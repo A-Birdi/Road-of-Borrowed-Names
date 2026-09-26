@@ -134,6 +134,31 @@ Status: `[ ]` not started · `[~]` in progress · `[i]` implemented, unverified 
 - [v] R18.2 Browser tests of the built file for critical paths (ui.mjs 13, story_ch1/3/4/6, side_ch3, atlas.check, explorer per chapter)
 - [v] R18.3 Recognizer tests with held-out variants, confusables, nonsense
 
+## Visual overhaul — Wayfarer's Folio (brief of 2026-09-26; docs/ART_DIRECTION.md)
+Status as above. `[v]` means a named browser/unit test passed on the stated
+commit (VALIDATION.md); screenshots inspected by eye are noted as such.
+- [v] V1 Hotfixes (Shift/run never a direction; Load/Continue clears the title override) present in source and build — shift_load_regression.mjs 18/18 in http-origin and file:// modes
+- [v] V2 docs/ART_DIRECTION.md records sources actually consulted (blocked sites stated as unverified), principles and decisions
+- [v] V3 Pause folio: four paper tabs Journey/Words/Satchel/Map in fixed order; Save & Load and Settings as labelled footer utilities; old section names still open the right place — folio.mjs
+- [v] V4 Tab semantics: tablist/tab/tabpanel, roving tabindex, Left/Right/Home/End, automatic activation; focus distinct from selection; Back closes only the top layer; Tab moves focus inside panels — folio.mjs, play_ui.mjs
+- [v] V5 Overlap never steals taps; labels never covered or clipped (probes in every tab's visible box) — folio.mjs
+- [v] V6 Phone composition: one page, stacked equal tabs; no horizontal overflow and ≥44 px controls at 320/360/390 px and 200 % text; scrollable tab rail with arrows when labels cannot fit — folio.mjs
+- [v] V7 Settings in named groups with real radios/switches/sliders; campaign choices shown apart; reading preview from real game text; furigana stays on (no toggle) — settings.mjs (persistence across reload)
+- [v] V8 Dialogue: inset paper sheet, speaker tab, one Next ("More" for overflowing lines), separate labelled Word help/Translation/Voice/History/Skip — play_ui.mjs
+- [v] V9 Word help: card (wide)/sheet (narrow) with visible Close; tapping a word never advances; a tap-opened card pauses what is underneath; Escape closes it first — play_ui.mjs, ui.mjs
+- [v] V10 Replies: a touch scroll over them does not choose one; a tap does — play_ui.mjs
+- [v] V11 HUD: exactly one Menu entry; hidden under panels/dialogue — play_ui.mjs
+- [v] V12 Touch: sliding move pad, hold-to-Run, context-labelled Action; hidden during dialogue/menus; touch-action none only on canvas and pad — play_ui.mjs, ui.mjs
+- [v] V13 Camera keeps the player above the dialogue sheet; small maps framed by a region surround — play_ui.mjs (position); surround inspected in screenshots
+- [~] V14 Title screen (lantern-road scene, prominent Continue, compact storage status, touch/keyboard guidance) — worker in progress
+- [~] V15 Six-slot travel ledger with thumbnails, names, place, playtime, time; Manage area; confirmations; empty/corrupt/error states — worker in progress
+- [~] V16 Character creation in four steps with live preview, swatches with non-colour marks, silhouettes — worker in progress
+- [~] V17 Challenge, handwriting pad, lessons, activities and combat in folio materials; recognition uncertainty distinct from wrong — worker in progress
+- [v] V18 Atlas reading sheet, expedition panel and chip in folio materials (no emoji icons) — atlas.check.mjs
+- [~] V19 Richer pixel art: 2x art-resolution renderer with legacy adapter DONE (art_shots.mjs); tiles, props/buildings, characters/portraits being redrawn by workers; enemy art and title backdrop to follow
+- [ ] V20 Viewport matrix 360x800, 390x844, 412x915, 844x390, tablet, 1280x720+ with before/after screenshots committed to docs/screenshots/
+- [~] V21 Performance measured on the same machine before/after (tests/e2e/perf.mjs); phone performance NOT validated (desktop emulation only)
+
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
 - R1.3/R14.x: tests/e2e/ui.mjs (IndexedDB probe, session-only banner under refusal, reload persistence, copy independence, delete, overwrite confirm, cross-tab read-only, pre-departure recovery, file:// mode).
