@@ -178,13 +178,20 @@ RB.render = (function () {
   function drawSurround(c, m, pal) {
     const mx = ax(0), my = ay(0), mw = m.w * ATS, mh = m.h * ATS;
     c.fillStyle = pal.dark;
-    c.fillRect(0, 0, bw, bh);
-    if (mx <= 0 && my <= 0 && mx + mw >= bw && my + mh >= bh) return;
+    if (mx <= 0 && my <= 0 && mx + mw >= bw && my + mh >= bh) { c.fillRect(0, 0, bw, bh); return; }
+    // plain ground under the map itself; the patterned surround only in the
+    // strips around it (painting the whole buffer twice a frame cost about
+    // a third of a small interior's frame time)
+    c.fillRect(mx, my, mw, mh);
     const indoor = m.region === 'interior' || (m.def && m.def.indoor) || (m.w <= 17 && m.h <= 12);
     c.save();
     c.translate(mx & 63, my & 63); // the pattern stays put relative to the map
     c.fillStyle = surroundPattern(c, pal, indoor);
-    c.fillRect(-64, -64, bw + 128, bh + 128);
+    const ox = mx & 63, oy = my & 63, top = Math.max(0, my), bot = Math.min(bh, my + mh);
+    if (my > 0) c.fillRect(-ox, -oy, bw, my);
+    if (my + mh < bh) c.fillRect(-ox, my + mh - oy, bw, bh - my - mh);
+    if (mx > 0 && bot > top) c.fillRect(-ox, top - oy, mx, bot - top);
+    if (mx + mw < bw && bot > top) c.fillRect(mx + mw - ox, top - oy, bw - mx - mw, bot - top);
     c.restore();
     // soft shadow just outside the map edge
     const sh = 20;
