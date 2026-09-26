@@ -18,6 +18,21 @@ Saves stay in your browser (IndexedDB, six slots). The game tells you honestly
 if the browser refuses storage and you are playing session-only. There is no
 save export or import.
 
+### Updating the game file without losing saves
+Saves are not inside `index.html`; the browser keeps them per browser profile
+and per page location (for a file opened from disk, its folder path). To
+install a newer `index.html`:
+1. Close every tab running the game.
+2. Keep a copy of the old `index.html` somewhere else (a code backup only).
+3. Put the new file at exactly the same path with the same name, replacing
+   the old one.
+4. Open it the same way as before (same browser, same profile, same path or
+   address) and use Continue or Load.
+
+Do not clear site data or cookies for the page, switch browser or profile,
+move the file to another folder, or start a New Game in an occupied slot as
+a "repair" — any of those can hide or overwrite existing saves.
+
 ### Controls
 | Action | Keyboard | Mouse / touch |
 |---|---|---|
