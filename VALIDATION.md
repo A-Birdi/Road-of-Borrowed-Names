@@ -50,3 +50,23 @@ just before the commit that recorded them.
   study.
 - **H** Still needs humans: real handwriting accuracy, playtime, native-speaker
   review of Japanese, music quality, voice quality (no ja voice in test browser).
+
+### Session log — Chapter 1 exploration and Chapter 5 intake
+- **B** `node tests/e2e/explore.mjs rw.road 3 9 ch1_done none E 5 2500` —
+  seeded blind explorer (talks, props, triggers, exits at random; no scripted
+  route) reached `ch1_done` in 1014 actions / 188 s: all 8 Chapter 1 side and
+  main quests done including the new Mochi side story, companion chosen
+  (Suzu) only through "Set out with…", 8 battles won with Unravel only, 0
+  harness problems, 0 page errors. First run failed: exposed (a) the harness
+  never cleared a Flour Moth "shroud" (policy fixed to use a light/wind word,
+  and the in-game disabled-card hint now names the remedy) and (b) the explorer
+  state signature ignored provisional companion choice (fixed).
+- **B** Mochi side story (`rw_mochi`): scripted check at F/E/I/A — quest
+  starts at Tomo, cat NPC appears/disappears, challenge solved, quest done,
+  cat at home afterwards; 0 problems.
+- **B** `node tests/e2e/story_ch1.mjs F mio` — PASS (30 checks) after the
+  Mochi addition.
+- **U** `node tools/validate.mjs --filter lf --unknown` — Chapter 5
+  (Lanternfall) 0 errors, 0 unknown tokens. Chapter 5 worker reports a real
+  browser playthrough to `ch5_done` with each companion (worker's run, not
+  re-run by the coordinator yet).

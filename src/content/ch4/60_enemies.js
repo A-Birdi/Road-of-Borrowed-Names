@@ -57,7 +57,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
     settle: { jp: 'つらら は {一本|いっぽん} ずつ {外|はず}れ 、 {床|ゆか} の {上|うえ} で {鈴|すず} の よう な {音|おと} を {立|た}てた 。', en: 'One by one the icicles come loose and ring like little bells on the floor.' } };
 
   EN['sb.boss'] = { name: { en: 'The Lamp That Waited', jp: '{待|ま}ちくたびれた {灯|ひ}' }, art: 'sb_frostlamp', region: 'snowbell', bg: 'observatory', knots: 5, boss: true, music: 'boss', pool,
-    introWho: 'sb_lampvoice',
     pattern: ['chill:1', 'strike', 'rest', 'chill:1'],
     intents: {
       'chill:1': { power: 1, target: 'rand',
@@ -102,10 +101,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
         } },
     },
     phases: [
-      { at: 3, pattern: ['chill:2', 'rest', 'plea:1', 'chill:1'], who: 'sb_lampvoice',
+      { at: 3, pattern: ['chill:2', 'rest', 'plea:1', 'chill:1'],
         line: { jp: '{灯|ひ} が {震|ふる}える 。 {冷|つめ}たさ の {奥|おく} から 、 {問|と}い が {聞|き}こえて くる 。', en: 'The lamp trembles. From deep in the cold, a question comes.' },
         teach: { en: 'The lamp is asking something (Plea). It isn\'t an attack: choose "Answer" and reply to what it really means — that loosens a knot. Its cold (Chill) is still answered by ほのお.' } },
-      { at: 1, pattern: ['plea:2', 'rest', 'plea:2'], who: 'sb_lampvoice',
+      { at: 1, pattern: ['plea:2', 'rest', 'plea:2'],
         line: { jp: '{青|あお}い {炎|ほのお} が {小|ちい}さく なり 、 {最後|さいご} の {問|と}い を {口|くち} に した 。', en: 'The blue flame shrinks, and asks one last question.' } },
     ],
     intro: { jp: '{氷|こおり} の {笠|かさ} の {中|なか} で 、 {青|あお}い {炎|ほのお} が {立|た}ち{上|あ}がる 。 {部屋|へや} じゅう の {霜|しも} が 、 {一斉|いっせい} に こちら を {向|む}いた 。', en: 'Inside the icy shade a blue flame rises. All the frost in the room turns toward you at once.' },

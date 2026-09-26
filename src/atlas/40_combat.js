@@ -133,10 +133,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (combo(ctx, 'duet')) st.harmony = Math.max(st.harmony, 1);
     }
   };
-  function withIntent(st, fn) {
-    const saved = st.intent;
-    try { return fn(); } finally { st.intent = saved; }
-  }
   E.enemy = function (st, countered, ctx) {
     const it = st.intent;
     let tmp = Object.assign({}, it);
@@ -153,9 +149,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }
     if (ctx.comp === 'suzu' && has(ctx, 'mask_suzu') && st.misdirectUsed && !st._a.mask2) { st.misdirectUsed = false; st._a.mask2 = true; }
     const before = st.pc + st.comp;
-    st.intent = tmp;
-    const fx = withIntent(st, () => orig.enemyAct(st, countered));
-    st.intent = it;
+    st.intent = tmp; // the telegraphed intent, softened by relics/charms for this exchange only
+    let fx;
+    try { fx = orig.enemyAct(st, countered); } finally { st.intent = it; }
     for (const m of pre) fx.unshift({ t: 'settle', en: m });
     if (has(ctx, 'wick') && !countered && it.kind === 'shroud' && st.shroud && !st._a.wickUsed) { st.shroud = false; st._a.wickUsed = true; fx.push({ t: 'settle', en: 'The spare wick flares — the mist burns off at once.' }); }
     if (ctx.comp === 'mio' && has(ctx, 'vial_mio')) {
