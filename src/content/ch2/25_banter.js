@@ -52,7 +52,7 @@ pc: この {書庫|しょこ} も 、 {片付|かたづ}けて いる つもり 
 comp[think]: …… うん 。 {片付|かたづ}ける の と 、 {仕舞|しま}い{込|こ}む の は 、 {違|ちが}う 。 {気|き}を つける 。 || …Yes. Tidying and hiding away aren't the same thing. I'll be careful.
 
 @scene sg.b_mio_after
-comp: ねえ 、 $name 。 わたし 、 {今日|きょう} {一回|いっかい} だけ 「いいえ 」 って {言|い}えた の 。 || Hey, $name. Today I managed to say "no". Just once.
+comp: ねぇ 、 $name 。 わたし 、 {今日|きょう} {一回|いっかい} だけ 「いいえ 」 って {言|い}えた の 。 || Hey, $name. Today I managed to say "no". Just once.
 pc: {誰|だれ} に ？ || To whom?
 comp[smile]: タマエ さん が 、 {干物|ひもの} を {十枚|じゅうまい} くれよう と した から 。 「{三枚|さんまい} で {十分|じゅうぶん} です 」 って 。 …… {大進歩|だいしんぽ} でしょう ？ || Tamae tried to give me ten dried fish. I said, "Three is plenty." …Huge progress, right?
 
@@ -65,7 +65,7 @@ comp: {十七冊目|じゅうななさつめ} です 。 {一冊目|いっさつ
 @scene sg.b_ren_puns
 comp: $name 。 {港|みなと} に ちなんだ {冗談|じょうだん} を 、 {一|ひと}つ {考|かんが}えました 。 || $name. I've thought of a joke fit for a harbour.
 pc: …… どうぞ 。 || …Go on.
-comp: 「{灯台|とうだい} {下|もと} {暗|くら}し 」 。 {灯台|とうだい} の {下|した} は {暗|くら}い 。 {近|ちか}く の こと ほど {見|み}えない 、 と いう {意味|いみ} です 。 || "Tōdai moto kurashi" — it's darkest at the foot of the tōdai: the nearer something is, the harder it is to see.
+comp: 「{灯台下暗|とうだいもとくら}し 」 。 {灯台|とうだい} の {下|した} は {暗|くら}い 。 {近|ちか}く の こと ほど {見|み}えない 、 と いう {意味|いみ} です 。 || "Tōdai moto kurashi" — it's darkest at the foot of the tōdai: the nearer something is, the harder it is to see.
 comp: ただし 、 この {言葉|ことば} の {灯台|とうだい} は {海|うみ} の {灯台|とうだい} では なく 、 {昔|むかし} の {油|あぶら} の {明|あ}かり を {載|の}せる {台|だい} の こと です 。 …… {冗談|じょうだん} の はず が 、 {豆知識|まめちしき} に なって しまいました 。 || Though the tōdai in this saying isn't a lighthouse at all — it's the old stand that held an oil lamp. …It was meant to be a joke and turned into trivia.
 
 @scene sg.b_ren_directions
@@ -94,7 +94,7 @@ comp[smirk]: {意外|いがい} ？ {芸人|げいにん} は ね 、 {数字|�
 comp: タマエ さん ！ {三年|さんねん} {前|まえ} の {銅貨|どうか} {三枚|さんまい} 、 {利子|りし} を つけて {返|かえ}しに {来|き}た わ 。 || Tamae! I've come to pay back those three coppers from three years ago. With interest.
 tamae[surprise]: …… あんた 、 あの {時|とき} の {旅芸人|たびげいにん} かい ！ {忘|わす}れてた よ 。 || …You're that travelling performer! I'd forgotten all about it.
 comp[smile]: あたし は {忘|わす}れない の 。 {借|か}り は ね 。 || I don't forget. Not debts.
-tamae[laugh]: {変|か}わった {人|ひと} だ ねえ ！ {利子|りし} は いらない よ 。 {代|か}わり に 、 {今夜|こんや} {一曲|いっきょく} やって おくれ 。 || What an odd one you are! Keep the interest. Sing us a song tonight instead.
+tamae[laugh]: {変|か}わった {人|ひと} だ ねぇ ！ {利子|りし} は いらない よ 。 {代|か}わり に 、 {今夜|こんや} {一曲|いっきょく} やって おくれ 。 || What an odd one you are! Keep the interest. Sing us a song tonight instead.
 
 @scene sg.b_suzu_lies
 comp: ワタル くん の {嘘|うそ} 、 {悪|わる}い {嘘|うそ} だった と {思|おも}う ？ || Do you think Wataru's lie was a bad lie?

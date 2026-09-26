@@ -231,6 +231,28 @@ var RB = (globalThis.RB = globalThis.RB || {});
       c.fillStyle = `rgba(255,214,130,${f})`; c.fillRect(x + 5, y - 5, 6, 7);
       px(c, x + 5, y - 8, 6, 2, '#d8b060');
     });
+    // Archive guardian: a dark stone scribe on a plinth, holding a closed book.
+    def('sa_statue', {}, (c, x, y) => {
+      px(c, x + 1, y + 9, 14, 6, '#3c3a48');
+      px(c, x + 2, y + 9, 12, 1, '#5a5868');
+      px(c, x + 4, y - 4, 8, 13, '#56546a');
+      px(c, x + 5, y - 9, 6, 5, '#56546a');
+      px(c, x + 4, y - 4, 1, 13, '#72708a');
+      px(c, x + 6, y + 1, 5, 4, '#8a6a4a');
+      px(c, x + 6, y + 1, 5, 1, '#b89a6a');
+      px(c, x + 1, y + 14, 14, 1, '#00000040');
+    });
+    // Ushio's grave: a low weathered slab with a brush-shaped cut and a cup of water.
+    def('sa_grave', {}, (c, x, y) => {
+      px(c, x + 3, y - 3, 10, 16, '#4a4858');
+      px(c, x + 4, y - 5, 8, 2, '#4a4858');
+      px(c, x + 3, y - 3, 1, 16, '#66647a');
+      px(c, x + 7, y - 1, 2, 7, '#d8d4c8');
+      px(c, x + 6, y + 5, 4, 1, '#d8d4c8');
+      px(c, x + 12, y + 10, 3, 3, '#8a8aa0');
+      px(c, x + 13, y + 10, 1, 1, '#a8d8e8');
+      px(c, x + 2, y + 13, 12, 2, '#00000040');
+    });
     // The Hush at the Heart: a slow spiral of blank pages around a hollow.
     def('sa_hushcore', { w: 3, h: 3, light: 30 }, (c, x, y, p, t, o) => {
       const cx = x + 24, cy = y + 18;

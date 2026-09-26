@@ -9,7 +9,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- The coast road ------------------------------------------------------------------
   C.maps['sg.road'] = {
-    name: { en: 'The Coast Road', jp: '{海沿|うみぞ}いの{道|みち}' }, region: 'saltglass', music: 'road',
+    name: { en: 'The Coast Road', jp: '{海沿|うみぞ}い の {道|みち}' }, region: 'saltglass', music: 'road',
     ambient: { weather: null },
     terrain: K.build(40, 22, '.', (k) => {
       k.ragged('top', 'T', 3, 41);
@@ -350,7 +350,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- The fishers' cove -----------------------------------------------------------------------------
   C.maps['sg.cove'] = {
-    name: { en: "The Fishers' Cove", jp: '{漁師|りょうし}の{入|い}り{江|え}' }, region: 'saltglass', music: 'quiet_road', noTravel: true,
+    name: { en: "The Fishers' Cove", jp: '{漁師|りょうし} の {入|い}り{江|え}' }, region: 'saltglass', music: 'quiet_road', noTravel: true,
     terrain: K.build(30, 20, 's', (k) => {
       k.rect(0, 0, 30, 4, '^');
       k.ragged('top', '^', 5, 51);

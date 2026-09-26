@@ -277,7 +277,6 @@ RB.lex.add(RB.lex.parseTable(`
 仕分ける|しわける|v1|I|to sort
 一打|いちだ|n|A|one stroke (of a bell)
 仕掛け|しかけ|n|I|device, mechanism; trick
-目|め|suf|E|-th (ordinal: 二度目, 一冊目)
 何冊目|なんさつめ|n|I|which volume (in order)
 一冊目|いっさつめ|n|I|the first volume
 十七冊目|じゅうななさつめ|n|I|the seventeenth volume
@@ -354,7 +353,7 @@ RB.lex.add(RB.lex.parseTable(`
 芸|げい|n|I|art, act, trick (of a performer)
 手品|てじな|n|I|magic trick
 縄抜け|なわぬけ|n|A|escaping from ropes (a stage trick)
-拍手|はくしゅ|vs|I|applause
+拍手|はくしゅ|n|I|applause
 紙吹雪|かみふぶき|n|A|confetti
 大成功|だいせいこう|n|I|great success
 稽古|けいこ|vs|I|practice, rehearsal
@@ -718,9 +717,9 @@ RB.lex.add(RB.lex.parseTable(`
 処分|しょぶん|vs|I|disposal, getting rid of
 長居|ながい|vs|A|staying too long
 休憩|きゅうけい|vs|I|rest, break
-調合|ちょうごう|vs|A|mixing (medicines)
+調合|ちょうごう|n|A|mixing (medicines)
 瞬き|まばたき|vs|I|blink
-整理|せいり|vs|I|putting in order
+整理|せいり|n|I|putting in order
 深呼吸|しんこきゅう|vs|I|deep breath
 喧嘩|けんか|vs|I|quarrel, fight
 希望|きぼう|vs|I|hope, wish
@@ -732,7 +731,7 @@ RB.lex.add(RB.lex.parseTable(`
 わあ||int|F|wow, oh!
 あら||int|E|oh! (surprise; mostly feminine)
 おーい||int|E|hey! (calling to someone far off)
-ねえ||int|E|hey; say (to get attention)
+ねぇ||int|E|hey; say (to get attention); (at the end) drawn-out ね, "isn't it"
 そっか||int|I|I see (casual そうか)
 ちゃぷん||int|A|(sound) slosh, splash
 きい||int|A|(sound) creak
@@ -781,4 +780,29 @@ RB.lex.add(RB.lex.parseTable(`
 書いとこ|かいとこ|exp|I|I'll write that down (casual = 書いておこう)
 空けとく|あけとく|exp|I|I'll keep (it) free (casual = 空けておく)
 沈んじまった|しずんじまった|exp|I|went and sank (rough = 沈んでしまった)
+灯|ひ|n|I|light, lamp (literary)
+里|さと|n|I|village, hamlet; one's home
+質|たち|n|A|nature, disposition (質が悪い: nasty, worse)
+糊|のり|n|I|starch; paste
+別|べつ|adj-na|E|separate, different
+節約|せつやく|n|I|saving, economizing (する)
+潮見|しおみ|n|I|tide-watching; the tide-watcher
+線|せん|n|E|line
+以外|いがい|n|I|except, other than
+後半|こうはん|n|I|second half
+私語|しご|n|A|whispering, idle talk
+幅|はば|n|I|width
+頃|ころ|n|E|time, period (when…)
+ころ||n|E|time, around (a time)
+不在|ふざい|n|I|absence, being out
+前後|ぜんご|n|I|around, about; before and after
+炎|ほのお|n|E|flame
+小刀|こがたな|n|I|small knife
+墓場|はかば|n|I|graveyard
+大進歩|だいしんぽ|n|A|great progress
+明かり|あかり|n|E|a light, lamp
+海沿い|うみぞい|n|I|along the sea, coastal
+耳飾り|みみかざり|n|I|earring
+睨めっこ|にらめっこ|n|A|staring contest
+読み返す|よみかえす|v5s|I|to reread
 `), 'ch2');

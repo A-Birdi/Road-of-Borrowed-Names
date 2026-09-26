@@ -13543,7 +13543,7 @@ RB.combatLogic = (function () {
   function responses(st, words) {
     const out = [];
     const it = st.intent;
-    out.push({ id: 'unravel', kind: 'unravel', icon: '🪢', jp: 'ほどく', en: 'Unravel', desc: 'Restore one of its tangled words — frees a knot.', disabled: st.shroud ? 'Shrouded: you can\'t see the knots.' : null });
+    out.push({ id: 'unravel', kind: 'unravel', icon: '🪢', jp: 'ほどく', en: 'Unravel', desc: 'Restore one of its tangled words — frees a knot.', disabled: st.shroud ? 'Shrouded: you can\'t see the knots. A light or wind word clears it.' : null });
     if (it && it.kind === 'plea') out.push({ id: 'answer', kind: 'answer', icon: '💬', jp: 'こたえる', en: 'Answer', desc: 'Reply to what it is really asking.' });
     if (it && (it.kind === 'lie' || it.kind === 'mirror')) out.push({ id: 'truth', kind: 'truth', icon: '🔍', jp: 'みぬく', en: 'See through', desc: 'Point out what is false in what it said.' });
     for (const w of words) {
@@ -13755,7 +13755,8 @@ RB.test = (function () {
         else if (counter && it.kind !== 'rest') card = counter;
         if (st.harmony >= st.harmonyMax && cards.find((c) => c.kind === 'tech')) card = cards.find((c) => c.kind === 'tech');
       }
-      if (card.disabled) card = cards.find((c) => c.kind === 'word' && !c.disabled) || card;
+      // Unravel is disabled while shrouded: clear it the way the telegraph says (light or wind)
+      if (card.disabled) card = cards.find((c) => c.kind === 'word' && !c.disabled && c.word.tags.some((t) => t === 'light' || t === 'wind')) || cards.find((c) => c.kind === 'word' && !c.disabled) || card;
       // validate authored answer/truth steps when present
       if (card.kind === 'answer' && st.intent.answer) solveStep(RB.activities.tier(st.intent.answer) || st.intent.answer, 'battle ' + enemyId + ' answer');
       if (card.kind === 'truth' && st.intent.truth) solveStep(RB.activities.tier(st.intent.truth) || st.intent.truth, 'battle ' + enemyId + ' truth');
@@ -20481,7 +20482,6 @@ RB.lex.add(RB.lex.parseTable(`
 仕分ける|しわける|v1|I|to sort
 一打|いちだ|n|A|one stroke (of a bell)
 仕掛け|しかけ|n|I|device, mechanism; trick
-目|め|suf|E|-th (ordinal: 二度目, 一冊目)
 何冊目|なんさつめ|n|I|which volume (in order)
 一冊目|いっさつめ|n|I|the first volume
 十七冊目|じゅうななさつめ|n|I|the seventeenth volume
@@ -20558,7 +20558,7 @@ RB.lex.add(RB.lex.parseTable(`
 芸|げい|n|I|art, act, trick (of a performer)
 手品|てじな|n|I|magic trick
 縄抜け|なわぬけ|n|A|escaping from ropes (a stage trick)
-拍手|はくしゅ|vs|I|applause
+拍手|はくしゅ|n|I|applause
 紙吹雪|かみふぶき|n|A|confetti
 大成功|だいせいこう|n|I|great success
 稽古|けいこ|vs|I|practice, rehearsal
@@ -20922,9 +20922,9 @@ RB.lex.add(RB.lex.parseTable(`
 処分|しょぶん|vs|I|disposal, getting rid of
 長居|ながい|vs|A|staying too long
 休憩|きゅうけい|vs|I|rest, break
-調合|ちょうごう|vs|A|mixing (medicines)
+調合|ちょうごう|n|A|mixing (medicines)
 瞬き|まばたき|vs|I|blink
-整理|せいり|vs|I|putting in order
+整理|せいり|n|I|putting in order
 深呼吸|しんこきゅう|vs|I|deep breath
 喧嘩|けんか|vs|I|quarrel, fight
 希望|きぼう|vs|I|hope, wish
@@ -20936,7 +20936,7 @@ RB.lex.add(RB.lex.parseTable(`
 わあ||int|F|wow, oh!
 あら||int|E|oh! (surprise; mostly feminine)
 おーい||int|E|hey! (calling to someone far off)
-ねえ||int|E|hey; say (to get attention)
+ねぇ||int|E|hey; say (to get attention); (at the end) drawn-out ね, "isn't it"
 そっか||int|I|I see (casual そうか)
 ちゃぷん||int|A|(sound) slosh, splash
 きい||int|A|(sound) creak
@@ -20985,6 +20985,31 @@ RB.lex.add(RB.lex.parseTable(`
 書いとこ|かいとこ|exp|I|I'll write that down (casual = 書いておこう)
 空けとく|あけとく|exp|I|I'll keep (it) free (casual = 空けておく)
 沈んじまった|しずんじまった|exp|I|went and sank (rough = 沈んでしまった)
+灯|ひ|n|I|light, lamp (literary)
+里|さと|n|I|village, hamlet; one's home
+質|たち|n|A|nature, disposition (質が悪い: nasty, worse)
+糊|のり|n|I|starch; paste
+別|べつ|adj-na|E|separate, different
+節約|せつやく|n|I|saving, economizing (する)
+潮見|しおみ|n|I|tide-watching; the tide-watcher
+線|せん|n|E|line
+以外|いがい|n|I|except, other than
+後半|こうはん|n|I|second half
+私語|しご|n|A|whispering, idle talk
+幅|はば|n|I|width
+頃|ころ|n|E|time, period (when…)
+ころ||n|E|time, around (a time)
+不在|ふざい|n|I|absence, being out
+前後|ぜんご|n|I|around, about; before and after
+炎|ほのお|n|E|flame
+小刀|こがたな|n|I|small knife
+墓場|はかば|n|I|graveyard
+大進歩|だいしんぽ|n|A|great progress
+明かり|あかり|n|E|a light, lamp
+海沿い|うみぞい|n|I|along the sea, coastal
+耳飾り|みみかざり|n|I|earring
+睨めっこ|にらめっこ|n|A|staring contest
+読み返す|よみかえす|v5s|I|to reread
 `), 'ch2');
 
 
@@ -21374,7 +21399,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- The coast road ------------------------------------------------------------------
   C.maps['sg.road'] = {
-    name: { en: 'The Coast Road', jp: '{海沿|うみぞ}いの{道|みち}' }, region: 'saltglass', music: 'road',
+    name: { en: 'The Coast Road', jp: '{海沿|うみぞ}い の {道|みち}' }, region: 'saltglass', music: 'road',
     ambient: { weather: null },
     terrain: K.build(40, 22, '.', (k) => {
       k.ragged('top', 'T', 3, 41);
@@ -21715,7 +21740,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- The fishers' cove -----------------------------------------------------------------------------
   C.maps['sg.cove'] = {
-    name: { en: "The Fishers' Cove", jp: '{漁師|りょうし}の{入|い}り{江|え}' }, region: 'saltglass', music: 'quiet_road', noTravel: true,
+    name: { en: "The Fishers' Cove", jp: '{漁師|りょうし} の {入|い}り{江|え}' }, region: 'saltglass', music: 'quiet_road', noTravel: true,
     terrain: K.build(30, 20, 's', (k) => {
       k.rect(0, 0, 30, 4, '^');
       k.ragged('top', '^', 5, 51);
@@ -22038,7 +22063,7 @@ narr: その {夜|よる} 。 {桟橋|さんばし} の {先|さき} で 、 {�
 ?(comp=ren) comp: …… ええ 。 だと すれば 、 {取|と}り{戻|もど}せる かも しれません 。 {返送|へんそう} は {取|と}り{消|け}せる と 、 {今日|きょう} {分|わ}かりました から 。 || …Yes. And if so, it might be retrieved. Today we learned that a return can be cancelled.
 ?(comp=ren) comp[smile]: {暗|くら}い {話|はなし} を して しまいました 。 {灯台|とうだい} の {前|まえ} では 、 {暗|くら}い {話|はなし} も {少|すこ}し {明|あか}るく {聞|き}こえる ので 、 {許|ゆる}して ください 。 || I've said something gloomy. Forgive me — in front of a lighthouse, even gloomy talk sounds a little brighter.
 ?(comp=ren) comp[shy]: …… {今|いま} の は 、 {冗談|じょうだん} の つもり でした 。 || …That was meant as a joke.
-?(comp=suzu) comp: ねえ 。 ワタル くん の {帳簿|ちょうぼ} 、 {最初|さいしょ} に {見|み}た とき から 、 {嘘|うそ} だって {分|わ}かってた の 。 || Hey. I knew Wataru's books were lying the first time I saw them.
+?(comp=suzu) comp: ねぇ 。 ワタル くん の {帳簿|ちょうぼ} 、 {最初|さいしょ} に {見|み}た とき から 、 {嘘|うそ} だって {分|わ}かってた の 。 || Hey. I knew Wataru's books were lying the first time I saw them.
 ?(comp=suzu) comp[smirk]: {数字|すうじ} の {嘘|うそ} は {得意|とくい} なの 。 {昔|むかし} 、 {一座|いちざ} の {帳簿|ちょうぼ} を ごまかした こと が ある から 。 {三日|みっか} で バレた けど 。 || I'm good at spotting lies in numbers. I once fudged the troupe's accounts myself. Found out in three days.
 ?(comp=suzu) pc: {今夜|こんや} は {冗談|じょうだん} から {入|はい}らない ね 。 || No joke to start with tonight.
 ?(comp=suzu) comp[closed]: …… {入|はい}った わ よ 。 {今|いま} の が {冗談|じょうだん} 。 {本当|ほんとう} の {話|はなし} は 、 ここ から 。 || …I did. That was the joke. The real story starts here.
@@ -22982,7 +23007,7 @@ pc: {道標|みちしるべ} を {直|なお}そう 。 {大通|おおどお}り
 
 @scene sg.kiyo_idle
 kiyo: {安|やす}い よ 、 {安|やす}い よ ！ …… って {言|い}いたい ん だ けど 、 {魚|さかな} が ない ん だ よ ね 。 {網|あみ} が {入|い}り{江|え} に {置|お}きっぱなし で さ 。 || Cheap, cheap! …Is what I'd like to shout, but there's no fish. The nets are stuck out at the cove.
-?(quest.sg_main>=4) kiyo: {塩|しお} の {樽|たる} 、 {返|かえ}した よ 。 ワタル が {頭|あたま} を {下|さ}げに {来|き}て さ 。 …… あの {子|こ} 、 {昔|むかし} から {字|じ} だけ は {上手|うま}かった ねえ 。 || I gave the salt barrels back. Wataru came round to apologise. …That boy always did have lovely handwriting.
+?(quest.sg_main>=4) kiyo: {塩|しお} の {樽|たる} 、 {返|かえ}した よ 。 ワタル が {頭|あたま} を {下|さ}げに {来|き}て さ 。 …… あの {子|こ} 、 {昔|むかし} から {字|じ} だけ は {上手|うま}かった ねぇ 。 || I gave the salt barrels back. Wataru came round to apologise. …That boy always did have lovely handwriting.
 
 @scene sg.kiyo_fish
 kiyo: {安|やす}い よ 、 {安|やす}い よ ！ {今朝|けさ} の {鯵|あじ} だ よ ！ {網|あみ} が {戻|もど}った から ね ！ || Cheap, cheap! This morning's horse mackerel! The nets are back!
@@ -23151,7 +23176,7 @@ asahi: いらっしゃい ！ …… って {言|い}いたい ところ だ け
 asahi: {嵐|あらし} の せい だ って 。 …… {嵐|あらし} って 、 {便利|べんり} な {言葉|ことば} だ よ ね 。 || The storm's fault, apparently. …"The storm" is a handy word, isn't it.
 
 @scene sg.asahi_order
-asahi: ねえ 、 {今|いま} {暇|ひま} ？ …… {暇|ひま} じゃ ない よ ね 。 でも {聞|き}いて 。 || Hey, got a minute? …You don't, do you. Listen anyway.
+asahi: ねぇ 、 {今|いま} {暇|ひま} ？ …… {暇|ひま} じゃ ない よ ね 。 でも {聞|き}いて 。 || Hey, got a minute? …You don't, do you. Listen anyway.
 asahi: フク さん から {注文|ちゅうもん} が {入|はい}った の 。 {亡|な}くなった {旦那|だんな} さん の {船|ふね} の {名札|なふだ} を 、 {海|うみ} ガラス で {作|つく}って ほしい って 。 {浜|はま} の {祠|ほこら} に {飾|かざ}る ん だ って 。 || I got an order from Fuku. She wants a nameplate for her late husband's boat, made of sea glass, to put up at the little shrine on the beach.
 asahi: {海|うみ} ガラス なら 、 {炉|ろ} が {冷|つめ}たくて も {削|けず}って {並|なら}べる だけ だ から 、 できる 。 {問題|もんだい} は {二|ふた}つ 。 || With sea glass I just cut it and set it — I can do that even with the furnace cold. There are two problems.
 asahi: {一|ひと}つ 、 {青|あお}い {海|うみ} ガラス が {三|みっ}つ {要|い}る 。 {浜|はま} で {拾|ひろ}える ん だ けど 、 {店番|みせばん} が いない から {離|はな}れられなくて 。 || One: I need three pieces of blue sea glass. You can pick them up on the shore, but there's no one to mind the shop, so I can't leave.
@@ -23198,7 +23223,7 @@ asahi: {名札|なふだ} 、 フク さん に {渡|わた}して くれた ？
 
 @scene sg.asahi_after
 asahi: フク さん 、 {泣|な}いてた ？ …… そっか 。 {泣|な}いて 、 {笑|わら}ってた ？ …… そっか 。 よかった 。 || Did Fuku cry? …I see. Cried, and then laughed? …I see. Good.
-asahi[think]: ねえ 。 {名前|なまえ} って 、 {言|い}わなく なる と {消|き}える の かな 。 フク さん 、 {船|ふね} の {名前|なまえ} を {四十年|よんじゅうねん} {口|くち} に {出|だ}さなかった ん だ って 。 || Hey. Do you think names disappear when people stop saying them? Fuku says she hadn't said the boat's name out loud in forty years.
+asahi[think]: ねぇ 。 {名前|なまえ} って 、 {言|い}わなく なる と {消|き}える の かな 。 フク さん 、 {船|ふね} の {名前|なまえ} を {四十年|よんじゅうねん} {口|くち} に {出|だ}さなかった ん だ って 。 || Hey. Do you think names disappear when people stop saying them? Fuku says she hadn't said the boat's name out loud in forty years.
 ?(sg_boss_done) asahi[smile]: {灰|はい} も {届|とど}いた し 、 {炉|ろ} も {熱|あつ}い よ ！ {次|つぎ} は {窓|まど} ガラス を {作|つく}る ん だ 。 {港|みなと} じゅう の ！ || And my ash has arrived, and the furnace is hot! Next I'm making window glass. For the whole harbour!
 
 @scene sg.asahi_post
@@ -23244,7 +23269,7 @@ genzo: {渡|わた}し{船|ぶね} が {動|うご}いたら 、 {来|く}る �
 !quest sg_lighthouse 2
 
 @scene sg.genzo_waiting
-genzo: {渡|わた}し{船|ぶね} は まだ か 。 …… {別|べつ} に 、 {待|ま}ってる わけ じゃ ない 。 {灯台|とうだい} {守|もり} は 、 {海|うみ} を {見|み}る の が {仕事|しごと} だ 。 || The ferry's not in yet? …Not that I'm waiting. A lighthouse keeper's job is to watch the sea.
+genzo: {渡|わた}し{船|ぶね} は まだ か 。 …… {別|べつ} に 、 {待|ま}ってる わけ じゃ ない 。 {灯台守|とうだいもり} は 、 {海|うみ} を {見|み}る の が {仕事|しごと} だ 。 || The ferry's not in yet? …Not that I'm waiting. A lighthouse keeper's job is to watch the sea.
 ?(!ch2_done) genzo: {港|みなと} の {騒|さわ}ぎ が {片付|かたづ}かん と 、 {船|ふね} は {出|で}ない そう だ 。 …… さっさと {片付|かたづ}けて こい 。 || The ferry won't run till the harbour's mess is sorted out. …So hurry up and sort it.
 
 @scene sg.genzo_family
@@ -23315,7 +23340,7 @@ narr: ゲンゾウ に {伝|つた}えよう 。 || Tell Genzō.
 narr: 「{港|みなと} まで は 、 {自分|じぶん} で {行|い}ける から 。 {膝|ひざ} 、 {大事|だいじ} に して 。 {灯台|とうだい} で {待|ま}って て 。」 || "I can make it to the harbour on my own. Look after your knees. Wait for me at the lighthouse."
 !end
 :plain
-narr: {手紙|てがみ} が {一通|いっつう} 。 {何度|なんど} も {読|よ}んだ らしく 、 {折|お}り{目|め} が {柔|やわ}らかい 。 || A single letter, read so many times the folds have gone soft.
+narr: {手紙|てがみ} が {一通|いっつう} 。 {何度|なんど} も {読|よ}み{返|かえ}した の だろう 。 {折|お}り{目|め} が {柔|やわ}らかい 。 || A single letter, read so many times the folds have gone soft.
 
 @scene sg.shiori_post
 shiori: {潮|しお} は {今日|きょう} も {表|ひょう} どおり です 。 {表|ひょう} が {潮|しお} どおり 、 と {言|い}う べき でしょう か 。 || The tide's keeping to the table again today. Or should I say the table's keeping to the tide?
@@ -23474,7 +23499,7 @@ pc: この {書庫|しょこ} も 、 {片付|かたづ}けて いる つもり 
 comp[think]: …… うん 。 {片付|かたづ}ける の と 、 {仕舞|しま}い{込|こ}む の は 、 {違|ちが}う 。 {気|き}を つける 。 || …Yes. Tidying and hiding away aren't the same thing. I'll be careful.
 
 @scene sg.b_mio_after
-comp: ねえ 、 $name 。 わたし 、 {今日|きょう} {一回|いっかい} だけ 「いいえ 」 って {言|い}えた の 。 || Hey, $name. Today I managed to say "no". Just once.
+comp: ねぇ 、 $name 。 わたし 、 {今日|きょう} {一回|いっかい} だけ 「いいえ 」 って {言|い}えた の 。 || Hey, $name. Today I managed to say "no". Just once.
 pc: {誰|だれ} に ？ || To whom?
 comp[smile]: タマエ さん が 、 {干物|ひもの} を {十枚|じゅうまい} くれよう と した から 。 「{三枚|さんまい} で {十分|じゅうぶん} です 」 って 。 …… {大進歩|だいしんぽ} でしょう ？ || Tamae tried to give me ten dried fish. I said, "Three is plenty." …Huge progress, right?
 
@@ -23487,7 +23512,7 @@ comp: {十七冊目|じゅうななさつめ} です 。 {一冊目|いっさつ
 @scene sg.b_ren_puns
 comp: $name 。 {港|みなと} に ちなんだ {冗談|じょうだん} を 、 {一|ひと}つ {考|かんが}えました 。 || $name. I've thought of a joke fit for a harbour.
 pc: …… どうぞ 。 || …Go on.
-comp: 「{灯台|とうだい} {下|もと} {暗|くら}し 」 。 {灯台|とうだい} の {下|した} は {暗|くら}い 。 {近|ちか}く の こと ほど {見|み}えない 、 と いう {意味|いみ} です 。 || "Tōdai moto kurashi" — it's darkest at the foot of the tōdai: the nearer something is, the harder it is to see.
+comp: 「{灯台下暗|とうだいもとくら}し 」 。 {灯台|とうだい} の {下|した} は {暗|くら}い 。 {近|ちか}く の こと ほど {見|み}えない 、 と いう {意味|いみ} です 。 || "Tōdai moto kurashi" — it's darkest at the foot of the tōdai: the nearer something is, the harder it is to see.
 comp: ただし 、 この {言葉|ことば} の {灯台|とうだい} は {海|うみ} の {灯台|とうだい} では なく 、 {昔|むかし} の {油|あぶら} の {明|あ}かり を {載|の}せる {台|だい} の こと です 。 …… {冗談|じょうだん} の はず が 、 {豆知識|まめちしき} に なって しまいました 。 || Though the tōdai in this saying isn't a lighthouse at all — it's the old stand that held an oil lamp. …It was meant to be a joke and turned into trivia.
 
 @scene sg.b_ren_directions
@@ -23516,7 +23541,7 @@ comp[smirk]: {意外|いがい} ？ {芸人|げいにん} は ね 、 {数字|�
 comp: タマエ さん ！ {三年|さんねん} {前|まえ} の {銅貨|どうか} {三枚|さんまい} 、 {利子|りし} を つけて {返|かえ}しに {来|き}た わ 。 || Tamae! I've come to pay back those three coppers from three years ago. With interest.
 tamae[surprise]: …… あんた 、 あの {時|とき} の {旅芸人|たびげいにん} かい ！ {忘|わす}れてた よ 。 || …You're that travelling performer! I'd forgotten all about it.
 comp[smile]: あたし は {忘|わす}れない の 。 {借|か}り は ね 。 || I don't forget. Not debts.
-tamae[laugh]: {変|か}わった {人|ひと} だ ねえ ！ {利子|りし} は いらない よ 。 {代|か}わり に 、 {今夜|こんや} {一曲|いっきょく} やって おくれ 。 || What an odd one you are! Keep the interest. Sing us a song tonight instead.
+tamae[laugh]: {変|か}わった {人|ひと} だ ねぇ ！ {利子|りし} は いらない よ 。 {代|か}わり に 、 {今夜|こんや} {一曲|いっきょく} やって おくれ 。 || What an odd one you are! Keep the interest. Sing us a song tonight instead.
 
 @scene sg.b_suzu_lies
 comp: ワタル くん の {嘘|うそ} 、 {悪|わる}い {嘘|うそ} だった と {思|おも}う ？ || Do you think Wataru's lie was a bad lie?
@@ -23688,7 +23713,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
           { jp: '「{貼|は}り{替|か}えられた」 と {受身|うけみ} で {言|い}って 、 {誰|だれ} が やった か を {言|い}わない 。 {帳簿|ちょうぼ} を {直|なお}した の は {本人|ほんにん} の {字|じ} なのに 。', en: 'He uses the passive — "had been switched" — and never says who, though the ledger correction is in his own hand.', ok: true },
           { jp: '「{誰|だれ} か に 」 は {丁寧|ていねい} すぎる 。', en: '"By someone" is too polite.', ok: false, why: no('It isn\'t a politeness issue — it\'s vague on purpose.') },
           { jp: '{嵐|あらし} の {夜|よる} は 、 {誰|だれ} も {倉庫|そうこ} に いなかった 。', en: 'No one was in the warehouse on the night of the storm.', ok: false, why: no('You have no evidence of that.') },
-        ], explain: { jp: '〜られる （{受身|うけみ}）', en: 'The passive is ordinary grammar, but it lets a speaker leave out the doer. Here the doer is the speaker.' } }],
+        ], explain: { jp: '{貼|は}り{替|か}えられた （{受身|うけみ}）', en: 'The passive is ordinary grammar, but it lets a speaker leave out the doer. Here the doer is the speaker.' } }],
       A: [{ kind: 'choose', item: 'c:sg_lie', ctx: { jp: 'ワタル ： 「{嵐|あらし} の {夜|よる} の こと です から 、 {僕|ぼく} の {知|し}らない {間|あいだ} に {貼|は}り{替|か}えられて いた と しか {考|かんが}えられません 。 {帳簿|ちょうぼ} も 、 {気付|きづ}いた {時|とき} に {直|なお}した だけ で …… 。」', en: 'Wataru: "It was the night of the storm, so I can only think they were switched without my knowing. And the ledger — I only corrected it when I noticed…"' },
         prompt: { en: 'Which part of his explanation undermines itself?' },
         options: [
@@ -24066,7 +24091,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
           F: { jp: 'さかな ひとつ 、 ごはん ひとつ 、 おにぎり ひとつ ！', en: 'One fish, one rice, one rice ball!' },
           E: { jp: '{焼|や}き{魚|ざかな} を {一|ひと}つ と 、 ご{飯|はん} を {一|ひと}つ 。 それ から 、 おにぎり も {一|ひと}つ 。', en: 'One grilled fish and one rice. And a rice ball too.' },
           I: { jp: 'いつも の で {頼|たの}む わ 。 あ 、 {汁|しる} は {今日|きょう} は いい 。 {代|か}わり に おにぎり {一|ひと}つ 。', en: 'The usual, please. Oh — skip the soup today. A rice ball instead.' },
-          A: { jp: 'いつも の やつ を …… いや 、 {汁物|しるもの} は {抜|ぬ}き で 。 {腹|はら} が {減|へ}って る から 、 {握|にぎ}り を {一|ひと}つ {足|た}して くれ 。', en: 'The usual… no, hold the soup. I\'m starving, so add a rice ball.' },
+          A: { jp: 'いつも の やつ を …… いや 、 {汁物|しるもの} は {抜|ぬ}き で 。 {腹|はら} が {減|へ}ってる から 、 {握|にぎ}り を {一|ひと}つ {足|た}して くれ 。', en: 'The usual… no, hold the soup. I\'m starving, so add a rice ball.' },
         },
         hint: { F: { en: 'One each of fish, rice and rice ball.' }, I: { en: 'Tamae said Daigo\'s usual is fish, rice and miso soup.' } },
         thanks: { jp: 'おう 、 これ これ ！', en: 'That\'s the stuff!' } },
@@ -24084,7 +24109,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
           F: { jp: 'みそしる ふたつ と 、 ごはん ひとつ 。', en: 'Two miso soups and one rice.' },
           E: { jp: '{味噌汁|みそしる} を {二|ふた}つ と 、 ご{飯|はん} を {一|ひと}つ ね 。 {魚|さかな} は いらない よ 。', en: 'Two miso soups and one rice. No fish.' },
           I: { jp: '{魚|さかな} は {勘弁|かんべん} して よ 。 {汁|しる} を {二杯|にはい} と 、 ご{飯|はん} を {一杯|いっぱい} 。', en: 'Spare me the fish. Two bowls of soup and one of rice.' },
-          A: { jp: '{魚|さかな} だけ は {見|み}たく ない ね 。 {朝|あさ} から {晩|ばん} まで {睨|にら}めっこ して る ん だ から 。 {汁|しる} は {二杯|にはい} 、 ご{飯|はん} は {軽|かる}く {一膳|いちぜん} で 。', en: 'Anything but fish — I stare the things down from dawn to dusk. Two bowls of soup, and a light bowl of rice.' },
+          A: { jp: '{魚|さかな} だけ は {見|み}たく ない ね 。 {朝|あさ} から {晩|ばん} まで {睨|にら}めっこ してる ん だ から 。 {汁|しる} は {二杯|にはい} 、 ご{飯|はん} は {軽|かる}く {一膳|いちぜん} で 。', en: 'Anything but fish — I stare the things down from dawn to dusk. Two bowls of soup, and a light bowl of rice.' },
         },
         hint: { F: { en: 'Two soups, one rice. No fish.' }, I: { jp: '{二杯|にはい} ・ {一杯|いっぱい} ・ {一膳|いちぜん}', en: 'はい counts cups and bowls (にはい = two); ぜん counts bowls of rice (いちぜん = one).' } },
         thanks: { jp: 'ありがと ！ {次|つぎ} は {安|やす}く する よ 。 {魚|さかな} を ね 。', en: 'Thanks! I\'ll give you a discount next time. On fish.' } },
@@ -24111,7 +24136,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
           F: { jp: 'やきざかな ふたつ 、 みそしる ひとつ 、 おちゃ ひとつ 。', en: 'Two grilled fish, one miso soup, one tea.' },
           E: { jp: '{焼|や}き{魚|ざかな} を {二|ふた}つ と 、 {味噌汁|みそしる} {一|ひと}つ 。 お{茶|ちゃ} も {一|ひと}つ 。', en: 'Two grilled fish and a miso soup. And a tea.' },
           I: { jp: '{焼|や}き{魚|ざかな} を {二|ふた}つ 。 {一|ひと}つ は ワタル に {持|も}って いく 。 あいつ 、 {昼|ひる} を {食|く}わない から な 。 それ と 、 {汁|しる} と {茶|ちゃ} を {一|ひと}つ ずつ 。', en: 'Two grilled fish — one\'s going to Wataru; the man never eats lunch. And one each of soup and tea.' },
-          A: { jp: 'わたし の {分|ぶん} と 、 ワタル の {分|ぶん} の {焼|や}き{魚|ざかな} 。 {汁|しる} と {茶|ちゃ} は わたし だけ で いい 。 …… あいつ 、 {昼|ひる} を {抜|ぬ}いて る だろう 。 {気付|きづ}かない と でも {思|おも}って る の か ね 。', en: 'Grilled fish for me and one for Wataru. Soup and tea just for me. …He\'s been skipping lunch. Does he think I haven\'t noticed?' },
+          A: { jp: 'わたし の {分|ぶん} と 、 ワタル の {分|ぶん} の {焼|や}き{魚|ざかな} 。 {汁|しる} と {茶|ちゃ} は わたし だけ で いい 。 …… あいつ 、 {昼|ひる} を {抜|ぬ}いてる だろう 。 {気付|きづ}かない と でも {思|おも}ってる の か ね 。', en: 'Grilled fish for me and one for Wataru. Soup and tea just for me. …He\'s been skipping lunch. Does he think I haven\'t noticed?' },
         },
         hint: { F: { en: 'Two fish, one soup, one tea.' }, I: { en: 'ずつ = each: one soup and one tea.' } },
         thanks: { jp: '{助|たす}かる 。 {釣|つ}り は いらない よ 。', en: 'Much obliged. Keep the change.' } },
@@ -24214,7 +24239,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { F: { jp: 'てがみ を わける たび に 、 かね が なった 。', en: 'Every time letters were sorted, a bell rang.', short: 'かね が なった' },
         E: { jp: '{手紙|てがみ} を {仕分|しわ}ける たび に 、 {島|しま} の {鐘|かね} が {鳴|な}った 。', en: 'Every time letters were sorted, the island bell rang.', short: '{鐘|かね} が {鳴|な}った' },
         I: { jp: '{手紙|てがみ} の {仕分|しわ}け が {済|す}む たび に 、 {鐘|かね} が {一|ひと}つ {鳴|な}った もん だ 。', en: 'Each time a batch of letters was sorted, the bell would ring once.', short: '{仕分|しわ}け の たび に {鐘|かね}' },
-        A: { jp: '{便|びん} が {仕分|しわ}け られる {度|たび} 、 {鐘|かね} が {一打|いちだ} 、 {沖|おき} まで {響|ひび}いた 。', en: 'Every time a post was sorted, the bell struck once and the sound carried out to sea.', short: '{鐘|かね} が {沖|おき} まで {響|ひび}いた' } },
+        A: { jp: '{便|びん} が {仕分|しわ}けられる {度|たび} 、 {鐘|かね} が {一打|いちだ} 、 {沖|おき} まで {響|ひび}いた 。', en: 'Every time a post was sorted, the bell struck once and the sound carried out to sea.', short: '{鐘|かね} が {沖|おき} まで {響|ひび}いた' } },
       { F: { jp: 'ある あき 、 おおきな なみ で しま が しずんだ 。', en: 'One autumn, a great wave sank the island.', short: 'しま が しずんだ' },
         E: { jp: 'ある {秋|あき} の {高潮|たかしお} で 、 {島|しま} は {一晩|ひとばん} で {沈|しず}んだ 。', en: 'One autumn a storm surge sank the island overnight.', short: '{島|しま} が {沈|しず}んだ' },
         I: { jp: 'ところが ある {秋|あき} 、 {高潮|たかしお} が {来|き}て 、 {島|しま} は {一晩|ひとばん} の うち に {沈|しず}んじまった 。', en: 'Then one autumn a storm surge came and the island went under in a single night.', short: '{一晩|ひとばん} で {沈|しず}んだ' },
@@ -24296,7 +24321,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Intermediate: passive, hearsay, はず, conditions, 〜なくていい
   Q('passive', 'I', 'g:passive', 'Who switched the labels?', [
     { en: 'The sentence doesn\'t say.', ok: true }, { en: 'The labels switched themselves.', ok: false, why: no('〜られた is passive: something was done to the labels by someone unnamed.') }, { en: 'The speaker did.', ok: false, why: no('The passive leaves the doer out; it doesn\'t name the speaker.') },
-  ], { jp: '〜られる （{受身|うけみ}）', en: 'The passive lets you leave out who did it.' }, J('ラベル が {貼|は}り{替|か}えられた 。'));
+  ], { jp: '{貼|は}り{替|か}えられた （{受身|うけみ}）', en: 'The passive lets you leave out who did it.' }, J('ラベル が {貼|は}り{替|か}えられた 。'));
   Q('sou_hear', 'I', 'g:sou_hear', 'How does the speaker know?', [
     { en: 'They heard it from someone.', ok: true }, { en: 'They saw it happen.', ok: false, why: no('Plain form + そうだ is hearsay: "I hear that…".') }, { en: 'They think it looks likely.', ok: false, why: no('That would be the stem + そう: ながされそう.') },
   ], { jp: '〜そう だ （{伝聞|でんぶん}）', en: 'Plain form + そうだ = "I hear that…".' }, J('{油|あぶら} は {嵐|あらし} で {流|なが}された そう だ 。'));
@@ -24539,7 +24564,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       ]), explain: { en: 'Its question is not about procedure; it is asking whether anyone will still read them.' } },
   };
   E('sg.tideclerk', {
-    name: { en: 'The Tide Clerk', jp: '{潮|しお}の{書記|しょき}' }, art: 'clerk', artOpts: { col: '#3a5a7a' }, look: { custom: 'sg_clerk' },
+    name: { en: 'The Tide Clerk', jp: '{潮|しお} の {書記|しょき}' }, art: 'clerk', artOpts: { col: '#3a5a7a' }, look: { custom: 'sg_clerk' },
     boss: true, music: 'boss', knots: 7, pool: POOL,
     pattern: ['strike', 'lie:gone', 'rest', 'charge', 'strike'],
     intents: {
@@ -37096,6 +37121,28 @@ var RB = (globalThis.RB = globalThis.RB || {});
       c.fillStyle = `rgba(255,214,130,${f})`; c.fillRect(x + 5, y - 5, 6, 7);
       px(c, x + 5, y - 8, 6, 2, '#d8b060');
     });
+    // Archive guardian: a dark stone scribe on a plinth, holding a closed book.
+    def('sa_statue', {}, (c, x, y) => {
+      px(c, x + 1, y + 9, 14, 6, '#3c3a48');
+      px(c, x + 2, y + 9, 12, 1, '#5a5868');
+      px(c, x + 4, y - 4, 8, 13, '#56546a');
+      px(c, x + 5, y - 9, 6, 5, '#56546a');
+      px(c, x + 4, y - 4, 1, 13, '#72708a');
+      px(c, x + 6, y + 1, 5, 4, '#8a6a4a');
+      px(c, x + 6, y + 1, 5, 1, '#b89a6a');
+      px(c, x + 1, y + 14, 14, 1, '#00000040');
+    });
+    // Ushio's grave: a low weathered slab with a brush-shaped cut and a cup of water.
+    def('sa_grave', {}, (c, x, y) => {
+      px(c, x + 3, y - 3, 10, 16, '#4a4858');
+      px(c, x + 4, y - 5, 8, 2, '#4a4858');
+      px(c, x + 3, y - 3, 1, 16, '#66647a');
+      px(c, x + 7, y - 1, 2, 7, '#d8d4c8');
+      px(c, x + 6, y + 5, 4, 1, '#d8d4c8');
+      px(c, x + 12, y + 10, 3, 3, '#8a8aa0');
+      px(c, x + 13, y + 10, 1, 1, '#a8d8e8');
+      px(c, x + 2, y + 13, 12, 2, '#00000040');
+    });
     // The Hush at the Heart: a slow spiral of blank pages around a hollow.
     def('sa_hushcore', { w: 3, h: 3, light: 30 }, (c, x, y, p, t, o) => {
       const cx = x + 24, cy = y + 18;
@@ -37363,9 +37410,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { type: 'house', x: 8, y: 2, w: 14, h: 7, roof: 'indigo', wall: 'stone', door: 7, windows: [2, 4, 10, 12], to: 'sa.reading', spawn: [14, 17], lit: true, if: '!post|!end_archive_closed' },
     ],
     props: [
-      { p: 'statue', x: 11, y: 10, scene: 'sa.gate_statue' }, { p: 'statue', x: 18, y: 10, scene: 'sa.gate_statue' },
+      { p: 'sa_statue', x: 11, y: 10, scene: 'sa.gate_statue' }, { p: 'sa_statue', x: 18, y: 10, scene: 'sa.gate_statue' },
       { p: 'sign', x: 18, y: 12, scene: 'sa.gate_plaque' },
-      { p: 'stone_marker', x: 22, y: 18, scene: 'sa.ushio_grave' },
+      { p: 'sa_grave', x: 22, y: 18, scene: 'sa.ushio_grave' },
       { p: 'lantern', x: 23, y: 18, if: 'sa_hush_down' }, { p: 'deadlantern', x: 23, y: 18, if: '!sa_hush_down' },
       { p: 'deadtree', x: 7, y: 15 }, { p: 'bush', x: 21, y: 15 }, { p: 'flowerpot', x: 23, y: 15, if: 'sa_hush_down' },
       { p: 'sa_pipe', x: 3, y: 2 }, { p: 'sa_pipe', x: 26, y: 2 },

@@ -125,7 +125,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
           { jp: '「{貼|は}り{替|か}えられた」 と {受身|うけみ} で {言|い}って 、 {誰|だれ} が やった か を {言|い}わない 。 {帳簿|ちょうぼ} を {直|なお}した の は {本人|ほんにん} の {字|じ} なのに 。', en: 'He uses the passive — "had been switched" — and never says who, though the ledger correction is in his own hand.', ok: true },
           { jp: '「{誰|だれ} か に 」 は {丁寧|ていねい} すぎる 。', en: '"By someone" is too polite.', ok: false, why: no('It isn\'t a politeness issue — it\'s vague on purpose.') },
           { jp: '{嵐|あらし} の {夜|よる} は 、 {誰|だれ} も {倉庫|そうこ} に いなかった 。', en: 'No one was in the warehouse on the night of the storm.', ok: false, why: no('You have no evidence of that.') },
-        ], explain: { jp: '〜られる （{受身|うけみ}）', en: 'The passive is ordinary grammar, but it lets a speaker leave out the doer. Here the doer is the speaker.' } }],
+        ], explain: { jp: '{貼|は}り{替|か}えられた （{受身|うけみ}）', en: 'The passive is ordinary grammar, but it lets a speaker leave out the doer. Here the doer is the speaker.' } }],
       A: [{ kind: 'choose', item: 'c:sg_lie', ctx: { jp: 'ワタル ： 「{嵐|あらし} の {夜|よる} の こと です から 、 {僕|ぼく} の {知|し}らない {間|あいだ} に {貼|は}り{替|か}えられて いた と しか {考|かんが}えられません 。 {帳簿|ちょうぼ} も 、 {気付|きづ}いた {時|とき} に {直|なお}した だけ で …… 。」', en: 'Wataru: "It was the night of the storm, so I can only think they were switched without my knowing. And the ledger — I only corrected it when I noticed…"' },
         prompt: { en: 'Which part of his explanation undermines itself?' },
         options: [
@@ -503,7 +503,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
           F: { jp: 'さかな ひとつ 、 ごはん ひとつ 、 おにぎり ひとつ ！', en: 'One fish, one rice, one rice ball!' },
           E: { jp: '{焼|や}き{魚|ざかな} を {一|ひと}つ と 、 ご{飯|はん} を {一|ひと}つ 。 それ から 、 おにぎり も {一|ひと}つ 。', en: 'One grilled fish and one rice. And a rice ball too.' },
           I: { jp: 'いつも の で {頼|たの}む わ 。 あ 、 {汁|しる} は {今日|きょう} は いい 。 {代|か}わり に おにぎり {一|ひと}つ 。', en: 'The usual, please. Oh — skip the soup today. A rice ball instead.' },
-          A: { jp: 'いつも の やつ を …… いや 、 {汁物|しるもの} は {抜|ぬ}き で 。 {腹|はら} が {減|へ}って る から 、 {握|にぎ}り を {一|ひと}つ {足|た}して くれ 。', en: 'The usual… no, hold the soup. I\'m starving, so add a rice ball.' },
+          A: { jp: 'いつも の やつ を …… いや 、 {汁物|しるもの} は {抜|ぬ}き で 。 {腹|はら} が {減|へ}ってる から 、 {握|にぎ}り を {一|ひと}つ {足|た}して くれ 。', en: 'The usual… no, hold the soup. I\'m starving, so add a rice ball.' },
         },
         hint: { F: { en: 'One each of fish, rice and rice ball.' }, I: { en: 'Tamae said Daigo\'s usual is fish, rice and miso soup.' } },
         thanks: { jp: 'おう 、 これ これ ！', en: 'That\'s the stuff!' } },
@@ -521,7 +521,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
           F: { jp: 'みそしる ふたつ と 、 ごはん ひとつ 。', en: 'Two miso soups and one rice.' },
           E: { jp: '{味噌汁|みそしる} を {二|ふた}つ と 、 ご{飯|はん} を {一|ひと}つ ね 。 {魚|さかな} は いらない よ 。', en: 'Two miso soups and one rice. No fish.' },
           I: { jp: '{魚|さかな} は {勘弁|かんべん} して よ 。 {汁|しる} を {二杯|にはい} と 、 ご{飯|はん} を {一杯|いっぱい} 。', en: 'Spare me the fish. Two bowls of soup and one of rice.' },
-          A: { jp: '{魚|さかな} だけ は {見|み}たく ない ね 。 {朝|あさ} から {晩|ばん} まで {睨|にら}めっこ して る ん だ から 。 {汁|しる} は {二杯|にはい} 、 ご{飯|はん} は {軽|かる}く {一膳|いちぜん} で 。', en: 'Anything but fish — I stare the things down from dawn to dusk. Two bowls of soup, and a light bowl of rice.' },
+          A: { jp: '{魚|さかな} だけ は {見|み}たく ない ね 。 {朝|あさ} から {晩|ばん} まで {睨|にら}めっこ してる ん だ から 。 {汁|しる} は {二杯|にはい} 、 ご{飯|はん} は {軽|かる}く {一膳|いちぜん} で 。', en: 'Anything but fish — I stare the things down from dawn to dusk. Two bowls of soup, and a light bowl of rice.' },
         },
         hint: { F: { en: 'Two soups, one rice. No fish.' }, I: { jp: '{二杯|にはい} ・ {一杯|いっぱい} ・ {一膳|いちぜん}', en: 'はい counts cups and bowls (にはい = two); ぜん counts bowls of rice (いちぜん = one).' } },
         thanks: { jp: 'ありがと ！ {次|つぎ} は {安|やす}く する よ 。 {魚|さかな} を ね 。', en: 'Thanks! I\'ll give you a discount next time. On fish.' } },
@@ -548,7 +548,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
           F: { jp: 'やきざかな ふたつ 、 みそしる ひとつ 、 おちゃ ひとつ 。', en: 'Two grilled fish, one miso soup, one tea.' },
           E: { jp: '{焼|や}き{魚|ざかな} を {二|ふた}つ と 、 {味噌汁|みそしる} {一|ひと}つ 。 お{茶|ちゃ} も {一|ひと}つ 。', en: 'Two grilled fish and a miso soup. And a tea.' },
           I: { jp: '{焼|や}き{魚|ざかな} を {二|ふた}つ 。 {一|ひと}つ は ワタル に {持|も}って いく 。 あいつ 、 {昼|ひる} を {食|く}わない から な 。 それ と 、 {汁|しる} と {茶|ちゃ} を {一|ひと}つ ずつ 。', en: 'Two grilled fish — one\'s going to Wataru; the man never eats lunch. And one each of soup and tea.' },
-          A: { jp: 'わたし の {分|ぶん} と 、 ワタル の {分|ぶん} の {焼|や}き{魚|ざかな} 。 {汁|しる} と {茶|ちゃ} は わたし だけ で いい 。 …… あいつ 、 {昼|ひる} を {抜|ぬ}いて る だろう 。 {気付|きづ}かない と でも {思|おも}って る の か ね 。', en: 'Grilled fish for me and one for Wataru. Soup and tea just for me. …He\'s been skipping lunch. Does he think I haven\'t noticed?' },
+          A: { jp: 'わたし の {分|ぶん} と 、 ワタル の {分|ぶん} の {焼|や}き{魚|ざかな} 。 {汁|しる} と {茶|ちゃ} は わたし だけ で いい 。 …… あいつ 、 {昼|ひる} を {抜|ぬ}いてる だろう 。 {気付|きづ}かない と でも {思|おも}ってる の か ね 。', en: 'Grilled fish for me and one for Wataru. Soup and tea just for me. …He\'s been skipping lunch. Does he think I haven\'t noticed?' },
         },
         hint: { F: { en: 'Two fish, one soup, one tea.' }, I: { en: 'ずつ = each: one soup and one tea.' } },
         thanks: { jp: '{助|たす}かる 。 {釣|つ}り は いらない よ 。', en: 'Much obliged. Keep the change.' } },
@@ -651,7 +651,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { F: { jp: 'てがみ を わける たび に 、 かね が なった 。', en: 'Every time letters were sorted, a bell rang.', short: 'かね が なった' },
         E: { jp: '{手紙|てがみ} を {仕分|しわ}ける たび に 、 {島|しま} の {鐘|かね} が {鳴|な}った 。', en: 'Every time letters were sorted, the island bell rang.', short: '{鐘|かね} が {鳴|な}った' },
         I: { jp: '{手紙|てがみ} の {仕分|しわ}け が {済|す}む たび に 、 {鐘|かね} が {一|ひと}つ {鳴|な}った もん だ 。', en: 'Each time a batch of letters was sorted, the bell would ring once.', short: '{仕分|しわ}け の たび に {鐘|かね}' },
-        A: { jp: '{便|びん} が {仕分|しわ}け られる {度|たび} 、 {鐘|かね} が {一打|いちだ} 、 {沖|おき} まで {響|ひび}いた 。', en: 'Every time a post was sorted, the bell struck once and the sound carried out to sea.', short: '{鐘|かね} が {沖|おき} まで {響|ひび}いた' } },
+        A: { jp: '{便|びん} が {仕分|しわ}けられる {度|たび} 、 {鐘|かね} が {一打|いちだ} 、 {沖|おき} まで {響|ひび}いた 。', en: 'Every time a post was sorted, the bell struck once and the sound carried out to sea.', short: '{鐘|かね} が {沖|おき} まで {響|ひび}いた' } },
       { F: { jp: 'ある あき 、 おおきな なみ で しま が しずんだ 。', en: 'One autumn, a great wave sank the island.', short: 'しま が しずんだ' },
         E: { jp: 'ある {秋|あき} の {高潮|たかしお} で 、 {島|しま} は {一晩|ひとばん} で {沈|しず}んだ 。', en: 'One autumn a storm surge sank the island overnight.', short: '{島|しま} が {沈|しず}んだ' },
         I: { jp: 'ところが ある {秋|あき} 、 {高潮|たかしお} が {来|き}て 、 {島|しま} は {一晩|ひとばん} の うち に {沈|しず}んじまった 。', en: 'Then one autumn a storm surge came and the island went under in a single night.', short: '{一晩|ひとばん} で {沈|しず}んだ' },
@@ -733,7 +733,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Intermediate: passive, hearsay, はず, conditions, 〜なくていい
   Q('passive', 'I', 'g:passive', 'Who switched the labels?', [
     { en: 'The sentence doesn\'t say.', ok: true }, { en: 'The labels switched themselves.', ok: false, why: no('〜られた is passive: something was done to the labels by someone unnamed.') }, { en: 'The speaker did.', ok: false, why: no('The passive leaves the doer out; it doesn\'t name the speaker.') },
-  ], { jp: '〜られる （{受身|うけみ}）', en: 'The passive lets you leave out who did it.' }, J('ラベル が {貼|は}り{替|か}えられた 。'));
+  ], { jp: '{貼|は}り{替|か}えられた （{受身|うけみ}）', en: 'The passive lets you leave out who did it.' }, J('ラベル が {貼|は}り{替|か}えられた 。'));
   Q('sou_hear', 'I', 'g:sou_hear', 'How does the speaker know?', [
     { en: 'They heard it from someone.', ok: true }, { en: 'They saw it happen.', ok: false, why: no('Plain form + そうだ is hearsay: "I hear that…".') }, { en: 'They think it looks likely.', ok: false, why: no('That would be the stem + そう: ながされそう.') },
   ], { jp: '〜そう だ （{伝聞|でんぶん}）', en: 'Plain form + そうだ = "I hear that…".' }, J('{油|あぶら} は {嵐|あらし} で {流|なが}された そう だ 。'));

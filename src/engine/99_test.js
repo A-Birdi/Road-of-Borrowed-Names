@@ -61,7 +61,8 @@ RB.test = (function () {
         else if (counter && it.kind !== 'rest') card = counter;
         if (st.harmony >= st.harmonyMax && cards.find((c) => c.kind === 'tech')) card = cards.find((c) => c.kind === 'tech');
       }
-      if (card.disabled) card = cards.find((c) => c.kind === 'word' && !c.disabled) || card;
+      // Unravel is disabled while shrouded: clear it the way the telegraph says (light or wind)
+      if (card.disabled) card = cards.find((c) => c.kind === 'word' && !c.disabled && c.word.tags.some((t) => t === 'light' || t === 'wind')) || cards.find((c) => c.kind === 'word' && !c.disabled) || card;
       // validate authored answer/truth steps when present
       if (card.kind === 'answer' && st.intent.answer) solveStep(RB.activities.tier(st.intent.answer) || st.intent.answer, 'battle ' + enemyId + ' answer');
       if (card.kind === 'truth' && st.intent.truth) solveStep(RB.activities.tier(st.intent.truth) || st.intent.truth, 'battle ' + enemyId + ' truth');

@@ -162,7 +162,7 @@ pc: {道標|みちしるべ} を {直|なお}そう 。 {大通|おおどお}り
 
 @scene sg.kiyo_idle
 kiyo: {安|やす}い よ 、 {安|やす}い よ ！ …… って {言|い}いたい ん だ けど 、 {魚|さかな} が ない ん だ よ ね 。 {網|あみ} が {入|い}り{江|え} に {置|お}きっぱなし で さ 。 || Cheap, cheap! …Is what I'd like to shout, but there's no fish. The nets are stuck out at the cove.
-?(quest.sg_main>=4) kiyo: {塩|しお} の {樽|たる} 、 {返|かえ}した よ 。 ワタル が {頭|あたま} を {下|さ}げに {来|き}て さ 。 …… あの {子|こ} 、 {昔|むかし} から {字|じ} だけ は {上手|うま}かった ねえ 。 || I gave the salt barrels back. Wataru came round to apologise. …That boy always did have lovely handwriting.
+?(quest.sg_main>=4) kiyo: {塩|しお} の {樽|たる} 、 {返|かえ}した よ 。 ワタル が {頭|あたま} を {下|さ}げに {来|き}て さ 。 …… あの {子|こ} 、 {昔|むかし} から {字|じ} だけ は {上手|うま}かった ねぇ 。 || I gave the salt barrels back. Wataru came round to apologise. …That boy always did have lovely handwriting.
 
 @scene sg.kiyo_fish
 kiyo: {安|やす}い よ 、 {安|やす}い よ ！ {今朝|けさ} の {鯵|あじ} だ よ ！ {網|あみ} が {戻|もど}った から ね ！ || Cheap, cheap! This morning's horse mackerel! The nets are back!
@@ -331,7 +331,7 @@ asahi: いらっしゃい ！ …… って {言|い}いたい ところ だ け
 asahi: {嵐|あらし} の せい だ って 。 …… {嵐|あらし} って 、 {便利|べんり} な {言葉|ことば} だ よ ね 。 || The storm's fault, apparently. …"The storm" is a handy word, isn't it.
 
 @scene sg.asahi_order
-asahi: ねえ 、 {今|いま} {暇|ひま} ？ …… {暇|ひま} じゃ ない よ ね 。 でも {聞|き}いて 。 || Hey, got a minute? …You don't, do you. Listen anyway.
+asahi: ねぇ 、 {今|いま} {暇|ひま} ？ …… {暇|ひま} じゃ ない よ ね 。 でも {聞|き}いて 。 || Hey, got a minute? …You don't, do you. Listen anyway.
 asahi: フク さん から {注文|ちゅうもん} が {入|はい}った の 。 {亡|な}くなった {旦那|だんな} さん の {船|ふね} の {名札|なふだ} を 、 {海|うみ} ガラス で {作|つく}って ほしい って 。 {浜|はま} の {祠|ほこら} に {飾|かざ}る ん だ って 。 || I got an order from Fuku. She wants a nameplate for her late husband's boat, made of sea glass, to put up at the little shrine on the beach.
 asahi: {海|うみ} ガラス なら 、 {炉|ろ} が {冷|つめ}たくて も {削|けず}って {並|なら}べる だけ だ から 、 できる 。 {問題|もんだい} は {二|ふた}つ 。 || With sea glass I just cut it and set it — I can do that even with the furnace cold. There are two problems.
 asahi: {一|ひと}つ 、 {青|あお}い {海|うみ} ガラス が {三|みっ}つ {要|い}る 。 {浜|はま} で {拾|ひろ}える ん だ けど 、 {店番|みせばん} が いない から {離|はな}れられなくて 。 || One: I need three pieces of blue sea glass. You can pick them up on the shore, but there's no one to mind the shop, so I can't leave.
@@ -378,7 +378,7 @@ asahi: {名札|なふだ} 、 フク さん に {渡|わた}して くれた ？
 
 @scene sg.asahi_after
 asahi: フク さん 、 {泣|な}いてた ？ …… そっか 。 {泣|な}いて 、 {笑|わら}ってた ？ …… そっか 。 よかった 。 || Did Fuku cry? …I see. Cried, and then laughed? …I see. Good.
-asahi[think]: ねえ 。 {名前|なまえ} って 、 {言|い}わなく なる と {消|き}える の かな 。 フク さん 、 {船|ふね} の {名前|なまえ} を {四十年|よんじゅうねん} {口|くち} に {出|だ}さなかった ん だ って 。 || Hey. Do you think names disappear when people stop saying them? Fuku says she hadn't said the boat's name out loud in forty years.
+asahi[think]: ねぇ 。 {名前|なまえ} って 、 {言|い}わなく なる と {消|き}える の かな 。 フク さん 、 {船|ふね} の {名前|なまえ} を {四十年|よんじゅうねん} {口|くち} に {出|だ}さなかった ん だ って 。 || Hey. Do you think names disappear when people stop saying them? Fuku says she hadn't said the boat's name out loud in forty years.
 ?(sg_boss_done) asahi[smile]: {灰|はい} も {届|とど}いた し 、 {炉|ろ} も {熱|あつ}い よ ！ {次|つぎ} は {窓|まど} ガラス を {作|つく}る ん だ 。 {港|みなと} じゅう の ！ || And my ash has arrived, and the furnace is hot! Next I'm making window glass. For the whole harbour!
 
 @scene sg.asahi_post
@@ -424,7 +424,7 @@ genzo: {渡|わた}し{船|ぶね} が {動|うご}いたら 、 {来|く}る �
 !quest sg_lighthouse 2
 
 @scene sg.genzo_waiting
-genzo: {渡|わた}し{船|ぶね} は まだ か 。 …… {別|べつ} に 、 {待|ま}ってる わけ じゃ ない 。 {灯台|とうだい} {守|もり} は 、 {海|うみ} を {見|み}る の が {仕事|しごと} だ 。 || The ferry's not in yet? …Not that I'm waiting. A lighthouse keeper's job is to watch the sea.
+genzo: {渡|わた}し{船|ぶね} は まだ か 。 …… {別|べつ} に 、 {待|ま}ってる わけ じゃ ない 。 {灯台守|とうだいもり} は 、 {海|うみ} を {見|み}る の が {仕事|しごと} だ 。 || The ferry's not in yet? …Not that I'm waiting. A lighthouse keeper's job is to watch the sea.
 ?(!ch2_done) genzo: {港|みなと} の {騒|さわ}ぎ が {片付|かたづ}かん と 、 {船|ふね} は {出|で}ない そう だ 。 …… さっさと {片付|かたづ}けて こい 。 || The ferry won't run till the harbour's mess is sorted out. …So hurry up and sort it.
 
 @scene sg.genzo_family
@@ -495,7 +495,7 @@ narr: ゲンゾウ に {伝|つた}えよう 。 || Tell Genzō.
 narr: 「{港|みなと} まで は 、 {自分|じぶん} で {行|い}ける から 。 {膝|ひざ} 、 {大事|だいじ} に して 。 {灯台|とうだい} で {待|ま}って て 。」 || "I can make it to the harbour on my own. Look after your knees. Wait for me at the lighthouse."
 !end
 :plain
-narr: {手紙|てがみ} が {一通|いっつう} 。 {何度|なんど} も {読|よ}んだ らしく 、 {折|お}り{目|め} が {柔|やわ}らかい 。 || A single letter, read so many times the folds have gone soft.
+narr: {手紙|てがみ} が {一通|いっつう} 。 {何度|なんど} も {読|よ}み{返|かえ}した の だろう 。 {折|お}り{目|め} が {柔|やわ}らかい 。 || A single letter, read so many times the folds have gone soft.
 
 @scene sg.shiori_post
 shiori: {潮|しお} は {今日|きょう} も {表|ひょう} どおり です 。 {表|ひょう} が {潮|しお} どおり 、 と {言|い}う べき でしょう か 。 || The tide's keeping to the table again today. Or should I say the table's keeping to the tide?

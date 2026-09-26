@@ -190,7 +190,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       ]), explain: { en: 'Its question is not about procedure; it is asking whether anyone will still read them.' } },
   };
   E('sg.tideclerk', {
-    name: { en: 'The Tide Clerk', jp: '{潮|しお}の{書記|しょき}' }, art: 'clerk', artOpts: { col: '#3a5a7a' }, look: { custom: 'sg_clerk' },
+    name: { en: 'The Tide Clerk', jp: '{潮|しお} の {書記|しょき}' }, art: 'clerk', artOpts: { col: '#3a5a7a' }, look: { custom: 'sg_clerk' },
     boss: true, music: 'boss', knots: 7, pool: POOL,
     pattern: ['strike', 'lie:gone', 'rest', 'charge', 'strike'],
     intents: {

@@ -29,7 +29,8 @@ const res = await p.evaluate(async (a) => {
   const visited = new Set();
   const trail = [];
   const W = RB.world.W;
-  const sig = () => Object.keys(s.flags).filter((k) => !k.startsWith('enter:') && !k.startsWith('named:') && !k.startsWith('trig:')).sort().join(',') + '|' + JSON.stringify(s.quests).length;
+  // state signature: story flags, quest stages, companion (provisional or committed) and script vars
+  const sig = () => Object.keys(s.flags).filter((k) => !k.startsWith('enter:') && !k.startsWith('named:') && !k.startsWith('trig:')).sort().join(',') + '|' + JSON.stringify(s.quests) + '|' + s.comp + '/' + s.provisional + '|' + Object.entries(s.vars || {}).filter(([k]) => k[0] !== '_').map((e) => e.join('=')).sort().join(',') + '|' + Object.keys(s.inv || {}).sort().join(',');
   let actions = 0;
   const flagsSeen = new Set(Object.keys(s.flags));
   const progress = [];

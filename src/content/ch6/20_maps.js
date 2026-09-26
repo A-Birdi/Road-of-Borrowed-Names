@@ -158,9 +158,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { type: 'house', x: 8, y: 2, w: 14, h: 7, roof: 'indigo', wall: 'stone', door: 7, windows: [2, 4, 10, 12], to: 'sa.reading', spawn: [14, 17], lit: true, if: '!post|!end_archive_closed' },
     ],
     props: [
-      { p: 'statue', x: 11, y: 10, scene: 'sa.gate_statue' }, { p: 'statue', x: 18, y: 10, scene: 'sa.gate_statue' },
+      { p: 'sa_statue', x: 11, y: 10, scene: 'sa.gate_statue' }, { p: 'sa_statue', x: 18, y: 10, scene: 'sa.gate_statue' },
       { p: 'sign', x: 18, y: 12, scene: 'sa.gate_plaque' },
-      { p: 'stone_marker', x: 22, y: 18, scene: 'sa.ushio_grave' },
+      { p: 'sa_grave', x: 22, y: 18, scene: 'sa.ushio_grave' },
       { p: 'lantern', x: 23, y: 18, if: 'sa_hush_down' }, { p: 'deadlantern', x: 23, y: 18, if: '!sa_hush_down' },
       { p: 'deadtree', x: 7, y: 15 }, { p: 'bush', x: 21, y: 15 }, { p: 'flowerpot', x: 23, y: 15, if: 'sa_hush_down' },
       { p: 'sa_pipe', x: 3, y: 2 }, { p: 'sa_pipe', x: 26, y: 2 },

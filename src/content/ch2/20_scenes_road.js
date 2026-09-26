@@ -134,7 +134,7 @@ narr: その {夜|よる} 。 {桟橋|さんばし} の {先|さき} で 、 {�
 ?(comp=ren) comp: …… ええ 。 だと すれば 、 {取|と}り{戻|もど}せる かも しれません 。 {返送|へんそう} は {取|と}り{消|け}せる と 、 {今日|きょう} {分|わ}かりました から 。 || …Yes. And if so, it might be retrieved. Today we learned that a return can be cancelled.
 ?(comp=ren) comp[smile]: {暗|くら}い {話|はなし} を して しまいました 。 {灯台|とうだい} の {前|まえ} では 、 {暗|くら}い {話|はなし} も {少|すこ}し {明|あか}るく {聞|き}こえる ので 、 {許|ゆる}して ください 。 || I've said something gloomy. Forgive me — in front of a lighthouse, even gloomy talk sounds a little brighter.
 ?(comp=ren) comp[shy]: …… {今|いま} の は 、 {冗談|じょうだん} の つもり でした 。 || …That was meant as a joke.
-?(comp=suzu) comp: ねえ 。 ワタル くん の {帳簿|ちょうぼ} 、 {最初|さいしょ} に {見|み}た とき から 、 {嘘|うそ} だって {分|わ}かってた の 。 || Hey. I knew Wataru's books were lying the first time I saw them.
+?(comp=suzu) comp: ねぇ 。 ワタル くん の {帳簿|ちょうぼ} 、 {最初|さいしょ} に {見|み}た とき から 、 {嘘|うそ} だって {分|わ}かってた の 。 || Hey. I knew Wataru's books were lying the first time I saw them.
 ?(comp=suzu) comp[smirk]: {数字|すうじ} の {嘘|うそ} は {得意|とくい} なの 。 {昔|むかし} 、 {一座|いちざ} の {帳簿|ちょうぼ} を ごまかした こと が ある から 。 {三日|みっか} で バレた けど 。 || I'm good at spotting lies in numbers. I once fudged the troupe's accounts myself. Found out in three days.
 ?(comp=suzu) pc: {今夜|こんや} は {冗談|じょうだん} から {入|はい}らない ね 。 || No joke to start with tonight.
 ?(comp=suzu) comp[closed]: …… {入|はい}った わ よ 。 {今|いま} の が {冗談|じょうだん} 。 {本当|ほんとう} の {話|はなし} は 、 ここ から 。 || …I did. That was the joke. The real story starts here.

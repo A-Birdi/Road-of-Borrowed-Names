@@ -124,6 +124,19 @@ await settle();
 let st = await state();
 check(st.map.startsWith('atlas.') && st.key === 't', 'expedition started in the threshold room (' + st.map + ', mods: ' + (st.run.mods.join('+') || 'none') + ')');
 await shot('threshold');
+// the run chip opens a readable summary of modifiers and relics
+const chip = await p.evaluate(async () => {
+  const c = document.querySelector('.atlas-chip');
+  if (!c || c.classList.contains('hidden')) return 'no chip';
+  c.click();
+  await new Promise((r) => setTimeout(r, 100));
+  const pn = [...document.querySelectorAll('.panel')].find((x) => /Unwritten Atlas/.test(x.textContent));
+  const txt = pn ? pn.textContent.slice(0, 80) : '';
+  if (pn) pn.querySelector('[data-x]').click();
+  await new Promise((r) => setTimeout(r, 50));
+  return { txt, mode: RB.game.mode() };
+});
+check(chip.txt && chip.mode === 'world', 'run chip opens and closes the route panel');
 
 const visited = [];
 let reloaded = false;
@@ -133,7 +146,11 @@ for (let guard = 0; guard < 20; guard++) {
   const r = st.room;
   visited.push(st.key + ':' + r.pattern);
   log('room', st.key, r.kind, r.pattern, r.branch || '', r.obj ? r.obj.type : '', r.boss || '');
-  if (r.kind === 'fork') await shot('fork');
+  if (r.kind === 'fork') {
+    await shot('fork');
+    const sign = r.props.find((pp) => pp.scene === 'atlas.fork.sign');
+    if (sign) await tap(sign.x, sign.y, 'signpost');
+  }
   if (r.kind === 'climax') await shot('climax');
   if (r.kind === 'extract') await shot('extract');
   // objectives and people first
