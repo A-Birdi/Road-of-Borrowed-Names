@@ -30,11 +30,13 @@
 - Complete: engine, UI, saves, learning, combat, recognizer, language, audio,
   Chapters 1–6 with ending/denouement, the Unwritten Atlas, New Game+.
 - Validator: no errors (`node tools/validate.mjs --stats` for counts).
-  Unit tests: 1815 pass. Browser: `node tests/e2e/run.mjs` 14/14 scripts on the hotfix
-  build (UI 14/14, systems 4/4, settings), per-chapter story
-  tests, Atlas check, and the whole-game matrix: 16/16 profile × companion
-  combinations play a new campaign through all six chapters and one Atlas
-  expedition (tests/e2e/matrix.mjs). Details and dates in VALIDATION.md.
+  Unit tests: 1866 pass. Browser: `node tests/e2e/run.mjs` 19/19 scripts on
+  the overhaul build d5d4b95 (UI, systems, settings, folio, play UI, title +
+  ledger, creation, learning UI, audio, Shift/Load regression in both modes,
+  per-chapter story tests, Atlas check, one whole-game run). The 16/16
+  profile × companion whole-game matrix (tests/e2e/matrix.mjs) passed on the
+  hotfix build; its re-run on the final build is recorded in VALIDATION.md.
+  Details and dates in VALIDATION.md.
 - Test tooling: tests/e2e/drive.mjs (goal-directed driver: walks real maps,
   interacts through the world), pursue.mjs (whole game), matrix.mjs,
   run.mjs (suite runner), explore.mjs (random explorer, weaker).

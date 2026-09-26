@@ -340,3 +340,25 @@ and the software keyboard are emulated. No real phone, Firefox or Safari.
   (d5d4b95). Frames compared pixel for pixel with the previous build at
   1280x800 and 390x844 (three positions × three frames in rw.hall): all
   identical; a self-comparison confirmed the capture is deterministic.
+- **B** Full default suite `node tests/e2e/run.mjs` on d5d4b95: **19/19
+  scripts passed** — ui 14/14, systems 4/4, settings, folio (incl. the new
+  steady-rail checks), play_ui, title_ledger, create, learning_ui 14/14,
+  audio check, shift_load_regression 18/18 in http-origin and file:// modes,
+  story_ch1 F/mio, story_ch3 E/nao, side_ch3, story_ch4 I/ren (go),
+  story_ch5 A/suzu, story_ch6 run 2 (36/36), atlas check, and the whole
+  game `pursue.mjs E mio` from a new campaign: ch1–ch6 and the first Atlas
+  expedition reached through the real world (721 s). **U** 1866 passed.
+  The final commit 6031612 differs from d5d4b95 only by one CSS property
+  (the tab measuring rule no longer overrides transitions); on 6031612:
+  unit 1866, folio (4 runs), play_ui, learning_ui 14/14, settings all pass.
+- **B** `perf.mjs`, same container, pre-overhaul 2b79f3b vs 3cce661 (the
+  renderer is unchanged since, except the surround change measured above),
+  two runs each at 1280x800 @1x and one at 390x844 @2x. Steady frame work
+  (world update + draw, flushed): outdoor maps before 1.4–1.9 ms, after
+  1.5–2.4 ms; the small interior rw.hall 1.2–1.4 ms before, 2.9–4.1 ms
+  after, and about 2.6 ms after d5d4b95. First static build of a map
+  (once per map entry, done during the door transition's black frame):
+  before 2–29 ms, after 8–117 ms (4x the pixels; sg.harbor largest). Folio
+  open+close 16–17 ms in both; DOM unchanged after 20 cycles. Headless
+  Chromium on a desktop-class CPU with software canvas; phones NOT
+  measured.
