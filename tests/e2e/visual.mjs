@@ -6,9 +6,11 @@
 // create_kb, create2, create2_acc, create_inspect, create3, create4,
 // create_place, create_ngplus, create_x2, create2_x2, create3_x2,
 // create4_x2, create2_hc, create2_focus, journey, words, satchel,
-// map, settings, dialogue, help, chal, combat, world_rw, world_sg, world_co,
-// world_sb, world_lf, world_sa; title_nosave, title_session, title_details,
-// title_big, slots_states, slots_new, slots_save, slots_readonly, slots_error,
+// map, settings, dialogue, help, chal, chal_ime, chal_choose, chal_order,
+// chal_unsure, chal_wrong, teach, lesson, activity, activity_letters, combat,
+// combat_f, combat_step, world_rw, world_sg, world_co, world_sb, world_lf,
+// world_sa; title_nosave, title_session, title_details, title_big,
+// slots_states, slots_new, slots_save, slots_readonly, slots_error,
 // slots_big. File names: <state>_<W>x<H>.png
 import fs from 'node:fs';
 import path from 'node:path';
@@ -75,6 +77,18 @@ async function prep(p) {
   });
 }
 async function settle(p, ms) { await p.waitForTimeout(ms || 500); }
+// learning states: real reference strokes (with a little seeded jitter) for the pad
+async function learnPrep(p) {
+  await p.evaluate(() => {
+    window.__wait = (ms) => new Promise((r) => setTimeout(r, ms));
+    window.__ink = (ch, seed, j) => {
+      const ref = RB.recog.reference(ch);
+      const r = RB.util.rng((seed || 7) * 31 + ch.charCodeAt(0));
+      const jj = j == null ? 0.02 : j;
+      return ref.strokes.map((st) => st.map((pt, i) => ({ x: (pt.x / ref.box) * 0.8 + 0.1 + (r() - 0.5) * jj, y: (pt.y / ref.box) * 0.8 + 0.1 + (r() - 0.5) * jj, t: 1000 + i * 16 })));
+    };
+  });
+}
 
 const STATES = {
   async title(p) { await p.evaluate(async () => { await V.sixSlots(); RB.game.toTitle ? await RB.game.toTitle() : RB.ui.title.show(); }); await settle(p, 900); },
@@ -236,14 +250,120 @@ const STATES = {
     if (t) { try { await t.tap({ timeout: 3000 }); } catch (e) { await t.click(); } } // a finger on phones, the mouse elsewhere
     await settle(p, 500);
   },
+  // ---- learning & combat (challenge runner, pad, lessons, activities, combat) ----
+  // Real content only: authored challenges, generated kana steps, activities.
   async chal(p) {
-    await p.evaluate(() => {
-      const s = V.rich('rw.village', 22, 30);
+    await learnPrep(p);
+    await p.evaluate(async () => {
+      V.rich('co.village', 20, 18);
       RB.game.settings.input = 'hand';
-      RB.challenge.runStep({ kind: 'write', item: 'v:みず', prompt: { en: 'Write "water" (mizu) to cool the heat.' }, ctx: { jp: '{炉|ろ} が {熱|あつ}く なって いる 。', en: 'The kiln is getting hot.' }, answer: 'みず', accept: ['みず'], mode: 'kana' }, {});
-      void s;
+      const ch = RB.content.challenges['co.c_koori'];
+      const step = RB.tasks.stepsOf(ch)[0];
+      step.title = ch.title.en;
+      RB.challenge.runStep(step, {});
+      await __wait(250);
+      RB.pad.__last._inject(__ink('こ')); await __wait(80);
+      document.querySelector('[data-a=confirm]').click();
+      RB.pad.__last._inject(__ink('お', 3, 0.03)); await __wait(80);
+    });
+    await settle(p, 600);
+  },
+  async chal_ime(p) {
+    await learnPrep(p);
+    await p.evaluate(async () => {
+      V.rich('co.village', 20, 18);
+      RB.game.settings.input = 'ime';
+      const ch = RB.content.challenges['co.c_koori'];
+      const step = RB.tasks.stepsOf(ch)[0];
+      step.title = ch.title.en;
+      RB.challenge.runStep(step, {});
+      await __wait(250);
+    });
+    await p.fill('#ime-in', 'こおり');
+    await settle(p, 400);
+  },
+  async chal_choose(p) {
+    await learnPrep(p);
+    await p.evaluate(async () => {
+      V.rich('co.village', 20, 18);
+      const ch = RB.content.challenges['co.c_chronicle'];
+      const step = RB.tasks.stepsOf(ch)[0];
+      step.title = ch.title.en;
+      RB.challenge.runStep(step, {});
+    });
+    await settle(p, 500);
+  },
+  async chal_order(p) {
+    await learnPrep(p);
+    await p.evaluate(async () => {
+      V.rich('co.village', 20, 18);
+      RB.activities.run('co.a_hist_ume');
+      await __wait(400);
+      document.querySelector('.chal [data-add]').click();
+      await __wait(60);
+      document.querySelector('.chal [data-add]').click();
+    });
+    await settle(p, 500);
+  },
+  async chal_unsure(p) {
+    await learnPrep(p);
+    await p.evaluate(async () => {
+      V.rich('rw.village', 22, 30);
+      RB.game.settings.input = 'hand';
+      const step = RB.tasks.kanaStep('ろ', { bare: true });
+      step.title = 'Practice 2 / 5 (optional)';
+      RB.challenge.runStep(step, {});
+      await __wait(250);
+      RB.pad.__last._inject(__ink('る', 1, 0.08)); await __wait(80);
+      document.querySelector('[data-a=confirm]').click();
+      document.querySelector('[data-a=submit]').click();
+    });
+    await settle(p, 500);
+  },
+  async chal_wrong(p) {
+    await learnPrep(p);
+    await p.evaluate(async () => {
+      V.rich('rw.village', 22, 30);
+      RB.game.settings.input = 'hand';
+      const step = RB.tasks.kanaStep('ぬ', { bare: true });
+      step.title = 'New kana practice';
+      RB.challenge.runStep(step, {});
+      await __wait(250);
+      RB.pad.__last._inject(__ink('め')); await __wait(80);
+      document.querySelector('[data-a=confirm]').click();
+      document.querySelector('[data-a=submit]').click();
+    });
+    await settle(p, 500);
+  },
+  async teach(p) {
+    await p.evaluate(() => {
+      V.rich('co.village', 20, 18);
+      const t = RB.content.challenges['co.c_ishi'].tiers.E[0].teach;
+      RB.challenge.teachCard(t);
+    });
+    await settle(p, 400);
+  },
+  async lesson(p) {
+    await p.evaluate(() => {
+      const s = V.rich('rw.village', 22, 30, { profile: 'F' });
+      s.learn.profile = 'F'; s.learn.kanaKnown = 'none'; s.learn.taught = {};
+      RB.lessons.run('kana');
     });
     await settle(p, 700);
+  },
+  async activity(p) {
+    await p.evaluate(async () => {
+      V.rich('co.village', 20, 18);
+      RB.activities.run('co.a_orders');
+      await new Promise((r) => setTimeout(r, 300));
+      const add = document.querySelectorAll('[data-add]');
+      if (add[2]) { add[2].click(); }
+    });
+    await settle(p, 500);
+  },
+  async activity_letters(p) {
+    await p.evaluate(() => { V.rich('co.village', 20, 18); RB.activities.run('co.a_letters'); });
+    await settle(p, 500);
   },
   async combat(p) {
     await p.evaluate(() => {
@@ -259,6 +379,26 @@ const STATES = {
       await p.waitForTimeout(80);
     }
     await settle(p, 500);
+  },
+  async combat_f(p) {
+    // Foundations profile: the English of the telegraph is shown, so its target is marked
+    await p.evaluate(() => {
+      const s = V.rich('rw.millroad', 10, 22, { profile: 'F' });
+      s.learn.profile = 'F';
+      RB.game.startBattle('rw.reedling', {});
+    });
+    for (let i = 0; i < 40; i++) {
+      const st = await p.evaluate(() => ({ dlg: RB.ui.dialogue.isOpen(), cards: !!document.querySelector('.resp') }));
+      if (st.cards) break;
+      if (st.dlg) await p.evaluate(() => RB.ui.dialogue.advance(true));
+      await p.waitForTimeout(80);
+    }
+    await settle(p, 500);
+  },
+  async combat_step(p) {
+    await STATES.combat(p);
+    await p.evaluate(() => { const b = [...document.querySelectorAll('.resp[data-i]')].find((x) => /まもる/.test(x.textContent)) || document.querySelector('.resp[data-i]'); b.click(); });
+    await settle(p, 600);
   },
 };
 const WORLD = { world_rw: ['rw.village', 22, 20], world_sg: ['sg.harbor', 20, 20], world_co: ['co.village', 20, 18], world_sb: ['sb.hamlet', 20, 20], world_lf: ['lf.town', 26, 20], world_sa: ['sa.camp', 10, 10] };

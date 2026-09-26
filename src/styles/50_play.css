@@ -321,3 +321,6 @@ body.touch-large .touchpad .tp-run { width: 68px; height: 68px; }
 .atlas-chip .st svg { width: 1.05em; height: 1.05em; }
 body.in-panel .atlas-chip, body.in-dialogue .atlas-chip { display: none; }
 @media (max-width: 599px) { .atlas-chip { top: calc(max(8px, env(safe-area-inset-top)) + 52px); max-width: calc(100vw - 16px); } }
+
+/* the Menu tag belongs to exploration; in battle and other modes only Word help stays */
+body:not([data-mode="world"]) .hud .menu-b { display: none; }
