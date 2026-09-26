@@ -417,6 +417,35 @@ await test('no horizontal overflow at 320/360/390 and at 200% text: challenge, c
 });
 
 // ---------------------------------------------------------------------------
+// the sheets also carry the old "panel" class; the paper restyle of that class
+// once took over their cloth cover and left the title light-on-paper
+await test('lesson and activity sheets keep their cloth cover: title and its furigana are readable', async () => {
+  const opens = {
+    lesson: (p) => p.evaluate(() => { const s = RB.game.debugStart('rw.village', 22, 30, {}); s.learn.profile = 'F'; s.learn.kanaKnown = 'none'; s.learn.taught = {}; RB.lessons.run('kana'); }),
+    activity: (p) => p.evaluate(() => { const s = RB.game.debugStart('co.village', 20, 18, {}); s.learn.profile = 'E'; RB.activities.run('co.a_letters'); }),
+  };
+  const bad = [];
+  for (const [name, open] of Object.entries(opens)) {
+    const { p, errors, ctx } = await page(b, url, phone(390, 844));
+    await open(p);
+    await p.waitForSelector('.lsheet.' + name + ' .folio-head h2');
+    const c = await p.evaluate(() => {
+      const rgb = (v) => v.match(/[\d.]+/g).map(Number);
+      const lum = (c) => { const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }; return 0.2126 * f(c[0]) + 0.7152 * f(c[1]) + 0.0722 * f(c[2]); };
+      const ratio = (a, b) => { const x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); };
+      const sheet = document.querySelector('.lsheet'), h2 = sheet.querySelector('.folio-head h2'), rt = h2.querySelector('rt');
+      const bg = rgb(getComputedStyle(sheet).backgroundColor);
+      return { title: ratio(rgb(getComputedStyle(h2).color), bg), rt: rt ? ratio(rgb(getComputedStyle(rt).color), bg) : null };
+    });
+    if (!(c.title >= 4.5)) bad.push(name + ' title ' + c.title.toFixed(1) + ':1');
+    if (c.rt != null && !(c.rt >= 4.5)) bad.push(name + ' furigana ' + c.rt.toFixed(1) + ':1');
+    if (errors.length) bad.push(name + ' errors: ' + errors.join('; '));
+    await ctx.close();
+  }
+  assert(!bad.length, bad.join('; '));
+});
+
+// ---------------------------------------------------------------------------
 await test('combat at phone and landscape sizes shows the telegraph, its target and the responses', async () => {
   for (const [w, h] of [[390, 844], [360, 800], [844, 390], [1280, 800]]) {
     const { p, errors, ctx } = await page(b, url, w < 900 ? phone(w, h) : { viewport: { width: w, height: h } });

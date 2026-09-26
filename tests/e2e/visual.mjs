@@ -1,7 +1,7 @@
 // Visual capture of representative states of the built game, for before/after
 // comparison and art/layout review. Uses synthetic fixtures only (never real
 // player saves). Usage:
-//   node tests/e2e/visual.mjs <outDir> [--html file] [--vp 390x844,1280x800] [--only a,b] [--check]
+//   node tests/e2e/visual.mjs <outDir> [--html file] [--vp 390x844,1280x800] [--only a,b] [--lang ja] [--check]
 // States: title, slots, slots_empty, create_prologue, create, create_err,
 // create_kb, create2, create2_acc, create_inspect, create3, create4,
 // create_place, create_ngplus, create_x2, create2_x2, create3_x2,
@@ -23,6 +23,7 @@ const opt = (k, d) => (args.includes(k) ? args[args.indexOf(k) + 1] : d);
 const htmlPath = path.resolve(opt('--html', path.join(root, 'index.html')));
 const vps = opt('--vp', '390x844,1280x800').split(',').map((s) => s.split('x').map(Number));
 const only = opt('--only', '') ? opt('--only', '').split(',') : null;
+const lang = opt('--lang', ''); // e.g. ja: capture with Japanese interface labels
 fs.mkdirSync(outDir, { recursive: true });
 const html = fs.readFileSync(htmlPath, 'utf8');
 const srv = http.createServer((req, res) => { res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }); res.end(html); });
@@ -75,6 +76,7 @@ async function prep(p) {
       },
     };
   });
+  if (lang) await p.evaluate((l) => { RB.game.settings.uiLang = l; RB.game.applySettings(); }, lang);
 }
 async function settle(p, ms) { await p.waitForTimeout(ms || 500); }
 // learning states: real reference strokes (with a little seeded jitter) for the pad
@@ -431,8 +433,33 @@ const audit = (p, touch) => p.evaluate((touch) => {
       if (tr.width < min || tr.height < min) small.push(name(e) + ' ' + Math.round(tr.width) + 'x' + Math.round(tr.height));
     }
   }
+  // furigana contrast: each visible reading against the nearest opaque paint
+  // behind it (an ancestor's background or its ::before face, as the paper
+  // tabs draw theirs); readings over the world canvas are skipped
+  const rgb = (c) => { const m = c.match(/[\d.]+/g); return m ? m.map(Number) : null; };
+  const lum = (c) => { const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }; return 0.2126 * f(c[0]) + 0.7152 * f(c[1]) + 0.0722 * f(c[2]); };
+  const ratio = (a, b) => { const x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); };
+  const opaque = (cs) => { const c = rgb(cs.backgroundColor); return c && (c.length < 4 || c[3] > 0.85) ? c : null; };
+  const paint = (e) => {
+    for (let a = e; a && a !== document.documentElement; a = a.parentElement) {
+      const own = opaque(getComputedStyle(a));
+      if (own) return own;
+      // a ::before counts only when it is a face laid under the whole element
+      const pb = getComputedStyle(a, '::before');
+      if (pb.content !== 'none' && pb.content !== 'normal' && pb.position === 'absolute' && parseFloat(pb.width) >= 0.8 * a.getBoundingClientRect().width && opaque(pb)) return opaque(pb);
+    }
+    return null;
+  };
+  const faint = [];
+  for (const e of document.querySelectorAll('#ui rt, #overlay rt')) {
+    if (!vis(e) || !e.textContent.trim()) continue;
+    const bg = paint(e), fg = rgb(getComputedStyle(e).color);
+    if (!bg || !fg) continue;
+    const r = ratio(fg, bg);
+    if (r < 4.5) faint.push(name(e.closest('ruby') || e) + ' ' + r.toFixed(1) + ':1');
+  }
   const uniq = (a) => [...new Set(a)];
-  return { docOverflow: document.documentElement.scrollWidth > vw + 1, wide: uniq(wide).slice(0, 8), clipped: uniq(clipped).slice(0, 8), small: uniq(small).slice(0, 8) };
+  return { docOverflow: document.documentElement.scrollWidth > vw + 1, wide: uniq(wide).slice(0, 8), clipped: uniq(clipped).slice(0, 8), small: uniq(small).slice(0, 8), faint: uniq(faint).slice(0, 8) };
 }, touch);
 
 const report = [];
@@ -451,7 +478,7 @@ for (const [w, h] of vps) {
     const file = path.join(outDir, name + '_' + w + 'x' + h + '.png');
     await p.screenshot({ path: file });
     const a = check ? await audit(p, mobile) : null;
-    const issues = a ? [a.docOverflow ? 'page wider than screen' : null, a.wide.length ? 'wide: ' + a.wide.join(' | ') : null, a.clipped.length ? 'clipped: ' + a.clipped.join(' | ') : null, a.small.length ? 'small: ' + a.small.join(' | ') : null].filter(Boolean) : [];
+    const issues = a ? [a.docOverflow ? 'page wider than screen' : null, a.wide.length ? 'wide: ' + a.wide.join(' | ') : null, a.clipped.length ? 'clipped: ' + a.clipped.join(' | ') : null, a.small.length ? 'small: ' + a.small.join(' | ') : null, a.faint.length ? 'faint furigana: ' + a.faint.join(' | ') : null].filter(Boolean) : [];
     report.push({ name, vp: w + 'x' + h, file: path.relative(root, file), err, pageErrors: errors.slice(0, 3), audit: a });
     console.log((err || errors.length || issues.length ? 'WARN ' : 'ok   ') + name + ' ' + w + 'x' + h + (err ? ' ' + err : '') + (errors.length ? ' pageerrors: ' + errors[0] : '') + (issues.length ? '\n     ' + issues.join('\n     ') : ''));
     await ctx.close();

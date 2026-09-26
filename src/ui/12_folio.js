@@ -115,20 +115,28 @@ RB.ui.folio = (function () {
     const btns = Array.from(rail.querySelectorAll('.ptab'));
     let cur = null;
     // keep the selected tab clear of the rail's edge arrows without moving the page
-    function reveal(b) {
+    // (instant on first placement: the rail scrolls smoothly otherwise)
+    function reveal(b, instant) {
       const pad = wrap.classList.contains('overflowing') ? 52 : 8;
       const l = b.offsetLeft - rail.scrollLeft, r = l + b.offsetWidth;
-      if (l < pad) rail.scrollLeft += l - pad; else if (r > rail.clientWidth - pad) rail.scrollLeft += r - rail.clientWidth + pad;
+      const d = l < pad ? l - pad : r > rail.clientWidth - pad ? r - rail.clientWidth + pad : 0;
+      if (!d) return;
+      if (instant && rail.scrollTo) rail.scrollTo({ left: rail.scrollLeft + d, behavior: 'instant' });
+      else rail.scrollLeft += d;
     }
-    function place() {
+    function place(instant) {
       const b = btns.find((x) => x.dataset.id === cur);
       if (!b) return;
-      ribbon.style.transform = 'translateX(' + (b.offsetLeft + b.offsetWidth - 28) + 'px)';
-      // natural width of the tabs (independent of the arrows' extra padding)
+      // natural width of the tabs, measured with growth switched off: phone
+      // tabs stretch to fill the rail, and the arrows' padding would otherwise
+      // feed back into the answer (the rail flickered between the two states)
       const first = btns[0], last = btns[btns.length - 1];
+      wrap.classList.add('measure');
       const need = last.offsetLeft + last.offsetWidth - first.offsetLeft + 16;
+      wrap.classList.remove('measure');
       wrap.classList.toggle('overflowing', need > rail.clientWidth + 1);
-      reveal(b);
+      ribbon.style.transform = 'translateX(' + (b.offsetLeft + b.offsetWidth - 28) + 'px)';
+      reveal(b, instant);
     }
     function select(id, how, focus) {
       const changed = id !== cur;
@@ -141,11 +149,11 @@ RB.ui.folio = (function () {
         if (on && changed && how) { b.classList.remove('lift'); void b.offsetWidth; b.classList.add('lift'); }
       }
       const b = btns.find((x) => x.dataset.id === id);
-      if (b) {
-        if (focus) b.focus({ preventScroll: true });
-        reveal(b);
-      }
-      requestAnimationFrame(place);
+      if (b && focus) b.focus({ preventScroll: true });
+      // settle the rail now when it is on the page, so the tabs never shift
+      // under a finger a frame after the folio appears; re-check next frame
+      if (rail.isConnected) place(!how);
+      requestAnimationFrame(() => place(false));
       if (changed && how && onSelect) onSelect(id, how);
     }
     rail.addEventListener('click', (e) => {
@@ -172,7 +180,7 @@ RB.ui.folio = (function () {
     wrap.querySelector('.rail-arrow.l').onclick = () => { rail.scrollLeft -= rail.clientWidth * 0.6; };
     wrap.querySelector('.rail-arrow.r').onclick = () => { rail.scrollLeft += rail.clientWidth * 0.6; };
     const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => place()) : null;
-    if (ro) ro.observe(rail);
+    if (ro) ro.observe(rail, { box: 'border-box' }); // not the padding the arrows add
     select(selected, null, false);
     return { el: wrap, select: (id) => select(id, null, false), current: () => cur, destroy() { if (ro) ro.disconnect(); } };
   }

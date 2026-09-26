@@ -163,6 +163,20 @@ for (const [w, h, scale] of [[390, 844, 1], [360, 800, 1], [320, 640, 1], [390, 
     assert(m.closeVisible && !m.two, `${tag} ${sec}: Close on screen; one page, not a spread`);
     await p.evaluate(() => RB.ui.menu.close());
   }
+  // the rail settles when the folio opens: its overflow state and tab positions
+  // hold still from the first frame (they once flickered at 320 px)
+  const steady = await p.evaluate(async () => {
+    RB.ui.menu.open('journey');
+    const seen = new Set();
+    for (let i = 0; i < 12; i++) {
+      const w = document.querySelector('.tabrail-wrap'), t = document.querySelector('.ptab[data-id=words]');
+      seen.add(w.classList.contains('overflowing') + ':' + Math.round(t.getBoundingClientRect().left) + ':' + document.querySelector('.tabrail').scrollLeft);
+      await new Promise((r) => requestAnimationFrame(r));
+    }
+    RB.ui.menu.close();
+    return Array.from(seen);
+  });
+  assert(steady.length === 1, `${tag}: tab rail is steady from the first frame (${steady.join(' | ')})`);
   // touch: tapping a tab selects it; the page never moves the world
   await openMenu(p, 'journey');
   await p.waitForTimeout(100);

@@ -353,6 +353,8 @@ input[type=text]:focus, select:focus { outline: 2px solid var(--focus); }
 .tabrail-wrap.overflowing .rail-arrow.l { left: -4px; }
 .tabrail-wrap.overflowing .rail-arrow.r { right: -4px; }
 .tabrail-wrap.overflowing .tabrail { padding-left: 48px; padding-right: 48px; }
+/* 12_folio.js measures the tabs' natural width with growth off for one layout */
+.tabrail-wrap.measure .ptab { flex-grow: 0 !important; transition: none; }
 body.reduced-motion .ptab, body.reduced-motion .tabrail .ribbon { transition: none; }
 /* phones: four equal tabs, icon over label. A tab never shrinks below its
  * own label (min-width: max-content); if the labels cannot fit (large text,
@@ -402,7 +404,7 @@ body.reduced-motion .ptab.lift { animation: none; }
 .leaf p { margin: 0.35em 0 0.6em; }
 .leaf .muted, .leaf .dim { color: var(--ink-3); }
 .leaf .small { font-size: 0.88em; }
-.leaf rt { color: var(--rt-ink); }
+.leaf rt, .ptab rt { color: var(--rt-ink); }
 .leaf .en, .leaf .enline { color: var(--ink-2); }
 .leaf .jline { color: var(--ink); }
 body.bulb-on .leaf .jline .jt { text-decoration-color: rgba(38, 31, 21, 0.45); }
@@ -1235,20 +1237,20 @@ body.bulb-on .place .jline .jt, body.bulb-on .card-slip .jline .jt, body.bulb-on
 .btn.primary { background: var(--cloth-700); border-color: var(--ribbon); box-shadow: inset 0 -3px 0 var(--ribbon); }
 .btn.danger { background: var(--danger-bg); color: var(--danger-ink); border-color: var(--danger-ink); }
 .btn.small { min-height: 40px; }
-.panel {
+.panel:not(.folio) {
   background: var(--paper); color: var(--ink); border: 1px solid var(--paper-edge); border-radius: 6px;
   box-shadow: 0 18px 50px rgba(0,0,0,0.55), 0 2px 0 var(--paper-3);
 }
-.panel header { background: var(--cloth-800); background-image: var(--cloth-weave); color: var(--on-cloth); border-bottom: 1px solid var(--paper-edge); border-radius: 5px 5px 0 0; }
-.panel header h2 { color: var(--on-cloth); font-family: var(--serif); }
-.panel h3 { color: var(--ink); font-family: var(--serif); border-bottom: 1px solid var(--rule); padding-bottom: 0.2em; }
-.panel .dim, .panel .muted { color: var(--ink-3); }
-.panel .en, .panel .enline { color: var(--ink-2); }
-.panel .foot { border-top: 1px solid var(--rule); background: var(--paper-2); border-radius: 0 0 5px 5px; }
-.panel .body { color: var(--ink); }
-.panel .body .btn:not(.primary):not(.danger) { background: var(--paper); color: var(--ink); border-color: var(--ink-3); box-shadow: 0 2px 0 var(--paper-3); }
-.panel .body .btn:not(.primary):not(.danger):hover { background: var(--paper-2); }
-.panel .body .btn:focus-visible { outline-color: var(--focus-paper); }
+.panel:not(.folio) header { background: var(--cloth-800); background-image: var(--cloth-weave); color: var(--on-cloth); border-bottom: 1px solid var(--paper-edge); border-radius: 5px 5px 0 0; }
+.panel:not(.folio) header h2 { color: var(--on-cloth); font-family: var(--serif); }
+.panel:not(.folio) h3 { color: var(--ink); font-family: var(--serif); border-bottom: 1px solid var(--rule); padding-bottom: 0.2em; }
+.panel:not(.folio) .dim, .panel:not(.folio) .muted { color: var(--ink-3); }
+.panel:not(.folio) .en, .panel:not(.folio) .enline { color: var(--ink-2); }
+.panel:not(.folio) .foot { border-top: 1px solid var(--rule); background: var(--paper-2); border-radius: 0 0 5px 5px; }
+.panel:not(.folio) .body { color: var(--ink); }
+.panel:not(.folio) .body .btn:not(.primary):not(.danger) { background: var(--paper); color: var(--ink); border-color: var(--ink-3); box-shadow: 0 2px 0 var(--paper-3); }
+.panel:not(.folio) .body .btn:not(.primary):not(.danger):hover { background: var(--paper-2); }
+.panel:not(.folio) .body .btn:focus-visible { outline-color: var(--focus-paper); }
 .scrim { background: rgba(8, 10, 22, 0.62); }
 
 /* ---- dialogue ------------------------------------------------------------- */
@@ -23649,20 +23651,28 @@ RB.ui.folio = (function () {
     const btns = Array.from(rail.querySelectorAll('.ptab'));
     let cur = null;
     // keep the selected tab clear of the rail's edge arrows without moving the page
-    function reveal(b) {
+    // (instant on first placement: the rail scrolls smoothly otherwise)
+    function reveal(b, instant) {
       const pad = wrap.classList.contains('overflowing') ? 52 : 8;
       const l = b.offsetLeft - rail.scrollLeft, r = l + b.offsetWidth;
-      if (l < pad) rail.scrollLeft += l - pad; else if (r > rail.clientWidth - pad) rail.scrollLeft += r - rail.clientWidth + pad;
+      const d = l < pad ? l - pad : r > rail.clientWidth - pad ? r - rail.clientWidth + pad : 0;
+      if (!d) return;
+      if (instant && rail.scrollTo) rail.scrollTo({ left: rail.scrollLeft + d, behavior: 'instant' });
+      else rail.scrollLeft += d;
     }
-    function place() {
+    function place(instant) {
       const b = btns.find((x) => x.dataset.id === cur);
       if (!b) return;
-      ribbon.style.transform = 'translateX(' + (b.offsetLeft + b.offsetWidth - 28) + 'px)';
-      // natural width of the tabs (independent of the arrows' extra padding)
+      // natural width of the tabs, measured with growth switched off: phone
+      // tabs stretch to fill the rail, and the arrows' padding would otherwise
+      // feed back into the answer (the rail flickered between the two states)
       const first = btns[0], last = btns[btns.length - 1];
+      wrap.classList.add('measure');
       const need = last.offsetLeft + last.offsetWidth - first.offsetLeft + 16;
+      wrap.classList.remove('measure');
       wrap.classList.toggle('overflowing', need > rail.clientWidth + 1);
-      reveal(b);
+      ribbon.style.transform = 'translateX(' + (b.offsetLeft + b.offsetWidth - 28) + 'px)';
+      reveal(b, instant);
     }
     function select(id, how, focus) {
       const changed = id !== cur;
@@ -23675,11 +23685,11 @@ RB.ui.folio = (function () {
         if (on && changed && how) { b.classList.remove('lift'); void b.offsetWidth; b.classList.add('lift'); }
       }
       const b = btns.find((x) => x.dataset.id === id);
-      if (b) {
-        if (focus) b.focus({ preventScroll: true });
-        reveal(b);
-      }
-      requestAnimationFrame(place);
+      if (b && focus) b.focus({ preventScroll: true });
+      // settle the rail now when it is on the page, so the tabs never shift
+      // under a finger a frame after the folio appears; re-check next frame
+      if (rail.isConnected) place(!how);
+      requestAnimationFrame(() => place(false));
       if (changed && how && onSelect) onSelect(id, how);
     }
     rail.addEventListener('click', (e) => {
@@ -23706,7 +23716,7 @@ RB.ui.folio = (function () {
     wrap.querySelector('.rail-arrow.l').onclick = () => { rail.scrollLeft -= rail.clientWidth * 0.6; };
     wrap.querySelector('.rail-arrow.r').onclick = () => { rail.scrollLeft += rail.clientWidth * 0.6; };
     const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => place()) : null;
-    if (ro) ro.observe(rail);
+    if (ro) ro.observe(rail, { box: 'border-box' }); // not the padding the arrows add
     select(selected, null, false);
     return { el: wrap, select: (id) => select(id, null, false), current: () => cur, destroy() { if (ro) ro.disconnect(); } };
   }
