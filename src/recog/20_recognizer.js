@@ -60,6 +60,7 @@ RB.recog = (function () {
     smallDyW: 1.5,
     margin: 0.02, // best vs best-other-shape distance gap needed for 'confident'
     marginRatio: 0.12, // ...or relative gap
+    marginCross: 0.06, // gap needed when the runner-up is a lookalike from the other script
   };
 
   // ------------------------------------------------------------ tables
@@ -80,26 +81,26 @@ RB.recog = (function () {
   const SAME_OF = {};
   for (const g of SAME_SHAPE) for (const c of g) SAME_OF[c] = g;
 
-  // Legitimate handwriting variants (1-based KanjiVG stroke numbers).
+  // Legitimate handwriting variants (1-based KanjiVG stroke numbers), matched at
+  // almost no extra cost. Any other pair of consecutive strokes written as one is
+  // still tolerated, at a larger cost (joinGeneric), as is a pen lift inside a
+  // stroke (inputJoin); base strokes are never joined to a ゛/゜.
   // join: those consecutive strokes are commonly written in one movement.
   // split: that stroke is commonly written as two, split at its first sharp corner.
-  // Voiced forms inherit their base character's variants (が from か, etc.).
+  // Voiced forms inherit their base character's variants (ぎ from き, etc.), and
+  // the two ゛ ticks written in one movement is a curated join for every voiced kana.
   const VARIANTS = {
-    'き': [{ join: 3 }], // lower hook joined to the diagonal (print style, 3 strokes)
-    'さ': [{ join: 2 }], // diagonal + lower curve joined (2 strokes)
-    'ふ': [{ join: 1 }, { join: 2 }], // top dot joined to the middle curve / middle joined to left dot
+    'き': [{ join: 3 }], // diagonal and lower curve joined (print style, 3 strokes)
+    'さ': [{ join: 2 }], // diagonal and lower curve joined (print style, 2 strokes)
+    'ふ': [{ join: 1 }, { join: 2 }], // top dot flowing into the middle curve / middle curve into the left dot
     'り': [{ join: 1 }], // り in one stroke
     'こ': [{ join: 1 }], // こ in one flowing stroke
     'い': [{ join: 1 }], // い in one flowing stroke
     'た': [{ join: 3 }], // the こ part of た in one stroke
     'に': [{ join: 2 }], // the こ part of に in one stroke
     'け': [{ join: 1 }], // left stroke flowing into the cross bar
-    'そ': [{ split: 1 }], // そ with a separate top stroke (2 strokes)
-    'や': [{ join: 1 }], // curved stroke flowing into the dot
     'ち': [{ join: 1 }], // bar flowing into the vertical/curve
-    'ゆ': [{ join: 1 }],
-    'か': [{ join: 2 }], // dot sometimes attached with the preceding stroke
-    'ヤ': [{ join: 1 }],
+    'そ': [{ split: 1 }], // そ with a separate top stroke (2 strokes; KanjiVG has 1)
   };
 
   // ------------------------------------------------------------ geometry helpers
@@ -244,8 +245,6 @@ RB.recog = (function () {
     return 0.5 * (sumA / na + sumB / nb);
   }
 
-  // Cost of pairing input stroke a with template stroke b.
-  // Returns [bestCost, reversed?, forwardCost, reversedCostWithoutPenalty]
   // Start- and direction-free cost for closed template loops: symmetric chamfer.
   function loopCost(a, b) {
     const M = P.M, ap = a.p, bp = b.p;
@@ -269,6 +268,8 @@ RB.recog = (function () {
     return [c, false, c, c];
   }
 
+  // Cost of pairing input stroke a with template stroke b.
+  // Returns [bestCost, reversed?, forwardCost, reversedCostWithoutPenalty]
   function pairCost(a, b, revPen) {
     if (b.closed) return loopCost(a, b);
     const M = P.M, ap = a.p, bp = b.p, au = a.u, bu = b.u;
@@ -328,8 +329,9 @@ RB.recog = (function () {
     return P.unmatchedBase + P.unmatchedLen * mmin(s.len, 1.5);
   }
 
-  // Optimal assignment of rows (input strokes) to cols (template strokes).
-  // rowIdx/colIdx give original stroke indices for the order penalty.
+  // Optimal assignment of rows (input strokes) to cols (template strokes);
+  // unpaired strokes on either side cost unmatchedCost. cols[].ord (template
+  // stroke number) drives the stroke-order penalty.
   function assign(rows, cols, ctx, forbid) {
     const N = rows.length, K = cols.length, S = mmax(N, K);
     const a = new F64(S * S);
@@ -691,7 +693,7 @@ RB.recog = (function () {
     }
     scored.sort((a, b) => a.dist - b.dist);
     result.sizeHint = scored.length ? sizeHintOf(clean, opts.box, scored[0].e) : null;
-    // 3) candidates with small/large expansion and script filter
+    // 4) candidates with small/large expansion and script filter
     const script = opts.script || 'any';
     // explicit toggle wins; otherwise box-relative size decides; default is the large form
     const preferSmall = opts.smallToggle === true || result.sizeHint === 'small';
@@ -745,7 +747,9 @@ RB.recog = (function () {
       return result;
     }
     const gap = other ? other.dist - best.dist : INF;
-    const close = gap < P.margin || gap < P.marginRatio * best.dist;
+    // hiragana/katakana lookalikes (り/リ, も/モ, や/ヤ...) need a wider margin in a mixed pad
+    const cross = other && best.e.script !== other.e.script && best.e.script !== 'both' && other.e.script !== 'both';
+    const close = gap < (cross ? P.marginCross : P.margin) || gap < P.marginRatio * best.dist;
     result.status = best.dist <= P.confidentMax && !close ? 'confident' : 'uncertain';
     if (close && other) result.notes.push('close-alternative: ' + other.e.ch);
     if (best.dist > P.confidentMax) result.notes.push('weak-match');

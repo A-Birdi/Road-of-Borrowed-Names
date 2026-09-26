@@ -2,7 +2,7 @@
  *
  * Stroke data derived from KanjiVG (https://kanjivg.tagaini.net,
  * https://github.com/KanjiVG/kanjivg, commit 422b55385956),
- * Copyright (C) 2009-2026 Ulrich Apel and the KanjiVG project, licensed under
+ * Copyright (C) 2009/2010/2011 Ulrich Apel and the KanjiVG project, licensed under
  * Creative Commons Attribution-Share Alike 3.0 (CC BY-SA 3.0,
  * https://creativecommons.org/licenses/by-sa/3.0/). This file is an adapted
  * form: paths were sampled into point sequences, simplified and quantised to

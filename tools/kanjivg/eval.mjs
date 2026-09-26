@@ -74,7 +74,7 @@ console.log('top1 = best candidate is the character or its size partner (つ/っ
 console.log('exact-size = top-1 is exactly the drawn character, size decided from box-relative size/position (no toggle).\n');
 
 const fams = Object.keys(FAMILIES).filter((f) => (onlyFam ? f === onlyFam : f !== 'dev'));
-const overall = { pad: newStats(), any: newStats() };
+const overall = { pad: newStats(), any: newStats() }; // kana only
 const perGroupAll = {};
 for (const fam of fams) {
   const fs1 = newStats();
@@ -85,17 +85,18 @@ for (const fam of fams) {
       for (let i = 0; i < N; i++) {
         const s = distort(ref, fam, `${ch}|${i}`, { ch });
         const r1 = run(s.strokes, { box: s.box, script: padMode(ch) });
-        tally(stPad, ch, r1, false); tally(fs1, ch, r1, false); tally(overall.pad, ch, r1, false);
+        tally(stPad, ch, r1, false); tally(fs1, ch, r1, false);
+        if (gname !== 'kanji') tally(overall.pad, ch, r1, false);
         const pg = (perGroupAll[gname] = perGroupAll[gname] || { pad: newStats(), any: newStats() });
         tally(pg.pad, ch, r1, false);
-        if (gname !== 'kanji') {
-          const r2 = run(s.strokes, { box: s.box, script: 'any', kanji: false });
-          tally(stAny, ch, r2, true); tally(overall.any, ch, r2, true); tally(pg.any, ch, r2, true);
-        }
+        // kana: 'any' pad (hiragana+katakana); kanji: 'any' with kanji enabled (kana+kanji)
+        const r2 = run(s.strokes, { box: s.box, script: 'any', kanji: gname === 'kanji' });
+        tally(stAny, ch, r2, true); tally(pg.any, ch, r2, true);
+        if (gname !== 'kanji') tally(overall.any, ch, r2, true);
       }
     }
     console.log(line(`${fam}/${gname} pad`, stPad));
-    if (gname !== 'kanji') console.log(line(`${fam}/${gname} any`, stAny));
+    console.log(line(`${fam}/${gname} any${gname === 'kanji' ? '+kanji' : ''}`, stAny));
   }
   console.log(`  worst confusions: ${worst(fs1)}\n`);
 }
@@ -103,10 +104,10 @@ if (fams.length > 1) {
   console.log('== all held-out families');
   for (const [g, s] of Object.entries(perGroupAll)) {
     console.log(line(`${g} pad-mode`, s.pad));
-    if (g !== 'kanji') console.log(line(`${g} any-mode`, s.any));
+    console.log(line(`${g} any${g === 'kanji' ? '+kanji' : ''}-mode`, s.any));
   }
-  console.log(line('ALL pad-mode', overall.pad));
-  console.log(line('ALL any-mode', overall.any));
+  console.log(line('ALL kana pad-mode', overall.pad));
+  console.log(line('ALL kana any-mode', overall.any));
   console.log(`  worst confusions (pad): ${worst(overall.pad, 20)}\n`);
 }
 

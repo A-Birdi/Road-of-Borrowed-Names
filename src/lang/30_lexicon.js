@@ -107,12 +107,27 @@ RB.lex = (function () {
 
   /* Table format, one entry per line:  w|r|pos|lv|meaning|note|alt1 ; alt2
    * r may be empty for kana-only words. Lines starting with # are comments. */
+  function splitFields(line) {
+    const f = [];
+    let cur = '';
+    let depth = 0;
+    for (const ch of line) {
+      if (ch === '{') depth++;
+      else if (ch === '}') depth = Math.max(0, depth - 1);
+      if (ch === '|' && depth === 0) {
+        f.push(cur);
+        cur = '';
+      } else cur += ch;
+    }
+    f.push(cur);
+    return f;
+  }
   function parseTable(text) {
     const out = [];
     text.split('\n').forEach((line) => {
       line = line.trim();
       if (!line || line[0] === '#') return;
-      const f = line.split('|');
+      const f = splitFields(line);
       const e = { w: f[0], r: f[1] || f[0], pos: f[2], lv: f[3], m: f[4] };
       if (f[5]) e.n = f[5];
       if (f[6]) e.alt = f[6].split(' ; ').map((s) => s.trim()).filter(Boolean);
@@ -1833,6 +1848,31 @@ RB.lex = (function () {
 中|ちゅう|suf|I|during, in the middle of ({仕事中|しごとちゅう})
 的|てき|suf|I|-ic, -ical (forms な-adjectives)
 語|ご|suf|E|language ({日本語|にほんご})
+`));
+
+  // Further words used in grammar examples
+  core.push(...T(`
+得る|える|v1|I|to get, obtain (formal)|Common in ～ざるを{得|え}ない and ～を{得|え}ない.
+学生|がくせい|n|E|student
+そろそろ||adv|E|soon; it's about time (to …)
+何度|なんど|n|I|how many times|With も: many times ({何度|なんど}も).
+引き返す|ひきかえす|v5s|I|to turn back
+自信|じしん|n|I|confidence (in oneself)
+まま||n|I|as it is, unchanged|このまま "as things are".
+生む|うむ|v5m|I|to give birth to; to produce, give rise to
+小さな|ちいさな|pn|E|small (only before a noun)
+大きな|おおきな|pn|E|big (only before a noun)
+礼|れい|n|I|thanks; a bow; manners
+命令|めいれい|vs|I|order, command
+お願い|おねがい|n|E|request, favour
+他人|たにん|n|I|other people; a stranger
+写す|うつす|v5s|I|to copy; to take (a photo)
+越す|こす|v5s|I|to cross, go over; to exceed
+用心|ようじん|vs|A|care, caution
+山道|やまみち|n|I|mountain road, mountain path
+どんなに||adv|I|however (much); how (very)
+どれほど||adv|A|how much, to what extent
+だめ||adj-na|E|no good; not allowed|Also written {駄目|だめ}.
 `));
 
   // Katakana loanwords used in the kana lessons and around the world

@@ -97,7 +97,7 @@ function main() {
   lines.push(' *');
   lines.push(' * Stroke data derived from KanjiVG (https://kanjivg.tagaini.net,');
   lines.push(' * https://github.com/KanjiVG/kanjivg, commit ' + KANJIVG_COMMIT.slice(0, 12) + '),');
-  lines.push(' * Copyright (C) 2009-2026 Ulrich Apel and the KanjiVG project, licensed under');
+  lines.push(' * Copyright (C) 2009/2010/2011 Ulrich Apel and the KanjiVG project, licensed under');
   lines.push(' * Creative Commons Attribution-Share Alike 3.0 (CC BY-SA 3.0,');
   lines.push(' * https://creativecommons.org/licenses/by-sa/3.0/). This file is an adapted');
   lines.push(' * form: paths were sampled into point sequences, simplified and quantised to');

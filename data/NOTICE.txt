@@ -2,3 +2,24 @@ The Road of Borrowed Names — embedded third-party data notices.
 
 Game code, story, art and music in this file are original to this project.
 Third-party data embedded in this file is listed below with its licence.
+
+------------------------------------------------------------------------
+KanjiVG stroke data (handwriting recognition templates and numbered
+stroke-order demonstrations)
+------------------------------------------------------------------------
+Source:     KanjiVG, https://kanjivg.tagaini.net
+            https://github.com/KanjiVG/kanjivg
+            (commit 422b5538595676da918c288a4230cb5e22a1ee7e)
+Copyright:  Copyright (C) 2009/2010/2011 Ulrich Apel and the KanjiVG project.
+Licence:    Creative Commons Attribution-Share Alike 3.0 Unported (CC BY-SA 3.0),
+            https://creativecommons.org/licenses/by-sa/3.0/
+Covers:     hiragana and katakana (basic, voiced, semi-voiced, small forms,
+            ヴ and the long-vowel mark ー) and 33 optional kanji
+            (一二三十人口日月山川木水火土石田力大小上下中名手目雨本入出王門心花).
+Changes:    The embedded stroke data (RB.recogData; src/recog/10_strokedata.js in
+            the source tree) is a derived, adapted form of the KanjiVG SVG
+            files: each stroke path was sampled into a point sequence,
+            simplified, quantised to integers in KanjiVG's 109x109 box and
+            packed into a compact text encoding. Stroke order and stroke
+            direction are unchanged. This adapted stroke data is distributed
+            under the same licence, CC BY-SA 3.0.

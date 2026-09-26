@@ -1,0 +1,24 @@
+Independent recognizer test fixtures (test-only; never embedded in the game).
+Regenerate: node tools/kanjivg/fetch.mjs --fixtures && node tools/kanjivg/fixtures.mjs
+
+animcjk-kana.json
+  Source:    AnimCJK, svgsJaKana/<decimal code point>.svg,
+             https://github.com/parsimonhi/animCJK (commit ec5e17cca76c87587790bcbce5ea0b4d4fb753d6)
+  Copyright: AnimCJK 2016-2026 Copyright FM&SH
+  Licence:   GNU Lesser General Public License v3 or later (the kana SVGs are
+             not derived from Arphic fonts; see the project's licenses/COPYING.txt).
+             https://www.gnu.org/licenses/lgpl-3.0.txt
+  Changes:   only the stroke median polylines were extracted (for strokes that
+             AnimCJK splits into clip parts a/b/c, part "a", which carries the
+             whole median), coordinates rounded to integers in the 1024 box.
+
+tomoe-ja.json
+  Source:    Tomoe 0.6.0, data/handwriting-ja.xml,
+             https://downloads.sourceforge.net/project/tomoe/tomoe/tomoe-0.6.0/tomoe-0.6.0.tar.gz
+  Copyright: the Tomoe project (Kouhei Sutou, Hiroyuki Ikezoe, Takuro Ashie,
+             Hiroyuki Komatsu and contributors)
+  Licence:   GNU Lesser General Public License v2.1,
+             https://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt
+  Changes:   only entries for characters the recognizer supports were kept
+             (54 kana entries incl. two そ and two ね forms, 47 kanji entries);
+             points unchanged (1000 box).

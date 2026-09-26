@@ -419,6 +419,7 @@ RB.jp = (function () {
   verbRule('i', 'すぎる', T.V1, 'too much (～すぎる)');
   verbRule('i', 'ながら', 0, 'while (～ながら)');
   verbRule('i', 'やすい', T.ADJ, 'easy to (～やすい)');
+  verbRule('i', '', 0, 'stem form (used in compounds and polite patterns)', { stem: true });
   verbRule('i', 'にくい', T.ADJ, 'hard to (～にくい)');
   // Volitional
   rule('よう', 'る', 0, T.V1, 'volitional: "let\'s …" / "I\'ll …" (～よう)');
@@ -554,7 +555,7 @@ RB.jp = (function () {
     for (let i = 0; i < results.length && results.length < 400; i++) {
       const cur = results[i];
       if (cur.rules.length >= 7) continue;
-      const bucket = RULE_INDEX.get(cur.base.slice(-1)) || [];
+      const bucket = (RULE_INDEX.get(cur.base.slice(-1)) || []).concat(RULE_INDEX.get('') || []);
       for (const r of bucket) {
         if (cur.mask !== 0 && (cur.mask & r.inM) === 0) continue;
         if (!cur.base.endsWith(r.from)) continue;
@@ -583,9 +584,16 @@ RB.jp = (function () {
     }
     return out;
   }
-  /* deinflect(word) → [{base, rules:[plain-English steps, base outward], type}] */
-  function deinflect(word) {
-    return deinflectRaw(String(word || '')).map((c) => ({ base: c.base, rules: describe(c.rules), type: typeName(c.mask) }));
+  /* deinflect(word[, {known:true}]) → [{base, rules:[plain-English steps,
+   * base outward], type}]. With known:true only bases that exist in the
+   * lexicon with a compatible part of speech are returned. */
+  function deinflect(word, opts) {
+    let list = deinflectRaw(String(word || ''));
+    if (opts && opts.known && RB.lex) {
+      list = list.filter((c) => RB.lex.bySurface(c.base).concat(K.hasKanji(c.base) ? [] : RB.lex.byReading(c.base))
+        .some((e) => posMask(e.pos) & c.mask));
+    }
+    return list.map((c) => ({ base: c.base, rules: describe(c.rules), type: typeName(c.mask) }));
   }
 
   // POS code → compatible type mask
@@ -622,6 +630,7 @@ RB.jp = (function () {
       if (c.readOk) s -= 100;
       if (!c.surf) s += 10;
       s += (c.rules ? c.rules.length : 0) * 3;
+      if (c.rules && c.rules.some((r) => r.stem)) s += 20;
       s += lvRank(c.e);
       return s;
     };
@@ -644,7 +653,9 @@ RB.jp = (function () {
     if (exact) add(exact, [], true, true);
     L.bySurface(surface).forEach((e) => add(e, [], true, hira(e.r) === rh));
     if (kanaOnly) L.byReading(rh).forEach((e) => add(e, [], false, true));
-    if (!cands.length || (prefer && !cands.some((c) => c.e.w === prefer))) {
+    // Kana-only tokens are ambiguous (した: 下 or する), so inflected readings
+    // are always considered; direct matches still rank first.
+    if (!cands.length || kanaOnly || (prefer && !cands.some((c) => c.e.w === prefer))) {
       const readBases = kanaOnly ? null : new Set(deinflectRaw(rh).map((c) => c.base));
       const dcs = deinflectRaw(surface);
       for (const c of dcs) {
@@ -817,7 +828,8 @@ RB.jp = (function () {
     const parts = splitToken(tk, prefer);
     if (parts) {
       res.parts = parts;
-      const head = parts.find((p) => p.entry && !AFFIX_POS.has(p.entry.pos)) || parts.find((p) => p.entry) || parts[0];
+      const head = parts.find((p) => p.name) || parts.find((p) => p.entry && !AFFIX_POS.has(p.entry.pos)) || parts.find((p) => p.entry) || parts[0];
+      if (head.name) res.name = head.name;
       res.entry = head.entry;
       res.lemma = head.lemma;
       res.forms = head.forms;

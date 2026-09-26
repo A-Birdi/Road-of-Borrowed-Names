@@ -7,3 +7,4 @@ playwright-report/
 tests/e2e/out/
 .cache/
 tmp/
+tools/kanjivg/.cache/
