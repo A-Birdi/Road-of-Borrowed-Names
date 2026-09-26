@@ -58,24 +58,98 @@ export function install() {
   function exitsOf(mid) {
     return comp(mid).exits.filter((ex) => test(ex.if) && !(ex.locked && !(ex.unlock && test(ex.unlock))) && C.maps[ex.to]);
   }
-  function route(from, to) {
-    if (from === to) return [];
-    const prev = { [from]: null };
-    const q = [from];
-    while (q.length) {
-      const m = q.shift();
-      for (const ex of exitsOf(m)) {
-        if (ex.to in prev) continue;
-        prev[ex.to] = { m, ex };
-        if (ex.to === to) {
-          const path = [];
-          for (let k = to; prev[k]; k = prev[k].m) path.unshift(prev[k].ex);
-          return path;
+  // Walking reachability from the player's tile: flood-fill walkable tiles
+  // (current conditional props block), take only exits whose tile is reached,
+  // arrive at the exit's spawn and continue. Returns per-map reached tiles and
+  // the entry (arrival) each tile belongs to, so a path can be rebuilt.
+  const DIRS4 = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+  function arrival(ex) {
+    if (ex.tx != null) return [ex.tx, ex.ty];
+    const sp = (C.maps[ex.to].spawn || {})[ex.sp || 'default'];
+    return sp ? [sp[0], sp[1]] : null;
+  }
+  function explore() {
+    const W = RB.world.W;
+    const reach = {}; // map -> Map(tileKey -> entry id)
+    const entries = [];
+    const q = [];
+    const add = (map, x, y, prev, ex) => {
+      const R = reach[map] || (reach[map] = new Map());
+      if (R.has(x + ',' + y)) return;
+      const id = entries.length;
+      entries.push({ map, x, y, prev, ex });
+      const m = comp(map);
+      R.set(x + ',' + y, id);
+      const st = [[x, y]];
+      while (st.length) {
+        const [cx, cy] = st.pop();
+        for (const [dx, dy] of DIRS4) {
+          const nx = cx + dx, ny = cy + dy, k = nx + ',' + ny;
+          if (R.has(k) || RB.maps.blockedStatic(m, nx, ny)) continue;
+          R.set(k, id); st.push([nx, ny]);
         }
-        q.push(ex.to);
+      }
+      q.push(id);
+    };
+    add(W.map.id, W.player.x, W.player.y, null, null);
+    while (q.length) {
+      const id = q.shift(), e = entries[id], R = reach[e.map];
+      for (const ex of exitsOf(e.map)) {
+        let ok = false;
+        for (let yy = ex.y; yy < ex.y + (ex.h || 1) && !ok; yy++) for (let xx = ex.x; xx < ex.x + (ex.w || 1) && !ok; xx++) {
+          if (R.get(xx + ',' + yy) === id) ok = true;
+          // an exit on a solid tile (stairs, ladders) is entered from beside it
+          else if (RB.maps.blockedStatic(comp(e.map), xx, yy) && DIRS4.some(([dx, dy]) => R.get((xx + dx) + ',' + (yy + dy)) === id)) ok = true;
+        }
+        if (!ok) continue;
+        const a = arrival(ex);
+        if (a) add(ex.to, a[0], a[1], id, ex);
       }
     }
-    return null;
+    return { reach, entries };
+  }
+  function pathTo(X, id) {
+    const path = [];
+    for (let e = X.entries[id]; e && e.prev != null; e = X.entries[e.prev]) path.unshift(e.ex);
+    return path;
+  }
+  // tiles from which a site can be used, and the reachable one (entry id + tile)
+  function standTiles(st) {
+    const out = [];
+    const around = (x, y, w, h) => { for (let yy = y; yy < y + h; yy++) for (let xx = x; xx < x + w; xx++) for (const [dx, dy] of DIRS4) out.push([xx + dx, yy + dy]); };
+    switch (st.kind) {
+      case 'npc': {
+        const live = RB.world.W.map.id === st.map && RB.world.W.npcs.find((a) => a.id === st.n.id);
+        around(live ? live.x : st.n.x, live ? live.y : st.n.y, 1, 1);
+        // talking across a counter / desk
+        for (const [dx, dy] of DIRS4) out.push([(live ? live.x : st.n.x) + 2 * dx, (live ? live.y : st.n.y) + 2 * dy]);
+        break;
+      }
+      case 'prop': { const pd = RB.props.P[st.pr.p] || {}; around(st.pr.x, st.pr.y, st.pr.w || pd.w || 1, st.pr.h || pd.h || 1); break; }
+      case 'trig': for (let yy = st.tr.y; yy < st.tr.y + (st.tr.h || 1); yy++) for (let xx = st.tr.x; xx < st.tr.x + (st.tr.w || 1); xx++) out.push([xx, yy]); break;
+      case 'foe': out.push([st.f.x, st.f.y]); around(st.f.x, st.f.y, 1, 1); break;
+      case 'locked': out.push([st.ex.x, st.ex.y]); around(st.ex.x, st.ex.y, st.ex.w || 1, st.ex.h || 1); break;
+    }
+    return out;
+  }
+  function reachSite(X, st) {
+    const R = X.reach[st.map];
+    if (!R) return null;
+    if (st.kind === 'enter') { const id = X.entries.findIndex((e) => e.map === st.map); return id < 0 ? null : { id, tile: null }; }
+    let best = null;
+    for (const [x, y] of standTiles(st)) {
+      const id = R.get(x + ',' + y);
+      if (id == null) continue;
+      const len = pathTo(X, id).length;
+      if (!best || len < best.len) best = { id, tile: [x, y], len };
+    }
+    return best;
+  }
+  // map-level route kept for diagnostics
+  function route(from, to) {
+    const X = explore();
+    const id = X.entries.findIndex((e) => e.map === to);
+    return id < 0 ? null : pathTo(X, id);
   }
   async function walk(path) {
     for (const ex of path) {
@@ -85,8 +159,20 @@ export function install() {
       await T.idle(60000);
     }
   }
-  async function fire(st) {
+  async function fire(st, tile) {
     const W = RB.world.W;
+    const face = (tx, ty) => { const [x, y] = tile; const dx = Math.sign(tx - x), dy = Math.sign(ty - y); return dx > 0 ? 'right' : dx < 0 ? 'left' : dy > 0 ? 'down' : 'up'; };
+    if (tile && st.kind === 'npc') {
+      const a = W.npcs.find((n) => n.id === st.n.id);
+      if (a) { T.place(tile[0], tile[1], face(a.x, a.y)); RB.world.interact(); return T.idle(60000); }
+    }
+    if (tile && st.kind === 'prop') {
+      // face a footprint tile next to the stand tile
+      const pd = RB.props.P[st.pr.p] || {};
+      const w = st.pr.w || pd.w || 1, h = st.pr.h || pd.h || 1;
+      const tx = Math.max(st.pr.x, Math.min(st.pr.x + w - 1, tile[0])), ty = Math.max(st.pr.y, Math.min(st.pr.y + h - 1, tile[1]));
+      T.place(tile[0], tile[1], face(tx, ty)); RB.world.interact(); return T.idle(60000);
+    }
     switch (st.kind) {
       case 'npc': return T.talk(st.n.id);
       case 'prop': return T.use(st.pr.x, st.pr.y);
@@ -127,22 +213,25 @@ export function install() {
       const all = sites(step.scene).map((x) => Object.assign(x, { scene: step.scene }));
       if (!all.length) return { ok: false, log, fail: 'no site starts ' + step.scene };
       const here = RB.world.W.map.id;
-      let pick = null, path = null;
+      const X = explore();
+      let pick = null, path = null, tile = null;
       for (const st of all) {
         if (!available(st)) continue;
-        const r = route(here, st.map);
-        if (r && (!path || r.length < path.length)) { pick = st; path = r; }
+        const r = reachSite(X, st);
+        if (!r) continue;
+        const pth = pathTo(X, r.id);
+        if (!path || pth.length < path.length) { pick = st; path = pth; tile = r.tile; }
       }
       if (!pick && step.optional) { log.push(step.scene + ' (optional, not available)'); continue; }
       if (!pick) {
         return { ok: false, log, fail: 'no available/reachable site for ' + step.scene, map: here,
-          sites: all.map((x) => x.kind + '@' + x.map + ' avail=' + available(x) + ' route=' + !!route(here, x.map)) };
+          sites: all.map((x) => x.kind + '@' + x.map + ' avail=' + available(x) + ' reach=' + !!reachSite(X, x) + ' mapRoute=' + !!X.reach[x.map]) };
       }
       const before = ran.length;
       try {
         await walk(path);
         // arriving may already have run it (onEnter)
-        if (ran.indexOf(step.scene, before) < 0) await fire(pick);
+        if (ran.indexOf(step.scene, before) < 0) await fire(pick, tile);
       } catch (e) {
         return { ok: false, log, fail: step.scene + ': ' + e.message, map: RB.world.W.map.id, ran: ran.slice(before) };
       }
@@ -217,33 +306,35 @@ export function install() {
     const log = [];
     for (let i = 0; i < max; i++) {
       await T.idle(60000);
-      if (S().flags[target]) return { ok: true, steps: i, log };
+      if (S().flags[target]) return { ok: true, steps: i, log: opts.fullLog ? log : log.slice(-25) };
       const here = RB.world.W.map.id;
       const sig = sigOf();
       let best = null;
+      const X = explore();
       for (const st of allSites(opts.prefix)) {
         const key = sig + '|' + st.kind + '|' + st.map + '|' + st.scene;
         if (tried.has(key)) continue;
         const g = gain(st.scene, opts.main);
         const tier = g.main ? 3 : g.other ? 2 : g.unseen ? 1 : 0;
         if (!tier) continue;
-        const r = route(here, st.map);
-        if (!r) continue;
+        const rs = reachSite(X, st);
+        if (!rs) continue;
+        const r = pathTo(X, rs.id);
         const score = tier * 1000 - r.length;
-        if (!best || score > best.score) best = { st, r, score, key };
+        if (!best || score > best.score) best = { st, r, score, key, tile: rs.tile };
       }
       if (!best) return { ok: false, steps: i, log: log.slice(-25), fail: 'no site offers progress towards ' + target, map: here, quests: S().quests };
       tried.add(best.key);
       const before = ran.length;
       try {
         await walk(best.r);
-        if (ran.indexOf(best.st.scene, before) < 0 && available(best.st)) await fire(best.st);
+        if (ran.indexOf(best.st.scene, before) < 0 && available(best.st)) await fire(best.st, best.tile);
       } catch (e) { log.push('ERR ' + best.st.scene + ': ' + e.message); continue; }
       log.push(best.st.scene + ' (' + best.st.kind + '@' + best.st.map + ')');
     }
     return { ok: !!S().flags[target], steps: max, log: log.slice(-25), fail: 'step limit' };
   }
 
-  window.RBDrive = { run, pursue, sites, route, ran, provides };
+  window.RBDrive = { run, pursue, sites, route, explore, ran, provides };
   return true;
 }

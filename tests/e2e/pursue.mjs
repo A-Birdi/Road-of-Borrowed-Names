@@ -9,7 +9,7 @@ import { install } from './drive.mjs';
 
 const ALL = 'ch1_done@rw.@rw_mill>ch2_done@sg.@sg_main>ch3_done@co.@co_main>ch4_done@sb.@sb_lamp>ch5_done@lf.@lf_main>ch6_done@sa.@sa_main';
 const [profile = 'E', comp = 'none', legsArg = ALL, startMap = 'rw.road', sx = '3', sy = '9', flagList = '', wordList = ''] = process.argv.slice(2);
-const legs = legsArg.split('>').map((l) => { const [flag, prefix, main] = l.split('@'); return { flag, prefix, main }; });
+const legs = legsArg.split('>').map((l) => { const [flag, prefix, main] = l.split('@'); return { flag, prefix, main, fullLog: !!process.env.PURSUE_LOG }; });
 const { srv, url } = await serve();
 const b = await launch();
 const { p, errors } = await page(b, url);
@@ -30,9 +30,10 @@ const out = [];
 let ok = true;
 for (const leg of legs) {
   const t1 = Date.now();
-  const r = await p.evaluate((leg) => RBDrive.pursue(leg.flag, { prefix: leg.prefix, main: leg.main, max: 900 }), leg).catch((e) => ({ ok: false, fail: String(e) }));
+  const r = await p.evaluate((leg) => RBDrive.pursue(leg.flag, { prefix: leg.prefix, main: leg.main, max: 900, fullLog: !!leg.fullLog }), leg).catch((e) => ({ ok: false, fail: String(e) }));
   out.push({ leg: leg.flag, ok: r.ok, steps: r.steps, seconds: Math.round((Date.now() - t1) / 1000), fail: r.fail, map: r.map, last: r.ok ? undefined : r.log });
   console.log((r.ok ? 'reached ' : 'STUCK   ') + leg.flag + ' in ' + r.steps + ' site visits (' + Math.round((Date.now() - t1) / 1000) + ' s)');
+  if (process.env.PURSUE_LOG && r.log) console.log('  ' + r.log.join('\n  '));
   if (!r.ok) { ok = false; console.log(JSON.stringify(r, null, 1).slice(0, 3000)); break; }
 }
 const fin = await p.evaluate(() => ({
