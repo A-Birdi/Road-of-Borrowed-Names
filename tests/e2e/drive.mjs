@@ -249,7 +249,7 @@ export function install() {
   const provCache = {};
   function provides(id, depth) {
     if (provCache[id]) return provCache[id];
-    const out = { flags: [], quests: [], items: [], words: [] };
+    const out = { flags: [], quests: [], items: [], words: [], warps: [] };
     const sc = C.scenes[id];
     if (sc && (depth || 0) < 4) {
       for (const c of sc.cmds) {
@@ -258,6 +258,7 @@ export function install() {
         else if (c.op === 'quest') out.quests.push([a[0], a[1] || 'start']);
         else if (c.op === 'give') out.items.push(a[0]);
         else if (c.op === 'word') out.words.push(a[0]);
+        else if (c.op === 'warp') out.warps.push(a[0]);
         else if (c.op === 'call') { const sub = provides(a[0], (depth || 0) + 1); for (const k in out) out[k].push(...sub[k]); }
       }
     }
@@ -274,7 +275,8 @@ export function install() {
     for (const f of p.flags) if (!s.flags[f]) other++;
     for (const it of p.items) if (!s.inv[it]) other++;
     for (const w of p.words) if (!s.words.includes(w)) other++;
-    return { main, other, unseen: !s.seen[id] };
+    // travel scenes (a boat, a ladder) stay useful: they reach other maps
+    return { main, other, unseen: !s.seen[id] || p.warps.some((m) => m !== RB.world.W.map.id) };
   }
   // all sites on maps with the given prefix
   function allSites(prefix) {
@@ -304,6 +306,7 @@ export function install() {
     const max = opts.max || 600;
     const tried = new Set();
     const log = [];
+    let lastScene = null;
     for (let i = 0; i < max; i++) {
       await T.idle(60000);
       if (S().flags[target]) return { ok: true, steps: i, log: opts.fullLog ? log : log.slice(-25) };
@@ -320,10 +323,11 @@ export function install() {
         const rs = reachSite(X, st);
         if (!rs) continue;
         const r = pathTo(X, rs.id);
-        const score = tier * 1000 - r.length;
+        // don't use the same site twice in a row (e.g. reopening a door you just opened)
+        const score = tier * 1000 - r.length - (st.scene === lastScene ? 500 : 0);
         if (!best || score > best.score) best = { st, r, score, key, tile: rs.tile };
       }
-      if (!best) return { ok: false, steps: i, log: log.slice(-25), fail: 'no site offers progress towards ' + target, map: here, quests: S().quests };
+      if (!best) return { ok: false, steps: i, log: opts.fullLog ? log : log.slice(-25), fail: 'no site offers progress towards ' + target, map: here, quests: S().quests };
       tried.add(best.key);
       const before = ran.length;
       try {
@@ -331,6 +335,7 @@ export function install() {
         if (ran.indexOf(best.st.scene, before) < 0 && available(best.st)) await fire(best.st, best.tile);
       } catch (e) { log.push('ERR ' + best.st.scene + ': ' + e.message); continue; }
       log.push(best.st.scene + ' (' + best.st.kind + '@' + best.st.map + ')');
+      lastScene = best.st.scene;
     }
     return { ok: !!S().flags[target], steps: max, log: log.slice(-25), fail: 'step limit' };
   }
