@@ -27,10 +27,12 @@ await test('new game through title, prologue skip, creation, setup', async () =>
   await p.waitForSelector('#nm');
   await p.fill('#nm', 'Aki');
   assert((await p.inputValue('#nj')) === 'アキ', 'katakana name suggestion');
+  await p.click('[data-a=next]'); // Identity -> Appearance
   await p.click('[data-set=hair][data-v=bun]');
   await p.click('[data-acc=glasses]');
   await shot(p, 'ui_creation');
-  await p.click('[data-a=next]');
+  await p.click('[data-a=next]'); // -> Background
+  await p.click('[data-a=next]'); // -> Learning setup
   await p.click('[data-k=profile][data-v=E]');
   await p.click('[data-a=go]');
   await p.waitForFunction(() => RB.game.mode() === 'dialogue' || RB.game.mode() === 'world', null, { timeout: 10000 });
@@ -461,7 +463,7 @@ await test('direct file:// mode boots, reports storage honestly, no network', as
   await p.click('.slot[data-slot="1"] [data-a=start]');
   await p.click('text=Skip prologue');
   await p.fill('#nm', 'Filer');
-  await p.click('[data-a=next]');
+  for (let i = 0; i < 3; i++) await p.click('[data-a=next]'); // Identity -> Appearance -> Background -> Learning setup
   await p.click('[data-a=go]');
   await p.waitForFunction(() => RB.game.G.playing === true);
   assert(!errors.length, errors.join('; '));
