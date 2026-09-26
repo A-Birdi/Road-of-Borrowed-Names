@@ -128,7 +128,7 @@ export function install() {
       case 'prop': { const pd = RB.props.P[st.pr.p] || {}; around(st.pr.x, st.pr.y, st.pr.w || pd.w || 1, st.pr.h || pd.h || 1); break; }
       case 'trig': for (let yy = st.tr.y; yy < st.tr.y + (st.tr.h || 1); yy++) for (let xx = st.tr.x; xx < st.tr.x + (st.tr.w || 1); xx++) out.push([xx, yy]); break;
       case 'foe': out.push([st.f.x, st.f.y]); around(st.f.x, st.f.y, 1, 1); break;
-      case 'locked': out.push([st.ex.x, st.ex.y]); around(st.ex.x, st.ex.y, st.ex.w || 1, st.ex.h || 1); break;
+      case 'locked': around(st.ex.x, st.ex.y, st.ex.w || 1, st.ex.h || 1); break; // stand beside it, facing it
     }
     return out;
   }
@@ -165,6 +165,12 @@ export function install() {
     if (tile && st.kind === 'npc') {
       const a = W.npcs.find((n) => n.id === st.n.id);
       if (a) { T.place(tile[0], tile[1], face(a.x, a.y)); RB.world.interact(); return T.idle(60000); }
+    }
+    if (tile && st.kind === 'locked') {
+      // as when walking into it: stand next to the exit, facing it (hooks read the exit in front)
+      const ex = st.ex;
+      const tx = Math.max(ex.x, Math.min(ex.x + (ex.w || 1) - 1, tile[0])), ty = Math.max(ex.y, Math.min(ex.y + (ex.h || 1) - 1, tile[1]));
+      T.place(tile[0], tile[1], face(tx, ty)); RB.script.run(ex.locked); return T.idle(60000);
     }
     if (tile && st.kind === 'prop') {
       // face a footprint tile next to the stand tile
@@ -264,7 +270,7 @@ export function install() {
     }
     return (provCache[id] = out);
   }
-  function gain(id, mainQuest) {
+  function gain(id, mainQuest, st) {
     const s = S(), p = provides(id);
     let main = 0, other = 0;
     for (const [q, st] of p.quests) {
@@ -276,19 +282,24 @@ export function install() {
     for (const it of p.items) if (!s.inv[it]) other++;
     for (const w of p.words) if (!s.words.includes(w)) other++;
     // travel scenes (a boat, a ladder) stay useful: they reach other maps
-    return { main, other, unseen: !s.seen[id] || p.warps.some((m) => m !== RB.world.W.map.id) };
+    // generated Atlas rooms reuse one objective scene and record progress in
+    // the run (via hooks), so each of their sites is worth one try per state
+    const atlas = st && st.map.startsWith('atlas.');
+    return { main, other, unseen: atlas || !s.seen[id] || p.warps.some((m) => m !== RB.world.W.map.id) };
   }
   // all sites on maps with the given prefix
   function allSites(prefix) {
     const out = [];
+    const pre = prefix ? prefix.split('|') : null; // several prefixes: 'rw.hall|atlas.'
     for (const mid in C.maps) {
-      if (prefix && !mid.startsWith(prefix)) continue;
+      if (pre && !pre.some((x) => mid.startsWith(x))) continue;
       const m = C.maps[mid];
       for (const n of m.npcs || []) { const first = test(n.if) && talkOf(n).find((o) => test(o.if)); if (first) out.push({ kind: 'npc', map: mid, n, scene: first.scene }); }
       for (const pr of m.props || []) if (pr.scene) out.push({ kind: 'prop', map: mid, pr, scene: pr.scene });
       for (const tr of m.triggers || []) out.push({ kind: 'trig', map: mid, tr, scene: tr.scene });
       for (const f of m.foes || []) if (f.scene) out.push({ kind: 'foe', map: mid, f, scene: f.scene });
       for (const ev of m.onEnter || []) out.push({ kind: 'enter', map: mid, ev, scene: ev.scene });
+      for (const ex of comp(mid).exits) if (ex.locked) out.push({ kind: 'locked', map: mid, ex, scene: ex.locked });
     }
     return out.filter((st) => st.scene && available(st));
   }
@@ -298,7 +309,8 @@ export function install() {
     return Object.keys(s.flags).filter((k) => !/^(enter|named|trig|foe):/.test(k)).sort().join(',') + '|' +
       Object.keys(s.quests).sort().map((k) => k + ':' + (s.quests[k].done ? 'd' : s.quests[k].stage)).join(',') + '|' +
       Object.keys(s.inv).sort().map((k) => k + ':' + s.inv[k]).join(',') + '|' + s.words.join(',') + '|' + s.comp + '/' + s.provisional +
-      '|' + Object.keys(s.seen).length; // conditions may test seen.<scene>
+      '|' + Object.keys(s.seen).length + // conditions may test seen.<scene>
+      '|' + (s.atlas && s.atlas.run ? JSON.stringify(s.atlas.run).length + ':' + RB.world.W.map.id : '');
   };
   // Pursue a flag: repeatedly do the reachable site offering the most progress
   // (main-quest stage > other new state > unseen scene), nearest first.
@@ -318,7 +330,7 @@ export function install() {
       for (const st of allSites(opts.prefix)) {
         const key = sig + '|' + st.kind + '|' + st.map + '|' + st.scene;
         if (tried.has(key)) continue;
-        const g = gain(st.scene, opts.main);
+        const g = gain(st.scene, opts.main, st);
         const tier = g.main ? 3 : g.other ? 2 : g.unseen ? 1 : 0;
         if (!tier) continue;
         const rs = reachSite(X, st);

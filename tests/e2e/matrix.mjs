@@ -33,5 +33,5 @@ async function runOne(j) {
 const queue = jobs.slice();
 await Promise.all(Array.from({ length: par }, async () => { while (queue.length) results.push(await runOne(queue.shift())); }));
 const failed = results.filter((r) => !r.ok);
-console.log('\n' + (results.length - failed.length) + '/' + results.length + ' combinations reached the end of Chapter 6');
+console.log('\n' + (results.length - failed.length) + '/' + results.length + ' combinations played all six chapters and one Atlas expedition');
 process.exit(failed.length ? 1 : 0);

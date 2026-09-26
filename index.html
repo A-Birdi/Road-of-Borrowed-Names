@@ -43502,6 +43502,8 @@ RB.hooks = RB.hooks || {};
     opts = opts || {};
     return new Promise((resolve) => {
       if (typeof document === 'undefined') { resolve({ assisted: false }); return; }
+      // test auto mode (RB.test) reads the panel and moves on, like dialogue
+      if (RB.test && RB.test.auto) { resolve({ assisted: false }); return; }
       const s = S();
       let showEn = s && s.learn.profile === 'F';
       let assisted = false;

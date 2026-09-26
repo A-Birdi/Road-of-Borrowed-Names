@@ -1,13 +1,15 @@
 // Goal-seeking story run through the real world (tests/e2e/drive.mjs pursue):
 // from a start map, reach each target flag in turn, each leg limited to one
 // chapter's maps. With no start arguments it plays a new campaign through all
-// six chapters.
+// six chapters and one Atlas expedition.
 // Usage: node tests/e2e/pursue.mjs [profile] [comp|none] [legs] [startMap x y] [flags] [words]
 //   legs: "ch1_done@rw.@rw_mill>ch2_done@sg.@sg_main>…" (flag@mapPrefix@mainQuest)
 import { serve, launch, page } from './lib.mjs';
 import { install } from './drive.mjs';
 
-const ALL = 'ch1_done@rw.@rw_mill>ch2_done@sg.@sg_main>ch3_done@co.@co_main>ch4_done@sb.@sb_lamp>ch5_done@lf.@lf_main>ch6_done@sa.@sa_main';
+// six chapters, then (after the ending returns you to Reedwake) one complete
+// Unwritten Atlas expedition, started from the Lantern Hall
+const ALL = 'ch1_done@rw.@rw_mill>ch2_done@sg.@sg_main>ch3_done@co.@co_main>ch4_done@sb.@sb_lamp>ch5_done@lf.@lf_main>ch6_done@sa.@sa_main>atlas_restore_1@rw.hall|atlas.@';
 const [profile = 'E', comp = 'none', legsArg = ALL, startMap = 'rw.road', sx = '3', sy = '9', flagList = '', wordList = ''] = process.argv.slice(2);
 const legs = legsArg.split('>').map((l) => { const [flag, prefix, main] = l.split('@'); return { flag, prefix, main, fullLog: !!process.env.PURSUE_LOG }; });
 const { srv, url } = await serve();
