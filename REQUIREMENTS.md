@@ -12,13 +12,13 @@ Status: `[ ]` not started · `[~]` in progress · `[i]` implemented, unverified 
 - [i] R1.5 All visuals/audio procedural; Japanese text readable (not pixel font)
 
 ## Story & world [2,3]
-- [~] R3.1 Six chapters: Reedwake, Saltglass, Cinder Orchard, Snowbell, Lanternfall, Still Archive
-- [~] R3.2 ≥5 inhabited settlements
-- [~] R3.3 ~6 dungeon/ruin sequences (mill, drowned archive, glass kiln, observatory, bell tower, Still Archive)
-- [~] R3.4 ~18 authored side quests (Ch1: 5 written; Ch2–6 in progress)
-- [~] R3.5 Antagonist (archive keeper / the Hush) with understandable motive
-- [~] R3.6 Final choices about promises/repair, not good/bad ending switch
-- [~] R3.7 Denouement, companion-specific resolution, changed world to revisit
+- [i] R3.1 Six chapters: Reedwake, Saltglass, Cinder Orchard, Snowbell, Lanternfall, Still Archive (each played to its end flag in the browser; see VALIDATION.md)
+- [i] R3.2 ≥5 inhabited settlements: Reedwake, Saltglass harbour, Cinder Orchard village, Snowbell hamlet, Lanternfall town (+ the Archive camp)
+- [i] R3.3 6 dungeon/ruin sequences: the mill, the Drowned Archive, the sealed kiln, the frozen observatory, the drowned bell tower, the Still Archive
+- [i] R3.4 21 authored side quests (rw 6, sg 3, co 3, sb 3, lf 4, sa 2) plus 4 companion personal quests; list via tools (see VALIDATION.md)
+- [i] R3.5 Antagonist (Kasane and the Hush) with understandable motive (docs/STORY.md; ch6 scenes)
+- [i] R3.6 Final choices about promises/repair (three ending choice pairs: memories return/choose, archive library/closed, Kasane trial/keeper), not a good/bad switch
+- [i] R3.7 Denouement tour of the five towns, companion-specific epilogue lines, post-story NPC lines varying by ending flags
 - [i] R3.8 Fast travel/shortcuts after routes explored
 - [ ] R3.9 10–15h first playthrough target (NOT measured; cannot be measured by automation)
 
@@ -35,7 +35,7 @@ Status: `[ ]` not started · `[~]` in progress · `[i]` implemented, unverified 
 - [v] R5.4 Intentional "Set out with X" interaction; movement cannot commit
 - [v] R5.5 Pre-departure recovery point; locked after departure; room can't re-recruit
 - [i] R5.6 Unchosen candidates remain in world
-- [~] R5.7 Per companion: banter, personal quest, decision reactions, coordinated technique, ending variation
+- [i] R5.7 Per companion: banter (4–5 per chapter), personal quest (Suzu co_suzu, Nao lf_nao, Mio lf_mio, Ren ren_ushio), decision reactions, coordinated technique, ending variation
 
 ## Exploration [6]
 - [v] R6.1 Tile movement with interpolation, collision, facing, doors, interiors, transitions, camera
@@ -75,7 +75,7 @@ Status: `[ ]` not started · `[~]` in progress · `[i]` implemented, unverified 
 
 ## Japanese content [10]
 - [i] R10.1 Foundations/Elementary/Intermediate/Advanced profiles, independent of combat difficulty
-- [~] R10.2 Advanced content genuinely playable (nuance, register, implication, paraphrase)
+- [i] R10.2 Advanced content genuinely playable (A tiers in every story challenge: nuance, register, implication, paraphrase); not reviewed by a native speaker
 - [i] R10.3 Separate mastery: characters, vocab, grammar, comprehension; spaced revisit
 - [i] R10.4 Authored content records (display, reading, meaning, accepted answers, tags, explanation, spoken)
 - [v] R10.5 Orthography handled carefully; IME composition-safe Enter
@@ -88,7 +88,7 @@ Status: `[ ]` not started · `[~]` in progress · `[i]` implemented, unverified 
 - [i] R11.4 English-led / Japanese-led / translation visibility; bilingual backlog
 
 ## Dialogue & quests [12]
-- [~] R12.1 Authored, distinct voices; register notes
+- [i] R12.1 Authored, distinct voices; register notes (≈4,900 dialogue lines; not native-reviewed)
 - [i] R12.2 Written language for orders/letters/directions/repairs/negotiations
 - [i] R12.3 No irreversible punishment for mistakes; journal next steps
 
@@ -109,9 +109,9 @@ Status: `[ ]` not started · `[~]` in progress · `[i]` implemented, unverified 
 - [v] R14.8 No export/import/cloud/share codes
 
 ## Endgame — Unwritten Atlas [15]
-- [~] R15.1 Repeatable 10–25 min expeditions with branches, climax, extraction
-- [~] R15.2 Route modifiers, relics; objectives solvable at every profile
-- [~] R15.3 Rewards: sidegrades, cosmetics, notebook, settlement details
+- [v] R15.1 Repeatable expeditions with branches, camp (rest or extract early), climax, extraction (atlas.check.mjs; human duration estimated 13–28 min, not measured)
+- [v] R15.2 Route modifiers (8), relics (14), objectives solvable at every profile (atlas self-check, 1200 generated runs)
+- [v] R15.3 Rewards: charm sidegrades, cosmetics, notebook entries, six settlement details (zz_atlas_decor.js, browser-checked)
 - [i] R15.4 Keep companion; NG+/fresh campaign with defined carryover
 
 ## Visual [16]
@@ -129,7 +129,7 @@ Status: `[ ]` not started · `[~]` in progress · `[i]` implemented, unverified 
 
 ## Validation [18]
 - [v] R18.1 Content validator (exits, spawns, prereqs, dialogue refs, furigana, answers)
-- [~] R18.2 Browser tests of the built file for critical paths
+- [v] R18.2 Browser tests of the built file for critical paths (ui.mjs 13, story_ch1/3/4/6, side_ch3, atlas.check, explorer per chapter)
 - [v] R18.3 Recognizer tests with held-out variants, confusables, nonsense
 
 ## Evidence index (see VALIDATION.md for commands and dates)
@@ -141,4 +141,7 @@ Status: `[ ]` not started · `[~]` in progress · `[i]` implemented, unverified 
 - R8.2/R8.3/R10.5: ui.mjs handwriting test (mode switch keeps step; IME Enter during composition does not submit; mastery tallies by mode).
 - R9.x: tests/unit/recog*.test.mjs (396 checks) + ui.mjs (reference strokes, wrong kana recognised then explained, nonsense rejected, composition edits, real mouse stroke). Human handwriting NOT tested.
 - R11.1: tools/validate.mjs rejects any kanji without ruby; R11.2/11.3: ui.mjs lightbulb test.
-- R18.1: tools/validate.mjs.
+- R18.1: tools/validate.mjs (also warns on unreachable exits, NPCs and interactable props).
+- R3.x/R5.7: per-chapter story tests (tests/e2e/story_ch1/3/4/6.mjs, side_ch3.mjs) and the
+  blind explorer (tests/e2e/explore.mjs) reaching each chapter's end flag.
+- R15.x: tests/e2e/atlas.check.mjs, tests/unit/atlas.test.mjs (self-check sweep).
