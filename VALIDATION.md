@@ -154,3 +154,15 @@ harness could not stand next to multi-tile props — fixed.
   fix. It answers through RB.test auto mode (no button clicks), so its
   reachability result is unaffected; the suite rerun below includes one
   whole-game run on the final build.
+- **B** Final `node tests/e2e/run.mjs` on the final build (commit 87bb614's
+  index.html): **12/12 scripts passed** — ui.mjs 14/14, systems 4/4,
+  settings (contrast, reduced motion, Japanese lead, instant text, text size
+  persist across reload), audio.check, story_ch1 F/Mio, story_ch3 E/Nao,
+  side_ch3 3/3, story_ch4 I/Ren/"go", story_ch5 A/Suzu, story_ch6 run 2,
+  atlas.check (complete expedition), and pursue E/Mio: a new campaign through
+  all six chapters (ch1 150, ch2 32, ch3 370, ch4 33, ch5 132, ch6 157 site
+  visits) and one Atlas expedition (13), 11 min, no problems or page errors.
+- **B** Real-click spot checks after the fix: clicking the Japanese words of a
+  dialogue choice chose it (Nao became the provisional companion); clicking
+  the Japanese word on a café kitchen tile added it to the tray.
+- **U** `node tests/run-unit.mjs` 1815 passed; `node tools/validate.mjs` no errors.

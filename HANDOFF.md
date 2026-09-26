@@ -30,7 +30,8 @@
 - Complete: engine, UI, saves, learning, combat, recognizer, language, audio,
   Chapters 1–6 with ending/denouement, the Unwritten Atlas, New Game+.
 - Validator: no errors (`node tools/validate.mjs --stats` for counts).
-  Unit tests: 1815 pass. Browser: UI 13/13, systems 4/4, per-chapter story
+  Unit tests: 1815 pass. Browser: `node tests/e2e/run.mjs` 12/12 scripts on the final
+  build (UI 14/14, systems 4/4, settings), per-chapter story
   tests, Atlas check, and the whole-game matrix: 16/16 profile × companion
   combinations play a new campaign through all six chapters and one Atlas
   expedition (tests/e2e/matrix.mjs). Details and dates in VALIDATION.md.

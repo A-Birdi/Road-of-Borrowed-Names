@@ -85,6 +85,7 @@ Status: `[ ]` not started · `[~]` in progress · `[i]` implemented, unverified 
 - [v] R11.1 Furigana on every displayed kanji (validator-enforced)
 - [v] R11.2 Lightbulb help: hover/focus/tap; reading, romaji, meaning, mora, notes, replay voice
 - [v] R11.3 Pin, add to notebook, never cover pad, assisted recording
+- [v] R11.5 Help never blocks answering: words inside buttons act on click; help via hover/focus/long press (ui.mjs test)
 - [i] R11.4 English-led / Japanese-led / translation visibility; bilingual backlog — Japanese-led mode applied and persisted (settings.mjs)
 
 ## Dialogue & quests [12]
