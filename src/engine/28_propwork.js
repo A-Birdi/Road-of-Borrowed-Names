@@ -1276,4 +1276,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     },
     shadow: () => [16, 30, 12, 2, 0.3],
   });
+
+  // helpers shared with the chapter prop art in src/content
+  Object.assign(RB.propArt.kit, { legs, fire, ring, spokeWheel, books, lanternBody, BOOKS });
 })();

@@ -198,6 +198,289 @@ var RB = (globalThis.RB = globalThis.RB || {});
     px(c, x + 3, y + 3, 1, 1, '#3a2a2a');
   });
 
+  // ---- art-resolution versions (draw2; rules and helpers: src/engine/26–28_*.js) ----
+  (function () {
+    const A = RB.propArt && RB.propArt.art, K = RB.propKit;
+    if (!A) return;
+    const kit = RB.propArt.kit, { R, ell, poly, line, cyl, cylCol, streaks, mix, ramp, hh } = K;
+    const IR = K.FIX.iron, BR = K.FIX.brass, PP = K.FIX.paper, GL = K.FIX.glow;
+    const ICE = ['#4a7aa0', '#7aaed0', '#a8d0ec', '#d0e8f8', '#f4fbff'];
+    const SNOW = ['#8898b0', '#b8c8d8', '#d8e4ee', '#eef4f8', '#ffffff'];
+    const shadeBall = kit.shadeBall, cxy = (o) => hh(o.cx | 0, o.cy | 0, 5);
+    // Sunken hearth: a timber frame round an ash bed, charcoal and a live fire
+    // (o.low: failing embers), a kettle on the pot-hook, a thread of steam.
+    A('sb_irori', {
+      box: [-4, -34, 72, 100],
+      v: (o) => (o.low ? 1 : 0),
+      f: (t, o) => K.frame(t, 110, 4, o.still),
+      draw(g, M, v, f) {
+        const w5 = M.wood, ash = ramp('#8a8078', 0.45, 0.35);
+        R(g, 2, 4, 60, 56, w5[1]); R(g, 2, 4, 60, 2, w5[4]); R(g, 2, 58, 60, 2, w5[0]);
+        R(g, 6, 8, 52, 48, w5[3]); R(g, 6, 8, 52, 1, w5[4]);
+        R(g, 10, 12, 44, 40, ash[2]); R(g, 10, 12, 44, 3, ash[0]); R(g, 10, 15, 44, 2, ash[1]);
+        streaks(g, 12, 20, 40, 30, ash[3], 5, 10, 5);
+        for (let i = 0; i < 5; i++) { R(g, 18 + i * 6, 38 + (i % 2), 5, 8, K.FIX.char[2]); R(g, 18 + i * 6, 38 + (i % 2), 5, 1, K.FIX.char[4]); }
+        if (!v) kit.fire(g, 32, 42, 16, 16, f, 3);
+        else { R(g, 22, 38, 20, 5, K.FIX.ember[1]); R(g, 26, 38, 3, 2, K.FIX.ember[3]); R(g, 34, 39, 2, 2, K.FIX.ember[2]); }
+        // pot-hook and kettle
+        R(g, 31, -30, 2, 42, '#2a2420'); R(g, 28, -10, 8, 3, w5[2]);
+        shadeBall(g, 32, 12, 9, 6, IR, 2); R(g, 26, 5, 12, 2, IR[3]); R(g, 30, 3, 4, 2, IR[4]);
+        line(g, 41, 10, 47, 6, IR[2], 2);
+      },
+      over(g, M, v, f) {
+        if (!v) K.halo(g, 32, 38, 18, '#ff9a40', 0.12);
+        if (!v) for (let i = 0; i < 2; i++) { const k = (f + i * 2) % 4; R(g, 48 + k, 2 - k * 4, 2, 2, 'rgba(240,240,240,' + (0.45 - k * 0.1) + ')'); }
+      },
+    });
+    // Bell-post (interactable): a tall post, a hooded bronze bell and a
+    // signal board (o.blank: nothing written on it yet).
+    A('sb_bellpost', {
+      box: [-2, -78, 36, 112], ink: true,
+      v: (o) => (o.blank ? 1 : 0),
+      draw(g, M, v) {
+        const w5 = M.wood, b5 = ramp('#8a7a4a', 0.5, 0.45);
+        kit.post(g, 13, -60, 6, 90, w5);
+        kit.plank(g, 2, -68, 28, 6, w5, 1); R(g, 4, -72, 24, 4, '#ffffff'); R(g, 4, -72, 24, 1, '#ffffff'); R(g, 4, -69, 24, 1, SNOW[2]);
+        poly(g, [10, -60, 22, -60, 26, -40, 6, -40], b5[2]); poly(g, [10, -60, 14, -60, 12, -40, 6, -40], b5[3]); poly(g, [19, -60, 22, -60, 26, -40, 21, -40], b5[1]);
+        R(g, 6, -41, 20, 2, b5[0]); R(g, 14, -40, 4, 4, '#5a4a2a');
+        R(g, 15, -36, 1, 24, '#c8b890');
+        kit.board(g, 3, -8, 26, 16, w5, v ? ramp('#ece8e0', 0.3, 0.2) : kit.signFace(M), 3, v ? 0 : 2);
+      },
+      shadow: () => [16, 30, 12, 3, 0.3],
+    });
+    // Pigeonhole shelves, some holes holding letters waiting for the thaw.
+    A('sb_mailshelf', {
+      box: [-2, -32, 68, 66],
+      v: (o) => ((o.cx | 0) % 3 + 3) % 3,
+      draw(g, M, v) {
+        const w5 = M.wood;
+        R(g, 2, -28, 60, 58, w5[1]); R(g, 2, -28, 60, 1, w5[4]);
+        for (let r = 0; r < 4; r++) for (let k = 0; k < 5; k++) {
+          const x = 5 + k * 11.4, y = -25 + r * 12;
+          R(g, Math.round(x), y, 10, 10, '#2a2018'); R(g, Math.round(x), y + 9, 10, 1, w5[3]);
+          if ((r * 5 + k + v) % 3) { const pc = (r + k) % 4 ? PP : ramp('#d8c8e0', 0.3, 0.2); R(g, Math.round(x) + 1, y + 3, 8, 6, pc[3]); R(g, Math.round(x) + 1, y + 3, 8, 1, pc[4]); R(g, Math.round(x) + 2, y + 5, 5, 1, pc[1]); if ((r + k) % 5 === 0) R(g, Math.round(x) + 6, y + 4, 2, 2, '#b84a3a'); }
+        }
+        R(g, 2, 24, 60, 6, w5[2]); R(g, 2, 24, 60, 1, w5[3]);
+      },
+      shadow: () => [32, 30, 30, 2.5, 0.3],
+    });
+    // Snow drift across a road.
+    A('sb_drift', {
+      box: [-4, -2, 40, 36],
+      draw(g) {
+        shadeBall(g, 17, 22, 17, 10, SNOW, 1);
+        shadeBall(g, 12, 17, 11, 8, SNOW, 2);
+        R(g, 6, 10, 8, 1, '#ffffff');
+      },
+      shadow: () => [17, 29, 16, 3, 0.18],
+    });
+    // A wall of clear ice with facets and a glint (o.cracked: thin, crazed).
+    A('sb_icewall', {
+      box: [0, -20, 32, 54],
+      v: (o) => (o.cracked ? 1 : 0),
+      f: (t, o) => K.frame(t, 180, 6, o.still, (o.cx | 0) * 0.7),
+      draw(g, M, v) {
+        const ic = v ? ICE.map((c) => mix(c, '#ffffff', 0.25)) : ICE;
+        K.shade(g, 0, -16, 32, 48, ic, (fx, fy) => {
+          const facet = Math.floor((fx + fy * 0.4) / 7) % 3;
+          return 0.35 + (facet === 0 ? 0.25 : facet === 1 ? -0.1 : 0.05) - (fy + 16) / 48 * 0.35 + (fx < 3 ? 0.3 : fx > 29 ? -0.3 : 0);
+        }, 4, 0.12, 6, 5);
+        R(g, 0, -16, 32, 2, ic[4]); R(g, 5, -12, 2, 26, 'rgba(255,255,255,0.7)'); R(g, 18, -6, 1, 18, 'rgba(255,255,255,0.5)');
+        if (v) { line(g, 12, -2, 16, 8, ICE[0], 1); line(g, 16, 8, 13, 16, ICE[0], 1); line(g, 16, 8, 22, 12, ICE[0], 1); line(g, 12, -2, 9, -8, ICE[0], 1); }
+      },
+      over(g, M, v, f) { const a = [0.2, 0.35, 0.5, 0.35, 0.2, 0.1][f]; R(g, 22, -12, 3, 3, 'rgba(255,255,255,' + a + ')'); R(g, 23, -14, 1, 7, 'rgba(255,255,255,' + a * 0.8 + ')'); },
+      shadow: () => [16, 31, 16, 2, 0.2],
+    });
+    // Icicles hanging from a beam above the path (walk-through).
+    A('sb_icicles', {
+      box: [0, -36, 32, 30],
+      v: (o) => cxy(o) % 3,
+      draw(g, M, v) {
+        for (let i = 0; i < 6; i++) {
+          const x = 2 + i * 5, L = 8 + ((i * 7 + v * 5) % 12);
+          for (let k = 0; k < L; k++) { const w = k < L * 0.4 ? 3 : k < L * 0.8 ? 2 : 1; R(g, x + (3 - w >> 1), -32 + k, w, 1, k < 2 ? ICE[4] : ICE[3]); }
+          R(g, x, -32, 1, Math.round(L * 0.6), '#ffffff');
+        }
+      },
+    });
+    // Star chart on a slanted table (o.frost: the chart iced over).
+    A('sb_starchart', {
+      box: [-2, -14, 68, 48],
+      v: (o) => (o.frost ? 1 : 0),
+      draw(g, M, v) {
+        const w5 = M.wood;
+        kit.legs(g, [5, 56], 16, 30, w5);
+        R(g, 2, -8, 60, 26, w5[1]); R(g, 2, -8, 60, 1, w5[4]); R(g, 2, 17, 60, 1, w5[0]);
+        R(g, 5, -6, 54, 21, v ? '#c8dcec' : '#1e2848');
+        if (!v) {
+          const st = [[10, 0], [18, 6], [28, 2], [36, 10], [44, 4], [50, 12], [22, 12], [14, 8], [40, 16], [8, 14]];
+          line(g, 17, 1, 25, 7, '#5a70a0', 1); line(g, 25, 7, 35, 3, '#5a70a0', 1); line(g, 35, 3, 41, 11, '#5a70a0', 1);
+          for (const [sx, sy] of st) { R(g, 5 + sx, -6 + sy, 2, 2, '#f4f0d0'); R(g, 5 + sx, -6 + sy, 1, 1, '#ffffff'); }
+          R(g, 6, 12, 10, 2, '#b89a58');
+        } else for (let i = 0; i < 9; i++) { const x = 8 + i * 6, y = -3 + (i % 3) * 5; R(g, x, y, 3, 1, '#ffffff'); R(g, x + 1, y - 1, 1, 3, '#ffffff'); }
+      },
+      shadow: () => [32, 30, 30, 3, 0.3],
+    });
+    // Brass direction dial on a stone pedestal (o.point, o.frost).
+    A('sb_dial', {
+      box: [0, -20, 32, 54], ink: true,
+      v: (o) => (o.point || 'up') + (o.frost ? 'f' : ''),
+      draw(g, M, v) {
+        const s5 = M.stone;
+        cyl(g, 8, 4, 16, 24, s5); R(g, 8, 4, 16, 1, s5[4]); R(g, 5, 26, 22, 4, s5[2]); R(g, 5, 26, 22, 1, s5[4]);
+        ell(g, 16, -4, 12, 12, BR[1]); ell(g, 16, -4, 11, 11, BR[2]); ell(g, 15, -5, 8, 8, BR[3]); ell(g, 14, -7, 3, 3, BR[4]);
+        for (let i = 0; i < 8; i++) { const a = (i * Math.PI) / 4; R(g, Math.round(16 + Math.cos(a) * 9.5), Math.round(-4 + Math.sin(a) * 9.5), 1, 1, BR[0]); }
+        const dir = String(v).replace('f', ''), a = { up: -Math.PI / 2, down: Math.PI / 2, left: Math.PI, right: 0 }[dir] || -Math.PI / 2;
+        line(g, 16, -4, 16 + Math.cos(a) * 8, -4 + Math.sin(a) * 8, '#5a3a1a', 2);
+        R(g, 15, -5, 2, 2, BR[0]);
+      },
+      over(g, M, v) { if (String(v).indexOf('f') >= 0) { ell(g, 16, -4, 12, 12, 'rgba(220,240,255,0.55)'); R(g, 10, -10, 5, 1, '#ffffff'); R(g, 19, 0, 4, 1, '#ffffff'); } },
+      shadow: () => [16, 30, 12, 3, 0.3],
+    });
+    // Hatch crank: a spoked iron wheel on a post (o.turned, o.frost).
+    A('sb_crank', {
+      box: [0, -24, 32, 58], ink: true,
+      v: (o) => (o.turned ? 't' : '') + (o.frost ? 'f' : ''),
+      draw(g, M, v) {
+        const frost = String(v).indexOf('f') >= 0, r5 = frost ? ICE : ramp('#8a6a3a', 0.45, 0.4);
+        cyl(g, 14, -8, 4, 38, IR);
+        kit.spokeWheel(g, 16, -8, 12, 4, String(v).indexOf('t') >= 0 ? 0.8 : 0, r5, 3);
+        R(g, 26, -10, 3, 5, r5[1]);
+      },
+      shadow: () => [16, 30, 8, 2.5, 0.3],
+    });
+    // The great observatory lamp (o.lit, o.frozen): a columned stand, a tall
+    // glass shade with the name on it and a flame.
+    A('sb_greatlamp', {
+      box: [-4, -56, 72, 124], ink: true,
+      v: (o) => (o.lit ? 'l' : o.frozen ? 'z' : 'd'),
+      f: (t, o) => (o.lit ? kit.flick(t, o, 140) : 0),
+      draw(g, M, v, f) {
+        const s5 = ramp('#3a3440', 0.4, 0.45);
+        R(g, 10, 48, 44, 12, s5[2]); R(g, 10, 48, 44, 2, s5[4]);
+        cyl(g, 26, 12, 12, 36, s5);
+        R(g, 6, -48, 52, 6, s5[2]); R(g, 6, -48, 52, 1, s5[4]); R(g, 8, 10, 48, 4, s5[2]); R(g, 8, 10, 48, 1, s5[4]);
+        if (v === 'l') {
+          kit.lamp(g, 12, -42, 40, 52, [0, 1, 0, 2][f]);
+          kit.fire(g, 32, 4, 12, 26, f, 2);
+          R(g, 18, -32, 2, 14, '#3a2a20'); R(g, 44, -32, 2, 14, '#3a2a20');
+        } else {
+          const gl = v === 'z' ? ICE : ['#4a4a58', '#6a6a78', '#8a8a98', '#a4a4b0', '#c0c0cc'];
+          R(g, 12, -42, 40, 52, gl[2]); R(g, 12, -42, 4, 52, gl[3]); R(g, 48, -42, 4, 52, gl[1]); R(g, 12, -42, 40, 2, gl[4]);
+          if (v === 'z') { for (let i = 0; i < 7; i++) R(g, 14 + i * 5, 10, 2, 5 + (i % 3) * 3, ICE[4]); R(g, 20, -30, 16, 1, '#ffffff'); R(g, 16, -20, 24, 1, 'rgba(255,255,255,0.6)'); }
+        }
+        for (const x of [12, 31, 51]) R(g, x, -42, 1, 52, s5[1]);
+        R(g, 4, -52, 56, 4, s5[1]); R(g, 26, -56, 12, 4, s5[2]);
+        K.snowTops(g, -4, -60, 72, 14, SNOW, 3, 2);
+      },
+      over(g, M, v, f) { if (v === 'l') K.halo(g, 32, -14, 30, '#ffd27a', 0.16 + (f === 1 ? 0.03 : 0)); },
+      shadow: () => [32, 60, 26, 4, 0.34],
+    });
+    // Invisible footprint blocker: nothing to draw.
+    if (RB.props.P.sb_blocker) RB.props.P.sb_blocker.draw2 = () => {};
+    // The observatory (7×5): a coursed stone drum under a snow-dusted dome
+    // with an open slit, the lamp in it (o.lit), a door and two windows,
+    // snow on the ledge and icicles while it is dark.
+    A('sb_observatory', {
+      box: [-10, -44, 244, 216],
+      v: (o) => (o.lit ? 1 : 0),
+      f: (t, o) => (o.lit ? kit.flick(t, o, 160) : 0),
+      draw(g, M, v, f) {
+        const s5 = M.stone, W = 224;
+        // drum
+        for (let i = 0; i < W - 24; i++) R(g, 12 + i, 64, 1, 96, cylCol(i, W - 24, s5));
+        for (let r = 0; r < 8; r++) { R(g, 12, 70 + r * 12, W - 24, 1, s5[1]); for (let k = 0; k < 14; k++) { const x = 14 + k * 15 + (r % 2) * 7; if (x < W - 14) { R(g, x, 71 + r * 12, 1, 11, s5[1]); R(g, x + 1, 71 + r * 12, 3, 1, s5[4]); } } }
+        R(g, 4, 56, W - 8, 10, s5[3]); R(g, 4, 56, W - 8, 2, s5[4]); R(g, 4, 65, W - 8, 1, s5[0]);
+        // dome
+        const d5 = v ? ['#6a7888', '#8a98a8', '#b8c4d0', '#d8e0ea', '#f4f8fc'] : ['#7a8898', '#9aa8b8', '#c8d6e2', '#e4ecf4', '#ffffff'];
+        K.shade(g, 24, -32, 176, 92, d5, (fx, fy) => {
+          const nx = (fx - 112) / 88, ny = (fy - 60) / 88;
+          if (fy > 58 || nx * nx + ny * ny > 1) return null;
+          const nz = Math.sqrt(Math.max(0, 1 - nx * nx - ny * ny));
+          let I = -0.55 * nx - 0.5 * ny + 0.5 * nz - 0.1;
+          if (Math.abs(Math.atan2(ny, nx) + Math.PI / 2) % 0.6 < 0.03) I -= 0.3;
+          return I;
+        }, 9, 0.06, 8, 4);
+        // slit and lamp
+        R(g, 100, -24, 24, 82, '#1a2030'); R(g, 100, -24, 2, 82, '#2a3448');
+        if (v) { kit.lamp(g, 104, 10, 16, 34, [0, 1, 0, 2][f]); kit.fire(g, 112, 40, 8, 18, f, 1); }
+        else { R(g, 104, 14, 16, 30, '#6a88a8'); R(g, 104, 14, 16, 2, '#8aa8c8'); }
+        // door and windows
+        R(g, 97, 122, 30, 38, '#231a20'); R(g, 100, 125, 24, 35, M.wood[2]);
+        for (let i = 0; i < 24; i += 6) R(g, 100 + i, 125, 1, 35, M.wood[1]); R(g, 115, 142, 2, 3, BR[3]);
+        R(g, 94, 116, 36, 6, s5[2]); R(g, 94, 116, 36, 1, s5[4]);
+        for (const wx of [40, 164]) { R(g, wx - 1, 87, 22, 30, '#231a20'); if (v) kit.lamp(g, wx, 88, 20, 28, 0); else { R(g, wx, 88, 20, 28, '#6a88a8'); R(g, wx, 88, 20, 4, '#8aa8c8'); } R(g, wx + 9, 88, 2, 28, '#231a20'); }
+        K.snowTops(g, -10, -44, 244, 130, SNOW, 5, 4);
+        if (!v) for (let i = 0; i < 22; i++) { const L = 4 + ((i * 5) % 9); R(g, 12 + i * 9, 66, 2, Math.ceil(L / 2), ICE[3]); R(g, 12 + i * 9, 66 + Math.ceil(L / 2), 1, L >> 1, ICE[2]); }
+      },
+      over(g, M, v, f) { if (v) { K.halo(g, 112, 26, 34, '#ffd27a', 0.14 + (f === 1 ? 0.03 : 0)); } },
+      ground(g) { R(g, 8, 158, 216, 6, 'rgba(22,16,40,0.26)'); },
+    });
+    // Futon on tatami (o.col: the quilt's colour).
+    A('sb_futon', {
+      box: [-2, -2, 36, 68],
+      v: (o) => o.col || '#6a7aa8',
+      draw(g, M, v) {
+        const q = ramp(v, 0.45, 0.35);
+        R(g, 2, 2, 28, 60, PP[3]); R(g, 2, 2, 28, 1, PP[4]); R(g, 29, 2, 1, 60, PP[1]);
+        R(g, 5, 4, 22, 10, PP[4]); R(g, 5, 13, 22, 1, PP[1]); R(g, 7, 5, 4, 7, '#ffffff');
+        R(g, 2, 18, 28, 44, q[2]); R(g, 2, 18, 28, 3, q[4]); R(g, 2, 21, 28, 1, q[1]); R(g, 2, 18, 2, 44, q[3]); R(g, 28, 18, 2, 44, q[1]);
+        for (let i = 0; i < 3; i++) { R(g, 7 + i * 8, 26 + i * 10, 4, 4, q[3]); R(g, 8 + i * 8, 27 + i * 10, 2, 2, q[4]); }
+        R(g, 2, 44, 28, 1, q[1]);
+      },
+      shadow: () => [16, 62, 15, 2, 0.2],
+    });
+    // Stacked firewood, end grain out (snow on top outdoors).
+    A('sb_woodpile', {
+      box: [-2, -20, 68, 54],
+      v: (o) => (o.indoor ? 1 : 0),
+      draw(g, M, v) {
+        const w5 = M.wood;
+        for (let r = 0; r < 3; r++) for (let k = 0; k < 5 - (r % 2); k++) {
+          const cx = 7 + k * 12 + (r % 2) * 6, cy = 22 - r * 10;
+          ell(g, cx, cy, 6, 5, w5[1]); ell(g, cx - 0.5, cy - 0.5, 5, 4, w5[3]); ell(g, cx - 1, cy - 1, 2.6, 2, w5[4]); R(g, cx - 1, cy - 1, 1, 1, w5[2]);
+        }
+        if (!v) K.snowTops(g, -2, -20, 68, 30, SNOW, 3, 3);
+      },
+      shadow: () => [32, 29, 30, 3, 0.3],
+    });
+    // Snow sculptures for the children's contest.
+    A('sb_snowgoat', {
+      box: [-6, -16, 44, 50],
+      v: (o) => (o.oneHorn ? 1 : 0),
+      draw(g, M, v) {
+        shadeBall(g, 17, 18, 13, 9, SNOW, 1);
+        shadeBall(g, 7, 6, 7, 6, SNOW, 2);
+        line(g, 3, 1, 1, -7, '#8a7a6a', 2); if (!v) line(g, 8, 0, 9, -8, '#8a7a6a', 2);
+        R(g, 4, 5, 2, 2, '#2a2a2a'); R(g, 5, 11, 4, 3, '#e8e0d0');
+        for (const x of [9, 14, 21, 26]) R(g, x, 25, 3, 4, SNOW[2]);
+      },
+      shadow: () => [17, 29, 14, 3, 0.25],
+    });
+    A('sb_snowobs', {
+      box: [0, -20, 32, 54],
+      draw(g) {
+        R(g, 6, 4, 20, 24, SNOW[3]); R(g, 6, 4, 3, 24, SNOW[4]); R(g, 23, 4, 3, 24, SNOW[1]);
+        shadeBall(g, 16, 4, 10, 9, SNOW, 3); R(g, 6, 4, 20, 1, SNOW[2]);
+        R(g, 14, 14, 4, 14, '#9ab0c0'); R(g, 15, -4, 2, 8, '#6a88a8');
+        ell(g, 16, -8, 3.5, 3.5, '#c83a3a'); R(g, 15, -10, 1, 1, '#f08a7a');
+      },
+      shadow: () => [16, 29, 12, 3, 0.25],
+    });
+    A('sb_snowfox', {
+      box: [-4, -12, 40, 46],
+      v: (o) => (o.bigTail ? 1 : 0),
+      draw(g, M, v) {
+        shadeBall(g, 26, 12, 7, v ? 9 : 5, SNOW, 4);
+        shadeBall(g, 14, 18, 12, 8, SNOW, 1);
+        shadeBall(g, 8, 6, 7, 6, SNOW, 2);
+        poly(g, [3, 2, 4, -6, 8, 0], SNOW[3]); poly(g, [9, 0, 12, -7, 14, 1], SNOW[2]);
+        R(g, 5, 5, 2, 2, '#3a2a2a'); R(g, 2, 8, 2, 1, '#3a2a2a');
+      },
+      shadow: () => [16, 29, 14, 3, 0.25],
+    });
+  })();
+
   // ---- overworld creatures ---------------------------------------------------------------
   const R = (c, x, y, w, h, col) => { c.fillStyle = col; c.fillRect(x, y, w, h); };
   RB.sprites.custom.goat = (c, look, d, f) => {

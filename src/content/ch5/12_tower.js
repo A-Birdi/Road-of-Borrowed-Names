@@ -124,6 +124,171 @@ var RB = (globalThis.RB = globalThis.RB || {});
     px(c, x + 14 + sw, y + 23, 4, 4, '#3a3020');
   });
 
+  // ---- art-resolution versions (draw2; rules and helpers: src/engine/26–28_*.js) ----
+  (function () {
+    const A = RB.propArt && RB.propArt.art, Kt = RB.propKit;
+    if (!A) return;
+    const kit = RB.propArt.kit, { R, ell, poly, line, cyl, cylCol, mix, ramp, hh } = Kt;
+    const IR = Kt.FIX.iron, BR = Kt.FIX.brass, PIPE = ramp('#3a3850', 0.45, 0.45);
+    const BRONZE = ramp('#b8984a', 0.5, 0.4), PATINA = ramp('#5a6a52', 0.45, 0.4);
+    // Iron grate in the embankment; a faint light hums behind the bars.
+    A('lf_grate', {
+      box: [0, 0, 32, 34], outline: false,
+      f: (t, o) => Kt.frame(t, 300, 3, o.still),
+      draw(g, M, v, f) {
+        const s5 = M.stone;
+        R(g, 2, 6, 28, 22, s5[1]); R(g, 2, 6, 28, 1, s5[3]);
+        R(g, 4, 8, 24, 18, '#1a1828');
+        R(g, 6, 18 - f * 2, 20, 3, 'rgba(150,170,240,0.35)'); R(g, 8, 19 - f * 2, 16, 1, 'rgba(190,205,255,0.5)');
+        for (let i = 0; i < 6; i++) { cyl(g, 5 + i * 4, 8, 2, 18, IR); }
+        R(g, 4, 8, 24, 2, IR[3]); R(g, 4, 24, 24, 2, IR[1]);
+        R(g, 2, 27, 28, 2, s5[0]);
+      },
+    });
+    // Sluice wheel on a post (o.shut: turned closed, brass handles bright).
+    A('lf_wheel', {
+      box: [0, -20, 32, 54], ink: true,
+      v: (o) => (o.shut ? 1 : 0),
+      draw(g, M, v) {
+        kit.post(g, 14, 6, 4, 24, M.wood);
+        kit.spokeWheel(g, 16, 4, 12, 4, v ? Math.PI / 4 : 0, v ? BR : ramp('#7a6a4a', 0.45, 0.35), 3);
+        for (let i = 0; i < 4; i++) { const a = (v ? Math.PI / 4 : 0) + (i * Math.PI) / 2; R(g, Math.round(16 + Math.cos(a) * 13) - 1, Math.round(4 + Math.sin(a) * 13) - 1, 3, 3, v ? BR[3] : '#5a4a3a'); }
+      },
+      shadow: () => [16, 30, 10, 2.5, 0.3],
+    });
+    // Floor lever on a stone base (o.pulled: thrown over; o.col: grip colour).
+    A('lf_lever', {
+      box: [-6, -26, 44, 60], ink: true,
+      v: (o) => (o.pulled ? 'p' : 'u') + (o.col || '#a8784a'),
+      draw(g, M, v) {
+        const s5 = M.stone, pulled = v[0] === 'p', grip = ramp(v.slice(1), 0.45, 0.35);
+        R(g, 5, 20, 22, 10, s5[2]); R(g, 5, 20, 22, 2, s5[4]); R(g, 26, 20, 1, 10, s5[1]); R(g, 11, 22, 10, 3, '#1a1418');
+        const a = (pulled ? 0.9 : -0.2) - Math.PI / 2, ex = 16 + Math.cos(a) * 24, ey = 22 + Math.sin(a) * 24;
+        line(g, 16, 22, ex, ey, '#6a5a4a', 3); line(g, 15, 22, ex - 1, ey, '#8a7a6a', 1);
+        ell(g, ex, ey, 5, 4, grip[2]); R(g, Math.round(ex) - 3, Math.round(ey) - 3, 3, 1, grip[4]); R(g, Math.round(ex) - 1, Math.round(ey) + 2, 4, 1, grip[1]);
+        ell(g, 16, 22, 3, 2, IR[3]);
+      },
+      shadow: () => [16, 30, 12, 2.5, 0.3],
+    });
+    // Bronze instruction plate on a post (interactable).
+    A('lf_plate', {
+      box: [0, -6, 32, 40], ink: true,
+      draw(g, M) {
+        kit.post(g, 14, 16, 4, 14, M.stone);
+        R(g, 2, -2, 28, 20, BRONZE[0]); R(g, 3, -1, 26, 18, BRONZE[2]); R(g, 3, -1, 26, 1, BRONZE[4]); R(g, 3, -1, 1, 18, BRONZE[3]); R(g, 28, 0, 1, 17, BRONZE[1]);
+        for (let i = 0; i < 4; i++) kit.glyph(g, 6 + i * 5, 3, hh(i, 2, 3), BRONZE[0]);
+        for (let i = 0; i < 3; i++) kit.glyph(g, 6 + i * 5, 10, hh(i, 5, 3), BRONZE[0]);
+        for (const [x, y] of [[4, 0], [26, 0], [4, 15], [26, 15]]) R(g, x, y, 1, 1, BRONZE[4]);
+      },
+      shadow: () => [16, 30, 7, 2, 0.3],
+    });
+    // Floodwater over a tile: flat water with slow ripples that line up
+    // across neighbouring tiles (four cached frames per layout).
+    A('lf_flood', {
+      box: [0, 0, 32, 32], outline: false,
+      v: (o) => hh(o.cx | 0, o.cy | 0, 9) % 4,
+      f: (t, o) => (o.still ? 0 : Math.floor(t / 700 + ((o.cx | 0) * 3 + (o.cy | 0) * 5)) % 4),
+      draw(g, M, v, f, info, pal) {
+        const w = pal.water;
+        R(g, 0, 0, 32, 32, w[0]);
+        const y1 = 6 + (v % 3) * 6, x1 = (v * 9 + f * 6) % 24;
+        R(g, x1, y1, 8, 1, w[1]); R(g, x1 + 2, y1 + 1, 4, 1, w[1]);
+        R(g, (x1 + 13) % 26, 24 - v, 6, 1, w[1]);
+        if (f === v) R(g, (v * 7 + 5) % 26, 16, 3, 1, w[2]);
+      },
+    });
+    // The hush conduit: an old flanged pipe with pale motes drifting up it.
+    A('lf_conduit', {
+      box: [0, -20, 32, 54],
+      f: (t, o) => Kt.frame(t, 150, 6, o.still, (o.cy | 0) * 0.8),
+      draw(g) {
+        for (let i = 0; i < 16; i++) R(g, 8 + i, -16, 1, 46, cylCol(i, 16, PIPE));
+        for (const y of [-16, 8, 24]) { for (let i = 0; i < 20; i++) R(g, 6 + i, y, 1, 4, cylCol(i, 20, PIPE)); R(g, 6, y, 20, 1, PIPE[4]); }
+        for (const [x, y] of [[8, -15], [22, -15], [8, 9], [22, 9]]) R(g, x, y, 2, 2, IR[4]);
+      },
+      over(g, M, v, f) {
+        for (let i = 0; i < 3; i++) { const ph = ((f / 6 + i / 3) % 1); R(g, 15, Math.round(22 - ph * 40), 2, 2, 'rgba(190,200,255,' + (0.8 - ph * 0.6).toFixed(2) + ')'); }
+      },
+      shadow: () => [16, 30, 10, 2.5, 0.3],
+    });
+    // Sluice gate: stacked boards between three stone piers.
+    A('lf_sluicegate', {
+      box: [-2, -16, 164, 50],
+      draw(g, M) {
+        const w5 = M.wood, s5 = M.stone;
+        for (let r = 0; r < 3; r++) kit.plank(g, 0, 2 + r * 8, 160, 8, w5, r + 3);
+        for (let x = 20; x < 160; x += 40) { R(g, x, 3, 2, 22, IR[2]); R(g, x, 3, 1, 22, IR[3]); }
+        for (const x of [0, 76, 152]) { for (let i = 0; i < 8; i++) R(g, x + i, -12, 1, 44, cylCol(i, 8, s5)); R(g, x - 1, -14, 10, 3, s5[3]); R(g, x - 1, -14, 10, 1, s5[4]); }
+      },
+      ground(g, M, v, f, info, pal) { R(g, 0, 26, 160, 4, Kt.rgba(pal.water[0], 0.7)); },
+    });
+    // The drowned bell tower: only the belfry clears the lake (o.rung).
+    A('lf_sunktower', {
+      box: [-6, -84, 108, 184],
+      v: (o) => (o.rung ? 1 : 0),
+      f: (t, o) => Kt.frame(t, 300, 4, o.still),
+      draw(g, M, v) {
+        const s5 = M.stone, W = 96, r5 = ramp('#2a2848', 0.4, 0.45);
+        for (let i = 0; i < W - 16; i++) R(g, 8 + i, -36, 1, 100, cylCol(i, W - 16, s5));
+        for (let r = 0; r < 14; r++) { R(g, 8, -32 + r * 7, W - 16, 1, s5[1]); for (let k = 0; k < 7; k++) { const x = 10 + k * 12 + (r % 2) * 6; if (x < W - 10) R(g, x, -31 + r * 7, 1, 6, s5[1]); } }
+        // belfry arch with the bell inside
+        R(g, 28, -20, 40, 44, '#141828'); ell(g, 48, -20, 20, 14, '#141828');
+        const b5 = v ? BRONZE : PATINA;
+        poly(g, [40, -16, 56, -16, 62, 12, 34, 12], b5[2]); poly(g, [40, -16, 45, -16, 41, 12, 34, 12], b5[3]); poly(g, [52, -16, 56, -16, 62, 12, 55, 12], b5[1]);
+        R(g, 34, 11, 28, 2, b5[0]); R(g, 46, -20, 4, 4, '#3a3020');
+        if (!v) { R(g, 38, 0, 4, 5, '#3a6a4a'); R(g, 52, -8, 5, 3, '#3a6a4a'); }
+        // roof
+        poly(g, [-2, -36, 48, -76, 98, -36], r5[2]); poly(g, [-2, -36, 48, -76, 40, -36], r5[3]);
+        for (let y = -70; y < -36; y += 6) R(g, 48 - (y + 76) * 1.25, y, (y + 76) * 2.5, 1, r5[1]);
+        R(g, -2, -38, 100, 3, r5[4]); R(g, -2, -35, 100, 1, r5[0]); R(g, 47, -82, 2, 8, IR[3]);
+      },
+      over(g, M, v, f, info, pal) {
+        const w = pal.water;
+        R(g, 0, 60, 96, 36, w[0]);
+        R(g, 2 + f * 2, 60, 92 - f * 2, 1, w[3]); R(g, 16 - f, 68, 64, 1, w[2]); R(g, 30 + f * 2, 78, 36, 1, w[1]);
+        R(g, 8, 62, 80, 3, Kt.rgba(w[2], 0.35));
+      },
+    });
+    // Open padlock on a chain, the key rusted into it.
+    A('lf_padlock', {
+      box: [0, -16, 32, 50], ink: true,
+      draw(g, M) {
+        kit.post(g, 14, -12, 4, 42, M.stone);
+        for (let i = 0; i < 5; i++) { R(g, 12 + (i % 2) * 4, -4 + i * 5, 4, 3, IR[3]); R(g, 13 + (i % 2) * 4, -3 + i * 5, 2, 1, IR[1]); }
+        const ru = ramp('#7a5a3a', 0.45, 0.35);
+        R(g, 8, 18, 16, 12, ru[2]); R(g, 8, 18, 16, 2, ru[4]); R(g, 22, 19, 2, 11, ru[1]);
+        line(g, 10, 18, 10, 11, IR[2], 2); line(g, 21, 15, 21, 11, IR[2], 2);
+        R(g, 14, 22, 3, 4, '#2a2020'); R(g, 16, 24, 9, 2, '#8a6a4a'); R(g, 24, 22, 3, 5, '#8a6a4a');
+      },
+      shadow: () => [16, 30, 8, 2, 0.3],
+    });
+    // The drowned bell (o.rung: bright bronze, swaying).
+    A('lf_bigbell', {
+      box: [-8, -30, 80, 98],
+      v: (o) => (o.rung ? 1 : 0),
+      f: (t, o) => (o.rung && !o.still ? Math.round(Math.sin(t / 300) * 2) + 2 : 2),
+      draw(g, M, v, f) {
+        const b5 = v ? BRONZE : PATINA, sw = (f - 2) * 1.5;
+        R(g, -4, -24, 72, 8, '#3a2e2a'); R(g, -4, -24, 72, 1, '#5a4a40'); R(g, 10, -22, 20, 2, '#241c1a');
+        R(g, 30, -16, 4, 12, '#3a2e2a');
+        Kt.shade(g, 0, -6, 64, 56, b5, (fx, fy) => {
+          const t = (fy + 4) / 48;
+          if (t < 0 || t > 1) return null;
+          const hw = t < 0.15 ? 16 * Math.sqrt(t / 0.15) : 16 + (t > 0.85 ? (t - 0.85) * 40 : t * 4);
+          const dx = fx - 32 - sw;
+          if (Math.abs(dx) > hw) return null;
+          let I = (-dx / hw) * 0.6 + 0.25 - t * 0.2;
+          if (Math.abs(fy - 18) < 1 || Math.abs(fy - 34) < 1) I -= 0.5;
+          if (!v && ((Math.floor(fx / 3) * 7 + Math.floor(fy / 3) * 3) % 11 === 0)) I -= 0.45;
+          return I;
+        }, 7, 0.08, 3, 2);
+        R(g, Math.round(28 + sw), 46, 8, 8, '#3a3020');
+      },
+      over(g, M, v) { if (v) Kt.halo(g, 32, 20, 28, '#ffe39c', 0.08); },
+      shadow: () => [32, 62, 24, 3, 0.25],
+    });
+  })();
+
   // ---- overworld creature sprites (16×24) ---------------------------------------------------------------
   const SP = RB.sprites.custom;
   const R = (c, x, y, w, h, col) => { c.fillStyle = col; c.fillRect(x, y, w, h); };
