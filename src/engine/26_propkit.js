@@ -257,7 +257,8 @@ RB.propKit = (function () {
         for (let i = L.length - 1; i >= 0; i--) {
           const c = L[i], dx = fx - c.x, dy = fy - c.y, dd = Math.sqrt(dx * dx + dy * dy);
           if (dd > c.r * (1 + c.a) + 0.5) continue;
-          const rr = rad(c, dx, dy);
+          // well inside the scalloped edge: no need for the exact edge radius
+          const rr = dd < c.r * (1 - c.a) - 1 ? c.r : rad(c, dx, dy);
           if (dd <= rr) { own = i; nx = dx / rr; ny = dy / rr; break; }
         }
         if (own < 0) continue;
@@ -268,8 +269,9 @@ RB.propKit = (function () {
         I += (((hh(cxc, cyc, seed) & 255) / 255) - 0.5) * tex;
         let k = I > 0.7 ? 4 : I > 0.4 ? 3 : I > 0.1 ? 2 : I > -0.22 ? 1 : 0;
         for (let j = own + 1; j < L.length; j++) {
-          const c = L[j], dx = fx - c.x, dy = fy - c.y;
-          if (Math.sqrt(dx * dx + dy * dy) <= rad(c, dx, dy) + 1.6) { k = Math.min(k, dy < 0 ? 1 : 0); break; }
+          const c = L[j], dx = fx - c.x, dy = fy - c.y, dd = Math.sqrt(dx * dx + dy * dy);
+          if (dd > c.r * (1 + c.a) + 1.6) continue;
+          if (dd <= rad(c, dx, dy) + 1.6) { k = Math.min(k, dy < 0 ? 1 : 0); break; }
         }
         const o4 = (py * Rg.W + px) * 4, col = C[k];
         d[o4] = col[0]; d[o4 + 1] = col[1]; d[o4 + 2] = col[2]; d[o4 + 3] = 255;

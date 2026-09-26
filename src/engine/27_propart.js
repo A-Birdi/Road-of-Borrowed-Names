@@ -181,16 +181,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const cl = [];
       for (let i = 0; i < 7; i++) {
         const r = hh(v, i, 23), a = (i / 7) * PI * 2 + v;
-        cl.push({ x: 16 + Math.cos(a) * 8 + ((r % 3) - 1), y: -2 + Math.sin(a) * 5 + (((r >>> 3) % 3) - 1), r: 7 + ((r >>> 6) % 2) });
+        cl.push({ x: 16 + Math.cos(a) * 9 + ((r % 3) - 1), y: 2 + Math.sin(a) * 5.5 + (((r >>> 3) % 3) - 1), r: 8 + ((r >>> 6) % 2) });
       }
-      cl.push({ x: 16, y: -4, r: 8 });
+      cl.push({ x: 16, y: 0, r: 9 });
       cl.sort((a, b) => a.y - b.y);
       K.foliage(g, cl, M.leaf, seed, { ao: 0.45 });
       // fruit: 3×3 rounds with a warm highlight and a cool underside
       const fr = ramp(pal.flower[3], 0.45, 0.4);
       for (let i = 0; i < 9; i++) {
         const r = hh(v, i, 29), a = (r % 628) / 100, d = 3 + ((r >>> 10) % 9);
-        const x = Math.round(16 + Math.cos(a) * d * 1.2), y = Math.round(-1 + Math.sin(a) * d * 0.7 + 1);
+        const x = Math.round(16 + Math.cos(a) * d * 1.3), y = Math.round(4 + Math.sin(a) * d * 0.75);
         R(g, x - 1, y, 3, 2, fr[2]); R(g, x, y - 1, 1, 1, fr[2]);
         R(g, x - 1, y - 1 + 1, 1, 1, fr[3]); R(g, x, y - 1, 1, 1, fr[4]);
         R(g, x, y + 2, 2, 1, fr[1]); R(g, x + 1, y + 1, 1, 1, fr[1]);

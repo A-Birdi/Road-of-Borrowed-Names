@@ -11598,7 +11598,8 @@ RB.propKit = (function () {
         for (let i = L.length - 1; i >= 0; i--) {
           const c = L[i], dx = fx - c.x, dy = fy - c.y, dd = Math.sqrt(dx * dx + dy * dy);
           if (dd > c.r * (1 + c.a) + 0.5) continue;
-          const rr = rad(c, dx, dy);
+          // well inside the scalloped edge: no need for the exact edge radius
+          const rr = dd < c.r * (1 - c.a) - 1 ? c.r : rad(c, dx, dy);
           if (dd <= rr) { own = i; nx = dx / rr; ny = dy / rr; break; }
         }
         if (own < 0) continue;
@@ -11609,8 +11610,9 @@ RB.propKit = (function () {
         I += (((hh(cxc, cyc, seed) & 255) / 255) - 0.5) * tex;
         let k = I > 0.7 ? 4 : I > 0.4 ? 3 : I > 0.1 ? 2 : I > -0.22 ? 1 : 0;
         for (let j = own + 1; j < L.length; j++) {
-          const c = L[j], dx = fx - c.x, dy = fy - c.y;
-          if (Math.sqrt(dx * dx + dy * dy) <= rad(c, dx, dy) + 1.6) { k = Math.min(k, dy < 0 ? 1 : 0); break; }
+          const c = L[j], dx = fx - c.x, dy = fy - c.y, dd = Math.sqrt(dx * dx + dy * dy);
+          if (dd > c.r * (1 + c.a) + 1.6) continue;
+          if (dd <= rad(c, dx, dy) + 1.6) { k = Math.min(k, dy < 0 ? 1 : 0); break; }
         }
         const o4 = (py * Rg.W + px) * 4, col = C[k];
         d[o4] = col[0]; d[o4 + 1] = col[1]; d[o4 + 2] = col[2]; d[o4 + 3] = 255;
@@ -11918,16 +11920,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const cl = [];
       for (let i = 0; i < 7; i++) {
         const r = hh(v, i, 23), a = (i / 7) * PI * 2 + v;
-        cl.push({ x: 16 + Math.cos(a) * 8 + ((r % 3) - 1), y: -2 + Math.sin(a) * 5 + (((r >>> 3) % 3) - 1), r: 7 + ((r >>> 6) % 2) });
+        cl.push({ x: 16 + Math.cos(a) * 9 + ((r % 3) - 1), y: 2 + Math.sin(a) * 5.5 + (((r >>> 3) % 3) - 1), r: 8 + ((r >>> 6) % 2) });
       }
-      cl.push({ x: 16, y: -4, r: 8 });
+      cl.push({ x: 16, y: 0, r: 9 });
       cl.sort((a, b) => a.y - b.y);
       K.foliage(g, cl, M.leaf, seed, { ao: 0.45 });
       // fruit: 3×3 rounds with a warm highlight and a cool underside
       const fr = ramp(pal.flower[3], 0.45, 0.4);
       for (let i = 0; i < 9; i++) {
         const r = hh(v, i, 29), a = (r % 628) / 100, d = 3 + ((r >>> 10) % 9);
-        const x = Math.round(16 + Math.cos(a) * d * 1.2), y = Math.round(-1 + Math.sin(a) * d * 0.7 + 1);
+        const x = Math.round(16 + Math.cos(a) * d * 1.3), y = Math.round(4 + Math.sin(a) * d * 0.75);
         R(g, x - 1, y, 3, 2, fr[2]); R(g, x, y - 1, 1, 1, fr[2]);
         R(g, x - 1, y - 1 + 1, 1, 1, fr[3]); R(g, x, y - 1, 1, 1, fr[4]);
         R(g, x, y + 2, 2, 1, fr[1]); R(g, x + 1, y + 1, 1, 1, fr[1]);
