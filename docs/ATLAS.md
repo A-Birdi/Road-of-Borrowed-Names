@@ -81,7 +81,7 @@ threshold → path room → fork ─┬─ branch A (1–2 rooms) ─┐
   reports no atlas errors or warnings (checked with a patched copy).
 - `RB.script.run` pops its `dialogue` mode only when the outermost scene ends, so calling
   it from inside a hook that runs within a scene leaves a stray `dialogue` mode (the world
-  freezes). The atlas uses a helper that restores the mode stack; other hook authors may
+  freezes). Fixed in the engine: every nested run now pops its own dialogue mode; other hook authors may
   hit the same thing.
 - The first-time atlas intro has Keeper Tsuru speak (as `rw.tsuru_post` does).
 

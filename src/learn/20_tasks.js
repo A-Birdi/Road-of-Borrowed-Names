@@ -209,6 +209,9 @@ RB.tasks = (function () {
           step.item = ['k:' + chars[i]].concat(step.item ? [].concat(step.item) : []);
           step.prompt = { en: (step.prompt && step.prompt.en ? step.prompt.en + ' ' : '') + 'Write the missing kana (' + RB.kana.romaji(chars[i]) + ').' };
           step.single = true;
+          // authored whole-word choices no longer fit a one-kana blank:
+          // let the choice mode build kana options (answer + confusables)
+          delete step.choices;
         } else {
           // Nothing taught yet in this answer: copy it with the model shown.
           step.copy = true;

@@ -50,7 +50,7 @@ RB.lex.add(RB.lex.parseTable(`
 大窯|おおがま|n|I|the great kiln
 更に|さらに|adv|I|further, even more
 柵|さく|n|I|fence
-行|ぎょう|ctr|I|line (of text)
+行|ぎょう|n|I|line (of text)
 強し|つよし|exp|A|strong (classical form of 強い, used in logs and notes)
 見失う|みうしなう|v5u|I|to lose sight of
 鍵束|かぎたば|n|I|bunch of keys
@@ -275,7 +275,7 @@ RB.lex.add(RB.lex.parseTable(`
 三十個目|さんじゅっこめ|n|E|the thirtieth (small object)
 受取人|うけとりにん|n|I|recipient
 手鐘|てがね|n|A|handbell
-予定|よてい|vs|E|plan, schedule
+予定|よてい|n|E|plan, schedule
 お世話|おせわ|n|E|care (余計なお世話 = none of your business)
 痛む|いたむ|v5m|I|to ache
 担ぐ|かつぐ|v5g|I|to carry on one's shoulders

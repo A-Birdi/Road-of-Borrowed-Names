@@ -149,9 +149,11 @@ RB.script = (function () {
       console.error('scene error', sceneId, err);
     } finally {
       running--;
+      // every run pushed one dialogue mode; pop it even when nested (a hook
+      // running a scene inside a scene) so no stray dialogue mode is left
+      RB.game.popMode('dialogue');
       if (running === 0) {
         RB.ui.dialogue.hide();
-        RB.game.popMode('dialogue');
         RB.world.refreshActors();
         RB.game.afterScene();
       }
@@ -164,9 +166,9 @@ RB.script = (function () {
       for (const l of lines) await RB.ui.dialogue.say(l);
     } finally {
       running--;
+      RB.game.popMode('dialogue');
       if (running === 0) {
         RB.ui.dialogue.hide();
-        RB.game.popMode('dialogue');
         RB.game.afterScene();
       }
     }

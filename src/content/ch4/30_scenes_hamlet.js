@@ -309,7 +309,7 @@ RB.script.add(`
 !if quest.sb_bell>=1 -> go
 fuki[tired]: ごほっ …… 。 おや 、 {旅|たび} の {人|ひと} かい 。 {見苦|みぐる}しい ところ を 。 || Koff… Oh, travellers, is it. Forgive the state of me.
 fuki: {鐘撞|かねつ}き の フキ だよ 。 {広場|ひろば} の {鐘|かね} を 、 {五十年|ごじゅうねん} {鳴|な}らして きた 。 {朝|あさ} 、 {昼|ひる} 、 {夕方|ゆうがた} 。 {吹雪|ふぶき} の とき も 、 {迷子|まいご} の とき も 。 || I'm Fuki, keeper of the bell. I've rung the bell in the square for fifty years. Morning, noon and evening. For storms, and for people lost.
-fuki[worry]: ところが この かぜ で 、 {柱|はしら} に {上|のぼ}れない 。 おまけ に 、 {柱|はしら} の {決|き}まり {書|が}き の {板|いた} が 、 {真|ま}っ{白|しろ} に なっちまった@なる 。 || But with this cold I can't climb the post. And on top of that, the board with the rules on it has gone blank as snow.
+fuki[worry]: ところが この かぜ で 、 {柱|はしら} に {上|のぼ}れない 。 おまけ に 、 {決|き}まり を {書|か}いた {柱|はしら} の {板|いた} が 、 {真|ま}っ{白|しろ} に なっちまった@なる 。 || But with this cold I can't climb the post. And on top of that, the board with the rules on it has gone blank as snow.
 fuki: {若|わか}い {者|もの} は 、 {板|いた} を {見|み}て {鳴|な}らして いた から ね 。 {今日|きょう} は {昼|ひる} の {鐘|かね} が {鳴|な}らない かも しれない 。 {昼|ひる} の {鐘|かね} が {鳴|な}らない と 、 {村|むら} じゅう {昼|ひる} ごはん を {食|た}べ{損|そこ}ねる んだよ 。 || The young ones always read the board to ring it. Today the noon bell might not ring at all. And when the noon bell doesn't ring, the whole hamlet misses lunch.
 fuki: わたし の {帳面|ちょうめん} に 、 {決|き}まり が {書|か}いて ある 。 {読|よ}んで 、 {代|か}わり に {鳴|な}らして くれない かい 。 || The rules are written in my notebook. Would you read them and ring it for me?
 !choice
@@ -391,8 +391,20 @@ narr: ごーん …… ごーん 。 {澄|す}んだ {音|おと} が 、 {雪|�
 !quest sb_bell 2
 
 @scene sb.fuki_after
+!if !quest.sb_bell -> offer
 fuki: かぜ は {治|なお}った よ 。 {灯|あか}り が ついた {晩|ばん} に 、 すっと {楽|らく}に なった 。 {気|き}の せい かね 。 || My cold's gone. The night the lamp came on, I felt better just like that. My imagination, maybe.
 fuki: {鐘|かね} と {灯|あか}り 。 {音|おと} と {光|ひかり} 。 {帰|かえ}り{道|みち} の {目印|めじるし} は 、 {二|ふた}つ ある ほう が いい 。 || The bell and the lamp. Sound and light. It's better for a way home to have two marks.
+
+!end
+:offer
+fuki: かぜ は {治|なお}った けど 、 {膝|ひざ} が ね 。 {梯子|はしご} は まだ {無理|むり} だ 。 {柱|はしら} の {板|いた} も {白|しろ}い まま さ 。 || My cold's better, but my knees aren't. The ladder's still beyond me. And the board on the post is still blank.
+fuki: わたし の {家|いえ} に {帳面|ちょうめん} が ある 。 {決|き}まり を {覚|おぼ}えて 、 {昼|ひる} の {鐘|かね} を {鳴|な}らして くれない かい 。 || My notebook's at my house. Would you learn the rules and ring the noon bell for me?
+!choice
+* {任|まか}せて ください || Leave it to us. -> yes
+* また {今度|こんど} || Another time. -> end
+:yes
+!quest sb_bell start
+fuki[smile]: ありがたい 。 {帳面|ちょうめん} は {本|ほん} の {山|やま} の {上|うえ} だよ 。 || Bless you. The notebook's on top of the pile of books.
 
 @scene sb.fuki_post
 ?(sb_hoshino_goes) fuki: ホシノ は {娘|むすめ} の ところ へ {下|くだ}った 。 {灯|あか}り は カンタ の {仕事|しごと} に なった よ 。 {約束|やくそく} は 、 {人|ひと} から {人|ひと} へ {渡|わた}せる もん だ ね 。 || Hoshino went down to his daughter. The lamp's Kanta's job now. Turns out a promise can be passed from hand to hand.

@@ -59,12 +59,12 @@ RB.lex.add(RB.lex.parseTable(`
 当書庫|とうしょこ|n|A|this archive (formal, in a charter)
 係|かかり|n|E|person in charge, attendant
 係員|かかりいん|n|I|attendant, staff member
-仕分け|しわけ|vs|I|sorting, classification
+仕分け|しわけ|n|I|sorting, classification
 移る|うつる|v5r|E|to move, shift; to be passed on (a habit)
 未分類|みぶんるい|n|A|unclassified
 分類|ぶんるい|vs|I|classification, sorting
 分類名|ぶんるいめい|n|A|category name
-ばらばら||adv|I|scattered, in pieces; loose
+ばらばら||adj-na|I|scattered, in pieces; loose
 書き損じ|かきそんじ|n|A|spoiled sheet, miswritten page
 芸名|げいめい|n|I|stage name
 栞|しおり|n|I|bookmark
@@ -78,7 +78,7 @@ RB.lex.add(RB.lex.parseTable(`
 収蔵|しゅうぞう|vs|A|accession, adding to a collection
 四十|よんじゅう|n|E|forty
 百三|ひゃくさん|n|I|one hundred and three
-不明|ふめい|adj-na|I|unknown, unclear
+不明|ふめい|n|I|unknown, unclear
 文書|ぶんしょ|n|I|document
 定め|さだめ|n|A|rule, law; (here) charter|Also "fate" in literary use.
 災い|わざわい|n|A|disaster, calamity

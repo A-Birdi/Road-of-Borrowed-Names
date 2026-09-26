@@ -32,6 +32,11 @@ RB.test = (function () {
         const r2 = RB.challenge.check(plain(a), step);
         if (!r2.ok) T.problems.push({ where, msg: 'accepted form rejected', answer: a });
       }
+      // authored choices (before the UI's safety net) must include an accepted answer
+      if (step.choices) {
+        const acc = new Set((step.accept || [step.answer]).map(plain));
+        if (!step.choices.some((c) => acc.has(plain(c)))) T.problems.push({ where, msg: 'no correct choice among authored choices', answer: step.answer, choices: step.choices });
+      }
     } else if (step.kind === 'choose') {
       if (!step.options || !step.options.some((o) => o.ok)) T.problems.push({ where, msg: 'no correct option' });
     } else if (step.kind === 'order') {

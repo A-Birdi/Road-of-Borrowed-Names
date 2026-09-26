@@ -9,7 +9,7 @@ const fi = args.indexOf('--filter');
 const filter = fi >= 0 ? args[fi + 1] : null;
 
 globalThis.__RB_TEST__ = true;
-const RB = load(['core', 'lang', 'recog', 'engine', 'learn', 'ui', 'content'], { __RB_TEST__: true });
+const RB = load(['core', 'lang', 'recog', 'engine', 'learn', 'ui', 'content', 'atlas'], { __RB_TEST__: true });
 const C = RB.content;
 const errors = [], warns = [];
 const E = (m) => errors.push(m), Wn = (m) => warns.push(m);

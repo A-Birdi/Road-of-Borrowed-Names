@@ -158,6 +158,16 @@ narr: {雪見屋|ゆきみや} で {一晩|ひとばん} {休|やす}み 、 {�
 !heal
 !autosave
 
+@scene sb.next_day_inn
+!unset sb_evening
+!set sb_after
+!fade out
+narr: その {夜|よる} は 、 {雪見屋|ゆきみや} の {二階|にかい} で {休|やす}んだ 。 {窓|まど} の {外|そと} で は 、 {山|やま} の {上|うえ} の {灯|あか}り が 、 {朝|あさ} まで {消|き}えなかった 。 || That night you rest upstairs at Yukimiya. Outside the window, the lamp on the mountain stays lit until morning.
+!heal
+!fade in
+narr: {朝|あさ} に なった 。 {坂|さか} の {下|した} の ほう から 、 シャベル の {音|おと} が {聞|き}こえる 。 ハヤテ が {灯落|ひおち} へ の {道|みち} を {開|あ}けて いる らしい 。 || Morning. From down the slope comes the sound of a shovel: Hayate is clearing the road to Lanternfall.
+!autosave
+
 @scene sb.eve_yae
 yae[smile]: {帰|かえ}って きたら 、 {熱|あつ}い の を {用意|ようい} する って {言|い}った でしょ 。 {宿|やど} に {甘酒|あまざけ} が ある よ 。 {今夜|こんや} は {全部|ぜんぶ} {店|みせ} の おごり ！ || I said I'd have something hot ready when you got back. There's amazake at the inn. Tonight it's all on the house!
 

@@ -12496,9 +12496,11 @@ RB.script = (function () {
       console.error('scene error', sceneId, err);
     } finally {
       running--;
+      // every run pushed one dialogue mode; pop it even when nested (a hook
+      // running a scene inside a scene) so no stray dialogue mode is left
+      RB.game.popMode('dialogue');
       if (running === 0) {
         RB.ui.dialogue.hide();
-        RB.game.popMode('dialogue');
         RB.world.refreshActors();
         RB.game.afterScene();
       }
@@ -12511,9 +12513,9 @@ RB.script = (function () {
       for (const l of lines) await RB.ui.dialogue.say(l);
     } finally {
       running--;
+      RB.game.popMode('dialogue');
       if (running === 0) {
         RB.ui.dialogue.hide();
-        RB.game.popMode('dialogue');
         RB.game.afterScene();
       }
     }
@@ -13726,6 +13728,11 @@ RB.test = (function () {
         const r2 = RB.challenge.check(plain(a), step);
         if (!r2.ok) T.problems.push({ where, msg: 'accepted form rejected', answer: a });
       }
+      // authored choices (before the UI's safety net) must include an accepted answer
+      if (step.choices) {
+        const acc = new Set((step.accept || [step.answer]).map(plain));
+        if (!step.choices.some((c) => acc.has(plain(c)))) T.problems.push({ where, msg: 'no correct choice among authored choices', answer: step.answer, choices: step.choices });
+      }
     } else if (step.kind === 'choose') {
       if (!step.options || !step.options.some((o) => o.ok)) T.problems.push({ where, msg: 'no correct option' });
     } else if (step.kind === 'order') {
@@ -14198,6 +14205,9 @@ RB.tasks = (function () {
           step.item = ['k:' + chars[i]].concat(step.item ? [].concat(step.item) : []);
           step.prompt = { en: (step.prompt && step.prompt.en ? step.prompt.en + ' ' : '') + 'Write the missing kana (' + RB.kana.romaji(chars[i]) + ').' };
           step.single = true;
+          // authored whole-word choices no longer fit a one-kana blank:
+          // let the choice mode build kana options (answer + confusables)
+          delete step.choices;
         } else {
           // Nothing taught yet in this answer: copy it with the model shown.
           step.copy = true;
@@ -16382,6 +16392,8 @@ RB.challenge = (function () {
       opts = [ans].concat(d);
     }
     const acc = new Set((step.accept || [step.answer]).map(plain));
+    // choice mode must always contain a right answer
+    if (!opts.some((o) => acc.has(plain(o)))) opts.unshift(ans);
     const r = RB.util.rng(RB.util.hashStr(ans + RB.learn.clock()));
     return r.shuffle(Array.from(new Set(opts.map(plain)))).map((t) => ({ text: t, ok: acc.has(t) }));
   }
@@ -24665,7 +24677,7 @@ RB.lex.add(RB.lex.parseTable(`
 大窯|おおがま|n|I|the great kiln
 更に|さらに|adv|I|further, even more
 柵|さく|n|I|fence
-行|ぎょう|ctr|I|line (of text)
+行|ぎょう|n|I|line (of text)
 強し|つよし|exp|A|strong (classical form of 強い, used in logs and notes)
 見失う|みうしなう|v5u|I|to lose sight of
 鍵束|かぎたば|n|I|bunch of keys
@@ -24890,7 +24902,7 @@ RB.lex.add(RB.lex.parseTable(`
 三十個目|さんじゅっこめ|n|E|the thirtieth (small object)
 受取人|うけとりにん|n|I|recipient
 手鐘|てがね|n|A|handbell
-予定|よてい|vs|E|plan, schedule
+予定|よてい|n|E|plan, schedule
 お世話|おせわ|n|E|care (余計なお世話 = none of your business)
 痛む|いたむ|v5m|I|to ache
 担ぐ|かつぐ|v5g|I|to carry on one's shoulders
@@ -28979,9 +28991,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
 用|よう|n|I|business, errand
 支度|したく|n|I|preparations
 一休み|ひとやすみ|n|I|a short rest
-休憩|きゅうけい|n|I|break, rest
+休憩|きゅうけい|vs|I|break, rest
 後半|こうはん|n|I|second half
-一周|いっしゅう|n|I|going all the way round
+一周|いっしゅう|vs|I|going all the way round
 往復|おうふく|n|I|round trip
 割|わり|n|I|rate (割がいい: it pays well)
 価値|かち|n|I|value, worth
@@ -29001,7 +29013,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 解説|かいせつ|n|I|explanation
 違反|いはん|n|I|violation, breach
 失格|しっかく|n|I|disqualification; failure (as…)
-禁止|きんし|n|I|prohibition
+禁止|きんし|vs|I|prohibition
 事項|じこう|n|A|matter, item
 文句|もんく|n|I|complaint
 格好|かっこう|n|I|appearance; (格好いい) cool
@@ -29148,7 +29160,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 真似事|まねごと|n|A|imitation, playing at
 無茶|むちゃ|n|I|unreasonable, absurd
 内緒|ないしょ|n|E|secret
-馬鹿|ばか|n|E|fool
+馬鹿|ばか|adj-na|E|fool; foolish
 悪趣味|あくしゅみ|n|A|bad taste
 大成功|だいせいこう|n|I|great success
 大騒ぎ|おおさわぎ|n|I|uproar
@@ -29173,7 +29185,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 以て|もって|exp|A|by means of (〜を以て)
 しかるのち||conj|A|thereafter (formal, literary)
 べし||aux|A|should, must (classical; in instructions)
-ご覧|ごらん|exp|I|look (見てごらん: have a look)
+ご覧|ごらん|n|I|look (見てごらん: have a look)
 いかん||exp|I|won't do; (〜ないといかん) must (casual, older speech)
 ほか||n|I|other; (〜ほかない) there is no choice but
 べき||aux|I|should, ought to (〜べき)
@@ -29214,16 +29226,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
 懐|ふところ|n|A|inside the front of one's kimono or coat
 訂正|ていせい|vs|I|correction
 追加|ついか|vs|I|addition
-勘弁|かんべん|n|A|pardon (勘弁して: go easy on me, forgive me)
+勘弁|かんべん|vs|A|pardon (勘弁して: go easy on me, forgive me)
 商売|しょうばい|n|I|business, trade
 引退|いんたい|vs|I|retirement
-瞬き|まばたき|n|I|blink, twinkle
+瞬き|まばたき|vs|I|blink, twinkle
 先回り|さきまわり|n|A|getting there first, anticipating
 夕|ゆう|n|I|evening (written)
 水たまり|みずたまり|n|E|puddle
 これら||pn|I|these
 別|べつ|adj-na|E|separate, different
 代|だい|n|I|charge, cost (〜代: the cost of…)
+帳場|ちょうば|n|A|front desk, counter (of an inn or shop)
 # verbs
 上る|のぼる|v5r|E|to climb, go up (stairs, a slope); to rise
 上り切る|のぼりきる|v5r|I|to climb all the way to the top
@@ -30579,7 +30592,7 @@ RB.script.add(`
 !if quest.sb_bell>=1 -> go
 fuki[tired]: ごほっ …… 。 おや 、 {旅|たび} の {人|ひと} かい 。 {見苦|みぐる}しい ところ を 。 || Koff… Oh, travellers, is it. Forgive the state of me.
 fuki: {鐘撞|かねつ}き の フキ だよ 。 {広場|ひろば} の {鐘|かね} を 、 {五十年|ごじゅうねん} {鳴|な}らして きた 。 {朝|あさ} 、 {昼|ひる} 、 {夕方|ゆうがた} 。 {吹雪|ふぶき} の とき も 、 {迷子|まいご} の とき も 。 || I'm Fuki, keeper of the bell. I've rung the bell in the square for fifty years. Morning, noon and evening. For storms, and for people lost.
-fuki[worry]: ところが この かぜ で 、 {柱|はしら} に {上|のぼ}れない 。 おまけ に 、 {柱|はしら} の {決|き}まり {書|が}き の {板|いた} が 、 {真|ま}っ{白|しろ} に なっちまった@なる 。 || But with this cold I can't climb the post. And on top of that, the board with the rules on it has gone blank as snow.
+fuki[worry]: ところが この かぜ で 、 {柱|はしら} に {上|のぼ}れない 。 おまけ に 、 {決|き}まり を {書|か}いた {柱|はしら} の {板|いた} が 、 {真|ま}っ{白|しろ} に なっちまった@なる 。 || But with this cold I can't climb the post. And on top of that, the board with the rules on it has gone blank as snow.
 fuki: {若|わか}い {者|もの} は 、 {板|いた} を {見|み}て {鳴|な}らして いた から ね 。 {今日|きょう} は {昼|ひる} の {鐘|かね} が {鳴|な}らない かも しれない 。 {昼|ひる} の {鐘|かね} が {鳴|な}らない と 、 {村|むら} じゅう {昼|ひる} ごはん を {食|た}べ{損|そこ}ねる んだよ 。 || The young ones always read the board to ring it. Today the noon bell might not ring at all. And when the noon bell doesn't ring, the whole hamlet misses lunch.
 fuki: わたし の {帳面|ちょうめん} に 、 {決|き}まり が {書|か}いて ある 。 {読|よ}んで 、 {代|か}わり に {鳴|な}らして くれない かい 。 || The rules are written in my notebook. Would you read them and ring it for me?
 !choice
@@ -30661,8 +30674,20 @@ narr: ごーん …… ごーん 。 {澄|す}んだ {音|おと} が 、 {雪|�
 !quest sb_bell 2
 
 @scene sb.fuki_after
+!if !quest.sb_bell -> offer
 fuki: かぜ は {治|なお}った よ 。 {灯|あか}り が ついた {晩|ばん} に 、 すっと {楽|らく}に なった 。 {気|き}の せい かね 。 || My cold's gone. The night the lamp came on, I felt better just like that. My imagination, maybe.
 fuki: {鐘|かね} と {灯|あか}り 。 {音|おと} と {光|ひかり} 。 {帰|かえ}り{道|みち} の {目印|めじるし} は 、 {二|ふた}つ ある ほう が いい 。 || The bell and the lamp. Sound and light. It's better for a way home to have two marks.
+
+!end
+:offer
+fuki: かぜ は {治|なお}った けど 、 {膝|ひざ} が ね 。 {梯子|はしご} は まだ {無理|むり} だ 。 {柱|はしら} の {板|いた} も {白|しろ}い まま さ 。 || My cold's better, but my knees aren't. The ladder's still beyond me. And the board on the post is still blank.
+fuki: わたし の {家|いえ} に {帳面|ちょうめん} が ある 。 {決|き}まり を {覚|おぼ}えて 、 {昼|ひる} の {鐘|かね} を {鳴|な}らして くれない かい 。 || My notebook's at my house. Would you learn the rules and ring the noon bell for me?
+!choice
+* {任|まか}せて ください || Leave it to us. -> yes
+* また {今度|こんど} || Another time. -> end
+:yes
+!quest sb_bell start
+fuki[smile]: ありがたい 。 {帳面|ちょうめん} は {本|ほん} の {山|やま} の {上|うえ} だよ 。 || Bless you. The notebook's on top of the pile of books.
 
 @scene sb.fuki_post
 ?(sb_hoshino_goes) fuki: ホシノ は {娘|むすめ} の ところ へ {下|くだ}った 。 {灯|あか}り は カンタ の {仕事|しごと} に なった よ 。 {約束|やくそく} は 、 {人|ひと} から {人|ひと} へ {渡|わた}せる もん だ ね 。 || Hoshino went down to his daughter. The lamp's Kanta's job now. Turns out a promise can be passed from hand to hand.
@@ -31933,6 +31958,16 @@ narr: {広場|ひろば} の {人|ひと} たち と {話|はな}したら 、 {
 !set sb_after
 narr: {雪見屋|ゆきみや} で {一晩|ひとばん} {休|やす}み 、 {朝|あさ} に なった 。 {坂|さか} の {下|した} から 、 シャベル の {音|おと} が {聞|き}こえる 。 || You spend the night at Yukimiya, and morning comes. From down the slope comes the sound of a shovel.
 !heal
+!autosave
+
+@scene sb.next_day_inn
+!unset sb_evening
+!set sb_after
+!fade out
+narr: その {夜|よる} は 、 {雪見屋|ゆきみや} の {二階|にかい} で {休|やす}んだ 。 {窓|まど} の {外|そと} で は 、 {山|やま} の {上|うえ} の {灯|あか}り が 、 {朝|あさ} まで {消|き}えなかった 。 || That night you rest upstairs at Yukimiya. Outside the window, the lamp on the mountain stays lit until morning.
+!heal
+!fade in
+narr: {朝|あさ} に なった 。 {坂|さか} の {下|した} の ほう から 、 シャベル の {音|おと} が {聞|き}こえる 。 ハヤテ が {灯落|ひおち} へ の {道|みち} を {開|あ}けて いる らしい 。 || Morning. From down the slope comes the sound of a shovel: Hayate is clearing the road to Lanternfall.
 !autosave
 
 @scene sb.eve_yae
@@ -36682,12 +36717,12 @@ RB.lex.add(RB.lex.parseTable(`
 当書庫|とうしょこ|n|A|this archive (formal, in a charter)
 係|かかり|n|E|person in charge, attendant
 係員|かかりいん|n|I|attendant, staff member
-仕分け|しわけ|vs|I|sorting, classification
+仕分け|しわけ|n|I|sorting, classification
 移る|うつる|v5r|E|to move, shift; to be passed on (a habit)
 未分類|みぶんるい|n|A|unclassified
 分類|ぶんるい|vs|I|classification, sorting
 分類名|ぶんるいめい|n|A|category name
-ばらばら||adv|I|scattered, in pieces; loose
+ばらばら||adj-na|I|scattered, in pieces; loose
 書き損じ|かきそんじ|n|A|spoiled sheet, miswritten page
 芸名|げいめい|n|I|stage name
 栞|しおり|n|I|bookmark
@@ -36701,7 +36736,7 @@ RB.lex.add(RB.lex.parseTable(`
 収蔵|しゅうぞう|vs|A|accession, adding to a collection
 四十|よんじゅう|n|E|forty
 百三|ひゃくさん|n|I|one hundred and three
-不明|ふめい|adj-na|I|unknown, unclear
+不明|ふめい|n|I|unknown, unclear
 文書|ぶんしょ|n|I|document
 定め|さだめ|n|A|rule, law; (here) charter|Also "fate" in literary use.
 災い|わざわい|n|A|disaster, calamity
@@ -42685,13 +42720,9 @@ RB.hooks = RB.hooks || {};
       }
     }
   }
-  // Run an authored scene from inside a hook. RB.script.run pops its dialogue
-  // mode only when the outermost scene ends, so a nested run would leave one
-  // behind; restore the mode stack afterwards.
+  // Run an authored scene from inside a hook (nested runs pop their own mode).
   async function scene(id) {
-    const before = RB.game.G.modes.length;
     await RB.script.run(id);
-    while (RB.game.G.modes.length > before && RB.game.mode() === 'dialogue') RB.game.popMode('dialogue');
   }
   async function toast(kind, jp, en) { try { await RB.ui.toast({ kind, jp, en }); } catch (e) { /* headless */ } }
   function addNote(id) {

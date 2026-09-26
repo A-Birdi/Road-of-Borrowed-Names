@@ -33,6 +33,8 @@ RB.challenge = (function () {
       opts = [ans].concat(d);
     }
     const acc = new Set((step.accept || [step.answer]).map(plain));
+    // choice mode must always contain a right answer
+    if (!opts.some((o) => acc.has(plain(o)))) opts.unshift(ans);
     const r = RB.util.rng(RB.util.hashStr(ans + RB.learn.clock()));
     return r.shuffle(Array.from(new Set(opts.map(plain)))).map((t) => ({ text: t, ok: acc.has(t) }));
   }

@@ -367,9 +367,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
 用|よう|n|I|business, errand
 支度|したく|n|I|preparations
 一休み|ひとやすみ|n|I|a short rest
-休憩|きゅうけい|n|I|break, rest
+休憩|きゅうけい|vs|I|break, rest
 後半|こうはん|n|I|second half
-一周|いっしゅう|n|I|going all the way round
+一周|いっしゅう|vs|I|going all the way round
 往復|おうふく|n|I|round trip
 割|わり|n|I|rate (割がいい: it pays well)
 価値|かち|n|I|value, worth
@@ -389,7 +389,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 解説|かいせつ|n|I|explanation
 違反|いはん|n|I|violation, breach
 失格|しっかく|n|I|disqualification; failure (as…)
-禁止|きんし|n|I|prohibition
+禁止|きんし|vs|I|prohibition
 事項|じこう|n|A|matter, item
 文句|もんく|n|I|complaint
 格好|かっこう|n|I|appearance; (格好いい) cool
@@ -536,7 +536,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 真似事|まねごと|n|A|imitation, playing at
 無茶|むちゃ|n|I|unreasonable, absurd
 内緒|ないしょ|n|E|secret
-馬鹿|ばか|n|E|fool
+馬鹿|ばか|adj-na|E|fool; foolish
 悪趣味|あくしゅみ|n|A|bad taste
 大成功|だいせいこう|n|I|great success
 大騒ぎ|おおさわぎ|n|I|uproar
@@ -561,7 +561,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 以て|もって|exp|A|by means of (〜を以て)
 しかるのち||conj|A|thereafter (formal, literary)
 べし||aux|A|should, must (classical; in instructions)
-ご覧|ごらん|exp|I|look (見てごらん: have a look)
+ご覧|ごらん|n|I|look (見てごらん: have a look)
 いかん||exp|I|won't do; (〜ないといかん) must (casual, older speech)
 ほか||n|I|other; (〜ほかない) there is no choice but
 べき||aux|I|should, ought to (〜べき)
@@ -602,16 +602,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
 懐|ふところ|n|A|inside the front of one's kimono or coat
 訂正|ていせい|vs|I|correction
 追加|ついか|vs|I|addition
-勘弁|かんべん|n|A|pardon (勘弁して: go easy on me, forgive me)
+勘弁|かんべん|vs|A|pardon (勘弁して: go easy on me, forgive me)
 商売|しょうばい|n|I|business, trade
 引退|いんたい|vs|I|retirement
-瞬き|まばたき|n|I|blink, twinkle
+瞬き|まばたき|vs|I|blink, twinkle
 先回り|さきまわり|n|A|getting there first, anticipating
 夕|ゆう|n|I|evening (written)
 水たまり|みずたまり|n|E|puddle
 これら||pn|I|these
 別|べつ|adj-na|E|separate, different
 代|だい|n|I|charge, cost (〜代: the cost of…)
+帳場|ちょうば|n|A|front desk, counter (of an inn or shop)
 # verbs
 上る|のぼる|v5r|E|to climb, go up (stairs, a slope); to rise
 上り切る|のぼりきる|v5r|I|to climb all the way to the top

@@ -49,13 +49,9 @@ RB.hooks = RB.hooks || {};
       }
     }
   }
-  // Run an authored scene from inside a hook. RB.script.run pops its dialogue
-  // mode only when the outermost scene ends, so a nested run would leave one
-  // behind; restore the mode stack afterwards.
+  // Run an authored scene from inside a hook (nested runs pop their own mode).
   async function scene(id) {
-    const before = RB.game.G.modes.length;
     await RB.script.run(id);
-    while (RB.game.G.modes.length > before && RB.game.mode() === 'dialogue') RB.game.popMode('dialogue');
   }
   async function toast(kind, jp, en) { try { await RB.ui.toast({ kind, jp, en }); } catch (e) { /* headless */ } }
   function addNote(id) {
