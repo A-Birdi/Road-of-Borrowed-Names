@@ -19,7 +19,7 @@ Status: `[ ]` not started · `[~]` in progress · `[i]` implemented, unverified 
 - [i] R3.5 Antagonist (Kasane and the Hush) with understandable motive (docs/STORY.md; ch6 scenes)
 - [i] R3.6 Final choices about promises/repair (three ending choice pairs: memories return/choose, archive library/closed, Kasane trial/keeper), not a good/bad switch
 - [v] R3.7 Denouement tour of the five towns, companion-specific epilogue lines, post-story NPC lines varying by ending flags; every matrix run ends back in Reedwake with post-game flags (story_ch6.mjs talks to every post-story NPC)
-- [i] R3.8 Fast travel/shortcuts after routes explored
+- [v] R3.8 Fast travel/shortcuts after routes explored (systems.mjs: map-tab travel to all five hubs; dungeon shortcuts used by story tests)
 - [ ] R3.9 10–15h first playthrough target (NOT measured; cannot be measured by automation)
 
 ## Intro & creation [4]
@@ -53,7 +53,7 @@ Status: `[ ]` not started · `[~]` in progress · `[i]` implemented, unverified 
 - [i] R7.6 Kana inscriptions for beginners without invented kana meanings
 - [i] R7.7 Bosses combine learned ideas, not HP sponges
 - [v] R7.8 Recognition uncertainty never damages; capped mistake cost; assist mode no penalty
-- [i] R7.9 Defeat → checkpoint, learning kept
+- [v] R7.9 Defeat → checkpoint, learning kept (systems.mjs, combat result stubbed)
 
 ## Input modes [8]
 - [i] R8.1 Handwriting, multiple choice, IME; whole game completable without handwriting
@@ -95,7 +95,7 @@ Status: `[ ]` not started · `[~]` in progress · `[i]` implemented, unverified 
 ## Progression & QoL [13]
 - [i] R13.1 Notebook, journal, inventory, equipment, map, settings, history
 - [i] R13.2 Few meaningful growth systems; no paid explanations
-- [i] R13.3 Retreat, tutorials revisit, no softlocks, key items protected
+- [i] R13.3 Retreat (verified: systems.mjs step back; bosses excluded), tutorials revisit (guide tab), no softlocks found by 16 whole-game runs, key items protected
 - [i] R13.4 Fast/instant text, skip seen scenes, remap, volumes, reduced motion, text size, contrast
 
 ## Saves [14]
@@ -122,10 +122,10 @@ Status: `[ ]` not started · `[~]` in progress · `[i]` implemented, unverified 
 - [i] R16.5 Resize/orientation/touch; reduced motion; no flashing
 
 ## Audio [17]
-- [i] R17.1 Procedural music with motifs (road, settlements, mystery, combat, companions, ending)
-- [i] R17.2 SFX for movement, writing, recognition, spells, discoveries
-- [i] R17.3 Start after gesture; music/sfx/voice volume + mute; ducking
-- [i] R17.4 Optional local ja TTS with spoken-text field, cancel, no overlap, honest labelling
+- [i] R17.1 Procedural music with motifs (road, settlements, mystery, combat, companions, ending) — every song renders without clipping or silence (audio.check.mjs); musical quality not judged
+- [v] R17.2 SFX for movement, writing, recognition, spells, discoveries (audio.check.mjs renders every effect; live sfx while running)
+- [i] R17.3 Start after gesture; music/sfx/voice volume + mute; ducking — gesture start, volume, mute, crossfade and visibility suspend verified (audio.check.mjs); ducking not separately tested
+- [v] R17.4 Optional local ja TTS with honest labelling: only local voices listed, speak() refuses without a local Japanese voice (audio.check.mjs; the test browser has no Japanese voice, so actual speech was not heard)
 
 ## Validation [18]
 - [v] R18.1 Content validator (exits, spawns, prereqs, dialogue refs, furigana, answers)

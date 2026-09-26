@@ -27,17 +27,18 @@
   docs/AGENT_COMMON.md, docs/LANGUAGE.md, docs/RECOGNITION.md, docs/AUDIO.md.
 
 ## State
-- Engine, UI, saves, learning, combat, recognizer, language, audio: implemented.
-- Chapters 1, 3, 4, 5, 6 and the Unwritten Atlas complete (validator: no
-  errors). Chapter 2 (Saltglass) worker finishing its own tests; its files are
-  already in src/content/ch2 and validate.
-- Per-chapter browser story tests: tests/e2e/story_ch1.mjs, story_ch3.mjs,
-  side_ch3.mjs, story_ch4.mjs, story_ch6.mjs, atlas.check.mjs; generic blind
-  explorer tests/e2e/explore.mjs (chained targets `a>b>c`, optional map prefix).
-- Atlas restoration details (src/content/zz_atlas_decor.js): Reedwake, Cinder
-  Orchard, Snowbell, Lanternfall, lantern road done; Saltglass (flag
-  atlas_restore_2) pending until Chapter 2 is final.
-- Content counts: `node tools/validate.mjs --stats`.
+- Complete: engine, UI, saves, learning, combat, recognizer, language, audio,
+  Chapters 1–6 with ending/denouement, the Unwritten Atlas, New Game+.
+- Validator: no errors (`node tools/validate.mjs --stats` for counts).
+  Unit tests: 1815 pass. Browser: UI 13/13, systems 4/4, per-chapter story
+  tests, Atlas check, and the whole-game matrix: 16/16 profile × companion
+  combinations play a new campaign through all six chapters and one Atlas
+  expedition (tests/e2e/matrix.mjs). Details and dates in VALIDATION.md.
+- Test tooling: tests/e2e/drive.mjs (goal-directed driver: walks real maps,
+  interacts through the world), pursue.mjs (whole game), matrix.mjs,
+  run.mjs (suite runner), explore.mjs (random explorer, weaker).
+- Not verified by automation (needs people): real handwriting accuracy,
+  playtime, native-speaker review, music quality, audible TTS.
 
 ## Commands
 - Build: `node tools/build.mjs`
@@ -55,12 +56,11 @@
   screenshots: `node tests/e2e/shot.mjs out.png "<js>" [ms] [WxH]`.
 
 ## Next concrete actions
-1. Integrate the Chapter 2 worker's final report; add its story test; Saltglass
-   Atlas restoration detail (flag atlas_restore_2, harbour cargo tags).
-2. Full-game flow test: explorer chained ch1_done>ch2_done>…>ch6_done from a
-   new campaign, plus Atlas expedition after the ending.
-3. Visual review of screenshots per region; polish.
-4. Update REQUIREMENTS.md / VALIDATION.md with evidence; final report.
+1. Human play-testing: handwriting with real learners, pacing/playtime, and a
+   native-speaker review of the Japanese (content in src/content/*/).
+2. Optional polish found in review: lexicon part-of-speech warnings between
+   chapters (validator warnings), observatory dome sprite clipped at the top
+   of sb.obs_path (cosmetic), credits are a single card.
 
 ## Known issues / limits
 - No human handwriting samples tested (synthetic + font-derived only).
