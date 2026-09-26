@@ -20,7 +20,7 @@ narr: {彼|かれ} は {一枚|いちまい} の {紙|かみ} を {台|だい} �
 lf_tadashi[smile]: {確|たし}か に {承|うけたまわ}りました 。|| Duly received.
 !give lf_request_slip
 lf_tadashi: {洪水|こうずい} の {年|とし} の {台帳|だいちょう} は 、{左|ひだり} の {机|つくえ} に ございます 。ごゆっくり どうぞ 。|| The ledger for the flood year is on the desk to your left. Take all the time you need.
-?(comp=nao) comp[smirk]: {字|じ} が きれい すぎる {人|ひと} は 、{信用|しんよう} できない ん だよ な 。|| I never trust anyone whose handwriting is too neat.
+?(comp=nao) comp[smirk]: {字|じ} が きれい すぎる {人|ひと} は 、{信用|しんよう} できない ん だ よね 。|| I never trust anyone whose handwriting is too neat.
 ?(comp=mio) comp: ……{判子|はんこ} 、{二回|にかい} {押|お}した ね 。{表|おもて} と {裏|うら} に 。|| …He stamped it twice. Front and back.
 ?(comp=ren) comp: {記録|きろく} の {扱|あつか}い は 、{灯守|ひもり} より ずっと {丁寧|ていねい} です 。…… {丁寧|ていねい} すぎる くらい に 。|| He handles records far more carefully than any lantern keeper. …Almost too carefully.
 ?(comp=suzu) comp: {今|いま} の {芝居|しばい} 、{台本|だいほん} どおり すぎて {拍手|はくしゅ} しにくい わ 。|| That was so perfectly by the script I don't know whether to clap.
@@ -49,7 +49,7 @@ lf_tadashi: あれ {以来|いらい} 、{判子|はんこ} を {押|お}す {�
 lf_tadashi: …… {鐘|かね} の {音|おと} を {聞|き}いた とき 、{最初|さいしょ} に {出|で}た {言葉|ことば} は 「{困|こま}ります」 で ございました 。|| …When I heard the bell, the first words out of my mouth were "This is most inconvenient."
 lf_tadashi: {三十年|さんじゅうねん} {言|い}って いなかった {言葉|ことば} です 。|| Words I had not said in thirty years.
 lf_tadashi: {地下|ちか} の {元|もと} の {台帳|だいちょう} を 、{上|うえ} へ {戻|もど}します 。{写|うつ}し は 、{全部|ぜんぶ} {破棄|はき} いたします 。{承認|しょうにん} は …… {私|わたし} が いたします 。|| I am bringing the original ledgers up from the basement. The copies will all be destroyed. The approval… I shall give myself.
-?(comp=nao) comp: {破|やぶ}る の 、{手伝|てつだ}おう か ? {得意|とくい} だよ 。|| Want a hand tearing them up? I'm good at it.
+?(comp=nao) comp: {破|やぶ}る の 、{手伝|てつだ}おう か ？ {得意|とくい} だよ 。|| Want a hand tearing them up? I'm good at it.
 ?(comp=mio) comp[smile]: {元|もと} の {字|じ} の ほう が 、{読|よ}みにくくて も 、ずっと いい です よ 。|| The original writing's much better, even if it's harder to read.
 ?(comp=ren) comp: {元|もと} に {戻|もど}す こと を 、{記録|きろく} の {世界|せかい} で は 「{復元|ふくげん}」 と {言|い}う そう です 。{灯守|ひもり} で は 「{灯|ひ} を {入|い}れ{直|なお}す」 と {言|い}います 。|| In the world of records they call putting things back "restoration". Lantern keepers call it "relighting".
 ?(comp=suzu) comp: {写|うつ}し の {紙代|かみだい} 、ちゃんと {帳簿|ちょうぼ} に {付|つ}けて おいて ね 。|| Do put the paper for those copies down in the accounts.
@@ -111,7 +111,7 @@ akari[smile]: …… ごめんなさい 。お{客|きゃく}さま に こん�
 
 @scene lf.akari_reply
 pc: お{父|とう}さん から 、{手紙|てがみ} を {預|あず}かって います 。{宛名|あてな} は 、あなた を {見|み}つけたら {書|か}く よう に 、と 。|| I've brought a letter from your father. He asked me to write the address once I found you.
-akari[surprise]: …… {父|ちち} から ?|| …From my father?
+akari[surprise]: …… {父|ちち} から ？|| …From my father?
 narr: ホシノ の {封筒|ふうとう} 。{宛名|あてな} の {欄|らん} は 、{空|あ}いた まま だ 。|| Hoshino's envelope. The address line is still blank.
 !challenge lf.ch_akari_addr
 narr: {書|か}いた {字|じ} は 、{薄|うす}れ ない 。{封筒|ふうとう} は 、ちゃんと アカリ の {手|て} に {届|とど}いた 。|| The words you wrote don't fade. The envelope arrives, properly, in Akari's hands.
@@ -138,7 +138,7 @@ akari[smile]: 「{温|あたた}かく して {寝|ね}る んだ よ 」 。…
 pc: {洪水|こうずい} の {年|とし} の {台帳|だいちょう} を {写|うつ}した の は 、あなた です か 。|| Was it you who copied the ledger for the flood year?
 akari[worry]: …… はい 。{先月|せんげつ} 、{写|うつ}し{直|なお}す よう に {言|い}われて 。|| …Yes. I was told to recopy it last month.
 akari: {元|もと} の {台帳|だいちょう} に は 、ちゃんと …… {色々|いろいろ} {書|か}いて ありました 。|| The original had… all sorts of things written in it.
-pc: {元|もと} の {台帳|だいちょう} は 、どこ に ?|| Where's the original?
+pc: {元|もと} の {台帳|だいちょう} は 、どこ に ？|| Where's the original?
 akari[closed]: …… {地下|ちか} の {書庫|しょこ} は 、ちょっと …… 。|| …The basement stacks are, well…
 akari: {古|ふる}い {物|もの} ばかり です し 、{暗|くら}い です し 。{行|い}かない ほう が いい かも しれません ね 。|| It's all old things down there, and it's dark. It might be better not to go, perhaps.
 narr: そう {言|い}いながら 、アカリ は {真鍮|しんちゅう} の {鍵|かぎ} を 、{机|つくえ} の {上|うえ} で すっと こちら へ {滑|すべ}らせた 。|| As she says it, Akari slides a brass key across the desk towards you.
@@ -158,7 +158,7 @@ akari[smile]: …… {何|なん} の こと でしょう 。{私|わたし} は
 !goto hint
 
 @scene lf.akari_again
-akari[smile]: {地下|ちか} ? さあ 。{私|わたし} は {何|なに} も {存|ぞん}じません 。|| The basement? I'm sure I know nothing about it.
+akari[smile]: {地下|ちか} ？ さあ 。{私|わたし} は {何|なに} も {存|ぞん}じません 。|| The basement? I'm sure I know nothing about it.
 akari: …… {階段|かいだん} は 、{窓口|まどぐち} の {奥|おく} の {右|みぎ} です けど 。|| …The stairs are at the back of the counter, on the right. Not that I'd know.
 
 @scene lf.akari_after
@@ -190,6 +190,13 @@ akari[laugh]: …… {叱|しか}って やらなきゃ 。{油|あぶら} が �
 !set lf_akari_letter lf_akari_leave
 !journal アカリ は {雪鈴|ゆきすず} へ {向|む}かった 。{手紙|てがみ} が {先|さき} に {着|つ}く はず だ 。|| Akari has set off for Snowbell. Her letter should arrive just ahead of her.
 !autosave
+
+@scene lf.akari_post
+akari[smile]: あ 、お{久|ひさ}しぶり です 。{休|やす}み から 、{昨日|きのう} {戻|もど}りました 。|| Oh, it's been a while. I got back from leave yesterday.
+?(sb_hoshino_goes) akari: {父|ちち} とは {峠|とうげ} で {会|あ}えました 。{二人|ふたり} とも 、{相手|あいて} が {来|く}る ほう に {賭|か}けて いた んです 。|| I met Father at the pass. We'd each been betting the other would come.
+?(sb_hoshino_both) akari: {父|ちち} は {春|はる} に また {来|く}る そう です 。{灯|あか}り の {番|ばん} を {人|ひと} に {頼|たの}む の が 、{上手|じょうず} に なった みたい 。|| Father says he'll come again in spring. He's got good at asking people to mind the lamp.
+?(!sb_hoshino_goes&!sb_hoshino_both) akari: {父|ちち} は 、{毎晩|まいばん} {灯|あか}り を {点|つ}けて います 。{今|いま} は 、{私|わたし} も {橋|はし} の {上|うえ} から {見|み}て います 。|| Father lights the lamp every night. Now I watch for it from the bridge.
+akari[laugh]: {手紙|てがみ} で は 、{毎週|まいしゅう} {言|い}い{争|あらそ}って います 。{油|あぶら} の {無駄遣|むだづか}い に ついて 。|| We argue by letter every week now. About wasting lamp oil.
 
 @scene lf.akari_done
 akari: {荷造|にづく}り を して います 。…… {父|ちち} に 、{何|なに} か {伝言|でんごん} は あります か 。|| I'm packing. …Any message for my father?
@@ -275,7 +282,7 @@ narr: ヤエ は {微笑|ほほえ}んだ まま 、{少|すこ}し だけ {眉|
 ?(comp=suzu) comp: {台詞|せりふ} を {忘|わす}れた {役者|やくしゃ} の {顔|かお} ね 。{誰|だれ} か が {台本|だいほん} を {見|み}せて あげない と 。|| That's the face of an actor who's forgotten her line. Someone needs to show her the script.
 
 @scene lf.yae_minutes
-lf_yae: それ は …… {議事録|ぎじろく} ? {見|み}せて ください 。|| Are those… minutes? Let me see.
+lf_yae: それ は …… {議事録|ぎじろく} ？ {見|み}せて ください 。|| Are those… minutes? Let me see.
 narr: ヤエ は {眼鏡|めがね} を かけて 、ゆっくり と {読|よ}み{始|はじ}めた 。|| Yae puts on her spectacles and begins, slowly, to read.
 lf_yae: 「{高瀬|たかせ} より {返答|へんとう} 。{必要|ひつよう} なら {開|あ}ける 。」|| "Reply from Takase: we'll open it if it's needed."
 lf_yae: 「{本|ほん}{議会|ぎかい} は 、これ を {開|あ}けない {約束|やくそく} と {受|う}け{取|と}る 。」|| "This council takes this as a promise not to open it."
@@ -383,7 +390,7 @@ narr: {町|まち} に {入|はい}る と 、{声|こえ} が {一斉|いっせ
 lf_masaru: {無理|むり} です ！ {三百個|さんびゃっこ} なんて {焼|や}けません ！|| I can't! I can't bake three hundred!
 lf_kinu: {垣根|かきね} は {柿|かき} の {木|き} の {手前|てまえ} です よ ！|| The fence goes on THIS side of the persimmon!
 lf_kohei: いいや 、{向|む}こう だ ！|| No, the far side!
-lf_setsu: {本日|ほんじつ} は {満室|まんしつ} で ございます ！ ……{言|い}えた ！|| We're full tonight! …I said it!
+lf_setsu: {本日|ほんじつ} は {満室|まんしつ} です 。お{断|ことわ}り いたします ！ ……{言|い}えた ！|| We're full tonight — I must decline! …I said it!
 narr: {誰|だれ} も が 、{少|すこ}し {驚|おどろ}いた {顔|かお} で 、{自分|じぶん} の {声|こえ} を {聞|き}いて いる 。|| Everyone looks slightly startled, listening to their own voices.
 ?(comp=nao) comp[laugh]: …… うるさい 。すごく うるさい 。{最高|さいこう} じゃん 。|| …Noisy. Really noisy. It's great.
 ?(comp=mio) comp[laugh]: みんな 、{顔色|かおいろ} が いい 。{怒|おこ}ってる のに 、{元気|げんき} そう 。|| Everyone's colour looks better. They're angry, and they look so well.

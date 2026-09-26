@@ -27,7 +27,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     settle: { jp: '{霜|しも} は {静|しず}か に とけて 、 {床|ゆか} の {上|うえ} の {小|ちい}さな {水|みず}たまり に なった 。', en: 'The frost melts quietly into a small puddle on the floor.' } };
 
   EN['sb.ghost'] = { name: { en: 'Lantern Ghost', jp: '{名無|なな}し の {灯|ひ}' }, art: 'lantern', artOpts: { col: '#8ab8f0' }, look: { custom: 'lanternghost' }, region: 'snowbell', bg: 'observatory', knots: 3, pool,
-    pattern: ['shroud', 'lie:1', 'strike', 'rest'],
+    pattern: ['strike', 'lie:1', 'mend', 'rest'],
     intents: {
       'lie:1': { power: 1, target: 'rand',
         text: {
@@ -47,7 +47,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     settle: { jp: '{提灯|ちょうちん} は {床|ゆか} に {落|お}ち 、 {笠|かさ} に うっすら と {字|じ} が {浮|う}かんだ 。 {石段|いしだん} の {名前|なまえ} だ 。', en: 'The lantern drops to the floor, and faint letters surface on its shade: the name of the stair.' } };
 
   EN['sb.moth'] = { name: { en: 'Chart Moth', jp: '{星図|せいず}{蛾|が}' }, art: 'moth', artOpts: { col: '#2a3458', col2: '#c8d8f0' }, look: { custom: 'moth', col: '#8a9ac8' }, region: 'snowbell', bg: 'observatory', knots: 2, pool,
-    pattern: ['shroud', 'strike', 'mend', 'rest'],
+    pattern: ['strike', 'mend', 'rest', 'sweep'],
     intro: { jp: '{星図|せいず} の {切|き}れ{端|はし} を {羽|はね} に した {蛾|が} が 、 {星|ほし} の {名前|なまえ} を {粉|こな} に して {撒|ま}いて いる 。', en: 'A moth with wings made of torn star charts is scattering star names as dust.' },
     settle: { jp: '{羽|はね} の {星|ほし} に 、 {名前|なまえ} が {戻|もど}った 。 {蛾|が} は {棚|たな} の {隙間|すきま} へ {帰|かえ}って いく 。', en: 'The stars on its wings have their names back. The moth returns to a gap in the shelves.' } };
 
@@ -102,7 +102,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         } },
     },
     phases: [
-      { at: 3, pattern: ['chill:2', 'shroud', 'plea:1', 'chill:1'], who: 'sb_lampvoice',
+      { at: 3, pattern: ['chill:2', 'rest', 'plea:1', 'chill:1'], who: 'sb_lampvoice',
         line: { jp: '{灯|ひ} が {震|ふる}える 。 {冷|つめ}たさ の {奥|おく} から 、 {問|と}い が {聞|き}こえて くる 。', en: 'The lamp trembles. From deep in the cold, a question comes.' },
         teach: { en: 'The lamp is asking something (Plea). It isn\'t an attack: choose "Answer" and reply to what it really means — that loosens a knot. Its cold (Chill) is still answered by ほのお.' } },
       { at: 1, pattern: ['plea:2', 'rest', 'plea:2'], who: 'sb_lampvoice',

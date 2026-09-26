@@ -16,7 +16,7 @@ comp: {配達人|はいたつにん} の ナオ 。{潮硝子|しおがらす} �
 umi[surprise]: …… {父|ちち} から 。|| …From my father.
 umi[smile]: もちろん 、{受|う}け{取|と}ります 。|| Of course. I'll take it.
 narr: ウミ は {手|て} を {差|さ}し{出|だ}した 。{笑顔|えがお} の まま 、{指先|ゆびさき} が {少|すこ}し {震|ふる}えて いる 。|| Umi holds out her hand. Her smile doesn't move, but her fingertips are trembling slightly.
-comp[think]: …… {受|う}け{取|と}りたい ?|| …Do you want to take it?
+comp[think]: …… {受|う}け{取|と}りたい ？|| …Do you want to take it?
 umi: もちろん です 。|| Of course.
 comp: {読|よ}みたく ない なら 、{断|ことわ}って いい んだ よ 。|| If you don't want to read it, you're allowed to refuse.
 umi[smile]: かしこまりました 。|| Certainly.
@@ -36,7 +36,7 @@ comp[closed]: {鐘|かね} を {鳴|な}らしたら 、もう {一回|いっか
 !if seen.lf.nao_umi_first -> again
 umi[angry]: {三時|さんじ} の {舟|ふね} は {出|で}ません ！ …… あ 、ごめんなさい 。{言|い}える の が {嬉|うれ}しくて 。|| The three o'clock does NOT run! …Oh, sorry. I'm just so glad I can say it.
 comp[closed]: …… ウミ さん 。{潮硝子|しおがらす} の イサム さん から 、{手紙|てがみ} を {預|あず}かってる 。|| …Umi. I've got a letter for you, from Isamu in Saltglass.
-umi[surprise]: …… {父|ちち} から ?|| …From my father?
+umi[surprise]: …… {父|ちち} から ？|| …From my father?
 comp: {一年|いちねん} {前|まえ} に {預|あず}かった 。{渡|わた}さない と {決|き}めた 。{君|きみ} に {聞|き}かず に 。|| I was given it a year ago. I decided not to deliver it. Without asking you.
 !goto ask
 :again
@@ -45,7 +45,7 @@ comp: {遅|おく}れた の は 、{自分|じぶん} の せい だ 。{渡|�
 :ask
 umi: …… {勝手|かって} ね 。|| …That was presumptuous.
 comp: うん 。{勝手|かって} だった 。|| Yeah. It was.
-comp: だから 、{今|いま} {聞|き}く 。{受|う}け{取|と}る ? {断|ことわ}って も いい 。{捨|す}てて も いい 。|| So I'm asking now. Will you take it? You can refuse. You can throw it away.
+comp: だから 、{今|いま} {聞|き}く 。{受|う}け{取|と}る ？ {断|ことわ}って も いい 。{捨|す}てて も いい 。|| So I'm asking now. Will you take it? You can refuse. You can throw it away.
 umi: …… {断|ことわ}れる の ね 、{今|いま} は 。|| …I can refuse now, can't I.
 narr: ウミ は {長|なが}い あいだ 、{封筒|ふうとう} を {見|み}て いた 。{宛名|あてな} の {字|じ} が 、{三度|さんど} {書|か}き{直|なお}されて いる 。|| For a long time, Umi looks at the envelope. The address has been rewritten three times.
 umi: {受|う}け{取|と}ります 。{断|ことわ}れる けど 、{受|う}け{取|と}る 。|| I'll take it. I could refuse, but I'll take it.
@@ -59,12 +59,12 @@ comp[think]: …… 「{許|ゆる}して くれ」 って {書|か}いて あ�
 comp: {書|か}いて ない 。…… いや 、{書|か}いて ある の か 、これ 。わかんない よ 。|| It doesn't say that. …Or does it? I can't tell.
 umi[sad]: 「{返事|へんじ} は いらない 。いや 、{本当|ほんとう} は ほしい 。」 …… {昔|むかし} から 、こう いう {人|ひと} 。|| "You needn't reply. No — truthfully, I want you to." …He was always like this.
 umi: {自分|じぶん} で は {何|なに} も {決|き}められない くせ に 、{決|き}めて くれ って 。|| Can't decide anything himself, then tells me to decide.
-comp[think]: …… どう する ?|| …What will you do?
+comp[think]: …… どう する ？|| …What will you do?
 umi: {許|ゆる}す か どう か は 、まだ わからない 。|| Whether I forgive him — I don't know yet.
 umi: でも 、{一行|いちぎょう} だけ {書|か}く 。|| But I'll write one line.
 narr: ウミ は {事務所|じむしょ} の {便箋|びんせん} に 、さらさら と {書|か}いた 。|| Umi writes quickly on the office letter paper.
 umi: 「{読|よ}みました 。 ウミ」|| "I read it. — Umi"
-umi: これ を 、{届|とど}けて くれる ? {父|ちち} が まだ {生|い}きて いて も 、いなくて も 。|| Will you deliver this? Whether my father's still alive or not.
+umi: これ を 、{届|とど}けて くれる ？ {父|ちち} が まだ {生|い}きて いて も 、いなくて も 。|| Will you deliver this? Whether my father's still alive or not.
 comp: イサム さん は 、{春|はる} に {灯|ひ} の {道|みち} を {上|のぼ}って いった って {聞|き}いた 。{山|やま} の ほう だ 。…… ちょうど 、{行|い}く ところ だ よ 。|| I heard Isamu went up the lantern road last spring. Up the mountain. …As it happens, that's where we're headed.
 comp[smile]: …… {届|とど}ける 。{必|かなら}ず 。|| …I'll deliver it. Without fail.
 narr: ナオ は {封筒|ふうとう} に {宛名|あてな} を {書|か}いた 。いつも より 、ずっと ゆっくり 、ていねい に 。|| Nao writes the address on the envelope — far more slowly and carefully than usual.
@@ -86,18 +86,18 @@ nao: {断|ことわ}れない {人|ひと} に 、この {手紙|てがみ} は 
 ?(comp=ren) comp: ナオ さん が 「{待|ま}つ」 と {言|い}う の は 、{珍|めずら}しい です ね 。|| It's rare to hear Nao say "I'll wait".
 ?(comp=suzu) comp[laugh]: {急|いそ}がば {回|まわ}れ 、ね 。ナオ に しては 。|| More haste, less speed, eh? From you, of all people.
 nao[smirk]: うるさい 。|| Shut up.
-nao: …… {鐘楼|しょうろう} に {行|い}く んだって ? {気|き} を つけて 。{出口|でぐち} は 、{先|さき} に {確|たし}かめて おく こと 。|| …Heading for the bell tower, I hear? Be careful. Check where the way out is first.
+nao: …… {鐘楼|しょうろう} に {行|い}く んだって ？ {気|き} を つけて 。{出口|でぐち} は 、{先|さき} に {確|たし}かめて おく こと 。|| …Heading for the bell tower, I hear? Be careful. Check where the way out is first.
 
 @scene lf.naoc_after
 nao: {鐘|かね} 、{聞|き}こえた よ 。あれ 、{君|きみ} たち だ よね 。|| Heard the bell. That was you lot, right?
 nao: {渡|わた}した よ 、{手紙|てがみ} 。ウミ 、{怒|おこ}った 。ちゃんと {怒|おこ}れた 。|| I delivered it. Umi got angry. Properly angry.
 nao: で 、{一行|いちぎょう} だけ {返事|へんじ} を {書|か}いた 。「{読|よ}みました」 って 。|| Then she wrote one line back. "I read it."
 nao[smile]: {許|ゆる}す とも {許|ゆる}さない とも {書|か}いて ない 。…… いい {返事|へんじ} だ よ 。|| Doesn't say whether she forgives him. …It's a good reply.
-?(comp=mio) comp: ナオ さん も 、{少|すこ}し {軽|かる}く なった ?|| Do you feel a bit lighter too, Nao?
+?(comp=mio) comp: ナオ さん も 、{少|すこ}し {軽|かる}く なった ？|| Do you feel a bit lighter too, Nao?
 ?(comp=mio) nao: …… {鞄|かばん} は {軽|かる}く なった 。|| …The satchel's lighter.
 ?(comp=ren) comp: {一年|いちねん} {遅|おく}れ の {配達|はいたつ} 、お{疲|つか}れ さま でした 。|| Well done on a delivery only a year late.
-?(comp=ren) nao[smirk]: {皮肉|ひにく} か ? …… ありがと 。|| Is that sarcasm? …Thanks.
-?(comp=suzu) comp: {送料|そうりょう} 、{一年分|いちねんぶん} {取|と}る の ?|| Charging a year's worth of postage?
+?(comp=ren) nao[smirk]: {皮肉|ひにく} か ？ …… ありがと 。|| Is that sarcasm? …Thanks.
+?(comp=suzu) comp: {送料|そうりょう} 、{一年分|いちねんぶん} {取|と}る の ？|| Charging a year's worth of postage?
 ?(comp=suzu) nao[laugh]: {取|と}らない よ 。…… たぶん 。|| No. …Probably not.
 nao: イサム さん は 、{春|はる} に {灯|ひ} の {道|みち} を {上|のぼ}って いった って {話|はなし} だ 。{返事|へんじ} は 、そっち へ {届|とど}ける 。|| Word is Isamu went up the lantern road last spring. I'll take the reply up that way.
 nao: じゃ 、{行|い}って くる 。{元気|げんき} で ね 。|| Right, I'm off. Take care.
@@ -106,14 +106,14 @@ nao: じゃ 、{行|い}って くる 。{元気|げんき} で ね 。|| Right,
 # ---- Mio: a no, out loud (comp = mio) ----------------------------------------------------------------------------------------------------------
 @scene lf.mio_start
 narr: {通|とお}り を {歩|ある}いて いる と 、{町|まち} の {人|ひと} が {次々|つぎつぎ} に ミオ に {声|こえ} を かけて くる 。|| As you walk down the avenue, townsfolk come up to Mio one after another.
-lf_setsu: {薬師|くすし} さん です よね ? {宿|やど} の お{客|きゃく}さま が 、{咳|せき} を して いて 。|| You're an apothecary, aren't you? One of our guests has a cough.
+lf_setsu: {薬師|くすし} さん です よね ？ {宿|やど} の お{客|きゃく}さま が 、{咳|せき} を して いて 。|| You're an apothecary, aren't you? One of our guests has a cough.
 comp[smile]: はい 、もちろん 。{後|あと} で {持|も}って いきます 。|| Yes, of course. I'll bring something later.
 lf_masaru: {俺|おれ} も ！ やけど の {薬|くすり} ！ {十人分|じゅうにんぶん} ！|| Me too! Burn ointment! Ten people's worth!
 comp: はい 、もちろん 。|| Yes, of course.
-lf_nagi: {油|あぶら} で {荒|あ}れた {手|て} に {効|き}く もの 、ある ?|| Got anything for hands chapped from lamp oil?
+lf_nagi: {油|あぶら} で {荒|あ}れた {手|て} に {効|き}く もの 、ある ？|| Got anything for hands chapped from lamp oil?
 comp: …… はい 、もちろん 。|| …Yes, of course.
 narr: ミオ の {手帳|てちょう} が 、{頼|たの}まれ{事|ごと} で {埋|う}まって いく 。|| Mio's notebook fills up with requests.
-pc: ミオ 、{大丈夫|だいじょうぶ} ?|| Mio, are you all right?
+pc: ミオ 、{大丈夫|だいじょうぶ} ？|| Mio, are you all right?
 comp[tired]: …… うん 。{慣|な}れてる から 。{昔|むかし} から 、こう なの 。|| …Mm. I'm used to it. I've always been like this.
 !quest lf_mio start
 lf_hayato: {薬師|くすし} の ミオ {様|さま} で いらっしゃいます か 。{登記官|とうきかん} から の ご{依頼|いらい} です 。|| Would you be Mio, the apothecary? A commission from the Registrar.
@@ -122,12 +122,12 @@ comp: はい 、もちろ@もちろん …… 。|| Yes, of cour—
 narr: ミオ は 、{自分|じぶん} の {口|くち} を {押|お}さえた 。|| Mio claps a hand over her own mouth.
 comp[surprise]: …… {今|いま} の 、{私|わたし} の {声|こえ} じゃ ない 。この {町|まち} の {声|こえ} だ 。|| …That wasn't my voice. That was this town's voice.
 !quest lf_mio 1
-comp[think]: {処方|しょほう} 、{一緒|いっしょ} に {読|よ}んで くれる ? {嫌|いや}な {予感|よかん} が する 。|| Will you read the recipe with me? I've got a bad feeling.
+comp[think]: {処方|しょほう} 、{一緒|いっしょ} に {読|よ}んで くれる ？ {嫌|いや}な {予感|よかん} が する 。|| Will you read the recipe with me? I've got a bad feeling.
 !challenge lf.ch_recipe
 comp[angry]: …… これ は 、{薬|くすり} じゃ ない 。{飲|の}んだ {人|ひと} が 「いや」 と {思|おも}う {気持|きも}ち ごと 、{消|け}して しまう もの 。{本人|ほんにん} に {黙|だま}って 。|| …This isn't medicine. It wipes out the very feeling of "no" in whoever drinks it. Without telling them.
 comp[sad]: {作|つく}れない 。{作|つく}っちゃ いけない 。…… でも 、{私|わたし} 、{断|ことわ}った こと なんて 、{一度|いちど} も ない 。|| I can't make it. I mustn't. …But I've never refused anyone, not once in my life.
 comp: …… タダシ さん に 、{言|い}い に {行|い}かなきゃ 。{言|い}える か 、わからない けど 。|| …I have to go and tell Tadashi. I don't know if I can say it.
-comp[shy]: {一緒|いっしょ} に {来|き}て くれる ? {声|こえ} が {出|で}なかったら 、{背中|せなか} を {叩|たた}いて 。|| Will you come with me? If my voice won't come out, give me a pat on the back.
+comp[shy]: {一緒|いっしょ} に {来|き}て くれる ？ {声|こえ} が {出|で}なかったら 、{背中|せなか} を {叩|たた}いて 。|| Will you come with me? If my voice won't come out, give me a pat on the back.
 !quest lf_mio 2
 !autosave
 
@@ -141,7 +141,7 @@ narr: {背中|せなか} に 、そっと {手|て} を {当|あ}てる 。|| Yo
 comp[angry]: …… お{断|ことわ}り します 。|| …I refuse.
 narr: {記録館|きろくかん} が 、しん と した 。{何年|なんねん} も {誰|だれ} も {口|くち} に して いない {言葉|ことば} だった 。|| The Records Hall falls utterly silent. No one has said those words aloud in years.
 lf_tadashi: かしこ@かしこまる …… 。|| Cert—
-lf_tadashi[surprise]: …… {今|いま} 、{何|なん} と ?|| …What did you say?
+lf_tadashi[surprise]: …… {今|いま} 、{何|なん} と ？|| …What did you say?
 comp: {作|つく}りません 。{皆|みな}さん が {困|こま}って いる の は 、{気持|きも}ち が {騒|さわ}ぐ から じゃ ありません 。{言|い}いたい こと が 、{言|い}えない から です 。|| I won't make it. What's troubling everyone isn't that their feelings are too stirred up. It's that they can't say what they want to say.
 comp: {本人|ほんにん} に {黙|だま}って {飲|の}ませて 、{反対|はんたい} する {気持|きも}ち を {消|け}す の は 、{治療|ちりょう} じゃ ない 。{私|わたし} は {薬師|くすし} です 。だから 、{作|つく}りません 。|| Slipping something into people without telling them, to erase their objections — that isn't treatment. I'm an apothecary. So I won't make it.
 narr: タダシ の 「{承認|しょうにん}」 の {判子|はんこ} が 、{宙|ちゅう} で {止|と}まった 。|| Tadashi's "approved" stamp stops in mid-air.
@@ -170,7 +170,7 @@ mio: {薬草|やくそう} を {買|か}い に {来|き}た だけ なの 。�
 mio[worry]: {断|ことわ}ろう と する と 、「もちろん」 って {口|くち} が {勝手|かって} に …… 。{前|まえ} から {苦手|にがて} だった けど 、ここ だと もっと {言|い}えない 。|| Whenever I try to refuse, "of course" just comes out… I was never good at it, but here I can't say it at all.
 ?(comp=nao) comp: ミオ 、{休|やす}め よ 。{顔|かお} が {真|ま}っ{青|さお} だ 。|| Mio, take a break. You're white as a sheet.
 ?(comp=ren) comp: ミオ さん 、{薬師|くすし} が {倒|たお}れて は 、{元|もと} も {子|こ} も ありません 。|| Mio, an apothecary who collapses is no use to anyone.
-?(comp=suzu) comp: 「{本日|ほんじつ} {休業|きゅうぎょう}」 の {札|ふだ} 、{書|か}いて あげよう か ?|| Want me to write you a "Closed today" sign?
+?(comp=suzu) comp: 「{本日|ほんじつ} {休業|きゅうぎょう}」 の {札|ふだ} 、{書|か}いて あげよう か ？|| Want me to write you a "Closed today" sign?
 mio[smile]: …… ありがとう 。{書|か}いて もらって も 、{出|だ}せない かも しれない けど 。|| …Thank you. Even if you write it, I might not manage to put it up.
 
 @scene lf.mioc_after
@@ -227,7 +227,7 @@ comp[worry]: ただ 、{笠|かさ} の {名前|なまえ} が 、{全部|ぜん
 
 @scene lf.b_ren2
 comp: {鐘|かね} の {話|はなし} を {聞|き}く のに 、お{金|かね} は {要|い}りません 。|| No money needed to hear about the bell.
-pc: …… え ?|| …Sorry?
+pc: …… え ？|| …Sorry?
 comp[smirk]: {鐘|かね} と お{金|かね} 。どちら も 「かね」 です 。…… {灯落|ひおち} の {人|ひと} は 、{誰|だれ} も {笑|わら}って くれませんでした 。「もちろん です」 と だけ 。|| Bell and money. Both かね. …Nobody in Lanternfall laughed. They just said "of course".
 comp: {笑|わら}わない の も 、{反対|はんたい} の {一種|いっしゅ} です から ね 。{取|と}られて しまった の でしょう 。|| Not laughing is a kind of objection, you see. They must have had it taken away.
 
@@ -255,7 +255,7 @@ comp: この {塔|とう} 、{響|ひび}き が {最高|さいこう} ね 。{�
 comp[sad]: …… {鳴|な}らない {鐘|かね} に は 、もったいない {舞台|ぶたい} 。|| …Wasted on a bell that won't ring.
 
 @scene lf.b_suzu4
-comp[laugh]: {聞|き}いた ? さっき {広場|ひろば} で 、{誰|だれ} か が {誰|だれ} か に 「{引|ひ}っ{込|こ}め ！」 って {言|い}ってた の 。|| Did you hear? Just now in the square, someone yelled "Get off!" at someone.
+comp[laugh]: {聞|き}いた ？ さっき {広場|ひろば} で 、{誰|だれ} か が {誰|だれ} か に 「{引|ひ}っ{込|こ}め ！」 って {言|い}ってた の 。|| Did you hear? Just now in the square, someone yelled "Get off!" at someone.
 comp: {何|なん}か{月|げつ}ぶり の {野次|やじ} かしら 。{音楽|おんがく} みたい に {聞|き}こえた わ 。|| First heckle in months, I'd guess. It sounded like music.
 comp[closed]: …… {本当|ほんとう} の こと を {言|い}う の と 、「いいえ」 を {言|い}う の は 、{同|おな}じ {筋肉|きんにく} を {使|つか}う の 。どっち も 、{使|つか}わない と {弱|よわ}る 。|| …Telling the truth and saying no use the same muscle. Both waste away if you don't use them.
 `, 'ch5/companions');

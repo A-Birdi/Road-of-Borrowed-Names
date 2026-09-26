@@ -30,7 +30,7 @@ narr: {石|いし} の {向|む}こう に は 、 {道|みち} の よう に {
 ?(comp=nao) comp: {火除|ひよ}け ？ この {草|くさ} で ？ {逆|ぎゃく} に よく {燃|も}え そう だ けど な 。 || Fire-ward? With this much grass on it? Looks more like kindling.
 ?(comp=mio) comp[worry]: {火除|ひよ}け の {道|みち} …… {本当|ほんとう} は {草|くさ} を {刈|か}って おく {道|みち} です よ ね 。 {誰|だれ} も {手入|てい}れ して いない 。 || A firebreak… it's meant to be kept mown. Nobody has touched it.
 ?(comp=ren) comp: {火除|ひよ}け{道|みち} です ね 。 {古|ふる}い {里|さと} に は よく あります 。 {手入|てい}れ を やめれば 、 ただ の {草|くさ}むら です が 。 || A firebreak path. Old villages often have them. Stop tending one and it's just a strip of weeds.
-?(comp=suzu) comp[closed]: …… {昔|むかし} は あった か な|むかし} は 、 きれい に {刈|か}って あった のに 。 || …It used to be cut so neatly.
+?(comp=suzu) comp[closed]: …… {昔|むかし} は 、 きれい に {刈|か}って あった のに 。 || …It used to be cut so neatly.
 ?(comp=suzu) pc: スズ ？ || Suzu?
 ?(comp=suzu) comp[laugh]: ん ？ {火除|ひよ}け って 、 {普通|ふつう} そう でしょ 、 って {話|はなし} 。 || Hm? I just mean that's what firebreaks are normally like.
 !if co_clue_marker -> end
@@ -214,7 +214,7 @@ co_tokiwa: {里|さと} の {皆|みな} は 、 {今|いま} 、 {笑|わら}�
 co_tokiwa: それ を {記録係|きろくがかり} の {私|わたし} が 、 {確|たし}か でも ない {証拠|しょうこ} で {決|き}めて いい の です か 。 || Should I — the recorder — decide that, on evidence that isn't even certain?
 narr: {扉|とびら} が {開|あ}いた 。 {水番|みずばん} の タモツ が 、 {泥|どろ} の ついた {長靴|ながぐつ} の まま {入|はい}って きた 。 || The door opens. Tamotsu, the channel keeper, walks in without taking off his muddy boots.
 co_tamotsu: トキワ 。 {水路|すいろ} が {三分|さんぶ} の {一|いち} を {切|き}った 。 {雨|あめ} は {四十日|よんじゅうにち} {降|ふ}って ない 。 || Tokiwa. The channel's below a third. It hasn't rained in forty days.
-co_tamotsu: {話|はなし} は {外|そと} で {聞|き}こえた 。 {火事|かじ} が あった か なかった か 、 {俺|おれ} に は {分|わ}から ん 。 だが {今|いま} {上|うえ} で {火|ひ} が {出|で}たら 、 {止|と}める もの は {何|なに} も ない 。 {火除|ひよ}け{道|みち} は {草|くさ} だらけ だ 。 || I heard you from outside. Whether there was a fire or not, I couldn't say. But if fire broke out up there now, nothing would stop it. The firebreaks are all weeds.
+co_tamotsu: {話|はなし} は {外|そと} で {聞|き}こえた 。 {火事|かじ} が あった か なかった か 、 {俺|おれ} に は {分|わ}からん 。 だが {今|いま} {上|うえ} で {火|ひ} が {出|で}たら 、 {止|と}める もの は {何|なに} も ない 。 {火除|ひよ}け{道|みち} は {草|くさ} だらけ だ 。 || I heard you from outside. Whether there was a fire or not, I couldn't say. But if fire broke out up there now, nothing would stop it. The firebreaks are all weeds.
 co_tokiwa[think]: …… || …
 co_tokiwa: {確|たし}か な {記録|きろく} が あれば 、 {私|わたし} は {書|か}きます 。 {窯|かま} の {記録|きろく} です 。 {窯焚|かまだ}き の {日誌|にっし} は 、 {大窯|おおがま} の {中|なか} に しまう {決|き}まり でした 。 || If there is a certain record, I will write it. The kiln's record. By custom, the firing log was kept inside the great kiln itself.
 co_tokiwa: ですが 、 {大窯|おおがま} は {上|うえ} の {段|だん} の {更|さら}に {上|うえ} 。 {古|ふる}い {工房|こうぼう} {通|どお}り の {奥|おく} で 、 {封|ふう} が して あります 。 …… {私|わたし} が {来|き}た {時|とき} から 、 ずっと 。 || But the great kiln is beyond the upper terraces, at the end of the old workshop row, and it is sealed. …It has been, for as long as I've been here.

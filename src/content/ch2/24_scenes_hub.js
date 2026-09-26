@@ -5,13 +5,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.script.add(`
 @scene sg.omi_final
-omi: {窓|まど} から {見|み}て た よ 。 {手紙|てがみ} の {雨|あめ} だ 。 {三十年|さんじゅうねん} {港|みなと} に いて 、 {初|はじ}めて {見|み}た 。 || I watched from the window. A rain of letters. Thirty years in this port and I'd never seen that.
+omi: {窓|まど} から {見|み}てた よ 。 {手紙|てがみ} の {雨|あめ} だ 。 {三十年|さんじゅうねん} {港|みなと} に いて 、 {初|はじ}めて {見|み}た 。 || I watched from the window. A rain of letters. Thirty years in this port and I'd never seen that.
 pc: {沈|しず}んだ {書庫|しょこ} で 、 {名前|なまえ} が {集|あつ}められて いました 。 {静寂|しじま} の {書庫|しょこ} と いう {所|ところ} へ {送|おく}られる ため に 。 || In the drowned archive, names were being collected — to be sent on to a place called the Still Archive.
-omi[think]: {静寂|しじま} の {書庫|しょこ} 、 か 。 {灯落|ひおち} の {上|うえ} の {山|やま} に 、 {古|ふる}い {書庫|しょこ} が ある と は {聞|き}く 。 {子|こ}ども の {怪談|かいだん} だ と {思|おも}って た が …… 。 || The Still Archive, eh. I've heard there's an old archive in the mountains above Lanternfall. I took it for a children's ghost story too…
+omi[think]: {静寂|しじま} の {書庫|しょこ} 、 か 。 {灯落|ひおち} の {上|うえ} の {山|やま} に 、 {古|ふる}い {書庫|しょこ} が ある と は {聞|き}く 。 {子|こ}ども の {怪談|かいだん} だ と {思|おも}ってた が …… 。 || The Still Archive, eh. I've heard there's an old archive in the mountains above Lanternfall. I took it for a children's ghost story too…
 omi: {怪談|かいだん} に しちゃ 、 {字|じ} が {綺麗|きれい} すぎる な 。 || Awfully neat handwriting, for a ghost story.
 omi: {港|みなと} は {動|うご}き{出|だ}した 。 {渡|わた}し{船|ぶね} も 、 {明日|あした} から {出|だ}す 。 {礼|れい} を {言|い}う よ 。 {本当|ほんとう} に 。 || The port's moving again. The ferry sails from tomorrow. Thank you. Truly.
-?(sg_wataru_self) omi: ワタル は {朝|あさ} から {晩|ばん} まで ラベル を {書|か}いて る 。 {鼻歌|はなうた} {混|ま}じり で な 。 あいつ の {鼻歌|はなうた} なんか 、 {初|はじ}めて {聞|き}いた よ 。 || Wataru's writing labels from dawn to dusk. Humming, if you please. First time I've ever heard that man hum.
-?(!sg_wataru_self) omi: ワタル は {朝|あさ} から {晩|ばん} まで ラベル を {書|か}いて る 。 {罰|ばつ} の つもり で やらせた ん だ が 、 {楽|たの}しそう で {困|こま}る 。 || Wataru's writing labels from dawn to dusk. I meant it as punishment, and the man looks happy. Annoying.
+?(sg_wataru_self) omi: ワタル は {朝|あさ} から {晩|ばん} まで ラベル を {書|か}いてる 。 {鼻歌|はなうた} {混|ま}じり で な 。 あいつ の {鼻歌|はなうた} なんか 、 {初|はじ}めて {聞|き}いた よ 。 || Wataru's writing labels from dawn to dusk. Humming, if you please. First time I've ever heard that man hum.
+?(!sg_wataru_self) omi: ワタル は {朝|あさ} から {晩|ばん} まで ラベル を {書|か}いてる 。 {罰|ばつ} の つもり で やらせた ん だ が 、 {楽|たの}しそう で {困|こま}る 。 || Wataru's writing labels from dawn to dusk. I meant it as punishment, and the man looks happy. Annoying.
 omi: {北|きた} の {道|みち} も 、 {通|とお}れる よう に なった そう だ 。 {灰実|はいみ} の {里|さと} へ {行|い}く なら 、 {今夜|こんや} は かもめ{亭|てい} に {泊|と}まって いきな 。 {宿代|やどだい} は {港|みなと} が {持|も}つ 。 || They say the north road's open again. If you're heading for Cinder Orchard, stay the night at the Gull. The harbour's paying.
 !quest sg_main done
 !note sg_three_kinds
@@ -25,7 +25,7 @@ omi: …… {時刻表|じこくひょう} が {正|ただ}しい って の は
 @scene sg.omi_post
 omi: {渡|わた}し{船|ぶね} は {毎日|まいにち} {時刻表|じこくひょう} どおり だ 。 {退屈|たいくつ} で {最高|さいこう} だ よ 。 || The ferry runs to the timetable every single day. Gloriously dull.
 ?(end_kasane_trial) omi: {灯落|ひおち} で {裁|さば}き が ある そう だ な 。 {港|みなと} から も {証人|しょうにん} を {出|だ}す 。 {手紙|てがみ} の {雨|あめ} の {話|はなし} を 、 {全部|ぜんぶ} して やる よ 。 || I hear there's to be a hearing in Lanternfall. The harbour's sending a witness. I'll tell them the whole story of the rain of letters.
-?(end_kasane_keeper) omi: {山|やま} の {書庫|しょこ} の {番人|ばんにん} は 、 {見張|みは}り {付|つ}き で {仕事|しごと} を {続|つづ}けて る そう だ な 。 {見張|みは}り が いる なら 、 {港|みなと} も {文句|もんく} は ない 。 {今|いま} の ところ は な 。 || I hear the archive's keeper carries on with a watch set over them. If someone's watching, the harbour has no complaint. For now.
+?(end_kasane_keeper) omi: {山|やま} の {書庫|しょこ} の {番人|ばんにん} は 、 {見張|みは}り {付|つ}き で {仕事|しごと} を {続|つづ}けてる そう だ な 。 {見張|みは}り が いる なら 、 {港|みなと} も {文句|もんく} は ない 。 {今|いま} の ところ は な 。 || I hear the archive's keeper carries on with a watch set over them. If someone's watching, the harbour has no complaint. For now.
 
 @scene sg.tamae_rest
 tamae: いらっしゃい ！ {休|やす}んで く かい ？ あんた たち なら 、 {部屋|へや} は いつでも {空|あ}けとく よ 。 || Welcome! Staying to rest? For you two, there's always a room.
@@ -38,7 +38,7 @@ tamae: よく {寝|ね}た かい ？ {朝|あさ} ご{飯|はん} は {焼|や}
 
 @scene sg.tamae_after
 tamae: {手紙|てがみ} が {空|そら} から {降|ふ}って きた ん だ よ ！ うち の {窓|まど} に も {一通|いっつう} 。 {二十年|にじゅうねん} {前|まえ} の {姉|あね} から の {手紙|てがみ} さ 。 || Letters came down from the sky! One landed on my window — from my sister, twenty years ago.
-tamae[laugh]: {返事|へんじ} 、 {今|いま} {書|か}いて る ところ 。 {二十年|にじゅうねん} {分|ぶん} だ から 、 {長|なが}く なる よ 。 || I'm writing a reply now. Twenty years' worth. It's going to be long.
+tamae[laugh]: {返事|へんじ} 、 {今|いま} {書|か}いてる ところ 。 {二十年|にじゅうねん} {分|ぶん} だ から 、 {長|なが}く なる よ 。 || I'm writing a reply now. Twenty years' worth. It's going to be long.
 !choice
 * {休|やす}んで いきます 。 || We'd like to rest. -> rest
 * {頑張|がんば}って ください 。 || Good luck with it. -> end
@@ -47,7 +47,7 @@ tamae[laugh]: {返事|へんじ} 、 {今|いま} {書|か}いて る ところ 
 
 @scene sg.tamae_post
 tamae: {昼|ひる} の {波|なみ} は {相変|あいか}わらず だ よ 。 {手伝|てつだ}い に {来|き}た の かい ？ …… {冗談|じょうだん} 。 {座|すわ}りな 。 || The lunch wave's as fierce as ever. Come to help? …Joking. Sit down.
-tamae: {姉|あね} から {返事|へんじ} が {来|き}た よ 。 {来年|らいねん} 、 {遊|あそ}びに {来|く}る って さ 。 {部屋|へや} を {一|ひと}つ 、 {空|あ}けとか なきゃ 。 || My sister wrote back. She's coming to visit next year. I'll have to keep a room free.
+tamae: {姉|あね} から {返事|へんじ} が {来|き}た よ 。 {来年|らいねん} 、 {遊|あそ}びに {来|く}る って さ 。 {部屋|へや} を {一|ひと}つ 、 {空|あ}けて おかない と 。 || My sister wrote back. She's coming to visit next year. I'll have to keep a room free.
 !choice
 * {休|やす}みます 。 || We'll rest. -> rest
 * また {来|き}ます 。 || We'll come again. -> end
@@ -66,10 +66,10 @@ narr: {壁|かべ} の {品書|しなが}き 。 「{焼|や}き{魚|ざかな} 
 
 @scene sg.nao_cameo
 nao: よう 。 {葦|あし}ノ{瀬|せ} から の {郵便|ゆうびん} 、 {届|とど}けた とこ だ 。 {宛名|あてな} の {読|よ}める {分|ぶん} は な 。 || Hey. Just dropped off the post from Reedwake. The ones with readable addresses, anyway.
-nao: {残|のこ}り は タマエ さん の {袋|ふくろ} の {中|なか} 。 {読|よ}めない {宛名|あてな} を {当|あ}てる の は 、 {配達人|はいたつにん} の {仕事|しごと} じゃ ない 。 …… そっち の {仕事|しごと} だ ろ 。 || The rest are in Tamae's bag. Guessing unreadable addresses isn't a courier's job. …That's your line of work, isn't it.
+nao: {残|のこ}り は タマエ さん の {袋|ふくろ} の {中|なか} 。 {読|よ}めない {宛名|あてな} を {当|あ}てる の は 、 {配達人|はいたつにん} の {仕事|しごと} じゃ ない 。 …… そっち の {仕事|しごと} だろ 。 || The rest are in Tamae's bag. Guessing unreadable addresses isn't a courier's job. …That's your line of work, isn't it.
 ?(comp=mio) nao: ミオ 、 {干物|ひもの} を {買|か}い{込|こ}む な よ 。 {鞄|かばん} が {魚|さかな} {臭|くさ}く なる 。 || Mio, don't stock up on dried fish. Your bag'll reek.
 ?(comp=ren) nao: レン 、 {港|みなと} で {迷|まよ}う な よ 。 {海|うみ} が {見|み}える {方|ほう} が {南|みなみ} だ 。 || Ren, don't get lost in the harbour. The side where you can see the sea is south.
-?(comp=suzu) nao: スズ 、 {宿代|やどだい} は {先|さき} に {払|はら}え よ 。 {前|まえ} の {分|ぶん} 、 まだ {噂|うわさ} に なって る ぞ 。 || Suzu, pay for your room up front. People are still talking about last time.
+?(comp=suzu) nao: スズ 、 {宿代|やどだい} は {先|さき} に {払|はら}え よ 。 {前|まえ} の {分|ぶん} 、 まだ {噂|うわさ} に なってる ぞ 。 || Suzu, pay for your room up front. People are still talking about last time.
 nao[closed]: …… じゃ 、 {次|つぎ} の {便|びん} が ある から 。 {右|みぎ} の {桟橋|さんばし} は {歩|ある}く な よ 。 || …Right. Got the next run. Stay off the right-hand pier.
 
 @scene sg.wataru_post
@@ -81,7 +81,7 @@ wataru: {借金|しゃっきん} は 、 あと {半分|はんぶん} です 。
 @scene sg.tetsu_idle
 tetsu: …… {潮|しお} が {変|か}わる 。 || …Tide's turning.
 ?(!sg_ferry_done) tetsu: {時刻表|じこくひょう} を {見|み}た か 。 {見|み}て から {来|こ}い 。 || Seen the board? Look at it, then come back.
-?(sg_fog_cleared) tetsu: {岬|みさき} の {風見|かざみ} が {回|まわ}って る 。 …… {久|ひさ}しぶり に 、 {背中|せなか} で {風|かぜ} を {感|かん}じた 。 || The vane on the point is turning. …First time in a while I've felt the wind on my back.
+?(sg_fog_cleared) tetsu: {岬|みさき} の {風見|かざみ} が {回|まわ}ってる 。 …… {久|ひさ}しぶり に 、 {背中|せなか} で {風|かぜ} を {感|かん}じた 。 || The vane on the point is turning. …First time in a while I've felt the wind on my back.
 
 @scene sg.tetsu_history
 tetsu: {沈|しず}んだ {書庫|しょこ} へ {行|い}く の か 。 || Going to the drowned archive, are you.
@@ -93,15 +93,15 @@ tetsu: …… {子|こ}ども の {頃|ころ} 、 {親父|おやじ} の {船|�
 !activity sg.a_history
 !if var._res=0 -> end
 tetsu: …… {鐘|かね} が {鳴|な}る と 、 {親父|おやじ} は {必|かなら}ず {船|ふね} を {止|と}めて 、 {帽子|ぼうし} を {取|と}った 。 {理由|りゆう} は {聞|き}かなかった 。 || …Whenever the bell rang, my father always stopped the boat and took off his hat. I never asked why.
-tetsu: {今|いま} に なって {思|おも}う 。 {手紙|てがみ} を {送|おく}る {音|おと} に 、 {頭|あたま} を {下|さ}げて いた ん だ ろう な 。 || I think now he was bowing to the sound of letters being sent on.
+tetsu: {今|いま} に なって {思|おも}う 。 {手紙|てがみ} を {送|おく}る {音|おと} に 、 {頭|あたま} を {下|さ}げて いた ん だろう な 。 || I think now he was bowing to the sound of letters being sent on.
 
 @scene sg.tetsu_ferry
-tetsu: {船|ふね} は {出|で}る 。 {満|み}ち{潮|しお} で な 。 {板|いた} も 、 もう {嘘|うそ} は つかん 。 || The boat sails. On the high tide. And the board's stopped lying.
+tetsu: {船|ふね} は {出|で}る 。 {満|み}ち{潮|しお} で な 。 {板|いた} も 、 もう {嘘|うそ} は つかない 。 || The boat sails. On the high tide. And the board's stopped lying.
 ?(quest.sg_lighthouse=2&!sg_nagisa_met) tetsu: …… ゲンゾウ の {娘|むすめ} が 、 {次|つぎ} の {便|びん} で {来|く}る そう だ 。 {爺|じい}さん 、 {朝|あさ} から {三回|さんかい} も {時刻表|じこくひょう} を {見|み}に {来|き}た 。 || …Genzō's girl is coming on the next boat, I hear. The old man's been down three times since morning to check the board.
 
 @scene sg.tetsu_post
 tetsu: {潮|しお} は {変|か}わらん 。 {人|ひと} は {変|か}わる 。 {悪|わる}く ない 。 || The tide doesn't change. People do. Not a bad thing.
-?(end_mem_return) tetsu: {親父|おやじ} の {顔|かお} を 、 {急|きゅう} に {思|おも}い{出|だ}した 。 {帽子|ぼうし} を {取|と}る {時|とき} の {顔|かお} だ 。 …… {持|も}って いかれて た とは な 。 || My father's face came back to me all of a sudden. The face he made taking off his hat. …Didn't know it had been taken.
+?(end_mem_return) tetsu: {親父|おやじ} の {顔|かお} を 、 {急|きゅう} に {思|おも}い{出|だ}した 。 {帽子|ぼうし} を {取|と}る {時|とき} の {顔|かお} だ 。 …… {持|も}って いかれてた とは な 。 || My father's face came back to me all of a sudden. The face he made taking off his hat. …Didn't know it had been taken.
 ?(end_mem_choose) tetsu: {山|やま} の {書庫|しょこ} に 、 {自分|じぶん} の {棚|たな} が ある そう だ 。 {船|ふね} が {暇|ひま} な {日|ひ} に でも 、 {見|み}に {行|い}く か 。 || They say there's a shelf of mine in the mountain archive. Might go and look, some day the boat's idle.
 
 @scene sg.daigo_idle
@@ -127,7 +127,7 @@ daigo: {船|ふね} で {港|みなと} に {入|はい}る とき は 、 い�
 !call sg.dir_check
 
 @scene sg.dir_tobi
-tobi: {入|い}り{江|え} ？ {知|し}って る ！ {道標|みちしるべ} の {所|ところ} を {右|みぎ} ！ {右|みぎ} に {行|い}って 、 {階段|かいだん} を {下|お}りる の ！ || The cove? I know! Go right at the signpost! Right, and then down the steps!
+tobi: {入|い}り{江|え} ？ {知|し}ってる ！ {道標|みちしるべ} の {所|ところ} を {右|みぎ} ！ {右|みぎ} に {行|い}って 、 {階段|かいだん} を {下|お}りる の ！ || The cove? I know! Go right at the signpost! Right, and then down the steps!
 tobi: {海|うみ} を {見|み}て 、 {右|みぎ} だ よ 。 ダイゴ の おっちゃん は {左|ひだり} って {言|い}う けど 、 {違|ちが}う から ね ！ || Facing the sea — right! Uncle Daigo says left, but he's wrong!
 !set sg_dir_tobi
 !var sg_dirs + 1
@@ -166,7 +166,7 @@ kiyo: {安|やす}い よ 、 {安|やす}い よ ！ …… って {言|い}い
 
 @scene sg.kiyo_fish
 kiyo: {安|やす}い よ 、 {安|やす}い よ ！ {今朝|けさ} の {鯵|あじ} だ よ ！ {網|あみ} が {戻|もど}った から ね ！ || Cheap, cheap! This morning's horse mackerel! The nets are back!
-kiyo[smile]: ソウタ は {岸|きし} で {釣|つ}って る 。 {沖|おき} に は まだ {出|だ}さない よ 。 {灯台|とうだい} の {灯|ひ} が {元|もと} に {戻|もど}る まで は ね 。 || Sōta's fishing from the shore. I'm not letting him out to sea yet — not till the lighthouse is burning properly again.
+kiyo[smile]: ソウタ は {岸|きし} で {釣|つ}ってる 。 {沖|おき} に は まだ {出|だ}さない よ 。 {灯台|とうだい} の {灯|ひ} が {元|もと} に {戻|もど}る まで は ね 。 || Sōta's fishing from the shore. I'm not letting him out to sea yet — not till the lighthouse is burning properly again.
 
 @scene sg.kiyo_post
 kiyo: {今日|きょう} の {一番|いちばん} は {鯛|たい} だ よ ！ …… {値段|ねだん} ？ {札|ふだ} を {見|み}な 。 {札|ふだ} は もう {嘘|うそ} を つかない から ね 。 {高|たか}い けど 。 || Today's best is sea bream! …The price? Read the tag. Tags don't lie any more. It's expensive, mind.
@@ -181,7 +181,7 @@ narr: {空|から} の {屋台|やたい} 。 {札|ふだ} に 「{休業|きゅ
 
 @scene sg.market_table
 narr: {魚|さかな} を {捌|さば}く {台|だい} 。 {包丁|ほうちょう} が {三本|さんぼん} 、 {大|おお}きさ の {順|じゅん} に {並|なら}んで いる 。 || A table for gutting fish. Three knives laid out in order of size.
-?(comp=mio) comp[smile]: {大|おお}きさ の {順|じゅん} 。 {分|わ}かって る ね 、 キヨ さん 。 || In order of size. Kiyo knows what she's doing.
+?(comp=mio) comp[smile]: {大|おお}きさ の {順|じゅん} 。 {分|わ}かってる ね 、 キヨ さん 。 || In order of size. Kiyo knows what she's doing.
 
 @scene sg.quay_crate
 narr: {積|つ}み{上|あ}げた {木箱|きばこ} 。 {新|あたら}しい ラベル に 、 {丁寧|ていねい} な {字|じ} 。 || Stacked crates. New labels, in careful handwriting.
@@ -193,7 +193,7 @@ sota: {網|あみ} が {入|い}り{江|え} に {置|お}きっぱなし で �
 @scene sg.sota_start
 sota: あ 、 {港長|こうちょう} の {手伝|てつだ}い の {人|ひと} ？ {頼|たの}み が ある ん です けど 。 || Oh — you're helping the harbourmaster? I've got a favour to ask.
 sota: {嵐|あらし} の {前|まえ} に 、 {網|あみ} を {入|い}り{江|え} に {干|ほ}して きた ん です 。 {取|と}りに {行|い}きたい のに 、 {崖|がけ} の {道|みち} が おかしくて 。 {歩|ある}いて も {歩|ある}いて も 、 {港|みなと} に {戻|もど}って くる 。 || Before the storm I left my nets drying at the cove. I want to fetch them, but the cliff path's gone wrong. However far you walk, you end up back at the harbour.
-sota[worry]: {道標|みちしるべ} は {字|じ} が {消|き}えて る し 、 {人|ひと} に {聞|き}いたら 、 みんな {言|い}う こと が {違|ちが}う ん です よ 。 || The signpost's lost its writing, and when you ask people, everyone tells you something different.
+sota[worry]: {道標|みちしるべ} は {字|じ} が {消|き}えてる し 、 {人|ひと} に {聞|き}いたら 、 みんな {言|い}う こと が {違|ちが}う ん です よ 。 || The signpost's lost its writing, and when you ask people, everyone tells you something different.
 sota: {岩|いわ} に {船|ふね} を {擦|す}った {晩|ばん} から 、 {母|かあ}さん が 「{沖|おき} に {出|で}る な 」 って うるさくて 。 せめて {網|あみ} だけ でも 。 || Ever since I scraped the boat on the rocks, Mum's been on at me not to go out. At least let me have my nets back.
 !quest sg_cove start
 narr: {入|い}り{江|え} へ の {道|みち} を 、 {港|みなと} の {人|ひと} に {聞|き}いて みよう 。 ダイゴ 、 トビ 、 キヨ …… 。 || Ask around the harbour for the way to the cove. Daigo, Tobi, Kiyo…
@@ -227,7 +227,7 @@ tobi: {海|うみ} ガラス 、 {見|み}る ？ {青|あお} は なかなか 
 ?(sg_boss_done) tobi: {空|そら} から {手紙|てがみ} が {降|ふ}って きた の 、 {見|み}た ？ {一通|いっつう} {拾|ひろ}った ！ {宛名|あてな} を {読|よ}んで 、 {届|とど}けた よ ！ || Did you see the letters falling out of the sky? I caught one! I read the address and delivered it!
 
 @scene sg.tobi_glass
-tobi: {青|あお} い {海|うみ} ガラス を {探|さが}して る の ？ {浜|はま} の {古|ふる}い {舟|ふね} の {近|ちか}く と 、 {入|い}り{江|え} に ある よ ！ {光|ひか}って る から 、 すぐ {分|わ}かる ！ || Looking for blue sea glass? There's some near the old boat on the beach, and in the cove! It sparkles, so you'll spot it straight away!
+tobi: {青|あお} い {海|うみ} ガラス を {探|さが}してる の ？ {浜|はま} の {古|ふる}い {舟|ふね} の {近|ちか}く と 、 {入|い}り{江|え} に ある よ ！ {光|ひか}ってる から 、 すぐ {分|わ}かる ！ || Looking for blue sea glass? There's some near the old boat on the beach, and in the cove! It sparkles, so you'll spot it straight away!
 tobi: {一|ひと}つ {見|み}つけたら 、 {一|ひと}つ {僕|ぼく} に …… いや 、 いい や 。 アサヒ ねえちゃん の ため なら 。 || If you find one, give one to m— no, never mind. If it's for Asahi, fine.
 
 @scene sg.tobi_post
@@ -256,23 +256,23 @@ narr: {名札|なふだ} を {渡|わた}した 。 {青|あお}い ガラス �
 fuku[surprise]: ちどり …… まる 。 || Chidori… maru.
 fuku: …… ああ 。 ああ 、 そう 。 そう でした 。 || …Oh. Oh, yes. That's right.
 fuku[sad]: {千鳥丸|ちどりまる} 。 あの {人|ひと} が {最後|さいご} に {乗|の}った {朝|あさ} 、 わたし 、 {喧嘩|けんか} を した ん です よ 。 {鍋|なべ} の {蓋|ふた} の こと で 。 つまらない こと で 。 || Chidori-maru. The morning he last sailed on her, we quarrelled. About a pot lid. Such a silly thing.
-fuku[sad]: 「{行|い}って らっしゃい 」 も {言|い}わなかった 。 {名前|なまえ} と {一緒|いっしょ} に 、 それ も {忘|わす}れて いた の ね 。 {忘|わす}れて いた から 、 {楽|らく} だった の ね 。 || I didn't even say "take care". I'd forgotten that too, along with the name. And because I'd forgotten, it was easier.
+fuku[sad]: 「いってらっしゃい 」 も {言|い}わなかった 。 {名前|なまえ} と {一緒|いっしょ} に 、 それ も {忘|わす}れて いた の ね 。 {忘|わす}れて いた から 、 {楽|らく} だった の ね 。 || I didn't even say "take care". I'd forgotten that too, along with the name. And because I'd forgotten, it was easier.
 ?(comp=mio) comp[worry]: …… ごめんなさい 。 {辛|つら}い こと を {思|おも}い{出|だ}させて しまって 。 || …I'm sorry. We've made you remember something painful.
 ?(comp=nao) comp: …… {届|とど}け{物|もの} が 、 {重|おも}すぎた か 。 || …Was that delivery too heavy?
 ?(comp=ren) comp[sad]: {名|な} を {返|かえ}せば 、 {名|な} に {付|つ}いて いた もの も {戻|もど}る 。 …… {分|わ}かって いた はず なのに 。 || Give back a name, and everything attached to it comes back too. …I should have known.
 ?(comp=suzu) comp[closed]: …… {忘|わす}れた まま の ほう が 、 よかった ？ || …Would you rather have gone on forgetting?
 fuku[closed]: いいえ 。 || No.
 fuku: {喧嘩|けんか} も 、 あの {人|ひと} の {顔|かお} も 、 {鍋|なべ} の {蓋|ふた} も 、 {全部|ぜんぶ} わたし の もの です 。 {痛|いた}くて も 、 {人|ひと} に {預|あず}けて おく もの じゃ ない わ 。 || The quarrel, his face, the pot lid — all of it is mine. Even if it hurts, it's not something to leave in someone else's keeping.
-fuku[smile]: {明日|あした} 、 {祠|ほこら} に {飾|かざ}って 、 {言|い}って きます 。 {四十年|よんじゅうねん} {遅|おく}れ の 「{行|い}って らっしゃい 」 を 。 || Tomorrow I'll put it up at the shrine and go and say it. Forty years late: "Take care."
+fuku[smile]: {明日|あした} 、 {祠|ほこら} に {飾|かざ}って 、 {言|い}って きます 。 {四十年|よんじゅうねん} {遅|おく}れ の 「いってらっしゃい 」 を 。 || Tomorrow I'll put it up at the shrine and go and say it. Forty years late: "Take care."
 fuku: それ と 、 これ 。 アサヒ ちゃん が 、 わたし が {泣|な}いたら {渡|わた}して って 。 …… {泣|な}きました から ね 。 || And these. Asahi said to give them to you if I cried. …Well, I did.
 !take sg_plate
 !quest sg_seaglass done
 
 @scene sg.fuku_after
-fuku: {祠|ほこら} に {飾|かざ}りました よ 。 {毎朝|まいあさ} 、 「{行|い}って らっしゃい 」 って {言|い}って ます 。 {返事|へんじ} は ない けど 、 {鳥|とり} が {鳴|な}く の 。 || I put it up at the shrine. Every morning I say "take care". He doesn't answer, but a bird always sings.
+fuku: {祠|ほこら} に {飾|かざ}りました よ 。 {毎朝|まいあさ} 、 「いってらっしゃい 」 って {言|い}って ます 。 {返事|へんじ} は ない けど 、 {鳥|とり} が {鳴|な}く の 。 || I put it up at the shrine. Every morning I say "take care". He doesn't answer, but a bird always sings.
 
 @scene sg.fuku_post
-fuku: {今日|きょう} も {言|い}って きました よ 。 「{行|い}って らっしゃい 」 。 || I went and said it again today. "Take care."
+fuku: {今日|きょう} も {言|い}って きました よ 。 「いってらっしゃい 」 。 || I went and said it again today. "Take care."
 ?(end_mem_return) fuku: {山|やま} から {思|おも}い{出|で}が {帰|かえ}って きた {時|とき} 、 {町|まち} じゅう で {泣|な}き{声|ごえ} が した わ 。 {痛|いた}い けど 、 {自分|じぶん} の もの だ から 。 わたし は {先|さき} に {練習|れんしゅう} して おいて よかった 。 || When the memories came back down from the mountain, the whole town was crying. It hurts, but they're ours. I'm glad I'd had some practice first.
 ?(end_mem_choose) fuku: {山|やま} の {書庫|しょこ} に は 、 {自分|じぶん} で {取|と}りに {行|い}く ん です って ね 。 わたし は もう {行|い}きました 。 {一|ひと}つ だけ 、 {置|お}いて きた の 。 {内緒|ないしょ} よ 。 || They say you go and fetch your own from the mountain archive now. I've been already. I left one thing behind. Don't tell anyone.
 
@@ -344,11 +344,11 @@ asahi: {青|あお}い の を {三|みっ}つ ね 。 {浜|はま} と 、 {入
 ?(item.sg_seaglass=2) asahi: {二|ふた}つ ！ あと {一|ひと}つ ！ || Two! One more!
 
 @scene sg.asahi_glass
-asahi: {青|あお} ！ {三|みっ}つ ！ しかも {角|かど} が {丸|まる}い 。 いい {目|め} して る ね 。 || Blue! Three! And the edges are nicely rounded. You've got a good eye.
+asahi: {青|あお} ！ {三|みっ}つ ！ しかも {角|かど} が {丸|まる}い 。 いい {目|め} してる ね 。 || Blue! Three! And the edges are nicely rounded. You've got a good eye.
 !take sg_seaglass 3
 asahi[worry]: で 、 {二|ふた}つ {目|め} の {問題|もんだい} 。 {船|ふね} の {名前|なまえ} が {分|わ}からない の 。 || Now, problem number two. I don't know the boat's name.
 asahi: フク さん {本人|ほんにん} が {思|おも}い{出|だ}せない ん だ って 。 {四十年|よんじゅうねん} {毎朝|まいあさ} {見送|みおく}った {船|ふね} なのに 。 {港|みなと} の {誰|だれ} に {聞|き}いて も 、 {思|おも}い{出|だ}せない 。 || Fuku herself can't remember. A boat she saw off every morning for forty years. And nobody else in the harbour can remember either.
-asahi[think]: {変|へん} だ よ ね 。 {名前|なまえ} だけ が 、 すっぽり {抜|ぬ}けて る 。 || Strange, isn't it? Only the name's gone, cleanly.
+asahi[think]: {変|へん} だ よ ね 。 {名前|なまえ} だけ が 、 すっぽり {抜|ぬ}けてる 。 || Strange, isn't it? Only the name's gone, cleanly.
 ?(comp=ren) comp: …… {棚|たな} に {上|あ}げられた の かも しれません 。 || …Perhaps it's been shelved.
 !if item.sg_registry -> have
 !quest sg_seaglass 1
@@ -358,8 +358,8 @@ pc: …… もしかして 、 これ ？ || …Could it be this?
 !call sg.asahi_name
 
 @scene sg.asahi_waitname
-asahi: {船|ふね} の {名前|なまえ} 、 {分|わ}かった ？ …… だよ ね 。 {誰|だれ} に {聞|き}いて も 、 {同|おな}じ {顔|かお} を する の 。 {喉|のど} まで {出|で}て る の に 、 って 。 || Found the boat's name? …Thought not. Everyone makes the same face: it's right on the tip of my tongue.
-?(sg_da_seen) asahi[think]: {沈|しず}んだ {書庫|しょこ} に 、 {名前|なまえ} が {集|あつ}められて る って {本当|ほんとう} ？ {船|ふね} の {名前|なまえ} も 、 そこ に ある の かな 。 || Is it true names are being collected in the drowned archive? Maybe the boat's name is there too.
+asahi: {船|ふね} の {名前|なまえ} 、 {分|わ}かった ？ …… だよ ね 。 {誰|だれ} に {聞|き}いて も 、 {同|おな}じ {顔|かお} を する の 。 {喉|のど} まで {出|で}てる の に 、 って 。 || Found the boat's name? …Thought not. Everyone makes the same face: it's right on the tip of my tongue.
+?(sg_da_seen) asahi[think]: {沈|しず}んだ {書庫|しょこ} に 、 {名前|なまえ} が {集|あつ}められてる って {本当|ほんとう} ？ {船|ふね} の {名前|なまえ} も 、 そこ に ある の かな 。 || Is it true names are being collected in the drowned archive? Maybe the boat's name is there too.
 
 @scene sg.asahi_name
 narr: {登録|とうろく} カード を {見|み}せた 。 「{船名|せんめい} ： {千鳥丸|ちどりまる}」 。 || You show her the registry card. "Vessel: Chidori-maru."
@@ -377,7 +377,7 @@ asahi[smile]: できた 。 …… {自分|じぶん} で {渡|わた}したい 
 asahi: {名札|なふだ} 、 フク さん に {渡|わた}して くれた ？ {丘|おか} の {上|うえ} の 、 {煙突|えんとつ} の ある {家|いえ} だ よ 。 || Did you give Fuku the nameplate? She's up the hill — the house with the chimney.
 
 @scene sg.asahi_after
-asahi: フク さん 、 {泣|な}いて た ？ …… そっか 。 {泣|な}いて 、 {笑|わら}って た ？ …… そっか 。 よかった 。 || Did Fuku cry? …I see. Cried, and then laughed? …I see. Good.
+asahi: フク さん 、 {泣|な}いてた ？ …… そっか 。 {泣|な}いて 、 {笑|わら}ってた ？ …… そっか 。 よかった 。 || Did Fuku cry? …I see. Cried, and then laughed? …I see. Good.
 asahi[think]: ねえ 。 {名前|なまえ} って 、 {言|い}わなく なる と {消|き}える の かな 。 フク さん 、 {船|ふね} の {名前|なまえ} を {四十年|よんじゅうねん} {口|くち} に {出|だ}さなかった ん だ って 。 || Hey. Do you think names disappear when people stop saying them? Fuku says she hadn't said the boat's name out loud in forty years.
 ?(sg_boss_done) asahi[smile]: {灰|はい} も {届|とど}いた し 、 {炉|ろ} も {熱|あつ}い よ ！ {次|つぎ} は {窓|まど} ガラス を {作|つく}る ん だ 。 {港|みなと} じゅう の ！ || And my ash has arrived, and the furnace is hot! Next I'm making window glass. For the whole harbour!
 
@@ -394,7 +394,7 @@ narr: ガラス を {溶|と}かす {炉|ろ} 。 || The furnace for melting gla
 narr: {作業台|さぎょうだい} に {注文|ちゅうもん} の {紙|かみ} が {留|と}めて ある 。 「{浮|う}き{玉|だま} {十個|じっこ} ・ {灯台|とうだい} の ランプ の {火屋|ほや} {一|ひと}つ ・ {名札|なふだ}（フク {様|さま}）」 。 || Order slips are pinned to the workbench: "Floats ×10 — lighthouse lamp chimney ×1 — nameplate (Mrs Fuku)".
 
 @scene sg.genzo_idle
-genzo: {灯台|とうだい} に {用|よう} か 。 {階段|かいだん} は {急|きゅう} だ ぞ 。 {俺|おれ} の {膝|ひざ} が {言|い}って る 。 || Business at the lighthouse? The stairs are steep. My knees say so.
+genzo: {灯台|とうだい} に {用|よう} か 。 {階段|かいだん} は {急|きゅう} だ ぞ 。 {俺|おれ} の {膝|ひざ} が {言|い}ってる 。 || Business at the lighthouse? The stairs are steep. My knees say so.
 ?(sg_boss_done) genzo: {油|あぶら} が {全部|ぜんぶ} {届|とど}いた 。 {灯|ひ} は {太|ふと}い 。 {沖|おき} の {船|ふね} も 、 もう {迷|まよ}わん 。 || All the oil's arrived. The flame's good and fat. No boat out there'll lose its way now.
 
 @scene sg.genzo_grump
@@ -419,12 +419,12 @@ pc: 「{来|こ}なくて いい 」 は 、 「{来|く}る な 」 では あ�
 genzo[sad]: …… {十年|じゅうねん} 、 {膝|ひざ} の こと なんか {書|か}いて きた こと は なかった 。 {俺|おれ} の {膝|ひざ} が {悪|わる}い の を 、 {誰|だれ} に {聞|き}いた ん だ 。 || …Ten years, and she never once wrote about my knees. Who told her my knees were bad?
 ?(comp=nao) comp: {手紙|てがみ} を {運|はこ}ぶ {人間|にんげん} は 、 {口|くち} が {軽|かる}い ん だ よ 。 {悪|わる}い ね 。 || People who carry letters talk. Sorry.
 ?(comp=suzu) comp[smile]: {港|みなと} の {噂|うわさ} は 、 {船|ふね} より {速|はや}い の よ 。 || Harbour gossip travels faster than boats.
-genzo[smile]: ふん 。 …… 「{灯台|とうだい} で {待|ま}って て 」 か 。 {五十年|ごじゅうねん} ずっと {待|ま}って る {場所|ばしょ} だ 。 {慣|な}れた もん だ 。 || Hmph. …"Wait at the lighthouse," is it. It's where I've waited for fifty years. I'm used to it.
+genzo[smile]: ふん 。 …… 「{灯台|とうだい} で {待|ま}って て 」 か 。 {五十年|ごじゅうねん} ずっと {待|ま}ってる {場所|ばしょ} だ 。 {慣|な}れた もん だ 。 || Hmph. …"Wait at the lighthouse," is it. It's where I've waited for fifty years. I'm used to it.
 genzo: {渡|わた}し{船|ぶね} が {動|うご}いたら 、 {来|く}る だろう 。 …… {下|した} まで は {行|い}かん ぞ 。 {膝|ひざ} を {大事|だいじ} に しろ と {言|い}われた から な 。 || She'll come once the ferry's running. …I'm not going down there, mind. I've been told to look after my knees.
 !quest sg_lighthouse 2
 
 @scene sg.genzo_waiting
-genzo: {渡|わた}し{船|ぶね} は まだ か 。 …… {別|べつ} に 、 {待|ま}って る わけ じゃ ない 。 {灯台|とうだい} {守|もり} は 、 {海|うみ} を {見|み}る の が {仕事|しごと} だ 。 || The ferry's not in yet? …Not that I'm waiting. A lighthouse keeper's job is to watch the sea.
+genzo: {渡|わた}し{船|ぶね} は まだ か 。 …… {別|べつ} に 、 {待|ま}ってる わけ じゃ ない 。 {灯台|とうだい} {守|もり} は 、 {海|うみ} を {見|み}る の が {仕事|しごと} だ 。 || The ferry's not in yet? …Not that I'm waiting. A lighthouse keeper's job is to watch the sea.
 ?(!ch2_done) genzo: {港|みなと} の {騒|さわ}ぎ が {片付|かたづ}かん と 、 {船|ふね} は {出|で}ない そう だ 。 …… さっさと {片付|かたづ}けて こい 。 || The ferry won't run till the harbour's mess is sorted out. …So hurry up and sort it.
 
 @scene sg.genzo_family
@@ -506,7 +506,7 @@ shiori: {潮|しお} は {今日|きょう} も {表|ひょう} どおり です
 narr: {空|から} の {家|いえ} だ 。 {窓|まど} の {前|まえ} に 、 {椅子|いす} が {一脚|いっきゃく} 。 {海|うみ} の ほう を {向|む}いて いる 。 || An empty house. A single chair by the window, facing the sea.
 comp: …… 。 || ……
 comp: {入|はい}る つもり は なかった 。 || I didn't mean to come in.
-pc: ここ 、 {知|し}って る の ？ || You know this place?
+pc: ここ 、 {知|し}ってる の ？ || You know this place?
 comp[closed]: イサム って {爺|じい}さん の {家|いえ} だ 。 {手紙|てがみ} を {何度|なんど} か {預|あず}かった 。 {字|じ} が {震|ふる}えて て 、 でも {丁寧|ていねい} で …… 。 || An old man called Isamu lived here. I carried letters for him a few times. His hand shook, but his writing was careful…
 comp: {最後|さいご} の {一通|いっつう} は 、 {灯落|ひおち} の {娘|むすめ} {宛|あて} だった 。 {十年|じゅうねん} {以上|いじょう} {口|くち} を {聞|き}いて ない {娘|むすめ} に 、 {許|ゆる}して くれ って 。 || The last one was to his daughter in Lanternfall. A daughter he hadn't spoken to in over ten years. Asking her to forgive him.
 comp[sad]: {届|とど}けなかった 。 {死|し}に{際|ぎわ} に {許|ゆる}し を {頼|たの}む の は 、 {受|う}け{取|と}る {側|がわ} に {重|おも}すぎる と {思|おも}った 。 {断|ことわ}る {自由|じゆう} の ない {手紙|てがみ} だ 。 || I didn't deliver it. Asking forgiveness on your deathbed puts too much on the one who receives it, I thought. It's a letter she'd have no freedom to refuse.
@@ -515,12 +515,12 @@ comp: …… {今|いま} も {鞄|かばん} の {底|そこ} に ある 。 {�
 * {届|とど}ける べき だった と {思|おも}う ？ || Do you think you should have delivered it? -> should
 * {何|なに} も {言|い}わない || Say nothing -> quiet
 :should
-comp[think]: {分|わ}からない 。 それ が {分|わ}からない から 、 {捨|す}て られない ん だ よ 。 || I don't know. That's exactly why I can't throw it away.
+comp[think]: {分|わ}からない 。 それ が {分|わ}からない から 、 {捨|す}てられない ん だ よ 。 || I don't know. That's exactly why I can't throw it away.
 !goto after
 :quiet
 narr: {二人|ふたり} で しばらく 、 {窓|まど} の {外|そと} の {海|うみ} を {見|み}て いた 。 || For a while, the two of you look at the sea through the window.
 :after
-comp[smirk]: …… {行|い}こう 。 {空|から} の {家|いえ} に {長居|ながい} する と 、 {返事|へんじ} を {待|ま}って る {気分|きぶん} に なる 。 || …Let's go. Stay too long in an empty house and you start feeling like you're waiting for a reply.
+comp[smirk]: …… {行|い}こう 。 {空|から} の {家|いえ} に {長居|ながい} する と 、 {返事|へんじ} を {待|ま}ってる {気分|きぶん} に なる 。 || …Let's go. Stay too long in an empty house and you start feeling like you're waiting for a reply.
 !set sg_nao_isamu
 
 @scene sg.isamu_chair
@@ -542,7 +542,7 @@ suzu[closed]: …… {冗談|じょうだん} よ 。 {気|き}を つけて ね
 
 @scene sg.suzu_cameo2
 suzu: {港|みなと} が うるさく なった わ ！ {投|な}げ{銭|せん} も {三倍|さんばい} よ 。 || The harbour's noisy again! Three times the coins in the hat.
-suzu[smile]: {前|まえ} に {来|き}た とき の {宿代|やどだい} 、 {利子|りし} を つけて {返|かえ}して きた の 。 タマエ さん 、 {目|め} を {丸|まる}く して た わ 。 {帳尻|ちょうじり} は {合|あ}わせる {主義|しゅぎ} なの 。 || I paid back the inn bill from last time — with interest. Tamae's eyes went round. I believe in balancing the books.
+suzu[smile]: {前|まえ} に {来|き}た とき の {宿代|やどだい} 、 {利子|りし} を つけて {返|かえ}して きた の 。 タマエ さん 、 {目|め} を {丸|まる}く してた わ 。 {帳尻|ちょうじり} は {合|あ}わせる {主義|しゅぎ} なの 。 || I paid back the inn bill from last time — with interest. Tamae's eyes went round. I believe in balancing the books.
 
 @scene sg.cove_arrive
 !set sg_cove_seen
@@ -582,7 +582,7 @@ narr: {古|ふる}い {立|た}て{札|ふだ} 。 「{漁師|りょうし} の 
 narr: {岩|いわ} に {網|あみ} が {掛|か}けて ある 。 {嵐|あらし} に も {飛|と}ばされず 、 {待|ま}って いた らしい 。 || The nets are hung on the rocks. They seem to have waited out the storm without blowing away.
 !give sg_nets
 !quest sg_cove 3
-?(comp=nao) comp: {重|おも}っ 。 …… {配達|はいたつ} {料|りょう} 、 {魚|さかな} で {払|はら}って もらう か 。 || Heavy. …Maybe we'll take our delivery fee in fish.
+?(comp=nao) comp: {重|おも}い な 。 …… {配達料|はいたつりょう} 、 {魚|さかな} で {払|はら}って もらう か 。 || Heavy. …Maybe we'll take our delivery fee in fish.
 ?(comp=mio) comp[smile]: {丁寧|ていねい} に {干|ほ}して ある 。 ソウタ さん 、 {几帳面|きちょうめん} な {人|ひと} だ ね 。 || Hung up so neatly. Sōta's a careful one.
 ?(comp=ren) comp: {網|あみ} も {縄|なわ} の {仲間|なかま} です ね 。 {結|むす}び{目|め} の {数|かず} を {数|かぞ}え{始|はじ}める と 、 {日|ひ} が {暮|く}れます 。 || Nets are relatives of rope. If I start counting the knots, we'll be here till dark.
 ?(comp=suzu) comp: {網|あみ} の {中|なか} に {小|ちい}さい {蟹|かに} が いる わ 。 …… お{帰|かえ}り なさい 、 {海|うみ} へ 。 || There's a tiny crab in the net. …Off you go, back to the sea.

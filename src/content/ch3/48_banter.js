@@ -23,7 +23,7 @@ comp[closed]: …… {鞄|かばん} の {一番|いちばん} {底|そこ} だ 
 
 @scene co.b_nao3
 comp: {窯|かま} の {中|なか} で {一番|いちばん} {嫌|いや} な の は 、 {出口|でぐち} が {入|い}り{口|ぐち} と {同|おな}じ だって こと だ 。 || The worst thing about a kiln is that the exit is the entrance.
-comp[smirk]: {戻|もど}る {時|とき} は {走|はし}る ぞ 。 {文句|もんく} は {聞|き}かない 。 …… {走|はし}る な 、 って {言|い}われた こと も あった けど な 。 {昔|むかし} は あった か な|むかし} 。 || We run on the way back. No complaints. …Someone once told me not to run. Long time ago.
+comp[smirk]: {戻|もど}る {時|とき} は {走|はし}る ぞ 。 {文句|もんく} は {聞|き}かない 。 …… {走|はし}る な 、 って {言|い}われた こと も あった けど な 。 {昔|むかし} 。 || We run on the way back. No complaints. …Someone once told me not to run. Long time ago.
 comp: {上|うえ} で {何|なに} か が {熱|ねつ} を {溜|た}めてる 。 {水|みず} か {氷|こおり} 。 {札|ふだ} を {二枚|にまい} {持|も}ってる の は 、 {心強|こころづよ}い な 。 || Something up there is building heat. Water or ice. Good to have two cards to play.
 
 @scene co.b_nao4
@@ -68,7 +68,7 @@ comp[smirk]: …… {道|みち}しるべ が {直|なお}れば 、 {私|わた
 @scene co.b_ren2
 comp: {師匠|ししょう} は よく {言|い}って いました 。 「 {口|くち} に {出|だ}さない {名|な} は 、 {薄|うす}く なる 」 。 || My master used to say: "A name no one says aloud grows thin."
 comp[sad]: {教|おし}え は 、 {声|こえ} の {調子|ちょうし} まで {覚|おぼ}えて います 。 なのに 、 {顔|かお} が {出|で}て こない 。 {笑|わら}って いた か どう か も 。 || I remember his teachings down to the tone of his voice. And yet his face won't come. Whether he was smiling or not.
-comp: この {里|さと} の {人|ひと} たち を {見|み}て いる と 、 {他人事|ひとごと} と は {思|おも}え ません 。 || Watching the people here, I can't feel it's none of my business.
+comp: この {里|さと} の {人|ひと} たち を {見|み}て いる と 、 {他人事|ひとごと} と は {思|おも}えません 。 || Watching the people here, I can't feel it's none of my business.
 
 @scene co.b_ren3
 comp[smirk]: {窯|かま} の {中|なか} は 、 {灯守|ひもり} の {制服|せいふく} に は {厳|きび}しい です ね 。 …… {外套|がいとう} が 、 {焼|や}き{芋|いも} の {気分|きぶん} です 。 || A kiln is hard on a lantern keeper's uniform. …My coat feels like a baked sweet potato.

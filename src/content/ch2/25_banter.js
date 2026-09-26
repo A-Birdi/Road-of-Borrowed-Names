@@ -11,7 +11,7 @@ comp[smirk]: {鞄|かばん} が {重|おも}い の は 、 その せい 。 �
 
 @scene sg.b_nao_exits
 comp: この {宿|やど} 、 {出口|でぐち} が {二|ふた}つ ある 。 {表|おもて} と 、 {台所|だいどころ} の {裏|うら} 。 || This inn has two exits. The front, and out the back through the kitchen.
-pc: いつも {出口|でぐち} を {数|かぞ}えて る よ ね 。 || You're always counting exits.
+pc: いつも {出口|でぐち} を {数|かぞ}えてる よ ね 。 || You're always counting exits.
 comp: {配達人|はいたつにん} は 、 {犬|いぬ} に {追|お}われる こと が ある ん だ よ 。 {本当|ほんとう} に 。 {三回|さんかい} ある 。 || Couriers get chased by dogs. Really. Three times.
 comp[smirk]: {四回目|よんかいめ} は ない 。 {出口|でぐち} を {数|かぞ}える よう に なって から は な 。 || There hasn't been a fourth. Not since I started counting exits.
 
@@ -26,13 +26,13 @@ comp[think]: …… でも 、 {少|すこ}し {分|わ}かる 。 {届|とど}�
 
 @scene sg.b_nao_after
 comp: {次|つぎ} は {灰実|はいみ} の {里|さと} か 。 {果物|くだもの} の {配達|はいたつ} で 、 {何度|なんど} か {行|い}った 。 {坂|さか} が {多|おお}い ぞ 。 || Cinder Orchard next. I've been a few times delivering fruit. Lots of hills.
-comp: …… {灯落|ひおち} は 、 もっと {先|さき} だ 。 {分|わ}かって る 。 || …Lanternfall's further on. I know.
+comp: …… {灯落|ひおち} は 、 もっと {先|さき} だ 。 {分|わ}かってる 。 || …Lanternfall's further on. I know.
 
 @scene sg.b_mio_labels
 comp: ラベル が {勝手|かって} に {変|か}わる の 、 {薬屋|くすりや} に とって は {一番|いちばん} {怖|こわ}い こと なの 。 || Labels changing by themselves is the most frightening thing there is for an apothecary.
 comp[worry]: {咳止|せきど}め と {眠|ねむ}り{薬|ぐすり} を {間違|まちが}えたら …… 。 {瓶|びん} に {焼|や}き{印|いん} を {入|い}れよう かな 。 || Mix up cough syrup and a sleeping draught and… Maybe I should brand my bottles.
 pc: ガラス に {焼|や}き{印|いん} は {難|むずか}しい よ 。 || Branding glass is hard.
-comp[smile]: {知|し}って る 。 アサヒ さん に {相談|そうだん} して みる 。 || I know. I'll ask Asahi about it.
+comp[smile]: {知|し}ってる 。 アサヒ さん に {相談|そうだん} して みる 。 || I know. I'll ask Asahi about it.
 
 @scene sg.b_mio_fish
 comp: {干物|ひもの} の {匂|にお}い 。 …… {母|はは} は {毎年|まいとし} 、 {潮硝子|しおがらす} から {干物|ひもの} を {取|と}り{寄|よ}せて いた の 。 || The smell of dried fish. …Every year my mother had dried fish sent from Saltglass.
@@ -48,7 +48,7 @@ comp[laugh]: …… ふう 。 {膝|ひざ} の {湿布|しっぷ} 、 {置|お}
 @scene sg.b_mio_archive
 comp[worry]: {全部|ぜんぶ} 、 {誰|だれ} か が {誰|だれ} か に {書|か}いた {手紙|てがみ} なん だ よ ね 。 || Every one of these is a letter someone wrote to someone.
 comp: {片付|かたづ}けたい 。 {宛先|あてさき} ごと に {分|わ}けて 、 {届|とど}けたい 。 …… {変|へん} な {癖|くせ} だ よ ね 。 || I want to tidy them. Sort them by address and deliver them. …A strange habit, I know.
-pc: この {書庫|しょこ} も 、 {片付|かたづ}けて いる つもり なん だ ろう ね 。 || This archive probably thinks it's tidying too.
+pc: この {書庫|しょこ} も 、 {片付|かたづ}けて いる つもり なん だろう ね 。 || This archive probably thinks it's tidying too.
 comp[think]: …… うん 。 {片付|かたづ}ける の と 、 {仕舞|しま}い{込|こ}む の は 、 {違|ちが}う 。 {気|き}を つける 。 || …Yes. Tidying and hiding away aren't the same thing. I'll be careful.
 
 @scene sg.b_mio_after
@@ -81,18 +81,18 @@ comp[worry]: {師匠|ししょう} も 、 この {色|いろ} の {灯|ひ} を
 @scene sg.b_ren_after
 comp: {北|きた} の {道|みち} の {灯籠|とうろう} 、 {名前|なまえ} が {戻|もど}って いました 。 {灯守|ひもり} と して は 、 {一安心|ひとあんしん} です 。 || The lantern at the fork has its name back. As a keeper, I'm relieved.
 comp: {次|つぎ} の {町|まち} まで は 、 {灯|ひ} が {続|つづ}いて いる はず です 。 {迷|まよ}いません 。 {今度|こんど} こそ 。 || The road to the next town should be lit all the way. I won't get lost. Not this time.
-pc: {前|まえ} も そう {言|い}って た よ 。 || You said that last time.
+pc: {前|まえ} も そう {言|い}ってた よ 。 || You said that last time.
 comp[shy]: {記録|きろく} に は 、 {残|のこ}って いません 。 || There's no record of that.
 
 @scene sg.b_suzu_accounts
-comp: {旅|たび} の {費用|ひよう} 、 {付|つ}けて る ？ {宿代|やどだい} 、 {食事|しょくじ} 、 {渡|わた}し{船|ぶね} 。 || Are you keeping track of our travel costs? Lodging, meals, ferries.
+comp: {旅|たび} の {費用|ひよう} 、 {付|つ}けてる ？ {宿代|やどだい} 、 {食事|しょくじ} 、 {渡|わた}し{船|ぶね} 。 || Are you keeping track of our travel costs? Lodging, meals, ferries.
 pc: {付|つ}けて ない 。 || No.
 comp[surprise]: {信|しん}じられない ！ …… {貸|か}して 。 {今日|きょう} から あたし が {付|つ}ける 。 {銅貨|どうか} {一枚|いちまい} {単位|たんい} で 。 || Unbelievable! …Hand it over. From today I'm keeping the accounts. To the last copper.
 comp[smirk]: {意外|いがい} ？ {芸人|げいにん} は ね 、 {数字|すうじ} に {強|つよ}く ない と {生|い}きて いけない の よ 。 || Surprised? A performer who's bad with numbers doesn't last.
 
 @scene sg.b_suzu_debt
 comp: タマエ さん ！ {三年|さんねん} {前|まえ} の {銅貨|どうか} {三枚|さんまい} 、 {利子|りし} を つけて {返|かえ}しに {来|き}た わ 。 || Tamae! I've come to pay back those three coppers from three years ago. With interest.
-tamae[surprise]: …… あんた 、 あの {時|とき} の {旅芸人|たびげいにん} かい ！ {忘|わす}れて た よ 。 || …You're that travelling performer! I'd forgotten all about it.
+tamae[surprise]: …… あんた 、 あの {時|とき} の {旅芸人|たびげいにん} かい ！ {忘|わす}れてた よ 。 || …You're that travelling performer! I'd forgotten all about it.
 comp[smile]: あたし は {忘|わす}れない の 。 {借|か}り は ね 。 || I don't forget. Not debts.
 tamae[laugh]: {変|か}わった {人|ひと} だ ねえ ！ {利子|りし} は いらない よ 。 {代|か}わり に 、 {今夜|こんや} {一曲|いっきょく} やって おくれ 。 || What an odd one you are! Keep the interest. Sing us a song tonight instead.
 
@@ -107,7 +107,7 @@ comp: {紙|かみ} の {鶴|つる} 、 {折|お}り{方|かた} が {上手|じ
 comp[closed]: …… {嘘|うそ} じゃ ない わ よ 。 {叶|かな}う {気|き} が する 、 って いう の は {本当|ほんとう} だ から 。 || …That wasn't a lie. It's true that it feels like it will.
 
 @scene sg.b_suzu_after
-comp: {次|つぎ} は {灰実|はいみ} の {里|さと} ね 。 {祭|まつ}り の {舞台|ぶたい} が ある {町|まち} よ 。 {前|まえ} は {毎年|まいとし} {出|で}て た 。 || Cinder Orchard next. The town with the festival stage. I used to perform there every year.
+comp: {次|つぎ} は {灰実|はいみ} の {里|さと} ね 。 {祭|まつ}り の {舞台|ぶたい} が ある {町|まち} よ 。 {前|まえ} は {毎年|まいとし} {出|で}てた 。 || Cinder Orchard next. The town with the festival stage. I used to perform there every year.
 pc: {今|いま} は ？ || And now?
 comp[smile]: …… {久|ひさ}しぶり に 、 {出|で}て みよう かな 。 {客席|きゃくせき} に 、 {会|あ}わなきゃ いけない {人|ひと} が いる の 。 || …Maybe it's time I did again. There's someone in the audience I need to face.
 `, 'ch2/25_banter');

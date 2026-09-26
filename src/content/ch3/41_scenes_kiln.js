@@ -18,7 +18,7 @@ narr: {古|ふる}い {木|き} は {一本|いっぽん} も ない 。 {黒|�
 narr: {段|だん} の {角|かど} に 、 {古|ふる}い {石|いし} が {立|た}って いる 。 {字|じ} が {刻|きざ}まれて いる 。 || An old stone stands at the corner of the terrace, carved with words.
 narr: 「 {火|ひ} は {来|く}る 。 {火|ひ} は {去|さ}る 。 {石|いし} は {黙|だま}って {残|のこ}る 。 」 || "Fire comes. Fire goes. Stone remains, and says nothing."
 ?(comp=nao) comp: {石|いし} は {喋|しゃべ}らない けど 、 {嘘|うそ} も つかない 。 {配達|はいたつ} {先|さき} と して は {最高|さいこう} だ 。 || Stone doesn't talk, but it doesn't lie either. Ideal recipient.
-?(comp=mio) comp: {火|ひ} が {来|く}る 、 と {書|か}いて ある 。 {来|こ}ない 、 じゃ なくて 。 {昔|むかし} は あった か な|むかし} の {人|ひと} は 、 {分|わ}かって いた んです ね 。 || It says fire comes. Not that it doesn't. The founders knew.
+?(comp=mio) comp: {火|ひ} が {来|く}る 、 と {書|か}いて ある 。 {来|こ}ない 、 じゃ なくて 。 {昔|むかし} の {人|ひと} は 、 {分|わ}かって いた んです ね 。 || It says fire comes. Not that it doesn't. The founders knew.
 ?(comp=ren) comp: {石|いし} に {刻|きざ}んだ {字|じ} は 、 {静寂|しじま} でも {消|け}しにくい 。 だから {残|のこ}った の でしょう 。 || Words cut in stone are hard even for the Hush to lift. That's why these survived.
 ?(comp=suzu) comp: {石|いし} は {黙|だま}って {残|のこ}る 、 か 。 …… {私|わたし} と {逆|ぎゃく} ね 。 よく {喋|しゃべ}って 、 {残|のこ}らない 。 || Stone stays silent and remains. …The opposite of me. I talk a lot and never stay.
 
@@ -27,7 +27,7 @@ narr: 「 {火|ひ} は {来|く}る 。 {火|ひ} は {去|さ}る 。 {石|い
 narr: {段|だん} の {壁|かべ} の {通|とお}り{道|みち} が 、 {崩|くず}れかけて いる 。 {石|いし} を {一|ひと}つ {動|うご}かす と 、 {上|うえ} から また {一|ひと}つ {落|お}ちて くる 。 || The passage through the terrace wall is crumbling. Move one stone and another slides down from above.
 ?(comp=nao) comp: {登|のぼ}る と {崩|くず}れる 。 {崩|くず}れる と {登|のぼ}れない 。 {石|いし} に {文句|もんく} を {言|い}って も {仕方|しかた} ない し な 。 || Climb it, it collapses. Collapses, you can't climb it. No use complaining to rocks.
 ?(comp=mio) comp[think]: {石|いし} が {石|いし} で ある こと を {忘|わす}れて いる みたい 。 {思|おも}い{出|だ}させて あげられ ない かな 。 || It's as if the stones have forgotten they're stones. Could we remind them?
-?(comp=ren) comp: {字|じ} で {支|ささ}え られる かも しれません 。 {石|いし} に 、 {石|いし} の {名|な} を 。 || We might be able to hold it with writing. Give the stones their own name.
+?(comp=ren) comp: {字|じ} で {支|ささ}えられる かも しれません 。 {石|いし} に 、 {石|いし} の {名|な} を 。 || We might be able to hold it with writing. Give the stones their own name.
 ?(comp=suzu) comp: {舞台|ぶたい} の {大道具|おおどうぐ} と {同|おな}じ よ 。 {名前|なまえ} を {呼|よ}んで あげる と 、 {立|た}つ の 。 …… たぶん 。 || Same as stage sets. Call them by name and they stand up. …Probably.
 !challenge co.c_ishi
 !if var._res=0 -> later
@@ -143,7 +143,7 @@ RB.script.add(`
 @scene co.ice_enter
 narr: {石|いし} の {壁|かべ} の {内側|うちがわ} は 、 {息|いき} が {白|しろ}く なる ほど {冷|つめ}たかった 。 {外|そと} の {暑|あつ}さ が 、 {嘘|うそ} の よう だ 。 || Inside the stone walls it's cold enough to see your breath. The heat outside might never have existed.
 narr: {藁|わら} の {山|やま} の {間|あいだ} に 、 {青白|あおじろ}い {塊|かたまり} が いくつ も {眠|ねむ}って いる 。 || Between heaps of straw, bluish-white blocks lie sleeping.
-?(comp=nao) comp: {氷室|ひむろ} だ 。 {夏|なつ} に {氷|こおり} を {売|う}る {家|いえ} が 、 {昔|むかし} は あった か な|むかし} は {山|やま} に こういう の を {持|も}ってた 。 || An ice house. Families who sold ice in summer used to keep these in the hills.
+?(comp=nao) comp: {氷室|ひむろ} だ 。 {夏|なつ} に {氷|こおり} を {売|う}る {家|いえ} が 、 {昔|むかし} は {山|やま} に こういう の を {持|も}ってた 。 || An ice house. Families who sold ice in summer used to keep these in the hills.
 ?(comp=mio) comp[smile]: …… {涼|すず}しい 。 ちょっと だけ 、 ここ で {休|やす}んで も いい です か 。 {三十|さんじゅう} {数|かぞ}える あいだ だけ 。 || …It's cool. Could we rest here, just a little? Just while I count to thirty.
 ?(comp=ren) comp: {静|しず}か な {場所|ばしょ} です 。 {静寂|しじま} の {静|しず}けさ と は {違|ちが}う 。 {音|おと} が {休|やす}んで いる だけ の 、 {静|しず}けさ 。 || A quiet place. Not the Hush's kind of quiet. The kind where sound is just resting.
 ?(comp=suzu) comp[smile]: {楽屋|がくや} みたい 。 {本番|ほんばん} {前|まえ} の 、 {一番|いちばん} {静|しず}か な {時間|じかん} 。 || Like a dressing room. The quietest moment before curtain.

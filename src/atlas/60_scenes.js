@@ -4,10 +4,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.script.add(`
 @scene atlas.intro.first
-tsuru: {名前|なまえ} が {戻|もど}って 、 {道|みち} も {戻|もど}って きた 。 …… {全部|ぜんぶ} じゃ ない けど ね 。 || The names came back, and the roads with them. …Not all of them, mind.
-tsuru: {書|か}きかけ の {道|みち} が 、 あちこち に {残|のこ}って いる 。 {行|い}き{先|さき} の {決|き}まって いない {道|みち} だ よ 。 || Half-written roads are left lying about. Roads that haven't decided where they go.
-tsuru: {歩|ある}く たび に {形|かたち} が {変|か}わる 。 わたし は 「{書|か}かれて いない {地図|ちず} 」 と {呼|よ}んで いる 。 || They change shape every time you walk them. I call them the Unwritten Atlas.
-tsuru: {迷子|まいご} の {名前|なまえ} も 、 まだ そこ に いる 。 {帰|かえ}り{道|みち} が {分|わ}からない の さ 。 || There are lost names out there still. They can't find their way home.
+tsuru: {書|か}かれて いない {道|みち} に は 、 {迷子|まいご} の {名前|なまえ} が まだ いる 。 {帰|かえ}り{道|みち} が {分|わ}からない の さ 。 || Out on the unwritten roads there are still lost names. They can't find their way home.
+tsuru: {道|みち} は {歩|ある}く たび に {形|かたち} が {変|か}わる 。 {霧|きり} の {日|ひ} も あれば 、 {潮|しお} の {引|ひ}いた {日|ひ} も ある 。 {好|す}きな {道|みち} を {選|えら}び な 。 || They change every time you walk them. Some days there's fog, some days the tide's out. Pick whichever road you like.
 ?(comp=nao) comp[smirk]: {届|とど}け{損|そこ}ねた {名前|なまえ} か 。 {私|わたし} の {仕事|しごと} だ な 。 || Undelivered names. Sounds like my line of work.
 ?(comp=mio) comp: {迷|まよ}って いる なら 、 {迎|むか}え に {行|い}かない と ね 。 || If they're lost, someone should go and fetch them.
 ?(comp=ren) comp: {道|みち} を {照|て}らす の は {灯守|ひもり} の {仕事|しごと} です 。 {方角|ほうがく} は …… お{任|まか}せ します 。 || Lighting roads is a lantern keeper's job. The direction, I'll… leave to you.
@@ -260,4 +258,30 @@ narr: {灯|あか}り は あなた の {腰|こし} に {収|おさ}まって �
 ?(var.atlas_kind=1&comp=ren) comp: {地図|ちず} に {道|みち} を {一本|いっぽん} {書|か}き{足|た}しました 。 {方角|ほうがく} は 、 {後|あと} で {確|たし}かめて ください 。 || I've added a road to the map. Please check the directions later.
 ?(var.atlas_kind=1&comp=suzu) comp[laugh]: {本日|ほんじつ} の {公演|こうえん} 、 これ に て {終幕|しゅうまく} ！ || And that concludes today's performance!
 ?(var.atlas_kind=2&comp) comp: {引|ひ}き{返|かえ}す {勇気|ゆうき} も 、 {大事|だいじ} だ よ 。 || It takes nerve to turn back, too.
+
+@scene atlas.banter.nao1
+comp: {地図|ちず} に ない {道|みち} を {歩|ある}く の は 、 {配達人|はいたつにん} の {夢|ゆめ} だ 。 …… {悪夢|あくむ} かも しれない けど 。 || Walking roads that aren't on any map is a courier's dream. …Or nightmare.
+
+@scene atlas.banter.nao2
+comp: この {紙|かみ} の {地面|じめん} 、 {踏|ふ}む と {少|すこ}し {音|おと} が する 。 {聞|き}こえる か ？ || This paper ground makes a little sound when you step on it. Hear it?
+
+@scene atlas.banter.mio1
+comp: {迷子|まいご} の {名前|なまえ} って 、 {怪我|けが} を して いる わけ じゃ ない のに 、 {放|ほう}って おけない の よ ね 。 || Lost names aren't hurt, and still I can't leave them be.
+
+@scene atlas.banter.mio2
+comp: {白|しろ}い {所|ところ} を {見|み}る と 、 ラベル を {書|か}きたく なる の 。 {職業病|しょくぎょうびょう} ね 。 || Whenever I see a blank space, I want to write a label on it. Occupational hazard.
+
+@scene atlas.banter.ren1
+comp: {地図|ちず} に {載|の}って いない なら 、 {私|わたし} が {迷|まよ}って も {仕方|しかた} ない です よ ね 。 …… {冗談|じょうだん} です 。 || If it isn't on the map, it's only natural that I get lost. …That was a joke.
+
+@scene atlas.banter.ren2
+comp: {灯|ひ} を {近|ちか}づける と 、 {紙|かみ} の {下|した} に {薄|うす}い {線|せん} が {見|み}えます 。 {誰|だれ}か が {下書|したが}き を した よう です 。 || Hold the lamp close and you can see faint lines under the paper. Someone sketched this first.
+
+@scene atlas.banter.suzu1
+comp: {台本|だいほん} の ない {舞台|ぶたい} は {久|ひさ}しぶり 。 {即興|そっきょう} は {得意|とくい} な の 。 || A stage with no script — it's been a while. I'm good at improvising.
+
+@scene atlas.banter.suzu2
+comp: {今日|きょう} の {旅費|りょひ} 、 {今|いま} の ところ ゼロ 。 {素晴|すば}らしい {帳簿|ちょうぼ} だ わ 。 || Travel costs so far today: zero. A beautiful ledger.
 `, 'atlas/scenes');
+
+for (const c of ['nao', 'mio', 'ren', 'suzu']) for (const i of [1, 2]) RB.content.banter.push({ comp: c, map: 'atlas.*', scene: 'atlas.banter.' + c + i });

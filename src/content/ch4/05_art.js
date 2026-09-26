@@ -123,6 +123,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }
     px(c, x + 3, y - 24, 26, 2, '#2a2430');
   });
+  // Invisible blocker for footprints drawn by a larger prop.
+  def('sb_blocker', {}, () => {});
   // The observatory building (7×5): stone drum, dome with a slit, the lamp's
   // window. Blocking comes from the map's wall tiles; this only draws.
   def('sb_observatory', { w: 7, h: 5, block: false, light: 0 }, (c, x, y, p, t, o) => {
@@ -161,7 +163,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     for (let i = 0; i < 3; i++) px(c, x + 3 + i * 4, y + 12 + i * 5, 2, 2, '#ffffff50');
   });
   // Stacked firewood (2×1).
-  def('sb_woodpile', { w: 2, h: 1 }, (c, x, y, p) => {
+  def('sb_woodpile', { w: 2, h: 1 }, (c, x, y, p, t, o) => {
     shadow(c, x, y, 30);
     for (let r = 0; r < 3; r++) for (let k = 0; k < 5 - (r % 2); k++) {
       const ox = x + 2 + k * 6 + (r % 2) * 3, oy = y + 8 - r * 5;

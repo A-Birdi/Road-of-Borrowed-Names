@@ -8,7 +8,7 @@
  *   ? objective spot(s) · $ cache spot · % unmoored-name spot · & foe spot
  *   G guard / guardian spot · K clue tablet · < door lamp · W bridge gap (bridge beneath)
  *   ( deep water that is shallow at low tide · [ cache spot uncovered at low tide
- *   ) promise veil (Promise-bound Ruin only; blank otherwise) · ] promise cache
+ *   ) promise veil (Promise-bound Ruin only; blank otherwise) · ] promise cache · } alcove floor
  *   - climax trigger · I pillar · U lit lantern · V statue · N stone marker
  *   J book pile · H campfire · M tent (2 wide) · Z folded page (behind the entry)
  * Dressings re-skin the generic ground so each room can echo a different
@@ -263,8 +263,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
         'XXXY:YXXXXXXXXXY:YXXX',
         'XXXY:.YXXXXXXXY.:YXXX',
         'X]))Y:.YTTTTTY.:.YXXX',
-        'X..)Y.:..,.,..:..YXXX',
-        'XX.)Y..:.....:..YXXXX',
+        'X}})Y.:..,.,..:..YXXX',
+        'XX})Y..:.....:..YXXXX',
         'XXXXXY..M.H..,.YXXXXX',
         'XXXXXY.....?...YXXXXX',
         'XXXXXY.,.......YXXXXX',
@@ -277,7 +277,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         'XXXY:.^^^^^^^^^.:YXXX',
         'XXXY.:.,^^^^^,.:.YXXX',
         'XXXXY.:.......:.)))]X',
-        'XXXXXY.:.M.H.:..)..XX',
+        'XXXXXY.:.M.H.:..)}}XX',
         'XXXXXY....?.....)XXXX',
         'XXXXXY.,...,...YXXXXX',
         'XXXXXXY..r...,YXXXXXX',
@@ -420,8 +420,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
         'XXXXXXXYpppppppYXXXXXXX',
         'XXXXXXYpppIpIpppYXXXXXX',
         'X]))YYpppppppppppYYXXXX',
-        'X..)YpppIpppppIpppYXXXX',
-        'XX.)YpppppppppppppYXXXX',
+        'X}})YpppIpppppIpppYXXXX',
+        'XX})YpppppppppppppYXXXX',
         'XXXXY-------------YXXXX',
         'XXXXYpppppppppppppYXXXX',
         'XXXXXYpppIpppIpppYXXXXX',
@@ -436,7 +436,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         'XXXXXXXXYppGppYXXXXXXXX',
         'XXXXXXXYJpppppJYXXXXXXX',
         'XXXXXXYppppppppp))))]XX',
-        'XXXXXYpppIpppIppY..XXXX',
+        'XXXXXYpppIpppIppY}}XXXX',
         'XXXXYppppppppppppYXXXXX',
         'XXXYpppppppppppppppYXXX',
         'XXXY---------------YXXX',

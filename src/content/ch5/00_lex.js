@@ -22,7 +22,7 @@ RB.lex.add(RB.lex.parseTable(`
 警鐘|けいしょう|n|A|warning bell, alarm bell|Also figurative: 警鐘を鳴らす = to sound a warning.
 来訪者|らいほうしゃ|n|A|visitor (formal)
 来訪者証|らいほうしゃしょう|n|A|visitor's pass
-閲覧|えつらん|n|A|reading, consulting (records, documents)
+閲覧|えつらん|vs|A|reading, consulting (records, documents)
 閲覧許可証|えつらんきょかしょう|n|A|reading permit (for records)
 閲覧申請書|えつらんしんせいしょ|n|A|application to consult records
 記録閲覧申請書|きろくえつらんしんせいしょ|n|A|records request form
@@ -339,6 +339,8 @@ RB.lex.add(RB.lex.parseTable(`
 突き出る|つきでる|v1|I|to stick out, jut out
 刈る|かる|v5r|I|to cut, mow, clip (grass, hedges)
 刈り込む|かりこむ|v5m|I|to clip, prune
+飲み込む|のみこむ|v5m|I|to swallow; to hold back (words)
+一字|いちじ|n|I|one character (of writing)
 飛ばす|とばす|v5s|E|to make fly; to skip; to fling
 苔むす|こけむす|v5s|A|to be covered with moss
 見下ろす|みおろす|v5s|I|to look down on / over
@@ -581,6 +583,8 @@ RB.lex.add(RB.lex.parseTable(`
 会議|かいぎ|n|E|meeting
 荷造り|にづくり|n|I|packing (luggage)
 唇|くちびる|n|I|lips
+賭ける|かける|v1|I|to bet, wager
+無駄遣い|むだづかい|n|I|waste (of money, resources)
 配達料|はいたつりょう|n|I|delivery fee
 親子|おやこ|n|I|parent and child
 施錠|せじょう|n|A|locking (a door, a building)|施錠のままとする = shall remain locked.

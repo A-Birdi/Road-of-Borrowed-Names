@@ -176,7 +176,7 @@ narr: {火|ひ} の {見|み} {櫓|やぐら} 。 {上|うえ} に {鐘|かね} 
 ?(comp=nao) comp: {火|ひ} の {見|み} {櫓|やぐら} に {綱|つな} が ない 。 {鳴|な}らさない {鐘|かね} を 、 {毎朝|まいあさ} {磨|みが}く 。 {変|へん} な {村|むら} だ 。 || A fire lookout with no rope. A bell nobody rings, polished every morning. Odd place.
 ?(comp=mio) comp: {火|ひ} の {見|み} {櫓|やぐら} …… {火事|かじ} の ない {里|さと} に 、 なぜ ？ || A fire lookout… in a village that's never had a fire?
 ?(comp=ren) comp: {火|ひ} の {見|み} {櫓|やぐら} は 、 {火|ひ} を {知|し}って いる {里|さと} に しか {建|た}ちません 。 || Fire lookouts are only built by villages that know fire.
-?(comp=suzu) comp[closed]: …… {鳴|な}った の よ 。 {昔|むかし} は あった か な|むかし} 。 {一晩中|ひとばんじゅう} 。 || …It rang, once. Long ago. All night.
+?(comp=suzu) comp[closed]: …… {鳴|な}った の よ 。 {昔|むかし} 。 {一晩中|ひとばんじゅう} 。 || …It rang, once. Long ago. All night.
 !var co_clues + 1
 !call co.clue_check
 !end

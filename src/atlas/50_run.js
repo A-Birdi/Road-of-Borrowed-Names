@@ -577,7 +577,9 @@ RB.hooks = RB.hooks || {};
     delete s.vars.atlas_ok; delete s.vars.atlas_won;
     s.atlas.last = { why, rooms: run.path.length, names: run.names.length, relics: run.relics.length, mods: run.mods.slice(), at: Date.now() };
     s.checkpoint = AT.hallSpot();
-    // (its generated maps are dropped on the next map entry outside the run; see the map:enter listener)
+    // Drop its generated maps now if we are already standing elsewhere (defeat
+    // lands in the hall first); otherwise on the next map entry (map:enter listener).
+    if (!(s.map && s.map.indexOf('atlas.' + run.id + '.') === 0)) AT.unregister(run.id);
     AT.hud.update();
   }
   async function finalize(kind) {
@@ -744,6 +746,11 @@ RB.hooks = RB.hooks || {};
       chip.onclick = () => { if (RB.game.mode() === 'world') panel(); };
       RB.ui.root.appendChild(chip);
       timer = setInterval(sync, 400);
+      // The combat UI rewrites its bars on every render; put the lantern back at once.
+      if (typeof MutationObserver !== 'undefined') {
+        new MutationObserver(() => { if (RB.game.mode() === 'combat') { const run = runOf(); if (run && run.lantern) lanternBar(); } })
+          .observe(RB.ui.root, { childList: true, subtree: true });
+      }
       return chip;
     }
     function sync() {

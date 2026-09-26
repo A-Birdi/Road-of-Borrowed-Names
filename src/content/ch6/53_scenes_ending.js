@@ -16,8 +16,8 @@ sa_oyone: {音|おと} が {戻|もど}って きた ね 。 {朝|あさ} から
 !if !seen.sa.isamu_first -> after_isamu
 ?(quest.sa_isamu=done) sa_isamu[smile]: {聞|き}こえる か ？ …… いや 、 {聞|き}こえる の は {俺|おれ} だけ か 。 {頭|あたま} の {中|なか} で 、 {朝|あさ} から ずっと {笑|わら}って やがる 。 || Can you hear it? …No, only I can. She's been laughing in my head all morning.
 ?(!quest.sa_isamu=done) sa_isamu: {夜中|よなか} に 、 {急|きゅう} に {思|おも}い{出|だ}した 。 あいつ の {笑|わら}い{声|ごえ} 。 {上|うえ} の {誰|だれ}か が 、 やっと {手紙|てがみ} を {読|よ}んで くれた らしい 。 || In the middle of the night it came back to me — her laugh. Seems somebody up there finally read my letter.
-?(!quest.sa_isamu=done) sa_isamu[smile]: {飛|と}び{起|お}きて 、 {泣|な}いて 、 それから …… {笑|わら}っちまった 。 {沸|わ}く {前|まえ} の やかん みたい に 。 || I sat bolt upright, cried, and then… I laughed. Like a kettle just before it boils.
-sa_isamu: {今日|きょう} 、 {下|くだ}る よ 。 {潮硝子|しおがらす} で 、 {網|あみ} が {待|ま}って る 。 || I'm going down today. The nets are waiting in Saltglass.
+?(!quest.sa_isamu=done) sa_isamu[smile]: {飛|と}び{起|お}きて 、 {泣|な}いて 、 それから …… {笑|わら}っちゃった 。 {沸|わ}く {前|まえ} の やかん みたい に 。 || I sat bolt upright, cried, and then… I laughed. Like a kettle just before it boils.
+sa_isamu: {今日|きょう} 、 {下|くだ}る よ 。 {潮硝子|しおがらす} で 、 {網|あみ} が {待|ま}ってる 。 || I'm going down today. The nets are waiting in Saltglass.
 !if quest.sa_isamu=active -> finish_isamu
 !goto after_isamu
 :finish_isamu
@@ -71,7 +71,7 @@ narr: {灯|あか}り{堂|どう} の {灯|ひ} は 、 {静|しず}か に {燃
 
 @scene sa.epi_lf
 narr: {灯落|ひおち} の {大通|おおどお}り は 、 うるさかった 。 || Lanternfall's main avenue is noisy.
-narr: {魚|さかな} の {値段|ねだん} で {揉|も}める {声|こえ} 。 「 いや 、 それ は {違|ちが}う 」 と {言|い}う {声|こえ} 。 {誰|だれ} も が 、 {少|すこ}し {嬉|うれ}し そう に {反対|はんたい} して いる 。 || Haggling over fish. Someone saying "No, that's wrong." Everyone is disagreeing, and looking a little pleased about it.
+narr: {魚|さかな} の {値段|ねだん} で {揉|も}める {声|こえ} 。 「 いや 、 それ は {違|ちが}う 」 と {言|い}う {声|こえ} 。 {誰|だれ} も が 、 {少|すこ}し {嬉|うれ}しそう に {反対|はんたい} して いる 。 || Haggling over fish. Someone saying "No, that's wrong." Everyone is disagreeing, and looking a little pleased about it.
 ?(end_mem_return) narr: {昨夜|ゆうべ} は 、 {町|まち} じゅう で {泣|な}き{声|ごえ} が した と いう 。 {朝|あさ} に は 、 {誰|だれ} も が {目|め} を {赤|あか}く して 、 それ でも {店|みせ} を {開|あ}けて いた 。 || Last night, they say, there was weeping all over town. By morning everyone's eyes were red — and they opened their shops anyway.
 ?(end_mem_choose) narr: {山|やま} へ の {坂|さか} を 、 {提灯|ちょうちん} を {持|も}った {人|ひと} が {何人|なんにん} も {登|のぼ}って いく 。 {途中|とちゅう} で {引|ひ}き{返|かえ}す {人|ひと} も いる 。 どちら も 、 {止|と}める {人|ひと} は いない 。 || Several people with lanterns are climbing the road to the mountain. Some turn back halfway. No one stops either kind.
 ?(end_kasane_trial) narr: カサネ は {広場|ひろば} の {真|ま}ん{中|なか} で {足|あし} を {止|と}めた 。 {人|ひと} が 、 {少|すこ}し ずつ {集|あつ}まって くる 。 || Kasane stops in the middle of the square. People gather, a few at a time.
@@ -103,7 +103,7 @@ narr: {数日後|すうじつご} 、 {雪鈴|ゆきすず} 。 || A few days la
 ?(!sb_hoshino_goes) hoshino: {消|け}し{忘|わす}れ じゃ ない よ 。 {娘|むすめ} が 、 {春|はる} に {帰|かえ}る と {書|か}いて きた ん だ 。 || I didn't forget to put it out. My daughter's written that she's coming home in spring.
 ?(!sb_hoshino_goes) hoshino[smile]: {春|はる} まで は {長|なが}い が な 。 {長|なが}い こと {待|ま}った ん だ 。 {少|すこ}し {早|はや}く {点|つ}けて も 、 {罰|ばち} は {当|あ}たる まい 。 || Spring's a long way off, mind. But I've waited a long time. Lighting it a little early won't bring bad luck.
 ?(sb_hoshino_goes) narr: {観測所|かんそくじょ} の {灯|あか}り を 、 カンタ が ともして いる 。 ホシノ は {灯落|ひおち} へ {下|くだ}った 。 それ でも {灯|あか}り は 、 {一晩|ひとばん} も {欠|か}けて いない 。 || Kanta is lighting the observatory lamp. Hoshino has gone down to Lanternfall; even so, not a single night has been missed.
-?(sb_hoshino_goes) kanta: ホシノ さん から {手紙|てがみ} が {来|く}る んだ 。 「 {灯|あか}り は {点|つ}いて いる か 」 って 、 {毎回|まいかい} 。 {点|つ}いて る よ 。 {毎回|まいかい} そう {返事|へんじ} する 。 || Letters come from Hoshino. "Is the lamp lit?" every time. It is. That's what I write back, every time.
+?(sb_hoshino_goes) kanta: ホシノ さん から {手紙|てがみ} が {来|く}る んだ 。 「 {灯|あか}り は {点|つ}いて いる か 」 って 、 {毎回|まいかい} 。 {点|つ}いてる よ 。 {毎回|まいかい} そう {返事|へんじ} する 。 || Letters come from Hoshino. "Is the lamp lit?" every time. It is. That's what I write back, every time.
 narr: {星図|せいず} に は 、 まだ {書庫|しょこ} の {場所|ばしょ} が {書|か}いて ある 。 でも もう 、 {動|うご}かない {光|ひかり} は ない 。 {山|やま} の {上|うえ} の {灯|ひ} は 、 {朝|あさ} に なる と ちゃんと {消|き}える 。 || The star charts still mark where the Archive is. But the light that never moved is gone. The lamp on the mountain goes out properly now, when morning comes.
 ?(end_archive_library) narr: {書庫|しょこ} が {図書館|としょかん} に なった と {聞|き}いて 、 {観測所|かんそくじょ} の {古|ふる}い {日誌|にっし} を {写|うつ}して {送|おく}る {話|はなし} が 、 {村|むら} で {出|で}て いる 。 {星|ほし} の {名前|なまえ} も 、 {誰|だれ}か が {守|まも}って おかない と 。 || Word that the Archive is now a library has the village talking about copying the observatory's old logs and sending them up. Someone ought to keep the names of the stars.
 ?(end_archive_closed) narr: {書庫|しょこ} が {閉|と}じた と {聞|き}いて 、 {村|むら} の {人|ひと} は {肩|かた} を すくめた 。 {雪鈴|ゆきすず} の {記録|きろく} は 、 {昔|むかし} から {鐘|かね} と {日誌|にっし} が {覚|おぼ}えて いる 。 || Hearing the Archive has closed, the villagers shrug. Snowbell's records have always been kept by its bell and its logbook.
@@ -132,8 +132,8 @@ hiro: {祭|まつ}り の {席|せき} 、 {今年|ことし} も {一|ひと}�
 narr: {潮硝子|しおがらす} の {港|みなと} 。 {積|つ}み{荷|に} の ラベル は 、 {全部|ぜんぶ} {読|よ}める 。 || Saltglass harbour. Every cargo label is legible.
 wataru: {帳簿|ちょうぼ} は 、 {全部|ぜんぶ} {書|か}き{直|なお}しました 。 {正|ただ}しい {数字|すうじ} で 。 {借金|しゃっきん} は …… {正|ただ}しく {増|ふ}えました 。 || I've rewritten all the ledgers. With the right numbers. The debts have… correctly gone up.
 wataru[smile]: でも 、 {夜|よる} は {眠|ねむ}れる よう に なりました 。 {沈|しず}んだ {書庫|しょこ} も 、 {干潮|かんちょう} の {時|とき} は ただ の {岩場|いわば} です 。 || But I sleep at night now. And the Drowned Archive is just rocks at low tide.
-?(quest.sa_isamu=done) sa_isamu: {網|あみ} を {繕|つくろ}い ながら 、 {時々|ときどき} {笑|わら}っちまう 。 {客|きゃく} に {変|へん} な {顔|かお} を される よ 。 || Sometimes I laugh while I'm mending nets. The customers give me funny looks.
-?(quest.sa_isamu=done) sa_isamu[smile]: あいつ の {笑|わら}い{方|かた} が 、 {移|うつ}っちまった らしい 。 {沸|わ}く {前|まえ} の やかん だ 。 || Seems her laugh has rubbed off on me. The kettle, just before it boils.
+?(quest.sa_isamu=done) sa_isamu: {網|あみ} を {繕|つくろ}い ながら 、 {時々|ときどき} {笑|わら}っちゃう 。 {客|きゃく} に {変|へん} な {顔|かお} を される よ 。 || Sometimes I laugh while I'm mending nets. The customers give me funny looks.
+?(quest.sa_isamu=done) sa_isamu[smile]: あいつ の {笑|わら}い{方|かた} が 、 {移|うつ}っちゃった らしい 。 {沸|わ}く {前|まえ} の やかん だ 。 || Seems her laugh has rubbed off on me. The kettle, just before it boils.
 ?(!comp=nao) nao[smirk]: よう 、 $name 。 {灯落|ひおち} {行|い}き の {手紙|てがみ} が {山|やま} ほど ある 。 {急|きゅう} に 、 みんな {言|い}いたい こと が {増|ふ}えた らしい 。 || Hey, $name. I've got a mountain of letters for Lanternfall. Everyone suddenly has a lot more to say, apparently.
 ?(!comp=nao) nao: …… {宛名|あてな} 、 {全部|ぜんぶ} {読|よ}める 。 いい {気分|きぶん} だ 。 || …Every address is legible. Feels good.
 ?(comp=nao) nao: {港|みなと} の {郵便受|ゆうびんう}け 、 {満杯|まんぱい} だ 。 …… {手伝|てつだ}って く か ？ {冗談|じょうだん} だ よ 。 {半分|はんぶん} は 。 || The harbour mailboxes are stuffed. …Want to help? Joking. Half joking.
@@ -187,7 +187,7 @@ narr: {日|ひ} が {暮|く}れる 。 {橋|はし} の {上|うえ} で 、 {�
 :nao
 !music companion_nao
 narr: {日|ひ} が {暮|く}れる 。 {橋|はし} の {上|うえ} で 、 ナオ が {鞄|かばん} を {下|お}ろした 。 || The sun goes down. On the bridge, Nao sets down the satchel.
-nao: {次|つぎ} の {配達|はいたつ} 、 もう {決|き}まって る んだ 。 {山|やま} の {上|うえ} 。 {書庫|しょこ} {行|い}き 。 || My next delivery's already set. Up the mountain. To the Archive.
+nao: {次|つぎ} の {配達|はいたつ} 、 もう {決|き}まってる んだ 。 {山|やま} の {上|うえ} 。 {書庫|しょこ} {行|い}き 。 || My next delivery's already set. Up the mountain. To the Archive.
 ?(end_kasane_keeper) nao[smirk]: カサネ {宛|あ}て の {文句|もんく} の {手紙|てがみ} 、 {山|やま} ほど ある 。 {全部|ぜんぶ} {届|とど}ける 。 {返事|へんじ} も {持|も}って {帰|かえ}る 。 {逃|に}げ{道|みち} は ない 。 || A mountain of complaint letters for Kasane. I'll deliver every one — and bring the replies back. No escape routes.
 ?(end_kasane_trial) nao: {灯落|ひおち} で カサネ が {書|か}き{写|うつ}す {名前|なまえ} を 、 {一|ひと}つ ずつ {持|も}ち{主|ぬし} に {届|とど}ける 。 {気|き} の {長|なが}い {仕事|しごと} だ 。 {嫌|きら}い じゃ ない 。 || Every name Kasane copies out in Lanternfall, I'll carry to its owner. One at a time. Slow work. I don't mind it.
 narr: ナオ は {鞄|かばん} から 、 {古|ふる}い {紙|かみ} の {束|たば} を {出|だ}した 。 {宛名|あてな} の ラベル 。 {何百枚|なんびゃくまい} も 。 || From the satchel, Nao draws out a bundle of old paper. Address labels. Hundreds of them.
@@ -195,7 +195,7 @@ nao[shy]: {書|か}き{直|なお}した ラベル 、 {全部|ぜんぶ} {取|�
 nao: …… これ は 、 $name に 。 || …This one's for you.
 narr: {一枚|いちまい} の ラベル 。 ナオ の {字|じ} で 、 {名前|なまえ} だけ が {書|か}いて ある 。 「 $name 」 。 || One label. In Nao's hand, just a name: "$name".
 nao: {住所|じゅうしょ} は {書|か}いて ない 。 {要|い}らない から 。 {道|みち} に {迷|まよ}ったら 、 それ を どこ か に {貼|は}っとけ 。 {探|さが}し に {行|い}く 。 || No address. You don't need one. If you ever get lost, stick that up somewhere. I'll come and find you.
-nao[smirk]: {出口|でぐち} は 、 いつ も {確|たし}かめて る から な 。 {入口|いりぐち} も 。 {両方|りょうほう} 、 {知|し}ってる 。 || I always know where the exits are, remember. The entrances too. Both.
+nao[smirk]: {出口|でぐち} は 、 いつ も {確|たし}かめてる から な 。 {入口|いりぐち} も 。 {両方|りょうほう} 、 {知|し}ってる 。 || I always know where the exits are, remember. The entrances too. Both.
 nao[smile]: …… {一緒|いっしょ} に {歩|ある}けて 、 よかった 。 {次|つぎ} の {道|みち} も 、 {声|こえ} を かけろ 。 {断|ことわ}る {理由|りゆう} は 、 {今|いま} の ところ {一|ひと}つ も ない 。 || …I'm glad we walked it together. Call me for the next road too. So far I haven't got a single reason to say no.
 !end
 :mio
@@ -209,7 +209,7 @@ narr: ミオ は {棚|たな} の {奥|おく} から 、 {空|から} の {瓶|
 mio: {旅|たび} の {間|あいだ} 、 ずっと {作|つく}ろう と して た {薬|くすり} 。 「 {長|なが}い {道|みち} に {効|き}く {薬|くすり} 」 。 …… {結局|けっきょく} 、 {中身|なかみ} は {作|つく}れなかった 。 || A remedy I've been trying to make the whole journey. "For long roads." …In the end, I couldn't make what goes inside.
 mio[smile]: たぶん 、 {一緒|いっしょ} に {歩|ある}く {人|ひと} が {中身|なかみ} な んだ と {思|おも}う 。 だから 、 {瓶|びん} だけ 。 {持|も}って て 。 || I think maybe the person walking beside you is what goes inside. So — just the bottle. Keep it.
 mio: …… それ から 、 {約束|やくそく} 。 これから は 、 $name に も 、 {時々|ときどき} 「 いいえ 」 って {言|い}う から ね 。 || …And a promise. From now on, I'll say no to you too, sometimes.
-mio[laugh]: {嬉|うれ}し そう な {顔|かお} 、 しない で よ 。 || Don't look so pleased about it.
+mio[laugh]: {嬉|うれ}しそう な {顔|かお} 、 しない で よ 。 || Don't look so pleased about it.
 !end
 :ren
 !music companion_ren
@@ -229,7 +229,7 @@ ren[smile]: {次|つぎ} も 、 {一緒|いっしょ} に {迷|まよ}って �
 narr: {葦|あし}ノ{瀬|せ} の {広場|ひろば} に 、 {小|ちい}さな {舞台|ぶたい} が {組|く}まれて いる 。 || A little stage has been put up in Reedwake's square.
 suzu: {帳簿|ちょうぼ} 、 {閉|と}じた よ 。 {借|か}り は {全部|ぜんぶ} {返|かえ}した 。 {貸|か}し は …… {半分|はんぶん} 、 {棒引|ぼうび}き に した 。 {珍|めずら}しい でしょ 。 || I've closed my ledger. Every debt I owed, repaid. What I'm owed… I let half of it go. Rare for me, right?
 suzu[laugh]: {新|あたら}しい {芝居|しばい} を {書|か}いてる んだ 。 {題|だい} は 『 {借|か}りた {名前|なまえ} の {道|みち} 』 。 {主役|しゅやく} が {誰|だれ} か 、 {分|わ}かる よ ね 。 || I'm writing a new play. It's called "The Road of Borrowed Names". You know who the lead is.
-suzu: {最後|さいご} の {台詞|せりふ} で 、 {迷|まよ}って る 。 「 みんな {幸|しあわ}せ に {暮|く}らしました 」 に する か …… || I'm stuck on the last line. Whether to go with "And everyone lived happily ever after"…
+suzu: {最後|さいご} の {台詞|せりふ} で 、 {迷|まよ}ってる 。 「 みんな {幸|しあわ}せ に {暮|く}らしました 」 に する か …… || I'm stuck on the last line. Whether to go with "And everyone lived happily ever after"…
 suzu[closed]: …… ううん 。 「 みんな 、 {生|い}きて いきました 」 に する 。 {幸|しあわ}せ か どう か は 、 {見|み}た {人|ひと} が {決|き}める 。 || …No. "And everyone went on living." Whether it was happily, the audience can decide.
 suzu: それ と 、 これ 。 || And — this.
 narr: スズ は {髪|かみ} の {古|ふる}い リボン を ほどいて 、 $name の {手首|てくび} に {結|むす}んだ 。 || Suzu unties the faded ribbon from her hair and ties it around your wrist.

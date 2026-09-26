@@ -118,9 +118,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- notebook entries ---------------------------------------------------------------------------------
   const N = (id, d) => (C.notes[id] = d);
-  N('atlas_about', { fiction: true, title: { jp: '{書|か}かれて いない {地図|ちず}', en: 'The Unwritten Atlas' },
-    jp: '{名前|なまえ} が {戻|もど}る と 、 {道|みち} も {戻|もど}る 。 でも 、 {戻|もど}り{切|き}れない {道|みち} も ある 。',
-    en: 'As names come back, roads come back. Some roads come back only halfway: routes that were never finished, or were finished only in someone\'s intention. Keeper Tsuru calls them the Unwritten Atlas (a fictional term). They shift from one walk to the next, and the names that were lost on them are still wandering, looking for home.' });
+  N('atlas_about', { fiction: true, title: { jp: '{書|か}かれて いない {道|みち} の {歩|ある}き{方|かた}', en: 'Walking the unwritten roads' },
+    jp: '{道|みち} は {歩|ある}く たび に {変|か}わる 。 {野営地|やえいち} で {引|ひ}き{返|かえ}して も いい 。',
+    en: 'Each walk on the Unwritten Atlas (a fictional term) is different: a gate to open, a fork to choose, a camp, a guardian at the end and a lantern that takes you home. Before setting out you can pick how the road behaves (fog, low tide, mirrored rooms and so on). Things found on the road help only while you walk it; keepsakes, names you send home and anything the road gives you at the end are yours to keep. At a camp you can head home early. If a fight goes badly the road folds up and sets you down in the Lantern Hall, and nothing you learned is lost.' });
   N('atlas_unmoored', { fiction: true, title: { jp: 'さまよう {名前|なまえ}', en: 'Unmoored names' },
     jp: '{名前|なまえ} は 、 {呼|よ}ぶ {人|ひと} が いる {場所|ばしょ} へ {帰|かえ}る 。',
     en: 'In the fiction of this world, a name that has lost its place drifts until someone understands what it was. Answer one well and it goes back to where it is still wanted.' });
@@ -143,9 +143,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     A: ['g:adv_ni_suginai', 'g:adv_to_iu_yori', 'g:prt_sae'],
   };
   A.pool = POOL;
-  const L = C.atlasLang = C.atlasLang || {};
-  // Authored special intents (text + answer/truth steps per profile) live in 15_lang.js
-  // and are attached below once that file has loaded (see 15_lang.js → A.attachIntents).
+  // Authored special intents (text + answer/truth steps per profile) live in 15_lang.js,
+  // which attaches them to these enemies.
 
   E('atlas.stray', { name: { jp: 'さまよう {名|な}', en: 'Stray Name' }, art: 'wisp', artOpts: { col: '#e8dcb0' }, look: { custom: 'wisp', col: '#e8dcb0' }, knots: 2, pool: POOL,
     pattern: ['rest', 'strike', 'plea:1'], intents: {},
@@ -227,5 +226,4 @@ var RB = (globalThis.RB = globalThis.RB || {});
     bell: { enemy: 'atlas.bell', legend: 'bell', name: { jp: '{借|か}り{物|もの} の {鐘|かね}', en: 'The Borrowed Bell' } },
     gate: { enemy: 'atlas.gate', legend: 'gate', name: { jp: '{半道|はんみち} の {関守|せきもり}', en: 'The Half-road Gatekeeper' } },
   };
-  void L;
 })(RB.content);

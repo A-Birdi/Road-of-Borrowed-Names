@@ -128,7 +128,7 @@ narr: {工房|こうぼう} の {炉|ろ} が 、 {低|ひく}く {唸|うな}�
 hiro: {悪|わる}い 。 {今|いま} {手|て} が {離|はな}せない 。 {話|はなし} なら 、 そこ で 。 || Sorry. Can't put this down. If you want to talk, go ahead.
 suzu[smile]: {大丈夫|だいじょうぶ} 。 {手|て} は {止|と}めない で 。 その {方|ほう} が 、 {私|わたし} も {言|い}い やすい 。 || That's fine. Don't stop. It's easier for me that way too.
 suzu: ヒロ 。 {赤|あか}い リボン の {姉|ねえ}ちゃん を {覚|おぼ}えてる 、 って {言|い}った よ ね 。 || Hiro. You said you remember a girl with a red ribbon.
-narr: スズ は {色褪|いろあ}せた リボン を ほどいて 、 {作業台|さぎょうだい} の {上|うえ} に {置|お}いた 。 {昔|むかし} は あった か な|むかし} は {赤|あか}かった の だろう 。 || Suzu unties her faded ribbon and lays it on the workbench. It must have been red, once.
+narr: スズ は {色褪|いろあ}せた リボン を ほどいて 、 {作業台|さぎょうだい} の {上|うえ} に {置|お}いた 。 {昔|むかし} は {赤|あか}かった の だろう 。 || Suzu unties her faded ribbon and lays it on the workbench. It must have been red, once.
 hiro[surprise]: …… || …
 suzu[laugh]: {色|いろ} は {落|お}ちた けど 、 {物持|ものも}ち は いい の 。 {借|か}り も ね 。 …… ごめん 。 {冗談|じょうだん} で {逃|に}げる の は 、 ここ まで に する 。 || The colour's gone, but I keep things. Debts too. …Sorry. That's the last joke I'll hide behind.
 suzu[closed]: あの {朝|あさ} 、 {私|わたし} は {嘘|うそ} を ついた 。 || That morning, I lied to you.

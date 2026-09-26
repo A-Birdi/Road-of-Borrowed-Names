@@ -180,6 +180,9 @@ yae[laugh]: {助|たす}かる ！ {給金|きゅうきん} は {甘酒|あま�
 narr: {品書|しなが}き 。 「 {甘酒|あまざけ} 、 しょうが{湯|ゆ} 、 ヤギ の ミルク 、 お{茶|ちゃ} 、 {焼|や}き{餅|もち} 」 。 {下|した} に {小|ちい}さく 「 ツケ は {春|はる} まで 」 。 || The menu: "Amazake, ginger tea, goat's milk, tea, grilled rice cakes." Underneath, in small letters: "Tabs settled in spring."
 ?(comp=suzu) comp[smirk]: 「 ツケ は {春|はる} まで 」 。 …… {正直|しょうじき} な {店|みせ} だ 。 {気|き}に {入|い}った 。 あたし は {今|いま} {払|はら}う けど 。 || "Tabs settled in spring." …An honest shop. I like it. I'll pay now, though.
 
+@scene sb.inn_counter
+narr: {帳場|ちょうば} の {台|だい} 。 {甘酒|あまざけ} の {鍋|なべ} から 、 {甘|あま}い {湯気|ゆげ} が {立|た}って いる 。 || The inn's counter. Sweet steam rises from the amazake pot.
+
 @scene sb.inn_table
 narr: {誰|だれ} か が {将棋|しょうぎ} の {途中|とちゅう} で {席|せき} を {立|た}った らしい 。 {駒|こま} が {一|ひと}つ 、 {盤|ばん} の {外|そと} に {転|ころ}がって いる 。 || Someone seems to have left in the middle of a game of shogi. One piece has rolled off the board.
 
@@ -334,7 +337,7 @@ fuki: {吹雪|ふぶき} の {鐘|かね} も 、 {覚|おぼ}えて おいて �
 fuki: {鐘|かね} は {鳴|な}らす {人|ひと} が いれば 、 {鳴|な}る 。 {灯|あか}り と {同|おな}じ さ 。 || A bell rings as long as there's someone to ring it. Same as a lamp.
 
 @scene sb.fuki_notebook
-!if quest.sb_bell>=1 -> read
+!if quest.sb_bell -> read
 narr: {古|ふる}い {帳面|ちょうめん} 。 {表紙|ひょうし} に 「 {鐘|かね} 」 と {一文字|ひともじ} 。 || An old notebook. On the cover, one character: "Bell".
 !end
 :read

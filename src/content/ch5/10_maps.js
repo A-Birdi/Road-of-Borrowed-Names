@@ -134,7 +134,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'lf_nagi', x: 13, y: 18, dir: 'down', wander: 3, talk: [{ if: 'post', scene: 'lf.nagi_post' }, { if: 'lf_bell_rung', scene: 'lf.nagi_after' }, { scene: 'lf.nagi' }] },
       { id: 'lf_kei', x: 16, y: 25, dir: 'down', wander: 2, if: '!lf_bell_rung', talk: 'lf.kei' },
       { id: 'lf_kei', x: 27, y: 18, dir: 'down', wander: 3, if: 'lf_bell_rung', talk: [{ if: 'post', scene: 'lf.kei_post' }, { scene: 'lf.kei_after' }] },
-      { id: 'lf_tsuya', x: 40, y: 33, dir: 'right', talk: [{ if: 'post', scene: 'lf.tsuya_post' }, { if: 'quest.lf_timetable=done', scene: 'lf.tsuya_done' }, { scene: 'lf.tsuya' }] },
+      { id: 'lf_tsuya', x: 40, y: 33, dir: 'right', talk: [{ if: 'quest.lf_timetable=active', scene: 'lf.tsuya' }, { if: 'post', scene: 'lf.tsuya_post' }, { if: 'quest.lf_timetable=done', scene: 'lf.tsuya_done' }, { scene: 'lf.tsuya' }] },
       { id: 'nao', x: 39, y: 30, dir: 'down', if: 'comp!=nao&!lf_nao_cameo_done', talk: [{ if: 'lf_bell_rung', scene: 'lf.naoc_after' }, { scene: 'lf.naoc' }] },
     ],
     exits: [
@@ -190,8 +190,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'sign', x: 1, y: 9, scene: 'lf.sign_town' },
     ],
     npcs: [
-      { id: 'lf_kohei', x: 10, y: 7, dir: 'right', talk: [{ if: 'post', scene: 'lf.kohei_post' }, { if: 'quest.lf_fence=done', scene: 'lf.kohei_done' }, { scene: 'lf.fence_talk' }] },
-      { id: 'lf_kinu', x: 17, y: 7, dir: 'left', talk: [{ if: 'post', scene: 'lf.kinu_post' }, { if: 'quest.lf_fence=done', scene: 'lf.kinu_done' }, { scene: 'lf.fence_talk' }] },
+      { id: 'lf_kohei', x: 10, y: 7, dir: 'right', talk: [{ if: 'quest.lf_fence=active', scene: 'lf.fence_talk' }, { if: 'post', scene: 'lf.kohei_post' }, { if: 'quest.lf_fence=done', scene: 'lf.kohei_done' }, { scene: 'lf.fence_talk' }] },
+      { id: 'lf_kinu', x: 17, y: 7, dir: 'left', talk: [{ if: 'quest.lf_fence=active', scene: 'lf.fence_talk' }, { if: 'post', scene: 'lf.kinu_post' }, { if: 'quest.lf_fence=done', scene: 'lf.kinu_done' }, { scene: 'lf.fence_talk' }] },
       { id: 'lf_shu', x: 8, y: 19, dir: 'down', wander: 3, talk: [{ if: 'post', scene: 'lf.shu_post' }, { if: 'lf_bell_rung', scene: 'lf.shu_after' }, { scene: 'lf.shu' }] },
     ],
     exits: [{ x: 0, y: 10, w: 1, h: 3, to: 'lf.town', tx: 50, ty: 17, dir: 'left' }],
@@ -280,7 +280,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'lantern', x: 5, y: 9 }, { p: 'lantern', x: 11, y: 9 },
     ],
     npcs: [
-      { id: 'lf_tadashi', x: 7, y: 3, dir: 'down', talk: [{ if: 'post', scene: 'lf.tadashi_post' }, { if: 'comp=mio&quest.lf_mio>=2&!quest.lf_mio=done', scene: 'lf.mio_refuse' }, { if: 'lf_bell_rung', scene: 'lf.tadashi_after' }, { scene: 'lf.tadashi' }] },
+      { id: 'lf_tadashi', x: 7, y: 3, dir: 'down', talk: [{ if: 'comp=mio&quest.lf_mio>=2&!quest.lf_mio=done', scene: 'lf.mio_refuse' }, { if: 'post', scene: 'lf.tadashi_post' }, { if: 'lf_bell_rung', scene: 'lf.tadashi_after' }, { scene: 'lf.tadashi' }] },
       { id: 'lf_hayato', x: 10, y: 5, dir: 'down', if: 'lf_town_intro', talk: [{ if: 'post', scene: 'lf.hayato_post' }, { if: 'quest.lf_form=done', scene: 'lf.hayato_done' }, { scene: 'lf.hayato' }] },
     ],
     exits: [
@@ -315,10 +315,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'chair', x: 2, y: 4 }, { p: 'chair', x: 9, y: 4 },
       { p: 'shelf', x: 11, y: 2 }, { p: 'bookpile', x: 11, y: 5 }, { p: 'bookpile', x: 1, y: 6 },
       { p: 'mailbox', x: 10, y: 6, scene: 'lf.returned_letters' },
-      { p: 'smalltable', x: 7, y: 6, if: 'lf_akari_leave', scene: 'lf.akari_note' },
+      { p: 'smalltable', x: 7, y: 6, if: 'lf_akari_leave&!post', scene: 'lf.akari_note' },
     ],
     npcs: [
-      { id: 'akari', x: 5, y: 4, dir: 'down', if: '!lf_akari_leave', talk: [{ if: 'quest.lf_akari>=1&!quest.lf_akari=done', scene: 'lf.akari_letter' }, { if: 'quest.lf_akari=done', scene: 'lf.akari_done' }, { if: 'lf_bell_rung', scene: 'lf.akari_after' }, { if: 'lf_akari_key', scene: 'lf.akari_again' }, { if: 'quest.lf_main>=2', scene: 'lf.akari_hint' }, { scene: 'lf.akari' }] },
+      { id: 'akari', x: 5, y: 4, dir: 'down', if: '!lf_akari_leave|post', talk: [{ if: 'quest.lf_akari>=1&!quest.lf_akari=done', scene: 'lf.akari_letter' }, { if: 'post', scene: 'lf.akari_post' }, { if: 'quest.lf_akari=done', scene: 'lf.akari_done' }, { if: 'lf_bell_rung', scene: 'lf.akari_after' }, { if: 'lf_akari_key', scene: 'lf.akari_again' }, { if: 'quest.lf_main>=2', scene: 'lf.akari_hint' }, { scene: 'lf.akari' }] },
     ],
   });
 
@@ -376,7 +376,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'crate', x: 1, y: 5 }, { p: 'crate', x: 1, y: 6, scene: 'lf.mailsacks' }, { p: 'net', x: 8, y: 6 },
     ],
     npcs: [
-      { id: 'umi', x: 4, y: 2, dir: 'down', talk: [{ if: 'post', scene: 'lf.umi_post' }, { if: 'comp=nao&lf_bell_rung&!quest.lf_nao=done', scene: 'lf.nao_deliver' }, { if: 'comp=nao&!lf_bell_rung&quest.lf_nao<1', scene: 'lf.nao_umi_first' }, { if: 'lf_bell_rung', scene: 'lf.umi_after' }, { scene: 'lf.umi' }] },
+      { id: 'umi', x: 4, y: 2, dir: 'down', talk: [{ if: 'comp=nao&lf_bell_rung&!quest.lf_nao=done', scene: 'lf.nao_deliver' }, { if: 'post', scene: 'lf.umi_post' }, { if: 'comp=nao&!lf_bell_rung&quest.lf_nao<1', scene: 'lf.nao_umi_first' }, { if: 'lf_bell_rung', scene: 'lf.umi_after' }, { scene: 'lf.umi' }] },
     ],
     spawn: { default: [5, 7, 'up'] },
   });

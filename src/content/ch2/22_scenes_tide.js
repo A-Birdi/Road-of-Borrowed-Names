@@ -4,7 +4,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.script.add(`
 @scene sg.shiori_early
-shiori: いらっしゃい ませ 。 {潮見|しおみ} の シオリ です 。 {潮|しお} の {時間|じかん} なら 、 {何|なん} でも {聞|き}いて ください 。 || Welcome. I'm Shiori, the tide-watcher. Ask me anything about the tides.
+shiori: いらっしゃいませ 。 {潮見|しおみ} の シオリ です 。 {潮|しお} の {時間|じかん} なら 、 {何|なん} でも {聞|き}いて ください 。 || Welcome. I'm Shiori, the tide-watcher. Ask me anything about the tides.
 shiori: {嵐|あらし} の {後|あと} 、 {港|みなと} の {板|いた} の {字|じ} は {動|うご}く よう に なりました が 、 {私|わたし} の {帳面|ちょうめん} の {字|じ} は {動|うご}きません 。 {不思議|ふしぎ} です ね 。 || Since the storm, the writing on the harbour boards has started to move — but the writing in my notebooks hasn't. Strange, isn't it.
 shiori[think]: {毎日|まいにち} {読|よ}み{返|かえ}して いる から かも しれません 。 {読|よ}まれない {字|じ} から 、 {消|き}えて いく の かも 。 || Perhaps because I read them back every day. Perhaps it's the writing nobody reads that fades first.
 
@@ -14,7 +14,7 @@ shiori: {港|みなと} の {騒|さわ}ぎ 、 {聞|き}いて います 。 {�
 
 @scene sg.shiori_tide
 !if sg_tide_read -> askwait
-shiori: いらっしゃい ませ 。 {今日|きょう} の {潮|しお} を {聞|き}きに いらした の です か 。 || Welcome. Have you come to ask about today's tide?
+shiori: いらっしゃいませ 。 {今日|きょう} の {潮|しお} を {聞|き}きに いらっしゃった の です か 。 || Welcome. Have you come to ask about today's tide?
 pc: {沖|おき} の {分室|ぶんしつ} の こと を {聞|き}きたくて 。 || We wanted to ask about the offshore branch.
 shiori[surprise]: …… {沈|しず}んだ {書庫|しょこ} を 「{分室|ぶんしつ}」 と {呼|よ}ぶ {人|ひと} に は 、 {初|はじ}めて {会|あ}いました 。 || …I've never met anyone who calls the drowned archive "the branch".
 shiori: {岬|みさき} の {沖|おき} の {小島|こじま} です 。 {八十年|はちじゅうねん} {前|まえ} の {高潮|たかしお} で {沈|しず}んで 、 それ から は {誰|だれ} も {近|ちか}づきません 。 || It's the little island off the point. It sank in a storm surge eighty years ago, and no one has gone near it since.
@@ -91,22 +91,22 @@ narr: {岬|みさき} の {先|さき} の {海|うみ} 。 {満|み}ち{潮|し
 ?(quest.sg_main>=5) narr: {潮|しお} の {時間|じかん} は 、 {潮見|しおみ}{小屋|ごや} の シオリ に {聞|き}こう 。 || Ask Shiori at the tide-watch hut about the tide times.
 
 @scene sg.causeway_marker
-narr: {石|いし} の {標|しるべ} 。 「{満|み}ち{潮|しお} に {注意|ちゅうい} ・ {子供|こども} は {岬|みさき} より {先|さき} へ {行|い}かない こと」 。 || A stone marker: "Beware the rising tide. Children must not go past the point."
+narr: {石|いし} の {道標|みちしるべ} 。 「{満|み}ち{潮|しお} に {注意|ちゅうい} ・ {子供|こども} は {岬|みさき} より {先|さき} へ {行|い}かない こと」 。 || A stone marker: "Beware the rising tide. Children must not go past the point."
 ?(comp=suzu) comp[smirk]: {大人|おとな} で よかった わ 。 || Lucky we're grown-ups.
 
 @scene sg.causeway_fog
 narr: {霧|きり} の {中|なか} へ {踏|ふ}み{込|こ}む 。 {足元|あしもと} の {砂|すな} しか {見|み}えない 。 || You step into the fog. You can see nothing but the sand at your feet.
-narr: {真|ま}っすぐ {歩|ある}いた 。 {確|たし}か に {真|ま}っすぐ 。 …… {霧|きり} が {途切|とぎ}れる と 、 {岬|みさき} の {石|いし} の {標|しるべ} が {目|め} の {前|まえ} に あった 。 || You walk straight ahead. Definitely straight. …When the fog parts, the stone marker on the point is right in front of you.
+narr: {真|ま}っすぐ {歩|ある}いた 。 {確|たし}か に {真|ま}っすぐ 。 …… {霧|きり} が {途切|とぎ}れる と 、 {岬|みさき} の {石|いし} の {道標|みちしるべ} が {目|め} の {前|まえ} に あった 。 || You walk straight ahead. Definitely straight. …When the fog parts, the stone marker on the point is right in front of you.
 !warp sg.harbor 9 33 up
 ?(comp=nao) comp[angry]: …… {道|みち} に {嘘|うそ} を つかれる の は 、 これ で {二度目|にどめ} だ 。 || …Second time a road's lied to me.
 ?(comp=mio) comp[worry]: {方角|ほうがく} が 、 {分|わ}からなく なる 。 {風|かぜ} さえ {吹|ふ}けば …… 。 || You lose all sense of direction. If only the wind would blow…
-?(comp=ren) comp[shy]: {私|わたし} の せい では ありません 。 …… {念|ねん} の ため 、 {言|い}って おきます 。 || That wasn't my fault. …Just so it's on record.
-?(comp=suzu) comp: {舞台|ぶたい} に {上|あ}がった つもり が 、 {楽屋|がくや} に {戻|もど}されて た わ 。 || I thought I was stepping on stage and found myself back in the dressing room.
+?(comp=ren) comp[shy]: {私|わたし} の せい では ありません 。 …… {念|ねん}のため 、 {言|い}って おきます 。 || That wasn't my fault. …Just so it's on record.
+?(comp=suzu) comp: {舞台|ぶたい} に {上|あ}がった つもり が 、 {楽屋|がくや} に {戻|もど}されてた わ 。 || I thought I was stepping on stage and found myself back in the dressing room.
 ?(quest.sg_main=6) narr: {灯台|とうだい} の ゲンゾウ に 、 {風|かぜ} の こと を {聞|き}こう 。 || Ask Genzō at the lighthouse about the wind.
 
 @scene sg.genzo_wind
-genzo: {風|かぜ} ？ …… {止|や}んで る な 。 {嵐|あらし} の {晩|ばん} から 、 ぴたり と だ 。 || The wind? …It's dropped. Dead since the night of the storm.
-genzo: {五十年|ごじゅうねん} 、 {岬|みさき} で {風|かぜ} が {止|や}んだ こと は ない 。 {凪|なぎ} の {日|ひ} でも 、 {上|うえ} の {風見|かざみ} は {回|まわ}って た 。 || Fifty years, and the wind's never stopped on this point. Even on a calm day, the vane up top would turn.
+genzo: {風|かぜ} ？ …… {止|や}んでる な 。 {嵐|あらし} の {晩|ばん} から 、 ぴたり と だ 。 || The wind? …It's dropped. Dead since the night of the storm.
+genzo: {五十年|ごじゅうねん} 、 {岬|みさき} で {風|かぜ} が {止|や}んだ こと は ない 。 {凪|なぎ} の {日|ひ} でも 、 {上|うえ} の {風見|かざみ} は {回|まわ}ってた 。 || Fifty years, and the wind's never stopped on this point. Even on a calm day, the vane up top would turn.
 genzo[think]: {来|き}な 。 {上|うえ} を {見|み}せて やる 。 || Come on. I'll show you the top.
 !fade out
 narr: {螺旋|らせん} {階段|かいだん} を {上|のぼ}る 。 ゲンゾウ は {膝|ひざ} を {叩|たた}きながら 、 {一段|いちだん} ずつ {上|のぼ}った 。 || You climb the spiral stairs. Genzō goes up one step at a time, slapping his knee.
@@ -142,7 +142,7 @@ genzo: {気|き} が {向|む}いたら {言|い}え 。 {階段|かいだん} �
 
 @scene sg.causeway_walk
 narr: {濡|ぬ}れた {砂|すな} の {道|みち} が 、 {島|しま} へ {続|つづ}いて いる 。 {両側|りょうがわ} で 、 {引|ひ}いた {海|うみ} が {静|しず}か に {光|ひか}って いた 。 || The wet sand road runs on to the island. On either side, the drawn-back sea glints quietly.
-?(comp=nao) comp: {帰|かえ}り の {時間|じかん} 、 {覚|おぼ}えて る ？ {満|み}ち{潮|しお} に {追|お}いつかれたら 、 {泳|およ}ぐ こと に なる ぞ 。 || You remember when we have to be back? If the tide catches us, we'll be swimming.
+?(comp=nao) comp: {帰|かえ}り の {時間|じかん} 、 {覚|おぼ}えてる ？ {満|み}ち{潮|しお} に {追|お}いつかれたら 、 {泳|およ}ぐ こと に なる ぞ 。 || You remember when we have to be back? If the tide catches us, we'll be swimming.
 ?(comp=mio) comp: {貝|かい} が いっぱい 。 …… {拾|ひろ}う の は 、 {帰|かえ}り に しよう ね 。 || So many shells. …We'll pick them up on the way back.
 ?(comp=ren) comp: {海|うみ} の {真|ま}ん{中|なか} を {歩|ある}く {道|みち} 。 {記録|きろく} で は {読|よ}んで いました が 、 {本当|ほんとう} に ある の です ね 。 || A road through the middle of the sea. I'd read about them in the records, but they really exist.
 ?(comp=suzu) comp: {花道|はなみち} ね 。 {客|きゃく} は カモメ と カニ だけ だ けど 。 || A runway to the stage. Though the audience is only gulls and crabs.

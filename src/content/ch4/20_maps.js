@@ -185,7 +185,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'exitmat', x: 8, y: 10 },
       { p: 'sb_irori', x: 7, y: 5, if: 'sb_hearth_done|!sb_storm', scene: 'sb.irori' },
       { p: 'sb_irori', x: 7, y: 5, o: { low: true }, if: 'sb_storm&!sb_hearth_done', scene: 'sb.irori' },
-      { p: 'counter', x: 12, y: 3 }, { p: 'shelf', x: 15, y: 2 }, { p: 'bottles', x: 14, y: 2 }, { p: 'pot', x: 12, y: 2 },
+      { p: 'counter', x: 12, y: 3, scene: 'sb.inn_counter' }, { p: 'shelf', x: 15, y: 2 }, { p: 'bottles', x: 14, y: 2 }, { p: 'pot', x: 12, y: 2 },
       { p: 'stairs', x: 1, y: 2 },
       { p: 'table', x: 2, y: 8 }, { p: 'chair', x: 1, y: 8 }, { p: 'chair', x: 4, y: 8 },
       { p: 'smalltable', x: 13, y: 8, scene: 'sb.inn_table' }, { p: 'chair', x: 14, y: 8 },
@@ -197,7 +197,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'yae', x: 13, y: 2, dir: 'down', talk: [{ if: 'post', scene: 'sb.yae_post' }, { if: inStorm, scene: 'sb.yae_storm' }, { scene: 'sb.yae' }] },
       { id: 'natsume', x: 5, y: 4, dir: 'down', if: '!sb_storm|sb_morning', talk: [{ if: 'post', scene: 'sb.natsume_post' }, { scene: 'sb.natsume' }] },
       // cameo: Nao, stuck with the winter mailbag
-      { id: 'nao', x: 3, y: 6, dir: 'right', if: 'comp!=nao&!sb_storm', talk: [{ if: 'post', scene: 'sb.nao_cameo_post' }, { if: 'sb_lamp_lit', scene: 'sb.nao_cameo_after' }, { scene: 'sb.nao_cameo' }] },
+      { id: 'nao', x: 3, y: 6, dir: 'right', if: 'comp!=nao&!sb_storm|comp!=nao&sb_morning', talk: [{ if: 'post', scene: 'sb.nao_cameo_post' }, { if: 'sb_lamp_lit', scene: 'sb.nao_cameo_after' }, { scene: 'sb.nao_cameo' }] },
       // the storm crowd
       { id: 'hoshino', x: 6, y: 8, dir: 'up', if: inStorm, talk: 'sb.storm_hoshino' },
       { id: 'fuki', x: 10, y: 7, dir: 'left', if: inStorm, talk: 'sb.storm_fuki' },
@@ -243,7 +243,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     props: [
       { p: 'exitmat', x: 5, y: 6 },
       { p: 'sb_mailshelf', x: 1, y: 2, scene: 'sb.post_shelf' }, { p: 'sb_mailshelf', x: 3, y: 2, scene: 'sb.post_shelf' },
-      { p: 'desk', x: 6, y: 3 }, { p: 'stove', x: 8, y: 2 },
+      { p: 'desk', x: 6, y: 3, across: true, scene: 'sb.post_desk' }, { p: 'stove', x: 8, y: 2 },
       { p: 'crate', x: 1, y: 5 }, { p: 'crate', x: 1, y: 4, scene: 'sb.post_sacks' }, { p: 'mailbox', x: 8, y: 5 },
       { p: 'noticeboard', x: 5, y: 2, scene: 'sb.post_notice' },
     ],

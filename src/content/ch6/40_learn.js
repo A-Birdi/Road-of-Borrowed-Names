@@ -147,7 +147,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
           { en: 'to take away', ok: false, why: { en: 'That would be 取る or 取り上げる.' } },
           { en: 'to hide', ok: false, why: { en: 'That would be 隠す.' } },
         ], { jp: '{写|うつ}す', en: '写す: to copy (also, to photograph). 写し: a copy.' }),
-        choose('g:cond_ba', 'What does 「{求|もと}め られれば 、 {返|かえ}す 。」 say?', { jp: '{定|さだ}め ： 「 {名前|なまえ} の {写|うつ}し を {守|まも}る 。 {求|もと}め られれば 、 {返|かえ}す 。 」', en: 'Charter: "We keep copies of names. If asked, we return them."' }, [
+        choose('g:cond_ba', 'What does 「{求|もと}められれば 、 {返|かえ}す 。」 say?', { jp: '{定|さだ}め ： 「 {名前|なまえ} の {写|うつ}し を {守|まも}る 。 {求|もと}められれば 、 {返|かえ}す 。 」', en: 'Charter: "We keep copies of names. If asked, we return them."' }, [
           { en: 'If asked, (the Archive) returns them.', ok: true },
           { en: 'Only if asked does it return them.', ok: false, why: { en: '〜ば gives a condition, not the only condition. That is Kasane\'s reading.' } },
           { en: 'The Archive asks for them back.', ok: false, why: { en: '求められる is passive: the Archive is the one being asked.' } },
@@ -155,12 +155,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
         { kind: 'order', item: 'c:sa_charter', prompt: { en: 'Put the charter\'s first line back together: "(We) keep copies of names."' }, tiles: ['{名前|なまえ}', 'の', '{写|うつ}し', 'を', '{守|まも}る'], answer: ['{名前|なまえ}', 'の', '{写|うつ}し', 'を', '{守|まも}る'], orderHint: { en: 'Noun の noun を verb.' } },
       ],
       I: [
-        choose('c:sa_charter', 'The plaque on the gate quotes only part of the charter. What does it leave out that changes the meaning?', { jp: '{門|もん} の {札|ふだ} ： 「 {求|もと}め られれば 、 {返|かえ}す 。 」 ／ {定|さだ}め ： 「 この {書庫|しょこ} は 、 {失|うしな}われた {名前|なまえ} の {写|うつ}し を {守|まも}る 。 {求|もと}め られれば 、 {必|かなら}ず {返|かえ}す 。 」', en: 'Plaque: "If asked, return." / Charter: "This archive keeps copies of lost names. If asked, it will always return them."' }, [
+        choose('c:sa_charter', 'The plaque on the gate quotes only part of the charter. What does it leave out that changes the meaning?', { jp: '{門|もん} の {札|ふだ} ： 「 {求|もと}められれば 、 {返|かえ}す 。 」 ／ {定|さだ}め ： 「 この {書庫|しょこ} は 、 {失|うしな}われた {名前|なまえ} の {写|うつ}し を {守|まも}る 。 {求|もと}められれば 、 {必|かなら}ず {返|かえ}す 。 」', en: 'Plaque: "If asked, return." / Charter: "This archive keeps copies of lost names. If asked, it will always return them."' }, [
           { en: 'That the Archive keeps copies (写し), not the names themselves.', ok: true },
           { en: 'That the Archive is a library.', ok: false, why: { en: 'The charter doesn\'t say that either.' } },
           { en: 'Nothing important.', ok: false, why: { en: 'Without 写し, it sounds as if the Archive may hold the originals.' } },
         ], { en: 'Cut away "copies" and "always", and "if asked, return" starts to sound like a favour.' }),
-        choose('g:cond_ba', 'Kasane\'s note: 「{求|もと}め られなければ 、 {返|かえ}さなくて よい 。」 Does the charter say this?', null, [
+        choose('g:cond_ba', 'Kasane\'s note: 「{求|もと}められなければ 、 {返|かえ}さなくて よい 。」 Does the charter say this?', null, [
           { en: 'No. "If asked, return" says nothing about when no one asks.', ok: true },
           { en: 'Yes, it follows logically.', ok: false, why: { en: 'Only if you read "if" as "only if" — which the charter never says.' } },
         ], { en: '〜ば is "if", not "only if". Kasane added the "only".' }),
@@ -181,7 +181,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
           { en: 'A permission to refuse unless asked.', ok: false, why: { en: 'べし binds the Archive; it grants no permission.' } },
           { en: 'A prediction about what will happen.', ok: false, why: { en: 'In a charter, べし states a duty, not a forecast.' } },
         ], { en: '有らば (= あれば, "if there is") + べし: whenever there is a request, it must return.' }),
-        choose('c:sa_charter', 'Kasane\'s gloss reads: 「{求|もと}め られなければ {返|かえ}さなくて よい 」. What has it done to the charter?', null, [
+        choose('c:sa_charter', 'Kasane\'s gloss reads: 「{求|もと}められなければ {返|かえ}さなくて よい 」. What has it done to the charter?', null, [
           { en: 'Turned "if asked, return" into "only if asked, return" — a condition the charter never states.', ok: true },
           { en: 'Restated exactly what 求め有らば means.', ok: false, why: { en: '求め有らば gives one case. It is silent on the others.' } },
           { en: 'Quoted the charter\'s second half.', ok: false, why: { en: 'The charter has no such half.' } },
@@ -488,7 +488,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     kanaDrill('sa.df7', 'たな', 'shelf', '', 'た', 'な'),
     kanaDrill('sa.df8', 'やくそく', 'promise', 'やく', 'そ', 'く'),
     kanaDrill('sa.df9', 'へんじ', 'reply', 'へん', 'じ', ''),
-    kanaDrill('sa.df10', 'ページ', 'page', '', 'ペ', 'ージ'),
+    kanaDrill('sa.df10', 'かさ', 'lampshade; umbrella', 'か', 'さ', ''),
     // Elementary
     read('sa.de1', 'E', '手紙', 'てがみ', 'letter'),
     read('sa.de2', 'E', '返事', 'へんじ', 'reply'),
@@ -509,8 +509,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { en: 'If it\'s needed, (I\'ll) open it.', ok: true }, { en: 'It is necessary to open it.', ok: false, why: { en: 'That would be 開ける必要がある.' } }, { en: 'Don\'t open it unless it\'s needed.', ok: false, why: { en: 'That adds a prohibition the sentence doesn\'t have.' } },
     ], { en: 'なら: "if (that is the case)".' }),
     { id: 'sa.de11', lv: 'E', tags: ['still'], kind: 'order', item: 'g:v_te_kudasai', prompt: { en: 'Build: "Please give the letter back."' }, tiles: ['{手紙|てがみ}', 'を', '{返|かえ}して', 'ください'], answer: ['{手紙|てがみ}', 'を', '{返|かえ}して', 'ください'], orderHint: { en: 'Object を, then the て form + ください.' } },
-    mc('sa.de12', 'E', 'v:忘れる', 'Choose the right verb: 「{名前|なまえ} を ＿＿ ない で 。」 ("Don\'t forget the name.")', null, [
-      { jp: '{忘|わす}れ', ok: true }, { jp: '{覚|おぼ}え', ok: false, why: { en: '覚えないで = "don\'t memorise it".' } }, { jp: '{書|か}か', ok: false, why: { en: '書かないで = "don\'t write it".' } },
+    mc('sa.de12', 'E', 'v:忘れる', 'Which sentence means "Don\'t forget the name"?', null, [
+      { jp: '{名前|なまえ} を {忘|わす}れないで 。', ok: true }, { jp: '{名前|なまえ} を {覚|おぼ}えないで 。', ok: false, why: { en: '覚えないで = "don\'t memorise it".' } }, { jp: '{名前|なまえ} を {書|か}かないで 。', ok: false, why: { en: '書かないで = "don\'t write it".' } },
     ], { en: '忘れないで — "don\'t forget".' }),
     // Intermediate
     read('sa.di1', 'I', '記憶', 'きおく', 'memory (what one remembers)'),

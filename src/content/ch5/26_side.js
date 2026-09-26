@@ -41,7 +41,7 @@ lf_kohei: {俺|おれ} の {味方|みかた} だ よ 。|| It'll take mine.
 :waiting
 lf_kohei: {記録館|きろくかん} の {右|みぎ} の {机|つくえ} に 、{土地|とち} の {記録|きろく} が ある はず です よ 。|| The land records should be on the desk on the right in the Records Hall.
 ?(!lf_bell_rung) lf_kinu: もちろん です 。|| Of course.
-?(lf_bell_rung) lf_kinu: {左|ひだり} の {机|つくえ} です よ 。…… え 、{右|みぎ} ? あら 。|| The left-hand desk. …Eh? The right? Oh.
+?(lf_bell_rung) lf_kinu: {左|ひだり} の {机|つくえ} です よ 。…… え 、{右|みぎ} ？ あら 。|| The left-hand desk. …Eh? The right? Oh.
 !end
 :record
 !if quest.lf_fence=done -> end
@@ -70,7 +70,7 @@ lf_kohei[angry]: {木|き} の {向|む}こう まで だ ！ {木|き} も {含
 narr: {二人|ふたり} は {生|い}き{生|い}き と {言|い}い{争|あらそ}って いる 。{三十年分|さんじゅうねんぶん} の {元気|げんき} が 、{顔|かお} に {戻|もど}って いる 。|| The two of them argue with real life in them. Thirty years' worth of vigour has come back into their faces.
 !quest lf_fence 3
 !challenge lf.ch_fence
-pc: {境|さかい} は {幹|みき} の {真|ま}ん{中|なか} 。{実|み} は 、{半分|はんぶん} ずつ に しては どう でしょう 。|| How about the line runs through the middle of the trunk, and the fruit is split half and half?
+pc: {境|さかい} は {幹|みき} の {真|ま}ん{中|なか} 。{柿|かき} の {実|み} は 、{半分|はんぶん} ずつ に しては どう でしょう 。|| How about the line runs through the middle of the trunk, and the fruit is split half and half?
 lf_kohei[think]: …… {半分|はんぶん} か 。|| …Half, eh.
 lf_kinu[think]: {半分|はんぶん} 、ね 。|| Half.
 lf_kinu: {反対|はんたい} です 。…… {甘|あま}い ほう の {枝|えだ} は 、{私|わたし} の {側|がわ} です から 。|| I object. …The branch with the sweeter fruit is on my side.
@@ -144,7 +144,7 @@ narr: ハヤト は {赤|あか}ペン で 、{勢|いきお}い よく {線|せ
 lf_hayato: {新|あたら}しい の を {用意|ようい} します 。…… この {赤|あか}ペン は 、{記念|きねん} に {差|さ}し{上|あ}げます 。|| I'll draw up a fresh one. …Please keep this red pen as a memento.
 :done
 !quest lf_form done
-lf_hayato: {断|ことわ}れない {事務員|じむいん} は 、{半分|はんぶん} しか {事務員|じむいん} じゃ ない 。…… {先輩|せんぱい} の {口癖|くちぐせ} でした 。やっと {意味|いみ} が わかりました 。|| "A clerk who can't cross things out is only half a clerk." …My senior used to say that. Now I finally get it.
+lf_hayato: {断|ことわ}れない {事務員|じむいん} は 、{半分|はんぶん} しか {事務員|じむいん} じゃ ない 。…… {先輩|せんぱい} の {口癖|くちぐせ} でした 。やっと {意味|いみ} が わかりました 。|| "A clerk who can't say no is only half a clerk." …My senior used to say that. Now I finally get it.
 !autosave
 !end
 :again
@@ -169,8 +169,8 @@ lf_tsuya[smile]: あら 、こんにちは 。{舟|ふね} を {待|ま}って �
 lf_tsuya: {東岸|ひがしぎし} に {妹|いもうと} が いて ね 。{甘酒|あまざけ} を {持|も}って いく {約束|やくそく} なの 。|| My sister lives on the east shore. I promised to bring her amazake.
 lf_tsuya[think]: {時刻表|じこくひょう} に は 、「{三時|さんじ} の {便|びん} は {当分|とうぶん} {出|で}ます」 って {書|か}いて ある の よ 。でも 、もう {二月|ふたつき} 、{一度|いちど} も {来|こ}ない の 。|| The timetable says "the three o'clock boat will run for the time being". But it hasn't come once in two months.
 lf_tsuya: {渡|わた}し{場|ば} の ウミ さん に {聞|き}いて も 、「もちろん {出|で}ます」 って 。…… じゃあ 、{明日|あした} は {来|く}る わ ね 。|| When I ask Umi at the ferry office, she says "of course it runs". …So it'll come tomorrow, I expect.
-?(comp=nao) comp: {二月|ふたつき} も ? {誰|だれ} か が 「{来|こ}ない よ」 って {言|い}えば {済|す}む {話|はなし} なのに 。|| Two months? One person saying "it's not coming" would've sorted it.
-?(comp=mio) comp[worry]: {雨|あめ} の {日|ひ} も ここ に ? {体|からだ} を {冷|ひ}やして は だめ です よ 。|| Even on rainy days? You mustn't let yourself get chilled.
+?(comp=nao) comp: {二月|ふたつき} も ？ {誰|だれ} か が 「{来|こ}ない よ」 って {言|い}えば {済|す}む {話|はなし} なのに 。|| Two months? One person saying "it's not coming" would've sorted it.
+?(comp=mio) comp[worry]: {雨|あめ} の {日|ひ} も ここ に ？ {体|からだ} を {冷|ひ}やして は だめ です よ 。|| Even on rainy days? You mustn't let yourself get chilled.
 ?(comp=ren) comp: {時刻表|じこくひょう} は 、{約束|やくそく} の {一種|いっしゅ} です 。{守|まも}られない {約束|やくそく} が {貼|は}って ある の は 、よく ありません 。|| A timetable is a kind of promise. It's not good to have a broken promise pinned up.
 ?(comp=suzu) comp: {来|こ}ない {役者|やくしゃ} を {待|ま}つ {客|きゃく} ほど 、{悲|かな}しい もの は ない わ 。|| There's nothing sadder than an audience waiting for an actor who isn't coming.
 pc: {時刻表|じこくひょう} を {見|み}て きます 。|| I'll go and look at the timetable.
@@ -211,7 +211,7 @@ lf_tsuya: {今日|きょう} は {妹|いもうと} が こっち へ {来|く}�
 !if lf_bell_rung -> fixed
 narr: {渡|わた}し{場|ば} の {時刻表|じこくひょう} 。「{東岸|ひがしぎし} {行|ゆ}き ： {九時|くじ} 、{十二時|じゅうにじ} 、{十五時|じゅうごじ} 」 。|| The ferry timetable. "To the east shore: 9:00, 12:00, 15:00."
 narr: {下|した} に {貼|は}り{紙|がみ} 。「{十五時|じゅうごじ} の {便|びん} は 、{当分|とうぶん} の {間|あいだ} {出|で}ます 。」|| A notice pasted underneath: "The 15:00 boat will run for the time being."
-narr: 「{出|で}ます 」 の {後|あと} に 、{何|なに} か を {剥|は}がした よう な {白|しろ}い {跡|あと} が ある 。|| After 出ます there's a pale mark, as if something had been peeled off.
+narr: 「{出|で}ます」 の {最後|さいご} の {一字|いちじ} だけ 、{墨|すみ} の {色|いろ} が {少|すこ}し {違|ちが}う 。|| Only the last character of 出ます is in a slightly different ink.
 !if !quest.lf_timetable -> end
 !if quest.lf_timetable>=1 -> end
 !choice
@@ -224,7 +224,7 @@ narr: {差|さ}し{出|だ}された {日誌|にっし} に は 、{毎日|ま�
 narr: {引|ひ}き{出|だ}し から 、{下書|したが}き の {紙|かみ} が {一枚|いちまい} はみ{出|だ}して いる 。|| A draft slip is poking out of her drawer.
 !challenge lf.ch_timetable
 umi[worry]: …… それ は 、{私|わたし} の {字|じ} です 。{最初|さいしょ} は 、ちゃんと 「{出|で}ません」 と {書|か}いた んです 。|| …That's my handwriting. At first, I did write "will not run".
-umi[sad]: {次|つぎ} の {朝|あさ} {来|き}たら 、「ん」 が {消|き}えて いて 。…… {書|か}き{直|なお}そう と する と 、{手|て} が {止|と}まる んです 。|| When I came in the next morning, the ん had vanished. …Whenever I try to write it again, my hand stops.
+umi[sad]: {次|つぎ} の {朝|あさ} {来|き}たら 、「ません」 が 「ます」 に なって いて 。…… {書|か}き{直|なお}そう と する と 、{手|て} が {止|と}まる んです 。|| When I came in the next morning, ません had turned into ます. …Whenever I try to write it again, my hand stops.
 !quest lf_timetable 1
 !end
 :fixed
@@ -233,6 +233,9 @@ narr: 「{十五時|じゅうごじ} の {便|びん} は 、{船体|せんた�
 narr: {下|した} に 、{大|おお}きな {字|じ} で {書|か}き{足|た}して ある 。「{本当|ほんとう} に 、{出|で}ません 。」|| Added underneath in big letters: "It really does NOT run."
 !if !quest.lf_timetable -> end
 !if quest.lf_timetable>=1 -> end
+narr: {新|あたら}しい {貼|は}り{紙|がみ} の {下|した} に 、{古|ふる}い {貼|は}り{紙|がみ} が まだ {残|のこ}って いる 。「{十五時|じゅうごじ} の {便|びん} は 、{当分|とうぶん} の {間|あいだ} {出|で}ます 。」|| Under the new notice, the old one is still pinned: "The 15:00 boat will run for the time being."
+umi: {日誌|にっし} を {見|み}て ください 。{最初|さいしょ} から 、ずっと {出|で}て いない んです 。|| Look at the log. It hasn't sailed once, from the very start.
+!challenge lf.ch_timetable
 !quest lf_timetable 1
 
 @scene lf.umi

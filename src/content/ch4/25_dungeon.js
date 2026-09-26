@@ -35,10 +35,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.path([[5, 6], [5, 6], [20, 6]], ':', 1);
       k.rect(12, 24, 2, 2, 'i');
       k.rect(14, 39, 2, 1, ':');
-      k.rect(10, 1, 7, 5, '#');
+      k.rect(10, 1, 7, 5, 'X');
       k.set(13, 5, ':');
     }),
-    legend: { '#': { tile: 'snow' } },
+    legend: { X: { tile: 'snow', prop: 'sb_blocker' } },
     structs: [
       { type: 'house', x: 19, y: 2, w: 3, h: 3, roof: 'snow', wall: 'stone', door: 1 },
     ],
@@ -125,7 +125,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'stove', x: 13, y: 2, scene: 'sb.charts_stove' },
       { p: 'bookpile', x: 1, y: 9 }, { p: 'chair', x: 11, y: 5 },
       { p: 'stairs', x: 14, y: 5 },
-      { p: 'sb_icewall', x: 14, y: 4, if: '!sb_log_solved' }, { p: 'sb_icewall', x: 14, y: 6, if: '!sb_log_solved' },
+      { p: 'sb_icewall', x: 14, y: 4, if: '!sb_log_solved' }, { p: 'sb_icewall', x: 14, y: 5, o: { cracked: true }, if: '!sb_log_solved', scene: 'sb.charts_stair_locked' }, { p: 'sb_icewall', x: 14, y: 6, if: '!sb_log_solved' },
       { p: 'sb_icicles', x: 10, y: 2 },
     ],
     foes: [

@@ -67,11 +67,11 @@ narr: {棚|たな} の {帳面|ちょうめん} に 、 {一冊|いっさつ} {�
 !call co.isao_first
 !end
 :idle
-co_isao: {火屋|ほや} は ヒロ に {任|まか}せて ある 。 {俺|おれ} は もう {目|め} が {利|き}かん 。 {火|ひ} の {色|いろ} が 、 {昔|むかし} は あった か な|むかし} ほど {見分|みわ}けられ ねえ 。 || I leave the globes to Hiro. My eyes aren't what they were. I can't tell the colours of a flame like I used to.
+co_isao: {火屋|ほや} は ヒロ に {任|まか}せて ある 。 {俺|おれ} は もう {目|め} が {利|き}かん 。 {火|ひ} の {色|いろ} が 、 {昔|むかし} ほど {見分|みわ}けられ ねえ 。 || I leave the globes to Hiro. My eyes aren't what they were. I can't tell the colours of a flame like I used to.
 ?(co_hist_isao&!co_restored) co_isao: {帳面|ちょうめん} は {返|かえ}さなくて いい 。 …… {返|かえ}って きて も 、 {俺|おれ} に は {読|よ}め ねえ {頁|ページ} だ 。 || You needn't return the ledger. …Even if you did, it's a page I can't read.
 !end
 :hist
-co_isao: {昔|むかし} は あった か な|むかし} の {話|はなし} だ と ？ …… {聞|き}かれた こと が ねえ な 。 || The old days? …Nobody's ever asked.
+co_isao: {昔|むかし} の {話|はなし} だ と ？ …… {聞|き}かれた こと が ねえ な 。 || The old days? …Nobody's ever asked.
 narr: イサオ は {右手|みぎて} を {開|ひら}いて 、 {手|て}のひら を {見|み}た 。 {古|ふる}い {火傷|やけど} の {跡|あと} が 、 {白|しろ}く {引|ひ}き{攣|つ}れて いる 。 || Isao opens his right hand and looks at the palm. An old burn scar puckers white across it.
 co_isao: この {火傷|やけど} か 。 {気|き} が ついたら あった 。 {若|わか}い {頃|ころ} から な 。 || This burn? It was just there one day. Since I was young.
 co_isao: {鉄|てつ} の {戸|と} を {素手|すで} で {閉|し}めた …… {気|き} が する 。 {熱|あつ}かった 。 {何|なん} で {閉|し}めた ん だ か 。 || I shut an iron door with my bare hand… I think. It was hot. Why did I shut it?
@@ -92,7 +92,7 @@ co_isao: {窯|かま} の {帳面|ちょうめん} を {持|も}って {行|い}
 !call co.hist_check
 !end
 :later
-co_isao: {無理|むり} に とは {言|い}わ ねえ 。 {気|き} が {向|む}いたら な 。 || I won't push. Whenever you're ready.
+co_isao: {無理|むり} に とは {言|い}わねえ 。 {気|き} が {向|む}いたら な 。 || I won't push. Whenever you're ready.
 
 @scene co.isao_first
 co_isao: {客|きゃく} か 。 {親方|おやかた} の イサオ だ 。 {火屋|ほや} なら ヒロ に {言|い}え 。 {俺|おれ} は もう {口|くち} を {出|だ}す だけ だ 。 || Customers? I'm Isao, the master. For globes, talk to Hiro. These days I just give orders.
@@ -164,7 +164,7 @@ co_fusa: {休|やす}みたく なったら {声|こえ} を かけて 。 {布�
 
 @scene co.fusa_after
 co_fusa: {妹|いもうと} の ヨシノ は ね 、 {工房|こうぼう} {通|どお}り で {染|そ}め{物|もの} を してた の 。 {祭|まつ}り の {旗|はた} も 、 あの {子|こ} が {染|そ}めてた 。 || My sister Yoshino dyed cloth on the workshop row. She dyed the festival banners, too.
-co_fusa[smile]: {今年|ことし} から 、 {旗|はた} の {一枚|いちまい} を {私|わたし} が {染|そ}める こと に した わ 。 {下手|へた} だ けど 。 {泣|な}き ながら {染|そ}めた から 、 {色|いろ} が {滲|にじ}んで る の 。 || From this year I dye one of the banners myself. I'm no good at it. I cried while I did it, so the colour ran.
+co_fusa[smile]: {今年|ことし} から 、 {旗|はた} の {一枚|いちまい} を {私|わたし} が {染|そ}める こと に した わ 。 {下手|へた} だ けど 。 {泣|な}き ながら {染|そ}めた から 、 {色|いろ} が {滲|にじ}んでる の 。 || From this year I dye one of the banners myself. I'm no good at it. I cried while I did it, so the colour ran.
 
 @scene co.fusa_post
 co_fusa: {宿|やど} の {帳場|ちょうば} に 、 {新|あたら}しい {桶|おけ} と {火傷|やけど} の {薬|くすり} を {置|お}いた の 。 {旅|たび} の {薬師|くすし} さん に {教|おし}わった {作|つく}り{方|かた} で ね 。 || I keep a new bucket and burn salve at the front desk now. Made the way a travelling apothecary taught me.
@@ -317,7 +317,7 @@ co_ume: {柿|かき} は ね 、 {渋|しぶ}い うち に {取|と}って 、 
 ?(co_hist_ume&!co_restored) co_ume: {植|う}え{付|つ}け{帳|ちょう} 、 {役|やく} に {立|た}ってる かい 。 {変|へん} な {頁|ページ} が ある だろう 。 {若|わか}い {木|き} ばかり {植|う}えた {年|とし} が 。 || Is the planting book any use? There's an odd page in it, isn't there. The year we planted nothing but saplings.
 !end
 :hist
-co_ume: {昔|むかし} は あった か な|むかし} の こと かい 。 …… {朝|あさ} …… {上|うえ} の {段|だん} が {真|ま}っ{黒|くろ} で ね 。 {柿|かき} の {木|き} が {一本|いっぽん} も なかった 。 || The old days? …In the morning… the upper terraces were pitch black. Not one persimmon tree left.
+co_ume: {昔|むかし} の こと かい 。 …… {朝|あさ} …… {上|うえ} の {段|だん} が {真|ま}っ{黒|くろ} で ね 。 {柿|かき} の {木|き} が {一本|いっぽん} も なかった 。 || The old days? …In the morning… the upper terraces were pitch black. Not one persimmon tree left.
 co_ume: いや 、 その {前|まえ} だ 。 {夜中|よなか} に 、 けむり の におい で {目|め} が {覚|さ}めた ん だ よ 。 {空|そら} が {赤|あか}くて ね 。 || No, before that. In the night, the smell of smoke woke me. The sky was red.
 co_ume: {子|こ}ども たち の {手|て} を {引|ひ}いて 、 {水路|すいろ} ぞい に {下|お}りた 。 {水|みず} の {音|おと} を {頼|たよ}り に ね 。 || I took the children by the hand and went down along the channel, following the sound of the water.
 co_ume: その {年|とし} は 、 ずっと {雨|あめ} が {降|ふ}らなかった 。 {一月|ひとつき} {以上|いじょう} も 。 {最初|さいしょ} に {言|い}う べき だった ね 。 || That year it didn't rain for over a month. I should have said that first.
@@ -398,7 +398,7 @@ co_asa: 「 {火除|ひよ}け{道|みち} 」 って 、 {変|へん} な {名�
 ?(co_restored) co_asa: …… {来|く}る ん だ ね 。 {来|き}た ん だ ね 。 だから {刈|か}る ん だ 。 {今|いま} は {分|わ}かる 。 || …It does come. It came. That's why we cut it. I understand now.
 
 @scene co.asa_after
-co_asa: {火除|ひよ}け{道|みち} を {刈|か}ったら 、 {段々畑|だんだんばたけ} の {形|かたち} が よく {見|み}える よう に なった 。 {昔|むかし} は あった か な|むかし} の {人|ひと} は 、 {火|ひ} の {通|とお}り{道|みち} まで {考|かんが}えて {段|だん} を {作|つく}った ん だ ね 。 || With the firebreaks cut, you can see the shape of the terraces properly. The old folk planned the terraces around where fire would run.
+co_asa: {火除|ひよ}け{道|みち} を {刈|か}ったら 、 {段々畑|だんだんばたけ} の {形|かたち} が よく {見|み}える よう に なった 。 {昔|むかし} の {人|ひと} は 、 {火|ひ} の {通|とお}り{道|みち} まで {考|かんが}えて {段|だん} を {作|つく}った ん だ ね 。 || With the firebreaks cut, you can see the shape of the terraces properly. The old folk planned the terraces around where fire would run.
 ?(co_signs_done) co_asa: {道|みち}しるべ の 「 {火除|ひよ}け{道|みち} 」 、 {今|いま} は {誰|だれ} も {笑|わら}わない よ 。 || Nobody laughs at the "firebreak path" arm any more.
 
 @scene co.asa_post

@@ -3,6 +3,8 @@
  * terms say so. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
+// Only words no earlier file defines are added, so atlas text never fights a
+// chapter's entry (chapters load first; see src/manifest.json).
 RB.lex.add(RB.lex.parseTable(`
 # --- general vocabulary
 あちこち||adv|E|here and there
@@ -274,10 +276,15 @@ RB.lex.add(RB.lex.parseTable(`
 乾杯|かんぱい|vs|E|a toast; cheers!
 熱|ねつ|n|I|heat; fever
 行方|ゆくえ|n|A|whereabouts
+悪夢|あくむ|n|I|nightmare
+旅費|りょひ|n|I|travel expenses
+職業病|しょくぎょうびょう|n|A|occupational hazard (lit. occupational illness)
+即興|そっきょう|n|A|improvisation
+下書き|したがき|n|I|rough draft, sketch
 # --- fictional / place terms used in atlas text
 雪鈴|ゆきすず|name|E|Snowbell (a place in this story)
 地図師|ちずし|n|A|map-maker, cartographer|Old-fashioned word.
 関守|せきもり|n|A|keeper of a barrier (checkpoint) gate|Historical word.
 半道|はんみち|n|A|a half-built road (in this story)|In this story, a road built only halfway; a fictional use.
 まや||int|F|(nonsense: やま said backwards)|Not a word: an echo turning やま round.
-`), 'atlas');
+`).filter((e) => !RB.lex.get(e.w, e.r || e.w)), 'atlas');

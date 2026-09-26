@@ -30,7 +30,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.hline(0, 35, 18, '^', 2);
       k.hline(0, 35, 12, '^', 2);
       k.hline(0, 35, 5, '^', 1);
-      k.path([[0, 21], [27, 21], [27, 15], [7, 15], [7, 9], [30, 9], [30, 0]], ':', 2);
+      k.path([[2, 25], [2, 21], [27, 21], [27, 15], [7, 15], [7, 9], [30, 9], [30, 0]], ':', 2);
       k.scatter('r', 6, 65, [2, 20, 30, 3], '.');
       k.scatter(',', 10, 66, [2, 14, 30, 8], '.');
       k.scatter('R', 5, 67, [2, 1, 30, 10], '*');
@@ -53,14 +53,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'c2', enemy: 'sa.crane', x: 20, y: 10, patrol: 1 },
     ],
     exits: [
-      { x: 0, y: 21, w: 1, h: 2, to: 'lf.road', sp: 'from_next', dir: 'left' },
+      { x: 2, y: 25, w: 2, h: 1, to: 'lf.road', sp: 'from_next', dir: 'down' },
       { x: 30, y: 0, w: 2, h: 1, to: 'sa.camp', tx: 13, ty: 17, dir: 'up' },
     ],
     triggers: [
-      { x: 1, y: 21, w: 1, h: 2, scene: 'sa.epilogue', if: 'sa_descent&!sa_done' },
+      { x: 2, y: 24, w: 2, h: 1, scene: 'sa.epilogue', if: 'sa_descent&!sa_done' },
     ],
     onEnter: [{ scene: 'sa.arrive', if: '!sa_arrived' }],
-    spawn: { default: [2, 21, 'right'], from_prev: [2, 22, 'right'], from_next: [30, 2, 'down'] },
+    spawn: { default: [3, 22, 'up'], from_prev: [2, 23, 'up'], from_next: [30, 2, 'down'] },
   };
 
   // ---- the pilgrims' hut ---------------------------------------------------------------------------
@@ -92,12 +92,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     npcs: [
       { id: 'sa_isamu', x: 16, y: 11, dir: 'right', if: '!post', talk: [
-        { if: 'post', scene: 'sa.isamu_post' },
         { if: 'quest.sa_isamu=done', scene: 'sa.isamu_after' },
         { if: 'item.sa_folio_isamu', scene: 'sa.isamu_return' },
         { if: 'quest.sa_isamu', scene: 'sa.isamu_wait' },
         { scene: 'sa.isamu_first' },
       ] },
+      { id: 'sa_oyone', x: 11, y: 14, dir: 'right', if: 'sa_descent&!post', talk: 'sa.oyone_descent' },
+      { id: 'kasane', x: 16, y: 15, dir: 'left', if: 'sa_descent&end_kasane_trial&!post', talk: 'sa.kasane_walk' },
       { id: 'sa_tsuzuri', x: 16, y: 6, dir: 'down', if: 'post&end_archive_closed&sa_clerk_named', talk: 'sa.tsuzuri_post' },
       { id: 'sa_clerk', x: 16, y: 6, dir: 'down', if: 'post&end_archive_closed&!sa_clerk_named', talk: 'sa.clerk_post' },
     ],
@@ -167,6 +168,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     npcs: [
       { id: 'kasane', x: 15, y: 12, dir: 'down', if: 'sa_choice_archive&!sa_choice_kasane', talk: 'sa.choose_kasane' },
+      { id: 'kasane', x: 15, y: 12, dir: 'down', if: 'sa_choice_kasane&end_kasane_keeper&!post', talk: 'sa.kasane_bye' },
       { id: 'kasane', x: 15, y: 12, dir: 'down', if: 'post&end_kasane_keeper&end_archive_closed', talk: 'sa.kasane_post' },
       { id: 'sa_reader', x: 8, y: 13, dir: 'right', wander: 2, if: 'post&end_archive_library', talk: 'sa.reader_gate' },
     ],
@@ -218,6 +220,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         { scene: 'sa.clerk_first' },
       ] },
       { id: 'sa_tsuzuri', x: 6, y: 4, dir: 'down', if: 'sa_clerk_named', talk: [{ if: 'post', scene: 'sa.tsuzuri_post' }, { scene: 'sa.tsuzuri_chat' }] },
+      { id: 'kasane', x: 14, y: 8, dir: 'down', if: '!sa_kasane_left', talk: 'sa.kasane_meet' },
       { id: 'kasane', x: 14, y: 6, dir: 'down', if: 'sa_choice_mem&!sa_choice_archive', talk: 'sa.choose_archive' },
       { id: 'kasane', x: 14, y: 5, dir: 'down', if: 'post&end_kasane_keeper&end_archive_library', talk: 'sa.kasane_post' },
       { id: 'sa_reader', x: 20, y: 9, dir: 'left', wander: 2, if: 'post&end_archive_library', talk: 'sa.reader_room' },
@@ -349,7 +352,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'shelf', x: 5, y: 15, scene: 'sa.shelf_empty' },
     ],
     npcs: [
-      { id: 'kasane', x: 11, y: 11, dir: 'up', if: 'sa_hush_down&!sa_choice_mem', talk: 'sa.choose_mem' },
+      { id: 'kasane', x: 11, y: 11, dir: 'up', if: 'sa_toya_read&!sa_choice_mem', talk: 'sa.choose_mem' },
       { id: 'kasane', x: 11, y: 11, dir: 'up', if: 'post&end_kasane_keeper&end_archive_library&end_mem_choose', talk: 'sa.kasane_post_mem' },
     ],
     exits: [
@@ -415,7 +418,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     npcs: [
       { id: 'kasane', x: 12, y: 7, dir: 'down', if: '!sa_hush_down', talk: 'sa.heart_kasane' },
-      { id: 'kasane', x: 12, y: 7, dir: 'down', if: 'sa_hush_down&!sa_toya_read', talk: 'sa.after_battle' },
+      { id: 'kasane', x: 12, y: 7, dir: 'down', if: 'sa_hush_down&!sa_toya_read', talk: [{ if: '!seen.sa.after_battle', scene: 'sa.after_battle' }, { scene: 'sa.after_return' }] },
     ],
     exits: [{ x: 12, y: 19, w: 1, h: 1, to: 'sa.study', tx: 7, ty: 2, dir: 'down' }],
     triggers: [

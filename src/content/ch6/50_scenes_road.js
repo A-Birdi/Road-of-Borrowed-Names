@@ -30,7 +30,7 @@ narr: 「 {次|つぎ} は {最後|さいご} の {灯|ひ} の {小屋|こや} 
 narr: {字|じ} は {読|よ}める 。 でも {墨|すみ} が 、 {水|みず} で {薄|うす}めた よう に {淡|あわ}い 。 || You can read it. But the ink is pale, as if it had been watered down.
 ?(comp=ren) ren[worry]: {名前|なまえ} は {残|のこ}って いる のに 、 {火|ひ} が {入|はい}らない 。 {約束|やくそく} の ほう が 、 {先|さき} に {抜|ぬ}かれて いる 。 || The name's still there, but it won't take a flame. The promise has been lifted out first.
 ?(comp=nao) nao: {書|か}き{直|なお}して も 、 すぐ {薄|うす}く なり そう だ な 。 {上|うえ} に {近|ちか}すぎる 。 || Rewrite it and it'd just fade again. We're too close to whatever's up there.
-?(comp=mio) mio: {誰|だれ}か が {何度|なんど} も {書|か}き{直|なお}した {跡|あと} が ある 。 {下|した} の ほう の {字|じ} 、 {重|かさ}なって る 。 || Someone's rewritten this over and over. The strokes near the bottom are layered on each other.
+?(comp=mio) mio: {誰|だれ}か が {何度|なんど} も {書|か}き{直|なお}した {跡|あと} が ある 。 {下|した} の ほう の {字|じ} 、 {重|かさ}なってる 。 || Someone's rewritten this over and over. The strokes near the bottom are layered on each other.
 ?(comp=suzu) suzu: {看板|かんばん} が {薄|うす}く なる {劇場|げきじょう} は 、 だいたい {潰|つぶ}れる {前|まえ} な んだ よ ね 。 || When a theatre's sign starts fading, it's usually about to close.
 
 @scene sa.lantern1_lit
@@ -39,7 +39,7 @@ narr: {灯|ひ} が {入|はい}って いる 。 「 {次|つぎ} は {最後|�
 @scene sa.lantern2
 narr: {笠|かさ} の {字|じ} が 、 ところどころ {抜|ぬ}けて いる 。 || Parts of the writing on the shade are missing.
 narr: 「 {次|つぎ} は …… {小屋|こや} 。 この {道|みち} は …… へ {続|つづ}く 。 」 || "Next: … hut. This road leads to …"
-?(comp=suzu) suzu: {台詞|せりふ} {飛|と}ばした {役者|やくしゃ} みたい 。 {見|み}て られない 。 || Like an actor who's dried. Painful to watch.
+?(comp=suzu) suzu: {台詞|せりふ} {飛|と}ばした {役者|やくしゃ} みたい 。 {見|み}て いられない 。 || Like an actor who's dried. Painful to watch.
 ?(comp=ren) ren: {次|つぎ} の {場所|ばしょ} の {名前|なまえ} から {消|き}えて いる 。 {行|い}き{先|さき} が {消|き}えれば 、 {道|みち} は {道|みち} で なく なる 。 || The next place's name goes first. Take away where a road leads and it stops being a road.
 
 @scene sa.lantern2_lit
@@ -56,7 +56,7 @@ narr: 「 この {道|みち} は 、 {書庫|しょこ} へ {続|つづ}く 。
 
 @scene sa.lantern4
 narr: {何|なに} も {書|か}かれて いない 。 {紙|かみ} が {新|あたら}しく {見|み}える ほど 、 {白|しろ}い 。 || Nothing is written on it. The paper is so white it looks new.
-?(comp=nao) nao: {新品|しんぴん} の {顔|かお} を して る けど 、 {古|ふる}い {灯籠|とうろう} だ 。 {消|け}された だけ だ 。 || It's putting on a brand-new face, but it's an old post. Just wiped.
+?(comp=nao) nao: {新品|しんぴん} の {顔|かお} を してる けど 、 {古|ふる}い {灯籠|とうろう} だ 。 {消|け}された だけ だ 。 || It's putting on a brand-new face, but it's an old post. Just wiped.
 ?(comp=mio) mio: …… {傷|きず} が ない の が 、 {一番|いちばん} {怖|こわ}い 。 || …The lack of a single mark is the scariest part.
 ?(comp=ren) ren[closed]: {灯守|ひもり} と して 、 これ は …… {見|み}たく なかった 。 || As a lantern keeper, this is… something I didn't want to see.
 ?(comp=suzu) suzu: {白紙|はくし} の {台本|だいほん} は 、 {自由|じゆう} って {言|い}う {人|ひと} も いる けど ね 。 これ は {違|ちが}う 。 {誰|だれ}か が {消|け}した {白|しろ} だ 。 || Some people call a blank script freedom. This isn't that. This white is something someone erased.
@@ -65,11 +65,11 @@ narr: {何|なに} も {書|か}かれて いない 。 {紙|かみ} が {新|�
 narr: {笠|かさ} に {字|じ} が ある 。 {少|すこ}し {下手|へた} な {字|じ} だ 。 「 {上|うえ} は {書庫|しょこ} 。 {下|した} は {灯落|ひおち} 。 どちら も {開|ひら}いて いる 。 」 || There's writing on the shade, in a slightly clumsy hand: "Up: the Archive. Down: Lanternfall. Both are open."
 
 @scene sa.road_marker
-narr: {苔|こけ} の {生|は}えた {石|いし} の {標|しるべ} 。 || A mossy stone waymarker.
+narr: {苔|こけ} の {生|は}えた {道標|みちしるべ} 。 || A mossy stone waymarker.
 narr: 「 ここ から {上|うえ} は 、 {荷|に} を {下|お}ろしたい {者|もの} の {道|みち} 。 」 || "Above this point, the road is for those who wish to set down their burdens."
 ?(comp=nao) nao: {荷|に} を {下|お}ろす 、 か 。 {配達人|はいたつにん} に は {耳|みみ} の {痛|いた}い {言葉|ことば} だ 。 {下|お}ろす の は 、 {届|とど}けた {後|あと} だ 。 || Set down your burdens. Not what a courier wants to hear. You set it down after it's delivered.
 ?(comp=mio) mio: {重|おも}い {荷物|にもつ} を {下|お}ろす の は 、 {悪|わる}い こと じゃ ない 。 …… {誰|だれ} の {荷物|にもつ} か に よる けど 。 || Setting down a heavy load isn't a bad thing. …Depends whose load it is, though.
-?(comp=ren) ren: {灯守|ひもり} の {標|しるべ} の {書|か}き{方|かた} です 。 {昔|むかし} は 、 {正|ただ}しい {道|みち} だった の でしょう 。 || That's how lantern keepers carve their markers. Once, this was an honest road.
+?(comp=ren) ren: {灯守|ひもり} の {道標|みちしるべ} の {書|か}き{方|かた} です 。 {昔|むかし} は 、 {正|ただ}しい {道|みち} だった の でしょう 。 || That's how lantern keepers carve their markers. Once, this was an honest road.
 ?(comp=suzu) suzu: {荷物|にもつ} を {下|お}ろす の は いい けど 、 {預|あず}かり{証|しょう} は もらって おく べき だ よ ね 。 {経験上|けいけんじょう} 。 || Setting down your baggage is fine, but you should always get a receipt. Speaking from experience.
 
 @scene sa.road_view
@@ -92,7 +92,7 @@ narr: 「 {下|くだ}り の {方|かた} へ 。 {履|は}き{替|か}え に 
 @scene sa.camp_first
 narr: {雪|ゆき} の {積|つ}もった {小|ちい}さな {平地|へいち} に 、 {小屋|こや} が {一軒|いっけん} 。 {煙突|えんとつ} から {煙|けむり} が {出|で}て いる 。 || On a small snowy shelf of land stands a single hut. Smoke rises from its chimney.
 narr: {小屋|こや} の {前|まえ} の {灯籠|とうろう} だけ が 、 {明|あか}るく {燃|も}えて いる 。 || Only the lantern post in front of the hut burns brightly.
-?(comp=nao) nao: {火|ひ} が {点|つ}いて る 。 {人|ひと} が いる 。 …… {助|たす}かる 。 {足|あし} が {冷|つめ}たい 。 || There's a fire. People. …Thank goodness. My feet are freezing.
+?(comp=nao) nao: {火|ひ} が {点|つ}いてる 。 {人|ひと} が いる 。 …… {助|たす}かる 。 {足|あし} が {冷|つめ}たい 。 || There's a fire. People. …Thank goodness. My feet are freezing.
 ?(comp=mio) mio[smile]: お{茶|ちゃ} の {匂|にお}い が する 。 {少|すこ}し {休|やす}もう よ 。 {登|のぼ}る {前|まえ} に 。 || I can smell tea. Let's rest a little before we go on up.
 ?(comp=ren) ren: この {灯|ひ} は 、 {生|い}きて います 。 {誰|だれ}か が {毎日|まいにち} {名前|なまえ} を {書|か}き{直|なお}して いる 。 || That lamp is alive. Someone rewrites its name every day.
 ?(comp=suzu) suzu: {楽屋|がくや} 、 {発見|はっけん} 。 {出番|でばん} の {前|まえ} に 、 {衣装|いしょう} を {乾|かわ}かそう 。 || Dressing room, found. Let's dry our costumes before we go on.
@@ -112,7 +112,7 @@ narr: 「 {上|うえ} へ {行|い}く {人|ひと} は 、 {火|ひ} に あ�
 ?(comp=nao) nao: {掲示板|けいじばん} って の は 、 {届|とど}かなかった {手紙|てがみ} の {墓場|はかば} だ 。 …… {三|みっ}つ {目|め} の やつ 、 {気|き} に なる な 。 || Noticeboards are graveyards for letters that never got delivered. …That third one bothers me.
 ?(comp=mio) mio: {置|お}き に {来|き}て 、 やめた {人|ひと} も いる んだ 。 …… よかった 。 || Some people came to set things down and changed their minds. …Good.
 ?(comp=ren) ren: 「 {扉|とびら} が {返事|へんじ} を しない 」 。 {書庫|しょこ} は 、 {頼|たの}み を {聞|き}かなく なって いる 。 || "The door won't answer." The Archive has stopped listening to requests.
-?(comp=suzu) suzu: {最後|さいご} の {貼|は}り{紙|がみ} 、 {好|す}き 。 {行|い}き も {帰|かえ}り も 、 ちゃんと {数|かぞ}えて る 。 || I like the last one. It counts the way up and the way back.
+?(comp=suzu) suzu: {最後|さいご} の {貼|は}り{紙|がみ} 、 {好|す}き 。 {行|い}き も {帰|かえ}り も 、 ちゃんと {数|かぞ}えてる 。 || I like the last one. It counts the way up and the way back.
 
 @scene sa.camp_cairn
 narr: {小石|こいし} を {積|つ}んだ {塚|つか} 。 {石|いし} の {一|ひと}つ {一|ひと}つ に 、 {名前|なまえ} が {刻|きざ}んで ある 。 || A cairn of stacked pebbles. Each stone has a name scratched into it.
@@ -134,9 +134,9 @@ sa_oyone: {名前|なまえ} 、 {書|か}いて いき な 。 {下|くだ}る 
 @scene sa.hut_register_signed
 narr: $name は 、 {宿帳|やどちょう} に {名前|なまえ} を {書|か}いた 。 {隣|となり} の {欄|らん} は 、 {空|あ}けて おく 。 || You write your name in the register, and leave the column beside it blank for now.
 ?(comp=nao) nao: {下|くだ}り の {欄|らん} 、 {必|かなら}ず {埋|う}める ぞ 。 {配達人|はいたつにん} は {往復|おうふく} が {基本|きほん} だ 。 || We are filling in that return column. Couriers always do the round trip.
-?(comp=mio) mio: …… わたし の {字|じ} 、 {震|ふる}えて る 。 {寒|さむ}い から ね 。 {寒|さむ}い から 。 || …My handwriting's shaky. It's the cold. It's the cold.
+?(comp=mio) mio: …… わたし の {字|じ} 、 {震|ふる}えてる 。 {寒|さむ}い から ね 。 {寒|さむ}い から 。 || …My handwriting's shaky. It's the cold. It's the cold.
 ?(comp=ren) ren: ウシオ 。 …… {下|くだ}り の {日付|ひづけ} が ない 。 || Ushio. …No date coming down.
-?(comp=suzu) suzu: {貸|か}し {出|だ}し {帳|ちょう} みたい 。 {返却|へんきゃく}{日|び} 、 {守|まも}ろう ね 。 || Like a lending ledger. Let's be back by the due date.
+?(comp=suzu) suzu: {貸|か}し{出|だ}し の {帳簿|ちょうぼ} みたい 。 {返却|へんきゃく}{日|び} 、 {守|まも}ろう ね 。 || Like a lending ledger. Let's be back by the due date.
 
 @scene sa.hut_shelf
 narr: {棚|たな} に 、 {巡礼|じゅんれい} の {人|ひと} たち が {忘|わす}れて いった もの が {並|なら}んで いる 。 || On the shelf, things the pilgrims left behind.
@@ -148,17 +148,17 @@ narr: {湯呑|ゆの}み が {二|ふた}つ 。 {一|ひと}つ は {縁|ふち
 
 @scene sa.oyone_first
 sa_oyone: おや 、 {上|うえ} へ {行|い}く {客|きゃく} は {久|ひさ}しぶり だ 。 {寒|さむ}かった だろう 。 {火|ひ} に あたり な 。 || Well, now. It's been a while since anyone went up. You must be frozen. Get by the fire.
-sa_oyone: オヨネ だ よ 。 この {小屋|こや} の {番|ばん} を して る 。 {昔|むかし} は 、 {上|うえ} へ {行|い}く {人|ひと} の {荷|に} を {担|かつ}いで {登|のぼ}って た 。 || I'm Oyone. I keep this hut. Used to carry people's bags up the mountain, in the old days.
+sa_oyone: オヨネ だ よ 。 この {小屋|こや} の {番|ばん} を してる 。 {昔|むかし} は 、 {上|うえ} へ {行|い}く {人|ひと} の {荷|に} を {担|かつ}いで {登|のぼ}って た 。 || I'm Oyone. I keep this hut. Used to carry people's bags up the mountain, in the old days.
 sa_oyone: {三十年|さんじゅうねん} {前|まえ} の {大水|おおみず} の {後|あと} は 、 {泣|な}き ながら {登|のぼ}って くる {人|ひと} が {多|おお}かった 。 {下|くだ}る {時|とき} は 、 みんな {少|すこ}し {軽|かる}く なって た 。 || After the big flood thirty years back, a lot of folk came up here crying. When they went down again, they were all a little lighter.
 sa_oyone[think]: {上|うえ} の カサネ も 、 {最初|さいしょ} は {頼|たの}まれた もの しか {預|あず}からなかった 。 {痩|や}せた {書記|しょき} で ね 。 {眠|ねむ}れない {顔|かお} を して た 。 || That Kasane up top only ever took what they were asked to, at first. A thin clerk. Always had the face of someone who couldn't sleep.
 sa_oyone[sad]: ここ {何年|なんねん} か は 、 {誰|だれ} も {登|のぼ}って こない 。 {荷|に} の ほう が 、 {勝手|かって} に {上|うえ} へ {行|い}く ように なった 。 {水路|すいろ} を {通|とお}って ね 。 || These last few years, nobody climbs up. The burdens go up on their own now. Through the conduits.
 ?(comp=nao) nao: {荷物|にもつ} が {自分|じぶん} で {歩|ある}く なら 、 {配達人|はいたつにん} は {失業|しつぎょう} だ な 。 …… {笑|わら}えない か 。 || If parcels walk themselves, couriers are out of a job. …Not funny, is it.
-?(comp=mio) mio: オヨネ さん 、 {手|て} を {見|み}せて ください 。 …… {墨|すみ} が {付|つ}いて る 。 {表|おもて} の {灯籠|とうろう} 、 オヨネ さん が ？ || Oyone, may I see your hands? …There's ink on them. The lantern out front — that's you?
+?(comp=mio) mio: オヨネ さん 、 {手|て} を {見|み}せて ください 。 …… {墨|すみ} が {付|つ}いてる 。 {表|おもて} の {灯籠|とうろう} 、 オヨネ さん が ？ || Oyone, may I see your hands? …There's ink on them. The lantern out front — that's you?
 ?(comp=mio) sa_oyone[smile]: {下手|へた} な {字|じ} だろう 。 {灯|ひ} は {文句|もんく} を {言|い}わない から ね 。 || Terrible handwriting, isn't it. The lamp doesn't complain.
 ?(comp=ren) sa_oyone[surprise]: …… その {灯|ひ} 。 そんな に {磨|みが}いて ある {灯|ひ} は 、 {一人|ひとり} しか {知|し}らない 。 あんた 、 ウシオ の {弟子|でし} かい 。 || …That lamp. I only ever knew one person who polished a lamp like that. You're Ushio's apprentice, are you.
 ?(comp=ren) ren[surprise]: {師匠|ししょう} を 、 {知|し}って いる の です か 。 || You knew my teacher?
 ?(comp=ren) sa_oyone: {七|なな}{冬|ふゆ} {前|まえ} 、 ここ で お{茶|ちゃ} を {三杯|さんばい} {飲|の}んで いった 。 {値段|ねだん} に {文句|もんく} を {言|い}って 、 {倍|ばい} {払|はら}って いった よ 。 {下|くだ}って は 、 こなかった 。 || Seven winters ago, drank three cups of tea right here. Complained about the price and paid double. Never came back down.
-?(comp=suzu) suzu: {三十年|さんじゅうねん} も {荷|に} を {担|かつ}いで たの ？ {腰|こし} の {貸|か}し が 、 {相当|そうとう} {溜|た}まって る ね 。 || Thirty years of hauling bags? Your back must be owed a fortune.
+?(comp=suzu) suzu: {三十年|さんじゅうねん} も {荷|に} を {担|かつ}いでた の ？ {腰|こし} の {貸|か}し が 、 {相当|そうとう} {溜|た}まってる ね 。 || Thirty years of hauling bags? Your back must be owed a fortune.
 ?(comp=suzu) sa_oyone[laugh]: {取|と}り{立|た}て に {来|き}て くれる かい 。 || Going to collect it for me, are you?
 sa_oyone: {休|やす}んで いく なら 、 {寝床|ねどこ} は ある よ 。 {上|うえ} へ {行|い}く {前|まえ} に 、 {声|こえ} を かけな 。 || If you want to rest, there's a bed. Give me a shout before you head up.
 !call sa.oyone_inn
@@ -183,7 +183,7 @@ narr: 「 ウシオ 、 ここ に {眠|ねむ}る 。 {灯守|ひもり} 。 {�
 !if seen.sa.ushio_grave -> end
 !if comp=ren -> ren
 ?(comp=nao) nao: ウシオ …… レン の {師匠|ししょう} の {名前|なまえ} じゃ なかった か 。 {帰|かえ}り を {待|ま}って た {人|ひと} だ 。 || Ushio… Wasn't that Ren's teacher's name? The one Ren's been waiting for.
-?(comp=mio) mio[sad]: ウシオ さん 。 レン さん が 、 ずっと {帰|かえ}り を {待|ま}って いた {人|ひと} 。 …… {伝|つた}え なきゃ 。 || Ushio. The one Ren has waited for all this time. …We'll have to tell them.
+?(comp=mio) mio[sad]: ウシオ さん 。 レン さん が 、 ずっと {帰|かえ}り を {待|ま}って いた {人|ひと} 。 …… {伝|つた}えなきゃ 。 || Ushio. The one Ren has waited for all this time. …We'll have to tell them.
 ?(comp=suzu) suzu[sad]: 「 {反対|はんたい} した {人|ひと} 」 か 。 {墓石|はかいし} の {言葉|ことば} と して は 、 {最高|さいこう} の {褒|ほ}め{言葉|ことば} だ ね 。 {葦|あし}ノ{瀬|せ} の レン の {師匠|ししょう} でしょ 。 {知|し}らせて あげなきゃ 。 || "One who disagreed." As words for a gravestone, that's the highest praise there is. That's Ren's teacher, from Reedwake, isn't it? Someone has to tell them.
 !set sa_ushio_found
 !end
@@ -202,14 +202,14 @@ narr: {石段|いしだん} の {上|うえ} に 、 {書庫|しょこ} が {建
 narr: {壁|かべ} は {紙|かみ} の よう に {白|しろ}い 。 {窓|まど} に は {灯|ひ} が ある のに 、 {中|なか} から は {何|なに} の {音|おと} も しない 。 || Its walls are paper-white. There is light in the windows, yet no sound at all comes from inside.
 narr: {左右|さゆう} の {水路|すいろ} を 、 {黒|くろ}い {水|みず} が {流|なが}れて いく 。 {下|した} から 、 {上|うえ} へ 。 || In the channels to either side, black water flows — from below, upwards.
 ?(comp=nao) nao: {水|みず} が {坂|さか} を {上|のぼ}る の は 、 {初|はじ}めて {見|み}た 。 …… {気持|きも}ち {悪|わる}い な 。 || First time I've seen water run uphill. …Gives me the creeps.
-?(comp=mio) mio: {水|みず} の {中|なか} に 、 {字|じ} が {見|み}える 。 {名前|なまえ} ？ …… {運|はこ}ばれて る ん だ 。 || There are letters in the water. Names? …They're being carried.
+?(comp=mio) mio: {水|みず} の {中|なか} に 、 {字|じ} が {見|み}える 。 {名前|なまえ} ？ …… {運|はこ}ばれてる ん だ 。 || There are letters in the water. Names? …They're being carried.
 ?(comp=suzu) suzu: {立派|りっぱ} な {劇場|げきじょう} だ ね 。 {看板|かんばん} が ない けど 。 || Fine theatre. No signboard, though.
 ?(comp=ren) ren: …… あの {石|いし} 。 {灯守|ひもり} の {墓|はか} の {形|かたち} です 。 || …That stone. It's shaped like a lantern keeper's grave.
 ?(comp=ren) !call sa.ushio_grave
 
 @scene sa.gate_statue
 narr: {本|ほん} を {抱|かか}えた {二人|ふたり} の {石像|せきぞう} 。 {台座|だいざ} に {字|じ} が {彫|ほ}って ある 。 || Two stone figures, each holding a book. There's an inscription on the base.
-narr: 「 {写|うつ}して {守|まも}り 、 {求|もと}め られれば {返|かえ}す 。 」 || "Copy and keep; when asked, return."
+narr: 「 {写|うつ}して {守|まも}り 、 {求|もと}められれば {返|かえ}す 。 」 || "Copy and keep; when asked, return."
 narr: {書庫|しょこ} を {建|た}てた {人|ひと} たち だろう 。 {顔|かお} は {風雨|ふうう} で {削|けず}れて いる 。 || Presumably the people who built the Archive. Their faces have been worn away by wind and rain.
 
 @scene sa.gate_plaque

@@ -1,5 +1,13 @@
 // Browser test: a complete Unwritten Atlas expedition, driven through the real UI.
-// Usage: node tools/build.mjs && node tests/e2e/atlas.check.mjs [--mod N] [--seed S] [--profile F|E|I|A] [--shots]
+// Usage: node tools/build.mjs && node tests/e2e/atlas.check.mjs [--scenario complete|early|defeat]
+//        [--reload] [--via-scene] [--mod N] [--seed S] [--profile F|E|I|A] [--comp mio] [--shots]
+//   complete (default): walk every room to the road home
+//   early:   head home from the camp (keep what you found)
+//   defeat:  lose a battle on the road (it folds back to the Lantern Hall)
+//   --reload: at the camp, save to slot 6, reload the page and load the save
+//             (exercises RB.atlas.prepare through the real save system)
+//   --via-scene: start through the Reedwake scene rw.atlas_go (`!hook atlas_start`
+//             inside a running scene) instead of calling the hook directly
 //
 // Starts a session-only post-game campaign in the Lantern Hall, calls
 // RB.hooks.atlas_start, then walks every room with the game's own tap-to-move
@@ -20,6 +28,9 @@ const SEED = arg('--seed', null);
 const PROFILE = arg('--profile', 'F');
 const COMP = arg('--comp', 'mio');
 const SHOTS = args.includes('--shots');
+const SCENARIO = arg('--scenario', 'complete');
+const RELOAD = args.includes('--reload');
+const VIA_SCENE = args.includes('--via-scene');
 const outDir = path.join(root, 'tests', 'e2e', 'out');
 fs.mkdirSync(outDir, { recursive: true });
 
@@ -44,7 +55,12 @@ async function uiStep() {
     const panelBtn = [...document.querySelectorAll('.panel .foot .btn.primary, .panel [data-ok]')].find(shown);
     if (panelBtn) { panelBtn.click(); return 'panel'; }
     const ch = document.querySelector('.choices');
-    if (shown(ch)) { const b = ch.querySelector('button'); if (b) { b.click(); return 'choice:' + b.textContent.slice(0, 40); } }
+    if (shown(ch)) {
+      const bs = [...ch.querySelectorAll('button')];
+      const i = window.__atlasPick ? window.__atlasPick(bs.map((b) => b.textContent)) : 0;
+      const b = bs[i] || bs[0];
+      if (b) { b.click(); return 'choice:' + b.textContent.slice(0, 40); }
+    }
     const card = document.querySelector('.combat-ui .responses [data-i]');
     if (card && !card.disabled) { card.click(); return 'battle:card'; }
     const dlg = document.querySelector('.dlg');
@@ -95,20 +111,22 @@ async function tap(x, y, label) {
 async function shot(name) { if (SHOTS) await p.screenshot({ path: path.join(outDir, 'atlas_' + name + '.png') }); }
 
 const t0 = Date.now();
-await p.evaluate(([prof, comp, mod, seed]) => {
+await p.evaluate(([prof, comp, mod, seed, via]) => {
   RB.game.debugStart('rw.hall', 5, 5, { comp, profile: prof, flags: { post: true } });
   RB.game.settings.textSpeed = 'instant';
   RB.atlas._debug.flags.chooseMod = mod;
   if (seed != null) RB.atlas._debug.flags.seed = +seed;
-  RB.hooks.atlas_start([], {});
+  if (via && RB.content.scenes['rw.atlas_go']) RB.script.run('rw.atlas_go');
+  else RB.hooks.atlas_start([], {});
   return 1;
-}, [PROFILE, COMP, MOD, SEED]);
+}, [PROFILE, COMP, MOD, SEED, VIA_SCENE]);
 await settle();
 let st = await state();
 check(st.map.startsWith('atlas.') && st.key === 't', 'expedition started in the threshold room (' + st.map + ', mods: ' + (st.run.mods.join('+') || 'none') + ')');
 await shot('threshold');
 
 const visited = [];
+let reloaded = false;
 for (let guard = 0; guard < 20; guard++) {
   st = await state();
   if (!st.run) break;
@@ -154,8 +172,35 @@ for (let guard = 0; guard < 20; guard++) {
     if (!(await tap(c.x, c.y, 'cache'))) break;
   }
   if (r.kind === 'camp') {
+    if (RELOAD) {
+      const slotOk = await p.evaluate(async () => { RB.save.setCurrent(6, 0); await RB.save.writeSlot(6, RB.game.s, { force: true }); return RB.save.status().mode; });
+      log('saved to slot 6 (' + slotOk + '); reloading the page');
+      await p.reload();
+      await p.waitForFunction(() => window.__RB_READY__ === true, null, { timeout: 15000 });
+      const res = await p.evaluate(async () => {
+        RB.game.settings.textSpeed = 'instant';
+        RB.ui.title.hide();
+        const before = Object.keys(RB.content.maps).filter((k) => k.startsWith('atlas.')).length;
+        const ok = await RB.game.loadCampaign(6);
+        return { ok, before, after: Object.keys(RB.content.maps).filter((k) => k.startsWith('atlas.')).length, map: RB.game.s.map, run: !!RB.game.s.atlas.run };
+      });
+      await settle();
+      check(res.ok && res.before === 0 && res.after >= 10 && res.map.startsWith('atlas.') && res.run, 'reloaded mid-run: maps rebuilt from the seed (' + res.before + ' → ' + res.after + '), standing in ' + res.map);
+      reloaded = true;
+    }
+    if (SCENARIO === 'early') await p.evaluate(() => { window.__atlasPick = (t) => { const i = t.findIndex((x) => /Head home/.test(x)); return i >= 0 ? i : 0; }; });
     const stump = r.props.find((pp) => pp.scene === 'atlas.camp');
     await tap(stump.x, stump.y, 'camp');
+    if (SCENARIO === 'early') break;
+  }
+  if (SCENARIO === 'defeat' && st.key === 't') {
+    await p.evaluate(() => {
+      RB.content.enemies['atlas.test_squall'] = Object.assign({}, RB.content.enemies['atlas.crane'], { name: { jp: 'テスト', en: 'Test squall' }, knots: 9, pattern: ['sweep'] });
+      RB.game.s.resolve = { pc: 1, comp: 1, max: 1 };
+      RB.game.startBattle('atlas.test_squall', {});
+    });
+    await settle();
+    break;
   }
   if (r.kind === 'climax') {
     const g = (await fresh()).npcs.find((n) => n.id === 'atlas_guardian');
@@ -188,17 +233,26 @@ st = await p.evaluate(() => {
 });
 await p.waitForTimeout(300);
 await p.screenshot({ path: path.join(outDir, 'atlas_home.png') });
-check(visited.length >= 8, 'walked ' + visited.length + ' rooms: ' + visited.join(' → '));
-check(st.map === 'rw.hall', 'extraction returned to rw.hall (now on ' + st.map + ')');
+if (SCENARIO === 'complete') {
+  check(visited.length >= 8, 'walked ' + visited.length + ' rooms: ' + visited.join(' → '));
+  check(st.completed === 1, 'expedition counted as completed');
+  check(st.atlasItems.length >= 1, 'reward received: ' + st.atlasItems.join(', '));
+  check(st.restore1, 'settlement restoration flag atlas_restore_1 set');
+  check(st.notes.length >= 3, 'notebook discoveries: ' + st.notes.join(', '));
+} else if (SCENARIO === 'early') {
+  check(visited.some((v) => v.startsWith('c:')), 'reached the camp: ' + visited.join(' → '));
+  check(!st.completed && st.summary && st.summary.kind === 'early', 'headed home early from the camp (not counted as completed)');
+} else if (SCENARIO === 'defeat') {
+  check(st.summary && st.summary.kind === 'defeat', 'defeat ended the expedition gently');
+  check(st.notes.indexOf('atlas_defeat') >= 0 && st.notes.some((n) => n.startsWith('atlas_name_')), 'consolation: notebook entries kept/added (' + st.notes.join(', ') + ')');
+}
+if (RELOAD) check(reloaded, 'mid-run reload exercised');
+check(st.map === 'rw.hall', 'returned to rw.hall (now on ' + st.map + ')');
 check(!st.run, 'run state cleared');
-check(st.completed === 1, 'expedition counted as completed');
-check(st.atlasItems.length >= 1, 'reward received: ' + st.atlasItems.join(', '));
-check(st.restore1, 'settlement restoration flag atlas_restore_1 set');
-check(st.notes.length >= 3, 'notebook discoveries: ' + st.notes.join(', '));
 check(st.leftoverFlags.length === 0, 'no run flags left behind (' + st.leftoverFlags.length + ')');
-check(st.maps === 0, 'generated maps unregistered after extraction (' + st.maps + ' left)');
+check(st.maps === 0, 'generated maps unregistered after the run (' + st.maps + ' left)');
 check(!st.patched, 'combat patches removed after the run');
-check(st.mastery > 0, 'learning records written (' + st.mastery + ' items)');
+check(st.mastery > 0, 'learning records kept (' + st.mastery + ' items)');
 check(errors.length === 0, 'no console/page errors' + (errors.length ? ': ' + errors.slice(0, 5).join(' | ') : ''));
 check(requests.length === 0, 'no external requests');
 console.log('\nscripted run: ' + secs + ' s wall clock with instant text and auto-answers (NOT a human playtime measurement);',

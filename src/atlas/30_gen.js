@@ -241,7 +241,7 @@ RB.atlas = (function () {
     if (!anchorCache.has(k)) anchorCache.set(k, rowsOf(pat, variant).join('').split(ch).length - 1);
     return anchorCache.get(k);
   }
-  const ANCHORS = '@123!?$%&GK<W([)]-IUVNJHMZ';
+  const ANCHORS = '@123!?$%&GK<W([)]}-IUVNJHMZ';
   const DECO_W = { M: 2 };
 
   // ---- map building ---------------------------------------------------------------------------------
@@ -268,7 +268,7 @@ RB.atlas = (function () {
           case 'W': rows[y][x] = 'B'; break;
           case '(': rows[y][x] = mods.has('lowtide') ? 'w' : '~'; break;
           case '[': rows[y][x] = mods.has('lowtide') ? 'w' : '~'; break;
-          case ')': case ']': rows[y][x] = mods.has('promises') ? floor : 'X'; break;
+          case ')': case ']': case '}': rows[y][x] = mods.has('promises') ? floor : 'X'; break;
           case 'Z': rows[y][x] = 'X'; deco.push({ p: 'atlas_fold', x, y, text: { jp: '{後|うし}ろ の {道|みち} は 、 {紙|かみ} の {端|はし} の よう に {折|お}り{畳|たた}まれて いる 。', en: 'The road behind you has folded itself shut, like the corner of a page.' } }); break;
           default:
             rows[y][x] = floor;
@@ -491,7 +491,7 @@ RB.atlas = (function () {
       run.room = parts[2];
       state.checkpoint = hallSpot();
     } catch (e) {
-      if (typeof console !== 'undefined') console.warn('atlas: run could not be restored —', e.message);
+      if (typeof console !== 'undefined' && !globalThis.__RB_TEST__) console.warn('atlas: run could not be restored —', e.message);
       try { unregister(run.id); } catch (e2) { /* ignore */ }
       state.atlas.run = null;
       cleanFlags(state, run.id);

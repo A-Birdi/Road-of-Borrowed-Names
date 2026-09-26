@@ -153,6 +153,9 @@ sousuke: {天文台|てんもんだい} へ {行|い}く んです ね 。 {灯|
 :lit
 sousuke[smile]: {灯|あか}り は 、 {宛名|あてな} の ない {手紙|てがみ} みたい な もの です ね 。 {見|み}る {人|ひと} {全員|ぜんいん} に {届|とど}く 。 || A lamp's a bit like a letter with no address. It reaches everyone who looks.
 
+@scene sb.post_desk
+narr: {机|つくえ} の {上|うえ} に {帳簿|ちょうぼ} が {開|ひら}いて いる 。 {預|あず}かった {手紙|てがみ} の {数|かず} が 、 {日|ひ} ごと に {書|か}き{込|こ}んで ある 。 {冬|ふゆ} の {間|あいだ} 、 {増|ふ}える ばかり だ 。 || A ledger lies open on the desk: the number of letters held, entered day by day. All winter, the count only goes up.
+
 @scene sb.post_shelf
 narr: {小|ちい}さな {仕切|しき}り の {一|ひと}つ {一|ひと}つ に 、 {手紙|てがみ} が {眠|ねむ}って いる 。 {札|ふだ} に は {家|いえ} の {名前|なまえ} 。 どれ も {春|はる} を {待|ま}って いる 。 || A letter sleeps in each little pigeonhole. Each hole is labelled with a household's name. All of them are waiting for spring.
 ?(!sb_letters_done) narr: いちばん {上|うえ} の {段|だん} だけ 、 {宛名|あてな} の {真|ま}っ{白|しろ}い {封筒|ふうとう} が {積|つ}まれて いる 。 || Only the top row holds a stack of envelopes with blank addresses.

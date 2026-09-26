@@ -83,7 +83,7 @@ narr: {下|した} へ {続|つづ}く {階段|かいだん} の {水|みず} �
 narr: {車輪|しゃりん} は 、びくとも しない 。|| The wheel won't budge.
 ?(!lf_plate_a_read) narr: {近|ちか}く の {壁|かべ} に 、{青銅|せいどう} の {札|ふだ} が ある 。{先|さき} に {読|よ}んで みよう 。|| There's a bronze plate on the wall nearby. Better read it first.
 ?(lf_plate_a_read&comp=nao) comp: 「{閉|し}めない と 、{開|ひら}かない」 。{上|うえ} が {先|さき} だよ 。|| "Unless it's closed, it won't open." Upper first.
-?(lf_plate_a_read&comp=mio) comp: {札|ふだ} に は 、{上|うえ} を {先|さき} に {閉|し}める って …… {書|か}いて なかった ?|| Didn't the plate say to close the upper one first?
+?(lf_plate_a_read&comp=mio) comp: {札|ふだ} に は 、{上|うえ} を {先|さき} に {閉|し}める って …… {書|か}いて なかった ？|| Didn't the plate say to close the upper one first?
 ?(lf_plate_a_read&comp=ren) comp: {札|ふだ} の {条件|じょうけん} を 、まだ {満|み}たして いません 。{西|にし} の {車輪|しゃりん} です 。|| We haven't met the plate's condition yet. The west wheel.
 ?(lf_plate_a_read&comp=suzu) comp: {段取|だんど}り を {飛|と}ばした わ ね 。{上|うえ} が {先|さき} 。|| We skipped a step. Upper first.
 !end
@@ -190,7 +190,7 @@ narr: {南|みなみ} へ {踏|ふ}み{出|だ}した とたん 、{開|あ}い�
 narr: {栓|せん} の {穴|あな} に {泥|どろ} が {詰|つ}まり 、{部屋|へや} は また {水|みず} の {下|した} に {沈|しず}んだ 。|| Silt clogs the drain, and the room sinks back under water.
 !unset lf_mid_drained
 ?(comp=nao) comp: …… 「{閉|し}めなければ 、{戻|もど}って くる 」 。{書|か}いて あった 。{書|か}いて あった よ 。|| …"If you don't close it, it comes back." It said so. It literally said so.
-?(comp=mio) comp[worry]: {大丈夫|だいじょうぶ} ? {濡|ぬ}れて ない ? …… {栓|せん} を もう {一度|いちど} {抜|ぬ}いて 、{今度|こんど} は {扉|とびら} を {閉|し}めよう 。|| Are you all right? Not soaked? …Let's pull the plug again, and this time close the door.
+?(comp=mio) comp[worry]: {大丈夫|だいじょうぶ} ？ {濡|ぬ}れて ない ？ …… {栓|せん} を もう {一度|いちど} {抜|ぬ}いて 、{今度|こんど} は {扉|とびら} を {閉|し}めよう 。|| Are you all right? Not soaked? …Let's pull the plug again, and this time close the door.
 ?(comp=ren) comp: {水|みず} が {引|ひ}いたら 、{閉|し}める 。{順番|じゅんばん} の {最後|さいご} を {飛|と}ばしました ね 。|| Once the water's down, close it. We skipped the last step.
 ?(comp=suzu) comp[laugh]: {大波|おおなみ} の {演出|えんしゅつ} 、{見事|みごと} ！ …… {二度目|にどめ} は いらない けど 。|| What a spectacular wave effect! …Don't need an encore.
 
@@ -206,7 +206,7 @@ narr: {管|くだ} に {手|て} を {当|あ}てる と 、{指先|ゆびさき
 !word koe
 narr: {声|こえ} ： {人|ひと} の {出|だ}す {音|おと} 。{黙|だま}らされた ところ に 、もう {一度|いちど} {響|ひび}かせる {言葉|ことば} 。{戦|たたか}い の {中|なか} で 、しじま に {答|こた}える {言葉|ことば} と して {織|お}れる 。|| 声 (こえ): voice — a word to make heard again where things were silenced. You can now weave こえ in encounters to answer a Hush.
 ?(comp=nao) comp[angry]: {宛先|あてさき} も {書|か}いて ない {荷物|にもつ} を 、{勝手|かって} に {運|はこ}ぶ な よ 。…… {返|かえ}して もらう から な 。|| Don't go hauling parcels that don't even have an address on them. …We're taking these back.
-?(comp=mio) comp[sad]: {一|ひと}つ {一|ひと}つ が 、{誰|だれ} か の {具合|ぐあい} の {悪|わる}さ の {原因|げんいん} だった ん だ 。|| Every single one of these was part of what's been making someone ill.
+?(comp=mio) comp[sad]: {言|い}えない まま {飲|の}み{込|こ}んだ {言葉|ことば} …… {体|からだ} に {悪|わる}い はず だ よ 。|| Words swallowed without ever being said… No wonder people have been getting ill.
 ?(comp=ren) comp: {師匠|ししょう} の {声|こえ} も 、こう して {上|うえ} へ {運|はこ}ばれた の でしょう か 。…… {今|いま} は 、{前|まえ} へ {進|すす}みましょう 。|| Was my master's voice carried up like this too? …For now, let's keep going.
 ?(comp=suzu) comp: {出番|でばん} を {待|ま}ってる {声|こえ} ばっかり 。{幕|まく} を {上|あ}げて あげなきゃ ね 。|| Nothing but voices waiting for their cue. We need to raise the curtain for them.
 !set lf_koe
@@ -303,7 +303,7 @@ narr: 「{鳴|な}らして は いけません 。…… いえ 、どうぞ �
 narr: {番人|ばんにん} が ほどけ 、{管|くだ} が {一本|いっぽん} ずつ {水|みず} に {沈|しず}んで いく 。|| The keeper comes apart, and its pipes sink into the water one by one.
 narr: {鐘|かね} に {巻|ま}きついて いた {管|くだ} も 、{緩|ゆる}んで {落|お}ちた 。|| The pipes that were wound round the bell loosen and fall away too.
 ?(comp=nao) comp: …… {鐘|かね} 、{自由|じゆう} に なった 。|| …The bell's free.
-?(comp=mio) comp[smile]: {怪我|けが} は ない ? …… よかった 。|| Are you hurt? …Thank goodness.
+?(comp=mio) comp[smile]: {怪我|けが} は ない ？ …… よかった 。|| Are you hurt? …Thank goodness.
 ?(comp=ren) comp: {灯|あか}り で {照|て}らします 。{鐘|かね} に 、{字|じ} が {刻|きざ}んで あります 。|| I'll light it up. There's writing cast into the bell.
 ?(comp=suzu) comp[smile]: {拍手|はくしゅ} は 、{鐘|かね} が {鳴|な}って から ね 。|| Applause can wait until the bell rings.
 !checkpoint lf.bellhall 8 4 down

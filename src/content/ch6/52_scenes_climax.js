@@ -71,7 +71,7 @@ narr: {静寂|しじま} が ほどけて いく 。 {白|しろ}い ページ �
 narr: {遠|とお}く で 、 {何|なに}か が {鳴|な}った 。 {水|みず} の {音|おと} 。 {誰|だれ}か の {笑|わら}い{声|ごえ} 。 {下|した} の {町|まち} の {音|おと} が 、 {坂|さか} を {上|のぼ}って くる 。 || Far away, something sounds. Water. Someone laughing. The noise of the towns below is climbing the mountain.
 kasane[tired]: …… {終|お}わりました か 。 || …Is it over?
 kasane: {不思議|ふしぎ} です 。 {三十年|さんじゅうねん} 、 {待|ま}って いた {気|き} が します 。 {止|と}めて くれる {人|ひと} を 。 || Strange. I feel as though I've been waiting thirty years for someone to stop me.
-?(comp=nao) nao: {待|ま}って た なら 、 {自分|じぶん} で {止|や}めりゃ よかった んだ 。 || If you were waiting, you could have just stopped.
+?(comp=nao) nao: {待|ま}って た なら 、 {自分|じぶん} で {止|や}めれば よかった んだ 。 || If you were waiting, you could have just stopped.
 ?(comp=nao) kasane[sad]: ええ 。 その {通|とお}り です 。 || Yes. Just so.
 ?(comp=mio) mio: {座|すわ}って ください 。 {話|はなし} は それ から です 。 {断|ことわ}って も {無駄|むだ} です から ね 。 || Sit down. We'll talk after that. And there's no point refusing.
 ?(comp=mio) kasane[surprise]: …… はい 。 || …Yes.
@@ -130,8 +130,8 @@ kasane: そして {世界|せかい} じゅう の {言葉|ことば} に 、 {�
 ?(item.lf_toya_bell) kasane: …… {持|も}って いて ください 。 あの {子|こ} は 、 {走|はし}る の が {仕事|しごと} でした から 。 {旅|たび} を {続|つづ}けさせて あげて 。 || …Please keep it. Running was his work. Let it go on travelling.
 kasane[tired]: {許|ゆる}して ほしい と は 、 {言|い}いません 。 {言|い}える {立場|たちば} で は ない 。 || I won't ask you to forgive me. I'm in no position to.
 kasane: でも 、 {決|き}めて ほしい 。 わたし が {預|あず}かって いる もの を 、 どう する か 。 わたし を 、 どう する か 。 || But I would like you to decide. What to do with what I've been keeping. What to do with me.
-?(comp=nao) nao: また {人|ひと} に {決|き}めさせる の か 。 …… いや 、 {今度|こんど} は {頼|たの}んで る の か 。 {違|ちが}い は {大|おお}きい な 。 || Making someone else decide again? …No — this time you're asking. That's a big difference.
-?(comp=mio) mio: {決|き}める の は 、 {一人|ひとり} じゃ ない 。 あなた も 、 {一緒|いっしょ} に {来|き}て ください 。 {断|ことわ}らせ ません 。 || Deciding isn't a one-person job. You're coming with us. I won't take no for an answer.
+?(comp=nao) nao: また {人|ひと} に {決|き}めさせる の か 。 …… いや 、 {今度|こんど} は {頼|たの}んでる の か 。 {違|ちが}い は {大|おお}きい な 。 || Making someone else decide again? …No — this time you're asking. That's a big difference.
+?(comp=mio) mio: {決|き}める の は 、 {一人|ひとり} じゃ ない 。 あなた も 、 {一緒|いっしょ} に {来|き}て ください 。 {断|ことわ}らせません 。 || Deciding isn't a one-person job. You're coming with us. I won't take no for an answer.
 ?(comp=ren) ren: 「 {名|な} は {灯|ひ} に 、 {灯|ひ} は {人|ひと} に 、 {人|ひと} は {名|な} に 。 だから 、 {名|な} を {一人|ひとり} で {守|まも}る {者|もの} は いない 」 。 {師匠|ししょう} の {教|おし}え です 。 あなた も 、 {一人|ひとり} で {守|まも}る {必要|ひつよう} は ない 。 || "A name to the lamp, the lamp to people, people to the name. And so no one keeps a name alone." My teacher's teaching. You don't have to keep them alone either.
 ?(comp=suzu) suzu: {貸|か}し {借|か}り を {整理|せいり} しよう 。 {帳簿|ちょうぼ} は {三冊|さんさつ} 。 {順番|じゅんばん} に 、 {片付|かたづ}けて いこう 。 || Let's settle the accounts. Three ledgers. One at a time.
 kasane: {下|した} の {記憶|きおく} の {部屋|へや} で 、 {待|ま}って います 。 {預|あず}けられた もの から 、 {始|はじ}めましょう 。 || I'll wait in the Room of Set-Down Memories below. Let's begin with what was given into my keeping.
@@ -152,7 +152,7 @@ kasane: …… ウシオさん なら 、 {後|あと} の ほう を {選|え�
 ?(comp=nao) nao: …… {届|とど}ける か 、 {預|あず}かる か 。 {配達人|はいたつにん} に {聞|き}く {質問|しつもん} じゃ ない な 。 {答|こた}え は {分|わ}かってる くせ に 、 {迷|まよ}う 。 || Deliver, or hold. Not a fair question for a courier. You'd think I'd know the answer, and I still waver.
 ?(comp=mio) mio: どっち を {選|えら}んで も 、 {痛|いた}む {人|ひと} は いる 。 それ は {覚悟|かくご} して おこう 。 || Whichever we choose, someone will hurt. Let's be ready for that.
 ?(comp=ren) ren: {灯|ひ} の {名前|なまえ} なら 、 {迷|まよ}わず {返|かえ}します 。 {記憶|きおく} は …… {名前|なまえ} より {重|おも}い 。 || If these were lantern names, I'd return them without a second thought. Memories are… heavier than names.
-?(comp=suzu) suzu: {預|あず}かり{証|しょう} は {全部|ぜんぶ} {残|のこ}って る 。 {誰|だれ} に {何|なに} を {返|かえ}す か は 、 {帳簿|ちょうぼ} が {覚|おぼ}えて る 。 {問題|もんだい} は 、 {返|かえ}す か どう か 。 || The receipts are all still here. The ledger remembers who's owed what. The only question is whether to pay it out.
+?(comp=suzu) suzu: {預|あず}かり{証|しょう} は {全部|ぜんぶ} {残|のこ}ってる 。 {誰|だれ} に {何|なに} を {返|かえ}す か は 、 {帳簿|ちょうぼ} が {覚|おぼ}えてる 。 {問題|もんだい} は 、 {返|かえ}す か どう か 。 || The receipts are all still here. The ledger remembers who's owed what. The only question is whether to pay it out.
 !choice
 * {全部|ぜんぶ} {返|かえ}そう 。 {悲|かな}しみ も 、 その {人|ひと} の もの だ 。 || Return them all. Grief belongs to the person too. -> ret
 * ここ に {置|お}いて 、 {本人|ほんにん} に {選|えら}んで もらおう 。 || Keep them here, and let each person choose. -> keep
@@ -172,7 +172,7 @@ kasane[smile]: ウシオさん の {札|ふだ} と {同|おな}じ です ね �
 ?(comp=nao) nao: {開|ひら}ける か どう か は 、 {受|う}け{取|と}った {人|ひと} が {決|き}める 。 …… {前|まえ} に も 、 そう {決|き}めた こと が ある 。 {間違|まちが}って なかった と {思|おも}う 。 || Whether to open it is up to whoever receives it. …I decided that once before. I don't think I was wrong.
 ?(comp=mio) mio: {無理|むり} に {飲|の}ませる {薬|くすり} は 、 {薬|くすり} じゃ ない 。 {選|えら}べる こと も 、 {治療|ちりょう} の うち 。 || Medicine forced down someone's throat isn't medicine. Being able to choose is part of the cure.
 ?(comp=ren&sa_ren_took) ren: {師匠|ししょう} の {字|じ} の とおり に 。 …… {今|いま} なら {分|わ}かります 。 {師匠|ししょう} が どんな {顔|かお} で 、 あの {札|ふだ} を {書|か}いた か 。 || As my teacher wrote it. …I know now what face my teacher wore, writing that label.
-?(comp=ren&!sa_ren_took) ren: {師匠|ししょう} の {字|じ} の とおり に 。 …… {師匠|ししょう} が {聞|き}いたら 、 {得意|とくい} げ な {顔|かお} を する でしょう 。 {顔|かお} は {知|し}りません が 。 || As my teacher wrote it. …My teacher would look smug, hearing that. Not that I know what the face looks like.
+?(comp=ren&!sa_ren_took) ren: {師匠|ししょう} の {字|じ} の とおり に 。 …… {師匠|ししょう} が {聞|き}いたら 、 {得意|とくい}げ な {顔|かお} を する でしょう 。 {顔|かお} は {知|し}りません が 。 || As my teacher wrote it. …My teacher would look smug, hearing that. Not that I know what the face looks like.
 ?(comp=suzu) suzu: {幕|まく} は {上|あ}げた まま に して おこう 。 {出|で}る か どう か は 、 {役者|やくしゃ} が {決|き}める 。 || Leave the curtain up. Whether to walk on is up to each actor.
 :done
 !set sa_choice_mem sa_shortcut
@@ -249,7 +249,7 @@ kasane[smile]: {怖|こわ}い です が 、 {少|すこ}し だけ …… {待
 kasane: …… {分|わ}かりました 。 {残|のこ}ります 。 {見張|みは}られ ながら 。 || …I understand. I'll stay. Under watch.
 kasane: {逃|に}げる ため では なく 、 ここ で しか できない {償|つぐな}い を する ため に 。 {返|かえ}す {仕事|しごと} は 、 {取|と}る {仕事|しごと} より 、 ずっと {長|なが}く かかります 。 || Not to hide — to make the amends only possible here. Returning things takes far longer than taking them.
 ?(comp=nao) nao: {毎週|まいしゅう} {来|く}る から な 。 {文句|もんく} の {手紙|てがみ} を {山|やま} ほど {抱|かか}えて 。 {全部|ぜんぶ} に {返事|へんじ} を {書|か}け 。 {一通|いっつう} {残|のこ}らず 。 || I'll be here every week, arms full of complaint letters. You'll answer every one. Every single one.
-?(comp=mio) mio: {月|つき} に {一度|いちど} 、 {診|み}に {来|き}ます 。 {断|ことわ}って も {来|き}ます 。 …… わたし 、 {今|いま} は {断|ことわ}れる けど 、 {断|ことわ}られ ても {引|ひ}かない の 。 || I'll come once a month to look you over. I'll come even if you refuse. …I can say no now — but I don't back down when I'm told no, either.
+?(comp=mio) mio: {月|つき} に {一度|いちど} 、 {診|み}に {来|き}ます 。 {断|ことわ}って も {来|き}ます 。 …… わたし 、 {今|いま} は {断|ことわ}れる けど 、 {断|ことわ}られても {引|ひ}かない の 。 || I'll come once a month to look you over. I'll come even if you refuse. …I can say no now — but I don't back down when I'm told no, either.
 ?(comp=ren) ren: {灯守|ひもり} が 、 {交代|こうたい} で {見張|みは}り に {来|き}ます 。 わたし も 。 {師匠|ししょう} の {墓|はか} の {灯|ひ} を 、 {消|け}さない よう に 。 || Lantern keepers will take turns keeping watch. Me among them. And we'll see that the lamp at my teacher's grave never goes out.
 ?(comp=suzu) suzu: {返済|へんさい} {計画|けいかく} を {立|た}てよう 。 {利子|りし} も {含|ふく}めて 。 {帳簿|ちょうぼ} は わたし が {付|つ}ける 。 {毎月|まいつき} {見|み}に {来|く}る から ね 。 {誤魔化|ごまか}したら 、 すぐ {分|わ}かる よ 。 || We'll draw up a repayment plan. Interest included. I'll keep the books, and I'll check them every month. Fiddle them and I'll know at once.
 :done
@@ -259,6 +259,6 @@ kasane: {逃|に}げる ため では なく 、 ここ で しか できない 
 !autosave
 
 @scene sa.kasane_bye
-kasane[smile]: {行|い}って らっしゃい 。 …… {変|へん} です ね 。 この {言葉|ことば} を {言|い}う の は 、 {三十年|さんじゅうねん} ぶり です 。 || Off you go, then. …How strange. It's thirty years since I last said that.
+kasane[smile]: {行|い}ってらっしゃい 。 …… {変|へん} です ね 。 この {言葉|ことば} を {言|い}う の は 、 {三十年|さんじゅうねん} ぶり です 。 || Off you go, then. …How strange. It's thirty years since I last said that.
 kasane: {次|つぎ} に {来|く}る {時|とき} は 、 {反対|はんたい} を {持|も}って {来|き}て ください 。 {箱|はこ} は 、 まだ {空|あ}いて います 。 || When you come next, bring an objection. There's still room in the boxes.
 `, 'ch6/scenes-climax');

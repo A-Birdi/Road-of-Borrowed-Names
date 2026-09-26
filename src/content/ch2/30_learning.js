@@ -196,15 +196,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
     title: { jp: '{潮|しお} の {表|ひょう}', en: 'The tide table' },
     tiers: {
       F: [
-        { kind: 'write', item: 'v:三時', ctx: { jp: 'ひきしお ： ごご 3じ', en: 'Low tide: 3 p.m.' },
-          prompt: { en: 'Shiori: "When is low tide?" Write the hour in kana: 3じ is read さんじ (sanji).' },
+        { kind: 'write', item: 'v:三時', ctx: { jp: 'ひきしお ： ごご 3:00', en: 'Low tide: 3:00 p.m.' },
+          prompt: { en: 'Shiori: "When is low tide?" Write the hour in kana: three o\'clock is さんじ (sanji).' },
           template: { before: 'ごご ', after: '' }, answer: 'さんじ', accept: ['さんじ', '3じ', '{三時|さんじ}'], mode: 'reading',
           explain: { jp: 'ごご {三時|さんじ}', en: 'ごご さんじ — 3 p.m. (ごご = afternoon, p.m.)' } },
         { kind: 'choose', item: 'g:mae_ato', prompt: { en: 'The causeway is dry from an hour BEFORE low tide. When can you start walking?' },
           options: [
-            { jp: 'ごご 2じ', en: '2 p.m.', ok: true },
-            { jp: 'ごご 4じ', en: '4 p.m.', ok: false, why: no('That is an hour AFTER low tide.') },
-            { jp: 'ごぜん 2じ', en: '2 a.m.', ok: false, why: no('ごぜん is the morning (a.m.).') },
+            { jp: 'ごご 2:00', en: '2 p.m.', ok: true },
+            { jp: 'ごご 4:00', en: '4 p.m.', ok: false, why: no('That is an hour AFTER low tide.') },
+            { jp: 'ごぜん 2:00', en: '2 a.m.', ok: false, why: no('ごぜん is the morning (a.m.).') },
           ], explain: { en: 'One hour before 3 p.m. is 2 p.m.' } },
       ],
       E: [
@@ -304,9 +304,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     tiers: {
       F: [
         { kind: 'order', item: 'c:sg_gojuon', prompt: { en: 'The row labels on the drawers: put them in gojūon order.' },
-          tiles: ['あ', 'か', 'さ', 'た', 'な'], answer: ['あ', 'か', 'さ', 'た', 'な'], orderHint: { en: 'あ, then か, さ, た, な — the order of the kana chart rows.' } },
-        { kind: 'order', item: 'c:sg_gojuon', prompt: { en: 'Inside the か drawer, the cards: put them in order.' },
-          tiles: ['か', 'き', 'く', 'け', 'こ'], answer: ['か', 'き', 'く', 'け', 'こ'], orderHint: { en: 'Vowel order: a, i, u, e, o.' } },
+          tiles: ['あ{行|ぎょう}', 'か{行|ぎょう}', 'さ{行|ぎょう}', 'た{行|ぎょう}', 'な{行|ぎょう}'], answer: ['あ{行|ぎょう}', 'か{行|ぎょう}', 'さ{行|ぎょう}', 'た{行|ぎょう}', 'な{行|ぎょう}'], orderHint: { en: 'あ, then か, さ, た, な — the order of the rows of the kana chart (ぎょう = row).' } },
+        { kind: 'order', item: 'c:sg_gojuon', prompt: { en: 'Inside the か-row drawer, the cards: put them in order.' },
+          tiles: ['かさ', 'きた', 'くも', 'けさ', 'こえ'], answer: ['かさ', 'きた', 'くも', 'けさ', 'こえ'], orderHint: { en: 'Look at the first kana. Vowel order: ka, ki, ku, ke, ko.' } },
       ],
       E: [
         { kind: 'order', item: 'c:sg_gojuon', prompt: { en: 'Sort these catalogue cards in gojūon order.' },
@@ -361,7 +361,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
           { jp: 'ここ に {保管|ほかん} して おく 。', en: 'It is kept here.', ok: false, why: no('いかん する = transfer to another office.') },
         ], explain: { jp: '〜と {見|み}なす ＝ to deem, treat as', en: 'The "Returned" stamp is a legal fiction covering a transfer.' } }],
       A: [
-        { kind: 'choose', item: 'c:sg_notice', ctx: { jp: '「{宛名|あてな} の {判読|はんどく} {能|あた}わざる もの は 、 {差出人|さしだしにん} に {返送|へんそう} する に {及|およ}ばず 、 {本庁|ほんちょう} へ {移管|いかん} す べし 。 {名|な} の {散逸|さんいつ} は {争|あらそ}い の {種|たね} なれば なり 。」', en: '' },
+        { kind: 'choose', item: 'c:sg_notice', ctx: { jp: '「{宛名|あてな} の {判読|はんどく} {能|あた}わざる もの は 、 {差出人|さしだしにん} に {返送|へんそう} する に {及|およ}ばず 、 {本庁|ほんちょう} へ {移管|いかん} すべし 。 {名|な} の {散逸|さんいつ} は {争|あらそ}い の {種|たね} なれば なり 。」', en: '' },
           prompt: { en: 'What does the rule say should happen?' },
           options: [
             { jp: '{返送|へんそう} する {必要|ひつよう} は なく 、 {本庁|ほんちょう} へ {移|うつ}す べき だ 。', en: 'There is no need to return them; they must be transferred to head office.', ok: true },
@@ -467,7 +467,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
             { jp: '{待|ま}って いて', ok: true },
             { jp: '{待|ま}たないで', ok: false, why: no('That is the opposite: "don\'t wait".') },
             { jp: '{待|ま}って って', ok: false, why: no('って would be a quotation.') },
-          ], explain: { jp: '〜て いて → 〜てて', en: 'In speech, the い of 〜ている often drops: まって いて → まってて, "keep waiting / be waiting".' } },
+          ], explain: { jp: '{待|ま}って いて', en: 'In speech, the い of 〜ている often drops: まって いて → まってて, "keep waiting / be waiting".' } },
       ],
       A: [
         { kind: 'choose', item: 'g:v_temo_ii', ctx: { jp: '「{迎|むか}え に {来|こ}なくて いい よ 。」', en: '' }, prompt: { en: 'Genzō read only this line. In context, which reading is most accurate?' },
@@ -658,7 +658,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         A: { jp: 'だが 、 ある {年|とし} の {秋|あき} 、 {高潮|たかしお} が {島|しま} を {一夜|いちや} に して {呑|の}み{込|こ}んだ 。', en: 'But one autumn, a storm surge swallowed the island in a single night.', short: '{一夜|いちや} に して {呑|の}まれた' } },
       { F: { jp: 'それ から 、 かね の おと は きこえない 。', en: 'Since then, no one has heard the bell.', short: 'かね は きこえない' },
         E: { jp: 'それ から は 、 {鐘|かね} の {音|おと} を {聞|き}いた {者|もの} は いない 。', en: 'Since then, no one has heard the bell.', short: 'もう {鐘|かね} は {聞|き}こえない' },
-        I: { jp: 'それ っきり 、 {鐘|かね} の {音|おと} を {聞|き}いた って {奴|やつ} は {一人|ひとり} も いない 。', en: 'And that was that — not one soul has heard the bell since.', short: 'それっきり {聞|き}こえない' },
+        I: { jp: 'それっきり 、 {鐘|かね} の {音|おと} を {聞|き}いた って {奴|やつ} は {一人|ひとり} も いない 。', en: 'And that was that — not one soul has heard the bell since.', short: 'それっきり {聞|き}こえない' },
         A: { jp: '{以来|いらい} 、 {鐘|かね} の {音|おと} を {耳|みみ} に した {者|もの} は 、 {誰一人|だれひとり} と して いない 。', en: 'Since then, not a single person has heard the bell.', short: '{以来|いらい} {誰|だれ} も {聞|き}いて いない' } },
     ],
     question: {
@@ -717,7 +717,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     { en: 'After the storm', ok: true }, { en: 'Before the storm', ok: false, why: no('あと = after.') }, { en: 'During the storm', ok: false, why: no('"During" would be あいだ or さいちゅう.') },
   ], { jp: '〜の {後|あと}', en: 'After ….' }, J('{嵐|あらし} の {後|あと} 、 ラベル が {消|き}えました 。'));
   Q('counter_tsu', 'E', 'g:counters', 'How do you say "three (things)" with the native counter?', [
-    { jp: 'みっつ', ok: true }, { jp: 'さんつ', ok: false, why: no('The native counter is みっつ.') }, { jp: 'みつ', ok: false, why: no('Don\'t forget the small っ.') },
+    { jp: 'みっつ', ok: true }, { jp: 'よっつ', ok: false, why: no('よっつ is four.') }, { jp: 'ふたつ', ok: false, why: no('ふたつ is two.') },
   ], { en: 'ひとつ, ふたつ, みっつ, よっつ…' });
   Q('counter_hai', 'E', 'g:counters', 'How many?', [
     { en: 'Two cups', ok: true }, { en: 'Twelve cups', ok: false, why: no('にはい is two cups; はい counts cups and bowls.') }, { en: 'Two pots', ok: false, why: no('はい counts cupfuls or bowlfuls, not pots.') },
@@ -778,6 +778,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
   Q('zaruwoenai', 'A', 'g:adv_zaru_wo_enai', 'What does this mean?', [
     { en: 'We have no choice but to tell the harbourmaster.', ok: true }, { en: 'We mustn\'t tell the harbourmaster.', ok: false, why: no('ざるを えない = cannot avoid doing.') }, { en: 'We could tell the harbourmaster if we like.', ok: false, why: no('No choice is implied.') },
   ], { jp: '〜ざる を {得|え}ない', en: 'Cannot help but …, have no choice but to ….' }, J('{港長|こうちょう} に {話|はな}さざる を {得|え}ない 。'));
-  O('kenjo_o', 'A', 'g:keigo_kenjo', 'Order the formal apology line: "I am truly sorry for the trouble I have caused."', ['ご{迷惑|めいわく}', 'を', 'お{掛|か}け', 'して', '{誠|まこと}に', '{申|もう}し{訳|わけ}', 'ございません'], 'お + stem + して is humble; the apology comes last.', [['{誠|まこと}に', 'ご{迷惑|めいわく}', 'を', 'お{掛|か}け', 'して', '{申|もう}し{訳|わけ}', 'ございません']]);
+  O('kenjo_o', 'A', 'g:keigo_kenjo', 'Order the formal apology line: "I am truly sorry for the trouble I have caused."', ['ご{迷惑|めいわく}', 'を', 'お{掛|か}け', 'して', '{誠|まこと} に', '{申|もう}し{訳|わけ}', 'ございません'], 'お + stem + して is humble; the apology comes last.', [['{誠|まこと} に', 'ご{迷惑|めいわく}', 'を', 'お{掛|か}け', 'して', '{申|もう}し{訳|わけ}', 'ございません']]);
   C.addDrills(D);
 })(RB.content);

@@ -9,13 +9,13 @@ pc: {葦|あし}ノ{瀬|せ} から {来|き}ました 。 {嵐|あらし} の {
 omi[surprise]: …… {葦|あし}ノ{瀬|せ} でも か 。 まあ 、 {座|すわ}りな 。 || …Reedwake too? Well, sit down.
 omi: {港長|こうちょう} の オウミ だ 。 {三十年|さんじゅうねん} この {港|みなと} を {回|まわ}して きた が 、 こんな の は {初|はじ}めて だ よ 。 || I'm Ōmi, harbourmaster. Thirty years running this port, and I've never seen the like.
 omi: {荷札|にふだ} が {白|しろ}く なる 。 {手紙|てがみ} の {宛名|あてな} が {消|き}える 。 {渡|わた}し{場|ば} の {時刻表|じこくひょう} は 、 {朝|あさ} と {昼|ひる} で {言|い}う こと が {違|ちが}う 。 || Cargo tags go blank. Addresses vanish from letters. The ferry board says one thing in the morning and another at noon.
-omi[think]: {港|みなと} って の は 、 {字|じ} で {動|うご}いて る ん だ 。 {字|じ} が {嘘|うそ} を {言|い}い{出|だ}したら 、 {何|なに} も {動|うご}かない 。 || A harbour runs on writing. When the writing starts lying, nothing moves.
-?(comp=nao) comp: {配達人|はいたつにん} も {同|おな}じ だ 。 {宛名|あてな} が {読|よ}めなきゃ 、 ただ の {紙|かみ} を {運|はこ}んで る だけ 。 || Same for couriers. If you can't read the address, you're just carrying paper around.
+omi[think]: {港|みなと} って の は 、 {字|じ} で {動|うご}いてる ん だ 。 {字|じ} が {嘘|うそ} を {言|い}い{出|だ}したら 、 {何|なに} も {動|うご}かない 。 || A harbour runs on writing. When the writing starts lying, nothing moves.
+?(comp=nao) comp: {配達人|はいたつにん} も {同|おな}じ だ 。 {宛名|あてな} が {読|よ}めなきゃ 、 ただ の {紙|かみ} を {運|はこ}んでる だけ 。 || Same for couriers. If you can't read the address, you're just carrying paper around.
 ?(comp=mio) comp: お{察|さっ}し します 。 わたし の {店|みせ} でも 、 {薬|くすり} の ラベル が {消|き}えて {大変|たいへん} でした 。 || I understand. At my shop the medicine labels vanished too. It was awful.
 ?(comp=ren) comp: {灯|ひ} の {道|みち} の {名前|なまえ} も 、 {同|おな}じ よう に {消|き}えて います 。 {無関係|むかんけい} と は {思|おも}えません 。 || The names on the lantern roads are fading the same way. I can't believe it's unrelated.
 ?(comp=suzu) comp: {字|じ} が {嘘|うそ} を つく 、 か 。 …… {役者|やくしゃ} より {質|たち} が {悪|わる}い わ ね 。 || Writing that lies. …Worse than actors.
-omi: {手|て} を {貸|か}して くれる なら 、 {助|たす}かる 。 {特|とく} に {困|こま}って る の は {三|みっ}つ だ 。 || If you'll lend a hand, I'd be grateful. Three things are giving me the most grief.
-omi: {一|ひと}つ 、 {二番|にばん}{倉庫|そうこ} の {荷|に} 。 {係|かかり} の ワタル が 、 {数|かず} が {合|あ}わない と {言|い}って る 。 || One: the cargo in No. 2 warehouse. The clerk, Wataru, says the counts don't add up.
+omi: {手|て} を {貸|か}して くれる なら 、 {助|たす}かる 。 {特|とく}に {困|こま}ってる の は {三|みっ}つ だ 。 || If you'll lend a hand, I'd be grateful. Three things are giving me the most grief.
+omi: {一|ひと}つ 、 {二番|にばん}{倉庫|そうこ} の {荷|に} 。 {係|かかり} の ワタル が 、 {数|かず} が {合|あ}わない と {言|い}ってる 。 || One: the cargo in No. 2 warehouse. The clerk, Wataru, says the counts don't add up.
 omi: {二|ふた}つ 、 かもめ{亭|てい} に {溜|た}まった {郵便|ゆうびん} 。 {宛名|あてな} の {消|き}えた {手紙|てがみ} が {山|やま} ほど ある 。 || Two: the post piling up at the Gull. Heaps of letters with the addresses gone.
 omi: {三|みっ}つ 、 {渡|わた}し{場|ば} の {時刻表|じこくひょう} 。 テツ の {爺|じい}さん に {聞|き}いて くれ 。 || Three: the ferry board at the landing. Ask old Tetsu.
 pc: {沈|しず}んだ {書庫|しょこ} の {噂|うわさ} を {聞|き}いて {来|き}た の です が 。 || We also came because of a rumour about a sunken archive.
@@ -27,7 +27,7 @@ omi: …… {沈|しず}んだ {書庫|しょこ} ？ ああ 、 {岬|みさき}
 omi: {倉庫|そうこ} 、 {郵便|ゆうびん} 、 {渡|わた}し{場|ば} 。 {全部|ぜんぶ} {見|み}たら 、 {戻|もど}って きて くれ 。 || The warehouse, the post, the landing. Come back once you've seen all three.
 ?(!sg_crates_done) omi: ワタル は {真面目|まじめ} すぎる くらい の {男|おとこ} だ 。 {数|かず} が {合|あ}わない と 、 {眠|ねむ}れない らしい 。 || Wataru's almost too conscientious. If the numbers don't match, he can't sleep, apparently.
 ?(!sg_post_done) omi: かもめ{亭|てい} の タマエ は 、 {昼|ひる} が {一番|いちばん} {忙|いそが}しい 。 {手伝|てつだ}えば 、 {話|はなし} が {早|はや}い よ 。 || Tamae at the Gull is busiest at lunch. Lend a hand and she'll talk faster.
-?(!sg_ferry_done) omi: テツ は {口|くち} が {重|おも}い が 、 {潮|しお} の こと なら {誰|だれ} より {知|し}って る 。 || Tetsu doesn't say much, but no one knows the tides better.
+?(!sg_ferry_done) omi: テツ は {口|くち} が {重|おも}い が 、 {潮|しお} の こと なら {誰|だれ} より {知|し}ってる 。 || Tetsu doesn't say much, but no one knows the tides better.
 
 @scene sg.office_desk
 narr: {港長|こうちょう} の {机|つくえ} 。 {書類|しょるい} の {山|やま} の {上|うえ} に 、 {冷|さ}めた お{茶|ちゃ} が {置|お}いて ある 。 {三杯|さんばい} も 。 || The harbourmaster's desk. On top of a mountain of papers sit cups of cold tea. Three of them.
@@ -43,7 +43,7 @@ wataru[surprise]: あっ 、 すみません 、 {今|いま} {数|かぞ}えて
 wataru: {倉庫|そうこ} {係|がかり} の ワタル です 。 {見|み}て の とおり 、 {荷札|にふだ} が めちゃくちゃ で …… 。 || I'm Wataru, the warehouse clerk. As you can see, the tags are a complete mess…
 wataru[worry]: {嵐|あらし} の {夜|よる} に 、 ラベル が {全部|ぜんぶ} {剥|は}がれて しまった ん です 。 {貼|は}り{直|なお}した ん です が 、 {朝|あさ} に なる と また {字|じ} が {変|か}わって いて 。 || On the night of the storm, the labels all came off. I stuck them back on, but by morning the writing had changed again.
 wataru: よかったら 、 {箱|はこ} を {見|み}て みて ください 。 {僕|ぼく} は …… {帳簿|ちょうぼ} を {確認|かくにん} します ので 。 || Please, look at the crates if you like. I'll… check the ledger.
-?(comp=nao) comp: （{字|じ} の {綺麗|きれい} な {人|ひと} だ 。 {帳簿|ちょうぼ} を {持|も}つ {手|て} が 、 {少|すこ}し {震|ふる}えて る けど 。） || (Neat handwriting, this one. His hands are shaking a bit on that ledger, though.)
+?(comp=nao) comp: （{字|じ} の {綺麗|きれい} な {人|ひと} だ 。 {帳簿|ちょうぼ} を {持|も}つ {手|て} が 、 {少|すこ}し {震|ふる}えてる けど 。） || (Neat handwriting, this one. His hands are shaking a bit on that ledger, though.)
 ?(comp=suzu) comp: （{帳簿|ちょうぼ} を {閉|と}じる の が 、 ちょっと {早|はや}かった わ ね 。） || (He shut that ledger a little too quickly.)
 ?(comp=mio) comp: （{顔色|かおいろ} が {悪|わる}い 。 {寝|ね}て ない の かな 。） || (He looks pale. Isn't he sleeping?)
 ?(comp=ren) comp: （{几帳面|きちょうめん} な {方|かた} です ね 。 {棚|たな} の {箱|はこ} の {角|かど} が 、 {全部|ぜんぶ} {揃|そろ}って いる 。） || (A meticulous man. Every crate on the shelves is squared up exactly.)
@@ -57,8 +57,8 @@ wataru: {箱|はこ} は {自由|じゆう} に {見|み}て ください 。 {�
 narr: {木箱|きばこ} の ラベル を {見|み}る 。 {字|じ} が {薄|うす}く なり 、 また {浮|う}かび 、 また {消|き}える 。 || You look at the crate's label. The writing fades, surfaces again, fades again.
 narr: {紙|かみ} は {古|ふる}く 、 {糊|のり} も {乾|かわ}いて いる 。 {誰|だれ} も {触|さわ}って いない 。 {字|じ} だけ が 、 {勝手|かって} に {動|うご}いて いる 。 || The paper is old and the paste is dry. No one has touched it. Only the writing moves, by itself.
 ?(comp=ren) comp[think]: {灯籠|とうろう} の {名前|なまえ} が {消|き}える とき と 、 {同|おな}じ {揺|ゆ}れ{方|かた} です 。 {静寂|しじま} の しわざ でしょう 。 || It wavers just the way lantern names do when they fade. This is the Hush's doing.
-?(comp=nao) comp: {誰|だれ} も {触|さわ}って ない のに 、 {字|じ} が {動|うご}いて る 。 …… {気味|きみ} が {悪|わる}い な 。 || No one's touched it, and the writing's moving. …Creepy.
-?(comp=mio) comp[worry]: {誰|だれ} も {触|さわ}って ない のに 、 {字|じ} が {動|うご}いて る 。 {葦|あし}ノ{瀬|せ} と {同|おな}じ …… 。 || No one's touched it and the writing moves. Just like in Reedwake…
+?(comp=nao) comp: {誰|だれ} も {触|さわ}って ない のに 、 {字|じ} が {動|うご}いてる 。 …… {気味|きみ} が {悪|わる}い な 。 || No one's touched it, and the writing's moving. …Creepy.
+?(comp=mio) comp[worry]: {誰|だれ} も {触|さわ}って ない のに 、 {字|じ} が {動|うご}いてる 。 {葦|あし}ノ{瀬|せ} と {同|おな}じ …… 。 || No one's touched it and the writing moves. Just like in Reedwake…
 ?(comp=suzu) comp[worry]: {種|たね} も {仕掛|しか}け も ない の が 、 {一番|いちばん} {怖|こわ}い わ 。 || No trick, no hidden wire. That's the scariest kind.
 !note sg_hush_labels
 !call sg.crates_check
@@ -68,7 +68,7 @@ narr: {紙|かみ} は {古|ふる}く 、 {糊|のり} も {乾|かわ}いて �
 narr: この {箱|はこ} の ラベル は {新|あたら}しい 。 {糊|のり} が まだ {柔|やわ}らかい 。 {字|じ} は {動|うご}かない 。 || This crate's label is new. The paste is still soft. The writing doesn't move.
 narr: 「{嵐|あらし} で {破損|はそん} ・ {廃棄|はいき}」 。 {端|はし} を めくる と 、 {下|した} に {古|ふる}い ラベル が ある 。 「{灯台|とうだい} {行|ゆ}き ・ {灯油|とうゆ} {四缶|よんかん}」 。 || "Damaged in storm — for disposal." Lift the corner, and there's an older label underneath: "To the lighthouse — lamp oil, four cans."
 narr: {箱|はこ} を {揺|ゆ}らす と 、 {中|なか} で {油|あぶら} が ちゃぷん と {鳴|な}った 。 {壊|こわ}れて など いない 。 || You tip the crate. Oil sloshes inside. Nothing is damaged.
-?(comp=nao) comp[think]: …… この {字|じ} 、 {知|し}って る 。 {跳|は}ね の {癖|くせ} が 、 {倉庫|そうこ} の {他|ほか} の {札|ふだ} と {同|おな}じ だ 。 {同|おな}じ {人|ひと} の {手|て} だ よ 。 || …I know this hand. Same flick at the end of the strokes as the other tags in here. Same person wrote it.
+?(comp=nao) comp[think]: …… この {字|じ} 、 {知|し}ってる 。 {跳|は}ね の {癖|くせ} が 、 {倉庫|そうこ} の {他|ほか} の {札|ふだ} と {同|おな}じ だ 。 {同|おな}じ {人|ひと} の {手|て} だ よ 。 || …I know this hand. Same flick at the end of the strokes as the other tags in here. Same person wrote it.
 ?(comp=mio) comp[think]: {糊|のり} の {匂|にお}い 、 {嗅|か}いで みて 。 {米|こめ} の {糊|のり} で 、 {炊|た}いた ばかり 。 {嵐|あらし} は {二週間|にしゅうかん} {前|まえ} よ 。 || Smell the paste. Rice paste, freshly cooked. The storm was two weeks ago.
 ?(comp=ren) comp[think]: {灯台|とうだい} の {油|あぶら} を 「{廃棄|はいき}」 に ？ …… {灯守|ひもり} と して 、 {見過|みす}ごせません 。 {灯|あか}り の {油|あぶら} は {命綱|いのちづな} です 。 || The lighthouse oil marked "for disposal"? …As a lantern keeper, I can't let that pass. Lamp oil is a lifeline.
 ?(comp=suzu) comp[smirk]: {壊|こわ}れて ない {荷|に} に 「{破損|はそん}」 の {札|ふだ} 。 {帳簿|ちょうぼ} の {上|うえ} では 、 {消|き}えて {無|な}くなる {荷物|にもつ} ね 。 よく ある {手|て} よ 。 || An undamaged crate tagged "damaged". On the books, it simply disappears. An old trick.
@@ -144,7 +144,7 @@ tamae: テツ さん は お{茶|ちゃ} ばかり 。 キヨ さん は {魚|�
 !if var._res=0 -> stopped
 !set sg_lunch_done
 tamae[laugh]: {終|お}わった ！ {今日|きょう} は {早|はや}かった よ 。 あんた たち 、 {宿屋|やどや} {向|む}き だ ね 。 || Done! Fastest lunch this year. You two are made for innkeeping.
-?(comp=mio) comp[smile]: {薬|くすり} の {調合|ちょうごう} と {似|に}て る ね 。 {分量|ぶんりょう} を {間違|まちが}えない こと 。 || It's like mixing medicines. Don't get the quantities wrong.
+?(comp=mio) comp[smile]: {薬|くすり} の {調合|ちょうごう} と {似|に}てる ね 。 {分量|ぶんりょう} を {間違|まちが}えない こと 。 || It's like mixing medicines. Don't get the quantities wrong.
 ?(comp=suzu) comp[laugh]: {満員|まんいん} {御礼|おんれい} ！ …… {皿|さら} {洗|あら}い は {別料金|べつりょうきん} よ 。 || Full house, thank you! …Washing up costs extra.
 ?(comp=nao) comp[tired]: {配達|はいたつ} より {忙|いそが}しかった 。 {誰|だれ} に も {言|い}う な よ 。 || Busier than couriering. Don't tell anyone I said that.
 ?(comp=ren) comp[tired]: {灯籠|とうろう} を {百|ひゃく} {灯|とも}す より 、 {疲|つか}れました 。 || More tiring than lighting a hundred lanterns.
@@ -163,7 +163,7 @@ narr: {封筒|ふうとう} の {宛名|あてな} が {真|ま}っ{白|しろ} 
 !if var._res=0 -> stopped
 !set sg_post_done
 !take sg_postbag
-tamae: {全部|ぜんぶ} {届|とど}いた ？ …… {待|ま}って 。 {一通|いっつう} だけ 、 {袋|ふくろ} の {底|そこ} に {残|のこ}って た 。 || All delivered? …Wait. There's one left at the bottom of the bag.
+tamae: {全部|ぜんぶ} {届|とど}いた ？ …… {待|ま}って 。 {一通|いっつう} だけ 、 {袋|ふくろ} の {底|そこ} に {残|のこ}ってた 。 || All delivered? …Wait. There's one left at the bottom of the bag.
 narr: {宛名|あてな} は はっきり {読|よ}める 。 「{潮硝子|しおがらす} {二番|にばん}{倉庫|そうこ} ワタル {様|さま}」 。 {差出人|さしだしにん} は 「{灯落|ひおち} ・ {黒部|くろべ}{商会|しょうかい}」 。 || The address is perfectly legible: "Mr Wataru, No. 2 Warehouse, Saltglass". From "Kurobe & Co., Lanternfall".
 narr: {封筒|ふうとう} に 、 {赤|あか}い {判|はん} 。 「{督促|とくそく}」 。 || A red stamp on the envelope: "PAYMENT DEMANDED".
 tamae[worry]: ワタル は これ を {取|と}りに {来|こ}ない ん だ よ 。 「{届|とど}かない {手紙|てがみ} の {箱|はこ} に {入|い}れといて 」 って 。 {宛名|あてな} は ちゃんと {読|よ}める のに ね 。 || Wataru never comes for that one. He told me to put it in the undeliverable box. Even though the address is perfectly readable.
@@ -182,10 +182,10 @@ tetsu: …… {時刻表|じこくひょう} か 。 || …The board, is it.
 tetsu: {見|み}て みろ 。 || Go on, look.
 !call sg.ferryboard
 tetsu: {板|いた} は {嘘|うそ} を つく 。 {潮|しお} は つかない 。 || Boards lie. Tides don't.
-tetsu: {渡|わた}し{船|ぶね} は {満|み}ち{潮|しお} で {出|で}る 。 {四十年|よんじゅうねん} {変|か}わらん 。 {今|いま} は 、 {港長|こうちょう} が {船|ふね} を {止|と}めて る が な 。 || The ferry goes out on the high tide. Forty years, same. Just now the harbourmaster's stopped the boat, mind.
+tetsu: {渡|わた}し{船|ぶね} は {満|み}ち{潮|しお} で {出|で}る 。 {四十年|よんじゅうねん} {変|か}わらん 。 {今|いま} は 、 {港長|こうちょう} が {船|ふね} を {止|と}めてる が な 。 || The ferry goes out on the high tide. Forty years, same. Just now the harbourmaster's stopped the boat, mind.
 pc: {止|と}めて いる ん です か 。 || She's stopped it?
 tetsu: {客|きゃく} が {時刻表|じこくひょう} を {信|しん}じて 、 {違|ちが}う {時間|じかん} に {来|く}る 。 {誰|だれ} も {乗|の}らない {船|ふね} を {出|だ}して も {仕方|しかた} ない 。 || Passengers trust the board and turn up at the wrong time. No sense sailing an empty boat.
-tetsu: {潮|しお} の {時間|じかん} なら 、 {岬|みさき} の シオリ が {書|か}いて る 。 {板|いた} じゃ なく 、 {帳面|ちょうめん} に な 。 {帳面|ちょうめん} の {字|じ} は 、 まだ {変|か}わって ない そう だ 。 || If you want tide times, Shiori on the point writes them down. In her notebooks, not on a board. They say the writing in her books hasn't changed yet.
+tetsu: {潮|しお} の {時間|じかん} なら 、 {岬|みさき} の シオリ が {書|か}いてる 。 {板|いた} じゃ なく 、 {帳面|ちょうめん} に な 。 {帳面|ちょうめん} の {字|じ} は 、 まだ {変|か}わって ない そう だ 。 || If you want tide times, Shiori on the point writes them down. In her notebooks, not on a board. They say the writing in her books hasn't changed yet.
 tetsu: …… それ と 。 || …And.
 !give sg_rope
 tetsu: {水辺|みずべ} を {嗅|か}ぎ{回|まわ}る なら 、 {縄|なわ} を {持|も}って いけ 。 {縄|なわ} なし で {水|みず} に {近|ちか}づく の は 、 {馬鹿|ばか} だけ だ 。 || If you're going to nose around the waterfront, take a rope. Only fools go near water without one.
@@ -238,8 +238,8 @@ omi: {岬|みさき} の {道|みち} へ {行|い}く なら 、 {潮|しお} �
 
 @scene sg.asahi_clue
 asahi: {灰|はい} ？ ああ 、 {注文|ちゅうもん} した ソーダ{灰|ばい} の こと ね ！ {届|とど}いて ない よ 。 ワタル さん が 、 「{嵐|あらし} で {濡|ぬ}れて {駄目|だめ} に なった 」 って 。 || Ash? Oh, the soda ash I ordered! Never came. Wataru said it got soaked in the storm and was ruined.
-asahi[think]: でも さ 、 ソーダ{灰|ばい} は {樽|たる} に {入|はい}って る ん だ よ 。 {蝋|ろう} で {封|ふう} して ある 。 {濡|ぬ}れる わけ ない ん だ けど な 。 || But here's the thing: soda ash comes in barrels sealed with wax. It can't get wet.
-asahi: {灰|はい} が ない と 、 {新|あたら}しい ガラス は {作|つく}れない 。 {炉|ろ} が {冷|ひ}えて {困|こま}って る ん だ よ ね 。 || Without the ash I can't make new glass. The furnace has gone cold. It's a real problem.
+asahi[think]: でも さ 、 ソーダ{灰|ばい} は {樽|たる} に {入|はい}ってる ん だ よ 。 {蝋|ろう} で {封|ふう} して ある 。 {濡|ぬ}れる わけ ない ん だ けど な 。 || But here's the thing: soda ash comes in barrels sealed with wax. It can't get wet.
+asahi: {灰|はい} が ない と 、 {新|あたら}しい ガラス は {作|つく}れない 。 {炉|ろ} が {冷|ひ}えて {困|こま}ってる ん だ よ ね 。 || Without the ash I can't make new glass. The furnace has gone cold. It's a real problem.
 !set sg_clue_asahi
 !call sg.check_clues
 
@@ -314,7 +314,7 @@ wataru: …… {帳簿|ちょうぼ} の {整理|せいり} が あります の
 ?(!sg_wataru_self) pc: {港長|こうちょう} 。 {二番|にばん}{倉庫|そうこ} の {件|けん} です 。 || Harbourmaster. It's about No. 2 warehouse.
 ?(!sg_wataru_self) wataru[sad]: …… {僕|ぼく} です 。 {荷|に} を {売|う}った の は 。 || …It was me. I sold the cargo.
 omi: …… 。 || ……
-omi: {知|し}って た よ 。 {半分|はんぶん} くらい は ね 。 {残|のこ}り の {半分|はんぶん} は 、 {知|し}りたく なかった 。 || I knew. About half of it. The other half I didn't want to know.
+omi: {知|し}ってた よ 。 {半分|はんぶん} くらい は ね 。 {残|のこ}り の {半分|はんぶん} は 、 {知|し}りたく なかった 。 || I knew. About half of it. The other half I didn't want to know.
 wataru: {借金|しゃっきん} が あって …… 。 いえ 、 {言|い}い{訳|わけ} は しません 。 || I had debts… No. I won't make excuses.
 omi[angry]: {言|い}い{訳|わけ} を しろ 。 {聞|き}く の も 、 {港長|こうちょう} の {仕事|しごと} だ 。 || Make them. Listening is part of the harbourmaster's job too.
 narr: ワタル は {全部|ぜんぶ} {話|はな}した 。 {船|ふね} の こと 、 {利子|りし} の こと 、 {遅|おく}れて いる {給料|きゅうりょう} の こと 。 || Wataru tells her everything: the boat, the interest, the late wages.
@@ -354,8 +354,8 @@ wataru[think]: でも 、 {並|なら}べて みる と {変|へん} なんで�
 narr: {手帳|てちょう} の {最後|さいご} の ページ 。 {同|おな}じ {文字|もじ} が 、 {何十回|なんじっかい} も {並|なら}んで いる 。 「{差出人|さしだしにん} に {返送|へんそう} ・ {沖|おき} の {分室|ぶんしつ}」 。 || The last page of the notebook. The same words, dozens of times: "Return to sender — offshore branch."
 wataru: {沖|おき} の {分室|ぶんしつ} 。 {岬|みさき} の {沖|おき} に は 、 {昔|むかし} 、 {書庫|しょこ} が あった そう です 。 {潮見|しおみ} の シオリ さん なら 、 {詳|くわ}しい はず です 。 || The offshore branch. They say there used to be an archive out past the point. Shiori the tide-watcher would know more.
 ?(comp=ren) comp[surprise]: {分室|ぶんしつ} …… 。 {本庁|ほんちょう} が ある から こそ 、 {分室|ぶんしつ} と {呼|よ}ぶ 。 どこ か に 、 {本体|ほんたい} が ある 。 || A branch… You only call something a branch if there's a head office. Somewhere, there's the main archive.
-?(comp=nao) comp: {返送|へんそう} 、 ね 。 {誰|だれ} も {頼|たの}んで ない のに 、 {勝手|かって} に {送|おく}り{返|かえ}して る {奴|やつ} が いる 。 || "Return to sender", huh. Someone's sending things back that nobody asked to have returned.
-?(comp=mio) comp[worry]: {名前|なまえ} が {消|き}えた ん じゃ なくて 、 どこ か へ {送|おく}られて る …… ？ || The names didn't vanish — they're being sent somewhere…?
+?(comp=nao) comp: {返送|へんそう} 、 ね 。 {誰|だれ} も {頼|たの}んで ない のに 、 {勝手|かって} に {送|おく}り{返|かえ}してる {奴|やつ} が いる 。 || "Return to sender", huh. Someone's sending things back that nobody asked to have returned.
+?(comp=mio) comp[worry]: {名前|なまえ} が {消|き}えた ん じゃ なくて 、 どこ か へ {送|おく}られてる …… ？ || The names didn't vanish — they're being sent somewhere…?
 ?(comp=suzu) comp[think]: {消|き}えた {荷|に} に は 、 {行|い}き{先|さき} が あった 。 {消|き}えた {名前|なまえ} に も 、 ある の かも ね 。 || The missing cargo had somewhere it went. Maybe the missing names do too.
 !quest sg_main 5
 !journal 「{沖|おき} の {分室|ぶんしつ}」 …… シオリ に {聞|き}こう 。 || "The offshore branch"… ask Shiori.

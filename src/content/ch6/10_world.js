@@ -114,7 +114,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- notebook lore -----------------------------------------------------------------------
   C.notes.sa_archive = {
     title: T('The Still Archive', '{静寂|しじま} の {書庫|しょこ}'), fiction: true,
-    jp: '{洪水|こうずい} や {火事|かじ} の {後|あと} 、 {失|うしな}われた {名前|なまえ} を {取|と}り{戻|もど}す ため に {建|た}てられた {書庫|しょこ} 。 {名前|なまえ} の {写|うつ}し を {守|まも}り 、 {求|もと}め られれば {返|かえ}す はず だった 。',
+    jp: '{洪水|こうずい} や {火事|かじ} の {後|あと} 、 {失|うしな}われた {名前|なまえ} を {取|と}り{戻|もど}す ため に {建|た}てられた {書庫|しょこ} 。 {名前|なまえ} の {写|うつ}し を {守|まも}り 、 {求|もと}められれば {返|かえ}す はず だった 。',
     en: '(Fiction.) Built in the mountains above Lanternfall to keep copies of every name and promise, so the region could recover after floods and fires. It was meant to keep copies — and to give them back when asked.',
   };
   C.notes.sa_hush = {

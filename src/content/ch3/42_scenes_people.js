@@ -82,7 +82,7 @@ co_kotaro: {決|き}まり {一|いち} 。 {風|かぜ} の {強|つよ}い {�
 
 @scene co.kotaro_post
 co_kotaro: {僕|ぼく} ね 、 {櫓|やぐら} の {鐘|かね} の {当番|とうばん} に なった んだ 。 {夕方|ゆうがた} に {一回|いっかい} だけ 。 {一回|いっかい} だけ だ よ 。 {分|わ}かってる 。 || I'm on bell duty at the lookout now. Once, at dusk. Only once. I know.
-?(end_mem_return) co_kotaro: {大人|おとな} は みんな 、 {急|きゅう}に {昔|むかし} は あった か な|むかし} の {話|はなし} を {始|はじ}めた んだ 。 {長|なが}い けど 、 {結構|けっこう} {面白|おもしろ}い 。 || All the grown-ups suddenly started telling old stories. They're long, but kind of fun.
+?(end_mem_return) co_kotaro: {大人|おとな} は みんな 、 {急|きゅう}に {昔|むかし} の {話|はなし} を {始|はじ}めた んだ 。 {長|なが}い けど 、 {結構|けっこう} {面白|おもしろ}い 。 || All the grown-ups suddenly started telling old stories. They're long, but kind of fun.
 ?(end_mem_choose) co_kotaro: ウメ ばあちゃん は 、 {山|やま} に {行|い}って {何|なに} か {取|と}って きた んだ って 。 {何|なに} を ？ って {聞|き}いたら 、 「 {内緒|ないしょ} 」 だって 。 || Grandma Ume went up the mountain and fetched something back, she says. When I asked what, she said "secret".
 
 @scene co.goro
@@ -132,7 +132,7 @@ co_goro: {綱|つな} が {下|さ}がった 。 {腕|うで} が {楽|らく} �
 
 @scene co.goro_first
 co_goro: おう 、 {旅|たび} の {人|ひと} か 。 {櫓|やぐら} の {番|ばん} を して おる 、 ゴロウ だ 。 …… {番|ばん} と {言|い}って も 、 {鐘|かね} を {磨|みが}く だけ だ が な 。 || Ah, travellers. I'm Gorō, keeper of the lookout. …Though "keeping" it means polishing the bell and nothing more.
-co_goro: この {鐘|かね} に は 、 {綱|つな} が ない 。 {昔|むかし} は あった か な|むかし} から ない 。 …… いや 、 {昔|むかし} は あった か な|{昔|むかし} は あった か な 。 {覚|おぼ}えて おらん 。 || This bell has no rope. Never has. …Or did it, once? I don't remember.
+co_goro: この {鐘|かね} に は 、 {綱|つな} が ない 。 {昔|むかし} から ない 。 …… いや 、 {昔|むかし} は あった か な 。 {覚|おぼ}えて おらん 。 || This bell has no rope. Never has. …Or did it, once? I don't remember.
 co_goro: {鳴|な}らさん {鐘|かね} なら 、 {綱|つな} も {要|い}らん と {皆|みな} {言|い}う 。 だが わし は 、 {綱|つな} の ない {鐘|かね} を {見|み}て おる と 、 {手|て} が むずむず する ん だ 。 || Folk say a bell nobody rings doesn't need a rope. But looking at a bell with no rope makes my hands itch.
 co_goro: {旅|たび} の {人|ひと} 、 {一|ひと}つ {頼|たの}まれて くれん か 。 {丈夫|じょうぶ} な {綱|つな} を 、 {一本|いっぽん} {探|さが}して きて ほしい 。 || Traveller, would you do me a favour? Find me one good strong rope.
 !choice
@@ -215,9 +215,9 @@ narr: タモツ の {道具|どうぐ} {箱|ばこ} 。 {予備|よび} の {綱
 
 @scene co.heita
 !if co_chronicle_read -> mid
-co_heita: …… ん ？ あ 、 {寝|ね}て ません よ 。 {目|め} を {閉|と}じて {考|かんが}えてた だけ っす 。 || …Hm? Oh, I wasn't asleep. Just thinking with my eyes shut.
+co_heita: …… ん ？ あ 、 {寝|ね}てません よ 。 {目|め} を {閉|と}じて {考|かんが}えてた だけ っす 。 || …Hm? Oh, I wasn't asleep. Just thinking with my eyes shut.
 co_heita: {祭|まつ}り の {敷物|しきもの} {用|よう} に 、 {草|くさ} を {刈|か}る {係|かかり} なん っす 。 でも {暑|あつ}い でしょ 。 {草|くさ} も {逃|に}げない し 。 || I'm on grass duty — for the festival mats. But it's hot, isn't it. And the grass isn't going anywhere.
-co_heita: この {草|くさ} の {帯|おび} ？ {昔|むかし} は あった か な|むかし} から ずっと {草|くさ}ぼうぼう っす よ 。 {刈|か}る {理由|りゆう} も ない し 。 …… ない っす よ ね ？ || This strip of grass? It's always been overgrown. There's no reason to cut it. …There isn't, right?
+co_heita: この {草|くさ} の {帯|おび} ？ {昔|むかし} から ずっと {草|くさ}ぼうぼう っす よ 。 {刈|か}る {理由|りゆう} も ない し 。 …… ない っす よ ね ？ || This strip of grass? It's always been overgrown. There's no reason to cut it. …There isn't, right?
 ?(comp=nao) comp: {理由|りゆう} が あったら 、 {刈|か}る の か ？ || If there were a reason, would you cut it?
 ?(comp=nao) co_heita: …… {理由|りゆう} {次第|しだい} っす ね 。 {俺|おれ} 、 {理由|りゆう} が ある と {働|はたら}く {男|おとこ} なん で 。 || …Depends on the reason. I'm a man who works when there's a reason.
 ?(comp=mio) comp[smile]: {日射病|にっしゃびょう} に なります よ 。 せめて {日陰|ひかげ} で {考|かんが}えて ください 。 || You'll get sunstroke. At least do your thinking in the shade.
@@ -261,7 +261,7 @@ narr: {記録堂|きろくどう} の {軒下|のきした} に 、 {古|ふる}
 ?(comp=nao) comp: {火消|ひけ}し の {桶|おけ} だ 。 {使|つか}わない のに 、 {捨|す}て も しない 。 || Fire buckets. Nobody uses them, but nobody throws them out either.
 ?(comp=mio) comp: {革|かわ} の {桶|おけ} …… {水|みず} を {急|いそ}いで {運|はこ}ぶ ため の もの です 。 {井戸|いど} で {使|つか}う もの じゃ ない 。 || Leather buckets… for carrying water in a hurry. Not the kind you use at a well.
 ?(comp=ren) comp: {印|しるし} の {横|よこ} に 、 {字|じ} の {跡|あと} が あります 。 {消|け}された {字|じ} …… 「 {火|ひ} 」 で {始|はじ}まる {言葉|ことば} でした 。 || Beside the mark there's the ghost of some writing. Erased… a word that began with the character for fire.
-?(comp=suzu) comp: {昔|むかし} は あった か な|むかし} は 、 {全部|ぜんぶ} {濡|ぬ}れてた わ 。 …… {雨|あめ} の {日|ひ} に {見|み}た の 。 たぶん 。 || They used to be wet, all of them. …I saw them on a rainy day. Probably.
+?(comp=suzu) comp: {昔|むかし} は 、 {全部|ぜんぶ} {濡|ぬ}れてた わ 。 …… {雨|あめ} の {日|ひ} に {見|み}た の 。 たぶん 。 || They used to be wet, all of them. …I saw them on a rainy day. Probably.
 ?(co_restored) narr: {今|いま} は {桶|おけ} に {水|みず} が {張|は}って あり 、 {埃|ほこり} も {拭|ふ}かれて いる 。 || Now the buckets are filled with water and wiped clean.
 !if co_clue_buckets -> end
 !set co_clue_buckets

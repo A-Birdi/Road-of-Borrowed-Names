@@ -37,7 +37,7 @@ narr: {苔|こけ}むした {道|みち}しるべ 。「{灯落|ひおち} ま�
 @scene lf.road_bench
 narr: {谷|たに} を {見下|みお}ろす {古|ふる}い {腰掛|こしか}け 。{座|すわ}る と 、{町|まち} の {灯|あか}り が {一|ひと}つ ずつ {点|つ}いて いく の が {見|み}える 。|| An old bench looking down over the valley. Sit, and you can watch the town's lamps come on one by one.
 ?(comp=nao) comp: {全部|ぜんぶ} 、{同|おな}じ {間隔|かんかく} で {点|つ}く 。{気持|きも}ち {悪|わる}い くらい {正確|せいかく} だ 。|| They all light at exactly the same interval. Creepily precise.
-?(comp=mio) comp: {少|すこ}し {休|やす}もう か 。{足|あし} 、{痛|いた}く ない ?|| Shall we rest a bit? Your feet aren't sore?
+?(comp=mio) comp: {少|すこ}し {休|やす}もう か 。{足|あし} 、{痛|いた}く ない ？|| Shall we rest a bit? Your feet aren't sore?
 ?(comp=ren) comp: {灯|あか}り の {点|つ}け{方|かた} が 、{教本|きょうほん}どおり です 。…… {教本|きょうほん}どおり すぎます 。|| They're lighting them exactly by the manual. …A little too exactly.
 ?(comp=suzu) comp: いい {眺|なが}め 。{幕|まく} が {上|あ}がる {前|まえ} の {客席|きゃくせき} みたい 。|| Nice view. Like the house just before the curtain goes up.
 
@@ -68,15 +68,15 @@ lf_hayato: こちら に 、お{名前|なまえ} を お{願|ねが}い しま�
 narr: {差|さ}し{出|だ}された {用紙|ようし} の {欄|らん} は 、{最初|さいしょ} から ぜんぶ 「{許可|きょか}」 に {丸|まる} が ついて いる 。|| On the form he offers, every box is already circled "approved".
 pc: もう {全部|ぜんぶ} 、「{許可|きょか}」 に なって います ね 。|| Everything's already marked "approved".
 lf_hayato[smile]: はい 、もちろん です 。|| Yes, of course.
-pc: もし {私|わたし} が 、{怪|あや}しい {者|もの} だったら ?|| And if I were someone suspicious?
+pc: もし {私|わたし} が 、{怪|あや}しい {者|もの} だったら ？|| And if I were someone suspicious?
 lf_hayato: かしこまりました 。|| Certainly.
 pc: …… いえ 、{質問|しつもん} です よ 。|| …No, that was a question.
 lf_hayato[think]: はい 、もちろん です 。|| Yes, of course.
 narr: {彼|かれ} は にこにこ と うなずいて 、{判子|はんこ} を {押|お}した 。|| He nods pleasantly and stamps it.
 ?(comp=nao) comp[think]: …… {今|いま} の 、{返事|へんじ} に なって ない よね 。|| …That wasn't an answer, was it.
-?(comp=mio) comp[worry]: {何|なに} を {聞|き}いて も 、「はい」 なの ?|| Whatever you ask, it's "yes"?
+?(comp=mio) comp[worry]: {何|なに} を {聞|き}いて も 、「はい」 なの ？|| Whatever you ask, it's "yes"?
 ?(comp=ren) comp[think]: {返事|へんじ} は {丁寧|ていねい} です が 、{中身|なかみ} が ありません ね 。|| Beautifully polite answers. With nothing inside them.
-?(comp=suzu) comp[smirk]: ねえ 、お{兄|にい}さん 。{今日|きょう} は {雪|ゆき} が {降|ふ}る と {思|おも}う ?|| Say, young man. Think it'll snow today?
+?(comp=suzu) comp[smirk]: ねえ 、お{兄|にい}さん 。{今日|きょう} は {雪|ゆき} が {降|ふ}る と {思|おも}う ？|| Say, young man. Think it'll snow today?
 ?(comp=suzu) lf_hayato[smile]: もちろん です 。|| Of course.
 ?(comp=suzu) comp[worry]: …… こんな に {晴|は}れてる のに ね 。|| …Under a sky this clear.
 !give lf_visitor_pass
@@ -98,7 +98,7 @@ narr: 「{灯落|ひおち} 。{静|しず}か で {穏|おだ}やか な {町|�
 narr: {議会|ぎかい} の {掲示板|けいじばん} 。|| The council noticeboard.
 narr: 「{議題|ぎだい} {一|いち} ： {灯落|ひおち} の {植木|うえき} は {全|すべ}て {丸|まる}く {刈|か}る こと 。{全員|ぜんいん} {賛成|さんせい} 。」|| "Item one: all shrubs in Lanternfall shall be clipped round. Unanimous."
 narr: 「{議題|ぎだい} {二|に} ： {灯落|ひおち} の {植木|うえき} は {全|すべ}て {四角|しかく}く {刈|か}る こと 。{全員|ぜんいん} {賛成|さんせい} 。」|| "Item two: all shrubs in Lanternfall shall be clipped square. Unanimous."
-?(comp=nao) comp[smirk]: {丸|まる} で {四角|しかく} 。{庭師|にわし} は どう しろ って ?|| Round and square. What's the gardener meant to do?
+?(comp=nao) comp[smirk]: {丸|まる} で {四角|しかく} 。{庭師|にわし} は どう しろ って ？|| Round and square. What's the gardener meant to do?
 ?(comp=mio) comp[worry]: どっち も 「{賛成|さんせい}」 …… 。{庭師|にわし} さん 、{困|こま}ってる だろう な 。|| Both "unanimous"… The gardener must be at their wits' end.
 ?(comp=ren) comp: {丸|まる} と {四角|しかく} の {間|あいだ} を {取|と}る と 、{角|かど} の {丸|まる}い {四角|しかく} です ね 。{議会|ぎかい} も {角|かど} が {取|と}れた よう で 。|| Split the difference between round and square and you get a rounded square. The council seems to have had its corners knocked off too.
 ?(comp=suzu) comp[laugh]: {全員|ぜんいん} {賛成|さんせい} が ふたつ 。{反対|はんたい} {意見|いけん} を {書|か}く {欄|らん} も ない 。|| Two unanimous votes. There isn't even a space to write an objection.
@@ -169,7 +169,7 @@ lf_nagi: {通|とお}り の {名前|なまえ} 、{全部|ぜんぶ} {戻|も�
 @scene lf.kei
 !faceplayer lf_kei
 lf_kei: だれ ？ {旅|たび} の {人|ひと} ？|| Who're you? Travellers?
-pc: こんにちは 。{少|すこ}し {話|はなし} を {聞|き}いて も いい ?|| Hello. Can I ask you a few things?
+pc: こんにちは 。{少|すこ}し {話|はなし} を {聞|き}いて も いい ？|| Hello. Can I ask you a few things?
 lf_kei[smirk]: いや ！|| No!
 narr: {町|まち} に {来|き}て {初|はじ}めて {聞|き}いた 「いや」 だった 。|| It is the first "no" you have heard since coming to town.
 lf_kei[laugh]: うそ 。いい よ 。{大人|おとな} は みんな 「もちろん」 しか {言|い}わない から 、つまんない の 。|| Just kidding. Okay. The grown-ups only ever say "of course". It's boring.
@@ -194,7 +194,7 @@ lf_kei[laugh]: お{母|かあ}さん に {言|い}ったら 、{笑|わら}わ�
 lf_shu: …… シュウ 。{庭師|にわし} 。|| …Shū. Gardener.
 lf_shu[think]: {議会|ぎかい} は 「{丸|まる}く {刈|か}れ」 と 「{四角|しかく}く {刈|か}れ」 を 、{同|おな}じ {日|ひ} に {決|き}めた 。|| The council decided "clip them round" and "clip them square" on the same day.
 lf_shu: だから 、{朝|あさ} {丸|まる}く 、{昼|ひる} {四角|しかく}く 、{夕方|ゆうがた} また {丸|まる}く 。…… {木|き} が {弱|よわ}って いる 。|| So: round in the morning, square at noon, round again in the evening. …The trees are weakening.
-pc: 「やめたい」 と {言|い}えば ?|| What if you said you wanted to stop?
+pc: 「やめたい」 と {言|い}えば ？|| What if you said you wanted to stop?
 lf_shu: …… かしこまりました 。|| …Certainly.
 narr: シュウ は {鋏|はさみ} を {持|も}った まま 、{少|すこ}し だけ {悲|かな}しそう な {顔|かお} を した 。|| Shū stands holding the shears, looking a little sad.
 ?(comp=mio) comp[worry]: {葉|は} の {色|いろ} が {悪|わる}い 。{刈|か}り すぎ …… 。{植物|しょくぶつ} に も 、{休|やす}み が {要|い}る のに 。|| The leaves are a bad colour. Over-pruned… Plants need rest too.
@@ -210,7 +210,7 @@ lf_shu[smile]: …… {悪|わる}く ない だろう 。|| …Not bad, is it.
 # ---- the inn -----------------------------------------------------------------------------------------------------------------
 @scene lf.setsu
 lf_setsu[smile]: {灯|あか}り{宿|やど} へ ようこそ 。…… {満室|まんしつ} です が 、もちろん お{泊|と}め します よ 。|| Welcome to the Lamplit Inn. …We're full, but of course we'll put you up.
-narr: {廊下|ろうか} に まで 、{布団|ふとん} が {並|なら}んで いる 。{誰|だれ} も 「{満室|まんしつ} です」 と {断|ことわ}れない の だ 。|| There are futons laid out even in the corridor. Nobody can say "we're full".
+narr: {廊下|ろうか} に まで 、{布団|ふとん} が {並|なら}んで いる 。「{満室|まんしつ} です」 と {言|い}って も 、その {後|あと} に 「お{断|ことわ}り します」 が {続|つづ}かない の だ 。|| There are futons laid out even in the corridor. She can say "we're full" — but "so I'm afraid not" never follows.
 lf_setsu[tired]: {部屋|へや} の {数|かず} の {三倍|さんばい} 、お{客|きゃく}さま が いらっしゃる んです 。ふふ 、{嬉|うれ}しい です わ 。|| Three times as many guests as rooms. Heh. It's a pleasure.
 !choice
 * {休|やす}ませて ください || We'd like to rest. -> rest
@@ -221,7 +221,7 @@ lf_setsu: かしこまりました 。{窓際|まどぎわ} の {布団|ふと�
 narr: {廊下|ろうか} で {誰|だれ} か が いびき を かいて いた が 、よく {眠|ねむ}れた 。|| Someone snored in the corridor all night, but you slept well.
 
 @scene lf.setsu_after
-lf_setsu[laugh]: {聞|き}いて ください ！ 「{満室|まんしつ} です 」 って 、{今朝|けさ} {三回|さんかい} も {言|い}えた んです よ ！|| Listen! I managed to say "we're full" three times this morning!
+lf_setsu[laugh]: {聞|き}いて ください ！ 「{満室|まんしつ} です 。お{断|ことわ}り します 」 って 、{今朝|けさ} {三回|さんかい} も {言|い}えた んです よ ！|| Listen! "We're full, so I'm afraid not" — I managed to say it three times this morning!
 lf_setsu: {廊下|ろうか} の {皆|みな}さま に は 、{隣|となり} の {宿|やど} を ご{紹介|しょうかい} しました 。お{客|きゃく}さま は {特別|とくべつ} です から 、{窓際|まどぎわ} を どうぞ 。|| The guests in the corridor, I've sent next door. You're special, so the window spot is yours.
 !choice
 * {休|やす}ませて ください || We'd like to rest. -> rest
@@ -264,7 +264,7 @@ lf_ritsu[smile]: いらっしゃいませ 。リツ の {喫茶|きっさ} へ �
 !if seen.lf.ritsu -> menu
 lf_ritsu[tired]: …… {実|じつ} は 、お{客|きゃく}さま が メニュー に ない もの を {頼|たの}まれて も 、{断|ことわ}れない んです 。|| …The truth is, when customers order things that aren't on the menu, I can't refuse.
 lf_ritsu: {昨日|きのう} は 「{虹色|にじいろ} の お{茶|ちゃ}」 。{一昨日|おととい} は 「{空|そら} を {飛|と}ぶ {団子|だんご}」 。…… かしこまりました 、と {申|もう}し{上|あ}げて しまって 。|| Yesterday it was "rainbow-coloured tea". The day before, "dango that fly". …And I heard myself say "certainly".
-?(comp=suzu) comp[think]: で 、{飛|と}んだ の ? {団子|だんご} 。|| And? Did they fly? The dango?
+?(comp=suzu) comp[think]: で 、{飛|と}んだ の ？ {団子|だんご} 。|| And? Did they fly? The dango?
 ?(comp=suzu) lf_ritsu[sad]: {投|な}げました 。|| I threw them.
 lf_ritsu: お{手伝|てつだ}い いただけません か 。{注文|ちゅうもん} を {聞|き}いて 、お{盆|ぼん} に {載|の}せて いただく だけ で …… 。|| Could you possibly help? Just listen to the orders and put things on the tray…
 :menu
@@ -318,7 +318,7 @@ narr: {彼|かれ} は {明|あか}るく うなずき 、また {生地|きじ}
 ?(comp=nao) comp: …… この {人|ひと} 、{寝|ね}て ない よね 。|| …This guy hasn't slept, has he.
 ?(comp=mio) comp[worry]: {手|て} に やけど が ある 。{薬|くすり} 、{置|お}いて いきます ね 。…… {断|ことわ}らないで 、って {言|い}う まで も ない か 。|| He's got burns on his hands. I'll leave some ointment. …No need to tell him not to refuse it, I suppose.
 ?(comp=ren) comp: {昨日|きのう} まで の {注文|ちゅうもん} は 、{時|とき} を {戻|もど}す {灯|あか}り で も ない と {無理|むり} です ね 。{灯守|ひもり} に も {無理|むり} です 。|| An order due yesterday would need a lantern that turns back time. Even lantern keepers can't manage that.
-?(comp=suzu) comp: {三百個|さんびゃっこ} 、{一個|いっこ} いくら ? …… え 、{値段|ねだん} も {決|き}めて ない の ?|| Three hundred — at how much each? …Wait, you haven't even set a price?
+?(comp=suzu) comp: {三百個|さんびゃっこ} 、{一個|いっこ} いくら ？ …… え 、{値段|ねだん} も {決|き}めて ない の ？|| Three hundred — at how much each? …Wait, you haven't even set a price?
 
 @scene lf.masaru_after
 lf_masaru[angry]: {無理|むり} です ！ {三百個|さんびゃっこ} なんて {焼|や}けません ！ …… って 、{言|い}って やった よ ！|| "I can't! I can't bake three hundred!" …That's what I told them!

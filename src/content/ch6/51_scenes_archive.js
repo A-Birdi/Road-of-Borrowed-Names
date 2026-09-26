@@ -99,7 +99,7 @@ sa_tsuzuri: {文|ぶん} の {続|つづ}き を {読|よ}んで くださって
 !quest sa_clerk done
 !end
 :later
-sa_clerk: {急|いそ}ぎ ません 。 ひと{冬|ふゆ} {待|ま}ちました から 。 || There is no hurry. This clerk has waited one whole winter.
+sa_clerk: {急|いそ}ぎません 。 ひと{冬|ふゆ} {待|ま}ちました から 。 || There is no hurry. This clerk has waited one whole winter.
 
 @scene sa.clerk_after
 sa_clerk: {静寂|しじま} が {止|と}まって 、 {閲覧室|えつらんしつ} に {音|おと} が {戻|もど}りました 。 {当|とう}{書記|しょき} の {足音|あしおと} まで 、 {聞|き}こえます 。 || The Hush has stopped, and sound has come back to the Reading Room. Even this clerk's footsteps can be heard.
@@ -149,7 +149,7 @@ narr: 「 {本日|ほんじつ} の {収蔵|しゅうぞう} ── {地名|ち�
 narr: {机|つくえ} の {上|うえ} に 、 {古|ふる}い {文書|ぶんしょ} の {写|うつ}し 。 {書庫|しょこ} の {定|さだ}め だ 。 || On the desk, a copy of an old document: the Archive's charter.
 narr: 「 {当|とう}{書庫|しょこ} は 、 {災|わざわ}い に より {失|うしな}われし {名|な} を {写|うつ}し{置|お}き 、 {求|もと}め {有|あ}らば {必|かなら}ず {返|かえ}す べし 。 」 || "This archive shall keep copies of names lost to disaster, and whenever they are asked for, shall without fail return them."
 narr: {余白|よはく} に 、 {鉛筆|えんぴつ} の {書|か}き{込|こ}み 。 カサネ の {字|じ} だ 。 「 {求|もと}め {無|な}くば 、 {返|かえ}さず とも {可|か} 。 」 || In the margin, a note in pencil, in Kasane's hand: "If not asked, need not return."
-narr: その {下|した} に 、 {別|べつ} の {字|じ} で {太|ふと}く 。 「 そう は {書|か}いて ない 。 ── ウ 」 || Beneath it, in another hand, heavily: "It doesn't say that. — U."
+narr: その {下|した} に 、 {別|べつ} の {字|じ} で {太|ふと}く 。 「 そう は {書|か}いて ない 。 ── ウシオ 」 || Beneath it, in another hand, heavily: "It doesn't say that. — Ushio."
 !note sa_charter
 
 @scene sa.reading_plaque
@@ -172,7 +172,7 @@ narr: {重|おも}い {扉|とびら} 。 {向|む}こう {側|がわ} から {�
 narr: {石|いし} の {棚|たな} が 、 {果|は}て が ない ほど {並|なら}んで いる 。 {並|なら}んで いる の は {本|ほん} で は なく 、 {細|ほそ}い {紙|かみ} の {札|ふだ} だ 。 {一枚|いちまい} ずつ 、 {名前|なまえ} が {書|か}いて ある 。 || Stone shelves stretch on and on. What stands on them isn't books but thin slips of paper, each with a name written on it.
 narr: {棚|たな} に は 、 {取|と}られた {理由|りゆう} ごと に {札|ふだ} が {付|つ}いて いる 。 || Each shelf is labelled with the reason its names were taken.
 ?(comp=nao) nao: {郵便受|ゆうびんう}け が {何千|なんぜん} {個|こ} も ある {郵便局|ゆうびんきょく} だ 。 {誰|だれ} も {取|と}り に {来|こ}ない 。 || A post office with thousands of mailboxes. And nobody comes to collect.
-?(comp=mio) mio[worry]: {整理|せいり} されて る 。 {気持|きも}ち {悪|わる}い くらい 。 …… わたし も {棚|たな} を {並|なら}べる の は {好|す}き だ けど 、 これ は {違|ちが}う 。 || It's all organised. Creepily so. …I like arranging shelves too, but this is different.
+?(comp=mio) mio[worry]: {整理|せいり} されてる 。 {気持|きも}ち {悪|わる}い くらい 。 …… わたし も {棚|たな} を {並|なら}べる の は {好|す}き だ けど 、 これ は {違|ちが}う 。 || It's all organised. Creepily so. …I like arranging shelves too, but this is different.
 ?(comp=ren) ren: {迷路|めいろ} です ね 。 {大丈夫|だいじょうぶ} 、 {左|ひだり} です 。 …… つまり {右|みぎ} です 。 わたし が {左|ひだり} と {言|い}ったら 。 || A maze. Don't worry, it's left. …Meaning it's right, if I'm the one saying left.
 ?(comp=suzu) suzu: {楽屋|がくや} の {衣装|いしょう}{部屋|べや} みたい 。 {着|き}る {人|ひと} の いない {衣装|いしょう} ばっかり 。 || Like a theatre's costume store. Nothing but costumes with no one to wear them.
 !journal {書架|しょか} に {入|はい}った 。 {入口|いりぐち} の {机|つくえ} に 、 {請求|せいきゅう}{票|ひょう} が ある 。 || Entered the Stacks. There's a call slip on the desk by the entrance.
@@ -231,7 +231,7 @@ narr: {下|した} の {札|ふだ} に も 、 {同|おな}じ {判|はん} 。
 narr: {静|しず}かな {水路|すいろ} の {終|お}わり 。 {壁|かべ} の {管|くだ} から 、 {淡|あわ}い {字|じ} が {流|なが}れ{出|だ}して 、 {真|ま}ん{中|なか} の {溜|た}まり に {沈|しず}んで いく 。 || The end of the Quiet Conduits. Faint characters drift out of the pipes in the walls and sink into the basin in the middle.
 narr: {水|みず} の {音|おと} が しない 。 {流|なが}れて いる のに 。 || The water makes no sound, though it is moving.
 ?(comp=nao) nao: {灯落|ひおち} の {地下|ちか} の {管|くだ} が 、 ここ に {繋|つな}がって た の か 。 {配達|はいたつ} の {終点|しゅうてん} だ な 。 {受取人|うけとりにん} の いない 。 || So this is where the pipes under Lanternfall end up. The end of the delivery route. With no one to sign for it.
-?(comp=mio) mio: {字|じ} が 、 {溺|おぼ}れて る みたい 。 …… {見|み}て られない 。 || It's like watching letters drown. …I can't look.
+?(comp=mio) mio: {字|じ} が 、 {溺|おぼ}れてる みたい 。 …… {見|み}て いられない 。 || It's like watching letters drown. …I can't look.
 ?(comp=ren) ren: {上|のぼ}り の {印|しるし} の {管|くだ} 。 {灯落|ひおち} で {見|み}た もの と {同|おな}じ です 。 || Pipes stamped "uphill". The same ones we saw in Lanternfall.
 ?(comp=suzu) suzu: {音|おと} の ない {水|みず} って 、 {拍手|はくしゅ} の ない {芝居|しばい} より {怖|こわ}い 。 || Silent water's scarier than a play with no applause.
 
@@ -252,8 +252,8 @@ narr: {空|から} の {机|つくえ} 。 {水|みず} の {跡|あと} が 、
 @scene sa.charter_gate
 !if sa_promise_done -> done
 narr: {板|いた} の {橋|はし} の {手前|てまえ} に 、 {水|みず} の {門|もん} 。 {札|ふだ} が {下|さ}がって いる 。 || Before the plank bridge stands a gate of water. A plaque hangs from it.
-narr: 「 {求|もと}め られれば 、 {返|かえ}す 。 」 || "If asked, return."
-narr: その {下|した} に 、 カサネ の {字|じ} の {貼|は}り{紙|がみ} 。 「 {求|もと}め られなければ 、 {返|かえ}さなくて よい 。 ── カ 」 || Beneath it, a note in Kasane's hand: "If not asked, need not return. — K."
+narr: 「 {求|もと}められれば 、 {返|かえ}す 。 」 || "If asked, return."
+narr: その {下|した} に 、 カサネ の {字|じ} の {貼|は}り{紙|がみ} 。 「 {求|もと}められなければ 、 {返|かえ}さなくて よい 。 ── カサネ 」 || Beneath it, a note in Kasane's hand: "If not asked, need not return. — Kasane."
 narr: {門|もん} は 、 {定|さだ}め を {正|ただ}しく {読|よ}む {者|もの} だけ を {通|とお}す 。 {定|さだ}め の {全文|ぜんぶん} が 、 {壁|かべ} に {彫|ほ}って ある 。 || The gate lets through only those who read the charter rightly. The full charter is carved into the wall.
 !challenge sa.charter
 !if var._res=0 -> later
@@ -273,7 +273,7 @@ narr: カサネ の {貼|は}り{紙|がみ} が 、 {水|みず} を {吸|す}�
 narr: {水|みず} は まだ 、 {橋|はし} を {覆|おお}って いる 。 || Water still covers the bridge.
 !end
 :done
-narr: {定|さだ}め の {札|ふだ} 。 「 {求|もと}め られれば 、 {返|かえ}す 」 。 {下|した} の {貼|は}り{紙|がみ} は 、 もう ない 。 || The charter plaque: "If asked, return." The note beneath it is gone.
+narr: {定|さだ}め の {札|ふだ} 。 「 {求|もと}められれば 、 {返|かえ}す 」 。 {下|した} の {貼|は}り{紙|がみ} は 、 もう ない 。 || The charter plaque: "If asked, return." The note beneath it is gone.
 
 @scene sa.conduit_crate
 narr: {木箱|きばこ} いっぱい の {紙切|かみき}れ 。 {全部|ぜんぶ} 、 {同|おな}じ {判|はん} が {押|お}して ある 。 「 {未処理|みしょり} 」 。 || A crate full of scraps of paper, every one stamped the same: "Unprocessed".
@@ -281,7 +281,7 @@ narr: 「 {母|はは} の {名前|なまえ} を {返|かえ}して 。 」 「
 ?(comp=nao) nao: {全部|ぜんぶ} 、 {届|とど}いて は いた ん だ 。 {読|よ}まれなかった だけ で 。 || They all arrived. They just never got read.
 ?(comp=mio) mio[laugh]: 「 {夫|おっと} と {喧嘩|けんか} が できない 」 。 …… ごめん 、 {笑|わら}っちゃった 。 でも 、 {分|わ}かる 。 || "I can't quarrel with my husband." …Sorry, I laughed. But I understand.
 ?(comp=ren) ren: {頼|たの}まれて いた 。 {何百|なんびゃく} {回|かい} も 。 || They were asked. Hundreds of times.
-?(comp=suzu) suzu: {未払|みばら}い の {請求書|せいきゅうしょ} の {山|やま} だ 。 {利子|りし} が {膨|ふく}らんで る よ 。 || A mountain of unpaid bills. The interest must be enormous by now.
+?(comp=suzu) suzu: {未払|みばら}い の {請求書|せいきゅうしょ} の {山|やま} だ 。 {利子|りし} が {膨|ふく}らんでる よ 。 || A mountain of unpaid bills. The interest must be enormous by now.
 
 @scene sa.memories_enter
 !autosave
@@ -290,8 +290,8 @@ narr: {棚|たな} に は 、 {薄|うす}い {綴|つづ}り が {並|なら}�
 narr: {奥|おく} の {左|ひだり} の {棚|たな} だけ 、 {札|ふだ} の {書|か}き{方|かた} が {違|ちが}う 。 「 カサネ ── {最初|さいしょ} の {一冊|いっさつ} 」 。 || Only the shelf at the back on the left has a label written differently: "Kasane — the first volume."
 !note sa_memories
 ?(comp=nao) nao: {預|あず}け{物|もの} の {倉庫|そうこ} だ 。 {全部|ぜんぶ} 、 {持|も}ち{主|ぬし} が {自分|じぶん} で {運|はこ}んで きた やつ 。 || A left-luggage room. Everything here, the owners carried up themselves.
-?(comp=mio) mio[sad]: ここ は …… {薬棚|くすりだな} に {似|に}て る 。 {飲|の}む の が {辛|つら}い {薬|くすり} を 、 {預|あず}かって おく {棚|たな} 。 || This is… like a medicine cabinet. Where you keep the medicines that are too hard to take.
-?(comp=suzu) suzu: {衣装|いしょう} を {脱|ぬ}いで いった {役者|やくしゃ} たち の {楽屋|がくや} だ ね 。 もう {着|き}られない {役|やく} が 、 {掛|か}かって る 。 || A dressing room full of costumes actors took off. Roles no one can wear any more, hanging up.
+?(comp=mio) mio[sad]: ここ は …… {薬棚|くすりだな} に {似|に}てる 。 {飲|の}む の が {辛|つら}い {薬|くすり} を 、 {預|あず}かって おく {棚|たな} 。 || This is… like a medicine cabinet. Where you keep the medicines that are too hard to take.
+?(comp=suzu) suzu: {衣装|いしょう} を {脱|ぬ}いで いった {役者|やくしゃ} たち の {楽屋|がくや} だ ね 。 もう {着|き}られない {役|やく} が 、 {掛|か}かってる 。 || A dressing room full of costumes actors took off. Roles no one can wear any more, hanging up.
 ?(comp=ren) ren[surprise]: …… $name 。 あの {棚|たな} 。 {札|ふだ} に 、 わたし の {名前|なまえ} が 。 || …$name. That shelf. My name is on the label.
 ?(comp=ren) !call sa.shelf_ren
 !quest sa_main 4
@@ -320,7 +320,7 @@ narr: {綴|つづ}り の {最後|さいご} に 、 {若|わか}い カサネ �
 !give sa_letter_kasane
 ?(sa_need_letter) narr: カサネ が {頼|たの}んだ もの だ 。 {上|うえ} へ {持|も}って いこう 。 || This is what Kasane asked for. Take it up.
 ?(comp=nao) nao: {言|い}った ほう が {預|あず}けた の か 。 {言|い}われた ほう じゃ なく 。 …… {重|おも}かった ん だ な 。 {自分|じぶん} の {言葉|ことば} が 。 || The one who said it set it down — not the one who heard it. …Their own words weighed that much.
-?(comp=mio) mio: 「 {鍵|かぎ} を {置|お}いて いきなさい 」 。 …… {怖|こわ}かった ん だ 。 {弟|おとうと} さん が {行|い}って しまう の が 。 {書記|しょき} の {顔|かお} で 、 {姉|あね} …… いえ 、 {家族|かぞく} の {心配|しんぱい} を して る 。 || "Leave the key." …They were frightened. Of their brother going. Worrying as family, wearing a clerk's face.
+?(comp=mio) mio: 「 {鍵|かぎ} を {置|お}いて いきなさい 」 。 …… {怖|こわ}かった ん だ 。 {弟|おとうと} さん が {行|い}って しまう の が 。 {書記|しょき} の {顔|かお} で 、 {姉|あね} …… いえ 、 {家族|かぞく} の {心配|しんぱい} を してる 。 || "Leave the key." …They were frightened. Of their brother going. Worrying as family, wearing a clerk's face.
 ?(comp=ren) ren: 「 {誰|だれ} も {開|あ}けない 」 。 …… この {言葉|ことば} を {覚|おぼ}えて おいて ください 。 {鍵|かぎ} に なる {気|き} が します 。 || "No one is opening it." …Remember those words. I think they're a key.
 ?(comp=suzu) suzu: {一番|いちばん} {聞|き}かれたく ない {台詞|せりふ} を 、 {一番|いちばん} {先|さき} に {棚|たな} に しまった の か 。 …… {分|わ}かる よ 。 {分|わ}かり たく ない けど 。 || The line they least wanted anyone to hear, put on the shelf first of all. …I understand. I wish I didn't.
 !end
@@ -387,7 +387,7 @@ narr: 「 {潮硝子|しおがらす} ── {沈|しず}んだ {書庫|しょ�
 narr: {何|なに} も ない {棚|たな} 。 {札|ふだ} だけ が {付|つ}いて いる 。 カサネ の {字|じ} だ 。 || An empty shelf with only a label, in Kasane's hand.
 narr: 「 {予約|よやく} ── {最後|さいご} に {預|あず}ける もの ： わたし の {名前|なまえ} 。 」 || "Reserved — the last thing to be set down: my own name."
 ?(comp=nao) nao[angry]: {自分|じぶん} の {名前|なまえ} まで 、 {棚|たな} に {上|あ}げる {気|き} だった の か 。 {宛名|あてな} の ない {手紙|てがみ} に なる つもり か よ 。 || Planning to shelve your own name too? Turn yourself into a letter with no address?
-?(comp=mio) mio: …… {疲|つか}れて る 。 {休|やす}みたい ん じゃ なくて 、 {消|き}えたい ん だ 。 {違|ちが}い は {分|わ}かる 。 {分|わ}かる から 、 {放|ほう}って おけない 。 || …They're exhausted. Not wanting to rest — wanting to disappear. I know the difference. That's why I can't leave it alone.
+?(comp=mio) mio: …… {疲|つか}れてる 。 {休|やす}みたい ん じゃ なくて 、 {消|き}えたい ん だ 。 {違|ちが}い は {分|わ}かる 。 {分|わ}かる から 、 {放|ほう}って おけない 。 || …They're exhausted. Not wanting to rest — wanting to disappear. I know the difference. That's why I can't leave it alone.
 ?(comp=ren) ren: 「 {名|な} を {一人|ひとり} で {守|まも}る {者|もの} は いない 」 。 {師匠|ししょう} なら 、 この {札|ふだ} を {破|やぶ}った でしょう 。 || "No one keeps a name alone." My teacher would have torn this label down.
 ?(comp=suzu) suzu: {最終幕|さいしゅうまく} で 、 {主役|しゅやく} が {舞台|ぶたい} から {消|き}える {芝居|しばい} は 、 {嫌|きら}い 。 {観客|かんきゃく} に {失礼|しつれい} だ よ 。 || I hate plays where the lead just vanishes in the last act. It's rude to the audience.
 
@@ -487,7 +487,7 @@ narr: {狭|せま}い {書斎|しょさい} 。 {灯|ひ} が {一|ひと}つ �
 narr: {机|つくえ} の {上|うえ} に 、 {文鎮|ぶんちん} で {押|お}さえた {小|ちい}さな {紙|かみ} 。 {上|うえ} へ {続|つづ}く {階段|かいだん} 。 || On the desk, a small slip of paper under a paperweight. A stair leading up.
 ?(comp=ren) ren[surprise]: …… {師匠|ししょう} の {灯|ひ} だ 。 || …That's my teacher's lamp.
 ?(comp=nao) nao: {出口|でぐち} は {三|みっ}つ 。 {下|した} 、 {西|にし} 、 {上|うえ} 。 …… {上|うえ} が {本命|ほんめい} だ な 。 {西|にし} の {扉|とびら} は 、 こっち から {開|あ}けられ そう だ 。 || Three exits. Down, west, up. …Up's the one that matters. And the west door looks like it opens from this side.
-?(comp=mio) mio: {湯呑|ゆの}み が {二|ふた}つ 。 {片方|かたほう} に は 、 {埃|ほこり} が {積|つ}もって る 。 || Two teacups. One has a layer of dust in it.
+?(comp=mio) mio: {湯呑|ゆの}み が {二|ふた}つ 。 {片方|かたほう} に は 、 {埃|ほこり} が {積|つ}もってる 。 || Two teacups. One has a layer of dust in it.
 ?(comp=suzu) suzu: {楽屋|がくや} みたい 。 {主役|しゅやく} が {一人|ひとり} で {泣|な}く {場所|ばしょ} 。 || Like a dressing room. The place the lead goes to cry alone.
 !quest sa_main 5
 !journal カサネ の {書斎|しょさい} に {着|つ}いた 。 {上|うえ} の {階段|かいだん} は 「 {芯|しん} 」 へ {続|つづ}く 。 {西|にし} の {扉|とびら} は {閲覧室|えつらんしつ} へ の {近道|ちかみち} だ 。 || Reached Kasane's study. The stair leads up to the Heart; the west door is a short way back to the Reading Room.
@@ -545,9 +545,9 @@ narr: {本|ほん} の {山|やま} 。 {一番|いちばん} {上|うえ} に �
 
 @scene sa.study_cups
 narr: {小|ちい}さな {卓|たく} に 、 {湯呑|ゆの}み が {二|ふた}つ 。 {一|ひと}つ は {使|つか}われて いる 。 もう {一|ひと}つ に は 、 {埃|ほこり} 。 || Two teacups on a little table. One is in use. The other has dust in it.
-narr: {埃|ほこり} の ほう の {底|そこ} に 、 {墨|すみ} で 「 ウ 」 。 || At the bottom of the dusty one, in ink: "U".
+narr: {埃|ほこり} の ほう の {底|そこ} に 、 {墨|すみ} で 「 ウシオ 」 。 || At the bottom of the dusty one, in ink: "Ushio".
 ?(comp=mio) mio[sad]: ハナ さん の {湯呑|ゆの}み と {同|おな}じ だ 。 {来|こ}ない {人|ひと} の {分|ぶん} まで 、 {出|だ}して おく 。 || It's just like Hana's teacups. Setting one out for someone who won't come.
-?(comp=nao) nao: {二|ふた}つ {目|め} の {湯呑|ゆの}み か 。 {葦|あし}ノ{瀬|せ} から ずっと 、 {同|おな}じ {話|はなし} を {追|お}いかけて る {気|き} が する 。 || A second teacup. Feels like we've been chasing the same story all the way from Reedwake.
+?(comp=nao) nao: {二|ふた}つ {目|め} の {湯呑|ゆの}み か 。 {葦|あし}ノ{瀬|せ} から ずっと 、 {同|おな}じ {話|はなし} を {追|お}いかけてる {気|き} が する 。 || A second teacup. Feels like we've been chasing the same story all the way from Reedwake.
 ?(comp=ren) ren[closed]: …… {師匠|ししょう} の {湯呑|ゆの}み です 。 {縁|ふち} の {欠|か}け{方|かた} で 、 {分|わ}かります 。 || …My teacher's cup. I can tell by the chip on the rim.
 ?(comp=suzu) suzu: {空|あ}いた {席|せき} 。 …… {灰実|はいみ}の{里|さと} の お{祭|まつ}り の {席|せき} と 、 {同|おな}じ {顔|かお} を してる 。 || An empty seat. …It has the same look as the empty seat at the Cinder Orchard festival.
 
