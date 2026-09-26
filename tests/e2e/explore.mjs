@@ -5,7 +5,9 @@
 // Usage: node tests/e2e/explore.mjs <startMap> <x> <y> <targetFlag[>flag2>…]> [comp] [profile] [seed] [maxActions] [flags,comma,sep] [words,comma,sep] [mapPrefix]
 // Several targets separated by '>' are reached in order in one continuous run
 // (maxActions applies to each leg); per-leg action counts are reported.
-// mapPrefix (e.g. 'lf.') keeps the explorer inside one chapter's maps.
+// mapPrefix (e.g. 'lf.') keeps the explorer inside one chapter's maps; a
+// target may carry its own prefix as flag@prefix (e.g. ch1_done@rw.>ch2_done@sg.),
+// which restricts exits during that leg to maps with that prefix.
 import { serve, launch, page } from './lib.mjs';
 
 const [startMap, sx, sy, target, comp = 'none', profile = 'E', seed = '1', maxActions = '900', flagList = '', wordList = '', prefix = ''] = process.argv.slice(2);
@@ -35,7 +37,8 @@ const res = await p.evaluate(async (a) => {
   let actions = 0;
   const flagsSeen = new Set(Object.keys(s.flags));
   const progress = [];
-  const targets = a.target.split('>');
+  const targets = a.target.split('>').map((t) => t.split('@')[0]);
+  const legPrefix = a.target.split('>').map((t) => t.split('@')[1] || a.prefix || '');
   const legs = [];
   let leg = 0, legStart = 0;
   for (;;) {
@@ -49,7 +52,8 @@ const res = await p.evaluate(async (a) => {
     for (const pr of m.props) if (pr.scene && (!pr.if || RB.state.test(s, pr.if))) cands.push({ k: 'use:' + pr.x + ',' + pr.y, run: () => T.use(pr.x, pr.y) });
     for (const f of W.foes) cands.push({ k: 'foe:' + f.id, run: async () => { await RB.game.startBattle(f.def.enemy, { foeKey: 'foe:' + m.id + ':' + f.def.id, scene: f.def.scene }); await T.idle(); } });
     for (const tr of m.triggers) if (!tr.if || RB.state.test(s, tr.if)) cands.push({ k: 'trig:' + tr.x + ',' + tr.y, run: async () => { T.place(tr.x, tr.y); RB.script.run(tr.scene); await T.idle(); } });
-    for (const ex of m.exits) if ((!ex.if || RB.state.test(s, ex.if)) && (!a.prefix || ex.to.startsWith(a.prefix))) {
+    const pfx = legPrefix[leg] || '';
+    for (const ex of m.exits) if ((!ex.if || RB.state.test(s, ex.if)) && (!pfx || ex.to.startsWith(pfx))) {
       cands.push({ k: 'exit:' + ex.to, exit: true, run: async () => {
         if (ex.locked && (!ex.unlock || !RB.state.test(s, ex.unlock))) { RB.script.run(ex.locked); await T.idle(); return; }
         await T.go(ex.to, ex.tx, ex.ty, ex.dir);

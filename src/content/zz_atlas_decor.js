@@ -8,6 +8,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const add = (map, props) => { if (C.maps[map]) C.maps[map].props = (C.maps[map].props || []).concat(props); };
   // 1 — Reedwake: a freshly painted signboard by Kōji's ferry landing
   add('rw.village', [{ p: 'sign', x: 47, y: 17, scene: 'at.decor_ferry', if: 'atlas_restore_1' }]);
+  // 2 — Saltglass: a crate of returned cargo tags by the harbour office
+  add('sg.harbor', [{ p: 'crate', x: 18, y: 11, scene: 'at.decor_tags', if: 'atlas_restore_2' }]);
   // 3 — Cinder Orchard: named saplings along the firebreak
   add('co.village', [
     { p: 'bush', x: 5, y: 8, if: 'atlas_restore_3' }, { p: 'bush', x: 7, y: 8, if: 'atlas_restore_3' },
@@ -39,6 +41,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
 火袋|ひぶくろ|n|A|light chamber (the lit box of a lantern)
 新田|しんでん|n|A|newly reclaimed fields; (in place names) a newly settled village
 葦原|あしはら|n|A|reed plain
+荷札|にふだ|n|I|cargo tag, luggage label
+持ち主|もちぬし|n|I|owner
 道標|みちしるべ|n|A|waymarker, signpost
   `), 'atlas_decor');
 })(RB.content);
@@ -58,6 +62,11 @@ narr: 「 {天文台|てんもんだい} まで あと {二百|にひゃく}{段
 
 @scene at.decor_mark100
 narr: 「 {天文台|てんもんだい} まで あと {百|ひゃく}{段|だん} 。 {灯|あか}り が {見|み}えたら 、 もう すぐ 」 || "Observatory: 100 steps to go. Once you can see the lamp, you're nearly there."
+
+@scene at.decor_tags
+narr: {港|みなと} {事務所|じむしょ} の {前|まえ} に 、 {木箱|きばこ} が {一|ひと}つ {置|お}いて ある 。 {中|なか} は {荷札|にふだ} で いっぱい だ 。 || A wooden crate stands outside the harbour office, full of cargo tags.
+narr: 「 {持|も}ち{主|ぬし} に {返|かえ}りました 。 {読|よ}めない {字|じ} は 、 もう ありません 」 || "Returned to their owners. There are no unreadable letters left."
+?(comp) comp: {字|じ} が {戻|もど}る と 、 {荷物|にもつ} も {帰|かえ}れる んだ ね 。 || When the letters come back, the cargo can go home too.
 
 @scene at.decor_saplings
 narr: {苗木|なえぎ} {一本|いっぽん} ずつ に 、 {小|ちい}さな {名札|なふだ} が ついて いる 。 || Every sapling has a small name tag.
