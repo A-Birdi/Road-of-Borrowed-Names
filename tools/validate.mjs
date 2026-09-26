@@ -233,7 +233,11 @@ const counts = {
   activities: Object.keys(C.activities).length, lexicon: RB.lex.all().length, unknownTokens: unknownTok.size,
 };
 console.log('content:', JSON.stringify(counts));
-if (showUnknown && unknownTok.size) { console.log('\nTokens without a dictionary entry (add to your lexicon file):'); for (const [k, w] of unknownTok) console.log('  ' + k + '   ← ' + w); }
+if (showUnknown && unknownTok.size) {
+  const rows = [...unknownTok].filter(([k, w]) => !filter || w.indexOf(filter) >= 0);
+  console.log('\nTokens without a dictionary entry' + (filter ? ' (in ' + filter + ' content)' : '') + ': ' + rows.length + ' — add them to your lexicon file:');
+  for (const [k, w] of rows) console.log('  ' + k + '   ← ' + w);
+}
 if (warns.length) { console.log('\n' + warns.length + ' warning(s):'); warns.slice(0, 200).forEach((w) => console.log('  W ' + w)); }
 if (errors.length) { console.log('\n' + errors.length + ' error(s):'); errors.slice(0, 300).forEach((e) => console.log('  E ' + e)); }
 else console.log('\nno errors');

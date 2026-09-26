@@ -131,6 +131,8 @@ RB.state = (function () {
         return !!s.seen[rest];
       case 'post':
         return !!s.flags.postgame;
+      case 'bg':
+        return cmp(s.player.bg, op || '=', val);
       default:
         if (op) return cmp(s.vars[key] || 0, op, num(val));
         return !!s.flags[key];

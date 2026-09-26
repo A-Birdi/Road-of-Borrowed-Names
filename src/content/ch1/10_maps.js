@@ -11,6 +11,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     name: { en: 'Reedwake', jp: '{葦|あし}ノ{瀬|せ}' }, region: 'reedwake', place: 'reedwake', travel: 'reedwake',
     music: [{ if: 'rw_night', id: 'reedwake_night' }, { id: 'reedwake' }],
     ambient: { weather: null },
+    alt: [{ if: 'rw_night', ambient: { dark: 0.55, darkCol: '12,16,44', weather: 'fireflies', playerLight: 56 }, night: true }],
+    onEnter: [{ scene: 'rw.village_first', once: true }],
     terrain: K.build(50, 36, '.', (k) => {
       k.ragged('top', 'T', 3, 11).ragged('left', 'T', 3, 12).ragged('bottom', 'T', 2, 13).ragged('right', 'T', 3, 14);
       // river and banks
@@ -174,7 +176,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'stone_marker', x: 20, y: 11, scene: 'rw.road_marker' },
     ],
     exits: [
-      { x: 31, y: 9, w: 1, h: 2, to: 'rw.village', tx: 1, ty: 30, dir: 'right' },
+      { x: 31, y: 9, w: 1, h: 2, to: 'rw.village', tx: 1, ty: 30, dir: 'right', locked: 'rw.road_mist', unlock: 'rw_road_lit' },
       { x: 0, y: 9, w: 1, h: 2, to: 'sg.road', sp: 'from_prev', dir: 'left', if: 'departed' },
     ],
     triggers: [{ x: 0, y: 9, w: 1, h: 2, scene: 'rw.road_west_blocked', if: '!departed' }],

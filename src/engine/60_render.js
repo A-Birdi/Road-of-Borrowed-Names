@@ -162,7 +162,8 @@ RB.render = (function () {
     const list = [];
     for (const st of m.structs) {
       if (st.if && !RB.state.test(s, st.if)) continue;
-      list.push({ z: (st.y + st.h) * TS, draw: () => RB.props.STRUCT[st.type || 'house'](c, st.x * TS - cam.x, st.y * TS - cam.y, pal, t, Object.assign({ night: m.def.night }, st)) });
+      const night = ambientOf(m).night;
+      list.push({ z: (st.y + st.h) * TS, draw: () => RB.props.STRUCT[st.type || 'house'](c, st.x * TS - cam.x, st.y * TS - cam.y, pal, t, Object.assign({ night }, st)) });
     }
     for (const p of m.props) {
       if (p.if && !RB.state.test(s, p.if)) continue;
@@ -189,8 +190,14 @@ RB.render = (function () {
     }
   }
 
+  // Effective ambience: a map may define alt: [{if, ambient, night}] for story states.
+  function ambientOf(m) {
+    const s = RB.game.s;
+    for (const a of m.def.alt || []) if (s && RB.state.test(s, a.if)) return a;
+    return { ambient: m.def.ambient || {}, night: m.def.night };
+  }
   function drawLighting(c, m, W, t) {
-    const amb = m.def.ambient || {};
+    const amb = ambientOf(m).ambient || {};
     const dark = amb.dark || 0;
     if (amb.tint) {
       c.fillStyle = amb.tint;
@@ -224,13 +231,13 @@ RB.render = (function () {
       if (p.o && p.o.lit === false) continue;
       hole(p.x * TS - cam.x + 8, p.y * TS - cam.y + 2, (p.light || pd.light) + flick);
     }
-    for (const st of m.structs) if (st.lit || m.def.night) (st.windows || []).forEach((wx) => hole((st.x + wx) * TS - cam.x + 8, (st.y + st.h) * TS - cam.y - 10, 18));
+    for (const st of m.structs) if (st.lit || ambientOf(m).night) (st.windows || []).forEach((wx) => hole((st.x + wx) * TS - cam.x + 8, (st.y + st.h) * TS - cam.y - 10, 18));
     lctx.globalCompositeOperation = 'source-over';
     c.drawImage(light, 0, 0);
   }
 
   function drawWeather(c, m, t) {
-    const amb = m.def.ambient || {};
+    const amb = ambientOf(m).ambient || {};
     const kind = amb.weather;
     if (!kind) return;
     const reduced = RB.game.reducedMotion();

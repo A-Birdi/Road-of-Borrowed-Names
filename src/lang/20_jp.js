@@ -385,7 +385,8 @@ RB.jp = (function () {
     if (col === 'a' || col === 'i') rule(suffix, 'る', inM, T.V1, d, extra);
     else if (col === 'te') rule('て' + suffix, 'る', inM, T.V1, d, extra);
     else if (col === 'ta') rule('た' + suffix, 'る', inM, T.V1, d, extra);
-    for (const end in G5) rule(G5[end][COL[col]] + suffix, end, inM, T.V5, d, extra);
+    // る-ending godan rules also serve the honorific v5aru verbs (おっしゃって, いらっしゃらない…)
+    for (const end in G5) rule(G5[end][COL[col]] + suffix, end, inM, end === 'る' && col !== 'i' ? (T.V5 | T.ARU) : T.V5, d, extra);
     if (col === 'te' || col === 'ta') {
       // 行く: 行って / 行った
       rule((col === 'te' ? 'って' : 'った') + suffix, 'く', inM, T.KS, d, extra);

@@ -182,7 +182,9 @@ RB.world = (function () {
       W.path = null;
       return;
     }
-    const dur = RB.input.running() || (W.path && W.path.length > 4) ? 105 : 160;
+    const tool = s().equip.tool && RB.content.items[s().equip.tool];
+    const quick = tool && tool.effect && tool.effect.walk ? 0.88 : 1;
+    const dur = Math.round((RB.input.running() || (W.path && W.path.length > 4) ? 105 : 160) * quick);
     // companion takes the player's old tile
     if (W.comp) {
       const c = W.comp;

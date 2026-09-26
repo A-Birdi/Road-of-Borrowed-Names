@@ -51,6 +51,12 @@ RB.combatLogic = (function () {
       assist: s.learn.assist === 'assist',
     };
     if (comp === 'ren') st.ward.pc = 1, st.ward.comp = 1;
+    // Equipped charm effects (small, well-defined sidegrades).
+    const charm = s.equip && s.equip.charm && RB.content.items[s.equip.charm];
+    const eff = (charm && charm.effect) || {};
+    if (eff.startWard) { st.ward.pc += eff.startWard; if (comp) st.ward.comp += eff.startWard; }
+    if (eff.harmonyStart) st.harmony = Math.min(st.harmonyMax, eff.harmonyStart);
+    if (eff.resolve) { st.pc += eff.resolve; st.comp += comp ? eff.resolve : 0; st.max += eff.resolve; }
     st.intent = drawIntent(enemy, st);
     return st;
   }

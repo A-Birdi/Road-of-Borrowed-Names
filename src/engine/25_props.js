@@ -436,6 +436,39 @@ RB.props = (function () {
     c.fillStyle = `rgba(30,24,60,${0.5 + a * 0.3})`;
     c.beginPath(); c.ellipse(x + 8, y + 10, 6, 3, 0, 0, 7); c.fill();
   });
+  def('millstone', { w: 2, h: 2 }, (c, x, y, p, t, o) => {
+    shadow(c, x, y + 16, 30);
+    c.fillStyle = p.stone[2]; c.beginPath(); c.ellipse(x + 16, y + 18, 14, 10, 0, 0, 7); c.fill();
+    c.fillStyle = p.stone[0]; c.beginPath(); c.ellipse(x + 16, y + 15, 14, 10, 0, 0, 7); c.fill();
+    c.fillStyle = p.stone[1]; c.beginPath(); c.ellipse(x + 16, y + 14, 11, 7, 0, 0, 7); c.fill();
+    const a = o.still ? 0 : t / 900;
+    c.strokeStyle = p.stone[2]; c.lineWidth = 1;
+    for (let i = 0; i < 4; i++) { const an = a + i * Math.PI / 2; c.beginPath(); c.moveTo(x + 16, y + 14); c.lineTo(x + 16 + Math.cos(an) * 10, y + 14 + Math.sin(an) * 6); c.stroke(); }
+    px(c, x + 14, y + 12, 4, 4, '#3a3a3a');
+  });
+  def('gears', { w: 2 }, (c, x, y, p, t, o) => {
+    px(c, x, y - 8, 32, 22, p.wood[2]);
+    const g = (cx, cy, r, dir) => {
+      const a = o.jammed ? 0.3 : (t / 700) * dir;
+      c.fillStyle = '#6a6a72'; c.beginPath(); c.arc(cx, cy, r, 0, 7); c.fill();
+      c.fillStyle = '#8a8a92';
+      for (let i = 0; i < 8; i++) { const an = a + i * Math.PI / 4; c.fillRect(cx + Math.cos(an) * r - 1, cy + Math.sin(an) * r - 1, 3, 3); }
+      c.fillStyle = '#3a3a3a'; c.fillRect(cx - 1, cy - 1, 3, 3);
+    };
+    g(x + 10, y + 2, 7, 1); g(x + 23, y + 5, 5, -1.4);
+  });
+  def('ladder', { block: false }, (c, x, y, p) => {
+    px(c, x + 3, y - 10, 2, 26, p.wood[2]);
+    px(c, x + 11, y - 10, 2, 26, p.wood[2]);
+    for (let i = -8; i < 16; i += 4) px(c, x + 3, y + i, 10, 1, p.wood[1]);
+  });
+  def('echo', { block: false, light: 16 }, (c, x, y, p, t) => {
+    const a = (Math.sin(t / 380 + x) + 1) / 2;
+    c.strokeStyle = `rgba(168,200,216,${0.3 + a * 0.5})`;
+    c.lineWidth = 1;
+    c.beginPath(); c.arc(x + 8, y + 6, 3 + a * 3, 0, 7); c.stroke();
+    c.beginPath(); c.arc(x + 8, y + 6, 7 + a * 2, 0.5, 2.6); c.stroke();
+  });
   // Water drawn over another tile (e.g. a gap in a bridge); blocks while present.
   def('water', {}, (c, x, y, p, t) => {
     px(c, x, y, 16, 16, p.water[0]);

@@ -213,3 +213,6 @@ Extra art: `RB.props.P.myprop = { id, w, h, block, draw(c,x,y,pal,t,o) }`,
 `RB.enemyArt.A.myart = (c, t, o) => {…}` (≈64px, centred), overworld
 creatures `RB.sprites.custom.x = (c, look, dir, frame) => {…}` (16×24).
 Story hooks needing code: `RB.hooks.name = async (args, ctx) => {…}` then `!hook name`.
+
+Story-state ambience: `alt: [{ if: 'flag', ambient: { dark: 0.5, weather: 'fireflies' }, night: true }]`
+on a map overrides `ambient` (and lights windows when `night`) while the condition holds.
