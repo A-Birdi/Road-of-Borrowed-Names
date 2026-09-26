@@ -36,14 +36,15 @@ a "repair" — any of those can hide or overwrite existing saves.
 ### Controls
 | Action | Keyboard | Mouse / touch |
 |---|---|---|
-| Move | Arrows or WASD (Shift to run) | Click/tap a tile to walk there |
-| Talk / examine / confirm | Enter, Space or Z | Click/tap the person or object |
-| Back / cancel | Esc, X or Backspace | ✕ buttons |
-| Menu (journal, notebook, items, map, settings, saves) | C or Tab | ≡ button |
-| Help lightbulb on Japanese words | H | 💡 button, or tap a word |
-| Dialogue log / map | L / M | Log button / map tab |
+| Move | Arrows or WASD (hold Shift to run) | Click/tap a tile to walk there, or the movement pad (slide your thumb) and hold **Run** |
+| Talk / examine / confirm | Enter, Space or Z | Click/tap the person or object, or the **Action** button (it says what it will do: Talk, Read, Look…) |
+| Back / cancel | Esc, X or Backspace | Back / Close buttons |
+| Menu: Journey, Words, Satchel, Map, plus Save & Load and Settings | C (Tab also opens it from the world) | **Menu** (top right) |
+| Word help on Japanese | H | **Word help** switch, then click/tap a word; press and hold a word on an answer button |
+| Dialogue history / map / translation | L / M / T | **History** and **Translation** in the dialogue |
 
-Keys can be remapped in Settings.
+Keys can be remapped in Settings › Controls, where you can also move the
+touch Action/Run buttons to the left and make the touch controls larger.
 
 ### Learning
 - **Profiles**: Foundations (kana from zero), Elementary, Intermediate and

@@ -80,10 +80,11 @@ Behaviour is checked by browser tests (`tests/e2e/folio.mjs` and others).
    (7)
 6. **Viewport and touch.** Full-screen surfaces are sized in `svh`, with a
    `vh` fallback. The on-screen keyboard is handled with `visualViewport`
-   (planned for the answer input, Phase B). Interface elements use
+   (a `--kb` inset for any screen, and in the answer field, the name field
+   and creation; pinch zoom is ignored). Interface elements use
    `touch-action: manipulation`. Pages use `pan-y pinch-zoom`. `none` is
-   reserved for the game canvas, the movement pad and the writing canvas
-   (moving it off `#app` is planned in Phase B). (8, 9, 10)
+   used only on the game canvas, the movement pad, the Run/Action buttons
+   and the writing canvas. (8, 9, 10)
 7. **Ornament stays outside the text layer.** No paper grain or texture sits
    under text or strokes, and stitching and weave appear only on the cloth.
    Furigana is always on, with no setting to turn it off. (2, project
@@ -198,8 +199,14 @@ whole number of device pixels. The field of view is about 12 tiles across
 on phones, 17 on tablets and 20–21 on desktops. Art authored at this
 resolution plugs in through `draw2`/`anim2` (tiles), `draw2` (props),
 `RB.props.STRUCT2` (buildings) and `RB.sprites.getArt` (characters).
-Anything not yet redrawn is drawn from its older 16-px art through a ×2
-transform. That is a stopgap, not the upgrade. Rules for the redrawn art:
+Everything in the world has been redrawn at this resolution: all ground
+tiles (`21_tileart.js`), all 139 props and the houses/towers
+(`26`–`29_*.js`, the Atlas art file and the chapter prop blocks), every
+character look and creature (`31`–`33_*.js`), 96-px portraits
+(`35`/`36_*.js`), every battle creature and battle backdrop
+(`77`–`79_*.js`), the title scene and the emote bubbles. The ×2 transform
+remains only as a fallback for anything added later without art. Rules the
+art follows:
 
 - light from the upper left
 - hue-shifted 3–5-step ramps per material
@@ -213,8 +220,10 @@ transform. That is a stopgap, not the upgrade. Rules for the redrawn art:
   only for the current and previous map
 
 `tests/e2e/art_shots.mjs` captures a world scene per region and specimen
-sheets of every tile, prop, sprite and portrait for review. What has
-actually been redrawn is recorded in `VALIDATION.md`.
+sheets of every tile, prop, sprite and portrait for review. Before/after
+captures of the real builds are in `docs/screenshots/`. Signs and papers
+suggest writing with brush dashes; no shapes that could pass for
+characters are used as ornament.
 
 ## 9. Things deliberately not done
 
