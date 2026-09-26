@@ -19,6 +19,7 @@ RB.ui.folio = (function () {
     close: '<path d="M6 6l12 12M18 6L6 18"/>',
     back: '<path d="M15 5l-7 7 7 7"/>',
     next: '<path d="M9 5l7 7-7 7"/>',
+    down: '<path d="M5 9l7 7 7-7"/>',
     main: '<path d="M7 3h10v18l-5-4-5 4z"/>',
     side: '<circle cx="12" cy="12" r="6.5"/><path d="M12 8.5v4l2.5 1.5"/>',
     companion: '<circle cx="9" cy="8" r="3"/><circle cx="16" cy="9" r="2.5"/><path d="M3.5 19c.8-4 3-6 5.5-6s4.7 2 5.5 6"/><path d="M14 14c2.6 0 4.5 1.8 5 5"/>',

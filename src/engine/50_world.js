@@ -378,6 +378,32 @@ RB.world = (function () {
       return;
     }
   }
+  // What interact() would do now, without doing it: {kind, label} or null.
+  // Used to label the touch Action button; mirrors interact()'s order.
+  const READ_PROP = /sign|board|notice|plaque|poster|letter|book|stone|marker|post|shrine|memorial|tablet|scroll|map|page|note/;
+  function talkable(n) {
+    const def = n.def;
+    if (typeof def.talk === 'string') return true;
+    if (Array.isArray(def.talk)) return def.talk.some((opt) => !opt.if || RB.state.test(s(), opt.if));
+    return false;
+  }
+  function frontAction() {
+    if (!W.map) return null;
+    const [fx, fy] = frontTile();
+    const n = actorAt(fx, fy);
+    if (n && n.foe) return { kind: 'foe', label: 'Face' };
+    if (n && talkable(n)) return { kind: 'talk', label: 'Talk' };
+    const pr = propAt(fx, fy);
+    const cpr = pr || propAt(fx, fy, true);
+    if (cpr && (cpr.p === 'counter' || cpr.across)) {
+      const [dx, dy] = DIRS[W.player.dir];
+      const n2 = actorAt(fx + dx, fy + dy);
+      if (n2 && talkable(n2)) return { kind: 'talk', label: 'Talk' };
+    }
+    if (pr) return { kind: 'prop', label: !pr.scene && READ_PROP.test(pr.p) ? 'Read' : 'Look' };
+    if (W.comp && W.comp.x === fx && W.comp.y === fy) return { kind: 'companion', label: 'Chat' };
+    return null;
+  }
   function startFoe(f) {
     const st = s();
     const e = f.def;
@@ -475,6 +501,6 @@ RB.world = (function () {
 
   return {
     W, DIRS, enter, update, interact, tapTile, refreshActors, placeCompanion, emote, actorById, scriptMove,
-    frontTile, checkFoeContact, faceTo, unstick, blocked, _tryMove: tryMovePlayer,
+    frontTile, frontAction, checkFoeContact, faceTo, unstick, blocked, _tryMove: tryMovePlayer,
   };
 })();

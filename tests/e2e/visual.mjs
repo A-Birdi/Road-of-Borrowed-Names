@@ -107,7 +107,7 @@ const STATES = {
     await STATES.dialogue(p);
     await p.evaluate(() => { RB.game.settings.lightbulb = true; });
     const t = await p.$('.dlg .jt >> nth=3');
-    if (t) await t.click();
+    if (t) { try { await t.tap({ timeout: 3000 }); } catch (e) { await t.click(); } } // a finger on phones, the mouse elsewhere
     await settle(p, 500);
   },
   async chal(p) {
@@ -144,7 +144,8 @@ const report = [];
 for (const [w, h] of vps) {
   for (const name of Object.keys(STATES)) {
     if (only && !only.includes(name)) continue;
-    const ctx = await browser.newContext({ viewport: { width: w, height: h }, hasTouch: w < 700, isMobile: w < 700, deviceScaleFactor: 2 });
+    const mobile = w < 700 || h < 500; // phones in portrait or landscape
+    const ctx = await browser.newContext({ viewport: { width: w, height: h }, hasTouch: mobile, isMobile: mobile, deviceScaleFactor: 2 });
     const p = await ctx.newPage();
     const errors = [];
     p.on('pageerror', (e) => errors.push(e.message));

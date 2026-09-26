@@ -22,6 +22,8 @@ RB.game = (function () {
       vol: { master: 0.8, music: 0.55, sfx: 0.75, voice: 1 }, muted: false,
       voice: { auto: false, uri: null, rate: 0.95 }, lightbulb: true, input: 'hand',
       binds: null, touch: 'auto', strokePractice: false, romaji: true,
+      // touch layout (older settings records lack these; the defaults keep the previous layout)
+      touchHand: 'right', touchSize: 'normal',
     };
   }
 
@@ -29,16 +31,24 @@ RB.game = (function () {
   function mode() {
     return G.modes.length ? G.modes[G.modes.length - 1] : 'none';
   }
+  // the current mode is mirrored on <body data-mode> so presentation (touch
+  // controls, HUD) can follow it without polling
+  function syncMode() {
+    if (typeof document !== 'undefined' && document.body) document.body.dataset.mode = mode();
+  }
   function pushMode(m) {
     G.modes.push(m);
     RB.input.clearHeld();
+    syncMode();
   }
   function popMode(m) {
     const i = G.modes.lastIndexOf(m);
     if (i >= 0) G.modes.splice(i, 1);
+    syncMode();
   }
   function setBase(m) {
     G.modes = [m];
+    syncMode();
   }
 
   // ---- loop --------------------------------------------------------------------
@@ -106,6 +116,8 @@ RB.game = (function () {
     document.body.classList.toggle('ui-ja', st.uiLang === 'ja');
     const touch = st.touch === 'on' || (st.touch === 'auto' && typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches);
     document.body.classList.toggle('touch', touch);
+    document.body.classList.toggle('touch-left', st.touchHand === 'left');
+    document.body.classList.toggle('touch-large', st.touchSize === 'large');
     applyAudio();
   }
   function applyAudio() {

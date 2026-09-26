@@ -125,7 +125,9 @@ RB.ui.settings = (function () {
       h += '<p class="muted small">Choose Change, then press the key you want. Each key does one thing; taking a key from another action removes it there.</p><ul class="entries keys">' +
         Object.keys(RB.input.DEFAULT_BINDS).map((a) => '<li class="entry"><span class="mark">' + I('next') + '</span><div><div class="t">' + esc(RB.input.ACTION_LABELS[a]) + '</div><div class="muted small keycaps">' + binds[a].map((k) => '<kbd>' + esc(RB.input.keyName(k)) + '</kbd>').join(' ') + '</div></div><button class="pbtn" data-bind="' + a + '">Change</button></li>').join('') + '</ul>' +
         '<div class="row-acts"><button class="pbtn" data-a="resetbinds">Reset all keys</button></div>' +
-        radios('touch', 'On-screen touch controls', [['auto', 'Automatic'], ['on', 'Always'], ['off', 'Never']], null, 'Automatic shows them on touch screens.');
+        radios('touch', 'On-screen touch controls', [['auto', 'Automatic'], ['on', 'Always'], ['off', 'Never']], null, 'Automatic shows them on touch screens.') +
+        radios('touchHand', 'Action and Run buttons on the', [['right', 'Right (move on the left)'], ['left', 'Left (move on the right)']]) +
+        radios('touchSize', 'Touch control size', [['normal', 'Standard'], ['large', 'Large']]);
     } else if (g === 'audio') {
       const vs = RB.voice ? RB.voice.status() : { supported: false, localJaCount: 0, note: 'Speech synthesis is not available.' };
       const voices = RB.voice && RB.voice.japaneseVoices ? RB.voice.japaneseVoices() : [];

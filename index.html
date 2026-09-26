@@ -143,8 +143,10 @@ body.high-contrast {
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; background: #0e1116; color: var(--fg); overflow: hidden; font-family: var(--ui-font); font-size: var(--base); -webkit-text-size-adjust: 100%; }
-#app { position: fixed; inset: 0; touch-action: none; }
-#world { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; image-rendering: crisp-edges; }
+#app { position: fixed; inset: 0; }
+/* gestures are suppressed only where the game needs them (the world canvas, the
+ * movement pad, the writing canvas); menus keep scrolling and pinch-zoom */
+#world { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; image-rendering: crisp-edges; touch-action: none; }
 #ui, #overlay { position: absolute; inset: 0; pointer-events: none; }
 #ui > *, #overlay > * { pointer-events: auto; }
 #overlay > .fade:not(.on), #overlay > .notices, #overlay > .place { pointer-events: none; }
@@ -185,51 +187,12 @@ body.bulb-on .jline .jt:hover, .jline .jt.active { background: rgba(231, 196, 11
 .enline { font-family: var(--en-font); line-height: 1.45; }
 
 /* ---- dialogue ---- */
-.dlg {
-  position: absolute; left: 50%; bottom: max(12px, env(safe-area-inset-bottom)); transform: translateX(-50%);
-  width: min(980px, calc(100vw - 20px)); min-height: 9em; background: var(--panel); border: 2px solid var(--line-soft);
-  border-radius: 10px; box-shadow: 0 6px 30px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.04);
-  display: grid; grid-template-columns: auto 1fr; gap: 0 0.9em; padding: 0.8em 1em 0.6em;
-}
-.dlg.noportrait { grid-template-columns: 1fr; }
-.dlg .portrait { width: 104px; height: 104px; image-rendering: pixelated; border-radius: 8px; background: #0c0e18; border: 1px solid var(--line-soft); align-self: start; }
-.dlg .who { font-weight: 600; color: var(--accent); font-size: 0.95em; margin-bottom: 0.15em; display: flex; gap: 0.6em; align-items: baseline; }
-.dlg .who .jp { font-size: 0.85em; color: var(--fg-dim); font-weight: 400; }
-.dlg .main { font-size: 1.18em; min-height: 2.2em; }
-.dlg .main.jline { font-size: 1.3em; }
-.dlg .sub { font-size: 0.95em; color: var(--fg-dim); margin-top: 0.25em; }
-.dlg .sub.jline { font-size: 1.05em; color: #d8d0bc; }
-.dlg .sub.tap { cursor: pointer; color: #8f8a7c; font-style: italic; }
-.dlg .ctrl { grid-column: 1 / -1; display: flex; gap: 0.4em; justify-content: flex-end; align-items: center; margin-top: 0.35em; flex-wrap: wrap; }
-.dlg .ctrl .btn { padding: 0.2em 0.55em; min-height: 1.9em; font-size: 0.8em; }
-.dlg .next { animation: bob 1s infinite; color: var(--accent); margin-left: 0.3em; }
-body.reduced-motion .dlg .next { animation: none; }
-@keyframes bob { 50% { transform: translateY(3px); } }
 .reveal-hide { opacity: 0; }
 .reveal-show { opacity: 1; transition: opacity 0.12s; }
-.choices { position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(12.5em + 12px); display: flex; flex-direction: column; gap: 0.45em; width: min(680px, calc(100vw - 24px)); }
-.choices .btn { text-align: left; padding: 0.6em 1em; font-size: 1.02em; background: var(--panel); }
-.choices .btn .jline { font-size: 1.05em; line-height: 1.9; }
-.choices .btn .en { display: block; color: var(--fg-dim); font-size: 0.9em; }
 
 /* ---- HUD ---- */
-.hud { position: absolute; top: max(8px, env(safe-area-inset-top)); right: 8px; display: flex; gap: 6px; }
-.hud .btn { min-width: 2.6em; min-height: 2.6em; padding: 0.3em 0.6em; background: rgba(20,22,38,0.8); }
-.hud .bulb svg { width: 1.3em; height: 1.3em; vertical-align: middle; }
-.hud .bulb.on { border-color: var(--accent); box-shadow: 0 0 12px rgba(231,196,110,0.5); }
-.place { position: absolute; top: 14%; left: 50%; transform: translateX(-50%); text-align: center; background: var(--panel); border: 1px solid var(--line-soft); border-radius: 8px; padding: 0.5em 1.4em; transition: opacity 0.6s; }
-.place .jline { font-size: 1.4em; }
-.notices { position: absolute; top: max(8px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 6px; align-items: center; width: min(640px, calc(100vw - 140px)); pointer-events: none; }
-.notice { background: var(--panel); border: 1px solid var(--line-soft); padding: 0.5em 0.9em; border-radius: 8px; font-size: 0.9em; pointer-events: auto; }
-.notice.warn { border-color: var(--warn); }
-.notice.bad { border-color: var(--bad); }
-.toast { background: var(--panel); border: 1px solid var(--line); padding: 0.55em 1em; border-radius: 8px; display: flex; gap: 0.8em; align-items: center; }
-.toast .kind { color: var(--accent); font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.08em; }
 .fade { position: absolute; inset: 0; background: #07080d; opacity: 0; pointer-events: none; transition: opacity 0.22s; }
 .fade.on { opacity: 1; pointer-events: auto; }
-.card { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(7,8,13,0.92); text-align: center; gap: 0.5em; }
-.card .jline { font-size: 2em; }
-.card .en { font-size: 1.2em; color: var(--fg-dim); }
 .shake { animation: shake 0.3s; }
 @keyframes shake { 25% { transform: translate(2px, 0); } 75% { transform: translate(-2px, 0); } }
 
@@ -283,18 +246,6 @@ input[type=text]:focus, select:focus { outline: 2px solid var(--focus); }
 @media (max-width: 640px) { .create { grid-template-columns: 1fr; } .create .preview canvas { width: 128px; height: 192px; } }
 
 /* ---- lightbulb help ---- */
-.help { position: absolute; max-width: min(380px, calc(100vw - 16px)); background: #fffaf0; color: #1d1a22; border-radius: 10px; padding: 0.7em 0.85em; box-shadow: 0 8px 30px rgba(0,0,0,0.5); font-size: 0.95em; z-index: 50; border: 2px solid #e7c46e; }
-.help.pinned { border-color: #6a8ad8; }
-.help .hw { font-family: var(--jp-font); font-size: 1.6em; line-height: 1.8; }
-.help .hr { font-family: var(--jp-font); color: #5a4a2a; }
-.help .rom { color: #3a5a8a; font-style: italic; }
-.help .mean { margin: 0.3em 0; font-family: var(--en-font); font-size: 1.05em; }
-.help .note { color: #4a4450; font-size: 0.9em; margin-top: 0.3em; line-height: 1.35; }
-.help .mora { display: inline-flex; gap: 2px; margin-top: 0.2em; }
-.help .mora span { border: 1px solid #c8b890; border-radius: 4px; padding: 0 0.3em; font-family: var(--jp-font); background: #fff; }
-.help .acts { display: flex; gap: 4px; margin-top: 0.5em; flex-wrap: wrap; }
-.help .acts .btn { background: #efe6cc; color: #2a2430; border-color: #c8b890; font-size: 0.8em; }
-.help.docked { top: 56px !important; right: 8px !important; left: auto !important; }
 
 /* ---- writing pad & challenges ---- */
 .chal { position: absolute; inset: 0; display: flex; align-items: stretch; justify-content: center; background: rgba(8,9,16,0.72); }
@@ -361,19 +312,6 @@ input[type=text]:focus, select:focus { outline: 2px solid var(--focus); }
 .clog { position: absolute; left: 50%; top: 32%; transform: translateX(-50%); background: var(--panel); border: 1px solid var(--line-soft); border-radius: 8px; padding: 0.5em 0.9em; max-width: min(640px, 92vw); text-align: center; }
 
 /* ---- touch ---- */
-.touchpad { display: none; }
-body.touch .touchpad { display: block; }
-.touchpad .tp-dpad { position: absolute; left: 14px; bottom: calc(14px + env(safe-area-inset-bottom)); width: 150px; height: 150px; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); opacity: 0.8; }
-.touchpad .tp-dpad button { background: rgba(20,22,38,0.75); border: 1px solid var(--line-soft); border-radius: 10px; color: var(--fg); font-size: 1.2em; touch-action: none; }
-.touchpad [data-d=up] { grid-column: 2; grid-row: 1; }
-.touchpad [data-d=left] { grid-column: 1; grid-row: 2; }
-.touchpad [data-d=right] { grid-column: 3; grid-row: 2; }
-.touchpad [data-d=down] { grid-column: 2; grid-row: 3; }
-.touchpad .tp-btns { position: absolute; right: 14px; bottom: calc(22px + env(safe-area-inset-bottom)); display: flex; gap: 12px; align-items: flex-end; opacity: 0.85; }
-.touchpad .tp-btns button { width: 64px; height: 64px; border-radius: 50%; background: rgba(20,22,38,0.8); border: 2px solid var(--line-soft); color: var(--fg); font-weight: 700; font-size: 1.2em; touch-action: none; }
-.touchpad .tp-btns .tp-menu { width: 48px; height: 48px; }
-body.touch .dlg { bottom: calc(12px + env(safe-area-inset-bottom)); }
-body.in-dialogue .touchpad .tp-dpad, body.in-panel .touchpad { display: none; }
 
 /* ==== src/styles/20_folio.css ==== */
 /* Wayfarer's Folio — shared components: cloth frame, paper leaves, layered
@@ -736,6 +674,307 @@ button.entry .t, button.entry .kind { display: block; }
 .keys .keycaps { margin-top: 0.2em; }
 kbd { display: inline-block; min-width: 1.6em; padding: 0 0.4em; border: 1px solid var(--ink-3); border-bottom-width: 2px; border-radius: 3px; background: #fffaf0; color: var(--ink); font: 0.9em var(--ui-font); text-align: center; }
 body.high-contrast .pv-box { background: #000; color: #fff; }
+
+/* ==== src/styles/50_play.css ==== */
+/* In-play interface in folio materials: dialogue sheet and replies, word
+ * help (note card / bottom sheet), HUD tags, touch controls, notices and
+ * toasts, place banner, chapter cards, confirmation sheet, and the shared
+ * cloth button (.btn) and generic panel (.panel) still used by some screens. */
+
+/* ---- paper surfaces: ink, furigana and word-help underline on paper ---- */
+.dlg-sheet, .choice, .help, .notice, .toast, .place, .card-slip, .csheet, .panel { --jt-line: rgba(38, 31, 21, 0.45); }
+.dlg-sheet rt, .choice rt, .help rt, .toast rt, .place rt, .card-slip rt, .csheet rt, .panel rt { color: var(--rt-ink); }
+body.bulb-on .dlg-sheet .jline .jt, body.bulb-on .choice .jline .jt, body.bulb-on .toast .jline .jt,
+body.bulb-on .place .jline .jt, body.bulb-on .card-slip .jline .jt, body.bulb-on .panel .jline .jt { text-decoration-color: var(--jt-line); }
+.dlg-sheet .jline .jt:hover, .dlg-sheet .jline .jt.active, .choice .jline .jt.active, .panel .jline .jt.active { background: rgba(193, 138, 42, 0.2); }
+
+/* ---- shared cloth button and generic panel (screens not yet rebuilt) ---- */
+.btn {
+  background: var(--cloth-700); color: var(--on-cloth); border: 1px solid var(--paper-edge); border-radius: var(--r-2);
+  min-height: var(--tap); padding: 0.45em 0.95em; box-shadow: 0 2px 0 rgba(0,0,0,0.25);
+}
+.btn:hover { background: var(--cloth-600); border-color: var(--paper-edge); }
+.btn:focus-visible { outline: 3px solid var(--focus-cloth); outline-offset: 2px; }
+.btn.primary { background: var(--cloth-700); border-color: var(--ribbon); box-shadow: inset 0 -3px 0 var(--ribbon); }
+.btn.danger { background: var(--danger-bg); color: var(--danger-ink); border-color: var(--danger-ink); }
+.btn.small { min-height: 40px; }
+.panel {
+  background: var(--paper); color: var(--ink); border: 1px solid var(--paper-edge); border-radius: 6px;
+  box-shadow: 0 18px 50px rgba(0,0,0,0.55), 0 2px 0 var(--paper-3);
+}
+.panel header { background: var(--cloth-800); background-image: var(--cloth-weave); color: var(--on-cloth); border-bottom: 1px solid var(--paper-edge); border-radius: 5px 5px 0 0; }
+.panel header h2 { color: var(--on-cloth); font-family: var(--serif); }
+.panel h3 { color: var(--ink); font-family: var(--serif); border-bottom: 1px solid var(--rule); padding-bottom: 0.2em; }
+.panel .dim, .panel .muted { color: var(--ink-3); }
+.panel .en, .panel .enline { color: var(--ink-2); }
+.panel .foot { border-top: 1px solid var(--rule); background: var(--paper-2); border-radius: 0 0 5px 5px; }
+.panel .body { color: var(--ink); }
+.panel .body .btn:not(.primary):not(.danger) { background: var(--paper); color: var(--ink); border-color: var(--ink-3); box-shadow: 0 2px 0 var(--paper-3); }
+.panel .body .btn:not(.primary):not(.danger):hover { background: var(--paper-2); }
+.panel .body .btn:focus-visible { outline-color: var(--focus-paper); }
+.scrim { background: rgba(8, 10, 22, 0.62); }
+
+/* ---- dialogue ------------------------------------------------------------- */
+.dlg {
+  position: absolute; left: 50%; transform: translateX(-50%);
+  bottom: max(12px, env(safe-area-inset-bottom)); width: min(920px, calc(100vw - 2 * var(--gutter)));
+  display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "por tab" "por sheet";
+  column-gap: 12px; align-items: end; color: var(--ink);
+}
+.dlg.noportrait, .dlg.narration { grid-template-columns: minmax(0, 1fr); grid-template-areas: "tab" "sheet"; }
+.dlg .portrait {
+  grid-area: por; width: 116px; height: 116px; image-rendering: pixelated; align-self: end; margin-bottom: 10px;
+  background: var(--paper-3); border: 4px solid var(--paper); outline: 1px solid var(--paper-edge);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.45); border-radius: 2px;
+}
+.dlg-tab { grid-area: tab; justify-self: start; position: relative; z-index: 1; margin: 0 0 -1px 14px; min-width: 0; max-width: 100%; }
+.dlg .who {
+  display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 0.7em; padding: 5px 16px 3px; min-height: 34px;
+  background: var(--paper-2); border: 1px solid var(--paper-edge); border-bottom: 0; border-radius: 8px 8px 0 0;
+  box-shadow: inset 0 3px 0 var(--ribbon);
+}
+.dlg .who .nm { font-family: var(--serif); font-weight: 600; font-size: 1.05em; color: var(--ink); }
+.dlg .who .jp { font-size: 0.9em; color: var(--ink-2); }
+.dlg .who .jp .jline { line-height: 1.7; }
+.dlg.narration .dlg-tab { display: none; }
+.dlg-sheet {
+  grid-area: sheet; display: flex; flex-direction: column; min-height: 0; max-height: calc(56 * var(--vh));
+  background: var(--paper); color: var(--ink); border: 1px solid var(--paper-edge); border-radius: 3px 8px 8px 8px;
+  box-shadow: 0 14px 36px rgba(0,0,0,0.5), 0 2px 0 var(--paper-3), 0 4px 0 var(--paper-edge);
+}
+.dlg.narration .dlg-sheet { border-radius: 8px; font-style: normal; }
+.dlg .txt {
+  flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y pinch-zoom;
+  padding: 14px 20px 10px; cursor: pointer;
+}
+.dlg .main { font-size: 1.16em; line-height: 1.55; min-height: 1.6em; color: var(--ink); }
+.dlg .main .enline { color: var(--ink); line-height: 1.5; }
+.dlg .main .jline { font-size: 1.12em; line-height: 2.05; color: var(--ink); }
+.dlg.narration .main .enline { font-style: italic; }
+.dlg .sub { margin-top: 0.5em; padding-top: 0.45em; border-top: 1px solid var(--rule); color: var(--ink-2); font-size: 1em; }
+.dlg .sub:empty { display: none; }
+.dlg .sub .enline { color: var(--ink-2); }
+.dlg .sub .jline { color: var(--ink-2); font-size: 1.04em; }
+.dlg .sub.tap { font-style: italic; color: var(--river); text-decoration: underline; text-underline-offset: 0.2em; min-height: var(--tap); display: flex; align-items: center; cursor: pointer; }
+.dlg .ctrl {
+  display: flex; align-items: flex-end; gap: 8px; padding: 6px 10px 10px 12px;
+  border-top: 1px dotted var(--paper-edge); background: linear-gradient(var(--paper), var(--paper-2));
+  border-radius: 0 0 8px 8px;
+}
+.dlg .aux { display: flex; flex-wrap: wrap; gap: 4px; flex: 1 1 auto; min-width: 0; }
+.dbtn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.4em; min-height: var(--tap); min-width: var(--tap);
+  padding: 0 0.75em; background: transparent; color: var(--ink-2); border: 1px solid transparent; border-radius: var(--r-1);
+  font: inherit; font-size: 0.88em; cursor: pointer; touch-action: manipulation;
+}
+.dbtn svg { width: 1.2em; height: 1.2em; flex: none; }
+.dbtn:hover { background: rgba(193, 138, 42, 0.12); color: var(--ink); }
+.dbtn[aria-pressed="true"] { color: var(--ink); border-color: var(--ink-3); box-shadow: inset 0 -3px 0 var(--ribbon); background: rgba(255,255,255,0.4); }
+.dbtn:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+.dbtn.primary {
+  flex: none; background: var(--ink); color: var(--paper); border-color: var(--ink); font-weight: 600; font-size: 0.98em;
+  padding: 0 1.1em 0 1.3em; min-width: 7.2em; box-shadow: 0 2px 0 var(--ribbon-deep);
+}
+.dbtn.primary:hover { background: #3a2f20; color: var(--paper); }
+.dbtn.primary svg { transition: transform var(--t-quick) var(--ease); }
+.dbtn.primary:hover svg { transform: translateX(2px); }
+body.high-contrast .dlg .who { box-shadow: inset 0 3px 0 #000; }
+/* more of the line below the fold: fade the last lines; Next reads "More" */
+.dlg.more .txt { -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 30px), rgba(0,0,0,0.25)); mask-image: linear-gradient(to bottom, #000 calc(100% - 30px), rgba(0,0,0,0.25)); }
+@media (max-height: 440px) { /* landscape phones: the sheet may use most of the height */
+  .dlg-sheet { max-height: calc(100 * var(--vh) - 64px); }
+  .dlg .portrait { width: 84px; height: 84px; }
+  .dlg .txt { padding-top: 10px; }
+}
+
+/* phones: a full-width sheet on the bottom edge; portrait beside the speaker tab */
+@media (max-width: 599px) {
+  .dlg {
+    left: 0; right: 0; transform: none; width: auto; bottom: 0;
+    grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "por tab" "sheet sheet"; column-gap: 8px;
+  }
+  .dlg.noportrait, .dlg.narration { grid-template-columns: minmax(0, 1fr); grid-template-areas: "tab" "sheet"; }
+  .dlg .portrait { width: 64px; height: 64px; margin: 0 0 6px 8px; border-width: 3px; }
+  .dlg-tab { margin-left: 0; align-self: end; }
+  .dlg-sheet { border-radius: 10px 10px 0 0; max-height: calc(60 * var(--vh)); border-left: 0; border-right: 0; }
+  .dlg .txt { padding: 12px 16px 8px; }
+  .dlg .ctrl { padding: 4px 8px calc(8px + env(safe-area-inset-bottom)); border-radius: 0; }
+  .dlg .aux { gap: 0; }
+  .dlg .aux .dbtn { flex-direction: column; gap: 1px; padding: 3px 0.35em; font-size: 0.72em; min-width: 50px; }
+  .dlg .aux .dbtn svg { width: 1.6em; height: 1.6em; }
+  .dbtn.primary { min-width: 6.4em; min-height: 48px; }
+}
+
+/* ---- replies (choices) ------------------------------------------------------- */
+.choices {
+  position: absolute; left: 50%; transform: translateX(-50%); width: min(760px, calc(100vw - 2 * var(--gutter)));
+  bottom: max(16px, env(safe-area-inset-bottom)); max-height: calc(100 * var(--vh) - 96px);
+  display: flex; flex-direction: column; gap: 8px; padding: 4px; overflow-y: auto; overscroll-behavior: contain;
+  touch-action: pan-y pinch-zoom;
+}
+.choices.with-dlg { bottom: calc(var(--dlg-h, 0px) + 14px); max-height: calc(100 * var(--vh) - var(--dlg-h, 0px) - 80px); }
+.choice {
+  display: grid; grid-template-columns: 2em minmax(0, 1fr); gap: 0.2em 0.7em; align-items: center; text-align: left; width: 100%;
+  min-height: 52px; padding: 0.55em 1em 0.55em 0.6em; background: var(--paper); color: var(--ink);
+  border: 1px solid var(--paper-edge); border-left: 5px solid var(--paper-3); border-radius: 3px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.4); font: inherit; font-size: 1.02em; cursor: pointer; touch-action: manipulation;
+}
+.choice .n { display: grid; place-items: center; width: 1.8em; height: 1.8em; border: 1px solid var(--ink-3); border-radius: 50%; font-size: 0.82em; color: var(--ink-2); }
+.choice .c { min-width: 0; }
+.choice .enline { color: var(--ink); }
+.choice .jline { color: var(--ink); line-height: 1.95; }
+.choice .en { display: block; color: var(--ink-2); font-size: 0.92em; margin-top: 0.1em; }
+.choice:hover { border-left-color: var(--ribbon); background: #fbf5e6; }
+.choice:focus-visible { outline: 3px solid var(--focus-cloth); outline-offset: 2px; border-left-color: var(--ribbon); }
+.choice:active { transform: translateY(1px); }
+@media (max-width: 599px) { .choices { width: calc(100vw - 16px); } }
+
+/* ---- word help: a note card (wide) or a sheet (narrow) --------------------------- */
+.help {
+  position: absolute; z-index: 50; width: min(400px, calc(100vw - 16px)); max-height: min(72vh, 540px);
+  display: flex; flex-direction: column; background: var(--paper); color: var(--ink);
+  border: 1px solid var(--paper-edge); border-top: 4px solid var(--ribbon); border-radius: 4px;
+  box-shadow: 0 14px 40px rgba(0,0,0,0.55); font-size: 0.95em; line-height: 1.45;
+}
+.help.pinned { border-top-color: var(--river); }
+.help .hhead { display: flex; align-items: flex-start; gap: 8px; padding: 8px 8px 6px 14px; border-bottom: 1px solid var(--rule); }
+.help .hw { flex: 1; min-width: 0; font-family: var(--jp-font); font-size: 1.75em; line-height: 1.25; color: var(--ink); overflow-wrap: anywhere; }
+.help .hr { display: block; font-size: 0.52em; color: var(--ink-2); letter-spacing: 0.04em; margin-top: 0.15em; }
+.help .hclose {
+  flex: none; display: inline-flex; align-items: center; gap: 0.35em; min-height: var(--tap); padding: 0 0.7em;
+  background: transparent; color: var(--ink-2); border: 1px solid var(--paper-edge); border-radius: var(--r-1); font: inherit; font-size: 0.9em; cursor: pointer;
+}
+.help .hclose svg { width: 1.1em; height: 1.1em; }
+.help .hclose:hover { background: var(--paper-2); color: var(--ink); }
+.help .hclose:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+.help .hbody { overflow-y: auto; overscroll-behavior: contain; padding: 8px 14px 6px; }
+.help .rom { color: var(--river); font-style: italic; }
+.help .mean { margin: 0.35em 0; font-family: var(--serif); font-size: 1.06em; color: var(--ink); }
+.help .mean .lab { display: block; font-family: var(--ui-font); font-size: 0.66em; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+.help .note { color: var(--ink-2); font-size: 0.92em; margin-top: 0.35em; }
+.help .small { font-size: 0.88em; color: var(--ink-2); }
+.help .mora { display: inline-flex; flex-wrap: wrap; gap: 3px; margin-top: 0.2em; vertical-align: middle; }
+.help .mora span { border: 1px solid var(--paper-edge); border-radius: 3px; padding: 0 0.35em; font-family: var(--jp-font); background: #fffaf0; color: var(--ink); }
+.help .acts { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 12px 12px; border-top: 1px dotted var(--rule); }
+.help .acts .pbtn { font-size: 0.86em; }
+.help .acts .pbtn[aria-pressed="true"] { box-shadow: inset 0 -3px 0 var(--river); }
+.help.docked { top: 64px !important; right: 8px !important; left: auto !important; }
+.help.sheet {
+  left: 0 !important; right: 0; top: auto !important; bottom: 0; width: 100%; max-height: calc(62 * var(--vh));
+  border-radius: 12px 12px 0 0; border-left: 0; border-right: 0; padding-bottom: env(safe-area-inset-bottom);
+  box-shadow: 0 -10px 40px rgba(0,0,0,0.55);
+}
+.help.sheet .acts .pbtn { flex: 1 1 auto; }
+
+/* ---- HUD --------------------------------------------------------------------- */
+.hud { position: absolute; top: max(8px, env(safe-area-inset-top)); right: max(8px, env(safe-area-inset-right)); display: flex; gap: 6px; }
+body.in-panel .hud, body.in-dialogue .hud { display: none; }
+.hbtn {
+  display: inline-flex; align-items: center; gap: 0.4em; min-height: var(--tap); min-width: var(--tap); padding: 0 0.8em;
+  background: rgba(28, 35, 70, 0.92); background-image: var(--cloth-weave); color: var(--on-cloth);
+  border: 1px solid var(--paper-edge); border-radius: var(--r-2); font: inherit; font-size: 0.88em; cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.35); touch-action: manipulation;
+}
+.hbtn svg { width: 1.3em; height: 1.3em; flex: none; }
+.hbtn .st { font-size: 0.8em; color: var(--on-cloth-2); padding-left: 0.4em; border-left: 1px solid rgba(241, 233, 212, 0.3); }
+.hbtn.on { border-color: var(--ribbon); box-shadow: inset 0 -3px 0 var(--ribbon), 0 4px 12px rgba(0,0,0,0.35); }
+.hbtn.on svg { color: var(--ribbon); }
+.hbtn:hover { background-color: var(--cloth-700); }
+.hbtn:focus-visible { outline: 3px solid var(--focus-cloth); outline-offset: 2px; }
+body.high-contrast .hbtn { background: #000; }
+
+/* ---- touch controls (world only) ------------------------------------------------ */
+.touchpad { display: none; }
+body.touch[data-mode="world"] .touchpad { display: block; }
+body.in-panel .touchpad, body.in-dialogue .touchpad { display: none !important; }
+.touchpad .tp-move {
+  position: absolute; left: max(14px, env(safe-area-inset-left)); bottom: calc(14px + env(safe-area-inset-bottom));
+  width: 148px; height: 148px; border-radius: 50%; touch-action: none; user-select: none; -webkit-user-select: none;
+  background: radial-gradient(circle, rgba(21, 26, 52, 0.35) 0 30%, rgba(21, 26, 52, 0.62) 31% 100%);
+  border: 1px solid rgba(168, 150, 108, 0.75); box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+}
+.touchpad .tp-ring { position: absolute; left: 50%; top: 50%; width: 30%; height: 30%; transform: translate(-50%, -50%); border-radius: 50%; border: 1px dashed rgba(241, 233, 212, 0.35); pointer-events: none; }
+.touchpad .tp-move button {
+  position: absolute; width: 33%; height: 33%; display: grid; place-items: center; padding: 0;
+  background: transparent; border: 0; border-radius: 50%; color: var(--on-cloth); pointer-events: none;
+}
+.touchpad .tp-move button svg { width: 60%; height: 60%; }
+.touchpad [data-d=up] { left: 33.5%; top: 1%; }
+.touchpad [data-d=down] { left: 33.5%; bottom: 1%; }
+.touchpad [data-d=left] { left: 1%; top: 33.5%; }
+.touchpad [data-d=right] { right: 1%; top: 33.5%; }
+.touchpad .tp-move[data-dir=up] [data-d=up], .touchpad .tp-move[data-dir=down] [data-d=down],
+.touchpad .tp-move[data-dir=left] [data-d=left], .touchpad .tp-move[data-dir=right] [data-d=right] { color: var(--ribbon); background: rgba(193, 138, 42, 0.28); }
+.touchpad .tp-acts {
+  position: absolute; right: max(14px, env(safe-area-inset-right)); bottom: calc(18px + env(safe-area-inset-bottom));
+  display: flex; align-items: flex-end; gap: 12px;
+}
+.touchpad .tp-acts button { touch-action: none; user-select: none; -webkit-user-select: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; border-radius: 50%; font: inherit; padding: 0; }
+.touchpad .tp-acts .k { font-size: 0.68em; font-weight: 700; opacity: 0.8; letter-spacing: 0.04em; }
+.touchpad .tp-act {
+  width: 80px; height: 80px; background: rgba(242, 233, 211, 0.95); color: var(--ink); border: 2px solid var(--paper-edge);
+  box-shadow: 0 3px 0 var(--paper-3), 0 8px 18px rgba(0,0,0,0.4);
+}
+.touchpad .tp-act .l { font-size: 1em; font-weight: 700; }
+.touchpad .tp-act.idle { background: rgba(231, 219, 189, 0.82); color: var(--ink-2); }
+.touchpad .tp-act.down { transform: translateY(2px); box-shadow: 0 1px 0 var(--paper-3), 0 4px 10px rgba(0,0,0,0.4); }
+.touchpad .tp-run {
+  width: 58px; height: 58px; background: rgba(28, 35, 70, 0.85); color: var(--on-cloth); border: 1px solid var(--paper-edge);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.35);
+}
+.touchpad .tp-run .l { font-size: 0.85em; font-weight: 600; }
+.touchpad .tp-run.on { background: var(--ribbon-deep); border-color: var(--ribbon); }
+body.touch-left .touchpad .tp-move { left: auto; right: max(14px, env(safe-area-inset-right)); }
+body.touch-left .touchpad .tp-acts { right: auto; left: max(14px, env(safe-area-inset-left)); flex-direction: row-reverse; }
+body.touch-large .touchpad .tp-move { width: 178px; height: 178px; }
+body.touch-large .touchpad .tp-act { width: 96px; height: 96px; }
+body.touch-large .touchpad .tp-run { width: 68px; height: 68px; }
+@media (max-height: 440px) { /* landscape phones: tuck the controls closer to the corners */
+  .touchpad .tp-move { width: 128px; height: 128px; bottom: calc(8px + env(safe-area-inset-bottom)); }
+  .touchpad .tp-acts { bottom: calc(10px + env(safe-area-inset-bottom)); }
+  .touchpad .tp-act { width: 70px; height: 70px; }
+}
+
+/* ---- notices, toasts, place banner ----------------------------------------------- */
+.notices { top: max(10px, env(safe-area-inset-top)); width: min(560px, calc(100vw - 32px)); }
+@media (max-width: 599px) { .notices { top: calc(max(8px, env(safe-area-inset-top)) + 52px); } }
+.notice, .toast {
+  background: var(--paper); color: var(--ink); border: 1px solid var(--paper-edge); border-left: 4px solid var(--ribbon);
+  border-radius: 3px; box-shadow: 0 8px 22px rgba(0,0,0,0.45); padding: 0.55em 0.95em; font-size: 0.92em; line-height: 1.4;
+}
+.notice.warn { border-left-color: var(--warn-ink); }
+.notice.bad { border-left-color: var(--danger-ink); }
+.toast { display: flex; flex-wrap: wrap; gap: 0.2em 0.8em; align-items: baseline; }
+.toast .kind { color: var(--ink-3); font-size: 0.74em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+.toast .jline { color: var(--ink); line-height: 1.9; }
+.toast .en { color: var(--ink-2); font-family: var(--serif); }
+.place {
+  top: max(14%, 64px); background: var(--paper); color: var(--ink); border: 1px solid var(--paper-edge);
+  border-top: 4px solid var(--ribbon); border-radius: 3px; box-shadow: 0 10px 30px rgba(0,0,0,0.45); padding: 0.4em 1.6em 0.6em;
+}
+.place .jline { color: var(--ink); }
+.place .en { color: var(--ink-2); font-family: var(--serif); font-style: italic; }
+
+/* ---- chapter / ending cards --------------------------------------------------------- */
+.card { background: var(--cloth-900); background-image: var(--cloth-weave); gap: 18px; padding: 16px; }
+.card-slip {
+  background: var(--paper); color: var(--ink); border: 1px solid var(--paper-edge); border-top: 4px solid var(--ribbon);
+  box-shadow: 0 18px 50px rgba(0,0,0,0.55); padding: 1.1em 2em 1.3em; max-width: min(680px, 92vw); text-align: center;
+}
+.card .card-slip .jline { font-size: 1.8em; color: var(--ink); }
+.card .card-slip .en { font-size: 1.15em; color: var(--ink-2); font-family: var(--serif); }
+.card .cbtn { font-size: 1em; }
+
+/* ---- confirmation sheet ---------------------------------------------------------------- */
+.confirm-scrim { z-index: 40; padding: 12px; }
+.csheet {
+  width: min(500px, 100%); background: var(--paper); color: var(--ink); border: 1px solid var(--paper-edge);
+  border-top: 4px solid var(--ribbon); border-radius: 4px; box-shadow: 0 18px 50px rgba(0,0,0,0.6); padding: 18px 18px 14px;
+}
+.csheet.danger { border-top-color: var(--danger-ink); }
+.csheet .q { margin: 0 0 16px; font-size: 1.04em; line-height: 1.55; }
+.csheet .foot { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+@media (max-width: 599px) { .csheet .foot .pbtn { flex: 1 1 auto; } }
 </style>
 </head>
 <body>
@@ -10041,16 +10280,17 @@ RB.input = (function () {
     log: ['KeyL'],
     map: ['KeyM'],
     run: ['ShiftLeft', 'ShiftRight'],
+    tr: ['KeyT'],
   };
   const ACTION_LABELS = {
     up: 'Move up', down: 'Move down', left: 'Move left', right: 'Move right',
     ok: 'Confirm / talk', cancel: 'Back', menu: 'Menu', help: 'Lightbulb help',
-    log: 'Dialogue history', map: 'Map', run: 'Walk faster (hold)',
+    log: 'Dialogue history', map: 'Map', run: 'Walk faster (hold)', tr: 'Show or hide the translation',
   };
   let binds = RB.util.deepClone(DEFAULT_BINDS);
   const DIRECTIONS = ['up', 'down', 'left', 'right'];
   const held = { up: 0, down: 0, left: 0, right: 0, run: 0 };
-  const touchHeld = { up: 0, down: 0, left: 0, right: 0 };
+  const touchHeld = { up: 0, down: 0, left: 0, right: 0, run: 0 };
   let handler = null; // (action, event) => void
   let lastDirPressed = null;
   let capturing = null; // remap capture callback
@@ -10084,6 +10324,9 @@ RB.input = (function () {
       if (e.code === 'Escape' && handler) handler('cancel', e);
       return;
     }
+    // Inside menus and dialogs Tab moves keyboard focus as usual; it only
+    // opens the menu from the world.
+    if (e.key === 'Tab' && typeof document !== 'undefined' && document.body.classList.contains('in-panel')) return;
     const a = actionFor(e.code);
     if (!a) return;
     if (a in held) {
@@ -10113,7 +10356,7 @@ RB.input = (function () {
     return null;
   }
   function running() {
-    return !!held.run;
+    return !!(held.run || touchHeld.run);
   }
   function attach(onAction) {
     handler = onAction;
@@ -10129,44 +10372,74 @@ RB.input = (function () {
     return code.replace(/^Key/, '').replace(/^Arrow/, '').replace(/^Digit/, '').replace('Left', ' L').replace('Right', ' R');
   }
 
-  // ---- Touch pad -----------------------------------------------------------
+  // ---- Touch controls ------------------------------------------------------
+  // A movement pad (slide the thumb between directions; a centre dead zone),
+  // a Run button (hold) and an Action button whose label says what it will do
+  // ("Talk", "Read", "Look" …). The folio/menu is reached from the HUD's one
+  // Menu button, not duplicated here. touch-action: none only on these.
+  const SVG = (d) => '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' + d + '</svg>';
   function buildTouchPad(root) {
     const pad = document.createElement('div');
     pad.className = 'touchpad';
     pad.innerHTML =
-      '<div class="tp-dpad">' +
-      '<button data-d="up" aria-label="Up">▲</button>' +
-      '<button data-d="left" aria-label="Left">◀</button>' +
-      '<button data-d="right" aria-label="Right">▶</button>' +
-      '<button data-d="down" aria-label="Down">▼</button></div>' +
-      '<div class="tp-btns"><button data-a="cancel" aria-label="Back">B</button>' +
-      '<button data-a="ok" aria-label="Confirm">A</button>' +
-      '<button data-a="menu" aria-label="Menu" class="tp-menu">≡</button></div>';
-    const press = (d, v) => {
-      touchHeld[d] = v;
-      if (v) lastDirPressed = d;
+      '<div class="tp-move" role="group" aria-label="Move">' +
+      '<span class="tp-ring" aria-hidden="true"></span>' +
+      '<button data-d="up" aria-label="Move up">' + SVG('<path d="M6 15l6-6 6 6"/>') + '</button>' +
+      '<button data-d="left" aria-label="Move left">' + SVG('<path d="M15 6l-6 6 6 6"/>') + '</button>' +
+      '<button data-d="right" aria-label="Move right">' + SVG('<path d="M9 6l6 6-6 6"/>') + '</button>' +
+      '<button data-d="down" aria-label="Move down">' + SVG('<path d="M6 9l6 6 6-6"/>') + '</button></div>' +
+      '<div class="tp-acts">' +
+      '<button class="tp-run" data-hold="run" aria-label="Run (hold)"><span class="k" aria-hidden="true">B</span><span class="l">Run</span></button>' +
+      '<button class="tp-act" data-a="ok"><span class="k" aria-hidden="true">A</span><span class="l">Look</span></button></div>';
+    const move = pad.querySelector('.tp-move');
+    let movePtr = null;
+    const setDir = (d) => {
+      for (const k of DIRECTIONS) touchHeld[k] = 0;
+      if (d) { touchHeld[d] = 1; lastDirPressed = d; }
+      move.dataset.dir = d || '';
     };
-    pad.querySelectorAll('[data-d]').forEach((b) => {
-      const d = b.getAttribute('data-d');
-      b.addEventListener('pointerdown', (e) => { e.preventDefault(); b.setPointerCapture(e.pointerId); press(d, 1); });
-      const up = () => press(d, 0);
-      b.addEventListener('pointerup', up);
-      b.addEventListener('pointercancel', up);
-      b.addEventListener('lostpointercapture', up);
+    const dirFrom = (e) => {
+      const r = move.getBoundingClientRect();
+      const dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
+      if (Math.hypot(dx, dy) < r.width * 0.12) return null; // dead zone in the centre
+      return Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up');
+    };
+    move.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      movePtr = e.pointerId;
+      try { move.setPointerCapture(e.pointerId); } catch (err) { /* capture is best effort */ }
+      setDir(dirFrom(e));
     });
-    pad.querySelectorAll('[data-a]').forEach((b) => {
-      b.addEventListener('pointerdown', (e) => {
-        e.preventDefault();
-        if (handler) handler(b.getAttribute('data-a'), e);
-      });
-    });
+    move.addEventListener('pointermove', (e) => { if (e.pointerId === movePtr) setDir(dirFrom(e)); });
+    const endMove = (e) => { if (e.pointerId === movePtr) { movePtr = null; setDir(null); } };
+    ['pointerup', 'pointercancel', 'lostpointercapture'].forEach((ev) => move.addEventListener(ev, endMove));
+    // keyboard/switch users can still press the arrow buttons one step at a time
+    move.addEventListener('click', (e) => { if (e.detail === 0) { const b = e.target.closest('[data-d]'); if (b && handler) handler(b.dataset.d, e); } });
+    const run = pad.querySelector('.tp-run');
+    const runOn = (v) => { touchHeld.run = v; run.classList.toggle('on', !!v); };
+    run.addEventListener('pointerdown', (e) => { e.preventDefault(); try { run.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ } runOn(1); });
+    ['pointerup', 'pointercancel', 'lostpointercapture'].forEach((ev) => run.addEventListener(ev, () => runOn(0)));
+    const act = pad.querySelector('.tp-act');
+    act.addEventListener('pointerdown', (e) => { e.preventDefault(); act.classList.add('down'); });
+    act.addEventListener('pointerup', (e) => { if (act.classList.contains('down') && handler) handler('ok', e); act.classList.remove('down'); });
+    ['pointercancel', 'pointerleave'].forEach((ev) => act.addEventListener(ev, () => act.classList.remove('down')));
+    act.addEventListener('click', (e) => { if (e.detail === 0 && handler) handler('ok', e); });
     root.appendChild(pad);
     return pad;
+  }
+  // Label the Action button with what it would do now ('Talk', 'Read', …).
+  function setActionLabel(text, active) {
+    const b = document.querySelector('.touchpad .tp-act');
+    if (!b) return;
+    const l = b.querySelector('.l');
+    if (l.textContent !== text) l.textContent = text;
+    b.setAttribute('aria-label', text + ' (A)');
+    b.classList.toggle('idle', !active);
   }
 
   return {
     attach, dir, running, clearHeld, setBinds, getBinds, captureNext, keyName,
-    buildTouchPad, DEFAULT_BINDS, ACTION_LABELS, isTextTarget,
+    buildTouchPad, setActionLabel, DEFAULT_BINDS, ACTION_LABELS, isTextTarget,
   };
 })();
 
@@ -12357,6 +12630,32 @@ RB.world = (function () {
       return;
     }
   }
+  // What interact() would do now, without doing it: {kind, label} or null.
+  // Used to label the touch Action button; mirrors interact()'s order.
+  const READ_PROP = /sign|board|notice|plaque|poster|letter|book|stone|marker|post|shrine|memorial|tablet|scroll|map|page|note/;
+  function talkable(n) {
+    const def = n.def;
+    if (typeof def.talk === 'string') return true;
+    if (Array.isArray(def.talk)) return def.talk.some((opt) => !opt.if || RB.state.test(s(), opt.if));
+    return false;
+  }
+  function frontAction() {
+    if (!W.map) return null;
+    const [fx, fy] = frontTile();
+    const n = actorAt(fx, fy);
+    if (n && n.foe) return { kind: 'foe', label: 'Face' };
+    if (n && talkable(n)) return { kind: 'talk', label: 'Talk' };
+    const pr = propAt(fx, fy);
+    const cpr = pr || propAt(fx, fy, true);
+    if (cpr && (cpr.p === 'counter' || cpr.across)) {
+      const [dx, dy] = DIRS[W.player.dir];
+      const n2 = actorAt(fx + dx, fy + dy);
+      if (n2 && talkable(n2)) return { kind: 'talk', label: 'Talk' };
+    }
+    if (pr) return { kind: 'prop', label: !pr.scene && READ_PROP.test(pr.p) ? 'Read' : 'Look' };
+    if (W.comp && W.comp.x === fx && W.comp.y === fy) return { kind: 'companion', label: 'Chat' };
+    return null;
+  }
   function startFoe(f) {
     const st = s();
     const e = f.def;
@@ -12454,7 +12753,7 @@ RB.world = (function () {
 
   return {
     W, DIRS, enter, update, interact, tapTile, refreshActors, placeCompanion, emote, actorById, scriptMove,
-    frontTile, checkFoeContact, faceTo, unstick, blocked, _tryMove: tryMovePlayer,
+    frontTile, frontAction, checkFoeContact, faceTo, unstick, blocked, _tryMove: tryMovePlayer,
   };
 })();
 
@@ -12529,16 +12828,102 @@ RB.render = (function () {
     staticDirty = false;
   }
 
+  // Screen area covered by interface (CSS px): the dialogue sheet or the touch
+  // controls at the bottom. The camera composes the map in the space that is
+  // left, so the player and nearby interactions are never under a panel and a
+  // small map sits in the visible area instead of floating in an empty band.
+  let insets = { top: 0, bottom: 0 };
+  let camMap = null, camY = 0, camX = 0;
+  function setInsets(o) {
+    insets = { top: Math.max(0, (o && o.top) || 0), bottom: Math.max(0, (o && o.bottom) || 0) };
+  }
   function updateCamera(W) {
     const p = W.player;
     const m = W.map;
-    let cx = (p.fx + 0.5) * TS - bw / 2;
-    let cy = (p.fy + 0.5) * TS - bh / 2 - 4;
+    const k = dpr / devScale; // CSS px -> buffer px
+    const ft = Math.min(bh * 0.3, insets.top * k);
+    const fb = Math.max(ft + bh * 0.4, bh - insets.bottom * k);
+    const fh = fb - ft;
     const mw = m.w * TS, mh = m.h * TS;
+    let cx = (p.fx + 0.5) * TS - bw / 2;
     cx = mw <= bw ? (mw - bw) / 2 : Math.max(0, Math.min(mw - bw, cx));
-    cy = mh <= bh ? (mh - bh) / 2 : Math.max(0, Math.min(mh - bh, cy));
-    cam.x = Math.round(cx);
-    cam.y = Math.round(cy);
+    let cy;
+    if (mh <= fh) cy = -(ft + (fh - mh) / 2);
+    else cy = Math.max(-ft, Math.min(mh - fb, (p.fy + 0.5) * TS - (ft + fh / 2) - 4));
+    // follow the walking player exactly; ease only the larger jumps that come
+    // from a panel opening or closing (snap on a new map or with reduced motion)
+    if (camMap !== m || RB.game.reducedMotion()) { camMap = m; camX = cx; camY = cy; }
+    else {
+      camX = Math.abs(cx - camX) > 24 ? camX + (cx - camX) * 0.2 : cx;
+      camY = Math.abs(cy - camY) > 24 ? camY + (cy - camY) * 0.2 : cy;
+    }
+    cam.x = Math.round(camX);
+    cam.y = Math.round(camY);
+  }
+
+  // Outside a small map: a quiet surround in the region's darkest colour —
+  // timber for interiors, a faint weave outdoors — and a soft edge shadow, so
+  // the map reads as a lit room or stage rather than an empty band. Nothing
+  // here looks walkable. Patterns are cached per palette.
+  const surroundCache = new Map();
+  function mix(hex, to, a) {
+    const n = parseInt(hex.slice(1), 16), m2 = parseInt(to.slice(1), 16);
+    const ch = (v, w) => Math.round(v + (w - v) * a);
+    const r = ch(n >> 16, m2 >> 16), g = ch((n >> 8) & 255, (m2 >> 8) & 255), b = ch(n & 255, m2 & 255);
+    return '#' + ((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1);
+  }
+  function surroundPattern(c, pal, indoor) {
+    const key = pal.dark + (indoor ? 'i' : 'o');
+    let pat = surroundCache.get(key);
+    if (pat) return pat;
+    const cv = RB.sprites.makeCanvas(32, 32);
+    const g = cv.getContext('2d');
+    g.fillStyle = pal.dark;
+    g.fillRect(0, 0, 32, 32);
+    if (indoor) {
+      // dark timber: 8-px boards, staggered joints, the odd knot
+      g.fillStyle = mix(pal.dark, '#000000', 0.35);
+      for (let x = 0; x < 32; x += 8) g.fillRect(x, 0, 1, 32);
+      g.fillRect(3, 9, 5, 1); g.fillRect(11, 25, 5, 1); g.fillRect(19, 4, 5, 1); g.fillRect(27, 18, 5, 1);
+      g.fillStyle = mix(pal.dark, '#ffffff', 0.05);
+      for (let x = 1; x < 32; x += 8) g.fillRect(x, 0, 1, 32);
+      g.fillRect(21, 13, 2, 1);
+    } else {
+      // faint two-way weave, like the folio's cloth
+      g.fillStyle = mix(pal.dark, '#ffffff', 0.045);
+      for (let i = 0; i < 32; i += 4) for (let j = 0; j < 32; j += 4) g.fillRect((i + j) % 32, j, 1, 1);
+      g.fillStyle = mix(pal.dark, '#000000', 0.3);
+      for (let i = 0; i < 32; i += 4) for (let j = 2; j < 32; j += 4) g.fillRect((i + 34 - j) % 32, j, 1, 1);
+    }
+    pat = c.createPattern(cv, 'repeat');
+    surroundCache.set(key, pat);
+    return pat;
+  }
+  function drawSurround(c, m, pal) {
+    const mx = -cam.x, my = -cam.y, mw = m.w * TS, mh = m.h * TS;
+    const covers = mx <= 0 && my <= 0 && mx + mw >= bw && my + mh >= bh;
+    c.fillStyle = pal.dark;
+    c.fillRect(0, 0, bw, bh);
+    if (covers) return;
+    const indoor = m.region === 'interior' || (m.def && m.def.indoor) || (m.w <= 17 && m.h <= 12);
+    c.save();
+    c.translate(-cam.x & 31, -cam.y & 31); // the pattern stays put relative to the map
+    c.fillStyle = surroundPattern(c, pal, indoor);
+    c.fillRect(-32, -32, bw + 64, bh + 64);
+    c.restore();
+    // soft shadow just outside the map edge
+    const sh = 10;
+    const edge = (x0, y0, x1, y1, x, y, w, h) => {
+      const gr = c.createLinearGradient(x0, y0, x1, y1);
+      gr.addColorStop(0, 'rgba(0,0,0,0.55)');
+      gr.addColorStop(1, 'rgba(0,0,0,0)');
+      c.fillStyle = gr;
+      c.fillRect(x, y, w, h);
+    };
+    edge(0, my, 0, my - sh, mx - sh, my - sh, mw + 2 * sh, sh);
+    edge(0, my + mh, 0, my + mh + sh, mx - sh, my + mh, mw + 2 * sh, sh);
+    edge(mx, 0, mx - sh, 0, mx - sh, my, sh, mh);
+    edge(mx + mw, 0, mx + mw + sh, 0, mx + mw, my, sh, mh);
   }
 
   function drawActor(c, a, t, isFoe) {
@@ -12601,8 +12986,7 @@ RB.render = (function () {
     updateCamera(W);
     const c = bctx;
     const pal = palOf(m);
-    c.fillStyle = pal.dark;
-    c.fillRect(0, 0, bw, bh);
+    drawSurround(c, m, pal);
     c.drawImage(m.staticLayer, -cam.x, -cam.y);
     // animated water glints
     const x0 = Math.max(0, Math.floor(cam.x / TS)), y0 = Math.max(0, Math.floor(cam.y / TS));
@@ -12789,7 +13173,7 @@ RB.render = (function () {
     return { x: ((x * TS - cam.x) * devScale) / dpr, y: ((y * TS - cam.y) * devScale) / dpr };
   }
 
-  return { init, frame, invalidate, setOverride, viewSize, thumbnail, tileToCss, resize, cam };
+  return { init, frame, invalidate, setOverride, setInsets, viewSize, thumbnail, tileToCss, resize, cam };
 })();
 
 
@@ -13587,6 +13971,8 @@ RB.game = (function () {
       vol: { master: 0.8, music: 0.55, sfx: 0.75, voice: 1 }, muted: false,
       voice: { auto: false, uri: null, rate: 0.95 }, lightbulb: true, input: 'hand',
       binds: null, touch: 'auto', strokePractice: false, romaji: true,
+      // touch layout (older settings records lack these; the defaults keep the previous layout)
+      touchHand: 'right', touchSize: 'normal',
     };
   }
 
@@ -13594,16 +13980,24 @@ RB.game = (function () {
   function mode() {
     return G.modes.length ? G.modes[G.modes.length - 1] : 'none';
   }
+  // the current mode is mirrored on <body data-mode> so presentation (touch
+  // controls, HUD) can follow it without polling
+  function syncMode() {
+    if (typeof document !== 'undefined' && document.body) document.body.dataset.mode = mode();
+  }
   function pushMode(m) {
     G.modes.push(m);
     RB.input.clearHeld();
+    syncMode();
   }
   function popMode(m) {
     const i = G.modes.lastIndexOf(m);
     if (i >= 0) G.modes.splice(i, 1);
+    syncMode();
   }
   function setBase(m) {
     G.modes = [m];
+    syncMode();
   }
 
   // ---- loop --------------------------------------------------------------------
@@ -13671,6 +14065,8 @@ RB.game = (function () {
     document.body.classList.toggle('ui-ja', st.uiLang === 'ja');
     const touch = st.touch === 'on' || (st.touch === 'auto' && typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches);
     document.body.classList.toggle('touch', touch);
+    document.body.classList.toggle('touch-left', st.touchHand === 'left');
+    document.body.classList.toggle('touch-large', st.touchSize === 'large');
     applyAudio();
   }
   function applyAudio() {
@@ -14720,6 +15116,20 @@ RB.ui = (function () {
     overlay.appendChild(fadeEl);
     RB.input.buildTouchPad(root);
     RB.ui.help.init();
+    // Software keyboard: the part of the layout viewport the visual viewport
+    // no longer shows (ignored while pinch-zoomed), as --kb on :root and
+    // body.kb-open, so fields and their buttons can stay above it.
+    const vv = window.visualViewport;
+    if (vv) {
+      const upd = () => {
+        const kb = vv.scale > 1.05 ? 0 : Math.max(0, Math.round(window.innerHeight - (vv.height + vv.offsetTop)));
+        document.documentElement.style.setProperty('--kb', kb + 'px');
+        document.body.classList.toggle('kb-open', kb > 80);
+      };
+      vv.addEventListener('resize', upd);
+      vv.addEventListener('scroll', upd);
+      upd();
+    }
     document.addEventListener('keydown', (e) => {
       // keep Tab focus inside the top layer
       if (e.key === 'Tab' && layers.length) {
@@ -14740,6 +15150,8 @@ RB.ui = (function () {
 
   // ---- layers & navigation -------------------------------------------------------
   function pushLayer(layer) {
+    // a word-help card belongs to the layer it was opened from
+    if (RB.ui.help) RB.ui.help.hide(true);
     layers.push(layer);
     (layer.parent || root).appendChild(layer.el);
     document.body.classList.add('in-panel');
@@ -14797,6 +15209,8 @@ RB.ui = (function () {
     best.focus({ preventScroll: false });
   }
   function onAction(a, e) {
+    // an open word-help card is dismissed before anything underneath acts
+    if (a === 'cancel' && RB.ui.help && RB.ui.help.isOpen()) { RB.ui.help.hide(true); return; }
     const top = topLayer();
     if (top) {
       if (top.onAction && top.onAction(a, e)) return;
@@ -14872,7 +15286,7 @@ RB.ui = (function () {
   function card(jp, en) {
     return new Promise((res) => {
       const c = el('div', 'card');
-      c.innerHTML = (jp ? jhtml(jp) : '') + '<div class="en">' + esc(RB.script.enVars(en)) + '</div><button class="btn small" style="margin-top:1em">Continue</button>';
+      c.innerHTML = '<div class="card-slip">' + (jp ? jhtml(jp) : '') + '<div class="en">' + esc(RB.script.enVars(en)) + '</div></div><button class="cbtn">Continue</button>';
       const layer = { el: c, name: 'card' };
       const done = () => { popLayer(layer); clearTimeout(tm); res(); };
       layer.onAction = (a) => { if (a === 'ok' || a === 'cancel') { done(); return true; } return false; };
@@ -14888,18 +15302,24 @@ RB.ui = (function () {
     setTimeout(() => (p.style.opacity = '0'), 2400);
     setTimeout(() => p.remove(), 3100);
   }
+  // A small paper sheet on the cloth: the question, then its answers. The
+  // first button is the proposed action (danger-styled when destructive); the
+  // last one is the safe way out and is what Back/Escape chooses.
   function confirm(text, buttons, opts) {
     opts = opts || {};
     return new Promise((res) => {
-      const scrim = el('div', 'scrim');
-      const panel = el('div', 'panel');
-      panel.style.width = 'min(520px, calc(100vw - 16px))';
+      const scrim = el('div', 'scrim confirm-scrim');
+      const panel = el('div', 'csheet' + (opts.danger ? ' danger' : ''));
+      const tid = 'cq' + Math.random().toString(36).slice(2, 7);
       panel.setAttribute('role', 'alertdialog');
-      panel.innerHTML = '<div class="body"><p>' + (opts.html ? text : esc(text)) + '</p></div><div class="foot"></div>';
+      panel.setAttribute('aria-modal', 'true');
+      panel.setAttribute('aria-labelledby', tid);
+      panel.innerHTML = '<p class="q" id="' + tid + '">' + (opts.html ? text : esc(text)) + '</p><div class="foot"></div>';
       const foot = panel.querySelector('.foot');
       const layer = { el: scrim, name: 'confirm' };
       buttons.forEach((b, i) => {
-        const btn = el('button', 'btn' + (i === 0 && opts.danger ? ' danger' : i === 0 ? ' primary' : ''), esc(b));
+        const btn = el('button', 'pbtn' + (i === 0 && opts.danger ? ' danger' : i === 0 && buttons.length > 1 ? ' primary' : ''), esc(b));
+        if (i === buttons.length - 1 && buttons.length > 1) btn.classList.add('autofocus'); // the safe choice has focus first
         btn.onclick = () => { popLayer(layer); res(i); };
         foot.appendChild(btn);
       });
@@ -14915,11 +15335,10 @@ RB.ui = (function () {
     void w.offsetWidth;
     w.classList.add('shake');
   }
-  function tick() {}
 
   return {
     init, el, pushLayer, popLayer, topLayer, focusables, moveFocus, onAction, jhtml, ehtml, plainJp, label,
-    notice, toast, fade, card, placeName, confirm, shake, tick, get root() { return root; }, get overlay() { return overlay; },
+    notice, toast, fade, card, placeName, confirm, shake, get root() { return root; }, get overlay() { return overlay; },
   };
 })();
 
@@ -14933,16 +15352,17 @@ RB.ui.help = (function () {
   const reg = new Map();
   let nextId = 1;
   let panel = null, pinned = false, cur = null, on = true;
+  let via = 'hover'; // how the open card was requested: 'hover' | 'tap' | 'key'
 
   function init() {
     on = true;
     document.addEventListener('pointerover', (e) => {
-      if (!enabled() || pinned || e.pointerType === 'touch') return;
+      if (!enabled() || pinned || e.pointerType === 'touch' || (panel && via !== 'hover')) return;
       const t = e.target.closest && e.target.closest('.jt');
-      if (t) showFor(t);
+      if (t) { via = 'hover'; showFor(t); }
     });
     document.addEventListener('pointerout', (e) => {
-      if (pinned || e.pointerType === 'touch') return;
+      if (pinned || e.pointerType === 'touch' || via !== 'hover') return;
       const t = e.target.closest && e.target.closest('.jt');
       if (t && panel && !panel.contains(e.relatedTarget)) {
         setTimeout(() => { if (!pinned && panel && !panel.matches(':hover') && cur === t) hide(); }, 250);
@@ -14958,7 +15378,7 @@ RB.ui.help = (function () {
       const t = enabled() && e.target.closest && e.target.closest('.jt');
       if (!t || !t.closest(CONTROL)) return;
       const x = e.clientX, y = e.clientY;
-      press = { t, x, y, timer: setTimeout(() => { press = null; swallowClick = true; showFor(t); }, 450) };
+      press = { t, x, y, timer: setTimeout(() => { press = null; swallowClick = true; via = 'tap'; showFor(t); }, 450) };
     }, true);
     const cancelPress = (e) => {
       if (!press) return;
@@ -14970,13 +15390,25 @@ RB.ui.help = (function () {
     document.addEventListener('click', (e) => {
       if (swallowClick) { swallowClick = false; e.stopPropagation(); e.preventDefault(); return; } // the long press was a help request
       const t = e.target.closest && e.target.closest('.jt');
-      if (t && enabled() && !t.closest(CONTROL)) { e.stopPropagation(); showFor(t); return; }
-      if (panel && !panel.contains(e.target) && !pinned) hide();
+      if (t && enabled() && !t.closest(CONTROL)) { e.stopPropagation(); via = 'tap'; showFor(t); return; }
+      if (panel && !panel.contains(e.target)) {
+        // A card opened by a tap (or pinned) pauses what is under it: the tap
+        // outside only closes the card and does not also press Next, choose an
+        // answer or walk. Hover and keyboard-focus cards never block a click.
+        const blocking = pinned || via === 'tap';
+        pinned = false;
+        hide();
+        if (blocking) { e.stopPropagation(); e.preventDefault(); }
+      }
     }, true);
+    // keyboard focus on a word opens its card only when the person is
+    // actually navigating with keys (not when a screen places focus itself)
+    let lastKey = 0;
+    document.addEventListener('keydown', () => { lastKey = Date.now(); }, true);
     document.addEventListener('focusin', (e) => {
-      if (!enabled()) return;
+      if (!enabled() || Date.now() - lastKey > 1500) return;
       const t = e.target.closest && e.target.closest('.jt');
-      if (t && t.matches(':focus-visible')) showFor(t);
+      if (t && t.matches(':focus-visible')) { via = 'key'; showFor(t); }
     });
   }
   function enabled() {
@@ -15010,6 +15442,7 @@ RB.ui.help = (function () {
     render(tok, elm, r);
     if (RB.challenge && RB.challenge.active()) RB.challenge.noteHelp(tok, elm);
   }
+  const HI = (n) => (RB.ui.folio ? RB.ui.folio.icon(n) : '');
   function render(tok, anchor, r) {
     let info;
     try { info = RB.jp.lookup(tok); } catch (e) { info = { unknown: true, reading: tok.reading || tok.surface }; }
@@ -15024,22 +15457,24 @@ RB.ui.help = (function () {
     const reading = info.reading || tok.reading || '';
     const surface = tok.surface || '';
     const mora = info.mora || (RB.kana && RB.kana.mora ? RB.kana.mora(reading) : []);
-    let html = '<div class="hw">' + esc(surface) + (reading && reading !== surface ? ' <span class="hr">【' + esc(reading) + '】</span>' : '') + '</div>';
+    // header: the word and its reading, with Close always in the same corner
+    let html = '<div class="hhead"><div class="hw" lang="ja">' + esc(surface) + (reading && reading !== surface ? '<span class="hr">' + esc(reading) + '</span>' : '') + '</div>' +
+      '<button class="hclose" data-a="close" aria-label="Close word help">' + HI('close') + '<span>Close</span></button></div><div class="hbody">';
     if (RB.game.settings.romaji !== false && info.romaji) html += '<div class="rom">' + esc(info.romaji) + '</div>';
-    if (info.gloss) html += '<div class="mean"><b>Here:</b> ' + esc(info.gloss) + '</div>';
-    if (e) html += '<div class="mean">' + (info.gloss ? '<span class="dim small">Dictionary: </span>' : '') + esc(e.m) + (info.lemma && info.lemma !== surface ? ' <span class="small">(' + esc(info.lemma) + ')</span>' : '') + '</div>';
+    if (info.gloss) html += '<div class="mean"><span class="lab">Here</span>' + esc(info.gloss) + '</div>';
+    if (e) html += '<div class="mean">' + (info.gloss ? '<span class="lab">Dictionary</span>' : '') + esc(e.m) + (info.lemma && info.lemma !== surface ? ' <span class="small" lang="ja">(' + esc(info.lemma) + ')</span>' : '') + '</div>';
     if (info.forms && info.forms.length) html += '<div class="note">Form: ' + esc(info.forms.join(' → ')) + '</div>';
     if (info.parts && info.parts.length) html += '<div class="note">Parts: ' + info.parts.map((p) => esc(p.surface || p.w || '') + (p.m ? ' (' + esc(p.m) + ')' : '')).join(' + ') + '</div>';
     if (e && e.n) html += '<div class="note">' + esc(e.n) + '</div>';
     if (!e && !info.gloss) html += '<div class="note">No dictionary note is recorded for this piece of text. The reading above is still accurate.</div>';
-    if (mora && mora.length > 1) html += '<div class="note">Beats (morae): <span class="mora">' + mora.map((m) => '<span>' + esc(m) + '</span>').join('') + '</span></div>';
+    if (mora && mora.length > 1) html += '<div class="note">Beats (morae): <span class="mora" lang="ja">' + mora.map((m) => '<span>' + esc(m) + '</span>').join('') + '</span></div>';
     if (surface.indexOf('っ') >= 0 || surface.indexOf('ッ') >= 0) html += '<div class="note">Small っ is a held beat: the next consonant is doubled.</div>';
     if (surface.indexOf('ー') >= 0) html += '<div class="note">ー lengthens the vowel before it by one beat.</div>';
-    html += '<div class="acts">';
-    if (RB.voice && RB.voice.japaneseVoices && RB.voice.japaneseVoices().length) html += '<button class="btn small" data-a="say">🔊 Say</button>';
-    html += '<button class="btn small" data-a="pin">' + (pinned ? 'Unpin' : '📌 Pin') + '</button>';
-    if (RB.game.s) html += '<button class="btn small" data-a="note">＋ Notebook</button>';
-    html += '<button class="btn small" data-a="close">Close</button></div>';
+    html += '</div><div class="acts">';
+    if (RB.voice && RB.voice.japaneseVoices && RB.voice.japaneseVoices().length) html += '<button class="pbtn" data-a="say">' + HI('sound') + 'Say it</button>';
+    html += '<button class="pbtn" data-a="pin" aria-pressed="' + pinned + '">' + HI('note') + (pinned ? 'Pinned' : 'Keep open') + '</button>';
+    if (RB.game.s) html += '<button class="pbtn" data-a="note">' + HI('words') + 'Add to notebook</button>';
+    html += '</div>';
     panel.innerHTML = html;
     panel.classList.toggle('pinned', pinned);
     panel.onclick = (ev) => {
@@ -15048,23 +15483,30 @@ RB.ui.help = (function () {
       const a = b.getAttribute('data-a');
       if (a === 'say') RB.voice.speak(reading || surface);
       if (a === 'pin') { pinned = !pinned; render(tok, anchor, r); }
-      if (a === 'close') { pinned = false; hide(); }
+      if (a === 'close') { pinned = false; hide(); if (anchor && anchor.isConnected && via === 'key') anchor.focus({ preventScroll: true }); }
       if (a === 'note') addToNotebook(tok, info);
     };
     position(anchor);
   }
+  // Narrow screens: a sheet along the bottom edge (it never sits on top of
+  // the word's own line and always shows its Close). Wider screens: a bounded
+  // note card beside the word, kept inside the viewport. With the writing pad
+  // open the card docks to a corner so it never covers the strokes.
   function position(anchor) {
     const padOpen = document.querySelector('.pad-box') && document.querySelector('.chal');
-    panel.classList.toggle('docked', !!padOpen);
-    if (padOpen) { panel.style.left = ''; panel.style.top = ''; return; }
+    // (a hover card stays beside the word even in a narrow window: a sheet
+    // would slide under the pointer and cover the word being read)
+    const sheet = window.innerWidth < 600 && via !== 'hover';
+    panel.classList.toggle('docked', !!padOpen && !sheet);
+    panel.classList.toggle('sheet', sheet);
+    if (sheet || padOpen) { panel.style.left = ''; panel.style.top = ''; return; }
     const r = anchor.getBoundingClientRect();
-    const pw = Math.min(380, window.innerWidth - 16);
-    let left = Math.min(window.innerWidth - pw - 8, Math.max(8, r.left + r.width / 2 - pw / 2));
+    const pw = Math.min(400, window.innerWidth - 16);
+    const left = Math.min(window.innerWidth - pw - 8, Math.max(8, r.left + r.width / 2 - pw / 2));
     panel.style.left = left + 'px';
-    panel.style.width = '';
     const ph = panel.offsetHeight || 180;
-    let top = r.top - ph - 10;
-    if (top < 8) top = r.bottom + 10;
+    let top = r.top - ph - 12;
+    if (top < 8) top = r.bottom + 12;
     if (top + ph > window.innerHeight - 8) top = Math.max(8, window.innerHeight - ph - 8);
     panel.style.top = top + 'px';
   }
@@ -15086,16 +15528,22 @@ RB.ui.help = (function () {
   return { init, toggle, register, showFor, hide, enabled, isOpen };
 })();
 
-/* ---- HUD --------------------------------------------------------------------------- */
+/* ---- HUD ---------------------------------------------------------------------------
+ * One Menu entry point and the word-help switch, as labelled cloth tags at the
+ * top edge. Hidden whenever a panel, the folio or dialogue is up (those carry
+ * their own controls). Also keeps the touch Action label and the camera's
+ * bottom inset in step with what is on screen. */
 RB.ui.hud = (function () {
   'use strict';
   let box = null;
-  const BULB = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a7 7 0 0 0-4 12.7V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.3A7 7 0 0 0 12 2zm-2 18h4v1a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-1z"/></svg>';
+  const I = (n) => RB.ui.folio.icon(n);
   function show() {
     if (!box) {
       box = RB.ui.el('div', 'hud');
-      box.innerHTML = '<button class="btn bulb" aria-label="Lightbulb help (H)" title="Lightbulb help (H)">' + BULB + '</button>' +
-        '<button class="btn menu-b" aria-label="Menu (C)" title="Menu (C)">≡</button>';
+      box.setAttribute('role', 'toolbar');
+      box.setAttribute('aria-label', 'Game');
+      box.innerHTML = '<button class="hbtn bulb" aria-pressed="false" title="Word help (H)">' + I('bulb') + '<span class="l">Word help</span><span class="st" aria-hidden="true"></span></button>' +
+        '<button class="hbtn menu-b" title="Menu (C)">' + I('menu') + '<span class="l">Menu</span></button>';
       box.querySelector('.bulb').onclick = () => RB.ui.help.toggle();
       box.querySelector('.menu-b').onclick = () => { if (RB.game.mode() === 'world') RB.ui.menu.open(); };
       RB.ui.root.appendChild(box);
@@ -15107,10 +15555,39 @@ RB.ui.hud = (function () {
   function refresh() {
     const on = RB.game.settings && RB.game.settings.lightbulb;
     document.body.classList.toggle('bulb-on', !!on);
-    if (box) box.querySelector('.bulb').classList.toggle('on', !!on);
+    if (box) {
+      const b = box.querySelector('.bulb');
+      b.classList.toggle('on', !!on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      b.querySelector('.st').textContent = on ? 'On' : 'Off';
+    }
   }
-  return { show, hide, refresh };
+  // ---- per-frame bookkeeping (cheap; DOM reads only when something changed) ----
+  let acc = 0, lastLabel = '', lastInset = -1;
+  function tick(dt) {
+    acc += dt;
+    if (acc < 120) return;
+    acc = 0;
+    const body = document.body;
+    const world = RB.game.mode && RB.game.mode() === 'world' && RB.world.W.map;
+    if (world && body.classList.contains('touch')) {
+      const fa = RB.world.frontAction ? RB.world.frontAction() : null;
+      const label = fa ? fa.label : 'Look';
+      if (label + !!fa !== lastLabel) { lastLabel = label + !!fa; RB.input.setActionLabel(label, !!fa); }
+    }
+    // the camera keeps the player clear of whatever covers the bottom edge
+    let inset = 0;
+    const dlg = document.querySelector('.dlg:not(.hidden)');
+    if (dlg) inset = Math.max(0, window.innerHeight - dlg.getBoundingClientRect().top);
+    else if (world && body.classList.contains('touch')) {
+      const tp = document.querySelector('.touchpad .tp-move');
+      if (tp) inset = Math.max(0, window.innerHeight - tp.getBoundingClientRect().top) * 0.75;
+    }
+    if (Math.abs(inset - lastInset) > 2) { lastInset = inset; RB.render.setInsets({ bottom: inset }); }
+  }
+  return { show, hide, refresh, tick };
 })();
+RB.ui.tick = function (dt, t) { RB.ui.hud.tick(dt, t); };
 
 
 /* ==== src/ui/12_folio.js ==== */
@@ -15135,6 +15612,7 @@ RB.ui.folio = (function () {
     close: '<path d="M6 6l12 12M18 6L6 18"/>',
     back: '<path d="M15 5l-7 7 7 7"/>',
     next: '<path d="M9 5l7 7-7 7"/>',
+    down: '<path d="M5 9l7 7 7-7"/>',
     main: '<path d="M7 3h10v18l-5-4-5 4z"/>',
     side: '<circle cx="12" cy="12" r="6.5"/><path d="M12 8.5v4l2.5 1.5"/>',
     companion: '<circle cx="9" cy="8" r="3"/><circle cx="16" cy="9" r="2.5"/><path d="M3.5 19c.8-4 3-6 5.5-6s4.7 2 5.5 6"/><path d="M14 14c2.6 0 4.5 1.8 5 5"/>',
@@ -15316,32 +15794,74 @@ RB.ui.dialogue = (function () {
   let current = null;       // current line data
   let showSub = false;
 
+  const I = (n) => RB.ui.folio.icon(n);
+  // Layout: a paper correspondence sheet inset at the bottom of the screen,
+  // a speaker tab on its top edge, the portrait beside it, the line in ink,
+  // the second language under a rule, and one control row: separate
+  // Word help / Translation / Voice / History / Skip toggles and ONE Next in
+  // the same place every time. Tapping the text also advances (a supplement,
+  // never on a word: words open help when word help is on).
   function ensure() {
     if (box) return;
     box = RB.ui.el('div', 'dlg hidden');
     box.setAttribute('role', 'dialog');
-    box.setAttribute('aria-live', 'polite');
+    box.setAttribute('aria-label', 'Dialogue');
     box.innerHTML =
       '<canvas class="portrait" width="48" height="48" aria-hidden="true"></canvas>' +
-      '<div class="txt"><div class="who"></div><div class="main"></div><div class="sub"></div></div>' +
-      '<div class="ctrl">' +
-      '<button class="btn b-voice" title="Replay voice" aria-label="Replay Japanese voice">🔊</button>' +
-      '<button class="btn b-tr" title="Show/hide translation (T)">Aあ</button>' +
-      '<button class="btn b-log" title="Dialogue history (L)">Log</button>' +
-      '<button class="btn b-skip" title="Skip lines you have already seen">Skip seen ⏩</button>' +
-      '<button class="btn b-next" aria-label="Next">Next <span class="next">▼</span></button></div>';
-    box.addEventListener('click', (e) => {
-      if (e.target.closest('.jt') || e.target.closest('.ctrl') || e.target.closest('.sub.tap')) return;
+      '<div class="dlg-tab"><div class="who"></div></div>' +
+      '<div class="dlg-sheet">' +
+      '<div class="txt" aria-live="polite"><div class="main"></div><div class="sub"></div></div>' +
+      '<div class="ctrl" role="group" aria-label="Dialogue controls"><div class="aux">' +
+      '<button class="dbtn b-words" aria-pressed="false" title="Word help (H)">' + I('bulb') + '<span>Word help</span></button>' +
+      '<button class="dbtn b-tr" aria-pressed="false" title="Show or hide the other language (T)">' + I('words') + '<span>Translation</span></button>' +
+      '<button class="dbtn b-voice" title="Replay the Japanese line with this device\'s voice">' + I('sound') + '<span>Voice</span></button>' +
+      '<button class="dbtn b-log" title="Dialogue history (L)">' + I('history') + '<span>History</span></button>' +
+      '<button class="dbtn b-skip" title="Skip lines you have already seen">' + I('next') + '<span>Skip seen</span></button>' +
+      '</div><button class="dbtn primary b-next">Next' + I('next') + '</button></div></div>';
+    box.querySelector('.txt').addEventListener('click', (e) => {
+      if (e.target.closest('.jt') || e.target.closest('.sub.tap')) return;
       advance();
     });
     box.querySelector('.b-next').onclick = () => advance();
+    // a line longer than the sheet: Next first shows the rest, then advances
+    box.querySelector('.txt').addEventListener('scroll', syncMore, { passive: true });
+    if (typeof ResizeObserver !== 'undefined') new ResizeObserver(syncMore).observe(box.querySelector('.txt'));
     box.querySelector('.b-log').onclick = () => RB.ui.menu.open('log');
     box.querySelector('.b-voice').onclick = () => speak(true);
-    box.querySelector('.b-tr').onclick = () => { showSub = !showSub; renderSub(); };
+    box.querySelector('.b-tr').onclick = () => { showSub = !showSub; renderSub(); syncCtrl(); };
+    box.querySelector('.b-words').onclick = () => { RB.ui.help.toggle(); syncCtrl(); };
     box.querySelector('.b-skip').onclick = () => { RB.game.setFastForward(true); advance(); };
     RB.ui.root.appendChild(box);
     choicesEl = RB.ui.el('div', 'choices hidden');
+    choicesEl.setAttribute('role', 'group');
+    choicesEl.setAttribute('aria-label', 'Your reply');
     RB.ui.root.appendChild(choicesEl);
+    // choices sit just above the sheet, whatever its height
+    if (typeof ResizeObserver !== 'undefined') {
+      new ResizeObserver(() => {
+        const h = box.classList.contains('hidden') ? 0 : box.getBoundingClientRect().height;
+        document.documentElement.style.setProperty('--dlg-h', Math.round(h) + 'px');
+      }).observe(box);
+    }
+  }
+  function unread() {
+    const t = box && box.querySelector('.txt');
+    return t ? t.scrollHeight - t.scrollTop - t.clientHeight > 4 : false;
+  }
+  function syncMore() {
+    if (!box) return;
+    const more = unread();
+    if (box.classList.contains('more') === more) return;
+    box.classList.toggle('more', more);
+    const nb = box.querySelector('.b-next');
+    nb.innerHTML = more ? 'More' + I('down') : 'Next' + I('next');
+    nb.setAttribute('aria-label', more ? 'Show the rest of this line' : 'Next');
+  }
+  function syncCtrl() {
+    if (!box) return;
+    const on = !!(RB.game.settings && RB.game.settings.lightbulb);
+    box.querySelector('.b-words').setAttribute('aria-pressed', on ? 'true' : 'false');
+    box.querySelector('.b-tr').setAttribute('aria-pressed', showSub ? 'true' : 'false');
   }
 
   function charInfo(who) {
@@ -15371,7 +15891,8 @@ RB.ui.dialogue = (function () {
       else RB.portraits.draw(cv, line.who, line.expr);
     }
     const whoEl = box.querySelector('.who');
-    whoEl.innerHTML = ch ? '<span>' + esc(ch.name.en) + '</span>' + (ch.name.jp ? '<span class="jp">' + RB.ui.jhtml(ch.name.jp) + '</span>' : '') : '';
+    whoEl.innerHTML = ch ? '<span class="nm">' + esc(ch.name.en) + '</span>' + (ch.name.jp ? '<span class="jp">' + RB.ui.jhtml(ch.name.jp) + '</span>' : '') : '<span class="nm narr">' + (line.jp || line.en ? '' : '') + '</span>';
+    box.classList.toggle('narration', !ch);
     const lead = RB.game.settings.lead;
     const main = box.querySelector('.main');
     const hasJp = !!line.jp;
@@ -15386,6 +15907,9 @@ RB.ui.dialogue = (function () {
     box.querySelector('.b-voice').classList.toggle('hidden', !(hasJp && RB.voice && RB.voice.japaneseVoices && RB.voice.japaneseVoices().length));
     box.querySelector('.b-skip').classList.toggle('hidden', !(seenScene && RB.game.settings.skipSeen));
     box.querySelector('.b-tr').classList.toggle('hidden', RB.game.settings.secondary === 'always' || !hasJp);
+    syncCtrl();
+    box.querySelector('.txt').scrollTop = 0;
+    requestAnimationFrame(syncMore);
     if (RB.game.settings.voice.auto && hasJp && !RB.game.fastForward()) speak(false);
     reveal(main);
     RB.audio && RB.audio.sfx('text_blip', { vol: 0.35 });
@@ -15475,7 +15999,12 @@ RB.ui.dialogue = (function () {
 
   function advance(auto) {
     if (!pending) return;
-    if (revealing && !auto) { revealing.finish(); return; }
+    if (revealing && !auto) { revealing.finish(); requestAnimationFrame(syncMore); return; }
+    if (!auto && unread()) {
+      const t = box.querySelector('.txt');
+      t.scrollBy({ top: Math.max(40, t.clientHeight * 0.8), behavior: RB.game.reducedMotion() ? 'auto' : 'smooth' });
+      return;
+    }
     if (revealing) revealing.finish();
     RB.voice && RB.voice.cancel();
     const r = pending;
@@ -15492,14 +16021,15 @@ RB.ui.dialogue = (function () {
       choicesEl.innerHTML = '';
       choicesEl.classList.remove('hidden');
       const layer = { el: choicesEl, name: 'choices', parent: RB.ui.root, noAutofocus: false };
+      choicesEl.classList.toggle('with-dlg', isOpen());
       opts.forEach((op, i) => {
-        const b = RB.ui.el('button', 'btn');
+        const b = RB.ui.el('button', 'choice');
         const lead = RB.game.settings.lead;
-        b.innerHTML = lead === 'ja' && op.jp
+        b.innerHTML = '<span class="n" aria-hidden="true">' + (i + 1) + '</span><span class="c">' + (lead === 'ja' && op.jp
           ? RB.ui.jhtml(op.jp) + (op.en ? '<span class="en">' + esc(RB.script.enVars(op.en)) + '</span>' : '')
-          : '<span class="enline">' + esc(RB.script.enVars(op.en || '')) + '</span>' + (op.jp ? '<span class="en">' + RB.ui.jhtml(op.jp) + '</span>' : '');
-        b.onclick = (e) => {
-            RB.ui.popLayer(layer);
+          : '<span class="enline">' + esc(RB.script.enVars(op.en || '')) + '</span>' + (op.jp ? '<span class="en">' + RB.ui.jhtml(op.jp) + '</span>' : '')) + '</span>';
+        b.onclick = () => {
+          RB.ui.popLayer(layer);
           choicesEl.classList.add('hidden');
           choicesEl.innerHTML = '';
           RB.audio && RB.audio.sfx('confirm');
@@ -15524,6 +16054,7 @@ RB.ui.dialogue = (function () {
   function onAction(a) {
     if (!box || box.classList.contains('hidden') || !pending) return false;
     if (a === 'ok') { advance(); return true; }
+    if (a === 'tr' && !box.querySelector('.b-tr').classList.contains('hidden')) { showSub = !showSub; renderSub(); syncCtrl(); return true; }
     if (a === 'log') { RB.ui.menu.open('log'); return true; }
     if (a === 'cancel') { return true; }
     return false;
@@ -16885,7 +17416,9 @@ RB.ui.settings = (function () {
       h += '<p class="muted small">Choose Change, then press the key you want. Each key does one thing; taking a key from another action removes it there.</p><ul class="entries keys">' +
         Object.keys(RB.input.DEFAULT_BINDS).map((a) => '<li class="entry"><span class="mark">' + I('next') + '</span><div><div class="t">' + esc(RB.input.ACTION_LABELS[a]) + '</div><div class="muted small keycaps">' + binds[a].map((k) => '<kbd>' + esc(RB.input.keyName(k)) + '</kbd>').join(' ') + '</div></div><button class="pbtn" data-bind="' + a + '">Change</button></li>').join('') + '</ul>' +
         '<div class="row-acts"><button class="pbtn" data-a="resetbinds">Reset all keys</button></div>' +
-        radios('touch', 'On-screen touch controls', [['auto', 'Automatic'], ['on', 'Always'], ['off', 'Never']], null, 'Automatic shows them on touch screens.');
+        radios('touch', 'On-screen touch controls', [['auto', 'Automatic'], ['on', 'Always'], ['off', 'Never']], null, 'Automatic shows them on touch screens.') +
+        radios('touchHand', 'Action and Run buttons on the', [['right', 'Right (move on the left)'], ['left', 'Left (move on the right)']]) +
+        radios('touchSize', 'Touch control size', [['normal', 'Standard'], ['large', 'Large']]);
     } else if (g === 'audio') {
       const vs = RB.voice ? RB.voice.status() : { supported: false, localJaCount: 0, note: 'Speech synthesis is not available.' };
       const voices = RB.voice && RB.voice.japaneseVoices ? RB.voice.japaneseVoices() : [];

@@ -28,8 +28,10 @@ body.high-contrast {
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; background: #0e1116; color: var(--fg); overflow: hidden; font-family: var(--ui-font); font-size: var(--base); -webkit-text-size-adjust: 100%; }
-#app { position: fixed; inset: 0; touch-action: none; }
-#world { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; image-rendering: crisp-edges; }
+#app { position: fixed; inset: 0; }
+/* gestures are suppressed only where the game needs them (the world canvas, the
+ * movement pad, the writing canvas); menus keep scrolling and pinch-zoom */
+#world { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; image-rendering: crisp-edges; touch-action: none; }
 #ui, #overlay { position: absolute; inset: 0; pointer-events: none; }
 #ui > *, #overlay > * { pointer-events: auto; }
 #overlay > .fade:not(.on), #overlay > .notices, #overlay > .place { pointer-events: none; }
@@ -70,51 +72,12 @@ body.bulb-on .jline .jt:hover, .jline .jt.active { background: rgba(231, 196, 11
 .enline { font-family: var(--en-font); line-height: 1.45; }
 
 /* ---- dialogue ---- */
-.dlg {
-  position: absolute; left: 50%; bottom: max(12px, env(safe-area-inset-bottom)); transform: translateX(-50%);
-  width: min(980px, calc(100vw - 20px)); min-height: 9em; background: var(--panel); border: 2px solid var(--line-soft);
-  border-radius: 10px; box-shadow: 0 6px 30px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.04);
-  display: grid; grid-template-columns: auto 1fr; gap: 0 0.9em; padding: 0.8em 1em 0.6em;
-}
-.dlg.noportrait { grid-template-columns: 1fr; }
-.dlg .portrait { width: 104px; height: 104px; image-rendering: pixelated; border-radius: 8px; background: #0c0e18; border: 1px solid var(--line-soft); align-self: start; }
-.dlg .who { font-weight: 600; color: var(--accent); font-size: 0.95em; margin-bottom: 0.15em; display: flex; gap: 0.6em; align-items: baseline; }
-.dlg .who .jp { font-size: 0.85em; color: var(--fg-dim); font-weight: 400; }
-.dlg .main { font-size: 1.18em; min-height: 2.2em; }
-.dlg .main.jline { font-size: 1.3em; }
-.dlg .sub { font-size: 0.95em; color: var(--fg-dim); margin-top: 0.25em; }
-.dlg .sub.jline { font-size: 1.05em; color: #d8d0bc; }
-.dlg .sub.tap { cursor: pointer; color: #8f8a7c; font-style: italic; }
-.dlg .ctrl { grid-column: 1 / -1; display: flex; gap: 0.4em; justify-content: flex-end; align-items: center; margin-top: 0.35em; flex-wrap: wrap; }
-.dlg .ctrl .btn { padding: 0.2em 0.55em; min-height: 1.9em; font-size: 0.8em; }
-.dlg .next { animation: bob 1s infinite; color: var(--accent); margin-left: 0.3em; }
-body.reduced-motion .dlg .next { animation: none; }
-@keyframes bob { 50% { transform: translateY(3px); } }
 .reveal-hide { opacity: 0; }
 .reveal-show { opacity: 1; transition: opacity 0.12s; }
-.choices { position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(12.5em + 12px); display: flex; flex-direction: column; gap: 0.45em; width: min(680px, calc(100vw - 24px)); }
-.choices .btn { text-align: left; padding: 0.6em 1em; font-size: 1.02em; background: var(--panel); }
-.choices .btn .jline { font-size: 1.05em; line-height: 1.9; }
-.choices .btn .en { display: block; color: var(--fg-dim); font-size: 0.9em; }
 
 /* ---- HUD ---- */
-.hud { position: absolute; top: max(8px, env(safe-area-inset-top)); right: 8px; display: flex; gap: 6px; }
-.hud .btn { min-width: 2.6em; min-height: 2.6em; padding: 0.3em 0.6em; background: rgba(20,22,38,0.8); }
-.hud .bulb svg { width: 1.3em; height: 1.3em; vertical-align: middle; }
-.hud .bulb.on { border-color: var(--accent); box-shadow: 0 0 12px rgba(231,196,110,0.5); }
-.place { position: absolute; top: 14%; left: 50%; transform: translateX(-50%); text-align: center; background: var(--panel); border: 1px solid var(--line-soft); border-radius: 8px; padding: 0.5em 1.4em; transition: opacity 0.6s; }
-.place .jline { font-size: 1.4em; }
-.notices { position: absolute; top: max(8px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 6px; align-items: center; width: min(640px, calc(100vw - 140px)); pointer-events: none; }
-.notice { background: var(--panel); border: 1px solid var(--line-soft); padding: 0.5em 0.9em; border-radius: 8px; font-size: 0.9em; pointer-events: auto; }
-.notice.warn { border-color: var(--warn); }
-.notice.bad { border-color: var(--bad); }
-.toast { background: var(--panel); border: 1px solid var(--line); padding: 0.55em 1em; border-radius: 8px; display: flex; gap: 0.8em; align-items: center; }
-.toast .kind { color: var(--accent); font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.08em; }
 .fade { position: absolute; inset: 0; background: #07080d; opacity: 0; pointer-events: none; transition: opacity 0.22s; }
 .fade.on { opacity: 1; pointer-events: auto; }
-.card { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(7,8,13,0.92); text-align: center; gap: 0.5em; }
-.card .jline { font-size: 2em; }
-.card .en { font-size: 1.2em; color: var(--fg-dim); }
 .shake { animation: shake 0.3s; }
 @keyframes shake { 25% { transform: translate(2px, 0); } 75% { transform: translate(-2px, 0); } }
 
@@ -168,18 +131,6 @@ input[type=text]:focus, select:focus { outline: 2px solid var(--focus); }
 @media (max-width: 640px) { .create { grid-template-columns: 1fr; } .create .preview canvas { width: 128px; height: 192px; } }
 
 /* ---- lightbulb help ---- */
-.help { position: absolute; max-width: min(380px, calc(100vw - 16px)); background: #fffaf0; color: #1d1a22; border-radius: 10px; padding: 0.7em 0.85em; box-shadow: 0 8px 30px rgba(0,0,0,0.5); font-size: 0.95em; z-index: 50; border: 2px solid #e7c46e; }
-.help.pinned { border-color: #6a8ad8; }
-.help .hw { font-family: var(--jp-font); font-size: 1.6em; line-height: 1.8; }
-.help .hr { font-family: var(--jp-font); color: #5a4a2a; }
-.help .rom { color: #3a5a8a; font-style: italic; }
-.help .mean { margin: 0.3em 0; font-family: var(--en-font); font-size: 1.05em; }
-.help .note { color: #4a4450; font-size: 0.9em; margin-top: 0.3em; line-height: 1.35; }
-.help .mora { display: inline-flex; gap: 2px; margin-top: 0.2em; }
-.help .mora span { border: 1px solid #c8b890; border-radius: 4px; padding: 0 0.3em; font-family: var(--jp-font); background: #fff; }
-.help .acts { display: flex; gap: 4px; margin-top: 0.5em; flex-wrap: wrap; }
-.help .acts .btn { background: #efe6cc; color: #2a2430; border-color: #c8b890; font-size: 0.8em; }
-.help.docked { top: 56px !important; right: 8px !important; left: auto !important; }
 
 /* ---- writing pad & challenges ---- */
 .chal { position: absolute; inset: 0; display: flex; align-items: stretch; justify-content: center; background: rgba(8,9,16,0.72); }
@@ -246,16 +197,3 @@ input[type=text]:focus, select:focus { outline: 2px solid var(--focus); }
 .clog { position: absolute; left: 50%; top: 32%; transform: translateX(-50%); background: var(--panel); border: 1px solid var(--line-soft); border-radius: 8px; padding: 0.5em 0.9em; max-width: min(640px, 92vw); text-align: center; }
 
 /* ---- touch ---- */
-.touchpad { display: none; }
-body.touch .touchpad { display: block; }
-.touchpad .tp-dpad { position: absolute; left: 14px; bottom: calc(14px + env(safe-area-inset-bottom)); width: 150px; height: 150px; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); opacity: 0.8; }
-.touchpad .tp-dpad button { background: rgba(20,22,38,0.75); border: 1px solid var(--line-soft); border-radius: 10px; color: var(--fg); font-size: 1.2em; touch-action: none; }
-.touchpad [data-d=up] { grid-column: 2; grid-row: 1; }
-.touchpad [data-d=left] { grid-column: 1; grid-row: 2; }
-.touchpad [data-d=right] { grid-column: 3; grid-row: 2; }
-.touchpad [data-d=down] { grid-column: 2; grid-row: 3; }
-.touchpad .tp-btns { position: absolute; right: 14px; bottom: calc(22px + env(safe-area-inset-bottom)); display: flex; gap: 12px; align-items: flex-end; opacity: 0.85; }
-.touchpad .tp-btns button { width: 64px; height: 64px; border-radius: 50%; background: rgba(20,22,38,0.8); border: 2px solid var(--line-soft); color: var(--fg); font-weight: 700; font-size: 1.2em; touch-action: none; }
-.touchpad .tp-btns .tp-menu { width: 48px; height: 48px; }
-body.touch .dlg { bottom: calc(12px + env(safe-area-inset-bottom)); }
-body.in-dialogue .touchpad .tp-dpad, body.in-panel .touchpad { display: none; }

@@ -67,16 +67,102 @@ RB.render = (function () {
     staticDirty = false;
   }
 
+  // Screen area covered by interface (CSS px): the dialogue sheet or the touch
+  // controls at the bottom. The camera composes the map in the space that is
+  // left, so the player and nearby interactions are never under a panel and a
+  // small map sits in the visible area instead of floating in an empty band.
+  let insets = { top: 0, bottom: 0 };
+  let camMap = null, camY = 0, camX = 0;
+  function setInsets(o) {
+    insets = { top: Math.max(0, (o && o.top) || 0), bottom: Math.max(0, (o && o.bottom) || 0) };
+  }
   function updateCamera(W) {
     const p = W.player;
     const m = W.map;
-    let cx = (p.fx + 0.5) * TS - bw / 2;
-    let cy = (p.fy + 0.5) * TS - bh / 2 - 4;
+    const k = dpr / devScale; // CSS px -> buffer px
+    const ft = Math.min(bh * 0.3, insets.top * k);
+    const fb = Math.max(ft + bh * 0.4, bh - insets.bottom * k);
+    const fh = fb - ft;
     const mw = m.w * TS, mh = m.h * TS;
+    let cx = (p.fx + 0.5) * TS - bw / 2;
     cx = mw <= bw ? (mw - bw) / 2 : Math.max(0, Math.min(mw - bw, cx));
-    cy = mh <= bh ? (mh - bh) / 2 : Math.max(0, Math.min(mh - bh, cy));
-    cam.x = Math.round(cx);
-    cam.y = Math.round(cy);
+    let cy;
+    if (mh <= fh) cy = -(ft + (fh - mh) / 2);
+    else cy = Math.max(-ft, Math.min(mh - fb, (p.fy + 0.5) * TS - (ft + fh / 2) - 4));
+    // follow the walking player exactly; ease only the larger jumps that come
+    // from a panel opening or closing (snap on a new map or with reduced motion)
+    if (camMap !== m || RB.game.reducedMotion()) { camMap = m; camX = cx; camY = cy; }
+    else {
+      camX = Math.abs(cx - camX) > 24 ? camX + (cx - camX) * 0.2 : cx;
+      camY = Math.abs(cy - camY) > 24 ? camY + (cy - camY) * 0.2 : cy;
+    }
+    cam.x = Math.round(camX);
+    cam.y = Math.round(camY);
+  }
+
+  // Outside a small map: a quiet surround in the region's darkest colour —
+  // timber for interiors, a faint weave outdoors — and a soft edge shadow, so
+  // the map reads as a lit room or stage rather than an empty band. Nothing
+  // here looks walkable. Patterns are cached per palette.
+  const surroundCache = new Map();
+  function mix(hex, to, a) {
+    const n = parseInt(hex.slice(1), 16), m2 = parseInt(to.slice(1), 16);
+    const ch = (v, w) => Math.round(v + (w - v) * a);
+    const r = ch(n >> 16, m2 >> 16), g = ch((n >> 8) & 255, (m2 >> 8) & 255), b = ch(n & 255, m2 & 255);
+    return '#' + ((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1);
+  }
+  function surroundPattern(c, pal, indoor) {
+    const key = pal.dark + (indoor ? 'i' : 'o');
+    let pat = surroundCache.get(key);
+    if (pat) return pat;
+    const cv = RB.sprites.makeCanvas(32, 32);
+    const g = cv.getContext('2d');
+    g.fillStyle = pal.dark;
+    g.fillRect(0, 0, 32, 32);
+    if (indoor) {
+      // dark timber: 8-px boards, staggered joints, the odd knot
+      g.fillStyle = mix(pal.dark, '#000000', 0.35);
+      for (let x = 0; x < 32; x += 8) g.fillRect(x, 0, 1, 32);
+      g.fillRect(3, 9, 5, 1); g.fillRect(11, 25, 5, 1); g.fillRect(19, 4, 5, 1); g.fillRect(27, 18, 5, 1);
+      g.fillStyle = mix(pal.dark, '#ffffff', 0.05);
+      for (let x = 1; x < 32; x += 8) g.fillRect(x, 0, 1, 32);
+      g.fillRect(21, 13, 2, 1);
+    } else {
+      // faint two-way weave, like the folio's cloth
+      g.fillStyle = mix(pal.dark, '#ffffff', 0.045);
+      for (let i = 0; i < 32; i += 4) for (let j = 0; j < 32; j += 4) g.fillRect((i + j) % 32, j, 1, 1);
+      g.fillStyle = mix(pal.dark, '#000000', 0.3);
+      for (let i = 0; i < 32; i += 4) for (let j = 2; j < 32; j += 4) g.fillRect((i + 34 - j) % 32, j, 1, 1);
+    }
+    pat = c.createPattern(cv, 'repeat');
+    surroundCache.set(key, pat);
+    return pat;
+  }
+  function drawSurround(c, m, pal) {
+    const mx = -cam.x, my = -cam.y, mw = m.w * TS, mh = m.h * TS;
+    const covers = mx <= 0 && my <= 0 && mx + mw >= bw && my + mh >= bh;
+    c.fillStyle = pal.dark;
+    c.fillRect(0, 0, bw, bh);
+    if (covers) return;
+    const indoor = m.region === 'interior' || (m.def && m.def.indoor) || (m.w <= 17 && m.h <= 12);
+    c.save();
+    c.translate(-cam.x & 31, -cam.y & 31); // the pattern stays put relative to the map
+    c.fillStyle = surroundPattern(c, pal, indoor);
+    c.fillRect(-32, -32, bw + 64, bh + 64);
+    c.restore();
+    // soft shadow just outside the map edge
+    const sh = 10;
+    const edge = (x0, y0, x1, y1, x, y, w, h) => {
+      const gr = c.createLinearGradient(x0, y0, x1, y1);
+      gr.addColorStop(0, 'rgba(0,0,0,0.55)');
+      gr.addColorStop(1, 'rgba(0,0,0,0)');
+      c.fillStyle = gr;
+      c.fillRect(x, y, w, h);
+    };
+    edge(0, my, 0, my - sh, mx - sh, my - sh, mw + 2 * sh, sh);
+    edge(0, my + mh, 0, my + mh + sh, mx - sh, my + mh, mw + 2 * sh, sh);
+    edge(mx, 0, mx - sh, 0, mx - sh, my, sh, mh);
+    edge(mx + mw, 0, mx + mw + sh, 0, mx + mw, my, sh, mh);
   }
 
   function drawActor(c, a, t, isFoe) {
@@ -139,8 +225,7 @@ RB.render = (function () {
     updateCamera(W);
     const c = bctx;
     const pal = palOf(m);
-    c.fillStyle = pal.dark;
-    c.fillRect(0, 0, bw, bh);
+    drawSurround(c, m, pal);
     c.drawImage(m.staticLayer, -cam.x, -cam.y);
     // animated water glints
     const x0 = Math.max(0, Math.floor(cam.x / TS)), y0 = Math.max(0, Math.floor(cam.y / TS));
@@ -327,5 +412,5 @@ RB.render = (function () {
     return { x: ((x * TS - cam.x) * devScale) / dpr, y: ((y * TS - cam.y) * devScale) / dpr };
   }
 
-  return { init, frame, invalidate, setOverride, viewSize, thumbnail, tileToCss, resize, cam };
+  return { init, frame, invalidate, setOverride, setInsets, viewSize, thumbnail, tileToCss, resize, cam };
 })();

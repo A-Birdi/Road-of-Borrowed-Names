@@ -17,6 +17,20 @@ RB.ui = (function () {
     overlay.appendChild(fadeEl);
     RB.input.buildTouchPad(root);
     RB.ui.help.init();
+    // Software keyboard: the part of the layout viewport the visual viewport
+    // no longer shows (ignored while pinch-zoomed), as --kb on :root and
+    // body.kb-open, so fields and their buttons can stay above it.
+    const vv = window.visualViewport;
+    if (vv) {
+      const upd = () => {
+        const kb = vv.scale > 1.05 ? 0 : Math.max(0, Math.round(window.innerHeight - (vv.height + vv.offsetTop)));
+        document.documentElement.style.setProperty('--kb', kb + 'px');
+        document.body.classList.toggle('kb-open', kb > 80);
+      };
+      vv.addEventListener('resize', upd);
+      vv.addEventListener('scroll', upd);
+      upd();
+    }
     document.addEventListener('keydown', (e) => {
       // keep Tab focus inside the top layer
       if (e.key === 'Tab' && layers.length) {
@@ -37,6 +51,8 @@ RB.ui = (function () {
 
   // ---- layers & navigation -------------------------------------------------------
   function pushLayer(layer) {
+    // a word-help card belongs to the layer it was opened from
+    if (RB.ui.help) RB.ui.help.hide(true);
     layers.push(layer);
     (layer.parent || root).appendChild(layer.el);
     document.body.classList.add('in-panel');
@@ -94,6 +110,8 @@ RB.ui = (function () {
     best.focus({ preventScroll: false });
   }
   function onAction(a, e) {
+    // an open word-help card is dismissed before anything underneath acts
+    if (a === 'cancel' && RB.ui.help && RB.ui.help.isOpen()) { RB.ui.help.hide(true); return; }
     const top = topLayer();
     if (top) {
       if (top.onAction && top.onAction(a, e)) return;
@@ -169,7 +187,7 @@ RB.ui = (function () {
   function card(jp, en) {
     return new Promise((res) => {
       const c = el('div', 'card');
-      c.innerHTML = (jp ? jhtml(jp) : '') + '<div class="en">' + esc(RB.script.enVars(en)) + '</div><button class="btn small" style="margin-top:1em">Continue</button>';
+      c.innerHTML = '<div class="card-slip">' + (jp ? jhtml(jp) : '') + '<div class="en">' + esc(RB.script.enVars(en)) + '</div></div><button class="cbtn">Continue</button>';
       const layer = { el: c, name: 'card' };
       const done = () => { popLayer(layer); clearTimeout(tm); res(); };
       layer.onAction = (a) => { if (a === 'ok' || a === 'cancel') { done(); return true; } return false; };
@@ -185,18 +203,24 @@ RB.ui = (function () {
     setTimeout(() => (p.style.opacity = '0'), 2400);
     setTimeout(() => p.remove(), 3100);
   }
+  // A small paper sheet on the cloth: the question, then its answers. The
+  // first button is the proposed action (danger-styled when destructive); the
+  // last one is the safe way out and is what Back/Escape chooses.
   function confirm(text, buttons, opts) {
     opts = opts || {};
     return new Promise((res) => {
-      const scrim = el('div', 'scrim');
-      const panel = el('div', 'panel');
-      panel.style.width = 'min(520px, calc(100vw - 16px))';
+      const scrim = el('div', 'scrim confirm-scrim');
+      const panel = el('div', 'csheet' + (opts.danger ? ' danger' : ''));
+      const tid = 'cq' + Math.random().toString(36).slice(2, 7);
       panel.setAttribute('role', 'alertdialog');
-      panel.innerHTML = '<div class="body"><p>' + (opts.html ? text : esc(text)) + '</p></div><div class="foot"></div>';
+      panel.setAttribute('aria-modal', 'true');
+      panel.setAttribute('aria-labelledby', tid);
+      panel.innerHTML = '<p class="q" id="' + tid + '">' + (opts.html ? text : esc(text)) + '</p><div class="foot"></div>';
       const foot = panel.querySelector('.foot');
       const layer = { el: scrim, name: 'confirm' };
       buttons.forEach((b, i) => {
-        const btn = el('button', 'btn' + (i === 0 && opts.danger ? ' danger' : i === 0 ? ' primary' : ''), esc(b));
+        const btn = el('button', 'pbtn' + (i === 0 && opts.danger ? ' danger' : i === 0 && buttons.length > 1 ? ' primary' : ''), esc(b));
+        if (i === buttons.length - 1 && buttons.length > 1) btn.classList.add('autofocus'); // the safe choice has focus first
         btn.onclick = () => { popLayer(layer); res(i); };
         foot.appendChild(btn);
       });
@@ -212,11 +236,10 @@ RB.ui = (function () {
     void w.offsetWidth;
     w.classList.add('shake');
   }
-  function tick() {}
 
   return {
     init, el, pushLayer, popLayer, topLayer, focusables, moveFocus, onAction, jhtml, ehtml, plainJp, label,
-    notice, toast, fade, card, placeName, confirm, shake, tick, get root() { return root; }, get overlay() { return overlay; },
+    notice, toast, fade, card, placeName, confirm, shake, get root() { return root; }, get overlay() { return overlay; },
   };
 })();
 
@@ -230,16 +253,17 @@ RB.ui.help = (function () {
   const reg = new Map();
   let nextId = 1;
   let panel = null, pinned = false, cur = null, on = true;
+  let via = 'hover'; // how the open card was requested: 'hover' | 'tap' | 'key'
 
   function init() {
     on = true;
     document.addEventListener('pointerover', (e) => {
-      if (!enabled() || pinned || e.pointerType === 'touch') return;
+      if (!enabled() || pinned || e.pointerType === 'touch' || (panel && via !== 'hover')) return;
       const t = e.target.closest && e.target.closest('.jt');
-      if (t) showFor(t);
+      if (t) { via = 'hover'; showFor(t); }
     });
     document.addEventListener('pointerout', (e) => {
-      if (pinned || e.pointerType === 'touch') return;
+      if (pinned || e.pointerType === 'touch' || via !== 'hover') return;
       const t = e.target.closest && e.target.closest('.jt');
       if (t && panel && !panel.contains(e.relatedTarget)) {
         setTimeout(() => { if (!pinned && panel && !panel.matches(':hover') && cur === t) hide(); }, 250);
@@ -255,7 +279,7 @@ RB.ui.help = (function () {
       const t = enabled() && e.target.closest && e.target.closest('.jt');
       if (!t || !t.closest(CONTROL)) return;
       const x = e.clientX, y = e.clientY;
-      press = { t, x, y, timer: setTimeout(() => { press = null; swallowClick = true; showFor(t); }, 450) };
+      press = { t, x, y, timer: setTimeout(() => { press = null; swallowClick = true; via = 'tap'; showFor(t); }, 450) };
     }, true);
     const cancelPress = (e) => {
       if (!press) return;
@@ -267,13 +291,25 @@ RB.ui.help = (function () {
     document.addEventListener('click', (e) => {
       if (swallowClick) { swallowClick = false; e.stopPropagation(); e.preventDefault(); return; } // the long press was a help request
       const t = e.target.closest && e.target.closest('.jt');
-      if (t && enabled() && !t.closest(CONTROL)) { e.stopPropagation(); showFor(t); return; }
-      if (panel && !panel.contains(e.target) && !pinned) hide();
+      if (t && enabled() && !t.closest(CONTROL)) { e.stopPropagation(); via = 'tap'; showFor(t); return; }
+      if (panel && !panel.contains(e.target)) {
+        // A card opened by a tap (or pinned) pauses what is under it: the tap
+        // outside only closes the card and does not also press Next, choose an
+        // answer or walk. Hover and keyboard-focus cards never block a click.
+        const blocking = pinned || via === 'tap';
+        pinned = false;
+        hide();
+        if (blocking) { e.stopPropagation(); e.preventDefault(); }
+      }
     }, true);
+    // keyboard focus on a word opens its card only when the person is
+    // actually navigating with keys (not when a screen places focus itself)
+    let lastKey = 0;
+    document.addEventListener('keydown', () => { lastKey = Date.now(); }, true);
     document.addEventListener('focusin', (e) => {
-      if (!enabled()) return;
+      if (!enabled() || Date.now() - lastKey > 1500) return;
       const t = e.target.closest && e.target.closest('.jt');
-      if (t && t.matches(':focus-visible')) showFor(t);
+      if (t && t.matches(':focus-visible')) { via = 'key'; showFor(t); }
     });
   }
   function enabled() {
@@ -307,6 +343,7 @@ RB.ui.help = (function () {
     render(tok, elm, r);
     if (RB.challenge && RB.challenge.active()) RB.challenge.noteHelp(tok, elm);
   }
+  const HI = (n) => (RB.ui.folio ? RB.ui.folio.icon(n) : '');
   function render(tok, anchor, r) {
     let info;
     try { info = RB.jp.lookup(tok); } catch (e) { info = { unknown: true, reading: tok.reading || tok.surface }; }
@@ -321,22 +358,24 @@ RB.ui.help = (function () {
     const reading = info.reading || tok.reading || '';
     const surface = tok.surface || '';
     const mora = info.mora || (RB.kana && RB.kana.mora ? RB.kana.mora(reading) : []);
-    let html = '<div class="hw">' + esc(surface) + (reading && reading !== surface ? ' <span class="hr">【' + esc(reading) + '】</span>' : '') + '</div>';
+    // header: the word and its reading, with Close always in the same corner
+    let html = '<div class="hhead"><div class="hw" lang="ja">' + esc(surface) + (reading && reading !== surface ? '<span class="hr">' + esc(reading) + '</span>' : '') + '</div>' +
+      '<button class="hclose" data-a="close" aria-label="Close word help">' + HI('close') + '<span>Close</span></button></div><div class="hbody">';
     if (RB.game.settings.romaji !== false && info.romaji) html += '<div class="rom">' + esc(info.romaji) + '</div>';
-    if (info.gloss) html += '<div class="mean"><b>Here:</b> ' + esc(info.gloss) + '</div>';
-    if (e) html += '<div class="mean">' + (info.gloss ? '<span class="dim small">Dictionary: </span>' : '') + esc(e.m) + (info.lemma && info.lemma !== surface ? ' <span class="small">(' + esc(info.lemma) + ')</span>' : '') + '</div>';
+    if (info.gloss) html += '<div class="mean"><span class="lab">Here</span>' + esc(info.gloss) + '</div>';
+    if (e) html += '<div class="mean">' + (info.gloss ? '<span class="lab">Dictionary</span>' : '') + esc(e.m) + (info.lemma && info.lemma !== surface ? ' <span class="small" lang="ja">(' + esc(info.lemma) + ')</span>' : '') + '</div>';
     if (info.forms && info.forms.length) html += '<div class="note">Form: ' + esc(info.forms.join(' → ')) + '</div>';
     if (info.parts && info.parts.length) html += '<div class="note">Parts: ' + info.parts.map((p) => esc(p.surface || p.w || '') + (p.m ? ' (' + esc(p.m) + ')' : '')).join(' + ') + '</div>';
     if (e && e.n) html += '<div class="note">' + esc(e.n) + '</div>';
     if (!e && !info.gloss) html += '<div class="note">No dictionary note is recorded for this piece of text. The reading above is still accurate.</div>';
-    if (mora && mora.length > 1) html += '<div class="note">Beats (morae): <span class="mora">' + mora.map((m) => '<span>' + esc(m) + '</span>').join('') + '</span></div>';
+    if (mora && mora.length > 1) html += '<div class="note">Beats (morae): <span class="mora" lang="ja">' + mora.map((m) => '<span>' + esc(m) + '</span>').join('') + '</span></div>';
     if (surface.indexOf('っ') >= 0 || surface.indexOf('ッ') >= 0) html += '<div class="note">Small っ is a held beat: the next consonant is doubled.</div>';
     if (surface.indexOf('ー') >= 0) html += '<div class="note">ー lengthens the vowel before it by one beat.</div>';
-    html += '<div class="acts">';
-    if (RB.voice && RB.voice.japaneseVoices && RB.voice.japaneseVoices().length) html += '<button class="btn small" data-a="say">🔊 Say</button>';
-    html += '<button class="btn small" data-a="pin">' + (pinned ? 'Unpin' : '📌 Pin') + '</button>';
-    if (RB.game.s) html += '<button class="btn small" data-a="note">＋ Notebook</button>';
-    html += '<button class="btn small" data-a="close">Close</button></div>';
+    html += '</div><div class="acts">';
+    if (RB.voice && RB.voice.japaneseVoices && RB.voice.japaneseVoices().length) html += '<button class="pbtn" data-a="say">' + HI('sound') + 'Say it</button>';
+    html += '<button class="pbtn" data-a="pin" aria-pressed="' + pinned + '">' + HI('note') + (pinned ? 'Pinned' : 'Keep open') + '</button>';
+    if (RB.game.s) html += '<button class="pbtn" data-a="note">' + HI('words') + 'Add to notebook</button>';
+    html += '</div>';
     panel.innerHTML = html;
     panel.classList.toggle('pinned', pinned);
     panel.onclick = (ev) => {
@@ -345,23 +384,30 @@ RB.ui.help = (function () {
       const a = b.getAttribute('data-a');
       if (a === 'say') RB.voice.speak(reading || surface);
       if (a === 'pin') { pinned = !pinned; render(tok, anchor, r); }
-      if (a === 'close') { pinned = false; hide(); }
+      if (a === 'close') { pinned = false; hide(); if (anchor && anchor.isConnected && via === 'key') anchor.focus({ preventScroll: true }); }
       if (a === 'note') addToNotebook(tok, info);
     };
     position(anchor);
   }
+  // Narrow screens: a sheet along the bottom edge (it never sits on top of
+  // the word's own line and always shows its Close). Wider screens: a bounded
+  // note card beside the word, kept inside the viewport. With the writing pad
+  // open the card docks to a corner so it never covers the strokes.
   function position(anchor) {
     const padOpen = document.querySelector('.pad-box') && document.querySelector('.chal');
-    panel.classList.toggle('docked', !!padOpen);
-    if (padOpen) { panel.style.left = ''; panel.style.top = ''; return; }
+    // (a hover card stays beside the word even in a narrow window: a sheet
+    // would slide under the pointer and cover the word being read)
+    const sheet = window.innerWidth < 600 && via !== 'hover';
+    panel.classList.toggle('docked', !!padOpen && !sheet);
+    panel.classList.toggle('sheet', sheet);
+    if (sheet || padOpen) { panel.style.left = ''; panel.style.top = ''; return; }
     const r = anchor.getBoundingClientRect();
-    const pw = Math.min(380, window.innerWidth - 16);
-    let left = Math.min(window.innerWidth - pw - 8, Math.max(8, r.left + r.width / 2 - pw / 2));
+    const pw = Math.min(400, window.innerWidth - 16);
+    const left = Math.min(window.innerWidth - pw - 8, Math.max(8, r.left + r.width / 2 - pw / 2));
     panel.style.left = left + 'px';
-    panel.style.width = '';
     const ph = panel.offsetHeight || 180;
-    let top = r.top - ph - 10;
-    if (top < 8) top = r.bottom + 10;
+    let top = r.top - ph - 12;
+    if (top < 8) top = r.bottom + 12;
     if (top + ph > window.innerHeight - 8) top = Math.max(8, window.innerHeight - ph - 8);
     panel.style.top = top + 'px';
   }
@@ -383,16 +429,22 @@ RB.ui.help = (function () {
   return { init, toggle, register, showFor, hide, enabled, isOpen };
 })();
 
-/* ---- HUD --------------------------------------------------------------------------- */
+/* ---- HUD ---------------------------------------------------------------------------
+ * One Menu entry point and the word-help switch, as labelled cloth tags at the
+ * top edge. Hidden whenever a panel, the folio or dialogue is up (those carry
+ * their own controls). Also keeps the touch Action label and the camera's
+ * bottom inset in step with what is on screen. */
 RB.ui.hud = (function () {
   'use strict';
   let box = null;
-  const BULB = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a7 7 0 0 0-4 12.7V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.3A7 7 0 0 0 12 2zm-2 18h4v1a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-1z"/></svg>';
+  const I = (n) => RB.ui.folio.icon(n);
   function show() {
     if (!box) {
       box = RB.ui.el('div', 'hud');
-      box.innerHTML = '<button class="btn bulb" aria-label="Lightbulb help (H)" title="Lightbulb help (H)">' + BULB + '</button>' +
-        '<button class="btn menu-b" aria-label="Menu (C)" title="Menu (C)">≡</button>';
+      box.setAttribute('role', 'toolbar');
+      box.setAttribute('aria-label', 'Game');
+      box.innerHTML = '<button class="hbtn bulb" aria-pressed="false" title="Word help (H)">' + I('bulb') + '<span class="l">Word help</span><span class="st" aria-hidden="true"></span></button>' +
+        '<button class="hbtn menu-b" title="Menu (C)">' + I('menu') + '<span class="l">Menu</span></button>';
       box.querySelector('.bulb').onclick = () => RB.ui.help.toggle();
       box.querySelector('.menu-b').onclick = () => { if (RB.game.mode() === 'world') RB.ui.menu.open(); };
       RB.ui.root.appendChild(box);
@@ -404,7 +456,36 @@ RB.ui.hud = (function () {
   function refresh() {
     const on = RB.game.settings && RB.game.settings.lightbulb;
     document.body.classList.toggle('bulb-on', !!on);
-    if (box) box.querySelector('.bulb').classList.toggle('on', !!on);
+    if (box) {
+      const b = box.querySelector('.bulb');
+      b.classList.toggle('on', !!on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      b.querySelector('.st').textContent = on ? 'On' : 'Off';
+    }
   }
-  return { show, hide, refresh };
+  // ---- per-frame bookkeeping (cheap; DOM reads only when something changed) ----
+  let acc = 0, lastLabel = '', lastInset = -1;
+  function tick(dt) {
+    acc += dt;
+    if (acc < 120) return;
+    acc = 0;
+    const body = document.body;
+    const world = RB.game.mode && RB.game.mode() === 'world' && RB.world.W.map;
+    if (world && body.classList.contains('touch')) {
+      const fa = RB.world.frontAction ? RB.world.frontAction() : null;
+      const label = fa ? fa.label : 'Look';
+      if (label + !!fa !== lastLabel) { lastLabel = label + !!fa; RB.input.setActionLabel(label, !!fa); }
+    }
+    // the camera keeps the player clear of whatever covers the bottom edge
+    let inset = 0;
+    const dlg = document.querySelector('.dlg:not(.hidden)');
+    if (dlg) inset = Math.max(0, window.innerHeight - dlg.getBoundingClientRect().top);
+    else if (world && body.classList.contains('touch')) {
+      const tp = document.querySelector('.touchpad .tp-move');
+      if (tp) inset = Math.max(0, window.innerHeight - tp.getBoundingClientRect().top) * 0.75;
+    }
+    if (Math.abs(inset - lastInset) > 2) { lastInset = inset; RB.render.setInsets({ bottom: inset }); }
+  }
+  return { show, hide, refresh, tick };
 })();
+RB.ui.tick = function (dt, t) { RB.ui.hud.tick(dt, t); };

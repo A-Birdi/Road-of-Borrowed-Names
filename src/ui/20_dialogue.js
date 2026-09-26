@@ -12,32 +12,74 @@ RB.ui.dialogue = (function () {
   let current = null;       // current line data
   let showSub = false;
 
+  const I = (n) => RB.ui.folio.icon(n);
+  // Layout: a paper correspondence sheet inset at the bottom of the screen,
+  // a speaker tab on its top edge, the portrait beside it, the line in ink,
+  // the second language under a rule, and one control row: separate
+  // Word help / Translation / Voice / History / Skip toggles and ONE Next in
+  // the same place every time. Tapping the text also advances (a supplement,
+  // never on a word: words open help when word help is on).
   function ensure() {
     if (box) return;
     box = RB.ui.el('div', 'dlg hidden');
     box.setAttribute('role', 'dialog');
-    box.setAttribute('aria-live', 'polite');
+    box.setAttribute('aria-label', 'Dialogue');
     box.innerHTML =
       '<canvas class="portrait" width="48" height="48" aria-hidden="true"></canvas>' +
-      '<div class="txt"><div class="who"></div><div class="main"></div><div class="sub"></div></div>' +
-      '<div class="ctrl">' +
-      '<button class="btn b-voice" title="Replay voice" aria-label="Replay Japanese voice">🔊</button>' +
-      '<button class="btn b-tr" title="Show/hide translation (T)">Aあ</button>' +
-      '<button class="btn b-log" title="Dialogue history (L)">Log</button>' +
-      '<button class="btn b-skip" title="Skip lines you have already seen">Skip seen ⏩</button>' +
-      '<button class="btn b-next" aria-label="Next">Next <span class="next">▼</span></button></div>';
-    box.addEventListener('click', (e) => {
-      if (e.target.closest('.jt') || e.target.closest('.ctrl') || e.target.closest('.sub.tap')) return;
+      '<div class="dlg-tab"><div class="who"></div></div>' +
+      '<div class="dlg-sheet">' +
+      '<div class="txt" aria-live="polite"><div class="main"></div><div class="sub"></div></div>' +
+      '<div class="ctrl" role="group" aria-label="Dialogue controls"><div class="aux">' +
+      '<button class="dbtn b-words" aria-pressed="false" title="Word help (H)">' + I('bulb') + '<span>Word help</span></button>' +
+      '<button class="dbtn b-tr" aria-pressed="false" title="Show or hide the other language (T)">' + I('words') + '<span>Translation</span></button>' +
+      '<button class="dbtn b-voice" title="Replay the Japanese line with this device\'s voice">' + I('sound') + '<span>Voice</span></button>' +
+      '<button class="dbtn b-log" title="Dialogue history (L)">' + I('history') + '<span>History</span></button>' +
+      '<button class="dbtn b-skip" title="Skip lines you have already seen">' + I('next') + '<span>Skip seen</span></button>' +
+      '</div><button class="dbtn primary b-next">Next' + I('next') + '</button></div></div>';
+    box.querySelector('.txt').addEventListener('click', (e) => {
+      if (e.target.closest('.jt') || e.target.closest('.sub.tap')) return;
       advance();
     });
     box.querySelector('.b-next').onclick = () => advance();
+    // a line longer than the sheet: Next first shows the rest, then advances
+    box.querySelector('.txt').addEventListener('scroll', syncMore, { passive: true });
+    if (typeof ResizeObserver !== 'undefined') new ResizeObserver(syncMore).observe(box.querySelector('.txt'));
     box.querySelector('.b-log').onclick = () => RB.ui.menu.open('log');
     box.querySelector('.b-voice').onclick = () => speak(true);
-    box.querySelector('.b-tr').onclick = () => { showSub = !showSub; renderSub(); };
+    box.querySelector('.b-tr').onclick = () => { showSub = !showSub; renderSub(); syncCtrl(); };
+    box.querySelector('.b-words').onclick = () => { RB.ui.help.toggle(); syncCtrl(); };
     box.querySelector('.b-skip').onclick = () => { RB.game.setFastForward(true); advance(); };
     RB.ui.root.appendChild(box);
     choicesEl = RB.ui.el('div', 'choices hidden');
+    choicesEl.setAttribute('role', 'group');
+    choicesEl.setAttribute('aria-label', 'Your reply');
     RB.ui.root.appendChild(choicesEl);
+    // choices sit just above the sheet, whatever its height
+    if (typeof ResizeObserver !== 'undefined') {
+      new ResizeObserver(() => {
+        const h = box.classList.contains('hidden') ? 0 : box.getBoundingClientRect().height;
+        document.documentElement.style.setProperty('--dlg-h', Math.round(h) + 'px');
+      }).observe(box);
+    }
+  }
+  function unread() {
+    const t = box && box.querySelector('.txt');
+    return t ? t.scrollHeight - t.scrollTop - t.clientHeight > 4 : false;
+  }
+  function syncMore() {
+    if (!box) return;
+    const more = unread();
+    if (box.classList.contains('more') === more) return;
+    box.classList.toggle('more', more);
+    const nb = box.querySelector('.b-next');
+    nb.innerHTML = more ? 'More' + I('down') : 'Next' + I('next');
+    nb.setAttribute('aria-label', more ? 'Show the rest of this line' : 'Next');
+  }
+  function syncCtrl() {
+    if (!box) return;
+    const on = !!(RB.game.settings && RB.game.settings.lightbulb);
+    box.querySelector('.b-words').setAttribute('aria-pressed', on ? 'true' : 'false');
+    box.querySelector('.b-tr').setAttribute('aria-pressed', showSub ? 'true' : 'false');
   }
 
   function charInfo(who) {
@@ -67,7 +109,8 @@ RB.ui.dialogue = (function () {
       else RB.portraits.draw(cv, line.who, line.expr);
     }
     const whoEl = box.querySelector('.who');
-    whoEl.innerHTML = ch ? '<span>' + esc(ch.name.en) + '</span>' + (ch.name.jp ? '<span class="jp">' + RB.ui.jhtml(ch.name.jp) + '</span>' : '') : '';
+    whoEl.innerHTML = ch ? '<span class="nm">' + esc(ch.name.en) + '</span>' + (ch.name.jp ? '<span class="jp">' + RB.ui.jhtml(ch.name.jp) + '</span>' : '') : '<span class="nm narr">' + (line.jp || line.en ? '' : '') + '</span>';
+    box.classList.toggle('narration', !ch);
     const lead = RB.game.settings.lead;
     const main = box.querySelector('.main');
     const hasJp = !!line.jp;
@@ -82,6 +125,9 @@ RB.ui.dialogue = (function () {
     box.querySelector('.b-voice').classList.toggle('hidden', !(hasJp && RB.voice && RB.voice.japaneseVoices && RB.voice.japaneseVoices().length));
     box.querySelector('.b-skip').classList.toggle('hidden', !(seenScene && RB.game.settings.skipSeen));
     box.querySelector('.b-tr').classList.toggle('hidden', RB.game.settings.secondary === 'always' || !hasJp);
+    syncCtrl();
+    box.querySelector('.txt').scrollTop = 0;
+    requestAnimationFrame(syncMore);
     if (RB.game.settings.voice.auto && hasJp && !RB.game.fastForward()) speak(false);
     reveal(main);
     RB.audio && RB.audio.sfx('text_blip', { vol: 0.35 });
@@ -171,7 +217,12 @@ RB.ui.dialogue = (function () {
 
   function advance(auto) {
     if (!pending) return;
-    if (revealing && !auto) { revealing.finish(); return; }
+    if (revealing && !auto) { revealing.finish(); requestAnimationFrame(syncMore); return; }
+    if (!auto && unread()) {
+      const t = box.querySelector('.txt');
+      t.scrollBy({ top: Math.max(40, t.clientHeight * 0.8), behavior: RB.game.reducedMotion() ? 'auto' : 'smooth' });
+      return;
+    }
     if (revealing) revealing.finish();
     RB.voice && RB.voice.cancel();
     const r = pending;
@@ -188,14 +239,15 @@ RB.ui.dialogue = (function () {
       choicesEl.innerHTML = '';
       choicesEl.classList.remove('hidden');
       const layer = { el: choicesEl, name: 'choices', parent: RB.ui.root, noAutofocus: false };
+      choicesEl.classList.toggle('with-dlg', isOpen());
       opts.forEach((op, i) => {
-        const b = RB.ui.el('button', 'btn');
+        const b = RB.ui.el('button', 'choice');
         const lead = RB.game.settings.lead;
-        b.innerHTML = lead === 'ja' && op.jp
+        b.innerHTML = '<span class="n" aria-hidden="true">' + (i + 1) + '</span><span class="c">' + (lead === 'ja' && op.jp
           ? RB.ui.jhtml(op.jp) + (op.en ? '<span class="en">' + esc(RB.script.enVars(op.en)) + '</span>' : '')
-          : '<span class="enline">' + esc(RB.script.enVars(op.en || '')) + '</span>' + (op.jp ? '<span class="en">' + RB.ui.jhtml(op.jp) + '</span>' : '');
-        b.onclick = (e) => {
-            RB.ui.popLayer(layer);
+          : '<span class="enline">' + esc(RB.script.enVars(op.en || '')) + '</span>' + (op.jp ? '<span class="en">' + RB.ui.jhtml(op.jp) + '</span>' : '')) + '</span>';
+        b.onclick = () => {
+          RB.ui.popLayer(layer);
           choicesEl.classList.add('hidden');
           choicesEl.innerHTML = '';
           RB.audio && RB.audio.sfx('confirm');
@@ -220,6 +272,7 @@ RB.ui.dialogue = (function () {
   function onAction(a) {
     if (!box || box.classList.contains('hidden') || !pending) return false;
     if (a === 'ok') { advance(); return true; }
+    if (a === 'tr' && !box.querySelector('.b-tr').classList.contains('hidden')) { showSub = !showSub; renderSub(); syncCtrl(); return true; }
     if (a === 'log') { RB.ui.menu.open('log'); return true; }
     if (a === 'cancel') { return true; }
     return false;

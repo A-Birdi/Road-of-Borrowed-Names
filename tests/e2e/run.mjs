@@ -11,7 +11,7 @@ import { fileURLToPath } from 'node:url';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const full = process.argv.includes('--full');
 const suites = [
-  ['ui.mjs'], ['systems.mjs'], ['settings.mjs'], ['folio.mjs'], ['audio.check.mjs'],
+  ['ui.mjs'], ['systems.mjs'], ['settings.mjs'], ['folio.mjs'], ['play_ui.mjs'], ['audio.check.mjs'],
   ['shift_load_regression.mjs', '--origin'], ['shift_load_regression.mjs'], // hotfix regressions (http origin, file://)
   full ? ['story_ch1.mjs'] : ['story_ch1.mjs', 'F', 'mio'],
   full ? ['story_ch3.mjs'] : ['story_ch3.mjs', 'E', 'nao'], ['side_ch3.mjs'],

@@ -52,7 +52,7 @@ async function uiStep() {
       const rev = chal.querySelector('[data-a=reveal]');
       if (rev) { rev.click(); return 'challenge:reveal'; }
     }
-    const panelBtn = [...document.querySelectorAll('.panel .foot .btn.primary, .panel [data-ok]')].find(shown);
+    const panelBtn = [...document.querySelectorAll('.panel .foot .btn.primary, .panel [data-ok], .csheet .foot .pbtn.primary')].find(shown);
     if (panelBtn) { panelBtn.click(); return 'panel'; }
     const ch = document.querySelector('.choices');
     if (shown(ch)) {

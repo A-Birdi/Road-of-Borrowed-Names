@@ -389,6 +389,12 @@ await test('clicking the Japanese word on an answer button answers it; a long pr
   const afterPress = await p.evaluate(() => ({ help: !!document.querySelector('.help:not(.hidden)'), fb: (document.querySelector('.fbwrap') || {}).innerText || '', disabled: [...document.querySelectorAll('.mc .btn')].filter((x) => x.disabled).length }));
   assert(afterPress.help, 'long press opened help');
   assert(!/Not quite/.test(afterPress.fb) && afterPress.disabled === 0, 'long press did not answer: ' + JSON.stringify(afterPress));
+  // while that help card is open, the next click only closes it (help pauses
+  // the question; nothing underneath is chosen by the same tap)
+  await p.locator('.mc .btn', { hasText: /^みず$/ }).locator('.jt').first().click();
+  await p.waitForTimeout(150);
+  const paused = await p.evaluate(() => ({ help: !!document.querySelector('.help'), answered: !!document.querySelector('.fbwrap button') }));
+  assert(!paused.help && !paused.answered, 'a click while help is open closes help without answering: ' + JSON.stringify(paused));
   // plain click on the word inside the right option answers it
   await p.locator('.mc .btn', { hasText: /^みず$/ }).locator('.jt').first().click();
   await p.waitForSelector('.fbwrap button');
@@ -424,7 +430,7 @@ await test('touch layout on a phone viewport; drawing does not move the player',
   const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, deviceScaleFactor: 3 });
   const { p, errors } = await page(b, url, { context: ctx });
   await p.evaluate(() => { RB.game.settings.touch = 'on'; RB.game.applySettings(); RB.game.debugStart('rw.village', 22, 18, {}); });
-  await p.waitForSelector('.touchpad .tp-dpad', { state: 'visible' });
+  await p.waitForSelector('.touchpad .tp-move', { state: 'visible' });
   await shot(p, 'ui_phone_world');
   const before = await p.evaluate(() => [RB.game.s.x, RB.game.s.y]);
   await p.evaluate(() => { RB.game.s.learn.kanaKnown = 'both'; window.__r = RB.challenge.runStep({ kind: 'write', item: 'k:く', answer: 'く', accept: ['く'], mode: 'kana', single: true, prompt: { en: 'Write ku' } }, {}); });
