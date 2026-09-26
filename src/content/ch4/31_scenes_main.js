@@ -17,7 +17,7 @@ hoshino: {出|で}て いく {朝|あさ} 、 わたし は {約束|やくそく
 hoshino: {灯|あか}り の {笠|かさ} に は 、 あの {子|こ} の {名前|なまえ} を {書|か}いた 。 {灯守|ひもり} の {真似事|まねごと} だ よ 。 {帰|かえ}り{道|みち} の {目印|めじるし} に なる よう に 。 || I wrote her name on the lamp's shade. Playing at being a lantern keeper. So it would mark her way home.
 ?(comp=ren) comp[surprise]: {名前|なまえ} を {灯|あか}り に …… 。 それ は {真似事|まねごと} では ありません 。 {灯守|ひもり} の {仕事|しごと} そのもの です 。 || A name on a lamp… That's not playing at it. That's exactly what a keeper does.
 ?(comp=ren) hoshino[smile]: {本物|ほんもの} の {灯守|ひもり} に そう {言|い}われる と 、 {照|て}れる ね 。 || Coming from a real keeper, that makes me blush.
-hoshino: {十日|とおか} {前|まえ} の {晩|ばん} 、 {灯|あか}り が {消|き}えた 。 {油|あぶら} も {芯|しん} も ある のに 、 どう して も つかない 。 || Ten nights ago, the lamp went out. There's oil, there's a wick, and it simply won't light.
+hoshino: {十日|とおか} {前|まえ} の {晩|ばん} 、 {灯|あか}り が {消|き}えた 。 {油|あぶら} も {芯|しん} も ある のに 、 どうしても つかない 。 || Ten nights ago, the lamp went out. There's oil, there's a wick, and it simply won't light.
 hoshino: {次|つぎ} の {朝|あさ} に は 、 {石段|いしだん} も {天文台|てんもんだい} も 、 {氷|こおり} に {閉|と}じ{込|こ}められて いた 。 || By the next morning the stair and the whole observatory were locked in ice.
 hoshino[sad]: それ に …… {手紙|てがみ} も {来|こ}なく なった 。 || And… the letters stopped coming too.
 hoshino: アカリ は {秋|あき} から {毎月|まいつき} {書|か}いて くれた 。 {冬|ふゆ} は {峠|とうげ} が {閉|し}まる から 、 {冬|ふゆ} の {手紙|てがみ} が {届|とど}く の は {春|はる} だ 。 それ は わかって いる 。 || Akari wrote every month from autumn on. The pass closes in winter, so winter letters arrive in spring. I know that.
@@ -49,7 +49,7 @@ hoshino[sad]: {最後|さいご} の {手紙|てがみ} だ 。 || The last one.
 hoshino: 「 {初雪|はつゆき} は もう {降|ふ}りました か 。 {最近|さいきん} 、 {灯|あか}り が {見|み}えない {夜|よる} が あります 。 {霧|きり} の せい だ と {思|おも}う けど 、 {心配|しんぱい} です 。 お{父|とう}さん 、 {無理|むり} しないで ね 。 」 || "Has the first snow fallen yet? Lately there are nights I can't see the lamp. I think it's the mist, but I worry. Father — don't overdo it, okay?"
 hoshino: ………… 。 || ………
 hoshino: …… あの {子|こ} は 、 {見|み}て いた んだ ね 。 {毎晩|まいばん} 。 || …She was watching. Every night.
-hoshino[sad]: それ なのに わたし は 、 {灯|あか}り を {守|まも}れなかった 。 || And I couldn't keep the lamp alight.
+hoshino[sad]: それなのに わたし は 、 {灯|あか}り を {守|まも}れなかった 。 || And I couldn't keep the lamp alight.
 ?(comp=nao) comp: {消|け}した の は あんた じゃ ない 。 {宛名|あてな} を {消|け}した の と {同|おな}じ {奴|やつ} だ よ 。 || It wasn't you who put it out. It's the same thing that wiped the addresses.
 ?(comp=mio) comp[worry]: ホシノ さん の せい じゃ ありません 。 {約束|やくそく} を {破|やぶ}った わけ じゃ ない 。 {奪|うば}われた んです 。 || It isn't your fault. You didn't break your promise. It was taken from you.
 ?(comp=ren) comp: {笠|かさ} の {名前|なまえ} が {消|き}えた の でしょう 。 {名前|なまえ} を {書|か}き{直|なお}せば 、 {灯|ひ} は {戻|もど}る かも しれません 。 || The name on the shade must have been lifted. If the name is written again, the flame may come back.
@@ -298,5 +298,8 @@ hoshino[smile]: やあ 、 $name 。 {灯|あか}り は {今夜|こんや} も 
 
 @scene sb.eve_hoshino
 hoshino[smile]: {見|み}て ごらん 。 {下|した} の {町|まち} まで {届|とど}いて いる はず だ 。 || Look. It should reach all the way to the town below.
+?(sb_hoshino_stays) hoshino: {今夜|こんや} から また 、 {毎晩|まいばん} だ 。 {膝|ひざ} に は {悪|わる}い が 、 {心|こころ} に は いい 。 || Every night again, starting tonight. Bad for the knees, good for the heart.
+?(sb_hoshino_goes) hoshino: {春|はる} に なったら 、 {君|きみ} たち の {後|あと} を {追|お}って {坂|さか} を {下|くだ}る よ 。 {灯|あか}り の {番|ばん} は 、 カンタ が {張|は}り{切|き}って いる 。 || Come spring, I'll follow you down the slope. Kanta's already fired up about keeping the lamp.
+?(sb_hoshino_both) hoshino: {春|はる} まで は わたし が 、 {春|はる} から は カンタ と フキ さん が 。 {灯|あか}り は {休|やす}まない 。 わたし だけ が 、 {少|すこ}し {旅|たび} に {出|で}る 。 || Until spring, me; from spring, Kanta and Fuki. The lamp never rests. Only I'll go travelling a little.
 hoshino: {君|きみ} たち が {灯落|ひおち} へ {下|くだ}る {道|みち} は 、 ハヤテ が {明日|あした} {開|あ}けて くれる そう だ 。 …… アカリ に 、 よろしく 。 || Hayate says he'll clear the road down to Lanternfall for you tomorrow. …Give Akari my love.
 `, 'ch4/main-hoshino2');

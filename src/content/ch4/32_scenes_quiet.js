@@ -133,7 +133,7 @@ comp: {怖|こわ}い の は 、 いつか 「 いいえ 」 って {言|い}�
 * わたし も 、 {同|おな}じ こと を {考|かんが}える || I think the same about myself. -> share
 :reassure
 !var sb_tone = 2
-comp[shy]: …… ずるい なあ 。 そう いう こと を 、 {暗|くら}い {部屋|へや} で {言|い}う の は 。 {顔|かお} が {見|み}えない から 、 {信|しん}じる しか ない じゃ ない 。 || …That's unfair. Saying something like that in a dark room. I can't see your face, so I've no choice but to believe you.
+comp[shy]: …… ずるい なあ 。 そういう こと を 、 {暗|くら}い {部屋|へや} で {言|い}う の は 。 {顔|かお} が {見|み}えない から 、 {信|しん}じる しか ない じゃ ない 。 || …That's unfair. Saying something like that in a dark room. I can't see your face, so I've no choice but to believe you.
 !goto jar
 :honest
 !var sb_tone = 3

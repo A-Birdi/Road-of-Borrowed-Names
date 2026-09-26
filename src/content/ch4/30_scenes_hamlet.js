@@ -116,7 +116,7 @@ RB.script.add(`
 !if sb_storm -> morning
 !if quest.sb_lamp>=1 -> later
 yae[surprise]: まあ ！ この {季節|きせつ} に お{客|きゃく} さん だ なんて 。 さあ さあ 、 {入|はい}って 。 {雪|ゆき} は {払|はら}って から ね 。 || My! Guests, at this time of year. Come in, come in. Brush the snow off first, mind.
-yae[smile]: {雪見屋|ゆきみや} の ヤエ です 。 {部屋|へや} なら {空|あ}いてる よ 。 {冬|ふゆ} は いつ も {空|あ}いてる けど ね 。 || I'm Yae; this is Yukimiya. There are rooms free. There always are, in winter.
+yae[smile]: {雪見屋|ゆきみや} の ヤエ です 。 {部屋|へや} なら {空|あ}いてる よ 。 {冬|ふゆ} は いつも {空|あ}いてる けど ね 。 || I'm Yae; this is Yukimiya. There are rooms free. There always are, in winter.
 pc: {天文台|てんもんだい} の {灯|あか}り の こと を {聞|き}きたい んです が 。 || We wanted to ask about the observatory lamp.
 yae[worry]: ああ …… あれ ね 。 || Ah… that.
 yae: ホシノ さん って いう {天文|てんもん}{学者|がくしゃ} が いて ね 。 {娘|むすめ} さん が {灯落|ひおち} へ {働|はたら}き に {出|で}た とき 、 {約束|やくそく} した んだって 。 「 おまえ が {帰|かえ}る まで 、 {毎晩|まいばん} {灯|あか}り を ともして おく 」 って 。 || There's an astronomer called Hoshino. When his daughter went down to work in Lanternfall, he made her a promise: "I'll keep the lamp lit every night until you come home."
