@@ -297,7 +297,8 @@ export function install() {
     const s = S();
     return Object.keys(s.flags).filter((k) => !/^(enter|named|trig|foe):/.test(k)).sort().join(',') + '|' +
       Object.keys(s.quests).sort().map((k) => k + ':' + (s.quests[k].done ? 'd' : s.quests[k].stage)).join(',') + '|' +
-      Object.keys(s.inv).sort().map((k) => k + ':' + s.inv[k]).join(',') + '|' + s.words.join(',') + '|' + s.comp + '/' + s.provisional;
+      Object.keys(s.inv).sort().map((k) => k + ':' + s.inv[k]).join(',') + '|' + s.words.join(',') + '|' + s.comp + '/' + s.provisional +
+      '|' + Object.keys(s.seen).length; // conditions may test seen.<scene>
   };
   // Pursue a flag: repeatedly do the reachable site offering the most progress
   // (main-quest stage > other new state > unseen scene), nearest first.
