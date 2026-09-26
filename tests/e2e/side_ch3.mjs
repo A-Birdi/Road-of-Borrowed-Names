@@ -1,6 +1,7 @@
 import { serve, launch, page } from './lib.mjs';
 const { srv, url } = await serve();
 const b = await launch();
+let sideFails = 0;
 for (const [profile, comp] of [['E', 'nao'], ['A', 'suzu'], ['F', 'ren']]) {
   const { p, errors } = await page(b, url);
   const res = await p.evaluate(async ({ profile, comp }) => {
@@ -46,7 +47,9 @@ for (const [profile, comp] of [['E', 'nao'], ['A', 'suzu'], ['F', 'ren']]) {
     out.problems = T.problems; return out;
   }, { profile, comp });
   const failed = res.checks.filter((c) => !c.ok);
+  if (failed.length || res.error || res.problems.length || errors.length) sideFails++;
   console.log((failed.length || res.error || res.problems.length || errors.length ? 'FAIL' : 'PASS') + ' side ' + profile + ' ' + comp + ' ' + res.checks.length + ' checks' + (res.error ? ' ERR ' + res.error : '') + (failed.length ? ' failed: ' + failed.map((c) => c.n).join(', ') : '') + (res.problems.length ? ' problems ' + JSON.stringify(res.problems).slice(0, 600) : '') + (errors.length ? ' page errors ' + errors.join('|').slice(0, 400) : ''));
   await p.context().close();
 }
 await b.close(); srv.close();
+process.exit(sideFails ? 1 : 0);

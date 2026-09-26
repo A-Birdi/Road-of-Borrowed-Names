@@ -1,0 +1,37 @@
+// Runs the browser test scripts against the built index.html, one after another,
+// and prints a summary. Usage: node tests/e2e/run.mjs [--full]
+//   default: UI, systems, audio, per-chapter story tests (one or two
+//            configurations each), an Atlas expedition, and one whole-game run
+//   --full:  per-chapter story tests in all their configurations and the
+//            16-combination whole-game matrix (takes an hour or more)
+import { spawn } from 'node:child_process';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const here = path.dirname(fileURLToPath(import.meta.url));
+const full = process.argv.includes('--full');
+const suites = [
+  ['ui.mjs'], ['systems.mjs'], ['audio.check.mjs'],
+  full ? ['story_ch1.mjs'] : ['story_ch1.mjs', 'F', 'mio'],
+  full ? ['story_ch3.mjs'] : ['story_ch3.mjs', 'E', 'nao'], ['side_ch3.mjs'],
+  full ? ['story_ch4.mjs'] : ['story_ch4.mjs', 'I', 'ren', 'go'],
+  full ? ['story_ch5.mjs'] : ['story_ch5.mjs', 'A', 'suzu'],
+  ...(full ? [0, 1, 2, 3, 4].map((i) => ['story_ch6.mjs', String(i)]) : [['story_ch6.mjs', '2']]),
+  ['atlas.check.mjs'],
+  full ? ['matrix.mjs'] : ['pursue.mjs', 'E', 'mio'],
+];
+const results = [];
+for (const [file, ...args] of suites) {
+  const t0 = Date.now();
+  const code = await new Promise((resolve) => {
+    const ch = spawn(process.execPath, [path.join(here, file), ...args], { stdio: 'inherit' });
+    ch.on('close', resolve);
+  });
+  results.push({ name: [file, ...args].join(' '), ok: code === 0, s: Math.round((Date.now() - t0) / 1000) });
+  console.log((code === 0 ? '== PASS ' : '== FAIL ') + [file, ...args].join(' ') + ' (' + results[results.length - 1].s + ' s)\n');
+}
+console.log('\nSummary:');
+for (const r of results) console.log('  ' + (r.ok ? 'PASS' : 'FAIL') + '  ' + r.name + '  ' + r.s + ' s');
+const failed = results.filter((r) => !r.ok).length;
+console.log('\n' + (results.length - failed) + '/' + results.length + ' browser test scripts passed');
+process.exit(failed ? 1 : 0);

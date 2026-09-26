@@ -1,0 +1,15 @@
+{
+  "name": "road-of-borrowed-names",
+  "private": true,
+  "description": "Development tooling for The Road of Borrowed Names (the game itself is the single file index.html and needs no install).",
+  "scripts": {
+    "build": "node tools/build.mjs",
+    "validate": "node tools/validate.mjs",
+    "test": "node tests/run-unit.mjs",
+    "test:browser": "node tests/e2e/run.mjs",
+    "test:browser:full": "node tests/e2e/run.mjs --full"
+  },
+  "devDependencies": {
+    "playwright": "1.56.1"
+  }
+}
