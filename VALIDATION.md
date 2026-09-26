@@ -135,3 +135,22 @@ harness could not stand next to multi-tile props — fixed.
   both combinations through all six chapters and an expedition. Together with
   the 14 passes above: **16/16 profile × companion combinations played a new
   campaign through the whole story and one Unwritten Atlas expedition.**
+
+### Session log — final-build suite and a click-handling bug
+- **B** First `node tests/e2e/run.mjs` on the near-final build: 10/11 scripts
+  passed; `ui.mjs` "real combat UI" failed intermittently (1 in 3). Root cause
+  (a real bug, not a flake): with lightbulb help on (the default), a capture
+  click handler turned any click on a Japanese word into a help request, even
+  inside buttons — so clicking the text of an answer choice, a battle card, a
+  dialogue choice or an activity tile opened help instead of acting; only
+  clicks on a button's padding or English line worked. Fixed in
+  src/ui/10_ui.js: inside controls a click/tap acts; word help there comes
+  from hover, keyboard focus, or a long press (which does not also press the
+  button). Also: a wrong choice on a writing step is now disabled after use,
+  as comprehension choices already were. New UI test "clicking the Japanese
+  word on an answer button answers it; a long press shows help instead"
+  fails on the old code and passes on the new; `ui.mjs` then 14/14 twice.
+- Note: the 16/16 whole-game matrix above ran on the build before this click
+  fix. It answers through RB.test auto mode (no button clicks), so its
+  reachability result is unaffected; the suite rerun below includes one
+  whole-game run on the final build.
