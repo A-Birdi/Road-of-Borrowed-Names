@@ -10989,7 +10989,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
 
   // ---- per-tile state -----------------------------------------------------------------------
-  let K = null, OX = 0, OY = 0, TX = 0, TY = 0, H = 0, NB = null, SELF = null;
+  let K = null, OX = 0, OY = 0, TX = 0, TY = 0, NB = null, SELF = null;
   const N8 = new Array(8), K8 = new Array(8); // neighbour tiles (null -> self) and kinds
   const DX8 = [0, 1, 1, 1, 0, -1, -1, -1], DY8 = [-1, -1, 0, 1, 1, 1, 0, -1];
   // slots: kind per slot, level per slot
@@ -11004,7 +11004,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
   const kindOf = (t) => (t ? KIND[t.id] || 'other' : 'other');
   const WET = { water: 1, shallow: 1, dark: 1, bridge: 1 };
-  const NATURAL = { veg: 1, dirt: 1, sand: 1, snow: 1, ash: 1, field: 1, ice: 1, cliff: 1 };
   const FLOORISH = { wood: 1, tatami: 1, stone: 1, carpet: 1, paper: 1, glass: 1 };
   // soft ground that spills over the edge of lower ground (higher wins) …
   const SPILL = { sand: 1, dirt: 2, field: 2, ash: 3.5, veg: 4, snow: 5 };
@@ -11027,7 +11026,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     K = kit(pal);
     TX = tx == null ? Math.round(x / A) : tx;
     TY = ty == null ? Math.round(y / A) : ty;
-    OX = TX * A; OY = TY * A; H = h >>> 0; NB = nb; SELF = tile;
+    OX = TX * A; OY = TY * A; NB = nb; SELF = tile;
     for (let d = 0; d < 8; d++) {
       const t = nb ? nb(DX8[d], DY8[d]) : null;
       N8[d] = t || tile;
@@ -11076,14 +11075,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     SK.push(kind); SL.push(SPILL[kind] == null ? 1 : SPILL[kind]);
     return NS++;
   }
-  // kind of the tile that holds world art pixel (wx, wy), within the 3×3 neighbourhood
-  function kindAt(wx, wy) {
-    const dx = Math.floor(wx / A) - TX, dy = Math.floor(wy / A) - TY;
-    if (!dx && !dy) return SK[0];
-    if (dx < -1 || dx > 1 || dy < -1 || dy > 1) return null;
-    for (let d = 0; d < 8; d++) if (DX8[d] === dx && DY8[d] === dy) return K8[d];
-    return null;
-  }
+  // id of the tile that holds world art pixel (wx, wy), within the 3×3 neighbourhood
   function idAt(wx, wy) {
     const dx = Math.floor(wx / A) - TX, dy = Math.floor(wy / A) - TY;
     if (!dx && !dy) return SELF.id;
@@ -11555,7 +11547,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       B[i] = t < 5 ? ds[t] : t === 6 ? mixU(K.w[3], d[2], 0.3) : mixU(K.w[1], d[1], 0.3);
     }
     switch (st) {
-      case 'shell': scatter(slot, 12, 64, 260, ST.pebble, d, K.s); scatter(slot, 15, 65, 240, ST.shell, d, d, [u('#f4ece0'), u('#e8c8b8'), 0]); break;
+      case 'shell': scatter(slot, 14, 64, 220, ST.pebble, d, K.s); scatter(slot, 20, 65, 150, ST.shell, d, d, [u('#f4ece0'), u('#e8c8b8'), 0]); break;
       case 'clay': scatter(slot, 12, 66, 260, ST.pebble, d, K.s); scatter(slot, 16, 67, 240, ST.shard, d, K.brick); scatter(slot, 20, 68, 200, ST.crack, d); break;
       case 'frozen': scatter(slot, 14, 69, 220, ST.pebble, d, K.s); scatter(slot, 17, 70, 300, ST.frost, K.sn); break;
       case 'gravel': scatter(slot, 6, 71, 400, ST.gravel, d, K.d); scatter(slot, 13, 78, 200, ST.pebble, d, K.s); break;
@@ -11584,9 +11576,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }
     despeckle(slot);
     fillTone(slot, sa);
-    scatter(slot, 23, 84, st === 'beach' ? 190 : 90, ST.shell, sa, sa, [u('#f6eee2'), u('#e6c4b4'), 0]);
-    scatter(slot, 21, 85, 110, ST.pebble, sa, K.s);
-    if (K.st.glassy) scatter(slot, 27, 86, 170, ST.glassy, sa, sa, K.acc);
+    scatter(slot, 24, 84, st === 'beach' ? 110 : 60, ST.shell, sa, sa, [u('#f6eee2'), u('#e6c4b4'), 0]);
+    scatter(slot, 24, 85, 80, ST.pebble, sa, K.s);
+    if (K.st.glassy) scatter(slot, 32, 86, 110, ST.glassy, sa, sa, K.acc);
   }
   function fillAsh(slot) {
     const a = K.ash;
@@ -11833,7 +11825,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
   function ground(kind, extra) {
     return (c, x, y, pal, h, nb, tx, ty) => {
-      begin(this_(kind), pal, h, nb, x, y, tx, ty);
+      begin(CUR, pal, h, nb, x, y, tx, ty);
       spills();
       roundCorners();
       fillKind(SK[0], 0);
@@ -11847,7 +11839,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
     };
   }
   let CUR = null;
-  const this_ = () => CUR;
   function wrap(id, fn) {
     const t = T[id];
     if (!t) return;
