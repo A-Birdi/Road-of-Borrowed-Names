@@ -362,3 +362,17 @@ and the software keyboard are emulated. No real phone, Firefox or Safari.
   open+close 16–17 ms in both; DOM unchanged after 20 cycles. Headless
   Chromium on a desktop-class CPU with software canvas; phones NOT
   measured.
+- **B** Final layout audit on 6031612, `visual.mjs --check` (overflow outside
+  scrollers, text clipped by its own box, touch targets under 44 px on
+  touch viewports, furigana under 4.5:1 against the paint behind it, page
+  errors, state errors): English labels, 56 states × 8 viewports (320x640,
+  360x800, 390x844, 412x915, 844x390, 768x1024, 1280x720, 1920x1080):
+  **448/448 clean**; Japanese interface labels (`--lang ja`), 56 states ×
+  320x640, 390x844, 1280x800: **168/168 clean**. States include title
+  (with/without save, session-only, details, 200 % text), six-slot ledger
+  (empty, states, new, save, read-only, error, 200 %), all creation steps
+  (100 % and 200 %, high contrast, focus, keyboard, errors, placement,
+  NG+), the four folio pages and Settings, dialogue, word help, challenge
+  modes (write/IME/choose/order/unsure/wrong), teaching card, lesson,
+  activities, combat, and six world regions. **S** after-captures in
+  docs/screenshots/ regenerated from 3cce661 and inspected.
