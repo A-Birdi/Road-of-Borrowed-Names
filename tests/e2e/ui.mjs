@@ -95,6 +95,8 @@ await test('overwrite confirmation and slot UI actions', async () => {
   await p.evaluate(async () => { const s = RB.state.newCampaign({}); s.map = 'rw.road'; s.player.name = 'Old'; await RB.save.writeSlot(1, s, {}); });
   await p.reload(); await p.waitForFunction(() => window.__RB_READY__ === true);
   await p.click('text=New Game');
+  // a used slot's overwrite lives in its Manage area
+  await p.click('.slot[data-slot="1"] [data-a=manage]');
   await p.click('.slot[data-slot="1"] [data-a=start]');
   await p.waitForSelector('[role=alertdialog]');
   const txt = await p.textContent('[role=alertdialog]');

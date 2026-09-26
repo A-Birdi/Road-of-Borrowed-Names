@@ -79,7 +79,11 @@ async function load(which = 'manual') {
   else {
     await page.locator('.title [data-a="load"]').click();
     const action = which === 'auto' ? 'loadauto' : which === 'predeparture' ? 'loadpre' : 'load';
-    await page.locator(`[data-slot="1"] [data-a="${action}"]`).click();
+    const btn = page.locator(`[data-slot="1"] [data-a="${action}"]`);
+    // recovery points (older autosave, pre-departure) live in the record's Manage area
+    await btn.waitFor({ state: 'attached' });
+    if (!(await btn.isVisible())) await page.locator('[data-slot="1"] [data-a="manage"]').click();
+    await btn.click();
   }
   await page.waitForFunction(() => RB.game.mode() === 'world' && !!RB.world.W.player);
 }

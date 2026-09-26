@@ -72,7 +72,8 @@ RB.ui = (function () {
     if (!layers.length) document.body.classList.remove('in-panel');
     const top = layers[layers.length - 1];
     if (top) {
-      const f = focusables(top.el);
+      // restored focus never lands on a Japanese word (that would pop its help card)
+      const f = focusables(top.el).filter((e) => !e.classList.contains('jt'));
       if (f[0] && !top.el.contains(document.activeElement)) f[0].focus({ preventScroll: true });
     }
   }

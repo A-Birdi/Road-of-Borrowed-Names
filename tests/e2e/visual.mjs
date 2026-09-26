@@ -4,7 +4,9 @@
 //   node tests/e2e/visual.mjs <outDir> [--html file] [--vp 390x844,1280x800] [--only a,b]
 // States: title, slots, slots_empty, create, create2, journey, words, satchel,
 // map, settings, dialogue, help, chal, combat, world_rw, world_sg, world_co,
-// world_sb, world_lf, world_sa. File names: <state>_<W>x<H>.png
+// world_sb, world_lf, world_sa; title_nosave, title_session, title_details,
+// title_big, slots_states, slots_new, slots_save, slots_readonly, slots_error,
+// slots_big. File names: <state>_<W>x<H>.png
 import fs from 'node:fs';
 import path from 'node:path';
 import http from 'node:http';
@@ -75,6 +77,49 @@ const STATES = {
   async title(p) { await p.evaluate(async () => { await V.sixSlots(); RB.game.toTitle ? await RB.game.toTitle() : RB.ui.title.show(); }); await settle(p, 900); },
   async slots(p) { await p.evaluate(async () => { await V.sixSlots(); await RB.game.toTitle(); RB.ui.title.slots('load'); }); await settle(p, 900); },
   async slots_empty(p) { await p.evaluate(async () => { await V.sixSlots(true); await RB.game.toTitle(); RB.ui.title.slots('load'); }); await settle(p, 900); },
+  // title / ledger variants (synthetic fixtures only)
+  async title_nosave(p) { await p.evaluate(async () => { await RB.game.toTitle(); }); await settle(p, 900); },
+  async title_session(p) {
+    // display-only stand-in for a browser that refuses storage (the real refusal is tested in ui.mjs / title_ledger.mjs)
+    await p.evaluate(async () => { const real = RB.save.status; RB.save.status = () => Object.assign(real(), { mode: 'session' }); await RB.game.toTitle(); });
+    await settle(p, 900);
+  },
+  async title_details(p) { await p.evaluate(async () => { await V.sixSlots(); await RB.game.toTitle(); }); await p.click('.title [data-a=storage]'); await settle(p, 600); },
+  async title_big(p) { await p.evaluate(async () => { await V.sixSlots(); await RB.game.toTitle(); RB.game.settings.textScale = 2; RB.game.applySettings(); }); await settle(p, 900); },
+  async slots_states(p) {
+    await p.evaluate(async () => {
+      await V.sixSlots(true);
+      const s1 = V.rich('sg.harbor', 20, 22, { comp: 'mio' }); s1.player.name = 'Robin'; s1.playtime += 900;
+      await RB.save.writeRecovery(1, s1, 'auto', RB.render.thumbnail());
+      const s2 = V.rich('rw.hall', 5, 6, { comp: null }); s2.comp = null; s2.provisional = 'ren'; s2.player.name = 'Aki';
+      await RB.save.writeRecovery(2, s2, 'predeparture', RB.render.thumbnail());
+      const bad = V.rich('co.village', 20, 18, { comp: 'ren' }); bad.player.name = 'Hana'; bad.map = 'no.such.map';
+      await RB.save.writeSlot(4, bad, { force: true, thumb: null });
+      await RB.save.del(5);
+      const s5 = V.rich('lf.town', 26, 20, { comp: 'suzu' }); s5.player.name = 'Sora';
+      await RB.save.writeRecovery(5, s5, 'auto', RB.render.thumbnail());
+      await RB.game.toTitle(); RB.ui.title.slots('load');
+    });
+    await settle(p, 900);
+    await p.click('.rec[data-slot="2"] [data-a=manage]');
+    await settle(p, 300);
+  },
+  async slots_new(p) { await p.evaluate(async () => { await V.sixSlots(); await RB.game.toTitle(); RB.ui.title.slots('new'); }); await settle(p, 900); },
+  async slots_save(p) {
+    await p.evaluate(async () => { await V.sixSlots(true); V.rich('sg.harbor', 20, 22); RB.save.setCurrent(2, 1); RB.ui.menu.open('save'); RB.ui.title.slots('save', true); });
+    await settle(p, 900);
+  },
+  async slots_readonly(p) {
+    // this tab lost ownership of the current campaign to another tab (the real two-tab flow is tested in ui.mjs)
+    await p.evaluate(async () => { await V.sixSlots(true); V.rich('sg.harbor', 20, 22); RB.save.setCurrent(2, 1); RB.save.setReadOnly(true); RB.ui.menu.open('save'); RB.ui.title.slots('save', true); });
+    await settle(p, 900);
+  },
+  async slots_error(p) {
+    // display-only stand-in for a storage read failure
+    await p.evaluate(async () => { await V.sixSlots(true); await RB.game.toTitle(); RB.save.list = async () => { throw new Error('The operation failed for reasons unrelated to the database itself'); }; RB.ui.title.slots('load'); });
+    await settle(p, 900);
+  },
+  async slots_big(p) { await p.evaluate(async () => { await V.sixSlots(); await RB.game.toTitle(); RB.game.settings.textScale = 2; RB.game.applySettings(); RB.ui.title.slots('load'); }); await settle(p, 900); },
   async create(p) {
     await p.click('text=New Game');
     await p.click('[data-slot="1"] [data-a=start]');

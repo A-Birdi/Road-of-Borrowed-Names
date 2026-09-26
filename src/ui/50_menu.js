@@ -33,6 +33,7 @@ RB.ui.menu = (function () {
     scroll: {},
   };
   let layer = null, fr = null, tabsApi = null, mq = null, stopDemo = () => {};
+  let sheet = null; // the Save & Load sheet, when open over the folio
 
   // ---- open / close -------------------------------------------------------------------
   function open(which) {
@@ -85,7 +86,8 @@ RB.ui.menu = (function () {
     if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
     RB.input.clearHeld && RB.input.clearHeld();
   }
-  function closeAll() { close(); }
+  // leaving the game (loading another journey, returning to the title) closes the sheet too
+  function closeAll() { if (sheet) { const sh = sheet; sheet = null; RB.ui.popLayer(sh); } close(); }
   // Back: leave a sub-page first (phones), otherwise close the folio.
   function back() {
     const w = view.words, j = view.journey;
@@ -471,7 +473,8 @@ RB.ui.menu = (function () {
   // ---- Save & Load (utility sheet) ---------------------------------------------------------------
   function saveSheet() {
     const st = RB.save.status();
-    const f2 = F().frame({ onClose: () => RB.ui.popLayer(lay), closeLabel: 'Back', closeIcon: 'back', cls: 'folio-sheet' });
+    const popSheet = () => { sheet = null; RB.ui.popLayer(lay); };
+    const f2 = F().frame({ onClose: () => popSheet(), closeLabel: 'Back', closeIcon: 'back', cls: 'folio-sheet' });
     f2.setTitle(RB.ui.label('セーブ・ロード', 'Save & Load'), '');
     f2.box.innerHTML = '<div class="spread"><div class="leaf" tabindex="0">' +
       (st.mode === 'session' ? '<p class="note-slip bad">' + I('warn') + ' Storage is unavailable here, so saves only last until this page closes.</p>' : '') +
@@ -481,7 +484,7 @@ RB.ui.menu = (function () {
       '<li class="entry"><span class="mark">' + I('title') + '</span><div><div class="t">Return to the title</div><div class="muted small">Anything since your last save or autosave will be lost.</div></div><button class="pbtn" data-a="title">Return to title</button></li>' +
       '</ul><p class="muted small">Autosaves happen at safe places (arriving somewhere new, finishing a scene that matters). Manual saves are kept separately from them.</p></div></div>';
     const lay = { el: f2.scrim, name: 'savesheet' };
-    lay.onCancel = () => RB.ui.popLayer(lay);
+    lay.onCancel = () => popSheet();
     f2.box.onclick = async (e) => {
       const b = e.target.closest('[data-a]');
       if (!b) return;
@@ -490,9 +493,10 @@ RB.ui.menu = (function () {
       if (a === 'load') RB.ui.title.slots('load', true);
       if (a === 'title') {
         const r = await RB.ui.confirm('Return to the title screen? Anything since your last save or autosave will be lost.', ['Return to title', 'Cancel']);
-        if (r === 0) { RB.ui.popLayer(lay); close(); RB.game.toTitle(); }
+        if (r === 0) { popSheet(); close(); RB.game.toTitle(); }
       }
     };
+    sheet = lay;
     RB.ui.pushLayer(lay);
   }
 

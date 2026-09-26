@@ -178,7 +178,8 @@ RB.save = (function () {
   async function list() {
     const out = [];
     let rows = [], rec = [];
-    try { rows = await kvAll('slots'); rec = await kvAll('recovery'); } catch (e) { lastError = String(e.message || e); }
+    let readError = null;
+    try { rows = await kvAll('slots'); rec = await kvAll('recovery'); } catch (e) { lastError = readError = String(e.message || e); }
     for (let i = 1; i <= SLOTS; i++) {
       const r = rows.find((x) => x && x.slot === i);
       const autos = rec.filter((x) => x && x.slot === i && x.kind === 'auto').sort((a, b) => b.savedAt - a.savedAt);
@@ -198,6 +199,8 @@ RB.save = (function () {
         rev: r ? r.rev : 0,
       });
     }
+    // a failed read is not six empty slots: the ledger shows an error with Try again
+    if (readError) out.readError = readError;
     return out;
   }
 
