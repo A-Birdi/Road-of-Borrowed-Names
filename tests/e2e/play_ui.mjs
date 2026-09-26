@@ -107,6 +107,19 @@ const faceNpc = (p) => p.evaluate(() => {
   await p.waitForTimeout(150);
   const h2 = await p.evaluate(() => ({ help: !!document.querySelector('.help'), line: document.querySelector('.dlg .main').textContent }));
   assert(!h2.help && h2.line === line0, 'a tap outside the sheet closes it without also advancing');
+  // an open sheet survives a resize to a wide window as a card beside its word, fully on screen
+  await p.locator('.dlg .jt >> nth=3').tap();
+  await p.waitForTimeout(120);
+  await p.setViewportSize({ width: 1024, height: 700 });
+  await p.waitForTimeout(250);
+  const rz = await p.evaluate(() => { const h = document.querySelector('.help'); if (!h) return null; const r = h.getBoundingClientRect(); return { sheet: h.classList.contains('sheet'), on: r.left >= 0 && r.top >= 0 && r.right <= innerWidth && r.bottom <= innerHeight }; });
+  assert(rz && !rz.sheet && rz.on, 'resizing phone → wide re-places the open help as an on-screen card ' + JSON.stringify(rz));
+  await p.setViewportSize({ width: 390, height: 844 });
+  await p.waitForTimeout(250);
+  const rz2 = await p.evaluate(() => { const h = document.querySelector('.help'); return h ? h.classList.contains('sheet') : null; });
+  assert(rz2 !== false, 'and back to a phone width it is a sheet again (or closed)');
+  await p.keyboard.press('Escape');
+  await p.waitForTimeout(100);
   // Escape closes help first
   await p.locator('.dlg .jt >> nth=2').tap();
   await p.waitForTimeout(120);

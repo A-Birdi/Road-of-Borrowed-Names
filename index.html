@@ -23339,6 +23339,9 @@ RB.ui.help = (function () {
         if (blocking) { e.stopPropagation(); e.preventDefault(); }
       }
     }, true);
+    // a resize (rotation, window, keyboard) re-places an open card: a sheet on
+    // narrow screens, a card beside its word on wide ones — never off-screen
+    window.addEventListener('resize', () => { if (panel && cur && cur.isConnected) position(cur); else if (panel && !pinned) hide(); });
     // keyboard focus on a word opens its card only when the person is
     // actually navigating with keys (not when a screen places focus itself)
     let lastKey = 0;
