@@ -13040,235 +13040,2359 @@ RB.sprites = (function () {
 })();
 
 
+/* ==== src/engine/31_pixel.js ==== */
+/* Pixel-art toolkit for art-resolution characters and portraits.
+ * Colour parsing, hue-shifted ramps (shadows lean cool/violet, highlights
+ * warm), and a small RGBA pixel buffer with hard-edged rects, ellipses,
+ * polygons, masks and ASCII templates, a selective outline and blitting to a
+ * canvas. Drawing into a buffer instead of through canvas paths keeps every
+ * edge crisp: no antialiased in-between colours. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.pix = (function () {
+  'use strict';
+
+  // ---- colour -------------------------------------------------------------------------
+  const cc = new Map();
+  function rgba(c) {
+    if (c == null || c === false) return null;
+    if (typeof c !== 'string') return c;
+    let v = cc.get(c);
+    if (v) return v;
+    let h = c[0] === '#' ? c.slice(1) : c;
+    if (h.length === 3 || h.length === 4) h = h.split('').map((ch) => ch + ch).join('');
+    v = [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16), h.length >= 8 ? parseInt(h.slice(6, 8), 16) : 255];
+    if (v.some((n) => Number.isNaN(n))) v = [255, 0, 255, 255];
+    cc.set(c, v);
+    return v;
+  }
+  const h2 = (n) => (n < 16 ? '0' : '') + Math.max(0, Math.min(255, Math.round(n))).toString(16);
+  function hex(v, a) { return '#' + h2(v[0]) + h2(v[1]) + h2(v[2]) + (a != null && a < 255 ? h2(a) : ''); }
+  function mix(a, b, t) {
+    const A = rgba(a), B = rgba(b);
+    return hex([A[0] + (B[0] - A[0]) * t, A[1] + (B[1] - A[1]) * t, A[2] + (B[2] - A[2]) * t]);
+  }
+  function alpha(c, a) { const v = rgba(c); return hex(v, Math.round(a * 255)); }
+  function toHsl(v) {
+    const r = v[0] / 255, g = v[1] / 255, b = v[2] / 255;
+    const mx = Math.max(r, g, b), mn = Math.min(r, g, b);
+    let h = 0, s = 0;
+    const l = (mx + mn) / 2;
+    if (mx !== mn) {
+      const d = mx - mn;
+      s = l > 0.5 ? d / (2 - mx - mn) : d / (mx + mn);
+      h = mx === r ? (g - b) / d + (g < b ? 6 : 0) : mx === g ? (b - r) / d + 2 : (r - g) / d + 4;
+      h *= 60;
+    }
+    return [h, s, l];
+  }
+  function fromHsl(h, s, l) {
+    h = (((h % 360) + 360) % 360) / 360;
+    s = Math.max(0, Math.min(1, s)); l = Math.max(0, Math.min(1, l));
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s, p = 2 * l - q;
+    const f = (t) => { if (t < 0) t += 1; if (t > 1) t -= 1; return t < 1 / 6 ? p + (q - p) * 6 * t : t < 1 / 2 ? q : t < 2 / 3 ? p + (q - p) * (2 / 3 - t) * 6 : p; };
+    return [f(h + 1 / 3) * 255, f(h) * 255, f(h - 1 / 3) * 255];
+  }
+  const toward = (h, target, amt) => { const d = ((target - h + 540) % 360) - 180; return h + Math.sign(d) * Math.min(Math.abs(d), amt); };
+  // One ramp step: k < 0 darker and cooler (towards blue-violet), k > 0 lighter and warmer.
+  const sc = new Map();
+  function shade(c, k) {
+    if (!k) return typeof c === 'string' ? c : hex(c);
+    const key = (typeof c === 'string' ? c : hex(c)) + '|' + k;
+    let out = sc.get(key);
+    if (out) return out;
+    const [h, s, l] = toHsl(rgba(c));
+    if (k < 0) {
+      const n = -k;
+      const grey = s < 0.1 ? 0.05 : 0;
+      out = hex(fromHsl(toward(h, 250, 10 * n), s + (0.05 + grey) * n, l - (l < 0.25 ? 0.055 : l < 0.5 ? 0.09 : 0.11) * n));
+    } else {
+      const n = k;
+      out = hex(fromHsl(toward(h, 48, 7 * n), s * (l > 0.7 ? 0.9 : 1) + (l < 0.6 ? 0.03 : 0) * n, l + (l < 0.25 ? 0.075 : l > 0.8 ? 0.05 : 0.085) * n));
+    }
+    sc.set(key, out);
+    return out;
+  }
+  // Five-step ramp around a base colour: [deep, shadow, base, light, highlight].
+  function ramp(base, dark, light) {
+    return [shade(dark || base, dark ? -1 : -2), dark ? mix(dark, shade(base, -1), 0.5) : shade(base, -1), base, light ? mix(light, shade(base, 1), 0.35) : shade(base, 1), shade(light || base, light ? 1 : 2)];
+  }
+  const lum = (c) => { const v = rgba(c); return (0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]) / 255; };
+
+  // ---- pixel buffer ------------------------------------------------------------------
+  function Buf(w, h) { this.w = w; this.h = h; this.d = new Uint8ClampedArray(w * h * 4); }
+  const B = Buf.prototype;
+  B.put = function (x, y, v) {
+    if (x < 0 || y < 0 || x >= this.w || y >= this.h) return;
+    const o = (y * this.w + x) * 4, d = this.d, a = v[3];
+    if (a >= 255 || d[o + 3] === 0) { d[o] = v[0]; d[o + 1] = v[1]; d[o + 2] = v[2]; d[o + 3] = a; return; }
+    if (a <= 0) return;
+    const sa = a / 255, da = d[o + 3] / 255, oa = sa + da * (1 - sa);
+    d[o] = (v[0] * sa + d[o] * da * (1 - sa)) / oa;
+    d[o + 1] = (v[1] * sa + d[o + 1] * da * (1 - sa)) / oa;
+    d[o + 2] = (v[2] * sa + d[o + 2] * da * (1 - sa)) / oa;
+    d[o + 3] = oa * 255;
+  };
+  B.px = function (x, y, c) { const v = rgba(c); if (v) this.put(x | 0, y | 0, v); return this; };
+  B.rect = function (x, y, w, h, c) {
+    const v = rgba(c);
+    if (!v || w <= 0 || h <= 0) return this;
+    for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) this.put(i, j, v);
+    return this;
+  };
+  B.alphaAt = function (x, y) { return x < 0 || y < 0 || x >= this.w || y >= this.h ? 0 : this.d[(y * this.w + x) * 4 + 3]; };
+  B.at = function (x, y) { const o = (y * this.w + x) * 4, d = this.d; return [d[o], d[o + 1], d[o + 2], d[o + 3]]; };
+  B.clear = function (x, y) { if (x >= 0 && y >= 0 && x < this.w && y < this.h) this.d[(y * this.w + x) * 4 + 3] = 0; };
+  // Ellipse filling every pixel whose centre lies inside; (x0,y0)-(x1,y1) is the inclusive pixel box.
+  B.oval = function (x0, y0, x1, y1, c) {
+    const v = rgba(c);
+    if (!v) return this;
+    const cx = (x0 + x1 + 1) / 2, cy = (y0 + y1 + 1) / 2, rx = (x1 - x0 + 1) / 2, ry = (y1 - y0 + 1) / 2;
+    for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) {
+      const dx = (x + 0.5 - cx) / rx, dy = (y + 0.5 - cy) / ry;
+      if (dx * dx + dy * dy <= 1.0001) this.put(x, y, v);
+    }
+    return this;
+  };
+  // Polygon (even-odd) sampled at pixel centres; pts = [x0, y0, x1, y1, ...].
+  B.poly = function (pts, c) {
+    const v = rgba(c);
+    if (!v) return this;
+    let y0 = Infinity, y1 = -Infinity;
+    for (let i = 1; i < pts.length; i += 2) { y0 = Math.min(y0, pts[i]); y1 = Math.max(y1, pts[i]); }
+    const n = pts.length / 2;
+    for (let y = Math.max(0, Math.floor(y0)); y <= Math.min(this.h - 1, Math.ceil(y1)); y++) {
+      const sy = y + 0.5, xs = [];
+      for (let i = 0; i < n; i++) {
+        const ax = pts[i * 2], ay = pts[i * 2 + 1], bx = pts[((i + 1) % n) * 2], by = pts[((i + 1) % n) * 2 + 1];
+        if ((ay <= sy && by > sy) || (by <= sy && ay > sy)) xs.push(ax + ((sy - ay) / (by - ay)) * (bx - ax));
+      }
+      xs.sort((a, b) => a - b);
+      for (let k = 0; k + 1 < xs.length; k += 2) {
+        for (let x = Math.max(0, Math.ceil(xs[k] - 0.5)); x <= Math.min(this.w - 1, Math.floor(xs[k + 1] - 0.5)); x++) this.put(x, y, v);
+      }
+    }
+    return this;
+  };
+  // Thick line of square pixels (Bresenham).
+  B.line = function (x0, y0, x1, y1, c, t) {
+    const v = rgba(c);
+    if (!v) return this;
+    t = t || 1;
+    let dx = Math.abs(x1 - x0), dy = -Math.abs(y1 - y0), sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1, err = dx + dy;
+    for (let guard = 0; guard < 4096; guard++) {
+      for (let j = 0; j < t; j++) for (let i = 0; i < t; i++) this.put(x0 + i, y0 + j, v);
+      if (x0 === x1 && y0 === y1) break;
+      const e2 = 2 * err;
+      if (e2 >= dy) { err += dy; x0 += sx; }
+      if (e2 <= dx) { err += dx; y0 += sy; }
+    }
+    return this;
+  };
+  // ASCII template: rows of characters; map[ch] is a colour (or null to skip). '.' and ' ' are transparent.
+  B.tpl = function (x, y, rows, map, flip) {
+    for (let j = 0; j < rows.length; j++) {
+      const r = rows[j];
+      for (let i = 0; i < r.length; i++) {
+        const ch = r[i];
+        if (ch === '.' || ch === ' ') continue;
+        const v = rgba(map[ch]);
+        if (v) this.put(flip ? x + r.length - 1 - i : x + i, y + j, v);
+      }
+    }
+    return this;
+  };
+  // Recolour every opaque pixel for which test(x, y) holds (keeps a shape, changes its shading).
+  B.each = function (fn) {
+    for (let y = 0; y < this.h; y++) for (let x = 0; x < this.w; x++) if (this.d[(y * this.w + x) * 4 + 3]) fn(x, y);
+    return this;
+  };
+  B.draw = function (src, dx, dy) {
+    for (let y = 0; y < src.h; y++) for (let x = 0; x < src.w; x++) {
+      const o = (y * src.w + x) * 4;
+      if (src.d[o + 3]) this.put(x + dx, y + dy, [src.d[o], src.d[o + 1], src.d[o + 2], src.d[o + 3]]);
+    }
+    return this;
+  };
+  B.mirror = function () {
+    const m = new Buf(this.w, this.h);
+    for (let y = 0; y < this.h; y++) for (let x = 0; x < this.w; x++) {
+      const a = (y * this.w + x) * 4, b = (y * this.w + (this.w - 1 - x)) * 4;
+      for (let k = 0; k < 4; k++) m.d[b + k] = this.d[a + k];
+    }
+    return m;
+  };
+  // Selective outline: every transparent pixel touching the silhouette (4-neighbour) becomes a
+  // dark line tinted by the colour it borders — darkest on the shadow side (below/right), a
+  // little lifted where light falls (above/left). Faint pixels (alpha < minA) do not count.
+  B.outline = function (col, opt) {
+    opt = opt || {};
+    const minA = opt.minA == null ? 128 : opt.minA;
+    const base = rgba(col || '#241c20');
+    const w = this.w, h = this.h, d = this.d;
+    const op = (x, y) => x >= 0 && y >= 0 && x < w && y < h && d[(y * w + x) * 4 + 3] >= minA;
+    const marks = [];
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      if (op(x, y)) continue;
+      const n = [[x, y + 1, 1], [x + 1, y, 1], [x, y - 1, 0], [x - 1, y, 0]].filter((q) => op(q[0], q[1]));
+      if (!n.length) continue;
+      let r = 0, g = 0, b = 0, lit = 0;
+      for (const q of n) { const o = (q[1] * w + q[0]) * 4; r += d[o]; g += d[o + 1]; b += d[o + 2]; lit += q[2]; }
+      r /= n.length; g /= n.length; b /= n.length;
+      // pixels above/left of the shape (their neighbour is below/right) sit on the lit side
+      const t = opt.flat ? 0.78 : lit === n.length ? 0.68 : 0.84;
+      marks.push(x, y, base[0] + (r - base[0]) * (1 - t), base[1] + (g - base[1]) * (1 - t), base[2] + (b - base[2]) * (1 - t));
+    }
+    for (let i = 0; i < marks.length; i += 5) {
+      const o = (marks[i + 1] * w + marks[i]) * 4;
+      d[o] = marks[i + 2]; d[o + 1] = marks[i + 3]; d[o + 2] = marks[i + 4]; d[o + 3] = 255;
+    }
+    return this;
+  };
+  B.toCanvas = function () {
+    const cv = RB.sprites.makeCanvas(this.w, this.h);
+    const c = cv.getContext('2d');
+    c.putImageData(new ImageData(this.d, this.w, this.h), 0, 0);
+    return cv;
+  };
+  B.threshold = function (a) { for (let i = 3; i < this.d.length; i += 4) this.d[i] = this.d[i] < (a || 110) ? 0 : 255; return this; };
+
+  return { rgba, hex, mix, alpha, shade, ramp, lum, toHsl, fromHsl, Buf };
+})();
+
+
+/* ==== src/engine/32_spriteart.js ==== */
+/* Art-resolution character sprites (32×48, drawn at 2 art px per logical px).
+ * RB.sprites.getArt(look, dir, frame) redraws every look parameter of the
+ * 16×24 sprites at double detail: faces with blinking eyes, hands, costume
+ * folds and trims, hair in shaded locks with a highlight, a selective dark
+ * outline and real walk poses (planted/lifted feet, arm swing, head bob,
+ * trailing hair and cloth). Frames: 0 stand, 1 and 2 steps, 3 blink.
+ * Left is the mirrored right view. Results are cached per variant. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function () {
+  'use strict';
+  const P = RB.pix, SP = RB.sprites;
+  const W = 32, H = 48;
+  const shade = P.shade, mix = P.mix;
+
+  // ---- palette for one look ---------------------------------------------------------------
+  function hairRamp(h) {
+    const [h0, h1, h2] = h;
+    const l1 = h1 && P.lum(h1) > P.lum(h0) + 0.02 ? mix(h1, shade(h0, 1), 0.3) : shade(h0, 1);
+    const l2 = h2 && P.lum(h2) > P.lum(l1) ? h2 : shade(h0, 2);
+    return [shade(h0, -2), shade(h0, -1), h0, l1, l2];
+  }
+  const pcache = new Map();
+  function palette(look) {
+    const col = SP.colorsOf(look);
+    const k = JSON.stringify([col, look.wrapCol, look.hoodCol, look.outlineCol]);
+    let p = pcache.get(k);
+    if (p) return p;
+    const [sk, sd] = col.skin;
+    const [cm, cs, ca] = col.cloth;
+    const skin = { L: shade(sk, 1), S: sk, s: mix(sd, shade(sk, -1), 0.4), z: shade(sd, -1) };
+    p = {
+      skin, sk: [skin.z, skin.s, skin.S, skin.L],
+      hair: hairRamp(col.hair),
+      wrap: P.ramp(look.wrapCol || ca),
+      stubble: hairRamp(col.hair).map((c) => mix(c, sk, 0.4)),
+      cl: P.ramp(cm, cs), ac: [shade(ca, -1), ca, shade(ca, 1)],
+      pa: [shade(col.pants, -1), col.pants, shade(col.pants, 1)],
+      bo: [shade(col.boots, -1), col.boots, shade(col.boots, 1)],
+      eye: '#2a1e26', iris: '#4a3440', white: '#fff8ee',
+      mouth: mix(sd, '#8a3a3a', 0.45), blush: P.alpha('#e8807a', 0.4),
+      ol: look.outlineCol || '#241c20',
+    };
+    pcache.set(k, p);
+    if (pcache.size > 300) pcache.delete(pcache.keys().next().value);
+    return p;
+  }
+
+  // ---- hair masks and shading ---------------------------------------------------------------
+  // A mask is stamped from parts [x, y, rows]; '#' pixels are shaded automatically (locks radiating
+  // from a parting point, a broken highlight band on the lit side, shadowed lower/right edges), digits
+  // 1-5 force a ramp step, 'x' removes a pixel from the mask.
+  function newMask() { return { px: new Map() }; }
+  function stamp(m, parts, dx, dy) {
+    for (const [x, y, rows] of parts) {
+      for (let j = 0; j < rows.length; j++) {
+        const r = rows[j];
+        for (let i = 0; i < r.length; i++) {
+          const ch = r[i];
+          if (ch === '.' || ch === ' ') continue;
+          const key = (x + i + (dx || 0)) + ',' + (y + j + (dy || 0));
+          if (ch === 'x') m.px.delete(key); else m.px.set(key, ch);
+        }
+      }
+    }
+    return m;
+  }
+  // Locks: the mask is split into angular sectors around the parting point (o.ox, o.oy). Each lock is
+  // lit on the side facing the upper-left light and dark on the other, so neighbouring locks meet in
+  // a dark seam against a lit edge — clusters, not speckle. A highlight band crosses the locks at
+  // radius h0..h1 on the lit side of the head; lower and right edges fall into shadow.
+  function shadeMask(b, m, R, o) {
+    const has = (x, y) => m.px.has(x + ',' + y);
+    const st = o.step || 30, r0 = o.r0 == null ? 5 : o.r0;
+    for (const [key, ch] of m.px) {
+      const c = key.indexOf(',');
+      const x = +key.slice(0, c), y = +key.slice(c + 1);
+      let v;
+      if (ch >= '1' && ch <= '5') v = +ch;
+      else {
+        v = 3;
+        const dx = x + 0.5 - o.ox, dy = y + 0.5 - o.oy, r = Math.hypot(dx, dy);
+        const th = Math.atan2(dy, dx);
+        const u = ((th * 180) / Math.PI - (o.phase || 0)) / st, fr = u - Math.floor(u);
+        const lit = Math.sin(th) - Math.cos(th) >= 0; // increasing angle moves towards the light
+        const q = lit ? fr : 1 - fr;                  // 1 = lit edge of the lock, 0 = shadow edge
+        const w = st * (Math.PI / 180) * r;           // lock width in pixels here
+        if (r > r0 && w > 2.5) {
+          if (q * w < 0.9) v = 2;
+          else if ((1 - q) * w < (w > 5 ? 1.8 : 1.1)) v = 4;
+        }
+        if (o.h0 != null && r >= o.h0 && r < o.h1 && dx < (o.hx == null ? 2 : o.hx)) {
+          v = q * w < 0.9 && r > r0 ? 3 : r >= o.h0 + 0.7 && r < o.h1 - 0.6 && dx < (o.hx == null ? 2 : o.hx) - 2 ? 5 : 4;
+        }
+        const eB = !has(x, y + 1) && !(o.blend && b.alphaAt(x, y + 1)), eR = !has(x + 1, y), eL = !has(x - 1, y), eT = !has(x, y - 1);
+        if (eB) v = Math.min(v, eR || eL ? 1 : 2);
+        else if (eR && dx > 1) v = Math.min(v, 2);
+        else if ((eT || eL) && dx < -1 && dy < 8 && v === 3) v = 4;
+      }
+      b.put(x, y, P.rgba(R[v - 1]));
+    }
+  }
+
+  // ---- shared shapes --------------------------------------------------------------------------
+  // Faces: S skin, s shade, z deep shade, L light.
+  const FACE_D = [
+    '....SSSSSSSS....',
+    '..SSSSSSSSSSSS..',
+    '.SSSSSSSSSSSSSS.',
+    '.SSSSSSSSSSSSSS.',
+    'SSSSSSSSSSSSSSSs',
+    'SSSSSSSSSSSSSSSs',
+    'LSSSSSSSSSSSSSSs',
+    'LSSSSSSSSSSSSSss',
+    'LSSSSSSSSSSSSSss',
+    'SSSSSSSSSSSSSSss',
+    'SSSSSSSSSSSSSSss',
+    '.SSSSSSSSSSSSSs.',
+    '.SSSSSSSSSSSSss.',
+    '..SSSSSSSSSSss..',
+    '...sSSSSSSSss...',
+    '.....ssssss.....',
+  ];
+  const FACE_S = [
+    '.....SSSSSSSS...',
+    '...SSSSSSSSSSS..',
+    '..SSSSSSSSSSSSS.',
+    '.SSSSSSSSSSSSSS.',
+    '.SSSSSSSSSSSSSSS',
+    'SSSSSSSSSSSSSSSS',
+    'SSSSSSSSSSSSSSSS',
+    'sSSSSSSSSSSSSSSSS',
+    'sSSSSSSSSSSSSSSSL',
+    'sSSSSSSSSSSSSSSS',
+    'sSSSSSSSSSSSSSSs',
+    '.sSSSSSSSSSSSSs.',
+    '.sSSSSSSSSSSSSs.',
+    '..sSSSSSSSSSSs..',
+    '...zsSSSSSSss...',
+    '.....zssssss....',
+  ];
+
+  // ---- the figure ---------------------------------------------------------------------------------
+  // Geometry (adult): head/face rows 6-21, neck 22, shoulders 23, belt 30-31, tunic hem 34, legs to 41,
+  // boots 42-46. Children keep the head, lower it by 7 and shorten the body; old people stoop a pixel.
+  const SHAPES = ['tunic', 'apron', 'coat', 'robe', 'dress'];
+  function geom(look, f) {
+    const child = look.size === 'child';
+    const g = child
+      ? { hy: 7, top: 30, belt: 35, hem: 38, boot: 43 }
+      : { hy: look.age === 'old' ? 1 : 0, top: 23, belt: 30, hem: 34, boot: 42 };
+    g.child = child; g.f = f;
+    g.bob = f === 1 || f === 2 ? 1 : 0; // step frames sit one pixel lower
+    g.foot = 46;
+    g.shape = SHAPES.includes(look.shape) ? look.shape : 'tunic';
+    g.t = g.top + g.bob; g.bt = g.belt + g.bob;
+    const hy = g.belt + 1 + g.bob; // top row of each 3×3 hand in the front/back views
+    // f1: right arm (screen right) swings forward and drops, the left one rises; f2 the reverse
+    g.hands = [hy + (f === 1 ? -1 : f === 2 ? 1 : 0), hy + (f === 1 ? 1 : f === 2 ? -1 : 0)];
+    g.low = { tunic: g.hem, apron: g.hem, coat: g.hem + (child ? 3 : 6), robe: 44, dress: child ? 42 : 41 }[g.shape];
+    g.apronLow = g.hem + (child ? 3 : 5);
+    return g;
+  }
+  const IVORY = ['#b8ab94', '#d8ccb4', '#ece4d4', '#f8f2e6'];
+
+  // ---- down / up (front and back views share the body) -------------------------------------------
+  function legsDown(b, look, p, g, f) {
+    const pa = p.pa, bo = p.bo;
+    const lift = [f === 2 ? 2 : 0, f === 1 ? 2 : 0]; // f1: screen-left foot planted, right lifted
+    const robe = g.shape === 'robe';
+    const lt = g.shape === 'dress' ? g.low + 1 : g.hem + 1;
+    for (let s = 0; s < 2; s++) {
+      const x = s ? 17 : 11, L = lift[s];
+      const by = robe ? g.foot - 1 - L : Math.max(lt, g.boot - L);
+      if (robe) { // only the feet show beneath a robe; the lifted one hides under the hem
+        if (!L) { b.rect(x, by, 4, 2, bo[1]); b.rect(x, by, 4, 1, bo[2]); b.rect(x, g.foot, 4, 1, bo[0]); }
+        continue;
+      }
+      if (by > lt) {
+        b.rect(x, lt, 4, by - lt, pa[1]);
+        b.rect(x + (s ? 3 : 0), lt, 1, by - lt, s ? pa[0] : pa[2]);
+        b.rect(x + 1, lt + 1, 1, Math.min(2, by - lt - 1), s ? pa[1] : pa[2]);
+      }
+      // boot: cuff, shaft, toe; a lifted foot shows its darker sole
+      const bx = x - (s ? 0 : 1);
+      b.rect(bx, by, 5, g.foot - by + 1 - L, bo[1]);
+      b.rect(bx, by, 5, 1, bo[2]);
+      b.rect(s ? x + 4 : x - 1, by + 1, 1, g.foot - by - L, bo[0]);
+      b.px(s ? x : x - 1, by + 1, bo[2]);
+      if (L) b.rect(bx, g.foot - L, 5, 1, bo[0]);
+      else b.rect(bx, g.foot, 5, 1, bo[0]);
+    }
+    if (!robe && g.shape !== 'dress') b.rect(15, lt, 2, 2, pa[0]);
+  }
+
+  function garmentDown(b, look, p, g, up) {
+    const C = p.cl, A = p.ac, sh = g.shape;
+    const t = g.t, bt = g.bt, hm = g.hem, low = g.low;
+    // chest: lit left flank and shoulder, shaded right flank
+    b.rect(11, t, 10, 1, C[2]);
+    b.rect(9, t + 1, 14, bt - t - 1, C[2]);
+    b.rect(9, t + 1, 1, bt - t - 1, C[3]);
+    b.rect(11, t, 3, 1, C[3]);
+    b.rect(10, t + 1, 2, 2, C[4]);
+    b.rect(21, t + 1, 2, bt - t - 1, C[1]);
+    b.rect(22, t + 3, 1, bt - t - 3, C[0]);
+    // below the waist
+    const flare = (y) => (sh === 'dress' ? Math.floor((y - bt - 2) / 3) : sh === 'robe' ? (y > low - 3 ? 1 : 0) : sh === 'coat' ? (y > bt + 5 ? 1 : 0) : 0);
+    for (let y = bt + 2; y <= low; y++) {
+      const e = flare(y), x0 = 9 - e, x1 = 22 + e;
+      const gap = sh === 'coat' && !up && y > bt + 2 ? (y > bt + 5 ? [14, 17] : [15, 16]) : null;
+      if (gap) { b.rect(x0, y, gap[0] - x0, 1, C[2]); b.rect(gap[1] + 1, y, x1 - gap[1], 1, C[2]); }
+      else b.rect(x0, y, x1 - x0 + 1, 1, C[2]);
+      b.px(x0, y, C[3]);
+      b.rect(x1 - 1, y, 2, 1, C[1]);
+      b.px(x1, y, C[0]);
+    }
+    b.rect(9, bt + 2, 14, 1, C[1]); // shadow under the belt
+    if (sh === 'tunic' || sh === 'apron') {
+      b.rect(9, hm, 14, 1, C[1]);
+      if (!up) b.rect(15, bt + 3, 1, hm - bt - 2, C[1]);
+    }
+    if (sh === 'coat') {
+      // the coat parts below the waist, showing the legs; lit edges on the opening
+      if (!up) { b.rect(13, bt + 3, 1, low - bt - 2, C[3]); b.rect(18, bt + 3, 1, low - bt - 2, C[1]); }
+      else { for (let y = bt + 3; y <= low; y++) { b.px(15, y, C[0]); b.px(16, y, C[1]); } b.rect(14, bt + 3, 1, 1, C[1]); }
+      if (up) b.rect(8, low, 16, 1, C[1]);
+      else { b.rect(8, low, 6, 1, C[1]); b.rect(18, low, 6, 1, C[0]); }
+      if (!up) { b.rect(10, bt + 4, 3, 1, C[1]); b.rect(19, bt + 4, 3, 1, C[0]); } // pocket flaps
+    }
+    if (sh === 'robe') {
+      // long straight folds and a hem band
+      b.rect(12, bt + 3, 1, low - bt - 4, C[1]);
+      b.rect(19, bt + 3, 1, low - bt - 4, C[1]);
+      b.rect(13, bt + 3, 1, low - bt - 4, C[3]);
+      b.rect(8, low - 1, 16, 1, C[1]);
+      b.rect(8, low, 16, 1, C[0]);
+      if (!up) b.line(17, bt + 2, 18, low - 2, C[1]); // overlap of the front panels
+      else b.rect(15, bt + 3, 1, low - bt - 4, C[1]);
+      // the hem lifts over the stepping foot
+      if (g.f === 1) { for (let x = 17; x <= 23; x++) b.clear(x, low); }
+      if (g.f === 2) { for (let x = 8; x <= 14; x++) b.clear(x, low); }
+    }
+    if (sh === 'dress') {
+      // pleats catch the light on their left side
+      for (const px of [12, 16, 20]) {
+        for (let y = bt + 4; y < low; y++) { const e = Math.floor((y - bt - 2) / 3); const xx = px + Math.round((px - 16) * e / 6); b.px(xx, y, C[1]); b.px(xx - 1, y, C[3]); }
+      }
+      const e = flare(low);
+      b.rect(9 - e, low, 14 + 2 * e, 1, A[1]);
+      b.rect(9 - e, low - 1, 14 + 2 * e, 1, C[1]);
+    }
+    // belt, sash or obi
+    const obi = sh === 'robe';
+    b.rect(9, bt - (obi ? 1 : 0), 14, obi ? 3 : 2, A[1]);
+    b.rect(9, bt - (obi ? 1 : 0), 14, 1, A[2]);
+    b.rect(21, bt - (obi ? 1 : 0), 2, obi ? 3 : 2, A[0]);
+    if (obi && up) { b.rect(13, bt - 2, 6, 5, A[1]); b.rect(13, bt - 2, 6, 1, A[2]); b.rect(17, bt - 1, 2, 4, A[0]); b.rect(15, bt - 2, 2, 5, A[0]); }
+    if (sh === 'dress') { const bx = up ? 14 : 19; b.rect(bx, bt - 1, 4, 3, A[1]); b.px(bx + 1, bt, A[0]); b.rect(bx + 1, bt + 2, 1, 3, A[1]); b.rect(bx + 3, bt + 2, 1, 2, A[0]); }
+    // collars (front) and the back seam
+    if (!up) {
+      if (sh === 'coat') {
+        b.rect(13, t - 1, 6, 1, C[3]); // standing collar
+        b.line(12, t, 15, t + 4, C[3]); b.line(19, t, 16, t + 4, C[1]);
+        b.rect(15, t, 2, 3, p.skin.s); b.rect(15, t + 1, 2, 2, A[1]);
+        b.px(17, t + 5, A[2]); b.px(17, t + 8, A[2]);
+      } else if (sh === 'robe') {
+        b.line(18, t, 13, bt - 2, A[2]); b.line(19, t, 14, bt - 2, A[1]);
+        b.line(13, t, 15, t + 2, IVORY[2]);
+        b.rect(14, t, 4, 1, p.skin.s);
+      } else if (sh === 'dress') {
+        b.rect(13, t, 6, 1, p.skin.s); b.rect(14, t + 1, 4, 1, p.skin.s); b.rect(14, t + 1, 4, 1, p.skin.s);
+        b.rect(13, t + 1, 1, 1, A[1]); b.rect(18, t + 1, 1, 1, A[0]); b.rect(14, t + 2, 4, 1, A[1]);
+      } else {
+        b.rect(14, t, 4, 1, p.skin.s);
+        b.rect(15, t + 1, 2, 1, p.skin.s);
+        b.rect(15, t + 2, 2, 1, p.skin.z);
+        b.px(13, t, A[2]); b.px(14, t + 1, A[1]); b.px(18, t, A[1]); b.px(17, t + 1, A[0]);
+        b.px(15, t + 3, A[1]); b.px(16, t + 3, A[0]);
+      }
+      if (sh === 'tunic' || sh === 'apron') { b.line(12, t + 3, 13, bt - 1, C[1]); b.line(19, t + 3, 18, bt - 1, C[1]); }
+    } else {
+      b.rect(12, t, 8, 1, C[3]);
+      b.rect(13, t - 1, 6, 1, sh === 'coat' ? C[3] : p.skin.s);
+      if (sh !== 'robe') { b.rect(15, t + 2, 2, bt - t - 2, C[1]); b.rect(15, t + 2, 1, bt - t - 2, C[0]); }
+      b.line(11, t + 2, 12, bt - 1, C[1]); b.line(20, t + 2, 19, bt - 1, C[0]);
+    }
+    if (sh === 'apron') apronDown(b, p, g, up);
+  }
+  function apronDown(b, p, g, up) {
+    const t = g.t, bt = g.bt, lo = g.apronLow;
+    const I = IVORY;
+    if (!up) {
+      b.rect(12, t + 3, 8, bt - t - 3, I[2]);            // bib
+      b.rect(12, t + 3, 8, 1, I[3]);
+      b.rect(19, t + 3, 1, bt - t - 3, I[1]);
+      b.px(12, t + 2, I[1]); b.px(19, t + 2, I[1]); b.px(12, t + 1, I[1]); b.px(19, t + 1, I[0]); // neck strap
+      b.rect(10, bt, 12, 2, I[1]); b.rect(10, bt, 12, 1, I[2]); // waistband
+      for (let y = bt + 2; y <= lo; y++) { const e = y > lo - 2 ? 1 : 0; b.rect(10 - e, y, 12 + 2 * e, 1, I[2]); b.px(10 - e, y, I[3]); b.rect(20 + e, y, 1, 1, I[1]); }
+      b.rect(9, lo, 14, 1, I[1]);
+      b.rect(13, bt + 3, 6, 3, I[1]); b.rect(13, bt + 3, 6, 1, I[0]); b.rect(14, bt + 4, 4, 1, I[2]); // pocket
+      b.px(16, bt + 4, I[1]);
+    } else {
+      b.line(10, t + 1, 20, bt - 1, I[1]); b.line(21, t + 1, 11, bt - 1, I[2]); // crossed straps
+      b.rect(9, bt, 14, 1, I[2]);
+      b.rect(14, bt - 1, 4, 3, I[2]); b.rect(13, bt, 1, 2, I[1]); b.rect(18, bt, 1, 2, I[1]); // bow
+      b.rect(14, bt + 2, 1, 4, I[1]); b.rect(17, bt + 2, 1, 3, I[1]);
+    }
+  }
+
+  function armsDown(b, look, p, g, f, up) {
+    const C = p.cl, sk = p.sk, t = g.t;
+    const robe = g.shape === 'robe', puff = g.shape === 'dress';
+    for (let s = 0; s < 2; s++) {
+      const x = s ? 22 : 7, hy = g.hands[s];
+      b.rect(x, t + 2, 3, hy - t - 2, C[2]);
+      b.rect(x + (s ? 0 : 1), t + 1, 2, 1, s ? C[2] : C[3]);
+      b.rect(x, t + 2, 1, hy - t - 2, s ? C[1] : C[3]);
+      b.rect(x + 2, t + 2, 1, hy - t - 2, s ? C[0] : C[1]);
+      if (puff) { b.rect(s ? 22 : 6, t + 1, 4, 3, C[2]); b.rect(s ? 22 : 6, t + 1, 2, 1, C[3]); b.rect(s ? 24 : 6, t + 3, 2, 1, C[1]); }
+      if (robe) {
+        // wide sleeve: the mouth flares outward and hangs past the wrist
+        const ox = s ? x + 3 : x - 1;
+        b.rect(ox, t + 5, 1, hy - t - 4, C[s ? 1 : 3]);
+        b.rect(Math.min(x, ox), hy - 2, 4, 2, C[1]);
+        b.rect(Math.min(x, ox), hy - 1, 4, 1, C[0]);
+      } else b.rect(x, hy - 1, 3, 1, C[1]); // cuff
+      b.rect(x, hy, 3, 3, sk[2]);
+      b.rect(x, hy + 2, 3, 1, sk[1]);
+      b.px(s ? x : x + 2, hy + 1, sk[1]);
+      if (!s) b.px(x, hy, sk[3]);
+    }
+  }
+
+  function headDown(b, look, p, g, blink) {
+    const y0 = 6 + g.hy + g.bob;
+    const sk = p.skin;
+    b.rect(14, y0 + 16, 4, 2, sk.s); // neck
+    b.rect(14, y0 + 16, 4, 1, sk.z);
+    b.tpl(8, y0, FACE_D, sk);
+    b.rect(7, y0 + 7, 1, 3, sk.S); b.px(7, y0 + 9, sk.s); // ears
+    b.rect(24, y0 + 7, 1, 3, sk.s); b.px(24, y0 + 9, sk.z);
+    const ey = y0 + 7;
+    for (const x of [11, 19]) {
+      if (blink) { b.rect(x, ey + 2, 2, 1, p.eye); continue; }
+      b.rect(x, ey, 2, 3, p.iris);
+      b.rect(x, ey, 2, 1, p.eye);
+      b.px(x, ey + 1, p.white);
+      b.px(x + 1, ey + 2, p.eye);
+    }
+    if (look.age === 'old') { b.px(10, ey + 3, sk.s); b.px(21, ey + 3, sk.s); }
+    else { b.rect(9, ey + 3, 2, 1, p.blush); b.rect(21, ey + 3, 2, 1, p.blush); }
+    b.rect(15, ey + 5, 2, 1, p.mouth);
+    b.px(16, ey + 3, mix(sk.S, sk.s, 0.6));
+  }
+  function headUp(b, look, p, g) {
+    const y0 = 6 + g.hy + g.bob;
+    const sk = p.skin;
+    b.rect(14, y0 + 15, 4, 3, sk.s);
+    b.tpl(8, y0, FACE_D, { S: sk.S, s: sk.s, z: sk.z, L: sk.S });
+    b.rect(7, y0 + 7, 1, 3, sk.S); b.rect(24, y0 + 7, 1, 3, sk.s);
+  }
+
+  // ---- side (facing right; left is mirrored) ------------------------------------------------------
+  function sidePose(f) { return f === 1 ? [19, 9, 0, 1] : f === 2 ? [9, 19, 1, 0] : [15, 13, 0, 0]; }
+  function legsSide(b, look, p, g, f) {
+    const pa = p.pa, bo = p.bo, ft = g.foot;
+    const robe = g.shape === 'robe';
+    const lt = g.shape === 'dress' ? g.low + 1 : g.hem + 1;
+    const pose = sidePose(f); // [near foot x, far foot x, near lifted, far lifted]
+    const leg = (fx, lifted, near) => {
+      const c = near ? pa : [shade(pa[0], -1), pa[0], pa[1]];
+      const cb = near ? bo : [shade(bo[0], -1), bo[0], bo[1]];
+      const hip = 14;
+      const by = robe ? ft - 1 : Math.max(lt, g.boot - (lifted ? 1 : 0));
+      if (robe && lifted) return;
+      for (let y = lt; y < by && !robe; y++) {
+        const k = (y - lt) / Math.max(1, by - lt);
+        const x = Math.round(hip + (fx - hip) * k);
+        b.rect(x, y, 4, 1, c[1]);
+        b.px(x, y, near ? c[2] : c[1]);
+        b.px(x + 3, y, c[0]);
+      }
+      b.rect(fx, by, 4, ft - by + 1 - (lifted ? 1 : 0), cb[1]);
+      b.rect(fx, by, 4, 1, cb[2]);
+      if (!lifted) { b.rect(fx + 4, ft - 1, 2, 2, cb[1]); b.rect(fx, ft, 6, 1, cb[0]); b.px(fx + 5, ft - 1, cb[2]); }
+      else { b.rect(fx + 3, ft - 1, 2, 1, cb[1]); b.rect(fx, ft - 1, 3, 1, cb[0]); b.px(fx - 1, ft - 2, cb[0]); }
+    };
+    leg(pose[1], pose[3], false);
+    leg(pose[0], pose[2], true);
+  }
+  function garmentSide(b, look, p, g) {
+    const C = p.cl, A = p.ac, sh = g.shape;
+    const t = g.t, bt = g.bt, hm = g.hem, low = g.low, f = g.f;
+    b.rect(12, t, 8, 1, C[2]);
+    b.rect(11, t + 1, 10, bt - t, C[2]);
+    b.rect(11, t + 1, 1, bt - t, C[1]); // back
+    b.rect(12, t + 1, 2, 3, C[3]);
+    b.rect(19, t + 2, 2, bt - t - 2, C[3]); // chest catches the light
+    b.px(20, t + 2, C[4]);
+    // below the waist; long garments swing with the stride
+    const sway = f === 1 ? 1 : f === 2 ? -1 : 0;
+    for (let y = bt + 2; y <= low; y++) {
+      let x0 = 11, x1 = 20;
+      const k = y - bt - 2;
+      if (sh === 'dress') { const e = Math.floor(k / 3); x0 -= e; x1 += e; }
+      if (sh === 'robe' && y > low - 4) { x0 -= 1; x1 += 1; }
+      if (sh === 'coat' && k > 3) { x0 -= 1 + (k > 6 ? 1 : 0); }
+      if ((sh === 'robe' || sh === 'dress' || sh === 'coat') && k > 4) { x0 += sway * (k > 8 ? 1 : 0) - (sh === 'coat' && f ? 1 : 0); x1 += sway * (k > 6 ? 1 : 0); }
+      b.rect(x0, y, x1 - x0 + 1, 1, C[2]);
+      b.px(x0, y, C[1]);
+      b.px(x1, y, C[1]);
+      if (x1 - 1 > x0) b.px(x1 - 1, y, C[3]);
+    }
+    b.rect(11, bt + 2, 10, 1, C[1]);
+    if (sh === 'tunic' || sh === 'apron') b.rect(11, hm, 10, 1, C[1]);
+    if (sh === 'coat') { for (let y = bt + 2; y <= low; y++) b.px(19, y, C[1]); b.rect(9 - (f ? 1 : 0), low, 12, 1, C[1]); b.px(19, t + 5, A[2]); b.px(19, t + 8, A[2]); }
+    if (sh === 'robe') { b.rect(10, low, 12, 1, C[0]); b.line(19, t + 1, 16, bt - 2, A[2]); b.rect(15, bt + 3, 1, low - bt - 4, C[1]); }
+    if (sh === 'dress') { const e = Math.floor((low - bt - 2) / 3); b.rect(11 - e, low, 10 + 2 * e, 1, A[1]); for (let y = bt + 4; y < low; y++) b.px(15 + Math.floor((y - bt - 2) / 6), y, C[1]); }
+    const obi = sh === 'robe';
+    b.rect(11, bt - (obi ? 1 : 0), 10, obi ? 3 : 2, A[1]);
+    b.rect(11, bt - (obi ? 1 : 0), 10, 1, A[2]);
+    if (obi) { b.rect(8, bt - 2, 4, 5, A[1]); b.rect(8, bt - 2, 4, 1, A[2]); b.rect(8, bt + 1, 2, 2, A[0]); }
+    if (sh === 'dress') { b.rect(8, bt - 1, 4, 3, A[1]); b.rect(8, bt + 2, 1, 3, A[1]); b.rect(10, bt + 2, 1, 2, A[0]); }
+    if (sh === 'coat') { b.rect(18, t - 1, 3, 2, C[3]); } else { b.rect(17, t, 3, 1, p.skin.s); b.px(19, t + 1, A[1]); b.px(17, t + 1, A[1]); }
+    if (sh === 'apron') {
+      const I = IVORY, lo = g.apronLow;
+      b.rect(18, t + 3, 3, bt - t - 3, I[2]); b.px(20, t + 3, I[3]); b.px(19, t + 2, I[1]); b.px(18, t + 1, I[1]);
+      for (let y = bt; y <= lo; y++) { const e = y > bt + 3 ? 1 : 0; b.rect(18, y, 3 + e, 1, I[2]); b.px(18, y, I[1]); }
+      b.rect(18, lo, 4, 1, I[1]);
+      b.rect(11, bt, 7, 1, I[1]); b.rect(8, bt - 1, 3, 3, I[2]); b.px(8, bt + 2, I[1]); b.px(10, bt + 3, I[1]);
+    }
+  }
+  function sideHand(g, near) {
+    const f = g.f;
+    const fw = near ? (f === 2 ? 1 : f === 1 ? -1 : 0) : f === 1 ? 1 : f === 2 ? -1 : 0;
+    const t = g.t + 1, len = g.belt - g.top + 1;
+    return { x: 15 + fw * 4, y: t + len - Math.abs(fw), fw, t };
+  }
+  function armSide(b, look, p, g, near) {
+    const C = near ? p.cl : p.cl.map((c) => shade(c, -1));
+    const sk = near ? p.sk : p.sk.map((c) => shade(c, -1));
+    const { x: hx, y: hy, fw, t } = sideHand(g, near);
+    const robe = g.shape === 'robe';
+    for (let y = t; y < hy; y++) {
+      const k = (y - t) / Math.max(1, hy - t);
+      const x = Math.round(14 + (hx - 15) * k);
+      b.rect(x, y, 4, 1, C[2]);
+      b.px(x, y, C[1]);
+      b.px(x + 3, y, near ? C[3] : C[2]);
+      if (robe && y > t + 3) b.px(x - 1, y, C[1]);
+    }
+    if (g.shape === 'dress') { b.rect(13, t, 5, 2, C[2]); b.rect(14, t, 3, 1, C[3]); }
+    const cx = hx - 1 + (fw > 0 ? 1 : 0);
+    b.rect(cx - (robe ? 1 : 0), hy - 1, robe ? 5 : 4, robe ? 2 : 1, C[1]);
+    b.rect(cx, hy + (robe ? 1 : 0), 3, 3, sk[2]);
+    b.rect(cx, hy + 2 + (robe ? 1 : 0), 3, 1, sk[1]);
+    b.px(cx + 2, hy + (robe ? 1 : 0), sk[3]);
+  }
+  function headSide(b, look, p, g, blink) {
+    const y0 = 6 + g.hy + g.bob;
+    const sk = p.skin;
+    b.rect(15, y0 + 16, 4, 2, sk.s);
+    b.rect(15, y0 + 16, 4, 1, sk.z);
+    b.tpl(8, y0, FACE_S, sk);
+    b.rect(13, y0 + 7, 2, 3, sk.s); b.px(13, y0 + 8, sk.z); // ear
+    const ey = y0 + 7;
+    if (blink) b.rect(20, ey + 2, 2, 1, p.eye);
+    else { b.rect(20, ey, 2, 3, p.iris); b.rect(20, ey, 2, 1, p.eye); b.px(21, ey + 1, p.white); b.px(20, ey + 2, p.eye); }
+    if (look.age !== 'old') b.rect(20, ey + 3, 2, 1, p.blush);
+    b.px(23, ey + 5, p.mouth);
+    b.px(24, ey + 2, sk.S);
+  }
+
+  // ---- hair styles --------------------------------------------------------------------------------
+  // Masks in span notation: sp(y0, 'a-b,c-d|e-f|...') gives one row per '|' starting at y0; 'a-b:4'
+  // forces ramp step 4 on that span; '*n' repeats a row n times.
+  function sp(y0, str) {
+    const parts = [];
+    let y = y0;
+    for (let row of str.split('|')) {
+      let rep = 1;
+      const star = row.indexOf('*');
+      if (star >= 0) { rep = +row.slice(star + 1); row = row.slice(0, star); }
+      for (let k = 0; k < rep; k++, y++) {
+        if (!row) continue;
+        for (const seg of row.split(',')) {
+          const [rng, force] = seg.split(':');
+          const [a, bb] = rng.split('-').map(Number);
+          const x1 = bb == null || Number.isNaN(bb) ? a : bb;
+          parts.push([a, y, [(force || '#').repeat(x1 - a + 1)]]);
+        }
+      }
+    }
+    return parts;
+  }
+  const BRAID_SEG = ['.43.', '4332', '3221'];
+  const braid = (x, y, n, w3) => {
+    const rows = [];
+    for (let i = 0; i < n; i++) rows.push(...(w3 ? ['43.', '332', '221'] : BRAID_SEG));
+    return [[x, y, rows]];
+  };
+  // down (facing the viewer): face x 8-23, rows 6-21
+  const CAP_D = sp(2, '11-20|9-22|8-23|7-24|6-25*5');
+  const CAP_TIGHT_D = sp(3, '11-20|9-22|8-23|7-24|6-25*4');
+  const BANGS_D = sp(11, '6-14,16-25|6-10,12-14,16-19,21-25|6-8,13,17-18,23-25');
+  const SIDES_D = sp(14, '6-8,23-25|7-8,23-24');
+  const NAPE_U = sp(11, '6-25*2|7-24*2|8-23|9-22|10-21|12-19');
+  const SIDE_CAP = sp(2, '11-19|9-21|8-22|7-23|7-24|6-24*3|6-23');
+  const SIDE_BANGS = sp(11, '6-13,15-18,20-22|6-13,16-18,21|6-12,17-18|7-12|8-12|9-11');
+  const TIE = (look, p) => look.tieCol || p.ac[1];
+  const HAIR = {
+    short: {
+      down: { front: [{ parts: [...CAP_D, ...BANGS_D, ...SIDES_D] }] },
+      up: { front: [{ parts: [...CAP_D, ...NAPE_U] }] },
+      side: { front: [{ parts: [...SIDE_CAP, ...SIDE_BANGS] }] },
+    },
+    bob: {
+      down: { front: [{ parts: [...CAP_D, ...sp(7, '5-26*4|5-25|5-13,15-18,20-26|5-8,23-26*6|5-9,22-26|6-9,22-25|7-8,23-24')] }] },
+      up: { front: [{ parts: [...CAP_D, ...sp(7, '5-26*13|5-26|6-25')] }] },
+      side: { front: [{ parts: [...SIDE_CAP, ...sp(6, '5*5'), ...sp(11, '5-13,15-18,20-22|5-14,16-18,21|5-14,16-18|5-14,17-18*3|5-14|6-14|6-13|7-12')] }] },
+    },
+    long: {
+      down: {
+        back: [{ parts: sp(8, '5-26*19|6-25*2|7-24|9-22'), o: [16, 4] }],
+        front: [{ parts: [...CAP_D, ...BANGS_D, ...sp(14, '6-8,23-25*11|7-8,23-24|7,24')] }],
+      },
+      up: { front: [{ parts: [...CAP_D, ...sp(7, '5-26*4'), ...sp(11, '5-26*18|5-26|6-25|6-10,12-19,21-25|7-9,13-18,22-24|14-17')] }] },
+      side: {
+        back: [{ parts: sp(8, '5-12*16|5-11*5|6-11|6-10|7-10|8-9'), o: [10, 3] }],
+        front: [{ parts: [...SIDE_CAP, ...sp(11, '6-13,15-18,20-22|6-14,16-18,21|6-14,17-18|6-14*2|6-13*2')], blend: true }],
+      },
+    },
+    wavy: {
+      down: {
+        back: [{ parts: sp(8, '5-26*2|4-27*3|5-26*3|5-27|4-27*2|5-26*3|4-27*2|5-27|5-26*2|6-26|5-25|6-25|7-24|9-22'), o: [16, 4] }],
+        front: [{ parts: [...CAP_D, ...BANGS_D, ...sp(14, '6-8,23-25*2|5-7,24-26*3|6-8,23-25*3|5-7,24-26*3|6-8,23-25*2|5-6,25-26|5,26')] }],
+      },
+      up: { front: [{ parts: [...CAP_D, ...sp(7, '5-26*4'), ...sp(11, '5-26*2|4-27*3|5-26*3|5-27|4-27*2|5-26*3|4-27*2|5-26*2|6-25|6-26|7-24|9-22')] }] },
+      side: {
+        back: [{ parts: sp(8, '5-12*3|4-11*3|5-12*3|4-11*3|5-12*3|4-11*3|5-11|6-11|6-10|7-9'), o: [10, 3] }],
+        front: [{ parts: [...SIDE_CAP, ...sp(11, '6-13,15-18,20-22|6-14,16-18,21|6-14,17-18|5-14*2|6-13*2')], blend: true }],
+      },
+    },
+    ponytail: {
+      down: {
+        back: [{ parts: sp(12, '24-26*4|24-27|25-27*4|25-26*2|26'), o: [24, 8], sway: 1 }],
+        front: [{ parts: [...CAP_D, ...BANGS_D, ...SIDES_D] }],
+      },
+      up: {
+        front: [
+          { parts: [...CAP_D, ...NAPE_U] },
+          { parts: sp(8, '14-17*2|13-18*12|14-17*4|15-16*2'), o: [16, 8], sway: 1, tie: [14, 9, 4, 2] },
+        ],
+      },
+      side: {
+        back: [{ parts: sp(5, '5-8|4-8|3-7*2|3-6*5|4-6*5|5-6*2|5'), o: [8, 5], sway: -1, tie: [6, 5, 3, 3] }],
+        front: [{ parts: [...SIDE_CAP, ...SIDE_BANGS] }],
+      },
+    },
+    bun: {
+      down: { front: [{ parts: [...CAP_TIGHT_D, ...BANGS_D, ...SIDES_D] }, { parts: sp(0, '13-18|12-19*3|13-18'), o: [15, 0], h: [1, 3] }] },
+      up: { front: [{ parts: [...CAP_TIGHT_D, ...NAPE_U] }, { parts: sp(2, '13-18|12-19*3|13-18'), o: [15, 2], h: [1, 3] }] },
+      side: { front: [{ parts: [...SIDE_CAP, ...SIDE_BANGS] }, { parts: sp(1, '6-10|5-11*3|6-10'), o: [7, 1], h: [1, 3] }] },
+    },
+    braid: {
+      down: { front: [{ parts: [...CAP_D, ...BANGS_D, ...SIDES_D] }, { parts: [...braid(23, 16, 4), [24, 28, ['23', '.2']]], raw: true, tie: [23, 28, 4, 1], sway: 1 }] },
+      up: { front: [{ parts: [...CAP_D, ...NAPE_U] }, { parts: [...braid(14, 17, 4), [15, 29, ['23', '.2']]], raw: true, tie: [14, 29, 4, 1], sway: 1 }] },
+      side: { back: [{ parts: [...braid(8, 15, 4, true), [8, 27, ['23', '2.']]], raw: true, tie: [8, 27, 3, 1], sway: -1 }], front: [{ parts: [...SIDE_CAP, ...SIDE_BANGS] }] },
+    },
+    twintails: {
+      down: {
+        back: [
+          { parts: sp(9, '4-6|3-6*13|3-5*4|4-5'), o: [6, 8], sway: -1 },
+          { parts: sp(9, '25-27|25-28*13|26-28*4|26-27'), o: [25, 8], sway: 1 },
+        ],
+        front: [{ parts: [...CAP_D, ...BANGS_D, ...SIDES_D], ties: [[5, 8, 3, 3], [24, 8, 3, 3]] }],
+      },
+      up: {
+        front: [
+          { parts: [...CAP_D, ...NAPE_U], ties: [[5, 8, 3, 3], [24, 8, 3, 3]] },
+          { parts: sp(10, '3-6*13|3-5*4|4-5'), o: [6, 8], sway: -1 },
+          { parts: sp(10, '25-28*13|26-28*4|26-27'), o: [25, 8], sway: 1 },
+        ],
+      },
+      side: {
+        back: [{ parts: sp(9, '8-10|7-10*12|7-9*4|8-9'), o: [9, 8], sway: -1 }],
+        front: [{ parts: [...SIDE_CAP, ...SIDE_BANGS], ties: [[8, 8, 3, 2]] }],
+      },
+    },
+    curly: {
+      down: { front: [{ parts: sp(1, '12-14,17-19|9-22|7-24|6-25|5-26|4-27*6|4-9,11-14,17-20,22-27|4-8,12-13,18-19,23-27|4-7,24-27*4|5-7,24-26|5-6,25-26'), mode: 'curl' }] },
+      up: { front: [{ parts: sp(1, '12-14,17-19|9-22|7-24|6-25|5-26|4-27*11|5-26|6-25|8-23|10-21'), mode: 'curl' }] },
+      side: { front: [{ parts: sp(1, '11-13,16-18|8-21|6-23|5-24|5-25|4-25*6|4-14,16-19,21-23|4-14,17-18|4-14|5-14|5-13|6-13|7-12'), mode: 'curl' }] },
+    },
+    spiky: {
+      down: { front: [{ parts: [...sp(0, '10,15,21|10-11,14-16,20-21|10-21'), ...sp(3, '9-22|8-23|7-24|6-25*5'), ...sp(7, '4-5,26-27|5,26'), ...sp(11, '6-10,12-15,17-20,22-25|6-8,10,13-15,18-20,23-25|6-7,13-14,18-19,24-25'), ...SIDES_D] }] },
+      up: { front: [{ parts: [...sp(0, '10,15,21|10-11,14-16,20-21|10-21'), ...sp(3, '9-22|8-23|7-24|6-25*5'), ...sp(7, '4-5,26-27|5,26'), ...sp(11, '6-25*2|7-24*2|8-23|9-22|10-21|11-12,14-17,19-20')] }] },
+      side: { front: [{ parts: [...sp(0, '9,14,19|9-10,13-15,18-20|9-21'), ...sp(3, '8-22|7-23|7-23'), ...sp(5, '3-6|4-6'), ...sp(6, '7-24*3|5-24|6-23'), ...sp(11, '4-13,15-18,20-22|6-13,16-18,21|6-12,17-18|5-12|8-12|9-11')] }] },
+    },
+    shaved: {
+      down: { front: [{ parts: sp(3, '12-19|10-21|9-22|8-23*4|8-9,22-23|8,23'), ramp: 'stubble' }] },
+      up: { front: [{ parts: sp(3, '12-19|10-21|9-22|8-23*10|9-22|10-21|12-19'), ramp: 'stubble' }] },
+      side: { front: [{ parts: sp(3, '11-19|9-21|8-22|8-23*3|8-22|8-13|8-12*2|9-12|9-11|10-11'), ramp: 'stubble' }] },
+    },
+    wrap: {
+      down: { front: [{ parts: [...sp(1, '11-20|9-22|8-23|7-24*6|6-25:4|6-25:2'), ...sp(12, '6-8,23-25*3|7-8,23-24*2')], ramp: 'wrap', mode: 'fold' }, { parts: sp(1, '20-22|19-23|20-22'), ramp: 'wrap', mode: 'knot' }] },
+      up: { front: [{ parts: [...sp(1, '11-20|9-22|8-23|7-24*6|6-25*3|7-24|8-23|9-22|10-21')], ramp: 'wrap', mode: 'fold' }, { parts: sp(15, '13-18|14-17|13-18|14-15,17-18*2|14,18'), ramp: 'wrap', mode: 'knot' }] },
+      side: { back: [{ parts: sp(8, '4-7*2|3-6*2|4-6*2|4-5*2|5'), ramp: 'wrap', mode: 'fold', sway: -1 }], front: [{ parts: [...sp(1, '11-19|9-21|8-22|7-23|7-24*5|6-24:4|6-23:2'), ...sp(12, '7-12*3|8-12')], ramp: 'wrap', mode: 'fold' }, { parts: sp(2, '7-9|6-10|7-9'), ramp: 'wrap', mode: 'knot' }] },
+    },
+  };
+  HAIR.bald = { down: {}, up: {}, side: {} };
+  const ORIGIN = { down: [16, 1], up: [16, 4], side: [19, 2] };
+  const BAND = { down: [3.2, 5.4, 1], up: [4.6, 6.8, 1], side: [3.4, 5.6, 0] };
+
+  // Curls: shaded discs on a jittered grid, laid from the bottom up so each curl overlaps the one
+  // below with its shadowed rim; the lit top-left of every curl catches a highlight.
+  function curlShade(b, m, R, g) {
+    let x0 = 99, y0 = 99, x1 = -99, y1 = -99;
+    for (const key of m.px.keys()) { const c = key.indexOf(','); const x = +key.slice(0, c), y = +key.slice(c + 1); x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+    const val = new Map();
+    const cells = [];
+    for (let gy = y0, row = 0; gy <= y1 + 2; gy += 3, row++) {
+      for (let gx = x0 - 1 + (row % 2) * 2; gx <= x1 + 2; gx += 4) cells.push([gx + (RB.tiles.hh(gx, gy, 5) % 2), gy + (RB.tiles.hh(gx, gy, 6) % 2)]);
+    }
+    cells.sort((a, bb) => bb[1] - a[1]);
+    for (const [cx, cy] of cells) {
+      for (let y = cy - 3; y <= cy + 3; y++) for (let x = cx - 3; x <= cx + 3; x++) {
+        const key = x + ',' + y;
+        if (!m.px.has(key)) continue;
+        const dx = x - cx, dy = y - cy, d2 = dx * dx + dy * dy;
+        if (d2 > 6.3) continue;
+        const t = dx + dy;
+        let v = t <= -2 ? 4 : t >= 2 ? 2 : 3;
+        if (d2 > 4 && t > 0) v = 1;
+        if (v === 4 && y < 9 + g && x < 17) v = 5;
+        val.set(key, v);
+      }
+    }
+    for (const [key, ch] of m.px) {
+      const c = key.indexOf(',');
+      let v = val.get(key) || 2;
+      if (ch >= '1' && ch <= '5') v = +ch;
+      b.put(+key.slice(0, c), +key.slice(c + 1), P.rgba(R[v - 1]));
+    }
+  }
+  function foldShade(b, m, R, knot) {
+    const has = (x, y) => m.px.has(x + ',' + y);
+    for (const [key, ch] of m.px) {
+      const c = key.indexOf(',');
+      const x = +key.slice(0, c), y = +key.slice(c + 1);
+      let v = 3;
+      if (knot) v = !has(x, y + 1) || !has(x + 1, y) ? 2 : !has(x, y - 1) || !has(x - 1, y) ? 5 : 4;
+      else {
+        // broad wound bands rising gently to the right, each lit on its upper edge
+        const u = (y + x * 0.3 + 40) / 4.2, fr = u - Math.floor(u);
+        v = fr < 0.24 ? 2 : fr > 0.7 ? 4 : 3;
+        if (!has(x, y + 1) || (!has(x + 1, y) && x > 16)) v = Math.min(v, 2);
+        else if ((!has(x, y - 1) || !has(x - 1, y)) && x < 16 && v === 3) v = 4;
+      }
+      if (ch >= '1' && ch <= '5') v = +ch;
+      b.put(x, y, P.rgba(R[v - 1]));
+    }
+  }
+  function drawHair(b, look, p, g, d, layer, f) {
+    const st = HAIR[look.hair] || HAIR.short;
+    const groups = st[d] && st[d][layer];
+    if (!groups) return;
+    const dy = g.hy + g.bob;
+    for (const G of groups) {
+      const sw = G.sway && f ? G.sway * (d === 'side' ? 1 : f === 1 ? 1 : -1) : 0;
+      const m = stamp(newMask(), G.parts, sw, dy);
+      const R = G.ramp === 'wrap' ? p.wrap : G.ramp === 'stubble' ? p.stubble : p.hair;
+      if (G.raw) {
+        for (const [key, ch] of m.px) { const c = key.indexOf(','); b.put(+key.slice(0, c), +key.slice(c + 1), P.rgba(R[(ch >= '1' && ch <= '5' ? +ch : 3) - 1])); }
+      } else if (G.mode === 'curl') curlShade(b, m, R, dy);
+      else if (G.mode === 'fold' || G.mode === 'knot') foldShade(b, m, R, G.mode === 'knot');
+      else {
+        const o = G.o || ORIGIN[d];
+        const band = G.h ? [G.h[0], G.h[1], 1] : G.o ? null : BAND[d];
+        shadeMask(b, m, R, { blend: G.blend, ox: o[0] + sw, oy: o[1] + dy, h0: band ? band[0] : null, h1: band ? band[1] : null, hx: band ? band[2] : 1, r0: G.ramp === 'stubble' ? 99 : 5 });
+      }
+      const tie = (t) => { b.rect(t[0] + sw, t[1] + dy, t[2], t[3], TIE(look, p)); b.rect(t[0] + sw, t[1] + dy + t[3] - 1, t[2], 1, shade(TIE(look, p), -1)); };
+      if (G.tie) tie(G.tie);
+      if (G.ties) G.ties.forEach(tie);
+    }
+  }
+
+  // ---- accessories --------------------------------------------------------------------------------
+  // Each accessory draws itself for a view ('down', 'up', 'side') and a layer: 'back' (behind the
+  // body), 'body' (over the clothes, under the head) or 'head' (over the hair).
+  const r3 = (c) => [shade(c, -1), c, shade(c, 1)];
+  const GOLD = ['#a8842c', '#e8c860', '#fff0a8'];
+  const LEATHER = ['#5a3e22', '#8a6a3a', '#b08e58'];
+  const STRAP = '#6a4a2a';
+  function lantern(b, x, y, small) {
+    // hanging lantern: bail, dark cap, glowing paper body with ribs, dark foot (x,y = top-left of the body)
+    const w = small ? 3 : 4, h = small ? 3 : 4;
+    b.px(x + (w >> 1), y - 2, '#3a3440');
+    b.rect(x, y - 1, w, 1, '#3a3440');
+    b.rect(x, y, w, h, '#ffd27a');
+    b.rect(x, y, 1, h, '#fff0b8');
+    b.rect(x + w - 1, y, 1, h, '#e8a040');
+    if (!small) b.rect(x + 2, y, 1, h, '#f0b050');
+    b.rect(x, y + h, w, 1, '#3a3440');
+  }
+  const ACC = {
+    scarf(b, look, p, g, d, L) {
+      if (L !== 'body') return;
+      const R = r3(look.scarfCol || '#c8962e'), t = g.t;
+      if (d === 'side') {
+        b.rect(14, t - 1, 7, 3, R[1]); b.rect(14, t - 1, 7, 1, R[2]); b.rect(14, t + 1, 7, 1, R[0]);
+        const fl = g.f ? 1 : 0; // the tail streams behind and lifts with the stride
+        b.rect(10, t, 4, 2, R[1]); b.rect(8, t + 1 - fl, 3, 2, R[1]); b.rect(7, t + 2 - fl, 2, 2, R[0]); b.px(10, t, R[2]);
+      } else {
+        b.rect(12, t - 1, 8, 1, R[1]); b.rect(11, t, 10, 2, R[1]); b.rect(11, t, 10, 1, R[2]); b.rect(11, t + 1, 10, 1, R[1]);
+        b.rect(11, t + 2, 10, 1, R[0]); b.px(12, t, shade(R[2], 1));
+        const tx = d === 'down' ? 17 : 12, sw = g.f === 1 ? 1 : g.f === 2 ? -1 : 0;
+        b.rect(tx, t + 2, 3, 6, R[1]); b.rect(tx, t + 2, 1, 6, R[2]); b.rect(tx + 2, t + 2, 1, 6, R[0]);
+        b.rect(tx + sw, t + 8, 3, 1, R[1]); b.px(tx + sw, t + 9, R[0]); b.px(tx + 2 + sw, t + 9, R[0]);
+      }
+    },
+    satchel(b, look, p, g, d, L) {
+      const t = g.t, bt = g.bt, big = look.bigSatchel;
+      const bag = (x, y) => {
+        const w = big ? 7 : 6, h = big ? 7 : 6;
+        if (big) { b.rect(x + 1, y - 2, w - 3, 2, '#f0e8d4'); b.rect(x + 2, y - 3, 2, 1, '#f8f2e4'); b.px(x + 4, y - 2, '#c8b890'); }
+        b.rect(x, y, w, h, LEATHER[1]);
+        b.rect(x, y, w, 3, LEATHER[2]); // flap
+        b.rect(x, y + 3, w, 1, LEATHER[0]);
+        b.rect(x + w - 1, y, 1, h, LEATHER[0]);
+        b.px(x + (w >> 1), y + 2, GOLD[1]);
+      };
+      if (d === 'down') {
+        if (L !== 'body') return;
+        b.line(11, t, 20, bt - 1, STRAP, 1); b.line(12, t, 21, bt - 1, LEATHER[0], 1);
+        bag(big ? 19 : 20, bt - 2);
+      } else if (d === 'up') {
+        if (L !== 'body') return;
+        b.line(20, t, 11, bt - 1, STRAP, 1); b.line(21, t, 12, bt - 1, LEATHER[0], 1);
+        bag(big ? 5 : 6, bt - 2);
+      } else {
+        if (L === 'back') bag(big ? 6 : 7, bt - 2);
+        if (L === 'body') { b.line(18, t, 13, bt, STRAP); }
+      }
+    },
+    glasses(b, look, p, g, d, L) {
+      if (L !== 'face') return;
+      const y = 6 + g.hy + g.bob + 6, fc = look.glassCol || '#4a3e48', hi = P.alpha('#f4fbff', 0.5);
+      // thin round rims a pixel clear of the eye, a bright glint on each lens, a bridge
+      if (d === 'down') {
+        for (const x of [10, 18]) {
+          b.rect(x + 1, y, 2, 1, fc); b.px(x, y + 1, fc); b.px(x + 3, y + 1, fc); b.px(x, y + 2, fc); b.px(x + 3, y + 2, fc);
+          b.rect(x + 1, y + 4, 2, 1, fc); b.px(x, y + 3, fc); b.px(x + 3, y + 3, fc);
+          b.px(x + 2, y + 1, hi);
+        }
+        b.rect(14, y + 1, 4, 1, fc);
+      } else if (d === 'side') {
+        b.rect(20, y, 2, 1, fc); b.rect(19, y + 1, 1, 3, fc); b.rect(22, y + 1, 1, 3, fc); b.rect(20, y + 4, 2, 1, fc);
+        b.rect(15, y + 1, 4, 1, fc); b.px(21, y + 1, hi);
+      }
+    },
+    headband(b, look, p, g, d, L) {
+      if (L !== 'head') return;
+      const R = r3(look.bandCol || p.ac[1]), y = 10 + g.hy + g.bob;
+      if (d === 'side') {
+        b.rect(6, y, 19, 2, R[1]); b.rect(6, y, 19, 1, R[2]);
+        const fl = g.f ? 1 : 0;
+        b.rect(3, y + 1 - fl, 4, 1, R[1]); b.rect(2, y + 2 - fl, 3, 1, R[0]); b.rect(4, y + 2, 2, 2, R[1]);
+      } else {
+        b.rect(6, y, 20, 2, R[1]); b.rect(6, y, 20, 1, R[2]); b.rect(22, y, 4, 2, R[0]); b.px(8, y, shade(R[2], 1));
+        if (d === 'up') { b.rect(14, y - 1, 4, 4, R[1]); b.px(14, y - 1, R[2]); b.rect(14, y + 3, 1, 3, R[1]); b.rect(17, y + 3, 1, 4, R[0]); }
+      }
+    },
+    flower(b, look, p, g, d, L) {
+      if (L !== 'head') return;
+      const c = look.flowerCol || '#f4a6a0', R = r3(c), y = 6 + g.hy + g.bob;
+      const x = d === 'side' ? 11 : 21;
+      b.rect(x + 1, y, 2, 1, R[2]); b.rect(x, y + 1, 4, 2, R[1]); b.rect(x + 1, y + 3, 2, 1, R[0]);
+      b.px(x, y + 1, R[2]); b.rect(x + 1, y + 1, 2, 2, '#fff4c0'); b.px(x + 2, y + 2, '#e8b050');
+      if (d !== 'up') b.px(x - 1, y + 3, '#5a8a4a');
+    },
+    hat(b, look, p, g, d, L) {
+      if (L !== 'head') return;
+      const c = look.hatCol || '#8a6a44', R = [shade(c, -2), shade(c, -1), c, shade(c, 1), shade(c, 2)];
+      const y = g.hy + g.bob;
+      if (d === 'side') {
+        b.rect(10, y + 2, 12, 7, R[2]); b.rect(12, y + 1, 8, 1, R[2]); b.rect(10, y + 2, 12, 1, R[3]); b.rect(11, y + 1, 4, 1, R[3]);
+        b.rect(10, y + 6, 12, 2, R[1]);
+        b.rect(3, y + 8, 27, 2, R[2]); b.rect(3, y + 8, 27, 1, R[3]); b.rect(4, y + 10, 25, 1, R[0]);
+      } else {
+        b.rect(10, y + 1, 12, 7, R[2]); b.rect(12, y, 8, 1, R[2]);
+        b.rect(10, y + 1, 4, 5, R[3]); b.rect(12, y, 3, 1, R[3]); b.px(11, y + 2, R[4]);
+        b.rect(19, y + 1, 3, 6, R[1]);
+        b.rect(10, y + 6, 12, 2, R[1]); b.rect(10, y + 6, 12, 1, shade(R[1], -1)); // band
+        b.oval(2, y + 7, 29, y + 11, R[2]);
+        b.rect(3, y + 8, 26, 1, R[3]);
+        b.oval(4, y + 10, 27, y + 11, R[1]);
+        b.rect(8, y + 12, 16, 1, P.alpha('#1a1020', 0.3));
+      }
+    },
+    earrings(b, look, p, g, d, L) {
+      if (L !== 'face') return;
+      const y = 6 + g.hy + g.bob + 10;
+      if (d === 'down') { b.rect(7, y, 1, 2, GOLD[1]); b.px(7, y + 1, GOLD[0]); b.rect(24, y, 1, 2, GOLD[1]); b.px(24, y + 1, GOLD[0]); }
+      else if (d === 'side') { b.rect(13, y, 1, 2, GOLD[1]); b.px(13, y + 1, GOLD[0]); }
+    },
+    cape(b, look, p, g, d, L) {
+      const c = look.capeCol || '#6a3a4a', R = [shade(c, -2), shade(c, -1), c, shade(c, 1)];
+      const t = g.t, lo = g.hem + 4;
+      if (d === 'down') {
+        if (L === 'back') { b.rect(5, t + 2, 3, lo - t - 2, R[1]); b.rect(24, t + 2, 3, lo - t - 2, R[0]); b.rect(5, t + 2, 1, lo - t - 2, R[2]); }
+        if (L === 'body') { b.rect(10, t - 1, 12, 2, R[2]); b.rect(8, t, 3, 3, R[2]); b.rect(21, t, 3, 3, R[1]); b.rect(10, t - 1, 12, 1, R[3]); b.rect(15, t, 2, 2, GOLD[1]); b.px(15, t, GOLD[2]); }
+      } else if (d === 'up') {
+        if (L !== 'body') return;
+        for (let y = t - 1; y <= lo; y++) { const e = Math.floor((y - t) / 5); const sw = g.f && y > lo - 4 ? (g.f === 1 ? 1 : -1) : 0; b.rect(8 - e + sw, y, 16 + 2 * e, 1, R[2]); b.px(8 - e + sw, y, R[3]); b.px(23 + e + sw, y, R[1]); }
+        for (const x of [12, 16, 20]) b.rect(x, t + 3, 1, lo - t - 3, R[1]);
+        b.rect(13, t + 3, 1, lo - t - 3, R[3]);
+        b.rect(9, lo, 15, 1, R[1]);
+        b.rect(10, t - 1, 12, 1, R[3]);
+      } else {
+        if (L !== 'back') return;
+        const sw = g.f ? 1 : 0;
+        for (let y = t; y <= lo; y++) { const e = Math.floor((y - t) / 4) + (y > lo - 5 ? sw : 0); b.rect(12 - e - 2, y, 4 + e, 1, R[2]); b.px(12 - e - 2, y, R[1]); }
+        b.rect(16, t - 1, 4, 2, R[2]);
+      }
+    },
+    lamp(b, look, p, g, d, L) {
+      if (d === 'side') { if (L !== 'hand') return; const h = sideHand(g, true); lantern(b, h.x - 1 + (h.fw > 0 ? 1 : 0), h.y + 5); b.rect(h.x + (h.fw > 0 ? 1 : 0), h.y + 2, 1, 2, '#3a3440'); return; }
+      if (L !== 'body') return;
+      const hy = g.hands[1];
+      b.rect(23, hy + 3, 1, 2, '#3a3440');
+      lantern(b, 22, hy + 6);
+    },
+    ribbon(b, look, p, g, d, L) {
+      if (L !== 'head') return;
+      const R = r3(look.ribbonCol || '#c85a6a'), y = 2 + g.hy + g.bob;
+      const x = d === 'down' ? 20 : d === 'up' ? 7 : 6;
+      b.rect(x, y, 3, 3, R[1]); b.rect(x + 4, y, 3, 3, R[1]); b.rect(x + 3, y + 1, 1, 2, R[0]);
+      b.px(x, y, R[2]); b.px(x + 4, y, R[2]); b.px(x + 2, y + 2, R[0]); b.px(x + 6, y + 2, R[0]);
+      b.rect(x + 2, y + 3, 1, 4, R[1]); b.rect(x + 4, y + 3, 1, 3, R[0]);
+    },
+    bottles(b, look, p, g, d, L) {
+      if (L !== 'body') return;
+      const y = g.bt + 2;
+      const bottle = (x, c, h) => { b.px(x, y, '#a88860'); b.rect(x, y + 1, 2, h, c); b.px(x, y + 1, shade(c, 2)); b.px(x + 1, y + h, shade(c, -1)); };
+      if (d === 'down') { bottle(10, '#6ab0a0', 3); bottle(13, '#e0c070', 2); bottle(19, '#c8a0d0', 3); }
+      else if (d === 'side') bottle(17, '#6ab0a0', 3);
+      else bottle(12, '#6ab0a0', 3);
+    },
+    beard(b, look, p, g, d, L) {
+      if (L !== 'face') return;
+      const R = p.hair, y = 6 + g.hy + g.bob;
+      if (d === 'down') {
+        b.rect(10, y + 11, 12, 4, R[3]); b.rect(11, y + 15, 10, 1, R[3]); b.rect(13, y + 16, 6, 1, R[2]); b.rect(9, y + 9, 2, 3, R[3]); b.rect(21, y + 9, 2, 3, R[2]);
+        b.rect(12, y + 13, 1, 3, R[2]); b.rect(16, y + 13, 1, 4, R[2]); b.rect(19, y + 12, 1, 3, R[2]); b.rect(10, y + 11, 2, 2, R[4]);
+        b.rect(13, y + 11, 6, 1, R[2]); b.rect(15, y + 12, 2, 1, p.mouth); // moustache and mouth
+      } else if (d === 'side') {
+        b.rect(16, y + 10, 8, 5, R[3]); b.rect(17, y + 15, 6, 1, R[2]); b.rect(14, y + 9, 2, 4, R[3]);
+        b.rect(19, y + 12, 1, 3, R[2]); b.rect(22, y + 11, 2, 1, R[2]); b.px(23, y + 12, p.mouth);
+      }
+    },
+    cane(b, look, p, g, d, L) {
+      if (d === 'side') { if (L !== 'hand') return; const h = sideHand(g, true); const x = h.x + 2 + (h.fw > 0 ? 1 : 0); b.rect(x, h.y - 1, 1, g.foot - h.y + 1, '#6a4a2a'); b.rect(x - 2, h.y - 1, 3, 1, '#8a6a44'); b.px(x, g.foot, '#3a2a1a'); return; }
+      if (L !== 'body') return;
+      const hy = g.hands[1];
+      b.rect(25, hy - 1, 1, g.foot - hy + 1, '#6a4a2a'); b.rect(25, hy - 1, 1, g.foot - hy + 1, '#6a4a2a');
+      b.rect(23, hy - 2, 3, 1, '#8a6a44'); b.px(22, hy - 1, '#8a6a44'); b.px(25, g.foot, '#3a2a1a');
+    },
+    basket(b, look, p, g, d, L) {
+      const W1 = ['#7a5a2e', '#b08a4a', '#d0ac6a'];
+      const bask = (x, y) => {
+        b.rect(x, y, 7, 4, W1[1]); b.rect(x, y, 7, 1, W1[2]);
+        for (let i = 0; i < 7; i += 2) b.px(x + i, y + 2, W1[0]);
+        b.rect(x + 1, y + 4, 5, 1, W1[0]);
+        b.line(x + 1, y - 1, x + 3, y - 3, W1[0]); b.line(x + 3, y - 3, x + 5, y - 1, W1[0]);
+        b.px(x + 2, y - 1, '#e8a0a0'); b.px(x + 4, y - 1, '#a0c880');
+      };
+      if (d === 'down') { if (L === 'body') bask(2, g.hands[0] - 1); }
+      else if (d === 'side') { if (L === 'hand') { const h = sideHand(g, true); bask(h.x - 3 + (h.fw > 0 ? 1 : 0), h.y + 2); } }
+    },
+    book(b, look, p, g, d, L) {
+      if (d === 'down' && L === 'body') { const y = g.hands[0] - 3; b.rect(3, y, 5, 6, '#6a3a3a'); b.rect(3, y, 5, 1, '#8a4a44'); b.rect(7, y + 1, 1, 5, '#e8e0c8'); b.rect(3, y + 5, 5, 1, '#4a2828'); b.px(5, y + 2, GOLD[1]); }
+      if (d === 'side' && L === 'hand') { const h = sideHand(g, true); b.rect(h.x - 1, h.y - 2, 5, 3, '#6a3a3a'); b.rect(h.x - 1, h.y - 2, 5, 1, '#e8e0c8'); }
+    },
+    hood(b0, look, p, g, d, L) {
+      if (L !== 'head') return;
+      const c = look.hoodCol || p.cl[1], R = [shade(c, -2), shade(c, -1), c, shade(c, 1)];
+      const y = g.hy + g.bob;
+      const b = new P.Buf(W, H);
+      if (d === 'down') {
+        b.oval(6, y + 1, 25, y + 17, R[2]);
+        b.rect(5, y + 9, 3, 14, R[2]); b.rect(24, y + 9, 3, 14, R[1]); b.rect(5, y + 9, 1, 14, R[3]);
+        b.rect(8, y + 21, 16, 3, R[2]); b.rect(8, y + 23, 16, 1, R[1]);
+        for (let yy = y + 9; yy <= y + 21; yy++) for (let x = 9; x <= 22; x++) {
+          const dx = (x + 0.5 - 16) / 7, dy = (yy + 0.5 - (y + 15.5)) / 7.5;
+          if (dx * dx + dy * dy <= 1) b.clear(x, yy);
+        }
+        b.rect(8, y + 3, 6, 2, R[3]); b.px(9, y + 2, R[3]);
+        for (let yy = y + 9; yy <= y + 20; yy++) { b.px(8, yy, R[3]); b.px(23, yy, R[0]); }
+        b.rect(10, y + 8, 12, 1, R[3]);
+      } else if (d === 'up') {
+        b.oval(6, y + 1, 25, y + 21, R[2]);
+        b.rect(7, y + 16, 18, 9, R[2]); b.rect(8, y + 25, 16, 1, R[1]);
+        b.rect(8, y + 3, 5, 3, R[3]); b.rect(21, y + 6, 3, 16, R[1]); b.rect(15, y + 4, 1, 18, R[1]);
+      } else {
+        b.oval(6, y + 1, 23, y + 18, R[2]);
+        b.rect(5, y + 10, 10, 15, R[2]); b.rect(5, y + 10, 1, 15, R[1]);
+        b.rect(8, y + 3, 6, 2, R[3]);
+        for (let yy = y + 5; yy <= y + 22; yy++) for (let x = 15; x <= 25; x++) { const dx = (x + 0.5 - 22) / 7, dy = (yy + 0.5 - (y + 14)) / 9; if (dx * dx + dy * dy <= 1) b.clear(x, yy); }
+        for (let yy = y + 6; yy <= y + 21; yy++) { const dy = (yy + 0.5 - (y + 14)) / 9, xx = Math.ceil(22 - 7 * Math.sqrt(Math.max(0, 1 - dy * dy))) - 1; b.px(xx, yy, R[3]); }
+      }
+      b0.draw(b, 0, 0);
+    },
+    patches(b, look, p, g, d, L) {
+      if (L !== 'body') return;
+      const pc = ['#6a5c42', '#8a7a5a', '#a89a78'];
+      const patch = (x, y) => { b.rect(x, y, 3, 3, pc[1]); b.rect(x, y, 3, 1, pc[2]); b.px(x + 2, y + 2, pc[0]); b.px(x + 1, y + 1, pc[0]); };
+      if (d === 'down') { patch(11, g.t + 5); patch(18, g.hem + 3); }
+      else if (d === 'up') patch(18, g.t + 4);
+      else patch(15, g.t + 4);
+    },
+    toolbelt(b, look, p, g, d, L) {
+      if (L !== 'body') return;
+      const y = g.bt + 1;
+      if (d === 'down') { b.rect(9, y, 14, 1, '#5a3a2a'); b.rect(10, y + 1, 3, 3, LEATHER[1]); b.rect(10, y + 1, 3, 1, LEATHER[2]); b.rect(20, y, 1, 5, '#8a6a44'); b.rect(19, y + 4, 3, 2, '#9a9aa0'); b.px(19, y + 4, '#c8c8d0'); }
+      else if (d === 'side') { b.rect(11, y, 10, 1, '#5a3a2a'); b.rect(12, y + 1, 3, 3, LEATHER[1]); b.rect(18, y + 1, 1, 4, '#8a6a44'); b.rect(17, y + 4, 3, 2, '#9a9aa0'); }
+      else { b.rect(9, y, 14, 1, '#5a3a2a'); b.rect(19, y + 1, 3, 3, LEATHER[1]); }
+    },
+    apronstrap() {},
+    // Unwritten Atlas keepsakes (cosmetic reward items)
+    atlas_sash(b, look, p, g, d, L) {
+      if (L !== 'body') return;
+      const c = look.sashCol || '#d8c89a', ln = '#8a7a5a';
+      if (d === 'side') { b.rect(15, g.t, 3, g.bt - g.t + 1, c); b.px(16, g.t + 2, ln); b.px(15, g.t + 5, ln); return; }
+      const [x0, x1] = d === 'down' ? [10, 21] : [21, 10];
+      b.line(x0, g.t, x1, g.bt + 1, c, 2);
+      b.line(x0, g.t + 2, x1, g.bt + 3, shade(c, -1));
+      b.px(Math.round((x0 * 2 + x1) / 3), g.t + 3, ln); b.px(Math.round((x0 + x1 * 2) / 3), g.t + 6, ln);
+    },
+    atlas_pin(b, look, p, g, d, L) {
+      if (L !== 'body' || d === 'up') return;
+      const x = d === 'side' ? 17 : 11, y = g.t + 2;
+      b.rect(x, y, 3, 3, GOLD[1]); b.px(x + 1, y + 1, '#3a5a8a'); b.px(x + 1, y, GOLD[2]); b.px(x + 2, y + 2, GOLD[0]);
+    },
+    atlas_lamplet(b, look, p, g, d, L) {
+      if (d === 'side') { if (L === 'back') lantern(b, 8, g.bt + 1, true); return; }
+      if (L !== 'body') return;
+      if (d === 'down') { b.rect(8, g.bt, 1, 2, '#3a3440'); lantern(b, 5, g.bt + 3, true); }
+      else lantern(b, 24, g.bt + 3, true);
+    },
+    atlas_quill(b, look, p, g, d, L) {
+      if (L !== 'head') return;
+      const y = g.hy + g.bob;
+      const x = d === 'side' ? 12 : d === 'up' ? 8 : 23;
+      b.line(x, y + 12, x + 2, y + 2, '#f4f0e0', 1); b.line(x + 1, y + 11, x + 3, y + 3, '#d8d0bc', 1); b.px(x, y + 12, '#6a5a3a');
+    },
+  };
+  // Accessories without art-resolution drawing (for example ones added by later content) fall back to
+  // their 16-px drawing from the Atlas patch, placed at double size over the finished figure.
+  function legacyAcc(b, fn, look, d, f) {
+    const cv = SP.makeCanvas(16, 24);
+    const c = cv.getContext('2d', { willReadFrequently: true });
+    fn(c, look, d, f);
+    const img = c.getImageData(0, 0, 16, 24).data;
+    for (let y = 0; y < 24; y++) for (let x = 0; x < 16; x++) {
+      const o = (y * 16 + x) * 4;
+      if (img[o + 3] > 100) b.rect(x * 2, y * 2, 2, 2, [img[o], img[o + 1], img[o + 2], 255]);
+    }
+  }
+  function accs(b, look, p, g, d, L) {
+    for (const a of look.acc || []) {
+      if (ACC[a]) ACC[a](b, look, p, g, d, L);
+      else if (L === 'head' && RB.atlasArt && RB.atlasArt.ACC && RB.atlasArt.ACC[a]) legacyAcc(b, RB.atlasArt.ACC[a], look, d, g.f);
+    }
+  }
+
+  // ---- composition -------------------------------------------------------------------------------
+  function humanoid(b, look, d, f, blink) {
+    const p = palette(look);
+    const g = geom(look, f);
+    if (d === 'down') {
+      accs(b, look, p, g, d, 'back');
+      drawHair(b, look, p, g, 'down', 'back', f);
+      legsDown(b, look, p, g, f);
+      garmentDown(b, look, p, g, false);
+      armsDown(b, look, p, g, f, false);
+      accs(b, look, p, g, d, 'body');
+      headDown(b, look, p, g, blink);
+      accs(b, look, p, g, d, 'face');
+      drawHair(b, look, p, g, 'down', 'front', f);
+      accs(b, look, p, g, d, 'head');
+    } else if (d === 'up') {
+      accs(b, look, p, g, d, 'back');
+      legsDown(b, look, p, g, f);
+      garmentDown(b, look, p, g, true);
+      armsDown(b, look, p, g, f, true);
+      headUp(b, look, p, g);
+      accs(b, look, p, g, d, 'body');
+      drawHair(b, look, p, g, 'up', 'back', f);
+      drawHair(b, look, p, g, 'up', 'front', f);
+      accs(b, look, p, g, d, 'head');
+    } else {
+      armSide(b, look, p, g, false);
+      accs(b, look, p, g, d, 'back');
+      drawHair(b, look, p, g, 'side', 'back', f);
+      legsSide(b, look, p, g, f);
+      garmentSide(b, look, p, g);
+      accs(b, look, p, g, d, 'body');
+      armSide(b, look, p, g, true);
+      accs(b, look, p, g, d, 'hand');
+      headSide(b, look, p, g, blink);
+      accs(b, look, p, g, d, 'face');
+      drawHair(b, look, p, g, 'side', 'front', f);
+      accs(b, look, p, g, d, 'head');
+    }
+    return p;
+  }
+
+  // ---- entry point --------------------------------------------------------------------------------
+  // Variants are keyed through RB.sprites.get: its cache already maps (look, dir, frame) to one small
+  // canvas (including the Atlas accessory patch), so one key lookup per call serves both sizes.
+  const art = new WeakMap();
+  SP.customArt = SP.customArt || {};
+  function build(look, dir, frame) {
+    const side = dir === 'left' || dir === 'right';
+    const d = side ? 'side' : dir === 'up' ? 'up' : 'down';
+    const blink = frame === 3;
+    const f = blink ? 0 : frame === 1 || frame === 2 ? frame : 0;
+    let b = new P.Buf(W, H);
+    let ol = look.outlineCol || '#241c20';
+    if (look.custom) {
+      const fn = SP.customArt[look.custom];
+      if (fn) {
+        const r = fn(b, look, d, f, blink);
+        if (r && r.outline === false) ol = null;
+        else if (r && r.outline) ol = r.outline;
+      } else if (SP.custom[look.custom]) {
+        // a creature without an art-resolution drawing (added by later content): its 16-px drawing,
+        // doubled, then outlined at art resolution like everything else
+        const cv = SP.makeCanvas(16, 24);
+        const c = cv.getContext('2d', { willReadFrequently: true });
+        SP.custom[look.custom](c, look, d, f, blink);
+        const img = c.getImageData(0, 0, 16, 24).data;
+        for (let y = 0; y < 24; y++) for (let x = 0; x < 16; x++) {
+          const o = (y * 16 + x) * 4;
+          if (img[o + 3] > 40) b.rect(x * 2, y * 2, 2, 2, [img[o], img[o + 1], img[o + 2], img[o + 3]]);
+        }
+      } else return null;
+    } else humanoid(b, look, d, f, blink);
+    if (ol) b.outline(ol);
+    if (dir === 'left') b = b.mirror();
+    return b.toCanvas();
+  }
+  SP.getArt = function (look, dir, frame) {
+    if (!look) return null;
+    const small = SP.get(look, dir, frame);
+    let cv = art.get(small);
+    if (cv === undefined) {
+      cv = build(look, dir, frame);
+      art.set(small, cv);
+    }
+    return cv;
+  };
+  SP.artW = W; SP.artH = H;
+  SP._art = { palette, geom, hairRamp, HAIR };
+})();
+
+
+/* ==== src/engine/33_creatureart.js ==== */
+/* Art-resolution creature sprites (32×48) for every `custom` look: the
+ * Hush-touched things of each region, animals and the Atlas figures. Each
+ * drawer receives a pixel buffer, the look, the view ('down', 'up', 'side'
+ * facing right), the walk frame (0-2) and a blink flag, and may return
+ * { outline: false } for soft, glowing things. Registered in
+ * RB.sprites.customArt; RB.sprites.getArt picks them up. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function () {
+  'use strict';
+  const P = RB.pix, S = (RB.sprites.customArt = RB.sprites.customArt || {});
+  const shade = P.shade, mix = P.mix, A = P.alpha;
+  const R5 = (c) => [shade(c, -2), shade(c, -1), c, shade(c, 1), shade(c, 2)];
+  const INK = '#1e1a2a';
+
+  // Ellipse shaded as a lit volume: light from the upper left, a darker rim on the lower right.
+  function orb(b, x0, y0, x1, y1, R, o) {
+    o = o || {};
+    const cx = (x0 + x1 + 1) / 2, cy = (y0 + y1 + 1) / 2, rx = (x1 - x0 + 1) / 2, ry = (y1 - y0 + 1) / 2;
+    for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) {
+      const nx = (x + 0.5 - cx) / rx, ny = (y + 0.5 - cy) / ry, d = nx * nx + ny * ny;
+      if (d > 1.0001) continue;
+      const l = -(nx * 0.55 + ny * 0.8);
+      let v = l > 0.62 ? 4 : l > 0.12 ? 3 : l > -0.45 ? 2 : 1;
+      if (d > 0.72 && nx + ny > 0.3) v = Math.min(v, 1);
+      if (o.flat) v = Math.max(v, 2);
+      b.px(x, y, R[v]);
+    }
+  }
+  // Eyes: 2×2 or 2×3 dark with a glint, or a closed line when blinking.
+  function eye(b, x, y, blink, h, col, glint) {
+    if (blink) { b.rect(x, y + (h || 2) - 1, 2, 1, col || INK); return; }
+    b.rect(x, y, 2, h || 2, col || INK);
+    b.px(x, y, glint || '#ffffff');
+  }
+  const hover = (f) => (f === 1 ? -1 : 0);
+  const soft = (c) => mix(shade(c, -3), '#1c1a2c', 0.55); // outline for pale, glowing things
+
+  // ---- region wanderers -------------------------------------------------------------------------
+  S.wisp = (b, look, d, f, blink) => {
+    const c = look.col || '#9fb8e8', R = R5(c), y = 25 + hover(f);
+    b.oval(4, y - 12, 27, y + 11, A(c, 0.14));
+    b.oval(7, y - 9, 24, y + 8, A(c, 0.22));
+    // tail flame curling under the body
+    const s = f === 1 ? 1 : f === 2 ? -1 : 0;
+    b.poly([10, y + 4, 22, y + 4, 18 + s, y + 12, 16 + s * 2, y + 17, 14 + s, y + 11], A(R[3], 0.75));
+    b.poly([13, y + 5, 19, y + 5, 16 + s, y + 12], A(R[4], 0.8));
+    orb(b, 8, y - 8, 23, y + 7, R);
+    b.oval(10, y - 6, 15, y - 3, R[4]);
+    b.rect(11, y - 5, 2, 1, '#ffffff');
+    if (d !== 'up') {
+      const ex = d === 'side' ? 3 : 0;
+      eye(b, 11 + ex, y - 1, blink, 3, '#1a1a30');
+      eye(b, 18 + ex, y - 1, blink, 3, '#1a1a30');
+    }
+    return { outline: soft(c) };
+  };
+  S.moth = (b, look, d, f) => {
+    const c = look.col || '#c8c0e0', R = R5(c), y = 24 + hover(f);
+    const up = f === 1; // wings pressed down on the beat
+    const wing = (sx) => {
+      const fx = (x) => (sx < 0 ? 31 - x : x);
+      // forewing
+      const fy = up ? 4 : 0;
+      b.poly([fx(16), y - 3, fx(29), y - 10 + fy, fx(31), y - 4 + fy, fx(27), y + 2, fx(17), y + 2], R[2]);
+      b.poly([fx(17), y - 2, fx(28), y - 8 + fy, fx(29), y - 6 + fy, fx(18), y], R[3]);
+      b.poly([fx(16), y + 1, fx(26), y + 2, fx(25), y + 9 - (up ? 1 : 0), fx(19), y + 8], R[1]); // hindwing
+      b.oval(Math.min(fx(22), fx(25)), y - 5 + (up ? 2 : 0), Math.max(fx(22), fx(25)), y - 2 + (up ? 2 : 0), R[4]); // eye spot
+      b.px(sx < 0 ? 31 - 23 : 23, y - 4 + (up ? 2 : 0), shade(c, -3));
+      b.rect(Math.min(fx(20), fx(23)), y + 4, 3, 2, R[0]);
+    };
+    wing(1); wing(-1);
+    b.rect(15, y - 6, 2, 15, '#4a4060');
+    b.rect(15, y - 6, 1, 15, '#6a6084');
+    b.rect(14, y - 4, 4, 5, '#5a5078');
+    for (let i = 0; i < 3; i++) b.rect(15, y + 2 + i * 2, 2, 1, '#3a3050');
+    b.line(14, y - 7, 12, y - 11, '#4a4060'); b.line(17, y - 7, 19, y - 11, '#4a4060');
+    b.px(11, y - 12, R[3]); b.px(20, y - 12, R[3]);
+    if (d !== 'up') { b.px(14, y - 5, '#f0e8ff'); b.px(17, y - 5, '#f0e8ff'); }
+  };
+  S.blot = (b, look, d, f, blink) => {
+    const c = look.col || '#2a2440', R = [shade(c, -1), c, shade(c, 1), shade(c, 2), shade(c, 3)];
+    const w = f === 1 ? 1 : 0;
+    // puddle, then the swelling head; a glossy highlight and drips
+    b.oval(2 - w, 34, 29 + w, 45, R[1]);
+    b.oval(3 - w, 35, 28 + w, 44, R[1]);
+    b.rect(5, 41, 22, 2, R[0]);
+    orb(b, 8, 18 + w, 23, 38, R);
+    b.oval(10, 21 + w, 14, 25 + w, R[3]);
+    b.rect(11, 22 + w, 2, 1, R[4]);
+    b.rect(4, 38, 2, 2, R[2]); b.rect(25, 37, 3, 2, R[2]);
+    b.oval(0, 42, 3, 44, R[1]); b.oval(27, 41, 31, 44, R[1]);
+    if (d !== 'up') {
+      const ex = d === 'side' ? 3 : 0;
+      if (blink) { b.rect(11 + ex, 28 + w, 3, 1, '#f0f0ff'); b.rect(18 + ex, 28 + w, 3, 1, '#f0f0ff'); }
+      else { b.rect(11 + ex, 26 + w, 3, 3, '#f0f0ff'); b.rect(18 + ex, 26 + w, 3, 3, '#f0f0ff'); b.rect(12 + ex, 27 + w, 2, 2, INK); b.rect(19 + ex, 27 + w, 2, 2, INK); }
+    }
+    return { outline: shade(c, -2) };
+  };
+  S.crane = (b, look, d, f) => {
+    const c = look.col || '#f4efe0', R = R5(c), y = 26 + hover(f);
+    const fl = f === 1 ? -5 : f === 2 ? 2 : 0;
+    // folded paper: each facet a flat tone, lit facets towards the upper left
+    b.poly([1, y - 4 + fl, 15, y + 1, 15, y + 6], R[3]);
+    b.poly([1, y - 4 + fl, 15, y + 6, 10, y + 5], R[2]);
+    b.poly([30, y - 4 + fl, 17, y + 1, 17, y + 6], R[2]);
+    b.poly([30, y - 4 + fl, 17, y + 6, 22, y + 5], R[1]);
+    b.poly([11, y + 1, 16, y - 1, 21, y + 1, 16, y + 11], R[3]);
+    b.poly([16, y - 1, 21, y + 1, 16, y + 11], R[2]);
+    if (d === 'side') {
+      b.poly([20, y + 1, 26, y - 10, 27, y - 10, 22, y + 3], R[2]); b.poly([26, y - 10, 30, y - 8, 27, y - 9], R[3]);
+      b.rect(26, y - 12, 2, 2, '#c85a4a'); b.poly([10, y + 2, 4, y - 2, 12, y + 5], R[1]);
+    } else {
+      b.rect(15, y - 9, 2, 9, R[3]); b.rect(16, y - 9, 1, 9, R[2]);
+      b.rect(14, y - 11, 4, 3, R[3]); b.rect(15, y - 12, 2, 1, '#c85a4a');
+      if (d === 'down') { b.px(15, y - 10, INK); b.px(16, y - 8, '#d8a040'); }
+      b.line(16, y + 6, 16, y + 11, R[1]);
+    }
+    b.line(1, y - 4 + fl, 15, y + 6, R[1]);
+    b.line(30, y - 4 + fl, 17, y + 6, R[0]);
+  };
+  S.golem = (b, look, d, f, blink) => {
+    const c = look.col || '#8fb8b0', R = R5(c);
+    const lift = [f === 2 ? 2 : 0, f === 1 ? 2 : 0], bob = f ? 1 : 0;
+    // feet
+    for (let s = 0; s < 2; s++) { const x = s ? 18 : 7, L = lift[s]; b.rect(x, 41 - L, 7, 6, R[1]); b.rect(x, 41 - L, 7, 1, R[2]); b.rect(x, 46 - L, 7, 1, R[0]); }
+    // body blocks with seams and a carved rune
+    b.rect(5, 18 + bob, 22, 23, R[2]);
+    b.rect(5, 18 + bob, 22, 2, R[3]); b.rect(5, 18 + bob, 2, 23, R[3]);
+    b.rect(24, 20 + bob, 3, 21, R[1]); b.rect(5, 39 + bob, 22, 2, R[1]);
+    b.rect(5, 29 + bob, 22, 1, R[1]); b.rect(15, 20 + bob, 1, 9, R[1]); b.rect(11, 30 + bob, 1, 9, R[1]); b.rect(20, 30 + bob, 1, 9, R[1]);
+    b.rect(12, 32 + bob, 6, 1, R[4]); b.rect(14, 31 + bob, 2, 5, R[4]); b.px(13, 35 + bob, R[4]);
+    b.px(8, 24 + bob, R[1]); b.px(9, 25 + bob, R[1]); b.px(22, 35 + bob, R[1]);
+    // arms
+    b.rect(1, 20 + bob, 4, 14, R[2]); b.rect(1, 20 + bob, 1, 14, R[3]); b.rect(1, 33 + bob, 4, 2, R[1]);
+    b.rect(27, 20 + bob, 4, 14, R[1]); b.rect(27, 33 + bob, 4, 2, R[0]);
+    // head
+    b.rect(9, 9 + bob, 14, 10, R[2]); b.rect(9, 9 + bob, 14, 2, R[3]); b.rect(9, 9 + bob, 2, 10, R[3]); b.rect(21, 11 + bob, 2, 8, R[1]);
+    b.rect(8, 11 + bob, 1, 5, R[1]); b.rect(23, 11 + bob, 1, 5, R[0]);
+    if (d !== 'up') {
+      const ex = d === 'side' ? 3 : 0;
+      if (blink) { b.rect(12 + ex, 14 + bob, 3, 1, '#1a2a2a'); b.rect(18 + ex, 14 + bob, 3, 1, '#1a2a2a'); }
+      else { b.rect(12 + ex, 13 + bob, 3, 2, '#1a2a2a'); b.rect(18 + ex, 13 + bob, 3, 2, '#1a2a2a'); b.px(12 + ex, 13 + bob, R[4]); b.px(18 + ex, 13 + bob, R[4]); }
+    }
+  };
+  S.lanternghost = (b, look, d, f) => {
+    const glow = f === 1 ? '#b8d4ff' : '#8aa8e8', G = R5(glow), y = 14 + hover(f);
+    // ghostly tail
+    b.poly([8, y + 20, 24, y + 20, 19, y + 28, 16 + (f === 1 ? 2 : 0), y + 33, 13, y + 27], A(G[2], 0.5));
+    b.poly([11, y + 20, 21, y + 20, 16 + (f === 1 ? 1 : 0), y + 29], A(G[3], 0.55));
+    // paper lantern: dark caps, glowing ribbed body
+    b.rect(13, y - 3, 6, 2, '#3a2e2a'); b.px(15, y - 5, '#3a2e2a'); b.px(16, y - 4, '#3a2e2a');
+    b.rect(10, y - 1, 12, 2, '#3a2e2a');
+    orb(b, 8, y + 1, 23, y + 19, G);
+    for (let i = 0; i < 4; i++) b.rect(8 + (i ? 0 : 1), y + 4 + i * 4, 16 - (i ? 0 : 2), 1, G[1]);
+    b.rect(10, y + 20, 12, 2, '#3a2e2a');
+    if (d !== 'up') { b.rect(12, y + 8, 2, 3, '#2a3a6a'); b.rect(18, y + 8, 2, 3, '#2a3a6a'); b.rect(14, y + 13, 4, 1, '#2a3a6a'); }
+  };
+  S.cat = (b, look, d, f, blink) => {
+    const c = look.col || '#e0a060', R = R5(c), st = f === 1 ? 1 : f === 2 ? -1 : 0;
+    if (d === 'side') {
+      // walking profile, head right, tail up behind
+      b.rect(6, 33, 17, 8, R[2]); b.rect(6, 33, 17, 2, R[3]); b.rect(6, 39, 17, 2, R[1]);
+      for (const [x, s] of [[7, st], [11, -st], [18, -st], [21, st]]) { b.rect(x + s, 40, 2, 6, s > 0 ? R[1] : R[2]); b.rect(x + s, 46, 3, 1, R[0]); }
+      b.line(6, 34, 3, 28, R[2], 2); b.line(3, 28, 4, 22 - (f === 1 ? 1 : 0), R[2], 2); b.px(4, 21 - (f === 1 ? 1 : 0), R[3]);
+      orb(b, 19, 24, 29, 34, R);
+      b.poly([20, 26, 21, 20, 24, 25], R[2]); b.poly([25, 25, 27, 20, 28, 26], R[1]); b.px(22, 23, '#e8a0a0'); b.px(27, 23, '#c88080');
+      eye(b, 25, 28, blink, 2, '#2a2a1a', '#e8f080');
+      b.px(29, 30, '#6a3a3a'); b.rect(28, 31, 2, 1, R[1]);
+      for (const x of [9, 13, 17]) b.rect(x, 34, 2, 1, R[1]);
+      return;
+    }
+    // front/back: sitting upright, ears up, tail curled round the paws
+    b.oval(7, 30, 24, 45, R[2]);
+    b.oval(7, 30, 12, 44, R[3]);
+    b.rect(20, 32, 4, 12, R[1]);
+    b.rect(10, 43, 4, 3, R[3]); b.rect(18, 43, 4, 3, R[2]); b.rect(10, 46, 12, 1, R[0]);
+    b.line(24, 44, 28, 40, R[2], 2); b.line(28, 40, 27, 34 + st, R[2], 2); b.px(27, 33 + st, R[3]);
+    orb(b, 8, 18, 23, 32, R);
+    b.poly([8, 22, 9, 13, 14, 19], R[2]); b.poly([23, 22, 22, 13, 17, 19], R[1]);
+    if (d === 'down') {
+      b.poly([10, 20, 10, 16, 13, 19], '#e8a0a0'); b.poly([21, 20, 21, 16, 18, 19], '#c88888');
+      eye(b, 11, 23, blink, 3, '#2a2a1a', '#e8f080'); eye(b, 18, 23, blink, 3, '#2a2a1a', '#e8f080');
+      b.rect(15, 27, 2, 1, '#8a4a4a'); b.px(14, 28, R[1]); b.px(17, 28, R[1]);
+      b.rect(12, 33, 8, 7, R[3]); b.rect(13, 34, 6, 5, shade(c, 3));
+      b.line(7, 27, 4, 26, R[4]); b.line(24, 27, 27, 26, R[4]);
+    } else {
+      for (const x of [12, 15, 18]) b.rect(x, 20, 2, 1, R[1]);
+      b.rect(15, 33, 2, 9, R[1]);
+    }
+  };
+  S.heron = (b, look, d, f, blink) => {
+    const c = look.col || '#dfe6ea', R = R5(c), st = f === 1 ? 1 : f === 2 ? -1 : 0;
+    const legs = (x1, x2) => { b.rect(x1, 33, 1, 13, '#6a6a6a'); b.rect(x2 + st, 33, 1, 13 - Math.abs(st), '#5a5a5a'); b.rect(x1 - 1, 46, 3, 1, '#4a4a4a'); b.rect(x2 - 1 + st, 46 - Math.abs(st), 3, 1, '#4a4a4a'); };
+    if (d === 'side') {
+      legs(15, 18);
+      b.oval(9, 22, 23, 34, R[2]); b.oval(9, 22, 20, 28, R[3]);
+      b.poly([9, 27, 3, 33, 5, 34, 12, 32], R[1]); // tail
+      b.poly([12, 29, 22, 27, 19, 34], R[1]); b.rect(14, 31, 6, 2, '#5a6a7a'); // wing, dark flight feathers
+      b.line(20, 23, 22, 14, R[2], 2); b.line(22, 14, 21, 9, R[2], 2);
+      b.oval(19, 6, 25, 10, R[3]); b.rect(25, 8, 5, 1, '#d8a040'); b.rect(25, 9, 4, 1, '#b88030');
+      b.line(19, 7, 14, 9, '#3a3a4a'); eye(b, 22, 7, blink, 1, '#1a1a1a', '#1a1a1a');
+      return;
+    }
+    legs(13, 18);
+    b.oval(9, 21, 22, 35, R[2]); b.oval(9, 21, 16, 30, R[3]); b.rect(20, 25, 3, 8, R[1]);
+    b.rect(10, 31, 2, 4, '#5a6a7a'); b.rect(20, 31, 2, 4, '#4a5a6a');
+    b.rect(15, 10, 3, 12, R[2]); b.rect(15, 10, 1, 12, R[3]);
+    b.oval(13, 5, 19, 11, R[3]);
+    if (d === 'down') { eye(b, 14, 7, blink, 1, '#1a1a1a', '#1a1a1a'); eye(b, 17, 7, blink, 1, '#1a1a1a', '#1a1a1a'); b.rect(16, 10, 1, 4, '#d8a040'); b.line(13, 6, 9, 8, '#3a3a4a'); }
+    else b.line(16, 6, 11, 9, '#3a3a4a');
+  };
+  S.spirit = (b, look, d, f, blink) => {
+    const c = look.col || '#e8e4ff', R = R5(c), y = 8 + hover(f), w = f === 1 ? 1 : 0;
+    const body = [6, 44, 5, y + 14, 9, y + 3, 16, y, 23, y + 3, 27, y + 14, 26, 44, 22 - w, 41, 19, 44, 16 + w, 41, 13, 44, 10 + w, 41];
+    b.poly(body, A(R[2], 0.8));
+    b.poly([8, 40, 8, y + 14, 11, y + 4, 16, y + 2, 14, y + 10, 12, 40], A(R[3], 0.7));
+    b.poly([24, 40, 25, y + 14, 22, y + 5, 21, 40], A(R[1], 0.7));
+    if (d !== 'up') {
+      const ex = d === 'side' ? 3 : 0;
+      eye(b, 11 + ex, y + 10, blink, 3, '#2a2440', '#e8e4ff'); eye(b, 18 + ex, y + 10, blink, 3, '#2a2440', '#e8e4ff');
+      b.rect(15 + ex, y + 16, 2, 1, A('#2a2440', 0.6));
+    }
+    return { outline: soft(c) };
+  };
+
+  // ---- Saltglass ---------------------------------------------------------------------------------
+  S.sg_crab = (b, look, d, f, blink) => {
+    const c = look.col || '#c86a4a', R = R5(c), s = f === 1 ? 2 : 0;
+    for (const [x, y, dx] of [[4, 38, -2], [7, 40, -2], [24, 38, 2], [21, 40, 2]]) { b.line(x, y, x + dx, y + 5, R[1]); b.px(x + dx, y + 6, R[0]); }
+    b.line(8, 34, 4, 30 - s, R[2], 2); b.line(23, 34, 27, 30 + s - 2, R[2], 2);
+    orb(b, 0, 23 - s, 7, 29 - s, R); b.rect(1, 22 - s, 3, 3, R[3]); b.px(4, 23 - s, INK);
+    orb(b, 24, 21 + s, 31, 27 + s, R); b.rect(28, 20 + s, 3, 3, R[3]); b.px(27, 21 + s, INK);
+    orb(b, 4, 29, 27, 42, R);
+    b.rect(10, 34, 12, 5, '#f0e8d8'); b.rect(10, 38, 12, 1, '#d8ccb8'); b.rect(13, 36, 6, 1, '#3a3036');
+    b.rect(12, 25, 1, 5, R[1]); b.rect(19, 25, 1, 5, R[1]);
+    eye(b, 11, 23, blink, 3, INK); eye(b, 18, 23, blink, 3, INK);
+    for (const x of [8, 14, 20]) b.rect(x, 31, 3, 1, R[3]);
+  };
+  S.sg_letter = (b, look, d, f, blink) => {
+    const y = 20 + (f === 1 ? -2 : 0);
+    const P0 = ['#b8ac90', '#d8ccb0', '#f4ecd8', '#fffaf0'];
+    b.rect(3, y, 26, 18, P0[2]);
+    b.rect(3, y, 26, 1, P0[3]); b.rect(3, y, 1, 18, P0[3]); b.rect(28, y, 1, 18, P0[1]); b.rect(3, y + 17, 26, 1, P0[1]);
+    b.poly([3, y, 16, y + 11, 29, y], P0[1]);
+    b.poly([4, y, 16, y + 9, 28, y], P0[2]);
+    b.line(3, y + 17, 12, y + 9, P0[1]); b.line(28, y + 17, 20, y + 9, P0[0]);
+    orb(b, 13, y + 9, 19, y + 14, R5('#b84a3a'));
+    b.px(15, y + 11, '#e8a090');
+    if (d !== 'up') { eye(b, 8, y + 4, blink, 3, '#2a2440'); eye(b, 22, y + 4, blink, 3, '#2a2440'); }
+    for (let i = 0; i < 3; i++) b.rect(6, y + 12 + i * 2, 5, 1, A('#8a7a6a', 0.5));
+  };
+  S.sg_clerk = (b, look, d, f, blink) => {
+    const C = R5('#4a6a8a'), H = R5('#3a5470'), st = f === 1 ? 1 : f === 2 ? -1 : 0;
+    b.rect(7 + st, 44, 5, 3, '#2a3a4a'); b.rect(20 - st, 44, 5, 3, '#2a3a4a');
+    for (let y = 18; y <= 44; y++) { const e = y > 36 ? 1 : 0; b.rect(6 - e, y, 20 + 2 * e, 1, C[2]); b.px(6 - e, y, C[3]); b.rect(24 + e, y, 2, 1, C[1]); }
+    b.rect(15, 20, 2, 24, C[1]); b.rect(5, 44, 22, 1, C[0]);
+    b.rect(6, 30, 20, 2, '#c85a4a'); b.rect(6, 30, 20, 1, '#e87a6a');
+    // hood and pale face with glowing eyes
+    b.oval(6, 3 + (f === 1 ? 1 : 0), 25, 22, H[2]); b.rect(6, 12, 3, 9, H[3]);
+    b.oval(9, 7, 22, 20, '#b8c8d0'); b.rect(9, 17, 14, 3, '#a0b0bc');
+    if (d !== 'up') { if (blink) { b.rect(11, 13, 4, 1, '#7ab0d0'); b.rect(17, 13, 4, 1, '#7ab0d0'); } else { b.rect(11, 12, 4, 2, '#7ab0d0'); b.rect(17, 12, 4, 2, '#7ab0d0'); b.rect(12, 12, 2, 1, '#e8f8ff'); b.rect(18, 12, 2, 1, '#e8f8ff'); } }
+    else b.oval(9, 7, 22, 20, H[1]);
+    // ledger under one arm, a slip in the other hand
+    b.rect(23, 24, 6, 10, '#6a4a3a'); b.rect(23, 24, 6, 1, '#8a6a4a'); b.rect(22, 32, 8, 3, '#c85a4a'); b.rect(28, 25, 1, 8, '#e8e0cc');
+    b.rect(1, 26, 5, 7, '#e8e0cc'); b.rect(1, 26, 5, 1, '#fff8e8'); b.rect(2, 28, 3, 1, '#a89a80'); b.rect(2, 30, 3, 1, '#a89a80');
+  };
+
+  // ---- Cinder Orchard / Snowbell animals --------------------------------------------------------------
+  function goat(b, look, d, f, blink, director) {
+    const c = look.col || (director ? '#e8e0d0' : '#eeeae0'), R = [look.col2 ? shade(look.col2, -1) : shade(c, -2), look.col2 || shade(c, -1), c, shade(c, 1), shade(c, 2)];
+    const horn = ['#6a5a44', '#8a7a5a', '#b8a882'], st = f === 1 ? 1 : f === 2 ? -1 : 0;
+    if (d === 'side') {
+      for (const [x, s] of [[5, st], [9, -st], [18, -st], [22, st]]) { b.rect(x + s, 37, 3, 9, s < 0 ? R[1] : R[2]); b.rect(x + s, 45, 3, 2, '#3a3030'); }
+      orb(b, 3, 25, 26, 39, R, { flat: true });
+      b.rect(5, 25, 16, 3, R[3]); b.rect(3, 34, 23, 3, R[1]);
+      for (const x of [7, 12, 17]) b.rect(x, 29, 3, 1, R[1]);
+      b.rect(1, 25, 3, 3, R[2]); b.px(1, 24, R[3]); // tail
+      orb(b, 21, 16, 29, 27, R);
+      b.rect(27, 21, 3, 4, R[3]); b.px(29, 22, '#3a3030'); b.px(29, 24, '#8a5a5a');
+      b.line(23, 16, 21, 11, horn[1], 2); b.line(21, 11, 18, 12, horn[1], 1); b.px(22, 12, horn[2]);
+      b.rect(20, 18, 3, 2, R[1]); // ear
+      eye(b, 25, 19, blink, 2, '#1a1414', '#d8c860');
+      b.rect(27, 27, 2, 4, R[3]); b.px(27, 30, R[1]); // beard
+      if (director) { b.rect(22, 28, 5, 2, '#a83a3a'); orb(b, 23, 30, 26, 33, R5('#d8c860')); }
+      return;
+    }
+    const lift = [f === 2 ? 2 : 0, f === 1 ? 2 : 0];
+    for (let s = 0; s < 2; s++) { const x = s ? 18 : 9, L = lift[s]; b.rect(x, 38 - L, 4, 8, R[1]); b.rect(x, 45 - L, 4, 2, '#3a3030'); }
+    orb(b, 6, 23, 25, 41, R, { flat: true });
+    b.rect(8, 23, 8, 4, R[3]);
+    if (d === 'up') { b.rect(14, 24, 4, 3, R[3]); b.rect(15, 21, 2, 3, R[2]); }
+    orb(b, 10, 13 - (d === 'up' ? 1 : 0), 21, 27, R);
+    b.poly([9, 15, 4, 18, 9, 18], R[1]); b.poly([22, 15, 27, 18, 22, 18], R[0]); // ears
+    b.line(12, 13, 10, 8, horn[1], 2); b.line(19, 13, 21, 8, horn[0], 2); b.px(10, 8, horn[2]); b.px(21, 8, horn[1]);
+    if (d === 'down') {
+      eye(b, 12, 18, blink, 2, '#1a1414', '#d8c860'); eye(b, 18, 18, blink, 2, '#1a1414', '#d8c860');
+      b.rect(13, 23, 6, 3, R[3]); b.rect(15, 24, 2, 1, '#8a5a5a');
+      b.rect(14, 27, 4, 4, R[3]); b.px(15, 30, R[1]);
+      if (director) { b.rect(11, 29, 10, 2, '#a83a3a'); orb(b, 14, 31, 17, 34, R5('#d8c860')); b.px(15, 34, '#6a5a2a'); }
+    }
+  }
+  S.co_goat = (b, look, d, f, blink) => goat(b, look, d, f, blink, true);
+  S.goat = (b, look, d, f, blink) => goat(b, look, d, f, blink, false);
+  S.snowfox = (b, look, d, f, blink) => {
+    const c = look.col || '#f2f6fa', R = [shade(c, -3), '#b8c8d8', c, shade(c, 1), '#ffffff'], st = f === 1 ? 1 : f === 2 ? -1 : 0;
+    const ear = (x0, x1, tip) => { b.poly([x0, 22, tip, 13, x1, 22], R[2]); b.poly([x0 + 2, 21, tip, 16, x1 - 2, 21], '#e8c8d0'); };
+    if (d === 'side') {
+      for (const [x, s] of [[7, st], [10, -st], [18, -st], [21, st]]) { b.rect(x + s, 38, 2, 8, s < 0 ? R[1] : R[2]); b.rect(x + s, 46, 3, 1, R[0]); }
+      orb(b, 5, 30, 25, 40, R, { flat: true }); b.rect(7, 30, 14, 2, R[3]);
+      // brush of a tail streaming back
+      orb(b, 0, 23 - st, 9, 33 - st, R); b.rect(0, 24 - st, 3, 3, R[4]);
+      orb(b, 19, 22, 29, 32, R);
+      b.poly([27, 26, 31, 28, 27, 30], R[2]); b.px(30, 28, '#2a2a2a');
+      b.poly([20, 24, 21, 16, 24, 23], R[2]); b.poly([23, 23, 25, 16, 27, 24], R[1]);
+      eye(b, 24, 25, blink, 2, '#3a5a8a', '#e8f4ff');
+      return;
+    }
+    const lift = [f === 2 ? 2 : 0, f === 1 ? 2 : 0];
+    for (let s = 0; s < 2; s++) { const x = s ? 18 : 10, L = lift[s]; b.rect(x, 38 - L, 3, 8, R[1]); b.rect(x, 46 - L, 4, 1, R[0]); }
+    orb(b, 7, 28, 24, 42, R, { flat: true });
+    if (d === 'up') { orb(b, 13, 30 - st, 22, 44 - st, R); b.rect(15, 40 - st, 5, 3, R[4]); }
+    ear(9, 15, 10); ear(17, 23, 22);
+    orb(b, 8, 18, 23, 31, R);
+    if (d === 'down') {
+      eye(b, 11, 23, blink, 2, '#3a5a8a', '#e8f4ff'); eye(b, 19, 23, blink, 2, '#3a5a8a', '#e8f4ff');
+      b.rect(14, 26, 4, 3, R[4]); b.rect(15, 27, 2, 1, '#2a2a2a');
+      b.oval(11, 31, 20, 38, R[4]);
+    }
+  };
+
+  // ---- Lanternfall -------------------------------------------------------------------------------
+  S.lf_bell = (b, look, d, f, blink) => {
+    const c = look.col || '#3c5c8a', R = R5(c), y = 10 + (f === 1 ? 2 : 0);
+    // wisps trailing under the rim
+    b.poly([8, y + 28, 12, y + 28, 10, y + 36], A(c, 0.45)); b.poly([19, y + 28, 23, y + 28, 22, y + 34 - (f === 1 ? 2 : 0)], A(c, 0.45));
+    b.rect(13, y - 2, 6, 3, shade(c, -2)); b.rect(14, y - 3, 4, 1, shade(c, -1));
+    for (let yy = y + 1; yy <= y + 24; yy++) {
+      const k = (yy - y) / 24, half = Math.round(6 + 5 * k * k + (yy > y + 21 ? 2 : 0));
+      b.rect(16 - half, yy, half * 2, 1, R[2]);
+      b.rect(16 - half, yy, 2, 1, R[3]); b.rect(16 + half - 3, yy, 3, 1, R[1]);
+    }
+    b.rect(3, y + 25, 26, 2, R[1]); b.rect(3, y + 25, 26, 1, R[3]);
+    b.rect(10, y + 4, 2, 14, R[4]);
+    b.line(20, y + 8, 22, y + 15, R[0]); b.line(22, y + 15, 21, y + 19, R[0]); // crack
+    orb(b, 14, y + 26, 18, y + 30, R5('#1a2030'));
+    if (d !== 'up') { eye(b, 11, y + 12, blink, 3, '#e8ecff', '#ffffff'); eye(b, 19, y + 12, blink, 3, '#e8ecff', '#ffffff'); }
+  };
+  S.lf_stamp = (b, look, d, f, blink) => {
+    const c = look.col || '#4c4a78', R = R5(c), st = f === 1 ? 1 : f === 2 ? -1 : 0;
+    const W0 = R5('#8a6a4a');
+    b.rect(8 + st, 43, 5, 4, R[1]); b.rect(19 - st, 43, 5, 4, R[1]);
+    b.rect(3, 36, 26, 7, '#c85a4a'); b.rect(3, 36, 26, 1, '#e87a6a'); b.rect(3, 41, 26, 2, '#8a3030');
+    b.rect(6, 18, 20, 18, R[2]); b.rect(6, 18, 20, 2, R[3]); b.rect(6, 18, 2, 18, R[3]); b.rect(23, 20, 3, 16, R[1]);
+    b.rect(11, 5, 10, 13, W0[2]); b.rect(11, 5, 3, 13, W0[3]); b.rect(18, 5, 3, 13, W0[1]);
+    orb(b, 9, 0, 22, 7, W0);
+    if (d !== 'up') {
+      const ex = d === 'side' ? 2 : 0;
+      if (blink) { b.rect(10 + ex, 26, 4, 1, '#f0f0ff'); b.rect(18 + ex, 26, 4, 1, '#f0f0ff'); }
+      else { b.rect(10 + ex, 24, 4, 4, '#f0f0ff'); b.rect(18 + ex, 24, 4, 4, '#f0f0ff'); b.rect(11 + ex, 25, 2, 2, INK); b.rect(19 + ex, 25, 2, 2, INK); }
+      b.rect(14 + ex, 31, 4, 1, R[0]);
+    }
+  };
+  S.lf_pipe = (b, look, d, f, blink) => {
+    const c = look.col || '#8a90c8', P0 = R5('#3a3850');
+    b.rect(10, 8, 12, 38, P0[2]); b.rect(10, 8, 3, 38, P0[3]); b.rect(19, 8, 3, 38, P0[1]);
+    for (const y of [8, 20, 32, 44]) { b.rect(9, y, 14, 3, P0[3]); b.rect(9, y + 2, 14, 1, P0[1]); b.px(11, y + 1, P0[4]); b.px(20, y + 1, P0[4]); }
+    b.rect(2, 16, 8, 4, P0[2]); b.rect(2, 16, 8, 1, P0[3]); b.rect(0, 14, 3, 8, P0[3]);
+    b.rect(22, 26, 8, 4, P0[1]); b.rect(29, 24, 3, 8, P0[2]);
+    // glowing droplets rising through the pipe
+    const o = f === 1 ? 4 : f === 2 ? 2 : 0;
+    for (let i = 0; i < 3; i++) { const y = 38 - i * 11 - o; b.rect(14, y, 4, 4, c); b.rect(14, y, 2, 2, shade(c, 2)); b.rect(13, y + 1, 1, 2, A(c, 0.5)); b.rect(18, y + 1, 1, 2, A(c, 0.5)); }
+    if (d !== 'up') { eye(b, 12, 12, blink, 2, '#f0f0ff', '#ffffff'); eye(b, 18, 12, blink, 2, '#f0f0ff', '#ffffff'); }
+  };
+
+  // ---- the Still Archive -------------------------------------------------------------------------
+  S.sa_wraith = (b, look, d, f) => {
+    const c = look.col || '#e6e4ee', R = R5(c), w = f === 1 ? 1 : 0;
+    b.poly([5, 46, 4, 10, 9, 3, 16, 1, 23, 3, 28, 10, 27, 46, 23, 42 - w, 20, 46, 16, 42 + w, 12, 46, 9, 42 - w], A(R[2], 0.85));
+    b.poly([7, 42, 7, 11, 11, 5, 16, 3, 13, 12, 11, 42], A(R[3], 0.8));
+    b.poly([25, 42, 25, 12, 22, 6, 22, 42], A(R[1], 0.8));
+    for (const y of [24, 30, 36]) b.rect(8, y, 16, 1, A(R[1], 0.9));
+    if (d !== 'up') {
+      const ex = d === 'side' ? 3 : 0;
+      for (let a = 0; a < 16; a++) { const t = (a / 16) * Math.PI * 2; b.px(Math.round(16 + ex + Math.cos(t) * 4), Math.round(15 + Math.sin(t) * 4), '#1a1830'); }
+      b.oval(13 + ex, 12, 18 + ex, 17, A('#1a1830', 0.35));
+    }
+    return { outline: soft(c) };
+  };
+  S.sa_echo = (b, look, d, f) => {
+    const c = look.col || '#a8c8d8', y = 24 - (f === 1 ? 2 : 0);
+    for (const [r, a] of [[14, 0.35], [11, 0.55]]) for (let k = 0; k < 40; k++) { const t = (k / 40) * Math.PI * 2; b.px(Math.round(16 + Math.cos(t) * r), Math.round(y + Math.sin(t) * r * 0.8), A(c, a)); }
+    // open book: two pages with lines of text, a dark spine
+    b.poly([4, y - 5, 15, y - 3, 15, y + 7, 4, y + 5], '#f0ece0');
+    b.poly([17, y - 3, 28, y - 5, 28, y + 5, 17, y + 7], '#e4ded0');
+    b.rect(15, y - 3, 2, 11, '#8a7a6a');
+    for (let i = 0; i < 3; i++) { b.rect(6, y - 1 + i * 2, 7, 1, '#6a6a80'); b.rect(19, y - 1 + i * 2, 7, 1, '#6a6a80'); }
+    b.line(4, y + 5, 15, y + 7, '#b8b0a0'); b.line(17, y + 7, 28, y + 5, '#a8a090');
+    return { outline: '#3a3a50' };
+  };
+  S.sa_clerk = (b, look, d, f, blink) => {
+    const c = look.col || '#ece6d6', R = R5(c), st = f === 1 ? 1 : f === 2 ? -1 : 0;
+    b.rect(9, 40, 5, 6 + (st > 0 ? 0 : 1), '#8a8474'); b.rect(18, 40, 5, 6 + (st < 0 ? 0 : 1), '#8a8474');
+    b.rect(8, 46, 6, 1, '#5a5448'); b.rect(18, 46, 6, 1, '#5a5448');
+    // a body stacked from index cards, each ruled and edged
+    for (let i = 0; i < 4; i++) {
+      const y = 20 + i * 5, sx = i % 2 ? 1 : 0;
+      b.rect(6 + sx, y, 20, 5, R[2]); b.rect(6 + sx, y, 20, 1, R[3]); b.rect(6 + sx, y + 4, 20, 1, R[1]); b.rect(24 + sx, y, 2, 5, R[1]);
+      b.rect(9 + sx, y + 2, 12, 1, '#c8c0b0');
+    }
+    b.rect(6, 23, 21, 2, '#c85a4a'); b.rect(6, 23, 21, 1, '#e07a6a');
+    b.rect(2, 22, 4, 12, R[2]); b.rect(2, 22, 1, 12, R[3]); b.rect(26, 22, 4, 12, R[1]);
+    b.rect(8, 3, 16, 16, '#f4efe2'); b.rect(8, 3, 16, 2, '#c85a4a'); b.rect(22, 5, 2, 14, R[1]); b.rect(8, 18, 16, 1, R[1]);
+    b.rect(10, 7, 12, 1, '#d8d0c0');
+    if (d !== 'up') {
+      if (d === 'side') eye(b, 17, 10, blink, 4, '#2a2436', '#6a6480');
+      else { eye(b, 11, 10, blink, 4, '#2a2436', '#6a6480'); eye(b, 19, 10, blink, 4, '#2a2436', '#6a6480'); }
+    }
+  };
+
+  // ---- the Unwritten Atlas -----------------------------------------------------------------------
+  S.atlas_name = (b, look, d, f, blink) => {
+    const c = look.col || '#f2ead2', R = R5(c), y = 12 + (f === 1 ? -2 : 0);
+    b.rect(8, y, 16, 26, R[2]); b.rect(8, y, 2, 26, R[3]); b.rect(22, y, 2, 26, R[1]); b.rect(8, y + 25, 16, 1, R[1]);
+    b.poly([19, y, 24, y, 24, y + 5], R[1]); b.poly([19, y, 19, y + 5, 24, y + 5], R[3]); // dog-eared corner
+    if (d !== 'up') {
+      b.rect(11, y + 4, 6, 2, look.ink || '#8a7a5a'); b.px(16, y + 6, look.ink || '#8a7a5a');
+      eye(b, 11, y + 10, blink, 2, '#4a4234'); eye(b, 18, y + 10, blink, 2, '#4a4234');
+      b.rect(12, y + 17, 8, 1, '#b8aa88'); b.rect(12, y + 20, 6, 1, '#b8aa88');
+    }
+    b.rect(14 + (f === 2 ? 2 : 0), y + 26, 4, 4, R[2]);
+  };
+  S.atlas_crab = (b, look, d, f, blink) => {
+    const c = look.col || '#b89070', R = R5(c), s = f === 1 ? 2 : 0;
+    for (const [x, dx] of [[6, -2], [10, -2], [21, 2], [25, 2]]) { b.line(x, 40, x + dx, 45, R[1]); }
+    b.line(8, 33, 4, 28 - s, R[2], 2); b.line(23, 33, 27, 28 + s - 2, R[2], 2);
+    orb(b, 0, 22 - s, 7, 28 - s, R); b.rect(1, 21 - s, 3, 2, R[3]);
+    orb(b, 24, 20 + s, 31, 26 + s, R); b.rect(28, 19 + s, 3, 2, R[3]);
+    orb(b, 5, 29, 26, 41, R);
+    b.line(8, 35, 23, 33, R[1]); b.line(15, 30, 16, 40, R[1]); b.line(9, 32, 12, 38, A('#6a4a3a', 0.6)); // map lines
+    b.rect(18, 36, 2, 2, '#c85a3a');
+    if (d !== 'up') { eye(b, 11, 30, blink, 2, INK); eye(b, 19, 30, blink, 2, INK); }
+  };
+  S.atlas_bell = (b, look, d, f, blink) => {
+    const c = look.col || '#9a8a5a', R = R5(c), s = f === 1 ? 1 : 0;
+    b.rect(9, 10, 14, 3, '#5a4a2a'); b.rect(9, 10, 14, 1, '#7a6a4a'); b.rect(15, 8, 2, 2, '#5a4a2a');
+    for (let yy = 13; yy <= 36; yy++) {
+      const k = (yy - 13) / 23, half = Math.round(5 + 5 * k * k + (yy > 33 ? 2 : 0));
+      b.rect(16 - half + s, yy, half * 2, 1, R[2]);
+      b.rect(16 - half + s, yy, 2, 1, R[3]); b.rect(16 + half - 3 + s, yy, 3, 1, R[1]);
+    }
+    b.rect(4 + s, 36, 24, 2, R[1]); b.rect(4 + s, 36, 24, 1, R[3]);
+    b.rect(12 + s, 17, 2, 12, R[4]);
+    orb(b, 14 + s, 38, 18 + s, 42, R5('#4a3a1a'));
+    if (d !== 'up') { eye(b, 12 + s, 23, blink, 2, '#2a2010', '#e8d890'); eye(b, 18 + s, 23, blink, 2, '#2a2010', '#e8d890'); }
+  };
+  S.atlas_cartographer = (b, look, d, f, blink) => {
+    const P0 = ['#9a8c6c', '#b4a684', '#e8dcc0', '#f4ecd8'], y = f === 1 ? -1 : 0;
+    b.rect(10, 42, 5, 5, P0[1]); b.rect(18, 42, 5, 5, P0[1]);
+    b.poly([7, 42 + y, 9, 8 + y, 16, 4 + y, 23, 8 + y, 25, 42 + y], P0[2]);
+    b.poly([9, 8 + y, 16, 4 + y, 16, 42 + y, 7, 42 + y], P0[3]);
+    for (const yy of [16, 26, 34]) b.rect(8, yy + y, 17, 1, P0[1]);
+    b.rect(16, 4 + y, 1, 38, P0[1]);
+    b.rect(11, 30 + y, 6, 1, '#8a5a3a'); b.rect(16, 22 + y, 1, 8, '#8a5a3a');
+    b.oval(10, 6 + y, 22, 16 + y, '#2a2a3a');
+    if (d !== 'up') { if (blink) { b.rect(12, 11 + y, 3, 1, '#9ec4f0'); b.rect(18, 11 + y, 3, 1, '#9ec4f0'); } else { b.rect(12, 10 + y, 3, 2, '#9ec4f0'); b.rect(18, 10 + y, 3, 2, '#9ec4f0'); } }
+    // a sheet held out, still blank
+    b.rect(24, 18 + y, 7, 12, '#f8f2e2'); b.rect(24, 18 + y, 7, 2, '#d8ccac'); b.rect(24, 28 + y, 7, 2, '#d8ccac');
+  };
+  S.atlas_gate = (b, look, d, f, blink) => {
+    const c = look.col || '#8a8a78', R = R5(c), bob = f === 1 ? 1 : 0;
+    b.rect(3, 6, 26, 5, R[3]); b.rect(3, 6, 26, 1, R[4]); b.rect(3, 10, 26, 1, R[1]); b.rect(1, 7, 2, 3, R[2]); b.rect(29, 7, 2, 3, R[1]);
+    b.rect(7, 11, 18, 35, R[2]); b.rect(7, 11, 3, 35, R[3]); b.rect(22, 11, 3, 35, R[1]);
+    for (const yy of [20, 30, 40]) { b.rect(7, yy, 18, 1, R[1]); }
+    b.rect(16, 21, 1, 9, R[1]); b.rect(12, 31, 1, 9, R[1]); b.rect(7, 46, 18, 1, R[0]);
+    if (d !== 'up') {
+      if (blink) { b.rect(11, 15, 3, 1, '#f0d890'); b.rect(18, 15, 3, 1, '#f0d890'); }
+      else { b.rect(11, 14, 3, 2, '#f0d890'); b.rect(18, 14, 3, 2, '#f0d890'); b.px(11, 14, '#fff8d0'); b.px(18, 14, '#fff8d0'); }
+      b.rect(12, 24 + bob, 8, 2, R[0]);
+    }
+  };
+})();
+
+
 /* ==== src/engine/35_portraits.js ==== */
-/* Procedural 48×48 portraits with expressions. Parameters come from the
- * character definition (portrait: {...}) so each named character has a
- * distinct face, hair and accessories rather than a palette swap. */
+/* Procedural 96×96 portraits with expressions, drawn as pixel art into a
+ * buffer (hard edges, hue-shifted ramps, locks of hair with a broken
+ * highlight band, a selective outline). Parameters come from the character
+ * definition (portrait: {...}) layered over what the overworld look implies,
+ * so each named character keeps a distinct face, hair, collar and
+ * accessories. Hair shapes live in 36_portraithair.js. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.portraits = (function () {
   'use strict';
-  const S = 48;
+  const S = 96;
+  const P = RB.pix;
+  const shade = P.shade, mix = P.mix, A = P.alpha;
   const cache = new Map();
 
-  function R(c, x, y, w, h, col) { c.fillStyle = col; c.fillRect(x, y, w, h); }
-  function E(c, x, y, rx, ry, col, a0, a1) {
-    c.fillStyle = col;
-    c.beginPath();
-    c.ellipse(x, y, rx, ry, 0, a0 || 0, a1 == null ? Math.PI * 2 : a1);
-    c.fill();
-  }
-  function poly(c, pts, col) {
-    c.fillStyle = col;
-    c.beginPath();
-    c.moveTo(pts[0], pts[1]);
-    for (let i = 2; i < pts.length; i += 2) c.lineTo(pts[i], pts[i + 1]);
-    c.closePath();
-    c.fill();
-  }
-
+  // ---- parameters ----------------------------------------------------------------------------
   function paramsFor(id) {
     const ch = RB.content.chars[id];
     if (!ch) return null;
     if (ch.portrait) return Object.assign({}, fromLook(ch.look || {}), ch.portrait);
     return fromLook(ch.look || RB.sprites.randomLook(RB.util.hashStr(id)));
   }
+  const COLLAR_OF_SHAPE = { apron: 'apron', robe: 'robe', coat: 'coat', dress: 'dress' };
   function fromLook(look) {
     const col = RB.sprites.colorsOf(look);
+    const acc = (look.acc || []).slice();
     return {
       skin: col.skin, hair: col.hair, cloth: col.cloth, style: look.hair || 'short',
-      acc: (look.acc || []).slice(), eyes: 'round', bg: '#2a3048', age: look.age || 'adult',
+      acc, eyes: 'round', bg: '#2a3048', age: look.age || 'adult', collar: COLLAR_OF_SHAPE[look.shape],
+      beard: acc.includes('beard') || undefined,
       scarfCol: look.scarfCol, ribbonCol: look.ribbonCol, hatCol: look.hatCol, wrapCol: look.wrapCol, hoodCol: look.hoodCol,
+      bandCol: look.bandCol, flowerCol: look.flowerCol, capeCol: look.capeCol, sashCol: look.sashCol,
     };
   }
+  const EXPR_ALIAS = { surprised: 'surprise', thinking: 'think', happy: 'smile', neutral: 'neutral' };
 
-  function drawFace(c, p, expr) {
+  // ---- palette ----------------------------------------------------------------------------------
+  function palette(p) {
     const [sk, sd] = p.skin;
-    const [h0, h1, h2] = p.hair;
     const [cm, cs, ca] = p.cloth;
-    const old = p.age === 'old';
-    // background
-    const g = c.createLinearGradient(0, 0, 0, S);
-    g.addColorStop(0, p.bg || '#2a3048');
-    g.addColorStop(1, '#10121c');
-    // (background drawn separately onto the display canvas so outline ignores it)
-    // hair back layer
-    const st = p.style;
-    if (st === 'long' || st === 'wavy') { E(c, 24, 26, 16, 18, h1); R(c, 8, 26, 32, 16, h1); }
-    if (st === 'bob') E(c, 24, 24, 15, 15, h1);
-    if (st === 'twintails') { E(c, 7, 30, 4, 10, h0); E(c, 41, 30, 4, 10, h0); }
-    if (st === 'ponytail') E(c, 38, 20, 5, 8, h1);
-    if (st === 'braid') { R(c, 34, 28, 5, 16, h0); for (let i = 0; i < 4; i++) R(c, 34, 30 + i * 4, 5, 1, h1); }
-    if (st === 'curly') { E(c, 24, 20, 17, 15, h0); }
-    // shoulders / clothing
-    poly(c, [4, 48, 8, 38, 17, 34, 31, 34, 40, 38, 44, 48], cm);
-    poly(c, [4, 48, 8, 38, 12, 37, 10, 48], cs);
-    poly(c, [44, 48, 40, 38, 36, 37, 38, 48], cs);
-    // neck
-    R(c, 20, 31, 8, 6, sd);
-    // collar variants
-    if (p.collar === 'high') { poly(c, [16, 34, 20, 30, 28, 30, 32, 34, 28, 38, 20, 38], cs); R(c, 16, 34, 16, 1, ca); }
-    else if (p.collar === 'apron') { R(c, 17, 38, 14, 10, '#ece4d4'); R(c, 18, 36, 2, 3, '#ece4d4'); R(c, 28, 36, 2, 3, '#ece4d4'); }
-    else { poly(c, [18, 35, 24, 41, 30, 35], sd); R(c, 17, 34, 14, 1, ca); }
-    // face
-    E(c, 24, 21, 11, 13, sk);
-    E(c, 24, 29, 8, 5, sk);
-    R(c, 13, 20, 1, 5, sd); R(c, 34, 20, 1, 5, sd);
-    // ears
-    E(c, 13, 22, 2, 3, sk); E(c, 35, 22, 2, 3, sk);
-    // eyes
-    const ex = [19, 29], ey = 22;
-    const dark = '#231a24';
-    const iris = p.iris || '#3a2a30';
-    for (const x of ex) {
-      if (expr === 'laugh' || expr === 'smile2') { R(c, x - 2, ey + 1, 1, 1, dark); R(c, x - 1, ey, 3, 1, dark); R(c, x + 2, ey + 1, 1, 1, dark); continue; }
-      if (expr === 'tired' || expr === 'think2') { R(c, x - 2, ey + 1, 5, 1, dark); R(c, x - 1, ey + 2, 3, 1, iris); continue; }
-      if (expr === 'closed' || expr === 'sad2') { R(c, x - 2, ey + 1, 5, 1, dark); continue; }
-      const big = expr === 'surprise';
-      if (p.eyes === 'narrow' || p.eyes === 'sharp') {
-        R(c, x - 2, ey, 5, 1, dark);
-        R(c, x - 1, ey + 1, 3, big ? 3 : 2, iris);
-        R(c, x, ey + 1, 1, 1, '#ffffff');
-        if (p.eyes === 'sharp') R(c, x + (x < 24 ? -3 : 3), ey - 1, 1, 1, dark);
-      } else if (p.eyes === 'soft') {
-        R(c, x - 1, ey, 3, big ? 4 : 3, iris);
-        R(c, x - 2, ey - 1, 5, 1, dark);
-        R(c, x, ey, 1, 1, '#ffffff');
-        R(c, x - 1, ey + (big ? 4 : 3), 3, 1, sd);
-      } else {
-        R(c, x - 1, ey - 1, 3, big ? 5 : 4, iris);
-        R(c, x - 2, ey - 1, 5, 1, dark);
-        R(c, x, ey, 1, 1, '#ffffff');
-      }
-      if (expr === 'shy') R(c, x - 1, ey + 2, 3, 1, iris);
-    }
-    if (p.acc.includes('glasses')) {
-      c.strokeStyle = p.glassCol || '#2a2a2a'; c.lineWidth = 1;
-      c.strokeRect(15.5, 19.5, 8, 6); c.strokeRect(25.5, 19.5, 8, 6);
-      R(c, 23, 21, 3, 1, p.glassCol || '#2a2a2a');
-    }
-    // brows
-    const bc = old ? '#d8d4d0' : h0;
-    const brow = (x, dir) => {
-      // dir: 0 flat, 1 worried (inner up), -1 angry (inner down)
-      const inner = x < 24 ? x + 2 : x - 2;
-      const outer = x < 24 ? x - 3 : x + 3;
-      const by = 17 + (p.browY || 0);
-      if (dir === 0) R(c, Math.min(inner, outer), by, 5, 1, bc);
-      else {
-        R(c, Math.min(inner, outer) + (x < 24 ? 0 : 3), by + (dir > 0 ? 1 : -1) * (x < 24 ? 1 : 0) + (dir > 0 ? 0 : 1), 2, 1, bc);
-        R(c, Math.min(inner, outer) + (x < 24 ? 3 : 0), by + (dir > 0 ? -1 : 1) * (x < 24 ? 1 : 0), 2, 1, bc);
-        R(c, Math.min(inner, outer) + (x < 24 ? 2 : 1), by, 2, 1, bc);
-      }
+    const h = p.hair;
+    const hl1 = h[1] && P.lum(h[1]) > P.lum(h[0]) + 0.02 ? mix(h[1], shade(h[0], 1), 0.3) : shade(h[0], 1);
+    const hl2 = h[2] && P.lum(h[2]) > P.lum(hl1) ? h[2] : shade(h[0], 2);
+    return {
+      sk: [shade(sd, -1), mix(sd, shade(sk, -1), 0.4), sk, shade(sk, 1), shade(sk, 2)],
+      hair: [shade(h[0], -2), shade(h[0], -1), h[0], hl1, hl2],
+      cl: P.ramp(cm, cs), ac: [shade(ca, -1), ca, shade(ca, 1)],
+      lash: '#231a24', iris: P.ramp(p.iris || '#4a3038'),
+      white: '#f8f4f2', whiteS: '#d8cfd8',
+      mouth: mix(sd, '#7a2e34', 0.55), mouthIn: '#5a2026', tongue: '#c86a6a',
+      blush: A('#f08080', 0.38), blushLine: A('#d85a64', 0.7),
     };
-    const bd = expr === 'worry' || expr === 'sad' || expr === 'shy' ? 1 : expr === 'angry' ? -1 : 0;
-    brow(19, bd); brow(29, expr === 'think' ? 1 : bd);
-    // nose
-    R(c, 24, 25, 1, 2, sd);
-    // blush
-    if (expr === 'shy' || expr === 'laugh' || p.blush) { R(c, 16, 27, 3, 1, '#e8908080'); R(c, 29, 27, 3, 1, '#e8908080'); }
-    // mouth
-    const mc = '#7a3a3a';
-    switch (expr) {
-      case 'smile': case 'smile2': R(c, 21, 30, 1, 1, mc); R(c, 22, 31, 4, 1, mc); R(c, 26, 30, 1, 1, mc); break;
-      case 'laugh': R(c, 21, 30, 6, 1, mc); R(c, 22, 31, 4, 2, '#5a2020'); break;
-      case 'sad': case 'sad2': R(c, 22, 31, 4, 1, mc); R(c, 21, 32, 1, 1, mc); R(c, 26, 32, 1, 1, mc); break;
-      case 'angry': R(c, 21, 31, 6, 1, mc); break;
-      case 'surprise': E(c, 24, 31, 1.6, 2, '#5a2020'); break;
-      case 'worry': R(c, 22, 31, 3, 1, mc); R(c, 25, 30, 1, 1, mc); break;
-      case 'think': case 'think2': R(c, 23, 31, 3, 1, mc); break;
-      case 'tired': R(c, 22, 31, 4, 1, mc); break;
-      case 'smirk': R(c, 22, 31, 3, 1, mc); R(c, 25, 30, 2, 1, mc); break;
-      default: R(c, 22, 31, 4, 1, mc);
-    }
-    if (p.mole) R(c, 30, 28, 1, 1, '#4a2a2a');
-    if (old) { R(c, 16, 26, 2, 1, sd); R(c, 30, 26, 2, 1, sd); R(c, 18, 15, 12, 1, sd); }
-    if (p.scar) { R(c, 30, 18, 1, 5, '#c89080'); }
-    if (p.beard) { E(c, 24, 32, 8, 5, p.beard === true ? h1 : p.beard); R(c, 22, 30, 4, 1, mc); }
-    // hair front
-    if (st === 'wrap') {
-      E(c, 24, 14, 13, 8, p.wrapCol || ca);
-      R(c, 11, 14, 26, 4, p.wrapCol || ca);
-      R(c, 14, 12, 20, 1, '#ffffff30');
-    } else if (st === 'shaved') {
-      E(c, 24, 12, 11, 5, h1);
-    } else if (st !== 'bald') {
-      E(c, 24, 12, 13, 8, h0);
-      R(c, 11, 12, 26, 5, h0);
-      // bangs
-      if (st === 'spiky') { poly(c, [11, 16, 14, 4, 17, 14, 20, 2, 24, 13, 28, 2, 31, 14, 34, 4, 37, 16], h0); }
-      else if (st === 'curly') { for (let i = 0; i < 7; i++) E(c, 12 + i * 4, 15 + (i % 2), 3, 3, h0); E(c, 10, 22, 3, 5, h0); E(c, 38, 22, 3, 5, h0); }
-      else if (p.parted) { poly(c, [11, 20, 12, 12, 24, 9, 22, 15, 16, 17, 13, 22], h0); poly(c, [37, 20, 36, 12, 25, 9, 28, 15, 34, 17, 35, 22], h0); }
-      else { poly(c, [11, 19, 12, 12, 36, 12, 37, 19, 33, 15, 30, 18, 27, 15, 23, 18, 19, 15, 15, 18], h0); }
-      if (st === 'bob' || st === 'long' || st === 'wavy' || st === 'twintails' || st === 'braid') { R(c, 10, 14, 4, st === 'bob' ? 16 : 20, h0); R(c, 34, 14, 4, st === 'bob' ? 16 : 20, h0); }
-      if (st === 'bun') { E(c, 24, 4, 6, 5, h0); E(c, 23, 3, 2, 1, h2); if (p.pins) { R(c, 29, 2, 5, 1, '#e0c070'); R(c, 15, 5, 4, 1, '#e0c070'); } }
-      if (st === 'ponytail') { R(c, 34, 12, 4, 6, h0); }
-      if (st === 'short' || st === 'spiky') { R(c, 11, 14, 3, 8, h0); R(c, 34, 14, 3, 8, h0); }
-      // highlight
-      R(c, 17, 7, 6, 1, h2); R(c, 15, 9, 3, 1, h2);
-    }
-    // accessories
-    for (const a of p.acc) {
-      if (a === 'scarf') {
-        const sc = p.scarfCol || '#c8962e';
-        poly(c, [10, 40, 14, 33, 24, 36, 34, 33, 38, 40, 30, 43, 18, 43], sc);
-        R(c, 30, 40, 6, 8, sc);
-        R(c, 14, 36, 20, 1, '#ffffff30');
-        R(c, 31, 44, 4, 1, '#00000030');
-      }
-      if (a === 'satchel') { poly(c, [12, 38, 15, 36, 36, 48, 32, 48], '#6a4a2a'); }
-      if (a === 'ribbon') { const rc = p.ribbonCol || '#c8687a'; poly(c, [30, 6, 38, 2, 37, 10], rc); poly(c, [30, 6, 34, 12, 38, 16], rc); E(c, 31, 7, 2, 2, rc); }
-      if (a === 'flower') { E(c, 34, 10, 3, 3, p.flowerCol || '#f4a6a0'); E(c, 34, 10, 1, 1, '#fff4c0'); }
-      if (a === 'headband') R(c, 11, 11, 26, 2, p.bandCol || ca);
-      if (a === 'hat') { const hc = p.hatCol || '#8a6a44'; E(c, 24, 10, 20, 4, hc); E(c, 24, 6, 10, 6, hc); R(c, 14, 8, 20, 1, '#00000030'); }
-      if (a === 'hood') { const hc = p.hoodCol || cs; poly(c, [8, 40, 9, 14, 24, 2, 39, 14, 40, 40, 36, 36, 35, 16, 24, 8, 13, 16, 12, 36], hc); }
-      if (a === 'earrings') { R(c, 12, 25, 1, 2, '#e8c860'); R(c, 35, 25, 1, 2, '#e8c860'); }
-      if (a === 'lamp') { E(c, 42, 42, 5, 5, '#ffd27a60'); R(c, 40, 38, 5, 7, '#3a3440'); R(c, 41, 39, 3, 5, '#ffd27a'); }
-      if (a === 'bottles') { R(c, 38, 40, 3, 6, '#6ab0a0'); R(c, 38, 39, 3, 1, '#ddd'); R(c, 7, 41, 3, 5, '#c8a0d0'); }
-      if (a === 'patches') { R(c, 9, 42, 4, 4, '#8a7a5a'); R(c, 36, 44, 3, 3, '#6a7a8a'); R(c, 9, 42, 4, 1, '#ffffff30'); }
-      if (a === 'pencil') { poly(c, [34, 12, 40, 6, 41, 7, 35, 13], '#e0b040'); }
-      if (a === 'cape') { poly(c, [2, 48, 6, 36, 12, 36, 10, 48], p.capeCol || '#6a3a4a'); poly(c, [46, 48, 42, 36, 36, 36, 38, 48], p.capeCol || '#6a3a4a'); }
-      if (a === 'pin') { R(c, 16, 38, 3, 3, '#e0c070'); }
-      if (a === 'goggles') { R(c, 12, 10, 24, 3, '#5a4a3a'); E(c, 19, 11, 3, 3, '#8fb8b0'); E(c, 29, 11, 3, 3, '#8fb8b0'); }
-    }
-    if (p.extra) p.extra(c, expr);
   }
 
-  function threshold(c) {
-    const img = c.getImageData(0, 0, S, S);
-    const d = img.data;
-    for (let i = 3; i < d.length; i += 4) d[i] = d[i] < 110 ? 0 : 255;
-    c.putImageData(img, 0, 0);
+  // ---- face ---------------------------------------------------------------------------------------
+  // Head: a cranium oval over a rounded jaw; the light comes from the upper left.
+  const JAW = [26, 40, 27, 50, 31, 58, 37, 64, 43, 68, 48, 69, 53, 68, 59, 64, 65, 58, 69, 50, 70, 40];
+  function faceMask(old) {
+    const m = new P.Buf(S, S);
+    m.oval(26, 14, 69, 62, '#fff');
+    m.poly(old ? JAW.map((v, i) => (i % 2 && v > 60 ? v + 1 : v)) : JAW, '#fff');
+    return m;
   }
-  function outline(c) {
-    const img = c.getImageData(0, 0, S, S);
-    const d = img.data;
-    const op = (x, y) => x >= 0 && y >= 0 && x < S && y < S && d[(y * S + x) * 4 + 3] > 0;
-    const marks = [];
-    for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) if (!op(x, y) && (op(x - 1, y) || op(x + 1, y) || op(x, y - 1) || op(x, y + 1))) marks.push((y * S + x) * 4);
-    for (const o of marks) { d[o] = 26; d[o + 1] = 20; d[o + 2] = 28; d[o + 3] = 255; }
-    c.putImageData(img, 0, 0);
+  function drawFace(b, p, C, m) {
+    const K = C.sk;
+    // ears: rim, inner fold, shadowed on the far side
+    for (const [x0, x1, lit] of [[22, 28, true], [68, 74, false]]) {
+      b.oval(x0, 40, x1, 54, lit ? K[2] : K[1]);
+      b.oval(x0 + 2, 43, x1 - 2, 51, lit ? K[1] : K[0]);
+      b.rect(lit ? x0 + 1 : x1 - 2, 42, 1, 6, lit ? K[3] : K[1]);
+    }
+    // neck, with the jaw's shadow falling across it
+    b.rect(40, 60, 16, 20, K[1]);
+    b.rect(40, 62, 3, 18, K[2]);
+    b.rect(53, 60, 3, 20, K[0]);
+    b.poly([40, 62, 56, 62, 56, 69, 48, 73, 40, 69], K[0]);
+    // the face as a rounded solid lit from the upper left: mostly flat tone, a lit temple and
+    // cheek, the terminator on the right, and shadow under the chin
+    const L = [-0.36, -0.42, 0.83];
+    m.each((x, y) => {
+      const nx = (x + 0.5 - 48) / 24, ny = (y + 0.5 - 40) / 30;
+      const nz = Math.sqrt(Math.max(0.02, 1 - nx * nx - ny * ny));
+      const d = nx * L[0] + ny * L[1] + nz * L[2];
+      let v = d > 0.93 ? 3 : d > 0.34 ? 2 : d > 0.08 ? 1 : 0;
+      if (y > 62 && v > 1) v = 1;
+      b.px(x, y, K[v]);
+    });
+    b.rect(31, 52, 4, 1, K[3]); b.rect(30, 53, 5, 1, K[3]);
+  }
+
+  // Eye lids as authored templates for the viewer's right eye (outer corner on the right; the left
+  // eye mirrors): k lash, w the opening, l lower lid. The iris is placed inside the opening.
+  const EYE_T = {
+    round: [
+      '...kkkkkk....',
+      '.kkkkkkkkkkk.',
+      'kkwwwwwwwwwkk',
+      '.wwwwwwwwwww.',
+      '.wwwwwwwwwww.',
+      '.wwwwwwwwwww.',
+      '..wwwwwwwww..',
+      '...wwwwwww...',
+      '....lllll....',
+    ],
+    soft: [
+      '...kkkkkk....',
+      '..kkkkkkkkk..',
+      '.kkwwwwwwwkk.',
+      '.wwwwwwwwwwkk',
+      '.wwwwwwwwwww.',
+      '.wwwwwwwwwww.',
+      '..wwwwwwwww..',
+      '...wwwwwwwl..',
+      '....lllll....',
+    ],
+    narrow: [
+      '.............',
+      '.kkkkkkkkkk..',
+      'kkkkkkkkkkkkk',
+      '.wwwwwwwwwww.',
+      '.wwwwwwwwwww.',
+      '..wwwwwwwww..',
+      '...lllllll...',
+    ],
+    sharp: [
+      '...........kk',
+      '....kkkkkkkk.',
+      '..kkkkkkkkkk.',
+      'kkkwwwwwwwwk.',
+      '.wwwwwwwwwww.',
+      '.wwwwwwwwww..',
+      '..wwwwwwww...',
+      '...llllll....',
+    ],
+  };
+  const CLOSED_DOWN = ['k...........k', '.kk.......kk.', '...kkkkkkk...', '....kkkkk....'];
+  const CLOSED_UP = ['....kkkkk....', '..kkkkkkkkk..', '.kk.......kk.', 'k...........k'];
+  function eye(b, p, C, cx, cy, side, e) {
+    const K = C.sk, st = EYE_T[p.eyes] ? p.eyes : 'round';
+    const X = (i) => (side > 0 ? cx - 6 + i : cx + 5 - i);
+    const put = (rows, y0, map) => rows.forEach((r, j) => { for (let i = 0; i < r.length; i++) { const c = map[r[i]]; if (c) b.px(X(i), y0 + j, c); } });
+    if (e.closed) {
+      const rows = e.closed === 'up' ? CLOSED_UP : CLOSED_DOWN;
+      put(rows, cy - 1, { k: C.lash });
+      if (e.closed === 'down') { b.px(X(12), cy - 2, C.lash); b.px(X(12), cy - 3, C.lash); }
+      return;
+    }
+    const T = EYE_T[st].slice();
+    if (e.wide) { const last = T[T.length - 1]; T[T.length - 1] = last.replace(/l/g, 'w'); T.push(last); }
+    const y0 = cy - 4;
+    // opening: whites, shaded under the upper lid
+    const open = [];
+    T.forEach((r, j) => { for (let i = 0; i < r.length; i++) if (r[i] === 'w') open.push([i, j]); });
+    let i0 = 99, i1 = -1, j0 = 99, j1 = -1;
+    for (const [i, j] of open) { i0 = Math.min(i0, i); i1 = Math.max(i1, i); j0 = Math.min(j0, j); j1 = Math.max(j1, j); }
+    const isOpen = (i, j) => T[j] && T[j][i] === 'w';
+    for (const [i, j] of open) b.px(X(i), y0 + j, j <= j0 ? C.whiteS : C.white);
+    // iris: a tall oval with a dark upper rim, a lighter lower half, pupil and glints
+    const lk = e.look || [0, 0];
+    const iw = e.wide ? 5 : st === 'sharp' ? 7 : 8, ih = e.wide ? 6 : j1 - j0 + 2;
+    const ic = (i0 + i1) / 2 - 0.5 + lk[0], jc = e.wide ? (j0 + j1) / 2 + 0.5 : j0 + ih / 2 - 1 + lk[1];
+    const I = C.iris;
+    for (let j = j0 - 1; j <= j1; j++) for (let i = i0; i <= i1; i++) {
+      if (!isOpen(i, j)) continue;
+      const a = (i + 0.5 - ic - 0.5) / (iw / 2), bb = (j + 0.5 - jc) / (ih / 2);
+      if (a * a + bb * bb > 1) continue;
+      const t = (j - (jc - ih / 2)) / ih;
+      b.px(X(i), y0 + j, t < 0.3 ? I[0] : t > 0.7 ? I[3] : I[2]);
+    }
+    const pi = Math.round(ic), pj = Math.round(jc - (e.wide ? 0 : 0.5));
+    for (let j = pj - (e.wide ? 0 : 1); j <= pj + (e.wide ? 0 : 1); j++) for (let i = pi; i <= pi + (e.wide ? 0 : 1); i++) if (isOpen(i, j)) b.px(X(i), y0 + j, I[0]);
+    // glints: a big one to the upper left of the pupil, a small one low right
+    const gi = Math.round(ic - iw / 2 + 1.5), gj = j0 + (e.wide ? 1 : 1);
+    for (const [i, j] of [[gi, gj], [gi + 1, gj], [gi, gj + 1], [gi + 1, gj + 1]]) if (isOpen(i, j)) b.px(X(i), y0 + j, '#ffffff');
+    if (isOpen(Math.round(ic + iw / 2 - 1.5), j1 - 1)) b.px(X(Math.round(ic + iw / 2 - 1.5)), y0 + j1 - 1, A('#ffffff', 0.75));
+    if (e.tear) { b.px(X(gi), y0 + j1, '#ffffff'); b.px(X(gi + 1), y0 + j1, A('#cfe8ff', 0.9)); }
+    // lashes and lower lid over everything
+    put(T, y0, { k: C.lash, l: mix(C.lash, K[1], 0.55) });
+    // crease above the lid
+    for (let i = 2; i <= 10; i++) b.px(X(i), y0 - 2 + (i < 4 || i > 9 ? 1 : 0), K[1]);
+    // lid modifiers
+    const lidLine = (fn) => { for (let i = 0; i <= 12; i++) { const j = fn(i); if (j == null) continue; b.px(X(i), y0 + j, C.lash); b.px(X(i), y0 + j + 1, C.lash); } };
+    const cover = (fn) => { for (let j = 0; j < T.length; j++) for (let i = 0; i <= 12; i++) if (fn(i, j) && (T[j][i] === 'w' || T[j][i] === 'k')) b.px(X(i), y0 + j, K[2]); };
+    if (e.heavy) { const lv = j0 + Math.ceil((j1 - j0) * 0.5); cover((i, j) => j < lv); lidLine((i) => (i >= 1 && i <= 12 ? lv - 1 : null)); b.rect(Math.min(X(2), X(10)), y0 + lv - 3, 9, 1, K[1]); }
+    if (e.angry) { cover((i, j) => j < j0 + Math.round(((12 - i) / 12) * 4)); lidLine((i) => Math.max(0, j0 - 1 + Math.round(((12 - i) / 12) * 4))); }
+    if (e.droop) { cover((i, j) => j < j0 + Math.round((i / 12) * 3)); lidLine((i) => Math.max(0, j0 - 1 + Math.round((i / 12) * 3))); }
+    if (e.cheek) { cover((i, j) => j > j1 - 2 && j <= j1 + 1); for (let i = 2; i <= 10; i++) b.px(X(i), y0 + j1 - 1 - (i > 3 && i < 9 ? 1 : 0), mix(C.lash, K[1], 0.4)); }
+  }
+
+  const EXPR = {
+    neutral: { eyes: {}, brow: 'flat', mouth: 'flat' },
+    smile: { eyes: { cheek: true }, brow: 'flat', mouth: 'smile' },
+    smile2: { eyes: { closed: 'up' }, brow: 'flat', mouth: 'smile' },
+    laugh: { eyes: { closed: 'up' }, brow: 'up', mouth: 'laugh', blush: true },
+    sad: { eyes: { droop: true, tear: true, look: [0, 1] }, brow: 'worry', mouth: 'sad' },
+    sad2: { eyes: { closed: 'down' }, brow: 'worry', mouth: 'sad' },
+    angry: { eyes: { angry: true }, brow: 'angry', mouth: 'angry' },
+    surprise: { eyes: { wide: true }, brow: 'high', mouth: 'o' },
+    think: { eyes: { look: [1, -1] }, brow: 'raise', mouth: 'think' },
+    think2: { eyes: { heavy: true }, brow: 'flat', mouth: 'think' },
+    worry: { eyes: { droop: true }, brow: 'worry', mouth: 'worry' },
+    shy: { eyes: { look: [1, 1], heavy: false, cheek: true }, brow: 'worry', mouth: 'shy', blush: true, lines: true },
+    smirk: { eyes: {}, eyesR: { heavy: true }, brow: 'raise', mouth: 'smirk' },
+    closed: { eyes: { closed: 'down' }, brow: 'flat', mouth: 'calm' },
+    tired: { eyes: { heavy: true }, brow: 'worry', mouth: 'tired' },
+  };
+
+  function brows(b, p, C, ex) {
+    const old = p.age === 'old';
+    const col = p.browCol || (old ? '#d8d4d0' : shade(C.hair[1], -1));
+    const y0 = 34 + (p.browY || 0) * 2;
+    const thick = p.brows === 'thick' ? 3 : 2;
+    for (const side of [-1, 1]) {
+      const cx = side < 0 ? 37 : 59;
+      let kind = ex.brow;
+      if (kind === 'raise') kind = side > 0 ? 'high' : 'flat';
+      // points: inner, middle, outer (u grows outward)
+      const pts = { flat: [[-4, 1], [1, 0], [6, 1]], up: [[-4, 0], [1, -1], [6, 0]], high: [[-4, -1], [1, -3], [6, -2]], worry: [[-4, -2], [1, 0], [6, 2]], angry: [[-4, 3], [1, 1], [6, -1]] }[kind] || [[-4, 1], [1, 0], [6, 1]];
+      const X = (u) => cx + (side > 0 ? u : -u - 1);
+      for (let i = 0; i < 2; i++) {
+        const [u0, v0] = pts[i], [u1, v1] = pts[i + 1];
+        for (let u = u0; u <= u1; u++) {
+          const v = Math.round(v0 + ((v1 - v0) * (u - u0)) / (u1 - u0));
+          const t = u >= 5 ? thick - 1 : thick;
+          b.rect(X(u), y0 + v, 1, t, col);
+        }
+      }
+    }
+  }
+  function mouth(b, p, C, kind) {
+    const m = C.mouth, y = 61;
+    const R = (x, yy, w, h, c) => b.rect(x, yy, w, h, c);
+    switch (kind) {
+      case 'smile': R(44, y, 1, 1, m); R(45, y + 1, 6, 1, m); R(51, y, 1, 1, m); R(46, y + 2, 4, 1, A(C.sk[1], 0.8)); break;
+      case 'laugh': R(43, y - 1, 10, 1, m); b.poly([43, y, 53, y, 51, y + 5, 45, y + 5], C.mouthIn); R(45, y + 3, 6, 2, C.tongue); R(44, y, 8, 1, '#f4ece8'); break;
+      case 'sad': R(45, y, 6, 1, m); R(44, y + 1, 1, 1, m); R(51, y + 1, 1, 1, m); break;
+      case 'angry': R(44, y + 1, 8, 1, m); R(43, y + 2, 1, 1, m); R(52, y + 2, 1, 1, m); R(45, y, 6, 1, A(C.sk[1], 0.9)); break;
+      case 'o': b.oval(46, y - 1, 50, y + 4, C.mouthIn); R(47, y + 2, 3, 1, C.tongue); b.oval(46, y - 1, 50, y - 1, m); break;
+      case 'worry': R(44, y + 1, 2, 1, m); R(46, y, 2, 1, m); R(48, y + 1, 2, 1, m); R(50, y, 2, 1, m); break;
+      case 'think': R(49, y, 4, 1, m); R(48, y + 1, 1, 1, A(m, 0.5)); break;
+      case 'tired': R(45, y + 1, 6, 1, m); R(46, y + 2, 4, 1, A(C.mouthIn, 0.6)); break;
+      case 'smirk': R(45, y + 1, 4, 1, m); R(49, y, 2, 1, m); R(51, y - 1, 1, 1, m); break;
+      case 'shy': R(45, y, 2, 1, m); R(47, y + 1, 2, 1, m); R(49, y, 2, 1, m); break;
+      case 'calm': R(45, y, 6, 1, m); R(44, y - 1, 1, 1, A(m, 0.6)); R(51, y - 1, 1, 1, A(m, 0.6)); break;
+      default: R(45, y, 6, 1, m); R(46, y + 1, 4, 1, A(C.sk[1], 0.7));
+    }
+  }
+  function features(b, p, C, ex) {
+    const K = C.sk;
+    // nose: a shadow under the tip on the right, a lit bridge
+    b.rect(49, 53, 2, 2, K[1]); b.px(48, 55, K[1]); b.rect(46, 51, 1, 2, K[3]);
+    // old age: laugh lines, crow's feet, a softer jaw
+    if (p.age === 'old') {
+      const soft = A(K[0], 0.45);
+      b.line(42, 57, 41, 61, K[1]); b.line(55, 57, 56, 61, soft);
+      b.px(28, 45, K[1]); b.px(27, 46, K[1]); b.px(68, 45, soft); b.px(69, 46, soft);
+      b.rect(34, 53, 5, 1, soft); b.rect(57, 53, 5, 1, soft);
+      b.rect(40, 30, 16, 1, soft); b.rect(42, 33, 12, 1, soft);
+    }
+    const eyL = Object.assign({}, ex.eyes), eyR = Object.assign({}, ex.eyes, ex.eyesR || {});
+    eye(b, p, C, 37, 45, -1, eyL);
+    eye(b, p, C, 59, 45, 1, eyR);
+    if (ex.blush || p.blush) {
+      b.oval(29, 53, 39, 57, C.blush); b.oval(57, 53, 67, 57, C.blush);
+      if (ex.lines) for (const x of [31, 34, 37, 59, 62, 65]) { b.px(x + 1, 54, C.blushLine); b.px(x, 55, C.blushLine); }
+    }
+    mouth(b, p, C, ex.mouth);
+    if (p.mole) b.rect(60, 57, 2, 2, '#4a2a2a');
+    if (p.scar) { b.line(60, 34, 63, 47, '#c89080'); b.line(61, 34, 64, 47, A('#f0c0b0', 0.6)); }
+    if (p.smudge) b.oval(31, 55, 37, 58, p.smudge === true ? '#2a2436' : p.smudge);
+  }
+  function beard(b, p, C) {
+    const col = p.beard === true ? C.hair[2] : p.beard;
+    const R = [shade(col, -2), shade(col, -1), col, shade(col, 1), shade(col, 2)];
+    const m = new P.Buf(S, S);
+    m.poly([27, 46, 29, 56, 33, 63, 38, 69, 42, 73, 45, 71, 48, 75, 51, 71, 54, 73, 58, 69, 63, 63, 67, 56, 69, 46, 66, 54, 60, 58, 54, 58, 48, 57, 42, 58, 36, 58, 30, 54], '#fff');
+    m.poly([39, 57, 44, 55, 48, 56, 52, 55, 57, 57, 56, 60, 48, 59, 40, 60], '#fff');
+    // a solid mass lit on the upper left and shadowed to the right and at the tips, then a few
+    // authored strands following the jaw
+    m.each((x, y) => {
+      let v = 2;
+      if (x < 40 && y < 66) v = 3;
+      if (x > 60 || y > 70) v = 1;
+      if (!m.alphaAt(x, y + 1) || !m.alphaAt(x, y + 2)) v = Math.min(v, 1);
+      b.px(x, y, R[v]);
+    });
+    for (const [x0, y0, x1, y1] of [[31, 55, 34, 62], [37, 60, 40, 68], [44, 63, 45, 71], [52, 63, 51, 70], [58, 61, 56, 67], [64, 55, 62, 61]]) {
+      b.line(x0, y0, x1, y1, R[1]);
+      if (x0 < 50) b.line(x0 - 1, y0 + 1, x1 - 1, y1, R[x0 < 40 ? 4 : 3]);
+    }
+    b.rect(41, 57, 14, 1, R[3]); b.rect(44, 56, 8, 1, R[3]);
+    b.rect(45, 61, 6, 1, C.mouthIn);
+    b.rect(44, 60, 8, 1, R[1]);
+  }
+
+  // ---- bust and collars ---------------------------------------------------------------------------
+  const IVORY = ['#b8ab94', '#d8ccb4', '#ece4d4', '#f8f2e6'];
+  function bust(b, p, C) {
+    const L = C.cl, ac = C.ac;
+    const m = new P.Buf(S, S);
+    m.poly([0, 96, 3, 86, 12, 79, 26, 74, 40, 72, 56, 72, 70, 74, 84, 79, 93, 86, 96, 96], '#fff');
+    m.each((x, y) => {
+      let v = 2;
+      if (x < 22 && y < 86 - (x >> 2)) v = 3;
+      if (x < 14 && y < 84) v = 4;
+      if (x > 70) v = 1;
+      if (x > 84 && y > 84) v = 0;
+      b.px(x, y, L[v]);
+    });
+    // seams where the sleeves meet the shoulders, and folds towards the collar
+    b.line(16, 80, 20, 96, L[1]); b.line(80, 80, 76, 96, L[0]);
+    b.line(30, 84, 34, 96, L[1]); b.line(64, 86, 62, 96, L[1]);
+    const col = p.collar;
+    if (col === 'high') {
+      b.poly([36, 76, 39, 64, 57, 64, 60, 76, 48, 79], L[1]);
+      b.poly([37, 75, 40, 65, 47, 65, 46, 78], L[2]);
+      b.rect(39, 64, 18, 2, ac[1]); b.rect(39, 64, 18, 1, ac[2]);
+      b.line(36, 76, 48, 79, ac[1]); b.line(48, 79, 60, 76, ac[0]);
+      b.rect(47, 66, 2, 12, L[0]);
+    } else if (col === 'apron') {
+      b.poly([42, 72, 48, 82, 54, 72], C.sk[1]);
+      b.line(42, 72, 48, 82, ac[1]); b.line(54, 72, 48, 82, ac[0]);
+      b.poly([33, 82, 63, 82, 66, 96, 30, 96], IVORY[2]);
+      b.rect(33, 82, 30, 2, IVORY[3]); b.rect(60, 84, 5, 12, IVORY[1]);
+      b.line(35, 82, 38, 72, IVORY[2], 2); b.line(60, 82, 57, 72, IVORY[1], 2);
+      b.rect(40, 88, 16, 1, IVORY[1]);
+    } else if (col === 'robe') {
+      b.poly([38, 72, 58, 72, 48, 86], C.sk[1]);
+      b.line(37, 72, 48, 88, IVORY[2], 2);
+      b.poly([57, 71, 61, 72, 42, 96, 37, 96], ac[1]);
+      b.line(58, 71, 39, 96, ac[2]);
+    } else if (col === 'coat') {
+      b.poly([42, 72, 48, 84, 54, 72], ac[1]);
+      b.rect(46, 74, 4, 10, ac[0]);
+      b.poly([36, 72, 42, 72, 48, 86, 44, 90, 34, 80], L[3]);
+      b.poly([54, 72, 60, 72, 62, 80, 52, 90, 48, 86], L[1]);
+      b.rect(46, 90, 3, 3, ac[2]);
+    } else if (col === 'dress') {
+      b.oval(38, 66, 58, 80, C.sk[1]);
+      b.oval(38, 66, 58, 70, C.sk[0]);
+      for (let x = 38; x <= 58; x++) { const dy = Math.round(7 * Math.sqrt(Math.max(0, 1 - ((x - 48) / 10.5) ** 2))); b.px(x, 73 + dy, ac[1]); b.px(x, 74 + dy, ac[0]); }
+    } else {
+      b.poly([41, 71, 48, 84, 55, 71], C.sk[1]);
+      b.poly([43, 71, 48, 76, 53, 71], C.sk[0]);
+      b.line(40, 71, 48, 85, ac[1]); b.line(41, 71, 48, 84, ac[2]);
+      b.line(56, 71, 48, 85, ac[0]);
+      b.rect(34, 71, 6, 2, ac[1]); b.rect(56, 71, 6, 2, ac[0]);
+    }
+  }
+
+  // ---- accessories ------------------------------------------------------------------------------------
+  const GOLD = ['#a8842c', '#e8c860', '#fff0a8'];
+  const R4 = (c) => [shade(c, -2), shade(c, -1), c, shade(c, 1), shade(c, 2)];
+  function lantern(b, x, y) {
+    b.oval(x - 6, y - 4, x + 18, y + 22, A('#ffd27a', 0.18));
+    b.rect(x + 4, y - 4, 4, 2, '#3a3440'); b.rect(x, y - 2, 12, 2, '#3a3440');
+    b.rect(x, y, 12, 14, '#ffd27a'); b.rect(x, y, 3, 14, '#fff0b8'); b.rect(x + 9, y, 3, 14, '#e8a040');
+    b.rect(x + 5, y, 1, 14, '#f0b050'); b.rect(x, y + 5, 12, 1, '#f0b050');
+    b.rect(x, y + 14, 12, 2, '#3a3440');
+  }
+  function accBack(b, p, C) {
+    if (p.acc.includes('cape')) { const R = R4(p.capeCol || '#6a3a4a'); b.poly([0, 96, 2, 80, 14, 72, 24, 74, 16, 96], R[1]); b.poly([96, 96, 94, 80, 82, 72, 72, 74, 80, 96], R[0]); }
+  }
+  function accFront(b, p, C, ex) {
+    const a = p.acc;
+    if (a.includes('scarf')) {
+      const R = R4(p.scarfCol || '#c8962e');
+      b.poly([18, 82, 26, 68, 40, 72, 48, 74, 56, 72, 70, 68, 78, 82, 64, 88, 48, 86, 32, 88], R[2]);
+      b.poly([18, 82, 26, 68, 40, 72, 36, 80, 28, 86], R[3]);
+      b.line(26, 70, 70, 70, R[3]); b.line(30, 80, 66, 80, R[1]); b.line(40, 74, 56, 74, R[1]);
+      b.poly([60, 82, 72, 82, 74, 96, 60, 96], R[2]); b.rect(70, 82, 4, 14, R[1]); b.rect(60, 82, 2, 14, R[3]);
+      for (let x = 61; x < 74; x += 3) b.rect(x, 94, 1, 2, R[0]);
+    }
+    if (a.includes('satchel')) { b.line(18, 76, 62, 96, '#6a4a2a', 5); b.line(18, 76, 62, 96, '#8a6a3a', 3); for (let k = 0; k < 7; k++) b.px(24 + k * 6, 80 + k * 2.6, '#c8a870'); }
+    if (a.includes('pin')) { b.oval(30, 78, 36, 84, GOLD[1]); b.px(32, 80, GOLD[2]); b.px(35, 83, GOLD[0]); }
+    if (a.includes('patches')) { const pc = ['#6a5c42', '#8a7a5a', '#a89a78']; for (const [x, y] of [[14, 84], [74, 88]]) { b.rect(x, y, 9, 8, pc[1]); b.rect(x, y, 9, 2, pc[2]); for (let i = 0; i < 9; i += 2) { b.px(x + i, y - 1, pc[0]); b.px(x + i, y + 8, pc[0]); } } }
+    if (a.includes('bottles')) {
+      const bottle = (x, y, c) => { b.rect(x + 1, y - 3, 3, 3, '#a88860'); b.rect(x, y, 6, 10, c); b.rect(x, y, 2, 10, shade(c, 2)); b.rect(x + 4, y, 2, 10, shade(c, -1)); b.rect(x, y + 3, 6, 2, '#e8e0cc'); };
+      bottle(78, 84, '#6ab0a0'); bottle(12, 86, '#c8a0d0');
+    }
+    if (a.includes('lamp')) lantern(b, 80, 78);
+    if (a.includes('book')) { b.rect(4, 82, 16, 14, '#6a3a3a'); b.rect(4, 82, 16, 2, '#8a4a44'); b.rect(18, 84, 2, 12, '#e8e0c8'); b.rect(8, 88, 6, 1, GOLD[1]); }
+    if (a.includes('basket')) { b.rect(76, 86, 20, 10, '#b08a4a'); b.rect(76, 86, 20, 2, '#d0ac6a'); for (let x = 77; x < 96; x += 3) b.rect(x, 89, 1, 7, '#7a5a2e'); }
+    if (a.includes('atlas_sash')) { const c = p.sashCol || '#d8c89a'; b.line(20, 76, 64, 96, c, 5); b.line(22, 80, 64, 99, shade(c, -1)); }
+    if (a.includes('atlas_pin')) { b.oval(30, 78, 37, 85, GOLD[1]); b.rect(33, 81, 2, 2, '#3a5a8a'); }
+    if (a.includes('cape')) { const R = R4(p.capeCol || '#6a3a4a'); b.poly([10, 80, 24, 72, 34, 76, 22, 84], R[2]); b.poly([86, 80, 72, 72, 62, 76, 74, 84], R[1]); b.oval(44, 70, 51, 77, GOLD[1]); b.px(46, 72, GOLD[2]); }
+  }
+  function accHead(b, p, C) {
+    const a = p.acc;
+    if (a.includes('glasses')) {
+      const fc = p.glassCol || '#2e2a30';
+      for (const cx of [37, 59]) {
+        b.rect(cx - 6, 38, 12, 1, fc); b.rect(cx - 6, 52, 12, 1, fc); b.rect(cx - 8, 40, 1, 11, fc); b.rect(cx + 6, 40, 1, 11, fc);
+        b.px(cx - 7, 39, fc); b.px(cx + 5, 39, fc); b.px(cx - 7, 51, fc); b.px(cx + 5, 51, fc);
+        b.rect(cx - 7, 39, 13, 13, A('#e8f4ff', 0.1));
+        b.px(cx + 3, 40, A('#ffffff', 0.7)); b.px(cx + 4, 41, A('#ffffff', 0.5)); b.px(cx + 2, 41, A('#ffffff', 0.4));
+      }
+      b.rect(44, 43, 8, 1, fc); b.rect(21, 42, 8, 1, fc); b.rect(67, 42, 8, 1, fc);
+    }
+    if (a.includes('goggles') || a.includes('atlas_goggles')) {
+      b.rect(22, 21, 52, 5, '#5a4a3a'); b.rect(22, 21, 52, 1, '#7a6a5a');
+      for (const cx of [38, 58]) { b.oval(cx - 8, 16, cx + 7, 30, '#3a3a3a'); b.oval(cx - 6, 18, cx + 5, 28, '#8fb8b0'); b.oval(cx - 5, 19, cx - 1, 23, '#d8f0e8'); }
+    }
+    if (a.includes('headband')) {
+      const R = R4(p.bandCol || C.ac[1]);
+      for (let x = 20; x <= 76; x++) { const y = 25 + Math.round(((x - 48) / 28) ** 2 * 5); b.rect(x, y, 1, 5, R[2]); b.px(x, y, R[3]); b.px(x, y + 4, R[1]); }
+      b.poly([74, 28, 82, 26, 84, 34, 76, 34], R[1]); b.poly([76, 33, 82, 40, 78, 42, 74, 34], R[0]);
+    }
+    if (a.includes('hood')) {
+      const R = R4(p.hoodCol || C.cl[1]);
+      const m = new P.Buf(S, S);
+      m.poly([14, 96, 16, 36, 24, 16, 48, 4, 72, 16, 80, 36, 82, 96, 72, 96, 72, 50, 68, 30, 48, 16, 28, 30, 24, 50, 24, 96], '#fff');
+      m.each((x, y) => { let v = 2; if (x < 26 && y < 60) v = 3; if (x > 70) v = 1; if (y < 18 && x < 44) v = 3; b.px(x, y, R[v]); });
+      b.line(28, 30, 48, 16, R[3]); b.line(48, 16, 68, 30, R[1]); b.line(24, 50, 28, 30, R[3]); b.line(72, 50, 68, 30, R[0]);
+      b.line(34, 10, 30, 20, R[1]); b.line(62, 10, 66, 20, R[0]);
+    }
+    if (a.includes('hat')) {
+      const R = R4(p.hatCol || '#8a6a44');
+      const crown = new P.Buf(S, S);
+      crown.poly([28, 20, 31, 6, 38, 1, 58, 1, 65, 6, 68, 20], '#fff');
+      crown.each((x, y) => { let v = x < 38 ? 3 : x > 60 ? 1 : 2; if (y % 4 === 3) v -= 1; if (x < 34 && y < 10 && y % 4 !== 3) v = 4; b.px(x, y, R[Math.max(0, v)]); });
+      b.rect(28, 15, 41, 5, R[1]); b.rect(28, 15, 41, 1, R[0]); b.rect(28, 19, 41, 1, R[0]); b.rect(30, 16, 8, 1, R[2]);
+      const brim = new P.Buf(S, S);
+      brim.oval(4, 16, 91, 32, '#fff');
+      brim.each((x, y) => {
+        const ang = Math.atan2((y - 24) * 3, x - 48);
+        let v = y < 25 ? (x < 40 ? 4 : x > 70 ? 2 : 3) : y < 28 ? 2 : 1;
+        if (Math.round(ang * 9) % 3 === 0 && y < 27 && v > 2) v -= 1;
+        b.px(x, y, R[v]);
+      });
+      b.rect(26, 33, 44, 3, A('#1a1020', 0.28));
+    }
+    if (a.includes('ribbon')) {
+      const R = R4(p.ribbonCol || '#c8687a');
+      b.poly([68, 22, 74, 30, 73, 38, 67, 29], R[1]); b.poly([72, 22, 82, 31, 84, 40, 76, 30], R[0]);  // tails
+      b.poly([66, 18, 52, 8, 50, 14, 54, 24], R[2]); b.poly([66, 18, 54, 10, 53, 14], R[3]);         // left loop
+      b.poly([66, 18, 80, 6, 84, 14, 78, 24], R[1]); b.poly([66, 18, 80, 8, 81, 12], R[2]);          // right loop
+      b.line(52, 9, 54, 23, R[0]); b.line(83, 8, 78, 23, R[0]);
+      b.oval(62, 14, 70, 22, R[2]); b.oval(63, 15, 66, 17, R[3]); b.px(69, 21, R[0]);                 // knot
+    }
+    if (a.includes('flower')) {
+      const R = R4(p.flowerCol || '#f4a6a0');
+      for (const [dx, dy] of [[0, -5], [5, -1], [3, 5], [-3, 5], [-5, -1]]) b.oval(66 + dx, 18 + dy, 70 + dx, 22 + dy, R[dy < 0 ? 3 : 2]);
+      b.oval(65, 17, 71, 23, '#fff4c0'); b.oval(67, 19, 69, 21, '#e8b050');
+      b.line(62, 26, 58, 30, '#5a8a4a', 2);
+    }
+    if (a.includes('earrings')) for (const x of [24, 71]) { b.oval(x, 54, x + 2, 56, GOLD[1]); b.rect(x + 1, 57, 1, 3, GOLD[0]); b.oval(x, 59, x + 2, 62, GOLD[1]); b.px(x, 59, GOLD[2]); }
+    if (a.includes('pencil')) { b.line(66, 30, 82, 12, '#e0b040', 3); b.line(67, 31, 83, 13, '#b88a20'); b.rect(81, 9, 4, 4, '#e8a0a0'); b.rect(64, 30, 3, 3, '#3a3040'); }
+    if (a.includes('atlas_quill')) { b.line(68, 32, 80, 4, '#f4f0e0', 3); b.line(70, 32, 82, 6, '#d8d0bc'); b.px(68, 32, '#6a5a3a'); }
+    if (a.includes('atlas_lamplet')) lantern(b, 80, 80);
+  }
+
+  // Animal speakers (portrait kind: 'cat'): a cat's head and chest in the same light and palette rules.
+  function drawCat(b, p, C, ex) {
+    const f = p.skin[0], R = [shade(f, -2), shade(f, -1), f, shade(f, 1), shade(f, 2)];
+    const shaded = (m, top) => m.each((x, y) => {
+      const nx = (x - 48) / 30, ny = (y - (top || 48)) / 30;
+      let v = 2;
+      if (nx + ny * 0.6 < -0.32 && ny < 0.4) v = 3;
+      if (nx > 0.55 || ny > 0.72) v = 1;
+      b.px(x, y, R[v]);
+    });
+    const body = new P.Buf(S, S); body.oval(12, 66, 83, 124, '#fff'); shaded(body, 90);
+    b.oval(34, 74, 61, 100, R[3]); b.oval(38, 78, 57, 100, R[4]);
+    for (const [x0, x1] of [[20, 26], [36, 42], [52, 58]]) for (let x = x0; x <= x1; x += 3) b.line(x, 70, x - 2, 76, R[1]);
+    // collar and bell
+    b.rect(24, 76, 48, 5, C.cl[2]); b.rect(24, 76, 48, 1, C.cl[3]); b.rect(24, 80, 48, 1, C.cl[0]);
+    b.oval(44, 79, 52, 87, GOLD[1]); b.oval(45, 80, 47, 82, GOLD[2]); b.rect(47, 85, 2, 1, GOLD[0]);
+    // ears, head with fluffed cheeks
+    for (const pts of [[18, 38, 24, 4, 44, 24], [52, 24, 72, 4, 78, 38]]) b.poly(pts, pts[0] < 40 ? R[2] : R[1]);
+    b.poly([24, 32, 26, 12, 38, 25], '#e8a0a0'); b.poly([58, 25, 70, 12, 72, 32], '#c88888');
+    const head = new P.Buf(S, S);
+    head.oval(18, 20, 77, 76, '#fff');
+    head.poly([18, 52, 10, 64, 20, 62, 16, 72, 26, 70, 30, 76, 66, 76, 70, 70, 80, 72, 76, 62, 86, 64, 78, 52], '#fff');
+    shaded(head, 44);
+    for (const x of [42, 47, 52]) b.line(x, 24, x + Math.round((x - 47) / 5), 33, R[1]); // forehead markings
+    b.oval(36, 56, 60, 72, R[3]);
+    // eyes: almond openings, green-gold irises, slit pupils that round out in surprise
+    const e = ex.eyes || {};
+    for (const [cx, side] of [[36, -1], [60, 1]]) {
+      if (e.closed) {
+        const up = e.closed === 'up';
+        for (let u = -6; u <= 6; u++) { const v = Math.round(((u * u) / 36) * 3) * (up ? 1 : -1); b.rect(cx + u, 48 + v, 1, 2, C.lash); }
+        continue;
+      }
+      const oy = e.heavy ? 3 : 0;
+      for (let y = 42 + oy; y <= 54; y++) for (let x = cx - 7; x <= cx + 7; x++) {
+        const nx = (x + 0.5 - cx) / 7.5, ny = (y + 0.5 - 48) / 6.5;
+        if (nx * nx + ny * ny > 1) continue;
+        b.px(x, y, ny < -0.4 ? '#8a9a30' : ny > 0.4 ? '#d8e070' : '#b8c850');
+      }
+      const pw = e.wide ? 4 : 2;
+      b.rect(cx - (pw >> 1), 43 + oy, pw, 11 - oy, '#1a1614');
+      b.rect(cx - 4, 44 + oy, 2, 2, '#ffffff'); b.px(cx + 3, 51, A('#ffffff', 0.8));
+      for (let x = cx - 7; x <= cx + 7; x++) { const nx = (x + 0.5 - cx) / 7.5; const y = Math.round(48 - 6.5 * Math.sqrt(Math.max(0, 1 - nx * nx))) + oy; b.px(x, y, C.lash); b.px(x, y - 1, C.lash); }
+      if (e.angry) b.line(cx - 7 * side, 43, cx + 7 * side, 40, C.lash, 2);
+      if (e.droop) b.line(cx - 7 * side, 40, cx + 7 * side, 44, C.lash, 2);
+    }
+    // nose, the little mouth, whiskers
+    b.poly([45, 58, 51, 58, 48, 62], '#d88a8a'); b.px(46, 58, '#f0b0b0');
+    const open = ex.mouth === 'laugh' || ex.mouth === 'o';
+    if (open) { b.oval(44, 63, 52, 70, C.mouthIn); b.rect(46, 67, 4, 2, C.tongue); }
+    b.rect(48, 62, 1, 2, R[0]); b.line(48, 64, 45, 66, R[0]); b.line(48, 64, 51, 66, R[0]);
+    for (const k of [-1, 1]) for (let i = 0; i < 3; i++) b.line(48 + k * 12, 62 + i * 3, 48 + k * 30, 58 + i * 5, A('#f8f4ec', 0.85));
+    if (ex.blush) { b.oval(24, 58, 32, 62, C.blush); b.oval(64, 58, 72, 62, C.blush); }
+  }
+
+  // ---- composition ----------------------------------------------------------------------------------
+  function drawAll(b, p, expr) {
+    const C = palette(p);
+    const ex = EXPR[EXPR_ALIAS[expr] || expr] || EXPR.neutral;
+    const H = RB.portraits.hairStyles || {};
+    const hs = H[p.style] || H.short;
+    const ctx = { p, C, S, P };
+    if (p.kind === 'cat') { drawCat(b, p, C, ex); return C; }
+    accBack(b, p, C);
+    if (hs && hs.back) hs.back(b, ctx);
+    bust(b, p, C);
+    const fm = faceMask(p.age === 'old');
+    drawFace(b, p, C, fm);
+    features(b, p, C, ex);
+    if (p.beard) beard(b, p, C);
+    accFront(b, p, C, ex);
+    if (hs && hs.front) hs.front(b, ctx, fm);
+    brows(b, p, C, ex);
+    accHead(b, p, C);
+    return C;
   }
 
   function build(p, expr, keyStr) {
     if (cache.has(keyStr)) return cache.get(keyStr);
-    const cv = RB.sprites.makeCanvas(S, S);
-    const c = cv.getContext('2d', { willReadFrequently: true });
-    drawFace(c, p, expr || 'neutral');
-    threshold(c);
-    outline(c);
+    const b = new P.Buf(S, S);
+    drawAll(b, p, expr || 'neutral');
+    let cv = b.toCanvas();
+    if (p.extra2 || p.extra) {
+      // character-specific marks drawn by the content: extra2 at 96 px, older extra at 48 px (doubled)
+      const c = cv.getContext('2d');
+      c.save();
+      if (!p.extra2) c.scale(2, 2);
+      (p.extra2 || p.extra)(c, EXPR_ALIAS[expr] || expr || 'neutral');
+      c.restore();
+      const img = c.getImageData(0, 0, S, S);
+      b.d.set(img.data);
+    }
+    b.threshold(110);
+    b.outline('#1a141c', { minA: 1 });
+    cv = b.toCanvas();
     cache.set(keyStr, cv);
     if (cache.size > 300) cache.delete(cache.keys().next().value);
+    return cv;
+  }
+  // Background: flat bands stepping from the character's colour down to night, with a lighter disc
+  // behind the head and a sparse dither where bands meet.
+  const bgCache = new Map();
+  function background(bg) {
+    const key = bg || '#2a3048';
+    let cv = bgCache.get(key);
+    if (cv) return cv;
+    const b = new P.Buf(S, S);
+    const bands = 6;
+    for (let i = 0; i < bands; i++) {
+      const col = mix(key, '#0c0e16', i / (bands - 0.5));
+      const y0 = Math.round((i * S) / bands), y1 = Math.round(((i + 1) * S) / bands);
+      b.rect(0, y0, S, y1 - y0, col);
+      if (i) { const prev = mix(key, '#0c0e16', (i - 1) / (bands - 0.5)); for (let x = (i % 2); x < S; x += 2) b.px(x, y0, prev); }
+    }
+    b.oval(8, 4, 87, 83, A(mix(key, '#fff4dc', 0.5), 0.07));
+    cv = b.toCanvas();
+    bgCache.set(key, cv);
     return cv;
   }
   function paint(target, img, bg) {
     const c = target.getContext('2d');
     target.width = S; target.height = S;
-    const g = c.createLinearGradient(0, 0, 0, S);
-    g.addColorStop(0, bg || '#2a3048');
-    g.addColorStop(1, '#0e1018');
-    c.fillStyle = g;
-    c.fillRect(0, 0, S, S);
+    c.imageSmoothingEnabled = false;
+    c.drawImage(background(bg), 0, 0);
     c.drawImage(img, 0, 0);
   }
   function draw(target, id, expr) {
@@ -13279,14 +15403,257 @@ RB.portraits = (function () {
   function drawPlayer(target, look, expr) {
     const p = fromLook(look);
     p.bg = '#2e3a34';
-    p.acc = (look.acc || []).filter((a) => a !== 'satchel' || true);
     paint(target, build(p, expr, 'pc|' + JSON.stringify(look) + '|' + expr), p.bg);
   }
   function image(id, expr) {
     const p = paramsFor(id);
     return p ? build(p, expr, id + '|' + expr) : null;
   }
-  return { draw, drawPlayer, image, fromLook, S };
+  // The player's portrait without its background (transparent), S×S — for
+  // previews that sit on paper (character creation).
+  function playerImage(look, expr) {
+    return build(fromLook(look), expr, 'pc|' + JSON.stringify(look) + '|' + expr);
+  }
+  const EXPRESSIONS = Object.keys(EXPR);
+  return { draw, drawPlayer, image, playerImage, fromLook, S, EXPRESSIONS, background };
+})();
+
+
+/* ==== src/engine/36_portraithair.js ==== */
+/* Portrait hair (96×96): every hairstyle as a back mass (behind the head and
+ * shoulders) and a front layer (crown, fringe, side locks, tails), built as
+ * masks from polygons and shaded as locks radiating from the crown: each lock
+ * lit on its upper-left edge with a dark seam on the other, a broken
+ * highlight band across the crown, and deeper shadow at lock tips. The
+ * fringe casts a soft shadow on the face. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function () {
+  'use strict';
+  const P = RB.pix, S = 96;
+  const shade = P.shade, mix = P.mix;
+  const hh = (a, b) => ((a * 73856093) ^ (b * 19349663)) >>> 0;
+
+  function mask(fn) { const m = new P.Buf(S, S); fn(m); return m; }
+  const W = '#fff';
+  const mirror = (pts) => pts.map((v, i) => (i % 2 ? v : 95 - v));
+
+  // Lock shading of a mask around a parting point.
+  function locks(b, m, R, o) {
+    const st = o.step || 22, r0 = o.r0 == null ? 8 : o.r0;
+    const inM = (x, y) => (y >= S ? o.open : m.alphaAt(x, y) > 0);
+    m.each((x, y) => {
+      let v = 3;
+      const dx = x + 0.5 - o.ox, dy = y + 0.5 - o.oy, r = Math.hypot(dx, dy);
+      const th = Math.atan2(dy, dx);
+      // lock boundaries wander a little with the radius so locks curve and taper irregularly
+      const deg = (th * 180) / Math.PI - (o.phase || 0);
+      const k0 = Math.floor(deg / st);
+      const wob = ((hh(k0, 11) % 7) - 3) * 0.06 * Math.sin(r / 9 + k0);
+      const u = deg / st + wob, k = Math.floor(u), fr = u - k;
+      const lit = Math.sin(th) - Math.cos(th) >= 0;
+      const q = lit ? fr : 1 - fr;
+      const w = st * (Math.PI / 180) * r;
+      const seam = r > r0 && w > 4 && q * w < 1.1;
+      if (r > r0 && w > 4) {
+        if (seam) v = 1;
+        else if (q * w < 2.3) v = 2;
+        else if ((1 - q) * w < 2.4 && hh(k, 7) % 3 !== 0) v = 4;
+        else if (hh(k, 3) % 4 === 0 && q < 0.5) v = 2; // an occasional lock turned away from the light
+      }
+      if (o.h0 != null && r >= o.h0 && r < o.h1 && dx < (o.hx == null ? 6 : o.hx) && !seam) {
+        v = r >= o.h0 + 1.5 && r < o.h1 - 1.5 && (1 - q) * w > 1.2 && q * w > 2.3 ? 5 : 4;
+      }
+      const eB = !inM(x, y + 1), eB2 = !inM(x, y + 2), eR = !inM(x + 1, y), eL = !inM(x - 1, y), eT = !inM(x, y - 1);
+      if (eB) v = Math.min(v, 1);
+      else if (eB2) v = Math.min(v, 2);
+      else if (eR && dx > 6) v = Math.min(v, 2);
+      else if ((eL || eT) && dx < -6 && dy < 30 && v === 3) v = 4;
+      b.px(x, y, R[v - 1]);
+    });
+  }
+  // Curls: shaded discs laid bottom-up so upper curls overlap lower ones.
+  function curls(b, m, R) {
+    const cells = [];
+    for (let y = -2, row = 0; y < S + 4; y += 6, row++) for (let x = -2 + (row % 2) * 4; x < S + 4; x += 8) cells.push([x + (hh(x, y) % 3) - 1, y + (hh(y, x) % 3) - 1]);
+    cells.sort((a, c) => c[1] - a[1]);
+    for (const [cx, cy] of cells) {
+      for (let y = cy - 6; y <= cy + 6; y++) for (let x = cx - 6; x <= cx + 6; x++) {
+        if (!m.alphaAt(x, y)) continue;
+        const dx = x - cx, dy = y - cy, d2 = dx * dx + dy * dy;
+        if (d2 > 26) continue;
+        const t = dx * 0.7 + dy;
+        let v = t < -3 ? 4 : t < 1 ? 3 : t < 3.5 ? 2 : 1;
+        if (d2 < 3 && t < -0.5) v = 4;
+        if (v === 4 && y < 26 && x < 50 && d2 < 8) v = 5;
+        b.px(x, y, R[v - 1]);
+      }
+    }
+  }
+  // Wound cloth: broad bands rising to the right, lit along their upper edges.
+  function folds(b, m, R) {
+    m.each((x, y) => {
+      const u = (y + x * 0.28 + 60) / 7, fr = u - Math.floor(u);
+      let v = fr < 0.18 ? 2 : fr > 0.72 ? 4 : 3;
+      if (!m.alphaAt(x, y + 1) || !m.alphaAt(x, y + 2)) v = 2;
+      if (x > 64 && v > 2) v -= 1;
+      if (x < 32 && v === 3) v = 4;
+      b.px(x, y, R[v - 1]);
+    });
+  }
+  function castShadow(b, face, hair, K) {
+    face.each((x, y) => {
+      if (hair.alphaAt(x, y)) return;
+      for (let k = 1; k <= 3; k++) if (hair.alphaAt(x - 1, y - k)) { b.px(x, y, K[1]); return; }
+    });
+  }
+
+  // ---- shapes ---------------------------------------------------------------------------------------
+  const BANGS = [22, 28, 74, 28, 74, 38, 71, 41, 68, 36, 65, 43, 61, 37, 57, 44, 53, 36, 49, 42, 45, 36, 42, 43, 38, 37, 34, 44, 30, 36, 27, 42, 24, 38, 22, 40];
+  const BLUNT = [22, 28, 74, 28, 74, 40, 66, 40, 64, 38, 62, 40, 50, 40, 48, 38, 46, 40, 34, 40, 32, 38, 30, 40, 22, 40];
+  const SPIKY_BANGS = [22, 28, 74, 28, 74, 40, 70, 36, 66, 46, 60, 36, 55, 45, 50, 34, 45, 45, 40, 34, 34, 46, 30, 36, 26, 44, 22, 38];
+  const PARTED_L = [22, 26, 44, 18, 42, 28, 36, 34, 30, 40, 26, 48, 22, 46];
+  const PARTED_R = [44, 18, 74, 26, 74, 44, 70, 48, 66, 38, 58, 32, 50, 28];
+  const SIDE_L = [21, 30, 29, 30, 30, 46, 27, 54, 24, 50, 21, 40];
+  const cap = (m, top) => { m.oval(21, top == null ? 8 : top, 74, 62, W); for (let y = 36; y < S; y++) for (let x = 0; x < S; x++) m.clear(x, y); };
+  const fringe = (m, p, pts) => { if (p.parted) { m.poly(PARTED_L, W); m.poly(PARTED_R, W); } else m.poly(pts || BANGS, W); };
+  const sides = (m) => { m.poly(SIDE_L, W); m.poly(mirror(SIDE_L), W); };
+  const wavy = (x0, x1, y0, y1, amp, ph) => {
+    const pts = [];
+    for (let y = y0; y <= y1; y += 2) pts.push(x0 + Math.round(Math.sin(y / 6 + ph) * amp), y);
+    for (let y = y1; y >= y0; y -= 2) pts.push(x1 + Math.round(Math.sin(y / 6 + ph + 0.6) * amp), y);
+    return pts;
+  };
+  const BACK_MASS = (m) => m.oval(21, 9, 74, 60, W);
+
+  function front(fn, o) {
+    return (b, ctx, face) => {
+      const { p, C } = ctx;
+      const m = mask((mm) => fn(mm, p));
+      castShadow(b, face, m, C.sk);
+      locks(b, m, C.hair, Object.assign({ ox: 48, oy: 5, h0: 13, h1: 18, hx: 8, r0: 19 }, o));
+    };
+  }
+  function back(fn, o) {
+    return (b, ctx) => {
+      const { p, C } = ctx;
+      const m = mask((mm) => fn(mm, p));
+      const R = C.hair.map((c) => shade(c, -1));
+      R[4] = C.hair[3];
+      locks(b, m, R, Object.assign({ ox: 48, oy: 6, open: true }, o));
+    };
+  }
+  const tie = (b, C, x, y, w, h) => { b.rect(x, y, w, h, C.ac[1]); b.rect(x, y, w, 1, C.ac[2]); b.rect(x, y + h - 1, w, 1, C.ac[0]); };
+
+  const shortFront = (m, p) => { cap(m); fringe(m, p); sides(m); };
+  const H = {};
+  H.short = { back: back(BACK_MASS), front: front(shortFront) };
+  H.bob = {
+    back: back((m) => { m.oval(15, 7, 80, 60, W); m.rect(15, 34, 66, 36, W); m.oval(15, 58, 32, 76, W); m.oval(63, 58, 80, 76, W); }),
+    front: front((m, p) => { cap(m); fringe(m, p, BLUNT); const L = [16, 30, 30, 30, 32, 56, 30, 70, 24, 74, 18, 68, 15, 50]; m.poly(L, W); m.poly(mirror(L), W); }),
+  };
+  H.long = {
+    back: back((m) => m.poly([13, 36, 18, 12, 48, 3, 78, 12, 83, 36, 86, 96, 10, 96], W)),
+    front: front((m, p) => { cap(m); fringe(m, p); const L = [20, 30, 30, 30, 31, 60, 29, 80, 27, 96, 18, 96, 20, 70, 18, 48]; m.poly(L, W); m.poly(mirror(L), W); }),
+  };
+  H.wavy = {
+    back: back((m) => { m.oval(14, 3, 81, 50, W); m.poly(wavy(11, 84, 30, 96, 3, 0), W); }),
+    front: front((m, p) => { cap(m); fringe(m, p); m.poly(wavy(19, 30, 30, 96, 3, 0), W); m.poly(wavy(66, 77, 30, 96, 3, 1.5), W); }),
+  };
+  H.ponytail = {
+    back: back((m) => { BACK_MASS(m); m.oval(64, 20, 88, 56, W); m.poly([68, 50, 86, 50, 82, 70, 78, 80, 72, 66], W); }, { ox: 70, oy: 18 }),
+    front: front((m, p) => { shortFront(m, p); m.rect(66, 22, 9, 14, W); }),
+  };
+  const ptFront = H.ponytail.front;
+  H.ponytail.front = (b, ctx, face) => { ptFront(b, ctx, face); tie(b, ctx.C, 67, 20, 8, 5); };
+  H.bun = {
+    back: back(BACK_MASS),
+    front: (b, ctx, face) => {
+      const { p, C } = ctx;
+      const m = mask((mm) => { cap(mm, 11); fringe(mm, p); sides(mm); });
+      castShadow(b, face, m, C.sk);
+      locks(b, m, C.hair, { ox: 48, oy: 8, h0: 11, h1: 16, hx: 8, r0: 17 });
+      const bun = mask((mm) => mm.oval(35, -3, 60, 17, W));
+      locks(b, bun, C.hair, { ox: 44, oy: 3, step: 32, r0: 3, h0: 3, h1: 7, hx: 4 });
+      b.line(37, 15, 58, 15, C.hair[0]);
+      if (p.pins) {
+        b.line(56, 3, 70, -1, '#e0c070', 2); b.px(70, 0, '#fff0a8'); b.rect(69, 2, 1, 4, '#c8a050'); b.rect(68, 6, 3, 2, '#c85a6a');
+        b.line(28, 10, 40, 6, '#e0c070', 2); b.px(28, 10, '#fff0a8');
+      }
+    },
+  };
+  H.braid = {
+    back: back(BACK_MASS),
+    front: (b, ctx, face) => {
+      front(shortFront)(b, ctx, face);
+      const R = ctx.C.hair;
+      for (let i = 0; i < 6; i++) {
+        const x = 66 + Math.round(i * 0.9) + (i % 2), y = 50 + i * 7;
+        const seg = mask((mm) => mm.oval(x, y, x + 8, y + 8, W));
+        seg.each((xx, yy) => { const t = (xx - x - 4) * 0.8 + (yy - y - 4); b.px(xx, yy, R[t < -3 ? 3 : t < 2 ? 2 : t < 5 ? 1 : 0]); });
+      }
+      tie(b, ctx.C, 70, 91, 8, 3);
+    },
+  };
+  H.twintails = {
+    back: (b, ctx) => {
+      back(BACK_MASS)(b, ctx);
+      const TL = [18, 32, 26, 32, 25, 50, 20, 70, 14, 90, 6, 86, 8, 62, 12, 44];
+      back((m) => m.poly(TL, W), { ox: 20, oy: 28, step: 25, r0: 3 })(b, ctx);
+      back((m) => m.poly(mirror(TL), W), { ox: 76, oy: 28, step: 25, r0: 3 })(b, ctx);
+    },
+    front: (b, ctx, face) => { front(shortFront)(b, ctx, face); tie(b, ctx.C, 17, 28, 7, 7); tie(b, ctx.C, 72, 28, 7, 7); },
+  };
+  H.curly = {
+    back: (b, ctx) => { const m = mask((mm) => { mm.oval(10, 0, 85, 78, W); }); curls(b, m, ctx.C.hair.map((c) => shade(c, -1))); },
+    front: (b, ctx, face) => {
+      const m = mask((mm) => { mm.oval(14, 0, 81, 58, W); for (let y = 34; y < S; y++) for (let x = 24; x < 72; x++) mm.clear(x, y); for (let y = 28; y < 34; y++) for (let x = 28; x < 68; x++) if ((x >> 2) % 2 && y > 30) mm.clear(x, y); mm.oval(14, 30, 28, 64, W); mm.oval(67, 30, 81, 64, W); });
+      castShadow(b, face, m, ctx.C.sk);
+      curls(b, m, ctx.C.hair);
+    },
+  };
+  H.spiky = {
+    back: back(BACK_MASS),
+    front: front((m, p) => {
+      cap(m);
+      for (const t of [[24, 22, 26, 2, 36, 16], [34, 14, 40, -3, 47, 12], [46, 12, 54, -4, 58, 12], [56, 14, 66, 0, 68, 18], [66, 18, 78, 6, 75, 26], [23, 36, 11, 26, 24, 26], [72, 36, 85, 28, 72, 26]]) m.poly(t, W);
+      m.poly(SPIKY_BANGS, W); sides(m);
+    }, { step: 18 }),
+  };
+  H.shaved = {
+    front: (b, ctx, face) => {
+      const { C } = ctx;
+      const R = C.hair.map((c) => mix(c, C.sk[2], 0.45));
+      const m = mask((mm) => { mm.oval(25, 12, 70, 56, W); for (let y = 31; y < S; y++) for (let x = 29; x < 67; x++) mm.clear(x, y); for (let y = 45; y < S; y++) for (let x = 0; x < S; x++) mm.clear(x, y); });
+      m.each((x, y) => {
+        let v = 2;
+        const dx = x - 40, dy = y - 16;
+        if (dx * dx + dy * dy < 60 && y < 22) v = 3;
+        if (x > 60 || !m.alphaAt(x, y + 1)) v = 1;
+        if ((!m.alphaAt(x, y + 2) || !m.alphaAt(x, y + 3)) && (x + y) % 2) v = 1; // dithered hairline
+        b.px(x, y, R[v]);
+      });
+    },
+  };
+  H.wrap = {
+    back: back(BACK_MASS),
+    front: (b, ctx, face) => {
+      const { p, C } = ctx;
+      const hm = mask((mm) => sides(mm));
+      locks(b, hm, C.hair, { ox: 48, oy: 5 });
+      const c = p.wrapCol || C.ac[1];
+      const R = [shade(c, -2), shade(c, -1), c, shade(c, 1), shade(c, 2)];
+      const m = mask((mm) => { mm.oval(19, 5, 76, 48, W); for (let y = 34; y < S; y++) for (let x = 0; x < S; x++) mm.clear(x, y); mm.rect(19, 28, 58, 6, W); });
+      castShadow(b, face, m, C.sk);
+      folds(b, m, R);
+      b.rect(19, 31, 58, 1, R[3]); b.rect(19, 33, 58, 1, R[1]);
+      const knot = mask((mm) => { mm.oval(64, 6, 78, 18, W); mm.poly([72, 16, 82, 30, 76, 32, 68, 18], W); });
+      knot.each((x, y) => b.px(x, y, R[!knot.alphaAt(x + 1, y) || !knot.alphaAt(x, y + 1) ? 1 : x < 70 && y < 12 ? 4 : 3]));
+    },
+  };
+  H.bald = { front: (b, ctx) => { b.oval(34, 16, 44, 22, P.alpha('#ffffff', 0.25)); } };
+
+  RB.portraits.hairStyles = H;
 })();
 
 
@@ -18215,9 +20582,10 @@ RB.ui.create = (function () {
       if (kind === 'walker') {
         const look = { skin: 3, hair: 'short', hairColor: 1, outfit: 5, acc: ['scarf'], scarfCol: '#6a6a7a' };
         const f = reduced ? 0 : Math.floor(t / 180) % 3;
-        const img = RB.sprites.get(look, 'up', f === 2 ? 2 : f);
+        const art = RB.sprites.getArt && RB.sprites.getArt(look, 'up', f === 2 ? 2 : f);
         const y = h * 0.95 - k * h * 0.2;
-        c.drawImage(img, Math.round(cx - 8), Math.round(y - 24));
+        if (art) c.drawImage(art, Math.round(cx - 8), Math.round(y - 24), 16, 24); // logical size; drawn at art resolution by the ×2 transform
+        else c.drawImage(RB.sprites.get(look, 'up', f === 2 ? 2 : f), Math.round(cx - 8), Math.round(y - 24));
         const gl = c.createRadialGradient(cx + 6, y - 10, 0, cx + 6, y - 10, 18);
         gl.addColorStop(0, 'rgba(255,210,120,0.5)'); gl.addColorStop(1, 'rgba(255,210,120,0)');
         c.fillStyle = gl; c.fillRect(cx - 14, y - 30, 40, 40);
@@ -18405,39 +20773,16 @@ RB.ui.create = (function () {
   // RB.portraits.drawPlayer paints its own dark mount. For the paper sheet we
   // lift the figure off it: pixels that match that mount's gradient exactly
   // (rendered the same way here) become transparent. The drawing is unchanged.
-  let mountRef = null;
-  const cutCache = new Map();
-  function mount() {
-    if (mountRef) return mountRef;
-    const cv = document.createElement('canvas');
-    cv.width = cv.height = 48;
-    const c = cv.getContext('2d');
-    const g = c.createLinearGradient(0, 0, 0, 48);
-    g.addColorStop(0, '#2e3a34');
-    g.addColorStop(1, '#0e1018');
-    c.fillStyle = g;
-    c.fillRect(0, 0, 48, 48);
-    mountRef = c.getImageData(0, 0, 48, 48).data;
-    return mountRef;
-  }
+  // The player's portrait without its dark mount, for the paper sheet.
   function cut(look, expr) {
-    const key = JSON.stringify(look) + '|' + expr;
-    let cv = cutCache.get(key);
-    if (cv) return cv;
-    cv = document.createElement('canvas');
-    cv.width = cv.height = 48;
-    RB.portraits.drawPlayer(cv, look, expr);
-    try {
-      const c = cv.getContext('2d');
-      const img = c.getImageData(0, 0, 48, 48), d = img.data, m = mount();
-      for (let i = 0; i < d.length; i += 4) {
-        if (Math.abs(d[i] - m[i]) <= 2 && Math.abs(d[i + 1] - m[i + 1]) <= 2 && Math.abs(d[i + 2] - m[i + 2]) <= 2) d[i + 3] = 0;
-      }
-      c.putImageData(img, 0, 0);
-    } catch (e) { /* keep the mounted portrait */ }
-    cutCache.set(key, cv);
-    if (cutCache.size > 240) cutCache.delete(cutCache.keys().next().value);
-    return cv;
+    return RB.portraits.playerImage(look, expr);
+  }
+  // 32×48 art sprite when available (16×24 enlarged otherwise)
+  function fig(c, look, dir, frame) {
+    const art = RB.sprites.getArt && RB.sprites.getArt(look, dir, frame);
+    c.imageSmoothingEnabled = false;
+    if (art) c.drawImage(art, 0, 0);
+    else c.drawImage(RB.sprites.get(look, dir, frame), 0, 0, 32, 48);
   }
 
   // ---- the stepped registration --------------------------------------------------------------
@@ -18472,8 +20817,8 @@ RB.ui.create = (function () {
       // -- builders ------------------------------------------------------------------------
       function sheetHtml() {
         return '<aside class="cr-sheet" aria-label="Your traveller"><div class="cr-kick" aria-hidden="true">Your traveller</div>' +
-          '<div class="cr-figs" aria-hidden="true"><div class="cr-port"><canvas width="48" height="48"></canvas></div>' +
-          '<div class="cr-fig" data-dir="down"><canvas width="16" height="24"></canvas></div></div>' +
+          '<div class="cr-figs" aria-hidden="true"><div class="cr-port"><canvas width="' + RB.portraits.S + '" height="' + RB.portraits.S + '"></canvas></div>' +
+          '<div class="cr-fig" data-dir="down"><canvas width="32" height="48"></canvas></div></div>' +
           '<div class="cr-sum"><div class="cr-nm"></div><div class="cr-sub"></div></div>' +
           '<div class="cr-turn" role="group" aria-label="Turn the figure"><button type="button" class="pbtn" data-a="turnl" aria-label="Turn left">' + I('cr-turnl') + '</button>' +
           '<button type="button" class="pbtn" data-a="turnr" aria-label="Turn right">' + I('cr-turnr') + '</button></div>' +
@@ -18501,7 +20846,7 @@ RB.ui.create = (function () {
       function tileGroup(key, legend, vals, thumb) {
         return '<fieldset class="field cr-group" data-group="' + key + '"><legend>' + esc(legend) + ' <span class="cr-selected" data-selof="' + key + '"></span></legend><div class="cr-tiles cr-tiles-' + key + '">' +
           vals.map((v) => '<label class="cr-tile"><input type="radio" name="cr-' + key + '" data-set="' + key + '" data-v="' + esc(v) + '"><span class="face">' + tick +
-            (thumb === 'port' ? '<canvas width="48" height="48" data-th="' + key + ':' + esc(v) + '"></canvas>' : '<canvas width="16" height="24" data-th="' + key + ':' + esc(v) + '"></canvas>') +
+            (thumb === 'port' ? '<canvas width="' + RB.portraits.S + '" height="' + RB.portraits.S + '" data-th="' + key + ':' + esc(v) + '"></canvas>' : '<canvas width="32" height="48" data-th="' + key + ':' + esc(v) + '"></canvas>') +
             '<span class="nm">' + esc(NAME[key](v)) + '</span></span></label>').join('') + '</div></fieldset>';
       }
       function entryGroup(key, attr, legend, list, iconOf, sr) {
@@ -18543,7 +20888,7 @@ RB.ui.create = (function () {
             '<div class="hint" id="acc-hint">Up to two. Choosing a third takes off the one you chose first.</div>' +
             '<div class="cr-tiles cr-tiles-acc">' + RB.sprites.ACCESSORIES.map((a) =>
               '<label class="cr-tile cr-acc"><input type="checkbox" data-acc="' + esc(a) + '" aria-describedby="acc-hint"><span class="face"><span class="box" aria-hidden="true">' + I('done') + '</span>' +
-              '<canvas width="48" height="48" data-th="acc:' + esc(a) + '"></canvas><span class="nm">' + esc(NAME.acc(a)) + '</span></span></label>').join('') +
+              '<canvas width="' + RB.portraits.S + '" height="' + RB.portraits.S + '" data-th="acc:' + esc(a) + '"></canvas><span class="nm">' + esc(NAME.acc(a)) + '</span></span></label>').join('') +
             '</div><p class="cr-accnote" aria-live="polite"></p></fieldset>';
         },
         background() {
@@ -18571,14 +20916,15 @@ RB.ui.create = (function () {
         if (!sheet) return;
         const fc = sheet.querySelector('.cr-fig canvas');
         const c = fc.getContext('2d');
-        c.clearRect(0, 0, 16, 24);
-        c.drawImage(RB.sprites.get(p.look, V.dir, V.blink && V.dir !== 'up' ? 3 : 0), 0, 0);
+        c.clearRect(0, 0, fc.width, fc.height);
+        fig(c, p.look, V.dir, V.blink && V.dir !== 'up' ? 3 : 0);
         sheet.querySelector('.cr-fig').setAttribute('data-dir', V.dir);
       }
       function drawMain() {
         if (!sheet) return;
-        const c = sheet.querySelector('.cr-port canvas').getContext('2d');
-        c.clearRect(0, 0, 48, 48);
+        const pc = sheet.querySelector('.cr-port canvas');
+        const c = pc.getContext('2d');
+        c.clearRect(0, 0, pc.width, pc.height);
         c.drawImage(cut(p.look, 'smile'), 0, 0);
         drawFig();
       }
@@ -18589,7 +20935,7 @@ RB.ui.create = (function () {
           c.clearRect(0, 0, cv.width, cv.height);
           if (k === 'hair') c.drawImage(cut(Object.assign({}, p.look, { hair: v, acc: [] }), 'neutral'), 0, 0);
           else if (k === 'acc') c.drawImage(cut(Object.assign({}, p.look, { acc: [v] }), 'neutral'), 0, 0);
-          else if (k === 'shape') c.drawImage(RB.sprites.get(Object.assign({}, p.look, { shape: v, acc: [] }), 'down', 0), 0, 0);
+          else if (k === 'shape') fig(c, Object.assign({}, p.look, { shape: v, acc: [] }), 'down', 0);
         });
       }
       function updateSheet() {
@@ -24395,7 +26741,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 (function (C) {
   'use strict';
   C.chars.mochi = { name: { en: 'Mochi', jp: 'モチ' }, voice: { pitch: 1.4 }, look: { custom: 'cat', col: '#e8d8c0' },
-    portrait: { skin: ['#e8d8c0', '#c8b8a0'], hair: ['#e8d8c0', '#d8c8b0', '#fff8ec'], cloth: ['#c86a5a', '#a85a4a', '#e8c060'], style: 'short', eyes: 'round', bg: '#2e3a2a' } };
+    portrait: { kind: 'cat', skin: ['#e8d8c0', '#c8b8a0'], hair: ['#e8d8c0', '#d8c8b0', '#fff8ec'], cloth: ['#c86a5a', '#a85a4a', '#e8c060'], style: 'short', eyes: 'round', bg: '#2e3a2a' } };
   C.quests.rw_mochi = { chapter: 1, title: { jp: 'モチ と いう {猫|ねこ}', en: 'A Cat Called Mochi' },
     stages: [
       { jp: 'トモ の {猫|ねこ} が いない 。 {川|かわ} の {向|む}こう で {見|み}た {人|ひと} が いる らしい 。', en: 'Tomo\'s cat is missing. Someone saw a cat across the river.' },
@@ -41219,16 +43565,18 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const clerkFace = {
     skin: ['#ece6d6', '#cfc6b0'], hair: ['#d8d0bc', '#c4bca8', '#f4f0e6'], cloth: ['#8a8474', '#6e695c', '#c85a4a'],
     style: 'shaved', acc: [], eyes: 'round', bg: '#2a2c40', age: 'adult',
-    extra: (c, expr) => {
+    extra2: (c, expr) => {
       // a face made of index cards: a ruled card for a forehead, ink-slit eyes
-      c.fillStyle = '#f4efe2'; c.fillRect(12, 8, 24, 10);
-      c.fillStyle = '#b8b0a0'; for (let i = 0; i < 3; i++) c.fillRect(13, 10 + i * 3, 22, 1);
-      c.fillStyle = '#c85a4a'; c.fillRect(12, 8, 24, 1);
-      c.fillStyle = '#f4efe2'; c.fillRect(14, 19, 20, 14);
-      c.fillStyle = '#2a2436';
-      if (expr === 'smile' || expr === 'laugh') { c.fillRect(17, 23, 4, 1); c.fillRect(27, 23, 4, 1); }
-      else { c.fillRect(18, 22, 2, 3); c.fillRect(28, 22, 2, 3); }
-      c.fillStyle = '#b8b0a0'; c.fillRect(20, 30, 8, 1);
+      const R = (x, y, w, h, col) => { c.fillStyle = col; c.fillRect(x, y, w, h); };
+      R(24, 16, 48, 20, '#f4efe2'); R(24, 16, 48, 2, '#c85a4a'); R(24, 18, 48, 1, '#e8a090');
+      R(70, 18, 2, 18, '#d8d0bc'); R(24, 35, 48, 1, '#cfc6b0');
+      for (let i = 0; i < 3; i++) R(26, 22 + i * 5, 44, 1, '#b8b0a0');
+      R(28, 38, 40, 28, '#f4efe2'); R(28, 38, 40, 1, '#fffaf0'); R(66, 39, 2, 27, '#d8d0bc'); R(28, 65, 40, 1, '#c4bca8');
+      const ink = '#2a2436';
+      if (expr === 'smile' || expr === 'laugh') { R(34, 46, 8, 2, ink); R(54, 46, 8, 2, ink); R(33, 47, 1, 1, ink); R(62, 47, 1, 1, ink); }
+      else if (expr === 'surprise') { R(36, 42, 4, 9, ink); R(56, 42, 4, 9, ink); }
+      else { R(36, 44, 4, 6, ink); R(56, 44, 4, 6, ink); R(36, 44, 1, 2, '#6a6480'); R(56, 44, 1, 2, '#6a6480'); }
+      R(40, 60, 16, 2, '#b8b0a0');
     },
   };
   C.chars.sa_clerk = { name: T('Catalogue Clerk', '{目録|もくろく}{係|がかり}'), voice: { pitch: 1.2, rate: 0.9 }, look: clerkLook, portrait: clerkFace };
@@ -41239,7 +43587,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     portrait: {
       eyes: 'narrow', style: 'wrap', wrapCol: '#6a6a78', age: 'old', collar: 'high', acc: ['lamp'], bg: '#262a44',
       // thick brows and an ink smudge on the left cheek (Ren remembers both)
-      extra: (c) => { c.fillStyle = '#d8d4d0'; c.fillRect(15, 16, 7, 2); c.fillRect(26, 16, 7, 2); c.fillStyle = '#2a2436'; c.fillRect(16, 27, 3, 2); },
+      brows: 'thick', browCol: '#d8d4d0', smudge: '#2a2436',
     },
   };
   C.chars.sa_tae = {

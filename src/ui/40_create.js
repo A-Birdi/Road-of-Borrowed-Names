@@ -56,9 +56,10 @@ RB.ui.create = (function () {
       if (kind === 'walker') {
         const look = { skin: 3, hair: 'short', hairColor: 1, outfit: 5, acc: ['scarf'], scarfCol: '#6a6a7a' };
         const f = reduced ? 0 : Math.floor(t / 180) % 3;
-        const img = RB.sprites.get(look, 'up', f === 2 ? 2 : f);
+        const art = RB.sprites.getArt && RB.sprites.getArt(look, 'up', f === 2 ? 2 : f);
         const y = h * 0.95 - k * h * 0.2;
-        c.drawImage(img, Math.round(cx - 8), Math.round(y - 24));
+        if (art) c.drawImage(art, Math.round(cx - 8), Math.round(y - 24), 16, 24); // logical size; drawn at art resolution by the ×2 transform
+        else c.drawImage(RB.sprites.get(look, 'up', f === 2 ? 2 : f), Math.round(cx - 8), Math.round(y - 24));
         const gl = c.createRadialGradient(cx + 6, y - 10, 0, cx + 6, y - 10, 18);
         gl.addColorStop(0, 'rgba(255,210,120,0.5)'); gl.addColorStop(1, 'rgba(255,210,120,0)');
         c.fillStyle = gl; c.fillRect(cx - 14, y - 30, 40, 40);
@@ -246,39 +247,16 @@ RB.ui.create = (function () {
   // RB.portraits.drawPlayer paints its own dark mount. For the paper sheet we
   // lift the figure off it: pixels that match that mount's gradient exactly
   // (rendered the same way here) become transparent. The drawing is unchanged.
-  let mountRef = null;
-  const cutCache = new Map();
-  function mount() {
-    if (mountRef) return mountRef;
-    const cv = document.createElement('canvas');
-    cv.width = cv.height = 48;
-    const c = cv.getContext('2d');
-    const g = c.createLinearGradient(0, 0, 0, 48);
-    g.addColorStop(0, '#2e3a34');
-    g.addColorStop(1, '#0e1018');
-    c.fillStyle = g;
-    c.fillRect(0, 0, 48, 48);
-    mountRef = c.getImageData(0, 0, 48, 48).data;
-    return mountRef;
-  }
+  // The player's portrait without its dark mount, for the paper sheet.
   function cut(look, expr) {
-    const key = JSON.stringify(look) + '|' + expr;
-    let cv = cutCache.get(key);
-    if (cv) return cv;
-    cv = document.createElement('canvas');
-    cv.width = cv.height = 48;
-    RB.portraits.drawPlayer(cv, look, expr);
-    try {
-      const c = cv.getContext('2d');
-      const img = c.getImageData(0, 0, 48, 48), d = img.data, m = mount();
-      for (let i = 0; i < d.length; i += 4) {
-        if (Math.abs(d[i] - m[i]) <= 2 && Math.abs(d[i + 1] - m[i + 1]) <= 2 && Math.abs(d[i + 2] - m[i + 2]) <= 2) d[i + 3] = 0;
-      }
-      c.putImageData(img, 0, 0);
-    } catch (e) { /* keep the mounted portrait */ }
-    cutCache.set(key, cv);
-    if (cutCache.size > 240) cutCache.delete(cutCache.keys().next().value);
-    return cv;
+    return RB.portraits.playerImage(look, expr);
+  }
+  // 32×48 art sprite when available (16×24 enlarged otherwise)
+  function fig(c, look, dir, frame) {
+    const art = RB.sprites.getArt && RB.sprites.getArt(look, dir, frame);
+    c.imageSmoothingEnabled = false;
+    if (art) c.drawImage(art, 0, 0);
+    else c.drawImage(RB.sprites.get(look, dir, frame), 0, 0, 32, 48);
   }
 
   // ---- the stepped registration --------------------------------------------------------------
@@ -313,8 +291,8 @@ RB.ui.create = (function () {
       // -- builders ------------------------------------------------------------------------
       function sheetHtml() {
         return '<aside class="cr-sheet" aria-label="Your traveller"><div class="cr-kick" aria-hidden="true">Your traveller</div>' +
-          '<div class="cr-figs" aria-hidden="true"><div class="cr-port"><canvas width="48" height="48"></canvas></div>' +
-          '<div class="cr-fig" data-dir="down"><canvas width="16" height="24"></canvas></div></div>' +
+          '<div class="cr-figs" aria-hidden="true"><div class="cr-port"><canvas width="' + RB.portraits.S + '" height="' + RB.portraits.S + '"></canvas></div>' +
+          '<div class="cr-fig" data-dir="down"><canvas width="32" height="48"></canvas></div></div>' +
           '<div class="cr-sum"><div class="cr-nm"></div><div class="cr-sub"></div></div>' +
           '<div class="cr-turn" role="group" aria-label="Turn the figure"><button type="button" class="pbtn" data-a="turnl" aria-label="Turn left">' + I('cr-turnl') + '</button>' +
           '<button type="button" class="pbtn" data-a="turnr" aria-label="Turn right">' + I('cr-turnr') + '</button></div>' +
@@ -342,7 +320,7 @@ RB.ui.create = (function () {
       function tileGroup(key, legend, vals, thumb) {
         return '<fieldset class="field cr-group" data-group="' + key + '"><legend>' + esc(legend) + ' <span class="cr-selected" data-selof="' + key + '"></span></legend><div class="cr-tiles cr-tiles-' + key + '">' +
           vals.map((v) => '<label class="cr-tile"><input type="radio" name="cr-' + key + '" data-set="' + key + '" data-v="' + esc(v) + '"><span class="face">' + tick +
-            (thumb === 'port' ? '<canvas width="48" height="48" data-th="' + key + ':' + esc(v) + '"></canvas>' : '<canvas width="16" height="24" data-th="' + key + ':' + esc(v) + '"></canvas>') +
+            (thumb === 'port' ? '<canvas width="' + RB.portraits.S + '" height="' + RB.portraits.S + '" data-th="' + key + ':' + esc(v) + '"></canvas>' : '<canvas width="32" height="48" data-th="' + key + ':' + esc(v) + '"></canvas>') +
             '<span class="nm">' + esc(NAME[key](v)) + '</span></span></label>').join('') + '</div></fieldset>';
       }
       function entryGroup(key, attr, legend, list, iconOf, sr) {
@@ -384,7 +362,7 @@ RB.ui.create = (function () {
             '<div class="hint" id="acc-hint">Up to two. Choosing a third takes off the one you chose first.</div>' +
             '<div class="cr-tiles cr-tiles-acc">' + RB.sprites.ACCESSORIES.map((a) =>
               '<label class="cr-tile cr-acc"><input type="checkbox" data-acc="' + esc(a) + '" aria-describedby="acc-hint"><span class="face"><span class="box" aria-hidden="true">' + I('done') + '</span>' +
-              '<canvas width="48" height="48" data-th="acc:' + esc(a) + '"></canvas><span class="nm">' + esc(NAME.acc(a)) + '</span></span></label>').join('') +
+              '<canvas width="' + RB.portraits.S + '" height="' + RB.portraits.S + '" data-th="acc:' + esc(a) + '"></canvas><span class="nm">' + esc(NAME.acc(a)) + '</span></span></label>').join('') +
             '</div><p class="cr-accnote" aria-live="polite"></p></fieldset>';
         },
         background() {
@@ -412,14 +390,15 @@ RB.ui.create = (function () {
         if (!sheet) return;
         const fc = sheet.querySelector('.cr-fig canvas');
         const c = fc.getContext('2d');
-        c.clearRect(0, 0, 16, 24);
-        c.drawImage(RB.sprites.get(p.look, V.dir, V.blink && V.dir !== 'up' ? 3 : 0), 0, 0);
+        c.clearRect(0, 0, fc.width, fc.height);
+        fig(c, p.look, V.dir, V.blink && V.dir !== 'up' ? 3 : 0);
         sheet.querySelector('.cr-fig').setAttribute('data-dir', V.dir);
       }
       function drawMain() {
         if (!sheet) return;
-        const c = sheet.querySelector('.cr-port canvas').getContext('2d');
-        c.clearRect(0, 0, 48, 48);
+        const pc = sheet.querySelector('.cr-port canvas');
+        const c = pc.getContext('2d');
+        c.clearRect(0, 0, pc.width, pc.height);
         c.drawImage(cut(p.look, 'smile'), 0, 0);
         drawFig();
       }
@@ -430,7 +409,7 @@ RB.ui.create = (function () {
           c.clearRect(0, 0, cv.width, cv.height);
           if (k === 'hair') c.drawImage(cut(Object.assign({}, p.look, { hair: v, acc: [] }), 'neutral'), 0, 0);
           else if (k === 'acc') c.drawImage(cut(Object.assign({}, p.look, { acc: [v] }), 'neutral'), 0, 0);
-          else if (k === 'shape') c.drawImage(RB.sprites.get(Object.assign({}, p.look, { shape: v, acc: [] }), 'down', 0), 0, 0);
+          else if (k === 'shape') fig(c, Object.assign({}, p.look, { shape: v, acc: [] }), 'down', 0);
         });
       }
       function updateSheet() {
