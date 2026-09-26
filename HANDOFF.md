@@ -28,27 +28,35 @@
 
 ## State
 - Engine, UI, saves, learning, combat, recognizer, language, audio: implemented.
-- Chapter 1 (Reedwake) complete and validated (0 unknown tokens); browser story
-  flow passes for all 4 companions × F/A profiles (tests/e2e/story_ch1.mjs).
-- Chapters 2–6 and the Atlas are being written by parallel workers into
-  src/content/ch2..ch6 and src/atlas (in progress at time of writing; check
-  git log and validator output).
+- Chapters 1, 3, 4, 5, 6 and the Unwritten Atlas complete (validator: no
+  errors). Chapter 2 (Saltglass) worker finishing its own tests; its files are
+  already in src/content/ch2 and validate.
+- Per-chapter browser story tests: tests/e2e/story_ch1.mjs, story_ch3.mjs,
+  side_ch3.mjs, story_ch4.mjs, story_ch6.mjs, atlas.check.mjs; generic blind
+  explorer tests/e2e/explore.mjs (chained targets `a>b>c`, optional map prefix).
+- Atlas restoration details (src/content/zz_atlas_decor.js): Reedwake, Cinder
+  Orchard, Snowbell, Lanternfall, lantern road done; Saltglass (flag
+  atlas_restore_2) pending until Chapter 2 is final.
+- Content counts: `node tools/validate.mjs --stats`.
 
 ## Commands
 - Build: `node tools/build.mjs`
 - Content validation: `node tools/validate.mjs [--filter sg] [--unknown]`
 - Unit tests: `node tests/run-unit.mjs [filter]`
 - Browser: `node tests/e2e/story_ch1.mjs [F|E|I|A] [nao|mio|ren|suzu]`,
+  `node tests/e2e/story_ch3.mjs [prof] [comp]`, `story_ch4.mjs [prof] [comp] [stay|go|both]`,
+  `story_ch6.mjs [runIndex 0-4]`, `node tests/e2e/atlas.check.mjs`,
+  explorer: `node tests/e2e/explore.mjs <map> <x> <y> <flag[>flag…]> [comp|none] [prof] [seed] [maxActions] [flags] [words] [mapPrefix]`,
   `node tests/e2e/ui.mjs [filter]`, `node tests/e2e/audio.check.mjs`,
   screenshots: `node tests/e2e/shot.mjs out.png "<js>" [ms] [WxH]`.
 
 ## Next concrete actions
-1. Integrate chapter workers' output; fix validator errors; add story-flow
-   browser tests per chapter (pattern: tests/e2e/story_ch1.mjs).
-2. Hub decorations for Atlas restoration flags (see docs/ATLAS.md when present).
-3. Full-game flow test (ch1→ch6→ending→atlas) with RB.test auto mode.
-4. Visual review of screenshots per region; polish.
-5. Update REQUIREMENTS.md / VALIDATION.md with evidence; final report.
+1. Integrate the Chapter 2 worker's final report; add its story test; Saltglass
+   Atlas restoration detail (flag atlas_restore_2, harbour cargo tags).
+2. Full-game flow test: explorer chained ch1_done>ch2_done>…>ch6_done from a
+   new campaign, plus Atlas expedition after the ending.
+3. Visual review of screenshots per region; polish.
+4. Update REQUIREMENTS.md / VALIDATION.md with evidence; final report.
 
 ## Known issues / limits
 - No human handwriting samples tested (synthetic + font-derived only).
