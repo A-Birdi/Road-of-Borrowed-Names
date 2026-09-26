@@ -108,6 +108,19 @@ async function checkWorldVisible() {
   for (let i = 0; i < now.length; i += 3) if (Math.abs(now[i] - titleSample[i]) + Math.abs(now[i + 1] - titleSample[i + 1]) + Math.abs(now[i + 2] - titleSample[i + 2]) > 30) differing++;
   assert(differing > now.length / 3 * 0.4, `canvas still looks like the title backdrop (${differing}/${now.length / 3} sample points changed)`);
 }
+// Press Enter through dialogue until the world is SETTLED: world mode with no
+// scene running for three checks in a row (a scene can end and the next one
+// start a moment later, so one 'world' reading is not enough). Up to ~30 s.
+async function settleWorld() {
+  let calm = 0;
+  for (let n = 0; n < 300 && calm < 3; n++) {
+    const st = await page.evaluate(() => RB.game.mode() === 'world' && !RB.script.isRunning());
+    if (st) { calm++; await page.waitForTimeout(120); continue; }
+    calm = 0;
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(100);
+  }
+}
 async function test(name, fn, { seed = true } = {}) {
   const t = Date.now();
   try { await boot(seed); await fn(); assert.deepEqual(errors, []); results.push({ name, pass: true, ms: Date.now() - t, storageMode }); console.log('PASS', name, '[' + storageMode + ']'); }
@@ -186,12 +199,21 @@ try {
     for (let i = 0; i < 3; i++) await page.locator('[data-a="next"]').click(); // four creation steps
     await page.locator('[data-k="profile"][data-v="E"]').click();
     await page.locator('[data-k="input"][data-v="choice"]').click(); await page.locator('[data-a="go"]').click();
-    for (let n = 0; n < 200; n++) { if (await page.evaluate(() => RB.game.mode() === 'world')) break; await page.keyboard.press('Enter'); await page.waitForTimeout(100); } // up to 20 s of Enter presses: each line may need one to finish revealing and one for 'More'
+    await settleWorld(); // presses Enter through the opening until the world is settled
+    if (await page.evaluate(() => RB.game.mode()) !== 'world') {
+      // say where it is stuck before failing
+      console.log('STUCK ' + JSON.stringify(await page.evaluate(() => ({
+        modes: RB.game.G.modes, script: RB.script.isRunning(), dlg: RB.ui.dialogue.isOpen() && (document.querySelector('.dlg .main') || {}).textContent,
+        more: !!document.querySelector('.dlg.more'), top: RB.ui.topLayer() && RB.ui.topLayer().name, active: document.activeElement && (document.activeElement.className || document.activeElement.tagName),
+        help: !!document.querySelector('.help'), choices: [...document.querySelectorAll('.choices .choice')].map((b) => b.textContent.slice(0, 30)),
+      }))));
+      await page.screenshot({ path: path.join(root, 'tests/e2e/out', 'stuck_new_game.png') }).catch(() => {});
+    }
     assert.equal(await page.evaluate(() => RB.game.mode()), 'world'); await spyWorld(); await checkWorldVisible(); await page.keyboard.press('ShiftLeft'); await checkLive();
   }, { seed: false });
   await test('New campaign API clears a prior title override itself', async () => {
     await page.evaluate(async () => { RB.ui.title.hide(); const s = RB.state.newCampaign({ profile: 'E' }); RB.game.settings.textSpeed = 'instant'; await RB.game.startNewCampaign(2, s); });
-    for (let n = 0; n < 200; n++) { if (await page.evaluate(() => RB.game.mode() === 'world')) break; await page.keyboard.press('Enter'); await page.waitForTimeout(100); } // up to 20 s of Enter presses: each line may need one to finish revealing and one for 'More'
+    await settleWorld(); // presses Enter through the opening until the world is settled
     await spyWorld(); await checkWorldVisible(); await checkLive();
   });
   if (!inline) {

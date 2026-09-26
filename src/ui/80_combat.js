@@ -3,275 +3,97 @@
  * response cards, and runs the language step for the chosen response. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
-RB.enemyArt = (function () {
-  'use strict';
-  // Each art draws a creature centred at (0,0) on a ~64px scale.
-  const A = {};
-  const circ = (c, x, y, r, col) => { c.fillStyle = col; c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill(); };
-  const eyes = (c, x, y, gap, col, h) => { c.fillStyle = col || '#1a1430'; c.fillRect(x - gap - 2, y, 3, h || 4); c.fillRect(x + gap - 1, y, 3, h || 4); };
-  A.wisp = (c, t, o) => {
-    const col = o.col || '#9fb8e8';
-    const b = Math.sin(t / 400) * 3;
-    for (let i = 5; i > 0; i--) circ(c, Math.sin(t / 300 + i) * 3, 20 + i * 6 + b, 10 - i, col + '50');
-    circ(c, 0, b, 22, col + '40');
-    circ(c, 0, b, 16, col);
-    circ(c, -5, b - 5, 5, '#ffffffa0');
-    eyes(c, 0, b - 2, 6, '#1a1430', 6);
-  };
-  A.moth = (c, t, o) => {
-    const col = o.col || '#c8c0e0';
-    const f = Math.sin(t / 160) * 0.25;
-    for (const s of [-1, 1]) {
-      c.save(); c.scale(s, 1); c.rotate(f);
-      c.fillStyle = col; c.beginPath(); c.ellipse(18, -6, 20, 14, -0.3, 0, 7); c.fill();
-      c.fillStyle = (o.col2 || '#9a8ab8'); c.beginPath(); c.ellipse(14, 14, 12, 9, 0.4, 0, 7); c.fill();
-      c.fillStyle = '#ffffff70'; c.fillRect(12, -10, 8, 2); c.fillRect(16, -4, 6, 2); c.fillRect(10, 2, 5, 2);
-      c.restore();
-    }
-    c.fillStyle = '#3a3050'; c.fillRect(-4, -14, 8, 34);
-    c.fillRect(-7, -20, 2, 7); c.fillRect(5, -20, 2, 7);
-    eyes(c, 0, -10, 3, '#f0e8ff', 3);
-  };
-  A.blot = (c, t, o) => {
-    const col = o.col || '#241f3a';
-    const w = Math.sin(t / 350) * 2;
-    c.fillStyle = col;
-    c.beginPath(); c.ellipse(0, 18, 30 + w, 10, 0, 0, 7); c.fill();
-    c.beginPath(); c.ellipse(0, 0, 20, 22 - w, 0, 0, 7); c.fill();
-    for (let i = 0; i < 5; i++) circ(c, -24 + i * 12, 22 + ((i * 5 + t / 90) % 10), 3, col);
-    eyes(c, 0, -6, 7, '#f4f0ff', 5);
-    c.fillStyle = '#f4f0ff80'; c.fillRect(-6, 6, 12, 2);
-  };
-  A.crane = (c, t, o) => {
-    const col = o.col || '#f4efe0';
-    const f = Math.sin(t / 220) * 8;
-    c.fillStyle = col;
-    c.beginPath(); c.moveTo(-34, -8 - f); c.lineTo(0, 6); c.lineTo(34, -8 - f); c.lineTo(0, 22); c.closePath(); c.fill();
-    c.fillStyle = '#d8d0bc'; c.beginPath(); c.moveTo(0, 6); c.lineTo(24, -26); c.lineTo(28, -24); c.lineTo(6, 14); c.fill();
-    c.fillStyle = '#c85a4a'; c.fillRect(24, -28, 6, 3);
-    c.fillStyle = '#2a2430a0'; for (let i = 0; i < 4; i++) c.fillRect(-20 + i * 9, -2 + (i % 2) * 3, 5, 1);
-  };
-  A.golem = (c, t, o) => {
-    const col = o.col || '#8fb8b0';
-    const b = Math.sin(t / 500) * 2;
-    c.fillStyle = col; c.fillRect(-18, -8 + b, 36, 34); c.fillRect(-12, -26 + b, 24, 18);
-    c.fillRect(-28, -4 + b, 10, 24); c.fillRect(18, -4 + b, 10, 24);
-    c.fillStyle = '#ffffff50'; c.fillRect(-16, -6 + b, 4, 30); c.fillRect(-10, -24 + b, 3, 14);
-    c.fillStyle = o.core || '#f0a060'; c.fillRect(-5, 4 + b, 10, 10);
-    eyes(c, 0, -18 + b, 5, '#123', 3);
-  };
-  A.lantern = (c, t, o) => {
-    const b = Math.sin(t / 400) * 3;
-    c.fillStyle = '#3a2e2a'; c.fillRect(-14, -24 + b, 28, 4); c.fillRect(-14, 18 + b, 28, 4);
-    c.fillStyle = '#f4ead0'; c.fillRect(-12, -20 + b, 24, 38);
-    c.fillStyle = (o.col || '#8aa8e8') + 'c0'; c.beginPath(); c.moveTo(-8, 10 + b); c.quadraticCurveTo(0, -20 + b + Math.sin(t / 150) * 4, 8, 10 + b); c.fill();
-    eyes(c, 0, -6 + b, 5, '#2a2440', 4);
-    c.fillStyle = '#8aa8e850'; c.beginPath(); c.moveTo(-10, 22 + b); c.lineTo(10, 22 + b); c.lineTo(0, 40 + b); c.fill();
-  };
-  A.echo = (c, t, o) => {
-    const col = o.col || '#a8c8d8';
-    c.strokeStyle = col; c.lineWidth = 3;
-    for (let i = 0; i < 3; i++) {
-      c.globalAlpha = 0.9 - i * 0.25;
-      c.beginPath(); c.arc(0, 0, 14 + i * 9 + Math.sin(t / 300 + i) * 2, 0, Math.PI * 2); c.stroke();
-    }
-    c.globalAlpha = 1;
-    const a = t / 1400;
-    c.lineWidth = 2;
-    for (let i = 0; i < 8; i++) { const an = a + i * Math.PI / 4; c.beginPath(); c.moveTo(Math.cos(an) * 10, Math.sin(an) * 10); c.lineTo(Math.cos(an) * 36, Math.sin(an) * 36); c.stroke(); }
-    circ(c, 0, 0, 9, '#1c2a34');
-    eyes(c, 0, -2, 3, col, 3);
-  };
-  A.clerk = (c, t, o) => {
-    const col = o.col || '#4a6a8a';
-    c.fillStyle = col; c.fillRect(-12, -10, 24, 40); c.fillRect(-9, -26, 18, 16);
-    c.fillStyle = '#e8e0cc'; c.fillRect(-9, -26, 18, 3);
-    const s = Math.sin(t / 350);
-    c.fillStyle = '#6a4a3a'; c.fillRect(14, -14 + s * 6, 6, 16); c.fillStyle = '#c85a4a'; c.fillRect(10, 2 + s * 6, 14, 6);
-    eyes(c, 0, -20, 4, '#f0f0ff', 2);
-    c.fillStyle = '#e8e0cc'; for (let i = 0; i < 3; i++) c.fillRect(-22 - i * 2, 10 - i * 8, 10, 7);
-  };
-  A.warden = (c, t, o) => {
-    const glow = 0.6 + Math.sin(t / 200) * 0.2;
-    c.fillStyle = '#6a4a3a'; c.beginPath(); c.moveTo(-26, 30); c.lineTo(-20, -18); c.quadraticCurveTo(0, -38, 20, -18); c.lineTo(26, 30); c.fill();
-    c.fillStyle = `rgba(255,150,60,${glow})`; c.fillRect(-10, 0, 20, 20);
-    c.fillStyle = '#8fb8b0'; c.fillRect(-12, -2, 24, 3);
-    eyes(c, 0, -14, 6, '#ffd070', 3);
-  };
-  A.bell = (c, t, o) => {
-    const sw = Math.sin(t / 500) * 0.15;
-    c.save(); c.rotate(sw);
-    c.fillStyle = o.col || '#8a7a4a';
-    c.beginPath(); c.moveTo(-14, -24); c.lineTo(14, -24); c.lineTo(22, 16); c.lineTo(-22, 16); c.closePath(); c.fill();
-    c.fillStyle = '#b8a468'; c.fillRect(-10, -20, 3, 30);
-    circ(c, 0, 20, 5, '#5a4a2a');
-    c.restore();
-    c.strokeStyle = '#c8a0a8a0'; c.lineWidth = 2;
-    for (let i = 0; i < 3; i++) { c.beginPath(); c.moveTo(-18 + i * 18, 18); c.quadraticCurveTo(-18 + i * 18 + Math.sin(t / 300 + i) * 8, 32, -14 + i * 18, 42); c.stroke(); }
-  };
-  A.fox = (c, t, o) => {
-    const col = o.col || '#e8eef4';
-    c.fillStyle = col;
-    c.beginPath(); c.ellipse(0, 10, 20, 12, 0, 0, 7); c.fill();
-    c.beginPath(); c.moveTo(-10, -2); c.lineTo(-16, -22); c.lineTo(-4, -8); c.fill();
-    c.beginPath(); c.moveTo(10, -2); c.lineTo(16, -22); c.lineTo(4, -8); c.fill();
-    c.beginPath(); c.ellipse(0, -4, 12, 10, 0, 0, 7); c.fill();
-    c.beginPath(); c.ellipse(24 + Math.sin(t / 300) * 3, 4, 12, 6, -0.6, 0, 7); c.fill();
-    eyes(c, 0, -6, 5, '#3a5a8a', 3);
-  };
-  A.crab = (c, t, o) => {
-    const col = o.col || '#c86a4a';
-    c.fillStyle = col; c.beginPath(); c.ellipse(0, 6, 26, 16, 0, 0, 7); c.fill();
-    c.fillStyle = '#f0e8d8'; c.fillRect(-14, -2, 12, 8); c.fillRect(2, 0, 12, 8);
-    c.fillStyle = '#2a2024'; c.fillRect(-12, 1, 8, 1); c.fillRect(4, 3, 8, 1);
-    const s = Math.sin(t / 250) * 4;
-    c.fillStyle = col; c.beginPath(); c.arc(-30, -10 + s, 8, 0, 7); c.fill(); c.beginPath(); c.arc(30, -10 - s, 8, 0, 7); c.fill();
-    eyes(c, 0, -14, 6, '#1a1a1a', 4);
-  };
-  A.hush = (c, t, o) => {
-    const b = Math.sin(t / 700) * 3;
-    c.fillStyle = '#e8e6f0';
-    c.beginPath(); c.moveTo(-26, 40); c.quadraticCurveTo(-30, -20 + b, 0, -34 + b); c.quadraticCurveTo(30, -20 + b, 26, 40); c.closePath(); c.fill();
-    c.strokeStyle = '#1a1830'; c.lineWidth = 2; c.beginPath(); c.arc(0, -14 + b, 8, 0, Math.PI * 2); c.stroke();
-    c.fillStyle = '#c8c4d8'; for (let i = 0; i < 6; i++) c.fillRect(-18 + i * 6, 6 + (i % 2) * 6 + b, 4, 14);
-  };
-  A.spirit = (c, t, o) => {
-    const col = o.col || '#e8e4ff';
-    const b = Math.sin(t / 450) * 3;
-    c.fillStyle = col + 'c0';
-    c.beginPath(); c.moveTo(-20, 34); c.quadraticCurveTo(-24, -20 + b, 0, -28 + b); c.quadraticCurveTo(24, -20 + b, 20, 34); c.lineTo(10, 26); c.lineTo(0, 34); c.lineTo(-10, 26); c.fill();
-    eyes(c, 0, -10 + b, 6, '#2a2440', 5);
-  };
-  function draw(c, art, t, o) { (A[art] || A.wisp)(c, t, o || {}); }
-  return { draw, A };
-})();
-
 RB.combat = (function () {
   'use strict';
   const esc = RB.util.esc;
   const L = () => RB.combatLogic;
   let st = null, enemy = null, ui = null, fxList = [], shake = 0;
 
-  const BG = {
-    reedwake: ['#6fa6c0', '#b8d8c0', '#5f9a4a', '#4b7f3c'], mill: ['#2a3a3a', '#3a4a44', '#4a3a2a', '#3a2c20'],
-    saltglass: ['#6a9ac0', '#d8e8f0', '#d9c38e', '#c4ab74'], archive: ['#141a30', '#262c48', '#3a3f5c', '#2e3248'],
-    cinder: ['#d8905a', '#f0c890', '#8a8480', '#6e6864'], kiln: ['#3a1a14', '#6a2a1a', '#4a3a34', '#3a2c28'],
-    snowbell: ['#8aa0c0', '#dde6ee', '#eef3f7', '#c7d4de'], observatory: ['#101830', '#283050', '#5a6478', '#3a4458'],
-    lanternfall: ['#6a6aa0', '#d8c8e8', '#b9b3c2', '#9892a4'], belltower: ['#1a2a44', '#2a4060', '#3c5c8a', '#2a3c5c'],
-    still: ['#0a0c18', '#1a1c30', '#e4ddc8', '#aea68e'], atlas: ['#c8b890', '#f0e8d0', '#b8b08a', '#a09872'],
-  };
-
   // ---- the scene, framed inside the stage: the free area the overlay leaves ----
+  // Drawn at art resolution (2 art px per logical px): the regional backdrop
+  // (RB.battleScene), the creature (RB.enemyArt), knots, the party, wards and
+  // effects. Positions below are art px.
   let stageCss = null, lastLay = null, measureAt = -1e9;
   function measure() {
     if (!ui || !ui.stage) { stageCss = null; return; }
     const r = ui.stage.getBoundingClientRect();
     stageCss = r.width > 60 && r.height > 60 ? { x: r.left, y: r.top, w: r.width, h: r.height } : null;
   }
+  // the stage cell in art px (CSS px per art px = the view's CSS px per logical px / ART)
   function stageBuf(w, h) {
-    const k = RB.render.viewSize().scale || 1;
+    const k = (RB.render.viewSize().scale || 1) / RB.render.ART;
     if (!stageCss) return { x: 0, y: 0, w, h };
     const x = Math.max(0, stageCss.x / k), y = Math.max(0, stageCss.y / k);
     return { x, y, w: Math.min(w - x, stageCss.w / k), h: Math.min(h - y, stageCss.h / k) };
   }
+  function partySprite(look) {
+    const S = RB.sprites;
+    if (typeof S.getArt === 'function') { const a = S.getArt(look, 'up', 0); if (a) return a; }
+    return S.get(look, 'up', 0);
+  }
   function draw(c, w, h, t) {
     if (t - measureAt > 400) { measureAt = t; measure(); }
     const S = stageBuf(w, h);
-    const bg = BG[enemy.bg || enemy.region || 'reedwake'] || BG.reedwake;
+    const Sc = RB.battleScene;
     const reduce = RB.game.reducedMotion();
     const tt = reduce ? 0 : t;
-    const sx = shake > 0 && !reduce ? Math.round(Math.sin(t / 20) * 2) : 0;
+    const sx = shake > 0 && !reduce ? Math.round(Math.sin(t / 20) * 4) : 0;
     if (shake > 0) shake -= 16;
     // integer scale only (pixel art), chosen so the whole scene fits the stage
-    const scale = Math.max(1, Math.min(3, Math.floor(Math.min(S.h / 112, S.w / 150))));
+    const scale = Math.max(1, Math.min(3, Math.floor(Math.min(S.h / 224, S.w / 300))));
     const ps = scale;
     const ex = Math.round(S.x + S.w * 0.62) + sx;
-    const ey = Math.round(Math.min(S.y + S.h - 50 * scale, Math.max(S.y + 40 * scale, S.y + S.h * 0.44)));
-    const px = Math.round(S.x + S.w * 0.1), py = Math.round(S.y + S.h - 26 * ps - 4);
-    const hz = Math.max(0, Math.min(h - 1, Math.round(Math.min(ey + 18 * scale, py + 8 * ps))));
-    const g = c.createLinearGradient(0, 0, 0, h);
-    const f = Math.max(0.02, Math.min(0.98, hz / h));
-    g.addColorStop(0, bg[0]); g.addColorStop(f - 0.005, bg[1]); g.addColorStop(f, bg[2]); g.addColorStop(1, bg[3]);
-    c.fillStyle = g;
-    c.fillRect(0, 0, w, h);
-    // ground detail
-    for (let i = 0; i < 40; i++) {
-      const x = (i * 97) % w, y = hz + 4 + ((i * 53) % Math.max(1, Math.floor(h - hz - 4)));
-      c.fillStyle = 'rgba(0,0,0,0.08)';
-      c.fillRect(x, y, 6, 1);
-    }
-    // enemy
-    c.save();
-    c.translate(ex, ey);
-    c.scale(scale, scale);
-    c.fillStyle = 'rgba(0,0,0,0.2)';
-    c.beginPath(); c.ellipse(0, 42, 30, 6, 0, 0, 7); c.fill();
+    let ey = Math.round(Math.min(S.y + S.h - 100 * scale, Math.max(S.y + 80 * scale, S.y + S.h * 0.44)));
+    // a tall creature on a short stage: keep its head inside the stage
+    // (letting its feet sit a little lower) rather than under the foe slip
+    const ext = RB.enemyArt.extent(enemy.art || 'wisp', enemy.artOpts || {});
+    ey = Math.min(Math.max(ey, Math.round(S.y - ext.top * scale + 2)), Math.round(S.y + S.h - 64 * scale));
+    const px = Math.round(S.x + S.w * 0.1), py = Math.round(S.y + S.h - 52 * ps - 8);
+    const hz = Math.max(0, Math.min(h - 1, Math.round(Math.min(ey + 36 * scale, py + 16 * ps))));
+    c.imageSmoothingEnabled = false;
+    Sc.backdrop(c, enemy.bg || enemy.region || 'reedwake', w, h, hz, tt, reduce);
+    // creature and its ground shadow
+    Sc.shadow(c, ex, ey + 84 * scale, 58 * scale, 11 * scale, 0.5);
     if (st && st.over === 'win') c.globalAlpha = 0.5;
-    RB.enemyArt.draw(c, enemy.art || 'wisp', tt, enemy.artOpts || {});
-    c.restore();
-    // knots as little loops around the enemy
+    RB.enemyArt.drawArt(c, enemy.art || 'wisp', tt, enemy.artOpts || {}, ex, ey, scale, reduce);
+    c.globalAlpha = 1;
+    if (st && st.shroud) Sc.mist(c, ex, ey, scale, t, reduce);
+    // knots: a row of cord loops under it, tied or undone
     if (st) for (let i = 0; i < st.maxKnots; i++) {
       const a = -Math.PI / 2 + (i - (st.maxKnots - 1) / 2) * 0.5;
-      const kx = ex + Math.cos(a) * 30 * scale, ky = ey + 44 * scale + 6 + Math.sin(a) * 4;
-      c.strokeStyle = i < st.knots ? '#e8d8b0' : 'rgba(232,216,176,0.25)';
-      c.lineWidth = 2;
-      c.beginPath(); c.arc(kx, ky, 4, 0, Math.PI * 2); c.stroke();
-      if (i < st.knots) { c.beginPath(); c.moveTo(kx - 5, ky + 5); c.lineTo(kx + 5, ky - 5); c.stroke(); }
+      const kx = Math.round(ex + Math.cos(a) * 60 * scale), ky = Math.round(ey + 88 * scale + 12 + Math.sin(a) * 8);
+      const icon = Sc.knot(i < st.knots);
+      c.drawImage(icon, kx - 10 * scale, ky - 10 * scale, icon.width * scale, icon.height * scale);
     }
-    // party (backs to us)
+    // party (backs to us), each on a small contact shadow
     const s = RB.game.s;
     const look = Object.assign({}, s.player.look);
-    c.imageSmoothingEnabled = false;
-    c.drawImage(RB.sprites.get(look, 'up', 0), px, py, 16 * ps, 24 * ps);
-    if (s.comp) c.drawImage(RB.sprites.get(RB.content.chars[s.comp].look, 'up', 0), px + 20 * ps, py + 6, 16 * ps, 24 * ps);
+    const members = [[px, py, look]];
+    if (s.comp) members.push([px + 40 * ps, py + 12, RB.content.chars[s.comp].look]);
+    for (const [x, y, lk] of members) {
+      Sc.shadow(c, x + 16 * ps, y + 46 * ps, 12 * ps, 4 * ps, 0.55);
+      c.drawImage(partySprite(lk), x, y, 32 * ps, 48 * ps);
+    }
     lastLay = { ex, ey, px, py, ps, scale };
-    // wards
     if (st) {
-      const wardAt = (x, y, n) => {
-        if (!n) return;
-        c.strokeStyle = `rgba(160,210,255,${0.35 + Math.min(n, 4) * 0.12})`;
-        c.lineWidth = 2;
-        c.beginPath(); c.arc(x, y, 12 * ps, Math.PI * 1.1, Math.PI * 1.9); c.stroke();
-      };
-      wardAt(px + 8 * ps, py + 8 * ps, st.ward.pc);
-      if (s.comp) wardAt(px + 28 * ps, py + 14 * ps, st.ward.comp);
+      Sc.ward(c, px + 16 * ps, py + 16 * ps, 24 * ps, st.ward.pc, ps);
+      if (s.comp) Sc.ward(c, px + 56 * ps, py + 12 + 16 * ps, 24 * ps, st.ward.comp, ps);
       if (st.heat) { c.fillStyle = `rgba(255,120,60,${0.08 * st.heat})`; c.fillRect(0, 0, w, h); }
-      if (st.shroud) { c.fillStyle = 'rgba(220,225,235,0.45)'; c.fillRect(ex - 60 * scale / 2, ey - 50 * scale / 2, 120 * scale / 2, 100 * scale / 2); }
     }
     // effects
     fxList = fxList.filter((e) => t - e.t0 < e.d);
-    for (const e of fxList) {
-      const k = (t - e.t0) / e.d;
-      if (e.kind === 'glyph') {
-        c.strokeStyle = `rgba(255,236,170,${1 - k})`;
-        c.lineWidth = 2;
-        c.beginPath(); c.arc(e.x, e.y, 10 + k * 40, 0, Math.PI * 2); c.stroke();
-      } else if (e.kind === 'water') {
-        for (let i = 0; i < 16; i++) { c.fillStyle = `rgba(120,190,240,${1 - k})`; c.fillRect(ex - 30 + i * 4, ey - 30 + k * 60 + (i % 3) * 5, 2, 5); }
-      } else if (e.kind === 'light') {
-        const gl = c.createRadialGradient(ex, ey, 0, ex, ey, 80);
-        gl.addColorStop(0, `rgba(255,248,200,${0.7 * (1 - k)})`); gl.addColorStop(1, 'rgba(255,248,200,0)');
-        c.fillStyle = gl; c.fillRect(ex - 80, ey - 80, 160, 160);
-      } else if (e.kind === 'untie') {
-        c.strokeStyle = `rgba(232,216,176,${1 - k})`; c.lineWidth = 2;
-        c.beginPath(); c.moveTo(ex - 20 - k * 30, ey - 20); c.quadraticCurveTo(ex, ey - 40 - k * 20, ex + 20 + k * 30, ey - 20); c.stroke();
-      } else if (e.kind === 'hit') {
-        c.fillStyle = `rgba(255,255,255,${0.25 * (1 - k)})`;
-        c.fillRect(e.x - 12, e.y - 12, 24, 24);
-      } else if (e.kind === 'heal') {
-        for (let i = 0; i < 8; i++) { c.fillStyle = `rgba(160,240,160,${1 - k})`; c.fillRect(px + i * 6, py + 30 - k * 40 - (i % 3) * 6, 2, 2); }
-      }
-    }
+    const at = { ex, ey, px, py };
+    for (const e of fxList) Sc.effect(c, e, (t - e.t0) / e.d, at, 1);
   }
+  draw.art = true;
   function addFx(kind, extra) {
     fxList.push(Object.assign({ kind, t0: performance.now(), d: RB.game.reducedMotion() ? 300 : 700 }, extra));
   }
-  // where the party stands (for effects), in scene pixels
+  // where the party stands (for effects), in art px; dx/dy in 16×24 sprite units
   function partyAt(dx, dy) {
-    const l = lastLay || { px: 20, py: 60, ps: 1 };
-    return { x: l.px + (dx || 8) * l.ps, y: l.py + (dy || 12) * l.ps };
+    const l = lastLay || { px: 40, py: 120, ps: 1 };
+    return { x: l.px + (dx || 8) * 2 * l.ps, y: l.py + (dy || 12) * 2 * l.ps };
   }
-
   function tierOf(obj) {
     return RB.activities.tier(obj);
   }

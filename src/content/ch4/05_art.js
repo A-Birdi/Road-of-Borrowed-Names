@@ -501,25 +501,81 @@ var RB = (globalThis.RB = globalThis.RB || {});
     else { R(c, 5, 10, 6, 6, col); R(c, 5, 8, 2, 2, col); R(c, 9, 8, 2, 2, col); if (d === 'down') { R(c, 6, 12, 1, 1, '#3a5a8a'); R(c, 9, 12, 1, 1, '#3a5a8a'); R(c, 7, 14, 2, 1, '#2a2a2a'); } else R(c, 6, 17, 4, 4, col); }
   };
 
-  // ---- battle art ------------------------------------------------------------------------
-  const A = RB.enemyArt.A;
-  // The lamp that waited: a tall lantern whose flame has gone blue and cold.
-  A.sb_frostlamp = (c, t, o) => {
-    const b = Math.sin(t / 520) * 3;
-    c.fillStyle = '#2a2838'; c.fillRect(-20, -40 + b, 40, 6); c.fillRect(-16, 30 + b, 32, 6); c.fillRect(-3, 36 + b, 6, 10);
-    c.fillStyle = o.warm ? '#f8ecc8' : '#d8e8f4'; c.fillRect(-18, -34 + b, 36, 64);
-    c.fillStyle = '#ffffff60'; c.fillRect(-16, -32 + b, 4, 60);
-    const fl = Math.sin(t / 160) * 3;
-    c.fillStyle = o.warm ? '#f8a040c0' : '#8ab8f0c0'; c.beginPath(); c.ellipse(0, 4 + b, 9, 16 + fl, 0, 0, 7); c.fill();
-    c.fillStyle = o.warm ? '#fff4b0' : '#e8f4ff'; c.beginPath(); c.ellipse(0, 8 + b, 4, 8 + fl / 2, 0, 0, 7); c.fill();
-    c.fillStyle = '#1a1830'; c.fillRect(-9, -18 + b, 4, 5); c.fillRect(5, -18 + b, 4, 5);
-    for (let i = 0; i < 7; i++) { const h = 6 + ((i * 5) % 9); c.fillStyle = '#e8f4fc'; c.fillRect(-19 + i * 6, 36 + b, 3, h); }
-    for (let i = 0; i < 10; i++) { const a = t / 900 + i * 0.63; const r = 44 + (i % 3) * 6; c.fillStyle = 'rgba(230,244,255,0.7)'; c.fillRect(Math.cos(a) * r, Math.sin(a) * r * 0.6 + b, 2, 2); }
-  };
-  // A small snow fox for battle (bigger ears, frost breath).
-  A.sb_snowfox = (c, t, o) => {
-    A.fox(c, t, { col: o.col || '#eef4fa' });
-    const s = (t / 600) % 1;
-    c.fillStyle = `rgba(220,240,255,${0.6 - s * 0.6})`; c.beginPath(); c.arc(-14 - s * 14, -2, 3 + s * 5, 0, 7); c.fill();
-  };
+  // ---- battle art (pixel art at art resolution; see src/ui/78_enemy_art.js) --------------
+  // The lamp that waited: a tall standing lantern under a snow-capped roof,
+  // its paper panels lit by a flame gone cold and blue (warm again with
+  // o.warm), icicles on the eaves and foot, frost motes circling it.
+  RB.enemyArt.def('sb_frostlamp', {
+    w: 184, h: 232, ox: 92, oy: 108, frames: 8, ms: 130,
+    bob: (t) => Math.sin(t / 520) * 3,
+    build(L, f, o, H) {
+      const K = H.K;
+      const warm = !!o.warm;
+      const wood = K.mat('#2e2c3e', { n: 4, at: 1, step: 0.08 });
+      const paper = K.mat(warm ? '#f8ecc8' : '#d8e8f4', { n: 5, at: 3, step: 0.08 });
+      const flame = warm ? '#f8a040' : '#8ab8f0';
+      const snow = K.mat('#eef4fa', { n: 4, at: 2, step: 0.07 });
+      const ice = K.mat('#bcd8ee', { n: 4, at: 2, step: 0.1, alpha: 230 });
+      const mote = K.mat('#e6f4ff', { n: 2, at: 1, line: false });
+      const flick = [0, 1, 2, 1, 0, 2, 1, 0][f];
+      const aura = L.like(), B = L.like(), fx = L.like();
+      H.glow(aura, 0, -4, 60 + flick, 72 + flick, flame, 0.26, 3);
+      // roof: a wide cap with a ridge, snow along the top
+      B.poly([[-54, -76], [-40, -90], [40, -90], [54, -76], [48, -72], [-48, -72]], wood, (x, y) => K.clamp(0.6 - (y + 90) / 30 - x / 200, 0, 0.99));
+      B.rect(-10, -96, 20, 6, wood, 2);
+      B.fill(-44, -100, 44, -86, (x, y) => y >= -93 - Math.round(Math.sin(x / 6) * 1.5) && y < -87 && Math.abs(x) < 42 - (y + 93) * 0.5, snow, (x, y) => K.clamp(0.8 - (x + 40) / 160 - (y + 93) / 20, 0, 0.99));
+      // posts and the lit paper panel with its lattice
+      B.rect(-42, -72, 84, 136, paper, (x, y) => {
+        const g = 1 - Math.hypot(x / 44, (y + 4) / 70);
+        return K.clamp(0.22 + g * (0.72 + flick * 0.05) + (x < 0 ? 0.04 : -0.04), 0, 0.99);
+      });
+      for (const x of [-42, 36]) B.rect(x, -72, 6, 136, wood, x < 0 ? 2 : 1);
+      B.rect(-42, -72, 84, 5, wood, 2);
+      B.rect(-42, 56, 84, 8, wood, 1);
+      B.onto((b) => {
+        for (const y of [-40, -8, 24]) b.line(-36, y, 36, y, wood, 1);
+        for (const x of [-12, 12]) b.line(x, -67, x, 56, wood, 1);
+      });
+      // the cold flame, seen through the paper
+      B.ell(0, 10, 10 + flick, 20 + flick * 2, paper, 4);
+      B.ell(0, 16, 5, 10 + flick, K.solid(warm ? '#fff4b0' : '#f2f8ff', { line: false }), 0);
+      // foot
+      B.stone([[-30, 64], [30, 64], [36, 74], [-36, 74]], wood, { bevel: 2, face: 1 });
+      B.rect(-6, 74, 12, 12, wood, 1);
+      // mournful eyes on the paper
+      for (const s of [-1, 1]) {
+        B.poly([[s * 7, -30], [s * 19, -34], [s * 19, -26], [s * 8, -24]], H.ink, 1);
+        B.rect(s * 12 - 1, -31, 2, 2, H.white, 0);
+      }
+      // icicles on the eaves and the foot
+      const icicle = (x, y, len) => B.poly([[x - 3, y], [x + 3, y], [x, y + len]], ice, (px) => K.clamp(0.7 - (px - x + 3) / 8, 0, 0.99));
+      for (let i = 0; i < 9; i++) icicle(-44 + i * 11, -72, 6 + ((i * 5) % 9));
+      for (let i = 0; i < 6; i++) icicle(-30 + i * 12, 74, 5 + ((i * 7) % 8));
+      B.outline();
+      // frost motes circling (small crosses of light)
+      for (let i = 0; i < 10; i++) {
+        const a = (f / 8) * (Math.PI * 2 / 10) + i * (Math.PI * 2 / 10);
+        const r = 70 + (i % 3) * 8;
+        const x = Math.round(Math.cos(a) * r), y = Math.round(Math.sin(a) * r * 0.55) - 4;
+        fx.rect(x - 1, y, 3, 1, mote, 1); fx.rect(x, y - 1, 1, 3, mote, 1);
+        if ((i + f) % 4 === 0) fx.dot(x, y, K.solid('#ffffff', { line: false }), 0);
+      }
+      return aura.over(B).over(fx);
+    },
+  });
+  // A small snow fox for battle: the fox, paler, with frost breath.
+  RB.enemyArt.def('sb_snowfox', Object.assign({}, RB.enemyArt.P.fox, {
+    build(L, f, o, H) {
+      const K = H.K;
+      const base = RB.enemyArt.P.fox.build(L, f, { col: o.col || '#eef4fa' }, H);
+      const puff = K.mat('#e2f0ff', { n: 3, at: 1, step: 0.06, alpha: 150, line: false });
+      const br = L.like();
+      for (let i = 0; i < 2; i++) {
+        const k = ((f / 4) + i * 0.5) % 1;
+        br.ell(-14 - k * 26, -2 - k * 6, 3 + k * 6, 2 + k * 4, puff, (x, y) => K.clamp(0.9 - k * 0.6 - (y + 2) / 30, 0, 0.99));
+      }
+      br.fade(0.9);
+      return base.over(br);
+    },
+  }));
 })();

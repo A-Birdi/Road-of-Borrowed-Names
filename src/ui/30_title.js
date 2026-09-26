@@ -53,6 +53,10 @@ RB.ui.title = (function () {
   }
 
   // ---- the title scene (pixels on the game canvas) -----------------------------------------
+  // Drawn at art resolution (drawBackdrop.art): 2 art px per logical px. The
+  // static scene is built once per buffer size; stars, water glints,
+  // lanterns, reeds and the desk lamp are drawn live on top. Glows are
+  // stepped rings of falling alpha (pixel glows), never blurred gradients.
   // Key points [y, x, half-width] as fractions of the buffer; smooth between them.
   const PLAN = {
     tall: {
@@ -89,26 +93,28 @@ RB.ui.title = (function () {
     cv.width = w; cv.height = h;
     return cv;
   }
+  // A pixel glow: flat rings whose alpha rises gently toward the centre (cached).
   function glowSprite(r, rgb) {
     const k = r + rgb;
     if (glows[k]) return glows[k];
     const cv = canvas(r * 2 + 1, r * 2 + 1);
     const g = cv.getContext('2d');
-    const gr = g.createRadialGradient(r + 0.5, r + 0.5, 0, r + 0.5, r + 0.5, r);
-    gr.addColorStop(0, 'rgba(' + rgb + ',0.55)');
-    gr.addColorStop(0.35, 'rgba(' + rgb + ',0.2)');
-    gr.addColorStop(1, 'rgba(' + rgb + ',0)');
-    g.fillStyle = gr;
-    g.fillRect(0, 0, r * 2 + 1, r * 2 + 1);
+    const steps = [[1, 0.03], [0.82, 0.035], [0.65, 0.04], [0.49, 0.05], [0.34, 0.06], [0.2, 0.08]];
+    for (const [f, a] of steps) {
+      g.fillStyle = 'rgba(' + rgb + ',' + a + ')';
+      RB.pxkit.disc(g, r, r, Math.max(1, Math.round(r * f)));
+    }
     return (glows[k] = cv);
   }
 
   function buildScene(w, h) {
+    const K = RB.pxkit;
     const P = h > w * 1.15 ? PLAN.tall : PLAN.wide;
     const L = { w, h, tall: P === PLAN.tall, lamps: [], reeds: [], stars: [], water: [] };
     const cv = canvas(w, h);
     const c = cv.getContext('2d');
-    const R = (x, y, ww, hh, col) => { c.fillStyle = col; c.fillRect(Math.round(x), Math.round(y), Math.max(0, Math.round(ww)), Math.max(0, Math.round(hh))); };
+    c.imageSmoothingEnabled = false;
+    const R = (x, y, ww, hh, col) => { if (col) c.fillStyle = col; c.fillRect(Math.round(x), Math.round(y), Math.max(0, Math.round(ww)), Math.max(0, Math.round(hh))); };
     const rnd = RB.util.rng(1187);
     const hz = Math.round(h * P.hz);
     L.hz = hz;
@@ -116,242 +122,270 @@ RB.ui.title = (function () {
     const road = (y) => { const [x, hw] = along(P.road, y / h); return [Math.round(x * w - hw * w - 0.5), Math.round(x * w + hw * w + 0.5)]; };
     L.river = river;
 
-    // sky: dusk colours with an ordered (Bayer) dither between steps, darkest
-    // at the top where the title reads
-    const bands = [[11, 15, 34], [15, 20, 41], [19, 26, 51], [24, 32, 63], [31, 39, 73], [41, 46, 85], [55, 51, 88], [74, 60, 92]];
-    const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
-    const sky = c.createImageData(w, hz);
-    for (let y = 0; y < hz; y++) {
-      const f = (y / Math.max(1, hz - 1)) * (bands.length - 1);
-      const i = Math.min(bands.length - 2, Math.floor(f)), fr = f - i;
-      for (let x = 0; x < w; x++) {
-        const col = fr * 16 > BAYER[(y & 3) * 4 + (x & 3)] + 0.5 ? bands[i + 1] : bands[i];
-        const o = (y * w + x) * 4;
-        sky.data[o] = col[0]; sky.data[o + 1] = col[1]; sky.data[o + 2] = col[2]; sky.data[o + 3] = 255;
-      }
+    // sky: dusk bands with a narrow ordered-dither seam between steps, darkest at the top where the title reads
+    const img = c.createImageData(w, hz);
+    K.bands(img, w, 0, hz, ['#0b0f22', '#0f1429', '#131a33', '#18203f', '#1f2749', '#292e55', '#373358', '#4a3c5c'], 0.45);
+    c.putImageData(img, 0, 0);
+    for (let i = 0; i < 40; i++) L.stars.push([Math.round(rnd() * w), Math.round(rnd() * hz * 0.72), rnd() * 6.28, rnd() < 0.22]);
+    // thin moonlit cloud streaks low over the far ridge (away from the title)
+    for (let i = 0; i < 4; i++) {
+      const cy = Math.round(hz * (0.56 + i * 0.07)), cx = Math.round(w * (L.tall ? 0.2 + i * 0.2 : 0.56 + (i % 2) * 0.16 + i * 0.05)), len = Math.round(w * (0.12 + (i % 3) * 0.05));
+      R(cx - len / 2, cy, len, 2, '#2c2d52'); R(cx - len / 2 + 6, cy - 1, len - 16, 1, '#3e3c62'); R(cx - len / 2 + 10, cy + 2, len - 30, 1, '#232548');
     }
-    c.putImageData(sky, 0, 0);
-    for (let i = 0; i < 26; i++) L.stars.push([Math.round(rnd() * w), Math.round(rnd() * hz * 0.72), rnd() * 6.28, rnd() < 0.25]);
-    // a pale crescent moon with a faint halo
-    const mx = Math.round(P.moon[0] * w), my = Math.round(P.moon[1] * h), mr = Math.max(3, Math.round(Math.min(w, h) * 0.018));
+    // the moon: a stepped halo and a crescent with a shaded limb and two faint maria
+    const mx = Math.round(P.moon[0] * w), my = Math.round(P.moon[1] * h), mr = Math.max(6, Math.round(Math.min(w, h) * 0.018));
     c.drawImage(glowSprite(mr * 5, '200,210,240'), mx - mr * 5, my - mr * 5);
     for (let y = -mr; y <= mr; y++) for (let x = -mr; x <= mr; x++) {
       if (x * x + y * y > mr * mr + mr * 0.6) continue;
       const cut = (x + mr * 0.55) * (x + mr * 0.55) + (y - mr * 0.3) * (y - mr * 0.3) <= mr * mr * 0.85;
-      if (!cut) R(mx + x, my + y, 1, 1, x > mr * 0.2 ? '#d9d2b8' : '#efe6c8');
+      if (cut) continue;
+      const edge = x * x + y * y > (mr - 1.5) * (mr - 1.5);
+      R(mx + x, my + y, 1, 1, edge && x > 0 ? '#c9c0a2' : x > mr * 0.35 ? '#dcd4b8' : '#f1e9cc');
     }
-    // mountains, far and near
-    const ridge = (base, amp, f1, f2, ph, col) => {
+    R(mx + Math.round(mr * 0.45), my - Math.round(mr * 0.3), 2, 2, '#d2c9ac'); R(mx + Math.round(mr * 0.6), my + Math.round(mr * 0.25), 2, 1, '#d2c9ac');
+    // mountains, far to near; the far ridges catch moonlight on their crests
+    const ridge = (base, amp, f1, f2, ph, col, rim, crest) => {
+      let prev = null;
       for (let x = 0; x < w; x++) {
         const v = Math.sin(x / (w * f1) + ph) * 0.6 + Math.sin(x / (w * f2) + ph * 2.3) * 0.4;
         const top = Math.round(base - amp * (0.55 + v * 0.45));
         R(x, top, 1, hz - top + 1, col);
+        if (rim && prev != null && top < prev + 1) R(x, top, 1, top < prev ? 2 : 1, rim);
+        if (crest) R(x, top + 2 + ((x * 7) % 5 === 0 ? 1 : 0), 1, 1, crest);
+        prev = top;
       }
     };
-    ridge(hz, h * (L.tall ? 0.1 : 0.17), 0.13, 0.05, 2.6, '#2a2c52');
-    ridge(hz, h * (L.tall ? 0.075 : 0.13), 0.09, 0.035, 1.3, '#1a2044');
-    ridge(hz, h * (L.tall ? 0.035 : 0.06), 0.06, 0.021, 4.1, '#141a36');
-    R(0, hz - 1, w, 1, '#262c52');
-    // ground below the horizon
-    R(0, hz, w, h - hz, '#141b2c');
-    for (let y = hz + 1; y < h; y++) {
-      const d = (y - hz) / (h - hz);
-      if (rnd() < 0.5) continue;
-      for (let n = 0; n < 2 + d * 6; n++) R(rnd() * w, y, 1 + (d > 0.5 ? 1 : 0), 1, d > 0.4 ? '#19223a' : '#171f33');
+    ridge(hz, h * (L.tall ? 0.1 : 0.17), 0.13, 0.05, 2.6, '#2a2c52', '#3b3a66');
+    ridge(hz, h * (L.tall ? 0.075 : 0.13), 0.09, 0.035, 1.3, '#1a2044', '#262c56');
+    // the near ridge is wooded: a fringe of tree crowns along its crest
+    for (let x = 0; x < w; x += 3) {
+      const v = Math.sin(x / (w * 0.06) + 4.1) * 0.6 + Math.sin(x / (w * 0.021) + 4.1 * 2.3) * 0.4;
+      const top = Math.round(hz - h * (L.tall ? 0.035 : 0.06) * (0.55 + v * 0.45));
+      const bump = 2 + ((x * 13) % 7 === 0 ? 2 : (x * 5) % 3);
+      R(x - 1, top - bump, 4, hz - top + bump + 1, '#141a36');
     }
-    // far villages with lit windows (a few houses, not a city)
+    R(0, hz - 1, w, 1, '#262c52');
+    // fields below the horizon: paddies in strips that widen toward the viewer, a
+    // thin moonlit water line along some of them; then a darker near ground
+    R(0, hz, w, h - hz, '#141b2c');
+    for (let i = 0, y = hz + 1; y < h * 0.98 && i < 40; i++) {
+      const d = (y - hz) / (h - hz), sh = Math.max(2, Math.round(2 + d * d * 30));
+      R(0, y, w, sh, i % 2 ? '#151c2e' : '#131a2a');
+      if (i % 4 === 1 && d < 0.5) {
+        for (let x = (i * 37) % 23; x < w; x += 70 + (i * 11) % 40) R(x, y, 16 + ((x + i) % 18), 1, d < 0.2 ? '#252e56' : '#1c2440');
+      }
+      y += sh;
+    }
+    // far villages: a few pitched-roof houses with lit windows
     for (const [a, b] of P.far) {
       const x0 = Math.round(a * w), x1 = Math.round(b * w);
-      for (let x = x0; x < x1 - 4; x += 5 + Math.floor(rnd() * 4)) {
-        const hw = 3 + Math.floor(rnd() * 3), hh = 2 + Math.floor(rnd() * 2), y = hz + 1 + Math.floor(rnd() * 3);
+      for (let x = x0; x < x1 - 8; x += 10 + Math.floor(rnd() * 8)) {
+        const hw = 6 + Math.floor(rnd() * 5), hh = 4 + Math.floor(rnd() * 3), y = hz + 2 + Math.floor(rnd() * 5);
         const [rl, rr] = river(y);
-        if (x + hw >= rl - 1 && x <= rr + 1) continue;
+        if (x + hw >= rl - 2 && x <= rr + 2) continue;
         R(x, y - hh, hw, hh + 1, '#0e1322');
-        R(x - 1, y - hh - 1, hw + 2, 1, '#0b0f1c');
-        if (rnd() < 0.7) R(x + 1 + Math.floor(rnd() * (hw - 2)), y - hh + 1, 1, 1, rnd() < 0.6 ? '#e8b860' : '#9a7446');
+        for (let j = 0; j < 3; j++) R(x - 2 + j, y - hh - 1 - j, hw + 4 - j * 2, 1, j === 2 ? '#1a2038' : '#0b0f1c');
+        if (rnd() < 0.75) { const wx = x + 2 + Math.floor(rnd() * (hw - 4)); R(wx, y - hh + 2, 2, 2, rnd() < 0.6 ? '#e8b860' : '#9a7446'); }
       }
     }
-    // the river: widening toward the viewer, sky-lit far away, deep near
+    // the river: widening toward the viewer; sky-lit far away, deep near; a
+    // dark lip on the far bank and a pale one on the near bank
     const by = Math.round(h * P.by);
     for (let y = hz; y < h; y++) {
       const [x0, x1] = river(y);
       const d = (y - hz) / (h - hz);
-      const wob = (Math.sin(y * 1.7) > 0.6 ? 1 : 0);
-      R(x0 + wob, y, x1 - x0 - wob, 1, d < 0.08 ? '#3a4470' : d < 0.25 ? '#26335c' : '#1a2748');
-      R(x0 + wob - 1, y, 1, 1, '#0c1222');
-      R(x1, y, 1, 1, '#2b3a62');
-      if (y > hz + 2 && rnd() < 0.5) L.water.push([x0 + 2 + rnd() * Math.max(1, x1 - x0 - 6), y, 1 + Math.round(d * 4), rnd() * 6.28]);
+      const wob = Math.sin(y * 0.85) > 0.6 ? 1 : 0;
+      R(x0 + wob, y, x1 - x0 - wob, 1, d < 0.06 ? '#3e4876' : d < 0.14 ? '#34406c' : d < 0.3 ? '#26335c' : '#1a2748');
+      if (d > 0.3 && ((y * 7) % 11) < 3) R(x0 + (x1 - x0) * 0.2, y, (x1 - x0) * 0.25, 1, '#1e2c50');
+      R(x0 + wob - 2, y, 2, 1, '#0c1222');
+      R(x1, y, 2, 1, '#2b3a62');
+      if (y > hz + 4 && rnd() < 0.3) L.water.push([x0 + 4 + rnd() * Math.max(1, x1 - x0 - 12), y, 2 + Math.round(d * 8), rnd() * 6.28]);
     }
-    // the road on the near bank, and the short path to the bridge
+    // the road on the near bank: a worn centre, two ruts, pebbles in small
+    // clusters, grass edges; then the short path to the bridge
     const [bl0, br0] = river(by);
-    const bpad = Math.max(3, Math.round((br0 - bl0) * 0.18));
+    const bpad = Math.max(6, Math.round((br0 - bl0) * 0.18));
     const bL = bl0 - bpad, bR = br0 + bpad;
     for (let y = hz + 1; y < h; y++) {
       const [x0, x1] = road(y);
-      const d = (y - hz) / (h - hz);
-      R(x0, y, x1 - x0, 1, d < 0.2 ? '#2c2a3a' : '#3a3342');
-      R(x0, y, 1, 1, '#221e2c'); R(x1 - 1, y, 1, 1, '#221e2c');
-      if (d > 0.3 && rnd() < 0.35) R(x0 + 1 + rnd() * Math.max(1, x1 - x0 - 3), y, 1, 1, '#4a4152');
-      if (d > 0.12 && x1 - x0 > 8) { const cxr = (x0 + x1) / 2, off = (x1 - x0) * 0.22; R(cxr - off, y, 1, 1, '#302a38'); R(cxr + off, y, 1, 1, '#302a38'); }
+      const d = (y - hz) / (h - hz), rw = x1 - x0;
+      R(x0, y, rw, 1, d < 0.2 ? '#2c2a3a' : '#3a3342');
+      if (rw > 10) R(x0 + rw * 0.35, y, rw * 0.3, 1, d < 0.2 ? '#302d3e' : '#40384a');
+      R(x0, y, 2, 1, '#221e2c'); R(x1 - 2, y, 2, 1, '#221e2c');
+      if (d > 0.12 && rw > 16) { const cxr = (x0 + x1) / 2, off = rw * 0.22; R(cxr - off, y, 2, 1, '#2a2634'); R(cxr + off - 1, y, 2, 1, '#2a2634'); }
+      if (d > 0.3 && rnd() < 0.18) { const px = x0 + 3 + rnd() * Math.max(1, rw - 8); R(px, y, 3, 2, '#4a4152'); R(px, y + 2, 3, 1, '#28222e'); }
+      if (d > 0.25 && rnd() < 0.35) { R(x0 - 2, y - 2, 1, 3, '#1d2740'); R(x1 + 1, y - 3, 1, 4, '#1d2740'); }
     }
-    // grass tufts on the banks, denser toward the viewer
-    for (let n = 0; n < w * 0.9; n++) {
-      const y = Math.round(hz + 3 + Math.pow(rnd(), 0.7) * (h - hz - 6)), x = Math.round(rnd() * w);
+    // grass tufts on the banks: small fans, denser and larger toward the viewer
+    for (let n = 0; n < w * 0.7; n++) {
+      const y = Math.round(hz + 6 + Math.pow(rnd(), 0.7) * (h - hz - 12)), x = Math.round(rnd() * w);
       const [ra, rb] = road(y), [wa, wb] = river(y);
-      if ((x >= ra - 1 && x <= rb) || (x >= wa - 1 && x <= wb + 1)) continue;
-      const d = (y - hz) / (h - hz);
-      R(x, y, 1, 1, '#1d2740'); if (d > 0.35) { R(x - 1, y - 1, 1, 1, '#1a2238'); R(x + 1, y - 1, 1, 1, '#1a2238'); }
+      if ((x >= ra - 3 && x <= rb + 2) || (x >= wa - 3 && x <= wb + 3)) continue;
+      const d = (y - hz) / (h - hz), s = 1 + Math.round(d * 4);
+      R(x, y - s * 2, 1, s * 2, '#1f2a44'); R(x - s, y - s, 1, s, '#1a2238'); R(x + s, y - s - 1, 1, s + 1, '#1a2238');
     }
-    // a few black pines on the near bank, silhouetted against the fields
+    // black pines on the near bank, pads alternating, moonlit on top
     const pine = (px, base, size) => {
-      const tw = Math.max(1, Math.round(size / 11));
+      const tw = Math.max(2, Math.round(size / 11));
       const bend = (k) => Math.round(Math.sin(k * 2.4) * size * 0.09);
       for (let y = 0; y < size * 0.9; y++) R(px + bend(y / size), base - y, tw, 1, '#0d111e');
-      // cloud pads, alternately to each side, smaller toward the top, moonlit on top
       for (const [hy, wf, side] of [[0.46, 0.95, -1], [0.7, 0.72, 1], [0.9, 0.48, -1], [1.02, 0.26, 0]]) {
-        const hw = Math.max(2, Math.round(size * wf * 0.48)), th = Math.max(2, Math.round(size * 0.16));
+        const hw = Math.max(3, Math.round(size * wf * 0.48)), th = Math.max(3, Math.round(size * 0.16));
         const cy = base - Math.round(size * hy), cx = px + bend(hy) + side * Math.round(hw * 0.35);
         for (let k = 0; k < th; k++) {
           const ww = Math.round(hw * (0.55 + 0.45 * Math.sqrt(k / Math.max(1, th - 1))));
-          R(cx - ww + Math.round((rnd() - 0.5) * 2), cy - th + k, ww * 2 + 1, 1, '#0d111e');
+          R(cx - ww + Math.round((rnd() - 0.5) * 3), cy - th + k, ww * 2 + 1, 1, '#0d111e');
         }
-        R(cx - Math.round(hw * 0.5), cy - th, Math.max(1, hw), 1, '#1c2440');
+        R(cx - Math.round(hw * 0.55), cy - th, Math.max(2, Math.round(hw * 0.9)), 1, '#1c2440');
+        R(cx - Math.round(hw * 0.3), cy - th + 1, Math.max(1, Math.round(hw * 0.4)), 1, '#161d36');
       }
     };
-    for (const [fx0, fy0, fs] of (L.tall ? [[0.09, 0.345, 0.05], [0.2, 0.33, 0.03]] : [[0.08, 0.6, 0.12], [0.2, 0.555, 0.07], [0.29, 0.52, 0.045]])) pine(Math.round(fx0 * w), Math.round(fy0 * h), Math.max(6, Math.round(fs * h)));
+    for (const [fx0, fy0, fs] of (L.tall ? [[0.09, 0.345, 0.05], [0.2, 0.33, 0.03]] : [[0.08, 0.6, 0.12], [0.2, 0.555, 0.07], [0.29, 0.52, 0.045]])) pine(Math.round(fx0 * w), Math.round(fy0 * h), Math.max(12, Math.round(fs * h)));
     const [, rr] = road(by);
-    for (let y = by - 1; y <= by + 1; y++) R(rr - 1, y, bL - rr + 2, 1, '#322d3c');
-    // the arched bridge, side on, with its reflection
-    const ah = Math.max(4, Math.round((bR - bL) * 0.2));
+    for (let y = by - 2; y <= by + 2; y++) R(rr - 2, y, bL - rr + 4, 1, y === by - 2 ? '#3a3444' : '#322d3c');
+    // the arched bridge, side on: deck with plank joints, railing posts and
+    // top rail, piers into the water, and its reflection
+    const ah = Math.max(8, Math.round((bR - bL) * 0.2));
     const top = (x) => by - Math.round(ah * Math.sin(Math.PI * (x - bL) / (bR - bL)));
     for (let x = bL; x <= bR; x++) {
-      const t0 = top(x), refl = Math.round((by - t0) * 0.7) + 2;
-      const [wl, wr] = river(by + 2);
-      if (x > wl && x < wr) { c.fillStyle = 'rgba(6,9,20,0.45)'; c.fillRect(x, by + 2, 1, refl); }
-      R(x, t0, 1, 3, '#4d3322');
-      R(x, t0, 1, 1, '#8a5a36');
-      R(x, t0 - 3, 1, 1, '#3a2619');
-      if ((x - bL) % 4 === 0) R(x, t0 - 3, 1, 3, '#3a2619');
+      const t0 = top(x), refl = Math.round((by - t0) * 0.7) + 4;
+      const [wl, wr] = river(by + 4);
+      if (x > wl && x < wr) { c.fillStyle = 'rgba(6,9,20,0.45)'; c.fillRect(x, by + 4, 1, refl); if ((x - bL) % 3 === 0) { c.fillStyle = 'rgba(138,90,54,0.18)'; c.fillRect(x, by + 4 + refl - 3, 1, 2); } }
+      R(x, t0, 1, 5, '#4d3322');
+      R(x, t0, 1, 1, '#9a6a40'); R(x, t0 + 1, 1, 1, '#7a5234');
+      if ((x - bL) % 5 === 0) R(x, t0 + 1, 1, 4, '#3a2619');
+      R(x, t0 - 6, 1, 1, '#5a3c28');
+      if ((x - bL) % 8 === 0) { R(x, t0 - 6, 2, 6, '#3a2619'); R(x, t0 - 7, 2, 1, '#8a5a36'); }
     }
-    for (const u of [0.22, 0.5, 0.78]) { const x = Math.round(bL + (bR - bL) * u); R(x, top(x) + 3, 1, by + 2 - top(x) - 2, '#2e1f16'); }
-    for (const x of [bL, bR]) { R(x, top(x) - 5, 1, 5, '#3a2619'); R(x - 1, top(x) - 6, 3, 1, '#7a5234'); }
+    for (const uu of [0.22, 0.5, 0.78]) { const x = Math.round(bL + (bR - bL) * uu); R(x, top(x) + 5, 2, by + 4 - top(x) - 4, '#2e1f16'); R(x, top(x) + 5, 1, by + 4 - top(x) - 4, '#3e2a1c'); }
+    for (const x of [bL, bR - 1]) { R(x, top(x) - 10, 2, 10, '#3a2619'); R(x - 1, top(x) - 12, 4, 2, '#7a5234'); }
     const cx = Math.round((bL + bR) / 2);
-    L.lamps.push({ x: cx, y: top(cx) - 6, s: 1, bridge: true });
-    R(cx, top(cx) - 5, 1, 3, '#2a1d15');
+    L.lamps.push({ x: cx, y: top(cx) - 12, s: 2, bridge: true });
+    R(cx, top(cx) - 10, 2, 5, '#2a1d15');
     // lantern posts along the road, alternating sides, growing with nearness
     P.lamps.forEach((f, i) => {
-      const y = Math.round(hz + 2 + f * (h - hz));
+      const y = Math.round(hz + 3 + f * (h - hz));
       const [x0, x1] = road(y);
       const d = (y - hz) / (h - hz);
-      const s = Math.max(1, Math.round(1 + d * (L.tall ? 5 : 4)));
-      const x = i % 2 ? x1 + s + 1 : x0 - s - 2;
-      const pole = Math.round(3 + s * 3.2);
-      R(x, y - pole, Math.max(1, Math.round(s / 2)), pole, '#1a1418');
-      R(x - s, y - pole - Math.round(s * 1.6) - 1, s * 2 + Math.max(1, Math.round(s / 2)), 1, '#241b20');
-      L.lamps.push({ x: x + Math.floor(s / 4), y: y - pole - Math.round(s * 0.8), s, out: i === 2 });
+      const s = Math.max(2, Math.round(2 + d * (L.tall ? 10 : 8)));
+      const x = i % 2 ? x1 + s + 2 : x0 - s - 3;
+      const pole = Math.round(6 + s * 3.2), pw = Math.max(1, Math.round(s / 3));
+      R(x, y - pole, pw, pole, '#1a1418'); R(x, y - pole, 1, pole, '#2a2026');
+      R(x - s, y - pole - Math.round(s * 1.6) - 2, s * 2 + pw, Math.max(1, Math.round(s / 4)), '#241b20');
+      R(x - Math.round(s * 0.7), y - 1, Math.round(s * 1.4) + pw, 1, '#0c0f1a');
+      L.lamps.push({ x: x + Math.floor(pw / 2), y: y - pole - Math.round(s * 0.8), s, out: i === 2 });
       if (i !== 2) {
-        const rx = Math.max(4, s * 7), ry = Math.max(2, Math.round(s * 2.2));
-        const gr = c.createRadialGradient(x, y, 0, x, y, rx);
-        gr.addColorStop(0, 'rgba(255,190,110,0.16)'); gr.addColorStop(1, 'rgba(255,190,110,0)');
-        c.save(); c.fillStyle = gr; c.beginPath(); c.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2); c.fill(); c.restore();
+        // warm light pooled on the road under the lamp, in two flat steps
+        const rx = Math.max(8, s * 7), ry = Math.max(3, Math.round(s * 2.2));
+        c.fillStyle = 'rgba(255,190,110,0.07)'; K.disc(c, x, y, rx, ry);
+        c.fillStyle = 'rgba(255,190,110,0.07)'; K.disc(c, x, y, Math.round(rx * 0.55), Math.max(1, Math.round(ry * 0.55)));
       }
     });
     // reeds on the near bank of the river (drawn live so they can sway)
-    for (let y = by + 5; y < h - 2; y += 2 + Math.floor(rnd() * 3)) {
+    for (let y = by + 10; y < h - 4; y += 3 + Math.floor(rnd() * 5)) {
       const [x0] = river(y);
       const d = (y - hz) / (h - hz);
-      if (rnd() < 0.5) L.reeds.push([x0 - 1 - Math.floor(rnd() * 3 * d), y, Math.round(2 + d * 8 * (0.6 + rnd() * 0.6)), rnd() * 6.28]);
+      if (rnd() < 0.55) L.reeds.push([x0 - 2 - Math.floor(rnd() * 6 * d), y, Math.round(4 + d * 16 * (0.6 + rnd() * 0.6)), rnd() * 6.28]);
     }
-    // the inn: the floor boards inside, the sill, door posts and the lintel
-    // (with a rolled bamboo blind when there is room above the title)
+    // the inn: floor boards inside (seams, staggered joints, grain), the sill,
+    // door posts with grain and a lit inner edge, the lintel (and a rolled
+    // bamboo blind when there is room above the title)
     const floorY = Math.round(h * (L.tall ? 0.935 : 0.9));
     L.floorY = floorY;
     R(0, floorY, w, h - floorY, '#24170f');
-    for (let y = floorY + 3; y < h; y += 4) R(0, y, w, 1, '#1b110b');
-    for (let y = floorY + 3, k = 0; y < h; y += 4, k++) for (let x = (k * 13) % 23; x < w; x += 23 + (k % 3) * 6) R(x, y - 3, 1, 3, '#1b110b');
-    R(0, floorY, w, 2, '#3b2819'); R(0, floorY, w, 1, '#5a3f2a');
-    const post = Math.max(4, Math.round(w * (L.tall ? 0.032 : 0.026)));
-    const lint = Math.max(2, Math.round(h * (L.tall ? 0.012 : 0.032)));
+    for (let y = floorY + 6, k = 0; y < h; y += 8, k++) {
+      R(0, y, w, 1, '#1a100a');
+      for (let x = (k * 29) % 47; x < w; x += 47 + (k % 3) * 12) R(x, y - 7, 1, 7, '#1a100a');
+      for (let x = (k * 13) % 31; x < w; x += 31 + (k % 4) * 9) R(x, y - 4 - (k % 2) * 2, 6 + (x % 5), 1, '#2a1b12');
+    }
+    R(0, floorY, w, 4, '#3b2819'); R(0, floorY, w, 1, '#5a3f2a'); R(0, floorY + 3, w, 1, '#1e140c');
+    const post = Math.max(8, Math.round(w * (L.tall ? 0.032 : 0.026)));
+    const lint = Math.max(4, Math.round(h * (L.tall ? 0.012 : 0.032)));
     L.post = post;
     for (const x0 of [0, w - post]) {
       R(x0, 0, post, h, '#1c140f');
-      for (let y = 6; y < h; y += 9) R(x0 + 1 + (y % 3), y, 1, 4, '#24190f');
+      for (let y = 10; y < h; y += 17) R(x0 + 2 + ((y * 3) % 5), y, 1, 7 + (y % 5), '#24190f');
+      for (let y = 4; y < h; y += 23) R(x0 + 3 + ((y * 7) % 4), y, 2, 3, '#170f0b');
     }
-    R(post - 1, lint, 1, h - lint, '#3f2d1f'); R(w - post, lint, 1, h - lint, '#2c2017');
-    R(0, 0, w, lint, '#1a120d'); R(0, lint - 1, w, 1, '#3a2a1e');
+    R(post - 2, lint, 2, h - lint, '#3f2d1f'); R(post - 1, lint, 1, h - lint, '#4c3726'); R(w - post, lint, 2, h - lint, '#2c2017');
+    R(0, 0, w, lint, '#1a120d'); R(0, lint - 2, w, 2, '#3a2a1e'); R(0, lint - 1, w, 1, '#46331f');
     if (!L.tall) {
-      const bl = Math.max(3, Math.round(h * 0.022));
+      const bl = Math.max(6, Math.round(h * 0.022));
       R(post, lint, w - 2 * post, bl, '#5c4a2c');
-      for (let x = post; x < w - post; x += 2) R(x, lint, 1, bl, '#4a3b22');
+      for (let y = lint; y < lint + bl; y += 2) R(post, y, w - 2 * post, 1, '#4f3f24');
+      for (let x = post; x < w - post; x += 3) R(x, lint, 1, bl, '#4a3b22');
       R(post, lint + bl - 1, w - 2 * post, 1, '#3a2e1a'); R(post, lint, w - 2 * post, 1, '#76603a');
-      for (const u of [0.18, 0.5, 0.82]) { const x = Math.round(post + (w - 2 * post) * u); R(x, lint, 1, bl + 2, '#c9b58a'); }
+      for (const uu of [0.18, 0.5, 0.82]) { const x = Math.round(post + (w - 2 * post) * uu); R(x, lint, 2, bl + 4, '#c9b58a'); R(x + 1, lint, 1, bl + 4, '#9a8660'); }
     }
-    // the writing desk (low, on short legs) with the folio, inkstone, brush and lamp
+    // the writing desk (low, on short legs): a lit front edge, grain, a
+    // shadow beneath; the folio, inkstone and brush, a teacup, the lamp
     const dx1 = Math.round(P.desk[2] * w), dy = Math.round(P.desk[1] * h);
-    const dt = Math.max(2, Math.round(h * 0.014));
-    const ap = Math.max(2, Math.round(h * 0.012));
-    R(0, dy + dt + ap, dx1, h - dy - dt - ap, 'rgba(8,5,3,0.45)');           // shadow under the desk
-    R(0, dy, dx1, dt, '#6e4428'); R(0, dy, dx1, 1, '#a06c42'); R(dx1 - 1, dy, 1, dt, '#8a5a36');
-    for (let x = 4; x < dx1 - 2; x += 7) R(x, dy + 1 + (x % 3 ? 1 : 0), 3, 1, '#7a4c2e');
-    R(0, dy + dt, dx1, ap, '#3a2418'); R(0, dy + dt, dx1, 1, '#24160e');
-    const leg = Math.max(2, Math.round(w * 0.008));
-    for (const x of [post + 2, dx1 - leg - 3]) { R(x, dy + dt + ap, leg, h - dy - dt - ap - 1, '#3a2418'); R(x, dy + dt + ap, 1, h - dy - dt - ap - 1, '#4e321f'); }
-    const fw = Math.max(18, Math.min(40, Math.round(Math.min(w, h * 1.4) * 0.085)));
-    const fh = Math.max(11, Math.round(fw * 0.62));
-    const fx = Math.max(post + 12, Math.round(dx1 * 0.42)), fy = dy - fh + Math.round(dt / 2) + 1;
-    R(fx + 1, fy + fh, fw, 1, '#1a100a');                                // shadow
-    R(fx + 2, fy + 1, fw - 1, fh, '#e7dbbd');                            // page edges
-    R(fx + 2, fy + fh - 1, fw - 1, 1, '#c9b98f');
-    R(fx, fy, fw, fh - 1, '#27305c');                                    // cloth cover
-    for (let y = fy + 1; y < fy + fh - 1; y++) for (let x = fx + 3 + (y & 1); x < fx + fw - 1; x += 2) if (((x + y) % 4) === 0) R(x, y, 1, 1, '#2e386a');
-    R(fx, fy, 2, fh - 1, '#1c2346');                                     // spine
-    for (let y = fy + 2; y < fy + fh - 2; y += 3) R(fx + 1, y, 1, 1, '#b9a57a'); // binding thread
-    const sw = Math.max(3, Math.round(fw * 0.16)), sh = Math.max(5, Math.round(fh * 0.55));
-    R(fx + 4, fy + 2, sw, sh, '#f2e9d3');                                // title slip
-    R(fx + 4 + Math.floor(sw / 2), fy + 3, 1, sh - 3, '#4c4030');
-    const rbx = fx + Math.round(fw * 0.66), rbl = Math.max(3, Math.round(fh * 0.45));
-    R(rbx, fy + fh - 1, 2, rbl, '#c18a2a');                              // ribbon
-    R(rbx + 1, fy + fh - 1, 1, rbl, '#8a5d14');
-    R(rbx, fy + fh - 1 + rbl, 1, 1, '#c18a2a');
-    const ix = fx + fw + 4;
-    if (ix + 12 < dx1) {
-      R(ix, dy - 2, 7, 3, '#15131a'); R(ix + 1, dy - 2, 5, 1, '#2c2833');   // inkstone
-      R(ix + 1, dy - 4, 9, 1, '#8a5a36'); R(ix + 9, dy - 4, 2, 1, '#1a1418'); // brush
+    const dt = Math.max(4, Math.round(h * 0.014));
+    const ap = Math.max(4, Math.round(h * 0.012));
+    R(0, dy + dt + ap, dx1, h - dy - dt - ap, 'rgba(8,5,3,0.45)');
+    R(0, dy, dx1, dt, '#6e4428'); R(0, dy, dx1, 1, '#b07a4c'); R(0, dy + 1, dx1, 1, '#8a5a36'); R(dx1 - 2, dy, 2, dt, '#8a5a36');
+    for (let x = 8; x < dx1 - 6; x += 13) R(x, dy + 2 + (x % 3 ? 1 : 0), 6 + (x % 4), 1, '#7a4c2e');
+    R(0, dy + dt, dx1, ap, '#3a2418'); R(0, dy + dt, dx1, 1, '#24160e'); R(0, dy + dt + ap - 1, dx1, 1, '#2a1a10');
+    const leg = Math.max(4, Math.round(w * 0.008));
+    for (const x of [post + 4, dx1 - leg - 6]) { R(x, dy + dt + ap, leg, h - dy - dt - ap - 2, '#3a2418'); R(x, dy + dt + ap, 1, h - dy - dt - ap - 2, '#4e321f'); R(x + leg - 1, dy + dt + ap, 1, h - dy - dt - ap - 2, '#2a1a10'); }
+    const fw = Math.max(36, Math.min(80, Math.round(Math.min(w, h * 1.4) * 0.085)));
+    const fh = Math.max(22, Math.round(fw * 0.62));
+    const fx = Math.max(post + 24, Math.round(dx1 * 0.42)), fy = dy - fh + Math.round(dt / 2) + 2;
+    R(fx + 2, fy + fh, fw, 2, '#1a100a');                                     // shadow
+    R(fx + 3, fy + 2, fw - 1, fh, '#e7dbbd');                                 // page edges
+    for (let y = fy + 4; y < fy + fh; y += 2) R(fx + fw, y, 2, 1, '#c9b98f');
+    R(fx + 3, fy + fh - 1, fw - 1, 1, '#c9b98f');
+    R(fx, fy, fw, fh - 1, '#27305c');                                         // indigo cloth cover
+    for (let y = fy + 2; y < fy + fh - 2; y += 2) for (let x = fx + 5 + ((y >> 1) & 1) * 2; x < fx + fw - 2; x += 4) R(x, y, 2, 1, '#2d3768');
+    R(fx, fy, fw, 1, '#36407a'); R(fx + fw - 1, fy, 1, fh - 1, '#1d2448');
+    R(fx, fy, 4, fh - 1, '#1c2346');                                          // spine
+    for (let y = fy + 3; y < fy + fh - 3; y += 5) { R(fx + 1, y, 2, 2, '#b9a57a'); R(fx + 1, y + 2, 1, 1, '#7a6a4c'); } // binding thread
+    const sw = Math.max(6, Math.round(fw * 0.16)), sh = Math.max(10, Math.round(fh * 0.55));
+    R(fx + 8, fy + 4, sw, sh, '#f2e9d3'); R(fx + 8, fy + 4 + sh - 1, sw, 1, '#cfc3a4'); R(fx + 8 + sw - 1, fy + 4, 1, sh, '#d9ceb2'); // blank title slip
+    const rbx = fx + Math.round(fw * 0.66), rbl = Math.max(6, Math.round(fh * 0.45));
+    R(rbx, fy + fh - 1, 4, rbl, '#c18a2a'); R(rbx + 2, fy + fh - 1, 2, rbl, '#8a5d14');   // ribbon over the desk edge
+    R(rbx, fy + fh - 1 + rbl, 2, 2, '#c18a2a'); R(rbx + 2, fy + fh - 1 + rbl, 2, 1, '#8a5d14');
+    const ix = fx + fw + 8;
+    if (ix + 24 < dx1) {
+      R(ix, dy - 4, 14, 5, '#15131a'); R(ix + 1, dy - 4, 12, 1, '#2c2833'); R(ix + 8, dy - 3, 4, 2, '#0a0a10'); // inkstone and its well
+      R(ix + 2, dy - 7, 18, 2, '#8a5a36'); R(ix + 2, dy - 7, 18, 1, '#a8744a'); R(ix + 18, dy - 7, 4, 2, '#1a1418'); // brush
+      if (ix + 36 < dx1) { R(ix + 26, dy - 7, 8, 7, '#b8b0a0'); R(ix + 26, dy - 7, 8, 1, '#d8d0c0'); R(ix + 27, dy - 6, 6, 1, '#4a6a4a'); R(ix + 33, dy - 7, 1, 7, '#8e867a'); } // teacup
     }
-    const lx = post + 3, lh = Math.max(7, Math.round(fh * 0.9)), lw = Math.max(5, Math.round(lh * 0.6));
-    R(lx - 1, dy - 1, lw + 2, 1, '#2a1a10');
-    R(lx, dy - lh, lw, lh, '#3a2418');
-    R(lx - 1, dy - lh - 1, lw + 2, 1, '#2a1a10');                          // cap
-    R(lx, dy - 1, 1, 1, '#2a1a10'); R(lx + lw - 1, dy - 1, 1, 1, '#2a1a10'); // feet
+    const lx = post + 6, lh = Math.max(14, Math.round(fh * 0.9)), lw = Math.max(10, Math.round(lh * 0.6));
+    R(lx - 2, dy - 2, lw + 4, 2, '#2a1a10');                                  // base
+    R(lx, dy - lh, lw, lh, '#3a2418');                                        // frame
+    R(lx - 2, dy - lh - 2, lw + 4, 2, '#2a1a10'); R(lx - 2, dy - lh - 2, lw + 4, 1, '#4a3020'); // cap
+    R(lx, dy - 2, 2, 2, '#2a1a10'); R(lx + lw - 2, dy - 2, 2, 2, '#2a1a10');  // feet
     L.lamp = { x: lx, y: dy - lh, w: lw, h: lh };
     // moving details stay inside the door frame and above the floor
-    L.water = L.water.filter(([x, y, len]) => x > post && x + len < w - post && y < floorY - 1);
-    L.reeds = L.reeds.filter(([x, y]) => x > post && x < w - post && y < floorY - 1);
-    const skyTop = lint + (L.tall ? 1 : Math.max(3, Math.round(h * 0.022)) + 2);
+    L.water = L.water.filter(([x, y, len]) => x > post && x + len < w - post && y < floorY - 2);
+    L.reeds = L.reeds.filter(([x, y]) => x > post && x < w - post && y < floorY - 2);
+    const skyTop = lint + (L.tall ? 2 : Math.max(6, Math.round(h * 0.022)) + 4);
     const inMast = (x, y) => (L.tall ? x > w * 0.08 && x < w * 0.92 && y < h * 0.25 : x < w * 0.5 && y < h * 0.42);
-    L.stars = L.stars.filter(([x, y]) => x > post + 1 && x < w - post - 2 && y > skyTop && !inMast(x, y));
+    L.stars = L.stars.filter(([x, y]) => x > post + 2 && x < w - post - 4 && y > skyTop && !inMast(x, y));
     scene.key = w + 'x' + h;
     scene.cv = cv;
     scene.L = L;
   }
 
-  function drawBackdrop(c, w, h, t) {
+  function drawScene(c, w, h, t) {
     if (scene.key !== w + 'x' + h) buildScene(w, h);
     const L = scene.L;
     const still = RB.game.reducedMotion();
+    c.imageSmoothingEnabled = false;
     c.drawImage(scene.cv, 0, 0);
     // stars: a few, softly twinkling
     for (const [x, y, ph, big] of L.stars) {
       const a = still ? 0.55 : 0.35 + 0.35 * (Math.sin(t / 900 + ph) + 1) / 2;
       c.fillStyle = 'rgba(240,236,214,' + a.toFixed(2) + ')';
-      c.fillRect(x, y, 1, 1);
-      if (big) { c.fillStyle = 'rgba(240,236,214,' + (a * 0.35).toFixed(2) + ')'; c.fillRect(x - 1, y, 3, 1); c.fillRect(x, y - 1, 1, 3); }
+      c.fillRect(x, y, big ? 2 : 1, big ? 2 : 1);
+      if (big) { c.fillStyle = 'rgba(240,236,214,' + (a * 0.35).toFixed(2) + ')'; c.fillRect(x - 2, y, 6, 2); c.fillRect(x, y - 2, 2, 6); }
     }
     // water: slow drifting glints and the bridge lantern's reflection
     for (const [x, y, len, ph] of L.water) {
       const k = still ? 0.5 : (Math.sin(t / 1400 + ph) + 1) / 2;
       if (k < 0.55) continue;
-      const dx = still ? 0 : Math.round(Math.sin(t / 2600 + ph) * 2);
+      const dx = still ? 0 : Math.round(Math.sin(t / 2600 + ph) * 3);
       c.fillStyle = 'rgba(120,150,200,' + (0.25 + (k - 0.55) * 0.9).toFixed(2) + ')';
       c.fillRect(Math.round(x + dx), y, len, 1);
     }
@@ -362,41 +396,64 @@ RB.ui.title = (function () {
       const s = p.s;
       if (lit) {
         const fl = still ? 0.85 : 0.78 + 0.12 * Math.sin(t / 310 + i * 1.9) + 0.05 * Math.sin(t / 97 + i);
-        const r = Math.round(4 + s * 4);
+        const r = Math.round(6 + s * 3.5);
         c.globalAlpha = fl;
         c.drawImage(glowSprite(r, '255,200,110'), p.x - r, p.y - r);
         c.globalAlpha = 1;
         if (p.bridge) {
-          const [wl, wr] = L.river(p.y + 12);
-          if (p.x > wl && p.x < wr) for (let k = 0; k < 4; k++) { c.fillStyle = 'rgba(255,200,110,' + (0.35 - k * 0.07).toFixed(2) + ')'; c.fillRect(p.x - (k % 2), p.y + 14 + k * 3, 2, 1); }
+          const [wl, wr] = L.river(p.y + 24);
+          if (p.x > wl && p.x < wr) for (let k = 0; k < 4; k++) { c.fillStyle = 'rgba(255,200,110,' + (0.35 - k * 0.07).toFixed(2) + ')'; c.fillRect(p.x - (k % 2) * 2, p.y + 28 + k * 6, 4, 1); }
         }
       }
-      c.fillStyle = lit ? '#ffd27a' : '#4a4650';
-      c.fillRect(p.x - Math.floor(s / 2), p.y - Math.floor(s * 0.7), Math.max(1, s), Math.max(1, Math.round(s * 1.3)));
+      // the lantern box: paper lit (or dark), a darker lower half, a cap
+      const bw = Math.max(2, s), bh = Math.max(3, Math.round(s * 1.4));
+      const bx = p.x - Math.floor(bw / 2), byy = p.y - Math.floor(bh / 2);
+      c.fillStyle = lit ? '#ffd27a' : '#4a4650'; c.fillRect(bx, byy, bw, bh);
+      if (bw > 2) { c.fillStyle = lit ? '#e8a850' : '#3a3640'; c.fillRect(bx + bw - Math.max(1, Math.floor(bw / 3)), byy, Math.max(1, Math.floor(bw / 3)), bh); c.fillStyle = lit ? '#fff0c0' : '#5a5660'; c.fillRect(bx, byy, Math.max(1, Math.floor(bw / 3)), Math.max(1, Math.floor(bh / 2))); }
+      c.fillStyle = '#241b20'; c.fillRect(bx - 1, byy - 1, bw + 2, 1);
     }
     // reeds by the water
     for (const [x, y, hh, ph] of L.reeds) {
-      const sway = still ? 0 : Math.round(Math.sin(t / 1100 + ph) * 1.2);
+      const sway = still ? 0 : Math.round(Math.sin(t / 1100 + ph) * 2);
       const lean = Math.round(hh / 3);
       c.fillStyle = '#0f1526';
-      c.fillRect(x, y - hh + 2, 1, hh - 2);
-      c.fillRect(x - 1, y - lean - 1, 1, lean);
-      if (hh > 5) c.fillRect(x + 1, y - lean, 1, lean);
+      c.fillRect(x, y - hh + 3, 1, hh - 3);
+      c.fillRect(x - 2, y - lean - 1, 1, lean);
+      if (hh > 8) c.fillRect(x + 2, y - lean, 1, lean);
       c.fillStyle = '#1d2438';
-      c.fillRect(x + sway, y - hh, 1, 2);
+      c.fillRect(x + sway, y - hh, 1, 4);
+      c.fillStyle = '#2a3048';
+      c.fillRect(x + sway, y - hh, 1, 1);
     }
-    // the desk lamp: paper glowing warm, lighting the desk
+    // the desk lamp: paper panels glowing warm behind the frame, lighting the desk
     const lp = L.lamp;
     const fl = still ? 0.9 : 0.84 + 0.06 * Math.sin(t / 420) + 0.04 * Math.sin(t / 130);
-    const r = Math.round(lp.h * 2.6);
+    const r = Math.round(lp.h * 2.2);
     c.globalAlpha = fl;
     c.drawImage(glowSprite(r, '255,196,120'), Math.round(lp.x + lp.w / 2 - r), Math.round(lp.y + lp.h / 2 - r));
     c.globalAlpha = 1;
-    c.fillStyle = '#f4dfa8';
-    c.fillRect(lp.x + 1, lp.y + 1, lp.w - 2, lp.h - 2);
-    c.fillStyle = '#c99a50';
-    c.fillRect(lp.x + 1, lp.y + Math.round(lp.h / 2), lp.w - 2, 1);
+    const ix = lp.x + 2, iy = lp.y + 2, iw = lp.w - 4, ih = lp.h - 4;
+    c.fillStyle = '#f4dfa8'; c.fillRect(ix, iy, iw, ih);
+    c.fillStyle = '#fff2c8'; c.fillRect(ix, iy, Math.max(1, Math.round(iw * 0.45)), ih);
+    c.fillStyle = '#d8b878'; c.fillRect(ix + iw - 1, iy, 1, ih);
+    c.fillStyle = '#c99a50'; c.fillRect(ix, lp.y + Math.round(lp.h / 2), iw, 1); c.fillRect(ix + Math.round(iw / 2), iy, 1, ih);
   }
+
+  // The backdrop draws at art resolution. When a caller that draws in
+  // logical px (the prologue's shots) calls it through the ×2 transform, it
+  // still draws the art-resolution scene into the whole buffer.
+  function drawBackdrop(c, w, h, t) {
+    const T = c.getTransform ? c.getTransform() : null;
+    if (T && (T.a !== 1 || T.d !== 1 || T.e || T.f) && c.canvas) {
+      c.save();
+      c.setTransform(1, 0, 0, 1, 0, 0);
+      drawScene(c, c.canvas.width, c.canvas.height, t);
+      c.restore();
+      return;
+    }
+    drawScene(c, w, h, t);
+  }
+  drawBackdrop.art = true;
 
   // ---- title --------------------------------------------------------------------------
   function keysGuide() {
