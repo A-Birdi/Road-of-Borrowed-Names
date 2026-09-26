@@ -685,7 +685,6 @@ RB.ui.create = (function () {
           const h = vv ? vv.height : full;
           const kb = typing && !zoomed && (full - h > 90);
           fr.scrim.classList.toggle('cr-kb', kb);
-          fr.scrim.classList.toggle('cr-typing', typing && !zoomed && (kb || h < 480));
           if (kb) { fr.scrim.style.top = Math.round(vv.offsetTop) + 'px'; fr.scrim.style.height = Math.round(h) + 'px'; fr.scrim.style.bottom = 'auto'; }
           else { fr.scrim.style.top = ''; fr.scrim.style.height = ''; fr.scrim.style.bottom = ''; }
           if (typing) {

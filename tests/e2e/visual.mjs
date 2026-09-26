@@ -5,7 +5,7 @@
 // States: title, slots, slots_empty, create_prologue, create, create_err,
 // create_kb, create2, create2_acc, create_inspect, create3, create4,
 // create_place, create_ngplus, create_x2, create2_x2, create3_x2,
-// create4_x2, journey, words, satchel,
+// create4_x2, create2_hc, create2_focus, journey, words, satchel,
 // map, settings, dialogue, help, chal, combat, world_rw, world_sg, world_co,
 // world_sb, world_lf, world_sa. File names: <state>_<W>x<H>.png
 import fs from 'node:fs';
@@ -151,6 +151,14 @@ const STATES = {
   async create2_x2(p) { await STATES.create_x2(p); await p.click('[data-a=next]'); await settle(p, 400); },
   async create3_x2(p) { await STATES.create2_x2(p); await p.click('[data-a=next]'); await settle(p, 400); },
   async create4_x2(p) { await STATES.create3_x2(p); await p.click('[data-a=next]'); await settle(p, 400); },
+  // high contrast, and keyboard focus on a swatch (focus is drawn apart from selection)
+  async create2_hc(p) { await STATES.create(p); await p.evaluate(() => { RB.game.settings.contrast = 'high'; RB.game.applySettings(); }); await p.click('[data-a=next]'); await settle(p, 400); },
+  async create2_focus(p) {
+    await STATES.create2(p);
+    await p.focus('[data-set=skin][data-v="2"]');
+    await p.keyboard.press('ArrowRight');
+    await settle(p, 300);
+  },
   async create_ngplus(p) {
     await p.evaluate(async () => {
       const s = V.rich('lf.town', 26, 20, { comp: 'ren' });
