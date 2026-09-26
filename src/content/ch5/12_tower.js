@@ -151,40 +151,102 @@ var RB = (globalThis.RB = globalThis.RB || {});
     R(c, 6, 6, 1, 1, '#f0f0ff'); R(c, 9, 6, 1, 1, '#f0f0ff');
   };
 
-  // ---- battle art (≈64px, centred) ---------------------------------------------------------------------
-  const A = RB.enemyArt.A;
-  const circ = (c, x, y, r, col) => { c.fillStyle = col; c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill(); };
-  A.lf_conduit = (c, t, o) => {
-    const col = o.col || '#8a90c8';
-    const s = Math.sin(t / 500) * 3;
-    c.fillStyle = '#3a3850';
-    c.beginPath(); c.moveTo(-8, 40); c.quadraticCurveTo(-26 + s, 10, -6, -8); c.quadraticCurveTo(14, -26, 4, -40); c.lineTo(14, -40); c.quadraticCurveTo(26, -24, 6, -4); c.quadraticCurveTo(-12 + s, 12, 4, 40); c.closePath(); c.fill();
-    c.strokeStyle = '#5a5878'; c.lineWidth = 2; c.stroke();
-    for (let i = 0; i < 6; i++) {
-      const ph = ((t / 1200) + i / 6) % 1;
-      circ(c, -4 + Math.sin(ph * 6) * 8, 36 - ph * 74, 3, col + (ph < 0.8 ? 'd0' : '60'));
-    }
-    c.fillStyle = '#f0f0ff'; c.fillRect(-2, -30, 3, 3); c.fillRect(6, -31, 3, 3);
-  };
-  A.lf_keeper = (c, t, o) => {
-    const sw = Math.sin(t / 700) * 0.08;
-    const drip = (t / 40) % 30;
-    // conduit tendrils behind
-    c.strokeStyle = '#3a3850'; c.lineWidth = 5;
-    for (let i = 0; i < 4; i++) { c.beginPath(); c.moveTo(-20 + i * 13, 10); c.quadraticCurveTo(-40 + i * 26 + Math.sin(t / 400 + i) * 6, 30, -30 + i * 20, 48); c.stroke(); }
-    c.save(); c.rotate(sw);
-    c.fillStyle = o.col || '#4a5a52';
-    c.beginPath(); c.moveTo(-18, -34); c.lineTo(18, -34); c.lineTo(30, 18); c.lineTo(-30, 18); c.closePath(); c.fill();
-    c.fillStyle = '#6a7a62'; c.fillRect(-30, 14, 60, 5);
-    c.fillStyle = '#2a3a34'; c.fillRect(-12, -30, 3, 40);
-    // sluice-plate face
-    c.fillStyle = '#b8984a'; c.fillRect(-12, -18, 24, 16);
-    c.fillStyle = '#6a5020'; c.fillRect(-9, -15, 18, 1); c.fillRect(-9, -11, 18, 1); c.fillRect(-9, -7, 12, 1);
-    c.fillStyle = '#e8ecff'; c.fillRect(-7, -24, 4, 3); c.fillRect(4, -24, 4, 3);
-    c.restore();
-    circ(c, 0, 24, 6, '#2a3020');
-    c.fillStyle = 'rgba(160,190,230,0.7)'; c.fillRect(-22, 20 + drip, 2, 4); c.fillRect(20, 20 + ((drip + 13) % 30), 2, 4);
-  };
+  // ---- battle art (pixel art at art resolution; see src/ui/78_enemy_art.js) --------------------------
+  // A conduit that woke: an iron pipe snaking up in an S with bolted
+  // collars, a flared spout for a head with two lit eyes, and spirit-light
+  // rising along it. Options: col (the light).
+  RB.enemyArt.def('lf_conduit', {
+    w: 144, h: 200, ox: 72, oy: 96, dy: -6, frames: 8, ms: 120,
+    build(L, f, o, H) {
+      const K = H.K;
+      const col = o.col || '#8a90c8';
+      const iron = K.mat('#3a3850', { n: 5, at: 2, step: 0.08, shift: 1.2 });
+      const light = K.mat(col, { n: 3, at: 1, step: 0.12, line: false });
+      const sway = [0, 1, 2, 1, 0, -1, -2, -1][f];
+      const P = [[-14, 84, 18], [-26, 58, 16], [-20, 30, 16], [0, 10, 16], [16, -10, 16], [14, -36, 16], [4 + sway, -56, 16]];
+      const glow = L.like(), B = L.like(), fx = L.like();
+      H.pipe(B, P, 16, iron);
+      B.stone([[-30, 84], [2, 84], [6, 92], [-34, 92]], iron, { bevel: 2, face: 1 });
+      // flared spout head
+      const hx = 4 + sway;
+      B.poly([[hx - 14, -58], [hx + 14, -58], [hx + 20, -78], [hx - 20, -78]], iron, (x, y) => K.clamp(0.55 - (x - hx) / 60 - (y + 78) / 90, 0, 0.99));
+      B.ell(hx, -78, 20, 5, iron, 3);
+      B.ell(hx, -78, 15, 3, K.mat('#141222', { n: 2, at: 0, line: false }), 0);
+      // bolts on the collars
+      for (let i = 1; i < P.length - 1; i++) B.rect(P[i][0] - 6, P[i][1] - 1, 2, 2, iron, 4);
+      B.outline();
+      for (const s of [-1, 1]) { B.rect(hx + s * 7 - 2, -68, 4, 3, light, 2); B.dot(hx + s * 7 - 2, -68, K.solid('#ffffff', { line: false }), 0); }
+      // rising droplets of light beside the pipe
+      for (let i = 0; i < 6; i++) {
+        const k = ((f / 8) + i / 6) % 1;
+        const seg = Math.min(P.length - 2, Math.floor((1 - k) * (P.length - 1)));
+        const u = (1 - k) * (P.length - 1) - seg;
+        const x = P[seg][0] + (P[seg + 1][0] - P[seg][0]) * u + (i % 2 ? 12 : -12), y = P[seg][1] + (P[seg + 1][1] - P[seg][1]) * u;
+        fx.ell(x, y, 3, 3, light, k < 0.8 ? 2 : 1);
+        H.glow(glow, x, y, 8, 8, col, 0.3, 2);
+      }
+      H.glow(glow, hx, -70, 18, 8, col, 0.3, 2);
+      return glow.over(B).over(fx);
+    },
+  });
+  // The Sluice Keeper: a weathered bronze body with verdigris, a brass
+  // sluice-plate face under a gate wheel, pale eyes, pipe tendrils behind
+  // curling to the floor, a clapper below, and water dripping from its lip.
+  // Options: col (the bronze).
+  RB.enemyArt.def('lf_keeper', {
+    w: 208, h: 228, ox: 104, oy: 104, frames: 8, ms: 150,
+    build(L, f, o, H) {
+      const K = H.K;
+      const col = o.col || '#4a5a52';
+      const bronze = K.mat(col, { n: 5, at: 2, step: 0.09, shift: 1.2 });
+      const patina = K.mat('#7fae9a', { n: 3, at: 1, step: 0.08, line: false });
+      const brass = K.mat('#b8984a', { n: 5, at: 2, step: 0.1 });
+      const band = K.mat('#6a7a62', { n: 4, at: 2, step: 0.08 });
+      const pipeM = K.mat('#3a3850', { n: 5, at: 2, step: 0.08 });
+      const water = K.mat('#a0bee6', { n: 3, at: 1, step: 0.1, alpha: 210, line: false });
+      const eyeM = K.mat('#e8ecff', { n: 3, at: 1, line: false });
+      const a = Math.sin(H.ph(f, 8)) * 0.05;
+      const tend = L.like(), B = L.like(), fx = L.like();
+      // tendrils: four pipes from the lower back, curling to the floor
+      for (let i = 0; i < 4; i++) {
+        const x0 = -30 + i * 20, w0 = Math.sin(H.ph(f, 8) + i) * 5;
+        const ex = -70 + i * 46;
+        H.pipe(tend, [[x0, 20, 10], [x0 + (ex - x0) * 0.5 + w0, 50, 10], [ex + w0 * 0.6, 78, 9], [ex + (i < 2 ? -10 : 10), 92, 8]], 10, pipeM);
+      }
+      B.save().translate(0, -80).rotate(a).translate(0, 80);
+      // gate wheel and spindle on the crown
+      B.path([[0, -72], [0, -94]], 4, brass, 2);
+      B.fill(-16, -104, 16, -86, (x, y) => { const d = Math.hypot(x, (y + 95) * 1.8); return d <= 15 && d >= 12; }, brass, (x, y) => K.clamp(0.6 - (x + y + 95) / 30, 0, 0.99));
+      for (const [x, y] of [[-13, -95], [13, -95], [0, -99], [0, -91]]) B.line(0, -95, x, y, brass, 1);
+      // body: a crowned bell-trapezoid with a heavy base band
+      B.ell(0, -70, 22, 8, bronze, K.sphere(-6, -74, 24, 10));
+      B.poly([[-22, -70], [22, -70], [62, 30], [-62, 30]], bronze, (x, y) => K.clamp(0.52 - x / 110 + (y < -40 ? 0.1 : 0), 0, 0.99));
+      B.stone([[-64, 28], [64, 28], [66, 40], [-66, 40]], band, { bevel: 2, face: 2 });
+      for (const x of [-30, 0, 30]) { B.line(x * 0.4, -68, x, 28, bronze, 1); B.line(x * 0.4 + 1, -68, x + 1, 28, bronze, 3); }
+      for (let i = 0; i < 7; i++) B.rect(-54 + i * 18, 32, 2, 2, band, 4);
+      // verdigris in clusters where water runs
+      for (const [x, y, s] of [[-40, 10, 8], [-30, 22, 6], [34, 14, 7], [18, -40, 5], [-14, -58, 6], [48, 24, 5]]) K.cluster(B, x, y, s, patina, 1, K.hh(x + 7, y + 7, 9));
+      // brass sluice-plate face with grooves and rivets
+      B.stone([[-26, -44], [26, -44], [26, -8], [-26, -8]], brass, { bevel: 3, face: 2 });
+      for (let y = -38; y <= -16; y += 6) { B.line(-20, y, 20, y, brass, 0); B.line(-20, y + 1, 20, y + 1, brass, 3); }
+      for (const [x, y] of [[-23, -41], [21, -41], [-23, -12], [21, -12]]) B.rect(x, y, 2, 2, brass, 4);
+      // pale eyes above the plate
+      for (const s of [-1, 1]) { B.rect(s * 12 - 4, -56, 8, 5, K.mat('#141820', { n: 2, at: 0, line: false }), 0); B.rect(s * 12 - 3, -55, 5, 3, eyeM, 1); }
+      // clapper
+      B.path([[0, 40], [0, 50]], 3, pipeM, 1);
+      B.ell(0, 54, 8, 7, pipeM, K.sphere(-2, 51, 9, 8));
+      B.restore();
+      B.outline(); tend.outline();
+      // drips falling from the lip
+      for (let i = 0; i < 4; i++) {
+        const k = ((f / 8) + i / 4) % 1;
+        const x = [-50, -18, 22, 52][i];
+        fx.rect(x, 42 + k * 44, 2, 4, water, 1);
+        if (k > 0.85) fx.rect(x - 2, 86, 6, 1, water, 2);
+      }
+      return tend.over(B).over(fx);
+    },
+  });
 
   // ---- tower maps ---------------------------------------------------------------------------------------
   const TOWER = { region: 'lanternfall', music: 'belltower', noTravel: true };

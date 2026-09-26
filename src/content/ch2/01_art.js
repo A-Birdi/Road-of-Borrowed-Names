@@ -137,18 +137,60 @@ var RB = (globalThis.RB = globalThis.RB || {});
     R(c, 1, 13, 3, 4, '#e8e0cc');
   };
 
-  // ---- battle art ---------------------------------------------------------------------------
-  const A = RB.enemyArt.A;
-  A.sg_letter = (c, t, o) => {
-    const b = Math.sin(t / 420) * 4;
-    c.save(); c.rotate(Math.sin(t / 900) * 0.08);
-    c.fillStyle = '#f4ecd8'; c.fillRect(-30, -20 + b, 60, 40);
-    c.fillStyle = '#d8ccb0'; c.beginPath(); c.moveTo(-30, -20 + b); c.lineTo(0, 4 + b); c.lineTo(30, -20 + b); c.fill();
-    c.fillStyle = '#b84a3a'; c.beginPath(); c.arc(0, 6 + b, 6, 0, 7); c.fill();
-    c.fillStyle = '#2a2440'; c.fillRect(-12, -6 + b, 3, 4); c.fillRect(9, -6 + b, 3, 4);
-    c.fillStyle = '#8a7a6a60'; for (let i = 0; i < 3; i++) c.fillRect(-24, 10 + i * 4 + b, 16, 1);
-    c.restore();
-    c.strokeStyle = '#e8e0cc80'; c.lineWidth = 2;
-    for (let i = 0; i < 3; i++) { c.beginPath(); c.moveTo(-16 + i * 16, 24 + b); c.quadraticCurveTo(-12 + i * 16 + Math.sin(t / 300 + i) * 5, 34, -16 + i * 16, 44); c.stroke(); }
-  };
+  // ---- battle art (pixel art at art resolution; see src/ui/78_enemy_art.js) -------------------
+  // A sealed letter that will not be read: an envelope of folded flaps with
+  // crisp creases, a vermilion wax seal, eyes on the flap, lines of writing
+  // too small to read, and torn paper strips fluttering below.
+  RB.enemyArt.def('sg_letter', {
+    w: 152, h: 176, ox: 76, oy: 68, frames: 6, ms: 150,
+    bob: (t) => Math.sin(t / 420) * 6,
+    build(L, f, o, H) {
+      const K = H.K;
+      const paper = K.mat(o.col || '#f4ecd8', { n: 5, at: 3, step: 0.08, shift: 1.2 });
+      const seal = K.mat('#b84a3a', { n: 5, at: 2, step: 0.1 });
+      const ink = K.solid('#6a6070', { line: false });
+      const stampM = K.mat('#7a9ab8', { n: 3, at: 1, step: 0.1 });
+      const strip = K.mat(o.col || '#f4ecd8', { n: 4, at: 2, step: 0.08 });
+      const stripF = K.mat(o.col || '#f4ecd8', { n: 3, at: 1, step: 0.08, alpha: 130, line: false });
+      const ph = H.ph(f, 6);
+      const tails = L.like(), E = L.like();
+      // torn strips trailing like ghost tails, thinning and fading at the ends
+      for (let i = 0; i < 2; i++) H.tail(tails, -26 + i * 30, 30, 50 - i * 10, 6, ph + i * 1.9, [[0, 24, strip], [24, 60, stripF]], { amp: 6, curl: 7, dark: 0.3, lean: -0.55 });
+      E.save().rotate(Math.sin(ph) * 0.07);
+      // body and its four flaps (the left one catches the light)
+      E.rect(-58, -38, 116, 76, paper, 3);
+      E.poly([[-58, -38], [-58, 38], [-4, 4]], paper, 4);
+      E.poly([[58, -38], [58, 38], [4, 4]], paper, 2);
+      E.poly([[-58, 38], [58, 38], [0, 0]], paper, 3);
+      E.line(-58, 38, -2, 2, paper, 1); E.line(58, 38, 2, 2, paper, 1);
+      // top flap with a shadow under its edges
+      E.poly([[-58, -38], [58, -38], [0, 12]], paper, 3);
+      E.line(-57, -37, 0, 13, paper, 0); E.line(57, -37, 0, 13, paper, 0);
+      E.line(-55, -35, -1, 14, paper, 1);
+      E.rect(-58, -38, 116, 2, paper, 4);
+      // writing too small to read, and a postage square with a wavy cancel line
+      E.onto((b) => {
+        for (let r = 0; r < 3; r++) for (let s = 0; s < 3; s++) {
+          const x = -40 + s * 9 + (r % 2) * 3, y = 20 + r * 5;
+          b.line(x, y, x + 3 + ((r + s * 2) % 4), y, ink, 0);
+        }
+        b.stone([[32, 16], [48, 16], [48, 30], [32, 30]], stampM, { bevel: 2, face: 1 });
+        for (let x = 30; x < 50; x += 2) b.dot(x, 23 + (x % 4 === 0 ? -1 : 1), paper, 4);
+      });
+      // wax seal with drips and an embossed ring
+      E.ell(0, 12, 11, 10, seal, K.sphere(-3, 8, 12, 11, { amb: 0.2 }));
+      E.ell(-8, 20, 3, 3, seal, 1); E.ell(7, 21, 2.5, 3, seal, 1);
+      E.fill(-8, 4, 8, 20, (x, y) => { const d = Math.hypot(x, y - 12); return d <= 6 && d >= 4.5; }, seal, (x, y) => K.clamp(0.5 - (x + y - 12) / 16, 0, 0.99));
+      E.rect(-1, 11, 2, 2, seal, 4);
+      E.restore();
+      E.outline();
+      E.onto((b) => {
+        b.save().rotate(Math.sin(ph) * 0.07);
+        H.eyes(b, 0, -10, 15, { rx: 3.5, ry: 5 });
+        b.restore();
+      });
+      tails.outline();
+      return tails.over(E);
+    },
+  });
 })();
