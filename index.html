@@ -31716,11 +31716,13 @@ comp: {言葉|ことば} は {全部|ぜんぶ} ここ に ある のに 、 {�
 comp: …… いいえ 。 あなた が {持|も}って いて ください 。 {今|いま} の わたし が {持|も}つ と 、 {見|み}る たび に {他人|たにん} に なって しまう {気|き} が する 。 || …No. Please keep it. If I carry it now, I think it'll become more of a stranger every time I look.
 comp: {南東|なんとう} の {光|ひかり} 。 {師匠|ししょう} は 、 そこ へ {行|い}った 。 {顔|かお} の {残|のこ}り も 、 たぶん そこ に ある 。 || The light in the southeast. My teacher went there. Whatever is left of the face is probably there too.
 !set sb_ren_ushio1
+!quest ren_ushio 0
 !goto after
 :onward
 comp: …… はい 。 {灯|あか}り が {先|さき} です 。 ホシノ さん の {約束|やくそく} が 、 {先|さき} です 。 || …Yes. The lamp comes first. Hoshino's promise comes first.
 comp[smile]: {似顔絵|にがおえ} は 、 あなた が {持|も}って いて ください 。 わたし は …… {言葉|ことば} の ほう を {持|も}って います から 。 || Please keep the sketch. I'll… carry the words instead.
 !set sb_ren_ushio1
+!quest ren_ushio 0
 :after
 narr: {似顔絵|にがおえ} を {丁寧|ていねい} に {畳|たた}み 、 {荷物|にもつ} の いちばん {上|うえ} に しまった 。 {格子|こうし} の {鍵|かぎ} を {手|て} に 、 {階段|かいだん} へ 。 || You fold the sketch carefully and put it at the very top of your pack. Key in hand, you head for the stairs.
 !autosave
@@ -38765,6 +38767,7 @@ narr: レン は {灯|ひ} を {石|いし} の {前|まえ} に {置|お}いて
 ren: {誰|だれ}か が 、 {丁寧|ていねい} に {彫|ほ}って います 。 {敬意|けいい} の ある {字|じ} です 。 || Someone carved this with care. These are respectful letters.
 ren[think]: …… {行|い}きましょう 。 {彫|ほ}った {人|ひと} に 、 {聞|き}きたい こと が できました 。 || …Let's go. I have some questions for whoever carved it.
 !set sa_ushio_found
+!quest ren_ushio 1
 
 @scene sa.gate_first
 narr: {石段|いしだん} の {上|うえ} に 、 {書庫|しょこ} が {建|た}って いた 。 || At the top of the stone steps stands the Archive.
@@ -39254,6 +39257,7 @@ ren[smile]: …… ずるい です ね 。 そう {言|い}われたら 、 {�
 ren: …… はい 。 {師匠|ししょう} も 、 たぶん そう {言|い}います 。 {逃|に}げる な 、 と 。 || …Yes. My teacher would probably say the same. Don't run from it.
 :ropen
 !set sa_ren_took sa_ren_decided
+!quest ren_ushio done
 !music companion_ren
 narr: レン は {綴|つづ}り を {開|ひら}いた 。 || Ren opens the folio.
 narr: {紙|かみ} の {上|うえ} に 、 {誰|だれ}か の {顔|かお} が {浮|う}かぶ 。 {太|ふと}い {眉|まゆ} 。 {笑|わら}う と 、 {目|め} が {消|き}える 。 {左|ひだり} の {頬|ほお} に 、 {墨|すみ} の {跡|あと} 。 || On the paper, a face surfaces. Heavy eyebrows. Eyes that vanish when it smiles. An ink smudge on the left cheek.
@@ -39269,6 +39273,7 @@ narr: レン は {眼鏡|めがね} を {外|はず}して 、 {長|なが}い �
 !end
 :rleave
 !set sa_ren_left sa_ren_decided
+!quest ren_ushio done
 ren: …… そう です ね 。 {教|おし}え は 、 {全部|ぜんぶ} ここ に ある 。 {顔|かお} を {取|と}り{戻|もど}して も 、 {口論|こうろん} を {取|と}り{消|け}せる わけ じゃ ない 。 || …Yes. The lessons are all here. Taking back the face wouldn't unsay the quarrel.
 ren[closed]: {師匠|ししょう} の {札|ふだ} に も 、 「 {選|えら}ぶ まで 」 と あります 。 {今|いま} は 、 {選|えら}ばない こと を {選|えら}びます 。 {逃|に}げる の と は 、 {少|すこ}し {違|ちが}う と {思|おも}いたい 。 || My teacher's label says "until the person chooses". For now, I choose not to choose. I'd like to think that's a little different from running away.
 ren[smile]: いつか 、 {取|と}り に {来|き}ます 。 {道|みち} に {迷|まよ}わなければ 。 || Someday I'll come back for it. If I don't get lost on the way.
@@ -40148,6 +40153,22 @@ narr: 「 {葦原|あしはら}{新田|しんでん} 」 || "Ashihara Shinden" �
  * lexicon so the lightbulb can explain them. */
 var RB = (globalThis.RB = globalThis.RB || {});
 if (RB.jp && RB.jp.registerNames) RB.jp.registerNames();
+
+
+/* ==== src/content/zz_ren_quest.js ==== */
+/* Ren's personal thread (Master Ushio) as a journal quest. The scenes live in
+ * ch4 (the sketch in the observatory) and ch6 (the grave, the folio); this only
+ * gives the journal something to track. Started only when Ren is the companion. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C) {
+  'use strict';
+  C.quests.ren_ushio = { chapter: 4, title: { jp: '{師匠|ししょう} の {顔|かお}', en: 'The Teacher\'s Face' },
+    stages: [
+      { jp: 'レン は {師匠|ししょう} ウシオ の {顔|かお} を {思|おも}い{出|だ}せない 。 {星図|せいず} は {南東|なんとう} の {光|ひかり} を {指|さ}して いた 。', en: 'Ren can\'t remember their teacher Ushio\'s face. The star charts pointed to a light in the southeast — where Ushio went.' },
+      { jp: 'ウシオ の {墓|はか} を {見|み}つけた 。 {墓|はか} を {彫|ほ}った {人|ひと} に 、 レン は {聞|き}きたい こと が ある 。', en: 'You found Ushio\'s grave below the Archive. Ren has questions for whoever carved it — and the Archive may be holding what Ushio left.' },
+    ] };
+})(RB.content);
 
 
 /* ==== src/atlas/00_lex.js ==== */

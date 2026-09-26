@@ -177,11 +177,13 @@ comp: {言葉|ことば} は {全部|ぜんぶ} ここ に ある のに 、 {�
 comp: …… いいえ 。 あなた が {持|も}って いて ください 。 {今|いま} の わたし が {持|も}つ と 、 {見|み}る たび に {他人|たにん} に なって しまう {気|き} が する 。 || …No. Please keep it. If I carry it now, I think it'll become more of a stranger every time I look.
 comp: {南東|なんとう} の {光|ひかり} 。 {師匠|ししょう} は 、 そこ へ {行|い}った 。 {顔|かお} の {残|のこ}り も 、 たぶん そこ に ある 。 || The light in the southeast. My teacher went there. Whatever is left of the face is probably there too.
 !set sb_ren_ushio1
+!quest ren_ushio 0
 !goto after
 :onward
 comp: …… はい 。 {灯|あか}り が {先|さき} です 。 ホシノ さん の {約束|やくそく} が 、 {先|さき} です 。 || …Yes. The lamp comes first. Hoshino's promise comes first.
 comp[smile]: {似顔絵|にがおえ} は 、 あなた が {持|も}って いて ください 。 わたし は …… {言葉|ことば} の ほう を {持|も}って います から 。 || Please keep the sketch. I'll… carry the words instead.
 !set sb_ren_ushio1
+!quest ren_ushio 0
 :after
 narr: {似顔絵|にがおえ} を {丁寧|ていねい} に {畳|たた}み 、 {荷物|にもつ} の いちばん {上|うえ} に しまった 。 {格子|こうし} の {鍵|かぎ} を {手|て} に 、 {階段|かいだん} へ 。 || You fold the sketch carefully and put it at the very top of your pack. Key in hand, you head for the stairs.
 !autosave

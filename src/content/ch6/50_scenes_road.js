@@ -196,6 +196,7 @@ narr: レン は {灯|ひ} を {石|いし} の {前|まえ} に {置|お}いて
 ren: {誰|だれ}か が 、 {丁寧|ていねい} に {彫|ほ}って います 。 {敬意|けいい} の ある {字|じ} です 。 || Someone carved this with care. These are respectful letters.
 ren[think]: …… {行|い}きましょう 。 {彫|ほ}った {人|ひと} に 、 {聞|き}きたい こと が できました 。 || …Let's go. I have some questions for whoever carved it.
 !set sa_ushio_found
+!quest ren_ushio 1
 
 @scene sa.gate_first
 narr: {石段|いしだん} の {上|うえ} に 、 {書庫|しょこ} が {建|た}って いた 。 || At the top of the stone steps stands the Archive.

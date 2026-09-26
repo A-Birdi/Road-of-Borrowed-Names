@@ -459,6 +459,7 @@ ren[smile]: …… ずるい です ね 。 そう {言|い}われたら 、 {�
 ren: …… はい 。 {師匠|ししょう} も 、 たぶん そう {言|い}います 。 {逃|に}げる な 、 と 。 || …Yes. My teacher would probably say the same. Don't run from it.
 :ropen
 !set sa_ren_took sa_ren_decided
+!quest ren_ushio done
 !music companion_ren
 narr: レン は {綴|つづ}り を {開|ひら}いた 。 || Ren opens the folio.
 narr: {紙|かみ} の {上|うえ} に 、 {誰|だれ}か の {顔|かお} が {浮|う}かぶ 。 {太|ふと}い {眉|まゆ} 。 {笑|わら}う と 、 {目|め} が {消|き}える 。 {左|ひだり} の {頬|ほお} に 、 {墨|すみ} の {跡|あと} 。 || On the paper, a face surfaces. Heavy eyebrows. Eyes that vanish when it smiles. An ink smudge on the left cheek.
@@ -474,6 +475,7 @@ narr: レン は {眼鏡|めがね} を {外|はず}して 、 {長|なが}い �
 !end
 :rleave
 !set sa_ren_left sa_ren_decided
+!quest ren_ushio done
 ren: …… そう です ね 。 {教|おし}え は 、 {全部|ぜんぶ} ここ に ある 。 {顔|かお} を {取|と}り{戻|もど}して も 、 {口論|こうろん} を {取|と}り{消|け}せる わけ じゃ ない 。 || …Yes. The lessons are all here. Taking back the face wouldn't unsay the quarrel.
 ren[closed]: {師匠|ししょう} の {札|ふだ} に も 、 「 {選|えら}ぶ まで 」 と あります 。 {今|いま} は 、 {選|えら}ばない こと を {選|えら}びます 。 {逃|に}げる の と は 、 {少|すこ}し {違|ちが}う と {思|おも}いたい 。 || My teacher's label says "until the person chooses". For now, I choose not to choose. I'd like to think that's a little different from running away.
 ren[smile]: いつか 、 {取|と}り に {来|き}ます 。 {道|みち} に {迷|まよ}わなければ 。 || Someday I'll come back for it. If I don't get lost on the way.
