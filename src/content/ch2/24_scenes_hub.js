@@ -384,6 +384,7 @@ asahi[think]: ねぇ 。 {名前|なまえ} って 、 {言|い}わなく なる
 @scene sg.asahi_post
 asahi: {新|あたら}しい {作品|さくひん} ！ {海|うみ} ガラス の {風鈴|ふうりん} ！ {風|かぜ} が {吹|ふ}く と 、 {名前|なまえ} を {呼|よ}ぶ みたい な {音|おと} が する の 。 …… {気|き} の せい だ けど 。 || New piece! A sea-glass wind chime! When the wind blows, it sounds like someone calling a name. …My imagination, probably.
 ?(end_archive_library) asahi: {山|やま} の {図書館|としょかん} の {窓|まど} 、 うち の ガラス なんだ よ 。 {注文|ちゅうもん} が {来|き}た の ！ {名前|なまえ} を {読|よ}む {人|ひと} の ため の 、 {明|あか}るい {窓|まど} ！ || The windows of the library in the mountains are my glass! They ordered them! Bright windows, for people reading names!
+?(end_archive_closed) asahi: {山|やま} の {書庫|しょこ} が {閉|と}じた から 、 {窓|まど} の {注文|ちゅうもん} は {来|こ}なかった 。 でも いい の 。 {港|みなと} の {人|ひと} の {名前|なまえ} を 、 ガラス に {彫|ほ}って {残|のこ}す から 。 || The mountain archive closed, so the window order never came. That's fine. I'll engrave the harbour's names in glass and keep them here.
 
 @scene sg.glass_kiln
 narr: ガラス を {溶|と}かす {炉|ろ} 。 || The furnace for melting glass.
@@ -433,6 +434,8 @@ genzo[smile]: {困|こま}った もん だ 。 || Terrible.
 
 @scene sg.genzo_post
 genzo: {娘|むすめ} は {灯落|ひおち} に {戻|もど}った が 、 {月|つき} に {一度|いちど} は {帰|かえ}って くる 。 {手紙|てがみ} も {来|く}る 。 {今度|こんど} は 、 {全部|ぜんぶ} {読|よ}む 。 {最後|さいご} まで な 。 || My daughter went back to Lanternfall, but she comes home once a month. And she writes. This time I read them all. Right to the end.
+?(end_mem_return) genzo: {思|おも}い{出|で} が {戻|もど}って から 、 {若|わか}い {頃|ころ} の {海|うみ} を よく {夢|ゆめ} に {見|み}る 。 …… {悪|わる}く ない 。 || Since the memories came back, I often dream of the sea as it was when I was young. …Not bad at all.
+?(end_mem_choose) genzo: {山|やま} の {書庫|しょこ} に 、 {俺|おれ} の {棚|たな} も ある そう だ な 。 …… {娘|むすめ} が {一緒|いっしょ} なら 、 {取|と}りに {行|い}って も いい 。 || I hear there's a shelf of mine in the mountain archive too. …If my daughter comes along, I might go and fetch it.
 
 @scene sg.nagisa_home
 nagisa: {父|ちち} が {読|よ}み{違|ちが}えた {手紙|てがみ} 、 {実|じつ} は {書|か}き{方|かた} も {悪|わる}かった ん です 。 {次|つぎ} から は 、 {大事|だいじ} な こと を {先|さき} に {書|か}きます 。 || The letter my father misread — honestly, I wrote it badly too. From now on, I'll put the important part first.
