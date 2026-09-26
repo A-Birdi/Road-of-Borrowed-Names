@@ -217,8 +217,8 @@ await test('handwriting: reference strokes recognised, wrong kana explained, emp
   assert(/ぬ/.test(readNu), 'read as: ' + readNu);
   await p.click('[data-a=confirm]');
   await p.click('text=Submit answer');
-  await p.waitForSelector('text=Continue ▶');
-  await p.click('text=Continue ▶');
+  await p.waitForSelector('.fbwrap [data-a=continue]');
+  await p.click('.fbwrap [data-a=continue]');
   const res = await p.evaluate(() => window.__res);
   assert(res.ok && res.mistakes === 1 && res.mode === 'hand', 'result ' + JSON.stringify(res));
   const rec = await p.evaluate(() => RB.game.s.learn.items['k:ぬ']);
@@ -304,8 +304,8 @@ await test('handwriting: real mouse stroke, nonsense rejected, composition edit,
   await p.evaluate(() => { const inp = document.getElementById('ime-in'); inp.dispatchEvent(new CompositionEvent('compositionend')); });
   await p.waitForTimeout(20);
   await p.press('#ime-in', 'Enter');
-  await p.waitForSelector('text=Continue ▶');
-  await p.click('text=Continue ▶');
+  await p.waitForSelector('.fbwrap [data-a=continue]');
+  await p.click('.fbwrap [data-a=continue]');
   const res = await p.evaluate(() => window.__res);
   assert(res.ok && res.mode === 'ime', 'ime result ' + JSON.stringify(res));
   assert(!errors.length, errors.join('; '));

@@ -161,25 +161,46 @@ RB.combat = (function () {
     still: ['#0a0c18', '#1a1c30', '#e4ddc8', '#aea68e'], atlas: ['#c8b890', '#f0e8d0', '#b8b08a', '#a09872'],
   };
 
+  // ---- the scene, framed inside the stage: the free area the overlay leaves ----
+  let stageCss = null, lastLay = null, measureAt = -1e9;
+  function measure() {
+    if (!ui || !ui.stage) { stageCss = null; return; }
+    const r = ui.stage.getBoundingClientRect();
+    stageCss = r.width > 60 && r.height > 60 ? { x: r.left, y: r.top, w: r.width, h: r.height } : null;
+  }
+  function stageBuf(w, h) {
+    const k = RB.render.viewSize().scale || 1;
+    if (!stageCss) return { x: 0, y: 0, w, h };
+    const x = Math.max(0, stageCss.x / k), y = Math.max(0, stageCss.y / k);
+    return { x, y, w: Math.min(w - x, stageCss.w / k), h: Math.min(h - y, stageCss.h / k) };
+  }
   function draw(c, w, h, t) {
+    if (t - measureAt > 400) { measureAt = t; measure(); }
+    const S = stageBuf(w, h);
     const bg = BG[enemy.bg || enemy.region || 'reedwake'] || BG.reedwake;
-    const g = c.createLinearGradient(0, 0, 0, h);
-    g.addColorStop(0, bg[0]); g.addColorStop(0.55, bg[1]); g.addColorStop(0.56, bg[2]); g.addColorStop(1, bg[3]);
-    c.fillStyle = g;
-    c.fillRect(0, 0, w, h);
-    // ground detail
-    for (let i = 0; i < 40; i++) {
-      const x = (i * 97) % w, y = h * 0.58 + ((i * 53) % Math.floor(h * 0.4));
-      c.fillStyle = 'rgba(0,0,0,0.08)';
-      c.fillRect(x, y, 6, 1);
-    }
     const reduce = RB.game.reducedMotion();
     const tt = reduce ? 0 : t;
     const sx = shake > 0 && !reduce ? Math.round(Math.sin(t / 20) * 2) : 0;
     if (shake > 0) shake -= 16;
+    // integer scale only (pixel art), chosen so the whole scene fits the stage
+    const scale = Math.max(1, Math.min(3, Math.floor(Math.min(S.h / 112, S.w / 150))));
+    const ps = scale;
+    const ex = Math.round(S.x + S.w * 0.62) + sx;
+    const ey = Math.round(Math.min(S.y + S.h - 50 * scale, Math.max(S.y + 40 * scale, S.y + S.h * 0.44)));
+    const px = Math.round(S.x + S.w * 0.1), py = Math.round(S.y + S.h - 26 * ps - 4);
+    const hz = Math.max(0, Math.min(h - 1, Math.round(Math.min(ey + 18 * scale, py + 8 * ps))));
+    const g = c.createLinearGradient(0, 0, 0, h);
+    const f = Math.max(0.02, Math.min(0.98, hz / h));
+    g.addColorStop(0, bg[0]); g.addColorStop(f - 0.005, bg[1]); g.addColorStop(f, bg[2]); g.addColorStop(1, bg[3]);
+    c.fillStyle = g;
+    c.fillRect(0, 0, w, h);
+    // ground detail
+    for (let i = 0; i < 40; i++) {
+      const x = (i * 97) % w, y = hz + 4 + ((i * 53) % Math.max(1, Math.floor(h - hz - 4)));
+      c.fillStyle = 'rgba(0,0,0,0.08)';
+      c.fillRect(x, y, 6, 1);
+    }
     // enemy
-    const ex = Math.round(w * 0.48) + sx, ey = Math.round(h * 0.38);
-    const scale = Math.max(1, Math.min(3, Math.floor(h / 110)));
     c.save();
     c.translate(ex, ey);
     c.scale(scale, scale);
@@ -199,14 +220,11 @@ RB.combat = (function () {
     }
     // party (backs to us)
     const s = RB.game.s;
-    const ps = Math.max(1, scale);
-    const px = Math.round(w * 0.16), py = Math.round(h * 0.62);
     const look = Object.assign({}, s.player.look);
-    const f = reduce ? 0 : [0, 1, 0, 2][Math.floor(t / 600) % 4];
     c.imageSmoothingEnabled = false;
     c.drawImage(RB.sprites.get(look, 'up', 0), px, py, 16 * ps, 24 * ps);
     if (s.comp) c.drawImage(RB.sprites.get(RB.content.chars[s.comp].look, 'up', 0), px + 20 * ps, py + 6, 16 * ps, 24 * ps);
-    void f;
+    lastLay = { ex, ey, px, py, ps, scale };
     // wards
     if (st) {
       const wardAt = (x, y, n) => {
@@ -248,6 +266,11 @@ RB.combat = (function () {
   function addFx(kind, extra) {
     fxList.push(Object.assign({ kind, t0: performance.now(), d: RB.game.reducedMotion() ? 300 : 700 }, extra));
   }
+  // where the party stands (for effects), in scene pixels
+  function partyAt(dx, dy) {
+    const l = lastLay || { px: 20, py: 60, ps: 1 };
+    return { x: l.px + (dx || 8) * l.ps, y: l.py + (dy || 12) * l.ps };
+  }
 
   function tierOf(obj) {
     return RB.activities.tier(obj);
@@ -277,38 +300,98 @@ RB.combat = (function () {
     };
   }
 
+  // ---- the overlay: foe slip, telegraph card, stage, party, response dock ----
+  const I = (n, t) => RB.learnUi.icon(n, t);
+  const INTENT_ICON = { strike: 'strike', sweep: 'sweep', heat: 'flame', shroud: 'cloud', charge: 'hourglass', gust: 'gust', mend: 'needle', lie: 'mask', plea: 'history', rest: 'rest', flood: 'waves', chill: 'snow', silence: 'mute', mirror: 'mirror' };
+  const TAG_ICON = [['ward', 'shield'], ['water', 'drop'], ['light', 'sun'], ['heal', 'leaf'], ['wind', 'wind'], ['bind', 'rope'], ['anchor', 'stone'], ['stone', 'stone'], ['fire', 'flame'], ['warm', 'flame'], ['bell', 'bell'], ['voice', 'sound']];
+  // plain attacks whose target the translated telegraph names outright
+  const AIMED = { strike: 1, sweep: 1, gust: 1, flood: 1, chill: 1 };
+  function cardIcon(c) {
+    if (c.kind === 'unravel') return 'knot';
+    if (c.kind === 'answer') return 'history';
+    if (c.kind === 'truth') return 'lens';
+    if (c.kind === 'tech') return 'join';
+    const tags = (c.word && c.word.tags) || [];
+    for (const [t, n] of TAG_ICON) if (tags.indexOf(t) >= 0) return n;
+    return 'words';
+  }
+  function compName() {
+    const s = RB.game.s;
+    return s.comp && RB.content.chars[s.comp] ? RB.content.chars[s.comp].name.en : 'companion';
+  }
   function buildUi() {
     const root = RB.ui.el('div', 'combat-ui');
-    root.innerHTML = '<div class="intent" aria-live="polite"></div><div class="bars"></div><div class="responses"></div><div class="clog hidden" aria-live="polite"></div>';
+    root.innerHTML =
+      '<div class="cb-foe"></div>' +
+      '<div class="cb-side">' +
+        '<section class="intent paper" aria-live="polite" aria-label="What it is about to do"></section>' +
+        '<section class="cb-dock" aria-label="Respond"><h2 class="cb-dock-h">Respond</h2>' +
+          '<div class="responses" role="group" aria-label="Responses"></div>' +
+          '<div class="clog paper hidden" aria-live="polite"></div></section>' +
+      '</div>' +
+      '<div class="cb-stage" aria-hidden="true"></div>' +
+      '<section class="bars cb-party" aria-label="Your party"></section>';
     RB.ui.root.appendChild(root);
-    return {
-      root, intent: root.querySelector('.intent'), bars: root.querySelector('.bars'), resp: root.querySelector('.responses'), log: root.querySelector('.clog'),
-    };
+    const q = (x) => root.querySelector(x);
+    const o = { root, foe: q('.cb-foe'), intent: q('.intent'), stage: q('.cb-stage'), bars: q('.bars'), dock: q('.cb-dock'), resp: q('.responses'), log: q('.clog') };
+    RB.learnUi.guardTaps(o.resp);
+    o.onResize = () => requestAnimationFrame(measure);
+    window.addEventListener('resize', o.onResize);
+    o.ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(o.onResize) : null;
+    if (o.ro) o.ro.observe(o.stage);
+    return o;
   }
   let showIntentEn = false;
+  function enShown() { return RB.game.s.learn.profile === 'F' || showIntentEn; }
   function intentHtml(compact) {
     const it = st.intent;
     const line = intentLine(it);
-    const prof = RB.game.s.learn.profile;
-    const enVisible = prof === 'F' || showIntentEn;
-    let h = '<div class="lbl">' + esc(it.icon + ' ' + it.label) + (st.shroud ? ' · shrouded' : '') + (st.heat ? ' · heat ' + st.heat : '') + (st.charged ? ' · charged' : '') + '</div>';
-    h += line.jp ? RB.ui.jhtml(line.jp, { vars: line.vars }) : '';
-    if (line.en) h += enVisible ? '<div class="en dim small">' + esc(line.en) + '</div>' : (compact ? '' : '<button class="btn small" data-tr>Translate (assisted)</button>');
-    if (!compact && RB.game.s.comp === 'nao' && st.nextIntents.length) h += '<div class="small dim">Nao: “After that — ' + esc(st.nextIntents.map((x) => x.icon + ' ' + x.label).join(', then ')) + '.”</div>';
+    const states = [st.shroud ? 'shrouded' : '', st.heat ? 'heat ' + st.heat : '', st.charged ? 'charged' : ''].filter(Boolean);
+    let h = '<div class="it-label">' + I(INTENT_ICON[it.kind] || 'strike') + '<span class="k">' + esc(it.label) + '</span>' + states.map((x) => '<span class="st">' + esc(x) + '</span>').join('') + '</div>';
+    if (line.jp) h += '<div class="it-jp">' + RB.ui.jhtml(line.jp, { vars: line.vars }) + '</div>';
+    if (line.en) h += enShown() ? '<div class="it-en">' + esc(line.en) + '</div>' : (compact ? '' : '<button class="pbtn quiet tr" data-tr title="Show the English (counts as assisted)">' + I('note') + '<span>Translate <span class="aside">(assisted)</span></span></button>');
+    if (!compact && RB.game.s.comp === 'nao' && st.nextIntents.length) h += '<div class="it-next">' + I('companion') + '<span>Nao: “After that — ' + esc(st.nextIntents.map((x) => x.label).join(', then ')) + '.”</span></div>';
     return h;
+  }
+  function knotsHtml() {
+    let h = '';
+    for (let i = 0; i < st.maxKnots; i++) h += '<span class="kn' + (i < st.knots ? ' tied' : '') + '"></span>';
+    return '<span class="knots" role="img" aria-label="Knots still tied: ' + st.knots + ' of ' + st.maxKnots + '">' + h + '</span><span class="kn-t">' + st.knots + ' / ' + st.maxKnots + ' knots</span>';
   }
   function renderUi() {
     const s = RB.game.s;
-    ui.intent.innerHTML = '<div class="small" style="color:var(--accent)">' + RB.ui.jhtml(enemy.name.jp) + ' ' + esc(enemy.name.en) + ' — knots ' + st.knots + '/' + st.maxKnots + '</div>' + intentHtml(false);
+    const it = st.intent;
+    ui.foe.innerHTML = '<span class="foe-n">' + RB.ui.jhtml(enemy.name.jp) + ' <span class="en">' + esc(enemy.name.en) + '</span></span>' + knotsHtml();
+    ui.intent.innerHTML = intentHtml(false);
     const tr = ui.intent.querySelector('[data-tr]');
     if (tr) tr.onclick = () => { showIntentEn = true; st.assistedRound = true; renderUi(); };
-    const bar = (label, v, max, cls) => '<div>' + esc(label) + ' <span class="dim small">' + v + '/' + max + '</span><div class="bar ' + (cls || '') + '"><i style="width:' + Math.round((100 * v) / max) + '%"></i></div></div>';
-    ui.bars.innerHTML = bar(s.player.name + (st.ward.pc ? ' 🛡' + st.ward.pc : ''), st.pc, st.max) + (s.comp ? bar(RB.content.chars[s.comp].name.en + (st.ward.comp ? ' 🛡' + st.ward.comp : ''), st.comp, st.max) : '') +
-      (s.comp ? bar('Harmony', st.harmony, st.harmonyMax, 'h') : '') + '<div class="small dim">' + (st.assist ? 'Assisted: mistakes cost nothing' : 'Mistakes cost at most 1') + '</div>';
+    // the party: resolve (numbers and bar), wards, harmony; the telegraph's
+    // target is marked once its meaning is on screen (never before)
+    const aimed = enShown() && AIMED[it.kind] ? (it.target === 'both' ? ['pc', 'comp'] : [it.target]) : [];
+    const member = (who, name, v, max, ward) => '<div class="pm' + (aimed.indexOf(who) >= 0 ? ' aimed' : '') + '">' +
+      '<div class="pm-h"><span class="pm-n">' + esc(name) + '</span>' +
+      (ward ? '<span class="pm-w" title="Wards">' + I('shield') + '<span class="sr">wards </span>' + ward + '</span>' : '') +
+      (aimed.indexOf(who) >= 0 ? '<span class="aimtag">' + I('aim') + 'its aim</span>' : '') +
+      '<span class="pm-v">' + v + ' / ' + max + '</span></div>' +
+      '<div class="bar" role="meter" aria-label="' + esc(name) + ' resolve" aria-valuemin="0" aria-valuemax="' + max + '" aria-valuenow="' + v + '"><i style="width:' + Math.round((100 * v) / max) + '%"></i></div></div>';
+    ui.bars.innerHTML = member('pc', s.player.name, st.pc, st.max, st.ward.pc) +
+      (s.comp ? member('comp', compName(), st.comp, st.max, st.ward.comp) : '') +
+      (s.comp ? '<div class="pm harmony"><div class="pm-h"><span class="pm-n">Harmony</span><span class="pm-v">' + st.harmony + ' / ' + st.harmonyMax + '</span></div><div class="bar h" role="meter" aria-label="Harmony" aria-valuemin="0" aria-valuemax="' + st.harmonyMax + '" aria-valuenow="' + st.harmony + '"><i style="width:' + Math.round((100 * st.harmony) / st.harmonyMax) + '%"></i></div></div>' : '') +
+      '<div class="pm-note">' + (st.assist ? 'Assisted: mistakes cost nothing' : 'Mistakes cost at most 1') + '</div>';
+    requestAnimationFrame(measure);
   }
   function words() {
     const s = RB.game.s;
     return s.words.map((id) => RB.content.words[id]).filter(Boolean);
+  }
+  function cardHtml(c, i, hi) {
+    const tgt = c.target ? (c.target === 'comp' ? compName() : 'you') : '';
+    const desc = c.disabled || RB.script.enVars(tgt ? String(c.desc).replace(/\s*\([^)]*\)\s*$/, '') : c.desc);
+    return '<button class="resp rcard" data-i="' + i + '"' + (c.disabled ? ' disabled' : '') + '>' +
+      '<span class="ic">' + I(cardIcon(c)) + '</span>' +
+      '<span class="rc-w"><span class="rc-jp">' + RB.ui.jhtml(hi && c.word && c.word.jpK ? c.word.jpK : c.jp) + '</span><span class="rc-en">' + esc(c.en) + '</span></span>' +
+      (tgt ? '<span class="rc-tgt">on ' + esc(tgt) + '</span>' : '') +
+      '<span class="rc-d">' + (c.disabled ? I('warn') : '') + esc(desc) + '</span></button>';
   }
   function pickCard() {
     return new Promise((resolve) => {
@@ -321,17 +404,19 @@ RB.combat = (function () {
         if (c.kind === 'unravel' && st.silenced && (known.has('bell') || known.has('voice'))) c.disabled = 'The hush swallows words: ring a bell or raise a voice first.';
       }
       const hi = s.learn.profile === 'I' || s.learn.profile === 'A';
-      ui.resp.innerHTML = cards.map((c, i) => '<button class="btn resp" data-i="' + i + '"' + (c.disabled ? ' disabled title="' + esc(c.disabled) + '"' : '') + '><span class="ic" aria-hidden="true">' + c.icon + '</span>' +
-        RB.ui.jhtml(hi && c.word && c.word.jpK ? c.word.jpK : c.jp) + '<span class="d">' + esc(c.en) + ' — ' + esc(c.disabled || RB.script.enVars(c.desc)) + '</span></button>').join('') +
-        (st.noFlee ? '' : '<button class="btn small" data-flee>Step back from this encounter</button>');
-      const layer = { el: ui.resp, name: 'cards', parent: ui.root };
+      ui.resp.innerHTML = '<div class="rcards">' + cards.map((c, i) => cardHtml(c, i, hi)).join('') + '</div>' +
+        (st.noFlee ? '' : '<button class="cbtn flee" data-flee>' + I('back') + '<span>Step back from this encounter</span></button>');
+      ui.log.classList.add('hidden');
+      const layer = { el: ui.resp, name: 'cards', parent: ui.dock };
+      const done = (v) => { RB.ui.popLayer(layer); ui.dock.insertBefore(ui.resp, ui.log); resolve(v); };
       ui.resp.onclick = (e) => {
         const b = e.target.closest('[data-i]');
-        if (b) { RB.ui.popLayer(layer); ui.root.appendChild(ui.resp); resolve(cards[+b.getAttribute('data-i')]); return; }
-        if (e.target.closest('[data-flee]')) { RB.ui.popLayer(layer); ui.root.appendChild(ui.resp); resolve({ kind: 'flee' }); }
+        if (b && !b.disabled) { done(cards[+b.getAttribute('data-i')]); return; }
+        if (e.target.closest('[data-flee]')) done({ kind: 'flee' });
       };
       layer.onCancel = () => {};
       RB.ui.pushLayer(layer);
+      ui.dock.insertBefore(ui.resp, ui.log);
     });
   }
   function stepFor(card) {
@@ -356,6 +441,15 @@ RB.combat = (function () {
       explain: { jp: w.jpK || w.jp, en: w.en + ' — ' + w.effect },
     });
   }
+  // The situation, carried onto the challenge's task slip: the foe, its
+  // telegraph, and the response (and its target) the player chose.
+  function situationHtml(card) {
+    const tgt = card.target ? (card.target === 'comp' ? compName() : 'you') : '';
+    return '<div class="cb-situ">' +
+      '<div class="cs-foe">' + RB.ui.jhtml(enemy.name.jp) + ' <span class="en">' + esc(enemy.name.en) + '</span> ' + knotsHtml() + '</div>' +
+      '<div class="cs-intent">' + intentHtml(true) + '</div>' +
+      '<div class="cs-chose">' + I(cardIcon(card)) + '<span>You chose <b>' + esc(card.en) + '</b>' + (tgt ? ' — on <b>' + esc(tgt) + '</b>' : '') + '. The encounter waits while you write.</span></div></div>';
+  }
   function say(line, who) {
     return RB.ui.dialogue.say({ who: who || 'narr', jp: line.jp, en: line.en });
   }
@@ -365,21 +459,20 @@ RB.combat = (function () {
     return new Promise((r) => setTimeout(r, RB.game.reducedMotion() ? 500 : 900));
   }
   async function playFx(fx) {
-    const { w, h } = RB.render.viewSize();
     for (const f of fx) {
       let msg = '';
       const s = RB.game.s;
       const nm = (who) => (who === 'comp' ? RB.content.chars[s.comp].name.en : s.player.name);
       switch (f.t) {
         case 'unravel': addFx('untie'); RB.audio && RB.audio.sfx('knot_untie'); msg = f.n > 1 ? 'Two knots come loose.' : 'A knot comes loose.'; break;
-        case 'ward': addFx('glyph', { x: w * 0.25, y: h * 0.75 }); RB.audio && RB.audio.sfx('ward'); msg = f.block ? 'The ward catches the blow meant for ' + nm(f.target) + '.' : 'A ward rises before ' + nm(f.target) + '.'; break;
+        case 'ward': addFx('glyph', partyAt(f.target === 'comp' ? 28 : 8, 12)); RB.audio && RB.audio.sfx('ward'); msg = f.block ? 'The ward catches the blow meant for ' + nm(f.target) + '.' : 'A ward rises before ' + nm(f.target) + '.'; break;
         case 'water': addFx('water'); RB.audio && RB.audio.sfx('water'); msg = 'Water hisses over the heat.'; break;
         case 'light': addFx('light'); RB.audio && RB.audio.sfx('light'); msg = 'Light burns the mist away.'; break;
         case 'bind': RB.audio && RB.audio.sfx('ward'); msg = 'The rope holds it fast; the gathered force spills away.'; break;
         case 'heal': addFx('heal'); RB.audio && RB.audio.sfx('heal'); msg = 'You both breathe easier.'; break;
         case 'warm': RB.audio && RB.audio.sfx('light'); msg = 'Warmth spreads through your fingers.'; break;
         case 'bell': RB.audio && RB.audio.sfx('bell'); msg = 'A clear note breaks the hush.'; break;
-        case 'hit': shake = 200; addFx('hit', { x: w * 0.25, y: h * 0.78 }); RB.audio && RB.audio.sfx('party_hit'); msg = nm(f.who) + ' is struck (−' + f.n + ').'; break;
+        case 'hit': shake = 200; addFx('hit', partyAt(f.who === 'comp' ? 28 : 8, 16)); RB.audio && RB.audio.sfx('party_hit'); msg = nm(f.who) + ' is struck (−' + f.n + ').'; break;
         case 'block': RB.audio && RB.audio.sfx('ward'); msg = 'The ward absorbs ' + f.n + '.'; break;
         case 'heat': RB.audio && RB.audio.sfx('enemy_intent'); msg = 'The heat builds (' + f.n + ').'; break;
         case 'shroud': RB.audio && RB.audio.sfx('wind'); msg = 'Mist swallows its knots.'; break;
@@ -414,6 +507,7 @@ RB.combat = (function () {
     st.noFlee = !!opts.noFlee || !!enemy.boss;
     showIntentEn = false;
     ui = buildUi();
+    measure();
     await RB.ui.fade(false, 200);
     let outcome = null;
     try {
@@ -438,7 +532,7 @@ RB.combat = (function () {
         ui.resp.innerHTML = '';
         const step = stepFor(card);
         const res = await RB.challenge.runStep(step, {
-          header: '<div class="small">' + intentHtml(true) + '</div><div class="small dim">You chose: ' + esc(card.en) + '. The encounter waits while you write.</div>',
+          header: situationHtml(card),
           allowCancel: true, cancelLabel: 'Choose a different response', ctxTag: 'battle:' + enemyId,
         });
         if (res.cancelled) continue;
@@ -469,8 +563,8 @@ RB.combat = (function () {
       // Resolve recovers after every encounter: no attrition grinding.
       s.resolve.pc = s.resolve.max;
       s.resolve.comp = s.resolve.max;
-      if (ui) ui.root.remove();
-      ui = null;
+      if (ui) { window.removeEventListener('resize', ui.onResize); if (ui.ro) ui.ro.disconnect(); ui.root.remove(); }
+      ui = null; stageCss = null; lastLay = null;
       await RB.ui.fade(true, 200);
       RB.render.setOverride(null);
       RB.game.popMode('combat');

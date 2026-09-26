@@ -20,21 +20,28 @@ RB.activities = (function () {
     for (let i = LV.indexOf(p) + 1; i < 4; i++) if (o[LV[i]]) return o[LV[i]];
     return null;
   }
+  // A full activity sheet: cloth frame, one paper page, "Stop for now" on the
+  // cloth header, the main action on the cloth foot.
   function panel(title) {
-    const scrim = RB.ui.el('div', 'scrim');
-    const pn = RB.ui.el('div', 'panel');
-    scrim.appendChild(pn);
-    pn.innerHTML = '<header><h2>' + title + '</h2><button class="btn small" data-x>Stop for now</button></header><div class="body"></div><div class="foot"></div>';
-    const lay = { el: scrim, name: 'activity' };
-    return { scrim, pn, lay, body: pn.querySelector('.body'), foot: pn.querySelector('.foot') };
+    const I = (n) => RB.learnUi.icon(n);
+    const fr = RB.learnUi.sheet({ cls: 'activity', title, headBtn: { html: I('back') + '<span>Stop for now</span>', attrs: { 'data-x': '' } } });
+    const lay = { el: fr.scrim, name: 'activity' };
+    RB.learnUi.guardTaps(fr.leaf);
+    return { scrim: fr.scrim, pn: fr.el, lay, body: fr.leaf, foot: fr.foot, fr };
   }
   function showEnDefault() {
     return RB.game.s.learn.profile === 'F';
   }
-  function lineHtml(l, showEn, onTr) {
-    void onTr;
-    return '<div style="font-size:1.25em">' + RB.ui.jhtml(l.jp) + '</div>' + (showEn ? '<div class="en dim">' + esc(RB.script.enVars(l.en)) + '</div>' : '<button class="btn small" data-tr>Show translation (assisted)</button>');
+  function trButton() {
+    return '<button class="pbtn quiet tr" data-tr title="Show the English (counts as assisted)">' + RB.learnUi.icon('note') + '<span>Translate <span class="aside">(assisted)</span></span></button>';
   }
+  function fbSet(el, kind, head, html) {
+    el.className = 'fbwrap fb ' + kind;
+    el.setAttribute('data-fb', kind);
+    el.innerHTML = RB.learnUi.fbHead(kind, head) + '<div class="fb-b">' + html + '</div>';
+    requestAnimationFrame(() => { if (el.isConnected && el.scrollIntoView) { const leaf = el.closest('.leaf'); if (leaf) { const lr = leaf.getBoundingClientRect(), r = el.getBoundingClientRect(); if (r.bottom > lr.bottom) leaf.scrollTop += r.bottom - lr.bottom + 12; } } });
+  }
+  const goBtn = (attr, label) => '<button class="cbtn go" ' + attr + ' data-ok><span>' + esc(label) + '</span>' + RB.learnUi.icon('next') + '</button>';
 
   // ---- orders ----------------------------------------------------------------------------
   function orders(a) {
@@ -47,13 +54,20 @@ RB.activities = (function () {
         const c = custs[i];
         const l = tier(c.line);
         const who = RB.content.chars[c.who];
-        P.body.innerHTML = '<div class="row" style="align-items:flex-start"><canvas width="48" height="48" style="width:72px;height:72px;image-rendering:pixelated;border-radius:8px"></canvas><div class="grow"><div class="small" style="color:var(--accent)">' + esc(who ? who.name.en : c.name || 'Customer') + ' (' + (i + 1) + '/' + custs.length + ')</div>' + lineHtml(l, showEn) + '</div></div>' +
-          '<h3>Tray</h3><div class="built">' + (Object.keys(tray).length ? Object.keys(tray).map((k) => { const m = a.menu.find((x) => x.id === k); return '<button class="btn" data-rm="' + k + '">' + RB.ui.jhtml(m.jp) + ' ×' + tray[k] + '</button>'; }).join('') : '<span class="dim small">empty — tap items below to add; tap tray items to remove one</span>') + '</div>' +
-          '<h3>Kitchen</h3><div class="tiles">' + a.menu.map((m) => '<button class="btn" data-add="' + m.id + '">' + RB.ui.jhtml(m.jp) + '<div class="small dim">' + esc(showEn || m.always ? m.en : '') + '</div></button>').join('') + '</div>' +
-          '<div class="fbwrap"></div>';
-        P.foot.innerHTML = '<button class="btn primary" data-serve>Serve ▶</button>';
+        P.fr.setTitle(RB.ui.jhtml(a.title.jp) + ' ' + esc(a.title.en), 'Customer ' + (i + 1) + ' of ' + custs.length);
+        const n = Object.keys(tray).reduce((t, k) => t + tray[k], 0);
+        P.body.innerHTML =
+          '<section class="act-say">' + (who ? '<canvas width="48" height="48" class="act-face" aria-hidden="true"></canvas>' : '') +
+            '<div class="act-line"><div class="act-who">' + esc(who ? who.name.en : c.name || 'Customer') + '</div>' +
+            '<div class="act-jp">' + RB.ui.jhtml(l.jp) + '</div>' + (showEn ? '<div class="act-en">' + esc(RB.script.enVars(l.en)) + '</div>' : trButton()) + '</div></section>' +
+          '<h3>' + RB.learnUi.icon('tray') + '<span>The tray</span><span class="count">' + (n ? n + ' item' + (n > 1 ? 's' : '') : 'empty') + '</span></h3>' +
+          '<div class="act-tray">' + (n ? Object.keys(tray).map((k) => { const m = a.menu.find((x) => x.id === k); return '<button class="tile placed" data-rm="' + k + '" aria-label="Take one ' + esc(m.en) + ' off the tray">' + RB.ui.jhtml(m.jp) + '<span class="qty">×' + tray[k] + '</span></button>'; }).join('') : '<span class="muted small">Tap the kitchen items below to add them; tap an item on the tray to take one off.</span>') + '</div>' +
+          '<h3>' + RB.learnUi.icon('food') + '<span>The kitchen</span></h3>' +
+          '<div class="act-menu">' + a.menu.map((m) => '<button class="tile" data-add="' + m.id + '">' + RB.ui.jhtml(m.jp) + (showEn || m.always ? '<span class="en">' + esc(m.en) + '</span>' : '') + '</button>').join('') + '</div>' +
+          '<div class="fbwrap" aria-live="polite"></div>';
+        P.foot.innerHTML = '<span class="spacer"></span>' + '<button class="cbtn go" data-serve data-ok>' + RB.learnUi.icon('done') + '<span>Serve</span></button>';
         const cv = P.body.querySelector('canvas');
-        if (who) RB.portraits.draw(cv, c.who, 'neutral'); else cv.remove();
+        if (who && cv) RB.portraits.draw(cv, c.who, 'neutral');
       }
       P.pn.onclick = (e) => {
         if (e.target.closest('[data-x]')) { RB.ui.popLayer(P.lay); resolve({ ok: false, cancelled: true }); return; }
@@ -76,19 +90,19 @@ RB.activities = (function () {
             results.push({ ok: firstTry });
             if (c.items) RB.learn.record(c.items, { ok: firstTry, mode: 'choice', assisted });
             const thanks = tier(c.thanks) || { jp: 'ありがとう ！', en: 'Thank you!' };
-            fb.className = 'fbwrap fb ok';
-            fb.innerHTML = '✓ ' + RB.ui.jhtml(thanks.jp) + ' <span class="dim">' + esc(thanks.en) + '</span>';
-            P.foot.innerHTML = '<button class="btn primary" data-next>' + (i < custs.length - 1 ? 'Next customer ▶' : 'Finish ▶') + '</button>';
+            fbSet(fb, 'ok', 'Just right.', '<div class="fb-jp">' + RB.ui.jhtml(thanks.jp) + '</div><div class="muted">' + esc(thanks.en) + '</div>');
+            P.body.querySelectorAll('[data-add], [data-rm]').forEach((x) => (x.disabled = true));
+            P.foot.innerHTML = '<span class="spacer"></span>' + goBtn('data-next', i < custs.length - 1 ? 'Next customer' : 'Finish');
             P.foot.querySelector('[data-next]').onclick = () => {
               i++; tray = {}; firstTry = true; showEn = showEnDefault();
               if (i >= custs.length) { RB.ui.popLayer(P.lay); resolve({ ok: true, mistakes, results }); } else render();
             };
+            P.foot.querySelector('[data-next]').focus({ preventScroll: true });
           } else {
             mistakes++; firstTry = false;
             RB.audio && RB.audio.sfx('answer_wrong');
             const hint = tier(c.hint);
-            fb.className = 'fbwrap fb no';
-            fb.innerHTML = '<b>Not quite what they asked for.</b> ' + diffs.map((d) => esc(d.m ? d.m.en : '?') + ': you put ' + d.h + (d.w === 0 ? ', but they didn\'t ask for it' : '')).join('; ') + '.' + (hint ? '<div>' + (hint.jp ? RB.ui.jhtml(hint.jp) + ' ' : '') + esc(hint.en) + '</div>' : '') + '<div class="small dim">Listen again and adjust the tray.</div>';
+            fbSet(fb, 'no', 'Not quite what they asked for.', '<ul class="fb-list">' + diffs.map((d) => '<li>' + esc(d.m ? d.m.en : '?') + ': you put ' + d.h + (d.w === 0 ? ', but they didn\'t ask for it' : '') + '</li>').join('') + '</ul>' + (hint ? '<div class="fb-why">' + (hint.jp ? RB.ui.jhtml(hint.jp) + ' ' : '') + esc(hint.en) + '</div>' : '') + '<p class="muted small">Listen again and adjust the tray.</p>');
           }
         }
       };
@@ -107,36 +121,39 @@ RB.activities = (function () {
       function render() {
         const L = list[i];
         const t = tier(L.text);
-        P.body.innerHTML = '<div class="small dim">Letter ' + (i + 1) + ' of ' + list.length + ' — the address has run in the rain. Who is it for?</div>' +
-          '<div style="background:#f4ecd8;color:#2a2024;border-radius:8px;padding:0.8em 1em;margin:0.5em 0;box-shadow:inset 0 0 20px rgba(120,90,40,0.2)">' + RB.ui.jhtml(t.jp) + (showEn ? '<div class="en" style="color:#5a4a3a">' + esc(RB.script.enVars(t.en)) + '</div>' : '') + '</div>' +
-          (showEn ? '' : '<button class="btn small" data-tr>Show translation (assisted)</button>') +
-          '<h3>Deliver to…</h3><div class="grid2">' + a.recipients.map((r) => '<button class="btn item" data-to="' + r.id + '" style="text-align:left"><div class="t">' + esc(r.name.en) + ' ' + RB.ui.jhtml(r.name.jp) + '</div><div class="small">' + RB.ui.jhtml(tier(r.desc).jp) + (showEn ? '<div class="dim">' + esc(tier(r.desc).en) + '</div>' : '') + '</div></button>').join('') + '</div><div class="fbwrap"></div>';
+        P.fr.setTitle(RB.ui.jhtml(a.title.jp) + ' ' + esc(a.title.en), 'Letter ' + (i + 1) + ' of ' + list.length);
+        P.body.innerHTML = '<p class="muted small act-lead">The address has run in the rain. Read the letter: who is it for?</p>' +
+          '<article class="letter" aria-label="The letter">' + RB.learnUi.icon('letter') + '<div class="letter-jp">' + RB.ui.jhtml(t.jp) + '</div>' + (showEn ? '<div class="act-en">' + esc(RB.script.enVars(t.en)) + '</div>' : '') + '</article>' +
+          (showEn ? '' : '<div class="act-tr">' + trButton() + '</div>') +
+          '<h3>' + RB.learnUi.icon('companion') + '<span>Deliver to…</span></h3><ul class="entries recips">' + a.recipients.map((r) => '<li><button class="entry recip" data-to="' + r.id + '"><span class="mark">' + RB.learnUi.icon('here') + '</span><span class="body"><span class="t">' + esc(r.name.en) + ' ' + RB.ui.jhtml(r.name.jp) + '</span><span class="d">' + RB.ui.jhtml(tier(r.desc).jp) + (showEn ? '<span class="en">' + esc(tier(r.desc).en) + '</span>' : '') + '</span></span></button></li>').join('') + '</ul>' +
+          '<div class="fbwrap" aria-live="polite"></div>';
         P.foot.innerHTML = '';
       }
       P.pn.onclick = (e) => {
         if (e.target.closest('[data-x]')) { RB.ui.popLayer(P.lay); resolve({ ok: false, cancelled: true }); return; }
         if (e.target.closest('[data-tr]')) { showEn = true; assisted = true; render(); return; }
         const b = e.target.closest('[data-to]');
-        if (!b) return;
+        if (!b || b.disabled) return;
         const L = list[i];
         const fb = P.body.querySelector('.fbwrap');
         if (b.getAttribute('data-to') === L.to) {
           RB.audio && RB.audio.sfx('answer_right');
           if (L.items) RB.learn.record(L.items, { ok: firstTry, mode: 'choice', assisted });
           const why = tier(L.why);
-          fb.className = 'fbwrap fb ok';
-          fb.innerHTML = '✓ Delivered. ' + (why ? (why.jp ? RB.ui.jhtml(why.jp) + ' ' : '') + esc(why.en) : '');
-          P.foot.innerHTML = '<button class="btn primary" data-next>' + (i < list.length - 1 ? 'Next letter ▶' : 'Done ▶') + '</button>';
+          b.classList.add('on');
+          fbSet(fb, 'ok', 'Delivered.', why ? (why.jp ? '<div class="fb-jp">' + RB.ui.jhtml(why.jp) + '</div>' : '') + '<div>' + esc(why.en) + '</div>' : '');
+          P.foot.innerHTML = '<span class="spacer"></span>' + goBtn('data-next', i < list.length - 1 ? 'Next letter' : 'Done');
           P.foot.querySelector('[data-next]').onclick = () => { i++; firstTry = true; showEn = showEnDefault(); if (i >= list.length) { RB.ui.popLayer(P.lay); resolve({ ok: true, mistakes }); } else render(); };
           P.body.querySelectorAll('[data-to]').forEach((x) => (x.disabled = true));
+          P.foot.querySelector('[data-next]').focus({ preventScroll: true });
         } else {
           mistakes++; firstTry = false;
           RB.audio && RB.audio.sfx('answer_wrong');
           const r = a.recipients.find((x) => x.id === b.getAttribute('data-to'));
           const hint = tier(L.hint);
           b.disabled = true;
-          fb.className = 'fbwrap fb no';
-          fb.innerHTML = esc(r.name.en) + ' reads a line and hands it back: “Not mine, I think.” ' + (hint ? (hint.jp ? RB.ui.jhtml(hint.jp) + ' ' : '') + esc(hint.en) : 'Look again for who, where and what.');
+          b.classList.add('tried');
+          fbSet(fb, 'no', 'Not for ' + r.name.en + '.', '<p>' + esc(r.name.en) + ' reads a line and hands it back: “Not mine, I think.”</p>' + (hint ? '<div class="fb-why">' + (hint.jp ? RB.ui.jhtml(hint.jp) + ' ' : '') + esc(hint.en) + '</div>' : '<div class="fb-why">Look again for who, where and what.</div>'));
         }
       };
       P.lay.onCancel = () => {};
@@ -180,7 +197,7 @@ RB.activities = (function () {
       if (a.teller) for (const f of frags) await RB.ui.dialogue.say({ who: a.teller, jp: f.jp, en: f.en });
       RB.ui.dialogue.hide();
       const order = {
-        kind: 'order', title: RB.ui.plainJp(a.title.jp) + ' — ' + a.title.en,
+        kind: 'order', title: a.title.en, titleJp: a.title.jp,
         prompt: { en: 'Put the story back in the order it happened.' },
         tiles: frags.map((f) => f.short || f.jp), answer: frags.map((f) => f.short || f.jp),
         orderHint: { en: 'Listen for time words and cause-and-effect.' }, item: a.item,

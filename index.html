@@ -736,6 +736,643 @@ button.entry .t, button.entry .kind { display: block; }
 .keys .keycaps { margin-top: 0.2em; }
 kbd { display: inline-block; min-width: 1.6em; padding: 0 0.4em; border: 1px solid var(--ink-3); border-bottom-width: 2px; border-radius: 3px; background: #fffaf0; color: var(--ink); font: 0.9em var(--ui-font); text-align: center; }
 body.high-contrast .pv-box { background: #000; color: #fff; }
+
+/* ==== src/styles/60_learning.css ==== */
+/* Learning and combat interfaces in folio materials: the challenge runner
+ * (task slip · writing sheet with paper tabs for input mode · answer slip),
+ * the handwriting pad, teaching cards, kana lessons, side activities and the
+ * combat overlay. Builds on 00_tokens / 20_folio. No texture sits under text,
+ * ruby or handwriting; the writing canvas is the only `touch-action: none`. */
+
+/* ---- ink on the paper pieces used here (outside .leaf) ------------------- */
+.chal .slip, .combat-ui .paper { color: var(--ink); }
+.chal .slip rt, .combat-ui .paper rt, .lsheet rt { color: var(--rt-ink); }
+.chal .slip .en, .chal .slip .enline, .combat-ui .paper .en, .combat-ui .paper .enline { color: var(--ink-2); }
+body.bulb-on .chal .slip .jline .jt, body.bulb-on .combat-ui .paper .jline .jt { text-decoration-color: rgba(38, 31, 21, 0.45); }
+body.bulb-on .chal .slip .jline .jt:hover, .chal .slip .jline .jt.active,
+body.bulb-on .combat-ui .paper .jline .jt:hover, .combat-ui .paper .jline .jt.active { background: rgba(193, 138, 42, 0.18); }
+.chal .slip :focus-visible, .combat-ui .paper :focus-visible, .combat-ui .paper:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.chal .muted, .combat-ui .paper .muted { color: var(--ink-3); }
+.chal .small { font-size: 0.88em; }
+.chal .jp.big, .chal .big.jp { font-family: var(--jp-font); font-size: 1.35em; }
+
+/* writing paper: the plain, slightly brighter sheet used for anything written */
+.chal, .lsheet, .combat-ui { --pad-paper: #fffaf0; }
+body.high-contrast :is(.chal, .lsheet, .combat-ui) { --pad-paper: #ffffff; }
+
+/* ---- the challenge overlay -------------------------------------------------- */
+.chal {
+  position: absolute; left: 0; right: 0; top: var(--vv-top, 0px); height: var(--vv-h, 100%);
+  display: flex; align-items: center; justify-content: center; isolation: isolate;
+  background: rgba(8, 10, 22, 0.62); touch-action: manipulation;
+}
+.chal [hidden] { display: none !important; }
+.chal-frame {
+  position: relative; color: var(--on-cloth);
+  width: min(1180px, calc(100vw - 2 * var(--gutter)));
+  height: min(820px, calc(100% - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom)));
+  display: flex; flex-direction: column; min-width: 0;
+  background-color: var(--cloth-800); background-image: var(--cloth-weave);
+  border-radius: 10px; padding: 6px 12px 12px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+.chal-frame::before { content: ""; position: absolute; inset: 4px; border: 1px dashed var(--thread); border-radius: 7px; opacity: 0.55; pointer-events: none; }
+.chal-head { position: relative; z-index: 2; display: flex; align-items: center; gap: 4px 10px; min-height: var(--tap); padding: 2px 2px 6px; }
+.chal-title { margin: 0; flex: 1 1 auto; min-width: 0; font-family: var(--serif); font-weight: 600; font-size: 1.15em; letter-spacing: 0.01em; color: var(--on-cloth); overflow-wrap: anywhere; }
+.chal-head .cbtn { flex: none; }
+/* one scroll surface for the whole task; the writing canvas never scrolls it */
+.chal-body {
+  position: relative; z-index: 1; flex: 1 1 auto; min-height: 0; min-width: 0;
+  overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
+  touch-action: pan-y pinch-zoom; scrollbar-gutter: stable;
+  display: flex; flex-direction: column; gap: 8px; padding: 2px 2px 4px;
+}
+.chal-body > * { min-width: 0; }
+
+/* paper pieces */
+.chal .slip {
+  position: relative; background: var(--paper); border: 1px solid var(--paper-edge); border-radius: 3px;
+  box-shadow: 0 2px 0 var(--paper-3), 0 3px 0 var(--paper-edge); padding: 8px 12px 10px; line-height: 1.5;
+}
+.chal .slip-lab { font-size: 0.76em; letter-spacing: 0.07em; text-transform: uppercase; font-weight: 700; color: var(--ink-3); margin-bottom: 2px; }
+/* the task slip: a tucked sheet of the same paper, marked by its fold */
+.chal-task { flex: none; background: var(--paper-2) !important; }
+.chal-task::after { content: ""; position: absolute; top: -1px; right: -1px; width: 18px; height: 18px; background: linear-gradient(225deg, var(--cloth-800) 50%, var(--paper-3) 50%); pointer-events: none; }
+.chal-situ { border-bottom: 1px solid var(--rule); padding-bottom: 6px; margin-bottom: 6px; }
+.chal-ctx { font-size: 1.15em; }
+.chal-ctx.big { font-size: 1.6em; }
+.chal-ctx .jline, .chal-tpl .jline, .chal-copy .jline { line-height: 2.1; }
+.chal-en { color: var(--ink-2); font-family: var(--en-font); margin: 0 0 0.3em; }
+.chal-prompt { font-size: 1.05em; font-weight: 600; color: var(--ink); margin-top: 0.2em; }
+.chal-prompt .jline { font-weight: 400; }
+.chal-tpl { font-size: 1.5em; margin-top: 0.15em; }
+.chal-tpl .blank { display: inline-block; min-width: 1.6em; text-align: center; margin: 0 0.15em; padding: 0 0.2em; border-bottom: 3px solid var(--ribbon-deep); color: var(--ink-3); font-family: var(--jp-font); line-height: 1.3; }
+.chal-copy { font-size: 1.6em; }
+.task-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 0 8px; margin-top: 2px; }
+.task-tr:empty { display: none; }
+.task-acts .pbtn { padding: 0 0.35em; min-width: 0; text-align: left; }
+.task-acts [data-a="reveal"] { margin-left: auto; }
+.task-acts .aside { color: var(--ink-3); }
+.chal.locked .task-acts { display: none; }
+
+/* the work column: mode tabs over the writing sheet */
+.chal-work { flex: 1 0 auto; display: flex; flex-direction: column; min-height: 0; }
+.chal .tabslot:empty { display: none; }
+.chal-tabs.tabrail-wrap { margin: 0 4px -1px; }
+.chal-tabs .tabrail { padding: 4px 8px 0; }
+.chal-tabs .ptab { flex: 0 0 auto; min-height: 46px; padding: 16px 0.95em 4px; font-size: 0.95em; flex-direction: row; gap: 0.4em; }
+.chal-tabs .tabrail .ribbon { width: 11px; height: 15px; }
+@media (max-width: 599px) {
+  .chal-tabs .tabrail { padding: 4px 6px 0; }
+  .chal-tabs .ptab { flex: 0 0 auto; min-width: 0; min-height: 46px; flex-direction: row; gap: 0.35em; padding: 16px 0.55em 4px; font-size: 0.92em; }
+  .chal-tabs .ptab svg { width: 1.15em; height: 1.15em; }
+}
+.chal-sheet { flex: 1 0 auto; display: flex; flex-direction: column; gap: 8px; padding: 10px 10px 10px; border-radius: 3px 3px 5px 5px; }
+.chal[data-kind="write"] .sheet-lab { display: none; }
+.chal .pane { flex: 1 0 auto; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+
+/* the answer slip: composed answer, Submit, feedback */
+.chal-answer { flex: none; display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px 10px; }
+.chal-line { flex: 1 1 15em; min-width: 0; }
+.chal-line:empty { display: none; }
+.chal-submit { flex: 1 1 auto; max-width: 100%; }
+.chal .fbwrap { flex: 1 0 100%; min-width: 0; }
+
+/* ---- the handwriting pad ---------------------------------------------------- */
+/* (neutralise the pre-folio pad rules: dark panel, touch-action on the box) */
+.chal .pad-area { background: transparent; border: 0; border-radius: 0; padding: 0; }
+.pad-box { touch-action: auto; align-self: auto; }
+.pad-box .pad-bg { touch-action: auto; pointer-events: none; cursor: default; }
+.strip .cell { height: auto; }
+.strip .cell.ins { opacity: 1; border: 0; }
+.strip .cell.asst { border-color: transparent; }
+.strip .cell.asst.cur { border-color: var(--ink); }
+.chal .pbtn.primary[disabled] { background: transparent; color: var(--ink-3); border-color: var(--ink-3); box-shadow: none; }
+.pad-area {
+  --pad-paper: #fffaf0; --pad-ink: #1c160e; --pad-guide: rgba(120, 90, 50, 0.3); --pad-edge: var(--paper-edge);
+  --pad-model: rgba(168, 62, 39, 0.4); --pad-num: #a83e27; --pad-hint: rgba(31, 90, 146, 0.08); --pad-ghost: rgba(76, 64, 48, 0.2);
+  flex: 1 0 auto; display: flex; flex-direction: column; gap: 8px; min-width: 0;
+}
+body.high-contrast .pad-area { --pad-paper: #ffffff; --pad-ink: #000000; --pad-guide: rgba(0, 0, 0, 0.35); --pad-ghost: rgba(0, 0, 0, 0.22); --pad-model: rgba(160, 30, 10, 0.5); }
+/* the canvas takes the room that is left, and stays square */
+.pad-hold { flex: 1 1 0; min-height: 180px; display: flex; align-items: center; justify-content: center; container-type: size; }
+.pad-box { position: relative; width: min(100%, 46vh); aspect-ratio: 1; flex: none; }
+@supports (width: 1cqw) { .pad-box { width: min(100cqw, 100cqh); } }
+.pad-box canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; border-radius: 4px; }
+.pad-box .pad-bg { box-shadow: 0 0 0 1px var(--paper-edge), 0 2px 0 var(--paper-3); }
+.pad-box .pad-ink { touch-action: none; cursor: crosshair; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.pad-box .pad-ink:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+
+/* what the recognizer read: sure (solid frame) · unsure / unread (dashed, "?").
+ * One caption line and one row, whatever the state, so the canvas above never
+ * changes size while a character is being written. */
+.pad-inspect { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+.readas { display: contents; }
+.rd-cap { flex: 1 0 100%; display: flex; align-items: center; gap: 0.35em; min-height: 1.45em; font-size: 0.92em; line-height: 1.3; color: var(--ink-2); }
+.rd-cap svg { width: 1.3em; height: 1.3em; flex: none; color: var(--river); }
+.rd-cap b { color: var(--ink); }
+.rd-cap .rd-hint { color: var(--ink-3); }
+.readas .big {
+  flex: none; display: inline-flex; align-items: center; justify-content: center; width: calc(var(--tap) + 4px); height: calc(var(--tap) + 4px);
+  font: 1.6em/1 var(--jp-font); color: var(--ink); background: var(--pad-paper, #fffcf3); border: 2px solid var(--ink); border-radius: var(--r-1);
+}
+.readas .big.none { border: 1px dashed var(--ink-3); background: transparent; }
+.readas[data-state="unsure"] .big { border-style: dashed; border-color: var(--river); }
+.readas[data-state="unread"] .big { border: 2px dashed var(--river); }
+.cands { flex: 0 1 auto; min-width: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.cands:empty { display: none; }
+.cands .or { font-size: 0.85em; color: var(--ink-3); }
+.cand {
+  min-width: var(--tap); min-height: var(--tap); padding: 0 0.3em; font: 1.35em/1 var(--jp-font); cursor: pointer; touch-action: manipulation;
+  background: var(--paper); color: var(--ink); border: 1px dashed var(--ink-3); border-radius: var(--r-1);
+}
+.cand:hover { background: var(--paper-2); border-style: solid; }
+.cand:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.pad-confirm { margin-left: auto; }
+.pad-confirm[disabled] { background: transparent; color: var(--ink-3); border-color: var(--ink-3); }
+
+/* tools: undo stroke / clear are always visible; the rest folds away on phones */
+.pad-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.pad-tools .pbtn { padding: 0 0.75em; }
+.pad-tools .glyph { font-family: var(--jp-font); font-size: 1.15em; line-height: 1; }
+.pad-tools .pbtn[aria-pressed="true"] { border-color: var(--ink); box-shadow: inset 0 -3px 0 var(--ribbon); font-weight: 600; }
+.pad-more-b .more-on { font-family: var(--jp-font); border: 1px solid var(--ink); border-radius: 50%; width: 1.5em; height: 1.5em; display: inline-flex; align-items: center; justify-content: center; font-size: 0.85em; }
+.pad-more-b[aria-expanded="true"] { background: var(--paper-2); box-shadow: inset 0 -3px 0 var(--ink-3); }
+.pad-extra { display: none; flex: 1 0 100%; flex-wrap: wrap; gap: 6px; align-items: center; }
+.pad-area.more-open .pad-extra { display: flex; }
+.pad-script { display: inline-flex; align-items: center; gap: 0.4em; color: var(--ink-2); font-size: 0.95em; }
+.pad-script select { min-height: var(--tap); background: var(--pad-paper, #fffcf3); color: var(--ink); border: 1px solid var(--ink-3); border-radius: var(--r-1); padding: 0 0.5em; font: inherit; }
+.pad-script select:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+
+/* the composed answer line (in the answer slip) */
+.pad-compose { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 2px 8px; }
+.pad-compose .pad-lab, .order-line .pad-lab { grid-column: 1 / -1; font-size: 0.76em; letter-spacing: 0.07em; text-transform: uppercase; font-weight: 700; color: var(--ink-3); }
+.pad-compose .pad-note { grid-column: 1 / -1; color: var(--ink-2); }
+.pad-compose .pad-note:empty { display: none; }
+.strip {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0; min-height: calc(var(--tap) + 8px); padding: 2px 4px;
+  background: var(--pad-paper, #fffcf3); border: 1px solid var(--paper-edge); border-bottom: 2px solid var(--ink-3); border-radius: 3px 3px 0 0;
+  font-family: var(--jp-font);
+}
+.strip .cell {
+  display: inline-flex; align-items: center; justify-content: center; min-width: var(--tap); min-height: var(--tap); padding: 0 0.15em;
+  background: transparent; color: var(--ink); border: 1px solid transparent; border-radius: var(--r-1); font: 1.55em/1 var(--jp-font); cursor: pointer; touch-action: manipulation;
+}
+.strip .cell:hover { background: rgba(193, 138, 42, 0.1); }
+.strip .cell.cur { border: 2px solid var(--ink); box-shadow: inset 0 -3px 0 var(--ribbon); }
+.strip .cell.asst { text-decoration: underline 2px dotted var(--river); text-underline-offset: 0.18em; }
+.strip .cell.unsure { border: 1px dashed var(--river); }
+.strip .cell.ins { min-width: 22px; width: 22px; padding: 0; font-size: 1em; position: relative; }
+.strip .cell.ins::before { content: ""; width: 2px; height: 1.4em; background: var(--rule); border-radius: 1px; }
+.strip .cell.ins.cur { border: 0; box-shadow: none; }
+.strip .cell.ins.cur::before { width: 3px; background: var(--ink); animation: caret 1.1s steps(1) infinite; }
+@keyframes caret { 50% { opacity: 0.25; } }
+body.reduced-motion .strip .cell.ins.cur::before { animation: none; }
+.strip .cell.slot { cursor: default; min-width: 1.6em; border: 0; border-bottom: 3px solid var(--ribbon-deep); border-radius: 0; box-shadow: none; }
+.strip .fixed { color: var(--ink-3); font-size: 1.45em; padding: 0 0.1em; }
+.strip .ph { color: var(--ink-3); font: 0.85em var(--ui-font); padding: 0 0.4em; }
+.strip :focus-visible { outline: 3px solid var(--focus-paper); outline-offset: -2px; }
+.pad-del { align-self: center; }
+
+/* ---- keyboard / IME ----------------------------------------------------------- */
+.pane-ime { gap: 6px; }
+.ime-lab { font-weight: 600; color: var(--ink); }
+#ime-in {
+  width: 100%; min-height: calc(var(--tap) + 12px); font: 1.5em var(--jp-font); padding: 0 0.5em;
+  background: var(--pad-paper, #fffcf3); color: var(--ink); border: 1px solid var(--ink-3); border-bottom: 2px solid var(--ink); border-radius: 3px;
+}
+#ime-in:focus-visible, #ime-in:focus { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+.pane-ime .hint { margin: 0; color: var(--ink-3); font-size: 0.9em; }
+
+/* ---- choices: answer slips on the sheet --------------------------------------- */
+.chal .mc { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 9.5em), 1fr)); gap: 8px; counter-reset: opt; }
+.chal .mc.mc-read { grid-template-columns: minmax(0, 1fr); }
+.chal .mc .btn {
+  counter-increment: opt; position: relative; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 0.1em;
+  min-height: 52px; padding: 0.45em 0.8em 0.45em 2.4em; margin: 0; text-align: left; font: inherit; font-size: 1.05em; line-height: 1.35; cursor: pointer;
+  background: var(--pad-paper, #fffcf3); color: var(--ink); border: 1px solid var(--ink-3); border-radius: 3px; box-shadow: 0 2px 0 var(--paper-3);
+  touch-action: manipulation;
+}
+.chal .mc .btn::before {
+  content: counter(opt, upper-alpha); position: absolute; left: 0.6em; top: 50%; transform: translateY(-50%);
+  width: 1.3em; height: 1.3em; display: flex; align-items: center; justify-content: center; border-radius: 50%;
+  border: 1px solid var(--ink-3); color: var(--ink-2); font: 600 0.78em var(--ui-font);
+}
+.chal .mc .btn .jline { font-size: 1.2em; line-height: 1.9; }
+.chal .mc .btn .enline { display: block; color: var(--ink-2); font-family: var(--ui-font); font-size: 0.95em; }
+.chal .mc .btn:hover { background: var(--paper); border-color: var(--ink); }
+.chal .mc .btn:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.chal .mc .btn[disabled], .chal .mc .btn.tried { cursor: not-allowed; opacity: 1; color: var(--ink-3); background: transparent; border-style: dashed; box-shadow: none; }
+.chal .mc .btn.tried::before { content: "✕"; border-style: dashed; }
+.chal .mc .btn.tried .jline, .chal .mc .btn.tried .enline { color: var(--ink-3); text-decoration: line-through 1px; }
+.chal .mc .btn.tried rt { text-decoration: none; }
+.chal .mc .btn.on { border: 2px solid var(--ok-ink); box-shadow: inset 4px 0 0 var(--ok-ink); }
+.chal .mc .btn.on::before { content: "✓"; background: var(--ok-ink); border-color: var(--ok-ink); color: #fff; }
+.chal.locked .mc .btn:not(.on) { opacity: 0.75; }
+
+/* ---- order: pieces on the sheet, the order in the answer slip ------------------ */
+:is(.chal, .lsheet) .tiles { display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start; }
+:is(.chal, .lsheet) .tile {
+  min-height: var(--tap); padding: 0.3em 0.7em; font: inherit; font-size: 1.05em; text-align: left; cursor: pointer; touch-action: manipulation;
+  background: var(--pad-paper, #fffcf3); color: var(--ink); border: 1px solid var(--ink-3); border-radius: 3px; box-shadow: 0 2px 0 var(--paper-3);
+}
+:is(.chal, .lsheet) .tile .jline { line-height: 1.95; }
+:is(.chal, .lsheet) .tile:hover { border-color: var(--ink); }
+:is(.chal, .lsheet) .tile:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.order-line { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 8px; align-items: end; }
+.order-line .built { list-style: none; margin: 0; padding: 4px; display: flex; flex-direction: column; gap: 4px; counter-reset: ord; min-height: calc(var(--tap) + 8px); background: var(--pad-paper, #fffcf3); border: 1px solid var(--paper-edge); border-radius: 3px; }
+.order-line .built li { counter-increment: ord; display: flex; align-items: center; gap: 6px; }
+.order-line .built li:not(.empty)::before { content: counter(ord); flex: none; width: 1.6em; text-align: right; font-weight: 700; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.order-line .built li.empty { padding: 0.6em; }
+.order-line .tile.placed { flex: 1 1 auto; box-shadow: none; border-style: solid; }
+.order-line [data-o="clr"] { align-self: end; }
+
+/* ---- feedback: right (solid, check) · wrong (solid, cross) · unsure (dashed, ?) */
+:is(.chal, .lsheet) .fbwrap.hint { font-size: 0.92em; padding: 2px 2px 0; }
+:is(.chal, .lsheet) .fb { position: relative; padding: 8px 12px 10px 14px; background: var(--paper); border: 1px solid var(--paper-edge); border-radius: 3px; line-height: 1.5; }
+:is(.chal, .lsheet) .fb p { margin: 0.3em 0; }
+:is(.chal, .lsheet) .fb .fb-h { display: flex; align-items: center; gap: 0.45em; font-family: var(--serif); font-size: 1.12em; font-weight: 700; color: var(--ink); }
+:is(.chal, .lsheet) .fb .fb-h svg { width: 1.45em; height: 1.45em; flex: none; }
+:is(.chal, .lsheet) .fb .fb-why { margin: 0.35em 0; }
+:is(.chal, .lsheet) .fb .fb-ex { margin-top: 0.4em; padding-top: 0.35em; border-top: 1px solid var(--rule); }
+:is(.chal, .lsheet) .fb .fb-jp { font-size: 1.1em; }
+:is(.chal, .lsheet) .fb .jp.big { display: inline-block; padding: 0 0.25em; border-bottom: 2px solid var(--ink-3); }
+:is(.chal, .lsheet) .fb.ok { border-left: 6px solid var(--ok-ink); }
+:is(.chal, .lsheet) .fb.ok .fb-h svg { color: var(--ok-ink); }
+:is(.chal, .lsheet) .fb.no { border-left: 6px solid var(--warn-ink); background: #f7e8cf; }
+:is(.chal, .lsheet) .fb.no .fb-h svg { color: var(--warn-ink); }
+:is(.chal, .lsheet) .fb.unsure { border: 2px dashed var(--river); background: #e9eef2; }
+:is(.chal, .lsheet) .fb.unsure .fb-h, :is(.chal, .lsheet) .fb.unsure .fb-h svg { color: var(--river); }
+:is(.chal, .lsheet) .fb.reveal { border-left: 6px solid var(--ribbon); }
+:is(.chal, .lsheet) .fb.reveal .fb-h svg { color: var(--ribbon-deep); }
+:is(.chal, .lsheet) .fb-go { margin-top: 0.5em; width: 100%; }
+body.high-contrast :is(.chal, .lsheet) .fb.no, body.high-contrast :is(.chal, .lsheet) .fb.unsure { background: #fff; }
+
+/* ---- wider screens: the three pieces side by side, in reading order ----------- */
+@media (min-width: 900px) and (min-height: 560px) {
+  .chal-body {
+    display: grid; gap: 12px; align-items: start;
+    grid-template-columns: minmax(230px, 0.85fr) minmax(340px, 1.3fr) minmax(240px, 0.9fr);
+    grid-template-rows: minmax(100%, auto);
+  }
+  .chal-work { align-self: stretch; }
+  .chal:not([data-mode="hand"]) .chal-work { align-self: start; }
+  /* without a canvas to fill, the frame fits its content */
+  .chal:not([data-mode="hand"]) .chal-frame { height: auto; max-height: min(820px, calc(100% - 24px)); }
+  .chal-answer { flex-direction: column; align-items: stretch; flex-wrap: nowrap; }
+  .chal-line { flex: none; }
+  .chal-submit { flex: none; }
+  .chal .fbwrap { flex: none; }
+  .pad-extra { display: flex; }
+  .pad-more-b { display: none !important; }
+  .chal[data-kind="choose"] .chal-body, .chal[data-kind="order"] .chal-body { grid-template-columns: minmax(260px, 1fr) minmax(340px, 1.25fr) minmax(240px, 0.85fr); }
+}
+
+/* ---- phones and short landscape screens: the frame is the whole screen, and
+ * everything fits on one screen — the prompt, the canvas, what was read, the
+ * answer line and Submit ---------------------------------------------------------- */
+@media (max-width: 599px), (max-height: 559px) {
+  .chal-frame {
+    width: 100vw; height: 100%; border-radius: 0;
+    padding: max(4px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+  }
+  .chal-frame::before { inset: 3px; border-radius: 0; }
+  .chal-head { padding-bottom: 4px; }
+  .chal-title { font-size: 1.05em; }
+  .chal .slip { padding: 6px 10px 8px; }
+  .chal-sheet { padding: 8px; gap: 6px; }
+  .pad-area { gap: 6px; }
+  .chal-task .slip-lab { display: none; }
+  .chal-ctx { font-size: 1.08em; }
+  .chal-ctx.big { font-size: 1.4em; }
+  .chal-ctx .jline, .chal-tpl .jline, .chal-copy .jline { line-height: 1.95; }
+  .chal-prompt { font-size: 1em; }
+  .chal-tpl, .chal-copy { font-size: 1.35em; }
+  .chal .fbwrap.hint { display: none; }
+  .chal:not(.fb-on)[data-mode="choice"] .chal-answer { display: none; }
+  .chal:not([data-mode="hand"]) .chal-work, .chal:not([data-mode="hand"]) .chal-sheet, .chal:not([data-mode="hand"]) .pane { flex: 0 0 auto; }
+  .chal-answer { align-items: center; }
+  .chal-line { flex: 1 1 6.5em; }
+  .chal[data-mode="order"] .chal-line { flex: 1 0 100%; }
+  .chal-submit { flex: 0 1 auto; margin-left: auto; padding: 0 0.7em; }
+  .pad-compose .pad-lab { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  /* Remove: icon over a short label, so the answer row and Submit share a line */
+  .pad-del { flex-direction: column; gap: 0; min-width: 52px; padding: 2px 0.35em; font-size: 0.72em; line-height: 1.1; }
+  .pad-del svg { width: 1.7em; height: 1.7em; }
+  .pad-tools { gap: 6px; }
+  .pad-tools .pbtn { padding: 0 0.6em; }
+  .task-acts { flex-wrap: nowrap; }
+  .task-acts .pbtn { flex: 0 1 auto; }
+}
+@media (max-width: 379px) {
+  .task-acts .aside { display: none; }
+  .chal-submit .w { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .pad-tools .pbtn { font-size: 0.9em; padding: 0 0.5em; }
+  .chal-head .cbtn { padding: 0 0.6em; }
+}
+/* landscape phone: task + answer on the left, the sheet on the right with its
+ * inspection and tools beside the canvas so the canvas uses the full height */
+@media (max-height: 559px) and (min-width: 600px) {
+  .chal-body {
+    display: grid; gap: 8px; align-items: start;
+    grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1.25fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas: "task work" "answer work";
+  }
+  .chal-task { grid-area: task; }
+  .chal-answer { grid-area: answer; }
+  .chal-work { grid-area: work; align-self: stretch; min-height: min(100%, 300px); }
+  .chal:not([data-mode="hand"]) .chal-work { align-self: start; min-height: 0; }
+  .task-acts .aside { display: none; }
+  .chal-tabs .ptab { min-height: 44px; }
+  .chal-ctx { font-size: 1em; }
+  .chal-ctx.big { font-size: 1.3em; }
+  .chal-prompt { font-size: 0.95em; }
+  .chal-tpl, .chal-copy { font-size: 1.2em; }
+  .pane-hand { container-type: size; min-height: 200px; }
+  .pane-hand .pad-area { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto auto 1fr; align-items: start; gap: 8px 10px; height: 100%; }
+  .pane-hand .pad-hold { grid-row: 1 / -1; flex: none; container-type: normal; min-height: 0; width: min(100cqh, 58cqw); height: min(100cqh, 58cqw); }
+  .pane-hand .pad-box { width: 100%; }
+  .pane-hand .pad-inspect { align-content: flex-start; }
+}
+
+/* ---- learning sheets: teaching cards, lessons, activities, the kana chart ------ */
+.folio.lsheet { border: 0; max-height: none; overflow: visible; }
+.folio.lsheet .folio-foot.foot { padding: 8px 0 0; border-top: 0; justify-content: flex-start; flex-wrap: wrap; gap: 8px; }
+.folio.lsheet .folio-foot:empty { display: none; }
+.folio.lsheet .folio-head h2 { max-width: none; flex: 1 1 auto; }
+.folio.lsheet .folio-head h2 .jline { font-family: var(--jp-font); font-weight: 400; }
+.folio.lsheet .folio-head rt { color: var(--on-cloth-2); }
+.folio.lsheet .leafbox { margin-top: 2px; }
+.folio.lsheet .leaf { touch-action: pan-y pinch-zoom; }
+.folio.lsheet .leaf .jline { line-height: 2.05; }
+.cbtn.go { background: var(--paper); color: var(--ink); border-color: var(--paper); font-weight: 600; box-shadow: 0 2px 0 var(--paper-edge); }
+.cbtn.go:hover { background: var(--paper-2); }
+.cbtn.go svg { color: var(--ink); }
+.folio-foot .cbtn.go { margin-left: auto; }
+/* small sheets size to their content */
+.folio.lsheet.small {
+  display: flex; flex-direction: column; height: auto;
+  width: min(640px, calc(100vw - 2 * var(--gutter)));
+  max-height: calc(100 * var(--vh) - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+}
+.folio.lsheet.small > .leafbox { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+.folio.lsheet.small > .leafbox > .leaf { flex: 1 1 auto; min-height: 0; }
+@media (max-width: 599px) {
+  .folio.lsheet.small { width: calc(100vw - 16px); height: auto; max-height: calc(100 * var(--vh) - 16px); border-radius: 8px; }
+}
+.teach-jp { font-size: 1.45em; }
+.teach-en { font-size: 1.02em; }
+.teach-ex { list-style: none; margin: 0; padding: 0; }
+.teach-ex li { padding: 0.35em 0; border-bottom: 1px solid var(--rule); }
+.teach-ex li .jline { font-size: 1.1em; margin-right: 0.5em; }
+.teach-ex li .en { display: block; color: var(--ink-2); font-family: var(--ui-font); }
+.kchart { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--tap), 1fr)); gap: 6px; font-family: var(--jp-font); }
+.kpick { min-height: var(--tap); font-size: 1.3em; background: #fffcf3; color: var(--ink); border: 1px solid var(--ink-3); border-radius: var(--r-1); cursor: pointer; touch-action: manipulation; }
+.kpick:hover { background: var(--paper-2); }
+.kpick:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+
+/* kana lesson: the character, its numbered strokes, the note, words using it */
+.lesson-row { list-style: none; display: flex; flex-wrap: wrap; gap: 4px; margin: 0 0 0.6em; padding: 0; font-family: var(--jp-font); }
+.lesson-row li { min-width: 2em; text-align: center; font-size: 1.15em; color: var(--ink-3); border-bottom: 3px solid transparent; padding: 0 0.2em 0.1em; }
+.lesson-row li[aria-current="true"] { color: var(--ink); font-weight: 700; border-bottom-color: var(--ribbon); }
+.lesson-main { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 12px 24px; }
+.lesson-char { margin: 0; text-align: center; min-width: 6em; }
+.lesson-char .kbig { font: 5.2em/1.15 var(--jp-font); color: var(--ink); }
+.lesson-char .rom { font-size: 1.3em; color: var(--ink); letter-spacing: 0.04em; }
+.lesson-demo { margin: 0; flex: 1 1 200px; max-width: 280px; }
+.lesson-demo canvas { display: block; width: 100%; max-width: 240px; aspect-ratio: 1; border-radius: var(--r-1); box-shadow: 0 0 0 1px var(--paper-edge), 0 2px 0 var(--paper-3); }
+.lesson-demo figcaption { margin-top: 0.4em; }
+.lesson-note { font-size: 1.02em; border-left: 3px solid var(--rule); padding-left: 0.7em; }
+.lesson-ex, .lsheet .fb-list { list-style: none; margin: 0; padding: 0; }
+.lesson-ex li { padding: 0.25em 0; border-bottom: 1px solid var(--rule); }
+.lesson-ex li .jline { font-size: 1.2em; margin-right: 0.6em; }
+.lesson-ex li .en { color: var(--ink-2); font-family: var(--ui-font); }
+.lsheet.lesson .folio-foot .cbtn.hidden { display: none; }
+@media (min-width: 860px) { .folio.lsheet.lesson, .folio.lsheet.activity { width: min(920px, calc(100vw - 2 * var(--gutter))); } }
+
+/* activities: who is speaking, the tray and the kitchen, a letter to deliver */
+.act-say { display: flex; gap: 12px; align-items: flex-start; padding-bottom: 0.4em; }
+.act-face { width: 72px; height: 72px; flex: none; image-rendering: pixelated; border-radius: 4px; background: var(--paper-2); box-shadow: 0 0 0 1px var(--paper-edge); }
+.act-line { min-width: 0; flex: 1 1 auto; }
+.act-who { font-family: var(--serif); font-weight: 700; color: var(--ink); }
+.act-jp { font-size: 1.25em; }
+.act-en { color: var(--ink-2); font-family: var(--en-font); }
+.lsheet .pbtn.tr { padding: 0 0.35em; margin-left: -0.35em; }
+.lsheet .aside { color: var(--ink-3); }
+.act-tray, .act-menu { display: flex; flex-wrap: wrap; gap: 8px; margin: 0.3em 0 0.6em; }
+.act-tray { min-height: calc(var(--tap) + 12px); padding: 6px; background: var(--pad-paper); border: 1px dashed var(--paper-edge); border-radius: 3px; align-items: center; }
+.lsheet .tile { display: inline-flex; flex-direction: column; align-items: flex-start; justify-content: center; }
+.lsheet .tile .en { font-size: 0.8em; color: var(--ink-2); font-family: var(--ui-font); }
+.lsheet .tile.placed { flex-direction: row; align-items: center; gap: 0.4em; box-shadow: none; border-color: var(--ink); }
+.lsheet .tile .qty { font-weight: 700; font-variant-numeric: tabular-nums; }
+.lsheet .tile[disabled] { cursor: default; opacity: 0.7; }
+.lsheet .fbwrap:empty { display: none; }
+.lsheet .fbwrap { margin-top: 0.6em; }
+.lsheet .fb-list li::before { content: "– "; color: var(--ink-3); }
+.act-lead { margin-top: 0; }
+/* a letter: the same plain paper, set apart by its ruled edge and envelope mark */
+.letter { position: relative; margin: 0.4em 0 0.6em; padding: 0.7em 1em 0.8em 3em; background: var(--pad-paper); border: 1px solid var(--paper-edge); border-left: 4px double var(--paper-edge); border-radius: 2px; box-shadow: 0 2px 0 var(--paper-3); }
+.letter > svg { position: absolute; left: 0.8em; top: 0.9em; width: 1.4em; height: 1.4em; color: var(--ink-3); }
+.letter-jp { font-size: 1.2em; }
+.act-tr { margin: -0.2em 0 0.4em; }
+.recips .recip { grid-template-columns: 1.6em minmax(0, 1fr); min-height: var(--tap); touch-action: manipulation; }
+.recips .recip .t { display: block; }
+.recips .recip .d { display: block; color: var(--ink-2); }
+.recips .recip .d .en { display: block; font-family: var(--ui-font); font-size: 0.9em; color: var(--ink-2); }
+.recips .recip.tried { cursor: not-allowed; }
+.recips .recip.tried .t { text-decoration: line-through 1px; color: var(--ink-3); }
+.recips .recip.tried > .mark { color: var(--warn-ink); }
+.recips .recip.on { box-shadow: inset 4px 0 0 var(--ok-ink); background: rgba(45, 95, 40, 0.08); }
+.recips .recip[disabled] { opacity: 1; }
+
+/* ---- combat overlay ------------------------------------------------------------
+ * A grid over the battle scene: the foe's slip, the telegraph card (paper,
+ * vermilion edge), the stage (an empty cell the scene is framed into), the
+ * party's cloth slip, and the response dock (cloth) of paper cards. The
+ * top-right corner stays free for the HUD. Pre-folio combat rules are
+ * neutralised here (positions, dark panels). */
+.combat-ui {
+  position: absolute; inset: 0; pointer-events: none; display: grid; gap: 8px;
+  padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto minmax(60px, 1fr) auto auto;
+  grid-template-areas: "foe" "intent" "stage" "party" "dock";
+}
+.combat-ui > *, .combat-ui .cb-side > * { pointer-events: auto; min-width: 0; }
+.combat-ui .cb-side { display: contents; }
+.combat-ui > .cb-stage { grid-area: stage; pointer-events: none; }
+.combat-ui .cb-foe { grid-area: foe; }
+.combat-ui .intent { grid-area: intent; }
+.combat-ui .cb-party { grid-area: party; }
+.combat-ui .cb-dock { grid-area: dock; }
+.combat-ui .paper { background: var(--paper); border: 1px solid var(--paper-edge); border-radius: 3px; box-shadow: 0 2px 0 var(--paper-3), 0 3px 0 var(--paper-edge), 0 8px 20px rgba(0, 0, 0, 0.3); }
+
+/* the foe: a cloth title slip with its name and the knots still tied */
+.cb-foe {
+  justify-self: start; align-self: start; max-width: calc(100% - 104px); min-height: var(--tap); display: flex; flex-wrap: wrap; align-items: center; gap: 2px 12px;
+  padding: 2px 12px; color: var(--on-cloth); background-color: var(--cloth-800); background-image: var(--cloth-weave);
+  border: 1px solid var(--paper-edge); border-radius: 6px; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+}
+.cb-foe .foe-n { font-family: var(--serif); font-weight: 700; font-size: 1.05em; }
+.cb-foe .foe-n .jline { font-family: var(--jp-font); font-weight: 400; line-height: 1.9; }
+.cb-foe .foe-n .en { font-family: var(--serif); }
+.cb-foe rt { color: var(--on-cloth-2); }
+.cb-foe .knots, .cb-situ .knots { display: inline-flex; gap: 4px; align-items: center; vertical-align: middle; }
+.kn { width: 14px; height: 14px; border-radius: 50%; border: 2px dashed currentColor; opacity: 0.8; }
+.kn.tied { border-style: solid; background: currentColor; box-shadow: inset 0 0 0 2px var(--cloth-800); opacity: 1; }
+.cb-foe .kn-t { color: var(--on-cloth-2); font-size: 0.88em; }
+
+/* the telegraph: what it is about to do, in Japanese at the player's level */
+.combat-ui .intent {
+  position: relative; left: auto; top: auto; transform: none; width: auto; max-width: 680px; justify-self: stretch;
+  padding: 8px 14px 10px 16px; border-left: 5px solid var(--vermilion); border-radius: 3px; color: var(--ink);
+}
+.it-label { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; font-size: 0.8em; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--vermilion); }
+.it-label svg { width: 1.6em; height: 1.6em; flex: none; }
+.it-label .st { color: var(--ink-2); border: 1px solid var(--ink-3); border-radius: 2px; padding: 0 0.35em; letter-spacing: 0.03em; }
+.it-jp { font-size: 1.22em; }
+.combat-ui .intent .jline, .cb-situ .it-jp .jline { font-size: 1em; line-height: 2.05; }
+.it-en { color: var(--ink-2); font-family: var(--en-font); }
+.it-next { display: flex; gap: 0.4em; align-items: center; margin-top: 0.2em; font-size: 0.9em; color: var(--ink-2); }
+.it-next svg { width: 1.2em; height: 1.2em; flex: none; }
+.combat-ui .pbtn.tr { padding: 0 0.35em; margin-left: -0.35em; }
+.combat-ui .aside, .cb-situ .aside { color: var(--ink-3); }
+
+/* the party: resolve with numbers, wards, harmony; the aim mark when known */
+.combat-ui .cb-party {
+  position: relative; left: auto; bottom: auto; min-width: 0; justify-self: stretch;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 4px 12px; padding: 6px 12px 8px; font-size: 0.92em;
+  color: var(--on-cloth); background-color: var(--cloth-800); background-image: var(--cloth-weave);
+  border: 1px solid var(--paper-edge); border-radius: 6px; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+}
+.pm { min-width: 0; }
+.pm-h { display: flex; align-items: center; gap: 6px; min-height: 1.6em; }
+.pm-n { font-weight: 700; min-width: 0; overflow-wrap: anywhere; }
+.pm-v { margin-left: auto; font-variant-numeric: tabular-nums; color: var(--on-cloth-2); }
+.pm-w { display: inline-flex; align-items: center; gap: 2px; color: var(--focus-cloth); font-weight: 700; }
+.pm-w svg { width: 1.1em; height: 1.1em; }
+.pm { position: relative; }
+.aimtag { position: absolute; top: -17px; left: -4px; display: inline-flex; align-items: center; gap: 3px; padding: 0 5px; border-radius: 2px; background: var(--paper); color: var(--vermilion); font-size: 0.8em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+.aimtag svg { width: 1.15em; height: 1.15em; }
+.pm.aimed .bar { outline: 2px solid var(--paper); outline-offset: 1px; }
+.pm-note { grid-column: 1 / -1; font-size: 0.85em; color: var(--on-cloth-2); }
+.combat-ui .bar { height: 10px; background: var(--cloth-950); border: 1px solid var(--paper-edge); border-radius: 2px; overflow: hidden; }
+.combat-ui .bar > i { display: block; height: 100%; background: var(--paper); }
+.combat-ui .bar.h > i { background: var(--ribbon); }
+.combat-ui .atlas-lantern { font-size: 1em; }
+.combat-ui .atlas-lantern .dim { color: var(--on-cloth-2); }
+
+/* the response dock: cloth, holding paper cards (one scroll surface) */
+.cb-dock {
+  display: flex; flex-direction: column; min-height: 0; padding: 6px 8px 8px; gap: 6px; position: relative;
+  color: var(--on-cloth); background-color: var(--cloth-800); background-image: var(--cloth-weave);
+  border: 1px solid var(--paper-edge); border-radius: 6px; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+}
+.cb-dock::before { content: ""; position: absolute; inset: 3px; border: 1px dashed var(--thread); border-radius: 4px; opacity: 0.5; pointer-events: none; }
+.cb-dock-h { margin: 0 4px; font: 600 1.02em var(--serif); color: var(--on-cloth); position: relative; }
+.combat-ui .responses {
+  position: relative; right: auto; left: auto; bottom: auto; width: auto; min-height: 0; flex: 1 1 auto;
+  display: flex; flex-direction: column; gap: 8px; padding: 0;
+}
+/* the cards scroll (one scroll surface); stepping back stays in view below them */
+.rcards { grid-auto-rows: max-content; min-height: 0; flex: 1 1 auto; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y pinch-zoom; padding: 2px 2px 6px; align-content: start; }
+.combat-ui .responses:empty { display: none; }
+.rcards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr)); gap: 8px; }
+.combat-ui .rcard {
+  display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "ic w" "tg tg" "d d"; align-items: center; gap: 0 8px;
+  min-height: var(--tap); padding: 6px 10px 8px; margin: 0; text-align: left; font: inherit; cursor: pointer; touch-action: manipulation;
+  background: var(--paper); color: var(--ink); border: 1px solid var(--paper-edge); border-radius: 3px; box-shadow: 0 2px 0 var(--paper-3), 0 3px 0 var(--paper-edge);
+}
+.combat-ui .rcard:hover { background: #f7efdc; }
+.combat-ui .rcard:focus-visible { outline: 3px solid var(--focus-cloth); outline-offset: 2px; }
+.combat-ui .rcard:active { transform: translateY(1px); }
+.rcard .ic { grid-area: ic; width: 28px; height: 28px; color: var(--ink-2); }
+.rcard .ic svg { width: 100%; height: 100%; }
+.rcard .rc-w { grid-area: w; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 0.5em; min-width: 0; }
+.rcard .rc-jp .jline { font-size: 1.2em; line-height: 1.9; }
+.rcard .rc-en { color: var(--ink-2); font-weight: 600; }
+.rcard .rc-tgt { grid-area: tg; justify-self: start; margin: 1px 0 2px; font-size: 0.8em; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--river); border-bottom: 2px solid var(--river); }
+.rcard .rc-d { grid-area: d; font-size: 0.86em; line-height: 1.35; color: var(--ink-2); }
+.rcard .rc-d svg { width: 1.1em; height: 1.1em; vertical-align: -0.2em; margin-right: 0.25em; color: var(--warn-ink); }
+.combat-ui .rcard[disabled] { cursor: not-allowed; background: var(--paper-2); border-style: dashed; box-shadow: none; color: var(--ink-2); }
+.combat-ui .rcard[disabled] .ic { color: var(--ink-3); }
+.combat-ui .flee { align-self: stretch; justify-content: center; flex: none; }
+.combat-ui .clog {
+  position: relative; left: auto; top: auto; transform: none; max-width: none; text-align: left;
+  flex: none; padding: 10px 14px; font-size: 1.02em; line-height: 1.45; color: var(--ink); border-left: 4px solid var(--ink-3);
+}
+.combat-ui .clog.hidden { display: none; }
+body.high-contrast .combat-ui .paper, body.high-contrast .combat-ui .rcard { border-color: #000; }
+
+/* the situation carried onto the challenge's task slip */
+.cb-situ { color: var(--ink); }
+.cb-situ .cs-foe { font-family: var(--serif); font-weight: 700; display: flex; flex-wrap: wrap; align-items: center; gap: 0 10px; }
+.cb-situ .cs-foe .jline { font-family: var(--jp-font); font-weight: 400; line-height: 1.9; }
+.cb-situ .kn { width: 11px; height: 11px; color: var(--ink-2); }
+.cb-situ .kn.tied { box-shadow: inset 0 0 0 2px var(--paper-2); }
+.cb-situ .kn-t { font: 0.85em var(--ui-font); color: var(--ink-3); }
+.cb-situ .cs-intent { border-left: 4px solid var(--vermilion); padding: 2px 0 2px 10px; margin: 4px 0; }
+.cb-situ .it-jp { font-size: 1.08em; }
+.cb-situ .cs-chose { display: flex; gap: 0.45em; align-items: flex-start; font-size: 0.92em; color: var(--ink-2); }
+.cb-situ .cs-chose svg { width: 1.35em; height: 1.35em; flex: none; color: var(--ink-2); }
+.cb-situ .cs-chose b { color: var(--ink); }
+
+/* phones: the dock keeps one height, so the stage (and the scene) never jumps */
+@media (max-width: 899px), (max-height: 559px) {
+  .cb-dock { height: calc(44 * var(--vh)); max-height: 440px; }
+  .combat-ui .cb-party { grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 2px 10px; padding: 4px 10px 6px; font-size: 0.85em; }
+  .pm-note { display: none; }
+  .it-jp { font-size: 1.12em; }
+}
+@media (max-width: 599px), (max-height: 559px) {
+  .rcards { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .combat-ui .rcard { grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "ic w tg" "ic d d"; padding: 4px 10px 6px; }
+  .rcard .ic { width: 24px; height: 24px; }
+  .rcard .rc-jp .jline { font-size: 1.12em; line-height: 1.8; }
+  .rcard .rc-tgt { justify-self: end; align-self: start; margin-top: 8px; }
+  .rcard .rc-d { font-size: 0.84em; }
+  .combat-ui .flee { min-height: var(--tap); }
+}
+/* wide: telegraph and party on the left, the dock as a right-hand column */
+@media (min-width: 900px) and (min-height: 560px) {
+  .combat-ui {
+    grid-template-columns: minmax(0, 1fr) clamp(340px, 34vw, 460px);
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    grid-template-areas: "foe dock" "intent dock" "stage dock" "party dock";
+    gap: 12px 16px; padding: 16px;
+  }
+  .cb-foe { max-width: 100%; }
+  .combat-ui .intent { justify-self: start; width: min(680px, 100%); }
+  .combat-ui .cb-party { justify-self: start; width: min(380px, 100%); }
+  .cb-dock { margin-top: 52px; }
+  .rcards { grid-template-columns: minmax(0, 1fr); }
+  .combat-ui .rcard { grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "ic w tg" "ic d d"; padding: 8px 12px 10px; }
+  .rcard .ic { width: 32px; height: 32px; }
+  .rcard .rc-tgt { justify-self: end; align-self: start; margin-top: 6px; }
+}
+/* landscape phone: foe, stage and party on the left; the telegraph over the
+ * dock on the right (below the HUD) */
+@media (max-height: 559px) and (min-width: 600px) {
+  .combat-ui {
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 50%);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-areas: "foe side" "stage side" "party side";
+  }
+  .combat-ui .cb-side { display: flex; flex-direction: column; gap: 8px; grid-area: side; min-height: 0; pointer-events: none; }
+  .cb-foe { max-width: 100%; }
+  /* the telegraph sits left of the HUD; its Translate shares the label's line */
+  .combat-ui .intent { flex: none; padding: 4px 10px 6px 12px; max-width: none; margin-right: 100px; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
+  .combat-ui .intent > * { grid-column: 1 / -1; }
+  .combat-ui .intent > .it-label { grid-column: 1; grid-row: 1; }
+  .combat-ui .intent > .tr { grid-column: 2; grid-row: 1; margin: 0; }
+  .combat-ui .intent .aside { display: none; }
+  .cb-dock { padding: 6px; }
+  .combat-ui .intent .it-jp { font-size: 1.05em; }
+  .combat-ui .intent .jline { line-height: 1.9; }
+  .cb-dock { height: auto; max-height: none; flex: 1 1 auto; }
+  .cb-dock-h { display: none; }
+}
 </style>
 </head>
 <body>
@@ -16986,10 +17623,15 @@ RB.ui.settings = (function () {
 
 
 /* ==== src/ui/60_pad.js ==== */
-/* Handwriting pad + composition strip (spec §9).
+/* Handwriting pad + composition strip (spec §9), and small shared pieces of
+ * the learning/combat interface (RB.learnUi).
  * - Captures ordered strokes with timestamps from mouse, touch or stylus,
  *   accounting for canvas scaling and devicePixelRatio. Drawing never
- *   scrolls the page or moves the character.
+ *   scrolls the page or moves the character. The writing canvas is the only
+ *   element with `touch-action: none`.
+ * - The writing surface is plain paper: faint quarter guides only, no
+ *   texture under the strokes. Strokes are kept in 0..1 box units, so a
+ *   resize or orientation change redraws them unchanged.
  * - The recognizer never sees the expected answer. The pad shows what it
  *   read ("I read this as…"), alternatives and uncertainty; only an
  *   explicit Confirm puts a character into the answer strip.
@@ -16997,36 +17639,163 @@ RB.ui.settings = (function () {
  *   assisted character. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
+/* ---- shared learning-interface helpers ------------------------------------------ */
+RB.learnUi = (function () {
+  'use strict';
+  const esc = RB.util.esc;
+  // Icons for the learning and combat screens (24×24, stroke currentColor),
+  // added to the folio icon set so RB.ui.folio.icon() draws them.
+  const ICONS = {
+    undo: '<path d="M9 6L4 11l5 5"/><path d="M4 11h9.5a5.5 5.5 0 0 1 0 11H10"/>',
+    erase: '<path d="M4 16l9-9 6 6-6 6H8z"/><path d="M9.5 10.5l6 6"/><path d="M14 21h6"/>',
+    backspace: '<path d="M8.5 5H20v14H8.5L3 12z"/><path d="M11.5 9l5 6M16.5 9l-5 6"/>',
+    grid: '<rect x="4" y="4" width="16" height="16" rx="1"/><path d="M4 9.3h16M4 14.6h16M9.3 4v16M14.6 4v16"/>',
+    eye: '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/>',
+    keyboard: '<rect x="2.5" y="6" width="19" height="12" rx="1.5"/><path d="M6 10h1M9.5 10h1M13 10h1M16.5 10h1M7 14h10"/>',
+    list: '<path d="M9 7h11M9 12h11M9 17h11"/><circle cx="5" cy="7" r="1.2"/><circle cx="5" cy="12" r="1.2"/><circle cx="5" cy="17" r="1.2"/>',
+    pieces: '<rect x="3" y="4" width="8" height="6" rx="1"/><rect x="13" y="4" width="8" height="6" rx="1"/><rect x="8" y="14" width="8" height="6" rx="1"/><path d="M7 10v2h10v-2M12 12v2"/>',
+    unsure: '<circle cx="12" cy="12" r="9" stroke-dasharray="3.2 2.6"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.4 2.4c-.6.3-1 .8-1 1.5v.5"/><path d="M12 16.8v.4"/>',
+    wrong: '<circle cx="12" cy="12" r="9"/><path d="M8.7 8.7l6.6 6.6M15.3 8.7l-6.6 6.6"/>',
+    right: '<circle cx="12" cy="12" r="9"/><path d="M7.6 12.4l3 3 5.8-6.4"/>',
+    seal: '<path d="M9.5 3h5v4.5l3 3V14h-11v-3.5l3-3z"/><path d="M5 17h14v4H5z"/>',
+    shield: '<path d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6z"/>',
+    drop: '<path d="M12 3c3 4.5 6 7.8 6 11a6 6 0 0 1-12 0c0-3.2 3-6.5 6-11z"/>',
+    sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2.5V5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/>',
+    leaf: '<path d="M5 19c0-8 5-13 14-14-1 9-6 14-14 14z"/><path d="M5 19l8-8"/>',
+    wind: '<path d="M3 9h11a3 3 0 1 0-3-3"/><path d="M3 14h15a3 3 0 1 1-3 3"/><path d="M3 19h6"/>',
+    rope: '<circle cx="12" cy="9.5" r="5"/><path d="M8.6 13.2L5 20.5M15.4 13.2l3.6 7.3"/>',
+    flame: '<path d="M12 3c1 4 5 5.5 5 10a5 5 0 0 1-10 0c0-2.5 1.5-4 2.5-5 .3 2 1.2 3 2.2 3-.7-3 .3-5.5.3-8z"/>',
+    knot: '<path d="M3 15c3 0 4-8 8-8a4 4 0 0 1 0 8c-3 0-3-4 0-4s4 4 10 4"/>',
+    lens: '<circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5.5 5.5"/>',
+    join: '<circle cx="9" cy="12" r="5"/><circle cx="15" cy="12" r="5"/>',
+    strike: '<path d="M20 4l-9.5 9.5M20 4h-4.5M20 4v4.5"/><path d="M8 12l4 4M6.5 14.5l3 3M4 20l3.8-3.8"/>',
+    sweep: '<path d="M3 16c4-8 14-8 18 0"/><path d="M16.5 12.5L21 16l-5 1"/>',
+    cloud: '<path d="M7 18h10a4 4 0 0 0 .5-8 5.5 5.5 0 0 0-10.5 1A3.5 3.5 0 0 0 7 18z"/>',
+    hourglass: '<path d="M7 3h10M7 21h10"/><path d="M8 3c0 5 4 6 4 9s-4 4-4 9M16 3c0 5-4 6-4 9s4 4 4 9"/>',
+    gust: '<path d="M4 12a8 8 0 1 1 8 8"/><path d="M8 12a4 4 0 1 1 4 4"/>',
+    needle: '<path d="M5 19L18 6"/><path d="M17 4.5a1.5 1.5 0 1 1 2.5 2.5"/><path d="M5 19c3 1 5-1 6-3s3-3 6-2"/>',
+    mask: '<path d="M4 7c3 1 13 1 16 0 0 6-2 11-8 11S4 13 4 7z"/><path d="M8 11h2M14 11h2M10 15c1 .7 3 .7 4 0"/>',
+    rest: '<circle cx="6" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="18" cy="12" r="1"/>',
+    waves: '<path d="M3 8c3-2 6 2 9 0s6 2 9 0M3 13c3-2 6 2 9 0s6 2 9 0M3 18c3-2 6 2 9 0s6 2 9 0"/>',
+    snow: '<path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9"/><path d="M9.5 4.5L12 6.5l2.5-2M9.5 19.5L12 17.5l2.5 2"/>',
+    mute: '<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 9l5 6M21 9l-5 6"/>',
+    mirror: '<ellipse cx="12" cy="10" rx="6" ry="7"/><path d="M12 17v4M9 21h6M9.5 7.5l2-2"/>',
+    aim: '<circle cx="12" cy="12" r="7.5"/><circle cx="12" cy="12" r="2"/><path d="M12 1.5v4M12 18.5v4M1.5 12h4M18.5 12h4"/>',
+    tray: '<path d="M3 15h18l-2 4H5z"/><path d="M7 15c0-3 2.2-5 5-5s5 2 5 5"/><path d="M12 7v3"/>',
+    dots: '<circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>',
+  };
+  if (RB.ui && RB.ui.folio && RB.ui.folio.ICONS) Object.assign(RB.ui.folio.ICONS, ICONS);
+  const icon = (n, t) => (RB.ui.folio ? RB.ui.folio.icon(n, t) : '');
+
+  /* A scroll gesture over a choice must not choose it on release. The
+   * browser normally cancels the tap when it starts scrolling, but a drag
+   * that ends on the same button, or a scroll container that moved under
+   * the finger, still produces a click; swallow those. Keyboard clicks
+   * (detail 0) always pass. */
+  function guardTaps(root) {
+    let down = null, last = null;
+    const scrollers = (el) => {
+      const out = [];
+      for (let n = el; n && n !== document.body; n = n.parentElement) if (n.scrollHeight > n.clientHeight + 1 || n.scrollWidth > n.clientWidth + 1) out.push([n, n.scrollTop, n.scrollLeft]);
+      return out;
+    };
+    root.addEventListener('pointerdown', (e) => {
+      down = { id: e.pointerId, x: e.clientX, y: e.clientY, moved: false, sc: scrollers(e.target), touch: e.pointerType !== 'mouse' };
+      last = null;
+    }, true);
+    root.addEventListener('pointermove', (e) => {
+      if (!down || e.pointerId !== down.id) return;
+      if (Math.hypot(e.clientX - down.x, e.clientY - down.y) > (down.touch ? 10 : 16)) down.moved = true;
+    }, true);
+    const finish = (e, cancelled) => {
+      if (!down || e.pointerId !== down.id) return;
+      const moved = cancelled || (down.touch && down.moved) || down.sc.some(([n, t, l]) => Math.abs(n.scrollTop - t) > 2 || Math.abs(n.scrollLeft - l) > 2);
+      last = { moved, t: performance.now() };
+      down = null;
+    };
+    root.addEventListener('pointerup', (e) => finish(e, false), true);
+    root.addEventListener('pointercancel', (e) => finish(e, true), true);
+    root.addEventListener('click', (e) => {
+      if (e.detail === 0) return; // keyboard / programmatic activation
+      const l = last;
+      last = null;
+      if (l && l.moved && performance.now() - l.t < 1000) { e.stopPropagation(); e.preventDefault(); }
+    }, true);
+  }
+
+  /* A learning sheet in folio materials: cloth frame, one paper leaf, cloth
+   * foot. `panel`/`foot` class hooks are kept for older test drivers. */
+  function sheet(opts) {
+    opts = opts || {};
+    const fr = RB.ui.folio.frame({ cls: 'lsheet panel' + (opts.cls ? ' ' + opts.cls : ''), onClose: opts.onClose, closeLabel: opts.closeLabel, closeIcon: opts.closeIcon });
+    fr.setTitle(opts.title || '', opts.meta || '');
+    fr.box.innerHTML = '<div class="leaf" tabindex="-1"></div>';
+    fr.leaf = fr.box.firstChild;
+    fr.foot.classList.add('foot');
+    if (opts.headBtn) {
+      const b = RB.ui.el('button', 'cbtn', opts.headBtn.html);
+      for (const k in opts.headBtn.attrs || {}) b.setAttribute(k, opts.headBtn.attrs[k]);
+      fr.head.appendChild(b);
+    }
+    return fr;
+  }
+  // Feedback heading with a shape mark (never colour alone).
+  function fbHead(kind, text) {
+    const n = { ok: 'right', no: 'wrong', unsure: 'unsure', reveal: 'eye', info: 'note' }[kind] || 'note';
+    return '<div class="fb-h">' + icon(n) + '<span>' + esc(text) + '</span></div>';
+  }
+  // Mixed text (English with {漢字|かな} groups, as in grammar notes and answer
+  // feedback): plain parts escaped, ruby groups rendered with furigana.
+  function mixed(t) {
+    const un = (x) => x.replace(/&(amp|lt|gt|quot|#39);/g, (m, k) => ({ amp: '&', lt: '<', gt: '>', quot: '"', '#39': "'" })[k]);
+    return String(t || '').split(/(\{[^|}]+\|[^}]+\})/).map((part, i) => (i % 2 ? RB.ui.jhtml(part) : esc(un(part)))).join('');
+  }
+  return { ICONS, icon, guardTaps, sheet, fbHead, mixed };
+})();
+
 RB.pad = (function () {
   'use strict';
   const esc = RB.util.esc;
+  const I = (n) => RB.learnUi.icon(n);
   const BOX = 300; // recognizer coordinate space
 
   function create(host, opts) {
     opts = opts || {};
     const el = RB.ui.el('div', 'pad-area');
     el.innerHTML =
-      '<div class="strip" aria-label="Your answer"></div>' +
-      '<div class="row small"><span class="readas" aria-live="polite"></span><span class="grow"></span>' +
-      '<div class="modes seg"><button class="btn small" data-script="any" title="Hiragana or katakana">あ/ア</button><button class="btn small" data-script="hira">ひらがな</button><button class="btn small" data-script="kata">カタカナ</button></div></div>' +
-      '<div class="pad-box"><canvas class="pad-bg"></canvas><canvas class="pad-ink" aria-label="Writing pad: draw one character"></canvas></div>' +
-      '<div class="cands"></div>' +
-      '<div class="row">' +
-      '<button class="btn small" data-a="undo" title="Undo last stroke">↶ Stroke</button>' +
-      '<button class="btn small" data-a="clear">Clear</button>' +
-      '<button class="btn small" data-a="small" aria-pressed="false" title="Mark as small kana (ゃ, っ…)">小 small</button>' +
-      '<button class="btn small" data-a="chart" title="Pick the character from a chart (counts as assisted)">Chart…</button>' +
-      '<span class="grow"></span>' +
-      '<button class="btn primary" data-a="confirm" disabled>Confirm ✓</button></div>' +
-      '<div class="row"><button class="btn small" data-a="del" title="Remove the selected character">⌫ Remove</button>' +
-      '<span class="small dim grow">Tap a character in the strip to replace it, or a gap to insert.</span>' +
-      '<button class="btn small" data-a="model" title="Show how to write it (counts as assisted)">Show me ✎</button></div>';
+      '<div class="pad-hold"><div class="pad-box"><canvas class="pad-bg" aria-hidden="true"></canvas><canvas class="pad-ink" role="img" aria-label="Writing pad: draw one character"></canvas></div></div>' +
+      '<div class="pad-inspect">' +
+        '<div class="readas" data-state="empty"></div>' +
+        '<div class="cands" role="group" aria-label="Other readings"></div>' +
+        '<button class="pbtn primary pad-confirm" data-a="confirm" disabled>' + I('done') + '<span>Confirm</span></button>' +
+        '<div class="sr" aria-live="polite"></div>' +
+      '</div>' +
+      '<div class="pad-tools" role="group" aria-label="Writing tools">' +
+        '<button class="pbtn" data-a="undo" title="Undo the last stroke">' + I('undo') + '<span>Undo stroke</span></button>' +
+        '<button class="pbtn" data-a="clear" title="Clear the character being written">' + I('erase') + '<span>Clear</span></button>' +
+        '<button class="pbtn pad-more-b" data-a="more" aria-expanded="false" aria-controls="pad-extra" title="More writing tools: small kana, chart, how to write, kana type">' + I('dots') + '<span>More</span><span class="more-on" lang="ja" hidden>小</span></button>' +
+        '<div class="pad-extra" id="pad-extra">' +
+          '<button class="pbtn" data-a="small" aria-pressed="false" title="Mark as small kana (ゃ, っ…)"><span class="glyph" lang="ja" aria-hidden="true">小</span><span>Small kana</span></button>' +
+          '<button class="pbtn" data-a="chart" title="Pick the character from a chart (counts as assisted)">' + I('grid') + '<span>Chart</span></button>' +
+          '<button class="pbtn" data-a="model" title="Show how to write it (counts as assisted)">' + I('eye') + '<span>How to write</span></button>' +
+          '<label class="pad-script"><span>Read as</span><select data-script-sel>' +
+            '<option value="any">Either kana</option><option value="hira">ひらがな</option><option value="kata">カタカナ</option></select></label>' +
+        '</div>' +
+      '</div>';
+    // The composition ("your answer") line can live elsewhere, e.g. next to Submit.
+    const comp = RB.ui.el('div', 'pad-compose');
+    comp.innerHTML = '<div class="pad-lab" id="pad-line-lab">Your answer</div>' +
+      '<div class="strip" role="group" aria-labelledby="pad-line-lab"></div>' +
+      '<button class="pbtn pad-del" data-a="del" title="Remove the selected character">' + I('backspace') + '<span>Remove</span></button>';
+    (opts.composeHost || el).appendChild(comp);
     host.appendChild(el);
+    if (!opts.composeHost) el.insertBefore(comp, el.firstChild);
     const bg = el.querySelector('.pad-bg'), ink = el.querySelector('.pad-ink');
     const box = el.querySelector('.pad-box');
-    const strip = el.querySelector('.strip');
+    const strip = comp.querySelector('.strip');
     const candsEl = el.querySelector('.cands');
     const readas = el.querySelector('.readas');
+    const live = el.querySelector('.pad-inspect [aria-live]');
     const P = {
       strokes: [],      // [[{x,y,t}]] in 0..1 box units
       cur: null,        // stroke in progress
@@ -17040,20 +17809,29 @@ RB.pad = (function () {
       script: opts.script || 'any',
       maxLen: opts.maxLen || 12,
       guide: opts.guide || null, // character to show faintly (copy mode)
+      model: null,      // character whose numbered model is shown
       onChange: opts.onChange || (() => {}),
       onAssist: opts.onAssist || (() => {}),
       destroyed: false,
     };
-    let dpr = 1, cssW = 0;
+    let dpr = 1;
+    // Colours come from CSS so high contrast can change them.
+    let C = { paper: '#fffaf0', ink: '#1c160e', guide: 'rgba(120,90,50,0.28)', edge: 'rgba(120,90,50,0.45)', model: 'rgba(168,62,39,0.38)', num: '#a83e27', hint: 'rgba(31,90,146,0.08)', ghost: 'rgba(76,64,48,0.2)' };
+    function readColours() {
+      const cs = getComputedStyle(el);
+      const g = (k, d) => (cs.getPropertyValue(k) || '').trim() || d;
+      C = { paper: g('--pad-paper', C.paper), ink: g('--pad-ink', C.ink), guide: g('--pad-guide', C.guide), edge: g('--pad-edge', C.edge), model: g('--pad-model', C.model), num: g('--pad-num', C.num), hint: g('--pad-hint', C.hint), ghost: g('--pad-ghost', C.ghost) };
+    }
 
     function layout() {
+      if (P.destroyed) return;
       const r = box.getBoundingClientRect();
-      if (!r.width) return;
+      if (!r.width || !r.height) return;
       dpr = window.devicePixelRatio || 1;
-      cssW = r.width;
-      for (const c of [bg, ink]) {
-        c.width = Math.round(r.width * dpr);
-        c.height = Math.round(r.height * dpr);
+      const w = Math.round(r.width * dpr), h = Math.round(r.height * dpr);
+      readColours();
+      if (bg.width !== w || bg.height !== h) {
+        for (const c of [bg, ink]) { c.width = w; c.height = h; }
       }
       drawBg();
       redraw();
@@ -17061,29 +17839,31 @@ RB.pad = (function () {
     const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => layout()) : null;
     if (ro) ro.observe(box);
     window.addEventListener('resize', layout);
+    const refit = () => requestAnimationFrame(() => fitAlts());
+    window.addEventListener('resize', refit);
 
     function drawBg() {
       const c = bg.getContext('2d');
       const w = bg.width, h = bg.height;
       c.clearRect(0, 0, w, h);
-      c.fillStyle = '#fbf7ea';
+      c.fillStyle = C.paper;
       c.fillRect(0, 0, w, h);
-      c.strokeStyle = 'rgba(160,120,80,0.35)';
+      // small-kana zone hint (lower-left quarter)
+      if (P.small) {
+        c.fillStyle = C.hint;
+        c.fillRect(0, h / 2, w / 2, h / 2);
+      }
+      // faint quarter guides — the only marks on the writing surface
+      c.strokeStyle = C.guide;
       c.lineWidth = Math.max(1, dpr);
-      c.setLineDash([6 * dpr, 6 * dpr]);
+      c.setLineDash([5 * dpr, 7 * dpr]);
       c.beginPath();
       c.moveTo(w / 2, 0); c.lineTo(w / 2, h);
       c.moveTo(0, h / 2); c.lineTo(w, h / 2);
       c.stroke();
       c.setLineDash([]);
-      c.strokeStyle = 'rgba(160,120,80,0.5)';
-      c.strokeRect(dpr, dpr, w - 2 * dpr, h - 2 * dpr);
-      // small-kana zone hint (lower-left quarter)
-      if (P.small) {
-        c.fillStyle = 'rgba(106,138,216,0.08)';
-        c.fillRect(0, h / 2, w / 2, h / 2);
-      }
-      if (P.guide && RB.recog && RB.recog.reference(P.guide)) drawRef(c, RB.recog.reference(P.guide), w, 'rgba(90,70,60,0.18)', false);
+      if (P.guide && RB.recog && RB.recog.reference(P.guide)) drawRef(c, RB.recog.reference(P.guide), w, C.ghost, false);
+      if (P.model && RB.recog && RB.recog.reference(P.model)) drawRef(c, RB.recog.reference(P.model), w, C.model, true);
     }
     function drawRef(c, ref, w, col, numbers) {
       const s = w / ref.box;
@@ -17095,8 +17875,8 @@ RB.pad = (function () {
         st.forEach((p, j) => (j ? c.lineTo(p.x * s, p.y * s) : c.moveTo(p.x * s, p.y * s)));
         c.stroke();
         if (numbers) {
-          c.fillStyle = '#c0392b';
-          c.font = Math.round(w / 16) + 'px sans-serif';
+          c.fillStyle = C.num;
+          c.font = '600 ' + Math.round(w / 15) + 'px sans-serif';
           c.fillText(String(i + 1), st[0].x * s + 4, st[0].y * s - 4);
         }
       });
@@ -17106,8 +17886,8 @@ RB.pad = (function () {
       c.clearRect(0, 0, ink.width, ink.height);
       c.lineCap = 'round';
       c.lineJoin = 'round';
-      c.strokeStyle = '#1e1a22';
-      c.lineWidth = Math.max(3, (ink.width / 38));
+      c.strokeStyle = C.ink;
+      c.lineWidth = Math.max(3, (ink.width / 36));
       const all = P.cur ? P.strokes.concat([P.cur]) : P.strokes;
       for (const st of all) {
         c.beginPath();
@@ -17115,6 +17895,7 @@ RB.pad = (function () {
         if (st.length === 1) c.lineTo(st[0].x * ink.width + 0.5, st[0].y * ink.height + 0.5);
         c.stroke();
       }
+      el.classList.toggle('inked', P.strokes.length > 0);
     }
     function pos(e) {
       const r = ink.getBoundingClientRect();
@@ -17122,9 +17903,10 @@ RB.pad = (function () {
     }
     ink.addEventListener('pointerdown', (e) => {
       if (P.pointerId != null) return; // one stroke at a time
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
       e.preventDefault();
       e.stopPropagation();
-      ink.setPointerCapture(e.pointerId);
+      try { ink.setPointerCapture(e.pointerId); } catch (err) { /* synthetic pointers */ }
       P.pointerId = e.pointerId;
       P.cur = [pos(e)];
       RB.audio && RB.audio.sfx('pen_down', { vol: 0.4 });
@@ -17156,7 +17938,7 @@ RB.pad = (function () {
     ink.addEventListener('pointerup', (e) => end(e, false));
     ink.addEventListener('pointercancel', (e) => end(e, true));
     ink.addEventListener('lostpointercapture', (e) => { if (P.pointerId === e.pointerId) end(e, false); });
-    // Block page scroll/zoom gestures over the pad.
+    // Block page scroll/zoom gestures over the writing canvas only.
     for (const t of ['touchstart', 'touchmove']) ink.addEventListener(t, (e) => e.preventDefault(), { passive: false });
     ink.addEventListener('contextmenu', (e) => e.preventDefault());
 
@@ -17166,6 +17948,7 @@ RB.pad = (function () {
       recTimer = setTimeout(recognize, 180);
     }
     function recognize() {
+      if (P.destroyed) return;
       P.pick = null;
       if (!P.strokes.length) { P.result = null; renderRead(); return; }
       const strokes = P.strokes.map((s) => s.map((p) => ({ x: p.x * BOX, y: p.y * BOX, t: p.t })));
@@ -17177,34 +17960,71 @@ RB.pad = (function () {
       }
       renderRead();
     }
+    // What the recognizer read. The area keeps one height whatever it shows
+    // (caption line + one row), so the canvas never resizes mid-character.
+    function setRead(state, cap, big) {
+      readas.setAttribute('data-state', state);
+      el.setAttribute('data-read', state);
+      const mark = state === 'unsure' || state === 'unread' ? I('unsure') : '';
+      readas.innerHTML = '<span class="rd-cap">' + mark + '<span>' + cap + '</span></span>' +
+        '<span class="big' + (big ? '' : ' none') + '" lang="ja">' + (big ? esc(big) : '<span class="sr">nothing yet</span>') + '</span>';
+      live.textContent = readas.textContent.replace(/\s+/g, ' ').trim();
+    }
     function renderRead() {
       const r = P.result;
       const conf = el.querySelector('[data-a=confirm]');
       candsEl.innerHTML = '';
       if (!r || r.status === 'empty') {
-        readas.innerHTML = P.strokes.length ? '' : '<span class="dim">Draw one character in the box.</span>';
+        setRead(P.strokes.length ? 'wait' : 'empty', P.strokes.length ? 'Reading…' : emptyCaption(), '');
         conf.disabled = true;
         return;
       }
       if (r.status === 'nonsense' || !r.candidates.length) {
-        readas.innerHTML = '<span>I can\'t read that as a character yet. Try again, or pick it from the chart.</span>';
+        setRead('unread', '<b>I can\'t read that clearly yet</b> — try again.', '');
+        candsEl.appendChild(RB.ui.el('button', 'pbtn', I('grid') + '<span>Chart</span>')).setAttribute('data-a', 'chart');
         conf.disabled = true;
         RB.audio && RB.audio.sfx('recog_unsure', { vol: 0.5 });
         return;
       }
       const top = P.pick || r.candidates[0].ch;
       const uncertain = r.status === 'uncertain' && !P.pick;
-      readas.innerHTML = (uncertain ? 'I\'m not sure — it might be' : 'I read this as') + '<span class="big">' + esc(top) + '</span>' + (uncertain ? '<span class="dim">(pick the one you meant)</span>' : '') +
-        (r.sizeHint === 'small' && !P.small ? ' <span class="dim small">— it looks small; press 小 if you meant a small kana</span>' : '');
-      r.candidates.slice(0, 6).forEach((cd, i) => {
-        const b = RB.ui.el('button', 'btn' + (cd.ch === top ? ' top' : ''), esc(cd.ch));
+      const small = r.sizeHint === 'small' && !P.small ? ' <span class="rd-hint">(looks small — 小?)</span>' : '';
+      setRead(uncertain ? 'unsure' : 'sure',
+        (uncertain ? '<b>Not sure</b> — pick the one you meant' : P.pick && P.pick !== r.candidates[0].ch ? 'You chose' : 'I read this as') + small, top);
+      // the other readings, so a different one can be chosen (counts as assisted)
+      const seen = new Set([top]);
+      const alts = r.candidates.slice(0, 6).filter((cd) => !seen.has(cd.ch) && seen.add(cd.ch));
+      if (alts.length) candsEl.appendChild(RB.ui.el('span', 'or', 'or'));
+      alts.forEach((cd) => {
+        const b = RB.ui.el('button', 'cand', esc(cd.ch));
+        b.setAttribute('lang', 'ja');
+        b.setAttribute('aria-label', 'I meant ' + cd.ch);
         b.title = 'Similarity ' + Math.round(cd.score * 100) + '% (a match score, not a probability)';
         b.onclick = () => { P.pick = cd.ch; renderRead(); };
         candsEl.appendChild(b);
-        void i;
       });
       conf.disabled = false;
+      fitAlts();
       RB.audio && RB.audio.sfx(uncertain ? 'recog_unsure' : 'recog_ok', { vol: 0.4 });
+    }
+    // Show as many other readings as fit on the row beside Confirm (the rest
+    // stay reachable through the chart), so the row never wraps.
+    function fitAlts() {
+      const bs = Array.from(candsEl.querySelectorAll('.cand'));
+      bs.forEach((b) => (b.hidden = false));
+      const conf = el.querySelector('[data-a=confirm]');
+      const big = readas.querySelector('.big');
+      if (!big || !conf.offsetParent) return;
+      for (let i = bs.length - 1; i >= 0 && conf.offsetTop > big.offsetTop + 4; i--) bs[i].hidden = true;
+      const or = candsEl.querySelector('.or');
+      if (or) or.hidden = !bs.some((b) => !b.hidden);
+    }
+    function emptyCaption() {
+      const orderNotes = P.chars.map((c) => c.order).filter((o) => o && o.confident && o.issues && o.issues.length);
+      if (P.replace >= 0) return 'Write the replacement for ' + esc(P.chars[P.replace].ch) + ', then Confirm.';
+      if (orderNotes.length && P.chars.length) return esc('Stroke order: ' + orderNotes[orderNotes.length - 1].issues.map((i) => i.en).join(' '));
+      if (P.chars.length && P.maxLen > 1) return 'Write the next one, or tap a character in your answer to fix it.';
+      return 'Write one character in the box.';
     }
 
     function confirm() {
@@ -17238,6 +18058,7 @@ RB.pad = (function () {
       P.cur = null;
       P.result = null;
       P.pick = null;
+      if (P.model) { P.model = null; drawBg(); }
       redraw();
       renderRead();
     }
@@ -17245,39 +18066,41 @@ RB.pad = (function () {
       strip.innerHTML = '';
       const gap = (i) => {
         const g = RB.ui.el('button', 'cell ins' + (P.cursor === i && P.replace < 0 ? ' cur' : ''), '');
-        g.setAttribute('aria-label', 'Insert here');
+        g.setAttribute('aria-label', 'Insert here' + (i === P.chars.length ? ' (end)' : ' before ' + P.chars[i].ch));
         g.onclick = () => { P.cursor = i; P.replace = -1; renderStrip(); };
         return g;
       };
-      if (opts.before) strip.appendChild(RB.ui.el('span', 'jp dim', esc(opts.before)));
+      if (opts.before) strip.appendChild(RB.ui.el('span', 'fixed', esc(opts.before)));
       for (let i = 0; i <= P.chars.length; i++) {
         if (P.maxLen > 1) strip.appendChild(gap(i));
         if (i < P.chars.length) {
           const c = P.chars[i];
-          const b = RB.ui.el('button', 'cell' + (P.replace === i ? ' cur' : '') + (c.assisted ? ' asst' : ''), esc(c.ch));
-          b.title = c.assisted ? 'Chosen by hand (assisted)' : 'Tap to replace';
+          const b = RB.ui.el('button', 'cell' + (P.replace === i ? ' cur' : '') + (c.assisted ? ' asst' : '') + (c.uncertain && !c.assisted ? ' unsure' : ''), esc(c.ch));
+          b.setAttribute('lang', 'ja');
+          b.setAttribute('aria-pressed', String(P.replace === i));
+          b.title = (c.assisted ? 'Chosen by hand (assisted). ' : c.uncertain ? 'The recognizer was not sure about this one. ' : '') + 'Tap to rewrite this character';
           b.onclick = () => { P.replace = P.replace === i ? -1 : i; renderStrip(); };
           strip.appendChild(b);
         }
       }
-      if (P.maxLen === 1 && !P.chars.length) strip.appendChild(RB.ui.el('span', 'cell cur', '＿'));
-      if (opts.after) strip.appendChild(RB.ui.el('span', 'jp dim', esc(opts.after)));
-      const orderNotes = P.chars.map((c) => c.order).filter((o) => o && o.confident && o.issues && o.issues.length);
-      if (orderNotes.length) strip.appendChild(RB.ui.el('span', 'small dim', ' ✎ ' + esc(orderNotes[orderNotes.length - 1].issues.map((i) => i.en).join(' '))));
+      if (P.maxLen === 1 && !P.chars.length) strip.appendChild(RB.ui.el('span', 'cell slot cur', '<span class="sr">empty</span>'));
+      if (!P.chars.length) strip.appendChild(RB.ui.el('span', 'ph', 'Your answer'));
+      if (opts.after) strip.appendChild(RB.ui.el('span', 'fixed', esc(opts.after)));
+      comp.classList.toggle('has-chars', P.chars.length > 0);
+      comp.querySelector('[data-a=del]').disabled = !P.chars.length;
+      if (!P.strokes.length && !P.result) renderRead();
     }
     function chart() {
       const script = P.script === 'kata' ? 'kata' : 'hira';
       const H = 'あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをんがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽぁぃぅぇぉっゃゅょゎ';
       const set = Array.from(script === 'kata' ? RB.kana.toKata(H) + 'ー' : H);
-      const scrim = RB.ui.el('div', 'scrim');
-      const pn = RB.ui.el('div', 'panel');
-      pn.style.width = 'min(560px, calc(100vw - 16px))';
-      pn.innerHTML = '<header><h2>Pick a character</h2><button class="btn small" data-x>Cancel</button></header><div class="body"><p class="small dim">Characters picked here count as assisted — handy when the recognizer can\'t read your writing.</p><div class="tiles">' + set.map((c) => '<button class="btn" data-c="' + c + '">' + c + '</button>').join('') + '</div></div>';
-      scrim.appendChild(pn);
-      const lay = { el: scrim, name: 'chart' };
+      const lay = { name: 'chart' };
+      const fr = RB.learnUi.sheet({ cls: 'small chart', title: 'Pick a character', meta: script === 'kata' ? 'Katakana' : 'Hiragana', onClose: () => RB.ui.popLayer(lay), closeLabel: 'Cancel' });
+      fr.el.querySelector('[data-folio-close]').setAttribute('data-x', '');
+      fr.leaf.innerHTML = '<p class="muted small">Characters picked here count as assisted — handy when the recognizer can\'t read your writing.</p><div class="kchart" lang="ja">' + set.map((c) => '<button class="kpick" data-c="' + c + '">' + c + '</button>').join('') + '</div>';
+      lay.el = fr.scrim;
       lay.onCancel = () => RB.ui.popLayer(lay);
-      pn.onclick = (e) => {
-        if (e.target.closest('[data-x]')) { RB.ui.popLayer(lay); return; }
+      fr.leaf.onclick = (e) => {
         const b = e.target.closest('[data-c]');
         if (!b) return;
         RB.ui.popLayer(lay);
@@ -17289,41 +18112,39 @@ RB.pad = (function () {
     }
     function showModel(ch) {
       if (!ch || !RB.recog.reference(ch)) { RB.ui.notice('No stroke reference is available for that character.', 'info'); return; }
-      const ref = RB.recog.reference(ch);
-      const c = bg.getContext('2d');
+      P.model = ch;
       drawBg();
-      drawRef(c, ref, bg.width, 'rgba(192,57,43,0.35)', true);
       P.onAssist('model');
     }
+    function remove() {
+      const i = P.replace >= 0 ? P.replace : P.cursor - 1;
+      if (i >= 0 && i < P.chars.length) { P.chars.splice(i, 1); P.cursor = i; P.replace = -1; renderStrip(); P.onChange(); }
+    }
 
-    el.onclick = (e) => {
-      const b = e.target.closest('[data-a],[data-script]');
-      if (!b) return;
-      if (b.hasAttribute('data-script')) {
-        P.script = b.getAttribute('data-script');
-        el.querySelectorAll('[data-script]').forEach((x) => x.classList.toggle('on', x === b));
-        if (P.strokes.length) recognize();
-        return;
-      }
+    const onClick = (e) => {
+      const b = e.target.closest('[data-a]');
+      if (!b || b.disabled) return;
       const a = b.getAttribute('data-a');
       if (a === 'undo') { P.strokes.pop(); redraw(); schedule(); }
       if (a === 'clear') clearInk();
-      if (a === 'small') { P.small = !P.small; b.classList.toggle('on', P.small); b.setAttribute('aria-pressed', String(P.small)); drawBg(); if (P.strokes.length) recognize(); }
+      if (a === 'small') { P.small = !P.small; b.classList.toggle('on', P.small); b.setAttribute('aria-pressed', String(P.small)); el.querySelector('.more-on').hidden = !P.small; drawBg(); if (P.strokes.length) recognize(); }
+      if (a === 'more') { const open = b.getAttribute('aria-expanded') !== 'true'; b.setAttribute('aria-expanded', String(open)); el.classList.toggle('more-open', open); }
       if (a === 'confirm') confirm();
-      if (a === 'del') {
-        const i = P.replace >= 0 ? P.replace : P.cursor - 1;
-        if (i >= 0 && i < P.chars.length) { P.chars.splice(i, 1); P.cursor = i; P.replace = -1; renderStrip(); P.onChange(); }
-      }
+      if (a === 'del') remove();
       if (a === 'chart') chart();
       if (a === 'model') opts.modelFor && showModel(opts.modelFor());
     };
-    el.querySelectorAll('[data-script]').forEach((x) => x.classList.toggle('on', x.getAttribute('data-script') === P.script));
+    el.addEventListener('click', onClick);
+    if (opts.composeHost) comp.addEventListener('click', onClick);
+    const sel = el.querySelector('[data-script-sel]');
+    sel.value = ['any', 'hira', 'kata'].indexOf(P.script) >= 0 ? P.script : 'any';
+    sel.onchange = () => { P.script = sel.value; if (P.strokes.length) recognize(); };
     renderStrip();
     renderRead();
     requestAnimationFrame(layout);
 
     return {
-      el,
+      el, compose: comp,
       text() { return P.chars.map((c) => c.ch).join(''); },
       meta() {
         return {
@@ -17335,8 +18156,10 @@ RB.pad = (function () {
       hasPending() { return P.strokes.length > 0; },
       confirmPending() { if (P.result && P.result.candidates && P.result.candidates.length) confirm(); },
       reset() { P.chars = []; P.cursor = 0; P.replace = -1; clearInk(); renderStrip(); },
+      remove,
       setGuide(ch) { P.guide = ch; drawBg(); },
-      destroy() { P.destroyed = true; if (ro) ro.disconnect(); window.removeEventListener('resize', layout); el.remove(); },
+      layout,
+      destroy() { P.destroyed = true; clearTimeout(recTimer); if (ro) ro.disconnect(); window.removeEventListener('resize', layout); window.removeEventListener('resize', refit); el.remove(); comp.remove(); },
       _state: P,
       _inject(strokes) { P.strokes = strokes; redraw(); recognize(); }, // tests: inject strokes in 0..1 units
     };
@@ -17351,18 +18174,28 @@ RB.pad = (function () {
  * (handwriting, choices, keyboard/IME), lets them switch mid-step without
  * losing anything, evaluates the CONFIRMED text with RB.answers (separately
  * from recognition), explains mistakes, and records mastery.
- * Recognizer uncertainty is never treated as a language mistake. */
+ * Recognizer uncertainty is never treated as a language mistake.
+ *
+ * Layout (folio materials): a cloth frame holding three paper pieces that
+ * read in the order of the task — 1 the task slip (prompt), 2 the sheet
+ * (writing canvas with what the recognizer read, or choices / keyboard /
+ * pieces, under paper tabs that switch input mode), 3 the answer slip (the
+ * composed answer, Submit, and language feedback). Phones stack them;
+ * wider screens set them side by side. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.challenge = (function () {
   'use strict';
   const esc = RB.util.esc;
+  const I = (n) => RB.learnUi.icon(n);
   let active = null; // {step, assisted}
 
   function isActive() { return !!active; }
   function noteHelp() { if (active) active.helpUsed = true; }
 
   function plain(s) { return RB.tasks.plain(s || ''); }
+  // English feedback may carry {漢字|かな} markup for a word it quotes: give it ruby
+  const enRuby = (t) => RB.learnUi.mixed(t);
 
   function check(input, step) {
     if (step.kind !== 'write') return { ok: false };
@@ -17388,176 +18221,254 @@ RB.challenge = (function () {
     return r.shuffle(Array.from(new Set(opts.map(plain)))).map((t) => ({ text: t, ok: acc.has(t) }));
   }
 
+  const MODES = [
+    { id: 'hand', en: 'Write', jp: '{書|か}く', icon: 'practice' },
+    { id: 'choice', en: 'Choose', jp: '{選|えら}ぶ', icon: 'list' },
+    { id: 'ime', en: 'Type', jp: '{打|う}つ', icon: 'keyboard' },
+  ];
+  const SHEET_LAB = { hand: 'Write', choice: 'Choose', ime: 'Type', order: 'Arrange the pieces' };
+
   // Render one step; resolves with a result object.
   function runStep(step, opts) {
     opts = opts || {};
     if (RB.test && RB.test.auto) return Promise.resolve(RB.test.solveStep(step, 'step ' + (step.title || step.item)));
     return new Promise((resolve) => {
       const st = RB.game.settings;
-      let mode = step.kind === 'write' ? (opts.mode || st.input || 'hand') : 'choice';
-      if (step.kind === 'order') mode = 'order';
+      let mode = step.kind === 'write' ? (opts.mode || st.input || 'hand') : step.kind === 'order' ? 'order' : 'choice';
+      if (step.kind === 'write' && !MODES.some((m) => m.id === mode)) mode = 'hand';
       const res = { ok: false, firstTry: null, mistakes: 0, assisted: false, mode: null, recogMisses: 0 };
       active = { step, helpUsed: false };
+      const canLeave = opts.allowCancel !== false;
+      const tid = 'chal-t' + Math.random().toString(36).slice(2, 7);
       const wrap = RB.ui.el('div', 'chal');
-      wrap.innerHTML = '<div class="wrap"><div class="ctx"></div><div class="work"></div><div class="row foot"></div></div>';
-      const ctxEl = wrap.querySelector('.ctx'), work = wrap.querySelector('.work'), foot = wrap.querySelector('.foot');
+      wrap.setAttribute('data-kind', step.kind);
+      wrap.innerHTML =
+        '<div class="chal-frame" role="dialog" aria-modal="true" aria-labelledby="' + tid + '">' +
+          '<div class="chal-head"><h2 class="chal-title" id="' + tid + '"></h2>' +
+            (canLeave ? '<button class="cbtn" data-a="leave">' + I('back') + '<span>' + esc(opts.cancelLabel || 'Step away') + '</span></button>' : '') + '</div>' +
+          '<div class="chal-body">' +
+            '<section class="chal-task slip" aria-label="The task"><div class="slip-lab">The task</div><div class="task-ctx"></div>' +
+              '<div class="task-acts"><span class="task-tr"></span><button class="pbtn quiet" data-a="reveal">' + I('help') + '<span>I don\'t know</span></button></div></section>' +
+            '<section class="chal-work"><div class="tabslot"></div><div class="chal-sheet slip" id="chal-sheet"><div class="slip-lab sheet-lab"><span class="t"></span></div></div></section>' +
+            '<section class="chal-answer slip" aria-label="Your answer">' +
+              '<div class="chal-line"></div>' +
+              '<button class="pbtn primary chal-submit" data-a="submit">' + I('seal') + '<span>Submit<span class="w"> answer</span></span></button>' +
+              '<div class="fbwrap hint" aria-live="polite"></div>' +
+            '</section>' +
+          '</div>' +
+        '</div>';
+      const $ = (q) => wrap.querySelector(q);
+      const ctxEl = $('.chal-task .task-ctx'), sheet = $('.chal-sheet'), line = $('.chal-line'), body = $('.chal-body');
+      const submitBtn = $('[data-a=submit]'), revealBtn = $('[data-a=reveal]');
+      $('.chal-title').innerHTML = (step.titleJp ? RB.ui.jhtml(step.titleJp) + ' ' : '') + esc(step.title || (step.kind === 'choose' ? 'Read and choose' : step.kind === 'order' ? 'Put it in order' : 'Write it'));
       const layer = { el: wrap, name: 'challenge', noAutofocus: true };
-      let pad = null, locked = false;
+      let pad = null, locked = false, tabsApi = null, ime = null, order = null;
+      const panes = {};
 
-      // ---- context & prompt ----
+      // ---- 1 · the task ----
       let showEn = !!(step.showEn || (step.ctx && step.ctx.showEn) || (RB.game.s && RB.game.s.learn.profile === 'F'));
       function renderCtx() {
-        let h = opts.header ? '<div>' + opts.header + '</div>' : '';
-        if (step.title) h += '<div class="small" style="color:var(--accent)">' + esc(step.title) + '</div>';
+        let h = opts.header ? '<div class="chal-situ">' + opts.header + '</div>' : '';
         if (step.ctx && step.ctx.jp) {
-          h += '<div class="' + (step.ctx.big ? '' : 'small') + '" style="' + (step.ctx.big ? 'font-size:1.6em' : '') + '">' + RB.ui.jhtml(step.ctx.jp) + '</div>';
-          if (step.ctx.en) h += showEn ? '<div class="en dim">' + esc(RB.script.enVars(step.ctx.en)) + '</div>' : '<button class="btn small" data-a="tr">Show translation (counts as assisted)</button>';
+          h += '<div class="chal-ctx' + (step.ctx.big ? ' big' : '') + '">' + RB.ui.jhtml(step.ctx.jp) + '</div>';
+          if (step.ctx.en && showEn) h += '<div class="chal-en">' + esc(RB.script.enVars(step.ctx.en)) + '</div>';
         }
-        if (step.prompt) h += '<div class="prompt">' + esc(RB.script.enVars(step.prompt.en || '')) + (step.prompt.jp ? ' ' + RB.ui.jhtml(step.prompt.jp) : '') + '</div>';
+        if (step.prompt) h += '<div class="chal-prompt">' + esc(RB.script.enVars(step.prompt.en || '')) + (step.prompt.jp ? ' ' + RB.ui.jhtml(step.prompt.jp) : '') + '</div>';
         if (step.kind === 'write' && step.template && (step.template.before || step.template.after)) {
-          h += '<div style="font-size:1.5em;margin-top:0.2em">' + RB.ui.jhtml(tplJp(step.template.before)) + '<span style="border-bottom:2px solid var(--accent);padding:0 0.6em;margin:0 0.1em" class="jp">？</span>' + RB.ui.jhtml(tplJp(step.template.after)) + '</div>';
+          h += '<div class="chal-tpl">' + RB.ui.jhtml(step.template.before || '') + '<span class="blank jp" role="img" aria-label="the missing part">？</span>' + RB.ui.jhtml(step.template.after || '') + '</div>';
         }
-        if (step.copy) h += '<div style="font-size:1.6em">' + RB.ui.jhtml(step.answer) + '</div>';
+        if (step.copy) h += '<div class="chal-copy">' + RB.ui.jhtml(step.answer) + '</div>';
         ctxEl.innerHTML = h;
-        const tr = ctxEl.querySelector('[data-a=tr]');
+        // the translation toggle shares a line with "I don't know"
+        const trSlot = wrap.querySelector('.task-tr');
+        trSlot.innerHTML = step.ctx && step.ctx.jp && step.ctx.en && !showEn ? '<button class="pbtn quiet tr" data-a="tr" title="Show the English (counts as assisted)">' + I('note') + '<span>Translate <span class="aside">(assisted)</span></span></button>' : '';
+        const tr = trSlot.querySelector('[data-a=tr]');
         if (tr) tr.onclick = () => { showEn = true; active.helpUsed = true; renderCtx(); };
       }
-      function tplJp(s) { return s ? s : ''; }
 
-      // ---- work area ----
-      function renderWork() {
-        work.innerHTML = '';
-        if (pad) { pad.destroy(); pad = null; }
-        const main = RB.ui.el('div', '');
-        main.style.minHeight = '0';
-        const side = RB.ui.el('div', 'side');
-        work.appendChild(main);
-        work.appendChild(side);
-        if (step.kind === 'write') {
-          const modes = RB.ui.el('div', 'box');
-          modes.innerHTML = '<div class="small dim">Answer by</div><div class="seg" role="tablist">' +
-            [['hand', '✎ Writing'], ['choice', '☰ Choices'], ['ime', '⌨ Keyboard']].map(([m, l]) => '<button class="btn small' + (m === mode ? ' on' : '') + '" data-mode="' + m + '">' + l + '</button>').join('') + '</div>' +
-            '<div class="small dim" style="margin-top:0.3em">Switching keeps your place.</div>';
-          modes.onclick = (e) => { const b = e.target.closest('[data-mode]'); if (b && !locked) { mode = b.getAttribute('data-mode'); renderWork(); } };
-          side.appendChild(modes);
-        }
-        const fbBox = RB.ui.el('div', 'box fbbox');
-        fbBox.innerHTML = '<div class="fbwrap small dim">' + (step.kind === 'choose' ? 'Choose the best answer.' : step.kind === 'order' ? 'Tap the pieces in order.' : 'Take your time — nothing happens until you submit.') + '</div>';
-        side.appendChild(fbBox);
-        const help = RB.ui.el('div', 'box');
-        help.innerHTML = '<button class="btn small" data-a="reveal">I don\'t know — show me</button>' + (opts.allowCancel !== false ? ' <button class="btn small" data-a="leave">' + esc(opts.cancelLabel || 'Step away') + '</button>' : '');
-        help.onclick = (e) => {
-          const b = e.target.closest('[data-a]');
-          if (!b || locked) return;
-          if (b.getAttribute('data-a') === 'reveal') reveal();
-          if (b.getAttribute('data-a') === 'leave') finish(true);
-        };
-        side.appendChild(help);
-
-        if (step.kind === 'write' && mode === 'hand') {
+      // ---- 2 · the sheet: one pane per input mode, kept when switching ----
+      const build = {
+        hand(p) {
           const single = step.single || Array.from(plain(step.answer)).length === 1;
-          pad = RB.pad.create(main, {
+          pad = RB.pad.create(p, {
             maxLen: single ? 1 : Math.max(4, Array.from(plain(step.fullAnswer || step.answer)).length + 3),
             script: step.script || 'any',
             guide: step.copy ? Array.from(plain(step.answer))[0] : null,
+            composeHost: line,
             onChange: () => { if (step.copy && pad) pad.setGuide(Array.from(plain(step.answer))[pad.text().length] || null); },
             onAssist: (why) => { if (why !== 'model' || !step.copy) active.helpUsed = true; },
             modelFor: () => Array.from(plain(step.answer))[pad ? Math.min(pad.text().length, Array.from(plain(step.answer)).length - 1) : 0],
           });
-          const submit = RB.ui.el('button', 'btn primary', 'Submit answer ▶');
-          submit.style.width = '100%';
-          submit.onclick = () => {
-            if (locked) return;
-            if (pad.hasPending()) { RB.ui.notice('Confirm (✓) or clear the character on the pad first.', 'info'); return; }
-            if (!pad.text()) { RB.ui.notice('Write and confirm at least one character first.', 'info'); return; }
-            evaluate(pad.text(), 'hand', pad.meta());
-          };
-          const sb = RB.ui.el('div', 'box');
-          sb.appendChild(submit);
-          side.insertBefore(sb, side.firstChild);
-        } else if (step.kind === 'write' && mode === 'ime') {
-          const box = RB.ui.el('div', 'box ime');
-          box.innerHTML = '<label class="small dim" for="ime-in">Type your answer (Japanese input / IME ' + (step.mode === 'reading' ? '— kana or kanji' : '— kana') + '). Enter submits once composition is finished.</label>' +
-            '<input id="ime-in" type="text" lang="ja" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="text"><div class="row" style="margin-top:0.4em"><button class="btn primary" data-a="sub">Submit ▶</button></div>';
-          main.appendChild(box);
-          const inp = box.querySelector('input');
-          let composing = false;
-          inp.addEventListener('compositionstart', () => (composing = true));
-          inp.addEventListener('compositionend', () => { setTimeout(() => (composing = false), 0); });
+        },
+        ime(p) {
+          p.innerHTML = '<label class="ime-lab" for="ime-in">Type your answer in Japanese</label>' +
+            '<input id="ime-in" type="text" lang="ja" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="text" enterkeyhint="done">' +
+            '<p class="hint">Use a Japanese keyboard (IME)' + (step.mode === 'reading' ? ' — kana or kanji' : ' — kana') + '. Enter submits once the composition is finished.</p>';
+          const inp = p.querySelector('input');
+          ime = { inp, composing: false };
+          inp.addEventListener('compositionstart', () => (ime.composing = true));
+          inp.addEventListener('compositionend', () => { setTimeout(() => (ime.composing = false), 0); });
           inp.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
-              if (composing || e.isComposing || e.keyCode === 229) return; // IME is still composing: let it finish
+              if (ime.composing || e.isComposing || e.keyCode === 229) return; // IME is still composing: let it finish
               e.preventDefault();
-              if (inp.value.trim()) evaluate(inp.value, 'ime', {});
+              submitIme();
             }
-            e.stopPropagation();
+            // typing never reaches the game's keys (Escape included); Tab still cycles focus
+            if (e.key !== 'Tab') e.stopPropagation();
           });
-          box.querySelector('[data-a=sub]').onclick = () => { if (!composing && inp.value.trim()) evaluate(inp.value, 'ime', {}); };
-          setTimeout(() => inp.focus(), 50);
-        } else if (step.kind === 'order') {
-          const box = RB.ui.el('div', 'box');
-          const placed = [];
-          const pool = RB.util.rng(RB.util.hashStr(step.tiles.join(''))).shuffle(step.tiles.map((t, i) => ({ t, i })));
-          function draw() {
-            box.innerHTML = '<div class="built">' + placed.map((p, j) => '<button class="btn" data-rm="' + j + '">' + RB.ui.jhtml(p.t) + '</button>').join('') + '</div>' +
-              '<div class="tiles" style="margin-top:0.5em">' + pool.map((p, j) => placed.indexOf(p) >= 0 ? '' : '<button class="btn" data-add="' + j + '">' + RB.ui.jhtml(p.t) + '</button>').join('') + '</div>' +
-              '<div class="row" style="margin-top:0.5em"><button class="btn primary" data-a="sub"' + (placed.length === step.tiles.length ? '' : ' disabled') + '>Submit ▶</button><button class="btn small" data-a="clr">Clear</button></div>';
-          }
-          box.onclick = (e) => {
-            if (locked) return;
-                const add = e.target.closest('[data-add]'), rm = e.target.closest('[data-rm]'), a = e.target.closest('[data-a]');
-            if (add) placed.push(pool[+add.getAttribute('data-add')]);
-            if (rm) placed.splice(+rm.getAttribute('data-rm'), 1);
-            if (a && a.getAttribute('data-a') === 'clr') placed.length = 0;
-            if (a && a.getAttribute('data-a') === 'sub') { evaluateOrder(placed.map((p) => p.t)); return; }
-            draw();
-          };
-          draw();
-          main.appendChild(box);
-        } else {
-          const box = RB.ui.el('div', 'mc');
+          inp.addEventListener('input', syncSubmit);
+          inp.addEventListener('focus', () => setTimeout(keepFocusVisible, 250));
+        },
+        choice(p) {
+          const box = RB.ui.el('div', 'mc' + (step.kind === 'choose' ? ' mc-read' : ''));
+          box.setAttribute('role', 'group');
+          box.setAttribute('aria-label', 'Choices');
           const ch = choicesFor(step);
-          ch.forEach((o, i) => {
-            const b = RB.ui.el('button', 'btn');
-            b.innerHTML = o.text != null ? RB.ui.jhtml(o.text) : (o.jp ? RB.ui.jhtml(o.jp) : '') + (o.en ? '<div class="enline">' + esc(o.en) + '</div>' : '');
-            b.onclick = (e) => {
+          ch.forEach((o) => {
+            const b = RB.ui.el('button', 'btn choice');
+            b.innerHTML = o.text != null ? RB.ui.jhtml(o.text) : (o.jp ? RB.ui.jhtml(o.jp) : '') + (o.en ? '<span class="enline">' + esc(o.en) + '</span>' : '');
+            b.onclick = () => {
               if (locked) return;
-                    if (step.kind === 'choose') evaluateChoice(o, b);
+              if (step.kind === 'choose') evaluateChoice(o, b);
               else {
                 evaluate(o.text, 'choice', {});
                 // like comprehension choices: a wrong option can't be picked twice
-                if (!o.ok) b.disabled = true;
+                if (!o.ok) { b.disabled = true; b.classList.add('tried'); }
+                else b.classList.add('on');
               }
             };
             box.appendChild(b);
-            void i;
           });
-          main.appendChild(box);
-        }
+          RB.learnUi.guardTaps(box);
+          p.appendChild(box);
+        },
+        order(p) {
+          const placed = [];
+          const pool = RB.util.rng(RB.util.hashStr(step.tiles.join(''))).shuffle(step.tiles.map((t, i) => ({ t, i })));
+          const lineBox = RB.ui.el('div', 'order-line');
+          lineBox.innerHTML = '<div class="pad-lab" id="order-lab">Your order</div><ol class="built" aria-labelledby="order-lab"></ol>' +
+            '<button class="pbtn" data-o="clr">' + I('erase') + '<span>Clear</span></button>';
+          line.appendChild(lineBox);
+          p.innerHTML = '<div class="pool-lab muted small">Tap the pieces in the order they belong. Tap a placed piece to take it back.</div><div class="tiles"></div>';
+          const built = lineBox.querySelector('.built'), tiles = p.querySelector('.tiles');
+          function draw() {
+            built.innerHTML = placed.length ? placed.map((pc, j) => '<li><button class="tile placed" data-rm="' + j + '">' + RB.ui.jhtml(pc.t) + '</button></li>').join('') : '<li class="empty muted small">Nothing placed yet.</li>';
+            tiles.innerHTML = pool.map((pc, j) => placed.indexOf(pc) >= 0 ? '' : '<button class="tile" data-add="' + j + '">' + RB.ui.jhtml(pc.t) + '</button>').join('') || '<span class="muted small">All pieces placed — check the order, then submit.</span>';
+            lineBox.querySelector('[data-o=clr]').disabled = !placed.length;
+            syncSubmit();
+          }
+          const click = (e) => {
+            if (locked) return;
+            const add = e.target.closest('[data-add]'), rm = e.target.closest('[data-rm]'), clr = e.target.closest('[data-o=clr]');
+            if (add) placed.push(pool[+add.getAttribute('data-add')]);
+            else if (rm) placed.splice(+rm.getAttribute('data-rm'), 1);
+            else if (clr) placed.length = 0;
+            else return;
+            RB.audio && RB.audio.sfx('cursor');
+            draw();
+          };
+          p.addEventListener('click', click);
+          lineBox.addEventListener('click', click);
+          RB.learnUi.guardTaps(p);
+          RB.learnUi.guardTaps(lineBox);
+          order = { placed, lineBox, complete: () => placed.length === step.tiles.length, value: () => placed.map((x) => x.t) };
+          draw();
+        },
+      };
+      function pane(m) {
+        if (panes[m]) return panes[m];
+        const p = RB.ui.el('div', 'pane pane-' + m);
+        p.setAttribute('data-pane', m);
+        sheet.appendChild(p);
+        panes[m] = p;
+        build[m](p);
+        return p;
       }
-      function fb(html, cls) {
+      function showMode(m, how) {
+        const prev = mode;
+        mode = m;
+        pane(m);
+        for (const k in panes) panes[k].hidden = k !== m;
+        wrap.setAttribute('data-mode', m);
+        if (pad) pad.compose.hidden = m !== 'hand';
+        if (order) order.lineBox.hidden = m !== 'order';
+        line.hidden = m === 'choice' || m === 'ime';
+        submitBtn.hidden = m === 'choice';
+        $('.sheet-lab .t').textContent = SHEET_LAB[m];
+        if (step.kind === 'write') sheet.setAttribute('aria-labelledby', 'tab-' + m);
+        else { sheet.setAttribute('role', 'region'); sheet.setAttribute('aria-label', SHEET_LAB[m]); }
+        if (m === 'hand' && pad) requestAnimationFrame(() => pad && pad.layout());
+        if (m === 'ime' && ime) {
+          // keep your place: carry what was written by hand over to the keyboard
+          if (prev === 'hand' && !ime.inp.value && pad && pad.text()) ime.inp.value = pad.text();
+          setTimeout(() => { if (wrap.isConnected && mode === 'ime' && !locked) ime.inp.focus({ preventScroll: true }); }, how === 'init' ? 50 : 0);
+        }
+        if (wrap.querySelector('.fbwrap.hint')) setHint();
+        syncSubmit();
+      }
+      function syncSubmit() {
+        let ready = true;
+        if (mode === 'ime') ready = !!(ime && ime.inp.value.trim());
+        if (mode === 'order') ready = !!(order && order.complete());
+        submitBtn.disabled = locked || !ready;
+        submitBtn.setAttribute('aria-disabled', String(submitBtn.disabled));
+      }
+      function setHint() {
         const w = wrap.querySelector('.fbwrap');
-        if (w) { w.className = 'fbwrap fb ' + (cls || ''); w.innerHTML = html; }
+        w.className = 'fbwrap hint';
+        wrap.classList.remove('fb-on');
+        w.removeAttribute('data-fb');
+        w.innerHTML = '<span class="muted">' + (mode === 'choice' ? (step.kind === 'choose' ? 'Choose the best answer. A wrong choice can be tried again.' : 'Choose the answer. Nothing is timed.') : 'Take your time — nothing happens until you submit.') + '</span>';
+      }
+
+      // ---- 3 · answer and feedback ----
+      function fb(kind, head, html) {
+        const w = wrap.querySelector('.fbwrap');
+        if (!w) return;
+        w.className = 'fbwrap fb ' + kind;
+        wrap.classList.add('fb-on');
+        w.setAttribute('data-fb', kind);
+        w.innerHTML = RB.learnUi.fbHead(kind, head) + '<div class="fb-b">' + html + '</div>';
+        requestAnimationFrame(() => reveal(w));
+      }
+      function reveal(el) {
+        // bring feedback into view inside the one scroll surface (never the page)
+        if (!el.isConnected) return;
+        const br = body.getBoundingClientRect(), r = el.getBoundingClientRect();
+        if (r.bottom > br.bottom) body.scrollTop += Math.min(r.bottom - br.bottom + 8, r.top - br.top - 8);
+        else if (r.top < br.top) body.scrollTop -= br.top - r.top + 8;
       }
       function explainHtml() {
         const e = step.explain;
         if (!e) return '';
-        return '<div style="margin-top:0.4em">' + (e.jp ? RB.ui.jhtml(e.jp) : '') + '<div>' + esc(RB.script.enVars(e.en || '')) + '</div></div>';
+        return '<div class="fb-ex">' + (e.jp ? '<div class="fb-jp">' + RB.ui.jhtml(e.jp) + '</div>' : '') + '<div>' + esc(RB.script.enVars(e.en || '')) + '</div></div>';
+      }
+      function continueBtn(label) {
+        const btn = RB.ui.el('button', 'pbtn primary fb-go', '<span>' + esc(label || opts.continueLabel || 'Continue') + '</span>' + I('next'));
+        btn.setAttribute('data-a', 'continue');
+        return btn;
+      }
+      function lock() {
+        locked = true;
+        wrap.classList.add('locked');
+        revealBtn.hidden = true;
+        syncSubmit();
+        if (tabsApi) tabsApi.el.querySelectorAll('.ptab').forEach((b) => b.setAttribute('aria-disabled', 'true'));
       }
       function success(modeUsed) {
-        locked = true;
+        lock();
         res.ok = true;
         res.mode = modeUsed;
         if (res.firstTry == null) res.firstTry = true;
         if (active.helpUsed) res.assisted = true;
         RB.audio && RB.audio.sfx('answer_right');
-        fb('<b style="color:var(--good)">✓ Yes.</b>' + (res.assisted ? ' <span class="dim small">(assisted — that\'s fine)</span>' : '') + explainHtml(), 'ok');
+        fb('ok', 'Yes.', (res.assisted ? '<span class="muted small">Assisted — that\'s fine.</span>' : '') + explainHtml());
         const w = wrap.querySelector('.fbwrap');
-        const btn = RB.ui.el('button', 'btn primary', opts.continueLabel || 'Continue ▶');
-        btn.style.marginTop = '0.5em';
+        const btn = continueBtn();
         btn.onclick = () => finish(false);
         w.appendChild(btn);
-        btn.focus();
+        btn.focus({ preventScroll: true });
         if (opts.autoContinue) setTimeout(() => { if (wrap.isConnected) finish(false); }, opts.autoContinue);
       }
       function evaluate(text, modeUsed, meta) {
@@ -17571,24 +18482,27 @@ RB.challenge = (function () {
         if (modeUsed === 'hand' && meta.uncertain) {
           res.recogMisses++;
           RB.audio && RB.audio.sfx('recog_unsure');
-          fb('The recognizer wasn\'t sure about your writing, so this doesn\'t count against you. Your strip reads <span class="jp big" lang="ja">' + esc(text) + '</span>. If that isn\'t what you meant, tap a character to rewrite it (or use the chart).', 'unsure');
+          fb('unsure', 'I could not read that clearly',
+            '<p>This doesn\'t count against you — the recognizer wasn\'t sure about your writing.</p>' +
+            '<p>Your answer line reads <span class="jp big" lang="ja">' + esc(text) + '</span>. If that isn\'t what you meant, tap a character to rewrite it, or pick it from the chart.</p>');
           return;
         }
         res.mistakes++;
         if (res.firstTry == null) res.firstTry = false;
         RB.audio && RB.audio.sfx('answer_wrong');
-        const msgs = (r.feedback || []).map((f) => '<div>' + (f.jp ? RB.ui.jhtml(f.jp) + ' ' : '') + esc(f.en) + '</div>').join('') || '<div>That isn\'t what this needs.</div>';
-        fb('<b>Not quite.</b> You gave <span class="jp" lang="ja">' + esc(plain(text)) + '</span>.' + msgs + '<div class="small dim" style="margin-top:0.3em">Try again — take all the time you need.</div>', 'no');
+        const msgs = (r.feedback || []).map((f) => '<div class="fb-why">' + (f.jp && !/\{[^|}]+\|/.test(f.en || '') ? RB.ui.jhtml(f.jp) + ' ' : '') + enRuby(f.en) + '</div>').join('') || '<div class="fb-why">That isn\'t what this needs.</div>';
+        fb('no', 'Not quite.', '<p>You gave <span class="jp big" lang="ja">' + esc(plain(text)) + '</span>.</p>' + msgs + '<p class="muted small">Try again — take all the time you need.</p>');
         if (opts.onMistake) opts.onMistake(r);
         if (pad) pad.reset();
       }
       function evaluateChoice(o, btn) {
-        if (o.ok) { success('choice'); btn.classList.add('on'); return; }
+        if (o.ok) { btn.classList.add('on'); success('choice'); return; }
         res.mistakes++;
         if (res.firstTry == null) res.firstTry = false;
         btn.disabled = true;
+        btn.classList.add('tried');
         RB.audio && RB.audio.sfx('answer_wrong');
-        fb('<b>Not that one.</b> ' + (o.why ? esc(o.why.en) : '') + '<div class="small dim">Try another.</div>', 'no');
+        fb('no', 'Not that one.', (o.why ? '<div class="fb-why">' + (o.why.jp ? RB.ui.jhtml(o.why.jp) + ' ' : '') + esc(o.why.en) + '</div>' : '') + '<p class="muted small">Try another.</p>');
         if (opts.onMistake) opts.onMistake({});
       }
       function evaluateOrder(arr) {
@@ -17598,24 +18512,65 @@ RB.challenge = (function () {
         res.mistakes++;
         if (res.firstTry == null) res.firstTry = false;
         RB.audio && RB.audio.sfx('answer_wrong');
-        fb('<b>Not quite.</b> ' + (step.orderHint ? esc(step.orderHint.en) : 'Check where the particles and the verb go.') + '<div class="small dim">Try again.</div>', 'no');
+        fb('no', 'Not quite.', '<div class="fb-why">' + (step.orderHint ? esc(step.orderHint.en) : 'Check where the particles and the verb go.') + '</div><p class="muted small">Try again.</p>');
         if (opts.onMistake) opts.onMistake({});
       }
-      function reveal() {
+      function submitIme() {
+        if (locked || !ime || ime.composing) return;
+        if (ime.inp.value.trim()) evaluate(ime.inp.value, 'ime', {});
+      }
+      function submit() {
+        if (locked) return;
+        if (mode === 'hand') {
+          if (pad.hasPending()) { RB.ui.notice('Confirm (✓) or clear the character on the pad first.', 'info'); return; }
+          if (!pad.text()) { RB.ui.notice('Write and confirm at least one character first.', 'info'); return; }
+          evaluate(pad.text(), 'hand', pad.meta());
+        } else if (mode === 'ime') submitIme();
+        else if (mode === 'order' && order && order.complete()) evaluateOrder(order.value());
+      }
+      function revealAnswer() {
         active.helpUsed = true;
         res.assisted = true;
         let ans = '';
-        if (step.kind === 'write') ans = plain(step.fullAnswer ? step.answer : step.answer);
+        if (step.kind === 'write') ans = plain(step.answer);
         if (step.kind === 'choose') ans = (step.options.find((o) => o.ok) || {}).en || (step.options.find((o) => o.ok) || {}).jp || '';
         if (step.kind === 'order') ans = step.answer.map(plain).join(' ');
-        fb('The answer is <span class="jp big" lang="ja" style="font-size:1.4em">' + esc(ans) + '</span>.' + explainHtml() + '<div class="small dim">This is recorded as assisted. Enter it to continue, or just continue.</div>', 'ok');
+        revealBtn.hidden = true;
+        fb('reveal', 'The answer', '<p><span class="jp big" lang="ja">' + esc(ans) + '</span></p>' + explainHtml() + '<p class="muted small">This is recorded as assisted. Enter it to continue, or just continue.</p>');
         const w = wrap.querySelector('.fbwrap');
-        const btn = RB.ui.el('button', 'btn', 'Continue ▶');
+        const btn = continueBtn();
         btn.onclick = () => { res.ok = true; res.mode = res.mode || mode; finish(false); };
         w.appendChild(btn);
+        btn.focus({ preventScroll: true });
         if (pad && step.kind === 'write') pad.setGuide(Array.from(plain(step.answer))[0]);
       }
+
+      // ---- the software keyboard: keep the typing field above it ----
+      const vv = typeof window !== 'undefined' ? window.visualViewport : null;
+      function keepFocusVisible() {
+        const a = document.activeElement;
+        if (!a || !wrap.contains(a) || !RB.input.isTextTarget(a)) return;
+        reveal(a);
+      }
+      function syncVV() {
+        if (!vv) return;
+        // pinch-zoom moves the visual viewport too; never chase it
+        if (vv.scale && Math.abs(vv.scale - 1) > 0.01) { wrap.style.removeProperty('--vv-h'); wrap.style.removeProperty('--vv-top'); wrap.classList.remove('kb'); return; }
+        const covered = window.innerHeight - vv.height - vv.offsetTop;
+        if (covered > 60 || vv.offsetTop > 1) {
+          wrap.style.setProperty('--vv-h', Math.round(vv.height) + 'px');
+          wrap.style.setProperty('--vv-top', Math.round(vv.offsetTop) + 'px');
+          wrap.classList.add('kb');
+          requestAnimationFrame(keepFocusVisible);
+        } else {
+          wrap.style.removeProperty('--vv-h'); wrap.style.removeProperty('--vv-top'); wrap.classList.remove('kb');
+        }
+      }
+      if (vv) { vv.addEventListener('resize', syncVV); vv.addEventListener('scroll', syncVV); }
+
       function finish(cancelled) {
+        if (vv) { vv.removeEventListener('resize', syncVV); vv.removeEventListener('scroll', syncVV); }
+        if (tabsApi) { tabsApi.destroy(); tabsApi = null; }
         if (pad) { pad.destroy(); pad = null; }
         RB.ui.popLayer(layer);
         RB.ui.help.hide(true);
@@ -17627,14 +18582,34 @@ RB.challenge = (function () {
         if (step.item) [].concat(step.item).forEach((i) => RB.learn.markIntroduced(i));
         resolve(res);
       }
-      layer.onAction = (a) => {
-        if (a === 'cancel' && opts.allowCancel !== false && !locked) { finish(true); return true; }
+      wrap.addEventListener('click', (e) => {
+        const b = e.target.closest('[data-a]');
+        if (!b || b.disabled || !wrap.contains(b)) return;
+        const a = b.getAttribute('data-a');
+        if (a === 'leave' && !locked) finish(true);
+        else if (a === 'submit') submit();
+        else if (a === 'reveal' && !locked) revealAnswer();
+      });
+      layer.onAction = (a, e) => {
+        // Backspace while writing edits the answer line instead of leaving
+        if (a === 'cancel' && e && e.code === 'Backspace' && mode === 'hand' && pad && !locked) { pad.remove(); return true; }
+        if (a === 'cancel' && canLeave && !locked) { finish(true); return true; }
         if (a === 'ok' && locked) { finish(false); return true; }
         return false;
       };
       renderCtx();
-      renderWork();
+      if (step.kind === 'write') {
+        tabsApi = RB.ui.folio.tabs($('.tabslot'), MODES, mode, (id) => {
+          if (locked) { tabsApi.select(mode); return; }
+          showMode(id, 'tab');
+        }, { label: 'Answer by', panelId: 'chal-sheet' });
+        tabsApi.el.classList.add('chal-tabs');
+        tabsApi.el.querySelectorAll('.ptab').forEach((b) => { b.setAttribute('data-mode', b.getAttribute('data-id')); b.classList.remove('autofocus'); });
+        sheet.setAttribute('role', 'tabpanel');
+      }
+      showMode(mode, 'init');
       RB.ui.pushLayer(layer);
+      syncVV();
     });
   }
 
@@ -17662,18 +18637,20 @@ RB.challenge = (function () {
       RB.game.popMode('challenge');
     }
   }
+  // A note card that teaches something before it is asked for.
   function teachCard(t) {
     if (RB.test && RB.test.auto) return Promise.resolve();
     return new Promise((resolve) => {
-      const scrim = RB.ui.el('div', 'scrim');
-      const pn = RB.ui.el('div', 'panel');
-      pn.style.width = 'min(620px, calc(100vw - 16px))';
-      pn.innerHTML = '<header><h2>' + esc(t.title || 'Something new') + '</h2></header><div class="body">' + (t.jp ? '<div style="font-size:1.4em">' + RB.ui.jhtml(t.jp) + '</div>' : '') + '<p>' + esc(t.en || '') + '</p>' + (t.ex || []).map((e) => '<div>' + RB.ui.jhtml(e.jp) + ' <span class="dim">' + esc(e.en) + '</span></div>').join('') + '</div><div class="foot"><button class="btn primary">Got it ▶</button></div>';
-      scrim.appendChild(pn);
-      const lay = { el: scrim, name: 'teach' };
+      const lay = { name: 'teach' };
+      // titleMixed / jpMixed: mixed text (English with {漢字|かな} groups), as grammar points use
+      const fr = RB.learnUi.sheet({ cls: 'small teach', title: esc(t.title || 'Something new') + (t.titleMixed ? ' ' + RB.learnUi.mixed(t.titleMixed) : '') });
+      fr.leaf.innerHTML = (t.jp ? '<div class="teach-jp">' + RB.ui.jhtml(t.jp) + '</div>' : t.jpMixed ? '<div class="teach-jp">' + RB.learnUi.mixed(t.jpMixed) + '</div>' : '') + (t.en ? '<p class="teach-en">' + RB.learnUi.mixed(t.en) + '</p>' : '') +
+        ((t.ex || []).length ? '<h3>Examples</h3><ul class="teach-ex">' + t.ex.map((e) => '<li>' + RB.ui.jhtml(e.jp) + '<span class="en">' + esc(e.en) + '</span></li>').join('') + '</ul>' : '');
+      fr.foot.innerHTML = '<span class="spacer"></span><button class="cbtn go" data-ok>' + I('done') + '<span>Got it</span></button>';
+      lay.el = fr.scrim;
       const done = () => { RB.ui.popLayer(lay); resolve(); };
       lay.onCancel = done;
-      pn.querySelector('.foot button').onclick = done;
+      fr.foot.querySelector('[data-ok]').onclick = done;
       RB.ui.pushLayer(lay);
     });
   }
@@ -17731,30 +18708,33 @@ RB.lessons = (function () {
     return null;
   }
 
-  // Animated numbered stroke demonstration on a small canvas.
+  // Animated numbered stroke demonstration on a small canvas. Plain writing
+  // paper, faint quarter guides, dark ink; the stroke being drawn and the
+  // stroke numbers in vermilion.
+  const DEMO = { paper: '#fffaf0', guide: 'rgba(120,90,50,0.3)', ink: '#261f15', cur: '#a83e27' };
   function demo(canvas, ch) {
     const ref = RB.recog && RB.recog.reference(ch);
     const c = canvas.getContext('2d');
     const W = canvas.width;
-    if (!ref) { c.fillStyle = '#fbf7ea'; c.fillRect(0, 0, W, W); return () => {}; }
+    if (!ref) { c.fillStyle = DEMO.paper; c.fillRect(0, 0, W, W); return () => {}; }
     const s = W / ref.box;
     let t0 = performance.now(), raf = 0;
     const total = ref.strokes.length;
     function frame(now) {
       const k = RB.game.reducedMotion() ? total : ((now - t0) / 700) % (total + 1.5);
-      c.fillStyle = '#fbf7ea'; c.fillRect(0, 0, W, W);
-      c.strokeStyle = 'rgba(160,120,80,0.3)'; c.setLineDash([4, 4]); c.beginPath(); c.moveTo(W / 2, 0); c.lineTo(W / 2, W); c.moveTo(0, W / 2); c.lineTo(W, W / 2); c.stroke(); c.setLineDash([]);
+      c.fillStyle = DEMO.paper; c.fillRect(0, 0, W, W);
+      c.strokeStyle = DEMO.guide; c.lineWidth = Math.max(1, W / 180); c.setLineDash([W / 45, W / 32]); c.beginPath(); c.moveTo(W / 2, 0); c.lineTo(W / 2, W); c.moveTo(0, W / 2); c.lineTo(W, W / 2); c.stroke(); c.setLineDash([]);
       c.lineCap = 'round'; c.lineJoin = 'round'; c.lineWidth = Math.max(3, W / 22);
       ref.strokes.forEach((st, i) => {
         const part = Math.max(0, Math.min(1, k - i));
         if (part <= 0) return;
         const n = Math.max(2, Math.round(st.length * part));
-        c.strokeStyle = i === Math.floor(k) ? '#c0392b' : '#2a2024';
+        c.strokeStyle = i === Math.floor(k) ? DEMO.cur : DEMO.ink;
         c.beginPath();
         st.slice(0, n).forEach((p, j) => (j ? c.lineTo(p.x * s, p.y * s) : c.moveTo(p.x * s, p.y * s)));
         c.stroke();
-        c.fillStyle = '#c0392b';
-        c.font = Math.round(W / 9) + 'px sans-serif';
+        c.fillStyle = DEMO.cur;
+        c.font = '600 ' + Math.round(W / 9) + 'px sans-serif';
         c.fillText(String(i + 1), st[0].x * s - W / 14, st[0].y * s);
       });
       if (!RB.game.reducedMotion()) raf = requestAnimationFrame(frame);
@@ -17763,13 +18743,15 @@ RB.lessons = (function () {
     return () => cancelAnimationFrame(raf);
   }
 
+  // One new kana per page of a lesson sheet: the character and its romaji,
+  // the numbered stroke demonstration, the note, and words that use it.
   function showGroup(g) {
     return new Promise((resolve) => {
       const cs = groupChars(g);
-      const scrim = RB.ui.el('div', 'scrim');
-      const pn = RB.ui.el('div', 'panel');
-      scrim.appendChild(pn);
-      const lay = { el: scrim, name: 'lesson' };
+      const I = (n) => RB.learnUi.icon(n);
+      const lay = { name: 'lesson' };
+      const fr = RB.learnUi.sheet({ cls: 'lesson' });
+      lay.el = fr.scrim;
       let idx = 0;
       let stop = () => {};
       function render() {
@@ -17777,24 +18759,32 @@ RB.lessons = (function () {
         const c = cs[idx];
         const rom = RB.kana.romaji(c.ch);
         const ex = (g.examples || g.words || []).filter((e) => (e.w || e.r || '').indexOf(c.ch) >= 0).slice(0, 3);
-        pn.innerHTML = '<header><h2>' + esc(g.title || g.name || 'Kana') + ' — ' + (idx + 1) + ' / ' + cs.length + '</h2></header><div class="body"><div class="row" style="align-items:flex-start;gap:1.2em">' +
-          '<div style="text-align:center"><div class="jp" lang="ja" style="font-size:5em;line-height:1.1">' + esc(c.ch) + '</div><div style="font-size:1.3em;color:var(--accent)">' + esc(rom) + '</div></div>' +
-          '<div><canvas width="180" height="180" style="width:180px;height:180px;border-radius:8px" aria-label="Stroke order for ' + esc(c.ch) + '"></canvas><div class="small dim">Numbered strokes from the reference data. The adventure accepts readable variants; order matters only in optional practice.</div></div>' +
-          '<div class="grow" style="min-width:200px">' + (c.note ? '<p>' + esc(c.note.en || c.note) + '</p>' : '') +
-          (ex.length ? '<h3>In words</h3>' + ex.map((e) => '<div>' + RB.ui.jhtml(e.jp || e.w) + ' <span class="dim">' + esc(e.m || e.en || '') + '</span></div>').join('') : '') + '</div></div></div>' +
-          '<div class="foot">' + (idx > 0 ? '<button class="btn" data-a="prev">◀ Back</button>' : '') + '<button class="btn" data-a="say">🔊</button><button class="btn primary" data-a="next">' + (idx < cs.length - 1 ? 'Next ▶' : 'Practise these ▶') + '</button></div>';
-        stop = demo(pn.querySelector('canvas'), c.ch);
-        const say = pn.querySelector('[data-a=say]');
+        fr.setTitle((g.jp ? RB.ui.jhtml(g.jp) + ' ' : '') + esc(g.title || g.name || 'Kana'), 'Kana ' + (idx + 1) + ' of ' + cs.length);
+        fr.leaf.innerHTML =
+          '<ol class="lesson-row" aria-label="Kana in this lesson">' + cs.map((x, i) => '<li lang="ja"' + (i === idx ? ' aria-current="true"' : '') + '>' + esc(x.ch) + '</li>').join('') + '</ol>' +
+          '<div class="lesson-main">' +
+            '<figure class="lesson-char"><div class="kbig" lang="ja">' + esc(c.ch) + '</div><figcaption><span class="muted small">read</span> <b class="rom">' + esc(rom) + '</b></figcaption></figure>' +
+            '<figure class="lesson-demo"><canvas width="360" height="360" role="img" aria-label="Stroke order for ' + esc(c.ch) + '"></canvas>' +
+              '<figcaption class="muted small">Numbered strokes from the reference data. The adventure accepts readable variants; order matters only in optional practice.</figcaption></figure>' +
+          '</div>' +
+          (c.note ? '<p class="lesson-note">' + RB.learnUi.mixed(c.note.en || c.note) + '</p>' : '') +
+          (ex.length ? '<h3>In words</h3><ul class="lesson-ex">' + ex.map((e) => '<li>' + RB.ui.jhtml(e.jp || e.w) + '<span class="en">' + esc(e.m || e.en || '') + '</span></li>').join('') + '</ul>' : '');
+        fr.foot.innerHTML = (idx > 0 ? '<button class="cbtn" data-a="prev">' + I('back') + '<span>Back</span></button>' : '') +
+          '<button class="cbtn" data-a="say">' + I('sound') + '<span>Say it</span></button>' +
+          '<button class="cbtn go" data-a="next" data-ok>' + '<span>' + (idx < cs.length - 1 ? 'Next' : 'Practise these') + '</span>' + I('next') + '</button>';
+        stop = demo(fr.leaf.querySelector('canvas'), c.ch);
+        const say = fr.foot.querySelector('[data-a=say]');
         if (!(RB.voice && RB.voice.japaneseVoices && RB.voice.japaneseVoices().length)) say.classList.add('hidden');
+        fr.leaf.scrollTop = 0;
       }
-      pn.onclick = (e) => {
+      fr.el.addEventListener('click', (e) => {
         const b = e.target.closest('[data-a]');
-        if (!b) return;
+        if (!b || !fr.foot.contains(b)) return;
         const a = b.getAttribute('data-a');
         if (a === 'say') RB.voice.speak(cs[idx].ch);
         if (a === 'prev') { idx--; render(); }
         if (a === 'next') { if (idx < cs.length - 1) { idx++; render(); } else { stop(); RB.ui.popLayer(lay); resolve(); } }
-      };
+      });
       lay.onCancel = () => {};
       render();
       RB.ui.pushLayer(lay);
@@ -17837,7 +18827,7 @@ RB.lessons = (function () {
     if (RB.learn.introduced('g:' + id)) return;
     RB.learn.markIntroduced('g:' + id);
     RB.learn.rec('g:' + id);
-    await RB.challenge.teachCard({ title: 'Grammar: ' + RB.ui.plainJp(g.title), jp: g.title, en: g.en, ex: (g.ex || []).slice(0, 3) });
+    await RB.challenge.teachCard({ title: 'Grammar:', titleMixed: g.title, jpMixed: g.title, en: g.en, ex: (g.ex || []).slice(0, 3) });
   }
   return { run, grammarCard, groups, groupChars, nextGroup, teachAll, demo };
 })();
@@ -17866,21 +18856,28 @@ RB.activities = (function () {
     for (let i = LV.indexOf(p) + 1; i < 4; i++) if (o[LV[i]]) return o[LV[i]];
     return null;
   }
+  // A full activity sheet: cloth frame, one paper page, "Stop for now" on the
+  // cloth header, the main action on the cloth foot.
   function panel(title) {
-    const scrim = RB.ui.el('div', 'scrim');
-    const pn = RB.ui.el('div', 'panel');
-    scrim.appendChild(pn);
-    pn.innerHTML = '<header><h2>' + title + '</h2><button class="btn small" data-x>Stop for now</button></header><div class="body"></div><div class="foot"></div>';
-    const lay = { el: scrim, name: 'activity' };
-    return { scrim, pn, lay, body: pn.querySelector('.body'), foot: pn.querySelector('.foot') };
+    const I = (n) => RB.learnUi.icon(n);
+    const fr = RB.learnUi.sheet({ cls: 'activity', title, headBtn: { html: I('back') + '<span>Stop for now</span>', attrs: { 'data-x': '' } } });
+    const lay = { el: fr.scrim, name: 'activity' };
+    RB.learnUi.guardTaps(fr.leaf);
+    return { scrim: fr.scrim, pn: fr.el, lay, body: fr.leaf, foot: fr.foot, fr };
   }
   function showEnDefault() {
     return RB.game.s.learn.profile === 'F';
   }
-  function lineHtml(l, showEn, onTr) {
-    void onTr;
-    return '<div style="font-size:1.25em">' + RB.ui.jhtml(l.jp) + '</div>' + (showEn ? '<div class="en dim">' + esc(RB.script.enVars(l.en)) + '</div>' : '<button class="btn small" data-tr>Show translation (assisted)</button>');
+  function trButton() {
+    return '<button class="pbtn quiet tr" data-tr title="Show the English (counts as assisted)">' + RB.learnUi.icon('note') + '<span>Translate <span class="aside">(assisted)</span></span></button>';
   }
+  function fbSet(el, kind, head, html) {
+    el.className = 'fbwrap fb ' + kind;
+    el.setAttribute('data-fb', kind);
+    el.innerHTML = RB.learnUi.fbHead(kind, head) + '<div class="fb-b">' + html + '</div>';
+    requestAnimationFrame(() => { if (el.isConnected && el.scrollIntoView) { const leaf = el.closest('.leaf'); if (leaf) { const lr = leaf.getBoundingClientRect(), r = el.getBoundingClientRect(); if (r.bottom > lr.bottom) leaf.scrollTop += r.bottom - lr.bottom + 12; } } });
+  }
+  const goBtn = (attr, label) => '<button class="cbtn go" ' + attr + ' data-ok><span>' + esc(label) + '</span>' + RB.learnUi.icon('next') + '</button>';
 
   // ---- orders ----------------------------------------------------------------------------
   function orders(a) {
@@ -17893,13 +18890,20 @@ RB.activities = (function () {
         const c = custs[i];
         const l = tier(c.line);
         const who = RB.content.chars[c.who];
-        P.body.innerHTML = '<div class="row" style="align-items:flex-start"><canvas width="48" height="48" style="width:72px;height:72px;image-rendering:pixelated;border-radius:8px"></canvas><div class="grow"><div class="small" style="color:var(--accent)">' + esc(who ? who.name.en : c.name || 'Customer') + ' (' + (i + 1) + '/' + custs.length + ')</div>' + lineHtml(l, showEn) + '</div></div>' +
-          '<h3>Tray</h3><div class="built">' + (Object.keys(tray).length ? Object.keys(tray).map((k) => { const m = a.menu.find((x) => x.id === k); return '<button class="btn" data-rm="' + k + '">' + RB.ui.jhtml(m.jp) + ' ×' + tray[k] + '</button>'; }).join('') : '<span class="dim small">empty — tap items below to add; tap tray items to remove one</span>') + '</div>' +
-          '<h3>Kitchen</h3><div class="tiles">' + a.menu.map((m) => '<button class="btn" data-add="' + m.id + '">' + RB.ui.jhtml(m.jp) + '<div class="small dim">' + esc(showEn || m.always ? m.en : '') + '</div></button>').join('') + '</div>' +
-          '<div class="fbwrap"></div>';
-        P.foot.innerHTML = '<button class="btn primary" data-serve>Serve ▶</button>';
+        P.fr.setTitle(RB.ui.jhtml(a.title.jp) + ' ' + esc(a.title.en), 'Customer ' + (i + 1) + ' of ' + custs.length);
+        const n = Object.keys(tray).reduce((t, k) => t + tray[k], 0);
+        P.body.innerHTML =
+          '<section class="act-say">' + (who ? '<canvas width="48" height="48" class="act-face" aria-hidden="true"></canvas>' : '') +
+            '<div class="act-line"><div class="act-who">' + esc(who ? who.name.en : c.name || 'Customer') + '</div>' +
+            '<div class="act-jp">' + RB.ui.jhtml(l.jp) + '</div>' + (showEn ? '<div class="act-en">' + esc(RB.script.enVars(l.en)) + '</div>' : trButton()) + '</div></section>' +
+          '<h3>' + RB.learnUi.icon('tray') + '<span>The tray</span><span class="count">' + (n ? n + ' item' + (n > 1 ? 's' : '') : 'empty') + '</span></h3>' +
+          '<div class="act-tray">' + (n ? Object.keys(tray).map((k) => { const m = a.menu.find((x) => x.id === k); return '<button class="tile placed" data-rm="' + k + '" aria-label="Take one ' + esc(m.en) + ' off the tray">' + RB.ui.jhtml(m.jp) + '<span class="qty">×' + tray[k] + '</span></button>'; }).join('') : '<span class="muted small">Tap the kitchen items below to add them; tap an item on the tray to take one off.</span>') + '</div>' +
+          '<h3>' + RB.learnUi.icon('food') + '<span>The kitchen</span></h3>' +
+          '<div class="act-menu">' + a.menu.map((m) => '<button class="tile" data-add="' + m.id + '">' + RB.ui.jhtml(m.jp) + (showEn || m.always ? '<span class="en">' + esc(m.en) + '</span>' : '') + '</button>').join('') + '</div>' +
+          '<div class="fbwrap" aria-live="polite"></div>';
+        P.foot.innerHTML = '<span class="spacer"></span>' + '<button class="cbtn go" data-serve data-ok>' + RB.learnUi.icon('done') + '<span>Serve</span></button>';
         const cv = P.body.querySelector('canvas');
-        if (who) RB.portraits.draw(cv, c.who, 'neutral'); else cv.remove();
+        if (who && cv) RB.portraits.draw(cv, c.who, 'neutral');
       }
       P.pn.onclick = (e) => {
         if (e.target.closest('[data-x]')) { RB.ui.popLayer(P.lay); resolve({ ok: false, cancelled: true }); return; }
@@ -17922,19 +18926,19 @@ RB.activities = (function () {
             results.push({ ok: firstTry });
             if (c.items) RB.learn.record(c.items, { ok: firstTry, mode: 'choice', assisted });
             const thanks = tier(c.thanks) || { jp: 'ありがとう ！', en: 'Thank you!' };
-            fb.className = 'fbwrap fb ok';
-            fb.innerHTML = '✓ ' + RB.ui.jhtml(thanks.jp) + ' <span class="dim">' + esc(thanks.en) + '</span>';
-            P.foot.innerHTML = '<button class="btn primary" data-next>' + (i < custs.length - 1 ? 'Next customer ▶' : 'Finish ▶') + '</button>';
+            fbSet(fb, 'ok', 'Just right.', '<div class="fb-jp">' + RB.ui.jhtml(thanks.jp) + '</div><div class="muted">' + esc(thanks.en) + '</div>');
+            P.body.querySelectorAll('[data-add], [data-rm]').forEach((x) => (x.disabled = true));
+            P.foot.innerHTML = '<span class="spacer"></span>' + goBtn('data-next', i < custs.length - 1 ? 'Next customer' : 'Finish');
             P.foot.querySelector('[data-next]').onclick = () => {
               i++; tray = {}; firstTry = true; showEn = showEnDefault();
               if (i >= custs.length) { RB.ui.popLayer(P.lay); resolve({ ok: true, mistakes, results }); } else render();
             };
+            P.foot.querySelector('[data-next]').focus({ preventScroll: true });
           } else {
             mistakes++; firstTry = false;
             RB.audio && RB.audio.sfx('answer_wrong');
             const hint = tier(c.hint);
-            fb.className = 'fbwrap fb no';
-            fb.innerHTML = '<b>Not quite what they asked for.</b> ' + diffs.map((d) => esc(d.m ? d.m.en : '?') + ': you put ' + d.h + (d.w === 0 ? ', but they didn\'t ask for it' : '')).join('; ') + '.' + (hint ? '<div>' + (hint.jp ? RB.ui.jhtml(hint.jp) + ' ' : '') + esc(hint.en) + '</div>' : '') + '<div class="small dim">Listen again and adjust the tray.</div>';
+            fbSet(fb, 'no', 'Not quite what they asked for.', '<ul class="fb-list">' + diffs.map((d) => '<li>' + esc(d.m ? d.m.en : '?') + ': you put ' + d.h + (d.w === 0 ? ', but they didn\'t ask for it' : '') + '</li>').join('') + '</ul>' + (hint ? '<div class="fb-why">' + (hint.jp ? RB.ui.jhtml(hint.jp) + ' ' : '') + esc(hint.en) + '</div>' : '') + '<p class="muted small">Listen again and adjust the tray.</p>');
           }
         }
       };
@@ -17953,36 +18957,39 @@ RB.activities = (function () {
       function render() {
         const L = list[i];
         const t = tier(L.text);
-        P.body.innerHTML = '<div class="small dim">Letter ' + (i + 1) + ' of ' + list.length + ' — the address has run in the rain. Who is it for?</div>' +
-          '<div style="background:#f4ecd8;color:#2a2024;border-radius:8px;padding:0.8em 1em;margin:0.5em 0;box-shadow:inset 0 0 20px rgba(120,90,40,0.2)">' + RB.ui.jhtml(t.jp) + (showEn ? '<div class="en" style="color:#5a4a3a">' + esc(RB.script.enVars(t.en)) + '</div>' : '') + '</div>' +
-          (showEn ? '' : '<button class="btn small" data-tr>Show translation (assisted)</button>') +
-          '<h3>Deliver to…</h3><div class="grid2">' + a.recipients.map((r) => '<button class="btn item" data-to="' + r.id + '" style="text-align:left"><div class="t">' + esc(r.name.en) + ' ' + RB.ui.jhtml(r.name.jp) + '</div><div class="small">' + RB.ui.jhtml(tier(r.desc).jp) + (showEn ? '<div class="dim">' + esc(tier(r.desc).en) + '</div>' : '') + '</div></button>').join('') + '</div><div class="fbwrap"></div>';
+        P.fr.setTitle(RB.ui.jhtml(a.title.jp) + ' ' + esc(a.title.en), 'Letter ' + (i + 1) + ' of ' + list.length);
+        P.body.innerHTML = '<p class="muted small act-lead">The address has run in the rain. Read the letter: who is it for?</p>' +
+          '<article class="letter" aria-label="The letter">' + RB.learnUi.icon('letter') + '<div class="letter-jp">' + RB.ui.jhtml(t.jp) + '</div>' + (showEn ? '<div class="act-en">' + esc(RB.script.enVars(t.en)) + '</div>' : '') + '</article>' +
+          (showEn ? '' : '<div class="act-tr">' + trButton() + '</div>') +
+          '<h3>' + RB.learnUi.icon('companion') + '<span>Deliver to…</span></h3><ul class="entries recips">' + a.recipients.map((r) => '<li><button class="entry recip" data-to="' + r.id + '"><span class="mark">' + RB.learnUi.icon('here') + '</span><span class="body"><span class="t">' + esc(r.name.en) + ' ' + RB.ui.jhtml(r.name.jp) + '</span><span class="d">' + RB.ui.jhtml(tier(r.desc).jp) + (showEn ? '<span class="en">' + esc(tier(r.desc).en) + '</span>' : '') + '</span></span></button></li>').join('') + '</ul>' +
+          '<div class="fbwrap" aria-live="polite"></div>';
         P.foot.innerHTML = '';
       }
       P.pn.onclick = (e) => {
         if (e.target.closest('[data-x]')) { RB.ui.popLayer(P.lay); resolve({ ok: false, cancelled: true }); return; }
         if (e.target.closest('[data-tr]')) { showEn = true; assisted = true; render(); return; }
         const b = e.target.closest('[data-to]');
-        if (!b) return;
+        if (!b || b.disabled) return;
         const L = list[i];
         const fb = P.body.querySelector('.fbwrap');
         if (b.getAttribute('data-to') === L.to) {
           RB.audio && RB.audio.sfx('answer_right');
           if (L.items) RB.learn.record(L.items, { ok: firstTry, mode: 'choice', assisted });
           const why = tier(L.why);
-          fb.className = 'fbwrap fb ok';
-          fb.innerHTML = '✓ Delivered. ' + (why ? (why.jp ? RB.ui.jhtml(why.jp) + ' ' : '') + esc(why.en) : '');
-          P.foot.innerHTML = '<button class="btn primary" data-next>' + (i < list.length - 1 ? 'Next letter ▶' : 'Done ▶') + '</button>';
+          b.classList.add('on');
+          fbSet(fb, 'ok', 'Delivered.', why ? (why.jp ? '<div class="fb-jp">' + RB.ui.jhtml(why.jp) + '</div>' : '') + '<div>' + esc(why.en) + '</div>' : '');
+          P.foot.innerHTML = '<span class="spacer"></span>' + goBtn('data-next', i < list.length - 1 ? 'Next letter' : 'Done');
           P.foot.querySelector('[data-next]').onclick = () => { i++; firstTry = true; showEn = showEnDefault(); if (i >= list.length) { RB.ui.popLayer(P.lay); resolve({ ok: true, mistakes }); } else render(); };
           P.body.querySelectorAll('[data-to]').forEach((x) => (x.disabled = true));
+          P.foot.querySelector('[data-next]').focus({ preventScroll: true });
         } else {
           mistakes++; firstTry = false;
           RB.audio && RB.audio.sfx('answer_wrong');
           const r = a.recipients.find((x) => x.id === b.getAttribute('data-to'));
           const hint = tier(L.hint);
           b.disabled = true;
-          fb.className = 'fbwrap fb no';
-          fb.innerHTML = esc(r.name.en) + ' reads a line and hands it back: “Not mine, I think.” ' + (hint ? (hint.jp ? RB.ui.jhtml(hint.jp) + ' ' : '') + esc(hint.en) : 'Look again for who, where and what.');
+          b.classList.add('tried');
+          fbSet(fb, 'no', 'Not for ' + r.name.en + '.', '<p>' + esc(r.name.en) + ' reads a line and hands it back: “Not mine, I think.”</p>' + (hint ? '<div class="fb-why">' + (hint.jp ? RB.ui.jhtml(hint.jp) + ' ' : '') + esc(hint.en) + '</div>' : '<div class="fb-why">Look again for who, where and what.</div>'));
         }
       };
       P.lay.onCancel = () => {};
@@ -18026,7 +19033,7 @@ RB.activities = (function () {
       if (a.teller) for (const f of frags) await RB.ui.dialogue.say({ who: a.teller, jp: f.jp, en: f.en });
       RB.ui.dialogue.hide();
       const order = {
-        kind: 'order', title: RB.ui.plainJp(a.title.jp) + ' — ' + a.title.en,
+        kind: 'order', title: a.title.en, titleJp: a.title.jp,
         prompt: { en: 'Put the story back in the order it happened.' },
         tiles: frags.map((f) => f.short || f.jp), answer: frags.map((f) => f.short || f.jp),
         orderHint: { en: 'Listen for time words and cause-and-effect.' }, item: a.item,
@@ -18234,25 +19241,46 @@ RB.combat = (function () {
     still: ['#0a0c18', '#1a1c30', '#e4ddc8', '#aea68e'], atlas: ['#c8b890', '#f0e8d0', '#b8b08a', '#a09872'],
   };
 
+  // ---- the scene, framed inside the stage: the free area the overlay leaves ----
+  let stageCss = null, lastLay = null, measureAt = -1e9;
+  function measure() {
+    if (!ui || !ui.stage) { stageCss = null; return; }
+    const r = ui.stage.getBoundingClientRect();
+    stageCss = r.width > 60 && r.height > 60 ? { x: r.left, y: r.top, w: r.width, h: r.height } : null;
+  }
+  function stageBuf(w, h) {
+    const k = RB.render.viewSize().scale || 1;
+    if (!stageCss) return { x: 0, y: 0, w, h };
+    const x = Math.max(0, stageCss.x / k), y = Math.max(0, stageCss.y / k);
+    return { x, y, w: Math.min(w - x, stageCss.w / k), h: Math.min(h - y, stageCss.h / k) };
+  }
   function draw(c, w, h, t) {
+    if (t - measureAt > 400) { measureAt = t; measure(); }
+    const S = stageBuf(w, h);
     const bg = BG[enemy.bg || enemy.region || 'reedwake'] || BG.reedwake;
-    const g = c.createLinearGradient(0, 0, 0, h);
-    g.addColorStop(0, bg[0]); g.addColorStop(0.55, bg[1]); g.addColorStop(0.56, bg[2]); g.addColorStop(1, bg[3]);
-    c.fillStyle = g;
-    c.fillRect(0, 0, w, h);
-    // ground detail
-    for (let i = 0; i < 40; i++) {
-      const x = (i * 97) % w, y = h * 0.58 + ((i * 53) % Math.floor(h * 0.4));
-      c.fillStyle = 'rgba(0,0,0,0.08)';
-      c.fillRect(x, y, 6, 1);
-    }
     const reduce = RB.game.reducedMotion();
     const tt = reduce ? 0 : t;
     const sx = shake > 0 && !reduce ? Math.round(Math.sin(t / 20) * 2) : 0;
     if (shake > 0) shake -= 16;
+    // integer scale only (pixel art), chosen so the whole scene fits the stage
+    const scale = Math.max(1, Math.min(3, Math.floor(Math.min(S.h / 112, S.w / 150))));
+    const ps = scale;
+    const ex = Math.round(S.x + S.w * 0.62) + sx;
+    const ey = Math.round(Math.min(S.y + S.h - 50 * scale, Math.max(S.y + 40 * scale, S.y + S.h * 0.44)));
+    const px = Math.round(S.x + S.w * 0.1), py = Math.round(S.y + S.h - 26 * ps - 4);
+    const hz = Math.max(0, Math.min(h - 1, Math.round(Math.min(ey + 18 * scale, py + 8 * ps))));
+    const g = c.createLinearGradient(0, 0, 0, h);
+    const f = Math.max(0.02, Math.min(0.98, hz / h));
+    g.addColorStop(0, bg[0]); g.addColorStop(f - 0.005, bg[1]); g.addColorStop(f, bg[2]); g.addColorStop(1, bg[3]);
+    c.fillStyle = g;
+    c.fillRect(0, 0, w, h);
+    // ground detail
+    for (let i = 0; i < 40; i++) {
+      const x = (i * 97) % w, y = hz + 4 + ((i * 53) % Math.max(1, Math.floor(h - hz - 4)));
+      c.fillStyle = 'rgba(0,0,0,0.08)';
+      c.fillRect(x, y, 6, 1);
+    }
     // enemy
-    const ex = Math.round(w * 0.48) + sx, ey = Math.round(h * 0.38);
-    const scale = Math.max(1, Math.min(3, Math.floor(h / 110)));
     c.save();
     c.translate(ex, ey);
     c.scale(scale, scale);
@@ -18272,14 +19300,11 @@ RB.combat = (function () {
     }
     // party (backs to us)
     const s = RB.game.s;
-    const ps = Math.max(1, scale);
-    const px = Math.round(w * 0.16), py = Math.round(h * 0.62);
     const look = Object.assign({}, s.player.look);
-    const f = reduce ? 0 : [0, 1, 0, 2][Math.floor(t / 600) % 4];
     c.imageSmoothingEnabled = false;
     c.drawImage(RB.sprites.get(look, 'up', 0), px, py, 16 * ps, 24 * ps);
     if (s.comp) c.drawImage(RB.sprites.get(RB.content.chars[s.comp].look, 'up', 0), px + 20 * ps, py + 6, 16 * ps, 24 * ps);
-    void f;
+    lastLay = { ex, ey, px, py, ps, scale };
     // wards
     if (st) {
       const wardAt = (x, y, n) => {
@@ -18321,6 +19346,11 @@ RB.combat = (function () {
   function addFx(kind, extra) {
     fxList.push(Object.assign({ kind, t0: performance.now(), d: RB.game.reducedMotion() ? 300 : 700 }, extra));
   }
+  // where the party stands (for effects), in scene pixels
+  function partyAt(dx, dy) {
+    const l = lastLay || { px: 20, py: 60, ps: 1 };
+    return { x: l.px + (dx || 8) * l.ps, y: l.py + (dy || 12) * l.ps };
+  }
 
   function tierOf(obj) {
     return RB.activities.tier(obj);
@@ -18350,38 +19380,98 @@ RB.combat = (function () {
     };
   }
 
+  // ---- the overlay: foe slip, telegraph card, stage, party, response dock ----
+  const I = (n, t) => RB.learnUi.icon(n, t);
+  const INTENT_ICON = { strike: 'strike', sweep: 'sweep', heat: 'flame', shroud: 'cloud', charge: 'hourglass', gust: 'gust', mend: 'needle', lie: 'mask', plea: 'history', rest: 'rest', flood: 'waves', chill: 'snow', silence: 'mute', mirror: 'mirror' };
+  const TAG_ICON = [['ward', 'shield'], ['water', 'drop'], ['light', 'sun'], ['heal', 'leaf'], ['wind', 'wind'], ['bind', 'rope'], ['anchor', 'stone'], ['stone', 'stone'], ['fire', 'flame'], ['warm', 'flame'], ['bell', 'bell'], ['voice', 'sound']];
+  // plain attacks whose target the translated telegraph names outright
+  const AIMED = { strike: 1, sweep: 1, gust: 1, flood: 1, chill: 1 };
+  function cardIcon(c) {
+    if (c.kind === 'unravel') return 'knot';
+    if (c.kind === 'answer') return 'history';
+    if (c.kind === 'truth') return 'lens';
+    if (c.kind === 'tech') return 'join';
+    const tags = (c.word && c.word.tags) || [];
+    for (const [t, n] of TAG_ICON) if (tags.indexOf(t) >= 0) return n;
+    return 'words';
+  }
+  function compName() {
+    const s = RB.game.s;
+    return s.comp && RB.content.chars[s.comp] ? RB.content.chars[s.comp].name.en : 'companion';
+  }
   function buildUi() {
     const root = RB.ui.el('div', 'combat-ui');
-    root.innerHTML = '<div class="intent" aria-live="polite"></div><div class="bars"></div><div class="responses"></div><div class="clog hidden" aria-live="polite"></div>';
+    root.innerHTML =
+      '<div class="cb-foe"></div>' +
+      '<div class="cb-side">' +
+        '<section class="intent paper" aria-live="polite" aria-label="What it is about to do"></section>' +
+        '<section class="cb-dock" aria-label="Respond"><h2 class="cb-dock-h">Respond</h2>' +
+          '<div class="responses" role="group" aria-label="Responses"></div>' +
+          '<div class="clog paper hidden" aria-live="polite"></div></section>' +
+      '</div>' +
+      '<div class="cb-stage" aria-hidden="true"></div>' +
+      '<section class="bars cb-party" aria-label="Your party"></section>';
     RB.ui.root.appendChild(root);
-    return {
-      root, intent: root.querySelector('.intent'), bars: root.querySelector('.bars'), resp: root.querySelector('.responses'), log: root.querySelector('.clog'),
-    };
+    const q = (x) => root.querySelector(x);
+    const o = { root, foe: q('.cb-foe'), intent: q('.intent'), stage: q('.cb-stage'), bars: q('.bars'), dock: q('.cb-dock'), resp: q('.responses'), log: q('.clog') };
+    RB.learnUi.guardTaps(o.resp);
+    o.onResize = () => requestAnimationFrame(measure);
+    window.addEventListener('resize', o.onResize);
+    o.ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(o.onResize) : null;
+    if (o.ro) o.ro.observe(o.stage);
+    return o;
   }
   let showIntentEn = false;
+  function enShown() { return RB.game.s.learn.profile === 'F' || showIntentEn; }
   function intentHtml(compact) {
     const it = st.intent;
     const line = intentLine(it);
-    const prof = RB.game.s.learn.profile;
-    const enVisible = prof === 'F' || showIntentEn;
-    let h = '<div class="lbl">' + esc(it.icon + ' ' + it.label) + (st.shroud ? ' · shrouded' : '') + (st.heat ? ' · heat ' + st.heat : '') + (st.charged ? ' · charged' : '') + '</div>';
-    h += line.jp ? RB.ui.jhtml(line.jp, { vars: line.vars }) : '';
-    if (line.en) h += enVisible ? '<div class="en dim small">' + esc(line.en) + '</div>' : (compact ? '' : '<button class="btn small" data-tr>Translate (assisted)</button>');
-    if (!compact && RB.game.s.comp === 'nao' && st.nextIntents.length) h += '<div class="small dim">Nao: “After that — ' + esc(st.nextIntents.map((x) => x.icon + ' ' + x.label).join(', then ')) + '.”</div>';
+    const states = [st.shroud ? 'shrouded' : '', st.heat ? 'heat ' + st.heat : '', st.charged ? 'charged' : ''].filter(Boolean);
+    let h = '<div class="it-label">' + I(INTENT_ICON[it.kind] || 'strike') + '<span class="k">' + esc(it.label) + '</span>' + states.map((x) => '<span class="st">' + esc(x) + '</span>').join('') + '</div>';
+    if (line.jp) h += '<div class="it-jp">' + RB.ui.jhtml(line.jp, { vars: line.vars }) + '</div>';
+    if (line.en) h += enShown() ? '<div class="it-en">' + esc(line.en) + '</div>' : (compact ? '' : '<button class="pbtn quiet tr" data-tr title="Show the English (counts as assisted)">' + I('note') + '<span>Translate <span class="aside">(assisted)</span></span></button>');
+    if (!compact && RB.game.s.comp === 'nao' && st.nextIntents.length) h += '<div class="it-next">' + I('companion') + '<span>Nao: “After that — ' + esc(st.nextIntents.map((x) => x.label).join(', then ')) + '.”</span></div>';
     return h;
+  }
+  function knotsHtml() {
+    let h = '';
+    for (let i = 0; i < st.maxKnots; i++) h += '<span class="kn' + (i < st.knots ? ' tied' : '') + '"></span>';
+    return '<span class="knots" role="img" aria-label="Knots still tied: ' + st.knots + ' of ' + st.maxKnots + '">' + h + '</span><span class="kn-t">' + st.knots + ' / ' + st.maxKnots + ' knots</span>';
   }
   function renderUi() {
     const s = RB.game.s;
-    ui.intent.innerHTML = '<div class="small" style="color:var(--accent)">' + RB.ui.jhtml(enemy.name.jp) + ' ' + esc(enemy.name.en) + ' — knots ' + st.knots + '/' + st.maxKnots + '</div>' + intentHtml(false);
+    const it = st.intent;
+    ui.foe.innerHTML = '<span class="foe-n">' + RB.ui.jhtml(enemy.name.jp) + ' <span class="en">' + esc(enemy.name.en) + '</span></span>' + knotsHtml();
+    ui.intent.innerHTML = intentHtml(false);
     const tr = ui.intent.querySelector('[data-tr]');
     if (tr) tr.onclick = () => { showIntentEn = true; st.assistedRound = true; renderUi(); };
-    const bar = (label, v, max, cls) => '<div>' + esc(label) + ' <span class="dim small">' + v + '/' + max + '</span><div class="bar ' + (cls || '') + '"><i style="width:' + Math.round((100 * v) / max) + '%"></i></div></div>';
-    ui.bars.innerHTML = bar(s.player.name + (st.ward.pc ? ' 🛡' + st.ward.pc : ''), st.pc, st.max) + (s.comp ? bar(RB.content.chars[s.comp].name.en + (st.ward.comp ? ' 🛡' + st.ward.comp : ''), st.comp, st.max) : '') +
-      (s.comp ? bar('Harmony', st.harmony, st.harmonyMax, 'h') : '') + '<div class="small dim">' + (st.assist ? 'Assisted: mistakes cost nothing' : 'Mistakes cost at most 1') + '</div>';
+    // the party: resolve (numbers and bar), wards, harmony; the telegraph's
+    // target is marked once its meaning is on screen (never before)
+    const aimed = enShown() && AIMED[it.kind] ? (it.target === 'both' ? ['pc', 'comp'] : [it.target]) : [];
+    const member = (who, name, v, max, ward) => '<div class="pm' + (aimed.indexOf(who) >= 0 ? ' aimed' : '') + '">' +
+      '<div class="pm-h"><span class="pm-n">' + esc(name) + '</span>' +
+      (ward ? '<span class="pm-w" title="Wards">' + I('shield') + '<span class="sr">wards </span>' + ward + '</span>' : '') +
+      (aimed.indexOf(who) >= 0 ? '<span class="aimtag">' + I('aim') + 'its aim</span>' : '') +
+      '<span class="pm-v">' + v + ' / ' + max + '</span></div>' +
+      '<div class="bar" role="meter" aria-label="' + esc(name) + ' resolve" aria-valuemin="0" aria-valuemax="' + max + '" aria-valuenow="' + v + '"><i style="width:' + Math.round((100 * v) / max) + '%"></i></div></div>';
+    ui.bars.innerHTML = member('pc', s.player.name, st.pc, st.max, st.ward.pc) +
+      (s.comp ? member('comp', compName(), st.comp, st.max, st.ward.comp) : '') +
+      (s.comp ? '<div class="pm harmony"><div class="pm-h"><span class="pm-n">Harmony</span><span class="pm-v">' + st.harmony + ' / ' + st.harmonyMax + '</span></div><div class="bar h" role="meter" aria-label="Harmony" aria-valuemin="0" aria-valuemax="' + st.harmonyMax + '" aria-valuenow="' + st.harmony + '"><i style="width:' + Math.round((100 * st.harmony) / st.harmonyMax) + '%"></i></div></div>' : '') +
+      '<div class="pm-note">' + (st.assist ? 'Assisted: mistakes cost nothing' : 'Mistakes cost at most 1') + '</div>';
+    requestAnimationFrame(measure);
   }
   function words() {
     const s = RB.game.s;
     return s.words.map((id) => RB.content.words[id]).filter(Boolean);
+  }
+  function cardHtml(c, i, hi) {
+    const tgt = c.target ? (c.target === 'comp' ? compName() : 'you') : '';
+    const desc = c.disabled || RB.script.enVars(tgt ? String(c.desc).replace(/\s*\([^)]*\)\s*$/, '') : c.desc);
+    return '<button class="resp rcard" data-i="' + i + '"' + (c.disabled ? ' disabled' : '') + '>' +
+      '<span class="ic">' + I(cardIcon(c)) + '</span>' +
+      '<span class="rc-w"><span class="rc-jp">' + RB.ui.jhtml(hi && c.word && c.word.jpK ? c.word.jpK : c.jp) + '</span><span class="rc-en">' + esc(c.en) + '</span></span>' +
+      (tgt ? '<span class="rc-tgt">on ' + esc(tgt) + '</span>' : '') +
+      '<span class="rc-d">' + (c.disabled ? I('warn') : '') + esc(desc) + '</span></button>';
   }
   function pickCard() {
     return new Promise((resolve) => {
@@ -18394,17 +19484,19 @@ RB.combat = (function () {
         if (c.kind === 'unravel' && st.silenced && (known.has('bell') || known.has('voice'))) c.disabled = 'The hush swallows words: ring a bell or raise a voice first.';
       }
       const hi = s.learn.profile === 'I' || s.learn.profile === 'A';
-      ui.resp.innerHTML = cards.map((c, i) => '<button class="btn resp" data-i="' + i + '"' + (c.disabled ? ' disabled title="' + esc(c.disabled) + '"' : '') + '><span class="ic" aria-hidden="true">' + c.icon + '</span>' +
-        RB.ui.jhtml(hi && c.word && c.word.jpK ? c.word.jpK : c.jp) + '<span class="d">' + esc(c.en) + ' — ' + esc(c.disabled || RB.script.enVars(c.desc)) + '</span></button>').join('') +
-        (st.noFlee ? '' : '<button class="btn small" data-flee>Step back from this encounter</button>');
-      const layer = { el: ui.resp, name: 'cards', parent: ui.root };
+      ui.resp.innerHTML = '<div class="rcards">' + cards.map((c, i) => cardHtml(c, i, hi)).join('') + '</div>' +
+        (st.noFlee ? '' : '<button class="cbtn flee" data-flee>' + I('back') + '<span>Step back from this encounter</span></button>');
+      ui.log.classList.add('hidden');
+      const layer = { el: ui.resp, name: 'cards', parent: ui.dock };
+      const done = (v) => { RB.ui.popLayer(layer); ui.dock.insertBefore(ui.resp, ui.log); resolve(v); };
       ui.resp.onclick = (e) => {
         const b = e.target.closest('[data-i]');
-        if (b) { RB.ui.popLayer(layer); ui.root.appendChild(ui.resp); resolve(cards[+b.getAttribute('data-i')]); return; }
-        if (e.target.closest('[data-flee]')) { RB.ui.popLayer(layer); ui.root.appendChild(ui.resp); resolve({ kind: 'flee' }); }
+        if (b && !b.disabled) { done(cards[+b.getAttribute('data-i')]); return; }
+        if (e.target.closest('[data-flee]')) done({ kind: 'flee' });
       };
       layer.onCancel = () => {};
       RB.ui.pushLayer(layer);
+      ui.dock.insertBefore(ui.resp, ui.log);
     });
   }
   function stepFor(card) {
@@ -18429,6 +19521,15 @@ RB.combat = (function () {
       explain: { jp: w.jpK || w.jp, en: w.en + ' — ' + w.effect },
     });
   }
+  // The situation, carried onto the challenge's task slip: the foe, its
+  // telegraph, and the response (and its target) the player chose.
+  function situationHtml(card) {
+    const tgt = card.target ? (card.target === 'comp' ? compName() : 'you') : '';
+    return '<div class="cb-situ">' +
+      '<div class="cs-foe">' + RB.ui.jhtml(enemy.name.jp) + ' <span class="en">' + esc(enemy.name.en) + '</span> ' + knotsHtml() + '</div>' +
+      '<div class="cs-intent">' + intentHtml(true) + '</div>' +
+      '<div class="cs-chose">' + I(cardIcon(card)) + '<span>You chose <b>' + esc(card.en) + '</b>' + (tgt ? ' — on <b>' + esc(tgt) + '</b>' : '') + '. The encounter waits while you write.</span></div></div>';
+  }
   function say(line, who) {
     return RB.ui.dialogue.say({ who: who || 'narr', jp: line.jp, en: line.en });
   }
@@ -18438,21 +19539,20 @@ RB.combat = (function () {
     return new Promise((r) => setTimeout(r, RB.game.reducedMotion() ? 500 : 900));
   }
   async function playFx(fx) {
-    const { w, h } = RB.render.viewSize();
     for (const f of fx) {
       let msg = '';
       const s = RB.game.s;
       const nm = (who) => (who === 'comp' ? RB.content.chars[s.comp].name.en : s.player.name);
       switch (f.t) {
         case 'unravel': addFx('untie'); RB.audio && RB.audio.sfx('knot_untie'); msg = f.n > 1 ? 'Two knots come loose.' : 'A knot comes loose.'; break;
-        case 'ward': addFx('glyph', { x: w * 0.25, y: h * 0.75 }); RB.audio && RB.audio.sfx('ward'); msg = f.block ? 'The ward catches the blow meant for ' + nm(f.target) + '.' : 'A ward rises before ' + nm(f.target) + '.'; break;
+        case 'ward': addFx('glyph', partyAt(f.target === 'comp' ? 28 : 8, 12)); RB.audio && RB.audio.sfx('ward'); msg = f.block ? 'The ward catches the blow meant for ' + nm(f.target) + '.' : 'A ward rises before ' + nm(f.target) + '.'; break;
         case 'water': addFx('water'); RB.audio && RB.audio.sfx('water'); msg = 'Water hisses over the heat.'; break;
         case 'light': addFx('light'); RB.audio && RB.audio.sfx('light'); msg = 'Light burns the mist away.'; break;
         case 'bind': RB.audio && RB.audio.sfx('ward'); msg = 'The rope holds it fast; the gathered force spills away.'; break;
         case 'heal': addFx('heal'); RB.audio && RB.audio.sfx('heal'); msg = 'You both breathe easier.'; break;
         case 'warm': RB.audio && RB.audio.sfx('light'); msg = 'Warmth spreads through your fingers.'; break;
         case 'bell': RB.audio && RB.audio.sfx('bell'); msg = 'A clear note breaks the hush.'; break;
-        case 'hit': shake = 200; addFx('hit', { x: w * 0.25, y: h * 0.78 }); RB.audio && RB.audio.sfx('party_hit'); msg = nm(f.who) + ' is struck (−' + f.n + ').'; break;
+        case 'hit': shake = 200; addFx('hit', partyAt(f.who === 'comp' ? 28 : 8, 16)); RB.audio && RB.audio.sfx('party_hit'); msg = nm(f.who) + ' is struck (−' + f.n + ').'; break;
         case 'block': RB.audio && RB.audio.sfx('ward'); msg = 'The ward absorbs ' + f.n + '.'; break;
         case 'heat': RB.audio && RB.audio.sfx('enemy_intent'); msg = 'The heat builds (' + f.n + ').'; break;
         case 'shroud': RB.audio && RB.audio.sfx('wind'); msg = 'Mist swallows its knots.'; break;
@@ -18487,6 +19587,7 @@ RB.combat = (function () {
     st.noFlee = !!opts.noFlee || !!enemy.boss;
     showIntentEn = false;
     ui = buildUi();
+    measure();
     await RB.ui.fade(false, 200);
     let outcome = null;
     try {
@@ -18511,7 +19612,7 @@ RB.combat = (function () {
         ui.resp.innerHTML = '';
         const step = stepFor(card);
         const res = await RB.challenge.runStep(step, {
-          header: '<div class="small">' + intentHtml(true) + '</div><div class="small dim">You chose: ' + esc(card.en) + '. The encounter waits while you write.</div>',
+          header: situationHtml(card),
           allowCancel: true, cancelLabel: 'Choose a different response', ctxTag: 'battle:' + enemyId,
         });
         if (res.cancelled) continue;
@@ -18542,8 +19643,8 @@ RB.combat = (function () {
       // Resolve recovers after every encounter: no attrition grinding.
       s.resolve.pc = s.resolve.max;
       s.resolve.comp = s.resolve.max;
-      if (ui) ui.root.remove();
-      ui = null;
+      if (ui) { window.removeEventListener('resize', ui.onResize); if (ui.ro) ui.ro.disconnect(); ui.root.remove(); }
+      ui = null; stageCss = null; lastLay = null;
       await RB.ui.fade(true, 200);
       RB.render.setOverride(null);
       RB.game.popMode('combat');
