@@ -60,19 +60,36 @@ docs/ART_DIRECTION.md.
   overflow at 320/360/390 and 200 % text), tests/e2e/settings.mjs updated,
   tests/unit/ui_contrast.test.mjs. Screenshot tool: tests/e2e/visual.mjs
   (synthetic fixtures; output tests/e2e/out/{before,after}, gitignored).
-- Phase B (next): title (lantern-road scene, prominent Continue, compact
-  storage status), 4-step character creation with live preview, six-slot
-  ledger redesign with Manage area, dialogue as inset correspondence panel
-  (speaker tab, one Next, separate history/replay/translation), help as a
-  note card (desktop) / sheet (phone) with an explicit touch route and hidden
-  on layer changes, combat/challenge/pad in folio materials (no texture under
-  strokes), lessons/activities, HUD with one menu entry above the scrim rule,
-  touch controls (context-labelled action; hidden during dialogue/menus/
-  writing), touch-action none only on canvas/pad/writing canvas (currently
-  on #app), visualViewport keyboard handling, camera composition for small
-  maps (empty bands).
-- Phase C: 2x art (32x32 tiles, ~32x48 characters) on the unchanged 16-px
-  logical grid; cached surfaces.
+- Phase B (in progress):
+  - DONE by the lead (commit 4079011): dialogue as an inset paper sheet with
+    speaker tab, one Next ("More" first for overflowing lines), separate
+    Word help / Translation / Voice / History / Skip controls; replies as
+    numbered paper slips; word help as note card (wide) / bottom sheet
+    (narrow) that pauses what is underneath when tap-opened; HUD with one
+    Menu entry + labelled word-help switch (hidden under panels/dialogue);
+    touch controls (sliding move pad, hold-to-Run, context-labelled Action;
+    hidden in dialogue/menus; handedness/size settings); touch-action none
+    only on canvas/pad; Tab navigates inside panels; --kb from
+    visualViewport; camera composes around the dialogue/touch controls and
+    small maps get a region surround; confirm/notice/toast/card restyled.
+    Test: tests/e2e/play_ui.mjs.
+  - Worker branches (worktrees under .claude/worktrees/, ignored by git),
+    to be merged by the lead: title + six-slot ledger (src/ui/30_title.js,
+    src/styles/40_title.css), character creation in four steps
+    (src/ui/40_create.js, 45_create.css), learning/combat surfaces
+    (src/ui/60_pad.js, 65_challenge.js, 70_lessons.js, 75_activities.js,
+    80_combat.js, 60_learning.css). If a session ends before merging, look
+    for their commits with `git worktree list` / `git branch -a`.
+- Phase C (in progress): art-resolution renderer DONE (commit 031e71a): the
+  world is drawn at 2 art px per logical px (32x32 tiles, 32x48 characters)
+  with hooks tile draw2/anim2, prop draw2, RB.props.STRUCT2,
+  RB.sprites.getArt; legacy art drawn through a x2 transform until
+  replaced. Review tool tests/e2e/art_shots.mjs. Art workers: tiles
+  (20_tiles.js), props/structures + atlas art (25_props.js,
+  src/atlas/05_art.js, content/zz_atlas_decor.js), characters (30_sprites.js,
+  35_portraits.js, portraits to 96 px). Still to do after merges: enemy art
+  in src/ui/80_combat.js, title backdrop at art resolution, UI previews
+  using getArt.
 - Phase D: full suites, viewport matrix, before/after screenshots into
   docs/screenshots/, performance timing, docs.
 
