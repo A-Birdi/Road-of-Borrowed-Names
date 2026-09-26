@@ -76,8 +76,8 @@ docs/ART_DIRECTION.md.
   - MERGED: title + six-slot ledger (src/ui/30_title.js,
     src/styles/40_title.css; test title_ledger.mjs) and character creation
     in four steps (src/ui/40_create.js, 45_create.css; test create.mjs).
-  - Worker branch still open (worktree under .claude/worktrees/, ignored by
-    git), to be merged by the lead: learning/combat surfaces
+  - MERGED: learning/combat surfaces (test learning_ui.mjs). Phase B done.
+    (was: learning/combat surfaces
     (src/ui/60_pad.js, 65_challenge.js, 70_lessons.js, 75_activities.js,
     80_combat.js, 60_learning.css). If a session ends before merging, look
     for their commits with `git worktree list` / `git branch -a`.
@@ -85,12 +85,13 @@ docs/ART_DIRECTION.md.
   world is drawn at 2 art px per logical px (32x32 tiles, 32x48 characters)
   with hooks tile draw2/anim2, prop draw2, RB.props.STRUCT2,
   RB.sprites.getArt; legacy art drawn through a x2 transform until
-  replaced. Review tool tests/e2e/art_shots.mjs. Art workers: tiles
-  (20_tiles.js), props/structures + atlas art (25_props.js,
-  src/atlas/05_art.js, content/zz_atlas_decor.js), characters (30_sprites.js,
-  35_portraits.js, portraits to 96 px). Still to do after merges: enemy art
-  in src/ui/80_combat.js, title backdrop at art resolution, UI previews
-  using getArt.
+  replaced. Review tool tests/e2e/art_shots.mjs. MERGED: ground tiles
+  (src/engine/20_tiles.js + 21_tileart.js), props/buildings (26–29_*.js,
+  src/atlas/05_art.js, chapter prop blocks), characters (31–33_*.js,
+  35_portraits.js + 36_portraithair.js; portraits 96 px; creation previews
+  use getArt/playerImage). In progress (worker): enemy art and battle
+  backgrounds (src/ui/80_combat.js + chapter RB.enemyArt blocks) and the
+  title backdrop at art resolution (src/ui/30_title.js drawBackdrop).
 - Phase D: full suites, viewport matrix, before/after screenshots into
   docs/screenshots/, performance timing, docs.
 

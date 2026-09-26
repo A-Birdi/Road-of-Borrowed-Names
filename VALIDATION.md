@@ -275,3 +275,29 @@ a full re-run of every suite on the final build is recorded at the end.
   (both modes), story_ch1 F mio pass, play_ui all ok, unit 1866.
   The software keyboard was only emulated (visualViewport stub); no real
   phone keyboard was used.
+- **B** Learning/combat merge (2788ac3): `learning_ui.mjs` 13/13 (pad
+  controls distinct and ≥44 px, canvas the only touch-action:none element,
+  mode switch keeps the task, uncertain vs wrong feedback distinguishable,
+  no overflow at 320/360/390 and 200 % text, a touch scroll over choices does
+  not select, resize mid-writing keeps the task, combat shows intent and
+  target at phone size), ui 14/14, systems 4/4, story_ch1 F mio, atlas
+  check, play_ui, shift_load --origin 18/18.
+- **B/S** Layout audit `visual.mjs --check` (3ef41cc build) over 56 states ×
+  7 viewports (360x800, 390x844, 412x915, 844x390, 768x1024, 1280x720,
+  1920x1080): 386/392 clean; the 6 reports were the move pad's arrow
+  glyphs at 844x390, which pass taps to the 128-px pad (the audit now skips
+  pass-through controls). Earlier 360 px run found 34-px rail arrows and
+  22-px insertion points (fixed to 44 and 28 px).
+- **B** Art merges — characters (aa8a66e), props/buildings (f749019), ground
+  tiles (d2dd910): each followed by unit 1866, validator, ui 14/14, systems
+  4/4, shift_load 18/18 (both modes), atlas check, story_ch1, play_ui; one
+  file-mode run of shift_load hit its 60-Enter budget in the New Game walk
+  while seven browser suites shared the CPU (passed alone twice; the walk
+  now allows up to 20 s of presses). **S** art_shots world scenes for
+  rw.village, rw.hall, sg.harbor, co.village, sb.hamlet, lf.town, sa.camp,
+  sa.memories, sg.da_stacks inspected.
+- **B** `perf.mjs` after the art merges (1280x800 @1x): frame work 1.6–3.3 ms,
+  first static build per map 10–102 ms (sg.harbor largest), folio
+  open+close 17 ms, DOM unchanged after 20 cycles. Door transitions now build
+  the new map's art while the screen is still black (RB.render.prewarm).
+  Desktop headless only; phones not measured.
