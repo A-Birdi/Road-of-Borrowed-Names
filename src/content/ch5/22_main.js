@@ -1,5 +1,5 @@
 /* Chapter 5 main quest: the Records Hall, Akari's key, the basement stacks
- * and the first hush conduit, Councillor Yae and the old minutes, Tokuji and
+ * and the first hush conduit, Councillor Tami and the old minutes, Tokuji and
  * Tōya's bell, the crossing to the tower, and the town after the bell. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
@@ -271,26 +271,26 @@ narr: 「{記録|きろく} を 、{穏|おだ}やか に {整|ととの}える 
 narr: {字|じ} は とても {丁寧|ていねい} だ 。{定規|じょうぎ} で {引|ひ}いた よう に {揺|ゆ}れ が ない 。…… {記録館|きろくかん} の {誰|だれ} の {字|じ} でも ない 。|| Very careful handwriting, as if ruled with a straightedge. …It belongs to no one at the Records Hall.
 ?(comp=ren) comp[think]: {紙|かみ} が 、{山|やま} の {上|うえ} の {匂|にお}い が します 。{冷|つめ}たい 、{乾|かわ}いた {匂|にお}い 。|| The paper smells of the mountain. Cold and dry.
 
-# ---- Councillor Yae ------------------------------------------------------------------------------------------------------------------
+# ---- Councillor Tami ------------------------------------------------------------------------------------------------------------------
 @scene lf.yae
-lf_yae: {議員|ぎいん} の ヤエ です よ 。{今日|きょう} も {議会|ぎかい} は {全員|ぜんいん} {賛成|さんせい} 。{早|はや}く {終|お}わって 、{結構|けっこう} な こと です 。|| I'm Councillor Yae. The council was unanimous again today. Finished early. Very nice.
+lf_yae: {議員|ぎいん} の タミ です よ 。{今日|きょう} も {議会|ぎかい} は {全員|ぜんいん} {賛成|さんせい} 。{早|はや}く {終|お}わって 、{結構|けっこう} な こと です 。|| I'm Councillor Tami. The council was unanimous again today. Finished early. Very nice.
 lf_yae[think]: …… {昔|むかし} は 、{夜中|よなか} まで {終|お}わらなかった もの です けど ね 。{何|なに} を あんな に {言|い}い{合|あ}って いた の やら 。|| …In the old days we'd go on past midnight. Heaven knows what we found to argue about.
 pc: {鐘楼|しょうろう} の こと を {聞|き}きたい の です が 。|| I'd like to ask about the bell tower.
 lf_yae: もちろん 、{何|なん} でも どうぞ 。…… {鐘楼|しょうろう} 。{鐘楼|しょうろう} ね 。{特|とく}に {問題|もんだい} は ありません よ 。|| Of course, ask anything. …The bell tower. Yes. No particular problem.
-narr: ヤエ は {微笑|ほほえ}んだ まま 、{少|すこ}し だけ {眉|まゆ} を {寄|よ}せた 。{何|なに} か を {思|おも}い{出|だ}そう と して 、{途中|とちゅう} で {止|と}まった {顔|かお} だ 。|| Yae keeps smiling, but her brow creases slightly: the face of someone who started to remember something and stopped halfway.
+narr: タミ は {微笑|ほほえ}んだ まま 、{少|すこ}し だけ {眉|まゆ} を {寄|よ}せた 。{何|なに} か を {思|おも}い{出|だ}そう と して 、{途中|とちゅう} で {止|と}まった {顔|かお} だ 。|| Tami keeps smiling, but her brow creases slightly: the face of someone who started to remember something and stopped halfway.
 ?(comp=mio) comp[worry]: …… {思|おも}い{出|だ}せない の が 、{苦|くる}しそう 。|| …Not being able to remember seems to hurt her.
 ?(comp=suzu) comp: {台詞|せりふ} を {忘|わす}れた {役者|やくしゃ} の {顔|かお} ね 。{誰|だれ} か が {台本|だいほん} を {見|み}せて あげない と 。|| That's the face of an actor who's forgotten her line. Someone needs to show her the script.
 
 @scene lf.yae_minutes
 lf_yae: それ は …… {議事録|ぎじろく} ？ {見|み}せて ください 。|| Are those… minutes? Let me see.
-narr: ヤエ は {眼鏡|めがね} を かけて 、ゆっくり と {読|よ}み{始|はじ}めた 。|| Yae puts on her spectacles and begins, slowly, to read.
+narr: タミ は {眼鏡|めがね} を かけて 、ゆっくり と {読|よ}み{始|はじ}めた 。|| Tami puts on her spectacles and begins, slowly, to read.
 lf_yae: 「{高瀬|たかせ} より {返答|へんとう} 。{必要|ひつよう} なら {開|あ}ける 。」|| "Reply from Takase: we'll open it if it's needed."
 lf_yae: 「{本|ほん}{議会|ぎかい} は 、これ を {開|あ}けない {約束|やくそく} と {受|う}け{取|と}る 。」|| "This council takes this as a promise not to open it."
 lf_yae: 「{使|つか}い の トウヤ 、{異議|いぎ} を {唱|とな}える 。{高瀬|たかせ} は {開|あ}ける {気|き} で いる 、と 。」|| "The messenger Tōya objects: Takase means to open it, he says."
 lf_yae: 「{書記|しょき} カサネ 、{反論|はんろん} 。{文面|ぶんめん} は 『{必要|ひつよう} なら』 で あり 、{約束|やくそく} と {読|よ}む べき で ある 。」|| "The clerk, Kasane, disagrees: the text says 'if it's needed', and should be read as a promise."
 lf_yae: 「{異議|いぎ} は 、{記録|きろく} に {残|のこ}す 。」|| "The objection is noted in the record."
 lf_yae: 「{鐘楼|しょうろう} は 、{施錠|せじょう} の まま と する 。」|| "The bell tower shall remain locked."
-narr: ヤエ の {指|ゆび} が 、{頁|ページ} の {上|うえ} で {止|と}まった 。|| Yae's finger stops on the page.
+narr: タミ の {指|ゆび} が 、{頁|ページ} の {上|うえ} で {止|と}まった 。|| Tami's finger stops on the page.
 lf_yae[sad]: …… カサネ 。そう 、カサネ だった 。{几帳面|きちょうめん} な {子|こ} で ね 。{誰|だれ} より も {字|じ} が きれい で 。|| …Kasane. Yes, it was Kasane. Such a meticulous young thing. Better handwriting than anyone.
 lf_yae: {弟|おとうと} の トウヤ が 、{高瀬|たかせ} から あの {返事|へんじ} を {持|も}って {帰|かえ}った の よ 。{雨|あめ} の {中|なか} を {走|はし}って 。|| It was Tōya, the younger brother, who carried that reply back from Takase. Ran all the way in the rain.
 lf_yae: {向|む}こう の {声|こえ} の {調子|ちょうし} を 、あの {子|こ} は {聞|き}いて いた 。だから {反対|はんたい} した 。|| He had heard how they said it over there. That's why he objected.
@@ -396,8 +396,8 @@ narr: {誰|だれ} も が 、{少|すこ}し {驚|おどろ}いた {顔|かお}
 ?(comp=mio) comp[laugh]: みんな 、{顔色|かおいろ} が いい 。{怒|おこ}ってる のに 、{元気|げんき} そう 。|| Everyone's colour looks better. They're angry, and they look so well.
 ?(comp=ren) comp[smile]: {灯|あか}り の {笠|かさ} に 、{通|とお}り の {名前|なまえ} が {戻|もど}って います 。…… {同|おな}じ {通|とお}り に {二|ふた}つ {名前|なまえ} が ある の は 、{見|み}なかった こと に します 。|| The street names are back on the lamp shades. …I'll pretend I didn't see the one street with two names.
 ?(comp=suzu) comp[laugh]: {野次|やじ} が {飛|と}んでる ！ {大入|おおい}り {満員|まんいん} ね ！|| People are heckling! A full house!
-narr: {議会堂|ぎかいどう} の ほう から 、{鈴|すず} の {音|おと} が {聞|き}こえる 。ヤエ が 、{集会|しゅうかい} を {呼|よ}びかけて いる 。|| From the Council Chamber comes the sound of a handbell. Yae is calling a meeting.
-!journal {町|まち} に {声|こえ} が {戻|もど}った 。ヤエ が {議会|ぎかい} を {開|ひら}く 。|| Voices have come back to the town. Yae is convening the council.
+narr: {議会堂|ぎかいどう} の ほう から 、{鈴|すず} の {音|おと} が {聞|き}こえる 。タミ が 、{集会|しゅうかい} を {呼|よ}びかけて いる 。|| From the Council Chamber comes the sound of a handbell. Tami is calling a meeting.
+!journal {町|まち} に {声|こえ} が {戻|もど}った 。タミ が {議会|ぎかい} を {開|ひら}く 。|| Voices have come back to the town. Tami is convening the council.
 
 @scene lf.yae_after
 !if ch5_done -> later

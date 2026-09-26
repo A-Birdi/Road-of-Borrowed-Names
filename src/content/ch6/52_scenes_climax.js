@@ -85,7 +85,7 @@ kasane[closed]: …… いい でしょう 。 {誰|だれ}か に {話|はな}�
 kasane[sad]: あの {子|こ} と {何|なに} を {言|い}い{合|あ}った の か 、 {思|おも}い{出|だ}せない の です 。 {思|おも}い{出|だ}せる の は 、 {次|つぎ} の {朝|あさ} {机|つくえ} に あった 、 あの {四語|よんご} だけ 。 || I can't remember what the two of us said to each other. All I remember is the four words on my desk the next morning.
 kasane: {高瀬|たかせ} の {返事|へんじ} と 、 {一字|いちじ} {一句|いっく} {同|おな}じ 。 {皮肉|ひにく} か 、 {恨|うら}み{言|ごと} か 。 {曖昧|あいまい} な {言葉|ことば} で 、 {最後|さいご} まで 。 || Word for word the same as Takase's reply. Sarcasm? A reproach? Vague to the very last.
 kasane: だから わたし は …… {曖昧|あいまい} な {言葉|ことば} を 、 {世界|せかい} から {取|と}り{除|のぞ}こう と した 。 || So I tried… to remove vague words from the world.
-?(seen.lf.yae_after) pc: ヤエ さん から {伝言|でんごん} が ある 。 {議事録|ぎじろく} に は 、 あなた の {反論|はんろん} も 、 トウヤ の {異議|いぎ} も 、 {両方|りょうほう} ちゃんと {残|のこ}って いた って 。 || A message from Yae: the minutes kept both — your counter-argument and Tōya's objection. Both, properly recorded.
+?(seen.lf.yae_after) pc: タミ さん から {伝言|でんごん} が ある 。 {議事録|ぎじろく} に は 、 あなた の {反論|はんろん} も 、 トウヤ の {異議|いぎ} も 、 {両方|りょうほう} ちゃんと {残|のこ}って いた って 。 || A message from Tami: the minutes kept both — your counter-argument and Tōya's objection. Both, properly recorded.
 ?(seen.lf.yae_after) kasane[surprise]: …… {両方|りょうほう} 。 || …Both.
 pc: あなた が {自分|じぶん} で {預|あず}けた {言葉|ことば} が 、 {下|した} の {部屋|へや} に ある 。 || The words you set down yourself are in the room below.
 !if item.sa_letter_kasane -> have

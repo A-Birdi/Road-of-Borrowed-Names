@@ -805,4 +805,5 @@ RB.lex.add(RB.lex.parseTable(`
 耳飾り|みみかざり|n|I|earring
 睨めっこ|にらめっこ|n|A|staring contest
 読み返す|よみかえす|v5s|I|to reread
+ねえ||aux|I|(rough casual) = ない, not
 `), 'ch2');

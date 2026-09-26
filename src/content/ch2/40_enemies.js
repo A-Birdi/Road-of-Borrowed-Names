@@ -191,7 +191,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
   E('sg.tideclerk', {
     name: { en: 'The Tide Clerk', jp: '{潮|しお} の {書記|しょき}' }, art: 'clerk', artOpts: { col: '#3a5a7a' }, look: { custom: 'sg_clerk' },
-    boss: true, music: 'boss', knots: 7, pool: POOL,
+    boss: true, music: 'boss', knots: 6, pool: POOL,
     pattern: ['strike', 'lie:gone', 'rest', 'charge', 'strike'],
     intents: {
       'lie:gone': {

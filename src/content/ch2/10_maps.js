@@ -276,7 +276,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     npcs: [{ id: 'wataru', x: 5, y: 5, dir: 'left', talk: [
       { if: 'post', scene: 'sg.wataru_post' },
       { if: 'quest.sg_main<=1&!sg_wataru_met', scene: 'sg.wataru_first' },
-      { if: 'quest.sg_main=4', scene: 'sg.wataru_confront' },
+      { if: 'quest.sg_main=4&!sg_wataru_confessed', scene: 'sg.wataru_confront' },
       { if: 'sg_wataru_resolved&!sg_extension_done', scene: 'sg.wataru_letter' },
       { if: 'sg_wataru_resolved', scene: 'sg.wataru_after' },
       { scene: 'sg.wataru_busy' }] }],

@@ -105,7 +105,7 @@ narr: 「{議題|ぎだい} {二|に} ： {灯落|ひおち} の {植木|うえ�
 !end
 :after
 narr: {掲示板|けいじばん} は 、{貼|は}り{紙|がみ} で いっぱい だ 。「{反対|はんたい}！」 「{再|さい}{審議|しんぎ} を {求|もと}む」 「{植木|うえき} は {好|す}きな {形|かたち} で いい」 。|| The board is covered in notices. "Opposed!" "Motion to reconsider." "Shrubs any shape you like."
-narr: {一番|いちばん} {上|うえ} に 、ヤエ の {字|じ} 。「{次|つぎ} の {議会|ぎかい} は {長|なが}く なります 。お{弁当|べんとう} を {持|も}って きなさい 。」|| At the top, in Yae's hand: "The next council meeting will be long. Bring a packed lunch."
+narr: {一番|いちばん} {上|うえ} に 、タミ の {字|じ} 。「{次|つぎ} の {議会|ぎかい} は {長|なが}く なります 。お{弁当|べんとう} を {持|も}って きなさい 。」|| At the top, in Tami's hand: "The next council meeting will be long. Bring a packed lunch."
 
 @scene lf.statue
 narr: {石|いし} の {像|ぞう} 。{台座|だいざ} に 「{調和|ちょうわ}」 と {彫|ほ}って ある 。{像|ぞう} の {顔|かお} は 、{誰|だれ} に も {似|に}て いない 。|| A stone statue. On the plinth: "Harmony". Its face resembles no one at all.

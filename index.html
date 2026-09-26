@@ -11859,15 +11859,17 @@ RB.world = (function () {
     const [dx, dy] = DIRS[p.dir];
     return [p.x + dx, p.y + dy];
   }
-  function propAt(x, y) {
+  // Interactable prop at a tile (one with a scene or text); with `any`, any
+  // visible prop there (used to talk across counters that have no scene).
+  function propAt(x, y, any) {
     const st = s();
     let best = null;
     for (const pr of W.map.props) {
-      if (pr.auto && !pr.text && !pr.scene) continue;
+      if (pr.auto && !pr.text && !pr.scene && !any) continue;
       if (pr.if && !RB.state.test(st, pr.if)) continue;
       const pd = RB.props.P[pr.p];
       const pw = pr.w || (pd && pd.w) || 1, ph = pr.h || (pd && pd.h) || 1;
-      if (x >= pr.x && x < pr.x + pw && y >= pr.y && y < pr.y + ph && (pr.text || pr.scene)) best = pr;
+      if (x >= pr.x && x < pr.x + pw && y >= pr.y && y < pr.y + ph && (any || pr.text || pr.scene)) best = pr;
     }
     return best;
   }
@@ -11892,7 +11894,8 @@ RB.world = (function () {
     if (n && talkTo(n)) return;
     // talk across a counter
     const pr = propAt(fx, fy);
-    if (pr && (pr.p === 'counter' || pr.across)) {
+    const cpr = pr || propAt(fx, fy, true);
+    if (cpr && (cpr.p === 'counter' || cpr.across)) {
       const [dx, dy] = DIRS[W.player.dir];
       const n2 = actorAt(fx + dx, fy + dy);
       if (n2 && talkTo(n2)) return;
@@ -21022,6 +21025,7 @@ RB.lex.add(RB.lex.parseTable(`
 耳飾り|みみかざり|n|I|earring
 睨めっこ|にらめっこ|n|A|staring contest
 読み返す|よみかえす|v5s|I|to reread
+ねえ||aux|I|(rough casual) = ない, not
 `), 'ch2');
 
 
@@ -21678,7 +21682,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     npcs: [{ id: 'wataru', x: 5, y: 5, dir: 'left', talk: [
       { if: 'post', scene: 'sg.wataru_post' },
       { if: 'quest.sg_main<=1&!sg_wataru_met', scene: 'sg.wataru_first' },
-      { if: 'quest.sg_main=4', scene: 'sg.wataru_confront' },
+      { if: 'quest.sg_main=4&!sg_wataru_confessed', scene: 'sg.wataru_confront' },
       { if: 'sg_wataru_resolved&!sg_extension_done', scene: 'sg.wataru_letter' },
       { if: 'sg_wataru_resolved', scene: 'sg.wataru_after' },
       { scene: 'sg.wataru_busy' }] }],
@@ -24580,7 +24584,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
   E('sg.tideclerk', {
     name: { en: 'The Tide Clerk', jp: '{潮|しお} の {書記|しょき}' }, art: 'clerk', artOpts: { col: '#3a5a7a' }, look: { custom: 'sg_clerk' },
-    boss: true, music: 'boss', knots: 7, pool: POOL,
+    boss: true, music: 'boss', knots: 6, pool: POOL,
     pattern: ['strike', 'lie:gone', 'rest', 'charge', 'strike'],
     intents: {
       'lie:gone': {
@@ -33251,7 +33255,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     portrait: { eyes: 'round', style: 'short', collar: 'high', bg: '#2c2a48' },
   });
   ch('lf_yae', {
-    name: { en: 'Councillor Yae', jp: 'ヤエ' }, voice: { pitch: 0.78 },
+    name: { en: 'Councillor Tami', jp: 'タミ' }, voice: { pitch: 0.78 },
     look: { skin: 2, hair: 'bun', hairColor: 6, cloth: ['#6a3a5a', '#502a44', '#e8c070'], shape: 'robe', acc: ['cane'], age: 'old' },
     portrait: { eyes: 'narrow', style: 'bun', age: 'old', collar: 'high', pins: true, bg: '#3a2438' },
   });
@@ -33383,12 +33387,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
       S('{窓口|まどぐち} で {閲覧|えつらん} の {申請書|しんせいしょ} を {出|だ}して 、{左|ひだり} の {机|つくえ} の {台帳|だいちょう} を {読|よ}む 。', 'File a records request at the Records Hall counter, then read the flood-year ledger on the desk to the left.'),
       S('{洪水|こうずい} の {年|とし} の {記録|きろく} は 「{特記|とっき}{事項|じこう} なし」 。{事務所|じむしょ} の アカリ に {聞|き}いて みる 。', 'The flood year\'s ledger says "nothing of note". Ask Akari in the clerks\' office (north-east).'),
       S('{記録館|きろくかん} の {地下|ちか}{書庫|しょこ} を {調|しら}べる 。', 'Search the basement stacks under the Records Hall (stairs behind the counter).'),
-      S('{古|ふる}い {議事録|ぎじろく} を {議会|ぎかい} の ヤエ に {見|み}せる 。', 'Show the old minutes to Councillor Yae in the Council Chamber.'),
+      S('{古|ふる}い {議事録|ぎじろく} を {議会|ぎかい} の タミ に {見|み}せる 。', 'Show the old minutes to Councillor Tami in the Council Chamber.'),
       S('{水門|すいもん} の トクジ に 、{洪水|こうずい} の {夜|よる} の こと を {聞|き}く 。', 'Ask old Tokuji, by the sluice gates south of town, about the night of the flood.'),
       S('トクジ の {舟|ふね} で {鐘楼|しょうろう} へ {渡|わた}る 。', 'Take Tokuji\'s boat from the sluice landing out to the bell tower.'),
       S('{水門|すいもん} の {札|ふだ} を {読|よ}み 、{鐘|かね} の {間|ま} の {水|みず} を {抜|ぬ}く 。', 'Inside the tower: read each gate plate carefully and drain the way down to the bell chamber.'),
       S('{沈|しず}んだ {鐘|かね} を {鳴|な}らす 。', 'Ring the drowned bell.'),
-      S('{灯落|ひおち} に {戻|もど}って 、{何|なに} が {変|か}わった か {見|み}る 。', 'Go back to Lanternfall and see what has changed. Councillor Yae is calling a meeting.'),
+      S('{灯落|ひおち} に {戻|もど}って 、{何|なに} が {変|か}わった か {見|み}る 。', 'Go back to Lanternfall and see what has changed. Councillor Tami is calling a meeting.'),
     ],
     reward: { flags: ['lf_main_reward'] },
   };
@@ -34339,7 +34343,7 @@ narr: 「{議題|ぎだい} {二|に} ： {灯落|ひおち} の {植木|うえ�
 !end
 :after
 narr: {掲示板|けいじばん} は 、{貼|は}り{紙|がみ} で いっぱい だ 。「{反対|はんたい}！」 「{再|さい}{審議|しんぎ} を {求|もと}む」 「{植木|うえき} は {好|す}きな {形|かたち} で いい」 。|| The board is covered in notices. "Opposed!" "Motion to reconsider." "Shrubs any shape you like."
-narr: {一番|いちばん} {上|うえ} に 、ヤエ の {字|じ} 。「{次|つぎ} の {議会|ぎかい} は {長|なが}く なります 。お{弁当|べんとう} を {持|も}って きなさい 。」|| At the top, in Yae's hand: "The next council meeting will be long. Bring a packed lunch."
+narr: {一番|いちばん} {上|うえ} に 、タミ の {字|じ} 。「{次|つぎ} の {議会|ぎかい} は {長|なが}く なります 。お{弁当|べんとう} を {持|も}って きなさい 。」|| At the top, in Tami's hand: "The next council meeting will be long. Bring a packed lunch."
 
 @scene lf.statue
 narr: {石|いし} の {像|ぞう} 。{台座|だいざ} に 「{調和|ちょうわ}」 と {彫|ほ}って ある 。{像|ぞう} の {顔|かお} は 、{誰|だれ} に も {似|に}て いない 。|| A stone statue. On the plinth: "Harmony". Its face resembles no one at all.
@@ -34666,7 +34670,7 @@ narr: {布|ぬの} は {外|はず}されて いる 。|| The cloth has been tak
 
 /* ==== src/content/ch5/22_main.js ==== */
 /* Chapter 5 main quest: the Records Hall, Akari's key, the basement stacks
- * and the first hush conduit, Councillor Yae and the old minutes, Tokuji and
+ * and the first hush conduit, Councillor Tami and the old minutes, Tokuji and
  * Tōya's bell, the crossing to the tower, and the town after the bell. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
@@ -34938,26 +34942,26 @@ narr: 「{記録|きろく} を 、{穏|おだ}やか に {整|ととの}える 
 narr: {字|じ} は とても {丁寧|ていねい} だ 。{定規|じょうぎ} で {引|ひ}いた よう に {揺|ゆ}れ が ない 。…… {記録館|きろくかん} の {誰|だれ} の {字|じ} でも ない 。|| Very careful handwriting, as if ruled with a straightedge. …It belongs to no one at the Records Hall.
 ?(comp=ren) comp[think]: {紙|かみ} が 、{山|やま} の {上|うえ} の {匂|にお}い が します 。{冷|つめ}たい 、{乾|かわ}いた {匂|にお}い 。|| The paper smells of the mountain. Cold and dry.
 
-# ---- Councillor Yae ------------------------------------------------------------------------------------------------------------------
+# ---- Councillor Tami ------------------------------------------------------------------------------------------------------------------
 @scene lf.yae
-lf_yae: {議員|ぎいん} の ヤエ です よ 。{今日|きょう} も {議会|ぎかい} は {全員|ぜんいん} {賛成|さんせい} 。{早|はや}く {終|お}わって 、{結構|けっこう} な こと です 。|| I'm Councillor Yae. The council was unanimous again today. Finished early. Very nice.
+lf_yae: {議員|ぎいん} の タミ です よ 。{今日|きょう} も {議会|ぎかい} は {全員|ぜんいん} {賛成|さんせい} 。{早|はや}く {終|お}わって 、{結構|けっこう} な こと です 。|| I'm Councillor Tami. The council was unanimous again today. Finished early. Very nice.
 lf_yae[think]: …… {昔|むかし} は 、{夜中|よなか} まで {終|お}わらなかった もの です けど ね 。{何|なに} を あんな に {言|い}い{合|あ}って いた の やら 。|| …In the old days we'd go on past midnight. Heaven knows what we found to argue about.
 pc: {鐘楼|しょうろう} の こと を {聞|き}きたい の です が 。|| I'd like to ask about the bell tower.
 lf_yae: もちろん 、{何|なん} でも どうぞ 。…… {鐘楼|しょうろう} 。{鐘楼|しょうろう} ね 。{特|とく}に {問題|もんだい} は ありません よ 。|| Of course, ask anything. …The bell tower. Yes. No particular problem.
-narr: ヤエ は {微笑|ほほえ}んだ まま 、{少|すこ}し だけ {眉|まゆ} を {寄|よ}せた 。{何|なに} か を {思|おも}い{出|だ}そう と して 、{途中|とちゅう} で {止|と}まった {顔|かお} だ 。|| Yae keeps smiling, but her brow creases slightly: the face of someone who started to remember something and stopped halfway.
+narr: タミ は {微笑|ほほえ}んだ まま 、{少|すこ}し だけ {眉|まゆ} を {寄|よ}せた 。{何|なに} か を {思|おも}い{出|だ}そう と して 、{途中|とちゅう} で {止|と}まった {顔|かお} だ 。|| Tami keeps smiling, but her brow creases slightly: the face of someone who started to remember something and stopped halfway.
 ?(comp=mio) comp[worry]: …… {思|おも}い{出|だ}せない の が 、{苦|くる}しそう 。|| …Not being able to remember seems to hurt her.
 ?(comp=suzu) comp: {台詞|せりふ} を {忘|わす}れた {役者|やくしゃ} の {顔|かお} ね 。{誰|だれ} か が {台本|だいほん} を {見|み}せて あげない と 。|| That's the face of an actor who's forgotten her line. Someone needs to show her the script.
 
 @scene lf.yae_minutes
 lf_yae: それ は …… {議事録|ぎじろく} ？ {見|み}せて ください 。|| Are those… minutes? Let me see.
-narr: ヤエ は {眼鏡|めがね} を かけて 、ゆっくり と {読|よ}み{始|はじ}めた 。|| Yae puts on her spectacles and begins, slowly, to read.
+narr: タミ は {眼鏡|めがね} を かけて 、ゆっくり と {読|よ}み{始|はじ}めた 。|| Tami puts on her spectacles and begins, slowly, to read.
 lf_yae: 「{高瀬|たかせ} より {返答|へんとう} 。{必要|ひつよう} なら {開|あ}ける 。」|| "Reply from Takase: we'll open it if it's needed."
 lf_yae: 「{本|ほん}{議会|ぎかい} は 、これ を {開|あ}けない {約束|やくそく} と {受|う}け{取|と}る 。」|| "This council takes this as a promise not to open it."
 lf_yae: 「{使|つか}い の トウヤ 、{異議|いぎ} を {唱|とな}える 。{高瀬|たかせ} は {開|あ}ける {気|き} で いる 、と 。」|| "The messenger Tōya objects: Takase means to open it, he says."
 lf_yae: 「{書記|しょき} カサネ 、{反論|はんろん} 。{文面|ぶんめん} は 『{必要|ひつよう} なら』 で あり 、{約束|やくそく} と {読|よ}む べき で ある 。」|| "The clerk, Kasane, disagrees: the text says 'if it's needed', and should be read as a promise."
 lf_yae: 「{異議|いぎ} は 、{記録|きろく} に {残|のこ}す 。」|| "The objection is noted in the record."
 lf_yae: 「{鐘楼|しょうろう} は 、{施錠|せじょう} の まま と する 。」|| "The bell tower shall remain locked."
-narr: ヤエ の {指|ゆび} が 、{頁|ページ} の {上|うえ} で {止|と}まった 。|| Yae's finger stops on the page.
+narr: タミ の {指|ゆび} が 、{頁|ページ} の {上|うえ} で {止|と}まった 。|| Tami's finger stops on the page.
 lf_yae[sad]: …… カサネ 。そう 、カサネ だった 。{几帳面|きちょうめん} な {子|こ} で ね 。{誰|だれ} より も {字|じ} が きれい で 。|| …Kasane. Yes, it was Kasane. Such a meticulous young thing. Better handwriting than anyone.
 lf_yae: {弟|おとうと} の トウヤ が 、{高瀬|たかせ} から あの {返事|へんじ} を {持|も}って {帰|かえ}った の よ 。{雨|あめ} の {中|なか} を {走|はし}って 。|| It was Tōya, the younger brother, who carried that reply back from Takase. Ran all the way in the rain.
 lf_yae: {向|む}こう の {声|こえ} の {調子|ちょうし} を 、あの {子|こ} は {聞|き}いて いた 。だから {反対|はんたい} した 。|| He had heard how they said it over there. That's why he objected.
@@ -35063,8 +35067,8 @@ narr: {誰|だれ} も が 、{少|すこ}し {驚|おどろ}いた {顔|かお}
 ?(comp=mio) comp[laugh]: みんな 、{顔色|かおいろ} が いい 。{怒|おこ}ってる のに 、{元気|げんき} そう 。|| Everyone's colour looks better. They're angry, and they look so well.
 ?(comp=ren) comp[smile]: {灯|あか}り の {笠|かさ} に 、{通|とお}り の {名前|なまえ} が {戻|もど}って います 。…… {同|おな}じ {通|とお}り に {二|ふた}つ {名前|なまえ} が ある の は 、{見|み}なかった こと に します 。|| The street names are back on the lamp shades. …I'll pretend I didn't see the one street with two names.
 ?(comp=suzu) comp[laugh]: {野次|やじ} が {飛|と}んでる ！ {大入|おおい}り {満員|まんいん} ね ！|| People are heckling! A full house!
-narr: {議会堂|ぎかいどう} の ほう から 、{鈴|すず} の {音|おと} が {聞|き}こえる 。ヤエ が 、{集会|しゅうかい} を {呼|よ}びかけて いる 。|| From the Council Chamber comes the sound of a handbell. Yae is calling a meeting.
-!journal {町|まち} に {声|こえ} が {戻|もど}った 。ヤエ が {議会|ぎかい} を {開|ひら}く 。|| Voices have come back to the town. Yae is convening the council.
+narr: {議会堂|ぎかいどう} の ほう から 、{鈴|すず} の {音|おと} が {聞|き}こえる 。タミ が 、{集会|しゅうかい} を {呼|よ}びかけて いる 。|| From the Council Chamber comes the sound of a handbell. Tami is calling a meeting.
+!journal {町|まち} に {声|こえ} が {戻|もど}った 。タミ が {議会|ぎかい} を {開|ひら}く 。|| Voices have come back to the town. Tami is convening the council.
 
 @scene lf.yae_after
 !if ch5_done -> later
@@ -36996,7 +37000,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   fallback('umi', { name: T('Umi', 'ウミ'), look: { skin: 2, hair: 'long', hairColor: 1, cloth: ['#3a6a7a', '#2a5260', '#e8d8b0'], shape: 'dress', acc: [] }, portrait: { eyes: 'sharp', style: 'long', bg: '#1e3440' } });
   fallback('lf_toya', { name: T('A young voice', '{若|わか}い {声|こえ}'), look: { skin: 1, hair: 'spiky', hairColor: 2, cloth: ['#6c8cbc', '#4a6c9c', '#e0e8f8'], shape: 'tunic', acc: ['scarf'], scarfCol: '#e0e8f8' }, portrait: { eyes: 'round', style: 'spiky', acc: ['scarf'], scarfCol: '#e0e8f8', bg: '#1a2a44' } });
   fallback('kanta', { name: T('Kanta', 'カンタ'), look: { skin: 3, hair: 'short', hairColor: 1, cloth: ['#5a6a7a', '#465464', '#e8d8b0'], shape: 'coat', acc: ['scarf'], scarfCol: '#a85a4a' }, portrait: { eyes: 'round', style: 'short', acc: ['scarf'], scarfCol: '#a85a4a', bg: '#243040' } });
-  fallback('lf_yae', { name: T('Councillor Yae', 'ヤエ'), look: { skin: 2, hair: 'bun', hairColor: 6, cloth: ['#6a3a5a', '#502a44', '#e8c070'], shape: 'robe', acc: [], age: 'old' }, portrait: { eyes: 'narrow', style: 'bun', age: 'old', collar: 'high', pins: true, bg: '#3a2438' } });
+  fallback('lf_yae', { name: T('Councillor Tami', 'タミ'), look: { skin: 2, hair: 'bun', hairColor: 6, cloth: ['#6a3a5a', '#502a44', '#e8c070'], shape: 'robe', acc: [], age: 'old' }, portrait: { eyes: 'narrow', style: 'bun', age: 'old', collar: 'high', pins: true, bg: '#3a2438' } });
   fallback('wataru', { name: T('Wataru', 'ワタル'), look: { skin: 2, hair: 'short', hairColor: 1, cloth: ['#5a6a7a', '#465464', '#e8e0cc'], shape: 'coat', acc: ['glasses'] }, portrait: { eyes: 'round', style: 'short', collar: 'high', acc: ['glasses'], bg: '#2a3440' } });
 
   // ---- items --------------------------------------------------------------------------
@@ -39441,7 +39445,7 @@ kasane[closed]: …… いい でしょう 。 {誰|だれ}か に {話|はな}�
 kasane[sad]: あの {子|こ} と {何|なに} を {言|い}い{合|あ}った の か 、 {思|おも}い{出|だ}せない の です 。 {思|おも}い{出|だ}せる の は 、 {次|つぎ} の {朝|あさ} {机|つくえ} に あった 、 あの {四語|よんご} だけ 。 || I can't remember what the two of us said to each other. All I remember is the four words on my desk the next morning.
 kasane: {高瀬|たかせ} の {返事|へんじ} と 、 {一字|いちじ} {一句|いっく} {同|おな}じ 。 {皮肉|ひにく} か 、 {恨|うら}み{言|ごと} か 。 {曖昧|あいまい} な {言葉|ことば} で 、 {最後|さいご} まで 。 || Word for word the same as Takase's reply. Sarcasm? A reproach? Vague to the very last.
 kasane: だから わたし は …… {曖昧|あいまい} な {言葉|ことば} を 、 {世界|せかい} から {取|と}り{除|のぞ}こう と した 。 || So I tried… to remove vague words from the world.
-?(seen.lf.yae_after) pc: ヤエ さん から {伝言|でんごん} が ある 。 {議事録|ぎじろく} に は 、 あなた の {反論|はんろん} も 、 トウヤ の {異議|いぎ} も 、 {両方|りょうほう} ちゃんと {残|のこ}って いた って 。 || A message from Yae: the minutes kept both — your counter-argument and Tōya's objection. Both, properly recorded.
+?(seen.lf.yae_after) pc: タミ さん から {伝言|でんごん} が ある 。 {議事録|ぎじろく} に は 、 あなた の {反論|はんろん} も 、 トウヤ の {異議|いぎ} も 、 {両方|りょうほう} ちゃんと {残|のこ}って いた って 。 || A message from Tami: the minutes kept both — your counter-argument and Tōya's objection. Both, properly recorded.
 ?(seen.lf.yae_after) kasane[surprise]: …… {両方|りょうほう} 。 || …Both.
 pc: あなた が {自分|じぶん} で {預|あず}けた {言葉|ことば} が 、 {下|した} の {部屋|へや} に ある 。 || The words you set down yourself are in the room below.
 !if item.sa_letter_kasane -> have
@@ -40069,6 +40073,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
     { p: 'stone_marker', x: 9, y: 8, scene: 'at.decor_saplings', if: 'atlas_restore_3' },
     { p: 'bush', x: 11, y: 8, if: 'atlas_restore_3' },
   ]);
+  // 4 — Snowbell: waymarker stones back on the Star Stair
+  add('sb.obs_path', [
+    { p: 'stone_marker', x: 16, y: 37, scene: 'at.decor_mark300', if: 'atlas_restore_4' },
+    { p: 'stone_marker', x: 8, y: 23, scene: 'at.decor_mark200', if: 'atlas_restore_4' },
+    { p: 'stone_marker', x: 20, y: 15, scene: 'at.decor_mark100', if: 'atlas_restore_4' },
+  ]);
   // 5 — Lanternfall: a second board for objections
   add('lf.town', [{ p: 'noticeboard', x: 29, y: 17, scene: 'at.decor_objections', if: 'atlas_restore_5' }]);
   // 6 — the lantern road: a new lantern with a new place name
@@ -40088,6 +40098,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 火袋|ひぶくろ|n|A|light chamber (the lit box of a lantern)
 新田|しんでん|n|A|newly reclaimed fields; (in place names) a newly settled village
 葦原|あしはら|n|A|reed plain
+道標|みちしるべ|n|A|waymarker, signpost
   `), 'atlas_decor');
 })(RB.content);
 
@@ -40096,6 +40107,16 @@ RB.script.add(`
 narr: {新|あたら}しい {看板|かんばん} だ 。 ペンキ が まだ {乾|かわ}いて いない 。 || A new signboard. The paint isn't dry yet.
 narr: 「 {渡|わた}し{場|ば} ── {夜明|よあ}け に {出|で}ます 」 || "Ferry landing — we cross at dawn."
 ?(comp) comp: {前|まえ} の {看板|かんばん} は 、 {字|じ} が {消|き}えて いた よね 。 || The old sign had lost its letters, hadn't it?
+
+@scene at.decor_mark300
+narr: {新|あたら}しい {道標|みちしるべ} だ 。 「 {天文台|てんもんだい} まで あと {三百|さんびゃく}{段|だん} 」 || A new waymarker. "Observatory: 300 steps to go."
+
+@scene at.decor_mark200
+narr: 「 {天文台|てんもんだい} まで あと {二百|にひゃく}{段|だん} 」 || "Observatory: 200 steps to go."
+?(comp) comp: {雪|ゆき} が {降|ふ}って も 、 これ なら {迷|まよ}わない ね 。 || Even in snow, nobody will get lost now.
+
+@scene at.decor_mark100
+narr: 「 {天文台|てんもんだい} まで あと {百|ひゃく}{段|だん} 。 {灯|あか}り が {見|み}えたら 、 もう すぐ 」 || "Observatory: 100 steps to go. Once you can see the lamp, you're nearly there."
 
 @scene at.decor_saplings
 narr: {苗木|なえぎ} {一本|いっぽん} ずつ に 、 {小|ちい}さな {名札|なふだ} が ついて いる 。 || Every sapling has a small name tag.

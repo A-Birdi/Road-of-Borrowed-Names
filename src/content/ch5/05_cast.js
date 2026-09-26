@@ -21,7 +21,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     portrait: { eyes: 'round', style: 'short', collar: 'high', bg: '#2c2a48' },
   });
   ch('lf_yae', {
-    name: { en: 'Councillor Yae', jp: 'ヤエ' }, voice: { pitch: 0.78 },
+    name: { en: 'Councillor Tami', jp: 'タミ' }, voice: { pitch: 0.78 },
     look: { skin: 2, hair: 'bun', hairColor: 6, cloth: ['#6a3a5a', '#502a44', '#e8c070'], shape: 'robe', acc: ['cane'], age: 'old' },
     portrait: { eyes: 'narrow', style: 'bun', age: 'old', collar: 'high', pins: true, bg: '#3a2438' },
   });
@@ -153,12 +153,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
       S('{窓口|まどぐち} で {閲覧|えつらん} の {申請書|しんせいしょ} を {出|だ}して 、{左|ひだり} の {机|つくえ} の {台帳|だいちょう} を {読|よ}む 。', 'File a records request at the Records Hall counter, then read the flood-year ledger on the desk to the left.'),
       S('{洪水|こうずい} の {年|とし} の {記録|きろく} は 「{特記|とっき}{事項|じこう} なし」 。{事務所|じむしょ} の アカリ に {聞|き}いて みる 。', 'The flood year\'s ledger says "nothing of note". Ask Akari in the clerks\' office (north-east).'),
       S('{記録館|きろくかん} の {地下|ちか}{書庫|しょこ} を {調|しら}べる 。', 'Search the basement stacks under the Records Hall (stairs behind the counter).'),
-      S('{古|ふる}い {議事録|ぎじろく} を {議会|ぎかい} の ヤエ に {見|み}せる 。', 'Show the old minutes to Councillor Yae in the Council Chamber.'),
+      S('{古|ふる}い {議事録|ぎじろく} を {議会|ぎかい} の タミ に {見|み}せる 。', 'Show the old minutes to Councillor Tami in the Council Chamber.'),
       S('{水門|すいもん} の トクジ に 、{洪水|こうずい} の {夜|よる} の こと を {聞|き}く 。', 'Ask old Tokuji, by the sluice gates south of town, about the night of the flood.'),
       S('トクジ の {舟|ふね} で {鐘楼|しょうろう} へ {渡|わた}る 。', 'Take Tokuji\'s boat from the sluice landing out to the bell tower.'),
       S('{水門|すいもん} の {札|ふだ} を {読|よ}み 、{鐘|かね} の {間|ま} の {水|みず} を {抜|ぬ}く 。', 'Inside the tower: read each gate plate carefully and drain the way down to the bell chamber.'),
       S('{沈|しず}んだ {鐘|かね} を {鳴|な}らす 。', 'Ring the drowned bell.'),
-      S('{灯落|ひおち} に {戻|もど}って 、{何|なに} が {変|か}わった か {見|み}る 。', 'Go back to Lanternfall and see what has changed. Councillor Yae is calling a meeting.'),
+      S('{灯落|ひおち} に {戻|もど}って 、{何|なに} が {変|か}わった か {見|み}る 。', 'Go back to Lanternfall and see what has changed. Councillor Tami is calling a meeting.'),
     ],
     reward: { flags: ['lf_main_reward'] },
   };

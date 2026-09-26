@@ -14,6 +14,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
     { p: 'stone_marker', x: 9, y: 8, scene: 'at.decor_saplings', if: 'atlas_restore_3' },
     { p: 'bush', x: 11, y: 8, if: 'atlas_restore_3' },
   ]);
+  // 4 — Snowbell: waymarker stones back on the Star Stair
+  add('sb.obs_path', [
+    { p: 'stone_marker', x: 16, y: 37, scene: 'at.decor_mark300', if: 'atlas_restore_4' },
+    { p: 'stone_marker', x: 8, y: 23, scene: 'at.decor_mark200', if: 'atlas_restore_4' },
+    { p: 'stone_marker', x: 20, y: 15, scene: 'at.decor_mark100', if: 'atlas_restore_4' },
+  ]);
   // 5 — Lanternfall: a second board for objections
   add('lf.town', [{ p: 'noticeboard', x: 29, y: 17, scene: 'at.decor_objections', if: 'atlas_restore_5' }]);
   // 6 — the lantern road: a new lantern with a new place name
@@ -33,6 +39,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 火袋|ひぶくろ|n|A|light chamber (the lit box of a lantern)
 新田|しんでん|n|A|newly reclaimed fields; (in place names) a newly settled village
 葦原|あしはら|n|A|reed plain
+道標|みちしるべ|n|A|waymarker, signpost
   `), 'atlas_decor');
 })(RB.content);
 
@@ -41,6 +48,16 @@ RB.script.add(`
 narr: {新|あたら}しい {看板|かんばん} だ 。 ペンキ が まだ {乾|かわ}いて いない 。 || A new signboard. The paint isn't dry yet.
 narr: 「 {渡|わた}し{場|ば} ── {夜明|よあ}け に {出|で}ます 」 || "Ferry landing — we cross at dawn."
 ?(comp) comp: {前|まえ} の {看板|かんばん} は 、 {字|じ} が {消|き}えて いた よね 。 || The old sign had lost its letters, hadn't it?
+
+@scene at.decor_mark300
+narr: {新|あたら}しい {道標|みちしるべ} だ 。 「 {天文台|てんもんだい} まで あと {三百|さんびゃく}{段|だん} 」 || A new waymarker. "Observatory: 300 steps to go."
+
+@scene at.decor_mark200
+narr: 「 {天文台|てんもんだい} まで あと {二百|にひゃく}{段|だん} 」 || "Observatory: 200 steps to go."
+?(comp) comp: {雪|ゆき} が {降|ふ}って も 、 これ なら {迷|まよ}わない ね 。 || Even in snow, nobody will get lost now.
+
+@scene at.decor_mark100
+narr: 「 {天文台|てんもんだい} まで あと {百|ひゃく}{段|だん} 。 {灯|あか}り が {見|み}えたら 、 もう すぐ 」 || "Observatory: 100 steps to go. Once you can see the lamp, you're nearly there."
 
 @scene at.decor_saplings
 narr: {苗木|なえぎ} {一本|いっぽん} ずつ に 、 {小|ちい}さな {名札|なふだ} が ついて いる 。 || Every sapling has a small name tag.

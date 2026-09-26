@@ -324,15 +324,17 @@ RB.world = (function () {
     const [dx, dy] = DIRS[p.dir];
     return [p.x + dx, p.y + dy];
   }
-  function propAt(x, y) {
+  // Interactable prop at a tile (one with a scene or text); with `any`, any
+  // visible prop there (used to talk across counters that have no scene).
+  function propAt(x, y, any) {
     const st = s();
     let best = null;
     for (const pr of W.map.props) {
-      if (pr.auto && !pr.text && !pr.scene) continue;
+      if (pr.auto && !pr.text && !pr.scene && !any) continue;
       if (pr.if && !RB.state.test(st, pr.if)) continue;
       const pd = RB.props.P[pr.p];
       const pw = pr.w || (pd && pd.w) || 1, ph = pr.h || (pd && pd.h) || 1;
-      if (x >= pr.x && x < pr.x + pw && y >= pr.y && y < pr.y + ph && (pr.text || pr.scene)) best = pr;
+      if (x >= pr.x && x < pr.x + pw && y >= pr.y && y < pr.y + ph && (any || pr.text || pr.scene)) best = pr;
     }
     return best;
   }
@@ -357,7 +359,8 @@ RB.world = (function () {
     if (n && talkTo(n)) return;
     // talk across a counter
     const pr = propAt(fx, fy);
-    if (pr && (pr.p === 'counter' || pr.across)) {
+    const cpr = pr || propAt(fx, fy, true);
+    if (cpr && (cpr.p === 'counter' || cpr.across)) {
       const [dx, dy] = DIRS[W.player.dir];
       const n2 = actorAt(fx + dx, fy + dy);
       if (n2 && talkTo(n2)) return;
