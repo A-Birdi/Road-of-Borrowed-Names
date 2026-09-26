@@ -154,6 +154,96 @@ export function install() {
     }
     return { ok: true, log };
   }
-  window.RBDrive = { run, sites, route, ran };
+  // ---- goal pursuit ---------------------------------------------------------
+  // What a scene can change: flags set, quest stages, items given, words
+  // taught (following !call). Used to rank sites by the progress they offer.
+  const provCache = {};
+  function provides(id, depth) {
+    if (provCache[id]) return provCache[id];
+    const out = { flags: [], quests: [], items: [], words: [] };
+    const sc = C.scenes[id];
+    if (sc && (depth || 0) < 4) {
+      for (const c of sc.cmds) {
+        const a = c.args || [];
+        if (c.op === 'set') out.flags.push(...a);
+        else if (c.op === 'quest') out.quests.push([a[0], a[1] || 'start']);
+        else if (c.op === 'give') out.items.push(a[0]);
+        else if (c.op === 'word') out.words.push(a[0]);
+        else if (c.op === 'call') { const sub = provides(a[0], (depth || 0) + 1); for (const k in out) out[k].push(...sub[k]); }
+      }
+    }
+    return (provCache[id] = out);
+  }
+  function gain(id, mainQuest) {
+    const s = S(), p = provides(id);
+    let main = 0, other = 0;
+    for (const [q, st] of p.quests) {
+      const cur = s.quests[q];
+      const newer = !cur || (st === 'done' ? !cur.done : st !== 'start' && +st > cur.stage);
+      if (newer) { if (q === mainQuest) main++; else other++; }
+    }
+    for (const f of p.flags) if (!s.flags[f]) other++;
+    for (const it of p.items) if (!s.inv[it]) other++;
+    for (const w of p.words) if (!s.words.includes(w)) other++;
+    return { main, other, unseen: !s.seen[id] };
+  }
+  // all sites on maps with the given prefix
+  function allSites(prefix) {
+    const out = [];
+    for (const mid in C.maps) {
+      if (prefix && !mid.startsWith(prefix)) continue;
+      const m = C.maps[mid];
+      for (const n of m.npcs || []) { const first = test(n.if) && talkOf(n).find((o) => test(o.if)); if (first) out.push({ kind: 'npc', map: mid, n, scene: first.scene }); }
+      for (const pr of m.props || []) if (pr.scene) out.push({ kind: 'prop', map: mid, pr, scene: pr.scene });
+      for (const tr of m.triggers || []) out.push({ kind: 'trig', map: mid, tr, scene: tr.scene });
+      for (const f of m.foes || []) if (f.scene) out.push({ kind: 'foe', map: mid, f, scene: f.scene });
+      for (const ev of m.onEnter || []) out.push({ kind: 'enter', map: mid, ev, scene: ev.scene });
+    }
+    return out.filter((st) => st.scene && available(st));
+  }
+  // state fingerprint (quest timestamps excluded: they change on every update)
+  const sigOf = () => {
+    const s = S();
+    return Object.keys(s.flags).filter((k) => !/^(enter|named|trig|foe):/.test(k)).sort().join(',') + '|' +
+      Object.keys(s.quests).sort().map((k) => k + ':' + (s.quests[k].done ? 'd' : s.quests[k].stage)).join(',') + '|' +
+      Object.keys(s.inv).sort().map((k) => k + ':' + s.inv[k]).join(',') + '|' + s.words.join(',') + '|' + s.comp + '/' + s.provisional;
+  };
+  // Pursue a flag: repeatedly do the reachable site offering the most progress
+  // (main-quest stage > other new state > unseen scene), nearest first.
+  async function pursue(target, opts) {
+    opts = opts || {};
+    const max = opts.max || 600;
+    const tried = new Set();
+    const log = [];
+    for (let i = 0; i < max; i++) {
+      await T.idle(60000);
+      if (S().flags[target]) return { ok: true, steps: i, log };
+      const here = RB.world.W.map.id;
+      const sig = sigOf();
+      let best = null;
+      for (const st of allSites(opts.prefix)) {
+        const key = sig + '|' + st.kind + '|' + st.map + '|' + st.scene;
+        if (tried.has(key)) continue;
+        const g = gain(st.scene, opts.main);
+        const tier = g.main ? 3 : g.other ? 2 : g.unseen ? 1 : 0;
+        if (!tier) continue;
+        const r = route(here, st.map);
+        if (!r) continue;
+        const score = tier * 1000 - r.length;
+        if (!best || score > best.score) best = { st, r, score, key };
+      }
+      if (!best) return { ok: false, steps: i, log: log.slice(-25), fail: 'no site offers progress towards ' + target, map: here, quests: S().quests };
+      tried.add(best.key);
+      const before = ran.length;
+      try {
+        await walk(best.r);
+        if (ran.indexOf(best.st.scene, before) < 0 && available(best.st)) await fire(best.st);
+      } catch (e) { log.push('ERR ' + best.st.scene + ': ' + e.message); continue; }
+      log.push(best.st.scene + ' (' + best.st.kind + '@' + best.st.map + ')');
+    }
+    return { ok: !!S().flags[target], steps: max, log: log.slice(-25), fail: 'step limit' };
+  }
+
+  window.RBDrive = { run, pursue, sites, route, ran, provides };
   return true;
 }
