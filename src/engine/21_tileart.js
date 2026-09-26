@@ -1671,5 +1671,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   if (T.shallow) T.shallow.anim2 = anim('shallow');
   if (T.darkwater) T.darkwater.anim2 = anim('dark');
 
-  RB.tileArt = { kit, STYLE };
+  // flush(): blit a pending row strip now (the renderer may call it at the end
+  // of a static-layer build; otherwise a microtask does it).
+  RB.tileArt = { kit, STYLE, flush };
 })();
