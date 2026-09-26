@@ -1,0 +1,378 @@
+/* New campaign (src/ui/40_create.js): the stepped registration in the folio —
+ * a route of four stations on the cloth, the traveller's sheet (portrait and
+ * full figure on paper) and one scrolling page of real controls — plus the
+ * prologue's caption slip, the optional placement and the New Game+ choice.
+ * Layouts: phones stack a compact traveller slip above the page (with an
+ * Inspect view); short landscape puts the traveller in a side column; wide
+ * screens show the sheet and the page as a two-page spread. */
+
+.folio-create [hidden], .folio-place [hidden], .folio-ngplus [hidden], .cr-prologue [hidden] { display: none !important; }
+
+/* ---- frame ---------------------------------------------------------------------- */
+.folio-create .folio-head { min-height: 40px; padding-bottom: 2px; }
+.folio-create .folio-head h2 { max-width: none; flex: 1 1 11em; }
+.folio-create .folio-head .meta { flex: 0 0 auto; }
+.folio-create .tabslot { container-type: inline-size; min-width: 0; position: relative; z-index: 3; }
+.folio-create .folio-foot { container-type: inline-size; flex-wrap: nowrap; align-items: center; gap: 10px; padding-top: 8px; }
+.folio-create .folio-foot .cbtn { flex: 0 1 auto; justify-content: center; text-align: center; }
+.folio-create .folio-foot .spacer { flex: 1 1 0; }
+.cr-back.gone { visibility: hidden; }
+/* the one forward action: a paper button on the cloth, marked by the ribbon */
+.cbtn.cr-primary { background: var(--paper); color: var(--ink); border-color: var(--paper); font-weight: 700; box-shadow: inset 0 -3px 0 var(--ribbon); padding: 0.2em 1.1em; line-height: 1.25; }
+.cbtn.cr-primary:hover { background: #fffaf0; }
+.cbtn.cr-primary svg { stroke-width: 2.4; }
+.folio-create .folio-foot .cr-primary { flex: 0 1 17em; }
+@container (max-width: 20em) { .cr-next .to { display: none; } }
+@container (max-width: 15em) { .cr-go .to { display: none; } }
+
+/* ---- the route: four stations on a thread ------------------------------------------ */
+.cr-route { position: relative; padding: 0 2px 6px; }
+.cr-route ol { list-style: none; display: flex; margin: 0 auto; padding: 0; max-width: 40em; }
+.cr-route li { position: relative; flex: 1 1 0; min-width: 0; display: flex; justify-content: center; }
+/* the road between stations: dashed ahead, sewn through where you have been */
+.cr-route li + li::before {
+  content: ""; position: absolute; top: calc(4px + 0.8em - 1px); left: calc(-50% + 1.15em); right: calc(50% + 1.15em);
+  border-top: 2px dashed var(--thread); opacity: 0.7; pointer-events: none;
+}
+.cr-route li.done + li::before, .cr-route li.cur + li.done::before { border-top-style: solid; opacity: 1; }
+.cr-route button {
+  position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+  min-width: var(--tap); min-height: var(--tap); max-width: 100%; padding: 4px 6px 2px; margin: 0;
+  background: transparent; border: 0; border-radius: var(--r-2); color: var(--on-cloth-2); font: inherit; cursor: pointer; touch-action: manipulation;
+}
+.cr-route .dot {
+  display: flex; align-items: center; justify-content: center; width: 1.6em; height: 1.6em; border-radius: 50%;
+  border: 2px solid var(--thread); background: var(--cloth-800); color: var(--on-cloth); font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums;
+}
+.cr-route .dot svg { width: 1em; height: 1em; stroke-width: 2.8; }
+.cr-route .lbl { font-size: 0.8em; line-height: 1.2; white-space: nowrap; }
+.cr-route li.cur .dot { background: var(--paper); border-color: var(--paper); color: var(--ink); box-shadow: 0 0 0 3px var(--ribbon); }
+.cr-route li.cur .lbl { color: var(--on-cloth); font-weight: 700; }
+.cr-route li.done .dot { background: var(--thread); border-color: var(--thread); color: var(--cloth-950); }
+.cr-route li.done .lbl { color: var(--on-cloth); }
+.cr-route li.todo .dot { border-style: dashed; color: var(--on-cloth-2); }
+.cr-route button:disabled { cursor: default; }
+.cr-route button:not(:disabled):hover .lbl { text-decoration: underline; text-underline-offset: 0.2em; }
+.cr-route li:not(.cur) button:not(:disabled):hover .dot { box-shadow: 0 0 0 2px var(--on-cloth-2); }
+.cr-route button:focus-visible { outline: 3px solid var(--focus-cloth); outline-offset: 0; }
+.cr-route-cur { display: none; }
+/* too narrow for four labels (small phones, large text): numbers only, and the
+ * current station named on its own line — never clipped */
+@container (max-width: 23em) {
+  .cr-route .lbl { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .cr-route button { padding-bottom: 0; }
+  .cr-route-cur { display: block; margin: 1px 0 0; text-align: center; color: var(--on-cloth); font-weight: 700; font-size: 0.85em; line-height: 1.25; overflow-wrap: anywhere; }
+}
+
+/* ---- body: traveller + page ------------------------------------------------------------ */
+.cr-body { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); gap: 6px; min-height: 0; min-width: 0; }
+.no-sheet .cr-body { grid-template-rows: minmax(0, 1fr); }
+.cr-page { min-height: 0; padding-top: 12px; }
+
+/* the traveller (compact slip by default) */
+.cr-sheet {
+  position: relative; min-width: 0; color: var(--ink);
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "figs sum btn"; align-items: center; gap: 4px 12px;
+  background: var(--paper-2); border: 1px solid var(--paper-edge); border-radius: 3px; padding: 5px 8px 5px 8px;
+  box-shadow: 0 2px 0 var(--paper-3);
+}
+.cr-figs { grid-area: figs; display: flex; align-items: flex-end; gap: 6px; }
+/* an arched mount for the portrait: the figure sits on paper, not in a dark box */
+.cr-port {
+  border: 1px solid var(--paper-edge); border-radius: 48% 48% 4px 4px / 34% 34% 4px 4px; overflow: hidden;
+  background: radial-gradient(ellipse at 50% 38%, #fbf6e8 0 45%, var(--paper-3) 100%);
+}
+.cr-port canvas { display: block; width: 56px; height: 56px; image-rendering: pixelated; }
+.cr-fig { position: relative; padding: 0 3px 3px; }
+.cr-fig::after { content: ""; position: absolute; left: 14%; right: 14%; bottom: 0; height: 7px; border-radius: 50%; background: rgba(38, 31, 21, 0.2); }
+.cr-fig canvas { position: relative; z-index: 1; display: block; width: 32px; height: 48px; image-rendering: pixelated; }
+.cr-sum { grid-area: sum; min-width: 0; }
+.cr-nm { font-family: var(--serif); font-weight: 600; font-size: 1.12em; line-height: 1.25; overflow-wrap: anywhere; }
+.cr-nm .jp-n { display: inline-block; font-family: var(--jp-font); font-weight: 400; font-size: 0.88em; color: var(--ink-2); margin-left: 0.25em; }
+.cr-sub { font-size: 0.86em; color: var(--ink-2); line-height: 1.3; }
+.cr-empty { color: var(--ink-3); font-style: italic; font-weight: 400; }
+.cr-kick { display: none; }
+.cr-expand { grid-area: btn; flex-direction: column; gap: 1px; min-width: 3.6em; padding: 4px 0.45em 3px; font-size: 0.8em; line-height: 1.1; }
+.cr-expand svg { width: 1.45em; height: 1.45em; }
+.cr-sheet.expanded .cr-expand { flex-direction: row; gap: 0.4em; font-size: 0.95em; padding: 0 0.8em; }
+.cr-sheet.expanded .cr-expand svg { width: 1.2em; height: 1.2em; }
+.cr-turn { grid-area: turn; display: none; justify-content: center; gap: 10px; }
+.cr-turn .pbtn { padding: 0; width: var(--tap); }
+.cr-reg { grid-area: reg; display: none; margin: 0.2em 0 0; }
+.cr-reg > div { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 0.7em; padding: 0.35em 0.1em; border-bottom: 1px dotted var(--paper-edge); }
+.cr-reg dt { flex: 0 0 8.4em; color: var(--ink-3); font-size: 0.86em; }
+.cr-reg dd { margin: 0; flex: 1 1 7em; min-width: 0; color: var(--ink); overflow-wrap: anywhere; }
+.cr-note { grid-area: note; display: none; margin: 0.5em 0 0; font-size: 0.86em; color: var(--ink-3); }
+/* cramped (small phones, or large text on any phone): the scrim is the query
+ * container, so this follows the text size as well as the width */
+.cr-scrim { container-type: inline-size; }
+@container (max-width: 22em) {
+  .folio-create .folio-head h2 { font-size: 1.05em; }
+  .folio-create .folio-head .meta { display: none; }
+  .cr-route-cur .n { display: none; }
+  .cr-sheet:not(.expanded) { gap: 4px 8px; padding: 4px 6px; }
+  .cr-sheet:not(.expanded) .cr-port canvas { width: 48px; height: 48px; }
+  .cr-sheet:not(.expanded) .cr-fig canvas { width: 24px; height: 36px; }
+  .cr-sheet:not(.expanded) .cr-nm { font-size: 1em; }
+  .cr-sheet:not(.expanded) .cr-sub, .cr-sheet:not(.expanded) .cr-nm .jp-n { display: none; }
+  .cr-sheet:not(.expanded) .cr-expand { min-width: var(--tap); padding: 0; }
+  .cr-sheet:not(.expanded) .cr-expand .tx, .folio-create .cr-back > span {
+    position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+  }
+  .folio-create .cr-back { padding: 0; width: var(--tap); flex: none; }
+}
+/* Inspect: a larger portrait and figure without leaving the step */
+.cr-sheet.expanded {
+  grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "sum btn" "figs figs" "turn turn";
+  max-height: calc(56 * var(--vh)); overflow: auto; overscroll-behavior: contain; touch-action: pan-y pinch-zoom; padding: 8px 10px 10px;
+}
+.cr-sheet.expanded .cr-figs { justify-content: center; gap: 22px; padding: 6px 0 2px; }
+.cr-sheet.expanded .cr-port canvas { width: 144px; height: 144px; }
+.cr-sheet.expanded .cr-fig canvas { width: 96px; height: 144px; }
+.cr-sheet.expanded .cr-turn { display: flex; }
+
+/* ---- the page ----------------------------------------------------------------------------- */
+.cr-page .cr-h { margin-top: 0; font-size: 1.22em; }
+.cr-h:focus { outline: none; }
+.cr-h:focus-visible { outline: 2px dashed var(--focus-paper); outline-offset: 3px; }
+.cr-lede { color: var(--ink-2); margin: 0.25em 0 1em; }
+.leaf h4.cr-kicker { font: 600 0.8em var(--ui-font); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); margin: 1.5em 0 0.4em; }
+.cr-group { margin: 0 0 1.35em; }
+fieldset.cr-group > legend { margin-bottom: 0.45em; }
+.cr-selected { font-weight: 400; color: var(--ink-2); }
+.cr-page .pbtn { max-width: 100%; text-align: left; line-height: 1.3; padding-top: 0.25em; padding-bottom: 0.25em; }
+
+/* text fields: label above, full width up to a comfortable measure */
+.cr-text input[type=text] { display: block; width: 100%; max-width: 24em; font-size: 1.1em; }
+.cr-text input[type=text]:focus { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+.cr-text input[aria-invalid=true] { border-color: var(--warn-ink); box-shadow: inset 0 0 0 1px var(--warn-ink); }
+.cr-err { display: flex; gap: 0.45em; align-items: flex-start; margin-top: 0.45em; color: var(--warn-ink); font-weight: 600; font-size: 0.93em; line-height: 1.35; }
+.cr-err svg { width: 1.2em; height: 1.2em; flex: none; margin-top: 0.05em; }
+.cr-suggest { margin-top: 0.2em; padding-left: 0; padding-right: 0; }
+
+/* shared: the real input covers its choice, so the whole face is the target */
+.cr-opt, .cr-sw, .cr-tile, .cr-entry, .cr-check { position: relative; touch-action: manipulation; }
+.cr-opt > input, .cr-sw > input, .cr-tile > input, .cr-entry > input, .cr-check > input {
+  position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; z-index: 2;
+}
+
+/* radio chips (few exclusive options) */
+.cr-opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.cr-opt { display: inline-flex; max-width: 100%; }
+.cr-opt > .face {
+  display: inline-flex; align-items: center; gap: 0.55em; min-height: var(--tap); padding: 0.3em 0.95em; max-width: 100%;
+  border: 1px solid var(--paper-edge); border-radius: var(--r-1); background: var(--paper); color: var(--ink); line-height: 1.3;
+}
+.cr-opt > .face::before { content: ""; flex: none; width: 0.85em; height: 0.85em; border-radius: 50%; border: 2px solid var(--ink-3); }
+.cr-opt:hover > .face { background: var(--paper-2); }
+.cr-opt > input:checked + .face { border-color: var(--ink); box-shadow: inset 0 -3px 0 var(--ribbon); font-weight: 600; background: #fffaf0; }
+.cr-opt > input:checked + .face::before { background: var(--ink); border-color: var(--ink); box-shadow: inset 0 0 0 2px var(--paper); }
+.cr-opt > input:focus-visible + .face { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.cr-opt .jline { line-height: 1.9; }
+
+.cr-check { display: flex; margin-top: 0.6em; }
+.cr-check > .face { display: inline-flex; align-items: center; gap: 0.6em; min-height: var(--tap); }
+.cr-check > .face::before { content: ""; flex: none; width: 1.05em; height: 1.05em; border: 2px solid var(--ink-3); border-radius: 3px; background: #fffaf0; }
+.cr-check > input:checked + .face::before { background: var(--ink); border-color: var(--ink); box-shadow: inset 0 0 0 3px #fffaf0; }
+.cr-check > input:focus-visible + .face { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.cr-custom { margin: -0.5em 0 1.3em; padding: 0.4em 0.8em 0.3em; border-left: 3px solid var(--ribbon); background: rgba(255, 255, 255, 0.35); }
+.cr-custom > .hint { margin: 0.2em 0 0.5em; color: var(--ink-3); font-size: 0.9em; }
+.cr-cps { display: grid; grid-template-columns: repeat(auto-fit, minmax(7.5em, 1fr)); gap: 8px 12px; }
+.cr-cp .lab { display: block; font-weight: 600; font-size: 0.92em; margin-bottom: 0.2em; }
+.cr-cp input[type=text] { width: 100%; }
+
+/* the "selected" mark: a tick badge (shape) as well as the ring and the label */
+.cr-tick {
+  position: absolute; top: -7px; right: -7px; z-index: 1; display: none; align-items: center; justify-content: center;
+  width: 20px; height: 20px; border-radius: 50%; background: var(--ink); color: var(--paper); box-shadow: 0 0 0 2px var(--paper);
+}
+.cr-tick svg { width: 13px; height: 13px; stroke-width: 3.2; }
+input:checked + .face .cr-tick { display: flex; }
+
+/* swatches: pigment dabs for skin, skeins for hair, cloth squares with a hem */
+.cr-swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(4.1em, 1fr)); gap: 10px 4px; }
+.cr-sw { display: block; min-width: 0; }
+.cr-sw .face { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 5px 2px 3px; border-radius: var(--r-2); }
+.cr-sw .chip { position: relative; flex: none; width: 44px; height: 44px; border: 1px solid rgba(38, 31, 21, 0.62); }
+.cr-sw .nm { font-size: 0.82em; line-height: 1.2; text-align: center; color: var(--ink-2); overflow-wrap: anywhere; }
+.cr-sw:hover .face { background: rgba(193, 138, 42, 0.1); }
+.cr-sw > input:checked + .face .chip { box-shadow: 0 0 0 3px var(--paper), 0 0 0 5px var(--ink); }
+.cr-sw > input:checked + .face .nm { color: var(--ink); font-weight: 700; }
+.cr-sw > input:focus-visible + .face { outline: 3px dashed var(--focus-paper); outline-offset: 0; }
+.cr-sw-skin .chip { border-radius: 50%; background: radial-gradient(circle at 34% 30%, var(--c0) 0 52%, var(--c1) 100%); }
+.cr-sw-hair .chip {
+  border-radius: 46% 46% 40% 40% / 34% 34% 66% 66%;
+  background: linear-gradient(170deg, var(--c2) 0 12%, transparent 12%),
+    repeating-linear-gradient(100deg, var(--c1) 0 4px, var(--c0) 4px 7px);
+}
+.cr-sw-cloth .chip {
+  border-radius: 3px;
+  background: linear-gradient(to bottom, transparent 72%, var(--c2) 72% 82%, transparent 82%),
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.09) 0 1px, transparent 1px 4px),
+    linear-gradient(135deg, var(--c0) 0 58%, var(--c1) 100%);
+}
+
+/* picture tiles: hairstyles and cuts drawn with the game's own portrait/sprite art */
+.cr-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(4.7em, 1fr)); gap: 8px; }
+.cr-tile { display: block; min-width: 0; }
+.cr-tile .face {
+  position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 3px; height: 100%;
+  min-height: var(--tap); padding: 7px 4px 8px; border: 1px solid var(--paper-edge); border-radius: var(--r-2); background: #f7efdb;
+}
+.cr-tile canvas { display: block; width: 56px; height: 56px; image-rendering: pixelated; }
+.cr-tiles-shape canvas { width: 40px; height: 60px; }
+.cr-tile .nm { font-size: 0.86em; line-height: 1.2; text-align: center; overflow-wrap: anywhere; max-width: 100%; }
+.cr-tile:hover .face { background: var(--paper-2); }
+.cr-tile > input:checked + .face { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink), inset 0 -4px 0 var(--ribbon); background: #fffaf0; }
+.cr-tile > input:checked + .face .nm { font-weight: 700; }
+.cr-tile > input:focus-visible + .face { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+/* accessories are a multi-choice: a square box, not a round tick */
+.cr-acc .box {
+  position: absolute; top: 5px; left: 5px; display: flex; align-items: center; justify-content: center; width: 20px; height: 20px;
+  border: 2px solid var(--ink-3); border-radius: 3px; background: #fffaf0; color: transparent;
+}
+.cr-acc .box svg { width: 14px; height: 14px; stroke-width: 3.2; }
+.cr-acc > input:checked + .face .box { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.cr-accnote { min-height: 1.4em; margin: 0.55em 0 0; color: var(--ink-2); font-size: 0.93em; }
+
+/* ruled entries with one selection mark (backgrounds, Japanese level) */
+.cr-entries { border-top: 1px solid var(--rule); }
+.cr-entry { display: block; }
+.cr-entry .face {
+  display: grid; grid-template-columns: 1.3em minmax(0, 1fr) auto; column-gap: 0.75em; align-items: start;
+  min-height: var(--tap); padding: 0.7em 0.6em 0.75em 0.7em; border-bottom: 1px solid var(--rule);
+}
+.cr-entry .face::before {
+  content: ""; grid-column: 1; grid-row: 1 / span 2; width: 1.05em; height: 1.05em; margin-top: 0.22em; border-radius: 50%; border: 2px solid var(--ink-3);
+}
+.cr-entry .t { grid-column: 2; font-weight: 700; color: var(--ink); line-height: 1.4; }
+.cr-entry .t .jp { font-weight: 400; margin-left: 0.2em; white-space: nowrap; }
+.cr-entry .t .jline { line-height: 1.9; }
+.cr-entry .d { grid-column: 2; color: var(--ink-2); font-size: 0.94em; margin-top: 0.1em; line-height: 1.45; }
+.cr-entry .ic { grid-column: 3; grid-row: 1 / span 2; align-self: center; width: 1.7em; height: 1.7em; color: var(--ink-3); }
+.cr-entry .ic svg { width: 100%; height: 100%; }
+.cr-entry:hover .face { background: rgba(193, 138, 42, 0.07); }
+.cr-entry > input:checked + .face { background: rgba(193, 138, 42, 0.14); box-shadow: inset 4px 0 0 var(--ribbon); }
+.cr-entry > input:checked + .face::before { background: var(--ink); border-color: var(--ink); box-shadow: inset 0 0 0 3px var(--paper); }
+.cr-entry > input:checked + .face .ic { color: var(--ink); }
+.cr-entry > input:focus-visible + .face { outline: 3px solid var(--focus-paper); outline-offset: -3px; }
+body.bulb-on .cr-entry .jline .jt { text-decoration: none; }
+
+/* ---- keyboard on screen: only the field, the page and the foot ------------------------------- */
+.folio-scrim.cr-kb > .folio { height: 100%; }
+/* (the tab slot stays in the grid so the rows keep their places; only its route goes) */
+.cr-typing .cr-sheet, .cr-typing .folio-create .tabslot > * { display: none; }
+
+/* ---- wide: a two-page spread, the traveller's sheet beside the page ---------------------------- */
+@media (min-width: 760px) and (min-height: 540px) {
+  .cr-body { grid-template-columns: minmax(250px, 0.8fr) minmax(0, 1.2fr); grid-template-rows: minmax(0, 1fr); gap: 0; }
+  .no-sheet .cr-body { grid-template-columns: minmax(0, 1fr); }
+  .cr-sheet, .cr-sheet.expanded {
+    display: flex; flex-direction: column; align-items: stretch; gap: 10px; max-height: none; overflow: auto; overscroll-behavior: contain; touch-action: pan-y pinch-zoom;
+    background: var(--paper); border-radius: 3px 0 0 6px; padding: 16px clamp(14px, 2.4vw, 30px) 18px;
+    box-shadow: inset -14px 0 18px -14px rgba(60, 40, 10, 0.35), 0 2px 0 var(--paper-3), 0 4px 0 var(--paper-edge);
+  }
+  .folio-create:not(.no-sheet) .cr-page { border-left: 0; border-radius: 0 3px 6px 0; box-shadow: inset 14px 0 18px -14px rgba(60, 40, 10, 0.35), 0 2px 0 var(--paper-3), 0 4px 0 var(--paper-edge); }
+  .cr-sheet .cr-kick { display: block; order: -1; font: 600 0.8em var(--ui-font); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); border-bottom: 1px solid var(--rule); padding-bottom: 0.3em; }
+  .cr-sheet .cr-figs, .cr-sheet.expanded .cr-figs { justify-content: center; gap: clamp(14px, 2.2vw, 30px); padding: 6px 0 0; }
+  .cr-sheet .cr-port canvas, .cr-sheet.expanded .cr-port canvas { width: 144px; height: 144px; }
+  .cr-sheet .cr-fig canvas, .cr-sheet.expanded .cr-fig canvas { width: 96px; height: 144px; }
+  .cr-sheet .cr-turn { display: flex; order: 1; }
+  .cr-sheet .cr-sum { order: 2; text-align: center; margin-top: 2px; }
+  .cr-sheet .cr-nm { font-size: 1.55em; }
+  .cr-sheet .cr-nm .jp-n { display: block; margin: 0.1em 0 0; font-size: 0.62em; }
+  .cr-sheet .cr-sub { display: none; }
+  .cr-sheet .cr-reg { display: block; order: 3; }
+  .cr-sheet .cr-note { display: block; order: 4; }
+  .cr-sheet .cr-expand { display: none; }
+  .folio-create .tabslot { padding-top: 2px; }
+}
+@media (min-width: 1100px) and (min-height: 720px) {
+  .cr-sheet .cr-port canvas, .cr-sheet.expanded .cr-port canvas { width: 192px; height: 192px; }
+  .cr-sheet .cr-fig canvas, .cr-sheet.expanded .cr-fig canvas { width: 128px; height: 192px; }
+}
+
+/* ---- short landscape (phones on their side): route in the header row, traveller in a side column */
+@media (max-height: 539px) and (min-width: 600px) {
+  .folio.folio-create {
+    width: 100vw; height: calc(100 * var(--vh)); border-radius: 0;
+    padding: max(4px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) max(6px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+    grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto;
+  }
+  .folio.folio-create::before { inset: 3px; border-radius: 0; }
+  .folio-create .folio-head { grid-column: 1; grid-row: 1; min-height: 0; padding: 0 10px 0 4px; }
+  .folio-create .folio-head h2 { font-size: 1.05em; }
+  .folio-create .folio-head .meta { display: none; }
+  .folio-create .tabslot { grid-column: 2; grid-row: 1; align-self: center; }
+  .folio-create .leafbox { grid-column: 1 / -1; grid-row: 2; }
+  .folio-create .folio-foot { grid-column: 1 / -1; grid-row: 3; padding-top: 6px; }
+  .folio-create .cr-route { padding-bottom: 2px; }
+  .cr-body { grid-template-columns: minmax(150px, 0.3fr) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); gap: 8px; }
+  .no-sheet .cr-body { grid-template-columns: minmax(0, 1fr); }
+  .cr-sheet, .cr-sheet.expanded {
+    grid-template-columns: minmax(0, 1fr); grid-template-areas: "figs" "sum" "turn" "btn" "reg" "note"; align-content: start; justify-items: center;
+    text-align: center; gap: 6px; max-height: none; overflow: auto; overscroll-behavior: contain; touch-action: pan-y pinch-zoom; padding: 8px;
+  }
+  .cr-sheet .cr-port canvas { width: 72px; height: 72px; }
+  .cr-sheet .cr-fig canvas { width: 48px; height: 72px; }
+  .cr-sheet .cr-turn { display: flex; }
+  .cr-sheet .cr-nm .jp-n { display: block; margin: 0; }
+  .cr-sheet.expanded .cr-figs { gap: 10px; }
+  .cr-sheet.expanded .cr-port canvas { width: 96px; height: 96px; }
+  .cr-sheet.expanded .cr-fig canvas { width: 64px; height: 96px; }
+  .cr-sheet.expanded .cr-reg, .cr-sheet.expanded .cr-note { display: block; text-align: left; justify-self: stretch; }
+}
+
+/* ---- prologue: a caption slip over the scene -------------------------------------------------- */
+.cr-prologue {
+  position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 10px;
+  padding: 16px var(--gutter) calc(max(14px, env(safe-area-inset-bottom)) + 3 * var(--vh)); pointer-events: none;
+}
+#ui > .cr-prologue { pointer-events: none; }
+.cr-prologue > * { pointer-events: auto; }
+.cr-prologue .slip {
+  width: min(780px, 100%); background: var(--paper); color: var(--ink); border: 1px solid var(--paper-edge); border-radius: 3px;
+  padding: 0.55em 1.2em 0.85em; text-align: center; box-shadow: 0 2px 0 var(--paper-3), 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+.cr-prologue .pg { display: flex; justify-content: center; gap: 6px; margin: 0 0 0.35em; }
+.cr-prologue .pg i { width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid var(--ink-3); }
+.cr-prologue .pg i.past { background: var(--ink-3); }
+.cr-prologue .pg i.on { width: 20px; border-radius: 4px; background: var(--ribbon); border-color: var(--ribbon-deep); }
+.cr-prologue .txt .jline { font-size: 1.28em; color: var(--ink); }
+.cr-prologue .txt rt { color: var(--rt-ink); }
+.cr-prologue .txt .en { font-family: var(--serif); color: var(--ink-2); font-size: 1.06em; line-height: 1.45; margin-top: 0.15em; }
+body.bulb-on .cr-prologue .jline .jt { text-decoration-color: rgba(38, 31, 21, 0.45); }
+body.bulb-on .cr-prologue .jline .jt:hover, .cr-prologue .jline .jt.active { background: rgba(193, 138, 42, 0.18); }
+.cr-prologue .acts { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.cr-prologue .acts .cbtn { justify-content: center; }
+.cr-prologue .acts .cr-primary { min-width: 8em; }
+
+/* ---- placement and New Game+: smaller folios ------------------------------------------------ */
+.folio-place, .folio-ngplus {
+  width: min(760px, calc(100vw - 2 * var(--gutter)));
+  height: min(660px, calc(100 * var(--vh) - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom)));
+}
+@media (max-width: 599px) { .folio-place, .folio-ngplus { width: 100vw; height: calc(100 * var(--vh)); } }
+.cr-place .pl-q { border: 0; font-family: var(--ui-font); font-size: 1.05em; font-weight: 600; margin: 0.2em 0 0.2em; }
+.cr-place .pl-q:focus { outline: none; }
+.cr-place .pl-jp { font-size: 1.6em; margin: 0.2em 0 0.6em; }
+.cr-place .pl-opts { display: flex; flex-direction: column; gap: 8px; max-width: 32em; }
+.cr-place .pl-opt { justify-content: flex-start; text-align: left; padding: 0.35em 1em; font-size: 1.05em; line-height: 1.35; }
+.cr-place .pl-opt .jline { font-size: 1.15em; line-height: 1.8; }
+.cr-place .pl-result { font-size: 1.15em; }
+.cr-place h3:focus { outline: none; }
+.cr-ngplus #ng-d { color: var(--ink-2); }
+.ng-list { list-style: none; margin: 0.9em 0 0; padding: 0; border-top: 1px solid var(--rule); }
+.ng-opt {
+  width: 100%; display: grid; grid-template-columns: 1.8em minmax(0, 1fr); gap: 0.1em 0.7em; align-items: start; text-align: left;
+  min-height: var(--tap); padding: 0.75em 0.5em 0.8em; background: transparent; border: 0; border-bottom: 1px solid var(--rule);
+  color: var(--ink); font: inherit; cursor: pointer; touch-action: manipulation;
+}
+.ng-opt .mk { grid-row: 1 / span 2; width: 1.5em; height: 1.5em; color: var(--ink-2); margin-top: 0.05em; }
+.ng-opt .mk svg { width: 100%; height: 100%; }
+.ng-opt .t { font-weight: 700; }
+.ng-opt .d { grid-column: 2; color: var(--ink-2); font-size: 0.92em; }
+.ng-opt:hover { background: rgba(193, 138, 42, 0.1); }
+.ng-opt:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: -3px; }
+
+body.reduced-motion .cr-route *, body.reduced-motion .cr-sheet * { transition: none !important; animation: none !important; }

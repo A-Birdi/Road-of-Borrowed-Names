@@ -179,7 +179,8 @@ try {
   await test('New Game through real UI still enters a visible controllable world', async () => {
     await page.locator('.title [data-a="new"]').click(); await page.locator('[data-slot="2"] [data-a="start"]').click();
     await page.locator('[data-a="skip"]').click(); await page.locator('#nm').fill('Regression hero');
-    await page.locator('[data-a="next"]').click(); await page.locator('[data-k="profile"][data-v="E"]').click();
+    for (let i = 0; i < 3; i++) await page.locator('[data-a="next"]').click(); // four creation steps
+    await page.locator('[data-k="profile"][data-v="E"]').click();
     await page.locator('[data-k="input"][data-v="choice"]').click(); await page.locator('[data-a="go"]').click();
     for (let n = 0; n < 60; n++) { if (await page.evaluate(() => RB.game.mode() === 'world')) break; await page.keyboard.press('Enter'); await page.waitForTimeout(100); }
     assert.equal(await page.evaluate(() => RB.game.mode()), 'world'); await spyWorld(); await checkWorldVisible(); await page.keyboard.press('ShiftLeft'); await checkLive();

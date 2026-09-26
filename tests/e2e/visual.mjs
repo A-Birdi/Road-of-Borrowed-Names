@@ -2,7 +2,10 @@
 // comparison and art/layout review. Uses synthetic fixtures only (never real
 // player saves). Usage:
 //   node tests/e2e/visual.mjs <outDir> [--html file] [--vp 390x844,1280x800] [--only a,b]
-// States: title, slots, slots_empty, create, create2, journey, words, satchel,
+// States: title, slots, slots_empty, create_prologue, create, create_err,
+// create_kb, create2, create2_acc, create_inspect, create3, create4,
+// create_place, create_ngplus, create_x2, create2_x2, create3_x2,
+// create4_x2, journey, words, satchel,
 // map, settings, dialogue, help, chal, combat, world_rw, world_sg, world_co,
 // world_sb, world_lf, world_sa. File names: <state>_<W>x<H>.png
 import fs from 'node:fs';
@@ -75,6 +78,13 @@ const STATES = {
   async title(p) { await p.evaluate(async () => { await V.sixSlots(); RB.game.toTitle ? await RB.game.toTitle() : RB.ui.title.show(); }); await settle(p, 900); },
   async slots(p) { await p.evaluate(async () => { await V.sixSlots(); await RB.game.toTitle(); RB.ui.title.slots('load'); }); await settle(p, 900); },
   async slots_empty(p) { await p.evaluate(async () => { await V.sixSlots(true); await RB.game.toTitle(); RB.ui.title.slots('load'); }); await settle(p, 900); },
+  // ---- new campaign (creation area) ----
+  async create_prologue(p) {
+    await p.click('text=New Game');
+    await p.click('[data-slot="1"] [data-a=start]');
+    await p.waitForSelector('text=Skip prologue');
+    await settle(p, 1400);
+  },
   async create(p) {
     await p.click('text=New Game');
     await p.click('[data-slot="1"] [data-a=start]');
@@ -83,11 +93,74 @@ const STATES = {
     await p.fill('#nm', 'Robin');
     await settle(p, 400);
   },
+  async create_err(p) {
+    await p.click('text=New Game');
+    await p.click('[data-slot="1"] [data-a=start]');
+    await p.click('text=Skip prologue');
+    await p.waitForSelector('#nm');
+    await p.click('[data-a=next]');
+    await settle(p, 300);
+  },
+  async create_kb(p) {
+    await STATES.create(p);
+    // an emulated software keyboard: the visual viewport shrinks to 55 %
+    await p.focus('#nm');
+    await p.evaluate(() => {
+      const vv = window.visualViewport, h = Math.round(innerHeight * 0.55);
+      Object.defineProperty(vv, 'height', { configurable: true, get: () => h });
+      vv.dispatchEvent(new Event('resize'));
+    });
+    await settle(p, 300);
+  },
   async create2(p) {
     await STATES.create(p);
-    // the appearance/background part of creation
-    await p.evaluate(() => { const el = document.querySelector('[data-step=appearance], .create'); if (el) el.scrollIntoView({ block: 'end' }); const sc = document.querySelector('.panel .body'); if (sc) sc.scrollTop = sc.scrollHeight / 2; });
-    await p.evaluate(() => { const b = document.querySelector('[data-a=next]'); if (b && document.querySelector('[data-step]')) b.click(); });
+    await p.click('[data-a=next]');
+    await settle(p, 400);
+  },
+  async create2_acc(p) {
+    await STATES.create2(p);
+    await p.click('[data-set=hair][data-v=bun]');
+    await p.click('[data-acc=glasses]');
+    await p.click('[data-acc=hat]');
+    await p.evaluate(() => document.querySelector('[data-group=acc]').scrollIntoView({ block: 'end' }));
+    await settle(p, 300);
+  },
+  async create_inspect(p) {
+    await STATES.create2(p);
+    const b = await p.$('[data-a=expand]');
+    if (b && await b.isVisible()) await b.click();
+    await settle(p, 300);
+  },
+  async create3(p) {
+    await STATES.create2(p);
+    await p.click('[data-a=next]');
+    await settle(p, 400);
+  },
+  async create4(p) {
+    await STATES.create3(p);
+    await p.click('[data-a=next]');
+    await settle(p, 400);
+  },
+  async create_place(p) {
+    await STATES.create4(p);
+    await p.click('[data-a=place]');
+    await settle(p, 400);
+  },
+  // the same steps at 200 % text
+  async create_x2(p) { await STATES.create(p); await p.evaluate(() => { RB.game.settings.textScale = 2; RB.game.applySettings(); }); await settle(p, 300); },
+  async create2_x2(p) { await STATES.create_x2(p); await p.click('[data-a=next]'); await settle(p, 400); },
+  async create3_x2(p) { await STATES.create2_x2(p); await p.click('[data-a=next]'); await settle(p, 400); },
+  async create4_x2(p) { await STATES.create3_x2(p); await p.click('[data-a=next]'); await settle(p, 400); },
+  async create_ngplus(p) {
+    await p.evaluate(async () => {
+      const s = V.rich('lf.town', 26, 20, { comp: 'ren' });
+      s.player.name = 'Veteran'; s.flags.postgame = true; s.chapter = 6;
+      await RB.save.writeSlot(1, s, { force: true, thumb: RB.render.thumbnail() });
+      await RB.game.toTitle();
+    });
+    await p.click('text=New Game');
+    await p.click('[data-slot="2"] [data-a=start]');
+    await p.waitForSelector('[role=alertdialog]');
     await settle(p, 400);
   },
   async journey(p) { await p.evaluate(() => { V.rich('sg.harbor', 20, 22); V.openMenu(['journey', 'journal']); }); await settle(p); },
