@@ -63,7 +63,10 @@ const res = await p.evaluate(async (a) => {
     const key = sig();
     // prefer actions not yet tried in this state; exits get lower priority unless nothing else
     let pool = cands.filter((c) => !tried.get(key + '|' + m.id + '|' + c.k));
-    if (!pool.length) pool = cands.filter((c) => c.exit);
+    // nothing new here: sometimes retry an interaction (a random choice may
+    // have declined it last time, e.g. "Leave it"), otherwise move on
+    if (!pool.length) pool = rng() < 0.35 ? cands.filter((c) => !c.exit) : cands.filter((c) => c.exit);
+    if (!pool.length) pool = cands;
     const nonExit = pool.filter((c) => !c.exit);
     const pick = (nonExit.length && rng() < 0.85 ? nonExit : pool)[rng.int((nonExit.length && rng() < 0.85 ? nonExit : pool).length)] || cands[rng.int(cands.length)];
     if (!pick) break;
