@@ -85,7 +85,7 @@ Status: `[ ]` not started · `[~]` in progress · `[i]` implemented, unverified 
 - [v] R11.1 Furigana on every displayed kanji (validator-enforced)
 - [v] R11.2 Lightbulb help: hover/focus/tap; reading, romaji, meaning, mora, notes, replay voice
 - [v] R11.3 Pin, add to notebook, never cover pad, assisted recording
-- [i] R11.4 English-led / Japanese-led / translation visibility; bilingual backlog
+- [i] R11.4 English-led / Japanese-led / translation visibility; bilingual backlog — Japanese-led mode applied and persisted (settings.mjs)
 
 ## Dialogue & quests [12]
 - [i] R12.1 Authored, distinct voices; register notes (≈4,900 dialogue lines; not native-reviewed)
@@ -96,7 +96,7 @@ Status: `[ ]` not started · `[~]` in progress · `[i]` implemented, unverified 
 - [i] R13.1 Notebook, journal, inventory, equipment, map, settings, history
 - [i] R13.2 Few meaningful growth systems; no paid explanations
 - [i] R13.3 Retreat (verified: systems.mjs step back; bosses excluded), tutorials revisit (guide tab), no softlocks found by 16 whole-game runs, key items protected
-- [i] R13.4 Fast/instant text, skip seen scenes, remap, volumes, reduced motion, text size, contrast
+- [i] R13.4 Fast/instant text, skip seen scenes, remap, volumes, reduced motion, text size, contrast — instant text, reduced motion, text size and contrast applied and persisted across reload (settings.mjs); volume/mute (audio.check.mjs); remap and skip-seen not browser-tested
 
 ## Saves [14]
 - [v] R14.1 Exactly six slots: new/save/load/copy/overwrite/delete; thumbnail + metadata
