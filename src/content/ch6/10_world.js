@@ -24,16 +24,18 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const clerkFace = {
     skin: ['#ece6d6', '#cfc6b0'], hair: ['#d8d0bc', '#c4bca8', '#f4f0e6'], cloth: ['#8a8474', '#6e695c', '#c85a4a'],
     style: 'shaved', acc: [], eyes: 'round', bg: '#2a2c40', age: 'adult',
-    extra: (c, expr) => {
+    extra2: (c, expr) => {
       // a face made of index cards: a ruled card for a forehead, ink-slit eyes
-      c.fillStyle = '#f4efe2'; c.fillRect(12, 8, 24, 10);
-      c.fillStyle = '#b8b0a0'; for (let i = 0; i < 3; i++) c.fillRect(13, 10 + i * 3, 22, 1);
-      c.fillStyle = '#c85a4a'; c.fillRect(12, 8, 24, 1);
-      c.fillStyle = '#f4efe2'; c.fillRect(14, 19, 20, 14);
-      c.fillStyle = '#2a2436';
-      if (expr === 'smile' || expr === 'laugh') { c.fillRect(17, 23, 4, 1); c.fillRect(27, 23, 4, 1); }
-      else { c.fillRect(18, 22, 2, 3); c.fillRect(28, 22, 2, 3); }
-      c.fillStyle = '#b8b0a0'; c.fillRect(20, 30, 8, 1);
+      const R = (x, y, w, h, col) => { c.fillStyle = col; c.fillRect(x, y, w, h); };
+      R(24, 16, 48, 20, '#f4efe2'); R(24, 16, 48, 2, '#c85a4a'); R(24, 18, 48, 1, '#e8a090');
+      R(70, 18, 2, 18, '#d8d0bc'); R(24, 35, 48, 1, '#cfc6b0');
+      for (let i = 0; i < 3; i++) R(26, 22 + i * 5, 44, 1, '#b8b0a0');
+      R(28, 38, 40, 28, '#f4efe2'); R(28, 38, 40, 1, '#fffaf0'); R(66, 39, 2, 27, '#d8d0bc'); R(28, 65, 40, 1, '#c4bca8');
+      const ink = '#2a2436';
+      if (expr === 'smile' || expr === 'laugh') { R(34, 46, 8, 2, ink); R(54, 46, 8, 2, ink); R(33, 47, 1, 1, ink); R(62, 47, 1, 1, ink); }
+      else if (expr === 'surprise') { R(36, 42, 4, 9, ink); R(56, 42, 4, 9, ink); }
+      else { R(36, 44, 4, 6, ink); R(56, 44, 4, 6, ink); R(36, 44, 1, 2, '#6a6480'); R(56, 44, 1, 2, '#6a6480'); }
+      R(40, 60, 16, 2, '#b8b0a0');
     },
   };
   C.chars.sa_clerk = { name: T('Catalogue Clerk', '{目録|もくろく}{係|がかり}'), voice: { pitch: 1.2, rate: 0.9 }, look: clerkLook, portrait: clerkFace };
@@ -44,7 +46,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     portrait: {
       eyes: 'narrow', style: 'wrap', wrapCol: '#6a6a78', age: 'old', collar: 'high', acc: ['lamp'], bg: '#262a44',
       // thick brows and an ink smudge on the left cheek (Ren remembers both)
-      extra: (c) => { c.fillStyle = '#d8d4d0'; c.fillRect(15, 16, 7, 2); c.fillRect(26, 16, 7, 2); c.fillStyle = '#2a2436'; c.fillRect(16, 27, 3, 2); },
+      brows: 'thick', browCol: '#d8d4d0', smudge: '#2a2436',
     },
   };
   C.chars.sa_tae = {

@@ -4,7 +4,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 (function (C) {
   'use strict';
   C.chars.mochi = { name: { en: 'Mochi', jp: 'モチ' }, voice: { pitch: 1.4 }, look: { custom: 'cat', col: '#e8d8c0' },
-    portrait: { skin: ['#e8d8c0', '#c8b8a0'], hair: ['#e8d8c0', '#d8c8b0', '#fff8ec'], cloth: ['#c86a5a', '#a85a4a', '#e8c060'], style: 'short', eyes: 'round', bg: '#2e3a2a' } };
+    portrait: { kind: 'cat', skin: ['#e8d8c0', '#c8b8a0'], hair: ['#e8d8c0', '#d8c8b0', '#fff8ec'], cloth: ['#c86a5a', '#a85a4a', '#e8c060'], style: 'short', eyes: 'round', bg: '#2e3a2a' } };
   C.quests.rw_mochi = { chapter: 1, title: { jp: 'モチ と いう {猫|ねこ}', en: 'A Cat Called Mochi' },
     stages: [
       { jp: 'トモ の {猫|ねこ} が いない 。 {川|かわ} の {向|む}こう で {見|み}た {人|ひと} が いる らしい 。', en: 'Tomo\'s cat is missing. Someone saw a cat across the river.' },
