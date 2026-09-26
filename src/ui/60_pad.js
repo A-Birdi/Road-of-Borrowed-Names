@@ -133,6 +133,7 @@ RB.pad = (function () {
   const esc = RB.util.esc;
   const I = (n) => RB.learnUi.icon(n);
   const BOX = 300; // recognizer coordinate space
+  const SMALL = 'ぁぃぅぇぉっゃゅょゎァィゥェォッャュョヮヵヶ';
 
   function create(host, opts) {
     opts = opts || {};
@@ -364,16 +365,18 @@ RB.pad = (function () {
       const top = P.pick || r.candidates[0].ch;
       const uncertain = r.status === 'uncertain' && !P.pick;
       const small = r.sizeHint === 'small' && !P.small ? ' <span class="rd-hint">(looks small — 小?)</span>' : '';
+      const topSmall = SMALL.indexOf(top) >= 0 ? ' <span class="rd-hint">(small kana)</span>' : '';
       setRead(uncertain ? 'unsure' : 'sure',
-        (uncertain ? '<b>Not sure</b> — pick the one you meant' : P.pick && P.pick !== r.candidates[0].ch ? 'You chose' : 'I read this as') + small, top);
+        (uncertain ? '<b>Not sure</b> — pick the one you meant' : P.pick && P.pick !== r.candidates[0].ch ? 'You chose' : 'I read this as') + small + topSmall, top);
       // the other readings, so a different one can be chosen (counts as assisted)
       const seen = new Set([top]);
       const alts = r.candidates.slice(0, 6).filter((cd) => !seen.has(cd.ch) && seen.add(cd.ch));
       if (alts.length) candsEl.appendChild(RB.ui.el('span', 'or', 'or'));
       alts.forEach((cd) => {
-        const b = RB.ui.el('button', 'cand', esc(cd.ch));
+        const small = SMALL.indexOf(cd.ch) >= 0; // small kana look like their full-size twins: say so
+        const b = RB.ui.el('button', 'cand' + (small ? ' sm' : ''), esc(cd.ch) + (small ? '<span class="cap" aria-hidden="true">small</span>' : ''));
         b.setAttribute('lang', 'ja');
-        b.setAttribute('aria-label', 'I meant ' + cd.ch);
+        b.setAttribute('aria-label', 'I meant ' + (small ? 'small ' : '') + cd.ch);
         b.title = 'Similarity ' + Math.round(cd.score * 100) + '% (a match score, not a probability)';
         b.onclick = () => { P.pick = cd.ch; renderRead(); };
         candsEl.appendChild(b);

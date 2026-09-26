@@ -214,7 +214,6 @@ RB.challenge = (function () {
         return p;
       }
       function showMode(m, how) {
-        const prev = mode;
         mode = m;
         pane(m);
         for (const k in panes) panes[k].hidden = k !== m;
@@ -229,7 +228,7 @@ RB.challenge = (function () {
         if (m === 'hand' && pad) requestAnimationFrame(() => pad && pad.layout());
         if (m === 'ime' && ime) {
           // keep your place: carry what was written by hand over to the keyboard
-          if (prev === 'hand' && !ime.inp.value && pad && pad.text()) ime.inp.value = pad.text();
+          if (!ime.inp.value && pad && pad.text()) { ime.inp.value = pad.text(); syncSubmit(); }
           setTimeout(() => { if (wrap.isConnected && mode === 'ime' && !locked) ime.inp.focus({ preventScroll: true }); }, how === 'init' ? 50 : 0);
         }
         if (wrap.querySelector('.fbwrap.hint')) setHint();
@@ -311,8 +310,7 @@ RB.challenge = (function () {
           res.recogMisses++;
           RB.audio && RB.audio.sfx('recog_unsure');
           fb('unsure', 'I could not read that clearly',
-            '<p>This doesn\'t count against you — the recognizer wasn\'t sure about your writing.</p>' +
-            '<p>Your answer line reads <span class="jp big" lang="ja">' + esc(text) + '</span>. If that isn\'t what you meant, tap a character to rewrite it, or pick it from the chart.</p>');
+            '<p>This doesn\'t count against you. Your answer reads <span class="jp big" lang="ja">' + esc(text) + '</span> — if you meant something else, tap it to rewrite it, or use the chart.</p>');
           return;
         }
         res.mistakes++;
@@ -321,7 +319,7 @@ RB.challenge = (function () {
         const msgs = (r.feedback || []).map((f) => '<div class="fb-why">' + (f.jp && !/\{[^|}]+\|/.test(f.en || '') ? RB.ui.jhtml(f.jp) + ' ' : '') + enRuby(f.en) + '</div>').join('') || '<div class="fb-why">That isn\'t what this needs.</div>';
         fb('no', 'Not quite.', '<p>You gave <span class="jp big" lang="ja">' + esc(plain(text)) + '</span>.</p>' + msgs + '<p class="muted small">Try again — take all the time you need.</p>');
         if (opts.onMistake) opts.onMistake(r);
-        if (pad) pad.reset();
+        if (pad && modeUsed === 'hand') pad.reset();
       }
       function evaluateChoice(o, btn) {
         if (o.ok) { btn.classList.add('on'); success('choice'); return; }

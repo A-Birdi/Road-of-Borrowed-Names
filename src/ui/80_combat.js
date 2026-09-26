@@ -337,6 +337,7 @@ RB.combat = (function () {
     RB.learnUi.guardTaps(o.resp);
     o.onResize = () => requestAnimationFrame(measure);
     window.addEventListener('resize', o.onResize);
+    root.addEventListener('scroll', o.onResize, { passive: true });
     o.ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(o.onResize) : null;
     if (o.ro) o.ro.observe(o.stage);
     return o;

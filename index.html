@@ -777,9 +777,9 @@ body.high-contrast :is(.chal, .lsheet, .combat-ui) { --pad-paper: #ffffff; }
   box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 .chal-frame::before { content: ""; position: absolute; inset: 4px; border: 1px dashed var(--thread); border-radius: 7px; opacity: 0.55; pointer-events: none; }
-.chal-head { position: relative; z-index: 2; display: flex; align-items: center; gap: 4px 10px; min-height: var(--tap); padding: 2px 2px 6px; }
-.chal-title { margin: 0; flex: 1 1 auto; min-width: 0; font-family: var(--serif); font-weight: 600; font-size: 1.15em; letter-spacing: 0.01em; color: var(--on-cloth); overflow-wrap: anywhere; }
-.chal-head .cbtn { flex: none; }
+.chal-head { position: relative; z-index: 2; flex: none; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; min-height: var(--tap); padding: 2px 2px 6px; }
+.chal-title { margin: 0; flex: 1 1 10em; min-width: 0; font-family: var(--serif); font-weight: 600; font-size: 1.15em; letter-spacing: 0.01em; color: var(--on-cloth); overflow-wrap: anywhere; }
+.chal-head .cbtn { flex: none; margin-left: auto; }
 /* one scroll surface for the whole task; the writing canvas never scrolls it */
 .chal-body {
   position: relative; z-index: 1; flex: 1 1 auto; min-height: 0; min-width: 0;
@@ -843,6 +843,9 @@ body.high-contrast :is(.chal, .lsheet, .combat-ui) { --pad-paper: #ffffff; }
 .chal .pad-area { background: transparent; border: 0; border-radius: 0; padding: 0; }
 .pad-box { touch-action: auto; align-self: auto; }
 .pad-box .pad-bg { touch-action: auto; pointer-events: none; cursor: default; }
+/* the ink layer is transparent: the paper and its faint guides are drawn below it */
+.pad-box canvas { background: transparent; border-radius: 4px; }
+.pad-box .pad-bg { background: var(--pad-paper, #fffaf0); }
 .strip .cell { height: auto; }
 .strip .cell.ins { opacity: 1; border: 0; }
 .strip .cell.asst { border-color: transparent; }
@@ -887,6 +890,8 @@ body.high-contrast .pad-area { --pad-paper: #ffffff; --pad-ink: #000000; --pad-g
   background: var(--paper); color: var(--ink); border: 1px dashed var(--ink-3); border-radius: var(--r-1);
 }
 .cand:hover { background: var(--paper-2); border-style: solid; }
+.cand.sm { display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; }
+.cand .cap { font: 600 0.4em var(--ui-font); letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-2); }
 .cand:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
 .pad-confirm { margin-left: auto; }
 .pad-confirm[disabled] { background: transparent; color: var(--ink-3); border-color: var(--ink-3); }
@@ -905,7 +910,10 @@ body.high-contrast .pad-area { --pad-paper: #ffffff; --pad-ink: #000000; --pad-g
 .pad-script select:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
 
 /* the composed answer line (in the answer slip) */
-.pad-compose { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 2px 8px; }
+.pad-compose { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+.pad-compose .strip { flex: 1 1 7em; min-width: 0; }
+.pad-compose .pad-del { flex: none; margin-left: auto; }
+.pad-compose .pad-lab { flex: 1 0 100%; }
 .pad-compose .pad-lab, .order-line .pad-lab { grid-column: 1 / -1; font-size: 0.76em; letter-spacing: 0.07em; text-transform: uppercase; font-weight: 700; color: var(--ink-3); }
 .pad-compose .pad-note { grid-column: 1 / -1; color: var(--ink-2); }
 .pad-compose .pad-note:empty { display: none; }
@@ -930,7 +938,7 @@ body.high-contrast .pad-area { --pad-paper: #ffffff; --pad-ink: #000000; --pad-g
 body.reduced-motion .strip .cell.ins.cur::before { animation: none; }
 .strip .cell.slot { cursor: default; min-width: 1.6em; border: 0; border-bottom: 3px solid var(--ribbon-deep); border-radius: 0; box-shadow: none; }
 .strip .fixed { color: var(--ink-3); font-size: 1.45em; padding: 0 0.1em; }
-.strip .ph { color: var(--ink-3); font: 0.85em var(--ui-font); padding: 0 0.4em; }
+.strip .ph { color: var(--ink-3); font: 0.85em var(--ui-font); padding: 0 0.4em; min-width: 0; overflow-wrap: anywhere; }
 .strip :focus-visible { outline: 3px solid var(--focus-paper); outline-offset: -2px; }
 .pad-del { align-self: center; }
 
@@ -979,13 +987,13 @@ body.reduced-motion .strip .cell.ins.cur::before { animation: none; }
 :is(.chal, .lsheet) .tile .jline { line-height: 1.95; }
 :is(.chal, .lsheet) .tile:hover { border-color: var(--ink); }
 :is(.chal, .lsheet) .tile:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
-.order-line { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 8px; align-items: end; }
+.order-line { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; }
 .order-line .built { list-style: none; margin: 0; padding: 4px; display: flex; flex-direction: column; gap: 4px; counter-reset: ord; min-height: calc(var(--tap) + 8px); background: var(--pad-paper, #fffcf3); border: 1px solid var(--paper-edge); border-radius: 3px; }
 .order-line .built li { counter-increment: ord; display: flex; align-items: center; gap: 6px; }
 .order-line .built li:not(.empty)::before { content: counter(ord); flex: none; width: 1.6em; text-align: right; font-weight: 700; color: var(--ink-3); font-variant-numeric: tabular-nums; }
 .order-line .built li.empty { padding: 0.6em; }
 .order-line .tile.placed { flex: 1 1 auto; box-shadow: none; border-style: solid; }
-.order-line [data-o="clr"] { align-self: end; }
+.order-line [data-o="clr"] { justify-self: end; }
 
 /* ---- feedback: right (solid, check) · wrong (solid, cross) · unsure (dashed, ?) */
 :is(.chal, .lsheet) .fbwrap.hint { font-size: 0.92em; padding: 2px 2px 0; }
@@ -1054,6 +1062,7 @@ body.high-contrast :is(.chal, .lsheet) .fb.no, body.high-contrast :is(.chal, .ls
   .chal-answer { align-items: center; }
   .chal-line { flex: 1 1 6.5em; }
   .chal[data-mode="order"] .chal-line { flex: 1 0 100%; }
+  .chal[data-mode="ime"] .chal-submit, .chal[data-mode="order"] .chal-submit { flex: 1 1 100%; margin-left: 0; }
   .chal-submit { flex: 0 1 auto; margin-left: auto; padding: 0 0.7em; }
   .pad-compose .pad-lab { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   /* Remove: icon over a short label, so the answer row and Submit share a line */
@@ -1061,12 +1070,13 @@ body.high-contrast :is(.chal, .lsheet) .fb.no, body.high-contrast :is(.chal, .ls
   .pad-del svg { width: 1.7em; height: 1.7em; }
   .pad-tools { gap: 6px; }
   .pad-tools .pbtn { padding: 0 0.6em; }
-  .task-acts { flex-wrap: nowrap; }
   .task-acts .pbtn { flex: 0 1 auto; }
+}
+@media (max-width: 419px) {
+  .chal-submit .w { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 }
 @media (max-width: 379px) {
   .task-acts .aside { display: none; }
-  .chal-submit .w { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   .pad-tools .pbtn { font-size: 0.9em; padding: 0 0.5em; }
   .chal-head .cbtn { padding: 0 0.6em; }
 }
@@ -1094,6 +1104,10 @@ body.high-contrast :is(.chal, .lsheet) .fb.no, body.high-contrast :is(.chal, .ls
   .pane-hand .pad-hold { grid-row: 1 / -1; flex: none; container-type: normal; min-height: 0; width: min(100cqh, 58cqw); height: min(100cqh, 58cqw); }
   .pane-hand .pad-box { width: 100%; }
   .pane-hand .pad-inspect { align-content: flex-start; }
+  /* when the left column (task, feedback) outgrows the screen, the writing
+   * sheet stays pinned in view while it scrolls */
+  .chal[data-mode="hand"] .chal-work { position: sticky; top: 0; align-self: start; height: calc(100 * var(--vh) - 66px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); min-height: 240px; }
+  .chal.kb[data-mode="hand"] .chal-work { height: auto; }
 }
 
 /* ---- learning sheets: teaching cards, lessons, activities, the kana chart ------ */
@@ -1121,7 +1135,7 @@ body.high-contrast :is(.chal, .lsheet) .fb.no, body.high-contrast :is(.chal, .ls
 @media (max-width: 599px) {
   .folio.lsheet.small { width: calc(100vw - 16px); height: auto; max-height: calc(100 * var(--vh) - 16px); border-radius: 8px; }
 }
-.teach-jp { font-size: 1.45em; }
+.teach-jp { font-size: 2em; }
 .teach-en { font-size: 1.02em; }
 .teach-ex { list-style: none; margin: 0; padding: 0; }
 .teach-ex li { padding: 0.35em 0; border-bottom: 1px solid var(--rule); }
@@ -1141,7 +1155,7 @@ body.high-contrast :is(.chal, .lsheet) .fb.no, body.high-contrast :is(.chal, .ls
 .lesson-char .kbig { font: 5.2em/1.15 var(--jp-font); color: var(--ink); }
 .lesson-char .rom { font-size: 1.3em; color: var(--ink); letter-spacing: 0.04em; }
 .lesson-demo { margin: 0; flex: 1 1 200px; max-width: 280px; }
-.lesson-demo canvas { display: block; width: 100%; max-width: 240px; aspect-ratio: 1; border-radius: var(--r-1); box-shadow: 0 0 0 1px var(--paper-edge), 0 2px 0 var(--paper-3); }
+.lesson-demo canvas { display: block; width: 100%; max-width: min(240px, 46 * var(--vh)); aspect-ratio: 1; border-radius: var(--r-1); box-shadow: 0 0 0 1px var(--paper-edge), 0 2px 0 var(--paper-3); }
 .lesson-demo figcaption { margin-top: 0.4em; }
 .lesson-note { font-size: 1.02em; border-left: 3px solid var(--rule); padding-left: 0.7em; }
 .lesson-ex, .lsheet .fb-list { list-style: none; margin: 0; padding: 0; }
@@ -1150,6 +1164,15 @@ body.high-contrast :is(.chal, .lsheet) .fb.no, body.high-contrast :is(.chal, .ls
 .lesson-ex li .en { color: var(--ink-2); font-family: var(--ui-font); }
 .lsheet.lesson .folio-foot .cbtn.hidden { display: none; }
 @media (min-width: 860px) { .folio.lsheet.lesson, .folio.lsheet.activity { width: min(920px, calc(100vw - 2 * var(--gutter))); } }
+/* wide or landscape: the note and the words sit beside the character */
+@media (min-width: 640px) {
+  .lsheet.lesson .leaf { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto 1fr; gap: 0 28px; align-content: start; }
+  .lsheet.lesson .lesson-row { grid-column: 1 / -1; }
+  .lsheet.lesson .lesson-main { grid-column: 1; grid-row: 2 / span 20; align-self: start; flex-wrap: nowrap; }
+  .lsheet.lesson .leaf > :not(.lesson-row):not(.lesson-main) { grid-column: 2; }
+  .lsheet.lesson .lesson-note { margin-top: 0; }
+  .lsheet.lesson .leaf > h3 { margin-top: 0.6em; }
+}
 
 /* activities: who is speaking, the tray and the kitchen, a letter to deliver */
 .act-say { display: flex; gap: 12px; align-items: flex-start; padding-bottom: 0.4em; }
@@ -1194,9 +1217,11 @@ body.high-contrast :is(.chal, .lsheet) .fb.no, body.high-contrast :is(.chal, .ls
  * neutralised here (positions, dark panels). */
 .combat-ui {
   position: absolute; inset: 0; pointer-events: none; display: grid; gap: 8px;
+  /* normally everything fits; with very large text the overlay scrolls (one surface) */
+  overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain;
   padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
   grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: auto auto minmax(60px, 1fr) auto auto;
+  grid-template-rows: max-content max-content minmax(60px, 1fr) max-content minmax(190px, max-content);
   grid-template-areas: "foe" "intent" "stage" "party" "dock";
 }
 .combat-ui > *, .combat-ui .cb-side > * { pointer-events: auto; min-width: 0; }
@@ -1247,13 +1272,13 @@ body.high-contrast :is(.chal, .lsheet) .fb.no, body.high-contrast :is(.chal, .ls
   border: 1px solid var(--paper-edge); border-radius: 6px; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
 }
 .pm { min-width: 0; }
-.pm-h { display: flex; align-items: center; gap: 6px; min-height: 1.6em; }
-.pm-n { font-weight: 700; min-width: 0; overflow-wrap: anywhere; }
+.pm-h { display: flex; flex-wrap: wrap; align-items: center; gap: 0 6px; min-height: 1.6em; }
+.pm-n { font-weight: 700; min-width: 0; overflow-wrap: break-word; }
 .pm-v { margin-left: auto; font-variant-numeric: tabular-nums; color: var(--on-cloth-2); }
 .pm-w { display: inline-flex; align-items: center; gap: 2px; color: var(--focus-cloth); font-weight: 700; }
 .pm-w svg { width: 1.1em; height: 1.1em; }
 .pm { position: relative; }
-.aimtag { position: absolute; top: -17px; left: -4px; display: inline-flex; align-items: center; gap: 3px; padding: 0 5px; border-radius: 2px; background: var(--paper); color: var(--vermilion); font-size: 0.8em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+.aimtag { position: absolute; top: -1.45em; left: -4px; white-space: nowrap; display: inline-flex; align-items: center; gap: 3px; padding: 0 5px; border-radius: 2px; background: var(--paper); color: var(--vermilion); font-size: 0.8em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
 .aimtag svg { width: 1.15em; height: 1.15em; }
 .pm.aimed .bar { outline: 2px solid var(--paper); outline-offset: 1px; }
 .pm-note { grid-column: 1 / -1; font-size: 0.85em; color: var(--on-cloth-2); }
@@ -1320,8 +1345,9 @@ body.high-contrast .combat-ui .paper, body.high-contrast .combat-ui .rcard { bor
 
 /* phones: the dock keeps one height, so the stage (and the scene) never jumps */
 @media (max-width: 899px), (max-height: 559px) {
-  .cb-dock { height: calc(44 * var(--vh)); max-height: 440px; }
-  .combat-ui .cb-party { grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 2px 10px; padding: 4px 10px 6px; font-size: 0.85em; }
+  .combat-ui { grid-template-rows: max-content max-content minmax(60px, 1fr) max-content minmax(240px, min(calc(44 * var(--vh)), 440px)); }
+  .cb-dock { height: auto; }
+  .combat-ui .cb-party { grid-template-columns: repeat(auto-fit, minmax(min(100%, 6em), 1fr)); gap: 2px 10px; padding: 4px 10px 6px; font-size: 0.85em; }
   .pm-note { display: none; }
   .it-jp { font-size: 1.12em; }
 }
@@ -1338,7 +1364,7 @@ body.high-contrast .combat-ui .paper, body.high-contrast .combat-ui .rcard { bor
 @media (min-width: 900px) and (min-height: 560px) {
   .combat-ui {
     grid-template-columns: minmax(0, 1fr) clamp(340px, 34vw, 460px);
-    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    grid-template-rows: max-content max-content minmax(0, 1fr) max-content;
     grid-template-areas: "foe dock" "intent dock" "stage dock" "party dock";
     gap: 12px 16px; padding: 16px;
   }
@@ -1356,7 +1382,7 @@ body.high-contrast .combat-ui .paper, body.high-contrast .combat-ui .rcard { bor
 @media (max-height: 559px) and (min-width: 600px) {
   .combat-ui {
     grid-template-columns: minmax(0, 1fr) minmax(300px, 50%);
-    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-rows: max-content minmax(0, 1fr) max-content;
     grid-template-areas: "foe side" "stage side" "party side";
   }
   .combat-ui .cb-side { display: flex; flex-direction: column; gap: 8px; grid-area: side; min-height: 0; pointer-events: none; }
@@ -17758,6 +17784,7 @@ RB.pad = (function () {
   const esc = RB.util.esc;
   const I = (n) => RB.learnUi.icon(n);
   const BOX = 300; // recognizer coordinate space
+  const SMALL = 'ぁぃぅぇぉっゃゅょゎァィゥェォッャュョヮヵヶ';
 
   function create(host, opts) {
     opts = opts || {};
@@ -17989,16 +18016,18 @@ RB.pad = (function () {
       const top = P.pick || r.candidates[0].ch;
       const uncertain = r.status === 'uncertain' && !P.pick;
       const small = r.sizeHint === 'small' && !P.small ? ' <span class="rd-hint">(looks small — 小?)</span>' : '';
+      const topSmall = SMALL.indexOf(top) >= 0 ? ' <span class="rd-hint">(small kana)</span>' : '';
       setRead(uncertain ? 'unsure' : 'sure',
-        (uncertain ? '<b>Not sure</b> — pick the one you meant' : P.pick && P.pick !== r.candidates[0].ch ? 'You chose' : 'I read this as') + small, top);
+        (uncertain ? '<b>Not sure</b> — pick the one you meant' : P.pick && P.pick !== r.candidates[0].ch ? 'You chose' : 'I read this as') + small + topSmall, top);
       // the other readings, so a different one can be chosen (counts as assisted)
       const seen = new Set([top]);
       const alts = r.candidates.slice(0, 6).filter((cd) => !seen.has(cd.ch) && seen.add(cd.ch));
       if (alts.length) candsEl.appendChild(RB.ui.el('span', 'or', 'or'));
       alts.forEach((cd) => {
-        const b = RB.ui.el('button', 'cand', esc(cd.ch));
+        const small = SMALL.indexOf(cd.ch) >= 0; // small kana look like their full-size twins: say so
+        const b = RB.ui.el('button', 'cand' + (small ? ' sm' : ''), esc(cd.ch) + (small ? '<span class="cap" aria-hidden="true">small</span>' : ''));
         b.setAttribute('lang', 'ja');
-        b.setAttribute('aria-label', 'I meant ' + cd.ch);
+        b.setAttribute('aria-label', 'I meant ' + (small ? 'small ' : '') + cd.ch);
         b.title = 'Similarity ' + Math.round(cd.score * 100) + '% (a match score, not a probability)';
         b.onclick = () => { P.pick = cd.ch; renderRead(); };
         candsEl.appendChild(b);
@@ -18386,7 +18415,6 @@ RB.challenge = (function () {
         return p;
       }
       function showMode(m, how) {
-        const prev = mode;
         mode = m;
         pane(m);
         for (const k in panes) panes[k].hidden = k !== m;
@@ -18401,7 +18429,7 @@ RB.challenge = (function () {
         if (m === 'hand' && pad) requestAnimationFrame(() => pad && pad.layout());
         if (m === 'ime' && ime) {
           // keep your place: carry what was written by hand over to the keyboard
-          if (prev === 'hand' && !ime.inp.value && pad && pad.text()) ime.inp.value = pad.text();
+          if (!ime.inp.value && pad && pad.text()) { ime.inp.value = pad.text(); syncSubmit(); }
           setTimeout(() => { if (wrap.isConnected && mode === 'ime' && !locked) ime.inp.focus({ preventScroll: true }); }, how === 'init' ? 50 : 0);
         }
         if (wrap.querySelector('.fbwrap.hint')) setHint();
@@ -18483,8 +18511,7 @@ RB.challenge = (function () {
           res.recogMisses++;
           RB.audio && RB.audio.sfx('recog_unsure');
           fb('unsure', 'I could not read that clearly',
-            '<p>This doesn\'t count against you — the recognizer wasn\'t sure about your writing.</p>' +
-            '<p>Your answer line reads <span class="jp big" lang="ja">' + esc(text) + '</span>. If that isn\'t what you meant, tap a character to rewrite it, or pick it from the chart.</p>');
+            '<p>This doesn\'t count against you. Your answer reads <span class="jp big" lang="ja">' + esc(text) + '</span> — if you meant something else, tap it to rewrite it, or use the chart.</p>');
           return;
         }
         res.mistakes++;
@@ -18493,7 +18520,7 @@ RB.challenge = (function () {
         const msgs = (r.feedback || []).map((f) => '<div class="fb-why">' + (f.jp && !/\{[^|}]+\|/.test(f.en || '') ? RB.ui.jhtml(f.jp) + ' ' : '') + enRuby(f.en) + '</div>').join('') || '<div class="fb-why">That isn\'t what this needs.</div>';
         fb('no', 'Not quite.', '<p>You gave <span class="jp big" lang="ja">' + esc(plain(text)) + '</span>.</p>' + msgs + '<p class="muted small">Try again — take all the time you need.</p>');
         if (opts.onMistake) opts.onMistake(r);
-        if (pad) pad.reset();
+        if (pad && modeUsed === 'hand') pad.reset();
       }
       function evaluateChoice(o, btn) {
         if (o.ok) { btn.classList.add('on'); success('choice'); return; }
@@ -19417,6 +19444,7 @@ RB.combat = (function () {
     RB.learnUi.guardTaps(o.resp);
     o.onResize = () => requestAnimationFrame(measure);
     window.addEventListener('resize', o.onResize);
+    root.addEventListener('scroll', o.onResize, { passive: true });
     o.ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(o.onResize) : null;
     if (o.ro) o.ro.observe(o.stage);
     return o;
