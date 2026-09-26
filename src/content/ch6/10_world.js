@@ -272,6 +272,131 @@ var RB = (globalThis.RB = globalThis.RB || {});
         c.strokeStyle = 'rgba(220,216,240,0.6)'; c.lineWidth = 1; c.beginPath(); c.ellipse(cx, cy, 9, 7, 0, 0, Math.PI * 2); c.stroke();
       }
     });
+
+    // ---- art-resolution versions (draw2; rules and helpers: src/engine/26–28_*.js) ----
+    const A = RB.propArt && RB.propArt.art, K = RB.propKit;
+    if (A) {
+      const kit = RB.propArt.kit, { R, ell, poly, line, cyl, cylCol, mix, ramp, hh } = K;
+      const IR = K.FIX.iron, BR = K.FIX.brass, PP = K.FIX.paper, GRILLE = ramp('#5a5a6e', 0.45, 0.4);
+      // Card catalogue (o.blank: the Hush has wiped the labels).
+      A('sa_cabinet', {
+        box: [-2, -28, 68, 62],
+        v: (o) => (o.blank ? 1 : 0),
+        draw(g, M, v) {
+          const lab = (r, q) => (v ? '#f4f0e6' : (r + q) % 3 ? '#e8e0c8' : '#c85a4a');
+          if (kit.catalogue) kit.catalogue(g, M, 2, -20, 60, 4, 4, lab);
+          kit.plank(g, 0, -24, 64, 4, M.wood, 3);
+          R(g, 2, 26, 60, 4, M.wood[1]); R(g, 2, 26, 60, 1, M.wood[2]);
+        },
+        shadow: () => [32, 30, 30, 2.5, 0.3],
+      });
+      // Iron grille barring a way, spear-tipped, with a brass lock.
+      A('sa_gate', {
+        box: [0, -20, 32, 54], ink: true,
+        draw(g) {
+          for (let x = 2; x < 32; x += 6) { cyl(g, x, -12, 3, 42, GRILLE); poly(g, [x - 1, -12, x + 4, -12, x + 1.5, -17], GRILLE[3]); }
+          for (const y of [-8, 20]) { R(g, 0, y, 32, 3, GRILLE[2]); R(g, 0, y, 32, 1, GRILLE[4]); R(g, 0, y + 2, 32, 1, GRILLE[0]); }
+          R(g, 12, 2, 8, 9, BR[2]); R(g, 12, 2, 8, 1, BR[4]); R(g, 12, 2, 1, 9, BR[3]); R(g, 15, 5, 2, 3, BR[0]);
+        },
+        shadow: () => [16, 30, 15, 2, 0.3],
+      });
+      // A heavy bolted door (opened from the other side).
+      A('sa_door', {
+        box: [0, -20, 32, 54], ink: true,
+        draw(g, M) {
+          const w5 = M.wood;
+          R(g, 1, -16, 30, 46, '#2e2a36'); R(g, 1, -16, 30, 2, '#4a4658');
+          for (let i = 0; i < 4; i++) kit.plank(g, 4 + i * 6, -13, 6, 43, w5, 20 + i, true);
+          for (const y of [-8, 4, 18]) { R(g, 4, y, 24, 3, IR[2]); R(g, 4, y, 24, 1, IR[3]); for (const x of [6, 16, 25]) R(g, x, y + 1, 1, 1, IR[4]); }
+          R(g, 8, 8, 16, 4, IR[3]); R(g, 8, 8, 16, 1, IR[4]); R(g, 22, 6, 4, 8, IR[2]);
+          ell(g, 23, 1, 2, 2, BR[2]); R(g, 22, 0, 1, 1, BR[4]);
+        },
+        shadow: () => [16, 30, 15, 2, 0.3],
+      });
+      // Conduit mouth: faint marks drift out of it, names on their way uphill.
+      A('sa_pipe', {
+        box: [0, -14, 32, 48],
+        f: (t, o) => K.frame(t, 180, 7, o.still),
+        draw(g) {
+          const p5 = ramp('#3a3c52', 0.45, 0.45);
+          for (let i = 0; i < 24; i++) R(g, 4 + i, -6, 1, 36, cylCol(i, 24, p5));
+          R(g, 2, -8, 28, 4, p5[3]); R(g, 2, -8, 28, 1, p5[4]);
+          R(g, 8, -2, 16, 28, '#10121e'); ell(g, 16, -2, 8, 3, '#10121e');
+        },
+        over(g, M, v, f) {
+          const k = f * 2, c = 'rgba(232,228,210,0.85)';
+          R(g, 12, 20 - k * 2, 1, 3, c); R(g, 16, 24 - ((k + 6) % 14) * 2, 3, 1, c); R(g, 19, 22 - ((k + 10) % 14) * 2, 1, 3, c);
+        },
+        shadow: () => [16, 30, 13, 2.5, 0.3],
+      });
+      // Ushio's lamp on its stand, kept lit for three winters.
+      A('sa_lamp', {
+        box: [0, -22, 32, 56], ink: true,
+        f: (t, o) => kit.flick(t, o, 240),
+        draw(g, M, v, f) {
+          const s5 = ramp('#3a3440', 0.4, 0.45);
+          cyl(g, 14, 4, 4, 24, s5); R(g, 8, 26, 16, 4, s5[2]); R(g, 8, 26, 16, 1, s5[4]);
+          R(g, 7, -12, 18, 18, '#2a2430');
+          kit.lamp(g, 9, -10, 14, 14, [0, 1, 0, 2][f]);
+          R(g, 15, -10, 2, 14, '#2a2430');
+          R(g, 8, -16, 16, 4, BR[2]); R(g, 8, -16, 16, 1, BR[4]); R(g, 13, -19, 6, 3, BR[1]);
+        },
+        over(g, M, v, f) { K.halo(g, 16, -3, 14, '#ffd68a', 0.14 + (f === 1 ? 0.03 : 0)); },
+        shadow: () => [16, 30, 9, 2.5, 0.3],
+      });
+      // Archive guardian: a dark stone scribe on a plinth, a closed book held
+      // against its chest.
+      A('sa_statue', {
+        box: [-2, -26, 36, 60],
+        draw(g) {
+          const s5 = ramp('#56546a', 0.45, 0.4);
+          R(g, 2, 18, 28, 12, s5[1]); R(g, 2, 18, 28, 2, s5[3]); R(g, 29, 18, 1, 12, s5[0]);
+          K.shade(g, 4, -22, 24, 40, s5, (fx, fy) => {
+            const dx = fx - 16;
+            if (fy >= -20 && fy < -8) { const ny = (fy + 14) / 6, nx = dx / 6; if (nx * nx + ny * ny <= 1) return -0.55 * nx - 0.5 * ny + 0.3; }
+            if (fy >= -9 && fy < 18) { const t = (fy + 9) / 27, hw = 6 + t * 5; if (Math.abs(dx) <= hw) return (-dx / hw) * 0.6 + 0.2 - t * 0.25 + (Math.round(fx) % 5 === 2 && fy > 6 ? -0.3 : 0); }
+            return null;
+          }, 12, 0.06, 3, 2);
+          const bk = ramp('#8a6a4a', 0.45, 0.35);
+          R(g, 11, 0, 11, 9, bk[2]); R(g, 11, 0, 11, 2, bk[4]); R(g, 21, 1, 1, 8, bk[1]); R(g, 13, 4, 7, 1, '#d8b060');
+          R(g, 13, -15, 2, 1, s5[0]); R(g, 18, -15, 2, 1, s5[0]);
+        },
+        shadow: () => [16, 30, 15, 3, 0.34],
+      });
+      // Ushio's grave: a low weathered slab with a brush-shaped cut, a cup of water.
+      A('sa_grave', {
+        box: [0, -16, 32, 50],
+        draw(g) {
+          const s5 = ramp('#4a4858', 0.45, 0.4);
+          K.shade(g, 5, -12, 22, 40, s5, (fx, fy) => {
+            const dx = fx - 16;
+            if (Math.abs(dx) > 10 || fy < -8 + (dx * dx) / 14) return null;
+            return (-dx / 10) * 0.55 + 0.25 - ((fy + 10) / 38) * 0.3 + (Math.abs(dx) > 8.5 ? (dx < 0 ? 0.25 : -0.3) : 0);
+          }, 3, 0.1, 4, 3);
+          line(g, 15, -2, 17, 10, '#d8d4c8', 2); R(g, 13, 11, 6, 1, '#d8d4c8'); R(g, 15, -3, 2, 1, '#f0ece0');
+          R(g, 23, 20, 6, 6, '#8a8aa0'); R(g, 23, 20, 6, 1, '#b8b8c8'); R(g, 24, 21, 4, 1, '#a8d8e8');
+        },
+        shadow: () => [16, 29, 13, 3, 0.3],
+      });
+      // The Hush at the Heart: blank pages circling a hollow (o.settled:
+      // the pages come to rest in a heap). 32 cached frames of the turn.
+      A('sa_hushcore', {
+        box: [-12, -24, 120, 120], outline: false,
+        v: (o) => (o.settled ? 1 : 0),
+        f: (t, o) => (o.settled || o.still ? 0 : Math.floor((t / 1400) / (2 * Math.PI) * 32) % 32),
+        draw(g, M, v, f) {
+          const cx = 48, cy = 36, n = v ? 10 : 22, tt = (f / 32) * 2 * Math.PI * 1400;
+          if (!v) { ell(g, cx, cy, 18, 12, 'rgba(220,216,240,0.35)'); ell(g, cx, cy, 15, 10, '#0a0a14'); ell(g, cx - 3, cy - 2, 7, 4, '#16162a'); }
+          for (let i = 0; i < n; i++) {
+            const a = (v ? 0 : tt / 1400) + i * ((Math.PI * 2) / n), r = 20 + (i % 4) * 10 + (v ? 0 : Math.sin(tt / 500 + i) * 3);
+            const x = Math.round(cx + Math.cos(a) * r), y = Math.round(cy + Math.sin(a) * r * 0.6 + (v ? 28 : 0));
+            const pc = i % 3 ? PP : ramp('#c8c4d8', 0.35, 0.3);
+            R(g, x - 4, y - 3, 8, 6, pc[3]); R(g, x - 4, y - 3, 8, 1, pc[4]); R(g, x + 3, y - 2, 1, 5, pc[1]); R(g, x - 4, y + 2, 8, 1, pc[1]);
+            if (i % 2) R(g, x - 2, y, 4, 1, pc[2]);
+          }
+        },
+      });
+    }
   }
 
   const S = RB.sprites && RB.sprites.custom;
