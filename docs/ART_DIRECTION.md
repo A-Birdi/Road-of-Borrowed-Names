@@ -157,17 +157,66 @@ and Storage. Choices saved with the current campaign (Japanese level,
 mistakes in battle, tactical challenge) are shown apart, in a marked box.
 All other preferences apply to every campaign.
 
-## 7. Pixel art (Phase C, planned)
+## 7. In play: dialogue, word help, HUD, touch, camera
+
+- **Dialogue** is an inset paper sheet (correspondence) with a speaker tab
+  on its top edge and the portrait framed beside it. The lead line is in
+  ink, and the second language sits under a rule in secondary ink, not
+  faint filler. There is one control row: Word help, Translation, Voice,
+  History and Skip seen are separate labelled toggles, and there is a
+  single Next in the same place. When a line is longer than the sheet, the
+  button reads "More" and first scrolls the rest into view. Replies are
+  numbered paper slips just above the sheet. A scroll gesture over them
+  does not choose one.
+- **Word help** is a bounded note card beside the word on wide screens,
+  or a bottom sheet on narrow ones when opened by tap or keyboard. Close
+  is always in its header. A card opened by a tap pauses what is under it:
+  the next tap only closes the card. Escape closes it first. Opening any
+  panel closes it. Touch has an explicit, labelled route (the Word help
+  toggle, then tap a word); long-press on an answer button supplements it.
+- **HUD:** one Menu entry and a labelled Word help switch showing its
+  state, as cloth tags at the top edge. They are hidden whenever a panel,
+  the folio or dialogue is up, because those carry their own controls.
+- **Touch:** a sliding movement pad (the direction follows the thumb, with
+  a centre dead zone), hold-to-Run, and an Action button labelled by what
+  it will do (Talk, Read, Look, Face, Chat). The controls are hidden
+  during dialogue, menus and writing. A handedness and size setting is
+  available, and its defaults keep the previous layout.
+- **Camera:** the map is composed in the space above the dialogue sheet or
+  touch controls. Small maps sit on a quiet surround in the region's
+  darkest colour (timber indoors, a faint weave outdoors) with a soft edge
+  shadow. Nothing in the surround looks walkable, and the map is never
+  stretched or cropped.
+
+## 8. Pixel art
 
 The world keeps its 16-px logical grid. Map IDs, collisions, triggers,
-movement and saved coordinates are unchanged. Art is authored at twice the
-logical resolution: 32×32 tiles and ~32×48 characters drawn into the same
-logical footprint. They are generated procedurally at load time, cached as
-canvases, and drawn at integer scale. The art is redrawn, not enlarged with
-nearest-neighbour scaling. Details and progress are recorded in
-`VALIDATION.md` and `HANDOFF.md` as the work lands.
+movement and saved coordinates are unchanged. The renderer
+(`src/engine/60_render.js`) draws at 2 art pixels per logical pixel, so a
+tile is 32×32 art pixels and a character 32×48, scaled to the screen by a
+whole number of device pixels. The field of view is about 12 tiles across
+on phones, 17 on tablets and 20–21 on desktops. Art authored at this
+resolution plugs in through `draw2`/`anim2` (tiles), `draw2` (props),
+`RB.props.STRUCT2` (buildings) and `RB.sprites.getArt` (characters).
+Anything not yet redrawn is drawn from its older 16-px art through a ×2
+transform. That is a stopgap, not the upgrade. Rules for the redrawn art:
 
-## 8. Things deliberately not done
+- light from the upper left
+- hue-shifted 3–5-step ramps per material
+- shading in clusters, with no single-pixel noise used as texture
+- selective dark outlines on characters only
+- contact shadows under props and people
+- deterministic variation from position hashes
+- region identity through materials and palettes
+- interactable objects kept distinct from decoration
+- generated surfaces cached; a map's static layer is built once and kept
+  only for the current and previous map
+
+`tests/e2e/art_shots.mjs` captures a world scene per region and specimen
+sheets of every tile, prop, sprite and portrait for review. What has
+actually been redrawn is recorded in `VALIDATION.md`.
+
+## 9. Things deliberately not done
 
 - No texture behind text, furigana or handwriting strokes.
 - No furigana-off toggle.
