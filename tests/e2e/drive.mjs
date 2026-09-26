@@ -328,7 +328,9 @@ export function install() {
       let best = null;
       const X = explore();
       for (const st of allSites(opts.prefix)) {
-        const key = sig + '|' + st.kind + '|' + st.map + '|' + st.scene;
+        // several sites can share a scene (three doors, one scene): key by place too
+        const where = st.n ? st.n.id : st.pr ? st.pr.x + ',' + st.pr.y : st.ex ? st.ex.x + ',' + st.ex.y : st.tr ? st.tr.x + ',' + st.tr.y : st.f ? st.f.id : '';
+        const key = sig + '|' + st.kind + '|' + st.map + '|' + st.scene + '|' + where;
         if (tried.has(key)) continue;
         const g = gain(st.scene, opts.main, st);
         const tier = g.main ? 3 : g.other ? 2 : g.unseen ? 1 : 0;
