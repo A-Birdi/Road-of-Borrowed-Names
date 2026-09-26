@@ -46,7 +46,11 @@
 - Browser: `node tests/e2e/story_ch1.mjs [F|E|I|A] [nao|mio|ren|suzu]`,
   `node tests/e2e/story_ch3.mjs [prof] [comp]`, `story_ch4.mjs [prof] [comp] [stay|go|both]`,
   `story_ch6.mjs [runIndex 0-4]`, `node tests/e2e/atlas.check.mjs`,
-  explorer: `node tests/e2e/explore.mjs <map> <x> <y> <flag[>flag…]> [comp|none] [prof] [seed] [maxActions] [flags] [words] [mapPrefix]`,
+  `story_ch5.mjs [prof] [comp]` (driven through the world by tests/e2e/drive.mjs),
+  `node tests/e2e/systems.mjs` (fast travel, step back, bosses, defeat),
+  goal pursuit (whole game from a new campaign by default):
+  `node tests/e2e/pursue.mjs [prof] [comp|none] ["flag@prefix@mainQuest>…"] [map x y] [flags] [words]`,
+  random explorer: `node tests/e2e/explore.mjs <map> <x> <y> <flag[@prefix][>…]> [comp|none] [prof] [seed] [maxActions] [flags] [words] [mapPrefix]`,
   `node tests/e2e/ui.mjs [filter]`, `node tests/e2e/audio.check.mjs`,
   screenshots: `node tests/e2e/shot.mjs out.png "<js>" [ms] [WxH]`.
 
