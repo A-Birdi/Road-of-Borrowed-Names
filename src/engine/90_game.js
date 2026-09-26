@@ -149,6 +149,9 @@ RB.game = (function () {
     setBase('world');
     const start = RB.content.start || { map: 'rw.home', x: 3, y: 3, dir: 'down', scene: null };
     RB.world.enter(start.map, start.x, start.y, start.dir);
+    // A successful campaign entry owns world rendering, regardless of caller.
+    RB.input.clearHeld();
+    RB.render.setOverride(null);
     st.checkpoint = { map: start.map, x: start.x, y: start.y, dir: start.dir };
     await RB.save.autosave('auto');
     RB.ui.hud.show();
@@ -177,6 +180,9 @@ RB.game = (function () {
     setBase('world');
     RB.maps.invalidate();
     RB.world.enter(G.s.map, G.s.x, G.s.y, G.s.dir);
+    // Clear title/creation backdrops only after the saved map entered successfully.
+    RB.input.clearHeld();
+    RB.render.setOverride(null);
     RB.ui.hud.show();
     RB.ui.notice(which === 'auto' ? 'Continued from the latest autosave.' : which === 'predeparture' ? 'Restored the point before departure.' : 'Loaded.', 'info');
     return true;

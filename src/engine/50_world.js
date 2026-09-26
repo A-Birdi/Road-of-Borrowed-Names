@@ -166,6 +166,8 @@ RB.world = (function () {
   }
 
   function tryMovePlayer(dir) {
+    // Reject non-direction actions before looking up or changing movement.
+    if (!Object.prototype.hasOwnProperty.call(DIRS, dir)) return;
     const p = W.player;
     if (p.mv) return;
     const [dx, dy] = DIRS[dir];

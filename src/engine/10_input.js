@@ -24,6 +24,7 @@ RB.input = (function () {
     log: 'Dialogue history', map: 'Map', run: 'Walk faster (hold)',
   };
   let binds = RB.util.deepClone(DEFAULT_BINDS);
+  const DIRECTIONS = ['up', 'down', 'left', 'right'];
   const held = { up: 0, down: 0, left: 0, right: 0, run: 0 };
   const touchHeld = { up: 0, down: 0, left: 0, right: 0 };
   let handler = null; // (action, event) => void
@@ -62,7 +63,8 @@ RB.input = (function () {
     const a = actionFor(e.code);
     if (!a) return;
     if (a in held) {
-      if (!held[a]) lastDirPressed = a;
+      // Running is a speed modifier, never a movement direction.
+      if (!held[a] && DIRECTIONS.includes(a)) lastDirPressed = a;
       held[a] = 1;
     }
     // Space/arrow/Tab must not scroll the page or move focus unexpectedly.
@@ -77,12 +79,13 @@ RB.input = (function () {
   function clearHeld() {
     for (const k in held) held[k] = 0;
     for (const k in touchHeld) touchHeld[k] = 0;
+    lastDirPressed = null;
   }
   // Direction currently held, favouring the most recently pressed.
   function dir() {
     const h = (k) => held[k] || touchHeld[k];
-    if (lastDirPressed && h(lastDirPressed)) return lastDirPressed;
-    for (const k of ['up', 'down', 'left', 'right']) if (h(k)) return k;
+    if (DIRECTIONS.includes(lastDirPressed) && h(lastDirPressed)) return lastDirPressed;
+    for (const k of DIRECTIONS) if (h(k)) return k;
     return null;
   }
   function running() {

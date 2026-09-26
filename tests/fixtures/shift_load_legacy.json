@@ -1,0 +1,123 @@
+{
+  "v": 1,
+  "id": "mui9e75drki1e2",
+  "created": 1790419250353,
+  "playtime": 0.05,
+  "chapter": 0,
+  "player": {
+    "name": "Hotfix test",
+    "nameJp": "\u30db\u30c8\u30d5\u30a3\u30af\u30b9\u30c6\u30b9\u30c8",
+    "pron": "they",
+    "bg": "courier",
+    "look": {
+      "skin": 2,
+      "hair": "short",
+      "hairColor": 1,
+      "outfit": 0,
+      "shape": "tunic",
+      "acc": [
+        "scarf"
+      ]
+    }
+  },
+  "comp": null,
+  "provisional": null,
+  "map": "rw.road",
+  "x": 3,
+  "y": 9,
+  "dir": "right",
+  "flags": {
+    "rw_arrived": true
+  },
+  "vars": {},
+  "quests": {},
+  "inv": {
+    "rw_letter": null
+  },
+  "equip": {
+    "charm": null,
+    "tool": null,
+    "cosmetic": null
+  },
+  "words": [],
+  "techniques": [],
+  "resolve": {
+    "pc": 12,
+    "comp": 12,
+    "max": 12
+  },
+  "checkpoint": {
+    "map": "rw.road",
+    "x": 3,
+    "y": 9,
+    "dir": "right"
+  },
+  "visited": {
+    "rw.road": true
+  },
+  "travel": {},
+  "seen": {
+    "rw.arrive": true
+  },
+  "backlog": [
+    {
+      "who": "narr",
+      "jp": "{\u5d50|\u3042\u3089\u3057} \u306e {\u6b21|\u3064\u304e} \u306e {\u671d|\u3042\u3055} \u3002 {\u9053|\u307f\u3061} \u306f \u307e\u3060 \u306c\u308c\u3066 \u3044\u308b \u3002",
+      "en": "The morning after the storm. The road is still wet."
+    },
+    {
+      "who": "narr",
+      "jp": "{\u6298|\u304a}\u308c\u305f {\u679d|\u3048\u3060} \u3001 {\u6ce5|\u3069\u308d} \u306e {\u6c34|\u307f\u305a}\u305f\u307e\u308a \u3001 \u3069\u3053\u304b \u3067 {\u9cf4|\u306a}\u304f {\u9ce5|\u3068\u308a} \u3002",
+      "en": "Broken branches, muddy puddles, a bird calling somewhere."
+    },
+    {
+      "who": "narr",
+      "jp": "{\u914d\u9054|\u306f\u3044\u305f\u3064} \u306e {\u7656|\u304f\u305b} \u3067 \u3001 {\u9053|\u307f\u3061} \u306e {\u5148|\u3055\u304d} \u306e {\u706f|\u3042\u304b}\u308a \u3092 {\u6570|\u304b\u305e}\u3048\u308b \u3002 \u3072\u3068\u3064 \u3001 \u3075\u305f\u3064 \u2026\u2026 \u307f\u3063\u3064{\u76ee|\u3081} \u304c {\u6d88|\u304d}\u3048\u3066 \u3044\u308b \u3002",
+      "en": "Out of courier's habit, you count the lanterns ahead. One, two\u2026 the third is dark."
+    },
+    {
+      "who": "narr",
+      "jp": "{\u8466|\u3042\u3057}\u30ce{\u702c|\u305b} \u306e {\u706f\u5b88|\u3072\u3082\u308a} \u3001 \u30c4\u30eb \u3055\u3093 \u3078 \u306e {\u7d39\u4ecb\u72b6|\u3057\u3087\u3046\u304b\u3044\u3058\u3087\u3046} \u3092 {\u6301|\u3082}\u3063\u3066 \u3001 {\u6771|\u3072\u304c\u3057} \u3078 {\u6b69|\u3042\u308b}\u304f \u3002",
+      "en": "You walk east, carrying a letter of introduction for Tsuru, the lantern keeper of Reedwake."
+    }
+  ],
+  "notebook": [
+    {
+      "kind": "lore",
+      "id": "rw_roads",
+      "t": 1790419251134
+    }
+  ],
+  "learn": {
+    "profile": "E",
+    "assist": "normal",
+    "difficulty": "normal",
+    "kanaGroup": "all_done",
+    "items": {},
+    "stats": {
+      "recog": 0,
+      "recall": 0,
+      "hand": 0,
+      "assisted": 0,
+      "typed": 0,
+      "mistakes": 0
+    },
+    "kanaKnown": "both"
+  },
+  "atlas": {
+    "unlocked": false,
+    "runs": 0,
+    "best": 0,
+    "relics": [],
+    "cosmetics": [],
+    "run": null
+  },
+  "ngplus": 0,
+  "journal": [
+    {
+      "jp": "{\u540d\u524d|\u306a\u307e\u3048} \u304c {\u6d88|\u304d}\u3048\u3066\u3044\u308b \u3002 {\u6a4b|\u306f\u3057} \u306f {\u5411|\u3080}\u3053\u3046{\u5cb8|\u304e\u3057} \u306b {\u5c4a|\u3068\u3069}\u304b\u306a\u3044 \u3002",
+      "en": "Names are fading from things. Hana at the Reedwake teahouse poured tea for someone she cannot remember; a lantern lost its name; a bridge no longer reaches the far bank.",
+      "t": 1790419250353
+    }
+  ]
+}

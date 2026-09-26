@@ -9607,6 +9607,7 @@ RB.input = (function () {
     log: 'Dialogue history', map: 'Map', run: 'Walk faster (hold)',
   };
   let binds = RB.util.deepClone(DEFAULT_BINDS);
+  const DIRECTIONS = ['up', 'down', 'left', 'right'];
   const held = { up: 0, down: 0, left: 0, right: 0, run: 0 };
   const touchHeld = { up: 0, down: 0, left: 0, right: 0 };
   let handler = null; // (action, event) => void
@@ -9645,7 +9646,8 @@ RB.input = (function () {
     const a = actionFor(e.code);
     if (!a) return;
     if (a in held) {
-      if (!held[a]) lastDirPressed = a;
+      // Running is a speed modifier, never a movement direction.
+      if (!held[a] && DIRECTIONS.includes(a)) lastDirPressed = a;
       held[a] = 1;
     }
     // Space/arrow/Tab must not scroll the page or move focus unexpectedly.
@@ -9660,12 +9662,13 @@ RB.input = (function () {
   function clearHeld() {
     for (const k in held) held[k] = 0;
     for (const k in touchHeld) touchHeld[k] = 0;
+    lastDirPressed = null;
   }
   // Direction currently held, favouring the most recently pressed.
   function dir() {
     const h = (k) => held[k] || touchHeld[k];
-    if (lastDirPressed && h(lastDirPressed)) return lastDirPressed;
-    for (const k of ['up', 'down', 'left', 'right']) if (h(k)) return k;
+    if (DIRECTIONS.includes(lastDirPressed) && h(lastDirPressed)) return lastDirPressed;
+    for (const k of DIRECTIONS) if (h(k)) return k;
     return null;
   }
   function running() {
@@ -11701,6 +11704,8 @@ RB.world = (function () {
   }
 
   function tryMovePlayer(dir) {
+    // Reject non-direction actions before looking up or changing movement.
+    if (!Object.prototype.hasOwnProperty.call(DIRS, dir)) return;
     const p = W.player;
     if (p.mv) return;
     const [dx, dy] = DIRS[dir];
@@ -13268,6 +13273,9 @@ RB.game = (function () {
     setBase('world');
     const start = RB.content.start || { map: 'rw.home', x: 3, y: 3, dir: 'down', scene: null };
     RB.world.enter(start.map, start.x, start.y, start.dir);
+    // A successful campaign entry owns world rendering, regardless of caller.
+    RB.input.clearHeld();
+    RB.render.setOverride(null);
     st.checkpoint = { map: start.map, x: start.x, y: start.y, dir: start.dir };
     await RB.save.autosave('auto');
     RB.ui.hud.show();
@@ -13296,6 +13304,9 @@ RB.game = (function () {
     setBase('world');
     RB.maps.invalidate();
     RB.world.enter(G.s.map, G.s.x, G.s.y, G.s.dir);
+    // Clear title/creation backdrops only after the saved map entered successfully.
+    RB.input.clearHeld();
+    RB.render.setOverride(null);
     RB.ui.hud.show();
     RB.ui.notice(which === 'auto' ? 'Continued from the latest autosave.' : which === 'predeparture' ? 'Restored the point before departure.' : 'Loaded.', 'info');
     return true;
