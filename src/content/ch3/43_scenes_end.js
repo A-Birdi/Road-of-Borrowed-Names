@@ -25,7 +25,7 @@ co_fusa[worry]: …… {楽|たの}しい まま で 、 いい じゃ ない �
 co_nobu: {泣|な}く の が {嫌|いや} で {草|くさ} を {刈|か}らず 、 それ で {燃|も}える の か 。 {俺|おれ} は {御免|ごめん} だ 。 || So we won't cut the grass because we'd rather not cry, and then we burn? Not me.
 co_ume: …… わたし は {頼|たの}まなかった よ 。 {預|あず}けなかった 。 それ でも {取|と}られた 。 {煙|けむり} の におい だけ {残|のこ}して ね 。 || …I never asked. Never handed anything over. They took it anyway — and left me the smell of smoke.
 co_goro: わし の {腕|うで} は 、 {鐘|かね} の {打|う}ち{方|かた} を {覚|おぼ}えて おった 。 {頭|あたま} が {忘|わす}れて も な 。 || My arms remembered how to ring that bell, even when my head forgot.
-?(co_bell_rung) co_goro: {鐘|かね} が {鳴|な}った {日|ひ} 、 みんな {桶|おけ} を {持|も}って {水路|すいろ} へ {走|はし}った じゃ ろう 。 {体|からだ} は {忘|わす}れて なかった ん だ 。 || The day the bell rang, you all ran to the channel with buckets, didn't you? Your bodies hadn't forgotten.
+?(co_bell_rung) co_goro: {鐘|かね} が {鳴|な}った {日|ひ} 、 みんな {桶|おけ} を {持|も}って {水路|すいろ} へ {走|はし}った だろう 。 {体|からだ} は {忘|わす}れて なかった ん だ 。 || The day the bell rang, you all ran to the channel with buckets, didn't you? Your bodies hadn't forgotten.
 narr: {皆|みな} の {目|め} が 、 {旅|たび} の {者|もの} に {向|む}いた 。 || Everyone's eyes turn to the travellers.
 co_tokiwa: {旅|たび} の お{方|かた} 。 {頁|ページ} を {見|み}つけた の は 、 あなた です 。 {最初|さいしょ} の {一行|いちぎょう} を 、 {一緒|いっしょ} に {考|かんが}えて いただけません か 。 || Traveller. You found the page. Would you help us decide the first line?
 !challenge co.c_assembly

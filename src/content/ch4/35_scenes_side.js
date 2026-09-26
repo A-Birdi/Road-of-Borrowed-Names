@@ -38,7 +38,7 @@ narr: {札|ふだ} 「 ロクタ 。 {座|すわ}って いる キツネ 。 {�
 
 RB.script.add(`
 @scene sb.bn_nao1
-comp: {雪鈴|ゆきすず} の {郵便|ゆうびん}{箱|ばこ} 、 {見|み}た か 。 「 {次|つぎ} の {集荷|しゅうか} ： {雪|ゆき} {解|ど}け の あと 」 。 …… {正直|しょうじき} で いい 。 {来|こ}ない もの を {来|く}る と {書|か}く より 、 ずっと いい 。 || Did you see Snowbell's postbox? "Next collection: after the thaw." …Honest. Much better than writing that something's coming when it isn't.
+comp: {雪鈴|ゆきすず} の {郵便|ゆうびん}{箱|ばこ} 、 {見|み}た か 。 「 {次|つぎ} の {集荷|しゅうか} ： {雪解|ゆきど}け の あと 」 。 …… {正直|しょうじき} で いい 。 {来|こ}ない もの を {来|く}る と {書|か}く より 、 ずっと いい 。 || Did you see Snowbell's postbox? "Next collection: after the thaw." …Honest. Much better than writing that something's coming when it isn't.
 
 @scene sb.bn_nao2
 comp: ヤギ って の は 、 {数|かぞ}え{間違|まちが}える と {増|ふ}える し 、 {目|め} を {離|はな}す と {減|へ}る 。 {郵便|ゆうびん} と {同|おな}じ だ 。 || Goats multiply when you miscount them and disappear when you look away. Same as mail.

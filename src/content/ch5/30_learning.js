@@ -280,7 +280,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         { kind: 'choose', item: 'v:まで', ctx: { jp: PLOT, en: '' }, prompt: { en: 'かき の き まで — まで means…' }, options: [ok('', 'as far as / up to', 'まで marks a limit.'), no('', 'from', 'From is から.'), no('', 'with', 'With is と.')] },
       ],
       E: [
-        { kind: 'choose', item: 'c:lf_fence', ctx: { jp: PLOT, en: '' }, prompt: { en: 'What are Sōta and Kinu really arguing about?' }, options: [ok('', 'Whether "up to the tree" includes the tree', 'まで marks the limit, but is the tree inside or outside it?'), no('', 'Whether there is a tree at all', 'The tree is right there.'), no('', 'Which of them is older', 'Not the point.')] },
+        { kind: 'choose', item: 'c:lf_fence', ctx: { jp: PLOT, en: '' }, prompt: { en: 'What are Kōhei and Kinu really arguing about?' }, options: [ok('', 'Whether "up to the tree" includes the tree', 'まで marks the limit, but is the tree inside or outside it?'), no('', 'Whether there is a tree at all', 'The tree is right there.'), no('', 'Which of them is older', 'Not the point.')] },
       ],
       I: [
         { kind: 'choose', item: 'c:lf_fence', prompt: { en: 'Which suggestion answers both of them?' }, options: [ok('', 'Run the line through the trunk, and share the fruit', 'Neither loses the tree; both keep their say.'), no('', 'Cut the tree down', 'That settles nothing and loses the persimmons.'), no('', 'Let the fence keep moving every morning', 'That is what the Hush did.')] },
@@ -408,7 +408,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   w('01', 'F', 'v:鈴', '{小|ちい}さな {鈴|すず} が {鳴|な}った 。', 'A small bell rang.', 'A small bell is すず. Write it.', 'すず', ['すず', '鈴'], { mode: 'kana', explain: { jp: '{鈴|すず}', en: 'すず — small bell.' } });
   w('02', 'F', 'v:声', '{町|まち} に {声|こえ} が {戻|もど}った 。', 'Voices came back to the town.', 'Voice is こえ. Write it.', 'こえ', ['こえ', '声'], { mode: 'kana', explain: { jp: '{声|こえ}', en: 'こえ — voice.' } });
   w('03', 'F', 'v:鐘', '{塔|とう} の {鐘|かね}', 'The tower bell', 'A big bell is かね. Write it.', 'かね', ['かね', '鐘'], { mode: 'kana', explain: { jp: '{鐘|かね}', en: 'かね — large bell.' } });
-  w('04', 'F', 'v:舟', 'テツ の {舟|ふね}', "Tetsu's boat", 'Boat is ふね. Write it.', 'ふね', ['ふね', '舟', '船'], { mode: 'kana', explain: { jp: '{舟|ふね}', en: 'ふね — boat.' } });
+  w('04', 'F', 'v:舟', 'トクジ の {舟|ふね}', "Tokuji's boat", 'Boat is ふね. Write it.', 'ふね', ['ふね', '舟', '船'], { mode: 'kana', explain: { jp: '{舟|ふね}', en: 'ふね — boat.' } });
   w('05', 'F', 'v:いいえ', '「はい」 と 「いいえ」', '"Yes" and "no"', 'Write the word for "no".', 'いいえ', ['いいえ'], { mode: 'kana', explain: { en: 'いいえ — no.' } });
   w('06', 'F', 'v:手紙', 'ウミ へ の {手紙|てがみ}', 'A letter for Umi', 'Letter is てがみ. Write it.', 'てがみ', ['てがみ', '手紙'], { mode: 'kana', explain: { jp: '{手紙|てがみ}', en: 'てがみ — letter.' } });
   w('07', 'F', 'v:水', '{水|みず} が {引|ひ}いた 。', 'The water went down.', 'Water is みず. Write it.', 'みず', ['みず', '水'], { mode: 'kana', explain: { jp: '{水|みず}', en: 'みず — water.' } });

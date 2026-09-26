@@ -371,7 +371,7 @@ RB.sprites = (function () {
     let cv = cache.get(k);
     if (cv) return cv;
     cv = makeCanvas(W, H);
-    const c = cv.getContext('2d');
+    const c = cv.getContext('2d', { willReadFrequently: true });
     const col = colorsOf(look);
     const side = dir === 'left' || dir === 'right';
     const d = side ? 'side' : dir;

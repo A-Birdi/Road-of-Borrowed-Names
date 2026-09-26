@@ -1,5 +1,5 @@
 /* Chapter 5 side quests:
- *  lf_fence     — Sōta and Kinu's fence moves every morning (settled once people can argue)
+ *  lf_fence     — Kōhei and Kinu's fence moves every morning (settled once people can argue)
  *  lf_form      — Hayato's form says two things at once
  *  lf_timetable — Tsuya waits for a ferry the timetable says runs */
 var RB = (globalThis.RB = globalThis.RB || {});
@@ -10,36 +10,36 @@ RB.script.add(`
 !if quest.lf_fence>=1 -> record
 !if quest.lf_fence -> waiting
 !if lf_bell_rung -> loud
-lf_sota: おや 、お{客|きゃく}さん 。{隣|となり} の キヌ さん と 、{垣根|かきね} の {話|はなし} を して いた ところ で ね 。|| Oh, hello there. I was just talking with my neighbour Kinu about the fence.
+lf_kohei: おや 、お{客|きゃく}さん 。{隣|となり} の キヌ さん と 、{垣根|かきね} の {話|はなし} を して いた ところ で ね 。|| Oh, hello there. I was just talking with my neighbour Kinu about the fence.
 lf_kinu[smile]: ええ 。とても {穏|おだ}やか な {話|はなし} です よ 。|| Yes. A very peaceful conversation.
-lf_sota: キヌ さん 、{垣根|かきね} は {柿|かき} の {木|き} の こちら {側|がわ} が いい です よね 。|| Kinu, the fence should go on this side of the persimmon, shouldn't it?
+lf_kohei: キヌ さん 、{垣根|かきね} は {柿|かき} の {木|き} の こちら {側|がわ} が いい です よね 。|| Kinu, the fence should go on this side of the persimmon, shouldn't it?
 lf_kinu[smile]: もちろん です 。|| Of course.
 lf_kinu: でも 、{柿|かき} の {木|き} の 、あちら {側|がわ} でも いい です よね 。|| But it could go on the far side of the persimmon too, couldn't it?
-lf_sota[smile]: もちろん です 。|| Of course.
+lf_kohei[smile]: もちろん です 。|| Of course.
 narr: ふたり は にこにこ して いる 。{地面|じめん} に は 、{杭|くい} を {抜|ぬ}いた {穴|あな} が いくつ も {並|なら}んで いる 。|| They are both smiling. In the ground, a row of holes where fence posts have been pulled up.
-lf_sota[tired]: …… {毎朝|まいあさ} 、どちら か が {言|い}い{出|だ}して 、どちら か が 「もちろん」 と {言|い}う 。それ で {垣根|かきね} を {動|うご}かす 。|| …Every morning, one of us suggests something and the other says "of course". So we move the fence.
+lf_kohei[tired]: …… {毎朝|まいあさ} 、どちら か が {言|い}い{出|だ}して 、どちら か が 「もちろん」 と {言|い}う 。それ で {垣根|かきね} を {動|うご}かす 。|| …Every morning, one of us suggests something and the other says "of course". So we move the fence.
 lf_kinu[tired]: {腰|こし} が {痛|いた}くて 。…… もちろん 、{構|かま}いません けれど 。|| My back aches. …Not that I mind, of course.
 ?(comp=nao) comp: {二人|ふたり} とも 、{本当|ほんとう} は {譲|ゆず}りたく ない んだ よね 。{顔|かお} に {書|か}いて ある 。|| Neither of you actually wants to give ground, do you. It's written all over your faces.
 ?(comp=mio) comp[worry]: {腰|こし} 、{見|み}せて ください 。…… {湿布|しっぷ} 、{置|お}いて いきます ね 。|| Let me see your back. …I'll leave you a poultice.
 ?(comp=ren) comp: {境|さかい} の {記録|きろく} が ある はず です 。{記録館|きろくかん} で {探|さが}して みましょう 。|| There must be a record of the boundary. Let's look for it at the Records Hall.
 ?(comp=suzu) comp[laugh]: {毎朝|まいあさ} の {公演|こうえん} ね 。{演目|えんもく} は 「{垣根|かきね} {往復|おうふく}」 。|| A daily performance. Today's programme: "The Fence, Back and Forth."
 pc: {記録館|きろくかん} に 、{土地|とち} の {記録|きろく} が ある かも しれません 。{探|さが}して みます 。|| There might be a land record at the Records Hall. I'll look.
-lf_sota: もちろん です 。|| Of course.
+lf_kohei: もちろん です 。|| Of course.
 lf_kinu: もちろん です 。|| Of course.
 !quest lf_fence start
 !end
 :loud
 lf_kinu[angry]: {垣根|かきね} は {柿|かき} の {木|き} の {手前|てまえ} です ！ {三十年|さんじゅうねん} そう でした ！|| The fence goes on THIS side of the persimmon! It's been that way for thirty years!
-lf_sota[angry]: いいや 、{向|む}こう だ ！ {親父|おやじ} が そう {言|い}ってた ！|| No, the far side! My father said so!
+lf_kohei[angry]: いいや 、{向|む}こう だ ！ {親父|おやじ} が そう {言|い}ってた ！|| No, the far side! My father said so!
 lf_kinu: あら 、{久|ひさ}しぶり に 「いいや」 を {聞|き}きました わ 。|| My, it's been a while since I heard "no".
-lf_sota[laugh]: …… {久|ひさ}しぶり に {言|い}った よ 。|| …Been a while since I said it.
+lf_kohei[laugh]: …… {久|ひさ}しぶり に {言|い}った よ 。|| …Been a while since I said it.
 pc: {記録館|きろくかん} で 、{土地|とち} の {記録|きろく} を {探|さが}して きましょう か 。|| Shall I go and find the land record at the Records Hall?
 lf_kinu: お{願|ねが}い します 。{記録|きろく} が {私|わたし} の {味方|みかた} を する の を 、{見|み}たい わ 。|| Please do. I'd like to see the record take my side.
-lf_sota: {俺|おれ} の {味方|みかた} だ よ 。|| It'll take mine.
+lf_kohei: {俺|おれ} の {味方|みかた} だ よ 。|| It'll take mine.
 !quest lf_fence start
 !end
 :waiting
-lf_sota: {記録館|きろくかん} の {右|みぎ} の {机|つくえ} に 、{土地|とち} の {記録|きろく} が ある はず です よ 。|| The land records should be on the desk on the right in the Records Hall.
+lf_kohei: {記録館|きろくかん} の {右|みぎ} の {机|つくえ} に 、{土地|とち} の {記録|きろく} が ある はず です よ 。|| The land records should be on the desk on the right in the Records Hall.
 ?(!lf_bell_rung) lf_kinu: もちろん です 。|| Of course.
 ?(lf_bell_rung) lf_kinu: {左|ひだり} の {机|つくえ} です よ 。…… え 、{右|みぎ} ? あら 。|| The left-hand desk. …Eh? The right? Oh.
 !end
@@ -48,10 +48,10 @@ lf_sota: {記録館|きろくかん} の {右|みぎ} の {机|つくえ} に �
 !if lf_bell_rung -> settle
 !if quest.lf_fence>=2 -> still
 pc: {記録|きろく} が ありました 。「{東|ひがし} の {境|さかい} は 、{柿|かき} の {木|き} まで と する 。」|| I found the record. "The eastern boundary shall run as far as the persimmon tree."
-lf_sota: {柿|かき} の {木|き} まで 。…… {木|き} の {向|む}こう まで 、と いう こと です ね 。|| As far as the tree. …Meaning up to the far side of the tree.
+lf_kohei: {柿|かき} の {木|き} まで 。…… {木|き} の {向|む}こう まで 、と いう こと です ね 。|| As far as the tree. …Meaning up to the far side of the tree.
 lf_kinu[smile]: もちろん です 。|| Of course.
 lf_kinu: {柿|かき} の {木|き} まで 。{木|き} の {手前|てまえ} まで 、と いう こと です よね 。|| As far as the tree. Meaning up to this side of it.
-lf_sota[smile]: もちろん です 。|| Of course.
+lf_kohei[smile]: もちろん です 。|| Of course.
 narr: {記録|きろく} は 、{二人|ふたり} の {間|あいだ} で 、{二|ふた}つ の {意味|いみ} に {分|わ}かれた まま だ 。|| Between the two of them, the record just splits into two meanings.
 ?(comp=nao) comp: {言|い}い{返|かえ}せない と 、{記録|きろく} が あって も {意味|いみ} ない ん だね 。|| If they can't argue back, even a record doesn't help.
 ?(comp=mio) comp[worry]: {反対|はんたい} できない と 、{話|はな}し{合|あ}い も できない んだ 。|| If you can't disagree, you can't talk things through either.
@@ -60,23 +60,23 @@ narr: {記録|きろく} は 、{二人|ふたり} の {間|あいだ} で 、{�
 !quest lf_fence 2
 !end
 :still
-lf_sota[smile]: {垣根|かきね} は {今朝|けさ} も {動|うご}きました よ 。|| The fence moved again this morning.
+lf_kohei[smile]: {垣根|かきね} は {今朝|けさ} も {動|うご}きました よ 。|| The fence moved again this morning.
 lf_kinu[smile]: もちろん です 。|| Of course.
 !end
 :settle
 !if quest.lf_fence<1 -> end
 lf_kinu[angry]: {柿|かき} の {木|き} まで です よ 。{木|き} の {手前|てまえ} まで ！|| As far as the tree. Up to THIS side of it!
-lf_sota[angry]: {木|き} の {向|む}こう まで だ ！ {木|き} も {含|ふく}めて 「まで」 だ ！|| Up to the far side! まで includes the tree!
+lf_kohei[angry]: {木|き} の {向|む}こう まで だ ！ {木|き} も {含|ふく}めて 「まで」 だ ！|| Up to the far side! まで includes the tree!
 narr: {二人|ふたり} は {生|い}き{生|い}き と {言|い}い{争|あらそ}って いる 。{三十年分|さんじゅうねんぶん} の {元気|げんき} が 、{顔|かお} に {戻|もど}って いる 。|| The two of them argue with real life in them. Thirty years' worth of vigour has come back into their faces.
 !quest lf_fence 3
 !challenge lf.ch_fence
 pc: {境|さかい} は {幹|みき} の {真|ま}ん{中|なか} 。{実|み} は 、{半分|はんぶん} ずつ に しては どう でしょう 。|| How about the line runs through the middle of the trunk, and the fruit is split half and half?
-lf_sota[think]: …… {半分|はんぶん} か 。|| …Half, eh.
+lf_kohei[think]: …… {半分|はんぶん} か 。|| …Half, eh.
 lf_kinu[think]: {半分|はんぶん} 、ね 。|| Half.
 lf_kinu: {反対|はんたい} です 。…… {甘|あま}い ほう の {枝|えだ} は 、{私|わたし} の {側|がわ} です から 。|| I object. …The branch with the sweeter fruit is on my side.
-lf_sota[laugh]: それ は {認|みと}める 。{渋|しぶ}い の は {全部|ぜんぶ} こっち だ 。{干|ほ}し{柿|がき} に する しか ない 。|| I'll grant you that. All the astringent ones are on mine. Only good for drying.
+lf_kohei[laugh]: それ は {認|みと}める 。{渋|しぶ}い の は {全部|ぜんぶ} こっち だ 。{干|ほ}し{柿|がき} に する しか ない 。|| I'll grant you that. All the astringent ones are on mine. Only good for drying.
 lf_kinu[laugh]: じゃあ 、{干|ほ}し{柿|がき} は {一緒|いっしょ} に {作|つく}りましょう 。{縁側|えんがわ} は うち の ほう が {広|ひろ}い わ 。|| Then let's make the dried persimmons together. My veranda's bigger.
-lf_sota: それ に は {反対|はんたい} しない 。|| That, I won't object to.
+lf_kohei: それ に は {反対|はんたい} しない 。|| That, I won't object to.
 narr: {二人|ふたり} は {柿|かき} の {木|き} の {幹|みき} に 、{縄|なわ} を {一本|いっぽん} {巻|ま}いた 。{垣根|かきね} は 、もう {動|うご}かない 。|| The two of them tie a single rope round the persimmon trunk. The fence won't be moving any more.
 ?(comp=nao) comp[smirk]: {言|い}い{争|あらそ}って 、{決|き}めて 、{笑|わら}ってる 。{順番|じゅんばん} 、{合|あ}ってる じゃん 。|| Argued, decided, laughing. Right order.
 ?(comp=mio) comp[laugh]: {腰|こし} も 、もう {痛|いた}く ならない ね 。|| No more sore backs, then.
@@ -86,15 +86,15 @@ narr: {二人|ふたり} は {柿|かき} の {木|き} の {幹|みき} に 、
 lf_kinu: {去年|きょねん} の {干|ほ}し{柿|がき} 、{少|すこ}し {残|のこ}って いた の 。どうぞ 。|| There were a few dried persimmons left from last year. Please, take them.
 !autosave
 
-@scene lf.sota_done
-lf_sota: {柿|かき} が {熟|う}れたら 、また {喧嘩|けんか} する よ 。どれ が {甘|あま}い か で ね 。|| When the persimmons ripen we'll argue again. Over which are the sweet ones.
+@scene lf.kohei_done
+lf_kohei: {柿|かき} が {熟|う}れたら 、また {喧嘩|けんか} する よ 。どれ が {甘|あま}い か で ね 。|| When the persimmons ripen we'll argue again. Over which are the sweet ones.
 
 @scene lf.kinu_done
 lf_kinu: {毎朝|まいあさ} {杭|くい} を {抜|ぬ}かなくて いい って 、{楽|らく} です ね 。{代|か}わり に 、{毎朝|まいあさ} {口|くち} で {言|い}い{合|あ}って います けど 。|| Not having to pull up posts every morning is such a relief. We argue out loud every morning instead.
 
-@scene lf.sota_post
-lf_sota: {干|ほ}し{柿|がき} 、{今年|ことし} は {二百個|にひゃっこ} だ 。キヌ さん は {百九十九個|ひゃくきゅうじゅうきゅうこ} だ と {言|い}ってる 。|| Two hundred dried persimmons this year. Kinu says a hundred and ninety-nine.
-lf_sota[laugh]: {数|かぞ}え{直|なお}す の が 、{楽|たの}しみ で ね 。|| I'm looking forward to counting them again.
+@scene lf.kohei_post
+lf_kohei: {干|ほ}し{柿|がき} 、{今年|ことし} は {二百個|にひゃっこ} だ 。キヌ さん は {百九十九個|ひゃくきゅうじゅうきゅうこ} だ と {言|い}ってる 。|| Two hundred dried persimmons this year. Kinu says a hundred and ninety-nine.
+lf_kohei[laugh]: {数|かぞ}え{直|なお}す の が 、{楽|たの}しみ で ね 。|| I'm looking forward to counting them again.
 
 @scene lf.kinu_post
 lf_kinu: {数|かぞ}え{直|なお}しましたら 、{百九十八個|ひゃくきゅうじゅうはっこ} でした 。…… {誰|だれ} か が {一|ひと}つ {食|た}べました ね 。|| When I recounted, it was a hundred and ninety-eight. …Someone's eaten one.
@@ -103,7 +103,7 @@ lf_kinu: {数|かぞ}え{直|なお}しましたら 、{百九十八個|ひゃ�
 !if quest.lf_fence=done -> done
 !if !quest.lf_fence -> plain
 !if quest.lf_fence>=1 -> seen
-narr: {庭|にわ} の {町|まち} の {土地|とち} の {記録|きろく} 。ソウタ と キヌ の {家|いえ} の {間|あいだ} の {頁|ページ} を {探|さが}す 。|| Land records for the garden quarter. You look for the page covering Sōta's and Kinu's houses.
+narr: {庭|にわ} の {町|まち} の {土地|とち} の {記録|きろく} 。コウヘイ と キヌ の {家|いえ} の {間|あいだ} の {頁|ページ} を {探|さが}す 。|| Land records for the garden quarter. You look for the page covering Kōhei's and Kinu's houses.
 narr: 「{東|ひがし} の {境|さかい} は 、{柿|かき} の {木|き} まで と する 。」|| "The eastern boundary shall run as far as the persimmon tree."
 narr: {古|ふる}い {字|じ} だ 。{写|うつ}し{直|なお}されて いない 。{土地|とち} の {記録|きろく} に は 、{争|あらそ}い の {言葉|ことば} が なかった から だろう 。|| Old writing, never recopied — perhaps because a land record contains no words of conflict.
 !quest lf_fence 1

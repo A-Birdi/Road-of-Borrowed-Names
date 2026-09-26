@@ -210,7 +210,7 @@ RB.portraits = (function () {
   function build(p, expr, keyStr) {
     if (cache.has(keyStr)) return cache.get(keyStr);
     const cv = RB.sprites.makeCanvas(S, S);
-    const c = cv.getContext('2d');
+    const c = cv.getContext('2d', { willReadFrequently: true });
     drawFace(c, p, expr || 'neutral');
     threshold(c);
     outline(c);

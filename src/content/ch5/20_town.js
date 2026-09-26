@@ -308,27 +308,27 @@ narr: 「お{品書|しなが}き ： お{茶|ちゃ} 、ほうじ{茶|ちゃ} �
 ?(lf_bell_rung) narr: {下|した} の {一行|いちぎょう} は 、{線|せん} で {消|け}されて いる 。|| The line underneath has been crossed out.
 
 # ---- the baker who cannot refuse an order ----------------------------------------------------------------------------------
-@scene lf.kanta
-lf_kanta[laugh]: いらっしゃい ！ パン {屋|や} の カンタ だ よ ！|| Welcome! Kanta the baker, that's me!
+@scene lf.masaru
+lf_masaru[laugh]: いらっしゃい ！ パン {屋|や} の マサル だ よ ！|| Welcome! Masaru the baker, that's me!
 narr: {頭|あたま} から {足|あし} まで 、{粉|こな} で まっ{白|しろ} だ 。{目|め} の {下|した} に 、{黒|くろ}い くま が ある 。|| He is white with flour from head to toe, with dark rings under his eyes.
-lf_kanta: {記録館|きろくかん} から {丸|まる}パン {三百個|さんびゃっこ} 。{猫|ねこ} の {形|かたち} の パン を {一|ひと}つ 。それ から 、「{昨日|きのう} まで に 」 って {注文|ちゅうもん} が {一|ひと}つ 。|| Three hundred rolls for the Records Hall. One cat-shaped loaf. And one order "for yesterday".
+lf_masaru: {記録館|きろくかん} から {丸|まる}パン {三百個|さんびゃっこ} 。{猫|ねこ} の {形|かたち} の パン を {一|ひと}つ 。それ から 、「{昨日|きのう} まで に 」 って {注文|ちゅうもん} が {一|ひと}つ 。|| Three hundred rolls for the Records Hall. One cat-shaped loaf. And one order "for yesterday".
 pc: {昨日|きのう} まで に は 、{無理|むり} でしょう 。|| You can't do anything by yesterday, surely.
-lf_kanta[smile]: もちろん です ！|| Of course!
+lf_masaru[smile]: もちろん です ！|| Of course!
 narr: {彼|かれ} は {明|あか}るく うなずき 、また {生地|きじ} を {捏|こ}ね{始|はじ}めた 。|| He nods cheerfully and goes back to kneading.
 ?(comp=nao) comp: …… この {人|ひと} 、{寝|ね}て ない よね 。|| …This guy hasn't slept, has he.
 ?(comp=mio) comp[worry]: {手|て} に やけど が ある 。{薬|くすり} 、{置|お}いて いきます ね 。…… {断|ことわ}らないで 、って {言|い}う まで も ない か 。|| He's got burns on his hands. I'll leave some ointment. …No need to tell him not to refuse it, I suppose.
 ?(comp=ren) comp: {昨日|きのう} まで の {注文|ちゅうもん} は 、{時|とき} を {戻|もど}す {灯|あか}り で も ない と {無理|むり} です ね 。{灯守|ひもり} に も {無理|むり} です 。|| An order due yesterday would need a lantern that turns back time. Even lantern keepers can't manage that.
 ?(comp=suzu) comp: {三百個|さんびゃっこ} 、{一個|いっこ} いくら ? …… え 、{値段|ねだん} も {決|き}めて ない の ?|| Three hundred — at how much each? …Wait, you haven't even set a price?
 
-@scene lf.kanta_after
-lf_kanta[angry]: {無理|むり} です ！ {三百個|さんびゃっこ} なんて {焼|や}けません ！ …… って 、{言|い}って やった よ ！|| "I can't! I can't bake three hundred!" …That's what I told them!
-lf_kanta[laugh]: {記録館|きろくかん} の {人|ひと} 、{少|すこ}し {驚|おどろ}いて から 、「では {五十個|ごじゅっこ} で 」 だって 。{最初|さいしょ} から そう {言|い}え っての ！|| The Records Hall fellow looked startled, then said "fifty, then". Should've said so in the first place!
-lf_kanta: {猫|ねこ} の パン は 、ケイ ちゃん の ため に {焼|や}く 。{頼|たの}まれた から じゃ ない 。{焼|や}きたい から だ 。|| The cat loaf I'm baking for little Kei. Not because I was asked. Because I want to.
+@scene lf.masaru_after
+lf_masaru[angry]: {無理|むり} です ！ {三百個|さんびゃっこ} なんて {焼|や}けません ！ …… って 、{言|い}って やった よ ！|| "I can't! I can't bake three hundred!" …That's what I told them!
+lf_masaru[laugh]: {記録館|きろくかん} の {人|ひと} 、{少|すこ}し {驚|おどろ}いて から 、「では {五十個|ごじゅっこ} で 」 だって 。{最初|さいしょ} から そう {言|い}え っての ！|| The Records Hall fellow looked startled, then said "fifty, then". Should've said so in the first place!
+lf_masaru: {猫|ねこ} の パン は 、ケイ ちゃん の ため に {焼|や}く 。{頼|たの}まれた から じゃ ない 。{焼|や}きたい から だ 。|| The cat loaf I'm baking for little Kei. Not because I was asked. Because I want to.
 
-@scene lf.kanta_post
-lf_kanta: よう ！ {今日|きょう} は {三|みっ}つ {注文|ちゅうもん} を {断|ことわ}って 、{二|ふた}つ {新|あたら}しい パン を {考|かんが}えた 。|| Hey there! Today I turned down three orders and came up with two new breads.
-?(end_kasane_trial) lf_kanta: カサネ って {人|ひと} が パン を {買|か}い に {来|き}た 。{最初|さいしょ} は {売|う}らない って {言|い}った 。…… {結局|けっきょく} 、{売|う}った けど な 。|| That Kasane came to buy bread. I told them I wouldn't sell it. …Sold it in the end, mind.
-?(!end_kasane_trial) lf_kanta[laugh]: {断|ことわ}る と 、{腹|はら} が {減|へ}る ね 。{言|い}い{争|あらそ}い は {体力|たいりょく} が いる ！|| Refusing people makes you hungry. Arguing takes stamina!
+@scene lf.masaru_post
+lf_masaru: よう ！ {今日|きょう} は {三|みっ}つ {注文|ちゅうもん} を {断|ことわ}って 、{二|ふた}つ {新|あたら}しい パン を {考|かんが}えた 。|| Hey there! Today I turned down three orders and came up with two new breads.
+?(end_kasane_trial) lf_masaru: カサネ って {人|ひと} が パン を {買|か}い に {来|き}た 。{最初|さいしょ} は {売|う}らない って {言|い}った 。…… {結局|けっきょく} 、{売|う}った けど な 。|| That Kasane came to buy bread. I told them I wouldn't sell it. …Sold it in the end, mind.
+?(!end_kasane_trial) lf_masaru[laugh]: {断|ことわ}る と 、{腹|はら} が {減|へ}る ね 。{言|い}い{争|あらそ}い は {体力|たいりょく} が いる ！|| Refusing people makes you hungry. Arguing takes stamina!
 
 @scene lf.bakery_orders
 narr: {注文書|ちゅうもんしょ} の {束|たば} 。どれ に も 「{承知|しょうち}」 の {印|しるし} 。{一番|いちばん} {上|うえ} の {紙|かみ} は 、{小|ちい}さな {子|こ} の {字|じ} で 「ねこ の パン」 。|| A stack of order slips, every one marked "accepted". The top slip, in a small child's hand: "cat bread".
@@ -350,7 +350,7 @@ narr: {古|ふる}い {柿|かき} の {木|き} 。{枝|えだ} は {両方|り
 narr: {地面|じめん} に 、{杭|くい} を {抜|ぬ}いた {穴|あな} が {並|なら}んで いる 。{毎朝|まいあさ} 、{垣根|かきね} が {少|すこ}し ずつ {動|うご}いて きた {跡|あと} だ 。|| A row of holes where fence posts were pulled up: the trail of a fence that has moved a little every morning.
 
 @scene lf.fence_bench
-narr: {柿|かき} の {木|き} の {下|した} の {長椅子|ながいす} 。{片側|かたがわ} に 「ソウタ」 、もう {片側|かたがわ} に 「キヌ」 と {彫|ほ}って ある 。{真|ま}ん{中|なか} は 、{空|あ}いて いる 。|| A bench under the persimmon. One end is carved "Sōta", the other "Kinu". The middle is left empty.
+narr: {柿|かき} の {木|き} の {下|した} の {長椅子|ながいす} 。{片側|かたがわ} に 「コウヘイ」 、もう {片側|かたがわ} に 「キヌ」 と {彫|ほ}って ある 。{真|ま}ん{中|なか} は 、{空|あ}いて いる 。|| A bench under the persimmon. One end is carved "Kōhei", the other "Kinu". The middle is left empty.
 
 # ---- the sluice shore -------------------------------------------------------------------------------------------------------------
 @scene lf.sluice_gate
@@ -359,7 +359,7 @@ narr: {柱|はしら} に {刻|きざ}まれた {線|せん} 。「{三十年前
 
 @scene lf.sluice_wheel
 narr: {水門|すいもん} を {上|あ}げ{下|さ}げ する {車輪|しゃりん} 。{錆|さび} で {固|かた}まって いる 。|| The wheel that raises and lowers the gate. Rusted solid.
-?(lf_tetsu_told) narr: {車輪|しゃりん} の {軸|じく} に 、{新|あたら}しい {油|あぶら} が {差|さ}して ある 。テツ が {毎日|まいにち} {差|さ}して いた らしい 。{回|まわ}す こと は なかった のに 。|| The axle has fresh oil on it. Tetsu seems to have oiled it every day. Without ever turning it.
+?(lf_tokuji_told) narr: {車輪|しゃりん} の {軸|じく} に 、{新|あたら}しい {油|あぶら} が {差|さ}して ある 。トクジ が {毎日|まいにち} {差|さ}して いた らしい 。{回|まわ}す こと は なかった のに 。|| The axle has fresh oil on it. Tokuji seems to have oiled it every day. Without ever turning it.
 
 @scene lf.memorial
 narr: {慰霊|いれい} の {碑|ひ} 。「{六月|ろくがつ} の {水|みず} に {逝|ゆ}きし {人々|ひとびと}」 。|| A memorial stone. "For those who were taken by the June waters."
@@ -382,10 +382,10 @@ narr: {窓|まど} の {奥|おく} に 、{緑|みどり} に くすんだ {大
 :rung
 narr: {鐘|かね} は 、{金色|きんいろ} に {光|ひか}って いる 。{風|かぜ} が {吹|ふ}く と 、ほんの {少|すこ}し {鳴|な}る 。|| The bell shines gold now. When the wind blows, it hums, just a little.
 
-@scene lf.tetsu_table
+@scene lf.tokuji_table
 narr: {小|ちい}さな {卓|たく} に 、{湯飲|ゆの}み が {二|ふた}つ 。{一|ひと}つ は {伏|ふ}せて ある 。|| Two teacups on the little table. One of them is upside down.
 
-@scene lf.tetsu_shelf
+@scene lf.tokuji_shelf
 narr: {棚|たな} に 、{水門|すいもん} の {番|ばん} の {日誌|にっし} が {三十冊|さんじゅっさつ} 。{毎日|まいにち} 、{同|おな}じ {一行|いちぎょう} 。「{水位|すいい} {異常|いじょう} なし 。{鐘|かね} 、{鳴|な}らず 。」|| Thirty volumes of the gatekeeper's log on the shelf. Every day, the same line. "Water level normal. Bell did not ring."
 ?(lf_bell_rung) narr: {最新|さいしん} の {頁|ページ} 。「{鐘|かね} 、{鳴|な}る 。」 {字|じ} が {震|ふる}えて いる 。|| The newest page: "Bell rang." The writing trembles.
 

@@ -408,6 +408,27 @@ await test('touch layout on a phone viewport; drawing does not move the player',
   await ctx.close();
 });
 
+// ---------------------------------------------------------------------------
+await test('direct file:// mode boots, reports storage honestly, no network', async () => {
+  const ctx = await b.newContext();
+  const fileUrl = 'file://' + process.cwd() + '/index.html';
+  const { p, errors, requests } = await page(b, fileUrl, { context: ctx });
+  const st = await p.evaluate(() => RB.save.status());
+  assert(st.fileMode === true, 'fileMode flag');
+  const banner = await p.textContent('.storage-banner');
+  assert(/file:\/\//.test(banner) || st.mode === 'session', 'file-mode note missing: ' + banner);
+  await p.click('text=New Game');
+  await p.click('.slot[data-slot="1"] [data-a=start]');
+  await p.click('text=Skip prologue');
+  await p.fill('#nm', 'Filer');
+  await p.click('[data-a=next]');
+  await p.click('[data-a=go]');
+  await p.waitForFunction(() => RB.game.G.playing === true);
+  assert(!errors.length, errors.join('; '));
+  assert(!requests.length, 'network: ' + requests.join(', '));
+  await ctx.close();
+});
+
 await b.close(); srv.close();
 console.log(results.join('\n'));
 console.log(`\n${pass} passed, ${fail} failed`);

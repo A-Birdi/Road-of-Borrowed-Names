@@ -359,11 +359,11 @@ narr: {湖|みずうみ} の {水|みず} が 、{少|すこ}し ずつ {引|ひ
 !fade out
 !warp lf.sluice 19 16 up
 !fade in
-narr: {岸|きし} で 、テツ が {待|ま}って いた 。|| Tetsu is waiting on the shore.
-lf_tetsu: …… {聞|き}こえた 。{町|まち} じゅう に 、{聞|き}こえた ぞ 。|| …I heard it. The whole town heard it.
-lf_tetsu[angry]: …… {遅|おそ}い ん だ よ 、{三十年|さんじゅうねん} も 。…… ばか やろう 。|| …Thirty years late, you know. …You damn fool.
-narr: {誰|だれ} に {言|い}った の か 。テツ は {湖|みずうみ} を {見|み}た まま 、{鼻|はな} を すすった 。|| Who was that for? Tetsu keeps looking out at the lake, and sniffs.
-lf_tetsu: {町|まち} へ {戻|もど}れ 。{今|いま}ごろ 、うるさく なってる はず だ 。|| Go back to town. It'll be getting noisy about now.
+narr: {岸|きし} で 、トクジ が {待|ま}って いた 。|| Tokuji is waiting on the shore.
+lf_tokuji: …… {聞|き}こえた 。{町|まち} じゅう に 、{聞|き}こえた ぞ 。|| …I heard it. The whole town heard it.
+lf_tokuji[angry]: …… {遅|おそ}い ん だ よ 、{三十年|さんじゅうねん} も 。…… ばか やろう 。|| …Thirty years late, you know. …You damn fool.
+narr: {誰|だれ} に {言|い}った の か 。トクジ は {湖|みずうみ} を {見|み}た まま 、{鼻|はな} を すすった 。|| Who was that for? Tokuji keeps looking out at the lake, and sniffs.
+lf_tokuji: {町|まち} へ {戻|もど}れ 。{今|いま}ごろ 、うるさく なってる はず だ 。|| Go back to town. It'll be getting noisy about now.
 !checkpoint lf.sluice 15 2 up
 !autosave
 !end

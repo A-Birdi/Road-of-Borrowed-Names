@@ -122,7 +122,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   X['sb.c_log'] = { title: { jp: '{観測|かんそく} {日誌|にっし}', en: 'The observing log' },
     tiers: {
       F: [
-        { kind: 'choose', item: 'c:sb_log_f', ctx: { jp: '８じ ： あかい ほし は ひがし 。 しろい ひかり は なんとう 。 ／ １０じ ： あかい ほし は なんとう 。 しろい ひかり も なんとう 。 ／ ０じ ： あかい ほし は みなみ 。 しろい ひかり は まだ なんとう 。', en: '8:00 — red star: east. White light: southeast. / 10:00 — red star: southeast. White light: southeast too. / 0:00 — red star: south. White light: still southeast.' }, prompt: { en: 'Stars move across the sky during the night. Which light did NOT move?' },
+        { kind: 'choose', item: 'c:sb_log_f', ctx: { jp: 'はちじ ： あかい ほし は ひがし 。 しろい ひかり は なんとう 。 ／ じゅうじ ： あかい ほし は なんとう 。 しろい ひかり も なんとう 。 ／ れいじ ： あかい ほし は みなみ 。 しろい ひかり は まだ なんとう 。', en: '8:00 — red star: east. White light: southeast. / 10:00 — red star: southeast. White light: southeast too. / 0:00 — red star: south. White light: still southeast.' }, prompt: { en: 'Stars move across the sky during the night. Which light did NOT move?' },
           options: [oj('しろい ひかり', true, null, 'the white light'), oj('あかい ほし', false, 'The red star went east → southeast → south.', 'the red star')] },
         { kind: 'write', item: 'v:白い', prompt: { en: 'Write the colour of the light that stayed put: shiroi (white).' }, template: { before: '', after: ' ひかり' }, answer: 'しろい', accept: ['しろい', '白い'], mode: 'kana', explain: { jp: 'しろい ひかり', en: 'しろい = white. It never moved, so it isn\'t a star.' } },
         drawer('v:南東'),
@@ -247,7 +247,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   X['sb.c_bell_board'] = { title: { jp: 'フキ の {帳面|ちょうめん}', en: 'Fuki\'s notebook' },
     tiers: {
       F: [
-        { kind: 'choose', item: 'c:sb_bell_f', ctx: { jp: 'あさ ７じ ： いっかい 。 ひる １２じ ： にかい 。 ゆうがた ５じ ： さんかい （ ヤギ を こや に いれる ） 。', en: '7 a.m.: once. Noon: twice. 5 p.m.: three times (bring the goats into the shed).' }, prompt: { en: 'It\'s almost noon. How many times do you ring?' },
+        { kind: 'choose', item: 'c:sb_bell_f', ctx: { jp: 'あさ しちじ ： いっかい 。 ひる じゅうにじ ： にかい 。 ゆうがた ごじ ： さんかい （ ヤギ を こや に いれる ） 。', en: '7 a.m.: once. Noon: twice. 5 p.m.: three times (bring the goats into the shed).' }, prompt: { en: 'It\'s almost noon. How many times do you ring?' },
           options: [oj('にかい', true, null, 'twice'), oj('いっかい', false, 'いっかい is the morning signal.', 'once'), oj('さんかい', false, 'さんかい is the evening goat signal.', 'three times')] },
         { kind: 'write', item: 'g:counters', prompt: { en: 'Write it on the blank board: nikai (two times).' }, answer: 'にかい', accept: ['にかい', '二回', '2回', '２回'], mode: 'kana', explain: { jp: 'にかい', en: '回 (かい) counts times: いっかい, にかい, さんかい.' } },
       ],
@@ -272,7 +272,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     } };
 
   const cards = {
-    F: 'カンタ ： ねて いる ヤギ 。 つの が ２ほん 。 ／ チヨ ： てんもんだい 。 やね は まるい 。 うえ に あかい あかり 。 ／ ロクタ ： すわって いる キツネ 。 しっぽ は からだ より おおきい 。',
+    F: 'カンタ ： ねて いる ヤギ 。 つの が ふたつ 。 ／ チヨ ： てんもんだい 。 やね は まるい 。 うえ に あかい あかり 。 ／ ロクタ ： すわって いる キツネ 。 しっぽ は からだ より おおきい 。',
     E: 'カンタ ： {寝|ね}て いる ヤギ 。 {角|つの} が {二本|にほん} 。 ／ チヨ ： {天文台|てんもんだい} 。 {屋根|やね} は {丸|まる}い 。 {上|うえ} に {赤|あか}い {灯|あか}り 。 {入|い}り{口|ぐち} は {一|ひと}つ 。 ／ ロクタ ： {座|すわ}って いる キツネ 。 {尻尾|しっぽ} は {体|からだ} より {大|おお}きい 。',
   };
   const seen = 'ヤギ の {角|つの} は {一本|いっぽん} {折|お}れて いる 。 {天文台|てんもんだい} の {屋根|やね} に は {赤|あか}い {実|み} 、 {入|い}り{口|ぐち} は {一|ひと}つ 。 キツネ の {尻尾|しっぽ} は {細|ほそ}くて {短|みじか}い 。';
@@ -282,7 +282,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     tiers: {
       F: [
         { kind: 'choose', item: 'c:sb_snow_f', ctx: { jp: cards.F, en: 'Kanta: a goat lying down, two horns. / Chiyo: the observatory, round roof, a red light on top. / Rokuta: a fox sitting, tail bigger than its body.' }, prompt: { en: 'You saw: the goat has one horn left; the observatory has a round roof and a red berry on top; the fox\'s tail is small. Which sculpture matches its card?' },
-          options: [oj('チヨ の てんもんだい', true, null, 'Chiyo\'s observatory'), oj('カンタ の ヤギ', false, 'The card says つの が ２ほん (two horns). One fell off.', 'Kanta\'s goat'), oj('ロクタ の キツネ', false, 'The card says the tail is big. It is small.', 'Rokuta\'s fox')] },
+          options: [oj('チヨ の てんもんだい', true, null, 'Chiyo\'s observatory'), oj('カンタ の ヤギ', false, 'The card says つの が ふたつ (two horns). One fell off.', 'Kanta\'s goat'), oj('ロクタ の キツネ', false, 'The card says the tail is big. It is small.', 'Rokuta\'s fox')] },
         { kind: 'write', item: 'v:角', prompt: { en: 'Kanta\'s card says the goat has two of these. Write tsuno (horn).' }, answer: 'つの', accept: ['つの', '角'], mode: 'kana', explain: { jp: 'つの', en: 'つの = horn (of an animal).' } },
       ],
       E: [
@@ -307,7 +307,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   A['sb.a_letters'] = { type: 'letters', title: { jp: '{宛名|あてな} の ない {手紙|てがみ}', en: 'Letters with no address' },
     recipients: [
       { id: 'sachi', name: { en: 'Sachi', jp: 'サチ' }, desc: { F: { jp: 'カンタ の おかあさん', en: 'Kanta\'s mother' }, E: { jp: 'カンタ の {母|はは} 。 {夫|おっと} は {町|まち} で {働|はたら}いて いる', en: 'Kanta\'s mother; her husband works in the town' } } },
-      { id: 'fuki', name: { en: 'Fuki', jp: 'フキ' }, desc: { F: { jp: 'かね を ならす おばあさん', en: 'the old woman who rings the bell' }, E: { jp: '{鐘|かね} {守|もり} の おばあさん', en: 'the elderly bell-keeper' } } },
+      { id: 'fuki', name: { en: 'Fuki', jp: 'フキ' }, desc: { F: { jp: 'かね を ならす おばあさん', en: 'the old woman who rings the bell' }, E: { jp: '{鐘撞|かねつ}き の おばあさん', en: 'the elderly bell-keeper' } } },
       { id: 'tetsuji', name: { en: 'Tetsuji', jp: 'テツジ' }, desc: { F: { jp: 'ヤギ を かって いる ひと', en: 'keeps goats' }, E: { jp: 'ヤギ {飼|か}い', en: 'a goatherd' } } },
       { id: 'yae', name: { en: 'Yae', jp: 'ヤエ' }, desc: { F: { jp: 'やど の ひと', en: 'runs the inn' }, E: { jp: '{宿|やど} の {女将|おかみ}', en: 'the innkeeper' } } },
       { id: 'denji', name: { en: 'Denji', jp: 'デンジ' }, desc: { F: { jp: 'むかし だいく だった ひと', en: 'used to be a carpenter' }, E: { jp: '{元|もと} {大工|だいく}', en: 'a retired carpenter' } } },
@@ -341,7 +341,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         hint: { I: { en: 'Good for the throat, and not sweet.' }, A: { en: '辛い here means sharp/spicy — ginger, not the sweet amazake.' } } },
       { who: 'tetsuji', want: { tea: 2 }, items: ['v:お茶'], line: { F: { jp: 'おちゃ ふたつ 。 ミルク は いらない 。', en: 'Two teas. No milk.' }, E: { jp: 'お{茶|ちゃ} を {二|ふた}つ 。 ミルク は もう {十分|じゅうぶん} だ 。', en: 'Two teas. I\'ve had enough milk for a lifetime.' }, I: { jp: 'ヤギ の ミルク {以外|いがい} なら {何|なん} でも いい 。 …… {茶|ちゃ} だ な 。 {二杯|にはい} 。', en: 'Anything but goat\'s milk. …Tea, then. Two cups.' }, A: { jp: '{毎日|まいにち} ヤギ の {乳|ちち} を {搾|しぼ}って いる {人間|にんげん} に 、 ミルク を {勧|すす}める な よ 。 {茶|ちゃ} を {二杯|にはい} 、 {濃|こ}い め で 。', en: 'Don\'t offer milk to a man who milks goats every day. Two teas, strong.' } },
         hint: { en: 'Not the milk.' } },
-      { who: 'denji', want: { mochi: 3, tea: 1 }, items: ['v:餅'], line: { F: { jp: 'やきもち みっつ と おちゃ 。', en: 'Three grilled rice cakes and a tea.' }, E: { jp: '{焼|や}き{餅|もち} を {三|みっ}つ と 、 お{茶|ちゃ} を {一|ひと}つ 。', en: 'Three grilled rice cakes and one tea.' }, I: { jp: '{餅|もち} を {三|みっ}つ {焼|や}いて くれ 。 {茶|ちゃ} は …… テツジ の を {一口|ひとくち} もらう から いい や 。 いや 、 やっぱり {一杯|いっぱい} 。', en: 'Grill me three rice cakes. Tea… I\'ll pinch a sip of Tetsuji\'s. No — one cup after all.' }, A: { jp: '{焼|や}き{餅|もち} を {三|みっ}つ 。 {歯|は} が {丈夫|じょうぶ} な うち に {食|く}って おかん と な 。 {茶|ちゃ} は {一杯|いっぱい} で {足|た}りる 。', en: 'Three grilled rice cakes. Must eat them while my teeth hold out. One tea will do.' } },
+      { who: 'denji', want: { mochi: 3, tea: 1 }, items: ['v:餅'], line: { F: { jp: 'やきもち みっつ と おちゃ 。', en: 'Three grilled rice cakes and a tea.' }, E: { jp: '{焼|や}き{餅|もち} を {三|みっ}つ と 、 お{茶|ちゃ} を {一|ひと}つ 。', en: 'Three grilled rice cakes and one tea.' }, I: { jp: '{餅|もち} を {三|みっ}つ {焼|や}いて くれ 。 {茶|ちゃ} は …… テツジ の を {一口|ひとくち} もらう から いい や 。 いや 、 やっぱり {一杯|いっぱい} 。', en: 'Grill me three rice cakes. Tea… I\'ll pinch a sip of Tetsuji\'s. No — one cup after all.' }, A: { jp: '{焼|や}き{餅|もち} を {三|みっ}つ 。 {歯|は} が {丈夫|じょうぶ} な うち に {食|く}って おかん@おく と な 。 {茶|ちゃ} は {一杯|いっぱい} で {足|た}りる 。', en: 'Three grilled rice cakes. Must eat them while my teeth hold out. One tea will do.' } },
         hint: { I: { en: 'He changed his mind about the tea — listen to the end.' } } },
       { who: 'hoshino', want: { tea: 1 }, items: ['v:癖'], line: { F: { jp: 'おちゃ を ひとつ 。', en: 'One tea.' }, E: { jp: 'お{茶|ちゃ} を {二|ふた}つ …… いや 、 {一|ひと}つ で いい 。', en: 'Two teas… no, one is fine.' }, I: { jp: 'お{茶|ちゃ} を {二|ふた}つ 。 …… いや 、 {一|ひと}つ だ 。 {癖|くせ} で ね 。 {昔|むかし} は {二|ふた}つ {頼|たの}んで いた から 。', en: 'Two teas. …No, one. Habit. I used to order two.' }, A: { jp: '{茶|ちゃ} を {二杯|にはい} 、 と {言|い}いかけて しまう の は 、 {年寄|としよ}り の {悪|わる}い {癖|くせ} だ ね 。 {一杯|いっぱい} で {結構|けっこう} 。', en: 'Starting to say "two teas" is a bad old man\'s habit. One will do.' } },
         hint: { en: 'He corrected himself.' } },

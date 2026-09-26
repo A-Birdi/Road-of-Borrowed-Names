@@ -93,7 +93,7 @@ narr: カン 、 カン 、 カン 、 カン ！ {家々|いえいえ} の {戸
 !set sb_rang_storm
 ?(comp=nao) comp: {間|ま}に{合|あ}った 。 …… {鐘|かね} って の は 、 {一番|いちばん} {速|はや}い {手紙|てがみ} だ な 。 || Made it. …A bell's the fastest letter there is.
 ?(comp=mio) comp[smile]: みんな 、 {聞|き}こえた みたい です 。 {行|い}きましょう 、 わたし たち も 。 || Looks like everyone heard it. Come on — us too.
-?(comp=ren) comp: {音|おと} が {届|とど}く {範囲|はんい} は 、 {灯|あか}り より {広|ひろ}い 。 {雪|ゆき} の {日|ひ} は {特|とく} に 。 {石|いし} の {言葉|ことば} どおり です 。 || Sound carries further than light, on snowy days especially. Just as the stone on the road said.
+?(comp=ren) comp: {音|おと} が {届|とど}く {範囲|はんい} は 、 {灯|あか}り より {広|ひろ}い 。 {雪|ゆき} の {日|ひ} は {特|とく}に 。 {石|いし} の {言葉|ことば} どおり です 。 || Sound carries further than light, on snowy days especially. Just as the stone on the road said.
 ?(comp=suzu) comp[laugh]: {満員|まんいん} {御礼|おんれい} ！ …… って 、 {言|い}ってる {場合|ばあい} じゃ ない か 。 {走|はし}ろう ！ || A full house! …Not really the time, is it. Run!
 !call sb.storm_start
 `, 'ch4/main-hoshino');
@@ -161,7 +161,7 @@ narr: {小|ちい}さな {仕切|しき}り の {一|ひと}つ {一|ひと}つ 
 narr: {郵便|ゆうびん} の {袋|ふくろ} 。 {札|ふだ} に 「 {灯落|ひおち} {行|ゆ}き ・ {春|はる} {一番|いちばん} 」 。 || A mailbag. Its tag says: "For Lanternfall — first thing in spring."
 
 @scene sb.post_notice
-narr: {壁|かべ} の {貼|は}り{紙|がみ} 。 「 {冬|ふゆ} の あいだ 、 {手紙|てがみ} は {雪|ゆき} {解|ど}け を {待|ま}ちます 。 {急|いそ}ぎ の {用|よう} は 、 {鐘|かね} で どうぞ 。 」 || A notice on the wall: "Through the winter, letters wait for the thaw. For urgent matters, please use the bell."
+narr: {壁|かべ} の {貼|は}り{紙|がみ} 。 「 {冬|ふゆ} の あいだ 、 {手紙|てがみ} は {雪解|ゆきど}け を {待|ま}ちます 。 {急|いそ}ぎ の {用|よう} は 、 {鐘|かね} で どうぞ 。 」 || A notice on the wall: "Through the winter, letters wait for the thaw. For urgent matters, please use the bell."
 `, 'ch4/main-post');
 
 RB.script.add(`
@@ -215,7 +215,7 @@ narr: {書|か}いた {字|じ} が {灰|はい} の {上|うえ} に {落|お}�
 !set sb_hearth_done
 !note sb_honoo
 yae[laugh]: …… まあ ！ うち の {囲炉裏|いろり} が 、 こんな に {元気|げんき} な の は {久|ひさ}しぶり だ よ 。 || …My! My hearth hasn't been this lively in years.
-kanta[surprise]: すげえ ！ {字|じ} で {火|ひ} が ついた ！ || Whoa! The writing lit the fire!
+kanta[surprise]: すげえ@すごい ！ {字|じ} で {火|ひ} が ついた ！ || Whoa! The writing lit the fire!
 hoshino[think]: …… {炎|ほのお} 。 そう か 。 あの {灯|あか}り も 、 {名前|なまえ} と {炎|ほのお} が あれば …… 。 || …Flame. I see. That lamp too — with its name, and a flame…
 ?(comp=nao) comp[smirk]: {火|ひ} を {起|お}こす {配達人|はいたつにん} 。 {新|あたら}しい {商売|しょうばい} に なる な 。 || A courier who lights fires. That could be a new line of business.
 ?(comp=mio) comp[smile]: よかった 。 …… {子|こ}ども たち の {顔|かお} に 、 {色|いろ} が {戻|もど}って きました 。 || Thank goodness. …The colour's coming back to the children's faces.
@@ -263,7 +263,7 @@ narr: {机|つくえ} の {上|うえ} の {星図|せいず} 。 {星|ほし} �
 ?(comp=ren) comp: {星|ほし} の {記録|きろく} と 、 {娘|むすめ} さん の {記録|きろく} が 、 {同|おな}じ {紙|かみ} に ある 。 …… {良|よ}い {記録|きろく} の {付|つ}け{方|かた} です 。 || The record of the stars and the record of his daughter, on the same sheet. …A good way to keep records.
 
 @scene sb.hoshino_window
-narr: {窓|まど} の {前|まえ} の {望遠鏡|ぼうえんきょう} は 、 {空|そら} で は なく 、 {坂|さか} の {下|した} に {向|む}けられて いる 。 {接眼|せつがん} {部|ぶ} だけ が 、 {手|て} の {脂|あぶら} で {光|ひか}って いた 。 || The telescope by the window points down the slope rather than at the sky. Only the eyepiece shines, polished by hands.
+narr: {窓|まど} の {前|まえ} の {望遠鏡|ぼうえんきょう} は 、 {空|そら} で は なく 、 {坂|さか} の {下|した} に {向|む}けられて いる 。 {覗|のぞ}き{口|ぐち} だけ が 、 {手|て} の {脂|あぶら} で {光|ひか}って いた 。 || The telescope by the window points down the slope rather than at the sky. Only the eyepiece shines, polished by hands.
 ?(sb_lamp_lit) narr: {今|いま} は {空|そら} に {向|む}け{直|なお}して ある 。 {鼓星|つづみぼし} の {方角|ほうがく} だ 。 || It has been turned back toward the sky now — toward the Drum Stars.
 
 @scene sb.hoshino_shelf

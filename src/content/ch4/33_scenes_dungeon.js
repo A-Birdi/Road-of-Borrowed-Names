@@ -7,7 +7,7 @@ RB.script.add(`
 @scene sb.path_enter
 !set sb_path_seen
 narr: {石段|いしだん} は 、 {山|やま} の {斜面|しゃめん} を {折|お}り{返|かえ}し ながら {上|のぼ}って いく 。 {上|うえ} の ほう に 、 {丸|まる}い {屋根|やね} が {小|ちい}さく {見|み}えた 。 || The stair zigzags up the face of the mountain. Far above, the round roof looks small.
-narr: {雪|ゆき} の {上|うえ} に 、 {白|しろ}い {影|かげ} が {動|うご}いた 。 {雪|ゆき} ギツネ だ 。 {目|め} が 、 {青|あお}く {光|ひか}って いる 。 || A white shape moves across the snow. A snow fox. Its eyes glow blue.
+narr: {雪|ゆき} の {上|うえ} に 、 {白|しろ}い {影|かげ} が {動|うご}いた 。 {雪|ゆき}ギツネ だ 。 {目|め} が 、 {青|あお}く {光|ひか}って いる 。 || A white shape moves across the snow. A snow fox. Its eyes glow blue.
 ?(comp=nao) comp: {走|はし}る な 、 だった な 。 …… {配達人|はいたつにん} に {走|はし}る な って 、 {無茶|むちゃ} を {言|い}う ぜ 。 || "Don't run," was it. …Telling a courier not to run. Unreasonable.
 ?(comp=mio) comp[worry]: あの {目|め} …… {熱|ねつ} の ある {子|こ} の {目|め} に {似|に}て います 。 {苦|くる}しい の かも しれない 。 || Those eyes… they look like a feverish child's. Maybe it's suffering.
 ?(comp=ren) comp: {石段|いしだん} の {灯|あか}り が {消|き}えて います 。 {上|うえ} の {灯|あか}り と {一緒|いっしょ} に 。 {灯|あか}り は 、 {道|みち} の {背骨|せぼね} です から 。 || The lanterns on the stair are out. Along with the one above. Lanterns are the backbone of a road.
@@ -47,7 +47,7 @@ narr: {奥|おく} の {扉|とびら} は 、 {分厚|ぶあつ}い {氷|こお
 ?(comp=nao) comp: {息|いき} が {白|しろ}い 。 …… {中|なか} の ほう が {寒|さむ}い って 、 {建物|たてもの} と して {失格|しっかく} だろ 。 || My breath's white. …A building that's colder inside than out has failed at being a building.
 ?(comp=mio) comp[worry]: {長|なが}く いる と 、 {指|ゆび} を {悪|わる}く します 。 {手|て} を {擦|こす}り{合|あ}わせて 。 こう 。 || Stay too long and you'll damage your fingers. Rub your hands together. Like this.
 ?(comp=ren) comp[think]: {星|ほし} を {見|み}る {建物|たてもの} が 、 {目|め} を {閉|と}じて いる よう です 。 || It's as if a building for watching stars has closed its eyes.
-?(comp=suzu) comp: {氷|こおり} の {宮殿|きゅうでん} だ ね 。 {衣装|いしょう} {代|だい} が かからない {舞台|ぶたい} 。 …… {暖房|だんぼう} {代|だい} は かかる けど 。 || An ice palace. A set that costs nothing in costumes. …Plenty in firewood, though.
+?(comp=suzu) comp: {氷|こおり} の {宮殿|きゅうでん} だ ね 。 {衣装|いしょう} {代|だい} が かからない {舞台|ぶたい} 。 …… {薪|まき} {代|だい} は かかる けど 。 || An ice palace. A set that costs nothing in costumes. …Plenty in firewood, though.
 
 @scene sb.hall_rules
 narr: {壁|かべ} の {板|いた} に 、 {氷|こおり} の {下|した} から {字|じ} が {透|す}けて {見|み}える 。 「 {観測|かんそく} の {心得|こころえ} 」 。 || On a board on the wall, writing shows through the ice: "Rules for Observing".

@@ -421,7 +421,6 @@ narr: {腕|うで} に {名前|なまえ} が {戻|もど}った 。 {下|くだ
 ?(comp=ren) comp: {道|みち}しるべ は 、 {道|みち} の {約束|やくそく} です 。 …… {私|わたし} も 、 これ で {迷|まよ}わない 、 と {言|い}いたい ところ です が 。 || A signpost is a road's promise. …I'd like to say I won't get lost now either, but.
 ?(comp=suzu) comp: 「 {火除|ひよ}け{道|みち} 」 。 …… {消|け}された {名前|なまえ} の {中|なか} で 、 {一番|いちばん} {大事|だいじ} な の が {戻|もど}った わ ね 。 || "Firebreak path." …Of all the erased names, the most important one came back.
 !set co_signs_done
-!quest co_signs 0
 
 @scene co.signpost_done
 narr: 「 ↓ {里|さと} 」 「 ↗ {水門|すいもん} 」 「 ↑ {上|うえ} の {段|だん} 」 「 ← {火除|ひよ}け{道|みち} 」 。 {字|じ} は {新|あたら}しく 、 {深|ふか}く {彫|ほ}り{直|なお}されて いる 。 || "↓ Village", "↗ Water gate", "↑ Upper terraces", "← Firebreak path". The letters are fresh, cut deep.

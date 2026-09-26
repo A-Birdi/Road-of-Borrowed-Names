@@ -160,7 +160,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.ragged('top', 'T', 2, 71).ragged('right', 'T', 3, 72).ragged('bottom', 'T', 2, 73);
       k.rect(0, 10, 27, 3, ':');
       k.rect(6, 6, 1, 4, ':').rect(21, 6, 1, 4, ':');
-      // Sōta's and Kinu's vegetable plots either side of the disputed strip
+      // Kōhei's and Kinu's vegetable plots either side of the disputed strip
       k.rect(2, 7, 4, 2, 'F');
       k.rect(22, 7, 4, 2, 'F');
       k.scatter(',', 7, 74, [9, 3, 10, 6], '.');
@@ -190,7 +190,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'sign', x: 1, y: 9, scene: 'lf.sign_town' },
     ],
     npcs: [
-      { id: 'lf_sota', x: 10, y: 7, dir: 'right', talk: [{ if: 'post', scene: 'lf.sota_post' }, { if: 'quest.lf_fence=done', scene: 'lf.sota_done' }, { scene: 'lf.fence_talk' }] },
+      { id: 'lf_kohei', x: 10, y: 7, dir: 'right', talk: [{ if: 'post', scene: 'lf.kohei_post' }, { if: 'quest.lf_fence=done', scene: 'lf.kohei_done' }, { scene: 'lf.fence_talk' }] },
       { id: 'lf_kinu', x: 17, y: 7, dir: 'left', talk: [{ if: 'post', scene: 'lf.kinu_post' }, { if: 'quest.lf_fence=done', scene: 'lf.kinu_done' }, { scene: 'lf.fence_talk' }] },
       { id: 'lf_shu', x: 8, y: 19, dir: 'down', wander: 3, talk: [{ if: 'post', scene: 'lf.shu_post' }, { if: 'lf_bell_rung', scene: 'lf.shu_after' }, { scene: 'lf.shu' }] },
     ],
@@ -220,13 +220,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.rect(0, 8, 5, 7, '~');
       k.rect(5, 8, 1, 5, '+');
       k.rect(6, 9, 2, 3, '+');
-      // Tetsu's pier
+      // Tokuji's pier
       k.rect(18, 13, 2, 6, '_');
       k.scatter(',', 10, 85, [8, 3, 24, 9], '.');
       k.scatter('"', 8, 86, [0, 12, 34, 3], 's');
     }),
     structs: [
-      { type: 'house', x: 21, y: 4, w: 5, h: 4, roof: 'thatch', wall: 'wood', door: 2, windows: [0, 4], chimney: true, to: 'lf.tetsu', spawn: [3, 6] },
+      { type: 'house', x: 21, y: 4, w: 5, h: 4, roof: 'thatch', wall: 'wood', door: 2, windows: [0, 4], chimney: true, to: 'lf.tokuji', spawn: [3, 6] },
     ],
     props: [
       { p: 'lf_sluicegate', x: 0, y: 10, scene: 'lf.sluice_gate' },
@@ -241,7 +241,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'sign', x: 17, y: 2, scene: 'lf.sign_sluice' },
     ],
     npcs: [
-      { id: 'lf_tetsu', x: 17, y: 11, dir: 'down', talk: [{ if: 'post', scene: 'lf.tetsu_post' }, { if: 'lf_bell_rung', scene: 'lf.tetsu_after' }, { if: 'lf_tetsu_told', scene: 'lf.tetsu_again' }, { if: 'quest.lf_main>=5', scene: 'lf.tetsu_story' }, { scene: 'lf.tetsu_early' }] },
+      { id: 'lf_tokuji', x: 17, y: 11, dir: 'down', talk: [{ if: 'post', scene: 'lf.tokuji_post' }, { if: 'lf_bell_rung', scene: 'lf.tokuji_after' }, { if: 'lf_tokuji_told', scene: 'lf.tokuji_again' }, { if: 'quest.lf_main>=5', scene: 'lf.tokuji_story' }, { scene: 'lf.tokuji_early' }] },
     ],
     exits: [{ x: 13, y: 0, w: 4, h: 1, to: 'lf.town', tx: 39, ty: 38, dir: 'up' }],
     spawn: { default: [15, 1, 'down'], from_tower: [19, 16, 'up'] },
@@ -355,7 +355,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     spawn: { default: [5, 7, 'up'] },
   });
 
-  interior('lf.bakery', T("Kanta's Bakery", 'カンタ の パン{屋|や}'), 9, 8, 3, [25, 30], {
+  interior('lf.bakery', T("Masaru's Bakery", 'マサル の パン{屋|や}'), 9, 8, 3, [25, 30], {
     props: [
       { p: 'exitmat', x: 3, y: 6 },
       { p: 'stove', x: 1, y: 2 }, { p: 'stove', x: 2, y: 2 }, { p: 'table', x: 5, y: 3, scene: 'lf.bakery_orders' },
@@ -363,7 +363,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'shelf', x: 4, y: 2 },
     ],
     npcs: [
-      { id: 'lf_kanta', x: 3, y: 4, dir: 'down', talk: [{ if: 'post', scene: 'lf.kanta_post' }, { if: 'lf_bell_rung', scene: 'lf.kanta_after' }, { scene: 'lf.kanta' }] },
+      { id: 'lf_masaru', x: 3, y: 4, dir: 'down', talk: [{ if: 'post', scene: 'lf.masaru_post' }, { if: 'lf_bell_rung', scene: 'lf.masaru_after' }, { scene: 'lf.masaru' }] },
     ],
     spawn: { default: [3, 6, 'up'] },
   });
@@ -381,11 +381,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
     spawn: { default: [5, 7, 'up'] },
   });
 
-  interior('lf.tetsu', T("Tetsu's Hut", 'テツ の {小屋|こや}'), 8, 8, 3, [23, 8], {
+  interior('lf.tokuji', T("Tokuji's Hut", 'トクジ の {小屋|こや}'), 8, 8, 3, [23, 8], {
     props: [
       { p: 'exitmat', x: 3, y: 6 },
-      { p: 'bed', x: 1, y: 2 }, { p: 'smalltable', x: 5, y: 3, scene: 'lf.tetsu_table' }, { p: 'net', x: 4, y: 2 },
-      { p: 'shelf', x: 6, y: 2, scene: 'lf.tetsu_shelf' }, { p: 'pot', x: 6, y: 5 },
+      { p: 'bed', x: 1, y: 2 }, { p: 'smalltable', x: 5, y: 3, scene: 'lf.tokuji_table' }, { p: 'net', x: 4, y: 2 },
+      { p: 'shelf', x: 6, y: 2, scene: 'lf.tokuji_shelf' }, { p: 'pot', x: 6, y: 5 },
     ],
     exits: [{ x: 3, y: 7, to: 'lf.sluice', tx: 23, ty: 8, dir: 'down' }],
   });

@@ -104,7 +104,7 @@ nao: じゃ 、{潮硝子|しおがらす} まで {走|はし}って くる 。{
 narr: {通|とお}り を {歩|ある}いて いる と 、{町|まち} の {人|ひと} が {次々|つぎつぎ} に ミオ に {声|こえ} を かけて くる 。|| As you walk down the avenue, townsfolk come up to Mio one after another.
 lf_setsu: {薬師|くすし} さん です よね ? {宿|やど} の お{客|きゃく}さま が 、{咳|せき} を して いて 。|| You're an apothecary, aren't you? One of our guests has a cough.
 comp[smile]: はい 、もちろん 。{後|あと} で {持|も}って いきます 。|| Yes, of course. I'll bring something later.
-lf_kanta: {俺|おれ} も ！ やけど の {薬|くすり} ！ {十人分|じゅうにんぶん} ！|| Me too! Burn ointment! Ten people's worth!
+lf_masaru: {俺|おれ} も ！ やけど の {薬|くすり} ！ {十人分|じゅうにんぶん} ！|| Me too! Burn ointment! Ten people's worth!
 comp: はい 、もちろん 。|| Yes, of course.
 lf_nagi: {油|あぶら} で {荒|あ}れた {手|て} に {効|き}く もの 、ある ?|| Got anything for hands chapped from lamp oil?
 comp: …… はい 、もちろん 。|| …Yes, of course.

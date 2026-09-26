@@ -5,7 +5,7 @@
 // Usage: node tests/e2e/explore.mjs <startMap> <x> <y> <targetFlag> [comp] [profile] [seed] [maxActions] [flags,comma,sep] [words,comma,sep]
 import { serve, launch, page } from './lib.mjs';
 
-const [startMap, sx, sy, target, comp = 'mio', profile = 'E', seed = '1', maxActions = '900', flagList = '', wordList = ''] = process.argv.slice(2);
+const [startMap, sx, sy, target, comp = 'none', profile = 'E', seed = '1', maxActions = '900', flagList = '', wordList = ''] = process.argv.slice(2);
 const { srv, url } = await serve();
 const b = await launch();
 const { p, errors } = await page(b, url);
@@ -16,7 +16,7 @@ const res = await p.evaluate(async (a) => {
   T.enable({ battle: 'unravel', choose: (opts) => rng.int(opts.length) });
   const flags = {};
   for (const f of a.flagList.split(',').filter(Boolean)) flags[f] = true;
-  const s = RB.game.debugStart(a.startMap, +a.sx, +a.sy, { comp: a.comp, profile: a.profile, flags });
+  const s = RB.game.debugStart(a.startMap, +a.sx, +a.sy, { comp: a.comp === 'none' ? null : a.comp, profile: a.profile, flags });
   s.learn.kanaKnown = a.profile === 'F' ? 'hira' : 'both';
   for (const w of a.wordList.split(',').filter(Boolean)) if (!s.words.includes(w)) s.words.push(w);
   s.chapter = 2;

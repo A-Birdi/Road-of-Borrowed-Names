@@ -189,7 +189,14 @@ input[type=text]:focus, select:focus { outline: 2px solid var(--focus); }
 .chal .ctx .prompt { font-size: 1.15em; }
 .chal .ctx .jline { font-size: 1.25em; }
 .chal .work { display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, 300px); gap: 0.6em; min-height: 0; }
-@media (max-width: 760px), (max-height: 520px) and (orientation: landscape) { .chal .work { grid-template-columns: 1fr; } }
+@media (max-width: 760px), (max-height: 520px) and (orientation: landscape) {
+  .chal .work { grid-template-columns: 1fr; }
+  .chal .wrap { grid-template-rows: auto auto auto; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .chal .ctx { max-height: none; }
+  .pad-area, .chal .work { min-height: auto; }
+  .pad-box { width: min(100%, 62vh, 420px); }
+  .side { overflow: visible; }
+}
 .pad-area { background: var(--panel); border: 1px solid var(--line-soft); border-radius: 10px; padding: 0.5em; display: flex; flex-direction: column; gap: 0.4em; min-height: 0; }
 .pad-box { position: relative; align-self: center; width: min(100%, 40vh, 400px); aspect-ratio: 1; touch-action: none; }
 .pad-box canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; border-radius: 8px; background: #fbf7ea; cursor: crosshair; }

@@ -42,7 +42,7 @@ narr: {灯落|ひおち} へ {下|くだ}る {道|みち} は 、 {背|せ} よ�
 ?(comp=suzu) comp: {幕|まく} が {下|お}りてる ね 。 {次|つぎ} の {幕|まく} は 、 {上|うえ} の {村|むら} から だ 。 || The curtain's down on that one. The next act starts in the village up the hill.
 
 @scene sb.hayate_road
-hayate: {吹|ふ}き{溜|だ}まり は {崩|くず}して おいた 。 {灯落|ひおち} まで 、 {道|みち} は {通|とお}じて いる 。 || I broke up the drift. The road's open all the way to Lanternfall.
+hayate: {吹|ふ}き{溜|だ}まり は {崩|くず}して おいた 。 {灯落|ひおち} まで 、 {道|みち} は {通|つう}じて いる 。 || I broke up the drift. The road's open all the way to Lanternfall.
 hayate: {下|くだ}り は {滑|すべ}る 。 {足|あし} を {横|よこ} に して {歩|ある}け 。 …… それ だけ だ 。 || The way down is slippery. Walk with your feet sideways. …That's all.
 `, 'ch4/road');
 
@@ -73,7 +73,7 @@ narr: {井戸|いど} は {凍|こお}って いる 。 {氷|こおり} の {上
 narr: {干|ほ}した {洗濯物|せんたくもの} が 、 {板|いた} の よう に {凍|こお}って いる 。 {子|こ}ども の {着物|きもの} が 、 {立|た}った まま {揺|ゆ}れて いた 。 || The washing on the line has frozen stiff as boards. A child's kimono sways, standing up by itself.
 
 @scene sb.post_box
-narr: {郵便|ゆうびん} {箱|ばこ} 。 {口|くち} に {雪|ゆき} が {詰|つ}まって いる 。 {札|ふだ} に は 「 {次|つぎ} の {集荷|しゅうか} ： {雪|ゆき} {解|ど}け の あと 」 。 || A postbox with snow packed into its slot. The label reads: "Next collection: after the thaw."
+narr: {郵便|ゆうびん} {箱|ばこ} 。 {口|くち} に {雪|ゆき} が {詰|つ}まって いる 。 {札|ふだ} に は 「 {次|つぎ} の {集荷|しゅうか} ： {雪解|ゆきど}け の あと 」 。 || A postbox with snow packed into its slot. The label reads: "Next collection: after the thaw."
 
 @scene sb.hoshino_scope
 narr: {古|ふる}い {望遠鏡|ぼうえんきょう} が 、 {坂|さか} の {下|した} に {向|む}けて {固定|こてい} されて いる 。 {星|ほし} で は なく 、 {灯落|ひおち} へ {続|つづ}く {道|みち} を {見|み}る {角度|かくど} だ 。 || An old telescope has been fixed pointing down the slope — not at the stars, but at the angle of the road that runs toward Lanternfall.
@@ -84,7 +84,7 @@ narr: {川|かわ} の {氷|こおり} に {開|あ}けた {丸|まる}い {穴|
 
 @scene sb.stair_marker
 narr: {石段|いしだん} の {脇|わき} の {石|いし} 。 「 ここ より {上|うえ} 、 {天文台|てんもんだい} 。 {星|ほし} を {見|み}る {者|もの} は 、 {足元|あしもと} も {見|み}よ 。 」 || A stone beside the stair: "Observatory above. You who look at the stars — look at your feet too."
-?(comp=ren) comp[smile]: いい {言葉|ことば} です 。 わたし の {師匠|ししょう} も 、 {似|に}た こと を {言|い}って いました 。 …… {言|い}われる {理由|りゆう} は 、 {察|さっ}して ください 。 || Good words. My teacher used to say something similar. …You may guess why it needed saying.
+?(comp=ren) comp[smile]: いい {言葉|ことば} です 。 わたし の {師匠|ししょう} も 、 {似|に}た こと を {言|い}って いました 。 …… わたし が {言|い}われた {理由|りゆう} は 、 ご{想像|そうぞう} に お{任|まか}せ します 。 || Good words. My teacher used to say something similar. …Why it needed saying to me, I leave to your imagination.
 
 @scene sb.stair_ice
 !if sb_stair_open -> end
@@ -239,7 +239,7 @@ RB.script.add(`
 :intro
 tetsuji[angry]: …… {十二|じゅうに} 。 {何度|なんど} {数|かぞ}えて も {十二|じゅうに} だ 。 || …Twelve. However many times I count, it's twelve.
 tetsuji: おれ の ヤギ は {十頭|じゅっとう} だ 。 {朝|あさ} {小屋|こや} を {開|あ}けたら 、 {十二|じゅうに} いた 。 {二頭|にとう} 、 {誰|だれ} か の が {迷|まよ}いこんで いる 。 || I own ten goats. This morning I opened the shed and there were twelve. Two of them belong to someone else and wandered in.
-tetsuji[angry]: {吹雪|ふぶき} の {前|まえ} に 、 {持|も}ち{主|ぬし} に {返|かえ}さない と いかん 。 だが 、 {誰|だれ} も {名乗|なの}り{出|で}ん 。 {旅|たび} の {人|ひと} 、 {暇|ひま} なら {聞|き}いて まわって くれ 。 || They need returning to their owner before the storm. But no one's come forward. If you've time, travellers, ask around.
+tetsuji[angry]: {吹雪|ふぶき} の {前|まえ} に 、 {持|も}ち{主|ぬし} に {返|かえ}さない と いかん 。 だが 、 {誰|だれ} も {名乗|なの}り{出|で}ん@名乗り出る 。 {旅|たび} の {人|ひと} 、 {暇|ひま} なら {聞|き}いて まわって くれ 。 || They need returning to their owner before the storm. But no one's come forward. If you've time, travellers, ask around.
 ?(comp=nao) comp[smirk]: ヤギ の {迷子|まいご} {届|とど}け か 。 {配達|はいたつ} より {難|むずか}しそう だ な 。 || A lost-goat notice. Sounds harder than deliveries.
 ?(comp=suzu) comp[laugh]: {増|ふ}えた ほう で {困|こま}る って 、 {珍|めずら}しい {悩|なや}み だ ね 。 {帳簿|ちょうぼ} が {合|あ}わない の は 、 あたし も {嫌|きら}い だけど 。 || Troubled because you've got more — that's a rare kind of worry. Mind you, I hate books that don't balance too.
 !quest sb_goats start
@@ -255,7 +255,7 @@ tetsuji: {誰|だれ} か の ヤギ じゃ なくて 、 おれ の ヤギ だ�
 narr: テツジ は {帽子|ぼうし} を {深|ふか}く かぶり {直|なお}した 。 {目|め} の {辺|あた}り が 、 {少|すこ}し {赤|あか}い 。 || Tetsuji pulls his hat down low. His eyes look a little red.
 tetsuji: …… {雪|ゆき} が {目|め} に {入|はい}った 。 || …Got snow in my eye.
 ?(comp=mio) comp[smile]: {雪|ゆき} なら 、 すぐ とけます よ 。 おめでとう ございます 。 || Snow melts quickly. Congratulations.
-?(comp=ren) comp[smile]: {記録|きろく} を {訂正|ていせい} しましょう 。 {十頭|じゅっとう} 、 {増|ぞう}{二|に} 。 {誤差|ごさ} で は なく 、 {慶事|けいじ} です 。 || Let's correct the record. Ten head, plus two. Not an error — a happy event.
+?(comp=ren) comp[smile]: {記録|きろく} を {訂正|ていせい} しましょう 。 {十頭|じゅっとう} に 、 {二頭|にとう} {追加|ついか} 。 {誤差|ごさ} で は なく 、 {慶事|けいじ} です 。 || Let's correct the record. Ten head, plus two. Not an error — a happy event.
 tetsuji: {持|も}って いけ 。 {予備|よび} の {鈴|すず} だ 。 {鳴|な}る と 「 {慌|あわ}てる な 」 と {聞|き}こえる 。 おれ に は な 。 || Take it. My spare bell. When it rings it sounds like "don't panic". To me, anyway.
 !give sb_goat_bell
 !give sb_cheese
@@ -266,7 +266,7 @@ tetsuji: {持|も}って いけ 。 {予備|よび} の {鈴|すず} だ 。 {�
 tetsuji: {十二|じゅうに} 。 …… {何度|なんど} {数|かぞ}えて も {十二|じゅうに} だ 。 {悪|わる}く ない 。 || Twelve. …However many times I count, twelve. Not bad.
 !end
 :after
-tetsuji: {天文台|てんもんだい} の {灯|あか}り が ある と 、 {夜|よる} の {小屋|こや} が {明|あか}るい 。 {子|こ}ヤギ が {外|そと} を {見|み}たがる 。 || With the observatory lamp lit, the shed's bright at night. The kids want to look outside.
+tetsuji: {天文台|てんもんだい} の {灯|あか}り が ある と 、 {夜|よる} の {小屋|こや} が {明|あか}るい 。 {子|こ}ヤギ が {外|そと} を {見|み}たがる@見る 。 || With the observatory lamp lit, the shed's bright at night. The kids want to look outside.
 !if quest.sb_goats=done -> end
 !if quest.sb_goats>=2 -> report
 !if quest.sb_goats -> waiting
@@ -282,13 +282,13 @@ tetsuji: {子|こ}ヤギ は {大|おお}きく なった 。 {十二頭|じゅ�
 tetsuji[angry]: ヤギ は {小屋|こや} に {入|い}れた 。 {十二頭|じゅうにとう} 、 {全部|ぜんぶ} な 。 {他人|たにん} の ヤギ でも 、 {吹雪|ふぶき} に {放|ほう}って は おけん 。 || The goats are in the shed. All twelve. Somebody else's or not, you don't leave a goat out in a storm.
 !end
 :ok
-tetsuji: {子|こ}ヤギ は {母親|ははおや} に くっついて {寝|ね}て いる 。 {吹雪|ふぶき} も {知|し}らん で 。 …… うらやましい 。 || The kids are asleep curled against their mother. Don't even know there's a storm. …Lucky things.
+tetsuji: {子|こ}ヤギ は {母親|ははおや} に くっついて {寝|ね}て いる 。 {吹雪|ふぶき} も {知|し}らん@知る で 。 …… うらやましい 。 || The kids are asleep curled against their mother. Don't even know there's a storm. …Lucky things.
 `, 'ch4/residents-tetsuji');
 
 RB.script.add(`
 @scene sb.sousuke_post
 sousuke[smile]: {春|はる} の {最初|さいしょ} の {郵便|ゆうびん} で 、 {灯落|ひおち} から {三十通|さんじゅっつう} も {届|とど}きました 。 {宛名|あてな} は 、 ぜんぶ {読|よ}めました よ 。 || The first post of spring brought thirty letters from Lanternfall. I could read every single address.
-?(sb_hoshino_goes) sousuke: ホシノ さん から も {一通|いっつう} 。 {差出|さしだ}し{地|ち} が {灯落|ひおち} の ホシノ さん の {手紙|てがみ} なんて 、 {変|へん} な {感|かん}じ です 。 || One from Mr Hoshino too. A letter from him with Lanternfall as the sender's address — feels strange.
+?(sb_hoshino_goes) sousuke: ホシノ さん から も {一通|いっつう} 。 {差出人|さしだしにん} の {住所|じゅうしょ} が {灯落|ひおち} に なって いる ホシノ さん の {手紙|てがみ} なんて 、 {変|へん} な {感|かん}じ です 。 || One from Mr Hoshino too. A letter from him with Lanternfall as the sender's address — feels strange.
 ?(!sb_hoshino_goes) sousuke: アカリ さん から ホシノ さん へ 、 {三通|さんつう} 。 {一番上|いちばんうえ} に {置|お}いて {渡|わた}しました 。 {配達|はいたつ} は 、 やっぱり {自分|じぶん} で したい です から ね 。 || Three from Akari to Mr Hoshino. I put them on top and handed them over myself. I do prefer to make my own deliveries.
 
 @scene sb.storm_sousuke
@@ -305,8 +305,8 @@ RB.script.add(`
 !if quest.sb_bell>=2 -> report
 !if quest.sb_bell>=1 -> go
 fuki[tired]: ごほっ …… 。 おや 、 {旅|たび} の {人|ひと} かい 。 {見苦|みぐる}しい ところ を 。 || Koff… Oh, travellers, is it. Forgive the state of me.
-fuki: {鐘|かね} {守|もり} の フキ だよ 。 {広場|ひろば} の {鐘|かね} を 、 {五十年|ごじゅうねん} {鳴|な}らして きた 。 {朝|あさ} 、 {昼|ひる} 、 {夕方|ゆうがた} 。 {吹雪|ふぶき} の とき も 、 {迷子|まいご} の とき も 。 || I'm Fuki, keeper of the bell. I've rung the bell in the square for fifty years. Morning, noon and evening. For storms, and for people lost.
-fuki[worry]: ところが この かぜ で 、 {柱|はしら} に {上|のぼ}れない 。 おまけ に 、 {柱|はしら} の {決|き}まり {書|が}き の {板|いた} が 、 {真|ま}っ{白|しろ} に なっちまった 。 || But with this cold I can't climb the post. And on top of that, the board with the rules on it has gone blank as snow.
+fuki: {鐘撞|かねつ}き の フキ だよ 。 {広場|ひろば} の {鐘|かね} を 、 {五十年|ごじゅうねん} {鳴|な}らして きた 。 {朝|あさ} 、 {昼|ひる} 、 {夕方|ゆうがた} 。 {吹雪|ふぶき} の とき も 、 {迷子|まいご} の とき も 。 || I'm Fuki, keeper of the bell. I've rung the bell in the square for fifty years. Morning, noon and evening. For storms, and for people lost.
+fuki[worry]: ところが この かぜ で 、 {柱|はしら} に {上|のぼ}れない 。 おまけ に 、 {柱|はしら} の {決|き}まり {書|が}き の {板|いた} が 、 {真|ま}っ{白|しろ} に なっちまった@なる 。 || But with this cold I can't climb the post. And on top of that, the board with the rules on it has gone blank as snow.
 fuki: {若|わか}い {者|もの} は 、 {板|いた} を {見|み}て {鳴|な}らして いた から ね 。 {今日|きょう} は {昼|ひる} の {鐘|かね} が {鳴|な}らない かも しれない 。 {昼|ひる} の {鐘|かね} が {鳴|な}らない と 、 {村|むら} じゅう {昼|ひる} ごはん を {食|た}べ{損|そこ}ねる んだよ 。 || The young ones always read the board to ring it. Today the noon bell might not ring at all. And when the noon bell doesn't ring, the whole hamlet misses lunch.
 fuki: わたし の {帳面|ちょうめん} に 、 {決|き}まり が {書|か}いて ある 。 {読|よ}んで 、 {代|か}わり に {鳴|な}らして くれない かい 。 || The rules are written in my notebook. Would you read them and ring it for me?
 !choice
@@ -320,7 +320,7 @@ fuki[smile]: ありがたい 。 {帳面|ちょうめん} は そこ の {本|�
 fuki: いい よ 、 いい よ 。 {昼|ひる} ごはん が {遅|おそ}れる だけ さ 。 …… {村|むら} じゅう の ね 。 || Fine, fine. Lunch will just be late. …For the whole hamlet.
 !end
 :go
-fuki: {帳面|ちょうめん} は {読|よ}めた かい 。 {昼|ひる} の {鐘|かね} 、 {頼|たの}んだ よ 。 {間違|まちが}えたら …… ヤギ が {帰|かえ}って きちまう から ね 。 || Managed to read the notebook? The noon bell, then — I'm counting on you. Get it wrong and… the goats will all come home.
+fuki: {帳面|ちょうめん} は {読|よ}めた かい 。 {昼|ひる} の {鐘|かね} 、 {頼|たの}んだ よ 。 {間違|まちが}えたら …… ヤギ が {帰|かえ}って きちまう@くる から ね 。 || Managed to read the notebook? The noon bell, then — I'm counting on you. Get it wrong and… the goats will all come home.
 !end
 :report
 fuki[laugh]: {聞|き}こえた よ 。 {昼|ひる} の {鐘|かね} 。 {二|ふた}つ 、 きれい に 。 {五十年|ごじゅうねん} ぶり に 、 {寝床|ねどこ} で {鐘|かね} を {聞|き}いた よ 。 || I heard it. The noon bell. Two strokes, clean. First time in fifty years I've heard the bell from my bed.
@@ -399,7 +399,7 @@ fuki: {鐘|かね} と {灯|あか}り 。 {音|おと} と {光|ひかり} 。 
 
 @scene sb.storm_fuki
 !if quest.sb_bell=done -> rang
-fuki[tired]: ごほっ 。 {吹雪|ふぶき} の {鐘|かね} は 、 {這|は}って でも {鳴|な}らす よ 。 それ が {鐘|かね} {守|もり} だ 。 || Koff. I'd crawl to ring the storm bell if I had to. That's what a bell-keeper is.
+fuki[tired]: ごほっ 。 {吹雪|ふぶき} の {鐘|かね} は 、 {這|は}って でも {鳴|な}らす よ 。 それ が {鐘撞|かねつ}き だ 。 || Koff. I'd crawl to ring the storm bell if I had to. That's what a bell-keeper is.
 !end
 :rang
 fuki[smile]: {吹雪|ふぶき} の {鐘|かね} 、 あんた が {鳴|な}らした ね 。 {音|おと} で わかる 。 {若|わか}い {腕|うで} の {音|おと} だ 。 …… {悪|わる}く なかった よ 。 || You rang the storm bell. I could tell by the sound. Young arms. …Not bad at all.
@@ -526,7 +526,7 @@ sachi[smile]: カンタ は {広場|ひろば} ？ …… やっぱり 。 {今�
 sachi[smile]: {夫|おっと} が {帰|かえ}って きた の 。 {人形|にんぎょう} を {見|み}た カンタ 、 「 {子|こ}ども じゃ ない 」 って {言|い}いながら 、 {毎晩|まいばん} {抱|だ}いて {寝|ね}てる わ 。 || My husband came home. Kanta took one look at the doll and said "I'm not a baby" — and he's slept holding it every night since.
 
 @scene sb.storm_sachi
-sachi[worry]: {夫|おっと} は {灯落|ひおち} で 、 この {吹雪|ふぶき} を {知|し}らない のね 。 {知|し}らない ほう が いい か 。 {心配|しんぱい} {性|しょう} だ から 。 || My husband's down in Lanternfall and doesn't know about this storm. Maybe better he doesn't. He's a worrier.
+sachi[worry]: {夫|おっと} は {灯落|ひおち} で 、 この {吹雪|ふぶき} を {知|し}らない のね 。 {知|し}らない ほう が いい か 。 {心配性|しんぱいしょう} だ から 。 || My husband's down in Lanternfall and doesn't know about this storm. Maybe better he doesn't. He's a worrier.
 
 @scene sb.sachi_loom
 narr: {織|お}り{機|き} に 、 {途中|とちゅう} まで {織|お}った {布|ぬの} 。 {雪|ゆき} の {結晶|けっしょう} の {模様|もよう} が 、 {三|みっ}つ {半|はん} 。 || Half-woven cloth on the loom: three and a half snowflake patterns.
@@ -538,7 +538,7 @@ narr: {箱|はこ} の {中|なか} に 、 {小|ちい}さく なった {子|�
 RB.script.add(`
 @scene sb.denji
 !if sb_lamp_lit -> after
-denji: {川|かわ} の {氷|こおり} に {穴|あな} を {開|あ}けて 、 {魚|さかな} を {待|ま}って いる 。 {魚|さかな} も {寒|さむ}くて {動|うご}かん 。 {気|き}が {合|あ}う 。 || I've cut a hole in the ice and I'm waiting for fish. The fish are too cold to move. We get on.
+denji: {川|かわ} の {氷|こおり} に {穴|あな} を {開|あ}けて 、 {魚|さかな} を {待|ま}って いる 。 {魚|さかな} も {寒|さむ}くて {動|うご}かん@動く 。 {気|き}が {合|あ}う 。 || I've cut a hole in the ice and I'm waiting for fish. The fish are too cold to move. We get on.
 denji: おれ は デンジ 。 {大工|だいく} だった 。 {天文台|てんもんだい} の {丸屋根|まるやね} は 、 {四十年|よんじゅうねん} {前|まえ} 、 ホシノ と {二人|ふたり} で {上|あ}げた 。 {二人|ふたり} とも {若|わか}くて 、 {馬鹿|ばか} だった 。 || I'm Denji. I was a carpenter. Forty years ago Hoshino and I put the dome on that observatory, just the two of us. Both young, both fools.
 ?(sb_storm) denji: {中|なか} の こと なら 、 {宿|やど} で {話|はな}した とおり だ 。 {迷|まよ}ったら 、 {壁|かべ} の {字|じ} を {読|よ}め 。 おれ たち は 、 {何|なん} でも {書|か}いて おいた 。 || As I told you at the inn. If you're lost inside, read the writing on the walls. We wrote everything down.
 !end
@@ -565,7 +565,7 @@ RB.script.add(`
 @scene sb.hayate
 !if sb_morning -> morning
 hayate: …… {旅|たび} の {者|もの} か 。 {石段|いしだん} に は {近|ちか}づく な 。 {氷|こおり} の {中|なか} に キツネ が いる 。 || …Travellers. Stay away from the stair. There are foxes in the ice.
-hayate: {雪|ゆき} ギツネ は {本来|ほんらい} 、 {人|ひと} を {襲|おそ}わない 。 だが {灯|あか}り が {消|き}えて から 、 {目|め} が {変|か}わった 。 {何|なに} か に {呼|よ}ばれて いる よう な {目|め} だ 。 || Snow foxes don't attack people, by nature. But since the lamp went out, their eyes have changed. Like something is calling them.
+hayate: {雪|ゆき}ギツネ は {本来|ほんらい} 、 {人|ひと} を {襲|おそ}わない 。 だが {灯|あか}り が {消|き}えて から 、 {目|め} が {変|か}わった 。 {何|なに} か に {呼|よ}ばれて いる よう な {目|め} だ 。 || Snow foxes don't attack people, by nature. But since the lamp went out, their eyes have changed. Like something is calling them.
 ?(comp=mio) comp[worry]: {怪我|けが} を して いる キツネ が いたら 、 {教|おし}えて ください 。 …… {人|ひと} も 、 キツネ も 。 || If you find any hurt foxes, tell me. …People or foxes.
 hayate[surprise]: …… {変|か}わった {人|ひと} だ 。 {覚|おぼ}えて おく 。 || …Odd sort. I'll remember.
 !end

@@ -25,8 +25,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     look: { skin: 2, hair: 'bun', hairColor: 6, cloth: ['#6a3a5a', '#502a44', '#e8c070'], shape: 'robe', acc: ['cane'], age: 'old' },
     portrait: { eyes: 'narrow', style: 'bun', age: 'old', collar: 'high', pins: true, bg: '#3a2438' },
   });
-  ch('lf_tetsu', {
-    name: { en: 'Tetsu', jp: 'テツ' }, voice: { pitch: 0.7 },
+  ch('lf_tokuji', {
+    name: { en: 'Tokuji', jp: 'トクジ' }, voice: { pitch: 0.7 },
     look: { skin: 4, hair: 'shaved', hairColor: 5, cloth: ['#4a5a5a', '#3a4848', '#c8a060'], shape: 'tunic', acc: ['beard', 'hat'], hatCol: '#6a5a44', age: 'old' },
     portrait: { eyes: 'sharp', style: 'shaved', beard: true, age: 'old', acc: ['hat'], hatCol: '#6a5a44', scar: true, bg: '#22303a' },
   });
@@ -35,8 +35,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     look: { skin: 1, hair: 'bun', hairColor: 5, cloth: ['#8a6a5a', '#6e5446', '#e0d0b0'], shape: 'robe', acc: ['basket'], age: 'old' },
     portrait: { eyes: 'soft', style: 'bun', age: 'old', bg: '#3a3028' },
   });
-  ch('lf_sota', {
-    name: { en: 'Sōta', jp: 'ソウタ' }, voice: { pitch: 0.8 },
+  ch('lf_kohei', {
+    name: { en: 'Kōhei', jp: 'コウヘイ' }, voice: { pitch: 0.8 },
     look: { skin: 3, hair: 'short', hairColor: 5, cloth: ['#5a6a4a', '#46543a', '#c8b080'], shape: 'tunic', acc: ['toolbelt'] },
     portrait: { eyes: 'round', style: 'short', beard: '#8a8a90', bg: '#2e3626' },
   });
@@ -45,8 +45,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     look: { skin: 1, hair: 'bob', hairColor: 6, cloth: ['#8a4a4a', '#6e3a3a', '#f0e0c0'], shape: 'apron', acc: ['flower'], flowerCol: '#e8b4d0' },
     portrait: { eyes: 'sharp', style: 'bob', collar: 'apron', acc: ['flower'], flowerCol: '#e8b4d0', mole: true, bg: '#3a2626' },
   });
-  ch('lf_kanta', {
-    name: { en: 'Kanta', jp: 'カンタ' }, voice: { pitch: 0.75 },
+  ch('lf_masaru', {
+    name: { en: 'Masaru', jp: 'マサル' }, voice: { pitch: 0.75 },
     look: { skin: 3, hair: 'wrap', hairColor: 1, wrapCol: '#f4f0e8', cloth: ['#c8a878', '#a88a5e', '#f4f0e8'], shape: 'apron', acc: [] },
     portrait: { eyes: 'round', style: 'wrap', wrapCol: '#f4f0e8', collar: 'apron', blush: true, bg: '#3a3024' },
   });
@@ -99,8 +99,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   it('lf_request_slip', { name: { jp: '{閲覧|えつらん}{許可|きょか}{証|しょう}', en: 'Reading permit' }, key: true, desc: 'Permission to read the public records. Stamped twice, once on each side, both times "certainly".' });
   it('lf_stacks_key', { name: { jp: '{地下|ちか}{書庫|しょこ}の {鍵|かぎ}', en: 'Basement stacks key' }, key: true, desc: 'A brass key Akari slid across her desk while saying you had better not go.' });
   it('lf_minutes', { name: { jp: '{古|ふる}い {議事録|ぎじろく}', en: 'The old minutes' }, key: true, desc: 'Council minutes from thirty years ago, the only copy the Hush did not smooth over. Full of people disagreeing.' });
-  it('lf_toya_bell', { name: { jp: 'トウヤ の {鈴|すず}', en: "Tōya's hand bell" }, key: true, desc: 'A messenger\'s small brass bell. Old Tetsu kept it for thirty years and never once rang it.' });
-  it('lf_hoshigaki', { name: { jp: '{干|ほ}し{柿|がき}', en: 'Dried persimmons' }, desc: 'From the tree Sōta and Kinu finally agreed to share. Sweet, a little chewy, argued over.' });
+  it('lf_toya_bell', { name: { jp: 'トウヤ の {鈴|すず}', en: "Tōya's hand bell" }, key: true, desc: 'A messenger\'s small brass bell. Old Tokuji kept it for thirty years and never once rang it.' });
+  it('lf_hoshigaki', { name: { jp: '{干|ほ}し{柿|がき}', en: 'Dried persimmons' }, desc: 'From the tree Kōhei and Kinu finally agreed to share. Sweet, a little chewy, argued over.' });
   it('lf_ferry_cap', { name: { jp: '{渡|わた}し{舟|ぶね}の {帽子|ぼうし}', en: 'Ferry cap' }, slot: 'cosmetic', acc: 'hat', desc: 'A spare ferry clerk\'s cap from Umi\'s office. Makes people ask you when the next boat leaves.' });
   it('lf_red_pen', { name: { jp: '{赤|あか}ペン', en: 'Red pen' }, desc: 'Hayato\'s correcting pen. He says a clerk who cannot cross things out is only half a clerk.' });
   it('lf_bell_shard', { name: { jp: '{鐘|かね}の {欠片|かけら}', en: 'Bell fragment' }, slot: 'charm', desc: 'A chip of bronze from the drowned bell. It hums faintly when someone near you is about to say no.' });
@@ -154,8 +154,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       S('{洪水|こうずい} の {年|とし} の {記録|きろく} は 「{特記|とっき}{事項|じこう} なし」 。{事務所|じむしょ} の アカリ に {聞|き}いて みる 。', 'The flood year\'s ledger says "nothing of note". Ask Akari in the clerks\' office (north-east).'),
       S('{記録館|きろくかん} の {地下|ちか}{書庫|しょこ} を {調|しら}べる 。', 'Search the basement stacks under the Records Hall (stairs behind the counter).'),
       S('{古|ふる}い {議事録|ぎじろく} を {議会|ぎかい} の ヤエ に {見|み}せる 。', 'Show the old minutes to Councillor Yae in the Council Chamber.'),
-      S('{水門|すいもん} の テツ に 、{洪水|こうずい} の {夜|よる} の こと を {聞|き}く 。', 'Ask old Tetsu, by the sluice gates south of town, about the night of the flood.'),
-      S('テツ の {舟|ふね} で {鐘楼|しょうろう} へ {渡|わた}る 。', 'Take Tetsu\'s boat from the sluice landing out to the bell tower.'),
+      S('{水門|すいもん} の トクジ に 、{洪水|こうずい} の {夜|よる} の こと を {聞|き}く 。', 'Ask old Tokuji, by the sluice gates south of town, about the night of the flood.'),
+      S('トクジ の {舟|ふね} で {鐘楼|しょうろう} へ {渡|わた}る 。', 'Take Tokuji\'s boat from the sluice landing out to the bell tower.'),
       S('{水門|すいもん} の {札|ふだ} を {読|よ}み 、{鐘|かね} の {間|ま} の {水|みず} を {抜|ぬ}く 。', 'Inside the tower: read each gate plate carefully and drain the way down to the bell chamber.'),
       S('{沈|しず}んだ {鐘|かね} を {鳴|な}らす 。', 'Ring the drowned bell.'),
       S('{灯落|ひおち} に {戻|もど}って 、{何|なに} が {変|か}わった か {見|み}る 。', 'Go back to Lanternfall and see what has changed. Councillor Yae is calling a meeting.'),
@@ -165,10 +165,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
   C.quests.lf_fence = {
     chapter: 5, title: { jp: '{毎朝|まいあさ} {動|うご}く {垣根|かきね}', en: 'The Fence That Moves Every Morning' },
     stages: [
-      S('ソウタ と キヌ は {垣根|かきね} の {場所|ばしょ} で {困|こま}って いる 。{記録館|きろくかん} で {土地|とち} の {記録|きろく} を {探|さが}す 。', 'Sōta and Kinu keep agreeing about their fence and it moves every morning. Look for the old boundary record in the Records Hall.'),
-      S('{境界|きょうかい} の {記録|きろく} を ふたり に {見|み}せる 。', 'Show the boundary record to Sōta and Kinu in the garden quarter.'),
+      S('コウヘイ と キヌ は {垣根|かきね} の {場所|ばしょ} で {困|こま}って いる 。{記録館|きろくかん} で {土地|とち} の {記録|きろく} を {探|さが}す 。', 'Kōhei and Kinu keep agreeing about their fence and it moves every morning. Look for the old boundary record in the Records Hall.'),
+      S('{境界|きょうかい} の {記録|きろく} を ふたり に {見|み}せる 。', 'Show the boundary record to Kōhei and Kinu in the garden quarter.'),
       S('ふたり は まだ {何|なん} でも 「もちろん」 と {言|い}う 。{言|い}い{争|あらそ}える よう に なったら 、また {来|く}る 。', 'They still say "of course" to everything. Come back once people in Lanternfall can argue again.'),
-      S('やっと {言|い}い{争|あらそ}える ふたり の {話|はなし} を {聞|き}いて 、{垣根|かきね} を {決|き}める 。', 'Now that they can argue, help Sōta and Kinu settle the fence line.'),
+      S('やっと {言|い}い{争|あらそ}える ふたり の {話|はなし} を {聞|き}いて 、{垣根|かきね} を {決|き}める 。', 'Now that they can argue, help Kōhei and Kinu settle the fence line.'),
     ],
     reward: { items: { lf_hoshigaki: 1 } },
   };

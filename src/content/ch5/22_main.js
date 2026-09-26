@@ -1,5 +1,5 @@
 /* Chapter 5 main quest: the Records Hall, Akari's key, the basement stacks
- * and the first hush conduit, Councillor Yae and the old minutes, Tetsu and
+ * and the first hush conduit, Councillor Yae and the old minutes, Tokuji and
  * Tōya's bell, the crossing to the tower, and the town after the bell. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
@@ -264,7 +264,7 @@ lf_yae: カサネ は その あと 、{山|やま} の {上|うえ} の {書庫
 ?(comp=mio) comp[sad]: {正|ただ}しく {読|よ}もう と した だけ なのに 。…… {正|ただ}しい こと と 、{助|たす}かる こと は 、{違|ちが}う ん だね 。|| Kasane was only trying to read it correctly. …Being correct and saving people aren't the same thing, are they.
 ?(comp=ren) comp[think]: 「{必要|ひつよう} なら」 。{誰|だれ} に とって の {必要|ひつよう} か を 、{誰|だれ} も {書|か}かなかった 。{灯守|ひもり} の {約束|やくそく} も 、{気|き} を つけない と {同|おな}じ {穴|あな} に {落|お}ちます 。|| "If it's needed." Nobody wrote down needed by whom. A lantern keeper's promise can fall into the same hole if we aren't careful.
 ?(comp=suzu) comp[sad]: …… {台本|だいほん} を {信|しん}じた {人|ひと} と 、{客席|きゃくせき} の {空気|くうき} を {読|よ}んだ {人|ひと} 。どっち も 、{本気|ほんき} だった の ね 。|| …One who trusted the script, and one who read the room. Both of them meant it with everything they had.
-lf_yae: {鐘|かね} の こと を {知|し}りたい なら 、{水門|すいもん} の テツ に {聞|き}きなさい 。あの {夜|よる} 、{水門|すいもん} の {番|ばん} を して いた の は あの {人|ひと} です 。|| If you want to know about the bell, ask Tetsu at the sluice. He was keeping the gate that night.
+lf_yae: {鐘|かね} の こと を {知|し}りたい なら 、{水門|すいもん} の トクジ に {聞|き}きなさい 。あの {夜|よる} 、{水門|すいもん} の {番|ばん} を して いた の は あの {人|ひと} です 。|| If you want to know about the bell, ask Tokuji at the sluice. He was keeping the gate that night.
 lf_yae[smile]: …… {変|へん} です ね 。{読|よ}んで いたら 、{胸|むね} が ざわざわ する 。{昔|むかし} の {議会|ぎかい} の {夜|よる} みたい 。|| …How odd. Reading this, my chest is all astir. Like a council night in the old days.
 !note lf_flood lf_promise lf_toya
 !set lf_yae_told
@@ -272,66 +272,66 @@ lf_yae[smile]: …… {変|へん} です ね 。{読|よ}んで いたら 、{�
 !autosave
 
 @scene lf.yae_again
-lf_yae: {水門|すいもん} の テツ の ところ へ {行|い}きなさい 。{町|まち} の {南|みなみ} 、{湖|みずうみ} の {岸|きし} です 。|| Go and see Tetsu at the sluice. South of town, on the lake shore.
+lf_yae: {水門|すいもん} の トクジ の ところ へ {行|い}きなさい 。{町|まち} の {南|みなみ} 、{湖|みずうみ} の {岸|きし} です 。|| Go and see Tokuji at the sluice. South of town, on the lake shore.
 lf_yae[think]: …… あの {人|ひと} は 、{三十年|さんじゅうねん} ずっと {湖|みずうみ} を {見|み}て いる 。{何|なに} を {待|ま}って いる の か 、{誰|だれ} も {聞|き}かなかった 。|| …For thirty years he's been looking out at the lake. Nobody ever asked what he was waiting for.
 
-# ---- Tetsu and Tōya's bell ------------------------------------------------------------------------------------------------------------
-@scene lf.tetsu_early
-lf_tetsu: …… おう 。|| …Yeah.
+# ---- Tokuji and Tōya's bell ------------------------------------------------------------------------------------------------------------
+@scene lf.tokuji_early
+lf_tokuji: …… おう 。|| …Yeah.
 pc: {鐘楼|しょうろう} へ {行|い}きたい の です が 。|| I want to get to the bell tower.
-lf_tetsu: …… おう 。|| …Yeah.
-narr: テツ は {答|こた}えた が 、{少|すこ}し も {動|うご}かない 。{湖|みずうみ} の {塔|とう} を {見|み}つめた まま だ 。|| Tetsu answers, but doesn't move an inch. He just keeps staring at the tower in the lake.
+lf_tokuji: …… おう 。|| …Yeah.
+narr: トクジ は {答|こた}えた が 、{少|すこ}し も {動|うご}かない 。{湖|みずうみ} の {塔|とう} を {見|み}つめた まま だ 。|| Tokuji answers, but doesn't move an inch. He just keeps staring at the tower in the lake.
 ?(comp=nao) comp: 「おう」 って {言|い}って 、{動|うご}かない 。{一番|いちばん} {手強|てごわ}い {断|ことわ}り{方|かた} だ よ 、それ 。|| Says "yeah" and doesn't budge. That's the toughest refusal there is.
 ?(comp=mio) comp: …… {無理|むり} に {頼|たの}む の は やめよう 。{何|なに} か 、{持|も}って {来|く}る もの が ある の かも 。|| …Let's not push him. Maybe there's something we need to bring him first.
 ?(comp=ren) comp: {湖|みずうみ} を {見|み}て いる {目|め} が 、{灯|あか}り を {待|ま}つ {人|ひと} の {目|め} です 。|| Those eyes on the lake are the eyes of someone waiting for a light.
 ?(comp=suzu) comp: {返事|へんじ} は 「はい」 、{体|からだ} は 「いいえ」 。{正直|しょうじき} な {人|ひと} ね 。|| His answer says yes, his body says no. An honest man.
 
-@scene lf.tetsu_story
-lf_tetsu: …… {議事録|ぎじろく} か 。{懐|なつ}かしい {字|じ} だ 。|| …The minutes, eh. There's handwriting I haven't seen in a long while.
-lf_tetsu: あの {夜|よる} 、{俺|おれ} は {水門|すいもん} の {番|ばん} だった 。|| That night, I was keeping the gate.
-lf_tetsu: トウヤ が {走|はし}って きた 。「テツ さん 、{下|した} の {水門|すいもん} を {開|あ}けて 。{高瀬|たかせ} が {上|うえ} を {開|あ}ける ！」|| Tōya came running. "Tetsu, open the lower gate! Takase's opening the upper one!"
-lf_tetsu: {議会|ぎかい} は 「{開|あ}けない {約束|やくそく} だ」 と {決|き}めて いた 。{俺|おれ} は …… {迷|まよ}った 。|| The council had decided it was a promise not to open. And I… I hesitated.
-lf_tetsu[closed]: {迷|まよ}って いる {間|あいだ} に 、{水|みず} が {来|き}た 。|| While I was hesitating, the water came.
-lf_tetsu: トウヤ は {塔|とう} へ {走|はし}った 。{鐘|かね} を {鳴|な}らし に 。…… これ を {落|お}として いった 。|| Tōya ran for the tower, to ring the bell. …He dropped this on the way.
-narr: テツ は {懐|ふところ} から 、{小|ちい}さな {真鍮|しんちゅう} の {鈴|すず} を {出|だ}した 。{使|つか}い が {腰|こし} に {下|さ}げる {鈴|すず} だ 。|| From inside his coat, Tetsu takes a small brass bell: the kind a messenger wears at the belt.
-lf_tetsu: {三十年|さんじゅうねん} 、{一度|いちど} も {鳴|な}らせなかった 。…… お{前|まえ} が {振|ふ}れ 。|| Thirty years, and I never once could ring it. …You shake it.
+@scene lf.tokuji_story
+lf_tokuji: …… {議事録|ぎじろく} か 。{懐|なつ}かしい {字|じ} だ 。|| …The minutes, eh. There's handwriting I haven't seen in a long while.
+lf_tokuji: あの {夜|よる} 、{俺|おれ} は {水門|すいもん} の {番|ばん} だった 。|| That night, I was keeping the gate.
+lf_tokuji: トウヤ が {走|はし}って きた 。「トクジ さん 、{下|した} の {水門|すいもん} を {開|あ}けて 。{高瀬|たかせ} が {上|うえ} を {開|あ}ける ！」|| Tōya came running. "Tokuji, open the lower gate! Takase's opening the upper one!"
+lf_tokuji: {議会|ぎかい} は 「{開|あ}けない {約束|やくそく} だ」 と {決|き}めて いた 。{俺|おれ} は …… {迷|まよ}った 。|| The council had decided it was a promise not to open. And I… I hesitated.
+lf_tokuji[closed]: {迷|まよ}って いる {間|あいだ} に 、{水|みず} が {来|き}た 。|| While I was hesitating, the water came.
+lf_tokuji: トウヤ は {塔|とう} へ {走|はし}った 。{鐘|かね} を {鳴|な}らし に 。…… これ を {落|お}として いった 。|| Tōya ran for the tower, to ring the bell. …He dropped this on the way.
+narr: トクジ は {懐|ふところ} から 、{小|ちい}さな {真鍮|しんちゅう} の {鈴|すず} を {出|だ}した 。{使|つか}い が {腰|こし} に {下|さ}げる {鈴|すず} だ 。|| From inside his coat, Tokuji takes a small brass bell: the kind a messenger wears at the belt.
+lf_tokuji: {三十年|さんじゅうねん} 、{一度|いちど} も {鳴|な}らせなかった 。…… お{前|まえ} が {振|ふ}れ 。|| Thirty years, and I never once could ring it. …You shake it.
 narr: {小|ちい}さな {鈴|すず} を {振|ふ}る 。…… ちりん 。{澄|す}んだ {音|おと} が 、{静|しず}か な {湖|みずうみ} の {上|うえ} を {渡|わた}って いく 。|| You shake the little bell. …Ting. A clear note carries out over the silent lake.
 !sfx bell
 !give lf_toya_bell
 !word suzu
 narr: {鈴|すず} ： {小|ちい}さな {鐘|かね} 。{静|しず}けさ を {破|やぶ}る 、はっきり した {音|おと} 。{戦|たたか}い の {中|なか} で 、しじま に {答|こた}える {言葉|ことば} と して {織|お}れる 。|| 鈴 (すず): a small bell — a clear sound that breaks a hush. You can now weave すず in encounters to answer a Hush.
-lf_tetsu: …… {鳴|な}った な 。|| …It rang.
-lf_tetsu: あの {塔|とう} に は 、{町|まち} の {連中|れんちゅう} が {言|い}えなく なった {言葉|ことば} が {溜|た}まってる 。{夜|よる} に なる と 、{管|くだ} を {光|ひかり} が {上|のぼ}って いく の が {見|み}える 。|| All the words the townsfolk stopped being able to say have piled up in that tower. At night you can see lights climbing the pipes.
-lf_tetsu[angry]: {大|おお}きい ほう の {鐘|かね} を {鳴|な}らせ 。{俺|おれ} の {舟|ふね} を {使|つか}え 。|| Ring the big one. Take my boat.
-narr: {言|い}って から 、テツ は {自分|じぶん} で {驚|おどろ}いた {顔|かお} を した 。「{使|つか}え」 。{命令|めいれい} は 、「いいえ」 の {親戚|しんせき} だ 。|| Having said it, Tetsu looks surprised at himself. "Take it" — an order, a close relative of "no".
+lf_tokuji: …… {鳴|な}った な 。|| …It rang.
+lf_tokuji: あの {塔|とう} に は 、{町|まち} の {連中|れんちゅう} が {言|い}えなく なった {言葉|ことば} が {溜|た}まってる 。{夜|よる} に なる と 、{管|くだ} を {光|ひかり} が {上|のぼ}って いく の が {見|み}える 。|| All the words the townsfolk stopped being able to say have piled up in that tower. At night you can see lights climbing the pipes.
+lf_tokuji[angry]: {大|おお}きい ほう の {鐘|かね} を {鳴|な}らせ 。{俺|おれ} の {舟|ふね} を {使|つか}え 。|| Ring the big one. Take my boat.
+narr: {言|い}って から 、トクジ は {自分|じぶん} で {驚|おどろ}いた {顔|かお} を した 。「{使|つか}え」 。{命令|めいれい} は 、「いいえ」 の {親戚|しんせき} だ 。|| Having said it, Tokuji looks surprised at himself. "Take it" — an order, a close relative of "no".
 ?(comp=nao) comp[smile]: …… {預|あず}かり{物|もの} だ 。ちゃんと {届|とど}ける よ 、{塔|とう} まで 。|| …Something entrusted to us. We'll get it delivered, all the way to the tower.
 ?(comp=mio) comp[smile]: いい {音|おと} 。{小|ちい}さい けど 、{遠|とお}く まで {届|とど}く {音|おと} 。|| What a lovely sound. Small, but it carries a long way.
 ?(comp=ren) comp: {鈴|すず} は 、{使|つか}い が {来|き}た こと を {知|し}らせる ため の もの です 。{三十年|さんじゅうねん} {遅|おく}れ の 、{到着|とうちゃく} の {合図|あいず} です ね 。|| A messenger's bell is for announcing that the messenger has arrived. This is his arrival, thirty years late.
 ?(comp=suzu) comp[sad]: {小|ちい}さな {鈴|すず} の {音|おと} で 、{大人|おとな} が {泣|な}き そう に なる の 、{見|み}た こと ある わ 。…… {舞台|ぶたい} の {外|そと} で も 。|| I've seen grown people nearly cry at a little bell's sound. …Offstage, too.
-lf_tetsu: {舟|ふね} は {桟橋|さんばし} の {先|さき} だ 。{塔|とう} の {上|うえ} の {窓|まど} から {入|はい}れる 。{中|なか} の {水門|すいもん} の {札|ふだ} は 、よく {読|よ}め 。{読|よ}み{間違|まちが}える と 、{水|みず} が {戻|もど}る 。|| The boat's at the end of the pier. You can get in by the window near the top of the tower. Read the gate plates inside carefully. Misread them and the water comes back.
-!set lf_tetsu_told lf_tetsu_boat
+lf_tokuji: {舟|ふね} は {桟橋|さんばし} の {先|さき} だ 。{塔|とう} の {上|うえ} の {窓|まど} から {入|はい}れる 。{中|なか} の {水門|すいもん} の {札|ふだ} は 、よく {読|よ}め 。{読|よ}み{間違|まちが}える と 、{水|みず} が {戻|もど}る 。|| The boat's at the end of the pier. You can get in by the window near the top of the tower. Read the gate plates inside carefully. Misread them and the water comes back.
+!set lf_tokuji_told lf_tokuji_boat
 !quest lf_main 6
 !autosave
 
-@scene lf.tetsu_again
-lf_tetsu: {舟|ふね} は {桟橋|さんばし} の {先|さき} だ 。{札|ふだ} は 、よく {読|よ}め 。|| The boat's at the end of the pier. Read the plates carefully.
-lf_tetsu: 「ない と」 と 「たら」 を {読|よ}み{飛|と}ばす な 。{水|みず} は 、{言葉|ことば} の {通|とお}り に しか {動|うご}かない 。|| Don't skip over "unless" and "once". Water only does exactly what the words say.
+@scene lf.tokuji_again
+lf_tokuji: {舟|ふね} は {桟橋|さんばし} の {先|さき} だ 。{札|ふだ} は 、よく {読|よ}め 。|| The boat's at the end of the pier. Read the plates carefully.
+lf_tokuji: 「ない と」 と 「たら」 を {読|よ}み{飛|と}ばす な 。{水|みず} は 、{言葉|ことば} の {通|とお}り に しか {動|うご}かない 。|| Don't skip over "unless" and "once". Water only does exactly what the words say.
 
-@scene lf.tetsu_after
-lf_tetsu: …… うるさく なった な 、{町|まち} が 。|| …Town's got noisy.
-lf_tetsu[smile]: {悪|わる}く ない 。|| Not bad.
-lf_tetsu: {水門|すいもん} の {番|ばん} は 、{明日|あした} から {若|わか}い {者|もの} に {教|おし}える 。{迷|まよ}ったら {鐘|かね} を {鳴|な}らせ 、{間違|まちが}って も いい から 、と な 。|| Tomorrow I start teaching a youngster to keep the gate. "When in doubt, ring the bell. It's all right to be wrong," I'll tell them.
+@scene lf.tokuji_after
+lf_tokuji: …… うるさく なった な 、{町|まち} が 。|| …Town's got noisy.
+lf_tokuji[smile]: {悪|わる}く ない 。|| Not bad.
+lf_tokuji: {水門|すいもん} の {番|ばん} は 、{明日|あした} から {若|わか}い {者|もの} に {教|おし}える 。{迷|まよ}ったら {鐘|かね} を {鳴|な}らせ 、{間違|まちが}って も いい から 、と な 。|| Tomorrow I start teaching a youngster to keep the gate. "When in doubt, ring the bell. It's all right to be wrong," I'll tell them.
 
-@scene lf.tetsu_post
-lf_tetsu: …… よう 。|| …Hey.
-?(end_kasane_trial) lf_tetsu: カサネ が {来|き}た 。ここ に {立|た}って 、{湖|みずうみ} を {見|み}た 。{二人|ふたり} とも 、{何|なに} も {言|い}わなかった 。…… それ で {良|よ}かった 。|| Kasane came. Stood right here and looked at the lake. Neither of us said anything. …That was right.
-?(end_kasane_keeper) lf_tetsu: {山|やま} の {上|うえ} に 、{日誌|にっし} の {写|うつ}し を {送|おく}った 。「{鐘|かね} 、{鳴|な}る」 の {頁|ページ} だけ な 。{返事|へんじ} は {来|こ}ない 。{来|こ}なくて いい 。|| Sent a copy of my log up the mountain. Just the "bell rang" page. No reply. Don't need one.
-?(end_mem_return) lf_tetsu: {町|まち} の {連中|れんちゅう} も 、{忘|わす}れて いた こと を {思|おも}い{出|だ}した 。{泣|な}いてる {奴|やつ} も いる 。{泣|な}ける の は 、いい こと だ 。|| The townsfolk remembered what they'd forgotten. Some of them are crying. Being able to cry is a good thing.
-?(end_mem_choose) lf_tetsu: {忘|わす}れた まま で いる か 、{取|と}り に {行|い}く か 。{町|まち} の {連中|れんちゅう} は 、{自分|じぶん} で {決|き}めてる 。{議会|ぎかい} で {揉|も}めながら な 。|| Stay forgetting, or go and fetch it back. Everyone's deciding for themselves. Squabbling about it in council, too.
+@scene lf.tokuji_post
+lf_tokuji: …… よう 。|| …Hey.
+?(end_kasane_trial) lf_tokuji: カサネ が {来|き}た 。ここ に {立|た}って 、{湖|みずうみ} を {見|み}た 。{二人|ふたり} とも 、{何|なに} も {言|い}わなかった 。…… それ で {良|よ}かった 。|| Kasane came. Stood right here and looked at the lake. Neither of us said anything. …That was right.
+?(end_kasane_keeper) lf_tokuji: {山|やま} の {上|うえ} に 、{日誌|にっし} の {写|うつ}し を {送|おく}った 。「{鐘|かね} 、{鳴|な}る」 の {頁|ページ} だけ な 。{返事|へんじ} は {来|こ}ない 。{来|こ}なくて いい 。|| Sent a copy of my log up the mountain. Just the "bell rang" page. No reply. Don't need one.
+?(end_mem_return) lf_tokuji: {町|まち} の {連中|れんちゅう} も 、{忘|わす}れて いた こと を {思|おも}い{出|だ}した 。{泣|な}いてる {奴|やつ} も いる 。{泣|な}ける の は 、いい こと だ 。|| The townsfolk remembered what they'd forgotten. Some of them are crying. Being able to cry is a good thing.
+?(end_mem_choose) lf_tokuji: {忘|わす}れた まま で いる か 、{取|と}り に {行|い}く か 。{町|まち} の {連中|れんちゅう} は 、{自分|じぶん} で {決|き}めてる 。{議会|ぎかい} で {揉|も}めながら な 。|| Stay forgetting, or go and fetch it back. Everyone's deciding for themselves. Squabbling about it in council, too.
 
 @scene lf.boat_to_tower
-!if !lf_tetsu_boat -> tied
-narr: テツ の {舟|ふね} 。{古|ふる}い が 、よく {手入|てい}れ されて いる 。|| Tetsu's boat. Old, but well cared for.
+!if !lf_tokuji_boat -> tied
+narr: トクジ の {舟|ふね} 。{古|ふる}い が 、よく {手入|てい}れ されて いる 。|| Tokuji's boat. Old, but well cared for.
 !choice
 * {鐘楼|しょうろう} へ {漕|こ}ぎ{出|だ}す || Row out to the bell tower -> go
 * まだ {行|い}かない || Not yet -> end
@@ -348,9 +348,9 @@ narr: {古|ふる}い {舟|ふね} が 、しっかり と {杭|くい} に {結
 @scene lf.after_town
 !set lf_after_town
 narr: {町|まち} に {入|はい}る と 、{声|こえ} が {一斉|いっせい} に {飛|と}び{込|こ}んで きた 。|| As you come into town, voices come flying at you from every side.
-lf_kanta: {無理|むり} です ！ {三百個|さんびゃっこ} なんて {焼|や}けません ！|| I can't! I can't bake three hundred!
+lf_masaru: {無理|むり} です ！ {三百個|さんびゃっこ} なんて {焼|や}けません ！|| I can't! I can't bake three hundred!
 lf_kinu: {垣根|かきね} は {柿|かき} の {木|き} の {手前|てまえ} です よ ！|| The fence goes on THIS side of the persimmon!
-lf_sota: いいや 、{向|む}こう だ ！|| No, the far side!
+lf_kohei: いいや 、{向|む}こう だ ！|| No, the far side!
 lf_setsu: {本日|ほんじつ} は {満室|まんしつ} で ございます ！ ……{言|い}えた ！|| We're full tonight! …I said it!
 narr: {誰|だれ} も が 、{少|すこ}し {驚|おどろ}いた {顔|かお} で 、{自分|じぶん} の {声|こえ} を {聞|き}いて いる 。|| Everyone looks slightly startled, listening to their own voices.
 ?(comp=nao) comp[laugh]: …… うるさい 。すごく うるさい 。{最高|さいこう} じゃん 。|| …Noisy. Really noisy. It's great.
@@ -363,7 +363,7 @@ narr: {議会堂|ぎかいどう} の ほう から 、{鈴|すず} の {音|お
 @scene lf.yae_after
 !if ch5_done -> later
 lf_yae: {静粛|せいしゅく} に ！ …… と {言|い}って も 、{誰|だれ} も {静|しず}か に しない 。ああ 、{懐|なつ}かしい 。|| Order! …Not that anyone's quieting down. Oh, how I've missed this.
-lf_kanta: {議長|ぎちょう} ！ {記録館|きろくかん} の {注文|ちゅうもん} 、{全部|ぜんぶ} {断|ことわ}って いい です か ！|| Madam Chair! May I turn down every order from the Records Hall?!
+lf_masaru: {議長|ぎちょう} ！ {記録館|きろくかん} の {注文|ちゅうもん} 、{全部|ぜんぶ} {断|ことわ}って いい です か ！|| Madam Chair! May I turn down every order from the Records Hall?!
 lf_tadashi: …… どうぞ 。{私|わたし} も 、{半分|はんぶん} は {要|い}らない と {思|おも}って おりました 。|| …Please do. I too thought half of them unnecessary.
 lf_kinu: {議長|ぎちょう} 、{垣根|かきね} の {件|けん} です が ！|| Madam Chair, regarding the fence!
 lf_yae: それ は {来週|らいしゅう} ！ …… {次|つぎ} 。{山|やま} の {上|うえ} の {書庫|しょこ} の こと 。|| Next week! …Next item. The Archive up the mountain.
@@ -371,7 +371,7 @@ lf_tadashi: {記録館|きろくかん} に は 、{差出人|さしだしにん
 lf_tadashi: {今|いま} なら {申|もう}せます 。{承知|しょうち} いたしかねます 。|| Now I can say it. I am unable to comply.
 lf_yae: {書庫|しょこ} へ 、{誰|だれ} か が {行|い}かなければ ならない 。…… カサネ に {会|あ}い に 。|| Someone must go up to the Archive. …To see Kasane.
 lf_hayato: {反対|はんたい} です ！ {危|あぶ}ない です ！|| I object! It's dangerous!
-lf_kanta: {賛成|さんせい} ！ {行|い}って {文句|もんく} を {言|い}って こい ！|| In favour! Go up there and give them a piece of your mind!
+lf_masaru: {賛成|さんせい} ！ {行|い}って {文句|もんく} を {言|い}って こい ！|| In favour! Go up there and give them a piece of your mind!
 lf_yae[laugh]: {賛成|さんせい} {一|ひと}つ 、{反対|はんたい} {一|ひと}つ 。…… よろしい 。{議会|ぎかい} が {戻|もど}って きた 。|| One for, one against. …Good. The council is back.
 lf_yae: $name さん 。{山道|やまみち} の {灯籠|とうろう} に 、{名前|なまえ} が {戻|もど}って いる はず です 。{書庫|しょこ} へ の {道|みち} は {開|ひら}いた 。|| $name. The lantern on the mountain road should have its name back. The way to the Archive is open.
 lf_yae: {行|い}く か どう か は 、あなた が {決|き}めなさい 。ここ に は もう 、「かしこまりました」 と {言|い}う {者|もの} は いません から ね 。|| Whether to go is for you to decide. There's no one left here who'll just say "certainly".

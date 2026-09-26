@@ -96,7 +96,7 @@ comp: じゃあ 、 {一枚|いちまい} だけ な 。 || Then just one.
 narr: いちばん {上|うえ} の {札|ふだ} に 、 {子|こ}ども の よう な {字|じ} で 「 おとうさん へ 」 と だけ {書|か}いて ある 。 || The label on top says only "To Dad", in handwriting like a child's.
 comp: {最初|さいしょ} の {一枚|いちまい} だ 。 {住所|じゅうしょ} が なくて 、 {三日|みっか} かけて {探|さが}した 。 {届|とど}いた よ 。 ちゃんと 。 || The very first one. No address at all; took me three days to find him. It got there. Properly.
 comp: …… {寝|ね}る か 。 {明日|あした} は {山|やま} {登|のぼ}り だ 。 || …Let's sleep. Tomorrow's a climb.
-comp[smile]: {今夜|こんや} の {話|はなし} は 、 {宛名|あてな} なし で あんた に {預|あず}けて おく 。 {誰|だれ} に も {届|とど}けんな よ 。 || Tonight's talk I'm leaving with you, no address on it. Don't go delivering it to anyone.
+comp[smile]: {今夜|こんや} の {話|はなし} は 、 {宛名|あてな} なし で あんた に {預|あず}けて おく 。 {誰|だれ} に も {届|とど}けんな@届ける よ 。 || Tonight's talk I'm leaving with you, no address on it. Don't go delivering it to anyone.
 `, 'ch4/quiet-nao');
 
 // ---- Mio -------------------------------------------------------------------------------
@@ -124,11 +124,11 @@ comp[smirk]: {怒|おこ}って ない わ 。 …… {外|そと} から は �
 comp[smirk]: {黙|だま}って {最後|さいご} まで {聞|き}いた の 。 それ から 、 お{医者|いしゃ} さん の {腰|こし} の {痛|いた}み に ついて 、 {一時間|いちじかん} {説明|せつめい} して あげた 。 {図|ず} も {描|か}いて 。 || I listened quietly to the end. Then I explained his own back pain to him. For an hour. With diagrams.
 comp[laugh]: {帰|かえ}る とき 、 {軟膏|なんこう} を {三|みっ}つ {買|か}って いった わ 。 {定価|ていか} で 。 || On his way out he bought three jars of salve. Full price.
 comp: …… でも ね 。 あの とき {腹|はら} が {立|た}った の は 、 {本当|ほんとう} は {少|すこ}し {怖|こわ}かった から かも しれない 。 || …But you know. Maybe the real reason he made me so angry was that I was a little afraid.
-comp: 「 {役|やく}に {立|た}たない 」 と {思|おも}われる の が 。 || Afraid of being thought useless.
+comp: 「 {役|やく}に{立|た}たない 」 と {思|おも}われる の が 。 || Afraid of being thought useless.
 comp[sad]: わたし 、 {頼|たの}まれる と {断|ことわ}れない でしょう 。 {夜中|よなか} でも 、 {熱|ねつ} を {出|だ}した {子|こ} が いれば {行|い}く 。 {隣|となり} の {村|むら} でも 。 それ は いい の 。 {好|す}き で やってる から 。 || I can't say no when someone asks, can I. Middle of the night, a child with a fever — I go. Even to the next village. That part's fine. I do it because I want to.
-comp: {怖|こわ}い の は 、 いつか 「 いいえ 」 って {言|い}ったら 、 みんな が {店|みせ} に {来|こ}なく なる ん じゃ ない か って こと 。 {役|やく}に {立|た}つ から {好|す}かれてる だけ なん じゃ ない か って 。 || What scares me is that if I ever said "no", everyone would stop coming to the shop. That I'm only liked because I'm useful.
+comp: {怖|こわ}い の は 、 いつか 「 いいえ 」 って {言|い}ったら 、 みんな が {店|みせ} に {来|こ}なく なる ん じゃ ない か って こと 。 {役|やく}に{立|た}つ から {好|す}かれてる だけ なん じゃ ない か って 。 || What scares me is that if I ever said "no", everyone would stop coming to the shop. That I'm only liked because I'm useful.
 !choice
-* {役|やく}に {立|た}つ から 、 {一緒|いっしょ} に いる わけ じゃ ない || That's not why I travel with you. -> reassure
+* {役|やく}に{立|た}つ から 、 {一緒|いっしょ} に いる わけ じゃ ない || That's not why I travel with you. -> reassure
 * {断|ことわ}って も 、 {来|く}る {人|ひと} は {来|く}る よ || The people who matter will keep coming even if you say no. -> honest
 * わたし も 、 {同|おな}じ こと を {考|かんが}える || I think the same about myself. -> share
 :reassure
@@ -142,9 +142,9 @@ comp[smile]: {薬師|くすし} らしい {答|こた}え に なっちゃった
 !goto jar
 :share
 !var sb_tone = 3
-pc: {役|やく}に {立|た}たなく なったら 、 {誰|だれ} も {待|ま}って いない ん じゃ ない か って 。 {時々|ときどき} 、 {思|おも}う 。 || That if I stopped being useful, no one would be waiting for me. Sometimes I think that.
+pc: {役|やく}に{立|た}たなく なったら 、 {誰|だれ} も {待|ま}って いない ん じゃ ない か って 。 {時々|ときどき} 、 {思|おも}う 。 || That if I stopped being useful, no one would be waiting for me. Sometimes I think that.
 comp[surprise]: …… あなた も ？ || …You too?
-comp[smile]: じゃあ 、 {約束|やくそく} 。 {役|やく}に {立|た}たない {日|ひ} が あって も 、 お{互|たが}い {待|ま}って いる こと 。 {三十二番目|さんじゅうにばんめ} の {主義|しゅぎ} に する わ 。 || Then it's a promise. Even on days we're useless, we wait for each other. I'll make it rule number thirty-two.
+comp[smile]: じゃあ 、 {約束|やくそく} 。 {役|やく}に{立|た}たない {日|ひ} が あって も 、 お{互|たが}い {待|ま}って いる こと 。 {三十二番目|さんじゅうにばんめ} の {主義|しゅぎ} に する わ 。 || Then it's a promise. Even on days we're useless, we wait for each other. I'll make it rule number thirty-two.
 :jar
 comp[shy]: …… {誰|だれ} に も {言|い}って ない こと 、 {一|ひと}つ {言|い}って いい ？ || …Can I tell you one thing I've never told anyone?
 comp: わたし の {家|いえ} に は 、 ラベル の ない {瓶|びん} が {一|ひと}つ だけ ある の 。 || In my house there's exactly one jar with no label.
