@@ -213,6 +213,7 @@ RB.lex = (function () {
 だろう||aux|I|probably; I wonder (plain)
 じゃない||aux|E|is not (casual)|With rising intonation it can mean "…, isn't it?".
 ではない||aux|E|is not (neutral or written)|Pronounced dewa nai.
+じゃ||aux|E|casual form of では (as in じゃない, じゃありません)|Also used alone as "well then" (= じゃあ).
 じゃありません||aux|E|is not (polite)
 ではありません||aux|E|is not (polite, a little more formal)
 じゃなかった||aux|E|was not (casual)
@@ -859,6 +860,7 @@ RB.lex = (function () {
 向かう|むかう|v5u|E|to head towards; to face
 迷う|まよう|v5u|E|to get lost; to hesitate
 もらう||v5u|E|to receive, get
+しまう||v5u|E|to put away; to finish|After a て-form: ～てしまう "do completely; end up doing (regrettably)".
 間に合う|まにあう|v5u|I|to be in time
 誘う|さそう|v5u|I|to invite (someone to do something)
 失う|うしなう|v5u|I|to lose (something important)
@@ -1063,6 +1065,7 @@ RB.lex = (function () {
 塗る|ぬる|v5r|I|to paint, spread
 振る|ふる|v5r|I|to wave; to shake
 降る|ふる|v5r|E|to fall (rain, snow)
+止む|やむ|v5m|I|to stop (rain, wind, noise)
 鳴る|なる|v5r|E|to ring, sound
 灯る|ともる|v5r|A|to be lit (a lamp)
 実る|みのる|v5r|I|to bear fruit
@@ -1206,6 +1209,7 @@ RB.lex = (function () {
 似る|にる|v1|I|to resemble|Usually {似|に}ている.
 煮る|にる|v1|I|to simmer, boil (food)
 できる||v1|E|can, be able to; to be made; to be finished|Also the potential form of する.
+いける||v1|I|to be all right, to be good; can go|Mostly in the negative: いけない "must not; bad" (～てはいけない).
 着替える|きがえる|v1|I|to change clothes
 覚める|さめる|v1|I|to wake up
 冷める|さめる|v1|I|to cool down (something hot); to lose interest

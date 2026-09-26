@@ -286,7 +286,7 @@ RB.audio = RB.audio || {};
     run(c, [car, mod], [car, mod, mg, a], t, Math.min(off + 1.0, t + dec * 3.3));
   }
   I.bell = (g, o, t, f, d, v) => fmBell(g, o, t, f, d, v, 3.5, 1.5, 1.5, 0.2, 0.5);
-  I.celesta = (g, o, t, f, d, v) => fmBell(g, o, t, f, d, v, 4, 0.8, 0.9, 0.22, 0.35);
+  I.celesta = (g, o, t, f, d, v) => fmBell(g, o, t, f, d, v, 4, 0.8, 0.9, 0.26, 0.35);
   I.toll = (g, o, t, f, d, v) => fmBell(g, o, t, f, d, v, 3.5, 2.0, 3.2, 0.26, 1.5);
 
   // Glass: near-pure sines with a slow beating pair — calm, clean, empty.
@@ -297,7 +297,7 @@ RB.audio = RB.audio || {};
     const s3 = osc(c, 'sine', f * 2.002, t);
     const m3 = amp(c, 0.12);
     const a = amp(c, 0);
-    const pk = 0.1 * v;
+    const pk = 0.12 * v;
     const off = t + Math.max(d, 0.08);
     env(a.gain, t, 0.05, pk, 0.9, 0.7, off, 0.4);
     s1.connect(a);
@@ -370,7 +370,7 @@ RB.audio = RB.audio || {};
     lg.connect(s2.frequency);
     const a = amp(c, 0);
     const off = t + Math.max(d, 0.1);
-    env(a.gain, t, Math.min(0.18, Math.max(0.04, d * 0.4)), 0.12 * v, 0, 1, off, 0.12);
+    env(a.gain, t, Math.min(0.18, Math.max(0.04, d * 0.4)), 0.15 * v, 0, 1, off, 0.12);
     s1.connect(lp);
     s2.connect(lp);
     lp.connect(hp);
@@ -383,18 +383,20 @@ RB.audio = RB.audio || {};
   I.bass = function (g, out, t, f, d, v) {
     const c = g.ctx;
     const s = osc(c, 'sine', f, t);
+    const sg = amp(c, 0.7);
     const tr = osc(c, 'triangle', f, t);
-    const tg = amp(c, 0.35);
-    const lp = bq(c, 'lowpass', 600 + f * 2, 0.6);
+    const tg = amp(c, 0.55);
+    const lp = bq(c, 'lowpass', 700 + f * 3, 0.6);
     const a = amp(c, 0);
     const off = t + Math.max(d, 0.05);
-    env(a.gain, t, 0.008, 0.42 * v, 0.35, 0.75, off, 0.05);
-    s.connect(a);
+    env(a.gain, t, 0.008, 0.3 * v, 0.35, 0.75, off, 0.05);
+    s.connect(sg);
+    sg.connect(a);
     tr.connect(tg);
     tg.connect(lp);
     lp.connect(a);
     a.connect(out);
-    run(c, [s, tr], [s, tr, tg, lp, a], t, off + 0.35);
+    run(c, [s, tr], [s, sg, tr, tg, lp, a], t, off + 0.35);
   };
 
   // Pad: triangle core with two detuned saws, slow swell, slowly opening LP.
@@ -409,7 +411,7 @@ RB.audio = RB.audio || {};
     lp.frequency.setTargetAtTime(Math.min(900 + f * 2, 3000), t, 0.9);
     const a = amp(c, 0);
     const off = t + Math.max(d, 0.1);
-    env(a.gain, t, clamp(d * 0.4, 0.08, 0.7), 0.08 * v, 0, 1, off, 0.45);
+    env(a.gain, t, clamp(d * 0.4, 0.08, 0.7), 0.09 * v, 0, 1, off, 0.45);
     o1.connect(lp);
     o2.connect(sg);
     o3.connect(sg);
@@ -544,19 +546,19 @@ RB.audio = RB.audio || {};
   _.voice = { thump, hiss, ping };
 
   P.k = (g, o, t, v) => { // soft kick
-    thump(g, o, t, v, 110, 46, 0.11, 0.11, 0.55);
+    thump(g, o, t, v, 110, 46, 0.11, 0.11, 0.42);
     hiss(g, o, t, v, 'lowpass', 1800, 0.7, 0.001, 0.01, 0.08);
   };
   P.t = (g, o, t, v) => { // hand tom
-    thump(g, o, t, v, 190, 118, 0.16, 0.13, 0.4);
+    thump(g, o, t, v, 190, 118, 0.16, 0.13, 0.34);
     hiss(g, o, t, v, 'bandpass', 400, 1, 0.001, 0.03, 0.06);
   };
   P.l = (g, o, t, v) => { // low drum (soft, taiko-sized but gentle)
-    thump(g, o, t, v, 92, 56, 0.3, 0.22, 0.5);
-    hiss(g, o, t, v, 'lowpass', 220, 0.7, 0.002, 0.06, 0.2);
+    thump(g, o, t, v, 92, 56, 0.3, 0.22, 0.36);
+    hiss(g, o, t, v, 'lowpass', 220, 0.7, 0.002, 0.06, 0.15);
   };
-  P.s = (g, o, t, v) => hiss(g, o, t, v, 'bandpass', 5200, 0.8, 0.012, 0.03, 0.09); // shaker
-  P.b = (g, o, t, v) => hiss(g, o, t, v, 'bandpass', 2600, 0.6, 0.015, 0.07, 0.07); // brush
+  P.s = (g, o, t, v) => hiss(g, o, t, v, 'bandpass', 5200, 0.8, 0.012, 0.04, 0.28); // shaker
+  P.b = (g, o, t, v) => hiss(g, o, t, v, 'bandpass', 2600, 0.6, 0.015, 0.07, 0.18); // brush
   P.w = (g, o, t, v) => { // woodblock
     ping(g, o, t, v, 820, 0.022, 0.2);
     ping(g, o, t, v, 1230, 0.016, 0.08);
@@ -573,9 +575,12 @@ RB.audio = RB.audio || {};
     hiss(g, o, t, v, 'bandpass', 1000, 1.2, 0.002, 0.025, 0.18);
     ping(g, o, t, v, 170, 0.03, 0.15);
   };
-  P.x = (g, o, t, v) => ping(g, o, t, v, 2000, 0.006, 0.05); // clock tick
+  P.x = (g, o, t, v) => { // clock tick
+    ping(g, o, t, v, 2000, 0.012, 0.1);
+    hiss(g, o, t, v, 'bandpass', 3500, 2, 0.001, 0.008, 0.08);
+  };
   P.g = (g, o, t, v) => { // glass tick (the Hush's metronome)
-    ping(g, o, t, v, 1760, 0.16, 0.045);
+    ping(g, o, t, v, 1760, 0.16, 0.06);
     ping(g, o, t, v, 3537, 0.05, 0.006);
   };
   P.d = (g, o, t, v, seed) => { // water drop
@@ -703,6 +708,7 @@ RB.audio = RB.audio || {};
       }
       try {
         st.g = _.buildGraph(ctx, st.vol, st.muted);
+        if (st.ducked) st.g.duck.gain.value = 0.3;
         st.g.out.connect(ctx.destination);
       } catch (e) {
         st.lastError = String(e && e.message);

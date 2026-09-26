@@ -78,7 +78,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'cart', x: 12, y: 18 },
       { p: 'stump', x: 8, y: 17 },
       { p: 'hay', x: 14, y: 21 },
-      { p: 'teaset', x: 30, y: 16, scene: 'rw.teatable' },
+      { p: 'teaset', x: 33, y: 16, scene: 'rw.teatable' },
       { p: 'water', x: 38, y: 17, if: '!bridge_fixed' }, { p: 'water', x: 39, y: 17, if: '!bridge_fixed' }, { p: 'water', x: 40, y: 17, if: '!bridge_fixed' },
       { p: 'water', x: 38, y: 18, if: '!bridge_fixed' }, { p: 'water', x: 39, y: 18, if: '!bridge_fixed' }, { p: 'water', x: 40, y: 18, if: '!bridge_fixed' },
       { p: 'stone_marker', x: 46, y: 11, scene: 'rw.far_marker' },
@@ -175,9 +175,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     exits: [
       { x: 31, y: 9, w: 1, h: 2, to: 'rw.village', tx: 1, ty: 30, dir: 'right' },
-      { x: 0, y: 9, w: 1, h: 2, to: 'sg.road', tx: 30, ty: 10, dir: 'left', if: 'departed' },
+      { x: 0, y: 9, w: 1, h: 2, to: 'sg.road', sp: 'from_prev', dir: 'left', if: 'departed' },
     ],
     triggers: [{ x: 0, y: 9, w: 1, h: 2, scene: 'rw.road_west_blocked', if: '!departed' }],
-    spawn: { default: [3, 9, 'right'] },
+    spawn: { default: [3, 9, 'right'], from_next: [2, 10, 'right'] },
   };
 })(RB.content, RB.mapkit);

@@ -36,7 +36,7 @@ RB.world = (function () {
     const st = s();
     st.map = mapId;
     if (x == null || y == null) {
-      const sp = (m.def.spawn && m.def.spawn.default) || [1, 1, 'down'];
+      const sp = (m.def.spawn && ((opts.sp && m.def.spawn[opts.sp]) || m.def.spawn.default)) || [1, 1, 'down'];
       x = sp[0]; y = sp[1]; dir = dir || sp[2];
     }
     st.x = x; st.y = y; st.dir = dir || st.dir || 'down';
@@ -217,7 +217,7 @@ RB.world = (function () {
         return;
       }
       W.path = null;
-      RB.game.transition(ex.to, ex.tx, ex.ty, ex.dir || p.dir);
+      RB.game.transition(ex.to, ex.tx, ex.ty, ex.dir || p.dir, { sp: ex.sp });
       return;
     }
     for (const tr of W.map.triggers) {

@@ -243,6 +243,8 @@ RB.jp = (function () {
     const v = vars ? mergedVars(vars) : Object.keys(defaultVars).length ? mergedVars() : null;
     const out = [];
     for (const raw of splitRaw(line)) out.push(...parseRaw(raw, v, errs));
+    // Context for lookup: the word token directly before (no punctuation between).
+    for (let i = 1; i < out.length; i++) if (!out[i].punct && !out[i - 1].punct) out[i].after = out[i - 1].surface;
     return out;
   }
 
@@ -521,7 +523,7 @@ RB.jp = (function () {
   // いい / よい (いい inflects on the よい stem)
   [['よかった', T.TA, 'past (～かった)'], ['よくない', T.ADJ, 'negative (～くない)'], ['よくて', T.TE, 'て-form (～くて)'],
     ['よければ', 0, 'conditional (～ければ)'], ['よさそう', T.NA, 'looks … (～そう)'], ['よく', 0, 'adverb form (～く)']]
-    .forEach(([f, inM, d]) => rule(f, 'いい', inM, T.ADJ, d));
+    .forEach(([f, inM, d]) => rule(f, 'いい', inM, T.ADJ, d, { whole: true }));
   // Copula after nouns / な-adjectives (cop: lookup prefers to show these as a
   // separate word, e.g. 先生 + です).
   const COP = { cop: true };
@@ -621,15 +623,20 @@ RB.jp = (function () {
   function lvRank(e) {
     return LV_ORDER[e.lv] != null ? LV_ORDER[e.lv] : 9;
   }
-  function pick(cands, prefer, readingH) {
-    // cands: [{e, rules, surf:boolean}]
+  // Auxiliary verbs that commonly follow a て-form (～ている, ～ておく …).
+  const TE_AUX_LEMMAS = new Set(['いる', 'ある', '置く', 'しまう', '見る', '行く', '来る', 'あげる', 'くれる', 'もらう', 'いただく', 'ください', 'くださる', '欲しい', 'おる', 'いらっしゃる', 'いける']);
+  /* Ranking. A match spelled exactly as written (e.g. する for した) beats a
+   * kana spelling of a word normally written in kanji (下 for した); fewer
+   * inflection steps win; a lemma hint or a preceding て-form can decide. */
+  function pick(cands, prefer, readingH, ctx) {
     const score = (c) => {
       let s = 0;
       if (prefer && (c.e.w === prefer || hira(c.e.r) === hira(prefer))) s -= 1000;
-      if (readingH && hira(c.e.r) === readingH) s -= 100;
       if (c.readOk) s -= 100;
-      if (!c.surf) s += 10;
-      s += (c.rules ? c.rules.length : 0) * 3;
+      if (ctx && ctx.teAux && TE_AUX_LEMMAS.has(c.e.w)) s -= 60;
+      const n = c.rules ? c.rules.length : 0;
+      if (!n) s -= c.surf ? 50 : 20;
+      else s += n * 3 - (c.surf ? 30 : 10);
       if (c.rules && c.rules.some((r) => r.stem)) s += 20;
       s += lvRank(c.e);
       return s;
@@ -682,11 +689,11 @@ RB.jp = (function () {
       }
     }
     if (!cands.length) return null;
-    const sorted = pick(cands, prefer, rh);
+    const sorted = pick(cands, prefer, rh, opts.ctx);
     const best = sorted[0];
     const forms = best.rules && best.rules.length ? describe(best.rules) : [];
     if (best.suru) forms.unshift('する-verb: ' + best.e.w + 'する');
-    return { entry: best.e, forms, others: sorted.slice(1, 6).map((c) => c.e) };
+    return { entry: best.e, forms, others: sorted.slice(1, 6).map((c) => c.e), inflected: !!(best.rules && best.rules.length) };
   }
 
   // Allowed split points of a token: not inside a ruby group. Returns an array
@@ -715,10 +722,13 @@ RB.jp = (function () {
   function isFuncEntry(e) {
     return e && FUNC_POS.has(e.pos);
   }
-  // Function words (particles / copula) that may trail a word.
+  // Grammatical words that behave like endings after a clause.
+  const GRAM_TAIL = new Set(['そう', 'よう', 'みたい', 'はず', 'わけ', 'つもり', 'こと', 'もの', 'ため', 'まま', 'かもしれない', 'かもしれません', 'ところ']);
+  // Function words (particles / copula / grammatical nouns) that may trail a word.
   function funcUnit(surface) {
     const L = lex();
-    const list = L.bySurface(surface).filter((e) => isFuncEntry(e));
+    let list = L.bySurface(surface).filter((e) => isFuncEntry(e));
+    if (!list.length && GRAM_TAIL.has(surface)) list = L.bySurface(surface).concat(L.byReading(surface)).filter((e) => !K.hasKanji(e.w) || e.w === '所');
     return list.length ? list[0] : null;
   }
   function segmentFunc(surface) {
@@ -763,10 +773,12 @@ RB.jp = (function () {
         gloss: t.gloss || null,
         punct: !!t.punct,
         ph: t.ph || null,
+        after: t.after || null,
       };
     }
     const toks = parse(String(t == null ? '' : t));
     const w = toks.filter((x) => !x.punct);
+    if (toks.length === 1) return toks[0];
     if (w.length === 1) return w[0];
     if (!toks.length) return makeWord([{ t: '', r: null }]);
     // several words given as one string: merge into one token
@@ -806,6 +818,8 @@ RB.jp = (function () {
       return res;
     }
     const prefer = tk.lemma || null;
+    // After a て-form, auxiliaries such as おく (置く) or みる (見る) are likely.
+    const ctx = { teAux: !!(tk.after && /[てで]$/.test(tk.after)) };
     const finish = (entry, forms, others) => {
       res.entry = entry;
       res.lemma = entry ? entry.w : prefer || surface;
@@ -819,13 +833,13 @@ RB.jp = (function () {
 
     // 1–5: the whole token as one unit (lemma hint preferred). Copula endings
     // after nouns are left to the split step so です shows as its own word.
-    const whole = analyseUnit(surface, rd, prefer, { noCop: true });
+    const whole = analyseUnit(surface, rd, prefer, { noCop: true, ctx });
     if (whole && (!prefer || whole.entry.w === prefer || hira(whole.entry.r) === hira(prefer))) {
       return finish(whole.entry, whole.forms, whole.others);
     }
 
     // 6: known word + trailing particle(s)/copula, then general segmentation.
-    const parts = splitToken(tk, prefer);
+    const parts = splitToken(tk, prefer, ctx);
     if (parts) {
       res.parts = parts;
       const head = parts.find((p) => p.name) || parts.find((p) => p.entry && !AFFIX_POS.has(p.entry.pos)) || parts.find((p) => p.entry) || parts[0];
@@ -852,7 +866,7 @@ RB.jp = (function () {
     return finish(null, [], []);
   }
 
-  function splitToken(tk, prefer) {
+  function splitToken(tk, prefer, ctx) {
     const surface = tk.surface;
     if (surface.length < 2 || surface.length > 30) return null;
     const pts = splitPoints(tk);
@@ -868,12 +882,12 @@ RB.jp = (function () {
       const seg = tk.segs.find((sg) => sg.ph && sg.t === s);
       if (seg) out = { ph: seg.ph, info: { surface: s, reading: r, entry: null, lemma: s, forms: [], romaji: K.romaji(r), meaning: null, name: seg.ph } };
       else {
-        const an = analyseUnit(s, r, prefer, { noCop: true });
+        const an = analyseUnit(s, r, prefer, { noCop: true, ctx: a.s === 0 ? ctx : null });
         if (an) {
           const e = an.entry;
           const kanaOnly = !K.hasKanji(s);
           // single kana is only trusted for particles and affixes
-          if (!(kanaOnly && s.length === 1 && !AFFIX_POS.has(e.pos))) out = { info: partInfo(s, r, an) };
+          if (!(kanaOnly && s.length === 1 && !AFFIX_POS.has(e.pos))) out = { info: partInfo(s, r, an), weak: kanaOnly && an.inflected && K.hasKanji(e.w) };
         }
       }
       memo.set(key, out);
@@ -896,17 +910,24 @@ RB.jp = (function () {
       });
       return parts;
     }
-    // (b) general segmentation into known units (fewest parts, longest first)
+    // (b) general segmentation into known units (lowest cost, longest first).
+    // A kana spelling of an inflected kanji word is weak evidence, so it costs
+    // more than splitting into plainly spelled words (雪だそうです → 雪+だ+そう+です).
     const n = pts.length - 1;
     const best = new Array(n + 1).fill(null);
+    const cost = new Array(n + 1).fill(Infinity);
     best[n] = [];
+    cost[n] = 0;
     for (let i = n - 1; i >= 0; i--) {
       for (let j = n; j > i; j--) {
         if (!best[j] || (i === 0 && j === n)) continue;
         const u = unit(pts[i], pts[j]);
         if (!u) continue;
-        const cand = [u.info].concat(best[j]);
-        if (!best[i] || cand.length < best[i].length) best[i] = cand;
+        const c = cost[j] + (u.weak ? 2.1 : 1);
+        if (c < cost[i] - 1e-9) {
+          cost[i] = c;
+          best[i] = [u.info].concat(best[j]);
+        }
       }
     }
     return best[0] && best[0].length > 1 ? best[0] : null;

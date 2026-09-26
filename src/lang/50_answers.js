@@ -36,6 +36,7 @@ RB.answers = (function () {
     ['さ', 'ち', 'In さ the lower curve opens to the right; in ち it opens to the left.'],
     ['き', 'さ', 'き has two horizontal strokes; さ has one.'],
     ['ぬ', 'め', 'ぬ ends with a small loop at the bottom right; め does not.'],
+    ['ぬ', 'ね', 'ね starts with a vertical stroke on the left; ぬ starts with a short slanted stroke.'],
     ['ね', 'れ', 'ね ends in a small loop; れ ends with an outward flick.'],
     ['ね', 'わ', 'ね ends in a small loop; わ ends with an inward curve.'],
     ['れ', 'わ', 'れ ends with an outward flick; わ ends with an inward curve.'],
@@ -193,10 +194,17 @@ RB.answers = (function () {
     return false;
   }
 
+  // Position of an insertion before target index j.
   function where(b, j) {
     if (j <= 0) return 'at the start';
     if (j >= b.length) return 'after ' + b[b.length - 1];
     return 'between ' + b[j - 1] + ' and ' + b[j];
+  }
+  // Position of the missing target character b[j], described by its neighbours.
+  function whereMissing(b, j) {
+    if (j <= 0) return 'at the start';
+    if (j >= b.length - 1) return 'at the end, after ' + b[j - 1];
+    return 'between ' + b[j - 1] + ' and ' + b[j + 1];
   }
 
   // ---- feedback ---------------------------------------------------------------------
@@ -271,9 +279,9 @@ RB.answers = (function () {
         if ((w === 'ー' || VOWEL_KANA[w]) && extendsVowel(prevT, w)) {
           out.push({ code: 'long_vowel', en: 'The vowel after ' + prevT + ' is long: write ' + prevT + w + '. A long vowel is held for an extra beat (one more mora).', at: o.j, want: w });
         } else if (w === 'っ' || w === 'ッ') {
-          out.push({ code: 'missing_char', en: 'A small ' + w + ' is missing ' + where(b, o.j) + '. It doubles the next consonant (a short pause).', at: o.j, want: w });
+          out.push({ code: 'missing_char', en: 'A small ' + w + ' is missing ' + whereMissing(b, o.j) + '. It doubles the next consonant (a short pause).', at: o.j, want: w });
         } else {
-          out.push({ code: 'missing_char', en: 'Something is missing ' + where(b, o.j) + ': the answer has ' + w + ' there.', at: o.j, want: w });
+          out.push({ code: 'missing_char', en: 'Something is missing ' + whereMissing(b, o.j) + ': the answer has ' + w + ' there.', at: o.j, want: w });
         }
       } else if (o.op === 'ins') {
         const g = o.got;
@@ -291,9 +299,10 @@ RB.answers = (function () {
     return out;
   }
 
+  // A lexicon word spelled exactly like s (same script), if any.
   function lexWordFor(s) {
     if (!RB.lex || !s) return null;
-    const cands = RB.lex.bySurface(s).concat(K.hasKanji(s) ? [] : RB.lex.byReading(s));
+    const cands = RB.lex.bySurface(s).concat(K.hasKanji(s) ? [] : RB.lex.byReading(s).filter((e) => e.r === s));
     return cands.length ? cands[0] : null;
   }
 
@@ -392,6 +401,11 @@ RB.answers = (function () {
       return res;
     }
     const tLen = Array.from(best.t).length;
+    // A different real word that shares little with the answer: naming it is enough.
+    if (fb.length && best.d > tLen * 0.5 && best.d >= 1) {
+      res.feedback = fb;
+      return res;
+    }
     if (best.d > Math.max(2, tLen * 0.6)) {
       if (!fb.length) fb.push({ code: 'generic', en: "That's not the answer here. Compare it with the model answer." });
       res.feedback = fb;
@@ -424,6 +438,8 @@ RB.answers = (function () {
       if (/[ぁぃぅぇぉァィゥェォ]/.test(c) && !SMALL_V_OK.has(p)) return false;
       if ((c === 'っ' || c === 'ッ') && (i === a.length - 1 && a.length === 1)) return false;
       if ((c === 'っ' || c === 'ッ') && a[i + 1] && (VOWEL_KANA[a[i + 1]] || /[んンっッーゃゅょャュョ]/.test(a[i + 1]))) return false;
+      if ((c === 'っ' || c === 'ッ') && p && /[んンっッー]/.test(p)) return false;
+      if (/[ゕゖヵヶゎヮ]/.test(c)) return false;
       if (c === 'ー' && (i === 0 || /[んンっッー]/.test(p))) return false;
       if ((c === 'ん' || c === 'ン') && i === 0 && a.length > 1) return false;
     }
@@ -431,7 +447,7 @@ RB.answers = (function () {
   }
 
   // Candidate generators by kind of genuine confusion.
-  function variantsAt(a, i) {
+  function variantsAt(a, i, single) {
     const out = [];
     const c = a[i];
     const put = (x, kind) => {
@@ -444,8 +460,10 @@ RB.answers = (function () {
     if (bse !== c) put(bse, 'diacritic');
     put(K.addDakuten(c) !== c ? K.addDakuten(c) : null, 'diacritic');
     put(K.addHandakuten(c) !== c ? K.addHandakuten(c) : null, 'diacritic');
-    if (K.toLarge(c) !== c) put(K.toLarge(c), 'small');
-    else if (K.toSmall(c) !== c) put(K.toSmall(c), 'small');
+    // size confusions: only っ and ゃゅょ inside words (small vowels only for single kana)
+    const sizeOk = (x) => /[っッゃゅょャュョつツやゆよヤユヨ]/.test(x) || single;
+    if (K.toLarge(c) !== c && sizeOk(c)) put(K.toLarge(c), 'small');
+    else if (K.toSmall(c) !== c && sizeOk(c)) put(K.toSmall(c), 'small');
     confusablesOf(c).forEach((x) => put(x, 'shape'));
     const pairs = { は: 'わ', わ: 'は', を: 'お', お: 'を', へ: 'え', え: 'へ' };
     if (pairs[c]) put(pairs[c], 'particle');
@@ -468,6 +486,7 @@ RB.answers = (function () {
     for (let i = 0; i < a.length; i++) {
       const v = VOWEL_OF[a[i]];
       if (!v || (a[i + 1] && (a[i + 1] === 'ー' || extendsVowel(a[i], a[i + 1])))) continue;
+      if (i > 0 && extendsVowel(a[i - 1], a[i])) continue; // already a long-vowel extension
       if (K.isSmall(a[i + 1] || '')) continue;
       const ext = K.isKata(a[i]) ? 'ー' : { a: 'あ', i: 'い', u: 'う', e: 'い', o: 'う' }[v];
       out.push({ s: a.slice(0, i + 1).concat([ext]).concat(a.slice(i + 1)).join(''), kind: 'long' });
@@ -503,7 +522,7 @@ RB.answers = (function () {
     let cands = [];
     if (kind === 'kana') {
       // a single kana or a yōon pair
-      a.forEach((_, i) => cands.push(...variantsAt(a, i)));
+      a.forEach((_, i) => cands.push(...variantsAt(a, i, true)));
       const scriptSwap = K.isKata(a[0]) ? K.toHira(base) : K.toKata(base);
       if (scriptSwap !== base) cands.push({ s: scriptSwap, kind: 'script' });
       if (a.length === 2 && /[ゃゅょャュョ]/.test(a[1])) {
@@ -517,10 +536,26 @@ RB.answers = (function () {
       const scriptSwap = K.script(base) === 'kata' ? K.toHira(base) : K.toKata(base);
       if (scriptSwap !== base) cands.push({ s: scriptSwap, kind: 'script' });
     }
-    // de-duplicate, drop implausible and valid answers
+    // Fill for single kana: same row or same vowel column, same script.
+    if (kind === 'kana' && opts.fill !== false) {
+      const head = K.toHira(a[0]);
+      const tail = a.slice(1).join('');
+      const conv = K.isKata(a[0]) ? K.toKata : (x) => x;
+      const rows = K.GOJUON.concat(K.VOICED, K.SEMIVOICED);
+      rows.forEach((row, ri) => row.forEach((k, ci) => {
+        if (k !== head) return;
+        row.forEach((x) => { if (x && x !== head) cands.push({ s: conv(x) + tail, kind: 'fill' }); });
+        rows.forEach((r2, rj) => { if (rj !== ri && r2[ci] && (tail === '' || K.YOON.includes(r2[ci] + K.toHira(tail)))) cands.push({ s: conv(r2[ci]) + tail, kind: 'fill' }); });
+      }));
+      if (head === 'っ') ['ゃ', 'ゅ', 'ょ'].forEach((x) => cands.push({ s: conv(x), kind: 'fill' }));
+    }
+    // de-duplicate, drop implausible, mixed-script and valid answers
+    const baseScript = K.script(base);
     const seen = new Set();
     cands = cands.filter((c) => {
-      if (!c.s || seen.has(c.s) || forbidden.has(c.s) || c.s === base || !plausible(c.s)) return false;
+      const single = kind === 'kana' && Array.from(c.s).length === 1;
+      if (!c.s || seen.has(c.s) || forbidden.has(c.s) || c.s === base || !(plausible(c.s) || (single && !/[ゕゖヵヶゎヮ]/.test(c.s)))) return false;
+      if (kind === 'word' && baseScript !== 'mixed' && K.script(c.s) === 'mixed') return false;
       if (opts.scriptFree && (forbidden.has(K.toHira(c.s)) || forbidden.has(K.toKata(c.s)))) return false;
       seen.add(c.s);
       return true;
@@ -544,7 +579,9 @@ RB.answers = (function () {
       return x;
     };
     // script swaps are the weakest distractor for single kana; keep them last
-    const orderedKinds = shuffle(kinds.filter((k) => k !== 'script')).concat(kinds.includes('script') ? ['script'] : []);
+    const orderedKinds = shuffle(kinds.filter((k) => k !== 'script' && k !== 'fill'))
+      .concat(kinds.includes('script') ? ['script'] : [])
+      .concat(kinds.includes('fill') ? ['fill'] : []);
     const pools = orderedKinds.map((k) => shuffle(byKind.get(k)));
     const out = [];
     let added = true;

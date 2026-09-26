@@ -12,7 +12,7 @@ RB.lessons = (function () {
     return KL.groups || KL.GROUPS || (KL.all ? KL.all() : []);
   }
   function groupChars(g) {
-    return (g.chars || g.kana || []).map((c) => (typeof c === 'string' ? { ch: c } : Object.assign({ ch: c.ch || c.k || c.kana }, c)));
+    return (g.kana || g.chars || []).map((c) => (typeof c === 'string' ? { ch: c } : Object.assign({ ch: c.ch || c.k || c.kana }, c)));
   }
   function nextGroup(s) {
     const L = s.learn;
@@ -73,7 +73,7 @@ RB.lessons = (function () {
         const c = cs[idx];
         const rom = RB.kana.romaji(c.ch);
         const ex = (g.examples || g.words || []).filter((e) => (e.w || e.r || '').indexOf(c.ch) >= 0).slice(0, 3);
-        pn.innerHTML = '<header><h2>' + esc(g.name || g.title || 'Kana') + ' — ' + (idx + 1) + ' / ' + cs.length + '</h2></header><div class="body"><div class="row" style="align-items:flex-start;gap:1.2em">' +
+        pn.innerHTML = '<header><h2>' + esc(g.title || g.name || 'Kana') + ' — ' + (idx + 1) + ' / ' + cs.length + '</h2></header><div class="body"><div class="row" style="align-items:flex-start;gap:1.2em">' +
           '<div style="text-align:center"><div class="jp" lang="ja" style="font-size:5em;line-height:1.1">' + esc(c.ch) + '</div><div style="font-size:1.3em;color:var(--accent)">' + esc(rom) + '</div></div>' +
           '<div><canvas width="180" height="180" style="width:180px;height:180px;border-radius:8px" aria-label="Stroke order for ' + esc(c.ch) + '"></canvas><div class="small dim">Numbered strokes from the reference data. The adventure accepts readable variants; order matters only in optional practice.</div></div>' +
           '<div class="grow" style="min-width:200px">' + (c.note ? '<p>' + esc(c.note.en || c.note) + '</p>' : '') +

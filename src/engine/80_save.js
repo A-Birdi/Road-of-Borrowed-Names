@@ -267,6 +267,8 @@ RB.save = (function () {
       rec = all[0];
     } else rec = await kvGet('slots', slot);
     if (!rec) throw new Error('Nothing saved there.');
+    // Generated maps (Unwritten Atlas) are rebuilt from their seed before validation.
+    if (RB.atlas && RB.atlas.prepare && rec.state) { try { RB.atlas.prepare(rec.state); } catch (e) { console.warn('atlas prepare failed', e); } }
     const errs = validate(rec.state);
     if (errs.length) throw new Error('This save could not be read safely: ' + errs.join('; ') + '. It has been left untouched.');
     return { state: migrate(RB.util.deepClone(rec.state)), rev: which === 'manual' || !which ? rec.rev : null, meta: rec.meta };

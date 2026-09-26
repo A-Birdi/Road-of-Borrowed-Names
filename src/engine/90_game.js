@@ -205,7 +205,7 @@ RB.game = (function () {
       await RB.ui.fade(true, reducedMotion() ? 80 : 220);
       const def = RB.content.maps[mapId];
       if (!def) throw new Error('unknown map ' + mapId);
-      RB.world.enter(mapId, x, y, dir);
+      RB.world.enter(mapId, x, y, dir, { sp: opts.sp });
       await RB.ui.fade(false, reducedMotion() ? 80 : 220);
       if (def.name && !opts.inScript && !G.s.flags['named:' + mapId]) {
         G.s.flags['named:' + mapId] = true;

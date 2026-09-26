@@ -379,7 +379,13 @@ RB.audio = RB.audio || {};
           }
         }
       }
-      sections.push({ s: fe.s, start: tSec, beats: secBeats, seconds: secBeats * spb, bars, key: keyName, mode: modeName, bpm });
+      const chordInfo = segs
+        ? segs.filter((sg) => sg.ch).map((sg) => {
+          const info = chordTones(sg.ch, keyPc, mode, 4);
+          return { t0: tSec + sg.b0 * spb, t1: tSec + sg.b1 * spb, src: sg.src, tones: info.tones.slice(0, 3).map((m) => ((m + tr) % 12 + 12) % 12) };
+        })
+        : [];
+      sections.push({ s: fe.s, start: tSec, beats: secBeats, seconds: secBeats * spb, bars, key: keyName, mode: modeName, bpm, spb, meter, chords: chordInfo });
       tSec += secBeats * spb;
     });
 
@@ -652,6 +658,9 @@ RB.audio = RB.audio || {};
     });
   };
 
+  // Shared motifs with their degree spelling and a note on what they mean.
+  A.motifList = () => Object.keys(_.motifs || {}).map((id) => ({ id, degrees: _.motifs[id].deg, notes: _.motifs[id].notes }));
+
   // ------------------------------------------------------ offline render
   // Renders a song (or 'sfx:<id>') into an OfflineAudioContext through the
   // same graph as live playback. Channels 0-1 = final output, 2-3 = the
@@ -688,6 +697,10 @@ RB.audio = RB.audio || {};
         const song = _.getSong(id);
         if (!song) return Promise.reject(new Error('unknown song ' + id));
         const p = new Player(g, song, 0.05 - (opts.offset || 0), false);
+        if (Array.isArray(opts.solo)) {
+          // balance analysis: silence every track not listed
+          song.tracks.forEach((tk, i) => { if (!opts.solo.includes(tk.name)) p.strips[i].gain.value = 0; });
+        }
         p.pump(seconds);
       }
     } catch (e) {
@@ -703,18 +716,42 @@ RB.audio = RB.audio || {};
       let raw = 0;
       let nan = false;
       let clipped = 0;
+      let dsum = 0;
+      let prev = 0;
+      // longest run of 50 ms windows quieter than -55 dBFS (after the first 0.1 s)
+      const win = Math.floor(sr * 0.05);
+      const quiet = Math.pow(10, -55 / 20);
+      let wsum = 0;
+      let wn = 0;
+      let run = 0;
+      let longest = 0;
       for (let i = 0; i < L.length; i++) {
         const a = L[i];
         const b = R[i];
         if (a !== a || b !== b) { nan = true; continue; }
         sum += a * a + b * b;
+        const mono = (a + b) * 0.5;
+        dsum += (mono - prev) * (mono - prev);
+        prev = mono;
         const m = Math.max(Math.abs(a), Math.abs(b));
         if (m > peak) peak = m;
         if (m >= 0.999) clipped++;
         const m2 = Math.max(Math.abs(L2[i]), Math.abs(R2[i]));
         if (m2 > raw) raw = m2;
+        wsum += mono * mono;
+        if (++wn === win) {
+          if (i > sr * 0.1 && Math.sqrt(wsum / wn) < quiet) { run++; if (run > longest) longest = run; } else run = 0;
+          wsum = 0;
+          wn = 0;
+        }
       }
-      return { rms: Math.sqrt(sum / (2 * L.length)), peak, rawPeak: raw, nan, clipped, seconds, sampleRate: sr };
+      let msum = 0;
+      for (let i = 0; i < L.length; i++) { const x = (L[i] + R[i]) * 0.5; msum += x * x; }
+      // Effective frequency of a sine with the same derivative/level ratio —
+      // a crude brightness figure (a harsh mix reads several kHz higher).
+      const ratio = msum > 0 ? Math.sqrt(dsum / msum) : 0;
+      const brightness = Math.round((sr / Math.PI) * Math.asin(Math.min(1, ratio / 2)));
+      return { rms: Math.sqrt(sum / (2 * L.length)), peak, rawPeak: raw, nan, clipped, brightness, longestSilence: longest * 0.05, seconds, sampleRate: sr };
     });
   };
 })(RB.audio);

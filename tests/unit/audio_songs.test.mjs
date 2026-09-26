@@ -105,6 +105,31 @@ export default async (t) => {
     t.ok((_.songDefs['companion_' + c].motifs || []).includes(c), `companion_${c} claims its own motif`);
   }
 
+  // --- harmony lint: no sustained (>= 1.5 beat) melody note a semitone above
+  // a chord tone, or a tritone above the root. Allowed on purpose: the Hush
+  // motif's raised fourth hanging over open fifths, and sorrow's F->E sigh.
+  const clashes = [];
+  for (const id of Object.keys(_.songDefs)) {
+    const s = _.getSong(id);
+    for (const e of s.events) {
+      if (e.m == null) continue;
+      const tk = s.tracks[e.tr];
+      if (tk.pat || tk.hold) continue;
+      const sec = s.sections.find((x) => e.t >= x.start - 1e-6 && e.t < x.start + x.seconds - 1e-6);
+      if (!sec || !sec.chords.length || e.d / sec.spb < 1.5) continue;
+      const ch = sec.chords.find((c) => e.t >= c.t0 - 1e-6 && e.t < c.t1 - 1e-6);
+      if (!ch) continue;
+      const pc = ((e.m % 12) + 12) % 12;
+      const semi = ch.tones.some((ct) => (pc - ct + 12) % 12 === 1);
+      const trit = (pc - ch.tones[0] + 12) % 12 === 6;
+      if (!semi && !trit) continue;
+      const hushFourth = trit && /P/.test(ch.src) && ['hush', 'lanternfall', 'still_archive'].includes(id);
+      const sigh = id === 'sorrow' && sec.s === 'B';
+      if (!hushFourth && !sigh) clashes.push(`${id}:${sec.s} ${tk.name} midi ${e.m} over ${ch.src} at ${e.t.toFixed(2)}s`);
+    }
+  }
+  t.ok(clashes.length === 0, 'no sustained melody/chord clashes: ' + clashes.slice(0, 6).join('; '));
+
   // --- the validator catches authoring mistakes
   const base = () => ({
     id: 'probe', key: 'C', bpm: 90,

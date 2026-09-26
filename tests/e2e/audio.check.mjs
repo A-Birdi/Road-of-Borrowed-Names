@@ -95,11 +95,12 @@ async function render(id, secs, opts) {
 }
 const db = (x) => (x > 0 ? (20 * Math.log10(x)).toFixed(1) : '-inf');
 const row = (cols, w) => cols.map((c, i) => String(c).padEnd(w[i])).join(' ');
-const W = [18, 8, 9, 8, 8, 9, 7, 7];
+const W = [18, 8, 9, 8, 8, 7, 7, 7, 7, 6];
 
 console.log(`\n## Songs (offline render, ${SONG_SECONDS}s from start${quick ? '' : ' + 6s from mid-song'})`);
-console.log(row(['id', 'length', 'window', 'rms', 'rms dB', 'peak', 'raw pk', 'ms'], W));
+console.log(row(['id', 'length', 'window', 'rms', 'rms dB', 'peak', 'raw pk', 'bright', 'gap s', 'ms'], W));
 const rmsList = [];
+const brightList = [];
 for (const s of api.songs) {
   const windows = [[0, SONG_SECONDS]];
   if (!quick && s.seconds > 20) windows.push([Math.floor(s.seconds / 2), 6]);
@@ -111,7 +112,9 @@ for (const s of api.songs) {
       fail(`${s.id}: render threw ${e.message}`);
       continue;
     }
-    console.log(row([s.id, s.seconds + 's', `${off}-${off + secs}s`, r.rms.toFixed(4), db(r.rms), r.peak.toFixed(3), r.rawPeak.toFixed(3), r.ms], W));
+    console.log(row([s.id, s.seconds + 's', `${off}-${off + secs}s`, r.rms.toFixed(4), db(r.rms), r.peak.toFixed(3), r.rawPeak.toFixed(3), r.brightness, r.longestSilence.toFixed(2), r.ms], W));
+    brightList.push([s.id + '@' + off, r.brightness]);
+    if (s.id !== 'prologue' && s.id !== 'victory') ok(r.longestSilence < 2.5, `${s.id}@${off}: ${r.longestSilence}s of near-silence`);
     ok(!r.nan, `${s.id}@${off}: NaN in output`);
     ok(r.rms > RMS_FLOOR, `${s.id}@${off}: too quiet (rms ${r.rms.toFixed(5)})`);
     ok(r.peak <= 1.0, `${s.id}@${off}: peak ${r.peak} > 1`);
@@ -122,12 +125,15 @@ for (const s of api.songs) {
 const sorted = rmsList.map((x) => x[1]).sort((a, b) => a - b);
 const median = sorted[Math.floor(sorted.length / 2)];
 console.log(`  loudness spread: min ${db(sorted[0])} dB, median ${db(median)} dB, max ${db(sorted[sorted.length - 1])} dB`);
+const bs = brightList.map((x) => x[1]).sort((a, b) => a - b);
+console.log(`  brightness (effective Hz): min ${bs[0]}, median ${bs[Math.floor(bs.length / 2)]}, max ${bs[bs.length - 1]}`);
+for (const [id, b] of brightList) if (b > 4000) console.log(`  note: ${id} is bright (${b} Hz effective) — check for harshness`);
 for (const [id, r] of rmsList) {
   if (r > median * 2.5 || r < median / 4) console.log(`  note: ${id} is ${db(r / median)} dB from the median`);
 }
 
 console.log('\n## Effects (offline render)');
-console.log(row(['id', '', 'secs', 'rms', 'rms dB', 'peak', 'raw pk', 'ms'], W));
+console.log(row(['id', '', 'secs', 'rms', 'rms dB', 'peak', 'raw pk', 'bright', '', 'ms'], W));
 for (const id of api.sfx) {
   let r;
   try {
@@ -136,7 +142,7 @@ for (const id of api.sfx) {
     fail(`sfx ${id}: render threw ${e.message}`);
     continue;
   }
-  console.log(row([id, '', '2.5', r.rms.toFixed(4), db(r.rms), r.peak.toFixed(3), r.rawPeak.toFixed(3), r.ms], W));
+  console.log(row([id, '', '2.5', r.rms.toFixed(4), db(r.rms), r.peak.toFixed(3), r.rawPeak.toFixed(3), r.brightness, '', r.ms], W));
   ok(!r.nan, `sfx ${id}: NaN`);
   ok(r.peak > 0.005, `sfx ${id}: silent (peak ${r.peak})`);
   ok(r.peak <= 1.0, `sfx ${id}: peak > 1`);

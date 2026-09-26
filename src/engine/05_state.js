@@ -18,6 +18,8 @@ RB.content = RB.content || {
   places: {},    // fast-travel places
   techniques: {},// companion coordinated techniques
   atlas: {},     // endgame room patterns etc.
+  banter: [],    // companion banter: {comp, map, if, scene}
+  intentText: {},
 };
 
 RB.state = (function () {
