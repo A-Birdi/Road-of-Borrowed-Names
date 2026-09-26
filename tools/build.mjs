@@ -34,7 +34,11 @@ export function listSources() {
 
 function build() {
   const tpl = fs.readFileSync(path.join(src, 'index.template.html'), 'utf8');
-  const css = fs.readFileSync(path.join(src, 'styles.css'), 'utf8');
+  // styles: every src/styles/*.css in name order (tokens first, then areas)
+  const styleDir = path.join(src, 'styles');
+  const css = fs.readdirSync(styleDir).filter((f) => f.endsWith('.css')).sort()
+    .map((f) => `/* ==== src/styles/${f} ==== */\n` + fs.readFileSync(path.join(styleDir, f), 'utf8')).join('\n');
+  if (css.includes('</style')) throw new Error('CSS contains "</style"');
   const files = listSources();
   const licences0 = fs.readFileSync(path.join(root, 'data', 'NOTICE.txt'), 'utf8');
   let js = `var RB = (globalThis.RB = globalThis.RB || {});\nRB.NOTICE = ${JSON.stringify(licences0).replace(/</g, '\\u003c')};\n`;

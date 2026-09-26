@@ -1,0 +1,77 @@
+/* Wayfarer's Folio — design tokens (docs/ART_DIRECTION.md).
+ * Material hierarchy: indigo cloth (cover, binding, navigation surround),
+ * warm low-glare paper with dark ink (reading surfaces), one amber ribbon for
+ * the current selection, occasional vermilion marks, and a plain danger ink
+ * reserved for destructive actions. Contrast pairs are checked by
+ * tests/unit/ui_contrast.test.mjs. */
+:root {
+  /* cloth */
+  --cloth-950: #0e1226;
+  --cloth-900: #151a34;
+  --cloth-800: #1c2346;
+  --cloth-700: #27305c;
+  --cloth-600: #343e72;
+  --thread: #b9a57a;          /* repair stitching on cloth */
+  --on-cloth: #f1e9d4;        /* text on cloth */
+  --on-cloth-2: #c9c0a8;      /* secondary text on cloth */
+  --cloth-weave:
+    repeating-linear-gradient(45deg, rgba(255,255,255,0.025) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(-45deg, rgba(0,0,0,0.12) 0 1px, transparent 1px 4px);
+
+  /* paper */
+  --paper: #f2e9d3;           /* page */
+  --paper-2: #e7dbbd;         /* tucked tab, secondary sheet */
+  --paper-3: #d9caa6;         /* deeper tuck, pressed */
+  --paper-edge: #a8966c;      /* page and tab edges (>= 3:1 on cloth) */
+  --rule: #d2c29c;            /* ruled lines (decorative) */
+  --ink: #261f15;             /* body text on paper */
+  --ink-2: #4c4030;           /* secondary text on paper */
+  --ink-3: #62553f;           /* muted labels on paper (>= 4.5:1) */
+  --rt-ink: #4a3e2c;          /* furigana on paper */
+
+  /* marks */
+  --ribbon: #c18a2a;          /* current selection */
+  --ribbon-deep: #8a5d14;
+  --vermilion: #a83e27;       /* occasional seal / important mark */
+  --danger-ink: #8e2418;      /* destructive actions only */
+  --danger-bg: #f5dcd3;
+  --ok-ink: #2d5f28;
+  --warn-ink: #7a4d00;
+  --river: #1f5a92;           /* links, focus on paper */
+  --focus-paper: #1f5a92;
+  --focus-cloth: #9fd3ff;
+
+  /* type */
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+
+  /* geometry & motion */
+  --tap: 44px;                /* project touch-comfort target for principal controls */
+  --r-1: 3px;
+  --r-2: 6px;
+  --gutter: max(12px, env(safe-area-inset-left));
+  --t-quick: 140ms;
+  --ease: cubic-bezier(.2, .7, .2, 1);
+  --vh: 1vh;                  /* replaced by svh where supported (below) */
+}
+/* svh: the viewport with browser bars shown — layouts never slide under a
+ * toolbar (vh = lvh can). The page itself never scrolls, so the dynamic
+ * unit would only add resize work. Keyboard occlusion is handled with
+ * visualViewport in script. */
+@supports (height: 100svh) { :root { --vh: 1svh; } }
+
+body.high-contrast {
+  --paper: #ffffff;
+  --paper-2: #f0f0f0;
+  --paper-3: #dcdcdc;
+  --paper-edge: #000000;
+  --ink: #000000;
+  --ink-2: #000000;
+  --ink-3: #1a1a1a;
+  --rt-ink: #000000;
+  --cloth-900: #000000;
+  --cloth-800: #000000;
+  --on-cloth: #ffffff;
+  --on-cloth-2: #ffffff;
+  --thread: #ffe36e;
+  --ribbon: #b36b00;
+}

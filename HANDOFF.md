@@ -46,6 +46,36 @@
 - Not verified by automation (needs people): real handwriting accuracy,
   playtime, native-speaker review, music quality, audible TTS.
 
+## Visual overhaul in progress: "Wayfarer's Folio" (brief received 2026-09-26)
+Staged phases (checkpoints, not approval gates); design record in
+docs/ART_DIRECTION.md.
+- Phase A (DONE at this checkpoint): design tokens + folio components
+  (src/styles/00_tokens.css, 20_folio.css, 30_folio_pages.css; CSS is now
+  split per area under src/styles/ and concatenated in name order),
+  RB.ui.folio (src/ui/12_folio.js: frame, APG paper tabs, inline SVG icons),
+  pause folio rebuilt with four tabs Journey/Words/Satchel/Map + Save & Load
+  and Settings utilities (src/ui/50_menu.js), Settings as named groups with
+  real controls (src/ui/55_settings.js). Tests: tests/e2e/folio.mjs (tabs by
+  mouse/keyboard/touch, overlap probes, Back order, aliases, resize, phone
+  overflow at 320/360/390 and 200 % text), tests/e2e/settings.mjs updated,
+  tests/unit/ui_contrast.test.mjs. Screenshot tool: tests/e2e/visual.mjs
+  (synthetic fixtures; output tests/e2e/out/{before,after}, gitignored).
+- Phase B (next): title (lantern-road scene, prominent Continue, compact
+  storage status), 4-step character creation with live preview, six-slot
+  ledger redesign with Manage area, dialogue as inset correspondence panel
+  (speaker tab, one Next, separate history/replay/translation), help as a
+  note card (desktop) / sheet (phone) with an explicit touch route and hidden
+  on layer changes, combat/challenge/pad in folio materials (no texture under
+  strokes), lessons/activities, HUD with one menu entry above the scrim rule,
+  touch controls (context-labelled action; hidden during dialogue/menus/
+  writing), touch-action none only on canvas/pad/writing canvas (currently
+  on #app), visualViewport keyboard handling, camera composition for small
+  maps (empty bands).
+- Phase C: 2x art (32x32 tiles, ~32x48 characters) on the unchanged 16-px
+  logical grid; cached surfaces.
+- Phase D: full suites, viewport matrix, before/after screenshots into
+  docs/screenshots/, performance timing, docs.
+
 ## Commands
 - Build: `node tools/build.mjs`
 - Content validation: `node tools/validate.mjs [--filter sg] [--unknown]`

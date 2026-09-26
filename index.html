@@ -33,9 +33,88 @@ Changes:    The embedded stroke data (RB.recogData; src/recog/10_strokedata.js i
             under the same licence, CC BY-SA 3.0.
 
 -->
-<style>:root {
+<style>/* ==== src/styles/00_tokens.css ==== */
+/* Wayfarer's Folio — design tokens (docs/ART_DIRECTION.md).
+ * Material hierarchy: indigo cloth (cover, binding, navigation surround),
+ * warm low-glare paper with dark ink (reading surfaces), one amber ribbon for
+ * the current selection, occasional vermilion marks, and a plain danger ink
+ * reserved for destructive actions. Contrast pairs are checked by
+ * tests/unit/ui_contrast.test.mjs. */
+:root {
+  /* cloth */
+  --cloth-950: #0e1226;
+  --cloth-900: #151a34;
+  --cloth-800: #1c2346;
+  --cloth-700: #27305c;
+  --cloth-600: #343e72;
+  --thread: #b9a57a;          /* repair stitching on cloth */
+  --on-cloth: #f1e9d4;        /* text on cloth */
+  --on-cloth-2: #c9c0a8;      /* secondary text on cloth */
+  --cloth-weave:
+    repeating-linear-gradient(45deg, rgba(255,255,255,0.025) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(-45deg, rgba(0,0,0,0.12) 0 1px, transparent 1px 4px);
+
+  /* paper */
+  --paper: #f2e9d3;           /* page */
+  --paper-2: #e7dbbd;         /* tucked tab, secondary sheet */
+  --paper-3: #d9caa6;         /* deeper tuck, pressed */
+  --paper-edge: #a8966c;      /* page and tab edges (>= 3:1 on cloth) */
+  --rule: #d2c29c;            /* ruled lines (decorative) */
+  --ink: #261f15;             /* body text on paper */
+  --ink-2: #4c4030;           /* secondary text on paper */
+  --ink-3: #62553f;           /* muted labels on paper (>= 4.5:1) */
+  --rt-ink: #4a3e2c;          /* furigana on paper */
+
+  /* marks */
+  --ribbon: #c18a2a;          /* current selection */
+  --ribbon-deep: #8a5d14;
+  --vermilion: #a83e27;       /* occasional seal / important mark */
+  --danger-ink: #8e2418;      /* destructive actions only */
+  --danger-bg: #f5dcd3;
+  --ok-ink: #2d5f28;
+  --warn-ink: #7a4d00;
+  --river: #1f5a92;           /* links, focus on paper */
+  --focus-paper: #1f5a92;
+  --focus-cloth: #9fd3ff;
+
+  /* type */
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+
+  /* geometry & motion */
+  --tap: 44px;                /* project touch-comfort target for principal controls */
+  --r-1: 3px;
+  --r-2: 6px;
+  --gutter: max(12px, env(safe-area-inset-left));
+  --t-quick: 140ms;
+  --ease: cubic-bezier(.2, .7, .2, 1);
+  --vh: 1vh;                  /* replaced by svh where supported (below) */
+}
+/* svh: the viewport with browser bars shown — layouts never slide under a
+ * toolbar (vh = lvh can). The page itself never scrolls, so the dynamic
+ * unit would only add resize work. Keyboard occlusion is handled with
+ * visualViewport in script. */
+@supports (height: 100svh) { :root { --vh: 1svh; } }
+
+body.high-contrast {
+  --paper: #ffffff;
+  --paper-2: #f0f0f0;
+  --paper-3: #dcdcdc;
+  --paper-edge: #000000;
+  --ink: #000000;
+  --ink-2: #000000;
+  --ink-3: #1a1a1a;
+  --rt-ink: #000000;
+  --cloth-900: #000000;
+  --cloth-800: #000000;
+  --on-cloth: #ffffff;
+  --on-cloth-2: #ffffff;
+  --thread: #ffe36e;
+  --ribbon: #b36b00;
+}
+
+/* ==== src/styles/10_legacy.css ==== */
+:root {
   --text-scale: 1;
-  --ink: #141625;
   --ink2: #1d2034;
   --panel: rgba(20, 22, 38, 0.94);
   --panel-solid: #171a2c;
@@ -295,6 +374,368 @@ body.touch .touchpad { display: block; }
 .touchpad .tp-btns .tp-menu { width: 48px; height: 48px; }
 body.touch .dlg { bottom: calc(12px + env(safe-area-inset-bottom)); }
 body.in-dialogue .touchpad .tp-dpad, body.in-panel .touchpad { display: none; }
+
+/* ==== src/styles/20_folio.css ==== */
+/* Wayfarer's Folio — shared components: cloth frame, paper leaves, layered
+ * paper tabs with a moving ribbon, paper/cloth buttons, ruled entries,
+ * real form controls. Screen-specific rules live in later files. */
+
+/* ---- frame --------------------------------------------------------------- */
+.folio-scrim {
+  position: absolute; inset: 0; isolation: isolate; /* each folio layer stacks as a whole */ background: rgba(8, 10, 22, 0.62);
+  display: flex; align-items: center; justify-content: center;
+}
+.folio {
+  position: relative; color: var(--on-cloth);
+  width: min(1080px, calc(100vw - 2 * var(--gutter)));
+  height: min(800px, calc(100 * var(--vh) - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom)));
+  display: grid; grid-template-rows: auto auto minmax(0, 1fr) auto; grid-template-columns: minmax(0, 1fr);
+  background-color: var(--cloth-800); background-image: var(--cloth-weave);
+  border-radius: 10px; padding: 8px 12px 10px;
+  box-shadow: 0 18px 50px rgba(0,0,0,0.55), inset 0 0 0 1px rgba(255,255,255,0.05);
+}
+/* repair stitching along the cover edge (decorative, never intercepts input) */
+.folio::before {
+  content: ""; position: absolute; inset: 4px; border: 1px dashed var(--thread); border-radius: 7px;
+  opacity: 0.55; pointer-events: none;
+}
+.folio > * { min-width: 0; }
+.folio-head { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; padding: 4px 4px 6px; min-height: var(--tap); position: relative; z-index: 3; }
+.folio-head > .cbtn { flex: none; margin-left: auto; }
+.folio-head h2 { margin: 0; font-family: var(--serif); font-weight: 600; font-size: 1.2em; letter-spacing: 0.02em; color: var(--on-cloth); flex: 0 1 auto; max-width: 60%; }
+.folio-head .meta { color: var(--on-cloth-2); font-size: 0.85em; line-height: 1.25; flex: 1 1 6em; min-width: 0; text-align: right; }
+/* when the line is too narrow (small phone, large text) the meta and Close
+ * wrap to a second line instead of squeezing the meta into a column */
+.folio-foot { display: flex; gap: 8px; padding-top: 8px; position: relative; z-index: 3; flex-wrap: wrap; }
+.folio-foot .spacer { flex: 1; }
+
+/* phones: the folio is the whole screen, one page at a time */
+@media (max-width: 599px) {
+  .folio {
+    width: 100vw; height: calc(100 * var(--vh)); border-radius: 0;
+    padding: max(6px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+  }
+  .folio::before { inset: 3px; border-radius: 0; }
+  .folio-foot .cbtn { flex: 1 1 auto; justify-content: center; }
+}
+
+/* ---- cloth buttons (on the cover) ----------------------------------------- */
+.cbtn {
+  display: inline-flex; align-items: center; gap: 0.45em; min-height: var(--tap); min-width: var(--tap);
+  padding: 0 0.9em; border-radius: var(--r-2); cursor: pointer; touch-action: manipulation;
+  background: var(--cloth-700); color: var(--on-cloth); border: 1px solid var(--paper-edge);
+  font: inherit; font-size: 0.95em; line-height: 1.2;
+}
+.cbtn:hover { background: var(--cloth-600); }
+.cbtn:active { transform: translateY(1px); }
+.cbtn:focus-visible { outline: 3px solid var(--focus-cloth); outline-offset: 2px; }
+.cbtn svg { width: 1.25em; height: 1.25em; flex: none; }
+.cbtn[aria-current="page"], .cbtn.current { box-shadow: inset 0 -3px 0 var(--ribbon); }
+
+/* ---- paper tabs ------------------------------------------------------------ */
+/* Each tab's own rectangle is its hit area. Its visible face is a ::before
+ * drawn slightly wider than the box (pointer-events: none), so faces overlap
+ * like index dividers while no face covers a neighbour's label or steals its
+ * taps. Inactive tabs sit lower, their bottoms tucked (clipped) behind the
+ * page edge; the selected tab rises, comes to the front and shares the
+ * page's paper, covering the page's top edge so tab and page are one sheet. */
+.tabrail-wrap { position: relative; z-index: 3; margin: 2px 6px -1px; min-width: 0; }
+/* the page's top edge, drawn over the tucked tabs and under the selected one */
+.tabrail-wrap::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--paper-edge); z-index: 2; pointer-events: none; }
+.tabrail {
+  position: relative; display: flex; align-items: flex-end; gap: 0; padding: 6px 12px 0; min-width: 0;
+  overflow-x: auto; overflow-y: hidden; scrollbar-width: none; scroll-behavior: smooth;
+}
+.tabrail::-webkit-scrollbar { display: none; }
+.ptab {
+  --tab-bg: var(--paper-3);
+  position: relative; z-index: 1; flex: 0 0 auto; min-width: 5.2em; min-height: 52px;
+  display: flex; align-items: center; justify-content: center; gap: 0.45em; margin: 0;
+  padding: 8px 1.05em 14px; border: 0; background: transparent; color: var(--ink-2);
+  font: inherit; font-size: 1em; font-weight: 600; letter-spacing: 0.01em; cursor: pointer; white-space: nowrap;
+  transform: translateY(7px); transition: transform var(--t-quick) var(--ease);
+  touch-action: manipulation;
+}
+.ptab + .ptab { margin-left: 4px; }
+.ptab svg { width: 1.3em; height: 1.3em; flex: none; }
+.ptab::before {
+  content: ""; position: absolute; top: 0; bottom: 0; left: -7px; right: -7px; z-index: -1; pointer-events: none;
+  background: var(--tab-bg); border: 1px solid var(--paper-edge); border-bottom: 0; border-radius: 10px 10px 0 0;
+  box-shadow: inset 0 -1px 0 var(--paper-edge), inset 0 2px 0 rgba(255,255,255,0.35);
+  transform: perspective(90px) rotateX(3deg); transform-origin: 50% 100%;
+  transition: background-color var(--t-quick);
+}
+.ptab:hover { --tab-bg: var(--paper-2); transform: translateY(4px); color: var(--ink); }
+.ptab:active { transform: translateY(6px); }
+.ptab[aria-selected="true"] { --tab-bg: var(--paper); z-index: 4; color: var(--ink); transform: translateY(1px); }
+.ptab[aria-selected="true"]::before { box-shadow: inset 0 2px 0 rgba(255,255,255,0.5), 0 -3px 8px rgba(0,0,0,0.22); bottom: -2px; }
+.ptab:focus-visible { outline: 3px solid var(--focus-cloth); outline-offset: 1px; }
+/* keyboard focus on the selected tab stays distinct from "selected" */
+.ptab[aria-selected="true"]:focus-visible { outline: 3px dashed var(--focus-paper); outline-offset: -5px; }
+.ptab[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+.ptab.lift { animation: tab-lift 170ms var(--ease); }
+@keyframes tab-lift { 0% { transform: translateY(7px); } 60% { transform: translateY(-2px); } 100% { transform: translateY(1px); } }
+/* the ribbon: one marker that moves to the selected tab */
+.tabrail .ribbon {
+  position: absolute; top: 0; left: 0; width: 14px; height: 22px; z-index: 5; pointer-events: none;
+  background: var(--ribbon); transition: transform 170ms var(--ease);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 76%, 0 100%);
+  box-shadow: inset -3px 0 0 var(--ribbon-deep);
+}
+/* rail that cannot fit (large text / Japanese labels): scrollable with visible arrows */
+.tabrail-wrap .rail-arrow { display: none; }
+.tabrail-wrap.overflowing .rail-arrow {
+  display: flex; position: absolute; top: 6px; bottom: 6px; z-index: 6; width: 34px; align-items: center; justify-content: center;
+  background: var(--cloth-800); color: var(--on-cloth); border: 1px solid var(--paper-edge); border-radius: var(--r-2); cursor: pointer; font: inherit;
+}
+.tabrail-wrap.overflowing .rail-arrow.l { left: -4px; }
+.tabrail-wrap.overflowing .rail-arrow.r { right: -4px; }
+.tabrail-wrap.overflowing .tabrail { padding-left: 38px; padding-right: 38px; }
+body.reduced-motion .ptab, body.reduced-motion .tabrail .ribbon { transition: none; }
+/* phones: four equal tabs, icon over label. A tab never shrinks below its
+ * own label (min-width: max-content); if the labels cannot fit (large text,
+ * Japanese labels at 320px) the rail scrolls and shows its arrows instead. */
+@media (max-width: 599px) {
+  .tabrail-wrap { margin: 0 0 -1px; }
+  .tabrail { padding: 4px 6px 0; }
+  .ptab {
+    flex: 1 1 0; min-width: max-content; flex-direction: column; gap: 1px; min-height: 58px;
+    padding: 7px 0.55em 11px; font-size: 0.9em;
+  }
+  .ptab + .ptab { margin-left: 6px; }
+  .ptab::before { left: -5px; right: -5px; }
+  .ptab svg { width: 1.35em; height: 1.35em; }
+  .tabrail .ribbon { width: 12px; height: 18px; }
+}
+body.reduced-motion .ptab.lift { animation: none; }
+
+/* ---- paper leaves ---------------------------------------------------------- */
+.leafbox { position: relative; z-index: 2; min-height: 0; min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); }
+.leaf {
+  position: relative; min-height: 0; overflow: auto; overscroll-behavior: contain;
+  background: var(--paper); color: var(--ink); border: 1px solid var(--paper-edge); border-radius: 3px 3px 6px 6px;
+  padding: 14px clamp(12px, 3vw, 28px) 22px; line-height: 1.55;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.35), 0 2px 0 var(--paper-3), 0 4px 0 var(--paper-edge);
+  -webkit-overflow-scrolling: touch; touch-action: pan-y pinch-zoom;
+}
+.leaf:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: -3px; }
+/* a two-page spread when there is room: list page + detail page, bound in the middle */
+.spread { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); min-height: 0; min-width: 0; }
+.spread > .leaf { min-width: 0; }
+.spread > .leaf + .leaf { display: none; }
+@media (min-width: 860px) {
+  .spread.two { grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); gap: 0; }
+  .spread.two > .leaf + .leaf { display: block; }
+  .spread.two > .leaf:first-child { border-radius: 3px 0 0 6px; box-shadow: inset -14px 0 18px -14px rgba(60,40,10,0.35), 0 2px 0 var(--paper-3), 0 4px 0 var(--paper-edge); }
+  .spread.two > .leaf + .leaf { border-left: 0; border-radius: 0 3px 6px 0; box-shadow: inset 14px 0 18px -14px rgba(60,40,10,0.35), 0 2px 0 var(--paper-3), 0 4px 0 var(--paper-edge); }
+}
+
+/* ---- ink on paper ---------------------------------------------------------- */
+.leaf h3, .leaf .ph {
+  font-family: var(--serif); font-weight: 600; font-size: 1.06em; color: var(--ink); margin: 1.1em 0 0.35em;
+  padding-bottom: 0.2em; border-bottom: 1px solid var(--rule); display: flex; align-items: baseline; gap: 0.5em;
+}
+.leaf h3:first-child, .leaf .ph:first-child { margin-top: 0.1em; }
+.leaf h3 .count, .leaf .ph .count { font-family: var(--ui-font); font-weight: 400; font-size: 0.8em; color: var(--ink-3); }
+.leaf p { margin: 0.35em 0 0.6em; }
+.leaf .muted, .leaf .dim { color: var(--ink-3); }
+.leaf .small { font-size: 0.88em; }
+.leaf rt { color: var(--rt-ink); }
+.leaf .en, .leaf .enline { color: var(--ink-2); }
+.leaf .jline { color: var(--ink); }
+body.bulb-on .leaf .jline .jt { text-decoration-color: rgba(38, 31, 21, 0.45); }
+body.bulb-on .leaf .jline .jt:hover, .leaf .jline .jt.active { background: rgba(193, 138, 42, 0.18); }
+.leaf a, .leaf .link { color: var(--river); }
+
+/* ruled entries: most content is ink on a shared page, not boxed cards */
+.entries { list-style: none; margin: 0; padding: 0; }
+.entry {
+  display: grid; grid-template-columns: 1.6em minmax(0, 1fr) auto; gap: 0.2em 0.6em; align-items: start;
+  padding: 0.65em 0.2em 0.7em; border-bottom: 1px solid var(--rule);
+}
+.entry > .mark { width: 1.3em; height: 1.3em; margin-top: 0.3em; color: var(--ink-2); }
+.entry > .mark svg { width: 100%; height: 100%; }
+.entry .t { font-weight: 600; color: var(--ink); }
+.entry .t .en { font-weight: 400; }
+.entry .kind { font-size: 0.78em; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+.entry .body { grid-column: 2 / -1; }
+.entry .acts { grid-column: 2 / -1; display: flex; gap: 8px; flex-wrap: wrap; margin-top: 0.35em; }
+.entry.current > .mark { color: var(--ribbon-deep); }
+.entry.done .t { color: var(--ink-3); }
+button.entry { width: 100%; text-align: left; background: transparent; border: 0; border-bottom: 1px solid var(--rule); font: inherit; color: inherit; cursor: pointer; }
+button.entry:hover { background: rgba(193, 138, 42, 0.08); }
+button.entry:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: -3px; }
+button.entry[aria-current="true"] { background: rgba(193, 138, 42, 0.14); box-shadow: inset 4px 0 0 var(--ribbon); }
+
+/* index lines ("contents" of a section) */
+.index { list-style: none; margin: 0.2em 0 0.8em; padding: 0; }
+.index button {
+  width: 100%; display: flex; align-items: baseline; gap: 0.6em; min-height: var(--tap); padding: 0.4em 0.3em;
+  background: transparent; border: 0; border-bottom: 1px dotted var(--paper-edge); color: var(--ink); font: inherit; text-align: left; cursor: pointer;
+}
+.index button .lbl { font-weight: 600; }
+.index button .fill { flex: 1; }
+.index button .n { color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.index button[aria-current="true"] { box-shadow: inset 4px 0 0 var(--ribbon); background: rgba(193, 138, 42, 0.12); }
+.index button:hover { background: rgba(193, 138, 42, 0.08); }
+.index button:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: -3px; }
+.backline { display: flex; align-items: center; gap: 8px; margin: -4px 0 6px; }
+
+/* ---- paper buttons (on pages) ---------------------------------------------- */
+.pbtn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.4em; min-height: var(--tap); min-width: var(--tap);
+  padding: 0 1em; border-radius: var(--r-1); cursor: pointer; touch-action: manipulation; font: inherit; font-size: 0.95em;
+  background: var(--paper); color: var(--ink); border: 1px solid var(--ink-3); box-shadow: 0 2px 0 var(--paper-3);
+}
+.pbtn:hover { background: var(--paper-2); }
+.pbtn:active { transform: translateY(1px); box-shadow: 0 1px 0 var(--paper-3); }
+.pbtn:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.pbtn[disabled], .pbtn[aria-disabled="true"] { color: var(--ink-3); border-style: dashed; cursor: not-allowed; box-shadow: none; }
+.pbtn.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); box-shadow: 0 2px 0 var(--ribbon-deep); }
+.pbtn.primary:hover { background: #3a2f20; }
+.pbtn.danger { color: var(--danger-ink); border-color: var(--danger-ink); background: var(--danger-bg); }
+.pbtn.quiet { border-color: transparent; box-shadow: none; background: transparent; color: var(--river); text-decoration: underline; text-underline-offset: 0.2em; }
+.pbtn svg { width: 1.2em; height: 1.2em; }
+
+/* ---- real controls, styled ------------------------------------------------- */
+.field { margin: 0.55em 0 0.9em; }
+.field > .lab, fieldset.field > legend { display: block; font-weight: 600; color: var(--ink); margin-bottom: 0.3em; padding: 0; }
+.field .hint { color: var(--ink-3); font-size: 0.86em; margin-top: 0.25em; }
+fieldset.field { border: 0; padding: 0; min-width: 0; }
+.opts { display: flex; flex-wrap: wrap; gap: 6px; }
+.opt { position: relative; display: inline-flex; }
+.opt input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.opt span {
+  display: inline-flex; align-items: center; gap: 0.45em; min-height: var(--tap); padding: 0 0.95em; border-radius: var(--r-1);
+  border: 1px solid var(--paper-edge); background: var(--paper); color: var(--ink); cursor: pointer;
+}
+.opt span::before { content: ""; width: 0.8em; height: 0.8em; border-radius: 50%; border: 2px solid var(--ink-3); flex: none; }
+.opt input:checked + span { border-color: var(--ink); box-shadow: inset 0 -3px 0 var(--ribbon); font-weight: 600; }
+.opt input:checked + span::before { background: var(--ink); border-color: var(--ink); box-shadow: inset 0 0 0 2px var(--paper); }
+.opt input:focus-visible + span { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.switch { display: flex; align-items: center; gap: 0.7em; min-height: var(--tap); cursor: pointer; }
+.switch input { appearance: none; -webkit-appearance: none; width: 3em; height: 1.6em; border-radius: 1em; background: var(--paper-3); border: 1px solid var(--ink-3); position: relative; cursor: pointer; flex: none; margin: 0; }
+.switch input::after { content: ""; position: absolute; top: 2px; left: 2px; width: calc(1.6em - 6px); height: calc(1.6em - 6px); border-radius: 50%; background: var(--ink-2); transition: transform var(--t-quick); }
+.switch input:checked { background: var(--ink); border-color: var(--ink); }
+.switch input:checked::after { transform: translateX(1.4em); background: var(--paper); }
+.switch input:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.switch .state { color: var(--ink-3); font-size: 0.86em; margin-left: auto; }
+.slider { display: grid; grid-template-columns: minmax(0, 1fr) 3.4em; gap: 0.7em; align-items: center; }
+.slider input[type=range] { width: 100%; accent-color: var(--ink); min-height: var(--tap); }
+.slider output { font-variant-numeric: tabular-nums; color: var(--ink-2); text-align: right; }
+.leaf select, .leaf input[type=text] {
+  min-height: var(--tap); background: #fffaf0; color: var(--ink); border: 1px solid var(--ink-3); border-radius: var(--r-1); padding: 0 0.7em; font: inherit; max-width: 100%;
+}
+.leaf select:focus-visible, .leaf input[type=text]:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+
+/* ---- status / notes on paper ---------------------------------------------- */
+.note-slip { background: var(--paper-2); border-left: 4px solid var(--ribbon); padding: 0.5em 0.8em; margin: 0.6em 0; color: var(--ink-2); }
+.note-slip.warn { border-left-color: var(--warn-ink); }
+.note-slip.bad { border-left-color: var(--danger-ink); }
+.sealmark { color: var(--vermilion); font-weight: 700; }
+
+/* ==== src/styles/30_folio_pages.css ==== */
+/* Folio page contents: Journey, Words, Satchel, Map, Settings, Save sheet. */
+
+/* sub-navigation inside a section (e.g. Quests / Dialogue history) */
+.subnav { display: flex; flex-wrap: wrap; gap: 0; margin: 0 0 0.6em; border-bottom: 2px solid var(--ink-3); }
+.subbtn {
+  display: inline-flex; align-items: center; gap: 0.4em; min-height: var(--tap); padding: 0 0.9em; margin-bottom: -2px;
+  background: transparent; border: 0; border-bottom: 3px solid transparent; color: var(--ink-2); font: inherit; font-weight: 600; cursor: pointer;
+}
+.subbtn svg { width: 1.2em; height: 1.2em; }
+.subbtn[aria-pressed="true"] { color: var(--ink); border-bottom-color: var(--ribbon-deep); }
+.subbtn:hover { color: var(--ink); background: rgba(193, 138, 42, 0.08); }
+.subbtn:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: -3px; }
+@media (max-width: 599px) {
+  .subnav { display: grid; grid-template-columns: repeat(auto-fit, minmax(8.5em, 1fr)); }
+  .subbtn { justify-content: center; text-align: center; padding: 0.3em 0.5em; line-height: 1.25; }
+  .subbtn svg { display: none; }
+}
+.leaf h3 svg { width: 1.1em; height: 1.1em; align-self: center; color: var(--ink-2); flex: none; }
+.leaf h3 .count { margin-left: auto; }
+
+/* Journey */
+.entry .obj { margin-top: 0.3em; }
+.entry .obj .jline { font-size: 1.02em; }
+.entry .obj .en { font-size: 0.95em; }
+.entry.current .kind { color: var(--ribbon-deep); }
+button.entry .body { display: block; }
+button.entry .t, button.entry .kind { display: block; }
+.inline-detail { border-left: 3px solid var(--ribbon); margin: 0 0 0.6em 1.2em; padding: 0.2em 0.2em 0.4em 0.8em; background: rgba(255,255,255,0.35); }
+.qdetail .kind { font-size: 0.8em; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+.qdetail h3 { border: 0; margin: 0.2em 0 0; font-size: 1.25em; }
+.qdetail .en-title { margin: 0 0 0.6em; color: var(--ink-2); font-family: var(--serif); font-style: italic; }
+.small-ph { font-size: 0.95em !important; }
+.earlier { margin: 0.3em 0 0.8em 1.2em; padding: 0; color: var(--ink-2); }
+.earlier li { margin: 0.35em 0; }
+.done-list summary { list-style: none; cursor: pointer; }
+.done-list summary::-webkit-details-marker { display: none; }
+.done-list summary h3 { margin-bottom: 0.2em; }
+.done-list summary h3::after { content: "show"; margin-left: 0.6em; font: 0.78em var(--ui-font); color: var(--river); text-decoration: underline; }
+.done-list[open] summary h3::after { content: "hide"; }
+.done-list summary:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.history .who { font-size: 0.85em; font-weight: 600; color: var(--ink-3); }
+
+/* Words: filed notes */
+.row-acts { display: flex; flex-wrap: wrap; gap: 8px; margin: 0.6em 0; }
+.filed .written { font-size: 1.35em; line-height: 1.9; }
+.filed .reading { color: var(--ink-2); font-family: var(--jp-font); }
+.filed .t { font-weight: 400; color: var(--ink); }
+.filed .ex { margin-top: 0.3em; font-size: 0.92em; }
+.index button svg { width: 1.2em; height: 1.2em; color: var(--ink-2); align-self: center; flex: none; }
+.stats { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0; margin: 0.3em 0 0.8em; }
+.stats dt, .stats dd { margin: 0; padding: 0.45em 0.2em; border-bottom: 1px solid var(--rule); }
+.stats dd { text-align: right; font-variant-numeric: tabular-nums; color: var(--ink-2); }
+/* kana chart: state by underline length and weight, not colour alone */
+.klegend { display: flex; flex-wrap: wrap; gap: 0.3em 0.8em; align-items: center; margin-bottom: 0.6em; color: var(--ink-2); font-size: 0.9em; }
+.kgroup { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; padding: 0.25em 0; border-bottom: 1px dotted var(--rule); }
+.kgl { flex: 0 0 9em; color: var(--ink-3); font-size: 0.85em; }
+.kcells { display: flex; flex-wrap: wrap; gap: 3px; }
+.kc { display: inline-flex; flex-direction: column; align-items: center; width: 2.1em; padding: 1px 0 2px; font-family: var(--jp-font); font-size: 1.1em; color: var(--ink); }
+.kc .ch { line-height: 1.3; }
+.kc::after { content: ""; display: block; height: 3px; width: 10%; background: var(--ink-3); border-radius: 2px; }
+.kc.l0 { color: var(--ink-3); }
+.kc.l0::after { width: 0; }
+.kc.l1::after { width: 35%; }
+.kc.l2::after { width: 65%; background: var(--ink-2); }
+.kc.l3::after { width: 100%; background: var(--ink); height: 4px; }
+.kcell { min-width: var(--tap); min-height: var(--tap); font: 1.2em var(--jp-font); background: var(--paper); color: var(--ink-3); border: 1px dashed var(--paper-edge); border-radius: var(--r-1); cursor: pointer; position: relative; }
+.kcell.taught { color: var(--ink); border-style: solid; }
+.kcell.taught::after { content: ""; position: absolute; top: 4px; right: 4px; width: 5px; height: 5px; border-radius: 50%; background: var(--ink); }
+.kcell:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+.kdemo-box { display: flex; gap: 12px; align-items: center; margin: 0.4em 0 0.8em; }
+.kdemo-box canvas { width: 160px; height: 160px; border-radius: var(--r-1); background: #fffaf0; border: 1px solid var(--paper-edge); flex: none; }
+
+/* Satchel */
+.item-row .kind svg, .entry .kind svg { width: 1em; height: 1em; vertical-align: -0.15em; }
+.idetail .ibig { width: 64px; height: 64px; padding: 10px; border: 1px solid var(--paper-edge); border-radius: 50%; color: var(--ink); background: var(--paper-2); margin-bottom: 0.4em; }
+.idetail .ibig svg { width: 100%; height: 100%; }
+.idetail h3 { border: 0; }
+.note-slip svg { width: 1.1em; height: 1.1em; vertical-align: -0.2em; }
+
+/* Map: a folded chart */
+.chartbox { border: 1px solid var(--paper-edge); box-shadow: 0 2px 0 var(--paper-3); background: #efe3c6; margin: 0.2em 0 0.3em; }
+.chartbox svg { display: block; width: 100%; height: auto; max-height: min(52 * var(--vh), 420px); }
+
+/* Settings */
+.folio-settings .leaf h3:first-child { margin-top: 0; }
+.campaign-box { border: 1px solid var(--paper-edge); border-left: 4px solid var(--ribbon); padding: 0.5em 0.9em 0.2em; margin: 0.4em 0 1em; background: rgba(255,255,255,0.3); }
+.leaf .kind svg { width: 1.1em; height: 1.1em; vertical-align: -0.2em; }
+.leaf > .kind, .campaign-box > .kind { font-size: 0.8em; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; margin: 0.4em 0 0.2em; }
+.pv { margin: 0.2em 0 1em; }
+.pv figcaption { font-size: 0.82em; color: var(--ink-3); margin-bottom: 0.3em; }
+.pv-box { background: var(--cloth-900); color: var(--on-cloth); border-radius: var(--r-2); padding: 0.7em 0.9em; border: 1px solid var(--paper-edge); }
+.leaf .pv-box .enline, .leaf .pv-box .jline, .leaf .pv-box .jt, .leaf .pv-box ruby { color: var(--on-cloth); }
+.leaf .pv-box rt { color: var(--on-cloth-2); }
+.pv-main { font-size: 1.2em; line-height: 1.9; }
+.pv-main .enline { font-family: var(--serif); }
+.pv-sub { color: var(--on-cloth-2); margin-top: 0.2em; }
+.leaf .pv-sub .enline, .leaf .pv-sub .jt, .leaf .pv-sub ruby { color: var(--on-cloth-2); }
+.pv-sub.tap { font-style: italic; font-size: 0.9em; }
+.keys .keycaps { margin-top: 0.2em; }
+kbd { display: inline-block; min-width: 1.6em; padding: 0 0.4em; border: 1px solid var(--ink-3); border-bottom-width: 2px; border-radius: 3px; background: #fffaf0; color: var(--ink); font: 0.9em var(--ui-font); text-align: center; }
+body.high-contrast .pv-box { background: #000; color: #fff; }
 </style>
 </head>
 <body>
@@ -14672,6 +15113,194 @@ RB.ui.hud = (function () {
 })();
 
 
+/* ==== src/ui/12_folio.js ==== */
+/* Wayfarer's Folio — shared interface pieces: a small inline icon set (no
+ * emoji), the cloth frame, layered paper tabs (APG tabs pattern with roving
+ * tabindex, automatic activation, one moving ribbon), and helpers for
+ * two-page spreads. Screens (pause folio, settings, ledger…) build on these. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.ui.folio = (function () {
+  'use strict';
+  const esc = RB.util.esc;
+
+  // ---- icons: 24×24 line drawings in currentColor --------------------------------
+  const P = {
+    journey: '<path d="M4 20c3-1 4-4 7-5s6 1 8-3"/><path d="M6 20c1-2 0-3-2-4"/><circle cx="18" cy="6" r="2.5"/><path d="M18 8.5v3"/>',
+    words: '<path d="M5 19c2-6 6-11 12-14"/><path d="M17 5l2 2-9 9-3 1 1-3z"/><path d="M5 19h7"/>',
+    satchel: '<path d="M5 9h14l-1.2 10H6.2z"/><path d="M8 9V7a4 4 0 0 1 8 0v2"/><path d="M5 9l2 4h10l2-4"/><path d="M11 13h2v2h-2z"/>',
+    map: '<path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/><path d="M5.5 11c1.5-1 3 1 4.5 0s3 1 4.5 0 2.5 1 3.5 0" stroke-dasharray="1.5 1.8"/>',
+    ledger: '<path d="M6 3h11a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6z"/><path d="M6 3a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2"/><path d="M9 8h7M9 12h7M9 16h4"/>',
+    settings: '<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/><path d="M4 12h5M13 12h7"/><circle cx="11" cy="12" r="2"/>',
+    close: '<path d="M6 6l12 12M18 6L6 18"/>',
+    back: '<path d="M15 5l-7 7 7 7"/>',
+    next: '<path d="M9 5l7 7-7 7"/>',
+    main: '<path d="M7 3h10v18l-5-4-5 4z"/>',
+    side: '<circle cx="12" cy="12" r="6.5"/><path d="M12 8.5v4l2.5 1.5"/>',
+    companion: '<circle cx="9" cy="8" r="3"/><circle cx="16" cy="9" r="2.5"/><path d="M3.5 19c.8-4 3-6 5.5-6s4.7 2 5.5 6"/><path d="M14 14c2.6 0 4.5 1.8 5 5"/>',
+    done: '<path d="M4 12.5l5 5L20 6.5"/>',
+    note: '<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/><path d="M9 11h7M9 15h7"/>',
+    history: '<path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/>',
+    pouch: '<path d="M8 6h8l-1 2c3 1.5 4 4 4 7a5 5 0 0 1-5 5h-4a5 5 0 0 1-5-5c0-3 1-5.5 4-7z"/><path d="M9 6c1-2 5-2 6 0"/>',
+    letter: '<rect x="3.5" y="6" width="17" height="12" rx="1"/><path d="M4 7l8 6 8-6"/>',
+    bell: '<path d="M12 3a1 1 0 0 1 1 1v1.2c2.8.6 4.5 3 4.5 6V15l1.5 2.5H5L6.5 15v-3.8c0-3.2 1.7-5.6 4.5-6.1V4a1 1 0 0 1 1-1z"/><path d="M10 19.5a2 2 0 0 0 4 0"/>',
+    key: '<circle cx="8" cy="12" r="3.5"/><path d="M11.5 12H21M17 12v3M20 12v2"/>',
+    charm: '<path d="M8 4h8v13l-4 3-4-3z"/><path d="M10 4V2.5h4V4"/><path d="M10 9h4M12 7v6"/>',
+    shard: '<path d="M7 4l9 2 3 7-7 8-7-6z"/><path d="M7 4l5 9 7 0M12 13l0 8"/>',
+    tool: '<path d="M14 4a4 4 0 0 0 5 5l-9 9a2 2 0 0 1-3-3z"/><path d="M13 5l6 6"/>',
+    keepsake: '<circle cx="12" cy="9" r="2"/><path d="M12 7c0-3 4-4 4-1s-4 3-4 3M12 7c0-3-4-4-4-1s4 3 4 3M12 11c0 3 4 4 4 1s-4-3-4-3M12 11c0 3-4 4-4 1s4-3 4-3"/><path d="M12 13v8"/>',
+    book: '<path d="M4 5c3-1 6-1 8 1v14c-2-2-5-2-8-1z"/><path d="M20 5c-3-1-6-1-8 1v14c2-2 5-2 8-1z"/>',
+    lantern: '<path d="M9 5h6M12 3v2M8 7h8l1 4-1 6H8l-1-6z"/><path d="M9 20h6M12 17v3"/>',
+    scroll: '<path d="M6 5h11a2 2 0 0 1 0 4H8"/><path d="M6 5a2 2 0 0 0 0 4v10h11a2 2 0 0 0 0-4"/><path d="M10 13h5"/>',
+    food: '<path d="M12 4c4 0 7 6 7 10a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3c0-4 3-10 7-10z"/><path d="M9 14h6v3H9z"/>',
+    stone: '<path d="M5 15c0-5 3-9 8-9 3 0 6 3 6 7 0 4-3 6-7 6-4 0-7-1-7-4z"/><path d="M9 11c1-1 2-1 3 0"/>',
+    travel: '<path d="M5 19c4-9 8-13 14-14"/><path d="M14 5h5v5"/>',
+    here: '<path d="M12 21s-6-6-6-11a6 6 0 0 1 12 0c0 5-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/>',
+    sound: '<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 9c1.5 1.5 1.5 4.5 0 6M18.5 7c3 3 3 7 0 10"/>',
+    help: '<path d="M9 9a3 3 0 1 1 4 2.8c-.7.3-1 1-1 1.7V15"/><circle cx="12" cy="18" r=".6"/><circle cx="12" cy="12" r="9"/>',
+    bulb: '<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V16h5v-.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/>',
+    menu: '<path d="M5 7h14M5 12h14M5 17h14"/>',
+    warn: '<path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17v.5"/>',
+    copy: '<rect x="8" y="8" width="11" height="12" rx="1"/><path d="M5 16V4h11"/>',
+    trash: '<path d="M5 7h14M9 7V4h6v3M7 7l1 13h8l1-13"/>',
+    save: '<path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/>',
+    load: '<path d="M4 7h7l2 2h7v10H4z"/><path d="M12 12v5M9.5 14.5L12 17l2.5-2.5"/>',
+    title: '<path d="M4 11l8-6 8 6"/><path d="M6 10v10h12V10"/><path d="M10 20v-5h4v5"/>',
+    practice: '<path d="M4 19l4-1L19 7l-3-3L5 15z"/><path d="M14 6l3 3"/>',
+  };
+  function icon(name, title) {
+    const d = P[name] || P.pouch;
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"' +
+      (title ? ' role="img" aria-label="' + esc(title) + '"' : ' aria-hidden="true" focusable="false"') + '>' + d + '</svg>';
+  }
+  // A recognisable icon for an item from its slot, id and name.
+  function itemIcon(id, d) {
+    const k = (id + ' ' + ((d && d.name && d.name.en) || '')).toLowerCase();
+    if (d && d.slot === 'charm') return 'charm';
+    if (d && d.slot === 'tool') return 'tool';
+    if (d && d.slot === 'cosmetic') return 'keepsake';
+    const R = [[/letter|reply|note|postcard|envelope|message|tag/, 'letter'], [/bell/, 'bell'], [/key/, 'key'], [/glass|shard|crystal/, 'shard'],
+      [/book|folio|registry|ledger|minutes|record|diary|notebook|log\b|page/, 'book'], [/lantern|lamp|candle/, 'lantern'], [/map|chart|sketch|scroll|poster/, 'scroll'],
+      [/rice|mochi|tea|food|bread|persimmon|dumpling|fish|cake|bun|soup/, 'food'], [/stone|tile|seal|pebble|rock/, 'stone'], [/tool|hammer|needle|brush/, 'tool']];
+    for (const [re, n] of R) if (re.test(k)) return n;
+    return 'pouch';
+  }
+
+  // ---- frame -------------------------------------------------------------------
+  // Returns the pieces of a folio: scrim > .folio > head / tab slot / leafbox / foot.
+  function frame(opts) {
+    const scrim = RB.ui.el('div', 'folio-scrim');
+    const f = RB.ui.el('div', 'folio' + (opts.cls ? ' ' + opts.cls : ''));
+    f.setAttribute('role', 'dialog');
+    f.setAttribute('aria-modal', 'true');
+    const hid = 'fh' + Math.random().toString(36).slice(2, 7);
+    f.setAttribute('aria-labelledby', hid);
+    f.innerHTML = '<div class="folio-head"><h2 id="' + hid + '"></h2><span class="meta"></span>' +
+      (opts.onClose ? '<button class="cbtn" data-folio-close>' + icon(opts.closeIcon || 'close') + '<span>' + esc(opts.closeLabel || 'Close') + '</span></button>' : '') + '</div>' +
+      '<div class="tabslot"></div><div class="leafbox"></div><div class="folio-foot"></div>';
+    scrim.appendChild(f);
+    const api = {
+      scrim, el: f,
+      head: f.querySelector('.folio-head'), tabslot: f.querySelector('.tabslot'), box: f.querySelector('.leafbox'), foot: f.querySelector('.folio-foot'),
+      setTitle(html, meta) { f.querySelector('h2').innerHTML = html; f.querySelector('.meta').innerHTML = meta || ''; },
+    };
+    if (opts.onClose) f.querySelector('[data-folio-close]').onclick = opts.onClose;
+    // clicks on the dim area outside the book close it (like Back), never on the page
+    scrim.addEventListener('pointerdown', (e) => { if (e.target === scrim && opts.onClose) { scrim.__outside = true; } });
+    scrim.addEventListener('click', (e) => { if (e.target === scrim && scrim.__outside && opts.onClose) opts.onClose(); scrim.__outside = false; });
+    return api;
+  }
+
+  // ---- paper tabs -----------------------------------------------------------------
+  // items: [{id, en, jp, icon}] · onSelect(id, how) where how is 'click' | 'key'
+  function tabs(slot, items, selected, onSelect, opts) {
+    opts = opts || {};
+    const wrap = RB.ui.el('div', 'tabrail-wrap');
+    const pid = opts.panelId || 'folio-page';
+    wrap.innerHTML = '<button class="rail-arrow l" tabindex="-1" aria-hidden="true">' + icon('back') + '</button>' +
+      '<div class="tabrail" role="tablist" aria-label="' + esc(opts.label || 'Sections') + '">' +
+      items.map((t) => '<button class="ptab" role="tab" id="tab-' + t.id + '" data-id="' + t.id + '" aria-controls="' + pid + '" aria-selected="false" tabindex="-1">' +
+        icon(t.icon) + '<span class="tl">' + RB.ui.label(t.jp, t.en) + '</span></button>').join('') +
+      '<span class="ribbon" aria-hidden="true"></span></div>' +
+      '<button class="rail-arrow r" tabindex="-1" aria-hidden="true">' + icon('next') + '</button>';
+    slot.innerHTML = '';
+    slot.appendChild(wrap);
+    const rail = wrap.querySelector('.tabrail');
+    const ribbon = rail.querySelector('.ribbon');
+    const btns = Array.from(rail.querySelectorAll('.ptab'));
+    let cur = null;
+    // keep the selected tab clear of the rail's edge arrows without moving the page
+    function reveal(b) {
+      const pad = wrap.classList.contains('overflowing') ? 44 : 8;
+      const l = b.offsetLeft - rail.scrollLeft, r = l + b.offsetWidth;
+      if (l < pad) rail.scrollLeft += l - pad; else if (r > rail.clientWidth - pad) rail.scrollLeft += r - rail.clientWidth + pad;
+    }
+    function place() {
+      const b = btns.find((x) => x.dataset.id === cur);
+      if (!b) return;
+      ribbon.style.transform = 'translateX(' + (b.offsetLeft + b.offsetWidth - 28) + 'px)';
+      // natural width of the tabs (independent of the arrows' extra padding)
+      const first = btns[0], last = btns[btns.length - 1];
+      const need = last.offsetLeft + last.offsetWidth - first.offsetLeft + 24;
+      wrap.classList.toggle('overflowing', need > rail.clientWidth + 1);
+      reveal(b);
+    }
+    function select(id, how, focus) {
+      const changed = id !== cur;
+      cur = id;
+      for (const b of btns) {
+        const on = b.dataset.id === id;
+        b.setAttribute('aria-selected', on ? 'true' : 'false');
+        b.tabIndex = on ? 0 : -1;
+        b.classList.toggle('autofocus', on); // the folio opens with focus on its selected tab
+        if (on && changed && how) { b.classList.remove('lift'); void b.offsetWidth; b.classList.add('lift'); }
+      }
+      const b = btns.find((x) => x.dataset.id === id);
+      if (b) {
+        if (focus) b.focus({ preventScroll: true });
+        reveal(b);
+      }
+      requestAnimationFrame(place);
+      if (changed && how && onSelect) onSelect(id, how);
+    }
+    rail.addEventListener('click', (e) => {
+      const b = e.target.closest('.ptab');
+      if (!b || b.getAttribute('aria-disabled') === 'true') return;
+      if (b.dataset.id !== cur) RB.audio && RB.audio.sfx('page');
+      select(b.dataset.id, 'click', false);
+    });
+    rail.addEventListener('keydown', (e) => {
+      const i = btns.findIndex((b) => b === document.activeElement);
+      if (i < 0) return;
+      let j = null;
+      if (e.key === 'ArrowRight') j = (i + 1) % btns.length;
+      else if (e.key === 'ArrowLeft') j = (i - 1 + btns.length) % btns.length;
+      else if (e.key === 'Home') j = 0;
+      else if (e.key === 'End') j = btns.length - 1;
+      if (j == null) return;
+      // the tablist owns Left/Right/Home/End; the game's global keys must not also act
+      e.preventDefault();
+      e.stopPropagation();
+      RB.audio && RB.audio.sfx('page');
+      select(btns[j].dataset.id, 'key', true);
+    });
+    wrap.querySelector('.rail-arrow.l').onclick = () => { rail.scrollLeft -= rail.clientWidth * 0.6; };
+    wrap.querySelector('.rail-arrow.r').onclick = () => { rail.scrollLeft += rail.clientWidth * 0.6; };
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => place()) : null;
+    if (ro) ro.observe(rail);
+    select(selected, null, false);
+    return { el: wrap, select: (id) => select(id, null, false), current: () => cur, destroy() { if (ro) ro.disconnect(); } };
+  }
+
+  // Two-page spread available at this width (matches the CSS breakpoint).
+  function wide() {
+    return typeof matchMedia !== 'undefined' && matchMedia('(min-width: 860px)').matches;
+  }
+
+  return { icon, itemIcon, frame, tabs, wide, ICONS: P };
+})();
+
+
 /* ==== src/ui/20_dialogue.js ==== */
 /* Dialogue box: portrait, speaker, Japanese/English per presentation
  * settings, word-level reveal, optional local Japanese voice, backlog,
@@ -15619,224 +16248,219 @@ RB.ui.create = (function () {
 
 
 /* ==== src/ui/50_menu.js ==== */
-/* Pause menu: journal, notebook, items/equipment, map & fast travel,
- * dialogue log, settings, save/load. */
+/* The pause folio: four paper tabs — Journey (quests, notes, dialogue
+ * history), Words (inscriptions, noted words, kana, grammar, lore, progress,
+ * guide), Satchel (equipment and carried items), Map (route chart and fast
+ * travel) — plus Save & Load and Settings as plain utility actions on the
+ * folio's foot. Old section names still open the right place
+ * (journal, log, notebook, guide, items, settings, save). */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.ui.menu = (function () {
   'use strict';
   const esc = RB.util.esc;
-  const TABS = [
-    ['journal', '{旅|たび} の {記録|きろく}', 'Journal'],
-    ['notebook', '{手帳|てちょう}', 'Notebook'],
-    ['items', '{持|も}ち{物|もの}', 'Items'],
-    ['map', '{地図|ちず}', 'Map'],
-    ['log', '{会話|かいわ}{履歴|りれき}', 'Log'],
-    ['guide', '{手引|てび}き', 'Guide'],
-    ['settings', '{設定|せってい}', 'Settings'],
-    ['save', 'セーブ', 'Save'],
+  const F = () => RB.ui.folio;
+  const I = (n, t) => RB.ui.folio.icon(n, t);
+  const SECTIONS = [
+    { id: 'journey', en: 'Journey', jp: '{旅路|たびじ}', icon: 'journey' },
+    { id: 'words', en: 'Words', jp: '{言葉|ことば}', icon: 'words' },
+    { id: 'satchel', en: 'Satchel', jp: '{荷物|にもつ}', icon: 'satchel' },
+    { id: 'map', en: 'Map', jp: '{地図|ちず}', icon: 'map' },
   ];
-  let layer = null, tab = 'journal', panel = null;
+  // old tab ids → [section, sub-view] or a utility
+  const ALIAS = {
+    journal: ['journey', 'quests'], journey: ['journey'], log: ['journey', 'history'], history: ['journey', 'history'],
+    notebook: ['words'], words: ['words'], guide: ['words', 'guide'], items: ['satchel'], satchel: ['satchel'], map: ['map'],
+    settings: '@settings', save: '@save',
+  };
+  const COMPANION_QUESTS = { co_suzu: 'suzu', lf_nao: 'nao', lf_mio: 'mio', ren_ushio: 'ren' };
+  const view = {
+    section: 'journey',
+    journey: { view: 'quests', sel: null },
+    words: { sub: null, guide: 'basics' },
+    satchel: { sel: null },
+    map: {},
+    scroll: {},
+  };
+  let layer = null, fr = null, tabsApi = null, mq = null, stopDemo = () => {};
 
+  // ---- open / close -------------------------------------------------------------------
   function open(which) {
-    if (layer) { show(which || tab); return; }
+    const a = which ? ALIAS[which] : null;
+    if (layer) {
+      if (a === '@settings') return RB.ui.settings.open();
+      if (a === '@save') return saveSheet();
+      if (a) go(a[0], a[1]);
+      return;
+    }
     if (RB.game.mode() !== 'world' && RB.game.mode() !== 'dialogue') return;
     RB.game.pushMode('menu');
     RB.audio && RB.audio.sfx('menu_open');
-    const scrim = RB.ui.el('div', 'scrim');
-    panel = RB.ui.el('div', 'panel');
-    scrim.appendChild(panel);
-    layer = { el: scrim, name: 'menu' };
-    layer.onCancel = close;
-    layer.onAction = (a) => {
-      if (a === 'menu') { close(); return true; }
-      return false;
+    fr = F().frame({ onClose: close, closeLabel: 'Close' });
+    fr.foot.innerHTML =
+      '<button class="cbtn" data-util="save">' + I('ledger') + '<span>' + RB.ui.label('セーブ・ロード', 'Save & Load') + '</span></button>' +
+      '<button class="cbtn" data-util="settings">' + I('settings') + '<span>' + RB.ui.label('{設定|せってい}', 'Settings') + '</span></button>';
+    fr.foot.onclick = (e) => {
+      const b = e.target.closest('[data-util]');
+      if (!b) return;
+      if (b.dataset.util === 'settings') RB.ui.settings.open();
+      else saveSheet();
     };
+    layer = { el: fr.scrim, name: 'menu' };
+    layer.onCancel = back;
+    layer.onAction = (act) => { if (act === 'menu') { close(); return true; } return false; };
     RB.ui.pushLayer(layer);
-    show(which || tab);
+    if (a && a !== '@settings' && a !== '@save') { view.section = a[0]; applySub(a[0], a[1]); }
+    tabsApi = F().tabs(fr.tabslot, SECTIONS, view.section, (id) => { remember(); view.section = id; render(); }, { label: 'Folio sections', panelId: 'folio-page' });
+    render();
+    if (typeof matchMedia !== 'undefined') {
+      mq = matchMedia('(min-width: 860px)');
+      mq.onchange = () => { if (layer) { remember(); render(); } };
+    }
+    if (a === '@settings') RB.ui.settings.open();
+    else if (a === '@save') saveSheet();
   }
   function close() {
     if (!layer) return;
+    remember();
+    stopDemo();
+    if (tabsApi) tabsApi.destroy();
+    if (mq) mq.onchange = null;
     RB.ui.popLayer(layer);
-    layer = null;
+    layer = null; fr = null; tabsApi = null;
     RB.game.popMode('menu');
     RB.audio && RB.audio.sfx('menu_close');
-    RB.ui.help.hide();
+    RB.ui.help.hide(true);
+    // give the keyboard back to the world without moving the character
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    RB.input.clearHeld && RB.input.clearHeld();
   }
   function closeAll() { close(); }
-
-  function show(t) {
-    tab = t;
-    const inGame = !!RB.game.s;
-    panel.innerHTML = '<header><h2>' + RB.ui.label(TABS.find((x) => x[0] === t)[1], TABS.find((x) => x[0] === t)[2]) + '</h2>' +
-      (inGame ? '<span class="small dim">' + esc(RB.game.s.player.name) + (RB.game.s.comp ? ' &amp; ' + esc(RB.content.chars[RB.game.s.comp].name.en) : '') + ' · ' + RB.util.fmtTime(RB.game.s.playtime) + '</span>' : '') +
-      '<button class="btn small" data-close>Close</button></header>' +
-      '<div class="tabs" role="tablist">' + TABS.map(([id, jp, en]) => '<button class="btn small' + (id === t ? ' sel' : '') + '" role="tab" data-tab="' + id + '">' + RB.ui.label(jp, en) + '</button>').join('') + '</div>' +
-      '<div class="body"></div>';
-    panel.querySelector('[data-close]').onclick = close;
-    panel.querySelectorAll('[data-tab]').forEach((b) => (b.onclick = () => { RB.audio && RB.audio.sfx('page'); show(b.getAttribute('data-tab')); }));
-    const body = panel.querySelector('.body');
-    ({ journal, notebook, items, map, log, settings, save, guide })[t](body);
+  // Back: leave a sub-page first (phones), otherwise close the folio.
+  function back() {
+    const w = view.words, j = view.journey;
+    if (view.section === 'words' && w.sub && !F().wide()) { remember(); w.sub = null; render(); return; }
+    if (view.section === 'journey' && j.view === 'history') { remember(); j.view = 'quests'; render(); return; }
+    close();
+  }
+  function go(section, sub) {
+    remember();
+    view.section = section;
+    applySub(section, sub);
+    if (tabsApi) tabsApi.select(section);
+    render();
+  }
+  function applySub(section, sub) {
+    if (section === 'journey') view.journey.view = sub || 'quests';
+    if (section === 'words') view.words.sub = sub || view.words.sub;
+  }
+  function key() {
+    const s = view.section;
+    return s + ':' + (s === 'journey' ? view.journey.view : s === 'words' ? view.words.sub || 'index' : '');
+  }
+  function remember() {
+    if (!fr) return;
+    const leaves = fr.box.querySelectorAll('.leaf');
+    if (leaves[0]) view.scroll[key()] = [leaves[0].scrollTop, leaves[1] ? leaves[1].scrollTop : 0];
   }
 
-  // ---- journal ----------------------------------------------------------------------
-  function journal(body) {
+  // ---- rendering ---------------------------------------------------------------------------
+  function render() {
+    stopDemo(); stopDemo = () => {};
     const s = RB.game.s;
-    const qs = Object.keys(s.quests).map((id) => ({ id, q: s.quests[id], d: RB.content.quests[id] })).filter((x) => x.d);
-    const active = qs.filter((x) => !x.q.done).sort((a, b) => (a.d.main ? -1 : 1) - (b.d.main ? -1 : 1) || b.q.t - a.q.t);
-    const done = qs.filter((x) => x.q.done);
-    const stageText = (x) => {
-      const st = x.d.stages && x.d.stages[Math.min(x.q.stage, x.d.stages.length - 1)];
-      return st ? RB.ui.jhtml(st.jp) + '<div class="en">' + esc(RB.script.enVars(st.en)) + '</div>' : '';
-    };
-    let h = '<h3>Current</h3><div class="list">';
-    if (!active.length) h += '<p class="dim">Nothing pressing. Walk around; people will tell you what they need.</p>';
-    for (const x of active) h += '<div class="item"><div class="t">' + (x.d.main ? '★ ' : '') + RB.ui.jhtml(x.d.title.jp) + ' <span class="dim">— ' + esc(x.d.title.en) + '</span></div><div class="small">' + stageText(x) + '</div></div>';
-    h += '</div>';
-    const j = (s.journal || []).slice(-8).reverse();
-    if (j.length) h += '<h3>Notes to self</h3><div class="list">' + j.map((e) => '<div class="item small">' + RB.ui.jhtml(e.jp) + '<div class="en">' + esc(RB.script.enVars(e.en)) + '</div></div>').join('') + '</div>';
-    if (done.length) h += '<h3>Completed</h3><div class="list">' + done.map((x) => '<div class="item small dim">✓ ' + esc(x.d.title.en) + '</div>').join('') + '</div>';
-    body.innerHTML = h;
+    const sec = SECTIONS.find((x) => x.id === view.section);
+    const comp = s.comp && RB.content.chars[s.comp];
+    fr.setTitle(RB.ui.label(sec.jp, sec.en), esc(s.player.name) + (comp ? ' &amp; ' + esc(comp.name.en) : '') + ' · ' + RB.util.fmtTime(s.playtime));
+    const two = F().wide();
+    fr.box.innerHTML = '<div class="spread' + (two ? ' two' : '') + '" id="folio-page" role="tabpanel" aria-labelledby="tab-' + view.section + '">' +
+      '<div class="leaf" tabindex="0" aria-label="' + esc(sec.en) + ' page"></div><div class="leaf leaf-b" tabindex="0" aria-label="' + esc(sec.en) + ' detail page"></div></div>';
+    const [A, B] = fr.box.querySelectorAll('.leaf');
+    ({ journey, words, satchel, map })[view.section](A, B, two);
+    const sc = view.scroll[key()];
+    if (sc) { A.scrollTop = sc[0]; B.scrollTop = sc[1]; }
   }
+  const j = (line) => (line ? RB.ui.jhtml(line) : '');
+  const en = (t) => '<div class="en">' + esc(RB.script.enVars(t || '')) + '</div>';
 
-  // ---- notebook ------------------------------------------------------------------------
-  let nbTab = 'words';
-  function notebook(body) {
-    const s = RB.game.s;
-    const sub = [['words', 'Words'], ['kana', 'Kana'], ['grammar', 'Grammar'], ['lore', 'Lore & histories'], ['stats', 'Progress']];
-    let h = '<div class="row" style="margin-bottom:0.5em">' + sub.map(([id, l]) => '<button class="btn small' + (nbTab === id ? ' on' : '') + '" data-nb="' + id + '">' + esc(l) + '</button>').join('') +
-      '<span class="grow"></span><button class="btn small" data-a="practice" title="Optional review of uncertain items">Practise (optional) ▶</button></div>';
-    if (nbTab === 'words') {
-      const ws = s.words.map((id) => RB.content.words[id]).filter(Boolean);
-      h += '<h3>Inscriptions you can weave</h3><div class="grid2">' + (ws.length ? ws.map((w) => '<div class="item"><div class="t">' + RB.ui.jhtml(w.jp) + '</div><div class="small">' + esc(w.en) + '</div><div class="small dim">' + esc(w.effect || '') + '</div></div>').join('') : '<p class="dim">None yet.</p>') + '</div>';
-      const saved = s.notebook.filter((n) => n.kind === 'word');
-      h += '<h3>Words you noted</h3><div class="grid2">' + (saved.length ? saved.map((n) => '<div class="item"><span class="jp" lang="ja">' + esc(n.surface) + '</span> <span class="dim">【' + esc(n.reading) + '】</span><div class="small">' + esc(n.m) + '</div></div>').join('') : '<p class="dim small">Use the lightbulb on any Japanese text and press “＋ Notebook”.</p>') + '</div>';
-    } else if (nbTab === 'kana') {
-      const ng = s.learn.profile === 'F' && s.learn.kanaKnown !== 'both' ? RB.lessons.nextGroup(s) : null;
-      if (ng) h += '<div class="row" style="margin-bottom:0.4em"><button class="btn small primary" data-a="nextkana">Learn the next kana group: ' + esc(ng.g.title || '') + ' ▶</button><span class="small dim">Optional — the story also teaches kana as you go.</span></div>';
-      h += kanaChart(s);
-    } else if (nbTab === 'grammar') {
-      const seen = Object.keys(s.learn.items).filter((k) => k.startsWith('g:')).map((k) => k.slice(2));
-      const pts = (RB.grammar && RB.grammar.points ? RB.grammar.points : []).filter((g) => seen.includes(g.id));
-      h += pts.length ? '<div class="list">' + pts.map((g) => '<div class="item"><div class="t">' + RB.ui.jhtml(g.title) + '</div><div class="small">' + esc(g.en) + '</div>' + (g.ex || []).slice(0, 2).map((e) => '<div class="small">' + RB.ui.jhtml(e.jp) + ' <span class="dim">' + esc(e.en) + '</span></div>').join('') + '</div>').join('') + '</div>' : '<p class="dim">Grammar you meet on the road will be collected here.</p>';
-    } else if (nbTab === 'lore') {
-      const notes = s.notebook.filter((n) => n.kind === 'lore').map((n) => RB.content.notes[n.id]).filter(Boolean);
-      h += notes.length ? '<div class="list">' + notes.map((n) => '<div class="item"><div class="t">' + RB.ui.jhtml(n.title.jp) + ' <span class="dim">— ' + esc(n.title.en) + '</span>' + (n.fiction ? ' <span class="small" style="color:var(--accent)">[fictional term]</span>' : '') + '</div>' + (n.jp ? '<div>' + RB.ui.jhtml(n.jp) + '</div>' : '') + '<div class="small">' + esc(n.en) + '</div></div>').join('') + '</div>' : '<p class="dim">Stories and inscriptions you collect will be kept here.</p>';
-    } else if (nbTab === 'stats') {
-      const L = s.learn;
-      const items = Object.values(L.items);
-      const by = (p) => items.filter((r) => r.id && r.id.startsWith(p));
-      const strong = (arr) => arr.filter((r) => r.box >= 3).length;
-      h += '<div class="grid2">' +
-        [['k:', 'Characters'], ['v:', 'Vocabulary'], ['g:', 'Grammar'], ['c:', 'Comprehension']].map(([p, l]) => '<div class="item"><div class="t">' + l + '</div><div class="small">' + by(p).length + ' met · ' + strong(by(p)) + ' steady</div></div>').join('') + '</div>' +
-        '<h3>How you answered</h3><div class="grid2"><div class="item small">Recognised (chose from options): ' + L.stats.recog + '</div><div class="item small">Recalled and typed: ' + L.stats.typed + '</div><div class="item small">Handwritten and recognised: ' + L.stats.hand + '</div><div class="item small">Assisted (help or manual correction): ' + L.stats.assisted + '</div></div>' +
-        '<p class="small dim">These are counted separately because choosing, typing and writing show different things. None of them is a lesser way to play.</p>';
-    }
-    body.innerHTML = h;
-    body.querySelectorAll('[data-nb]').forEach((b) => (b.onclick = () => { nbTab = b.getAttribute('data-nb'); notebook(body); }));
-    const nk = body.querySelector('[data-a=nextkana]');
-    if (nk) nk.onclick = async () => { close(); await RB.lessons.run('kana'); };
-    const pr = body.querySelector('[data-a=practice]');
-    if (pr) pr.onclick = async () => { close(); await RB.challenge.practice(); };
+  // ---- Journey --------------------------------------------------------------------------------
+  function questKind(id, d) {
+    if (d.main) return ['main', 'Main road'];
+    if (COMPANION_QUESTS[id] || d.companion) return ['companion', 'Companion'];
+    return ['side', 'Side request'];
   }
-  function kanaChart(s) {
-    const K = RB.kana;
-    const groups = RB.lessons.groups();
-    if (!groups.length) return '<p class="dim">Kana chart unavailable.</p>';
-    const rec = s.learn.items;
-    const cell = (ch) => {
-      const r = rec['k:' + ch];
-      const lvl = !r ? 0 : r.box >= 3 ? 3 : r.box >= 1 ? 2 : 1;
-      const col = ['#2a2d44', '#5a4a2a', '#6a7a3a', '#3a7a5a'][lvl];
-      const lbl = ['not met', 'met', 'practising', 'steady'][lvl];
-      return '<span class="jp" lang="ja" style="display:inline-block;width:2em;text-align:center;margin:1px;border-radius:4px;padding:2px 0;background:' + col + '" title="' + esc(K.romaji(ch) + ' — ' + lbl) + '">' + esc(ch) + '</span>';
-    };
-    let h = '<p class="small dim">Colour shows how settled each character is: not met · met · practising · steady (hover for the label).</p>';
-    for (const g of groups) h += '<div style="margin:0.3em 0"><span class="small dim" style="display:inline-block;min-width:9em">' + esc(g.title || '') + '</span>' + RB.lessons.groupChars(g).map((c) => cell(c.ch)).join('') + '</div>';
-    return h;
+  function stageOf(x) {
+    const st = x.d.stages && x.d.stages[Math.min(x.q.stage, x.d.stages.length - 1)];
+    return st ? '<div class="obj">' + j(st.jp) + en(st.en) + '</div>' : '';
   }
-
-  // ---- items & equipment --------------------------------------------------------------
-  function items(body) {
-    const s = RB.game.s;
-    const inv = Object.keys(s.inv).map((id) => ({ id, n: s.inv[id], d: RB.content.items[id] })).filter((x) => x.d);
-    const slots = [['charm', 'Charm'], ['tool', 'Tool'], ['cosmetic', 'Keepsake (appearance)']];
-    let h = '<h3>Equipped</h3><div class="grid2">' + slots.map(([k, l]) => {
-      const it = s.equip[k] && RB.content.items[s.equip[k]];
-      return '<div class="item"><div class="small dim">' + l + '</div><div class="t">' + (it ? RB.ui.jhtml(it.name.jp) + ' ' + esc(it.name.en) : '<span class="dim">—</span>') + '</div>' + (it ? '<div class="small">' + esc(it.desc || '') + '</div><button class="btn small" data-unequip="' + k + '">Remove</button>' : '') + '</div>';
-    }).join('') + '</div>';
-    h += '<h3>Carried</h3><div class="list">';
-    if (!inv.length) h += '<p class="dim">Your pack is light.</p>';
-    for (const x of inv) {
-      h += '<div class="item"><div class="t">' + RB.ui.jhtml(x.d.name.jp) + ' <span>' + esc(x.d.name.en) + '</span>' + (x.n > 1 ? ' ×' + x.n : '') + (x.d.key ? ' <span class="small" style="color:var(--accent)">important</span>' : '') + '</div><div class="small">' + esc(RB.script.enVars(x.d.desc || '')) + '</div>' +
-        (x.d.slot ? '<button class="btn small" data-equip="' + x.id + '">' + (s.equip[x.d.slot] === x.id ? 'Equipped' : 'Equip') + '</button>' : '') + '</div>';
-    }
-    h += '</div><p class="small dim">Important items cannot be sold or used up. Nothing essential can be lost.</p>';
-    body.innerHTML = h;
-    body.onclick = (e) => {
-      const eq = e.target.closest('[data-equip]'), un = e.target.closest('[data-unequip]');
-      if (eq) { const id = eq.getAttribute('data-equip'); const d = RB.content.items[id]; s.equip[d.slot] = id; RB.audio && RB.audio.sfx('confirm'); items(body); if (d.slot === 'cosmetic') RB.world.W.player.look = null || RB.world.W.player.look; }
-      if (un) { s.equip[un.getAttribute('data-unequip')] = null; items(body); }
-      if (eq || un) { const W = RB.world.W; if (W.player) { const look = Object.assign({}, s.player.look); const c = s.equip.cosmetic && RB.content.items[s.equip.cosmetic]; if (c && c.acc) look.acc = (look.acc || []).concat([c.acc]); W.player.look = look; } }
-    };
+  function questDetail(x) {
+    const [k, kl] = questKind(x.id, x.d);
+    const cur = Math.min(x.q.stage, (x.d.stages || []).length - 1);
+    const earlier = (x.d.stages || []).slice(0, x.q.done ? cur + 1 : cur);
+    return '<div class="qdetail"><div class="kind">' + esc(kl) + (x.q.done ? ' · completed' : '') + '</div>' +
+      '<h3>' + j(x.d.title.jp) + '</h3><p class="en-title">' + esc(x.d.title.en) + '</p>' +
+      (x.q.done ? '<p class="muted">' + I('done') + ' Finished.</p>' : '<div class="ph small-ph">What to do now</div>' + stageOf(x)) +
+      (earlier.length && !x.q.done ? '<div class="ph small-ph">Earlier on this road</div><ol class="earlier">' + earlier.map((st) => '<li>' + j(st.jp) + en(st.en) + '</li>').join('') + '</ol>' : '') +
+      (x.q.done && earlier.length ? '<div class="ph small-ph">The steps you took</div><ol class="earlier">' + earlier.map((st) => '<li>' + j(st.jp) + en(st.en) + '</li>').join('') + '</ol>' : '') +
+      '</div>';
   }
-
-  // ---- map & fast travel ------------------------------------------------------------------
-  function map(body) {
+  function journey(A, B, two) {
     const s = RB.game.s;
-    const places = Object.keys(RB.content.places).map((id) => Object.assign({ id }, RB.content.places[id]));
-    const curMap = RB.content.maps[s.map] || {};
-    const canTravel = !curMap.noTravel && RB.game.mode() === 'menu';
-    const W = 520, H = 320;
-    let svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;max-height:52vh;background:#1a1e2c;border-radius:10px;border:1px solid var(--line-soft)" role="img" aria-label="World map">';
-    svg += '<path d="M0 250 Q120 220 200 250 T 520 230 L520 320 L0 320Z" fill="#23304a"/><path d="M60 0 L140 90 L230 60 L300 120 L420 40 L520 80 L520 0Z" fill="#2c3246"/>';
-    const roads = RB.content.roads || [];
-    for (const [a, b] of roads) {
-      const A = RB.content.places[a], B = RB.content.places[b];
-      if (!A || !B) continue;
-      const known = s.travel[a] || s.travel[b];
-      svg += '<line x1="' + A.pos[0] + '" y1="' + A.pos[1] + '" x2="' + B.pos[0] + '" y2="' + B.pos[1] + '" stroke="' + (known ? '#e7c46e' : '#4a4e60') + '" stroke-width="2" stroke-dasharray="' + (known ? '0' : '4 4') + '"/>';
+    const J = view.journey;
+    const sub = '<div class="subnav" role="group" aria-label="Journey pages">' +
+      '<button class="subbtn" data-jv="quests" aria-pressed="' + (J.view === 'quests') + '">' + I('journey') + 'Quests &amp; notes</button>' +
+      '<button class="subbtn" data-jv="history" aria-pressed="' + (J.view === 'history') + '">' + I('history') + 'Dialogue history</button></div>';
+    if (J.view === 'history') {
+      const lines = s.backlog.slice(-120);
+      A.innerHTML = sub + '<h3>Dialogue history <span class="count">' + lines.length + ' lines, oldest first</span></h3>' +
+        (lines.length ? '<ol class="entries history">' + lines.map((l) => {
+          const ch = l.who === 'pc' ? { name: { en: s.player.name } } : RB.content.chars[l.who];
+          return '<li class="entry"><span class="mark">' + I(l.choice ? 'next' : 'history') + '</span><div><div class="who">' + (l.choice ? 'You chose' : ch ? esc(ch.name.en) : '') + '</div>' + j(l.jp) + en(l.en) + '</div></li>';
+        }).join('') + '</ol>' : '<p class="muted">Nothing said yet.</p>');
+      B.innerHTML = '<p class="muted">The history keeps the last 120 lines, in both languages. Replay a line’s voice from the dialogue box while it is on screen.</p>';
+      requestAnimationFrame(() => { if (!view.scroll[key()]) A.scrollTop = A.scrollHeight; });
+    } else {
+      const qs = Object.keys(s.quests).map((id) => ({ id, q: s.quests[id], d: RB.content.quests[id] })).filter((x) => x.d);
+      const active = qs.filter((x) => !x.q.done).sort((a, b) => (a.d.main ? -1 : 1) - (b.d.main ? -1 : 1) || b.q.t - a.q.t);
+      const done = qs.filter((x) => x.q.done).sort((a, b) => b.q.t - a.q.t);
+      const mains = active.filter((x) => x.d.main), others = active.filter((x) => !x.d.main);
+      if (!J.sel || !qs.find((x) => x.id === J.sel)) J.sel = (mains[0] || others[0] || done[0] || {}).id || null;
+      const row = (x) => {
+        const [k, kl] = questKind(x.id, x.d);
+        const sel = two && x.id === J.sel;
+        return '<li><button class="entry' + (x.q.done ? ' done' : x.d.main ? ' current' : '') + '" data-q="' + x.id + '" aria-current="' + sel + '"' + (two ? '' : ' aria-expanded="' + (x.id === J.open) + '"') + '>' +
+          '<span class="mark">' + I(x.q.done ? 'done' : k) + '</span>' +
+          '<span class="body"><span class="kind">' + esc(x.q.done ? 'Completed' : kl) + '</span><span class="t">' + j(x.d.title.jp) + ' <span class="en">' + esc(x.d.title.en) + '</span></span>' +
+          (x.q.done ? '' : stageOf(x)) + '</span></button>' + (!two && x.id === J.open ? '<div class="inline-detail">' + questDetail(x) + '</div>' : '') + '</li>';
+      };
+      let h = sub;
+      h += '<h3>' + I('main') + ' Now <span class="count">the main road</span></h3>';
+      h += mains.length ? '<ul class="entries">' + mains.map(row).join('') + '</ul>' : '<p class="muted">Nothing pressing. Walk around; people will tell you what they need.</p>';
+      if (others.length) h += '<h3>' + I('side') + ' Also on the way <span class="count">' + others.length + ' optional</span></h3><ul class="entries">' + others.map(row).join('') + '</ul>';
+      const notes = (s.journal || []).slice(-8).reverse();
+      if (notes.length) h += '<h3>' + I('note') + ' Notes to self</h3><ul class="entries">' + notes.map((e) => '<li class="entry"><span class="mark">' + I('note') + '</span><div>' + j(e.jp) + en(e.en) + '</div></li>').join('') + '</ul>';
+      if (done.length) h += '<details class="done-list"' + (J.doneOpen ? ' open' : '') + '><summary><h3>' + I('done') + ' Completed <span class="count">' + done.length + '</span></h3></summary><ul class="entries">' + done.map(row).join('') + '</ul></details>';
+      A.innerHTML = h;
+      const selQ = qs.find((x) => x.id === J.sel);
+      B.innerHTML = selQ ? questDetail(selQ) : '<p class="muted">Choose a quest to read its notes.</p>';
+      const dl = A.querySelector('details.done-list');
+      if (dl) dl.ontoggle = () => { J.doneOpen = dl.open; };
     }
-    for (const p of places) {
-      const known = s.travel[p.id];
-      const here = curMap.place === p.id || (curMap.region && p.region === curMap.region && p.hub);
-      svg += '<circle cx="' + p.pos[0] + '" cy="' + p.pos[1] + '" r="' + (here ? 8 : 6) + '" fill="' + (known ? '#e7c46e' : '#3a3e50') + '" stroke="#fff" stroke-width="' + (here ? 2 : 0) + '"/>';
-      svg += '<text x="' + (p.pos[0] + 10) + '" y="' + (p.pos[1] + 4) + '" fill="' + (known ? '#f3ecd9' : '#6a6e80') + '" font-size="12">' + esc(known ? p.name.en : '???') + '</text>';
-    }
-    svg += '</svg>';
-    let h = svg + '<h3>Travel</h3><div class="grid2">';
-    for (const p of places) {
-      if (!s.travel[p.id]) continue;
-      h += '<div class="item"><div class="t">' + RB.ui.jhtml(p.name.jp) + ' ' + esc(p.name.en) + '</div>' + (p.desc ? '<div class="small dim">' + esc(p.desc) + '</div>' : '') +
-        (canTravel ? '<button class="btn small" data-go="' + p.id + '">Travel here</button>' : '') + '</div>';
-    }
-    h += '</div>' + (canTravel ? '<p class="small dim">Roads you have walked can be travelled quickly.</p>' : '<p class="small dim">You can\'t fast-travel from here.</p>');
-    body.innerHTML = h;
-    body.onclick = async (e) => {
-      const b = e.target.closest('[data-go]');
-      if (!b) return;
-      const p = RB.content.places[b.getAttribute('data-go')];
-      close();
-      await RB.game.transition(p.map, p.x, p.y, p.dir || 'down');
+    A.onclick = (e) => {
+      const v = e.target.closest('[data-jv]');
+      if (v) { remember(); J.view = v.dataset.jv; render(); return; }
+      const q = e.target.closest('[data-q]');
+      if (q) {
+        if (two) { J.sel = q.dataset.q; remember(); render(); }
+        else { J.open = J.open === q.dataset.q ? null : q.dataset.q; remember(); render(); }
+      }
     };
   }
 
-  // ---- log --------------------------------------------------------------------------------------
-  function log(body) {
-    const s = RB.game.s;
-    const lines = s.backlog.slice(-120);
-    body.innerHTML = '<div class="list">' + lines.map((l) => {
-      const ch = l.who === 'pc' ? { name: { en: s.player.name } } : RB.content.chars[l.who];
-      return '<div class="item small"><div class="dim">' + (l.choice ? 'You chose' : ch ? esc(ch.name.en) : '') + '</div>' + (l.jp ? RB.ui.jhtml(l.jp) : '') + '<div class="en">' + esc(RB.script.enVars(l.en || '')) + '</div></div>';
-    }).join('') + '</div>';
-    body.scrollTop = body.scrollHeight;
-  }
-
-  // ---- guide (revisit tutorials any time) ------------------------------------------
-  let gTab = 'basics';
+  // ---- Words ----------------------------------------------------------------------------------
   const GUIDE = {
     basics: ['Getting around', [
-      'Move with the arrow keys or WASD, or tap/click where you want to walk. Z, Enter or Space talks and examines; X or Esc goes back; C (or ≡) opens this menu. Controls can be remapped in Settings.',
+      'Move with the arrow keys or WASD, or tap/click where you want to walk. Hold Shift to walk faster. Z, Enter or Space talks and examines; X or Esc goes back; C opens this folio. Controls can be remapped in Settings.',
+      'On a touch screen, use the movement pad and the action button labelled with what it will do (Talk, Look). The folio button opens this book.',
       'A small ▾ marker appears above things you can examine or people you can talk to. Talk to your companion by facing them and pressing Z.',
       'Nothing is timed. Take as long as you like to read, write or think.',
     ]],
@@ -15849,140 +16473,450 @@ RB.ui.menu = (function () {
     ]],
     pad: ['The writing pad', [
       'Draw one character in the box. The pad shows what it thinks you wrote ("I read this as…") and alternatives. Nothing is submitted until you press Confirm, then Submit.',
-      'Tap a character in the answer strip to replace it; tap a gap to insert. ↶ undoes a stroke; Clear wipes the box. Use 小 for small kana (ゃ, っ…) and the script buttons to choose hiragana or katakana.',
+      'Tap a character in the answer strip to replace it; tap a gap to insert. Undo removes a stroke; Clear wipes the box. Use 小 for small kana (ゃ, っ…) and the script buttons to choose hiragana or katakana.',
       'If the recogniser can\'t read you, pick the character from the chart. That counts as "assisted" — which is fine, it just isn\'t counted as unaided handwriting.',
       'You can switch to choices or keyboard (IME) at any time without losing your place.',
     ]],
-    bulb: ['Lightbulb help', [
-      'Press H or the bulb button. Then hover, focus or tap any Japanese text to see its reading, romaji, meaning in context, beats (morae) and notes. Pin the panel or add the word to your notebook.',
+    bulb: ['Word help', [
+      'Turn on word help with H or the lightbulb button. Then hover, focus or tap Japanese text in dialogue and notes to see its reading, romaji, meaning in context, beats (morae) and notes. On answer buttons, press and hold a word to look it up — a plain tap chooses the answer.',
       'Furigana (small readings over kanji) are always shown. Using help during a question marks that answer as assisted, with no penalty.',
     ]],
     saves: ['Saving', [
-      'Six slots. Save from Menu → Save. The game also autosaves at safe places; those autosaves belong to their slot and are listed there.',
+      'Six slots. Save from the folio’s Save & Load. The game also autosaves at safe places; those autosaves belong to their slot and are listed there.',
       'Before you set out with a companion, a special recovery point is kept so you can revisit that choice by loading it (a separate timeline).',
       'Saves live in this browser, for this page\'s address. Clearing site data or private browsing removes them. There is no export or cloud copy.',
     ]],
     kana: ['Kana reference', []],
   };
-  function guide(body) {
-    let h = '<div class="row" style="margin-bottom:0.5em">' + Object.keys(GUIDE).map((k) => '<button class="btn small' + (gTab === k ? ' on' : '') + '" data-g="' + k + '">' + esc(GUIDE[k][0]) + '</button>').join('') + '</div>';
-    if (gTab === 'kana') {
-      const s = RB.game.s;
-      const groups = RB.lessons.groups();
-      h += '<p class="small dim">Tap a character to see its stroke order. Kana you have been taught are bright.</p>';
-      for (const g of groups) {
-        const cs = RB.lessons.groupChars(g);
-        h += '<div style="margin:0.3em 0"><span class="small dim" style="display:inline-block;min-width:9em">' + esc(g.title || '') + '</span>' + cs.map((c) => {
-          const taught = !RB.learn.taughtKana() || (s.learn.taught && s.learn.taught[c.ch]) || (s.learn.kanaKnown === 'hira' && RB.kana.isHira(c.ch));
-          return '<button class="btn small jp" lang="ja" style="min-width:2.4em;opacity:' + (taught ? 1 : 0.45) + '" data-k="' + esc(c.ch) + '">' + esc(c.ch) + '</button>';
-        }).join('') + '</div>';
-      }
-      h += '<div class="row" style="margin-top:0.6em"><canvas width="160" height="160" class="kdemo" style="width:160px;height:160px;border-radius:8px"></canvas><div class="kinfo"></div></div>';
+  function wordSubs(s) {
+    const lore = s.notebook.filter((n) => n.kind === 'lore' && RB.content.notes[n.id]);
+    const gram = Object.keys(s.learn.items).filter((k) => k.startsWith('g:')).length;
+    return [
+      ['inscriptions', 'Inscriptions you can weave', '{言霊|ことだま}', s.words.filter((w) => RB.content.words[w]).length],
+      ['noted', 'Words you noted', '{控|ひか}え', s.notebook.filter((n) => n.kind === 'word').length],
+      ['kana', 'Kana chart', '{仮名|かな}', null],
+      ['grammar', 'Grammar met on the road', '{文法|ぶんぽう}', gram],
+      ['lore', 'Lore & histories', '{言|い}い{伝|つた}え', lore.length],
+      ['progress', 'How your learning is going', '{進|すす}み{具合|ぐあい}', null],
+      ['guide', 'Guide: how things work', '{手引|てび}き', null],
+    ];
+  }
+  function words(A, B, two) {
+    const s = RB.game.s;
+    const W = view.words;
+    const subs = wordSubs(s);
+    const ng = s.learn.profile === 'F' && s.learn.kanaKnown !== 'both' ? RB.lessons.nextGroup(s) : null;
+    const index = '<h3>Contents</h3><ul class="index">' + subs.map(([id, l, jp, n]) =>
+      '<li><button data-sub="' + id + '" aria-current="' + (two && (W.sub || 'inscriptions') === id) + '"><span class="lbl">' + esc(l) + '</span><span class="fill"></span>' + (n != null ? '<span class="n">' + n + '</span>' : '') + '</button></li>').join('') + '</ul>' +
+      '<div class="row-acts"><button class="pbtn" data-a="practice">' + I('practice') + 'Practise (optional)</button>' +
+      (ng ? '<button class="pbtn" data-a="nextkana">' + I('words') + 'Learn the next kana: ' + esc(ng.g.title || '') + '</button>' : '') + '</div>' +
+      '<p class="muted small">Practice is optional review of items you are unsure of. The story teaches everything you need as you go.</p>';
+    if (two) {
+      const cur = W.sub || 'inscriptions';
+      A.innerHTML = index;
+      B.innerHTML = '<h3>' + esc(subs.find((x) => x[0] === cur)[1]) + '</h3>' + wordsSub(cur, s);
+      wireWords(B, s);
+    } else if (!W.sub) {
+      A.innerHTML = index;
     } else {
-      h += '<h3>' + esc(GUIDE[gTab][0]) + '</h3>' + GUIDE[gTab][1].map((t) => '<p>' + esc(t) + '</p>').join('');
+      A.innerHTML = '<div class="backline"><button class="pbtn quiet" data-a="wback">' + I('back') + 'Contents</button></div><h3>' + esc(subs.find((x) => x[0] === W.sub)[1]) + '</h3>' + wordsSub(W.sub, s);
+      wireWords(A, s);
     }
-    body.innerHTML = h;
-    let stop = () => {};
-    body.onclick = (e) => {
+    A.addEventListener('click', async (e) => {
+      const sb = e.target.closest('[data-sub]');
+      if (sb) { remember(); W.sub = sb.dataset.sub; render(); return; }
+      const a = e.target.closest('[data-a]');
+      if (!a) return;
+      if (a.dataset.a === 'wback') { remember(); W.sub = null; render(); }
+      if (a.dataset.a === 'practice') { close(); await RB.challenge.practice(); }
+      if (a.dataset.a === 'nextkana') { close(); await RB.lessons.run('kana'); }
+    });
+  }
+  function wordsSub(id, s) {
+    if (id === 'inscriptions') {
+      const ws = s.words.map((w) => RB.content.words[w]).filter(Boolean);
+      return ws.length ? '<ul class="entries notes">' + ws.map((w) => '<li class="entry filed"><span class="mark">' + I('words') + '</span><div><div class="written">' + j(w.jp) + '</div><div class="t">' + esc(w.en) + '</div>' + (w.effect ? '<div class="muted small">' + esc(w.effect) + '</div>' : '') + '</div></li>').join('') + '</ul>' : '<p class="muted">None yet.</p>';
+    }
+    if (id === 'noted') {
+      const saved = s.notebook.filter((n) => n.kind === 'word');
+      const canSpeak = RB.voice && RB.voice.status && RB.voice.status().localJaCount > 0;
+      return saved.length ? '<ul class="entries notes">' + saved.map((n, i) => {
+        const hasKanji = /[一-鿿々]/.test(n.surface || '');
+        const written = hasKanji && n.reading ? '{' + n.surface + '|' + n.reading + '}' : n.surface;
+        return '<li class="entry filed"><span class="mark">' + I('note') + '</span><div><div class="written">' + j(written) + '</div>' +
+          '<div class="reading">' + esc(n.reading || '') + (RB.kana && n.reading ? ' · <i>' + esc(RB.kana.romaji(n.reading)) + '</i>' : '') + '</div>' +
+          '<div class="t">' + esc(n.m || '') + '</div>' + (canSpeak ? '<div class="acts"><button class="pbtn" data-say="' + i + '">' + I('sound') + 'Hear it</button></div>' : '') + '</div></li>';
+      }).join('') + '</ul>' : '<p class="muted">Use word help on any Japanese text and choose “Add to notebook”.</p>';
+    }
+    if (id === 'kana') return kanaChart(s);
+    if (id === 'grammar') {
+      const seen = Object.keys(s.learn.items).filter((k) => k.startsWith('g:')).map((k) => k.slice(2));
+      const pts = (RB.grammar && RB.grammar.points ? RB.grammar.points : []).filter((g) => seen.includes(g.id));
+      return pts.length ? '<ul class="entries notes">' + pts.map((g) => '<li class="entry filed"><span class="mark">' + I('book') + '</span><div><div class="written">' + j(g.title) + '</div><div class="t">' + esc(g.en) + '</div>' + (g.ex || []).slice(0, 2).map((e) => '<div class="ex">' + j(e.jp) + en(e.en) + '</div>').join('') + '</div></li>').join('') + '</ul>' : '<p class="muted">Grammar you meet on the road will be collected here.</p>';
+    }
+    if (id === 'lore') {
+      const notes = s.notebook.filter((n) => n.kind === 'lore').map((n) => RB.content.notes[n.id]).filter(Boolean);
+      return notes.length ? '<ul class="entries notes">' + notes.map((n) => '<li class="entry filed"><span class="mark">' + I('scroll') + '</span><div><div class="t">' + j(n.title.jp) + ' <span class="en">' + esc(n.title.en) + '</span>' + (n.fiction ? ' <span class="sealmark small">fictional term</span>' : '') + '</div>' + (n.jp ? '<div>' + j(n.jp) + '</div>' : '') + en(n.en) + '</div></li>').join('') + '</ul>' : '<p class="muted">Stories and inscriptions you collect will be kept here.</p>';
+    }
+    if (id === 'progress') {
+      const L = s.learn;
+      const items = Object.values(L.items);
+      const by = (p) => items.filter((r) => r.id && r.id.startsWith(p));
+      const strong = (arr) => arr.filter((r) => r.box >= 3).length;
+      return '<dl class="stats">' + [['k:', 'Characters'], ['v:', 'Vocabulary'], ['g:', 'Grammar'], ['c:', 'Comprehension']].map(([p, l]) => '<dt>' + l + '</dt><dd>' + by(p).length + ' met · ' + strong(by(p)) + ' steady</dd>').join('') + '</dl>' +
+        '<h3>How you answered</h3><dl class="stats"><dt>Recognised (chose from options)</dt><dd>' + L.stats.recog + '</dd><dt>Recalled and typed</dt><dd>' + L.stats.typed + '</dd><dt>Handwritten and recognised</dt><dd>' + L.stats.hand + '</dd><dt>Assisted (help or manual correction)</dt><dd>' + L.stats.assisted + '</dd></dl>' +
+        '<p class="muted small">These are counted separately because choosing, typing and writing show different things. None of them is a lesser way to play.</p>';
+    }
+    if (id === 'guide') {
+      const g = view.words.guide;
+      let h = '<div class="subnav" role="group" aria-label="Guide topics">' + Object.keys(GUIDE).map((k) => '<button class="subbtn" data-g="' + k + '" aria-pressed="' + (g === k) + '">' + esc(GUIDE[k][0]) + '</button>').join('') + '</div>';
+      if (g === 'kana') {
+        const groups = RB.lessons.groups();
+        h += '<p class="muted small">Choose a character to see its stroke order. Kana you have been taught are marked with a dot.</p><div class="kdemo-box"><canvas width="160" height="160" class="kdemo"></canvas><div class="kinfo muted">Stroke order appears here.</div></div>';
+        for (const gr of groups) {
+          h += '<div class="kgroup"><span class="kgl">' + esc(gr.title || '') + '</span><span class="kcells">' + RB.lessons.groupChars(gr).map((c) => {
+            const taught = !RB.learn.taughtKana() || (s.learn.taught && s.learn.taught[c.ch]) || (s.learn.kanaKnown === 'hira' && RB.kana.isHira(c.ch));
+            return '<button class="kcell' + (taught ? ' taught' : '') + '" lang="ja" data-k="' + esc(c.ch) + '" aria-label="' + esc(c.ch + ' ' + RB.kana.romaji(c.ch) + (taught ? ', taught' : '')) + '">' + esc(c.ch) + '</button>';
+          }).join('') + '</span></div>';
+        }
+      } else {
+        h += GUIDE[g][1].map((t) => '<p>' + esc(t) + '</p>').join('');
+      }
+      return h;
+    }
+    return '';
+  }
+  function wireWords(el, s) {
+    el.onclick = (e) => {
       const g = e.target.closest('[data-g]');
-      if (g) { stop(); gTab = g.getAttribute('data-g'); guide(body); return; }
+      if (g) { stopDemo(); view.words.guide = g.dataset.g; remember(); render(); return; }
       const k = e.target.closest('[data-k]');
       if (k) {
-        stop();
-        const ch = k.getAttribute('data-k');
-        stop = RB.lessons.demo(body.querySelector('.kdemo'), ch);
-        body.querySelector('.kinfo').innerHTML = '<div class="jp" lang="ja" style="font-size:2.6em">' + esc(ch) + '</div><div>' + esc(RB.kana.romaji(ch)) + '</div>';
+        stopDemo();
+        const ch = k.dataset.k;
+        stopDemo = RB.lessons.demo(el.querySelector('.kdemo'), ch);
+        el.querySelector('.kinfo').innerHTML = '<div class="jp" lang="ja" style="font-size:2.4em;line-height:1.2">' + esc(ch) + '</div><div>' + esc(RB.kana.romaji(ch)) + '</div>';
+        return;
       }
+      const say = e.target.closest('[data-say]');
+      if (say) { const n = s.notebook.filter((x) => x.kind === 'word')[+say.dataset.say]; if (n && RB.voice) RB.voice.speak(n.reading || n.surface); }
     };
   }
+  function kanaChart(s) {
+    const K = RB.kana;
+    const groups = RB.lessons.groups();
+    if (!groups.length) return '<p class="muted">Kana chart unavailable.</p>';
+    const rec = s.learn.items;
+    const LV = ['not met', 'met', 'practising', 'steady'];
+    const cell = (ch) => {
+      const r = rec['k:' + ch];
+      const lvl = !r ? 0 : r.box >= 3 ? 3 : r.box >= 1 ? 2 : 1;
+      return '<span class="kc l' + lvl + '" lang="ja" title="' + esc(K.romaji(ch) + ' — ' + LV[lvl]) + '"><span class="ch">' + esc(ch) + '</span><span class="sr"> ' + esc(K.romaji(ch) + ', ' + LV[lvl]) + '</span></span>';
+    };
+    let h = '<p class="muted small">Each character’s underline shows how settled it is:</p><div class="klegend">' + LV.map((l, i) => '<span class="kc l' + i + '"><span class="ch">あ</span></span> ' + esc(l)).join(' &nbsp; ') + '</div>';
+    for (const g of groups) h += '<div class="kgroup"><span class="kgl">' + esc(g.title || '') + '</span><span class="kcells">' + RB.lessons.groupChars(g).map((c) => cell(c.ch)).join('') + '</span></div>';
+    return h;
+  }
 
-  // ---- save ------------------------------------------------------------------------------------------
-  function save(body) {
+  // ---- Satchel -------------------------------------------------------------------------------
+  const SLOTS = [['charm', 'Charm'], ['tool', 'Tool'], ['cosmetic', 'Keepsake (appearance only)']];
+  function itemDetail(x, s) {
+    const d = x.d;
+    const eqd = d.slot && s.equip[d.slot] === x.id;
+    return '<div class="idetail"><div class="ibig">' + I(F().itemIcon(x.id, d)) + '</div><h3>' + j(d.name.jp) + ' <span class="en">' + esc(d.name.en) + '</span>' + (x.n > 1 ? ' <span class="count">×' + x.n + '</span>' : '') + '</h3>' +
+      '<p>' + esc(RB.script.enVars(d.desc || '')) + '</p>' +
+      (d.key ? '<p class="note-slip">' + I('key') + ' Important: it can’t be sold, used up or lost.</p>' : '') +
+      (d.slot ? '<p class="muted small">Worn as: ' + esc(SLOTS.find((z) => z[0] === d.slot)[1]) + (eqd ? ' — equipped now.' : '.') + '</p><div class="acts"><button class="pbtn' + (eqd ? '' : ' primary') + '" data-' + (eqd ? 'unequip="' + d.slot : 'equip="' + x.id) + '">' + (eqd ? 'Take it off' : 'Equip') + '</button></div>' : '') +
+      '</div>';
+  }
+  function satchel(A, B, two) {
+    const s = RB.game.s;
+    const S = view.satchel;
+    const inv = Object.keys(s.inv).map((id) => ({ id, n: s.inv[id], d: RB.content.items[id] })).filter((x) => x.d);
+    if (!S.sel || !inv.find((x) => x.id === S.sel)) S.sel = inv[0] ? inv[0].id : null;
+    let h = '<h3>' + I('charm') + ' Equipped</h3><ul class="entries">' + SLOTS.map(([k, l]) => {
+      const it = s.equip[k] && RB.content.items[s.equip[k]];
+      return '<li class="entry"><span class="mark">' + I(it ? F().itemIcon(s.equip[k], it) : k === 'cosmetic' ? 'keepsake' : k) + '</span><div><div class="kind">' + esc(l) + '</div><div class="t">' + (it ? j(it.name.jp) + ' <span class="en">' + esc(it.name.en) + '</span>' : '<span class="muted">Nothing</span>') + '</div></div>' +
+        (it ? '<button class="pbtn" data-unequip="' + k + '">Take off</button>' : '<span></span>') + '</li>';
+    }).join('') + '</ul>';
+    h += '<h3>' + I('satchel') + ' Carried <span class="count">' + inv.length + '</span></h3>';
+    if (!inv.length) h += '<p class="muted">Your pack is light.</p>';
+    else h += '<ul class="entries">' + inv.map((x) => '<li><button class="entry item-row" data-it="' + x.id + '" aria-current="' + (two && S.sel === x.id) + '"' + (two ? '' : ' aria-expanded="' + (S.open === x.id) + '"') + '>' +
+      '<span class="mark">' + I(F().itemIcon(x.id, x.d)) + '</span><span class="body"><span class="t">' + j(x.d.name.jp) + ' <span class="en">' + esc(x.d.name.en) + '</span>' + (x.n > 1 ? ' <span class="count">×' + x.n + '</span>' : '') + '</span>' +
+      (x.d.key ? '<span class="kind">' + I('key') + ' important</span>' : x.d.slot ? '<span class="kind">' + (s.equip[x.d.slot] === x.id ? 'equipped' : 'can be worn') + '</span>' : '') + '</span></button>' +
+      (!two && S.open === x.id ? '<div class="inline-detail">' + itemDetail(x, s) + '</div>' : '') + '</li>').join('') + '</ul>';
+    h += '<p class="muted small">Important items cannot be sold or used up. Nothing essential can be lost.</p>';
+    A.innerHTML = h;
+    const selX = inv.find((x) => x.id === S.sel);
+    B.innerHTML = selX ? itemDetail(selX, s) : '<p class="muted">Choose something to look at it closely.</p>';
+    const handler = (e) => {
+      const it = e.target.closest('[data-it]');
+      const eq = e.target.closest('[data-equip]'), un = e.target.closest('[data-unequip]');
+      if (eq) { const id = eq.dataset.equip; s.equip[RB.content.items[id].slot] = id; RB.audio && RB.audio.sfx('confirm'); refreshLook(s); remember(); render(); return; }
+      if (un) { s.equip[un.dataset.unequip] = null; refreshLook(s); remember(); render(); return; }
+      if (it) { if (two) S.sel = it.dataset.it; else S.open = S.open === it.dataset.it ? null : it.dataset.it; remember(); render(); }
+    };
+    A.onclick = handler; B.onclick = handler;
+  }
+  function refreshLook(s) {
+    const W = RB.world.W;
+    if (!W.player) return;
+    const look = Object.assign({}, s.player.look);
+    const c = s.equip.cosmetic && RB.content.items[s.equip.cosmetic];
+    if (c && c.acc) look.acc = (look.acc || []).concat([c.acc]);
+    W.player.look = look;
+  }
+
+  // ---- Map ------------------------------------------------------------------------------------
+  function chartSvg(s, curMap) {
+    const places = Object.keys(RB.content.places).map((id) => Object.assign({ id }, RB.content.places[id]));
+    const Wd = 520, H = 320;
+    const fs = Math.round(14 * Math.min(1.5, Math.max(1, (RB.game.settings && RB.game.settings.textScale) || 1)));
+    let svg = '<svg class="chart" viewBox="0 0 ' + Wd + ' ' + H + '" role="img" aria-label="Route chart. Known places: ' + esc(places.filter((p) => s.travel[p.id]).map((p) => p.name.en).join(', ') || 'none yet') + '">';
+    // paper, folds and the sea/mountain washes (decorative)
+    svg += '<rect width="' + Wd + '" height="' + H + '" fill="#efe3c6"/><path d="M0 252 Q120 222 200 252 T 520 232 L520 320 L0 320Z" fill="#cfdbd6"/><path d="M60 0 L140 90 L230 60 L300 120 L420 40 L520 80 L520 0Z" fill="#e2d4b2"/>';
+    svg += '<path d="M173 0V320M346 0V320M0 160H520" stroke="#b9a57a" stroke-width="1" stroke-dasharray="2 5" opacity="0.8"/>';
+    for (const [a, b] of RB.content.roads || []) {
+      const A = RB.content.places[a], B = RB.content.places[b];
+      if (!A || !B) continue;
+      const known = s.travel[a] && s.travel[b];
+      const half = s.travel[a] || s.travel[b];
+      svg += '<line x1="' + A.pos[0] + '" y1="' + A.pos[1] + '" x2="' + B.pos[0] + '" y2="' + B.pos[1] + '" stroke="' + (known ? '#3b2e1c' : '#9d8b66') + '" stroke-width="' + (known ? 2.5 : 1.6) + '" stroke-dasharray="' + (known ? '0' : half ? '6 5' : '2 6') + '"/>';
+    }
+    for (const p of places) {
+      const known = s.travel[p.id];
+      const here = curMap.place === p.id || (curMap.region && p.region === curMap.region && p.hub);
+      svg += '<circle cx="' + p.pos[0] + '" cy="' + p.pos[1] + '" r="' + (here ? 8 : 6) + '" fill="' + (known ? '#2a2217' : '#efe3c6') + '" stroke="#2a2217" stroke-width="1.5"/>';
+      if (here) svg += '<path d="M' + p.pos[0] + ' ' + (p.pos[1] - 12) + ' l-6 -12 h12 z" fill="#a83e27"/>';
+      // labels near the right edge sit left of their dot so they are never cut off; size follows the text-size setting
+      const right = p.pos[0] > Wd * 0.62;
+      svg += '<text x="' + (p.pos[0] + (right ? -11 : 11)) + '" y="' + (p.pos[1] + 5) + '"' + (right ? ' text-anchor="end"' : '') + ' fill="' + (known ? '#261f15' : '#62553f') + '" font-size="' + fs + '" font-family="Georgia, serif" stroke="#efe3c6" stroke-width="3" paint-order="stroke">' + esc(known ? p.name.en : '? unexplored') + '</text>';
+    }
+    return svg + '</svg>';
+  }
+  function map(A, B, two) {
+    const s = RB.game.s;
+    const curMap = RB.content.maps[s.map] || {};
+    const canTravel = !curMap.noTravel && RB.game.mode() === 'menu';
+    const places = Object.keys(RB.content.places).map((id) => Object.assign({ id }, RB.content.places[id])).filter((p) => s.travel[p.id]);
+    const chart = '<div class="chartbox">' + chartSvg(s, curMap) + '</div><p class="muted small">Solid lines are roads you have walked; dashed lines are roads you have heard of. The red mark is where you are.</p>';
+    const list = '<h3>' + I('travel') + ' Travel <span class="count">' + places.length + ' known</span></h3>' +
+      (canTravel ? '' : '<p class="note-slip warn">You can’t travel quickly from here. Step outside first.</p>') +
+      '<ul class="entries">' + places.map((p) => {
+        const here = curMap.region && p.region === curMap.region && p.hub;
+        return '<li class="entry"><span class="mark">' + I(here ? 'here' : 'map') + '</span><div><div class="t">' + j(p.name.jp) + ' <span class="en">' + esc(p.name.en) + '</span></div>' + (p.desc ? '<div class="muted small">' + esc(p.desc) + '</div>' : '') + (here ? '<div class="kind">you are in this region</div>' : '') + '</div>' +
+          (canTravel ? '<button class="pbtn" data-go="' + p.id + '">Travel</button>' : '<span></span>') + '</li>';
+      }).join('') + '</ul><p class="muted small">Roads you have walked can be travelled quickly.</p>';
+    if (two) { A.innerHTML = chart; B.innerHTML = list; } else { A.innerHTML = chart + list; }
+    const handler = async (e) => {
+      const b = e.target.closest('[data-go]');
+      if (!b) return;
+      const p = RB.content.places[b.dataset.go];
+      close();
+      await RB.game.transition(p.map, p.x, p.y, p.dir || 'down');
+    };
+    A.onclick = handler; B.onclick = handler;
+  }
+
+  // ---- Save & Load (utility sheet) ---------------------------------------------------------------
+  function saveSheet() {
     const st = RB.save.status();
-    body.innerHTML = '<p>' + (st.mode === 'session' ? 'Storage is unavailable here, so saves only last until this page closes.' : 'Choose a slot to save to, or load another campaign.') + '</p>' +
-      '<div class="row"><button class="btn primary" data-a="save">Save…</button><button class="btn" data-a="load">Load…</button><button class="btn" data-a="title">Return to title</button></div>' +
-      '<p class="small dim">Autosaves happen at safe places (arriving somewhere new, finishing a scene that matters). Manual saves are kept separately from them.</p>';
-    body.onclick = async (e) => {
+    const f2 = F().frame({ onClose: () => RB.ui.popLayer(lay), closeLabel: 'Back', closeIcon: 'back', cls: 'folio-sheet' });
+    f2.setTitle(RB.ui.label('セーブ・ロード', 'Save & Load'), '');
+    f2.box.innerHTML = '<div class="spread"><div class="leaf" tabindex="0">' +
+      (st.mode === 'session' ? '<p class="note-slip bad">' + I('warn') + ' Storage is unavailable here, so saves only last until this page closes.</p>' : '') +
+      '<ul class="entries">' +
+      '<li class="entry"><span class="mark">' + I('save') + '</span><div><div class="t">Save this journey</div><div class="muted small">Choose one of six slots in the ledger. Overwriting asks first.</div></div><button class="pbtn primary" data-a="save">Save…</button></li>' +
+      '<li class="entry"><span class="mark">' + I('load') + '</span><div><div class="t">Load a journey</div><div class="muted small">Manual saves, autosaves and the pre-departure point.</div></div><button class="pbtn" data-a="load">Load…</button></li>' +
+      '<li class="entry"><span class="mark">' + I('title') + '</span><div><div class="t">Return to the title</div><div class="muted small">Anything since your last save or autosave will be lost.</div></div><button class="pbtn" data-a="title">Return to title</button></li>' +
+      '</ul><p class="muted small">Autosaves happen at safe places (arriving somewhere new, finishing a scene that matters). Manual saves are kept separately from them.</p></div></div>';
+    const lay = { el: f2.scrim, name: 'savesheet' };
+    lay.onCancel = () => RB.ui.popLayer(lay);
+    f2.box.onclick = async (e) => {
       const b = e.target.closest('[data-a]');
       if (!b) return;
-      const a = b.getAttribute('data-a');
+      const a = b.dataset.a;
       if (a === 'save') RB.ui.title.slots('save', true);
       if (a === 'load') RB.ui.title.slots('load', true);
       if (a === 'title') {
         const r = await RB.ui.confirm('Return to the title screen? Anything since your last save or autosave will be lost.', ['Return to title', 'Cancel']);
-        if (r === 0) { close(); RB.game.toTitle(); }
+        if (r === 0) { RB.ui.popLayer(lay); close(); RB.game.toTitle(); }
       }
     };
+    RB.ui.pushLayer(lay);
   }
 
-  // ---- settings -----------------------------------------------------------------------------------------
-  function settings(body) {
+  function settingsStandalone() { return RB.ui.settings.open(); }
+
+  return { open, close, closeAll, settingsStandalone, isOpen: () => !!layer, current: () => ({ section: view.section, journey: view.journey.view, words: view.words.sub }) };
+})();
+
+RB.ui.credits = function () {
+  return RB.ui.card('{終|お}わり ── そして 、 {道|みち} は {続|つづ}く 。', 'The end — and the road goes on.');
+};
+RB.ui.shop = function () { return Promise.resolve(); };
+
+
+/* ==== src/ui/55_settings.js ==== */
+/* Settings, as a folio section of named groups. Real controls: radio groups
+ * for few exclusive options, switches for on/off, sliders with values,
+ * a select for voices, key capture for remapping. Campaign-specific learning
+ * choices are shown apart from preferences that apply to every campaign.
+ * Changes apply and persist at once, as before (sliders debounce saving). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.ui.settings = (function () {
+  'use strict';
+  const esc = RB.util.esc;
+  const I = (n) => RB.ui.folio.icon(n);
+  const GROUPS = [
+    ['reading', 'Reading & Language', '{読|よ}み{方|かた}と{言語|げんご}', 'words'],
+    ['learning', 'Learning & Challenge', '{学|まな}びと{難|むずか}しさ', 'practice'],
+    ['controls', 'Controls', '{操作|そうさ}', 'settings'],
+    ['audio', 'Audio', '{音|おと}', 'sound'],
+    ['display', 'Display & Accessibility', '{表示|ひょうじ}', 'bulb'],
+    ['storage', 'Storage', '{保存|ほぞん}', 'ledger'],
+  ];
+  let lay = null, fr = null, group = null, mq = null, sampleCache = null;
+
+  function open() {
+    if (lay) return;
+    fr = RB.ui.folio.frame({ onClose: close, closeLabel: 'Back', closeIcon: 'back', cls: 'folio-settings' });
+    fr.setTitle(RB.ui.label('{設定|せってい}', 'Settings'), RB.game.s ? 'Some choices belong to this campaign' : 'Preferences for every campaign');
+    lay = { el: fr.scrim, name: 'settings' };
+    lay.onCancel = back;
+    RB.ui.pushLayer(lay);
+    if (!group && RB.ui.folio.wide()) group = 'reading';
+    render();
+    if (typeof matchMedia !== 'undefined') { mq = matchMedia('(min-width: 860px)'); mq.onchange = () => { if (lay) { if (!group && RB.ui.folio.wide()) group = 'reading'; render(); } }; }
+  }
+  function close() {
+    if (!lay) return;
+    if (mq) mq.onchange = null;
+    RB.ui.popLayer(lay);
+    lay = null; fr = null;
+    if (!RB.ui.folio.wide()) group = null;
+  }
+  function back() {
+    if (group && !RB.ui.folio.wide()) { group = null; render(); return; }
+    close();
+  }
+
+  function render() {
+    const two = RB.ui.folio.wide();
+    const leaves = fr.box.querySelectorAll('.leaf');
+    const keep = leaves.length ? [leaves[0].scrollTop, leaves[1] ? leaves[1].scrollTop : 0] : [0, 0];
+    fr.box.innerHTML = '<div class="spread' + (two ? ' two' : '') + '"><div class="leaf" tabindex="0" aria-label="Settings groups"></div><div class="leaf leaf-b" tabindex="0" aria-label="Settings"></div></div>';
+    const [A, B] = fr.box.querySelectorAll('.leaf');
+    const index = '<h3>Groups</h3><ul class="index">' + GROUPS.map(([id, en, jp, ic]) => '<li><button data-grp="' + id + '" aria-current="' + (group === id) + '">' + I(ic) + '<span class="lbl">' + RB.ui.label(jp, en) + '</span><span class="fill"></span></button></li>').join('') + '</ul>' +
+      '<p class="muted small">Changes take effect straight away and are remembered in this browser.</p>';
+    if (two) { A.innerHTML = index; B.innerHTML = groupHtml(group || 'reading'); }
+    else if (!group) { A.innerHTML = index; }
+    else { A.innerHTML = '<div class="backline"><button class="pbtn quiet" data-grp="">' + I('back') + 'All groups</button></div>' + groupHtml(group); }
+    A.scrollTop = keep[0]; B.scrollTop = keep[1];
+    for (const L of [A, B]) wire(L);
+  }
+
+  // ---- control builders ------------------------------------------------------------------
+  let uid = 0;
+  function radios(key, label, opts, obj, hint) {
+    const cur = (obj === 'learn' ? RB.game.s.learn : RB.game.settings)[key];
+    const name = 'r' + (++uid) + key;
+    return '<fieldset class="field"><legend>' + esc(label) + '</legend><div class="opts">' + opts.map(([v, l]) =>
+      '<label class="opt"><input type="radio" name="' + name + '" data-set="' + key + '" data-obj="' + (obj || 'st') + '" value="' + esc(String(v)) + '"' + (String(cur) === String(v) ? ' checked' : '') + '><span>' + esc(l) + '</span></label>').join('') + '</div>' + (hint ? '<div class="hint">' + esc(hint) + '</div>' : '') + '</fieldset>';
+  }
+  function sw(key, label, hint, invert) {
+    const st = RB.game.settings;
+    const on = (key === 'contrast' ? st.contrast === 'high' : !!st[key]) !== !!invert;
+    return '<div class="field"><label class="switch"><input type="checkbox" role="switch" data-sw="' + key + '"' + (invert ? ' data-inv="1"' : '') + (on ? ' checked' : '') + '><span>' + esc(label) + '</span><span class="state">' + (on ? 'On' : 'Off') + '</span></label>' + (hint ? '<div class="hint">' + esc(hint) + '</div>' : '') + '</div>';
+  }
+  function slider(path, label, v, min, max, step, fmt) {
+    const id = 'sl' + (++uid);
+    return '<div class="field"><label class="lab" for="' + id + '">' + esc(label) + '</label><div class="slider"><input type="range" id="' + id + '" data-range="' + path + '" min="' + min + '" max="' + max + '" step="' + step + '" value="' + v + '"><output for="' + id + '">' + esc(fmt(v)) + '</output></div></div>';
+  }
+  const pct = (v) => Math.round(v * 100) + '%';
+
+  function sample() {
+    if (sampleCache) return sampleCache;
+    const sc = RB.content.scenes['rw.arrive'];
+    const c = sc && sc.cmds.find((x) => x.op === 'say' && x.jp);
+    sampleCache = c ? { jp: c.jp, en: c.en } : { jp: '{嵐|あらし} の {次|つぎ} の {朝|あさ} 。', en: 'The morning after the storm.' };
+    return sampleCache;
+  }
+  function preview() {
+    const st = RB.game.settings;
+    const smp = sample();
+    const ja = st.lead === 'ja';
+    const main = ja ? RB.ui.jhtml(smp.jp) : '<span class="enline">' + esc(smp.en) + '</span>';
+    const sub = st.secondary === 'off' ? '' : st.secondary === 'tap' ? '<div class="pv-sub tap">(' + (ja ? 'English' : 'Japanese') + ' appears when you tap the line)</div>' : '<div class="pv-sub">' + (ja ? '<span class="enline">' + esc(smp.en) + '</span>' : RB.ui.jhtml(smp.jp)) + '</div>';
+    return '<figure class="pv"><figcaption>Preview — a line from the game with your current reading settings</figcaption><div class="pv-box"><div class="pv-main">' + main + '</div>' + sub + '</div></figure>';
+  }
+
+  function groupHtml(g) {
     const st = RB.game.settings;
     const s = RB.game.s;
-    const seg = (key, opts, obj) => '<div class="seg">' + opts.map(([v, l]) => '<button class="btn small' + ((obj || st)[key] === v ? ' on' : '') + '" data-set="' + key + '" data-obj="' + (obj ? 'learn' : 'st') + '" data-v="' + v + '">' + esc(l) + '</button>').join('') + '</div>';
-    const range = (path, v, min, max, step) => '<input type="range" data-range="' + path + '" min="' + min + '" max="' + max + '" step="' + step + '" value="' + v + '">';
-    const vs = RB.voice ? RB.voice.status() : { supported: false, localJaCount: 0, note: 'Speech synthesis is not available.' };
-    const voices = RB.voice && RB.voice.japaneseVoices ? RB.voice.japaneseVoices() : [];
-    const ss = RB.save.status();
-    let h = '';
-    if (s) {
-      h += '<h3>Learning (this campaign)</h3>' +
-        '<div class="set-row"><span>Japanese level</span>' + seg('profile', [['F', 'Foundations'], ['E', 'Elementary'], ['I', 'Intermediate'], ['A', 'Advanced']], s.learn) + '</div>' +
-        '<div class="set-row"><span>Mistakes in battle</span>' + seg('assist', [['assist', 'Assisted (no cost)'], ['normal', 'Standard (small, capped)']], s.learn) + '</div>' +
-        '<div class="set-row"><span>Tactical challenge</span>' + seg('difficulty', [['relaxed', 'Relaxed'], ['normal', 'Standard'], ['hard', 'Demanding']], s.learn) + '</div>';
+    const title = GROUPS.find((x) => x[0] === g);
+    let h = '<h3>' + I(title[3]) + ' ' + RB.ui.label(title[2], title[1]) + '</h3>';
+    if (g === 'reading') {
+      h += preview() +
+        radios('lead', 'Dialogue leads with', [['en', 'English'], ['ja', 'Japanese']]) +
+        radios('secondary', 'The second language', [['always', 'Always shown'], ['tap', 'Shown when tapped'], ['off', 'Hidden']]) +
+        sw('spacing', 'Spaces between Japanese words', 'Beginner-friendly. Standard Japanese is written without spaces.') +
+        radios('uiLang', 'Menu language', [['en', 'English'], ['ja', '日本語']]) +
+        sw('lightbulb', 'Word help (lightbulb)', 'Hover, focus or tap Japanese text for reading, meaning and notes.') +
+        sw('romaji', 'Romaji in word help') +
+        radios('textSpeed', 'Text speed', [['normal', 'Normal'], ['fast', 'Fast'], ['instant', 'Instant']]) +
+        sw('skipSeen', 'Offer to skip scenes you have already seen') +
+        '<p class="muted small">Furigana (readings over kanji) is always shown. It is an accessibility feature, not a difficulty setting.</p>';
+    } else if (g === 'learning') {
+      if (s) {
+        h += '<div class="campaign-box"><div class="kind">' + I('ledger') + ' Saved with this campaign (' + esc(s.player.name) + ')</div>' +
+          radios('profile', 'Japanese level', [['F', 'Foundations'], ['E', 'Elementary'], ['I', 'Intermediate'], ['A', 'Advanced']], 'learn', 'Changes which version of each challenge you meet. It never locks you out of the story.') +
+          radios('assist', 'Mistakes in battle', [['assist', 'Assisted — no cost'], ['normal', 'Standard — small and capped']], 'learn') +
+          radios('difficulty', 'Tactical challenge', [['relaxed', 'Relaxed'], ['normal', 'Standard'], ['hard', 'Demanding']], 'learn', 'Separate from the Japanese level.') + '</div>';
+      } else {
+        h += '<p class="note-slip">Japanese level, mistakes and tactical challenge are chosen for each campaign when you start it, and can be changed here during play.</p>';
+      }
+      h += '<div class="kind">' + I('settings') + ' For every campaign</div>' +
+        radios('input', 'Default way to answer', [['hand', 'Handwriting'], ['choice', 'Choices'], ['ime', 'Keyboard / IME']], null, 'You can switch during any question without losing your place.') +
+        sw('strokePractice', 'Show stroke-order notes after handwriting', 'Off keeps handwriting lenient: only the shape is checked.');
+    } else if (g === 'controls') {
+      const binds = RB.input.getBinds();
+      h += '<p class="muted small">Choose Change, then press the key you want. Each key does one thing; taking a key from another action removes it there.</p><ul class="entries keys">' +
+        Object.keys(RB.input.DEFAULT_BINDS).map((a) => '<li class="entry"><span class="mark">' + I('next') + '</span><div><div class="t">' + esc(RB.input.ACTION_LABELS[a]) + '</div><div class="muted small keycaps">' + binds[a].map((k) => '<kbd>' + esc(RB.input.keyName(k)) + '</kbd>').join(' ') + '</div></div><button class="pbtn" data-bind="' + a + '">Change</button></li>').join('') + '</ul>' +
+        '<div class="row-acts"><button class="pbtn" data-a="resetbinds">Reset all keys</button></div>' +
+        radios('touch', 'On-screen touch controls', [['auto', 'Automatic'], ['on', 'Always'], ['off', 'Never']], null, 'Automatic shows them on touch screens.');
+    } else if (g === 'audio') {
+      const vs = RB.voice ? RB.voice.status() : { supported: false, localJaCount: 0, note: 'Speech synthesis is not available.' };
+      const voices = RB.voice && RB.voice.japaneseVoices ? RB.voice.japaneseVoices() : [];
+      h += slider('vol.master', 'Overall volume', st.vol.master, 0, 1, 0.05, pct) + slider('vol.music', 'Music', st.vol.music, 0, 1, 0.05, pct) +
+        slider('vol.sfx', 'Effects', st.vol.sfx, 0, 1, 0.05, pct) + slider('vol.voice', 'Voice', st.vol.voice, 0, 1, 0.05, pct) + sw('muted', 'Mute all sound') +
+        '<h3>' + I('sound') + ' Japanese voice (optional)</h3><p class="small">' + esc(vs.note || '') + '</p>' +
+        (voices.length ? '<div class="field"><label class="lab" for="vsel">Voice</label><select id="vsel" data-voice>' + voices.map((v) => '<option value="' + esc(v.voiceURI) + '"' + (st.voice.uri === v.voiceURI ? ' selected' : '') + '>' + esc(v.name) + '</option>').join('') + '</select></div>' +
+          '<div class="field"><label class="switch"><input type="checkbox" role="switch" data-voiceauto' + (st.voice.auto ? ' checked' : '') + '><span>Speak dialogue automatically</span><span class="state">' + (st.voice.auto ? 'On' : 'Off') + '</span></label></div>' +
+          slider('voice.rate', 'Speech rate', st.voice.rate, 0.6, 1.3, 0.05, (v) => v.toFixed(2) + '×') : '<p class="note-slip">No Japanese voice is installed on this device, so nothing will be spoken. Everything works without it.</p>') +
+        '<p class="muted small">Voices are your device\'s own speech synthesis, labelled as such. They are not recorded actors and not a pronunciation authority.</p>';
+    } else if (g === 'display') {
+      h += preview() + slider('textScale', 'Text size', st.textScale, 0.85, 1.5, 0.05, pct) + sw('contrast', 'High contrast', null) + sw('reducedMotion', 'Reduce motion', 'Removes sliding and bouncing; changes still show immediately.');
+    } else if (g === 'storage') {
+      const ss = RB.save.status();
+      h += '<p class="' + (ss.mode === 'session' ? 'note-slip bad' : 'note-slip') + '">' + esc(ss.mode === 'idb' ? 'Saving to this browser (IndexedDB).' : ss.mode === 'local' ? 'Saving to this browser (localStorage fallback).' : 'Session only: nothing persists after closing.') + '</p>' +
+        '<p>Saves belong to this browser profile and this page\'s address. Clearing site data, private windows, or opening the game from a different address or browser will not see them.' + (ss.persisted ? ' The browser has granted persistent storage (you can still clear it yourself).' : '') + '</p>' +
+        (ss.mode !== 'session' && !ss.persisted ? '<div class="row-acts"><button class="pbtn" data-a="persist">Ask the browser to keep saves</button></div>' : '');
     }
-    h += '<h3>Reading</h3>' +
-      '<div class="set-row"><span>Dialogue leads with</span>' + seg('lead', [['en', 'English'], ['ja', 'Japanese']]) + '</div>' +
-      '<div class="set-row"><span>Second line</span>' + seg('secondary', [['always', 'Always'], ['tap', 'On tap'], ['off', 'Hidden']]) + '</div>' +
-      '<div class="set-row"><span>Menus</span>' + seg('uiLang', [['en', 'English'], ['ja', '日本語']]) + '</div>' +
-      '<div class="set-row"><span>Spaces between Japanese words</span>' + seg('spacing', [[true, 'On (beginner-friendly)'], [false, 'Off (standard)']]) + '</div>' +
-      '<div class="set-row"><span>Lightbulb help</span>' + seg('lightbulb', [[true, 'On'], [false, 'Off']]) + '</div>' +
-      '<div class="set-row"><span>Romaji in help</span>' + seg('romaji', [[true, 'Show'], [false, 'Hide']]) + '</div>' +
-      '<div class="set-row"><span>Text speed</span>' + seg('textSpeed', [['normal', 'Normal'], ['fast', 'Fast'], ['instant', 'Instant']]) + '</div>' +
-      '<div class="set-row"><span>Seen scenes</span>' + seg('skipSeen', [[true, 'Offer skip'], [false, 'Never skip']]) + '</div>' +
-      '<p class="small dim">Furigana is always on: it is an accessibility feature, not a difficulty setting.</p>' +
-      '<h3>Answers</h3>' +
-      '<div class="set-row"><span>Default answer method</span>' + seg('input', [['hand', 'Handwriting'], ['choice', 'Choices'], ['ime', 'Keyboard/IME']]) + '</div>' +
-      '<div class="set-row"><span>Stroke-order practice</span>' + seg('strokePractice', [[false, 'Off (lenient)'], [true, 'Show stroke-order notes']]) + '</div>' +
-      '<h3>Sound</h3>' +
-      '<div class="set-row"><span>Master</span>' + range('vol.master', st.vol.master, 0, 1, 0.05) + '</div>' +
-      '<div class="set-row"><span>Music</span>' + range('vol.music', st.vol.music, 0, 1, 0.05) + '</div>' +
-      '<div class="set-row"><span>Effects</span>' + range('vol.sfx', st.vol.sfx, 0, 1, 0.05) + '</div>' +
-      '<div class="set-row"><span>Voice</span>' + range('vol.voice', st.vol.voice, 0, 1, 0.05) + '</div>' +
-      '<div class="set-row"><span>Mute all</span>' + seg('muted', [[false, 'Sound on'], [true, 'Muted']]) + '</div>' +
-      '<h3>Japanese voice (optional)</h3><p class="small">' + esc(vs.note || '') + '</p>' +
-      (voices.length ? '<div class="set-row"><span>Voice</span><select data-voice>' + voices.map((v) => '<option value="' + esc(v.voiceURI) + '"' + (st.voice.uri === v.voiceURI ? ' selected' : '') + '>' + esc(v.name) + '</option>').join('') + '</select></div>' +
-        '<div class="set-row"><span>Speak dialogue automatically</span><div class="seg"><button class="btn small' + (st.voice.auto ? ' on' : '') + '" data-voiceauto="1">On</button><button class="btn small' + (!st.voice.auto ? ' on' : '') + '" data-voiceauto="0">Off</button></div></div>' +
-        '<div class="set-row"><span>Speech rate</span>' + range('voice.rate', st.voice.rate, 0.6, 1.3, 0.05) + '</div>' : '') +
-      '<p class="small dim">Voices are your device\'s own speech synthesis, labelled as such. They are not recorded actors and not a pronunciation authority. Everything works without them.</p>' +
-      '<h3>Display &amp; comfort</h3>' +
-      '<div class="set-row"><span>Text size</span>' + range('textScale', st.textScale, 0.85, 1.5, 0.05) + '</div>' +
-      '<div class="set-row"><span>Contrast</span>' + seg('contrast', [['normal', 'Normal'], ['high', 'High']]) + '</div>' +
-      '<div class="set-row"><span>Reduce motion</span>' + seg('reducedMotion', [[false, 'Off'], [true, 'On']]) + '</div>' +
-      '<div class="set-row"><span>Touch controls</span>' + seg('touch', [['auto', 'Auto'], ['on', 'Always'], ['off', 'Never']]) + '</div>' +
-      '<h3>Controls</h3><div class="grid2">' + Object.keys(RB.input.DEFAULT_BINDS).map((a) => '<div class="item small row"><span class="grow">' + esc(RB.input.ACTION_LABELS[a]) + '</span><button class="btn small" data-bind="' + a + '">' + esc(RB.input.getBinds()[a].map(RB.input.keyName).join(' / ')) + '</button></div>').join('') + '</div>' +
-      '<div class="row"><button class="btn small" data-a="resetbinds">Reset controls</button></div>' +
-      '<h3>Storage</h3><p class="small">' + esc(ss.mode === 'idb' ? 'Saving to this browser (IndexedDB).' : ss.mode === 'local' ? 'Saving to this browser (localStorage fallback).' : 'Session only: nothing persists after closing.') +
-      ' Saves belong to this browser profile and this page\'s address. Clearing site data, private windows or a different address/browser will not see them.' + (ss.persisted ? ' The browser has granted persistent storage (it can still be cleared by you).' : '') + '</p>' +
-      (ss.mode !== 'session' && !ss.persisted ? '<button class="btn small" data-a="persist">Ask the browser to keep saves persistent</button>' : '');
-    body.innerHTML = h;
-    body.onclick = async (e) => {
-      const b = e.target.closest('[data-set],[data-bind],[data-a],[data-voiceauto]');
+    return h;
+  }
+
+  // ---- behaviour (unchanged persistence: apply now, save now; sliders debounce) --------------
+  function wire(L) {
+    L.onclick = async (e) => {
+      const gb = e.target.closest('[data-grp]');
+      if (gb) { group = gb.dataset.grp || null; render(); return; }
+      const b = e.target.closest('[data-bind],[data-a]');
       if (!b) return;
-      if (b.hasAttribute('data-set')) {
-        let v = b.getAttribute('data-v');
-        if (v === 'true') v = true; else if (v === 'false') v = false;
-        const key = b.getAttribute('data-set');
-        if (b.getAttribute('data-obj') === 'learn') s.learn[key] = v; else st[key] = v;
-        await RB.game.saveSettings();
-        if (key === 'lightbulb') RB.ui.hud.refresh();
-        settings(body);
-      } else if (b.hasAttribute('data-voiceauto')) {
-        st.voice.auto = b.getAttribute('data-voiceauto') === '1';
-        await RB.game.saveSettings();
-        settings(body);
-      } else if (b.hasAttribute('data-bind')) {
-        const a = b.getAttribute('data-bind');
+      const st = RB.game.settings;
+      if (b.hasAttribute('data-bind')) {
+        const a = b.dataset.bind;
         b.textContent = 'Press a key…';
         RB.input.captureNext((code) => {
           const binds = RB.util.deepClone(RB.input.getBinds());
@@ -15991,48 +16925,64 @@ RB.ui.menu = (function () {
           st.binds = binds;
           RB.input.setBinds(binds);
           RB.game.saveSettings();
-          settings(body);
+          render();
         });
-      } else if (b.getAttribute('data-a') === 'resetbinds') {
-        st.binds = null; RB.input.setBinds(null); await RB.game.saveSettings(); settings(body);
-      } else if (b.getAttribute('data-a') === 'persist') {
+      } else if (b.dataset.a === 'resetbinds') {
+        st.binds = null; RB.input.setBinds(null); await RB.game.saveSettings(); render();
+      } else if (b.dataset.a === 'persist') {
         const r = await RB.save.requestPersist();
         RB.ui.notice(r ? 'The browser agreed to keep this site\'s storage persistent.' : 'The browser declined; saves still work but may be cleared under storage pressure.', 'info');
-        settings(body);
+        render();
       }
     };
-    body.oninput = (e) => {
+    L.onchange = async (e) => {
+      const t = e.target;
+      const st = RB.game.settings;
+      if (t.matches('input[type=radio][data-set]')) {
+        let v = t.value;
+        if (v === 'true') v = true; else if (v === 'false') v = false;
+        if (t.dataset.obj === 'learn') RB.game.s.learn[t.dataset.set] = v; else st[t.dataset.set] = v;
+        await RB.game.saveSettings();
+        if (t.dataset.set === 'uiLang') { RB.ui.hud.refresh && RB.ui.hud.refresh(); }
+        render();
+        focusSame(t);
+      } else if (t.matches('[data-sw]')) {
+        const k = t.dataset.sw;
+        const on = t.checked;
+        if (k === 'contrast') st.contrast = on ? 'high' : 'normal';
+        else st[k] = t.dataset.inv ? !on : on;
+        await RB.game.saveSettings();
+        if (k === 'lightbulb') RB.ui.hud.refresh();
+        render();
+        focusSame(t);
+      } else if (t.matches('[data-voiceauto]')) {
+        st.voice.auto = t.checked; await RB.game.saveSettings(); render(); focusSame(t);
+      } else if (t.matches('[data-voice]')) {
+        st.voice.uri = t.value; RB.game.saveSettings(); RB.voice.speak('こんにちは');
+      }
+    };
+    L.oninput = (e) => {
       const r = e.target.closest('[data-range]');
-      if (r) {
-        const path = r.getAttribute('data-range').split('.');
-        if (path.length === 2) st[path[0]][path[1]] = +r.value; else st[path[0]] = +r.value;
-        RB.game.applySettings();
-        clearTimeout(settings._t);
-        settings._t = setTimeout(() => RB.game.saveSettings(), 300);
-      }
-      const v = e.target.closest('[data-voice]');
-      if (v) { st.voice.uri = v.value; RB.game.saveSettings(); RB.voice.speak('こんにちは'); }
+      if (!r) return;
+      const st = RB.game.settings;
+      const path = r.dataset.range.split('.');
+      if (path.length === 2) st[path[0]][path[1]] = +r.value; else st[path[0]] = +r.value;
+      const out = r.parentNode.querySelector('output');
+      if (out) out.textContent = path[1] === 'rate' ? (+r.value).toFixed(2) + '×' : Math.round(+r.value * 100) + '%';
+      RB.game.applySettings();
+      clearTimeout(wire._t);
+      wire._t = setTimeout(() => RB.game.saveSettings(), 300);
     };
   }
-  function settingsStandalone() {
-    const scrim = RB.ui.el('div', 'scrim');
-    const p = RB.ui.el('div', 'panel');
-    scrim.appendChild(p);
-    const lay = { el: scrim, name: 'settings' };
-    lay.onCancel = () => RB.ui.popLayer(lay);
-    p.innerHTML = '<header><h2>Settings</h2><button class="btn small" data-close>Back</button></header><div class="body"></div>';
-    p.querySelector('[data-close]').onclick = lay.onCancel;
-    settings(p.querySelector('.body'));
-    RB.ui.pushLayer(lay);
+  // after a re-render, keep keyboard focus on the equivalent control
+  function focusSame(t) {
+    const sel = t.dataset.set ? 'input[data-set="' + t.dataset.set + '"][value="' + CSS.escape(t.value) + '"]' : t.dataset.sw ? '[data-sw="' + t.dataset.sw + '"]' : t.hasAttribute('data-voiceauto') ? '[data-voiceauto]' : null;
+    const n = sel && fr && fr.box.querySelector(sel);
+    if (n) n.focus({ preventScroll: true });
   }
 
-  return { open, close, closeAll, settingsStandalone, isOpen: () => !!layer };
+  return { open, close, isOpen: () => !!lay };
 })();
-
-RB.ui.credits = function () {
-  return RB.ui.card('{終|お}わり ── そして 、 {道|みち} は {続|つづ}く 。', 'The end — and the road goes on.');
-};
-RB.ui.shop = function () { return Promise.resolve(); };
 
 
 /* ==== src/ui/60_pad.js ==== */

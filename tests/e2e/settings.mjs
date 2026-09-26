@@ -1,6 +1,7 @@
-// Display/accessibility settings through the real settings tab: contrast,
-// reduced motion, Japanese-led dialogue, instant text and text size are
-// applied at once and survive a page reload (stored in IndexedDB).
+// Settings through the real Settings folio (named groups, real switches,
+// radios and sliders): contrast, reduced motion, Japanese-led dialogue,
+// instant text and text size are applied at once and survive a page reload
+// (stored in IndexedDB).
 // Usage: node tests/e2e/settings.mjs
 import { serve, launch, page } from './lib.mjs';
 
@@ -12,11 +13,24 @@ const ctx = await b.newContext({ viewport: { width: 1280, height: 800 } });
 const { p, errors } = await page(b, url, { context: ctx });
 await p.waitForFunction(() => window.__RB_READY__);
 await p.evaluate(() => { RB.game.debugStart('rw.village', 22, 30, { comp: 'mio' }); RB.ui.menu.open('settings'); });
-await p.waitForSelector('[data-set=contrast][data-v=high]');
-for (const [k, v] of [['contrast', 'high'], ['reducedMotion', 'true'], ['lead', 'ja'], ['textSpeed', 'instant']]) {
-  await p.click(`[data-set=${k}][data-v="${v}"]`);
+// Display & Accessibility: real switches
+await p.waitForSelector('[data-grp=display]');
+await p.click('[data-grp=display]');
+for (const k of ['contrast', 'reducedMotion']) {
+  await p.click(`label.switch:has([data-sw=${k}])`);
   await p.waitForTimeout(120);
+  assert(await p.isChecked(`[data-sw=${k}]`), k + ' switch reads On after one click');
 }
+// Reading & Language: real radio groups
+await p.click('[data-grp=reading]');
+for (const [k, v] of [['lead', 'ja'], ['textSpeed', 'instant']]) {
+  await p.click(`label.opt:has(input[data-set=${k}][value="${v}"])`);
+  await p.waitForTimeout(120);
+  assert(await p.isChecked(`input[data-set=${k}][value="${v}"]`), k + '=' + v + ' radio checked');
+}
+const pv = await p.evaluate(() => { const b = document.querySelector('.pv-main'); return b ? { ruby: !!b.querySelector('ruby'), text: b.textContent.trim().slice(0, 20) } : null; });
+assert(pv && pv.ruby, 'reading preview now leads with Japanese from the game, with furigana (' + (pv && pv.text) + ')');
+await p.click('[data-grp=display]');
 await p.evaluate(() => { const r = document.querySelector('[data-range="textScale"]'); r.value = '1.3'; r.dispatchEvent(new Event('input', { bubbles: true })); r.dispatchEvent(new Event('change', { bubbles: true })); });
 await p.waitForTimeout(600);
 const now = await p.evaluate(() => ({

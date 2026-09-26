@@ -1,0 +1,101 @@
+/* Folio page contents: Journey, Words, Satchel, Map, Settings, Save sheet. */
+
+/* sub-navigation inside a section (e.g. Quests / Dialogue history) */
+.subnav { display: flex; flex-wrap: wrap; gap: 0; margin: 0 0 0.6em; border-bottom: 2px solid var(--ink-3); }
+.subbtn {
+  display: inline-flex; align-items: center; gap: 0.4em; min-height: var(--tap); padding: 0 0.9em; margin-bottom: -2px;
+  background: transparent; border: 0; border-bottom: 3px solid transparent; color: var(--ink-2); font: inherit; font-weight: 600; cursor: pointer;
+}
+.subbtn svg { width: 1.2em; height: 1.2em; }
+.subbtn[aria-pressed="true"] { color: var(--ink); border-bottom-color: var(--ribbon-deep); }
+.subbtn:hover { color: var(--ink); background: rgba(193, 138, 42, 0.08); }
+.subbtn:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: -3px; }
+@media (max-width: 599px) {
+  .subnav { display: grid; grid-template-columns: repeat(auto-fit, minmax(8.5em, 1fr)); }
+  .subbtn { justify-content: center; text-align: center; padding: 0.3em 0.5em; line-height: 1.25; }
+  .subbtn svg { display: none; }
+}
+.leaf h3 svg { width: 1.1em; height: 1.1em; align-self: center; color: var(--ink-2); flex: none; }
+.leaf h3 .count { margin-left: auto; }
+
+/* Journey */
+.entry .obj { margin-top: 0.3em; }
+.entry .obj .jline { font-size: 1.02em; }
+.entry .obj .en { font-size: 0.95em; }
+.entry.current .kind { color: var(--ribbon-deep); }
+button.entry .body { display: block; }
+button.entry .t, button.entry .kind { display: block; }
+.inline-detail { border-left: 3px solid var(--ribbon); margin: 0 0 0.6em 1.2em; padding: 0.2em 0.2em 0.4em 0.8em; background: rgba(255,255,255,0.35); }
+.qdetail .kind { font-size: 0.8em; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+.qdetail h3 { border: 0; margin: 0.2em 0 0; font-size: 1.25em; }
+.qdetail .en-title { margin: 0 0 0.6em; color: var(--ink-2); font-family: var(--serif); font-style: italic; }
+.small-ph { font-size: 0.95em !important; }
+.earlier { margin: 0.3em 0 0.8em 1.2em; padding: 0; color: var(--ink-2); }
+.earlier li { margin: 0.35em 0; }
+.done-list summary { list-style: none; cursor: pointer; }
+.done-list summary::-webkit-details-marker { display: none; }
+.done-list summary h3 { margin-bottom: 0.2em; }
+.done-list summary h3::after { content: "show"; margin-left: 0.6em; font: 0.78em var(--ui-font); color: var(--river); text-decoration: underline; }
+.done-list[open] summary h3::after { content: "hide"; }
+.done-list summary:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.history .who { font-size: 0.85em; font-weight: 600; color: var(--ink-3); }
+
+/* Words: filed notes */
+.row-acts { display: flex; flex-wrap: wrap; gap: 8px; margin: 0.6em 0; }
+.filed .written { font-size: 1.35em; line-height: 1.9; }
+.filed .reading { color: var(--ink-2); font-family: var(--jp-font); }
+.filed .t { font-weight: 400; color: var(--ink); }
+.filed .ex { margin-top: 0.3em; font-size: 0.92em; }
+.index button svg { width: 1.2em; height: 1.2em; color: var(--ink-2); align-self: center; flex: none; }
+.stats { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0; margin: 0.3em 0 0.8em; }
+.stats dt, .stats dd { margin: 0; padding: 0.45em 0.2em; border-bottom: 1px solid var(--rule); }
+.stats dd { text-align: right; font-variant-numeric: tabular-nums; color: var(--ink-2); }
+/* kana chart: state by underline length and weight, not colour alone */
+.klegend { display: flex; flex-wrap: wrap; gap: 0.3em 0.8em; align-items: center; margin-bottom: 0.6em; color: var(--ink-2); font-size: 0.9em; }
+.kgroup { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; padding: 0.25em 0; border-bottom: 1px dotted var(--rule); }
+.kgl { flex: 0 0 9em; color: var(--ink-3); font-size: 0.85em; }
+.kcells { display: flex; flex-wrap: wrap; gap: 3px; }
+.kc { display: inline-flex; flex-direction: column; align-items: center; width: 2.1em; padding: 1px 0 2px; font-family: var(--jp-font); font-size: 1.1em; color: var(--ink); }
+.kc .ch { line-height: 1.3; }
+.kc::after { content: ""; display: block; height: 3px; width: 10%; background: var(--ink-3); border-radius: 2px; }
+.kc.l0 { color: var(--ink-3); }
+.kc.l0::after { width: 0; }
+.kc.l1::after { width: 35%; }
+.kc.l2::after { width: 65%; background: var(--ink-2); }
+.kc.l3::after { width: 100%; background: var(--ink); height: 4px; }
+.kcell { min-width: var(--tap); min-height: var(--tap); font: 1.2em var(--jp-font); background: var(--paper); color: var(--ink-3); border: 1px dashed var(--paper-edge); border-radius: var(--r-1); cursor: pointer; position: relative; }
+.kcell.taught { color: var(--ink); border-style: solid; }
+.kcell.taught::after { content: ""; position: absolute; top: 4px; right: 4px; width: 5px; height: 5px; border-radius: 50%; background: var(--ink); }
+.kcell:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+.kdemo-box { display: flex; gap: 12px; align-items: center; margin: 0.4em 0 0.8em; }
+.kdemo-box canvas { width: 160px; height: 160px; border-radius: var(--r-1); background: #fffaf0; border: 1px solid var(--paper-edge); flex: none; }
+
+/* Satchel */
+.item-row .kind svg, .entry .kind svg { width: 1em; height: 1em; vertical-align: -0.15em; }
+.idetail .ibig { width: 64px; height: 64px; padding: 10px; border: 1px solid var(--paper-edge); border-radius: 50%; color: var(--ink); background: var(--paper-2); margin-bottom: 0.4em; }
+.idetail .ibig svg { width: 100%; height: 100%; }
+.idetail h3 { border: 0; }
+.note-slip svg { width: 1.1em; height: 1.1em; vertical-align: -0.2em; }
+
+/* Map: a folded chart */
+.chartbox { border: 1px solid var(--paper-edge); box-shadow: 0 2px 0 var(--paper-3); background: #efe3c6; margin: 0.2em 0 0.3em; }
+.chartbox svg { display: block; width: 100%; height: auto; max-height: min(52 * var(--vh), 420px); }
+
+/* Settings */
+.folio-settings .leaf h3:first-child { margin-top: 0; }
+.campaign-box { border: 1px solid var(--paper-edge); border-left: 4px solid var(--ribbon); padding: 0.5em 0.9em 0.2em; margin: 0.4em 0 1em; background: rgba(255,255,255,0.3); }
+.leaf .kind svg { width: 1.1em; height: 1.1em; vertical-align: -0.2em; }
+.leaf > .kind, .campaign-box > .kind { font-size: 0.8em; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; margin: 0.4em 0 0.2em; }
+.pv { margin: 0.2em 0 1em; }
+.pv figcaption { font-size: 0.82em; color: var(--ink-3); margin-bottom: 0.3em; }
+.pv-box { background: var(--cloth-900); color: var(--on-cloth); border-radius: var(--r-2); padding: 0.7em 0.9em; border: 1px solid var(--paper-edge); }
+.leaf .pv-box .enline, .leaf .pv-box .jline, .leaf .pv-box .jt, .leaf .pv-box ruby { color: var(--on-cloth); }
+.leaf .pv-box rt { color: var(--on-cloth-2); }
+.pv-main { font-size: 1.2em; line-height: 1.9; }
+.pv-main .enline { font-family: var(--serif); }
+.pv-sub { color: var(--on-cloth-2); margin-top: 0.2em; }
+.leaf .pv-sub .enline, .leaf .pv-sub .jt, .leaf .pv-sub ruby { color: var(--on-cloth-2); }
+.pv-sub.tap { font-style: italic; font-size: 0.9em; }
+.keys .keycaps { margin-top: 0.2em; }
+kbd { display: inline-block; min-width: 1.6em; padding: 0 0.4em; border: 1px solid var(--ink-3); border-bottom-width: 2px; border-radius: 3px; background: #fffaf0; color: var(--ink); font: 0.9em var(--ui-font); text-align: center; }
+body.high-contrast .pv-box { background: #000; color: #fff; }

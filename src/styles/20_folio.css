@@ -1,0 +1,257 @@
+/* Wayfarer's Folio — shared components: cloth frame, paper leaves, layered
+ * paper tabs with a moving ribbon, paper/cloth buttons, ruled entries,
+ * real form controls. Screen-specific rules live in later files. */
+
+/* ---- frame --------------------------------------------------------------- */
+.folio-scrim {
+  position: absolute; inset: 0; isolation: isolate; /* each folio layer stacks as a whole */ background: rgba(8, 10, 22, 0.62);
+  display: flex; align-items: center; justify-content: center;
+}
+.folio {
+  position: relative; color: var(--on-cloth);
+  width: min(1080px, calc(100vw - 2 * var(--gutter)));
+  height: min(800px, calc(100 * var(--vh) - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom)));
+  display: grid; grid-template-rows: auto auto minmax(0, 1fr) auto; grid-template-columns: minmax(0, 1fr);
+  background-color: var(--cloth-800); background-image: var(--cloth-weave);
+  border-radius: 10px; padding: 8px 12px 10px;
+  box-shadow: 0 18px 50px rgba(0,0,0,0.55), inset 0 0 0 1px rgba(255,255,255,0.05);
+}
+/* repair stitching along the cover edge (decorative, never intercepts input) */
+.folio::before {
+  content: ""; position: absolute; inset: 4px; border: 1px dashed var(--thread); border-radius: 7px;
+  opacity: 0.55; pointer-events: none;
+}
+.folio > * { min-width: 0; }
+.folio-head { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; padding: 4px 4px 6px; min-height: var(--tap); position: relative; z-index: 3; }
+.folio-head > .cbtn { flex: none; margin-left: auto; }
+.folio-head h2 { margin: 0; font-family: var(--serif); font-weight: 600; font-size: 1.2em; letter-spacing: 0.02em; color: var(--on-cloth); flex: 0 1 auto; max-width: 60%; }
+.folio-head .meta { color: var(--on-cloth-2); font-size: 0.85em; line-height: 1.25; flex: 1 1 6em; min-width: 0; text-align: right; }
+/* when the line is too narrow (small phone, large text) the meta and Close
+ * wrap to a second line instead of squeezing the meta into a column */
+.folio-foot { display: flex; gap: 8px; padding-top: 8px; position: relative; z-index: 3; flex-wrap: wrap; }
+.folio-foot .spacer { flex: 1; }
+
+/* phones: the folio is the whole screen, one page at a time */
+@media (max-width: 599px) {
+  .folio {
+    width: 100vw; height: calc(100 * var(--vh)); border-radius: 0;
+    padding: max(6px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+  }
+  .folio::before { inset: 3px; border-radius: 0; }
+  .folio-foot .cbtn { flex: 1 1 auto; justify-content: center; }
+}
+
+/* ---- cloth buttons (on the cover) ----------------------------------------- */
+.cbtn {
+  display: inline-flex; align-items: center; gap: 0.45em; min-height: var(--tap); min-width: var(--tap);
+  padding: 0 0.9em; border-radius: var(--r-2); cursor: pointer; touch-action: manipulation;
+  background: var(--cloth-700); color: var(--on-cloth); border: 1px solid var(--paper-edge);
+  font: inherit; font-size: 0.95em; line-height: 1.2;
+}
+.cbtn:hover { background: var(--cloth-600); }
+.cbtn:active { transform: translateY(1px); }
+.cbtn:focus-visible { outline: 3px solid var(--focus-cloth); outline-offset: 2px; }
+.cbtn svg { width: 1.25em; height: 1.25em; flex: none; }
+.cbtn[aria-current="page"], .cbtn.current { box-shadow: inset 0 -3px 0 var(--ribbon); }
+
+/* ---- paper tabs ------------------------------------------------------------ */
+/* Each tab's own rectangle is its hit area. Its visible face is a ::before
+ * drawn slightly wider than the box (pointer-events: none), so faces overlap
+ * like index dividers while no face covers a neighbour's label or steals its
+ * taps. Inactive tabs sit lower, their bottoms tucked (clipped) behind the
+ * page edge; the selected tab rises, comes to the front and shares the
+ * page's paper, covering the page's top edge so tab and page are one sheet. */
+.tabrail-wrap { position: relative; z-index: 3; margin: 2px 6px -1px; min-width: 0; }
+/* the page's top edge, drawn over the tucked tabs and under the selected one */
+.tabrail-wrap::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--paper-edge); z-index: 2; pointer-events: none; }
+.tabrail {
+  position: relative; display: flex; align-items: flex-end; gap: 0; padding: 6px 12px 0; min-width: 0;
+  overflow-x: auto; overflow-y: hidden; scrollbar-width: none; scroll-behavior: smooth;
+}
+.tabrail::-webkit-scrollbar { display: none; }
+.ptab {
+  --tab-bg: var(--paper-3);
+  position: relative; z-index: 1; flex: 0 0 auto; min-width: 5.2em; min-height: 52px;
+  display: flex; align-items: center; justify-content: center; gap: 0.45em; margin: 0;
+  padding: 8px 1.05em 14px; border: 0; background: transparent; color: var(--ink-2);
+  font: inherit; font-size: 1em; font-weight: 600; letter-spacing: 0.01em; cursor: pointer; white-space: nowrap;
+  transform: translateY(7px); transition: transform var(--t-quick) var(--ease);
+  touch-action: manipulation;
+}
+.ptab + .ptab { margin-left: 4px; }
+.ptab svg { width: 1.3em; height: 1.3em; flex: none; }
+.ptab::before {
+  content: ""; position: absolute; top: 0; bottom: 0; left: -7px; right: -7px; z-index: -1; pointer-events: none;
+  background: var(--tab-bg); border: 1px solid var(--paper-edge); border-bottom: 0; border-radius: 10px 10px 0 0;
+  box-shadow: inset 0 -1px 0 var(--paper-edge), inset 0 2px 0 rgba(255,255,255,0.35);
+  transform: perspective(90px) rotateX(3deg); transform-origin: 50% 100%;
+  transition: background-color var(--t-quick);
+}
+.ptab:hover { --tab-bg: var(--paper-2); transform: translateY(4px); color: var(--ink); }
+.ptab:active { transform: translateY(6px); }
+.ptab[aria-selected="true"] { --tab-bg: var(--paper); z-index: 4; color: var(--ink); transform: translateY(1px); }
+.ptab[aria-selected="true"]::before { box-shadow: inset 0 2px 0 rgba(255,255,255,0.5), 0 -3px 8px rgba(0,0,0,0.22); bottom: -2px; }
+.ptab:focus-visible { outline: 3px solid var(--focus-cloth); outline-offset: 1px; }
+/* keyboard focus on the selected tab stays distinct from "selected" */
+.ptab[aria-selected="true"]:focus-visible { outline: 3px dashed var(--focus-paper); outline-offset: -5px; }
+.ptab[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+.ptab.lift { animation: tab-lift 170ms var(--ease); }
+@keyframes tab-lift { 0% { transform: translateY(7px); } 60% { transform: translateY(-2px); } 100% { transform: translateY(1px); } }
+/* the ribbon: one marker that moves to the selected tab */
+.tabrail .ribbon {
+  position: absolute; top: 0; left: 0; width: 14px; height: 22px; z-index: 5; pointer-events: none;
+  background: var(--ribbon); transition: transform 170ms var(--ease);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 76%, 0 100%);
+  box-shadow: inset -3px 0 0 var(--ribbon-deep);
+}
+/* rail that cannot fit (large text / Japanese labels): scrollable with visible arrows */
+.tabrail-wrap .rail-arrow { display: none; }
+.tabrail-wrap.overflowing .rail-arrow {
+  display: flex; position: absolute; top: 6px; bottom: 6px; z-index: 6; width: 34px; align-items: center; justify-content: center;
+  background: var(--cloth-800); color: var(--on-cloth); border: 1px solid var(--paper-edge); border-radius: var(--r-2); cursor: pointer; font: inherit;
+}
+.tabrail-wrap.overflowing .rail-arrow.l { left: -4px; }
+.tabrail-wrap.overflowing .rail-arrow.r { right: -4px; }
+.tabrail-wrap.overflowing .tabrail { padding-left: 38px; padding-right: 38px; }
+body.reduced-motion .ptab, body.reduced-motion .tabrail .ribbon { transition: none; }
+/* phones: four equal tabs, icon over label. A tab never shrinks below its
+ * own label (min-width: max-content); if the labels cannot fit (large text,
+ * Japanese labels at 320px) the rail scrolls and shows its arrows instead. */
+@media (max-width: 599px) {
+  .tabrail-wrap { margin: 0 0 -1px; }
+  .tabrail { padding: 4px 6px 0; }
+  .ptab {
+    flex: 1 1 0; min-width: max-content; flex-direction: column; gap: 1px; min-height: 58px;
+    padding: 7px 0.55em 11px; font-size: 0.9em;
+  }
+  .ptab + .ptab { margin-left: 6px; }
+  .ptab::before { left: -5px; right: -5px; }
+  .ptab svg { width: 1.35em; height: 1.35em; }
+  .tabrail .ribbon { width: 12px; height: 18px; }
+}
+body.reduced-motion .ptab.lift { animation: none; }
+
+/* ---- paper leaves ---------------------------------------------------------- */
+.leafbox { position: relative; z-index: 2; min-height: 0; min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); }
+.leaf {
+  position: relative; min-height: 0; overflow: auto; overscroll-behavior: contain;
+  background: var(--paper); color: var(--ink); border: 1px solid var(--paper-edge); border-radius: 3px 3px 6px 6px;
+  padding: 14px clamp(12px, 3vw, 28px) 22px; line-height: 1.55;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.35), 0 2px 0 var(--paper-3), 0 4px 0 var(--paper-edge);
+  -webkit-overflow-scrolling: touch; touch-action: pan-y pinch-zoom;
+}
+.leaf:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: -3px; }
+/* a two-page spread when there is room: list page + detail page, bound in the middle */
+.spread { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); min-height: 0; min-width: 0; }
+.spread > .leaf { min-width: 0; }
+.spread > .leaf + .leaf { display: none; }
+@media (min-width: 860px) {
+  .spread.two { grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); gap: 0; }
+  .spread.two > .leaf + .leaf { display: block; }
+  .spread.two > .leaf:first-child { border-radius: 3px 0 0 6px; box-shadow: inset -14px 0 18px -14px rgba(60,40,10,0.35), 0 2px 0 var(--paper-3), 0 4px 0 var(--paper-edge); }
+  .spread.two > .leaf + .leaf { border-left: 0; border-radius: 0 3px 6px 0; box-shadow: inset 14px 0 18px -14px rgba(60,40,10,0.35), 0 2px 0 var(--paper-3), 0 4px 0 var(--paper-edge); }
+}
+
+/* ---- ink on paper ---------------------------------------------------------- */
+.leaf h3, .leaf .ph {
+  font-family: var(--serif); font-weight: 600; font-size: 1.06em; color: var(--ink); margin: 1.1em 0 0.35em;
+  padding-bottom: 0.2em; border-bottom: 1px solid var(--rule); display: flex; align-items: baseline; gap: 0.5em;
+}
+.leaf h3:first-child, .leaf .ph:first-child { margin-top: 0.1em; }
+.leaf h3 .count, .leaf .ph .count { font-family: var(--ui-font); font-weight: 400; font-size: 0.8em; color: var(--ink-3); }
+.leaf p { margin: 0.35em 0 0.6em; }
+.leaf .muted, .leaf .dim { color: var(--ink-3); }
+.leaf .small { font-size: 0.88em; }
+.leaf rt { color: var(--rt-ink); }
+.leaf .en, .leaf .enline { color: var(--ink-2); }
+.leaf .jline { color: var(--ink); }
+body.bulb-on .leaf .jline .jt { text-decoration-color: rgba(38, 31, 21, 0.45); }
+body.bulb-on .leaf .jline .jt:hover, .leaf .jline .jt.active { background: rgba(193, 138, 42, 0.18); }
+.leaf a, .leaf .link { color: var(--river); }
+
+/* ruled entries: most content is ink on a shared page, not boxed cards */
+.entries { list-style: none; margin: 0; padding: 0; }
+.entry {
+  display: grid; grid-template-columns: 1.6em minmax(0, 1fr) auto; gap: 0.2em 0.6em; align-items: start;
+  padding: 0.65em 0.2em 0.7em; border-bottom: 1px solid var(--rule);
+}
+.entry > .mark { width: 1.3em; height: 1.3em; margin-top: 0.3em; color: var(--ink-2); }
+.entry > .mark svg { width: 100%; height: 100%; }
+.entry .t { font-weight: 600; color: var(--ink); }
+.entry .t .en { font-weight: 400; }
+.entry .kind { font-size: 0.78em; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+.entry .body { grid-column: 2 / -1; }
+.entry .acts { grid-column: 2 / -1; display: flex; gap: 8px; flex-wrap: wrap; margin-top: 0.35em; }
+.entry.current > .mark { color: var(--ribbon-deep); }
+.entry.done .t { color: var(--ink-3); }
+button.entry { width: 100%; text-align: left; background: transparent; border: 0; border-bottom: 1px solid var(--rule); font: inherit; color: inherit; cursor: pointer; }
+button.entry:hover { background: rgba(193, 138, 42, 0.08); }
+button.entry:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: -3px; }
+button.entry[aria-current="true"] { background: rgba(193, 138, 42, 0.14); box-shadow: inset 4px 0 0 var(--ribbon); }
+
+/* index lines ("contents" of a section) */
+.index { list-style: none; margin: 0.2em 0 0.8em; padding: 0; }
+.index button {
+  width: 100%; display: flex; align-items: baseline; gap: 0.6em; min-height: var(--tap); padding: 0.4em 0.3em;
+  background: transparent; border: 0; border-bottom: 1px dotted var(--paper-edge); color: var(--ink); font: inherit; text-align: left; cursor: pointer;
+}
+.index button .lbl { font-weight: 600; }
+.index button .fill { flex: 1; }
+.index button .n { color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.index button[aria-current="true"] { box-shadow: inset 4px 0 0 var(--ribbon); background: rgba(193, 138, 42, 0.12); }
+.index button:hover { background: rgba(193, 138, 42, 0.08); }
+.index button:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: -3px; }
+.backline { display: flex; align-items: center; gap: 8px; margin: -4px 0 6px; }
+
+/* ---- paper buttons (on pages) ---------------------------------------------- */
+.pbtn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.4em; min-height: var(--tap); min-width: var(--tap);
+  padding: 0 1em; border-radius: var(--r-1); cursor: pointer; touch-action: manipulation; font: inherit; font-size: 0.95em;
+  background: var(--paper); color: var(--ink); border: 1px solid var(--ink-3); box-shadow: 0 2px 0 var(--paper-3);
+}
+.pbtn:hover { background: var(--paper-2); }
+.pbtn:active { transform: translateY(1px); box-shadow: 0 1px 0 var(--paper-3); }
+.pbtn:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.pbtn[disabled], .pbtn[aria-disabled="true"] { color: var(--ink-3); border-style: dashed; cursor: not-allowed; box-shadow: none; }
+.pbtn.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); box-shadow: 0 2px 0 var(--ribbon-deep); }
+.pbtn.primary:hover { background: #3a2f20; }
+.pbtn.danger { color: var(--danger-ink); border-color: var(--danger-ink); background: var(--danger-bg); }
+.pbtn.quiet { border-color: transparent; box-shadow: none; background: transparent; color: var(--river); text-decoration: underline; text-underline-offset: 0.2em; }
+.pbtn svg { width: 1.2em; height: 1.2em; }
+
+/* ---- real controls, styled ------------------------------------------------- */
+.field { margin: 0.55em 0 0.9em; }
+.field > .lab, fieldset.field > legend { display: block; font-weight: 600; color: var(--ink); margin-bottom: 0.3em; padding: 0; }
+.field .hint { color: var(--ink-3); font-size: 0.86em; margin-top: 0.25em; }
+fieldset.field { border: 0; padding: 0; min-width: 0; }
+.opts { display: flex; flex-wrap: wrap; gap: 6px; }
+.opt { position: relative; display: inline-flex; }
+.opt input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.opt span {
+  display: inline-flex; align-items: center; gap: 0.45em; min-height: var(--tap); padding: 0 0.95em; border-radius: var(--r-1);
+  border: 1px solid var(--paper-edge); background: var(--paper); color: var(--ink); cursor: pointer;
+}
+.opt span::before { content: ""; width: 0.8em; height: 0.8em; border-radius: 50%; border: 2px solid var(--ink-3); flex: none; }
+.opt input:checked + span { border-color: var(--ink); box-shadow: inset 0 -3px 0 var(--ribbon); font-weight: 600; }
+.opt input:checked + span::before { background: var(--ink); border-color: var(--ink); box-shadow: inset 0 0 0 2px var(--paper); }
+.opt input:focus-visible + span { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.switch { display: flex; align-items: center; gap: 0.7em; min-height: var(--tap); cursor: pointer; }
+.switch input { appearance: none; -webkit-appearance: none; width: 3em; height: 1.6em; border-radius: 1em; background: var(--paper-3); border: 1px solid var(--ink-3); position: relative; cursor: pointer; flex: none; margin: 0; }
+.switch input::after { content: ""; position: absolute; top: 2px; left: 2px; width: calc(1.6em - 6px); height: calc(1.6em - 6px); border-radius: 50%; background: var(--ink-2); transition: transform var(--t-quick); }
+.switch input:checked { background: var(--ink); border-color: var(--ink); }
+.switch input:checked::after { transform: translateX(1.4em); background: var(--paper); }
+.switch input:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.switch .state { color: var(--ink-3); font-size: 0.86em; margin-left: auto; }
+.slider { display: grid; grid-template-columns: minmax(0, 1fr) 3.4em; gap: 0.7em; align-items: center; }
+.slider input[type=range] { width: 100%; accent-color: var(--ink); min-height: var(--tap); }
+.slider output { font-variant-numeric: tabular-nums; color: var(--ink-2); text-align: right; }
+.leaf select, .leaf input[type=text] {
+  min-height: var(--tap); background: #fffaf0; color: var(--ink); border: 1px solid var(--ink-3); border-radius: var(--r-1); padding: 0 0.7em; font: inherit; max-width: 100%;
+}
+.leaf select:focus-visible, .leaf input[type=text]:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+
+/* ---- status / notes on paper ---------------------------------------------- */
+.note-slip { background: var(--paper-2); border-left: 4px solid var(--ribbon); padding: 0.5em 0.8em; margin: 0.6em 0; color: var(--ink-2); }
+.note-slip.warn { border-left-color: var(--warn-ink); }
+.note-slip.bad { border-left-color: var(--danger-ink); }
+.sealmark { color: var(--vermilion); font-weight: 700; }
