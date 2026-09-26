@@ -41,22 +41,43 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const hx = Math.round(Math.min(34, 10 + W * 0.13));
     return { hx, S: [0, -7, W, -7, W + 7, eY, -7, eY], L: [0, -7, hx, -7, -7, eY], Rt: [W - hx, -7, W, -7, W + 7, eY] };
   }
-  const lighter = (r5) => [r5[1], r5[2], r5[3], r5[4], mix(r5[4], K.WARM, 0.3)];
-  const darker = (r5) => [mix(r5[0], K.COOL, 0.3), r5[0], r5[1], r5[2], r5[3]];
-  function roofPlanes(g, W, eY, r5, tex) {
+  // Tint every pixel inside a triangle toward a colour (hip planes: warm
+  // light on the left, cool shade on the right).
+  function tintTri(g, tri, col, k) {
+    const tf = g.getTransform(), ox = Math.round(tf.e), oy = Math.round(tf.f);
+    const xs = [tri[0], tri[2], tri[4]], ys = [tri[1], tri[3], tri[5]];
+    const X0 = Math.max(0, Math.floor(Math.min(...xs)) + ox), Y0 = Math.max(0, Math.floor(Math.min(...ys)) + oy);
+    const X1 = Math.min(g.canvas.width, Math.ceil(Math.max(...xs)) + ox), Y1 = Math.min(g.canvas.height, Math.ceil(Math.max(...ys)) + oy);
+    if (X1 <= X0 || Y1 <= Y0) return;
+    const img = g.getImageData(X0, Y0, X1 - X0, Y1 - Y0), d = img.data, C = K.rgb(col);
+    const [ax, ay, bx, by, cx, cy] = tri;
+    const s = (px, py, x1, y1, x2, y2) => (px - x2) * (y1 - y2) - (x1 - x2) * (py - y2);
+    for (let y = Y0; y < Y1; y++) for (let x = X0; x < X1; x++) {
+      const px = x - ox + 0.5, py = y - oy + 0.5;
+      const d1 = s(px, py, ax, ay, bx, by), d2 = s(px, py, bx, by, cx, cy), d3 = s(px, py, cx, cy, ax, ay);
+      if ((d1 < 0 || d2 < 0 || d3 < 0) && (d1 > 0 || d2 > 0 || d3 > 0)) continue;
+      const i = ((y - Y0) * (X1 - X0) + (x - X0)) * 4;
+      if (d[i + 3] < 128) continue;
+      d[i] += (C[0] - d[i]) * k; d[i + 1] += (C[1] - d[i + 1]) * k; d[i + 2] += (C[2] - d[i + 2]) * k;
+    }
+    g.putImageData(img, X0, Y0);
+  }
+  function roofPlanes(g, W, eY, r5, tex, noAo) {
     const G = roofGeom(W, eY), RX = -10, RY = -10, RW = W + 20, RH = eY + 12;
-    const layer = (q, mask) => K.make(RW, RH, (g2) => {
+    const layer = K.make(RW, RH, (g2) => {
       g2.translate(-RX, -RY);
-      tex(g2, q);
+      tex(g2, r5);
+      tintTri(g2, G.L, K.WARM, 0.2);
+      tintTri(g2, G.Rt, K.COOL, 0.28);
       // the lower courses sit a little darker (stepped, cool)
       const ao = Math.round((eY + 7) * 0.32);
-      R(g2, -8, eY - ao, W + 16, ao, 'rgba(22,16,40,0.07)');
-      R(g2, -8, eY - (ao >> 1), W + 16, ao >> 1, 'rgba(22,16,40,0.07)');
-      K.keepPoly(g2, mask, -10, -10, W + 10, eY + 2);
+      if (!noAo) {
+        R(g2, -8, eY - ao, W + 16, ao, 'rgba(22,16,40,0.06)');
+        R(g2, -8, eY - (ao >> 1), W + 16, ao >> 1, 'rgba(22,16,40,0.06)');
+      }
+      K.keepPoly(g2, G.S, -10, -10, W + 10, eY + 2);
     });
-    g.drawImage(layer(r5, G.S), RX, RY);
-    g.drawImage(layer(lighter(r5), G.L), RX, RY);
-    g.drawImage(layer(darker(r5), G.Rt), RX, RY);
+    g.drawImage(layer, RX, RY);
     // hip ridges
     line(g, G.hx, -7, -6, eY - 1, r5[4], 1); line(g, G.hx + 1, -7, -5, eY - 1, r5[3], 1);
     line(g, W - G.hx, -7, W + 6, eY - 1, r5[2], 1); line(g, W - G.hx - 1, -7, W + 5, eY - 1, r5[1], 1);
@@ -89,16 +110,18 @@ var RB = (globalThis.RB = globalThis.RB || {});
   function tileRoof(g, W, eY, r5, seed, soot) {
     const G = roofPlanes(g, W, eY, r5, (q, p) => {
       R(q, -8, -8, W + 16, eY + 8, p[1]);
-      for (const [ya, yb] of courses(-7, eY - 5, 6)) {
-        for (let x = -8; x < W + 8; x += 6) {
-          const sh = hh(seed, x * 7 + ya, 3) % 14 === 0 ? -1 : 0;
+      const rows = courses(-7, eY - 5, 6);
+      rows.forEach(([ya, yb], ri) => {
+        for (let x = -8, col = 0; x < W + 8; x += 6, col++) {
+          let sh = hh(seed, x * 7 + ya, 3) % 14 === 0 ? -1 : 0;
+          // ash roofs: soot washed down a few tile columns in streaks
+          if (soot) { const r = hh(seed, col, 44); if (r % 5 === 0) { const s0 = (r >>> 4) % Math.max(1, rows.length - 3), L = 2 + ((r >>> 8) % 4); if (ri >= s0 && ri < s0 + L) sh = ri === s0 || ri === s0 + L - 1 ? -1 : -2; } }
           const c = (k) => p[Math.max(0, Math.min(4, k + sh))];
           R(q, x, ya, 1, yb - ya, c(3)); R(q, x + 1, ya, 1, yb - ya, c(4)); R(q, x + 2, ya, 1, yb - ya, c(3));
           R(q, x + 3, ya, 1, yb - ya, c(2)); R(q, x + 4, ya, 2, yb - ya, c(1));
           R(q, x, yb - 2, 4, 1, c(4)); R(q, x, yb - 1, 6, 1, p[0]);
         }
-        if (soot) for (let i = 0; i < W / 20; i++) { const r = hh(seed, ya, i + 40); if (r % 3 === 0) R(q, (r >>> 4) % W, ya, 2 + (r % 3), yb - ya - 1, mix(p[1], '#1a1414', 0.45)); }
-      }
+      });
       R(q, -8, eY - 5, W + 16, 5, p[1]);
       for (let x = -8; x < W + 8; x += 6) { ell(q, x + 2.5, eY - 3, 3, 2.6, p[3]); R(q, x + 1, eY - 5, 2, 1, p[4]); R(q, x + 3, eY - 2, 2, 1, p[1]); }
       R(q, -8, eY - 1, W + 16, 1, p[0]);
@@ -164,7 +187,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         if (fy > l - 4) I -= fy > l - 1 ? 0.75 : 0.35;
         return I;
       }, seed, 0.06, 8, 4);
-    });
+    }, true);
     // eave lip lumps over the edge, then icicles
     for (let x = -6; x < W + 6; x += 5) { const y = Math.round(lip(x)); ell(g, x + 2.5, y, 3.4, 2.2, s5[2]); R(g, x + 1, y - 2, 3, 1, s5[3]); }
     R(g, -7, eY - 1, W + 14, 1, s5[1]);

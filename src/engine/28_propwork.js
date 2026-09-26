@@ -498,7 +498,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
       }
       R(g, 3, 24, 26, 6, w5[2]); R(g, 3, 24, 26, 1, w5[1]);
     },
-    over(g, M, v) { void v; },
     shadow: () => [16, 30, 16, 2.5, 0.28],
   });
   // Chest (interactable): planked, iron-banded, a brass lock plate; o.open

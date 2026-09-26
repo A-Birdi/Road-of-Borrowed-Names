@@ -144,10 +144,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
   art('tree', {
     box: [-10, -36, 52, 72],
-    v: (o) => cxy(o) % 8,
+    v: (o) => cxy(o) % 12,
     draw(g, M, v, f, info) {
-      const s = [1, 0.92, 1.06, 0.97, 1.03, 0.9, 1.08, 1][v];
-      const lean = ((hh(v, 1, 3) % 5) - 2) * 0.7;
+      const s = [1, 0.92, 1.06, 0.97, 1.03, 0.9, 1.08, 1, 0.95, 1.05, 0.93, 1.02][v];
+      const lean = ((hh(v, 1, 3) % 7) - 3) * 0.8;
       const tr = M.trunk, seed = 900 + v * 17;
       // trunk with a fork into the canopy
       trunk(g, 6, 30, (y) => 12.5 + lean * (1 - y / 30) - Math.max(0, y - 22) * 0.45, (y) => 19.5 + lean * (1 - y / 30) + Math.max(0, y - 22) * 0.5, tr, seed, 10);
@@ -156,7 +156,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       roots(g, tr, 16, 29, 9);
       const A = 19 * s, B = 15 * s;
       const L = info.autumn ? [M.leaf[0], M.leaf[1], M.leaf[2], M.leaf[3], mix(M.leaf[4], '#fff2a0', 0.2)] : v % 3 === 1 ? M.leaf.map((c) => mix(c, '#c8d060', 0.08)) : v % 3 === 2 ? M.leaf.map((c) => mix(c, '#306070', 0.07)) : M.leaf;
-      const cl = canopy(v, 16 + lean, -3 - (s - 1) * 10, A, B);
+      // crowns sit a little off the grid: shifted and raised per layout
+      const cl = canopy(v, 16 + lean * 1.4, -3 - (s - 1) * 10 - (hh(v, 9, 2) % 4), A * (0.94 + (v % 4) * 0.03), B);
       // low side boughs that hang past the trunk on one or both sides
       cl.push({ x: 5 + lean + (v % 2), y: 8, r: 6.5, k: -0.05 });
       if (v % 3) cl.push({ x: 27 + lean - (v % 2), y: 7, r: 6, k: -0.05 });
