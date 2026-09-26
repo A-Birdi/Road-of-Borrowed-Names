@@ -29899,7 +29899,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'sousuke', x: 27, y: 19, dir: 'up', if: 'sb_evening&!post', talk: 'sb.eve_sousuke' },
       // After the story: Hoshino on his bench if he stayed.
       { id: 'hoshino', x: 36, y: 9, dir: 'down', if: 'post&!sb_hoshino_goes', talk: 'sb.hoshino_post' },
-      { id: 'fuki', x: 23, y: 16, dir: 'down', if: 'ch4_done&!sb_evening', talk: [{ if: 'post', scene: 'sb.fuki_post' }, { scene: 'sb.fuki_after' }] },
+      { id: 'fuki', x: 23, y: 16, dir: 'down', if: 'ch4_done&!sb_evening', talk: [{ if: 'post', scene: 'sb.fuki_post' }, { if: 'quest.sb_bell&!quest.sb_bell=done', scene: 'sb.fuki' }, { scene: 'sb.fuki_after' }] },
     ],
     exits: [
       { x: 22, y: 35, w: 2, h: 1, to: 'sb.road', tx: 18, ty: 1, dir: 'down' },
@@ -29968,6 +29968,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { x: 8, y: 11, to: 'sb.hamlet', tx: 10, ty: 17, dir: 'down', locked: 'sb.inn_door_storm', unlock: '!sb_storm|sb_morning' },
       { x: 1, y: 2, to: 'sb.inn_room', tx: 6, ty: 5, dir: 'right', locked: 'sb.inn_stairs', unlock: 'sb_storm|sb_lamp_lit' },
     ],
+    onEnter: [{ scene: 'sb.next_day_inn', if: 'sb_evening' }],
     spawn: { default: [8, 9, 'up'] },
   });
   // Upstairs: the travellers' room.
@@ -30050,7 +30051,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'smalltable', x: 3, y: 2, scene: 'sb.fuki_tea' },
     ],
     npcs: [
-      { id: 'fuki', x: 2, y: 3, dir: 'right', if: '!sb_storm&!sb_evening&!post', talk: 'sb.fuki' },
+      { id: 'fuki', x: 2, y: 3, dir: 'right', if: '!sb_storm&!sb_evening|sb_morning&!ch4_done', talk: 'sb.fuki' },
     ],
   });
 })(RB.content, RB.mapkit);
