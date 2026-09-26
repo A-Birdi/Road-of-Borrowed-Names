@@ -1,0 +1,310 @@
+THE ROAD OF BORROWED NAMES
+Complete single-page Japanese-learning fantasy RPG — build prompt
+
+Build a complete, playable browser game from the following brief. Do not respond with only a proposal, design document, mock-up, opening scene, or engine scaffold. Deliver the actual game, including its authored content, ending, persistence, and repeatable post-story play.
+
+Act as its game designer, narrative designer, Japanese-learning systems designer, pixel artist, composer, and engineer. Make sensible decisions without requiring follow-up questions. You may improve the proposed title, characters, and creative details when doing so produces a stronger experience, but preserve the core requirements.
+
+The guiding principle: create an adventure someone would enjoy even without its educational purpose, where learning Japanese makes the world increasingly understandable and responsive. The language must be part of the experience, not an unrelated quiz periodically interrupting it.
+
+1. DELIVERY AND TECHNICAL BOUNDARIES
+
+Deliver one self-contained index.html containing the HTML, CSS, JavaScript, game data, procedural graphics, and audio logic. It must be a single-page application, not a collection of linked pages. Prefer vanilla JavaScript and browser APIs. No installation, build process, account, API key, paid service, external runtime library, CDN, or application server should be required.
+
+The game must remain playable without network access. Embed the content and necessary recognition data rather than fetching them during play. Keep engine, content, learning, recognition, audio, and persistence logically separated even though they ship together. A “backend system” here means genuine local application logic, not a remote service.
+
+Support opening the standalone file directly wherever browser security permits. Also support ordinary static hosting under a stable origin. Detect storage availability through an actual write/read check; do not assume direct-file mode or an embedded preview provides reliable persistence. Explain limitations accurately and never claim progress is saved when it is not. A hosted page being cached for offline reopening is a separate capability: do not promise it without implementing and testing it.
+
+All visuals, animation, effects, transitions, interfaces, music, and sound effects should be code-driven. Use compact sprite definitions, tile data, drawing functions, vector paths, CSS, and synthesized audio. Procedural rendering must still produce intentional art and authored composition, not random noise or generic colored rectangles. Japanese text must remain readable rather than being forced into an unsuitable pixel font.
+
+2. IDENTITY, PREMISE, AND TONE
+
+Working title: The Road of Borrowed Names.
+
+An old network of lantern roads connects a region of villages, trading towns, mountain settlements, and abandoned sanctuaries. The lanterns preserve the names of places and the promises that make travel between them possible. Now names are disappearing. A bridge remains visible but no longer reaches the opposite bank. A shopkeeper remembers preparing two cups of tea, but cannot remember who visits each morning.
+
+The player becomes a wayfarer capable of repairing these broken connections through written language. Their gift is not simply producing the correct symbol: they must understand what someone meant, what a place remembers, and what a promise actually commits them to.
+
+The central mystery concerns an archive created to protect the region from loss. Its keeper began removing painful memories, then disagreements, then ambiguities. The resulting “Hush” is making the world orderly, peaceful, and increasingly empty. The antagonist should have understandable motives without being absolved of the harm they cause.
+
+Begin with small human problems and let their implications grow. Use warmth, restrained humor, domestic detail, wonder, loneliness, and occasional unease. Not every scene should be cryptic, tragic, or portentous. Let characters talk about cold tea, badly repaired boots, and someone who never returns borrowed tools.
+
+Mysticism belongs in the fictional setting. Do not present invented spells, symbols, etymologies, or traditions as authentic Japanese linguistic or cultural facts. Ordinary Japanese should remain ordinary Japanese even when the surrounding world is magical.
+
+3. LENGTH, WORLD, AND AUTHORED CONTENT
+
+Target approximately 10–15 hours for a first playthrough involving the main story, natural exploration, and a reasonable selection of side content. Repeatable endgame is additional, not the excuse for an otherwise twenty-minute campaign. This is a pacing target, not permission to claim measured playtime without evidence.
+
+Build six substantial chapters, at least five distinct inhabited settlements, roughly six meaningful dungeon or ruin sequences, and approximately eighteen authored side quests. These are content targets, not invitations to inflate counts with empty rooms or renamed fetch tasks. Every region should introduce a different exploration pattern, local concern, visual identity, musical treatment, and language application.
+
+Suggested progression:
+
+Reedwake: a riverside village recovering from a storm. The first two quests establish the village, the missing-name phenomenon, and all recruitable companions. The abandoned mill is the first compact dungeon.
+
+Saltglass: a working harbor where cargo labels, letters, and contradictory directions point toward a drowned archive. Explore tides, ferry routes, and the difference between a misunderstanding and a deliberate lie.
+
+Cinder Orchard: a farming and craft settlement whose supposedly perfect festival history contradicts its residents’ memories. Explore terraced fields, workshops, and a sealed glass kiln. Give its conflict a practical consequence for living people.
+
+Snowbell: a mountain hamlet near an observatory. Weather, isolation, family correspondence, and an old promise shape its story. This chapter should include a quieter stretch where the relationship between the two adventurers can breathe.
+
+Lanternfall: a beautiful administrative town where disagreement is disappearing from everyday speech. Explore its public records, submerged bell tower, and the hidden infrastructure of the Hush.
+
+The Still Archive: the final connected dungeon and story climax. Resolve the mystery through both action and interpretation. Choices should concern which promises to keep and how to repair harm, not simply selecting “good ending” or “bad ending.”
+
+Provide a proper denouement, companion-specific resolution, and a changed world to revisit. The player should see what happened to people they helped. Do not end immediately after the final combat victory.
+
+Avoid grinding gates, inflated enemy health, excessive walking, mandatory daily tasks, repeated corridors, and huge dialogue dumps. Shortcuts and fast travel should become available after routes have been explored. Let quiet exploration exist between learning challenges.
+
+4. INTRODUCTION AND CHARACTER CREATION
+
+Open with a short, atmospheric, skippable cutscene of approximately 30–60 seconds. Show a concrete mystery rather than explaining the entire cosmology. Skipping must lead to the same valid starting state, with essential context recoverable through the journal and subsequent dialogue.
+
+Create the player character immediately afterward. Include a name, pronouns, skin tone, hairstyle, hair color, clothing palette, and a small selection of visual accessories. Use a live procedural sprite preview. Keep presentation choices separate from power or difficulty.
+
+Offer a few lightweight backgrounds, such as courier’s apprentice, village craftsperson, or wandering student. They may alter occasional lines and starting flavor, but should not lock beginners into a bad build. Avoid a lengthy character-sheet exercise before play begins.
+
+Let the player select interface language, learning assistance, and an initial Japanese skill profile. An optional short placement activity may refine that profile, but experienced learners must be able to skip the alphabet tutorial and beginners must not be tested on material before receiving help.
+
+5. TWO ADVENTURERS AND A MEANINGFUL COMPANION CHOICE
+
+The traveling party contains exactly two adventurers: the customized player character and one selected companion. Before recruitment, the player travels alone. Other characters may participate in story scenes, but must not become additional controllable party members.
+
+Introduce four recruitable adults through the first two exploratory quests, not through a character-selection roster.
+
+Nao, a courier: an ochre scarf, an overstuffed satchel, and a habit of checking the nearest exit while apparently listening. Wry, perceptive, and impatient with ceremonial nonsense. Nao specializes in anticipating enemy intentions and exploiting openings. Their personal story concerns a letter they chose not to deliver.
+
+Mio, an apothecary: rolled sleeves, carefully labeled bottles, and a tendency to straighten things while thinking. Gentle with frightened people but stubborn when kindness would become dishonesty. Mio specializes in protective mixtures, cleansing effects, and recovery. Their personal story concerns the limits of being useful to everyone.
+
+Ren, a lantern keeper: a patched ceremonial coat and a lamp polished far more carefully than their boots. Earnest, precise, and unexpectedly funny when comfortable. Ren specializes in wards, interruption, and revealing environmental echoes. Their personal story concerns a mentor whose teachings they can remember more clearly than their face.
+
+Suzu, a traveling performer: a faded stage ribbon, expressive posture, and a habit of answering a difficult question with a joke before eventually giving an honest answer. Suzu specializes in misdirection, reframing, and coordinated techniques. Their personal story concerns a comforting lie that outlived its purpose.
+
+These are starting directions, not permission for one-note personalities. Give each a distinctive portrait, overworld silhouette, mannerisms, dialogue rhythm, relationships within Reedwake, and at least one moment that contradicts a first impression.
+
+The first quest, provisionally “Labels After the Storm,” should involve helping several residents untangle the storm’s aftermath. Make it a small connected investigation rather than four deliveries. The second, “The Mill That Calls Back,” should let the player see how the candidates respond to a shared problem. NPC assistance can be environmental or narrative without violating the two-person party limit.
+
+By the recruitment scene, the player should know the village and have meaningfully interacted with every candidate. Each candidate should have demonstrated their approach, not just described their combat perk.
+
+Gather the group in one departure room. The player may speak to anyone, provisionally choose a companion, reconsider, and switch freely while remaining inside. Communicate permanence through unmistakable conversation rather than a system warning modal.
+
+For example, the keeper might say: “Take your time in here. Once that lantern crosses the threshold, it will carry your two names for the whole journey. It will not take a third.” The selected companion should also acknowledge the commitment plainly, in their own voice.
+
+Do not let an accidental movement key commit the choice. Departure should be an intentional interaction, such as “Set out with Nao,” after the conversation has explained the consequence. Create a safe pre-departure recovery point.
+
+After departure, that companion is permanently locked for that campaign timeline. Returning to the room does not unlock recruitment again. Loading an earlier save or starting a separate campaign remains valid. Unchosen candidates should remain people in the world rather than disappearing or resenting the player automatically.
+
+Every companion must support completing every required challenge. Give each recurring banter, a personal quest, distinctive reactions to major decisions, coordinated abilities, and an ending variation. Do not tie the best ending to choosing the designer’s favorite character.
+
+6. EXPLORATION AND EVERYDAY PLAY
+
+Use a top-down, 2D pixel-art world with logical tile/grid-locked movement and smooth interpolation between tiles. Include collision, facing, doors, interiors, readable interactable objects, map transitions, and a camera that handles different map sizes correctly.
+
+Support keyboard movement and interaction, mouse controls where useful, and a genuinely usable touch layout. The companion should follow intelligently without blocking doors or getting stranded. Prevent characters from becoming trapped by scene transitions, NPC movement, or puzzle objects.
+
+Settlements should feel inhabited through small routines, contextual conversations, environmental changes, and recurring residents. Side quests should include misunderstandings, investigations, repairs, favors with unexpected consequences, and optional character stories.
+
+Include a few world-appropriate side activities: helping an inn prepare orders, restoring signposts and maps, delivering letters by interpreting their context, and collecting oral histories or inscriptions. Give activities their own decisions and feedback rather than reskinning the same multiple-choice question.
+
+Not every chest, door, flower, or conversation needs an exercise. Sometimes finding a lovely place or hearing a good line is the reward.
+
+7. COMBAT: WRITTEN INTENT, NOT A STANDARD ATTACK MENU
+
+Create a combat system provisionally called Inkweaving. Encounters should involve observing an enemy’s intention, choosing a meaningful response, and expressing that response through Japanese. The act of writing should visibly form a ward, redirect a current, steady a companion, reveal a false promise, or produce another understandable effect.
+
+The main interaction must not be selecting Attack, Magic, and Item from a conventional RPG menu. Menus are appropriate for inventory, targeting, equipment, retreat, accessibility, and supplementary tactical choices.
+
+Use readable, telegraphed exchanges. The enemy presents an intention or changes the small combat field; the player considers a response; a confirmed action resolves the exchange. Ordinary play is untimed. Enemies must not attack while the player is drawing, reading help, correcting recognition, or using an input method.
+
+A single written response can coordinate both adventurers. Do not require two repetitive exercises merely because there are two party members. Let companion identity change tactical possibilities through support behaviors and meaningful coordinated techniques.
+
+Examples include cooling a heated mechanism with a learned water-related expression, recognizing that an enemy’s warning contains a negation, or interpreting a promise well enough to settle a hostile spirit without destroying it. Some encounters should allow more than one valid solution.
+
+For absolute beginners, individual kana can complete or activate an explicitly taught inscription. Do not teach that a kana has an invented elemental meaning. Language content and the fictional spell system must remain distinguishable.
+
+Vary enemies through telegraphed patterns, positioning, changing objectives, environmental interactions, and conflicting priorities. Bosses should test combinations of ideas already introduced, with new mechanics taught safely. Do not make bosses ordinary enemies with ten times as much health.
+
+Keep equipment, resources, and progression understandable. Rewards should open tactical options, exploration affordances, or cosmetic expression. Handwriting speed and artistic neatness must not determine damage. Any optional timed challenge must be separate from required story completion.
+
+Recognition uncertainty never causes combat damage. Genuine language mistakes should lead to useful correction and a retry; any normal-mode consequence should be small, capped per exchange, and never compounded by redrawing. Offer an assistance mode with no mistake penalty. Defeat should return the player to a sensible checkpoint without erasing learning progress or demanding repetitive grinding.
+
+8. INPUT MODES AND FAIRNESS
+
+Provide handwriting as the intended primary input, multiple choice as a fully supported alternative, and optional Japanese keyboard/IME entry for players who prefer it. The entire story and endgame must be completable without handwriting.
+
+Allow switching methods during a challenge without losing the encounter or restarting the game. Multiple-choice play must retain tactical decisions, dialogue, rewards, and endings. Do not mark it as a lesser way to play.
+
+Track recognition, recall, handwriting, and assisted answers separately. Selecting a choice demonstrates something different from recalling and writing an answer, but neither should be shamed or denied ordinary rewards.
+
+Build plausible distractors from genuine confusions. Avoid ambiguous questions with multiple defensible answers unless all valid answers are accepted. A correct response must be correct for its context, not merely match a hard-coded preferred string.
+
+9. REAL LOCAL HANDWRITING RECOGNITION
+
+Implement a genuine, bounded, local recognition system. A drawing pad that accepts any scribble, counts strokes without evaluating shape, or automatically returns the expected answer does not satisfy this requirement.
+
+Capture pointer strokes as ordered coordinates with stroke boundaries and timestamps. Support mouse, finger, and stylus; account for canvas scaling and device pixel ratio. Drawing must not scroll the page or move the player. Handle canceled pointers and resizing without corrupting the input.
+
+Support the 46 basic hiragana and 46 basic katakana, plus the voiced, semi-voiced, small-kana, and long-vowel-mark forms used by the included curriculum. Do not claim a supported character unless its recognition and reference data are actually present.
+
+Use embedded, verified stroke templates and an appropriately adapted multistroke recognizer, or another demonstrably functional local method. Include legitimate handwriting variants. Normalize translation and scale carefully, but do not make the recognizer invariant to arbitrary rotation or reflection: those transformations can erase meaningful distinctions.
+
+Preserve stroke direction, relative placement, and distinguishing features where needed. Pay particular attention to visually confusable forms, small kana, and diacritics. Do not normalize small kana into full-size kana or discard dakuten and handakuten. Use an explicit size control or another tested method where separate character boxes would otherwise erase size information.
+
+For words, prefer a reliable composition workflow over pretending to recognize arbitrary freehand paragraphs. The player draws one character, confirms it into an editable answer strip, and continues. Allow returning to an earlier character, replacing it, removing it, and inserting missing characters. Keep a character open long enough for its diacritics; do not submit automatically after every stroke.
+
+Separate recognition from answer evaluation. First show what the recognizer believes was written, including plausible alternatives and an uncertainty state. Then evaluate the confirmed text against the task. The expected answer must not be used to manufacture successful recognition. A clearly drawn wrong kana should be recognized as that kana before the language system explains why it does not answer the prompt.
+
+Provide undo last stroke, clear character, redraw, candidate selection, explicit confirmation, and a visible “I read this as…” preview. Reject empty input and obvious nonsense. Similarity scores must not be presented as calibrated probabilities unless they actually are calibrated.
+
+When recognition is uncertain, say so. Never translate “the recognizer could not decide” into “your Japanese is wrong.” A manual correction should allow progress while being recorded as assisted rather than proof of unaided handwriting mastery.
+
+Keep visual-shape feedback separate from stroke-order feedback. Show numbered stroke demonstrations only from real reference paths. Give specific corrections only when the captured data and reference support them; otherwise show a comparison and acknowledge uncertainty. Do not infer stroke order from a final bitmap or from an unordered shape score.
+
+A lenient adventure mode should accept readable standard variants even when their stroke sequence differs. An optional practice mode may teach a reference stroke order without making calligraphic perfection a progression requirement. Preserve required attribution for any embedded recognition code or stroke dataset.
+
+10. JAPANESE CONTENT AND MULTIPLE SKILL LEVELS
+
+Separate language difficulty from combat difficulty. A beginner can enjoy demanding tactics, and an advanced reader can choose a gentle adventure. Settings should be adjustable without losing story progress.
+
+Provide Foundations, Elementary, Intermediate, and Advanced learning profiles. Foundations covers kana and supported variants in useful contexts. Elementary develops everyday vocabulary, particles, basic constructions, and common polite/plain forms. Intermediate introduces connected sentences, cause, time, condition, and contextual reading. Advanced includes a meaningful, curated selection of material approaching N2/N1-style reading and language-use difficulty: nuance, register, implied meaning, paraphrase, and longer contextual passages.
+
+Do not label faster kana quizzes “N1.” Advanced depth must exist in playable content, not merely in a difficulty dropdown. Conversely, do not imply that this bounded adventure constitutes a complete N2/N1 course or guarantees an examination result.
+
+Advanced reading must not silently introduce a requirement to handwrite thousands of kanji. Accept kana responses or supported IME input when the task tests reading or meaning. Freehand kanji recognition is optional and must be limited to a genuinely implemented, validated set.
+
+Do not force every learner through the same escalating syllabus. Someone who starts with no kana should still be able to finish the story through appropriate teaching and assistance. An advanced player should encounter suitable material early rather than spending hours unlocking it.
+
+Maintain separate mastery records for characters, vocabulary, grammar, and comprehension. Revisit uncertain material in varied contexts over time. Introduce new material with examples before relying on it for required progress. Avoid repeatedly drilling an already mastered item or escalating after a single lucky answer.
+
+Use authored, inspectable content records containing display text, contextual reading, meaning, accepted answers, relevant variants, difficulty tags, explanations, and spoken text where applicable. Keep fictional terminology clearly labeled. Base teaching explanations on trustworthy language references; do not invent citations, grammatical rules, or a claim of native-speaker review.
+
+Handle orthographic distinctions carefully: script, small kana, diacritics, long vowels, particle usage, and context-dependent readings matter. Normalize only differences that are irrelevant to the specific task. Preserve meaningful contrasts. Support IME composition correctly so Enter does not submit before text composition finishes.
+
+A bounded authored intent system is acceptable for interactive dialogue. Pretending to understand arbitrary Japanese through a few loose keyword checks is not. When input falls outside supported intents, acknowledge that limitation and offer relevant examples or choices instead of inventing an explanation of the player’s supposed mistake.
+
+11. FURIGANA AND THE LIGHTBULB SYSTEM
+
+Every displayed kanji must have appropriate small furigana above it, including dialogue, menus, item names, quest text, signs, help text, and advanced passages. Use real ruby annotations or an equally readable semantic implementation. Provide the correct reading in context, at word level where necessary, rather than mechanically attaching a character’s most common reading.
+
+Do not remove furigana in a harder mode. Its presence is an accessibility requirement. Design assessments honestly around it: do not display an answer in furigana and then count reproducing it as unaided kanji-reading recall. Use contextual comprehension or prompts that do not expose the target response when recall is the actual objective.
+
+Include a persistent, toggleable lightbulb button. When enabled, hovering, keyboard-focusing, or tapping Japanese text should reveal a readable contextual help panel. Hover cannot be the only interaction because the game must work on touchscreens.
+
+Show the reading, romaji, meaning in this context, useful pronunciation or mora guidance, and a brief usage note where supported. Include a replay-pronunciation control when a suitable voice is available. Explain homophones and contextual meanings rather than assigning every written form one universal English translation. Do not invent pitch-accent information or treat approximate English sound comparisons as exact phonetics.
+
+Allow pinning a help panel and adding an entry to a field notebook. Do not cover the handwriting pad with tooltips. Pause optional timers while help is open. Help can reveal an answer, but record the response as assisted without shaming the player or reducing normal rewards.
+
+Offer English-led bilingual presentation, Japanese-led presentation, and adjustable translation visibility. Narrative comprehension must remain accessible independently of the selected exercise level. Maintain a dialogue backlog with the original Japanese and a faithful English rendering.
+
+12. DIALOGUE, QUESTS, AND WRITING QUALITY
+
+Author the story and dialogue instead of assembling it from interchangeable procedural sentences. Characters need different priorities, rhythms, levels of directness, and relationships to one another. Let subtext and specific details do some of the work.
+
+Avoid constant exposition, repetitive praise, modern corporate phrasing, unnecessary honorifics, and every character sounding like an ancient oracle. Humor should emerge from personality and circumstance rather than internet references that break the setting.
+
+Japanese dialogue should be natural for its speaker and situation. Keep teaching explanations distinct from stylized character speech. Fantasy formality is not automatically a good model for everyday conversation. Provide contextual register notes where this matters.
+
+Use written language outside combat for orders, correspondence, directions, repairs, negotiations, and interpretation. Offer short authored response spaces, answer construction, handwriting, IME, or choices as appropriate. Clearly signpost the supported interaction instead of creating the illusion of unrestricted conversation.
+
+Different valid responses may change tone, rewards, or a later conversation, but avoid irreversible story punishment caused by ambiguous wording, a recognition failure, or a learner’s honest mistake. Necessary clues must be recoverable. Maintain a journal that records the practical next step without revealing every solution.
+
+13. PROGRESSION AND QUALITY OF LIFE
+
+Provide a field notebook, quest journal, readable inventory, equipment screen, map, settings, and dialogue history. The notebook should organize discoveries and offer optional practice without becoming a mandatory homework checklist.
+
+Use a small number of meaningful character-growth systems. New techniques, coordinated actions, useful equipment, and restored routes are preferable to a forest of barely different statistics. Do not make unfamiliar Japanese a purchasable consumable or charge in-game currency for essential explanations.
+
+Make retreat, revisiting tutorials, reviewing clues, and retrying puzzles straightforward. Prevent resource softlocks. Important items must not be accidentally sold or consumed in a way that makes the game impossible to finish.
+
+Allow fast text, instant text reveal, skippable previously seen scenes, remappable practical controls, separate volume settings, reduced motion, adjustable text size, and sufficient contrast. Never require hearing, color discrimination alone, handwriting, or fast reaction time for required progress.
+
+14. SAVE SYSTEM: SIX LOCAL CAMPAIGN SLOTS
+
+Provide exactly six player-facing campaign slots. Each supports New Game in an empty slot, Save, Load, Copy, Overwrite, and Delete. Show a procedural thumbnail, player name, companion, location or chapter, playtime, and last-saved timestamp.
+
+Use IndexedDB for structured campaign data, with a deliberate fallback only where appropriate. Do not store the campaign in cookies. Internal recovery records are acceptable but should not create a confusing second roster of visible save files.
+
+Preserve manual saves independently from automatic recovery snapshots. Autosave after meaningful progress and at safe transitions, not on every movement or stroke. Capture the pre-departure state before permanently committing a companion. Restore into a safe, coherent state rather than half an animation or a broken encounter.
+
+Save the world state, quest flags, companion commitment, inventory, settings needed for that campaign, learning progress, and post-story state. Copying creates an independent branch with no shared mutable campaign data. Deleting a slot must also remove its associated recovery data rather than resurrecting it on the next launch.
+
+Use explicit confirmation for destructive save operations. A technical overwrite confirmation is appropriate even though the companion decision itself is conveyed through dialogue. Never silently overwrite an unrelated slot when starting a new game.
+
+Validate loaded records, version the save schema, and write atomically where possible. Handle unavailable storage, quota errors, interrupted writes, malformed records, and incompatible saves gracefully. Do not clear existing data just because reading it failed. Distinguish a session-only game from one that is actually saving.
+
+Protect a campaign against silent conflicting writes from two open tabs, using supported coordination or revision checks. Show a clear warning rather than pretending both tabs can safely own the same live save. Keep last-known-good recovery data bounded; do not grow storage indefinitely.
+
+Request persistent storage where supported and appropriate, without implying that it guarantees protection from user deletion. Explain that saves belong to this browser profile and origin, and that clearing site data or using temporary/private storage can remove them.
+
+Do not include save export, save import, cloud saves, accounts, share codes, download-save buttons, or hidden equivalents. Local slot copying is the only requested save duplication feature.
+
+15. POST-STORY PLAY: THE UNWRITTEN ATLAS
+
+After the ending, unlock the Unwritten Atlas: a collection of unstable routes left behind as the world recovers. The final story resolution must remain resolved; do not reset everyone’s problems merely to justify more combat.
+
+Create repeatable expeditions of roughly 10–25 minutes with a beginning, branching decisions, a climax, and an extraction point. Combine authored room patterns, encounter variants, local objectives, and procedural arrangements. A run should feel like a small adventure, not a shuffled quiz list.
+
+Let players choose among route modifiers and discover combinations of temporary relics that change tactics and companion interactions. Examples include mirrored routes, an escorting lantern that must be protected, or a ruin whose rooms change when particular promises are restored. Every generated objective must be solvable with the available tools and selected language profile.
+
+Language selection can revisit weak concepts alongside familiar material, but must not endlessly repeat the same mistaken character. Advanced profiles should support richer interpretation challenges without forcing the player to handwrite long essays.
+
+Reward expeditions with optional equipment sidegrades, cosmetics, notebook discoveries, settlement restoration details, and new encounter combinations. Avoid mandatory daily streaks, online leaderboards, time-limited rewards, or infinite numerical escalation as the sole attraction.
+
+Keep the selected companion. A separate New Game Plus or fresh campaign can support another companion choice without breaking permanence in the original timeline. Any carryover must be clearly defined and must not accidentally mix story flags between slots.
+
+16. VISUAL PRESENTATION AND INTERFACE
+
+Aim for a deliberate old-school pixel-art RPG identity with modern readability. Build distinct regional palettes, recognizable architecture, layered terrain, expressive portraits, directional walking animations, small ambient movements, and restrained lighting and particles.
+
+Give important NPCs unique silhouettes and accessories. Do not represent an entire cast through palette swaps alone. Reuse a coherent asset vocabulary while making locations recognizable by composition and detail.
+
+Keep the world central. Avoid a dashboard layout, excessive cards, permanent walls of statistics, or large unused margins. During writing, give the input area generous space while retaining a readable view of the encounter and enemy intention.
+
+Render Japanese dialogue and furigana through a text layer that stays sharp at different display sizes. Provide an interactable readable transcription of any decorative inscription drawn into the world. Support resized desktop windows, touchscreens, and orientation changes without clipping essential controls.
+
+Use transitions to communicate travel, discovery, and consequence. Keep them short and skippable where appropriate. Respect reduced-motion settings and avoid flashing effects or excessive screen shake.
+
+17. PROCEDURAL MUSIC, SOUND, AND OPTIONAL JAPANESE VOICES
+
+Compose original, code-generated music using Web Audio or an equivalent embedded local implementation. Use intentional melodies, accompaniment, and variation rather than random notes. Create related motifs for the road, settlements, mysteries, combat, companions, and the ending.
+
+Use a restrained palette of synthesized plucks, bell-like tones, breathy or flute-like leads, soft bass, and percussion. Music should suit long sessions, develop beyond a tiny repeating loop, and transition gracefully between exploration and danger. Sound effects should make movement, writing, recognition, confirmation, spells, and discoveries feel responsive without becoming abrasive.
+
+Start audio only after an appropriate user interaction. Include independent music, effects, and voice controls, plus master mute. Handle suspended audio contexts and device changes gracefully. Duck background audio under speech.
+
+Japanese voice playback is a conditional enhancement. Where a usable local Japanese speech-synthesis voice is available, support speaking every authored dialogue line, with replay, rate control, and a visible transcript. Detect available voices and voice-list changes. Do not assume every browser or device has one.
+
+Keep a dedicated spoken-text representation so ruby annotations are not read twice and written names can use their intended readings. Cancel obsolete speech when dialogue is skipped, replaced, or loaded from a different save. Do not overlap a backlog of utterances.
+
+Do not label browser text-to-speech as original recorded voice acting. Genuine original Japanese voices are welcome only if they can actually be produced and included within the self-contained, no-required-service constraints. Never clone a real performer. Otherwise use honestly labeled local synthesis or text-only presentation.
+
+Do not silently fall back to a network voice. When no suitable local voice exists, explain the limitation in settings and keep the entire game functional. Do not claim pronunciation or listening validation based solely on synthetic speech.
+
+18. IMPLEMENTATION INTEGRITY AND VALIDATION
+
+Implement the essential systems early: booting, input, movement, dialogue, one real learning interaction, genuine handwriting recognition, and save/load. Then build the full authored content on those functioning systems. Do not spend the implementation budget polishing a title screen while the adventure remains nonexistent.
+
+Use data-driven content with stable identifiers and explicit game states. Keep rendering, input, recognition, answer checking, dialogue, quests, and storage from becoming one tangled event handler. Escape player-entered text rather than inserting it as executable HTML.
+
+Validate map exits, spawn positions, collisions, quest prerequisites, dialogue references, inventory requirements, companion flags, curriculum prerequisites, accepted-answer sets, and furigana records. Check that procedural endgame routes are reachable and solvable.
+
+Test the introductory skip and normal paths, each companion selection, switching before departure, permanent locking afterward, and restoring both pre- and post-commitment saves. Check that no event creates a third party member.
+
+Test creating, saving, loading, copying, overwriting, and deleting every slot; recovery after reload; storage refusal; and cross-tab conflicts. Check that copying and later saving do not mutate the original slot.
+
+Test handwriting with supported characters, confusable pairs, empty input, nonsense, legible wrong answers, diacritics, small kana, alternate valid forms, undo, replacement, and multi-character composition. Include held-out variations rather than testing only the exact reference templates against themselves. Synthetic fixtures do not establish real-world human handwriting accuracy; report that distinction honestly.
+
+Verify that drawing or typing does not move the character, touch input does not scroll the writing surface, and IME composition does not prematurely submit. Test absent voices, muted audio, resizing, text scaling, and switching input methods mid-challenge.
+
+Check story reachability at every supported language profile and with every companion. Confirm the final ending, denouement, return to the changed world, and at least one complete endgame expedition. Use actual browser execution where tools permit. Never claim tests were run when they were not.
+
+19. FINAL DELIVERY STANDARD
+
+Deliver the playable single-file game first, with concise controls and any genuinely necessary launch information. Include an honest implementation summary identifying actual content counts, learning coverage, recognition scope, voice behavior, and tests performed versus not performed.
+
+Do not ship placeholder dialogue, empty regions, fake recognition, disconnected menus, nonfunctional save buttons, or features labeled “coming soon.” Do not claim ten hours of content because an endless activity can technically be repeated for ten hours.
+
+Preserve the 10+ hour authored-adventure goal. If the delivered build falls short, identify the shortfall explicitly rather than concealing it, inventing playtime, or describing unwritten content as implemented. Protect a complete story arc, working language interactions, reliable saves, and satisfying play before adding decorative breadth.
+
+The desired result is a memorable journey shared by two people: a place the player grows attached to, a companion whose presence matters, and Japanese that gradually becomes something they can use to understand and affect the world.
+
+Build the game now.
