@@ -65,7 +65,7 @@ RB.ui.menu = (function () {
     tabsApi = F().tabs(fr.tabslot, SECTIONS, view.section, (id) => { remember(); view.section = id; render(); }, { label: 'Folio sections', panelId: 'folio-page' });
     render();
     if (typeof matchMedia !== 'undefined') {
-      mq = matchMedia('(min-width: 860px)');
+      mq = matchMedia(RB.ui.folio.WIDE);
       mq.onchange = () => { if (layer) { remember(); render(); } };
     }
     if (a === '@settings') RB.ui.settings.open();

@@ -423,7 +423,8 @@ const audit = (p, touch) => p.evaluate((touch) => {
     if ((r.right > vw + 1 || r.left < -1) && !scroller(e) && e.tagName !== 'CANVAS') wide.push(name(e));
     const cs = getComputedStyle(e);
     if (!e.closest('.sr') && e.children.length === 0 && (e.textContent || '').trim() && (cs.textOverflow === 'ellipsis' || cs.overflowX === 'hidden' || cs.overflow === 'hidden') && e.scrollWidth > e.clientWidth + 1) clipped.push(name(e));
-    if (touch && e.matches('button, [role=button], [role=tab], a[href], input:not([type=hidden]), select, label.opt, label.switch') && !e.closest('.jline') && !e.classList.contains('jt')) {
+    // (controls that let taps pass through to a larger target, like the move pad's arrow glyphs, are not targets themselves)
+    if (touch && e.matches('button, [role=button], [role=tab], a[href], input:not([type=hidden]), select, label.opt, label.switch') && !e.closest('.jline') && !e.classList.contains('jt') && cs.pointerEvents !== 'none') {
       const t = e.matches('input[type=radio], input[type=checkbox]') ? (e.closest('label') || e) : e;
       const tr = t.getBoundingClientRect();
       const min = e.matches('.strip .cell.ins') ? 23.5 : 43.5; // insertion points between 44-px character cells: WCAG 2.5.8 minimum

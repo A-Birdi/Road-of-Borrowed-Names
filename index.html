@@ -385,7 +385,7 @@ body.reduced-motion .ptab.lift { animation: none; }
 .spread { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); min-height: 0; min-width: 0; }
 .spread > .leaf { min-width: 0; }
 .spread > .leaf + .leaf { display: none; }
-@media (min-width: 860px) {
+@media (min-width: 720px) { /* keep in step with RB.ui.folio.WIDE */
   .spread.two { grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); gap: 0; }
   .spread.two > .leaf + .leaf { display: block; }
   .spread.two > .leaf:first-child { border-radius: 3px 0 0 6px; box-shadow: inset -14px 0 18px -14px rgba(60,40,10,0.35), 0 2px 0 var(--paper-3), 0 4px 0 var(--paper-edge); }
@@ -19430,12 +19430,14 @@ RB.ui.folio = (function () {
     return { el: wrap, select: (id) => select(id, null, false), current: () => cur, destroy() { if (ro) ro.disconnect(); } };
   }
 
-  // Two-page spread available at this width (matches the CSS breakpoint).
+  // Two-page spread available at this width (matches the CSS breakpoint in
+  // 20_folio.css): tablets in portrait and anything wider.
+  const WIDE = '(min-width: 720px)';
   function wide() {
-    return typeof matchMedia !== 'undefined' && matchMedia('(min-width: 860px)').matches;
+    return typeof matchMedia !== 'undefined' && matchMedia(WIDE).matches;
   }
 
-  return { icon, itemIcon, frame, tabs, wide, ICONS: P };
+  return { icon, itemIcon, frame, tabs, wide, WIDE, ICONS: P };
 })();
 
 
@@ -21459,7 +21461,7 @@ RB.ui.menu = (function () {
     tabsApi = F().tabs(fr.tabslot, SECTIONS, view.section, (id) => { remember(); view.section = id; render(); }, { label: 'Folio sections', panelId: 'folio-page' });
     render();
     if (typeof matchMedia !== 'undefined') {
-      mq = matchMedia('(min-width: 860px)');
+      mq = matchMedia(RB.ui.folio.WIDE);
       mq.onchange = () => { if (layer) { remember(); render(); } };
     }
     if (a === '@settings') RB.ui.settings.open();
@@ -21936,7 +21938,7 @@ RB.ui.settings = (function () {
     RB.ui.pushLayer(lay);
     if (!group && RB.ui.folio.wide()) group = 'reading';
     render();
-    if (typeof matchMedia !== 'undefined') { mq = matchMedia('(min-width: 860px)'); mq.onchange = () => { if (lay) { if (!group && RB.ui.folio.wide()) group = 'reading'; render(); } }; }
+    if (typeof matchMedia !== 'undefined') { mq = matchMedia(RB.ui.folio.WIDE); mq.onchange = () => { if (lay) { if (!group && RB.ui.folio.wide()) group = 'reading'; render(); } }; }
   }
   function close() {
     if (!lay) return;

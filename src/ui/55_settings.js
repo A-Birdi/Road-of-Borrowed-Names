@@ -28,7 +28,7 @@ RB.ui.settings = (function () {
     RB.ui.pushLayer(lay);
     if (!group && RB.ui.folio.wide()) group = 'reading';
     render();
-    if (typeof matchMedia !== 'undefined') { mq = matchMedia('(min-width: 860px)'); mq.onchange = () => { if (lay) { if (!group && RB.ui.folio.wide()) group = 'reading'; render(); } }; }
+    if (typeof matchMedia !== 'undefined') { mq = matchMedia(RB.ui.folio.WIDE); mq.onchange = () => { if (lay) { if (!group && RB.ui.folio.wide()) group = 'reading'; render(); } }; }
   }
   function close() {
     if (!lay) return;

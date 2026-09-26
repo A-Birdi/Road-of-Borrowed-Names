@@ -177,10 +177,12 @@ RB.ui.folio = (function () {
     return { el: wrap, select: (id) => select(id, null, false), current: () => cur, destroy() { if (ro) ro.disconnect(); } };
   }
 
-  // Two-page spread available at this width (matches the CSS breakpoint).
+  // Two-page spread available at this width (matches the CSS breakpoint in
+  // 20_folio.css): tablets in portrait and anything wider.
+  const WIDE = '(min-width: 720px)';
   function wide() {
-    return typeof matchMedia !== 'undefined' && matchMedia('(min-width: 860px)').matches;
+    return typeof matchMedia !== 'undefined' && matchMedia(WIDE).matches;
   }
 
-  return { icon, itemIcon, frame, tabs, wide, ICONS: P };
+  return { icon, itemIcon, frame, tabs, wide, WIDE, ICONS: P };
 })();
