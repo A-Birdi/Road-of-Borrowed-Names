@@ -127,3 +127,11 @@ harness could not stand next to multi-tile props — fixed.
 - Driver development found only harness issues plus one Atlas integration gap:
   the Atlas reading panel waited for a click even in test auto mode (fixed; it
   now resolves in auto mode like dialogue). No story softlocks were found.
+- The two Atlas stalls were a driver defect: the "hall of three doors" room has
+  three door exits sharing one scene, and the driver keyed sites by scene, so
+  it only ever tried one door. Keyed by place instead (tests only; `index.html`
+  unchanged), 20/20 Atlas-only runs with Nao at E and A passed (6 of them met
+  the three-doors room), and `node tests/e2e/matrix.mjs EA nao 2` then passed
+  both combinations through all six chapters and an expedition. Together with
+  the 14 passes above: **16/16 profile × companion combinations played a new
+  campaign through the whole story and one Unwritten Atlas expedition.**

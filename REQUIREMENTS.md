@@ -109,7 +109,7 @@ Status: `[ ]` not started · `[~]` in progress · `[i]` implemented, unverified 
 - [v] R14.8 No export/import/cloud/share codes
 
 ## Endgame — Unwritten Atlas [15]
-- [v] R15.1 Repeatable expeditions with branches, camp (rest or extract early), climax, extraction (atlas.check.mjs; human duration estimated 13–28 min, not measured)
+- [v] R15.1 Repeatable expeditions with branches, camp (rest or extract early), climax, extraction (atlas.check.mjs; one expedition after the ending in every matrix run; human duration estimated 13–28 min, not measured)
 - [v] R15.2 Route modifiers (8), relics (14), objectives solvable at every profile (atlas self-check, 1200 generated runs)
 - [v] R15.3 Rewards: charm sidegrades, cosmetics, notebook entries, six settlement details (zz_atlas_decor.js, browser-checked)
 - [i] R15.4 Keep companion; NG+/fresh campaign with defined carryover
