@@ -13822,7 +13822,14 @@ RB.test = (function () {
   }
   async function use(x, y) {
     await idle();
-    const f = freeAround(x, y);
+    // a prop may cover several tiles: stand next to any tile of its footprint
+    let f = freeAround(x, y);
+    const pr = !f && RB.world.W.map.props.find((q) => q.x === x && q.y === y);
+    if (pr) {
+      const pd = RB.props.P[pr.p] || {};
+      const pw = pr.w || pd.w || 1, ph = pr.h || pd.h || 1;
+      for (let yy = y; yy < y + ph && !f; yy++) for (let xx = x; xx < x + pw && !f; xx++) f = freeAround(xx, yy);
+    }
     if (!f) throw new Error('no free tile next to ' + x + ',' + y);
     place(f.x, f.y, f.dir);
     RB.world.interact();

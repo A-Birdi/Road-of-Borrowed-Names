@@ -148,6 +148,17 @@ for (const id in C.maps) {
       const adj = [[1, 0], [-1, 0], [0, 1], [0, -1], [2, 0], [-2, 0], [0, 2], [0, -2]].some(([dx, dy]) => seen.has((n.x + dx) + ',' + (n.y + dy)));
       if (!adj) Wn('map ' + id + ': NPC ' + n.id + ' may be unreachable');
     }
+    // interactable props: some tile next to their footprint must be reachable
+    for (const pr of def.props || []) {
+      if (!pr.scene && !pr.text) continue;
+      const pd = RB.props.P[pr.p] || {};
+      const pw = pr.w || pd.w || 1, ph = pr.h || pd.h || 1;
+      let ok = false;
+      for (let yy = pr.y; yy < pr.y + ph && !ok; yy++) for (let xx = pr.x; xx < pr.x + pw && !ok; xx++) {
+        ok = [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => seen.has((xx + dx) + ',' + (yy + dy)));
+      }
+      if (!ok) Wn('map ' + id + ': prop ' + pr.p + ' at ' + pr.x + ',' + pr.y + ' (' + (pr.scene || 'text') + ') may be unreachable from the default spawn');
+    }
   }
 }
 
