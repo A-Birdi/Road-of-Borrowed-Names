@@ -40,6 +40,7 @@ RB.challenge = (function () {
   // Render one step; resolves with a result object.
   function runStep(step, opts) {
     opts = opts || {};
+    if (RB.test && RB.test.auto) return Promise.resolve(RB.test.solveStep(step, 'step ' + (step.title || step.item)));
     return new Promise((resolve) => {
       const st = RB.game.settings;
       let mode = step.kind === 'write' ? (opts.mode || st.input || 'hand') : 'choice';
@@ -288,6 +289,7 @@ RB.challenge = (function () {
   async function run(id, ctx) {
     const ch = RB.content.challenges[id];
     if (!ch) { console.warn('missing challenge', id); return { ok: true }; }
+    if (RB.test && RB.test.auto) { RB.tasks.stepsOf(ch).forEach((st, i) => RB.test.solveStep(st, 'challenge ' + id + '[' + i + ']')); RB.game.s.flags['chal:' + id] = true; return { ok: true }; }
     RB.game.pushMode('challenge');
     try {
       if (ch.intro) await RB.ui.card(ch.intro.jp || '', ch.intro.en || '');
@@ -308,6 +310,7 @@ RB.challenge = (function () {
     }
   }
   function teachCard(t) {
+    if (RB.test && RB.test.auto) return Promise.resolve();
     return new Promise((resolve) => {
       const scrim = RB.ui.el('div', 'scrim');
       const pn = RB.ui.el('div', 'panel');

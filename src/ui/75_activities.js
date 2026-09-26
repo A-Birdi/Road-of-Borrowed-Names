@@ -208,6 +208,11 @@ RB.activities = (function () {
   async function run(id, ctx) {
     const a = RB.content.activities[id];
     if (!a) { console.warn('missing activity', id); return { ok: true }; }
+    if (RB.test && RB.test.auto) {
+      if (a.type === 'history' && a.question) RB.test.solveStep(tier(a.question) || a.question, 'activity ' + id);
+      if (a.note && !RB.game.s.notebook.find((n) => n.id === a.note)) RB.game.s.notebook.push({ kind: 'lore', id: a.note, t: Date.now() });
+      return { ok: true };
+    }
     void ctx;
     RB.ui.dialogue.hide();
     if (a.type === 'orders') { RB.game.pushMode('challenge'); try { return await orders(a); } finally { RB.game.popMode('challenge'); } }

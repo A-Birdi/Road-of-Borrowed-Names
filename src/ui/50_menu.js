@@ -11,6 +11,7 @@ RB.ui.menu = (function () {
     ['items', '{持|も}ち{物|もの}', 'Items'],
     ['map', '{地図|ちず}', 'Map'],
     ['log', '{会話|かいわ}{履歴|りれき}', 'Log'],
+    ['guide', '{手引|てび}き', 'Guide'],
     ['settings', '{設定|せってい}', 'Settings'],
     ['save', 'セーブ', 'Save'],
   ];
@@ -54,7 +55,7 @@ RB.ui.menu = (function () {
     panel.querySelector('[data-close]').onclick = close;
     panel.querySelectorAll('[data-tab]').forEach((b) => (b.onclick = () => { RB.audio && RB.audio.sfx('page'); show(b.getAttribute('data-tab')); }));
     const body = panel.querySelector('.body');
-    ({ journal, notebook, items, map, log, settings, save })[t](body);
+    ({ journal, notebook, items, map, log, settings, save, guide })[t](body);
   }
 
   // ---- journal ----------------------------------------------------------------------
@@ -115,17 +116,18 @@ RB.ui.menu = (function () {
   }
   function kanaChart(s) {
     const K = RB.kana;
-    if (!K || !K.table) return '<p class="dim">Kana chart unavailable.</p>';
+    const groups = RB.lessons.groups();
+    if (!groups.length) return '<p class="dim">Kana chart unavailable.</p>';
     const rec = s.learn.items;
     const cell = (ch) => {
       const r = rec['k:' + ch];
       const lvl = !r ? 0 : r.box >= 3 ? 3 : r.box >= 1 ? 2 : 1;
       const col = ['#2a2d44', '#5a4a2a', '#6a7a3a', '#3a7a5a'][lvl];
-      return '<span class="jp" lang="ja" style="display:inline-block;width:2em;text-align:center;margin:1px;border-radius:4px;padding:2px 0;background:' + col + '" title="' + esc(K.romaji ? K.romaji(ch) : '') + '">' + esc(ch) + '</span>';
+      const lbl = ['not met', 'met', 'practising', 'steady'][lvl];
+      return '<span class="jp" lang="ja" style="display:inline-block;width:2em;text-align:center;margin:1px;border-radius:4px;padding:2px 0;background:' + col + '" title="' + esc(K.romaji(ch) + ' — ' + lbl) + '">' + esc(ch) + '</span>';
     };
-    const rows = K.table();
-    let h = '<p class="small dim">Colour shows how settled each character is: not met · met · practising · steady.</p>';
-    for (const grp of rows) h += '<div style="margin:0.3em 0"><span class="small dim" style="display:inline-block;width:6em">' + esc(grp.name) + '</span>' + grp.chars.map(cell).join('') + '</div>';
+    let h = '<p class="small dim">Colour shows how settled each character is: not met · met · practising · steady (hover for the label).</p>';
+    for (const g of groups) h += '<div style="margin:0.3em 0"><span class="small dim" style="display:inline-block;min-width:9em">' + esc(g.title || '') + '</span>' + RB.lessons.groupChars(g).map((c) => cell(c.ch)).join('') + '</div>';
     return h;
   }
 
@@ -203,6 +205,70 @@ RB.ui.menu = (function () {
       return '<div class="item small"><div class="dim">' + (l.choice ? 'You chose' : ch ? esc(ch.name.en) : '') + '</div>' + (l.jp ? RB.ui.jhtml(l.jp) : '') + '<div class="en">' + esc(RB.script.enVars(l.en || '')) + '</div></div>';
     }).join('') + '</div>';
     body.scrollTop = body.scrollHeight;
+  }
+
+  // ---- guide (revisit tutorials any time) ------------------------------------------
+  let gTab = 'basics';
+  const GUIDE = {
+    basics: ['Getting around', [
+      'Move with the arrow keys or WASD, or tap/click where you want to walk. Z, Enter or Space talks and examines; X or Esc goes back; C (or ≡) opens this menu. Controls can be remapped in Settings.',
+      'A small ▾ marker appears above things you can examine or people you can talk to. Talk to your companion by facing them and pressing Z.',
+      'Nothing is timed. Take as long as you like to read, write or think.',
+    ]],
+    ink: ['Inkweaving (battles)', [
+      'Enemies telegraph what they are about to do, in Japanese at your level. Read it: who is it aiming at? Is it heating up, hiding, or asking something?',
+      'Pick a response. Ordinary words do what they mean: まもる (protect) raises a ward in front of whoever you choose, みず (water) cools heat, ひかり (light) burns off mist. Unravel restores one of its tangled words and frees a knot. Free every knot to settle the creature.',
+      'Then express your response in Japanese — by writing, choosing, or typing. The enemy never acts while you write or read help.',
+      'Clean answers build Harmony; when it is full, your companion offers a coordinated technique. Each companion changes the tactics in their own way.',
+      'A genuine mistake costs at most 1 resolve per exchange (nothing in Assisted mode). When the recogniser is unsure of your handwriting, it never costs anything. You can always step back from ordinary encounters, and defeat just returns you to the last safe place.',
+    ]],
+    pad: ['The writing pad', [
+      'Draw one character in the box. The pad shows what it thinks you wrote ("I read this as…") and alternatives. Nothing is submitted until you press Confirm, then Submit.',
+      'Tap a character in the answer strip to replace it; tap a gap to insert. ↶ undoes a stroke; Clear wipes the box. Use 小 for small kana (ゃ, っ…) and the script buttons to choose hiragana or katakana.',
+      'If the recogniser can\'t read you, pick the character from the chart. That counts as "assisted" — which is fine, it just isn\'t counted as unaided handwriting.',
+      'You can switch to choices or keyboard (IME) at any time without losing your place.',
+    ]],
+    bulb: ['Lightbulb help', [
+      'Press H or the bulb button. Then hover, focus or tap any Japanese text to see its reading, romaji, meaning in context, beats (morae) and notes. Pin the panel or add the word to your notebook.',
+      'Furigana (small readings over kanji) are always shown. Using help during a question marks that answer as assisted, with no penalty.',
+    ]],
+    saves: ['Saving', [
+      'Six slots. Save from Menu → Save. The game also autosaves at safe places; those autosaves belong to their slot and are listed there.',
+      'Before you set out with a companion, a special recovery point is kept so you can revisit that choice by loading it (a separate timeline).',
+      'Saves live in this browser, for this page\'s address. Clearing site data or private browsing removes them. There is no export or cloud copy.',
+    ]],
+    kana: ['Kana reference', []],
+  };
+  function guide(body) {
+    let h = '<div class="row" style="margin-bottom:0.5em">' + Object.keys(GUIDE).map((k) => '<button class="btn small' + (gTab === k ? ' on' : '') + '" data-g="' + k + '">' + esc(GUIDE[k][0]) + '</button>').join('') + '</div>';
+    if (gTab === 'kana') {
+      const s = RB.game.s;
+      const groups = RB.lessons.groups();
+      h += '<p class="small dim">Tap a character to see its stroke order. Kana you have been taught are bright.</p>';
+      for (const g of groups) {
+        const cs = RB.lessons.groupChars(g);
+        h += '<div style="margin:0.3em 0"><span class="small dim" style="display:inline-block;min-width:9em">' + esc(g.title || '') + '</span>' + cs.map((c) => {
+          const taught = !RB.learn.taughtKana() || (s.learn.taught && s.learn.taught[c.ch]) || (s.learn.kanaKnown === 'hira' && RB.kana.isHira(c.ch));
+          return '<button class="btn small jp" lang="ja" style="min-width:2.4em;opacity:' + (taught ? 1 : 0.45) + '" data-k="' + esc(c.ch) + '">' + esc(c.ch) + '</button>';
+        }).join('') + '</div>';
+      }
+      h += '<div class="row" style="margin-top:0.6em"><canvas width="160" height="160" class="kdemo" style="width:160px;height:160px;border-radius:8px"></canvas><div class="kinfo"></div></div>';
+    } else {
+      h += '<h3>' + esc(GUIDE[gTab][0]) + '</h3>' + GUIDE[gTab][1].map((t) => '<p>' + esc(t) + '</p>').join('');
+    }
+    body.innerHTML = h;
+    let stop = () => {};
+    body.onclick = (e) => {
+      const g = e.target.closest('[data-g]');
+      if (g) { stop(); gTab = g.getAttribute('data-g'); guide(body); return; }
+      const k = e.target.closest('[data-k]');
+      if (k) {
+        stop();
+        const ch = k.getAttribute('data-k');
+        stop = RB.lessons.demo(body.querySelector('.kdemo'), ch);
+        body.querySelector('.kinfo').innerHTML = '<div class="jp" lang="ja" style="font-size:2.6em">' + esc(ch) + '</div><div>' + esc(RB.kana.romaji(ch)) + '</div>';
+      }
+    };
   }
 
   // ---- save ------------------------------------------------------------------------------------------

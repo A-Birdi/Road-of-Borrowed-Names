@@ -103,6 +103,7 @@ RB.lessons = (function () {
       if (s.learn.profile !== 'F' || s.learn.kanaKnown === 'both') return;
       const ng = nextGroup(s);
       if (!ng) return;
+      if (RB.test && RB.test.auto) { groupChars(ng.g).forEach((c) => { s.learn.taught[c.ch] = true; RB.learn.markIntroduced('k:' + c.ch); }); s.learn.kanaGroup = ng.i + 1; return; }
       RB.game.pushMode('challenge');
       try {
         await showGroup(ng.g);

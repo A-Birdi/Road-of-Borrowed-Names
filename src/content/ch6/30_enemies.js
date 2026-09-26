@@ -233,8 +233,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
         truth: {
           F: choose('What is wrong with this?', null, [
             { en: 'Words mean things in context. Take away the context and even clear words get misread.', ok: true },
-            { en: 'Nothing; every word should mean one thing.', ok: false, why: { en: 'Think of the letters you found. The words were clear to the person they were written for.' } },
-          ], { en: 'The words weren\'t the problem that night. Losing the letter they answered was.' }),
+            { en: 'Nothing; every word should mean one thing.', ok: false, why: { en: 'Think of what you found on the shelves. Words can be clear to the one they were written for.' } },
+          ], { en: 'Words don\'t mean things on their own; they mean things where they are said. Cut them loose and anything can be misread.' }),
           E: choose('What is wrong with this?', null, [
             { jp: '{言葉|ことば} の {意味|いみ} は 、 {前後|ぜんご} の {文|ぶん} で {決|き}まる 。', en: 'A word\'s meaning is settled by what comes around it.', ok: true },
             { jp: '{言葉|ことば} は {短|みじか}い ほう が いい 。', en: 'Shorter words are better.', ok: false, why: { en: 'Length has nothing to do with it.' } },
@@ -243,7 +243,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
             { jp: '{言葉|ことば} は {文脈|ぶんみゃく} の {中|なか} で {意味|いみ} を {持|も}つ 。 {文脈|ぶんみゃく} を {失|うしな}えば 、 どんな {言葉|ことば} も {読|よ}み{違|ちが}えられる 。', ok: true },
             { jp: '{言葉|ことば} は {少|すく}なければ {少|すく}ない ほど いい 。', ok: false, why: { en: '"The fewer words the better" — that is the Hush\'s own logic.' } },
             { jp: '{誰|だれ}も {読|よ}み{違|ちが}えない {言葉|ことば} が 、 どこか に ある はず だ 。', ok: false, why: { en: '"Somewhere there must be words no one can misread" — the Hush\'s hope, restated.' } },
-          ], { en: 'Meaning lives in context (文脈). Strip the context and any word can be misread — which is exactly what happened to Tōya\'s reply.' }),
+          ], { en: 'Meaning lives in context (文脈). Strip the context and any word can be misread — including four words you have been carrying all the way up this mountain.' }),
           A: choose('Which reply exposes what that night actually teaches?', null, [
             { jp: 'あの {夜|よる} {失|うしな}われた の は {言葉|ことば} の {明確|めいかく}さ で は なく 、 {言葉|ことば} が {置|お}かれて いた {文脈|ぶんみゃく} だ 。', ok: true },
             { jp: '{確|たし}か に 、 {曖昧|あいまい}な {言葉|ことば} は {避|さ}ける に {越|こ}した こと は ない 。', ok: false, why: { en: '"Admittedly, it\'s best to avoid vague words" — sensible advice, but it concedes the Hush\'s premise about that night.' } },

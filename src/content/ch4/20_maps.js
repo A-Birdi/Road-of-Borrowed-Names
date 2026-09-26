@@ -44,7 +44,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { x: 18, y: 0, w: 2, h: 1, to: 'sb.hamlet', tx: 22, ty: 33, dir: 'up' },
       { x: 35, y: 13, w: 1, h: 2, to: 'lf.road', sp: 'from_prev', dir: 'right', if: 'ch4_done' },
     ],
-    onEnter: [{ scene: 'sb.arrive', if: '!sb_arrived' }],
+    onEnter: [{ scene: 'sb.arrive', if: '!sb_arrived' }, { scene: 'sb.next_day', if: 'sb_evening' }],
     spawn: { default: [3, 13, 'right'], from_prev: [2, 13, 'right'], from_next: [33, 13, 'left'] },
   };
 

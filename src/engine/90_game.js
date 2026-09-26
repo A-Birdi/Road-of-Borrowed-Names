@@ -129,7 +129,7 @@ RB.game = (function () {
     return !!(G.settings && G.settings.reducedMotion);
   }
   function fastForward() {
-    return G.ff;
+    return G.ff || !!(RB.test && RB.test.auto);
   }
   function setFastForward(v) {
     G.ff = v;

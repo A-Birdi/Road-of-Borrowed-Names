@@ -123,7 +123,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { jp: '「{返送|へんそう}」された {名前|なまえ}が どこ へ {行|い}く の か {突|つ}き{止|と}めよう 。', en: 'Find out where the "returned" names are taken — go deeper into the archive.' },
       { jp: '{潮硝子|しおがらす}に {戻|もど}って 、 オウミ に {伝|つた}えよう 。', en: 'Return to Saltglass and tell Ōmi what you found.' },
     ],
-    reward: { items: { sg_stamp: 1 } },
+    reward: { flags: ['sg_main_done'] },
   };
   C.quests.sg_lighthouse = {
     chapter: 2,

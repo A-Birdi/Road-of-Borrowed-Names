@@ -183,7 +183,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const rect = (x0, y0, w, h) => { const out = []; for (let y = y0; y < y0 + h; y++) for (let x = x0; x < x0 + w; x++) out.push([x, y]); return out; };
 
   C.maps['lf.tower_top'] = Object.assign({}, TOWER, {
-    name: T('Belfry Loft', '{鐘楼|しょうろう}の{屋根裏|やねうら}'),
+    name: T('Belfry Loft', '{鐘楼|しょうろう} の {屋根裏|やねうら}'),
     ambient: { dark: 0.45, playerLight: 52, tint: 'rgba(40,60,120,0.12)' },
     terrain: K.build(16, 12, '#', (k) => {
       k.rect(1, 2, 14, 8, '_');
@@ -209,7 +209,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
 
   C.maps['lf.tower_upper'] = Object.assign({}, TOWER, {
-    name: T('Upper Floor', '{上|うえ}の{階|かい}'),
+    name: T('Upper Floor', '{上|うえ} の {階|かい}'),
     ambient: { dark: 0.5, playerLight: 50, tint: 'rgba(40,60,120,0.12)' },
     terrain: K.build(20, 16, '#', (k) => {
       k.rect(1, 2, 18, 13, '+');
@@ -244,7 +244,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   C.maps['lf.tower_upper'].terrain = C.maps['lf.tower_upper'].terrain.map((row, y) => (y === 1 ? row.slice(0, 16) + '+' + row.slice(17) : row));
 
   C.maps['lf.tower_mid'] = Object.assign({}, TOWER, {
-    name: T('Gate Works', '{水門|すいもん}の{機械室|きかいしつ}'),
+    name: T('Gate Works', '{水門|すいもん} の {機械室|きかいしつ}'),
     ambient: { dark: 0.5, playerLight: 50, tint: 'rgba(40,60,120,0.14)' },
     terrain: K.build(22, 18, '#', (k) => {
       k.rect(1, 2, 20, 15, '+');
@@ -283,7 +283,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
 
   C.maps['lf.tower_low'] = Object.assign({}, TOWER, {
-    name: T('Drowned Stair', '{沈|しず}んだ{階段|かいだん}'),
+    name: T('Drowned Stair', '{沈|しず}んだ {階段|かいだん}'),
     ambient: { dark: 0.58, playerLight: 48, tint: 'rgba(30,50,110,0.16)' },
     terrain: K.build(20, 18, '#', (k) => {
       k.rect(1, 2, 18, 15, '+');
@@ -316,7 +316,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
 
   C.maps['lf.bellhall'] = Object.assign({}, TOWER, {
-    name: T('Bell Chamber', '{鐘|かね}の{間|ま}'),
+    name: T('Bell Chamber', '{鐘|かね} の {間|ま}'),
     music: [{ if: 'lf_bell_rung', id: 'wonder' }, { id: 'hush' }],
     ambient: { dark: 0.5, playerLight: 50, tint: 'rgba(30,50,110,0.16)' },
     terrain: K.build(16, 14, '#', (k) => {
@@ -333,7 +333,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'lf_plate', x: 10, y: 6, scene: 'lf.bell_plate' },
     ],
     exits: [{ x: 8, y: 1, to: 'lf.tower_low', tx: 10, ty: 16, dir: 'up' }],
-    triggers: [{ x: 5, y: 5, w: 6, h: 1, scene: 'lf.boss_intro', if: '!lf_boss_done' }],
+    triggers: [{ x: 1, y: 5, w: 14, h: 1, scene: 'lf.boss_intro', if: '!lf_boss_done' }],
     spawn: { default: [8, 2, 'down'] },
   });
 })(RB.content, RB.mapkit);

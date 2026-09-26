@@ -353,5 +353,6 @@ RB.pad = (function () {
       _inject(strokes) { P.strokes = strokes; redraw(); recognize(); }, // tests: inject strokes in 0..1 units
     };
   }
-  return { create, BOX };
+  const api = { create(host, opts) { const p = create(host, opts); api.__last = p; return p; }, BOX };
+  return api;
 })();

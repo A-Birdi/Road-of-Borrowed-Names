@@ -383,8 +383,41 @@ RB.ui.create = (function () {
     });
   }
 
+  // New Game+: offer to carry learning into a fresh timeline. Carried: mastery
+  // records, taught kana, notebook, cosmetic items, player identity. Never
+  // carried: story flags, quests, companion, other items, position.
+  async function offerCarryover() {
+    const list = await RB.save.list();
+    const done = list.filter((x) => !x.empty && !x.corrupt && x.meta && x.meta.post);
+    if (!done.length) return null;
+    const btns = ['Start fresh'].concat(done.map((x) => 'New Game+ from slot ' + x.slot + ' (' + x.meta.name + (x.meta.comp ? ' & ' + x.meta.comp : '') + ')'));
+    const r = await RB.ui.confirm('You have a finished campaign. New Game+ starts the story over in this slot with a new companion choice, carrying over only your learning progress, notebook, keepsakes (cosmetics) and appearance. Story choices, companion, quests and other items are not carried, and the finished campaign stays untouched.', btns);
+    if (r <= 0) return null;
+    const src = done[r - 1];
+    const rec = await RB.save.read(src.slot, src.manual ? 'manual' : 'auto');
+    return rec.state;
+  }
+  function carry(from) {
+    const s = RB.state.newCampaign({ player: RB.util.deepClone(from.player), profile: from.learn.profile, assist: from.learn.assist, difficulty: from.learn.difficulty });
+    s.learn = RB.util.deepClone(from.learn);
+    s.notebook = RB.util.deepClone(from.notebook || []);
+    for (const id in from.inv) { const it = RB.content.items[id]; if (it && it.slot === 'cosmetic') s.inv[id] = 1; }
+    if (from.equip && from.equip.cosmetic) s.equip.cosmetic = from.equip.cosmetic;
+    s.atlas.cosmetics = RB.util.deepClone((from.atlas && from.atlas.cosmetics) || []);
+    s.ngplus = (from.ngplus || 0) + 1;
+    s.journal = [{ jp: 'もう {一度|いちど} 、 {灯|ひ} の {道|みち} を {歩|ある}く 。', en: 'Walking the lantern road once more (New Game+).', t: Date.now() }];
+    return s;
+  }
+
   async function begin(slot) {
     RB.game.setBase('create');
+    const from = await offerCarryover();
+    if (from) {
+      const s = carry(from);
+      RB.render.setOverride(null);
+      await RB.game.startNewCampaign(slot, s);
+      return;
+    }
     await prologue();
     RB.render.setOverride(RB.ui.title.drawBackdrop);
     RB.audio && RB.audio.playSong('title');
@@ -403,5 +436,5 @@ RB.ui.create = (function () {
     await RB.game.startNewCampaign(slot, s);
   }
 
-  return { begin, prologue, creation, setup, placement, romajiToKata, PROFILES, BACKGROUNDS };
+  return { begin, prologue, creation, setup, placement, romajiToKata, PROFILES, BACKGROUNDS, carry };
 })();

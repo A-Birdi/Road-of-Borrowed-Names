@@ -63,12 +63,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
   fallback('hoshino', { name: T('Hoshino', 'ホシノ'), look: { skin: 1, hair: 'short', hairColor: 6, cloth: ['#3a4a6a', '#2c3850', '#d8c890'], shape: 'coat', acc: ['glasses', 'scarf'], scarfCol: '#8a8ab0', age: 'old' }, portrait: { eyes: 'soft', style: 'short', age: 'old', beard: true, acc: ['glasses', 'scarf'], scarfCol: '#8a8ab0', bg: '#1e2438' } });
   fallback('akari', { name: T('Akari', 'アカリ'), look: { skin: 1, hair: 'bob', hairColor: 0, cloth: ['#4c4a78', '#3a3860', '#e8e0c8'], shape: 'robe', acc: ['glasses'] }, portrait: { eyes: 'soft', style: 'bob', collar: 'high', acc: ['glasses'], bg: '#2a2848' } });
   fallback('umi', { name: T('Umi', 'ウミ'), look: { skin: 2, hair: 'long', hairColor: 1, cloth: ['#3a6a7a', '#2a5260', '#e8d8b0'], shape: 'dress', acc: [] }, portrait: { eyes: 'sharp', style: 'long', bg: '#1e3440' } });
+  fallback('lf_toya', { name: T('A young voice', '{若|わか}い {声|こえ}'), look: { skin: 1, hair: 'spiky', hairColor: 2, cloth: ['#6c8cbc', '#4a6c9c', '#e0e8f8'], shape: 'tunic', acc: ['scarf'], scarfCol: '#e0e8f8' }, portrait: { eyes: 'round', style: 'spiky', acc: ['scarf'], scarfCol: '#e0e8f8', bg: '#1a2a44' } });
+  fallback('kanta', { name: T('Kanta', 'カンタ'), look: { skin: 3, hair: 'short', hairColor: 1, cloth: ['#5a6a7a', '#465464', '#e8d8b0'], shape: 'coat', acc: ['scarf'], scarfCol: '#a85a4a' }, portrait: { eyes: 'round', style: 'short', acc: ['scarf'], scarfCol: '#a85a4a', bg: '#243040' } });
+  fallback('lf_yae', { name: T('Councillor Yae', 'ヤエ'), look: { skin: 2, hair: 'bun', hairColor: 6, cloth: ['#6a3a5a', '#502a44', '#e8c070'], shape: 'robe', acc: [], age: 'old' }, portrait: { eyes: 'narrow', style: 'bun', age: 'old', collar: 'high', pins: true, bg: '#3a2438' } });
   fallback('wataru', { name: T('Wataru', 'ワタル'), look: { skin: 2, hair: 'short', hairColor: 1, cloth: ['#5a6a7a', '#465464', '#e8e0cc'], shape: 'coat', acc: ['glasses'] }, portrait: { eyes: 'round', style: 'short', collar: 'high', acc: ['glasses'], bg: '#2a3440' } });
 
   // ---- items --------------------------------------------------------------------------
-  C.items.sa_letter_kasane = { name: T("Kasane's last letter", 'カサネ の {手紙|てがみ}'), desc: 'The first thing ever shelved in the Room of Set-Down Memories: an official letter from the lower town, with a private note folded inside.', key: true };
-  C.items.sa_toya_reply = { name: T("Tōya's reply", 'トウヤ の {返事|へんじ}'), desc: 'A torn slip in a young hand: 「必要なら開ける」. Kept under a paperweight on Kasane\'s desk for thirty years.', key: true };
-  C.items.sa_notice = { name: T('Council notice', '{議会|ぎかい} の {貼|は}り{紙|がみ}'), desc: 'A water-stained notice from the lower town council, the night before the flood. It quotes Tōya\'s reply and guesses what it meant.', key: true };
+  C.items.sa_letter_kasane = { name: T("Kasane's first folio", 'カサネ の {最初|さいしょ} の {綴|つづ}り'), desc: 'The first memory ever shelved in the Room of Set-Down Memories: Kasane\'s own half of a quarrel in a council corridor, thirty years ago.', key: true };
+  C.items.sa_toya_reply = { name: T("Tōya's note", 'トウヤ の {書|か}き{置|お}き'), desc: 'A bell-tower key slip. On the back, in a hurried young hand: 「必要なら開ける」. On the front, in Kasane\'s neat one: "Key taken out — messenger Tōya. Without permission."', key: true };
+  C.items.sa_notice = { name: T('Council notice', '{議会|ぎかい} の {貼|は}り{紙|がみ}'), desc: 'A water-stained notice posted by the Lanternfall council on the night of the flood: Takase\'s reply, how the council chose to read it, and an order that the bell tower stay locked.', key: true };
   C.items.sa_tae_slip = { name: T("Tae's slip", 'タエ の {紙片|しへん}'), desc: 'A set-down memory of the flood night: the bell that rang from a locked tower.', key: true };
   C.items.sa_folio_isamu = { name: T("Isamu's folio", 'イサム の {綴|つづ}り'), desc: 'A thin folio filed under "a laugh, before the kettle boils". Isamu asked for it back.', key: true };
   C.items.sa_ushio_notes = { name: T("Ushio's notebook", 'ウシオ の {手帳|てちょう}'), desc: 'A battered notebook of objections, recipes and, near the back, three names for the Archive\'s clerk.', key: true };
@@ -121,18 +124,18 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
   C.notes.sa_kasane = {
     title: T('Kasane', 'カサネ'), fiction: true,
-    jp: '{三十年|さんじゅうねん} {前|まえ} 、 {下|しも}の{町|まち} の {議会|ぎかい} の {書記|しょき} だった 。 {弟|おとうと} の トウヤ は {上|かみ}の{町|まち} の {水門|すいもん} で {働|はたら}いて いた 。',
-    en: '(Fiction.) Thirty years ago, clerk to the lower town council of Lanternfall. Their younger brother Tōya kept records at the upper town\'s sluice. They wrote to each other across a quarrel between the two towns, and then the flood came.',
+    jp: '{三十年|さんじゅうねん} {前|まえ} 、 {灯落|ひおち} の {議会|ぎかい} の {書記|しょき} だった 。 {弟|おとうと} の トウヤ は {使|つか}い だった 。 {二人|ふたり} は {高瀬|たかせ} の {返事|へんじ} を めぐって 、 {議会|ぎかい} の {廊下|ろうか} で {言|い}い{争|あらそ}った 。',
+    en: '(Fiction.) Thirty years ago, clerk to the Lanternfall council. Their younger brother Tōya was the council\'s messenger. They quarrelled in the council corridor over how to read Takase\'s reply; that night the flood came, and Tōya did not come back. Kasane set down their own half of the quarrel — the first memory the Archive ever kept.',
   };
   C.notes.sa_toya = {
     title: T('「必要なら開ける」', '「{必要|ひつよう}なら {開|あ}ける」'), fiction: true,
-    jp: 'トウヤ の {最後|さいご} の {返事|へんじ} 。 {主語|しゅご} も {目的語|もくてきご} も ない 。 {文脈|ぶんみゃく} の {中|なか} で {読|よ}めば 、 {何|なに} を {誰|だれ} が {開|あ}ける の か 、 はっきり して いた 。',
-    en: 'Tōya\'s last reply has no subject and no object — ordinary in Japanese, where both are left out when context supplies them. Read beside Kasane\'s note, it said exactly who would open what, and when. Read alone, on a council noticeboard, it could mean anything. (Language note: 〜なら and 〜ば mean "if", not "only if".)',
+    jp: '{高瀬|たかせ} の {返事|へんじ} と {同|おな}じ {四語|よんご} 。 でも トウヤ の {書|か}き{置|お}き は 、 {鐘楼|しょうろう} の {鍵|かぎ} の {控|ひか}え の {裏|うら} に 、 カサネ へ の {返事|へんじ} と して {書|か}かれて いた 。 {開|あ}ける の は {自分|じぶん} 、 {開|あ}ける の は {鐘楼|しょうろう} 。',
+    en: 'The same four words as Takase\'s reply — but Tōya wrote his on the back of the bell-tower key slip, straight after Kasane told him "no one is opening it". Japanese often leaves out subject and object when context supplies them; here the context says: I will open the bell tower. Takase\'s 必要なら left open "needed by whom?"; in Tōya\'s note, the one who judges is the one who acts. He kept the promise.',
   };
   C.notes.sa_ushio = {
     title: T('Master Ushio', 'ウシオ{師匠|ししょう}'), fiction: true,
-    jp: 'レン の {師匠|ししょう} 。 カサネ と {言|い}い{争|あらそ}う ため に {書庫|しょこ} へ {来|き}て 、 {十一年|じゅういちねん} 、 {反対|はんたい} し{続|つづ}けた 。',
-    en: '(Fiction.) A lantern keeper, Ren\'s teacher. Came to the Archive to argue with Kasane and stayed eleven years doing exactly that. Died there three winters ago. Kasane never shelved a single one of Ushio\'s objections.',
+    jp: 'レン の {師匠|ししょう} 。 {七|なな}{冬|ふゆ} {前|まえ} 、 カサネ と {言|い}い{争|あらそ}う ため に {書庫|しょこ} へ {来|き}て 、 {六年|ろくねん} 、 {反対|はんたい} し{続|つづ}けた 。',
+    en: '(Fiction.) A lantern keeper, Ren\'s teacher. Came to the Archive seven winters ago to have it out with Kasane, and spent six years doing exactly that. Died there last winter. Kasane never shelved a single one of Ushio\'s objections.',
   };
   C.notes.sa_memories = {
     title: T('The Room of Set-Down Memories', '{預|あず}けられた {記憶|きおく} の {部屋|へや}'), fiction: true,

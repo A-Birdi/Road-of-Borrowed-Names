@@ -350,10 +350,16 @@ RB.save = (function () {
     } catch (e) { chan = null; }
   }
   function releaseLock() {
-    if (current.lockRelease) { current.lockRelease(); current.lockRelease = null; }
+    if (current.lockRelease) { current.lockRelease(); current.lockRelease = null; current.lockSlot = null; }
   }
   // Try to become the only tab writing to this slot. Returns 'owned' | 'busy' | 'unsupported'.
   function claim(slot) {
+    // Already holding this slot's lock in this tab: keep it (no false warning).
+    if (current.lockRelease && current.lockSlot === slot) {
+      current.slot = slot;
+      current.readOnly = false;
+      return Promise.resolve('owned');
+    }
     releaseLock();
     current.slot = slot;
     current.readOnly = false;
@@ -362,6 +368,7 @@ RB.save = (function () {
       navigator.locks.request('rbn-slot-' + slot, { ifAvailable: true }, (lock) => {
         if (!lock) { resolve('busy'); return undefined; }
         resolve('owned');
+        current.lockSlot = slot;
         return new Promise((rel) => (current.lockRelease = rel));
       }).catch(() => resolve('unsupported'));
     });
@@ -373,6 +380,7 @@ RB.save = (function () {
       new Promise((resolve) => {
         navigator.locks.request('rbn-slot-' + slot, (lock) => {
           resolve('owned');
+          current.lockSlot = slot;
           return new Promise((rel) => (current.lockRelease = rel));
         });
       }),

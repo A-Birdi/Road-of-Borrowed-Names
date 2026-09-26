@@ -402,6 +402,7 @@ RB.combat = (function () {
 
   async function start(enemyId, opts) {
     opts = opts || {};
+    if (RB.test && RB.test.auto) return RB.test.battle(enemyId);
     const s = RB.game.s;
     enemy = Object.assign({ id: enemyId }, RB.content.enemies[enemyId] || {});
     if (!RB.content.enemies[enemyId]) console.warn('missing enemy', enemyId);

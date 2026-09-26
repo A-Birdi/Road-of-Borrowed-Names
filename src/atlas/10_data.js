@@ -153,7 +153,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     settle: { jp: '{光|ひかり} は {落|お}ち{着|つ}いて 、 {道|みち} の {脇|わき} へ {退|しりぞ}いた 。', en: 'The light calms and drifts to the side of the road.' } });
   E('atlas.moth', { name: { jp: '{余白|よはく} の {蛾|が}', en: 'Margin Moth' }, art: 'moth', artOpts: { col: '#e6dcc4', col2: '#b8ac90' }, look: { custom: 'moth', col: '#e6dcc4' }, knots: 2, pool: POOL,
     pattern: ['shroud', 'strike', 'rest'],
-    intro: { jp: '{白|しろ} い {蛾|が} が 、 {紙|かみ} の {端|はし} から {舞|ま}い{上|あ}がった 。', en: 'A white moth flutters up from the edge of the page.' },
+    intro: { jp: '{白|しろ}い {蛾|が} が 、 {紙|かみ} の {端|はし} から {舞|ま}い{上|あ}がった 。', en: 'A white moth flutters up from the edge of the page.' },
     settle: { jp: '{蛾|が} は {余白|よはく} に {戻|もど}って {動|うご}かなく なった 。', en: 'The moth settles back into the margin and is still.' } });
   E('atlas.blot', { name: { jp: 'にじんだ {行|ぎょう}', en: 'Blotted Line' }, art: 'blot', artOpts: { col: '#3a3050' }, look: { custom: 'blot', col: '#3a3050' }, knots: 3, pool: POOL,
     pattern: ['strike', 'mend', 'rest', 'strike'],
@@ -190,7 +190,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Combination encounters (unlocked after completed expeditions).
   E('atlas.mothlamp', { name: { jp: '{蛾|が} と {灯籠|とうろう}', en: 'Moth and Lantern' }, art: 'lantern', artOpts: { col: '#d8c0a0' }, look: { custom: 'lanternghost' }, knots: 3, pool: POOL,
     pattern: ['shroud', 'heat', 'strike', 'rest'],
-    intro: { jp: '{灯籠|とうろう} の {周|まわ}り を 、 {白|しろ} い {蛾|が} が {回|まわ}って いる 。', en: 'White moths circle a lantern — and the lantern circles back.' },
+    intro: { jp: '{灯籠|とうろう} の {周|まわ}り を 、 {白|しろ}い {蛾|が} が {回|まわ}って いる 。', en: 'White moths circle a lantern — and the lantern circles back.' },
     settle: { jp: '{蛾|が} は {散|ち}り 、 {灯|ひ} は {静|しず}か に なった 。', en: 'The moths scatter and the flame goes quiet.' } });
   E('atlas.echotoll', { name: { jp: 'こだま の {番人|ばんにん}', en: 'Echoing Gatekeeper' }, art: 'clerk', artOpts: { col: '#5a6a7a' }, look: { custom: 'atlas_gate', col: '#6a7a8a' }, knots: 3, pool: POOL,
     pattern: ['mirror:1', 'rest', 'lie:1', 'strike'], intents: {},

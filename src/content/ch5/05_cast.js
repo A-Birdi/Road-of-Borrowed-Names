@@ -150,7 +150,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     title: { jp: '{水底|みなそこ} の {鐘|かね}', en: 'The Bell Under the Water' },
     stages: [
       S('{記録館|きろくかん} で 、{沈|しず}んだ {鐘楼|しょうろう} の こと を {聞|き}く 。', 'Ask at the Public Records Hall (north side of the main avenue) about the drowned bell tower.'),
-      S('{窓口|まどぐち} で {閲覧|えつらん} の {申請書|しんせいしょ} を {出|だ}す 。', 'File a records request at the Records Hall counter.'),
+      S('{窓口|まどぐち} で {閲覧|えつらん} の {申請書|しんせいしょ} を {出|だ}して 、{左|ひだり} の {机|つくえ} の {台帳|だいちょう} を {読|よ}む 。', 'File a records request at the Records Hall counter, then read the flood-year ledger on the desk to the left.'),
       S('{洪水|こうずい} の {年|とし} の {記録|きろく} は 「{特記|とっき}{事項|じこう} なし」 。{事務所|じむしょ} の アカリ に {聞|き}いて みる 。', 'The flood year\'s ledger says "nothing of note". Ask Akari in the clerks\' office (north-east).'),
       S('{記録館|きろくかん} の {地下|ちか}{書庫|しょこ} を {調|しら}べる 。', 'Search the basement stacks under the Records Hall (stairs behind the counter).'),
       S('{古|ふる}い {議事録|ぎじろく} を {議会|ぎかい} の ヤエ に {見|み}せる 。', 'Show the old minutes to Councillor Yae in the Council Chamber.'),
@@ -208,7 +208,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   C.quests.lf_mio = {
     chapter: 5, title: { jp: '{声|こえ} に {出|だ}す 「いいえ」', en: 'A No, Out Loud' },
     stages: [
-      S('{宿|やど} の すみ の {席|せき} で 、ミオ に {頼|たの}み{事|ごと} が {集|あつ}まって いる 。', 'At the inn, everyone has started bringing Mio their requests. See how she is doing at the corner table.'),
+      S('{町|まち} の {人|ひと} が みんな 、ミオ に {頼|たの}み{事|ごと} を {持|も}って くる 。', 'Everyone in town has started bringing Mio their requests, and she is saying yes to all of them.'),
       S('{登記官|とうきかん} が {町|まち} {全体|ぜんたい} の 「しずめ{薬|ぐすり}」 を {頼|たの}んだ 。ミオ と {処方|しょほう} を {読|よ}む 。', 'The Registrar has ordered a "quieting draught" for the whole town. Read the recipe with Mio.'),
       S('ミオ に は {言|い}う こと が ある 。{記録館|きろくかん} の タダシ の ところ へ {一緒|いっしょ} に {行|い}く 。', 'Mio has something to say. Go with her to Registrar Tadashi in the Records Hall.'),
     ],

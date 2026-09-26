@@ -470,6 +470,6 @@ RB.world = (function () {
 
   return {
     W, DIRS, enter, update, interact, tapTile, refreshActors, placeCompanion, emote, actorById, scriptMove,
-    frontTile, checkFoeContact, faceTo, unstick, blocked,
+    frontTile, checkFoeContact, faceTo, unstick, blocked, _tryMove: tryMovePlayer,
   };
 })();

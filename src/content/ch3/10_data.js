@@ -14,7 +14,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const ch = (id, d) => (C.chars[id] = d);
 
   // ---- cast (13 residents + one remembered) ----------------------------------------
-  ch('co_hiro', { name: { en: 'Hiro', jp: 'ヒロ' }, voice: { pitch: 0.86 },
+  ch('hiro', { name: { en: 'Hiro', jp: 'ヒロ' }, voice: { pitch: 0.86 },
     look: { skin: 2, hair: 'short', hairColor: 1, cloth: ['#4a5656', '#384444', '#c8603a'], shape: 'apron', acc: ['headband'], bandCol: '#c8603a' },
     portrait: { eyes: 'narrow', style: 'short', acc: ['headband'], bandCol: '#c8603a', collar: 'apron', bg: '#3a2a24' } });
   ch('co_tokiwa', { name: { en: 'Tokiwa', jp: 'トキワ' }, voice: { pitch: 0.82 },

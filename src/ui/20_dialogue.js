@@ -88,6 +88,7 @@ RB.ui.dialogue = (function () {
     return new Promise((res) => {
       pending = res;
       if (RB.game.fastForward() && seenScene) setTimeout(() => advance(true), 40);
+      else if (RB.test && RB.test.auto) setTimeout(() => advance(true), 5);
     });
   }
   function renderSub() {
@@ -182,6 +183,7 @@ RB.ui.dialogue = (function () {
   function choose(opts, o) {
     ensure();
     RB.game.setFastForward(false);
+    if (RB.test && RB.test.auto) return Promise.resolve(RB.test.choose(opts));
     return new Promise((res) => {
       choicesEl.innerHTML = '';
       choicesEl.classList.remove('hidden');

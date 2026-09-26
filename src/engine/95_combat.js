@@ -102,7 +102,7 @@ RB.combatLogic = (function () {
     for (const w of words) {
       if (w.tags.indexOf('ward') >= 0) {
         out.push({ id: 'w:' + w.id + ':pc', kind: 'word', word: w, target: 'pc', icon: w.icon || '🛡', jp: w.jp, en: w.en, desc: w.effect + ' (you)' });
-        if (st.compId) out.push({ id: 'w:' + w.id + ':comp', kind: 'word', word: w, target: 'comp', icon: w.icon || '🛡', jp: w.jp, en: w.en, desc: w.effect + ' (companion)' });
+        if (st.compId) out.push({ id: 'w:' + w.id + ':comp', kind: 'word', word: w, target: 'comp', icon: w.icon || '🛡', jp: w.jp, en: w.en, desc: w.effect + ' (' + ((RB.content.chars[st.compId] && RB.content.chars[st.compId].name.en) || 'companion') + ')' });
       } else {
         out.push({ id: 'w:' + w.id, kind: 'word', word: w, icon: w.icon || '✦', jp: w.jp, en: w.en, desc: w.effect });
       }

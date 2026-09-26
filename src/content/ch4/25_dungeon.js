@@ -188,7 +188,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'sb_icicles', x: 4, y: 1 }, { p: 'sb_icicles', x: 9, y: 1 },
     ],
     npcs: [
-      { id: 'hoshino', x: 4, y: 8, dir: 'right', if: 'sb_lamp_lit&!sb_evening', talk: 'sb.dome_hoshino_after' },
+      { id: 'hoshino', x: 4, y: 8, dir: 'right', if: 'sb_boss_done&!ch4_done&!sb_evening', talk: 'sb.dome_hoshino' },
     ],
     exits: [
       { x: 7, y: 11, to: 'sb.obs_gallery', tx: 11, ty: 4, dir: 'down' },

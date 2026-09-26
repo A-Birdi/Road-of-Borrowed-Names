@@ -10,7 +10,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- the road down from the mountains -----------------------------------------------
   C.maps['lf.road'] = {
-    name: T('The Lantern Road above Lanternfall', '{灯|ひ}の{道|みち}・{灯落|ひおち}{坂|ざか}'), region: 'lanternfall', music: 'road',
+    name: T('The Lantern Road above Lanternfall', '{灯|ひ} の {道|みち} ・ {灯落|ひおち}{坂|ざか}'), region: 'lanternfall', music: 'road',
     ambient: { weather: 'leaves' },
     terrain: K.build(36, 22, '.', (k) => {
       k.ragged('top', '^', 3, 51).ragged('bottom', 'T', 3, 52);
@@ -147,13 +147,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     onEnter: [
       { scene: 'lf.after_town', if: 'lf_bell_rung&!lf_after_town' },
+      { scene: 'lf.mio_start', if: 'comp=mio&!quest.lf_mio&quest.lf_main>=2&!lf_bell_rung' },
     ],
     spawn: { default: [2, 17, 'right'] },
   };
 
   // ---- the garden quarter ---------------------------------------------------------------------
   C.maps['lf.gardens'] = {
-    name: T('The Garden Quarter', '{庭|にわ}の{町|まち}'), region: 'lanternfall', music: TOWN_MUSIC,
+    name: T('The Garden Quarter', '{庭|にわ} の {町|まち}'), region: 'lanternfall', music: TOWN_MUSIC,
     ambient: { weather: 'leaves' },
     terrain: K.build(34, 24, '.', (k) => {
       k.ragged('top', 'T', 2, 71).ragged('right', 'T', 3, 72).ragged('bottom', 'T', 2, 73);
@@ -199,7 +200,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- the sluice shore and the drowned quarter -------------------------------------------------------
   C.maps['lf.sluice'] = {
-    name: T('The Sluice Shore', '{水門|すいもん}の{岸|きし}'), region: 'lanternfall',
+    name: T('The Sluice Shore', '{水門|すいもん} の {岸|きし}'), region: 'lanternfall',
     music: [{ if: 'lf_bell_rung', id: 'lanternfall' }, { id: 'mystery' }],
     ambient: { weather: null, tint: 'rgba(40,60,120,0.08)' },
     terrain: K.build(34, 28, '.', (k) => {
@@ -367,7 +368,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     spawn: { default: [3, 6, 'up'] },
   });
 
-  interior('lf.ferry', T('Ferry Office', '{渡|わた}し{場|ば}の{事務所|じむしょ}'), 11, 9, 5, [35, 30], {
+  interior('lf.ferry', T('Ferry Office', '{渡|わた}し{場|ば} の {事務所|じむしょ}'), 11, 9, 5, [35, 30], {
     props: [
       { p: 'exitmat', x: 5, y: 7 },
       { p: 'counter', x: 3, y: 3, across: true }, { p: 'shelf', x: 1, y: 2 }, { p: 'shelf', x: 9, y: 2 },
@@ -375,7 +376,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'crate', x: 1, y: 5 }, { p: 'crate', x: 1, y: 6, scene: 'lf.mailsacks' }, { p: 'net', x: 8, y: 6 },
     ],
     npcs: [
-      { id: 'umi', x: 4, y: 2, dir: 'down', talk: [{ if: 'post', scene: 'lf.umi_post' }, { if: 'comp=nao&quest.lf_nao>=1&lf_bell_rung&!quest.lf_nao=done', scene: 'lf.nao_deliver' }, { if: 'comp=nao&!quest.lf_nao', scene: 'lf.nao_umi_first' }, { if: 'lf_bell_rung', scene: 'lf.umi_after' }, { scene: 'lf.umi' }] },
+      { id: 'umi', x: 4, y: 2, dir: 'down', talk: [{ if: 'post', scene: 'lf.umi_post' }, { if: 'comp=nao&lf_bell_rung&!quest.lf_nao=done', scene: 'lf.nao_deliver' }, { if: 'comp=nao&!lf_bell_rung&quest.lf_nao<1', scene: 'lf.nao_umi_first' }, { if: 'lf_bell_rung', scene: 'lf.umi_after' }, { scene: 'lf.umi' }] },
     ],
     spawn: { default: [5, 7, 'up'] },
   });

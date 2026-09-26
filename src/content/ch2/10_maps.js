@@ -58,6 +58,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     name: { en: 'Saltglass', jp: '{潮|しお}{硝子|がらす}' }, region: 'saltglass', place: 'saltglass', travel: 'saltglass',
     music: 'saltglass',
     ambient: { weather: null },
+    alt: [{ if: 'sg_evening', ambient: { dark: 0.5, tint: 'rgba(60,40,110,0.16)', playerLight: 40 }, night: true }],
     terrain: K.build(56, 42, '.', (k) => {
       k.ragged('top', 'T', 2, 21);
       k.vline(0, 0, 19, 'T').vline(55, 0, 11, 'T');
@@ -154,8 +155,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'tetsu', x: 34, y: 29, dir: 'down', talk: [
         { if: 'post', scene: 'sg.tetsu_post' },
         { if: 'quest.sg_main=1&!sg_ferry_done', scene: 'sg.tetsu_first' },
-        { if: 'sg_boss_done&!seen.sg.tetsu_history', scene: 'sg.tetsu_history' },
-        { if: 'quest.sg_main>=5&!item.sg_rope', scene: 'sg.tetsu_rope' },
+        { if: 'quest.sg_main>=5&!seen.sg.tetsu_history', scene: 'sg.tetsu_history' },
+        { if: 'ch2_done', scene: 'sg.tetsu_ferry' },
         { scene: 'sg.tetsu_idle' }] },
       { id: 'kiyo', x: 31, y: 17, dir: 'down', noFace: false, talk: [
         { if: 'post', scene: 'sg.kiyo_post' },
@@ -186,7 +187,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'suzu', x: 28, y: 22, dir: 'down', if: 'comp!=suzu&!ch2_done', talk: [
         { if: 'sg_boss_done', scene: 'sg.suzu_cameo2' },
         { scene: 'sg.suzu_cameo' }] },
-      { id: 'nagisa_q', char: 'nagisa', x: 35, y: 33, dir: 'up', if: 'sg_ferry_running&quest.sg_lighthouse=2&!sg_nagisa_met', talk: 'sg.nagisa_arrive' },
+      { id: 'genzo_q', char: 'genzo', x: 34, y: 26, dir: 'down', if: 'sg_ferry_scene', talk: 'sg.genzo_family' },
+      { id: 'nagisa_q', char: 'nagisa', x: 35, y: 27, dir: 'left', if: 'sg_ferry_scene', talk: 'sg.nagisa_home' },
     ],
     exits: [
       { x: 27, y: 0, w: 2, h: 1, to: 'sg.road', tx: 18, ty: 20, dir: 'up' },
@@ -201,7 +203,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     onEnter: [
       { scene: 'sg.harbor_first', if: '!sg_harbor_seen' },
       { scene: 'sg.return_harbor', if: 'sg_boss_done&!sg_returned' },
-      { scene: 'sg.ferry_arrives', if: 'sg_ferry_running&quest.sg_lighthouse=2&!sg_ferry_seen' },
+      { scene: 'sg.ferry_arrives', if: 'ch2_done&quest.sg_lighthouse=2&!sg_ferry_seen' },
     ],
     spawn: { default: [27, 2, 'down'], from_road: [27, 2, 'down'], from_cove: [54, 13, 'left'], from_archive: [8, 39, 'up'] },
   };
@@ -226,7 +228,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'bookpile', x: 9, y: 6 }, { p: 'flowerpot', x: 9, y: 2 },
       { p: 'bench', x: 1, y: 6 },
     ],
-    npcs: [{ id: 'omi', x: 5, y: 3, dir: 'down', talk: [
+    npcs: [{ id: 'wataru_office', char: 'wataru', x: 7, y: 5, dir: 'left', if: 'sg_wataru_confessed&!sg_wataru_resolved', talk: 'sg.wataru_busy' },
+      { id: 'omi', x: 5, y: 3, dir: 'down', talk: [
       { if: 'post', scene: 'sg.omi_post' },
       { if: 'quest.sg_main=0', scene: 'sg.omi_intro' },
       { if: 'quest.sg_main=1', scene: 'sg.omi_checking' },
