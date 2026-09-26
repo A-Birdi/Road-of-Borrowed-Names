@@ -14,8 +14,8 @@ for (const profile of profiles) for (const comp of comps) {
   const { p, errors } = await page(b, url);
   const steps = [
     'lf.arrive', 'lf.town_intro',
-    ...(comp === 'mio' ? ['lf.mio_start'] : []),
     'lf.tadashi', 'lf.records_ledger', 'lf.akari_hint', // after the ledger, Akari's hint scene (it includes her introduction)
+    ...(comp === 'mio' ? ['lf.mio_start'] : []), // town entry event once the main quest reaches stage 2
     'lf.stacks_door', 'lf.stacks_enter', 'lf.minutes_chest', 'lf.conduit',
     'lf.yae_minutes', // with the minutes in hand, Councillor Tami's scene covers the introduction
     ...(comp === 'nao' ? ['lf.nao_umi_first'] : []),

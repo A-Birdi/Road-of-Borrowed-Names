@@ -123,7 +123,7 @@ export function install() {
         continue;
       }
       const prior = ran.indexOf(step.scene, mark);
-      if (prior >= 0 && !step.again) { log.push(step.scene + ' (already ran)'); mark = prior + 1; continue; }
+      if (prior >= 0 && !step.again) { log.push(step.scene + ' (already ran)'); continue; }
       const all = sites(step.scene).map((x) => Object.assign(x, { scene: step.scene }));
       if (!all.length) return { ok: false, log, fail: 'no site starts ' + step.scene };
       const here = RB.world.W.map.id;
@@ -148,8 +148,9 @@ export function install() {
       }
       if (ran.indexOf(step.scene, before) < 0) return { ok: false, log, fail: step.scene + ' did not run (' + pick.kind + '@' + pick.map + ')', ran: ran.slice(before) };
       log.push(step.scene + ' via ' + pick.kind + '@' + pick.map + (path.length ? ' (' + path.length + ' exits)' : ''));
-      // scenes chained after this one (onEnter after a warp, etc.) stay visible to the next step
-      mark = ran.indexOf(step.scene, before) + 1;
+      // scenes that ran on the way here or chained after this one (onEnter on
+      // arrival, after a warp, …) stay visible to the following steps
+      mark = step.again ? ran.indexOf(step.scene, before) + 1 : before;
     }
     return { ok: true, log };
   }
