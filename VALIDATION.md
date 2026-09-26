@@ -376,3 +376,13 @@ and the software keyboard are emulated. No real phone, Firefox or Safari.
   modes (write/IME/choose/order/unsure/wrong), teaching card, lesson,
   activities, combat, and six world regions. **S** after-captures in
   docs/screenshots/ regenerated from 3cce661 and inspected.
+- **B** Whole-game matrix on the final build 6031612,
+  `node tests/e2e/matrix.mjs FEIA nao,mio,ren,suzu 3`: **16/16** — every
+  learning profile (F/E/I/A) × companion (Nao/Mio/Ren/Suzu) played a new
+  campaign through the real world to the end of chapters 1–6 and the first
+  Atlas expedition (10.4–12.5 min each, three at a time), through the new
+  folio, dialogue, challenge and combat interfaces.
+- Not tested (needs people or hardware): real phones and tablets (touch,
+  software keyboard, safe areas, frame rate, battery), Firefox and
+  Safari/WebKit (only Chromium is installed here), screen readers beyond the
+  ARIA roles the tests check, and a human judgement of the art.

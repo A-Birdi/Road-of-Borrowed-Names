@@ -34,8 +34,8 @@
   the overhaul build d5d4b95 (UI, systems, settings, folio, play UI, title +
   ledger, creation, learning UI, audio, Shift/Load regression in both modes,
   per-chapter story tests, Atlas check, one whole-game run). The 16/16
-  profile × companion whole-game matrix (tests/e2e/matrix.mjs) passed on the
-  hotfix build; its re-run on the final build is recorded in VALIDATION.md.
+  profile × companion whole-game matrix (tests/e2e/matrix.mjs) passed 16/16
+  on the final overhaul build 6031612 (and earlier on the hotfix build).
   Details and dates in VALIDATION.md.
 - Test tooling: tests/e2e/drive.mjs (goal-directed driver: walks real maps,
   interacts through the world), pursue.mjs (whole game), matrix.mjs,
@@ -49,9 +49,10 @@
   playtime, native-speaker review, music quality, audible TTS.
 
 ## Visual overhaul: "Wayfarer's Folio" (brief of 2026-09-26) — complete on this branch
-All four phases are implemented and merged on `claude/stoic-sagan-n3jvgk`
-(not on main); the final full-suite, viewport-audit and whole-game runs are
-recorded in VALIDATION.md as they complete. Design record, tokens, component rules, the old→new menu mapping and
+All four phases are done on `claude/stoic-sagan-n3jvgk` (not on main). Final
+build 6031612: full browser suite 19/19 (d5d4b95; 6031612 differs by one CSS
+property, re-tested), unit 1866, layout audit 448/448 (English, 8
+viewports) and 168/168 (Japanese labels), whole-game matrix 16/16. Design record, tokens, component rules, the old→new menu mapping and
 the pixel-art record: docs/ART_DIRECTION.md. Before/after captures of the
 real builds: docs/screenshots/ (README indexes them). Evidence: VALIDATION.md
 ("Visual overhaul — final build"). Checklist: REQUIREMENTS.md V1–V21.
