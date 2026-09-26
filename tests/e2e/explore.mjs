@@ -18,7 +18,8 @@ const t0 = Date.now();
 const res = await p.evaluate(async (a) => {
   const T = RB.test;
   const rng = RB.util.rng(+a.seed);
-  T.enable({ battle: 'unravel', choose: (opts) => rng.int(opts.length) });
+  // choices: mostly the first option (authors put "do it" first), sometimes any
+  T.enable({ battle: 'unravel', choose: (opts) => (rng() < 0.75 ? 0 : rng.int(opts.length)) });
   const flags = {};
   for (const f of a.flagList.split(',').filter(Boolean)) flags[f] = true;
   const s = RB.game.debugStart(a.startMap, +a.sx, +a.sy, { comp: a.comp === 'none' ? null : a.comp, profile: a.profile, flags });
@@ -62,15 +63,20 @@ const res = await p.evaluate(async (a) => {
     }
     const key = sig();
     // prefer actions not yet tried in this state; exits get lower priority unless nothing else
-    let pool = cands.filter((c) => !tried.get(key + '|' + m.id + '|' + c.k));
-    // nothing new here: sometimes retry an interaction (a random choice may
-    // have declined it last time, e.g. "Leave it"), otherwise move on
-    if (!pool.length) pool = rng() < 0.35 ? cands.filter((c) => !c.exit) : cands.filter((c) => c.exit);
+    const tk = (c) => key + '|' + m.id + '|' + c.k;
+    let pool = cands.filter((c) => !tried.get(tk(c)));
+    // nothing new here: half the time retry the least-tried interaction (a
+    // choice may have declined it, e.g. "Leave it"), otherwise move on
+    if (!pool.length) {
+      const inter = cands.filter((c) => !c.exit);
+      const least = Math.min(...inter.map((c) => tried.get(tk(c)) || 0));
+      pool = inter.length && rng() < 0.5 ? inter.filter((c) => (tried.get(tk(c)) || 0) === least) : cands.filter((c) => c.exit);
+    }
     if (!pool.length) pool = cands;
     const nonExit = pool.filter((c) => !c.exit);
     const pick = (nonExit.length && rng() < 0.85 ? nonExit : pool)[rng.int((nonExit.length && rng() < 0.85 ? nonExit : pool).length)] || cands[rng.int(cands.length)];
     if (!pick) break;
-    tried.set(key + '|' + m.id + '|' + pick.k, 1);
+    tried.set(tk(pick), (tried.get(tk(pick)) || 0) + 1);
     try {
       if (pick.k.startsWith('exit:')) {
         const ex = m.exits.find((e) => 'exit:' + e.to === pick.k);
