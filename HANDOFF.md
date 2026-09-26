@@ -73,10 +73,11 @@ docs/ART_DIRECTION.md.
     visualViewport; camera composes around the dialogue/touch controls and
     small maps get a region surround; confirm/notice/toast/card restyled.
     Test: tests/e2e/play_ui.mjs.
-  - Worker branches (worktrees under .claude/worktrees/, ignored by git),
-    to be merged by the lead: title + six-slot ledger (src/ui/30_title.js,
-    src/styles/40_title.css), character creation in four steps
-    (src/ui/40_create.js, 45_create.css), learning/combat surfaces
+  - MERGED: title + six-slot ledger (src/ui/30_title.js,
+    src/styles/40_title.css; test title_ledger.mjs) and character creation
+    in four steps (src/ui/40_create.js, 45_create.css; test create.mjs).
+  - Worker branch still open (worktree under .claude/worktrees/, ignored by
+    git), to be merged by the lead: learning/combat surfaces
     (src/ui/60_pad.js, 65_challenge.js, 70_lessons.js, 75_activities.js,
     80_combat.js, 60_learning.css). If a session ends before merging, look
     for their commits with `git worktree list` / `git branch -a`.

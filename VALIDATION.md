@@ -259,3 +259,19 @@ a full re-run of every suite on the final build is recorded at the end.
   1.6–3.6 ms vs 2.2–4.2 ms; static map build 2–46 ms vs 5–43 ms; folio
   open+close 18 ms vs 34 ms; DOM size unchanged after 20 open/close cycles
   in both. Desktop headless only — phone performance and battery NOT tested.
+- **B** Merged title + ledger (commit 3def4a9 build): `title_ledger.mjs`
+  13/13 (real clicks/keys/taps: initial focus not on the subtitle word and no
+  help card, Continue only with a save, storage line + details, session-only
+  variant, ledger at 390x844 and 1280x800 with six and five slots, no
+  overflow and ≥44 px at 320/360/390 and 200 % text, Manage → Delete asks and
+  Cancel keeps the save, Copy, loading enters the world with the title
+  override cleared, in-game Save here by click). Merged creation:
+  `create.mjs` 382 checks (all four steps into the world with every choice
+  checked in the saved state, Back keeps entries, no prologue replay, the
+  accessory limit announced, empty-name error, no overflow/clipping and ≥44
+  px at 320/360/390 (100 % and 200 %), 844x390 and 1280x800, resize
+  mid-flow, emulated software keyboard and pinch zoom, Inspect, placement,
+  New Game+ choice). Same build: ui.mjs 14/14, shift_load_regression 18/18
+  (both modes), story_ch1 F mio pass, play_ui all ok, unit 1866.
+  The software keyboard was only emulated (visualViewport stub); no real
+  phone keyboard was used.
