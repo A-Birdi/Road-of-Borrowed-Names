@@ -87,6 +87,7 @@ RB.render = (function () {
         if (t.draw2) t.draw2(c, x * ATS, y * ATS, pal, RB.tiles.hh(x, y), nb, x, y);
         else legacy(c, () => t.draw(c, x * TS, y * TS, pal, RB.tiles.hh(x, y), nb));
       }
+    if (RB.tileArt && RB.tileArt.flush) RB.tileArt.flush(); // tile art batches its output per row
     m.staticLayer = cv;
     staticDirty = false;
     staticMaps = staticMaps.filter((o) => o !== m);

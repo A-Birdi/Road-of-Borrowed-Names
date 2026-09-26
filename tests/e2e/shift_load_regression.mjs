@@ -186,12 +186,12 @@ try {
     for (let i = 0; i < 3; i++) await page.locator('[data-a="next"]').click(); // four creation steps
     await page.locator('[data-k="profile"][data-v="E"]').click();
     await page.locator('[data-k="input"][data-v="choice"]').click(); await page.locator('[data-a="go"]').click();
-    for (let n = 0; n < 60; n++) { if (await page.evaluate(() => RB.game.mode() === 'world')) break; await page.keyboard.press('Enter'); await page.waitForTimeout(100); }
+    for (let n = 0; n < 200; n++) { if (await page.evaluate(() => RB.game.mode() === 'world')) break; await page.keyboard.press('Enter'); await page.waitForTimeout(100); } // up to 20 s of Enter presses: each line may need one to finish revealing and one for 'More'
     assert.equal(await page.evaluate(() => RB.game.mode()), 'world'); await spyWorld(); await checkWorldVisible(); await page.keyboard.press('ShiftLeft'); await checkLive();
   }, { seed: false });
   await test('New campaign API clears a prior title override itself', async () => {
     await page.evaluate(async () => { RB.ui.title.hide(); const s = RB.state.newCampaign({ profile: 'E' }); RB.game.settings.textSpeed = 'instant'; await RB.game.startNewCampaign(2, s); });
-    for (let n = 0; n < 60; n++) { if (await page.evaluate(() => RB.game.mode() === 'world')) break; await page.keyboard.press('Enter'); await page.waitForTimeout(100); }
+    for (let n = 0; n < 200; n++) { if (await page.evaluate(() => RB.game.mode() === 'world')) break; await page.keyboard.press('Enter'); await page.waitForTimeout(100); } // up to 20 s of Enter presses: each line may need one to finish revealing and one for 'More'
     await spyWorld(); await checkWorldVisible(); await checkLive();
   });
   if (!inline) {

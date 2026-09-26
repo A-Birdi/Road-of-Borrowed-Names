@@ -74,6 +74,69 @@ RB.tiles = (function () {
   };
   PAL.interior = PAL.reedwake;
 
+  // ---- hue-shifted material ramps ------------------------------------------------------
+  // Five steps per material, darkest first, around one anchor colour of the
+  // palette (index 2 is the anchor). Worked out in OKLab: shadows turn toward
+  // blue-violet and keep their chroma, highlights turn toward warm yellow and
+  // lose a little, so a ramp is never just a darker/lighter copy of one hue.
+  // The step size follows the spread of the palette's own anchors. Added keys
+  // (existing keys are never changed): grassR dirtR stoneR sandR snowR waterR
+  // woodR floorR wallR roofR leafR reedR. Palettes defined later get them
+  // through addRamps(pal).
+  const hexRgb = (h) => { const n = parseInt(h.slice(1, 7), 16); return [n >> 16, (n >> 8) & 255, n & 255]; };
+  const toLin = (c) => { c /= 255; return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
+  const toGam = (v) => { v = v <= 0.0031308 ? 12.92 * v : 1.055 * Math.pow(Math.max(0, v), 1 / 2.4) - 0.055; return Math.max(0, Math.min(255, Math.round(v * 255))); };
+  function oklab(hex) {
+    const [R, G, B] = hexRgb(hex).map(toLin);
+    const l = Math.cbrt(0.4122214708 * R + 0.5363325363 * G + 0.0514459929 * B);
+    const m = Math.cbrt(0.2119034982 * R + 0.6806995451 * G + 0.1073969566 * B);
+    const s = Math.cbrt(0.0883024619 * R + 0.2817188376 * G + 0.6299787005 * B);
+    return [0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s, 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s, 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s];
+  }
+  function fromOklab(L, a, b) {
+    const l = Math.pow(L + 0.3963377774 * a + 0.2158037573 * b, 3), m = Math.pow(L - 0.1055613458 * a - 0.0638541728 * b, 3), s = Math.pow(L - 0.0894841775 * a - 1.291485548 * b, 3);
+    const r = toGam(4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s), g = toGam(-1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s), bb = toGam(-0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s);
+    return '#' + ((1 << 24) | (r << 16) | (g << 8) | bb).toString(16).slice(1);
+  }
+  const COOL = (275 * Math.PI) / 180, WARM = (88 * Math.PI) / 180;
+  // One colour moved k steps (negative = darker) along a hue-shifted ramp.
+  function shift(hex, k, dl, hs) {
+    if (!k) return hex;
+    let [L, a, b] = oklab(hex);
+    const C = Math.hypot(a, b), tgt = k < 0 ? COOL : WARM, n = Math.abs(k);
+    let h = Math.atan2(b, a), d = tgt - h;
+    while (d > Math.PI) d -= 2 * Math.PI;
+    while (d < -Math.PI) d += 2 * Math.PI;
+    h += d * Math.min(0.5, n * (hs == null ? 0.065 : hs));
+    const C2 = C * (k < 0 ? 1 - 0.05 * n : 1 - 0.09 * n), tint = 0.006 * n;
+    a = C2 * Math.cos(h) + Math.cos(tgt) * tint;
+    b = C2 * Math.sin(h) + Math.sin(tgt) * tint;
+    L = Math.max(0.06, Math.min(0.985, L + k * (dl || 0.06)));
+    return fromOklab(L, a, b);
+  }
+  function ramp(hex, dl, hs) {
+    return [-2, -1, 0, 1, 2].map((k) => shift(hex, k, dl, hs));
+  }
+  // source key, anchor index, anchors that set the step size
+  const RAMPS = {
+    grassR: ['grass', 0, [0, 2, 3]], dirtR: ['dirt', 0, [0, 2, 3]], stoneR: ['stone', 0, [0, 1, 2]], sandR: ['sand', 0, [0, 1, 2]],
+    snowR: ['snow', 1, [0, 1, 2]], waterR: ['water', 0, [0, 1, 2]], woodR: ['wood', 0, [0, 2, 3]], floorR: ['floor', 0, [0, 1, 2]],
+    wallR: ['wall', 1, [0, 1, 2]], roofR: ['roof', 1, [0, 1, 2]], leafR: ['leaf', 0, [0, 2, 3]], reedR: ['reed', 0, [0, 1, 2]],
+  };
+  function addRamps(p) {
+    if (!p) return p;
+    for (const k in RAMPS) {
+      if (p[k]) continue;
+      const [src, bi, an] = RAMPS[k], arr = p[src];
+      if (!arr) continue;
+      const Ls = an.map((i) => oklab(arr[i] || arr[0])[0]);
+      const dl = Math.max(0.035, Math.min(0.085, (Math.max.apply(null, Ls) - Math.min.apply(null, Ls)) / 3));
+      p[k] = ramp(arr[bi], dl);
+    }
+    return p;
+  }
+  for (const k in PAL) addRamps(PAL[k]);
+
   function px(c, x, y, w, h, col) {
     c.fillStyle = col;
     c.fillRect(x, y, w, h);
@@ -320,5 +383,5 @@ RB.tiles = (function () {
     c: { tile: 'stonefloor', prop: 'crystal' }, h: { tile: 'sand', prop: 'rock' }, n: { tile: 'ash', prop: 'deadtree' },
   };
 
-  return { TS, PAL, T, LEGEND, px, hh };
+  return { TS, PAL, T, LEGEND, px, hh, ramp, shift, addRamps, oklab };
 })();
