@@ -301,3 +301,42 @@ a full re-run of every suite on the final build is recorded at the end.
   open+close 17 ms, DOM unchanged after 20 cycles. Door transitions now build
   the new map's art while the screen is still black (RB.render.prewarm).
   Desktop headless only; phones not measured.
+
+## Visual overhaul — final build (2026-09-26)
+Same key (**B** browser, **U** unit, **S** screenshot inspected by eye,
+**R** review). Headless Chromium 1194 in this Linux container only; touch
+and the software keyboard are emulated. No real phone, Firefox or Safari.
+- **B** Full default suite `node tests/e2e/run.mjs` on fbdc102 (all art and
+  interface merged): 18/19 scripts passed. The failure was real:
+  `folio.mjs` at 320x640 — "tap selects Words" (and the two Back steps
+  after it). Root cause: phone tabs grow to fill the rail, so the
+  overflow test (natural tab span vs rail width) depended on the arrow
+  padding its own answer adds; after the folio opened, the rail flipped
+  between "fits" and "scrolls" every frame (logged frame by frame: the
+  overflowing class alternated and the Words tab moved 42 px), so a quick
+  tap could land on a neighbour. Fixed in 3cce661: the tabs are measured
+  with growth switched off, the first placement is synchronous and instant,
+  and the ResizeObserver watches the border box. New check "tab rail is
+  steady from the first frame" fails on the previous build at 390, 360,
+  320 and 390 @200 % text, and passes now; folio.mjs passed 6/6 repeats.
+- **B** New furigana-contrast audit (visual.mjs `--check`, every visible
+  reading against the paint behind it, English and `--lang ja`) over all
+  states at 320x640, 390x844 and 1280x800 found two real defects, both
+  fixed in 3cce661: (1) tab furigana used the old light-on-dark reading
+  colour on paper (1.1–1.2:1 on the previous build); (2) lesson and
+  activity sheets also carry the old `panel` class, and the paper restyle
+  of `.panel` had replaced their cloth cover, leaving the sheet title
+  almost invisible (1.5:1). New learning_ui.mjs test "lesson and activity
+  sheets keep their cloth cover" fails on the previous build and passes
+  now. After the tab fix the only warnings left (9 per language) were the
+  lesson/activity sheets; after the sheet fix those states were re-audited
+  clean at 390x844 and 1280x800. The whole set is re-audited on the final
+  build below.
+- **B** Japanese interface labels (uiLang ja) at 390x844, 320x640 and
+  1280x800: no clipped tab label, no page overflow, readings present on all
+  tabs; all four tabs fit without arrows from 320 px. **S** 320 px capture
+  in docs/screenshots/after/extra/journey_ja_320x640.webp.
+- **B** Small maps: the patterned surround is painted only around the map
+  (d5d4b95). Frames compared pixel for pixel with the previous build at
+  1280x800 and 390x844 (three positions × three frames in rw.hall): all
+  identical; a self-comparison confirmed the capture is deterministic.

@@ -46,54 +46,34 @@
 - Not verified by automation (needs people): real handwriting accuracy,
   playtime, native-speaker review, music quality, audible TTS.
 
-## Visual overhaul in progress: "Wayfarer's Folio" (brief received 2026-09-26)
-Staged phases (checkpoints, not approval gates); design record in
-docs/ART_DIRECTION.md.
-- Phase A (DONE at this checkpoint): design tokens + folio components
-  (src/styles/00_tokens.css, 20_folio.css, 30_folio_pages.css; CSS is now
-  split per area under src/styles/ and concatenated in name order),
-  RB.ui.folio (src/ui/12_folio.js: frame, APG paper tabs, inline SVG icons),
-  pause folio rebuilt with four tabs Journey/Words/Satchel/Map + Save & Load
-  and Settings utilities (src/ui/50_menu.js), Settings as named groups with
-  real controls (src/ui/55_settings.js). Tests: tests/e2e/folio.mjs (tabs by
-  mouse/keyboard/touch, overlap probes, Back order, aliases, resize, phone
-  overflow at 320/360/390 and 200 % text), tests/e2e/settings.mjs updated,
-  tests/unit/ui_contrast.test.mjs. Screenshot tool: tests/e2e/visual.mjs
-  (synthetic fixtures; output tests/e2e/out/{before,after}, gitignored).
-- Phase B (in progress):
-  - DONE by the lead (commit 4079011): dialogue as an inset paper sheet with
-    speaker tab, one Next ("More" first for overflowing lines), separate
-    Word help / Translation / Voice / History / Skip controls; replies as
-    numbered paper slips; word help as note card (wide) / bottom sheet
-    (narrow) that pauses what is underneath when tap-opened; HUD with one
-    Menu entry + labelled word-help switch (hidden under panels/dialogue);
-    touch controls (sliding move pad, hold-to-Run, context-labelled Action;
-    hidden in dialogue/menus; handedness/size settings); touch-action none
-    only on canvas/pad; Tab navigates inside panels; --kb from
-    visualViewport; camera composes around the dialogue/touch controls and
-    small maps get a region surround; confirm/notice/toast/card restyled.
-    Test: tests/e2e/play_ui.mjs.
-  - MERGED: title + six-slot ledger (src/ui/30_title.js,
-    src/styles/40_title.css; test title_ledger.mjs) and character creation
-    in four steps (src/ui/40_create.js, 45_create.css; test create.mjs).
-  - MERGED: learning/combat surfaces (test learning_ui.mjs). Phase B done.
-    (was: learning/combat surfaces
-    (src/ui/60_pad.js, 65_challenge.js, 70_lessons.js, 75_activities.js,
-    80_combat.js, 60_learning.css). If a session ends before merging, look
-    for their commits with `git worktree list` / `git branch -a`.
-- Phase C (in progress): art-resolution renderer DONE (commit 031e71a): the
-  world is drawn at 2 art px per logical px (32x32 tiles, 32x48 characters)
-  with hooks tile draw2/anim2, prop draw2, RB.props.STRUCT2,
-  RB.sprites.getArt; legacy art drawn through a x2 transform until
-  replaced. Review tool tests/e2e/art_shots.mjs. MERGED: ground tiles
-  (src/engine/20_tiles.js + 21_tileart.js), props/buildings (26–29_*.js,
-  src/atlas/05_art.js, chapter prop blocks), characters (31–33_*.js,
-  35_portraits.js + 36_portraithair.js; portraits 96 px; creation previews
-  use getArt/playerImage). In progress (worker): enemy art and battle
-  backgrounds (src/ui/80_combat.js + chapter RB.enemyArt blocks) and the
-  title backdrop at art resolution (src/ui/30_title.js drawBackdrop).
-- Phase D: full suites, viewport matrix, before/after screenshots into
-  docs/screenshots/, performance timing, docs.
+## Visual overhaul: "Wayfarer's Folio" (brief of 2026-09-26) — complete on this branch
+All four phases are implemented and merged on `claude/stoic-sagan-n3jvgk`
+(not on main); the final full-suite, viewport-audit and whole-game runs are
+recorded in VALIDATION.md as they complete. Design record, tokens, component rules, the old→new menu mapping and
+the pixel-art record: docs/ART_DIRECTION.md. Before/after captures of the
+real builds: docs/screenshots/ (README indexes them). Evidence: VALIDATION.md
+("Visual overhaul — final build"). Checklist: REQUIREMENTS.md V1–V21.
+- Interface: CSS per area in src/styles/ (00_tokens, 10_legacy, 20_folio,
+  30_folio_pages, 40_title, 45_create, 50_play, 60_learning; concatenated in
+  name order). RB.ui.folio (src/ui/12_folio.js): frame, APG paper tabs
+  (roving tabindex, ribbon, overflow arrows measured from natural tab
+  widths), inline SVG icons. Pause folio (src/ui/50_menu.js): Journey /
+  Words / Satchel / Map + Save & Load and Settings utilities; old names
+  (journal, log, notebook, guide, items) still open the right page.
+  Settings (55_settings.js), dialogue (20_dialogue.js), word help, HUD,
+  confirm sheets and cards (10_ui.js), touch pad (engine/10_input.js),
+  title + six-slot ledger (30_title.js), four-step creation (40_create.js),
+  challenge/pad/lessons/activities/combat (60–80_*.js), Atlas sheets
+  (atlas/50_run.js).
+- Art: renderer at 2 art px per logical px (engine/60_render.js; hooks
+  draw2/anim2/STRUCT2/getArt, legacy x2 adapter, region surround, prewarm on
+  door transitions); tiles 20–21, props/buildings 26–29 + chapter blocks,
+  characters 31–33, portraits 35–36, battle creatures/backdrops 77–79 +
+  chapter enemy-art blocks, title scene in 30_title.js.
+- Tests added: folio, play_ui, title_ledger, create, learning_ui (in
+  run.mjs); visual.mjs (captures + `--check` layout/target/furigana-contrast
+  audit, `--lang ja`), art_shots.mjs, perf.mjs, shots_to_docs.mjs;
+  tests/unit/ui_contrast.test.mjs.
 
 ## Commands
 - Build: `node tools/build.mjs`
@@ -109,11 +89,23 @@ docs/ART_DIRECTION.md.
   random explorer: `node tests/e2e/explore.mjs <map> <x> <y> <flag[@prefix][>…]> [comp|none] [prof] [seed] [maxActions] [flags] [words] [mapPrefix]`,
   `node tests/e2e/ui.mjs [filter]`, `node tests/e2e/audio.check.mjs`,
   screenshots: `node tests/e2e/shot.mjs out.png "<js>" [ms] [WxH]`.
+- Interface/art review: `node tests/e2e/visual.mjs <outDir> [--vp 390x844,1280x800] [--only a,b] [--lang ja] [--check]`
+  (synthetic fixtures; `--check` audits overflow, clipped text, touch targets
+  and furigana contrast), `node tests/e2e/art_shots.mjs`, timing
+  `node tests/e2e/perf.mjs [--html file] [--vp WxH] [--dpr n]`, docs images
+  `node tests/e2e/shots_to_docs.mjs <beforeDir> <afterDir>`.
 
 ## Next concrete actions
 1. Human play-testing: handwriting with real learners, pacing/playtime, and a
    native-speaker review of the Japanese (content in src/content/*/).
-2. Optional polish found in review: lexicon part-of-speech warnings between
+2. Real-device pass of the overhaul (everything so far is headless Chromium
+   with emulated touch and an emulated software keyboard): a phone in
+   portrait and landscape (tabs, move pad, word-help sheet, creation with the
+   real keyboard, handwriting pad), frame rate on a mid-range phone, and
+   Firefox and Safari/WebKit (not installed here, not tested).
+3. A human look at the art (docs/screenshots/, `art_shots.mjs`) — quality
+   was judged only by the author from captures.
+4. Optional polish found in review: lexicon part-of-speech warnings between
    chapters (validator warnings), observatory dome sprite clipped at the top
    of sb.obs_path (cosmetic), credits are a single card.
 
@@ -121,3 +113,7 @@ docs/ART_DIRECTION.md.
 - No human handwriting samples tested (synthetic + font-derived only).
 - Playtime not measured.
 - Japanese content has not been reviewed by a native speaker.
+- Overhaul: validated in headless Chromium only (touch and keyboard
+  emulated); no real phone, Firefox or Safari; phone performance and battery
+  not measured. Entering a map now builds about 4x the pixels of before
+  (hidden behind the door transition; see VALIDATION.md timings).

@@ -71,10 +71,15 @@ Behaviour is checked by browser tests (`tests/e2e/folio.mjs` and others).
 4. **Phones get their own composition.** Below 600 px the folio fills the
    screen as one page: four equal tabs with the icon above the label, and
    a sub-page with its own Back step. It is not a shrunken spread. At 320 px
-   and at 200 % text, nothing is wider than the screen. If the tab labels
-   cannot fit, the rail scrolls and shows arrows instead of clipping them.
+   and at 200 % text, nothing is wider than the screen. English and
+   Japanese labels fit as four tabs from 320 px up; if the labels cannot fit
+   (200 % text), the rail scrolls and shows arrows instead of clipping them.
+   Whether it overflows is measured from the tabs' natural widths, so the
+   rail is settled from the first frame and never shifts under a finger.
    (6)
-5. **Contrast.** Ink and furigana on paper are at least 4.5:1. Focus rings,
+5. **Contrast.** Ink and furigana on paper are at least 4.5:1 (the
+   `visual.mjs --check` audit measures every visible reading against the
+   paint behind it, in both interface languages). Focus rings,
    the ribbon, the "you are here" mark and control outlines are at least
    3:1 against what is next to them. High contrast is the same or stronger.
    (7)
