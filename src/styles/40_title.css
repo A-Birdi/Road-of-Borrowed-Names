@@ -16,7 +16,7 @@
 .title .mast { grid-area: mast; text-align: center; min-width: 0; }
 .title h1 {
   margin: 0; font-family: var(--serif); font-weight: 500; letter-spacing: 0.025em; line-height: 1.08; color: #f6ecd2;
-  font-size: clamp(2.05em, 10vw, 3.1em); text-shadow: 0 2px 0 rgba(6, 8, 18, 0.7), 0 0 22px rgba(8, 10, 24, 0.9);
+  font-size: clamp(1.5em, 10vw, 3.1em); text-shadow: 0 2px 0 rgba(6, 8, 18, 0.7), 0 0 22px rgba(8, 10, 24, 0.9);
   overflow-wrap: anywhere;
 }
 .title h1 span { display: block; }
@@ -36,6 +36,7 @@
   position: relative; background: var(--paper); color: var(--ink); border: 1px solid var(--paper-edge); border-radius: 3px 3px 6px 6px;
   padding: 6px 6px 4px; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35), 0 2px 0 var(--paper-3), 0 4px 0 var(--paper-edge);
 }
+.tmenu { container-type: inline-size; }
 .tm {
   display: flex; align-items: center; gap: 0.75em; width: 100%; min-height: 48px; margin: 0; padding: 0.45em 0.7em;
   background: transparent; border: 0; border-bottom: 1px dotted var(--paper-edge); border-radius: 0; color: var(--ink);
@@ -56,6 +57,7 @@
 .tm.go:hover { background: #3a2f20; }
 .tm.go:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
 .tm .tl { display: flex; flex-direction: column; min-width: 0; }
+.tm .lbl { min-width: 0; overflow-wrap: anywhere; }
 .tm .tl .lbl { font-size: 1.08em; }
 .tm .sub { font-size: 0.8em; font-weight: 400; color: #e6dbc2; overflow-wrap: anywhere; }
 
@@ -103,8 +105,9 @@
 }
 /* short landscape (phones on their side): compact rows, title centred beside the folio */
 @media (min-width: 700px) and (min-aspect-ratio: 1/1) and (max-height: 520px) {
-  .title-in { padding-top: max(10px, env(safe-area-inset-top)); padding-bottom: max(10px, env(safe-area-inset-bottom)); }
-  .title .mast { align-self: center; grid-row: 1 / -1; }
+  .title-in { padding-top: max(calc(6 * var(--vh) + 8px), env(safe-area-inset-top)); padding-bottom: max(10px, env(safe-area-inset-bottom)); }
+  .title .mast { align-self: start; grid-row: 1; }
+  .title .deck { margin-top: calc(-6 * var(--vh)); }
   .title h1 { font-size: clamp(1.8em, 4.6vw, 2.6em); }
   .title .mast-jp .jline { font-size: 1.15em; }
   .title .deck { padding: 8px 8px 4px; }
@@ -112,13 +115,26 @@
   .tm.go { min-height: 52px; margin-bottom: 4px; }
   .deck-foot .guide { display: none; }
 }
+/* large text in little room (measured in em of the menu itself): drop the icons
+ * rather than break the words */
+@container (max-width: 15.5em) { .tm > svg { display: none; } .tm { padding-left: 0.6em; } }
+/* narrow phones (and large text on them): tighter margins so labels keep their words */
+@media (max-width: 380px) {
+  .title-in { padding-left: max(10px, env(safe-area-inset-left)); padding-right: max(10px, env(safe-area-inset-right)); }
+  .title .deck { padding: 7px 7px 6px; }
+  .tmenu { padding: 4px; }
+  .tm { gap: 0.55em; padding: 0.4em 0.5em; }
+  .tm svg { width: 1.15em; height: 1.15em; }
+  .tm.go { padding: 0.5em 0.55em; }
+  .tm.go svg { width: 1.2em; height: 1.2em; }
+}
 body.high-contrast .title .mast { background: rgba(0, 0, 0, 0.82); padding: 0.5em 0.8em; border-radius: var(--r-2); }
 body.high-contrast .title h1, body.high-contrast .title .mast-jp .jline, body.high-contrast .title .mast-jp rt { color: #fff; }
 body.high-contrast .tm .sub { color: #fff; }
 body.reduced-motion .st-more svg { transition: none; }
 
 /* ---- the travel ledger -------------------------------------------------------------- */
-.folio-ledger .leaf { padding-top: 10px; }
+.folio-ledger .leaf { padding-top: 10px; container-type: inline-size; }
 .ledger { list-style: none; margin: 0; padding: 0; }
 .folio-ledger .slots, .ledger .slot { background: none; border-radius: 0; }
 .rec {
@@ -144,8 +160,8 @@ body.reduced-motion .st-more svg { transition: none; }
 .rec.current .rec-no { background: var(--ribbon); border-color: var(--ribbon-deep); color: var(--ink); }
 .rec-main { grid-area: main; min-width: 0; }
 .rec .kind { margin: 0; font-size: 0.76em; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
-.rec .kind .here { color: var(--vermilion); white-space: nowrap; margin-left: 0.3em; }
-.rec .kind .latest { color: var(--ribbon-deep); white-space: nowrap; }
+.rec .kind .here { color: var(--vermilion); margin-left: 0.3em; }
+.rec .kind .latest { color: var(--ribbon-deep); }
 .rec .kind .here svg { width: 1.2em; height: 1.2em; vertical-align: -0.25em; margin-right: 0.1em; }
 .leaf .rec h3 {
   display: block; margin: 0.05em 0 0.1em; padding: 0; border: 0; font-family: var(--serif); font-size: 1.14em; line-height: 1.25;
@@ -175,7 +191,8 @@ body.reduced-motion .pbtn.mg-t svg { transition: none; }
 .manage[hidden] { display: none; }
 .manage .mg-h { font-size: 0.76em; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; margin: 0 0 0.35em; }
 .manage .mg-b { display: flex; flex-wrap: wrap; gap: 8px; }
-.manage .pbtn .when { color: var(--ink-3); font-size: 0.88em; margin-left: 0.2em; }
+.manage .pbtn { justify-content: flex-start; text-align: left; padding-top: 0.35em; padding-bottom: 0.35em; }
+.manage .pbtn .when { color: var(--ink-3); font-size: 0.88em; margin-left: 0.2em; white-space: nowrap; }
 .manage .mg-hint { color: var(--ink-3); font-size: 0.84em; margin: 0.45em 0 0; }
 .ledger-foot { margin-top: 0.9em; }
 .folio-ledger .note-slip svg { width: 1.1em; height: 1.1em; vertical-align: -0.2em; }
@@ -189,11 +206,23 @@ body.reduced-motion .pbtn.mg-t svg { transition: none; }
   .rec-no { font-size: 1.1em; }
   .rec.empty .rec-thumb { height: 96px; }
 }
+/* mid widths (landscape phones, small tablets): actions beside the record, so more records show */
+@media (min-width: 600px) and (max-width: 859px) {
+  .rec { grid-template-columns: 96px minmax(0, 1fr) min(13.5em, 38%); grid-template-areas: "thumb main acts" "mg mg mg"; }
+  .rec-acts { flex-direction: column; align-items: stretch; align-self: center; }
+  .rec-acts .mg-t { margin-left: 0; }
+}
 /* very narrow screens and large text: keep the picture, stack the buttons */
 @media (max-width: 380px) {
   .rec { grid-template-columns: 80px minmax(0, 1fr); column-gap: 0.75em; }
   .rec-thumb { width: 80px; height: 53px; }
   .rec-acts .mg-t { margin-left: 0; }
+}
+
+/* large text for the space available: the picture goes above the record */
+@container (max-width: 17em) {
+  .rec { grid-template-columns: minmax(0, 1fr); grid-template-areas: "thumb" "main" "acts" "mg"; }
+  .rec-acts { flex-direction: row; }
 }
 
 /* ---- about ------------------------------------------------------------------------ */

@@ -131,7 +131,7 @@ RB.ui.title = (function () {
       }
     }
     c.putImageData(sky, 0, 0);
-    for (let i = 0; i < 16; i++) L.stars.push([Math.round(rnd() * w), Math.round(rnd() * hz * 0.72), rnd() * 6.28, rnd() < 0.25]);
+    for (let i = 0; i < 26; i++) L.stars.push([Math.round(rnd() * w), Math.round(rnd() * hz * 0.72), rnd() * 6.28, rnd() < 0.25]);
     // a pale crescent moon with a faint halo
     const mx = Math.round(P.moon[0] * w), my = Math.round(P.moon[1] * h), mr = Math.max(3, Math.round(Math.min(w, h) * 0.018));
     c.drawImage(glowSprite(mr * 5, '200,210,240'), mx - mr * 5, my - mr * 5);
@@ -293,7 +293,8 @@ RB.ui.title = (function () {
     L.water = L.water.filter(([x, y, len]) => x > post && x + len < w - post && y < floorY - 1);
     L.reeds = L.reeds.filter(([x, y]) => x > post && x < w - post && y < floorY - 1);
     const skyTop = lint + (L.tall ? 1 : Math.max(3, Math.round(h * 0.022)) + 2);
-    L.stars = L.stars.filter(([x, y]) => x > post + 1 && x < w - post - 2 && y > skyTop);
+    const inMast = (x, y) => (L.tall ? x > w * 0.08 && x < w * 0.92 && y < h * 0.25 : x < w * 0.5 && y < h * 0.42);
+    L.stars = L.stars.filter(([x, y]) => x > post + 1 && x < w - post - 2 && y > skyTop && !inMast(x, y));
     scene.key = w + 'x' + h;
     scene.cv = cv;
     scene.L = L;
@@ -409,6 +410,12 @@ RB.ui.title = (function () {
       '<p class="guide g-touch">Tap a choice. Tap Japanese words for their reading and meaning.</p>' +
       '<p class="guide g-keys">' + keysGuide() + '</p></div>' +
       '</div></div>';
+    // The subtitle's words keep furigana and pointer/touch help, but are not
+    // focus stops: when a layer above closes, focus returns to the first
+    // focusable of the title, which must be an action, not a word whose help
+    // card would open over the title. (Tab is bound to Menu and arrow keys
+    // skip words, so the keyboard never reached them anyway.)
+    box.querySelectorAll('.mast-jp .jt').forEach((t) => { t.tabIndex = -1; });
     const lay = { el: box, name: 'title', noAutofocus: true };
     layer = lay;
     let chosen = null;
@@ -506,13 +513,18 @@ RB.ui.title = (function () {
       else mg.push('<button class="pbtn danger" data-a="start">Overwrite with a new game…</button>');
     } else if (ctx === 'save') {
       if (s.empty) acts.push('<button class="pbtn primary" data-a="save">' + I('save') + 'Save here</button>');
+      else if (current && cur.readOnly) acts.push('<button class="pbtn" data-a="save" disabled>' + I('save') + 'Save (read-only in this tab)</button>');
       else if (current) acts.push('<button class="pbtn primary" data-a="save">' + I('save') + 'Save</button>');
       else mg.push('<button class="pbtn danger" data-a="save">Overwrite with this journey…</button>');
     } else if (ctx === 'load' && !s.empty && !s.corrupt) {
       if (s.manual) acts.push('<button class="pbtn primary" data-a="load">' + I('load') + 'Load</button>');
       if (s.auto && (!s.manual || s.autoNewer)) acts.push('<button class="pbtn' + (s.manual ? '' : ' primary') + '" data-a="loadauto">' + (s.manual ? 'Load newer autosave' : I('load') + 'Continue (autosave)') + '</button>');
-      else if (s.auto) mg.push('<button class="pbtn" data-a="loadauto">' + I('side') + 'Load autosave <span class="when">' + esc(fmtDate(s.auto.savedAt)) + '</span></button>');
-      if (s.pre) mg.push('<button class="pbtn" data-a="loadpre" title="Return to the room before choosing your companion">' + I('companion') + 'Before departure <span class="when">' + esc(fmtDate(s.pre.savedAt)) + '</span></button>');
+      else if (s.auto) mg.push('<button class="pbtn" data-a="loadauto">' + I('side') + '<span>Load autosave <span class="when">' + esc(fmtDate(s.auto.savedAt)) + '</span></span></button>');
+      if (s.pre) mg.push('<button class="pbtn" data-a="loadpre" title="Return to the room before choosing your companion">' + I('companion') + '<span>Before departure <span class="when">' + esc(fmtDate(s.pre.savedAt)) + '</span></span></button>');
+    } else if (ctx === 'load' && s.corrupt) {
+      // the manual record is unreadable, but its recovery points may still load
+      if (s.auto) mg.push('<button class="pbtn" data-a="loadauto">' + I('side') + '<span>Try the latest autosave <span class="when">' + esc(fmtDate(s.auto.savedAt)) + '</span></span></button>');
+      if (s.pre) mg.push('<button class="pbtn" data-a="loadpre">' + I('companion') + '<span>Try the pre-departure point <span class="when">' + esc(fmtDate(s.pre.savedAt)) + '</span></span></button>');
     }
     if (!s.empty && ctx !== 'new') {
       mg.push('<button class="pbtn" data-a="copy">' + I('copy') + 'Copy to another slot…</button>');
@@ -533,12 +545,20 @@ RB.ui.title = (function () {
   async function slots(ctx, fromGame) {
     const ttl = TITLES[ctx] || TITLES.load;
     let lay = null;
-    const close = () => { if (!lay) return; if (mq) mq.onchange = null; RB.ui.popLayer(lay); lay = null; };
+    const opener = document.activeElement;
+    const close = () => {
+      if (!lay) return;
+      if (mq) mq.onchange = null;
+      // hand focus back to what opened the ledger before the layer goes
+      if (opener && opener.focus && opener !== document.body && document.contains(opener)) opener.focus({ preventScroll: true });
+      RB.ui.popLayer(lay);
+      lay = null;
+    };
     const fr = RB.ui.folio.frame({ onClose: close, closeLabel: 'Back', closeIcon: 'back', cls: 'folio-ledger' });
     fr.setTitle(esc(ttl), '');
     lay = { el: fr.scrim, name: 'slots', noAutofocus: true };
     lay.onCancel = close;
-    let list = null, err = null, first = true, focusAfter = null;
+    let list = null, err = null, failed = false, first = true, focusAfter = null;
     const mq = typeof matchMedia !== 'undefined' ? matchMedia('(min-width: 860px)') : null;
 
     function render() {
@@ -551,13 +571,13 @@ RB.ui.title = (function () {
       const cur = RB.save.current();
       const info = storageInfo();
       const used = list ? list.filter((s) => !s.empty).length : 0;
-      fr.setTitle(esc(ttl), list ? used + ' of 6 slots in use' : '');
+      fr.setTitle(esc(ttl), list && !failed ? used + ' of 6 in use' : '');
       let top = '';
       if (info.level === 'bad') top += '<p class="note-slip bad">' + I('warn') + ' Storage is unavailable here, so saves only last until this page closes.</p>';
       if (cur.readOnly && ctx === 'save') top += '<p class="note-slip warn">' + I('warn') + ' This tab is read-only for this campaign because another tab owns it. Saving to other slots is still possible.</p>';
-      if (err) top += '<div class="note-slip bad" role="alert">' + I('warn') + ' The ledger could not be read (' + esc(err) + '). Slots may show as empty; nothing was changed. <button class="pbtn" data-a="retry">Try again</button></div>';
-      if (ctx === 'new' && list && used === 6) top += '<p class="note-slip">All six slots hold journeys. To start a new one, open Manage on a slot and overwrite it.</p>';
-      if (ctx === 'load' && list && !list.some((s) => !s.empty && !s.corrupt)) top += '<p class="note-slip">No saved journeys yet. Choose New Game on the title to begin one.</p>';
+      if (err) top += '<div class="note-slip bad" role="alert">' + I('warn') + ' The ledger could not be read (' + esc(err) + ').' + (failed ? '' : ' Slots may show as empty.') + ' Nothing was changed. <button class="pbtn" data-a="retry">Try again</button></div>';
+      if (ctx === 'new' && list && !failed && used === 6) top += '<p class="note-slip">All six slots hold journeys. To start a new one, open Manage on a slot and overwrite it.</p>';
+      if (ctx === 'load' && list && !err && !list.some((s) => !s.empty && !s.corrupt)) top += '<p class="note-slip">No saved journeys yet. Choose New Game on the title to begin one.</p>';
       const last = ctx === 'load' && list ? newest(list) : null;
       const recs = (list || []).map((s) => record(s, ctx, cur, fromGame, last && last.slot === s.slot));
       const foot = '<p class="ledger-foot muted small">Six local slots in ' + (info.mode === 'session' ? 'this session only' : 'this browser') + '. Copy makes an independent duplicate in another slot; deleting a slot also removes its autosaves. There is no export or cloud copy.</p>';
@@ -597,8 +617,9 @@ RB.ui.title = (function () {
         const cur = RB.save.current();
         t = (fromGame && cur.slot && q('.rec[data-slot="' + cur.slot + '"] [data-a=save].primary')) || q('.rec.empty [data-a=save]');
       } else t = q('.rec.empty [data-a=start]');
-      t = t || q('.rec-acts button') || fr.el.querySelector('[data-folio-close]');
-      if (t) t.focus({ preventScroll: false });
+      t = t || q('.rec-acts button:not([disabled])') || q('[data-a=retry]') || fr.el.querySelector('[data-folio-close]');
+      // a warning at the top of the page stays in view; otherwise bring the target into view
+      if (t) t.focus({ preventScroll: !!q('.leaf > .note-slip.bad, .leaf > .note-slip.warn') });
     }
     async function refresh() {
       const before = RB.save.status().lastError;
@@ -606,9 +627,11 @@ RB.ui.title = (function () {
         list = await RB.save.list();
         const after = RB.save.status().lastError;
         err = after && after !== before ? after : null;
+        failed = false;
       } catch (e) {
         list = list || [];
         err = String((e && e.message) || e);
+        failed = true;
       }
       render();
       if (first || focusAfter) { first = false; initialFocus(); }
@@ -706,7 +729,13 @@ RB.ui.title = (function () {
   // ---- about & credits ------------------------------------------------------------------
   function about() {
     let lay = null;
-    const close = () => { if (lay) { RB.ui.popLayer(lay); lay = null; } };
+    const opener = document.activeElement;
+    const close = () => {
+      if (!lay) return;
+      if (opener && opener.focus && opener !== document.body && document.contains(opener)) opener.focus({ preventScroll: true });
+      RB.ui.popLayer(lay);
+      lay = null;
+    };
     const fr = RB.ui.folio.frame({ onClose: close, closeLabel: 'Back', closeIcon: 'back', cls: 'folio-sheet folio-about' });
     fr.setTitle('About &amp; credits', '');
     fr.box.innerHTML = '<div class="spread"><div class="leaf" tabindex="0" aria-label="About">' +

@@ -107,6 +107,16 @@ const STATES = {
     await p.evaluate(async () => { await V.sixSlots(true); V.rich('sg.harbor', 20, 22); RB.save.setCurrent(2, 1); RB.ui.menu.open('save'); RB.ui.title.slots('save', true); });
     await settle(p, 900);
   },
+  async slots_readonly(p) {
+    // this tab lost ownership of the current campaign to another tab (the real two-tab flow is tested in ui.mjs)
+    await p.evaluate(async () => { await V.sixSlots(true); V.rich('sg.harbor', 20, 22); RB.save.setCurrent(2, 1); RB.save.setReadOnly(true); RB.ui.menu.open('save'); RB.ui.title.slots('save', true); });
+    await settle(p, 900);
+  },
+  async slots_error(p) {
+    // display-only stand-in for a storage read failure
+    await p.evaluate(async () => { await V.sixSlots(true); await RB.game.toTitle(); RB.save.list = async () => { throw new Error('The operation failed for reasons unrelated to the database itself'); }; RB.ui.title.slots('load'); });
+    await settle(p, 900);
+  },
   async slots_big(p) { await p.evaluate(async () => { await V.sixSlots(); await RB.game.toTitle(); RB.game.settings.textScale = 2; RB.game.applySettings(); RB.ui.title.slots('load'); }); await settle(p, 900); },
   async create(p) {
     await p.click('text=New Game');
