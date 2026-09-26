@@ -12,13 +12,13 @@ Status: `[ ]` not started · `[~]` in progress · `[i]` implemented, unverified 
 - [i] R1.5 All visuals/audio procedural; Japanese text readable (not pixel font)
 
 ## Story & world [2,3]
-- [i] R3.1 Six chapters: Reedwake, Saltglass, Cinder Orchard, Snowbell, Lanternfall, Still Archive (each played to its end flag in the browser; see VALIDATION.md)
+- [v] R3.1 Six chapters: Reedwake, Saltglass, Cinder Orchard, Snowbell, Lanternfall, Still Archive — a new campaign played through all six in the browser for every profile × companion (tests/e2e/matrix.mjs, 16/16)
 - [i] R3.2 ≥5 inhabited settlements: Reedwake, Saltglass harbour, Cinder Orchard village, Snowbell hamlet, Lanternfall town (+ the Archive camp)
 - [i] R3.3 6 dungeon/ruin sequences: the mill, the Drowned Archive, the sealed kiln, the frozen observatory, the drowned bell tower, the Still Archive
 - [i] R3.4 21 authored side quests (rw 6, sg 3, co 3, sb 3, lf 4, sa 2) plus 4 companion personal quests; list via tools (see VALIDATION.md)
 - [i] R3.5 Antagonist (Kasane and the Hush) with understandable motive (docs/STORY.md; ch6 scenes)
 - [i] R3.6 Final choices about promises/repair (three ending choice pairs: memories return/choose, archive library/closed, Kasane trial/keeper), not a good/bad switch
-- [i] R3.7 Denouement tour of the five towns, companion-specific epilogue lines, post-story NPC lines varying by ending flags
+- [v] R3.7 Denouement tour of the five towns, companion-specific epilogue lines, post-story NPC lines varying by ending flags; every matrix run ends back in Reedwake with post-game flags (story_ch6.mjs talks to every post-story NPC)
 - [i] R3.8 Fast travel/shortcuts after routes explored
 - [ ] R3.9 10–15h first playthrough target (NOT measured; cannot be measured by automation)
 
@@ -34,7 +34,7 @@ Status: `[ ]` not started · `[~]` in progress · `[i]` implemented, unverified 
 - [v] R5.3 Departure room: talk, provisional choose, switch freely; permanence via dialogue
 - [v] R5.4 Intentional "Set out with X" interaction; movement cannot commit
 - [v] R5.5 Pre-departure recovery point; locked after departure; room can't re-recruit
-- [i] R5.6 Unchosen candidates remain in world
+- [i] R5.6 Unchosen candidates remain in world (cameos in later chapters)
 - [i] R5.7 Per companion: banter (4–5 per chapter), personal quest (Suzu co_suzu, Nao lf_nao, Mio lf_mio, Ren ren_ushio), decision reactions, coordinated technique, ending variation
 
 ## Exploration [6]
@@ -142,6 +142,9 @@ Status: `[ ]` not started · `[~]` in progress · `[i]` implemented, unverified 
 - R9.x: tests/unit/recog*.test.mjs (396 checks) + ui.mjs (reference strokes, wrong kana recognised then explained, nonsense rejected, composition edits, real mouse stroke). Human handwriting NOT tested.
 - R11.1: tools/validate.mjs rejects any kanji without ruby; R11.2/11.3: ui.mjs lightbulb test.
 - R18.1: tools/validate.mjs (also warns on unreachable exits, NPCs and interactable props).
+- R3.1/R3.7/R5.x: tests/e2e/matrix.mjs — for each of F/E/I/A × Nao/Mio/Ren/Suzu a new
+  campaign recruits that companion through the story and reaches the end of all six
+  chapters and the epilogue (goal-directed driver tests/e2e/drive.mjs through the real world).
 - R3.x/R5.7: per-chapter story tests (tests/e2e/story_ch1/3/4/6.mjs, side_ch3.mjs) and the
   blind explorer (tests/e2e/explore.mjs) reaching each chapter's end flag.
 - R15.x: tests/e2e/atlas.check.mjs, tests/unit/atlas.test.mjs (self-check sweep).

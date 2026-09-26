@@ -103,3 +103,27 @@ nested scene runs leaked a dialogue mode (world froze) — fixed in the runner;
 Foundations one-kana blanks kept whole-word choices (no correct option) —
 fixed; counters without their own scene blocked talking across — fixed;
 harness could not stand next to multi-tile props — fixed.
+
+### Session log — whole-game reachability
+- **B** `node tests/e2e/matrix.mjs FEIA nao,mio,ren,suzu 3` (runs
+  `tests/e2e/pursue.mjs` per combination): from a brand-new campaign on the
+  first road, the goal-directed driver (tests/e2e/drive.mjs) walks the real
+  maps (flood-fill reachability with current blockers, open exits only),
+  talks/examines/steps on triggers through `RB.world.interact`, answers every
+  step with its canonical answer (accept lists checked) and fights with
+  Unravel only. The companion is recruited through the Lantern Hall dialogue.
+  Result: **16/16 combinations reached the end of all six chapters** (ch1…ch6
+  done, epilogue, return to Reedwake with post-game flags), 9.6–11.4 min each,
+  0 harness problems, 0 lost battles, 0 page errors. 14/16 also completed an
+  Unwritten Atlas expedition in the same run; E/Nao and A/Nao stalled inside
+  the expedition (investigated below).
+- **B** `node tests/e2e/story_ch5.mjs` — 8/8 (F and I × all companions), plus
+  A/Suzu; Chapter 5 main path through the real world with gate puzzles in
+  order and the boss won.
+- **B** `node tests/e2e/systems.mjs` — 4/4: fast travel to all five hubs from
+  the map tab (arrival tile free), stepping back from a regular encounter
+  (foe not marked defeated), no step-back on bosses, defeat → last checkpoint
+  with resolve restored and learning kept (combat result stubbed for that test).
+- Driver development found only harness issues plus one Atlas integration gap:
+  the Atlas reading panel waited for a click even in test auto mode (fixed; it
+  now resolves in auto mode like dialogue). No story softlocks were found.
