@@ -186,6 +186,7 @@ narr: 「 コウジ の ぶん 」 。 {小|ちい}さな {茶碗|ちゃわん} 
 @scene rw.m2_lantern
 !if rw_loft_done -> done
 narr: {屋根裏|やねうら} の {古|ふる}い {灯|あか}り 。 {水車|すいしゃ}{小屋|ごや} の {灯|あか}り は 、 {村|むら} の {名前|なまえ} を {背負|せお}って いた はず だ 。 || The old lantern in the loft. The mill's lantern used to carry the village's name.
+!lesson kana
 !challenge rw.c_mill_lantern
 !if var._res=0 -> end
 !sfx lantern
@@ -215,6 +216,7 @@ narr: この {声|こえ} たち は {怒|おこ}って いる の では ない
 narr: {声|こえ} が ほどけて いく 。 {梁|はり} から 、 {屋根裏|やねうら} から 、 {外|そと} の {川|かわ} へ 。 || The voices come untied — from the beams, from the loft, out to the river.
 narr: {外|そと} で 、 {水車|すいしゃ} が {大|おお}きく {一|ひと}つ {回|まわ}った 。 || Outside, the waterwheel makes one great turn.
 !note rw_mill
+!lesson kana
 !fade out
 !warp rw.village 31 17 right
 !fade in

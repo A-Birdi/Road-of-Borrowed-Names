@@ -121,7 +121,7 @@ genzo: {親父|おやじ} が {彫|ほ}った ん だ 。 「{風|かぜ}」 っ
 genzo: {書|か}ける の か 。 お{前|まえ} さん 。 || Can you write it? You?
 !challenge sg.c_kaze
 !if var._res=0 -> later
-narr: {溝|みぞ} を なぞる よう に 、 {筆|ふで} を {動|うご}かす 。 「{風|かぜ}」 。 || You move the brush as if tracing the grooves. 風 — wind.
+narr: {溝|みぞ} を なぞる よう に 、 {筆|ふで} を {動|うご}かす 。 「{風|かぜ}」 。 || You move the brush as if tracing the grooves. Kaze — wind.
 !sfx wind
 narr: {風見|かざみ} が 、 きい 、 と {鳴|な}った 。 || The vane creaks.
 narr: {沖|おき} から 、 {冷|つめ}たい {風|かぜ} が {吹|ふ}いて きた 。 {岬|みさき} の {霧|きり} が 、 {端|はし} から ほどけて いく 。 || A cold wind comes in off the sea. The fog on the causeway begins to unravel from its edges.

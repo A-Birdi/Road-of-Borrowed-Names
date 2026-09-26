@@ -135,7 +135,7 @@ pc: {白|しろ}い {服|ふく} の {旅人|たびびと} …… {静寂|しじ
 ?(comp=nao) comp: {悲|かな}しみ を {預|あず}かる 、 か 。 {頼|たの}まれて も いない {荷物|にもつ} まで {運|はこ}んで いった ん だ 。 {配達人|はいたつにん} と して は 、 {許|ゆる}せない な 。 || Keeping people's grief. And carrying off parcels nobody asked it to take. As a courier, I can't forgive that.
 ?(comp=mio) comp: {最初|さいしょ} は 、 {優|やさ}しさ だった の かも しれません 。 …… {優|やさ}しさ も 、 {量|りょう} を {間違|まちが}えれば {毒|どく} です 。 || Maybe it began as kindness. …But even kindness is poison in the wrong dose.
 ?(comp=ren) comp: {北|きた} の {山|やま} の {上|うえ} です ね 。 {記録|きろく} に よれば 。 …… {道|みち} は 、 {私|わたし} が {案内|あんない} しない ほう が いい でしょう 。 || Up in the northern mountains, according to the records. …It's probably best if I don't lead.
-?(comp=suzu) comp: {預|あず}かる って 、 {返|かえ}す {約束|やくそく} の {言葉|ことば} の はず な のに ね 。 {返|かえ}して もらい に 行こう 。 {全部|ぜんぶ} 。 || "Keeping" something is supposed to mean you'll give it back. Let's go and get it all back.
+?(comp=suzu) comp: {預|あず}かる って 、 {返|かえ}す {約束|やくそく} の {言葉|ことば} の はず な のに ね 。 {返|かえ}して もらい に {行|い}こう 。 {全部|ぜんぶ} 。 || "Keeping" something is supposed to mean you'll give it back. Let's go and get it all back.
 narr: {北|きた} の {峰|みね} に は 、 もう {雪|ゆき} が {光|ひか}って いた 。 || Snow was already gleaming on the northern peaks.
 !set ch3_done
 !quest co_main done

@@ -414,7 +414,7 @@ RB.script.add(`
 !if quest.sb_snow=done -> done
 !if quest.sb_snow>=1 -> judge
 !if quest.sb_snow -> look
-kanta[smile]: ねえ ねえ 、 {旅|たび} の {人|ひと} ！ {雪像|せつぞう} コンテスト の {審査員|しんさいん} に なって よ ！ || Hey, hey, traveller! Be the judge for our snow-sculpture contest!
+kanta[smile]: ねえ=(hey) ねえ=(hey) 、 {旅|たび} の {人|ひと} ！ {雪像|せつぞう} コンテスト の {審査員|しんさいん} に なって よ ！ || Hey, hey, traveller! Be the judge for our snow-sculpture contest!
 kanta: おれ と チヨ と ロクタ で 、 {一|ひと}つ ずつ {作|つく}った んだ 。 {大人|おとな} は みんな 「 どれ も {上手|じょうず} 」 って {言|い}う から 、 {決|き}まらない の 。 || Chiyo, Rokuta and me made one each. The grown-ups all say "they're all good", so we can't decide.
 kanta: {決|き}まり が ある んだ 。 「 {札|ふだ} に {書|か}いた とおり の {雪像|せつぞう} が {勝|か}ち 」 ！ {大|おお}きさ じゃ ない よ 。 {説明|せつめい} と {同|おな}じ か どう か ！ || There's a rule: "The sculpture that matches what's written on its card wins!" Not the biggest — whichever matches its description!
 kanta[worry]: でも 、 {昨日|きのう} の {風|かぜ} で 、 ちょっと {崩|くず}れた の も ある んだ よね …… 。 || Only, yesterday's wind knocked some of them about a bit…
@@ -454,7 +454,7 @@ kanta[laugh]: {灯|あか}り 、 ついた ！ ついた ！ {窓|まど} か�
 !if quest.sb_snow=done -> end
 !if quest.sb_snow>=1 -> judge
 !if quest.sb_snow -> look
-kanta: ねえ 、 まだ {審査員|しんさいん} 、 {募集|ぼしゅう} {中|ちゅう} だ よ ！ || Hey, we're still looking for a judge!
+kanta: ねえ=(hey) 、 まだ {審査員|しんさいん} 、 {募集|ぼしゅう} {中|ちゅう} だ よ ！ || Hey, we're still looking for a judge!
 !quest sb_snow start
 !end
 
@@ -465,7 +465,7 @@ kanta: ねえ 、 まだ {審査員|しんさいん} 、 {募集|ぼしゅう} {
 
 @scene sb.storm_kanta
 kanta[worry]: {風|かぜ} の {音|おと} 、 {怖|こわ}く ない よ 。 …… ちょっと だけ 。 || The wind doesn't scare me. …Only a little.
-?(sb_hearth_done) kanta[smile]: ねえ 、 さっき の {火|ひ} の {字|じ} 、 おれ に も {教|おし}えて ！ 「 ほのお 」 だよ ね ？ || Hey, teach me that fire word from before! Ho, no, o, right?
+?(sb_hearth_done) kanta[smile]: ねえ=(hey) 、 さっき の {火|ひ} の {字|じ} 、 おれ に も {教|おし}えて ！ 「 ほのお 」 だよ ね ？ || Hey, teach me that fire word from before! Ho, no, o, right?
 
 @scene sb.eve_kanta
 kanta[laugh]: {見|み}て ！ {見|み}て ！ {灯|あか}り が ついた ！ {十日|とおか} ぶり ！ いや 、 {十一日|じゅういちにち} ぶり ！ || Look! Look! The lamp's lit! First time in ten days! No, eleven!
@@ -553,7 +553,7 @@ denji: {丸屋根|まるやね} の {修理|しゅうり} を {頼|たの}まれ
 @scene sb.storm_denji
 denji: {天文台|てんもんだい} に {上|のぼ}る なら 、 {聞|き}いて おけ 。 || If you're going up to the observatory, listen.
 denji: {一階|いっかい} の {奥|おく} の {扉|とびら} は 、 ホシノ の {悪趣味|あくしゅみ} だ 。 「 {見|み}る べき {方角|ほうがく} を {知|し}る {者|もの} に {開|ひら}く 」 。 {壁|かべ} の {心得|こころえ} を {読|よ}め 。 {答|こた}え は そこ に ある 。 || The door at the back of the ground floor is Hoshino's bad taste: "It opens for one who knows which way to look." Read the rules on the wall. The answer's there.
-denji: {上|うえ} の {回廊|かいろう} に は 、 {裏|うら} の {階段|かいだん} が ある 。 {外|そと} の {石段|いしだん} に {出|で}られる 。 ただし {内側|うちがわ} から しか {開|あ}かん 。 {一度|いちど} {開|あ}ければ 、 {次|つぎ} から は {近道|ちかみち} だ 。 || The upper gallery has a back stair. It lets out onto the stone steps outside. Only opens from the inside, though. Open it once and it's a shortcut after that.
+denji: {上|うえ} の {回廊|かいろう} に は 、 {裏|うら} の {階段|かいだん} が ある 。 {外|そと} の {石段|いしだん} に {出|で}られる 。 ただし {内側|うちがわ} から しか {開|あ}かん@開く 。 {一度|いちど} {開|あ}ければ 、 {次|つぎ} から は {近道|ちかみち} だ 。 || The upper gallery has a back stair. It lets out onto the stone steps outside. Only opens from the inside, though. Open it once and it's a shortcut after that.
 denji: {丸屋根|まるやね} へ の {蓋|ふた} は 、 {回廊|かいろう} の ハンドル で {開|あ}ける 。 {回|まわ}し{方|かた} は {壁|かべ} に {書|か}いて ある 。 {凍|こお}って いたら …… まあ 、 {読|よ}めば わかる 。 || The hatch to the dome opens with the handle in the gallery. How to turn it is written on the wall. If it's frozen… well, read it and you'll see.
 
 @scene sb.denji_morning

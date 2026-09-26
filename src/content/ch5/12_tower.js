@@ -101,6 +101,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
     px(c, x + 2 + k, y + 30, W - 4, 1, p.water[3]);
     px(c, x + 8 - k, y + 34, W - 16, 1, p.water[2]);
   });
+  // An old padlock hanging open on its chain, the key rusted in place.
+  def('lf_padlock', {}, (c, x, y, p) => {
+    px(c, x + 7, y - 6, 2, 14, p.stone[2]);
+    for (let i = 0; i < 4; i++) px(c, x + 6 + (i % 2) * 2, y - 2 + i * 3, 3, 2, '#6a6a72');
+    px(c, x + 4, y + 9, 8, 6, '#7a5a3a');
+    px(c, x + 5, y + 6, 1, 4, '#6a6a72'); px(c, x + 10, y + 7, 1, 3, '#6a6a72');
+    px(c, x + 7, y + 11, 2, 2, '#2a2020');
+    px(c, x + 8, y + 12, 5, 1, '#8a6a4a'); px(c, x + 12, y + 11, 2, 3, '#8a6a4a');
+  });
   // The drowned bell itself (2×2), hanging from a charred beam.
   def('lf_bigbell', { w: 2, h: 2 }, (c, x, y, p, t, o) => {
     px(c, x - 2, y - 12, 36, 4, '#3a2e2a');
@@ -300,7 +309,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'lf_lever', x: 2, y: 14, scene: 'lf.south_plug', o: { col: '#a8784a', pulled: true }, if: 'lf_south_pulled' },
       { p: 'lf_lever', x: 16, y: 3, scene: 'lf.north_plug', o: { col: '#6a8ab8' }, if: '!lf_gate_c' },
       { p: 'lf_lever', x: 16, y: 3, scene: 'lf.north_plug', o: { col: '#6a8ab8', pulled: true }, if: 'lf_gate_c' },
-      { p: 'pillar', x: 14, y: 5, scene: 'lf.toya_scratch' }, { p: 'pillar', x: 5, y: 5 },
+      { p: 'pillar', x: 14, y: 5, scene: 'lf.waterline' }, { p: 'pillar', x: 5, y: 5 },
       { p: 'deadlantern', x: 17, y: 9 },
     ].concat(flood(rect(9, 8, 2, 9).concat([[10, 17]]), '!lf_gate_c')),
     foes: [
@@ -331,6 +340,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'pillar', x: 3, y: 5 }, { p: 'pillar', x: 12, y: 5 }, { p: 'pillar', x: 3, y: 10 }, { p: 'pillar', x: 12, y: 10 },
       { p: 'lf_conduit', x: 1, y: 7 }, { p: 'lf_conduit', x: 14, y: 7 },
       { p: 'lf_plate', x: 10, y: 6, scene: 'lf.bell_plate' },
+      { p: 'lf_padlock', x: 9, y: 2, scene: 'lf.tower_key' },
     ],
     exits: [{ x: 8, y: 1, to: 'lf.tower_low', tx: 10, ty: 16, dir: 'up' }],
     triggers: [{ x: 1, y: 5, w: 14, h: 1, scene: 'lf.boss_intro', if: '!lf_boss_done' }],

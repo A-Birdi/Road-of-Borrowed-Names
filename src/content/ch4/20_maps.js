@@ -109,7 +109,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'sb_snowfox', x: 24, y: 21, scene: 'sb.sculpt_fox' },
       { p: 'snowman', x: 28, y: 22 },
       // around the houses
-      { p: 'sb_woodpile', x: 15, y: 11 }, { p: 'sb_woodpile', x: 38, y: 7 },
+      { p: 'sb_woodpile', x: 15, y: 11 }, { p: 'sb_woodpile', x: 36, y: 10 },
       { p: 'barrel', x: 7, y: 18 }, { p: 'crate', x: 32, y: 29 }, { p: 'crate', x: 26, y: 29 },
       { p: 'mailbox', x: 26, y: 28, scene: 'sb.post_box' },
       { p: 'laundry', x: 34, y: 19, scene: 'sb.laundry' },

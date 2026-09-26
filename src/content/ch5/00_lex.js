@@ -136,7 +136,6 @@ RB.lex.add(RB.lex.parseTable(`
 内側|うちがわ|n|I|inside
 外側|そとがわ|n|I|outside
 北側|きたがわ|n|E|the north side
-側|がわ|suf|I|side (after a noun)|こちら側 = this side.
 両端|りょうはし|n|I|both ends
 中央|ちゅうおう|n|I|centre, middle
 高台|たかだい|n|I|high ground, heights
@@ -484,7 +483,6 @@ RB.lex.add(RB.lex.parseTable(`
 納得|なっとく|n|I|being convinced, accepting|納得できない = I can't accept that.
 最高|さいこう|adj-na|E|the best, great
 仕掛け|しかけ|n|I|mechanism, device, trick
-悪趣味|あくしゅみ|adj-na|A|in bad taste
 眉|まゆ|n|I|eyebrow
 手強い|てごわい|adj-i|A|tough, formidable
 腰|こし|n|I|lower back, hips
@@ -534,7 +532,6 @@ RB.lex.add(RB.lex.parseTable(`
 情け|なさけ|n|A|compassion, pity
 小声|こごえ|n|I|low voice, whisper
 甘味|かんみ|n|A|sweets, sweet things
-訂正|ていせい|n|I|correction
 お土産|おみやげ|n|E|souvenir, present (brought back for someone)
 過ち|あやまち|n|A|mistake, fault
 頼まれ事|たのまれごと|n|I|something one has been asked to do, a favour
@@ -584,5 +581,15 @@ RB.lex.add(RB.lex.parseTable(`
 会議|かいぎ|n|E|meeting
 荷造り|にづくり|n|I|packing (luggage)
 唇|くちびる|n|I|lips
+配達料|はいたつりょう|n|I|delivery fee
+親子|おやこ|n|I|parent and child
+施錠|せじょう|n|A|locking (a door, a building)|施錠のままとする = shall remain locked.
+鎖|くさり|n|I|chain
+差さる|ささる|v5r|I|to be stuck in, be inserted
+錠前|じょうまえ|n|A|lock, padlock
+刻み|きざみ|n|I|notch, nick
+毎年|まいとし|n|E|every year
+峠|とうげ|n|I|mountain pass
+欲張り|よくばり|adj-na|I|greedy
 かしこまる||v5r|I|to accept respectfully (a request, an order)|かしこまりました: "certainly", a very polite way of accepting a request, typical of service staff.
 `), 'ch5');

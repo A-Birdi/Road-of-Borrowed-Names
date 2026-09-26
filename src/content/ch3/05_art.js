@@ -237,3 +237,25 @@ var RB = (globalThis.RB = globalThis.RB || {});
     for (let i = 0; i < 48; i += 8) px(c, x + i, y + 12, 1, 4, p.wood[0]);
   });
 })(RB.props.P);
+
+// An old retired stage goat, overworld sprite (16x24).
+(function (S) {
+  'use strict';
+  const R = (c, x, y, w, h, col) => { c.fillStyle = col; c.fillRect(x, y, w, h); };
+  S.co_goat = (c, look, d, f) => {
+    const col = look.col || '#e8e0d0', sh = '#b8b0a0';
+    const step = f === 1 ? 1 : f === 2 ? -1 : 0;
+    if (d === 'side') {
+      R(c, 2, 13, 11, 6, col); R(c, 2, 18, 11, 1, sh);
+      R(c, 11, 9, 4, 5, col); R(c, 14, 11, 1, 2, '#3a3030'); R(c, 12, 7, 1, 3, '#8a7a5a'); R(c, 13, 10, 1, 1, '#1a1414');
+      R(c, 12, 14, 2, 3, '#e8e0d0'); R(c, 12, 16, 1, 2, '#d8c860');
+      R(c, 3 + step, 19, 2, 4, sh); R(c, 10 - step, 19, 2, 4, sh);
+      R(c, 1, 12, 2, 2, col);
+    } else {
+      R(c, 4, 12, 8, 8, col); R(c, 4, 19, 8, 1, sh);
+      R(c, 5, 7, 6, 6, col); R(c, 4, 6, 1, 2, '#8a7a5a'); R(c, 11, 6, 1, 2, '#8a7a5a');
+      if (d === 'down') { R(c, 6, 9, 1, 1, '#1a1414'); R(c, 9, 9, 1, 1, '#1a1414'); R(c, 7, 12, 2, 2, '#e8e0d0'); R(c, 7, 14, 2, 2, '#d8c860'); }
+      R(c, 5, 20 + (step > 0 ? -1 : 0), 2, 3, sh); R(c, 9, 20 + (step < 0 ? -1 : 0), 2, 3, sh);
+    }
+  };
+})(RB.sprites.custom);

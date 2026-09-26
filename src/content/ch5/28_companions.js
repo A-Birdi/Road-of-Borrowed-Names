@@ -55,6 +55,8 @@ narr: 「{許|ゆる}して ほしい と は {書|か}かない 。{書|か}け
 narr: 「ただ 、あの {朝|あさ} 、{港|みなと} で {言|い}えなかった こと が ある 。すまなかった 。」|| "Only, there's something I couldn't say that morning at the harbour. I'm sorry."
 narr: 「{返事|へんじ} は いらない 。いや 、{本当|ほんとう} は ほしい 。どちら でも いい 。お{前|まえ} が {決|き}めて くれ 。 イサム」|| "You needn't reply. No — truthfully, I want you to. Either is fine. You decide. — Isamu"
 !challenge lf.ch_nao_letter
+comp[think]: …… 「{許|ゆる}して くれ」 って {書|か}いて ある と 、ずっと {思|おも}ってた 。イサム さん が 、そう {言|い}って {渡|わた}した から 。|| …I always thought it said "forgive me". That's what Isamu said when he handed it over.
+comp: {書|か}いて ない 。…… いや 、{書|か}いて ある の か 、これ 。わかんない よ 。|| It doesn't say that. …Or does it? I can't tell.
 umi[sad]: 「{返事|へんじ} は いらない 。いや 、{本当|ほんとう} は ほしい 。」 …… {昔|むかし} から 、こう いう {人|ひと} 。|| "You needn't reply. No — truthfully, I want you to." …He was always like this.
 umi: {自分|じぶん} で は {何|なに} も {決|き}められない くせ に 、{決|き}めて くれ って 。|| Can't decide anything himself, then tells me to decide.
 comp[think]: …… どう する ?|| …What will you do?
@@ -63,6 +65,7 @@ umi: でも 、{一行|いちぎょう} だけ {書|か}く 。|| But I'll write
 narr: ウミ は {事務所|じむしょ} の {便箋|びんせん} に 、さらさら と {書|か}いた 。|| Umi writes quickly on the office letter paper.
 umi: 「{読|よ}みました 。 ウミ」|| "I read it. — Umi"
 umi: これ を 、{届|とど}けて くれる ? {父|ちち} が まだ {生|い}きて いて も 、いなくて も 。|| Will you deliver this? Whether my father's still alive or not.
+comp: イサム さん は 、{春|はる} に {灯|ひ} の {道|みち} を {上|のぼ}って いった って {聞|き}いた 。{山|やま} の ほう だ 。…… ちょうど 、{行|い}く ところ だ よ 。|| I heard Isamu went up the lantern road last spring. Up the mountain. …As it happens, that's where we're headed.
 comp[smile]: …… {届|とど}ける 。{必|かなら}ず 。|| …I'll deliver it. Without fail.
 narr: ナオ は {封筒|ふうとう} に {宛名|あてな} を {書|か}いた 。いつも より 、ずっと ゆっくり 、ていねい に 。|| Nao writes the address on the envelope — far more slowly and carefully than usual.
 narr: それ から 、{古|ふる}い {封筒|ふうとう} の {宛名|あてな} の {紙|かみ} を そっと はがして 、{鞄|かばん} の {奥|おく} の {束|たば} に {加|くわ}えた 。|| Then Nao gently peels the old address label off Isamu's envelope and adds it to the bundle deep in the satchel.
@@ -96,7 +99,8 @@ nao[smile]: {許|ゆる}す とも {許|ゆる}さない とも {書|か}いて 
 ?(comp=ren) nao[smirk]: {皮肉|ひにく} か ? …… ありがと 。|| Is that sarcasm? …Thanks.
 ?(comp=suzu) comp: {送料|そうりょう} 、{一年分|いちねんぶん} {取|と}る の ?|| Charging a year's worth of postage?
 ?(comp=suzu) nao[laugh]: {取|と}らない よ 。…… たぶん 。|| No. …Probably not.
-nao: じゃ 、{潮硝子|しおがらす} まで {走|はし}って くる 。{元気|げんき} で ね 。|| Right. I'm off to run it down to Saltglass. Take care.
+nao: イサム さん は 、{春|はる} に {灯|ひ} の {道|みち} を {上|のぼ}って いった って {話|はなし} だ 。{返事|へんじ} は 、そっち へ {届|とど}ける 。|| Word is Isamu went up the lantern road last spring. I'll take the reply up that way.
+nao: じゃ 、{行|い}って くる 。{元気|げんき} で ね 。|| Right, I'm off. Take care.
 !set lf_nao_cameo_done
 
 # ---- Mio: a no, out loud (comp = mio) ----------------------------------------------------------------------------------------------------------

@@ -173,7 +173,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   note('sg_tide_words', {
     title: { jp: '{潮|しお}の {言葉|ことば}', en: 'Words for the tide' },
     jp: '{満潮|まんちょう} ・ {満|み}ち{潮|しお} ＝ {潮|しお}が いちばん {高|たか}い とき 。 {干潮|かんちょう} ・ {引|ひ}き{潮|しお} ＝ いちばん {低|ひく}い とき 。',
-    en: 'High tide: 満潮 (manchō) or 満ち潮 (michishio). Low tide: 干潮 (kanchō) or 引き潮 (hikishio). On a tide table you will usually see the kanchō/manchō forms with times.',
+    en: 'High tide: manchō or michishio. Low tide: kanchō or hikishio. On a tide table you will usually see the kanchō/manchō forms, with times.',
   });
   note('sg_gojuon', {
     title: { jp: '{五十音|ごじゅうおん}{順|じゅん}', en: 'Gojūon order' },

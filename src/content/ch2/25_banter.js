@@ -65,8 +65,8 @@ comp: {十七冊目|じゅうななさつめ} です 。 {一冊目|いっさつ
 @scene sg.b_ren_puns
 comp: $name 。 {港|みなと} に ちなんだ {冗談|じょうだん} を 、 {一|ひと}つ {考|かんが}えました 。 || $name. I've thought of a joke fit for a harbour.
 pc: …… どうぞ 。 || …Go on.
-comp: 「{灯台|とうだい} {下|もと} {暗|くら}し 」 。 {灯台|とうだい} の {下|した} は {暗|くら}い 。 {近|ちか}く の こと ほど {見|み}えない 、 と いう {意味|いみ} です 。 || "Tōdai moto kurashi" — it's darkest at the foot of the 灯台: the nearer something is, the harder it is to see.
-comp: ただし 、 この {言葉|ことば} の {灯台|とうだい} は {海|うみ} の {灯台|とうだい} では なく 、 {昔|むかし} の {油|あぶら} の {明|あ}かり を {載|の}せる {台|だい} の こと です 。 …… {冗談|じょうだん} の はず が 、 {豆知識|まめちしき} に なって しまいました 。 || Though the 灯台 in this saying isn't a lighthouse at all — it's the old stand that held an oil lamp. …It was meant to be a joke and turned into trivia.
+comp: 「{灯台|とうだい} {下|もと} {暗|くら}し 」 。 {灯台|とうだい} の {下|した} は {暗|くら}い 。 {近|ちか}く の こと ほど {見|み}えない 、 と いう {意味|いみ} です 。 || "Tōdai moto kurashi" — it's darkest at the foot of the tōdai: the nearer something is, the harder it is to see.
+comp: ただし 、 この {言葉|ことば} の {灯台|とうだい} は {海|うみ} の {灯台|とうだい} では なく 、 {昔|むかし} の {油|あぶら} の {明|あ}かり を {載|の}せる {台|だい} の こと です 。 …… {冗談|じょうだん} の はず が 、 {豆知識|まめちしき} に なって しまいました 。 || Though the tōdai in this saying isn't a lighthouse at all — it's the old stand that held an oil lamp. …It was meant to be a joke and turned into trivia.
 
 @scene sg.b_ren_directions
 comp[shy]: {打|う}ち{明|あ}けます と 、 {私|わたし} は {入|い}り{江|え} の {方角|ほうがく} を 、 まだ {分|わ}かって いません 。 || I confess I still don't know which direction the cove is.

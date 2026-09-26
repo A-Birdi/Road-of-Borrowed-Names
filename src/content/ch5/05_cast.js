@@ -189,9 +189,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     reward: { items: { lf_ferry_cap: 1 } },
   };
   C.quests.lf_akari = {
-    chapter: 5, title: { jp: '{雪鈴|ゆきすず} へ の {手紙|てがみ}', en: 'A Letter to Snowbell' },
+    chapter: 5, title: { jp: '{雪鈴|ゆきすず} と の {手紙|てがみ}', en: 'Letters to and from Snowbell' },
     stages: [
-      S('アカリ の {手紙|てがみ} は 「{宛先|あてさき}{不明|ふめい}」 で {戻|もど}って くる 。', 'Akari\'s letters home keep coming back "address unknown". There may be nothing to do until the Hush loosens its grip.'),
+      S('アカリ の {手紙|てがみ} は 「{宛先|あてさき}{不明|ふめい}」 で {戻|もど}って くる 。{休|やす}み も {取|と}れない 。', 'Akari\'s letters home keep coming back "address unknown", and she can\'t refuse overtime long enough to go home. Nothing more can be done until the town can say no again.'),
       S('{鐘|かね} が {鳴|な}った 。アカリ に {会|あ}い に {行|い}く 。', 'The bell has rung. Visit Akari in the clerks\' office.'),
       S('アカリ の {封筒|ふうとう} に {宛先|あてさき} を {書|か}く {手伝|てつだ}い を する 。', 'Help Akari write the address on her envelope.'),
     ],

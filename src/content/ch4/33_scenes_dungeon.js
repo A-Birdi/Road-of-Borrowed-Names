@@ -15,7 +15,7 @@ narr: {雪|ゆき} の {上|うえ} に 、 {白|しろ}い {影|かげ} が {�
 
 @scene sb.path_lantern
 narr: {石段|いしだん} の {灯|あか}り 。 {笠|かさ} の {字|じ} は {読|よ}めない ほど {薄|うす}れ 、 {中|なか} に {霜|しも} が {詰|つ}まって いる 。 || A stair lantern. The writing on its shade has faded past reading, and it's packed with frost.
-?(comp=ren) comp: {上|うえ} の {大|おお}きな {灯|あか}り が {戻|もど}れば 、 これ ら も {戻|もど}る でしょう 。 {灯|あか}り は 、 {互|たが}い の {名前|なまえ} を {呼|よ}び{合|あ}って いる もの です 。 || If the great lamp above comes back, these will too. Lamps call each other's names.
+?(comp=ren) comp: {上|うえ} の {大|おお}きな {灯|あか}り が {戻|もど}れば 、 これら も {戻|もど}る でしょう 。 {灯|あか}り は 、 {互|たが}い の {名前|なまえ} を {呼|よ}び{合|あ}って いる もの です 。 || If the great lamp above comes back, these will too. Lamps call each other's names.
 
 @scene sb.path_bench
 narr: {石|いし} の {腰掛|こしか}け 。 {脇|わき} の {柱|はしら} に 、 {刻|きざ}み{目|め} が {縦|たて} に {並|なら}んで いる 。 {一|ひと}つ {一|ひと}つ に {小|ちい}さく 、 「 アカリ {四|よっ}つ 」 「 アカリ {五|いつ}つ 」 …… 「 アカリ {十五|じゅうご} 」 。 || A stone seat. On the post beside it, notches run upward, each labelled small: "Akari, 4", "Akari, 5"… "Akari, 15".
@@ -47,7 +47,7 @@ narr: {奥|おく} の {扉|とびら} は 、 {分厚|ぶあつ}い {氷|こお
 ?(comp=nao) comp: {息|いき} が {白|しろ}い 。 …… {中|なか} の ほう が {寒|さむ}い って 、 {建物|たてもの} と して {失格|しっかく} だろ 。 || My breath's white. …A building that's colder inside than out has failed at being a building.
 ?(comp=mio) comp[worry]: {長|なが}く いる と 、 {指|ゆび} を {悪|わる}く します 。 {手|て} を {擦|こす}り{合|あ}わせて 。 こう 。 || Stay too long and you'll damage your fingers. Rub your hands together. Like this.
 ?(comp=ren) comp[think]: {星|ほし} を {見|み}る {建物|たてもの} が 、 {目|め} を {閉|と}じて いる よう です 。 || It's as if a building for watching stars has closed its eyes.
-?(comp=suzu) comp: {氷|こおり} の {宮殿|きゅうでん} だ ね 。 {衣装|いしょう} {代|だい} が かからない {舞台|ぶたい} 。 …… {薪|まき} {代|だい} は かかる けど 。 || An ice palace. A set that costs nothing in costumes. …Plenty in firewood, though.
+?(comp=suzu) comp: {氷|こおり} の {宮殿|きゅうでん} だ ね 。 {衣装|いしょう} {代|だい}=(cost) が かからない {舞台|ぶたい} 。 …… {薪|まき} {代|だい}=(cost) は かかる けど 。 || An ice palace. A set that costs nothing in costumes. …Plenty in firewood, though.
 
 @scene sb.hall_rules
 narr: {壁|かべ} の {板|いた} に 、 {氷|こおり} の {下|した} から {字|じ} が {透|す}けて {見|み}える 。 「 {観測|かんそく} の {心得|こころえ} 」 。 || On a board on the wall, writing shows through the ice: "Rules for Observing".

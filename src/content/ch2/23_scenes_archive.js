@@ -167,7 +167,7 @@ narr: テツ に もらった {縄|なわ} を 、 {係船柱|けいせんちゅ
 ?(comp=suzu) comp[smirk]: {縄|なわ}{抜|ぬ}け の {逆|ぎゃく} を やる の よ 。 {縄|なわ} で {捕|つか}まえる 、 ね 。 || We do the rope escape in reverse. The rope catches, for once.
 !challenge sg.c_nawa
 !if var._res=0 -> later
-narr: 「{縄|なわ}」 。 {書|か}いた {字|じ} が {縄|なわ} に {染|し}み{込|こ}む と 、 {縄|なわ} は {蛇|へび} の よう に {水|みず} の {上|うえ} を {伸|の}びて 、 {棚|たな} に {巻|ま}き{付|つ}いた 。 || 縄. As the word soaks into it, the rope snakes out across the water and wraps itself around the cabinet.
+narr: 「{縄|なわ}」 。 {書|か}いた {字|じ} が {縄|なわ} に {染|し}み{込|こ}む と 、 {縄|なわ} は {蛇|へび} の よう に {水|みず} の {上|うえ} を {伸|の}びて 、 {棚|たな} に {巻|ま}き{付|つ}いた 。 || Nawa — rope. As the word soaks into it, the rope snakes out across the water and wraps itself around the cabinet.
 !word nawa
 !set sg_da_raft
 !sfx ward

@@ -413,7 +413,8 @@ narr: どれ に も 「{宛先|あてさき}{不明|ふめい}」 の {判子|�
 
 @scene lf.akari_note
 narr: アカリ の {机|つくえ} の {上|うえ} に 、{札|ふだ} が {立|た}てて ある 。|| On Akari's desk, a card is propped up.
-narr: 「{雪鈴|ゆきすず} に {帰省|きせい} {中|ちゅう} 。{残業|ざんぎょう} は お{断|ことわ}り します 。アカリ」|| "Home in Snowbell on leave. Overtime: declined. — Akari"
+?(lf_akari_got_reply&sb_hoshino_goes) narr: 「{峠|とうげ} まで {父|ちち} を {迎|むか}え に {行|い}って います 。{残業|ざんぎょう} は お{断|ことわ}り します 。アカリ」|| "Gone up to the pass to meet my father. Overtime: declined. — Akari"
+?(!lf_akari_got_reply|!sb_hoshino_goes) narr: 「{雪鈴|ゆきすず} に {帰省|きせい} {中|ちゅう} 。{残業|ざんぎょう} は お{断|ことわ}り します 。アカリ」|| "Home in Snowbell on leave. Overtime: declined. — Akari"
 
 @scene lf.council_table
 narr: {議会|ぎかい} の {大|おお}きな {卓|たく} 。{議決|ぎけつ} の {帳面|ちょうめん} が {開|ひら}いて いる 。{最近|さいきん} の {頁|ページ} は 、{全部|ぜんぶ} 「{全員|ぜんいん} {賛成|さんせい}」 。|| The council's great table. The book of resolutions lies open. Every recent page: "Unanimous."

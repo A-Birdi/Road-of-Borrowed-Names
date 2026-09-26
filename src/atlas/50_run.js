@@ -49,6 +49,14 @@ RB.hooks = RB.hooks || {};
       }
     }
   }
+  // Run an authored scene from inside a hook. RB.script.run pops its dialogue
+  // mode only when the outermost scene ends, so a nested run would leave one
+  // behind; restore the mode stack afterwards.
+  async function scene(id) {
+    const before = RB.game.G.modes.length;
+    await RB.script.run(id);
+    while (RB.game.G.modes.length > before && RB.game.mode() === 'dialogue') RB.game.popMode('dialogue');
+  }
   async function toast(kind, jp, en) { try { await RB.ui.toast({ kind, jp, en }); } catch (e) { /* headless */ } }
   function addNote(id) {
     const s = S();
@@ -138,13 +146,13 @@ RB.hooks = RB.hooks || {};
       s.atlas.unlocked = true;
       if (s.atlas.run) endRun(s, 'abandon');
       const first = !s.atlas.started;
-      await RB.script.run(first ? 'atlas.intro.first' : 'atlas.intro.again');
+      await scene(first ? 'atlas.intro.first' : 'atlas.intro.again');
       const offered = offeredMods(s);
       const opts = offered.map((m) => ({ jp: A.modifiers[m].name.jp, en: A.modifiers[m].name.en + ' — ' + A.modifiers[m].desc }));
       opts.push({ jp: '{静|しず}か な {道|みち}', en: 'A quiet road — no modifier' });
       opts.push({ jp: '{今日|きょう} は やめて おく', en: 'Not today' });
       let idx = dbg.chooseMod != null ? dbg.chooseMod : await choose(opts);
-      if (idx === opts.length - 1) { await RB.script.run('atlas.intro.later'); return; }
+      if (idx === opts.length - 1) { await scene('atlas.intro.later'); return; }
       const mods = idx < offered.length ? [offered[idx]] : [];
       if (mods.length && (s.atlas.completed || 0) >= 3) {
         const rest = offered.filter((m) => m !== mods[0]);
@@ -160,7 +168,7 @@ RB.hooks = RB.hooks || {};
       AT.register(run);
       s.checkpoint = AT.hallSpot();
       s.vars.atlas_mods = mods.length;
-      await RB.script.run('atlas.intro.go');
+      await scene('atlas.intro.go');
       const id = AT.mapId(run, 't');
       const sp = C.maps[id].spawn.default;
       await RB.game.transition(id, sp[0], sp[1], 'up', { inScript: true });
@@ -514,7 +522,7 @@ RB.hooks = RB.hooks || {};
     const boss = r.room.boss;
     const cd = A.climaxes[boss];
     s.vars.atlas_boss = { cartographer: 1, bell: 2, gate: 3 }[boss];
-    await RB.script.run('atlas.climax.' + boss);
+    await scene('atlas.climax.' + boss);
     // Interpretation before action: understanding what it wants loosens a knot.
     run.bonusKnots = 0;
     run.objs.legend = run.objs.legend || {};
@@ -569,8 +577,7 @@ RB.hooks = RB.hooks || {};
     delete s.vars.atlas_ok; delete s.vars.atlas_won;
     s.atlas.last = { why, rooms: run.path.length, names: run.names.length, relics: run.relics.length, mods: run.mods.slice(), at: Date.now() };
     s.checkpoint = AT.hallSpot();
-    // maps are unregistered once we have left them
-    setTimeout(() => { if (!(RB.game.s && RB.game.s.map && RB.game.s.map.indexOf('atlas.' + run.id + '.') === 0)) AT.unregister(run.id); }, 0);
+    // (its generated maps are dropped on the next map entry outside the run; see the map:enter listener)
     AT.hud.update();
   }
   async function finalize(kind) {
@@ -594,7 +601,7 @@ RB.hooks = RB.hooks || {};
       }
       if (run.lantern) {
         if (run.lantern.hp > 0) {
-          await RB.script.run('atlas.escort.home');
+          await scene('atlas.escort.home');
           if (!owned(s, 'atlas_cos_lamplet')) { RB.state.give(s, 'atlas_cos_lamplet', 1); summary.rewards.push('atlas_cos_lamplet'); await toast('item', C.items.atlas_cos_lamplet.name.jp, C.items.atlas_cos_lamplet.name.en); }
         } else await say('narr', { jp: '{消|き}えた {灯|あか}り も 、 {一緒|いっしょ}に {帰|かえ}って きた 。', en: 'The lantern that went out comes home with you anyway. Someone will relight it.' });
       }
@@ -630,7 +637,7 @@ RB.hooks = RB.hooks || {};
       const h = AT.hallSpot();
       await RB.game.transition(h.map, h.x, h.y, h.dir, { inScript: true });
     }
-    await RB.script.run('atlas.home');
+    await scene('atlas.home');
     if (summary.restore) await note('atlas_news_' + summary.restore);
     for (const n of summary.notes) { const nd = C.notes[n]; if (nd) await toast('note', nd.title.jp, nd.title.en); }
     for (const id of kind === 'defeat' ? summary.rewards : []) await toast('item', C.items[id].name.jp, C.items[id].name.en);
@@ -689,7 +696,10 @@ RB.hooks = RB.hooks || {};
       delete s.flags.atlas_restored_to_hall;
       setTimeout(() => RB.ui.notice && RB.ui.notice('The unwritten road you were on could not be restored, so you are back at the Lantern Hall. Your learning and notebook are untouched.', 'info'), 400);
     }
-    // relic items never outlive a run
+    // Generated maps of runs that are over are dropped once we stand elsewhere.
+    for (const rid of Array.from(AT._registered.keys())) {
+      if ((!run || run.id !== rid) && !ev.id.startsWith('atlas.' + rid + '.')) AT.unregister(rid);
+    }
     AT.hud.update();
   });
 

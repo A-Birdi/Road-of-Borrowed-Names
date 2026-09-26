@@ -113,7 +113,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'exitmat', x: 5, y: 8 },
       { p: 'shrine', x: 4, y: 2, scene: 'rw.hall_shrine' },
       { p: 'shelf', x: 1, y: 3 }, { p: 'shelf', x: 9, y: 3 },
-      { p: 'lantern', x: 2, y: 6 }, { p: 'lantern', x: 8, y: 6 },
+      { p: 'lantern', x: 1, y: 6 }, { p: 'lantern', x: 9, y: 6 },
       { p: 'bookpile', x: 1, y: 7 }, { p: 'desk', x: 7, y: 7, scene: 'rw.hall_desk' },
     ],
     ambient: { dark: 0.35, playerLight: 40 },

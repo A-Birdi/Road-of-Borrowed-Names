@@ -280,16 +280,13 @@ narr: {全身|ぜんしん} ずぶ{濡|ぬ}れ だ 。{栓|せん} は 、{元|�
 :done
 narr: {北|きた} の {栓|せん} は 、{抜|ぬ}けて いる 。|| The north plug is out.
 
-@scene lf.toya_scratch
-narr: {柱|はしら} の {低|ひく}い ところ に 、{何|なに} か で {引|ひ}っ{掻|か}いた {字|じ} が ある 。|| Low on the pillar, letters scratched with something sharp.
-narr: 「カサネ へ 。ごめん 。でも {僕|ぼく} は 、」|| "Kasane — I'm sorry. But I…"
-narr: その {先|さき} は 、{石|いし} が つるつる に なって いる 。{削|けず}られた の で は ない 。{字|じ} だけ が 、{持|も}ち{上|あ}げられて {消|き}えた よう に 。|| After that, the stone is smooth. Not scraped away: as if only the letters had been lifted off.
-narr: {柱|はしら} の {横|よこ} を 、{管|くだ} が {上|うえ} へ {通|とお}って いる 。|| A pipe runs up past the pillar.
-?(comp=nao) comp[closed]: …… {届|とど}いて ない {手紙|てがみ} が 、ここ に も {一通|いっつう} 。{続|つづ}き は 、{山|やま} の {上|うえ} だ 。|| …Another undelivered letter, right here. The rest of it is up the mountain.
-?(comp=mio) comp[sad]: {謝|あやま}って 、それ でも …… 。{言|い}いたい こと が 、まだ あった ん だ 。|| He apologised, and still… He still had something to say.
-?(comp=ren) comp[worry]: {書庫|しょこ} は 、{名前|なまえ} だけ で なく 、{最後|さいご} の {言葉|ことば} まで {預|あず}かって いる の でしょう か 。|| Does the Archive hold not just names, but even people's last words?
-?(comp=suzu) comp[sad]: {台詞|せりふ} の {途中|とちゅう} で {幕|まく} 。…… {一番|いちばん} {嫌|いや}な {終|お}わり{方|かた} よ 。|| The curtain falling mid-line. …The worst way for anything to end.
-!set lf_toya_scratch_seen
+@scene lf.waterline
+narr: {柱|はしら} に 、{水|みず} の {跡|あと} が {何本|なんぼん} も {残|のこ}って いる 。{一番|いちばん} {上|うえ} の {線|せん} は 、{天井|てんじょう} の すぐ {下|した} だ 。|| Water lines ring the pillar, one above another. The highest is just below the ceiling.
+narr: その {線|せん} の {横|よこ} に 、{小|ちい}さな {刻|きざ}み 。「{六月|ろくがつ} {十二日|じゅうににち}」 。{誰|だれ} か が 、{後|あと} から {刻|きざ}んだ の だろう 。|| Beside it, a small notch: "June 12th". Someone must have cut it afterwards.
+?(comp=nao) comp: …… ここ まで {来|き}た のか 、{水|みず} が 。|| …The water came all the way up here.
+?(comp=mio) comp[sad]: {息|いき} が できる {場所|ばしょ} なんて 、なかった ね 。|| There was nowhere left to breathe.
+?(comp=ren) comp: {刻|きざ}んだ の は 、きっと トクジ さん です 。{毎年|まいとし} {来|き}て いた の かも しれません 。|| I'd guess Tokuji cut that. Perhaps he came every year.
+?(comp=suzu) comp: {一番|いちばん} {上|うえ} の {線|せん} だけ 、{誰|だれ} も {見|み}たく ない {台詞|せりふ} みたい に {深|ふか}い 。|| Only the top line is cut deep, like a line nobody wants to read.
 
 # ---- the bell chamber ---------------------------------------------------------------------------------------------------------------
 @scene lf.boss_intro
@@ -311,6 +308,15 @@ narr: {鐘|かね} に {巻|ま}きついて いた {管|くだ} も 、{緩|ゆ
 ?(comp=suzu) comp[smile]: {拍手|はくしゅ} は 、{鐘|かね} が {鳴|な}って から ね 。|| Applause can wait until the bell rings.
 !checkpoint lf.bellhall 8 4 down
 !autosave
+
+@scene lf.tower_key
+narr: {入|い}り{口|ぐち} の {横|よこ} の {柱|はしら} に 、{古|ふる}い {錠前|じょうまえ} が {鎖|くさり} で {下|さ}がって いる 。{開|あ}いた まま だ 。|| On the post beside the entrance, an old padlock hangs from a chain. It is open.
+narr: {鍵|かぎ} が {差|さ}さった まま 、{錆|さび} で {固|かた}まって いる 。{鍵|かぎ} の {札|ふだ} に 「{鐘楼|しょうろう}」 。|| The key is still in it, rusted fast. Its tag reads "Bell tower".
+narr: {鍵|かぎ} で {開|あ}けられた の だ 。{壊|こわ}された の で は なく 。|| It was opened with the key. Not broken.
+?(comp=nao) comp: {鍵|かぎ} が かかってた んだ 、この {塔|とう} 。…… {誰|だれ} か が {持|も}ち{出|だ}して 、{自分|じぶん} で {開|あ}けた 。|| So this tower was locked. …Someone took the key and opened it themselves.
+?(comp=mio) comp: {鍵|かぎ} を {開|あ}けた {人|ひと} は 、{閉|し}める {時間|じかん} が なかった ん だね 。|| Whoever opened it had no time to lock it again.
+?(comp=ren) comp: {議事録|ぎじろく} に は 、{鐘楼|しょうろう} は {施錠|せじょう} の まま と ありました 。{許可|きょか} なし で {鍵|かぎ} を {持|も}ち{出|だ}した 、と いう こと です 。|| The minutes said the tower was to stay locked. So the key was taken without permission.
+?(comp=suzu) comp: {立入|たちいり} {禁止|きんし} の {舞台|ぶたい} に 、{一人|ひとり} で {上|あ}がった {役者|やくしゃ} が いた の ね 。|| An actor went up alone onto a stage that was closed to everyone.
 
 @scene lf.bell_plate
 narr: {鐘|かね} の {台|だい} の {札|ふだ} 。「{灯落|ひおち} {警鐘|けいしょう} 。{鋳造|ちゅうぞう} 、{百年前|ひゃくねんまえ} 。」|| The plate on the bell's stand. "Lanternfall Warning Bell. Cast one hundred years ago."

@@ -64,7 +64,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         { jp: 'とうだい の ゲンゾウ', en: 'Genzō at the lighthouse', ok: true },
         { jp: 'さかなや の キヨ', en: 'Kiyo at the fish stall', ok: false, why: { en: 'Kiyo sells fish; nothing here is about fish.' } },
         { jp: 'ガラス こうぼう の アサヒ', en: 'Asahi at the glassworks', ok: false, why: { en: 'A furnace is a light of sorts — but "by the sea", and lamp oil?' } },
-      ], explain: { en: 'とうだい (灯台) is a lighthouse: the light by the sea.' } },
+      ], explain: { en: 'とうだい is a lighthouse: the light by the sea.' } },
     E: { kind: 'choose', item: 'c:sg_letter_who', ctx: { jp: '{海|うみ}の {光|ひかり}を {守|まも}る {人|ひと}へ 。 {油|あぶら}を {八缶|はちかん} {送|おく}ります 。', en: 'To the one who keeps the light of the sea. I am sending eight cans of oil.' },
       prompt: { en: 'Who is this letter for?' },
       options: [
@@ -78,14 +78,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
         { jp: '{灯台|とうだい}の ゲンゾウ', en: 'Genzō at the lighthouse', ok: true },
         { jp: 'かもめ{亭|てい}の チヨ', en: 'Chiyo at the Gull', ok: false, why: { en: 'An inn has lamps, but "don\'t let the light go out" on long nights is a keeper\'s duty.' } },
         { jp: '{倉庫|そうこ}の ワタル', en: 'Wataru at the warehouse', ok: false, why: { en: 'Wataru handles the cans, but the letter is for whoever burns them.' } },
-      ], explain: { en: '灯を絶やさない — "keep the light from going out": the lighthouse.' } },
+      ], explain: { jp: '{灯|ひ} を {絶|た}やさない', en: '"Keep the light from going out": the lighthouse.' } },
     A: { kind: 'choose', item: 'c:sg_letter_who', ctx: { jp: '{不足分|ふそくぶん}は {追|お}って {届|とど}けます 。 {岬|みさき}の {灯|ひ}が {一晩|ひとばん}でも {途切|とぎ}れれば 、 {沖|おき}の {船|ふね}は {帰|かえ}る {港|みなと}を {失|うしな}う の です から 。', en: 'The shortfall will follow shortly. If the light on the point fails for even one night, the boats at sea lose the harbour they are coming home to.' },
-      prompt: { en: 'Who is the letter addressed to, and what does 不足分 tell you?' },
+      prompt: { en: 'Who is the letter addressed to, and what does ふそくぶん ("the shortfall") tell you?' },
       options: [
         { jp: 'ゲンゾウ 。 {油|あぶら}が {足|た}りなかった こと を {送|おく}り{主|ぬし}も {知|し}って いる 。', en: 'Genzō — and the sender knows his oil came up short.', ok: true },
-        { jp: 'テツ 。 {渡|わた}し{船|ぶね}の {灯|ひ}の {話|はなし}だ 。', en: 'Tetsu — it\'s about the ferry\'s lamp.', ok: false, why: { en: '岬の灯 is the light on the point: the lighthouse, not the ferry.' } },
-        { jp: 'ゲンゾウ 。 ただ の {季節|きせつ}の {挨拶|あいさつ}だ 。', en: 'Genzō — it\'s just a seasonal greeting.', ok: false, why: { en: '不足分 (the shortfall) means something was missing from the delivery.' } },
-      ], explain: { en: '不足分は追って届けます — "the shortfall will be sent on": someone already noticed missing oil.' } },
+        { jp: 'テツ 。 {渡|わた}し{船|ぶね}の {灯|ひ}の {話|はなし}だ 。', en: 'Tetsu — it\'s about the ferry\'s lamp.', ok: false, why: { en: 'みさき の ひ is the light on the point: the lighthouse, not the ferry.' } },
+        { jp: 'ゲンゾウ 。 ただ の {季節|きせつ}の {挨拶|あいさつ}だ 。', en: 'Genzō — it\'s just a seasonal greeting.', ok: false, why: { en: 'ふそくぶん (the shortfall) means something was missing from the delivery.' } },
+      ], explain: { jp: '{不足分|ふそくぶん} は {追|お}って {届|とど}けます', en: '"The shortfall will be sent on": someone already noticed missing oil.' } },
   })[lv];
   E('sg.letter', {
     name: { en: 'Undelivered Letter', jp: '{届|とど}かない {手紙|てがみ}' }, art: 'sg_letter', look: { custom: 'sg_letter' },

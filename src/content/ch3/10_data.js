@@ -56,6 +56,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   ch('co_tomoe', { name: { en: 'Tomoe', jp: 'トモエ' }, voice: { pitch: 1.0 },
     look: { skin: 2, hair: 'long', hairColor: 1, cloth: ['#a05a3a', '#80462c', '#e8c890'], shape: 'apron', acc: ['headband'], bandCol: '#c8603a' },
     portrait: { eyes: 'narrow', style: 'long', acc: ['headband'], bandCol: '#c8603a', collar: 'apron', bg: '#4a2618' } });
+  ch('co_goat', { name: { en: 'The Director (a goat)', jp: '{座長|ざちょう}' }, voice: { pitch: 0.6 },
+    look: { custom: 'co_goat', col: '#e8e0d0' },
+    portrait: { skin: ['#e8e0d0', '#c8c0b0'], hair: ['#d8d0c0', '#e8e0d0', '#fff8e8'], cloth: ['#c8a040', '#a88030', '#e8c060'], style: 'shaved', eyes: 'narrow', bg: '#3a3222' } });
   ch('co_warden', { name: { en: 'The Kiln Warden', jp: '{窯|かま}の{番人|ばんにん}' }, voice: { pitch: 0.6 },
     look: { custom: 'golem', col: '#8a6a5a' },
     portrait: { skin: ['#8a6a5a', '#6a4a3a'], hair: ['#4a3028', '#6a4a3a', '#f0a060'], cloth: ['#6a4a3a', '#4a3028', '#8fb8b0'], style: 'shaved', eyes: 'sharp', iris: '#ffd070', bg: '#2a120c' } });
@@ -102,6 +105,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   it('co_plantbook', { name: { jp: '{植|う}え{付|つ}け{帳|ちょう}', en: 'Terrace planting book' }, desc: 'Grandma Ume\'s record of every tree set on the terraces, in three different hands. One page lists two hundred saplings in a single spring.', key: true });
   it('co_kilnbook', { name: { jp: '{窯|かま} の {帳面|ちょうめん}', en: 'Kiln ledger' }, desc: 'Master Isao\'s firing log. It stops mid-autumn, twenty years ago, and starts again the next spring in a different hand.', key: true });
   it('co_logpage', { name: { jp: '{窯焚|かまだ}き {日誌|にっし} の {最後|さいご} の {頁|ページ}', en: 'The kiln log\'s last page' }, desc: 'Brittle, scorched at one corner, written fast. Found sealed inside the great kiln.', key: true });
+  it('co_globe', { name: { jp: 'トモエ の {火屋|ほや}', en: 'Tomoe\'s lantern globe' }, desc: 'The one festival globe of thirty that survived the kiln. トモエ is scratched small into its base.', key: true });
   it('co_rope', { name: { jp: '{水門|すいもん} の {綱|つな}', en: 'Channel-gate rope' }, desc: 'Tamotsu\'s spare hemp rope, still smelling faintly of river mud.', key: true });
   it('co_ash_cup', { name: { jp: '{灰釉|はいゆう} の {湯呑|ゆの}み', en: 'Ash-glazed cup' }, desc: 'Nobu\'s thanks. The glaze is made from orchard ash; it runs green where it pooled in the kiln.' });
   it('co_straw_hat', { name: { jp: '{麦|むぎ}わら{帽子|ぼうし}', en: 'Terrace straw hat' }, desc: 'Asa\'s spare. A keepsake to wear; it changes only how you look.', slot: 'cosmetic', acc: 'hat' });

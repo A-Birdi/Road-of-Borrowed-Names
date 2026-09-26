@@ -301,3 +301,19 @@ narr: {里|さと} に {戻|もど}る と 、 {夕日|ゆうひ} が {段々畑
 !quest co_suzu 3
 !journal {窯|かま} の {頁|ページ} を トキワ に {届|とど}けよう 。 {皆|みな} が {集|あつ}まる {前|まえ} に 、 スズ と ヒロ の {工房|こうぼう} へ 。 || Take the kiln page to Tokiwa. Before the village gathers, go with Suzu to Hiro's workshop.
 `, 'ch3/return');
+
+RB.script.add(`
+@scene co.tokiwa_after
+co_tokiwa: {年代記|ねんだいき} の {今年|ことし} の {頁|ページ} に は 、 「 {本年|ほんねん} 」 と {書|か}きました 。 {今|いま} 、 ここ で {書|か}いて いる {記録|きろく} です から 。 || On this year's page I wrote "this year". Because it's a record written here and now.
+co_tokiwa: {記録係|きろくがかり} の {仕事|しごと} は 、 {正|ただ}しい {字|じ} を {守|まも}る こと だ と {思|おも}って いました 。 {違|ちが}いました 。 {書|か}いて ある こと と 、 {書|か}いて ない こと の {両方|りょうほう} に 、 {責任|せきにん} を {持|も}つ こと でした 。 || I used to think a recorder's job was to guard correct writing. I was wrong. It's to answer for both what is written and what isn't.
+?(co_bell_rung) co_tokiwa: …… {鐘|かね} を {外|はず}せ と {言|い}った こと 、 ゴロウ さん に {謝|あやま}りました 。 {笑|わら}われました よ 。 {腕|うで} の {方|ほう} が {頭|あたま} より {賢|かしこ}い 、 と 。 || …I apologised to Gorō for telling him to take the rope down. He laughed at me. Said arms are wiser than heads.
+
+@scene co.tokiwa_post
+co_tokiwa: {他|ほか} の {里|さと} の {記録係|きろくがかり} と 、 {手紙|てがみ} の やり{取|と}り を {始|はじ}めました 。 {皆|みな} 、 {何|なに} か を {書|か}き{落|お}として いた 。 {一緒|いっしょ} に {探|さが}して います 。 || I've begun corresponding with recorders in other villages. They'd all left something out. We're searching together.
+?(end_archive_library) co_tokiwa: {山|やま} の {書庫|しょこ} は 、 {誰|だれ} でも {読|よ}める {場所|ばしょ} に なった そう です ね 。 {灰実|はいみ} の {年代記|ねんだいき} の {写|うつ}し を 、 {一冊|いっさつ} {納|おさ}めました 。 {火事|かじ} の {頁|ページ} も 、 {私|わたし} の {字|じ} の まま で 。 || I hear the mountain archive is now a place anyone can read. I've deposited a copy of Haimi's chronicle — the fire page too, in my own hand.
+?(end_archive_closed) co_tokiwa: {書庫|しょこ} は {閉|と}じられた 。 {記録|きろく} は 、 {記録|きろく} を {必要|ひつよう} と する {人|ひと} の {手元|てもと} に {残|のこ}る 。 {私|わたし} は 、 それ で よい と {思|おも}います 。 {預|あず}ける の は 、 もう {懲|こ}り{懲|ご}り です 。 || The archive was closed. Records stay in the hands of the people who need them. I think that's right. I've had my fill of handing things over for safekeeping.
+?(end_mem_return) co_tokiwa: {預|あず}けた {悲|かな}しみ が 、 {皆|みな} に {返|かえ}って きました 。 {私|わたし} の {分|ぶん} も 。 …… {重|おも}い です 。 でも 、 {持|も}てない {重|おも}さ で は ない 。 || The grief we handed over came back to all of us. Mine too. …It's heavy. But not too heavy to carry.
+?(end_mem_choose) co_tokiwa: {自分|じぶん} で {選|えら}んで {取|と}り{戻|もど}しに {行|い}きました 。 {頼|たの}んだ の は {私|わたし} です から 、 {迎|むか}え に {行|い}く の も {私|わたし} で あるべき だ と 。 || I chose to go and take mine back. I was the one who asked; it seemed only right that I should be the one to fetch it.
+?(end_kasane_trial) co_tokiwa: {灯落|ひおち} で 、 {番人|ばんにん} と {話|はな}しました 。 {冬|ふゆ} に {来|き}た 、 {白|しろ}い {服|ふく} の {人|ひと} でした 。 {私|わたし} は {礼|れい} を {言|い}い 、 それ から {抗議|こうぎ} しました 。 {順番|じゅんばん} は 、 それ で {正|ただ}しかった と {思|おも}います 。 || I spoke with the keeper in Lanternfall — the one in white who came that winter. I thanked them, and then I protested. I believe that was the right order.
+?(end_kasane_keeper) co_tokiwa: {番人|ばんにん} は {山|やま} に {残|のこ}り 、 {書庫|しょこ} を {守|まも}って いる 。 {年|とし} に {一度|いちど} 、 {記録|きろく} の {写|うつ}し を {送|おく}る {約束|やくそく} を しました 。 {見張|みは}り {役|やく} の {一人|ひとり} と して 。 || The keeper stayed on the mountain to mind the archive. I've promised to send them a copy of our records once a year — as one of those who keep watch.
+`, 'ch3/hall-after');

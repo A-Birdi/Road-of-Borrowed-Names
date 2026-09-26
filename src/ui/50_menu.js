@@ -91,6 +91,8 @@ RB.ui.menu = (function () {
       const saved = s.notebook.filter((n) => n.kind === 'word');
       h += '<h3>Words you noted</h3><div class="grid2">' + (saved.length ? saved.map((n) => '<div class="item"><span class="jp" lang="ja">' + esc(n.surface) + '</span> <span class="dim">【' + esc(n.reading) + '】</span><div class="small">' + esc(n.m) + '</div></div>').join('') : '<p class="dim small">Use the lightbulb on any Japanese text and press “＋ Notebook”.</p>') + '</div>';
     } else if (nbTab === 'kana') {
+      const ng = s.learn.profile === 'F' && s.learn.kanaKnown !== 'both' ? RB.lessons.nextGroup(s) : null;
+      if (ng) h += '<div class="row" style="margin-bottom:0.4em"><button class="btn small primary" data-a="nextkana">Learn the next kana group: ' + esc(ng.g.title || '') + ' ▶</button><span class="small dim">Optional — the story also teaches kana as you go.</span></div>';
       h += kanaChart(s);
     } else if (nbTab === 'grammar') {
       const seen = Object.keys(s.learn.items).filter((k) => k.startsWith('g:')).map((k) => k.slice(2));
@@ -111,6 +113,8 @@ RB.ui.menu = (function () {
     }
     body.innerHTML = h;
     body.querySelectorAll('[data-nb]').forEach((b) => (b.onclick = () => { nbTab = b.getAttribute('data-nb'); notebook(body); }));
+    const nk = body.querySelector('[data-a=nextkana]');
+    if (nk) nk.onclick = async () => { close(); await RB.lessons.run('kana'); };
     const pr = body.querySelector('[data-a=practice]');
     if (pr) pr.onclick = async () => { close(); await RB.challenge.practice(); };
   }

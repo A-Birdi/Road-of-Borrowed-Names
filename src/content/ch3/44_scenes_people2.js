@@ -164,7 +164,7 @@ co_fusa: {休|やす}みたく なったら {声|こえ} を かけて 。 {布�
 
 @scene co.fusa_after
 co_fusa: {妹|いもうと} の ヨシノ は ね 、 {工房|こうぼう} {通|どお}り で {染|そ}め{物|もの} を して た の 。 {祭|まつ}り の {旗|はた} も 、 あの {子|こ} が {染|そ}めて た 。 || My sister Yoshino dyed cloth on the workshop row. She dyed the festival banners, too.
-co_fusa[smile]: {今年|ことし} から 、 {旗|はた} の {一枚|いちまい} を {私|わたし} が {染|そ}める こと に した わ 。 {下手|へた} だ けど 。 {泣|な}き ながら 染めた から 、 {色|いろ} が {滲|にじ}んで る の 。 || From this year I dye one of the banners myself. I'm no good at it. I cried while I did it, so the colour ran.
+co_fusa[smile]: {今年|ことし} から 、 {旗|はた} の {一枚|いちまい} を {私|わたし} が {染|そ}める こと に した わ 。 {下手|へた} だ けど 。 {泣|な}き ながら {染|そ}めた から 、 {色|いろ} が {滲|にじ}んで る の 。 || From this year I dye one of the banners myself. I'm no good at it. I cried while I did it, so the colour ran.
 
 @scene co.fusa_post
 co_fusa: {宿|やど} の {帳場|ちょうば} に 、 {新|あたら}しい {桶|おけ} と {火傷|やけど} の {薬|くすり} を {置|お}いた の 。 {旅|たび} の {薬師|くすし} さん に {教|おし}わった {作|つく}り{方|かた} で ね 。 || I keep a new bucket and burn salve at the front desk now. Made the way a travelling apothecary taught me.
@@ -342,7 +342,7 @@ co_ume: {急|いそ}がなくて いい よ 。 {婆|ばあ} の {話|はなし}
 
 @scene co.ume_first
 co_ume: おや 、 {旅|たび} の {人|ひと} 。 {段々畑|だんだんばたけ} は {初|はじ}めて かい 。 {坂|さか} が {急|きゅう} だ から 、 {足元|あしもと} に {気|き} を お{付|つ}け 。 || Well now, travellers. First time on the terraces? The slopes are steep — mind your feet.
-co_ume: ウメ だ よ 。 {柿|かき} を {育|そだ}てて 六十年 。 …… {変|へん} な こと を {言|い}う よう だ けど 、 {雨|あめ} の {日|ひ} に なる と 、 {家|いえ} の {梁|はり} から けむり の におい が する ん だ よ 。 || I'm Ume. Sixty years growing persimmons. …This may sound odd, but on rainy days my roof beams smell of smoke.
+co_ume: ウメ だ よ 。 {柿|かき} を {育|そだ}てて {六十年|ろくじゅうねん} 。 …… {変|へん} な こと を {言|い}う よう だ けど 、 {雨|あめ} の {日|ひ} に なる と 、 {家|いえ} の {梁|はり} から けむり の におい が する ん だ よ 。 || I'm Ume. Sixty years growing persimmons. …This may sound odd, but on rainy days my roof beams smell of smoke.
 co_ume: {焚|た}き{火|び} なんか した こと ない {梁|はり} なのに ね 。 {毎年|まいとし} 、 {秋|あき} の {今頃|いまごろ} に なる と 、 その におい で {眠|ねむ}れなく なる 。 || And those beams never saw a fire. Every year about now, that smell keeps me awake.
 ?(comp=nao) comp: {梁|はり} は 、 どこ から {持|も}って きた もの です か 。 || Where did those beams come from?
 ?(comp=nao) co_ume: さあ 。 {上|うえ} の {方|ほう} から {下|お}ろした 、 と {聞|き}いた よう な 。 || Hmm. Brought down from up the hill, I think I heard.

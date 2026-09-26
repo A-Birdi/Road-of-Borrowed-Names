@@ -101,7 +101,7 @@ narr: {手紙|てがみ} が 、 カモメ の よう に {港|みなと} の {�
 shiori[surprise]: {手紙|てがみ} が …… {空|そら} から 。 || Letters… falling from the sky.
 narr: {渡|わた}し{場|ば} の {時刻表|じこくひょう} で {揺|ゆ}れて いた {字|じ} が 、 {落|お}ち{着|つ}いた 。 {倉庫|そうこ} の ラベル も 、 もう {動|うご}かない 。 || The flickering times on the ferry board settle. The warehouse labels stop moving.
 narr: {岬|みさき} の {風見|かざみ} が 、 {気持|きも}ち よさそう に {回|まわ}って いる 。 || The weather vane on the point turns contentedly.
-?(comp=nao) comp: {配達|はいたつ} {完了|かんりょう} 。 …… {空|そら} から 、 って の は {初|はじ}めて 見た けど な 。 || Delivery complete. …Though I've never seen it done from the sky.
+?(comp=nao) comp: {配達|はいたつ} {完了|かんりょう} 。 …… {空|そら} から 、 って の は {初|はじ}めて {見|み}た けど な 。 || Delivery complete. …Though I've never seen it done from the sky.
 ?(comp=mio) comp[smile]: {見|み}て 、 キヨ さん が {手紙|てがみ} を {拾|ひろ}って {泣|な}いてる 。 …… よかった 。 || Look, Kiyo's picked up a letter and she's crying. …I'm glad.
 ?(comp=ren) comp[smile]: {返送|へんそう} {取|と}り{消|け}し 。 …… {記録|きろく} に {残|のこ}したい {言葉|ことば} です 。 || "Return cancelled." …Words I'd like to put on record.
 ?(comp=suzu) comp[laugh]: {紙吹雪|かみふぶき} ！ {最高|さいこう} の {終幕|しゅうまく} ね ！ || Confetti! What a finale!

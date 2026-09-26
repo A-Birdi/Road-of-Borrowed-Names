@@ -429,6 +429,32 @@ await test('direct file:// mode boots, reports storage honestly, no network', as
   await ctx.close();
 });
 
+// ---------------------------------------------------------------------------
+await test('New Game+ carries only learning, notebook, cosmetics; source untouched', async () => {
+  const ctx = await b.newContext();
+  const { p, errors } = await page(b, url, { context: ctx });
+  await p.evaluate(async () => {
+    const s = RB.state.newCampaign({ profile: 'I' });
+    s.player.name = 'Veteran'; s.comp = 'ren'; s.flags.postgame = true; s.flags.ch3_done = true; s.map = 'rw.hall'; s.x = 5; s.y = 6;
+    s.learn.items['k:あ'] = { id: 'k:あ', box: 4, seen: 9, ok: 9, bad: 0, streak: 5, last: 1, lastOk: 1, due: 9, cool: 0, modes: { recog: 1, recall: 2, hand: 6, assisted: 0 }, ctx: [] };
+    s.notebook.push({ kind: 'lore', id: 'rw_hush', t: 1 });
+    s.inv.rw_ribbon = 1; s.inv.rw_plane = 1; s.equip.cosmetic = 'rw_ribbon';
+    await RB.save.writeSlot(1, s, {});
+  });
+  await p.reload(); await p.waitForFunction(() => window.__RB_READY__ === true);
+  await p.click('text=New Game');
+  await p.click('.slot[data-slot="2"] [data-a=start]');
+  await p.waitForSelector('[role=alertdialog]');
+  await p.click('[role=alertdialog] >> text=New Game+ from slot 1');
+  await p.waitForFunction(() => RB.game.G.playing === true);
+  const n = await p.evaluate(() => { const s = RB.game.s; return { comp: s.comp, post: !!s.flags.postgame, ch3: !!s.flags.ch3_done, a: s.learn.items['k:あ'] && s.learn.items['k:あ'].box, nb: s.notebook.length, ribbon: s.inv.rw_ribbon, plane: s.inv.rw_plane || 0, ng: s.ngplus, map: s.map, name: s.player.name }; });
+  assert(n.comp === null && !n.post && !n.ch3 && n.a === 4 && n.nb === 1 && n.ribbon === 1 && n.plane === 0 && n.ng === 1 && n.map === 'rw.road' && n.name === 'Veteran', JSON.stringify(n));
+  const src = await p.evaluate(async () => (await RB.save.read(1, 'manual')).state);
+  assert(src.comp === 'ren' && src.flags.postgame, 'source slot changed');
+  assert(!errors.length, errors.join('; '));
+  await ctx.close();
+});
+
 await b.close(); srv.close();
 console.log(results.join('\n'));
 console.log(`\n${pass} passed, ${fail} failed`);

@@ -290,7 +290,7 @@ RB.atlas = (function () {
     }
     const terrain = rows.map((row) => row.join(''));
     const id = mapId(run, d.key);
-    const sp = (spots['@'] || [[Math.floor(W / 2), H - 2]])[0];
+    const sp = spawnOf(run, d);
     const def = {
       name: pat.name, region: 'atlas', music: pat.music || 'atlas', noTravel: true, noCheckpoint: true,
       ambient: ambientFor(run, d),
@@ -394,12 +394,18 @@ RB.atlas = (function () {
     }
     return { id, def };
   }
+  // Entry point. If the tile behind the entry is blank page, the player stands
+  // one step further in so the companion has room to follow in behind.
   function spawnOf(run, d) {
     const pat = A.patterns[d.pattern];
     const rows = rowsOf(d.pattern, d.variant);
     for (let y = 0; y < rows.length; y++) {
       const x = rows[y].indexOf('@');
-      if (x >= 0) return [d.mirror ? pat.w - 1 - x : x, y];
+      if (x < 0) continue;
+      const below = rows[y + 1] ? rows[y + 1][x] : 'X';
+      const above = y > 0 ? rows[y - 1][x] : 'X';
+      const yy = (below === 'X' || below === 'Z') && ':.+ps,'.indexOf(above) >= 0 ? y - 1 : y;
+      return [d.mirror ? pat.w - 1 - x : x, yy];
     }
     return [Math.floor(pat.w / 2), pat.h - 2];
   }

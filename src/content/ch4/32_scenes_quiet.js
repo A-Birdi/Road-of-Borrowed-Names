@@ -222,7 +222,7 @@ comp: …… {話|はな}しすぎました 。 {明日|あした} の {灯|あ�
 // ---- Suzu -------------------------------------------------------------------------------
 RB.script.add(`
 @scene sb.quiet_suzu
-comp: ねえ 、 {起|お}きてる ？ …… {起|お}きてる よね 。 {息|いき} の {音|おと} で わかる 。 {客席|きゃくせき} の {寝息|ねいき} は 、 {舞台|ぶたい} から よく {聞|き}こえる の 。 || Hey, you awake? …You are. I can tell by your breathing. You can hear the audience snoring very clearly from the stage.
+comp: ねえ=(hey) 、 {起|お}きてる ？ …… {起|お}きてる よね 。 {息|いき} の {音|おと} で わかる 。 {客席|きゃくせき} の {寝息|ねいき} は 、 {舞台|ぶたい} から よく {聞|き}こえる の 。 || Hey, you awake? …You are. I can tell by your breathing. You can hear the audience snoring very clearly from the stage.
 !choice
 * {寝|ね}てる お{客|きゃく} が いた の ？ || People slept through your shows? -> sleep
 * {眠|ねむ}れない の ？ || Can't sleep? -> cant
@@ -237,7 +237,7 @@ comp: ヤギ と いえば ね 。 {昔|むかし} 、 {一座|いちざ} に �
 comp: {本物|ほんもの} の {座長|ざちょう} が {付|つ}けた の 。 {自分|じぶん} より {言|い}う こと を {聞|き}かない やつ に は 、 {似合|にあ}い の {名前|なまえ} だ って 。 || The real director named it. Said anything that listened to him even less than he did deserved the title.
 comp[laugh]: ある {晩|ばん} 、 お{芝居|しばい} の いちばん {泣|な}ける {場面|ばめん} で 、 その ヤギ が {舞台|ぶたい} に {上|あ}がって きて 、 {幕|まく} を {食|た}べ{始|はじ}めた の 。 || One night, right in the most tear-jerking scene of the play, that goat walked onstage and started eating the curtain.
 comp: {客席|きゃくせき} は {大|おお}{笑|わら}い 。 {次|つぎ} の {町|まち} でも 「 ヤギ の {場面|ばめん} は ？ 」 って {聞|き}かれて 、 {結局|けっきょく} その {旅|たび} の {間|あいだ} ずっと 、 ヤギ に {幕|まく} を {食|た}べて もらった 。 || The audience roared. In the next town people asked, "Where's the goat scene?" — so for the rest of that tour, we had the goat eat the curtain every night.
-comp[smirk]: {幕|まく} {代|だい} で {一座|いちざ} は {赤字|あかじ} に なった けど ね 。 {帳簿|ちょうぼ} は あたし が つけてた から 、 よく {覚|おぼ}えてる 。 {一枚|いちまい} {八百|はっぴゃく} 。 || The curtains put the troupe in the red. I kept the books, so I remember exactly. Eight hundred a curtain.
+comp[smirk]: {幕|まく} {代|だい}=(cost) で {一座|いちざ} は {赤字|あかじ} に なった けど ね 。 {帳簿|ちょうぼ} は あたし が つけてた から 、 よく {覚|おぼ}えてる 。 {一枚|いちまい} {八百|はっぴゃく} 。 || The curtains put the troupe in the red. I kept the books, so I remember exactly. Eight hundred a curtain.
 !choice
 * {八百|はっぴゃく} …… {細|こま}かい ね || Eight hundred… you remember the exact figure? -> exact
 * ヤギ は {元気|げんき} ？ || Is the goat still around? -> goatnow

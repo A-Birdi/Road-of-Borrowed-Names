@@ -67,11 +67,11 @@ co_kotaro: …… うん 。 じいちゃん も そう {言|い}った 。 || �
 !end
 :count
 co_kotaro: サヨ さん の {伝言|でんごん} ？ うん 、 {僕|ぼく} が ノブ さん に {言|い}った よ 。 「 さんじゅう …… 」 {何|なん} だっけ 。 || Sayo's message? Yeah, I told Nobu. "Thirty…" thirty what, again?
-co_kotaro: サヨ さん は 「 さんじゅう まい 」 って {言|い}った 気 が する 。 でも ノブ さん の とこ の とっくり 、 かっこいい じゃん 。 だから 「 さんじゅっぽん ！ 」 って 。 || I think Sayo said "thirty flat ones". But Nobu's sake flasks are cool, right? So I said "thirty long ones!"
+co_kotaro: サヨ さん は 「 さんじゅう まい 」 って {言|い}った {気|き} が する 。 でも ノブ さん の とこ の とっくり 、 かっこいい じゃん 。 だから 「 さんじゅっぽん ！ 」 って 。 || I think Sayo said "thirty flat ones". But Nobu's sake flasks are cool, right? So I said "thirty long ones!"
 ?(comp=nao) comp[smirk]: {伝言|でんごん} の {途中|とちゅう} で {中身|なかみ} を {変|か}える な 。 {配達人|はいたつにん} の {一番|いちばん} {大事|だいじ} な {決|き}まり だ ぞ 。 || Never change the contents of a message on the way. Rule number one for couriers.
 ?(comp=mio) comp[smile]: {好|す}きな もの を {頼|たの}んじゃった の ね 。 {正直|しょうじき} で よろしい 。 {謝|あやま}りに {行|い}こう か 。 || You ordered what you liked. Very honest. Shall we go and apologise?
-?(comp=ren) comp: {助数詞|じょすうし} 一つ で 、 {皿|さら} が {徳利|とっくり} に なる 。 {言葉|ことば} は {恐|おそ}ろしい 。 {美|うつく}しい 。 || One counter word, and plates become flasks. Language is terrifying. And beautiful.
-?(comp=suzu) comp[laugh]: {台本|だいほん} を {書|か}き{換|か}える {役者|やくしゃ} ね 。 {気持|きも}ち は 分かる けど 、 {座長|ざちょう} に {怒|おこ}られる やつ よ 。 || An actor rewriting the script mid-show. I understand the urge, but the director will have your head.
+?(comp=ren) comp: {助数詞|じょすうし} {一|ひと}つ で 、 {皿|さら} が {徳利|とっくり} に なる 。 {言葉|ことば} は {恐|おそ}ろしい 。 {美|うつく}しい 。 || One counter word, and plates become flasks. Language is terrifying. And beautiful.
+?(comp=suzu) comp[laugh]: {台本|だいほん} を {書|か}き{換|か}える {役者|やくしゃ} ね 。 {気持|きも}ち は {分|わ}かる けど 、 {座長|ざちょう} に {怒|おこ}られる やつ よ 。 || An actor rewriting the script mid-show. I understand the urge, but the director will have your head.
 co_kotaro[worry]: …… ノブ さん 、 {怒|おこ}って る ？ || …Is Nobu angry?
 pc: {正|ただ}しい {注文書|ちゅうもんしょ} を {書|か}けば 、 {大丈夫|だいじょうぶ} だ よ 。 || If we write a proper order slip, it'll be fine.
 !quest co_count 2
@@ -219,7 +219,7 @@ co_heita: …… ん ？ あ 、 {寝|ね}て ません よ 。 {目|め} を {�
 co_heita: {祭|まつ}り の {敷物|しきもの} {用|よう} に 、 {草|くさ} を {刈|か}る {係|かかり} なん っす 。 でも {暑|あつ}い でしょ 。 {草|くさ} も {逃|に}げない し 。 || I'm on grass duty — for the festival mats. But it's hot, isn't it. And the grass isn't going anywhere.
 co_heita: この {草|くさ} の {帯|おび} ？ {昔|むかし} から ずっと {草|くさ}ぼうぼう っす よ 。 {刈|か}る {理由|りゆう} も ない し 。 …… ない っす よ ね ？ || This strip of grass? It's always been overgrown. There's no reason to cut it. …There isn't, right?
 ?(comp=nao) comp: {理由|りゆう} が あったら 、 {刈|か}る の か ？ || If there were a reason, would you cut it?
-?(comp=nao) co_heita: …… {理由|りゆう} 次第 っす ね 。 {俺|おれ} 、 {理由|りゆう} が ある と {働|はたら}く {男|おとこ} なん で 。 || …Depends on the reason. I'm a man who works when there's a reason.
+?(comp=nao) co_heita: …… {理由|りゆう} {次第|しだい} っす ね 。 {俺|おれ} 、 {理由|りゆう} が ある と {働|はたら}く {男|おとこ} なん で 。 || …Depends on the reason. I'm a man who works when there's a reason.
 ?(comp=mio) comp[smile]: {日射病|にっしゃびょう} に なります よ 。 せめて {日陰|ひかげ} で {考|かんが}えて ください 。 || You'll get sunstroke. At least do your thinking in the shade.
 ?(comp=ren) comp: {草|くさ} の {帯|おび} に も 、 {名|な} が あった はず です 。 {道|みち} の {形|かたち} を して います から 。 || That strip must have had a name once. It's shaped like a road.
 ?(comp=suzu) comp[laugh]: {目|め} を {閉|と}じて {考|かんが}える の 、 {私|わたし} も {得意|とくい} よ 。 {客席|きゃくせき} で よく やる わ 。 || I'm good at thinking with my eyes shut too. I do it in audiences all the time.

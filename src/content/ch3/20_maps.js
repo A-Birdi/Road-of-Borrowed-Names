@@ -88,7 +88,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       for (let x = 40; x < 50; x += 3) k.set(x, 33, 'O');
       k.scatter(',', 24, 315, [2, 26, 30, 12], '.');
       k.scatter('O', 5, 316, [2, 27, 12, 6], '.');
-      k.scatter('"', 6, 317, [32, 20, 2, 12], '.');
+      k.scatter('"', 6, 317, [32, 27, 2, 6], '.');
       k.scatter('"', 5, 318, [36, 26, 1, 12], '.:');
     });
   }
@@ -108,8 +108,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     { p: 'door', x: 46, y: 36, text: { jp: '{留守|るす} の よう だ 。 {軒下|のきした} に {長靴|ながぐつ} が {三足|さんぞく} {並|なら}んで いる 。', en: 'Nobody home. Three pairs of boots stand under the eaves, in order of size.' } },
   ];
   const villageProps = [
-    { p: 'co_lookout', x: 11, y: 11, scene: 'co.lookout_base', o: {}, if: '!co_bell_done' },
-    { p: 'co_lookout', x: 11, y: 11, scene: 'co.lookout_base', o: { rope: true }, if: 'co_bell_done' },
+    { p: 'co_lookout', x: 11, y: 11, scene: 'co.lookout_base', o: {}, if: '!co_bell_done&!co_restored' },
+    { p: 'co_lookout', x: 11, y: 11, scene: 'co.lookout_base', o: { rope: true }, if: 'co_bell_done|co_restored' },
     { p: 'co_buckets', x: 38, y: 6, scene: 'co.buckets' }, { p: 'co_buckets', x: 48, y: 6, scene: 'co.buckets' },
     { p: 'noticeboard', x: 15, y: 24, scene: 'co.board' },
     { p: 'co_stage', x: 19, y: 13 }, { p: 'co_stage', x: 22, y: 13 }, { p: 'co_stage', x: 25, y: 13 },
@@ -124,10 +124,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
     { p: 'lantern', x: 13, y: 17 }, { p: 'lantern', x: 32, y: 17 }, { p: 'lantern', x: 36, y: 20 },
     { p: 'kiln', x: 47, y: 21, o: {} , text: { jp: 'ノブ の {小|ちい}さな {窯|かま} 。 まだ {少|すこ}し {温|あたた}かい 。', en: 'Nobu\'s small pottery kiln. Still faintly warm from yesterday.' } },
     { p: 'crate', x: 33, y: 24, scene: 'co.tamotsu_shed' }, { p: 'barrel', x: 32, y: 25 },
-    { p: 'co_hoshigaki', x: 4, y: 10 }, { p: 'co_hoshigaki', x: 26, y: 26 },
-    { p: 'flowerpot', x: 12, y: 16 }, { p: 'flowerpot', x: 38, y: 12 },
+    { p: 'co_hoshigaki', x: 4, y: 16 }, { p: 'co_hoshigaki', x: 27, y: 31 },
+    { p: 'flowerpot', x: 12, y: 16 }, { p: 'flowerpot', x: 36, y: 12 },
     { p: 'cart', x: 12, y: 27 }, { p: 'hay', x: 19, y: 9 }, { p: 'stump', x: 29, y: 10 },
-    { p: 'mailbox', x: 9, y: 25, text: { jp: '「 {郵便|ゆうびん} ・ {灰実|はいみ} 」 。 {入|い}れ{口|ぐち} に {祭|まつ}り の {招待状|しょうたいじょう} が {一枚|いちまい} {挟|はさ}まって いる 。', en: '"Post — Haimi." A festival invitation is stuck half-in the slot.' } },
+    { p: 'mailbox', x: 9, y: 24, text: { jp: '「 {郵便|ゆうびん} ・ {灰実|はいみ} 」 。 {入|い}れ{口|ぐち} に {祭|まつ}り の {招待状|しょうたいじょう} が {一枚|いちまい} {挟|はさ}まって いる 。', en: '"Post — Haimi." A festival invitation is stuck half-in the slot.' } },
     { p: 'stone_marker', x: 36, y: 16, scene: 'co.channel_marker' },
     { p: 'co_scrub', x: 3, y: 9, if: '!co_firebreak_cut' }, { p: 'co_scrub', x: 9, y: 10, if: '!co_firebreak_cut' }, { p: 'co_scrub', x: 14, y: 9, if: '!co_firebreak_cut' },
     { p: 'co_scrub', x: 30, y: 9, if: '!co_firebreak_cut' }, { p: 'co_scrub', x: 32, y: 10, if: '!co_firebreak_cut' },
@@ -152,7 +152,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'co_heita', x: 16, y: 9, dir: 'left', wander: 2, if: 'co_firebreak_cut', talk: [{ if: 'post', scene: 'co.heita_post' }, { scene: 'co.heita_after' }] },
       { id: 'hiro', x: 25, y: 19, dir: 'up', if: 'ch3_done', talk: [{ if: 'post', scene: 'co.hiro_post' }, { scene: 'co.hiro_after' }] },
       { id: 'suzu', x: 27, y: 14, dir: 'down', wander: 1, if: 'comp!=suzu&co_chronicle_read&!co_kiln_done', talk: [{ scene: 'co.suzu_c_square' }] },
-      { id: 'suzu', x: 23, y: 21, dir: 'up', if: 'comp!=suzu&co_kiln_done&!co_suzu_done', talk: [{ scene: 'co.suzu_c_ready' }] },
       { id: 'suzu', x: 21, y: 14, dir: 'down', wander: 2, if: 'comp!=suzu&ch3_done', talk: [{ if: 'post', scene: 'co.suzu_c_post' }, { scene: 'co.suzu_c_after' }] },
     ],
     exits: [
@@ -190,7 +189,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'co_asa', x: 29, y: 18, dir: 'up' }, { id: 'co_heita', x: 22, y: 19, dir: 'up' },
       { id: 'suzu', x: 25, y: 20, dir: 'up', if: 'comp!=suzu' },
     ],
-    exits: [], spawn: { default: [24, 17, 'up'] },
+    exits: [], spawn: { default: [23, 17, 'up'] },
   };
 
   // Festival night.
@@ -277,6 +276,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'suzu', x: 10, y: 5, dir: 'left', if: 'comp!=suzu&co_chronicle_read&!co_suzu_c_inn', talk: 'co.suzu_c_inn' },
       { id: 'suzu', x: 10, y: 5, dir: 'left', if: 'comp!=suzu&co_suzu_c_inn&!co_kiln_done', talk: 'co.suzu_c_wait' },
     ],
+    onEnter: [{ scene: 'co.suzu_night', if: 'comp=suzu&co_chronicle_read' }],
   });
 
   interior('co.glass', T('Glass Workshop', 'ガラス {工房|こうぼう}'), 13, 10, 6, [42, 18], {
@@ -294,6 +294,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     npcs: [
       { id: 'hiro', x: 4, y: 5, dir: 'left', if: '!ch3_done', talk: [{ scene: 'co.hiro' }] },
       { id: 'co_isao', x: 9, y: 4, dir: 'down', talk: [{ if: 'post', scene: 'co.isao_post' }, { if: 'ch3_done', scene: 'co.isao_after' }, { scene: 'co.isao' }] },
+      { id: 'suzu', x: 6, y: 6, dir: 'left', if: 'comp!=suzu&co_kiln_done&!co_suzu_done', talk: 'co.suzu_truth' },
     ],
   });
 
@@ -351,7 +352,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.path([[28, 19], [28, 16], [10, 16], [10, 13]], ':', 2);
       k.path([[19, 16], [19, 17]], ':', 1);
       // band 4 — the overgrown firebreak cuts diagonally across
-      for (let i = 0; i < 16; i++) k.rect(2 + i * 2, 11 - Math.floor(i / 3), 3, 2, ';');
+      for (let i = 0; i < 14; i++) k.rect(2 + i * 2, 11 - Math.floor(i / 3), 3, 2, ';');
       k.path([[10, 12], [10, 9], [20, 9], [20, 6]], ':', 2);
       k.rect(26, 8, 8, 3, 'F');
       // band 5 (top): headgate and the upper gate
@@ -377,17 +378,18 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'fence', x: 20, y: 0, if: '!co_upper_open', scene: 'co.upper_locked' }, { p: 'fence', x: 21, y: 0, if: '!co_upper_open', scene: 'co.upper_locked' },
       { p: 'fence', x: 4, y: 0, if: '!co_shortcut', scene: 'co.shortcut_locked' }, { p: 'fence', x: 5, y: 0, if: '!co_shortcut', scene: 'co.shortcut_locked' },
       { p: 'co_scrub', x: 14, y: 10, if: '!co_firebreak_cut' }, { p: 'co_scrub', x: 23, y: 8, if: '!co_firebreak_cut' }, { p: 'co_scrub', x: 27, y: 7, if: '!co_firebreak_cut' },
-      { p: 'co_scrub', x: 6, y: 11, if: '!co_firebreak_cut' }, { p: 'co_scrub', x: 31, y: 6, if: '!co_firebreak_cut' },
+      { p: 'co_scrub', x: 6, y: 11, if: '!co_firebreak_cut' }, { p: 'co_scrub', x: 33, y: 8, if: '!co_firebreak_cut' },
       { p: 'co_sheaf', x: 14, y: 10, if: 'co_firebreak_cut' }, { p: 'co_sheaf', x: 23, y: 8, if: 'co_firebreak_cut' }, { p: 'co_sheaf', x: 6, y: 11, if: 'co_firebreak_cut' },
-      { p: 'hay', x: 15, y: 30 }, { p: 'cart', x: 12, y: 32 },
+      { p: 'hay', x: 15, y: 32 }, { p: 'cart', x: 12, y: 32 },
       { p: 'stone_marker', x: 33, y: 12, scene: 'co.terrace_marker' },
-      { p: 'co_hoshigaki', x: 2, y: 20 },
+      { p: 'co_hoshigaki', x: 2, y: 25 },
       { p: 'bench', x: 30, y: 2, text: { jp: '{水門|すいもん} の {横|よこ} の {長椅子|ながいす} 。 ここ から {里|さと} {全体|ぜんたい} が {見|み}える 。', en: 'A bench beside the water gate. From here you can see the whole village, and the lookout tower standing over it like a heron.' } },
     ],
     npcs: [
       { id: 'co_asa', x: 22, y: 31, dir: 'left', wander: 1, talk: [{ if: 'post', scene: 'co.asa_post' }, { if: 'ch3_done', scene: 'co.asa_after' }, { scene: 'co.asa' }] },
       { id: 'co_ume', x: 14, y: 23, dir: 'down', wander: 1, talk: [{ if: 'post', scene: 'co.ume_post' }, { if: 'ch3_done', scene: 'co.ume_after' }, { scene: 'co.ume' }] },
       { id: 'co_tamotsu', x: 34, y: 3, dir: 'right', if: 'co_records_done&!co_upper_open', talk: 'co.tamotsu_gate' },
+      { id: 'co_goat', x: 27, y: 23, dir: 'left', wander: 2, talk: 'co.goat' },
     ],
     exits: [
       { x: 21, y: 33, w: 2, h: 1, to: 'co.village', tx: 24, ty: 1, dir: 'down' },
@@ -431,8 +433,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.scatter('.', 30, 334, [3, 0, 33, 29], 'a');
       k.rect(29, 0, 4, 7, 'a');
       k.path([[20, 29], [20, 23]], ':', 2);
-      k.path([[20, 21], [14, 21], [14, 15]], ':', 2);
-      k.path([[15, 13], [30, 13], [30, 8]], ':', 2);
+      k.path([[20, 20], [14, 20], [14, 15]], ':', 2);
+      k.path([[14, 12], [30, 12], [30, 8]], ':', 2);
       k.path([[30, 6], [30, 0]], ':', 2);
     }),
     props: [
@@ -494,7 +496,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     props: [
       { p: 'co_seal', x: 20, y: 5, if: '!co_seal_broken', scene: 'co.kiln_seal' },
       { p: 'kiln', x: 11, y: 3, o: { sealed: true }, text: { jp: '{小|ちい}さな {素焼|すや}き の {窯|かま} 。 {中|なか} は {灰|はい} で いっぱい だ 。', en: 'A small bisque kiln, its mouth choked with ash.' } },
-      { p: 'sign', x: 7, y: 13, scene: 'co.works_sign' },
+      { p: 'sign', x: 5, y: 13, scene: 'co.works_sign' },
       { p: 'signblank', x: 29, y: 13, scene: 'co.works_sign2' },
       { p: 'co_beam', x: 11, y: 21 }, { p: 'co_beam', x: 27, y: 9 },
       { p: 'glassware', x: 19, y: 20, scene: 'co.works_globes' },
@@ -597,8 +599,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'bell', x: 7, y: 3, scene: 'co.lookout_bell' },
       { p: 'sparkle', x: 1, y: 9 }, { p: 'sparkle', x: 3, y: 10 }, { p: 'sparkle', x: 12, y: 9 }, { p: 'sparkle', x: 14, y: 10 },
       { p: 'sparkle', x: 2, y: 1 }, { p: 'sparkle', x: 13, y: 2 }, { p: 'sparkle', x: 7, y: 10 }, { p: 'sparkle', x: 9, y: 11 },
+      { p: 'fence', x: 5, y: 8, block: false }, { p: 'fence', x: 6, y: 8, block: false }, { p: 'fence', x: 7, y: 8, block: false }, { p: 'fence', x: 8, y: 8, block: false }, { p: 'fence', x: 9, y: 8, block: false },
+      { p: 'hole', x: 10, y: 7 },
     ],
     exits: [],
+    triggers: [{ x: 10, y: 7, w: 1, h: 1, scene: 'co.lookout_down', if: 'ch3_done' }],
     spawn: { default: [7, 6, 'up'] },
   };
 })(RB.content, RB.mapkit);

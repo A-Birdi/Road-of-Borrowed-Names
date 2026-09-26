@@ -98,12 +98,39 @@ narr: {机|つくえ} の {端|はし} に 、{雪|ゆき} の {色|いろ} を 
 ?(!ch4_done) akari: {雪鈴|ゆきすず} の {出|で} なんです 。{父|ちち} が {山|やま} で {星|ほし} を {見|み}て います 。|| I'm from Snowbell. My father watches the stars up on the mountain.
 akari[sad]: {手紙|てがみ} を {書|か}いて も 、ぜんぶ 「{宛先|あてさき}{不明|ふめい}」 で {戻|もど}って くる んです 。|| Every letter I write comes back "address unknown".
 akari: 「{休|やす}み を ください 」 と {言|い}おう と して も 、{残業|ざんぎょう} を {頼|たの}まれる と 、「かしこまりました」 と {言|い}って しまう 。|| I try to say "please give me some leave", but whenever I'm asked to stay late, out comes "certainly".
-akari[smile]: …… ごめんなさい 。お{客|きゃく}さま に こんな {話|はなし} 。|| …I'm sorry. Telling a visitor all this.
 ?(comp=nao) comp: {宛先|あてさき}{不明|ふめい} 、か 。{宛先|あてさき} は ある のに 、{字|じ} が {通|とお}らない んだ 。{配達人|はいたつにん} と して は 、{腹|はら} が {立|た}つ 。|| "Address unknown." The address exists; the writing just won't go through. That makes a courier angry.
 ?(comp=mio) comp: {休|やす}み も {薬|くすり} の うち です よ 。…… {私|わたし} が {言|い}える こと じゃ ない けど 。|| Rest is a kind of medicine too. …Not that I'm one to talk.
 ?(comp=ren) comp: {灯|あか}り を {点|つ}けて {待|ま}つ {人|ひと} と 、{帰|かえ}れない {人|ひと} 。{同|おな}じ {道|みち} の {両端|りょうはし} です ね 。|| Someone keeping a lamp lit, and someone who can't come home. Two ends of the same road.
 ?(comp=suzu) comp: {帰|かえ}る {場所|ばしょ} が ある の は 、{幸|しあわ}せ な こと よ 。…… {帰|かえ}れれば 、だけど 。|| Having somewhere to go home to is a blessing. …If you can get there.
 !quest lf_akari start
+!if item.sb_reply_letter -> reply
+akari[smile]: …… ごめんなさい 。お{客|きゃく}さま に こんな {話|はなし} 。|| …I'm sorry. Telling a visitor all this.
+!end
+:reply
+!call lf.akari_reply
+
+@scene lf.akari_reply
+pc: お{父|とう}さん から 、{手紙|てがみ} を {預|あず}かって います 。{宛名|あてな} は 、あなた を {見|み}つけたら {書|か}く よう に 、と 。|| I've brought a letter from your father. He asked me to write the address once I found you.
+akari[surprise]: …… {父|ちち} から ?|| …From my father?
+narr: ホシノ の {封筒|ふうとう} 。{宛名|あてな} の {欄|らん} は 、{空|あ}いた まま だ 。|| Hoshino's envelope. The address line is still blank.
+!challenge lf.ch_akari_addr
+narr: {書|か}いた {字|じ} は 、{薄|うす}れ ない 。{封筒|ふうとう} は 、ちゃんと アカリ の {手|て} に {届|とど}いた 。|| The words you wrote don't fade. The envelope arrives, properly, in Akari's hands.
+!take sb_reply_letter
+narr: 「あかり へ 。{元気|げんき} に して いる かい 。わたし の こと は 、{心配|しんぱい} しなくて いい よ 。」|| "Akari. Are you keeping well? You don't need to worry about me."
+narr: 「{灯|あか}り は 、{今夜|こんや} も ついて いる よ 。{寒|さむ}い から 、{温|あたた}かく して {寝|ね}る んだ よ 。」|| "The lamp is lit tonight as well. It's cold, so keep warm when you sleep."
+?(sb_hoshino_goes) narr: 「{雪|ゆき} が {溶|と}けたら 、わたし が {会|あ}い に {行|い}く 。 {父|ちち}」|| "When the snow melts, I'll come to see you. — Dad"
+?(sb_hoshino_both) narr: 「{春|はる} に なったら 、{会|あ}い に {行|い}く よ 。{灯|あか}り は {人|ひと} に {預|あず}けて ね 。 {父|ちち}」|| "Come spring, I'll come and see you. I'll leave the lamp in good hands. — Dad"
+?(!sb_hoshino_goes&!sb_hoshino_both) narr: 「{急|いそ}がなくて いい 。{灯|あか}り は 、ここ に ある 。 {父|ちち}」|| "There's no need to hurry. The lamp is here. — Dad"
+akari[sad]: …… {父|ちち} の {字|じ} 。{少|すこ}し {震|ふる}えてる 。|| …Father's handwriting. It shakes a little.
+akari[smile]: 「{温|あたた}かく して {寝|ね}る んだ よ 」 。…… {子供|こども} の とき と 、{同|おな}じ こと を {言|い}ってる 。|| "Keep warm when you sleep." …He's saying the same thing he said when I was little.
+?(sb_hoshino_goes) akari[worry]: {会|あ}い に {来|く}る って 。…… でも 、{今|いま} の {私|わたし} じゃ 、{父|ちち} が {来|き}て も 、{一日|いちにち} も {休|やす}め ない 。{残業|ざんぎょう} を {断|ことわ}れない から 。|| He says he's coming. …But the way I am now, even if he came, I couldn't take a single day off. I can't refuse overtime.
+?(!sb_hoshino_goes) akari[worry]: {返事|へんじ} を {書|か}きたい 。{会|あ}い に {行|い}きたい 。…… でも 、「{休|やす}み を ください」 が 、{言|い}えない 。|| I want to reply. I want to go and see him. …But I can't say "please give me leave".
+?(comp=nao) comp[smile]: {届|とど}いた な 。{宛名|あてな} 、いい {字|じ} だった よ 。|| It got there. That was a good address you wrote.
+?(comp=mio) comp: …… よかった 。{本当|ほんとう} に 、よかった 。|| …I'm so glad. Truly.
+?(comp=ren) comp: {灯|あか}り の {下|した} で {書|か}かれた {手紙|てがみ} は 、{灯|あか}り と {同|おな}じ {重|おも}さ が あります 。|| A letter written under a lamp weighs the same as the lamp.
+?(comp=suzu) comp: {配達料|はいたつりょう} は いらない わ 。{泣|な}き{顔|がお} で {十分|じゅうぶん} 。|| No delivery fee. That face is payment enough.
+!set lf_akari_got_reply
+!autosave
 
 @scene lf.akari_hint
 !if !quest.lf_akari -> letters
@@ -146,18 +173,22 @@ akari: …… {階段|かいだん} は 、{窓口|まどぐち} の {奥|おく
 
 @scene lf.akari_letter
 akari[laugh]: {聞|き}いて ください ！ {今朝|けさ} 、{残業|ざんぎょう} を {断|ことわ}りました ！ 「お{断|ことわ}り します」 って ！|| Listen! This morning I turned down overtime! I said "I refuse"!
-akari: それ で 、{休|やす}み も もらいました 。{雪鈴|ゆきすず} へ 、{帰|かえ}ります 。|| And I got leave. I'm going home to Snowbell.
+akari: それ で 、{休|やす}み も もらいました 。|| And I got leave.
+?(lf_akari_got_reply&sb_hoshino_goes) akari: {父|ちち} は 、{雪|ゆき} が {溶|と}けたら {来|く}る と {書|か}いて いました 。{待|ま}って いる の は {性|しょう} に {合|あ}わない ので 、{峠|とうげ} まで {迎|むか}え に {行|い}きます 。|| Father wrote he'd come when the snow melts. Waiting isn't in my nature, so I'm going up to the pass to meet him.
+?(lf_akari_got_reply&sb_hoshino_both) akari: {父|ちち} は {春|はる} に {来|く}る と {言|い}って います 。でも 、{私|わたし} も {今|いま} {行|い}きます 。{春|はる} に は また {来|き}て もらえば いい 。{欲張|よくば}り な {親子|おやこ} です 。|| Father says he'll come in spring. But I'm going now anyway. He can come again in spring. We're a greedy family.
+?(lf_akari_got_reply&!sb_hoshino_goes&!sb_hoshino_both) akari: {父|ちち} は 「{急|いそ}がなくて いい」 と {書|か}いて いました 。…… だから 、{急|いそ}いで {帰|かえ}ります 。|| Father wrote "there's no need to hurry". …So I'm going to hurry home.
+?(!lf_akari_got_reply) akari: {雪鈴|ゆきすず} へ 、{帰|かえ}ります 。{何年|なんねん} ぶり かしら 。|| I'm going home to Snowbell. It's been years.
 akari[shy]: {先|さき} に {手紙|てがみ} を {出|だ}したい んです 。{父|ちち} を {驚|おどろ}かせたく ない ので 。…… {宛先|あてさき} 、{一緒|いっしょ} に {見|み}て いただけます か 。{何度|なんど} も {戻|もど}って きた ので 、{自信|じしん} が なくて 。|| I want to send a letter first, so I don't startle my father. …Would you check the address with me? It came back so many times I've lost my nerve.
 !quest lf_akari 2
-!challenge lf.ch_akari_addr
+!challenge lf.ch_akari_addr2
 akari[smile]: …… {雪鈴|ゆきすず} {天文台|てんもんだい} 、ホシノ {様|さま} 。{今度|こんど} は 、ちゃんと {字|じ} が {紙|かみ} に {残|のこ}って います 。|| …Snowbell Observatory, Mr Hoshino. This time the writing is staying on the paper.
-?(comp=nao) comp: {貸|か}して 。{上|のぼ}り の {配達|はいたつ} なら 、{一番|いちばん} {速|はや}い {便|びん} に {乗|の}せる 。…… {宛名|あてな} 、いい {字|じ} だ 。|| Give it here. For a delivery up the mountain, I'll get it on the fastest run. …Nice handwriting on the address.
+?(comp=nao) comp: {貸|か}して 。{山|やま} へ {上|のぼ}る {便|びん} なら 、{一番|いちばん} {速|はや}い の に {乗|の}せる 。…… {宛名|あてな} 、いい {字|じ} だ 。|| Give it here. For anything going up the mountain, I'll get it on the fastest run. …Nice handwriting on the address.
 ?(comp!=nao) akari: {渡|わた}し{場|ば} の ウミ さん に {頼|たの}みます 。{舟|ふね} と {馬|うま} を {乗|の}り{継|つ}いで 、{三日|みっか} で {着|つ}く そう です 。|| I'll ask Umi at the ferry office. By boat and then horse, it should get there in three days.
 akari: {手紙|てがみ} が {着|つ}いた {頃|ころ} に 、{私|わたし} も {着|つ}きます 。{父|ちち} は きっと 、{灯|あか}り を {点|つ}けた まま {寝|ね}て います 。|| I'll arrive around when the letter does. Father's probably sleeping with the lamp still lit.
 akari[laugh]: …… {叱|しか}って やらなきゃ 。{油|あぶら} が もったいない って 。|| …I'll have to scold him. What a waste of oil.
 !quest lf_akari done
 !set lf_akari_letter lf_akari_leave
-!journal アカリ は {雪鈴|ゆきすず} へ {帰|かえ}った 。{手紙|てがみ} が {先|さき} に {着|つ}く はず だ 。|| Akari has gone home to Snowbell. Her letter should arrive just ahead of her.
+!journal アカリ は {雪鈴|ゆきすず} へ {向|む}かった 。{手紙|てがみ} が {先|さき} に {着|つ}く はず だ 。|| Akari has set off for Snowbell. Her letter should arrive just ahead of her.
 !autosave
 
 @scene lf.akari_done
@@ -251,12 +282,13 @@ lf_yae: 「{本|ほん}{議会|ぎかい} は 、これ を {開|あ}けない {
 lf_yae: 「{使|つか}い の トウヤ 、{異議|いぎ} を {唱|とな}える 。{高瀬|たかせ} は {開|あ}ける {気|き} で いる 、と 。」|| "The messenger Tōya objects: Takase means to open it, he says."
 lf_yae: 「{書記|しょき} カサネ 、{反論|はんろん} 。{文面|ぶんめん} は 『{必要|ひつよう} なら』 で あり 、{約束|やくそく} と {読|よ}む べき で ある 。」|| "The clerk, Kasane, disagrees: the text says 'if it's needed', and should be read as a promise."
 lf_yae: 「{異議|いぎ} は 、{記録|きろく} に {残|のこ}す 。」|| "The objection is noted in the record."
+lf_yae: 「{鐘楼|しょうろう} は 、{施錠|せじょう} の まま と する 。」|| "The bell tower shall remain locked."
 narr: ヤエ の {指|ゆび} が 、{頁|ページ} の {上|うえ} で {止|と}まった 。|| Yae's finger stops on the page.
 lf_yae[sad]: …… カサネ 。そう 、カサネ だった 。{几帳面|きちょうめん} な {子|こ} で ね 。{誰|だれ} より も {字|じ} が きれい で 。|| …Kasane. Yes, it was Kasane. Such a meticulous young thing. Better handwriting than anyone.
 lf_yae: {弟|おとうと} の トウヤ が 、{高瀬|たかせ} から あの {返事|へんじ} を {持|も}って {帰|かえ}った の よ 。{雨|あめ} の {中|なか} を {走|はし}って 。|| It was Tōya, the younger brother, who carried that reply back from Takase. Ran all the way in the rain.
 lf_yae: {向|む}こう の {声|こえ} の {調子|ちょうし} を 、あの {子|こ} は {聞|き}いて いた 。だから {反対|はんたい} した 。|| He had heard how they said it over there. That's why he objected.
 lf_yae: カサネ は 、{紙|かみ} に {書|か}かれた {字|じ} を {信|しん}じた 。…… {二人|ふたり} は 、{議会|ぎかい} の {廊下|ろうか} で {大|おお}げんか を した 。|| Kasane trusted the words on the paper. …The two of them had a dreadful quarrel in the council corridor.
-lf_yae: その {夜|よる} 、トウヤ は {鐘|かね} を {鳴|な}らし に {塔|とう} へ {走|はし}った 。{鐘|かね} は {鳴|な}った 。{下町|したまち} の {人|ひと} は みんな 、{高|たか}い {所|ところ} へ {逃|に}げた 。{私|わたし} も ね 。|| That night Tōya ran to the tower to ring the bell. The bell rang. Everyone in the lower quarter fled to high ground. Me included.
+lf_yae: その {夜|よる} 、トウヤ は {鐘楼|しょうろう} の {鍵|かぎ} を {持|も}ち{出|だ}して 、{塔|とう} へ {走|はし}った 。{鐘|かね} は {鳴|な}った 。{下町|したまち} の {人|ひと} は みんな 、{高|たか}い {所|ところ} へ {逃|に}げた 。{私|わたし} も ね 。|| That night Tōya took the bell tower key and ran to the tower. The bell rang. Everyone in the lower quarter fled to high ground. Me included.
 lf_yae[closed]: トウヤ だけ が 、{戻|もど}らなかった 。|| Only Tōya didn't come back.
 lf_yae: カサネ は その あと 、{山|やま} の {上|うえ} の {書庫|しょこ} へ {上|のぼ}って 、{二度|にど} と {町|まち} へ は {下|お}りて こなかった 。|| Afterwards, Kasane went up to the Archive on the mountain, and never came down to the town again.
 !challenge lf.ch_minutes

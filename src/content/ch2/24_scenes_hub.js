@@ -34,7 +34,7 @@ tamae: いらっしゃい ！ {休|やす}んで く かい ？ あんた たち
 * また {今度|こんど} 。 || Another time. -> end
 :rest
 !inn
-tamae: よく {寝|ね}た かい ？ {朝|あさ} ご{飯|はん} は {焼|や}き{魚|ざかな} だ よ 。 {他|ほか} に 何 が ある って ん だ 。 || Sleep well? Breakfast is grilled fish. What else would it be?
+tamae: よく {寝|ね}た かい ？ {朝|あさ} ご{飯|はん} は {焼|や}き{魚|ざかな} だ よ 。 {他|ほか} に {何|なに} が ある って ん だ 。 || Sleep well? Breakfast is grilled fish. What else would it be?
 
 @scene sg.tamae_after
 tamae: {手紙|てがみ} が {空|そら} から {降|ふ}って きた ん だ よ ！ うち の {窓|まど} に も {一通|いっつう} 。 {二十年|にじゅうねん} {前|まえ} の {姉|あね} から の {手紙|てがみ} さ 。 || Letters came down from the sky! One landed on my window — from my sister, twenty years ago.
@@ -482,7 +482,7 @@ narr: 「お{父|とう}さん へ 。 {来月|らいげつ} 、 {帰|かえ}り
 narr: レンズ の {光|ひかり} に {透|す}かして みる と 、 {滲|にじ}んだ {字|じ} が {少|すこ}し {浮|う}かんだ 。 || You hold it up to the light of the lens, and the blurred writing surfaces a little.
 !goto reveal
 :light
-narr: 「{光|ひかり}」 と {小|ちい}さく {書|か}いて 、 {手紙|てがみ} に かざす 。 {滲|にじ}んだ {字|じ} が 、 {光|ひかり} の {中|なか} に {浮|う}かび{上|あ}がった 。 || You write 光 — light — small, and hold it over the letter. The blurred words rise into the light.
+narr: 「{光|ひかり}」 と {小|ちい}さく {書|か}いて 、 {手紙|てがみ} に かざす 。 {滲|にじ}んだ {字|じ} が 、 {光|ひかり} の {中|なか} に {浮|う}かび{上|あ}がった 。 || You write hikari — light — small, and hold it over the letter. The blurred words rise into the light.
 :reveal
 narr: 「{港|みなと} まで は 、 {自分|じぶん} で {行|い}ける から 。 {膝|ひざ} 、 {大事|だいじ} に して 。 {灯台|とうだい} で {待|ま}って て 。」 || "I can make it to the harbour on my own. Look after your knees. Wait for me at the lighthouse."
 !note sg_nakute

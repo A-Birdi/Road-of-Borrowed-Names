@@ -339,9 +339,32 @@ var RB = (globalThis.RB = globalThis.RB || {});
     },
   });
 
-  // ---- 15. Akari: the envelope ---------------------------------------------------------------------------
-  const ADDR_T = ['{雪鈴|ゆきすず}', '{天文台|てんもんだい}', 'ホシノ', '{様|さま}'];
+  // ---- 15. Akari: the envelopes -----------------------------------------------------------------------------
+  // (a) Hoshino left the address on his reply blank (Chapter 4); the player writes it.
+  const ADDR_A = ['{灯落|ひおち}', '{事務所|じむしょ}', 'アカリ', '{様|さま}'];
   ch('lf.ch_akari_addr', {
+    title: { jp: 'ホシノ の {封筒|ふうとう}', en: "Addressing Hoshino's envelope" },
+    tiers: {
+      F: [
+        { kind: 'write', item: 'v:様', ctx: { jp: '{灯落|ひおち} {事務所|じむしょ} アカリ ＿＿', en: 'Lanternfall, Clerks\' Office, Ms Akari' }, prompt: { en: 'After the name on an envelope goes the polite title さま. Complete it.' }, answer: 'さま', accept: ['さま', '様'], mode: 'kana', explain: { jp: '{様|さま}', en: 'さま (様) — the polite title used on envelopes.' } },
+      ],
+      E: [
+        { kind: 'order', item: 'c:lf_address', prompt: { en: 'Write the address in the Japanese order: town → office → name → title.' }, tiles: ADDR_A, answer: ADDR_A, orderHint: { en: 'Japanese addresses go from the biggest unit to the smallest.' } },
+      ],
+      I: [
+        { kind: 'order', item: 'c:lf_address', prompt: { en: 'Address the envelope.' }, tiles: ADDR_A, answer: ADDR_A },
+        { kind: 'choose', item: 'g:register_polite_plain', prompt: { en: 'Inside, the letter begins 「あかり へ」. On the envelope you wrote 「アカリ 様」. Why the difference?' }, options: [ok('', 'The envelope follows postal convention (様); inside, a father writes to his daughter in plain, warm language.', 'Different audiences: the postman and the daughter.'), no('', 'You made a mistake; they should match.', 'They are meant to differ.'), no('', '様 is only for strangers, so the envelope is rude.', '様 on an envelope is normal even within a family.')] },
+      ],
+      A: [
+        { kind: 'order', item: 'c:lf_address', prompt: { en: 'Address the envelope.' }, tiles: ADDR_A, answer: ADDR_A },
+        { kind: 'choose', item: 'c:lf_address', prompt: { en: 'Which title belongs on this envelope?' }, options: [ok('{様|さま}', 'sama', 'The standard, courteous title on letters.'), no('{殿|どの}', 'dono', 'Used in official or business documents; cold for a family letter.'), no('へ', 'e ("to")', 'Fine inside a letter or on a note, but not as the title on an envelope.'), no('さん', 'san', 'Spoken; envelopes use 様.')] },
+      ],
+    },
+  });
+
+  // (b) Akari's own letter home, after the bell.
+  const ADDR_T = ['{雪鈴|ゆきすず}', '{天文台|てんもんだい}', 'ホシノ', '{様|さま}'];
+  ch('lf.ch_akari_addr2', {
     title: { jp: '{封筒|ふうとう} の {宛名|あてな}', en: 'Addressing the envelope' },
     tiers: {
       F: [

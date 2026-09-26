@@ -255,5 +255,5 @@ umi[angry]: {三時|さんじ} の {舟|ふね} は {出|で}ません ！ …�
 @scene lf.umi_post
 umi: {渡|わた}し{場|ば} の {事務所|じむしょ} です 。{本日|ほんじつ} の {十五時|じゅうごじ} の {便|びん} は 、{出|で}ます 。{本当|ほんとう} に 。|| Ferry office. Today's 15:00 boat will run. Truly.
 ?(comp=nao) umi: {父|ちち} から 、{返事|へんじ} の {返事|へんじ} が {来|き}ました 。{字|じ} が ひどく {揺|ゆ}れて いて 、{半分|はんぶん} しか {読|よ}めません 。…… それ で いい んです 。|| A reply to my reply came from my father. The writing shakes so badly I can only read half. …That's all right.
-?(comp!=nao) umi: {潮硝子|しおがらす} へ 、{一度|いちど} {行|い}って みよう か と {思|おも}って います 。…… {決|き}めて は いません 。{思|おも}って いる だけ 。|| I'm thinking of going to Saltglass once. …I haven't decided. Just thinking.
+?(comp!=nao) umi: {父|ちち} は {灯|ひ} の {道|みち} を {上|のぼ}って いった そう です 。{一度|いちど} 、{会|あ}い に {行|い}って みよう か と {思|おも}って います 。…… {決|き}めて は いません 。{思|おも}って いる だけ 。|| They say my father went up the lantern road. I'm thinking of going to see him once. …I haven't decided. Just thinking.
 `, 'ch5/side');
