@@ -56,7 +56,6 @@ RB.activities = (function () {
         if (who) RB.portraits.draw(cv, c.who, 'neutral'); else cv.remove();
       }
       P.pn.onclick = (e) => {
-        if (e.target.closest('.jt') && RB.ui.help.enabled()) return;
         if (e.target.closest('[data-x]')) { RB.ui.popLayer(P.lay); resolve({ ok: false, cancelled: true }); return; }
         if (e.target.closest('[data-tr]')) { showEn = true; assisted = true; render(); return; }
         const add = e.target.closest('[data-add]'), rm = e.target.closest('[data-rm]');
@@ -115,7 +114,6 @@ RB.activities = (function () {
         P.foot.innerHTML = '';
       }
       P.pn.onclick = (e) => {
-        if (e.target.closest('.jt') && RB.ui.help.enabled()) return;
         if (e.target.closest('[data-x]')) { RB.ui.popLayer(P.lay); resolve({ ok: false, cancelled: true }); return; }
         if (e.target.closest('[data-tr]')) { showEn = true; assisted = true; render(); return; }
         const b = e.target.closest('[data-to]');

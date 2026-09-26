@@ -326,7 +326,6 @@ RB.combat = (function () {
         (st.noFlee ? '' : '<button class="btn small" data-flee>Step back from this encounter</button>');
       const layer = { el: ui.resp, name: 'cards', parent: ui.root };
       ui.resp.onclick = (e) => {
-        if (e.target.closest('.jt') && RB.ui.help.enabled()) return;
         const b = e.target.closest('[data-i]');
         if (b) { RB.ui.popLayer(layer); ui.root.appendChild(ui.resp); resolve(cards[+b.getAttribute('data-i')]); return; }
         if (e.target.closest('[data-flee]')) { RB.ui.popLayer(layer); ui.root.appendChild(ui.resp); resolve({ kind: 'flee' }); }

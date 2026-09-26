@@ -195,8 +195,7 @@ RB.ui.dialogue = (function () {
           ? RB.ui.jhtml(op.jp) + (op.en ? '<span class="en">' + esc(RB.script.enVars(op.en)) + '</span>' : '')
           : '<span class="enline">' + esc(RB.script.enVars(op.en || '')) + '</span>' + (op.jp ? '<span class="en">' + RB.ui.jhtml(op.jp) + '</span>' : '');
         b.onclick = (e) => {
-          if (e.target.closest('.jt') && RB.ui.help.enabled()) return;
-          RB.ui.popLayer(layer);
+            RB.ui.popLayer(layer);
           choicesEl.classList.add('hidden');
           choicesEl.innerHTML = '';
           RB.audio && RB.audio.sfx('confirm');

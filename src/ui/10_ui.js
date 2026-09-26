@@ -245,9 +245,29 @@ RB.ui.help = (function () {
         setTimeout(() => { if (!pinned && panel && !panel.matches(':hover') && cur === t) hide(); }, 250);
       }
     });
+    // Words inside buttons (answer choices, battle cards, dialogue choices,
+    // menu items): a click/tap does the button's action; help for those words
+    // comes from hover, keyboard focus, or a long press (touch). Words in
+    // running text: a click/tap opens help.
+    const CONTROL = 'button, a[href], [role=button]'; // (.jt tokens carry data-i themselves)
+    let press = null, swallowClick = false;
+    document.addEventListener('pointerdown', (e) => {
+      const t = enabled() && e.target.closest && e.target.closest('.jt');
+      if (!t || !t.closest(CONTROL)) return;
+      const x = e.clientX, y = e.clientY;
+      press = { t, x, y, timer: setTimeout(() => { press = null; swallowClick = true; showFor(t); }, 450) };
+    }, true);
+    const cancelPress = (e) => {
+      if (!press) return;
+      if (e.type === 'pointermove' && Math.hypot(e.clientX - press.x, e.clientY - press.y) < 10) return;
+      clearTimeout(press.timer); press = null;
+    };
+    ['pointerup', 'pointercancel', 'pointermove'].forEach((ev) => document.addEventListener(ev, cancelPress, true));
+    document.addEventListener('contextmenu', (e) => { if (swallowClick || press) e.preventDefault(); }, true);
     document.addEventListener('click', (e) => {
+      if (swallowClick) { swallowClick = false; e.stopPropagation(); e.preventDefault(); return; } // the long press was a help request
       const t = e.target.closest && e.target.closest('.jt');
-      if (t && enabled()) { e.stopPropagation(); showFor(t); return; }
+      if (t && enabled() && !t.closest(CONTROL)) { e.stopPropagation(); showFor(t); return; }
       if (panel && !panel.contains(e.target) && !pinned) hide();
     }, true);
     document.addEventListener('focusin', (e) => {

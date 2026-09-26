@@ -156,8 +156,7 @@ RB.challenge = (function () {
           }
           box.onclick = (e) => {
             if (locked) return;
-            if (e.target.closest('.jt') && RB.ui.help.enabled()) return;
-            const add = e.target.closest('[data-add]'), rm = e.target.closest('[data-rm]'), a = e.target.closest('[data-a]');
+                const add = e.target.closest('[data-add]'), rm = e.target.closest('[data-rm]'), a = e.target.closest('[data-a]');
             if (add) placed.push(pool[+add.getAttribute('data-add')]);
             if (rm) placed.splice(+rm.getAttribute('data-rm'), 1);
             if (a && a.getAttribute('data-a') === 'clr') placed.length = 0;
@@ -174,9 +173,12 @@ RB.challenge = (function () {
             b.innerHTML = o.text != null ? RB.ui.jhtml(o.text) : (o.jp ? RB.ui.jhtml(o.jp) : '') + (o.en ? '<div class="enline">' + esc(o.en) + '</div>' : '');
             b.onclick = (e) => {
               if (locked) return;
-              if (e.target.closest('.jt') && RB.ui.help.enabled()) return;
-              if (step.kind === 'choose') evaluateChoice(o, b);
-              else evaluate(o.text, 'choice', {});
+                    if (step.kind === 'choose') evaluateChoice(o, b);
+              else {
+                evaluate(o.text, 'choice', {});
+                // like comprehension choices: a wrong option can't be picked twice
+                if (!o.ok) b.disabled = true;
+              }
             };
             box.appendChild(b);
             void i;

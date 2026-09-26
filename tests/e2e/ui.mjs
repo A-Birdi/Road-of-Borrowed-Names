@@ -327,7 +327,8 @@ await test('real combat UI: telegraph, card, choice answer, knot untied, no pena
   let shotTaken = false, answered = 0;
   for (let i = 0; i < 400; i++) {
     const st = await p.evaluate(() => ({
-      over: !RB.combat.state() && RB.game.mode() !== 'combat',
+      // done only when startBattle resolved: a victory line may still be open after combat state clears
+      over: window.__battleDone === true,
       dlg: RB.ui.dialogue.isOpen(),
       cards: !!document.querySelector('.resp[data-i="0"]'),
       chal: !!document.querySelector('.chal'),
@@ -362,6 +363,37 @@ await test('real combat UI: telegraph, card, choice answer, knot untied, no pena
   void pcRes;
   const outcome = await p.evaluate(() => window.__battle);
   assert(outcome === 'win', 'outcome ' + outcome);
+  assert(!errors.length, errors.join('; '));
+  await ctx.close();
+});
+
+// ---------------------------------------------------------------------------
+await test('clicking the Japanese word on an answer button answers it; a long press shows help instead', async () => {
+  const ctx = await b.newContext({ viewport: { width: 1280, height: 800 } });
+  const { p, errors } = await page(b, url, { context: ctx });
+  await p.evaluate(() => {
+    const s = RB.game.debugStart('rw.village', 22, 30, {});
+    s.learn.kanaKnown = 'both'; s.learn.profile = 'E';
+    RB.game.settings.lightbulb = true; RB.game.settings.input = 'choice';
+    const step = { kind: 'write', item: 'v:みず', prompt: { en: 'Water.' }, answer: 'みず', accept: ['みず'], mode: 'kana', choices: ['みす', 'みず', 'ミズ'] };
+    window.__r = null;
+    RB.challenge.runStep(step, {}).then((r) => { window.__r = r; });
+  });
+  await p.waitForSelector('.mc .btn .jt');
+  // long press on a word inside a wrong option: help opens, the option is not chosen
+  const wrong = p.locator('.mc .btn', { hasText: 'みす' }).locator('.jt').first();
+  const bw = await wrong.boundingBox();
+  await p.mouse.move(bw.x + bw.width / 2, bw.y + bw.height / 2);
+  await p.mouse.down(); await p.waitForTimeout(650); await p.mouse.up();
+  await p.waitForTimeout(150);
+  const afterPress = await p.evaluate(() => ({ help: !!document.querySelector('.help:not(.hidden)'), fb: (document.querySelector('.fbwrap') || {}).innerText || '', disabled: [...document.querySelectorAll('.mc .btn')].filter((x) => x.disabled).length }));
+  assert(afterPress.help, 'long press opened help');
+  assert(!/Not quite/.test(afterPress.fb) && afterPress.disabled === 0, 'long press did not answer: ' + JSON.stringify(afterPress));
+  // plain click on the word inside the right option answers it
+  await p.locator('.mc .btn', { hasText: /^みず$/ }).locator('.jt').first().click();
+  await p.waitForSelector('.fbwrap button');
+  const fb = await p.textContent('.fbwrap');
+  assert(/Yes/.test(fb), 'clicking the word answered: ' + fb);
   assert(!errors.length, errors.join('; '));
   await ctx.close();
 });

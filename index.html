@@ -14496,9 +14496,29 @@ RB.ui.help = (function () {
         setTimeout(() => { if (!pinned && panel && !panel.matches(':hover') && cur === t) hide(); }, 250);
       }
     });
+    // Words inside buttons (answer choices, battle cards, dialogue choices,
+    // menu items): a click/tap does the button's action; help for those words
+    // comes from hover, keyboard focus, or a long press (touch). Words in
+    // running text: a click/tap opens help.
+    const CONTROL = 'button, a[href], [role=button]'; // (.jt tokens carry data-i themselves)
+    let press = null, swallowClick = false;
+    document.addEventListener('pointerdown', (e) => {
+      const t = enabled() && e.target.closest && e.target.closest('.jt');
+      if (!t || !t.closest(CONTROL)) return;
+      const x = e.clientX, y = e.clientY;
+      press = { t, x, y, timer: setTimeout(() => { press = null; swallowClick = true; showFor(t); }, 450) };
+    }, true);
+    const cancelPress = (e) => {
+      if (!press) return;
+      if (e.type === 'pointermove' && Math.hypot(e.clientX - press.x, e.clientY - press.y) < 10) return;
+      clearTimeout(press.timer); press = null;
+    };
+    ['pointerup', 'pointercancel', 'pointermove'].forEach((ev) => document.addEventListener(ev, cancelPress, true));
+    document.addEventListener('contextmenu', (e) => { if (swallowClick || press) e.preventDefault(); }, true);
     document.addEventListener('click', (e) => {
+      if (swallowClick) { swallowClick = false; e.stopPropagation(); e.preventDefault(); return; } // the long press was a help request
       const t = e.target.closest && e.target.closest('.jt');
-      if (t && enabled()) { e.stopPropagation(); showFor(t); return; }
+      if (t && enabled() && !t.closest(CONTROL)) { e.stopPropagation(); showFor(t); return; }
       if (panel && !panel.contains(e.target) && !pinned) hide();
     }, true);
     document.addEventListener('focusin', (e) => {
@@ -14839,8 +14859,7 @@ RB.ui.dialogue = (function () {
           ? RB.ui.jhtml(op.jp) + (op.en ? '<span class="en">' + esc(RB.script.enVars(op.en)) + '</span>' : '')
           : '<span class="enline">' + esc(RB.script.enVars(op.en || '')) + '</span>' + (op.jp ? '<span class="en">' + RB.ui.jhtml(op.jp) + '</span>' : '');
         b.onclick = (e) => {
-          if (e.target.closest('.jt') && RB.ui.help.enabled()) return;
-          RB.ui.popLayer(layer);
+            RB.ui.popLayer(layer);
           choicesEl.classList.add('hidden');
           choicesEl.innerHTML = '';
           RB.audio && RB.audio.sfx('confirm');
@@ -16525,8 +16544,7 @@ RB.challenge = (function () {
           }
           box.onclick = (e) => {
             if (locked) return;
-            if (e.target.closest('.jt') && RB.ui.help.enabled()) return;
-            const add = e.target.closest('[data-add]'), rm = e.target.closest('[data-rm]'), a = e.target.closest('[data-a]');
+                const add = e.target.closest('[data-add]'), rm = e.target.closest('[data-rm]'), a = e.target.closest('[data-a]');
             if (add) placed.push(pool[+add.getAttribute('data-add')]);
             if (rm) placed.splice(+rm.getAttribute('data-rm'), 1);
             if (a && a.getAttribute('data-a') === 'clr') placed.length = 0;
@@ -16543,9 +16561,12 @@ RB.challenge = (function () {
             b.innerHTML = o.text != null ? RB.ui.jhtml(o.text) : (o.jp ? RB.ui.jhtml(o.jp) : '') + (o.en ? '<div class="enline">' + esc(o.en) + '</div>' : '');
             b.onclick = (e) => {
               if (locked) return;
-              if (e.target.closest('.jt') && RB.ui.help.enabled()) return;
-              if (step.kind === 'choose') evaluateChoice(o, b);
-              else evaluate(o.text, 'choice', {});
+                    if (step.kind === 'choose') evaluateChoice(o, b);
+              else {
+                evaluate(o.text, 'choice', {});
+                // like comprehension choices: a wrong option can't be picked twice
+                if (!o.ok) b.disabled = true;
+              }
             };
             box.appendChild(b);
             void i;
@@ -16920,7 +16941,6 @@ RB.activities = (function () {
         if (who) RB.portraits.draw(cv, c.who, 'neutral'); else cv.remove();
       }
       P.pn.onclick = (e) => {
-        if (e.target.closest('.jt') && RB.ui.help.enabled()) return;
         if (e.target.closest('[data-x]')) { RB.ui.popLayer(P.lay); resolve({ ok: false, cancelled: true }); return; }
         if (e.target.closest('[data-tr]')) { showEn = true; assisted = true; render(); return; }
         const add = e.target.closest('[data-add]'), rm = e.target.closest('[data-rm]');
@@ -16979,7 +16999,6 @@ RB.activities = (function () {
         P.foot.innerHTML = '';
       }
       P.pn.onclick = (e) => {
-        if (e.target.closest('.jt') && RB.ui.help.enabled()) return;
         if (e.target.closest('[data-x]')) { RB.ui.popLayer(P.lay); resolve({ ok: false, cancelled: true }); return; }
         if (e.target.closest('[data-tr]')) { showEn = true; assisted = true; render(); return; }
         const b = e.target.closest('[data-to]');
@@ -17419,7 +17438,6 @@ RB.combat = (function () {
         (st.noFlee ? '' : '<button class="btn small" data-flee>Step back from this encounter</button>');
       const layer = { el: ui.resp, name: 'cards', parent: ui.root };
       ui.resp.onclick = (e) => {
-        if (e.target.closest('.jt') && RB.ui.help.enabled()) return;
         const b = e.target.closest('[data-i]');
         if (b) { RB.ui.popLayer(layer); ui.root.appendChild(ui.resp); resolve(cards[+b.getAttribute('data-i')]); return; }
         if (e.target.closest('[data-flee]')) { RB.ui.popLayer(layer); ui.root.appendChild(ui.resp); resolve({ kind: 'flee' }); }
