@@ -224,6 +224,7 @@ RB.game = (function () {
       const def = RB.content.maps[mapId];
       if (!def) throw new Error('unknown map ' + mapId);
       RB.world.enter(mapId, x, y, dir, { sp: opts.sp });
+      RB.render.prewarm(); // build the new map's art while the screen is still dark
       await RB.ui.fade(false, reducedMotion() ? 80 : 220);
       if (def.name && !opts.inScript && !G.s.flags['named:' + mapId]) {
         G.s.flags['named:' + mapId] = true;

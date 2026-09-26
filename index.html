@@ -21055,6 +21055,11 @@ RB.render = (function () {
   function setOverride(fn) {
     override = fn;
   }
+  // Draw one frame now, e.g. while a transition is still dark, so the new
+  // map's static layer and prop caches are built before it fades in.
+  function prewarm() {
+    if (!override && RB.world.W.map) frame(typeof performance !== 'undefined' ? performance.now() : 0);
+  }
 
   function onPointer(e) {
     if (!RB.world.W.map || override) return;
@@ -21088,7 +21093,7 @@ RB.render = (function () {
     return { x: (x * TS - cam.x) * k, y: (y * TS - cam.y) * k };
   }
 
-  return { init, frame, invalidate, setOverride, setInsets, viewSize, thumbnail, tileToCss, resize, cam, ART, TS };
+  return { init, frame, prewarm, invalidate, setOverride, setInsets, viewSize, thumbnail, tileToCss, resize, cam, ART, TS };
 })();
 
 
@@ -22091,6 +22096,7 @@ RB.game = (function () {
       const def = RB.content.maps[mapId];
       if (!def) throw new Error('unknown map ' + mapId);
       RB.world.enter(mapId, x, y, dir, { sp: opts.sp });
+      RB.render.prewarm(); // build the new map's art while the screen is still dark
       await RB.ui.fade(false, reducedMotion() ? 80 : 220);
       if (def.name && !opts.inScript && !G.s.flags['named:' + mapId]) {
         G.s.flags['named:' + mapId] = true;
