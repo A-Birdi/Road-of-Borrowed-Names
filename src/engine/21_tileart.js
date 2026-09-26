@@ -55,7 +55,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     snowbell: { grass: 'snow', path: 'frozen', road: 'setts', sand: 'river', water: 'cold', wall: 'timber', floor: 'flags', field: 'snow', tall: 'frost', carpet: '#5a3448', trim: '#d8c8a0', heri: '#262636' },
     lanternfall: { grass: 'lawn', path: 'gravel', road: 'slab', sand: 'river', water: 'canal', wall: 'timber', floor: 'slab', field: 'bed', tall: 'plume', carpet: '#56386a', trim: '#e8c070', heri: '#28223e', lantern: '#f2c46a' },
     archive: { grass: 'moss', path: 'silt', road: 'wet', sand: 'river', water: 'drowned', wall: 'stone', floor: 'wet', field: 'grey', tall: 'reed', carpet: '#2c3a6a', trim: '#c8b880', heri: '#181a2e' },
-    atlas: { grass: 'ink', path: 'ink', road: 'ink', sand: 'ink', water: 'ink', wall: 'timber', floor: 'ink', field: 'ink', tall: 'ink', carpet: '#8a4a3a', trim: '#e0c890', heri: '#3a3024', ink: '#5e4c3a' },
+    atlas: { grass: 'paper', path: 'earth', road: 'ink', sand: 'river', water: 'still', wall: 'timber', floor: 'ink', field: 'stubble', tall: 'marram', carpet: '#8a4a3a', trim: '#e0c890', heri: '#3a3024', ink: '#5e4c3a' },
     sa_mount: { grass: 'alpine', path: 'scree', road: 'rough', sand: 'river', water: 'cold', wall: 'timber', floor: 'flags', field: 'grey', tall: 'frost', carpet: '#5a4050', trim: '#d0c090', heri: '#2a2a36' },
     sa_still: { grass: 'ashmoss', path: 'dust', road: 'ashlar', sand: 'river', water: 'still', wall: 'stone', floor: 'ashlar', field: 'grey', tall: 'reed', carpet: '#3a4462', trim: '#d8d0b0', heri: '#22243a' },
   };
@@ -198,6 +198,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }
     S.fill(0);
     fullRegion();
+    EX0 = 32; EY0 = 32; EX1 = -1; EY1 = -1;
     SK.length = 0; SL.length = 0;
     SK.push(KIND[tile.id]); SL.push(RECV[KIND[tile.id]] == null ? 0 : RECV[KIND[tile.id]]);
     NS = 1;
@@ -206,7 +207,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // that covers only a fringe or a corner costs only that much.
   const IDX = new Int16Array(N);
   let NI = 0, RX0 = 0, RY0 = 0, RX1 = 31, RY1 = 31;
+  const ALL = new Int16Array(N).map((v, i) => i);
   function select(slot) {
+    if (NS === 1 && slot === 0) { IDX.set(ALL); NI = N; RX0 = 0; RY0 = 0; RX1 = 31; RY1 = 31; return true; }
     NI = 0;
     let x0 = 32, y0 = 32, x1 = -1, y1 = -1;
     for (let i = 0; i < N; i++) {
@@ -222,6 +225,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
     return NI > 0;
   }
   function fullRegion() { RX0 = 0; RY0 = 0; RX1 = 31; RY1 = 31; }
+  // box around pixels given to other slots (edge passes only look there)
+  let EX0 = 32, EY0 = 32, EX1 = -1, EY1 = -1;
+  function mark(i) {
+    const x = i & 31, y = i >> 5;
+    if (x < EX0) EX0 = x;
+    if (x > EX1) EX1 = x;
+    if (y < EY0) EY0 = y;
+    if (y > EY1) EY1 = y;
+  }
   function slotOf(kind) {
     for (let i = 1; i < NS; i++) if (SK[i] === kind) return i;
     SK.push(kind); SL.push(SPILL[kind] == null ? 1 : SPILL[kind]);
@@ -416,7 +428,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     pebble: [stp(['.DD.', 'DCCB', '.BBs'], 1, 2), stp(['DC.', 'CBs'], 1, 1), stp(['.DDC.', 'DCCCB', '.BBBs'], 2, 2)],
     stone2: [stp(['DC', 'Bs'], 0, 1), stp(['.D.', 'DCB', '.s.'], 1, 2)],
     leaf: [stp(['.DE', 'CDs'], 1, 1), stp(['CD.', 'sCD'], 1, 1), stp(['.E.', 'CDC', '.s.'], 1, 2)],
-    crack: [stp(['1...', '.1..', '.11.', '...1'], 0, 0), stp(['..1', '11.', '1..'], 0, 0), stp(['1.1', '.1.', '.1.'], 0, 0)],
+    crack: [stp(['11......', '..11....', '....111.', '.......1'], 0, 0), stp(['1.......', '.11.....', '...1111.', '....1..1'], 0, 0)],
     shell: [stp(['.ab', 'abb', 'ss.'], 1, 1), stp(['ab.', 'bbs'], 1, 1), stp(['.a.', 'aba', '.s.'], 1, 1)],
     glassy: [stp(['.ab', 'abc', '.cs'], 1, 1), stp(['ab.', 'bcc', '.s.'], 1, 1), stp(['.b', 'ac', 'cs'], 0, 1)],
     shard: [stp(['.DE', 'CCs'], 1, 1), stp(['DD', 'Cs'], 0, 1)],
@@ -424,12 +436,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
     puddle: [stp(['.AAA.', 'ABBBA', '.AAA.'], 2, 1), stp(['.AA.', 'ABBA', '.AA.'], 1, 1)],
     gravel: [stp(['DC', 'BA'], 0, 0), stp(['C.', 'BA'], 0, 0), stp(['.C', 'CA'], 0, 0), stp(['CBA'], 0, 0)],
     sparkle: [stp(['.4.', '4h4', '.4.'], 1, 1), stp(['h4'], 0, 0)],
-    twig: [stp(['A...', '.AA.', '...A'], 0, 0), stp(['..A', 'AA.'], 0, 0)],
+    twig: [stp(['AA....', '..AAAA'], 0, 0), stp(['AAA...', '...BBB'], 0, 0)],
     lump: [stp(['.CD.', 'BCCB', 'ABBA', '.ss.'], 1, 2), stp(['.CC.', 'BBCB', '.AAs'], 1, 1), stp(['CD.', 'BCB', 'sAs'], 1, 1)],
     flake: [stp(['.4.', '443', '.3.'], 1, 1), stp(['44.', '.43'], 0, 0)],
     ember: [stp(['.BC.', 'AaBA', '.AA.'], 1, 1)],
-    ink: [stp(['a...a', '.a.a.', '..a..'], 2, 2), stp(['a.a', '.a.'], 1, 1), stp(['a..', '.a.', '.a.'], 1, 2)],
-    inkdot: [stp(['a'], 0, 0), stp(['aa'], 0, 0)],
     scrap: [stp(['aaab', 'abbb', '.sss'], 1, 0), stp(['aab.', 'abbb', 'bbs.'], 1, 0)],
     moss: [stp(['.33.', '3443', '2332', '.22.'], 1, 2), stp(['.3.', '343', '.2.'], 1, 1)],
     flower: [stp(['.a.', 'abc', '.c.', '.1.'], 1, 3), stp(['a.', 'bc', '1.'], 0, 2), stp(['.a..', 'abc.', '.c1a', '..bc'], 1, 3)],
@@ -494,7 +504,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       SL[sl] = Math.max(SL[sl], p);
       for (let a = 0; a < A; a++) for (let d = 0, n = PR[a]; d < n; d++) {
         const i = sidePix(s, a, d);
-        if (SL[S[i]] < p) S[i] = sl;
+        if (SL[S[i]] < p) { S[i] = sl; mark(i); }
       }
     }
     for (let c = 0; c < 4; c++) {
@@ -509,7 +519,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       for (let y = 0; y < 9; y++) for (let x = 0; x < 9; x++) {
         if (x * x + y * y >= rad * rad) continue;
         const i = (py0 ? 31 - y : y) * A + (px0 ? 31 - x : x);
-        if (SL[S[i]] < p) S[i] = sl;
+        if (SL[S[i]] < p) { S[i] = sl; mark(i); }
       }
     }
   }
@@ -530,7 +540,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         const dx = rad - xx - 0.5, dy = rad - yy - 0.5;
         if (dx * dx + dy * dy <= rad * rad) continue;
         const i = (py0 ? 31 - yy : yy) * A + (px0 ? 31 - xx : xx);
-        if (S[i] === 0) S[i] = sl;
+        if (S[i] === 0) { S[i] = sl; mark(i); }
       }
     }
   }
@@ -544,7 +554,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Rims and cast shadows wherever a higher material meets lower ground.
   function spillEdges() {
     if (NS === 1) return;
-    for (let y = 0; y < A; y++) for (let x = 0; x < A; x++) {
+    const y0 = EX1 < 0 ? 0 : Math.max(0, EY0 - 2), y1 = EX1 < 0 ? 31 : Math.min(31, EY1 + 2), x0 = EX1 < 0 ? 0 : Math.max(0, EX0 - 2), x1 = EX1 < 0 ? 31 : Math.min(31, EX1 + 2);
+    for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) {
       const i = y * A + x, s = S[i], p = SL[s];
       const up = y ? S[i - A] : s, dn = y < 31 ? S[i + A] : s, lf = x ? S[i - 1] : s, rt = x < 31 ? S[i + 1] : s;
       const P = SPR[SK[s]];
@@ -626,7 +637,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
   function toneField(slot, s1, s2, seed, w2, lo, hi, tl, tm, th) {
     field(F, s1, s2, seed, w2);
     for (let k = 0, i = 0; k < NI; k++) if ((i = IDX[k]) >= 0) { const v = F[i]; TI[i] = v < lo ? tl : v > hi ? th : tm; }
-    despeckle(slot);
   }
   // relief shading of a height field: lit where it faces the upper left
   function relief(slot, sx, sy, seed, t1, t2, tl, tm, tsh, tdk) {
@@ -658,7 +668,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         const i = IDX[k];
         const wx = OX + (i & 31), stripe = Math.floor(wx / 24) & 1;
         const v = F[i];
-        TI[i] = v < 0.3 ? 1 : v > 0.72 ? 3 : stripe ? 3 : 2;
+        TI[i] = v < 0.24 ? 1 : v > 0.72 || stripe ? 3 : 2;
       }
       despeckle(slot);
       const gl = gentle(g);
@@ -679,13 +689,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const t = TI[i];
       B[i] = t < 5 ? gs[t] : t === 7 ? ss[2] : ss[1];
     }
-    if (st === 'ink') {
-      scatter(slot, 14, 39, 420, ST.ink, g, g, [K.inkU]);
-      return;
-    }
-    const dens = { lush: 520, autumn: 400, dune: 320, alpine: 330 }[st] || 380;
-    const key = { lush: 'lush', autumn: 'dry', dune: 'dune', alpine: 'short' }[st] || 'lush';
-    scatter(slot, 10, 40, dens, tufts(key), g, st === 'autumn' ? K.rd : st === 'dune' ? K.rd : g);
+    const dens = { lush: 520, autumn: 400, dune: 320, alpine: 330, paper: 300 }[st] || 380;
+    const key = { lush: 'lush', autumn: 'dry', dune: 'dune', alpine: 'short', paper: 'dry' }[st] || 'lush';
+    scatter(slot, 10, 40, dens, tufts(key), g, st === 'autumn' || st === 'dune' || st === 'paper' ? K.rd : g);
     if (st === 'lush') scatter(slot, 17, 41, 260, ST.clover, g);
     if (st === 'autumn') scatter(slot, 13, 42, 330, ST.leaf, g, K.lf);
     if (st === 'alpine') scatter(slot, 15, 43, 260, ST.pebble, g, K.s);
@@ -712,7 +718,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
       B[i] = t < 5 ? ds[t] : t === 6 ? mixU(K.w[3], d[2], 0.3) : mixU(K.w[1], d[1], 0.3);
     }
     switch (st) {
-      case 'ink': scatter(slot, 9, 63, 300, ST.inkdot, d, d, [K.inkU]); break;
       case 'shell': scatter(slot, 12, 64, 260, ST.pebble, d, K.s); scatter(slot, 15, 65, 240, ST.shell, d, d, [u('#f4ece0'), u('#e8c8b8'), 0]); break;
       case 'clay': scatter(slot, 12, 66, 260, ST.pebble, d, K.s); scatter(slot, 16, 67, 240, ST.shard, d, K.brick); scatter(slot, 20, 68, 200, ST.crack, d); break;
       case 'frozen': scatter(slot, 14, 69, 220, ST.pebble, d, K.s); scatter(slot, 17, 70, 300, ST.frost, K.sn); break;
@@ -731,7 +736,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const i = IDX[k];
       const x = i & 31, y = i >> 5, wx = OX + x, wy = OY + y;
       let t = F[i] < 0.3 ? 1 : F[i] > 0.7 ? 3 : 2;
-      if (G[i] > 0.45 && st !== 'ink') {
+      if (G[i] > 0.45) {
         // wind ripples: wavy bands with a lit crest and a shadowed trough
         const ph = (wy + 2.2 * Math.sin(wx / 7 + G[i] * 5) + F[i] * 4) / 7;
         const f = ph - Math.floor(ph);
@@ -742,7 +747,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }
     despeckle(slot);
     fillTone(slot, sa);
-    if (st === 'ink') { scatter(slot, 9, 83, 260, ST.inkdot, sa, sa, [K.inkU]); return; }
     scatter(slot, 23, 84, st === 'beach' ? 190 : 90, ST.shell, sa, sa, [u('#f6eee2'), u('#e6c4b4'), 0]);
     scatter(slot, 21, 85, 110, ST.pebble, sa, K.s);
     if (K.st.glassy) scatter(slot, 27, 86, 170, ST.glassy, sa, sa, K.acc);
@@ -762,7 +766,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     sprout: [stp(['2.2', '.3.', '.1.'], 1, 2), stp(['3.3', '.2.'], 1, 1)],
     stubble: [stp(['D.D', 'C.C', 'B.B'], 1, 2), stp(['D', 'C'], 0, 1)],
     bed: [stp(['.33.', '3443', '2332', '.11.'], 1, 3), stp(['.3.', '343', '.1.'], 1, 2)],
-    snow: [stp(['C.C'], 1, 0)], grey: [stp(['C.', 'B.'], 0, 1)], ink: [stp(['a.a', '.a.'], 1, 1)],
+    snow: [stp(['C.C'], 1, 0)], grey: [stp(['C.', 'B.'], 0, 1)],
   };
   function fillField(slot) {
     const d = K.d, st = K.st.field;
@@ -867,7 +871,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
       }
     }
     if (P.chips && K.st.glassy) scatter(slot, 37, 107, 150, ST.glassy, R, R, K.acc);
-    if (style === 'ink') scatter(slot, 12, 108, 200, ST.inkdot, R, R, [K.inkU]);
     if (!floor) kerbs(slot, R);
   }
   // Road kerbs where paving meets soft ground (lower at the south/east face).
@@ -913,31 +916,39 @@ var RB = (globalThis.RB = globalThis.RB || {});
       let c = R[t];
       if (((id >>> 17) % 5 === 0) && lx >= 20 && lx <= 22 && ly >= 2 && ly <= 4) c = (lx === 21 && ly === 3) ? R[0] : R[Math.max(0, t - 1)];
       // nail heads beside each joint
-      if ((lx === 2 || lx === len - 3) && (ly === 2 || ly === 5)) c = R[0];
+      if ((lx === 2 || lx === len - 3) && ly === 3) c = R[1];
       B[i] = c;
     }
   }
+  // Tatami are laid from the corner of their own area: rows of mats two tiles
+  // long in running bond (half mats at the row ends), cloth edging (heri) on
+  // the long sides, a seam at the short ends, the rush weave across the mat.
+  function tatamiOrigin() {
+    let ox = TX, oy = TY;
+    if (NB) {
+      for (let k = 1; k < 12; k++) { const t = NB(-k, 0); if (!t || t.id !== 'tatami') break; ox = TX - k; }
+      for (let k = 1; k < 12; k++) { const t = NB(0, -k); if (!t || t.id !== 'tatami') break; oy = TY - k; }
+    }
+    return [ox, oy];
+  }
   function fillTatami(slot) {
     const R = K.ta, E = K.heri;
+    const [ox, oy] = SK[0] === 'tatami' ? tatamiOrigin() : [0, 0];
+    const row = TY - oy, c = TX - ox + (row & 1), half = c & 1;
+    const mat = hh((c >> 1) + (row & 1) * 97, row + oy * 13 + ox * 7, 131);
+    const endR = !half && N8[2].id !== 'tatami', endL = half && N8[6].id !== 'tatami';
     for (let k = 0; k < NI; k++) {
-      const i = IDX[k];
-      const x = i & 31, y = i >> 5, wx = OX + x, wy = OY + y;
-      const bx = Math.floor(wx / 64), by = Math.floor(wy / 64), horiz = ((bx + by) & 1) === 0;
-      // mats are 64×32 (horizontal) or 32×64 (vertical); cloth edging (heri) on the long sides
-      const along = horiz ? wx - bx * 64 : wy - by * 64, across = horiz ? (wy & 31) : (wx & 31);
-      const mat = hh(horiz ? bx : Math.floor(wx / 32), horiz ? Math.floor(wy / 32) : by, 131);
-      let c;
-      if (across < 2 || across > 29) {
-        const e = across < 2 ? across : 31 - across;
-        c = e === 0 ? E[1] : E[3];
-      } else if (along === 0 || along === 63) c = R[0];
+      const i = IDX[k], x = i & 31, y = i >> 5, along = half * 32 + x;
+      let col;
+      if (y < 2 || y > 29) col = y === 0 || y === 31 ? E[1] : E[3];
+      else if (along === 0 || along === 63 || (endR && x === 31) || (endL && x === 0)) col = R[0];
       else {
         let t = (mat & 1) ? 3 : 2;
         if (along % 3 === 0) t -= 1;
-        if (across === 2 || across === 29) t = 1;
-        c = R[Math.max(0, t)];
+        if (y === 2 || y === 29) t = 1;
+        col = R[Math.max(0, t)];
       }
-      B[i] = c;
+      B[i] = col;
     }
   }
   function fillGlass(slot) {
@@ -981,7 +992,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // the parts that lean or reach over their border.
   function tallClumps(slot) {
     const key = K.st.tall, alt = key === 'susuki' || key === 'frost' || key === 'marram' || key === 'plume' || key === 'reed';
-    scatter(slot, 8, 183, 960, tufts(key === 'ink' ? 'tall' : key), K.g, alt ? (key === 'reed' ? K.wd : K.rd) : K.g, [K.inkU], (wx, wy) => idAt(wx, wy) === 'tallgrass');
+    scatter(slot, 8, 183, 960, tufts(key), K.g, alt ? (key === 'reed' ? K.wd : K.rd) : K.g, [K.inkU], (wx, wy) => idAt(wx, wy) === 'tallgrass');
   }
   function ground(kind, extra) {
     return (c, x, y, pal, h, nb, tx, ty) => {
@@ -1108,10 +1119,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       }
       // surface stamps by region
       if (!dark) {
-        if (ws === 'sea') scatter(0, 23, 164, 130, [stp(['.aaa.', 'a...b'], 2, 1), stp(['.aa.', 'b..a'], 1, 1)], W, W, [mixU(K.foam, W[3], 0.3), W[3]], (wx, wy) => distOK(wx, wy));
+        if (ws === 'sea') scatter(0, 23, 164, 130, [stp(['.aaaab', '..bb..'], 2, 1), stp(['baaa.', '.bb..'], 2, 1)], W, W, [mixU(K.foam, W[3], 0.3), W[3]], (wx, wy) => distOK(wx, wy));
         if (ws === 'drowned') scatter(0, 29, 165, 170, ST.scrap, W, W, [mixU(u('#e8e2cc'), W[2], 0.35), mixU(u('#c8c2ae'), W[2], 0.45)], (wx, wy) => distOK(wx, wy));
         if (ws === 'canal') scatter(0, 23, 166, 150, [stp(['aa', '.a'], 0, 0), stp(['a', 'a'], 0, 0)], W, W, [mixU(K.lantern, W[3], 0.3)], (wx, wy) => distOK(wx, wy));
-        if (ws === 'ink') scatter(0, 12, 167, 420, [stp(['.aa..', 'a..aa'], 2, 1), stp(['aa.', '..a'], 1, 1)], W, W, [mixU(K.inkU, W[2], 0.35)], (wx, wy) => distOK(wx, wy));
       } else scatter(0, 21, 168, 120, [stp(['aaa'], 1, 0)], W, W, [W[3]], (wx, wy) => distOK(wx, wy));
       // banks
       for (let s = 1; s < NS; s++) fillKind(SK[s], s);
@@ -1246,8 +1256,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
           else {
             const t = (id & 3) === 0 ? 3 : (id & 3) === 1 ? 1 : 2, jc = wc & 15;
             col = pa === 0 ? R[Math.min(4, t + 1)] : RS[t];
-            if (pa === 2 && ((wc + (id >>> 4)) % 13) < 4) col = R[Math.max(0, t - 1)];
-            if (jc === 7 && (pa === 1 || pa === 3)) col = R[1];
+            // grain away from the joist line; one nail per plank on it
+            if (pa === ((id >>> 3) & 1 ? 1 : 3) && (jc < 4 || jc > 10) && ((wc + (id >>> 4)) % 12) < 5) col = R[Math.max(0, t - 1)];
+            if (jc === 7 && pa === 2) col = R[1];
           }
         }
         B[i] = col;
@@ -1416,7 +1427,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // tone, a shaded right side), split by crevices that wobble, broken by a
   // ledge or two (snow or moss on it in some regions); darker at the foot.
   function rockFace(lip) {
-    const R = K.s, RS = soft(R), snowy = K.st.grass === 'snow' || K.name === 'sa_mount', green = !snowy && K.st.grass !== 'ink' && K.st.grass !== 'ashmoss';
+    const R = K.s, RS = soft(R), snowy = K.st.grass === 'snow' || K.name === 'sa_mount', green = !snowy && K.st.grass !== 'ashmoss';
     const bnd = (k, y) => k * 12 + (hh(k, 0, 211) % 5) - 2 + ((hh(k, (OY + y) >> 2, 212) % 3) - 1);
     for (let y = 0; y < A; y++) for (let x = 0; x < A; x++) {
       const i = y * A + x;
@@ -1473,7 +1484,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (snowy && fy < 0 && e > 1.3 && !(lower && e < 3.6)) c = e < 2.4 || fy < -4 ? K.sn[4] : K.sn[3];
       B[i] = c;
     }
-    if (!snowy && K.st.grass !== 'ink') scatter(0, 15, 217, 150, tufts('short'), K.g);
+    if (!snowy) scatter(0, 15, 217, 150, tufts('short'), K.g);
   }
 
   // ---- the void ------------------------------------------------------------------------------------
@@ -1568,7 +1579,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     out(c, x, y);
   }
   // Loose pages drifted over a stone floor: whole sheets only, each with a lit
-  // top edge, a shadow, lines of writing (or none, where names were wiped).
+  // top edge, a shadow, rows of brush dashes that suggest writing but are far
+  // too small to read (or none, where names were wiped).
   function paperTile(c, x, y, pal, h, nb, tx, ty) {
     begin(CUR, pal, h, nb, x, y, tx, ty);
     fillKind('stone', 0);
@@ -1576,11 +1588,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
     for (let cy = Math.floor((OY - 22) / cell); cy <= Math.floor((OY + 31) / cell); cy++)
       for (let cx = Math.floor((OX - 22) / cell); cx <= Math.floor((OX + 31) / cell); cx++) {
         const r = hh(cx, cy, 231);
-        if ((r & 3) < 2) continue;
+        if ((r & 7) < 5) continue;
         const sw = 11 + (r % 6), sh = 13 + ((r >>> 3) % 6);
         const sx = cx * cell + ((r >>> 6) % 7) - 3, sy = cy * cell + ((r >>> 9) % 7) - 3;
         if (idAt(sx, sy) !== 'paper' || idAt(sx + sw, sy) !== 'paper' || idAt(sx, sy + sh) !== 'paper' || idAt(sx + sw, sy + sh) !== 'paper') continue;
-        const tone = (r >>> 12) & 1 ? 3 : 2, blank = (r >>> 13) % (still ? 2 : 4) === 0, fold = (r >>> 16) % 4 === 0;
+        const tone = (r >>> 12) & 1 ? 2 : 1, blank = (r >>> 13) % (still ? 2 : 4) === 0, fold = (r >>> 16) % 4 === 0;
         for (let yy = 0; yy <= sh; yy++) for (let xx = 0; xx <= sw; xx++) {
           const X = sx + xx - OX, Y = sy + yy - OY;
           if (X < 0 || Y < 0 || X >= A || Y >= A) continue;
@@ -1588,7 +1600,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
           if (xx === sw || yy === sh) { if (xx > 0 && yy > 0) B[i] = mixU(B[i], K.shade, 0.34); continue; }
           if (fold && xx + (2 - yy) >= sw - 1 && yy < 3) { B[i] = xx + (2 - yy) === sw - 1 ? P[1] : mixU(B[i], K.shade, 0.2); continue; }
           let col = P[tone];
-          if (yy === 0) col = P[Math.min(4, tone + 1)];
+          if (yy === 0) col = P[tone + 1];
           else if (xx === 0) col = mixU(P[tone], P[tone + 1], 0.5);
           else if (xx === sw - 1 || yy === sh - 1) col = P[1];
           else if (!blank && xx >= 2 && xx < sw - 2 && yy >= 3 && yy < sh - 2 && yy % 3 === 0) {
