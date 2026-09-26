@@ -30,7 +30,7 @@
 - Complete: engine, UI, saves, learning, combat, recognizer, language, audio,
   Chapters 1–6 with ending/denouement, the Unwritten Atlas, New Game+.
 - Validator: no errors (`node tools/validate.mjs --stats` for counts).
-  Unit tests: 1815 pass. Browser: `node tests/e2e/run.mjs` 12/12 scripts on the final
+  Unit tests: 1815 pass. Browser: `node tests/e2e/run.mjs` 14/14 scripts on the hotfix
   build (UI 14/14, systems 4/4, settings), per-chapter story
   tests, Atlas check, and the whole-game matrix: 16/16 profile × companion
   combinations play a new campaign through all six chapters and one Atlas
@@ -38,6 +38,11 @@
 - Test tooling: tests/e2e/drive.mjs (goal-directed driver: walks real maps,
   interacts through the world), pursue.mjs (whole game), matrix.mjs,
   run.mjs (suite runner), explore.mjs (random explorer, weaker).
+- Hotfix (user-reported): Shift froze the world; Load/Continue left the title
+  backdrop over the world. Fixed in src/engine/10_input.js, 50_world.js,
+  90_game.js; regression tests/e2e/shift_load_regression.mjs (+ fixture
+  tests/fixtures/shift_load_legacy.json), 18/18 in http-origin and file://
+  modes; original build 3/18. See VALIDATION.md.
 - Not verified by automation (needs people): real handwriting accuracy,
   playtime, native-speaker review, music quality, audible TTS.
 

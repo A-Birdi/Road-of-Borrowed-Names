@@ -166,3 +166,48 @@ harness could not stand next to multi-tile props — fixed.
   dialogue choice chose it (Nao became the provisional companion); clicking
   the Japanese word on a café kitchen tile added it to the tray.
 - **U** `node tests/run-unit.mjs` 1815 passed; `node tools/validate.mjs` no errors.
+
+### Session log — Shift / Load hotfix (user-reported, reproduced)
+Starting point: branch head b4dd315, whose index.html matches the user's file
+(git blob 066c9755…, sha256 3788278a…). Two defects were confirmed in source:
+(1) src/engine/10_input.js recorded the held `run` action as the last pressed
+direction, so `RB.input.dir()` returned 'run' while Shift was held and
+src/engine/50_world.js `tryMovePlayer('run')` threw on `DIRS['run']` inside the
+frame loop before the next `requestAnimationFrame` — one Shift press froze the
+world; (2) src/engine/90_game.js `loadCampaign` never cleared the title's
+render override, so after Load/Continue the lantern backdrop stayed on screen
+and world pointer input was ignored. The earlier tests never pressed Shift and
+checked load by state, not by what is drawn.
+Fix: the supplied source.patch (checked with `git apply --check`, applied to
+the modular source unchanged): Run is only a speed modifier; direction
+priority is limited to the four directions and reset with held input;
+`tryMovePlayer` rejects non-directions; successful `loadCampaign` and
+`startNewCampaign` clear held input and the old override after the map entered
+(a cancelled/failed load returns earlier and keeps the title). The rebuilt
+index.html is byte-identical to the supplied repaired standalone
+(sha256 d890792d744c70e69bc6a2280676090f9269997b43785ec1c2f947a33d26129c).
+Save module, schema, database name, keys and slots are unchanged.
+- **B** `node tests/e2e/shift_load_regression.mjs --origin` (stable
+  http://127.0.0.1 origin, IndexedDB): **18/18** — both Shift keys alone
+  (no movement, loop alive), movement→Shift (105 ms run steps), Shift→movement
+  and releasing direction first, releasing Run first (back to 160 ms), remapped
+  Run key, focus loss, text-field isolation, an injected invalid direction,
+  manual Load (legacy fixture fields preserved), Continue, autosave Load,
+  pre-departure Load, three title→load→run cycles, New Game through the real
+  UI, `startNewCampaign` after a title override, a real page reload keeping the
+  campaign, and a reload + load leaving another slot's campaign untouched.
+  Visibility is asserted by world sprites drawn AND canvas pixels no longer
+  matching the title backdrop (checked: 165/165 sample points change on a real
+  load, 0/165 when the backdrop is forced back on).
+- **B** Same script, default file:// navigation: **18/18**, storage mode
+  IndexedDB in every test (Chromium allows it for file URLs).
+- **B** `--inline` (setContent, session-only storage; not a persistence test): 16/16.
+- **B** Against the original b4dd315 index.html: **3/18** (all Shift-direction
+  and Load-visibility checks fail as reported).
+- **B** `node tests/e2e/run.mjs` on the hotfix build: **14/14 scripts**
+  (ui 14/14, systems, settings, audio, both regression modes, story_ch1/3/4/5/6,
+  side_ch3, atlas.check, and a whole-game run through six chapters + one Atlas
+  expedition). **U** unit 1815 passed; validator no errors.
+- Not tested here: Windows, Brave, Firefox, Safari (only Chromium 141 headless
+  is installed); the user's actual saved slot (not provided — the fixture is a
+  synthetic save made by the pre-hotfix build); human play.

@@ -39,7 +39,7 @@ Status: `[ ]` not started · `[~]` in progress · `[i]` implemented, unverified 
 
 ## Exploration [6]
 - [v] R6.1 Tile movement with interpolation, collision, facing, doors, interiors, transitions, camera
-- [i] R6.2 Keyboard, mouse, touch controls
+- [i] R6.2 Keyboard, mouse, touch controls — keyboard movement with both Shift keys (run), release orders, remapped Run, focus loss verified (shift_load_regression.mjs); touch layout (ui.mjs)
 - [i] R6.3 Companion follows without blocking/stranding
 - [i] R6.4 NPC routines, contextual talk, environment changes
 - [i] R6.5 Side activities: inn orders, signposts/maps, letter delivery by context, oral histories/inscriptions
@@ -101,6 +101,7 @@ Status: `[ ]` not started · `[~]` in progress · `[i]` implemented, unverified 
 
 ## Saves [14]
 - [v] R14.1 Exactly six slots: new/save/load/copy/overwrite/delete; thumbnail + metadata
+- [v] R14.9 Load/Continue/autosave/pre-departure show the world (not the title backdrop) and accept input; reload keeps campaigns (shift_load_regression.mjs, http origin and file://)
 - [v] R14.2 IndexedDB; manual separate from autosave recovery; pre-departure snapshot
 - [v] R14.3 Copy independent; delete removes recovery data
 - [v] R14.4 Confirm destructive ops; never silently overwrite
