@@ -11020,6 +11020,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ash: { seed: 4, base: 3.5, amp: 2.5, cell: 7, spike: false, shade: 1, lit: 3, cast: 0.1 },
     field: { seed: 5, base: 2, amp: 1, cell: 8, spike: false, shade: 1, lit: 3, cast: 0.12 },
     sand: { seed: 6, base: 3, amp: 2, cell: 8, spike: false, shade: 1, lit: 4, cast: 0.1 },
+    def: { seed: 7, base: 3, amp: 2, cell: 6, spike: false, shade: 1, lit: 3, cast: 0.2 },
   };
 
   function begin(tile, pal, h, nb, x, y, tx, ty) {
@@ -11033,10 +11034,31 @@ var RB = (globalThis.RB = globalThis.RB || {});
       K8[d] = kindOf(N8[d]);
     }
     S.fill(0);
+    fullRegion();
     SK.length = 0; SL.length = 0;
     SK.push(KIND[tile.id]); SL.push(RECV[KIND[tile.id]] == null ? 0 : RECV[KIND[tile.id]]);
     NS = 1;
   }
+  // Pixels of the slot being filled and their bounding box, so a material
+  // that covers only a fringe or a corner costs only that much.
+  const IDX = new Int16Array(N);
+  let NI = 0, RX0 = 0, RY0 = 0, RX1 = 31, RY1 = 31;
+  function select(slot) {
+    NI = 0;
+    let x0 = 32, y0 = 32, x1 = -1, y1 = -1;
+    for (let i = 0; i < N; i++) {
+      if (S[i] !== slot) continue;
+      IDX[NI++] = i;
+      const x = i & 31, y = i >> 5;
+      if (x < x0) x0 = x;
+      if (x > x1) x1 = x;
+      if (y < y0) y0 = y;
+      y1 = y;
+    }
+    RX0 = x0; RY0 = y0; RX1 = x1; RY1 = y1;
+    return NI > 0;
+  }
+  function fullRegion() { RX0 = 0; RY0 = 0; RX1 = 31; RY1 = 31; }
   function slotOf(kind) {
     for (let i = 1; i < NS; i++) if (SK[i] === kind) return i;
     SK.push(kind); SL.push(SPILL[kind] == null ? 1 : SPILL[kind]);
@@ -11079,11 +11101,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
   function noise(out, W, Hh, x0, y0, sx, sy, seed, wgt, add) {
     const ox = OX + x0, oy = OY + y0;
     lattice(LAT, CX, CF, W, Hh, ox, oy, sx, sy, seed, wgt, LY);
-    for (let r = 0; r < Hh; r++) {
+    const r0 = RY0, r1 = Math.min(Hh - 1, RY1 + Hh - A), c0 = RX0, c1 = Math.min(W - 1, RX1 + W - A);
+    for (let r = r0; r <= r1; r++) {
       rowCols(LAT, COLV, LY, oy + r, sy);
       const o = r * W;
-      if (add) for (let x = 0; x < W; x++) { const c = CX[x], a = COLV[c]; out[o + x] += a + (COLV[c + 1] - a) * CF[x]; }
-      else for (let x = 0; x < W; x++) { const c = CX[x], a = COLV[c]; out[o + x] = a + (COLV[c + 1] - a) * CF[x]; }
+      if (add) for (let x = c0; x <= c1; x++) { const c = CX[x], a = COLV[c]; out[o + x] += a + (COLV[c + 1] - a) * CF[x]; }
+      else for (let x = c0; x <= c1; x++) { const c = CX[x], a = COLV[c]; out[o + x] = a + (COLV[c + 1] - a) * CF[x]; }
     }
   }
   // two octaves in one pass (W×Hh from the tile origin)
@@ -11091,11 +11114,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const a1 = 1 / (1 + w2), a2 = w2 / (1 + w2);
     lattice(LAT, CX, CF, W, Hh, OX, OY, sx1, sy1, seed, a1, LY);
     lattice(LAT2, CX2, CF2, W, Hh, OX, OY, sx2, sy2, seed + 17, a2, LY2);
-    for (let r = 0; r < Hh; r++) {
+    const c0 = RX0, c1 = Math.min(W - 1, RX1 + W - A);
+    for (let r = RY0, r1 = Math.min(Hh - 1, RY1 + Hh - A); r <= r1; r++) {
       rowCols(LAT, COLV, LY, OY + r, sy1);
       rowCols(LAT2, COLV2, LY2, OY + r, sy2);
       const o = r * W;
-      for (let x = 0; x < W; x++) {
+      for (let x = c0; x <= c1; x++) {
         const c = CX[x], a = COLV[c], d = CX2[x], b = COLV2[d];
         out[o + x] = a + (COLV[c + 1] - a) * CF[x] + b + (COLV2[d + 1] - b) * CF2[x];
       }
@@ -11107,7 +11131,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
   // remove lone pixels from a tone map (keeps clusters ≥ 2 px)
   function despeckle(slot) {
-    for (let y = 0; y < A; y++) for (let x = 0; x < A; x++) {
+    for (let y = RY0; y <= RY1; y++) for (let x = RX0; x <= RX1; x++) {
       const i = y * A + x;
       if (S[i] !== slot) continue;
       const t = TI[i];
@@ -11147,9 +11171,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // their overlapping pixels, so stamps continue across borders.
   function scatter(slot, cell, seed, dens, list, ramp, ramp2, acc, accept) {
     R1 = ramp; R2 = ramp2 || ramp; AC = acc || K.fw;
-    const m = 10;
-    const cx0 = Math.floor((OX - m) / cell), cx1 = Math.floor((OX + A + m) / cell);
-    const cy0 = Math.floor((OY - 2) / cell), cy1 = Math.floor((OY + A + m) / cell);
+    const cx0 = Math.floor((OX + RX0 - 10) / cell), cx1 = Math.floor((OX + RX1 + 10) / cell);
+    const cy0 = Math.floor((OY + RY0 - 3) / cell), cy1 = Math.floor((OY + RY1 + 18) / cell);
     for (let cy = cy0; cy <= cy1; cy++) for (let cx = cx0; cx <= cx1; cx++) {
       const r = hh(cx, cy, seed);
       if ((r & 1023) >= dens) continue;
@@ -11268,27 +11291,58 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const sidePix = (s, a, d) => (s === 0 ? d * A + a : s === 2 ? (31 - d) * A + a : s === 3 ? a * A + d : a * A + 31 - d);
 
   // Soft ground from the sides and corners spills over this tile's edge.
+  // Spill level of a neighbouring kind onto this tile (null: it does not
+  // spill). Ice is lower than everything: floors and paving edge it too.
+  function lvlOn(k) {
+    if (SPILL[k] != null) return SPILL[k];
+    return SK[0] === 'ice' && (k === 'road' || k === 'stone' || FLOORISH[k]) ? 1 : null;
+  }
+  const cornerRad = (cx, cy) => 7 + (hh(cx, cy, 79) % 4);
+  // Does the tile across side s round its corner at this end (lo: toward the
+  // lower along-coordinate)? It does when it spills onto us and the tiles on
+  // both sides of that corner are our kind too (see roundCorners).
+  function rounds(s, lo) {
+    const own = SK[0];
+    const perp = s === 0 || s === 2 ? (lo ? 6 : 2) : lo ? 0 : 4; // side toward that end
+    const diag = s === 0 ? (lo ? 7 : 1) : s === 2 ? (lo ? 5 : 3) : s === 3 ? (lo ? 7 : 5) : lo ? 1 : 3;
+    return K8[perp] === own && K8[diag] === own;
+  }
   function spills() {
     const po = SL[0];
     if (RECV[SK[0]] == null) return;
     const only = ONLY[SK[0]];
     for (let s = 0; s < 4; s++) {
-      const k = K8[s * 2], p = SPILL[k];
+      const k = K8[s * 2], p = lvlOn(k);
       if (p == null || p <= po || (only && !only[k])) continue;
-      const P = SPR[k];
+      const P = SPR[k] || SPR.def;
       profile(PR, s, P.seed, P.base, P.amp, P.cell, P.spike);
+      // taper where the spilling tile rounds its corner away
+      if (SPILL[k] != null) {
+        const hor = (s & 1) === 0;
+        const cLo = hor ? cornerRad(TX, s === 0 ? TY : TY + 1) : cornerRad(s === 3 ? TX : TX + 1, TY);
+        const cHi = hor ? cornerRad(TX + 1, s === 0 ? TY : TY + 1) : cornerRad(s === 3 ? TX : TX + 1, TY + 1);
+        const tLo = rounds(s, true), tHi = rounds(s, false);
+        for (let a = 0; a < A; a++) {
+          if (tLo) PR[a] = Math.min(PR[a], Math.max(0, Math.floor((a - cLo + Math.sqrt(cLo) + 0.5) * 0.9)));
+          if (tHi) PR[a] = Math.min(PR[a], Math.max(0, Math.floor((31 - a - cHi + Math.sqrt(cHi) + 0.5) * 0.9)));
+        }
+      }
       const sl = slotOf(k);
+      SL[sl] = Math.max(SL[sl], p);
       for (let a = 0; a < A; a++) for (let d = 0, n = PR[a]; d < n; d++) {
         const i = sidePix(s, a, d);
         if (SL[S[i]] < p) S[i] = sl;
       }
     }
     for (let c = 0; c < 4; c++) {
-      const k = K8[c * 2 + 1], p = SPILL[k];
+      const k = K8[c * 2 + 1], p = lvlOn(k);
       if (p == null || p <= po || (only && !only[k]) || K8[c * 2] === k || K8[(c * 2 + 2) % 8] === k) continue;
+      // no nub where that tile rounds its corner away from us
+      if (SPILL[k] != null && K8[c * 2] === SK[0] && K8[(c * 2 + 2) % 8] === SK[0]) continue;
       const cxw = c === 0 || c === 1 ? TX + 1 : TX, cyw = c === 1 || c === 2 ? TY + 1 : TY;
-      const rad = SPR[k].base + 1.5 + (hh(cxw, cyw, 77) % 3);
+      const rad = (SPR[k] || SPR.def).base + 1.5 + (hh(cxw, cyw, 77) % 3);
       const sl = slotOf(k), px0 = c === 0 || c === 1 ? 31 : 0, py0 = c === 1 || c === 2 ? 31 : 0;
+      SL[sl] = Math.max(SL[sl], p);
       for (let y = 0; y < 9; y++) for (let x = 0; x < 9; x++) {
         if (x * x + y * y >= rad * rad) continue;
         const i = (py0 ? 31 - y : y) * A + (px0 ? 31 - x : x);
@@ -11296,24 +11350,59 @@ var RB = (globalThis.RB = globalThis.RB || {});
       }
     }
   }
-  // Rims and cast shadows where a spilled material meets lower ground.
+  // A patch of soft ground rounds its outer corners where lower ground wraps
+  // around it (both sides and the diagonal), so single tiles read as patches.
+  function roundCorners() {
+    const own = SK[0], p = SPILL[own];
+    if (p == null) return;
+    for (let c = 0; c < 4; c++) {
+      const kA = K8[c * 2], kB = K8[(c * 2 + 2) % 8], kD = K8[c * 2 + 1];
+      if (kA !== kB || kA !== kD || WET[kA] || kA === 'other' || kA === 'void' || kA === 'wall' || kA === 'cliff') continue;
+      const q = SPILL[kA] != null ? SPILL[kA] : RECV[kA] != null ? RECV[kA] : FLOORISH[kA] ? 0 : null;
+      if (q == null || q >= p || lvlSpillsBack(kA)) continue;
+      const cxw = c === 0 || c === 1 ? TX + 1 : TX, cyw = c === 1 || c === 2 ? TY + 1 : TY, rad = cornerRad(cxw, cyw);
+      const sl = slotOf(kA), px0 = c === 0 || c === 1 ? 31 : 0, py0 = c === 1 || c === 2 ? 31 : 0;
+      SL[sl] = Math.min(SL[sl], q);
+      for (let yy = 0; yy < rad; yy++) for (let xx = 0; xx < rad; xx++) {
+        const dx = rad - xx - 0.5, dy = rad - yy - 0.5;
+        if (dx * dx + dy * dy <= rad * rad) continue;
+        const i = (py0 ? 31 - yy : yy) * A + (px0 ? 31 - xx : xx);
+        if (S[i] === 0) S[i] = sl;
+      }
+    }
+  }
+  // the lower kind would not receive our spill (then we must not round into it)
+  function lvlSpillsBack(k) {
+    const r = RECV[k];
+    if (r == null) return true;
+    const o = ONLY[k];
+    return !!(o && !o[SK[0]]);
+  }
+  // Rims and cast shadows wherever a higher material meets lower ground.
   function spillEdges() {
     if (NS === 1) return;
     for (let y = 0; y < A; y++) for (let x = 0; x < A; x++) {
       const i = y * A + x, s = S[i], p = SL[s];
       const up = y ? S[i - A] : s, dn = y < 31 ? S[i + A] : s, lf = x ? S[i - 1] : s, rt = x < 31 ? S[i + 1] : s;
-      if (s) {
-        const P = SPR[SK[s]], R = rampOf(SK[s]);
+      const P = SPR[SK[s]];
+      if (P) {
+        const R = rampOf(SK[s]);
         if (SL[dn] < p) B[i] = R[P.shade];
         else if (SL[rt] < p) B[i] = R[Math.min(4, P.shade + 1)];
         else if (SL[up] < p || SL[lf] < p) B[i] = R[P.lit];
       }
       // shadow cast by a higher material above/left
       let a = 0;
-      if (SL[up] > p) a = SPR[SK[up]] ? SPR[SK[up]].cast : 0;
-      else if (y > 1 && SL[S[i - 2 * A]] > p && SPR[SK[S[i - 2 * A]]]) a = SPR[SK[S[i - 2 * A]]].cast * 0.5;
-      else if (SL[lf] > p && SPR[SK[lf]]) a = SPR[SK[lf]].cast * 0.7;
+      if (SL[up] > p) a = (SPR[SK[up]] || SPR.def).cast;
+      else if (y > 1 && SL[S[i - 2 * A]] > p) a = (SPR[SK[S[i - 2 * A]]] || SPR.def).cast * 0.5;
+      else if (SL[lf] > p) a = (SPR[SK[lf]] || SPR.def).cast * 0.7;
       if (a) B[i] = mixU(B[i], K.shade, a);
+    }
+    // frost where ice meets its edge
+    if (SK[0] === 'ice') for (let i = 0; i < N; i++) {
+      if (S[i] !== 0) continue;
+      const x = i & 31, y = i >> 5;
+      if ((y && S[i - A]) || (x && S[i - 1]) || (x < 31 && S[i + 1]) || (y < 31 && S[i + A])) B[i] = K.ice[4];
     }
   }
   function rampOf(kind) {
@@ -11369,18 +11458,18 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
   function fillTone(slot, ramp, hard) {
     const R = hard ? ramp : soft(ramp);
-    for (let i = 0; i < N; i++) if (S[i] === slot) B[i] = R[TI[i]];
+    for (let k = 0, i = 0; k < NI; k++) if ((i = IDX[k]) >= 0) B[i] = R[TI[i]];
   }
   function toneField(slot, s1, s2, seed, w2, lo, hi, tl, tm, th) {
     field(F, s1, s2, seed, w2);
-    for (let i = 0; i < N; i++) if (S[i] === slot) { const v = F[i]; TI[i] = v < lo ? tl : v > hi ? th : tm; }
+    for (let k = 0, i = 0; k < NI; k++) if ((i = IDX[k]) >= 0) { const v = F[i]; TI[i] = v < lo ? tl : v > hi ? th : tm; }
     despeckle(slot);
   }
   // relief shading of a height field: lit where it faces the upper left
   function relief(slot, sx, sy, seed, t1, t2, tl, tm, tsh, tdk) {
     noise(G, 34, 34, 0, 0, sx, sy, seed, 0.7, false);
     noise(G, 34, 34, 0, 0, sx * 0.45, sy * 0.45, seed + 3, 0.3, true);
-    for (let y = 0; y < A; y++) for (let x = 0; x < A; x++) {
+    for (let y = RY0; y <= RY1; y++) for (let x = RX0; x <= RX1; x++) {
       const i = y * A + x;
       if (S[i] !== slot) continue;
       const e = G[y * 34 + x] - G[(y + 2) * 34 + x + 2];
@@ -11402,15 +11491,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
     if (st === 'lawn') {
       // mown stripes plus a few soft patches
       field(F, 30, 12, 34, 0.4);
-      for (let i = 0; i < N; i++) {
-        if (S[i] !== slot) continue;
+      for (let k = 0; k < NI; k++) {
+        const i = IDX[k];
         const wx = OX + (i & 31), stripe = Math.floor(wx / 24) & 1;
         const v = F[i];
         TI[i] = v < 0.3 ? 1 : v > 0.72 ? 3 : stripe ? 3 : 2;
       }
       despeckle(slot);
       const gl = gentle(g);
-      for (let i = 0; i < N; i++) if (S[i] === slot) B[i] = gl[TI[i]];
+      for (let k = 0, i = 0; k < NI; k++) if ((i = IDX[k]) >= 0) B[i] = gl[TI[i]];
       scatter(slot, 12, 35, 260, tufts('short'), g);
       scatter(slot, 19, 36, 220, ST.clover, g);
       return;
@@ -11419,11 +11508,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
     if (st === 'dune') {
       // salt-bleached turf thinning to sand
       field(G, 21, 8, 38, 0.4);
-      for (let i = 0; i < N; i++) if (S[i] === slot && G[i] < 0.3) TI[i] = G[i] < 0.26 ? 7 : 6;
+      for (let k = 0, i = 0; k < NI; k++) if ((i = IDX[k]) >= 0 && G[i] < 0.3) TI[i] = G[i] < 0.26 ? 7 : 6;
     }
     const gs = gentle(g), ss = soft(K.sa);
-    for (let i = 0; i < N; i++) {
-      if (S[i] !== slot) continue;
+    for (let k = 0; k < NI; k++) {
+      const i = IDX[k];
       const t = TI[i];
       B[i] = t < 5 ? gs[t] : t === 7 ? ss[2] : ss[1];
     }
@@ -11451,11 +11540,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
     toneField(slot, 18, 7, 61, 0.5, 0.34, 0.66, 1, 2, 3);
     if (st === 'silt') {
       field(G, 20, 9, 62, 0.4);
-      for (let i = 0; i < N; i++) if (S[i] === slot && G[i] > 0.7) TI[i] = G[i] > 0.74 ? 6 : 5;
+      for (let k = 0, i = 0; k < NI; k++) if ((i = IDX[k]) >= 0 && G[i] > 0.7) TI[i] = G[i] > 0.74 ? 6 : 5;
     }
     const ds = soft(d);
-    for (let i = 0; i < N; i++) {
-      if (S[i] !== slot) continue;
+    for (let k = 0; k < NI; k++) {
+      const i = IDX[k];
       const t = TI[i];
       B[i] = t < 5 ? ds[t] : t === 6 ? mixU(K.w[3], d[2], 0.3) : mixU(K.w[1], d[1], 0.3);
     }
@@ -11475,8 +11564,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const sa = K.sa, st = K.st.sand;
     field(F, 26, 9, 81, 0.4);
     noise(G, A, A, 0, 0, 34, 34, 82, 1, false);
-    for (let i = 0; i < N; i++) {
-      if (S[i] !== slot) continue;
+    for (let k = 0; k < NI; k++) {
+      const i = IDX[k];
       const x = i & 31, y = i >> 5, wx = OX + x, wy = OY + y;
       let t = F[i] < 0.3 ? 1 : F[i] > 0.7 ? 3 : 2;
       if (G[i] > 0.45 && st !== 'ink') {
@@ -11499,33 +11588,34 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const a = K.ash;
     noise(F, A, A, 0, 0, 22, 5, 91, 0.7, false);
     noise(F, A, A, 0, 0, 9, 9, 92, 0.3, true);
-    for (let i = 0; i < N; i++) if (S[i] === slot) TI[i] = F[i] < 0.34 ? 1 : F[i] > 0.66 ? 3 : 2;
+    for (let k = 0, i = 0; k < NI; k++) if ((i = IDX[k]) >= 0) TI[i] = F[i] < 0.34 ? 1 : F[i] > 0.66 ? 3 : 2;
     despeckle(slot);
     fillTone(slot, a);
     scatter(slot, 17, 93, 170, ST.lump, a, K.cinder);
     scatter(slot, 19, 94, 120, ST.flake, a);
     scatter(slot, 53, 95, 70, ST.ember, a, K.dw, [u('#c8683a')]);
   }
+  const CROPS = {
+    sprout: [stp(['2.2', '.3.', '.1.'], 1, 2), stp(['3.3', '.2.'], 1, 1)],
+    stubble: [stp(['D.D', 'C.C', 'B.B'], 1, 2), stp(['D', 'C'], 0, 1)],
+    bed: [stp(['.33.', '3443', '2332', '.11.'], 1, 3), stp(['.3.', '343', '.1.'], 1, 2)],
+    snow: [stp(['C.C'], 1, 0)], grey: [stp(['C.', 'B.'], 0, 1)], ink: [stp(['a.a', '.a.'], 1, 1)],
+  };
   function fillField(slot) {
     const d = K.d, st = K.st.field;
-    for (let i = 0; i < N; i++) {
-      if (S[i] !== slot) continue;
+    for (let k = 0; k < NI; k++) {
+      const i = IDX[k];
       const r = (OY + (i >> 5)) & 7;
       B[i] = r === 0 ? d[3] : r < 4 ? d[2] : r === 4 ? d[1] : d[0];
       if (st === 'snow' && r > 4) B[i] = K.sn[r === 5 ? 2 : 3];
     }
     // crops sit on the ridges, spaced along the row
-    const crop = {
-      sprout: [stp(['2.2', '.3.', '.1.'], 1, 2), stp(['3.3', '.2.'], 1, 1)],
-      stubble: [stp(['D.D', 'C.C', 'B.B'], 1, 2), stp(['D', 'C'], 0, 1)],
-      bed: [stp(['.33.', '3443', '2332', '.11.'], 1, 3), stp(['.3.', '343', '.1.'], 1, 2)],
-      snow: [stp(['C.C'], 1, 0)], grey: [stp(['C.', 'B.'], 0, 1)], ink: [stp(['a.a', '.a.'], 1, 1)],
-    }[st] || [];
+    const crop = CROPS[st] || CROPS.sprout;
     const R = st === 'stubble' ? K.rd : st === 'bed' ? K.lf : K.g;
     R1 = R; R2 = st === 'stubble' ? K.rd : st === 'snow' || st === 'grey' ? K.d : R; AC = [K.inkU];
-    for (let row = Math.floor(OY / 8); row <= Math.floor((OY + 31) / 8); row++) {
+    for (let row = Math.floor((OY + RY0) / 8); row <= Math.floor((OY + RY1 + 4) / 8); row++) {
       const wy = row * 8 + 3;
-      for (let k = Math.floor((OX - 6) / 7); k <= Math.floor((OX + 37) / 7); k++) {
+      for (let k = Math.floor((OX + RX0 - 6) / 7); k <= Math.floor((OX + RX1 + 6) / 7); k++) {
         const r = hh(k, row, 97);
         if ((r & 7) === 0) continue;
         stamp(crop[(r >>> 3) % crop.length], k * 7 + ((r >>> 6) % 3) - OX, wy - OY, slot);
@@ -11534,6 +11624,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
   // Ground fill by kind (used for this tile and for spilled/bank material).
   function fillKind(kind, slot) {
+    if (select(slot)) fillBody(kind, slot);
+    fullRegion();
+  }
+  function fillBody(kind, slot) {
     switch (kind) {
       case 'veg': return fillGrass(slot);
       case 'snow': return fillSnow(slot);
@@ -11563,7 +11657,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     flags: { rw: 26, rh: 16, st: 1, split: 1, round: 0, ramp: 's', joint: 's1m', tones: [2, 3, 3, 2], chips: 1, soft: 1, softEdge: 1 },
     brick: { rw: 16, rh: 8, st: 1, round: 0, ramp: 'brick', joint: 'ash', tones: [2, 2, 3, 1], soft: 1 },
     setts: { rw: 11, rh: 8, st: 1, round: 0, ramp: 's', joint: 'snow', tones: [1, 2, 2, 3], soft: 1 },
-    slab: { rw: 16, rh: 16, st: 1, round: 0, ramp: 's', joint: 's1', tones: [2, 2, 3, 2], sheen: 1, warm: 1, soft: 1 },
+    slab: { rw: 24, rh: 16, st: 1, split: 1, round: 0, ramp: 's', joint: 's1m', tones: [2, 2, 3, 2], sheen: 1, warm: 1, soft: 1, softEdge: 1 },
     wet: { rw: 22, rh: 14, st: 1, split: 1, round: 0, ramp: 's', joint: 'moss', tones: [1, 2, 2, 1], wet: 1 },
     ashlar: { rw: 28, rh: 20, st: 1, split: 1, round: 0, ramp: 's', joint: 's1m', tones: [2, 3, 3, 2], soft: 1, softEdge: 1 },
     ink: { rw: 16, rh: 12, st: 1, round: 1, ramp: 's', joint: 'ink', tones: [3, 3, 4, 3] },
@@ -11575,16 +11669,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
       : P.joint === 'snow' ? mixU(K.s[1], K.sn[2], 0.55) : P.joint === 'moss' ? mixU(K.s[0], K.g[1], 0.5) : K.inkU;
     const warm = P.warm ? K.lantern : 0, rw = P.rw, rh = P.rh, round = P.round | 0, cut = round + (round > 1 ? 1 : 0);
     if (P.wet) field(G, 17, 7, 101, 0.5);
-    for (let y = 0; y < A; y++) {
+    for (let y = RY0; y <= RY1; y++) {
       const wy = OY + y, row = Math.floor(wy / rh), ly = wy - row * rh;
       const off = P.st ? (row & 1 ? rw >> 1 : 0) + (hh(row, -7, 105) % 3) : 0;
-      let x = 0;
-      while (x < A) {
+      let x = RX0;
+      while (x <= RX1) {
         // one stone (or half stone) of this course at a time
         const wx = OX + x, col = Math.floor((wx + off) / rw), sx0 = col * rw - off;
         let id = hh(col, row, 105), s0 = sx0, w = rw;
         if (P.split && id % 3 === 0) { const hw = rw >> 1; if (wx - sx0 >= hw) { s0 = sx0 + hw; id = (id * 7 + 1) >>> 0; } w = hw; }
-        const xe = Math.min(A, s0 + w - OX), t = P.tones[id & 3];
+        const xe = Math.min(RX1 + 1, s0 + w - OX), t = P.tones[id & 3];
         const cBody = P.soft ? RS[t] : R[t], cLit = R[Math.min(4, t + 1)], cDark = P.softEdge ? RS[Math.max(0, t - 1)] : R[Math.max(0, t - 1)];
         const chip = (id >>> 8) % 11 === 0;
         for (; x < xe; x++) {
@@ -11603,7 +11697,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
           if (P.wet && G[i] > 0.64) {
             // a shallow puddle: the stone darkens and reflects a little light
             c = mixU(c, K.wet, G[i] > 0.7 ? 0.42 : 0.28);
-            if (G[i] > 0.7 && ((OX + x + wy) % 11) < 2) c = mixU(c, K.light, 0.18);
           }
           if (chip && lx > 2 && ly > 2 && lx < w - 3 && ly < rh - 3 && ((lx + ly * 3 + (id >>> 4)) % 7) === 0) c = cDark;
           B[i] = c;
@@ -11638,8 +11731,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
   function fillWood(slot) {
     const R = K.fl;
-    for (let i = 0; i < N; i++) {
-      if (S[i] !== slot) continue;
+    for (let k = 0; k < NI; k++) {
+      const i = IDX[k];
       const x = i & 31, y = i >> 5, wx = OX + x, wy = OY + y;
       const row = Math.floor(wy / 8), ly = wy - row * 8;
       const off = hh(row, 0, 121) % 56, len = 56;
@@ -11663,8 +11756,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
   function fillTatami(slot) {
     const R = K.ta, E = K.heri;
-    for (let i = 0; i < N; i++) {
-      if (S[i] !== slot) continue;
+    for (let k = 0; k < NI; k++) {
+      const i = IDX[k];
       const x = i & 31, y = i >> 5, wx = OX + x, wy = OY + y;
       const bx = Math.floor(wx / 64), by = Math.floor(wy / 64), horiz = ((bx + by) & 1) === 0;
       // mats are 64×32 (horizontal) or 32×64 (vertical); cloth edging (heri) on the long sides
@@ -11686,8 +11779,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
   function fillGlass(slot) {
     const R = K.gl, RS = soft(R);
-    for (let i = 0; i < N; i++) {
-      if (S[i] !== slot) continue;
+    for (let k = 0; k < NI; k++) {
+      const i = IDX[k];
       const wx = OX + (i & 31), wy = OY + (i >> 5);
       const lx = wx & 15, ly = wy & 15, id = hh(wx >> 4, wy >> 4, 141);
       let c;
@@ -11708,8 +11801,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const R = K.ice;
     noise(F, A, A, 0, 0, 19, 19, 151, 1, false);
     noise(G, A, A, 0, 0, 9, 9, 152, 1, false);
-    for (let i = 0; i < N; i++) {
-      if (S[i] !== slot) continue;
+    for (let k = 0; k < NI; k++) {
+      const i = IDX[k];
       const x = i & 31, y = i >> 5, wx = OX + x, wy = OY + y, v = F[i];
       let t = G[i] > 0.62 ? 3 : 2;
       if (Math.abs(v - 0.5) < 0.022) t = 1; // cracks
@@ -11731,6 +11824,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     return (c, x, y, pal, h, nb, tx, ty) => {
       begin(this_(kind), pal, h, nb, x, y, tx, ty);
       spills();
+      roundCorners();
       fillKind(SK[0], 0);
       if (extra) extra(0);
       else if (SELF.id !== 'tallgrass' && RECV[SK[0]] != null) for (let d = 0; d < 8; d++) if (N8[d].id === 'tallgrass') { tallClumps(0); break; }
@@ -12314,7 +12408,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // top edge, a shadow, lines of writing (or none, where names were wiped).
   function paperTile(c, x, y, pal, h, nb, tx, ty) {
     begin(CUR, pal, h, nb, x, y, tx, ty);
-    fillPave(0, K.st.floor === 'brick' ? 'flags' : K.st.floor, true);
+    fillKind('stone', 0);
     const P = K.paper, ink = K.inkU, cell = 17, still = K.name === 'sa_still';
     for (let cy = Math.floor((OY - 22) / cell); cy <= Math.floor((OY + 31) / cell); cy++)
       for (let cx = Math.floor((OX - 22) / cell); cx <= Math.floor((OX + 31) / cell); cx++) {
