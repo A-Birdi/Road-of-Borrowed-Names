@@ -431,12 +431,10 @@ body.high-contrast :is(.chal, .lsheet) .fb.no, body.high-contrast :is(.chal, .ls
 @media (min-width: 860px) { .folio.lsheet.lesson, .folio.lsheet.activity { width: min(920px, calc(100vw - 2 * var(--gutter))); } }
 /* wide or landscape: the note and the words sit beside the character */
 @media (min-width: 640px) {
-  .lsheet.lesson .leaf { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto 1fr; gap: 0 28px; align-content: start; }
+  .lsheet.lesson .leaf { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0 28px; align-content: start; align-items: start; }
   .lsheet.lesson .lesson-row { grid-column: 1 / -1; }
-  .lsheet.lesson .lesson-main { grid-column: 1; grid-row: 2 / span 20; align-self: start; flex-wrap: nowrap; }
-  .lsheet.lesson .leaf > :not(.lesson-row):not(.lesson-main) { grid-column: 2; }
+  .lsheet.lesson .lesson-main { flex-wrap: nowrap; }
   .lsheet.lesson .lesson-note { margin-top: 0; }
-  .lsheet.lesson .leaf > h3 { margin-top: 0.6em; }
 }
 
 /* activities: who is speaking, the tray and the kitchen, a letter to deliver */

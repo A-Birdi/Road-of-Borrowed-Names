@@ -1171,12 +1171,10 @@ body.high-contrast :is(.chal, .lsheet) .fb.no, body.high-contrast :is(.chal, .ls
 @media (min-width: 860px) { .folio.lsheet.lesson, .folio.lsheet.activity { width: min(920px, calc(100vw - 2 * var(--gutter))); } }
 /* wide or landscape: the note and the words sit beside the character */
 @media (min-width: 640px) {
-  .lsheet.lesson .leaf { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto 1fr; gap: 0 28px; align-content: start; }
+  .lsheet.lesson .leaf { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0 28px; align-content: start; align-items: start; }
   .lsheet.lesson .lesson-row { grid-column: 1 / -1; }
-  .lsheet.lesson .lesson-main { grid-column: 1; grid-row: 2 / span 20; align-self: start; flex-wrap: nowrap; }
-  .lsheet.lesson .leaf > :not(.lesson-row):not(.lesson-main) { grid-column: 2; }
+  .lsheet.lesson .lesson-main { flex-wrap: nowrap; }
   .lsheet.lesson .lesson-note { margin-top: 0; }
-  .lsheet.lesson .leaf > h3 { margin-top: 0.6em; }
 }
 
 /* activities: who is speaking, the tray and the kitchen, a letter to deliver */
@@ -18782,7 +18780,7 @@ RB.lessons = (function () {
       const cs = groupChars(g);
       const I = (n) => RB.learnUi.icon(n);
       const lay = { name: 'lesson' };
-      const fr = RB.learnUi.sheet({ cls: 'lesson' });
+      const fr = RB.learnUi.sheet({ cls: 'small lesson' });
       lay.el = fr.scrim;
       let idx = 0;
       let stop = () => {};
@@ -18799,8 +18797,10 @@ RB.lessons = (function () {
             '<figure class="lesson-demo"><canvas width="360" height="360" role="img" aria-label="Stroke order for ' + esc(c.ch) + '"></canvas>' +
               '<figcaption class="muted small">Numbered strokes from the reference data. The adventure accepts readable variants; order matters only in optional practice.</figcaption></figure>' +
           '</div>' +
+          '<div class="lesson-side">' +
           (c.note ? '<p class="lesson-note">' + RB.learnUi.mixed(c.note.en || c.note) + '</p>' : '') +
-          (ex.length ? '<h3>In words</h3><ul class="lesson-ex">' + ex.map((e) => '<li>' + RB.ui.jhtml(e.jp || e.w) + '<span class="en">' + esc(e.m || e.en || '') + '</span></li>').join('') + '</ul>' : '');
+          (ex.length ? '<h3>In words</h3><ul class="lesson-ex">' + ex.map((e) => '<li>' + RB.ui.jhtml(e.jp || e.w) + '<span class="en">' + esc(e.m || e.en || '') + '</span></li>').join('') + '</ul>' : '') +
+          '</div>';
         fr.foot.innerHTML = (idx > 0 ? '<button class="cbtn" data-a="prev">' + I('back') + '<span>Back</span></button>' : '') +
           '<button class="cbtn" data-a="say">' + I('sound') + '<span>Say it</span></button>' +
           '<button class="cbtn go" data-a="next" data-ok>' + '<span>' + (idx < cs.length - 1 ? 'Next' : 'Practise these') + '</span>' + I('next') + '</button>';

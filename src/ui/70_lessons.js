@@ -69,7 +69,7 @@ RB.lessons = (function () {
       const cs = groupChars(g);
       const I = (n) => RB.learnUi.icon(n);
       const lay = { name: 'lesson' };
-      const fr = RB.learnUi.sheet({ cls: 'lesson' });
+      const fr = RB.learnUi.sheet({ cls: 'small lesson' });
       lay.el = fr.scrim;
       let idx = 0;
       let stop = () => {};
@@ -86,8 +86,10 @@ RB.lessons = (function () {
             '<figure class="lesson-demo"><canvas width="360" height="360" role="img" aria-label="Stroke order for ' + esc(c.ch) + '"></canvas>' +
               '<figcaption class="muted small">Numbered strokes from the reference data. The adventure accepts readable variants; order matters only in optional practice.</figcaption></figure>' +
           '</div>' +
+          '<div class="lesson-side">' +
           (c.note ? '<p class="lesson-note">' + RB.learnUi.mixed(c.note.en || c.note) + '</p>' : '') +
-          (ex.length ? '<h3>In words</h3><ul class="lesson-ex">' + ex.map((e) => '<li>' + RB.ui.jhtml(e.jp || e.w) + '<span class="en">' + esc(e.m || e.en || '') + '</span></li>').join('') + '</ul>' : '');
+          (ex.length ? '<h3>In words</h3><ul class="lesson-ex">' + ex.map((e) => '<li>' + RB.ui.jhtml(e.jp || e.w) + '<span class="en">' + esc(e.m || e.en || '') + '</span></li>').join('') + '</ul>' : '') +
+          '</div>';
         fr.foot.innerHTML = (idx > 0 ? '<button class="cbtn" data-a="prev">' + I('back') + '<span>Back</span></button>' : '') +
           '<button class="cbtn" data-a="say">' + I('sound') + '<span>Say it</span></button>' +
           '<button class="cbtn go" data-a="next" data-ok>' + '<span>' + (idx < cs.length - 1 ? 'Next' : 'Practise these') + '</span>' + I('next') + '</button>';
