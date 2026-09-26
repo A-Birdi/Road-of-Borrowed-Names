@@ -16,10 +16,24 @@ const { p, errors } = await page(b, url);
 const t0 = Date.now();
 await p.evaluate(install);
 await p.evaluate(async (a) => {
-  RB.test.enable({ battle: 'unravel', choose: () => 0 });
+  // A new campaign recruits the companion in the story: prefer choices that
+  // name them (e.g. "Set out with Mio"); otherwise the first option.
+  const fresh = a.startMap === 'rw.road' && !a.flagList;
+  const want = a.comp !== 'none' && RB.content.chars[a.comp] ? RB.content.chars[a.comp].name.en : null;
+  const names = ['nao', 'mio', 'ren', 'suzu'].map((c) => RB.content.chars[c].name.en);
+  RB.test.enable({ battle: 'unravel', choose: (opts) => {
+    if (fresh && want && !RB.game.s.comp) {
+      const txt = opts.map((o) => RB.script.enVars(o.en || ''));
+      const mine = txt.findIndex((t) => t.includes(want));
+      if (mine >= 0) return mine;
+      // an option naming someone else would recruit them: take one naming nobody
+      if (txt.some((t) => names.some((n) => t.includes(n)))) { const i = txt.findIndex((t) => !names.some((n) => t.includes(n))); if (i >= 0) return i; }
+    }
+    return 0;
+  } });
   const flags = {};
   for (const f of a.flagList.split(',').filter(Boolean)) flags[f] = true;
-  const s = RB.game.debugStart(a.startMap, +a.sx, +a.sy, { comp: a.comp === 'none' ? null : a.comp, profile: a.profile, flags });
+  const s = RB.game.debugStart(a.startMap, +a.sx, +a.sy, { comp: fresh || a.comp === 'none' ? null : a.comp, profile: a.profile, flags });
   s.learn.kanaKnown = a.profile === 'F' ? 'hira' : 'both';
   for (const w of a.wordList.split(',').filter(Boolean)) if (!s.words.includes(w)) s.words.push(w);
   await RB.test.idle(60000);
@@ -43,6 +57,7 @@ const fin = await p.evaluate(() => ({
   flags: ['post', 'postgame', 'ch6_done'].filter((f) => RB.game.s.flags[f]),
 }));
 const lost = fin.battles.filter((x) => !x.endsWith(':win'));
+if (comp !== 'none' && fin.comp !== comp) { ok = false; console.log('companion ' + fin.comp + ' is not the requested ' + comp); }
 console.log(JSON.stringify({ profile, comp: fin.comp, seconds: Math.round((Date.now() - t0) / 1000), map: fin.map, flags: fin.flags, battles: fin.battles.length, lost, problems: fin.problems, pageErrors: errors.slice(0, 5), quests: fin.quests }, null, 1));
 await b.close(); srv.close();
 process.exit(ok && !fin.problems.length && !errors.length && !lost.length ? 0 : 1);
