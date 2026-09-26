@@ -211,3 +211,51 @@ Save module, schema, database name, keys and slots are unchanged.
 - Not tested here: Windows, Brave, Firefox, Safari (only Chromium 141 headless
   is installed); the user's actual saved slot (not provided — the fixture is a
   synthetic save made by the pre-hotfix build); human play.
+
+## Visual overhaul — Wayfarer's Folio (interim runs, 2026-09-26)
+Key: **B** = browser test of the built index.html (Playwright, Chromium
+headless, this container), **U** = unit test, **S** = screenshot inspected by
+eye, **R** = code review only. These are interim runs on the listed commits;
+a full re-run of every suite on the final build is recorded at the end.
+- **B** `tests/e2e/folio.mjs` (commit da82a12, again on 4079011): all ok.
+  Covers: four tabs in fixed order, tablist/tabpanel wiring, roving tabindex,
+  focus on the selected tab, click/ArrowLeft/ArrowRight/Home/End with wrap,
+  the game not acting on arrows, 16 hit probes inside visible tab boxes all
+  reaching their own tab, labels uncovered/unclipped, Settings and Save & Load
+  utilities, Escape closing one layer at a time, old names (journal, log,
+  notebook, guide, items, map, settings), Words › Guide kept across a
+  desktop→phone resize, one page on phones; at 390x844, 360x800, 320x640 and
+  390x844 with 200 % text: no element wider than the screen, no clipped tab
+  label, rail fits or scrolls with arrows, ≥44 px controls, Close on screen,
+  touch tap selects a tab, Back leaves a sub-page before closing, character
+  does not move.
+- **B** `tests/e2e/settings.mjs` (da82a12, 4079011): switches and radios in
+  named groups, reading preview with furigana from a real game line, all
+  values applied and persisted across a reload (IndexedDB).
+- **B** `tests/e2e/play_ui.mjs` (4079011, again on 031e71a): all ok. Covers
+  touch-action none only on the world canvas and touch controls, exactly one
+  visible Menu entry, "Talk" label when facing an NPC, hold-to-Run, sliding
+  move pad (left→right→released), one Next, HUD and touch controls hidden in
+  dialogue, ≥44 px dialogue controls, player drawn above the dialogue sheet,
+  tapped word → bottom sheet with Close in view and no advance, tap outside
+  only closes the sheet, Escape closes help first, a touch scroll over nine
+  replies does not choose one while a tap does, "More" before advancing an
+  overflowing line (640x320 at 130 % text), HUD hidden under the folio, Tab
+  moves focus into the page without closing it, a hover card does not block
+  a click on Next.
+- **B** `tests/e2e/ui.mjs` 14/14 (4079011 and 031e71a) — updated for the
+  new touch pad selector and for help pausing the question (a click while a
+  long-press card is open closes it without answering; the next click
+  answers). **B** `systems.mjs` 4/4, `shift_load_regression.mjs` 18/18 in
+  both modes, `story_ch1.mjs F mio` pass (4079011); `atlas.check.mjs` 15
+  checks ok (7bd3b9c). **U** 1866 passed incl. `ui_contrast.test.mjs`
+  (token contrast pairs in default and high-contrast modes).
+- **S** Folio (Journey/Words/Satchel/Map/Settings) at 390x844, 320x640,
+  390x844 @200 % text and 1280x800; dialogue, word help and world at
+  390x844, 844x390 and 1280x800; Atlas sheet/panel/chip at 390x844 and
+  1280x800.
+- **B** `tests/e2e/perf.mjs`, 1280x800 @1x, same container: pre-overhaul
+  build 2b79f3b vs 031e71a+ (art renderer, legacy art at 2x): frame work
+  1.6–3.6 ms vs 2.2–4.2 ms; static map build 2–46 ms vs 5–43 ms; folio
+  open+close 18 ms vs 34 ms; DOM size unchanged after 20 open/close cycles
+  in both. Desktop headless only — phone performance and battery NOT tested.
