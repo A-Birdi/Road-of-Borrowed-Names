@@ -1,7 +1,7 @@
 // Visual capture of representative states of the built game, for before/after
 // comparison and art/layout review. Uses synthetic fixtures only (never real
 // player saves). Usage:
-//   node tests/e2e/visual.mjs <outDir> [--html file] [--vp 390x844,1280x800] [--only a,b]
+//   node tests/e2e/visual.mjs <outDir> [--html file] [--vp 390x844,1280x800] [--only a,b] [--check]
 // States: title, slots, slots_empty, create_prologue, create, create_err,
 // create_kb, create2, create2_acc, create_inspect, create3, create4,
 // create_place, create_ngplus, create_x2, create2_x2, create3_x2,
@@ -406,6 +406,34 @@ for (const [k, [m, x, y]] of Object.entries(WORLD)) {
   STATES[k] = async (p) => { await p.evaluate((a) => { V.rich(a[0], a[1], a[2]); RB.game.settings.lightbulb = false; }, [m, x, y]); await settle(p, 900); };
 }
 
+// --check: a layout audit of each captured state. Reports anything wider than
+// the screen (outside horizontal scrollers), text clipped by its own box
+// (ellipsis or hidden overflow), and — on touch viewports — principal
+// controls smaller than 44 px (inline word tokens excepted).
+const check = args.includes('--check');
+const audit = (p, touch) => p.evaluate((touch) => {
+  const vw = document.documentElement.clientWidth;
+  const vis = (e) => { const r = e.getBoundingClientRect(); if (r.width <= 1 || r.height <= 1) return false; /* also skips visually-hidden (sr-only) text */ const cs = getComputedStyle(e); return cs.visibility !== 'hidden' && cs.display !== 'none' && +cs.opacity !== 0 && !e.closest('.hidden'); };
+  const scroller = (e) => { for (let a = e.parentElement; a; a = a.parentElement) { const ox = getComputedStyle(a).overflowX; if (ox === 'auto' || ox === 'scroll') return true; } return false; };
+  const name = (e) => e.tagName.toLowerCase() + (e.className && typeof e.className === 'string' ? '.' + e.className.trim().split(/\s+/).slice(0, 2).join('.') : '') + ' "' + (e.textContent || '').trim().slice(0, 24) + '"';
+  const wide = [], clipped = [], small = [];
+  for (const e of document.querySelectorAll('#ui *, #overlay *')) {
+    if (!vis(e)) continue;
+    const r = e.getBoundingClientRect();
+    if ((r.right > vw + 1 || r.left < -1) && !scroller(e) && e.tagName !== 'CANVAS') wide.push(name(e));
+    const cs = getComputedStyle(e);
+    if (!e.closest('.sr') && e.children.length === 0 && (e.textContent || '').trim() && (cs.textOverflow === 'ellipsis' || cs.overflowX === 'hidden' || cs.overflow === 'hidden') && e.scrollWidth > e.clientWidth + 1) clipped.push(name(e));
+    if (touch && e.matches('button, [role=button], [role=tab], a[href], input:not([type=hidden]), select, label.opt, label.switch') && !e.closest('.jline') && !e.classList.contains('jt')) {
+      const t = e.matches('input[type=radio], input[type=checkbox]') ? (e.closest('label') || e) : e;
+      const tr = t.getBoundingClientRect();
+      const min = e.matches('.strip .cell.ins') ? 23.5 : 43.5; // insertion points between 44-px character cells: WCAG 2.5.8 minimum
+      if (tr.width < min || tr.height < min) small.push(name(e) + ' ' + Math.round(tr.width) + 'x' + Math.round(tr.height));
+    }
+  }
+  const uniq = (a) => [...new Set(a)];
+  return { docOverflow: document.documentElement.scrollWidth > vw + 1, wide: uniq(wide).slice(0, 8), clipped: uniq(clipped).slice(0, 8), small: uniq(small).slice(0, 8) };
+}, touch);
+
 const report = [];
 for (const [w, h] of vps) {
   for (const name of Object.keys(STATES)) {
@@ -421,8 +449,10 @@ for (const [w, h] of vps) {
     try { await STATES[name](p); } catch (e) { err = String(e.message || e).slice(0, 200); }
     const file = path.join(outDir, name + '_' + w + 'x' + h + '.png');
     await p.screenshot({ path: file });
-    report.push({ name, vp: w + 'x' + h, file: path.relative(root, file), err, pageErrors: errors.slice(0, 3) });
-    console.log((err || errors.length ? 'WARN ' : 'ok   ') + name + ' ' + w + 'x' + h + (err ? ' ' + err : '') + (errors.length ? ' pageerrors: ' + errors[0] : ''));
+    const a = check ? await audit(p, mobile) : null;
+    const issues = a ? [a.docOverflow ? 'page wider than screen' : null, a.wide.length ? 'wide: ' + a.wide.join(' | ') : null, a.clipped.length ? 'clipped: ' + a.clipped.join(' | ') : null, a.small.length ? 'small: ' + a.small.join(' | ') : null].filter(Boolean) : [];
+    report.push({ name, vp: w + 'x' + h, file: path.relative(root, file), err, pageErrors: errors.slice(0, 3), audit: a });
+    console.log((err || errors.length || issues.length ? 'WARN ' : 'ok   ') + name + ' ' + w + 'x' + h + (err ? ' ' + err : '') + (errors.length ? ' pageerrors: ' + errors[0] : '') + (issues.length ? '\n     ' + issues.join('\n     ') : ''));
     await ctx.close();
   }
 }

@@ -116,7 +116,7 @@ RB.ui.folio = (function () {
     let cur = null;
     // keep the selected tab clear of the rail's edge arrows without moving the page
     function reveal(b) {
-      const pad = wrap.classList.contains('overflowing') ? 44 : 8;
+      const pad = wrap.classList.contains('overflowing') ? 52 : 8;
       const l = b.offsetLeft - rail.scrollLeft, r = l + b.offsetWidth;
       if (l < pad) rail.scrollLeft += l - pad; else if (r > rail.clientWidth - pad) rail.scrollLeft += r - rail.clientWidth + pad;
     }
@@ -126,7 +126,7 @@ RB.ui.folio = (function () {
       ribbon.style.transform = 'translateX(' + (b.offsetLeft + b.offsetWidth - 28) + 'px)';
       // natural width of the tabs (independent of the arrows' extra padding)
       const first = btns[0], last = btns[btns.length - 1];
-      const need = last.offsetLeft + last.offsetWidth - first.offsetLeft + 24;
+      const need = last.offsetLeft + last.offsetWidth - first.offsetLeft + 16;
       wrap.classList.toggle('overflowing', need > rail.clientWidth + 1);
       reveal(b);
     }

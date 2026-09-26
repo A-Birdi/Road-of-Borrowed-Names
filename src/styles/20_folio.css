@@ -107,12 +107,12 @@
 /* rail that cannot fit (large text / Japanese labels): scrollable with visible arrows */
 .tabrail-wrap .rail-arrow { display: none; }
 .tabrail-wrap.overflowing .rail-arrow {
-  display: flex; position: absolute; top: 6px; bottom: 6px; z-index: 6; width: 34px; align-items: center; justify-content: center;
+  display: flex; position: absolute; top: 4px; bottom: 4px; z-index: 6; width: 44px; align-items: center; justify-content: center;
   background: var(--cloth-800); color: var(--on-cloth); border: 1px solid var(--paper-edge); border-radius: var(--r-2); cursor: pointer; font: inherit;
 }
 .tabrail-wrap.overflowing .rail-arrow.l { left: -4px; }
 .tabrail-wrap.overflowing .rail-arrow.r { right: -4px; }
-.tabrail-wrap.overflowing .tabrail { padding-left: 38px; padding-right: 38px; }
+.tabrail-wrap.overflowing .tabrail { padding-left: 48px; padding-right: 48px; }
 body.reduced-motion .ptab, body.reduced-motion .tabrail .ribbon { transition: none; }
 /* phones: four equal tabs, icon over label. A tab never shrinks below its
  * own label (min-width: max-content); if the labels cannot fit (large text,
@@ -122,10 +122,10 @@ body.reduced-motion .ptab, body.reduced-motion .tabrail .ribbon { transition: no
   .tabrail { padding: 4px 6px 0; }
   .ptab {
     flex: 1 1 0; min-width: max-content; flex-direction: column; gap: 1px; min-height: 58px;
-    padding: 7px 0.55em 11px; font-size: 0.9em;
+    padding: 7px 0.45em 11px; font-size: 0.9em;
   }
-  .ptab + .ptab { margin-left: 6px; }
-  .ptab::before { left: -5px; right: -5px; }
+  .ptab + .ptab { margin-left: 5px; }
+  .ptab::before { left: -4px; right: -4px; }
   .ptab svg { width: 1.35em; height: 1.35em; }
   .tabrail .ribbon { width: 12px; height: 18px; }
 }

@@ -192,7 +192,7 @@ body.high-contrast .pad-area { --pad-paper: #ffffff; --pad-ink: #000000; --pad-g
 .strip .cell.cur { border: 2px solid var(--ink); box-shadow: inset 0 -3px 0 var(--ribbon); }
 .strip .cell.asst { text-decoration: underline 2px dotted var(--river); text-underline-offset: 0.18em; }
 .strip .cell.unsure { border: 1px dashed var(--river); }
-.strip .cell.ins { min-width: 22px; width: 22px; padding: 0; font-size: 1em; position: relative; }
+.strip .cell.ins { min-width: 28px; width: 28px; padding: 0; font-size: 1em; position: relative; } /* ≥ 24 px (WCAG 2.5.8) between the 44-px character cells */
 .strip .cell.ins::before { content: ""; width: 2px; height: 1.4em; background: var(--rule); border-radius: 1px; }
 .strip .cell.ins.cur { border: 0; box-shadow: none; }
 .strip .cell.ins.cur::before { width: 3px; background: var(--ink); animation: caret 1.1s steps(1) infinite; }
