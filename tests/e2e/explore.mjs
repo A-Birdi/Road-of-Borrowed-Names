@@ -2,12 +2,13 @@
 // by talking to NPCs, examining scripted props, stepping on triggers and
 // taking exits, with seeded random choices. Uses RB.test auto mode (answers
 // and battles solved by the harness; battles with Unravel only).
-// Usage: node tests/e2e/explore.mjs <startMap> <x> <y> <targetFlag[>flag2>…]> [comp] [profile] [seed] [maxActions] [flags,comma,sep] [words,comma,sep]
+// Usage: node tests/e2e/explore.mjs <startMap> <x> <y> <targetFlag[>flag2>…]> [comp] [profile] [seed] [maxActions] [flags,comma,sep] [words,comma,sep] [mapPrefix]
 // Several targets separated by '>' are reached in order in one continuous run
 // (maxActions applies to each leg); per-leg action counts are reported.
+// mapPrefix (e.g. 'lf.') keeps the explorer inside one chapter's maps.
 import { serve, launch, page } from './lib.mjs';
 
-const [startMap, sx, sy, target, comp = 'none', profile = 'E', seed = '1', maxActions = '900', flagList = '', wordList = ''] = process.argv.slice(2);
+const [startMap, sx, sy, target, comp = 'none', profile = 'E', seed = '1', maxActions = '900', flagList = '', wordList = '', prefix = ''] = process.argv.slice(2);
 const { srv, url } = await serve();
 const b = await launch();
 const { p, errors } = await page(b, url);
@@ -48,7 +49,7 @@ const res = await p.evaluate(async (a) => {
     for (const pr of m.props) if (pr.scene && (!pr.if || RB.state.test(s, pr.if))) cands.push({ k: 'use:' + pr.x + ',' + pr.y, run: () => T.use(pr.x, pr.y) });
     for (const f of W.foes) cands.push({ k: 'foe:' + f.id, run: async () => { await RB.game.startBattle(f.def.enemy, { foeKey: 'foe:' + m.id + ':' + f.def.id, scene: f.def.scene }); await T.idle(); } });
     for (const tr of m.triggers) if (!tr.if || RB.state.test(s, tr.if)) cands.push({ k: 'trig:' + tr.x + ',' + tr.y, run: async () => { T.place(tr.x, tr.y); RB.script.run(tr.scene); await T.idle(); } });
-    for (const ex of m.exits) if (!ex.if || RB.state.test(s, ex.if)) {
+    for (const ex of m.exits) if ((!ex.if || RB.state.test(s, ex.if)) && (!a.prefix || ex.to.startsWith(a.prefix))) {
       cands.push({ k: 'exit:' + ex.to, exit: true, run: async () => {
         if (ex.locked && (!ex.unlock || !RB.state.test(s, ex.unlock))) { RB.script.run(ex.locked); await T.idle(); return; }
         await T.go(ex.to, ex.tx, ex.ty, ex.dir);
@@ -80,7 +81,7 @@ const res = await p.evaluate(async (a) => {
     battles: T.log.filter((l) => l.t === 'battle').map((l) => l.enemy + ':' + l.result + '/' + l.rounds),
     map: W.map.id, words: s.words,
   };
-}, { startMap, sx, sy, target, comp, profile, seed, maxActions, flagList, wordList }).catch((e) => ({ error: String(e && e.stack || e) }));
+}, { startMap, sx, sy, target, comp, profile, seed, maxActions, flagList, wordList, prefix }).catch((e) => ({ error: String(e && e.stack || e) }));
 console.log(JSON.stringify({ target, comp, profile, seed, seconds: Math.round((Date.now() - t0) / 1000), ...res, pageErrors: errors.slice(0, 8) }, null, 1));
 await b.close(); srv.close();
 process.exit(res.reached && !(res.problems || []).length && !errors.length ? 0 : 1);
