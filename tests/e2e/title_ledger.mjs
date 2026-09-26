@@ -246,6 +246,12 @@ await test('loading a slot by click enters the world with world rendering (no ti
   await p.waitForSelector('.folio-ledger .rec');
   const cur = p.locator('.rec.current');
   assert(await cur.count() === 1 && /this journey/i.test(await cur.innerText()), 'current journey not marked in the save ledger');
+  // save this journey into the empty slot 6 by click; the record fills in with a thumbnail
+  await p.click('.rec[data-slot="6"] [data-a=save]');
+  await p.waitForFunction(() => /Wayfarer/.test((document.querySelector('.rec[data-slot="6"]') || {}).innerText || ''));
+  assert(await p.locator('.rec[data-slot="6"] .rec-thumb img').count() === 1, 'saved record lacks its thumbnail');
+  const saved = await p.evaluate(async () => { const l = await RB.save.list(); return l[5].manual && l[5].meta.place; });
+  assert(saved === 'Cinder Orchard', 'slot 6 after Save here: ' + saved);
   await p.keyboard.press('Escape');
   await p.waitForTimeout(100);
   assert(await p.locator('.folio-ledger').count() === 0 && await p.locator('.folio-sheet').count() === 1, 'Escape should close only the ledger');
