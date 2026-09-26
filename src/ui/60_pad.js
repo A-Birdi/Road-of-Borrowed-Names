@@ -338,12 +338,12 @@ RB.pad = (function () {
     }
     // What the recognizer read. The area keeps one height whatever it shows
     // (caption line + one row), so the canvas never resizes mid-character.
-    function setRead(state, cap, big) {
+    function setRead(state, cap, big, small) {
       readas.setAttribute('data-state', state);
       el.setAttribute('data-read', state);
       const mark = state === 'unsure' || state === 'unread' ? I('unsure') : '';
       readas.innerHTML = '<span class="rd-cap">' + mark + '<span>' + cap + '</span></span>' +
-        '<span class="big' + (big ? '' : ' none') + '" lang="ja">' + (big ? esc(big) : '<span class="sr">nothing yet</span>') + '</span>';
+        '<span class="big' + (big ? '' : ' none') + (small ? ' sm' : '') + '" lang="ja">' + (big ? esc(big) + (small ? '<span class="cap" aria-hidden="true">small</span>' : '') : '<span class="sr">nothing yet</span>') + '</span>';
       live.textContent = readas.textContent.replace(/\s+/g, ' ').trim();
     }
     function renderRead() {
@@ -364,10 +364,10 @@ RB.pad = (function () {
       }
       const top = P.pick || r.candidates[0].ch;
       const uncertain = r.status === 'uncertain' && !P.pick;
-      const small = r.sizeHint === 'small' && !P.small ? ' <span class="rd-hint">(looks small — 小?)</span>' : '';
-      const topSmall = SMALL.indexOf(top) >= 0 ? ' <span class="rd-hint">(small kana)</span>' : '';
+      const topSmall = SMALL.indexOf(top) >= 0;
+      const small = r.sizeHint === 'small' && !P.small && !topSmall ? ' <span class="rd-hint">(looks small — 小?)</span>' : '';
       setRead(uncertain ? 'unsure' : 'sure',
-        (uncertain ? '<b>Not sure</b> — pick the one you meant' : P.pick && P.pick !== r.candidates[0].ch ? 'You chose' : 'I read this as') + small + topSmall, top);
+        (uncertain ? '<b>Not sure</b> — pick the one you meant' : P.pick && P.pick !== r.candidates[0].ch ? 'You chose' : 'I read this as') + (topSmall ? ' a small kana' : '') + small, top, topSmall);
       // the other readings, so a different one can be chosen (counts as assisted)
       const seen = new Set([top]);
       const alts = r.candidates.slice(0, 6).filter((cd) => !seen.has(cd.ch) && seen.add(cd.ch));

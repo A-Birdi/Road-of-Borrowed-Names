@@ -841,7 +841,7 @@ body.high-contrast :is(.chal, .lsheet, .combat-ui) { --pad-paper: #ffffff; }
 /* ---- the handwriting pad ---------------------------------------------------- */
 /* (neutralise the pre-folio pad rules: dark panel, touch-action on the box) */
 .chal .pad-area { background: transparent; border: 0; border-radius: 0; padding: 0; }
-.pad-box { touch-action: auto; align-self: auto; }
+.pad-box { position: relative; touch-action: auto; align-self: auto; }
 .pad-box .pad-bg { touch-action: auto; pointer-events: none; cursor: default; }
 /* the ink layer is transparent: the paper and its faint guides are drawn below it */
 .pad-box canvas { background: transparent; border-radius: 4px; }
@@ -880,6 +880,8 @@ body.high-contrast .pad-area { --pad-paper: #ffffff; --pad-ink: #000000; --pad-g
   font: 1.6em/1 var(--jp-font); color: var(--ink); background: var(--pad-paper, #fffcf3); border: 2px solid var(--ink); border-radius: var(--r-1);
 }
 .readas .big.none { border: 1px dashed var(--ink-3); background: transparent; }
+.readas .big.sm { flex-direction: column; gap: 1px; }
+.readas .big .cap { font: 600 0.32em var(--ui-font); letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-2); }
 .readas[data-state="unsure"] .big { border-style: dashed; border-color: var(--river); }
 .readas[data-state="unread"] .big { border: 2px dashed var(--river); }
 .cands { flex: 0 1 auto; min-width: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
@@ -1104,6 +1106,8 @@ body.high-contrast :is(.chal, .lsheet) .fb.no, body.high-contrast :is(.chal, .ls
   .pane-hand .pad-hold { grid-row: 1 / -1; flex: none; container-type: normal; min-height: 0; width: min(100cqh, 58cqw); height: min(100cqh, 58cqw); }
   .pane-hand .pad-box { width: 100%; }
   .pane-hand .pad-inspect { align-content: flex-start; }
+  .chal-submit .w { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .chal-line { flex: 1 1 9em; }
   /* when the left column (task, feedback) outgrows the screen, the writing
    * sheet stays pinned in view while it scrolls */
   .chal[data-mode="hand"] .chal-work { position: sticky; top: 0; align-self: start; height: calc(100 * var(--vh) - 66px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); min-height: 240px; }
@@ -1112,6 +1116,7 @@ body.high-contrast :is(.chal, .lsheet) .fb.no, body.high-contrast :is(.chal, .ls
 
 /* ---- learning sheets: teaching cards, lessons, activities, the kana chart ------ */
 .folio.lsheet { border: 0; max-height: none; overflow: visible; }
+.folio.lsheet .body { padding: 0; overflow: visible; flex: none; } /* not the old .panel .body */
 .folio.lsheet .folio-foot.foot { padding: 8px 0 0; border-top: 0; justify-content: flex-start; flex-wrap: wrap; gap: 8px; }
 .folio.lsheet .folio-foot:empty { display: none; }
 .folio.lsheet .folio-head h2 { max-width: none; flex: 1 1 auto; }
@@ -17989,12 +17994,12 @@ RB.pad = (function () {
     }
     // What the recognizer read. The area keeps one height whatever it shows
     // (caption line + one row), so the canvas never resizes mid-character.
-    function setRead(state, cap, big) {
+    function setRead(state, cap, big, small) {
       readas.setAttribute('data-state', state);
       el.setAttribute('data-read', state);
       const mark = state === 'unsure' || state === 'unread' ? I('unsure') : '';
       readas.innerHTML = '<span class="rd-cap">' + mark + '<span>' + cap + '</span></span>' +
-        '<span class="big' + (big ? '' : ' none') + '" lang="ja">' + (big ? esc(big) : '<span class="sr">nothing yet</span>') + '</span>';
+        '<span class="big' + (big ? '' : ' none') + (small ? ' sm' : '') + '" lang="ja">' + (big ? esc(big) + (small ? '<span class="cap" aria-hidden="true">small</span>' : '') : '<span class="sr">nothing yet</span>') + '</span>';
       live.textContent = readas.textContent.replace(/\s+/g, ' ').trim();
     }
     function renderRead() {
@@ -18015,10 +18020,10 @@ RB.pad = (function () {
       }
       const top = P.pick || r.candidates[0].ch;
       const uncertain = r.status === 'uncertain' && !P.pick;
-      const small = r.sizeHint === 'small' && !P.small ? ' <span class="rd-hint">(looks small — 小?)</span>' : '';
-      const topSmall = SMALL.indexOf(top) >= 0 ? ' <span class="rd-hint">(small kana)</span>' : '';
+      const topSmall = SMALL.indexOf(top) >= 0;
+      const small = r.sizeHint === 'small' && !P.small && !topSmall ? ' <span class="rd-hint">(looks small — 小?)</span>' : '';
       setRead(uncertain ? 'unsure' : 'sure',
-        (uncertain ? '<b>Not sure</b> — pick the one you meant' : P.pick && P.pick !== r.candidates[0].ch ? 'You chose' : 'I read this as') + small + topSmall, top);
+        (uncertain ? '<b>Not sure</b> — pick the one you meant' : P.pick && P.pick !== r.candidates[0].ch ? 'You chose' : 'I read this as') + (topSmall ? ' a small kana' : '') + small, top, topSmall);
       // the other readings, so a different one can be chosen (counts as assisted)
       const seen = new Set([top]);
       const alts = r.candidates.slice(0, 6).filter((cd) => !seen.has(cd.ch) && seen.add(cd.ch));
