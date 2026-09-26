@@ -70,3 +70,36 @@ just before the commit that recorded them.
   (Lanternfall) 0 errors, 0 unknown tokens. Chapter 5 worker reports a real
   browser playthrough to `ch5_done` with each companion (worker's run, not
   re-run by the coordinator yet).
+
+### Session log — chapter integration (Chapters 2–6, Atlas)
+Commands run by the coordinator on the integrated build (B = browser, U = unit/static):
+- **U** `node tools/validate.mjs` — no errors (atlas module now loaded; 17
+  lexicon part-of-speech warnings between chapters remain, harmless). New
+  checks: unreachable interactable props (0 found).
+- **U** `node tests/run-unit.mjs` — 1822 passed, 0 failed (includes new
+  learn_prepare test: Foundations one-kana blanks always offer the right kana
+  in choice mode; the test fails without the fix).
+- **B** `node tests/e2e/ui.mjs` — 13/13 PASS after the engine changes below.
+- **B** `node tests/e2e/story_ch3.mjs F nao` — PASS 39 checks (5 battles won,
+  Unravel only); `side_ch3.mjs` — 3/3 PASS.
+- **B** `node tests/e2e/story_ch4.mjs F ren stay` — 53/53; `A nao both` — 52/52.
+- **B** `node tests/e2e/story_ch6.mjs 0` (Ren/A, smart policy) — all ok,
+  through the Hush, three ending choices, epilogue to rw.hall.
+- **B** `node tests/e2e/atlas.check.mjs` — full expedition, rewards,
+  restoration flag, cleanup; no console errors (52.8 s scripted, not playtime).
+- **B** Chapter 2 blind explorer (`explore.mjs sg.road 37 10
+  "sg_wataru_resolved>sg_tide_low>sg_boss_done>ch2_done" ren I 3 3000 … sg.`)
+  — reached ch2_done in 1887 actions, 14 battles won, 0 problems.
+- **B** Full-game explorer from a new campaign (seed 21): Chapter 1 → Chapter 2
+  end reached continuously (4276 actions, 21 battles won, 0 problems, 0 page
+  errors); it then stalled because the explorer's leg restriction forbade
+  walking out of Saltglass — explorer fixed, rerun in progress.
+- **B** Atlas restoration details: all six props present and their scenes play
+  when the matching flag is set (scratch check).
+- **B** Ren's journal quest `ren_ushio`: stage 1 at the grave, done at the
+  folio choice (scratch check); Chapter 4 story test still passes with it.
+Engine fixes made during integration, each found by a worker or a test:
+nested scene runs leaked a dialogue mode (world froze) — fixed in the runner;
+Foundations one-kana blanks kept whole-word choices (no correct option) —
+fixed; counters without their own scene blocked talking across — fixed;
+harness could not stand next to multi-tile props — fixed.
