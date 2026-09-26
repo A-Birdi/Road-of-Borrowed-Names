@@ -258,8 +258,12 @@ body.touch-large .touchpad .tp-run { width: 68px; height: 68px; }
 }
 
 /* ---- notices, toasts, place banner ----------------------------------------------- */
-.notices { top: max(10px, env(safe-area-inset-top)); width: min(560px, calc(100vw - 32px)); }
-@media (max-width: 599px) { .notices { top: calc(max(8px, env(safe-area-inset-top)) + 52px); } }
+/* below the HUD band, so a toast never covers Menu or Word help */
+.notices {
+  position: absolute; top: calc(max(8px, env(safe-area-inset-top)) + 56px); left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; gap: 6px; align-items: center; width: min(560px, calc(100vw - 24px)); pointer-events: none; z-index: 30;
+}
+.notice { pointer-events: auto; }
 .notice, .toast {
   background: var(--paper); color: var(--ink); border: 1px solid var(--paper-edge); border-left: 4px solid var(--ribbon);
   border-radius: 3px; box-shadow: 0 8px 22px rgba(0,0,0,0.45); padding: 0.55em 0.95em; font-size: 0.92em; line-height: 1.4;
@@ -271,14 +275,18 @@ body.touch-large .touchpad .tp-run { width: 68px; height: 68px; }
 .toast .jline { color: var(--ink); line-height: 1.9; }
 .toast .en { color: var(--ink-2); font-family: var(--serif); }
 .place {
+  position: absolute; left: 50%; transform: translateX(-50%); text-align: center; transition: opacity 0.6s; max-width: calc(100vw - 24px);
   top: max(14%, 64px); background: var(--paper); color: var(--ink); border: 1px solid var(--paper-edge);
   border-top: 4px solid var(--ribbon); border-radius: 3px; box-shadow: 0 10px 30px rgba(0,0,0,0.45); padding: 0.4em 1.6em 0.6em;
 }
-.place .jline { color: var(--ink); }
+.place .jline { color: var(--ink); font-size: 1.4em; }
 .place .en { color: var(--ink-2); font-family: var(--serif); font-style: italic; }
 
 /* ---- chapter / ending cards --------------------------------------------------------- */
-.card { background: var(--cloth-900); background-image: var(--cloth-weave); gap: 18px; padding: 16px; }
+.card {
+  position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+  background: var(--cloth-900); background-image: var(--cloth-weave); gap: 18px; padding: 16px;
+}
 .card-slip {
   background: var(--paper); color: var(--ink); border: 1px solid var(--paper-edge); border-top: 4px solid var(--ribbon);
   box-shadow: 0 18px 50px rgba(0,0,0,0.55); padding: 1.1em 2em 1.3em; max-width: min(680px, 92vw); text-align: center;
@@ -297,3 +305,19 @@ body.touch-large .touchpad .tp-run { width: 68px; height: 68px; }
 .csheet .q { margin: 0 0 16px; font-size: 1.04em; line-height: 1.55; }
 .csheet .foot { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
 @media (max-width: 599px) { .csheet .foot .pbtn { flex: 1 1 auto; } }
+
+/* ---- a single sheet of the folio (Atlas reading, expedition status) ------------------- */
+.folio.folio-reading { width: min(720px, calc(100vw - 2 * var(--gutter))); height: auto; max-height: calc(100 * var(--vh) - 24px); }
+.folio-reading .leafbox { min-height: 0; }
+.folio-reading .leaf { max-height: calc(100 * var(--vh) - 190px); }
+.folio-reading .reading-jp { font-size: 1.35em; line-height: 2; }
+.folio-reading .reading-en { font-family: var(--serif); font-size: 1.05em; margin-top: 0.7em; border-top: 1px solid var(--rule); padding-top: 0.5em; }
+@media (max-width: 599px) { .folio.folio-reading { width: 100vw; height: calc(100 * var(--vh)); max-height: none; } .folio-reading .leaf { max-height: none; } }
+
+/* ---- Atlas expedition chip (top left, beside the HUD) ---------------------------------- */
+.atlas-chip { position: absolute; left: max(8px, env(safe-area-inset-left)); top: max(8px, env(safe-area-inset-top)); z-index: 5; max-width: calc(100vw - 280px); overflow: hidden; }
+.atlas-chip .l { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.atlas-chip .st { display: inline-flex; align-items: center; gap: 0.25em; white-space: nowrap; }
+.atlas-chip .st svg { width: 1.05em; height: 1.05em; }
+body.in-panel .atlas-chip, body.in-dialogue .atlas-chip { display: none; }
+@media (max-width: 599px) { .atlas-chip { top: calc(max(8px, env(safe-area-inset-top)) + 52px); max-width: calc(100vw - 16px); } }

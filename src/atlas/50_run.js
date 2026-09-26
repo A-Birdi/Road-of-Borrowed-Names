@@ -711,18 +711,18 @@ RB.hooks = RB.hooks || {};
       const s = S();
       let showEn = s && s.learn.profile === 'F';
       let assisted = false;
-      const scrim = RB.ui.el('div', 'scrim');
-      const pn = RB.ui.el('div', 'panel');
-      pn.style.width = 'min(640px, calc(100vw - 16px))';
-      scrim.appendChild(pn);
-      const lay = { el: scrim, name: 'atlas-reading' };
-      const render = () => {
-        pn.innerHTML = '<header><h2>' + RB.util.esc(opts.title || 'Read') + '</h2></header><div class="body"><div style="font-size:1.35em;line-height:1.9">' + RB.ui.jhtml(jp) + '</div>' +
-          (showEn ? '<div class="en dim" style="margin-top:0.6em">' + RB.util.esc(RB.script.enVars(en)) + '</div>' : '<button class="btn small" data-tr style="margin-top:0.6em">Show translation (counts as assisted)</button>') +
-          '</div><div class="foot"><button class="btn primary" data-ok>Done ▶</button></div>';
-      };
+      // a sheet of the folio: the text in ink, translation on request, Done at the foot
       const done = () => { RB.ui.popLayer(lay); resolve({ assisted }); };
-      pn.onclick = (e) => {
+      const fr = RB.ui.folio.frame({ cls: 'folio-reading' }); // one Done, at the foot
+      fr.setTitle(RB.util.esc(opts.title || 'Read'), '');
+      const lay = { el: fr.scrim, name: 'atlas-reading' };
+      const render = () => {
+        fr.box.innerHTML = '<div class="spread"><div class="leaf" tabindex="0"><div class="reading-jp">' + RB.ui.jhtml(jp) + '</div>' +
+          (showEn ? '<p class="en reading-en">' + RB.util.esc(RB.script.enVars(en)) + '</p>' : '<div class="row-acts"><button class="pbtn" data-tr>' + RB.ui.folio.icon('words') + 'Show translation <span class="small">(counts as assisted)</span></button></div>') +
+          '</div></div>';
+        fr.foot.innerHTML = '<span class="spacer"></span><button class="cbtn" data-ok>Done' + RB.ui.folio.icon('next') + '</button>';
+      };
+      fr.el.onclick = (e) => {
         if (e.target.closest('.jt') && RB.ui.help.enabled()) { assisted = true; return; }
         if (e.target.closest('[data-tr]')) { showEn = true; assisted = true; render(); return; }
         if (e.target.closest('[data-ok]')) done();
@@ -739,8 +739,8 @@ RB.hooks = RB.hooks || {};
     function ensure() {
       if (typeof document === 'undefined' || !RB.ui.root) return null;
       if (chip) return chip;
-      chip = RB.ui.el('button', 'btn atlas-chip');
-      chip.style.cssText = 'position:absolute;left:8px;top:max(8px, env(safe-area-inset-top));padding:0.3em 0.7em;background:rgba(40,34,24,0.85);border-color:#b8a068;font-size:0.85em;z-index:5;max-width:calc(100vw - 140px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis';
+      chip = RB.ui.el('button', 'hbtn atlas-chip');
+      chip.setAttribute('aria-label', 'Expedition details');
       chip.onclick = () => { if (RB.game.mode() === 'world') panel(); };
       RB.ui.root.appendChild(chip);
       timer = setInterval(sync, 400);
@@ -775,7 +775,9 @@ RB.hooks = RB.hooks || {};
       const s = S();
       if (!run || !s) { c.classList.add('hidden'); return; }
       const mods = run.mods.map((m) => A.modifiers[m].name.en).join(' + ') || 'quiet road';
-      c.textContent = '🗺 ' + mods + (run.lantern ? ' · 🏮 ' + run.lantern.hp + '/' + run.lantern.max : '') + ' · relics ' + run.relics.length;
+      const I = RB.ui.folio.icon;
+      c.innerHTML = I('map') + '<span class="l">' + RB.util.esc(mods) + '</span>' + (run.lantern ? '<span class="st">' + I('lantern') + run.lantern.hp + '/' + run.lantern.max + '</span>' : '') +
+        '<span class="st">' + run.relics.length + ' relic' + (run.relics.length === 1 ? '' : 's') + '</span>';
       sync();
     }
     function panel() {
@@ -783,22 +785,20 @@ RB.hooks = RB.hooks || {};
       if (!run) return;
       RB.game.pushMode('menu');
       const esc = RB.util.esc;
-      const scrim = RB.ui.el('div', 'scrim');
-      const pn = RB.ui.el('div', 'panel');
-      pn.style.width = 'min(620px, calc(100vw - 16px))';
-      scrim.appendChild(pn);
-      const lay = { el: scrim, name: 'atlas-panel' };
+      const fr = RB.ui.folio.frame({ onClose: () => close(), closeLabel: 'Close', cls: 'folio-reading' });
+      fr.setTitle(RB.ui.label('{書|か}かれて いない {地図|ちず}', 'The Unwritten Atlas'), 'Expedition');
+      const lay = { el: fr.scrim, name: 'atlas-panel' };
       const close = () => { RB.ui.popLayer(lay); RB.game.popMode('menu'); };
       lay.onCancel = close;
-      const combos = run.combos.map((k) => '<div class="item small"><b>' + esc(A.combos[k].name.en) + '</b> — ' + esc(A.combos[k].desc) + '</div>').join('');
-      pn.innerHTML = '<header><h2>' + RB.ui.jhtml('{書|か}かれて いない {地図|ちず}') + ' The Unwritten Atlas</h2><button class="btn small" data-x>Close</button></header><div class="body">' +
-        '<h3>Route</h3>' + (run.mods.length ? run.mods.map((m) => '<div class="item"><div class="t">' + RB.ui.jhtml(A.modifiers[m].name.jp) + ' ' + esc(A.modifiers[m].name.en) + '</div><div class="small">' + esc(A.modifiers[m].desc) + '</div></div>').join('') : '<p class="dim">A quiet road: no modifier.</p>') +
-        (run.lantern ? '<p>Escorted lantern: ' + run.lantern.hp + '/' + run.lantern.max + (run.lantern.hp ? '' : ' (out — the expedition carries on)') + '</p>' : '') +
-        '<h3>Relics (temporary)</h3>' + (run.relics.length ? run.relics.map((k) => { const d = A.relics[k]; return '<div class="item"><div class="t">' + RB.ui.jhtml(d.name.jp) + ' ' + esc(d.name.en) + (d.comp && d.comp !== S().comp ? ' <span class="dim small">(waiting for someone else)</span>' : '') + '</div><div class="small">' + esc(d.desc) + '</div></div>'; }).join('') : '<p class="dim">Nothing found yet.</p>') +
-        (combos ? '<h3>Combinations</h3>' + combos : '') +
+      const entry = (jp, en, desc, extra) => '<li class="entry"><span class="mark">' + RB.ui.folio.icon('note') + '</span><div><div class="t">' + (jp ? RB.ui.jhtml(jp) + ' ' : '') + '<span class="en">' + esc(en) + '</span>' + (extra || '') + '</div><div class="small muted">' + esc(desc) + '</div></div></li>';
+      const combos = run.combos.map((k) => entry(null, A.combos[k].name.en, A.combos[k].desc)).join('');
+      fr.box.innerHTML = '<div class="spread"><div class="leaf" tabindex="0">' +
+        '<h3>' + RB.ui.folio.icon('map') + ' Route</h3>' + (run.mods.length ? '<ul class="entries">' + run.mods.map((m) => entry(A.modifiers[m].name.jp, A.modifiers[m].name.en, A.modifiers[m].desc)).join('') + '</ul>' : '<p class="muted">A quiet road: no modifier.</p>') +
+        (run.lantern ? '<p class="note-slip">' + RB.ui.folio.icon('lantern') + ' Escorted lantern: ' + run.lantern.hp + '/' + run.lantern.max + (run.lantern.hp ? '' : ' (out — the expedition carries on)') + '</p>' : '') +
+        '<h3>' + RB.ui.folio.icon('pouch') + ' Relics (temporary)</h3>' + (run.relics.length ? '<ul class="entries">' + run.relics.map((k) => { const d = A.relics[k]; return entry(d.name.jp, d.name.en, d.desc, d.comp && d.comp !== S().comp ? ' <span class="small muted">(waiting for someone else)</span>' : ''); }).join('') + '</ul>' : '<p class="muted">Nothing found yet.</p>') +
+        (combos ? '<h3>Combinations</h3><ul class="entries">' + combos + '</ul>' : '') +
         '<h3>So far</h3><p class="small">Rooms walked: ' + run.path.length + ' · names sent home: ' + run.names.length + ' · things restored: ' + run.stats.objectives + '</p>' +
-        '<p class="small dim">Camps let you head home early and keep what you found. If a fight goes badly, the road folds up and sets you down at the Lantern Hall — nothing you learned is lost.</p></div>';
-      pn.querySelector('[data-x]').onclick = close;
+        '<p class="small muted">Camps let you head home early and keep what you found. If a fight goes badly, the road folds up and sets you down at the Lantern Hall — nothing you learned is lost.</p></div></div>';
       RB.ui.pushLayer(lay);
     }
     return { update, sync, panel };

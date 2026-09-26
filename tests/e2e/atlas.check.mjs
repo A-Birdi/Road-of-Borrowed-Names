@@ -52,7 +52,7 @@ async function uiStep() {
       const rev = chal.querySelector('[data-a=reveal]');
       if (rev) { rev.click(); return 'challenge:reveal'; }
     }
-    const panelBtn = [...document.querySelectorAll('.panel .foot .btn.primary, .panel [data-ok], .csheet .foot .pbtn.primary')].find(shown);
+    const panelBtn = [...document.querySelectorAll('.panel .foot .btn.primary, .panel [data-ok], .folio [data-ok], .csheet .foot .pbtn.primary')].find(shown);
     if (panelBtn) { panelBtn.click(); return 'panel'; }
     const ch = document.querySelector('.choices');
     if (shown(ch)) {
@@ -130,9 +130,9 @@ const chip = await p.evaluate(async () => {
   if (!c || c.classList.contains('hidden')) return 'no chip';
   c.click();
   await new Promise((r) => setTimeout(r, 100));
-  const pn = [...document.querySelectorAll('.panel')].find((x) => /Unwritten Atlas/.test(x.textContent));
+  const pn = [...document.querySelectorAll('.folio, .panel')].find((x) => /Unwritten Atlas/.test(x.textContent));
   const txt = pn ? pn.textContent.slice(0, 80) : '';
-  if (pn) pn.querySelector('[data-x]').click();
+  if (pn) pn.querySelector('[data-folio-close], [data-x]').click();
   await new Promise((r) => setTimeout(r, 50));
   return { txt, mode: RB.game.mode() };
 });
