@@ -56,14 +56,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
       }
     }
   }
-  // Brush lettering: 4×5 glyphs built from a few stroke patterns (never text).
-  const GLYPHS = [
-    [[0, 1, 4, 1], [2, 0, 1, 5], [0, 4, 4, 1]], [[0, 0, 4, 1], [0, 0, 1, 5], [3, 0, 1, 5], [0, 4, 4, 1], [1, 2, 2, 1]],
-    [[1, 0, 1, 5], [0, 2, 4, 1], [3, 3, 1, 2]], [[0, 0, 4, 1], [2, 1, 1, 2], [0, 3, 4, 1], [1, 4, 1, 1], [3, 4, 1, 1]],
-    [[0, 0, 1, 3], [0, 2, 4, 1], [3, 1, 1, 4]], [[1, 0, 2, 1], [0, 1, 1, 3], [3, 1, 1, 3], [1, 4, 2, 1]],
-  ];
+  // Writing on boards is suggested, never imitated: short brush dashes in
+  // rows, like lines of text too small to read. (No shapes that could pass
+  // for Japanese characters — the brief rules out meaningless characters as
+  // ornament; the readable text of a sign is shown in the dialogue layer.)
   function glyph(g, x, y, r, ink) {
-    for (const [a, b, w, h] of GLYPHS[r % GLYPHS.length]) R(g, x + a, y + b, w, h, ink);
+    const w = 3 + (r % 2);            // 3–4 px dash
+    const dy = 1 + ((r >>> 3) % 3);   // on a slightly uneven baseline
+    R(g, x, y + dy, w, 1, ink);
+    if ((r >>> 5) % 4 === 0) R(g, x + w - 1, y + dy - 1, 1, 1, ink); // the odd lifted brush end
   }
   const signFace = (M) => ramp(mix(M.wood[4], '#efe2c0', 0.55), 0.4, 0.3);
   // Warm light in a paper or glass window; k = flicker level (0 steady).
@@ -1062,9 +1063,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
         if (Math.abs(dx) > 5.5) I += dx < 0 ? 0.25 : -0.3;
         return I;
       }, 20 + v, 0.1, 4, 3);
-      // carved characters: dark grooves with a lit lower lip
-      for (let i = 0; i < 3; i++) glyph(g, 14, -5 + i * 8, hh(v, i, 7), s5[0]);
-      for (let i = 0; i < 3; i++) R(g, 14, -5 + i * 8 + 5, 4, 1, s5[4]);
+      // a carved inscription panel: a sunk border and vertical grooves (the words are read in the dialogue layer)
+      R(g, 12, -8, 8, 24, s5[1]); R(g, 12, -8, 8, 1, s5[0]); R(g, 12, 15, 8, 1, s5[4]);
+      for (let i = 0; i < 2; i++) { const L = 14 + (hh(v, i, 7) % 6); R(g, 14 + i * 3, -5, 1, L, s5[0]); R(g, 15 + i * 3, -5, 1, L, s5[3]); }
       if (info.snow) K.snowTops(g, 0, -20, 32, 16, M.snow, v, 2);
       else if (info.green) K.snowTops(g, 0, -20, 32, 12, M.grass, v, 1);
     },
