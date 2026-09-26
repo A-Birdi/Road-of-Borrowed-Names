@@ -53,9 +53,11 @@ const res = await p.evaluate(async (a) => {
     for (const pr of m.props) if (pr.scene && (!pr.if || RB.state.test(s, pr.if))) cands.push({ k: 'use:' + pr.x + ',' + pr.y, run: () => T.use(pr.x, pr.y) });
     for (const f of W.foes) cands.push({ k: 'foe:' + f.id, run: async () => { await RB.game.startBattle(f.def.enemy, { foeKey: 'foe:' + m.id + ':' + f.def.id, scene: f.def.scene }); await T.idle(); } });
     for (const tr of m.triggers) if (!tr.if || RB.state.test(s, tr.if)) cands.push({ k: 'trig:' + tr.x + ',' + tr.y, run: async () => { T.place(tr.x, tr.y); RB.script.run(tr.scene); await T.idle(); } });
-    const pfx = legPrefix[leg] || '';
-    for (const ex of m.exits) if ((!ex.if || RB.state.test(s, ex.if)) && (!pfx || ex.to.startsWith(pfx))) {
-      cands.push({ k: 'exit:' + ex.to, exit: true, run: async () => {
+    // a leg may use its own chapter's maps and the previous leg's (to walk out of it)
+    const pfx = legPrefix[leg] || '', prev = (leg > 0 && legPrefix[leg - 1]) || '';
+    const allowed = (to) => !pfx || to.startsWith(pfx) || (prev && to.startsWith(prev));
+    for (const ex of m.exits) if ((!ex.if || RB.state.test(s, ex.if)) && allowed(ex.to)) {
+      cands.push({ k: 'exit:' + ex.to, exit: true, fwd: !!pfx && ex.to.startsWith(pfx) && !m.id.startsWith(pfx), run: async () => {
         if (ex.locked && (!ex.unlock || !RB.state.test(s, ex.unlock))) { RB.script.run(ex.locked); await T.idle(); return; }
         await T.go(ex.to, ex.tx, ex.ty, ex.dir);
         if (ex.tx == null) { /* named spawn */ }
@@ -72,6 +74,9 @@ const res = await p.evaluate(async (a) => {
       const least = Math.min(...inter.map((c) => tried.get(tk(c)) || 0));
       pool = inter.length && rng() < 0.5 ? inter.filter((c) => (tried.get(tk(c)) || 0) === least) : cands.filter((c) => c.exit);
     }
+    // an open way into this leg's chapter is usually taken
+    const fwd = cands.filter((c) => c.fwd);
+    if (fwd.length && rng() < 0.6) pool = fwd;
     if (!pool.length) pool = cands;
     const nonExit = pool.filter((c) => !c.exit);
     const pick = (nonExit.length && rng() < 0.85 ? nonExit : pool)[rng.int((nonExit.length && rng() < 0.85 ? nonExit : pool).length)] || cands[rng.int(cands.length)];
