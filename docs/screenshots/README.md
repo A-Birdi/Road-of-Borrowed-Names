@@ -5,7 +5,7 @@ saves) by `tests/e2e/visual.mjs` in headless Chromium, converted to half-scale
 WebP by `tests/e2e/shots_to_docs.mjs`.
 
 - **Before:** the pre-overhaul build `2b79f3b` (the Shift/Load hotfix build).
-- **After:** the overhaul build `fbdc102` (branch `claude/stoic-sagan-n3jvgk`).
+- **After:** the overhaul build `3cce661` (branch `claude/stoic-sagan-n3jvgk`).
 - Phone = 390×844 CSS px (touch emulation), desktop = 1280×800. Both captured at
   device pixel ratio 2, then halved.
 
@@ -50,3 +50,6 @@ with twice the art detail per tile).
 | Handwriting, landscape phone | [image](after/extra/chal_844x390.webp) |
 | Journey spread on a tablet | [image](after/extra/journey_768x1024.webp) |
 | Settings index/detail on a tablet | [image](after/extra/settings_768x1024.webp) |
+| Kana lesson sheet (cloth cover, readable title and furigana) | [image](after/extra/lesson_390x844.webp) |
+| Teahouse activity sheet, desktop | [image](after/extra/activity_1280x800.webp) |
+| Journey at 320 px with Japanese interface labels (all four tabs, no scroll arrows) | [image](after/extra/journey_ja_320x640.webp) |
