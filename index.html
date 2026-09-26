@@ -11866,6 +11866,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
 
   // ---- water -------------------------------------------------------------------------------------
+  const DEEP_R = 12;
   const BUILT = { road: 1, stone: 1, wood: 1, tatami: 1, carpet: 1, paper: 1, glass: 1, wall: 1, void: 1 };
   const landKind = (k) => !(WET[k] || k === 'other');
   function water(mode) {
@@ -11895,7 +11896,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         const px0 = s1 === 0 || s1 === 1 ? 31 : 0, py0 = s1 === 1 || s1 === 2 ? 31 : 0;
         const cx = s1 === 0 || s1 === 1 ? TX + 1 : TX, cy = s1 === 1 || s1 === 2 ? TY + 1 : TY;
         if (land[s1] && land[s2] && !built[s1] && !built[s2]) {
-          const Rr = 6;
+          const Rr = 15;
           for (let yy = 0; yy < 16; yy++) for (let xx = 0; xx < 16; xx++) {
             const i = (py0 ? 31 - yy : yy) * A + (px0 ? 31 - xx : xx);
             const d1 = (s1 === 0 || s1 === 2 ? yy : xx) + 0.5 - dep[s1][s1 === 0 || s1 === 2 ? (px0 ? 31 - xx : xx) : (py0 ? 31 - yy : yy)];
@@ -11942,16 +11943,34 @@ var RB = (globalThis.RB = globalThis.RB || {});
       }
       // shallow: sandy bottom and the drop-off toward deep water
       if (mode === 'shallow') {
-        scatter(0, 12, 163, 280, ST.pebble, W, W.map((q) => mixU(q, K.sa[2], 0.2)));
+        scatter(0, 12, 163, 280, ST.pebble, W, K.shPeb || (K.shPeb = W.map((q) => mixU(q, K.sa[2], 0.2))));
         for (let s = 0; s < 4; s++) {
           if (K8[s * 2] !== 'water') continue;
-          profile(PR, s, 13, 6, 4.5, 5, false);
+          profile(PR, s, 13, 7, 5, 12, false);
+          // taper where the deep tile rounds its corner away (see below)
+          const tLo = rounds(s, true), tHi = rounds(s, false), cut = DEEP_R - Math.sqrt(DEEP_R) - 0.5;
+          if (tLo || tHi) for (let a = 0; a < A; a++) {
+            if (tLo) PR[a] = Math.min(PR[a], Math.max(0, Math.floor((a - cut) * 0.9)));
+            if (tHi) PR[a] = Math.min(PR[a], Math.max(0, Math.floor((31 - a - cut) * 0.9)));
+          }
           for (let a = 0; a < A; a++) for (let d = 0; d < PR[a] + 3; d++) {
             const i = sidePix(s, a, d);
             if (S[i] !== 0 || D[i] <= 2) continue;
             const e = PR[a] - d;
             B[i] = e > 1 ? K.w[2] : e === 1 ? mixU(K.w[2], W[4], 0.45) : e > -2 ? mixU(B[i], K.w[2], 0.35) : B[i];
           }
+        }
+      }
+      // deep water rounds its corners where shallows wrap around it
+      if (deep) for (let cn = 0; cn < 4; cn++) {
+        if (K8[cn * 2] !== 'shallow' || K8[(cn * 2 + 2) % 8] !== 'shallow' || K8[cn * 2 + 1] !== 'shallow') continue;
+        const px0 = cn === 0 || cn === 1 ? 31 : 0, py0 = cn === 1 || cn === 2 ? 31 : 0, R = DEEP_R, SH = soft(K.sh);
+        for (let yy = 0; yy < R; yy++) for (let xx = 0; xx < R; xx++) {
+          const dx = R - xx - 0.5, dy = R - yy - 0.5, e = Math.hypot(dx, dy) - R;
+          if (e <= -1) continue;
+          const i = (py0 ? 31 - yy : yy) * A + (px0 ? 31 - xx : xx);
+          if (S[i] !== 0) continue;
+          B[i] = e < 0 ? mixU(K.w[2], K.sh[4], 0.45) : e < 2 ? mixU(SH[2], K.w[2], 0.35) : SH[2];
         }
       }
       // surface stamps by region
