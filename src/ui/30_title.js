@@ -148,6 +148,7 @@ RB.ui.title = (function () {
         R(x, top, 1, hz - top + 1, col);
       }
     };
+    ridge(hz, h * (L.tall ? 0.1 : 0.17), 0.13, 0.05, 2.6, '#2a2c52');
     ridge(hz, h * (L.tall ? 0.075 : 0.13), 0.09, 0.035, 1.3, '#1a2044');
     ridge(hz, h * (L.tall ? 0.035 : 0.06), 0.06, 0.021, 4.1, '#141a36');
     R(0, hz - 1, w, 1, '#262c52');
@@ -191,7 +192,33 @@ RB.ui.title = (function () {
       R(x0, y, x1 - x0, 1, d < 0.2 ? '#2c2a3a' : '#3a3342');
       R(x0, y, 1, 1, '#221e2c'); R(x1 - 1, y, 1, 1, '#221e2c');
       if (d > 0.3 && rnd() < 0.35) R(x0 + 1 + rnd() * Math.max(1, x1 - x0 - 3), y, 1, 1, '#4a4152');
+      if (d > 0.12 && x1 - x0 > 8) { const cxr = (x0 + x1) / 2, off = (x1 - x0) * 0.22; R(cxr - off, y, 1, 1, '#302a38'); R(cxr + off, y, 1, 1, '#302a38'); }
     }
+    // grass tufts on the banks, denser toward the viewer
+    for (let n = 0; n < w * 0.9; n++) {
+      const y = Math.round(hz + 3 + Math.pow(rnd(), 0.7) * (h - hz - 6)), x = Math.round(rnd() * w);
+      const [ra, rb] = road(y), [wa, wb] = river(y);
+      if ((x >= ra - 1 && x <= rb) || (x >= wa - 1 && x <= wb + 1)) continue;
+      const d = (y - hz) / (h - hz);
+      R(x, y, 1, 1, '#1d2740'); if (d > 0.35) { R(x - 1, y - 1, 1, 1, '#1a2238'); R(x + 1, y - 1, 1, 1, '#1a2238'); }
+    }
+    // a few black pines on the near bank, silhouetted against the fields
+    const pine = (px, base, size) => {
+      const tw = Math.max(1, Math.round(size / 11));
+      const bend = (k) => Math.round(Math.sin(k * 2.4) * size * 0.09);
+      for (let y = 0; y < size * 0.9; y++) R(px + bend(y / size), base - y, tw, 1, '#0d111e');
+      // cloud pads, alternately to each side, smaller toward the top, moonlit on top
+      for (const [hy, wf, side] of [[0.46, 0.95, -1], [0.7, 0.72, 1], [0.9, 0.48, -1], [1.02, 0.26, 0]]) {
+        const hw = Math.max(2, Math.round(size * wf * 0.48)), th = Math.max(2, Math.round(size * 0.16));
+        const cy = base - Math.round(size * hy), cx = px + bend(hy) + side * Math.round(hw * 0.35);
+        for (let k = 0; k < th; k++) {
+          const ww = Math.round(hw * (0.55 + 0.45 * Math.sqrt(k / Math.max(1, th - 1))));
+          R(cx - ww + Math.round((rnd() - 0.5) * 2), cy - th + k, ww * 2 + 1, 1, '#0d111e');
+        }
+        R(cx - Math.round(hw * 0.5), cy - th, Math.max(1, hw), 1, '#1c2440');
+      }
+    };
+    for (const [fx0, fy0, fs] of (L.tall ? [[0.09, 0.345, 0.05], [0.2, 0.33, 0.03]] : [[0.08, 0.6, 0.12], [0.2, 0.555, 0.07], [0.29, 0.52, 0.045]])) pine(Math.round(fx0 * w), Math.round(fy0 * h), Math.max(6, Math.round(fs * h)));
     const [, rr] = road(by);
     for (let y = by - 1; y <= by + 1; y++) R(rr - 1, y, bL - rr + 2, 1, '#322d3c');
     // the arched bridge, side on, with its reflection
@@ -222,6 +249,12 @@ RB.ui.title = (function () {
       R(x, y - pole, Math.max(1, Math.round(s / 2)), pole, '#1a1418');
       R(x - s, y - pole - Math.round(s * 1.6) - 1, s * 2 + Math.max(1, Math.round(s / 2)), 1, '#241b20');
       L.lamps.push({ x: x + Math.floor(s / 4), y: y - pole - Math.round(s * 0.8), s, out: i === 2 });
+      if (i !== 2) {
+        const rx = Math.max(4, s * 7), ry = Math.max(2, Math.round(s * 2.2));
+        const gr = c.createRadialGradient(x, y, 0, x, y, rx);
+        gr.addColorStop(0, 'rgba(255,190,110,0.16)'); gr.addColorStop(1, 'rgba(255,190,110,0)');
+        c.save(); c.fillStyle = gr; c.beginPath(); c.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2); c.fill(); c.restore();
+      }
     });
     // reeds on the near bank of the river (drawn live so they can sway)
     for (let y = by + 5; y < h - 2; y += 2 + Math.floor(rnd() * 3)) {
@@ -288,6 +321,8 @@ RB.ui.title = (function () {
     const lx = post + 3, lh = Math.max(7, Math.round(fh * 0.9)), lw = Math.max(5, Math.round(lh * 0.6));
     R(lx - 1, dy - 1, lw + 2, 1, '#2a1a10');
     R(lx, dy - lh, lw, lh, '#3a2418');
+    R(lx - 1, dy - lh - 1, lw + 2, 1, '#2a1a10');                          // cap
+    R(lx, dy - 1, 1, 1, '#2a1a10'); R(lx + lw - 1, dy - 1, 1, 1, '#2a1a10'); // feet
     L.lamp = { x: lx, y: dy - lh, w: lw, h: lh };
     // moving details stay inside the door frame and above the floor
     L.water = L.water.filter(([x, y, len]) => x > post && x + len < w - post && y < floorY - 1);
@@ -626,7 +661,9 @@ RB.ui.title = (function () {
       try {
         list = await RB.save.list();
         const after = RB.save.status().lastError;
-        err = after && after !== before ? after : null;
+        // list() reports a failed read by setting lastError (and, if the save
+        // module provides it, list.readError) while returning empty slots
+        err = list.readError || (after && after !== before ? after : null);
         failed = false;
       } catch (e) {
         list = list || [];
