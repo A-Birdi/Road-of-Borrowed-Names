@@ -76,7 +76,7 @@ Commands run by the coordinator on the integrated build (B = browser, U = unit/s
 - **U** `node tools/validate.mjs` — no errors (atlas module now loaded; 17
   lexicon part-of-speech warnings between chapters remain, harmless). New
   checks: unreachable interactable props (0 found).
-- **U** `node tests/run-unit.mjs` — 1822 passed, 0 failed (includes new
+- **U** `node tests/run-unit.mjs` — 1815 passed, 0 failed (includes new
   learn_prepare test: Foundations one-kana blanks always offer the right kana
   in choice mode; the test fails without the fix).
 - **B** `node tests/e2e/ui.mjs` — 13/13 PASS after the engine changes below.
