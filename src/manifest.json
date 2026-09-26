@@ -1,0 +1,14 @@
+{
+  "comment": "Build order. Directories are included recursively in name order. Files only define things; main.js boots.",
+  "order": [
+    "core",
+    "lang",
+    "recog",
+    "audio",
+    "engine",
+    "learn",
+    "ui",
+    "content",
+    "main.js"
+  ]
+}

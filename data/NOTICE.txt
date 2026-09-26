@@ -1,0 +1,4 @@
+The Road of Borrowed Names — embedded third-party data notices.
+
+Game code, story, art and music in this file are original to this project.
+Third-party data embedded in this file is listed below with its licence.
