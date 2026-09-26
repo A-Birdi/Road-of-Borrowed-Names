@@ -258,7 +258,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     terrain: K.build(22, 18, '#', (k) => {
       k.rect(1, 2, 20, 15, '+');
       k.set(10, 1, '+');
-      k.rect(1, 10, 20, 6, 'w');
+      k.rect(1, 10, 20, 6, '+');
+      k.scatter('w', 16, 91, [1, 10, 20, 6], '+');
+      k.rect(9, 14, 4, 2, 'w');
       k.rect(10, 16, 2, 1, 'w');
       k.set(10, 17, 'w');
     }),

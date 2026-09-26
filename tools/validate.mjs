@@ -1,4 +1,4 @@
-// Content validator. Usage: node tools/validate.mjs [--strict] [--unknown] [--filter prefix]
+// Content validator. Usage: node tools/validate.mjs [--strict] [--unknown] [--filter prefix] [--stats]
 // Exits non-zero on errors. Warnings are listed but don't fail (unless --strict).
 import { load } from '../tests/lib/load.mjs';
 
@@ -233,6 +233,22 @@ const counts = {
   activities: Object.keys(C.activities).length, lexicon: RB.lex.all().length, unknownTokens: unknownTok.size,
 };
 console.log('content:', JSON.stringify(counts));
+if (args.includes('--stats')) {
+  // per-prefix breakdown (scene/map/enemy/challenge ids are '<prefix>.<name>'; quests carry `chapter`)
+  const by = {};
+  const row = (k) => (by[k] = by[k] || { maps: 0, scenes: 0, lines: 0, words: 0, main: 0, side: 0, enemies: 0, bosses: 0, challenges: 0 });
+  const pre = (id) => String(id).split(/[._]/)[0];
+  for (const id in C.maps) row(pre(id)).maps++;
+  for (const id in C.scenes) {
+    const r = row(pre(id)); r.scenes++;
+    for (const c of C.scenes[id].cmds) if (c.op === 'say') { r.lines++; r.words += String(c.en || '').split(/\s+/).filter(Boolean).length; }
+  }
+  for (const id in C.enemies) { const r = row(pre(id)); r.enemies++; if (C.enemies[id].boss) r.bosses++; }
+  for (const id in C.challenges) row(pre(id)).challenges++;
+  for (const id in C.quests) row(pre(id))[C.quests[id].main ? 'main' : 'side']++;
+  console.log('\nper prefix (lines = spoken/narrated dialogue lines; words = English gloss words):');
+  for (const k of Object.keys(by).sort()) console.log('  ' + k.padEnd(8) + JSON.stringify(by[k]));
+}
 if (showUnknown && unknownTok.size) {
   const rows = [...unknownTok].filter(([k, w]) => !filter || w.indexOf(filter) >= 0);
   console.log('\nTokens without a dictionary entry' + (filter ? ' (in ' + filter + ' content)' : '') + ': ' + rows.length + ' — add them to your lexicon file:');

@@ -88,7 +88,7 @@ narr: ヒロ の {席|せき} に は 、 {名前|なまえ} の {札|ふだ} �
 ?(comp=nao) comp: …… いや 、 だから か 。 || …No. Maybe that's why.
 ?(comp=mio) comp[smile]: {皆|みな} さん 、 ちゃんと {食|た}べて います ね 。 よかった 。 {泣|な}いた {後|あと} は 、 {甘|あま}い もの が {一番|いちばん} の {薬|くすり} です から 。 || Everyone's eating properly. Good. After crying, something sweet is the best medicine.
 ?(comp=ren) comp: {灯籠|とうろう} の {名|な} を 、 {全部|ぜんぶ} {読|よ}んで きます 。 …… {戻|もど}って こなかったら 、 {迷子|まいご} です 。 {探|さが}して ください 。 || I'm going to read the name on every lantern. …If I don't come back, I'm lost. Please come and find me.
-?(comp=suzu) comp[smile]: {隣|となり} の {席|せき} 、 {予約|よやく} が {入|はい}って る の 。 …… {後|あと} で ね 。 {先|さき} に {一周|いっしゅう} して きて 。 || I've a reserved seat — next door to Hiro's. …Later. Go and walk round first.
+?(comp=suzu) comp[smile]: {隣|となり} の {席|せき} 、 {予約|よやく} が {入|はい}ってる の 。 …… {後|あと} で ね 。 {先|さき} に {一周|いっしゅう} して きて 。 || I've a reserved seat — next door to Hiro's. …Later. Go and walk round first.
 ?(comp!=suzu) narr: {舞台|ぶたい} の {袖|そで} で 、 スズ が リボン を {結|むす}び{直|なお}して いる 。 {色褪|いろあ}せた リボン を 。 || At the side of the stage, Suzu is retying her ribbon. The faded one.
 !journal {祭|まつ}り を {見|み}て {回|まわ}ろう 。 {気|き} が {済|す}んだら 、 {火|ひ} の {見|み} {櫓|やぐら} に {登|のぼ}ろう 。 || Walk among the lanterns. When you're ready, climb the fire lookout at the corner of the square.
 
@@ -116,17 +116,17 @@ narr: {席|せき} に {立|た}て{掛|か}けた {札|ふだ} に 、 {丁寧|
 narr: {櫓|やぐら} の {上|うえ} から は 、 {里|さと} {全体|ぜんたい} が {見|み}えた 。 {灯籠|とうろう} の {灯|ひ} が 、 {段々畑|だんだんばたけ} の {下|した} で {揺|ゆ}れて いる 。 || From the top of the lookout you can see the whole village. The lantern lights sway below the terraces.
 narr: {刈|か}った ばかり の {火除|ひよ}け{道|みち} が 、 {月|つき} の {光|ひかり} で {白|しろ}く {浮|う}かんで いる 。 || The freshly cut firebreaks lie pale in the moonlight.
 ?(comp=nao) comp: …… いい {眺|なが}め だ 。 {出口|でぐち} も {全部|ぜんぶ} {見|み}える 。 {水路|すいろ} 、 {街道|かいどう} 、 {北|きた} の {道|みち} 。 || …Good view. You can see every exit. The channel, the road, the north path.
-?(comp=nao) comp: スズ が {二十年|にじゅうねん} {抱|かか}えて た {借|か}り 、 {聞|き}いた か 。 …… {俺|おれ} の {鞄|かばん} に も 、 {一通|いっつう} ある 。 {届|とど}けない って {決|き}めた {手紙|てがみ} が 。 || You heard about the debt Suzu carried for twenty years? …There's one in my bag too. A letter I decided not to deliver.
-?(comp=nao) comp: {相手|あいて} を {守|まも}る つもり だった 。 {今夜|こんや} {見|み}て て 、 {分|わ}から なく なった 。 {守|まも}って た の は 、 {誰|だれ} だった ん だ ろう な 。 || I thought I was protecting her. Watching tonight, I'm not so sure. Who was I really protecting?
+?(comp=nao) comp: スズ が {二十年|にじゅうねん} {抱|かか}えてた {借|か}り 、 {聞|き}いた か 。 …… {俺|おれ} の {鞄|かばん} に も 、 {一通|いっつう} ある 。 {届|とど}けない って {決|き}めた {手紙|てがみ} が 。 || You heard about the debt Suzu carried for twenty years? …There's one in my bag too. A letter I decided not to deliver.
+?(comp=nao) comp: {相手|あいて} を {守|まも}る つもり だった 。 {今夜|こんや} {見|み}て て 、 {分|わ}から なく なった 。 {守|まも}ってた の は 、 {誰|だれ} だった ん だろう な 。 || I thought I was protecting her. Watching tonight, I'm not so sure. Who was I really protecting?
 ?(comp=nao) comp[smirk]: …… {灯落|ひおち} まで 、 {考|かんが}える {時間|じかん} は ある 。 {急|いそ}ぐ {配達|はいたつ} じゃ ない 。 たぶん 。 || …There's time to think before Lanternfall. It's not an urgent delivery. Probably.
 ?(comp=mio) comp: {今日|きょう} 、 {火傷|やけど} の {薬|くすり} を {十四軒|じゅうよんけん} {分|ぶん} {作|つく}りました 。 {皆|みな} さん に {頼|たの}まれて 、 {全部|ぜんぶ} 「 はい 」 って {言|い}って 。 || Today I made burn salve for fourteen households. Everyone asked, and I said yes to all of them.
-?(comp=mio) comp[think]: …… {今|いま} に なって 、 {疲|つか}れて いる こと に {気|き} づきました 。 {変|へん} です よ ね 。 {頼|たの}まれる の は 、 {嬉|うれ}しい はず なのに 。 || …Only now do I notice I'm tired. Strange, isn't it. Being asked is supposed to make me happy.
+?(comp=mio) comp[think]: …… {今|いま} に なって 、 {疲|つか}れて いる こと に {気|き}づきました 。 {変|へん} です よ ね 。 {頼|たの}まれる の は 、 {嬉|うれ}しい はず なのに 。 || …Only now do I notice I'm tired. Strange, isn't it. Being asked is supposed to make me happy.
 ?(comp=mio) comp[smile]: {今夜|こんや} は 、 {誰|だれ} の {頼|たの}み も {聞|き}きません 。 …… $name さん の {頼|たの}み も です よ 。 {冗談|じょうだん} です 。 {半分|はんぶん} は 。 || Tonight I'm not taking anyone's requests. …Not even yours. That's a joke. Half a joke.
 ?(comp=ren) comp: トキワ さん は 、 {自分|じぶん} から {預|あず}けた 、 と {言|い}いました ね 。 {痛|いた}み を 。 || Tokiwa said he handed it over himself. The pain.
 ?(comp=ren) comp[think]: {私|わたし} は 、 {師匠|ししょう} の {教|おし}え を {全部|ぜんぶ} {覚|おぼ}えて いる のに 、 {顔|かお} だけ {思|おも}い{出|だ}せない 。 …… まさか {私|わたし} も 、 {誰|だれ} か に {頼|たの}んだ の でしょう か 。 || I remember every one of my master's teachings, but not his face. …Could I have asked someone too?
 ?(comp=ren) comp: …… {分|わ}かりません 。 でも 、 {分|わ}からない まま に は しない 。 {今夜|こんや} 、 そう {決|き}めました 。 || …I don't know. But I won't leave it unknown. I decided that tonight.
 ?(comp=ren) comp[smirk]: ところで 、 {下|お}りる {時|とき} は {先|さき} に {行|い}って ください 。 {梯子|はしご} で も {迷|まよ}う {自信|じしん} が あります 。 || By the way, please go first on the way down. I'm confident I can get lost even on a ladder.
-?(comp=suzu) comp: …… ここ から だと 、 ヒロ の {席|せき} が よく {見|み}える わ 。 {火屋|ほや} が {一|ひと}つ 、 {灯|とも}って る 。 || …You can see Hiro's seat from here. One globe, lit.
+?(comp=suzu) comp: …… ここ から だと 、 ヒロ の {席|せき} が よく {見|み}える わ 。 {火屋|ほや} が {一|ひと}つ 、 {灯|とも}ってる 。 || …You can see Hiro's seat from here. One globe, lit.
 ?(comp=suzu) comp: {帳簿|ちょうぼ} 、 {見|み}る ？ 「 {一部|いちぶ} {返済|へんさい} 」 。 …… {線|せん} を {引|ひ}かない {借|か}り も ある の ね 。 {初|はじ}めて {知|し}った 。 || Want to see my book? "Paid in part." …Some debts you don't cross out. I didn't know that.
 ?(comp=suzu) comp[laugh]: ちなみに 、 {次|つぎ} の {頁|ページ} に は あなた の {名前|なまえ} も ある の よ 。 「 $name ── {観客|かんきゃく} {一名|いちめい} 。 {最後|さいご} まで {席|せき} を {立|た}たず 」 。 || By the way, your name's on the next page. "$name — audience of one. Stayed in their seat to the end."
 ?(comp=suzu) comp[smile]: …… ありがとう 。 これ は {冗談|じょうだん} じゃ ない わ 。 || …Thank you. That one isn't a joke.
@@ -176,7 +176,7 @@ narr: {火|ひ} の {見|み} {櫓|やぐら} 。 {上|うえ} に {鐘|かね} 
 ?(comp=nao) comp: {火|ひ} の {見|み} {櫓|やぐら} に {綱|つな} が ない 。 {鳴|な}らさない {鐘|かね} を 、 {毎朝|まいあさ} {磨|みが}く 。 {変|へん} な {村|むら} だ 。 || A fire lookout with no rope. A bell nobody rings, polished every morning. Odd place.
 ?(comp=mio) comp: {火|ひ} の {見|み} {櫓|やぐら} …… {火事|かじ} の ない {里|さと} に 、 なぜ ？ || A fire lookout… in a village that's never had a fire?
 ?(comp=ren) comp: {火|ひ} の {見|み} {櫓|やぐら} は 、 {火|ひ} を {知|し}って いる {里|さと} に しか {建|た}ちません 。 || Fire lookouts are only built by villages that know fire.
-?(comp=suzu) comp[closed]: …… {鳴|な}った の よ 。 {昔|むかし} 。 {一晩中|ひとばんじゅう} 。 || …It rang, once. Long ago. All night.
+?(comp=suzu) comp[closed]: …… {鳴|な}った の よ 。 {昔|むかし} は あった か な|むかし} 。 {一晩中|ひとばんじゅう} 。 || …It rang, once. Long ago. All night.
 !var co_clues + 1
 !call co.clue_check
 !end

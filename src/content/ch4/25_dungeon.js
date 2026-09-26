@@ -35,12 +35,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.path([[5, 6], [5, 6], [20, 6]], ':', 1);
       k.rect(12, 24, 2, 2, 'i');
       k.rect(14, 39, 2, 1, ':');
+      k.rect(10, 1, 7, 5, '#');
+      k.set(13, 5, ':');
     }),
+    legend: { '#': { tile: 'snow' } },
     structs: [
-      { type: 'tower', x: 10, y: 1, w: 7, h: 5, door: 3, to: 'sb.obs_hall', spawn: [10, 14] },
       { type: 'house', x: 19, y: 2, w: 3, h: 3, roof: 'snow', wall: 'stone', door: 1 },
     ],
     props: [
+      { p: 'sb_observatory', x: 10, y: 1, if: '!sb_lamp_lit' },
+      { p: 'sb_observatory', x: 10, y: 1, o: { lit: true }, if: 'sb_lamp_lit' },
       { p: 'deadlantern', x: 7, y: 33, scene: 'sb.path_lantern', if: '!sb_lamp_lit' },
       { p: 'lantern', x: 7, y: 33, if: 'sb_lamp_lit' },
       { p: 'bench', x: 9, y: 36, scene: 'sb.path_bench' },
@@ -59,6 +63,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     npcs: [],
     exits: [
       { x: 14, y: 39, w: 2, h: 1, to: 'sb.hamlet', tx: 30, ty: 2, dir: 'down' },
+      { x: 13, y: 5, to: 'sb.obs_hall', tx: 10, ty: 14, dir: 'up' },
       { x: 20, y: 4, to: 'sb.obs_gallery', tx: 17, ty: 11, dir: 'up', locked: 'sb.service_door_out', unlock: 'sb_shortcut' },
     ],
     onEnter: [{ scene: 'sb.path_enter', if: '!sb_path_seen' }],

@@ -18,7 +18,7 @@ narr: {古|ふる}い {木|き} は {一本|いっぽん} も ない 。 {黒|�
 narr: {段|だん} の {角|かど} に 、 {古|ふる}い {石|いし} が {立|た}って いる 。 {字|じ} が {刻|きざ}まれて いる 。 || An old stone stands at the corner of the terrace, carved with words.
 narr: 「 {火|ひ} は {来|く}る 。 {火|ひ} は {去|さ}る 。 {石|いし} は {黙|だま}って {残|のこ}る 。 」 || "Fire comes. Fire goes. Stone remains, and says nothing."
 ?(comp=nao) comp: {石|いし} は {喋|しゃべ}らない けど 、 {嘘|うそ} も つかない 。 {配達|はいたつ} {先|さき} と して は {最高|さいこう} だ 。 || Stone doesn't talk, but it doesn't lie either. Ideal recipient.
-?(comp=mio) comp: {火|ひ} が {来|く}る 、 と {書|か}いて ある 。 {来|こ}ない 、 じゃ なくて 。 {昔|むかし} の {人|ひと} は 、 {分|わ}かって いた んです ね 。 || It says fire comes. Not that it doesn't. The founders knew.
+?(comp=mio) comp: {火|ひ} が {来|く}る 、 と {書|か}いて ある 。 {来|こ}ない 、 じゃ なくて 。 {昔|むかし} は あった か な|むかし} の {人|ひと} は 、 {分|わ}かって いた んです ね 。 || It says fire comes. Not that it doesn't. The founders knew.
 ?(comp=ren) comp: {石|いし} に {刻|きざ}んだ {字|じ} は 、 {静寂|しじま} でも {消|け}しにくい 。 だから {残|のこ}った の でしょう 。 || Words cut in stone are hard even for the Hush to lift. That's why these survived.
 ?(comp=suzu) comp: {石|いし} は {黙|だま}って {残|のこ}る 、 か 。 …… {私|わたし} と {逆|ぎゃく} ね 。 よく {喋|しゃべ}って 、 {残|のこ}らない 。 || Stone stays silent and remains. …The opposite of me. I talk a lot and never stay.
 
@@ -46,10 +46,10 @@ narr: {今|いま} は やめて おこう 。 {石|いし} は {逃|に}げな�
 @scene co.ashband
 !if co_w_tsuchi -> seen
 narr: {崩|くず}れた {壁|かべ} の {断面|だんめん} に 、 {土|つち} の {層|そう} が {見|み}える 。 {真|ま}ん{中|なか} {辺|あた}り に 、 {黒|くろ}い {線|せん} が {一本|いっぽん} 、 {横|よこ} に {走|はし}って いる 。 || In the broken face of the wall, you can see layers of soil. About halfway down, a single black line runs straight across.
-?(comp=nao) comp: …… {灰|はい} だ 。 {焚|た}き{火|び} の {跡|あと} を {埋|う}めた の と 、 {同|おな}じ {色|いろ} を して る 。 || …Ash. Same colour as a campfire that's been buried.
+?(comp=nao) comp: …… {灰|はい} だ 。 {焚|た}き{火|び} の {跡|あと} を {埋|う}めた の と 、 {同|おな}じ {色|いろ} を してる 。 || …Ash. Same colour as a campfire that's been buried.
 ?(comp=mio) comp[think]: {灰|はい} の {層|そう} です 。 {上|うえ} に {積|つ}もった {土|つち} の {厚|あつ}さ から する と …… {二十年|にじゅうねん} {前後|ぜんご} 。 || A layer of ash. From the depth of soil on top… about twenty years.
 ?(comp=ren) comp: {記録|きろく} は {書|か}き{換|か}えられて も 、 {土|つち} は {書|か}き{換|か}えられ ない 。 …… {灯守|ひもり} の {教本|きょうほん} に 、 {載|の}せたい くらい です 。 || You can rewrite a record, but not the soil. …I'd like to put that in the lantern keepers' handbook.
-?(comp=suzu) comp[closed]: …… {土|つち} は 、 {覚|おぼ}えて た の ね 。 || …The soil remembered.
+?(comp=suzu) comp[closed]: …… {土|つち} は 、 {覚|おぼ}えてた の ね 。 || …The soil remembered.
 !challenge co.c_tsuchi
 !if var._res=0 -> later
 !word tsuchi
@@ -108,7 +108,7 @@ narr: {工房|こうぼう} {通|どお}り の {灯籠|とうろう} 。 {油|�
 !if co_seal_broken -> end
 narr: {大窯|おおがま} の {入|い}り{口|ぐち} は 、 {溶|と}けた ガラス で {封|ふう}じられて いる 。 {手|て} を {近|ちか}づける と 、 まだ {温|あたた}かい 。 || The great kiln's doorway is sealed with melted glass. Hold your hand near it: it's still warm.
 !if word.koori -> crack
-?(comp=nao) comp: {叩|たた}いて も {割|わ}れない な 。 {熱|あつ}い ガラス を {急|きゅう}に {冷|ひ}やす と {割|わ}れる 、 って ヒロ が {言|い}って た ろ 。 {水|みず} じゃ {湯気|ゆげ} に なる だけ だ 。 もっと {冷|つめ}たい もの が {要|い}る 。 || Hitting it won't break it. Hiro said hot glass cracks if you cool it too fast. Water'll just turn to steam. We need something colder.
+?(comp=nao) comp: {叩|たた}いて も {割|わ}れない な 。 {熱|あつ}い ガラス を {急|きゅう}に {冷|ひ}やす と {割|わ}れる 、 って ヒロ が {言|い}ってた ろ 。 {水|みず} じゃ {湯気|ゆげ} に なる だけ だ 。 もっと {冷|つめ}たい もの が {要|い}る 。 || Hitting it won't break it. Hiro said hot glass cracks if you cool it too fast. Water'll just turn to steam. We need something colder.
 ?(comp=mio) comp[think]: {冷|ひ}やせば {割|わ}れる かも 。 でも {水|みず} だと すぐ {湯気|ゆげ} に なって しまう 。 もっと {冷|つめ}たい もの …… {氷|こおり} とか 。 || If we chill it, it might crack. But water would just boil off. Something colder… like ice.
 ?(comp=ren) comp: {封|ふう} は {熱|ねつ} で {保|たも}たれて います 。 {熱|ねつ} を {奪|うば}えば …… {水|みず} より {冷|つめ}たい {字|じ} が あれば 。 || The seal holds because it's hot. Take the heat away… if only we had a word colder than water.
 ?(comp=suzu) comp: {熱|あつ}い {舞台|ぶたい} に は 、 {冷|つめ}たい {客|きゃく} が {一番|いちばん} {効|き}く の よ 。 …… {冗談|じょうだん} じゃ なくて 、 {氷|こおり} が {要|い}る わ 。 || Nothing kills a hot show like a cold audience. …Not a joke: we need ice.
@@ -121,7 +121,7 @@ narr: {封|ふう} は まだ {温|あたた}かい 。 {急|きゅう}に {冷|
 !sfx reveal
 !shake
 narr: {冷気|れいき} が {走|はし}る と 、 {封|ふう} に {細|ほそ}い {罅|ひび} が {入|はい}り 、 {次|つぎ} の {瞬間|しゅんかん} 、 {音|おと} を {立|た}てて {崩|くず}れ{落|お}ちた 。 || The cold runs across it; a fine crack appears, and in the next moment the seal gives way and falls with a crash.
-?(comp=nao) comp: {開|あ}いた 。 …… {中|なか} から {熱気|ねっき} が {来|く}る ぞ 。 {二十年|にじゅうねん} {閉|と}じて た {窯|かま} の {熱|ねつ} じゃ ない 。 || It's open. …Heat's coming out. That's not the heat of a kiln shut for twenty years.
+?(comp=nao) comp: {開|あ}いた 。 …… {中|なか} から {熱気|ねっき} が {来|く}る ぞ 。 {二十年|にじゅうねん} {閉|と}じてた {窯|かま} の {熱|ねつ} じゃ ない 。 || It's open. …Heat's coming out. That's not the heat of a kiln shut for twenty years.
 ?(comp=mio) comp[worry]: {熱|あつ}い …… {中|なか} で は 、 こまめ に {水|みず} を {飲|の}んで ください ね 。 {約束|やくそく} です よ 。 || It's hot… Drink water often in there. Promise me.
 ?(comp=ren) comp: {窯|かま} が {息|いき} を して います 。 {気|き} を つけて 。 || The kiln is breathing. Careful.
 ?(comp=suzu) comp: {幕|まく} が {開|あ}いた わ 。 {第二幕|だいにまく} 、 {窯|かま} の {中|なか} 。 || Curtain up. Act two: inside the kiln.
@@ -143,7 +143,7 @@ RB.script.add(`
 @scene co.ice_enter
 narr: {石|いし} の {壁|かべ} の {内側|うちがわ} は 、 {息|いき} が {白|しろ}く なる ほど {冷|つめ}たかった 。 {外|そと} の {暑|あつ}さ が 、 {嘘|うそ} の よう だ 。 || Inside the stone walls it's cold enough to see your breath. The heat outside might never have existed.
 narr: {藁|わら} の {山|やま} の {間|あいだ} に 、 {青白|あおじろ}い {塊|かたまり} が いくつ も {眠|ねむ}って いる 。 || Between heaps of straw, bluish-white blocks lie sleeping.
-?(comp=nao) comp: {氷室|ひむろ} だ 。 {夏|なつ} に {氷|こおり} を {売|う}る {家|いえ} が 、 {昔|むかし} は {山|やま} に こういう の を {持|も}って た 。 || An ice house. Families who sold ice in summer used to keep these in the hills.
+?(comp=nao) comp: {氷室|ひむろ} だ 。 {夏|なつ} に {氷|こおり} を {売|う}る {家|いえ} が 、 {昔|むかし} は あった か な|むかし} は {山|やま} に こういう の を {持|も}ってた 。 || An ice house. Families who sold ice in summer used to keep these in the hills.
 ?(comp=mio) comp[smile]: …… {涼|すず}しい 。 ちょっと だけ 、 ここ で {休|やす}んで も いい です か 。 {三十|さんじゅう} {数|かぞ}える あいだ だけ 。 || …It's cool. Could we rest here, just a little? Just while I count to thirty.
 ?(comp=ren) comp: {静|しず}か な {場所|ばしょ} です 。 {静寂|しじま} の {静|しず}けさ と は {違|ちが}う 。 {音|おと} が {休|やす}んで いる だけ の 、 {静|しず}けさ 。 || A quiet place. Not the Hush's kind of quiet. The kind where sound is just resting.
 ?(comp=suzu) comp[smile]: {楽屋|がくや} みたい 。 {本番|ほんばん} {前|まえ} の 、 {一番|いちばん} {静|しず}か な {時間|じかん} 。 || Like a dressing room. The quietest moment before curtain.
@@ -283,7 +283,7 @@ co_warden: …… {誰|だれ} も {入|い}れる な 。 {窯|かま} を {守
 !set co_warden_down
 !music kiln
 narr: {番人|ばんにん} の {体|からだ} から {熱|ねつ} が {抜|ぬ}け 、 {土|つち} と ガラス が {静|しず}か に {崩|くず}れた 。 その {跡|あと} に 、 {割|わ}れて いない {火屋|ほや} が {一|ひと}つ と 、 {焦|こ}げた {紙|かみ} が {一枚|いちまい} {残|のこ}って いた 。 || The heat leaves the warden's body, and the clay and glass settle quietly apart. Where it stood lie one unbroken lantern globe and a single scorched sheet of paper.
-?(comp=nao) comp: {水門|すいもん} は {開|あ}いた か 、 って {聞|き}いた な 。 …… {開|あ}いた ん だ ろう な 。 {下|した} の {里|さと} は {残|のこ}って る 。 || It asked if the water gate opened. …It must have. The village below is still standing.
+?(comp=nao) comp: {水門|すいもん} は {開|あ}いた か 、 って {聞|き}いた な 。 …… {開|あ}いた ん だろう な 。 {下|した} の {里|さと} は {残|のこ}ってる 。 || It asked if the water gate opened. …It must have. The village below is still standing.
 ?(comp=mio) comp[sad]: {最後|さいご} まで 、 {誰|だれ} か の {心配|しんぱい} を して いました ね 。 || Right to the end, it was worried about someone else.
 ?(comp=ren) comp: {答|こた}え を {聞|き}けず に 、 {二十年|にじゅうねん} 。 …… {灯|ひ} も 、 {人|ひと} も 、 {答|こた}え を {待|ま}つ の は {辛|つら}い 。 || Twenty years without an answer. …For lanterns and people alike, waiting for an answer is hard.
 ?(comp=suzu) comp[sad]: …… {開|あ}いた わ よ 。 あなた の おかげ で 、 {下|した} は {助|たす}かった 。 || …It opened. Thanks to you, the village below was saved.

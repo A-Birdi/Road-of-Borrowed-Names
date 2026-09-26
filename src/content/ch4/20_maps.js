@@ -189,7 +189,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'stairs', x: 1, y: 2 },
       { p: 'table', x: 2, y: 8 }, { p: 'chair', x: 1, y: 8 }, { p: 'chair', x: 4, y: 8 },
       { p: 'smalltable', x: 13, y: 8, scene: 'sb.inn_table' }, { p: 'chair', x: 14, y: 8 },
-      { p: 'sb_woodpile', x: 1, y: 5 },
+      { p: 'sb_woodpile', x: 1, y: 5, o: { indoor: true } },
       { p: 'noticeboard', x: 10, y: 2, scene: 'sb.inn_menu' },
       { p: 'lantern', x: 4, y: 2 },
     ],

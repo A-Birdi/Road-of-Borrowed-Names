@@ -2,7 +2,9 @@
 // by talking to NPCs, examining scripted props, stepping on triggers and
 // taking exits, with seeded random choices. Uses RB.test auto mode (answers
 // and battles solved by the harness; battles with Unravel only).
-// Usage: node tests/e2e/explore.mjs <startMap> <x> <y> <targetFlag> [comp] [profile] [seed] [maxActions] [flags,comma,sep] [words,comma,sep]
+// Usage: node tests/e2e/explore.mjs <startMap> <x> <y> <targetFlag[>flag2>…]> [comp] [profile] [seed] [maxActions] [flags,comma,sep] [words,comma,sep]
+// Several targets separated by '>' are reached in order in one continuous run
+// (maxActions applies to each leg); per-leg action counts are reported.
 import { serve, launch, page } from './lib.mjs';
 
 const [startMap, sx, sy, target, comp = 'none', profile = 'E', seed = '1', maxActions = '900', flagList = '', wordList = ''] = process.argv.slice(2);
@@ -31,7 +33,12 @@ const res = await p.evaluate(async (a) => {
   let actions = 0;
   const flagsSeen = new Set(Object.keys(s.flags));
   const progress = [];
-  while (actions < +a.maxActions && !s.flags[a.target]) {
+  const targets = a.target.split('>');
+  const legs = [];
+  let leg = 0, legStart = 0;
+  for (;;) {
+    while (leg < targets.length && s.flags[targets[leg]]) { legs.push({ target: targets[leg], actions: actions - legStart, map: W.map.id }); leg++; legStart = actions; }
+    if (leg >= targets.length || actions - legStart >= +a.maxActions) break;
     actions++;
     const m = W.map;
     visited.add(m.id);
@@ -67,7 +74,7 @@ const res = await p.evaluate(async (a) => {
     if (trail.length > 40) trail.shift();
   }
   return {
-    reached: !!s.flags[a.target], actions, visited: [...visited], progress, trail, problems: T.problems,
+    reached: leg >= targets.length, legs, stuckOn: targets[leg] || null, actions, comp: s.comp, visited: [...visited], progress, trail, problems: T.problems,
     quests: Object.fromEntries(Object.entries(s.quests).map(([k, q]) => [k, q.done ? 'done' : q.stage])),
     battles: T.log.filter((l) => l.t === 'battle').map((l) => l.enemy + ':' + l.result + '/' + l.rounds),
     map: W.map.id, words: s.words,

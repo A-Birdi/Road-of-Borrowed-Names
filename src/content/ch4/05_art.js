@@ -123,6 +123,36 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }
     px(c, x + 3, y - 24, 26, 2, '#2a2430');
   });
+  // The observatory building (7×5): stone drum, dome with a slit, the lamp's
+  // window. Blocking comes from the map's wall tiles; this only draws.
+  def('sb_observatory', { w: 7, h: 5, block: false, light: 0 }, (c, x, y, p, t, o) => {
+    const W = 112;
+    c.fillStyle = 'rgba(0,0,0,0.25)'; c.fillRect(x + 4, y + 78, W - 4, 4);
+    px(c, x + 6, y + 32, W - 12, 48, p.stone[0]);
+    for (let r = 0; r < 4; r++) for (let k = 0; k < 7; k++) px(c, x + 8 + k * 14 + (r % 2) * 7, y + 36 + r * 11, 12, 1, p.stone[2]);
+    px(c, x + 6, y + 32, 4, 48, p.stone[1]); px(c, x + W - 10, y + 32, 4, 48, p.stone[2]);
+    px(c, x + 2, y + 28, W - 4, 5, p.stone[2]);
+    // dome
+    c.fillStyle = o.lit ? '#b8c4d0' : '#c8d6e2';
+    c.beginPath(); c.arc(x + 56, y + 30, 44, Math.PI, 0); c.fill();
+    c.fillStyle = '#ffffff'; c.beginPath(); c.arc(x + 56, y + 30, 44, Math.PI * 1.05, Math.PI * 1.45); c.lineTo(x + 56, y + 30); c.fill();
+    c.strokeStyle = '#8a98a8'; c.lineWidth = 1;
+    for (let i = 1; i < 4; i++) { c.beginPath(); c.arc(x + 56, y + 30, 44, Math.PI + i * 0.78, Math.PI + i * 0.78 + 0.01); c.lineTo(x + 56, y + 30); c.stroke(); }
+    // slit and lamp
+    px(c, x + 51, y - 12, 10, 40, '#1a2030');
+    if (o.lit) {
+      const f = o.still ? 0 : Math.sin(t / 160) * 1.5;
+      px(c, x + 52, y + 6, 8, 16, '#f8c060');
+      px(c, x + 54, y + 9 - f, 4, 8, '#fff4b0');
+    } else px(c, x + 52, y + 8, 8, 14, '#6a88a8');
+    // door and windows
+    px(c, x + 50, y + 62, 12, 18, '#2a1e18'); px(c, x + 51, y + 63, 10, 17, p.wood[0]); px(c, x + 58, y + 71, 1, 2, '#e0c060');
+    px(c, x + 48, y + 59, 16, 3, p.stone[2]);
+    for (const wx of [20, 82]) { px(c, x + wx, y + 44, 10, 14, '#2a2430'); px(c, x + wx + 1, y + 45, 8, 12, o.lit ? '#ffd27a' : '#6a88a8'); }
+    // snow on the ledge, icicles while frozen
+    px(c, x + 2, y + 26, W - 4, 3, '#ffffff');
+    if (!o.lit) for (let i = 0; i < 12; i++) px(c, x + 6 + i * 9, y + 33, 2, 3 + ((i * 5) % 6), '#e8f4fc');
+  });
   // Futon laid on tatami (1×2).
   def('sb_futon', { w: 1, h: 2 }, (c, x, y, p, t, o) => {
     px(c, x + 1, y + 1, 14, 30, '#e8e0d0');
@@ -138,7 +168,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       c.fillStyle = p.wood[1]; c.beginPath(); c.arc(ox + 2, oy + 2, 2.6, 0, 7); c.fill();
       c.fillStyle = p.wood[3]; c.fillRect(ox + 1, oy + 1, 2, 2);
     }
-    px(c, x + 1, y - 7, 30, 2, '#ffffff');
+    if (!o.indoor) px(c, x + 1, y - 7, 30, 2, '#ffffff');
   });
   // Snow sculptures for the children's contest.
   def('sb_snowgoat', { w: 1, h: 1 }, (c, x, y, p, t, o) => {

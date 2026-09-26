@@ -25070,7 +25070,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       I: [
         { kind: 'choose', item: 'c:co_assembly_i', ctx: { jp: '{記録|きろく} に {残|のこ}す {文|ぶん} は 、 {誰|だれ} が {読|よ}んで も {分|わ}かる よう に 。', en: 'A line for the record, clear to anyone who reads it.' }, prompt: { en: 'Which is right for the chronicle?' },
           options: [{ jp: '{二十年前|にじゅうねんまえ} {十月|じゅうがつ} {十四日|じゅうよっか} の {夜|よる} 、 {大窯|おおがま} から {火|ひ} が {出|で}た 。 {上|うえ} の {段|だん} と {工房|こうぼう} {通|どお}り が {焼|や}け 、 {五人|ごにん} が {亡|な}くなった 。', ok: true },
-            noJ('なんか 、 {昔|むかし} {火事|かじ} が あった みたい 。', 'Too casual and vague for a record: なんか / みたい hedge everything.'),
+            noJ('なんか 、 {昔|むかし} は あった か な|むかし} {火事|かじ} が あった みたい 。', 'Too casual and vague for a record: なんか / みたい hedge everything.'),
             noJ('{少々|しょうしょう} {困|こま}った こと が あった 。', 'This hides the fire all over again behind a euphemism.')], explain: { en: 'A record states what, where, when and who plainly.' } },
         { kind: 'order', item: 'c:co_assembly_i2', prompt: { en: 'Build the rule that goes underneath: "Keep up the firebreaks every year."' }, tiles: ['{火除|ひよ}け{道|みち}', 'の', '{手入|てい}れ', 'を', '{毎年|まいとし}', '{続|つづ}ける', 'こと'], answer: ['{火除|ひよ}け{道|みち}', 'の', '{手入|てい}れ', 'を', '{毎年|まいとし}', '{続|つづ}ける', 'こと'], alts: [['{毎年|まいとし}', '{火除|ひよ}け{道|みち}', 'の', '{手入|てい}れ', 'を', '{続|つづ}ける', 'こと']], orderHint: { en: 'Verb + こと at the end states a rule. 毎年 can open the sentence or sit before the verb.' } },
       ],
@@ -25278,14 +25278,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
     c('co.d_e11', 'E', 'g:v_te_iru', { jp: 'ゴロウ は {毎朝|まいあさ} {鐘|かね} を {磨|みが}いて いる 。', en: '' }, 'What does this say?', [{ en: 'Gorō polishes the bell every morning.', ok: true }, no('Gorō polished the bell once.', '毎朝 + ている = habit.'), no('Gorō is going to polish the bell.', 'ている isn\'t future here.')], { explain: { en: '〜ている with 毎朝 = a habit.' } }),
     o('co.d_e12', 'E', 'g:prt_wo', 'Build: "I cut the grass."', ['{草|くさ}', 'を', '{刈|か}ります']),
     o('co.d_e13', 'E', 'g:prt_ni', 'Build: "There is a bell on the lookout."', ['{櫓|やぐら}', 'に', '{鐘|かね}', 'が', 'あります'], { alts: [['{鐘|かね}', 'が', '{櫓|やぐら}', 'に', 'あります']] }),
-    c('co.d_e14', 'E', 'g:cop_past', { jp: '{昔|むかし} 、 ここ は {畑|はたけ} でした 。', en: '' }, 'What does this say?', [{ en: 'Long ago, this was a field.', ok: true }, no('This will be a field.', 'でした is past.'), no('This isn\'t a field.', 'That would be じゃありません.')], { explain: { en: 'でした = was (polite).' } }),
+    c('co.d_e14', 'E', 'g:cop_past', { jp: '{昔|むかし} は あった か な|むかし} 、 ここ は {畑|はたけ} でした 。', en: '' }, 'What does this say?', [{ en: 'Long ago, this was a field.', ok: true }, no('This will be a field.', 'でした is past.'), no('This isn\'t a field.', 'That would be じゃありません.')], { explain: { en: 'でした = was (polite).' } }),
     // ---- Intermediate ----
     c('co.d_i1', 'I', 'g:v_te_kara', { jp: '{窯|かま} が {冷|さ}めて から 、 {火屋|ほや} を {出|だ}す 。', en: '' }, 'When are the globes taken out?', [{ en: 'After the kiln has cooled.', ok: true }, no('Before the kiln cools.', 'てから = after.'), no('While the kiln is firing.', 'That would be 〜ている間に.')], { explain: { en: '〜てから = after doing.' } }),
     c('co.d_i2', 'I', 'g:cond_tara', { jp: '{風|かぜ} が {強|つよ}く なったら 、 {窓|まど} を {閉|し}めて 。', en: '' }, 'When should the vent be shut?', [{ en: 'Once the wind gets strong.', ok: true }, no('Always.', 'たら makes it conditional.'), no('Only when there\'s no wind.', 'The opposite.')], { explain: { en: '〜たら = if/when (once it happens).' } }),
     c('co.d_i3', 'I', 'g:temo', { jp: '{雨|あめ} が {降|ふ}って も 、 {祭|まつ}り は やる 。', en: '' }, 'What happens if it rains?', [{ en: 'The festival goes ahead anyway.', ok: true }, no('The festival is cancelled.', 'ても = even if.'), no('The festival is moved.', 'Not stated.')], { explain: { en: '〜ても = even if.' } }),
     c('co.d_i4', 'I', 'g:noni', { jp: '{火事|かじ} は なかった はず な のに 、 {焦|こ}げた {梁|はり} が ある 。', en: '' }, 'What feeling does のに carry here?', [{ en: 'Surprise at a contradiction: there "shouldn\'t" have been a fire, yet there\'s a burned beam.', ok: true }, no('A simple reason.', 'のに isn\'t ので.'), no('A wish.', 'のに can express regret, but here it links a contradiction.')], { explain: { en: '〜のに = even though (with surprise or frustration).' } }),
     c('co.d_i5', 'I', 'g:hazu', { jp: 'この {里|さと} は {一度|いちど} も {燃|も}えて いない はず だ 。', en: '' }, 'How sure is the speaker, and on what basis?', [{ en: 'They expect it to be true — based on what they\'ve been told or read.', ok: true }, no('They saw it with their own eyes.', 'はず is expectation, not witness.'), no('They hope it will burn.', 'No.')], { explain: { en: '〜はず = should be (by reasoning or information).' } }),
-    c('co.d_i6', 'I', 'g:sou_hear', { jp: '{昔|むかし} 、 {大|おお}きな {窯|かま} が あった そう だ 。', en: '' }, 'How does the speaker know?', [{ en: 'They heard it from someone.', ok: true }, no('They saw the kiln.', 'そうだ after a plain verb = hearsay.'), no('It looks like there is a kiln.', 'That would be ありそう.')], { explain: { en: 'Plain form + そうだ = "I hear that".' } }),
+    c('co.d_i6', 'I', 'g:sou_hear', { jp: '{昔|むかし} は あった か な|むかし} 、 {大|おお}きな {窯|かま} が あった そう だ 。', en: '' }, 'How does the speaker know?', [{ en: 'They heard it from someone.', ok: true }, no('They saw the kiln.', 'そうだ after a plain verb = hearsay.'), no('It looks like there is a kiln.', 'That would be ありそう.')], { explain: { en: 'Plain form + そうだ = "I hear that".' } }),
     c('co.d_i7', 'I', 'g:te_shimau', { jp: '{大事|だいじ} な こと を {忘|わす}れて しまった 。', en: '' }, 'What does しまった add?', [{ en: 'Regret — forgetting it was a loss.', ok: true }, no('Pride.', 'てしまう often carries regret.'), no('An intention to forget.', 'That would be 忘れよう.')], { explain: { en: '〜てしまう = completely / regrettably.' } }),
     c('co.d_i8', 'I', 'g:passive', { jp: '{記録|きろく} が {書|か}き{換|か}えられた 。', en: '' }, 'What happened to the record?', [{ en: 'Someone rewrote it.', ok: true }, no('It rewrote something.', 'られた = passive: it was rewritten.'), no('It can be rewritten.', 'Potential would be context-dependent; here it is past passive.')], { explain: { en: 'Passive 〜られる: the subject undergoes the action.' } }),
     o('co.d_i9', 'I', 'g:v_te_kara', 'Build: "After the grass is cut, the fire won\'t spread."', ['{草|くさ}', 'を', '{刈|か}って', 'から', '{火|ひ}', 'は', '{広|ひろ}がらない']),
@@ -25346,7 +25346,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         answer: {
           F: { kind: 'choose', item: 'c:co_warden_plea1', prompt: { en: 'It is asking about the children. Answer it.' }, options: [{ jp: 'みんな にげた よ', en: 'They all got away.', ok: true }, noJ('しらない', '"I don\'t know" — but you do: Ume led them down the channel.'), noJ('あつい', '"It\'s hot" — true, but not an answer.')], explain: { en: 'にげた = escaped, got away.' } },
           E: { kind: 'choose', item: 'c:co_warden_plea1', prompt: { en: 'Answer what it is really asking.' }, options: [{ jp: '{子|こ}ども たち は みんな {無事|ぶじ} です 。 {水路|すいろ} から {逃|に}げました 。', ok: true }, noJ('{窯|かま} を {閉|し}めて ください 。', 'That answers nothing it asked.'), noJ('わかりません 。', 'You do know — Ume and Gorō both told you.')], explain: { en: '無事 = safe, unharmed.' } },
-          I: { kind: 'choose', item: 'c:co_warden_plea1', prompt: { en: 'Answer it truthfully and specifically.' }, options: [{ jp: 'みんな {水路|すいろ} ぞい に {下|お}りた 。 ウメ さん が {手|て} を {引|ひ}いて 。 {一人|ひとり} も {残|のこ}って いない 。', ok: true }, noJ('もう {昔|むかし} の こと だ 。 {気|き} に しなくて いい 。', 'That brushes the question aside — the Hush\'s way.'), noJ('{誰|だれ} か が {残|のこ}って いた かも しれない 。', 'Not true, and not kind.')], explain: { en: '一人も〜ない = not a single one.' } },
+          I: { kind: 'choose', item: 'c:co_warden_plea1', prompt: { en: 'Answer it truthfully and specifically.' }, options: [{ jp: 'みんな {水路|すいろ} ぞい に {下|お}りた 。 ウメ さん が {手|て} を {引|ひ}いて 。 {一人|ひとり} も {残|のこ}って いない 。', ok: true }, noJ('もう {昔|むかし} は あった か な|むかし} の こと だ 。 {気|き} に しなくて いい 。', 'That brushes the question aside — the Hush\'s way.'), noJ('{誰|だれ} か が {残|のこ}って いた かも しれない 。', 'Not true, and not kind.')], explain: { en: '一人も〜ない = not a single one.' } },
           A: { kind: 'choose', item: 'c:co_warden_plea1', prompt: { en: 'It wants certainty. Give it — and let it rest.' }, options: [{ jp: '{言|い}い{切|き}れる 。 {子|こ}ども は {皆|みな} {逃|に}げ{延|の}びた 。 その {中|なか} の {一人|ひとり} は 、 {今|いま} も {里|さと} で ガラス を {吹|ふ}いて いる 。', ok: true }, noJ('{言|い}い{切|き}れない が 、 {考|かんが}えて も {仕方|しかた} が ない 。', 'Dismissive where it needs certainty.'), noJ('それ は {記録|きろく} に {書|か}いて ない 。', 'The record is exactly what failed.')], explain: { en: '逃げ延びる = to escape to safety. The one still blowing glass is Hiro.' } },
         } },
       'mirror:record': { power: 2, target: 'rand',
@@ -25414,12 +25414,12 @@ pc: {祭|まつ}り の {前|まえ} に {着|つ}いた みたい だ ね 。 |
 !autosave
 
 @scene co.road_marker
-narr: {苔|こけ} むした {石|いし} に 、 {字|じ} が {彫|ほ}って ある 。 「 {火除|ひよ}け 」 。 || Words are carved into the mossy stone: 火除け — "fire-ward".
+narr: {苔|こけ} の {生|は}えた {石|いし} に 、 {字|じ} が {彫|ほ}って ある 。 「 {火除|ひよ}け 」 。 || Words are carved into the mossy stone: 火除け — "fire-ward".
 narr: {石|いし} の {向|む}こう に は 、 {道|みち} の よう に {幅|はば} の {広|ひろ}い 、 {草|くさ} だらけ の {帯|おび} が {続|つづ}いて いる 。 || Beyond it runs a strip as wide as a road, thick with dry grass.
 ?(comp=nao) comp: {火除|ひよ}け ？ この {草|くさ} で ？ {逆|ぎゃく} に よく {燃|も}え そう だ けど な 。 || Fire-ward? With this much grass on it? Looks more like kindling.
 ?(comp=mio) comp[worry]: {火除|ひよ}け の {道|みち} …… {本当|ほんとう} は {草|くさ} を {刈|か}って おく {道|みち} です よ ね 。 {誰|だれ} も {手入|てい}れ して いない 。 || A firebreak… it's meant to be kept mown. Nobody has touched it.
 ?(comp=ren) comp: {火除|ひよ}け{道|みち} です ね 。 {古|ふる}い {里|さと} に は よく あります 。 {手入|てい}れ を やめれば 、 ただ の {草|くさ}むら です が 。 || A firebreak path. Old villages often have them. Stop tending one and it's just a strip of weeds.
-?(comp=suzu) comp[closed]: …… {昔|むかし} は 、 きれい に {刈|か}って あった のに 。 || …It used to be cut so neatly.
+?(comp=suzu) comp[closed]: …… {昔|むかし} は あった か な|むかし} は 、 きれい に {刈|か}って あった のに 。 || …It used to be cut so neatly.
 ?(comp=suzu) pc: スズ ？ || Suzu?
 ?(comp=suzu) comp[laugh]: ん ？ {火除|ひよ}け って 、 {普通|ふつう} そう でしょ 、 って {話|はなし} 。 || Hm? I just mean that's what firebreaks are normally like.
 !if co_clue_marker -> end
@@ -25464,14 +25464,14 @@ co_sayo: じゃ 、 {私|わたし} は {席|せき} の {準備|じゅんび} �
 !if co_suspect -> end
 !set co_suspect
 narr: {広場|ひろば} を {抜|ぬ}ける {途中|とちゅう} で 、 {足|あし} が {止|と}まった 。 || Crossing the square, your feet stop on their own.
-?(comp=nao) comp: なあ 、 {気|き} づいた ？ {空|あ}いた {席|せき} 、 {焦|こ}げた {梁|はり} 、 {誰|だれ} も {使|つか}わない {桶|おけ} 、 {綱|つな} の ない {鐘|かね} 。 || Hey. Notice it? An empty seat, a scorched beam, buckets nobody uses, a bell with no rope.
+?(comp=nao) comp: なあ 、 {気|き}づいた ？ {空|あ}いた {席|せき} 、 {焦|こ}げた {梁|はり} 、 {誰|だれ} も {使|つか}わない {桶|おけ} 、 {綱|つな} の ない {鐘|かね} 。 || Hey. Notice it? An empty seat, a scorched beam, buckets nobody uses, a bell with no rope.
 ?(comp=nao) comp: {全部|ぜんぶ} 、 {同|おな}じ {穴|あな} の {周|まわ}り を よけて {歩|ある}いてる 。 {宛名|あてな} の {抜|ぬ}けた {手紙|てがみ} と {同|おな}じ {感|かん}じ だ 。 || Everything here walks around the same hole. Same feeling as a letter with the address missing.
 ?(comp=mio) comp[worry]: $name さん 。 この {里|さと} 、 {火傷|やけど} の {薬|くすり} を {置|お}いて いる {家|いえ} が {一軒|いっけん} も ない んです 。 || $name… not one house in this village keeps burn salve.
 ?(comp=mio) comp: ガラス と {焼|や}き{物|もの} の {里|さと} で 、 {火傷|やけど} の {薬|くすり} が ない なんて 。 {何|なに} か を 、 {忘|わす}れさせられて いる みたい 。 || A village of glass and pottery, and no burn salve. It's as if they've been made to forget something.
 ?(comp=ren) comp[think]: {灯|ひ} の {名|な} と {同|おな}じ です 。 {上|うわ}{書|が}き の {下|した} に 、 {元|もと} の {字|じ} が {透|す}けて {見|み}える 。 || It's like the lantern's name. Under the overwriting, the original letters still show through.
 ?(comp=ren) comp: {空|あ}いた {席|せき} 、 {焦|こ}げた {木|き} 、 {鳴|な}らない {鐘|かね} …… {火|ひ} の {字|じ} を {消|け}した {跡|あと} です 。 || The empty seat, the scorched wood, the silent bell… they're the marks left where the word "fire" was erased.
 ?(comp=suzu) comp[closed]: …… ねえ 、 $name 。 || …Hey, $name.
-?(comp=suzu) comp: {私|わたし} 、 {嘘|うそ} の {上手|じょうず} な {人|ひと} を たくさん {知|し}って る の 。 {自分|じぶん} も {含|ふく}めて ね 。 この {里|さと} は {嘘|うそ} を ついて る ん じゃ ない 。 {嘘|うそ} を {信|しん}じて る 。 || I know a lot of good liars. Myself included. This village isn't lying. It believes the lie.
+?(comp=suzu) comp: {私|わたし} 、 {嘘|うそ} の {上手|じょうず} な {人|ひと} を たくさん {知|し}ってる の 。 {自分|じぶん} も {含|ふく}めて ね 。 この {里|さと} は {嘘|うそ} を ついてる ん じゃ ない 。 {嘘|うそ} を {信|しん}じてる 。 || I know a lot of good liars. Myself included. This village isn't lying. It believes the lie.
 pc: {記録堂|きろくどう} へ {行|い}こう 。 {年代記|ねんだいき} を {見|み}せて もらおう 。 || Let's go to the Chronicle Hall. I want to see that chronicle.
 !quest co_main 2
 !journal {年代記|ねんだいき} は {火事|かじ} を {記録|きろく} して いない 。 でも {里|さと} の あちこち に 、 {火|ひ} の {跡|あと} が ある 。 || The chronicle records no fire. But the village is full of the marks of one.
@@ -25534,7 +25534,7 @@ co_tokiwa: {里|さと} の {人|ひと} に {聞|き}いて みて ください
 ?(comp=nao) comp: {聞|き}く なら 、 {年寄|としよ}り と {職人|しょくにん} だ 。 {段々畑|だんだんばたけ} の ばあさん 、 {櫓|やぐら} の じいさん 、 ガラス {工房|こうぼう} の {親方|おやかた} 。 || If we're asking, we ask the old folk and the craftsmen. The grandma on the terraces, the old man at the lookout, the master at the glass workshop.
 ?(comp=mio) comp: {話|はなし} を {聞|き}く なら 、 {長|なが}く {住|す}んで いる {方|かた} に 。 {段々畑|だんだんばたけ} の ウメ さん 、 {櫓|やぐら} の ゴロウ さん 、 ガラス {工房|こうぼう} の イサオ さん 。 || We should ask people who've lived here longest. Ume on the terraces, Gorō at the lookout, Isao at the glass workshop.
 ?(comp=ren) comp: {古|ふる}い {灯|ひ} ほど 、 {古|ふる}い {名|な} を {覚|おぼ}えて います 。 {人|ひと} も {同|おな}じ でしょう 。 ウメ さん 、 ゴロウ さん 、 イサオ さん に 。 || The older the lantern, the older the names it remembers. People too, I'd think. Ume, Gorō and Isao.
-?(comp=suzu) comp: {年寄|としよ}り に {聞|き}こう 。 {体|からだ} が {覚|おぼ}えて る こと って 、 ある から 。 ウメ さん 、 ゴロウ さん 、 イサオ さん 。 || Let's ask the old ones. Bodies remember things. Ume, Gorō, Isao.
+?(comp=suzu) comp: {年寄|としよ}り に {聞|き}こう 。 {体|からだ} が {覚|おぼ}えてる こと って 、 ある から 。 ウメ さん 、 ゴロウ さん 、 イサオ さん 。 || Let's ask the old ones. Bodies remember things. Ume, Gorō, Isao.
 !set co_chronicle_read
 !quest co_main 3
 !journal ウメ （ {段々畑|だんだんばたけ} ） 、 ゴロウ （ {櫓|やぐら} ） 、 イサオ （ ガラス {工房|こうぼう} ） に {話|はなし} を {聞|き}こう 。 || Ask Ume (terraces), Gorō (lookout) and Isao (glass workshop) what they remember.
@@ -25607,7 +25607,7 @@ co_tamotsu: {話|はなし} は {外|そと} で {聞|き}こえた 。 {火事|
 co_tokiwa[think]: …… || …
 co_tokiwa: {確|たし}か な {記録|きろく} が あれば 、 {私|わたし} は {書|か}きます 。 {窯|かま} の {記録|きろく} です 。 {窯焚|かまだ}き の {日誌|にっし} は 、 {大窯|おおがま} の {中|なか} に しまう {決|き}まり でした 。 || If there is a certain record, I will write it. The kiln's record. By custom, the firing log was kept inside the great kiln itself.
 co_tokiwa: ですが 、 {大窯|おおがま} は {上|うえ} の {段|だん} の {更|さら}に {上|うえ} 。 {古|ふる}い {工房|こうぼう} {通|どお}り の {奥|おく} で 、 {封|ふう} が して あります 。 …… {私|わたし} が {来|き}た {時|とき} から 、 ずっと 。 || But the great kiln is beyond the upper terraces, at the end of the old workshop row, and it is sealed. …It has been, for as long as I've been here.
-co_tamotsu: {上|うえ} の {段|だん} へ の {柵|さく} の {鍵|かぎ} は 、 {俺|おれ} が {持|も}って る 。 {水門|すいもん} で {待|ま}って る 。 || I've got the key to the fence on the upper terraces. I'll wait for you at the water gate.
+co_tamotsu: {上|うえ} の {段|だん} へ の {柵|さく} の {鍵|かぎ} は 、 {俺|おれ} が {持|も}ってる 。 {水門|すいもん} で {待|ま}ってる 。 || I've got the key to the fence on the upper terraces. I'll wait for you at the water gate.
 !set co_records_done
 !quest co_main 5
 !journal {窯|かま} の {日誌|にっし} は {大窯|おおがま} の {中|なか} に ある らしい 。 タモツ が {段々畑|だんだんばたけ} の {水門|すいもん} で {待|ま}って いる 。 || The kiln's firing log should be inside the great kiln. Tamotsu is waiting at the water gate at the top of the terraces.
@@ -25648,9 +25648,9 @@ RB.script.add(`
 @scene co.tamotsu_gate
 co_tamotsu: {来|き}た か 。 || You came.
 narr: タモツ は {腰|こし} の {鍵束|かぎたば} から 、 {錆|さ}びた {鍵|かぎ} を {一本|いっぽん} {外|はず}した 。 || Tamotsu unhooks a rusty key from the ring at his belt.
-co_tamotsu: この {柵|さく} は 、 {俺|おれ} が {子|こ}ども の {頃|ころ} から {閉|し}まって た 。 {理由|りゆう} を {聞|き}いた こと は ない 。 {聞|き}こう と も {思|おも}わなかった 。 || This fence has been shut since I was a boy. I never asked why. Never even thought to ask.
+co_tamotsu: この {柵|さく} は 、 {俺|おれ} が {子|こ}ども の {頃|ころ} から {閉|し}まってた 。 {理由|りゆう} を {聞|き}いた こと は ない 。 {聞|き}こう と も {思|おも}わなかった 。 || This fence has been shut since I was a boy. I never asked why. Never even thought to ask.
 co_tamotsu: …… {変|へん} だ よ な 。 {水|みず} の {番|ばん} を して いて 、 {水門|すいもん} の {上|うえ} に {何|なに} が ある か 、 {考|かんが}えた こと も なかった 。 || …Strange, isn't it. I keep the water, and I never once wondered what lay above the water gate.
-co_tamotsu: {上|うえ} は {乾|かわ}いて る 。 {火|ひ} の {気|け} の ある もの は {持|も}って {行|い}く な 。 {気|き} を つけろ 。 || It's dry up there. Take nothing that burns. Be careful.
+co_tamotsu: {上|うえ} は {乾|かわ}いてる 。 {火|ひ} の {気|け} の ある もの は {持|も}って {行|い}く な 。 {気|き} を つけろ 。 || It's dry up there. Take nothing that burns. Be careful.
 !set co_upper_open
 !quest co_main 6
 !sfx door
@@ -25664,7 +25664,7 @@ narr: {柵|さく} が きしんで {開|ひら}いた 。 || The fence creaks o
 @scene co.upper_locked
 !if co_records_done -> key
 narr: {上|うえ} の {段|だん} へ の {道|みち} は 、 {錠|じょう} の {下|お}りた {柵|さく} で {塞|ふさ}がれて いる 。 「 {立入|たちい}り {禁止|きんし} 」 の {札|ふだ} が 、 {日|ひ} に {焼|や}けて {白|しろ}く なって いる 。 || The way to the upper terraces is shut by a locked fence. The "No entry" sign has bleached white in the sun.
-?(comp=nao) comp: {立入|たちい}り {禁止|きんし} の {理由|りゆう} が {書|か}いて ない 。 {理由|りゆう} の ない {禁止|きんし} は 、 {大体|だいたい} {何|なに} か {隠|かく}して る 。 || No reason given for the "no entry". A ban without a reason is usually hiding something.
+?(comp=nao) comp: {立入|たちい}り {禁止|きんし} の {理由|りゆう} が {書|か}いて ない 。 {理由|りゆう} の ない {禁止|きんし} は 、 {大体|だいたい} {何|なに} か {隠|かく}してる 。 || No reason given for the "no entry". A ban without a reason is usually hiding something.
 ?(comp=mio) comp: {鍵|かぎ} が ない と {無理|むり} です ね 。 {誰|だれ} が {持|も}って いる の かしら 。 || We can't without the key. I wonder who has it.
 ?(comp=ren) comp: {柵|さく} の {向|む}こう の {木|き} 、 {全部|ぜんぶ} {同|おな}じ {背丈|せたけ} です 。 …… {気味|きみ} が {悪|わる}い ほど 。 || The trees beyond the fence are all the same height. …Unnervingly so.
 ?(comp=suzu) comp[closed]: …… {上|うえ} は 、 {今|いま} は いい わ 。 || …Not up there. Not yet.
@@ -25684,7 +25684,7 @@ RB.script.add(`
 narr: {里|さと} に {戻|もど}る と 、 {夕日|ゆうひ} が {段々畑|だんだんばたけ} を {赤|あか}く {染|そ}めて いた 。 || When you come back down, the evening sun is reddening the terraces.
 ?(comp=suzu) comp: $name 。 {頁|ページ} は トキワ さん に {渡|わた}して 。 でも 、 {広場|ひろば} で {読|よ}み{上|あ}げられる {前|まえ} に …… ヒロ に は 、 {私|わたし} から {言|い}いたい 。 || $name. Give the page to Tokiwa. But before it's read out in the square… I want Hiro to hear it from me.
 ?(comp=suzu) comp: {母親|ははおや} の {死|し} を 、 {記録|きろく} の {読|よ}み{上|あ}げ で {知|し}る なんて 。 {誰|だれ} に も そんな {思|おも}い は させたく ない 。 || Learning of your mother's death from a public reading. Nobody should have to go through that.
-?(comp!=suzu) co_shino: あ 、 いた ！ {旅芸人|たびげいにん} の スズ さん から {伝言|でんごん} です 。 「 ヒロ の {工房|こうぼう} で {待|ま}って る 。 {来|く}れば {分|わ}かる 」 って 。 || There you are! A message from Suzu, the performer: "I'm waiting at Hiro's workshop. You'll know why when you come."
+?(comp!=suzu) co_shino: あ 、 いた ！ {旅芸人|たびげいにん} の スズ さん から {伝言|でんごん} です 。 「 ヒロ の {工房|こうぼう} で {待|ま}ってる 。 {来|く}れば {分|わ}かる 」 って 。 || There you are! A message from Suzu, the performer: "I'm waiting at Hiro's workshop. You'll know why when you come."
 ?(comp!=suzu) co_shino: {伝言|でんごん} は {確|たし}か に {届|とど}けました よ 。 {配達料|はいたつりょう} は {取|と}りません 。 || Message delivered. No charge.
 !quest co_main 7
 !quest co_suzu 3
@@ -25729,7 +25729,7 @@ narr: {古|ふる}い {木|き} は {一本|いっぽん} も ない 。 {黒|�
 narr: {段|だん} の {角|かど} に 、 {古|ふる}い {石|いし} が {立|た}って いる 。 {字|じ} が {刻|きざ}まれて いる 。 || An old stone stands at the corner of the terrace, carved with words.
 narr: 「 {火|ひ} は {来|く}る 。 {火|ひ} は {去|さ}る 。 {石|いし} は {黙|だま}って {残|のこ}る 。 」 || "Fire comes. Fire goes. Stone remains, and says nothing."
 ?(comp=nao) comp: {石|いし} は {喋|しゃべ}らない けど 、 {嘘|うそ} も つかない 。 {配達|はいたつ} {先|さき} と して は {最高|さいこう} だ 。 || Stone doesn't talk, but it doesn't lie either. Ideal recipient.
-?(comp=mio) comp: {火|ひ} が {来|く}る 、 と {書|か}いて ある 。 {来|こ}ない 、 じゃ なくて 。 {昔|むかし} の {人|ひと} は 、 {分|わ}かって いた んです ね 。 || It says fire comes. Not that it doesn't. The founders knew.
+?(comp=mio) comp: {火|ひ} が {来|く}る 、 と {書|か}いて ある 。 {来|こ}ない 、 じゃ なくて 。 {昔|むかし} は あった か な|むかし} の {人|ひと} は 、 {分|わ}かって いた んです ね 。 || It says fire comes. Not that it doesn't. The founders knew.
 ?(comp=ren) comp: {石|いし} に {刻|きざ}んだ {字|じ} は 、 {静寂|しじま} でも {消|け}しにくい 。 だから {残|のこ}った の でしょう 。 || Words cut in stone are hard even for the Hush to lift. That's why these survived.
 ?(comp=suzu) comp: {石|いし} は {黙|だま}って {残|のこ}る 、 か 。 …… {私|わたし} と {逆|ぎゃく} ね 。 よく {喋|しゃべ}って 、 {残|のこ}らない 。 || Stone stays silent and remains. …The opposite of me. I talk a lot and never stay.
 
@@ -25757,10 +25757,10 @@ narr: {今|いま} は やめて おこう 。 {石|いし} は {逃|に}げな�
 @scene co.ashband
 !if co_w_tsuchi -> seen
 narr: {崩|くず}れた {壁|かべ} の {断面|だんめん} に 、 {土|つち} の {層|そう} が {見|み}える 。 {真|ま}ん{中|なか} {辺|あた}り に 、 {黒|くろ}い {線|せん} が {一本|いっぽん} 、 {横|よこ} に {走|はし}って いる 。 || In the broken face of the wall, you can see layers of soil. About halfway down, a single black line runs straight across.
-?(comp=nao) comp: …… {灰|はい} だ 。 {焚|た}き{火|び} の {跡|あと} を {埋|う}めた の と 、 {同|おな}じ {色|いろ} を して る 。 || …Ash. Same colour as a campfire that's been buried.
+?(comp=nao) comp: …… {灰|はい} だ 。 {焚|た}き{火|び} の {跡|あと} を {埋|う}めた の と 、 {同|おな}じ {色|いろ} を してる 。 || …Ash. Same colour as a campfire that's been buried.
 ?(comp=mio) comp[think]: {灰|はい} の {層|そう} です 。 {上|うえ} に {積|つ}もった {土|つち} の {厚|あつ}さ から する と …… {二十年|にじゅうねん} {前後|ぜんご} 。 || A layer of ash. From the depth of soil on top… about twenty years.
 ?(comp=ren) comp: {記録|きろく} は {書|か}き{換|か}えられて も 、 {土|つち} は {書|か}き{換|か}えられ ない 。 …… {灯守|ひもり} の {教本|きょうほん} に 、 {載|の}せたい くらい です 。 || You can rewrite a record, but not the soil. …I'd like to put that in the lantern keepers' handbook.
-?(comp=suzu) comp[closed]: …… {土|つち} は 、 {覚|おぼ}えて た の ね 。 || …The soil remembered.
+?(comp=suzu) comp[closed]: …… {土|つち} は 、 {覚|おぼ}えてた の ね 。 || …The soil remembered.
 !challenge co.c_tsuchi
 !if var._res=0 -> later
 !word tsuchi
@@ -25819,7 +25819,7 @@ narr: {工房|こうぼう} {通|どお}り の {灯籠|とうろう} 。 {油|�
 !if co_seal_broken -> end
 narr: {大窯|おおがま} の {入|い}り{口|ぐち} は 、 {溶|と}けた ガラス で {封|ふう}じられて いる 。 {手|て} を {近|ちか}づける と 、 まだ {温|あたた}かい 。 || The great kiln's doorway is sealed with melted glass. Hold your hand near it: it's still warm.
 !if word.koori -> crack
-?(comp=nao) comp: {叩|たた}いて も {割|わ}れない な 。 {熱|あつ}い ガラス を {急|きゅう}に {冷|ひ}やす と {割|わ}れる 、 って ヒロ が {言|い}って た ろ 。 {水|みず} じゃ {湯気|ゆげ} に なる だけ だ 。 もっと {冷|つめ}たい もの が {要|い}る 。 || Hitting it won't break it. Hiro said hot glass cracks if you cool it too fast. Water'll just turn to steam. We need something colder.
+?(comp=nao) comp: {叩|たた}いて も {割|わ}れない な 。 {熱|あつ}い ガラス を {急|きゅう}に {冷|ひ}やす と {割|わ}れる 、 って ヒロ が {言|い}ってた ろ 。 {水|みず} じゃ {湯気|ゆげ} に なる だけ だ 。 もっと {冷|つめ}たい もの が {要|い}る 。 || Hitting it won't break it. Hiro said hot glass cracks if you cool it too fast. Water'll just turn to steam. We need something colder.
 ?(comp=mio) comp[think]: {冷|ひ}やせば {割|わ}れる かも 。 でも {水|みず} だと すぐ {湯気|ゆげ} に なって しまう 。 もっと {冷|つめ}たい もの …… {氷|こおり} とか 。 || If we chill it, it might crack. But water would just boil off. Something colder… like ice.
 ?(comp=ren) comp: {封|ふう} は {熱|ねつ} で {保|たも}たれて います 。 {熱|ねつ} を {奪|うば}えば …… {水|みず} より {冷|つめ}たい {字|じ} が あれば 。 || The seal holds because it's hot. Take the heat away… if only we had a word colder than water.
 ?(comp=suzu) comp: {熱|あつ}い {舞台|ぶたい} に は 、 {冷|つめ}たい {客|きゃく} が {一番|いちばん} {効|き}く の よ 。 …… {冗談|じょうだん} じゃ なくて 、 {氷|こおり} が {要|い}る わ 。 || Nothing kills a hot show like a cold audience. …Not a joke: we need ice.
@@ -25832,7 +25832,7 @@ narr: {封|ふう} は まだ {温|あたた}かい 。 {急|きゅう}に {冷|
 !sfx reveal
 !shake
 narr: {冷気|れいき} が {走|はし}る と 、 {封|ふう} に {細|ほそ}い {罅|ひび} が {入|はい}り 、 {次|つぎ} の {瞬間|しゅんかん} 、 {音|おと} を {立|た}てて {崩|くず}れ{落|お}ちた 。 || The cold runs across it; a fine crack appears, and in the next moment the seal gives way and falls with a crash.
-?(comp=nao) comp: {開|あ}いた 。 …… {中|なか} から {熱気|ねっき} が {来|く}る ぞ 。 {二十年|にじゅうねん} {閉|と}じて た {窯|かま} の {熱|ねつ} じゃ ない 。 || It's open. …Heat's coming out. That's not the heat of a kiln shut for twenty years.
+?(comp=nao) comp: {開|あ}いた 。 …… {中|なか} から {熱気|ねっき} が {来|く}る ぞ 。 {二十年|にじゅうねん} {閉|と}じてた {窯|かま} の {熱|ねつ} じゃ ない 。 || It's open. …Heat's coming out. That's not the heat of a kiln shut for twenty years.
 ?(comp=mio) comp[worry]: {熱|あつ}い …… {中|なか} で は 、 こまめ に {水|みず} を {飲|の}んで ください ね 。 {約束|やくそく} です よ 。 || It's hot… Drink water often in there. Promise me.
 ?(comp=ren) comp: {窯|かま} が {息|いき} を して います 。 {気|き} を つけて 。 || The kiln is breathing. Careful.
 ?(comp=suzu) comp: {幕|まく} が {開|あ}いた わ 。 {第二幕|だいにまく} 、 {窯|かま} の {中|なか} 。 || Curtain up. Act two: inside the kiln.
@@ -25854,7 +25854,7 @@ RB.script.add(`
 @scene co.ice_enter
 narr: {石|いし} の {壁|かべ} の {内側|うちがわ} は 、 {息|いき} が {白|しろ}く なる ほど {冷|つめ}たかった 。 {外|そと} の {暑|あつ}さ が 、 {嘘|うそ} の よう だ 。 || Inside the stone walls it's cold enough to see your breath. The heat outside might never have existed.
 narr: {藁|わら} の {山|やま} の {間|あいだ} に 、 {青白|あおじろ}い {塊|かたまり} が いくつ も {眠|ねむ}って いる 。 || Between heaps of straw, bluish-white blocks lie sleeping.
-?(comp=nao) comp: {氷室|ひむろ} だ 。 {夏|なつ} に {氷|こおり} を {売|う}る {家|いえ} が 、 {昔|むかし} は {山|やま} に こういう の を {持|も}って た 。 || An ice house. Families who sold ice in summer used to keep these in the hills.
+?(comp=nao) comp: {氷室|ひむろ} だ 。 {夏|なつ} に {氷|こおり} を {売|う}る {家|いえ} が 、 {昔|むかし} は あった か な|むかし} は {山|やま} に こういう の を {持|も}ってた 。 || An ice house. Families who sold ice in summer used to keep these in the hills.
 ?(comp=mio) comp[smile]: …… {涼|すず}しい 。 ちょっと だけ 、 ここ で {休|やす}んで も いい です か 。 {三十|さんじゅう} {数|かぞ}える あいだ だけ 。 || …It's cool. Could we rest here, just a little? Just while I count to thirty.
 ?(comp=ren) comp: {静|しず}か な {場所|ばしょ} です 。 {静寂|しじま} の {静|しず}けさ と は {違|ちが}う 。 {音|おと} が {休|やす}んで いる だけ の 、 {静|しず}けさ 。 || A quiet place. Not the Hush's kind of quiet. The kind where sound is just resting.
 ?(comp=suzu) comp[smile]: {楽屋|がくや} みたい 。 {本番|ほんばん} {前|まえ} の 、 {一番|いちばん} {静|しず}か な {時間|じかん} 。 || Like a dressing room. The quietest moment before curtain.
@@ -25994,7 +25994,7 @@ co_warden: …… {誰|だれ} も {入|い}れる な 。 {窯|かま} を {守
 !set co_warden_down
 !music kiln
 narr: {番人|ばんにん} の {体|からだ} から {熱|ねつ} が {抜|ぬ}け 、 {土|つち} と ガラス が {静|しず}か に {崩|くず}れた 。 その {跡|あと} に 、 {割|わ}れて いない {火屋|ほや} が {一|ひと}つ と 、 {焦|こ}げた {紙|かみ} が {一枚|いちまい} {残|のこ}って いた 。 || The heat leaves the warden's body, and the clay and glass settle quietly apart. Where it stood lie one unbroken lantern globe and a single scorched sheet of paper.
-?(comp=nao) comp: {水門|すいもん} は {開|あ}いた か 、 って {聞|き}いた な 。 …… {開|あ}いた ん だ ろう な 。 {下|した} の {里|さと} は {残|のこ}って る 。 || It asked if the water gate opened. …It must have. The village below is still standing.
+?(comp=nao) comp: {水門|すいもん} は {開|あ}いた か 、 って {聞|き}いた な 。 …… {開|あ}いた ん だろう な 。 {下|した} の {里|さと} は {残|のこ}ってる 。 || It asked if the water gate opened. …It must have. The village below is still standing.
 ?(comp=mio) comp[sad]: {最後|さいご} まで 、 {誰|だれ} か の {心配|しんぱい} を して いました ね 。 || Right to the end, it was worried about someone else.
 ?(comp=ren) comp: {答|こた}え を {聞|き}けず に 、 {二十年|にじゅうねん} 。 …… {灯|ひ} も 、 {人|ひと} も 、 {答|こた}え を {待|ま}つ の は {辛|つら}い 。 || Twenty years without an answer. …For lanterns and people alike, waiting for an answer is hard.
 ?(comp=suzu) comp[sad]: …… {開|あ}いた わ よ 。 あなた の おかげ で 、 {下|した} は {助|たす}かった 。 || …It opened. Thanks to you, the village below was saved.
@@ -26078,7 +26078,7 @@ co_sayo: コタロウ に {聞|き}いて みて 。 {何|なん} て {言|い}�
 !goto main
 
 @scene co.sayo_seats
-co_sayo: {今|いま} 、 {席|せき} を {並|なら}べて る ところ なん です 。 {家|いえ} ごと に {一|ひと}つ ずつ 。 {席|せき} {表|ひょう} の とおり に 。 || I'm laying out the seats right now. One per household, according to the seating chart.
+co_sayo: {今|いま} 、 {席|せき} を {並|なら}べてる ところ なん です 。 {家|いえ} ごと に {一|ひと}つ ずつ 。 {席|せき} {表|ひょう} の とおり に 。 || I'm laying out the seats right now. One per household, according to the seating chart.
 co_sayo: ガラス {職人|しょくにん} の {卓|たく} の {端|はし} の {席|せき} は 、 {空|あ}けて おく の 。 ヒロ さん の {頼|たの}み で ね 。 {毎年|まいとし} 。 || The seat at the end of the glassmakers' table stays empty. Hiro asks for it every year.
 pc: {誰|だれ} の {席|せき} なん です か 。 || Whose seat is it?
 co_sayo[think]: さあ …… {聞|き}いた こと が ない わ 。 {聞|き}いちゃ いけない よう な {気|き} が して 。 {変|へん} よ ね 。 || Hmm… I've never asked. It always felt like something I shouldn't. Strange, isn't it.
@@ -26106,21 +26106,21 @@ co_kotaro: あと ね 、 あの {端|はし} の {椅子|いす} 、 {誰|だ�
 ?(comp=suzu) comp[laugh]: {呪|のろ}われる わ よ 。 {一生|いっしょう} 、 {甘酒|あまざけ} が {一杯|いっぱい} まで に なる {呪|のろ}い 。 || Oh, you'd be cursed. Cursed to one cup of amazake for the rest of your life.
 !end
 :mid
-co_kotaro: ゴロウ じいちゃん の {鐘|かね} 、 {鳴|な}った の {聞|き}いた こと ない んだ 。 {毎朝|まいあさ} ぴかぴか に して る のに 。 || I've never heard Grandpa Gorō's bell ring. He polishes it every morning, though.
+co_kotaro: ゴロウ じいちゃん の {鐘|かね} 、 {鳴|な}った の {聞|き}いた こと ない んだ 。 {毎朝|まいあさ} ぴかぴか に してる のに 。 || I've never heard Grandpa Gorō's bell ring. He polishes it every morning, though.
 !end
 :rung
-co_kotaro[worry]: …… {鐘|かね} 、 {鳴|な}らした の {僕|ぼく} だ よ 。 みんな {走|はし}って った 。 {怖|こわ}い {顔|かお} で 。 {僕|ぼく} 、 {悪|わる}い こと した ？ || …I'm the one who rang the bell. Everyone ran. With scary faces. Did I do something bad?
+co_kotaro[worry]: …… {鐘|かね} 、 {鳴|な}らした の {僕|ぼく} だ よ 。 みんな {走|はし}って いった 。 {怖|こわ}い {顔|かお} で 。 {僕|ぼく} 、 {悪|わる}い こと した ？ || …I'm the one who rang the bell. Everyone ran. With scary faces. Did I do something bad?
 pc: {悪|わる}く ない よ 。 {鐘|かね} は 、 {鳴|な}らす ため に ある ん だ 。 || You didn't. A bell's there to be rung.
 co_kotaro: …… うん 。 じいちゃん も そう {言|い}った 。 || …Okay. Grandpa said that too.
 !end
 :count
 co_kotaro: サヨ さん の {伝言|でんごん} ？ うん 、 {僕|ぼく} が ノブ さん に {言|い}った よ 。 「 さんじゅう …… 」 {何|なん} だっけ 。 || Sayo's message? Yeah, I told Nobu. "Thirty…" thirty what, again?
-co_kotaro: サヨ さん は 「 さんじゅう まい 」 って {言|い}った {気|き} が する 。 でも ノブ さん の とこ の とっくり 、 かっこいい じゃん 。 だから 「 さんじゅっぽん ！ 」 って 。 || I think Sayo said "thirty flat ones". But Nobu's sake flasks are cool, right? So I said "thirty long ones!"
+co_kotaro: サヨ さん は 「 さんじゅう まい 」 って {言|い}った {気|き} が する 。 でも ノブ さん の ところ の とっくり 、 かっこいい じゃん 。 だから 「 さんじゅっぽん ！ 」 って 。 || I think Sayo said "thirty flat ones". But Nobu's sake flasks are cool, right? So I said "thirty long ones!"
 ?(comp=nao) comp[smirk]: {伝言|でんごん} の {途中|とちゅう} で {中身|なかみ} を {変|か}える な 。 {配達人|はいたつにん} の {一番|いちばん} {大事|だいじ} な {決|き}まり だ ぞ 。 || Never change the contents of a message on the way. Rule number one for couriers.
 ?(comp=mio) comp[smile]: {好|す}きな もの を {頼|たの}んじゃった の ね 。 {正直|しょうじき} で よろしい 。 {謝|あやま}りに {行|い}こう か 。 || You ordered what you liked. Very honest. Shall we go and apologise?
 ?(comp=ren) comp: {助数詞|じょすうし} {一|ひと}つ で 、 {皿|さら} が {徳利|とっくり} に なる 。 {言葉|ことば} は {恐|おそ}ろしい 。 {美|うつく}しい 。 || One counter word, and plates become flasks. Language is terrifying. And beautiful.
 ?(comp=suzu) comp[laugh]: {台本|だいほん} を {書|か}き{換|か}える {役者|やくしゃ} ね 。 {気持|きも}ち は {分|わ}かる けど 、 {座長|ざちょう} に {怒|おこ}られる やつ よ 。 || An actor rewriting the script mid-show. I understand the urge, but the director will have your head.
-co_kotaro[worry]: …… ノブ さん 、 {怒|おこ}って る ？ || …Is Nobu angry?
+co_kotaro[worry]: …… ノブ さん 、 {怒|おこ}ってる ？ || …Is Nobu angry?
 pc: {正|ただ}しい {注文書|ちゅうもんしょ} を {書|か}けば 、 {大丈夫|だいじょうぶ} だ よ 。 || If we write a proper order slip, it'll be fine.
 !quest co_count 2
 
@@ -26129,8 +26129,8 @@ co_kotaro: {今年|ことし} の {祭|まつ}り で ね 、 ヒロ さん が 
 co_kotaro: {決|き}まり {一|いち} 。 {風|かぜ} の {強|つよ}い {日|ひ} は 、 {窓|まど} を {開|あ}けない 。 もう {覚|おぼ}えた ！ || Rule one: on windy days, don't open the vents. I know it already!
 
 @scene co.kotaro_post
-co_kotaro: {僕|ぼく} ね 、 {櫓|やぐら} の {鐘|かね} の {当番|とうばん} に なった んだ 。 {夕方|ゆうがた} に {一回|いっかい} だけ 。 {一回|いっかい} だけ だ よ 。 {分|わ}かって る 。 || I'm on bell duty at the lookout now. Once, at dusk. Only once. I know.
-?(end_mem_return) co_kotaro: {大人|おとな} は みんな 、 {急|きゅう}に {昔|むかし} の {話|はなし} を {始|はじ}めた んだ 。 {長|なが}い けど 、 {結構|けっこう} {面白|おもしろ}い 。 || All the grown-ups suddenly started telling old stories. They're long, but kind of fun.
+co_kotaro: {僕|ぼく} ね 、 {櫓|やぐら} の {鐘|かね} の {当番|とうばん} に なった んだ 。 {夕方|ゆうがた} に {一回|いっかい} だけ 。 {一回|いっかい} だけ だ よ 。 {分|わ}かってる 。 || I'm on bell duty at the lookout now. Once, at dusk. Only once. I know.
+?(end_mem_return) co_kotaro: {大人|おとな} は みんな 、 {急|きゅう}に {昔|むかし} は あった か な|むかし} の {話|はなし} を {始|はじ}めた んだ 。 {長|なが}い けど 、 {結構|けっこう} {面白|おもしろ}い 。 || All the grown-ups suddenly started telling old stories. They're long, but kind of fun.
 ?(end_mem_choose) co_kotaro: ウメ ばあちゃん は 、 {山|やま} に {行|い}って {何|なに} か {取|と}って きた んだ って 。 {何|なに} を ？ って {聞|き}いたら 、 「 {内緒|ないしょ} 」 だって 。 || Grandma Ume went up the mountain and fetched something back, she says. When I asked what, she said "secret".
 
 @scene co.goro
@@ -26157,7 +26157,7 @@ co_goro: …… わし は {何|なに} を {言|い}って おる ん だ 。 {
 !activity co.a_hist_goro
 !if var._res=0 -> later
 co_goro: …… そう だ 。 そう いう {順番|じゅんばん} だった 。 {夜番|よばん} 、 {赤|あか}い {光|ひかり} 、 {鐘|かね} 、 {提灯|ちょうちん} 、 {朝|あさ} 。 || …Yes. That was the order. Night watch, red light, bell, lanterns, morning.
-co_goro[sad]: {腕|うで} が {覚|おぼ}えて おる の に 、 {頭|あたま} が {知|し}らん と {言|い}う 。 {年|とし} を {取|と}る と は 、 こう いう こと か の う 。 || My arms remember, and my head says it doesn't know. Is this what getting old is?
+co_goro[sad]: {腕|うで} が {覚|おぼ}えて おる の に 、 {頭|あたま} が {知|し}らん と {言|い}う 。 {年|とし} を {取|と}る と は 、 こう いう こと か な 。 || My arms remember, and my head says it doesn't know. Is this what getting old is?
 ?(comp=nao) comp: {年|とし} の せい じゃ ない よ 。 {誰|だれ} か が 、 {途中|とちゅう} で {抜|ぬ}き{取|と}った ん だ 。 || It's not your age. Somebody took it out along the way.
 ?(comp=mio) comp: {体|からだ} の {記憶|きおく} は 、 {頭|あたま} より {正直|しょうじき} な こと が あります 。 || The body's memory is sometimes more honest than the head's.
 ?(comp=ren) comp: {鐘|かね} を {鳴|な}らした {腕|うで} は 、 {嘘|うそ} を {覚|おぼ}えません 。 || Arms that rang a bell don't remember lies.
@@ -26180,7 +26180,7 @@ co_goro: {綱|つな} が {下|さ}がった 。 {腕|うで} が {楽|らく} �
 
 @scene co.goro_first
 co_goro: おう 、 {旅|たび} の {人|ひと} か 。 {櫓|やぐら} の {番|ばん} を して おる 、 ゴロウ だ 。 …… {番|ばん} と {言|い}って も 、 {鐘|かね} を {磨|みが}く だけ だ が な 。 || Ah, travellers. I'm Gorō, keeper of the lookout. …Though "keeping" it means polishing the bell and nothing more.
-co_goro: この {鐘|かね} に は 、 {綱|つな} が ない 。 {昔|むかし} から ない 。 …… いや 、 {昔|むかし} は あった か の う 。 {覚|おぼ}えて おらん 。 || This bell has no rope. Never has. …Or did it, once? I don't remember.
+co_goro: この {鐘|かね} に は 、 {綱|つな} が ない 。 {昔|むかし} は あった か な|むかし} から ない 。 …… いや 、 {昔|むかし} は あった か な|{昔|むかし} は あった か な 。 {覚|おぼ}えて おらん 。 || This bell has no rope. Never has. …Or did it, once? I don't remember.
 co_goro: {鳴|な}らさん {鐘|かね} なら 、 {綱|つな} も {要|い}らん と {皆|みな} {言|い}う 。 だが わし は 、 {綱|つな} の ない {鐘|かね} を {見|み}て おる と 、 {手|て} が むずむず する ん だ 。 || Folk say a bell nobody rings doesn't need a rope. But looking at a bell with no rope makes my hands itch.
 co_goro: {旅|たび} の {人|ひと} 、 {一|ひと}つ {頼|たの}まれて くれん か 。 {丈夫|じょうぶ} な {綱|つな} を 、 {一本|いっぽん} {探|さが}して きて ほしい 。 || Traveller, would you do me a favour? Find me one good strong rope.
 !choice
@@ -26210,7 +26210,7 @@ co_sayo[surprise]: …… {私|わたし} 、 {今|いま} 、 {何|なに} を 
 co_tokiwa[angry]: {誰|だれ} が {鳴|な}らした の です か ！ {綱|つな} を {外|はず}して ください 。 {今|いま} すぐ に ！ || Who rang that?! Take that rope down. At once!
 co_goro: {外|はず}さん よ 。 {鐘|かね} は {鳴|な}らす ため に ある 。 {高|たか}い ところ に {結|ゆ}わえて おく 。 {子|こ}ども の {手|て} の {届|とど}かん ところ に な 。 || I won't. A bell's for ringing. I'll tie it up high, out of children's reach.
 narr: トキワ は {何|なに} か {言|い}い かけて 、 {黙|だま}って {記録堂|きろくどう} へ {戻|もど}って いった 。 {顔|かお} が {青|あお}かった 。 || Tokiwa starts to say something, then walks back to the Chronicle Hall without a word. His face is white.
-?(comp=nao) comp: {見|み}た か 。 {全員|ぜんいん} 、 {迷|まよ}わず {水路|すいろ} に {走|はし}った 。 {逃|に}げ{道|みち} を {体|からだ} が {覚|おぼ}えて る 。 || Did you see? Every one of them ran straight for the channel. Their bodies know the escape route.
+?(comp=nao) comp: {見|み}た か 。 {全員|ぜんいん} 、 {迷|まよ}わず {水路|すいろ} に {走|はし}った 。 {逃|に}げ{道|みち} を {体|からだ} が {覚|おぼ}えてる 。 || Did you see? Every one of them ran straight for the channel. Their bodies know the escape route.
 ?(comp=mio) comp[worry]: {皆|みな} さん 、 {息|いき} が {上|あ}がって いる 。 {怖|こわ}かった ん です 。 {理由|りゆう} も {分|わ}からない まま …… || They're all out of breath. They were frightened — without knowing why…
 ?(comp=ren) comp: {鐘|かね} の {音|おと} は 、 {名|な} より {深|ふか}い ところ に {残|のこ}って いた 。 {静寂|しじま} も 、 そこ まで は {届|とど}かなかった 。 || The sound of the bell was kept somewhere deeper than names. Even the Hush couldn't reach that far.
 ?(comp=suzu) comp[closed]: …… {同|おな}じ {顔|かお} だった 。 あの {夜|よる} と 。 || …The same faces. Just like that night.
@@ -26219,15 +26219,15 @@ co_goro: ……ありがとう よ 、 {旅|たび} の {人|ひと} 。 {腕|�
 !quest co_bell done
 
 @scene co.goro_after
-co_goro: {夕方|ゆうがた} に {一回|いっかい} 、 {鐘|かね} を {鳴|な}らす こと に なった 。 {火|ひ} の {用心|ようじん} の {合図|あいず} だ 。 {鳴|な}らす の は わし で は のう て 、 コタロウ だ が な 。 || We ring the bell once at dusk now — the signal to mind your fires. It's Kotarō who rings it, not me.
+co_goro: {夕方|ゆうがた} に {一回|いっかい} 、 {鐘|かね} を {鳴|な}らす こと に なった 。 {火|ひ} の {用心|ようじん} の {合図|あいず} だ 。 {鳴|な}らす の は わし で は なく 、 コタロウ だ が な 。 || We ring the bell once at dusk now — the signal to mind your fires. It's Kotarō who rings it, not me.
 co_goro[smile]: ミツ …… わし の {女房|にょうぼう} の {名前|なまえ} だ 。 {二十年|にじゅうねん} {言|い}って なかった 。 {今|いま} は {毎日|まいにち} {言|い}う 。 {鐘|かね} を {磨|みが}き ながら な 。 || Mitsu… my wife's name. I didn't say it for twenty years. Now I say it every day, polishing the bell.
 
 @scene co.goro_post
-co_goro: {鐘|かね} の {音|おと} が {遠|とお}く まで {届|とど}く よう に なった 。 {空気|くうき} が {澄|す}んだ ん だ ろう 。 || The bell carries further these days. The air's cleared, I suppose.
+co_goro: {鐘|かね} の {音|おと} が {遠|とお}く まで {届|とど}く よう に なった 。 {空気|くうき} が {澄|す}んだ ん だろう 。 || The bell carries further these days. The air's cleared, I suppose.
 ?(end_mem_return) co_goro: {山|やま} から {皆|みな} の {記憶|きおく} が {戻|もど}った {日|ひ} 、 わし は {一日中|いちにちじゅう} {鐘|かね} の {下|した} に {座|すわ}って おった 。 {鳴|な}らさず に な 。 || The day everyone's memories came back from the mountain, I sat under the bell all day. Didn't ring it once.
 ?(end_mem_choose) co_goro: {返|かえ}して もらう か どう か 、 {自分|じぶん} で {選|えら}べ と {言|い}われた 。 わし は もう {全部|ぜんぶ} {持|も}って おる 。 {行|い}く {必要|ひつよう} は なかった よ 。 || They said we could each choose whether to take ours back. I've already got all of mine. No need to go.
 ?(end_kasane_trial) co_goro: {書庫|しょこ} の {番人|ばんにん} が 、 {灯落|ひおち} で {皆|みな} の {前|まえ} に {立|た}った そう だ な 。 わし も {一言|ひとこと} {言|い}って やりたかった 。 …… {礼|れい} か {文句|もんく} か 、 {決|き}めかねて おる が 。 || I hear the archive's keeper stood before everyone down in Lanternfall. I'd have liked a word myself. …Whether thanks or a scolding, I can't decide.
-?(end_kasane_keeper) co_goro: {書庫|しょこ} の {番人|ばんにん} は 、 {山|やま} に {残|のこ}った ん だ ろう 。 {見張|みは}られ ながら 。 {櫓|やぐら} の {番|ばん} と {同|おな}じ で 、 {寂|さび}しい {仕事|しごと} だ 。 || The archive's keeper stayed up the mountain, under watch. A lonely job, like minding a lookout.
+?(end_kasane_keeper) co_goro: {書庫|しょこ} の {番人|ばんにん} は 、 {山|やま} に {残|のこ}った ん だろう 。 {見張|みは}られ ながら 。 {櫓|やぐら} の {番|ばん} と {同|おな}じ で 、 {寂|さび}しい {仕事|しごと} だ 。 || The archive's keeper stayed up the mountain, under watch. A lonely job, like minding a lookout.
 
 @scene co.tamotsu
 !if quest.co_bell=0 -> rope
@@ -26237,16 +26237,16 @@ co_tamotsu: {水番|みずばん} の タモツ だ 。 …… {水路|すいろ
 co_tamotsu: {変|へん} な {水路|すいろ} だ と {思|おも}わない か 。 {田畑|たはた} に {水|みず} を {引|ひ}く だけ なら 、 この {半分|はんぶん} の {幅|はば} で {足|た}りる 。 {誰|だれ} が 、 {何|なん} の ため に こんな {幅|はば} に した ん だ か 。 || Strange channel, don't you think? For watering fields, half this width would do. Who made it this wide, and why?
 !end
 :mid
-co_tamotsu: {祭|まつ}り の {灯籠|とうろう} は {三十|さんじゅう} 。 {火|ひ} を {入|い}れる {夜|よる} は 、 {俺|おれ} が {水路|すいろ} の {横|よこ} で {見張|みは}る 。 {理由|りゆう} は {知|し}らん 。 {親父|おやじ} も そう して た 。 || Thirty lanterns at the festival. The night they're lit, I stand watch by the channel. Don't know why. My father did the same.
+co_tamotsu: {祭|まつ}り の {灯籠|とうろう} は {三十|さんじゅう} 。 {火|ひ} を {入|い}れる {夜|よる} は 、 {俺|おれ} が {水路|すいろ} の {横|よこ} で {見張|みは}る 。 {理由|りゆう} は {知|し}らん 。 {親父|おやじ} も そう してた 。 || Thirty lanterns at the festival. The night they're lit, I stand watch by the channel. Don't know why. My father did the same.
 !end
 :gate
-co_tamotsu: {柵|さく} の {鍵|かぎ} を {持|も}って 、 {段々畑|だんだんばたけ} の {上|うえ} の {水門|すいもん} で {待|ま}って る 。 {来|き}い 。 || I've got the fence key. I'll be at the water gate, top of the terraces. Come on.
+co_tamotsu: {柵|さく} の {鍵|かぎ} を {持|も}って 、 {段々畑|だんだんばたけ} の {上|うえ} の {水門|すいもん} で {待|ま}ってる 。 {来|き}い 。 || I've got the fence key. I'll be at the water gate, top of the terraces. Come on.
 !end
 :rope
 co_tamotsu: {綱|つな} ？ {鐘|かね} に ？ …… ゴロウ の じいさん か 。 || A rope? For the bell? …Old Gorō, is it.
-co_tamotsu: {水門|すいもん} {用|よう} の {予備|よび} が ある 。 {麻|あさ} だ 。 {丈夫|じょうぶ} だ ぞ 。 {持|も}って け 。 || I've a spare for the water gates. Hemp. It's strong. Take it.
+co_tamotsu: {水門|すいもん} {用|よう} の {予備|よび} が ある 。 {麻|あさ} だ 。 {丈夫|じょうぶ} だ ぞ 。 {持|も}って {行|い}け 。 || I've a spare for the water gates. Hemp. It's strong. Take it.
 !give co_rope
-co_tamotsu: {俺|おれ} も 、 {綱|つな} の ない {鐘|かね} は {落|お}ち{着|つ}かん と {思|おも}って た 。 {誰|だれ} に も {言|い}わなかった が な 。 || I never liked the look of a bell with no rope either. Never told anyone.
+co_tamotsu: {俺|おれ} も 、 {綱|つな} の ない {鐘|かね} は {落|お}ち{着|つ}かん と {思|おも}ってた 。 {誰|だれ} に も {言|い}わなかった が な 。 || I never liked the look of a bell with no rope either. Never told anyone.
 !quest co_bell 1
 
 @scene co.tamotsu_after
@@ -26254,7 +26254,7 @@ co_tamotsu: {火除|ひよ}け{道|みち} は {年|ねん} に {二度|にど} 
 co_tamotsu: {水路|すいろ} が {広|ひろ}い {理由|りゆう} も {分|わ}かった 。 {逃|に}げ{道|みち} だった ん だ な 。 {先祖|せんぞ} は {賢|かしこ}い 。 || And now I know why the channel's so wide. It was an escape route. Our ancestors were no fools.
 
 @scene co.tamotsu_post
-co_tamotsu: {雨|あめ} が {戻|もど}った 。 {水路|すいろ} は {縁|ふち} まで {満|み}ちて る 。 …… それ でも {火除|ひよ}け{道|みち} は {刈|か}る 。 {決|き}まり だ から な 。 || The rain came back. The channel's full to the brim. …We still cut the firebreaks. It's the rule.
+co_tamotsu: {雨|あめ} が {戻|もど}った 。 {水路|すいろ} は {縁|ふち} まで {満|み}ちてる 。 …… それ でも {火除|ひよ}け{道|みち} は {刈|か}る 。 {決|き}まり だ から な 。 || The rain came back. The channel's full to the brim. …We still cut the firebreaks. It's the rule.
 ?(end_archive_closed) co_tamotsu: {山|やま} の {書庫|しょこ} が {閉|と}じた って ？ なら {記録|きろく} は {石|いし} に {刻|きざ}む 。 {水門|すいもん} の {横|よこ} に 、 {火事|かじ} の {年|とし} を {彫|ほ}った 。 || The mountain archive's closed? Then we carve our records in stone. I cut the year of the fire into the stone by the water gate.
 ?(end_archive_library) co_tamotsu: {書庫|しょこ} に {水路|すいろ} の {図|ず} を {送|おく}った 。 {他|ほか} の {里|さと} の {役|やく} に {立|た}つ なら な 。 || I sent the archive a plan of the channel. If it helps some other village.
 
@@ -26263,9 +26263,9 @@ narr: タモツ の {道具|どうぐ} {箱|ばこ} 。 {予備|よび} の {綱
 
 @scene co.heita
 !if co_chronicle_read -> mid
-co_heita: …… ん ？ あ 、 {寝|ね}て ません よ 。 {目|め} を {閉|と}じて {考|かんが}えて た だけ っす 。 || …Hm? Oh, I wasn't asleep. Just thinking with my eyes shut.
+co_heita: …… ん ？ あ 、 {寝|ね}て ません よ 。 {目|め} を {閉|と}じて {考|かんが}えてた だけ っす 。 || …Hm? Oh, I wasn't asleep. Just thinking with my eyes shut.
 co_heita: {祭|まつ}り の {敷物|しきもの} {用|よう} に 、 {草|くさ} を {刈|か}る {係|かかり} なん っす 。 でも {暑|あつ}い でしょ 。 {草|くさ} も {逃|に}げない し 。 || I'm on grass duty — for the festival mats. But it's hot, isn't it. And the grass isn't going anywhere.
-co_heita: この {草|くさ} の {帯|おび} ？ {昔|むかし} から ずっと {草|くさ}ぼうぼう っす よ 。 {刈|か}る {理由|りゆう} も ない し 。 …… ない っす よ ね ？ || This strip of grass? It's always been overgrown. There's no reason to cut it. …There isn't, right?
+co_heita: この {草|くさ} の {帯|おび} ？ {昔|むかし} は あった か な|むかし} から ずっと {草|くさ}ぼうぼう っす よ 。 {刈|か}る {理由|りゆう} も ない し 。 …… ない っす よ ね ？ || This strip of grass? It's always been overgrown. There's no reason to cut it. …There isn't, right?
 ?(comp=nao) comp: {理由|りゆう} が あったら 、 {刈|か}る の か ？ || If there were a reason, would you cut it?
 ?(comp=nao) co_heita: …… {理由|りゆう} {次第|しだい} っす ね 。 {俺|おれ} 、 {理由|りゆう} が ある と {働|はたら}く {男|おとこ} なん で 。 || …Depends on the reason. I'm a man who works when there's a reason.
 ?(comp=mio) comp[smile]: {日射病|にっしゃびょう} に なります よ 。 せめて {日陰|ひかげ} で {考|かんが}えて ください 。 || You'll get sunstroke. At least do your thinking in the shade.
@@ -26273,16 +26273,16 @@ co_heita: この {草|くさ} の {帯|おび} ？ {昔|むかし} から ずっ
 ?(comp=suzu) comp[laugh]: {目|め} を {閉|と}じて {考|かんが}える の 、 {私|わたし} も {得意|とくい} よ 。 {客席|きゃくせき} で よく やる わ 。 || I'm good at thinking with my eyes shut too. I do it in audiences all the time.
 !end
 :mid
-co_heita: {旅|たび} の {人|ひと} 、 {記録堂|きろくどう} で {何|なに} か {調|しら}べて る って ？ {真面目|まじめ} っす ねえ 。 …… {俺|おれ} も 、 {何|なに} か {思|おも}い{出|だ}せそう で {思|おも}い{出|だ}せない こと 、 ある ん っす よ 。 {親父|おやじ} の {顔|かお} と か 。 || Travellers researching in the Chronicle Hall? Serious types. …There's stuff I nearly remember too, you know. My dad's face, for one.
+co_heita: {旅|たび} の {人|ひと} 、 {記録堂|きろくどう} で {何|なに} か {調|しら}べてる って ？ {真面目|まじめ} っす ねえ 。 …… {俺|おれ} も 、 {何|なに} か {思|おも}い{出|だ}せそう で {思|おも}い{出|だ}せない こと 、 ある ん っす よ 。 {親父|おやじ} の {顔|かお} と か 。 || Travellers researching in the Chronicle Hall? Serious types. …There's stuff I nearly remember too, you know. My dad's face, for one.
 
 @scene co.heita_after
 co_heita: {聞|き}きました ？ {草刈|くさか}り 、 {俺|おれ} が {先頭|せんとう} だった ん っす よ 。 {理由|りゆう} が あれば {働|はたら}く {男|おとこ} なん で 。 || Did you hear? I led the grass-cutting. I'm a man who works when there's a reason.
-co_heita[sad]: {親父|おやじ} …… ハチロウ って いう ん っす 。 {工房|こうぼう} {通|どお}り の {灯|ひ} を {守|まも}って た らしい 。 {俺|おれ} 、 {似|に}て ない っす よ 。 {働|はたら}き{者|もの} だった みたい で 。 || My dad… his name was Hachirō. He tended the lanterns on the workshop row, I hear. I don't take after him. He was a hard worker, apparently.
+co_heita[sad]: {親父|おやじ} …… ハチロウ って いう ん っす 。 {工房|こうぼう} {通|どお}り の {灯|ひ} を {守|まも}ってた らしい 。 {俺|おれ} 、 {似|に}て ない っす よ 。 {働|はたら}き{者|もの} だった みたい で 。 || My dad… his name was Hachirō. He tended the lanterns on the workshop row, I hear. I don't take after him. He was a hard worker, apparently.
 ?(comp=mio) comp[smile]: {今朝|けさ} の ヘイタ さん は 、 {誰|だれ} より {働|はたら}いて いました よ 。 || This morning you worked harder than anyone.
 
 @scene co.heita_post
 co_heita: {草刈|くさか}り {組|ぐみ} の {頭|かしら} に なっちゃい ました 。 {昼寝|ひるね} の {時間|じかん} が {減|へ}った っす 。 …… {後悔|こうかい} は して ない っす 。 たぶん 。 || I ended up head of the grass crew. Less time for naps. …No regrets. Probably.
-?(end_mem_choose) co_heita: {山|やま} に {行|い}って 、 {親父|おやじ} の {顔|かお} を {取|と}り{戻|もど}して きました 。 …… {俺|おれ} に {似|に}て た っす 。 {寝顔|ねがお} が 。 || I went up the mountain and got my dad's face back. …He looked like me. When he slept.
+?(end_mem_choose) co_heita: {山|やま} に {行|い}って 、 {親父|おやじ} の {顔|かお} を {取|と}り{戻|もど}して きました 。 …… {俺|おれ} に {似|に}てた っす 。 {寝顔|ねがお} が 。 || I went up the mountain and got my dad's face back. …He looked like me. When he slept.
 ?(end_mem_return) co_heita: {親父|おやじ} の {顔|かお} 、 {急|きゅう}に {思|おも}い{出|だ}した ん っす 。 {朝|あさ} {起|お}きたら 。 …… {寝顔|ねがお} が {俺|おれ} に そっくり で 、 {笑|わら}っちゃい ました 。 || I suddenly remembered my dad's face — just woke up and there it was. …He slept like me. I laughed.
 `, 'ch3/people-square');
 
@@ -26291,7 +26291,7 @@ RB.script.add(`
 !if co_hiro_seat_named -> named
 narr: ガラス {職人|しょくにん} の {卓|たく} の {端|はし} に 、 {椅子|いす} が {一|ひと}つ 。 {座布団|ざぶとん} の {上|うえ} に 、 {小|ちい}さな ガラス の {杯|さかずき} が {伏|ふ}せて ある 。 || At the end of the glassmakers' table, a single chair. On its cushion, a small glass cup turned upside down.
 narr: {他|ほか} の {席|せき} に は {名札|なふだ} が ある 。 この {席|せき} だけ 、 {名前|なまえ} が ない 。 || Every other seat has a name tag. Only this one has none.
-?(comp=nao) comp: {宛名|あてな} の ない {席|せき} だ 。 …… {誰|だれ} か を {待|ま}って る {顔|かお} を して る 。 || A seat with no address. …It has the look of someone waiting.
+?(comp=nao) comp: {宛名|あてな} の ない {席|せき} だ 。 …… {誰|だれ} か を {待|ま}ってる {顔|かお} を してる 。 || A seat with no address. …It has the look of someone waiting.
 ?(comp=mio) comp[think]: {伏|ふ}せた {杯|さかずき} 。 {誰|だれ} か が {来|く}る まで 、 {埃|ほこり} が {入|はい}らない よう に 。 …… {優|やさ}しい {置|お}き{方|かた} です 。 || An overturned cup — to keep the dust out until someone comes. …That's a tender way to set a place.
 ?(comp=ren) comp: {空|あ}いた {席|せき} は 、 {名|な} の ない {灯|ひ} と {同|おな}じ です 。 {誰|だれ} か の {形|かたち} を して いる のに 、 {誰|だれ} の もの か {分|わ}からない 。 || An empty seat is like a nameless lantern: shaped like someone, but whose, no one can say.
 ?(comp=suzu) comp[closed]: …… || …
@@ -26309,8 +26309,8 @@ narr: {記録堂|きろくどう} の {軒下|のきした} に 、 {古|ふる}
 ?(comp=nao) comp: {火消|ひけ}し の {桶|おけ} だ 。 {使|つか}わない のに 、 {捨|す}て も しない 。 || Fire buckets. Nobody uses them, but nobody throws them out either.
 ?(comp=mio) comp: {革|かわ} の {桶|おけ} …… {水|みず} を {急|いそ}いで {運|はこ}ぶ ため の もの です 。 {井戸|いど} で {使|つか}う もの じゃ ない 。 || Leather buckets… for carrying water in a hurry. Not the kind you use at a well.
 ?(comp=ren) comp: {印|しるし} の {横|よこ} に 、 {字|じ} の {跡|あと} が あります 。 {消|け}された {字|じ} …… 「 {火|ひ} 」 で {始|はじ}まる {言葉|ことば} でした 。 || Beside the mark there's the ghost of some writing. Erased… a word that began with the character for fire.
-?(comp=suzu) comp: {昔|むかし} は 、 {全部|ぜんぶ} {濡|ぬ}れて た わ 。 …… {雨|あめ} の {日|ひ} に {見|み}た の 。 たぶん 。 || They used to be wet, all of them. …I saw them on a rainy day. Probably.
-?(co_restored) narr: {今|いま} は {桶|おけ} に {水|みず} が {張|は}って あり 、 {埃|ほこり} も {拭|ふ}われて いる 。 || Now the buckets are filled with water and wiped clean.
+?(comp=suzu) comp: {昔|むかし} は あった か な|むかし} は 、 {全部|ぜんぶ} {濡|ぬ}れてた わ 。 …… {雨|あめ} の {日|ひ} に {見|み}た の 。 たぶん 。 || They used to be wet, all of them. …I saw them on a rainy day. Probably.
+?(co_restored) narr: {今|いま} は {桶|おけ} に {水|みず} が {張|は}って あり 、 {埃|ほこり} も {拭|ふ}かれて いる 。 || Now the buckets are filled with water and wiped clean.
 !if co_clue_buckets -> end
 !set co_clue_buckets
 !var co_clues + 1
@@ -26318,7 +26318,7 @@ narr: {記録堂|きろくどう} の {軒下|のきした} に 、 {古|ふる}
 
 @scene co.channel_marker
 narr: {水路|すいろ} の {脇|わき} の {石|いし} に 、 {字|じ} が {刻|きざ}まれて いる 。 「 {非常|ひじょう} の {時|とき} は 、 {水路|すいろ} に {沿|そ}って {下|くだ}る こと 」 。 || Words are carved on a stone beside the channel: "In an emergency, go down along the channel."
-?(comp=nao) comp: {非常|ひじょう} {時|じ} の {逃|に}げ{道|みち} だ 。 {祭|まつ}り の {広場|ひろば} は 、 {逃|に}げて きた {人|ひと} が {集|あつ}まる {場所|ばしょ} な ん だ 。 …… {何|なに} から {逃|に}げる ん だ ろう な 。 || An escape route. The festival square is where people fleeing downhill would gather. …Fleeing what, I wonder.
+?(comp=nao) comp: {非常|ひじょう} {時|じ} の {逃|に}げ{道|みち} だ 。 {祭|まつ}り の {広場|ひろば} は 、 {逃|に}げて きた {人|ひと} が {集|あつ}まる {場所|ばしょ} な ん だ 。 …… {何|なに} から {逃|に}げる ん だろう な 。 || An escape route. The festival square is where people fleeing downhill would gather. …Fleeing what, I wonder.
 ?(comp=mio) comp: {水|みず} の そば は 、 {火|ひ} から {一番|いちばん} {遠|とお}い {場所|ばしょ} です 。 || Beside water is the farthest you can get from fire.
 ?(comp=ren) comp: {田|た} に {水|みず} を {引|ひ}く に は 、 {広|ひろ}すぎる {水路|すいろ} です 。 {人|ひと} が {通|とお}る ため の {幅|はば} です ね 。 || This channel is too wide for irrigation alone. It's wide enough for people.
 ?(comp=suzu) comp[closed]: …… ここ を 、 {子|こ}ども たち が {下|お}りて きた の 。 || …The children came down this way.
@@ -26436,7 +26436,7 @@ narr: ヒロ の {席|せき} に は 、 {名前|なまえ} の {札|ふだ} �
 ?(comp=nao) comp: …… いや 、 だから か 。 || …No. Maybe that's why.
 ?(comp=mio) comp[smile]: {皆|みな} さん 、 ちゃんと {食|た}べて います ね 。 よかった 。 {泣|な}いた {後|あと} は 、 {甘|あま}い もの が {一番|いちばん} の {薬|くすり} です から 。 || Everyone's eating properly. Good. After crying, something sweet is the best medicine.
 ?(comp=ren) comp: {灯籠|とうろう} の {名|な} を 、 {全部|ぜんぶ} {読|よ}んで きます 。 …… {戻|もど}って こなかったら 、 {迷子|まいご} です 。 {探|さが}して ください 。 || I'm going to read the name on every lantern. …If I don't come back, I'm lost. Please come and find me.
-?(comp=suzu) comp[smile]: {隣|となり} の {席|せき} 、 {予約|よやく} が {入|はい}って る の 。 …… {後|あと} で ね 。 {先|さき} に {一周|いっしゅう} して きて 。 || I've a reserved seat — next door to Hiro's. …Later. Go and walk round first.
+?(comp=suzu) comp[smile]: {隣|となり} の {席|せき} 、 {予約|よやく} が {入|はい}ってる の 。 …… {後|あと} で ね 。 {先|さき} に {一周|いっしゅう} して きて 。 || I've a reserved seat — next door to Hiro's. …Later. Go and walk round first.
 ?(comp!=suzu) narr: {舞台|ぶたい} の {袖|そで} で 、 スズ が リボン を {結|むす}び{直|なお}して いる 。 {色褪|いろあ}せた リボン を 。 || At the side of the stage, Suzu is retying her ribbon. The faded one.
 !journal {祭|まつ}り を {見|み}て {回|まわ}ろう 。 {気|き} が {済|す}んだら 、 {火|ひ} の {見|み} {櫓|やぐら} に {登|のぼ}ろう 。 || Walk among the lanterns. When you're ready, climb the fire lookout at the corner of the square.
 
@@ -26464,17 +26464,17 @@ narr: {席|せき} に {立|た}て{掛|か}けた {札|ふだ} に 、 {丁寧|
 narr: {櫓|やぐら} の {上|うえ} から は 、 {里|さと} {全体|ぜんたい} が {見|み}えた 。 {灯籠|とうろう} の {灯|ひ} が 、 {段々畑|だんだんばたけ} の {下|した} で {揺|ゆ}れて いる 。 || From the top of the lookout you can see the whole village. The lantern lights sway below the terraces.
 narr: {刈|か}った ばかり の {火除|ひよ}け{道|みち} が 、 {月|つき} の {光|ひかり} で {白|しろ}く {浮|う}かんで いる 。 || The freshly cut firebreaks lie pale in the moonlight.
 ?(comp=nao) comp: …… いい {眺|なが}め だ 。 {出口|でぐち} も {全部|ぜんぶ} {見|み}える 。 {水路|すいろ} 、 {街道|かいどう} 、 {北|きた} の {道|みち} 。 || …Good view. You can see every exit. The channel, the road, the north path.
-?(comp=nao) comp: スズ が {二十年|にじゅうねん} {抱|かか}えて た {借|か}り 、 {聞|き}いた か 。 …… {俺|おれ} の {鞄|かばん} に も 、 {一通|いっつう} ある 。 {届|とど}けない って {決|き}めた {手紙|てがみ} が 。 || You heard about the debt Suzu carried for twenty years? …There's one in my bag too. A letter I decided not to deliver.
-?(comp=nao) comp: {相手|あいて} を {守|まも}る つもり だった 。 {今夜|こんや} {見|み}て て 、 {分|わ}から なく なった 。 {守|まも}って た の は 、 {誰|だれ} だった ん だ ろう な 。 || I thought I was protecting her. Watching tonight, I'm not so sure. Who was I really protecting?
+?(comp=nao) comp: スズ が {二十年|にじゅうねん} {抱|かか}えてた {借|か}り 、 {聞|き}いた か 。 …… {俺|おれ} の {鞄|かばん} に も 、 {一通|いっつう} ある 。 {届|とど}けない って {決|き}めた {手紙|てがみ} が 。 || You heard about the debt Suzu carried for twenty years? …There's one in my bag too. A letter I decided not to deliver.
+?(comp=nao) comp: {相手|あいて} を {守|まも}る つもり だった 。 {今夜|こんや} {見|み}て て 、 {分|わ}から なく なった 。 {守|まも}ってた の は 、 {誰|だれ} だった ん だろう な 。 || I thought I was protecting her. Watching tonight, I'm not so sure. Who was I really protecting?
 ?(comp=nao) comp[smirk]: …… {灯落|ひおち} まで 、 {考|かんが}える {時間|じかん} は ある 。 {急|いそ}ぐ {配達|はいたつ} じゃ ない 。 たぶん 。 || …There's time to think before Lanternfall. It's not an urgent delivery. Probably.
 ?(comp=mio) comp: {今日|きょう} 、 {火傷|やけど} の {薬|くすり} を {十四軒|じゅうよんけん} {分|ぶん} {作|つく}りました 。 {皆|みな} さん に {頼|たの}まれて 、 {全部|ぜんぶ} 「 はい 」 って {言|い}って 。 || Today I made burn salve for fourteen households. Everyone asked, and I said yes to all of them.
-?(comp=mio) comp[think]: …… {今|いま} に なって 、 {疲|つか}れて いる こと に {気|き} づきました 。 {変|へん} です よ ね 。 {頼|たの}まれる の は 、 {嬉|うれ}しい はず なのに 。 || …Only now do I notice I'm tired. Strange, isn't it. Being asked is supposed to make me happy.
+?(comp=mio) comp[think]: …… {今|いま} に なって 、 {疲|つか}れて いる こと に {気|き}づきました 。 {変|へん} です よ ね 。 {頼|たの}まれる の は 、 {嬉|うれ}しい はず なのに 。 || …Only now do I notice I'm tired. Strange, isn't it. Being asked is supposed to make me happy.
 ?(comp=mio) comp[smile]: {今夜|こんや} は 、 {誰|だれ} の {頼|たの}み も {聞|き}きません 。 …… $name さん の {頼|たの}み も です よ 。 {冗談|じょうだん} です 。 {半分|はんぶん} は 。 || Tonight I'm not taking anyone's requests. …Not even yours. That's a joke. Half a joke.
 ?(comp=ren) comp: トキワ さん は 、 {自分|じぶん} から {預|あず}けた 、 と {言|い}いました ね 。 {痛|いた}み を 。 || Tokiwa said he handed it over himself. The pain.
 ?(comp=ren) comp[think]: {私|わたし} は 、 {師匠|ししょう} の {教|おし}え を {全部|ぜんぶ} {覚|おぼ}えて いる のに 、 {顔|かお} だけ {思|おも}い{出|だ}せない 。 …… まさか {私|わたし} も 、 {誰|だれ} か に {頼|たの}んだ の でしょう か 。 || I remember every one of my master's teachings, but not his face. …Could I have asked someone too?
 ?(comp=ren) comp: …… {分|わ}かりません 。 でも 、 {分|わ}からない まま に は しない 。 {今夜|こんや} 、 そう {決|き}めました 。 || …I don't know. But I won't leave it unknown. I decided that tonight.
 ?(comp=ren) comp[smirk]: ところで 、 {下|お}りる {時|とき} は {先|さき} に {行|い}って ください 。 {梯子|はしご} で も {迷|まよ}う {自信|じしん} が あります 。 || By the way, please go first on the way down. I'm confident I can get lost even on a ladder.
-?(comp=suzu) comp: …… ここ から だと 、 ヒロ の {席|せき} が よく {見|み}える わ 。 {火屋|ほや} が {一|ひと}つ 、 {灯|とも}って る 。 || …You can see Hiro's seat from here. One globe, lit.
+?(comp=suzu) comp: …… ここ から だと 、 ヒロ の {席|せき} が よく {見|み}える わ 。 {火屋|ほや} が {一|ひと}つ 、 {灯|とも}ってる 。 || …You can see Hiro's seat from here. One globe, lit.
 ?(comp=suzu) comp: {帳簿|ちょうぼ} 、 {見|み}る ？ 「 {一部|いちぶ} {返済|へんさい} 」 。 …… {線|せん} を {引|ひ}かない {借|か}り も ある の ね 。 {初|はじ}めて {知|し}った 。 || Want to see my book? "Paid in part." …Some debts you don't cross out. I didn't know that.
 ?(comp=suzu) comp[laugh]: ちなみに 、 {次|つぎ} の {頁|ページ} に は あなた の {名前|なまえ} も ある の よ 。 「 $name ── {観客|かんきゃく} {一名|いちめい} 。 {最後|さいご} まで {席|せき} を {立|た}たず 」 。 || By the way, your name's on the next page. "$name — audience of one. Stayed in their seat to the end."
 ?(comp=suzu) comp[smile]: …… ありがとう 。 これ は {冗談|じょうだん} じゃ ない わ 。 || …Thank you. That one isn't a joke.
@@ -26524,7 +26524,7 @@ narr: {火|ひ} の {見|み} {櫓|やぐら} 。 {上|うえ} に {鐘|かね} 
 ?(comp=nao) comp: {火|ひ} の {見|み} {櫓|やぐら} に {綱|つな} が ない 。 {鳴|な}らさない {鐘|かね} を 、 {毎朝|まいあさ} {磨|みが}く 。 {変|へん} な {村|むら} だ 。 || A fire lookout with no rope. A bell nobody rings, polished every morning. Odd place.
 ?(comp=mio) comp: {火|ひ} の {見|み} {櫓|やぐら} …… {火事|かじ} の ない {里|さと} に 、 なぜ ？ || A fire lookout… in a village that's never had a fire?
 ?(comp=ren) comp: {火|ひ} の {見|み} {櫓|やぐら} は 、 {火|ひ} を {知|し}って いる {里|さと} に しか {建|た}ちません 。 || Fire lookouts are only built by villages that know fire.
-?(comp=suzu) comp[closed]: …… {鳴|な}った の よ 。 {昔|むかし} 。 {一晩中|ひとばんじゅう} 。 || …It rang, once. Long ago. All night.
+?(comp=suzu) comp[closed]: …… {鳴|な}った の よ 。 {昔|むかし} は あった か な|むかし} 。 {一晩中|ひとばんじゅう} 。 || …It rang, once. Long ago. All night.
 !var co_clues + 1
 !call co.clue_check
 !end
@@ -26574,7 +26574,7 @@ hiro: {外|そと} が {騒|さわ}がしい な 。 {窯|かま} の {方|ほ�
 @scene co.hiro_first
 hiro: …… {悪|わる}い 。 {今|いま} {手|て} が {離|はな}せない 。 ガラス は {待|ま}って くれない 。 || …Sorry. Can't let go of this. Glass doesn't wait.
 narr: ヒロ は {吹|ふ}き{竿|ざお} を {回|まわ}し{続|つづ}け 、 {橙色|だいだいいろ} の {塊|かたまり} を {丸|まる}く {整|ととの}えて いく 。 {額|ひたい} に {巻|ま}いた {手拭|てぬぐ}い が 、 {煤|すす} で {少|すこ}し {黒|くろ}い 。 || Hiro keeps the blowpipe turning, coaxing an orange gather into a sphere. The cloth tied round his forehead is a little black with soot.
-hiro: ヒロ だ 。 {祭|まつ}り の {灯籠|とうろう} の {火屋|ほや} を {作|つく}って る 。 {用|よう} が あれば 、 {冷|さ}める {間|あいだ} に {聞|き}く 。 || I'm Hiro. I make the globes for the festival lanterns. If you need something, I'll listen while this cools.
+hiro: ヒロ だ 。 {祭|まつ}り の {灯籠|とうろう} の {火屋|ほや} を {作|つく}ってる 。 {用|よう} が あれば 、 {冷|さ}める {間|あいだ} に {聞|き}く 。 || I'm Hiro. I make the globes for the festival lanterns. If you need something, I'll listen while this cools.
 ?(comp=nao) comp: {職人|しょくにん} は {無口|むくち} な {方|ほう} が {信用|しんよう} できる 。 {配達先|はいたつさき} と して も {楽|らく} だ 。 || Quiet craftsmen are the trustworthy kind. Easy to deliver to, too.
 ?(comp=mio) comp[smile]: {額|ひたい} の {手拭|てぬぐ}い 、 {汗|あせ} {止|ど}め です ね 。 {火|ひ} の {粉|こ} {除|よ}け に も なる 。 {賢|かしこ}い 。 || The cloth on your forehead — for sweat. And to keep sparks off, too. Smart.
 ?(comp=mio) hiro: …… {母|はは} の {真似|まね} だ 。 || …I copied my mother.
@@ -26614,22 +26614,22 @@ narr: {棚|たな} の {帳面|ちょうめん} に 、 {一冊|いっさつ} {�
 !call co.isao_first
 !end
 :idle
-co_isao: {火屋|ほや} は ヒロ に {任|まか}せて ある 。 {俺|おれ} は もう {目|め} が {利|き}かん 。 {火|ひ} の {色|いろ} が 、 {昔|むかし} ほど {見分|みわ}けられ ねえ 。 || I leave the globes to Hiro. My eyes aren't what they were. I can't tell the colours of a flame like I used to.
+co_isao: {火屋|ほや} は ヒロ に {任|まか}せて ある 。 {俺|おれ} は もう {目|め} が {利|き}かん 。 {火|ひ} の {色|いろ} が 、 {昔|むかし} は あった か な|むかし} ほど {見分|みわ}けられ ねえ 。 || I leave the globes to Hiro. My eyes aren't what they were. I can't tell the colours of a flame like I used to.
 ?(co_hist_isao&!co_restored) co_isao: {帳面|ちょうめん} は {返|かえ}さなくて いい 。 …… {返|かえ}って きて も 、 {俺|おれ} に は {読|よ}め ねえ {頁|ページ} だ 。 || You needn't return the ledger. …Even if you did, it's a page I can't read.
 !end
 :hist
-co_isao: {昔|むかし} の {話|はなし} だ と ？ …… {聞|き}かれた こと が ねえ な 。 || The old days? …Nobody's ever asked.
-narr: イサオ は {右手|みぎて} を {開|ひら}いて 、 {手|て} の ひら を {見|み}た 。 {古|ふる}い {火傷|やけど} の {跡|あと} が 、 {白|しろ}く {引|ひ}き{攣|つ}れて いる 。 || Isao opens his right hand and looks at the palm. An old burn scar puckers white across it.
+co_isao: {昔|むかし} は あった か な|むかし} の {話|はなし} だ と ？ …… {聞|き}かれた こと が ねえ な 。 || The old days? …Nobody's ever asked.
+narr: イサオ は {右手|みぎて} を {開|ひら}いて 、 {手|て}のひら を {見|み}た 。 {古|ふる}い {火傷|やけど} の {跡|あと} が 、 {白|しろ}く {引|ひ}き{攣|つ}れて いる 。 || Isao opens his right hand and looks at the palm. An old burn scar puckers white across it.
 co_isao: この {火傷|やけど} か 。 {気|き} が ついたら あった 。 {若|わか}い {頃|ころ} から な 。 || This burn? It was just there one day. Since I was young.
 co_isao: {鉄|てつ} の {戸|と} を {素手|すで} で {閉|し}めた …… {気|き} が する 。 {熱|あつ}かった 。 {何|なん} で {閉|し}めた ん だ か 。 || I shut an iron door with my bare hand… I think. It was hot. Why did I shut it?
 co_isao: {風|かぜ} が {変|か}わった ん だ 。 {急|きゅう} に 。 {山|やま} の {方|ほう} から 。 || The wind changed. Suddenly. Off the mountain.
 co_isao: {祭|まつ}り の {火屋|ほや} を {焼|や}いて いた 。 {三十個|さんじゅっこ} 。 {火|ひ} の {番|ばん} は …… トモエ だ 。 トモエ が {見|み}て いた 。 || We were firing globes for the festival. Thirty. On the fire was… Tomoe. Tomoe was watching it.
 co_isao[surprise]: …… トモエ 。 なんで {今|いま} 、 その {名前|なまえ} が {出|で}て くる 。 || …Tomoe. Why would that name come to me now?
-co_isao: {頭|あたま} が {散|ち}らかって やがる 。 {順|じゅん} に {並|なら}べて くれ 。 || My head's a mess. Line it up for me.
+co_isao: {頭|あたま} が {散|ち}らかって いる 。 {順|じゅん} に {並|なら}べて くれ 。 || My head's a mess. Line it up for me.
 !activity co.a_hist_isao
 !if var._res=0 -> later
 co_isao: …… {火屋|ほや} 、 トモエ 、 {風|かぜ} 、 {戸|と} 、 {火傷|やけど} 。 そう だ 。 そう いう {順番|じゅんばん} だ 。 || …Globes, Tomoe, wind, door, burn. Yes. That's the order.
-co_isao: {窯|かま} の {帳面|ちょうめん} を {持|も}って け 。 {十四日|じゅうよっか} で {止|と}まって 、 {春|はる} から {俺|おれ} の {字|じ} に なって る 。 その {間|あいだ} に {何|なに} が あった か 、 {俺|おれ} に は {分|わ}から ねえ 。 || Take the kiln ledger. It stops on the fourteenth, and from spring on it's in my hand. What happened between, I couldn't tell you.
+co_isao: {窯|かま} の {帳面|ちょうめん} を {持|も}って {行|い}け 。 {十四日|じゅうよっか} で {止|と}まって 、 {春|はる} から {俺|おれ} の {字|じ} に なってる 。 その {間|あいだ} に {何|なに} が あった か 、 {俺|おれ} に は {分|わ}から ねえ 。 || Take the kiln ledger. It stops on the fourteenth, and from spring on it's in my hand. What happened between, I couldn't tell you.
 !give co_kilnbook
 ?(comp=nao) comp: トモエ 。 {工房|こうぼう} の {看板|かんばん} の {名前|なまえ} か も な 。 {覚|おぼ}えて おこう 。 || Tomoe. Could be the name on a workshop sign somewhere. Let's remember it.
 ?(comp=mio) comp[worry]: その {火傷|やけど} 、 {治|なお}って から {随分|ずいぶん} {経|た}って います 。 …… {体|からだ} は 、 {忘|わす}れて いません よ 。 || That burn healed a long time ago. …Your body hasn't forgotten.
@@ -26650,7 +26650,7 @@ co_isao: {客|きゃく} か 。 {親方|おやかた} の イサオ だ 。 {�
 
 @scene co.isao_after
 co_isao: {窯|かま} の {帳面|ちょうめん} に 、 {十四日|じゅうよっか} の {夜|よる} の こと を {書|か}き{足|た}した 。 {俺|おれ} の {字|じ} で な 。 {二十年|にじゅうねん} {遅|おく}れ の {記録|きろく} だ 。 || I added the night of the fourteenth to the kiln ledger. In my own hand. A record twenty years late.
-co_isao: ヒロ の {奴|やつ} 、 {母親|ははおや} に {似|に}て {来|き}やがった 。 {火|ひ} の {見方|みかた} が そっくり だ 。 || That boy Hiro's getting more like his mother. The way he watches a flame — just the same.
+co_isao: ヒロ の {奴|やつ} 、 {母親|ははおや} に {似|に}て きた 。 {火|ひ} の {見方|みかた} が そっくり だ 。 || That boy Hiro's getting more like his mother. The way he watches a flame — just the same.
 
 @scene co.isao_post
 co_isao: {新|あたら}しい {窯|かま} に は 、 {窓|まど} の {横|よこ} に {札|ふだ} を {貼|は}った 。 「 {風|かぜ} の {強|つよ}い {夜|よる} は {開|ひら}く べからず 」 。 トモエ の {字|じ} を {写|うつ}して な 。 || On the new kiln I've put a sign beside the vent: "On windy nights, do not open." Copied from Tomoe's hand.
@@ -26663,12 +26663,12 @@ hiro: {席|せき} は 、 {今年|ことし} も {空|あ}けて おいた 。 
 ?(comp=suzu) comp[laugh]: {利子|りし} は 、 {取|と}らない で よ ？ || No interest, I hope?
 ?(comp!=suzu) hiro: スズ は {旅|たび} に {出|で}た 。 {来年|らいねん} の {祭|まつ}り に {来|く}る と {言|い}って な 。 {帳簿|ちょうぼ} に {書|か}いて いった 。 || Suzu went back on the road. Said she'll come to next year's festival — and wrote it in her book.
 !if item.co_glass_beads -> end
-hiro: …… これ 、 {持|も}って け 。 {火屋|ほや} の {余|あま}り で {作|つく}った 。 {礼|れい} だ 。 || …Take these. I made them from the leftover globe glass. A thank-you.
+hiro: …… これ 、 {持|も}って {行|い}け 。 {火屋|ほや} の {余|あま}り で {作|つく}った 。 {礼|れい} だ 。 || …Take these. I made them from the leftover globe glass. A thank-you.
 !give co_glass_beads
 
 @scene co.hiro_post
 hiro: {窯|かま} の {番|ばん} を {教|おし}える {時|とき} 、 {最初|さいしょ} に {言|い}う こと に した 。 「 {風|かぜ} の {強|つよ}い {夜|よる} は 、 {上|うえ} の {窓|まど} を {開|あ}ける な 」 。 {理由|りゆう} も {一緒|いっしょ} に 。 || When I teach someone to watch the kiln, that's the first thing I tell them now: "Never open the upper vent on a windy night." And why.
-?(end_mem_choose) hiro: {山|やま} に は {行|い}か なかった 。 {母|はは} の こと は 、 もう {自分|じぶん} で {持|も}って る 。 {足|た}りない {分|ぶん} は 、 {里|さと} の {皆|みな} が {覚|おぼ}えて る 。 || I didn't go up the mountain. I carry my mother with me now. Whatever I'm missing, the village remembers.
+?(end_mem_choose) hiro: {山|やま} に は {行|い}かなかった 。 {母|はは} の こと は 、 もう {自分|じぶん} で {持|も}ってる 。 {足|た}りない {分|ぶん} は 、 {里|さと} の {皆|みな} が {覚|おぼ}えてる 。 || I didn't go up the mountain. I carry my mother with me now. Whatever I'm missing, the village remembers.
 ?(end_mem_return) hiro: {山|やま} から {戻|もど}った {記憶|きおく} の {中|なか} に 、 {母|はは} の {鼻歌|はなうた} が あった 。 {下手|へた} だった 。 {嬉|うれ}しかった 。 || Among the memories that came back from the mountain was my mother's humming. She was awful at it. I was so glad.
 
 @scene co.fusa
@@ -26678,7 +26678,7 @@ hiro: {窯|かま} の {番|ばん} を {教|おし}える {時|とき} 、 {最
 !call co.fusa_first
 !end
 :idle
-co_fusa: {部屋|へや} は {空|あ}いて る わ よ 。 {休|やす}んで いく ？ || There's a room free. Want to rest?
+co_fusa: {部屋|へや} は {空|あ}いてる わ よ 。 {休|やす}んで いく ？ || There's a room free. Want to rest?
 !choice
 * {休|やす}む || Rest -> rest
 * {今|いま} は いい || Not now -> end
@@ -26696,7 +26696,7 @@ co_fusa: {少|すこ}し だけ {手伝|てつだ}って くれない ？ {言|�
 !activity co.a_orders
 !if var._res=0 -> end
 co_fusa[laugh]: {完璧|かんぺき} ！ {数|かぞ}え{方|かた} が きれい ね 。 {杯|はい} も {個|こ} も {袋|ふくろ} も 、 {一|ひと}つ も {間違|まちが}え ない なんて 。 || Perfect! You count beautifully — cups, pieces, bags, not one wrong.
-co_fusa: {御礼|おれい} に 、 {干|ほ}し{柿|がき} を ひと{連|れん} 。 {旅|たび} の {途中|とちゅう} で {食|た}べて ね 。 || Here's a string of dried persimmons as thanks. Eat them on the road.
+co_fusa: {御礼|おれい} に 、 {干|ほ}し{柿|がき} を ひと{束|たば} 。 {旅|たび} の {途中|とちゅう} で {食|た}べて ね 。 || Here's a string of dried persimmons as thanks. Eat them on the road.
 !give co_hoshigaki
 !set co_orders_done
 !end
@@ -26704,13 +26704,13 @@ co_fusa: {御礼|おれい} に 、 {干|ほ}し{柿|がき} を ひと{連|れ�
 co_fusa[worry]: トキワ さん が 、 {夕方|ゆうがた} {広場|ひろば} に {集|あつ}まれ って 。 {何|なに} の {話|はなし} かしら 。 {胸|むね} が ざわざわ する の 。 || Tokiwa wants everyone in the square at dusk. I wonder what it's about. My chest feels all fluttery.
 
 @scene co.fusa_first
-co_fusa[smile]: いらっしゃい 。 フサ の {宿|やど} へ ようこそ 。 {茶屋|ちゃや} も やって る から 、 {甘酒|あまざけ} でも どう ぞ 。 || Welcome, welcome, to Fusa's inn. I run the teahouse too, so have some amazake.
-co_fusa: {祭|まつ}り の {前|まえ} は {満室|まんしつ} に なる ん だ けど 、 {今年|ことし} は まだ {空|あ}いて る わ 。 {運|うん} が いい わ ね 。 || Before the festival we're usually full, but this year there's still room. Lucky you.
+co_fusa[smile]: いらっしゃい 。 フサ の {宿|やど} へ ようこそ 。 {茶屋|ちゃや} も やってる から 、 {甘酒|あまざけ} でも どう ぞ 。 || Welcome, welcome, to Fusa's inn. I run the teahouse too, so have some amazake.
+co_fusa: {祭|まつ}り の {前|まえ} は {満室|まんしつ} に なる ん だ けど 、 {今年|ことし} は まだ {空|あ}いてる わ 。 {運|うん} が いい わ ね 。 || Before the festival we're usually full, but this year there's still room. Lucky you.
 co_fusa: {休|やす}みたく なったら {声|こえ} を かけて 。 {布団|ふとん} は {干|ほ}した ばかり よ 。 {柿|かき} の {匂|にお}い が する かも しれない けど 。 || Just ask when you want to rest. The futons were aired today. They might smell of persimmon.
 ?(comp=mio) comp[smile]: {柿|かき} の {匂|にお}い の {布団|ふとん} 。 …… {素敵|すてき} です 。 || A futon that smells of persimmon. …That's lovely.
 
 @scene co.fusa_after
-co_fusa: {妹|いもうと} の ヨシノ は ね 、 {工房|こうぼう} {通|どお}り で {染|そ}め{物|もの} を して た の 。 {祭|まつ}り の {旗|はた} も 、 あの {子|こ} が {染|そ}めて た 。 || My sister Yoshino dyed cloth on the workshop row. She dyed the festival banners, too.
+co_fusa: {妹|いもうと} の ヨシノ は ね 、 {工房|こうぼう} {通|どお}り で {染|そ}め{物|もの} を してた の 。 {祭|まつ}り の {旗|はた} も 、 あの {子|こ} が {染|そ}めてた 。 || My sister Yoshino dyed cloth on the workshop row. She dyed the festival banners, too.
 co_fusa[smile]: {今年|ことし} から 、 {旗|はた} の {一枚|いちまい} を {私|わたし} が {染|そ}める こと に した わ 。 {下手|へた} だ けど 。 {泣|な}き ながら {染|そ}めた から 、 {色|いろ} が {滲|にじ}んで る の 。 || From this year I dye one of the banners myself. I'm no good at it. I cried while I did it, so the colour ran.
 
 @scene co.fusa_post
@@ -26776,8 +26776,8 @@ nao: {潮硝子|しおがらす} から の {荷|に} を {届|とど}け に {�
 ?(comp=mio) nao: {坂|さか} の せい だ 。 {俺|おれ} の せい じゃ ない 。 || The hills' fault. Not mine.
 ?(comp=ren) comp: ナオ 。 {道|みち} を {教|おし}えて ください 。 {宿|やど} から ここ まで 、 {二回|にかい} {迷|まよ}いました 。 || Nao. Please tell me the way. I got lost twice between the inn and here.
 ?(comp=ren) nao: まっすぐ {一本|いっぽん} だ ぞ 。 …… どう やって {迷|まよ}った 。 || It's one straight road. …How did you get lost?
-?(comp=suzu) comp[laugh]: ナオ ！ {相変|あいか}わらず {出口|でぐち} {側|がわ} に {立|た}って る の ね 。 || Nao! Still standing by the exit, I see.
-?(comp=suzu) nao: {癖|くせ} だ 。 …… お{前|まえ} も {相変|あいか}わらず 、 {笑|わら}って {誤魔化|ごまか}して る な 。 {顔|かお} に {書|か}いて ある 。 || Habit. …And you're still laughing things off. It's written on your face.
+?(comp=suzu) comp[laugh]: ナオ ！ {相変|あいか}わらず {出口|でぐち} {側|がわ} に {立|た}ってる の ね 。 || Nao! Still standing by the exit, I see.
+?(comp=suzu) nao: {癖|くせ} だ 。 …… お{前|まえ} も {相変|あいか}わらず 、 {笑|わら}って {誤魔化|ごまか}してる な 。 {顔|かお} に {書|か}いて ある 。 || Habit. …And you're still laughing things off. It's written on your face.
 nao: {宛名|あてな} の {札|ふだ} が {外|はず}れた {手紙|てがみ} の {話|はなし} 、 シノ から {聞|き}いた 。 {手伝|てつだ}って やって くれ 。 {中身|なかみ} を {読|よ}めば {分|わ}かる 。 {大抵|たいてい} は な 。 || Shino told me about the letters that lost their address tags. Give her a hand. Read the contents and you'll know. Usually.
 nao: …… {大抵|たいてい} じゃ ない {手紙|てがみ} も ある けど な 。 じゃ 、 {次|つぎ} の {配達|はいたつ} だ 。 || …Not always, though. Right. Next delivery.
 !set co_nao_cameo
@@ -26812,7 +26812,7 @@ co_nobu: よし 。 {今度|こんど} は {間違|まちが}え ない よう �
 !if var._res=0 -> end
 co_nobu: …… よし 、 {分|わ}かり やすい 。 {小皿|こざら} {三十枚|さんじゅうまい} 、 {明日|あした} まで に {焼|や}く 。 || …Good. Clear as day. Thirty small plates, fired by tomorrow.
 co_nobu: この とっくり は どう する か な 。 …… {割|わ}る の も {惜|お}しい 。 || And what to do with these flasks. …Shame to smash them.
-co_nobu: {礼|れい} だ 。 {持|も}って け 。 {灰|はい} の {釉|くすり} を かけた {湯呑|ゆの}み だ 。 {里|さと} の {灰|はい} で {作|つく}った 。 || Here, for your trouble. A cup with an ash glaze. Made with the orchard's own ash.
+co_nobu: {礼|れい} だ 。 {持|も}って {行|い}け 。 {灰|はい} の {釉|くすり} を かけた {湯呑|ゆの}み だ 。 {里|さと} の {灰|はい} で {作|つく}った 。 || Here, for your trouble. A cup with an ash glaze. Made with the orchard's own ash.
 !set co_count_done
 !quest co_count done
 ?(comp=nao) comp: {灰|はい} の {釉|くすり} 、 か 。 {燃|も}えた {後|あと} の もの で 、 きれい な もん を {作|つく}る 。 {悪|わる}く ない 。 || An ash glaze. Making something beautiful out of what's left after burning. I like that.
@@ -26832,12 +26832,12 @@ narr: {机|つくえ} の {上|うえ} の {注文|ちゅうもん} の {紙|か
 ?(comp=ren) comp: {数|かず} だけ で {助数詞|じょすうし} の ない {注文|ちゅうもん} 。 {灯|ひ} に {行|い}き{先|さき} を {書|か}かない の と {同|おな}じ です 。 || A number with no counter. Like a lantern with no destination written on it.
 
 @scene co.nobu_after
-co_nobu: {窯|かま} の {横|よこ} に {水|みず} の {桶|おけ} を {置|お}く よう に なった 。 {俺|おれ} の {親父|おやじ} も そう して た 。 {理由|りゆう} を {聞|き}かず に {真似|まね} して た が 、 {今|いま} は {分|わ}かる 。 || I keep a bucket of water by the kiln now. My old man did the same. I copied him without asking why. Now I know.
+co_nobu: {窯|かま} の {横|よこ} に {水|みず} の {桶|おけ} を {置|お}く よう に なった 。 {俺|おれ} の {親父|おやじ} も そう してた 。 {理由|りゆう} を {聞|き}かず に {真似|まね} してた が 、 {今|いま} は {分|わ}かる 。 || I keep a bucket of water by the kiln now. My old man did the same. I copied him without asking why. Now I know.
 ?(!co_count_done) co_nobu: とっくり は {草刈|くさか}り {組|ぐみ} に {配|くば}った 。 {水筒|すいとう} に ちょうど いい ん だ と 。 {焼|や}いた {甲斐|かい} が あった 。 || I handed the flasks out to the grass crew. Just right for water, they say. Worth firing after all.
 
 @scene co.nobu_post
 co_nobu: {灰|はい} の {釉|くすり} が 、 {他|ほか} の {里|さと} で {売|う}れる よう に なった 。 「 {火事|かじ} を {覚|おぼ}えて いる {里|さと} の {焼|や}き{物|もの} 」 だ と さ 。 {変|へん} な {売|う}り{文句|もんく} だ 。 || Our ash glaze sells in other villages now. "Pottery from the village that remembers its fire," they call it. Odd selling point.
-?(end_kasane_trial) co_nobu: {書庫|しょこ} の {番人|ばんにん} が {灯落|ひおち} に {来|き}た ん だ ろう 。 {俺|おれ} は {会|あ}い に は {行|い}か ねえ 。 {湯呑|ゆの}み を {一|ひと}つ {送|おく}った 。 {割|わ}る か {使|つか}う か は 、 {向|む}こう の {勝手|かって} だ 。 || The archive keeper came down to Lanternfall, I hear. I'm not going to see them. I sent a cup. Whether they smash it or use it is up to them.
+?(end_kasane_trial) co_nobu: {書庫|しょこ} の {番人|ばんにん} が {灯落|ひおち} に {来|き}た ん だろう 。 {俺|おれ} は {会|あ}い に は {行|い}か ねえ 。 {湯呑|ゆの}み を {一|ひと}つ {送|おく}った 。 {割|わ}る か {使|つか}う か は 、 {向|む}こう の {勝手|かって} だ 。 || The archive keeper came down to Lanternfall, I hear. I'm not going to see them. I sent a cup. Whether they smash it or use it is up to them.
 `, 'ch3/pottery');
 
 RB.script.add(`
@@ -26850,7 +26850,7 @@ RB.script.add(`
 ?(comp=nao) comp: {三人|さんにん} の {話|はなし} 、 {全部|ぜんぶ} {同|おな}じ {夜|よる} の {話|はなし} だ 。 {宛先|あてさき} は {一|ひと}つ 。 {記録堂|きろくどう} に {持|も}って {行|い}こう 。 || Three stories, all about the same night. One address. Let's take them to the Chronicle Hall.
 ?(comp=mio) comp: {三人|さんにん} とも 、 {同|おな}じ {夜|よる} の こと を {話|はな}して いました 。 {症状|しょうじょう} が {揃|そろ}えば 、 {診断|しんだん} は {一|ひと}つ です 。 || All three were describing the same night. When the symptoms line up, there's only one diagnosis.
 ?(comp=ren) comp: {三|みっ}つ の {灯|ひ} が 、 {同|おな}じ {名|な} を {照|て}らして います 。 {記録堂|きろくどう} で 、 {帳面|ちょうめん} と {並|なら}べましょう 。 || Three lanterns lighting the same name. Let's set them beside the records in the Chronicle Hall.
-?(comp=suzu) comp: {三人|さんにん} の {台詞|せりふ} が 、 {同|おな}じ {場面|ばめん} を {指|さ}して る 。 …… {記録堂|きろくどう} へ 。 {植|う}え{付|つ}け{帳|ちょう} と {窯|かま} の {帳面|ちょうめん} を {持|も}って 。 || Three people's lines, all pointing to the same scene. …To the Chronicle Hall, with the planting book and the kiln ledger.
+?(comp=suzu) comp: {三人|さんにん} の {台詞|せりふ} が 、 {同|おな}じ {場面|ばめん} を {指|さ}してる 。 …… {記録堂|きろくどう} へ 。 {植|う}え{付|つ}け{帳|ちょう} と {窯|かま} の {帳面|ちょうめん} を {持|も}って 。 || Three people's lines, all pointing to the same scene. …To the Chronicle Hall, with the planting book and the kiln ledger.
 !journal {植|う}え{付|つ}け{帳|ちょう} と {窯|かま} の {帳面|ちょうめん} を 、 {記録堂|きろくどう} の {閲覧|えつらん} の {机|つくえ} へ 。 || Take the planting book and the kiln ledger to the reading table in the Chronicle Hall.
 !autosave
 
@@ -26861,10 +26861,10 @@ RB.script.add(`
 !end
 :idle
 co_ume: {柿|かき} は ね 、 {渋|しぶ}い うち に {取|と}って 、 {干|ほ}して {甘|あま}く する ん だ よ 。 {人|ひと} も {同|おな}じ さ 。 {少|すこ}し {干|ほ}される と 、 {甘|あま}く なる 。 || You pick persimmons while they're still astringent, and dry them sweet. People too. Hang them out a bit and they sweeten.
-?(co_hist_ume&!co_restored) co_ume: {植|う}え{付|つ}け{帳|ちょう} 、 {役|やく} に {立|た}って る かい 。 {変|へん} な {頁|ページ} が ある だろう 。 {若|わか}い {木|き} ばかり {植|う}えた {年|とし} が 。 || Is the planting book any use? There's an odd page in it, isn't there. The year we planted nothing but saplings.
+?(co_hist_ume&!co_restored) co_ume: {植|う}え{付|つ}け{帳|ちょう} 、 {役|やく} に {立|た}ってる かい 。 {変|へん} な {頁|ページ} が ある だろう 。 {若|わか}い {木|き} ばかり {植|う}えた {年|とし} が 。 || Is the planting book any use? There's an odd page in it, isn't there. The year we planted nothing but saplings.
 !end
 :hist
-co_ume: {昔|むかし} の こと かい 。 …… {朝|あさ} …… {上|うえ} の {段|だん} が {真|ま}っ{黒|くろ} で ね 。 {柿|かき} の {木|き} が {一本|いっぽん} も なかった 。 || The old days? …In the morning… the upper terraces were pitch black. Not one persimmon tree left.
+co_ume: {昔|むかし} は あった か な|むかし} の こと かい 。 …… {朝|あさ} …… {上|うえ} の {段|だん} が {真|ま}っ{黒|くろ} で ね 。 {柿|かき} の {木|き} が {一本|いっぽん} も なかった 。 || The old days? …In the morning… the upper terraces were pitch black. Not one persimmon tree left.
 co_ume: いや 、 その {前|まえ} だ 。 {夜中|よなか} に 、 けむり の におい で {目|め} が {覚|さ}めた ん だ よ 。 {空|そら} が {赤|あか}くて ね 。 || No, before that. In the night, the smell of smoke woke me. The sky was red.
 co_ume: {子|こ}ども たち の {手|て} を {引|ひ}いて 、 {水路|すいろ} ぞい に {下|お}りた 。 {水|みず} の {音|おと} を {頼|たよ}り に ね 。 || I took the children by the hand and went down along the channel, following the sound of the water.
 co_ume: その {年|とし} は 、 ずっと {雨|あめ} が {降|ふ}らなかった 。 {一月|ひとつき} {以上|いじょう} も 。 {最初|さいしょ} に {言|い}う べき だった ね 。 || That year it didn't rain for over a month. I should have said that first.
@@ -26872,12 +26872,12 @@ co_ume: {祭|まつ}り の {前|まえ} の {晩|ばん} だった 。 {山|や
 co_ume: あんた 、 {若|わか}い {頭|あたま} で {並|なら}べ{直|なお}して くれない かい 。 || Would you put it in order for me, with your young head?
 !activity co.a_hist_ume
 !if var._res=0 -> later
-co_ume[sad]: …… そう 。 そう いう {順番|じゅんばん} だった 。 {不思議|ふしぎ} だ ね 。 {誰|だれ} に も {話|はな}した こと が ない のに 、 {口|くち} が {覚|おぼ}えて る 。 || …Yes. That was the order. Strange. I've never told a soul, and yet my mouth remembers.
+co_ume[sad]: …… そう 。 そう いう {順番|じゅんばん} だった 。 {不思議|ふしぎ} だ ね 。 {誰|だれ} に も {話|はな}した こと が ない のに 、 {口|くち} が {覚|おぼ}えてる 。 || …Yes. That was the order. Strange. I've never told a soul, and yet my mouth remembers.
 co_ume: {植|う}え{付|つ}け{帳|ちょう} を {持|も}って お{行|い}き 。 {三|さん}{代|だい} {分|ぶん} の {字|じ} が ある 。 {変|へん} な {年|とし} が {一|ひと}つ ある から 、 {見|み}て ご{覧|らん} 。 || Take the planting book. It has three generations' handwriting in it. There's one odd year — have a look.
 !give co_plantbook
 ?(comp=nao) comp: {子|こ}ども を {連|つ}れて {逃|に}げた の は 、 ばあさん だった の か 。 {水路|すいろ} が {逃|に}げ{道|みち} 。 {石|いし} に {彫|ほ}って あった とおり だ 。 || So it was you who led the children out. Down the channel — just like the stone says.
 ?(comp=mio) comp[sad]: {子|こ}ども たち の {手|て} を {引|ひ}いて …… {怖|こわ}かった でしょう 。 || Leading the children by the hand… You must have been so frightened.
-?(comp=mio) co_ume: {怖|こわ}かった の かね 。 {覚|おぼ}えて る の は 、 {手|て} の {温|あたた}かさ だけ さ 。 || Was I? All I remember is how warm their hands were.
+?(comp=mio) co_ume: {怖|こわ}かった の かね 。 {覚|おぼ}えてる の は 、 {手|て} の {温|あたた}かさ だけ さ 。 || Was I? All I remember is how warm their hands were.
 ?(comp=ren) comp: {話|はな}す {順番|じゅんばん} が {乱|みだ}れて も 、 {話|はなし} そのもの は {乱|みだ}れて いない 。 {確|たし}か な {記憶|きおく} です 。 || The telling was out of order, but the story itself wasn't. That's a true memory.
 ?(comp=suzu) comp[closed]: …… {水路|すいろ} の {下|した} で 、 {子|こ}ども を {数|かぞ}えて いた {人|ひと} たち が いた でしょう 。 …… {旅芸人|たびげいにん} の 。 || …There were people at the bottom of the channel, counting the children as they came, weren't there. …Travelling players.
 ?(comp=suzu) co_ume: …… ああ 。 いた ね 。 {派手|はで} な {衣装|いしょう} の まま 、 {桶|おけ} を {運|はこ}んで くれた 。 {赤|あか}い リボン の {娘|むすめ} が いた よ 。 || …Ah. There were. Carrying buckets in their gaudy costumes. There was a girl with a red ribbon.
@@ -26916,23 +26916,23 @@ co_ume: …… そう だ 。 これ を あげよう 。 {紅葉|もみじ} の
 !give co_leaf_pin
 
 @scene co.ume_post
-co_ume: {上|うえ} の {段|だん} の {柿|かき} が 、 {甘|あま}く なった よ 。 {火|ひ} を {知|し}って る {土|つち} は 、 いい {実|み} を つける 。 || The upper persimmons have gone sweet. Soil that has known fire bears good fruit.
+co_ume: {上|うえ} の {段|だん} の {柿|かき} が 、 {甘|あま}く なった よ 。 {火|ひ} を {知|し}ってる {土|つち} は 、 いい {実|み} を つける 。 || The upper persimmons have gone sweet. Soil that has known fire bears good fruit.
 ?(end_mem_return) co_ume: {皆|みな} に {記憶|きおく} が {戻|もど}った {日|ひ} 、 わたし は {何|なに} も {変|か}わら なかった 。 {最初|さいしょ} から {預|あず}けて なかった から ね 。 {皆|みな} の {背中|せなか} を {撫|な}でて {回|まわ}った よ 。 || The day everyone's memories came back, nothing changed for me. I never gave mine away. I went round rubbing everyone's backs.
 ?(end_mem_choose) co_ume: {皆|みな} が {自分|じぶん} で {選|えら}べる よう に した の は 、 {良|よ}い やり{方|かた} だ よ 。 {無理|むり} に {飲|の}ませる {薬|くすり} は 、 {薬|くすり} じゃ ない から ね 。 || Letting everyone choose for themselves was the right way. Medicine forced down someone's throat isn't medicine.
 ?(end_kasane_trial) co_ume: {番人|ばんにん} さん が {灯落|ひおち} で {皆|みな} に {頭|あたま} を {下|さ}げた そう だ ね 。 {会|あ}ったら 、 {干|ほ}し{柿|がき} を {一|ひと}つ あげる よ 。 {怒|おこ}る の は 、 それ から だ 。 || The keeper bowed to everyone down in Lanternfall, I hear. If I met them, I'd give them a dried persimmon first. The scolding can come after.
-?(end_kasane_keeper) co_ume: {番人|ばんにん} さん は 、 {山|やま} で {書庫|しょこ} を {守|まも}って る ん だ ろう 。 {寒|さむ}い ところ だ 。 {干|ほ}し{柿|がき} を {送|おく}って やった よ 。 {返事|へんじ} は {三頁|さんページ} も あった 。 || The keeper's minding the archive up the mountain. Cold place. I sent them dried persimmons. The reply ran to three pages.
+?(end_kasane_keeper) co_ume: {番人|ばんにん} さん は 、 {山|やま} で {書庫|しょこ} を {守|まも}ってる ん だろう 。 {寒|さむ}い ところ だ 。 {干|ほ}し{柿|がき} を {送|おく}って やった よ 。 {返事|へんじ} は {三頁|さんページ} も あった 。 || The keeper's minding the archive up the mountain. Cold place. I sent them dried persimmons. The reply ran to three pages.
 
 @scene co.asa
 !if co_signs_done -> done
 !if quest.co_signs=active -> going
 co_asa: {旅|たび} の {人|ひと} ！ ちょうど いい ところ に 。 {道|みち} に {迷|まよ}って ない ？ …… {迷|まよ}う よ ね 。 {道|みち}しるべ の {字|じ} が 、 {全部|ぜんぶ} {消|き}えちゃった ん だ もん 。 || Travellers! Good timing. Lost? …Of course you are. All the writing on the signposts has vanished.
-co_asa: {雨|あめ} で {流|なが}れた ん じゃ ない の 。 {雨|あめ} なんて {降|ふ}って ない し 。 {朝|あさ} {来|き}たら 、 {真|ま}っ{白|しろ} に なって た 。 || It didn't wash off — it hasn't even rained. I came up one morning and they were just blank.
+co_asa: {雨|あめ} で {流|なが}れた ん じゃ ない の 。 {雨|あめ} なんて {降|ふ}って ない し 。 {朝|あさ} {来|き}たら 、 {真|ま}っ{白|しろ} に なってた 。 || It didn't wash off — it hasn't even rained. I came up one morning and they were just blank.
 co_asa: ウメ ばあちゃん が {夕方|ゆうがた} に {迷|まよ}って 、 {上|うえ} の {柵|さく} の {前|まえ} まで {行|い}っちゃった こと が ある の 。 {危|あぶ}ない よ ね 。 || Grandma Ume got lost at dusk once and ended up right at the top fence. Dangerous.
-co_asa: {真|ま}ん{中|なか} の {道|みち}しるべ 、 {直|なお}して くれない ？ {腕|うで} が {指|さ}して る {方|ほう} を {見|み}れば 、 {分|わ}かる はず だ から 。 || Could you fix the middle signpost? If you look where each arm points, you should be able to tell.
+co_asa: {真|ま}ん{中|なか} の {道|みち}しるべ 、 {直|なお}して くれない ？ {腕|うで} が {指|さ}してる {方|ほう} を {見|み}れば 、 {分|わ}かる はず だ から 。 || Could you fix the middle signpost? If you look where each arm points, you should be able to tell.
 !quest co_signs 0
 !end
 :going
-co_asa: {真|ま}ん{中|なか} の {段|だん} の {道|みち}しるべ だ よ 。 {十字|じゅうじ} に なって る ところ 。 || It's the signpost on the middle terrace, where the paths cross.
+co_asa: {真|ま}ん{中|なか} の {段|だん} の {道|みち}しるべ だ よ 。 {十字|じゅうじ} に なってる ところ 。 || It's the signpost on the middle terrace, where the paths cross.
 !end
 :done
 co_asa[smile]: {道|みち}しるべ 、 ありがとう ！ ウメ ばあちゃん も 、 もう {迷|まよ}わない って 。 || Thanks for the signpost! Grandma Ume says she won't get lost any more.
@@ -26945,7 +26945,7 @@ co_asa: 「 {火除|ひよ}け{道|みち} 」 って 、 {変|へん} な {名�
 ?(co_restored) co_asa: …… {来|く}る ん だ ね 。 {来|き}た ん だ ね 。 だから {刈|か}る ん だ 。 {今|いま} は {分|わ}かる 。 || …It does come. It came. That's why we cut it. I understand now.
 
 @scene co.asa_after
-co_asa: {火除|ひよ}け{道|みち} を {刈|か}った ら 、 {段々畑|だんだんばたけ} の {形|かたち} が よく {見|み}える よう に なった 。 {昔|むかし} の {人|ひと} は 、 {火|ひ} の {通|とお}り{道|みち} まで {考|かんが}えて {段|だん} を {作|つく}った ん だ ね 。 || With the firebreaks cut, you can see the shape of the terraces properly. The old folk planned the terraces around where fire would run.
+co_asa: {火除|ひよ}け{道|みち} を {刈|か}ったら 、 {段々畑|だんだんばたけ} の {形|かたち} が よく {見|み}える よう に なった 。 {昔|むかし} は あった か な|むかし} の {人|ひと} は 、 {火|ひ} の {通|とお}り{道|みち} まで {考|かんが}えて {段|だん} を {作|つく}った ん だ ね 。 || With the firebreaks cut, you can see the shape of the terraces properly. The old folk planned the terraces around where fire would run.
 ?(co_signs_done) co_asa: {道|みち}しるべ の 「 {火除|ひよ}け{道|みち} 」 、 {今|いま} は {誰|だれ} も {笑|わら}わない よ 。 || Nobody laughs at the "firebreak path" arm any more.
 
 @scene co.asa_post
@@ -26988,7 +26988,7 @@ narr: {草|くさ} に {埋|う}もれた {石|いし} の {道標|どうひょ�
 @scene co.goat
 !if comp=suzu -> suzu
 narr: {年|とし} を {取|と}った ヤギ が 、 {柿|かき} の {葉|は} を {食|た}べて いる 。 {首|くび} に 、 {色褪|いろあ}せた {金|きん} の {房|ふさ} が {下|さ}がって いる 。 || An old goat is eating persimmon leaves. From its neck hangs a faded gold tassel.
-co_ume: その ヤギ かい 。 {何年|なんねん} か {前|まえ} に 、 {通|とお}りすがり の {一座|いちざ} が {置|お}いて いった の さ 。 「 {引退|いんたい} です 」 って ね 。 {葉|は} ばかり {食|た}べて 、 {働|はたら}き ゃ しない よ 。 || That goat? A passing troupe left it here a few years back. "Retired," they said. Eats leaves all day and never lifts a hoof.
+co_ume: その ヤギ かい 。 {何年|なんねん} か {前|まえ} に 、 {通|とお}りすがり の {一座|いちざ} が {置|お}いて いった の さ 。 「 {引退|いんたい} です 」 って ね 。 {葉|は} ばかり {食|た}べて 、 {働|はたら}き は しない よ 。 || That goat? A passing troupe left it here a few years back. "Retired," they said. Eats leaves all day and never lifts a hoof.
 !end
 :suzu
 narr: {年|とし} を {取|と}った ヤギ が 、 {柿|かき} の {葉|は} を {食|た}べて いる 。 {首|くび} に 、 {色褪|いろあ}せた {金|きん} の {房|ふさ} 。 || An old goat is eating persimmon leaves. From its neck hangs a faded gold tassel.
@@ -27015,7 +27015,7 @@ RB.script.add(`
 narr: その {夜|よる} 。 {宿|やど} の {縁側|えんがわ} に 、 スズ が {一人|ひとり} で {座|すわ}って いた 。 || That night, Suzu is sitting alone on the inn's veranda.
 !fade in
 comp[smile]: あら 、 {眠|ねむ}れない の ？ {私|わたし} も 。 {枕|まくら} が {変|か}わる と ダメ な の よ 。 {旅芸人|たびげいにん} の くせ に 。 || Oh, can't sleep? Me neither. A new pillow always gets me. And me a travelling performer.
-pc: スズ 。 この {里|さと} に 、 {来|き}た こと が ある ん だ ろう 。 || Suzu. You've been to this village before, haven't you.
+pc: スズ 。 この {里|さと} に 、 {来|き}た こと が ある ん だろう 。 || Suzu. You've been to this village before, haven't you.
 comp[laugh]: {来|き}た こと ？ ある ある 。 {百回|ひゃっかい} くらい 。 {柿|かき} を {食|た}べ に 。 || Been here? Oh, loads. A hundred times. For the persimmons.
 comp[closed]: …… || …
 comp: …… {一回|いっかい} だけ 。 {二十年前|にじゅうねんまえ} 。 {一座|いちざ} で 、 {秋祭|あきまつ}り の {舞台|ぶたい} に {立|た}つ はず だった 。 {私|わたし} は {十六|じゅうろく} で 、 {初|はじ}めて {台詞|せりふ} を もらった {年|とし} 。 || …Once. Twenty years ago. With the troupe — we were booked for the autumn festival. I was sixteen. The first year I had lines of my own.
@@ -27023,11 +27023,11 @@ comp: {前|まえ} の {晩|ばん} に 、 {火事|かじ} が あった 。 {�
 pc: {覚|おぼ}えて いる の か 。 {里|さと} の {人|ひと} は {誰|だれ} も …… || You remember it. Nobody in the village…
 comp: {私|わたし} たち は {次|つぎ} の {朝|あさ} に {発|た}った から 。 {静寂|しじま} が {来|き}た の は 、 たぶん {冬|ふゆ} 。 {私|わたし} だけ 、 {取|と}られ {損|そこ}ねた の ね 。 || We left the next morning. I think the Hush came that winter. I'm the one it missed.
 comp[sad]: その {朝|あさ} 、 {小|ちい}さな {男|おとこ} の {子|こ} が {私|わたし} の リボン を {引|ひ}っ{張|ぱ}って 、 「 お{母|かあ}さん は どこ ？ 」 って {聞|き}いた の 。 || That morning a little boy tugged at my ribbon and asked me, "Where's my mum?"
-comp: {私|わたし} は {知|し}って た 。 {窯|かま} の {人|ひと} で 、 {上|うえ} へ {行|い}った まま {戻|もど}らなかった 。 || I knew. She worked the kiln. She went up the hill and didn't come back.
+comp: {私|わたし} は {知|し}ってた 。 {窯|かま} の {人|ひと} で 、 {上|うえ} へ {行|い}った まま {戻|もど}らなかった 。 || I knew. She worked the kiln. She went up the hill and didn't come back.
 comp: {私|わたし} は {言|い}った 。 「 お{母|かあ}さん は {一座|いちざ} と {一緒|いっしょ} に {先|さき} へ {行|い}った の 。 {春|はる} に なったら {帰|かえ}って くる よ 」 って 。 || I told him: "Your mum's gone on ahead with the troupe. She'll be back when spring comes."
 comp[closed]: …… {台詞|せりふ} の {稽古|けいこ} より 、 ずっと {上手|じょうず} に {言|い}えた 。 || …I delivered it far better than any line I'd rehearsed.
 pc: その {子|こ} が …… || That boy…
-comp: ヒロ 。 {広場|ひろば} の {空|あ}いた {席|せき} 。 {毎年|まいとし} {誰|だれ} か の ため に {空|あ}けて ある って 、 サヨ さん が {言|い}って た でしょ 。 || Hiro. The empty seat in the square. Sayo said someone keeps it free every year, didn't she.
+comp: ヒロ 。 {広場|ひろば} の {空|あ}いた {席|せき} 。 {毎年|まいとし} {誰|だれ} か の ため に {空|あ}けて ある って 、 サヨ さん が {言|い}ってた でしょ 。 || Hiro. The empty seat in the square. Sayo said someone keeps it free every year, didn't she.
 narr: スズ は {小|ちい}さな {帳簿|ちょうぼ} を {取|と}り{出|だ}して 、 {最後|さいご} の {頁|ページ} を {開|ひら}いた 。 {丁寧|ていねい} な {字|じ} が {並|なら}んで いる 。 || Suzu takes out a little account book and opens it at the last page. Neat lines of names and figures.
 comp: {私|わたし} ね 、 {借|か}り は {全部|ぜんぶ} {書|か}いて おく の 。 {宿代|やどだい} 、 {傘|かさ} 、 {貸|か}して もらった {針|はり} {一本|いっぽん} まで 。 {返|かえ}したら {線|せん} を {引|ひ}く 。 || I write down every debt, you know. Lodgings, umbrellas, a single needle someone lent me. When I pay, I cross it out.
 comp: {線|せん} が {引|ひ}けて ない の は 、 これ だけ 。 || This is the only one I've never crossed out.
@@ -27045,7 +27045,7 @@ comp[smile]: {優|やさ}しい の ね 。 でも それ 、 {二十年前|に�
 !goto both
 :both
 comp: {火事|かじ} を {取|と}り{戻|もど}す の を 、 {手伝|てつだ}う わ 。 {全部|ぜんぶ} {終|お}わったら 、 {言|い}う 。 {今度|こんど} は {字|じ} が {消|き}えない よう に 。 || I'll help you bring the fire back. And when it's done, I'll tell him. So that this time the words don't fade.
-comp[smirk]: …… その {前|まえ} に 、 ヒロ が {今|いま} {何|なに} を {信|しん}じて る か 、 {確|たし}かめ たい 。 {付|つ}いて {来|き}て くれる ？ {観客|かんきゃく} が いる と 、 {私|わたし} 、 {強|つよ}い の 。 || …Before that, I want to know what Hiro believes now. Will you come? I'm braver with an audience.
+comp[smirk]: …… その {前|まえ} に 、 ヒロ が {今|いま} {何|なに} を {信|しん}じてる か 、 {確|たし}かめたい 。 {付|つ}いて {来|き}て くれる ？ {観客|かんきゃく} が いる と 、 {私|わたし} 、 {強|つよ}い の 。 || …Before that, I want to know what Hiro believes now. Will you come? I'm braver with an audience.
 !note co_suzu_ledger
 !quest co_suzu 1
 !set co_suzu_told
@@ -27059,16 +27059,16 @@ comp[smirk]: …… その {前|まえ} に 、 ヒロ が {今|いま} {何|な
 pc: {広場|ひろば} の {空|あ}いた {席|せき} 、 {誰|だれ} の ため の {席|せき} です か 。 || The empty seat in the square — who is it for?
 hiro[think]: …… {母|はは} の だ 。 || …My mother's.
 hiro: {俺|おれ} が {七|なな}つ の {年|とし} に 、 {旅|たび} の {一座|いちざ} と {一緒|いっしょ} に {先|さき} へ {行|い}った 。 {春|はる} に {帰|かえ}る 、 って 。 || The year I was seven, she went on ahead with a travelling troupe. Said she'd be back in spring.
-hiro[smirk]: {春|はる} は {二十回|にじゅっかい} {来|き}た 。 {変|へん} な {話|はなし} だ ろ 。 {分|わ}かって る 。 || Spring has come twenty times. Strange story, I know.
+hiro[smirk]: {春|はる} は {二十回|にじゅっかい} {来|き}た 。 {変|へん} な {話|はなし} だろ 。 {分|わ}かってる 。 || Spring has come twenty times. Strange story, I know.
 hiro: {赤|あか}い リボン の {姉|ねえ}ちゃん が 、 そう {教|おし}えて くれた 。 {顔|かお} は {覚|おぼ}えて ない 。 リボン だけ 。 || A girl with a red ribbon told me. I don't remember her face. Just the ribbon.
 ?(comp=suzu) narr: スズ の {手|て} が 、 {色褪|いろあ}せた リボン に {触|ふ}れて 、 すぐ {離|はな}れた 。 || Suzu's hand brushes her faded ribbon, and drops away.
-hiro: {席|せき} を {空|あ}けて おく の は …… {習|なら}わし だ 。 {待|ま}って る わけ じゃ ない 。 たぶん 。 || Keeping the seat is… a habit. It's not that I'm waiting. Probably.
+hiro: {席|せき} を {空|あ}けて おく の は …… {習|なら}わし だ 。 {待|ま}ってる わけ じゃ ない 。 たぶん 。 || Keeping the seat is… a habit. It's not that I'm waiting. Probably.
 hiro: {他|ほか} に {何|なに} か {理由|りゆう} が ある {気|き} が する んだ が 、 {考|かんが}える と {頭|あたま} が {白|しろ}く なる 。 || I feel there's some other reason, but when I try to think about it, my head goes white.
 ?(comp=suzu) comp[smile]: …… {素敵|すてき} な {習|なら}わし ね 。 ありがとう 、 {話|はな}して くれて 。 || …It's a lovely custom. Thank you for telling us.
 ?(comp=suzu) hiro: …… あんた 、 どこ か で {会|あ}った か ？ || …Have we met?
 ?(comp=suzu) comp[laugh]: {旅芸人|たびげいにん} の {顔|かお} は 、 みんな どこ か で {見|み}た {顔|かお} よ 。 || Every travelling performer has a face you've seen somewhere.
 ?(comp=suzu) narr: {工房|こうぼう} を {出|で}る と 、 スズ は {一度|いちど} だけ {振|ふ}り{返|かえ}った 。 || Outside the workshop, Suzu looks back just once.
-?(comp=suzu) comp: …… リボン だけ {覚|おぼ}えて る 、 か 。 {私|わたし} も {同|おな}じ よ 。 あの {子|こ} の {顔|かお} より 、 {引|ひ}っ{張|ぱ}られた リボン の {感|かん}じ の {方|ほう} を {覚|おぼ}えて る 。 || …He remembers only the ribbon. Same for me. I remember the tug on the ribbon better than his face.
+?(comp=suzu) comp: …… リボン だけ {覚|おぼ}えてる 、 か 。 {私|わたし} も {同|おな}じ よ 。 あの {子|こ} の {顔|かお} より 、 {引|ひ}っ{張|ぱ}られた リボン の {感|かん}じ の {方|ほう} を {覚|おぼ}えてる 。 || …He remembers only the ribbon. Same for me. I remember the tug on the ribbon better than his face.
 ?(comp=suzu) comp: {今|いま} {言|い}って も 、 {火事|かじ} ごと {頭|あたま} から {滑|すべ}り{落|お}ちる だけ 。 {窯|かま} が {記録|きろく} を {返|かえ}して から に する わ 。 || If I told him now, it'd slide off his mind with the rest of the fire. I'll wait until the kiln gives its record back.
 !set co_suzu_asked
 !quest co_suzu 2
@@ -27076,7 +27076,7 @@ hiro: {他|ほか} に {何|なに} か {理由|りゆう} が ある {気|き} 
 @scene co.suzu_c_square
 !if co_suzu_c_met -> again
 suzu[surprise]: …… あら ！ $name ！ {葦|あし}ノ{瀬|せ} {以来|いらい} ね 。 {世|よ} の {中|なか} って 、 {舞台|ぶたい} が {狭|せま}い わ 。 || …Well! $name! Not since Reedwake. What a small stage the world is.
-?(comp=nao) suzu: ナオ も 。 {相変|あいか}わらず {出口|でぐち} ばかり {見|み}て る の ね 。 || And Nao. Still watching the exits, I see.
+?(comp=nao) suzu: ナオ も 。 {相変|あいか}わらず {出口|でぐち} ばかり {見|み}てる の ね 。 || And Nao. Still watching the exits, I see.
 ?(comp=nao) comp[smirk]: {職業病|しょくぎょうびょう} だ よ 。 {久|ひさ}しぶり 、 スズ 。 || Occupational habit. Long time, Suzu.
 ?(comp=mio) suzu: ミオ も ！ {薬箱|くすりばこ} 、 {今日|きょう} も {重|おも}そう ね 。 || Mio too! Your medicine box looks as heavy as ever.
 ?(comp=mio) comp[smile]: スズ さん 。 お{元気|げんき} そう で よかった 。 || Suzu. I'm glad you look well.
@@ -27084,7 +27084,7 @@ suzu[surprise]: …… あら ！ $name ！ {葦|あし}ノ{瀬|せ} {以来|い
 ?(comp=ren) comp: {三回|さんかい} {迷|まよ}いました 。 {四回目|よんかいめ} で {着|つ}きました 。 || I got lost three times. The fourth time, I arrived.
 pc: スズ も {祭|まつ}り に ？ || You're here for the festival too?
 suzu[laugh]: {呼|よ}ばれて ない けど 、 {呼|よ}ばれた こと に した の 。 サヨ さん に {手紙|てがみ} を {出|だ}したら 、 {舞台|ぶたい} を {一枠|ひとわく} くれた わ 。 || Nobody invited me, so I invited myself. I wrote to Sayo and she gave me a slot on the stage.
-suzu[closed]: …… ねえ 、 ガラス {職人|しょくにん} の ヒロ って {人|ひと} 、 どこ で {働|はたら}いて る か {知|し}って る ？ || …Say, do you know where a glassblower called Hiro works?
+suzu[closed]: …… ねえ 、 ガラス {職人|しょくにん} の ヒロ って {人|ひと} 、 どこ で {働|はたら}いてる か {知|し}ってる ？ || …Say, do you know where a glassblower called Hiro works?
 pc: {東|ひがし} の {工房|こうぼう} だ よ 。 {知|し}り{合|あ}い ？ || The workshop to the east. Do you know him?
 suzu[smile]: {知|し}り{合|あ}い …… じゃ ない わ 。 {向|む}こう は {私|わたし} を {覚|おぼ}えて ない もの 。 || Know him… no. He wouldn't remember me.
 suzu: …… {夜|よる} は フサ さん の {宿|やど} に いる から 。 {暇|ひま} が あったら {来|き}て 。 {観客|かんきゃく} が {一人|ひとり} {欲|ほ}しい の 。 || …I'm staying at Fusa's inn. If you've a moment this evening, come by. I need an audience of one.
@@ -27092,7 +27092,7 @@ suzu: …… {夜|よる} は フサ さん の {宿|やど} に いる から �
 !quest co_suzu 0
 !end
 :again
-suzu: {夜|よる} は フサ さん の {宿|やど} よ 。 {待|ま}って る 。 …… {急|いそ}がなくて いい けど 。 || I'm at Fusa's inn in the evenings. I'll be waiting. …No hurry, though.
+suzu: {夜|よる} は フサ さん の {宿|やど} よ 。 {待|ま}ってる 。 …… {急|いそ}がなくて いい けど 。 || I'm at Fusa's inn in the evenings. I'll be waiting. …No hurry, though.
 
 @scene co.suzu_c_inn
 suzu[smile]: {来|き}て くれた 。 {座|すわ}って 。 {甘酒|あまざけ} 、 {奢|おご}る わ 。 {帳簿|ちょうぼ} に は {書|か}かない で おいて あげる 。 || You came. Sit. The amazake's on me — and I won't even write it in my book.
@@ -27100,12 +27100,12 @@ suzu: {二十年前|にじゅうねんまえ} 、 {一座|いちざ} で この 
 ?(comp=nao) comp: …… {里|さと} の {人|ひと} は {誰|だれ} も {覚|おぼ}えて ない 。 {記録|きろく} に も ない 。 || …Nobody here remembers. It isn't in the records.
 ?(comp=mio) comp[worry]: {火事|かじ} …… やっぱり 。 だから {火傷|やけど} の {薬|くすり} が 、 どこ に も ない ん です ね 。 || A fire… I knew it. That's why there's no burn salve anywhere.
 ?(comp=ren) comp[think]: {記録|きろく} から も {人|ひと} から も {消|き}えた {火事|かじ} 。 {灯|ひ} の {名|な} と {同|おな}じ {消|き}え{方|かた} です 。 || A fire gone from the records and from people. It vanished the way lantern names do.
-suzu: {私|わたし} は {次|つぎ} の {朝|あさ} に {里|さと} を {出|で}た から 、 {全部|ぜんぶ} {覚|おぼ}えて る 。 {窯|かま} の {女|おんな} の {人|ひと} が {上|うえ} へ {行|い}って 、 {戻|もど}らなかった こと も 。 || I left the next morning, so I remember all of it. Including the woman from the kiln who went up the hill and never came back.
+suzu: {私|わたし} は {次|つぎ} の {朝|あさ} に {里|さと} を {出|で}た から 、 {全部|ぜんぶ} {覚|おぼ}えてる 。 {窯|かま} の {女|おんな} の {人|ひと} が {上|うえ} へ {行|い}って 、 {戻|もど}らなかった こと も 。 || I left the next morning, so I remember all of it. Including the woman from the kiln who went up the hill and never came back.
 suzu[sad]: その {人|ひと} の {息子|むすこ} に 、 {私|わたし} 、 {嘘|うそ} を ついた の 。 「 お{母|かあ}さん は {一座|いちざ} と {先|さき} へ {行|い}った 。 {春|はる} に {帰|かえ}って くる 」 って 。 || I lied to her son. I told him, "Your mum's gone on ahead with the troupe. She'll be back in spring."
 suzu: その {子|こ} が ヒロ 。 {広場|ひろば} の {空|あ}いた {席|せき} の 。 || That boy is Hiro. The one with the empty seat in the square.
 narr: スズ は {帳簿|ちょうぼ} を {開|ひら}いて {見|み}せた 。 「 ヒロ ── {本当|ほんとう} の こと {一|ひと}つ 。 {未払|みはら}い 。 」 || Suzu opens her account book to show you: "Hiro — one truth. Unpaid."
 suzu: {手紙|てがみ} で {返|かえ}そう と した こと も ある 。 {字|じ} が {白|しろ}く {消|き}えた わ 。 {嘘|うそ} だけ が {残|のこ}る の 。 {痛|いた}く ない から 。 || I tried to pay it by letter once. The words faded white. Only the lie stays — it doesn't hurt anyone, you see.
-suzu[closed]: …… お{願|ねが}い が ある の 。 ヒロ が {今|いま} 、 あの {席|せき} を どう {思|おも}って る か 、 {聞|き}いて きて くれない ？ {私|わたし} が {聞|き}く と 、 {顔|かお} に {出|で}ちゃう から 。 || …I've a favour to ask. Would you find out what Hiro thinks about that seat now? If I ask, it'll show on my face.
+suzu[closed]: …… お{願|ねが}い が ある の 。 ヒロ が {今|いま} 、 あの {席|せき} を どう {思|おも}ってる か 、 {聞|き}いて きて くれない ？ {私|わたし} が {聞|き}く と 、 {顔|かお} に {出|で}ちゃう から 。 || …I've a favour to ask. Would you find out what Hiro thinks about that seat now? If I ask, it'll show on my face.
 !set co_suzu_c_inn co_suzu_told
 !note co_suzu_ledger
 !quest co_suzu 1
@@ -27116,7 +27116,7 @@ suzu: {急|いそ}がなくて いい わ 。 {二十年|にじゅうねん} {�
 !end
 :report
 pc: ヒロ は 、 {赤|あか}い リボン の {姉|ねえ}ちゃん を {覚|おぼ}えて いた 。 {顔|かお} は {覚|おぼ}えて ない けど 、 リボン だけ は 。 || Hiro remembers a girl with a red ribbon. Not her face — just the ribbon.
-suzu[sad]: …… そう 。 {私|わたし} も 、 あの {子|こ} の {顔|かお} より 、 リボン を {引|ひ}っ{張|ぱ}られた {感|かん}じ の {方|ほう} を {覚|おぼ}えて る 。 || …I see. Same for me. I remember the tug on the ribbon better than his face.
+suzu[sad]: …… そう 。 {私|わたし} も 、 あの {子|こ} の {顔|かお} より 、 リボン を {引|ひ}っ{張|ぱ}られた {感|かん}じ の {方|ほう} を {覚|おぼ}えてる 。 || …I see. Same for me. I remember the tug on the ribbon better than his face.
 suzu: {今|いま} {言|い}って も 、 {火事|かじ} ごと {頭|あたま} から {滑|すべ}り{落|お}ちる だけ ね 。 {窯|かま} の {記録|きろく} が {戻|もど}ったら …… その {時|とき} に {言|い}う 。 {約束|やくそく} する わ 。 {帳簿|ちょうぼ} に {書|か}いて おく 。 || If I told him now, it'd slide off his mind along with the fire. When the kiln's record comes back… I'll tell him then. I promise. I'll write it in my book.
 !set co_suzu_c_reported
 
@@ -27129,8 +27129,8 @@ suzu[closed]: …… {入|はい}る {前|まえ} に 、 {一|ひと}つ だけ
 narr: {工房|こうぼう} の {炉|ろ} が 、 {低|ひく}く {唸|うな}って いる 。 ヒロ は {吹|ふ}き{竿|ざお} の {先|さき} で 、 {橙色|だいだいいろ} の ガラス を {回|まわ}して いた 。 || The furnace hums low. Hiro is turning a gather of orange glass on the end of his blowpipe.
 hiro: {悪|わる}い 。 {今|いま} {手|て} が {離|はな}せない 。 {話|はなし} なら 、 そこ で 。 || Sorry. Can't put this down. If you want to talk, go ahead.
 suzu[smile]: {大丈夫|だいじょうぶ} 。 {手|て} は {止|と}めない で 。 その {方|ほう} が 、 {私|わたし} も {言|い}い やすい 。 || That's fine. Don't stop. It's easier for me that way too.
-suzu: ヒロ 。 {赤|あか}い リボン の {姉|ねえ}ちゃん を {覚|おぼ}えて る 、 って {言|い}った よ ね 。 || Hiro. You said you remember a girl with a red ribbon.
-narr: スズ は {色褪|いろあ}せた リボン を ほどいて 、 {作業台|さぎょうだい} の {上|うえ} に {置|お}いた 。 {昔|むかし} は {赤|あか}かった の だろう 。 || Suzu unties her faded ribbon and lays it on the workbench. It must have been red, once.
+suzu: ヒロ 。 {赤|あか}い リボン の {姉|ねえ}ちゃん を {覚|おぼ}えてる 、 って {言|い}った よ ね 。 || Hiro. You said you remember a girl with a red ribbon.
+narr: スズ は {色褪|いろあ}せた リボン を ほどいて 、 {作業台|さぎょうだい} の {上|うえ} に {置|お}いた 。 {昔|むかし} は あった か な|むかし} は {赤|あか}かった の だろう 。 || Suzu unties her faded ribbon and lays it on the workbench. It must have been red, once.
 hiro[surprise]: …… || …
 suzu[laugh]: {色|いろ} は {落|お}ちた けど 、 {物持|ものも}ち は いい の 。 {借|か}り も ね 。 …… ごめん 。 {冗談|じょうだん} で {逃|に}げる の は 、 ここ まで に する 。 || The colour's gone, but I keep things. Debts too. …Sorry. That's the last joke I'll hide behind.
 suzu[closed]: あの {朝|あさ} 、 {私|わたし} は {嘘|うそ} を ついた 。 || That morning, I lied to you.
@@ -27143,8 +27143,8 @@ hiro: {変|へん} だ な 。 {昨日|きのう} まで 、 その {言葉|こ�
 hiro: {母|はは} の {手|て} は 、 いつも {火傷|やけど} の {跡|あと} だらけ だった 。 {上|うえ} へ {行|い}く {前|まえ} 、 {俺|おれ} の {頭|あたま} に この {手拭|てぬぐ}い を {巻|ま}いた 。 「 {火|ひ} の {粉|こ} が {熱|あつ}い から ね 」 って 。 || My mother's hands were always covered in burn scars. Before she went up, she tied this cloth round my head. "The sparks are hot," she said.
 narr: ヒロ は {額|ひたい} の {手拭|てぬぐ}い に 、 {一瞬|いっしゅん} だけ {触|ふ}れた 。 || For a moment, Hiro touches the cloth tied round his forehead.
 hiro: 「 {振|ふ}り{返|かえ}らない で 」 。 {振|ふ}り{返|かえ}らなかった 。 {二十年|にじゅうねん} 。 || "Don't look back." I didn't. For twenty years.
-hiro[sad]: …… {怒|おこ}って る か 、 と {聞|き}かれたら 、 {怒|おこ}って る 。 {嘘|うそ} に じゃ ない 。 {七|なな}つ の {子|こ} に {本当|ほんとう} の こと を {言|い}える {十六|じゅうろく} なんて 、 いない 。 || …If you're asking whether I'm angry — I am. Not about the lie. No sixteen-year-old could have told a seven-year-old the truth.
-hiro: あんた が {行|い}っちまった こと に 、 だ 。 {母|はは} は {一座|いちざ} と {行|い}った 、 と {聞|き}いた 。 それ から {一座|いちざ} も 、 あんた も {行|い}った 。 {俺|おれ} は {二人|ふたり} {分|ぶん} 、 {待|ま}って た ん だ 。 || It's that you left. I was told my mother went with the troupe. Then the troupe left, and you with it. I was waiting for two people.
+hiro[sad]: …… {怒|おこ}ってる か 、 と {聞|き}かれたら 、 {怒|おこ}ってる 。 {嘘|うそ} に じゃ ない 。 {七|なな}つ の {子|こ} に {本当|ほんとう} の こと を {言|い}える {十六|じゅうろく} なんて 、 いない 。 || …If you're asking whether I'm angry — I am. Not about the lie. No sixteen-year-old could have told a seven-year-old the truth.
+hiro: あんた が {行|い}っちまった こと に 、 だ 。 {母|はは} は {一座|いちざ} と {行|い}った 、 と {聞|き}いた 。 それ から {一座|いちざ} も 、 あんた も {行|い}った 。 {俺|おれ} は {二人|ふたり} {分|ぶん} 、 {待|ま}ってた ん だ 。 || It's that you left. I was told my mother went with the troupe. Then the troupe left, and you with it. I was waiting for two people.
 suzu[sad]: …… うん 。 || …Yes.
 narr: ヒロ は ガラス を {竿|さお} から {外|はず}し 、 {灰|はい} の {中|なか} に そっと {置|お}いた 。 {丸|まる}い {火屋|ほや} が 、 {橙色|だいだいいろ} に {光|ひか}って いる 。 || Hiro breaks the glass from the pipe and lays it gently in the ash. A round lantern globe, glowing orange.
 hiro: {席|せき} は 、 {今年|ことし} も {空|あ}けて おく 。 でも {今年|ことし} は 、 {母|はは} の {名前|なまえ} を {書|か}く 。 {帰|かえ}って くる {人|ひと} の {席|せき} じゃ ない 。 {覚|おぼ}えて いる {人|ひと} の {席|せき} だ 。 || I'll keep the seat free this year too. But this year I'll write her name on it. Not a seat for someone coming back. A seat for someone remembered.
@@ -27156,7 +27156,7 @@ narr: スズ は {帳簿|ちょうぼ} を {開|ひら}き 、 {震|ふる}え�
 * （ {何|なに} も {言|い}わず に {見守|みまも}る ） || (Say nothing. Let them have this.) -> quiet
 * スズ は 、 これ を {言|い}う ため に {戻|もど}って {来|き}た ん だ 。 || Suzu came back to say this. -> speak
 :speak
-hiro: {分|わ}かって る 。 {二十年|にじゅうねん} {遅|おく}れ でも 、 {来|き}た 。 …… それ は {数|かぞ}える 。 || I know. Twenty years late, but she came. …That counts.
+hiro: {分|わ}かってる 。 {二十年|にじゅうねん} {遅|おく}れ でも 、 {来|き}た 。 …… それ は {数|かぞ}える 。 || I know. Twenty years late, but she came. …That counts.
 !goto after
 :quiet
 narr: {炉|ろ} の {音|おと} だけ が 、 しばらく {続|つづ}いた 。 || For a while there's only the sound of the furnace.
@@ -27164,7 +27164,7 @@ narr: {炉|ろ} の {音|おと} だけ が 、 しばらく {続|つづ}いた 
 !if !item.co_globe -> finish
 pc: {窯|かま} の {奥|おく} で 、 これ を {見|み}つけた 。 || We found this at the back of the kiln.
 narr: {三十個|さんじゅっこ} の {中|なか} で 、 {一|ひと}つ だけ {割|わ}れず に {残|のこ}った {火屋|ほや} 。 {底|そこ} に {小|ちい}さく 「 トモエ 」 と {刻|きざ}まれて いる 。 || The one lantern globe of the thirty that didn't break. Scratched small on its base: トモエ.
-hiro[sad]: …… {母|はは} の {字|じ} だ 。 {最後|さいご} の {一|ひと}つ が 、 いつも {上手|うま}く いかない わけ だ 。 {俺|おれ} は ずっと 、 {三十個目|さんじゅっこめ} を {作|つく}って た ん だ な 。 || …That's her hand. No wonder the last one never came out right. I've been making the thirtieth all along.
+hiro[sad]: …… {母|はは} の {字|じ} だ 。 {最後|さいご} の {一|ひと}つ が 、 いつも {上手|うま}く いかない わけ だ 。 {俺|おれ} は ずっと 、 {三十個目|さんじゅっこめ} を {作|つく}ってた ん だ な 。 || …That's her hand. No wonder the last one never came out right. I've been making the thirtieth all along.
 !take co_globe
 !set co_hiro_globe
 :finish
@@ -27190,15 +27190,15 @@ suzu: その {子|こ} が ヒロ 。 {帳簿|ちょうぼ} に 、 {二十年|�
 !goto start
 
 @scene co.suzu_c_after
-suzu[smile]: {明日|あした} 、 {発|た}つ わ 。 {次|つぎ} の {町|まち} で 、 {次|つぎ} の {舞台|ぶたい} 。 …… {来年|らいねん} の {秋|あき} は 、 {予定|よてい} が {入|はい}って る の 。 {隣|となり} の {席|せき} に ね 。 || I'm off tomorrow. Next town, next stage. …Next autumn I'm booked, though. The seat next door.
+suzu[smile]: {明日|あした} 、 {発|た}つ わ 。 {次|つぎ} の {町|まち} で 、 {次|つぎ} の {舞台|ぶたい} 。 …… {来年|らいねん} の {秋|あき} は 、 {予定|よてい} が {入|はい}ってる の 。 {隣|となり} の {席|せき} に ね 。 || I'm off tomorrow. Next town, next stage. …Next autumn I'm booked, though. The seat next door.
 suzu: {帳簿|ちょうぼ} の {最後|さいご} の {頁|ページ} 、 {見|み}る ？ 「 {一部|いちぶ} {返済|へんさい} 」 。 {線|せん} を {引|ひ}かない {借|か}り が ある なんて 、 {知|し}らなかった 。 || Want to see the last page of my book? "Paid in part." I never knew there were debts you don't cross out.
 ?(comp=nao) suzu: ナオ 。 あなた の {鞄|かばん} の {底|そこ} の {手紙|てがみ} 、 {重|おも}そう ね 。 …… {私|わたし} が {言|い}える {立場|たちば} じゃ ない けど 。 || Nao. The letter at the bottom of your bag looks heavy. …Not that I'm one to talk.
-?(comp=nao) comp: …… {余計|よけい} な お{世話|せわ} だ 。 {分|わ}かって る よ 。 || …Mind your own business. I know.
+?(comp=nao) comp: …… {余計|よけい} な お{世話|せわ} だ 。 {分|わ}かってる よ 。 || …Mind your own business. I know.
 
 @scene co.suzu_c_post
-suzu[laugh]: あら 、 $name ！ {今年|ことし} も {返済|へんさい} に {来|き}た の 。 {残|のこ}り 、 {十八回|じゅうはっかい} 。 {利子|りし} は {柿|かき} で {払|はら}って る わ 。 || Oh, $name! Here to make this year's payment. Eighteen to go. I'm paying the interest in persimmons.
-?(end_kasane_trial) suzu: {灯落|ひおち} で 、 {番人|ばんにん} さん が {皆|みな} の {前|まえ} に {立|た}った ん です って ね 。 {観客|かんきゃく} の {前|まえ} に {立|た}つ の は 、 {怖|こわ}い の よ 。 {私|わたし} は {知|し}って る 。 || I heard the keeper stood before everyone in Lanternfall. Standing in front of an audience is frightening. I'd know.
-?(end_kasane_keeper) suzu: {番人|ばんにん} さん は 、 {山|やま} で {書庫|しょこ} を {守|まも}って る の よ ね 。 {誰|だれ} か が {見|み}て いて くれる の は 、 {悪|わる}く ない こと よ 。 {観客|かんきゃく} が いれば 、 {人|ひと} は {逃|に}げない から 。 || The keeper's minding the archive in the mountains, isn't it. Having someone watch you isn't a bad thing. With an audience, people don't run.
+suzu[laugh]: あら 、 $name ！ {今年|ことし} も {返済|へんさい} に {来|き}た の 。 {残|のこ}り 、 {十八回|じゅうはっかい} 。 {利子|りし} は {柿|かき} で {払|はら}ってる わ 。 || Oh, $name! Here to make this year's payment. Eighteen to go. I'm paying the interest in persimmons.
+?(end_kasane_trial) suzu: {灯落|ひおち} で 、 {番人|ばんにん} さん が {皆|みな} の {前|まえ} に {立|た}った ん です って ね 。 {観客|かんきゃく} の {前|まえ} に {立|た}つ の は 、 {怖|こわ}い の よ 。 {私|わたし} は {知|し}ってる 。 || I heard the keeper stood before everyone in Lanternfall. Standing in front of an audience is frightening. I'd know.
+?(end_kasane_keeper) suzu: {番人|ばんにん} さん は 、 {山|やま} で {書庫|しょこ} を {守|まも}ってる の よ ね 。 {誰|だれ} か が {見|み}て いて くれる の は 、 {悪|わる}く ない こと よ 。 {観客|かんきゃく} が いれば 、 {人|ひと} は {逃|に}げない から 。 || The keeper's minding the archive in the mountains, isn't it. Having someone watch you isn't a bad thing. With an audience, people don't run.
 
 @scene co.fest_suzu_c
 suzu[smile]: {次|つぎ} が {私|わたし} の {番|ばん} な の 。 {二十年前|にじゅうねんまえ} に {踊|おど}る はず だった {演目|えんもく} 。 {台詞|せりふ} は {三|みっ}つ だけ 。 {全部|ぜんぶ} 、 {本当|ほんとう} の こと よ 。 || I'm on next. The piece I was meant to dance twenty years ago. Only three lines. All of them true.
@@ -27220,7 +27220,7 @@ co_tokiwa: {本年|ほんねん} 、 と {書|か}きます 。 {同年|どう�
 ?(co_asm_ume) co_tokiwa: ウメ さん に {話|はな}して もらって よかった 。 {覚|おぼ}えて いた {人|ひと} の {言葉|ことば} は 、 {私|わたし} の {字|じ} より {重|おも}い 。 || I'm glad Ume spoke. The words of someone who kept remembering weigh more than anything in my hand.
 
 @scene co.fest_ume
-co_ume: {若|わか}い {頃|ころ} の {祭|まつ}り の {歌|うた} を 、 {思|おも}い{出|だ}した よ 。 {二番|にばん} が ある ん だ 。 {誰|だれ} も {歌|うた}わなく なって た 、 {二番|にばん} が ね 。 || I remembered the festival song from when I was young. There's a second verse. A verse nobody had been singing.
+co_ume: {若|わか}い {頃|ころ} の {祭|まつ}り の {歌|うた} を 、 {思|おも}い{出|だ}した よ 。 {二番|にばん} が ある ん だ 。 {誰|だれ} も {歌|うた}わなく なってた 、 {二番|にばん} が ね 。 || I remembered the festival song from when I was young. There's a second verse. A verse nobody had been singing.
 co_ume[smile]: {火|ひ} を {送|おく}る {歌|うた} さ 。 {来|き}た {火|ひ} に 、 {帰|かえ}り{道|みち} を {教|おし}える {歌|うた} 。 || It's a song for seeing the fire off. It shows the fire that came the way home.
 
 @scene co.fest_goro
@@ -27228,40 +27228,40 @@ co_goro: {祭|まつ}り の {終|お}わり に 、 {鐘|かね} を {一度|�
 ?(co_bell_done) co_goro: {綱|つな} を {探|さが}して くれた の は 、 あんた だ 。 {鳴|な}らす {時|とき} 、 {少|すこ}し {思|おも}い{出|だ}す と しよう 。 || You're the one who found me the rope. When I ring it, I'll think of you a little.
 
 @scene co.fest_sayo
-co_sayo[laugh]: {見|み}て ！ {席|せき} が {全部|ぜんぶ} {埋|う}まって る の 。 {空|あ}いて いる の は 、 {名前|なまえ} の ある {五|いつ}つ だけ 。 {空|あ}いて いて も 、 {今年|ことし} は {誰|だれ} か が いる 。 || Look! Every seat is filled. The only empty ones are the five with names. Empty, but this year there's someone in them.
-?(co_count_done) co_sayo: {甘|あま}い もの は 、 ノブ さん の {小皿|こざら} で {配|くば}って る わ 。 {三十枚|さんじゅうまい} 、 ぴったり ！ || The sweets are going round on Nobu's small plates. Thirty exactly!
+co_sayo[laugh]: {見|み}て ！ {席|せき} が {全部|ぜんぶ} {埋|う}まってる の 。 {空|あ}いて いる の は 、 {名前|なまえ} の ある {五|いつ}つ だけ 。 {空|あ}いて いて も 、 {今年|ことし} は {誰|だれ} か が いる 。 || Look! Every seat is filled. The only empty ones are the five with names. Empty, but this year there's someone in them.
+?(co_count_done) co_sayo: {甘|あま}い もの は 、 ノブ さん の {小皿|こざら} で {配|くば}ってる わ 。 {三十枚|さんじゅうまい} 、 ぴったり ！ || The sweets are going round on Nobu's small plates. Thirty exactly!
 
 @scene co.fest_kotaro
 co_kotaro: {甘酒|あまざけ} 、 {今年|ことし} は {二杯|にはい} {飲|の}んで いい って ！ {特別|とくべつ} な {年|とし} だ から だって 。 {何|なに} が {特別|とくべつ} か 、 {誰|だれ} も {教|おし}えて くれない けど 。 || I'm allowed two cups of amazake this year! Because it's a special year, they said. Nobody'll tell me what's special.
-co_kotaro: …… {嘘|うそ} 。 {知|し}って る 。 {父|とう}ちゃん が {泣|な}き ながら {教|おし}えて くれた 。 || …That's a lie. I know. Dad told me, crying.
+co_kotaro: …… {嘘|うそ} 。 {知|し}ってる 。 {父|とう}ちゃん が {泣|な}き ながら {教|おし}えて くれた 。 || …That's a lie. I know. Dad told me, crying.
 
 @scene co.fest_isao
 co_isao: {火屋|ほや} {三十個|さんじゅっこ} 。 {今年|ことし} は {全部|ぜんぶ} ヒロ が {吹|ふ}いた 。 {最後|さいご} の {一|ひと}つ も 、 {上手|うま}く いった そう だ 。 || Thirty globes. Hiro blew every one this year. Even the last one came out right, he says.
 co_isao: …… {右手|みぎて} が {痛|いた}む 。 {悪|わる}い {痛|いた}み じゃ ねえ 。 {何|なに} を {掴|つか}んだ か 、 {分|わ}かった から な 。 || …My right hand aches. It's not a bad ache. Now I know what I was holding on to.
 
 @scene co.fest_hiro
-hiro: {席|せき} に {名前|なまえ} を {書|か}いた ら 、 {不思議|ふしぎ} と {肩|かた} が {軽|かる}く なった 。 {二十年|にじゅうねん} 、 {何|なに} か を {担|かつ}いで いた らしい 。 || When I wrote her name on the seat, my shoulders felt oddly light. I must have been carrying something for twenty years.
-?(comp=suzu) hiro: …… {隣|となり} 、 {空|あ}いて る ぞ 。 {返済|へんさい} の {日|ひ} だ 。 || …The seat next to it is free. Payment's due.
-?(comp=suzu) comp[smile]: {分|わ}かって る わ よ 。 {帳簿|ちょうぼ} {通|どお}り に ね 。 || I know, I know. By the book.
-?(comp!=suzu) hiro: スズ の {芝居|しばい} 、 {見|み}る か 。 {次|つぎ} だ そう だ 。 …… {俺|おれ} は {一番|いちばん} {前|まえ} で {見|み}る 。 {待|ま}た された {分|ぶん} な 。 || Watching Suzu's piece? She's on next. …I'm watching from the front row. I've waited long enough.
+hiro: {席|せき} に {名前|なまえ} を {書|か}いたら 、 {不思議|ふしぎ} と {肩|かた} が {軽|かる}く なった 。 {二十年|にじゅうねん} 、 {何|なに} か を {担|かつ}いで いた らしい 。 || When I wrote her name on the seat, my shoulders felt oddly light. I must have been carrying something for twenty years.
+?(comp=suzu) hiro: …… {隣|となり} 、 {空|あ}いてる ぞ 。 {返済|へんさい} の {日|ひ} だ 。 || …The seat next to it is free. Payment's due.
+?(comp=suzu) comp[smile]: {分|わ}かってる わ よ 。 {帳簿|ちょうぼ} {通|どお}り に ね 。 || I know, I know. By the book.
+?(comp!=suzu) hiro: スズ の {芝居|しばい} 、 {見|み}る か 。 {次|つぎ} だ そう だ 。 …… {俺|おれ} は {一番|いちばん} {前|まえ} で {見|み}る 。 {待|ま}たされた {分|ぶん} な 。 || Watching Suzu's piece? She's on next. …I'm watching from the front row. I've waited long enough.
 
 @scene co.fest_nobu
 co_nobu: {飲|の}む か 。 {甘酒|あまざけ} だ 。 とっくり に {入|い}れて ある 。 …… {三十本|さんじゅっぽん} も あれば 、 {使|つか}い{道|みち} は ある もん だ な 。 || Drink? Amazake. In a flask. …Turns out thirty flasks do find a use.
-?(co_count_done) co_nobu: {湯呑|ゆの}み 、 {使|つか}って る か 。 {灰|はい} の {釉|くすり} は 、 {使|つか}う ほど {色|いろ} が {深|ふか}く なる 。 || Using that cup? Ash glaze deepens the more you use it.
+?(co_count_done) co_nobu: {湯呑|ゆの}み 、 {使|つか}ってる か 。 {灰|はい} の {釉|くすり} は 、 {使|つか}う ほど {色|いろ} が {深|ふか}く なる 。 || Using that cup? Ash glaze deepens the more you use it.
 
 @scene co.fest_fusa
-co_fusa[smile]: ヨシノ が {染|そ}めた {旗|はた} 、 {物置|ものおき} に {一枚|いちまい} だけ {残|のこ}って た の 。 {今夜|こんや} は 、 {舞台|ぶたい} の {真|ま}ん{中|なか} に {下|さ}げた わ 。 || One of the banners Yoshino dyed was still in the storeroom. Tonight I hung it in the middle of the stage.
+co_fusa[smile]: ヨシノ が {染|そ}めた {旗|はた} 、 {物置|ものおき} に {一枚|いちまい} だけ {残|のこ}ってた の 。 {今夜|こんや} は 、 {舞台|ぶたい} の {真|ま}ん{中|なか} に {下|さ}げた わ 。 || One of the banners Yoshino dyed was still in the storeroom. Tonight I hung it in the middle of the stage.
 ?(co_orders_done) co_fusa: {甘酒|あまざけ} の {注文|ちゅうもん} 、 {今夜|こんや} も {手伝|てつだ}って くれる ？ …… {冗談|じょうだん} よ 。 {今夜|こんや} は {飲|の}む {側|がわ} で いて 。 || Help with the amazake orders again tonight? …I'm joking. Tonight, be on the drinking side.
 
 @scene co.fest_shino
 co_shino: {今夜|こんや} は {手紙|てがみ} を {書|か}く {人|ひと} が {多|おお}い ん です 。 {宛先|あてさき} の ない {手紙|てがみ} を 。 {五|いつ}つ の {棚|たな} に 、 もう {入|はい}りきらない くらい 。 || A lot of people are writing letters tonight. Letters with no destination. The five slots are already overflowing.
 
 @scene co.fest_tamotsu
-co_tamotsu: {灯籠|とうろう} の {夜|よる} は 、 {水路|すいろ} の {横|よこ} で {見張|みは}る 。 {親父|おやじ} も そう して た 。 {今|いま} は {理由|りゆう} を {知|し}って る 。 {理由|りゆう} を {知|し}って {立|た}つ {見張|みは}り は 、 {眠|ねむ}く ならん 。 || On lantern night I keep watch by the channel. My father did the same. Now I know why. A watch you stand knowing why doesn't make you sleepy.
+co_tamotsu: {灯籠|とうろう} の {夜|よる} は 、 {水路|すいろ} の {横|よこ} で {見張|みは}る 。 {親父|おやじ} も そう してた 。 {今|いま} は {理由|りゆう} を {知|し}ってる 。 {理由|りゆう} を {知|し}って {立|た}つ {見張|みは}り は 、 {眠|ねむ}く ならん 。 || On lantern night I keep watch by the channel. My father did the same. Now I know why. A watch you stand knowing why doesn't make you sleepy.
 
 @scene co.fest_asa
 co_asa: {上|うえ} の {段|だん} の {柿|かき} 、 {初|はじ}めて {採|と}った の 。 {渋|しぶ}かった ！ {干|ほ}せば {甘|あま}く なる って 、 ウメ ばあちゃん が 。 || I picked persimmons from the upper terraces for the first time. So astringent! Grandma Ume says they'll sweeten once they're dried.
-?(co_signs_done) co_asa: {道|みち}しるべ の {火除|ひよ}け{道|みち} の {腕|うで} 、 {今朝|けさ} {皆|みな} が {見上|みあ}げて {歩|ある}いて た よ 。 || This morning everyone was looking up at the "firebreak path" arm as they walked.
+?(co_signs_done) co_asa: {道|みち}しるべ の {火除|ひよ}け{道|みち} の {腕|うで} 、 {今朝|けさ} {皆|みな} が {見上|みあ}げて {歩|ある}いてた よ 。 || This morning everyone was looking up at the "firebreak path" arm as they walked.
 
 @scene co.fest_heita
 co_heita: {今日|きょう} は {朝|あさ} から {草|くさ} を {刈|か}って 、 {夜|よる} は {祭|まつ}り っす 。 {人生|じんせい} で {一番|いちばん} {働|はたら}いた {日|ひ} っす よ 。 {昼寝|ひるね} も して ない 。 …… ちょっと だけ しか 。 || Cutting grass since dawn, festival by night. Hardest-working day of my life. Didn't even nap. …Well, only a little.
@@ -27294,12 +27294,12 @@ comp[closed]: …… {鞄|かばん} の {一番|いちばん} {底|そこ} だ 
 
 @scene co.b_nao3
 comp: {窯|かま} の {中|なか} で {一番|いちばん} {嫌|いや} な の は 、 {出口|でぐち} が {入|い}り{口|ぐち} と {同|おな}じ だって こと だ 。 || The worst thing about a kiln is that the exit is the entrance.
-comp[smirk]: {戻|もど}る {時|とき} は {走|はし}る ぞ 。 {文句|もんく} は {聞|き}かない 。 …… {走|はし}る な 、 って {言|い}われた こと も あった けど な 。 {昔|むかし} 。 || We run on the way back. No complaints. …Someone once told me not to run. Long time ago.
-comp: {上|うえ} で {何|なに} か が {熱|ねつ} を {溜|た}めて る 。 {水|みず} か {氷|こおり} 。 {札|ふだ} を {二枚|にまい} {持|も}って る の は 、 {心強|こころづよ}い な 。 || Something up there is building heat. Water or ice. Good to have two cards to play.
+comp[smirk]: {戻|もど}る {時|とき} は {走|はし}る ぞ 。 {文句|もんく} は {聞|き}かない 。 …… {走|はし}る な 、 って {言|い}われた こと も あった けど な 。 {昔|むかし} は あった か な|むかし} 。 || We run on the way back. No complaints. …Someone once told me not to run. Long time ago.
+comp: {上|うえ} で {何|なに} か が {熱|ねつ} を {溜|た}めてる 。 {水|みず} か {氷|こおり} 。 {札|ふだ} を {二枚|にまい} {持|も}ってる の は 、 {心強|こころづよ}い な 。 || Something up there is building heat. Water or ice. Good to have two cards to play.
 
 @scene co.b_nao4
-comp: {鐘|かね} の {話|はなし} 、 {聞|き}いた か 。 {皆|みな} 、 {鐘|かね} が {鳴|な}った ら {水路|すいろ} へ {走|はし}った って 。 {頭|あたま} が {忘|わす}れて も 、 {足|あし} が {道|みち} を {覚|おぼ}えて た 。 || Heard about the bell? Everyone ran to the channel when it rang. Their heads forgot; their feet remembered the way.
-comp: {配達|はいたつ} も そう だ 。 {宛名|あてな} が {消|き}えて も 、 {足|あし} が {家|いえ} を {覚|おぼ}えて る こと が ある 。 || Deliveries are like that. Even when the address fades, your feet sometimes remember the house.
+comp: {鐘|かね} の {話|はなし} 、 {聞|き}いた か 。 {皆|みな} 、 {鐘|かね} が {鳴|な}ったら {水路|すいろ} へ {走|はし}った って 。 {頭|あたま} が {忘|わす}れて も 、 {足|あし} が {道|みち} を {覚|おぼ}えてた 。 || Heard about the bell? Everyone ran to the channel when it rang. Their heads forgot; their feet remembered the way.
+comp: {配達|はいたつ} も そう だ 。 {宛名|あてな} が {消|き}えて も 、 {足|あし} が {家|いえ} を {覚|おぼ}えてる こと が ある 。 || Deliveries are like that. Even when the address fades, your feet sometimes remember the house.
 comp: …… {今夜|こんや} の {集|あつ}まり 、 {重|おも}い {荷物|にもつ} に なる な 。 {一緒|いっしょ} に {運|はこ}ぼう 。 || …Tonight's gathering is going to be a heavy parcel. Let's carry it together.
 
 @scene co.b_nao5
@@ -27365,12 +27365,12 @@ comp[smile]: {借|か}り を {書|か}いて おく と 、 {自分|じぶん} 
 
 @scene co.b_suzu3
 comp[laugh]: {熱|あつ}い ！ {化粧|けしょう} が {流|なが}れる ！ …… して ない けど 。 {気分|きぶん} の {問題|もんだい} よ 。 || Hot! My make-up's running! …I'm not wearing any. It's the principle.
-comp[closed]: …… あの {夜|よる} 、 {下|した} から {見|み}て た の 。 {上|うえ} が {赤|あか}く {光|ひか}って 、 {鐘|かね} が {鳴|な}り{止|や}まなくて 。 {誰|だれ} か が 、 {火|ひ} の {方|ほう} へ {上|のぼ}って いく の が {見|み}えた 。 || …That night I watched from below. The hill glowing red, the bell that wouldn't stop. And someone climbing up towards the fire.
+comp[closed]: …… あの {夜|よる} 、 {下|した} から {見|み}てた の 。 {上|うえ} が {赤|あか}く {光|ひか}って 、 {鐘|かね} が {鳴|な}り{止|や}まなくて 。 {誰|だれ} か が 、 {火|ひ} の {方|ほう} へ {上|のぼ}って いく の が {見|み}えた 。 || …That night I watched from below. The hill glowing red, the bell that wouldn't stop. And someone climbing up towards the fire.
 comp: {今|いま} {思|おも}えば 、 あれ が トモエ さん だった の ね 。 || Now I think about it, that must have been Tomoe.
 
 @scene co.b_suzu4
 !if co_suzu_done -> paid
-comp: …… {手|て} が {震|ふる}えて る の 。 {初日|しょにち} の {幕|まく} が {上|あ}がる {前|まえ} より 、 ずっと 。 || …My hands are shaking. Much worse than before any opening night.
+comp: …… {手|て} が {震|ふる}えてる の 。 {初日|しょにち} の {幕|まく} が {上|あ}がる {前|まえ} より 、 ずっと 。 || …My hands are shaking. Much worse than before any opening night.
 comp[smile]: でも 、 {逃|に}げない わ 。 {観客|かんきゃく} が いる もの 。 || But I won't run. I've got an audience.
 !end
 :paid
@@ -28277,6 +28277,36 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }
     px(c, x + 3, y - 24, 26, 2, '#2a2430');
   });
+  // The observatory building (7×5): stone drum, dome with a slit, the lamp's
+  // window. Blocking comes from the map's wall tiles; this only draws.
+  def('sb_observatory', { w: 7, h: 5, block: false, light: 0 }, (c, x, y, p, t, o) => {
+    const W = 112;
+    c.fillStyle = 'rgba(0,0,0,0.25)'; c.fillRect(x + 4, y + 78, W - 4, 4);
+    px(c, x + 6, y + 32, W - 12, 48, p.stone[0]);
+    for (let r = 0; r < 4; r++) for (let k = 0; k < 7; k++) px(c, x + 8 + k * 14 + (r % 2) * 7, y + 36 + r * 11, 12, 1, p.stone[2]);
+    px(c, x + 6, y + 32, 4, 48, p.stone[1]); px(c, x + W - 10, y + 32, 4, 48, p.stone[2]);
+    px(c, x + 2, y + 28, W - 4, 5, p.stone[2]);
+    // dome
+    c.fillStyle = o.lit ? '#b8c4d0' : '#c8d6e2';
+    c.beginPath(); c.arc(x + 56, y + 30, 44, Math.PI, 0); c.fill();
+    c.fillStyle = '#ffffff'; c.beginPath(); c.arc(x + 56, y + 30, 44, Math.PI * 1.05, Math.PI * 1.45); c.lineTo(x + 56, y + 30); c.fill();
+    c.strokeStyle = '#8a98a8'; c.lineWidth = 1;
+    for (let i = 1; i < 4; i++) { c.beginPath(); c.arc(x + 56, y + 30, 44, Math.PI + i * 0.78, Math.PI + i * 0.78 + 0.01); c.lineTo(x + 56, y + 30); c.stroke(); }
+    // slit and lamp
+    px(c, x + 51, y - 12, 10, 40, '#1a2030');
+    if (o.lit) {
+      const f = o.still ? 0 : Math.sin(t / 160) * 1.5;
+      px(c, x + 52, y + 6, 8, 16, '#f8c060');
+      px(c, x + 54, y + 9 - f, 4, 8, '#fff4b0');
+    } else px(c, x + 52, y + 8, 8, 14, '#6a88a8');
+    // door and windows
+    px(c, x + 50, y + 62, 12, 18, '#2a1e18'); px(c, x + 51, y + 63, 10, 17, p.wood[0]); px(c, x + 58, y + 71, 1, 2, '#e0c060');
+    px(c, x + 48, y + 59, 16, 3, p.stone[2]);
+    for (const wx of [20, 82]) { px(c, x + wx, y + 44, 10, 14, '#2a2430'); px(c, x + wx + 1, y + 45, 8, 12, o.lit ? '#ffd27a' : '#6a88a8'); }
+    // snow on the ledge, icicles while frozen
+    px(c, x + 2, y + 26, W - 4, 3, '#ffffff');
+    if (!o.lit) for (let i = 0; i < 12; i++) px(c, x + 6 + i * 9, y + 33, 2, 3 + ((i * 5) % 6), '#e8f4fc');
+  });
   // Futon laid on tatami (1×2).
   def('sb_futon', { w: 1, h: 2 }, (c, x, y, p, t, o) => {
     px(c, x + 1, y + 1, 14, 30, '#e8e0d0');
@@ -28292,7 +28322,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       c.fillStyle = p.wood[1]; c.beginPath(); c.arc(ox + 2, oy + 2, 2.6, 0, 7); c.fill();
       c.fillStyle = p.wood[3]; c.fillRect(ox + 1, oy + 1, 2, 2);
     }
-    px(c, x + 1, y - 7, 30, 2, '#ffffff');
+    if (!o.indoor) px(c, x + 1, y - 7, 30, 2, '#ffffff');
   });
   // Snow sculptures for the children's contest.
   def('sb_snowgoat', { w: 1, h: 1 }, (c, x, y, p, t, o) => {
@@ -28680,7 +28710,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'stairs', x: 1, y: 2 },
       { p: 'table', x: 2, y: 8 }, { p: 'chair', x: 1, y: 8 }, { p: 'chair', x: 4, y: 8 },
       { p: 'smalltable', x: 13, y: 8, scene: 'sb.inn_table' }, { p: 'chair', x: 14, y: 8 },
-      { p: 'sb_woodpile', x: 1, y: 5 },
+      { p: 'sb_woodpile', x: 1, y: 5, o: { indoor: true } },
       { p: 'noticeboard', x: 10, y: 2, scene: 'sb.inn_menu' },
       { p: 'lantern', x: 4, y: 2 },
     ],
@@ -28836,12 +28866,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.path([[5, 6], [5, 6], [20, 6]], ':', 1);
       k.rect(12, 24, 2, 2, 'i');
       k.rect(14, 39, 2, 1, ':');
+      k.rect(10, 1, 7, 5, '#');
+      k.set(13, 5, ':');
     }),
+    legend: { '#': { tile: 'snow' } },
     structs: [
-      { type: 'tower', x: 10, y: 1, w: 7, h: 5, door: 3, to: 'sb.obs_hall', spawn: [10, 14] },
       { type: 'house', x: 19, y: 2, w: 3, h: 3, roof: 'snow', wall: 'stone', door: 1 },
     ],
     props: [
+      { p: 'sb_observatory', x: 10, y: 1, if: '!sb_lamp_lit' },
+      { p: 'sb_observatory', x: 10, y: 1, o: { lit: true }, if: 'sb_lamp_lit' },
       { p: 'deadlantern', x: 7, y: 33, scene: 'sb.path_lantern', if: '!sb_lamp_lit' },
       { p: 'lantern', x: 7, y: 33, if: 'sb_lamp_lit' },
       { p: 'bench', x: 9, y: 36, scene: 'sb.path_bench' },
@@ -28860,6 +28894,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     npcs: [],
     exits: [
       { x: 14, y: 39, w: 2, h: 1, to: 'sb.hamlet', tx: 30, ty: 2, dir: 'down' },
+      { x: 13, y: 5, to: 'sb.obs_hall', tx: 10, ty: 14, dir: 'up' },
       { x: 20, y: 4, to: 'sb.obs_gallery', tx: 17, ty: 11, dir: 'up', locked: 'sb.service_door_out', unlock: 'sb_shortcut' },
     ],
     onEnter: [{ scene: 'sb.path_enter', if: '!sb_path_seen' }],
@@ -32824,7 +32859,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     terrain: K.build(22, 18, '#', (k) => {
       k.rect(1, 2, 20, 15, '+');
       k.set(10, 1, '+');
-      k.rect(1, 10, 20, 6, 'w');
+      k.rect(1, 10, 20, 6, '+');
+      k.scatter('w', 16, 91, [1, 10, 20, 6], '+');
+      k.rect(9, 14, 4, 2, 'w');
       k.rect(10, 16, 2, 1, 'w');
       k.set(10, 17, 'w');
     }),
@@ -38000,6 +38037,247 @@ kasane: {逃|に}げる ため では なく 、 ここ で しか できない 
 kasane[smile]: {行|い}って らっしゃい 。 …… {変|へん} です ね 。 この {言葉|ことば} を {言|い}う の は 、 {三十年|さんじゅうねん} ぶり です 。 || Off you go, then. …How strange. It's thirty years since I last said that.
 kasane: {次|つぎ} に {来|く}る {時|とき} は 、 {反対|はんたい} を {持|も}って {来|き}て ください 。 {箱|はこ} は 、 まだ {空|あ}いて います 。 || When you come next, bring an objection. There's still room in the boxes.
 `, 'ch6/scenes-climax');
+
+
+/* ==== src/content/ch6/53_scenes_ending.js ==== */
+/* Chapter 6 ending: the descent, the denouement walk through the changed
+ * towns, the companion-specific endings, credits, and the hand-over to the
+ * Unwritten Atlas in Reedwake's Lantern Hall. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.script.add(`
+@scene sa.camp_descent
+narr: {小屋|こや} の {前|まえ} で 、 オヨネ が {待|ま}って いた 。 || Oyone is waiting outside the hut.
+sa_oyone: {音|おと} が {戻|もど}って きた ね 。 {朝|あさ} から {鳥|とり} が うるさくて 、 {眠|ねむ}れ や しない 。 || The sound's come back. The birds have been at it since dawn; a body can't sleep.
+?(end_kasane_trial) sa_oyone: …… {痩|や}せた ね 、 カサネ 。 {三十年|さんじゅうねん} {前|まえ} も {痩|や}せて た けど 。 || …You've got thin, Kasane. You were thin thirty years ago, too.
+?(end_kasane_trial) kasane[shy]: オヨネさん 。 …… お{茶|ちゃ} を 、 {一杯|いっぱい} だけ 。 || Oyone. …Just one cup of tea, please.
+?(end_kasane_trial) sa_oyone[smile]: {一杯|いっぱい} で {済|す}む もん かい 。 {下|くだ}る {人|ひと} は 、 お{茶|ちゃ} を {飲|の}んで から 。 {決|き}まり だ よ 。 || One cup, she says. Those coming down have tea first. That's the rule.
+?(end_kasane_keeper) sa_oyone: カサネ は {上|うえ} に {残|のこ}る の かい 。 なら 、 {時々|ときどき} {飯|めし} を {担|かつ}いで {上|あ}がる よ 。 {荷|に} を {担|かつ}ぐ の は 、 {慣|な}れた もん さ 。 || Kasane's staying up there? Then I'll carry some food up now and then. Hauling loads up that slope is nothing new to me.
+?(end_archive_library) sa_oyone: {図書館|としょかん} に なる なら 、 この {小屋|こや} も {忙|いそが}しく なる ね 。 {読|よ}み に {登|のぼ}る {人|ひと} の {宿|やど} だ 。 {泣|な}き ながら {登|のぼ}る {人|ひと} より 、 よっぽど いい 。 || If it's to be a library, this hut'll be busy. An inn for people climbing up to read. Much better than people climbing up in tears.
+?(end_archive_closed) sa_oyone: {閉|と}じた の かい 。 …… それ で いい 。 {灯|ひ} は 、 {毎朝|まいあさ} {書|か}き{直|なお}す よ 。 {誰|だれ}か が {道|みち} に {迷|まよ}わない よう に 。 || Closed, is it. …That's all right. I'll still rewrite the lamp every morning. So nobody loses their way.
+!if !seen.sa.isamu_first -> after_isamu
+?(quest.sa_isamu=done) sa_isamu[smile]: {聞|き}こえる か ？ …… いや 、 {聞|き}こえる の は {俺|おれ} だけ か 。 {頭|あたま} の {中|なか} で 、 {朝|あさ} から ずっと {笑|わら}って やがる 。 || Can you hear it? …No, only I can. She's been laughing in my head all morning.
+?(!quest.sa_isamu=done) sa_isamu: {夜中|よなか} に 、 {急|きゅう} に {思|おも}い{出|だ}した 。 あいつ の {笑|わら}い{声|ごえ} 。 {上|うえ} の {誰|だれ}か が 、 やっと {手紙|てがみ} を {読|よ}んで くれた らしい 。 || In the middle of the night it came back to me — her laugh. Seems somebody up there finally read my letter.
+?(!quest.sa_isamu=done) sa_isamu[smile]: {飛|と}び{起|お}きて 、 {泣|な}いて 、 それから …… {笑|わら}っちまった 。 {沸|わ}く {前|まえ} の やかん みたい に 。 || I sat bolt upright, cried, and then… I laughed. Like a kettle just before it boils.
+sa_isamu: {今日|きょう} 、 {下|くだ}る よ 。 {潮硝子|しおがらす} で 、 {網|あみ} が {待|ま}って る 。 || I'm going down today. The nets are waiting in Saltglass.
+!if quest.sa_isamu=active -> finish_isamu
+!goto after_isamu
+:finish_isamu
+!quest sa_isamu done
+:after_isamu
+?(comp=nao) nao: {往復|おうふく} {完了|かんりょう} だ 。 {宿帳|やどちょう} の {下|くだ}り の {欄|らん} 、 {埋|う}めて いこう 。 || Round trip complete. Let's fill in the column for coming down.
+?(comp=mio) mio: オヨネ さん 、 {腰|こし} に {効|き}く {膏薬|こうやく} 、 {置|お}いて いきます 。 {担|かつ}ぐ の は 、 ほどほど に 。 …… {言|い}って も {聞|き}かない でしょう けど 。 || Oyone, I'll leave you a plaster for your back. Go easy on the hauling. …Not that you'll listen.
+?(comp=ren) ren: {最後|さいご} の {灯|ひ} 、 {今日|きょう} は わたし に {書|か}かせて ください 。 {師匠|ししょう} の {払|はら}い で 。 || Let me write the last lamp's name today. With my teacher's sweep.
+?(comp=suzu) suzu: {宿代|やどだい} 、 {払|はら}って いく ね 。 …… {倍|ばい} で 。 {誰|だれ}か の {真似|まね} だ よ 。 || I'll settle the bill. …Double. I'm copying someone.
+narr: {宿帳|やどちょう} の {下|くだ}り の {欄|らん} に 、 {今日|きょう} の {日付|ひづけ} が {入|はい}った 。 || Today's date goes into the register's column for coming down.
+!if seen.sa.hut_register -> signed
+!end
+:signed
+narr: ウシオ の {名前|なまえ} の {横|よこ} に も 、 オヨネ が {何|なに}か {書|か}き{足|た}して いる 。 「 {下|くだ}らず 。 {上|うえ} で 、 {最後|さいご} まで {反対|はんたい} 。 」 || Beside Ushio's name, Oyone has added something too: "Did not come down. Stayed up there, disagreeing to the end."
+
+@scene sa.oyone_descent
+sa_oyone: {下|くだ}る の かい 。 お{茶|ちゃ} は {飲|の}んだ ね 。 よし 。 {気|き} を つけて {行|い}き な 。 || Heading down? You've had your tea? Good. Mind how you go.
+!call sa.oyone_inn
+
+@scene sa.kasane_walk
+kasane: {灯落|ひおち} まで 、 {自分|じぶん} の {足|あし} で {歩|ある}きます 。 {三十年|さんじゅうねん} ぶり の {坂|さか} です 。 …… {膝|ひざ} が {笑|わら}って います 。 || I'll walk to Lanternfall on my own feet. The first time down this slope in thirty years. …My knees are shaking.
+?(comp=mio) mio: {膝|ひざ} が {笑|わら}える なら 、 {大丈夫|だいじょうぶ} 。 {本人|ほんにん} も 、 {少|すこ}し は {笑|わら}って ください 。 || If your knees can laugh, you'll be fine. You could try laughing a little yourself.
+
+@scene sa.epilogue
+!set sa_epilogue
+!music ending
+narr: {坂|さか} を {下|くだ}りきる と 、 {灯落|ひおち} の {鐘|かね} が {鳴|な}って いた 。 {朝|あさ} を {知|し}らせる 、 ただ の {鐘|かね} だ 。 || At the foot of the slope, Lanternfall's bell is ringing. Just the ordinary bell that marks the morning.
+!hook sa_goto lanternfall
+!call sa.epi_lf
+!hook sa_goto snowbell
+!call sa.epi_sb
+!hook sa_goto cinder
+!call sa.epi_co
+!hook sa_goto saltglass
+!call sa.epi_sg
+!hook sa_goto reedwake
+!call sa.epi_rw
+!call sa.end_comp
+!music credits
+!credits
+!postgame
+!set post ch6_done sa_done
+!quest sa_main done
+!warp rw.hall 5 5 up
+!music reedwake_night
+!autosave
+narr: {灯|あか}り{堂|どう} の {灯|ひ} は 、 {静|しず}か に {燃|も}えて いる 。 {名前|なまえ} は 、 {全部|ぜんぶ} {読|よ}める 。 || The lamps in the Lantern Hall burn quietly. Every name can be read.
+!journal ツル が {灯|あか}り{堂|どう} で {待|ま}って いる 。 「 {書|か}かれて いない {地図|ちず} 」 の こと を {聞|き}いて みよう 。 || Tsuru is waiting in the Lantern Hall. Ask her about the Unwritten Atlas.
+!toast {物語|ものがたり} は {終|お}わった 。 {道|みち} は 、 まだ {続|つづ}く 。 || The story is over. The roads go on — and every town is yours to revisit.
+!hook sa_after rw.atlas_intro
+
+@scene sa.epi_lf
+narr: {灯落|ひおち} の {大通|おおどお}り は 、 うるさかった 。 || Lanternfall's main avenue is noisy.
+narr: {魚|さかな} の {値段|ねだん} で {揉|も}める {声|こえ} 。 「 いや 、 それ は {違|ちが}う 」 と {言|い}う {声|こえ} 。 {誰|だれ} も が 、 {少|すこ}し {嬉|うれ}し そう に {反対|はんたい} して いる 。 || Haggling over fish. Someone saying "No, that's wrong." Everyone is disagreeing, and looking a little pleased about it.
+?(end_mem_return) narr: {昨夜|ゆうべ} は 、 {町|まち} じゅう で {泣|な}き{声|ごえ} が した と いう 。 {朝|あさ} に は 、 {誰|だれ} も が {目|め} を {赤|あか}く して 、 それ でも {店|みせ} を {開|あ}けて いた 。 || Last night, they say, there was weeping all over town. By morning everyone's eyes were red — and they opened their shops anyway.
+?(end_mem_choose) narr: {山|やま} へ の {坂|さか} を 、 {提灯|ちょうちん} を {持|も}った {人|ひと} が {何人|なんにん} も {登|のぼ}って いく 。 {途中|とちゅう} で {引|ひ}き{返|かえ}す {人|ひと} も いる 。 どちら も 、 {止|と}める {人|ひと} は いない 。 || Several people with lanterns are climbing the road to the mountain. Some turn back halfway. No one stops either kind.
+?(end_kasane_trial) narr: カサネ は {広場|ひろば} の {真|ま}ん{中|なか} で {足|あし} を {止|と}めた 。 {人|ひと} が 、 {少|すこ}し ずつ {集|あつ}まって くる 。 || Kasane stops in the middle of the square. People gather, a few at a time.
+?(end_kasane_trial) lf_yae: …… カサネ 。 {三十年|さんじゅうねん} の {遅刻|ちこく} です よ 。 || …Kasane. You're thirty years late.
+?(end_kasane_trial) kasane: はい 。 {申|もう}し{訳|わけ} ありません 。 || Yes. I'm sorry.
+?(end_kasane_trial) lf_yae: {謝|あやま}る の は 、 {議会|ぎかい} で どうぞ 。 {三日|みっか} は かかる でしょう ね 。 {誰|だれ} も {賛成|さんせい} しない から 。 …… {素晴|すば}らしい こと です 。 || You may apologise in council. It'll take three days, I expect, since nobody will agree with anybody. …Marvellous.
+?(end_kasane_keeper) lf_yae: カサネ は {山|やま} に {残|のこ}った の ね 。 {議会|ぎかい} は {大|おお}もめ でした よ 。 「 {甘|あま}い 」 「 それ で いい 」 「 {手紙|てがみ} を {書|か}け 」 。 {結局|けっきょく} 、 {全員|ぜんいん} {毎週|まいしゅう} {手紙|てがみ} を {書|か}く こと に なりました 。 || So Kasane stayed up the mountain. The council was in uproar. "Too soft!" "Quite right!" "Write to them!" In the end, everyone's to write every week.
+sa_tae: …… あんた が 、 {上|うえ} まで {行|い}った {旅|たび} の {人|ひと} かい 。 || …You're the traveller who went all the way up there, are you.
+sa_tae: {昨夜|ゆうべ} 、 {鐘|かね} の {音|おと} を {思|おも}い{出|だ}した よ 。 {三十年前|さんじゅうねんまえ} の 。 {返|かえ}して くれ って {頼|たの}んで 、 {五年|ごねん} {待|ま}った 。 || Last night I remembered the bell. From thirty years ago. I'd asked for it back, and waited five years.
+sa_tae: {誰|だれ} が {鳴|な}らした の か 、 {結局|けっきょく} {分|わ}からず じまい さ 。 || Never did find out who rang it.
+pc: {鳴|な}らした の は 、 トウヤ と いう {人|ひと} です 。 {使|つか}い の 。 {鍵|かぎ} を {持|も}って 、 {自分|じぶん} で {開|あ}けた 。 || The one who rang it was named Tōya. The messenger. He had the key, and he opened it himself.
+sa_tae[surprise]: …… そう かい 。 あの {子|こ} だった の かい 。 || …Was it. So it was that boy.
+?(end_kasane_trial) narr: カサネ は {何|なに} も {言|い}わなかった 。 ただ 、 {深|ふか}く {頭|あたま} を {下|さ}げた 。 タエ は 、 {長|なが}い こと それ を {見|み}て いた 。 || Kasane says nothing; only bows, very low. Tae watches for a long time.
+?(end_kasane_trial) sa_tae: {謝|あやま}って {済|す}む こと じゃ ない よ 。 …… でも 、 {聞|き}いた 。 {聞|き}いた から ね 。 || Sorry doesn't settle it. …But I've heard you. I've heard you.
+akari: $name さん ！ …… {父|ちち} と 、 {手紙|てがみ} が やり{取|と}り できる よう に なりました 。 {宛先|あてさき} が 、 ちゃんと {読|よ}める {字|じ} で {届|とど}く んです 。 || $name! …My father and I can write to each other now. The addresses arrive in writing anyone can read.
+?(sb_hoshino_goes) akari[smile]: {父|ちち} は 、 {今|いま} こっち に いる んです 。 {灯|あか}り を {人|ひと} に {頼|たの}んで 、 {山|やま} を {下|お}りて きて 。 {毎晩|まいばん} 、 {窓|まど} から {雪鈴|ゆきすず} の {方|ほう} を {見|み}て います 。 || My father's here now. He left the lamp in someone's care and came down the mountain. Every night he looks out of the window towards Snowbell.
+?(comp=nao) umi: …… {返事|へんじ} は 、 まだ {書|か}いて ない 。 {書|か}く か どう か も 、 {決|き}めて ない 。 || …I haven't written back. I haven't decided whether I will.
+?(comp=nao) umi: {決|き}めなくて いい って 、 あんた {言|い}った よ ね 。 || You said I didn't have to decide.
+?(comp=nao) nao: {言|い}った 。 {今|いま} も そう {思|おも}う 。 {手紙|てがみ} は {届|とど}いた 。 {配達人|はいたつにん} の {仕事|しごと} は 、 そこ まで だ 。 || I did. I still think so. The letter arrived. That's where a courier's job ends.
+?(comp=mio) lf_yae: ミオ さん 、 {町|まち} に {残|のこ}って {薬屋|くすりや} を {開|ひら}いて くれない かしら 。 {皆|みな} 、 {頼|たよ}り に して いる の よ 。 || Mio, won't you stay and open an apothecary here? Everyone's come to rely on you.
+?(comp=mio) mio: ごめんなさい 。 お{断|ことわ}り します 。 {葦|あし}ノ{瀬|せ} に 、 {店|みせ} が あります ので 。 || I'm sorry. I'll have to say no. I have a shop in Reedwake.
+?(comp=mio) mio[laugh]: …… {聞|き}いた ？ {今|いま} の 。 {断|ことわ}った 。 ちゃんと 、 {丁寧|ていねい} に 。 || …Did you hear that? I said no. Properly, and politely.
+?(comp=ren) ren: {灯落|ひおち} の {灯籠|とうろう} 、 {名前|なまえ} が {全部|ぜんぶ} {戻|もど}って います 。 …… {一本|いっぽん} だけ 、 {字|じ} が {下手|へた} です 。 {新|あたら}しい {字|じ} だ 。 {誰|だれ}か が 、 {練習|れんしゅう} して いる 。 || Every lantern in Lanternfall has its name back. …Just one has clumsy writing. New writing. Someone's practising.
+?(comp=suzu) suzu: {広場|ひろば} で {揉|も}めてる {声|こえ} 、 {最高|さいこう} の {音楽|おんがく} だ ね 。 {入場料|にゅうじょうりょう} を {取|と}りたい くらい 。 || The squabbling in the square — finest music there is. I could charge admission.
+
+@scene sa.epi_sb
+narr: {数日後|すうじつご} 、 {雪鈴|ゆきすず} 。 || A few days later: Snowbell.
+?(!sb_hoshino_goes) narr: {観測所|かんそくじょ} の {灯|あか}り が 、 {昼間|ひるま} なのに {点|つ}いて いる 。 || The observatory lamp is lit, though it's broad daylight.
+?(!sb_hoshino_goes) hoshino: {消|け}し{忘|わす}れ じゃ ない よ 。 {娘|むすめ} が 、 {春|はる} に {帰|かえ}る と {書|か}いて きた ん だ 。 || I didn't forget to put it out. My daughter's written that she's coming home in spring.
+?(!sb_hoshino_goes) hoshino[smile]: {春|はる} まで は {長|なが}い が な 。 {長|なが}い こと {待|ま}った ん だ 。 {少|すこ}し {早|はや}く {点|つ}けて も 、 {罰|ばち} は {当|あ}たる まい 。 || Spring's a long way off, mind. But I've waited a long time. Lighting it a little early won't bring bad luck.
+?(sb_hoshino_goes) narr: {観測所|かんそくじょ} の {灯|あか}り を 、 カンタ が ともして いる 。 ホシノ は {灯落|ひおち} へ {下|くだ}った 。 それ でも {灯|あか}り は 、 {一晩|ひとばん} も {欠|か}けて いない 。 || Kanta is lighting the observatory lamp. Hoshino has gone down to Lanternfall; even so, not a single night has been missed.
+?(sb_hoshino_goes) kanta: ホシノ さん から {手紙|てがみ} が {来|く}る んだ 。 「 {灯|あか}り は {点|つ}いて いる か 」 って 、 {毎回|まいかい} 。 {点|つ}いて る よ 。 {毎回|まいかい} そう {返事|へんじ} する 。 || Letters come from Hoshino. "Is the lamp lit?" every time. It is. That's what I write back, every time.
+narr: {星図|せいず} に は 、 まだ {書庫|しょこ} の {場所|ばしょ} が {書|か}いて ある 。 でも もう 、 {動|うご}かない {光|ひかり} は ない 。 {山|やま} の {上|うえ} の {灯|ひ} は 、 {朝|あさ} に なる と ちゃんと {消|き}える 。 || The star charts still mark where the Archive is. But the light that never moved is gone. The lamp on the mountain goes out properly now, when morning comes.
+?(end_archive_library) narr: {書庫|しょこ} が {図書館|としょかん} に なった と {聞|き}いて 、 {観測所|かんそくじょ} の {古|ふる}い {日誌|にっし} を {写|うつ}して {送|おく}る {話|はなし} が 、 {村|むら} で {出|で}て いる 。 {星|ほし} の {名前|なまえ} も 、 {誰|だれ}か が {守|まも}って おかない と 。 || Word that the Archive is now a library has the village talking about copying the observatory's old logs and sending them up. Someone ought to keep the names of the stars.
+?(end_archive_closed) narr: {書庫|しょこ} が {閉|と}じた と {聞|き}いて 、 {村|むら} の {人|ひと} は {肩|かた} を すくめた 。 {雪鈴|ゆきすず} の {記録|きろく} は 、 {昔|むかし} から {鐘|かね} と {日誌|にっし} が {覚|おぼ}えて いる 。 || Hearing the Archive has closed, the villagers shrug. Snowbell's records have always been kept by its bell and its logbook.
+?(comp=ren&sa_ren_took) ren: {星図|せいず} の {似顔絵|にがおえ} 、 {似|に}て いません でした ね 。 {眉|まゆ} が {細|ほそ}すぎる 。 {描|か}き{足|た}して いい か 、 ホシノ さん に {聞|き}いて みます 。 || The sketch on the star chart doesn't really look like my teacher, you know. The eyebrows are far too thin. I'll ask Hoshino whether I may add to them.
+?(comp=ren&!sa_ren_took) ren: {似顔絵|にがおえ} は 、 {似顔絵|にがおえ} の まま で いい 。 {余白|よはく} の {言葉|ことば} は 、 {全部|ぜんぶ} {合|あ}って いました から 。 || The sketch can stay a sketch. The words in the margin were all correct.
+?(comp=nao) nao: {雪|ゆき} の {宿|やど} 、 また {泊|と}まりたい な 。 …… {今度|こんど} は 、 {吹雪|ふぶき} なし で 。 || I'd like to stay at the snowbound inn again. …Without the blizzard, this time.
+?(comp=mio) mio: {雪|ゆき} の {夜|よる} に {話|はな}した こと 、 {覚|おぼ}えてる ？ …… わたし は {全部|ぜんぶ} {覚|おぼ}えてる 。 {預|あず}け ない から ね 。 || Remember what we talked about that snowy night? …I remember all of it. And I'm not setting any of it down.
+?(comp=suzu) suzu: {雪鈴|ゆきすず} の {鐘|かね} 、 {音|おと} が {戻|もど}った ね 。 {迷子|まいご} の {合図|あいず} を {鳴|な}らさない で {済|す}む よう に 、 {祈|いの}ろう 。 || Snowbell's bell has its voice back. Here's hoping no one ever needs to ring the lost-traveller signal.
+
+@scene sa.epi_co
+narr: {灰実|はいみ}の{里|さと} 。 {防火帯|ぼうかたい} の {草|くさ} を {刈|か}る {音|おと} が 、 {段々畑|だんだんばたけ} に {響|ひび}いて いる 。 || Cinder Orchard. The sound of scythes clearing the firebreaks rings across the terraces.
+?(co_bell_done) narr: {夕方|ゆうがた} に なる と 、 ゴロウ の {鐘|かね} が {鳴|な}る 。 {今|いま} は 、 {毎日|まいにち} 。 || At dusk, Gorō's bell rings. Every day, now.
+hiro: {祭|まつ}り の {席|せき} 、 {今年|ことし} も {一|ひと}つ {空|あ}けて ある 。 || I've kept a seat empty at the festival again this year.
+?(co_hiro_seat_named) hiro: {席|せき} に は 、 {母|はは} の {名前|なまえ} を {彫|ほ}った 。 {待|ま}つ ため じゃ ない 。 {覚|おぼ}えて おく ため だ 。 {違|ちが}い が {分|わ}かる か ？ || I carved my mother's name into it. Not to wait. To remember. Do you see the difference?
+?(!co_hiro_seat_named) hiro: でも 、 {待|ま}つ ため じゃ ない 。 {覚|おぼ}えて おく ため だ 。 {違|ちが}い が {分|わ}かる か ？ || But not to wait. To remember. Do you see the difference?
+?(comp=suzu) suzu[sad]: …… {分|わ}かる よ 。 {分|わ}かる 。 || …I do. I do.
+?(comp=suzu) hiro: スズ 。 {座|すわ}って いけ よ 。 {空|あ}いてる {席|せき} の {隣|となり} に 。 {母|かあ}さん の {話|はなし} 、 {本当|ほんとう} の ほう を 、 もう {一度|いちど} {聞|き}かせて くれ 。 || Suzu. Sit down — next to the empty seat. Tell me about my mother again. The true version.
+?(comp=suzu) suzu[smile]: …… うん 。 {今度|こんど} は 、 {最後|さいご} まで ちゃんと {話|はな}す 。 {笑|わら}える ところ も 、 {泣|な}ける ところ も 。 || …Okay. This time I'll tell it right to the end. The funny parts and the sad ones.
+?(!comp=suzu) narr: {広場|ひろば} の {隅|すみ} で 、 {旅芸人|たびげいにん} の スズ が {子|こ}ども たち に {芝居|しばい} を {見|み}せて いる 。 {火事|かじ} の {話|はなし} だ 。 {最後|さいご} は 、 {皆|みんな} で {防火帯|ぼうかたい} を {作|つく}る 。 || In a corner of the square, Suzu the travelling performer is putting on a play for the children. It's about the fire. At the end, everyone builds a firebreak together.
+?(!comp=suzu) suzu[smile]: あ 、 $name ！ {見|み}て いって よ 。 {今日|きょう} の {芝居|しばい} に は 、 {嘘|うそ} が {一|ひと}つ も ない んだ 。 {珍|めずら}しい でしょ 。 || Oh, $name! Stay and watch. There isn't a single lie in today's play. Rare, right?
+?(comp=nao) nao: {草|くさ} を {刈|か}る {音|おと} って 、 {落|お}ち{着|つ}く な 。 {誰|だれ}か が {明日|あした} の こと を {考|かんが}えてる {音|おと} だ 。 || The sound of scything is soothing. It's the sound of people thinking about tomorrow.
+?(comp=mio) mio: {火傷|やけど} の {薬|くすり} 、 {置|お}いて いこう 。 {使|つか}わない で {済|す}む の が 、 {一番|いちばん} だ けど 。 || Let's leave some burn ointment. Best if it never gets used.
+?(comp=ren) ren: {防火帯|ぼうかたい} の {端|はし} に 、 {新|あたら}しい {灯籠|とうろう} が {立|た}って います 。 {名前|なまえ} は 「 {火|ひ} の {後|あと} 」 。 …… いい {名前|なまえ} だ 。 || There's a new lantern post at the edge of the firebreak. Its name is "After the Fire". …A good name.
+
+@scene sa.epi_sg
+narr: {潮硝子|しおがらす} の {港|みなと} 。 {積|つ}み{荷|に} の ラベル は 、 {全部|ぜんぶ} {読|よ}める 。 || Saltglass harbour. Every cargo label is legible.
+wataru: {帳簿|ちょうぼ} は 、 {全部|ぜんぶ} {書|か}き{直|なお}しました 。 {正|ただ}しい {数字|すうじ} で 。 {借金|しゃっきん} は …… {正|ただ}しく {増|ふ}えました 。 || I've rewritten all the ledgers. With the right numbers. The debts have… correctly gone up.
+wataru[smile]: でも 、 {夜|よる} は {眠|ねむ}れる よう に なりました 。 {沈|しず}んだ {書庫|しょこ} も 、 {干潮|かんちょう} の {時|とき} は ただ の {岩場|いわば} です 。 || But I sleep at night now. And the Drowned Archive is just rocks at low tide.
+?(quest.sa_isamu=done) sa_isamu: {網|あみ} を {繕|つくろ}い ながら 、 {時々|ときどき} {笑|わら}っちまう 。 {客|きゃく} に {変|へん} な {顔|かお} を される よ 。 || Sometimes I laugh while I'm mending nets. The customers give me funny looks.
+?(quest.sa_isamu=done) sa_isamu[smile]: あいつ の {笑|わら}い{方|かた} が 、 {移|うつ}っちまった らしい 。 {沸|わ}く {前|まえ} の やかん だ 。 || Seems her laugh has rubbed off on me. The kettle, just before it boils.
+?(!comp=nao) nao[smirk]: よう 、 $name 。 {灯落|ひおち} {行|い}き の {手紙|てがみ} が {山|やま} ほど ある 。 {急|きゅう} に 、 みんな {言|い}いたい こと が {増|ふ}えた らしい 。 || Hey, $name. I've got a mountain of letters for Lanternfall. Everyone suddenly has a lot more to say, apparently.
+?(!comp=nao) nao: …… {宛名|あてな} 、 {全部|ぜんぶ} {読|よ}める 。 いい {気分|きぶん} だ 。 || …Every address is legible. Feels good.
+?(comp=nao) nao: {港|みなと} の {郵便受|ゆうびんう}け 、 {満杯|まんぱい} だ 。 …… {手伝|てつだ}って く か ？ {冗談|じょうだん} だ よ 。 {半分|はんぶん} は 。 || The harbour mailboxes are stuffed. …Want to help? Joking. Half joking.
+?(comp=mio) mio: {潮|しお} の {匂|にお}い 。 …… {帰|かえ}って きた 、 って {感|かん}じ が する 。 {葦|あし}ノ{瀬|せ} まで 、 あと {少|すこ}し 。 || The smell of the sea. …It feels like coming home. Not far to Reedwake now.
+?(comp=ren) ren: {港|みなと} の {灯台|とうだい} の {名前|なまえ} 、 {書|か}き{直|なお}さなくて も {消|き}えて いません 。 {良|よ}い {字|じ} で {書|か}いて ある 。 || The lighthouse's name hasn't faded, even without rewriting. It's written in a good hand.
+?(comp=suzu) suzu: ワタル の {帳簿|ちょうぼ} 、 {後|あと} で {見|み}せて もらおう 。 {正直|しょうじき} な {帳簿|ちょうぼ} は 、 {読|よ}んで いて {気持|きも}ち が いい から 。 || I'll ask to see Wataru's ledgers later. An honest ledger is a pleasure to read.
+
+@scene sa.epi_rw
+narr: {葦|あし}ノ{瀬|せ} 。 {橋|はし} は 、 ちゃんと {向|む}こう {岸|ぎし} に {届|とど}いて いる 。 || Reedwake. The bridge reaches the far bank, as a bridge should.
+hana[smile]: {帰|かえ}って きた ！ ほら 、 お{茶|ちゃ} 。 …… {三|みっ}つ いれた の 。 {間違|まちが}えた わけ じゃ ない よ 。 || You're back! Here — tea. …I poured three. Not by mistake.
+koji: {一|ひと}つ は {俺|おれ} の だ 。 {一|ひと}つ は ハナ の 。 {一|ひと}つ は …… {言|い}わなくて も {分|わ}かる だろ 。 || One's mine. One's Hana's. And one's… well, you know whose.
+?(!comp=mio) narr: {薬屋|くすりや} の {前|まえ} で 、 ミオ が {客|きゃく} に {頭|あたま} を {下|さ}げて いる 。 || Outside the apothecary, Mio is bowing to a customer.
+?(!comp=mio) mio: {今日|きょう} は お{休|やす}み です 。 …… いえ 、 {本当|ほんとう} に お{休|やす}み です 。 {断|ことわ}る {練習|れんしゅう} 、 {続|つづ}けて いる んです 。 || We're closed today. …No, really, closed. I'm keeping up my practice at saying no.
+?(!comp=ren) !call sa.epi_ren_home
+tsuru: {帰|かえ}った かい 。 {顔|かお} を {見|み}せて ごらん 。 …… うん 。 {道|みち} の {顔|かお} に なった ね 。 || You're back, are you. Let me see your face. …Mm. You've got the look of the road about you now.
+tsuru: {灯|あか}り{堂|どう} に おいで 。 {見|み}せたい もの が ある 。 {急|いそ}がなくて いい 。 {先|さき} に 、 {連|つ}れ と {話|はな}して おいで 。 || Come by the Lantern Hall. There's something I want to show you. No hurry. Talk with your companion first.
+
+@scene sa.epi_ren_home
+narr: {灯|あか}り{堂|どう} の {前|まえ} で 、 レン が {灯籠|とうろう} の {名前|なまえ} を {書|か}き{直|なお}して いる 。 || Outside the Lantern Hall, Ren is rewriting a lantern's name.
+ren: $name 。 お{帰|かえ}り なさい 。 {無事|ぶじ} で よかった 。 || $name. Welcome back. I'm glad you're safe.
+!if !sa_ushio_found&!seen.sa.shelf_ren -> plain
+pc: レン 。 {師匠|ししょう} の こと で 、 {話|はなし} が ある 。 || Ren. I have news of your teacher.
+narr: $name は 、 {門|もん} の {脇|わき} の {小|ちい}さな {石|いし} の こと を {話|はな}した 。 「 {最後|さいご} まで {反対|はんたい} した {人|ひと} 」 と {彫|ほ}られた {石|いし} の こと を 。 || You tell Ren about the small stone beside the Archive gate, carved "One who disagreed to the very end."
+ren[closed]: …… そう です か 。 {最後|さいご} まで 、 {反対|はんたい} して いた 。 …… {師匠|ししょう} らしい 。 || …I see. Disagreeing to the very end. …That's my teacher all over.
+!if item.sa_ren_folio -> folio
+!if sa_ren_told -> told
+ren: {会|あ}い に {行|い}きます 。 {墓|はか} の {灯|ひ} を 、 {消|け}さない よう に 。 || I'll go and visit. And see that the lamp at the grave stays lit.
+!end
+:folio
+narr: $name は 、 ウシオ の {札|ふだ} の {付|つ}いた {綴|つづ}り を {渡|わた}した 。 {一度|いちど} も {開|ひら}かず に {運|はこ}んで きた もの だ 。 || You hand over the folio with Ushio's label on it, carried all this way without once being opened.
+ren: 「 {本人|ほんにん} が {選|えら}ぶ まで {預|あず}かる こと 」 …… {師匠|ししょう} の {字|じ} です 。 {右|みぎ} に {跳|は}ねる 。 {間違|まちが}い ない 。 || "To be held until the person themself chooses." …My teacher's hand. It kicks to the right. No mistaking it.
+ren[closed]: …… {今|いま} は 、 {開|ひら}けません 。 でも 、 {捨|す}て も しない 。 {選|えら}べる の は 、 {嬉|うれ}しい です 。 {選|えら}ぶ まで 、 {少|すこ}し {時間|じかん} を ください 。 || …I can't open it now. But I won't throw it away. I'm glad I get to choose. Give me a little time before I do.
+!take sa_ren_folio
+!set sa_ren_delivered
+!end
+:told
+pc: {書庫|しょこ} に 、 レン の {綴|つづ}り が ある 。 {師匠|ししょう} の {字|じ} で 、 「 {本人|ほんにん} が {選|えら}ぶ まで 」 と 。 || There's a folio of yours in the Archive. In your teacher's hand: "until the person chooses".
+ren: …… {自分|じぶん} で {取|と}り に {行|い}きます 。 {道|みち} に {迷|まよ}わなければ 。 {迷|まよ}ったら 、 {音|おと} の する ほう へ 。 {今|いま} は 、 {音|おと} が あります から 。 || …I'll go and fetch it myself. If I don't get lost. And if I do — toward the sound. There's sound now.
+!end
+:plain
+ren[smile]: {灯|ひ} の {道|みち} が 、 {全部|ぜんぶ} {繋|つな}がりました 。 {書|か}き{直|なお}す {名前|なまえ} は 、 まだ {山|やま} ほど あります が 。 || The lantern roads are all joined up again. There are still mountains of names to rewrite, mind.
+
+@scene sa.end_comp
+!music departure
+!if comp=nao -> nao
+!if comp=mio -> mio
+!if comp=ren -> ren
+!if comp=suzu -> suzu
+narr: {日|ひ} が {暮|く}れる 。 {橋|はし} の {上|うえ} で 、 {川|かわ} の {音|おと} を {聞|き}いた 。 {道|みち} は 、 どこ まで も {続|つづ}いて いる 。 || The sun goes down. On the bridge, you listen to the river. The road goes on and on.
+!end
+:nao
+!music companion_nao
+narr: {日|ひ} が {暮|く}れる 。 {橋|はし} の {上|うえ} で 、 ナオ が {鞄|かばん} を {下|お}ろした 。 || The sun goes down. On the bridge, Nao sets down the satchel.
+nao: {次|つぎ} の {配達|はいたつ} 、 もう {決|き}まって る んだ 。 {山|やま} の {上|うえ} 。 {書庫|しょこ} {行|い}き 。 || My next delivery's already set. Up the mountain. To the Archive.
+?(end_kasane_keeper) nao[smirk]: カサネ {宛|あ}て の {文句|もんく} の {手紙|てがみ} 、 {山|やま} ほど ある 。 {全部|ぜんぶ} {届|とど}ける 。 {返事|へんじ} も {持|も}って {帰|かえ}る 。 {逃|に}げ{道|みち} は ない 。 || A mountain of complaint letters for Kasane. I'll deliver every one — and bring the replies back. No escape routes.
+?(end_kasane_trial) nao: {灯落|ひおち} で カサネ が {書|か}き{写|うつ}す {名前|なまえ} を 、 {一|ひと}つ ずつ {持|も}ち{主|ぬし} に {届|とど}ける 。 {気|き} の {長|なが}い {仕事|しごと} だ 。 {嫌|きら}い じゃ ない 。 || Every name Kasane copies out in Lanternfall, I'll carry to its owner. One at a time. Slow work. I don't mind it.
+narr: ナオ は {鞄|かばん} から 、 {古|ふる}い {紙|かみ} の {束|たば} を {出|だ}した 。 {宛名|あてな} の ラベル 。 {何百枚|なんびゃくまい} も 。 || From the satchel, Nao draws out a bundle of old paper. Address labels. Hundreds of them.
+nao[shy]: {書|か}き{直|なお}した ラベル 、 {全部|ぜんぶ} {取|と}って ある 。 {笑|わら}う な よ 。 || Every label I ever rewrote. Kept them all. Don't laugh.
+nao: …… これ は 、 $name に 。 || …This one's for you.
+narr: {一枚|いちまい} の ラベル 。 ナオ の {字|じ} で 、 {名前|なまえ} だけ が {書|か}いて ある 。 「 $name 」 。 || One label. In Nao's hand, just a name: "$name".
+nao: {住所|じゅうしょ} は {書|か}いて ない 。 {要|い}らない から 。 {道|みち} に {迷|まよ}ったら 、 それ を どこ か に {貼|は}っとけ 。 {探|さが}し に {行|い}く 。 || No address. You don't need one. If you ever get lost, stick that up somewhere. I'll come and find you.
+nao[smirk]: {出口|でぐち} は 、 いつ も {確|たし}かめて る から な 。 {入口|いりぐち} も 。 {両方|りょうほう} 、 {知|し}ってる 。 || I always know where the exits are, remember. The entrances too. Both.
+nao[smile]: …… {一緒|いっしょ} に {歩|ある}けて 、 よかった 。 {次|つぎ} の {道|みち} も 、 {声|こえ} を かけろ 。 {断|ことわ}る {理由|りゆう} は 、 {今|いま} の ところ {一|ひと}つ も ない 。 || …I'm glad we walked it together. Call me for the next road too. So far I haven't got a single reason to say no.
+!end
+:mio
+!music companion_mio
+narr: {薬屋|くすりや} の {棚|たな} に 、 {新|あたら}しい ラベル が {並|なら}んで いる 。 {全部|ぜんぶ} 、 まっすぐ だ 。 || On the apothecary's shelves stands a row of new labels. Every one of them perfectly straight.
+mio: {見|み}て 。 {新|あたら}しい {札|ふだ} 。 || Look. A new sign.
+narr: {戸口|とぐち} の {札|ふだ} に は 、 こう {書|か}いて ある 。 「 {水曜|すいよう} は {休|やす}み 。 {急|きゅう}{患|かん} {以外|いがい} は 、 お{断|ことわ}り します 。 」 || The sign on the door reads: "Closed Wednesdays. Emergencies only — everything else, I will politely refuse."
+mio[laugh]: {書|か}いた {時|とき} 、 {手|て} が {震|ふる}えた の 。 {笑|わら}える でしょ 。 「 {断|ことわ}る 」 って {字|じ} だけ で 。 || My hand shook when I wrote it. Funny, isn't it? Just the word "refuse".
+mio: でも 、 {灯落|ひおち} で {分|わ}かった 。 「 いいえ 」 が {言|い}えない {所|ところ} は 、 {優|やさ}しい ん じゃ なくて 、 {苦|くる}しい ん だ って 。 || But Lanternfall taught me. A place where no one can say no isn't kind. It's suffocating.
+narr: ミオ は {棚|たな} の {奥|おく} から 、 {空|から} の {瓶|びん} を {一|ひと}つ {取|と}り{出|だ}した 。 ラベル に 、 $name の {名前|なまえ} 。 || From the back of the shelf, Mio takes out an empty bottle. The label bears your name.
+mio: {旅|たび} の {間|あいだ} 、 ずっと {作|つく}ろう と して た {薬|くすり} 。 「 {長|なが}い {道|みち} に {効|き}く {薬|くすり} 」 。 …… {結局|けっきょく} 、 {中身|なかみ} は {作|つく}れなかった 。 || A remedy I've been trying to make the whole journey. "For long roads." …In the end, I couldn't make what goes inside.
+mio[smile]: たぶん 、 {一緒|いっしょ} に {歩|ある}く {人|ひと} が {中身|なかみ} な んだ と {思|おも}う 。 だから 、 {瓶|びん} だけ 。 {持|も}って て 。 || I think maybe the person walking beside you is what goes inside. So — just the bottle. Keep it.
+mio: …… それ から 、 {約束|やくそく} 。 これから は 、 $name に も 、 {時々|ときどき} 「 いいえ 」 って {言|い}う から ね 。 || …And a promise. From now on, I'll say no to you too, sometimes.
+mio[laugh]: {嬉|うれ}し そう な {顔|かお} 、 しない で よ 。 || Don't look so pleased about it.
+!end
+:ren
+!music companion_ren
+narr: {灯|あか}り{堂|どう} の {前|まえ} で 、 レン が {灯|ひ} を {磨|みが}いて いる 。 {二|ふた}つ 。 || Outside the Lantern Hall, Ren is polishing lamps. Two of them.
+ren: {師匠|ししょう} の {灯|ひ} です 。 カサネ さん が 、 {持|も}って いけ と 。 {磨|みが}き{方|かた} が {雑|ざつ} で 、 {見|み}て いられません でした 。 || My teacher's lamp. Kasane told me to take it. The polishing was so slapdash I couldn't bear to look.
+?(sa_ren_took) ren[smile]: {顔|かお} を {思|おも}い{出|だ}して から 、 {教|おし}え が {少|すこ}し {違|ちが}って {聞|き}こえます 。 {同|おな}じ {言葉|ことば} なのに 、 {言|い}った {顔|かお} が {笑|わら}って いる 。 || Since I remembered the face, the lessons sound a little different. The same words, but the face that says them is smiling.
+?(sa_ren_took) ren: {最後|さいご} の {口論|こうろん} も 、 {一緒|いっしょ} に {戻|もど}って きました 。 {痛|いた}い です 。 でも 、 {痛|いた}い {所|ところ} に 、 {師匠|ししょう} が いる 。 || The last quarrel came back with it. It hurts. But where it hurts is where my teacher is.
+?(sa_ren_left) ren: {顔|かお} は 、 {書庫|しょこ} に {置|お}いて きました 。 {後悔|こうかい} は …… {毎日|まいにち} {少|すこ}し ずつ して います 。 {体|からだ} に いい {程度|ていど} に 。 || I left the face at the Archive. Regrets… I have a small one every day. A healthy dose.
+?(sa_ren_left) ren: {教|おし}え は 、 {全部|ぜんぶ} ここ に ある 。 {師匠|ししょう} が {一番|いちばん} {残|のこ}したかった の は 、 たぶん こっち です 。 || The lessons are all here. I suspect that's what my teacher most wanted to leave behind.
+ren: {灯|ひ} の {道|みち} は 、 まだ {途中|とちゅう} です 。 {書|か}き{直|なお}す {名前|なまえ} が 、 {山|やま} ほど ある 。 || The lantern roads are only half mended. There are mountains of names to rewrite.
+ren[think]: {師匠|ししょう} の {教|おし}え を 、 {一|ひと}つ {足|た}して も いい です か 。 「 {道|みち} を {知|し}る {者|もの} より 、 {一緒|いっしょ} に {迷|まよ}って くれる {者|もの} を {連|つ}れて いけ 」 。 || May I add one to my teacher's lessons? "Take someone who'll get lost with you, over someone who knows the way."
+ren[smirk]: …… {今|いま} {考|かんが}えました 。 でも 、 {師匠|ししょう} なら {言|い}った と {思|おも}います 。 {解説|かいせつ} は {要|い}りません ね 。 || …I just made that one up. But I think my teacher would have said it. No explanation needed, I trust.
+ren[smile]: {次|つぎ} も 、 {一緒|いっしょ} に {迷|まよ}って ください 。 $name 。 || Get lost with me next time too, $name.
+!end
+:suzu
+!music companion_suzu
+narr: {葦|あし}ノ{瀬|せ} の {広場|ひろば} に 、 {小|ちい}さな {舞台|ぶたい} が {組|く}まれて いる 。 || A little stage has been put up in Reedwake's square.
+suzu: {帳簿|ちょうぼ} 、 {閉|と}じた よ 。 {借|か}り は {全部|ぜんぶ} {返|かえ}した 。 {貸|か}し は …… {半分|はんぶん} 、 {棒引|ぼうび}き に した 。 {珍|めずら}しい でしょ 。 || I've closed my ledger. Every debt I owed, repaid. What I'm owed… I let half of it go. Rare for me, right?
+suzu[laugh]: {新|あたら}しい {芝居|しばい} を {書|か}いてる んだ 。 {題|だい} は 『 {借|か}りた {名前|なまえ} の {道|みち} 』 。 {主役|しゅやく} が {誰|だれ} か 、 {分|わ}かる よ ね 。 || I'm writing a new play. It's called "The Road of Borrowed Names". You know who the lead is.
+suzu: {最後|さいご} の {台詞|せりふ} で 、 {迷|まよ}って る 。 「 みんな {幸|しあわ}せ に {暮|く}らしました 」 に する か …… || I'm stuck on the last line. Whether to go with "And everyone lived happily ever after"…
+suzu[closed]: …… ううん 。 「 みんな 、 {生|い}きて いきました 」 に する 。 {幸|しあわ}せ か どう か は 、 {見|み}た {人|ひと} が {決|き}める 。 || …No. "And everyone went on living." Whether it was happily, the audience can decide.
+suzu: それ と 、 これ 。 || And — this.
+narr: スズ は {髪|かみ} の {古|ふる}い リボン を ほどいて 、 $name の {手首|てくび} に {結|むす}んだ 。 || Suzu unties the faded ribbon from her hair and ties it around your wrist.
+suzu: {貸|か}し じゃ ない よ 。 {預|あず}ける だけ 。 {次|つぎ} の {幕|まく} まで 。 …… {返|かえ}し に {来|き}て よ ね 。 {必|かなら}ず 。 {曖昧|あいまい} じゃ ない ほう の {必|かなら}ず 。 || It's not a loan. I'm just leaving it with you. Until the next act. …Come and give it back. Without fail. The kind of "without fail" that isn't vague.
+!end
+`, 'ch6/scenes-ending');
 
 
 /* ==== src/content/zz_names.js ==== */

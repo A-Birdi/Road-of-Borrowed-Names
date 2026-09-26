@@ -23,12 +23,12 @@ comp[closed]: …… {鞄|かばん} の {一番|いちばん} {底|そこ} だ 
 
 @scene co.b_nao3
 comp: {窯|かま} の {中|なか} で {一番|いちばん} {嫌|いや} な の は 、 {出口|でぐち} が {入|い}り{口|ぐち} と {同|おな}じ だって こと だ 。 || The worst thing about a kiln is that the exit is the entrance.
-comp[smirk]: {戻|もど}る {時|とき} は {走|はし}る ぞ 。 {文句|もんく} は {聞|き}かない 。 …… {走|はし}る な 、 って {言|い}われた こと も あった けど な 。 {昔|むかし} 。 || We run on the way back. No complaints. …Someone once told me not to run. Long time ago.
-comp: {上|うえ} で {何|なに} か が {熱|ねつ} を {溜|た}めて る 。 {水|みず} か {氷|こおり} 。 {札|ふだ} を {二枚|にまい} {持|も}って る の は 、 {心強|こころづよ}い な 。 || Something up there is building heat. Water or ice. Good to have two cards to play.
+comp[smirk]: {戻|もど}る {時|とき} は {走|はし}る ぞ 。 {文句|もんく} は {聞|き}かない 。 …… {走|はし}る な 、 って {言|い}われた こと も あった けど な 。 {昔|むかし} は あった か な|むかし} 。 || We run on the way back. No complaints. …Someone once told me not to run. Long time ago.
+comp: {上|うえ} で {何|なに} か が {熱|ねつ} を {溜|た}めてる 。 {水|みず} か {氷|こおり} 。 {札|ふだ} を {二枚|にまい} {持|も}ってる の は 、 {心強|こころづよ}い な 。 || Something up there is building heat. Water or ice. Good to have two cards to play.
 
 @scene co.b_nao4
-comp: {鐘|かね} の {話|はなし} 、 {聞|き}いた か 。 {皆|みな} 、 {鐘|かね} が {鳴|な}った ら {水路|すいろ} へ {走|はし}った って 。 {頭|あたま} が {忘|わす}れて も 、 {足|あし} が {道|みち} を {覚|おぼ}えて た 。 || Heard about the bell? Everyone ran to the channel when it rang. Their heads forgot; their feet remembered the way.
-comp: {配達|はいたつ} も そう だ 。 {宛名|あてな} が {消|き}えて も 、 {足|あし} が {家|いえ} を {覚|おぼ}えて る こと が ある 。 || Deliveries are like that. Even when the address fades, your feet sometimes remember the house.
+comp: {鐘|かね} の {話|はなし} 、 {聞|き}いた か 。 {皆|みな} 、 {鐘|かね} が {鳴|な}ったら {水路|すいろ} へ {走|はし}った って 。 {頭|あたま} が {忘|わす}れて も 、 {足|あし} が {道|みち} を {覚|おぼ}えてた 。 || Heard about the bell? Everyone ran to the channel when it rang. Their heads forgot; their feet remembered the way.
+comp: {配達|はいたつ} も そう だ 。 {宛名|あてな} が {消|き}えて も 、 {足|あし} が {家|いえ} を {覚|おぼ}えてる こと が ある 。 || Deliveries are like that. Even when the address fades, your feet sometimes remember the house.
 comp: …… {今夜|こんや} の {集|あつ}まり 、 {重|おも}い {荷物|にもつ} に なる な 。 {一緒|いっしょ} に {運|はこ}ぼう 。 || …Tonight's gathering is going to be a heavy parcel. Let's carry it together.
 
 @scene co.b_nao5
@@ -94,12 +94,12 @@ comp[smile]: {借|か}り を {書|か}いて おく と 、 {自分|じぶん} 
 
 @scene co.b_suzu3
 comp[laugh]: {熱|あつ}い ！ {化粧|けしょう} が {流|なが}れる ！ …… して ない けど 。 {気分|きぶん} の {問題|もんだい} よ 。 || Hot! My make-up's running! …I'm not wearing any. It's the principle.
-comp[closed]: …… あの {夜|よる} 、 {下|した} から {見|み}て た の 。 {上|うえ} が {赤|あか}く {光|ひか}って 、 {鐘|かね} が {鳴|な}り{止|や}まなくて 。 {誰|だれ} か が 、 {火|ひ} の {方|ほう} へ {上|のぼ}って いく の が {見|み}えた 。 || …That night I watched from below. The hill glowing red, the bell that wouldn't stop. And someone climbing up towards the fire.
+comp[closed]: …… あの {夜|よる} 、 {下|した} から {見|み}てた の 。 {上|うえ} が {赤|あか}く {光|ひか}って 、 {鐘|かね} が {鳴|な}り{止|や}まなくて 。 {誰|だれ} か が 、 {火|ひ} の {方|ほう} へ {上|のぼ}って いく の が {見|み}えた 。 || …That night I watched from below. The hill glowing red, the bell that wouldn't stop. And someone climbing up towards the fire.
 comp: {今|いま} {思|おも}えば 、 あれ が トモエ さん だった の ね 。 || Now I think about it, that must have been Tomoe.
 
 @scene co.b_suzu4
 !if co_suzu_done -> paid
-comp: …… {手|て} が {震|ふる}えて る の 。 {初日|しょにち} の {幕|まく} が {上|あ}がる {前|まえ} より 、 ずっと 。 || …My hands are shaking. Much worse than before any opening night.
+comp: …… {手|て} が {震|ふる}えてる の 。 {初日|しょにち} の {幕|まく} が {上|あ}がる {前|まえ} より 、 ずっと 。 || …My hands are shaking. Much worse than before any opening night.
 comp[smile]: でも 、 {逃|に}げない わ 。 {観客|かんきゃく} が いる もの 。 || But I won't run. I've got an audience.
 !end
 :paid

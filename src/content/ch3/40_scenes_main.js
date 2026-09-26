@@ -25,12 +25,12 @@ pc: {祭|まつ}り の {前|まえ} に {着|つ}いた みたい だ ね 。 |
 !autosave
 
 @scene co.road_marker
-narr: {苔|こけ} むした {石|いし} に 、 {字|じ} が {彫|ほ}って ある 。 「 {火除|ひよ}け 」 。 || Words are carved into the mossy stone: 火除け — "fire-ward".
+narr: {苔|こけ} の {生|は}えた {石|いし} に 、 {字|じ} が {彫|ほ}って ある 。 「 {火除|ひよ}け 」 。 || Words are carved into the mossy stone: 火除け — "fire-ward".
 narr: {石|いし} の {向|む}こう に は 、 {道|みち} の よう に {幅|はば} の {広|ひろ}い 、 {草|くさ} だらけ の {帯|おび} が {続|つづ}いて いる 。 || Beyond it runs a strip as wide as a road, thick with dry grass.
 ?(comp=nao) comp: {火除|ひよ}け ？ この {草|くさ} で ？ {逆|ぎゃく} に よく {燃|も}え そう だ けど な 。 || Fire-ward? With this much grass on it? Looks more like kindling.
 ?(comp=mio) comp[worry]: {火除|ひよ}け の {道|みち} …… {本当|ほんとう} は {草|くさ} を {刈|か}って おく {道|みち} です よ ね 。 {誰|だれ} も {手入|てい}れ して いない 。 || A firebreak… it's meant to be kept mown. Nobody has touched it.
 ?(comp=ren) comp: {火除|ひよ}け{道|みち} です ね 。 {古|ふる}い {里|さと} に は よく あります 。 {手入|てい}れ を やめれば 、 ただ の {草|くさ}むら です が 。 || A firebreak path. Old villages often have them. Stop tending one and it's just a strip of weeds.
-?(comp=suzu) comp[closed]: …… {昔|むかし} は 、 きれい に {刈|か}って あった のに 。 || …It used to be cut so neatly.
+?(comp=suzu) comp[closed]: …… {昔|むかし} は あった か な|むかし} は 、 きれい に {刈|か}って あった のに 。 || …It used to be cut so neatly.
 ?(comp=suzu) pc: スズ ？ || Suzu?
 ?(comp=suzu) comp[laugh]: ん ？ {火除|ひよ}け って 、 {普通|ふつう} そう でしょ 、 って {話|はなし} 。 || Hm? I just mean that's what firebreaks are normally like.
 !if co_clue_marker -> end
@@ -75,14 +75,14 @@ co_sayo: じゃ 、 {私|わたし} は {席|せき} の {準備|じゅんび} �
 !if co_suspect -> end
 !set co_suspect
 narr: {広場|ひろば} を {抜|ぬ}ける {途中|とちゅう} で 、 {足|あし} が {止|と}まった 。 || Crossing the square, your feet stop on their own.
-?(comp=nao) comp: なあ 、 {気|き} づいた ？ {空|あ}いた {席|せき} 、 {焦|こ}げた {梁|はり} 、 {誰|だれ} も {使|つか}わない {桶|おけ} 、 {綱|つな} の ない {鐘|かね} 。 || Hey. Notice it? An empty seat, a scorched beam, buckets nobody uses, a bell with no rope.
+?(comp=nao) comp: なあ 、 {気|き}づいた ？ {空|あ}いた {席|せき} 、 {焦|こ}げた {梁|はり} 、 {誰|だれ} も {使|つか}わない {桶|おけ} 、 {綱|つな} の ない {鐘|かね} 。 || Hey. Notice it? An empty seat, a scorched beam, buckets nobody uses, a bell with no rope.
 ?(comp=nao) comp: {全部|ぜんぶ} 、 {同|おな}じ {穴|あな} の {周|まわ}り を よけて {歩|ある}いてる 。 {宛名|あてな} の {抜|ぬ}けた {手紙|てがみ} と {同|おな}じ {感|かん}じ だ 。 || Everything here walks around the same hole. Same feeling as a letter with the address missing.
 ?(comp=mio) comp[worry]: $name さん 。 この {里|さと} 、 {火傷|やけど} の {薬|くすり} を {置|お}いて いる {家|いえ} が {一軒|いっけん} も ない んです 。 || $name… not one house in this village keeps burn salve.
 ?(comp=mio) comp: ガラス と {焼|や}き{物|もの} の {里|さと} で 、 {火傷|やけど} の {薬|くすり} が ない なんて 。 {何|なに} か を 、 {忘|わす}れさせられて いる みたい 。 || A village of glass and pottery, and no burn salve. It's as if they've been made to forget something.
 ?(comp=ren) comp[think]: {灯|ひ} の {名|な} と {同|おな}じ です 。 {上|うわ}{書|が}き の {下|した} に 、 {元|もと} の {字|じ} が {透|す}けて {見|み}える 。 || It's like the lantern's name. Under the overwriting, the original letters still show through.
 ?(comp=ren) comp: {空|あ}いた {席|せき} 、 {焦|こ}げた {木|き} 、 {鳴|な}らない {鐘|かね} …… {火|ひ} の {字|じ} を {消|け}した {跡|あと} です 。 || The empty seat, the scorched wood, the silent bell… they're the marks left where the word "fire" was erased.
 ?(comp=suzu) comp[closed]: …… ねえ 、 $name 。 || …Hey, $name.
-?(comp=suzu) comp: {私|わたし} 、 {嘘|うそ} の {上手|じょうず} な {人|ひと} を たくさん {知|し}って る の 。 {自分|じぶん} も {含|ふく}めて ね 。 この {里|さと} は {嘘|うそ} を ついて る ん じゃ ない 。 {嘘|うそ} を {信|しん}じて る 。 || I know a lot of good liars. Myself included. This village isn't lying. It believes the lie.
+?(comp=suzu) comp: {私|わたし} 、 {嘘|うそ} の {上手|じょうず} な {人|ひと} を たくさん {知|し}ってる の 。 {自分|じぶん} も {含|ふく}めて ね 。 この {里|さと} は {嘘|うそ} を ついてる ん じゃ ない 。 {嘘|うそ} を {信|しん}じてる 。 || I know a lot of good liars. Myself included. This village isn't lying. It believes the lie.
 pc: {記録堂|きろくどう} へ {行|い}こう 。 {年代記|ねんだいき} を {見|み}せて もらおう 。 || Let's go to the Chronicle Hall. I want to see that chronicle.
 !quest co_main 2
 !journal {年代記|ねんだいき} は {火事|かじ} を {記録|きろく} して いない 。 でも {里|さと} の あちこち に 、 {火|ひ} の {跡|あと} が ある 。 || The chronicle records no fire. But the village is full of the marks of one.
@@ -145,7 +145,7 @@ co_tokiwa: {里|さと} の {人|ひと} に {聞|き}いて みて ください
 ?(comp=nao) comp: {聞|き}く なら 、 {年寄|としよ}り と {職人|しょくにん} だ 。 {段々畑|だんだんばたけ} の ばあさん 、 {櫓|やぐら} の じいさん 、 ガラス {工房|こうぼう} の {親方|おやかた} 。 || If we're asking, we ask the old folk and the craftsmen. The grandma on the terraces, the old man at the lookout, the master at the glass workshop.
 ?(comp=mio) comp: {話|はなし} を {聞|き}く なら 、 {長|なが}く {住|す}んで いる {方|かた} に 。 {段々畑|だんだんばたけ} の ウメ さん 、 {櫓|やぐら} の ゴロウ さん 、 ガラス {工房|こうぼう} の イサオ さん 。 || We should ask people who've lived here longest. Ume on the terraces, Gorō at the lookout, Isao at the glass workshop.
 ?(comp=ren) comp: {古|ふる}い {灯|ひ} ほど 、 {古|ふる}い {名|な} を {覚|おぼ}えて います 。 {人|ひと} も {同|おな}じ でしょう 。 ウメ さん 、 ゴロウ さん 、 イサオ さん に 。 || The older the lantern, the older the names it remembers. People too, I'd think. Ume, Gorō and Isao.
-?(comp=suzu) comp: {年寄|としよ}り に {聞|き}こう 。 {体|からだ} が {覚|おぼ}えて る こと って 、 ある から 。 ウメ さん 、 ゴロウ さん 、 イサオ さん 。 || Let's ask the old ones. Bodies remember things. Ume, Gorō, Isao.
+?(comp=suzu) comp: {年寄|としよ}り に {聞|き}こう 。 {体|からだ} が {覚|おぼ}えてる こと って 、 ある から 。 ウメ さん 、 ゴロウ さん 、 イサオ さん 。 || Let's ask the old ones. Bodies remember things. Ume, Gorō, Isao.
 !set co_chronicle_read
 !quest co_main 3
 !journal ウメ （ {段々畑|だんだんばたけ} ） 、 ゴロウ （ {櫓|やぐら} ） 、 イサオ （ ガラス {工房|こうぼう} ） に {話|はなし} を {聞|き}こう 。 || Ask Ume (terraces), Gorō (lookout) and Isao (glass workshop) what they remember.
@@ -218,7 +218,7 @@ co_tamotsu: {話|はなし} は {外|そと} で {聞|き}こえた 。 {火事|
 co_tokiwa[think]: …… || …
 co_tokiwa: {確|たし}か な {記録|きろく} が あれば 、 {私|わたし} は {書|か}きます 。 {窯|かま} の {記録|きろく} です 。 {窯焚|かまだ}き の {日誌|にっし} は 、 {大窯|おおがま} の {中|なか} に しまう {決|き}まり でした 。 || If there is a certain record, I will write it. The kiln's record. By custom, the firing log was kept inside the great kiln itself.
 co_tokiwa: ですが 、 {大窯|おおがま} は {上|うえ} の {段|だん} の {更|さら}に {上|うえ} 。 {古|ふる}い {工房|こうぼう} {通|どお}り の {奥|おく} で 、 {封|ふう} が して あります 。 …… {私|わたし} が {来|き}た {時|とき} から 、 ずっと 。 || But the great kiln is beyond the upper terraces, at the end of the old workshop row, and it is sealed. …It has been, for as long as I've been here.
-co_tamotsu: {上|うえ} の {段|だん} へ の {柵|さく} の {鍵|かぎ} は 、 {俺|おれ} が {持|も}って る 。 {水門|すいもん} で {待|ま}って る 。 || I've got the key to the fence on the upper terraces. I'll wait for you at the water gate.
+co_tamotsu: {上|うえ} の {段|だん} へ の {柵|さく} の {鍵|かぎ} は 、 {俺|おれ} が {持|も}ってる 。 {水門|すいもん} で {待|ま}ってる 。 || I've got the key to the fence on the upper terraces. I'll wait for you at the water gate.
 !set co_records_done
 !quest co_main 5
 !journal {窯|かま} の {日誌|にっし} は {大窯|おおがま} の {中|なか} に ある らしい 。 タモツ が {段々畑|だんだんばたけ} の {水門|すいもん} で {待|ま}って いる 。 || The kiln's firing log should be inside the great kiln. Tamotsu is waiting at the water gate at the top of the terraces.
@@ -259,9 +259,9 @@ RB.script.add(`
 @scene co.tamotsu_gate
 co_tamotsu: {来|き}た か 。 || You came.
 narr: タモツ は {腰|こし} の {鍵束|かぎたば} から 、 {錆|さ}びた {鍵|かぎ} を {一本|いっぽん} {外|はず}した 。 || Tamotsu unhooks a rusty key from the ring at his belt.
-co_tamotsu: この {柵|さく} は 、 {俺|おれ} が {子|こ}ども の {頃|ころ} から {閉|し}まって た 。 {理由|りゆう} を {聞|き}いた こと は ない 。 {聞|き}こう と も {思|おも}わなかった 。 || This fence has been shut since I was a boy. I never asked why. Never even thought to ask.
+co_tamotsu: この {柵|さく} は 、 {俺|おれ} が {子|こ}ども の {頃|ころ} から {閉|し}まってた 。 {理由|りゆう} を {聞|き}いた こと は ない 。 {聞|き}こう と も {思|おも}わなかった 。 || This fence has been shut since I was a boy. I never asked why. Never even thought to ask.
 co_tamotsu: …… {変|へん} だ よ な 。 {水|みず} の {番|ばん} を して いて 、 {水門|すいもん} の {上|うえ} に {何|なに} が ある か 、 {考|かんが}えた こと も なかった 。 || …Strange, isn't it. I keep the water, and I never once wondered what lay above the water gate.
-co_tamotsu: {上|うえ} は {乾|かわ}いて る 。 {火|ひ} の {気|け} の ある もの は {持|も}って {行|い}く な 。 {気|き} を つけろ 。 || It's dry up there. Take nothing that burns. Be careful.
+co_tamotsu: {上|うえ} は {乾|かわ}いてる 。 {火|ひ} の {気|け} の ある もの は {持|も}って {行|い}く な 。 {気|き} を つけろ 。 || It's dry up there. Take nothing that burns. Be careful.
 !set co_upper_open
 !quest co_main 6
 !sfx door
@@ -275,7 +275,7 @@ narr: {柵|さく} が きしんで {開|ひら}いた 。 || The fence creaks o
 @scene co.upper_locked
 !if co_records_done -> key
 narr: {上|うえ} の {段|だん} へ の {道|みち} は 、 {錠|じょう} の {下|お}りた {柵|さく} で {塞|ふさ}がれて いる 。 「 {立入|たちい}り {禁止|きんし} 」 の {札|ふだ} が 、 {日|ひ} に {焼|や}けて {白|しろ}く なって いる 。 || The way to the upper terraces is shut by a locked fence. The "No entry" sign has bleached white in the sun.
-?(comp=nao) comp: {立入|たちい}り {禁止|きんし} の {理由|りゆう} が {書|か}いて ない 。 {理由|りゆう} の ない {禁止|きんし} は 、 {大体|だいたい} {何|なに} か {隠|かく}して る 。 || No reason given for the "no entry". A ban without a reason is usually hiding something.
+?(comp=nao) comp: {立入|たちい}り {禁止|きんし} の {理由|りゆう} が {書|か}いて ない 。 {理由|りゆう} の ない {禁止|きんし} は 、 {大体|だいたい} {何|なに} か {隠|かく}してる 。 || No reason given for the "no entry". A ban without a reason is usually hiding something.
 ?(comp=mio) comp: {鍵|かぎ} が ない と {無理|むり} です ね 。 {誰|だれ} が {持|も}って いる の かしら 。 || We can't without the key. I wonder who has it.
 ?(comp=ren) comp: {柵|さく} の {向|む}こう の {木|き} 、 {全部|ぜんぶ} {同|おな}じ {背丈|せたけ} です 。 …… {気味|きみ} が {悪|わる}い ほど 。 || The trees beyond the fence are all the same height. …Unnervingly so.
 ?(comp=suzu) comp[closed]: …… {上|うえ} は 、 {今|いま} は いい わ 。 || …Not up there. Not yet.
@@ -295,7 +295,7 @@ RB.script.add(`
 narr: {里|さと} に {戻|もど}る と 、 {夕日|ゆうひ} が {段々畑|だんだんばたけ} を {赤|あか}く {染|そ}めて いた 。 || When you come back down, the evening sun is reddening the terraces.
 ?(comp=suzu) comp: $name 。 {頁|ページ} は トキワ さん に {渡|わた}して 。 でも 、 {広場|ひろば} で {読|よ}み{上|あ}げられる {前|まえ} に …… ヒロ に は 、 {私|わたし} から {言|い}いたい 。 || $name. Give the page to Tokiwa. But before it's read out in the square… I want Hiro to hear it from me.
 ?(comp=suzu) comp: {母親|ははおや} の {死|し} を 、 {記録|きろく} の {読|よ}み{上|あ}げ で {知|し}る なんて 。 {誰|だれ} に も そんな {思|おも}い は させたく ない 。 || Learning of your mother's death from a public reading. Nobody should have to go through that.
-?(comp!=suzu) co_shino: あ 、 いた ！ {旅芸人|たびげいにん} の スズ さん から {伝言|でんごん} です 。 「 ヒロ の {工房|こうぼう} で {待|ま}って る 。 {来|く}れば {分|わ}かる 」 って 。 || There you are! A message from Suzu, the performer: "I'm waiting at Hiro's workshop. You'll know why when you come."
+?(comp!=suzu) co_shino: あ 、 いた ！ {旅芸人|たびげいにん} の スズ さん から {伝言|でんごん} です 。 「 ヒロ の {工房|こうぼう} で {待|ま}ってる 。 {来|く}れば {分|わ}かる 」 って 。 || There you are! A message from Suzu, the performer: "I'm waiting at Hiro's workshop. You'll know why when you come."
 ?(comp!=suzu) co_shino: {伝言|でんごん} は {確|たし}か に {届|とど}けました よ 。 {配達料|はいたつりょう} は {取|と}りません 。 || Message delivered. No charge.
 !quest co_main 7
 !quest co_suzu 3

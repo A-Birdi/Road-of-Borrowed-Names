@@ -194,6 +194,6 @@ export default async function (t) {
 
   // ---- design constraints -------------------------------------------------------------------------------------
   const src = fs.readdirSync(path.join(root, 'src/atlas')).map((f) => fs.readFileSync(path.join(root, 'src/atlas', f), 'utf8')).join('\n');
-  t.ok(!/daily|streak|leaderboard|limited[- ]time/i.test(src), 'no daily streaks, leaderboards or time-limited rewards');
+  t.ok(!/streak|leaderboard|daily[ _-]?(reward|bonus|quest|login)|limited[- ]time|getDay\(|getDate\(/i.test(src), 'no daily streaks, leaderboards or time-limited rewards');
   t.ok(!/Date\.now\(\)[^;\n]*(reward|offer)/.test(src), 'rewards do not depend on the clock');
 }
