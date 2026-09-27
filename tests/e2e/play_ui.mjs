@@ -3,8 +3,8 @@
 // before anything underneath acts), replies (a scroll never selects), the HUD
 // (one Menu entry, hidden under panels), touch controls (context label, Run,
 // sliding move pad, hidden during dialogue/menus), gesture suppression only
-// on the canvas/pad, Tab inside the folio, and the camera keeping the player
-// above the dialogue sheet.
+// on the canvas/pad, Tab inside the folio, and the camera staying put when
+// the dialogue opens (the sheet never covers the player; see world_view.mjs).
 // Usage: node tests/e2e/play_ui.mjs
 import { serve, launch, page } from './lib.mjs';
 
@@ -77,6 +77,7 @@ const faceNpc = (p) => p.evaluate(() => {
   const d3 = await p.evaluate(() => RB.input.dir());
   assert(d1 === 'left' && d2 === 'right' && d3 === null, `move pad follows a sliding thumb (${d1} → ${d2} → ${d3})`);
   // dialogue
+  const cam0 = await p.evaluate(() => [RB.render.cam.x, RB.render.cam.y].join());
   await p.evaluate((L) => { RB.game.settings.textSpeed = 'instant'; window.__done = false; RB.script.runInline([L, { who: 'mio', jp: '{行|い}こう 。', en: "Let's go." }]).then(() => { window.__done = true; }); }, LONG);
   await p.waitForTimeout(400);
   const dl = await p.evaluate(() => ({
@@ -91,9 +92,14 @@ const faceNpc = (p) => p.evaluate(() => {
   assert(dl.hudHidden && dl.tpHidden, 'HUD and touch controls hidden during dialogue');
   assert(dl.labels.includes('Word help') && dl.labels.includes('History'), 'separate, labelled dialogue controls: ' + dl.labels.join(', '));
   assert(!dl.small && !dl.overflow, 'dialogue controls ≥44px and nothing wider than the screen');
-  // the camera keeps the player above the sheet
-  const cam = await p.evaluate(() => { const P = RB.world.W.player; const pos = RB.render.tileToCss(P.fx, P.fy + 1); return { py: pos.y, top: document.querySelector('.dlg').getBoundingClientRect().top }; });
-  assert(cam.py <= cam.top, `player drawn above the dialogue sheet (${Math.round(cam.py)} ≤ ${Math.round(cam.top)})`);
+  // the camera stays put (the touch controls' band is kept while they hide) and the sheet does not cover the player
+  const cam = await p.evaluate(() => {
+    const P = RB.world.W.player, a = RB.render.tileToCss(P.fx, P.fy - 0.5), z = RB.render.tileToCss(P.fx + 1, P.fy + 1);
+    const r = document.querySelector('.dlg').getBoundingClientRect();
+    return { at: [RB.render.cam.x, RB.render.cam.y].join(), covered: z.x > r.left && a.x < r.right && z.y > r.top && a.y < r.bottom };
+  });
+  assert(cam.at === cam0, `the camera does not move when the dialogue opens (${cam0} → ${cam.at})`);
+  assert(!cam.covered, 'the dialogue sheet does not cover the player');
   // a tap on a word opens help and does NOT advance
   const line0 = await p.evaluate(() => document.querySelector('.dlg .main').textContent);
   await p.locator('.dlg .jt >> nth=4').tap();

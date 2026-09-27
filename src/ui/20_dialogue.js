@@ -54,6 +54,7 @@ RB.ui.dialogue = (function () {
     choicesEl.setAttribute('role', 'group');
     choicesEl.setAttribute('aria-label', 'Your reply');
     RB.ui.root.appendChild(choicesEl);
+    window.addEventListener('resize', () => dock(false));
     // choices sit just above the sheet, whatever its height
     if (typeof ResizeObserver !== 'undefined') {
       new ResizeObserver(() => {
@@ -99,6 +100,7 @@ RB.ui.dialogue = (function () {
     const ch = charInfo(line.who);
     s.backlog.push({ who: line.who, jp: line.jp, en: line.en });
     if (s.backlog.length > 220) s.backlog.splice(0, s.backlog.length - 200);
+    const fresh = box.classList.contains('hidden');
     box.classList.remove('hidden');
     document.body.classList.add('in-dialogue');
     box.classList.toggle('noportrait', !ch || !!line.noPortrait);
@@ -127,6 +129,7 @@ RB.ui.dialogue = (function () {
     box.querySelector('.b-tr').classList.toggle('hidden', RB.game.settings.secondary === 'always' || !hasJp);
     syncCtrl();
     box.querySelector('.txt').scrollTop = 0;
+    dock(fresh);
     requestAnimationFrame(syncMore);
     if (RB.game.settings.voice.auto && hasJp && !RB.game.fastForward()) speak(false);
     reveal(main);
@@ -231,6 +234,33 @@ RB.ui.dialogue = (function () {
     r();
   }
 
+  // The camera never moves for the dialogue. When the sheet at the bottom
+  // would cover the player or the speaker, it docks at the top of the screen
+  // instead, and goes back when that stops being true. Each conversation
+  // starts at the bottom; within one, the sheet only moves when it has to.
+  function setTop(on) {
+    box.classList.toggle('top', on);
+    document.body.classList.toggle('dlg-top', on);
+    if (choicesEl) choicesEl.classList.toggle('dlg-top', on);
+  }
+  function dock(fresh) {
+    if (!box || box.classList.contains('hidden')) return;
+    if (fresh) setTop(false);
+    if (!RB.render.worldVisible()) { setTop(false); return; }
+    const W = RB.world.W;
+    const who = [W.player];
+    const sp = current && current.who ? RB.world.actorById(current.who) : null;
+    if (sp && sp !== W.player) who.push(sp);
+    // a character sprite is a tile wide and a tile and a half tall
+    const boxes = who.map((a) => { const p0 = RB.render.tileToCss(a.fx, a.fy - 0.5), p1 = RB.render.tileToCss(a.fx + 1, a.fy + 1); return { l: p0.x, t: p0.y, r: p1.x, b: p1.y }; });
+    const r = box.getBoundingClientRect(), vh = window.innerHeight;
+    const top = box.classList.contains('top');
+    const edge = top ? r.top : vh - r.bottom;
+    const there = top ? { t: vh - edge - r.height, b: vh - edge } : { t: edge, b: edge + r.height };
+    const hits = (t, b) => boxes.some((q) => q.r > r.left + 4 && q.l < r.right - 4 && q.b > t + 4 && q.t < b - 4);
+    if (hits(r.top, r.bottom) && !hits(there.t, there.b)) setTop(!top);
+  }
+
   function choose(opts, o) {
     ensure();
     RB.game.setFastForward(false);
@@ -240,6 +270,7 @@ RB.ui.dialogue = (function () {
       choicesEl.classList.remove('hidden');
       const layer = { el: choicesEl, name: 'choices', parent: RB.ui.root, noAutofocus: false };
       choicesEl.classList.toggle('with-dlg', isOpen());
+      choicesEl.classList.toggle('dlg-top', isOpen() && box.classList.contains('top'));
       opts.forEach((op, i) => {
         const b = RB.ui.el('button', 'choice');
         const lead = RB.game.settings.lead;
@@ -264,6 +295,7 @@ RB.ui.dialogue = (function () {
   function hide() {
     if (!box) return;
     box.classList.add('hidden');
+    setTop(false);
     document.body.classList.remove('in-dialogue');
     RB.voice && RB.voice.cancel();
     RB.game.setFastForward(false);

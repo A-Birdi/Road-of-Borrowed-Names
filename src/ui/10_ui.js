@@ -480,15 +480,16 @@ RB.ui.hud = (function () {
       const label = fa ? fa.label : 'Look';
       if (label + !!fa !== lastLabel) { lastLabel = label + !!fa; RB.input.setActionLabel(label, !!fa); }
     }
-    // the camera keeps the player clear of whatever covers the bottom edge
-    let inset = 0;
-    const dlg = document.querySelector('.dlg:not(.hidden)');
-    if (dlg) inset = Math.max(0, window.innerHeight - dlg.getBoundingClientRect().top);
-    else if (world && body.classList.contains('touch')) {
+    // on a touch device the camera keeps the player clear of the touch
+    // controls. It is measured while they show and kept while they are hidden
+    // (dialogue, menus), so nothing that opens or closes moves the map.
+    if (world && body.classList.contains('touch')) {
       const tp = document.querySelector('.touchpad .tp-move');
-      if (tp) inset = Math.max(0, window.innerHeight - tp.getBoundingClientRect().top) * 0.75;
-    }
-    if (Math.abs(inset - lastInset) > 2) { lastInset = inset; RB.render.setInsets({ bottom: inset }); }
+      if (tp && tp.offsetParent) {
+        const r = Math.max(0, window.innerHeight - tp.getBoundingClientRect().top) * 0.75;
+        if (Math.abs(r - lastInset) > 2) { lastInset = r; RB.render.setReserve(r); }
+      }
+    } else if (!body.classList.contains('touch') && lastInset) { lastInset = 0; RB.render.setReserve(0); }
   }
   return { show, hide, refresh, tick };
 })();

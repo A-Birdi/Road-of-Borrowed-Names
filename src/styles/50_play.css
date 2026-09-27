@@ -101,6 +101,11 @@ body.bulb-on .place .jline .jt, body.bulb-on .card-slip .jline .jt, body.bulb-on
 .dbtn.primary svg { transition: transform var(--t-quick) var(--ease); }
 .dbtn.primary:hover svg { transform: translateX(2px); }
 body.high-contrast .dlg .who { box-shadow: inset 0 3px 0 #000; }
+/* docked at the top when the bottom would cover the player or the speaker
+ * (20_dialogue.js): the camera never moves for the dialogue */
+.dlg.top { bottom: auto; top: max(12px, env(safe-area-inset-top)); }
+body.dlg-top .notices { top: calc(var(--dlg-h, 0px) + max(12px, env(safe-area-inset-top)) + 12px); }
+body.dlg-top .place { top: calc(var(--dlg-h, 0px) + max(12px, env(safe-area-inset-top)) + 24px); }
 /* more of the line below the fold: fade the last lines; Next reads "More" */
 .dlg.more .txt { -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 30px), rgba(0,0,0,0.25)); mask-image: linear-gradient(to bottom, #000 calc(100% - 30px), rgba(0,0,0,0.25)); }
 @media (max-height: 440px) { /* landscape phones: the sheet may use most of the height */
@@ -125,6 +130,9 @@ body.high-contrast .dlg .who { box-shadow: inset 0 3px 0 #000; }
   .dlg .aux .dbtn { flex-direction: column; gap: 1px; padding: 3px 0.35em; font-size: 0.72em; min-width: 50px; }
   .dlg .aux .dbtn svg { width: 1.6em; height: 1.6em; }
   .dbtn.primary { min-width: 6.4em; min-height: 48px; }
+  .dlg.top { top: 0; padding-top: env(safe-area-inset-top); }
+  .dlg.top .dlg-sheet { border-radius: 0 0 10px 10px; }
+  .dlg.top .ctrl { padding-bottom: 8px; }
 }
 
 /* ---- replies (choices) ------------------------------------------------------- */
@@ -135,6 +143,7 @@ body.high-contrast .dlg .who { box-shadow: inset 0 3px 0 #000; }
   touch-action: pan-y pinch-zoom;
 }
 .choices.with-dlg { bottom: calc(var(--dlg-h, 0px) + 14px); max-height: calc(100 * var(--vh) - var(--dlg-h, 0px) - 80px); }
+.choices.with-dlg.dlg-top { bottom: auto; top: calc(var(--dlg-h, 0px) + max(12px, env(safe-area-inset-top)) + 14px); }
 .choice {
   display: grid; grid-template-columns: 2em minmax(0, 1fr); gap: 0.2em 0.7em; align-items: center; text-align: left; width: 100%;
   min-height: 52px; padding: 0.55em 1em 0.55em 0.6em; background: var(--paper); color: var(--ink);

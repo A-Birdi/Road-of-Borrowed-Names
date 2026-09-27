@@ -72,54 +72,132 @@ RB.render = (function () {
     c.restore();
   }
 
-  // Static layer of a map at art resolution. Only the current and previous
-  // maps keep one (a large map is a few megabytes at this resolution).
+  // ---- beyond the map's edge ---------------------------------------------------
+  // Outdoors the ground at each edge carries on past it: the same tiles with
+  // their own per-cell variation (so nothing repeats in stripes), the river
+  // keeps flowing, a road keeps going, and a wooded, reedy or rocky edge stays
+  // so — scenery is scattered at the density found along that stretch of edge.
+  // It darkens gently with distance so it never reads as walkable. Walled
+  // interiors keep the dark timber surround (the building around the room).
+  const SCENERY = { tree: 1, orchard: 1, pine: 1, deadtree: 1, bush: 1, reeds: 1, rock: 1, stump: 1, co_scrub: 1, sb_drift: 1 };
+  function enclosed(m) {
+    if (m.enclosed != null) return m.enclosed;
+    let e = m.region === 'interior' || !!(m.def && m.def.indoor);
+    if (!e) {
+      let wall = 0, n = 0;
+      const at = (x, y) => { n++; if (m.tiles[y * m.w + x].id === 'wall') wall++; };
+      for (let x = 0; x < m.w; x++) { at(x, 0); at(x, m.h - 1); }
+      for (let y = 1; y < m.h - 1; y++) { at(0, y); at(m.w - 1, y); }
+      e = wall / n >= 0.5;
+    }
+    return (m.enclosed = e);
+  }
+  const clampI = (v, n) => (v < 0 ? 0 : v >= n ? n - 1 : v);
+  // Margin (tiles) the current view can show past each edge: half the room a
+  // small map leaves, plus the touch-controls reserve below.
+  function marginFor(m) {
+    if (enclosed(m)) return { x: 0, y: 0 };
+    const vwT = bw / ATS, vhT = bh / ATS, rT = reserveLogical() / TS;
+    return { x: Math.max(1, Math.ceil((vwT - m.w) / 2) + 1), y: Math.max(1, Math.ceil((vhT - m.h) / 2) + 1) + Math.ceil(rT) };
+  }
+  // Scenery continued past the edge: for each outside cell, the edge cell it
+  // continues from sets the ground; the scenery found within two cells of that
+  // edge cell sets how likely a piece is here and which kind (by hash, stable).
+  function buildApronProps(m, g) {
+    const at = new Map();
+    for (const p of m.props) {
+      if (p.if || !SCENERY[p.p]) continue;
+      const pd = RB.props.P[p.p];
+      if (!pd || (p.w || pd.w) !== 1 || (p.h || pd.h) !== 1) continue;
+      at.set(p.y * m.w + p.x, p.p);
+    }
+    const base = new Map(); // prop kind -> the tile it stands on (from the map itself)
+    for (const p of m.props) if (SCENERY[p.p] && !base.has(p.p)) base.set(p.p, m.tiles[p.y * m.w + p.x]);
+    const out = [];
+    for (let y = -g.y; y < m.h + g.y; y++)
+      for (let x = -g.x; x < m.w + g.x; x++) {
+        if (x >= 0 && y >= 0 && x < m.w && y < m.h) continue;
+        const cx = clampI(x, m.w), cy = clampI(y, m.h);
+        const count = new Map();
+        let n = 0, hit = 0;
+        for (let yy = Math.max(0, cy - 2); yy <= Math.min(m.h - 1, cy + 2); yy++)
+          for (let xx = Math.max(0, cx - 2); xx <= Math.min(m.w - 1, cx + 2); xx++) {
+            n++;
+            const k = at.get(yy * m.w + xx);
+            if (k) { hit++; count.set(k, (count.get(k) || 0) + 1); }
+          }
+        if (!hit) continue;
+        const ground = m.tiles[cy * m.w + cx];
+        // only where that ground could carry it (never on the river or the road)
+        const kinds = [...count].filter(([k]) => base.get(k) === ground);
+        if (!kinds.length) continue;
+        const r = RB.tiles.hh(x, y, 11) % 1000;
+        if (r >= (1000 * hit) / n) continue;
+        let pick = RB.tiles.hh(x, y, 12) % kinds.reduce((a, [, c]) => a + c, 0), kind = kinds[0][0];
+        for (const [k, c] of kinds) { if (pick < c) { kind = k; break; } pick -= c; }
+        out.push({ p: kind, x, y, auto: true, apron: true });
+      }
+    return out;
+  }
+
+  // Static layer of a map at art resolution, with the apron around it when
+  // the map is outdoors. Only the current and previous maps keep one (a large
+  // map is a few megabytes at this resolution).
   let staticMaps = [];
   function buildStatic(m) {
-    const cv = RB.sprites.makeCanvas(m.w * ATS, m.h * ATS);
+    const g = marginFor(m);
+    const cv = RB.sprites.makeCanvas((m.w + 2 * g.x) * ATS, (m.h + 2 * g.y) * ATS);
     const c = cv.getContext('2d');
     c.imageSmoothingEnabled = false;
     const pal = palOf(m);
-    for (let y = 0; y < m.h; y++)
-      for (let x = 0; x < m.w; x++) {
-        const t = m.tiles[y * m.w + x];
-        const nb = (dx, dy) => RB.maps.tileAt(m, x + dx, y + dy);
-        if (t.draw2) t.draw2(c, x * ATS, y * ATS, pal, RB.tiles.hh(x, y), nb, x, y);
-        else legacy(c, () => t.draw(c, x * TS, y * TS, pal, RB.tiles.hh(x, y), nb));
+    const ext = !enclosed(m);
+    for (let y = -g.y; y < m.h + g.y; y++)
+      for (let x = -g.x; x < m.w + g.x; x++) {
+        const t = m.tiles[clampI(y, m.h) * m.w + clampI(x, m.w)];
+        // outdoors every tile sees the ground continuing past the edge
+        const nb = ext ? (dx, dy) => m.tiles[clampI(y + dy, m.h) * m.w + clampI(x + dx, m.w)] : (dx, dy) => RB.maps.tileAt(m, x + dx, y + dy);
+        const px = (x + g.x) * ATS, py = (y + g.y) * ATS;
+        if (t.draw2) t.draw2(c, px, py, pal, RB.tiles.hh(x, y), nb, x, y);
+        else legacy(c, () => t.draw(c, px / ART, py / ART, pal, RB.tiles.hh(x, y), nb));
       }
     if (RB.tileArt && RB.tileArt.flush) RB.tileArt.flush(); // tile art batches its output per row
     m.staticLayer = cv;
+    m.margin = g;
+    m.apronProps = ext ? buildApronProps(m, g) : [];
     staticDirty = false;
     staticMaps = staticMaps.filter((o) => o !== m);
     staticMaps.push(m);
-    while (staticMaps.length > 2) { const old = staticMaps.shift(); old.staticLayer = null; }
+    while (staticMaps.length > 2) { const old = staticMaps.shift(); old.staticLayer = null; old.apronProps = null; }
   }
 
-  // Screen area covered by interface (CSS px): the dialogue sheet or the touch
-  // controls at the bottom. The camera composes the map in the space that is
-  // left, so the player and nearby interactions are never under a panel and a
-  // small map sits in the visible area instead of floating in an empty band.
-  let insets = { top: 0, bottom: 0 };
+  // The camera never moves because a panel opened or closed: the dialogue
+  // docks at the top of the screen instead when it would cover someone (see
+  // 20_dialogue.js). The one thing it allows for is the band the touch
+  // controls occupy on a touch device (CSS px): a property of the device, so
+  // the view can run past the map's bottom edge by that much and keep the
+  // player clear of the pad.
+  let reserve = 0;
   let camMap = null, camY = 0, camX = 0;
-  function setInsets(o) {
-    insets = { top: Math.max(0, (o && o.top) || 0), bottom: Math.max(0, (o && o.bottom) || 0) };
+  function setReserve(px) {
+    reserve = Math.max(0, px || 0);
+  }
+  function reserveLogical() {
+    return Math.min((bh / ART) * 0.3, (reserve * dpr) / (artPx * ART));
   }
   function updateCamera(W) {
     const p = W.player;
     const m = W.map;
     const vw = bw / ART, vh = bh / ART; // logical view
-    const k = dpr / (artPx * ART);     // CSS px -> logical px
-    const ft = Math.min(vh * 0.3, insets.top * k);
-    const fb = Math.max(ft + vh * 0.4, vh - insets.bottom * k);
-    const fh = fb - ft;
+    const rb = reserveLogical();
     const mw = m.w * TS, mh = m.h * TS;
     let cx = (p.fx + 0.5) * TS - vw / 2;
     cx = mw <= vw ? (mw - vw) / 2 : Math.max(0, Math.min(mw - vw, cx));
-    let cy;
-    if (mh <= fh) cy = -(ft + (fh - mh) / 2);
-    else cy = Math.max(-ft, Math.min(mh - fb, (p.fy + 0.5) * TS - (ft + fh / 2) - 4));
-    // follow the walking player exactly; ease only the larger jumps that come
-    // from a panel opening or closing (snap on a new map or with reduced motion)
+    // centred on the player in the view above the reserve; the view may run
+    // past the bottom edge by the reserve (that ground is drawn: the apron)
+    const hi = mh - vh + rb;
+    const cy = mh + rb <= vh ? Math.max((mh - vh) / 2, hi) : Math.max(0, Math.min(hi, (p.fy + 0.5) * TS - (vh - rb) / 2 - 4));
+    // follow the walking player exactly; ease only larger jumps (a resize, or
+    // the reserve appearing); snap on a new map or with reduced motion
     if (camMap !== m || RB.game.reducedMotion()) { camMap = m; camX = cx; camY = cy; }
     else {
       camX = Math.abs(cx - camX) > 12 ? camX + (cx - camX) * 0.2 : cx;
@@ -176,24 +254,28 @@ RB.render = (function () {
     return pat;
   }
   function drawSurround(c, m, pal) {
-    const mx = ax(0), my = ay(0), mw = m.w * ATS, mh = m.h * ATS;
+    const g = m.margin || { x: 0, y: 0 };
+    const mx = ax(-g.x * TS), my = ay(-g.y * TS), mw = (m.w + 2 * g.x) * ATS, mh = (m.h + 2 * g.y) * ATS;
     c.fillStyle = pal.dark;
     if (mx <= 0 && my <= 0 && mx + mw >= bw && my + mh >= bh) { c.fillRect(0, 0, bw, bh); return; }
     // plain ground under the map itself; the patterned surround only in the
     // strips around it (painting the whole buffer twice a frame cost about
     // a third of a small interior's frame time)
     c.fillRect(mx, my, mw, mh);
-    const indoor = m.region === 'interior' || (m.def && m.def.indoor) || (m.w <= 17 && m.h <= 12);
+    const indoor = enclosed(m);
+    // rooms get dark timber, larger walled places (archives, towers) the weave
+    const timber = m.region === 'interior' || (m.def && m.def.indoor) || (m.w <= 17 && m.h <= 12);
     c.save();
     c.translate(mx & 63, my & 63); // the pattern stays put relative to the map
-    c.fillStyle = surroundPattern(c, pal, indoor);
+    c.fillStyle = surroundPattern(c, pal, timber);
     const ox = mx & 63, oy = my & 63, top = Math.max(0, my), bot = Math.min(bh, my + mh);
     if (my > 0) c.fillRect(-ox, -oy, bw, my);
     if (my + mh < bh) c.fillRect(-ox, my + mh - oy, bw, bh - my - mh);
     if (mx > 0 && bot > top) c.fillRect(-ox, top - oy, mx, bot - top);
     if (mx + mw < bw && bot > top) c.fillRect(mx + mw - ox, top - oy, bw - mx - mw, bot - top);
     c.restore();
-    // soft shadow just outside the map edge
+    if (!indoor) return; // outdoors the apron fades instead (drawFade)
+    // soft shadow just outside the room's edge
     const sh = 20;
     const edge = (x0, y0, x1, y1, x, y, w, h) => {
       const gr = c.createLinearGradient(x0, y0, x1, y1);
@@ -278,23 +360,47 @@ RB.render = (function () {
     c.fillRect(x, y, 8, 1); c.fillRect(x + 1, y + 1, 6, 1); c.fillRect(x + 2, y + 2, 4, 1); c.fillRect(x + 3, y + 3, 2, 1);
   }
 
+  // Past an outdoor map's edge the ground darkens towards the region's night
+  // colour over three tiles, from nothing at the edge itself, so the boundary
+  // reads without a line. Corners take both bands and so fall off further.
+  function drawFade(c, m, pal) {
+    if (enclosed(m)) return;
+    const X0 = ax(0), Y0 = ay(0), X1 = ax(m.w * TS), Y1 = ay(m.h * TS);
+    if (X0 <= 0 && Y0 <= 0 && X1 >= bw && Y1 >= bh) return;
+    const n = parseInt(pal.dark.slice(1), 16), rgb = (n >> 16) + ',' + ((n >> 8) & 255) + ',' + (n & 255);
+    const D = 3 * ATS, A = 0.5;
+    const band = (fx, fy, tx, ty, x, y, w, h) => {
+      const gr = c.createLinearGradient(fx, fy, tx, ty);
+      gr.addColorStop(0, 'rgba(' + rgb + ',0)');
+      gr.addColorStop(1, 'rgba(' + rgb + ',' + A + ')');
+      c.fillStyle = gr;
+      c.fillRect(x, y, w, h);
+    };
+    if (X0 > 0) band(X0, 0, X0 - D, 0, 0, 0, X0, bh);
+    if (X1 < bw) band(X1, 0, X1 + D, 0, X1, 0, bw - X1, bh);
+    if (Y0 > 0) band(0, Y0, 0, Y0 - D, 0, 0, bw, Y0);
+    if (Y1 < bh) band(0, Y1, 0, Y1 + D, 0, Y1, bw, bh - Y1);
+  }
+
   function drawWorld(t) {
     const W = RB.world.W;
     const m = W.map;
     if (!m) return;
     if (staticDirty || !m.staticLayer) buildStatic(m);
+    else { const need = marginFor(m); if (need.x > m.margin.x || need.y > m.margin.y) buildStatic(m); }
     updateCamera(W);
     const c = bctx;
     const pal = palOf(m);
+    const g = m.margin;
     drawSurround(c, m, pal);
-    c.drawImage(m.staticLayer, ax(0), ay(0));
-    // animated water
-    const x0 = Math.max(0, Math.floor(cam.x / TS)), y0 = Math.max(0, Math.floor(cam.y / TS));
-    const x1 = Math.min(m.w, Math.ceil((cam.x + bw / ART) / TS) + 1), y1 = Math.min(m.h, Math.ceil((cam.y + bh / ART) / TS) + 1);
+    c.drawImage(m.staticLayer, ax(-g.x * TS), ay(-g.y * TS));
+    // animated water (past the edge too: the river keeps flowing)
+    const x0 = Math.max(-g.x, Math.floor(cam.x / TS)), y0 = Math.max(-g.y, Math.floor(cam.y / TS));
+    const x1 = Math.min(m.w + g.x, Math.ceil((cam.x + bw / ART) / TS) + 1), y1 = Math.min(m.h + g.y, Math.ceil((cam.y + bh / ART) / TS) + 1);
     const still = RB.game.reducedMotion();
     for (let y = y0; y < y1; y++)
       for (let x = x0; x < x1; x++) {
-        const tile = m.tiles[y * m.w + x];
+        const tile = m.tiles[clampI(y, m.h) * m.w + clampI(x, m.w)];
         if (!tile.anim) continue;
         const sx = ax(x * TS), sy = ay(y * TS);
         if (tile.anim2) { tile.anim2(c, sx, sy, pal, t, x, y, still); continue; }
@@ -332,12 +438,20 @@ RB.render = (function () {
         draw: pd.draw2 ? () => pd.draw2(c, ax(p.x * TS), ay(p.y * TS), pal, t, opts) : () => legacy(c, () => pd.draw(c, lx, ly, pal, t, opts)),
       });
     }
+    for (const p of m.apronProps || []) {
+      const lx = p.x * TS - cam.x, ly = p.y * TS - cam.y;
+      if (lx < -64 || ly < -64 || lx > bw / ART + 64 || ly > bh / ART + 80) continue;
+      const pd = RB.props.P[p.p];
+      const opts = { cx: p.x, cy: p.y, still };
+      list.push({ z: (p.y + 1) * TS - 0.5, draw: pd.draw2 ? () => pd.draw2(c, ax(p.x * TS), ay(p.y * TS), pal, t, opts) : () => legacy(c, () => pd.draw(c, lx, ly, pal, t, opts)) });
+    }
     for (const n of W.npcs) list.push({ z: n.fy * TS + TS, draw: () => drawActor(c, n, t) });
     for (const f of W.foes) list.push({ z: f.fy * TS + TS, draw: () => drawActor(c, f, t, true) });
     if (W.comp) list.push({ z: W.comp.fy * TS + TS - 0.1, draw: () => drawActor(c, W.comp, t) });
     list.push({ z: W.player.fy * TS + TS, draw: () => drawActor(c, W.player, t) });
     list.sort((a, b) => a.z - b.z);
     for (const d of list) d.draw();
+    drawFade(c, m, pal);
     interactMarker(c, W, t);
     drawLighting(c, m, W, t);
     drawWeather(c, m, t);
@@ -491,11 +605,15 @@ RB.render = (function () {
       return null;
     }
   }
+  // Whether the world map is what is on screen (not combat, the title or creation).
+  function worldVisible() {
+    return !override && !!RB.world.W.map;
+  }
   // Screen position (css px) of a tile, for placing DOM bubbles.
   function tileToCss(x, y) {
     const k = (artPx * ART) / dpr;
     return { x: (x * TS - cam.x) * k, y: (y * TS - cam.y) * k };
   }
 
-  return { init, frame, prewarm, invalidate, setOverride, setInsets, viewSize, thumbnail, tileToCss, resize, cam, ART, TS };
+  return { init, frame, prewarm, invalidate, setOverride, setReserve, viewSize, thumbnail, tileToCss, worldVisible, resize, cam, ART, TS };
 })();
