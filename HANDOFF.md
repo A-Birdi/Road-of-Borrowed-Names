@@ -69,8 +69,11 @@ real builds: docs/screenshots/ (README indexes them). Evidence: VALIDATION.md
   challenge/pad/lessons/activities/combat (60–80_*.js), Atlas sheets
   (atlas/50_run.js).
 - Art: renderer at 2 art px per logical px (engine/60_render.js; hooks
-  draw2/anim2/STRUCT2/getArt, legacy x2 adapter, region surround, prewarm on
-  door transitions); tiles 20–21, props/buildings 26–29 + chapter blocks,
+  draw2/anim2/STRUCT2/getArt, legacy x2 adapter, prewarm on door
+  transitions; outdoor maps continue past their edges — the "apron" built
+  with the static layer — and walled maps keep a surround; the camera is
+  never moved by the dialogue, which docks at the top when it would cover
+  the player or speaker: 20_dialogue.js dock()); tiles 20–21, props/buildings 26–29 + chapter blocks,
   characters 31–33, portraits 35–36, battle creatures/backdrops 77–79 +
   chapter enemy-art blocks, title scene in 30_title.js.
 - Tests added: folio, play_ui, title_ledger, create, learning_ui (in

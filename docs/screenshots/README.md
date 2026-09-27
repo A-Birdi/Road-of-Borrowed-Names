@@ -53,3 +53,19 @@ with twice the art detail per tile).
 | Kana lesson sheet (cloth cover, readable title and furigana) | [image](after/extra/lesson_390x844.webp) |
 | Teahouse activity sheet, desktop | [image](after/extra/activity_1280x800.webp) |
 | Journey at 320 px with Japanese interface labels (all four tabs, no scroll arrows) | [image](after/extra/journey_ja_320x640.webp) |
+
+## Map edges and the dialogue (player report, 2026-09-27)
+
+Before = the build before the fix (c6850ad); after = b1185f9. Mill Road (the
+map after the first battle) at 1600×870 and 1600×397 CSS px with 125 %
+scaling, a phone at 390×844, the village, and a room on a phone.
+
+| Case | Before | After |
+|---|---|---|
+| Mill Road, no dialogue | [before](before/edges/mr_desk_a.webp) | [after](after/edges/mr_desk_a.webp) |
+| Mill Road, dialogue open (before: map pushed up over an empty band; after: map still, sheet docked at the top) | [before](before/edges/mr_desk_b.webp) | [after](after/edges/mr_desk_b.webp) |
+| Short wide window, no dialogue (before: dark band past the edges; after: woods and river continue) | [before](before/edges/mr_short_a.webp) | [after](after/edges/mr_short_a.webp) |
+| Short wide window, dialogue open (after: the map stays still; the sheet is taller than half this window, so either position overlaps the player and it stays at the bottom) | [before](before/edges/mr_short_b.webp) | [after](after/edges/mr_short_b.webp) |
+| Phone, dialogue open near the bottom of the map | [before](before/edges/mr_phone_b.webp) | [after](after/edges/mr_phone_b.webp) |
+| Village, dialogue open mid-map (unchanged: sheet stays at the bottom) | [before](before/edges/vil_desk_b.webp) | [after](after/edges/vil_desk_b.webp) |
+| Room on a phone, dialogue open (room no longer jumps; surround kept) | [before](before/edges/hall_phone_b.webp) | [after](after/edges/hall_phone_b.webp) |

@@ -386,3 +386,45 @@ and the software keyboard are emulated. No real phone, Firefox or Safari.
   software keyboard, safe areas, frame rate, battery), Firefox and
   Safari/WebKit (only Chromium is installed here), screen readers beyond the
   ARIA roles the tests check, and a human judgement of the art.
+
+## Map edges and the dialogue — player report (2026-09-27)
+Report: on the Mill Road (after the first battle) opening a dialogue pushed
+the whole map up above the text box, exposing an empty band, and it dropped
+back on close; wider windows showed the same band past the map's sides.
+- **B** Reproduced on c6850ad with the player's scenario (Mill Road, Mio
+  speaking; 1600x870 and 1600x397 CSS px at 125 %, 390x844 phone): camera
+  moved on open (e.g. y 216 → 269 at 1280x800) and the dark weave band
+  showed past the edges. Captures: docs/screenshots/{before,after}/edges/.
+- Fix (b1185f9): camera independent of the dialogue (touch controls keep a
+  fixed reserve), sheet docks at the top when it would cover the player or
+  speaker, outdoor maps continue past their edges with scenery at the edge's
+  density and a gentle fade, walled maps unchanged. See ART_DIRECTION §7.
+- **B** `tests/e2e/world_view.mjs` (new): all ok on b1185f9; on c6850ad 9
+  of its checks fail (camera moves on open, no top docking, the edge colour
+  past the river and woods is the surround's (31,45,39)). Covers desktop and
+  phone camera unchanged on open and close, top docking near the bottom,
+  replies below a top sheet, mid-map sheet at the bottom, river and woods
+  continuing past the edges and darker than inside, trees continued (50)
+  and none on the river or road, the band rebuilt when the window grows
+  (margin 3 → 9 tiles), and a room keeping its surround. `play_ui.mjs`
+  camera check rewritten to the new rule (fails on c6850ad).
+- **B** On the build just before b1185f9 (which differs only by keeping the
+  old choice of surround pattern for walled maps; world_view and play_ui
+  were re-run on b1185f9): unit 1866; ui 14/14, systems 4/4, folio, settings,
+  learning_ui 14/14, create 382, title_ledger 13/13, shift_load 18/18 in
+  both modes, story_ch1 F/mio, atlas check; layout audit of dialogue, help,
+  challenge and six world states at 320x640, 390x844, 844x390, 1280x800,
+  1920x1080: 45/45 clean.
+- **S** Every outdoor map small enough to show its edges, captured at
+  390x844 (14 maps) and 1600x397: woods, sea, orchard, snow and pines
+  continue; floating places (co.lookout, sa.heart) keep their night sky.
+- **B** `perf.mjs` c6850ad vs the fix (same container, two runs at
+  1280x800 @1x, one at 390x844 @2x): steady frame work unchanged within
+  noise — outdoors 1.8–2.8 ms before, 1.9–2.8 ms after (one 3.5 ms reading,
+  sb.hamlet on the phone size); first static build per map about 12 %
+  longer on average (−16 % to +30 % across readings; the band past the
+  edge), still done during the door transition.
+- Limitation: on very short windows (e.g. 1600x397, landscape phones) the
+  sheet is taller than half the screen, so both positions overlap the
+  player and it stays at the bottom; the portrait and name tab still show
+  who speaks.

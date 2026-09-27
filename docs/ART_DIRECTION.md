@@ -188,11 +188,26 @@ All other preferences apply to every campaign.
   it will do (Talk, Read, Look, Face, Chat). The controls are hidden
   during dialogue, menus and writing. A handedness and size setting is
   available, and its defaults keep the previous layout.
-- **Camera:** the map is composed in the space above the dialogue sheet or
-  touch controls. Small maps sit on a quiet surround in the region's
-  darkest colour (timber indoors, a faint weave outdoors) with a soft edge
-  shadow. Nothing in the surround looks walkable, and the map is never
-  stretched or cropped.
+- **Camera:** composed from the whole view and never moved by a panel
+  opening or closing. (Until 2026-09-27 it recomposed the map above the
+  dialogue sheet; on a map about the size of the window that pushed the
+  whole map up and exposed an empty band. Reported by the player.) When the
+  dialogue sheet at the bottom would cover the player or the speaker, the
+  sheet docks at the top of the screen instead, the usual answer in this
+  genre; replies, notices and the place banner then sit below it. On touch
+  devices the band the touch controls use is a fixed reserve, so the view
+  may run a little past a map's bottom edge to keep the player clear of the
+  pad.
+- **Past a map's edge:** outdoors, the edge carries on. The edge tiles
+  continue with their own per-cell variation (the river keeps flowing, a
+  road keeps going), and trees, reeds and rocks are scattered at the density
+  found along that stretch of edge, never on water or a road. The ground
+  darkens gently towards the region's night colour over three tiles, from
+  nothing at the edge, so the boundary reads without a drawn line and
+  nothing past it looks like part of the playable map. Walled maps (rooms,
+  archives, towers) keep a quiet surround in the region's darkest colour
+  (timber for rooms, a faint weave for larger places) with a soft edge
+  shadow. The map is never stretched or cropped.
 
 ## 8. Pixel art
 
