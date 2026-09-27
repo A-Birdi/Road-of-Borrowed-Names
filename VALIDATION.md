@@ -428,3 +428,7 @@ back on close; wider windows showed the same band past the map's sides.
   sheet is taller than half the screen, so both positions overlap the
   player and it stays at the bottom; the portrait and name tab still show
   who speaks.
+- **B** Full default suite `node tests/e2e/run.mjs` on b1185f9: **20/20
+  scripts passed** (the 19 before plus world_view), including Shift/Load
+  18/18 in both modes, every per-chapter story test, the Atlas check and
+  the whole game `pursue.mjs E mio` (739 s).

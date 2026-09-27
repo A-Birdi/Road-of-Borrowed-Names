@@ -52,7 +52,9 @@
 All four phases are done on `claude/stoic-sagan-n3jvgk` (not on main). Final
 build 6031612: full browser suite 19/19 (d5d4b95; 6031612 differs by one CSS
 property, re-tested), unit 1866, layout audit 448/448 (English, 8
-viewports) and 168/168 (Japanese labels), whole-game matrix 16/16. Design record, tokens, component rules, the old→new menu mapping and
+viewports) and 168/168 (Japanese labels), whole-game matrix 16/16.
+Follow-up (player report, 2026-09-27): the dialogue no longer moves the map
+and outdoor maps continue past their edges (b1185f9; full suite 20/20). Design record, tokens, component rules, the old→new menu mapping and
 the pixel-art record: docs/ART_DIRECTION.md. Before/after captures of the
 real builds: docs/screenshots/ (README indexes them). Evidence: VALIDATION.md
 ("Visual overhaul — final build"). Checklist: REQUIREMENTS.md V1–V21.
