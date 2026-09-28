@@ -51,7 +51,7 @@ RB.combat = (function () {
     const px = Math.round(S.x + S.w * 0.1), py = Math.round(S.y + S.h - 52 * ps - 8);
     const hz = Math.max(0, Math.min(h - 1, Math.round(Math.min(ey + 36 * scale, py + 16 * ps))));
     c.imageSmoothingEnabled = false;
-    Sc.backdrop(c, enemy.bgKey || enemy.bg || enemy.region || 'reedwake', w, h, hz, tt, reduce);
+    Sc.backdrop(c, enemy.bgKey || enemy.bg || enemy.region || 'reedwake', w, h, hz, tt, reduce, { S, ex, ey, ext, px, py, ps, scale, art: enemy.art });
     // creature and its ground shadow
     Sc.shadow(c, ex, ey + 84 * scale, 58 * scale, 11 * scale, 0.5);
     if (st && st.over === 'win') c.globalAlpha = 0.5;
@@ -471,6 +471,8 @@ RB.combat = (function () {
     if (e.setting === 'outdoor' && INDOOR_BG[bg]) bg = OUTDOOR_BG[e.region] ? e.region : 'reedwake';
     if (e.setting === 'indoor' && OUTDOOR_BG[bg] && !place.bg) console.warn('outdoor backdrop indoors', e.id, where && where.map);
     e.bgKey = bg;
+    // the backdrop's composition for this place, chosen once (RB.battlePlaces)
+    if (RB.battlePlaces) RB.battlePlaces.begin(e, opts);
   }
   async function start(enemyId, opts) {
     opts = opts || {};

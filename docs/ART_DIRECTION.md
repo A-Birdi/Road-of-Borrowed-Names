@@ -274,6 +274,88 @@ captures of the real builds are in `docs/screenshots/`. Signs and papers
 suggest writing with brush dashes; no shapes that could pass for
 characters are used as ornament.
 
+### Battle backdrops: the place of the encounter (2026-09-28)
+
+A battle's backdrop is a glimpse of where the encounter happens, composed
+once at encounter entry by `RB.battlePlaces` (`src/ui/76_battle_places.js`)
+and drawn by `RB.battlePlaceArt` (`src/ui/76_battle_placeart.js`). The
+region painters in `79_battle_scene.js` remain as the fallback when there is
+no place to read (a battle started without a map position).
+
+- **The view looks north**, as the world's camera does: the back of the
+  scene is what lies beyond the encounter on the map, left is west, and a
+  building shows the front the map shows. A **small room** (at most 20×16
+  cells inside) is one fixed glancing view of its back wall: the same
+  structure wherever in the room the battle starts. A large hall or open
+  country is read around the encounter (10 cells west, 6 east, 10 ahead,
+  3 behind), so two places on one map look different.
+- **Structure** (never random, never invented): indoors or out; the room's
+  walls in the world's own wall styles (timber-framed plaster with a board
+  dado where the floor is wood, stone or brick courses otherwise) and the
+  building's articulation (the Drowned Archive's arched bays, the
+  observatory's pilasters, braces in the bell tower, soot in the kilns);
+  openings where the top wall row has a gap; and the landmarks really in
+  view: ladder, stairs, the mill's gears and millstone, shelves, pillars,
+  bells, kilns, conduits, a building's front with its windows and door where
+  the map puts them, the water wheel, bridges, cliffs. Each piece records
+  the map prop, building or tile run it comes from (`last().structure`).
+  Relations are kept: pieces are placed in their west-to-east order; one
+  that would stand behind the creature is either drawn in shadow (large,
+  quiet things: the gear train, shelves, the millstone) or slid to its own
+  side of the scene; a feature may be left out of view, never moved to
+  another wall.
+- **The ground** is the map's: the cells in view are projected onto the
+  backdrop's ground plane (the encounter's row at the creature's feet, the
+  row behind under the party), so water, paths, sand, grass, snow, stone
+  and bridges lie where the map has them, with clustered wandering edges, a
+  lit shore, and reeds on the banks of maps that grow reeds.
+- **Nearby context**: the nearest few real props per kind (trees, reeds,
+  rocks, barrels, crates, lanterns…) drawn with the world's own prop art at
+  the world's size; far trees, bushes, reeds and rocks become lines on the
+  horizon. Nothing is set down on water or over an actor.
+- **Accessories**: a seeded, bounded choice of themed clusters per kind of
+  place (the mill: sacks and spilled flour, a lantern on a crate, hanging
+  scrolls, a peg board, a wall shelf, a broom, rope and a bucket, baskets,
+  hay; the kilns: pots, firewood, buckets, ash; the archives: books, loose
+  pages, candles, puddles; out of doors: tufts, flowers, pebbles,
+  mushrooms by trees, reeds only by water, shells on sand, snow clumps…).
+  Indoors two or three on the wall and two or three on the floor; out of
+  doors three to five. They go only into free zones: the floor line by the
+  wall at the sides the actors leave, the wall under the beam (hanging
+  things hang from the beam or a nail on a rail), the near floor at the
+  edges; up to half of one may run past the stage's outer edge. They never
+  touch the creature's box (its drawing measured from its own frames, its
+  shadow and its knots, with room to move) or the party's corner (the
+  lower-left third, with room for taller battle sprites). Authored with the
+  prop kit in the world's style: a selective outline in the object's own
+  colour, never the ink line that marks interactable things.
+- **Seeds and stability**: the seed is `opts.presentSeed`, else
+  `RB.battlePlaces.forceSeed(n)`, else a hash of the map, the tile and an
+  encounter counter kept in memory (not saved). Structure and context do not
+  depend on it; only the accessories do. The static layer is built once per
+  (composition, frame) and cached; turns, hits and statuses never rebuild
+  it. A new frame (a resize, or the overlay's slips changing height) reframes
+  the same selection. Cosmetic choices use their own `RB.util.rng`; nothing
+  here calls `Math.random` or touches battle state.
+- **Light and life**: rooms are dim in their own warm shadow with a pool of
+  light where the party stands; windows on the building's front (behind the
+  viewer) throw a pale shaft by day; lamps glow. Out of doors the sky and
+  ground follow the map's current light (evening and night variants darken
+  it, with a few stars). Ambient life is small and bounded: dust (and dust
+  turning in a window shaft), a lamp's pool breathing now and then, glints
+  on water; none of it with reduced motion.
+- **Pixel grid**: everything is drawn at art resolution (2 art px per
+  logical px); the static layer is built at scene resolution and blitted at
+  the same whole-number scale as the creature and the party.
+
+Limitations: the view always looks north (a scene south of the encounter is
+only the near foreground); world props keep their top-down three-quarter
+drawing; heights and depths are simplified (one horizon; the far tier is a
+line on the horizon); a building's roof is drawn in elevation, not from the
+map's art. A battle with no map position (tests, tools) falls back to the
+region painter. Evidence: `tests/e2e/backdrops.mjs`; captures in
+`docs/screenshots/backdrops/`.
+
 ## 9. Things deliberately not done
 
 - No texture behind text, furigana or handwriting strokes.
