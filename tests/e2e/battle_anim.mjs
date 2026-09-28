@@ -94,7 +94,8 @@ async function helpers(p) {
       const q = bs.find((x) => !right.includes(x.textContent.replace(/\s+/g, ' ').trim())).getBoundingClientRect();
       return { x: q.left + q.width / 2, y: q.top + q.height / 2 };
     };
-    BA.setIntent = (kind, target) => { const st = RB.combat.state(); st.intent = Object.assign(RB.combatLogic.intentDef({}, kind), target ? { target } : {}); RB.combat.refresh(); return st.intent.kind; };
+    // (a 'rand' target is resolved when the rules draw an intent; here it becomes you)
+    BA.setIntent = (kind, target) => { const st = RB.combat.state(); st.intent = Object.assign(RB.combatLogic.intentDef({}, kind), target ? { target } : {}); if (st.intent.target === 'rand') st.intent.target = 'pc'; RB.combat.refresh(); return st.intent.kind; };
   });
 }
 // A fresh campaign in a battle; resolves when the response cards are up.
@@ -455,6 +456,11 @@ await test('states: Hush on the party and Gathering on the creature, applied and
   assert(seq(E.map((s) => s.marks.indexOf('charge') >= 0)).join() === 'false,true' && E.some((s) => (s.effects || []).indexOf('gather') >= 0), 'Gathering: motes spiral in, then circle it');
   S = await turn('rest', 'Holds something in place'); P = during(S, 'player');
   assert(seq(P.map((s) => s.marks.indexOf('charge') >= 0)).join() === 'true,false' && P.some((s) => (s.effects || []).some((e) => /^rope/.test(e))) && P.some((s) => (s.effects || []).indexOf('scatter') >= 0), 'the rope: a loop cinches, the gathered force spills away at the beat');
+  // a Gathering left alone is spent in its next Strike: the mark goes with that blow, not later
+  await p.evaluate(() => { RB.combat.state().charged = true; RB.combat.refresh(); });
+  S = await turn('strike', 'Cools what is overheating'); E = during(S, 'enemy');
+  const te = last(await trace(p), 'enemy'), spentAt = E.findIndex((s) => s.marks.indexOf('charge') < 0);
+  assert(te.beats.map((x) => x.t).join() === 'hit,spent' && spentAt > 0 && spentAt < E.length - 10 && E.some((s) => (s.effects || []).indexOf('scatter') >= 0), 'Gathering spent in the blow: the mark goes at contact (' + te.beats.map((x) => x.t + '@' + x.at).join(', ') + ')');
   // several states at once stay bounded: Heat + Shroud + Gathering + Hush + wards
   await p.evaluate(() => { const st = RB.combat.state(); st.heat = 2; st.shroud = true; st.charged = true; st.silenced = 1; st.ward.pc = 3; st.ward.comp = 2; RB.combat.refresh(); BA.sampleOn(); });
   await wait(p, 400);

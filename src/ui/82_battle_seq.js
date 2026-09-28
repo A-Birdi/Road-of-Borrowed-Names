@@ -169,7 +169,7 @@ RB.battleSeq = (function () {
     RB.ui.pushLayer(layer);
     const t0 = performance.now();
     onDown = (e) => {
-      if (!cur || e.timeStamp && performance.now() - t0 < 120) return;
+      if (!cur || performance.now() - t0 < 120) return; // not the press that started it
       const tg = e.target;
       if (!tg || !tg.closest) return;
       if (tg.closest('button, a, input, select, textarea, .kwcard, .dlg')) return;
@@ -188,9 +188,9 @@ RB.battleSeq = (function () {
   const TECH_GESTURE = { nao: 'direct', mio: 'restore', ren: 'ward', suzu: 'flow' };
   const OUTCOME = { unravel: 1, ward: 1, heal: 1, water: 1, light: 1, bind: 1, warm: 1, bell: 1, settle: 1, reveal: 1, tech: 1, comp: 1 };
   function wordOf(card) {
+    // the response's own Japanese (a word in kanji with its reading; ほどく, こたえる, みぬく, あわせ as written)
     const jp = card.kind === 'word' ? card.word.jpK || card.word.jp : card.jp;
-    const en = card.kind === 'tech' ? card.en : card.en;
-    return { jp, en, html: RB.ui.jhtml(jp) };
+    return { jp, en: card.en, html: RB.ui.jhtml(jp) };
   }
   function planOf(card, fx, ctx) {
     const has = (t) => fx.some((f) => f.t === t);
@@ -368,6 +368,15 @@ RB.battleSeq = (function () {
       ctx.missAt = single ? aimed : ((comp ? ['pc', 'comp'] : ['pc']).find((w) => hits.indexOf(w) < 0) || 'pc');
       const fam = single ? 'strike' : kind === 'sweep' || kind === 'flood' ? 'sweep' : kind === 'gust' ? 'sweep' : 'cast';
       const pre = [], post = [];
+      // A Strike or Sweep spends a held Gathering whether it lands or not. The rules clear
+      // it without an event of its own; this display-only beat shows it at the blow (the
+      // reconcile at the end of the sequence would show the same).
+      const spent = (Q, at) => {
+        if ((kind === 'strike' || kind === 'sweep') && ctx.view.charged && !fx.some((f) => f.t === 'countered' && f.kind === 'charge')) {
+          Q.push({ at, type: 'fx', name: 'scatter', d: 480, p: {} });
+          Q.push({ at, type: 'beat', f: { t: 'spent' } });
+        }
+      };
       // lines the rules put before the move (Atlas) and after it (a companion's draught)
       let seenMove = false;
       for (const f of fx) {
@@ -394,6 +403,7 @@ RB.battleSeq = (function () {
           Q.push({ at: t + T.foePrep + 200, type: 'pose', who: aimed, pose: 'brace', d: 320 });
         } else Q.push({ at: t + T.foePrep, type: 'foe', act: 'balk', d: 380 });
         for (const f of fx.filter((x) => x.t === 'countered')) { reactions(Q, f, t + T.foePrep + 200, ctx, 'enemy'); Q.push({ at: t + T.foePrep + 200, type: 'beat', f }); }
+        spent(Q, t + T.foePrep + 260);
         t += T.foePrep + 520;
       } else {
         Q.push({ at: t, type: 'foe', act: 'prep', d: T.foePrep, dir, family: fam });
@@ -423,6 +433,7 @@ RB.battleSeq = (function () {
           if (f.t === 'hit' || f.t === 'block') lastWho[f.who] = f.t;
           if (f.t === 'stripWard') at += 90;
         }
+        spent(Q, at + 60);
         Q.push({ at: Math.max(at + 100, t + T.contact + 140), type: 'foe', act: fam === 'cast' ? 'rest' : 'recover', d: fam === 'cast' ? 260 : T.foeRecover, dir, family: fam });
         t = Math.max(at + 380, t + T.contact + 440);
       }

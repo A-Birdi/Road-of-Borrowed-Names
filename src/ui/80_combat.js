@@ -462,6 +462,7 @@ RB.combat = (function () {
         sfx('reveal'); msg = f.en; break;
       case 'plea': msg = 'It waits for an answer that doesn\'t come.'; break;
       case 'rest': msg = 'It hangs back, waiting.'; break;
+      case 'spent': v.charged = false; msg = 'The force it gathered is spent in that blow.'; break;
       case 'revive': v.pc = st.pc; msg = compName() + ' hauls you back to your feet.'; break;
       case 'woven': msg = ''; break;
       default: msg = f.en || '';
