@@ -706,18 +706,25 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
   const ACC = {
     scarf(b, look, p, g, d, L) {
-      if (L !== 'body') return;
+      // seen from behind (the battle party) the wrap and tail lie over long hair, so they still show
+      if (L !== (d === 'up' ? 'head' : 'body')) return;
       const R = r3(look.scarfCol || '#c8962e'), t = g.t;
+      const S = look.scarfStripe ? r3(look.scarfStripe) : null; // a knitted stripe (a keepsake scarf)
       if (d === 'side') {
         b.rect(14, t - 1, 7, 3, R[1]); b.rect(14, t - 1, 7, 1, R[2]); b.rect(14, t + 1, 7, 1, R[0]);
         const fl = g.f ? 1 : 0; // the tail streams behind and lifts with the stride
         b.rect(10, t, 4, 2, R[1]); b.rect(8, t + 1 - fl, 3, 2, R[1]); b.rect(7, t + 2 - fl, 2, 2, R[0]); b.px(10, t, R[2]);
+        if (S) { for (const x of [16, 19]) { b.rect(x, t - 1, 1, 3, S[1]); b.px(x, t - 1, S[2]); } b.rect(11, t, 1, 2, S[1]); b.rect(8, t + 1 - fl, 1, 2, S[1]); }
       } else {
         b.rect(12, t - 1, 8, 1, R[1]); b.rect(11, t, 10, 2, R[1]); b.rect(11, t, 10, 1, R[2]); b.rect(11, t + 1, 10, 1, R[1]);
         b.rect(11, t + 2, 10, 1, R[0]); b.px(12, t, shade(R[2], 1));
         const tx = d === 'down' ? 17 : 12, sw = g.f === 1 ? 1 : g.f === 2 ? -1 : 0;
         b.rect(tx, t + 2, 3, 6, R[1]); b.rect(tx, t + 2, 1, 6, R[2]); b.rect(tx + 2, t + 2, 1, 6, R[0]);
         b.rect(tx + sw, t + 8, 3, 1, R[1]); b.px(tx + sw, t + 9, R[0]); b.px(tx + 2 + sw, t + 9, R[0]);
+        if (S) {
+          for (const x of [13, 16, 19]) { b.rect(x, t, 1, 3, S[1]); b.px(x, t, S[2]); }
+          for (const y of [t + 4, t + 6]) { b.rect(tx, y, 3, 1, S[1]); b.px(tx, y, S[2]); }
+        }
       }
     },
     satchel(b, look, p, g, d, L) {
@@ -774,11 +781,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
     },
     flower(b, look, p, g, d, L) {
       if (L !== 'head') return;
-      const c = look.flowerCol || '#f4a6a0', R = r3(c), y = 6 + g.hy + g.bob;
-      const x = d === 'side' ? 11 : 21;
-      b.rect(x + 1, y, 2, 1, R[2]); b.rect(x, y + 1, 4, 2, R[1]); b.rect(x + 1, y + 3, 2, 1, R[0]);
-      b.px(x, y + 1, R[2]); b.rect(x + 1, y + 1, 2, 2, '#fff4c0'); b.px(x + 2, y + 2, '#e8b050');
-      if (d !== 'up') b.px(x - 1, y + 3, '#5a8a4a');
+      // five petals round a small yellow heart, lit from the upper left, and a leaf
+      const c = look.flowerCol || '#f4a6a0', R = r3(c), y = 5 + g.hy + g.bob;
+      const x = d === 'side' ? 10 : 21;
+      b.rect(x + 1, y, 3, 5, R[1]); b.rect(x, y + 1, 5, 3, R[1]);
+      b.px(x + 1, y, R[2]); b.px(x + 2, y, R[2]); b.px(x, y + 1, R[2]); b.px(x, y + 2, R[2]);
+      b.px(x + 4, y + 3, R[0]); b.px(x + 3, y + 4, R[0]); b.px(x + 2, y + 4, R[0]);
+      b.px(x + 2, y + 1, '#fff4c0'); b.rect(x + 1, y + 2, 3, 1, '#fff4c0'); b.px(x + 2, y + 3, '#fff4c0'); b.px(x + 2, y + 2, '#e8b050');
+      if (d !== 'up') { b.px(x - 1, y + 4, '#5a8a4a'); b.px(x, y + 5, '#4a7a3a'); }
     },
     hat(b, look, p, g, d, L) {
       if (L !== 'head') return;
@@ -800,10 +810,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
       }
     },
     earrings(b, look, p, g, d, L) {
-      if (L !== 'face') return;
-      const y = 6 + g.hy + g.bob + 10;
-      if (d === 'down') { b.rect(7, y, 1, 2, GOLD[1]); b.px(7, y + 1, GOLD[0]); b.rect(24, y, 1, 2, GOLD[1]); b.px(24, y + 1, GOLD[0]); }
-      else if (d === 'side') { b.rect(13, y, 1, 2, GOLD[1]); b.px(13, y + 1, GOLD[0]); }
+      // drops hanging below each ear, drawn over the hair so no hairstyle hides them (and from behind too)
+      if (L !== 'head') return;
+      const R = look.earCol ? r3(look.earCol) : GOLD, y = 6 + g.hy + g.bob + 10;
+      const drop = (x) => { // a hook and a round drop, 3 wide
+        b.px(x + 1, y, '#8a6a2a'); b.px(x + 1, y + 1, R[1]);
+        b.rect(x, y + 2, 3, 3, R[1]); b.px(x, y + 2, R[2]); b.px(x + 1, y + 2, R[2]); b.px(x, y + 3, R[2]); b.px(x + 2, y + 4, R[0]);
+        b.px(x + 1, y + 5, R[0]);
+      };
+      if (d === 'side') drop(12);
+      else { drop(5); drop(24); }
     },
     cape(b, look, p, g, d, L) {
       const c = look.capeCol || '#6a3a4a', R = [shade(c, -2), shade(c, -1), c, shade(c, 1)];
@@ -839,6 +855,64 @@ var RB = (globalThis.RB = globalThis.RB || {});
       b.rect(x, y, 3, 3, R[1]); b.rect(x + 4, y, 3, 3, R[1]); b.rect(x + 3, y + 1, 1, 2, R[0]);
       b.px(x, y, R[2]); b.px(x + 4, y, R[2]); b.px(x + 2, y + 2, R[0]); b.px(x + 6, y + 2, R[0]);
       b.rect(x + 2, y + 3, 1, 4, R[1]); b.rect(x + 4, y + 3, 1, 3, R[0]);
+    },
+    // Keepsakes from the road (items worn in the keepsake slot)
+    bell(b, look, p, g, d, L) {
+      // a little bell on a red cord round the neck; from behind, the cord's bow at the nape
+      const R = look.bellCol ? r3(look.bellCol) : GOLD, cord = look.cordCol || '#b8342a', t = g.t;
+      const O = '#4a3418';
+      const bell = (x, y) => { // loop, a dark-rimmed dome, flared lip, mouth and clapper (5 wide), clear on any cloth
+        b.px(x + 2, y, cord);
+        b.rect(x + 1, y + 1, 3, 1, O);
+        b.px(x, y + 2, O); b.px(x + 4, y + 2, O); b.rect(x + 1, y + 2, 3, 1, R[1]); b.px(x + 1, y + 2, R[2]);
+        b.px(x, y + 3, O); b.px(x + 4, y + 3, O); b.rect(x + 1, y + 3, 3, 1, R[1]); b.px(x + 3, y + 3, R[0]);
+        b.rect(x, y + 4, 5, 1, R[1]); b.px(x, y + 4, R[2]); b.px(x + 4, y + 4, R[0]);
+        b.rect(x + 1, y + 5, 3, 1, O); b.px(x + 2, y + 5, '#1e140a');
+      };
+      // (front: over the neck and any long hair, which would otherwise hide the cord and the bell's top)
+      if (d === 'down') { if (L === 'head') { b.rect(13, t - 1, 6, 1, cord); b.px(12, t - 2, cord); b.px(19, t - 2, cord); b.px(15, t, cord); bell(13, t + 1); } }
+      else if (d === 'side') { if (L === 'hand') { b.rect(15, t - 1, 5, 1, cord); bell(18, t); } }
+      else if (L === 'head') {
+        const k = shade(cord, -1);
+        b.rect(12, t - 2, 8, 1, cord);
+        b.rect(12, t - 4, 3, 2, cord); b.rect(17, t - 4, 3, 2, cord); b.px(12, t - 4, shade(cord, 1));
+        b.rect(15, t - 3, 2, 2, k); b.px(14, t - 1, cord); b.px(17, t - 1, k); b.px(14, t, k); b.px(17, t, k);
+      }
+    },
+    cap(b, look, p, g, d, L) {
+      // a peaked cap (a ferry clerk's): round crown, dark band with a brass badge, a stiff peak
+      if (L !== 'head') return;
+      const c = look.capCol || '#2c4468', R = [shade(c, -2), shade(c, -1), c, shade(c, 1), shade(c, 2)];
+      const y = g.hy + g.bob;
+      if (d === 'side') {
+        b.rect(11, y + 2, 9, 1, R[3]); b.rect(9, y + 3, 13, 5, R[2]); b.rect(9, y + 3, 13, 1, R[3]); b.rect(10, y + 4, 3, 2, R[4]);
+        b.rect(9, y + 8, 13, 2, R[1]); b.rect(9, y + 9, 13, 1, R[0]);
+        b.rect(18, y + 4, 3, 3, GOLD[1]); b.px(18, y + 4, GOLD[2]);
+        b.rect(21, y + 9, 6, 2, R[0]); b.rect(21, y + 9, 6, 1, R[1]);
+        return;
+      }
+      b.rect(11, y + 1, 10, 1, R[3]); b.rect(9, y + 2, 14, 6, R[2]);
+      b.rect(9, y + 2, 5, 4, R[3]); b.px(10, y + 3, R[4]); b.px(11, y + 3, R[4]); b.rect(20, y + 2, 3, 6, R[1]);
+      b.rect(8, y + 8, 16, 2, R[1]); b.rect(8, y + 9, 16, 1, R[0]);
+      if (d === 'down') {
+        b.rect(14, y + 4, 4, 3, GOLD[1]); b.px(14, y + 4, GOLD[2]); b.px(17, y + 6, GOLD[0]);
+        b.rect(9, y + 10, 14, 2, R[0]); b.rect(10, y + 10, 12, 1, R[1]);
+        b.rect(10, y + 12, 12, 1, P.alpha('#1a1020', 0.3));
+      }
+    },
+    leaf(b, look, p, g, d, L) {
+      // a maple leaf pinned in the hair: five points, lit from the upper left, a short stem
+      if (L !== 'head') return;
+      const R = r3(look.leafCol || '#c8452a'), y = 3 + g.hy + g.bob;
+      const x = d === 'side' ? 8 : d === 'up' ? 5 : 20;
+      b.px(x + 3, y, R[2]);
+      b.px(x + 1, y + 1, R[2]); b.px(x + 3, y + 1, R[1]); b.px(x + 5, y + 1, R[1]);
+      b.rect(x + 1, y + 2, 5, 1, R[1]); b.px(x + 1, y + 2, R[2]);
+      b.rect(x, y + 3, 7, 1, R[1]); b.px(x, y + 3, R[2]); b.px(x + 6, y + 3, R[0]);
+      b.rect(x + 1, y + 4, 5, 1, R[1]); b.px(x + 5, y + 4, R[0]);
+      b.rect(x + 2, y + 5, 3, 1, R[0]);
+      b.px(x + 3, y + 2, R[2]); b.px(x + 3, y + 3, R[2]); b.px(x + 3, y + 4, R[1]); // midrib
+      b.px(x + 3, y + 6, '#6a4a2a'); // stem
     },
     bottles(b, look, p, g, d, L) {
       if (L !== 'body') return;
@@ -930,21 +1004,39 @@ var RB = (globalThis.RB = globalThis.RB || {});
     apronstrap() {},
     // Unwritten Atlas keepsakes (cosmetic reward items)
     atlas_sash(b, look, p, g, d, L) {
-      if (L !== 'body') return;
-      const c = look.sashCol || '#d8c89a', ln = '#8a7a5a';
-      if (d === 'side') { b.rect(15, g.t, 3, g.bt - g.t + 1, c); b.px(16, g.t + 2, ln); b.px(15, g.t + 5, ln); return; }
+      const c = look.sashCol || '#d8c89a', ln = '#8a7a5a', dk = shade(c, -1);
+      if (d === 'side') {
+        // over the shoulder and down the chest, in front of the near arm (it hid the old strip)
+        if (L !== 'hand') return;
+        b.rect(14, g.t - 1, 6, 2, c); b.rect(14, g.t, 6, 1, dk);
+        b.rect(19, g.t + 1, 2, g.bt - g.t + 1, c); b.rect(20, g.t + 1, 1, g.bt - g.t + 1, dk); b.px(19, g.t + 3, ln); b.px(19, g.t + 6, ln);
+        return;
+      }
       const [x0, x1] = d === 'down' ? [10, 21] : [21, 10];
+      // the knot at the hip with its folded ends; from behind it lies over long hair, which covers the rest
+      const knot = () => {
+        const kx = x1 - 2, ky = g.bt + 1;
+        b.rect(kx, ky, 4, 3, c); b.px(kx, ky, shade(c, 1)); b.rect(kx + 3, ky, 1, 3, dk);
+        b.rect(kx, ky + 3, 2, 4, c); b.rect(kx + 2, ky + 3, 2, 3, dk); b.px(kx, ky + 5, ln);
+      };
+      if (d === 'up' && L === 'head') { knot(); return; }
+      if (L !== 'body') return;
       b.line(x0, g.t, x1, g.bt + 1, c, 2);
-      b.line(x0, g.t + 2, x1, g.bt + 3, shade(c, -1));
+      b.line(x0, g.t + 2, x1, g.bt + 3, dk);
       b.px(Math.round((x0 * 2 + x1) / 3), g.t + 3, ln); b.px(Math.round((x0 + x1 * 2) / 3), g.t + 6, ln);
+      if (d === 'down') knot();
     },
     atlas_pin(b, look, p, g, d, L) {
-      if (L !== 'body' || d === 'up') return;
-      const x = d === 'side' ? 17 : 11, y = g.t + 2;
-      b.rect(x, y, 3, 3, GOLD[1]); b.px(x + 1, y + 1, '#3a5a8a'); b.px(x + 1, y, GOLD[2]); b.px(x + 2, y + 2, GOLD[0]);
+      // a compass rose (four points round a blue heart) at the collar, over long hair; from behind, on the shoulder
+      if (L !== (d === 'side' ? 'hand' : 'head')) return;
+      const x = d === 'side' ? 16 : d === 'up' ? 17 : 9, y = g.t;
+      b.rect(x + 3, y, 1, 7, GOLD[1]); b.rect(x, y + 3, 7, 1, GOLD[1]); b.rect(x + 2, y + 2, 3, 3, GOLD[1]);
+      b.px(x + 3, y, GOLD[2]); b.px(x, y + 3, GOLD[2]); b.px(x + 2, y + 2, GOLD[2]);
+      b.px(x + 6, y + 3, GOLD[0]); b.px(x + 3, y + 6, GOLD[0]); b.px(x + 4, y + 4, GOLD[0]);
+      b.px(x + 3, y + 3, '#3a5a8a');
     },
     atlas_lamplet(b, look, p, g, d, L) {
-      if (d === 'side') { if (L === 'back') lantern(b, 8, g.bt + 1, true); return; }
+      if (d === 'side') { if (L === 'body') lantern(b, 7, g.bt + 1, true); return; }
       if (L !== 'body') return;
       if (d === 'down') { b.rect(8, g.bt, 1, 2, '#3a3440'); lantern(b, 5, g.bt + 3, true); }
       else lantern(b, 24, g.bt + 3, true);

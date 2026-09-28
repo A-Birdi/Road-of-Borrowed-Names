@@ -67,7 +67,7 @@ RB.combat = (function () {
     }
     // party (backs to us), each on a small contact shadow
     const s = RB.game.s;
-    const look = Object.assign({}, s.player.look);
+    const look = RB.equip.look(s); // with the equipped keepsake, as on the road
     const members = [[px, py, look]];
     if (s.comp) members.push([px + 40 * ps, py + 12, RB.content.chars[s.comp].look]);
     for (const [x, y, lk] of members) {

@@ -122,7 +122,7 @@ RB.ui.dialogue = (function () {
     const cv = box.querySelector('.portrait');
     cv.classList.toggle('hidden', !ch);
     if (ch) {
-      if (ch.pc) RB.portraits.drawPlayer(cv, s.player.look, line.expr);
+      if (ch.pc) RB.portraits.drawPlayer(cv, RB.equip.look(s), line.expr);
       else RB.portraits.draw(cv, line.who, line.expr);
     }
     const whoEl = box.querySelector('.who');

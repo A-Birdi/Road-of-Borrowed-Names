@@ -105,7 +105,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   it('sg_stamp', { name: { jp: '{割|わ}れた {判子|はんこ}', en: 'Broken stamp' }, key: true, desc: 'The Tide Clerk\'s "returned to sender" stamp, split in two.' });
   it('sg_float_charm', { name: { jp: 'ガラス の {浮|う}き{玉|だま}', en: 'Glass float charm' }, slot: 'charm', effect: { startWard: 1 }, desc: 'A fishing float the size of a plum, from Kiyo and Sōta. Charm: each encounter begins with a small ward before both of you.' });
   it('sg_lens_charm', { name: { jp: 'レンズ の かけら', en: 'Lens chip' }, slot: 'charm', effect: { harmonyStart: 1 }, desc: 'A chip of the old lighthouse lens, from Genzō. Charm: encounters begin with a little harmony already built.' });
-  it('sg_glass_earrings', { name: { jp: '{海|うみ} ガラス の {耳飾|みみかざ}り', en: 'Sea-glass earrings' }, slot: 'cosmetic', acc: 'earrings', desc: 'Asahi\'s thank-you: two drops of frosted blue glass.' });
+  it('sg_glass_earrings', { name: { jp: '{海|うみ} ガラス の {耳飾|みみかざ}り', en: 'Sea-glass earrings' }, slot: 'cosmetic', acc: 'earrings', wear: { earCol: '#8fc6d8' }, desc: 'Asahi\'s thank-you: two drops of frosted blue glass. A keepsake: it changes only how you look.' });
 
   // ---- quests ------------------------------------------------------------------------------
   C.quests.sg_main = {

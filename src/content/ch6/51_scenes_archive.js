@@ -310,6 +310,7 @@ narr: どれ に も {同|おな}じ {判|はん} 。 「 {未処理|みしょ�
 ?(comp=suzu) suzu: {返事|へんじ} の ない {請求|せいきゅう} は 、 {時効|じこう} に なら ない 。 {全部|ぜんぶ} {有効|ゆうこう} だ よ 。 {覚|おぼ}えて おいて 。 || A claim that gets no answer doesn't expire. Every one of these still stands. Remember that.
 
 @scene sa.shelf_kasane
+!speakerless kasane lf_toya
 !if item.sa_letter_kasane -> have
 narr: 「 カサネ ── {最初|さいしょ} の {一冊|いっさつ} 」 。 {綴|つづ}り を {開|ひら}く と 、 {声|こえ} が {聞|き}こえた 。 {雨|あめ} の {音|おと} 。 {石|いし} の {廊下|ろうか} 。 || "Kasane — the first volume." When you open the folio, you hear voices. Rain. A stone corridor.
 lf_toya: {向|む}こう の {顔|かお} を {見|み}て ない から 、 そう {言|い}える んだ ！ {高瀬|たかせ} は {開|あ}ける 。 {今夜|こんや} に でも ！ || You can say that because you didn't see their faces over there! Takase is going to open it. Maybe tonight!
@@ -419,6 +420,7 @@ narr: イサム の {綴|つづ}り は 、 {手元|てもと} に ある 。 {�
 narr: {棚|たな} に 、 {空|あ}いた {隙間|すきま} が {一|ひと}つ 。 {返却|へんきゃく}{済|ず}み 。 || One gap on the shelf. Returned.
 
 @scene sa.shelf_ren
+!speakerless sa_ushio
 !if sa_ren_decided -> after
 narr: {棚|たな} の {札|ふだ} に 、 {見覚|みおぼ}え の ない {力強|ちからづよ}い {字|じ} 。 || The label on this shelf is in a strong hand you don't recognise.
 narr: 「 レン ── {師|し} の {顔|かお} 、 {及|およ}び {最後|さいご} の {口論|こうろん} 。 {本人|ほんにん} が {選|えら}ぶ まで {預|あず}かる こと 。 ── ウシオ 」 || "Ren — the teacher's face, and the last quarrel. To be held until the person themself chooses. — Ushio"

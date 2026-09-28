@@ -371,52 +371,116 @@ RB.ui.menu = (function () {
   }
 
   // ---- Satchel -------------------------------------------------------------------------------
-  const SLOTS = [['charm', 'Charm'], ['tool', 'Tool'], ['cosmetic', 'Keepsake (appearance only)']];
+  // Slots, the worn look and each item's keyword tags come from RB.equip
+  // (src/engine/07_equip.js), derived from the item data. Equipped things are
+  // marked by shape and words (an "Equipped" tag on a faded, tinted row), never
+  // by colour alone; the Key at the foot of the list explains every mark shown.
+  const EQ = () => RB.equip;
+  const lab = (jp, en) => RB.ui.label(jp, en);
+  const tagChip = (t) => '<span class="etag ' + t.kind + '" data-tag="' + esc(t.id) + '">' + I(t.icon) + '<span>' + (t.kind === 'cost' ? '<span class="sr">Drawback: </span>' : '') + lab(t.jp, t.en) + '</span></span>';
+  const tagRow = (d) => '<span class="etags">' + EQ().tags(d).map(tagChip).join('') + '</span>';
+  const wornChip = () => '<span class="worn-tag">' + I('worn') + '<span>' + lab('{装備中|そうびちゅう}', 'Equipped') + '</span></span>';
+  const ACC_WORD = { hat: 'hat', cap: 'cap', scarf: 'scarf', earrings: 'earrings', flower: 'flower', cape: 'cape' };
+  function wearPreview(id, d, s) {
+    const rep = EQ().replaces(s.player.look, id).map((a) => ACC_WORD[a] || a);
+    const views = [['down', 'Front'], ['right', 'Side'], ['up', 'Back, in battle']];
+    return '<figure class="wear-prev"><figcaption>How you look wearing it</figcaption><div class="wp-row">' +
+      views.map(([dir, cap]) => '<div class="wp"><canvas width="32" height="48" data-prev="' + esc(id) + '" data-dir="' + dir + '" role="img" aria-label="' + esc('You wearing the ' + d.name.en + ': ' + cap.toLowerCase()) + '"></canvas><span>' + esc(cap) + '</span></div>').join('') +
+      '<div class="wp wp-face"><canvas width="96" height="96" data-prev="' + esc(id) + '" data-dir="face" role="img" aria-label="' + esc('Your portrait wearing the ' + d.name.en) + '"></canvas><span>Portrait</span></div></div>' +
+      (rep.length ? '<p class="muted small">You already wear a ' + esc(rep.join(' and ')) + '; this takes its place, in its own colours, while you wear it.</p>' : '') + '</figure>';
+  }
+  function drawPreviews(root, s) {
+    for (const cv of root.querySelectorAll('canvas[data-prev]')) {
+      const look = EQ().lookWith(s.player.look, cv.dataset.prev);
+      if (cv.dataset.dir === 'face') { RB.portraits.drawPlayer(cv, look, 'smile'); continue; }
+      const art = RB.sprites.getArt(look, cv.dataset.dir, 0);
+      const c = cv.getContext('2d');
+      c.clearRect(0, 0, cv.width, cv.height);
+      if (art) c.drawImage(art, 0, 0);
+    }
+  }
   function itemDetail(x, s) {
     const d = x.d;
-    const eqd = d.slot && s.equip[d.slot] === x.id;
-    return '<div class="idetail"><div class="ibig">' + I(F().itemIcon(x.id, d)) + '</div><h3>' + j(d.name.jp) + ' <span class="en">' + esc(d.name.en) + '</span>' + (x.n > 1 ? ' <span class="count">×' + x.n + '</span>' : '') + '</h3>' +
+    const eqd = !!d.slot && EQ().isWorn(s, x.id);
+    const z = d.slot && EQ().slot(d.slot);
+    let h = '<div class="idetail' + (eqd ? ' worn' : '') + '"><div class="ibig">' + I(F().itemIcon(x.id, d)) + '</div><h3>' + j(d.name.jp) + ' <span class="en">' + esc(d.name.en) + '</span>' + (x.n > 1 ? ' <span class="count">×' + x.n + '</span>' : '') + '</h3>' +
+      (eqd ? '<p class="worn-line">' + wornChip() + '</p>' : '') +
       '<p>' + esc(RB.script.enVars(d.desc || '')) + '</p>' +
-      (d.key ? '<p class="note-slip">' + I('key') + ' Important: it can’t be sold, used up or lost.</p>' : '') +
-      (d.slot ? '<p class="muted small">Worn as: ' + esc(SLOTS.find((z) => z[0] === d.slot)[1]) + (eqd ? ' — equipped now.' : '.') + '</p><div class="acts"><button class="pbtn' + (eqd ? '' : ' primary') + '" data-' + (eqd ? 'unequip="' + d.slot : 'equip="' + x.id) + '">' + (eqd ? 'Take it off' : 'Equip') + '</button></div>' : '') +
-      '</div>';
+      (d.key ? '<p class="note-slip">' + I('key') + ' Important: it can’t be sold, used up or lost.</p>' : '');
+    if (z) {
+      const cur = s.equip[d.slot] && !eqd && RB.content.items[s.equip[d.slot]];
+      h += '<div class="ph small-ph">What it does</div><ul class="tagx">' + EQ().tags(d).map((t) => '<li>' + tagChip(t) + '<span class="x">' + esc(t.key) + '</span></li>').join('') + '</ul>';
+      if (d.acc) h += wearPreview(x.id, d, s);
+      h += '<p class="muted small">Worn as: ' + esc(z.en.toLowerCase()) + ' (' + esc(z.where) + '). ' + (eqd ? 'Equipped now.' : cur ? 'Equipping it takes off the ' + esc(cur.name.en) + '.' : 'That slot is empty.') + '</p>' +
+        '<div class="acts"><button class="pbtn' + (eqd ? '' : ' primary') + '" data-' + (eqd ? 'unequip="' + d.slot : 'equip="' + x.id) + '">' + (eqd ? lab('{外|はず}す', 'Take it off') : lab('{装備|そうび}する', 'Equip')) + '</button></div>';
+    }
+    return h + '</div>';
   }
   function satchel(A, B, two) {
     const s = RB.game.s;
     const S = view.satchel;
     const inv = Object.keys(s.inv).map((id) => ({ id, n: s.inv[id], d: RB.content.items[id] })).filter((x) => x.d);
     if (!S.sel || !inv.find((x) => x.id === S.sel)) S.sel = inv[0] ? inv[0].id : null;
-    let h = '<h3>' + I('charm') + ' Equipped</h3><ul class="entries">' + SLOTS.map(([k, l]) => {
-      const it = s.equip[k] && RB.content.items[s.equip[k]];
-      return '<li class="entry"><span class="mark">' + I(it ? F().itemIcon(s.equip[k], it) : k === 'cosmetic' ? 'keepsake' : k) + '</span><div><div class="kind">' + esc(l) + '</div><div class="t">' + (it ? j(it.name.jp) + ' <span class="en">' + esc(it.name.en) + '</span>' : '<span class="muted">Nothing</span>') + '</div></div>' +
-        (it ? '<button class="pbtn" data-unequip="' + k + '">Take off</button>' : '<span></span>') + '</li>';
+    // the slots: what is worn, what it does, or what could go there
+    const filled = EQ().SLOTS.filter((z) => s.equip[z.id] && RB.content.items[s.equip[z.id]]).length;
+    let h = '<h3>' + I('worn') + ' ' + lab('{装備|そうび}', 'Equipped') + ' <span class="count">' + filled + ' of ' + EQ().SLOTS.length + ' slots</span></h3><ul class="entries eq-slots">' + EQ().SLOTS.map((z) => {
+      const id = s.equip[z.id], it = id && RB.content.items[id];
+      const fits = inv.filter((x) => x.d.slot === z.id && x.id !== id).length;
+      return '<li class="entry eq-slot ' + (it ? 'worn' : 'empty') + '" data-slot="' + z.id + '"><span class="mark">' + I(it ? F().itemIcon(id, it) : z.icon) + '</span><div class="eq-body">' +
+        '<div class="kind">' + lab(z.jp, z.en) + ' · ' + esc(z.where) + '</div>' +
+        (it ? '<div class="t">' + j(it.name.jp) + ' <span class="en">' + esc(it.name.en) + '</span></div>' +
+            '<div class="eq-foot">' + tagRow(it) + '<button class="pbtn" data-unequip="' + z.id + '" aria-label="' + esc('Take off the ' + it.name.en) + '">' + lab('{外|はず}す', 'Take off') + '</button></div>'
+          : '<div class="t muted">' + lab('{空|あ}き', 'Empty') + '</div><div class="muted small">' + (fits ? fits + (fits > 1 ? ' things' : ' thing') + ' you carry can go here.' : 'Nothing you carry fits here yet.') + '</div>') +
+        '</div></li>';
     }).join('') + '</ul>';
-    h += '<h3>' + I('satchel') + ' Carried <span class="count">' + inv.length + '</span></h3>';
+    h += '<h3>' + I('satchel') + ' ' + lab('{持|も}ち{物|もの}', 'Carried') + ' <span class="count">' + inv.length + '</span></h3>';
     if (!inv.length) h += '<p class="muted">Your pack is light.</p>';
-    else h += '<ul class="entries">' + inv.map((x) => '<li><button class="entry item-row" data-it="' + x.id + '" aria-current="' + (two && S.sel === x.id) + '"' + (two ? '' : ' aria-expanded="' + (S.open === x.id) + '"') + '>' +
-      '<span class="mark">' + I(F().itemIcon(x.id, x.d)) + '</span><span class="body"><span class="t">' + j(x.d.name.jp) + ' <span class="en">' + esc(x.d.name.en) + '</span>' + (x.n > 1 ? ' <span class="count">×' + x.n + '</span>' : '') + '</span>' +
-      (x.d.key ? '<span class="kind">' + I('key') + ' important</span>' : x.d.slot ? '<span class="kind">' + (s.equip[x.d.slot] === x.id ? 'equipped' : 'can be worn') + '</span>' : '') + '</span></button>' +
-      (!two && S.open === x.id ? '<div class="inline-detail">' + itemDetail(x, s) + '</div>' : '') + '</li>').join('') + '</ul>';
+    else h += '<ul class="entries">' + inv.map((x) => {
+      const worn = !!x.d.slot && EQ().isWorn(s, x.id), z = x.d.slot && EQ().slot(x.d.slot);
+      return '<li><button class="entry item-row' + (worn ? ' worn' : z ? ' wearable' : '') + '" data-it="' + x.id + '" aria-current="' + (two && S.sel === x.id) + '"' + (two ? '' : ' aria-expanded="' + (S.open === x.id) + '"') + '>' +
+        '<span class="mark">' + I(F().itemIcon(x.id, x.d)) + '</span><span class="body"><span class="t">' + j(x.d.name.jp) + ' <span class="en">' + esc(x.d.name.en) + '</span>' + (x.n > 1 ? ' <span class="count">×' + x.n + '</span>' : '') + '</span>' +
+        (x.d.key ? '<span class="kind">' + I('key') + ' important</span>' : '') +
+        (z ? '<span class="kind slotline">' + (worn ? wornChip() : '') + '<span>' + lab(z.jp, z.en) + (worn ? '' : ' · can be worn') + '</span></span>' + tagRow(x.d) : '') +
+        '</span></button>' + (!two && S.open === x.id ? '<div class="inline-detail">' + itemDetail(x, s) + '</div>' : '') + '</li>';
+    }).join('') + '</ul>';
+    // the key: every mark on this page, explained
+    const seen = [];
+    for (const x of inv) if (x.d.slot) for (const t of EQ().tags(x.d)) if (!seen.some((u) => u.id === t.id)) seen.push(t);
+    if (seen.length) {
+      h += '<h3>' + I('help') + ' ' + lab('{印|しるし} の {見方|みかた}', 'Key to the marks') + '</h3><ul class="tagx tag-key">' +
+        '<li>' + wornChip() + '<span class="x">Worn now. Each slot holds one thing; equipping another takes it off.</span></li>' +
+        seen.map((t) => '<li>' + tagChip(t) + '<span class="x">' + esc(t.key) + '</span></li>').join('') + '</ul>' +
+        (seen.some((t) => t.kind === 'cost') ? '<p class="muted small">A dashed mark with a minus sign is the drawback that comes with a charm.</p>' : '');
+    }
     h += '<p class="muted small">Important items cannot be sold or used up. Nothing essential can be lost.</p>';
     A.innerHTML = h;
     const selX = inv.find((x) => x.id === S.sel);
     B.innerHTML = selX ? itemDetail(selX, s) : '<p class="muted">Choose something to look at it closely.</p>';
+    drawPreviews(A, s); drawPreviews(B, s);
+    // a polite announcement of what changed (the page itself is redrawn)
+    let live = fr.el.querySelector('.eq-live');
+    if (!live) { live = RB.ui.el('p', 'sr eq-live'); live.setAttribute('aria-live', 'polite'); fr.el.appendChild(live); }
     const handler = (e) => {
       const it = e.target.closest('[data-it]');
       const eq = e.target.closest('[data-equip]'), un = e.target.closest('[data-unequip]');
-      if (eq) { const id = eq.dataset.equip; s.equip[RB.content.items[id].slot] = id; RB.audio && RB.audio.sfx('confirm'); refreshLook(s); remember(); render(); return; }
-      if (un) { s.equip[un.dataset.unequip] = null; refreshLook(s); remember(); render(); return; }
+      const page = e.currentTarget;
+      if (eq || un) {
+        const id = eq ? eq.dataset.equip : s.equip[un.dataset.unequip];
+        const d = RB.content.items[id], sl = eq ? d.slot : un.dataset.unequip;
+        const inline = !!(eq || un).closest('.inline-detail');
+        if (eq) { EQ().equip(s, id); RB.audio && RB.audio.sfx('confirm'); } else EQ().unequip(s, sl);
+        remember(); render();
+        live.textContent = d ? (eq ? 'Equipped: ' : 'Taken off: ') + d.name.en + '.' : '';
+        // keep the keyboard where it was: the same control, now reading the other way
+        const leaves = fr.box.querySelectorAll('.leaf'), again = leaves[page === B ? 1 : 0];
+        const want = (inline ? '.inline-detail ' : '') + (eq ? '[data-unequip="' + sl + '"]' : '[data-equip="' + id + '"]');
+        const next = again && (again.querySelector(want) || again.querySelector('[data-it="' + id + '"]'));
+        (next || again || fr.el).focus({ preventScroll: true });
+        return;
+      }
       if (it) { if (two) S.sel = it.dataset.it; else S.open = S.open === it.dataset.it ? null : it.dataset.it; remember(); render(); }
     };
     A.onclick = handler; B.onclick = handler;
-  }
-  function refreshLook(s) {
-    const W = RB.world.W;
-    if (!W.player) return;
-    const look = Object.assign({}, s.player.look);
-    const c = s.equip.cosmetic && RB.content.items[s.equip.cosmetic];
-    if (c && c.acc) look.acc = (look.acc || []).concat([c.acc]);
-    W.player.look = look;
   }
 
   // ---- Map ------------------------------------------------------------------------------------

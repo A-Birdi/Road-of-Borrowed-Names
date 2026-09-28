@@ -10,7 +10,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { jp: 'トモ の {猫|ねこ} が いない 。 {川|かわ} の {向|む}こう で {見|み}た {人|ひと} が いる らしい 。', en: 'Tomo\'s cat is missing. Someone saw a cat across the river.' },
       { jp: '{猫|ねこ} を トモ の ところ へ {連|つ}れて {帰|かえ}ろう 。', en: 'Bring the cat back to Tomo (near the laundry lines, west of the square).' },
     ] };
-  C.items.rw_catbell = { name: { jp: '{小|ちい}さな {鈴|すず}', en: 'Tiny bell' }, desc: 'Mochi\'s old bell. Worn as a keepsake, it changes only how you look.', slot: 'cosmetic', acc: 'earrings' };
+  C.items.rw_catbell = { name: { jp: '{小|ちい}さな {鈴|すず}', en: 'Tiny bell' }, desc: 'Mochi\'s old bell, still on its red cord. Worn at your neck as a keepsake, it changes only how you look.', slot: 'cosmetic', acc: 'bell' };
   C.challenges['rw.c_mochi'] = { title: { jp: '{首輪|くびわ} の {名札|なふだ}', en: 'The collar tag' },
     tiers: {
       F: [{ kind: 'write', item: 'v:モチ', prompt: { en: 'The cat\'s name tag is blank. Tomo says its name is Mochi — written in katakana: モチ. Write it on the tag.' }, answer: 'モチ', accept: ['モチ'], mode: 'kana', script: 'kata', explain: { jp: 'モチ', en: 'Pet names are often written in katakana.' } }],

@@ -63,12 +63,7 @@ RB.world = (function () {
     return null;
   }
   function playerLook() {
-    const p = s().player;
-    const look = Object.assign({}, p.look);
-    if (s().equip.cosmetic && RB.content.items[s().equip.cosmetic] && RB.content.items[s().equip.cosmetic].acc) {
-      look.acc = (look.acc || []).concat([RB.content.items[s().equip.cosmetic].acc]);
-    }
-    return look;
+    return RB.equip.look(s()); // own look + the equipped keepsake (src/engine/07_equip.js)
   }
   function partyCompanion() {
     const st = s();

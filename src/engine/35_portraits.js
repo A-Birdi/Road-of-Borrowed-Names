@@ -30,6 +30,7 @@ RB.portraits = (function () {
       beard: acc.includes('beard') || undefined,
       scarfCol: look.scarfCol, ribbonCol: look.ribbonCol, hatCol: look.hatCol, wrapCol: look.wrapCol, hoodCol: look.hoodCol,
       bandCol: look.bandCol, flowerCol: look.flowerCol, capeCol: look.capeCol, sashCol: look.sashCol,
+      earCol: look.earCol, capCol: look.capCol, leafCol: look.leafCol, scarfStripe: look.scarfStripe, bellCol: look.bellCol, cordCol: look.cordCol,
     };
   }
   const EXPR_ALIAS = { surprised: 'surprise', thinking: 'think', happy: 'smile', neutral: 'neutral' };
@@ -370,6 +371,21 @@ RB.portraits = (function () {
       b.line(26, 70, 70, 70, R[3]); b.line(30, 80, 66, 80, R[1]); b.line(40, 74, 56, 74, R[1]);
       b.poly([60, 82, 72, 82, 74, 96, 60, 96], R[2]); b.rect(70, 82, 4, 14, R[1]); b.rect(60, 82, 2, 14, R[3]);
       for (let x = 61; x < 74; x += 3) b.rect(x, 94, 1, 2, R[0]);
+      if (p.scarfStripe) { // a knitted keepsake scarf: bands across the wrap and the tail
+        const S = R4(p.scarfStripe);
+        for (let x = 21; x <= 75; x++) { // two bands following the wrap's curve
+          const u = (x - 48) / 26, top = 73 - 5 * u * u, bot = 86 + 2 * u * u;
+          for (const k of [0.3, 0.64]) { const y = Math.round(top + (bot - top) * k); b.rect(x, y, 1, 2, S[2]); b.px(x, y, S[3]); }
+        }
+        for (const y of [86, 91]) { b.rect(60, y, 14, 2, S[2]); b.rect(60, y, 14, 1, S[3]); }
+      }
+    }
+    if (a.includes('bell')) { // a little bell on a red cord at the collar
+      const cord = p.cordCol || '#b8342a', G = p.bellCol ? R4(p.bellCol).slice(1, 4) : GOLD;
+      b.line(36, 72, 48, 80, cord, 2); b.line(60, 72, 48, 80, cord, 2);
+      b.rect(47, 79, 2, 3, cord);
+      b.oval(42, 81, 54, 91, G[1]); b.oval(43, 82, 47, 86, G[2]); b.rect(41, 89, 15, 3, G[1]); b.rect(41, 89, 15, 1, G[2]); b.rect(52, 84, 2, 5, G[0]);
+      b.rect(47, 92, 3, 2, '#5a4020'); b.rect(44, 87, 9, 1, G[0]);
     }
     if (a.includes('satchel')) { b.line(18, 76, 62, 96, '#6a4a2a', 5); b.line(18, 76, 62, 96, '#8a6a3a', 3); for (let k = 0; k < 7; k++) b.px(24 + k * 6, 80 + k * 2.6, '#c8a870'); }
     if (a.includes('pin')) { b.oval(30, 78, 36, 84, GOLD[1]); b.px(32, 80, GOLD[2]); b.px(35, 83, GOLD[0]); }
@@ -382,7 +398,11 @@ RB.portraits = (function () {
     if (a.includes('book')) { b.rect(4, 82, 16, 14, '#6a3a3a'); b.rect(4, 82, 16, 2, '#8a4a44'); b.rect(18, 84, 2, 12, '#e8e0c8'); b.rect(8, 88, 6, 1, GOLD[1]); }
     if (a.includes('basket')) { b.rect(76, 86, 20, 10, '#b08a4a'); b.rect(76, 86, 20, 2, '#d0ac6a'); for (let x = 77; x < 96; x += 3) b.rect(x, 89, 1, 7, '#7a5a2e'); }
     if (a.includes('atlas_sash')) { const c = p.sashCol || '#d8c89a'; b.line(20, 76, 64, 96, c, 5); b.line(22, 80, 64, 99, shade(c, -1)); }
-    if (a.includes('atlas_pin')) { b.oval(30, 78, 37, 85, GOLD[1]); b.rect(33, 81, 2, 2, '#3a5a8a'); }
+    if (a.includes('atlas_pin')) { // a compass rose: four points round a blue heart
+      b.poly([33, 70, 36, 79, 33, 82, 30, 79], GOLD[2]); b.poly([33, 94, 30, 85, 33, 82, 36, 85], GOLD[0]);
+      b.poly([21, 82, 30, 79, 33, 82, 30, 85], GOLD[1]); b.poly([45, 82, 36, 85, 33, 82, 36, 79], GOLD[1]);
+      b.oval(29, 78, 37, 86, GOLD[1]); b.oval(31, 80, 35, 84, '#3a5a8a'); b.px(32, 81, '#8ab0e0');
+    }
     if (a.includes('cape')) { const R = R4(p.capeCol || '#6a3a4a'); b.poly([10, 80, 24, 72, 34, 76, 22, 84], R[2]); b.poly([86, 80, 72, 72, 62, 76, 74, 84], R[1]); b.oval(44, 70, 51, 77, GOLD[1]); b.px(46, 72, GOLD[2]); }
   }
   function accHead(b, p, C) {
@@ -444,7 +464,28 @@ RB.portraits = (function () {
       b.oval(65, 17, 71, 23, '#fff4c0'); b.oval(67, 19, 69, 21, '#e8b050');
       b.line(62, 26, 58, 30, '#5a8a4a', 2);
     }
-    if (a.includes('earrings')) for (const x of [24, 71]) { b.oval(x, 54, x + 2, 56, GOLD[1]); b.rect(x + 1, 57, 1, 3, GOLD[0]); b.oval(x, 59, x + 2, 62, GOLD[1]); b.px(x, 59, GOLD[2]); }
+    if (a.includes('cap')) { // a peaked cap: crown, dark band with a brass badge, a stiff peak over the brow
+      const R = R4(p.capCol || '#2c4468');
+      const crown = new P.Buf(S, S);
+      crown.poly([22, 26, 24, 12, 34, 4, 48, 2, 62, 4, 72, 12, 74, 26], '#fff');
+      crown.each((x, y) => { let v = x < 36 ? 3 : x > 62 ? 1 : 2; if (x < 32 && y < 12) v = 4; b.px(x, y, R[v]); });
+      b.rect(22, 22, 53, 6, R[1]); b.rect(22, 27, 53, 1, R[0]); b.rect(24, 22, 10, 1, R[2]);
+      b.oval(43, 10, 53, 20, GOLD[1]); b.oval(44, 11, 48, 15, GOLD[2]); b.px(52, 19, GOLD[0]);
+      b.poly([20, 28, 76, 28, 72, 34, 24, 34], R[0]); b.rect(24, 28, 48, 1, R[1]);
+      b.rect(26, 35, 44, 2, A('#1a1020', 0.28));
+    }
+    if (a.includes('leaf')) { // a maple-leaf pin in the hair
+      const R = R4(p.leafCol || '#c8452a');
+      b.poly([70, 4, 73, 12, 80, 8, 78, 16, 86, 16, 80, 22, 82, 28, 74, 25, 70, 30, 66, 25, 58, 28, 60, 22, 54, 16, 62, 16, 60, 8, 67, 12], R[2]);
+      b.poly([70, 4, 73, 12, 70, 18, 67, 12], R[3]); b.poly([54, 16, 62, 16, 70, 18, 60, 22], R[3]);
+      b.poly([86, 16, 80, 22, 82, 28, 70, 18], R[1]);
+      b.line(70, 8, 70, 26, R[1]); b.line(70, 18, 58, 14, R[1]); b.line(70, 18, 82, 14, R[1]);
+      b.line(70, 26, 66, 34, '#6a4a2a', 2);
+    }
+    if (a.includes('earrings')) {
+      const G = p.earCol ? R4(p.earCol).slice(1, 4) : GOLD;
+      for (const x of [24, 71]) { b.oval(x, 54, x + 2, 56, GOLD[1]); b.rect(x + 1, 57, 1, 3, GOLD[0]); b.oval(x - 1, 59, x + 3, 64, G[1]); b.px(x, 60, G[2]); b.px(x + 2, 63, G[0]); }
+    }
     if (a.includes('pencil')) { b.line(66, 30, 82, 12, '#e0b040', 3); b.line(67, 31, 83, 13, '#b88a20'); b.rect(81, 9, 4, 4, '#e8a0a0'); b.rect(64, 30, 3, 3, '#3a3040'); }
     if (a.includes('atlas_quill')) { b.line(68, 32, 80, 4, '#f4f0e0', 3); b.line(70, 32, 82, 6, '#d8d0bc'); b.px(68, 32, '#6a5a3a'); }
     if (a.includes('atlas_lamplet')) lantern(b, 80, 80);

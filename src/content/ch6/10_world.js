@@ -78,7 +78,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   C.items.sa_folio_isamu = { name: T("Isamu's folio", 'イサム の {綴|つづ}り'), desc: 'A thin folio filed under "a laugh, before the kettle boils". Isamu asked for it back.', key: true };
   C.items.sa_ushio_notes = { name: T("Ushio's notebook", 'ウシオ の {手帳|てちょう}'), desc: 'A battered notebook of objections, recipes and, near the back, three names for the Archive\'s clerk.', key: true };
   C.items.sa_ren_folio = { name: T("Ren's folio", 'レン の {綴|つづ}り'), desc: 'Filed by Master Ushio: "To be held until the person themself chooses." Not yours to open.', key: true };
-  C.items.sa_bookmark = { name: T('Archive bookmark', '{書庫|しょこ} の {栞|しおり}'), desc: 'A bookmark of pale card with a red thread, given by Tsuzuri. It marks a place so you can come back to it.', slot: 'charm' };
+  C.items.sa_bookmark = { name: T('Archive bookmark', '{書庫|しょこ} の {栞|しおり}'), desc: 'A bookmark of pale card with a red thread, given by Tsuzuri. Its job is to keep a place between pages. Worn as a charm it is a keepsake only: it does nothing in battle.', slot: 'charm' };
 
   // ---- quests ---------------------------------------------------------------------------
   C.quests.sa_main = {
@@ -507,9 +507,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
   RB.hooks.sa_after = async (args) => {
     const id = args[0];
     if (!id || !RB.content.scenes[id] || (RB.game.s && RB.game.s.seen[id])) return;
+    // only where it was asked for: if the player has already walked on (into
+    // an expedition, say), the scene waits to be found by talking instead
+    const at = RB.game.s && RB.game.s.map;
     let tries = 0;
     const tick = () => {
-      if (!RB.game.s || ++tries > 600) return;
+      if (!RB.game.s || ++tries > 600 || RB.game.s.map !== at) return;
       if (RB.script.isRunning() || RB.game.mode() !== 'world') { setTimeout(tick, 150); return; }
       RB.script.run(id);
     };
