@@ -25,10 +25,12 @@ RB.challenge = (function () {
   // English feedback may carry {漢字|かな} markup for a word it quotes: give it ruby
   const enRuby = (t) => RB.learnUi.mixed(t);
 
-  function check(input, step) {
+  // opts.handwritten: the text came from the writing pad, so characters that
+  // are written with one shape (ロ/口, へ/ヘ…) count as one (RB.answers).
+  function check(input, step, opts) {
     if (step.kind !== 'write') return { ok: false };
     const accept = (step.accept && step.accept.length ? step.accept : [step.answer]).map(String);
-    if (RB.answers && RB.answers.check) return RB.answers.check(input, { accept, mode: step.mode || 'kana', scriptFree: !!step.scriptFree });
+    if (RB.answers && RB.answers.check) return RB.answers.check(input, { accept, mode: step.mode || 'kana', scriptFree: !!step.scriptFree, handwritten: !!(opts && opts.handwritten) });
     const norm = (s) => plain(s).replace(/\s/g, '');
     const ok = accept.some((a) => norm(a) === norm(input));
     return { ok, feedback: ok ? [] : [{ code: 'generic', en: 'That is not what this needs.' }] };
@@ -55,6 +57,11 @@ RB.challenge = (function () {
     { id: 'ime', en: 'Type', jp: '{打|う}つ', icon: 'keyboard' },
   ];
   const SHEET_LAB = { hand: 'Write', choice: 'Choose', ime: 'Type', order: 'Arrange the pieces' };
+  // A kana-practice step (a k: item) asks for kana, so its pad reads kana only;
+  // every other step reads kanji too when the player does (RB.pad).
+  const kanaTask = (step) => [].concat(step.item || []).some((i) => typeof i === 'string' && i.slice(0, 2) === 'k:');
+  // the player's own text, with readings on any kanji (there is no word context)
+  const ownText = (t) => RB.learnUi.mixed(RB.answers && RB.answers.rubyText ? RB.answers.rubyText(t) : t);
 
   // Render one step; resolves with a result object.
   function runStep(step, opts) {
@@ -121,6 +128,7 @@ RB.challenge = (function () {
           pad = RB.pad.create(p, {
             maxLen: single ? 1 : Math.max(4, Array.from(plain(step.fullAnswer || step.answer)).length + 3),
             script: step.script || 'any',
+            kanji: kanaTask(step) ? false : undefined,
             guide: step.copy ? Array.from(plain(step.answer))[0] : null,
             composeHost: line,
             onChange: () => { if (step.copy && pad) pad.setGuide(Array.from(plain(step.answer))[pad.text().length] || null); },
@@ -283,14 +291,16 @@ RB.challenge = (function () {
         syncSubmit();
         if (tabsApi) tabsApi.el.querySelectorAll('.ptab').forEach((b) => b.setAttribute('aria-disabled', 'true'));
       }
-      function success(modeUsed) {
+      function success(modeUsed, notes) {
         lock();
         res.ok = true;
         res.mode = modeUsed;
         if (res.firstTry == null) res.firstTry = true;
         if (active.helpUsed) res.assisted = true;
         RB.audio && RB.audio.sfx('answer_right');
-        fb('ok', 'Yes.', (res.assisted ? '<span class="muted small">Assisted — that\'s fine.</span>' : '') + explainHtml());
+        // how it was written: "水 (みず) — written in kanji", one-shape characters
+        const how = (notes || []).map((n) => '<div class="fb-how" data-note="' + esc(n.code) + '">' + enRuby(n.en) + '</div>').join('');
+        fb('ok', 'Yes.', how + (res.assisted ? '<span class="muted small">Assisted — that\'s fine.</span>' : '') + explainHtml());
         const w = wrap.querySelector('.fbwrap');
         const btn = continueBtn();
         btn.onclick = () => finish(false);
@@ -299,10 +309,10 @@ RB.challenge = (function () {
         if (opts.autoContinue) setTimeout(() => { if (wrap.isConnected) finish(false); }, opts.autoContinue);
       }
       function evaluate(text, modeUsed, meta) {
-        const r = check(text, step);
+        const r = check(text, step, { handwritten: modeUsed === 'hand' });
         if (r.ok) {
           if (meta.assisted) active.helpUsed = true;
-          success(modeUsed);
+          success(modeUsed, r.notes);
           return;
         }
         // Wrong: was it the recognizer's uncertainty or a language mistake?
@@ -310,14 +320,14 @@ RB.challenge = (function () {
           res.recogMisses++;
           RB.audio && RB.audio.sfx('recog_unsure');
           fb('unsure', 'I could not read that clearly',
-            '<p>This doesn\'t count against you. Your answer reads <span class="jp big" lang="ja">' + esc(text) + '</span> — if you meant something else, tap it to rewrite it, or use the chart.</p>');
+            '<p>This doesn\'t count against you. Your answer reads <span class="jp big" lang="ja">' + ownText(text) + '</span> — if you meant something else, tap it to rewrite it, or use the chart.</p>');
           return;
         }
         res.mistakes++;
         if (res.firstTry == null) res.firstTry = false;
         RB.audio && RB.audio.sfx('answer_wrong');
         const msgs = (r.feedback || []).map((f) => '<div class="fb-why">' + (f.jp && !/\{[^|}]+\|/.test(f.en || '') ? RB.ui.jhtml(f.jp) + ' ' : '') + enRuby(f.en) + '</div>').join('') || '<div class="fb-why">That isn\'t what this needs.</div>';
-        fb('no', 'Not quite.', '<p>You gave <span class="jp big" lang="ja">' + esc(plain(text)) + '</span>.</p>' + msgs + '<p class="muted small">Try again — take all the time you need.</p>');
+        fb('no', 'Not quite.', '<p>You gave <span class="jp big" lang="ja">' + ownText(plain(text)) + '</span>.</p>' + msgs + '<p class="muted small">Try again — take all the time you need.</p>');
         if (opts.onMistake) opts.onMistake(r);
         if (pad && modeUsed === 'hand') pad.reset();
       }

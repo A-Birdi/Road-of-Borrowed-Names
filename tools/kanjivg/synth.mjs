@@ -210,3 +210,33 @@ export function nonsense(kind, seed, padW = 300) {
   }
   throw new Error('unknown nonsense kind ' + kind);
 }
+
+// Kanji the recognizer does NOT know, built from the real KanjiVG strokes of
+// kanji it does know, placed as components (林 = 木 + 木, 明 = 日 + 月). They
+// stand in for "a kanji outside the supported set" in tests of the kanji-like
+// detection; no stroke data from outside the repository is used. Each part is
+// {ch, x0, y0, x1, y1}: a supported kanji and its box in 0..1 of the square.
+const LR = (a, b, s = 0.46) => [{ ch: a, x0: 0.08, y0: 0.1, x1: 0.08 + s * 0.9, y1: 0.9 }, { ch: b, x0: 0.54, y0: 0.08, x1: 0.94, y1: 0.92 }];
+const TB = (a, b) => [{ ch: a, x0: 0.15, y0: 0.06, x1: 0.85, y1: 0.46 }, { ch: b, x0: 0.12, y0: 0.52, x1: 0.88, y1: 0.94 }];
+const T3 = (a, b, c) => [{ ch: a, x0: 0.25, y0: 0.06, x1: 0.75, y1: 0.46 }, { ch: b, x0: 0.08, y0: 0.52, x1: 0.46, y1: 0.94 }, { ch: c, x0: 0.54, y0: 0.52, x1: 0.92, y1: 0.94 }];
+export const UNKNOWN_KANJI = {
+  '林': LR('木', '木'), '明': LR('日', '月', 0.36), '朋': LR('月', '月'), '炎': TB('火', '火'), '昌': TB('日', '日'),
+  '圭': TB('土', '土'), '岩': TB('山', '石'), '男': TB('田', '力'), '呂': TB('口', '口'), '品': T3('口', '口', '口'),
+  '森': T3('木', '木', '木'), '晶': T3('日', '日', '日'), '畑': LR('火', '田', 0.4), '杏': TB('木', '口'), '呆': TB('口', '木'),
+  '古': TB('十', '口'), '早': TB('日', '十'), '杜': LR('木', '土'), '相': LR('木', '目', 0.44), '叶': LR('口', '十', 0.4),
+  '回': [{ ch: '口', x0: 0.1, y0: 0.08, x1: 0.9, y1: 0.92 }, { ch: '口', x0: 0.35, y0: 0.35, x1: 0.65, y1: 0.62 }],
+  '旦': TB('日', '一'), '吉': [{ ch: '土', x0: 0.15, y0: 0.06, x1: 0.85, y1: 0.5 }, { ch: '口', x0: 0.25, y0: 0.56, x1: 0.75, y1: 0.94 }],
+};
+// reference(ch) -> {box, strokes:[[{x,y}]]} (RB.recog.reference). Returns the
+// same shape for the composed kanji, in the 109 box.
+export function composeKanji(reference, parts) {
+  const strokes = [];
+  for (const p of parts) {
+    const ref = reference(p.ch);
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    for (const s of ref.strokes) for (const q of s) { x0 = Math.min(x0, q.x); y0 = Math.min(y0, q.y); x1 = Math.max(x1, q.x); y1 = Math.max(y1, q.y); }
+    const w = Math.max(1, x1 - x0), h = Math.max(1, y1 - y0);
+    for (const s of ref.strokes) strokes.push(s.map((q) => ({ x: Math.round((p.x0 + ((q.x - x0) / w) * (p.x1 - p.x0)) * 108), y: Math.round((p.y0 + ((q.y - y0) / h) * (p.y1 - p.y0)) * 108) })));
+  }
+  return { box: 109, strokes };
+}
