@@ -1,6 +1,6 @@
 /* World renderer. The world keeps its 16-px logical grid (movement, collision,
  * triggers, saves), but is drawn into a buffer at ART = 2 art pixels per
- * logical pixel: 32×32-art-pixel tiles and 40×56 character frames. The buffer is
+ * logical pixel: 32×32-art-pixel tiles and 40×58 character frames. The buffer is
  * then scaled by an integer number of device pixels (artPx) so pixel art stays
  * crisp. Art authored at art resolution provides draw2/getArt; older 16-px art
  * is drawn through a ×2 transform until it is redrawn (legacy adapter). Text

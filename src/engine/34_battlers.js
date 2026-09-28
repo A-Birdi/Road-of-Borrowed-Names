@@ -257,6 +257,8 @@ RB.battlers = (function () {
       skin: { R: p.skin5, th: [0.7, 0.26, -0.2, -0.6] },
       hand: { R: p.skin5, th: [0.62, 0.2, -0.3, -0.7], min: 2 },
       ear: { R: p.skin5, th: [0.8, 0.4, -0.1, -0.5], min: 1, max: 3 },
+      lash: { R: [p.eye, p.eye, p.eye, p.iris, p.iris], max: 1, flag: 1 },
+      blush: { R: [mix(p.skin5[1], '#d86a6a', 0.35), mix(p.skin5[2], '#e8807a', 0.35), mix(p.skin5[3], '#e8807a', 0.3), mix(p.skin5[3], '#e8807a', 0.3), mix(p.skin5[4], '#e8807a', 0.25)], flag: 1 },
       cloth: { R: p.cl5 },
       // the back of the garment: a centre seam
       torso: {
@@ -424,6 +426,10 @@ RB.battlers = (function () {
     E(add(headC, mv(Mh, [hr[0] * 0.98, -hr[1] * 0.14, -hr[2] * 0.1])), Mh, [1.8, 3.1, 2.2], Mt.ear, GRP.ear);
     E(add(headC, mv(Mh, [-hr[0] * 0.98, -hr[1] * 0.14, -hr[2] * 0.1])), Mh, [1.8, 3.1, 2.2], Mt.ear, GRP.ear);
     E(add(headC, mv(Mh, [0.4, -hr[1] * 0.22, hr[2] * 0.97])), Mh, [1.3, 1.6, 1.6], Mt.skin, GRP.head);
+    // the lashes of the near eye, showing at the cheek's edge when the head turns toward the foe,
+    // and a touch of colour on the cheek
+    E(add(headC, mv(Mh, [hr[0] * 0.56, -hr[1] * 0.02, hr[2] * 0.86])), Mh, [1.5, 0.9, 1.1], Mt.lash, GRP.ear);
+    E(add(headC, mv(Mh, [hr[0] * 0.72, -hr[1] * 0.3, hr[2] * 0.62])), Mh, [1.4, 0.8, 1.2], Mt.blush, GRP.head, (l) => true);
     hair(K);
     return { calls, J, K };
   }
@@ -556,10 +562,11 @@ RB.battlers = (function () {
     const { J, Mt, ps, look } = K;
     const pr = ps.prop || {};
     const Ms = J.Ms;
-    if (pr.book != null) {
-      // held in the left hand; open 0 (shut) .. 1 (open flat), raised toward the face or the foe
+    if (pr.book > 0.25) {
+      // held in the left hand (the right, if the left carries a lantern); open 0 (shut) .. 1 (open flat)
+      // (someone without a book of their own brings one out as the gesture begins)
       const open = clamp01(pr.bookOpen || 0), tilt = pr.bookTilt == null ? -50 : pr.bookTilt;
-      const c = add(J.handL, mv(Ms, pr.bookAt || [-1.4, 1.2, 0.8]));
+      const c = pr.bookR ? add(J.handR, mv(Ms, [-2.4, 1.2, 1])) : add(J.handL, mv(Ms, pr.bookAt || [-1.4, 1.2, 0.8]));
       const Mb = mm(Ms, mm(rotY((pr.bookYaw || 10) * DEG), rotX(tilt * DEG)));
       const cover = { R: ['#3a1e1e', '#5a2e2c', '#7a3e38', '#9a5448', '#b86e5a'], min: 1 };
       if (open < 0.08) {
@@ -580,6 +587,11 @@ RB.battlers = (function () {
       const d = norm(sub(J.handR, J.elbR)), Ls = 3 + 6 * clamp01(pr.strip);
       K.C(add(J.handR, mul(d, 1)), add(J.handR, mul(d, Ls)), 1.2, 1.2, Mt.paper, GRP.prop);
       K.S(add(J.handR, mul(d, Ls * 0.6)), 0.8, Mt.ink, GRP.prop);
+    }
+    if (pr.palm > 0.5) {
+      // the hand opened flat against what comes: a palm facing along the forearm, fingers up
+      const z = norm(sub(J.handR, J.elbR)), x = norm(cross([0, 1, 0], z)), y = cross(z, x);
+      K.E(add(J.handR, mul(z, 0.6)), [x, y, z], [2.3, 3.4, 1.1], Mt.hand, GRP.hand);
     }
     if (pr.brush) {
       const d = norm(sub(J.handR, J.elbR)), up = norm(add(d, [0, 0.9, 0]));
@@ -686,7 +698,9 @@ RB.battlers = (function () {
         case 'bell': {
           const cord = flat(look.cordCol || '#b8342a', { min: 1 });
           ring(J.neckB, 3.9 * g, 3.4 * g, 1.4, 10, 0.6, cord, Ms);
-          const n = Sp([0, ch + 1.6, -4.9 * g]);
+          // the bow at the nape sits over long hair or a scarf, as it does on the road from behind
+          const over = (['long', 'wavy'].includes(look.hair) ? 6.6 : look.hair === 'bob' ? 3.4 : 0) + (acc.includes('scarf') ? 1.8 : 0);
+          const n = Sp([0, ch + 1.6 + (over ? 1 : 0), -4.9 * g - over]);
           K.E(add(n, mv(Ms, [-1.7, 0.5, -0.4])), Ms, [1.8, 1.3, 0.9], cord, GRP.acc);
           K.E(add(n, mv(Ms, [1.7, 0.5, -0.4])), Ms, [1.8, 1.3, 0.9], cord, GRP.acc);
           K.S(add(n, mv(Ms, [0, 0.3, -0.6])), 0.9, cord, GRP.acc);
@@ -743,7 +757,12 @@ RB.battlers = (function () {
           chain([Pl([-6.6, 1.4, -6]), Pl([-7 + sway * 0.4, -4, -6.4])], 1.2, 1, R);
           break;
         }
-        case 'atlas_pin': K.Bx(Sp([6.2, ch - 2.4, -4.6 * g]), mm(Ms, rotZ(45 * DEG)), [1.3, 1.3, 0.5], Mt.gold, GRP.acc); break;
+        case 'atlas_pin': { // on the outside of the right shoulder, clear of long hair
+          const Mq = mm(Ms, mm(rotY(80 * DEG), rotZ(45 * DEG)));
+          K.Bx(add(J.shR, mv(Ms, [3.9, 0.4, -0.9])), Mq, [1.5, 1.5, 0.6], Mt.gold, GRP.acc);
+          K.S(add(J.shR, mv(Ms, [4.4, 0.4, -0.9])), 0.7, flat('#3a5a8a', { min: 2 }), GRP.acc);
+          break;
+        }
         case 'atlas_lamplet': lantern(Pl([8.4, 3.6, -1])); break;
         case 'atlas_quill': K.C(H([-hr[0] * 0.66, hr[1] * 0.42, -hr[2] * 0.58]), H([-hr[0] * 1.02 + hsw * 0.3, hr[1] * 1.3, -hr[2] * 0.9]), 1.1, 0.5, flat('#f4f0e0', { min: 2 }), GRP.acc); break;
         default: break;
@@ -811,7 +830,8 @@ RB.battlers = (function () {
         r.prop = {};
         for (const q of new Set([...Object.keys(a || {}), ...Object.keys(b || {})])) {
           const va = (a || {})[q], vb = (b || {})[q];
-          r.prop[q] = va == null ? vb * t : vb == null ? va * (1 - t) : va + (vb - va) * t;
+          if (Array.isArray(va) || Array.isArray(vb)) r.prop[q] = !Array.isArray(vb) ? va.slice() : !Array.isArray(va) ? vb.slice() : va.map((v, i) => v + (vb[i] - v) * t);
+          else r.prop[q] = va == null ? vb * t : vb == null ? va * (1 - t) : va + (vb - va) * t;
         }
       } else r[k] = t < 0.5 ? a : b;
     }
@@ -845,17 +865,18 @@ RB.battlers = (function () {
     const u = ((((t % (2 * Lp)) + 2 * Lp) % (2 * Lp)) / Lp); // 0..2
     const TAU = Math.PI * 2, off = pc ? 0 : 1.7;
     const br = Math.sin(u * TAU * 2), spring = Math.sin(u * TAU * 2 + 0.6), ws = Math.sin(u * TAU + off), hd = Math.sin(u * TAU + 0.9 + off);
-    ps.pelvis[1] += amp * (-0.5 + 0.5 * spring);
-    ps.pelvis[0] += amp * ws * 1.0;
-    ps.pelvisRoll += amp * ws * -2.4;
-    ps.spineRoll += amp * ws * 1.8;
-    ps.spinePitch += amp * br * 1.4;
-    ps.headYaw += amp * hd * 3.5;
-    ps.headPitch += amp * -br * 1.2;
-    for (const h of [ps.handR, ps.handL]) { h[1] += amp * br * 0.6; h[0] += amp * ws * 0.5; }
-    ps.hairLag = amp * 1.1 * Math.sin(u * TAU * 2 + 0.6 - 0.9);
-    ps.hairSway = amp * 1.3 * Math.sin(u * TAU + off - 0.9);
-    ps.clothSway = amp * 0.9 * Math.sin(u * TAU + off - 0.6);
+    ps.pelvis[1] += amp * (-0.75 + 0.75 * spring);
+    ps.pelvis[0] += amp * ws * 1.3;
+    ps.pelvisRoll += amp * ws * -3;
+    ps.spineRoll += amp * ws * 2.2;
+    ps.spinePitch += amp * br * 1.8;
+    ps.headYaw += amp * hd * 5;
+    ps.headPitch += amp * -br * 1.5;
+    for (const h of [ps.handR, ps.handL]) { h[1] += amp * br * 0.9; h[0] += amp * ws * 0.7; }
+    ps.handR[2] += amp * Math.sin(u * TAU * 2 + 1.4) * 0.8; // the free hand stays busy
+    ps.hairLag = amp * 1.5 * Math.sin(u * TAU * 2 + 0.6 - 0.9);
+    ps.hairSway = amp * 1.8 * Math.sin(u * TAU + off - 0.9);
+    ps.clothSway = amp * 1.1 * Math.sin(u * TAU + off - 0.6);
     if (u >= 1) {
       const gph = u - 1;
       if (pc) {
@@ -909,13 +930,13 @@ RB.battlers = (function () {
     // a forearm raised across the body, then the palm set against what comes, feet braced
     ward: {
       a: { handR: [2.4, 42, 7], elbowR: [1, -1.2, 0.2], spinePitch: 10, pelvis: [-0.3, -2.4, -0.4], headPitch: 2, footR: [7, 0, 5] },
-      x: (k) => ({ handR: [15.4, 44.5, 11.6], elbowR: [1, -1, -0.4], handL: [-3.8, 38.5, 9.6], spinePitch: 12, spineYaw: 14, pelvis: [0.5, -2.8, 0.6], footR: [7.6, 0, 6], headPitch: -4, prop: { palm: 1 } }),
+      x: (k) => ({ handR: [15.8, 47.5, 11], elbowR: [1, -1.2, -0.4], handL: [-3.8, 38.5, 9.6], spinePitch: 12, spineYaw: 14, pelvis: [0.5, -2.8, 0.6], footR: [7.6, 0, 6], headPitch: -4, hairSway: -1, clothSway: -0.8, prop: { palm: 1 } }),
       snap: 0.28,
     },
-    // both hands low and open, rising gently to the chest
+    // both hands low and open at the sides, rising gently and opening outward to shoulder height
     restore: {
-      a: { handR: [4.2, 27, 8], handL: [-4, 27.4, 8], elbowR: [1, -1, -0.2], elbowL: [-1, -1, -0.2], spinePitch: 12, headPitch: 10, pelvis: [0, -2, 0] },
-      x: (k) => ({ handR: [6.2, 36 + 6 * ease(k), 9.4], handL: [-4.2, 36 + 6 * ease(k), 9.2], elbowR: [1, -1, -0.2], elbowL: [-1, -1, -0.2], spinePitch: 3, headPitch: -8, pelvis: [0, -0.6, 0], hairLag: -0.6 }),
+      a: { handR: [9.6, 25.5, 5], handL: [-9.6, 25.8, 3.6], elbowR: [1, -0.6, -0.8], elbowL: [-1, -0.6, -0.8], spinePitch: 13, headPitch: 12, pelvis: [0, -2.2, 0] },
+      x: (k) => ({ handR: [12.8 + 1.4 * ease(k), 36 + 8 * ease(k), 5.4], handL: [-12.6 - 1.4 * ease(k), 36 + 8 * ease(k), 3.6], elbowR: [1, -0.8, -0.6], elbowL: [-1, -0.8, -0.6], spinePitch: 2, headPitch: -10, pelvis: [0, -0.4, 0], hairLag: -0.8 }),
       snap: 0,
     },
     // the arm swept back low, then round in a flowing arc up toward the foe
@@ -931,7 +952,7 @@ RB.battlers = (function () {
     // the arm lowered, then raised high toward the foe: a light, a bell, a voice
     raise: {
       a: { handR: [8.4, 33, 4.2], elbowR: [1, -0.9, -0.8], spinePitch: 9, pelvis: [0, -2.2, 0], headPitch: 6 },
-      x: (k) => ({ handR: [9.6, 60.5, 8.6], elbowR: [1, 0.2, -0.3], spinePitch: -3, spineYaw: 6, pelvis: [0, -0.3, 0.2], headPitch: -12, headYaw: 8, hairLag: 0.8 }),
+      x: (k) => ({ handR: [12.4, 66, 7.4], elbowR: [1, 0.3, -0.3], spinePitch: -4, spineYaw: 6, spineRoll: -4, pelvis: [0, -0.3, 0.2], headPitch: -14, headYaw: 8, hairLag: 0.8 }),
       snap: 0.3,
     },
   };
@@ -979,8 +1000,17 @@ RB.battlers = (function () {
     else if (pose === 'calm') ps = idle(calmOf(look, who), who, t, reduce ? 0 : 0.45);
     else if (pose === 'anticipate' || pose === 'act' || pose === 'recover') ps = gesturePose(look, who, gesture, pose, k);
     else ps = reactPose(look, who, pose, k);
+    // a lantern or a cane stays out at the side in the left hand, where it can be seen, whatever the
+    // right hand does (and the free hand of a lantern keeper does the gestures alone)
+    if (holdsLeft(look)) {
+      const R = readyOf(look, who);
+      ps.handL = add(R.handL, [(ps.pelvis[0] - R.pelvis[0]) * 0.4, (ps.pelvis[1] - R.pelvis[1]) * 0.7, (ps.pelvis[2] - R.pelvis[2]) * 0.4]);
+      ps.elbowL = R.elbowL;
+      if (ps.prop.book) ps.prop.bookR = 1; // a book, when one is wanted, goes in the right hand
+    }
     return ps;
   }
+  const holdsLeft = (look) => (look.acc || []).some((a) => a === 'lamp' || a === 'cane');
   function pointsOf(J, ps, pose, gesture) {
     const Mh = J.Mh, top = add(J.headC, mv(Mh, [0, J.B.headR[1] + 2, 0]));
     let hand = J.handR;

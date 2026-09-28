@@ -243,8 +243,8 @@ All other preferences apply to every campaign.
 The world keeps its 16-px logical grid. Map IDs, collisions, triggers,
 movement and saved coordinates are unchanged. The renderer
 (`src/engine/60_render.js`) draws at 2 art pixels per logical pixel, so a
-tile is 32×32 art pixels and a character 32×48, scaled to the screen by a
-whole number of device pixels. The field of view is about 12 tiles across
+tile is 32×32 art pixels and a character frame 40×58 (§10), scaled to the
+screen by a whole number of device pixels. The field of view is about 12 tiles across
 on phones, 17 on tablets and 20–21 on desktops. Art authored at this
 resolution plugs in through `draw2`/`anim2` (tiles), `draw2` (props),
 `RB.props.STRUCT2` (buildings) and `RB.sprites.getArt` (characters).
@@ -281,3 +281,160 @@ characters are used as ornament.
 - No remote fonts, images, libraries or CDNs. Everything is inline in the
   single file, under the existing content security policy.
 - No save export/import or share codes.
+
+## 10. The character standard (2026-09-28)
+
+Characters are drawn in code, as before (no sprite sheets, nothing
+fetched). This section fixes their size, anchors and pose library.
+
+### Measured before choosing
+
+| Thing (art px; 2 art px = 1 logical px, a tile is 32×32) | Size |
+|---|---|
+| Old road sprite frame | 32×48, sole on row 46, adult 45 px tall (hair crown to sole), face 16×16 |
+| House door (`29_structart.js` `doorAt`) | 38 px frame, 33 px opening; the eave overlaps its top |
+| Tower door (arched) | 36 px |
+| Old battle party | the road back view (32×48) at the battle scale |
+| Battle creatures (`78_enemy_art.js`) | frames 120–200 px; bodies about 100–150 px |
+
+A 48×72 road frame (the starting proposal) at this resolution would make a
+person about 66 px tall — 1.7 times a house door and two tiles high — so on
+the road the increase is kept modest and the detail comes from redrawing.
+Battle has no doors to respect; there the figure is about twice the road
+height, still well under the creature it faces.
+
+### Road (overworld) sprites — `src/engine/32_spriteart.js`, `32h_spritehair.js`, `32k_spriteacc.js`
+
+- **Frame 40×58 art px** (`RB.sprites.FRAME`), **foot anchor (20, 55)**
+  (`RB.sprites.ANCHOR`). The anchor stands on the middle of the actor's tile,
+  2 art px above its bottom edge — exactly where the old sprite's feet were —
+  so collision (one tile), interaction distance and depth sorting (by tile y)
+  are unchanged. The art is authored on a 40×56 figure with the sole on row
+  53; the frame keeps two clear rows above it for a hat, bun or feather and
+  their outline.
+- **Adult 50 px tall** (old 45: +11 %), child 42, a hat adds up to 4. Face
+  18×17 with 3-px eyes (lid, lash tick, iris, glint, lower light), brows
+  under the fringe; torso 16 px with sloped shoulders, crossed collars,
+  belts with a knot, skirt folds and seams; arms with a darker inner edge
+  and elbow crease; round fists; boots with cuff, toe cap and sole. About
+  1.3 times a house door's frame (old: 1.2).
+- **One rig, every look.** Rows for head, shoulders, belt, hem and boots,
+  and per frame a pose: upper-body bob, each foot's stride and lift, each
+  arm's swing, hair and hem follow-through. All 12 hairstyles, 5 cuts, the
+  8 creation accessories, every keepsake and every NPC accessory are
+  redrawn on it; creatures keep their 32×48 art, centred on the anchor.
+- **Frames.** `getArt(look, dir, frame)`: 0 stand, 1/2 the contact steps,
+  3 blink (as before); `'w0'…'w7'` an eight-phase walk (four frames per
+  tile step, picked from the step's progress: contact, down, passing, up);
+  `'i0'…'i3'` idle breathing (shoulders, head and arms settle a pixel onto
+  the legs, hair follows a beat later — articulated, not a slice of the
+  whole sprite); any key + `'b'` blinks. At every frame one foot is on the
+  anchor row.
+- **Sides are kept, not mirrored.** A side ponytail, single braid, flower,
+  ribbon, leaf, quill and lantern are worn on the left; a book or basket in
+  the right hand; a satchel's strap over the right shoulder with the bag on
+  the left hip. The front view shows the left on screen right, the back
+  view on screen left; each side view draws the side facing the camera in
+  front of the body and the other behind it (only the light is mirrored in
+  the left view).
+- `drawActor` places the frame by the anchor, draws a contact shadow at the
+  feet, picks walk/idle/blink frames, keeps alpha fades; emote bubbles and
+  the interaction chevron sit above a 50-px head.
+
+### Battle figures — `src/engine/34_battlers.js` (`RB.battlers`)
+
+- **Frame 80×104 art px, foot anchor (36, 100)**; the adult figure is about
+  86 px tall, drawn at the battle scene's whole-number scale — the same art
+  pixel grid as everything else in the scene. Room is left to the right and
+  above for an arm directed at the foe or raised.
+- **Rear three-quarter view.** The body is turned 36° from straight away,
+  facing up-right; the head turns a further 6–14° toward the foe; the camera
+  looks down 20°; light from the upper left. We see the back, the right
+  side, the right ear and cheek line.
+- **How it is drawn.** A pose rig — pelvis, spine, head, and hands and feet
+  placed by two-bone IK, so a gesture is written as "where the hand goes" —
+  carries simple volumes (ellipsoids, tapered capsules, lofted sections for
+  torso and skirts, boxes for books and bags). These are rasterized with a
+  depth buffer; each pixel takes one step of its material's 5-step
+  hue-shifted ramp from the light, plus the material's pattern (hair locks
+  and a sheen band, cloth folds, a back seam, a yoke, side seams, a hem
+  band, trims); a darker contour is drawn where a nearer part crosses a
+  farther one; lone pixels join their neighbours; the selective outline goes
+  round. Nothing is smoothed. The head is a little smaller relative to the
+  body than on the road so arms and what they hold read past it.
+- **Every look.** All hairstyles (a side ponytail and braid on the left,
+  showing past the head), cuts (tunic, apron with its bow, coat with a back
+  vent, robe with obi bow and hem trim, dress with bow and trim), and
+  accessories/keepsakes attached to their joints: hat, cap, hood and
+  headband on the head; flower, ribbon, leaf and quill on the upper left of
+  the head; earrings under the ears; scarf round the neck with its tail over
+  the left shoulder blade; satchel strap across the back to the bag on the
+  left hip; bell cord's bow at the nape; compass pin on the right shoulder;
+  lantern (Ren) and cane in the left hand, kept out at the side; basket in
+  the right; cape from the shoulders.
+- **Poses.** `ready` (lively but grounded: breathing, a spring in the
+  knees, a slow weight shift, the head searching the foe, hair and cloth
+  following; feet planted), `calm` (quieter; the player reads the folio,
+  head bowed), `anticipate` → `act` → `recover` for seven gestures —
+  `direct` (a paper strip drawn back, then sent up-right with the whole
+  arm), `trace` (a brush raised; a stroke with hook and flick), `book` (the
+  folio lifted and opened toward the foe), `ward` (forearm across, then the
+  open palm pushed out), `restore` (hands low at the sides rising and
+  opening), `flow` (arm swept back low, round in an arc up to the foe),
+  `raise` (arm lowered, then raised high) — and `hit` (knocked back at the
+  waist, then back to the stance), `brace` (a small flinch behind a raised
+  forearm), `down` (on the left knee, a hand on the ground), `cheer` (a fist
+  raised, restrained). Every gesture, hit and brace ends exactly in the
+  stance it began from; the anchor never moves.
+- **Two characters, two rhythms.** The player's idle loops every 5.2 s
+  (breath 2.6 s) and on every second loop settles the grip on the folio and
+  glances at it; the companion's loops every 6.0 s (breath 3.0 s), stands
+  wider and lower, and on every second loop shifts footing. The player holds
+  the folio at the left hip.
+- **Reduced motion.** `o.reduce` gives a still, readable stance (no idle
+  motion at any time) and poses as key frames (progress snapped to 0, ½, 1).
+- **Cost.** Frames are cached per look, pose, gesture, progress (12 steps)
+  and idle time (100-ms steps; 104 frames per player loop pair, 120 for the
+  companion), least-recently-used, up to 720 frames. A new frame takes a
+  few ms to build (`RB.battlers.prewarm(look, who)` builds the idle ahead of
+  time); a cached one is one `drawImage`.
+
+API (the contract with the battle presentation):
+
+```
+RB.battlers.FRAME    // { w: 80, h: 104 }
+RB.battlers.ANCHOR   // { x: 36, y: 100 }
+RB.battlers.POSES    // ['ready','calm','anticipate','act','recover','hit','brace','down','cheer']
+RB.battlers.GESTURES // ['direct','trace','book','ward','restore','flow','raise']
+RB.battlers.draw(ctx, look, { x, y, scale, t, who, pose, gesture, k, reduce, facing })
+  -> { hand, head, chest, feet }   // canvas px
+RB.battlers.preview(look, pose, gesture, k[, o]) -> canvas (one frame at scale 1)
+RB.battlers.prewarm(look, who)
+```
+
+`facing: 'upleft'` mirrors the frame (the anchor mirrors with it) — kept for
+later; only `'upright'` is authored.
+
+### Where the standard shows outside the world
+
+- Character creation: the figure (40×58) at 3× or 4× in the traveller
+  column and when inspected (2× and 1.5× on short landscape screens); the
+  compact phone slip keeps a ¾-size thumbnail beside the portrait so its
+  text column is no narrower than before; the clothing-cut tiles at 1×; the
+  prologue walker walks the eight-phase cycle.
+- Satchel, "How you look wearing it": Front and Side (road sprites) and In
+  battle (the battle figure, trimmed to the figure), all at 2 CSS px per art
+  px, then the portrait.
+
+### Tests
+
+`tests/e2e/characters.mjs` (in `run.mjs`): every option class, keepsake,
+companion and NPC × 4 directions × 17 frames on the road standard (size,
+not blank, feet on the anchor, nothing clipped), one-sided things on their
+side in every view, depth sorting in the world, and for the battle figures
+the API, every pose × gesture × progress for the player and all four
+companions (not blank, anchor stable, no drift), accessories present in
+every pose and head things on the head, reduced-motion stillness, lively
+upper body with planted feet, different idle timing, and frame cost.
+Review sheets go to `tests/e2e/out/characters/`; a selection is in
+`docs/screenshots/after/characters/`.

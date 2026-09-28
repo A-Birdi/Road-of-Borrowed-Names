@@ -352,7 +352,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (L !== 'head') return;
       const c = look.hoodCol || p.cl[1], R = [shade(c, -2), shade(c, -1), c, shade(c, 1)];
       const y = g.hy;
-      const b = new P.Buf(W, A.H);
+      const b = new P.Buf(W, 56);
       if (v === 'down') {
         b.oval(8, y + 1, 31, y + 20, R[2]);
         b.rect(7, y + 11, 4, 15, R[2]); b.rect(29, y + 11, 4, 15, R[1]); b.rect(7, y + 11, 1, 15, R[3]);

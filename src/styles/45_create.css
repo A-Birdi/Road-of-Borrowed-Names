@@ -85,7 +85,9 @@
 .cr-port canvas { display: block; width: 56px; height: 56px; image-rendering: pixelated; }
 .cr-fig { position: relative; padding: 0 3px 3px; }
 .cr-fig::after { content: ""; position: absolute; left: 14%; right: 14%; bottom: 0; height: 7px; border-radius: 50%; background: rgba(38, 31, 21, 0.2); }
-.cr-fig canvas { position: relative; z-index: 1; display: block; width: 32px; height: 48px; image-rendering: pixelated; }
+/* the road sprite (40×58 art px): a small thumbnail in the compact slip (it keeps the slip's text
+ * column as wide as before), whole multiples where there is room */
+.cr-fig canvas { position: relative; z-index: 1; display: block; width: 30px; height: 44px; image-rendering: pixelated; }
 .cr-sum { grid-area: sum; min-width: 0; }
 .cr-nm { font-family: var(--serif); font-weight: 600; font-size: 1.12em; line-height: 1.25; overflow-wrap: anywhere; }
 .cr-nm .jp-n { display: inline-block; font-family: var(--jp-font); font-weight: 400; font-size: 0.88em; color: var(--ink-2); margin-left: 0.25em; }
@@ -112,7 +114,7 @@
   .cr-route-cur .n { display: none; }
   .cr-sheet:not(.expanded) { gap: 4px 8px; padding: 4px 6px; }
   .cr-sheet:not(.expanded) .cr-port canvas { width: 48px; height: 48px; }
-  .cr-sheet:not(.expanded) .cr-fig canvas { width: 24px; height: 36px; }
+  .cr-sheet:not(.expanded) .cr-fig canvas { width: 24px; height: 35px; }
   .cr-sheet:not(.expanded) .cr-nm { font-size: 1em; }
   .cr-sheet:not(.expanded) .cr-sub, .cr-sheet:not(.expanded) .cr-nm .jp-n { display: none; }
   .cr-sheet:not(.expanded) .cr-expand { min-width: var(--tap); padding: 0; }
@@ -128,7 +130,7 @@
 }
 .cr-sheet.expanded .cr-figs { justify-content: center; gap: 22px; padding: 6px 0 2px; }
 .cr-sheet.expanded .cr-port canvas { width: 144px; height: 144px; }
-.cr-sheet.expanded .cr-fig canvas { width: 96px; height: 144px; }
+.cr-sheet.expanded .cr-fig canvas { width: 120px; height: 174px; }
 .cr-sheet.expanded .cr-turn { display: flex; }
 
 /* ---- the page ----------------------------------------------------------------------------- */
@@ -220,7 +222,7 @@ input:checked + .face .cr-tick { display: flex; }
   min-height: var(--tap); padding: 7px 4px 8px; border: 1px solid var(--paper-edge); border-radius: var(--r-2); background: #f7efdb;
 }
 .cr-tile canvas { display: block; width: 56px; height: 56px; image-rendering: pixelated; }
-.cr-tiles-shape canvas { width: 40px; height: 60px; }
+.cr-tiles-shape canvas { width: 40px; height: 58px; }
 .cr-tile .nm { font-size: 0.86em; line-height: 1.2; text-align: center; overflow-wrap: break-word; max-width: 100%; }
 .cr-tile:hover .face { background: var(--paper-2); }
 .cr-tile > input:checked + .face { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink), inset 0 -4px 0 var(--ribbon); background: #fffaf0; }
@@ -278,7 +280,7 @@ body.bulb-on .cr-entry .jline .jt { text-decoration: none; }
   .cr-sheet .cr-kick { display: block; order: -1; font: 600 0.8em var(--ui-font); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); border-bottom: 1px solid var(--rule); padding-bottom: 0.3em; }
   .cr-sheet .cr-figs, .cr-sheet.expanded .cr-figs { justify-content: center; gap: clamp(14px, 2.2vw, 30px); padding: 6px 0 0; }
   .cr-sheet .cr-port canvas, .cr-sheet.expanded .cr-port canvas { width: 144px; height: 144px; }
-  .cr-sheet .cr-fig canvas, .cr-sheet.expanded .cr-fig canvas { width: 96px; height: 144px; }
+  .cr-sheet .cr-fig canvas, .cr-sheet.expanded .cr-fig canvas { width: 120px; height: 174px; }
   .cr-sheet .cr-turn { display: flex; order: 1; }
   .cr-sheet .cr-sum { order: 2; text-align: center; margin-top: 2px; }
   .cr-sheet .cr-nm { font-size: 1.55em; }
@@ -291,7 +293,7 @@ body.bulb-on .cr-entry .jline .jt { text-decoration: none; }
 }
 @media (min-width: 1100px) and (min-height: 720px) {
   .cr-sheet .cr-port canvas, .cr-sheet.expanded .cr-port canvas { width: 192px; height: 192px; }
-  .cr-sheet .cr-fig canvas, .cr-sheet.expanded .cr-fig canvas { width: 128px; height: 192px; }
+  .cr-sheet .cr-fig canvas, .cr-sheet.expanded .cr-fig canvas { width: 160px; height: 232px; }
 }
 
 /* ---- short landscape (phones on their side): route in the header row, traveller in a side column */
@@ -316,12 +318,12 @@ body.bulb-on .cr-entry .jline .jt { text-decoration: none; }
     text-align: center; gap: 6px; max-height: none; overflow: auto; overscroll-behavior: contain; touch-action: pan-y pinch-zoom; padding: 8px;
   }
   .cr-sheet .cr-port canvas { width: 72px; height: 72px; }
-  .cr-sheet .cr-fig canvas { width: 48px; height: 72px; }
+  .cr-sheet .cr-fig canvas { width: 60px; height: 87px; }
   .cr-sheet .cr-turn { display: flex; }
   .cr-sheet .cr-nm .jp-n { display: block; margin: 0; }
   .cr-sheet.expanded .cr-figs { gap: 10px; }
   .cr-sheet.expanded .cr-port canvas { width: 96px; height: 96px; }
-  .cr-sheet.expanded .cr-fig canvas { width: 64px; height: 96px; }
+  .cr-sheet.expanded .cr-fig canvas { width: 80px; height: 116px; }
   .cr-sheet.expanded .cr-reg, .cr-sheet.expanded .cr-note { display: block; text-align: left; justify-self: stretch; }
 }
 

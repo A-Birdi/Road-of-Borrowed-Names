@@ -1,9 +1,11 @@
 /* Overworld character sprites at the character standard (see docs/ART_DIRECTION.md §10).
  *
- * RB.sprites.getArt(look, dir, frame) returns a 40×56-art-px canvas: one tile and a quarter
- * wide, a tile and three quarters tall, the foot anchor at (20, 53) — the point that stands
+ * RB.sprites.getArt(look, dir, frame) returns a 40×58-art-px canvas (RB.sprites.FRAME): a tile
+ * and a quarter wide, the foot anchor at (20, 55) (RB.sprites.ANCHOR) — the point that stands
  * on the tile, 2 art px above its bottom edge, as before. An adult figure is 50 px tall (the
- * 32×48 sprites it replaces were 45), a child 42; the collision footprint stays one tile.
+ * 32×48 sprites it replaces were 45), a child 42, a hat or bun adds up to 4; the collision
+ * footprint stays one tile. The art is authored with the sole on row 53 of a 40×56 figure;
+ * the frame keeps two clear rows above it.
  *
  * Every look is drawn from one rig: rows for the head, shoulders, belt, hem and boots, and per
  * frame a pose (upper-body bob, each foot's stride and lift, each arm's swing, hair and cloth
@@ -19,7 +21,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
 (function () {
   'use strict';
   const P = RB.pix, SP = RB.sprites;
-  const W = 40, H = 56, AX = 20, AY = 53;
+  // Art is authored for a 40×56 figure (sole on row 53); the frame adds TOP clear rows above it so a
+  // tall hat, bun or feather and its outline are never clipped: 40×58, foot anchor (20, 55).
+  const W = 40, TOP = 2, H = 56 + TOP, AX = 20, AY = 53;
   const shade = P.shade, mix = P.mix;
 
   // ---- palette for one look ---------------------------------------------------------------
@@ -253,9 +257,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const lt = sh === 'dress' ? g.low + 1 : g.hem + 1;
     for (let s = 0; s < 2; s++) {
       const foot = g.pose.feet[sideAt(view, s)];
-      // the foot further from the camera sits a pixel higher; a lifted foot rises
-      const back = view === 'down' ? foot.fwd < 0 : foot.fwd > 0;
-      const sole = g.sole - (back ? 1 : 0) - foot.lift;
+      // a lifted foot rises; the other one always stands on the anchor row
+      const sole = g.sole - foot.lift;
       const x = s ? 21 : 14; // leg columns (5 wide)
       if (robe) {
         if (foot.lift) continue; // a lifted foot hides under the hem
@@ -763,6 +766,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   function build(look, dir, frame) {
     const pose = poseOf(frame);
     let b = new P.Buf(W, H);
+    b.oy = TOP;
     let ol = look.outlineCol || '#241c20';
     if (look.custom) {
       // creatures are drawn at 32×48 and stand in the middle of the frame, feet on the anchor
@@ -811,7 +815,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
   // The frame standard (art px): size, and the foot anchor that stands on the tile.
   SP.FRAME = { w: W, h: H };
-  SP.ANCHOR = { x: AX, y: AY };
+  SP.ANCHOR = { x: AX, y: AY + TOP };
   SP.artW = W; SP.artH = H;
   SP._art = { W, H, AX, AY, palette, geom, hairRamp, poseOf, handsFB, sideHand, sideAt, sp, mir, stamp, newMask, shadeMask, curlShade, foldShade, IVORY, set HAIR(v) { HAIR = v; }, get HAIR() { return HAIR; }, set drawHair(f) { drawHair = f; }, set ACC(v) { ACC = v; }, get ACC() { return ACC; } };
 })();

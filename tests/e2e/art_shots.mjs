@@ -137,21 +137,20 @@ if (sheets.length) {
         for (const id of Object.keys(RB.content.chars)) { const ch = RB.content.chars[id]; if (ch.look) looks.push({ name: id, look: ch.look }); }
         for (const cu of Object.keys(RB.sprites.custom)) looks.push({ name: cu, look: { custom: cu } });
         const dirs = ['down', 'up', 'left', 'right'];
-        const cw = 36 * 2 + 4, cols = 4;
-        const colW = 90 + dirs.length * 3 * 36;
+        const F = RB.sprites.FRAME || { w: 32, h: 48 }, cellW = F.w + 2, cellH = F.h + 4, cols = 4;
+        const colW = 90 + dirs.length * 3 * cellW;
         const perCol = Math.ceil(looks.length / cols);
-        [cv, g] = mk(colW * cols, perCol * 54 + 20);
+        [cv, g] = mk(colW * cols, perCol * cellH + 20);
         g.fillStyle = '#6a7a5a'; g.fillRect(0, 0, cv.width, cv.height);
         looks.forEach((L, i) => {
-          const x0 = Math.floor(i / perCol) * colW, y0 = (i % perCol) * 54 + 6;
+          const x0 = Math.floor(i / perCol) * colW, y0 = (i % perCol) * cellH + 6;
           label(g, L.name.slice(0, 12), x0 + 4, y0 + 30);
           dirs.forEach((d, di) => [0, 1, 2].forEach((f, fi) => {
             const art = RB.sprites.getArt && RB.sprites.getArt(L.look, d, f);
-            const x = x0 + 90 + (di * 3 + fi) * 36;
+            const x = x0 + 90 + (di * 3 + fi) * cellW;
             if (art) g.drawImage(art, x, y0); else g.drawImage(RB.sprites.get(L.look, d, f), x, y0, 32, 48);
           }));
         });
-        void cw;
       } else if (kind === 'portraits') {
         const ids = Object.keys(RB.content.chars).filter((id) => RB.portraits.image(id, 'neutral'));
         const exprs = ['neutral', 'smile', 'sad', 'surprised', 'angry', 'thinking'];

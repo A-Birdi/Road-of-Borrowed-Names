@@ -627,8 +627,11 @@ button.entry .kind.slotline { display: flex; flex-wrap: wrap; align-items: cente
 .wear-prev { margin: 0.7em 0 0.8em; }
 .wear-prev figcaption { font-size: 0.86em; font-weight: 600; color: var(--ink-3); margin-bottom: 0.35em; }
 .wp-row { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 10px 12px; }
-.wp { display: flex; flex-direction: column; align-items: center; gap: 0.2em; max-width: 96px; text-align: center; font-size: 0.8em; line-height: 1.25; color: var(--ink-3); }
-.wp canvas { display: block; width: 64px; height: 96px; image-rendering: pixelated; background: var(--paper-2); border: 1px solid var(--paper-edge); border-radius: var(--r-1); }
+.wp { display: flex; flex-direction: column; align-items: center; gap: 0.2em; max-width: 112px; text-align: center; font-size: 0.8em; line-height: 1.25; color: var(--ink-3); }
+/* road sprites (40×58 art px) and the battle figure, both at 2 CSS px per art px */
+.wp canvas { display: block; width: 80px; height: 116px; image-rendering: pixelated; background: var(--paper-2); border: 1px solid var(--paper-edge); border-radius: var(--r-1); }
+.wp-battle { max-width: none; }
+.wp-battle canvas { width: auto; height: auto; }
 .wp-face canvas { width: 96px; height: 96px; }
 
 /* Map: a folded chart */
@@ -975,7 +978,9 @@ body.reduced-motion .pbtn.mg-t svg { transition: none; }
 .cr-port canvas { display: block; width: 56px; height: 56px; image-rendering: pixelated; }
 .cr-fig { position: relative; padding: 0 3px 3px; }
 .cr-fig::after { content: ""; position: absolute; left: 14%; right: 14%; bottom: 0; height: 7px; border-radius: 50%; background: rgba(38, 31, 21, 0.2); }
-.cr-fig canvas { position: relative; z-index: 1; display: block; width: 32px; height: 48px; image-rendering: pixelated; }
+/* the road sprite (40×58 art px): a small thumbnail in the compact slip (it keeps the slip's text
+ * column as wide as before), whole multiples where there is room */
+.cr-fig canvas { position: relative; z-index: 1; display: block; width: 30px; height: 44px; image-rendering: pixelated; }
 .cr-sum { grid-area: sum; min-width: 0; }
 .cr-nm { font-family: var(--serif); font-weight: 600; font-size: 1.12em; line-height: 1.25; overflow-wrap: anywhere; }
 .cr-nm .jp-n { display: inline-block; font-family: var(--jp-font); font-weight: 400; font-size: 0.88em; color: var(--ink-2); margin-left: 0.25em; }
@@ -1002,7 +1007,7 @@ body.reduced-motion .pbtn.mg-t svg { transition: none; }
   .cr-route-cur .n { display: none; }
   .cr-sheet:not(.expanded) { gap: 4px 8px; padding: 4px 6px; }
   .cr-sheet:not(.expanded) .cr-port canvas { width: 48px; height: 48px; }
-  .cr-sheet:not(.expanded) .cr-fig canvas { width: 24px; height: 36px; }
+  .cr-sheet:not(.expanded) .cr-fig canvas { width: 24px; height: 35px; }
   .cr-sheet:not(.expanded) .cr-nm { font-size: 1em; }
   .cr-sheet:not(.expanded) .cr-sub, .cr-sheet:not(.expanded) .cr-nm .jp-n { display: none; }
   .cr-sheet:not(.expanded) .cr-expand { min-width: var(--tap); padding: 0; }
@@ -1018,7 +1023,7 @@ body.reduced-motion .pbtn.mg-t svg { transition: none; }
 }
 .cr-sheet.expanded .cr-figs { justify-content: center; gap: 22px; padding: 6px 0 2px; }
 .cr-sheet.expanded .cr-port canvas { width: 144px; height: 144px; }
-.cr-sheet.expanded .cr-fig canvas { width: 96px; height: 144px; }
+.cr-sheet.expanded .cr-fig canvas { width: 120px; height: 174px; }
 .cr-sheet.expanded .cr-turn { display: flex; }
 
 /* ---- the page ----------------------------------------------------------------------------- */
@@ -1110,7 +1115,7 @@ input:checked + .face .cr-tick { display: flex; }
   min-height: var(--tap); padding: 7px 4px 8px; border: 1px solid var(--paper-edge); border-radius: var(--r-2); background: #f7efdb;
 }
 .cr-tile canvas { display: block; width: 56px; height: 56px; image-rendering: pixelated; }
-.cr-tiles-shape canvas { width: 40px; height: 60px; }
+.cr-tiles-shape canvas { width: 40px; height: 58px; }
 .cr-tile .nm { font-size: 0.86em; line-height: 1.2; text-align: center; overflow-wrap: break-word; max-width: 100%; }
 .cr-tile:hover .face { background: var(--paper-2); }
 .cr-tile > input:checked + .face { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink), inset 0 -4px 0 var(--ribbon); background: #fffaf0; }
@@ -1168,7 +1173,7 @@ body.bulb-on .cr-entry .jline .jt { text-decoration: none; }
   .cr-sheet .cr-kick { display: block; order: -1; font: 600 0.8em var(--ui-font); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); border-bottom: 1px solid var(--rule); padding-bottom: 0.3em; }
   .cr-sheet .cr-figs, .cr-sheet.expanded .cr-figs { justify-content: center; gap: clamp(14px, 2.2vw, 30px); padding: 6px 0 0; }
   .cr-sheet .cr-port canvas, .cr-sheet.expanded .cr-port canvas { width: 144px; height: 144px; }
-  .cr-sheet .cr-fig canvas, .cr-sheet.expanded .cr-fig canvas { width: 96px; height: 144px; }
+  .cr-sheet .cr-fig canvas, .cr-sheet.expanded .cr-fig canvas { width: 120px; height: 174px; }
   .cr-sheet .cr-turn { display: flex; order: 1; }
   .cr-sheet .cr-sum { order: 2; text-align: center; margin-top: 2px; }
   .cr-sheet .cr-nm { font-size: 1.55em; }
@@ -1181,7 +1186,7 @@ body.bulb-on .cr-entry .jline .jt { text-decoration: none; }
 }
 @media (min-width: 1100px) and (min-height: 720px) {
   .cr-sheet .cr-port canvas, .cr-sheet.expanded .cr-port canvas { width: 192px; height: 192px; }
-  .cr-sheet .cr-fig canvas, .cr-sheet.expanded .cr-fig canvas { width: 128px; height: 192px; }
+  .cr-sheet .cr-fig canvas, .cr-sheet.expanded .cr-fig canvas { width: 160px; height: 232px; }
 }
 
 /* ---- short landscape (phones on their side): route in the header row, traveller in a side column */
@@ -1206,12 +1211,12 @@ body.bulb-on .cr-entry .jline .jt { text-decoration: none; }
     text-align: center; gap: 6px; max-height: none; overflow: auto; overscroll-behavior: contain; touch-action: pan-y pinch-zoom; padding: 8px;
   }
   .cr-sheet .cr-port canvas { width: 72px; height: 72px; }
-  .cr-sheet .cr-fig canvas { width: 48px; height: 72px; }
+  .cr-sheet .cr-fig canvas { width: 60px; height: 87px; }
   .cr-sheet .cr-turn { display: flex; }
   .cr-sheet .cr-nm .jp-n { display: block; margin: 0; }
   .cr-sheet.expanded .cr-figs { gap: 10px; }
   .cr-sheet.expanded .cr-port canvas { width: 96px; height: 96px; }
-  .cr-sheet.expanded .cr-fig canvas { width: 64px; height: 96px; }
+  .cr-sheet.expanded .cr-fig canvas { width: 80px; height: 116px; }
   .cr-sheet.expanded .cr-reg, .cr-sheet.expanded .cr-note { display: block; text-align: left; justify-self: stretch; }
 }
 
@@ -17978,9 +17983,12 @@ RB.pix = (function () {
   const lum = (c) => { const v = rgba(c); return (0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]) / 255; };
 
   // ---- pixel buffer ------------------------------------------------------------------
-  function Buf(w, h) { this.w = w; this.h = h; this.d = new Uint8ClampedArray(w * h * 4); }
+  // oy: drawing coordinates sit this many rows above the buffer's own (room for an outline or a
+  // tall hat above art authored from row 0)
+  function Buf(w, h) { this.w = w; this.h = h; this.oy = 0; this.d = new Uint8ClampedArray(w * h * 4); }
   const B = Buf.prototype;
   B.put = function (x, y, v) {
+    y += this.oy;
     if (x < 0 || y < 0 || x >= this.w || y >= this.h) return;
     const o = (y * this.w + x) * 4, d = this.d, a = v[3];
     if (a >= 255 || d[o + 3] === 0) { d[o] = v[0]; d[o + 1] = v[1]; d[o + 2] = v[2]; d[o + 3] = a; return; }
@@ -17998,9 +18006,9 @@ RB.pix = (function () {
     for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) this.put(i, j, v);
     return this;
   };
-  B.alphaAt = function (x, y) { return x < 0 || y < 0 || x >= this.w || y >= this.h ? 0 : this.d[(y * this.w + x) * 4 + 3]; };
-  B.at = function (x, y) { const o = (y * this.w + x) * 4, d = this.d; return [d[o], d[o + 1], d[o + 2], d[o + 3]]; };
-  B.clear = function (x, y) { if (x >= 0 && y >= 0 && x < this.w && y < this.h) this.d[(y * this.w + x) * 4 + 3] = 0; };
+  B.alphaAt = function (x, y) { y += this.oy; return x < 0 || y < 0 || x >= this.w || y >= this.h ? 0 : this.d[(y * this.w + x) * 4 + 3]; };
+  B.at = function (x, y) { y += this.oy; const o = (y * this.w + x) * 4, d = this.d; return [d[o], d[o + 1], d[o + 2], d[o + 3]]; };
+  B.clear = function (x, y) { y += this.oy; if (x >= 0 && y >= 0 && x < this.w && y < this.h) this.d[(y * this.w + x) * 4 + 3] = 0; };
   // Ellipse filling every pixel whose centre lies inside; (x0,y0)-(x1,y1) is the inclusive pixel box.
   B.oval = function (x0, y0, x1, y1, c) {
     const v = rgba(c);
@@ -18122,10 +18130,12 @@ RB.pix = (function () {
 /* ==== src/engine/32_spriteart.js ==== */
 /* Overworld character sprites at the character standard (see docs/ART_DIRECTION.md §10).
  *
- * RB.sprites.getArt(look, dir, frame) returns a 40×56-art-px canvas: one tile and a quarter
- * wide, a tile and three quarters tall, the foot anchor at (20, 53) — the point that stands
+ * RB.sprites.getArt(look, dir, frame) returns a 40×58-art-px canvas (RB.sprites.FRAME): a tile
+ * and a quarter wide, the foot anchor at (20, 55) (RB.sprites.ANCHOR) — the point that stands
  * on the tile, 2 art px above its bottom edge, as before. An adult figure is 50 px tall (the
- * 32×48 sprites it replaces were 45), a child 42; the collision footprint stays one tile.
+ * 32×48 sprites it replaces were 45), a child 42, a hat or bun adds up to 4; the collision
+ * footprint stays one tile. The art is authored with the sole on row 53 of a 40×56 figure;
+ * the frame keeps two clear rows above it.
  *
  * Every look is drawn from one rig: rows for the head, shoulders, belt, hem and boots, and per
  * frame a pose (upper-body bob, each foot's stride and lift, each arm's swing, hair and cloth
@@ -18141,7 +18151,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
 (function () {
   'use strict';
   const P = RB.pix, SP = RB.sprites;
-  const W = 40, H = 56, AX = 20, AY = 53;
+  // Art is authored for a 40×56 figure (sole on row 53); the frame adds TOP clear rows above it so a
+  // tall hat, bun or feather and its outline are never clipped: 40×58, foot anchor (20, 55).
+  const W = 40, TOP = 2, H = 56 + TOP, AX = 20, AY = 53;
   const shade = P.shade, mix = P.mix;
 
   // ---- palette for one look ---------------------------------------------------------------
@@ -18375,9 +18387,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const lt = sh === 'dress' ? g.low + 1 : g.hem + 1;
     for (let s = 0; s < 2; s++) {
       const foot = g.pose.feet[sideAt(view, s)];
-      // the foot further from the camera sits a pixel higher; a lifted foot rises
-      const back = view === 'down' ? foot.fwd < 0 : foot.fwd > 0;
-      const sole = g.sole - (back ? 1 : 0) - foot.lift;
+      // a lifted foot rises; the other one always stands on the anchor row
+      const sole = g.sole - foot.lift;
       const x = s ? 21 : 14; // leg columns (5 wide)
       if (robe) {
         if (foot.lift) continue; // a lifted foot hides under the hem
@@ -18885,6 +18896,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   function build(look, dir, frame) {
     const pose = poseOf(frame);
     let b = new P.Buf(W, H);
+    b.oy = TOP;
     let ol = look.outlineCol || '#241c20';
     if (look.custom) {
       // creatures are drawn at 32×48 and stand in the middle of the frame, feet on the anchor
@@ -18933,7 +18945,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
   // The frame standard (art px): size, and the foot anchor that stands on the tile.
   SP.FRAME = { w: W, h: H };
-  SP.ANCHOR = { x: AX, y: AY };
+  SP.ANCHOR = { x: AX, y: AY + TOP };
   SP.artW = W; SP.artH = H;
   SP._art = { W, H, AX, AY, palette, geom, hairRamp, poseOf, handsFB, sideHand, sideAt, sp, mir, stamp, newMask, shadeMask, curlShade, foldShade, IVORY, set HAIR(v) { HAIR = v; }, get HAIR() { return HAIR; }, set drawHair(f) { drawHair = f; }, set ACC(v) { ACC = v; }, get ACC() { return ACC; } };
 })();
@@ -18960,7 +18972,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const BANGS_D = sp(14, '9-17,19-30|9-12,14-17,19-23,26-30|9-11,17-18,21-22,28-30|9-10,21,29-30');
   const SIDES_D = sp(17, '9-10,29-30*3|10,29*2');
   const NAPE_U = sp(14, '9-30*4|10-29*2|11-28|12-27|13-26|15-24');
-  const SIDE_CAP = sp(4, '15-23|13-25|11-27|10-28|9-29|9-30*3');
+  const SIDE_CAP = sp(4, '15-23|13-25|11-27|10-28|9-29|9-30*4');
   const SIDE_BACK = sp(13, '9-19|9-18*6|10-18|10-17|11-17|12-16');
   const SIDE_BANGS = sp(12, '9-30|19-23,25-30|20-22,26-29|20-21,27-28|20-21,27|20-21|20-21|21');
   const TIE = (look, p) => look.tieCol || p.ac[1];
@@ -18985,7 +18997,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       side: { front: [{ parts: [...SIDE_CAP, ...SIDE_BACK, ...SIDE_BANGS] }] },
     },
     bob: {
-      down: { front: [{ parts: [...CAP_D, ...sp(8, '8-31*6'), ...sp(14, '8-31|8-31|8-12,14-17,19-23,25-31|8-12,27-31*5|8-12,27-31|8-12,27-31|9-11,28-30')] }] },
+      down: { front: [{ parts: [...CAP_D, ...sp(8, '8-31*6'), ...sp(14, '8-31|8-12,14-17,19-23,25-31|8-12,17,21-22,27-31|8-12,27-31*5|8-12,27-31|9-12,27-30|9-11,28-30')] }] },
       up: { front: [{ parts: [...CAP_D, ...sp(8, '8-31*16|9-30')] }] },
       side: { front: [{ parts: [...SIDE_CAP, ...sp(8, '8-9*5'), ...sp(13, '8-30|8-20,23-30|8-20,26-29|8-20,28|8-20*5|9-20|10-19')] }] },
     },
@@ -19060,9 +19072,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       side: { front: [{ parts: sp(2, '14-16,20-22|11-25|9-27|8-28|7-29|7-30*6|7-18,20-24,26-30|7-18,21-23,28-29|7-18|7-17*2|8-17|8-16|9-16|10-15'), mode: 'curl' }] },
     },
     spiky: {
-      down: { front: [{ parts: [...sp(1, '13,19,26|13-14,18-20,25-26|13-15,17-21,24-26'), ...sp(4, '12-27|11-28|10-29|9-30*6'), ...sp(9, '7-8,31-32|8,31'), ...sp(14, '9-14,16-19,21-24,26-30|9-11,13-14,17-19,22-24,27-30|9-10,13,18-19,23,29-30|9,29-30'), ...SIDES_D] }] },
-      up: { front: [{ parts: [...sp(1, '13,19,26|13-14,18-20,25-26|13-15,17-21,24-26'), ...sp(4, '12-27|11-28|10-29|9-30*6'), ...sp(9, '7-8,31-32|8,31'), ...sp(14, '9-30*3|10-29*2|11-28|12-27|13-26|14-16,18-21,23-25')] }] },
-      side: { front: [{ parts: [...sp(1, '12,18,24|12-13,17-19,23-25|12-14,16-20,22-26'), ...sp(4, '11-27|10-28|9-29'), ...sp(7, '5-8|6-8'), ...sp(7, '9-29*2|9-30*4'), ...sp(13, '8-19|9-18,20-24,26-30|9-18,20-22,27-29|8-18,20-21,28|10-18,20-21|10-17,21|11-17|12-16')] }] },
+      down: { front: [{ parts: [...sp(1, '13,19,26|13-14,18-20,25-26|13-15,17-21,24-26'), ...sp(4, '12-27|11-28|10-29|9-30*7'), ...sp(9, '7-8,31-32|8,31'), ...sp(14, '9-14,16-19,21-24,26-30|9-11,13-14,17-19,22-24,27-30|9-10,13,18-19,23,29-30|9,29-30'), ...SIDES_D] }] },
+      up: { front: [{ parts: [...sp(1, '13,19,26|13-14,18-20,25-26|13-15,17-21,24-26'), ...sp(4, '12-27|11-28|10-29|9-30*7'), ...sp(9, '7-8,31-32|8,31'), ...sp(14, '9-30*3|10-29*2|11-28|12-27|13-26|14-16,18-21,23-25')] }] },
+      side: { front: [{ parts: [...sp(1, '12,18,24|12-13,17-19,23-25|12-14,16-20,22-26'), ...sp(4, '11-27|10-28|9-29'), ...sp(7, '5-8|6-8'), ...sp(7, '9-29*2|9-30*4'), ...sp(13, '8-30|9-18,20-24,26-30|9-18,20-22,27-29|8-18,20-21,28|10-18,20-21|10-17,21|11-17|12-16')] }] },
     },
     shaved: {
       down: { front: [{ parts: sp(5, '14-25|12-27|11-28|10-29*5|10-11,28-29|10,29'), ramp: 'stubble' }] },
@@ -19476,7 +19488,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (L !== 'head') return;
       const c = look.hoodCol || p.cl[1], R = [shade(c, -2), shade(c, -1), c, shade(c, 1)];
       const y = g.hy;
-      const b = new P.Buf(W, A.H);
+      const b = new P.Buf(W, 56);
       if (v === 'down') {
         b.oval(8, y + 1, 31, y + 20, R[2]);
         b.rect(7, y + 11, 4, 15, R[2]); b.rect(29, y + 11, 4, 15, R[1]); b.rect(7, y + 11, 1, 15, R[3]);
@@ -20322,6 +20334,8 @@ RB.battlers = (function () {
       skin: { R: p.skin5, th: [0.7, 0.26, -0.2, -0.6] },
       hand: { R: p.skin5, th: [0.62, 0.2, -0.3, -0.7], min: 2 },
       ear: { R: p.skin5, th: [0.8, 0.4, -0.1, -0.5], min: 1, max: 3 },
+      lash: { R: [p.eye, p.eye, p.eye, p.iris, p.iris], max: 1, flag: 1 },
+      blush: { R: [mix(p.skin5[1], '#d86a6a', 0.35), mix(p.skin5[2], '#e8807a', 0.35), mix(p.skin5[3], '#e8807a', 0.3), mix(p.skin5[3], '#e8807a', 0.3), mix(p.skin5[4], '#e8807a', 0.25)], flag: 1 },
       cloth: { R: p.cl5 },
       // the back of the garment: a centre seam
       torso: {
@@ -20489,6 +20503,10 @@ RB.battlers = (function () {
     E(add(headC, mv(Mh, [hr[0] * 0.98, -hr[1] * 0.14, -hr[2] * 0.1])), Mh, [1.8, 3.1, 2.2], Mt.ear, GRP.ear);
     E(add(headC, mv(Mh, [-hr[0] * 0.98, -hr[1] * 0.14, -hr[2] * 0.1])), Mh, [1.8, 3.1, 2.2], Mt.ear, GRP.ear);
     E(add(headC, mv(Mh, [0.4, -hr[1] * 0.22, hr[2] * 0.97])), Mh, [1.3, 1.6, 1.6], Mt.skin, GRP.head);
+    // the lashes of the near eye, showing at the cheek's edge when the head turns toward the foe,
+    // and a touch of colour on the cheek
+    E(add(headC, mv(Mh, [hr[0] * 0.56, -hr[1] * 0.02, hr[2] * 0.86])), Mh, [1.5, 0.9, 1.1], Mt.lash, GRP.ear);
+    E(add(headC, mv(Mh, [hr[0] * 0.72, -hr[1] * 0.3, hr[2] * 0.62])), Mh, [1.4, 0.8, 1.2], Mt.blush, GRP.head, (l) => true);
     hair(K);
     return { calls, J, K };
   }
@@ -20621,10 +20639,11 @@ RB.battlers = (function () {
     const { J, Mt, ps, look } = K;
     const pr = ps.prop || {};
     const Ms = J.Ms;
-    if (pr.book != null) {
-      // held in the left hand; open 0 (shut) .. 1 (open flat), raised toward the face or the foe
+    if (pr.book > 0.25) {
+      // held in the left hand (the right, if the left carries a lantern); open 0 (shut) .. 1 (open flat)
+      // (someone without a book of their own brings one out as the gesture begins)
       const open = clamp01(pr.bookOpen || 0), tilt = pr.bookTilt == null ? -50 : pr.bookTilt;
-      const c = add(J.handL, mv(Ms, pr.bookAt || [-1.4, 1.2, 0.8]));
+      const c = pr.bookR ? add(J.handR, mv(Ms, [-2.4, 1.2, 1])) : add(J.handL, mv(Ms, pr.bookAt || [-1.4, 1.2, 0.8]));
       const Mb = mm(Ms, mm(rotY((pr.bookYaw || 10) * DEG), rotX(tilt * DEG)));
       const cover = { R: ['#3a1e1e', '#5a2e2c', '#7a3e38', '#9a5448', '#b86e5a'], min: 1 };
       if (open < 0.08) {
@@ -20645,6 +20664,11 @@ RB.battlers = (function () {
       const d = norm(sub(J.handR, J.elbR)), Ls = 3 + 6 * clamp01(pr.strip);
       K.C(add(J.handR, mul(d, 1)), add(J.handR, mul(d, Ls)), 1.2, 1.2, Mt.paper, GRP.prop);
       K.S(add(J.handR, mul(d, Ls * 0.6)), 0.8, Mt.ink, GRP.prop);
+    }
+    if (pr.palm > 0.5) {
+      // the hand opened flat against what comes: a palm facing along the forearm, fingers up
+      const z = norm(sub(J.handR, J.elbR)), x = norm(cross([0, 1, 0], z)), y = cross(z, x);
+      K.E(add(J.handR, mul(z, 0.6)), [x, y, z], [2.3, 3.4, 1.1], Mt.hand, GRP.hand);
     }
     if (pr.brush) {
       const d = norm(sub(J.handR, J.elbR)), up = norm(add(d, [0, 0.9, 0]));
@@ -20751,7 +20775,9 @@ RB.battlers = (function () {
         case 'bell': {
           const cord = flat(look.cordCol || '#b8342a', { min: 1 });
           ring(J.neckB, 3.9 * g, 3.4 * g, 1.4, 10, 0.6, cord, Ms);
-          const n = Sp([0, ch + 1.6, -4.9 * g]);
+          // the bow at the nape sits over long hair or a scarf, as it does on the road from behind
+          const over = (['long', 'wavy'].includes(look.hair) ? 6.6 : look.hair === 'bob' ? 3.4 : 0) + (acc.includes('scarf') ? 1.8 : 0);
+          const n = Sp([0, ch + 1.6 + (over ? 1 : 0), -4.9 * g - over]);
           K.E(add(n, mv(Ms, [-1.7, 0.5, -0.4])), Ms, [1.8, 1.3, 0.9], cord, GRP.acc);
           K.E(add(n, mv(Ms, [1.7, 0.5, -0.4])), Ms, [1.8, 1.3, 0.9], cord, GRP.acc);
           K.S(add(n, mv(Ms, [0, 0.3, -0.6])), 0.9, cord, GRP.acc);
@@ -20808,7 +20834,12 @@ RB.battlers = (function () {
           chain([Pl([-6.6, 1.4, -6]), Pl([-7 + sway * 0.4, -4, -6.4])], 1.2, 1, R);
           break;
         }
-        case 'atlas_pin': K.Bx(Sp([6.2, ch - 2.4, -4.6 * g]), mm(Ms, rotZ(45 * DEG)), [1.3, 1.3, 0.5], Mt.gold, GRP.acc); break;
+        case 'atlas_pin': { // on the outside of the right shoulder, clear of long hair
+          const Mq = mm(Ms, mm(rotY(80 * DEG), rotZ(45 * DEG)));
+          K.Bx(add(J.shR, mv(Ms, [3.9, 0.4, -0.9])), Mq, [1.5, 1.5, 0.6], Mt.gold, GRP.acc);
+          K.S(add(J.shR, mv(Ms, [4.4, 0.4, -0.9])), 0.7, flat('#3a5a8a', { min: 2 }), GRP.acc);
+          break;
+        }
         case 'atlas_lamplet': lantern(Pl([8.4, 3.6, -1])); break;
         case 'atlas_quill': K.C(H([-hr[0] * 0.66, hr[1] * 0.42, -hr[2] * 0.58]), H([-hr[0] * 1.02 + hsw * 0.3, hr[1] * 1.3, -hr[2] * 0.9]), 1.1, 0.5, flat('#f4f0e0', { min: 2 }), GRP.acc); break;
         default: break;
@@ -20876,7 +20907,8 @@ RB.battlers = (function () {
         r.prop = {};
         for (const q of new Set([...Object.keys(a || {}), ...Object.keys(b || {})])) {
           const va = (a || {})[q], vb = (b || {})[q];
-          r.prop[q] = va == null ? vb * t : vb == null ? va * (1 - t) : va + (vb - va) * t;
+          if (Array.isArray(va) || Array.isArray(vb)) r.prop[q] = !Array.isArray(vb) ? va.slice() : !Array.isArray(va) ? vb.slice() : va.map((v, i) => v + (vb[i] - v) * t);
+          else r.prop[q] = va == null ? vb * t : vb == null ? va * (1 - t) : va + (vb - va) * t;
         }
       } else r[k] = t < 0.5 ? a : b;
     }
@@ -20910,17 +20942,18 @@ RB.battlers = (function () {
     const u = ((((t % (2 * Lp)) + 2 * Lp) % (2 * Lp)) / Lp); // 0..2
     const TAU = Math.PI * 2, off = pc ? 0 : 1.7;
     const br = Math.sin(u * TAU * 2), spring = Math.sin(u * TAU * 2 + 0.6), ws = Math.sin(u * TAU + off), hd = Math.sin(u * TAU + 0.9 + off);
-    ps.pelvis[1] += amp * (-0.5 + 0.5 * spring);
-    ps.pelvis[0] += amp * ws * 1.0;
-    ps.pelvisRoll += amp * ws * -2.4;
-    ps.spineRoll += amp * ws * 1.8;
-    ps.spinePitch += amp * br * 1.4;
-    ps.headYaw += amp * hd * 3.5;
-    ps.headPitch += amp * -br * 1.2;
-    for (const h of [ps.handR, ps.handL]) { h[1] += amp * br * 0.6; h[0] += amp * ws * 0.5; }
-    ps.hairLag = amp * 1.1 * Math.sin(u * TAU * 2 + 0.6 - 0.9);
-    ps.hairSway = amp * 1.3 * Math.sin(u * TAU + off - 0.9);
-    ps.clothSway = amp * 0.9 * Math.sin(u * TAU + off - 0.6);
+    ps.pelvis[1] += amp * (-0.75 + 0.75 * spring);
+    ps.pelvis[0] += amp * ws * 1.3;
+    ps.pelvisRoll += amp * ws * -3;
+    ps.spineRoll += amp * ws * 2.2;
+    ps.spinePitch += amp * br * 1.8;
+    ps.headYaw += amp * hd * 5;
+    ps.headPitch += amp * -br * 1.5;
+    for (const h of [ps.handR, ps.handL]) { h[1] += amp * br * 0.9; h[0] += amp * ws * 0.7; }
+    ps.handR[2] += amp * Math.sin(u * TAU * 2 + 1.4) * 0.8; // the free hand stays busy
+    ps.hairLag = amp * 1.5 * Math.sin(u * TAU * 2 + 0.6 - 0.9);
+    ps.hairSway = amp * 1.8 * Math.sin(u * TAU + off - 0.9);
+    ps.clothSway = amp * 1.1 * Math.sin(u * TAU + off - 0.6);
     if (u >= 1) {
       const gph = u - 1;
       if (pc) {
@@ -20974,13 +21007,13 @@ RB.battlers = (function () {
     // a forearm raised across the body, then the palm set against what comes, feet braced
     ward: {
       a: { handR: [2.4, 42, 7], elbowR: [1, -1.2, 0.2], spinePitch: 10, pelvis: [-0.3, -2.4, -0.4], headPitch: 2, footR: [7, 0, 5] },
-      x: (k) => ({ handR: [15.4, 44.5, 11.6], elbowR: [1, -1, -0.4], handL: [-3.8, 38.5, 9.6], spinePitch: 12, spineYaw: 14, pelvis: [0.5, -2.8, 0.6], footR: [7.6, 0, 6], headPitch: -4, prop: { palm: 1 } }),
+      x: (k) => ({ handR: [15.8, 47.5, 11], elbowR: [1, -1.2, -0.4], handL: [-3.8, 38.5, 9.6], spinePitch: 12, spineYaw: 14, pelvis: [0.5, -2.8, 0.6], footR: [7.6, 0, 6], headPitch: -4, hairSway: -1, clothSway: -0.8, prop: { palm: 1 } }),
       snap: 0.28,
     },
-    // both hands low and open, rising gently to the chest
+    // both hands low and open at the sides, rising gently and opening outward to shoulder height
     restore: {
-      a: { handR: [4.2, 27, 8], handL: [-4, 27.4, 8], elbowR: [1, -1, -0.2], elbowL: [-1, -1, -0.2], spinePitch: 12, headPitch: 10, pelvis: [0, -2, 0] },
-      x: (k) => ({ handR: [6.2, 36 + 6 * ease(k), 9.4], handL: [-4.2, 36 + 6 * ease(k), 9.2], elbowR: [1, -1, -0.2], elbowL: [-1, -1, -0.2], spinePitch: 3, headPitch: -8, pelvis: [0, -0.6, 0], hairLag: -0.6 }),
+      a: { handR: [9.6, 25.5, 5], handL: [-9.6, 25.8, 3.6], elbowR: [1, -0.6, -0.8], elbowL: [-1, -0.6, -0.8], spinePitch: 13, headPitch: 12, pelvis: [0, -2.2, 0] },
+      x: (k) => ({ handR: [12.8 + 1.4 * ease(k), 36 + 8 * ease(k), 5.4], handL: [-12.6 - 1.4 * ease(k), 36 + 8 * ease(k), 3.6], elbowR: [1, -0.8, -0.6], elbowL: [-1, -0.8, -0.6], spinePitch: 2, headPitch: -10, pelvis: [0, -0.4, 0], hairLag: -0.8 }),
       snap: 0,
     },
     // the arm swept back low, then round in a flowing arc up toward the foe
@@ -20996,7 +21029,7 @@ RB.battlers = (function () {
     // the arm lowered, then raised high toward the foe: a light, a bell, a voice
     raise: {
       a: { handR: [8.4, 33, 4.2], elbowR: [1, -0.9, -0.8], spinePitch: 9, pelvis: [0, -2.2, 0], headPitch: 6 },
-      x: (k) => ({ handR: [9.6, 60.5, 8.6], elbowR: [1, 0.2, -0.3], spinePitch: -3, spineYaw: 6, pelvis: [0, -0.3, 0.2], headPitch: -12, headYaw: 8, hairLag: 0.8 }),
+      x: (k) => ({ handR: [12.4, 66, 7.4], elbowR: [1, 0.3, -0.3], spinePitch: -4, spineYaw: 6, spineRoll: -4, pelvis: [0, -0.3, 0.2], headPitch: -14, headYaw: 8, hairLag: 0.8 }),
       snap: 0.3,
     },
   };
@@ -21044,8 +21077,17 @@ RB.battlers = (function () {
     else if (pose === 'calm') ps = idle(calmOf(look, who), who, t, reduce ? 0 : 0.45);
     else if (pose === 'anticipate' || pose === 'act' || pose === 'recover') ps = gesturePose(look, who, gesture, pose, k);
     else ps = reactPose(look, who, pose, k);
+    // a lantern or a cane stays out at the side in the left hand, where it can be seen, whatever the
+    // right hand does (and the free hand of a lantern keeper does the gestures alone)
+    if (holdsLeft(look)) {
+      const R = readyOf(look, who);
+      ps.handL = add(R.handL, [(ps.pelvis[0] - R.pelvis[0]) * 0.4, (ps.pelvis[1] - R.pelvis[1]) * 0.7, (ps.pelvis[2] - R.pelvis[2]) * 0.4]);
+      ps.elbowL = R.elbowL;
+      if (ps.prop.book) ps.prop.bookR = 1; // a book, when one is wanted, goes in the right hand
+    }
     return ps;
   }
+  const holdsLeft = (look) => (look.acc || []).some((a) => a === 'lamp' || a === 'cane');
   function pointsOf(J, ps, pose, gesture) {
     const Mh = J.Mh, top = add(J.headC, mv(Mh, [0, J.B.headR[1] + 2, 0]));
     let hand = J.handR;
@@ -22893,7 +22935,7 @@ RB.world = (function () {
 /* ==== src/engine/60_render.js ==== */
 /* World renderer. The world keeps its 16-px logical grid (movement, collision,
  * triggers, saves), but is drawn into a buffer at ART = 2 art pixels per
- * logical pixel: 32×32-art-pixel tiles and 40×56 character frames. The buffer is
+ * logical pixel: 32×32-art-pixel tiles and 40×58 character frames. The buffer is
  * then scaled by an integer number of device pixels (artPx) so pixel art stays
  * crisp. Art authored at art resolution provides draw2/getArt; older 16-px art
  * is drawn through a ×2 transform until it is redrawn (legacy adapter). Text
@@ -27537,9 +27579,10 @@ RB.ui.create = (function () {
       if (kind === 'walker') {
         const look = { skin: 3, hair: 'short', hairColor: 1, outfit: 5, acc: ['scarf'], scarfCol: '#6a6a7a' };
         const f = reduced ? 0 : Math.floor(t / 180) % 3;
-        const art = RB.sprites.getArt && RB.sprites.getArt(look, 'up', f === 2 ? 2 : f);
+        const art = RB.sprites.getArt && RB.sprites.getArt(look, 'up', reduced ? 0 : 'w' + (Math.floor(t / 90) % 8));
         const y = h * 0.95 - k * h * 0.2;
-        if (art) c.drawImage(art, Math.round(cx - 8), Math.round(y - 24), 16, 24); // logical size; drawn at art resolution by the ×2 transform
+        // logical size (half the art size): drawn at art resolution by the ×2 transform, feet on y
+        if (art) c.drawImage(art, Math.round(cx) - RB.sprites.ANCHOR.x / 2, Math.round(y) - RB.sprites.ANCHOR.y / 2, art.width / 2, art.height / 2);
         else c.drawImage(RB.sprites.get(look, 'up', f === 2 ? 2 : f), Math.round(cx - 8), Math.round(y - 24));
         const gl = c.createRadialGradient(cx + 6, y - 10, 0, cx + 6, y - 10, 18);
         gl.addColorStop(0, 'rgba(255,210,120,0.5)'); gl.addColorStop(1, 'rgba(255,210,120,0)');
@@ -27732,13 +27775,14 @@ RB.ui.create = (function () {
   function cut(look, expr) {
     return RB.portraits.playerImage(look, expr);
   }
-  // 32×48 art sprite when available (16×24 enlarged otherwise)
+  // the road sprite at the character standard (RB.sprites.FRAME, 40×58 art px)
   function fig(c, look, dir, frame) {
     const art = RB.sprites.getArt && RB.sprites.getArt(look, dir, frame);
     c.imageSmoothingEnabled = false;
     if (art) c.drawImage(art, 0, 0);
-    else c.drawImage(RB.sprites.get(look, dir, frame), 0, 0, 32, 48);
+    else c.drawImage(RB.sprites.get(look, dir, frame), 4, 9, 32, 48);
   }
+  const FIG_W = (RB.sprites.FRAME || { w: 40 }).w, FIG_H = (RB.sprites.FRAME || { h: 58 }).h;
 
   // ---- the stepped registration --------------------------------------------------------------
   // steps: any of ['identity','appearance','background','learning'] in order.
@@ -27773,7 +27817,7 @@ RB.ui.create = (function () {
       function sheetHtml() {
         return '<aside class="cr-sheet" aria-label="Your traveller"><div class="cr-kick" aria-hidden="true">Your traveller</div>' +
           '<div class="cr-figs" aria-hidden="true"><div class="cr-port"><canvas width="' + RB.portraits.S + '" height="' + RB.portraits.S + '"></canvas></div>' +
-          '<div class="cr-fig" data-dir="down"><canvas width="32" height="48"></canvas></div></div>' +
+          '<div class="cr-fig" data-dir="down"><canvas width="' + FIG_W + '" height="' + FIG_H + '"></canvas></div></div>' +
           '<div class="cr-sum"><div class="cr-nm"></div><div class="cr-sub"></div></div>' +
           '<div class="cr-turn" role="group" aria-label="Turn the figure"><button type="button" class="pbtn" data-a="turnl" aria-label="Turn left">' + I('cr-turnl') + '</button>' +
           '<button type="button" class="pbtn" data-a="turnr" aria-label="Turn right">' + I('cr-turnr') + '</button></div>' +
@@ -27801,7 +27845,7 @@ RB.ui.create = (function () {
       function tileGroup(key, legend, vals, thumb) {
         return '<fieldset class="field cr-group" data-group="' + key + '"><legend>' + esc(legend) + ' <span class="cr-selected" data-selof="' + key + '"></span></legend><div class="cr-tiles cr-tiles-' + key + '">' +
           vals.map((v) => '<label class="cr-tile"><input type="radio" name="cr-' + key + '" data-set="' + key + '" data-v="' + esc(v) + '"><span class="face">' + tick +
-            (thumb === 'port' ? '<canvas width="' + RB.portraits.S + '" height="' + RB.portraits.S + '" data-th="' + key + ':' + esc(v) + '"></canvas>' : '<canvas width="32" height="48" data-th="' + key + ':' + esc(v) + '"></canvas>') +
+            (thumb === 'port' ? '<canvas width="' + RB.portraits.S + '" height="' + RB.portraits.S + '" data-th="' + key + ':' + esc(v) + '"></canvas>' : '<canvas width="' + FIG_W + '" height="' + FIG_H + '" data-th="' + key + ':' + esc(v) + '"></canvas>') +
             '<span class="nm">' + esc(NAME[key](v)) + '</span></span></label>').join('') + '</div></fieldset>';
       }
       function entryGroup(key, attr, legend, list, iconOf, sr) {
@@ -28733,9 +28777,11 @@ RB.ui.menu = (function () {
   const ACC_WORD = { hat: 'hat', cap: 'cap', scarf: 'scarf', earrings: 'earrings', flower: 'flower', cape: 'cape' };
   function wearPreview(id, d, s) {
     const rep = EQ().replaces(s.player.look, id).map((a) => ACC_WORD[a] || a);
-    const views = [['down', 'Front'], ['right', 'Side'], ['up', 'Back, in battle']];
+    // on the road (front and side, 40×58) and in battle (seen from behind, facing the foe), all at 2 CSS px per art px
+    const views = [['down', 'Front'], ['right', 'Side'], ['battle', 'In battle']];
+    const F = RB.sprites.FRAME || { w: 40, h: 58 };
     return '<figure class="wear-prev"><figcaption>How you look wearing it</figcaption><div class="wp-row">' +
-      views.map(([dir, cap]) => '<div class="wp"><canvas width="32" height="48" data-prev="' + esc(id) + '" data-dir="' + dir + '" role="img" aria-label="' + esc('You wearing the ' + d.name.en + ': ' + cap.toLowerCase()) + '"></canvas><span>' + esc(cap) + '</span></div>').join('') +
+      views.map(([dir, cap]) => '<div class="wp' + (dir === 'battle' ? ' wp-battle' : '') + '"><canvas width="' + F.w + '" height="' + F.h + '" data-prev="' + esc(id) + '" data-dir="' + dir + '" role="img" aria-label="' + esc('You wearing the ' + d.name.en + ': ' + cap.toLowerCase()) + '"></canvas><span>' + esc(cap) + '</span></div>').join('') +
       '<div class="wp wp-face"><canvas width="96" height="96" data-prev="' + esc(id) + '" data-dir="face" role="img" aria-label="' + esc('Your portrait wearing the ' + d.name.en) + '"></canvas><span>Portrait</span></div></div>' +
       (rep.length ? '<p class="muted small">You already wear a ' + esc(rep.join(' and ')) + '; this takes its place, in its own colours, while you wear it.</p>' : '') + '</figure>';
   }
@@ -28743,11 +28789,29 @@ RB.ui.menu = (function () {
     for (const cv of root.querySelectorAll('canvas[data-prev]')) {
       const look = EQ().lookWith(s.player.look, cv.dataset.prev);
       if (cv.dataset.dir === 'face') { RB.portraits.drawPlayer(cv, look, 'smile'); continue; }
+      if (cv.dataset.dir === 'battle') { battlePreview(cv, look); continue; }
       const art = RB.sprites.getArt(look, cv.dataset.dir, 0);
       const c = cv.getContext('2d');
       c.clearRect(0, 0, cv.width, cv.height);
       if (art) c.drawImage(art, 0, 0);
     }
+  }
+  // The battle figure in its ready stance (RB.battlers), trimmed to the figure and shown at the same
+  // 2 CSS px per art px as the road sprites beside it.
+  function battlePreview(cv, look) {
+    const B = RB.battlers;
+    if (!B) return;
+    const src = B.preview(look, 'ready', null, 0, { who: 'pc', reduce: true });
+    const d = src.getContext('2d').getImageData(0, 0, src.width, src.height).data;
+    let x0 = src.width, y0 = src.height, x1 = -1, y1 = -1;
+    for (let y = 0; y < src.height; y++) for (let x = 0; x < src.width; x++) if (d[(y * src.width + x) * 4 + 3]) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+    if (x1 < 0) return;
+    x0 = Math.max(0, x0 - 2); y0 = Math.max(0, y0 - 2); x1 = Math.min(src.width - 1, x1 + 2); y1 = Math.min(src.height - 1, y1 + 2);
+    cv.width = x1 - x0 + 1; cv.height = y1 - y0 + 1;
+    cv.style.width = cv.width * 2 + 'px'; cv.style.height = cv.height * 2 + 'px';
+    const c = cv.getContext('2d');
+    c.imageSmoothingEnabled = false;
+    c.drawImage(src, -x0, -y0);
   }
   function itemDetail(x, s) {
     const d = x.d;

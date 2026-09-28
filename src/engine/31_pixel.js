@@ -77,9 +77,12 @@ RB.pix = (function () {
   const lum = (c) => { const v = rgba(c); return (0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]) / 255; };
 
   // ---- pixel buffer ------------------------------------------------------------------
-  function Buf(w, h) { this.w = w; this.h = h; this.d = new Uint8ClampedArray(w * h * 4); }
+  // oy: drawing coordinates sit this many rows above the buffer's own (room for an outline or a
+  // tall hat above art authored from row 0)
+  function Buf(w, h) { this.w = w; this.h = h; this.oy = 0; this.d = new Uint8ClampedArray(w * h * 4); }
   const B = Buf.prototype;
   B.put = function (x, y, v) {
+    y += this.oy;
     if (x < 0 || y < 0 || x >= this.w || y >= this.h) return;
     const o = (y * this.w + x) * 4, d = this.d, a = v[3];
     if (a >= 255 || d[o + 3] === 0) { d[o] = v[0]; d[o + 1] = v[1]; d[o + 2] = v[2]; d[o + 3] = a; return; }
@@ -97,9 +100,9 @@ RB.pix = (function () {
     for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) this.put(i, j, v);
     return this;
   };
-  B.alphaAt = function (x, y) { return x < 0 || y < 0 || x >= this.w || y >= this.h ? 0 : this.d[(y * this.w + x) * 4 + 3]; };
-  B.at = function (x, y) { const o = (y * this.w + x) * 4, d = this.d; return [d[o], d[o + 1], d[o + 2], d[o + 3]]; };
-  B.clear = function (x, y) { if (x >= 0 && y >= 0 && x < this.w && y < this.h) this.d[(y * this.w + x) * 4 + 3] = 0; };
+  B.alphaAt = function (x, y) { y += this.oy; return x < 0 || y < 0 || x >= this.w || y >= this.h ? 0 : this.d[(y * this.w + x) * 4 + 3]; };
+  B.at = function (x, y) { y += this.oy; const o = (y * this.w + x) * 4, d = this.d; return [d[o], d[o + 1], d[o + 2], d[o + 3]]; };
+  B.clear = function (x, y) { y += this.oy; if (x >= 0 && y >= 0 && x < this.w && y < this.h) this.d[(y * this.w + x) * 4 + 3] = 0; };
   // Ellipse filling every pixel whose centre lies inside; (x0,y0)-(x1,y1) is the inclusive pixel box.
   B.oval = function (x0, y0, x1, y1, c) {
     const v = rgba(c);
