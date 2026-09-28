@@ -70,6 +70,7 @@ See `docs/ART_DIRECTION.md` §10.
 | Battle figure, Ren (companion; lantern kept in the left hand) | [image](after/characters/battle_poses_ren.png) |
 | Ready idle as a frame sequence: the player (5.2-s loop) and two companions (6.0-s loop) — different timing and gestures, feet planted on the line | [image](after/characters/battle_idle_sequence.png) |
 | Battle figures for every creation option, keepsake and a sample of NPCs | [image](after/characters/battle_all_looks.png) |
+| Composition preview drawn by the test (not the battle screen, which still uses the old sprite until the combat code is wired to `RB.battlers`): backdrop, creature and the two figures at scale 1, shown at 2× | [image](after/characters/battle_scene_preview.png) |
 
 ## Map edges and the dialogue (player report, 2026-09-27)
 

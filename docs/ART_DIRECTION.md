@@ -437,4 +437,8 @@ companions (not blank, anchor stable, no drift), accessories present in
 every pose and head things on the head, reduced-motion stillness, lively
 upper body with planted feet, different idle timing, and frame cost.
 Review sheets go to `tests/e2e/out/characters/`; a selection is in
-`docs/screenshots/after/characters/`.
+`docs/screenshots/after/characters/`. `battle_scene_preview.png` is a
+composition drawn by the test (backdrop, creature, the player at about 16%
+of the stage width on the ground line, the companion 70 px to the right and
+8 px lower, both at the scene's scale) — a layout suggestion for wiring the
+battle screen, not a capture of it.

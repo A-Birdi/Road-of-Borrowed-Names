@@ -403,6 +403,26 @@ const helpers = (p) => p.evaluate(() => {
       if (!e.look.custom) B.draw(c, e.look, { x: (x + B.ANCHOR.x) * Z, y: (y + B.ANCHOR.y) * Z, scale: Z, pose: 'ready', t: 0, who: e.comp ? 'comp' : 'comp', reduce: true });
       c.fillStyle = '#fff'; c.font = (6 * Z) + 'px sans-serif'; c.fillText(e.name, (x + 2) * Z, (y + 8) * Z); });
     return cv;`);
+  // how the figures sit in a battle scene: the region backdrop, the creature and the two figures drawn
+  // together by this script at scale 1 (a composition preview — the battle screen itself places them)
+  await save(p, 'battle_scene_preview.png', `
+    const w = 640, h = 330, Z = 2, Sc = RB.battleScene, E = RB.enemyArt, B = RB.battlers;
+    const cv = document.createElement('canvas'); cv.width = w; cv.height = h * 2;
+    const c = cv.getContext('2d'); c.imageSmoothingEnabled = false;
+    const pc = { skin: 1, hair: 'ponytail', hairColor: 3, outfit: 2, shape: 'coat', acc: ['flower', 'glasses'] };
+    [[0, 'reedwake', 'moth', 'ren', ['act', 'direct', 1], ['ready', null, 0]], [h, 'saltglass', 'crab', 'suzu', ['calm', null, 0], ['act', 'ward', 1]]].forEach(([oy, bg, en, comp, a, b2]) => {
+      const sub = document.createElement('canvas'); sub.width = w; sub.height = h; const g = sub.getContext('2d'); g.imageSmoothingEnabled = false;
+      const ex = Math.round(w * 0.64), ey = Math.round(h * 0.4);
+      Sc.backdrop(g, bg, w, h, ey + 36, 0, true); Sc.shadow(g, ex, ey + 84, 58, 11, 0.5); E.drawArt(g, en, 0, {}, ex, ey, 1, true);
+      const px = Math.round(w * 0.16), py = h - 18;
+      Sc.shadow(g, px, py - 1, 20, 4, 0.5); Sc.shadow(g, px + 70, py + 7, 20, 4, 0.5);
+      B.draw(g, pc, { x: px, y: py, scale: 1, pose: a[0], gesture: a[1], k: a[2], who: 'pc', reduce: true });
+      B.draw(g, RB.content.chars[comp].look, { x: px + 70, y: py + 8, scale: 1, pose: b2[0], gesture: b2[1], k: b2[2], who: 'comp', reduce: true });
+      c.drawImage(sub, 0, oy);
+    });
+    const out = document.createElement('canvas'); out.width = w * Z; out.height = h * 2 * Z;
+    const o = out.getContext('2d'); o.imageSmoothingEnabled = false; o.drawImage(cv, 0, 0, w * Z, h * 2 * Z);
+    return out;`);
   ok(!errors.length, 'no page errors (battle figures) ' + errors.join('; '));
   await p.context().close();
 }
