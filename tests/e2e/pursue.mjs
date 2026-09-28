@@ -62,6 +62,7 @@ const fin = await p.evaluate(() => ({
   absent: (RB.test.absentSpeakers || []).map((x) => x.who + ' @ ' + x.map + ' (' + (x.scene || '?') + '): ' + x.en),
   nightLeaks: RB.test.nightLeaks || [],
   extras: [...new Set(RB.test.extras || [])],
+  departures: [...new Set((RB.test.departures || []).map((d) => (d.arriving ? 'in  ' : 'out ') + d.id + ' @ ' + d.map + ' ' + d.from + ' → ' + (d.exit || '(fades)') + ' toward ' + (d.to || '?') + ' [' + d.reason + ']'))],
 }));
 // lines spoken by characters who are not on the map (reported, reviewed by hand;
 // some are meant — voices through a door, letters, memories)
@@ -69,7 +70,11 @@ if (fin.nightLeaks.length) { ok = false; console.log('left a night-only map duri
 if (fin.absent.length) console.log('bodiless speakers (' + fin.absent.length + '):\n  ' + fin.absent.join('\n  '));
 fs.mkdirSync(path.join(root, 'tests/e2e/out'), { recursive: true });
 if (fin.extras.length) console.log('walked in to speak (' + fin.extras.length + '):\n  ' + fin.extras.join('\n  '));
-fs.writeFileSync(path.join(root, 'tests/e2e/out', 'speakers-' + profile + '-' + comp + '.json'), JSON.stringify({ absent: fin.absent, extras: fin.extras }, null, 1));
+// comings and goings: where people walked to, and why that way (reviewed by
+// hand; "nearest" means no destination was known and the nearest way was used)
+const guessed = fin.departures.filter((d) => /\[nearest/.test(d));
+console.log('comings and goings: ' + fin.departures.length + ' (' + guessed.length + ' by the nearest way)' + (guessed.length ? ':\n  ' + guessed.join('\n  ') : ''));
+fs.writeFileSync(path.join(root, 'tests/e2e/out', 'speakers-' + profile + '-' + comp + '.json'), JSON.stringify({ absent: fin.absent, extras: fin.extras, departures: fin.departures }, null, 1));
 const lost = fin.battles.filter((x) => !x.endsWith(':win'));
 if (comp !== 'none' && fin.comp !== comp) { ok = false; console.log('companion ' + fin.comp + ' is not the requested ' + comp); }
 console.log(JSON.stringify({ profile, comp: fin.comp, seconds: Math.round((Date.now() - t0) / 1000), map: fin.map, flags: fin.flags, battles: fin.battles.length, lost, problems: fin.problems, pageErrors: errors.slice(0, 5), quests: fin.quests }, null, 1));
