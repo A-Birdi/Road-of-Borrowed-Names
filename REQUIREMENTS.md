@@ -159,22 +159,22 @@ commit (VALIDATION.md); screenshots inspected by eye are noted as such.
 - [v] V20 Viewport matrix 320x640, 360x800, 390x844, 412x915, 844x390, 768x1024, 1280x720, 1920x1080: layout audit (visual.mjs --check: overflow, clipped text, ≥44 px touch targets, furigana contrast) over 56 states is clean on the final build, 448/448 with English labels and 168/168 with Japanese labels at 320/390/1280; before/after screenshots committed in docs/screenshots/ (index in its README). Real phones not used (emulation)
 - [v] V21 Performance measured on the same machine, pre-overhaul 2b79f3b vs final (tests/e2e/perf.mjs, 1280x800 @1x and 390x844 @2x): steady frame work within a few ms of before and far under a 16.7 ms frame; first static build per map about 4x larger (art resolution) and hidden behind the door transition; menu open/close unchanged; no DOM growth — see VALIDATION.md. Phone hardware performance and battery NOT validated (desktop headless only)
 
-## Playtest fixes (player report of 2026-09-28; VALIDATION.md "Playtest fixes"; [~] = each named test passed on its own, the full suite on the integrated build is running)
-- [~] P1 Lit lanterns show lit: the opening road's Ashinose lantern and the two Cinder Orchard lanterns Ren promises to relight; validator rule (a dead lantern with a scene needs a lit twin or `staysDark`) — world_fixes.mjs, validate.mjs
-- [~] P2 A house with no inside keeps its door shut (solid) and says so; 31 such doors across the game handled by one engine rule — world_fixes.mjs
-- [~] P3 Entering a building lands on its entry mat, leaving lands in front of the door (6 spawns fixed; validator rule) — world_fixes.mjs, validate.mjs
-- [~] P4 Nobody speaks without being there: the Lantern Hall four are present; any absent speaker walks in and off; voices/memories marked `!speakerless`, voice-only characters `bodiless`, a renamed figure stays put (`was`) — world_fixes.mjs; whole-game runs list every walk-in and bodiless line (reviewed: only the mill echo, kiln warden, Tomoe's memory and the observatory lamp stay bodiless)
-- [~] P5 People leaving walk to a door or way out and fade; arriving people walk in — world_fixes.mjs
-- [~] P6 Idle life: breathing and glances for people and animals on the road, breathing for the party in battle, wind sway for trees/pines/bushes; none with reduced motion — world_fixes.mjs (rendered moments differ; identical with reduced motion)
-- [~] P7 Reedwake's evening: a dusk fade, and the roads out wait for morning with a reason (map hold rule); test runs flag leaving a night-only map during its night — world_fixes.mjs, pursue.mjs
-- [~] P8 Route chart: Reedwake east of Saltglass, matching the story ("west, downriver"), signposts and road exits — world_fixes.mjs; all inter-region direction statements reviewed
-- [~] P9 Chapter cards: a banner at the top, in from the left, out to the right, ink flourish, lingers, place name waits — world_fixes.mjs
-- [~] P10 Play time counts the whole game (it counted walking only) with a five-minute idle stop — world_fixes.mjs; older saved totals unchanged
-- [~] P11 Harmony shown apart from HP with what it offers and how it fills; keyword note cards for moves, statuses and wards (Strike one of you / Sweep both); "New" responses with what they answer; Heat +1 per level (cap 2); みず learned before the mill boss; no foe uses a move before its answer can be learned — combat_ui.mjs, unit combat_rules/combat_fairness, story_ch1.mjs
-- [~] P12 Boss music faster and heavier (138 bpm, drums, driving bass) — audio.check.mjs (signal level only; nobody has listened to it)
-- [~] P13 Handwriting reads kanji: "Kanji or kana" (default from Elementary; a Settings choice), kanji spellings accepted with a note, unknown kanji said plainly — pad_kanji.mjs, unit recog-kanji/lang_answers_kanji; measured accuracy in docs/RECOGNITION.md
-- [~] P14 Keepsakes visible on the road, in battle and in portraits; Satchel marks what is worn and tags what each item does — equipment.mjs, unit equip.test.mjs
-- [~] P15 Out-of-bounds and dialogue camera (report of 2026-09-27, V13) — world_view.mjs
+## Playtest fixes (player report of 2026-09-28; VALIDATION.md "Playtest fixes"; full suite 24/24 on bbee0e2)
+- [v] P1 Lit lanterns show lit: the opening road's Ashinose lantern and the two Cinder Orchard lanterns Ren promises to relight; validator rule (a dead lantern with a scene needs a lit twin or `staysDark`) — world_fixes.mjs, validate.mjs
+- [v] P2 A house with no inside keeps its door shut (solid) and says so; 31 such doors across the game handled by one engine rule — world_fixes.mjs
+- [v] P3 Entering a building lands on its entry mat, leaving lands in front of the door (6 spawns fixed; validator rule) — world_fixes.mjs, validate.mjs
+- [v] P4 Nobody speaks without being there: the Lantern Hall four are present; any absent speaker walks in and off; voices/memories marked `!speakerless`, voice-only characters `bodiless`, a renamed figure stays put (`was`) — world_fixes.mjs; whole-game runs list every walk-in and bodiless line (reviewed: only the mill echo, kiln warden, Tomoe's memory and the observatory lamp stay bodiless)
+- [v] P5 People leaving walk to a door or way out and fade; arriving people walk in — world_fixes.mjs
+- [v] P6 Idle life: breathing and glances for people and animals on the road, breathing for the party in battle, wind sway for trees/pines/bushes; none with reduced motion — world_fixes.mjs (rendered moments differ; identical with reduced motion)
+- [v] P7 Reedwake's evening: a dusk fade, and the roads out wait for morning with a reason (map hold rule); test runs flag leaving a night-only map during its night — world_fixes.mjs, pursue.mjs
+- [v] P8 Route chart: Reedwake east of Saltglass, matching the story ("west, downriver"), signposts and road exits — world_fixes.mjs; all inter-region direction statements reviewed
+- [v] P9 Chapter cards: a banner at the top, in from the left, out to the right, ink flourish, lingers, place name waits — world_fixes.mjs
+- [v] P10 Play time counts the whole game (it counted walking only) with a five-minute idle stop — world_fixes.mjs; older saved totals unchanged
+- [v] P11 Harmony shown apart from HP with what it offers and how it fills; keyword note cards for moves, statuses and wards (Strike one of you / Sweep both); "New" responses with what they answer; Heat +1 per level (cap 2); みず learned before the mill boss; no foe uses a move before its answer can be learned — combat_ui.mjs, unit combat_rules/combat_fairness, story_ch1.mjs
+- [v] P12 Boss music faster and heavier (138 bpm, drums, driving bass) — audio.check.mjs (signal level only; nobody has listened to it)
+- [v] P13 Handwriting reads kanji: "Kanji or kana" (default from Elementary; a Settings choice), kanji spellings accepted with a note, unknown kanji said plainly — pad_kanji.mjs, unit recog-kanji/lang_answers_kanji; measured accuracy in docs/RECOGNITION.md
+- [v] P14 Keepsakes visible on the road, in battle and in portraits; Satchel marks what is worn and tags what each item does — equipment.mjs, unit equip.test.mjs
+- [v] P15 Out-of-bounds and dialogue camera (report of 2026-09-27, V13) — world_view.mjs
 
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.

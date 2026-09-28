@@ -432,3 +432,72 @@ back on close; wider windows showed the same band past the map's sides.
   scripts passed** (the 19 before plus world_view), including Shift/Load
   18/18 in both modes, every per-chapter story test, the Atlas check and
   the whole game `pursue.mjs E mio` (739 s).
+
+## Playtest fixes — player report of 2026-09-28
+Key as above (**B** browser, **U** unit, **S** inspected by eye). Headless
+Chromium in this container; touch emulated; no real devices. Three parts
+were built by parallel workers in their own git worktrees and merged here
+(equipment 7025909/16f303f → c1f212c; combat 9c9d73c..8ce638e → c99a516;
+handwriting 82b2789/8e274f7 → ce42be9); every merge was rebuilt, validated
+and re-tested on the merged tree.
+- **B** Reproduced before fixing (on c6850ad/fd61367): the opening road's
+  lantern stays a dead-lantern prop after `rw_road_lit`; the door of the
+  first house is walkable; the warehouse re-entry spawns at 4,7 beside its
+  mat (5,7); the Lantern Hall gathering scene has Nao speak while no
+  companion NPC is on the map (the whole-game audit listed 54 lines by
+  absent speakers across the game); the route chart places Reedwake west of
+  Saltglass while every direction line, signpost and road exit puts it
+  east; play time is added only in the free-walking world mode.
+  `tests/e2e/world_fixes.mjs` fails on the old build from its first checks.
+- **B** `tests/e2e/world_fixes.mjs` (new): lantern lit; shut door solid and
+  says so; warehouse spawn on the mat; Nao walks out (4 steps) and fades,
+  and walks back in; nobody speaks in the Lantern Hall without being there;
+  at night the road out holds you in Reedwake with a reason; rendered
+  moments differ (breathing, sway) and are identical with reduced motion;
+  chart order; chapter banner at the top (416×93 at 1280×800), sliding in
+  from the left and out to the right, place name after it; play time runs
+  during dialogue. All ok (repeated).
+- **U/B** Validator rules added: dead lanterns with scenes need a lit twin
+  or `staysDark`; door spawns on the interior's mat and interior exits in
+  front of the door; hold scenes exist. `node tools/validate.mjs`: no
+  errors.
+- **B** Whole-game speaker audit (pursue.mjs now reports it): with
+  walk-ins, E/nao and E/ren runs reached ch1–ch6 and the first Atlas
+  expedition; the only bodiless lines left are the mill echo, the kiln
+  warden (a visible foe), Tomoe's memory, the observatory lamp and the
+  Still Archive memory shelf (all intended, marked); ~40 walk-ins reviewed
+  (send-off on the road, harbour arrivals, Lanternfall arguments, epilogue
+  visits). Two wrong ones found and fixed: memory voices walking in
+  (marked `!speakerless`) and Tsuru's Atlas introduction firing on an
+  expedition map (the hand-over now only fires in the Lantern Hall).
+- **B** Combat (worker): `combat_ui.mjs` 6/6 (Harmony band and card,
+  keyword cards by hover, focus and tap, New markers, Heat status);
+  **U** combat_rules and combat_fairness (Heat numbers equal applied damage;
+  no foe uses a move before its answer is learnable: mill boss Heat, ch2
+  moth/sluice Gathering, ch5 blot/stacks Hush fixed). `story_ch1` checks
+  みず is known right after the mill gears. Boss theme checked by
+  `audio.check.mjs` at signal level only — nobody has listened to it.
+- **B/U** Handwriting (worker): `pad_kanji.mjs` 8/8 (Kanji or kana chosen
+  and remembered, 水 accepted for みず with a note, unknown-kanji message,
+  kana-only unchanged, look-alike ordering, chart, 320/360 px at 200 %);
+  recognizer measurements in docs/RECOGNITION.md (kana-only pad identical
+  to before on 4,592 outputs; kana misread as kanji 75 → 3). No real human
+  handwriting.
+- **B/U** Equipment (worker): `equipment.mjs` (keepsakes change the world
+  sprite, battle party and portrait in pixels; tags for all 27 wearables;
+  Equipped marker; 320 px at 200 %); unit equip.test. Found: keepsakes were
+  drawn only on the world sprite, and several were invisible (0 px).
+- **B** After the merges: the furigana audit caught response-card readings
+  in the old light colour (1.1:1) — fixed; `play_ui.mjs` camera check made
+  to wait for a walking step to finish (a 1-px flake under load came from
+  the player still moving, not from the dialogue); battle party breathes.
+- **B** Full default suite `node tests/e2e/run.mjs` on bbee0e2: **24/24
+  scripts passed** (adds equipment, world_view, world_fixes, pad_kanji,
+  combat_ui), including the whole game `pursue.mjs E mio` (767 s).
+  **U** 3074 passed.
+- **B** `perf.mjs` (same container, c6850ad vs the world-fix build): steady
+  frame work unchanged within noise with breathing and sway on (about
+  2–2.6 ms outdoors on both).
+- Not verified: how the new boss music sounds; real handwriting; real
+  phones; the Atlas intro hand-over was changed by reading the code path
+  and re-running the whole game, not by a dedicated test.

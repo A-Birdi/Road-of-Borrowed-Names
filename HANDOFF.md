@@ -54,7 +54,23 @@ build 6031612: full browser suite 19/19 (d5d4b95; 6031612 differs by one CSS
 property, re-tested), unit 1866, layout audit 448/448 (English, 8
 viewports) and 168/168 (Japanese labels), whole-game matrix 16/16.
 Follow-up (player report, 2026-09-27): the dialogue no longer moves the map
-and outdoor maps continue past their edges (b1185f9; full suite 20/20). Design record, tokens, component rules, the old→new menu mapping and
+and outdoor maps continue past their edges (b1185f9; full suite 20/20).
+Follow-up (player report, 2026-09-28), full suite 24/24 on bbee0e2 — see
+REQUIREMENTS.md P1–P15 and VALIDATION.md "Playtest fixes":
+- World (src/engine/40_maps.js shut doors + shutDoorAt; 50_world.js walk
+  in/out (leave, arriveOnFoot, routeOut), extras (ensureSpeaker,
+  dismissExtras), idle glances, map `hold` rule; 60_render.js breathing;
+  27_propart.js `sway`; 70_script.js `!speakerless` now meaningful;
+  chars[id].bodiless; npc `was` for a renamed figure; 90_game.js play time
+  in every mode with a 5-minute idle stop). Test runs list bodiless lines,
+  walk-ins and night leaks (tests/e2e/pursue.mjs).
+- Chapter banner: src/ui/10_ui.js card() + 50_play.css .banner.
+- Combat clarity: src/engine/95_combat.js (TECHS, blowOf/heatBonus/answers),
+  src/ui/80_combat.js, src/ui/81_combat_help.js; boss theme in
+  src/audio/30_songs.js. Kanji handwriting: src/recog/20_recognizer.js,
+  src/ui/60_pad.js, src/lang/50_answers.js, Settings `padKanji`.
+  Equipment: src/engine/07_equip.js (the worn look), Satchel in
+  src/ui/50_menu.js. Design record, tokens, component rules, the old→new menu mapping and
 the pixel-art record: docs/ART_DIRECTION.md. Before/after captures of the
 real builds: docs/screenshots/ (README indexes them). Evidence: VALIDATION.md
 ("Visual overhaul — final build"). Checklist: REQUIREMENTS.md V1–V21.
@@ -113,7 +129,10 @@ real builds: docs/screenshots/ (README indexes them). Evidence: VALIDATION.md
    Firefox and Safari/WebKit (not installed here, not tested).
 3. A human look at the art (docs/screenshots/, `art_shots.mjs`) — quality
    was judged only by the author from captures.
-4. Optional polish found in review: lexicon part-of-speech warnings between
+4. Listen to the new boss theme (checked at signal level only) and play a
+   few battles with a companion to judge the Harmony notes and keyword
+   cards; try the pad's kanji reading with real handwriting.
+5. Optional polish found in review: lexicon part-of-speech warnings between
    chapters (validator warnings), observatory dome sprite clipped at the top
    of sb.obs_path (cosmetic), credits are a single card.
 
