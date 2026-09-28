@@ -151,6 +151,19 @@ assert(banner.mid.top < innerHeightOf(800) * 0.2 && banner.mid.h < 800 * 0.25 &&
 assert(banner.x0 < banner.mid.x && banner.x2 > banner.mid.x, `it slides in from the left and out to the right (x ${Math.round(banner.x0)} → ${Math.round(banner.mid.x)} → ${Math.round(banner.x2)})`);
 assert(!banner.mid.placeEarly && banner.placeAfter && banner.gone, 'the place name waits for the banner, then shows');
 
+// play time counts talking (and writing, battles, menus), not just walking
+await start('rw.village', 22, 18, { rw_arrived: true, rw_road_lit: true });
+await p.mouse.move(200, 200); await p.mouse.move(210, 205);
+const pt = await p.evaluate(async () => {
+  const t0 = RB.game.s.playtime;
+  RB.script.runInline([{ who: 'narr', jp: 'しずか だ 。', en: 'It is quiet.' }]);
+  await new Promise((r) => setTimeout(r, 2500));
+  const inDialogue = RB.ui.dialogue.isOpen();
+  RB.ui.dialogue.advance(true);
+  return { inDialogue, gained: RB.game.s.playtime - t0 };
+});
+assert(pt.inDialogue && pt.gained > 1.8, `play time runs during dialogue (+${pt.gained.toFixed(1)} s in 2.5 s)`);
+
 assert(!errors.length, 'no page errors ' + errors.join('; '));
 await b.close(); srv.close();
 console.log(fail ? fail + ' failed' : 'all ok');

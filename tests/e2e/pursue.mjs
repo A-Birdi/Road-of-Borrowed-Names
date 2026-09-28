@@ -61,13 +61,15 @@ const fin = await p.evaluate(() => ({
   flags: ['post', 'postgame', 'ch6_done'].filter((f) => RB.game.s.flags[f]),
   absent: (RB.test.absentSpeakers || []).map((x) => x.who + ' @ ' + x.map + ' (' + (x.scene || '?') + '): ' + x.en),
   nightLeaks: RB.test.nightLeaks || [],
+  extras: [...new Set(RB.test.extras || [])],
 }));
 // lines spoken by characters who are not on the map (reported, reviewed by hand;
 // some are meant — voices through a door, letters, memories)
 if (fin.nightLeaks.length) { ok = false; console.log('left a night-only map during its night: ' + fin.nightLeaks.join(', ')); }
 if (fin.absent.length) console.log('bodiless speakers (' + fin.absent.length + '):\n  ' + fin.absent.join('\n  '));
 fs.mkdirSync(path.join(root, 'tests/e2e/out'), { recursive: true });
-fs.writeFileSync(path.join(root, 'tests/e2e/out', 'speakers-' + profile + '-' + comp + '.json'), JSON.stringify(fin.absent, null, 1));
+if (fin.extras.length) console.log('walked in to speak (' + fin.extras.length + '):\n  ' + fin.extras.join('\n  '));
+fs.writeFileSync(path.join(root, 'tests/e2e/out', 'speakers-' + profile + '-' + comp + '.json'), JSON.stringify({ absent: fin.absent, extras: fin.extras }, null, 1));
 const lost = fin.battles.filter((x) => !x.endsWith(':win'));
 if (comp !== 'none' && fin.comp !== comp) { ok = false; console.log('companion ' + fin.comp + ' is not the requested ' + comp); }
 console.log(JSON.stringify({ profile, comp: fin.comp, seconds: Math.round((Date.now() - t0) / 1000), map: fin.map, flags: fin.flags, battles: fin.battles.length, lost, problems: fin.problems, pageErrors: errors.slice(0, 5), quests: fin.quests }, null, 1));

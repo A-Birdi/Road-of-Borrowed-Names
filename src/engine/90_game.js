@@ -58,7 +58,12 @@ RB.game = (function () {
     if (G.playing && RB.world.W.map) {
       const m = mode();
       RB.world.update(dt, m === 'world');
-      if (m === 'world' && !document.hidden) G.s.playtime += dt / 1000;
+      // play time: everything you do in a campaign — walking, talking,
+      // writing, battles, lessons, the folio — while the page is visible and
+      // you have touched a key, the pointer or the screen in the last five
+      // minutes (a game left open does not count). It used to count walking
+      // time only, so it read far less than the time actually played.
+      if (!document.hidden && t - (G.lastInput || 0) < 300000) G.s.playtime += dt / 1000;
       if (m === 'world') RB.world.checkFoeContact();
     }
     RB.ui.tick && RB.ui.tick(dt, t);
@@ -97,6 +102,8 @@ RB.game = (function () {
     };
     window.addEventListener('pointerdown', unlockAudio, { capture: true });
     window.addEventListener('keydown', unlockAudio, { capture: true });
+    const seen = () => { G.lastInput = performance.now(); };
+    for (const ev of ['keydown', 'pointerdown', 'pointermove', 'touchstart', 'wheel']) window.addEventListener(ev, seen, { passive: true, capture: true });
     RB.bus.on('save:takenover', () => RB.ui.notice('Another tab took over this campaign. Saving is disabled in this tab.', 'warn'));
     RB.bus.on('save:conflict', () => RB.ui.notice('This campaign was saved from another tab. Saving here may overwrite it — you will be asked first.', 'warn'));
     RB.bus.on('save:error', (d) => RB.ui.notice('Autosave failed: ' + (d.error && d.error.message), 'warn'));
