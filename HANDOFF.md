@@ -30,7 +30,7 @@
 - Complete: engine, UI, saves, learning, combat, recognizer, language, audio,
   Chapters 1–6 with ending/denouement, the Unwritten Atlas, New Game+.
 - Validator: no errors (`node tools/validate.mjs --stats` for counts).
-  Unit tests: 1866 pass. Browser: `node tests/e2e/run.mjs` 19/19 scripts on
+  Unit tests: 3084 pass (1866 at the overhaul). Browser: `node tests/e2e/run.mjs` 19/19 scripts on
   the overhaul build d5d4b95 (UI, systems, settings, folio, play UI, title +
   ledger, creation, learning UI, audio, Shift/Load regression in both modes,
   per-chapter story tests, Atlas check, one whole-game run). The 16/16
@@ -55,8 +55,11 @@ property, re-tested), unit 1866, layout audit 448/448 (English, 8
 viewports) and 168/168 (Japanese labels), whole-game matrix 16/16.
 Follow-up (player report, 2026-09-27): the dialogue no longer moves the map
 and outdoor maps continue past their edges (b1185f9; full suite 20/20).
-Follow-up (player report, 2026-09-28), full suite 24/24 on bbee0e2 — see
-REQUIREMENTS.md P1–P15 and VALIDATION.md "Playtest fixes":
+Follow-up (player report, 2026-09-28), full suite 24/24, layout audit
+448/448 + 168/168 and whole-game matrix 16/16 on bbee0e2; then multiple-choice
+options shuffled (src/ui/65_challenge.js choicesFor; the right option had been
+shown first ~99% of the time) — see REQUIREMENTS.md P1–P16 and VALIDATION.md
+"Playtest fixes":
 - World (src/engine/40_maps.js shut doors + shutDoorAt; 50_world.js walk
   in/out (leave, arriveOnFoot, routeOut), extras (ensureSpeaker,
   dismissExtras), idle glances, map `hold` rule; 60_render.js breathing;

@@ -498,6 +498,39 @@ and re-tested on the merged tree.
 - **B** `perf.mjs` (same container, c6850ad vs the world-fix build): steady
   frame work unchanged within noise with breathing and sway on (about
   2–2.6 ms outdoors on both).
+- **B** Final layout audit on bbee0e2, `visual.mjs --check` (same states
+  and checks as the overhaul audit above): English labels, 8 viewports
+  (320x640 … 1920x1080): **448/448 clean**; Japanese interface labels,
+  320x640, 390x844, 1280x800: **168/168 clean**.
+- **B** Whole-game matrix on bbee0e2,
+  `node tests/e2e/matrix.mjs FEIA nao,mio,ren,suzu 3`: **16/16** — every
+  learning profile × companion played a new campaign through chapters 1–6
+  and the first Atlas expedition (10.9–13.1 min each, three at a time).
+- **Choice order (player report, same day: "the correct answer choice was
+  almost always the first option").** Reproduced: `choicesFor` showed a
+  multiple-choice question's options in the order written, and the right
+  option is written first in 657 of 667 authored questions (chapters,
+  battles, side stories, Atlas) and in every generated "What does this word
+  mean?" question. Fixed in src/ui/65_challenge.js: the options are
+  shuffled, seeded by the question and the review clock (steady while a
+  question is open, different at the next asking); the right answer is
+  still marked by its data, not its place.
+  - **U** tests/unit/choice_order.test.mjs: every authored question plus
+    120 generated ones, 12 askings each — same options and right answer,
+    step not reordered, order steady on redraw, the right option moves in
+    every question; right option first **32.4%** of 9,444 askings (chance
+    32.3%), four-option places 427/396/419/402; write steps in choice mode
+    also at chance. On the old code the same test fails: first 98.7%,
+    places 1596/48/0/0. A wider sweep (237,780 generated four-option
+    questions) put the right option in each place 25.0%.
+  - **B** combat_ui.mjs "multiple-choice questions in battle": real battles
+    (Unravel, choice mode), one learner across battles, the right option
+    found on screen by its own text: new build — 17 meaning questions,
+    right option at places 0,1,2,3 (5/5/2/5); the old build (bbee0e2) —
+    **0 in all 17**. Full combat_ui 7/7 and learning_ui 14/14 on the new
+    build; atlas.check passes; unit 3084 passed; validator no errors. The
+    full suite and the matrix were not re-run for this one-function change
+    (they answer through the test solver, not by position).
 - Not verified: how the new boss music sounds; real handwriting; real
   phones; the Atlas intro hand-over was changed by reading the code path
   and re-running the whole game, not by a dedicated test.

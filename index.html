@@ -28483,8 +28483,21 @@ RB.challenge = (function () {
     const ok = accept.some((a) => norm(a) === norm(input));
     return { ok, feedback: ok ? [] : [{ code: 'generic', en: 'That is not what this needs.' }] };
   }
+  // The order choices are shown in. Seeded by the step and the review clock,
+  // so it holds while a step is open (switching input modes redraws it) and
+  // changes from one asking to the next.
+  function orderRng(key) {
+    let turn = 0;
+    try { turn = RB.learn.clock(); } catch (e) { turn = 0; }
+    return RB.util.rng(RB.util.hashStr(key + '#' + turn));
+  }
   function choicesFor(step) {
-    if (step.kind === 'choose') return step.options.map((o) => Object.assign({}, o));
+    // Authors (and the meaning questions RB.tasks builds) list the right
+    // option first, so where an option sits must never give the answer away.
+    if (step.kind === 'choose') {
+      const key = (step.item || '') + '|' + ((step.prompt && step.prompt.en) || '') + '|' + step.options.map((o) => o.en || o.jp || '').join('|');
+      return orderRng(key).shuffle(step.options).map((o) => Object.assign({}, o));
+    }
     let opts = step.choices ? step.choices.slice() : null;
     const ans = plain(step.answer);
     if (!opts) {
@@ -28495,7 +28508,7 @@ RB.challenge = (function () {
     const acc = new Set((step.accept || [step.answer]).map(plain));
     // choice mode must always contain a right answer
     if (!opts.some((o) => acc.has(plain(o)))) opts.unshift(ans);
-    const r = RB.util.rng(RB.util.hashStr(ans + RB.learn.clock()));
+    const r = orderRng(ans);
     return r.shuffle(Array.from(new Set(opts.map(plain)))).map((t) => ({ text: t, ok: acc.has(t) }));
   }
 

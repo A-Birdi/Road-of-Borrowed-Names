@@ -2,7 +2,8 @@
 // its own band (not a third resolve bar) with a one-time explanation; keyword
 // help for moves and states by hover, keyboard focus and tap; the "New"
 // marker on responses; Heat shown as a state and cleared by a real みず
-// exchange. Real mouse, keyboard and touch input; answers go through the
+// exchange; multiple-choice questions do not keep the right option in one
+// place. Real mouse, keyboard and touch input; answers go through the
 // real challenge in multiple-choice mode.
 // Usage: node tests/e2e/combat_ui.mjs [filter]
 import { serve, launch, page } from './lib.mjs';
@@ -321,6 +322,57 @@ await test('Heat is shown as a state and a real みず exchange clears it; the f
   await p.evaluate(() => { const L = RB.combatLogic, st = RB.combat.state(); L.enemyAct(st, false); L.endRound(st, Object.assign({ id: 'rw.mill_echo' }, RB.content.enemies['rw.mill_echo'])); RB.combat.refresh(); });
   const next = await p.evaluate(() => ({ kind: RB.combat.state().intent.kind, foe: document.querySelector('.cb-foe').textContent, tele: document.querySelector('.intent .kw.it-kind').textContent }));
   assert(next.kind === 'strike' && /Heat 1/.test(next.foe) && /3 to one of you/.test(next.tele), 'Heat 1 makes the next Strike 2 + 1: ' + JSON.stringify(next));
+  assert(!errors.length, errors.join('; '));
+  await ctx.close();
+});
+
+await test('multiple-choice questions in battle: the right option is not always in the same place', async () => {
+  const { p, errors, ctx } = await page(b, url, DESK);
+  // note the step each question is built from (the battle asks through RB.challenge.runStep)
+  await p.evaluate(() => { const run = RB.challenge.runStep; RB.challenge.runStep = (step, o) => { window.__step = step; return run(step, o); }; });
+  const seen = [];
+  // one learner across the battles: the review clock carries on, as it does in play
+  let clock = 0;
+  for (let n = 0; n < 20 && seen.filter((x) => x.kind === 'choose').length < 16; n++) {
+    await battle(p, 'rw.reedling', { profile: 'E' });
+    await p.evaluate((c) => { RB.game.s.learn.clock = c; }, clock);
+    for (let r = 0; r < 6 && !(await p.evaluate(() => window.__result)); r++) {
+      const i = await p.evaluate(() => { const c = [...document.querySelectorAll('.rcard')].find((x) => /unravel/i.test(x.textContent) && !x.disabled); return c ? c.getAttribute('data-i') : null; });
+      assert(i != null, 'no Unravel card');
+      await p.click('.rcard[data-i="' + i + '"]');
+      await p.waitForSelector('.chal .mc .btn');
+      // where the right option is on screen, found by its own text (nothing in the page marks it)
+      const q = await p.evaluate(() => {
+        const st = window.__step, bs = [...document.querySelectorAll('.chal .mc .btn')];
+        const txt = (h) => { const d = document.createElement('div'); d.innerHTML = h; return d.textContent.replace(/\s+/g, ' ').trim(); };
+        const html = (o) => o.text != null ? RB.ui.jhtml(o.text) : (o.jp ? RB.ui.jhtml(o.jp) : '') + (o.en ? '<span class="enline">' + RB.util.esc(o.en) + '</span>' : '');
+        const right = RB.challenge.choicesFor(st).filter((o) => o.ok).map((o) => txt(html(o)));
+        const at = bs.findIndex((b) => right.includes(b.textContent.replace(/\s+/g, ' ').trim()));
+        if (at >= 0) bs[at].click();
+        return { kind: st.kind, at, n: bs.length, item: st.item, clock: RB.learn.clock() };
+      });
+      assert(q.at >= 0, 'the right option is on screen: ' + JSON.stringify(q));
+      seen.push(q);
+      await p.waitForSelector('.fbwrap[data-fb=ok] .fb-go');
+      await p.click('.fbwrap[data-fb=ok] .fb-go');
+      for (let k = 0; k < 200; k++) {
+        const st = await p.evaluate(() => ({ done: !!window.__result, dlg: RB.ui.dialogue.isOpen(), cards: !!document.querySelector('.rcard[data-i]:not([disabled])') && !document.querySelector('.chal') }));
+        if (st.done || st.cards) break;
+        if (st.dlg) await p.evaluate(() => RB.ui.dialogue.advance(true));
+        await p.waitForTimeout(60);
+      }
+    }
+    clock = await p.evaluate(() => RB.learn.clock());
+    await p.waitForFunction(() => RB.game.mode() === 'world' || !!document.querySelector('.rcard[data-i]'), null, { timeout: 20000 });
+    if (!(await p.evaluate(() => window.__result))) await flee(p);
+    else await p.waitForFunction(() => RB.game.mode() === 'world', null, { timeout: 20000 }).catch(() => {});
+  }
+  const choose = seen.filter((x) => x.kind === 'choose');
+  const places = choose.map((x) => x.at);
+  console.log('  battle questions: ' + seen.length + ' (' + choose.length + ' meaning questions); right option at ' + places.join(','));
+  console.log('  asked (item@clock): ' + choose.map((x) => x.item + '@' + x.clock + '→' + x.at).join(' '));
+  assert(choose.length >= 8 && new Set(choose.map((x) => x.item + '@' + x.clock)).size >= 8, 'enough different meaning questions asked in battle: ' + choose.length);
+  assert(new Set(places).size >= 2 && places.filter((i) => i === 0).length < places.length * 0.75, 'the right option moves between places: ' + places.join(','));
   assert(!errors.length, errors.join('; '));
   await ctx.close();
 });
