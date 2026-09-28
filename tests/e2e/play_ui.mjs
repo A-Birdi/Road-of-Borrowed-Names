@@ -76,7 +76,10 @@ const faceNpc = (p) => p.evaluate(() => {
   await p.waitForTimeout(40);
   const d3 = await p.evaluate(() => RB.input.dir());
   assert(d1 === 'left' && d2 === 'right' && d3 === null, `move pad follows a sliding thumb (${d1} → ${d2} → ${d3})`);
-  // dialogue
+  // dialogue (first let the step the move pad started finish: the camera
+  // follows a walking player, and that is not what this checks)
+  await p.waitForFunction(() => !RB.world.W.player.mv);
+  await p.waitForTimeout(300);
   const cam0 = await p.evaluate(() => [RB.render.cam.x, RB.render.cam.y].join());
   await p.evaluate((L) => { RB.game.settings.textSpeed = 'instant'; window.__done = false; RB.script.runInline([L, { who: 'mio', jp: '{行|い}こう 。', en: "Let's go." }]).then(() => { window.__done = true; }); }, LONG);
   await p.waitForTimeout(400);

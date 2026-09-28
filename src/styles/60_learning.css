@@ -6,7 +6,7 @@
 
 /* ---- ink on the paper pieces used here (outside .leaf) ------------------- */
 .chal .slip, .combat-ui .paper { color: var(--ink); }
-.chal .slip rt, .combat-ui .paper rt, .lsheet rt { color: var(--rt-ink); }
+.chal .slip rt, .combat-ui .paper rt, .lsheet rt, .rcard rt { color: var(--rt-ink); }
 .chal .slip .en, .chal .slip .enline, .combat-ui .paper .en, .combat-ui .paper .enline { color: var(--ink-2); }
 body.bulb-on .chal .slip .jline .jt, body.bulb-on .combat-ui .paper .jline .jt { text-decoration-color: rgba(38, 31, 21, 0.45); }
 body.bulb-on .chal .slip .jline .jt:hover, .chal .slip .jline .jt.active,
@@ -162,6 +162,8 @@ body.high-contrast .pad-area { --pad-paper: #ffffff; --pad-ink: #000000; --pad-g
 .pad-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
 .pad-tools .pbtn { padding: 0 0.75em; }
 .pad-tools .glyph { font-family: var(--jp-font); font-size: 1.15em; line-height: 1; }
+.pad-tools .glyph ruby { ruby-position: over; }
+.pad-tools .glyph rt { font-size: 0.5em; line-height: 1; }
 .pad-tools .pbtn[aria-pressed="true"] { border-color: var(--ink); box-shadow: inset 0 -3px 0 var(--ribbon); font-weight: 600; }
 .pad-more-b .more-on { font-family: var(--jp-font); border: 1px solid var(--ink); border-radius: 50%; width: 1.5em; height: 1.5em; display: inline-flex; align-items: center; justify-content: center; font-size: 0.85em; }
 .pad-more-b[aria-expanded="true"] { background: var(--paper-2); box-shadow: inset 0 -3px 0 var(--ink-3); }

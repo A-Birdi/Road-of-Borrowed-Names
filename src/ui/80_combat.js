@@ -70,10 +70,18 @@ RB.combat = (function () {
     const look = RB.equip.look(s); // with the equipped keepsake, as on the road
     const members = [[px, py, look]];
     if (s.comp) members.push([px + 40 * ps, py + 12, RB.content.chars[s.comp].look]);
-    for (const [x, y, lk] of members) {
+    members.forEach(([x, y, lk], i) => {
       Sc.shadow(c, x + 16 * ps, y + 46 * ps, 12 * ps, 4 * ps, 0.55);
-      c.drawImage(partySprite(lk), x, y, 32 * ps, 48 * ps);
-    }
+      const spr = partySprite(lk);
+      // breathing, as in the world: head and body settle one art pixel onto
+      // the legs every couple of seconds, each on their own beat
+      const u = ((t + i * 1100) % 2600) / 2600;
+      if (!reduce && u > 0.5 && u < 0.92 && spr.height === 48) {
+        const cut = 30;
+        c.drawImage(spr, 0, cut, 32, 48 - cut, x, y + cut * ps, 32 * ps, (48 - cut) * ps);
+        c.drawImage(spr, 0, 0, 32, cut, x, y + ps, 32 * ps, cut * ps);
+      } else c.drawImage(spr, x, y, 32 * ps, 48 * ps);
+    });
     lastLay = { ex, ey, px, py, ps, scale };
     if (st) {
       Sc.ward(c, px + 16 * ps, py + 16 * ps, 24 * ps, st.ward.pc, ps);
@@ -335,7 +343,8 @@ RB.combat = (function () {
         if (c.kind === 'unravel' && st.shroud && !(known.has('light') || known.has('wind'))) c.disabled = null;
         if (c.kind === 'unravel' && st.silenced && (known.has('bell') || known.has('voice'))) c.disabled = 'The hush swallows words: ring a bell or raise a voice first.';
       }
-      const hi = s.learn.profile === 'I' || s.learn.profile === 'A';
+      // say "kana or kanji" whenever the writing pad will read kanji for this player
+    const hi = RB.pad && RB.pad.kanjiPreferred ? RB.pad.kanjiPreferred() : s.learn.profile === 'I' || s.learn.profile === 'A';
       for (const c of cards) if (c.kind === 'word') shownWords.add(c.word.id);
       ui.resp.innerHTML = '<div class="rcards">' + cards.map((c, i) => cardHtml(c, i, hi)).join('') + '</div>' +
         (st.noFlee ? '' : '<button class="cbtn flee" data-flee>' + I('back') + '<span>Step back from this encounter</span></button>');
@@ -373,7 +382,8 @@ RB.combat = (function () {
       return RB.tasks.next(enemy.pool || {});
     }
     const w = card.word;
-    const hi = s.learn.profile === 'I' || s.learn.profile === 'A';
+    // say "kana or kanji" whenever the writing pad will read kanji for this player
+    const hi = RB.pad && RB.pad.kanjiPreferred ? RB.pad.kanjiPreferred() : s.learn.profile === 'I' || s.learn.profile === 'A';
     return RB.tasks.prepare({
       kind: 'write', item: 'v:' + (w.lex || w.r), answer: w.r, accept: [w.r, RB.tasks.plain(w.jpK || w.jp)], mode: 'reading',
       title: 'Weave the inscription', prompt: { en: 'Write the word for “' + w.en + '”' + (hi ? ' (kana or kanji).' : '.') },

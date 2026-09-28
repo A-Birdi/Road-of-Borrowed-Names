@@ -1633,7 +1633,7 @@ body:not([data-mode="world"]) .hud .menu-b { display: none; }
 
 /* ---- ink on the paper pieces used here (outside .leaf) ------------------- */
 .chal .slip, .combat-ui .paper { color: var(--ink); }
-.chal .slip rt, .combat-ui .paper rt, .lsheet rt { color: var(--rt-ink); }
+.chal .slip rt, .combat-ui .paper rt, .lsheet rt, .rcard rt { color: var(--rt-ink); }
 .chal .slip .en, .chal .slip .enline, .combat-ui .paper .en, .combat-ui .paper .enline { color: var(--ink-2); }
 body.bulb-on .chal .slip .jline .jt, body.bulb-on .combat-ui .paper .jline .jt { text-decoration-color: rgba(38, 31, 21, 0.45); }
 body.bulb-on .chal .slip .jline .jt:hover, .chal .slip .jline .jt.active,
@@ -1789,6 +1789,8 @@ body.high-contrast .pad-area { --pad-paper: #ffffff; --pad-ink: #000000; --pad-g
 .pad-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
 .pad-tools .pbtn { padding: 0 0.75em; }
 .pad-tools .glyph { font-family: var(--jp-font); font-size: 1.15em; line-height: 1; }
+.pad-tools .glyph ruby { ruby-position: over; }
+.pad-tools .glyph rt { font-size: 0.5em; line-height: 1; }
 .pad-tools .pbtn[aria-pressed="true"] { border-color: var(--ink); box-shadow: inset 0 -3px 0 var(--ribbon); font-weight: 600; }
 .pad-more-b .more-on { font-family: var(--jp-font); border: 1px solid var(--ink); border-radius: 50%; width: 1.5em; height: 1.5em; display: inline-flex; align-items: center; justify-content: center; font-size: 0.85em; }
 .pad-more-b[aria-expanded="true"] { background: var(--paper-2); box-shadow: inset 0 -3px 0 var(--ink-3); }
@@ -27975,7 +27977,7 @@ RB.pad = (function () {
         '<button class="pbtn" data-a="clear" title="Clear the character being written">' + I('erase') + '<span>Clear</span></button>' +
         '<button class="pbtn pad-more-b" data-a="more" aria-expanded="false" aria-controls="pad-extra" title="More writing tools: small kana, chart, how to write, kana type">' + I('dots') + '<span>More</span><span class="more-on" lang="ja" hidden>小</span></button>' +
         '<div class="pad-extra" id="pad-extra">' +
-          '<button class="pbtn" data-a="small" aria-pressed="false" title="Mark as small kana (ゃ, っ…)"><span class="glyph" lang="ja" aria-hidden="true">小</span><span>Small kana</span></button>' +
+          '<button class="pbtn" data-a="small" aria-pressed="false" title="Mark as small kana (ゃ, っ…)"><span class="glyph" lang="ja" aria-hidden="true"><ruby>小<rt>ちい</rt></ruby></span><span>Small kana</span></button>' +
           '<button class="pbtn" data-a="chart" title="Pick the character from a chart (counts as assisted)">' + I('grid') + '<span>Chart</span></button>' +
           '<button class="pbtn" data-a="model" title="Show how to write it (counts as assisted)">' + I('eye') + '<span>How to write</span></button>' +
           '<label class="pad-script" title="What the pad reads. Kanji or kana adds the 33 kanji it knows; choosing it or Either kana is remembered for the next questions."><span>Read as</span><select data-script-sel>' +
@@ -31338,10 +31340,18 @@ RB.combat = (function () {
     const look = RB.equip.look(s); // with the equipped keepsake, as on the road
     const members = [[px, py, look]];
     if (s.comp) members.push([px + 40 * ps, py + 12, RB.content.chars[s.comp].look]);
-    for (const [x, y, lk] of members) {
+    members.forEach(([x, y, lk], i) => {
       Sc.shadow(c, x + 16 * ps, y + 46 * ps, 12 * ps, 4 * ps, 0.55);
-      c.drawImage(partySprite(lk), x, y, 32 * ps, 48 * ps);
-    }
+      const spr = partySprite(lk);
+      // breathing, as in the world: head and body settle one art pixel onto
+      // the legs every couple of seconds, each on their own beat
+      const u = ((t + i * 1100) % 2600) / 2600;
+      if (!reduce && u > 0.5 && u < 0.92 && spr.height === 48) {
+        const cut = 30;
+        c.drawImage(spr, 0, cut, 32, 48 - cut, x, y + cut * ps, 32 * ps, (48 - cut) * ps);
+        c.drawImage(spr, 0, 0, 32, cut, x, y + ps, 32 * ps, cut * ps);
+      } else c.drawImage(spr, x, y, 32 * ps, 48 * ps);
+    });
     lastLay = { ex, ey, px, py, ps, scale };
     if (st) {
       Sc.ward(c, px + 16 * ps, py + 16 * ps, 24 * ps, st.ward.pc, ps);
@@ -31603,7 +31613,8 @@ RB.combat = (function () {
         if (c.kind === 'unravel' && st.shroud && !(known.has('light') || known.has('wind'))) c.disabled = null;
         if (c.kind === 'unravel' && st.silenced && (known.has('bell') || known.has('voice'))) c.disabled = 'The hush swallows words: ring a bell or raise a voice first.';
       }
-      const hi = s.learn.profile === 'I' || s.learn.profile === 'A';
+      // say "kana or kanji" whenever the writing pad will read kanji for this player
+    const hi = RB.pad && RB.pad.kanjiPreferred ? RB.pad.kanjiPreferred() : s.learn.profile === 'I' || s.learn.profile === 'A';
       for (const c of cards) if (c.kind === 'word') shownWords.add(c.word.id);
       ui.resp.innerHTML = '<div class="rcards">' + cards.map((c, i) => cardHtml(c, i, hi)).join('') + '</div>' +
         (st.noFlee ? '' : '<button class="cbtn flee" data-flee>' + I('back') + '<span>Step back from this encounter</span></button>');
@@ -31641,7 +31652,8 @@ RB.combat = (function () {
       return RB.tasks.next(enemy.pool || {});
     }
     const w = card.word;
-    const hi = s.learn.profile === 'I' || s.learn.profile === 'A';
+    // say "kana or kanji" whenever the writing pad will read kanji for this player
+    const hi = RB.pad && RB.pad.kanjiPreferred ? RB.pad.kanjiPreferred() : s.learn.profile === 'I' || s.learn.profile === 'A';
     return RB.tasks.prepare({
       kind: 'write', item: 'v:' + (w.lex || w.r), answer: w.r, accept: [w.r, RB.tasks.plain(w.jpK || w.jp)], mode: 'reading',
       title: 'Weave the inscription', prompt: { en: 'Write the word for “' + w.en + '”' + (hi ? ' (kana or kanji).' : '.') },
