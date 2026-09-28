@@ -1,6 +1,6 @@
 /* World renderer. The world keeps its 16-px logical grid (movement, collision,
  * triggers, saves), but is drawn into a buffer at ART = 2 art pixels per
- * logical pixel: 32×32-art-pixel tiles and ~32×48 characters. The buffer is
+ * logical pixel: 32×32-art-pixel tiles and 40×56 character frames. The buffer is
  * then scaled by an integer number of device pixels (artPx) so pixel art stays
  * crisp. Art authored at art resolution provides draw2/getArt; older 16-px art
  * is drawn through a ×2 transform until it is redrawn (legacy adapter). Text
@@ -290,37 +290,46 @@ RB.render = (function () {
     edge(mx + mw, 0, mx + mw + sh, 0, mx + mw, my, sh, mh);
   }
 
+  // Characters stand on their tile by a foot anchor (RB.sprites.ANCHOR, inside a
+  // RB.sprites.FRAME-sized frame): the middle of the tile, 2 art px above its
+  // bottom edge. Walking shows an eight-phase cycle (four frames per step, from
+  // the step's progress); standing people breathe — shoulders, head and arms
+  // settle a pixel onto the legs and their hair follows a beat later — each on
+  // their own beat, and blink. Reduced motion keeps them still.
+  const WALK_PHASES = ['w0', 'w1', 'w2', 'w3', 'w4', 'w5', 'w6', 'w7'];
+  const IDLE_KEYS = ['i0', 'i1', 'i2', 'i3'], IDLE_BLINK = ['i0b', 'i1b', 'i2b', 'i3b'];
+  function actorFrame(a, t, isFoe, still) {
+    const blink = !a.mv && a.blinkT != null && a.blinkT < 0;
+    if (!a.look || a.look.custom) return blink ? 3 : a.frame || 0;
+    if (a.mv) {
+      const k = Math.max(0, Math.min(0.999, a.mv.t / a.mv.dur));
+      return WALK_PHASES[(a.stepToggle ? 0 : 4) + Math.floor(k * 4)];
+    }
+    if (isFoe || still) return blink ? 3 : 0;
+    const ph = a.breath == null ? (a.breath = RB.tiles.hh((a.id || '').length * 31 + (a.home ? a.home[0] * 7 + a.home[1] : 3), 17) % 2600) : a.breath;
+    const u = ((t + ph) % 2600) / 2600;
+    const i = u < 0.46 ? 0 : u < 0.52 ? 1 : u < 0.88 ? 2 : u < 0.94 ? 3 : 0;
+    return (blink ? IDLE_BLINK : IDLE_KEYS)[i];
+  }
   function drawActor(c, a, t, isFoe) {
     const x = ax(a.fx * TS), y = ay(a.fy * TS);
+    const fx = x + ATS / 2, fy = y + ATS - 2; // the foot anchor on this tile
     const alpha = a.alpha == null ? 1 : Math.max(0, Math.min(1, a.alpha));
     if (alpha < 1) c.globalAlpha = alpha;
     // contact shadow
     c.fillStyle = 'rgba(0,0,0,0.25)';
     c.beginPath();
-    c.ellipse(x + 16, y + 28, 10, 4, 0, 0, Math.PI * 2);
+    c.ellipse(fx, fy - 2, 11, 4, 0, 0, Math.PI * 2);
     c.fill();
-    let frame = a.frame;
-    if (!a.mv && a.blinkT != null && a.blinkT < 0) frame = 3;
     const still = RB.game.reducedMotion();
     const bob = isFoe && !still ? Math.round(Math.sin(t / 300 + a.x) * 3) : 0;
-    const art = RB.sprites.getArt && RB.sprites.getArt(a.look, a.dir, frame);
-    if (art && !a.mv && !isFoe && !still) {
-      // idle breathing: every couple of seconds the head and body settle one
-      // art pixel onto the legs, then rise again (each person on their own beat)
-      const ph = a.breath == null ? (a.breath = RB.tiles.hh((a.id || '').length * 31 + (a.home ? a.home[0] * 7 + a.home[1] : 3), 17) % 2600) : a.breath;
-      const u = ((t + ph) % 2600) / 2600;
-      if (u > 0.5 && u < 0.92) {
-        const cut = Math.round(art.height * 0.62);
-        c.drawImage(art, 0, cut, art.width, art.height - cut, x, y - 16 + cut, art.width, art.height - cut);
-        c.drawImage(art, 0, 0, art.width, cut, x, y - 16 + 1, art.width, cut);
-        if (alpha < 1) c.globalAlpha = 1;
-        return;
-      }
-    }
-    if (art) c.drawImage(art, x, y - 16 + bob);
-    else c.drawImage(RB.sprites.get(a.look, a.dir, frame), x, y - 16 + bob, 32, 48);
+    const art = RB.sprites.getArt && RB.sprites.getArt(a.look, a.dir, actorFrame(a, t, isFoe, still));
+    if (art) c.drawImage(art, fx - RB.sprites.ANCHOR.x, fy - RB.sprites.ANCHOR.y + bob);
+    else c.drawImage(RB.sprites.get(a.look, a.dir, a.frame || 0), fx - 16, fy - 46 + bob, 32, 48);
     if (alpha < 1) c.globalAlpha = 1;
   }
+  // Top of an adult's head above its tile's top edge, in art px (for bubbles and markers).
+  const HEAD_TOP = 20;
 
   // Emote bubbles at art resolution: an inked paper bubble with a tail and a
   // small drawn mark. Cached per kind.
@@ -351,7 +360,7 @@ RB.render = (function () {
     return cv;
   }
   function drawEmote(c, a, kind) {
-    c.drawImage(emoteArt(kind), ax(a.fx * TS) + 5, ay(a.fy * TS) - 44);
+    c.drawImage(emoteArt(kind), ax(a.fx * TS) + ATS / 2 - 11, ay(a.fy * TS) - HEAD_TOP - 28);
   }
 
   function interactMarker(c, W, t) {
@@ -370,7 +379,7 @@ RB.render = (function () {
     if (!show) return;
     // a small inked chevron over the thing you can act on
     const x = ax(fx * TS) + 12;
-    const y = ay(fy * TS) - 28 + (RB.game.reducedMotion() ? 0 : Math.round(Math.sin(t / 200) * 3));
+    const y = ay(fy * TS) - HEAD_TOP - 12 + (RB.game.reducedMotion() ? 0 : Math.round(Math.sin(t / 200) * 3));
     c.fillStyle = '#2a2024';
     c.fillRect(x - 1, y - 1, 10, 3); c.fillRect(x + 1, y + 2, 6, 2); c.fillRect(x + 3, y + 4, 2, 2);
     c.fillStyle = '#fff4c8';
