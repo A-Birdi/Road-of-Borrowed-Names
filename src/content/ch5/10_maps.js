@@ -412,7 +412,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'crate', x: 1, y: 13 }, { p: 'crate', x: 18, y: 3 },
     ],
     foes: [
-      { id: 'st1', enemy: 'lf.stamp', x: 10, y: 6, patrol: 1, aggro: true },
+      { id: 'st1', enemy: 'lf.stamp', x: 10, y: 6, patrol: 1, aggro: true, bg: 'belltower' }, // down in the stacks
       // (its Hush is answered by すず or こえ, learned later in the chapter: it waits until then)
       { id: 'st2', enemy: 'lf.blot', x: 18, y: 9, patrol: 2, aggro: true, if: 'word.suzu|word.koe' },
     ],

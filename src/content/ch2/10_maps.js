@@ -404,8 +404,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'sign', x: 10, y: 2, scene: 'sg.da_innersign' },
     ],
     foes: [
-      { id: 'e1', enemy: 'sg.crab', x: 6, y: 12, patrol: 2, aggro: true },
-      { id: 'e2', enemy: 'sg.crab', x: 21, y: 11, patrol: 2, aggro: true },
+      { id: 'e1', enemy: 'sg.crab', x: 6, y: 12, patrol: 2, aggro: true, bg: 'archive' }, // inside the Receiving Hall
+      { id: 'e2', enemy: 'sg.crab', x: 21, y: 11, patrol: 2, aggro: true, bg: 'archive' },
     ],
     exits: [
       { x: 11, y: 17, w: 2, h: 1, to: 'sg.harbor', tx: 8, ty: 39, dir: 'up' },

@@ -47,7 +47,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // The echo repeats a promise someone made, turned inside out. Seeing through
   // it means recovering what the promise really said (negation matters).
-  C.enemies['sa.echo'] = {
+  C.enemies['sa.echo'] = { setting: 'indoor',
     name: T('Shelved Echo', '{棚|たな} の {木霊|こだま}'), art: 'echo', artOpts: { col: '#b8c8e0' }, look: { custom: 'sa_echo' },
     region: 'still', bg: 'still', knots: 3, pool,
     pattern: ['mirror:1', 'strike', 'mend'],

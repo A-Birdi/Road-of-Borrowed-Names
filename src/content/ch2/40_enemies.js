@@ -28,14 +28,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
     intro: { jp: '{湿|しめ}った {紙|かみ} の {鶴|つる} が 、 {重|おも}たげ に {羽|は}ばたく 。 {羽|はね} に {誰|だれ} か の {名前|なまえ} が {滲|にじ}んで いる 。', en: 'A damp paper crane flaps heavily towards you. Someone\'s name has run across its wings.' },
     settle: { jp: '{鶴|つる} は ほどけて 、 {一枚|いちまい} の {紙|かみ} に {戻|もど}った 。', en: 'The crane unfolds and becomes a single sheet of paper again.' },
   });
-  E('sg.blot', {
+  E('sg.blot', { setting: 'indoor',
     name: { en: 'Runaway Ink', jp: 'にじんだ {墨|すみ}' }, art: 'blot', artOpts: { col: '#1e2440' }, look: { custom: 'blot', col: '#1e2440' },
     knots: 3, pool: POOL,
     pattern: ['sweep', 'mend', 'rest'],
     intro: { jp: '{水|みず} に {溶|と}けた {墨|すみ} が {集|あつ}まって 、 {床|ゆか}から {起|お}き{上|あ}がった 。', en: 'Ink washed out of a hundred pages has pooled together and risen off the floor.' },
     settle: { jp: '{墨|すみ} は {静|しず}か に {広|ひろ}がって 、 ただ の {水|みず}たまり に なった 。', en: 'The ink spreads out quietly into an ordinary puddle.' },
   });
-  E('sg.fogwisp', {
+  E('sg.fogwisp', { setting: 'outdoor',
     name: { en: 'Harbour Fog', jp: '{港|みなと} の {霧|きり}' }, art: 'wisp', artOpts: { col: '#c8d4e0' }, look: { custom: 'wisp', col: '#c8d4e0' },
     bg: 'saltglass', knots: 2, pool: POOL,
     pattern: ['shroud', 'rest', 'strike'],
@@ -49,7 +49,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     intro: { jp: '{羽|はね} に {丸|まる}い {消印|けしいん} の {模様|もよう} が ある {蛾|が}だ 。 {押|お}された {所|ところ}から {文字|もじ} が {消|き}えて いく 。', en: 'A moth with round postmarks on its wings. Wherever it lands, the writing fades.' },
     settle: { jp: '{蛾|が} は {灯|あか}り の ほう へ ふらふら と {飛|と}んで いった 。', en: 'The moth flutters away towards the lamplight.' },
   });
-  E('sg.golem', {
+  E('sg.golem', { setting: 'indoor',
     name: { en: 'Ledger Heap', jp: '{帳簿|ちょうぼ} の {山|やま}' }, art: 'golem', artOpts: { col: '#8a8aa0', core: '#e8e0cc' }, look: { custom: 'golem', col: '#8a8aa0' },
     knots: 4, pool: POOL,
     pattern: ['charge', 'strike', 'flood', 'rest'],

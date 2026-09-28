@@ -16,17 +16,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const o = (en, ok, why) => (why ? { en, ok, why: { en: why } } : { en, ok });
   const oj = (jp, ok, why, en) => Object.assign({ jp, ok }, en ? { en } : {}, why ? { why: { en: why } } : {});
 
-  EN['sb.fox'] = { name: { en: 'Snow Fox', jp: '{雪|ゆき}ギツネ' }, art: 'sb_snowfox', look: { custom: 'snowfox' }, region: 'snowbell', bg: 'snowbell', knots: 2, pool,
+  EN['sb.fox'] = { setting: 'outdoor', name: { en: 'Snow Fox', jp: '{雪|ゆき}ギツネ' }, art: 'sb_snowfox', look: { custom: 'snowfox' }, region: 'snowbell', bg: 'snowbell', knots: 2, pool,
     pattern: ['strike', 'rest', 'chill', 'strike'],
     intro: { jp: '{青|あお}く {光|ひか}る {目|め} の キツネ が 、 {雪|ゆき} を {蹴|け}って {跳|と}びかかって きた 。', en: 'A fox with glowing blue eyes kicks up the snow and springs at you.' },
     settle: { jp: 'キツネ の {目|め} から 、 {青|あお}い {光|ひかり} が {抜|ぬ}けた 。 {一声|ひとこえ} {鳴|な}いて 、 {雪|ゆき} の {中|なか} へ {走|はし}り{去|さ}る 。', en: 'The blue light drains from the fox\'s eyes. It gives one cry and runs off into the snow.' } };
 
-  EN['sb.wisp'] = { name: { en: 'Frost Wisp', jp: '{霜|しも} の {精|せい}' }, art: 'wisp', artOpts: { col: '#cfe8ff' }, look: { custom: 'wisp', col: '#cfe8ff' }, region: 'snowbell', bg: 'observatory', knots: 2, pool,
+  EN['sb.wisp'] = { setting: 'indoor', name: { en: 'Frost Wisp', jp: '{霜|しも} の {精|せい}' }, art: 'wisp', artOpts: { col: '#cfe8ff' }, look: { custom: 'wisp', col: '#cfe8ff' }, region: 'snowbell', bg: 'observatory', knots: 2, pool,
     pattern: ['chill', 'mend', 'rest', 'chill'],
     intro: { jp: '{白|しろ}い {息|いき} の よう な もの が 、 {氷|こおり} の {床|ゆか} から {立|た}ち{上|のぼ}った 。', en: 'Something like a white breath rises from the icy floor.' },
     settle: { jp: '{霜|しも} は {静|しず}か に とけて 、 {床|ゆか} の {上|うえ} の {小|ちい}さな {水|みず}たまり に なった 。', en: 'The frost melts quietly into a small puddle on the floor.' } };
 
-  EN['sb.ghost'] = { name: { en: 'Lantern Ghost', jp: '{名無|なな}し の {灯|ひ}' }, art: 'lantern', artOpts: { col: '#8ab8f0' }, look: { custom: 'lanternghost' }, region: 'snowbell', bg: 'observatory', knots: 3, pool,
+  EN['sb.ghost'] = { setting: 'indoor', name: { en: 'Lantern Ghost', jp: '{名無|なな}し の {灯|ひ}' }, art: 'lantern', artOpts: { col: '#8ab8f0' }, look: { custom: 'lanternghost' }, region: 'snowbell', bg: 'observatory', knots: 3, pool,
     pattern: ['strike', 'lie:1', 'mend', 'rest'],
     intents: {
       'lie:1': { power: 1, target: 'rand',
@@ -46,12 +46,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
     intro: { jp: '{笠|かさ} の {白|しろ}い {提灯|ちょうちん} が 、 {冷|つめ}たい {光|ひかり} を {揺|ゆ}らして {近|ちか}づいて くる 。', en: 'A lantern with a blank shade drifts closer, swaying its cold light.' },
     settle: { jp: '{提灯|ちょうちん} は {床|ゆか} に {落|お}ち 、 {笠|かさ} に うっすら と {字|じ} が {浮|う}かんだ 。 {石段|いしだん} の {名前|なまえ} だ 。', en: 'The lantern drops to the floor, and faint letters surface on its shade: the name of the stair.' } };
 
-  EN['sb.moth'] = { name: { en: 'Chart Moth', jp: '{星図|せいず}{蛾|が}' }, art: 'moth', artOpts: { col: '#2a3458', col2: '#c8d8f0' }, look: { custom: 'moth', col: '#8a9ac8' }, region: 'snowbell', bg: 'observatory', knots: 2, pool,
+  EN['sb.moth'] = { setting: 'indoor', name: { en: 'Chart Moth', jp: '{星図|せいず}{蛾|が}' }, art: 'moth', artOpts: { col: '#2a3458', col2: '#c8d8f0' }, look: { custom: 'moth', col: '#8a9ac8' }, region: 'snowbell', bg: 'observatory', knots: 2, pool,
     pattern: ['strike', 'mend', 'rest', 'sweep'],
     intro: { jp: '{星図|せいず} の {切|き}れ{端|はし} を {羽|はね} に した {蛾|が} が 、 {星|ほし} の {名前|なまえ} を {粉|こな} に して {撒|ま}いて いる 。', en: 'A moth with wings made of torn star charts is scattering star names as dust.' },
     settle: { jp: '{羽|はね} の {星|ほし} に 、 {名前|なまえ} が {戻|もど}った 。 {蛾|が} は {棚|たな} の {隙間|すきま} へ {帰|かえ}って いく 。', en: 'The stars on its wings have their names back. The moth returns to a gap in the shelves.' } };
 
-  EN['sb.golem'] = { name: { en: 'Icicle Warden', jp: '{氷|こおり} の {番人|ばんにん}' }, art: 'golem', artOpts: { col: '#a8d4f0', core: '#e8f4ff' }, look: { custom: 'golem', col: '#a8d4f0' }, region: 'snowbell', bg: 'observatory', knots: 3, pool,
+  EN['sb.golem'] = { setting: 'indoor', name: { en: 'Icicle Warden', jp: '{氷|こおり} の {番人|ばんにん}' }, art: 'golem', artOpts: { col: '#a8d4f0', core: '#e8f4ff' }, look: { custom: 'golem', col: '#a8d4f0' }, region: 'snowbell', bg: 'observatory', knots: 3, pool,
     pattern: ['charge', 'strike', 'chill', 'rest'],
     intro: { jp: 'つらら が {寄|よ}り{集|あつ}まって 、 {人|ひと} の {形|かたち} に なった 。 {回廊|かいろう} を {塞|ふさ}いで いる 。', en: 'Icicles have gathered into the shape of a person. It is blocking the gallery.' },
     settle: { jp: 'つらら は {一本|いっぽん} ずつ {外|はず}れ 、 {床|ゆか} の {上|うえ} で {鈴|すず} の よう な {音|おと} を {立|た}てた 。', en: 'One by one the icicles come loose and ring like little bells on the floor.' } };

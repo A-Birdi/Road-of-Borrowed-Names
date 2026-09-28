@@ -279,6 +279,10 @@ RB.game = (function () {
   // ---- battles ---------------------------------------------------------------------------
   async function startBattle(enemyId, opts) {
     opts = opts || {};
+    // where the encounter happens: its backdrop and its lines follow the
+    // place, not the species (a scripted battle happens where the player is)
+    const W = RB.world.W;
+    if (!opts.where && W && W.map && W.player) opts.where = { map: W.map.id, x: W.player.x, y: W.player.y };
     const res = await RB.combat.start(enemyId, opts);
     if (res === 'win' && opts.foeKey) G.s.flags[opts.foeKey] = true;
     if (res === 'win') {

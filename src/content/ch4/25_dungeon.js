@@ -58,7 +58,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
     foes: [
       { id: 'fox1', enemy: 'sb.fox', x: 9, y: 22, patrol: 2, aggro: true },
       { id: 'fox2', enemy: 'sb.fox', x: 18, y: 26, patrol: 2, aggro: true },
-      { id: 'wisp1', enemy: 'sb.wisp', x: 14, y: 11, patrol: 2, aggro: true },
+      // on the open path, not the observatory's icy floor
+      { id: 'wisp1', enemy: 'sb.wisp', x: 14, y: 11, patrol: 2, aggro: true, bg: 'snowbell',
+        intro: { jp: '{白|しろ}い {息|いき} の よう な もの が 、 {凍|こお}った {道|みち} から {立|た}ち{上|のぼ}った 。', en: 'Something like a white breath rises from the frozen path.' },
+        settle: { jp: '{霜|しも} は {静|しず}か に とけて 、 {道|みち} の {上|うえ} の {小|ちい}さな {水|みず}たまり に なった 。', en: 'The frost melts quietly into a small puddle on the path.' } },
     ],
     npcs: [],
     exits: [

@@ -84,6 +84,19 @@ for (const id in C.scenes) {
 
 // ---- maps --------------------------------------------------------------------------------
 const compiled = {};
+// backdrops painted as interiors / as open country (RB.combat uses the same lists), and whether a
+// map reads as indoors (RB.render.enclosed: an interior region, def.indoor, or
+// a border that is mostly wall)
+const INDOOR_BG = new Set(['mill', 'archive', 'kiln', 'observatory', 'belltower']);
+const OUTDOOR_BG = new Set(['reedwake', 'saltglass', 'cinder', 'snowbell', 'lanternfall']); // 'still' and 'atlas' are open, dreamlike places
+function indoorMap(m, def) {
+  if (m.region === 'interior' || def.indoor) return true;
+  let wall = 0, n = 0;
+  const at = (x, y) => { n++; if (m.tiles[y * m.w + x].id === 'wall') wall++; };
+  for (let x = 0; x < m.w; x++) { at(x, 0); at(x, m.h - 1); }
+  for (let y = 1; y < m.h - 1; y++) { at(0, y); at(m.w - 1, y); }
+  return wall / n >= 0.5;
+}
 for (const id in C.maps) {
   if (filter && !id.startsWith(filter.split('.')[0])) continue;
   let m;
@@ -143,6 +156,20 @@ for (const id in C.maps) {
   for (const ev of def.onEnter || []) ref(ev.scene, 'map ' + id + ' onEnter');
   for (const h of def.hold || []) ref(h.scene, 'map ' + id + ' hold');
   for (const f of def.foes || []) { if (!C.enemies[f.enemy]) E('map ' + id + ': foe uses unknown enemy ' + f.enemy); if (!walk(f.x, f.y)) E('map ' + id + ': foe ' + f.id + ' on blocked tile'); if (f.scene) ref(f.scene, 'map ' + id + ' foe'); }
+  // an encounter's backdrop and lines follow its place: a creature placed
+  // indoors when it usually lives outdoors (or the reverse) carries its own
+  // backdrop and its own intro/settle lines for that place
+  for (const f of def.foes || []) {
+    const en = C.enemies[f.enemy];
+    if (!en) continue;
+    const here = indoorMap(m, def) ? 'indoor' : 'outdoor', bg = f.bg || en.bg || en.region;
+    // lines: enemy.setting names the place its own intro/settle describe (none: any place)
+    if (en.setting && en.setting !== here && !(f.intro && f.settle)) E('map ' + id + ': foe ' + f.id + ' (' + f.enemy + ') is ' + here + 's but its lines describe an ' + en.setting + ' place — give the placement its own intro and settle');
+    // backdrop: an interior backdrop out of doors, or open country indoors, needs the placement's own bg
+    if ((here === 'outdoor' && INDOOR_BG.has(bg)) || (here === 'indoor' && OUTDOOR_BG.has(bg))) E('map ' + id + ': foe ' + f.id + ' (' + f.enemy + ') would fight in front of the ' + bg + ' backdrop, which is not ' + (here === 'indoor' ? 'an interior' : 'out of doors') + ' — give the placement a bg that fits');
+    if (f.intro) tiered(f.intro, 'map ' + id + ' foe ' + f.id + ' intro', jen);
+    if (f.settle) tiered(f.settle, 'map ' + id + ' foe ' + f.id + ' settle', jen);
+  }
   // reachability of exits from spawn (ignores NPCs; conditional props treated as absent)
   if (sp && walk(sp[0], sp[1])) {
     const seen = new Set([sp[0] + ',' + sp[1]]);

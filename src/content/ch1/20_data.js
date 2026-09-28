@@ -337,10 +337,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- enemies -----------------------------------------------------------------------------
   const EN = C.enemies;
   const pool = { tags: ['reedwake'], E: ['v:川', 'v:橋', 'v:水', 'v:雨', 'v:名前'], I: [], A: [] };
-  EN['rw.reedling'] = { name: { en: 'Reedling', jp: '{葦|あし}の{子|こ}' }, art: 'wisp', artOpts: { col: '#b8d88a' }, look: { custom: 'wisp', col: '#b8d88a' }, region: 'reedwake', bg: 'reedwake', knots: 2, pool, pattern: ['strike', 'rest', 'strike', 'sweep'],
+  EN['rw.reedling'] = { setting: 'outdoor', name: { en: 'Reedling', jp: '{葦|あし}の{子|こ}' }, art: 'wisp', artOpts: { col: '#b8d88a' }, look: { custom: 'wisp', col: '#b8d88a' }, region: 'reedwake', bg: 'reedwake', knots: 2, pool, pattern: ['strike', 'rest', 'strike', 'sweep'],
     intro: { jp: '{葦|あし} の {間|あいだ} から 、 {名前|なまえ} を なくした {光|ひかり} が {浮|う}かんで きた 。', en: 'From between the reeds rises a light that has lost its name.' },
     settle: { jp: '{光|ひかり} は {静|しず}か に {葦|あし} の {中|なか} へ {戻|もど}って いった 。', en: 'The light settles quietly back among the reeds.' } };
-  EN['rw.dustmoth'] = { name: { en: 'Flour Moth', jp: '{粉|こな}{蛾|が}' }, art: 'moth', artOpts: { col: '#e8e0d0', col2: '#b8a888' }, look: { custom: 'moth', col: '#e8e0d0' }, region: 'reedwake', bg: 'mill', knots: 2, pool, pattern: ['shroud', 'strike', 'rest', 'strike'],
+  EN['rw.dustmoth'] = { setting: 'indoor', name: { en: 'Flour Moth', jp: '{粉|こな}{蛾|が}' }, art: 'moth', artOpts: { col: '#e8e0d0', col2: '#b8a888' }, look: { custom: 'moth', col: '#e8e0d0' }, region: 'reedwake', bg: 'mill', knots: 2, pool, pattern: ['shroud', 'strike', 'rest', 'strike'],
     intro: { jp: '{白|しろ}い {粉|こな} を まとった {蛾|が} が 、 {羽|はね} の {字|じ} を {隠|かく}して いる 。', en: 'A moth dusted in white flour is hiding the letters on its wings.' },
     settle: { jp: '{羽|はね} の {字|じ} が {読|よ}める よう に なる と 、 {蛾|が} は {窓|まど} から {飛|と}んで いった 。', en: 'Once the letters on its wings can be read, the moth flutters out through the window.' } };
   EN['rw.inkblot'] = { name: { en: 'Runoff Blot', jp: 'にじみ' }, art: 'blot', artOpts: { col: '#2a2a44' }, look: { custom: 'blot', col: '#2a2a44' }, region: 'reedwake', bg: 'mill', knots: 3, pool, pattern: ['strike', 'mend', 'rest', 'sweep'],

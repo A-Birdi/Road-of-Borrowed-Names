@@ -9,6 +9,7 @@ RB.ui.dialogue = (function () {
   let box = null, choicesEl = null;
   let pending = null;       // resolve fn for current line
   let revealing = null;     // {timer, finish}
+  let shownAt = 0, lastDown = -1; // event-clock times: when the line appeared, the last pointer press
   let current = null;       // current line data
   let showSub = false;
 
@@ -36,11 +37,16 @@ RB.ui.dialogue = (function () {
       '<button class="dbtn b-log" title="Dialogue history (L)">' + I('history') + '<span>History</span></button>' +
       '<button class="dbtn b-skip" title="Skip lines you have already seen">' + I('next') + '<span>Skip seen</span></button>' +
       '</div><button class="dbtn primary b-next">Next' + I('next') + '</button></div></div>';
+    // A press that began before this line appeared (the click that chose a
+    // response or finished an exchange) never also dismisses it; keyboard
+    // activation (detail 0) and Z / Enter go through advance() as well.
+    document.addEventListener('pointerdown', (e) => { lastDown = e.timeStamp; }, true);
+    const fresh = (e) => e.detail === 0 || lastDown >= shownAt;
     box.querySelector('.txt').addEventListener('click', (e) => {
       if (e.target.closest('.jt') || e.target.closest('.sub.tap')) return;
-      advance();
+      if (fresh(e)) advance();
     });
-    box.querySelector('.b-next').onclick = () => advance();
+    box.querySelector('.b-next').onclick = (e) => { if (fresh(e)) advance(); };
     // a line longer than the sheet: Next first shows the rest, then advances
     box.querySelector('.txt').addEventListener('scroll', syncMore, { passive: true });
     if (typeof ResizeObserver !== 'undefined') new ResizeObserver(syncMore).observe(box.querySelector('.txt'));
@@ -148,6 +154,7 @@ RB.ui.dialogue = (function () {
     requestAnimationFrame(syncMore);
     if (RB.game.settings.voice.auto && hasJp && !RB.game.fastForward()) speak(false);
     reveal(main);
+    shownAt = performance.now();
     RB.audio && RB.audio.sfx('text_blip', { vol: 0.35 });
     return new Promise((res) => {
       pending = res;
@@ -286,13 +293,15 @@ RB.ui.dialogue = (function () {
       const layer = { el: choicesEl, name: 'choices', parent: RB.ui.root, noAutofocus: false };
       choicesEl.classList.toggle('with-dlg', isOpen());
       choicesEl.classList.toggle('dlg-top', isOpen() && box.classList.contains('top'));
+      const at = performance.now();
       opts.forEach((op, i) => {
         const b = RB.ui.el('button', 'choice');
         const lead = RB.game.settings.lead;
         b.innerHTML = '<span class="n" aria-hidden="true">' + (i + 1) + '</span><span class="c">' + (lead === 'ja' && op.jp
           ? RB.ui.jhtml(op.jp) + (op.en ? '<span class="en">' + esc(RB.script.enVars(op.en)) + '</span>' : '')
           : '<span class="enline">' + esc(RB.script.enVars(op.en || '')) + '</span>' + (op.jp ? '<span class="en">' + RB.ui.jhtml(op.jp) + '</span>' : '')) + '</span>';
-        b.onclick = () => {
+        b.onclick = (e) => {
+          if (e && e.detail !== 0 && lastDown < at) return; // a press from before the replies appeared
           RB.ui.popLayer(layer);
           choicesEl.classList.add('hidden');
           choicesEl.innerHTML = '';

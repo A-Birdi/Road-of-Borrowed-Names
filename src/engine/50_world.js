@@ -585,6 +585,7 @@ RB.world = (function () {
     RB.game.startBattle(e.enemy, {
       foeKey: 'foe:' + W.map.id + ':' + e.id,
       onWin: e.onWin, scene: e.scene,
+      where: { map: W.map.id, x: f.x, y: f.y }, place: e,
     });
   }
   // Foes that walk into the player start a battle too (they are visible and avoidable).

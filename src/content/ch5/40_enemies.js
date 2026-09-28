@@ -17,7 +17,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const ok = (jp, en, why) => ({ jp, en, ok: true, why: { en: why } });
   const no = (jp, en, why) => ({ jp, en, ok: false, why: { en: why } });
 
-  C.enemies['lf.blot'] = {
+  C.enemies['lf.blot'] = { setting: 'indoor',
     name: { en: 'Silence Blot', jp: 'しじま の {染|し}み' }, art: 'blot', artOpts: { col: '#2a2848' }, look: { custom: 'blot', col: '#2a2848' },
     region: 'lanternfall', bg: 'belltower', knots: 2, pool: POOL,
     pattern: ['silence', 'strike', 'rest'],

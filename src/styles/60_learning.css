@@ -505,6 +505,9 @@ body.high-contrast :is(.chal, .lsheet) .fb.no, body.high-contrast :is(.chal, .ls
   grid-template-areas: "foe" "intent" "stage" "party" "dock";
 }
 .combat-ui > *, .combat-ui .cb-side > * { pointer-events: auto; min-width: 0; }
+/* while a line is spoken over the battle, the battle takes no pointer input:
+   the dialogue's own buttons are the only thing to press */
+body.in-dialogue .combat-ui, body.in-dialogue .combat-ui * { pointer-events: none !important; }
 .combat-ui .cb-side { display: contents; }
 .combat-ui > .cb-stage { grid-area: stage; pointer-events: none; }
 .combat-ui .cb-foe { grid-area: foe; }

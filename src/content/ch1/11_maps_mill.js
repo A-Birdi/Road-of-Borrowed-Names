@@ -49,7 +49,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
     foes: [
       { id: 'f1', enemy: 'rw.reedling', x: 10, y: 21, patrol: 1 },
       { id: 'f2', enemy: 'rw.reedling', x: 6, y: 9, patrol: 1, aggro: true },
-      { id: 'f3', enemy: 'rw.dustmoth', x: 11, y: 7, patrol: 1 },
+      // out of doors by the mill: the moth has drifted out of it (its own lines
+      // and the open-air backdrop; inside the mill it keeps the window line)
+      { id: 'f3', enemy: 'rw.dustmoth', x: 11, y: 7, patrol: 1, bg: 'reedwake',
+        intro: { jp: '{白|しろ}い {粉|こな} を まとった {蛾|が} が 、 {水車|すいしゃ}{小屋|ごや} から ゆっくり {出|で}て きた 。 {羽|はね} の {字|じ} が {見|み}えない 。', en: 'A moth dusted in white flour drifts out of the mill. The letters on its wings are hidden.' },
+        settle: { jp: '{羽|はね} の {字|じ} が {読|よ}める よう に なる と 、 {蛾|が} は {水車|すいしゃ}{小屋|ごや} の {屋根|やね} を こえて {飛|と}んで いった 。', en: 'Once the letters on its wings can be read, the moth flutters up over the mill roof and away.' } },
     ],
     exits: [{ x: 10, y: 25, w: 2, h: 1, to: 'rw.village', tx: 22, ty: 1, dir: 'down' }],
     triggers: [{ x: 6, y: 16, w: 1, h: 1, scene: 'rw.mr_narrows', if: '!rw_mr_suzu' }],
@@ -109,7 +113,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     foes: [
       { id: 'p1', enemy: 'rw.inkblot', x: 11, y: 6, patrol: 1 },
-      { id: 'p2', enemy: 'rw.reedling', x: 3, y: 4, patrol: 1 },
+      // under the wheel there are no reeds: the Reedling rises from the wet stones
+      { id: 'p2', enemy: 'rw.reedling', x: 3, y: 4, patrol: 1, bg: 'mill',
+        intro: { jp: '{水車|すいしゃ} の {下|した} の {濡|ぬ}れた {石|いし} の {間|あいだ} から 、 {名前|なまえ} を なくした {光|ひかり} が {浮|う}かんで きた 。', en: 'From between the wet stones under the wheel rises a light that has lost its name.' },
+        settle: { jp: '{光|ひかり} は {静|しず}か に {水路|すいろ} の {流|なが}れ に {乗|の}って いった 。', en: 'The light slips quietly away on the millrace.' } },
     ],
     exits: [{ x: 2, y: 9, to: 'rw.mill1', tx: 12, ty: 8, dir: 'down' }],
     spawn: { default: [2, 7, 'up'] },

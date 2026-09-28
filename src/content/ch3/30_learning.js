@@ -484,7 +484,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     region: 'cinder', bg: 'cinder', knots: 2, pool, pattern: ['gust', 'strike', 'rest', 'strike'],
     intro: { jp: '{灰|はい} を まとった {蛾|が} が 、 {羽|はね} で {風|かぜ} を {起|お}こす 。', en: 'A moth dusted grey with ash beats up a wind with its wings.' },
     settle: { jp: '{蛾|が} は {灰|はい} を {落|お}として 、 ふつう の {白|しろ}い {蛾|が} に {戻|もど}った 。', en: 'The moth shakes off its ash and is only a small white moth again.' } };
-  EN['co.soot'] = { name: { en: 'Smoke Blot', jp: '{煙|けむり}だまり' }, art: 'blot', artOpts: { col: '#4a4440' }, look: { custom: 'blot', col: '#4a4440' },
+  EN['co.soot'] = { setting: 'outdoor', name: { en: 'Smoke Blot', jp: '{煙|けむり}だまり' }, art: 'blot', artOpts: { col: '#4a4440' }, look: { custom: 'blot', col: '#4a4440' },
     region: 'cinder', bg: 'cinder', knots: 2, pool, pattern: ['sweep', 'rest', 'mend', 'strike'],
     intents: {
       sweep: { text: { F: { jp: 'けむり が ひろがる ！', en: 'The smoke is spreading!' }, E: { jp: '{煙|けむり} が {広|ひろ}がって 、 ふたり を {包|つつ}もう と して いる 。', en: 'The smoke is spreading out to engulf you both.' }, I: { jp: '{煙|けむり} が {低|ひく}く {這|は}い 、 {二人|ふたり} の {足元|あしもと} に {迫|せま}る 。', en: 'The smoke creeps low towards both your feet.' }, A: { jp: '{淀|よど}んだ {煙|けむり} が 、 {音|おと} も なく {二人|ふたり} を {呑|の}み{込|こ}もう と {広|ひろ}がる 。', en: 'Stagnant smoke spreads without a sound, ready to swallow you both.' } } },

@@ -51,7 +51,7 @@ RB.combat = (function () {
     const px = Math.round(S.x + S.w * 0.1), py = Math.round(S.y + S.h - 52 * ps - 8);
     const hz = Math.max(0, Math.min(h - 1, Math.round(Math.min(ey + 36 * scale, py + 16 * ps))));
     c.imageSmoothingEnabled = false;
-    Sc.backdrop(c, enemy.bg || enemy.region || 'reedwake', w, h, hz, tt, reduce);
+    Sc.backdrop(c, enemy.bgKey || enemy.bg || enemy.region || 'reedwake', w, h, hz, tt, reduce);
     // creature and its ground shadow
     Sc.shadow(c, ex, ey + 84 * scale, 58 * scale, 11 * scale, 0.5);
     if (st && st.over === 'win') c.globalAlpha = 0.5;
@@ -162,7 +162,9 @@ RB.combat = (function () {
       '</div>' +
       '<div class="cb-stage" aria-hidden="true"></div>' +
       '<section class="bars cb-party" aria-label="Your party"></section>';
-    RB.ui.root.appendChild(root);
+    // Beneath every other layer: the dialogue sheet usually exists before the
+    // battle, and an overlay appended after it would sit on top of its buttons.
+    RB.ui.root.insertBefore(root, RB.ui.root.firstChild);
     const q = (x) => root.querySelector(x);
     const o = { root, foe: q('.cb-foe'), intent: q('.intent'), stage: q('.cb-stage'), bars: q('.bars'), dock: q('.cb-dock'), resp: q('.responses'), log: q('.clog'), coach: q('.cb-coachbox') };
     RB.learnUi.guardTaps(o.resp);
@@ -451,12 +453,32 @@ RB.combat = (function () {
     renderUi();
   }
 
+  // The encounter's place decides its setting (indoors / outdoors), its
+  // backdrop and the lines that describe it, not the species: a foe placed
+  // on a map may carry its own intro/settle/bg (tools/validate.mjs requires
+  // that when the place differs from the creature's usual setting).
+  const INDOOR_BG = { mill: 1, archive: 1, kiln: 1, observatory: 1, belltower: 1 };
+  const OUTDOOR_BG = { reedwake: 1, saltglass: 1, cinder: 1, snowbell: 1, lanternfall: 1 }; // 'still', 'atlas': open, dreamlike
+  function placeEnemy(e, opts) {
+    const W = RB.world.W, where = opts.where || null;
+    const m = W && W.map && where && W.map.id === where.map ? W.map : null;
+    e.where = where;
+    e.setting = m ? (RB.render.enclosed(m) ? 'indoor' : 'outdoor') : null;
+    const place = opts.place || {};
+    for (const k of ['intro', 'settle', 'introWho', 'settleWho', 'bg']) if (place[k] != null) e[k] = place[k];
+    let bg = e.bg || e.region || 'reedwake';
+    // never an interior backdrop out of doors, or open sky inside
+    if (e.setting === 'outdoor' && INDOOR_BG[bg]) bg = OUTDOOR_BG[e.region] ? e.region : 'reedwake';
+    if (e.setting === 'indoor' && OUTDOOR_BG[bg] && !place.bg) console.warn('outdoor backdrop indoors', e.id, where && where.map);
+    e.bgKey = bg;
+  }
   async function start(enemyId, opts) {
     opts = opts || {};
     if (RB.test && RB.test.auto) return RB.test.battle(enemyId);
     const s = RB.game.s;
     enemy = Object.assign({ id: enemyId }, RB.content.enemies[enemyId] || {});
     if (!RB.content.enemies[enemyId]) console.warn('missing enemy', enemyId);
+    placeEnemy(enemy, opts);
     RB.game.pushMode('combat');
     const prevSong = RB.audio && RB.audio.currentSong();
     RB.audio && RB.audio.playSong(enemy.music || (enemy.boss ? 'boss' : 'battle'));
@@ -548,5 +570,6 @@ RB.combat = (function () {
     return outcome;
   }
   // refresh(): redraw the overlay from the current state (tests, tools)
-  return { start, state: () => st, refresh: () => { if (st && ui) renderUi(); } };
+  // context(): where the current encounter happens (tests, tools)
+  return { start, state: () => st, refresh: () => { if (st && ui) renderUi(); }, context: () => enemy && st ? { id: enemy.id, where: enemy.where, setting: enemy.setting, bg: enemy.bgKey, intro: enemy.intro, settle: enemy.settle } : null };
 })();

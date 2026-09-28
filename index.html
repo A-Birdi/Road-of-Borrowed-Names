@@ -2132,6 +2132,9 @@ body.high-contrast :is(.chal, .lsheet) .fb.no, body.high-contrast :is(.chal, .ls
   grid-template-areas: "foe" "intent" "stage" "party" "dock";
 }
 .combat-ui > *, .combat-ui .cb-side > * { pointer-events: auto; min-width: 0; }
+/* while a line is spoken over the battle, the battle takes no pointer input:
+   the dialogue's own buttons are the only thing to press */
+body.in-dialogue .combat-ui, body.in-dialogue .combat-ui * { pointer-events: none !important; }
 .combat-ui .cb-side { display: contents; }
 .combat-ui > .cb-stage { grid-area: stage; pointer-events: none; }
 .combat-ui .cb-foe { grid-area: foe; }
@@ -21431,6 +21434,7 @@ RB.world = (function () {
     RB.game.startBattle(e.enemy, {
       foeKey: 'foe:' + W.map.id + ':' + e.id,
       onWin: e.onWin, scene: e.scene,
+      where: { map: W.map.id, x: f.x, y: f.y }, place: e,
     });
   }
   // Foes that walk into the player start a battle too (they are visible and avoidable).
@@ -22166,7 +22170,7 @@ RB.render = (function () {
     return { x: (x * TS - cam.x) * k, y: (y * TS - cam.y) * k };
   }
 
-  return { init, frame, prewarm, invalidate, setOverride, setReserve, viewSize, thumbnail, tileToCss, worldVisible, resize, cam, ART, TS };
+  return { init, frame, prewarm, invalidate, setOverride, setReserve, viewSize, thumbnail, tileToCss, worldVisible, resize, cam, enclosed, ART, TS };
 })();
 
 
@@ -23233,6 +23237,10 @@ RB.game = (function () {
   // ---- battles ---------------------------------------------------------------------------
   async function startBattle(enemyId, opts) {
     opts = opts || {};
+    // where the encounter happens: its backdrop and its lines follow the
+    // place, not the species (a scripted battle happens where the player is)
+    const W = RB.world.W;
+    if (!opts.where && W && W.map && W.player) opts.where = { map: W.map.id, x: W.player.x, y: W.player.y };
     const res = await RB.combat.start(enemyId, opts);
     if (res === 'win' && opts.foeKey) G.s.flags[opts.foeKey] = true;
     if (res === 'win') {
@@ -24919,6 +24927,7 @@ RB.ui.dialogue = (function () {
   let box = null, choicesEl = null;
   let pending = null;       // resolve fn for current line
   let revealing = null;     // {timer, finish}
+  let shownAt = 0, lastDown = -1; // event-clock times: when the line appeared, the last pointer press
   let current = null;       // current line data
   let showSub = false;
 
@@ -24946,11 +24955,16 @@ RB.ui.dialogue = (function () {
       '<button class="dbtn b-log" title="Dialogue history (L)">' + I('history') + '<span>History</span></button>' +
       '<button class="dbtn b-skip" title="Skip lines you have already seen">' + I('next') + '<span>Skip seen</span></button>' +
       '</div><button class="dbtn primary b-next">Next' + I('next') + '</button></div></div>';
+    // A press that began before this line appeared (the click that chose a
+    // response or finished an exchange) never also dismisses it; keyboard
+    // activation (detail 0) and Z / Enter go through advance() as well.
+    document.addEventListener('pointerdown', (e) => { lastDown = e.timeStamp; }, true);
+    const fresh = (e) => e.detail === 0 || lastDown >= shownAt;
     box.querySelector('.txt').addEventListener('click', (e) => {
       if (e.target.closest('.jt') || e.target.closest('.sub.tap')) return;
-      advance();
+      if (fresh(e)) advance();
     });
-    box.querySelector('.b-next').onclick = () => advance();
+    box.querySelector('.b-next').onclick = (e) => { if (fresh(e)) advance(); };
     // a line longer than the sheet: Next first shows the rest, then advances
     box.querySelector('.txt').addEventListener('scroll', syncMore, { passive: true });
     if (typeof ResizeObserver !== 'undefined') new ResizeObserver(syncMore).observe(box.querySelector('.txt'));
@@ -25058,6 +25072,7 @@ RB.ui.dialogue = (function () {
     requestAnimationFrame(syncMore);
     if (RB.game.settings.voice.auto && hasJp && !RB.game.fastForward()) speak(false);
     reveal(main);
+    shownAt = performance.now();
     RB.audio && RB.audio.sfx('text_blip', { vol: 0.35 });
     return new Promise((res) => {
       pending = res;
@@ -25196,13 +25211,15 @@ RB.ui.dialogue = (function () {
       const layer = { el: choicesEl, name: 'choices', parent: RB.ui.root, noAutofocus: false };
       choicesEl.classList.toggle('with-dlg', isOpen());
       choicesEl.classList.toggle('dlg-top', isOpen() && box.classList.contains('top'));
+      const at = performance.now();
       opts.forEach((op, i) => {
         const b = RB.ui.el('button', 'choice');
         const lead = RB.game.settings.lead;
         b.innerHTML = '<span class="n" aria-hidden="true">' + (i + 1) + '</span><span class="c">' + (lead === 'ja' && op.jp
           ? RB.ui.jhtml(op.jp) + (op.en ? '<span class="en">' + esc(RB.script.enVars(op.en)) + '</span>' : '')
           : '<span class="enline">' + esc(RB.script.enVars(op.en || '')) + '</span>' + (op.jp ? '<span class="en">' + RB.ui.jhtml(op.jp) + '</span>' : '')) + '</span>';
-        b.onclick = () => {
+        b.onclick = (e) => {
+          if (e && e.detail !== 0 && lastDown < at) return; // a press from before the replies appeared
           RB.ui.popLayer(layer);
           choicesEl.classList.add('hidden');
           choicesEl.innerHTML = '';
@@ -31334,7 +31351,7 @@ RB.combat = (function () {
     const px = Math.round(S.x + S.w * 0.1), py = Math.round(S.y + S.h - 52 * ps - 8);
     const hz = Math.max(0, Math.min(h - 1, Math.round(Math.min(ey + 36 * scale, py + 16 * ps))));
     c.imageSmoothingEnabled = false;
-    Sc.backdrop(c, enemy.bg || enemy.region || 'reedwake', w, h, hz, tt, reduce);
+    Sc.backdrop(c, enemy.bgKey || enemy.bg || enemy.region || 'reedwake', w, h, hz, tt, reduce);
     // creature and its ground shadow
     Sc.shadow(c, ex, ey + 84 * scale, 58 * scale, 11 * scale, 0.5);
     if (st && st.over === 'win') c.globalAlpha = 0.5;
@@ -31445,7 +31462,9 @@ RB.combat = (function () {
       '</div>' +
       '<div class="cb-stage" aria-hidden="true"></div>' +
       '<section class="bars cb-party" aria-label="Your party"></section>';
-    RB.ui.root.appendChild(root);
+    // Beneath every other layer: the dialogue sheet usually exists before the
+    // battle, and an overlay appended after it would sit on top of its buttons.
+    RB.ui.root.insertBefore(root, RB.ui.root.firstChild);
     const q = (x) => root.querySelector(x);
     const o = { root, foe: q('.cb-foe'), intent: q('.intent'), stage: q('.cb-stage'), bars: q('.bars'), dock: q('.cb-dock'), resp: q('.responses'), log: q('.clog'), coach: q('.cb-coachbox') };
     RB.learnUi.guardTaps(o.resp);
@@ -31734,12 +31753,32 @@ RB.combat = (function () {
     renderUi();
   }
 
+  // The encounter's place decides its setting (indoors / outdoors), its
+  // backdrop and the lines that describe it, not the species: a foe placed
+  // on a map may carry its own intro/settle/bg (tools/validate.mjs requires
+  // that when the place differs from the creature's usual setting).
+  const INDOOR_BG = { mill: 1, archive: 1, kiln: 1, observatory: 1, belltower: 1 };
+  const OUTDOOR_BG = { reedwake: 1, saltglass: 1, cinder: 1, snowbell: 1, lanternfall: 1 }; // 'still', 'atlas': open, dreamlike
+  function placeEnemy(e, opts) {
+    const W = RB.world.W, where = opts.where || null;
+    const m = W && W.map && where && W.map.id === where.map ? W.map : null;
+    e.where = where;
+    e.setting = m ? (RB.render.enclosed(m) ? 'indoor' : 'outdoor') : null;
+    const place = opts.place || {};
+    for (const k of ['intro', 'settle', 'introWho', 'settleWho', 'bg']) if (place[k] != null) e[k] = place[k];
+    let bg = e.bg || e.region || 'reedwake';
+    // never an interior backdrop out of doors, or open sky inside
+    if (e.setting === 'outdoor' && INDOOR_BG[bg]) bg = OUTDOOR_BG[e.region] ? e.region : 'reedwake';
+    if (e.setting === 'indoor' && OUTDOOR_BG[bg] && !place.bg) console.warn('outdoor backdrop indoors', e.id, where && where.map);
+    e.bgKey = bg;
+  }
   async function start(enemyId, opts) {
     opts = opts || {};
     if (RB.test && RB.test.auto) return RB.test.battle(enemyId);
     const s = RB.game.s;
     enemy = Object.assign({ id: enemyId }, RB.content.enemies[enemyId] || {});
     if (!RB.content.enemies[enemyId]) console.warn('missing enemy', enemyId);
+    placeEnemy(enemy, opts);
     RB.game.pushMode('combat');
     const prevSong = RB.audio && RB.audio.currentSong();
     RB.audio && RB.audio.playSong(enemy.music || (enemy.boss ? 'boss' : 'battle'));
@@ -31831,7 +31870,8 @@ RB.combat = (function () {
     return outcome;
   }
   // refresh(): redraw the overlay from the current state (tests, tools)
-  return { start, state: () => st, refresh: () => { if (st && ui) renderUi(); } };
+  // context(): where the current encounter happens (tests, tools)
+  return { start, state: () => st, refresh: () => { if (st && ui) renderUi(); }, context: () => enemy && st ? { id: enemy.id, where: enemy.where, setting: enemy.setting, bg: enemy.bgKey, intro: enemy.intro, settle: enemy.settle } : null };
 })();
 
 
@@ -33079,7 +33119,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
     foes: [
       { id: 'f1', enemy: 'rw.reedling', x: 10, y: 21, patrol: 1 },
       { id: 'f2', enemy: 'rw.reedling', x: 6, y: 9, patrol: 1, aggro: true },
-      { id: 'f3', enemy: 'rw.dustmoth', x: 11, y: 7, patrol: 1 },
+      // out of doors by the mill: the moth has drifted out of it (its own lines
+      // and the open-air backdrop; inside the mill it keeps the window line)
+      { id: 'f3', enemy: 'rw.dustmoth', x: 11, y: 7, patrol: 1, bg: 'reedwake',
+        intro: { jp: '{白|しろ}い {粉|こな} を まとった {蛾|が} が 、 {水車|すいしゃ}{小屋|ごや} から ゆっくり {出|で}て きた 。 {羽|はね} の {字|じ} が {見|み}えない 。', en: 'A moth dusted in white flour drifts out of the mill. The letters on its wings are hidden.' },
+        settle: { jp: '{羽|はね} の {字|じ} が {読|よ}める よう に なる と 、 {蛾|が} は {水車|すいしゃ}{小屋|ごや} の {屋根|やね} を こえて {飛|と}んで いった 。', en: 'Once the letters on its wings can be read, the moth flutters up over the mill roof and away.' } },
     ],
     exits: [{ x: 10, y: 25, w: 2, h: 1, to: 'rw.village', tx: 22, ty: 1, dir: 'down' }],
     triggers: [{ x: 6, y: 16, w: 1, h: 1, scene: 'rw.mr_narrows', if: '!rw_mr_suzu' }],
@@ -33139,7 +33183,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     foes: [
       { id: 'p1', enemy: 'rw.inkblot', x: 11, y: 6, patrol: 1 },
-      { id: 'p2', enemy: 'rw.reedling', x: 3, y: 4, patrol: 1 },
+      // under the wheel there are no reeds: the Reedling rises from the wet stones
+      { id: 'p2', enemy: 'rw.reedling', x: 3, y: 4, patrol: 1, bg: 'mill',
+        intro: { jp: '{水車|すいしゃ} の {下|した} の {濡|ぬ}れた {石|いし} の {間|あいだ} から 、 {名前|なまえ} を なくした {光|ひかり} が {浮|う}かんで きた 。', en: 'From between the wet stones under the wheel rises a light that has lost its name.' },
+        settle: { jp: '{光|ひかり} は {静|しず}か に {水路|すいろ} の {流|なが}れ に {乗|の}って いった 。', en: 'The light slips quietly away on the millrace.' } },
     ],
     exits: [{ x: 2, y: 9, to: 'rw.mill1', tx: 12, ty: 8, dir: 'down' }],
     spawn: { default: [2, 7, 'up'] },
@@ -33571,10 +33618,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- enemies -----------------------------------------------------------------------------
   const EN = C.enemies;
   const pool = { tags: ['reedwake'], E: ['v:川', 'v:橋', 'v:水', 'v:雨', 'v:名前'], I: [], A: [] };
-  EN['rw.reedling'] = { name: { en: 'Reedling', jp: '{葦|あし}の{子|こ}' }, art: 'wisp', artOpts: { col: '#b8d88a' }, look: { custom: 'wisp', col: '#b8d88a' }, region: 'reedwake', bg: 'reedwake', knots: 2, pool, pattern: ['strike', 'rest', 'strike', 'sweep'],
+  EN['rw.reedling'] = { setting: 'outdoor', name: { en: 'Reedling', jp: '{葦|あし}の{子|こ}' }, art: 'wisp', artOpts: { col: '#b8d88a' }, look: { custom: 'wisp', col: '#b8d88a' }, region: 'reedwake', bg: 'reedwake', knots: 2, pool, pattern: ['strike', 'rest', 'strike', 'sweep'],
     intro: { jp: '{葦|あし} の {間|あいだ} から 、 {名前|なまえ} を なくした {光|ひかり} が {浮|う}かんで きた 。', en: 'From between the reeds rises a light that has lost its name.' },
     settle: { jp: '{光|ひかり} は {静|しず}か に {葦|あし} の {中|なか} へ {戻|もど}って いった 。', en: 'The light settles quietly back among the reeds.' } };
-  EN['rw.dustmoth'] = { name: { en: 'Flour Moth', jp: '{粉|こな}{蛾|が}' }, art: 'moth', artOpts: { col: '#e8e0d0', col2: '#b8a888' }, look: { custom: 'moth', col: '#e8e0d0' }, region: 'reedwake', bg: 'mill', knots: 2, pool, pattern: ['shroud', 'strike', 'rest', 'strike'],
+  EN['rw.dustmoth'] = { setting: 'indoor', name: { en: 'Flour Moth', jp: '{粉|こな}{蛾|が}' }, art: 'moth', artOpts: { col: '#e8e0d0', col2: '#b8a888' }, look: { custom: 'moth', col: '#e8e0d0' }, region: 'reedwake', bg: 'mill', knots: 2, pool, pattern: ['shroud', 'strike', 'rest', 'strike'],
     intro: { jp: '{白|しろ}い {粉|こな} を まとった {蛾|が} が 、 {羽|はね} の {字|じ} を {隠|かく}して いる 。', en: 'A moth dusted in white flour is hiding the letters on its wings.' },
     settle: { jp: '{羽|はね} の {字|じ} が {読|よ}める よう に なる と 、 {蛾|が} は {窓|まど} から {飛|と}んで いった 。', en: 'Once the letters on its wings can be read, the moth flutters out through the window.' } };
   EN['rw.inkblot'] = { name: { en: 'Runoff Blot', jp: 'にじみ' }, art: 'blot', artOpts: { col: '#2a2a44' }, look: { custom: 'blot', col: '#2a2a44' }, region: 'reedwake', bg: 'mill', knots: 3, pool, pattern: ['strike', 'mend', 'rest', 'sweep'],
@@ -36685,8 +36732,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'sign', x: 10, y: 2, scene: 'sg.da_innersign' },
     ],
     foes: [
-      { id: 'e1', enemy: 'sg.crab', x: 6, y: 12, patrol: 2, aggro: true },
-      { id: 'e2', enemy: 'sg.crab', x: 21, y: 11, patrol: 2, aggro: true },
+      { id: 'e1', enemy: 'sg.crab', x: 6, y: 12, patrol: 2, aggro: true, bg: 'archive' }, // inside the Receiving Hall
+      { id: 'e2', enemy: 'sg.crab', x: 21, y: 11, patrol: 2, aggro: true, bg: 'archive' },
     ],
     exits: [
       { x: 11, y: 17, w: 2, h: 1, to: 'sg.harbor', tx: 8, ty: 39, dir: 'up' },
@@ -39297,14 +39344,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
     intro: { jp: '{湿|しめ}った {紙|かみ} の {鶴|つる} が 、 {重|おも}たげ に {羽|は}ばたく 。 {羽|はね} に {誰|だれ} か の {名前|なまえ} が {滲|にじ}んで いる 。', en: 'A damp paper crane flaps heavily towards you. Someone\'s name has run across its wings.' },
     settle: { jp: '{鶴|つる} は ほどけて 、 {一枚|いちまい} の {紙|かみ} に {戻|もど}った 。', en: 'The crane unfolds and becomes a single sheet of paper again.' },
   });
-  E('sg.blot', {
+  E('sg.blot', { setting: 'indoor',
     name: { en: 'Runaway Ink', jp: 'にじんだ {墨|すみ}' }, art: 'blot', artOpts: { col: '#1e2440' }, look: { custom: 'blot', col: '#1e2440' },
     knots: 3, pool: POOL,
     pattern: ['sweep', 'mend', 'rest'],
     intro: { jp: '{水|みず} に {溶|と}けた {墨|すみ} が {集|あつ}まって 、 {床|ゆか}から {起|お}き{上|あ}がった 。', en: 'Ink washed out of a hundred pages has pooled together and risen off the floor.' },
     settle: { jp: '{墨|すみ} は {静|しず}か に {広|ひろ}がって 、 ただ の {水|みず}たまり に なった 。', en: 'The ink spreads out quietly into an ordinary puddle.' },
   });
-  E('sg.fogwisp', {
+  E('sg.fogwisp', { setting: 'outdoor',
     name: { en: 'Harbour Fog', jp: '{港|みなと} の {霧|きり}' }, art: 'wisp', artOpts: { col: '#c8d4e0' }, look: { custom: 'wisp', col: '#c8d4e0' },
     bg: 'saltglass', knots: 2, pool: POOL,
     pattern: ['shroud', 'rest', 'strike'],
@@ -39318,7 +39365,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     intro: { jp: '{羽|はね} に {丸|まる}い {消印|けしいん} の {模様|もよう} が ある {蛾|が}だ 。 {押|お}された {所|ところ}から {文字|もじ} が {消|き}えて いく 。', en: 'A moth with round postmarks on its wings. Wherever it lands, the writing fades.' },
     settle: { jp: '{蛾|が} は {灯|あか}り の ほう へ ふらふら と {飛|と}んで いった 。', en: 'The moth flutters away towards the lamplight.' },
   });
-  E('sg.golem', {
+  E('sg.golem', { setting: 'indoor',
     name: { en: 'Ledger Heap', jp: '{帳簿|ちょうぼ} の {山|やま}' }, art: 'golem', artOpts: { col: '#8a8aa0', core: '#e8e0cc' }, look: { custom: 'golem', col: '#8a8aa0' },
     knots: 4, pool: POOL,
     pattern: ['charge', 'strike', 'flood', 'rest'],
@@ -41170,9 +41217,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'deadlantern', x: 23, y: 7, scene: 'co.works_lantern', if: '!co_kiln_done' }, { p: 'lantern', x: 23, y: 7, scene: 'co.works_lantern', if: 'co_kiln_done' },
     ],
     foes: [
-      { id: 'g1', enemy: 'co.golem', x: 13, y: 15, patrol: 2 },
+      { id: 'g1', enemy: 'co.golem', x: 13, y: 15, patrol: 2, bg: 'cinder' }, // out on the workshop row, not in a kiln
       { id: 's2', enemy: 'co.soot', x: 29, y: 10, patrol: 1 },
-      { id: 'e1', enemy: 'co.ember', x: 20, y: 21, patrol: 1, aggro: true },
+      { id: 'e1', enemy: 'co.ember', x: 20, y: 21, patrol: 1, aggro: true, bg: 'cinder' },
     ],
     exits: [
       { x: 30, y: 25, w: 2, h: 1, to: 'co.upper', tx: 30, ty: 1, dir: 'down' },
@@ -41761,7 +41808,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     region: 'cinder', bg: 'cinder', knots: 2, pool, pattern: ['gust', 'strike', 'rest', 'strike'],
     intro: { jp: '{灰|はい} を まとった {蛾|が} が 、 {羽|はね} で {風|かぜ} を {起|お}こす 。', en: 'A moth dusted grey with ash beats up a wind with its wings.' },
     settle: { jp: '{蛾|が} は {灰|はい} を {落|お}として 、 ふつう の {白|しろ}い {蛾|が} に {戻|もど}った 。', en: 'The moth shakes off its ash and is only a small white moth again.' } };
-  EN['co.soot'] = { name: { en: 'Smoke Blot', jp: '{煙|けむり}だまり' }, art: 'blot', artOpts: { col: '#4a4440' }, look: { custom: 'blot', col: '#4a4440' },
+  EN['co.soot'] = { setting: 'outdoor', name: { en: 'Smoke Blot', jp: '{煙|けむり}だまり' }, art: 'blot', artOpts: { col: '#4a4440' }, look: { custom: 'blot', col: '#4a4440' },
     region: 'cinder', bg: 'cinder', knots: 2, pool, pattern: ['sweep', 'rest', 'mend', 'strike'],
     intents: {
       sweep: { text: { F: { jp: 'けむり が ひろがる ！', en: 'The smoke is spreading!' }, E: { jp: '{煙|けむり} が {広|ひろ}がって 、 ふたり を {包|つつ}もう と して いる 。', en: 'The smoke is spreading out to engulf you both.' }, I: { jp: '{煙|けむり} が {低|ひく}く {這|は}い 、 {二人|ふたり} の {足元|あしもと} に {迫|せま}る 。', en: 'The smoke creeps low towards both your feet.' }, A: { jp: '{淀|よど}んだ {煙|けむり} が 、 {音|おと} も なく {二人|ふたり} を {呑|の}み{込|こ}もう と {広|ひろ}がる 。', en: 'Stagnant smoke spreads without a sound, ready to swallow you both.' } } },
@@ -45691,7 +45738,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
     foes: [
       { id: 'fox1', enemy: 'sb.fox', x: 9, y: 22, patrol: 2, aggro: true },
       { id: 'fox2', enemy: 'sb.fox', x: 18, y: 26, patrol: 2, aggro: true },
-      { id: 'wisp1', enemy: 'sb.wisp', x: 14, y: 11, patrol: 2, aggro: true },
+      // on the open path, not the observatory's icy floor
+      { id: 'wisp1', enemy: 'sb.wisp', x: 14, y: 11, patrol: 2, aggro: true, bg: 'snowbell',
+        intro: { jp: '{白|しろ}い {息|いき} の よう な もの が 、 {凍|こお}った {道|みち} から {立|た}ち{上|のぼ}った 。', en: 'Something like a white breath rises from the frozen path.' },
+        settle: { jp: '{霜|しも} は {静|しず}か に とけて 、 {道|みち} の {上|うえ} の {小|ちい}さな {水|みず}たまり に なった 。', en: 'The frost melts quietly into a small puddle on the path.' } },
     ],
     npcs: [],
     exits: [
@@ -48088,17 +48138,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const o = (en, ok, why) => (why ? { en, ok, why: { en: why } } : { en, ok });
   const oj = (jp, ok, why, en) => Object.assign({ jp, ok }, en ? { en } : {}, why ? { why: { en: why } } : {});
 
-  EN['sb.fox'] = { name: { en: 'Snow Fox', jp: '{雪|ゆき}ギツネ' }, art: 'sb_snowfox', look: { custom: 'snowfox' }, region: 'snowbell', bg: 'snowbell', knots: 2, pool,
+  EN['sb.fox'] = { setting: 'outdoor', name: { en: 'Snow Fox', jp: '{雪|ゆき}ギツネ' }, art: 'sb_snowfox', look: { custom: 'snowfox' }, region: 'snowbell', bg: 'snowbell', knots: 2, pool,
     pattern: ['strike', 'rest', 'chill', 'strike'],
     intro: { jp: '{青|あお}く {光|ひか}る {目|め} の キツネ が 、 {雪|ゆき} を {蹴|け}って {跳|と}びかかって きた 。', en: 'A fox with glowing blue eyes kicks up the snow and springs at you.' },
     settle: { jp: 'キツネ の {目|め} から 、 {青|あお}い {光|ひかり} が {抜|ぬ}けた 。 {一声|ひとこえ} {鳴|な}いて 、 {雪|ゆき} の {中|なか} へ {走|はし}り{去|さ}る 。', en: 'The blue light drains from the fox\'s eyes. It gives one cry and runs off into the snow.' } };
 
-  EN['sb.wisp'] = { name: { en: 'Frost Wisp', jp: '{霜|しも} の {精|せい}' }, art: 'wisp', artOpts: { col: '#cfe8ff' }, look: { custom: 'wisp', col: '#cfe8ff' }, region: 'snowbell', bg: 'observatory', knots: 2, pool,
+  EN['sb.wisp'] = { setting: 'indoor', name: { en: 'Frost Wisp', jp: '{霜|しも} の {精|せい}' }, art: 'wisp', artOpts: { col: '#cfe8ff' }, look: { custom: 'wisp', col: '#cfe8ff' }, region: 'snowbell', bg: 'observatory', knots: 2, pool,
     pattern: ['chill', 'mend', 'rest', 'chill'],
     intro: { jp: '{白|しろ}い {息|いき} の よう な もの が 、 {氷|こおり} の {床|ゆか} から {立|た}ち{上|のぼ}った 。', en: 'Something like a white breath rises from the icy floor.' },
     settle: { jp: '{霜|しも} は {静|しず}か に とけて 、 {床|ゆか} の {上|うえ} の {小|ちい}さな {水|みず}たまり に なった 。', en: 'The frost melts quietly into a small puddle on the floor.' } };
 
-  EN['sb.ghost'] = { name: { en: 'Lantern Ghost', jp: '{名無|なな}し の {灯|ひ}' }, art: 'lantern', artOpts: { col: '#8ab8f0' }, look: { custom: 'lanternghost' }, region: 'snowbell', bg: 'observatory', knots: 3, pool,
+  EN['sb.ghost'] = { setting: 'indoor', name: { en: 'Lantern Ghost', jp: '{名無|なな}し の {灯|ひ}' }, art: 'lantern', artOpts: { col: '#8ab8f0' }, look: { custom: 'lanternghost' }, region: 'snowbell', bg: 'observatory', knots: 3, pool,
     pattern: ['strike', 'lie:1', 'mend', 'rest'],
     intents: {
       'lie:1': { power: 1, target: 'rand',
@@ -48118,12 +48168,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
     intro: { jp: '{笠|かさ} の {白|しろ}い {提灯|ちょうちん} が 、 {冷|つめ}たい {光|ひかり} を {揺|ゆ}らして {近|ちか}づいて くる 。', en: 'A lantern with a blank shade drifts closer, swaying its cold light.' },
     settle: { jp: '{提灯|ちょうちん} は {床|ゆか} に {落|お}ち 、 {笠|かさ} に うっすら と {字|じ} が {浮|う}かんだ 。 {石段|いしだん} の {名前|なまえ} だ 。', en: 'The lantern drops to the floor, and faint letters surface on its shade: the name of the stair.' } };
 
-  EN['sb.moth'] = { name: { en: 'Chart Moth', jp: '{星図|せいず}{蛾|が}' }, art: 'moth', artOpts: { col: '#2a3458', col2: '#c8d8f0' }, look: { custom: 'moth', col: '#8a9ac8' }, region: 'snowbell', bg: 'observatory', knots: 2, pool,
+  EN['sb.moth'] = { setting: 'indoor', name: { en: 'Chart Moth', jp: '{星図|せいず}{蛾|が}' }, art: 'moth', artOpts: { col: '#2a3458', col2: '#c8d8f0' }, look: { custom: 'moth', col: '#8a9ac8' }, region: 'snowbell', bg: 'observatory', knots: 2, pool,
     pattern: ['strike', 'mend', 'rest', 'sweep'],
     intro: { jp: '{星図|せいず} の {切|き}れ{端|はし} を {羽|はね} に した {蛾|が} が 、 {星|ほし} の {名前|なまえ} を {粉|こな} に して {撒|ま}いて いる 。', en: 'A moth with wings made of torn star charts is scattering star names as dust.' },
     settle: { jp: '{羽|はね} の {星|ほし} に 、 {名前|なまえ} が {戻|もど}った 。 {蛾|が} は {棚|たな} の {隙間|すきま} へ {帰|かえ}って いく 。', en: 'The stars on its wings have their names back. The moth returns to a gap in the shelves.' } };
 
-  EN['sb.golem'] = { name: { en: 'Icicle Warden', jp: '{氷|こおり} の {番人|ばんにん}' }, art: 'golem', artOpts: { col: '#a8d4f0', core: '#e8f4ff' }, look: { custom: 'golem', col: '#a8d4f0' }, region: 'snowbell', bg: 'observatory', knots: 3, pool,
+  EN['sb.golem'] = { setting: 'indoor', name: { en: 'Icicle Warden', jp: '{氷|こおり} の {番人|ばんにん}' }, art: 'golem', artOpts: { col: '#a8d4f0', core: '#e8f4ff' }, look: { custom: 'golem', col: '#a8d4f0' }, region: 'snowbell', bg: 'observatory', knots: 3, pool,
     pattern: ['charge', 'strike', 'chill', 'rest'],
     intro: { jp: 'つらら が {寄|よ}り{集|あつ}まって 、 {人|ひと} の {形|かたち} に なった 。 {回廊|かいろう} を {塞|ふさ}いで いる 。', en: 'Icicles have gathered into the shape of a person. It is blocking the gallery.' },
     settle: { jp: 'つらら は {一本|いっぽん} ずつ {外|はず}れ 、 {床|ゆか} の {上|うえ} で {鈴|すず} の よう な {音|おと} を {立|た}てた 。', en: 'One by one the icicles come loose and ring like little bells on the floor.' } };
@@ -49426,7 +49476,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'crate', x: 1, y: 13 }, { p: 'crate', x: 18, y: 3 },
     ],
     foes: [
-      { id: 'st1', enemy: 'lf.stamp', x: 10, y: 6, patrol: 1, aggro: true },
+      { id: 'st1', enemy: 'lf.stamp', x: 10, y: 6, patrol: 1, aggro: true, bg: 'belltower' }, // down in the stacks
       // (its Hush is answered by すず or こえ, learned later in the chapter: it waits until then)
       { id: 'st2', enemy: 'lf.blot', x: 18, y: 9, patrol: 2, aggro: true, if: 'word.suzu|word.koe' },
     ],
@@ -52343,7 +52393,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const ok = (jp, en, why) => ({ jp, en, ok: true, why: { en: why } });
   const no = (jp, en, why) => ({ jp, en, ok: false, why: { en: why } });
 
-  C.enemies['lf.blot'] = {
+  C.enemies['lf.blot'] = { setting: 'indoor',
     name: { en: 'Silence Blot', jp: 'しじま の {染|し}み' }, art: 'blot', artOpts: { col: '#2a2848' }, look: { custom: 'blot', col: '#2a2848' },
     region: 'lanternfall', bg: 'belltower', knots: 2, pool: POOL,
     pattern: ['silence', 'strike', 'rest'],
@@ -53722,7 +53772,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // The echo repeats a promise someone made, turned inside out. Seeing through
   // it means recovering what the promise really said (negation matters).
-  C.enemies['sa.echo'] = {
+  C.enemies['sa.echo'] = { setting: 'indoor',
     name: T('Shelved Echo', '{棚|たな} の {木霊|こだま}'), art: 'echo', artOpts: { col: '#b8c8e0' }, look: { custom: 'sa_echo' },
     region: 'still', bg: 'still', knots: 3, pool,
     pattern: ['mirror:1', 'strike', 'mend'],

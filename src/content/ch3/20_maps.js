@@ -505,9 +505,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'deadlantern', x: 23, y: 7, scene: 'co.works_lantern', if: '!co_kiln_done' }, { p: 'lantern', x: 23, y: 7, scene: 'co.works_lantern', if: 'co_kiln_done' },
     ],
     foes: [
-      { id: 'g1', enemy: 'co.golem', x: 13, y: 15, patrol: 2 },
+      { id: 'g1', enemy: 'co.golem', x: 13, y: 15, patrol: 2, bg: 'cinder' }, // out on the workshop row, not in a kiln
       { id: 's2', enemy: 'co.soot', x: 29, y: 10, patrol: 1 },
-      { id: 'e1', enemy: 'co.ember', x: 20, y: 21, patrol: 1, aggro: true },
+      { id: 'e1', enemy: 'co.ember', x: 20, y: 21, patrol: 1, aggro: true, bg: 'cinder' },
     ],
     exits: [
       { x: 30, y: 25, w: 2, h: 1, to: 'co.upper', tx: 30, ty: 1, dir: 'down' },
