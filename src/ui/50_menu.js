@@ -218,9 +218,10 @@ RB.ui.menu = (function () {
     ]],
     ink: ['Inkweaving (battles)', [
       'Enemies telegraph what they are about to do, in Japanese at your level. Read it: who is it aiming at? Is it heating up, hiding, or asking something?',
-      'Pick a response. Ordinary words do what they mean: まもる (protect) raises a ward in front of whoever you choose, みず (water) cools heat, ひかり (light) burns off mist. Unravel restores one of its tangled words and frees a knot. Free every knot to settle the creature.',
+      'Pick a response. Ordinary words do what they mean: まもる (protect) raises a ward in front of whoever you choose, みず (water) cools heat, ひかり (light) burns off mist. Unravel restores one of its tangled words and frees a knot. Free every knot to settle the creature. Each response card says what it does and what it answers; one you have never used in battle is marked New.',
+      'Point at, focus or tap a move or a state on the battle screen — Strike, Sweep, Heat, Shrouded, Gathering, Hushed, a Ward — to see what it does, how hard it hits and what answers it. Strike hits one of you; Sweep and Flood hit you both. Heat builds by one each time you leave it (at most 2) and makes every blow hit that much harder until water cools it.',
       'Then express your response in Japanese — by writing, choosing, or typing. The enemy never acts while you write or read help.',
-      'Clean answers build Harmony; when it is full, your companion offers a coordinated technique. Each companion changes the tactics in their own way.',
+      'Harmony is the band above your party. It fills by one each time you answer right first time with a response that cancels its move, or with Unravel. When it is full, your companion\'s coordinated technique joins your responses; using it cancels the move and empties Harmony. Each companion has one technique: Nao — Read the Opening (frees 2 knots); Mio — Clearwater Draught (restores you both, washes away Heat, mist and Gathering, frees 1 knot); Ren — Lantern Ward (a 3-point ward on each of you, frees 1 knot); Suzu — Curtain Call (frees 2 knots).',
       'A genuine mistake costs at most 1 resolve per exchange (nothing in Assisted mode). When the recogniser is unsure of your handwriting, it never costs anything. You can always step back from ordinary encounters, and defeat just returns you to the last safe place.',
     ]],
     pad: ['The writing pad', [

@@ -557,6 +557,15 @@ RB.audio = RB.audio || {};
     thump(g, o, t, v, 92, 56, 0.3, 0.22, 0.36);
     hiss(g, o, t, v, 'lowpass', 220, 0.7, 0.002, 0.06, 0.15);
   };
+  P.o = (g, o, t, v) => { // big drum (taiko-sized, full weight: boss fights)
+    thump(g, o, t, v, 132, 44, 0.16, 0.22, 0.6);
+    thump(g, o, t, v, 72, 40, 0.28, 0.3, 0.28);
+    hiss(g, o, t, v, 'lowpass', 900, 0.8, 0.001, 0.02, 0.2);
+  };
+  P.n = (g, o, t, v) => { // frame-drum snap (a bright backbeat)
+    hiss(g, o, t, v, 'bandpass', 2200, 0.9, 0.001, 0.07, 0.32);
+    thump(g, o, t, v, 240, 170, 0.05, 0.05, 0.18);
+  };
   P.s = (g, o, t, v) => hiss(g, o, t, v, 'bandpass', 5200, 0.8, 0.012, 0.04, 0.28); // shaker
   P.b = (g, o, t, v) => hiss(g, o, t, v, 'bandpass', 2600, 0.6, 0.015, 0.07, 0.18); // brush
   P.w = (g, o, t, v) => { // woodblock

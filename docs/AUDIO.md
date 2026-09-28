@@ -7,7 +7,7 @@ network, no libraries. Source: `src/audio/`. Spec: SPECIFICATION.txt §17.
 
 | file | contents |
 |---|---|
-| `10_synth.js` | context lifecycle, mix graph, 13 instruments, 14 percussion voices, public `init/ready/setVolume/setMuted/duck` |
+| `10_synth.js` | context lifecycle, mix graph, 13 instruments, 16 percussion voices, public `init/ready/setVolume/setMuted/duck` |
 | `20_sequencer.js` | notation compiler + validator, `Player`, 25 ms lookahead scheduler, `playSong/stopSong/currentSong/songList/motifList/renderOffline` |
 | `30_songs.js` | the 33 songs + shared motifs; **the notation is documented in this file's header** |
 | `40_sfx.js` | 44 effects, `sfx(id, {pitch, vol})`, rate limiting and a voice cap |
@@ -55,6 +55,7 @@ Percussion is noise- or sine-based:
 - kick, tom, low drum, shaker, brush, hand pat
 - woodblocks, rim, clock tick, glass tick
 - water drop, wooden creak, small bells
+- big drum and frame-drum snap (the boss theme's weight)
 
 ## Motifs
 
@@ -84,7 +85,7 @@ notes for each song are in `30_songs.js` and in `RB.audio.songList()`.
 | `road` | The Road of Borrowed Names | D ionian | 84 | 4/4 | 149 s | 137 s | road |
 | `mill` | The Mill That Calls Back | A dorian | 108 | 3/4 | 83 s | 83 s | road |
 | `battle` | Inkweaving | E aeolian | 100 | 4/4 (3+3+2) | 82 s | 82 s | road |
-| `boss` | A Promise Held Too Tightly | C aeolian + ♭2 | 108 | 4/4 (3+3+2) | 76 s | 76 s | road, hush |
+| `boss` | A Promise Held Too Tightly | C aeolian + ♭2 | 138 | 4/4 (3+3+2) | 73 s | 70 s | road, hush |
 | `victory` | Victory Sting | D ionian | 120 | 4/4 | 6 s | no | road |
 | `saltglass` | Saltglass Harbour | F ionian (swing) | 104 | 4/4 | 97 s | 97 s | road |
 | `drowned_archive` | The Drowned Archive | E aeolian | 66 | 4/4 | 116 s | 116 s | road, hush |
