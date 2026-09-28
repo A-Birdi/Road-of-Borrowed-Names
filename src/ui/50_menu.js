@@ -384,9 +384,11 @@ RB.ui.menu = (function () {
   const ACC_WORD = { hat: 'hat', cap: 'cap', scarf: 'scarf', earrings: 'earrings', flower: 'flower', cape: 'cape' };
   function wearPreview(id, d, s) {
     const rep = EQ().replaces(s.player.look, id).map((a) => ACC_WORD[a] || a);
-    const views = [['down', 'Front'], ['right', 'Side'], ['up', 'Back, in battle']];
+    // on the road (front and side, 40×58) and in battle (seen from behind, facing the foe), all at 2 CSS px per art px
+    const views = [['down', 'Front'], ['right', 'Side'], ['battle', 'In battle']];
+    const F = RB.sprites.FRAME || { w: 40, h: 58 };
     return '<figure class="wear-prev"><figcaption>How you look wearing it</figcaption><div class="wp-row">' +
-      views.map(([dir, cap]) => '<div class="wp"><canvas width="32" height="48" data-prev="' + esc(id) + '" data-dir="' + dir + '" role="img" aria-label="' + esc('You wearing the ' + d.name.en + ': ' + cap.toLowerCase()) + '"></canvas><span>' + esc(cap) + '</span></div>').join('') +
+      views.map(([dir, cap]) => '<div class="wp' + (dir === 'battle' ? ' wp-battle' : '') + '"><canvas width="' + F.w + '" height="' + F.h + '" data-prev="' + esc(id) + '" data-dir="' + dir + '" role="img" aria-label="' + esc('You wearing the ' + d.name.en + ': ' + cap.toLowerCase()) + '"></canvas><span>' + esc(cap) + '</span></div>').join('') +
       '<div class="wp wp-face"><canvas width="96" height="96" data-prev="' + esc(id) + '" data-dir="face" role="img" aria-label="' + esc('Your portrait wearing the ' + d.name.en) + '"></canvas><span>Portrait</span></div></div>' +
       (rep.length ? '<p class="muted small">You already wear a ' + esc(rep.join(' and ')) + '; this takes its place, in its own colours, while you wear it.</p>' : '') + '</figure>';
   }
@@ -394,11 +396,29 @@ RB.ui.menu = (function () {
     for (const cv of root.querySelectorAll('canvas[data-prev]')) {
       const look = EQ().lookWith(s.player.look, cv.dataset.prev);
       if (cv.dataset.dir === 'face') { RB.portraits.drawPlayer(cv, look, 'smile'); continue; }
+      if (cv.dataset.dir === 'battle') { battlePreview(cv, look); continue; }
       const art = RB.sprites.getArt(look, cv.dataset.dir, 0);
       const c = cv.getContext('2d');
       c.clearRect(0, 0, cv.width, cv.height);
       if (art) c.drawImage(art, 0, 0);
     }
+  }
+  // The battle figure in its ready stance (RB.battlers), trimmed to the figure and shown at the same
+  // 2 CSS px per art px as the road sprites beside it.
+  function battlePreview(cv, look) {
+    const B = RB.battlers;
+    if (!B) return;
+    const src = B.preview(look, 'ready', null, 0, { who: 'pc', reduce: true });
+    const d = src.getContext('2d').getImageData(0, 0, src.width, src.height).data;
+    let x0 = src.width, y0 = src.height, x1 = -1, y1 = -1;
+    for (let y = 0; y < src.height; y++) for (let x = 0; x < src.width; x++) if (d[(y * src.width + x) * 4 + 3]) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+    if (x1 < 0) return;
+    x0 = Math.max(0, x0 - 2); y0 = Math.max(0, y0 - 2); x1 = Math.min(src.width - 1, x1 + 2); y1 = Math.min(src.height - 1, y1 + 2);
+    cv.width = x1 - x0 + 1; cv.height = y1 - y0 + 1;
+    cv.style.width = cv.width * 2 + 'px'; cv.style.height = cv.height * 2 + 'px';
+    const c = cv.getContext('2d');
+    c.imageSmoothingEnabled = false;
+    c.drawImage(src, -x0, -y0);
   }
   function itemDetail(x, s) {
     const d = x.d;

@@ -1,7 +1,8 @@
 // Equipment: keepsakes change how the player looks everywhere the player is
 // drawn (world sprite, on screen and straight after equipping; the battle
 // party; the dialogue portrait), compared in rendered pixels; every
-// keepsake is visible on the 32×48 sprite in each view, also over the same
+// keepsake is visible on the 40×58 road sprite in each view (a one-sided one in the
+// side view that faces it) and on the battle figure, also over the same
 // kind of accessory chosen at character creation; worn things are marked in
 // the Satchel by a tag (not colour alone) and every equippable item in every
 // chapter and the Atlas shows keyword tags that the Key explains; the tool
@@ -54,20 +55,32 @@ const helpers = (p) => p.evaluate(() => {
     ];
     const px = (cv) => EQT.data(cv);
     const weak = [], noAcc = [];
-    let min = { down: 1e9, up: 1e9, right: 1e9, face: 1e9 };
+    let min = { down: 1e9, up: 1e9, side: 1e9, face: 1e9, battle: 1e9 };
     for (const id of ids) {
       if (!RB.content.items[id].acc) { noAcc.push(id); continue; }
+      let battleSeen = 0;
       for (const base of bases) {
         const worn = RB.equip.lookWith(base, id);
-        for (const d of ['down', 'up', 'right']) {
+        for (const d of ['down', 'up']) {
           const n = EQT.diff(px(RB.sprites.getArt(base, d, 0)), px(RB.sprites.getArt(worn, d, 0)));
           min[d] = Math.min(min[d], n);
-          if (n < (d === 'right' ? 8 : 16)) weak.push(id + ' ' + d + ' on ' + base.hair + '/' + base.acc.join('+') + ': ' + n + ' px');
+          if (n < 16) weak.push(id + ' ' + d + ' on ' + base.hair + '/' + base.acc.join('+') + ': ' + n + ' px');
         }
+        // side views: a keepsake worn on one side of the head (a ribbon, a leaf) is drawn in front
+        // in the view that faces that side, and may hide behind the head in the other; so the side
+        // that faces it must show it
+        const side = Math.max(...['left', 'right'].map((d) => EQT.diff(px(RB.sprites.getArt(base, d, 0)), px(RB.sprites.getArt(worn, d, 0)))));
+        min.side = Math.min(min.side, side);
+        if (side < 8) weak.push(id + ' side on ' + base.hair + '/' + base.acc.join('+') + ': ' + side + ' px');
         const n = EQT.diff(px(RB.portraits.playerImage(base, 'neutral')), px(RB.portraits.playerImage(worn, 'neutral')));
         min.face = Math.min(min.face, n);
         if (n < 40) weak.push(id + ' portrait on ' + base.hair + '/' + base.acc.join('+') + ': ' + n + ' px');
+        // the battle figure (seen from behind): shows it too, unless a hat covers a flower on the far side of the head
+        const bn = EQT.diff(px(RB.battlers.preview(base, 'ready', null, 0, { reduce: true })), px(RB.battlers.preview(worn, 'ready', null, 0, { reduce: true })));
+        min.battle = Math.min(min.battle, bn);
+        if (bn >= 8) battleSeen++;
       }
+      if (battleSeen < 3) weak.push(id + ' battle figure: visible on only ' + battleSeen + ' of 4 looks');
     }
     // the base look is never changed by wearing something
     const b0 = { skin: 2, hair: 'short', hairColor: 1, outfit: 0, acc: ['hat'] };
@@ -75,7 +88,7 @@ const helpers = (p) => p.evaluate(() => {
     return { n: ids.length, weak, noAcc, min, untouched: JSON.stringify(b0.acc) === '["hat"]', replaced: w0.acc.join() === 'cap' && w0.capCol === RB.content.items.lf_ferry_cap.wear.capCol };
   });
   assert(r.n >= 14 && !r.noAcc.length, `${r.n} keepsakes, each with an accessory to draw` + (r.noAcc.length ? ' missing: ' + r.noAcc : ''));
-  assert(!r.weak.length, 'every keepsake visibly changes the 32×48 sprite (front/back ≥16 px, side ≥8 px) and the portrait (≥40 px), on four looks including the same accessory from creation; least change ' + JSON.stringify(r.min) + (r.weak.length ? '\n     ' + r.weak.slice(0, 12).join('\n     ') : ''));
+  assert(!r.weak.length, 'every keepsake visibly changes the 40×58 road sprite (front/back ≥16 px, the side view facing it ≥8 px), the portrait (≥40 px) and the battle figure (≥8 px on at least 3 of the 4 looks), on four looks including the same accessory from creation; least change ' + JSON.stringify(r.min) + (r.weak.length ? '\n     ' + r.weak.slice(0, 12).join('\n     ') : ''));
   assert(r.untouched && r.replaced, 'wearing a cap takes the place of the hat chosen at creation, in its own colour, without changing the saved look');
   assert(!errors.length, 'no page errors (sprites) ' + errors.join('; '));
   await p.context().close();
@@ -278,9 +291,11 @@ const helpers = (p) => p.evaluate(() => {
   await p.click('[data-it="lf_ferry_cap"]');
   const pv = await p.evaluate(() => {
     const cvs = Array.from(document.querySelectorAll('.leaf-b canvas[data-prev]'));
-    return { n: cvs.length, drawn: cvs.every((cv) => Array.from(EQT.data(cv)).some((v, i) => i % 4 === 3 && v > 0)), note: document.querySelector('.leaf-b .wear-prev').textContent };
+    const bt = cvs.find((cv) => cv.dataset.dir === 'battle');
+    return { n: cvs.length, drawn: cvs.every((cv) => Array.from(EQT.data(cv)).some((v, i) => i % 4 === 3 && v > 0)), note: document.querySelector('.leaf-b .wear-prev').textContent,
+      battle: !!bt && Math.abs(bt.getBoundingClientRect().width - bt.width * 2) <= 2 && bt.height > 60, bw: bt && [bt.width, bt.getBoundingClientRect().width] };
   });
-  assert(pv.n === 4 && pv.drawn, 'a keepsake\'s detail previews the player wearing it (front, side, back as in battle, portrait)');
+  assert(pv.n === 4 && pv.drawn && pv.battle, 'a keepsake\'s detail previews the player wearing it (front, side, the battle figure seen from behind at the same 2 px per art px, portrait) ' + JSON.stringify(pv.bw));
   assert(!errors.length, 'no page errors (Satchel) ' + errors.join('; '));
   await p.context().close();
 }

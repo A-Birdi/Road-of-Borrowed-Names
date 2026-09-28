@@ -48,7 +48,13 @@ RB.combat = (function () {
     // (letting its feet sit a little lower) rather than under the foe slip
     const ext = RB.enemyArt.extent(enemy.art || 'wisp', enemy.artOpts || {});
     ey = Math.min(Math.max(ey, Math.round(S.y - ext.top * scale + 2)), Math.round(S.y + S.h - 64 * scale));
-    const px = Math.round(S.x + S.w * 0.1), py = Math.round(S.y + S.h - 52 * ps - 8);
+    // the party's feet (rear three-quarter battle figures, RB.battlers): the
+    // player a little in from the left, the companion to their right and a
+    // step nearer; px/py keep the old sprite-corner convention (feet at
+    // px+16ps, py+48ps) for the backdrop's party box and effect anchors
+    const B = RB.battlers;
+    const fX = Math.round(Math.max(S.x + S.w * 0.14, S.x + ((B ? B.ANCHOR.x : 16) + 6) * ps)), fY = Math.round(S.y + S.h - 12 - 8 * ps);
+    const px = fX - 16 * ps, py = fY - 48 * ps;
     const hz = Math.max(0, Math.min(h - 1, Math.round(Math.min(ey + 36 * scale, py + 16 * ps))));
     c.imageSmoothingEnabled = false;
     Sc.backdrop(c, enemy.bgKey || enemy.bg || enemy.region || 'reedwake', w, h, hz, tt, reduce, { S, ex, ey, ext, px, py, ps, scale, art: enemy.art });
@@ -68,24 +74,17 @@ RB.combat = (function () {
     // party (backs to us), each on a small contact shadow
     const s = RB.game.s;
     const look = RB.equip.look(s); // with the equipped keepsake, as on the road
-    const members = [[px, py, look]];
-    if (s.comp) members.push([px + 40 * ps, py + 12, RB.content.chars[s.comp].look]);
-    members.forEach(([x, y, lk], i) => {
-      Sc.shadow(c, x + 16 * ps, y + 46 * ps, 12 * ps, 4 * ps, 0.55);
-      const spr = partySprite(lk);
-      // breathing, as in the world: head and body settle one art pixel onto
-      // the legs every couple of seconds, each on their own beat
-      const u = ((t + i * 1100) % 2600) / 2600;
-      if (!reduce && u > 0.5 && u < 0.92 && spr.height === 48) {
-        const cut = 30;
-        c.drawImage(spr, 0, cut, 32, 48 - cut, x, y + cut * ps, 32 * ps, (48 - cut) * ps);
-        c.drawImage(spr, 0, 0, 32, cut, x, y + ps, 32 * ps, cut * ps);
-      } else c.drawImage(spr, x, y, 32 * ps, 48 * ps);
-    });
-    lastLay = { ex, ey, px, py, ps, scale };
+    const feet = [{ x: fX, y: fY, look, who: 'pc' }];
+    if (s.comp) feet.push({ x: fX + 70 * ps, y: fY + 8 * ps, look: RB.content.chars[s.comp].look, who: 'comp' });
+    for (const m of feet) {
+      Sc.shadow(c, m.x, m.y - 2 * ps, 16 * ps, 5 * ps, 0.55);
+      if (B) m.pts = B.draw(c, m.look, { x: m.x, y: m.y, scale: ps, t, who: m.who, pose: st && st.over === 'win' ? 'cheer' : 'ready', k: 1, reduce });
+      else { const spr = partySprite(m.look); c.drawImage(spr, m.x - 16 * ps, m.y - 48 * ps, 32 * ps, 48 * ps); }
+    }
+    lastLay = { ex, ey, px, py, ps, scale, feet };
     if (st) {
-      Sc.ward(c, px + 16 * ps, py + 16 * ps, 24 * ps, st.ward.pc, ps);
-      if (s.comp) Sc.ward(c, px + 56 * ps, py + 12 + 16 * ps, 24 * ps, st.ward.comp, ps);
+      Sc.ward(c, feet[0].x, feet[0].y - 50 * ps, 40 * ps, st.ward.pc, ps);
+      if (feet[1]) Sc.ward(c, feet[1].x, feet[1].y - 50 * ps, 40 * ps, st.ward.comp, ps);
       if (st.heat) { c.fillStyle = `rgba(255,120,60,${0.08 * st.heat})`; c.fillRect(0, 0, w, h); }
     }
     // effects
@@ -100,6 +99,8 @@ RB.combat = (function () {
   // where the party stands (for effects), in art px; dx/dy in 16×24 sprite units
   function partyAt(dx, dy) {
     const l = lastLay || { px: 40, py: 120, ps: 1 };
+    const m = l.feet && l.feet[(dx || 8) >= 20 && l.feet[1] ? 1 : 0];
+    if (m) return { x: m.x, y: m.y - (48 - (dy || 12) * 2) * 1.8 * l.ps };
     return { x: l.px + (dx || 8) * 2 * l.ps, y: l.py + (dy || 12) * 2 * l.ps };
   }
   function tierOf(obj) {
@@ -485,6 +486,7 @@ RB.combat = (function () {
     const prevSong = RB.audio && RB.audio.currentSong();
     RB.audio && RB.audio.playSong(enemy.music || (enemy.boss ? 'boss' : 'battle'));
     await RB.ui.fade(true, 200);
+    if (RB.battlers && RB.battlers.prewarm) { RB.battlers.prewarm(RB.equip.look(s), 'pc'); if (s.comp) RB.battlers.prewarm(RB.content.chars[s.comp].look, 'comp'); }
     RB.render.setOverride(draw);
     st = L().init(enemy, s, opts);
     st.noFlee = !!opts.noFlee || !!enemy.boss;

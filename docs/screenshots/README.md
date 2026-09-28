@@ -54,6 +54,24 @@ with twice the art detail per tile).
 | Teahouse activity sheet, desktop | [image](after/extra/activity_1280x800.webp) |
 | Journey at 320 px with Japanese interface labels (all four tabs, no scroll arrows) | [image](after/extra/journey_ja_320x640.webp) |
 
+## The character standard (2026-09-28)
+
+Real renders of the built game by `tests/e2e/characters.mjs` (PNG, pixel
+for pixel at 2–3 CSS px per art px, so every art pixel can be inspected).
+See `docs/ART_DIRECTION.md` §10.
+
+| What | Image |
+|---|---|
+| Road sprites at 40×58: every hairstyle, clothing colour and cut, skin tone, hair colour, accessory and keepsake, the companions — front, left, right, back | [image](after/characters/road_options.png) |
+| The player look and the four companions: eight-phase walk and idle breathing, four directions | [image](after/characters/road_walk_cycle.png) |
+| In the world: the player standing in front of Mio, by a house door (depth sorting, scale against the door) | [image](after/characters/world_cast.png) |
+| Battle figure, the player: stance, calm, hit, brace, down, cheer, and anticipate → act → recover for all seven gestures | [image](after/characters/battle_poses_pc.png) |
+| Battle figure, Nao (companion) | [image](after/characters/battle_poses_nao.png) |
+| Battle figure, Ren (companion; lantern kept in the left hand) | [image](after/characters/battle_poses_ren.png) |
+| Ready idle as a frame sequence: the player (5.2-s loop) and two companions (6.0-s loop) — different timing and gestures, feet planted on the line | [image](after/characters/battle_idle_sequence.png) |
+| Battle figures for every creation option, keepsake and a sample of NPCs | [image](after/characters/battle_all_looks.png) |
+| Composition preview drawn by the test (not the battle screen, which still uses the old sprite until the combat code is wired to `RB.battlers`): backdrop, creature and the two figures at scale 1, shown at 2× | [image](after/characters/battle_scene_preview.png) |
+
 ## Map edges and the dialogue (player report, 2026-09-27)
 
 Before = the build before the fix (c6850ad); after = b1185f9. Mill Road (the
