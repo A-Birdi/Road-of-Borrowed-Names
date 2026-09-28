@@ -68,6 +68,8 @@ RB.battlePlaces = (function () {
     anvil: Cx({}), snowman: Cx({}), sa_grave: Cx({}), co_tablet: Cx({}), sb_snowobs: Cx({}), co_iceblock: Cx({}), sb_bellpost: Cx({}), sg_stall: Cx({}), co_bar: Cx({}), co_wheel: Cx({}),
   };
   const WATER = { water: 1, shallow: 1, darkwater: 1 };
+  // props that give light: [height of the light in the sprite (0 top → 1 foot), radius]
+  const GLOW = { co_furnace: [0.7, 40], co_kilnwall: [0.65, 38], kiln: [0.7, 44], campfire: [0.6, 30], lantern: [0.4, 26], lamppost: [0.15, 24], co_glasslantern: [0.3, 24], sb_greatlamp: [0.3, 36], sb_frostlamp: [0.3, 20], sa_lamp: [0.25, 22], atlas_lamp: [0.3, 22], stove: [0.6, 22], sb_irori: [0.6, 26] };
   // the ground as a small grid of codes (what each map cell is), for projecting onto the backdrop's ground
   const CELL = { water: 'w', shallow: 'w', darkwater: 'w', bridgeH: 'b', bridgeV: 'b', path: 'p', road: 'p', sand: 's', grass: 'g', flowers: 'g', tallgrass: 'g', field: 'g', snow: 'n', ice: 'n', ash: 'a', paper: 'q', atlas_sketch: 'q', stonefloor: 'o', glass: 'o', wood: 'd', tatami: 'd', carpet: 'd', cliff: 'c', wall: '#', void: '#', atlas_blank: '#' };
   const CODEOF = { meadow: 'g', sand: 's', snow: 'n', ash: 'a', paper: 'q', stone: 'o', earth: 'p', parch: 'q' };
@@ -555,6 +557,13 @@ RB.battlePlaces = (function () {
       Object.assign(rec, { shown: true, x: r.x, y: r.y, w: r.w, h: r.h, spr, it });
       occ.push(r);
     }
+    // real lights among them glow (indoors, or out of doors after dark): kiln
+    // mouths, furnaces, fires, lit lanterns and lamps
+    if (comp.indoor || comp.night || comp.dark >= 0.35) for (const p of placed) {
+      const g = p.shown && p.spr && GLOW[p.id];
+      if (!g) continue;
+      out.lights.push({ x: p.x + p.w / 2, y: p.y + p.h * g[0], r: g[1], warm: g[2] || null, lit: p.id });
+    }
     // accessories: each cluster goes to the first free place along a band of
     // its zone (its own side first), packed from the band's outer edge inward
     const bands = zonesOf(fr, comp);
@@ -742,6 +751,7 @@ RB.battlePlaces = (function () {
       for (let i = 0; i < colsN; i++) {
         const mx = G.x0 + i, c = at(mx, my);
         if (c === baseCode || !CELLCOL[c] || (comp.indoor && c !== 'o' && c !== 'd')) continue;
+        if (comp.key === 'atlas' && c !== 'p' && c !== 'c') continue; // the Atlas's dressings stay one sheet of parchment
         if (comp.indoor && c === 'd' && comp.floorCode === 'd') continue;
         if (comp.indoor && c === 'o' && comp.floorCode === 'o') continue;
         const q = quadPts(mx, my);
@@ -813,7 +823,7 @@ RB.battlePlaces = (function () {
 
   // ---- painting the static layer ----------------------------------------------------------------------
   function paint(comp, fr, lay) {
-    const A = Art(), k = RB.propKit;
+    const A = Art();
     const { W, H, HZ, S, C } = fr;
     const cv = RB.sprites.makeCanvas(W, H);
     const g = cv.getContext('2d');
@@ -821,7 +831,6 @@ RB.battlePlaces = (function () {
     const region = comp.palRegion, pal = A.palOf(region);
     const X = (f) => S.x + f * S.w;
     const get = (kind) => lay.placed.filter((p) => p.shown && p.paint === kind);
-    const blit = (s, x, y, haze, hazeCol) => { const t = haze ? A.tinted(s, hazeCol, haze, s.cv.width + 'x' + s.cv.height + '|' + x) : s; g.drawImage(t.cv, Math.round(x), Math.round(y)); };
     if (comp.indoor) {
       const R0 = A.ROOMS[comp.key] || A.ROOMS.interior;
       // the floor and walls of this room; the floor's material follows the map
@@ -872,14 +881,12 @@ RB.battlePlaces = (function () {
     for (const q of get('ladder')) ladderTall(g, q, fr, region, comp);
     // world-prop landmarks and context, back to front; those behind the creature in shadow
     const sprites = lay.placed.filter((p) => p.shown && p.spr).sort((a, b) => (a.y + a.h) - (b.y + b.h));
-    const roomShade = comp.indoor ? 'rgba(16,10,26,' : null;
     for (const p of sprites) {
       let s = p.spr;
       const a = comp.indoor ? (p.dimmed ? 0.5 : p.tier === 'wall' ? 0.22 : 0.12) : p.dimmed ? 0.35 : p.tier === 'wall' || p.tier === 'far' ? 0.25 : 0;
       if (a) s = A.tinted(s, comp.indoor ? '#140c1c' : (A.LAND[comp.palRegion] || A.LAND.reedwake).haze, a, p.id + '|' + p.x + '|' + p.y + '|' + comp.id);
       g.drawImage(s.cv, p.x, p.y);
     }
-    void roomShade;
     // accessories
     for (const p of lay.placed) {
       if (!p.shown || p.kind !== 'accessory') continue;
@@ -918,9 +925,9 @@ RB.battlePlaces = (function () {
         for (let i = 0; i < 26; i++) { const x = RB.tiles.hh(i, 81) % W, y = RB.tiles.hh(i, 82) % Math.max(1, HZ - 40); if (!inter(rect(x, y, 1, 1), C)) g.fillRect(x, y, 1, 1); }
       }
       if (comp.tint) { g.fillStyle = comp.tint; g.fillRect(0, 0, W, H); }
+      for (const l of lay.lights) A.pool(g, l.x, l.y, l.r, Math.round(l.r * 0.8), '255,196,110', 0.24);
     }
     if (comp.key === 'atlas') { g.globalCompositeOperation = 'color'; g.fillStyle = 'rgba(150,120,80,0.28)'; g.fillRect(0, HZ, W, H - HZ); g.globalCompositeOperation = 'source-over'; }
-    void C; void k;
     return cv;
   }
   function spans(xs, gap) {
@@ -947,65 +954,6 @@ RB.battlePlaces = (function () {
     const wd = RB.propKit.mat(pal).wood;
     Art().R(g, x0, base - 7, x1 - x0, 1, wd[3]); Art().R(g, x0, base - 4, x1 - x0, 1, wd[2]);
     for (let x = x0; x < x1; x += 7) Art().R(g, x, base - 9, 1, 9, wd[1]);
-  }
-  // Water outdoors, over the depths the map has it at: far water is a band on
-  // the horizon; water beside the encounter runs from the horizon (or from
-  // where it begins) toward the viewer, widening with perspective; water only
-  // behind the viewer (south of the encounter) is a strip along the bottom.
-  // Its shore gets a lit rim, and reeds where this stretch of map has reeds.
-  function waterOutdoor(g, w, fr, pal, comp) {
-    const A = Art(), { S, HZ, H, W } = fr;
-    const t = w.it.tiers, v = comp.view;
-    const cfx = fr.C.x + fr.C.w / 2;
-    const touchL = w.it.mx <= v.x0, touchR = w.it.mx + w.it.w - 1 >= v.x1;
-    const yT = t.far ? HZ - 7 : t.mid ? HZ + 1 : Math.round(S.y + S.h - 12);
-    const yB = t.near ? H : t.mid ? Math.round(fr.feet + 4) : HZ + 2;
-    const sp = (y) => 1 + 0.55 * Math.max(0, (y - HZ) / Math.max(1, H - HZ));
-    const xl = (y) => (touchL ? -4 : Math.round(cfx + (w.x0 - cfx) * sp(y)));
-    const xr = (y) => (touchR ? W + 4 : Math.round(cfx + (w.x1 - cfx) * sp(y)));
-    if (!t.mid && !t.near) {
-      A.water(g, [xl(HZ), HZ - 7, xr(HZ), HZ - 7, xr(HZ), HZ + 2, xl(HZ), HZ + 2], pal);
-      A.R(g, xl(HZ), HZ + 2, xr(HZ) - xl(HZ), 1, pal.water[3]);
-      return;
-    }
-    const pts = [xl(yT), yT, xr(yT), yT, xr(yB), yB, xl(yB), yB];
-    A.water(g, pts, pal);
-    const rim = pal.sand ? pal.sand[1] : pal.water[3];
-    // shore rims: the far edge when the water begins in front of the horizon, and the side edges inside the view
-    if (yT > HZ + 1) A.R(g, xl(yT), yT - 1, xr(yT) - xl(yT), 2, rim);
-    const edges = [];
-    if (!touchL) edges.push([xl(yT), yT, xl(yB), yB]);
-    if (!touchR) edges.push([xr(yT), yT, xr(yB), yB]);
-    for (const [ax, ay, bx, by] of edges) for (let y = ay; y < by; y++) { const u = (y - ay) / Math.max(1, by - ay); A.R(g, Math.round(ax + (bx - ax) * u) - 1, y, 2, 1, rim); }
-    if (comp.has.reeds) for (const [ax, ay, bx, by] of edges) for (let i = 0; i < 6; i++) {
-      const u = 0.1 + i * 0.15, x = Math.round(ax + (bx - ax) * u), y = Math.round(ay + (by - ay) * u);
-      const r = rect(x - 6, y - 18, 12, 18);
-      if (!inter(r, fr.C) && !inter(r, fr.P)) reedClump(g, x, y, 10 + Math.round(u * 14), pal, i + 3);
-    }
-  }
-
-  function waterIndoor(g, w, fr, pal) {
-    const A = Art(), { HZ, H, S } = fr;
-    const x0 = Math.max(0, w.x0), x1 = Math.min(fr.W, w.x1);
-    const k = (x1 - x0) / 2, cx = (x0 + x1) / 2, vx = S.x + S.w * 0.5;
-    // a channel running from the back wall toward the viewer, widening
-    const bl = cx - k, br = cx + k, nl = vx + (bl - vx) * 1.7, nr = vx + (br - vx) * 1.7;
-    A.water(g, [bl, HZ, br, HZ, nr, H, nl, H], pal);
-    A.R(g, bl, HZ, br - bl, 1, 'rgba(10,8,20,0.5)');
-  }
-  function bridgeAt(g, b, fr, pal, indoor) {
-    const A = Art(), wd = RB.propKit.mat(pal).wood;
-    const y = indoor ? fr.HZ + Math.round((fr.H - fr.HZ) * 0.18) : fr.HZ - 2;
-    const x0 = b.x0 - 6, x1 = b.x1 + 6;
-    A.R(g, x0, y, x1 - x0, 4, wd[2]); A.R(g, x0, y, x1 - x0, 1, wd[3]); A.R(g, x0, y + 4, x1 - x0, 1, wd[0]);
-    for (let x = x0; x < x1; x += 5) A.R(g, x, y + 1, 1, 3, wd[1]);
-  }
-  function pathWedge(g, xn, xf, fr, pal, ground) {
-    const A = Art(), { HZ, H } = fr;
-    const c = ground === 'snow' ? ['#c8d0d8', '#d6dde4'] : ground === 'sand' ? [pal.sand[2], pal.sand[0]] : [pal.dirt[2], pal.dirt[0]];
-    const pts = [xf - 3, HZ + 1, xf + 3, HZ + 1, xn + 26, H, xn - 26, H];
-    RB.propKit.poly(g, pts, c[1]);
-    for (let y = HZ + 2; y < H; y += 3) { const u = (y - HZ) / (H - HZ), x = xf + (xn - xf) * u, half = 3 + 23 * u; A.R(g, Math.round(x - half), y, 1 + Math.round(u * 2), 1, c[0]); A.R(g, Math.round(x + half - 1 - u * 2), y, 1 + Math.round(u * 2), 1, c[0]); }
   }
   // The ladder to the floor above: rails from the floor to the top of the wall,
   // rungs, and the dark square of the loft hatch it leads into.

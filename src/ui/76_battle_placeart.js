@@ -28,7 +28,6 @@ RB.battlePlaceArt = (function () {
   // ---- fixed material ramps (dark → light) -------------------------------------------------
   const HESSIAN = ['#4e3e2c', '#7a6246', '#a88e66', '#cdb58a', '#e8d8b0'];
   const FLOUR = ['#b8b0a0', '#d4ccbc', '#e8e2d4', '#f4f0e6', '#fffdf6'];
-  const SEPIA = 'rgba(122,92,58,';
 
   // ---- sprites: a canvas, its size and its anchor (the contact point, bottom centre) ----------
   const sprites = new Map();
@@ -612,23 +611,6 @@ RB.battlePlaceArt = (function () {
     }
     R(g, x0, base - 1, x1 - x0, 1, s[0]);
   }
-  // Water between two x ranges from the horizon to a bottom line: a surface
-  // in bands, a lit shore edge and still glints. side: which edge is the
-  // shore ('left' water is to the left of the shore line, etc.).
-  function water(g, poly, pal) {
-    const w = pal.water, k = K();
-    k.poly(g, poly, w[0]);
-    let y0 = 1e9, y1 = -1e9;
-    for (let i = 1; i < poly.length; i += 2) { y0 = Math.min(y0, poly[i]); y1 = Math.max(y1, poly[i]); }
-    // bands toward the viewer are lighter; every band keeps inside the shape
-    const cv = mk(g.canvas.width, g.canvas.height), c2 = cv.getContext('2d');
-    for (let y = Math.floor(y0); y < y1; y++) { const u = (y - y0) / Math.max(1, y1 - y0); c2.fillStyle = u < 0.2 ? w[0] : u < 0.55 ? w[1] : w[1]; c2.fillRect(0, y, cv.width, 1); }
-    for (let i = 0; i < 90; i++) { const x = hh(i, 7, 1) % cv.width, y = y0 + (hh(i, 7, 2) % Math.max(1, Math.round(y1 - y0))); const l = 3 + (i % 4); c2.fillStyle = i % 3 ? w[2] : w[3]; c2.fillRect(x, Math.round(y), l, 1); }
-    c2.globalCompositeOperation = 'destination-in';
-    k.poly(c2, poly, '#000');
-    g.drawImage(cv, 0, 0);
-  }
-
   // Water inside a mask (the water cells projected onto the ground): bands,
   // lighter toward the viewer, clustered ripple marks, never blurred.
   function waterIn(g, mask, y0, y1, pal, dark) {
@@ -891,16 +873,6 @@ RB.battlePlaceArt = (function () {
     R(g, cx - w / 2, HZ - h, w, h, '#120e18'); R(g, cx - w / 2, HZ - h, w, 3, '#0a0810');
     R(g, cx - w / 2 + 2, HZ - 6, w - 4, 6, 'rgba(60,50,70,0.5)');
   }
-  // A window high in the wall: dim sky behind a lattice.
-  function windowPane(g, cx, y, w, h, region, sky) {
-    const M = K().mat(palOf(region)), wd = M.wood;
-    R(g, cx - w / 2 - 2, y - 2, w + 4, h + 4, wd[1]); R(g, cx - w / 2 - 2, y - 2, w + 4, 1, wd[3]);
-    R(g, cx - w / 2, y, w, h, sky || '#7e98a8'); R(g, cx - w / 2, y, w, 2, '#a8c0cc');
-    R(g, Math.round(cx) - 1, y, 2, h, wd[0]); R(g, cx - w / 2, y + Math.round(h / 2), w, 1, wd[0]);
-  }
-  // The mill's gear train as the backdrop sees it: a great toothed wheel in
-  // shadow, its pinion and the upright shaft — the same machinery as the
-  // map's gear frame, drawn at the size a room shows it.
   // A wooden pit wheel: a rim of pegged cogs on a cross of arms, lit along
   // its upper left, in the room's shadow; its axle runs back into the wall.
   function bigGear(g, cx, cy, r, region, lit) {
@@ -967,7 +939,7 @@ RB.battlePlaceArt = (function () {
   }
 
   return {
-    worldProp, acc, tinted, facade, wheel, treeline, rocks, water, waterIn, land, room, wallDress, posts, beam, doorway, windowPane, bigGear, stairsDown, shaft, pool, shade, dimR, DUSK,
-    ROOMS, LAND, GROUND, ACC, palOf, R, SEPIA, ridge,
+    worldProp, acc, tinted, facade, wheel, treeline, rocks, waterIn, land, room, wallDress, posts, beam, doorway, bigGear, stairsDown, shaft, pool, shade, dimR, DUSK,
+    ROOMS, LAND, GROUND, ACC, palOf, R, ridge,
   };
 })();

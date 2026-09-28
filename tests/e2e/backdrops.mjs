@@ -19,7 +19,7 @@
 // Captures (with the chosen context and seed in the name, and a JSON record
 // beside each) go to tests/e2e/out/backdrops/. With --docs, representative
 // ones are copied to docs/screenshots/backdrops/ as WebP.
-// Usage: node tests/e2e/backdrops.mjs [--docs] [--only a,b,c,d,e,f,all]
+// Usage: node tests/e2e/backdrops.mjs [--docs] [--only a,b,c,d,e,f,atlas,phone,all]
 import fs from 'node:fs';
 import path from 'node:path';
 import { serve, launch, page, root } from './lib.mjs';
@@ -342,6 +342,55 @@ if (want('f')) {
   }
 }
 
+// ---- an Unwritten Atlas room keeps the parchment map's identity ------------------------------------
+if (want('atlas')) {
+  await p.evaluate(() => {
+    RB.game.debugStart('rw.hall', 5, 5, { comp: 'mio', profile: 'E', flags: { post: true } });
+    RB.game.settings.textSpeed = 'instant';
+    RB.atlas._debug.flags.seed = 7;
+    RB.hooks.atlas_start([], {});
+  });
+  for (let i = 0; i < 150; i++) {
+    const ok = await p.evaluate(() => {
+      if (RB.atlas._debug.run() && !RB.ui.dialogue.isOpen()) return true;
+      const ch = document.querySelector('.choices:not(.hidden) button'); if (ch) { ch.click(); return false; }
+      const pb = [...document.querySelectorAll('.panel .foot .btn.primary, .panel [data-ok], .folio [data-ok], .csheet .foot .pbtn.primary')].find((e) => e.offsetParent); if (pb) { pb.click(); return false; }
+      if (RB.ui.dialogue.isOpen()) RB.ui.dialogue.advance(true);
+      return false;
+    });
+    if (ok) break;
+    await p.waitForTimeout(80);
+  }
+  const room = await p.evaluate(() => { const plan = RB.atlas._debug.plan(); const r = Object.values(plan).find((q) => q.foes.length); return r ? { id: r.id, foe: r.foes[0] } : null; });
+  assert(!!room, 'an expedition with a foe in one of its rooms (' + (room && room.id) + ')');
+  if (room) {
+    await p.evaluate((room) => { RB.game.settings.reducedMotion = true; RB.game.applySettings(); RB.game.startBattle(room.foe.enemy, { where: { map: room.id, x: room.foe.x, y: room.foe.y }, presentSeed: 3 }); }, room);
+    await cards();
+    await p.waitForTimeout(250);
+    const r = await p.evaluate(() => RB.battlePlaces.last());
+    await capture(r, 'atlas');
+    assert(r.key === 'atlas' && !r.fallback && r.fam === 'atlas', 'the Atlas room composes its own place on the parchment map (' + r.zone + ')');
+    assert(!(await traceable(r)).length && !zoneProblems(r).length, 'its pieces are on the generated map and everything is in a valid zone');
+  }
+  await leave();
+}
+
+// ---- a phone: the stage is a narrow strip, the same rules hold ------------------------------------
+if (want('phone')) {
+  const ph = await page(b, url, { viewport: { width: 390, height: 844 }, touch: true, mobile: true, dpr: 2 });
+  const keep = p; p = ph.p;
+  for (const o of [{ map: 'rw.mill1', foe: 'm1a', flags: { rw_mill_open: true, rw_gears: true }, seed: 3 }, { map: 'rw.millroad', foe: 'f3', flags: { rw_mill_open: true }, seed: 3 }, { map: 'sg.cove', foe: 'c2', seed: 3 }]) {
+    const r = await battle(o);
+    await capture(r, 'phone-' + o.foe);
+    const probs = zoneProblems(r);
+    assert(!r.fallback && !probs.length, 'phone ' + r.map + ': composed, everything in a valid zone (' + (probs.join('; ') || r.accessoriesPlaced.filter((q) => q.shown).length + ' clusters shown') + ')');
+    await leave();
+  }
+  errors.push(...ph.errors);
+  await ph.ctx.close();
+  p = keep;
+}
+
 // ---- every other place that hosts a battle composes a backdrop ------------------------------------
 if (want('all')) {
   const all = await p.evaluate(() => {
@@ -376,7 +425,7 @@ if (DOCS) {
   const dir = path.join(root, 'docs', 'screenshots', 'backdrops');
   fs.mkdirSync(dir, { recursive: true });
   const q = await (await b.newContext()).newPage();
-  for (const c of captures.filter((c) => /^(a-|b-|c-|d-after|boss-)/.test(c.label))) {
+  for (const c of captures.filter((c) => /^(a-|b-|c-|d-after|boss-|atlas|phone-)/.test(c.label))) {
     const data = 'data:image/png;base64,' + fs.readFileSync(c.file).toString('base64');
     const b64 = await q.evaluate(async (data) => {
       const img = new Image(); img.src = data; await img.decode();
