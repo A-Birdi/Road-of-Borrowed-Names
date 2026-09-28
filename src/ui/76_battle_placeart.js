@@ -235,6 +235,20 @@ RB.battlePlaceArt = (function () {
       if (v % 3 !== 2) { k.line(g, 25, 6, 25, 12, wd[1]); for (let a = 0; a < 7; a++) R(g, 25 + Math.round(Math.cos(a / 6 * PI) * 3), 13 + Math.round(Math.sin(a / 6 * PI) * 3), 1, 1, '#9593a0'); }
     },
   });
+  // A plank shelf on two brackets with jars and a bundle on it (anchor: its
+  // top centre on the wall).
+  A('shelfJars', {
+    box: [34, 22], anchor: [17, 0],
+    draw(g, M, v, pal, k) {
+      const wd = M.wood;
+      R(g, 1, 14, 32, 3, wd[3]); R(g, 1, 14, 32, 1, wd[4]); R(g, 1, 16, 32, 1, wd[1]);
+      for (const x of [5, 27]) { R(g, x, 17, 2, 4, wd[1]); k.line(g, x + 1, 20, x + 3, 17, wd[2]); }
+      const jar = (x, c5, h) => { for (let y = 0; y < h; y++) { const half = y < 2 ? 2 : 3; for (let i = -half; i < half; i++) R(g, x + i, 14 - h + y, 1, 1, k.cylCol(i + half, half * 2, c5)); } R(g, x - 2, 14 - h - 1, 4, 1, c5[1]); };
+      jar(7, k.FIX.clay, 8); jar(14, v % 2 ? k.FIX.ceramic : k.FIX.clay, 10);
+      if (v !== 1) jar(21, k.FIX.ceramic, 7);
+      R(g, 24, 10, 7, 4, k.FIX.paper[2]); R(g, 24, 10, 7, 1, k.FIX.paper[4]); R(g, 27, 10, 1, 4, '#8a5a3a');
+    },
+  });
   // A woven basket (v: grain, apples, empty).
   A('basket', {
     box: [16, 11], anchor: [8, 10],
@@ -753,7 +767,7 @@ RB.battlePlaceArt = (function () {
     const pal = palOf(sp.region), M = K().mat(pal), k = K();
     const wd = dimR(M.wood, 0.28), st = M.stone;
     // plaster in the room's warm shadow
-    const WS = '#3a2418', wl = [mix(pal.wall[2], WS, 0.6), mix(pal.wall[2], WS, 0.48), mix(pal.wall[1], WS, 0.42), mix(pal.wall[0], WS, 0.42), mix(pal.wall[0], WS, 0.3)];
+    const WS = '#34201a', wl = [mix(pal.wall[2], WS, 0.68), mix(pal.wall[2], WS, 0.58), mix(pal.wall[1], WS, 0.54), mix(pal.wall[0], WS, 0.52), mix(pal.wall[0], WS, 0.42)];
     const brick = sp.wall === 'brick';
     const beamY = sp.beamY != null ? sp.beamY : Math.round(HZ * 0.3);
     // back wall

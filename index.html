@@ -29631,6 +29631,20 @@ RB.battlePlaceArt = (function () {
       if (v % 3 !== 2) { k.line(g, 25, 6, 25, 12, wd[1]); for (let a = 0; a < 7; a++) R(g, 25 + Math.round(Math.cos(a / 6 * PI) * 3), 13 + Math.round(Math.sin(a / 6 * PI) * 3), 1, 1, '#9593a0'); }
     },
   });
+  // A plank shelf on two brackets with jars and a bundle on it (anchor: its
+  // top centre on the wall).
+  A('shelfJars', {
+    box: [34, 22], anchor: [17, 0],
+    draw(g, M, v, pal, k) {
+      const wd = M.wood;
+      R(g, 1, 14, 32, 3, wd[3]); R(g, 1, 14, 32, 1, wd[4]); R(g, 1, 16, 32, 1, wd[1]);
+      for (const x of [5, 27]) { R(g, x, 17, 2, 4, wd[1]); k.line(g, x + 1, 20, x + 3, 17, wd[2]); }
+      const jar = (x, c5, h) => { for (let y = 0; y < h; y++) { const half = y < 2 ? 2 : 3; for (let i = -half; i < half; i++) R(g, x + i, 14 - h + y, 1, 1, k.cylCol(i + half, half * 2, c5)); } R(g, x - 2, 14 - h - 1, 4, 1, c5[1]); };
+      jar(7, k.FIX.clay, 8); jar(14, v % 2 ? k.FIX.ceramic : k.FIX.clay, 10);
+      if (v !== 1) jar(21, k.FIX.ceramic, 7);
+      R(g, 24, 10, 7, 4, k.FIX.paper[2]); R(g, 24, 10, 7, 1, k.FIX.paper[4]); R(g, 27, 10, 1, 4, '#8a5a3a');
+    },
+  });
   // A woven basket (v: grain, apples, empty).
   A('basket', {
     box: [16, 11], anchor: [8, 10],
@@ -30149,7 +30163,7 @@ RB.battlePlaceArt = (function () {
     const pal = palOf(sp.region), M = K().mat(pal), k = K();
     const wd = dimR(M.wood, 0.28), st = M.stone;
     // plaster in the room's warm shadow
-    const WS = '#3a2418', wl = [mix(pal.wall[2], WS, 0.6), mix(pal.wall[2], WS, 0.48), mix(pal.wall[1], WS, 0.42), mix(pal.wall[0], WS, 0.42), mix(pal.wall[0], WS, 0.3)];
+    const WS = '#34201a', wl = [mix(pal.wall[2], WS, 0.68), mix(pal.wall[2], WS, 0.58), mix(pal.wall[1], WS, 0.54), mix(pal.wall[0], WS, 0.52), mix(pal.wall[0], WS, 0.42)];
     const brick = sp.wall === 'brick';
     const beamY = sp.beamY != null ? sp.beamY : Math.round(HZ * 0.3);
     // back wall
@@ -30610,7 +30624,8 @@ RB.battlePlaces = (function () {
     baskets: { zone: 'base', w: 28, items: [['a:basket', 0, 0, 0], ['a:jar', 13, -1, 0]] },
     grain: { zone: 'base', w: 30, items: [['a:basket', 0, 0, 0], ['a:sack', 14, -1, 1]] },
     hay: { zone: 'base', w: 40, items: [['w:hay', 0, 0, 0], ['a:sackLie', 20, 2, 0]] },
-    cobweb: { zone: 'corner', w: 14, items: [['a:cobweb', 0, 0, 0]] },
+    cobweb: { zone: 'corner', w: 14, extra: 1, items: [['a:cobweb', 0, 0, 0]] },
+    shelf: { zone: 'hang', w: 36, items: [['a:shelfJars', 0, 0, 0]] },
     stool: { zone: 'base', w: 26, items: [['a:stool', 0, 0, 0], ['a:candle', 0, -10, 0]], light: 1 },
     pots: { zone: 'base', w: 30, items: [['a:pots', 0, 0, 0], ['a:jar', 15, 0, 0]] },
     firewood: { zone: 'base', w: 24, items: [['a:firewood', 0, 0, 1]] },
@@ -30637,9 +30652,9 @@ RB.battlePlaces = (function () {
   // where a cluster may go when its own zone is full or out of view
   const ZONES = { base: ['base', 'side', 'fore'], side: ['side', 'base', 'fore'], fore: ['fore', 'side', 'base'], hang: ['hang'], beam: ['beam', 'hang'], corner: ['corner'] };
   const POOLS = {
-    mill: ['sacks', 'sacks2', 'lanternCrate', 'storage', 'rope', 'tools', 'broom', 'scrolls', 'scroll1', 'hangLamp', 'baskets', 'grain', 'hay', 'cobweb'],
-    interior: ['lanternCrate', 'storage', 'rope', 'scrolls', 'books', 'baskets', 'stool', 'cobweb'],
-    kiln: ['pots', 'firewood', 'buckets', 'ash', 'lanternCrate', 'rope', 'sacks2', 'baskets', 'tools'],
+    mill: ['sacks', 'sacks2', 'lanternCrate', 'storage', 'rope', 'tools', 'broom', 'scrolls', 'scroll1', 'hangLamp', 'baskets', 'grain', 'hay', 'shelf', 'cobweb'],
+    interior: ['lanternCrate', 'storage', 'rope', 'scrolls', 'books', 'baskets', 'stool', 'shelf', 'cobweb'],
+    kiln: ['pots', 'firewood', 'buckets', 'ash', 'lanternCrate', 'rope', 'sacks2', 'baskets', 'tools', 'shelf'],
     archive: ['books', 'pages', 'papers', 'candles', 'puddle', 'scroll1', 'lanternCrate', 'cobweb', 'stool'],
     observatory: ['charts', 'books', 'papers', 'candles', 'stool', 'scroll1', 'storage', 'cobweb'],
     belltower: ['papers', 'books', 'lanternCrate', 'storage', 'rope', 'candles', 'scroll1', 'pages', 'hangLamp'],
@@ -30721,8 +30736,9 @@ RB.battlePlaces = (function () {
     const pool = POOLS[poolKey].filter((k, i, a) => a.indexOf(k) === i && (!CL[k].needs || has[CL[k].needs]));
     // indoors: one or two things on the wall, two or three on the floor; outdoors: three to five on the ground
     const onWall = (k) => CL[k].zone === 'hang' || CL[k].zone === 'beam' || CL[k].zone === 'corner';
-    const wallPool = rng.shuffle(pool.filter(onWall)), floorPool = rng.shuffle(pool.filter((k) => !onWall(k)));
-    const chosen = out.indoor ? wallPool.slice(0, 2 + rng.int(2)).concat(floorPool.slice(0, 2 + rng.int(2))) : floorPool.slice(0, 3 + rng.int(3));
+    const wallPool = rng.shuffle(pool.filter((k) => onWall(k) && !CL[k].extra)), floorPool = rng.shuffle(pool.filter((k) => !onWall(k)));
+    const extras = pool.filter((k) => CL[k].extra && rng() < 0.5);
+    const chosen = out.indoor ? wallPool.slice(0, 2 + rng.int(2)).concat(floorPool.slice(0, 2 + rng.int(2)), extras) : floorPool.slice(0, 3 + rng.int(3));
     // a lit room keeps at most one extra light; sides alternate so clusters spread
     let lights = 0;
     out.accessories = [];
@@ -30943,8 +30959,9 @@ RB.battlePlaces = (function () {
           const mem = members(ax, b.y);
           const bb = box(mem);
           if (!free(rect(bb.x - 3, bb.y - 1, bb.w + 6, bb.h + 2), true)) continue;
-          // nothing set down on water
+          // nothing set down on water; what grows by water only by it
           if (b.zone !== 'hang' && b.zone !== 'beam' && b.zone !== 'corner' && wet(bb.x + bb.w * 0.15, bb.x + bb.w * 0.85, b.y - 1)) continue;
+          if (cl.needs === 'water' && !(wet(bb.x - 24, bb.x + bb.w + 24, b.y - 1) || wet(bb.x - 24, bb.x + bb.w + 24, b.y + 6) || wet(bb.x - 24, bb.x + bb.w + 24, b.y - 8))) continue;
           // at most a third of it past the stage's edge
           if (bb.x + bb.w * 0.66 > b.edge.r || bb.x + bb.w * 0.34 < b.edge.l) continue;
           rec.zone = zl[b.zi];
@@ -31210,12 +31227,16 @@ RB.battlePlaces = (function () {
       const bl = lay.placed.filter((p) => p.shown && (p.paint === 'facade' || p.paint === 'wheel')).sort((a, b) => (b.haze || 0) - (a.haze || 0));
       const haze = (A.LAND[sky] || A.LAND.reedwake).haze;
       for (const b of bl) {
-        const tmp = RB.sprites.makeCanvas(W, H), tg = tmp.getContext('2d');
+        // drawn on its own small canvas, washed toward the haze with distance
+        const ox = Math.round(b.x) - 8, oy = Math.round(b.y) - 40, tw = Math.round(b.w) + 16, th = Math.round(b.h) + 56;
+        const tmp = RB.sprites.makeCanvas(tw, th), tg = tmp.getContext('2d');
         tg.imageSmoothingEnabled = false;
-        if (b.paint === 'facade') A.facade(tg, b.x, b.by, b.it.st, b.tp, region, { lit: comp.dark > 0.3 });
+        tg.translate(-ox, -oy);
+        if (b.paint === 'facade') A.facade(tg, b.x, b.by, b.it.st, b.tp, region, { lit: comp.night || comp.dark > 0.3 });
         else A.wheel(tg, b.cx, b.cy, b.r, region, 0);
-        if (b.haze) { tg.globalCompositeOperation = 'source-atop'; tg.globalAlpha = b.haze; tg.fillStyle = haze; tg.fillRect(0, 0, W, H); }
-        g.drawImage(tmp, 0, 0);
+        tg.setTransform(1, 0, 0, 1, 0, 0);
+        if (b.haze) { tg.globalCompositeOperation = 'source-atop'; tg.globalAlpha = b.haze; tg.fillStyle = haze; tg.fillRect(0, 0, tw, th); }
+        g.drawImage(tmp, ox, oy);
       }
     }
     // landmarks with their own painters
@@ -31442,7 +31463,7 @@ RB.battlePlaces = (function () {
   // draw(c, key, w, h, hz, t, still, frame): the backdrop for this frame; returns
   // false when there is no composed place (the caller then paints the region backdrop).
   function draw(c, key, w, h, hz, t, still, F) {
-    if (!cur || cur.fallback || !F || !F.S || cur.key !== key) return false;
+    if (!cur || cur.fallback || !F || !F.S || cur.key !== key || dbg.off) return false;
     const u = Math.max(1, Math.round(F.scale || 1));
     const W = Math.ceil(w / u), H = Math.ceil(h / u);
     if (cur.artBox === undefined) cur.artBox = artBox(F.art || 'wisp', cur.artOpts) || null;

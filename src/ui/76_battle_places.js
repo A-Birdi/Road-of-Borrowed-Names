@@ -252,7 +252,8 @@ RB.battlePlaces = (function () {
     baskets: { zone: 'base', w: 28, items: [['a:basket', 0, 0, 0], ['a:jar', 13, -1, 0]] },
     grain: { zone: 'base', w: 30, items: [['a:basket', 0, 0, 0], ['a:sack', 14, -1, 1]] },
     hay: { zone: 'base', w: 40, items: [['w:hay', 0, 0, 0], ['a:sackLie', 20, 2, 0]] },
-    cobweb: { zone: 'corner', w: 14, items: [['a:cobweb', 0, 0, 0]] },
+    cobweb: { zone: 'corner', w: 14, extra: 1, items: [['a:cobweb', 0, 0, 0]] },
+    shelf: { zone: 'hang', w: 36, items: [['a:shelfJars', 0, 0, 0]] },
     stool: { zone: 'base', w: 26, items: [['a:stool', 0, 0, 0], ['a:candle', 0, -10, 0]], light: 1 },
     pots: { zone: 'base', w: 30, items: [['a:pots', 0, 0, 0], ['a:jar', 15, 0, 0]] },
     firewood: { zone: 'base', w: 24, items: [['a:firewood', 0, 0, 1]] },
@@ -279,9 +280,9 @@ RB.battlePlaces = (function () {
   // where a cluster may go when its own zone is full or out of view
   const ZONES = { base: ['base', 'side', 'fore'], side: ['side', 'base', 'fore'], fore: ['fore', 'side', 'base'], hang: ['hang'], beam: ['beam', 'hang'], corner: ['corner'] };
   const POOLS = {
-    mill: ['sacks', 'sacks2', 'lanternCrate', 'storage', 'rope', 'tools', 'broom', 'scrolls', 'scroll1', 'hangLamp', 'baskets', 'grain', 'hay', 'cobweb'],
-    interior: ['lanternCrate', 'storage', 'rope', 'scrolls', 'books', 'baskets', 'stool', 'cobweb'],
-    kiln: ['pots', 'firewood', 'buckets', 'ash', 'lanternCrate', 'rope', 'sacks2', 'baskets', 'tools'],
+    mill: ['sacks', 'sacks2', 'lanternCrate', 'storage', 'rope', 'tools', 'broom', 'scrolls', 'scroll1', 'hangLamp', 'baskets', 'grain', 'hay', 'shelf', 'cobweb'],
+    interior: ['lanternCrate', 'storage', 'rope', 'scrolls', 'books', 'baskets', 'stool', 'shelf', 'cobweb'],
+    kiln: ['pots', 'firewood', 'buckets', 'ash', 'lanternCrate', 'rope', 'sacks2', 'baskets', 'tools', 'shelf'],
     archive: ['books', 'pages', 'papers', 'candles', 'puddle', 'scroll1', 'lanternCrate', 'cobweb', 'stool'],
     observatory: ['charts', 'books', 'papers', 'candles', 'stool', 'scroll1', 'storage', 'cobweb'],
     belltower: ['papers', 'books', 'lanternCrate', 'storage', 'rope', 'candles', 'scroll1', 'pages', 'hangLamp'],
@@ -363,8 +364,9 @@ RB.battlePlaces = (function () {
     const pool = POOLS[poolKey].filter((k, i, a) => a.indexOf(k) === i && (!CL[k].needs || has[CL[k].needs]));
     // indoors: one or two things on the wall, two or three on the floor; outdoors: three to five on the ground
     const onWall = (k) => CL[k].zone === 'hang' || CL[k].zone === 'beam' || CL[k].zone === 'corner';
-    const wallPool = rng.shuffle(pool.filter(onWall)), floorPool = rng.shuffle(pool.filter((k) => !onWall(k)));
-    const chosen = out.indoor ? wallPool.slice(0, 2 + rng.int(2)).concat(floorPool.slice(0, 2 + rng.int(2))) : floorPool.slice(0, 3 + rng.int(3));
+    const wallPool = rng.shuffle(pool.filter((k) => onWall(k) && !CL[k].extra)), floorPool = rng.shuffle(pool.filter((k) => !onWall(k)));
+    const extras = pool.filter((k) => CL[k].extra && rng() < 0.5);
+    const chosen = out.indoor ? wallPool.slice(0, 2 + rng.int(2)).concat(floorPool.slice(0, 2 + rng.int(2)), extras) : floorPool.slice(0, 3 + rng.int(3));
     // a lit room keeps at most one extra light; sides alternate so clusters spread
     let lights = 0;
     out.accessories = [];
@@ -585,8 +587,9 @@ RB.battlePlaces = (function () {
           const mem = members(ax, b.y);
           const bb = box(mem);
           if (!free(rect(bb.x - 3, bb.y - 1, bb.w + 6, bb.h + 2), true)) continue;
-          // nothing set down on water
+          // nothing set down on water; what grows by water only by it
           if (b.zone !== 'hang' && b.zone !== 'beam' && b.zone !== 'corner' && wet(bb.x + bb.w * 0.15, bb.x + bb.w * 0.85, b.y - 1)) continue;
+          if (cl.needs === 'water' && !(wet(bb.x - 24, bb.x + bb.w + 24, b.y - 1) || wet(bb.x - 24, bb.x + bb.w + 24, b.y + 6) || wet(bb.x - 24, bb.x + bb.w + 24, b.y - 8))) continue;
           // at most a third of it past the stage's edge
           if (bb.x + bb.w * 0.66 > b.edge.r || bb.x + bb.w * 0.34 < b.edge.l) continue;
           rec.zone = zl[b.zi];
@@ -852,12 +855,16 @@ RB.battlePlaces = (function () {
       const bl = lay.placed.filter((p) => p.shown && (p.paint === 'facade' || p.paint === 'wheel')).sort((a, b) => (b.haze || 0) - (a.haze || 0));
       const haze = (A.LAND[sky] || A.LAND.reedwake).haze;
       for (const b of bl) {
-        const tmp = RB.sprites.makeCanvas(W, H), tg = tmp.getContext('2d');
+        // drawn on its own small canvas, washed toward the haze with distance
+        const ox = Math.round(b.x) - 8, oy = Math.round(b.y) - 40, tw = Math.round(b.w) + 16, th = Math.round(b.h) + 56;
+        const tmp = RB.sprites.makeCanvas(tw, th), tg = tmp.getContext('2d');
         tg.imageSmoothingEnabled = false;
-        if (b.paint === 'facade') A.facade(tg, b.x, b.by, b.it.st, b.tp, region, { lit: comp.dark > 0.3 });
+        tg.translate(-ox, -oy);
+        if (b.paint === 'facade') A.facade(tg, b.x, b.by, b.it.st, b.tp, region, { lit: comp.night || comp.dark > 0.3 });
         else A.wheel(tg, b.cx, b.cy, b.r, region, 0);
-        if (b.haze) { tg.globalCompositeOperation = 'source-atop'; tg.globalAlpha = b.haze; tg.fillStyle = haze; tg.fillRect(0, 0, W, H); }
-        g.drawImage(tmp, 0, 0);
+        tg.setTransform(1, 0, 0, 1, 0, 0);
+        if (b.haze) { tg.globalCompositeOperation = 'source-atop'; tg.globalAlpha = b.haze; tg.fillStyle = haze; tg.fillRect(0, 0, tw, th); }
+        g.drawImage(tmp, ox, oy);
       }
     }
     // landmarks with their own painters
@@ -1084,7 +1091,7 @@ RB.battlePlaces = (function () {
   // draw(c, key, w, h, hz, t, still, frame): the backdrop for this frame; returns
   // false when there is no composed place (the caller then paints the region backdrop).
   function draw(c, key, w, h, hz, t, still, F) {
-    if (!cur || cur.fallback || !F || !F.S || cur.key !== key) return false;
+    if (!cur || cur.fallback || !F || !F.S || cur.key !== key || dbg.off) return false;
     const u = Math.max(1, Math.round(F.scale || 1));
     const W = Math.ceil(w / u), H = Math.ceil(h / u);
     if (cur.artBox === undefined) cur.artBox = artBox(F.art || 'wisp', cur.artOpts) || null;
