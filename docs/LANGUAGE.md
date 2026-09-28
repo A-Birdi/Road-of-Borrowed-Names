@@ -89,10 +89,30 @@ Content adds its own words (names with `pos:'name'`) via `RB.lex.add`.
 ## Answer checking
 
 ```
-RB.answers.check(input, {accept:[markup…], mode, scriptFree?, vars?})
-  -> {ok, matched, normalized, feedback:[{code, en, jp?, at?, got?, want?}], assisted:false, closest}
+RB.answers.check(input, {accept:[markup…], mode, scriptFree?, vars?, handwritten?})
+  -> {ok, matched, form?, notes?, normalized, feedback:[{code, en, jp?, at?, got?, want?}], assisted:false, closest}
 RB.answers.distractors(answer, {count=3, kind:'kana'|'word', accept?, scriptFree?, seed?})
+RB.answers.kanjiReading(ch) -> kana | null      // a common reading of one kanji (no word context)
+RB.answers.rubyText(text)  -> markup            // the player's text, each kanji with that reading
 ```
+- **Kanji spellings** are accepted where the step lists them (`accept:
+  ['みず', '水']`; the content convention for every word task, checked by
+  `tests/unit/lang_answers_kanji.test.mjs`, including that a step's own
+  `explain.jp` spelling of the answer word is listed). On success `form` is
+  the accepted spelling that matched and `notes` (mixed text) say how it was
+  written: `{水|みず} (みず) — written in kanji.`, `{出|で}ません (でません) —
+  written with kanji.` The reading comes from the accepted markup, else from
+  a kana answer that lines up with the okurigana.
+- **Handwriting** (`handwritten: true`, set by the challenge runner for the
+  writing pad only): characters written with one shape — the recognizer's
+  identical-shape groups へ/ヘ べ/ベ ぺ/ペ ー/一 ロ/口 カ/力 ニ/二
+  (`RB.answers.HAND_SAME`, tested equal to `RB.recog`) — count as one form,
+  with a `same_shape` note. Typed answers are never folded.
+- **Kanji in a wrong answer**: a kanji whose reading is an accepted kana
+  answer gets `needs_kana` where the step accepts only kana (田 for the kana
+  blank た) and `other_word` where it accepts another kanji (日 for 火, both
+  ひ). Character feedback names a kanji with its reading in ruby, never as
+  "romaji".
 - Always: NFC, trim, remove spaces, half-width → full-width katakana; sentence
   punctuation is ignored. Meaning mode: full-width ASCII → ASCII, case-insensitive,
   punctuation, articles and a leading "to" dropped.

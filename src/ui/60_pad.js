@@ -11,7 +11,12 @@
  *   read ("I read this as…"), alternatives and uncertainty; only an
  *   explicit Confirm puts a character into the answer strip.
  * - Choosing a non-top candidate or picking from the chart counts as an
- *   assisted character. */
+ *   assisted character (not the other character of one shape, ロ/口).
+ * - "Read as": Kanji or kana (the task's kana plus the 33 kanji the
+ *   recognizer knows), Either kana, ひらがな, カタカナ. The start follows the
+ *   player's preference (by level: Foundations kana only), never the answer;
+ *   kana practice reads kana only. A kanji drawn while kanji reading is off,
+ *   or a kanji the pad doesn't know, is said so plainly (no kana guesses). */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 /* ---- shared learning-interface helpers ------------------------------------------ */
@@ -134,6 +139,51 @@ RB.pad = (function () {
   const I = (n) => RB.learnUi.icon(n);
   const BOX = 300; // recognizer coordinate space
   const SMALL = 'ぁぃぅぇぉっゃゅょゎァィゥェォッャュョヮヵヶ';
+  const MODES = ['kanji', 'any', 'hira', 'kata']; // "Read as": Kanji or kana / Either kana / ひらがな / カタカナ
+  const isKanji = (c) => !!c && RB.kana.isKanji(c);
+
+  /* Kanji reading on the pad is the player's preference (Settings › Learning:
+   * padKanji 'auto' | 'on' | 'off'; older settings records have none and mean
+   * 'auto'). 'auto' follows the Japanese level: kana only in Foundations,
+   * kanji or kana from Elementary on. It never depends on the task's answer. */
+  function kanjiPreferred() {
+    const st = RB.game && RB.game.settings;
+    const v = (st && st.padKanji) || 'auto';
+    if (v === 'on' || v === 'off') return v === 'on';
+    const s = RB.game && RB.game.s;
+    return !!(s && s.learn && s.learn.profile && s.learn.profile !== 'F');
+  }
+  // Choosing "Kanji or kana" or "Either kana" on a pad is remembered.
+  function rememberKanji(on) {
+    const st = RB.game && RB.game.settings;
+    if (!st || kanjiPreferred() === on) return;
+    st.padKanji = on ? 'on' : 'off';
+    if (RB.game.saveSettings) RB.game.saveSettings();
+  }
+  // A character as shown on the pad: a kanji carries its reading on its own
+  // as furigana (there is no word context yet; the feedback gives the word's).
+  function glyph(ch) {
+    const r = isKanji(ch) && RB.answers && RB.answers.kanjiReading ? RB.answers.kanjiReading(ch) : null;
+    return r ? '<ruby>' + esc(ch) + '<rt>' + esc(r) + '</rt></ruby>' : esc(ch);
+  }
+  const spoken = (ch) => {
+    const r = isKanji(ch) && RB.answers && RB.answers.kanjiReading ? RB.answers.kanjiReading(ch) : null;
+    return r ? 'the kanji ' + ch + ' (' + r + ')' : ch;
+  };
+  /* One shape, two characters (ロ/口, ニ/二, カ/力, ー/一): the recognizer
+   * returns both at one distance, kana first. The pad offers first the one
+   * that fits the character written just before it — never the task's answer:
+   * after a kanji, the kanji; after katakana, the kana; after hiragana, the
+   * kanji (but ー, which lengthens a vowel); at the start, the kana (but 一,
+   * since no word starts with ー). Choosing the other one is not "assisted". */
+  function twinFirst(group, prev) {
+    const kana = group.find((c) => !isKanji(c)), kan = group.find(isKanji);
+    if (!kana || !kan) return null;
+    if (!prev) return kana === 'ー' ? kan : kana;
+    if (isKanji(prev)) return kan;
+    if (RB.kana.isHira(prev)) return kana === 'ー' ? kana : kan;
+    return kana;
+  }
 
   function create(host, opts) {
     opts = opts || {};
@@ -154,8 +204,8 @@ RB.pad = (function () {
           '<button class="pbtn" data-a="small" aria-pressed="false" title="Mark as small kana (ゃ, っ…)"><span class="glyph" lang="ja" aria-hidden="true">小</span><span>Small kana</span></button>' +
           '<button class="pbtn" data-a="chart" title="Pick the character from a chart (counts as assisted)">' + I('grid') + '<span>Chart</span></button>' +
           '<button class="pbtn" data-a="model" title="Show how to write it (counts as assisted)">' + I('eye') + '<span>How to write</span></button>' +
-          '<label class="pad-script"><span>Read as</span><select data-script-sel>' +
-            '<option value="any">Either kana</option><option value="hira">ひらがな</option><option value="kata">カタカナ</option></select></label>' +
+          '<label class="pad-script" title="What the pad reads. Kanji or kana adds the 33 kanji it knows; choosing it or Either kana is remembered for the next questions."><span>Read as</span><select data-script-sel>' +
+            '<option value="kanji">Kanji or kana</option><option value="any">Either kana</option><option value="hira">ひらがな</option><option value="kata">カタカナ</option></select></label>' +
         '</div>' +
       '</div>';
     // The composition ("your answer") line can live elsewhere, e.g. next to Submit.
@@ -182,7 +232,12 @@ RB.pad = (function () {
       result: null,     // last recognizer result
       pick: null,       // candidate chosen by the player
       small: false,
-      script: opts.script || 'any',
+      // "Read as": the task's kana script (opts.script 'any' | 'hira' | 'kata'),
+      // with kanji added in mode 'kanji'. opts.kanji: false for kana tasks,
+      // true to start with kanji, otherwise the player's preference.
+      kanaScript: ['hira', 'kata'].indexOf(opts.script) >= 0 ? opts.script : 'any',
+      mode: 'any',
+      list: [],         // the candidates in the order offered
       maxLen: opts.maxLen || 12,
       guide: opts.guide || null, // character to show faintly (copy mode)
       model: null,      // character whose numbered model is shown
@@ -190,6 +245,7 @@ RB.pad = (function () {
       onAssist: opts.onAssist || (() => {}),
       destroyed: false,
     };
+    P.mode = opts.kanji !== false && (opts.kanji === true || kanjiPreferred()) ? 'kanji' : P.kanaScript;
     let dpr = 1;
     // Colours come from CSS so high contrast can change them.
     let C = { paper: '#fffaf0', ink: '#1c160e', guide: 'rgba(120,90,50,0.28)', edge: 'rgba(120,90,50,0.45)', model: 'rgba(168,62,39,0.38)', num: '#a83e27', hint: 'rgba(31,90,146,0.08)', ghost: 'rgba(76,64,48,0.2)' };
@@ -329,7 +385,8 @@ RB.pad = (function () {
       if (!P.strokes.length) { P.result = null; renderRead(); return; }
       const strokes = P.strokes.map((s) => s.map((p) => ({ x: p.x * BOX, y: p.y * BOX, t: p.t })));
       try {
-        P.result = RB.recog.recognize(strokes, { box: { w: BOX, h: BOX }, script: P.script, smallToggle: P.small });
+        const kanji = P.mode === 'kanji';
+        P.result = RB.recog.recognize(strokes, { box: { w: BOX, h: BOX }, script: kanji ? P.kanaScript : P.mode, kanji, smallToggle: P.small });
       } catch (err) {
         P.result = { status: 'nonsense', candidates: [], notes: ['error'] };
         console.error(err);
@@ -341,49 +398,97 @@ RB.pad = (function () {
     function setRead(state, cap, big, small) {
       readas.setAttribute('data-state', state);
       el.setAttribute('data-read', state);
-      const mark = state === 'unsure' || state === 'unread' ? I('unsure') : '';
+      const mark = state === 'unsure' || state === 'unread' || state === 'outside' ? I('unsure') : '';
       readas.innerHTML = '<span class="rd-cap">' + mark + '<span>' + cap + '</span></span>' +
-        '<span class="big' + (big ? '' : ' none') + (small ? ' sm' : '') + '" lang="ja">' + (big ? esc(big) + (small ? '<span class="cap" aria-hidden="true">small</span>' : '') : '<span class="sr">nothing yet</span>') + '</span>';
+        '<span class="big' + (big ? '' : ' none') + (small ? ' sm' : '') + '" lang="ja">' + (big ? glyph(big) + (small ? '<span class="cap" aria-hidden="true">small</span>' : '') : '<span class="sr">nothing yet</span>') + '</span>';
       live.textContent = readas.textContent.replace(/\s+/g, ' ').trim();
     }
+    // the character written just before the one being written (for ロ/口 order)
+    function prevChar() {
+      const c = P.chars[(P.replace >= 0 ? P.replace : P.cursor) - 1];
+      return c ? c.ch : '';
+    }
+    // the recognizer's candidates in the order offered (see twinFirst)
+    function offered(r) {
+      const list = r.candidates.slice();
+      const g = list.length && P.mode === 'kanji' && RB.recog.sameShape ? RB.recog.sameShape(list[0].ch) : null;
+      if (!g || list.filter((c) => g.indexOf(c.ch) >= 0).length < 2) return list;
+      const i = list.findIndex((c) => c.ch === twinFirst(g, prevChar()));
+      if (i > 0) list.unshift(list.splice(i, 1)[0]);
+      return list;
+    }
+    const twinOf = (a, b) => !!(a && b && a !== b && RB.recog.sameShape && (RB.recog.sameShape(a) || []).indexOf(b) >= 0);
+    const button = (a, icon, label) => { const b = RB.ui.el('button', 'pbtn rd-act', I(icon) + '<span>' + label + '</span>'); b.setAttribute('data-a', a); return b; };
     function renderRead() {
       const r = P.result;
       const conf = el.querySelector('[data-a=confirm]');
       candsEl.innerHTML = '';
+      P.list = [];
       if (!r || r.status === 'empty') {
         setRead(P.strokes.length ? 'wait' : 'empty', P.strokes.length ? 'Reading…' : emptyCaption(), '');
         conf.disabled = true;
         return;
       }
+      // Outside what the pad reads: a kanji while kanji reading is off, or a
+      // kanji-like drawing nothing matches. Say so; no unrelated kana guesses.
+      if ((r.kanjiHint || r.kanjiLike) && !P.pick) {
+        const off = P.mode !== 'kanji';
+        if (r.kanjiHint) {
+          setRead('outside', 'Looks like the kanji <span lang="ja">' + glyph(r.kanjiHint.ch) + '</span>, but kanji reading is off.', '');
+        } else {
+          setRead('outside', off ? '<b>Looks like a kanji</b>, and kanji reading is off. Try it, or write the word in kana.' : '<b>Looks like a kanji the pad doesn\'t know.</b> Write the word in kana.', '');
+        }
+        if (off) candsEl.appendChild(button('kanji', 'pieces', 'Read kanji too'));
+        if (r.kanjiHint && r.candidates.length) {
+          // the kana it could also be, if a kana was meant
+          candsEl.appendChild(RB.ui.el('span', 'or', 'or'));
+          r.candidates.slice(0, 4).forEach((cd) => candsEl.appendChild(candButton(cd)));
+        }
+        if (!r.kanjiHint) candsEl.appendChild(button('chart', 'grid', 'Chart'));
+        conf.disabled = true;
+        fitAlts();
+        RB.audio && RB.audio.sfx('recog_unsure', { vol: 0.5 });
+        return;
+      }
       if (r.status === 'nonsense' || !r.candidates.length) {
         setRead('unread', '<b>I can\'t read that clearly yet</b> — try again.', '');
-        candsEl.appendChild(RB.ui.el('button', 'pbtn', I('grid') + '<span>Chart</span>')).setAttribute('data-a', 'chart');
+        candsEl.appendChild(button('chart', 'grid', 'Chart'));
         conf.disabled = true;
         RB.audio && RB.audio.sfx('recog_unsure', { vol: 0.5 });
         return;
       }
-      const top = P.pick || r.candidates[0].ch;
+      P.list = offered(r);
+      const first = P.list[0].ch;
+      const top = P.pick || first;
       const uncertain = r.status === 'uncertain' && !P.pick;
       const topSmall = SMALL.indexOf(top) >= 0;
-      const small = r.sizeHint === 'small' && !P.small && !topSmall ? ' <span class="rd-hint">(looks small — 小?)</span>' : '';
+      const chose = P.pick && P.pick !== first && !twinOf(first, P.pick);
+      // a small drawing only matters when a small kana is among the readings
+      const smallAlt = P.list.some((cd) => cd.ch !== top && SMALL.indexOf(cd.ch) >= 0);
+      const small = r.sizeHint === 'small' && !P.small && !topSmall && smallAlt && !isKanji(top) ? ' <span class="rd-hint">(drawn small: the small kana is in the list)</span>' : '';
+      const twin = P.list.some((cd) => twinOf(top, cd.ch));
+      const kind = twin ? (isKanji(top) ? ' the kanji' : top === 'ー' ? ' the long-vowel mark' : RB.kana.isKata(top) ? ' katakana' : ' hiragana') : topSmall ? ' a small kana' : '';
       setRead(uncertain ? 'unsure' : 'sure',
-        (uncertain ? '<b>Not sure</b> — pick the one you meant' : P.pick && P.pick !== r.candidates[0].ch ? 'You chose' : 'I read this as') + (topSmall ? ' a small kana' : '') + small, top, topSmall);
-      // the other readings, so a different one can be chosen (counts as assisted)
+        (uncertain ? '<b>Not sure</b> — pick the one you meant' : chose ? 'You chose' : 'I read this as' + kind) + small, top, topSmall);
+      // the other readings, so a different one can be chosen (counts as
+      // assisted, except the other character of the same shape)
       const seen = new Set([top]);
-      const alts = r.candidates.slice(0, 6).filter((cd) => !seen.has(cd.ch) && seen.add(cd.ch));
+      const alts = P.list.slice(0, 6).filter((cd) => !seen.has(cd.ch) && seen.add(cd.ch));
       if (alts.length) candsEl.appendChild(RB.ui.el('span', 'or', 'or'));
-      alts.forEach((cd) => {
-        const small = SMALL.indexOf(cd.ch) >= 0; // small kana look like their full-size twins: say so
-        const b = RB.ui.el('button', 'cand' + (small ? ' sm' : ''), esc(cd.ch) + (small ? '<span class="cap" aria-hidden="true">small</span>' : ''));
-        b.setAttribute('lang', 'ja');
-        b.setAttribute('aria-label', 'I meant ' + (small ? 'small ' : '') + cd.ch);
-        b.title = 'Similarity ' + Math.round(cd.score * 100) + '% (a match score, not a probability)';
-        b.onclick = () => { P.pick = cd.ch; renderRead(); };
-        candsEl.appendChild(b);
-      });
+      alts.forEach((cd) => candsEl.appendChild(candButton(cd, twinOf(top, cd.ch))));
       conf.disabled = false;
       fitAlts();
       RB.audio && RB.audio.sfx(uncertain ? 'recog_unsure' : 'recog_ok', { vol: 0.4 });
+    }
+    function candButton(cd, twin) {
+      const small = SMALL.indexOf(cd.ch) >= 0; // small kana look like their full-size twins: say so
+      const cap = small ? 'small' : !twin ? '' : isKanji(cd.ch) ? 'kanji' : cd.ch === 'ー' ? 'long' : RB.kana.isKata(cd.ch) ? 'katakana' : 'hiragana';
+      const b = RB.ui.el('button', 'cand' + (cap ? ' sm' : ''), glyph(cd.ch) + (cap ? '<span class="cap" aria-hidden="true">' + cap + '</span>' : ''));
+      b.setAttribute('lang', 'ja');
+      b.setAttribute('aria-label', 'I meant ' + (small ? 'small ' : '') + spoken(cd.ch) + (twin ? ', the same shape' : ''));
+      b.title = twin ? 'The same shape as a different character: choose the one you meant' : 'Similarity ' + Math.round(cd.score * 100) + '% (a match score, not a probability)';
+      b.onclick = () => { P.pick = cd.ch; renderRead(); };
+      return b;
     }
     // Show as many other readings as fit on the row beside Confirm (the rest
     // stay reachable through the chart), so the row never wraps.
@@ -399,7 +504,7 @@ RB.pad = (function () {
     }
     function emptyCaption() {
       const orderNotes = P.chars.map((c) => c.order).filter((o) => o && o.confident && o.issues && o.issues.length);
-      if (P.replace >= 0) return 'Write the replacement for ' + esc(P.chars[P.replace].ch) + ', then Confirm.';
+      if (P.replace >= 0) return 'Write the replacement for <span lang="ja">' + glyph(P.chars[P.replace].ch) + '</span>, then Confirm.';
       if (orderNotes.length && P.chars.length) return esc('Stroke order: ' + orderNotes[orderNotes.length - 1].issues.map((i) => i.en).join(' '));
       if (P.chars.length && P.maxLen > 1) return 'Write the next one, or tap a character in your answer to fix it.';
       return 'Write one character in the box.';
@@ -407,10 +512,10 @@ RB.pad = (function () {
 
     function confirm() {
       const r = P.result;
-      if (!r || !r.candidates.length) return;
-      const top = r.candidates[0].ch;
+      if (!r || !r.candidates.length || ((r.kanjiHint || r.kanjiLike) && !P.pick)) return;
+      const top = (P.list.length ? P.list : offered(r))[0].ch;
       const ch = P.pick || top;
-      const assisted = !!(P.pick && P.pick !== top);
+      const assisted = !!(P.pick && P.pick !== top && !twinOf(top, P.pick));
       const entry = { ch, assisted, uncertain: r.status === 'uncertain', strokes: P.strokes.slice() };
       if (RB.game.settings.strokePractice && RB.recog.strokeOrderFeedback && !assisted) {
         const strokes = P.strokes.map((s) => s.map((p) => ({ x: p.x * BOX, y: p.y * BOX, t: p.t })));
@@ -453,7 +558,7 @@ RB.pad = (function () {
         if (P.maxLen > 1) strip.appendChild(gap(i));
         if (i < P.chars.length) {
           const c = P.chars[i];
-          const b = RB.ui.el('button', 'cell' + (P.replace === i ? ' cur' : '') + (c.assisted ? ' asst' : '') + (c.uncertain && !c.assisted ? ' unsure' : ''), esc(c.ch));
+          const b = RB.ui.el('button', 'cell' + (P.replace === i ? ' cur' : '') + (c.assisted ? ' asst' : '') + (c.uncertain && !c.assisted ? ' unsure' : ''), glyph(c.ch));
           b.setAttribute('lang', 'ja');
           b.setAttribute('aria-pressed', String(P.replace === i));
           b.title = (c.assisted ? 'Chosen by hand (assisted). ' : c.uncertain ? 'The recognizer was not sure about this one. ' : '') + 'Tap to rewrite this character';
@@ -468,14 +573,21 @@ RB.pad = (function () {
       comp.querySelector('[data-a=del]').disabled = !P.chars.length;
       if (!P.strokes.length && !P.result) renderRead();
     }
+    // Pick a character by hand (assisted): the kana the pad is reading, and
+    // with kanji reading on, the kanji it knows.
     function chart() {
-      const script = P.script === 'kata' ? 'kata' : 'hira';
       const H = 'あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをんがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽぁぃぅぇぉっゃゅょゎ';
-      const set = Array.from(script === 'kata' ? RB.kana.toKata(H) + 'ー' : H);
+      const kana = P.mode === 'kanji' ? P.kanaScript : P.mode;
+      const secs = [];
+      if (kana !== 'kata') secs.push(['Hiragana', Array.from(H)]);
+      if (kana !== 'hira') secs.push(['Katakana', Array.from(RB.kana.toKata(H) + 'ー')]);
+      if (P.mode === 'kanji') secs.push(['Kanji the pad can read', RB.recog.supported({ kanji: true }).filter(isKanji)]);
       const lay = { name: 'chart' };
-      const fr = RB.learnUi.sheet({ cls: 'small chart', title: 'Pick a character', meta: script === 'kata' ? 'Katakana' : 'Hiragana', onClose: () => RB.ui.popLayer(lay), closeLabel: 'Cancel' });
+      const fr = RB.learnUi.sheet({ cls: 'small chart', title: 'Pick a character', meta: secs.map((x) => x[0].split(' ')[0]).join(', '), onClose: () => RB.ui.popLayer(lay), closeLabel: 'Cancel' });
       fr.el.querySelector('[data-folio-close]').setAttribute('data-x', '');
-      fr.leaf.innerHTML = '<p class="muted small">Characters picked here count as assisted — handy when the recognizer can\'t read your writing.</p><div class="kchart" lang="ja">' + set.map((c) => '<button class="kpick" data-c="' + c + '">' + c + '</button>').join('') + '</div>';
+      fr.leaf.innerHTML = '<p class="muted small">Characters picked here count as assisted — handy when the recognizer can\'t read your writing.</p>' +
+        secs.map(([t, set]) => (secs.length > 1 ? '<h3 class="kchart-h">' + esc(t) + '</h3>' : '') + '<div class="kchart" lang="ja">' +
+          set.map((c) => '<button class="kpick" data-c="' + c + '"' + (isKanji(c) ? ' aria-label="' + esc(spoken(c)) + '"' : '') + '>' + glyph(c) + '</button>').join('') + '</div>').join('');
       lay.el = fr.scrim;
       lay.onCancel = () => RB.ui.popLayer(lay);
       fr.leaf.onclick = (e) => {
@@ -510,13 +622,21 @@ RB.pad = (function () {
       if (a === 'confirm') confirm();
       if (a === 'del') remove();
       if (a === 'chart') chart();
+      if (a === 'kanji') setMode('kanji', true);
       if (a === 'model') opts.modelFor && showModel(opts.modelFor());
     };
     el.addEventListener('click', onClick);
     if (opts.composeHost) comp.addEventListener('click', onClick);
     const sel = el.querySelector('[data-script-sel]');
-    sel.value = ['any', 'hira', 'kata'].indexOf(P.script) >= 0 ? P.script : 'any';
-    sel.onchange = () => { P.script = sel.value; if (P.strokes.length) recognize(); };
+    function setMode(m, remember) {
+      if (MODES.indexOf(m) < 0) return;
+      P.mode = m;
+      sel.value = m;
+      if (remember && (m === 'kanji' || m === 'any')) rememberKanji(m === 'kanji');
+      if (P.strokes.length) recognize();
+    }
+    sel.value = P.mode;
+    sel.onchange = () => setMode(sel.value, true);
     renderStrip();
     renderRead();
     requestAnimationFrame(layout);
@@ -538,10 +658,12 @@ RB.pad = (function () {
       setGuide(ch) { P.guide = ch; drawBg(); },
       layout,
       destroy() { P.destroyed = true; clearTimeout(recTimer); if (ro) ro.disconnect(); window.removeEventListener('resize', layout); window.removeEventListener('resize', refit); el.remove(); comp.remove(); },
+      mode() { return P.mode; },
+      setMode(m) { setMode(m, false); },
       _state: P,
       _inject(strokes) { P.strokes = strokes; redraw(); recognize(); }, // tests: inject strokes in 0..1 units
     };
   }
-  const api = { create(host, opts) { const p = create(host, opts); api.__last = p; return p; }, BOX };
+  const api = { create(host, opts) { const p = create(host, opts); api.__last = p; return p; }, BOX, kanjiPreferred, twinFirst };
   return api;
 })();

@@ -83,6 +83,41 @@ RB.answers = (function () {
   });
   const confusablesOf = (ch) => (SHAPE_MAP.has(ch) ? Array.from(SHAPE_MAP.get(ch).keys()) : []);
 
+  // ---- handwriting: one written shape, two characters ----------------------------
+  // Characters written with the same shape (the recognizer's identical-shape
+  // groups, checked against RB.recog by tests/unit/lang_answers.test.mjs).
+  // A handwritten answer cannot show which one was meant, so with
+  // {handwritten:true} they count as one form. Typed answers are never folded.
+  const HAND_SAME = ['へヘ', 'べベ', 'ぺペ', 'ー一', 'ロ口', 'カ力', 'ニ二'];
+  const HAND_ONE = {};
+  HAND_SAME.forEach((g) => Array.from(g).forEach((c) => { HAND_ONE[c] = g[0]; }));
+  const handFold = (s) => Array.from(s).map((c) => HAND_ONE[c] || c).join('');
+
+  // A common reading of a single kanji, for furigana where there is no word
+  // context (a handwritten character on the pad, a quoted character in
+  // feedback): the 33 kanji the handwriting pad can read (a kun reading, or
+  // the stem a learner meets first: 大 おお(きい), 入 い(る)), then the lexicon.
+  // Accepted answers are shown with the word's own reading instead.
+  const KANJI_READ = {
+    一: 'いち', 二: 'に', 三: 'さん', 十: 'じゅう', 人: 'ひと', 口: 'くち', 日: 'ひ', 月: 'つき', 山: 'やま', 川: 'かわ', 木: 'き',
+    水: 'みず', 火: 'ひ', 土: 'つち', 石: 'いし', 田: 'た', 力: 'ちから', 大: 'おお', 小: 'ちい', 上: 'うえ', 下: 'した', 中: 'なか',
+    名: 'な', 手: 'て', 目: 'め', 雨: 'あめ', 本: 'ほん', 入: 'い', 出: 'で', 王: 'おう', 門: 'もん', 心: 'こころ', 花: 'はな',
+  };
+  function kanjiReading(ch) {
+    if (KANJI_READ[ch]) return KANJI_READ[ch];
+    const e = RB.lex ? RB.lex.bySurface(ch).find((x) => x.r && K.isKanaString(x.r)) : null;
+    return e ? e.r : null;
+  }
+  // Markup for text the player wrote: each kanji gets its reading on its own
+  // where one is known ('み水' → 'み{水|みず}'). Kanji without a known reading
+  // stay as they are.
+  function rubyText(s) {
+    return Array.from(String(s || '')).map((c) => {
+      const r = K.isKanji(c) ? kanjiReading(c) : null;
+      return r ? '{' + c + '|' + r + '}' : c.replace(/[{}|]/g, '');
+    }).join('');
+  }
+
   // ---- helpers ---------------------------------------------------------------------
   const VOWEL_OF = {};
   (function () {
@@ -210,6 +245,15 @@ RB.answers = (function () {
   // ---- feedback ---------------------------------------------------------------------
   function explainSub(got, want, ctx) {
     const { acc, j, vars } = ctx;
+    if (K.isKanji(got) || K.isKanji(want)) {
+      // a kanji has no romaji: name it with its reading instead
+      const desc = (c) => {
+        if (!K.isKanji(c)) return c + ' (' + roma(c) + ')';
+        const r = kanjiReading(c);
+        return r ? 'the kanji {' + c + '|' + r + '}' : 'a kanji';
+      };
+      return { code: 'wrong_char', en: 'The answer has ' + desc(want) + ' where you wrote ' + desc(got) + '.' };
+    }
     // particles は/わ, を/お, へ/え
     const pairs = { 'はわ': 'particle_wa', 'わは': 'particle_wa', 'をお': 'particle_o', 'おを': 'particle_o', 'へえ': 'particle_e', 'えへ': 'particle_e' };
     const pk = pairs[want + got];
@@ -306,8 +350,58 @@ RB.answers = (function () {
     return cands.length ? cands[0] : null;
   }
 
-  /* check(input, task) → { ok, matched, normalized, feedback:[{code, en, jp?, …}], assisted:false, closest }
-   * task: { accept:[markup…], mode:'exact'|'kana'|'reading'|'meaning', scriptFree?, vars? } */
+  // Does kana reading r line up with the kanji/kana spelling w (okurigana match)?
+  function alignsWith(w, r) {
+    const md = RB.jp.rubyize(w, r);
+    return !(K.hasKanji(w) && md === '{' + w + '|' + r + '}' && Array.from(w).some((c) => !K.isKanji(c)));
+  }
+  // The kana reading of an accepted form that contains kanji: its own ruby,
+  // else a kana-only accepted form that lines up with it, else the first one.
+  function readingFor(c, cands) {
+    if (!K.hasKanji(c.reading)) return c.reading;
+    const kana = cands.filter((x) => !K.hasKanji(x.reading) && !K.hasKanji(x.surface)).map((x) => x.reading);
+    return kana.find((r) => alignsWith(c.surface, r)) || kana[0] || null;
+  }
+  // Notes on an accepted answer (mixed text): written with kanji, and which
+  // one-shape character a handwritten answer was taken as.
+  function successNotes(n, form, c, cands) {
+    const notes = [];
+    let md = null;
+    if (K.hasKanji(form)) {
+      const r = readingFor(c, cands);
+      if (r) {
+        md = RB.jp.rubyize(form, r);
+        const all = Array.from(form).every((ch) => K.isKanji(ch));
+        notes.push({ code: 'kanji', en: md + ' (' + r + ') — written ' + (all ? 'in kanji' : 'with kanji') + '.', jp: md });
+      }
+    }
+    const a = Array.from(n), b = Array.from(form);
+    if (a.length === b.length) {
+      // the ruby of the kanji at position i, from the accepted word's markup
+      const segs = [];
+      if (md) for (const tk of RB.jp.parse(md)) for (const sg of tk.segs) for (const ch of Array.from(sg.t)) segs.push(sg);
+      const kind = (ch) => (K.isKanji(ch) ? 'kanji' : ch === 'ー' ? 'long-vowel mark' : K.isKata(ch) ? 'katakana' : 'hiragana');
+      const name = (ch, i) => {
+        const sg = segs[i];
+        const r = K.isKanji(ch) ? (sg && sg.r && sg.t === ch ? sg.r : kanjiReading(ch)) : null;
+        return (r ? '{' + ch + '|' + r + '}' : ch) + ' (' + kind(ch) + ')';
+      };
+      const seen = new Set();
+      a.forEach((got, i) => {
+        const want = b[i];
+        if (got === want || !HAND_ONE[got] || HAND_ONE[got] !== HAND_ONE[want] || seen.has(got + want)) return;
+        seen.add(got + want);
+        notes.push({ code: 'same_shape', en: name(got, i) + ' and ' + name(want, i) + ' look the same when handwritten; here it is the ' + kind(want) + '.', got, want });
+      });
+    }
+    return notes;
+  }
+
+  /* check(input, task) → { ok, matched, form?, notes?, normalized, feedback:[{code, en, jp?, …}], assisted:false, closest }
+   * task: { accept:[markup…], mode:'exact'|'kana'|'reading'|'meaning', scriptFree?, vars?, handwritten? }
+   * handwritten: the input came from the handwriting pad, so characters written
+   * with one shape (ロ/口, へ/ヘ…) count as one form. On success, `form` is the
+   * accepted spelling that matched and `notes` (mixed text) say how it was written. */
   function check(input, task) {
     task = task || {};
     const mode = task.mode || 'reading';
@@ -347,20 +441,38 @@ RB.answers = (function () {
     }
     const sf = !!task.scriptFree;
     const fold = (s) => (sf ? K.toHira(s) : s);
+    const hand = !!task.handwritten;
     const cands = accept.map((acc) => forms(acc, task.vars));
-    for (const c of cands) {
-      let targets;
-      if (mode === 'exact') targets = [c.surface];
-      else if (mode === 'kana') targets = [c.reading];
-      else targets = [c.surface, c.reading];
-      if (targets.some((t) => fold(t) === fold(n))) {
-        res.ok = true;
-        res.matched = c.acc;
-        return res;
+    const targetsOf = (c) => (mode === 'exact' ? [c.surface] : mode === 'kana' ? [c.reading] : [c.surface, c.reading]);
+    // exact first; then, for handwriting only, one-shape characters folded (ロ/口, へ/ヘ…)
+    const passes = hand ? [fold, (s) => fold(handFold(s))] : [fold];
+    for (const key of passes) {
+      for (const c of cands) {
+        const hit = targetsOf(c).find((t) => key(t) === key(n));
+        if (hit != null) {
+          res.ok = true;
+          res.matched = c.acc;
+          res.form = hit;
+          res.notes = successNotes(n, hit, c, cands, task.vars);
+          return res;
+        }
       }
     }
     // ---- wrong: find the closest accepted form and explain the difference ----
     const inputHasKanji = K.hasKanji(n);
+    // Kanji whose reading is an accepted answer: where the task only accepts
+    // kana (田 for the kana blank た), the right sound written the wrong way;
+    // where it accepts another kanji (日 for 火, both ひ), a homophone.
+    if (inputHasKanji && mode !== 'exact' && !cands.some((c) => fold(c.surface) === fold(n))) {
+      const hit = (RB.lex ? RB.lex.bySurface(n) : []).concat(kanjiReading(n) ? [{ w: n, r: kanjiReading(n) }] : [])
+        .find((e) => e.r && cands.some((c) => fold(c.reading) === fold(normKana(e.r)) && !K.hasKanji(c.reading)));
+      if (hit) {
+        const rb = RB.jp.rubyize(hit.w, hit.r);
+        if (cands.some((c) => K.hasKanji(c.surface))) res.feedback.push({ code: 'other_word', en: "That's " + rb + (hit.m ? ', "' + esc(hit.m) + '"' : '') + ': the same reading, but a different word.', jp: rb });
+        else res.feedback.push({ code: 'needs_kana', en: rb + ' has the right reading, but here the answer is written in kana.', jp: rb });
+        return res;
+      }
+    }
     let best = null;
     cands.forEach((c) => {
       const opts = mode === 'exact' ? [c.surface] : mode === 'kana' ? [c.reading] : inputHasKanji ? [c.surface, c.reading] : [c.reading, c.surface];
@@ -599,5 +711,5 @@ RB.answers = (function () {
     return out;
   }
 
-  return { check, distractors, normKana, normMeaning, align, plausible, confusablesOf, SHAPES };
+  return { check, distractors, normKana, normMeaning, align, plausible, confusablesOf, SHAPES, HAND_SAME, kanjiReading, rubyText };
 })();

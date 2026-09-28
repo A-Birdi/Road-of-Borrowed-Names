@@ -7,7 +7,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { load } from '../../tests/lib/load.mjs';
-import { FAMILIES, distort, nonsense } from './synth.mjs';
+import { FAMILIES, distort, nonsense, UNKNOWN_KANJI, composeKanji } from './synth.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '..', '..');
@@ -111,6 +111,76 @@ if (fams.length > 1) {
   console.log(`  worst confusions (pad): ${worst(overall.pad, 20)}\n`);
 }
 
+// The kana + kanji pad ("Kanji or kana", script 'any' + kanji): kana accuracy
+// against the kana pad on the same samples, the kana/kanji confusable sets, the
+// kanji hint with kanji reading off, and kanji the recognizer does not know
+// (composed from real KanjiVG component strokes).
+if (withKanji && fams.length > 1) {
+  const MIX = { script: 'any', kanji: true };
+  const sizeEq = (ch, got) => got === ch || I.LARGE_OF[ch] === got || I.SMALL_OF[ch] === got || I.LARGE_OF[got] === ch;
+  const top = (r) => (r.candidates[0] ? r.candidates[0].ch : null);
+  let n = 0, anyShape = 0, mixShape = 0, anyStrict = 0, mixStrict = 0, changed = 0, kanjiFirst = 0, like = 0, hint = 0, confA = 0, confM = 0;
+  for (const fam of fams) for (const ch of kana) for (let i = 0; i < N; i++) {
+    const s = distort(R.reference(ch), fam, `${ch}|${i}`, { ch });
+    const a = run(s.strokes, { box: s.box, script: 'any' }), m = run(s.strokes, { box: s.box, ...MIX });
+    n++;
+    if (top(a) && equivalents(ch).has(top(a))) anyShape++;
+    if (top(m) && equivalents(ch).has(top(m))) mixShape++;
+    if (top(a) && sizeEq(ch, top(a))) anyStrict++;
+    if (top(m) && sizeEq(ch, top(m))) mixStrict++;
+    if (top(a) !== top(m)) changed++;
+    if (top(m) && scriptOf(top(m)) === 'kanji') kanjiFirst++;
+    if (a.status === 'confident') confA++;
+    if (m.status === 'confident') confM++;
+    if (a.kanjiLike || m.kanjiLike) like++;
+    if (a.kanjiHint) hint++;
+  }
+  console.log('== kana + kanji pad ("Kanji or kana"), all held-out families');
+  console.log(`  kana (n=${n}): top-1 ${pct(anyStrict, n)} kana pad / ${pct(mixStrict, n)} kana+kanji pad (shape-equivalent ${pct(anyShape, n)} / ${pct(mixShape, n)}); ` +
+    `confident ${pct(confA, n)} / ${pct(confM, n)}; first reading changed ${changed}×, a kanji first ${kanjiFirst}×; kanji-like ${like}×, kanji hint ${hint}×`);
+  const kanjiSet = kanji;
+  let kn = 0, k1 = 0, kx = 0, kc = 0, kcOk = 0, hn = 0, h1 = 0, hWrong = 0;
+  for (const fam of fams) for (const ch of kanjiSet) for (let i = 0; i < N; i++) {
+    const s = distort(R.reference(ch), fam, `${ch}|${i}`, { ch });
+    const m = run(s.strokes, { box: s.box, ...MIX });
+    const ok = top(m) && (top(m) === ch || (I.TWIN_OF[ch] && I.TWIN_OF[ch].includes(top(m))));
+    kn++; if (ok) k1++; if (top(m) === ch) kx++;
+    if (m.status === 'confident') { kc++; if (ok) kcOk++; }
+    if (!I.TWIN_OF[ch]) {
+      const a = run(s.strokes, { box: s.box, script: 'any' });
+      hn++;
+      if (a.kanjiHint) { if (a.kanjiHint.ch === ch) h1++; else hWrong++; }
+    }
+  }
+  console.log(`  kanji (n=${kn}): top-1 ${pct(k1, kn)} (a twin counts as its kana: exact ${pct(kx, kn)}), confident ${pct(kc, kn)} (precision ${pct(kcOk, kc)})`);
+  console.log(`  kanji drawn with kanji reading off (n=${hn}, twins excluded): the hint names it ${pct(h1, hn)}, another kanji ${hWrong}×`);
+  const SETS = ['口ロ', '二ニ', '力カ', '一ー', '入人', '十ナメ', 'エハタ', '三ミ', '川ルリり', '小ハ', '土エ上', '王エキ', '手キチ', '木ホ本',
+    '大ナ', '下トテ', '日目ヨ', '田ロ', '中ロ', '心ルい', '水ホ', '火ソメ', '人入ヘ', '花イヒ', '名タ', '山出', '二こに', 'ソリ川', 'ノ人'];
+  let pn = 0, pok = 0;
+  const perr = {};
+  for (const set of SETS) for (const ch of new Set(set)) for (const fam of ['heldout-affine', 'heldout-noise', 'heldout-truncext']) for (let i = 0; i < N; i++) {
+    const s = distort(R.reference(ch), fam, `pair|${ch}|${i}`, { ch });
+    const m = run(s.strokes, { box: s.box, ...MIX });
+    pn++;
+    if (top(m) && (equivalents(ch).has(top(m)))) pok++; else { const k = ch + '→' + (top(m) || '∅'); perr[k] = (perr[k] || 0) + 1; }
+  }
+  console.log(`  kana/kanji confusable sets (${SETS.length}, direction-preserving families): ${pct(pok, pn)} of ${pn}; errors: ${Object.entries(perr).map(([k, v]) => k + '×' + v).join(' ') || 'none'}`);
+  const unk = Object.entries(UNKNOWN_KANJI);
+  let un = 0, lk = 0, lm = 0, hu = 0, cm = 0;
+  const cmList = {};
+  for (const fam of fams) for (const [ch, parts] of unk) for (let i = 0; i < N; i++) {
+    const s = distort(composeKanji(R.reference, parts), fam, `unk|${ch}|${i}`, {});
+    const a = run(s.strokes, { box: s.box, script: 'any' }), m = run(s.strokes, { box: s.box, ...MIX });
+    un++;
+    if (a.kanjiLike) lk++;
+    if (m.kanjiLike) lm++;
+    if (a.kanjiHint) hu++;
+    if (m.status === 'confident') { cm++; const k = ch + '→' + top(m); cmList[k] = (cmList[k] || 0) + 1; }
+  }
+  console.log(`  kanji it does not know (${unk.length}, composed from KanjiVG components; n=${un}): kanji-like ${pct(lk, un)} kana pad / ${pct(lm, un)} kana+kanji pad; ` +
+    `named by the hint ${hu}×; read 'confident' as a supported kanji ${cm}× (${Object.entries(cmList).map(([k, v]) => k + '×' + v).join(' ') || 'none'})\n`);
+}
+
 // Independent sources (not KanjiVG), used unmodified except for pointer-style densification.
 function densify(stroke, step) {
   const out = [stroke[0]];
@@ -125,21 +195,29 @@ for (const file of ['animcjk-kana.json', 'tomoe-ja.json']) {
   const p = path.join(root, 'tests', 'fixtures', 'recog', file);
   if (!fs.existsSync(p)) { console.log(`${file}: not present (run tools/kanjivg/fixtures.mjs)`); continue; }
   const fx = JSON.parse(fs.readFileSync(p, 'utf8'));
-  const st = { pad: newStats(), any: newStats(), kanji: newStats() };
+  const st = { pad: newStats(), any: newStats(), kanji: newStats(), mixKana: newStats(), mixKanji: newStats() };
+  let fxHint = 0, fxHintN = 0;
   for (const c of fx.chars) {
     const strokes = c.strokes.map((s) => densify(s, fx.box / 100).map(([x, y], k) => ({ x, y, t: k * 10 })));
     const box = { w: fx.box, h: fx.box };
     if (scriptOf(c.ch) === 'kanji') {
       tally(st.kanji, c.ch, run(strokes, { box, script: 'kanji' }), false);
+      if (withKanji) {
+        tally(st.mixKanji, c.ch, run(strokes, { box, script: 'any', kanji: true }), true);
+        if (!I.TWIN_OF[c.ch]) { fxHintN++; const h = run(strokes, { box, script: 'any' }).kanjiHint; if (h && h.ch === c.ch) fxHint++; }
+      }
       continue;
     }
     tally(st.pad, c.ch, run(strokes, { box, script: padMode(c.ch) }), false);
     tally(st.any, c.ch, run(strokes, { box, script: 'any' }), true);
+    if (withKanji) tally(st.mixKana, c.ch, run(strokes, { box, script: 'any', kanji: true }), true);
   }
   console.log(`== ${file}: ${fx.source}`);
   console.log(line('kana pad-mode', st.pad));
   console.log(line('kana any-mode', st.any));
   if (st.kanji.n) console.log(line('kanji (script:kanji)', st.kanji));
+  if (st.mixKana.n) console.log(line('kana kana+kanji pad', st.mixKana));
+  if (st.mixKanji.n) console.log(line('kanji kana+kanji pad', st.mixKanji) + `\n  kanji in the kana pad: the hint names it ${fxHint}/${fxHintN} (twins excluded)`);
   console.log(`  errors (pad): ${worst(st.pad, 40)}`);
   if (st.kanji.n) console.log(`  errors (kanji): ${worst(st.kanji, 20)}`);
   console.log('');

@@ -1797,6 +1797,20 @@ body.high-contrast .pad-area { --pad-paper: #ffffff; --pad-ink: #000000; --pad-g
 .pad-script { display: inline-flex; align-items: center; gap: 0.4em; color: var(--ink-2); font-size: 0.95em; }
 .pad-script select { min-height: var(--tap); background: var(--pad-paper, #fffcf3); color: var(--ink); border: 1px solid var(--ink-3); border-radius: var(--r-1); padding: 0 0.5em; font: inherit; }
 .pad-script select:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+/* at 320 px and 200 % text the choice drops under its label instead of overflowing */
+.pad-script { flex-wrap: wrap; min-width: 0; max-width: 100%; }
+.pad-script > span { white-space: nowrap; }
+.pad-script select { max-width: 100%; min-width: 0; }
+/* the reading box fits a kana or a kanji with its furigana, at any text size */
+.readas .big { width: max(calc(var(--tap) + 4px), 1.9em); height: max(calc(var(--tap) + 4px), 1.9em); }
+.cand { min-height: max(var(--tap), 1.9em); }
+/* a kanji read by the pad carries its reading (ruby) inside the fixed boxes */
+.readas .big ruby, .cand ruby, .strip .cell ruby, .kpick ruby { ruby-position: over; line-height: 1; }
+.readas .big rt, .cand rt, .strip .cell rt, .kpick rt { font-size: 0.4em; line-height: 1.1; color: var(--rt-ink); }
+/* outside what the pad reads (a kanji with kanji reading off, or one it doesn't know) */
+.readas[data-state="outside"] .big { border: 2px dashed var(--river); background: transparent; }
+.cands .rd-act { flex: none; padding: 0 0.75em; }
+.fbwrap .fb-how { margin: 0.2em 0 0.4em; font-size: 1.05em; }
 
 /* the composed answer line (in the answer slip) */
 .pad-compose { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
@@ -2037,6 +2051,7 @@ body.high-contrast :is(.chal, .lsheet) .fb.no, body.high-contrast :is(.chal, .ls
 .kpick { min-height: var(--tap); font-size: 1.3em; background: #fffcf3; color: var(--ink); border: 1px solid var(--ink-3); border-radius: var(--r-1); cursor: pointer; touch-action: manipulation; }
 .kpick:hover { background: var(--paper-2); }
 .kpick:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+.kchart-h { margin: 0.8em 0 0.35em; font-size: 0.95em; }
 
 /* kana lesson: the character, its numbered strokes, the note, words using it */
 .lesson-row { list-style: none; display: flex; flex-wrap: wrap; gap: 4px; margin: 0 0 0.6em; padding: 0; font-family: var(--jp-font); }
@@ -6319,6 +6334,41 @@ RB.answers = (function () {
   });
   const confusablesOf = (ch) => (SHAPE_MAP.has(ch) ? Array.from(SHAPE_MAP.get(ch).keys()) : []);
 
+  // ---- handwriting: one written shape, two characters ----------------------------
+  // Characters written with the same shape (the recognizer's identical-shape
+  // groups, checked against RB.recog by tests/unit/lang_answers.test.mjs).
+  // A handwritten answer cannot show which one was meant, so with
+  // {handwritten:true} they count as one form. Typed answers are never folded.
+  const HAND_SAME = ['へヘ', 'べベ', 'ぺペ', 'ー一', 'ロ口', 'カ力', 'ニ二'];
+  const HAND_ONE = {};
+  HAND_SAME.forEach((g) => Array.from(g).forEach((c) => { HAND_ONE[c] = g[0]; }));
+  const handFold = (s) => Array.from(s).map((c) => HAND_ONE[c] || c).join('');
+
+  // A common reading of a single kanji, for furigana where there is no word
+  // context (a handwritten character on the pad, a quoted character in
+  // feedback): the 33 kanji the handwriting pad can read (a kun reading, or
+  // the stem a learner meets first: 大 おお(きい), 入 い(る)), then the lexicon.
+  // Accepted answers are shown with the word's own reading instead.
+  const KANJI_READ = {
+    一: 'いち', 二: 'に', 三: 'さん', 十: 'じゅう', 人: 'ひと', 口: 'くち', 日: 'ひ', 月: 'つき', 山: 'やま', 川: 'かわ', 木: 'き',
+    水: 'みず', 火: 'ひ', 土: 'つち', 石: 'いし', 田: 'た', 力: 'ちから', 大: 'おお', 小: 'ちい', 上: 'うえ', 下: 'した', 中: 'なか',
+    名: 'な', 手: 'て', 目: 'め', 雨: 'あめ', 本: 'ほん', 入: 'い', 出: 'で', 王: 'おう', 門: 'もん', 心: 'こころ', 花: 'はな',
+  };
+  function kanjiReading(ch) {
+    if (KANJI_READ[ch]) return KANJI_READ[ch];
+    const e = RB.lex ? RB.lex.bySurface(ch).find((x) => x.r && K.isKanaString(x.r)) : null;
+    return e ? e.r : null;
+  }
+  // Markup for text the player wrote: each kanji gets its reading on its own
+  // where one is known ('み水' → 'み{水|みず}'). Kanji without a known reading
+  // stay as they are.
+  function rubyText(s) {
+    return Array.from(String(s || '')).map((c) => {
+      const r = K.isKanji(c) ? kanjiReading(c) : null;
+      return r ? '{' + c + '|' + r + '}' : c.replace(/[{}|]/g, '');
+    }).join('');
+  }
+
   // ---- helpers ---------------------------------------------------------------------
   const VOWEL_OF = {};
   (function () {
@@ -6446,6 +6496,15 @@ RB.answers = (function () {
   // ---- feedback ---------------------------------------------------------------------
   function explainSub(got, want, ctx) {
     const { acc, j, vars } = ctx;
+    if (K.isKanji(got) || K.isKanji(want)) {
+      // a kanji has no romaji: name it with its reading instead
+      const desc = (c) => {
+        if (!K.isKanji(c)) return c + ' (' + roma(c) + ')';
+        const r = kanjiReading(c);
+        return r ? 'the kanji {' + c + '|' + r + '}' : 'a kanji';
+      };
+      return { code: 'wrong_char', en: 'The answer has ' + desc(want) + ' where you wrote ' + desc(got) + '.' };
+    }
     // particles は/わ, を/お, へ/え
     const pairs = { 'はわ': 'particle_wa', 'わは': 'particle_wa', 'をお': 'particle_o', 'おを': 'particle_o', 'へえ': 'particle_e', 'えへ': 'particle_e' };
     const pk = pairs[want + got];
@@ -6542,8 +6601,58 @@ RB.answers = (function () {
     return cands.length ? cands[0] : null;
   }
 
-  /* check(input, task) → { ok, matched, normalized, feedback:[{code, en, jp?, …}], assisted:false, closest }
-   * task: { accept:[markup…], mode:'exact'|'kana'|'reading'|'meaning', scriptFree?, vars? } */
+  // Does kana reading r line up with the kanji/kana spelling w (okurigana match)?
+  function alignsWith(w, r) {
+    const md = RB.jp.rubyize(w, r);
+    return !(K.hasKanji(w) && md === '{' + w + '|' + r + '}' && Array.from(w).some((c) => !K.isKanji(c)));
+  }
+  // The kana reading of an accepted form that contains kanji: its own ruby,
+  // else a kana-only accepted form that lines up with it, else the first one.
+  function readingFor(c, cands) {
+    if (!K.hasKanji(c.reading)) return c.reading;
+    const kana = cands.filter((x) => !K.hasKanji(x.reading) && !K.hasKanji(x.surface)).map((x) => x.reading);
+    return kana.find((r) => alignsWith(c.surface, r)) || kana[0] || null;
+  }
+  // Notes on an accepted answer (mixed text): written with kanji, and which
+  // one-shape character a handwritten answer was taken as.
+  function successNotes(n, form, c, cands) {
+    const notes = [];
+    let md = null;
+    if (K.hasKanji(form)) {
+      const r = readingFor(c, cands);
+      if (r) {
+        md = RB.jp.rubyize(form, r);
+        const all = Array.from(form).every((ch) => K.isKanji(ch));
+        notes.push({ code: 'kanji', en: md + ' (' + r + ') — written ' + (all ? 'in kanji' : 'with kanji') + '.', jp: md });
+      }
+    }
+    const a = Array.from(n), b = Array.from(form);
+    if (a.length === b.length) {
+      // the ruby of the kanji at position i, from the accepted word's markup
+      const segs = [];
+      if (md) for (const tk of RB.jp.parse(md)) for (const sg of tk.segs) for (const ch of Array.from(sg.t)) segs.push(sg);
+      const kind = (ch) => (K.isKanji(ch) ? 'kanji' : ch === 'ー' ? 'long-vowel mark' : K.isKata(ch) ? 'katakana' : 'hiragana');
+      const name = (ch, i) => {
+        const sg = segs[i];
+        const r = K.isKanji(ch) ? (sg && sg.r && sg.t === ch ? sg.r : kanjiReading(ch)) : null;
+        return (r ? '{' + ch + '|' + r + '}' : ch) + ' (' + kind(ch) + ')';
+      };
+      const seen = new Set();
+      a.forEach((got, i) => {
+        const want = b[i];
+        if (got === want || !HAND_ONE[got] || HAND_ONE[got] !== HAND_ONE[want] || seen.has(got + want)) return;
+        seen.add(got + want);
+        notes.push({ code: 'same_shape', en: name(got, i) + ' and ' + name(want, i) + ' look the same when handwritten; here it is the ' + kind(want) + '.', got, want });
+      });
+    }
+    return notes;
+  }
+
+  /* check(input, task) → { ok, matched, form?, notes?, normalized, feedback:[{code, en, jp?, …}], assisted:false, closest }
+   * task: { accept:[markup…], mode:'exact'|'kana'|'reading'|'meaning', scriptFree?, vars?, handwritten? }
+   * handwritten: the input came from the handwriting pad, so characters written
+   * with one shape (ロ/口, へ/ヘ…) count as one form. On success, `form` is the
+   * accepted spelling that matched and `notes` (mixed text) say how it was written. */
   function check(input, task) {
     task = task || {};
     const mode = task.mode || 'reading';
@@ -6583,20 +6692,38 @@ RB.answers = (function () {
     }
     const sf = !!task.scriptFree;
     const fold = (s) => (sf ? K.toHira(s) : s);
+    const hand = !!task.handwritten;
     const cands = accept.map((acc) => forms(acc, task.vars));
-    for (const c of cands) {
-      let targets;
-      if (mode === 'exact') targets = [c.surface];
-      else if (mode === 'kana') targets = [c.reading];
-      else targets = [c.surface, c.reading];
-      if (targets.some((t) => fold(t) === fold(n))) {
-        res.ok = true;
-        res.matched = c.acc;
-        return res;
+    const targetsOf = (c) => (mode === 'exact' ? [c.surface] : mode === 'kana' ? [c.reading] : [c.surface, c.reading]);
+    // exact first; then, for handwriting only, one-shape characters folded (ロ/口, へ/ヘ…)
+    const passes = hand ? [fold, (s) => fold(handFold(s))] : [fold];
+    for (const key of passes) {
+      for (const c of cands) {
+        const hit = targetsOf(c).find((t) => key(t) === key(n));
+        if (hit != null) {
+          res.ok = true;
+          res.matched = c.acc;
+          res.form = hit;
+          res.notes = successNotes(n, hit, c, cands, task.vars);
+          return res;
+        }
       }
     }
     // ---- wrong: find the closest accepted form and explain the difference ----
     const inputHasKanji = K.hasKanji(n);
+    // Kanji whose reading is an accepted answer: where the task only accepts
+    // kana (田 for the kana blank た), the right sound written the wrong way;
+    // where it accepts another kanji (日 for 火, both ひ), a homophone.
+    if (inputHasKanji && mode !== 'exact' && !cands.some((c) => fold(c.surface) === fold(n))) {
+      const hit = (RB.lex ? RB.lex.bySurface(n) : []).concat(kanjiReading(n) ? [{ w: n, r: kanjiReading(n) }] : [])
+        .find((e) => e.r && cands.some((c) => fold(c.reading) === fold(normKana(e.r)) && !K.hasKanji(c.reading)));
+      if (hit) {
+        const rb = RB.jp.rubyize(hit.w, hit.r);
+        if (cands.some((c) => K.hasKanji(c.surface))) res.feedback.push({ code: 'other_word', en: "That's " + rb + (hit.m ? ', "' + esc(hit.m) + '"' : '') + ': the same reading, but a different word.', jp: rb });
+        else res.feedback.push({ code: 'needs_kana', en: rb + ' has the right reading, but here the answer is written in kana.', jp: rb });
+        return res;
+      }
+    }
     let best = null;
     cands.forEach((c) => {
       const opts = mode === 'exact' ? [c.surface] : mode === 'kana' ? [c.reading] : inputHasKanji ? [c.surface, c.reading] : [c.reading, c.surface];
@@ -6835,7 +6962,7 @@ RB.answers = (function () {
     return out;
   }
 
-  return { check, distractors, normKana, normMeaning, align, plausible, confusablesOf, SHAPES };
+  return { check, distractors, normKana, normMeaning, align, plausible, confusablesOf, SHAPES, HAND_SAME, kanjiReading, rubyText };
 })();
 
 
@@ -7409,8 +7536,13 @@ RB.recogData = {
  *     joins/splits.
  *  4. Small kana share their large form's shape; small vs large is decided by
  *     the explicit toggle and box-relative size (sizeHint). Shape-identical
- *     pairs across scripts are returned together with a note.
- * The recognizer never receives the expected answer; `script` is the pad mode.
+ *     pairs across scripts are returned together with a note; kana/kanji twins
+ *     (ロ/口…) at one distance, kana first.
+ *  5. Outside the allowed set: with kanji off, a supported kanji that matches
+ *     clearly better is named (kanjiHint); a kanji-like drawing that nothing
+ *     allowed matches is flagged (kanjiLike). Neither adds a candidate.
+ * The recognizer never receives the expected answer; `script` and `kanji` are
+ * the pad mode.
  */
 var RB = (globalThis.RB = globalThis.RB || {});
 
@@ -7448,12 +7580,23 @@ RB.recog = (function () {
     shortlist: 40, // templates passed from the chamfer pre-filter to the structured matcher
     scoreScale: 0.25, // score = exp(-dist/scoreScale); similarity, not a probability
     confidentMax: 0.2, // best distance must be below this for 'confident'
+    confidentMaxKanji: 0.17, // ...0.17 for a kanji: 33 kanji cannot cover the lookalikes of all the others (朋 vs 門)
     nonsenseMin: 0.38, // best distance above this -> 'nonsense'
     smallZ: 0.2, // sizeHint 'small' when (1 - relative size) + smallDyW * (lowering) exceeds this
     smallDyW: 1.5,
     margin: 0.02, // best vs best-other-shape distance gap needed for 'confident'
     marginRatio: 0.12, // ...or relative gap
     marginCross: 0.06, // gap needed when the runner-up is a lookalike from the other script
+    // Outside the allowed set (see docs/RECOGNITION.md "Kanji outside the pad's set"):
+    kanjiHintMax: 0.16, // kanji off: a supported kanji must match at least this well to be named...
+    kanjiHintGap: 0.04, // ...and beat every allowed character by this much
+    kanjiLikeStrokes: 5, // kanji-like: at least this many strokes (a kana has at most 6),
+    kanjiLikeStraight: 0.6, // mostly straight strokes (mean chord / length; scribbles are ~0.15),
+    // and nothing allowed matches well: rejected (no-match / too many strokes), or the best
+    // match is above kanjiLikeWeak — kanjiLikeWeakKana when the best is a kana with no
+    // more than one stroke fewer than drawn (a sloppy ボ or ぎ must not be taken for a kanji)
+    kanjiLikeWeak: 0.2,
+    kanjiLikeWeakKana: 0.27,
   };
 
   // ------------------------------------------------------------ tables
@@ -7473,6 +7616,11 @@ RB.recog = (function () {
   ];
   const SAME_OF = {};
   for (const g of SAME_SHAPE) for (const c of g) SAME_OF[c] = g;
+  // kana/kanji twins (ー/一, ロ/口, カ/力, ニ/二): with kanji enabled both are
+  // returned at the same distance, the kana form first (the pad reorders them
+  // by the characters already written; see RB.pad).
+  const TWIN_OF = {};
+  for (const g of SAME_SHAPE) if (g.some((c) => scriptOf(c) === 'kanji')) for (const c of g) TWIN_OF[c] = g;
 
   // Legitimate handwriting variants (1-based KanjiVG stroke numbers), matched at
   // almost no extra cost. Any other pair of consecutive strokes written as one is
@@ -8053,21 +8201,84 @@ RB.recog = (function () {
     return null;
   }
 
+  // Mean straightness of the drawn strokes: chord / path length (1 = a straight
+  // line). Kanji strokes are mostly straight; wandering scribbles are not.
+  function straightness(clean) {
+    let s = 0;
+    for (const st of clean) {
+      const L = polyLen(st), a = st[0], b = st[st.length - 1];
+      s += L > 1e-9 ? hypot(b[0] - a[0], b[1] - a[1]) / L : 1;
+    }
+    return clean.length ? s / clean.length : 0;
+  }
+
+  // The best supported kanji for this drawing, used only when kanji are not in
+  // the allowed set: the same match on the kanji templates alone (chamfer
+  // shortlist of 6, structured match, refinement of the leading 3).
+  // `limit`: only a kanji closer than this is of interest; templates whose
+  // chamfer term alone (with a margin for the refinement) exceeds it are skipped.
+  function bestKanji(inp, t, ctx, limit) {
+    const pool = [];
+    for (const e of t.list) {
+      if (e.script !== 'kanji') continue;
+      const cd = cloudDist(inp.cloud, e.cloud);
+      if (P.cloudW * cd <= limit + 0.02) pool.push({ e, cd });
+    }
+    if (!pool.length) return null;
+    pool.sort((a, b) => a.cd - b.cd);
+    const sc = pool.slice(0, 6).map(({ e, cd }) => { const m = matchEntry(inp, e, ctx); return { e, cd, m, dist: m.dist + P.cloudW * cd }; });
+    sc.sort((a, b) => a.dist - b.dist);
+    for (let k = 0; k < mmin(3, sc.length); k++) {
+      if (sc[k].dist > limit + 0.06) break;
+      const r = refine(inp, sc[k], ctx);
+      if (r && r.dist < sc[k].dist) sc[k] = r;
+    }
+    sc.sort((a, b) => a.dist - b.dist);
+    return sc[0];
+  }
+
   function recognize(strokes, opts) {
     opts = opts || {};
     const t = tables();
     const clean = cleanStrokes(strokes);
-    const result = { status: 'empty', candidates: [], sizeHint: null, notes: [] };
+    const result = { status: 'empty', candidates: [], sizeHint: null, notes: [], kanjiHint: null, kanjiLike: false };
     if (!clean.length) return result;
     const allowed = allowedSet(opts);
+    const kanjiOn = (opts.script || 'any') === 'kanji' || !!opts.kanji;
     const inp = prepInput(clean);
+    const ctx = makeCtx(opts.mode === 'strict');
+    // Is the drawing outside the allowed set? (a) kanji off, and a supported
+    // kanji matches clearly better than anything allowed: name it (kanjiHint);
+    // (b) otherwise, kanji-like (several mostly straight strokes) while nothing
+    // allowed matches well: say so (kanjiLike). Both use the drawing only.
+    const outside = (bestDist, bestCh, rejected) => {
+      if (rejected && rejected !== 'no-match' && rejected !== 'too-many-strokes') return;
+      const limit = mmin(P.kanjiHintMax, bestDist - P.kanjiHintGap);
+      if (!kanjiOn && rejected !== 'too-many-strokes' && limit > 0) {
+        const k = bestKanji(inp, t, ctx, limit);
+        const twin = k && bestCh && TWIN_OF[k.e.ch] && TWIN_OF[k.e.ch].includes(bestCh);
+        if (k && !twin && k.dist <= P.kanjiHintMax && k.dist + P.kanjiHintGap <= bestDist) {
+          result.kanjiHint = { ch: k.e.ch, dist: +k.dist.toFixed(4) };
+          result.notes.push('kanji-hint: ' + k.e.ch);
+          return;
+        }
+      }
+      const e = bestCh ? t.byChar[bestCh] : null;
+      const kanaLike = e && (e.script !== 'kanji' || TWIN_OF[bestCh]) && clean.length < e.K + 2;
+      const weak = rejected || bestDist > (kanaLike ? P.kanjiLikeWeakKana : P.kanjiLikeWeak);
+      if (clean.length >= P.kanjiLikeStrokes && weak && straightness(clean) >= P.kanjiLikeStraight) {
+        result.kanjiLike = true;
+        result.sizeHint = null;
+        result.notes.push('kanji-like');
+      }
+    };
     const bad = nonsenseCheck(clean, inp, opts.box, t, allowed);
     if (bad) {
       result.status = 'nonsense';
       result.notes.push('nonsense: ' + bad);
+      outside(INF, null, bad);
       return result;
     }
-    const ctx = makeCtx(opts.mode === 'strict');
     // 1) chamfer pre-filter
     const pool = [];
     for (const e of t.list) if (allowed(e)) pool.push({ e, cd: cloudDist(inp.cloud, e.cloud) });
@@ -8097,17 +8308,27 @@ RB.recog = (function () {
       seen.add(ch);
       cands.push({ ch, score: +mexp(-dist / P.scoreScale).toFixed(3), dist: +dist.toFixed(4), ...extra });
     };
-    for (const s of scored) {
-      const ch = s.e.ch;
+    const pushChar = (ch, dist) => {
       const sm = SMALL_OF[ch];
       const smOk = sm && t.byChar[sm] && (script === 'any' || scriptOf(sm) === script);
       if (sm && smOk && preferSmall) {
-        push(sm, s.dist);
-        push(ch, s.dist + 0.004);
+        push(sm, dist);
+        push(ch, dist + 0.004);
       } else {
-        push(ch, s.dist);
-        if (sm && smOk) push(sm, s.dist + 0.004);
+        push(ch, dist);
+        if (sm && smOk) push(sm, dist + 0.004);
       }
+    };
+    const byCh = {};
+    for (const s of scored) if (!byCh[s.e.ch]) byCh[s.e.ch] = s;
+    for (const s of scored) {
+      const ch = s.e.ch;
+      // kana/kanji twins: one shape, so one distance, kana form first
+      const tw = TWIN_OF[ch] && TWIN_OF[ch].filter((c) => byCh[c]);
+      if (tw && tw.length > 1) {
+        const d = mmin(...tw.map((c) => byCh[c].dist));
+        for (const c of tw) pushChar(c, d);
+      } else pushChar(ch, s.dist);
       if (cands.length >= 6) break;
     }
     // keep order consistent with scores
@@ -8137,15 +8358,18 @@ RB.recog = (function () {
       result.status = 'nonsense';
       result.notes.push('nonsense: no-match');
       result.candidates = [];
+      outside(best.dist, bestCh, 'no-match');
       return result;
     }
     const gap = other ? other.dist - best.dist : INF;
     // hiragana/katakana lookalikes (り/リ, も/モ, や/ヤ...) need a wider margin in a mixed pad
     const cross = other && best.e.script !== other.e.script && best.e.script !== 'both' && other.e.script !== 'both';
     const close = gap < (cross ? P.marginCross : P.margin) || gap < P.marginRatio * best.dist;
-    result.status = best.dist <= P.confidentMax && !close ? 'confident' : 'uncertain';
+    const confMax = best.e.script === 'kanji' && !TWIN_OF[bestCh] ? P.confidentMaxKanji : P.confidentMax;
+    result.status = best.dist <= confMax && !close ? 'confident' : 'uncertain';
     if (close && other) result.notes.push('close-alternative: ' + other.e.ch);
-    if (best.dist > P.confidentMax) result.notes.push('weak-match');
+    if (best.dist > confMax) result.notes.push('weak-match');
+    outside(best.dist, bestCh, null);
     return result;
   }
 
@@ -8250,13 +8474,19 @@ RB.recog = (function () {
     return out;
   }
 
+  // The group of characters written with the same shape as ch (['ロ', '口']), or null.
+  function sameShape(ch) {
+    return SAME_OF[ch] ? SAME_OF[ch].slice() : null;
+  }
+
   return {
     supported,
     recognize,
     reference,
     strokeOrderFeedback,
+    sameShape,
     // exposed for tests and tooling only
-    _internal: { P, tables, SMALL_OF, LARGE_OF, SAME_SHAPE, VARIANTS, scriptOf, baseOf, normalize, cleanStrokes },
+    _internal: { P, tables, SMALL_OF, LARGE_OF, SAME_SHAPE, TWIN_OF, VARIANTS, scriptOf, baseOf, normalize, cleanStrokes, straightness },
   };
 })();
 
@@ -22746,6 +22976,8 @@ RB.game = (function () {
       binds: null, touch: 'auto', strokePractice: false, romaji: true,
       // touch layout (older settings records lack these; the defaults keep the previous layout)
       touchHand: 'right', touchSize: 'normal',
+      // handwriting pad reads kanji too: 'auto' (by Japanese level), 'on', 'off' (older records lack it: 'auto')
+      padKanji: 'auto',
     };
   }
 
@@ -27430,6 +27662,7 @@ RB.ui.settings = (function () {
       }
       h += '<div class="kind">' + I('settings') + ' For every campaign</div>' +
         radios('input', 'Default way to answer', [['hand', 'Handwriting'], ['choice', 'Choices'], ['ime', 'Keyboard / IME']], null, 'You can switch during any question without losing your place.') +
+        radios('padKanji', 'Handwriting reads', [['auto', 'By Japanese level'], ['on', 'Kanji or kana'], ['off', 'Kana only']], null, 'By level: kana only in Foundations, kanji or kana from Elementary on. The pad knows 33 common kanji; writing in kana is always fine. Kana practice reads kana only. You can also change this with Read as on the writing pad.') +
         sw('strokePractice', 'Show stroke-order notes after handwriting', 'Off keeps handwriting lenient: only the shape is checked.');
     } else if (g === 'controls') {
       const binds = RB.input.getBinds();
@@ -27552,7 +27785,12 @@ RB.ui.settings = (function () {
  *   read ("I read this as…"), alternatives and uncertainty; only an
  *   explicit Confirm puts a character into the answer strip.
  * - Choosing a non-top candidate or picking from the chart counts as an
- *   assisted character. */
+ *   assisted character (not the other character of one shape, ロ/口).
+ * - "Read as": Kanji or kana (the task's kana plus the 33 kanji the
+ *   recognizer knows), Either kana, ひらがな, カタカナ. The start follows the
+ *   player's preference (by level: Foundations kana only), never the answer;
+ *   kana practice reads kana only. A kanji drawn while kanji reading is off,
+ *   or a kanji the pad doesn't know, is said so plainly (no kana guesses). */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 /* ---- shared learning-interface helpers ------------------------------------------ */
@@ -27675,6 +27913,51 @@ RB.pad = (function () {
   const I = (n) => RB.learnUi.icon(n);
   const BOX = 300; // recognizer coordinate space
   const SMALL = 'ぁぃぅぇぉっゃゅょゎァィゥェォッャュョヮヵヶ';
+  const MODES = ['kanji', 'any', 'hira', 'kata']; // "Read as": Kanji or kana / Either kana / ひらがな / カタカナ
+  const isKanji = (c) => !!c && RB.kana.isKanji(c);
+
+  /* Kanji reading on the pad is the player's preference (Settings › Learning:
+   * padKanji 'auto' | 'on' | 'off'; older settings records have none and mean
+   * 'auto'). 'auto' follows the Japanese level: kana only in Foundations,
+   * kanji or kana from Elementary on. It never depends on the task's answer. */
+  function kanjiPreferred() {
+    const st = RB.game && RB.game.settings;
+    const v = (st && st.padKanji) || 'auto';
+    if (v === 'on' || v === 'off') return v === 'on';
+    const s = RB.game && RB.game.s;
+    return !!(s && s.learn && s.learn.profile && s.learn.profile !== 'F');
+  }
+  // Choosing "Kanji or kana" or "Either kana" on a pad is remembered.
+  function rememberKanji(on) {
+    const st = RB.game && RB.game.settings;
+    if (!st || kanjiPreferred() === on) return;
+    st.padKanji = on ? 'on' : 'off';
+    if (RB.game.saveSettings) RB.game.saveSettings();
+  }
+  // A character as shown on the pad: a kanji carries its reading on its own
+  // as furigana (there is no word context yet; the feedback gives the word's).
+  function glyph(ch) {
+    const r = isKanji(ch) && RB.answers && RB.answers.kanjiReading ? RB.answers.kanjiReading(ch) : null;
+    return r ? '<ruby>' + esc(ch) + '<rt>' + esc(r) + '</rt></ruby>' : esc(ch);
+  }
+  const spoken = (ch) => {
+    const r = isKanji(ch) && RB.answers && RB.answers.kanjiReading ? RB.answers.kanjiReading(ch) : null;
+    return r ? 'the kanji ' + ch + ' (' + r + ')' : ch;
+  };
+  /* One shape, two characters (ロ/口, ニ/二, カ/力, ー/一): the recognizer
+   * returns both at one distance, kana first. The pad offers first the one
+   * that fits the character written just before it — never the task's answer:
+   * after a kanji, the kanji; after katakana, the kana; after hiragana, the
+   * kanji (but ー, which lengthens a vowel); at the start, the kana (but 一,
+   * since no word starts with ー). Choosing the other one is not "assisted". */
+  function twinFirst(group, prev) {
+    const kana = group.find((c) => !isKanji(c)), kan = group.find(isKanji);
+    if (!kana || !kan) return null;
+    if (!prev) return kana === 'ー' ? kan : kana;
+    if (isKanji(prev)) return kan;
+    if (RB.kana.isHira(prev)) return kana === 'ー' ? kana : kan;
+    return kana;
+  }
 
   function create(host, opts) {
     opts = opts || {};
@@ -27695,8 +27978,8 @@ RB.pad = (function () {
           '<button class="pbtn" data-a="small" aria-pressed="false" title="Mark as small kana (ゃ, っ…)"><span class="glyph" lang="ja" aria-hidden="true">小</span><span>Small kana</span></button>' +
           '<button class="pbtn" data-a="chart" title="Pick the character from a chart (counts as assisted)">' + I('grid') + '<span>Chart</span></button>' +
           '<button class="pbtn" data-a="model" title="Show how to write it (counts as assisted)">' + I('eye') + '<span>How to write</span></button>' +
-          '<label class="pad-script"><span>Read as</span><select data-script-sel>' +
-            '<option value="any">Either kana</option><option value="hira">ひらがな</option><option value="kata">カタカナ</option></select></label>' +
+          '<label class="pad-script" title="What the pad reads. Kanji or kana adds the 33 kanji it knows; choosing it or Either kana is remembered for the next questions."><span>Read as</span><select data-script-sel>' +
+            '<option value="kanji">Kanji or kana</option><option value="any">Either kana</option><option value="hira">ひらがな</option><option value="kata">カタカナ</option></select></label>' +
         '</div>' +
       '</div>';
     // The composition ("your answer") line can live elsewhere, e.g. next to Submit.
@@ -27723,7 +28006,12 @@ RB.pad = (function () {
       result: null,     // last recognizer result
       pick: null,       // candidate chosen by the player
       small: false,
-      script: opts.script || 'any',
+      // "Read as": the task's kana script (opts.script 'any' | 'hira' | 'kata'),
+      // with kanji added in mode 'kanji'. opts.kanji: false for kana tasks,
+      // true to start with kanji, otherwise the player's preference.
+      kanaScript: ['hira', 'kata'].indexOf(opts.script) >= 0 ? opts.script : 'any',
+      mode: 'any',
+      list: [],         // the candidates in the order offered
       maxLen: opts.maxLen || 12,
       guide: opts.guide || null, // character to show faintly (copy mode)
       model: null,      // character whose numbered model is shown
@@ -27731,6 +28019,7 @@ RB.pad = (function () {
       onAssist: opts.onAssist || (() => {}),
       destroyed: false,
     };
+    P.mode = opts.kanji !== false && (opts.kanji === true || kanjiPreferred()) ? 'kanji' : P.kanaScript;
     let dpr = 1;
     // Colours come from CSS so high contrast can change them.
     let C = { paper: '#fffaf0', ink: '#1c160e', guide: 'rgba(120,90,50,0.28)', edge: 'rgba(120,90,50,0.45)', model: 'rgba(168,62,39,0.38)', num: '#a83e27', hint: 'rgba(31,90,146,0.08)', ghost: 'rgba(76,64,48,0.2)' };
@@ -27870,7 +28159,8 @@ RB.pad = (function () {
       if (!P.strokes.length) { P.result = null; renderRead(); return; }
       const strokes = P.strokes.map((s) => s.map((p) => ({ x: p.x * BOX, y: p.y * BOX, t: p.t })));
       try {
-        P.result = RB.recog.recognize(strokes, { box: { w: BOX, h: BOX }, script: P.script, smallToggle: P.small });
+        const kanji = P.mode === 'kanji';
+        P.result = RB.recog.recognize(strokes, { box: { w: BOX, h: BOX }, script: kanji ? P.kanaScript : P.mode, kanji, smallToggle: P.small });
       } catch (err) {
         P.result = { status: 'nonsense', candidates: [], notes: ['error'] };
         console.error(err);
@@ -27882,49 +28172,97 @@ RB.pad = (function () {
     function setRead(state, cap, big, small) {
       readas.setAttribute('data-state', state);
       el.setAttribute('data-read', state);
-      const mark = state === 'unsure' || state === 'unread' ? I('unsure') : '';
+      const mark = state === 'unsure' || state === 'unread' || state === 'outside' ? I('unsure') : '';
       readas.innerHTML = '<span class="rd-cap">' + mark + '<span>' + cap + '</span></span>' +
-        '<span class="big' + (big ? '' : ' none') + (small ? ' sm' : '') + '" lang="ja">' + (big ? esc(big) + (small ? '<span class="cap" aria-hidden="true">small</span>' : '') : '<span class="sr">nothing yet</span>') + '</span>';
+        '<span class="big' + (big ? '' : ' none') + (small ? ' sm' : '') + '" lang="ja">' + (big ? glyph(big) + (small ? '<span class="cap" aria-hidden="true">small</span>' : '') : '<span class="sr">nothing yet</span>') + '</span>';
       live.textContent = readas.textContent.replace(/\s+/g, ' ').trim();
     }
+    // the character written just before the one being written (for ロ/口 order)
+    function prevChar() {
+      const c = P.chars[(P.replace >= 0 ? P.replace : P.cursor) - 1];
+      return c ? c.ch : '';
+    }
+    // the recognizer's candidates in the order offered (see twinFirst)
+    function offered(r) {
+      const list = r.candidates.slice();
+      const g = list.length && P.mode === 'kanji' && RB.recog.sameShape ? RB.recog.sameShape(list[0].ch) : null;
+      if (!g || list.filter((c) => g.indexOf(c.ch) >= 0).length < 2) return list;
+      const i = list.findIndex((c) => c.ch === twinFirst(g, prevChar()));
+      if (i > 0) list.unshift(list.splice(i, 1)[0]);
+      return list;
+    }
+    const twinOf = (a, b) => !!(a && b && a !== b && RB.recog.sameShape && (RB.recog.sameShape(a) || []).indexOf(b) >= 0);
+    const button = (a, icon, label) => { const b = RB.ui.el('button', 'pbtn rd-act', I(icon) + '<span>' + label + '</span>'); b.setAttribute('data-a', a); return b; };
     function renderRead() {
       const r = P.result;
       const conf = el.querySelector('[data-a=confirm]');
       candsEl.innerHTML = '';
+      P.list = [];
       if (!r || r.status === 'empty') {
         setRead(P.strokes.length ? 'wait' : 'empty', P.strokes.length ? 'Reading…' : emptyCaption(), '');
         conf.disabled = true;
         return;
       }
+      // Outside what the pad reads: a kanji while kanji reading is off, or a
+      // kanji-like drawing nothing matches. Say so; no unrelated kana guesses.
+      if ((r.kanjiHint || r.kanjiLike) && !P.pick) {
+        const off = P.mode !== 'kanji';
+        if (r.kanjiHint) {
+          setRead('outside', 'Looks like the kanji <span lang="ja">' + glyph(r.kanjiHint.ch) + '</span>, but kanji reading is off.', '');
+        } else {
+          setRead('outside', off ? '<b>Looks like a kanji</b>, and kanji reading is off. Try it, or write the word in kana.' : '<b>Looks like a kanji the pad doesn\'t know.</b> Write the word in kana.', '');
+        }
+        if (off) candsEl.appendChild(button('kanji', 'pieces', 'Read kanji too'));
+        if (r.kanjiHint && r.candidates.length) {
+          // the kana it could also be, if a kana was meant
+          candsEl.appendChild(RB.ui.el('span', 'or', 'or'));
+          r.candidates.slice(0, 4).forEach((cd) => candsEl.appendChild(candButton(cd)));
+        }
+        if (!r.kanjiHint) candsEl.appendChild(button('chart', 'grid', 'Chart'));
+        conf.disabled = true;
+        fitAlts();
+        RB.audio && RB.audio.sfx('recog_unsure', { vol: 0.5 });
+        return;
+      }
       if (r.status === 'nonsense' || !r.candidates.length) {
         setRead('unread', '<b>I can\'t read that clearly yet</b> — try again.', '');
-        candsEl.appendChild(RB.ui.el('button', 'pbtn', I('grid') + '<span>Chart</span>')).setAttribute('data-a', 'chart');
+        candsEl.appendChild(button('chart', 'grid', 'Chart'));
         conf.disabled = true;
         RB.audio && RB.audio.sfx('recog_unsure', { vol: 0.5 });
         return;
       }
-      const top = P.pick || r.candidates[0].ch;
+      P.list = offered(r);
+      const first = P.list[0].ch;
+      const top = P.pick || first;
       const uncertain = r.status === 'uncertain' && !P.pick;
       const topSmall = SMALL.indexOf(top) >= 0;
-      const small = r.sizeHint === 'small' && !P.small && !topSmall ? ' <span class="rd-hint">(looks small — 小?)</span>' : '';
+      const chose = P.pick && P.pick !== first && !twinOf(first, P.pick);
+      // a small drawing only matters when a small kana is among the readings
+      const smallAlt = P.list.some((cd) => cd.ch !== top && SMALL.indexOf(cd.ch) >= 0);
+      const small = r.sizeHint === 'small' && !P.small && !topSmall && smallAlt && !isKanji(top) ? ' <span class="rd-hint">(drawn small: the small kana is in the list)</span>' : '';
+      const twin = P.list.some((cd) => twinOf(top, cd.ch));
+      const kind = twin ? (isKanji(top) ? ' the kanji' : top === 'ー' ? ' the long-vowel mark' : RB.kana.isKata(top) ? ' katakana' : ' hiragana') : topSmall ? ' a small kana' : '';
       setRead(uncertain ? 'unsure' : 'sure',
-        (uncertain ? '<b>Not sure</b> — pick the one you meant' : P.pick && P.pick !== r.candidates[0].ch ? 'You chose' : 'I read this as') + (topSmall ? ' a small kana' : '') + small, top, topSmall);
-      // the other readings, so a different one can be chosen (counts as assisted)
+        (uncertain ? '<b>Not sure</b> — pick the one you meant' : chose ? 'You chose' : 'I read this as' + kind) + small, top, topSmall);
+      // the other readings, so a different one can be chosen (counts as
+      // assisted, except the other character of the same shape)
       const seen = new Set([top]);
-      const alts = r.candidates.slice(0, 6).filter((cd) => !seen.has(cd.ch) && seen.add(cd.ch));
+      const alts = P.list.slice(0, 6).filter((cd) => !seen.has(cd.ch) && seen.add(cd.ch));
       if (alts.length) candsEl.appendChild(RB.ui.el('span', 'or', 'or'));
-      alts.forEach((cd) => {
-        const small = SMALL.indexOf(cd.ch) >= 0; // small kana look like their full-size twins: say so
-        const b = RB.ui.el('button', 'cand' + (small ? ' sm' : ''), esc(cd.ch) + (small ? '<span class="cap" aria-hidden="true">small</span>' : ''));
-        b.setAttribute('lang', 'ja');
-        b.setAttribute('aria-label', 'I meant ' + (small ? 'small ' : '') + cd.ch);
-        b.title = 'Similarity ' + Math.round(cd.score * 100) + '% (a match score, not a probability)';
-        b.onclick = () => { P.pick = cd.ch; renderRead(); };
-        candsEl.appendChild(b);
-      });
+      alts.forEach((cd) => candsEl.appendChild(candButton(cd, twinOf(top, cd.ch))));
       conf.disabled = false;
       fitAlts();
       RB.audio && RB.audio.sfx(uncertain ? 'recog_unsure' : 'recog_ok', { vol: 0.4 });
+    }
+    function candButton(cd, twin) {
+      const small = SMALL.indexOf(cd.ch) >= 0; // small kana look like their full-size twins: say so
+      const cap = small ? 'small' : !twin ? '' : isKanji(cd.ch) ? 'kanji' : cd.ch === 'ー' ? 'long' : RB.kana.isKata(cd.ch) ? 'katakana' : 'hiragana';
+      const b = RB.ui.el('button', 'cand' + (cap ? ' sm' : ''), glyph(cd.ch) + (cap ? '<span class="cap" aria-hidden="true">' + cap + '</span>' : ''));
+      b.setAttribute('lang', 'ja');
+      b.setAttribute('aria-label', 'I meant ' + (small ? 'small ' : '') + spoken(cd.ch) + (twin ? ', the same shape' : ''));
+      b.title = twin ? 'The same shape as a different character: choose the one you meant' : 'Similarity ' + Math.round(cd.score * 100) + '% (a match score, not a probability)';
+      b.onclick = () => { P.pick = cd.ch; renderRead(); };
+      return b;
     }
     // Show as many other readings as fit on the row beside Confirm (the rest
     // stay reachable through the chart), so the row never wraps.
@@ -27940,7 +28278,7 @@ RB.pad = (function () {
     }
     function emptyCaption() {
       const orderNotes = P.chars.map((c) => c.order).filter((o) => o && o.confident && o.issues && o.issues.length);
-      if (P.replace >= 0) return 'Write the replacement for ' + esc(P.chars[P.replace].ch) + ', then Confirm.';
+      if (P.replace >= 0) return 'Write the replacement for <span lang="ja">' + glyph(P.chars[P.replace].ch) + '</span>, then Confirm.';
       if (orderNotes.length && P.chars.length) return esc('Stroke order: ' + orderNotes[orderNotes.length - 1].issues.map((i) => i.en).join(' '));
       if (P.chars.length && P.maxLen > 1) return 'Write the next one, or tap a character in your answer to fix it.';
       return 'Write one character in the box.';
@@ -27948,10 +28286,10 @@ RB.pad = (function () {
 
     function confirm() {
       const r = P.result;
-      if (!r || !r.candidates.length) return;
-      const top = r.candidates[0].ch;
+      if (!r || !r.candidates.length || ((r.kanjiHint || r.kanjiLike) && !P.pick)) return;
+      const top = (P.list.length ? P.list : offered(r))[0].ch;
       const ch = P.pick || top;
-      const assisted = !!(P.pick && P.pick !== top);
+      const assisted = !!(P.pick && P.pick !== top && !twinOf(top, P.pick));
       const entry = { ch, assisted, uncertain: r.status === 'uncertain', strokes: P.strokes.slice() };
       if (RB.game.settings.strokePractice && RB.recog.strokeOrderFeedback && !assisted) {
         const strokes = P.strokes.map((s) => s.map((p) => ({ x: p.x * BOX, y: p.y * BOX, t: p.t })));
@@ -27994,7 +28332,7 @@ RB.pad = (function () {
         if (P.maxLen > 1) strip.appendChild(gap(i));
         if (i < P.chars.length) {
           const c = P.chars[i];
-          const b = RB.ui.el('button', 'cell' + (P.replace === i ? ' cur' : '') + (c.assisted ? ' asst' : '') + (c.uncertain && !c.assisted ? ' unsure' : ''), esc(c.ch));
+          const b = RB.ui.el('button', 'cell' + (P.replace === i ? ' cur' : '') + (c.assisted ? ' asst' : '') + (c.uncertain && !c.assisted ? ' unsure' : ''), glyph(c.ch));
           b.setAttribute('lang', 'ja');
           b.setAttribute('aria-pressed', String(P.replace === i));
           b.title = (c.assisted ? 'Chosen by hand (assisted). ' : c.uncertain ? 'The recognizer was not sure about this one. ' : '') + 'Tap to rewrite this character';
@@ -28009,14 +28347,21 @@ RB.pad = (function () {
       comp.querySelector('[data-a=del]').disabled = !P.chars.length;
       if (!P.strokes.length && !P.result) renderRead();
     }
+    // Pick a character by hand (assisted): the kana the pad is reading, and
+    // with kanji reading on, the kanji it knows.
     function chart() {
-      const script = P.script === 'kata' ? 'kata' : 'hira';
       const H = 'あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをんがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽぁぃぅぇぉっゃゅょゎ';
-      const set = Array.from(script === 'kata' ? RB.kana.toKata(H) + 'ー' : H);
+      const kana = P.mode === 'kanji' ? P.kanaScript : P.mode;
+      const secs = [];
+      if (kana !== 'kata') secs.push(['Hiragana', Array.from(H)]);
+      if (kana !== 'hira') secs.push(['Katakana', Array.from(RB.kana.toKata(H) + 'ー')]);
+      if (P.mode === 'kanji') secs.push(['Kanji the pad can read', RB.recog.supported({ kanji: true }).filter(isKanji)]);
       const lay = { name: 'chart' };
-      const fr = RB.learnUi.sheet({ cls: 'small chart', title: 'Pick a character', meta: script === 'kata' ? 'Katakana' : 'Hiragana', onClose: () => RB.ui.popLayer(lay), closeLabel: 'Cancel' });
+      const fr = RB.learnUi.sheet({ cls: 'small chart', title: 'Pick a character', meta: secs.map((x) => x[0].split(' ')[0]).join(', '), onClose: () => RB.ui.popLayer(lay), closeLabel: 'Cancel' });
       fr.el.querySelector('[data-folio-close]').setAttribute('data-x', '');
-      fr.leaf.innerHTML = '<p class="muted small">Characters picked here count as assisted — handy when the recognizer can\'t read your writing.</p><div class="kchart" lang="ja">' + set.map((c) => '<button class="kpick" data-c="' + c + '">' + c + '</button>').join('') + '</div>';
+      fr.leaf.innerHTML = '<p class="muted small">Characters picked here count as assisted — handy when the recognizer can\'t read your writing.</p>' +
+        secs.map(([t, set]) => (secs.length > 1 ? '<h3 class="kchart-h">' + esc(t) + '</h3>' : '') + '<div class="kchart" lang="ja">' +
+          set.map((c) => '<button class="kpick" data-c="' + c + '"' + (isKanji(c) ? ' aria-label="' + esc(spoken(c)) + '"' : '') + '>' + glyph(c) + '</button>').join('') + '</div>').join('');
       lay.el = fr.scrim;
       lay.onCancel = () => RB.ui.popLayer(lay);
       fr.leaf.onclick = (e) => {
@@ -28051,13 +28396,21 @@ RB.pad = (function () {
       if (a === 'confirm') confirm();
       if (a === 'del') remove();
       if (a === 'chart') chart();
+      if (a === 'kanji') setMode('kanji', true);
       if (a === 'model') opts.modelFor && showModel(opts.modelFor());
     };
     el.addEventListener('click', onClick);
     if (opts.composeHost) comp.addEventListener('click', onClick);
     const sel = el.querySelector('[data-script-sel]');
-    sel.value = ['any', 'hira', 'kata'].indexOf(P.script) >= 0 ? P.script : 'any';
-    sel.onchange = () => { P.script = sel.value; if (P.strokes.length) recognize(); };
+    function setMode(m, remember) {
+      if (MODES.indexOf(m) < 0) return;
+      P.mode = m;
+      sel.value = m;
+      if (remember && (m === 'kanji' || m === 'any')) rememberKanji(m === 'kanji');
+      if (P.strokes.length) recognize();
+    }
+    sel.value = P.mode;
+    sel.onchange = () => setMode(sel.value, true);
     renderStrip();
     renderRead();
     requestAnimationFrame(layout);
@@ -28079,11 +28432,13 @@ RB.pad = (function () {
       setGuide(ch) { P.guide = ch; drawBg(); },
       layout,
       destroy() { P.destroyed = true; clearTimeout(recTimer); if (ro) ro.disconnect(); window.removeEventListener('resize', layout); window.removeEventListener('resize', refit); el.remove(); comp.remove(); },
+      mode() { return P.mode; },
+      setMode(m) { setMode(m, false); },
       _state: P,
       _inject(strokes) { P.strokes = strokes; redraw(); recognize(); }, // tests: inject strokes in 0..1 units
     };
   }
-  const api = { create(host, opts) { const p = create(host, opts); api.__last = p; return p; }, BOX };
+  const api = { create(host, opts) { const p = create(host, opts); api.__last = p; return p; }, BOX, kanjiPreferred, twinFirst };
   return api;
 })();
 
@@ -28116,10 +28471,12 @@ RB.challenge = (function () {
   // English feedback may carry {漢字|かな} markup for a word it quotes: give it ruby
   const enRuby = (t) => RB.learnUi.mixed(t);
 
-  function check(input, step) {
+  // opts.handwritten: the text came from the writing pad, so characters that
+  // are written with one shape (ロ/口, へ/ヘ…) count as one (RB.answers).
+  function check(input, step, opts) {
     if (step.kind !== 'write') return { ok: false };
     const accept = (step.accept && step.accept.length ? step.accept : [step.answer]).map(String);
-    if (RB.answers && RB.answers.check) return RB.answers.check(input, { accept, mode: step.mode || 'kana', scriptFree: !!step.scriptFree });
+    if (RB.answers && RB.answers.check) return RB.answers.check(input, { accept, mode: step.mode || 'kana', scriptFree: !!step.scriptFree, handwritten: !!(opts && opts.handwritten) });
     const norm = (s) => plain(s).replace(/\s/g, '');
     const ok = accept.some((a) => norm(a) === norm(input));
     return { ok, feedback: ok ? [] : [{ code: 'generic', en: 'That is not what this needs.' }] };
@@ -28146,6 +28503,11 @@ RB.challenge = (function () {
     { id: 'ime', en: 'Type', jp: '{打|う}つ', icon: 'keyboard' },
   ];
   const SHEET_LAB = { hand: 'Write', choice: 'Choose', ime: 'Type', order: 'Arrange the pieces' };
+  // A kana-practice step (a k: item) asks for kana, so its pad reads kana only;
+  // every other step reads kanji too when the player does (RB.pad).
+  const kanaTask = (step) => [].concat(step.item || []).some((i) => typeof i === 'string' && i.slice(0, 2) === 'k:');
+  // the player's own text, with readings on any kanji (there is no word context)
+  const ownText = (t) => RB.learnUi.mixed(RB.answers && RB.answers.rubyText ? RB.answers.rubyText(t) : t);
 
   // Render one step; resolves with a result object.
   function runStep(step, opts) {
@@ -28212,6 +28574,7 @@ RB.challenge = (function () {
           pad = RB.pad.create(p, {
             maxLen: single ? 1 : Math.max(4, Array.from(plain(step.fullAnswer || step.answer)).length + 3),
             script: step.script || 'any',
+            kanji: kanaTask(step) ? false : undefined,
             guide: step.copy ? Array.from(plain(step.answer))[0] : null,
             composeHost: line,
             onChange: () => { if (step.copy && pad) pad.setGuide(Array.from(plain(step.answer))[pad.text().length] || null); },
@@ -28374,14 +28737,16 @@ RB.challenge = (function () {
         syncSubmit();
         if (tabsApi) tabsApi.el.querySelectorAll('.ptab').forEach((b) => b.setAttribute('aria-disabled', 'true'));
       }
-      function success(modeUsed) {
+      function success(modeUsed, notes) {
         lock();
         res.ok = true;
         res.mode = modeUsed;
         if (res.firstTry == null) res.firstTry = true;
         if (active.helpUsed) res.assisted = true;
         RB.audio && RB.audio.sfx('answer_right');
-        fb('ok', 'Yes.', (res.assisted ? '<span class="muted small">Assisted — that\'s fine.</span>' : '') + explainHtml());
+        // how it was written: "水 (みず) — written in kanji", one-shape characters
+        const how = (notes || []).map((n) => '<div class="fb-how" data-note="' + esc(n.code) + '">' + enRuby(n.en) + '</div>').join('');
+        fb('ok', 'Yes.', how + (res.assisted ? '<span class="muted small">Assisted — that\'s fine.</span>' : '') + explainHtml());
         const w = wrap.querySelector('.fbwrap');
         const btn = continueBtn();
         btn.onclick = () => finish(false);
@@ -28390,10 +28755,10 @@ RB.challenge = (function () {
         if (opts.autoContinue) setTimeout(() => { if (wrap.isConnected) finish(false); }, opts.autoContinue);
       }
       function evaluate(text, modeUsed, meta) {
-        const r = check(text, step);
+        const r = check(text, step, { handwritten: modeUsed === 'hand' });
         if (r.ok) {
           if (meta.assisted) active.helpUsed = true;
-          success(modeUsed);
+          success(modeUsed, r.notes);
           return;
         }
         // Wrong: was it the recognizer's uncertainty or a language mistake?
@@ -28401,14 +28766,14 @@ RB.challenge = (function () {
           res.recogMisses++;
           RB.audio && RB.audio.sfx('recog_unsure');
           fb('unsure', 'I could not read that clearly',
-            '<p>This doesn\'t count against you. Your answer reads <span class="jp big" lang="ja">' + esc(text) + '</span> — if you meant something else, tap it to rewrite it, or use the chart.</p>');
+            '<p>This doesn\'t count against you. Your answer reads <span class="jp big" lang="ja">' + ownText(text) + '</span> — if you meant something else, tap it to rewrite it, or use the chart.</p>');
           return;
         }
         res.mistakes++;
         if (res.firstTry == null) res.firstTry = false;
         RB.audio && RB.audio.sfx('answer_wrong');
         const msgs = (r.feedback || []).map((f) => '<div class="fb-why">' + (f.jp && !/\{[^|}]+\|/.test(f.en || '') ? RB.ui.jhtml(f.jp) + ' ' : '') + enRuby(f.en) + '</div>').join('') || '<div class="fb-why">That isn\'t what this needs.</div>';
-        fb('no', 'Not quite.', '<p>You gave <span class="jp big" lang="ja">' + esc(plain(text)) + '</span>.</p>' + msgs + '<p class="muted small">Try again — take all the time you need.</p>');
+        fb('no', 'Not quite.', '<p>You gave <span class="jp big" lang="ja">' + ownText(plain(text)) + '</span>.</p>' + msgs + '<p class="muted small">Try again — take all the time you need.</p>');
         if (opts.onMistake) opts.onMistake(r);
         if (pad && modeUsed === 'hand') pad.reset();
       }
@@ -32950,7 +33315,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const X = C.challenges;
   X['rw.c_road_lantern'] = { title: { jp: '{道|みち} の {灯|あか}り', en: 'The roadside lantern' },
     tiers: {
-      F: [{ kind: 'write', item: 'v:葦ノ瀬', prompt: { en: 'The lantern\'s shade is blank. The road leads to the village of Ashinose (Reedwake). Write its name on the shade.' }, answer: 'あしのせ', accept: ['あしのせ'], mode: 'kana', explain: { jp: '{葦|あし}ノ{瀬|せ}', en: 'Ashinose — "the shallows of the reeds". The village is called Reedwake in English.' } }],
+      F: [{ kind: 'write', item: 'v:葦ノ瀬', prompt: { en: 'The lantern\'s shade is blank. The road leads to the village of Ashinose (Reedwake). Write its name on the shade.' }, answer: 'あしのせ', accept: ['あしのせ', '葦ノ瀬'], mode: 'kana', explain: { jp: '{葦|あし}ノ{瀬|せ}', en: 'Ashinose — "the shallows of the reeds". The village is called Reedwake in English.' } }],
       E: [
         { kind: 'write', item: 'g:prt_he', ctx: { jp: 'あしのせ ＿ いく みち', en: 'The road that goes (to) Ashinose' }, prompt: { en: 'The old writing has lost one small word. Which particle marks the direction "to"?' }, template: { before: 'あしのせ', after: 'いく みち' }, answer: 'へ', accept: ['へ', 'に'], mode: 'kana', choices: ['へ', 'を', 'で'], explain: { en: 'へ (pronounced e) marks direction; に also works here ("to Ashinose"). を would make Ashinose the thing you pass along, which doesn\'t fit.' } },
         { kind: 'write', item: 'v:葦ノ瀬', prompt: { en: 'Now write the village name itself on the shade (Ashinose).' }, answer: 'あしのせ', accept: ['あしのせ', '葦ノ瀬'], mode: 'reading', explain: { jp: '{葦|あし}ノ{瀬|せ}', en: 'Ashinose (Reedwake).' } },
@@ -33001,7 +33366,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   X['rw.c_lantern_s'] = { title: { jp: '{南|みなみ} の {灯|あか}り', en: 'The south lantern' },
     tiers: {
-      F: [{ kind: 'write', item: 'v:潮硝子', prompt: { en: 'Ren reads from the records: "The south lantern points to Shiogarasu — Saltglass, the harbour town." Write its name on the shade.' }, answer: 'しおがらす', accept: ['しおがらす'], mode: 'kana', explain: { jp: '{潮硝子|しおがらす}', en: 'Shiogarasu (Saltglass).' } }],
+      F: [{ kind: 'write', item: 'v:潮硝子', prompt: { en: 'Ren reads from the records: "The south lantern points to Shiogarasu — Saltglass, the harbour town." Write its name on the shade.' }, answer: 'しおがらす', accept: ['しおがらす', '潮硝子'], mode: 'kana', explain: { jp: '{潮硝子|しおがらす}', en: 'Shiogarasu (Saltglass).' } }],
       E: [
         { kind: 'choose', item: 'c:rw_rec1', ctx: { jp: '{南|みなみ} の {灯|あか}り ： しおがらす まで {二日|ふつか}', en: '' }, prompt: { en: 'Ren\'s record for the south lantern. How far is Saltglass?' },
           options: [{ en: 'Two days', ok: true }, { en: 'Two hours', ok: false, why: { en: 'Hours would be 二時間 (にじかん).' } }, { en: 'Ten days', ok: false, why: { en: 'Ten days is 十日 (とおか).' } }],

@@ -16,8 +16,13 @@
  *     joins/splits.
  *  4. Small kana share their large form's shape; small vs large is decided by
  *     the explicit toggle and box-relative size (sizeHint). Shape-identical
- *     pairs across scripts are returned together with a note.
- * The recognizer never receives the expected answer; `script` is the pad mode.
+ *     pairs across scripts are returned together with a note; kana/kanji twins
+ *     (ロ/口…) at one distance, kana first.
+ *  5. Outside the allowed set: with kanji off, a supported kanji that matches
+ *     clearly better is named (kanjiHint); a kanji-like drawing that nothing
+ *     allowed matches is flagged (kanjiLike). Neither adds a candidate.
+ * The recognizer never receives the expected answer; `script` and `kanji` are
+ * the pad mode.
  */
 var RB = (globalThis.RB = globalThis.RB || {});
 
@@ -55,12 +60,23 @@ RB.recog = (function () {
     shortlist: 40, // templates passed from the chamfer pre-filter to the structured matcher
     scoreScale: 0.25, // score = exp(-dist/scoreScale); similarity, not a probability
     confidentMax: 0.2, // best distance must be below this for 'confident'
+    confidentMaxKanji: 0.17, // ...0.17 for a kanji: 33 kanji cannot cover the lookalikes of all the others (朋 vs 門)
     nonsenseMin: 0.38, // best distance above this -> 'nonsense'
     smallZ: 0.2, // sizeHint 'small' when (1 - relative size) + smallDyW * (lowering) exceeds this
     smallDyW: 1.5,
     margin: 0.02, // best vs best-other-shape distance gap needed for 'confident'
     marginRatio: 0.12, // ...or relative gap
     marginCross: 0.06, // gap needed when the runner-up is a lookalike from the other script
+    // Outside the allowed set (see docs/RECOGNITION.md "Kanji outside the pad's set"):
+    kanjiHintMax: 0.16, // kanji off: a supported kanji must match at least this well to be named...
+    kanjiHintGap: 0.04, // ...and beat every allowed character by this much
+    kanjiLikeStrokes: 5, // kanji-like: at least this many strokes (a kana has at most 6),
+    kanjiLikeStraight: 0.6, // mostly straight strokes (mean chord / length; scribbles are ~0.15),
+    // and nothing allowed matches well: rejected (no-match / too many strokes), or the best
+    // match is above kanjiLikeWeak — kanjiLikeWeakKana when the best is a kana with no
+    // more than one stroke fewer than drawn (a sloppy ボ or ぎ must not be taken for a kanji)
+    kanjiLikeWeak: 0.2,
+    kanjiLikeWeakKana: 0.27,
   };
 
   // ------------------------------------------------------------ tables
@@ -80,6 +96,11 @@ RB.recog = (function () {
   ];
   const SAME_OF = {};
   for (const g of SAME_SHAPE) for (const c of g) SAME_OF[c] = g;
+  // kana/kanji twins (ー/一, ロ/口, カ/力, ニ/二): with kanji enabled both are
+  // returned at the same distance, the kana form first (the pad reorders them
+  // by the characters already written; see RB.pad).
+  const TWIN_OF = {};
+  for (const g of SAME_SHAPE) if (g.some((c) => scriptOf(c) === 'kanji')) for (const c of g) TWIN_OF[c] = g;
 
   // Legitimate handwriting variants (1-based KanjiVG stroke numbers), matched at
   // almost no extra cost. Any other pair of consecutive strokes written as one is
@@ -660,21 +681,84 @@ RB.recog = (function () {
     return null;
   }
 
+  // Mean straightness of the drawn strokes: chord / path length (1 = a straight
+  // line). Kanji strokes are mostly straight; wandering scribbles are not.
+  function straightness(clean) {
+    let s = 0;
+    for (const st of clean) {
+      const L = polyLen(st), a = st[0], b = st[st.length - 1];
+      s += L > 1e-9 ? hypot(b[0] - a[0], b[1] - a[1]) / L : 1;
+    }
+    return clean.length ? s / clean.length : 0;
+  }
+
+  // The best supported kanji for this drawing, used only when kanji are not in
+  // the allowed set: the same match on the kanji templates alone (chamfer
+  // shortlist of 6, structured match, refinement of the leading 3).
+  // `limit`: only a kanji closer than this is of interest; templates whose
+  // chamfer term alone (with a margin for the refinement) exceeds it are skipped.
+  function bestKanji(inp, t, ctx, limit) {
+    const pool = [];
+    for (const e of t.list) {
+      if (e.script !== 'kanji') continue;
+      const cd = cloudDist(inp.cloud, e.cloud);
+      if (P.cloudW * cd <= limit + 0.02) pool.push({ e, cd });
+    }
+    if (!pool.length) return null;
+    pool.sort((a, b) => a.cd - b.cd);
+    const sc = pool.slice(0, 6).map(({ e, cd }) => { const m = matchEntry(inp, e, ctx); return { e, cd, m, dist: m.dist + P.cloudW * cd }; });
+    sc.sort((a, b) => a.dist - b.dist);
+    for (let k = 0; k < mmin(3, sc.length); k++) {
+      if (sc[k].dist > limit + 0.06) break;
+      const r = refine(inp, sc[k], ctx);
+      if (r && r.dist < sc[k].dist) sc[k] = r;
+    }
+    sc.sort((a, b) => a.dist - b.dist);
+    return sc[0];
+  }
+
   function recognize(strokes, opts) {
     opts = opts || {};
     const t = tables();
     const clean = cleanStrokes(strokes);
-    const result = { status: 'empty', candidates: [], sizeHint: null, notes: [] };
+    const result = { status: 'empty', candidates: [], sizeHint: null, notes: [], kanjiHint: null, kanjiLike: false };
     if (!clean.length) return result;
     const allowed = allowedSet(opts);
+    const kanjiOn = (opts.script || 'any') === 'kanji' || !!opts.kanji;
     const inp = prepInput(clean);
+    const ctx = makeCtx(opts.mode === 'strict');
+    // Is the drawing outside the allowed set? (a) kanji off, and a supported
+    // kanji matches clearly better than anything allowed: name it (kanjiHint);
+    // (b) otherwise, kanji-like (several mostly straight strokes) while nothing
+    // allowed matches well: say so (kanjiLike). Both use the drawing only.
+    const outside = (bestDist, bestCh, rejected) => {
+      if (rejected && rejected !== 'no-match' && rejected !== 'too-many-strokes') return;
+      const limit = mmin(P.kanjiHintMax, bestDist - P.kanjiHintGap);
+      if (!kanjiOn && rejected !== 'too-many-strokes' && limit > 0) {
+        const k = bestKanji(inp, t, ctx, limit);
+        const twin = k && bestCh && TWIN_OF[k.e.ch] && TWIN_OF[k.e.ch].includes(bestCh);
+        if (k && !twin && k.dist <= P.kanjiHintMax && k.dist + P.kanjiHintGap <= bestDist) {
+          result.kanjiHint = { ch: k.e.ch, dist: +k.dist.toFixed(4) };
+          result.notes.push('kanji-hint: ' + k.e.ch);
+          return;
+        }
+      }
+      const e = bestCh ? t.byChar[bestCh] : null;
+      const kanaLike = e && (e.script !== 'kanji' || TWIN_OF[bestCh]) && clean.length < e.K + 2;
+      const weak = rejected || bestDist > (kanaLike ? P.kanjiLikeWeakKana : P.kanjiLikeWeak);
+      if (clean.length >= P.kanjiLikeStrokes && weak && straightness(clean) >= P.kanjiLikeStraight) {
+        result.kanjiLike = true;
+        result.sizeHint = null;
+        result.notes.push('kanji-like');
+      }
+    };
     const bad = nonsenseCheck(clean, inp, opts.box, t, allowed);
     if (bad) {
       result.status = 'nonsense';
       result.notes.push('nonsense: ' + bad);
+      outside(INF, null, bad);
       return result;
     }
-    const ctx = makeCtx(opts.mode === 'strict');
     // 1) chamfer pre-filter
     const pool = [];
     for (const e of t.list) if (allowed(e)) pool.push({ e, cd: cloudDist(inp.cloud, e.cloud) });
@@ -704,17 +788,27 @@ RB.recog = (function () {
       seen.add(ch);
       cands.push({ ch, score: +mexp(-dist / P.scoreScale).toFixed(3), dist: +dist.toFixed(4), ...extra });
     };
-    for (const s of scored) {
-      const ch = s.e.ch;
+    const pushChar = (ch, dist) => {
       const sm = SMALL_OF[ch];
       const smOk = sm && t.byChar[sm] && (script === 'any' || scriptOf(sm) === script);
       if (sm && smOk && preferSmall) {
-        push(sm, s.dist);
-        push(ch, s.dist + 0.004);
+        push(sm, dist);
+        push(ch, dist + 0.004);
       } else {
-        push(ch, s.dist);
-        if (sm && smOk) push(sm, s.dist + 0.004);
+        push(ch, dist);
+        if (sm && smOk) push(sm, dist + 0.004);
       }
+    };
+    const byCh = {};
+    for (const s of scored) if (!byCh[s.e.ch]) byCh[s.e.ch] = s;
+    for (const s of scored) {
+      const ch = s.e.ch;
+      // kana/kanji twins: one shape, so one distance, kana form first
+      const tw = TWIN_OF[ch] && TWIN_OF[ch].filter((c) => byCh[c]);
+      if (tw && tw.length > 1) {
+        const d = mmin(...tw.map((c) => byCh[c].dist));
+        for (const c of tw) pushChar(c, d);
+      } else pushChar(ch, s.dist);
       if (cands.length >= 6) break;
     }
     // keep order consistent with scores
@@ -744,15 +838,18 @@ RB.recog = (function () {
       result.status = 'nonsense';
       result.notes.push('nonsense: no-match');
       result.candidates = [];
+      outside(best.dist, bestCh, 'no-match');
       return result;
     }
     const gap = other ? other.dist - best.dist : INF;
     // hiragana/katakana lookalikes (り/リ, も/モ, や/ヤ...) need a wider margin in a mixed pad
     const cross = other && best.e.script !== other.e.script && best.e.script !== 'both' && other.e.script !== 'both';
     const close = gap < (cross ? P.marginCross : P.margin) || gap < P.marginRatio * best.dist;
-    result.status = best.dist <= P.confidentMax && !close ? 'confident' : 'uncertain';
+    const confMax = best.e.script === 'kanji' && !TWIN_OF[bestCh] ? P.confidentMaxKanji : P.confidentMax;
+    result.status = best.dist <= confMax && !close ? 'confident' : 'uncertain';
     if (close && other) result.notes.push('close-alternative: ' + other.e.ch);
-    if (best.dist > P.confidentMax) result.notes.push('weak-match');
+    if (best.dist > confMax) result.notes.push('weak-match');
+    outside(best.dist, bestCh, null);
     return result;
   }
 
@@ -857,12 +954,18 @@ RB.recog = (function () {
     return out;
   }
 
+  // The group of characters written with the same shape as ch (['ロ', '口']), or null.
+  function sameShape(ch) {
+    return SAME_OF[ch] ? SAME_OF[ch].slice() : null;
+  }
+
   return {
     supported,
     recognize,
     reference,
     strokeOrderFeedback,
+    sameShape,
     // exposed for tests and tooling only
-    _internal: { P, tables, SMALL_OF, LARGE_OF, SAME_SHAPE, VARIANTS, scriptOf, baseOf, normalize, cleanStrokes },
+    _internal: { P, tables, SMALL_OF, LARGE_OF, SAME_SHAPE, TWIN_OF, VARIANTS, scriptOf, baseOf, normalize, cleanStrokes, straightness },
   };
 })();

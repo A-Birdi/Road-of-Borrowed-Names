@@ -106,7 +106,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const X = C.challenges;
   X['rw.c_road_lantern'] = { title: { jp: '{道|みち} の {灯|あか}り', en: 'The roadside lantern' },
     tiers: {
-      F: [{ kind: 'write', item: 'v:葦ノ瀬', prompt: { en: 'The lantern\'s shade is blank. The road leads to the village of Ashinose (Reedwake). Write its name on the shade.' }, answer: 'あしのせ', accept: ['あしのせ'], mode: 'kana', explain: { jp: '{葦|あし}ノ{瀬|せ}', en: 'Ashinose — "the shallows of the reeds". The village is called Reedwake in English.' } }],
+      F: [{ kind: 'write', item: 'v:葦ノ瀬', prompt: { en: 'The lantern\'s shade is blank. The road leads to the village of Ashinose (Reedwake). Write its name on the shade.' }, answer: 'あしのせ', accept: ['あしのせ', '葦ノ瀬'], mode: 'kana', explain: { jp: '{葦|あし}ノ{瀬|せ}', en: 'Ashinose — "the shallows of the reeds". The village is called Reedwake in English.' } }],
       E: [
         { kind: 'write', item: 'g:prt_he', ctx: { jp: 'あしのせ ＿ いく みち', en: 'The road that goes (to) Ashinose' }, prompt: { en: 'The old writing has lost one small word. Which particle marks the direction "to"?' }, template: { before: 'あしのせ', after: 'いく みち' }, answer: 'へ', accept: ['へ', 'に'], mode: 'kana', choices: ['へ', 'を', 'で'], explain: { en: 'へ (pronounced e) marks direction; に also works here ("to Ashinose"). を would make Ashinose the thing you pass along, which doesn\'t fit.' } },
         { kind: 'write', item: 'v:葦ノ瀬', prompt: { en: 'Now write the village name itself on the shade (Ashinose).' }, answer: 'あしのせ', accept: ['あしのせ', '葦ノ瀬'], mode: 'reading', explain: { jp: '{葦|あし}ノ{瀬|せ}', en: 'Ashinose (Reedwake).' } },
@@ -157,7 +157,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   X['rw.c_lantern_s'] = { title: { jp: '{南|みなみ} の {灯|あか}り', en: 'The south lantern' },
     tiers: {
-      F: [{ kind: 'write', item: 'v:潮硝子', prompt: { en: 'Ren reads from the records: "The south lantern points to Shiogarasu — Saltglass, the harbour town." Write its name on the shade.' }, answer: 'しおがらす', accept: ['しおがらす'], mode: 'kana', explain: { jp: '{潮硝子|しおがらす}', en: 'Shiogarasu (Saltglass).' } }],
+      F: [{ kind: 'write', item: 'v:潮硝子', prompt: { en: 'Ren reads from the records: "The south lantern points to Shiogarasu — Saltglass, the harbour town." Write its name on the shade.' }, answer: 'しおがらす', accept: ['しおがらす', '潮硝子'], mode: 'kana', explain: { jp: '{潮硝子|しおがらす}', en: 'Shiogarasu (Saltglass).' } }],
       E: [
         { kind: 'choose', item: 'c:rw_rec1', ctx: { jp: '{南|みなみ} の {灯|あか}り ： しおがらす まで {二日|ふつか}', en: '' }, prompt: { en: 'Ren\'s record for the south lantern. How far is Saltglass?' },
           options: [{ en: 'Two days', ok: true }, { en: 'Two hours', ok: false, why: { en: 'Hours would be 二時間 (にじかん).' } }, { en: 'Ten days', ok: false, why: { en: 'Ten days is 十日 (とおか).' } }],

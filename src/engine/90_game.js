@@ -24,6 +24,8 @@ RB.game = (function () {
       binds: null, touch: 'auto', strokePractice: false, romaji: true,
       // touch layout (older settings records lack these; the defaults keep the previous layout)
       touchHand: 'right', touchSize: 'normal',
+      // handwriting pad reads kanji too: 'auto' (by Japanese level), 'on', 'off' (older records lack it: 'auto')
+      padKanji: 'auto',
     };
   }
 

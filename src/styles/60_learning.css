@@ -170,6 +170,20 @@ body.high-contrast .pad-area { --pad-paper: #ffffff; --pad-ink: #000000; --pad-g
 .pad-script { display: inline-flex; align-items: center; gap: 0.4em; color: var(--ink-2); font-size: 0.95em; }
 .pad-script select { min-height: var(--tap); background: var(--pad-paper, #fffcf3); color: var(--ink); border: 1px solid var(--ink-3); border-radius: var(--r-1); padding: 0 0.5em; font: inherit; }
 .pad-script select:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+/* at 320 px and 200 % text the choice drops under its label instead of overflowing */
+.pad-script { flex-wrap: wrap; min-width: 0; max-width: 100%; }
+.pad-script > span { white-space: nowrap; }
+.pad-script select { max-width: 100%; min-width: 0; }
+/* the reading box fits a kana or a kanji with its furigana, at any text size */
+.readas .big { width: max(calc(var(--tap) + 4px), 1.9em); height: max(calc(var(--tap) + 4px), 1.9em); }
+.cand { min-height: max(var(--tap), 1.9em); }
+/* a kanji read by the pad carries its reading (ruby) inside the fixed boxes */
+.readas .big ruby, .cand ruby, .strip .cell ruby, .kpick ruby { ruby-position: over; line-height: 1; }
+.readas .big rt, .cand rt, .strip .cell rt, .kpick rt { font-size: 0.4em; line-height: 1.1; color: var(--rt-ink); }
+/* outside what the pad reads (a kanji with kanji reading off, or one it doesn't know) */
+.readas[data-state="outside"] .big { border: 2px dashed var(--river); background: transparent; }
+.cands .rd-act { flex: none; padding: 0 0.75em; }
+.fbwrap .fb-how { margin: 0.2em 0 0.4em; font-size: 1.05em; }
 
 /* the composed answer line (in the answer slip) */
 .pad-compose { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
@@ -410,6 +424,7 @@ body.high-contrast :is(.chal, .lsheet) .fb.no, body.high-contrast :is(.chal, .ls
 .kpick { min-height: var(--tap); font-size: 1.3em; background: #fffcf3; color: var(--ink); border: 1px solid var(--ink-3); border-radius: var(--r-1); cursor: pointer; touch-action: manipulation; }
 .kpick:hover { background: var(--paper-2); }
 .kpick:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+.kchart-h { margin: 0.8em 0 0.35em; font-size: 0.95em; }
 
 /* kana lesson: the character, its numbered strokes, the note, words using it */
 .lesson-row { list-style: none; display: flex; flex-wrap: wrap; gap: 4px; margin: 0 0 0.6em; padding: 0; font-family: var(--jp-font); }
