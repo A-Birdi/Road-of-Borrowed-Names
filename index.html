@@ -64,6 +64,8 @@ Changes:    The embedded stroke data (RB.recogData; src/recog/10_strokedata.js i
   --ink-2: #4c4030;           /* secondary text on paper */
   --ink-3: #62553f;           /* muted labels on paper (>= 4.5:1) */
   --rt-ink: #4a3e2c;          /* furigana on paper */
+  --worn-paper: #e2dfd2;      /* a faded, cooler row: something equipped (always with its tag) */
+  --worn-edge: #6f7898;       /* the equipped row's frame (>= 3:1 on --worn-paper) */
 
   /* marks */
   --ribbon: #c18a2a;          /* current selection */
@@ -104,6 +106,8 @@ body.high-contrast {
   --ink-2: #000000;
   --ink-3: #1a1a1a;
   --rt-ink: #000000;
+  --worn-paper: #e4e4e4;
+  --worn-edge: #000000;
   --cloth-900: #000000;
   --cloth-800: #000000;
   --on-cloth: #ffffff;
@@ -577,6 +581,54 @@ button.entry .t, button.entry .kind { display: block; }
 .idetail .ibig svg { width: 100%; height: 100%; }
 .idetail h3 { border: 0; }
 .note-slip svg { width: 1.1em; height: 1.1em; vertical-align: -0.2em; }
+/* Equipment. Something worn is marked by words and shape — an "Equipped" tag
+ * with a check, and a framed row of faded, cooler paper — never by colour
+ * alone. Keyword tags name what each wearable thing does (solid: a benefit;
+ * dashed with a minus: the drawback that comes with it; dotted: no effect),
+ * and the Key at the foot of the list explains every mark on the page. */
+.worn-tag {
+  display: inline-flex; align-items: center; gap: 0.3em; padding: 0.05em 0.55em 0.05em 0.35em; border-radius: 999px;
+  background: var(--cloth-700); color: var(--on-cloth); font-size: 0.8em; font-weight: 700; line-height: 1.5;
+  letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; vertical-align: 0.05em;
+}
+.worn-tag svg { width: 1.1em; height: 1.1em; flex: none; }
+.leaf .worn-tag rt, .leaf .worn-tag .jline { color: var(--on-cloth); }
+.leaf .entry .kind .worn-tag { font-size: 1em; }
+.entry.worn, button.entry.worn { background: var(--worn-paper); box-shadow: inset 0 0 0 1px var(--worn-edge); }
+button.entry.worn:hover { background: linear-gradient(rgba(193, 138, 42, 0.08), rgba(193, 138, 42, 0.08)), var(--worn-paper); }
+button.entry.worn[aria-current="true"] { background: linear-gradient(rgba(193, 138, 42, 0.14), rgba(193, 138, 42, 0.14)), var(--worn-paper); box-shadow: inset 4px 0 0 var(--ribbon), inset 0 0 0 1px var(--worn-edge); }
+.entry.worn > .mark { color: var(--ink); }
+button.entry .kind.slotline { display: flex; flex-wrap: wrap; align-items: center; gap: 0.2em 0.5em; margin-top: 0.15em; }
+.eq-slot { padding-left: 0.4em; padding-right: 0.4em; }
+.eq-slot > .eq-body { grid-column: 2 / -1; min-width: 0; }
+.eq-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-top: 0.1em; }
+.eq-foot .etags { flex: 1 1 10em; min-width: 0; }
+.eq-foot .pbtn { flex: none; margin-left: auto; }
+.eq-slot + .eq-slot { margin-top: 4px; }
+.eq-slot.empty { border: 1px dashed var(--paper-edge); }
+.eq-slot.empty .t { font-weight: 400; }
+.eq-slot.empty > .mark { color: var(--ink-3); }
+.etags { display: flex; flex-wrap: wrap; gap: 4px 6px; margin-top: 0.4em; }
+.etag {
+  display: inline-flex; align-items: center; gap: 0.3em; max-width: 100%; padding: 0.1em 0.5em 0.1em 0.35em; box-sizing: border-box;
+  border: 1px solid var(--ink-3); border-radius: var(--r-1); background: var(--paper); color: var(--ink-2);
+  font-size: 0.8em; font-weight: 600; line-height: 1.4; text-transform: none; letter-spacing: 0; overflow-wrap: break-word;
+}
+.etag svg { width: 1.15em; height: 1.15em; flex: none; }
+.etag > span { min-width: 0; }
+.etag.cost { border-style: dashed; }
+.etag.none { border-style: dotted; color: var(--ink-3); font-weight: 400; }
+.tagx { list-style: none; margin: 0.3em 0 0.8em; padding: 0; }
+.tagx li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25em 0.7em; padding: 0.45em 0; border-bottom: 1px dotted var(--rule); }
+.tagx .x { flex: 1 1 14em; min-width: 0; color: var(--ink-2); font-size: 0.92em; }
+.tagx .etag, .tagx .worn-tag { flex: none; }
+.worn-line { margin: 0.1em 0 0.4em; }
+.wear-prev { margin: 0.7em 0 0.8em; }
+.wear-prev figcaption { font-size: 0.86em; font-weight: 600; color: var(--ink-3); margin-bottom: 0.35em; }
+.wp-row { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 10px 12px; }
+.wp { display: flex; flex-direction: column; align-items: center; gap: 0.2em; max-width: 96px; text-align: center; font-size: 0.8em; line-height: 1.25; color: var(--ink-3); }
+.wp canvas { display: block; width: 64px; height: 96px; image-rendering: pixelated; background: var(--paper-2); border: 1px solid var(--paper-edge); border-radius: var(--r-1); }
+.wp-face canvas { width: 96px; height: 96px; }
 
 /* Map: a folded chart */
 .chartbox { border: 1px solid var(--paper-edge); box-shadow: 0 2px 0 var(--paper-3); background: #efe3c6; margin: 0.2em 0 0.3em; }
@@ -1500,6 +1552,7 @@ body.touch-large .touchpad .tp-run { width: 68px; height: 68px; }
 .toast .kind { color: var(--ink-3); font-size: 0.74em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
 .toast .jline { color: var(--ink); line-height: 1.9; }
 .toast .en { color: var(--ink-2); font-family: var(--serif); }
+.toast .tnote { flex-basis: 100%; color: var(--ink-3); font-size: 0.85em; }
 .place {
   position: absolute; left: 50%; transform: translateX(-50%); text-align: center; transition: opacity 0.6s; max-width: calc(100vw - 24px);
   top: max(14%, 64px); background: var(--paper); color: var(--ink); border: 1px solid var(--paper-edge);
@@ -11501,6 +11554,144 @@ RB.state = (function () {
 })();
 
 
+/* ==== src/engine/07_equip.js ==== */
+/* Equipment in one place: the worn look and the Satchel's keyword tags.
+ *
+ * The worn look is the player's own look with the equipped keepsake's
+ * accessory (and its colours) laid over it. Everything that draws the
+ * player asks for it here — the world sprite, the battle party, the dialogue
+ * portrait (and so the save thumbnails, which are snapshots of the world) —
+ * so a keepsake shows everywhere at once. A keepsake of the same kind as
+ * something the player already wears (a second hat, a scarf over the
+ * starting scarf) takes that thing's place in its own colours, so wearing it
+ * always changes something you can see.
+ *
+ * Keyword tags ([Battle start: ward +1], [Quicker stride], [Appearance] …)
+ * are derived from each item's data (slot, effect fields, acc), so every
+ * item in every chapter and the Atlas gets them with no hand-kept list.
+ * Effect kinds defined elsewhere (the Atlas charms) register their own tags
+ * with defineEffect next to the code that implements them. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.equip = (function () {
+  'use strict';
+
+  // ---- slots ------------------------------------------------------------------------------------
+  const SLOTS = [
+    { id: 'charm', en: 'Charm', jp: 'お{守|まも}り', where: 'works in battle', icon: 'charm' },
+    { id: 'tool', en: 'Tool', jp: '{道具|どうぐ}', where: 'works on the road', icon: 'tool' },
+    { id: 'cosmetic', en: 'Keepsake', jp: '{飾|かざ}り', where: 'appearance only', icon: 'keepsake' },
+  ];
+  const slot = (id) => SLOTS.find((x) => x.id === id) || null;
+  const item = (id) => (id && RB.content.items[id]) || null;
+
+  // ---- the worn look ------------------------------------------------------------------------------
+  // Accessories that sit in the same place: one thing on the head at a time.
+  const SAME_PLACE = { hat: ['hat', 'cap'], cap: ['hat', 'cap'] };
+  function lookWith(base, id) {
+    base = base || {};
+    const out = Object.assign({}, base, { acc: (base.acc || []).slice() });
+    const it = item(id);
+    if (!it || !it.acc) return out;
+    const drop = SAME_PLACE[it.acc] || [it.acc];
+    out.acc = out.acc.filter((a) => drop.indexOf(a) < 0);
+    out.acc.push(it.acc); // last, so it is drawn over everything else in its layer
+    if (it.wear) Object.assign(out, it.wear);
+    return out;
+  }
+  // The look the player is drawn with everywhere.
+  function look(s) {
+    s = s || (RB.game && RB.game.s);
+    if (!s || !s.player) return {};
+    return lookWith(s.player.look, s.equip && s.equip.cosmetic);
+  }
+  // What of the player's own look a keepsake takes the place of (for the Satchel's note).
+  function replaces(base, id) {
+    const it = item(id);
+    if (!it || !it.acc) return [];
+    const drop = SAME_PLACE[it.acc] || [it.acc];
+    return ((base && base.acc) || []).filter((a) => drop.indexOf(a) >= 0);
+  }
+  // Keep the world sprite in step with the equipment straight away.
+  function refresh(s) {
+    const W = RB.world && RB.world.W;
+    if (W && W.player) W.player.look = look(s);
+  }
+  function equip(s, id) {
+    const it = item(id);
+    if (!it || !it.slot || !s.equip) return false;
+    s.equip[it.slot] = id;
+    refresh(s);
+    RB.bus && RB.bus.emit('equip:change', { slot: it.slot, id });
+    return true;
+  }
+  function unequip(s, slotId) {
+    if (!s.equip || !slot(slotId)) return false;
+    s.equip[slotId] = null;
+    refresh(s);
+    RB.bus && RB.bus.emit('equip:change', { slot: slotId, id: null });
+    return true;
+  }
+  const isWorn = (s, id) => { const it = item(id); return !!(it && it.slot && s.equip && s.equip[it.slot] === id); };
+
+  // ---- keyword tags ---------------------------------------------------------------------------------
+  // A tag: { id, icon, kind, en, jp, key }. kind: 'boon' (a benefit), 'cost' (the drawback that
+  // comes with it), 'look' (appearance only) or 'none' (no effect). `key` explains it in the Key.
+  const T = {
+    ward: (n) => ({ id: 'ward' + n, icon: 'ward', kind: 'boon', en: 'Battle start: ward +' + n, jp: '{初|はじ}め から {守|まも}り ＋' + n,
+      key: 'Every battle begins with a ward of ' + n + ' in front of you (and your companion), before anything has happened.' }),
+    harmony: (n) => ({ id: 'harmony' + n, icon: 'harmony', kind: 'boon', en: 'Battle start: harmony +' + n, jp: '{初|はじ}め から {調和|ちょうわ} ＋' + n,
+      key: 'Every battle begins with ' + n + ' harmony already built, so a coordinated technique comes sooner. (Harmony builds with a companion.)' }),
+    resolve: (n) => ({ id: 'resolve' + n, icon: 'resolve', kind: 'boon', en: 'Resolve +' + n, jp: '{気力|きりょく} ＋' + n,
+      key: 'In battle you (and your companion) start with ' + n + ' more resolve, and your maximum is ' + n + ' higher.' }),
+    stride: () => ({ id: 'stride', icon: 'stride', kind: 'boon', en: 'Quicker stride', jp: '{早足|はやあし}',
+      key: 'You walk and run a little faster on the road (each step takes about an eighth less time).' }),
+    look: () => ({ id: 'look', icon: 'look', kind: 'look', en: 'Appearance', jp: '{見|み}た{目|め}',
+      key: 'Changes only how you look: on the road, in battle and in your portrait. No effect on play.' }),
+    noBattle: () => ({ id: 'nobattle', icon: 'none', kind: 'none', en: 'No battle effect', jp: '{戦|たたか}い の {効果|こうか} なし',
+      key: 'A keepsake worn as a charm. It fills the charm slot but changes nothing in battle.' }),
+    noEffect: () => ({ id: 'noeffect', icon: 'none', kind: 'none', en: 'No effect', jp: '{効果|こうか} なし',
+      key: 'Worn for its own sake. It changes nothing in play.' }),
+    special: () => ({ id: 'special', icon: 'charm', kind: 'boon', en: 'Special effect', jp: '{特別|とくべつ} な {効果|こうか}',
+      key: 'It does something particular; its description says what.' }),
+    // for effect kinds registered elsewhere: boon(id, icon, en, jp, key) / cost(id, en, jp, key)
+    boon: (id, icon, en, jp, key) => ({ id, icon, kind: 'boon', en, jp, key }),
+    cost: (id, en, jp, key) => ({ id, icon: 'cost', kind: 'cost', en, jp, key }),
+  };
+  const EFFECT = {
+    startWard: (v) => [T.ward(v)],
+    harmonyStart: (v) => [T.harmony(v)],
+    resolve: (v) => [T.resolve(v)],
+    walk: () => [T.stride()],
+  };
+  function defineEffect(key, fn) { EFFECT[key] = fn; }
+  function tags(it) {
+    if (typeof it === 'string') it = item(it);
+    if (!it || !it.slot) return [];
+    const out = [];
+    const eff = it.effect || {};
+    for (const k in eff) {
+      const fn = EFFECT[k];
+      const got = fn ? [].concat(fn(eff[k], T) || []) : [T.special()];
+      for (const g of got) if (g && !out.some((o) => o.id === g.id)) out.push(g);
+    }
+    if (it.acc) out.push(T.look());
+    if (!out.length) out.push(it.slot === 'charm' ? T.noBattle() : T.noEffect());
+    return out;
+  }
+  // Every effect key has tags (for the content check).
+  const knownEffect = (k) => Object.prototype.hasOwnProperty.call(EFFECT, k);
+  // One line for the "Received" note: that it can be worn, where, and what it does.
+  function note(it) {
+    const z = it && it.slot && slot(it.slot);
+    if (!z) return null;
+    return 'Can be worn as a ' + z.en.toLowerCase() + ' (' + tags(it).map((t) => (t.kind === 'cost' ? 'but ' : '') + t.en).join(', ') + '). Equip it in the Satchel.';
+  }
+
+  return { SLOTS, slot, SAME_PLACE, lookWith, look, replaces, refresh, equip, unequip, isWorn, tags, note, defineEffect, knownEffect, T };
+})();
+
+
 /* ==== src/engine/10_input.js ==== */
 /* Input: remappable keyboard actions, held directions, virtual touch pad.
  * Text fields and the handwriting pad swallow input so typing/drawing never
@@ -18239,18 +18430,25 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
   const ACC = {
     scarf(b, look, p, g, d, L) {
-      if (L !== 'body') return;
+      // seen from behind (the battle party) the wrap and tail lie over long hair, so they still show
+      if (L !== (d === 'up' ? 'head' : 'body')) return;
       const R = r3(look.scarfCol || '#c8962e'), t = g.t;
+      const S = look.scarfStripe ? r3(look.scarfStripe) : null; // a knitted stripe (a keepsake scarf)
       if (d === 'side') {
         b.rect(14, t - 1, 7, 3, R[1]); b.rect(14, t - 1, 7, 1, R[2]); b.rect(14, t + 1, 7, 1, R[0]);
         const fl = g.f ? 1 : 0; // the tail streams behind and lifts with the stride
         b.rect(10, t, 4, 2, R[1]); b.rect(8, t + 1 - fl, 3, 2, R[1]); b.rect(7, t + 2 - fl, 2, 2, R[0]); b.px(10, t, R[2]);
+        if (S) { for (const x of [16, 19]) { b.rect(x, t - 1, 1, 3, S[1]); b.px(x, t - 1, S[2]); } b.rect(11, t, 1, 2, S[1]); b.rect(8, t + 1 - fl, 1, 2, S[1]); }
       } else {
         b.rect(12, t - 1, 8, 1, R[1]); b.rect(11, t, 10, 2, R[1]); b.rect(11, t, 10, 1, R[2]); b.rect(11, t + 1, 10, 1, R[1]);
         b.rect(11, t + 2, 10, 1, R[0]); b.px(12, t, shade(R[2], 1));
         const tx = d === 'down' ? 17 : 12, sw = g.f === 1 ? 1 : g.f === 2 ? -1 : 0;
         b.rect(tx, t + 2, 3, 6, R[1]); b.rect(tx, t + 2, 1, 6, R[2]); b.rect(tx + 2, t + 2, 1, 6, R[0]);
         b.rect(tx + sw, t + 8, 3, 1, R[1]); b.px(tx + sw, t + 9, R[0]); b.px(tx + 2 + sw, t + 9, R[0]);
+        if (S) {
+          for (const x of [13, 16, 19]) { b.rect(x, t, 1, 3, S[1]); b.px(x, t, S[2]); }
+          for (const y of [t + 4, t + 6]) { b.rect(tx, y, 3, 1, S[1]); b.px(tx, y, S[2]); }
+        }
       }
     },
     satchel(b, look, p, g, d, L) {
@@ -18307,11 +18505,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
     },
     flower(b, look, p, g, d, L) {
       if (L !== 'head') return;
-      const c = look.flowerCol || '#f4a6a0', R = r3(c), y = 6 + g.hy + g.bob;
-      const x = d === 'side' ? 11 : 21;
-      b.rect(x + 1, y, 2, 1, R[2]); b.rect(x, y + 1, 4, 2, R[1]); b.rect(x + 1, y + 3, 2, 1, R[0]);
-      b.px(x, y + 1, R[2]); b.rect(x + 1, y + 1, 2, 2, '#fff4c0'); b.px(x + 2, y + 2, '#e8b050');
-      if (d !== 'up') b.px(x - 1, y + 3, '#5a8a4a');
+      // five petals round a small yellow heart, lit from the upper left, and a leaf
+      const c = look.flowerCol || '#f4a6a0', R = r3(c), y = 5 + g.hy + g.bob;
+      const x = d === 'side' ? 10 : 21;
+      b.rect(x + 1, y, 3, 5, R[1]); b.rect(x, y + 1, 5, 3, R[1]);
+      b.px(x + 1, y, R[2]); b.px(x + 2, y, R[2]); b.px(x, y + 1, R[2]); b.px(x, y + 2, R[2]);
+      b.px(x + 4, y + 3, R[0]); b.px(x + 3, y + 4, R[0]); b.px(x + 2, y + 4, R[0]);
+      b.px(x + 2, y + 1, '#fff4c0'); b.rect(x + 1, y + 2, 3, 1, '#fff4c0'); b.px(x + 2, y + 3, '#fff4c0'); b.px(x + 2, y + 2, '#e8b050');
+      if (d !== 'up') { b.px(x - 1, y + 4, '#5a8a4a'); b.px(x, y + 5, '#4a7a3a'); }
     },
     hat(b, look, p, g, d, L) {
       if (L !== 'head') return;
@@ -18333,10 +18534,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
       }
     },
     earrings(b, look, p, g, d, L) {
-      if (L !== 'face') return;
-      const y = 6 + g.hy + g.bob + 10;
-      if (d === 'down') { b.rect(7, y, 1, 2, GOLD[1]); b.px(7, y + 1, GOLD[0]); b.rect(24, y, 1, 2, GOLD[1]); b.px(24, y + 1, GOLD[0]); }
-      else if (d === 'side') { b.rect(13, y, 1, 2, GOLD[1]); b.px(13, y + 1, GOLD[0]); }
+      // drops hanging below each ear, drawn over the hair so no hairstyle hides them (and from behind too)
+      if (L !== 'head') return;
+      const R = look.earCol ? r3(look.earCol) : GOLD, y = 6 + g.hy + g.bob + 10;
+      const drop = (x) => { // a hook and a round drop, 3 wide
+        b.px(x + 1, y, '#8a6a2a'); b.px(x + 1, y + 1, R[1]);
+        b.rect(x, y + 2, 3, 3, R[1]); b.px(x, y + 2, R[2]); b.px(x + 1, y + 2, R[2]); b.px(x, y + 3, R[2]); b.px(x + 2, y + 4, R[0]);
+        b.px(x + 1, y + 5, R[0]);
+      };
+      if (d === 'side') drop(12);
+      else { drop(5); drop(24); }
     },
     cape(b, look, p, g, d, L) {
       const c = look.capeCol || '#6a3a4a', R = [shade(c, -2), shade(c, -1), c, shade(c, 1)];
@@ -18372,6 +18579,64 @@ var RB = (globalThis.RB = globalThis.RB || {});
       b.rect(x, y, 3, 3, R[1]); b.rect(x + 4, y, 3, 3, R[1]); b.rect(x + 3, y + 1, 1, 2, R[0]);
       b.px(x, y, R[2]); b.px(x + 4, y, R[2]); b.px(x + 2, y + 2, R[0]); b.px(x + 6, y + 2, R[0]);
       b.rect(x + 2, y + 3, 1, 4, R[1]); b.rect(x + 4, y + 3, 1, 3, R[0]);
+    },
+    // Keepsakes from the road (items worn in the keepsake slot)
+    bell(b, look, p, g, d, L) {
+      // a little bell on a red cord round the neck; from behind, the cord's bow at the nape
+      const R = look.bellCol ? r3(look.bellCol) : GOLD, cord = look.cordCol || '#b8342a', t = g.t;
+      const O = '#4a3418';
+      const bell = (x, y) => { // loop, a dark-rimmed dome, flared lip, mouth and clapper (5 wide), clear on any cloth
+        b.px(x + 2, y, cord);
+        b.rect(x + 1, y + 1, 3, 1, O);
+        b.px(x, y + 2, O); b.px(x + 4, y + 2, O); b.rect(x + 1, y + 2, 3, 1, R[1]); b.px(x + 1, y + 2, R[2]);
+        b.px(x, y + 3, O); b.px(x + 4, y + 3, O); b.rect(x + 1, y + 3, 3, 1, R[1]); b.px(x + 3, y + 3, R[0]);
+        b.rect(x, y + 4, 5, 1, R[1]); b.px(x, y + 4, R[2]); b.px(x + 4, y + 4, R[0]);
+        b.rect(x + 1, y + 5, 3, 1, O); b.px(x + 2, y + 5, '#1e140a');
+      };
+      // (front: over the neck and any long hair, which would otherwise hide the cord and the bell's top)
+      if (d === 'down') { if (L === 'head') { b.rect(13, t - 1, 6, 1, cord); b.px(12, t - 2, cord); b.px(19, t - 2, cord); b.px(15, t, cord); bell(13, t + 1); } }
+      else if (d === 'side') { if (L === 'hand') { b.rect(15, t - 1, 5, 1, cord); bell(18, t); } }
+      else if (L === 'head') {
+        const k = shade(cord, -1);
+        b.rect(12, t - 2, 8, 1, cord);
+        b.rect(12, t - 4, 3, 2, cord); b.rect(17, t - 4, 3, 2, cord); b.px(12, t - 4, shade(cord, 1));
+        b.rect(15, t - 3, 2, 2, k); b.px(14, t - 1, cord); b.px(17, t - 1, k); b.px(14, t, k); b.px(17, t, k);
+      }
+    },
+    cap(b, look, p, g, d, L) {
+      // a peaked cap (a ferry clerk's): round crown, dark band with a brass badge, a stiff peak
+      if (L !== 'head') return;
+      const c = look.capCol || '#2c4468', R = [shade(c, -2), shade(c, -1), c, shade(c, 1), shade(c, 2)];
+      const y = g.hy + g.bob;
+      if (d === 'side') {
+        b.rect(11, y + 2, 9, 1, R[3]); b.rect(9, y + 3, 13, 5, R[2]); b.rect(9, y + 3, 13, 1, R[3]); b.rect(10, y + 4, 3, 2, R[4]);
+        b.rect(9, y + 8, 13, 2, R[1]); b.rect(9, y + 9, 13, 1, R[0]);
+        b.rect(18, y + 4, 3, 3, GOLD[1]); b.px(18, y + 4, GOLD[2]);
+        b.rect(21, y + 9, 6, 2, R[0]); b.rect(21, y + 9, 6, 1, R[1]);
+        return;
+      }
+      b.rect(11, y + 1, 10, 1, R[3]); b.rect(9, y + 2, 14, 6, R[2]);
+      b.rect(9, y + 2, 5, 4, R[3]); b.px(10, y + 3, R[4]); b.px(11, y + 3, R[4]); b.rect(20, y + 2, 3, 6, R[1]);
+      b.rect(8, y + 8, 16, 2, R[1]); b.rect(8, y + 9, 16, 1, R[0]);
+      if (d === 'down') {
+        b.rect(14, y + 4, 4, 3, GOLD[1]); b.px(14, y + 4, GOLD[2]); b.px(17, y + 6, GOLD[0]);
+        b.rect(9, y + 10, 14, 2, R[0]); b.rect(10, y + 10, 12, 1, R[1]);
+        b.rect(10, y + 12, 12, 1, P.alpha('#1a1020', 0.3));
+      }
+    },
+    leaf(b, look, p, g, d, L) {
+      // a maple leaf pinned in the hair: five points, lit from the upper left, a short stem
+      if (L !== 'head') return;
+      const R = r3(look.leafCol || '#c8452a'), y = 3 + g.hy + g.bob;
+      const x = d === 'side' ? 8 : d === 'up' ? 5 : 20;
+      b.px(x + 3, y, R[2]);
+      b.px(x + 1, y + 1, R[2]); b.px(x + 3, y + 1, R[1]); b.px(x + 5, y + 1, R[1]);
+      b.rect(x + 1, y + 2, 5, 1, R[1]); b.px(x + 1, y + 2, R[2]);
+      b.rect(x, y + 3, 7, 1, R[1]); b.px(x, y + 3, R[2]); b.px(x + 6, y + 3, R[0]);
+      b.rect(x + 1, y + 4, 5, 1, R[1]); b.px(x + 5, y + 4, R[0]);
+      b.rect(x + 2, y + 5, 3, 1, R[0]);
+      b.px(x + 3, y + 2, R[2]); b.px(x + 3, y + 3, R[2]); b.px(x + 3, y + 4, R[1]); // midrib
+      b.px(x + 3, y + 6, '#6a4a2a'); // stem
     },
     bottles(b, look, p, g, d, L) {
       if (L !== 'body') return;
@@ -18463,21 +18728,39 @@ var RB = (globalThis.RB = globalThis.RB || {});
     apronstrap() {},
     // Unwritten Atlas keepsakes (cosmetic reward items)
     atlas_sash(b, look, p, g, d, L) {
-      if (L !== 'body') return;
-      const c = look.sashCol || '#d8c89a', ln = '#8a7a5a';
-      if (d === 'side') { b.rect(15, g.t, 3, g.bt - g.t + 1, c); b.px(16, g.t + 2, ln); b.px(15, g.t + 5, ln); return; }
+      const c = look.sashCol || '#d8c89a', ln = '#8a7a5a', dk = shade(c, -1);
+      if (d === 'side') {
+        // over the shoulder and down the chest, in front of the near arm (it hid the old strip)
+        if (L !== 'hand') return;
+        b.rect(14, g.t - 1, 6, 2, c); b.rect(14, g.t, 6, 1, dk);
+        b.rect(19, g.t + 1, 2, g.bt - g.t + 1, c); b.rect(20, g.t + 1, 1, g.bt - g.t + 1, dk); b.px(19, g.t + 3, ln); b.px(19, g.t + 6, ln);
+        return;
+      }
       const [x0, x1] = d === 'down' ? [10, 21] : [21, 10];
+      // the knot at the hip with its folded ends; from behind it lies over long hair, which covers the rest
+      const knot = () => {
+        const kx = x1 - 2, ky = g.bt + 1;
+        b.rect(kx, ky, 4, 3, c); b.px(kx, ky, shade(c, 1)); b.rect(kx + 3, ky, 1, 3, dk);
+        b.rect(kx, ky + 3, 2, 4, c); b.rect(kx + 2, ky + 3, 2, 3, dk); b.px(kx, ky + 5, ln);
+      };
+      if (d === 'up' && L === 'head') { knot(); return; }
+      if (L !== 'body') return;
       b.line(x0, g.t, x1, g.bt + 1, c, 2);
-      b.line(x0, g.t + 2, x1, g.bt + 3, shade(c, -1));
+      b.line(x0, g.t + 2, x1, g.bt + 3, dk);
       b.px(Math.round((x0 * 2 + x1) / 3), g.t + 3, ln); b.px(Math.round((x0 + x1 * 2) / 3), g.t + 6, ln);
+      if (d === 'down') knot();
     },
     atlas_pin(b, look, p, g, d, L) {
-      if (L !== 'body' || d === 'up') return;
-      const x = d === 'side' ? 17 : 11, y = g.t + 2;
-      b.rect(x, y, 3, 3, GOLD[1]); b.px(x + 1, y + 1, '#3a5a8a'); b.px(x + 1, y, GOLD[2]); b.px(x + 2, y + 2, GOLD[0]);
+      // a compass rose (four points round a blue heart) at the collar, over long hair; from behind, on the shoulder
+      if (L !== (d === 'side' ? 'hand' : 'head')) return;
+      const x = d === 'side' ? 16 : d === 'up' ? 17 : 9, y = g.t;
+      b.rect(x + 3, y, 1, 7, GOLD[1]); b.rect(x, y + 3, 7, 1, GOLD[1]); b.rect(x + 2, y + 2, 3, 3, GOLD[1]);
+      b.px(x + 3, y, GOLD[2]); b.px(x, y + 3, GOLD[2]); b.px(x + 2, y + 2, GOLD[2]);
+      b.px(x + 6, y + 3, GOLD[0]); b.px(x + 3, y + 6, GOLD[0]); b.px(x + 4, y + 4, GOLD[0]);
+      b.px(x + 3, y + 3, '#3a5a8a');
     },
     atlas_lamplet(b, look, p, g, d, L) {
-      if (d === 'side') { if (L === 'back') lantern(b, 8, g.bt + 1, true); return; }
+      if (d === 'side') { if (L === 'body') lantern(b, 7, g.bt + 1, true); return; }
       if (L !== 'body') return;
       if (d === 'down') { b.rect(8, g.bt, 1, 2, '#3a3440'); lantern(b, 5, g.bt + 3, true); }
       else lantern(b, 24, g.bt + 3, true);
@@ -19118,6 +19401,7 @@ RB.portraits = (function () {
       beard: acc.includes('beard') || undefined,
       scarfCol: look.scarfCol, ribbonCol: look.ribbonCol, hatCol: look.hatCol, wrapCol: look.wrapCol, hoodCol: look.hoodCol,
       bandCol: look.bandCol, flowerCol: look.flowerCol, capeCol: look.capeCol, sashCol: look.sashCol,
+      earCol: look.earCol, capCol: look.capCol, leafCol: look.leafCol, scarfStripe: look.scarfStripe, bellCol: look.bellCol, cordCol: look.cordCol,
     };
   }
   const EXPR_ALIAS = { surprised: 'surprise', thinking: 'think', happy: 'smile', neutral: 'neutral' };
@@ -19458,6 +19742,21 @@ RB.portraits = (function () {
       b.line(26, 70, 70, 70, R[3]); b.line(30, 80, 66, 80, R[1]); b.line(40, 74, 56, 74, R[1]);
       b.poly([60, 82, 72, 82, 74, 96, 60, 96], R[2]); b.rect(70, 82, 4, 14, R[1]); b.rect(60, 82, 2, 14, R[3]);
       for (let x = 61; x < 74; x += 3) b.rect(x, 94, 1, 2, R[0]);
+      if (p.scarfStripe) { // a knitted keepsake scarf: bands across the wrap and the tail
+        const S = R4(p.scarfStripe);
+        for (let x = 21; x <= 75; x++) { // two bands following the wrap's curve
+          const u = (x - 48) / 26, top = 73 - 5 * u * u, bot = 86 + 2 * u * u;
+          for (const k of [0.3, 0.64]) { const y = Math.round(top + (bot - top) * k); b.rect(x, y, 1, 2, S[2]); b.px(x, y, S[3]); }
+        }
+        for (const y of [86, 91]) { b.rect(60, y, 14, 2, S[2]); b.rect(60, y, 14, 1, S[3]); }
+      }
+    }
+    if (a.includes('bell')) { // a little bell on a red cord at the collar
+      const cord = p.cordCol || '#b8342a', G = p.bellCol ? R4(p.bellCol).slice(1, 4) : GOLD;
+      b.line(36, 72, 48, 80, cord, 2); b.line(60, 72, 48, 80, cord, 2);
+      b.rect(47, 79, 2, 3, cord);
+      b.oval(42, 81, 54, 91, G[1]); b.oval(43, 82, 47, 86, G[2]); b.rect(41, 89, 15, 3, G[1]); b.rect(41, 89, 15, 1, G[2]); b.rect(52, 84, 2, 5, G[0]);
+      b.rect(47, 92, 3, 2, '#5a4020'); b.rect(44, 87, 9, 1, G[0]);
     }
     if (a.includes('satchel')) { b.line(18, 76, 62, 96, '#6a4a2a', 5); b.line(18, 76, 62, 96, '#8a6a3a', 3); for (let k = 0; k < 7; k++) b.px(24 + k * 6, 80 + k * 2.6, '#c8a870'); }
     if (a.includes('pin')) { b.oval(30, 78, 36, 84, GOLD[1]); b.px(32, 80, GOLD[2]); b.px(35, 83, GOLD[0]); }
@@ -19470,7 +19769,11 @@ RB.portraits = (function () {
     if (a.includes('book')) { b.rect(4, 82, 16, 14, '#6a3a3a'); b.rect(4, 82, 16, 2, '#8a4a44'); b.rect(18, 84, 2, 12, '#e8e0c8'); b.rect(8, 88, 6, 1, GOLD[1]); }
     if (a.includes('basket')) { b.rect(76, 86, 20, 10, '#b08a4a'); b.rect(76, 86, 20, 2, '#d0ac6a'); for (let x = 77; x < 96; x += 3) b.rect(x, 89, 1, 7, '#7a5a2e'); }
     if (a.includes('atlas_sash')) { const c = p.sashCol || '#d8c89a'; b.line(20, 76, 64, 96, c, 5); b.line(22, 80, 64, 99, shade(c, -1)); }
-    if (a.includes('atlas_pin')) { b.oval(30, 78, 37, 85, GOLD[1]); b.rect(33, 81, 2, 2, '#3a5a8a'); }
+    if (a.includes('atlas_pin')) { // a compass rose: four points round a blue heart
+      b.poly([33, 70, 36, 79, 33, 82, 30, 79], GOLD[2]); b.poly([33, 94, 30, 85, 33, 82, 36, 85], GOLD[0]);
+      b.poly([21, 82, 30, 79, 33, 82, 30, 85], GOLD[1]); b.poly([45, 82, 36, 85, 33, 82, 36, 79], GOLD[1]);
+      b.oval(29, 78, 37, 86, GOLD[1]); b.oval(31, 80, 35, 84, '#3a5a8a'); b.px(32, 81, '#8ab0e0');
+    }
     if (a.includes('cape')) { const R = R4(p.capeCol || '#6a3a4a'); b.poly([10, 80, 24, 72, 34, 76, 22, 84], R[2]); b.poly([86, 80, 72, 72, 62, 76, 74, 84], R[1]); b.oval(44, 70, 51, 77, GOLD[1]); b.px(46, 72, GOLD[2]); }
   }
   function accHead(b, p, C) {
@@ -19532,7 +19835,28 @@ RB.portraits = (function () {
       b.oval(65, 17, 71, 23, '#fff4c0'); b.oval(67, 19, 69, 21, '#e8b050');
       b.line(62, 26, 58, 30, '#5a8a4a', 2);
     }
-    if (a.includes('earrings')) for (const x of [24, 71]) { b.oval(x, 54, x + 2, 56, GOLD[1]); b.rect(x + 1, 57, 1, 3, GOLD[0]); b.oval(x, 59, x + 2, 62, GOLD[1]); b.px(x, 59, GOLD[2]); }
+    if (a.includes('cap')) { // a peaked cap: crown, dark band with a brass badge, a stiff peak over the brow
+      const R = R4(p.capCol || '#2c4468');
+      const crown = new P.Buf(S, S);
+      crown.poly([22, 26, 24, 12, 34, 4, 48, 2, 62, 4, 72, 12, 74, 26], '#fff');
+      crown.each((x, y) => { let v = x < 36 ? 3 : x > 62 ? 1 : 2; if (x < 32 && y < 12) v = 4; b.px(x, y, R[v]); });
+      b.rect(22, 22, 53, 6, R[1]); b.rect(22, 27, 53, 1, R[0]); b.rect(24, 22, 10, 1, R[2]);
+      b.oval(43, 10, 53, 20, GOLD[1]); b.oval(44, 11, 48, 15, GOLD[2]); b.px(52, 19, GOLD[0]);
+      b.poly([20, 28, 76, 28, 72, 34, 24, 34], R[0]); b.rect(24, 28, 48, 1, R[1]);
+      b.rect(26, 35, 44, 2, A('#1a1020', 0.28));
+    }
+    if (a.includes('leaf')) { // a maple-leaf pin in the hair
+      const R = R4(p.leafCol || '#c8452a');
+      b.poly([70, 4, 73, 12, 80, 8, 78, 16, 86, 16, 80, 22, 82, 28, 74, 25, 70, 30, 66, 25, 58, 28, 60, 22, 54, 16, 62, 16, 60, 8, 67, 12], R[2]);
+      b.poly([70, 4, 73, 12, 70, 18, 67, 12], R[3]); b.poly([54, 16, 62, 16, 70, 18, 60, 22], R[3]);
+      b.poly([86, 16, 80, 22, 82, 28, 70, 18], R[1]);
+      b.line(70, 8, 70, 26, R[1]); b.line(70, 18, 58, 14, R[1]); b.line(70, 18, 82, 14, R[1]);
+      b.line(70, 26, 66, 34, '#6a4a2a', 2);
+    }
+    if (a.includes('earrings')) {
+      const G = p.earCol ? R4(p.earCol).slice(1, 4) : GOLD;
+      for (const x of [24, 71]) { b.oval(x, 54, x + 2, 56, GOLD[1]); b.rect(x + 1, 57, 1, 3, GOLD[0]); b.oval(x - 1, 59, x + 3, 64, G[1]); b.px(x, 60, G[2]); b.px(x + 2, 63, G[0]); }
+    }
     if (a.includes('pencil')) { b.line(66, 30, 82, 12, '#e0b040', 3); b.line(67, 31, 83, 13, '#b88a20'); b.rect(81, 9, 4, 4, '#e8a0a0'); b.rect(64, 30, 3, 3, '#3a3040'); }
     if (a.includes('atlas_quill')) { b.line(68, 32, 80, 4, '#f4f0e0', 3); b.line(70, 32, 82, 6, '#d8d0bc'); b.px(68, 32, '#6a5a3a'); }
     if (a.includes('atlas_lamplet')) lantern(b, 80, 80);
@@ -20175,12 +20499,7 @@ RB.world = (function () {
     return null;
   }
   function playerLook() {
-    const p = s().player;
-    const look = Object.assign({}, p.look);
-    if (s().equip.cosmetic && RB.content.items[s().equip.cosmetic] && RB.content.items[s().equip.cosmetic].acc) {
-      look.acc = (look.acc || []).concat([RB.content.items[s().equip.cosmetic].acc]);
-    }
-    return look;
+    return RB.equip.look(s()); // own look + the equipped keepsake (src/engine/07_equip.js)
   }
   function partyCompanion() {
     const st = s();
@@ -21454,7 +21773,7 @@ RB.script = (function () {
         case 'give': {
           RB.state.give(s, a[0], a[1] ? +a[1] : 1);
           const it = RB.content.items[a[0]];
-          if (it && !c.args.includes('quiet')) await RB.ui.toast({ kind: 'item', jp: it.name.jp, en: it.name.en, n: a[1] ? +a[1] : 1 });
+          if (it && !c.args.includes('quiet')) await RB.ui.toast({ kind: 'item', jp: it.name.jp, en: it.name.en, n: a[1] ? +a[1] : 1, note: RB.equip.note(it) });
           RB.audio && RB.audio.sfx('item_get');
           break;
         }
@@ -23342,7 +23661,7 @@ RB.ui = (function () {
     return new Promise((res) => {
       const n = el('div', 'toast');
       n.setAttribute('role', 'status');
-      n.innerHTML = '<span class="kind">' + esc(TOAST_LABEL[t.kind] || '') + '</span>' + (t.jp ? jhtml(t.jp) : '') + '<span class="en">' + esc(t.en || '') + (t.n > 1 ? ' ×' + t.n : '') + '</span>';
+      n.innerHTML = '<span class="kind">' + esc(TOAST_LABEL[t.kind] || '') + '</span>' + (t.jp ? jhtml(t.jp) : '') + '<span class="en">' + esc(t.en || '') + (t.n > 1 ? ' ×' + t.n : '') + '</span>' + (t.note ? '<span class="tnote">' + esc(t.note) + '</span>' : '');
       notices.appendChild(n);
       RB.audio && RB.audio.sfx(t.kind === 'quest_done' ? 'quest_update' : t.kind === 'word' ? 'discover' : 'page');
       setTimeout(() => { n.style.opacity = '0'; n.style.transition = 'opacity .5s'; }, 2600);
@@ -23723,6 +24042,17 @@ RB.ui.folio = (function () {
     load: '<path d="M4 7h7l2 2h7v10H4z"/><path d="M12 12v5M9.5 14.5L12 17l2.5-2.5"/>',
     title: '<path d="M4 11l8-6 8 6"/><path d="M6 10v10h12V10"/><path d="M10 20v-5h4v5"/>',
     practice: '<path d="M4 19l4-1L19 7l-3-3L5 15z"/><path d="M14 6l3 3"/>',
+    // equipment: the worn mark and the Satchel's effect keywords (see RB.equip.tags)
+    worn: '<circle cx="12" cy="12" r="8.5"/><path d="M8 12.5l3 3 5-6"/>',
+    ward: '<path d="M12 3l7 3v5c0 4.6-3 8-7 10-4-2-7-5.4-7-10V6z"/><path d="M9 11.5l2 2 4-4"/>',
+    harmony: '<circle cx="9" cy="12" r="5"/><circle cx="15" cy="12" r="5"/>',
+    resolve: '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>',
+    stride: '<path d="M9 4h4v8l5 2a2.4 2.4 0 0 1 2 2.4V19H9z"/><path d="M9 16h11"/><path d="M2 9h4M3 13h4"/>',
+    look: '<ellipse cx="12" cy="9" rx="5" ry="6"/><path d="M12 15v6M9 21h6"/><path d="M9.8 7.2c.6-1.2 1.6-1.8 2.7-1.8"/>',
+    wave: '<path d="M3 10c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 15c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/>',
+    knot: '<path d="M4.5 12c0-3.5 4.5-3.5 7.5 0s7.5 3.5 7.5 0-4.5-3.5-7.5 0-7.5 3.5-7.5 0z"/>',
+    cost: '<circle cx="12" cy="12" r="8.5"/><path d="M8 12h8"/>',
+    none: '<circle cx="12" cy="12" r="8.5" stroke-dasharray="2.4 3"/><path d="M9 12h6"/>',
   };
   function icon(name, title) {
     const d = P[name] || P.pouch;
@@ -23977,7 +24307,7 @@ RB.ui.dialogue = (function () {
     const cv = box.querySelector('.portrait');
     cv.classList.toggle('hidden', !ch);
     if (ch) {
-      if (ch.pc) RB.portraits.drawPlayer(cv, s.player.look, line.expr);
+      if (ch.pc) RB.portraits.drawPlayer(cv, RB.equip.look(s), line.expr);
       else RB.portraits.draw(cv, line.who, line.expr);
     }
     const whoEl = box.querySelector('.who');
@@ -26282,52 +26612,116 @@ RB.ui.menu = (function () {
   }
 
   // ---- Satchel -------------------------------------------------------------------------------
-  const SLOTS = [['charm', 'Charm'], ['tool', 'Tool'], ['cosmetic', 'Keepsake (appearance only)']];
+  // Slots, the worn look and each item's keyword tags come from RB.equip
+  // (src/engine/07_equip.js), derived from the item data. Equipped things are
+  // marked by shape and words (an "Equipped" tag on a faded, tinted row), never
+  // by colour alone; the Key at the foot of the list explains every mark shown.
+  const EQ = () => RB.equip;
+  const lab = (jp, en) => RB.ui.label(jp, en);
+  const tagChip = (t) => '<span class="etag ' + t.kind + '" data-tag="' + esc(t.id) + '">' + I(t.icon) + '<span>' + (t.kind === 'cost' ? '<span class="sr">Drawback: </span>' : '') + lab(t.jp, t.en) + '</span></span>';
+  const tagRow = (d) => '<span class="etags">' + EQ().tags(d).map(tagChip).join('') + '</span>';
+  const wornChip = () => '<span class="worn-tag">' + I('worn') + '<span>' + lab('{装備中|そうびちゅう}', 'Equipped') + '</span></span>';
+  const ACC_WORD = { hat: 'hat', cap: 'cap', scarf: 'scarf', earrings: 'earrings', flower: 'flower', cape: 'cape' };
+  function wearPreview(id, d, s) {
+    const rep = EQ().replaces(s.player.look, id).map((a) => ACC_WORD[a] || a);
+    const views = [['down', 'Front'], ['right', 'Side'], ['up', 'Back, in battle']];
+    return '<figure class="wear-prev"><figcaption>How you look wearing it</figcaption><div class="wp-row">' +
+      views.map(([dir, cap]) => '<div class="wp"><canvas width="32" height="48" data-prev="' + esc(id) + '" data-dir="' + dir + '" role="img" aria-label="' + esc('You wearing the ' + d.name.en + ': ' + cap.toLowerCase()) + '"></canvas><span>' + esc(cap) + '</span></div>').join('') +
+      '<div class="wp wp-face"><canvas width="96" height="96" data-prev="' + esc(id) + '" data-dir="face" role="img" aria-label="' + esc('Your portrait wearing the ' + d.name.en) + '"></canvas><span>Portrait</span></div></div>' +
+      (rep.length ? '<p class="muted small">You already wear a ' + esc(rep.join(' and ')) + '; this takes its place, in its own colours, while you wear it.</p>' : '') + '</figure>';
+  }
+  function drawPreviews(root, s) {
+    for (const cv of root.querySelectorAll('canvas[data-prev]')) {
+      const look = EQ().lookWith(s.player.look, cv.dataset.prev);
+      if (cv.dataset.dir === 'face') { RB.portraits.drawPlayer(cv, look, 'smile'); continue; }
+      const art = RB.sprites.getArt(look, cv.dataset.dir, 0);
+      const c = cv.getContext('2d');
+      c.clearRect(0, 0, cv.width, cv.height);
+      if (art) c.drawImage(art, 0, 0);
+    }
+  }
   function itemDetail(x, s) {
     const d = x.d;
-    const eqd = d.slot && s.equip[d.slot] === x.id;
-    return '<div class="idetail"><div class="ibig">' + I(F().itemIcon(x.id, d)) + '</div><h3>' + j(d.name.jp) + ' <span class="en">' + esc(d.name.en) + '</span>' + (x.n > 1 ? ' <span class="count">×' + x.n + '</span>' : '') + '</h3>' +
+    const eqd = !!d.slot && EQ().isWorn(s, x.id);
+    const z = d.slot && EQ().slot(d.slot);
+    let h = '<div class="idetail' + (eqd ? ' worn' : '') + '"><div class="ibig">' + I(F().itemIcon(x.id, d)) + '</div><h3>' + j(d.name.jp) + ' <span class="en">' + esc(d.name.en) + '</span>' + (x.n > 1 ? ' <span class="count">×' + x.n + '</span>' : '') + '</h3>' +
+      (eqd ? '<p class="worn-line">' + wornChip() + '</p>' : '') +
       '<p>' + esc(RB.script.enVars(d.desc || '')) + '</p>' +
-      (d.key ? '<p class="note-slip">' + I('key') + ' Important: it can’t be sold, used up or lost.</p>' : '') +
-      (d.slot ? '<p class="muted small">Worn as: ' + esc(SLOTS.find((z) => z[0] === d.slot)[1]) + (eqd ? ' — equipped now.' : '.') + '</p><div class="acts"><button class="pbtn' + (eqd ? '' : ' primary') + '" data-' + (eqd ? 'unequip="' + d.slot : 'equip="' + x.id) + '">' + (eqd ? 'Take it off' : 'Equip') + '</button></div>' : '') +
-      '</div>';
+      (d.key ? '<p class="note-slip">' + I('key') + ' Important: it can’t be sold, used up or lost.</p>' : '');
+    if (z) {
+      const cur = s.equip[d.slot] && !eqd && RB.content.items[s.equip[d.slot]];
+      h += '<div class="ph small-ph">What it does</div><ul class="tagx">' + EQ().tags(d).map((t) => '<li>' + tagChip(t) + '<span class="x">' + esc(t.key) + '</span></li>').join('') + '</ul>';
+      if (d.acc) h += wearPreview(x.id, d, s);
+      h += '<p class="muted small">Worn as: ' + esc(z.en.toLowerCase()) + ' (' + esc(z.where) + '). ' + (eqd ? 'Equipped now.' : cur ? 'Equipping it takes off the ' + esc(cur.name.en) + '.' : 'That slot is empty.') + '</p>' +
+        '<div class="acts"><button class="pbtn' + (eqd ? '' : ' primary') + '" data-' + (eqd ? 'unequip="' + d.slot : 'equip="' + x.id) + '">' + (eqd ? lab('{外|はず}す', 'Take it off') : lab('{装備|そうび}する', 'Equip')) + '</button></div>';
+    }
+    return h + '</div>';
   }
   function satchel(A, B, two) {
     const s = RB.game.s;
     const S = view.satchel;
     const inv = Object.keys(s.inv).map((id) => ({ id, n: s.inv[id], d: RB.content.items[id] })).filter((x) => x.d);
     if (!S.sel || !inv.find((x) => x.id === S.sel)) S.sel = inv[0] ? inv[0].id : null;
-    let h = '<h3>' + I('charm') + ' Equipped</h3><ul class="entries">' + SLOTS.map(([k, l]) => {
-      const it = s.equip[k] && RB.content.items[s.equip[k]];
-      return '<li class="entry"><span class="mark">' + I(it ? F().itemIcon(s.equip[k], it) : k === 'cosmetic' ? 'keepsake' : k) + '</span><div><div class="kind">' + esc(l) + '</div><div class="t">' + (it ? j(it.name.jp) + ' <span class="en">' + esc(it.name.en) + '</span>' : '<span class="muted">Nothing</span>') + '</div></div>' +
-        (it ? '<button class="pbtn" data-unequip="' + k + '">Take off</button>' : '<span></span>') + '</li>';
+    // the slots: what is worn, what it does, or what could go there
+    const filled = EQ().SLOTS.filter((z) => s.equip[z.id] && RB.content.items[s.equip[z.id]]).length;
+    let h = '<h3>' + I('worn') + ' ' + lab('{装備|そうび}', 'Equipped') + ' <span class="count">' + filled + ' of ' + EQ().SLOTS.length + ' slots</span></h3><ul class="entries eq-slots">' + EQ().SLOTS.map((z) => {
+      const id = s.equip[z.id], it = id && RB.content.items[id];
+      const fits = inv.filter((x) => x.d.slot === z.id && x.id !== id).length;
+      return '<li class="entry eq-slot ' + (it ? 'worn' : 'empty') + '" data-slot="' + z.id + '"><span class="mark">' + I(it ? F().itemIcon(id, it) : z.icon) + '</span><div class="eq-body">' +
+        '<div class="kind">' + lab(z.jp, z.en) + ' · ' + esc(z.where) + '</div>' +
+        (it ? '<div class="t">' + j(it.name.jp) + ' <span class="en">' + esc(it.name.en) + '</span></div>' +
+            '<div class="eq-foot">' + tagRow(it) + '<button class="pbtn" data-unequip="' + z.id + '" aria-label="' + esc('Take off the ' + it.name.en) + '">' + lab('{外|はず}す', 'Take off') + '</button></div>'
+          : '<div class="t muted">' + lab('{空|あ}き', 'Empty') + '</div><div class="muted small">' + (fits ? fits + (fits > 1 ? ' things' : ' thing') + ' you carry can go here.' : 'Nothing you carry fits here yet.') + '</div>') +
+        '</div></li>';
     }).join('') + '</ul>';
-    h += '<h3>' + I('satchel') + ' Carried <span class="count">' + inv.length + '</span></h3>';
+    h += '<h3>' + I('satchel') + ' ' + lab('{持|も}ち{物|もの}', 'Carried') + ' <span class="count">' + inv.length + '</span></h3>';
     if (!inv.length) h += '<p class="muted">Your pack is light.</p>';
-    else h += '<ul class="entries">' + inv.map((x) => '<li><button class="entry item-row" data-it="' + x.id + '" aria-current="' + (two && S.sel === x.id) + '"' + (two ? '' : ' aria-expanded="' + (S.open === x.id) + '"') + '>' +
-      '<span class="mark">' + I(F().itemIcon(x.id, x.d)) + '</span><span class="body"><span class="t">' + j(x.d.name.jp) + ' <span class="en">' + esc(x.d.name.en) + '</span>' + (x.n > 1 ? ' <span class="count">×' + x.n + '</span>' : '') + '</span>' +
-      (x.d.key ? '<span class="kind">' + I('key') + ' important</span>' : x.d.slot ? '<span class="kind">' + (s.equip[x.d.slot] === x.id ? 'equipped' : 'can be worn') + '</span>' : '') + '</span></button>' +
-      (!two && S.open === x.id ? '<div class="inline-detail">' + itemDetail(x, s) + '</div>' : '') + '</li>').join('') + '</ul>';
+    else h += '<ul class="entries">' + inv.map((x) => {
+      const worn = !!x.d.slot && EQ().isWorn(s, x.id), z = x.d.slot && EQ().slot(x.d.slot);
+      return '<li><button class="entry item-row' + (worn ? ' worn' : z ? ' wearable' : '') + '" data-it="' + x.id + '" aria-current="' + (two && S.sel === x.id) + '"' + (two ? '' : ' aria-expanded="' + (S.open === x.id) + '"') + '>' +
+        '<span class="mark">' + I(F().itemIcon(x.id, x.d)) + '</span><span class="body"><span class="t">' + j(x.d.name.jp) + ' <span class="en">' + esc(x.d.name.en) + '</span>' + (x.n > 1 ? ' <span class="count">×' + x.n + '</span>' : '') + '</span>' +
+        (x.d.key ? '<span class="kind">' + I('key') + ' important</span>' : '') +
+        (z ? '<span class="kind slotline">' + (worn ? wornChip() : '') + '<span>' + lab(z.jp, z.en) + (worn ? '' : ' · can be worn') + '</span></span>' + tagRow(x.d) : '') +
+        '</span></button>' + (!two && S.open === x.id ? '<div class="inline-detail">' + itemDetail(x, s) + '</div>' : '') + '</li>';
+    }).join('') + '</ul>';
+    // the key: every mark on this page, explained
+    const seen = [];
+    for (const x of inv) if (x.d.slot) for (const t of EQ().tags(x.d)) if (!seen.some((u) => u.id === t.id)) seen.push(t);
+    if (seen.length) {
+      h += '<h3>' + I('help') + ' ' + lab('{印|しるし} の {見方|みかた}', 'Key to the marks') + '</h3><ul class="tagx tag-key">' +
+        '<li>' + wornChip() + '<span class="x">Worn now. Each slot holds one thing; equipping another takes it off.</span></li>' +
+        seen.map((t) => '<li>' + tagChip(t) + '<span class="x">' + esc(t.key) + '</span></li>').join('') + '</ul>' +
+        (seen.some((t) => t.kind === 'cost') ? '<p class="muted small">A dashed mark with a minus sign is the drawback that comes with a charm.</p>' : '');
+    }
     h += '<p class="muted small">Important items cannot be sold or used up. Nothing essential can be lost.</p>';
     A.innerHTML = h;
     const selX = inv.find((x) => x.id === S.sel);
     B.innerHTML = selX ? itemDetail(selX, s) : '<p class="muted">Choose something to look at it closely.</p>';
+    drawPreviews(A, s); drawPreviews(B, s);
+    // a polite announcement of what changed (the page itself is redrawn)
+    let live = fr.el.querySelector('.eq-live');
+    if (!live) { live = RB.ui.el('p', 'sr eq-live'); live.setAttribute('aria-live', 'polite'); fr.el.appendChild(live); }
     const handler = (e) => {
       const it = e.target.closest('[data-it]');
       const eq = e.target.closest('[data-equip]'), un = e.target.closest('[data-unequip]');
-      if (eq) { const id = eq.dataset.equip; s.equip[RB.content.items[id].slot] = id; RB.audio && RB.audio.sfx('confirm'); refreshLook(s); remember(); render(); return; }
-      if (un) { s.equip[un.dataset.unequip] = null; refreshLook(s); remember(); render(); return; }
+      const page = e.currentTarget;
+      if (eq || un) {
+        const id = eq ? eq.dataset.equip : s.equip[un.dataset.unequip];
+        const d = RB.content.items[id], sl = eq ? d.slot : un.dataset.unequip;
+        const inline = !!(eq || un).closest('.inline-detail');
+        if (eq) { EQ().equip(s, id); RB.audio && RB.audio.sfx('confirm'); } else EQ().unequip(s, sl);
+        remember(); render();
+        live.textContent = d ? (eq ? 'Equipped: ' : 'Taken off: ') + d.name.en + '.' : '';
+        // keep the keyboard where it was: the same control, now reading the other way
+        const leaves = fr.box.querySelectorAll('.leaf'), again = leaves[page === B ? 1 : 0];
+        const want = (inline ? '.inline-detail ' : '') + (eq ? '[data-unequip="' + sl + '"]' : '[data-equip="' + id + '"]');
+        const next = again && (again.querySelector(want) || again.querySelector('[data-it="' + id + '"]'));
+        (next || again || fr.el).focus({ preventScroll: true });
+        return;
+      }
       if (it) { if (two) S.sel = it.dataset.it; else S.open = S.open === it.dataset.it ? null : it.dataset.it; remember(); render(); }
     };
     A.onclick = handler; B.onclick = handler;
-  }
-  function refreshLook(s) {
-    const W = RB.world.W;
-    if (!W.player) return;
-    const look = Object.assign({}, s.player.look);
-    const c = s.equip.cosmetic && RB.content.items[s.equip.cosmetic];
-    if (c && c.acc) look.acc = (look.acc || []).concat([c.acc]);
-    W.player.look = look;
   }
 
   // ---- Map ------------------------------------------------------------------------------------
@@ -30084,7 +30478,7 @@ RB.combat = (function () {
     }
     // party (backs to us), each on a small contact shadow
     const s = RB.game.s;
-    const look = Object.assign({}, s.player.look);
+    const look = RB.equip.look(s); // with the equipped keepsake, as on the road
     const members = [[px, py, look]];
     if (s.comp) members.push([px + 40 * ps, py + 12, RB.content.chars[s.comp].look]);
     for (const [x, y, lk] of members) {
@@ -31534,7 +31928,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   it('rw_wheel_pin', { name: { jp: '{歯車|はぐるま} の {軸|じく}', en: 'Gear pin' }, desc: 'An iron pin from the mill\'s gear train.', key: true });
   it('rw_reed_charm', { name: { jp: '{葦|あし} の {守|まも}り', en: 'Reed charm' }, desc: 'Braided by Mame. In battle you begin behind a small ward.', slot: 'charm', effect: { startWard: 1 } });
   it('rw_boots_good', { name: { jp: '{丈夫|じょうぶ}な {長靴|ながぐつ}', en: 'Sturdy boots' }, desc: 'Oto\'s work. They never slip, and they make your stride a touch quicker on long roads.', slot: 'tool', effect: { walk: 1 } });
-  it('rw_ribbon', { name: { jp: '{色褪|いろあ}せた リボン', en: 'Faded ribbon' }, desc: 'A keepsake to wear. It changes nothing but how you look.', slot: 'cosmetic', acc: 'flower' });
+  it('rw_ribbon', { name: { jp: '{色褪|いろあ}せた リボン', en: 'Faded ribbon' }, desc: 'A keepsake to wear, tied in your hair. It changes nothing but how you look.', slot: 'cosmetic', acc: 'ribbon', wear: { ribbonCol: '#b98088' } });
   it('rw_mill_charm', { name: { jp: '{石臼|いしうす} の {守|まも}り', en: 'Millstone charm' }, desc: 'The miller\'s round stone charm. In battle, you start with one point of harmony.', slot: 'charm', effect: { harmonyStart: 1 } });
   it('rw_tea_leaves', { name: { jp: 'お{茶|ちゃ} の {葉|は}', en: 'Tea leaves' }, desc: 'A twist of Hana\'s morning tea.' });
   it('rw_salve', { name: { jp: 'ミオ の {軟膏|なんこう}', en: 'Mio\'s salve' }, desc: 'Labelled, dated and initialled. Of course.' });
@@ -32990,7 +33384,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { jp: 'トモ の {猫|ねこ} が いない 。 {川|かわ} の {向|む}こう で {見|み}た {人|ひと} が いる らしい 。', en: 'Tomo\'s cat is missing. Someone saw a cat across the river.' },
       { jp: '{猫|ねこ} を トモ の ところ へ {連|つ}れて {帰|かえ}ろう 。', en: 'Bring the cat back to Tomo (near the laundry lines, west of the square).' },
     ] };
-  C.items.rw_catbell = { name: { jp: '{小|ちい}さな {鈴|すず}', en: 'Tiny bell' }, desc: 'Mochi\'s old bell. Worn as a keepsake, it changes only how you look.', slot: 'cosmetic', acc: 'earrings' };
+  C.items.rw_catbell = { name: { jp: '{小|ちい}さな {鈴|すず}', en: 'Tiny bell' }, desc: 'Mochi\'s old bell, still on its red cord. Worn at your neck as a keepsake, it changes only how you look.', slot: 'cosmetic', acc: 'bell' };
   C.challenges['rw.c_mochi'] = { title: { jp: '{首輪|くびわ} の {名札|なふだ}', en: 'The collar tag' },
     tiers: {
       F: [{ kind: 'write', item: 'v:モチ', prompt: { en: 'The cat\'s name tag is blank. Tomo says its name is Mochi — written in katakana: モチ. Write it on the tag.' }, answer: 'モチ', accept: ['モチ'], mode: 'kana', script: 'kata', explain: { jp: 'モチ', en: 'Pet names are often written in katakana.' } }],
@@ -34364,7 +34758,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   it('sg_stamp', { name: { jp: '{割|わ}れた {判子|はんこ}', en: 'Broken stamp' }, key: true, desc: 'The Tide Clerk\'s "returned to sender" stamp, split in two.' });
   it('sg_float_charm', { name: { jp: 'ガラス の {浮|う}き{玉|だま}', en: 'Glass float charm' }, slot: 'charm', effect: { startWard: 1 }, desc: 'A fishing float the size of a plum, from Kiyo and Sōta. Charm: each encounter begins with a small ward before both of you.' });
   it('sg_lens_charm', { name: { jp: 'レンズ の かけら', en: 'Lens chip' }, slot: 'charm', effect: { harmonyStart: 1 }, desc: 'A chip of the old lighthouse lens, from Genzō. Charm: encounters begin with a little harmony already built.' });
-  it('sg_glass_earrings', { name: { jp: '{海|うみ} ガラス の {耳飾|みみかざ}り', en: 'Sea-glass earrings' }, slot: 'cosmetic', acc: 'earrings', desc: 'Asahi\'s thank-you: two drops of frosted blue glass.' });
+  it('sg_glass_earrings', { name: { jp: '{海|うみ} ガラス の {耳飾|みみかざ}り', en: 'Sea-glass earrings' }, slot: 'cosmetic', acc: 'earrings', wear: { earCol: '#8fc6d8' }, desc: 'Asahi\'s thank-you: two drops of frosted blue glass. A keepsake: it changes only how you look.' });
 
   // ---- quests ------------------------------------------------------------------------------
   C.quests.sg_main = {
@@ -38817,9 +39211,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   it('co_globe', { name: { jp: 'トモエ の {火屋|ほや}', en: 'Tomoe\'s lantern globe' }, desc: 'The one festival globe of thirty that survived the kiln. トモエ is scratched small into its base.', key: true });
   it('co_rope', { name: { jp: '{水門|すいもん} の {綱|つな}', en: 'Channel-gate rope' }, desc: 'Tamotsu\'s spare hemp rope, still smelling faintly of river mud.', key: true });
   it('co_ash_cup', { name: { jp: '{灰釉|はいゆう} の {湯呑|ゆの}み', en: 'Ash-glazed cup' }, desc: 'Nobu\'s thanks. The glaze is made from orchard ash; it runs green where it pooled in the kiln.' });
-  it('co_straw_hat', { name: { jp: '{麦|むぎ}わら{帽子|ぼうし}', en: 'Terrace straw hat' }, desc: 'Asa\'s spare. A keepsake to wear; it changes only how you look.', slot: 'cosmetic', acc: 'hat' });
-  it('co_leaf_pin', { name: { jp: '{紅葉|もみじ} の {髪飾|かみかざ}り', en: 'Maple-leaf hairpin' }, desc: 'Grandma Ume\'s pin, pressed on you "because it suits a traveller". Cosmetic.', slot: 'cosmetic', acc: 'flower' });
-  it('co_glass_beads', { name: { jp: 'ガラス の {耳飾|みみかざ}り', en: 'Glass-bead earrings' }, desc: 'Hiro\'s work: two drops of amber glass, the colour of the festival lanterns. Cosmetic.', slot: 'cosmetic', acc: 'earrings' });
+  it('co_straw_hat', { name: { jp: '{麦|むぎ}わら{帽子|ぼうし}', en: 'Terrace straw hat' }, desc: 'Asa\'s spare. A keepsake to wear; it changes only how you look.', slot: 'cosmetic', acc: 'hat', wear: { hatCol: '#d6b25e' } });
+  it('co_leaf_pin', { name: { jp: '{紅葉|もみじ} の {髪飾|かみかざ}り', en: 'Maple-leaf hairpin' }, desc: 'Grandma Ume\'s pin, pressed on you "because it suits a traveller". Cosmetic.', slot: 'cosmetic', acc: 'leaf', wear: { leafCol: '#c8452a' } });
+  it('co_glass_beads', { name: { jp: 'ガラス の {耳飾|みみかざ}り', en: 'Glass-bead earrings' }, desc: 'Hiro\'s work: two drops of amber glass, the colour of the festival lanterns. Cosmetic.', slot: 'cosmetic', acc: 'earrings', wear: { earCol: '#e0781e' } });
   it('co_hoshigaki', { name: { jp: '{干|ほ}し{柿|がき}', en: 'Dried persimmons' }, desc: 'A string of Fusa\'s dried persimmons, sweet as honey. Good for the road.' });
 
   // ---- notebook lore -------------------------------------------------------------------------
@@ -43476,7 +43870,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   it('sb_reply_letter', { name: { jp: 'ホシノ の {返事|へんじ}', en: 'Hoshino\'s reply' }, desc: 'A letter for Akari, a clerk in Lanternfall. The address line is left for you to fill in when you find her.', key: true });
   it('sb_goat_bell', { name: { jp: 'ヤギ の {鈴|すず}', en: 'Goat bell' }, desc: 'Tetsuji\'s spare. It sounds exactly like "don\'t panic". In battle you stand a little steadier (+1 resolve).', slot: 'charm', effect: { resolve: 1 } });
   it('sb_bell_cord', { name: { jp: '{鐘|かね} の {綱|つな}', en: 'Bell-rope braid' }, desc: 'Fuki braided it from an old bell rope. You begin each encounter already in step (+1 harmony).', slot: 'charm', effect: { harmonyStart: 1 } });
-  it('sb_scarf', { name: { jp: '{手編|てあ}み の マフラー', en: 'Hand-knitted scarf' }, desc: 'Sachi\'s work, in the colours the children chose. It changes nothing but how you look (and how warm).', slot: 'cosmetic', acc: 'scarf' });
+  it('sb_scarf', { name: { jp: '{手編|てあ}み の マフラー', en: 'Hand-knitted scarf' }, desc: 'Sachi\'s work, in the colours the children chose. It changes nothing but how you look (and how warm).', slot: 'cosmetic', acc: 'scarf', wear: { scarfCol: '#b8433a', scarfStripe: '#e9c648' } });
   it('sb_cheese', { name: { jp: 'ヤギ の チーズ', en: 'Goat cheese' }, desc: 'Wrapped in cloth. Tetsuji says it\'s better the second week. It is the first week.' });
   it('sb_amazake', { name: { jp: '{甘酒|あまざけ}', en: 'Amazake' }, desc: 'Sweet, warm, non-alcoholic rice drink from Yae\'s pot, in a stoppered flask.' });
 
@@ -47077,9 +47471,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   it('lf_minutes', { name: { jp: '{古|ふる}い {議事録|ぎじろく}', en: 'The old minutes' }, key: true, desc: 'Council minutes from thirty years ago, the only copy the Hush did not smooth over. Full of people disagreeing.' });
   it('lf_toya_bell', { name: { jp: 'トウヤ の {鈴|すず}', en: "Tōya's hand bell" }, key: true, desc: 'A messenger\'s small brass bell. Old Tokuji kept it for thirty years and never once rang it.' });
   it('lf_hoshigaki', { name: { jp: '{干|ほ}し{柿|がき}', en: 'Dried persimmons' }, desc: 'From the tree Kōhei and Kinu finally agreed to share. Sweet, a little chewy, argued over.' });
-  it('lf_ferry_cap', { name: { jp: '{渡|わた}し{舟|ぶね}の {帽子|ぼうし}', en: 'Ferry cap' }, slot: 'cosmetic', acc: 'hat', desc: 'A spare ferry clerk\'s cap from Umi\'s office. Makes people ask you when the next boat leaves.' });
+  it('lf_ferry_cap', { name: { jp: '{渡|わた}し{舟|ぶね}の {帽子|ぼうし}', en: 'Ferry cap' }, slot: 'cosmetic', acc: 'cap', wear: { capCol: '#2c4468' }, desc: 'A spare ferry clerk\'s cap from Umi\'s office, navy with a brass badge. Makes people ask you when the next boat leaves. A keepsake: it changes only how you look.' });
   it('lf_red_pen', { name: { jp: '{赤|あか}ペン', en: 'Red pen' }, desc: 'Hayato\'s correcting pen. He says a clerk who cannot cross things out is only half a clerk.' });
-  it('lf_bell_shard', { name: { jp: '{鐘|かね}の {欠片|かけら}', en: 'Bell fragment' }, slot: 'charm', desc: 'A chip of bronze from the drowned bell. It hums faintly when someone near you is about to say no.' });
+  it('lf_bell_shard', { name: { jp: '{鐘|かね}の {欠片|かけら}', en: 'Bell fragment' }, slot: 'charm', desc: 'A chip of bronze from the drowned bell. It seems to hum faintly when someone near you is about to say no, though that may be your imagination. Worn as a charm it is a keepsake only: it does nothing in battle.' });
 
   // ---- notes (notebook lore) ----------------------------------------------------------
   const nt = (id, d) => (C.notes[id] = d);
@@ -50982,7 +51376,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   C.items.sa_folio_isamu = { name: T("Isamu's folio", 'イサム の {綴|つづ}り'), desc: 'A thin folio filed under "a laugh, before the kettle boils". Isamu asked for it back.', key: true };
   C.items.sa_ushio_notes = { name: T("Ushio's notebook", 'ウシオ の {手帳|てちょう}'), desc: 'A battered notebook of objections, recipes and, near the back, three names for the Archive\'s clerk.', key: true };
   C.items.sa_ren_folio = { name: T("Ren's folio", 'レン の {綴|つづ}り'), desc: 'Filed by Master Ushio: "To be held until the person themself chooses." Not yours to open.', key: true };
-  C.items.sa_bookmark = { name: T('Archive bookmark', '{書庫|しょこ} の {栞|しおり}'), desc: 'A bookmark of pale card with a red thread, given by Tsuzuri. It marks a place so you can come back to it.', slot: 'charm' };
+  C.items.sa_bookmark = { name: T('Archive bookmark', '{書庫|しょこ} の {栞|しおり}'), desc: 'A bookmark of pale card with a red thread, given by Tsuzuri. Its job is to keep a place between pages. Worn as a charm it is a keepsake only: it does nothing in battle.', slot: 'charm' };
 
   // ---- quests ---------------------------------------------------------------------------
   C.quests.sa_main = {
@@ -55145,8 +55539,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   I('atlas_cos_pin', { slot: 'cosmetic', acc: 'atlas_pin', name: { jp: '{方位|ほうい} の ピン', en: 'Compass-rose Pin' }, desc: 'It points north. Mostly.' });
   I('atlas_cos_lamplet', { slot: 'cosmetic', acc: 'atlas_lamplet', name: { jp: '{小|ちい}さな {提灯|ちょうちん}', en: 'Little Lantern' }, desc: 'The lantern you walked home, still lit. It hangs at your hip now.' });
   I('atlas_cos_quill', { slot: 'cosmetic', acc: 'atlas_quill', name: { jp: '{羽|はね}ペン', en: 'Quill' }, desc: 'Worn behind the ear, as cartographers apparently do.' });
-  I('atlas_cos_flower', { slot: 'cosmetic', acc: 'flower', name: { jp: '{押|お}し{花|ばな}', en: 'Pressed Road-flower' }, desc: 'A flower that grew on a road that had not been written yet.' });
-  I('atlas_cos_cape', { slot: 'cosmetic', acc: 'cape', name: { jp: '{旅|たび} の {外套|がいとう}', en: 'Traveller\'s Cape' }, desc: 'Good against fog, and against being asked where you have been.' });
+  I('atlas_cos_flower', { slot: 'cosmetic', acc: 'flower', wear: { flowerCol: '#9fb6ea' }, name: { jp: '{押|お}し{花|ばな}', en: 'Pressed Road-flower' }, desc: 'A flower that grew on a road that had not been written yet.' });
+  I('atlas_cos_cape', { slot: 'cosmetic', acc: 'cape', wear: { capeCol: '#51666e' }, name: { jp: '{旅|たび} の {外套|がいとう}', en: 'Traveller\'s Cape' }, desc: 'Good against fog, and against being asked where you have been.' });
   A.rewardOrder = ['atlas_cos_quill', 'atlas_charm_reed', 'atlas_cos_pin', 'atlas_charm_page', 'atlas_cos_sash', 'atlas_charm_tide', 'atlas_cos_flower', 'atlas_charm_mirror', 'atlas_cos_cape', 'atlas_cos_lamplet'];
 
   // ---- settlement restoration details (flags atlas_restore_1..6) ----------------------------------------
@@ -57092,6 +57486,20 @@ var RB = (globalThis.RB = globalThis.RB || {});
     return errs;
   }
 
+  // ---- Satchel keywords for the permanent charms --------------------------------------------------------------
+  // Kept beside the effects above so the two stay in step. RB.equip (src/engine/07_equip.js) shows them in the
+  // Satchel's list and its Key: each charm's benefit, and the drawback that comes with it.
+  if (RB.equip) RB.equip.defineEffect('atlasCharm', (v, T) => ({
+    reed: [T.boon('atlas_reed', 'ward', 'Battle start: ward +1 (you)', '{初|はじ}め から {守|まも}り ＋1', 'Every battle begins with a ward of 1 in front of you (not your companion).'),
+      T.cost('atlas_reed_cost', 'Techniques need 4 harmony', '{技|わざ} に は {調和|ちょうわ} 4', 'A coordinated technique needs 4 harmony instead of 3.')],
+    tide: [T.boon('atlas_tide', 'wave', 'Floods and sweeps −1', '{大波|おおなみ} と {薙|な}ぎ −1', 'Floods and sweeps hit for 1 less.'),
+      T.cost('atlas_tide_cost', 'Word wards hold 1', '{言葉|ことば} の {守|まも}り は 1', 'A ward you raise with a word holds 1 point instead of 2.')],
+    page: [T.boon('atlas_page', 'harmony', 'Clean Unravel: harmony ×2', 'ほどき で {調和|ちょうわ} ×2', 'A clean Unravel builds twice the harmony.'),
+      T.cost('atlas_page_cost', 'Answers build no harmony', '{答|こた}え で は {調和|ちょうわ} なし', 'Answering and seeing through build no harmony.')],
+    mirror: [T.boon('atlas_mirror', 'knot', 'Seeing through frees a knot', '{見破|みやぶ}る と {結|むす}び{目|め} が ほどける', 'Seeing through a lie or an echo frees a knot as well.'),
+      T.cost('atlas_mirror_cost', 'First Unravel frees nothing', '{最初|さいしょ} の ほどき は {空振|からぶ}り', 'Your first Unravel in each battle only finds the thread; it frees nothing.')],
+  })[v] || [T.special()]);
+
   AT.combat = { applyEnemy, effects: E, ctxNow, runActive, charmOf, combosOf, install, uninstall, installed: () => installed, orig };
   AT.simBattle = simBattle;
   AT.intentProblems = intentProblems;
@@ -57442,7 +57850,7 @@ RB.hooks = RB.hooks || {};
         RB.state.give(s, id, 1);
         run.keepsakes.push(id);
         await toast('item', C.items[id].name.jp, C.items[id].name.en);
-        await say('narr', { jp: 'これ は {持|も}ち{帰|かえ}れる 。', en: 'This one you can keep: ' + C.items[id].name.en + '. (Equip it as a keepsake from the Items menu.)' });
+        await say('narr', { jp: 'これ は {持|も}ち{帰|かえ}れる 。', en: 'This one you can keep: ' + C.items[id].name.en + '. (Equip it as a keepsake in the Satchel.)' });
       } else {
         await say('narr', { jp: '{中|なか} は {空|から} だった 。 {紙|かみ} に は 「ありがとう 」 と だけ {書|か}いて ある 。', en: 'It is empty. The paper just says "thank you".' });
       }

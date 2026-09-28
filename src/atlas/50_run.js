@@ -341,7 +341,7 @@ RB.hooks = RB.hooks || {};
         RB.state.give(s, id, 1);
         run.keepsakes.push(id);
         await toast('item', C.items[id].name.jp, C.items[id].name.en);
-        await say('narr', { jp: 'これ は {持|も}ち{帰|かえ}れる 。', en: 'This one you can keep: ' + C.items[id].name.en + '. (Equip it as a keepsake from the Items menu.)' });
+        await say('narr', { jp: 'これ は {持|も}ち{帰|かえ}れる 。', en: 'This one you can keep: ' + C.items[id].name.en + '. (Equip it as a keepsake in the Satchel.)' });
       } else {
         await say('narr', { jp: '{中|なか} は {空|から} だった 。 {紙|かみ} に は 「ありがとう 」 と だけ {書|か}いて ある 。', en: 'It is empty. The paper just says "thank you".' });
       }

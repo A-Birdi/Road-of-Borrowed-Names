@@ -84,7 +84,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   it('rw_wheel_pin', { name: { jp: '{歯車|はぐるま} の {軸|じく}', en: 'Gear pin' }, desc: 'An iron pin from the mill\'s gear train.', key: true });
   it('rw_reed_charm', { name: { jp: '{葦|あし} の {守|まも}り', en: 'Reed charm' }, desc: 'Braided by Mame. In battle you begin behind a small ward.', slot: 'charm', effect: { startWard: 1 } });
   it('rw_boots_good', { name: { jp: '{丈夫|じょうぶ}な {長靴|ながぐつ}', en: 'Sturdy boots' }, desc: 'Oto\'s work. They never slip, and they make your stride a touch quicker on long roads.', slot: 'tool', effect: { walk: 1 } });
-  it('rw_ribbon', { name: { jp: '{色褪|いろあ}せた リボン', en: 'Faded ribbon' }, desc: 'A keepsake to wear. It changes nothing but how you look.', slot: 'cosmetic', acc: 'flower' });
+  it('rw_ribbon', { name: { jp: '{色褪|いろあ}せた リボン', en: 'Faded ribbon' }, desc: 'A keepsake to wear, tied in your hair. It changes nothing but how you look.', slot: 'cosmetic', acc: 'ribbon', wear: { ribbonCol: '#b98088' } });
   it('rw_mill_charm', { name: { jp: '{石臼|いしうす} の {守|まも}り', en: 'Millstone charm' }, desc: 'The miller\'s round stone charm. In battle, you start with one point of harmony.', slot: 'charm', effect: { harmonyStart: 1 } });
   it('rw_tea_leaves', { name: { jp: 'お{茶|ちゃ} の {葉|は}', en: 'Tea leaves' }, desc: 'A twist of Hana\'s morning tea.' });
   it('rw_salve', { name: { jp: 'ミオ の {軟膏|なんこう}', en: 'Mio\'s salve' }, desc: 'Labelled, dated and initialled. Of course.' });

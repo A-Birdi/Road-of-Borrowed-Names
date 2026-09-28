@@ -101,9 +101,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   it('lf_minutes', { name: { jp: '{古|ふる}い {議事録|ぎじろく}', en: 'The old minutes' }, key: true, desc: 'Council minutes from thirty years ago, the only copy the Hush did not smooth over. Full of people disagreeing.' });
   it('lf_toya_bell', { name: { jp: 'トウヤ の {鈴|すず}', en: "Tōya's hand bell" }, key: true, desc: 'A messenger\'s small brass bell. Old Tokuji kept it for thirty years and never once rang it.' });
   it('lf_hoshigaki', { name: { jp: '{干|ほ}し{柿|がき}', en: 'Dried persimmons' }, desc: 'From the tree Kōhei and Kinu finally agreed to share. Sweet, a little chewy, argued over.' });
-  it('lf_ferry_cap', { name: { jp: '{渡|わた}し{舟|ぶね}の {帽子|ぼうし}', en: 'Ferry cap' }, slot: 'cosmetic', acc: 'hat', desc: 'A spare ferry clerk\'s cap from Umi\'s office. Makes people ask you when the next boat leaves.' });
+  it('lf_ferry_cap', { name: { jp: '{渡|わた}し{舟|ぶね}の {帽子|ぼうし}', en: 'Ferry cap' }, slot: 'cosmetic', acc: 'cap', wear: { capCol: '#2c4468' }, desc: 'A spare ferry clerk\'s cap from Umi\'s office, navy with a brass badge. Makes people ask you when the next boat leaves. A keepsake: it changes only how you look.' });
   it('lf_red_pen', { name: { jp: '{赤|あか}ペン', en: 'Red pen' }, desc: 'Hayato\'s correcting pen. He says a clerk who cannot cross things out is only half a clerk.' });
-  it('lf_bell_shard', { name: { jp: '{鐘|かね}の {欠片|かけら}', en: 'Bell fragment' }, slot: 'charm', desc: 'A chip of bronze from the drowned bell. It hums faintly when someone near you is about to say no.' });
+  it('lf_bell_shard', { name: { jp: '{鐘|かね}の {欠片|かけら}', en: 'Bell fragment' }, slot: 'charm', desc: 'A chip of bronze from the drowned bell. It seems to hum faintly when someone near you is about to say no, though that may be your imagination. Worn as a charm it is a keepsake only: it does nothing in battle.' });
 
   // ---- notes (notebook lore) ----------------------------------------------------------
   const nt = (id, d) => (C.notes[id] = d);

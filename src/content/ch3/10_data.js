@@ -108,9 +108,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   it('co_globe', { name: { jp: 'トモエ の {火屋|ほや}', en: 'Tomoe\'s lantern globe' }, desc: 'The one festival globe of thirty that survived the kiln. トモエ is scratched small into its base.', key: true });
   it('co_rope', { name: { jp: '{水門|すいもん} の {綱|つな}', en: 'Channel-gate rope' }, desc: 'Tamotsu\'s spare hemp rope, still smelling faintly of river mud.', key: true });
   it('co_ash_cup', { name: { jp: '{灰釉|はいゆう} の {湯呑|ゆの}み', en: 'Ash-glazed cup' }, desc: 'Nobu\'s thanks. The glaze is made from orchard ash; it runs green where it pooled in the kiln.' });
-  it('co_straw_hat', { name: { jp: '{麦|むぎ}わら{帽子|ぼうし}', en: 'Terrace straw hat' }, desc: 'Asa\'s spare. A keepsake to wear; it changes only how you look.', slot: 'cosmetic', acc: 'hat' });
-  it('co_leaf_pin', { name: { jp: '{紅葉|もみじ} の {髪飾|かみかざ}り', en: 'Maple-leaf hairpin' }, desc: 'Grandma Ume\'s pin, pressed on you "because it suits a traveller". Cosmetic.', slot: 'cosmetic', acc: 'flower' });
-  it('co_glass_beads', { name: { jp: 'ガラス の {耳飾|みみかざ}り', en: 'Glass-bead earrings' }, desc: 'Hiro\'s work: two drops of amber glass, the colour of the festival lanterns. Cosmetic.', slot: 'cosmetic', acc: 'earrings' });
+  it('co_straw_hat', { name: { jp: '{麦|むぎ}わら{帽子|ぼうし}', en: 'Terrace straw hat' }, desc: 'Asa\'s spare. A keepsake to wear; it changes only how you look.', slot: 'cosmetic', acc: 'hat', wear: { hatCol: '#d6b25e' } });
+  it('co_leaf_pin', { name: { jp: '{紅葉|もみじ} の {髪飾|かみかざ}り', en: 'Maple-leaf hairpin' }, desc: 'Grandma Ume\'s pin, pressed on you "because it suits a traveller". Cosmetic.', slot: 'cosmetic', acc: 'leaf', wear: { leafCol: '#c8452a' } });
+  it('co_glass_beads', { name: { jp: 'ガラス の {耳飾|みみかざ}り', en: 'Glass-bead earrings' }, desc: 'Hiro\'s work: two drops of amber glass, the colour of the festival lanterns. Cosmetic.', slot: 'cosmetic', acc: 'earrings', wear: { earCol: '#e0781e' } });
   it('co_hoshigaki', { name: { jp: '{干|ほ}し{柿|がき}', en: 'Dried persimmons' }, desc: 'A string of Fusa\'s dried persimmons, sweet as honey. Good for the road.' });
 
   // ---- notebook lore -------------------------------------------------------------------------

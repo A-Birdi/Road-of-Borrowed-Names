@@ -170,7 +170,7 @@ RB.ui = (function () {
     return new Promise((res) => {
       const n = el('div', 'toast');
       n.setAttribute('role', 'status');
-      n.innerHTML = '<span class="kind">' + esc(TOAST_LABEL[t.kind] || '') + '</span>' + (t.jp ? jhtml(t.jp) : '') + '<span class="en">' + esc(t.en || '') + (t.n > 1 ? ' ×' + t.n : '') + '</span>';
+      n.innerHTML = '<span class="kind">' + esc(TOAST_LABEL[t.kind] || '') + '</span>' + (t.jp ? jhtml(t.jp) : '') + '<span class="en">' + esc(t.en || '') + (t.n > 1 ? ' ×' + t.n : '') + '</span>' + (t.note ? '<span class="tnote">' + esc(t.note) + '</span>' : '');
       notices.appendChild(n);
       RB.audio && RB.audio.sfx(t.kind === 'quest_done' ? 'quest_update' : t.kind === 'word' ? 'discover' : 'page');
       setTimeout(() => { n.style.opacity = '0'; n.style.transition = 'opacity .5s'; }, 2600);

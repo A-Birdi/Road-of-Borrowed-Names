@@ -28,6 +28,8 @@
   --ink-2: #4c4030;           /* secondary text on paper */
   --ink-3: #62553f;           /* muted labels on paper (>= 4.5:1) */
   --rt-ink: #4a3e2c;          /* furigana on paper */
+  --worn-paper: #e2dfd2;      /* a faded, cooler row: something equipped (always with its tag) */
+  --worn-edge: #6f7898;       /* the equipped row's frame (>= 3:1 on --worn-paper) */
 
   /* marks */
   --ribbon: #c18a2a;          /* current selection */
@@ -68,6 +70,8 @@ body.high-contrast {
   --ink-2: #000000;
   --ink-3: #1a1a1a;
   --rt-ink: #000000;
+  --worn-paper: #e4e4e4;
+  --worn-edge: #000000;
   --cloth-900: #000000;
   --cloth-800: #000000;
   --on-cloth: #ffffff;

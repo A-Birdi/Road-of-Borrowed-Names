@@ -52,6 +52,17 @@ RB.ui.folio = (function () {
     load: '<path d="M4 7h7l2 2h7v10H4z"/><path d="M12 12v5M9.5 14.5L12 17l2.5-2.5"/>',
     title: '<path d="M4 11l8-6 8 6"/><path d="M6 10v10h12V10"/><path d="M10 20v-5h4v5"/>',
     practice: '<path d="M4 19l4-1L19 7l-3-3L5 15z"/><path d="M14 6l3 3"/>',
+    // equipment: the worn mark and the Satchel's effect keywords (see RB.equip.tags)
+    worn: '<circle cx="12" cy="12" r="8.5"/><path d="M8 12.5l3 3 5-6"/>',
+    ward: '<path d="M12 3l7 3v5c0 4.6-3 8-7 10-4-2-7-5.4-7-10V6z"/><path d="M9 11.5l2 2 4-4"/>',
+    harmony: '<circle cx="9" cy="12" r="5"/><circle cx="15" cy="12" r="5"/>',
+    resolve: '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>',
+    stride: '<path d="M9 4h4v8l5 2a2.4 2.4 0 0 1 2 2.4V19H9z"/><path d="M9 16h11"/><path d="M2 9h4M3 13h4"/>',
+    look: '<ellipse cx="12" cy="9" rx="5" ry="6"/><path d="M12 15v6M9 21h6"/><path d="M9.8 7.2c.6-1.2 1.6-1.8 2.7-1.8"/>',
+    wave: '<path d="M3 10c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 15c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/>',
+    knot: '<path d="M4.5 12c0-3.5 4.5-3.5 7.5 0s7.5 3.5 7.5 0-4.5-3.5-7.5 0-7.5 3.5-7.5 0z"/>',
+    cost: '<circle cx="12" cy="12" r="8.5"/><path d="M8 12h8"/>',
+    none: '<circle cx="12" cy="12" r="8.5" stroke-dasharray="2.4 3"/><path d="M9 12h6"/>',
   };
   function icon(name, title) {
     const d = P[name] || P.pouch;

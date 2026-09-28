@@ -205,7 +205,7 @@ RB.script = (function () {
         case 'give': {
           RB.state.give(s, a[0], a[1] ? +a[1] : 1);
           const it = RB.content.items[a[0]];
-          if (it && !c.args.includes('quiet')) await RB.ui.toast({ kind: 'item', jp: it.name.jp, en: it.name.en, n: a[1] ? +a[1] : 1 });
+          if (it && !c.args.includes('quiet')) await RB.ui.toast({ kind: 'item', jp: it.name.jp, en: it.name.en, n: a[1] ? +a[1] : 1, note: RB.equip.note(it) });
           RB.audio && RB.audio.sfx('item_get');
           break;
         }

@@ -283,6 +283,7 @@ body.touch-large .touchpad .tp-run { width: 68px; height: 68px; }
 .toast .kind { color: var(--ink-3); font-size: 0.74em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
 .toast .jline { color: var(--ink); line-height: 1.9; }
 .toast .en { color: var(--ink-2); font-family: var(--serif); }
+.toast .tnote { flex-basis: 100%; color: var(--ink-3); font-size: 0.85em; }
 .place {
   position: absolute; left: 50%; transform: translateX(-50%); text-align: center; transition: opacity 0.6s; max-width: calc(100vw - 24px);
   top: max(14%, 64px); background: var(--paper); color: var(--ink); border: 1px solid var(--paper-edge);

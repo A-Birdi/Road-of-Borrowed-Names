@@ -91,7 +91,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   it('sb_reply_letter', { name: { jp: 'ホシノ の {返事|へんじ}', en: 'Hoshino\'s reply' }, desc: 'A letter for Akari, a clerk in Lanternfall. The address line is left for you to fill in when you find her.', key: true });
   it('sb_goat_bell', { name: { jp: 'ヤギ の {鈴|すず}', en: 'Goat bell' }, desc: 'Tetsuji\'s spare. It sounds exactly like "don\'t panic". In battle you stand a little steadier (+1 resolve).', slot: 'charm', effect: { resolve: 1 } });
   it('sb_bell_cord', { name: { jp: '{鐘|かね} の {綱|つな}', en: 'Bell-rope braid' }, desc: 'Fuki braided it from an old bell rope. You begin each encounter already in step (+1 harmony).', slot: 'charm', effect: { harmonyStart: 1 } });
-  it('sb_scarf', { name: { jp: '{手編|てあ}み の マフラー', en: 'Hand-knitted scarf' }, desc: 'Sachi\'s work, in the colours the children chose. It changes nothing but how you look (and how warm).', slot: 'cosmetic', acc: 'scarf' });
+  it('sb_scarf', { name: { jp: '{手編|てあ}み の マフラー', en: 'Hand-knitted scarf' }, desc: 'Sachi\'s work, in the colours the children chose. It changes nothing but how you look (and how warm).', slot: 'cosmetic', acc: 'scarf', wear: { scarfCol: '#b8433a', scarfStripe: '#e9c648' } });
   it('sb_cheese', { name: { jp: 'ヤギ の チーズ', en: 'Goat cheese' }, desc: 'Wrapped in cloth. Tetsuji says it\'s better the second week. It is the first week.' });
   it('sb_amazake', { name: { jp: '{甘酒|あまざけ}', en: 'Amazake' }, desc: 'Sweet, warm, non-alcoholic rice drink from Yae\'s pot, in a stoppered flask.' });
 

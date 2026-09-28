@@ -276,6 +276,20 @@ var RB = (globalThis.RB = globalThis.RB || {});
     return errs;
   }
 
+  // ---- Satchel keywords for the permanent charms --------------------------------------------------------------
+  // Kept beside the effects above so the two stay in step. RB.equip (src/engine/07_equip.js) shows them in the
+  // Satchel's list and its Key: each charm's benefit, and the drawback that comes with it.
+  if (RB.equip) RB.equip.defineEffect('atlasCharm', (v, T) => ({
+    reed: [T.boon('atlas_reed', 'ward', 'Battle start: ward +1 (you)', '{初|はじ}め から {守|まも}り ＋1', 'Every battle begins with a ward of 1 in front of you (not your companion).'),
+      T.cost('atlas_reed_cost', 'Techniques need 4 harmony', '{技|わざ} に は {調和|ちょうわ} 4', 'A coordinated technique needs 4 harmony instead of 3.')],
+    tide: [T.boon('atlas_tide', 'wave', 'Floods and sweeps −1', '{大波|おおなみ} と {薙|な}ぎ −1', 'Floods and sweeps hit for 1 less.'),
+      T.cost('atlas_tide_cost', 'Word wards hold 1', '{言葉|ことば} の {守|まも}り は 1', 'A ward you raise with a word holds 1 point instead of 2.')],
+    page: [T.boon('atlas_page', 'harmony', 'Clean Unravel: harmony ×2', 'ほどき で {調和|ちょうわ} ×2', 'A clean Unravel builds twice the harmony.'),
+      T.cost('atlas_page_cost', 'Answers build no harmony', '{答|こた}え で は {調和|ちょうわ} なし', 'Answering and seeing through build no harmony.')],
+    mirror: [T.boon('atlas_mirror', 'knot', 'Seeing through frees a knot', '{見破|みやぶ}る と {結|むす}び{目|め} が ほどける', 'Seeing through a lie or an echo frees a knot as well.'),
+      T.cost('atlas_mirror_cost', 'First Unravel frees nothing', '{最初|さいしょ} の ほどき は {空振|からぶ}り', 'Your first Unravel in each battle only finds the thread; it frees nothing.')],
+  })[v] || [T.special()]);
+
   AT.combat = { applyEnemy, effects: E, ctxNow, runActive, charmOf, combosOf, install, uninstall, installed: () => installed, orig };
   AT.simBattle = simBattle;
   AT.intentProblems = intentProblems;

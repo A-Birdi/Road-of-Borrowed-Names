@@ -76,6 +76,54 @@ button.entry .t, button.entry .kind { display: block; }
 .idetail .ibig svg { width: 100%; height: 100%; }
 .idetail h3 { border: 0; }
 .note-slip svg { width: 1.1em; height: 1.1em; vertical-align: -0.2em; }
+/* Equipment. Something worn is marked by words and shape — an "Equipped" tag
+ * with a check, and a framed row of faded, cooler paper — never by colour
+ * alone. Keyword tags name what each wearable thing does (solid: a benefit;
+ * dashed with a minus: the drawback that comes with it; dotted: no effect),
+ * and the Key at the foot of the list explains every mark on the page. */
+.worn-tag {
+  display: inline-flex; align-items: center; gap: 0.3em; padding: 0.05em 0.55em 0.05em 0.35em; border-radius: 999px;
+  background: var(--cloth-700); color: var(--on-cloth); font-size: 0.8em; font-weight: 700; line-height: 1.5;
+  letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; vertical-align: 0.05em;
+}
+.worn-tag svg { width: 1.1em; height: 1.1em; flex: none; }
+.leaf .worn-tag rt, .leaf .worn-tag .jline { color: var(--on-cloth); }
+.leaf .entry .kind .worn-tag { font-size: 1em; }
+.entry.worn, button.entry.worn { background: var(--worn-paper); box-shadow: inset 0 0 0 1px var(--worn-edge); }
+button.entry.worn:hover { background: linear-gradient(rgba(193, 138, 42, 0.08), rgba(193, 138, 42, 0.08)), var(--worn-paper); }
+button.entry.worn[aria-current="true"] { background: linear-gradient(rgba(193, 138, 42, 0.14), rgba(193, 138, 42, 0.14)), var(--worn-paper); box-shadow: inset 4px 0 0 var(--ribbon), inset 0 0 0 1px var(--worn-edge); }
+.entry.worn > .mark { color: var(--ink); }
+button.entry .kind.slotline { display: flex; flex-wrap: wrap; align-items: center; gap: 0.2em 0.5em; margin-top: 0.15em; }
+.eq-slot { padding-left: 0.4em; padding-right: 0.4em; }
+.eq-slot > .eq-body { grid-column: 2 / -1; min-width: 0; }
+.eq-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-top: 0.1em; }
+.eq-foot .etags { flex: 1 1 10em; min-width: 0; }
+.eq-foot .pbtn { flex: none; margin-left: auto; }
+.eq-slot + .eq-slot { margin-top: 4px; }
+.eq-slot.empty { border: 1px dashed var(--paper-edge); }
+.eq-slot.empty .t { font-weight: 400; }
+.eq-slot.empty > .mark { color: var(--ink-3); }
+.etags { display: flex; flex-wrap: wrap; gap: 4px 6px; margin-top: 0.4em; }
+.etag {
+  display: inline-flex; align-items: center; gap: 0.3em; max-width: 100%; padding: 0.1em 0.5em 0.1em 0.35em; box-sizing: border-box;
+  border: 1px solid var(--ink-3); border-radius: var(--r-1); background: var(--paper); color: var(--ink-2);
+  font-size: 0.8em; font-weight: 600; line-height: 1.4; text-transform: none; letter-spacing: 0; overflow-wrap: break-word;
+}
+.etag svg { width: 1.15em; height: 1.15em; flex: none; }
+.etag > span { min-width: 0; }
+.etag.cost { border-style: dashed; }
+.etag.none { border-style: dotted; color: var(--ink-3); font-weight: 400; }
+.tagx { list-style: none; margin: 0.3em 0 0.8em; padding: 0; }
+.tagx li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25em 0.7em; padding: 0.45em 0; border-bottom: 1px dotted var(--rule); }
+.tagx .x { flex: 1 1 14em; min-width: 0; color: var(--ink-2); font-size: 0.92em; }
+.tagx .etag, .tagx .worn-tag { flex: none; }
+.worn-line { margin: 0.1em 0 0.4em; }
+.wear-prev { margin: 0.7em 0 0.8em; }
+.wear-prev figcaption { font-size: 0.86em; font-weight: 600; color: var(--ink-3); margin-bottom: 0.35em; }
+.wp-row { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 10px 12px; }
+.wp { display: flex; flex-direction: column; align-items: center; gap: 0.2em; max-width: 96px; text-align: center; font-size: 0.8em; line-height: 1.25; color: var(--ink-3); }
+.wp canvas { display: block; width: 64px; height: 96px; image-rendering: pixelated; background: var(--paper-2); border: 1px solid var(--paper-edge); border-radius: var(--r-1); }
+.wp-face canvas { width: 96px; height: 96px; }
 
 /* Map: a folded chart */
 .chartbox { border: 1px solid var(--paper-edge); box-shadow: 0 2px 0 var(--paper-3); background: #efe3c6; margin: 0.2em 0 0.3em; }

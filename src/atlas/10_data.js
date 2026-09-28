@@ -101,8 +101,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   I('atlas_cos_pin', { slot: 'cosmetic', acc: 'atlas_pin', name: { jp: '{方位|ほうい} の ピン', en: 'Compass-rose Pin' }, desc: 'It points north. Mostly.' });
   I('atlas_cos_lamplet', { slot: 'cosmetic', acc: 'atlas_lamplet', name: { jp: '{小|ちい}さな {提灯|ちょうちん}', en: 'Little Lantern' }, desc: 'The lantern you walked home, still lit. It hangs at your hip now.' });
   I('atlas_cos_quill', { slot: 'cosmetic', acc: 'atlas_quill', name: { jp: '{羽|はね}ペン', en: 'Quill' }, desc: 'Worn behind the ear, as cartographers apparently do.' });
-  I('atlas_cos_flower', { slot: 'cosmetic', acc: 'flower', name: { jp: '{押|お}し{花|ばな}', en: 'Pressed Road-flower' }, desc: 'A flower that grew on a road that had not been written yet.' });
-  I('atlas_cos_cape', { slot: 'cosmetic', acc: 'cape', name: { jp: '{旅|たび} の {外套|がいとう}', en: 'Traveller\'s Cape' }, desc: 'Good against fog, and against being asked where you have been.' });
+  I('atlas_cos_flower', { slot: 'cosmetic', acc: 'flower', wear: { flowerCol: '#9fb6ea' }, name: { jp: '{押|お}し{花|ばな}', en: 'Pressed Road-flower' }, desc: 'A flower that grew on a road that had not been written yet.' });
+  I('atlas_cos_cape', { slot: 'cosmetic', acc: 'cape', wear: { capeCol: '#51666e' }, name: { jp: '{旅|たび} の {外套|がいとう}', en: 'Traveller\'s Cape' }, desc: 'Good against fog, and against being asked where you have been.' });
   A.rewardOrder = ['atlas_cos_quill', 'atlas_charm_reed', 'atlas_cos_pin', 'atlas_charm_page', 'atlas_cos_sash', 'atlas_charm_tide', 'atlas_cos_flower', 'atlas_charm_mirror', 'atlas_cos_cape', 'atlas_cos_lamplet'];
 
   // ---- settlement restoration details (flags atlas_restore_1..6) ----------------------------------------
