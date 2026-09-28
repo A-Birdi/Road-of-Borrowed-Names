@@ -2064,6 +2064,12 @@ body.high-contrast :is(.chal, .lsheet) .fb.no, body.high-contrast :is(.chal, .ls
 .kn { width: 14px; height: 14px; border-radius: 50%; border: 2px dashed currentColor; opacity: 0.8; }
 .kn.tied { border-style: solid; background: currentColor; box-shadow: inset 0 0 0 2px var(--cloth-800); opacity: 1; }
 .cb-foe .kn-t { color: var(--on-cloth-2); font-size: 0.88em; }
+/* its state (Heat, Shrouded, Gathering, Hushed) beside its knots */
+.cb-foe .foe-k { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0 12px; }
+.cb-foe .it-states .kw { color: var(--on-cloth); font-size: 0.86em; font-weight: 700; }
+.cb-foe .it-states .kw[data-kw="heat"] svg { color: #ffa27e; }
+.cb-foe .kw:focus-visible { outline: 3px solid var(--focus-cloth); outline-offset: 1px; }
+.cb-foe .kw[aria-expanded="true"] { background: rgba(159, 211, 255, 0.14); }
 
 /* the telegraph: what it is about to do, in Japanese at the player's level */
 .combat-ui .intent {
@@ -2073,6 +2079,69 @@ body.high-contrast :is(.chal, .lsheet) .fb.no, body.high-contrast :is(.chal, .ls
 .it-label { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; font-size: 0.8em; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--vermilion); }
 .it-label svg { width: 1.6em; height: 1.6em; flex: none; }
 .it-label .st { color: var(--ink-2); border: 1px solid var(--ink-3); border-radius: 2px; padding: 0 0.35em; letter-spacing: 0.03em; }
+.it-label .it-kind { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0 6px; }
+/* the move's gist beside its name (who it hits and how hard, or what it does) */
+.it-label .gist { text-transform: none; letter-spacing: 0; font-weight: 600; font-size: 1.12em; color: var(--ink-2); }
+
+/* ---- keywords: a move or state that explains itself on hover, focus or tap.
+ * The button is the whole 44 px target; the visible mark is a pill inside it.
+ * A dotted underline and a help mark say it can be opened (not colour alone). */
+.combat-ui .kw {
+  display: inline-flex; align-items: center; min-height: var(--tap); margin: 0; padding: 0 2px; font: inherit; color: inherit; text-align: left;
+  background: transparent; border: 0; border-radius: var(--r-1); cursor: help; touch-action: manipulation;
+}
+.combat-ui .paper .kw:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+.combat-ui .kw[aria-expanded="true"] { background: rgba(193, 138, 42, 0.16); }
+.it-label .kw.it-kind .k { text-decoration: underline dotted 2px; text-underline-offset: 0.3em; }
+.combat-ui .kw-q { display: inline-flex; flex: none; color: var(--river); }
+.combat-ui .kw-q svg { width: 1.25em; height: 1.25em; }
+.cb-harmony .kw-q svg { width: 1.2em; height: 1.2em; }
+.it-states { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0 4px; }
+.kw .pill { display: inline-flex; align-items: center; gap: 0.3em; padding: 0.1em 0.45em; border: 1px solid currentColor; border-radius: 2px; letter-spacing: 0.03em; text-decoration: underline dotted 1px; text-underline-offset: 0.25em; }
+.it-states .kw .pill svg { width: 1.35em; height: 1.35em; }
+
+/* the one-time note (coach mark) at the top of the response dock */
+.cb-coachbox { flex: none; position: relative; }
+.cb-coachbox:empty { display: none; }
+.combat-ui .cb-coach { padding: 6px 10px 4px 12px; border-left: 4px solid var(--ribbon); font-size: 0.9em; line-height: 1.4; animation: cb-coach-in 150ms var(--ease); }
+.cb-coach .cc-h { display: flex; align-items: center; gap: 0.4em; font-family: var(--serif); font-size: 1.05em; }
+.cb-coach .cc-h svg { width: 1.35em; height: 1.35em; flex: none; color: var(--vermilion); }
+.cb-coach p { margin: 0.2em 0 0.1em; color: var(--ink); }
+.cb-coach .kwj { font-family: var(--jp-font); }
+.cb-coach .cc-f { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 4px 8px; }
+.cb-coach .cc-more { color: var(--river); text-decoration: underline; text-underline-offset: 0.2em; padding: 0 0.6em; }
+@keyframes cb-coach-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+body.reduced-motion .combat-ui .cb-coach { animation: none; }
+@media (prefers-reduced-motion: reduce) { .combat-ui .cb-coach { animation: none; } }
+
+/* the keyword note card: the word-help card's materials (wide: beside the
+ * keyword; narrow, when tapped or focused: a sheet along the bottom edge) */
+.kwcard {
+  position: absolute; z-index: 55; width: min(380px, calc(100vw - 16px)); max-height: min(70vh, 480px);
+  display: flex; flex-direction: column; background: var(--paper); color: var(--ink);
+  border: 1px solid var(--paper-edge); border-top: 4px solid var(--ribbon); border-radius: 4px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.55); font-size: 0.95em; line-height: 1.45;
+}
+.kwcard .kw-h { display: flex; align-items: center; gap: 8px; padding: 6px 6px 6px 12px; border-bottom: 1px solid var(--rule); }
+.kwcard .kw-h > svg { width: 1.5em; height: 1.5em; flex: none; color: var(--vermilion); }
+.kwcard h3 { flex: 1; min-width: 0; margin: 0; font: 700 1.02em var(--serif); color: var(--ink); overflow-wrap: anywhere; }
+.kwcard .kw-x {
+  flex: none; display: inline-flex; align-items: center; gap: 0.35em; min-height: var(--tap); min-width: var(--tap); padding: 0 0.7em;
+  background: transparent; color: var(--ink-2); border: 1px solid var(--paper-edge); border-radius: var(--r-1); font: inherit; font-size: 0.9em; cursor: pointer; touch-action: manipulation;
+}
+.kwcard .kw-x svg { width: 1.1em; height: 1.1em; }
+.kwcard .kw-x:hover { background: var(--paper-2); color: var(--ink); }
+.kwcard .kw-x:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+.kwcard .kw-b { overflow-y: auto; overscroll-behavior: contain; padding: 4px 12px 10px; }
+.kwcard p { margin: 0.4em 0; color: var(--ink-2); }
+.kwcard b, .kwcard .kw-now { color: var(--ink); }
+.kwcard .kw-now { font-weight: 600; }
+.kwcard .kwj { font-family: var(--jp-font); color: var(--ink); }
+.kwcard.sheet {
+  left: 0 !important; right: 0; top: auto !important; bottom: 0; width: 100% !important; max-height: calc(62 * var(--vh));
+  border-radius: 12px 12px 0 0; border-left: 0; border-right: 0; padding-bottom: env(safe-area-inset-bottom); box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.55);
+}
+body.high-contrast .kwcard { border-color: #000; }
 .it-jp { font-size: 1.22em; }
 .combat-ui .intent .jline, .cb-situ .it-jp .jline { font-size: 1em; line-height: 2.05; }
 .it-en { color: var(--ink-2); font-family: var(--en-font); }
@@ -2081,27 +2150,52 @@ body.high-contrast :is(.chal, .lsheet) .fb.no, body.high-contrast :is(.chal, .ls
 .combat-ui .pbtn.tr { padding: 0 0.35em; margin-left: -0.35em; }
 .combat-ui .aside, .cb-situ .aside { color: var(--ink-3); }
 
-/* the party: resolve with numbers, wards, harmony; the aim mark when known */
+/* the party: resolve with numbers and wards; Harmony is a separate paper band
+ * tied to the top of the slip (pips, not a bar); the aim mark when known */
 .combat-ui .cb-party {
+  --pp-t: 6px; --pp-x: 12px;
   position: relative; left: auto; bottom: auto; min-width: 0; justify-self: stretch;
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 4px 12px; padding: 6px 12px 8px; font-size: 0.92em;
+  display: flex; flex-direction: column; padding: var(--pp-t) var(--pp-x) 8px; font-size: 0.92em;
   color: var(--on-cloth); background-color: var(--cloth-800); background-image: var(--cloth-weave);
   border: 1px solid var(--paper-edge); border-radius: 6px; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
 }
+.cb-party .pm-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0 12px; }
 .pm { min-width: 0; }
-.pm-h { display: flex; flex-wrap: wrap; align-items: center; gap: 0 6px; min-height: 1.6em; }
+.pm-h { display: flex; flex-wrap: wrap; align-items: center; gap: 0 6px; min-height: var(--tap); }
 .pm-n { font-weight: 700; min-width: 0; overflow-wrap: break-word; }
-.pm-v { margin-left: auto; font-variant-numeric: tabular-nums; color: var(--on-cloth-2); }
-.pm-w { display: inline-flex; align-items: center; gap: 2px; color: var(--focus-cloth); font-weight: 700; }
+.pm-r { display: flex; align-items: center; gap: 8px; }
+.pm-r .bar { flex: 1 1 auto; min-width: 2em; }
+.pm-v { flex: none; white-space: nowrap; font-variant-numeric: tabular-nums; color: var(--on-cloth-2); }
+.combat-ui .kw.pm-w { color: var(--focus-cloth); font-weight: 700; }
+.pm-w .pill { gap: 3px; padding: 0 0.35em; }
 .pm-w svg { width: 1.1em; height: 1.1em; }
+.cb-party .kw:focus-visible { outline: 3px solid var(--focus-cloth); outline-offset: 1px; }
+.cb-party .kw[aria-expanded="true"] { background: rgba(159, 211, 255, 0.14); }
 .pm { position: relative; }
-.aimtag { position: absolute; top: -1.45em; left: -4px; white-space: nowrap; display: inline-flex; align-items: center; gap: 3px; padding: 0 5px; border-radius: 2px; background: var(--paper); color: var(--vermilion); font-size: 0.8em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+.aimtag { white-space: nowrap; display: inline-flex; align-items: center; gap: 3px; padding: 0 5px; border-radius: 2px; background: var(--paper); color: var(--vermilion); font-size: 0.8em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+.combat-ui .cb-harmony {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0 10px; min-height: var(--tap);
+  margin: calc(-1 * var(--pp-t)) calc(-1 * var(--pp-x)) 2px; padding: 3px var(--pp-x) 3px calc(var(--pp-x) - 2px);
+  background: var(--paper); color: var(--ink); border-radius: 5px 5px 0 0; border-bottom: 2px solid var(--ribbon); box-shadow: inset 4px 0 0 var(--ribbon);
+}
+.combat-ui .cb-harmony:focus-visible { outline-offset: -3px; outline-color: var(--focus-paper); }
+.combat-ui .cb-party .cb-harmony[aria-expanded="true"], .combat-ui .cb-harmony:hover { background: var(--paper-2); }
+.cb-harmony .hm-a { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; }
+.cb-harmony .hm-a > svg { width: 1.35em; height: 1.35em; color: var(--ribbon-deep); }
+.cb-harmony .hm-n { font-family: var(--serif); font-size: 1.05em; text-decoration: underline dotted 2px; text-underline-offset: 0.3em; }
+.cb-harmony .hm-pips { display: inline-flex; gap: 5px; padding: 0 2px; }
+.cb-harmony .hp { display: inline-block; width: 9px; height: 9px; transform: rotate(45deg); border: 2px solid var(--ink-2); border-radius: 1px; }
+.cb-harmony .hp.on { background: var(--ribbon); border-color: var(--ribbon-deep); }
+.cb-harmony .hm-v { font-variant-numeric: tabular-nums; color: var(--ink-2); }
+.cb-harmony .hm-t { flex: 1 1 11em; min-width: 0; color: var(--ink-2); font-size: 0.92em; overflow-wrap: anywhere; }
+.cb-harmony .kw-q { margin-left: auto; }
+.cb-harmony.full { border-bottom-color: var(--ok-ink); }
+.cb-harmony.full .hm-t, .cb-harmony.full .hm-t b { color: var(--ok-ink); font-weight: 600; }
 .aimtag svg { width: 1.15em; height: 1.15em; }
 .pm.aimed .bar { outline: 2px solid var(--paper); outline-offset: 1px; }
 .pm-note { grid-column: 1 / -1; font-size: 0.85em; color: var(--on-cloth-2); }
 .combat-ui .bar { height: 10px; background: var(--cloth-950); border: 1px solid var(--paper-edge); border-radius: 2px; overflow: hidden; }
 .combat-ui .bar > i { display: block; height: 100%; background: var(--paper); }
-.combat-ui .bar.h > i { background: var(--ribbon); }
 .combat-ui .atlas-lantern { font-size: 1em; }
 .combat-ui .atlas-lantern .dim { color: var(--on-cloth-2); }
 
@@ -2137,6 +2231,13 @@ body.high-contrast :is(.chal, .lsheet) .fb.no, body.high-contrast :is(.chal, .ls
 .rcard .rc-tgt { grid-area: tg; justify-self: start; margin: 1px 0 2px; font-size: 0.8em; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--river); border-bottom: 2px solid var(--river); }
 .rcard .rc-d { grid-area: d; font-size: 0.86em; line-height: 1.35; color: var(--ink-2); }
 .rcard .rc-d svg { width: 1.1em; height: 1.1em; vertical-align: -0.2em; margin-right: 0.25em; color: var(--warn-ink); }
+/* a response used in battle for the first time, and the companion's technique */
+.rcard .rc-new { align-self: center; padding: 0 0.45em; border-radius: 2px; font-size: 0.72em; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--paper); background: var(--ok-ink); }
+.combat-ui .rcard.fresh { box-shadow: inset 4px 0 0 var(--ok-ink), 0 2px 0 var(--paper-3), 0 3px 0 var(--paper-edge); }
+.rcard .rc-ans { display: block; margin-top: 0.15em; color: var(--ok-ink); }
+.rcard .rc-ans b { font-weight: 700; }
+.combat-ui .rcard.tech { border-color: var(--ribbon-deep); box-shadow: inset 4px 0 0 var(--ribbon), 0 2px 0 var(--paper-3), 0 3px 0 var(--ribbon-deep); }
+.rcard.tech .rc-new { background: var(--river); }
 .combat-ui .rcard[disabled] { cursor: not-allowed; background: var(--paper-2); border-style: dashed; box-shadow: none; color: var(--ink-2); }
 .combat-ui .rcard[disabled] .ic { color: var(--ink-3); }
 .combat-ui .flee { align-self: stretch; justify-content: center; flex: none; }
@@ -2164,7 +2265,16 @@ body.high-contrast .combat-ui .paper, body.high-contrast .combat-ui .rcard { bor
 @media (max-width: 899px), (max-height: 559px) {
   .combat-ui { grid-template-rows: max-content max-content minmax(60px, 1fr) max-content minmax(240px, min(calc(44 * var(--vh)), 440px)); }
   .cb-dock { height: auto; }
-  .combat-ui .cb-party { grid-template-columns: repeat(auto-fit, minmax(min(100%, 6em), 1fr)); gap: 2px 10px; padding: 4px 10px 6px; font-size: 0.85em; }
+  .combat-ui .cb-party { --pp-t: 4px; --pp-x: 10px; padding: var(--pp-t) var(--pp-x) 6px; font-size: 0.85em; }
+  .cb-party .pm-list { grid-template-columns: repeat(auto-fit, minmax(min(100%, 6em), 1fr)); gap: 0 10px; }
+  /* narrow: the knot marks carry their count (and its label) when a state
+   * chip needs the room; a ward shows its shield and number */
+  .cb-foe .foe-k.has-st .kn-t { display: none; }
+  .aimtag { text-transform: none; letter-spacing: 0; }
+  .pm-w .wl { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  /* the band in two short lines: name, pips and help mark; then the technique */
+  .cb-harmony .kw-q { order: 2; }
+  .cb-harmony .hm-t { order: 3; flex: 1 0 100%; font-size: 0.88em; line-height: 1.25; padding-bottom: 2px; }
   .pm-note { display: none; }
   .it-jp { font-size: 1.12em; }
 }
@@ -2215,6 +2325,8 @@ body.high-contrast .combat-ui .paper, body.high-contrast .combat-ui .rcard { bor
   .combat-ui .intent .jline { line-height: 1.9; }
   .cb-dock { height: auto; max-height: none; flex: 1 1 auto; }
   .cb-dock-h { display: none; }
+  /* a one-time note stays short here (More opens all of it); responses keep the room */
+  .cb-coach p { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
 }
 </style>
 </head>
@@ -22408,6 +22520,48 @@ RB.combatLogic = (function () {
     normal: { powerMod: 0, resolve: 12, knotMod: 0 },
     hard: { powerMod: 1, resolve: 10, knotMod: 1 },
   };
+  // Heat: every Heat intent left unanswered raises the level by one, up to
+  // `max`; while it lasts, each blow it lands hits `per` harder per level.
+  // A water word (or Mio's technique) cools it back to 0. Small and capped.
+  const HEAT = { max: 2, per: 1 };
+  function heatBonus(st) {
+    return Math.min(st.heat || 0, HEAT.max) * HEAT.per;
+  }
+  // Base damage of a telegraphed blow (before difficulty, heat and wards).
+  const BASE_POWER = { strike: 2, lie: 2, mirror: 2, chill: 2, sweep: 1, flood: 1, gust: 1 };
+  function basePower(it) {
+    return it.power || BASE_POWER[it.kind] || 0;
+  }
+  // What an unanswered intent would do to each of you: {per, who: ['pc'|'comp',…]}
+  // or null when it deals no damage. The UI's help text uses this, so the
+  // numbers it shows are the ones enemyAct applies.
+  function blowOf(st, it) {
+    it = it || st.intent;
+    if (!it || !BASE_POWER[it.kind]) return null;
+    const who = it.kind === 'sweep' || it.kind === 'flood' ? (st.compId ? ['pc', 'comp'] : ['pc'])
+      : it.kind === 'gust' ? ['pc'] : [it.target === 'comp' && st.compId ? 'comp' : 'pc'];
+    return { per: Math.max(0, basePower(it) + st.diff.powerMod + heatBonus(st)), who };
+  }
+  // Coordinated techniques: one per companion, decided by who travels with you.
+  // `knots` is how many knots it frees; every technique also cancels the
+  // telegraphed move and empties Harmony.
+  const TECHS = {
+    nao: { name: 'Read the Opening', knots: 2, effect: 'Nao reads where it is about to move: frees 2 knots at once.' },
+    mio: { name: 'Clearwater Draught', knots: 1, effect: 'Restores you both to full resolve, washes away Heat, mist and Gathering, and frees 1 knot.' },
+    ren: { name: 'Lantern Ward', knots: 1, effect: 'Raises a 3-point ward in front of each of you and frees 1 knot.' },
+    suzu: { name: 'Curtain Call', knots: 2, effect: 'Its own move turns back on it: frees 2 knots at once.' },
+  };
+  // The intents a word cancels outright (a ward only cancels a single-target
+  // Strike raised in front of its target; against Sweep/Flood it soaks damage).
+  function answers(word) {
+    const tags = (word && word.tags) || [];
+    const out = [];
+    for (const k in INTENTS) {
+      const c = INTENTS[k].counters;
+      if (tags.some((t) => c.indexOf(t) >= 0 && (t !== 'ward' || INTENTS[k].target !== 'both'))) out.push(k);
+    }
+    return out;
+  }
 
   function init(enemy, s, opts) {
     const d = DIFF[s.learn.difficulty] || DIFF.normal;
@@ -22480,7 +22634,11 @@ RB.combatLogic = (function () {
         out.push({ id: 'w:' + w.id, kind: 'word', word: w, icon: w.icon || '✦', jp: w.jp, en: w.en, desc: w.effect });
       }
     }
-    if (st.harmony >= st.harmonyMax && st.compId) out.push({ id: 'tech', kind: 'tech', icon: '✧', jp: 'あわせ', en: 'Coordinated technique', desc: 'A single inscription the two of you weave together.' });
+    if (st.harmony >= st.harmonyMax && st.compId) {
+      const T = TECHS[st.compId];
+      out.push({ id: 'tech', kind: 'tech', icon: '✧', jp: 'あわせ', en: T ? T.name : 'Coordinated technique', tech: st.compId,
+        desc: (T ? T.effect + ' ' : '') + 'Also cancels its move. Uses up Harmony.' });
+    }
     return out;
   }
 
@@ -22528,20 +22686,21 @@ RB.combatLogic = (function () {
       if (it.kind === 'charge' && st.compId === 'ren' && result.ok) { countered = true; fx.push({ t: 'comp', who: 'ren', en: 'Ren\'s lamp flares and interrupts the gathering force.' }); }
     }
     if (it.kind === 'lie' && st.compId === 'suzu' && result.ok && !countered && card.kind !== 'word') { countered = true; fx.push({ t: 'comp', who: 'suzu', en: 'Suzu laughs at the promise until it sounds as hollow as it is.' }); }
-    // harmony builds on clean, meaningful play
-    if (perfect && (countered || card.kind === 'unravel')) st.harmony = Math.min(st.harmonyMax, st.harmony + 1);
+    // harmony builds on clean, meaningful play (a technique spends it: it
+    // starts again from 0, so the technique itself adds nothing)
+    if (perfect && card.kind !== 'tech' && (countered || card.kind === 'unravel')) st.harmony = Math.min(st.harmonyMax, st.harmony + 1);
     if (perfect && countered && st.compId === 'nao' && card.kind !== 'unravel' && card.kind !== 'tech') st.openingBonus = true;
     st.lastCountered = countered;
     return { fx, countered };
   }
   function techUnravel(st) {
-    return st.compId === 'nao' || st.compId === 'suzu' ? 2 : 1;
+    return (TECHS[st.compId] && TECHS[st.compId].knots) || 1;
   }
   function applyTech(st, fx) {
     const c = st.compId;
     if (c === 'nao') fx.push({ t: 'tech', who: 'nao', en: 'Read the Opening: you strike where it was about to move.' });
     if (c === 'mio') { st.pc = st.max; st.comp = st.max; st.heat = 0; st.shroud = false; st.charged = false; fx.push({ t: 'tech', who: 'mio', en: 'Clearwater Draught: both of you steady, every lingering effect washed away.' }); }
-    if (c === 'ren') { st.ward.pc += 3; st.ward.comp += 3; fx.push({ t: 'tech', who: 'ren', en: 'Lantern Ward: light stands between you and the next two blows.' }); }
+    if (c === 'ren') { st.ward.pc += 3; st.ward.comp += 3; fx.push({ t: 'tech', who: 'ren', en: 'Lantern Ward: light stands between you and the next blows.' }); }
     if (c === 'suzu') fx.push({ t: 'tech', who: 'suzu', en: 'Curtain Call: its own intent turns back on it.' });
   }
 
@@ -22551,7 +22710,7 @@ RB.combatLogic = (function () {
     const fx = [];
     const dmg = (who, p) => {
       if (who === 'comp' && !st.compId) who = 'pc';
-      let power = Math.max(0, p + st.diff.powerMod + (st.heat ? 1 : 0));
+      let power = Math.max(0, p + st.diff.powerMod + heatBonus(st));
       if (st.compId === 'suzu' && !st.misdirectUsed && power > 0 && ((who === 'pc' ? st.pc : st.comp) - power <= 2)) {
         st.misdirectUsed = true;
         fx.push({ t: 'comp', who: 'suzu', en: 'Suzu steps into the blow with a flourish — it meets empty air.' });
@@ -22570,12 +22729,12 @@ RB.combatLogic = (function () {
     if (!countered) {
       switch (it.kind) {
         case 'strike': case 'lie': case 'mirror': case 'chill':
-          dmg(it.target, it.power || 2); break;
+          dmg(it.target, basePower(it)); break;
         case 'sweep': case 'flood':
-          dmg('pc', it.power || 1); if (st.compId) dmg('comp', it.power || 1); break;
+          dmg('pc', basePower(it)); if (st.compId) dmg('comp', basePower(it)); break;
         case 'gust':
-          st.ward.pc = 0; st.ward.comp = 0; fx.push({ t: 'stripWard' }); dmg('pc', it.power || 1); break;
-        case 'heat': st.heat = Math.min(3, st.heat + 1); fx.push({ t: 'heat', n: st.heat }); break;
+          st.ward.pc = 0; st.ward.comp = 0; fx.push({ t: 'stripWard' }); dmg('pc', basePower(it)); break;
+        case 'heat': st.heat = Math.min(HEAT.max, st.heat + 1); fx.push({ t: 'heat', n: st.heat, bonus: heatBonus(st) }); break;
         case 'shroud': st.shroud = true; fx.push({ t: 'shroud' }); break;
         case 'charge': st.charged = true; fx.push({ t: 'charge' }); break;
         case 'mend': if (st.knots < st.maxKnots) { st.knots++; fx.push({ t: 'mend' }); } break;
@@ -22613,7 +22772,7 @@ RB.combatLogic = (function () {
     st.phaseChanged = null;
     st.intent = drawIntent(enemy, st);
   }
-  return { INTENTS, DIFF, init, responses, playerAct, enemyAct, endRound, intentDef };
+  return { INTENTS, DIFF, HEAT, TECHS, init, responses, playerAct, enemyAct, endRound, intentDef, heatBonus, basePower, blowOf, answers };
 })();
 
 
@@ -23204,9 +23363,10 @@ RB.ui = (function () {
       upd();
     }
     document.addEventListener('keydown', (e) => {
-      // keep Tab focus inside the top layer
+      // keep Tab focus inside the top layer (or the wider `scope` it declares:
+      // the battle's response list also lets focus reach the keywords above it)
       if (e.key === 'Tab' && layers.length) {
-        const f = focusables(layers[layers.length - 1].el);
+        const f = focusables(scopeOf(layers[layers.length - 1]));
         if (!f.length) return;
         const i = f.indexOf(document.activeElement);
         if (e.shiftKey && (i <= 0)) { e.preventDefault(); f[f.length - 1].focus(); }
@@ -23252,6 +23412,11 @@ RB.ui = (function () {
   function topLayer() {
     return layers[layers.length - 1] || null;
   }
+  // Where keyboard focus may move while a layer is on top: the layer itself,
+  // or a larger `scope` element that contains it.
+  function scopeOf(layer) {
+    return (layer.scope && layer.scope.isConnected && layer.scope) || layer.el;
+  }
   function focusables(container) {
     return Array.from(container.querySelectorAll('button:not([disabled]), [tabindex="0"], input, select, textarea')).filter((e) => e.offsetParent !== null && !e.closest('.hidden'));
   }
@@ -23289,10 +23454,10 @@ RB.ui = (function () {
     if (top) {
       if (top.onAction && top.onAction(a, e)) return;
       if (a === 'cancel') { if (top.onCancel) top.onCancel(); return; }
-      if (a === 'up' || a === 'down' || a === 'left' || a === 'right') { moveFocus(top.el, a); return; }
+      if (a === 'up' || a === 'down' || a === 'left' || a === 'right') { moveFocus(scopeOf(top), a); return; }
       if (a === 'ok') {
         const f = document.activeElement;
-        if (f && top.el.contains(f) && (f.tagName === 'BUTTON' || f.getAttribute('role') === 'button')) f.click();
+        if (f && scopeOf(top).contains(f) && (f.tagName === 'BUTTON' || f.getAttribute('role') === 'button')) f.click();
         else if (f && f.classList && f.classList.contains('jt')) RB.ui.help.showFor(f);
         return;
       }
@@ -30165,6 +30330,7 @@ RB.combat = (function () {
       '<div class="cb-side">' +
         '<section class="intent paper" aria-live="polite" aria-label="What it is about to do"></section>' +
         '<section class="cb-dock" aria-label="Respond"><h2 class="cb-dock-h">Respond</h2>' +
+          '<div class="cb-coachbox" aria-live="polite"></div>' +
           '<div class="responses" role="group" aria-label="Responses"></div>' +
           '<div class="clog paper hidden" aria-live="polite"></div></section>' +
       '</div>' +
@@ -30172,7 +30338,7 @@ RB.combat = (function () {
       '<section class="bars cb-party" aria-label="Your party"></section>';
     RB.ui.root.appendChild(root);
     const q = (x) => root.querySelector(x);
-    const o = { root, foe: q('.cb-foe'), intent: q('.intent'), stage: q('.cb-stage'), bars: q('.bars'), dock: q('.cb-dock'), resp: q('.responses'), log: q('.clog') };
+    const o = { root, foe: q('.cb-foe'), intent: q('.intent'), stage: q('.cb-stage'), bars: q('.bars'), dock: q('.cb-dock'), resp: q('.responses'), log: q('.clog'), coach: q('.cb-coachbox') };
     RB.learnUi.guardTaps(o.resp);
     o.onResize = () => requestAnimationFrame(measure);
     window.addEventListener('resize', o.onResize);
@@ -30183,15 +30349,58 @@ RB.combat = (function () {
   }
   let showIntentEn = false;
   function enShown() { return RB.game.s.learn.profile === 'F' || showIntentEn; }
+  // A keyword: a button that explains itself (RB.combatHelp) on hover, focus or tap.
+  const kw = (key, cls, inner, sr) => '<button type="button" class="kw ' + cls + '" data-kw="' + key + '" aria-expanded="false" aria-controls="kwcard">' + inner +
+    '<span class="sr">' + esc(sr || ' — what this means') + '</span></button>';
+  // the small "explain" mark on a keyword (shape, not colour alone)
+  const Q = () => '<span class="kw-q" aria-hidden="true">' + I('help') + '</span>';
+  // States in play, shown as keywords on the foe's slip beside its knots
+  // (wards are on the party slip).
+  const STATUS_ICON = { heat: 'flame', shroud: 'cloud', charge: 'hourglass', silence: 'mute', 'ward:pc': 'shield', 'ward:comp': 'shield' };
+  function statusList() {
+    const out = [];
+    if (st.heat) out.push({ key: 'heat', label: 'Heat ' + st.heat });
+    if (st.shroud) out.push({ key: 'shroud', label: 'Shrouded' });
+    if (st.charged) out.push({ key: 'charge', label: 'Gathering' });
+    if (st.silenced) out.push({ key: 'silence', label: 'Hushed' });
+    return out;
+  }
   function intentHtml(compact) {
     const it = st.intent;
     const line = intentLine(it);
-    const states = [st.shroud ? 'shrouded' : '', st.heat ? 'heat ' + st.heat : '', st.charged ? 'charged' : ''].filter(Boolean);
-    let h = '<div class="it-label">' + I(INTENT_ICON[it.kind] || 'strike') + '<span class="k">' + esc(it.label) + '</span>' + states.map((x) => '<span class="st">' + esc(x) + '</span>').join('') + '</div>';
+    const H = RB.combatHelp;
+    const g = H.gist(st, it);
+    const face = I(INTENT_ICON[it.kind] || 'strike') + '<span class="k">' + esc(it.label) + '</span>' + (g ? '<span class="gist">' + esc(g) + '</span>' : '');
+    // (the task slip carries the states as plain text; on screen they are on the foe's slip)
+    const states = compact ? statusList() : [];
+    let h = '<div class="it-label">' + (compact ? '<span class="it-kind">' + face + '</span>' : kw('intent', 'it-kind', face + Q())) +
+      states.map((x) => '<span class="st">' + esc(x.label) + '</span>').join('') + '</div>';
     if (line.jp) h += '<div class="it-jp">' + RB.ui.jhtml(line.jp, { vars: line.vars }) + '</div>';
     if (line.en) h += enShown() ? '<div class="it-en">' + esc(line.en) + '</div>' : (compact ? '' : '<button class="pbtn quiet tr" data-tr title="Show the English (counts as assisted)">' + I('note') + '<span>Translate <span class="aside">(assisted)</span></span></button>');
     if (!compact && RB.game.s.comp === 'nao' && st.nextIntents.length) h += '<div class="it-next">' + I('companion') + '<span>Nao: “After that — ' + esc(st.nextIntents.map((x) => x.label).join(', then ')) + '.”</span></div>';
     return h;
+  }
+  // The text of a keyword's note card, for the encounter on screen.
+  function helpFor(key) {
+    if (!st) return null;
+    const H = RB.combatHelp;
+    const s = RB.game.s;
+    const ws = words();
+    const p = (x) => (x ? '<p>' + x + '</p>' : '');
+    const ans = (x) => (x ? '<p><b>Answer:</b> ' + x + '</p>' : '');
+    if (key === 'intent') {
+      const it = st.intent;
+      const i = H.intentInfo(st, it, ws);
+      return { icon: INTENT_ICON[it.kind] || 'strike', title: esc(i.title), body: p(i.what) + ans(i.answer) };
+    }
+    if (key === 'harmony') {
+      if (!st.compId) return null;
+      const h = H.harmonyInfo(st);
+      return { icon: 'join', title: h.title, body: '<p class="kw-now">' + h.now + '</p><p><b>How it fills:</b> ' + h.fills + '</p><p><b>When it is full:</b> ' + h.offers + '</p><p>' + h.more + '</p>' };
+    }
+    const i = H.statusInfo(st, key, ws, { pc: esc(s.player.name), comp: esc(compName()) });
+    if (!i) return null;
+    return { icon: STATUS_ICON[key], title: i.title, body: p(i.what) + ans(i.answer) };
   }
   function knotsHtml() {
     let h = '';
@@ -30201,37 +30410,103 @@ RB.combat = (function () {
   function renderUi() {
     const s = RB.game.s;
     const it = st.intent;
-    ui.foe.innerHTML = '<span class="foe-n">' + RB.ui.jhtml(enemy.name.jp) + ' <span class="en">' + esc(enemy.name.en) + '</span></span>' + knotsHtml();
+    const states = statusList();
+    ui.foe.innerHTML = '<span class="foe-n">' + RB.ui.jhtml(enemy.name.jp) + ' <span class="en">' + esc(enemy.name.en) + '</span></span>' +
+      '<span class="foe-k' + (states.length ? ' has-st' : '') + '">' + knotsHtml() + (states.length ? '<span class="it-states" role="group" aria-label="Its state">' +
+        states.map((x) => kw(x.key, 'st', '<span class="pill">' + I(STATUS_ICON[x.key]) + esc(x.label) + '</span>')).join('') + '</span>' : '') + '</span>';
     ui.intent.innerHTML = intentHtml(false);
     const tr = ui.intent.querySelector('[data-tr]');
     if (tr) tr.onclick = () => { showIntentEn = true; st.assistedRound = true; renderUi(); };
-    // the party: resolve (numbers and bar), wards, harmony; the telegraph's
-    // target is marked once its meaning is on screen (never before)
+    // the party: resolve (numbers and bar) and wards; Harmony is its own band
+    // above them (not a third resolve bar). The telegraph's target is marked
+    // once its meaning is on screen (never before).
     const aimed = enShown() && AIMED[it.kind] ? (it.target === 'both' ? ['pc', 'comp'] : [it.target]) : [];
     const member = (who, name, v, max, ward) => '<div class="pm' + (aimed.indexOf(who) >= 0 ? ' aimed' : '') + '">' +
       '<div class="pm-h"><span class="pm-n">' + esc(name) + '</span>' +
-      (ward ? '<span class="pm-w" title="Wards">' + I('shield') + '<span class="sr">wards </span>' + ward + '</span>' : '') +
       (aimed.indexOf(who) >= 0 ? '<span class="aimtag">' + I('aim') + 'its aim</span>' : '') +
-      '<span class="pm-v">' + v + ' / ' + max + '</span></div>' +
-      '<div class="bar" role="meter" aria-label="' + esc(name) + ' resolve" aria-valuemin="0" aria-valuemax="' + max + '" aria-valuenow="' + v + '"><i style="width:' + Math.round((100 * v) / max) + '%"></i></div></div>';
-    ui.bars.innerHTML = member('pc', s.player.name, st.pc, st.max, st.ward.pc) +
+      (ward ? kw('ward:' + who, 'pm-w', '<span class="pill">' + I('shield') + '<span class="wl">Ward </span>' + ward + '</span>', ' in front of ' + name + ' — what this means') : '') + '</div>' +
+      '<div class="pm-r"><div class="bar" role="meter" aria-label="' + esc(name) + ' resolve" aria-valuemin="0" aria-valuemax="' + max + '" aria-valuenow="' + v + '"><i style="width:' + Math.round((100 * v) / max) + '%"></i></div>' +
+      '<span class="pm-v"><span class="sr">Resolve </span>' + v + ' / ' + max + '</span></div></div>';
+    ui.bars.innerHTML = (s.comp && st.compId ? harmonyHtml() : '') + '<div class="pm-list">' +
+      member('pc', s.player.name, st.pc, st.max, st.ward.pc) +
       (s.comp ? member('comp', compName(), st.comp, st.max, st.ward.comp) : '') +
-      (s.comp ? '<div class="pm harmony"><div class="pm-h"><span class="pm-n">Harmony</span><span class="pm-v">' + st.harmony + ' / ' + st.harmonyMax + '</span></div><div class="bar h" role="meter" aria-label="Harmony" aria-valuemin="0" aria-valuemax="' + st.harmonyMax + '" aria-valuenow="' + st.harmony + '"><i style="width:' + Math.round((100 * st.harmony) / st.harmonyMax) + '%"></i></div></div>' : '') +
-      '<div class="pm-note">' + (st.assist ? 'Assisted: mistakes cost nothing' : 'Mistakes cost at most 1') + '</div>';
+      '<div class="pm-note">' + (st.assist ? 'Assisted: mistakes cost nothing' : 'Mistakes cost at most 1') + '</div></div>';
+    ui.root.classList.toggle('has-harmony', !!(s.comp && st.compId));
+    RB.combatHelp.refresh(ui.root);
     requestAnimationFrame(measure);
+  }
+  // Harmony: a paper band tied to the top of the party slip, with pips (not a
+  // bar), what it is building towards (this companion's technique), and its
+  // own explanation on hover, focus or tap.
+  function harmonyHtml() {
+    const T = RB.combatHelp.techOf(st);
+    const full = st.harmony >= st.harmonyMax;
+    let pips = '';
+    for (let i = 0; i < st.harmonyMax; i++) pips += '<i class="hp' + (i < st.harmony ? ' on' : '') + '"></i>';
+    return kw('harmony', 'cb-harmony' + (full ? ' full' : ''),
+      '<span class="hm-a">' + I('join') + '<span class="hm-n">Harmony</span>' +
+      '<span class="hm-pips" aria-hidden="true">' + pips + '</span><span class="hm-v">' + st.harmony + '<span class="sr"> of </span><span aria-hidden="true">/</span>' + st.harmonyMax + '</span></span>' +
+      '<span class="hm-t">' + (full ? '<b>Ready:</b> ' + esc(T.name) + ' is in your responses' : esc(compName()) + '\'s technique at ' + st.harmonyMax + ': ' + esc(T.name)) + '</span>' + Q(),
+      ' — what Harmony is and how it fills');
   }
   function words() {
     const s = RB.game.s;
     return s.words.map((id) => RB.content.words[id]).filter(Boolean);
   }
+  // Words used in battle for the first time are marked "New" for that whole
+  // encounter, with what they answer; recorded (s.tips) when it ends.
+  let newWords = new Set(), shownWords = new Set();
   function cardHtml(c, i, hi) {
     const tgt = c.target ? (c.target === 'comp' ? compName() : 'you') : '';
     const desc = c.disabled || RB.script.enVars(tgt ? String(c.desc).replace(/\s*\([^)]*\)\s*$/, '') : c.desc);
-    return '<button class="resp rcard" data-i="' + i + '"' + (c.disabled ? ' disabled' : '') + '>' +
+    const fresh = c.kind === 'word' && newWords.has(c.word.id);
+    const ans = fresh ? L().answers(c.word).map((k) => L().INTENTS[k].label) : [];
+    const ready = c.kind === 'tech';
+    return '<button class="resp rcard' + (fresh ? ' fresh' : '') + (ready ? ' tech' : '') + '" data-i="' + i + '"' + (c.disabled ? ' disabled' : '') + '>' +
       '<span class="ic">' + I(cardIcon(c)) + '</span>' +
-      '<span class="rc-w"><span class="rc-jp">' + RB.ui.jhtml(hi && c.word && c.word.jpK ? c.word.jpK : c.jp) + '</span><span class="rc-en">' + esc(c.en) + '</span></span>' +
+      '<span class="rc-w"><span class="rc-jp">' + RB.ui.jhtml(hi && c.word && c.word.jpK ? c.word.jpK : c.jp) + '</span><span class="rc-en">' + esc(c.en) + '</span>' +
+      (fresh ? '<span class="rc-new">New</span>' : '') + (ready ? '<span class="rc-new">With ' + esc(compName()) + '</span>' : '') + '</span>' +
       (tgt ? '<span class="rc-tgt">on ' + esc(tgt) + '</span>' : '') +
-      '<span class="rc-d">' + (c.disabled ? I('warn') : '') + esc(desc) + '</span></button>';
+      '<span class="rc-d">' + (c.disabled ? I('warn') : '') + esc(desc) +
+      (ans.length ? '<span class="rc-ans"><b>Answers:</b> ' + esc(ans.join(', ')) + (c.word.tags.indexOf('ward') >= 0 ? ' (in front of the one it aims at)' : '') + '</span>' : '') + '</span></button>';
+  }
+  // One short note per exchange, the first time something needs explaining:
+  // a kind of move never seen before, then a full Harmony, then Harmony itself.
+  function coachFor() {
+    const s = RB.game.s;
+    const H = RB.combatHelp;
+    const it = st.intent;
+    const cn = esc(compName());
+    if (!H.seen(s, 'intent:' + it.kind)) {
+      H.mark(s, 'intent:' + it.kind);
+      const i = H.intentInfo(st, it, words());
+      return { icon: INTENT_ICON[it.kind] || 'strike', title: 'New move: ' + esc(it.label), body: i.what + (i.answer ? ' ' + i.answer : ''), more: 'intent' };
+    }
+    if (st.compId && st.harmony >= st.harmonyMax && !H.seen(s, 'harmonyFull')) {
+      H.mark(s, 'harmonyFull'); H.mark(s, 'harmony');
+      const T = H.techOf(st);
+      return { icon: 'join', title: esc(T.name) + ' is ready', body: 'Harmony is full, so ' + cn + '\'s technique is now among your responses. ' + esc(T.effect) + ' It also cancels its move, and uses up Harmony.', more: 'harmony' };
+    }
+    if (st.compId && !H.seen(s, 'harmony')) {
+      H.mark(s, 'harmony');
+      const T = H.techOf(st);
+      return { icon: 'join', title: 'Harmony', body: cn + ' fights beside you. Each time you answer right first time with a response that cancels its move — or with Unravel — Harmony fills by 1. At ' + st.harmonyMax + ', ' + cn + '\'s technique, <b>' + esc(T.name) + '</b>, joins your responses.', more: 'harmony' };
+    }
+    return null;
+  }
+  function showCoach(c) {
+    if (!c) { ui.coach.innerHTML = ''; return; }
+    ui.coach.innerHTML = '<div class="cb-coach paper" role="note">' +
+      '<div class="cc-h">' + I(c.icon) + '<b>' + c.title + '</b></div><p>' + c.body + '</p>' +
+      '<div class="cc-f">' + kw(c.more, 'cc-more pbtn quiet', '<span>More</span>', ' about this') +
+      '<button type="button" class="pbtn cc-ok" data-coach-ok>' + I('done') + '<span>Got it</span></button></div></div>';
+    ui.coach.querySelector('[data-coach-ok]').onclick = () => {
+      ui.coach.innerHTML = '';
+      RB.combatHelp.hide();
+      const f = ui.resp.querySelector('.rcard:not([disabled])');
+      if (f) f.focus({ preventScroll: true });
+      requestAnimationFrame(measure);
+    };
   }
   function pickCard() {
     return new Promise((resolve) => {
@@ -30244,19 +30519,26 @@ RB.combat = (function () {
         if (c.kind === 'unravel' && st.silenced && (known.has('bell') || known.has('voice'))) c.disabled = 'The hush swallows words: ring a bell or raise a voice first.';
       }
       const hi = s.learn.profile === 'I' || s.learn.profile === 'A';
+      for (const c of cards) if (c.kind === 'word') shownWords.add(c.word.id);
       ui.resp.innerHTML = '<div class="rcards">' + cards.map((c, i) => cardHtml(c, i, hi)).join('') + '</div>' +
         (st.noFlee ? '' : '<button class="cbtn flee" data-flee>' + I('back') + '<span>Step back from this encounter</span></button>');
       ui.log.classList.add('hidden');
-      const layer = { el: ui.resp, name: 'cards', parent: ui.dock };
-      const done = (v) => { RB.ui.popLayer(layer); ui.dock.insertBefore(ui.resp, ui.log); resolve(v); };
+      showCoach(coachFor());
+      // Keyboard focus starts on the responses but may also reach the
+      // keywords (telegraph, states, Harmony, wards) and the note above them.
+      const layer = { el: ui.resp, name: 'cards', parent: ui.dock, scope: ui.root };
+      const done = (v) => { RB.combatHelp.hide(); showCoach(null); RB.ui.popLayer(layer); ui.dock.insertBefore(ui.resp, ui.log); resolve(v); };
       ui.resp.onclick = (e) => {
         const b = e.target.closest('[data-i]');
         if (b && !b.disabled) { done(cards[+b.getAttribute('data-i')]); return; }
         if (e.target.closest('[data-flee]')) done({ kind: 'flee' });
       };
+      // Back closes an open keyword note first; it never leaves the encounter.
+      layer.onAction = (a) => { if (a === 'cancel' && RB.combatHelp.isOpen()) { RB.combatHelp.hide(); return true; } return false; };
       layer.onCancel = () => {};
       RB.ui.pushLayer(layer);
       ui.dock.insertBefore(ui.resp, ui.log);
+      requestAnimationFrame(measure);
     });
   }
   function stepFor(card) {
@@ -30264,7 +30546,7 @@ RB.combat = (function () {
     const it = st.intent;
     if (card.kind === 'unravel' || card.kind === 'tech') {
       const step = RB.tasks.next(enemy.pool || {}, {});
-      step.title = card.kind === 'tech' ? 'Coordinated technique — weave it together' : 'Unravel: restore one of its tangled words';
+      step.title = card.kind === 'tech' ? 'Coordinated technique with ' + compName() + ': ' + card.en : 'Unravel: restore one of its tangled words';
       return step;
     }
     if (card.kind === 'answer' || card.kind === 'truth') {
@@ -30306,20 +30588,30 @@ RB.combat = (function () {
       switch (f.t) {
         case 'unravel': addFx('untie'); RB.audio && RB.audio.sfx('knot_untie'); msg = f.n > 1 ? 'Two knots come loose.' : 'A knot comes loose.'; break;
         case 'ward': addFx('glyph', partyAt(f.target === 'comp' ? 28 : 8, 12)); RB.audio && RB.audio.sfx('ward'); msg = f.block ? 'The ward catches the blow meant for ' + nm(f.target) + '.' : 'A ward rises before ' + nm(f.target) + '.'; break;
-        case 'water': addFx('water'); RB.audio && RB.audio.sfx('water'); msg = 'Water hisses over the heat.'; break;
-        case 'light': addFx('light'); RB.audio && RB.audio.sfx('light'); msg = 'Light burns the mist away.'; break;
+        case 'water': addFx('water'); RB.audio && RB.audio.sfx('water'); msg = 'Water hisses over the heat — it cools. Heat cleared.'; break;
+        case 'light': addFx('light'); RB.audio && RB.audio.sfx('light'); msg = 'Light burns the mist away — its knots show again.'; break;
         case 'bind': RB.audio && RB.audio.sfx('ward'); msg = 'The rope holds it fast; the gathered force spills away.'; break;
         case 'heal': addFx('heal'); RB.audio && RB.audio.sfx('heal'); msg = 'You both breathe easier.'; break;
         case 'warm': RB.audio && RB.audio.sfx('light'); msg = 'Warmth spreads through your fingers.'; break;
         case 'bell': RB.audio && RB.audio.sfx('bell'); msg = 'A clear note breaks the hush.'; break;
-        case 'hit': shake = 200; addFx('hit', partyAt(f.who === 'comp' ? 28 : 8, 16)); RB.audio && RB.audio.sfx('party_hit'); msg = nm(f.who) + ' is struck (−' + f.n + ').'; break;
+        case 'hit': {
+          shake = 200; addFx('hit', partyAt(f.who === 'comp' ? 28 : 8, 16)); RB.audio && RB.audio.sfx('party_hit');
+          const hb = L().heatBonus(st);
+          msg = nm(f.who) + ' is struck (−' + f.n + (hb ? ', with +' + hb + ' from Heat' : '') + ').'; break;
+        }
         case 'block': RB.audio && RB.audio.sfx('ward'); msg = 'The ward absorbs ' + f.n + '.'; break;
-        case 'heat': RB.audio && RB.audio.sfx('enemy_intent'); msg = 'The heat builds (' + f.n + ').'; break;
+        case 'heat': RB.audio && RB.audio.sfx('enemy_intent'); msg = 'It overheats: Heat ' + f.n + ' — its blows now hit +' + (f.bonus != null ? f.bonus : f.n) + ' harder until it is cooled.'; break;
         case 'shroud': RB.audio && RB.audio.sfx('wind'); msg = 'Mist swallows its knots.'; break;
-        case 'charge': RB.audio && RB.audio.sfx('enemy_intent'); msg = 'It gathers itself. The next blow will be heavy.'; break;
+        case 'charge': RB.audio && RB.audio.sfx('enemy_intent'); msg = 'It gathers itself: its next blow will hit +2 harder.'; break;
+        case 'harmony': {
+          const full = f.n >= f.max;
+          if (full) RB.audio && RB.audio.sfx('harmony_ready');
+          msg = full ? 'In step with ' + compName() + ': Harmony is full — ' + RB.combatHelp.techOf(st).name + ' is ready.' : 'In step with ' + compName() + ': Harmony ' + f.n + ' of ' + f.max + '.';
+          break;
+        }
         case 'mend': RB.audio && RB.audio.sfx('enemy_intent'); msg = 'It ties one knot back up.'; break;
         case 'stripWard': RB.audio && RB.audio.sfx('wind'); msg = 'The gust tears your wards away.'; break;
-        case 'silence': RB.audio && RB.audio.sfx('enemy_intent'); msg = 'Sound drains out of the air.'; break;
+        case 'silence': RB.audio && RB.audio.sfx('enemy_intent'); msg = 'Sound drains out of the air: you are Hushed.'; break;
         case 'countered': RB.audio && RB.audio.sfx('reveal'); msg = 'You answered it — its move comes to nothing.'; break;
         case 'cost': msg = f.en; break;
         case 'comp': case 'tech': case 'settle': case 'reveal': msg = f.en; RB.audio && RB.audio.sfx(f.t === 'tech' ? 'technique' : 'reveal'); break;
@@ -30346,6 +30638,10 @@ RB.combat = (function () {
     st = L().init(enemy, s, opts);
     st.noFlee = !!opts.noFlee || !!enemy.boss;
     showIntentEn = false;
+    const H = RB.combatHelp;
+    newWords = new Set(s.words.filter((w) => !H.seen(s, 'word:' + w)));
+    shownWords = new Set();
+    H.attach(helpFor);
     ui = buildUi();
     measure();
     await RB.ui.fade(false, 200);
@@ -30377,7 +30673,9 @@ RB.combat = (function () {
         });
         if (res.cancelled) continue;
         if (st.assistedRound) res.assisted = true;
+        const hb = st.harmony;
         const { fx, countered } = L().playerAct(st, card, res, enemy);
+        if (st.compId && st.harmony > hb) fx.push({ t: 'harmony', n: st.harmony, max: st.harmonyMax });
         await playFx(fx);
         if (st.knots <= 0) { outcome = 'win'; break; }
         const efx = L().enemyAct(st, countered);
@@ -30403,6 +30701,8 @@ RB.combat = (function () {
       // Resolve recovers after every encounter: no attrition grinding.
       s.resolve.pc = s.resolve.max;
       s.resolve.comp = s.resolve.max;
+      for (const w of shownWords) RB.combatHelp.mark(s, 'word:' + w);
+      RB.combatHelp.detach();
       if (ui) { window.removeEventListener('resize', ui.onResize); if (ui.ro) ui.ro.disconnect(); ui.root.remove(); }
       ui = null; stageCss = null; lastLay = null;
       await RB.ui.fade(true, 200);
@@ -30416,7 +30716,374 @@ RB.combat = (function () {
     }
     return outcome;
   }
-  return { start, state: () => st };
+  // refresh(): redraw the overlay from the current state (tests, tools)
+  return { start, state: () => st, refresh: () => { if (st && ui) renderUi(); } };
+})();
+
+
+/* ==== src/ui/81_combat_help.js ==== */
+/* Inkweaving — plain-language help for what is on the battle screen: the
+ * telegraphed move, the states in play (Heat, mist, Gathering, Hush, wards)
+ * and Harmony.
+ *
+ * - Keywords (`.kw[data-kw]` buttons) open a small note card on hover,
+ *   keyboard focus or a tap/click. Wide screens: a card beside the keyword.
+ *   Narrow screens, when tapped or focused: a sheet along the bottom edge.
+ *   Close is always in its header; Escape closes it; a tap outside a card
+ *   opened by a tap only closes the card (it never also chooses a response).
+ *   Same materials as the word-help card.
+ * - Every number in the text comes from RB.combatLogic (blowOf, heatBonus,
+ *   HEAT, TECHS, answers), so it states the rules the exchange applies.
+ * - One-time coach marks (a companion's Harmony, a full Harmony, the first
+ *   time each kind of move is telegraphed) and the "New" response marker are
+ *   recorded in the campaign as s.tips {key: 1}. The field is created on first
+ *   use; saves from before it existed have their known words and (with a
+ *   companion) the Harmony introduction marked as already seen, so a long
+ *   campaign is not suddenly full of "New" labels. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.combatHelp = (function () {
+  'use strict';
+  const esc = RB.util.esc;
+  const L = () => RB.combatLogic;
+  const I = (n) => RB.learnUi.icon(n);
+  const C = () => RB.content;
+
+  // ---- words the player knows that answer a move --------------------------------
+  const wj = (w) => '<span class="kwj" lang="ja">' + esc(w.jp) + '</span> (' + esc(w.en) + ')';
+  const list = (ws) => ws.map(wj).join(' or ');
+  const cancels = (words, kind) => words.filter((w) => L().answers(w).indexOf(kind) >= 0);
+  const withTag = (words, tags) => words.filter((w) => (w.tags || []).some((t) => tags.indexOf(t) >= 0));
+  function compName(st) {
+    const c = st.compId && C().chars[st.compId];
+    return c ? c.name.en : 'your companion';
+  }
+
+  // ---- the numbers of a blow --------------------------------------------------------
+  function blowText(st, it) {
+    const b = L().blowOf(st, it);
+    if (!b) return null;
+    const parts = [];
+    const hb = L().heatBonus(st);
+    if (hb) parts.push('+' + hb + ' from Heat');
+    if (st.charged && (it.kind === 'strike' || it.kind === 'sweep')) parts.push('+2 from Gathering');
+    return { n: b.per, extra: parts.length ? ' (' + parts.join(', ') + ')' : '' };
+  }
+  // A few words beside the move's name, so the telegraph reads at a glance.
+  function gist(st, it) {
+    const b = L().blowOf(st, it);
+    const n = b ? b.per : 0;
+    const H = L().HEAT;
+    switch (it.kind) {
+      case 'strike': case 'lie': case 'mirror': case 'chill':
+        return st.compId ? n + ' to one of you' : n + ' to you';
+      case 'sweep': case 'flood': return st.compId ? n + ' to each of you' : n + ' to you';
+      case 'gust': return n + ' to you, strips wards';
+      case 'heat': return (st.heat || 0) >= H.max ? 'stays at Heat ' + H.max : 'Heat +1 if not cooled';
+      case 'shroud': return 'hides its knots';
+      case 'charge': return 'next blow +2';
+      case 'mend': return 're-ties a knot';
+      case 'plea': return 'asks, does not attack';
+      case 'rest': return 'does nothing';
+      case 'silence': return 'blocks Unravel';
+      default: return '';
+    }
+  }
+
+  // ---- what a move does and what answers it --------------------------------------------
+  // Returns {title, what, answer} (HTML strings).
+  function intentInfo(st, it, words) {
+    const b = blowText(st, it) || { n: 0, extra: '' };
+    const duo = !!st.compId;
+    const H = L().HEAT;
+    const k = it.kind;
+    const known = cancels(words, k);
+    const noneYet = (what) => what + ' — you don\'t know one yet.';
+    let title = it.label, what = '', answer = '';
+    if (k === 'strike') {
+      title = 'Strike — a blow at one of you';
+      what = duo ? 'It hits one of you for ' + b.n + b.extra + '. The Japanese says who.' : 'It hits you for ' + b.n + b.extra + '.';
+      answer = known.length ? 'Raise a ward in front of the one it is aiming at — use ' + list(known) + ': that blocks it completely.' : 'Nothing you know blocks it yet: Unravel and take the blow.';
+    } else if (k === 'sweep') {
+      title = duo ? 'Sweep — a group attack on both of you' : 'Sweep — a wide blow';
+      what = duo ? 'It hits both of you at once: ' + b.n + ' each' + b.extra + '.' : 'It hits you for ' + b.n + b.extra + ' (with a companion, it would hit you both).';
+      answer = 'Nothing cancels it outright. ' + (withTag(words, ['ward']).length ? 'A ward (use ' + list(withTag(words, ['ward'])) + ') soaks up to 2 of it for the one it guards.' : '');
+    } else if (k === 'heat') {
+      title = 'Heat — it is heating up';
+      const lvl = st.heat || 0;
+      what = lvl >= H.max
+        ? 'It is already at Heat ' + H.max + ', the most: every blow it lands hits +' + H.max * H.per + ' harder until it is cooled.'
+        : 'Left alone, its Heat rises to ' + (lvl + 1) + ': every blow it lands then hits +' + (lvl + 1) * H.per + ' harder, until it is cooled (+' + H.per + ' per level, at most +' + H.max * H.per + ').';
+      answer = known.length ? 'Water cools it: use ' + list(known) + ' — that stops this and clears all Heat.' : noneYet('Water words cool it');
+    } else if (k === 'shroud') {
+      title = 'Shroud — it hides in mist';
+      what = 'Left alone, mist hides its knots: while it is Shrouded you can\'t Unravel.';
+      answer = known.length ? 'Light or wind clears it: use ' + list(known) + ' — that stops this and keeps the mist away.' : 'You know no light or wind word yet, so the mist can\'t block your Unravel.';
+    } else if (k === 'charge') {
+      title = 'Gathering — it is building up force';
+      what = 'Left alone, its next Strike or Sweep hits +2 harder.';
+      answer = (known.length ? 'Binding holds it: use ' + list(known) + ' — that stops it.' : noneYet('A binding word stops it')) +
+        (st.compId === 'ren' ? ' Ren\'s lamp also interrupts it whenever you answer correctly.' : '');
+    } else if (k === 'gust') {
+      title = 'Gust — a wind that tears wards away';
+      what = 'It strips every ward you have' + (duo ? ' (both of you)' : '') + ' and hits you for ' + b.n + b.extra + '.';
+      answer = known.length ? 'Holding firm cancels it: use ' + list(known) + '.' : noneYet('A word that holds firm, like stone, cancels it');
+    } else if (k === 'mend') {
+      title = 'Re-tying — it ties a knot back up';
+      what = 'Left alone, one knot you loosened is tied again.' + (st.knots >= st.maxKnots ? ' No knot is loose yet, so it would change nothing.' : '');
+      answer = known.length ? 'Rope or light stops it: use ' + list(known) + '.' : noneYet('Rope or light stops it');
+    } else if (k === 'lie') {
+      title = 'False promise — a lie with a blow behind it';
+      what = 'It says something untrue; if you let it stand, it hits ' + (duo ? 'one of you' : 'you') + ' for ' + b.n + b.extra + '.';
+      answer = 'Choose See through (<span class="kwj" lang="ja">みぬく</span>) and say what is false: that stops the blow.' +
+        (st.compId === 'suzu' ? ' With Suzu beside you, a correct Unravel also stops it.' : '');
+    } else if (k === 'plea') {
+      title = 'Plea — it is asking you something';
+      what = 'It isn\'t attacking. If you don\'t answer, nothing happens — but the moment passes.';
+      answer = 'Choose Answer (<span class="kwj" lang="ja">こたえる</span>) and reply to what it is really asking: that loosens a knot.';
+    } else if (k === 'rest') {
+      title = 'Waiting — it holds still';
+      what = 'It does nothing this turn.';
+      answer = 'A free moment: Unravel, heal, or raise a ward for later.';
+    } else if (k === 'flood') {
+      title = 'Flood — water at both of you';
+      what = duo ? 'It hits both of you: ' + b.n + ' each' + b.extra + '.' : 'It hits you for ' + b.n + b.extra + '.';
+      answer = (known.length ? 'Stone or earth banks it and cancels it: use ' + list(known) + '.' : noneYet('Stone or earth cancels it')) +
+        (withTag(words, ['ward']).length ? ' A ward soaks up to 2 of it for the one it guards.' : '');
+    } else if (k === 'chill') {
+      title = 'Chill — a freezing breath at one of you';
+      what = duo ? 'It hits one of you for ' + b.n + b.extra + '. The Japanese says who.' : 'It hits you for ' + b.n + b.extra + '.';
+      answer = known.length ? 'Fire or warmth cancels it: use ' + list(known) + '.' : noneYet('A fire or warm word cancels it');
+    } else if (k === 'silence') {
+      title = 'Hush — it drains the sound away';
+      what = 'Left alone, you are Hushed: your words can\'t reach its knots, so you can\'t Unravel until the hush breaks.';
+      answer = known.length ? 'A bell or a voice breaks it: use ' + list(known) + ' — that stops this and breaks any hush.' : 'You know no bell or voice word yet, so the hush can\'t block your Unravel.';
+    } else if (k === 'mirror') {
+      title = 'Mirror — your words, turned inside out';
+      what = 'It repeats something real but twists it, and hits ' + (duo ? 'one of you' : 'you') + ' for ' + b.n + b.extra + '.';
+      const light = withTag(words, ['light']);
+      answer = 'Choose See through (<span class="kwj" lang="ja">みぬく</span>) and say what it changed: that stops the blow and loosens a knot.' +
+        (light.length ? ' Light also stops the blow: ' + list(light) + '.' : '');
+    }
+    return { title, what, answer };
+  }
+
+  // ---- states in play ------------------------------------------------------------------------
+  // key: 'heat' | 'shroud' | 'charge' | 'silence' | 'ward:pc' | 'ward:comp'
+  function statusInfo(st, key, words, names) {
+    const H = L().HEAT;
+    if (key === 'heat') {
+      const w = cancels(words, 'heat');
+      return {
+        title: 'Heat ' + st.heat + ' of ' + H.max + ' — overheating',
+        what: 'While it lasts, every blow it lands hits +' + L().heatBonus(st) + ' harder. It rises by 1 each time a Heat move is left unanswered (at most ' + H.max + ').',
+        answer: w.length ? 'Water cools it completely: use ' + list(w) + '.' : 'Water words cool it — you don\'t know one yet.',
+      };
+    }
+    if (key === 'shroud') {
+      const w = cancels(words, 'shroud');
+      return {
+        title: 'Shrouded — its knots are hidden',
+        what: w.length ? 'Mist hides its knots: you can\'t Unravel until the mist clears.' : 'Mist hides its knots, but while you know no light or wind word it can\'t block your Unravel.',
+        answer: w.length ? 'Light or wind clears it: use ' + list(w) + '.' : '',
+      };
+    }
+    if (key === 'charge') {
+      const w = cancels(words, 'charge');
+      return {
+        title: 'Gathering — force held back',
+        what: 'Its next Strike or Sweep hits +2 harder; then the force is spent.',
+        answer: w.length ? 'Binding spills it away: use ' + list(w) + '.' : 'A binding word spills it away — you don\'t know one yet.',
+      };
+    }
+    if (key === 'silence') {
+      const w = cancels(words, 'silence');
+      return {
+        title: 'Hushed — words can\'t reach its knots',
+        what: w.length ? 'You can\'t Unravel until the hush breaks.' : 'While you know no bell or voice word, it can\'t block your Unravel.',
+        answer: w.length ? 'A bell or a voice breaks it: use ' + list(w) + '.' : '',
+      };
+    }
+    if (key === 'ward:pc' || key === 'ward:comp') {
+      const who = key.slice(5);
+      const n = st.ward[who] || 0;
+      const nm = names[who];
+      return {
+        title: 'Ward ' + n + ' — in front of ' + nm,
+        what: 'It soaks up the next ' + n + ' damage aimed at ' + nm + '.',
+        answer: 'Raised in front of the one a Strike is aiming at, a ward blocks that Strike completely. A Gust tears all wards away.',
+      };
+    }
+    return null;
+  }
+
+  // ---- Harmony ------------------------------------------------------------------------------
+  function techOf(st) {
+    return L().TECHS[st.compId] || { name: 'Coordinated technique', knots: 1, effect: '' };
+  }
+  function harmonyInfo(st) {
+    const s = RB.game.s;
+    const cn = compName(st);
+    const T = techOf(st);
+    const full = st.harmony >= st.harmonyMax;
+    const charm = s && s.equip && s.equip.charm && C().items[s.equip.charm];
+    const head = charm && charm.effect && charm.effect.harmonyStart ? ' Your ' + esc(charm.name.en) + ' starts it at ' + charm.effect.harmonyStart + '.' : '';
+    return {
+      title: 'Harmony — you and ' + esc(cn) + ', in step',
+      now: full ? 'Full (' + st.harmony + ' of ' + st.harmonyMax + '): ' + esc(T.name) + ' is ready among your responses.'
+        : 'Now ' + st.harmony + ' of ' + st.harmonyMax + ': ' + (st.harmonyMax - st.harmony) + ' more to go.',
+      fills: 'It fills by 1 each time you answer right first time with a response that cancels its move — or with Unravel. A slip, or a response that cancels nothing, adds nothing.',
+      offers: esc(cn) + '\'s coordinated technique joins your responses: <b>' + esc(T.name) + '</b>. ' + esc(T.effect) + ' It also cancels its move, and uses up Harmony.',
+      more: 'Each companion has one technique; who travels with you decides which. Harmony starts from 0 in every encounter.' + head,
+    };
+  }
+
+  // ---- the note card -----------------------------------------------------------------------
+  let card = null, anchor = null, via = 'hover', provider = null, hideTimer = 0;
+  function isOpen() { return !!card; }
+  function ensure() {
+    if (card) return card;
+    card = document.createElement('div');
+    card.className = 'kwcard';
+    card.id = 'kwcard';
+    card.setAttribute('role', 'dialog');
+    card.setAttribute('aria-labelledby', 'kwcard-t');
+    card.addEventListener('click', (e) => { if (e.target.closest('[data-kwclose]')) { const a = anchor; hide(); if (a && a.isConnected && via !== 'hover') a.focus({ preventScroll: true }); } });
+    card.addEventListener('pointerleave', (e) => { if (via === 'hover' && e.pointerType === 'mouse') later(); });
+    card.addEventListener('pointerenter', () => clearTimeout(hideTimer));
+    document.getElementById('overlay').appendChild(card);
+    return card;
+  }
+  function render(a) {
+    const key = a.getAttribute('data-kw');
+    const info = provider ? provider(key) : null;
+    if (!info) return false;
+    ensure();
+    card.innerHTML = '<div class="kw-h">' + (info.icon ? I(info.icon) : '') + '<h3 id="kwcard-t">' + info.title + '</h3>' +
+      '<button class="kw-x" data-kwclose aria-label="Close this note">' + I('close') + '<span>Close</span></button></div>' +
+      '<div class="kw-b" aria-live="polite">' + info.body + '</div>';
+    return true;
+  }
+  function position(a) {
+    const narrow = window.innerWidth < 600;
+    const sheet = narrow && via !== 'hover';
+    card.classList.toggle('sheet', sheet);
+    if (sheet) { card.style.left = ''; card.style.top = ''; return; }
+    const r = a.getBoundingClientRect();
+    const w = Math.min(380, window.innerWidth - 16);
+    card.style.width = w + 'px';
+    card.style.left = Math.round(Math.min(window.innerWidth - w - 8, Math.max(8, r.left + r.width / 2 - w / 2))) + 'px';
+    const h = card.offsetHeight || 160;
+    // beside the panel the keyword sits in (below the telegraph, above the
+    // party), so the card never covers the line being read
+    let box = (a.closest('.intent, .cb-party, .cb-coach, .cb-foe') || a).getBoundingClientRect();
+    // the foe's slip sits over the telegraph: open below both
+    const tele = a.closest('.cb-foe') && document.querySelector('.combat-ui .intent');
+    if (tele) { const t = tele.getBoundingClientRect(); box = { top: Math.min(box.top, t.top), bottom: Math.max(box.bottom, t.bottom) }; }
+    let top = box.bottom + 8;
+    if (top + h > window.innerHeight - 8) top = box.top - h - 8;
+    if (top < 8) { top = r.bottom + 8; if (top + h > window.innerHeight - 8) top = Math.max(8, window.innerHeight - h - 8); }
+    card.style.top = Math.round(top) + 'px';
+  }
+  function show(a, how) {
+    clearTimeout(hideTimer);
+    if (anchor && anchor !== a) anchor.setAttribute('aria-expanded', 'false');
+    via = how;
+    if (!render(a)) return;
+    anchor = a;
+    a.setAttribute('aria-expanded', 'true');
+    card.classList.toggle('tapped', how !== 'hover');
+    position(a);
+  }
+  function hide() {
+    clearTimeout(hideTimer);
+    if (anchor) anchor.setAttribute('aria-expanded', 'false');
+    anchor = null;
+    if (card) { card.remove(); card = null; }
+  }
+  function later() {
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(() => { if (via === 'hover' && card && !card.matches(':hover') && !(anchor && anchor.matches(':hover'))) hide(); }, 250);
+  }
+  // refresh an open card after the screen re-rendered (its keyword was replaced)
+  function refresh(root) {
+    if (!card || !anchor) return;
+    const key = anchor.getAttribute('data-kw');
+    const a = root && root.querySelector('.kw[data-kw="' + key + '"]');
+    if (!a) { hide(); return; }
+    anchor = a;
+    a.setAttribute('aria-expanded', 'true');
+    render(a);
+    position(a);
+  }
+  // Delegated listeners, installed once; `provider(key)` supplies the text
+  // for the battle on screen ({title, body, icon}).
+  let installed = false, lastKey = 0;
+  function attach(fn) {
+    provider = fn;
+    if (installed) return;
+    installed = true;
+    const kwOf = (e) => (provider && e.target && e.target.closest ? e.target.closest('.kw[data-kw]') : null);
+    document.addEventListener('pointerover', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      const a = kwOf(e);
+      if (!a || (card && via !== 'hover')) return;
+      show(a, 'hover');
+    });
+    document.addEventListener('pointerout', (e) => {
+      if (e.pointerType !== 'mouse' || via !== 'hover') return;
+      const a = kwOf(e);
+      if (a && a === anchor && !(card && card.contains(e.relatedTarget))) later();
+    });
+    document.addEventListener('keydown', (e) => {
+      lastKey = Date.now();
+      if (e.key === 'Escape' && card) { const a = anchor; hide(); if (a && a.isConnected && document.activeElement !== a && via !== 'hover') a.focus({ preventScroll: true }); e.stopPropagation(); e.preventDefault(); }
+    }, true);
+    document.addEventListener('focusin', (e) => {
+      const a = kwOf(e);
+      if (!a || Date.now() - lastKey > 1500 || !a.matches(':focus-visible')) return;
+      show(a, 'key');
+    });
+    document.addEventListener('focusout', (e) => {
+      const a = kwOf(e);
+      if (a && a === anchor && via === 'key' && !(card && card.contains(e.relatedTarget))) setTimeout(() => { if (anchor === a && document.activeElement !== a && !(card && card.contains(document.activeElement))) hide(); }, 0);
+    });
+    document.addEventListener('click', (e) => {
+      const a = kwOf(e);
+      if (a) {
+        e.stopPropagation(); e.preventDefault();
+        const how = e.detail === 0 ? 'key' : 'tap';
+        if (card && anchor === a && via === how && how === 'tap') { hide(); return; }
+        show(a, how);
+        return;
+      }
+      if (card && !card.contains(e.target)) {
+        // a card opened by a tap pauses what is under it: this tap only closes it
+        const blocking = via === 'tap';
+        hide();
+        if (blocking) { e.stopPropagation(); e.preventDefault(); }
+      }
+    }, true);
+    window.addEventListener('resize', () => { if (card && anchor && anchor.isConnected) position(anchor); else if (card) hide(); });
+  }
+  function detach() { hide(); provider = null; }
+
+  // ---- one-time notes (s.tips) ---------------------------------------------------------------
+  function tips(s) {
+    if (!s.tips || typeof s.tips !== 'object') {
+      s.tips = {};
+      // a save from before these notes: what it has already used is not "new"
+      if ((s.vars && s.vars.battlesWon) > 0) {
+        for (const w of s.words || []) s.tips['word:' + w] = 1;
+        if (s.comp) s.tips.harmony = 1;
+      }
+    }
+    return s.tips;
+  }
+  function seen(s, key) { return !!tips(s)[key]; }
+  function mark(s, key) { tips(s)[key] = 1; }
+
+  return { gist, intentInfo, statusInfo, harmonyInfo, techOf, compName, attach, detach, show, hide, isOpen, refresh, tips, seen, mark, list, cancels };
 })();
 
 
@@ -30503,18 +31170,20 @@ var RB = (globalThis.RB = globalThis.RB || {});
 (function (C) {
   'use strict';
   const W = (id, d) => (C.words[id] = Object.assign({ id }, d));
-  W('mamoru', { jp: 'まもる', jpK: '{守|まも}る', r: 'まもる', lex: '守る', en: 'protect', tags: ['ward'], icon: '🛡', effect: 'Raises a ward before one of you.' });
-  W('mizu', { jp: 'みず', jpK: '{水|みず}', r: 'みず', lex: '水', en: 'water', tags: ['water'], icon: '💧', effect: 'Cools what is overheating.' });
-  W('hikari', { jp: 'ひかり', jpK: '{光|ひかり}', r: 'ひかり', lex: '光', en: 'light', tags: ['light'], icon: '✺', effect: 'Shows what is hidden; burns off mist.' });
-  W('iyasu', { jp: 'いやす', jpK: '{癒|いや}す', r: 'いやす', lex: '癒す', en: 'heal, soothe', tags: ['heal'], icon: '✚', effect: 'Restores some resolve to both of you.' });
-  W('kaze', { jp: 'かぜ', jpK: '{風|かぜ}', r: 'かぜ', lex: '風', en: 'wind', tags: ['wind'], icon: '🌬', effect: 'Blows away mist and smoke.' });
-  W('nawa', { jp: 'なわ', jpK: '{縄|なわ}', r: 'なわ', lex: '縄', en: 'rope', tags: ['bind'], icon: '➰', effect: 'Holds something in place: stops a charge or a re-tying.' });
-  W('ishi', { jp: 'いし', jpK: '{石|いし}', r: 'いし', lex: '石', en: 'stone', tags: ['anchor', 'stone'], icon: '⬣', effect: 'Stands firm against gusts and floods.' });
-  W('koori', { jp: 'こおり', jpK: '{氷|こおり}', r: 'こおり', lex: '氷', en: 'ice', tags: ['water'], icon: '❄', effect: 'Cools heat (another way to answer it).' });
-  W('tsuchi', { jp: 'つち', jpK: '{土|つち}', r: 'つち', lex: '土', en: 'earth, soil', tags: ['stone'], icon: '⛰', effect: 'Banks against rising water.' });
-  W('honoo', { jp: 'ほのお', jpK: '{炎|ほのお}', r: 'ほのお', lex: '炎', en: 'flame', tags: ['fire', 'warm', 'light'], icon: '🔥', effect: 'Warms against cold; also gives light.' });
-  W('suzu', { jp: 'すず', jpK: '{鈴|すず}', r: 'すず', lex: '鈴', en: 'bell (small)', tags: ['bell'], icon: '🔔', effect: 'A clear sound that breaks a hush.' });
-  W('koe', { jp: 'こえ', jpK: '{声|こえ}', r: 'こえ', lex: '声', en: 'voice', tags: ['voice'], icon: '🗣', effect: 'Speaks up into silence.' });
+  // `effect` is shown on the battle's response card: what the word does, and
+  // which moves it answers (RB.combatLogic.answers lists the same from the tags).
+  W('mamoru', { jp: 'まもる', jpK: '{守|まも}る', r: 'まもる', lex: '守る', en: 'protect', tags: ['ward'], icon: '🛡', effect: 'Raises a ward before one of you: it blocks a Strike aimed at them, or soaks up 2 damage later.' });
+  W('mizu', { jp: 'みず', jpK: '{水|みず}', r: 'みず', lex: '水', en: 'water', tags: ['water'], icon: '💧', effect: 'Cools what is overheating: clears Heat.' });
+  W('hikari', { jp: 'ひかり', jpK: '{光|ひかり}', r: 'ひかり', lex: '光', en: 'light', tags: ['light'], icon: '✺', effect: 'Shows what is hidden: clears mist, and stops a Re-tying or a Mirror.' });
+  W('iyasu', { jp: 'いやす', jpK: '{癒|いや}す', r: 'いやす', lex: '癒す', en: 'heal, soothe', tags: ['heal'], icon: '✚', effect: 'Restores 3 resolve to each of you.' });
+  W('kaze', { jp: 'かぜ', jpK: '{風|かぜ}', r: 'かぜ', lex: '風', en: 'wind', tags: ['wind'], icon: '🌬', effect: 'Blows away mist and smoke: clears mist.' });
+  W('nawa', { jp: 'なわ', jpK: '{縄|なわ}', r: 'なわ', lex: '縄', en: 'rope', tags: ['bind'], icon: '➰', effect: 'Holds something in place: stops Gathering or a Re-tying.' });
+  W('ishi', { jp: 'いし', jpK: '{石|いし}', r: 'いし', lex: '石', en: 'stone', tags: ['anchor', 'stone'], icon: '⬣', effect: 'Stands firm: cancels a Gust or a Flood.' });
+  W('koori', { jp: 'こおり', jpK: '{氷|こおり}', r: 'こおり', lex: '氷', en: 'ice', tags: ['water'], icon: '❄', effect: 'Cools heat (another way to answer it): clears Heat.' });
+  W('tsuchi', { jp: 'つち', jpK: '{土|つち}', r: 'つち', lex: '土', en: 'earth, soil', tags: ['stone'], icon: '⛰', effect: 'Banks against rising water: cancels a Flood.' });
+  W('honoo', { jp: 'ほのお', jpK: '{炎|ほのお}', r: 'ほのお', lex: '炎', en: 'flame', tags: ['fire', 'warm', 'light'], icon: '🔥', effect: 'Warms against cold: cancels a Chill. Also gives light: clears mist, stops a Re-tying or a Mirror.' });
+  W('suzu', { jp: 'すず', jpK: '{鈴|すず}', r: 'すず', lex: '鈴', en: 'bell (small)', tags: ['bell'], icon: '🔔', effect: 'A clear sound that breaks a hush: ends the Hush.' });
+  W('koe', { jp: 'こえ', jpK: '{声|こえ}', r: 'こえ', lex: '声', en: 'voice', tags: ['voice'], icon: '🗣', effect: 'Speaks up into silence: ends the Hush.' });
 
   // Default telegraph lines. $tgt = the one being targeted, $other = the one who isn't.
   // Variants marked neg:true name the one who is NOT targeted (reading the negation matters).
@@ -31832,7 +32501,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     intro: { jp: '{石臼|いしうす} の {上|うえ} で 、 {村|むら} じゅう の {声|こえ} が {渦|うず} を {巻|ま}いて いる 。', en: 'Above the millstone, the voices of the whole village are turning in a slow whirlpool.' },
     settle: { jp: '「 ── コウジ 。 そう 、 コウジ 。 」 {声|こえ} は ひとつ ずつ ほどけて 、 {川|かわ} へ {帰|かえ}って いった 。', en: '"…Kōji. Yes — Kōji." One by one the voices come untied and go home to the river.' },
-    reward: { words: ['mizu'] } };
+    // Heat is answered with みず, learned when the mill's gears turn
+    // (rw.m1_gears; rw.m1_boss makes sure of it before the fight).
+  };
 })(RB.content);
 
 
@@ -32306,6 +32977,9 @@ narr: {歯車|はぐるま} の {真|ま}ん{中|なか} に 、 {軸|じく} �
 !take rw_wheel_pin
 !sfx chest
 narr: {軸|じく} が はまり 、 {歯車|はぐるま} が {重|おも}たげ に {回|まわ}り{出|だ}した 。 {外|そと} で 、 {水車|すいしゃ} の きしむ {音|おと} が {変|か}わる 。 || The pin slots in, and the gears begin to turn, heavily. Outside, the creak of the waterwheel changes.
+narr: {床|ゆか} の {下|した} の {水路|すいろ} に 、 {冷|つめ}たい {水|みず} が {戻|もど}って きた 。 {歯車|はぐるま} の {板|いた} の {字|じ} の {中|なか} に 、 {一|ひと}つ だけ {数字|すうじ} で は ない {字|じ} が ある 。 「 {水|みず} 」 。 || Cold water runs back into the millrace under the floor. Among the characters on the gear plates, one isn't a number: 水, water.
+!word mizu
+narr: 「 みず 」 。 {熱|あつ}く なった もの を {冷|ひ}やす {言葉|ことば} だ 。 さっき {触|さわ}った {石臼|いしうす} の {温|あたた}かさ が 、 {少|すこ}し {気|き} に なる 。 || Mizu — water: a word that cools whatever has grown hot. The warmth of that millstone bothers you a little.
 narr: {梯子|はしご} の {上|うえ} の {扉|とびら} が 、 がたん と {開|ひら}いた 。 || The trapdoor above the ladder bangs open.
 !set rw_gears
 !quest rw_mill 2
@@ -32380,6 +33054,10 @@ narr: {古|ふる}い {箱|はこ} の {中|なか} に 、 {丸|まる}い {石
 narr: {石臼|いしうす} の {上|うえ} に 、 {声|こえ} が {渦|うず} を {巻|ま}いて いる 。 {聞|き}いた こと の ある {声|こえ} 、 {知|し}らない {声|こえ} 、 {名前|なまえ} の ない {呼|よ}び{声|ごえ} 。 || Above the millstone, voices swirl. Voices you know, voices you don't, calls with no names in them.
 echo: …… おかえり 。 …… あした も 。 …… まって 。 || …Welcome back. …Tomorrow too. …Wait.
 narr: この {声|こえ} たち は {怒|おこ}って いる の では ない 。 {行|い}き{場|ば} を なくして いる だけ だ 。 || These voices aren't angry. They've just lost their way home.
+!if word.mizu -> fight
+narr: {石臼|いしうす} が {熱|あつ}く なって いく 。 {床|ゆか} の {下|した} で は 、 {水路|すいろ} の {水|みず} が {鳴|な}って いる 。 {歯車|はぐるま} の {板|いた} に あった {字|じ} を {思|おも}い{出|だ}す 。 「 {水|みず} 」 。 || The millstone is growing hot. Under the floor, the millrace is running. You remember the character on the gear plate: 水, water.
+!word mizu
+:fight
 !battle rw.mill_echo noflee
 !if var._res=0 -> end
 !set rw_echo_done bridge_fixed
@@ -34976,7 +35654,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ].concat(channel),
     foes: [
       { id: 'm1', enemy: 'sg.moth', x: 6, y: 5, patrol: 2, aggro: true },
-      { id: 'm2', enemy: 'sg.moth', x: 21, y: 15, patrol: 2, aggro: true },
+      // (its Gathering is answered by なわ, learned at the bollard: it waits until then)
+      { id: 'm2', enemy: 'sg.moth', x: 21, y: 15, patrol: 2, aggro: true, if: 'word.nawa' },
       { id: 'g1', enemy: 'sg.golem', x: 17, y: 4, patrol: 1, aggro: true },
     ],
     exits: [
@@ -47614,7 +48293,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     foes: [
       { id: 'st1', enemy: 'lf.stamp', x: 10, y: 6, patrol: 1, aggro: true },
-      { id: 'st2', enemy: 'lf.blot', x: 18, y: 9, patrol: 2, aggro: true },
+      // (its Hush is answered by すず or こえ, learned later in the chapter: it waits until then)
+      { id: 'st2', enemy: 'lf.blot', x: 18, y: 9, patrol: 2, aggro: true, if: 'word.suzu|word.koe' },
     ],
     exits: [{ x: 2, y: 1, to: 'lf.records', tx: 13, ty: 3, dir: 'up' }],
     onEnter: [{ scene: 'lf.stacks_enter' }],

@@ -148,6 +148,7 @@ RB.combat = (function () {
       '<div class="cb-side">' +
         '<section class="intent paper" aria-live="polite" aria-label="What it is about to do"></section>' +
         '<section class="cb-dock" aria-label="Respond"><h2 class="cb-dock-h">Respond</h2>' +
+          '<div class="cb-coachbox" aria-live="polite"></div>' +
           '<div class="responses" role="group" aria-label="Responses"></div>' +
           '<div class="clog paper hidden" aria-live="polite"></div></section>' +
       '</div>' +
@@ -155,7 +156,7 @@ RB.combat = (function () {
       '<section class="bars cb-party" aria-label="Your party"></section>';
     RB.ui.root.appendChild(root);
     const q = (x) => root.querySelector(x);
-    const o = { root, foe: q('.cb-foe'), intent: q('.intent'), stage: q('.cb-stage'), bars: q('.bars'), dock: q('.cb-dock'), resp: q('.responses'), log: q('.clog') };
+    const o = { root, foe: q('.cb-foe'), intent: q('.intent'), stage: q('.cb-stage'), bars: q('.bars'), dock: q('.cb-dock'), resp: q('.responses'), log: q('.clog'), coach: q('.cb-coachbox') };
     RB.learnUi.guardTaps(o.resp);
     o.onResize = () => requestAnimationFrame(measure);
     window.addEventListener('resize', o.onResize);
@@ -166,15 +167,58 @@ RB.combat = (function () {
   }
   let showIntentEn = false;
   function enShown() { return RB.game.s.learn.profile === 'F' || showIntentEn; }
+  // A keyword: a button that explains itself (RB.combatHelp) on hover, focus or tap.
+  const kw = (key, cls, inner, sr) => '<button type="button" class="kw ' + cls + '" data-kw="' + key + '" aria-expanded="false" aria-controls="kwcard">' + inner +
+    '<span class="sr">' + esc(sr || ' — what this means') + '</span></button>';
+  // the small "explain" mark on a keyword (shape, not colour alone)
+  const Q = () => '<span class="kw-q" aria-hidden="true">' + I('help') + '</span>';
+  // States in play, shown as keywords on the foe's slip beside its knots
+  // (wards are on the party slip).
+  const STATUS_ICON = { heat: 'flame', shroud: 'cloud', charge: 'hourglass', silence: 'mute', 'ward:pc': 'shield', 'ward:comp': 'shield' };
+  function statusList() {
+    const out = [];
+    if (st.heat) out.push({ key: 'heat', label: 'Heat ' + st.heat });
+    if (st.shroud) out.push({ key: 'shroud', label: 'Shrouded' });
+    if (st.charged) out.push({ key: 'charge', label: 'Gathering' });
+    if (st.silenced) out.push({ key: 'silence', label: 'Hushed' });
+    return out;
+  }
   function intentHtml(compact) {
     const it = st.intent;
     const line = intentLine(it);
-    const states = [st.shroud ? 'shrouded' : '', st.heat ? 'heat ' + st.heat : '', st.charged ? 'charged' : ''].filter(Boolean);
-    let h = '<div class="it-label">' + I(INTENT_ICON[it.kind] || 'strike') + '<span class="k">' + esc(it.label) + '</span>' + states.map((x) => '<span class="st">' + esc(x) + '</span>').join('') + '</div>';
+    const H = RB.combatHelp;
+    const g = H.gist(st, it);
+    const face = I(INTENT_ICON[it.kind] || 'strike') + '<span class="k">' + esc(it.label) + '</span>' + (g ? '<span class="gist">' + esc(g) + '</span>' : '');
+    // (the task slip carries the states as plain text; on screen they are on the foe's slip)
+    const states = compact ? statusList() : [];
+    let h = '<div class="it-label">' + (compact ? '<span class="it-kind">' + face + '</span>' : kw('intent', 'it-kind', face + Q())) +
+      states.map((x) => '<span class="st">' + esc(x.label) + '</span>').join('') + '</div>';
     if (line.jp) h += '<div class="it-jp">' + RB.ui.jhtml(line.jp, { vars: line.vars }) + '</div>';
     if (line.en) h += enShown() ? '<div class="it-en">' + esc(line.en) + '</div>' : (compact ? '' : '<button class="pbtn quiet tr" data-tr title="Show the English (counts as assisted)">' + I('note') + '<span>Translate <span class="aside">(assisted)</span></span></button>');
     if (!compact && RB.game.s.comp === 'nao' && st.nextIntents.length) h += '<div class="it-next">' + I('companion') + '<span>Nao: “After that — ' + esc(st.nextIntents.map((x) => x.label).join(', then ')) + '.”</span></div>';
     return h;
+  }
+  // The text of a keyword's note card, for the encounter on screen.
+  function helpFor(key) {
+    if (!st) return null;
+    const H = RB.combatHelp;
+    const s = RB.game.s;
+    const ws = words();
+    const p = (x) => (x ? '<p>' + x + '</p>' : '');
+    const ans = (x) => (x ? '<p><b>Answer:</b> ' + x + '</p>' : '');
+    if (key === 'intent') {
+      const it = st.intent;
+      const i = H.intentInfo(st, it, ws);
+      return { icon: INTENT_ICON[it.kind] || 'strike', title: esc(i.title), body: p(i.what) + ans(i.answer) };
+    }
+    if (key === 'harmony') {
+      if (!st.compId) return null;
+      const h = H.harmonyInfo(st);
+      return { icon: 'join', title: h.title, body: '<p class="kw-now">' + h.now + '</p><p><b>How it fills:</b> ' + h.fills + '</p><p><b>When it is full:</b> ' + h.offers + '</p><p>' + h.more + '</p>' };
+    }
+    const i = H.statusInfo(st, key, ws, { pc: esc(s.player.name), comp: esc(compName()) });
+    if (!i) return null;
+    return { icon: STATUS_ICON[key], title: i.title, body: p(i.what) + ans(i.answer) };
   }
   function knotsHtml() {
     let h = '';
@@ -184,37 +228,103 @@ RB.combat = (function () {
   function renderUi() {
     const s = RB.game.s;
     const it = st.intent;
-    ui.foe.innerHTML = '<span class="foe-n">' + RB.ui.jhtml(enemy.name.jp) + ' <span class="en">' + esc(enemy.name.en) + '</span></span>' + knotsHtml();
+    const states = statusList();
+    ui.foe.innerHTML = '<span class="foe-n">' + RB.ui.jhtml(enemy.name.jp) + ' <span class="en">' + esc(enemy.name.en) + '</span></span>' +
+      '<span class="foe-k' + (states.length ? ' has-st' : '') + '">' + knotsHtml() + (states.length ? '<span class="it-states" role="group" aria-label="Its state">' +
+        states.map((x) => kw(x.key, 'st', '<span class="pill">' + I(STATUS_ICON[x.key]) + esc(x.label) + '</span>')).join('') + '</span>' : '') + '</span>';
     ui.intent.innerHTML = intentHtml(false);
     const tr = ui.intent.querySelector('[data-tr]');
     if (tr) tr.onclick = () => { showIntentEn = true; st.assistedRound = true; renderUi(); };
-    // the party: resolve (numbers and bar), wards, harmony; the telegraph's
-    // target is marked once its meaning is on screen (never before)
+    // the party: resolve (numbers and bar) and wards; Harmony is its own band
+    // above them (not a third resolve bar). The telegraph's target is marked
+    // once its meaning is on screen (never before).
     const aimed = enShown() && AIMED[it.kind] ? (it.target === 'both' ? ['pc', 'comp'] : [it.target]) : [];
     const member = (who, name, v, max, ward) => '<div class="pm' + (aimed.indexOf(who) >= 0 ? ' aimed' : '') + '">' +
       '<div class="pm-h"><span class="pm-n">' + esc(name) + '</span>' +
-      (ward ? '<span class="pm-w" title="Wards">' + I('shield') + '<span class="sr">wards </span>' + ward + '</span>' : '') +
       (aimed.indexOf(who) >= 0 ? '<span class="aimtag">' + I('aim') + 'its aim</span>' : '') +
-      '<span class="pm-v">' + v + ' / ' + max + '</span></div>' +
-      '<div class="bar" role="meter" aria-label="' + esc(name) + ' resolve" aria-valuemin="0" aria-valuemax="' + max + '" aria-valuenow="' + v + '"><i style="width:' + Math.round((100 * v) / max) + '%"></i></div></div>';
-    ui.bars.innerHTML = member('pc', s.player.name, st.pc, st.max, st.ward.pc) +
+      (ward ? kw('ward:' + who, 'pm-w', '<span class="pill">' + I('shield') + '<span class="wl">Ward </span>' + ward + '</span>', ' in front of ' + name + ' — what this means') : '') + '</div>' +
+      '<div class="pm-r"><div class="bar" role="meter" aria-label="' + esc(name) + ' resolve" aria-valuemin="0" aria-valuemax="' + max + '" aria-valuenow="' + v + '"><i style="width:' + Math.round((100 * v) / max) + '%"></i></div>' +
+      '<span class="pm-v"><span class="sr">Resolve </span>' + v + ' / ' + max + '</span></div></div>';
+    ui.bars.innerHTML = (s.comp && st.compId ? harmonyHtml() : '') + '<div class="pm-list">' +
+      member('pc', s.player.name, st.pc, st.max, st.ward.pc) +
       (s.comp ? member('comp', compName(), st.comp, st.max, st.ward.comp) : '') +
-      (s.comp ? '<div class="pm harmony"><div class="pm-h"><span class="pm-n">Harmony</span><span class="pm-v">' + st.harmony + ' / ' + st.harmonyMax + '</span></div><div class="bar h" role="meter" aria-label="Harmony" aria-valuemin="0" aria-valuemax="' + st.harmonyMax + '" aria-valuenow="' + st.harmony + '"><i style="width:' + Math.round((100 * st.harmony) / st.harmonyMax) + '%"></i></div></div>' : '') +
-      '<div class="pm-note">' + (st.assist ? 'Assisted: mistakes cost nothing' : 'Mistakes cost at most 1') + '</div>';
+      '<div class="pm-note">' + (st.assist ? 'Assisted: mistakes cost nothing' : 'Mistakes cost at most 1') + '</div></div>';
+    ui.root.classList.toggle('has-harmony', !!(s.comp && st.compId));
+    RB.combatHelp.refresh(ui.root);
     requestAnimationFrame(measure);
+  }
+  // Harmony: a paper band tied to the top of the party slip, with pips (not a
+  // bar), what it is building towards (this companion's technique), and its
+  // own explanation on hover, focus or tap.
+  function harmonyHtml() {
+    const T = RB.combatHelp.techOf(st);
+    const full = st.harmony >= st.harmonyMax;
+    let pips = '';
+    for (let i = 0; i < st.harmonyMax; i++) pips += '<i class="hp' + (i < st.harmony ? ' on' : '') + '"></i>';
+    return kw('harmony', 'cb-harmony' + (full ? ' full' : ''),
+      '<span class="hm-a">' + I('join') + '<span class="hm-n">Harmony</span>' +
+      '<span class="hm-pips" aria-hidden="true">' + pips + '</span><span class="hm-v">' + st.harmony + '<span class="sr"> of </span><span aria-hidden="true">/</span>' + st.harmonyMax + '</span></span>' +
+      '<span class="hm-t">' + (full ? '<b>Ready:</b> ' + esc(T.name) + ' is in your responses' : esc(compName()) + '\'s technique at ' + st.harmonyMax + ': ' + esc(T.name)) + '</span>' + Q(),
+      ' — what Harmony is and how it fills');
   }
   function words() {
     const s = RB.game.s;
     return s.words.map((id) => RB.content.words[id]).filter(Boolean);
   }
+  // Words used in battle for the first time are marked "New" for that whole
+  // encounter, with what they answer; recorded (s.tips) when it ends.
+  let newWords = new Set(), shownWords = new Set();
   function cardHtml(c, i, hi) {
     const tgt = c.target ? (c.target === 'comp' ? compName() : 'you') : '';
     const desc = c.disabled || RB.script.enVars(tgt ? String(c.desc).replace(/\s*\([^)]*\)\s*$/, '') : c.desc);
-    return '<button class="resp rcard" data-i="' + i + '"' + (c.disabled ? ' disabled' : '') + '>' +
+    const fresh = c.kind === 'word' && newWords.has(c.word.id);
+    const ans = fresh ? L().answers(c.word).map((k) => L().INTENTS[k].label) : [];
+    const ready = c.kind === 'tech';
+    return '<button class="resp rcard' + (fresh ? ' fresh' : '') + (ready ? ' tech' : '') + '" data-i="' + i + '"' + (c.disabled ? ' disabled' : '') + '>' +
       '<span class="ic">' + I(cardIcon(c)) + '</span>' +
-      '<span class="rc-w"><span class="rc-jp">' + RB.ui.jhtml(hi && c.word && c.word.jpK ? c.word.jpK : c.jp) + '</span><span class="rc-en">' + esc(c.en) + '</span></span>' +
+      '<span class="rc-w"><span class="rc-jp">' + RB.ui.jhtml(hi && c.word && c.word.jpK ? c.word.jpK : c.jp) + '</span><span class="rc-en">' + esc(c.en) + '</span>' +
+      (fresh ? '<span class="rc-new">New</span>' : '') + (ready ? '<span class="rc-new">With ' + esc(compName()) + '</span>' : '') + '</span>' +
       (tgt ? '<span class="rc-tgt">on ' + esc(tgt) + '</span>' : '') +
-      '<span class="rc-d">' + (c.disabled ? I('warn') : '') + esc(desc) + '</span></button>';
+      '<span class="rc-d">' + (c.disabled ? I('warn') : '') + esc(desc) +
+      (ans.length ? '<span class="rc-ans"><b>Answers:</b> ' + esc(ans.join(', ')) + (c.word.tags.indexOf('ward') >= 0 ? ' (in front of the one it aims at)' : '') + '</span>' : '') + '</span></button>';
+  }
+  // One short note per exchange, the first time something needs explaining:
+  // a kind of move never seen before, then a full Harmony, then Harmony itself.
+  function coachFor() {
+    const s = RB.game.s;
+    const H = RB.combatHelp;
+    const it = st.intent;
+    const cn = esc(compName());
+    if (!H.seen(s, 'intent:' + it.kind)) {
+      H.mark(s, 'intent:' + it.kind);
+      const i = H.intentInfo(st, it, words());
+      return { icon: INTENT_ICON[it.kind] || 'strike', title: 'New move: ' + esc(it.label), body: i.what + (i.answer ? ' ' + i.answer : ''), more: 'intent' };
+    }
+    if (st.compId && st.harmony >= st.harmonyMax && !H.seen(s, 'harmonyFull')) {
+      H.mark(s, 'harmonyFull'); H.mark(s, 'harmony');
+      const T = H.techOf(st);
+      return { icon: 'join', title: esc(T.name) + ' is ready', body: 'Harmony is full, so ' + cn + '\'s technique is now among your responses. ' + esc(T.effect) + ' It also cancels its move, and uses up Harmony.', more: 'harmony' };
+    }
+    if (st.compId && !H.seen(s, 'harmony')) {
+      H.mark(s, 'harmony');
+      const T = H.techOf(st);
+      return { icon: 'join', title: 'Harmony', body: cn + ' fights beside you. Each time you answer right first time with a response that cancels its move — or with Unravel — Harmony fills by 1. At ' + st.harmonyMax + ', ' + cn + '\'s technique, <b>' + esc(T.name) + '</b>, joins your responses.', more: 'harmony' };
+    }
+    return null;
+  }
+  function showCoach(c) {
+    if (!c) { ui.coach.innerHTML = ''; return; }
+    ui.coach.innerHTML = '<div class="cb-coach paper" role="note">' +
+      '<div class="cc-h">' + I(c.icon) + '<b>' + c.title + '</b></div><p>' + c.body + '</p>' +
+      '<div class="cc-f">' + kw(c.more, 'cc-more pbtn quiet', '<span>More</span>', ' about this') +
+      '<button type="button" class="pbtn cc-ok" data-coach-ok>' + I('done') + '<span>Got it</span></button></div></div>';
+    ui.coach.querySelector('[data-coach-ok]').onclick = () => {
+      ui.coach.innerHTML = '';
+      RB.combatHelp.hide();
+      const f = ui.resp.querySelector('.rcard:not([disabled])');
+      if (f) f.focus({ preventScroll: true });
+      requestAnimationFrame(measure);
+    };
   }
   function pickCard() {
     return new Promise((resolve) => {
@@ -227,19 +337,26 @@ RB.combat = (function () {
         if (c.kind === 'unravel' && st.silenced && (known.has('bell') || known.has('voice'))) c.disabled = 'The hush swallows words: ring a bell or raise a voice first.';
       }
       const hi = s.learn.profile === 'I' || s.learn.profile === 'A';
+      for (const c of cards) if (c.kind === 'word') shownWords.add(c.word.id);
       ui.resp.innerHTML = '<div class="rcards">' + cards.map((c, i) => cardHtml(c, i, hi)).join('') + '</div>' +
         (st.noFlee ? '' : '<button class="cbtn flee" data-flee>' + I('back') + '<span>Step back from this encounter</span></button>');
       ui.log.classList.add('hidden');
-      const layer = { el: ui.resp, name: 'cards', parent: ui.dock };
-      const done = (v) => { RB.ui.popLayer(layer); ui.dock.insertBefore(ui.resp, ui.log); resolve(v); };
+      showCoach(coachFor());
+      // Keyboard focus starts on the responses but may also reach the
+      // keywords (telegraph, states, Harmony, wards) and the note above them.
+      const layer = { el: ui.resp, name: 'cards', parent: ui.dock, scope: ui.root };
+      const done = (v) => { RB.combatHelp.hide(); showCoach(null); RB.ui.popLayer(layer); ui.dock.insertBefore(ui.resp, ui.log); resolve(v); };
       ui.resp.onclick = (e) => {
         const b = e.target.closest('[data-i]');
         if (b && !b.disabled) { done(cards[+b.getAttribute('data-i')]); return; }
         if (e.target.closest('[data-flee]')) done({ kind: 'flee' });
       };
+      // Back closes an open keyword note first; it never leaves the encounter.
+      layer.onAction = (a) => { if (a === 'cancel' && RB.combatHelp.isOpen()) { RB.combatHelp.hide(); return true; } return false; };
       layer.onCancel = () => {};
       RB.ui.pushLayer(layer);
       ui.dock.insertBefore(ui.resp, ui.log);
+      requestAnimationFrame(measure);
     });
   }
   function stepFor(card) {
@@ -247,7 +364,7 @@ RB.combat = (function () {
     const it = st.intent;
     if (card.kind === 'unravel' || card.kind === 'tech') {
       const step = RB.tasks.next(enemy.pool || {}, {});
-      step.title = card.kind === 'tech' ? 'Coordinated technique — weave it together' : 'Unravel: restore one of its tangled words';
+      step.title = card.kind === 'tech' ? 'Coordinated technique with ' + compName() + ': ' + card.en : 'Unravel: restore one of its tangled words';
       return step;
     }
     if (card.kind === 'answer' || card.kind === 'truth') {
@@ -289,20 +406,30 @@ RB.combat = (function () {
       switch (f.t) {
         case 'unravel': addFx('untie'); RB.audio && RB.audio.sfx('knot_untie'); msg = f.n > 1 ? 'Two knots come loose.' : 'A knot comes loose.'; break;
         case 'ward': addFx('glyph', partyAt(f.target === 'comp' ? 28 : 8, 12)); RB.audio && RB.audio.sfx('ward'); msg = f.block ? 'The ward catches the blow meant for ' + nm(f.target) + '.' : 'A ward rises before ' + nm(f.target) + '.'; break;
-        case 'water': addFx('water'); RB.audio && RB.audio.sfx('water'); msg = 'Water hisses over the heat.'; break;
-        case 'light': addFx('light'); RB.audio && RB.audio.sfx('light'); msg = 'Light burns the mist away.'; break;
+        case 'water': addFx('water'); RB.audio && RB.audio.sfx('water'); msg = 'Water hisses over the heat — it cools. Heat cleared.'; break;
+        case 'light': addFx('light'); RB.audio && RB.audio.sfx('light'); msg = 'Light burns the mist away — its knots show again.'; break;
         case 'bind': RB.audio && RB.audio.sfx('ward'); msg = 'The rope holds it fast; the gathered force spills away.'; break;
         case 'heal': addFx('heal'); RB.audio && RB.audio.sfx('heal'); msg = 'You both breathe easier.'; break;
         case 'warm': RB.audio && RB.audio.sfx('light'); msg = 'Warmth spreads through your fingers.'; break;
         case 'bell': RB.audio && RB.audio.sfx('bell'); msg = 'A clear note breaks the hush.'; break;
-        case 'hit': shake = 200; addFx('hit', partyAt(f.who === 'comp' ? 28 : 8, 16)); RB.audio && RB.audio.sfx('party_hit'); msg = nm(f.who) + ' is struck (−' + f.n + ').'; break;
+        case 'hit': {
+          shake = 200; addFx('hit', partyAt(f.who === 'comp' ? 28 : 8, 16)); RB.audio && RB.audio.sfx('party_hit');
+          const hb = L().heatBonus(st);
+          msg = nm(f.who) + ' is struck (−' + f.n + (hb ? ', with +' + hb + ' from Heat' : '') + ').'; break;
+        }
         case 'block': RB.audio && RB.audio.sfx('ward'); msg = 'The ward absorbs ' + f.n + '.'; break;
-        case 'heat': RB.audio && RB.audio.sfx('enemy_intent'); msg = 'The heat builds (' + f.n + ').'; break;
+        case 'heat': RB.audio && RB.audio.sfx('enemy_intent'); msg = 'It overheats: Heat ' + f.n + ' — its blows now hit +' + (f.bonus != null ? f.bonus : f.n) + ' harder until it is cooled.'; break;
         case 'shroud': RB.audio && RB.audio.sfx('wind'); msg = 'Mist swallows its knots.'; break;
-        case 'charge': RB.audio && RB.audio.sfx('enemy_intent'); msg = 'It gathers itself. The next blow will be heavy.'; break;
+        case 'charge': RB.audio && RB.audio.sfx('enemy_intent'); msg = 'It gathers itself: its next blow will hit +2 harder.'; break;
+        case 'harmony': {
+          const full = f.n >= f.max;
+          if (full) RB.audio && RB.audio.sfx('harmony_ready');
+          msg = full ? 'In step with ' + compName() + ': Harmony is full — ' + RB.combatHelp.techOf(st).name + ' is ready.' : 'In step with ' + compName() + ': Harmony ' + f.n + ' of ' + f.max + '.';
+          break;
+        }
         case 'mend': RB.audio && RB.audio.sfx('enemy_intent'); msg = 'It ties one knot back up.'; break;
         case 'stripWard': RB.audio && RB.audio.sfx('wind'); msg = 'The gust tears your wards away.'; break;
-        case 'silence': RB.audio && RB.audio.sfx('enemy_intent'); msg = 'Sound drains out of the air.'; break;
+        case 'silence': RB.audio && RB.audio.sfx('enemy_intent'); msg = 'Sound drains out of the air: you are Hushed.'; break;
         case 'countered': RB.audio && RB.audio.sfx('reveal'); msg = 'You answered it — its move comes to nothing.'; break;
         case 'cost': msg = f.en; break;
         case 'comp': case 'tech': case 'settle': case 'reveal': msg = f.en; RB.audio && RB.audio.sfx(f.t === 'tech' ? 'technique' : 'reveal'); break;
@@ -329,6 +456,10 @@ RB.combat = (function () {
     st = L().init(enemy, s, opts);
     st.noFlee = !!opts.noFlee || !!enemy.boss;
     showIntentEn = false;
+    const H = RB.combatHelp;
+    newWords = new Set(s.words.filter((w) => !H.seen(s, 'word:' + w)));
+    shownWords = new Set();
+    H.attach(helpFor);
     ui = buildUi();
     measure();
     await RB.ui.fade(false, 200);
@@ -360,7 +491,9 @@ RB.combat = (function () {
         });
         if (res.cancelled) continue;
         if (st.assistedRound) res.assisted = true;
+        const hb = st.harmony;
         const { fx, countered } = L().playerAct(st, card, res, enemy);
+        if (st.compId && st.harmony > hb) fx.push({ t: 'harmony', n: st.harmony, max: st.harmonyMax });
         await playFx(fx);
         if (st.knots <= 0) { outcome = 'win'; break; }
         const efx = L().enemyAct(st, countered);
@@ -386,6 +519,8 @@ RB.combat = (function () {
       // Resolve recovers after every encounter: no attrition grinding.
       s.resolve.pc = s.resolve.max;
       s.resolve.comp = s.resolve.max;
+      for (const w of shownWords) RB.combatHelp.mark(s, 'word:' + w);
+      RB.combatHelp.detach();
       if (ui) { window.removeEventListener('resize', ui.onResize); if (ui.ro) ui.ro.disconnect(); ui.root.remove(); }
       ui = null; stageCss = null; lastLay = null;
       await RB.ui.fade(true, 200);
@@ -399,5 +534,6 @@ RB.combat = (function () {
     }
     return outcome;
   }
-  return { start, state: () => st };
+  // refresh(): redraw the overlay from the current state (tests, tools)
+  return { start, state: () => st, refresh: () => { if (st && ui) renderUi(); } };
 })();

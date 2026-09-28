@@ -6,18 +6,20 @@ var RB = (globalThis.RB = globalThis.RB || {});
 (function (C) {
   'use strict';
   const W = (id, d) => (C.words[id] = Object.assign({ id }, d));
-  W('mamoru', { jp: 'まもる', jpK: '{守|まも}る', r: 'まもる', lex: '守る', en: 'protect', tags: ['ward'], icon: '🛡', effect: 'Raises a ward before one of you.' });
-  W('mizu', { jp: 'みず', jpK: '{水|みず}', r: 'みず', lex: '水', en: 'water', tags: ['water'], icon: '💧', effect: 'Cools what is overheating.' });
-  W('hikari', { jp: 'ひかり', jpK: '{光|ひかり}', r: 'ひかり', lex: '光', en: 'light', tags: ['light'], icon: '✺', effect: 'Shows what is hidden; burns off mist.' });
-  W('iyasu', { jp: 'いやす', jpK: '{癒|いや}す', r: 'いやす', lex: '癒す', en: 'heal, soothe', tags: ['heal'], icon: '✚', effect: 'Restores some resolve to both of you.' });
-  W('kaze', { jp: 'かぜ', jpK: '{風|かぜ}', r: 'かぜ', lex: '風', en: 'wind', tags: ['wind'], icon: '🌬', effect: 'Blows away mist and smoke.' });
-  W('nawa', { jp: 'なわ', jpK: '{縄|なわ}', r: 'なわ', lex: '縄', en: 'rope', tags: ['bind'], icon: '➰', effect: 'Holds something in place: stops a charge or a re-tying.' });
-  W('ishi', { jp: 'いし', jpK: '{石|いし}', r: 'いし', lex: '石', en: 'stone', tags: ['anchor', 'stone'], icon: '⬣', effect: 'Stands firm against gusts and floods.' });
-  W('koori', { jp: 'こおり', jpK: '{氷|こおり}', r: 'こおり', lex: '氷', en: 'ice', tags: ['water'], icon: '❄', effect: 'Cools heat (another way to answer it).' });
-  W('tsuchi', { jp: 'つち', jpK: '{土|つち}', r: 'つち', lex: '土', en: 'earth, soil', tags: ['stone'], icon: '⛰', effect: 'Banks against rising water.' });
-  W('honoo', { jp: 'ほのお', jpK: '{炎|ほのお}', r: 'ほのお', lex: '炎', en: 'flame', tags: ['fire', 'warm', 'light'], icon: '🔥', effect: 'Warms against cold; also gives light.' });
-  W('suzu', { jp: 'すず', jpK: '{鈴|すず}', r: 'すず', lex: '鈴', en: 'bell (small)', tags: ['bell'], icon: '🔔', effect: 'A clear sound that breaks a hush.' });
-  W('koe', { jp: 'こえ', jpK: '{声|こえ}', r: 'こえ', lex: '声', en: 'voice', tags: ['voice'], icon: '🗣', effect: 'Speaks up into silence.' });
+  // `effect` is shown on the battle's response card: what the word does, and
+  // which moves it answers (RB.combatLogic.answers lists the same from the tags).
+  W('mamoru', { jp: 'まもる', jpK: '{守|まも}る', r: 'まもる', lex: '守る', en: 'protect', tags: ['ward'], icon: '🛡', effect: 'Raises a ward before one of you: it blocks a Strike aimed at them, or soaks up 2 damage later.' });
+  W('mizu', { jp: 'みず', jpK: '{水|みず}', r: 'みず', lex: '水', en: 'water', tags: ['water'], icon: '💧', effect: 'Cools what is overheating: clears Heat.' });
+  W('hikari', { jp: 'ひかり', jpK: '{光|ひかり}', r: 'ひかり', lex: '光', en: 'light', tags: ['light'], icon: '✺', effect: 'Shows what is hidden: clears mist, and stops a Re-tying or a Mirror.' });
+  W('iyasu', { jp: 'いやす', jpK: '{癒|いや}す', r: 'いやす', lex: '癒す', en: 'heal, soothe', tags: ['heal'], icon: '✚', effect: 'Restores 3 resolve to each of you.' });
+  W('kaze', { jp: 'かぜ', jpK: '{風|かぜ}', r: 'かぜ', lex: '風', en: 'wind', tags: ['wind'], icon: '🌬', effect: 'Blows away mist and smoke: clears mist.' });
+  W('nawa', { jp: 'なわ', jpK: '{縄|なわ}', r: 'なわ', lex: '縄', en: 'rope', tags: ['bind'], icon: '➰', effect: 'Holds something in place: stops Gathering or a Re-tying.' });
+  W('ishi', { jp: 'いし', jpK: '{石|いし}', r: 'いし', lex: '石', en: 'stone', tags: ['anchor', 'stone'], icon: '⬣', effect: 'Stands firm: cancels a Gust or a Flood.' });
+  W('koori', { jp: 'こおり', jpK: '{氷|こおり}', r: 'こおり', lex: '氷', en: 'ice', tags: ['water'], icon: '❄', effect: 'Cools heat (another way to answer it): clears Heat.' });
+  W('tsuchi', { jp: 'つち', jpK: '{土|つち}', r: 'つち', lex: '土', en: 'earth, soil', tags: ['stone'], icon: '⛰', effect: 'Banks against rising water: cancels a Flood.' });
+  W('honoo', { jp: 'ほのお', jpK: '{炎|ほのお}', r: 'ほのお', lex: '炎', en: 'flame', tags: ['fire', 'warm', 'light'], icon: '🔥', effect: 'Warms against cold: cancels a Chill. Also gives light: clears mist, stops a Re-tying or a Mirror.' });
+  W('suzu', { jp: 'すず', jpK: '{鈴|すず}', r: 'すず', lex: '鈴', en: 'bell (small)', tags: ['bell'], icon: '🔔', effect: 'A clear sound that breaks a hush: ends the Hush.' });
+  W('koe', { jp: 'こえ', jpK: '{声|こえ}', r: 'こえ', lex: '声', en: 'voice', tags: ['voice'], icon: '🗣', effect: 'Speaks up into silence: ends the Hush.' });
 
   // Default telegraph lines. $tgt = the one being targeted, $other = the one who isn't.
   // Variants marked neg:true name the one who is NOT targeted (reading the negation matters).
