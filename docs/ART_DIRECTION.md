@@ -524,3 +524,301 @@ composition drawn by the test (backdrop, creature, the player at about 16%
 of the stage width on the ground line, the companion 70 px to the right and
 8 px lower, both at the scene's scale) — a layout suggestion for wiring the
 battle screen, not a capture of it.
+
+## 11. Battle presentation: responses, enemy moves, reactions, states
+
+(2026-09-28, brief sections 7–9.) The rules decide; the screen stages.
+`RB.combatLogic` (src/engine/95_combat.js) still resolves a whole exchange
+at once and returns its fx events. Nothing in the presentation recomputes,
+rerolls or applies a rule.
+
+The overlay and the scene show a **displayed state**: a copy of the state
+from before the exchange. It steps forward by exactly one fx event at each
+**beat**, so each bar, knot, ward and state mark changes once, when its
+result is shown. Every sequence ends by reconciling the display with the
+rules. With no sequence running, the screen shows the rules' state
+directly.
+
+### Files and interfaces
+
+- `src/ui/82_battle_seq.js` — `RB.battleSeq`, the sequencer.
+  - `choreo.player(card, fx, ctx)`, `choreo.enemy(intent, fx, ctx)`,
+    `choreo.finish(end, ctx)` and `choreo.revive(ctx)` turn authoritative
+    fx into timed cues: `pose`, `foe`, `fx`, `strip`, `num`, `beat`, `log`,
+    `sfx` and `final`.
+  - `run(kind, cues, meta)` returns a Promise. Only one sequence runs at a
+    time.
+  - `tick(t)` is driven by the frame loop, with dt clamped to 100 ms.
+  - `hurry()` plays the rest ×4.
+  - `settle(why)` applies every remaining beat in order, at once, and drops
+    the transient visuals.
+  - `attach(port)` / `detach()` wrap one encounter.
+  - `stats()` and `trace()` report counters and the last 40 sequences.
+  - `setTimeScale(k)` is for captures only. `T` holds the tuning.
+- `src/ui/83_battle_stage.js` — `RB.battleStage`, the stage.
+  - `layout(Sr, w, h)` works out the arrangement.
+  - `draw(c, w, h, frame)` draws the creature, knots, states, party,
+    effects, numbers and the paper strip.
+  - `anchor(id, part)` resolves the ids `pc`, `comp`, `party`, `foe` and
+    `knot:i` with the parts `hand`, `head`, `chest`, `feet`, `core`, `top`
+    and `base`. Anchors are resolved every frame, so a resize keeps effects
+    attached. A second creature would be `foe:1`; nothing in the
+    choreography assumes one creature beyond this id.
+  - `pose`, `foe`, `effect`, `number`, `strip`, `clearTransient`,
+    `finalFoe` and `stats` complete it.
+  - It holds a small **fallback** for `RB.battlers` (see below).
+- `src/ui/84_battle_fx.js` — `RB.battleFx`. Pure pixel drawing:
+  - `fx.*` holds about 40 transient effects and `status.*` the persistent
+    marks.
+  - `digits()` draws 3×5 pixel numbers and `sealMark()` a small seal.
+  - Everything is deterministic (no `Math.random`) and bounded: at most 24
+    effects and 8 numbers alive at once.
+- `src/ui/78_enemy_art.js` — per-creature motion styles.
+  - `STYLE`/`MOVES` define them; a definition may also carry `motion`.
+  - `motion(id, pose, t, still)` returns offsets.
+  - `drawPosed(c, id, t, o, x, y, s, still, pose)` moves, leans, squashes
+    or ripples the cached frame in 4-row bands, with whole-pixel offsets
+    and no smoothing.
+  - `extent()` now also returns `left` and `right`.
+- `src/ui/80_combat.js` wires it together.
+  - Phases: `intro`, `choose`, `challenge`, `player`, `enemy`, `revive`,
+    `finish`, `outro`, `idle`.
+  - The displayed state is read with `RB.combat.shown()`; `applyBeat()`
+    applies one fx event to it.
+  - It keeps the exchange log and recap and the calm clock.
+  - Debug and test hooks: `RB.combat.phase()`, `shown()`, `debug()`.
+
+### Timing (presentation ms at normal speed; `RB.battleSeq.T`)
+
+| Your response | ms |
+|---|---|
+| anticipation pose | 0–170 |
+| gesture (`act`) | 170–570 |
+| paper strip appears | 120 |
+| …travels from the hand to the target and unrolls | 320 / 200 |
+| …the ink writes the word (fully written at ≈540) | 120–420 after it appears |
+| …fades, gone before the response ends | 850–1000 after it appears |
+| first result beat (effect on the target) | 560 |
+| further result beats | every 150 |
+| Harmony beat | ≥ 780 |
+| recovery pose | 900–1140 |
+| **response ends** | **1140** (a slip of the brush adds 280 at the start) |
+
+| Its move | ms |
+|---|---|
+| preparation | 0–320 |
+| execution | 320–700 (sweep 320–780) |
+| contact / result beat | 560 (+110 after a ward's intercept, +120 for the second target) |
+| creature's recovery | from ≈700 |
+| **ends** | **≈ contact + 440 ≈ 1000** |
+| Waiting | 700 |
+| a move that fizzles | ≈840 |
+| Mio's draught afterwards | +520 |
+
+The finishing response adds about 1 s. The creature settles (it rises and
+fades to 45 %), light motes rise, and you both ease; then the last line
+opens. A revive takes about 840 ms.
+
+Measured wall time (trace durations, 1280×800, headless Chromium):
+- a response: 1138 ms;
+- a Shroud: 1063 ms;
+- a Strike followed by Mio's draught: 1582 ms;
+- Waiting followed by the draught: 932 ms.
+
+Speed and hurrying:
+- Text speed Fast runs everything ×1.4, and Instant ×2.
+- Z, Enter or Escape (by the player's bindings), or a fresh click on the
+  battle, hurries the current sequence ×4.
+- That press is used up, so it never also advances the line that follows.
+
+### Responses (from the real card list)
+
+| Response | Who acts, gesture | The word on paper goes to | Effect / reactions at the beat |
+|---|---|---|---|
+| ほどく Unravel | you, *direct* | the creature | a paper thread arcs to the knot being freed; the knot opens (ring, flecks); strands peel off; it shivers (*release*) |
+| 守る on you / on your companion | you, *ward* | that ally | a brush arc sweeps in front of them and seal tags stand up (one tag per ward point); a ward that blocks the telegraphed Strike stays as one raised seal until the blow meets it |
+| 癒す heal | you, *restore* | the party | paper motes rise round both, a soft ring pulses, +n shows the real amount |
+| 水 / 氷 water | you, *flow* | the creature | a compact wave lands in a splash, steam rises where there was Heat, the flame pips go, it recoils a little |
+| 光 light | you, *raise* | the creature | warm light gathers in the hand, then a revealing flash and rays (no impact); the mist parts |
+| 風 wind | you, *flow* | the creature | wind strokes through the mist; the mist parts |
+| 縄 rope | you, *trace* | the creature | a loop is thrown round it and cinched; held force scatters |
+| 石 / 土 stone | you, *ward* | the party | a stone seal settles at your feet (a Gust or Flood then fizzles) |
+| 炎 flame | you, *raise* | the creature if it cleared mist, else the party | flash as light; warmth round the party |
+| 鈴 / 声 bell, voice | you, *raise* | the party | clear rings spread; the Hush mark breaks |
+| こたえる Answer | you, *book* | the creature | a folded note drifts to it; it eases (*release*) |
+| みぬく See through | you, *trace* | the creature | a pale lens forms and cracks across; it recoils |
+| あわせ technique | **both**: you *direct* + Nao *direct* / Mio *restore* / Ren *ward* / Suzu *flow* | the creature | a thread of light joins your hands, threads run to the freed knots. Mio: motes and full resolve, states washed away. Ren: seals before both (3 points). Suzu: its move fizzles |
+
+A word that changes nothing (water with no Heat) still plays its gesture
+and word. It lands with no state change, and the log says what was woven.
+
+Companions act only when the rules say so:
+- a technique;
+- Nao's opening (a second thread);
+- Ren's lamp interrupting a Gathering;
+- Suzu's flourish against a promise, or her misdirect;
+- Mio's draught at the end of the exchange.
+
+### Enemy moves (families; the creature's own anatomy)
+
+| Intent | Family | Execution | On the actual target(s) |
+|---|---|---|---|
+| Strike, False promise, Mirror, Chill | strike | lunges and leans toward its **one** target. A tapered stroke in its own colour leaves its edge; False promise and Mirror send a glinting pane, Chill a frost-blue stroke with frost sparks | impact star, recoil, −n; the bar changes at the same beat |
+| Sweep, Flood | sweep | a wider swing; **one** stroke passes over each affected ally in turn (Flood in water blue with foam) | you, then your companion 120 ms later |
+| Gust | sweep | wind strokes rake across the party | every seal tag is torn off and blown away, then the blow on you |
+| Heat | cast | a glow gathers; embers burst | flame pips appear (one per level) |
+| Gathering | cast | motes spiral into its core | motes circle it on an orbit |
+| Shroud | cast | mist rolls down off it | a mist bank lies over its knots |
+| Re-tying | cast | a thread runs to a loose knot | that knot pulls tight (vermilion ring) |
+| Hush | cast | a pale wave rolls onto you | the mute mark settles over the party |
+| Plea | cast | a paper note drifts to you | it fades, unanswered |
+| Waiting | rest | a slow breath | "It hangs back, waiting." |
+| answered (countered) | balk | it winds up, then the move falls apart | puffs of its ink break up. Against a raised 守る the blow is thrown and meets the seal (you brace) |
+
+The motion styles live in `78_enemy_art.js`:
+- *flutter* — moths, the crane, the letter: wings raised, a fast beat, a
+  darting reach;
+- *drift* — wisps, veils: pulls in, then darts out;
+- *sway* — lanterns: tilts back and swings;
+- *pulse* — echoes, the Hush: contracts and swells;
+- *ripple* — blots: shrinks, surges, splashes;
+- *lurch* — golems, the kiln, the keeper: rocks back and slams;
+- *stamp* — clerks: rises and brings the seal down;
+- *swing* — bells;
+- *pounce* — foxes: crouches and leaps;
+- *scuttle* — crabs: a sideways shuffle and a snap.
+
+Each style has distinct *prep*, *exec*, *cast*, *recoil*, *release*,
+*balk*, *settle* and *rest* poses. The ground shadow follows a lunge
+sideways only. Positions return exactly, with no drift.
+
+### Reactions (what the rules can produce)
+
+| Outcome | On screen |
+|---|---|
+| **damage** (`hit`) | impact star, *hit* pose (420 ms), −n above the head, bar at the beat |
+| **partly absorbed** (`block` then `hit`) | the seal tag in front flashes and a spent tag flutters off, *brace*, the absorbed amount with a seal mark; 110 ms later a smaller impact and a short flinch |
+| **fully absorbed** (`block` only) | seal flash and *brace*; no injury pose |
+| **blocked outright** (raised 守る, `countered`) | the blow meets the raised seal; *brace* |
+| **no effect** (`countered`) | the move balks and fizzles at the creature |
+| **meets air** (Suzu's misdirect) | Suzu's flourish; paper confetti where it would have landed |
+| **healing** | motes, +n (the real amount) |
+| **knot freed / re-tied** | knot release / re-tie at that knot |
+| **down / revived** | kneeling while at 0; your companion's *restore*, a column of light, you *recover* |
+
+The rules have no other result types (no miss roll, no resistance or
+immunity), so none are drawn.
+
+### Conditions and wards
+
+| State (holder) | Applied | While active | Removed | Reduced motion |
+|---|---|---|---|---|
+| Heat 1–2 (creature) | embers burst | one flame pip per level beside its head; rising outlined embers | the splash with steam; the pips go at the beat | pips only, still |
+| Shroud (creature) | mist rolls down | a mist bank over its knots | flash or wind; the mist parts | still mist |
+| Gathering (creature) | motes spiral in | outlined motes circling it, a held glow | rope cinch, motes scatter (or spent in its Strike/Sweep) | still motes |
+| Hush (party) | a pale wave | an arc and an outlined mute mark over you both | rings spread, the mark breaks | still mark |
+| Ward points (each ally) | brush arc, tags stand | one paper tag per point in front of that ally | a tag flutters off per absorbed hit; Gust blows all off | still tags |
+| Harmony (party) | a thread of light between your hands as it rises | the band's pips; a faint thread between your hands when full | spent by the technique | still thread |
+
+Several states at once each keep one compact mark. The keyword pills on
+the slips are unchanged, so nothing depends on colour or particles alone.
+Chill has no lasting state in the rules (it is a cold single blow), so it
+shows only frost at contact.
+
+### Arrangement
+
+- Your companion stands a step back on the left. You stand in front on the
+  right, nearest the creature, so your gestures reach it without crossing
+  anyone.
+  - The companion's feet are about 0.8 of a frame width plus a gap
+    (≈ 82 art px) to your left, and about 9 % of a figure's height further
+    back.
+  - Both face up-right (`facing: 'upright'`).
+- The party's integer scale makes a figure about 44 % of the stage height,
+  never taller than the creature. The 80×104 battle frame draws at scale 1
+  on phones and desktops, and at 2 only on very tall stages.
+- The creature keeps its scale rule. It moves right, clear of the party,
+  where the stage allows.
+- The backdrop receives `{ S, ex, ey, ext, px, py, ps, scale, art, party }`.
+  - `px, py` follow the composer's "old corner" convention: your feet are
+    at `px + 16·ps`, `py + 48·ps`. Its party box, from the stage's left edge
+    to `px + 140·ps` and up to 112·ps above your feet, covers you both.
+  - `party` is the actual box in canvas px (both frames, with room for
+    gestures and seals), for a composer that wants it.
+- The whole-screen shake and Heat tint are gone. All feedback is local to
+  the actor it concerns, and nothing moves the DOM overlay.
+
+### Learning stays central
+
+- While you choose or write, both adventurers take the *calm* stance. The
+  ambient clock (the backdrop's drifting motes, the creature's idle) eases
+  to half speed.
+- No effect, strip or number is created outside a committed sequence.
+  Nothing is drawn over the response cards, the task or the writing pad,
+  and no focus is taken. There are no countdowns and no auto-advance.
+- The word also goes into the exchange log with its reading, followed by
+  what it did. The log stays under the responses as a **Last exchange**
+  recap until the next choice, so nothing depends on catching the
+  animation.
+- The telegraph line chosen for a move stays the same for the whole
+  exchange.
+
+### Reduced motion, hidden tabs, cleanup
+
+- **Reduced motion** keeps every beat, word, target, number and state
+  mark.
+  - The gesture becomes one held pose, with no anticipation or recovery
+    flips.
+  - The strip appears in place (no travel or unrolling) for about 0.9 s.
+  - The creature does not move or change posture; only its settled look
+    after the win shows.
+  - There are no particles, flashes or fades on the canvas (tested still to
+    under 50 changed pixels).
+- **Hidden tab:** a sequence settles at once, and any sequence started
+  while hidden settles immediately. On return, nothing replays.
+- **Watchdog:** if frames stop arriving, a sequence settles after about
+  twice its length plus 2.5 s.
+- **Failures:** a failing cue or stage draw is logged and skipped. It never
+  stops the frame loop, and the display is reconciled from the rules at the
+  end of the sequence.
+- **Scene exit:** the sequencer settles, its layer and pointer hook are
+  removed, its timers are cleared, and the stage's DOM layer is removed.
+  This was tested over three consecutive encounters.
+
+### `RB.battlers` and the fallback
+
+The stage calls the character art's battle frames, `RB.battlers`:
+- `FRAME` and `ANCHOR`;
+- the poses `ready`, `calm`, `anticipate`, `act`, `recover`, `hit`,
+  `brace`, `down` and `cheer`;
+- the gestures `direct`, `trace`, `book`, `ward`, `restore`, `flow` and
+  `raise`;
+- `draw(ctx, look, {x, y, scale, t, who, pose, gesture, k, reduce, facing})`,
+  which returns the `hand`, `head`, `chest` and `feet` anchors.
+
+The module is merged (§10: an 80×104 frame, anchor (36, 100)). The stage
+passes the actor's current pose, gesture and progress k, and it attaches
+effects, strips and numbers to the anchors that `draw` returns. At the
+start of a battle, `RB.battlers.prewarm(look, who)` builds each figure's
+idle frames.
+
+If the module is ever absent, a fallback in `83_battle_stage.js` stands in.
+It draws the road sprite (`RB.sprites.FRAME`, 40×58) with simple band
+offsets per pose and a tiny prop per gesture, behind the same interface.
+
+### Evidence
+
+- `tests/e2e/battle_anim.mjs` holds 16 checks and is in `run.mjs`.
+- `--gallery` adds a sheet of every response and every enemy-move family,
+  each captured at its beat.
+- `--docs` copies the WebP strips to `docs/screenshots/battle/`.
+- Frames and strips go to `tests/e2e/out/battle_anim/`.
+- Frame cost is the time to draw the whole battle (backdrop, stage,
+  effects), measured by `RB.combat.debug().frames` at 1280×800 in headless
+  Chromium with a software canvas and the real battle figures.
+  - During sequences it averages 1.5–1.7 ms per frame, with a maximum of
+    11–15 ms.
+  - Over all frames it averages about 2 ms. The one-off maximum of about
+    0.2 s is the first frame building the backdrop and figure caches.
+  - With the fallback figures, sequences averaged 0.5–0.7 ms.
+  - Not measured on real phones.

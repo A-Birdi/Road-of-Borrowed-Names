@@ -55,14 +55,15 @@ RB.enemyArt = (function () {
     const L = K.layer(spec.w, spec.h, spec.ox, spec.oy);
     const out = spec.build(L, f, o || {}, H) || L;
     if (f === seqOf(spec)[0] && !spec._box) {
-      // rows that hold any pixel: the creature's real vertical reach
-      let t0 = -1, t1 = -1;
+      // rows (and columns) that hold any pixel: the creature's real reach
+      let t0 = -1, t1 = -1, l0 = out.w, l1 = -1;
       for (let y = 0; y < out.h; y++) {
         let any = false;
-        for (let x = 0, i = y * out.w; x < out.w; x++, i++) if (out.px[i] >>> 24) { any = true; break; }
+        for (let x = 0, i = y * out.w; x < out.w; x++, i++) if (out.px[i] >>> 24) { any = true; if (x < l0) l0 = x; if (x > l1) l1 = x; }
         if (any) { if (t0 < 0) t0 = y; t1 = y; }
       }
       spec._box = [Math.max(0, t0), Math.max(0, t1)];
+      spec._boxX = [l1 < 0 ? 0 : l0, l1 < 0 ? out.w - 1 : l1];
     }
     cv = out.canvas();
     cache.set(key, cv);
@@ -77,8 +78,8 @@ RB.enemyArt = (function () {
     const spec = P[pid];
     const dy = spec.dy || 0;
     frame(pid, seqOf(spec)[0], o);
-    const box = spec._box || [0, spec.h - 1];
-    return { top: box[0] - spec.oy + dy - 6, bottom: box[1] - spec.oy + dy + 6 };
+    const box = spec._box || [0, spec.h - 1], bx = spec._boxX || [0, spec.w - 1];
+    return { top: box[0] - spec.oy + dy - 6, bottom: box[1] - spec.oy + dy + 6, left: bx[0] - spec.ox, right: bx[1] - spec.ox };
   }
   // Draw a creature at art resolution: origin at (x, y), integer scale s.
   function drawArt(c, id, t, o, x, y, s, still) {
@@ -93,6 +94,137 @@ RB.enemyArt = (function () {
     c.drawImage(cv, Math.round(x - spec.ox * s), Math.round(y - (spec.oy - b) * s), spec.w * s, spec.h * s);
     return true;
   }
+  // ---- acting: each creature performs with its own anatomy ------------------------------
+  // A motion style per creature (a definition may also carry `motion`):
+  // flutter — wings raised in preparation, a fast beat and a darting reach
+  //           (moths, the crane, the letter);
+  // drift   — pulls in, then darts out with the tail streaming (wisps, veils);
+  // sway    — a hung thing tilting back and swinging (lanterns, the lamp);
+  // pulse   — contracts and swells (echoes, the Hush);
+  // ripple  — ink that shrinks, surges and splashes (blots);
+  // lurch   — rocks back and lurches into a slam (golems, the kiln, the keeper);
+  // stamp   — rises and brings the seal down (clerks);
+  // swing   — a bell's long swing; pounce — crouch and leap (foxes);
+  // scuttle — a sideways shuffle and a snap (crabs).
+  // Every style reads differently for an attack (exec), a self-buff or
+  // condition (cast), a reaction (recoil / release), a move that fizzles
+  // (balk), the final settling (settle) and waiting (rest).
+  const STYLE = {
+    moth: 'flutter', crane: 'flutter', sg_letter: 'flutter', wisp: 'drift', hush: 'drift', spirit: 'drift', atlas_cartographer: 'drift',
+    lantern: 'sway', sb_frostlamp: 'sway', lf_conduit: 'sway', echo: 'pulse', sa_hush: 'pulse', blot: 'ripple',
+    golem: 'lurch', warden: 'lurch', lf_keeper: 'lurch', clerk: 'stamp', bell: 'swing', fox: 'pounce', sb_snowfox: 'pounce', crab: 'scuttle',
+  };
+  const MOVES = {
+    flutter: { prep: { dy: -5, lean: -3, pull: 3, frame: 'hi' }, exec: { reach: 16, lean: 4, rate: 2.6 }, cast: { dy: -4, rate: 2.2, glow: 0.5 }, recoil: { push: 6, lean: 3, frame: 'lo' } },
+    drift: { prep: { pull: 5, sy: 0.94 }, exec: { reach: 18, lean: 5 }, cast: { sy: 1.05, glow: 0.7 }, recoil: { push: 7, lean: 3 } },
+    sway: { prep: { lean: -6, pull: 2 }, exec: { reach: 6, lean: 8 }, cast: { osc: 4, glow: 0.4 }, recoil: { push: 3, lean: 5 } },
+    pulse: { prep: { sy: 0.92 }, exec: { reach: 4, sy: 1.08, glow: 0.8 }, cast: { sy: 1.06, glow: 0.8 }, recoil: { push: 3, sy: 0.94 } },
+    ripple: { prep: { sy: 0.9, ripple: 1 }, exec: { reach: 10, lean: 5, sy: 1.07, ripple: 2 }, cast: { sy: 1.04, ripple: 2 }, recoil: { push: 3, sy: 0.9, ripple: 2 } },
+    lurch: { prep: { lean: -5, dy: -2, pull: 2 }, exec: { reach: 8, lean: 6, slam: 3 }, cast: { dy: -3, sy: 1.03, glow: 0.3 }, recoil: { push: 3, lean: 4 } },
+    stamp: { prep: { dy: -7 }, exec: { reach: 4, slam: 5, sy: 0.95 }, cast: { dy: -4, glow: 0.3 }, recoil: { push: 3, lean: 2 } },
+    swing: { prep: { lean: -7 }, exec: { reach: 4, lean: 9 }, cast: { osc: 5 }, recoil: { push: 2, lean: 6 } },
+    pounce: { prep: { sy: 0.93, dy: 3, lean: -2, pull: 2 }, exec: { reach: 20, hop: 9 }, cast: { dy: -2, sy: 1.03, glow: 0.3 }, recoil: { push: 5, lean: 3 } },
+    scuttle: { prep: { jitter: 2, pull: 2 }, exec: { reach: 10, lean: 4 }, cast: { jitter: 2 }, recoil: { push: 4, lean: 2 } },
+  };
+  function styleOf(id) { return (P[id] && P[id].motion) || STYLE[id] || 'drift'; }
+  const cl = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
+  const eo = (k) => 1 - Math.pow(1 - cl(k), 3);
+  const bl = (k) => Math.sin(Math.PI * cl(k));
+  // the reach of a blow over its execution: out fast, then partly back (0.3 held for the recovery)
+  const lunge = (k) => (k < 0.45 ? eo(k / 0.45) : 1 - 0.7 * eo((k - 0.45) / 0.55));
+  // pose: { act, k (0..1), dir: unit vector toward the target (or the source, for a
+  // reaction), family: 'strike'|'sweep'|… } → offsets in creature px
+  function motion(id, pose, t, still) {
+    const M = MOVES[styleOf(id)] || MOVES.drift;
+    const k = cl(pose.k || 0), d = pose.dir || { x: -0.8, y: 0.6 }, sg = d.x < 0 ? -1 : 1;
+    const m = { dx: 0, dy: 0, lean: 0, ripple: 0, sy: 1, frame: null, rate: 1, alpha: 1, glow: 0 };
+    const exec = (L, E, sweep) => {
+      const reach = (E.reach || 0) * (sweep ? 0.7 : 1);
+      m.dx = d.x * reach * L; m.dy = d.y * reach * 0.5 * L;
+      if (E.slam) m.dy += E.slam * cl((L - 0.6) / 0.4);
+      if (E.hop) m.dy -= E.hop * bl(Math.min(1, L));
+      m.lean = (E.lean || 0) * sg * L * (sweep ? 1.5 : 1);
+      if (sweep) m.dy += Math.sin(L * Math.PI * 2) * 3;
+      m.sy = 1 + ((E.sy || 1) - 1) * L; m.ripple = (E.ripple || 0) * L; m.glow = (E.glow || 0) * L;
+      m.rate = E.rate || 1.6;
+    };
+    const a = pose.act;
+    if (a === 'prep' || a === 'balk') {
+      const Pp = M.prep, p = a === 'prep' ? eo(k) : 1 - eo(k);
+      m.dx = -d.x * (Pp.pull || 0) * p; m.dy = (Pp.dy || 0) * p; m.lean = (Pp.lean || 0) * sg * p;
+      m.sy = 1 + ((Pp.sy || 1) - 1) * p; m.ripple = (Pp.ripple || 0) * p;
+      if (Pp.jitter) m.dx += Math.round(Math.sin(t / 45) * Pp.jitter * p);
+      if (Pp.frame && k > 0.2 && a === 'prep') m.frame = Pp.frame;
+      if (a === 'balk') { m.dx += Math.sin(k * 30) * 1.5 * (1 - k); m.alpha = 1 - 0.15 * bl(k); }
+    } else if (a === 'exec') exec(lunge(k), M.exec, pose.family === 'sweep');
+    else if (a === 'recover') exec(0.3 * (1 - eo(k)), M.exec, pose.family === 'sweep');
+    else if (a === 'cast') {
+      const C = M.cast, c = bl(k);
+      m.dy = (C.dy || 0) * c; m.sy = 1 + ((C.sy || 1) - 1) * c; m.glow = (C.glow || 0) * c; m.ripple = (C.ripple || 0) * c;
+      if (C.osc) m.lean = C.osc * Math.sin(k * Math.PI * 2) * sg;
+      if (C.jitter) m.dx = Math.round(Math.sin(t / 45) * C.jitter * c);
+      m.rate = C.rate || 1.3;
+    } else if (a === 'recoil') {
+      const Rr = M.recoil, j = Math.pow(1 - k, 2);
+      m.dx = -d.x * (Rr.push || 4) * j; m.dy = -d.y * (Rr.push || 4) * 0.4 * j; m.lean = -sg * (Rr.lean || 2) * j;
+      m.sy = 1 + ((Rr.sy || 1) - 1) * j; m.ripple = (Rr.ripple || 0) * j;
+      if (Rr.frame && k < 0.5) m.frame = Rr.frame;
+    } else if (a === 'release') {
+      m.dx = Math.sin(k * 28) * 1.5 * (1 - k); m.glow = 0.4 * bl(k);
+    } else if (a === 'settle') {
+      const s = eo(k);
+      m.dy = -6 * s; m.alpha = 1 - 0.55 * s; m.glow = 0.5 * bl(k); m.rate = 0.5;
+    } else if (a === 'rest') {
+      const b = bl(k);
+      m.dy = 2 * b; m.sy = 1 - 0.02 * b; m.rate = 0.6;
+    }
+    // reduced motion: no movement, no posture or frame changes, no fades; only the
+    // settled (released) creature shows as it will stay, at once
+    if (still) return { dx: 0, dy: 0, lean: 0, ripple: 0, sy: 1, frame: null, rate: 0, alpha: a === 'settle' ? 0.45 : 1, glow: 0 };
+    return m;
+  }
+  function pickFrame(spec, which) {
+    const seq = seqOf(spec);
+    if (which === 'lo') return seq[0];
+    let hi = seq[0];
+    for (const f of seq) if (f > hi) hi = f;
+    return hi;
+  }
+  // Draw a creature in a pose (see motion): moved, leaned, squashed or rippled in
+  // whole creature pixels (4-row bands drawn with integer offsets, no smoothing).
+  // Without a pose it is exactly drawArt. Returns the offset applied (art px).
+  function drawPosed(c, id, t, o, x, y, s, still, pose) {
+    const spec = P[id] || (!A[id] && P.wisp);
+    if (!spec) return null;
+    const pid = P[id] ? id : 'wisp';
+    s = s || 1;
+    const m = pose ? motion(pid, pose, t, still) : null;
+    const f = m && m.frame != null ? pickFrame(spec, m.frame) : frameAt(spec, t * (m ? m.rate || 1 : 1), still);
+    const cv = frame(pid, f, o);
+    const b = (spec.bob && !still ? Math.round(spec.bob(t)) : 0) + (spec.dy || 0);
+    const X = Math.round(x + Math.round(m ? m.dx : 0) * s), Y = Math.round(y + Math.round(m ? m.dy : 0) * s);
+    c.imageSmoothingEnabled = false;
+    if (m && m.glow > 0.02) K.halo(c, X, Y, Math.round(Math.max(spec.ox, spec.oy) * 0.6 * s), '255,244,214', 0.24 * m.glow, 3);
+    const a0 = c.globalAlpha;
+    if (m && m.alpha < 1) c.globalAlpha = a0 * m.alpha;
+    const lean = m ? m.lean : 0, rip = m ? m.ripple : 0, sy = m ? m.sy : 1;
+    if (!lean && !rip && Math.abs(sy - 1) < 0.005) {
+      c.drawImage(cv, X - spec.ox * s, Math.round(Y - (spec.oy - b) * s), spec.w * s, spec.h * s);
+    } else {
+      const H = spec.h, BH = 4;
+      for (let r = 0; r < H; r += BH) {
+        const bh = Math.min(BH, H - r);
+        const y1 = Math.round((r - spec.oy) * sy), y2 = Math.round((r + bh - spec.oy) * sy);
+        if (y2 <= y1) continue;
+        const up = 1 - (r + bh / 2) / H;
+        const off = Math.round(lean * up + (rip ? Math.sin(r / 9 + t / 150) * rip : 0));
+        c.drawImage(cv, 0, r, spec.w, bh, X + (off - spec.ox) * s, Y + (y1 + b) * s, spec.w * s, (y2 - y1) * s);
+      }
+    }
+    c.globalAlpha = a0;
+    return { dx: X - x, dy: Y - y };
+  }
+
   // Older entry point: draws in the caller's logical px (half the art size).
   function draw(c, art, t, o) {
     if (P[art]) {
@@ -946,5 +1078,5 @@ RB.enemyArt = (function () {
     },
   });
 
-  return { def, P, A, draw, drawArt, frame, has, frameAt, extent, H };
+  return { def, P, A, draw, drawArt, drawPosed, motion, styleOf, STYLE, MOVES, frame, has, frameAt, extent, H };
 })();

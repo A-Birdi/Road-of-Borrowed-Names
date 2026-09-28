@@ -2345,6 +2345,37 @@ body.high-contrast .kwcard { border-color: #000; }
   flex: none; padding: 10px 14px; font-size: 1.02em; line-height: 1.45; color: var(--ink); border-left: 4px solid var(--ink-3);
 }
 .combat-ui .clog.hidden { display: none; }
+/* the exchange log: one line per result; the resolved word with its reading leads */
+.combat-ui .clog .cl-l { margin: 0; }
+.combat-ui .clog .cl-l + .cl-l { margin-top: 0.2em; }
+.combat-ui .clog .cl-w .jline { font-size: 1.12em; line-height: 1.95; }
+.combat-ui .clog .cl-en { font-weight: 700; }
+/* …left under the responses as a recap of the last exchange (not announced again) */
+.combat-ui .clog.recap { padding: 3px 12px 5px; font-size: 0.86em; line-height: 1.35; color: var(--ink-2); border-left-color: var(--ribbon); max-height: 6.4em; overflow-y: auto; overscroll-behavior: contain; }
+.combat-ui .clog.recap::before { content: "Last exchange"; display: block; font-size: 0.8em; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
+.combat-ui .clog.recap .cl-w .jline { font-size: 1.05em; line-height: 1.8; }
+/* the battle's presentation layer: the paper strip that carries a resolved word
+   (positioned each frame inside the stage cell; never takes input) */
+.combat-ui > .cb-fx { position: fixed; inset: 0; z-index: 1; overflow: hidden; }
+.combat-ui > .cb-fx, .combat-ui > .cb-fx * { pointer-events: none !important; }
+.cb-strip {
+  position: absolute; left: 0; top: 0; display: flex; flex-direction: column; align-items: center; white-space: nowrap;
+  padding: 2px 16px 5px 18px; color: var(--ink); background: var(--paper);
+  border: 1px solid var(--paper-edge); border-left: 4px solid var(--ribbon); border-radius: 2px;
+  box-shadow: 0 2px 0 var(--paper-3), 0 3px 0 var(--paper-edge), 0 8px 16px rgba(0, 0, 0, 0.35);
+  /* unrolls from its left end: --u (0..1) is set per frame by RB.battleStage */
+  clip-path: inset(-12px calc((1 - var(--u, 1)) * 100% - 12px) -24px -12px);
+  will-change: transform, opacity;
+}
+.cb-strip .cs-w { font-family: var(--jp-font); font-size: clamp(22px, 2.4vw, 32px); line-height: 1.95;
+  /* the ink writes the word across: --w (0..1) */
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(var(--w, 1) * 115% - 14%), transparent calc(var(--w, 1) * 115%));
+  mask-image: linear-gradient(90deg, #000 calc(var(--w, 1) * 115% - 14%), transparent calc(var(--w, 1) * 115%)); }
+.cb-strip .cs-w rt { color: var(--rt-ink); }
+.cb-strip .cs-en { margin-top: -0.35em; font: 600 0.84rem var(--serif); color: var(--ink-2); letter-spacing: 0.02em; }
+body.high-contrast .cb-strip { border-color: #000; border-left-color: #000; }
+/* the sequencer's key catcher (a layer with no visible surface) */
+.combat-ui > .cb-seqkey { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); pointer-events: none; }
 body.high-contrast .combat-ui .paper, body.high-contrast .combat-ui .rcard { border-color: #000; }
 
 /* the situation carried onto the challenge's task slip */
@@ -33518,14 +33549,15 @@ RB.enemyArt = (function () {
     const L = K.layer(spec.w, spec.h, spec.ox, spec.oy);
     const out = spec.build(L, f, o || {}, H) || L;
     if (f === seqOf(spec)[0] && !spec._box) {
-      // rows that hold any pixel: the creature's real vertical reach
-      let t0 = -1, t1 = -1;
+      // rows (and columns) that hold any pixel: the creature's real reach
+      let t0 = -1, t1 = -1, l0 = out.w, l1 = -1;
       for (let y = 0; y < out.h; y++) {
         let any = false;
-        for (let x = 0, i = y * out.w; x < out.w; x++, i++) if (out.px[i] >>> 24) { any = true; break; }
+        for (let x = 0, i = y * out.w; x < out.w; x++, i++) if (out.px[i] >>> 24) { any = true; if (x < l0) l0 = x; if (x > l1) l1 = x; }
         if (any) { if (t0 < 0) t0 = y; t1 = y; }
       }
       spec._box = [Math.max(0, t0), Math.max(0, t1)];
+      spec._boxX = [l1 < 0 ? 0 : l0, l1 < 0 ? out.w - 1 : l1];
     }
     cv = out.canvas();
     cache.set(key, cv);
@@ -33540,8 +33572,8 @@ RB.enemyArt = (function () {
     const spec = P[pid];
     const dy = spec.dy || 0;
     frame(pid, seqOf(spec)[0], o);
-    const box = spec._box || [0, spec.h - 1];
-    return { top: box[0] - spec.oy + dy - 6, bottom: box[1] - spec.oy + dy + 6 };
+    const box = spec._box || [0, spec.h - 1], bx = spec._boxX || [0, spec.w - 1];
+    return { top: box[0] - spec.oy + dy - 6, bottom: box[1] - spec.oy + dy + 6, left: bx[0] - spec.ox, right: bx[1] - spec.ox };
   }
   // Draw a creature at art resolution: origin at (x, y), integer scale s.
   function drawArt(c, id, t, o, x, y, s, still) {
@@ -33556,6 +33588,137 @@ RB.enemyArt = (function () {
     c.drawImage(cv, Math.round(x - spec.ox * s), Math.round(y - (spec.oy - b) * s), spec.w * s, spec.h * s);
     return true;
   }
+  // ---- acting: each creature performs with its own anatomy ------------------------------
+  // A motion style per creature (a definition may also carry `motion`):
+  // flutter — wings raised in preparation, a fast beat and a darting reach
+  //           (moths, the crane, the letter);
+  // drift   — pulls in, then darts out with the tail streaming (wisps, veils);
+  // sway    — a hung thing tilting back and swinging (lanterns, the lamp);
+  // pulse   — contracts and swells (echoes, the Hush);
+  // ripple  — ink that shrinks, surges and splashes (blots);
+  // lurch   — rocks back and lurches into a slam (golems, the kiln, the keeper);
+  // stamp   — rises and brings the seal down (clerks);
+  // swing   — a bell's long swing; pounce — crouch and leap (foxes);
+  // scuttle — a sideways shuffle and a snap (crabs).
+  // Every style reads differently for an attack (exec), a self-buff or
+  // condition (cast), a reaction (recoil / release), a move that fizzles
+  // (balk), the final settling (settle) and waiting (rest).
+  const STYLE = {
+    moth: 'flutter', crane: 'flutter', sg_letter: 'flutter', wisp: 'drift', hush: 'drift', spirit: 'drift', atlas_cartographer: 'drift',
+    lantern: 'sway', sb_frostlamp: 'sway', lf_conduit: 'sway', echo: 'pulse', sa_hush: 'pulse', blot: 'ripple',
+    golem: 'lurch', warden: 'lurch', lf_keeper: 'lurch', clerk: 'stamp', bell: 'swing', fox: 'pounce', sb_snowfox: 'pounce', crab: 'scuttle',
+  };
+  const MOVES = {
+    flutter: { prep: { dy: -5, lean: -3, pull: 3, frame: 'hi' }, exec: { reach: 16, lean: 4, rate: 2.6 }, cast: { dy: -4, rate: 2.2, glow: 0.5 }, recoil: { push: 6, lean: 3, frame: 'lo' } },
+    drift: { prep: { pull: 5, sy: 0.94 }, exec: { reach: 18, lean: 5 }, cast: { sy: 1.05, glow: 0.7 }, recoil: { push: 7, lean: 3 } },
+    sway: { prep: { lean: -6, pull: 2 }, exec: { reach: 6, lean: 8 }, cast: { osc: 4, glow: 0.4 }, recoil: { push: 3, lean: 5 } },
+    pulse: { prep: { sy: 0.92 }, exec: { reach: 4, sy: 1.08, glow: 0.8 }, cast: { sy: 1.06, glow: 0.8 }, recoil: { push: 3, sy: 0.94 } },
+    ripple: { prep: { sy: 0.9, ripple: 1 }, exec: { reach: 10, lean: 5, sy: 1.07, ripple: 2 }, cast: { sy: 1.04, ripple: 2 }, recoil: { push: 3, sy: 0.9, ripple: 2 } },
+    lurch: { prep: { lean: -5, dy: -2, pull: 2 }, exec: { reach: 8, lean: 6, slam: 3 }, cast: { dy: -3, sy: 1.03, glow: 0.3 }, recoil: { push: 3, lean: 4 } },
+    stamp: { prep: { dy: -7 }, exec: { reach: 4, slam: 5, sy: 0.95 }, cast: { dy: -4, glow: 0.3 }, recoil: { push: 3, lean: 2 } },
+    swing: { prep: { lean: -7 }, exec: { reach: 4, lean: 9 }, cast: { osc: 5 }, recoil: { push: 2, lean: 6 } },
+    pounce: { prep: { sy: 0.93, dy: 3, lean: -2, pull: 2 }, exec: { reach: 20, hop: 9 }, cast: { dy: -2, sy: 1.03, glow: 0.3 }, recoil: { push: 5, lean: 3 } },
+    scuttle: { prep: { jitter: 2, pull: 2 }, exec: { reach: 10, lean: 4 }, cast: { jitter: 2 }, recoil: { push: 4, lean: 2 } },
+  };
+  function styleOf(id) { return (P[id] && P[id].motion) || STYLE[id] || 'drift'; }
+  const cl = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
+  const eo = (k) => 1 - Math.pow(1 - cl(k), 3);
+  const bl = (k) => Math.sin(Math.PI * cl(k));
+  // the reach of a blow over its execution: out fast, then partly back (0.3 held for the recovery)
+  const lunge = (k) => (k < 0.45 ? eo(k / 0.45) : 1 - 0.7 * eo((k - 0.45) / 0.55));
+  // pose: { act, k (0..1), dir: unit vector toward the target (or the source, for a
+  // reaction), family: 'strike'|'sweep'|… } → offsets in creature px
+  function motion(id, pose, t, still) {
+    const M = MOVES[styleOf(id)] || MOVES.drift;
+    const k = cl(pose.k || 0), d = pose.dir || { x: -0.8, y: 0.6 }, sg = d.x < 0 ? -1 : 1;
+    const m = { dx: 0, dy: 0, lean: 0, ripple: 0, sy: 1, frame: null, rate: 1, alpha: 1, glow: 0 };
+    const exec = (L, E, sweep) => {
+      const reach = (E.reach || 0) * (sweep ? 0.7 : 1);
+      m.dx = d.x * reach * L; m.dy = d.y * reach * 0.5 * L;
+      if (E.slam) m.dy += E.slam * cl((L - 0.6) / 0.4);
+      if (E.hop) m.dy -= E.hop * bl(Math.min(1, L));
+      m.lean = (E.lean || 0) * sg * L * (sweep ? 1.5 : 1);
+      if (sweep) m.dy += Math.sin(L * Math.PI * 2) * 3;
+      m.sy = 1 + ((E.sy || 1) - 1) * L; m.ripple = (E.ripple || 0) * L; m.glow = (E.glow || 0) * L;
+      m.rate = E.rate || 1.6;
+    };
+    const a = pose.act;
+    if (a === 'prep' || a === 'balk') {
+      const Pp = M.prep, p = a === 'prep' ? eo(k) : 1 - eo(k);
+      m.dx = -d.x * (Pp.pull || 0) * p; m.dy = (Pp.dy || 0) * p; m.lean = (Pp.lean || 0) * sg * p;
+      m.sy = 1 + ((Pp.sy || 1) - 1) * p; m.ripple = (Pp.ripple || 0) * p;
+      if (Pp.jitter) m.dx += Math.round(Math.sin(t / 45) * Pp.jitter * p);
+      if (Pp.frame && k > 0.2 && a === 'prep') m.frame = Pp.frame;
+      if (a === 'balk') { m.dx += Math.sin(k * 30) * 1.5 * (1 - k); m.alpha = 1 - 0.15 * bl(k); }
+    } else if (a === 'exec') exec(lunge(k), M.exec, pose.family === 'sweep');
+    else if (a === 'recover') exec(0.3 * (1 - eo(k)), M.exec, pose.family === 'sweep');
+    else if (a === 'cast') {
+      const C = M.cast, c = bl(k);
+      m.dy = (C.dy || 0) * c; m.sy = 1 + ((C.sy || 1) - 1) * c; m.glow = (C.glow || 0) * c; m.ripple = (C.ripple || 0) * c;
+      if (C.osc) m.lean = C.osc * Math.sin(k * Math.PI * 2) * sg;
+      if (C.jitter) m.dx = Math.round(Math.sin(t / 45) * C.jitter * c);
+      m.rate = C.rate || 1.3;
+    } else if (a === 'recoil') {
+      const Rr = M.recoil, j = Math.pow(1 - k, 2);
+      m.dx = -d.x * (Rr.push || 4) * j; m.dy = -d.y * (Rr.push || 4) * 0.4 * j; m.lean = -sg * (Rr.lean || 2) * j;
+      m.sy = 1 + ((Rr.sy || 1) - 1) * j; m.ripple = (Rr.ripple || 0) * j;
+      if (Rr.frame && k < 0.5) m.frame = Rr.frame;
+    } else if (a === 'release') {
+      m.dx = Math.sin(k * 28) * 1.5 * (1 - k); m.glow = 0.4 * bl(k);
+    } else if (a === 'settle') {
+      const s = eo(k);
+      m.dy = -6 * s; m.alpha = 1 - 0.55 * s; m.glow = 0.5 * bl(k); m.rate = 0.5;
+    } else if (a === 'rest') {
+      const b = bl(k);
+      m.dy = 2 * b; m.sy = 1 - 0.02 * b; m.rate = 0.6;
+    }
+    // reduced motion: no movement, no posture or frame changes, no fades; only the
+    // settled (released) creature shows as it will stay, at once
+    if (still) return { dx: 0, dy: 0, lean: 0, ripple: 0, sy: 1, frame: null, rate: 0, alpha: a === 'settle' ? 0.45 : 1, glow: 0 };
+    return m;
+  }
+  function pickFrame(spec, which) {
+    const seq = seqOf(spec);
+    if (which === 'lo') return seq[0];
+    let hi = seq[0];
+    for (const f of seq) if (f > hi) hi = f;
+    return hi;
+  }
+  // Draw a creature in a pose (see motion): moved, leaned, squashed or rippled in
+  // whole creature pixels (4-row bands drawn with integer offsets, no smoothing).
+  // Without a pose it is exactly drawArt. Returns the offset applied (art px).
+  function drawPosed(c, id, t, o, x, y, s, still, pose) {
+    const spec = P[id] || (!A[id] && P.wisp);
+    if (!spec) return null;
+    const pid = P[id] ? id : 'wisp';
+    s = s || 1;
+    const m = pose ? motion(pid, pose, t, still) : null;
+    const f = m && m.frame != null ? pickFrame(spec, m.frame) : frameAt(spec, t * (m ? m.rate || 1 : 1), still);
+    const cv = frame(pid, f, o);
+    const b = (spec.bob && !still ? Math.round(spec.bob(t)) : 0) + (spec.dy || 0);
+    const X = Math.round(x + Math.round(m ? m.dx : 0) * s), Y = Math.round(y + Math.round(m ? m.dy : 0) * s);
+    c.imageSmoothingEnabled = false;
+    if (m && m.glow > 0.02) K.halo(c, X, Y, Math.round(Math.max(spec.ox, spec.oy) * 0.6 * s), '255,244,214', 0.24 * m.glow, 3);
+    const a0 = c.globalAlpha;
+    if (m && m.alpha < 1) c.globalAlpha = a0 * m.alpha;
+    const lean = m ? m.lean : 0, rip = m ? m.ripple : 0, sy = m ? m.sy : 1;
+    if (!lean && !rip && Math.abs(sy - 1) < 0.005) {
+      c.drawImage(cv, X - spec.ox * s, Math.round(Y - (spec.oy - b) * s), spec.w * s, spec.h * s);
+    } else {
+      const H = spec.h, BH = 4;
+      for (let r = 0; r < H; r += BH) {
+        const bh = Math.min(BH, H - r);
+        const y1 = Math.round((r - spec.oy) * sy), y2 = Math.round((r + bh - spec.oy) * sy);
+        if (y2 <= y1) continue;
+        const up = 1 - (r + bh / 2) / H;
+        const off = Math.round(lean * up + (rip ? Math.sin(r / 9 + t / 150) * rip : 0));
+        c.drawImage(cv, 0, r, spec.w, bh, X + (off - spec.ox) * s, Y + (y1 + b) * s, spec.w * s, (y2 - y1) * s);
+      }
+    }
+    c.globalAlpha = a0;
+    return { dx: X - x, dy: Y - y };
+  }
+
   // Older entry point: draws in the caller's logical px (half the art size).
   function draw(c, art, t, o) {
     if (P[art]) {
@@ -34409,7 +34572,7 @@ RB.enemyArt = (function () {
     },
   });
 
-  return { def, P, A, draw, drawArt, frame, has, frameAt, extent, H };
+  return { def, P, A, draw, drawArt, drawPosed, motion, styleOf, STYLE, MOVES, frame, has, frameAt, extent, H };
 })();
 
 
@@ -34916,13 +35079,19 @@ RB.combat = (function () {
   'use strict';
   const esc = RB.util.esc;
   const L = () => RB.combatLogic;
-  let st = null, enemy = null, ui = null, fxList = [], shake = 0;
+  let st = null, enemy = null, ui = null;
+  // What the screen shows lags the rules by one beat: the rules apply a whole
+  // exchange at once, and `view` (a copy of the state from before it) steps
+  // forward as each result is shown (RB.battleSeq). null = show `st` itself.
+  let view = null, phase = 'idle', sealHeld = null, curCard = null;
+  const V = () => view || st;
+  const snapshot = (x) => Object.assign({}, x, { ward: Object.assign({}, x.ward) });
 
   // ---- the scene, framed inside the stage: the free area the overlay leaves ----
   // Drawn at art resolution (2 art px per logical px): the regional backdrop
-  // (RB.battleScene), the creature (RB.enemyArt), knots, the party, wards and
-  // effects. Positions below are art px.
-  let stageCss = null, lastLay = null, measureAt = -1e9;
+  // (RB.battleScene), then the stage (RB.battleStage: the creature, knots,
+  // the party, states and effects). Positions are art px.
+  let stageCss = null, measureAt = -1e9;
   function measure() {
     if (!ui || !ui.stage) { stageCss = null; return; }
     const r = ui.stage.getBoundingClientRect();
@@ -34935,86 +35104,49 @@ RB.combat = (function () {
     const x = Math.max(0, stageCss.x / k), y = Math.max(0, stageCss.y / k);
     return { x, y, w: Math.min(w - x, stageCss.w / k), h: Math.min(h - y, stageCss.h / k) };
   }
-  function partySprite(look) {
-    const S = RB.sprites;
-    if (typeof S.getArt === 'function') { const a = S.getArt(look, 'up', 0); if (a) return a; }
-    return S.get(look, 'up', 0);
+  // While you read, choose and write, the scene stays alive but calm: the
+  // adventurers take their calm stance and the ambient clock (the backdrop's
+  // drifting motes, the creature's idle) runs at half speed. Strong motion
+  // belongs to the committed beats.
+  const calmNow = () => phase === 'choose' || phase === 'challenge';
+  const amb = { v: null, last: null, rate: 1 };
+  function ambient(t) {
+    if (amb.v == null) { amb.v = t; amb.last = t; }
+    const dt = Math.max(0, Math.min(100, t - amb.last));
+    amb.last = t;
+    amb.rate += ((calmNow() ? 0.5 : 1) - amb.rate) * Math.min(1, dt / 400);
+    amb.v += dt * amb.rate;
+    return amb.v;
   }
+  // frame cost (ms spent drawing the battle), for tests and tuning
+  const cost = { n: 0, sum: 0, max: 0, seqN: 0, seqSum: 0, seqMax: 0 };
   function draw(c, w, h, t) {
+    const t0 = performance.now();
     if (t - measureAt > 400) { measureAt = t; measure(); }
     const S = stageBuf(w, h);
     const Sc = RB.battleScene;
     const reduce = RB.game.reducedMotion();
-    const tt = reduce ? 0 : t;
-    const sx = shake > 0 && !reduce ? Math.round(Math.sin(t / 20) * 4) : 0;
-    if (shake > 0) shake -= 16;
-    // integer scale only (pixel art), chosen so the whole scene fits the stage
-    const scale = Math.max(1, Math.min(3, Math.floor(Math.min(S.h / 224, S.w / 300))));
-    const ps = scale;
-    const ex = Math.round(S.x + S.w * 0.62) + sx;
-    let ey = Math.round(Math.min(S.y + S.h - 100 * scale, Math.max(S.y + 80 * scale, S.y + S.h * 0.44)));
-    // a tall creature on a short stage: keep its head inside the stage
-    // (letting its feet sit a little lower) rather than under the foe slip
-    const ext = RB.enemyArt.extent(enemy.art || 'wisp', enemy.artOpts || {});
-    ey = Math.min(Math.max(ey, Math.round(S.y - ext.top * scale + 2)), Math.round(S.y + S.h - 64 * scale));
-    // the party's feet (rear three-quarter battle figures, RB.battlers): the
-    // player a little in from the left, the companion to their right and a
-    // step nearer; px/py keep the old sprite-corner convention (feet at
-    // px+16ps, py+48ps) for the backdrop's party box and effect anchors
-    const B = RB.battlers;
-    const fX = Math.round(Math.max(S.x + S.w * 0.14, S.x + ((B ? B.ANCHOR.x : 16) + 6) * ps)), fY = Math.round(S.y + S.h - 12 - 8 * ps);
-    const px = fX - 16 * ps, py = fY - 48 * ps;
-    const hz = Math.max(0, Math.min(h - 1, Math.round(Math.min(ey + 36 * scale, py + 16 * ps))));
+    const pt = RB.battleSeq.tick(t);
+    const tt = reduce ? 0 : ambient(t);
+    const lay = st && RB.battleStage.active() ? RB.battleStage.layout(S, w, h) : null;
+    const hz = lay ? lay.hz : Math.round(h * 0.62);
     c.imageSmoothingEnabled = false;
-    Sc.backdrop(c, enemy.bgKey || enemy.bg || enemy.region || 'reedwake', w, h, hz, tt, reduce, { S, ex, ey, ext, px, py, ps, scale, art: enemy.art });
-    // creature and its ground shadow
-    Sc.shadow(c, ex, ey + 84 * scale, 58 * scale, 11 * scale, 0.5);
-    if (st && st.over === 'win') c.globalAlpha = 0.5;
-    RB.enemyArt.drawArt(c, enemy.art || 'wisp', tt, enemy.artOpts || {}, ex, ey, scale, reduce);
-    c.globalAlpha = 1;
-    if (st && st.shroud) Sc.mist(c, ex, ey, scale, t, reduce);
-    // knots: a row of cord loops under it, tied or undone
-    if (st) for (let i = 0; i < st.maxKnots; i++) {
-      const a = -Math.PI / 2 + (i - (st.maxKnots - 1) / 2) * 0.5;
-      const kx = Math.round(ex + Math.cos(a) * 60 * scale), ky = Math.round(ey + 88 * scale + 12 + Math.sin(a) * 8);
-      const icon = Sc.knot(i < st.knots);
-      c.drawImage(icon, kx - 10 * scale, ky - 10 * scale, icon.width * scale, icon.height * scale);
+    // (the stage's arrangement, for a backdrop composer that keeps the actors' boxes clear)
+    Sc.backdrop(c, enemy.bgKey || enemy.bg || enemy.region || 'reedwake', w, h, hz, tt, reduce, lay ? { S, ex: lay.ex, ey: lay.ey, ext: lay.ext, px: lay.px, py: lay.py, ps: lay.ps, scale: lay.scale, art: enemy.art, party: lay.party } : null);
+    if (lay) {
+      // the frame loop must survive anything the presentation does wrong
+      try { RB.battleStage.draw(c, w, h, { t, pt, amb: tt, view: V(), reduce, calm: calmNow(), Sr: S, lay, stageCss, sealHeld }); }
+      catch (err) { if (!draw.failed) console.error('battle stage', err); draw.failed = true; }
     }
-    // party (backs to us), each on a small contact shadow
-    const s = RB.game.s;
-    const look = RB.equip.look(s); // with the equipped keepsake, as on the road
-    const feet = [{ x: fX, y: fY, look, who: 'pc' }];
-    if (s.comp) feet.push({ x: fX + 70 * ps, y: fY + 8 * ps, look: RB.content.chars[s.comp].look, who: 'comp' });
-    for (const m of feet) {
-      Sc.shadow(c, m.x, m.y - 2 * ps, 16 * ps, 5 * ps, 0.55);
-      if (B) m.pts = B.draw(c, m.look, { x: m.x, y: m.y, scale: ps, t, who: m.who, pose: st && st.over === 'win' ? 'cheer' : 'ready', k: 1, reduce });
-      else { const spr = partySprite(m.look); c.drawImage(spr, m.x - 16 * ps, m.y - 48 * ps, 32 * ps, 48 * ps); }
-    }
-    lastLay = { ex, ey, px, py, ps, scale, feet };
-    if (st) {
-      Sc.ward(c, feet[0].x, feet[0].y - 50 * ps, 40 * ps, st.ward.pc, ps);
-      if (feet[1]) Sc.ward(c, feet[1].x, feet[1].y - 50 * ps, 40 * ps, st.ward.comp, ps);
-      if (st.heat) { c.fillStyle = `rgba(255,120,60,${0.08 * st.heat})`; c.fillRect(0, 0, w, h); }
-    }
-    // effects
-    fxList = fxList.filter((e) => t - e.t0 < e.d);
-    const at = { ex, ey, px, py };
-    for (const e of fxList) Sc.effect(c, e, (t - e.t0) / e.d, at, 1);
+    const dt = performance.now() - t0;
+    cost.n++; cost.sum += dt; cost.max = Math.max(cost.max, dt);
+    if (RB.battleSeq.busy()) { cost.seqN++; cost.seqSum += dt; cost.seqMax = Math.max(cost.seqMax, dt); }
   }
   draw.art = true;
-  function addFx(kind, extra) {
-    fxList.push(Object.assign({ kind, t0: performance.now(), d: RB.game.reducedMotion() ? 300 : 700 }, extra));
-  }
-  // where the party stands (for effects), in art px; dx/dy in 16×24 sprite units
-  function partyAt(dx, dy) {
-    const l = lastLay || { px: 40, py: 120, ps: 1 };
-    const m = l.feet && l.feet[(dx || 8) >= 20 && l.feet[1] ? 1 : 0];
-    if (m) return { x: m.x, y: m.y - (48 - (dy || 12) * 2) * 1.8 * l.ps };
-    return { x: l.px + (dx || 8) * 2 * l.ps, y: l.py + (dy || 12) * 2 * l.ps };
-  }
   function tierOf(obj) {
     return RB.activities.tier(obj);
   }
+  let linePick = null;
   function intentLine(it) {
     const s = RB.game.s;
     const prof = s.learn.profile;
@@ -35029,7 +35161,9 @@ RB.combat = (function () {
     let cands = pool;
     if (solo || it.target === 'both') cands = pool.filter((x) => !x.neg);
     if (!cands.length) cands = pool;
-    const pick = cands[(st.round + st.knots) % cands.length];
+    // the line chosen when the move was telegraphed stays put for the whole exchange
+    if (!linePick || linePick.it !== it || linePick.round !== st.round) linePick = { it, round: st.round, i: (st.round + st.knots) % cands.length };
+    const pick = cands[linePick.i % cands.length];
     const nm = { pc: s.player.nameJp || s.player.name, comp: s.comp ? RB.jp.plain(RB.content.chars[s.comp].name.jp) : '' };
     const nmEn = { pc: s.player.name, comp: s.comp ? RB.content.chars[s.comp].name.en : '' };
     const tgt = it.target === 'comp' ? 'comp' : 'pc';
@@ -35096,11 +35230,11 @@ RB.combat = (function () {
   // (wards are on the party slip).
   const STATUS_ICON = { heat: 'flame', shroud: 'cloud', charge: 'hourglass', silence: 'mute', 'ward:pc': 'shield', 'ward:comp': 'shield' };
   function statusList() {
-    const out = [];
-    if (st.heat) out.push({ key: 'heat', label: 'Heat ' + st.heat });
-    if (st.shroud) out.push({ key: 'shroud', label: 'Shrouded' });
-    if (st.charged) out.push({ key: 'charge', label: 'Gathering' });
-    if (st.silenced) out.push({ key: 'silence', label: 'Hushed' });
+    const out = [], v = V();
+    if (v.heat) out.push({ key: 'heat', label: 'Heat ' + v.heat });
+    if (v.shroud) out.push({ key: 'shroud', label: 'Shrouded' });
+    if (v.charged) out.push({ key: 'charge', label: 'Gathering' });
+    if (v.silenced) out.push({ key: 'silence', label: 'Hushed' });
     return out;
   }
   function intentHtml(compact) {
@@ -35133,17 +35267,18 @@ RB.combat = (function () {
     }
     if (key === 'harmony') {
       if (!st.compId) return null;
-      const h = H.harmonyInfo(st);
+      const h = H.harmonyInfo(V());
       return { icon: 'join', title: h.title, body: '<p class="kw-now">' + h.now + '</p><p><b>How it fills:</b> ' + h.fills + '</p><p><b>When it is full:</b> ' + h.offers + '</p><p>' + h.more + '</p>' };
     }
-    const i = H.statusInfo(st, key, ws, { pc: esc(s.player.name), comp: esc(compName()) });
+    const i = H.statusInfo(V(), key, ws, { pc: esc(s.player.name), comp: esc(compName()) });
     if (!i) return null;
     return { icon: STATUS_ICON[key], title: i.title, body: p(i.what) + ans(i.answer) };
   }
   function knotsHtml() {
     let h = '';
-    for (let i = 0; i < st.maxKnots; i++) h += '<span class="kn' + (i < st.knots ? ' tied' : '') + '"></span>';
-    return '<span class="knots" role="img" aria-label="Knots still tied: ' + st.knots + ' of ' + st.maxKnots + '">' + h + '</span><span class="kn-t">' + st.knots + ' / ' + st.maxKnots + ' knots</span>';
+    const v = V();
+    for (let i = 0; i < v.maxKnots; i++) h += '<span class="kn' + (i < v.knots ? ' tied' : '') + '"></span>';
+    return '<span class="knots" role="img" aria-label="Knots still tied: ' + v.knots + ' of ' + v.maxKnots + '">' + h + '</span><span class="kn-t">' + v.knots + ' / ' + v.maxKnots + ' knots</span>';
   }
   function renderUi() {
     const s = RB.game.s;
@@ -35165,9 +35300,10 @@ RB.combat = (function () {
       (ward ? kw('ward:' + who, 'pm-w', '<span class="pill">' + I('shield') + '<span class="wl">Ward </span>' + ward + '</span>', ' in front of ' + name + ' — what this means') : '') + '</div>' +
       '<div class="pm-r"><div class="bar" role="meter" aria-label="' + esc(name) + ' resolve" aria-valuemin="0" aria-valuemax="' + max + '" aria-valuenow="' + v + '"><i style="width:' + Math.round((100 * v) / max) + '%"></i></div>' +
       '<span class="pm-v"><span class="sr">Resolve </span>' + v + ' / ' + max + '</span></div></div>';
+    const v = V();
     ui.bars.innerHTML = (s.comp && st.compId ? harmonyHtml() : '') + '<div class="pm-list">' +
-      member('pc', s.player.name, st.pc, st.max, st.ward.pc) +
-      (s.comp ? member('comp', compName(), st.comp, st.max, st.ward.comp) : '') +
+      member('pc', s.player.name, v.pc, v.max, v.ward.pc) +
+      (s.comp ? member('comp', compName(), v.comp, v.max, v.ward.comp) : '') +
       '<div class="pm-note">' + (st.assist ? 'Assisted: mistakes cost nothing' : 'Mistakes cost at most 1') + '</div></div>';
     RB.combatHelp.refresh(ui.root);
     requestAnimationFrame(measure);
@@ -35177,13 +35313,14 @@ RB.combat = (function () {
   // own explanation on hover, focus or tap.
   function harmonyHtml() {
     const T = RB.combatHelp.techOf(st);
-    const full = st.harmony >= st.harmonyMax;
+    const v = V();
+    const full = v.harmony >= v.harmonyMax;
     let pips = '';
-    for (let i = 0; i < st.harmonyMax; i++) pips += '<i class="hp' + (i < st.harmony ? ' on' : '') + '"></i>';
+    for (let i = 0; i < v.harmonyMax; i++) pips += '<i class="hp' + (i < v.harmony ? ' on' : '') + '"></i>';
     return kw('harmony', 'cb-harmony' + (full ? ' full' : ''),
       '<span class="hm-a">' + I('join') + '<span class="hm-n">Harmony</span>' +
-      '<span class="hm-pips" aria-hidden="true">' + pips + '</span><span class="hm-v">' + st.harmony + '<span class="sr"> of </span><span aria-hidden="true">/</span>' + st.harmonyMax + '</span></span>' +
-      '<span class="hm-t">' + (full ? '<b>Ready:</b> ' + esc(T.name) + ' is in your responses' : esc(compName()) + '\'s technique at ' + st.harmonyMax + ': ' + esc(T.name)) + '</span>' + Q(),
+      '<span class="hm-pips" aria-hidden="true">' + pips + '</span><span class="hm-v">' + v.harmony + '<span class="sr"> of </span><span aria-hidden="true">/</span>' + v.harmonyMax + '</span></span>' +
+      '<span class="hm-t">' + (full ? '<b>Ready:</b> ' + esc(T.name) + ' is in your responses' : esc(compName()) + '\'s technique at ' + v.harmonyMax + ': ' + esc(T.name)) + '</span>' + Q(),
       ' — what Harmony is and how it fills');
   }
   function words() {
@@ -35260,12 +35397,15 @@ RB.combat = (function () {
       for (const c of cards) if (c.kind === 'word') shownWords.add(c.word.id);
       ui.resp.innerHTML = '<div class="rcards">' + cards.map((c, i) => cardHtml(c, i, hi)).join('') + '</div>' +
         (st.noFlee ? '' : '<button class="cbtn flee" data-flee>' + I('back') + '<span>Step back from this encounter</span></button>');
-      ui.log.classList.add('hidden');
+      // the last exchange stays readable under the responses (what was woven, what it did)
+      recap();
       showCoach(coachFor());
       // Keyboard focus starts on the responses but may also reach the
       // keywords (telegraph, states, Harmony, wards) and the note above them.
       const layer = { el: ui.resp, name: 'cards', parent: ui.dock, scope: ui.root };
-      const done = (v) => { RB.combatHelp.hide(); showCoach(null); RB.ui.popLayer(layer); ui.dock.insertBefore(ui.resp, ui.log); resolve(v); };
+      // one choice per exchange: a second click (or a double click) is ignored
+      let chosen = false;
+      const done = (v) => { if (chosen) return; chosen = true; RB.combatHelp.hide(); showCoach(null); RB.ui.popLayer(layer); ui.dock.insertBefore(ui.resp, ui.log); resolve(v); };
       ui.resp.onclick = (e) => {
         const b = e.target.closest('[data-i]');
         if (b && !b.disabled) { done(cards[+b.getAttribute('data-i')]); return; }
@@ -35314,54 +35454,135 @@ RB.combat = (function () {
   function say(line, who) {
     return RB.ui.dialogue.say({ who: who || 'narr', jp: line.jp, en: line.en });
   }
-  function log(text) {
-    ui.log.classList.remove('hidden');
-    ui.log.innerHTML = text;
-    return new Promise((r) => setTimeout(r, RB.game.reducedMotion() ? 500 : 900));
+  // ---- the exchange log: every result as a line, kept for the whole exchange and
+  // left under the responses afterwards as a recap (the resolved word with its
+  // reading, and what it did), so nothing depends on catching the animation.
+  let logFresh = true;
+  function logLine(html) {
+    if (!ui || !html) return;
+    if (logFresh) { ui.log.innerHTML = ''; logFresh = false; }
+    ui.log.classList.remove('hidden', 'recap');
+    ui.log.setAttribute('aria-live', 'polite');
+    const p = document.createElement('p');
+    p.className = 'cl-l';
+    p.innerHTML = html;
+    ui.log.appendChild(p);
+    while (ui.log.children.length > 5) ui.log.removeChild(ui.log.firstChild);
   }
-  async function playFx(fx) {
-    for (const f of fx) {
-      let msg = '';
-      const s = RB.game.s;
-      const nm = (who) => (who === 'comp' ? RB.content.chars[s.comp].name.en : s.player.name);
-      switch (f.t) {
-        case 'unravel': addFx('untie'); RB.audio && RB.audio.sfx('knot_untie'); msg = f.n > 1 ? 'Two knots come loose.' : 'A knot comes loose.'; break;
-        case 'ward': addFx('glyph', partyAt(f.target === 'comp' ? 28 : 8, 12)); RB.audio && RB.audio.sfx('ward'); msg = f.block ? 'The ward catches the blow meant for ' + nm(f.target) + '.' : 'A ward rises before ' + nm(f.target) + '.'; break;
-        case 'water': addFx('water'); RB.audio && RB.audio.sfx('water'); msg = 'Water hisses over the heat — it cools. Heat cleared.'; break;
-        case 'light': addFx('light'); RB.audio && RB.audio.sfx('light'); msg = 'Light burns the mist away — its knots show again.'; break;
-        case 'bind': RB.audio && RB.audio.sfx('ward'); msg = 'The rope holds it fast; the gathered force spills away.'; break;
-        case 'heal': addFx('heal'); RB.audio && RB.audio.sfx('heal'); msg = 'You both breathe easier.'; break;
-        case 'warm': RB.audio && RB.audio.sfx('light'); msg = 'Warmth spreads through your fingers.'; break;
-        case 'bell': RB.audio && RB.audio.sfx('bell'); msg = 'A clear note breaks the hush.'; break;
-        case 'hit': {
-          shake = 200; addFx('hit', partyAt(f.who === 'comp' ? 28 : 8, 16)); RB.audio && RB.audio.sfx('party_hit');
-          const hb = L().heatBonus(st);
-          msg = nm(f.who) + ' is struck (−' + f.n + (hb ? ', with +' + hb + ' from Heat' : '') + ').'; break;
-        }
-        case 'block': RB.audio && RB.audio.sfx('ward'); msg = 'The ward absorbs ' + f.n + '.'; break;
-        case 'heat': RB.audio && RB.audio.sfx('enemy_intent'); msg = 'It overheats: Heat ' + f.n + ' — its blows now hit +' + (f.bonus != null ? f.bonus : f.n) + ' harder until it is cooled.'; break;
-        case 'shroud': RB.audio && RB.audio.sfx('wind'); msg = 'Mist swallows its knots.'; break;
-        case 'charge': RB.audio && RB.audio.sfx('enemy_intent'); msg = 'It gathers itself: its next blow will hit +2 harder.'; break;
-        case 'harmony': {
-          const full = f.n >= f.max;
-          if (full) RB.audio && RB.audio.sfx('harmony_ready');
-          msg = full ? 'In step with ' + compName() + ': Harmony is full — ' + RB.combatHelp.techOf(st).name + ' is ready.' : 'In step with ' + compName() + ': Harmony ' + f.n + ' of ' + f.max + '.';
-          break;
-        }
-        case 'mend': RB.audio && RB.audio.sfx('enemy_intent'); msg = 'It ties one knot back up.'; break;
-        case 'stripWard': RB.audio && RB.audio.sfx('wind'); msg = 'The gust tears your wards away.'; break;
-        case 'silence': RB.audio && RB.audio.sfx('enemy_intent'); msg = 'Sound drains out of the air: you are Hushed.'; break;
-        case 'countered': RB.audio && RB.audio.sfx('reveal'); msg = 'You answered it — its move comes to nothing.'; break;
-        case 'cost': msg = f.en; break;
-        case 'comp': case 'tech': case 'settle': case 'reveal': msg = f.en; RB.audio && RB.audio.sfx(f.t === 'tech' ? 'technique' : 'reveal'); break;
-        case 'plea': msg = 'It waits for an answer that doesn\'t come.'; break;
-        default: msg = '';
+  function recap() {
+    logFresh = true;
+    const any = ui.log.children.length > 0;
+    ui.log.classList.toggle('hidden', !any);
+    ui.log.classList.toggle('recap', any);
+    ui.log.setAttribute('aria-live', 'off');
+  }
+  const wordHtml = (w) => '<span class="cl-w">' + w.html + '</span> <span class="cl-en">' + esc(w.en) + '</span>';
+  // One authoritative fx event reaches the screen: the displayed state steps
+  // forward by exactly this result, its line is logged and its sound plays.
+  // Called once per event by the sequencer (RB.battleSeq), at its beat.
+  function applyBeat(f, cue) {
+    const s = RB.game.s;
+    if (!view) view = snapshot(st);
+    const v = view;
+    const nm = (who) => (who === 'comp' ? RB.content.chars[s.comp].name.en : s.player.name);
+    const was = { pc: v.pc, comp: v.comp };
+    const sfx = (n) => RB.audio && RB.audio.sfx(n);
+    let msg = '';
+    switch (f.t) {
+      case 'unravel': v.knots = Math.max(0, v.knots - (f.n || 1)); sfx('knot_untie'); msg = f.n > 1 ? 'Two knots come loose.' : 'A knot comes loose.'; break;
+      case 'ward':
+        if (f.block) sealHeld = f.target; else v.ward[f.target] = (v.ward[f.target] || 0) + 2;
+        sfx('ward'); msg = f.block ? 'The ward catches the blow meant for ' + nm(f.target) + '.' : 'A ward rises before ' + nm(f.target) + '.'; break;
+      case 'water': v.heat = 0; sfx('water'); msg = 'Water hisses over the heat — it cools. Heat cleared.'; break;
+      case 'light': v.shroud = false; sfx('light'); msg = 'Light burns the mist away — its knots show again.'; break;
+      case 'bind': v.charged = false; sfx('ward'); msg = 'The rope holds it fast; the gathered force spills away.'; break;
+      case 'heal': v.pc = Math.min(v.max, v.pc + 3); if (v.compId) v.comp = Math.min(v.max, v.comp + 3); sfx('heal'); msg = 'You both breathe easier.'; break;
+      case 'warm': sfx('light'); msg = 'Warmth spreads through your fingers.'; break;
+      case 'bell': v.silenced = 0; sfx('bell'); msg = 'A clear note breaks the hush.'; break;
+      case 'hit': {
+        if (f.who === 'comp') v.comp = Math.max(0, v.comp - f.n); else v.pc = Math.max(0, v.pc - f.n);
+        sfx('party_hit');
+        const hb = L().heatBonus(v);
+        msg = nm(f.who) + ' is struck (−' + f.n + (hb ? ', with +' + hb + ' from Heat' : '') + ').'; break;
       }
-      if (msg) { renderUi(); await log(esc(msg)); }
+      case 'block': v.ward[f.who] = Math.max(0, (v.ward[f.who] || 0) - f.n); sfx('ward'); msg = 'The ward absorbs ' + f.n + '.'; break;
+      case 'heat': v.heat = f.n; sfx('enemy_intent'); msg = 'It overheats: Heat ' + f.n + ' — its blows now hit +' + (f.bonus != null ? f.bonus : f.n) + ' harder until it is cooled.'; break;
+      case 'shroud': v.shroud = true; sfx('wind'); msg = 'Mist swallows its knots.'; break;
+      case 'charge': v.charged = true; sfx('enemy_intent'); msg = 'It gathers itself: its next blow will hit +2 harder.'; break;
+      case 'harmony': {
+        v.harmony = f.n;
+        const full = f.n >= f.max;
+        if (full) sfx('harmony_ready');
+        msg = full ? 'In step with ' + compName() + ': Harmony is full — ' + RB.combatHelp.techOf(st).name + ' is ready.' : 'In step with ' + compName() + ': Harmony ' + f.n + ' of ' + f.max + '.';
+        break;
+      }
+      case 'mend': v.knots = Math.min(v.maxKnots, v.knots + 1); sfx('enemy_intent'); msg = 'It ties one knot back up.'; break;
+      case 'stripWard': v.ward.pc = 0; v.ward.comp = 0; sfx('wind'); msg = 'The gust tears your wards away.'; break;
+      case 'silence': v.silenced = 1; sfx('enemy_intent'); msg = 'Sound drains out of the air: you are Hushed.'; break;
+      case 'countered': sealHeld = null; if (f.kind === 'charge') v.charged = false; sfx('reveal'); msg = 'You answered it — its move comes to nothing.'; break;
+      case 'cost': v.pc = Math.max(0, v.pc - 1); msg = f.en; break;
+      case 'tech':
+        if (f.who === 'mio') { v.pc = v.max; v.comp = v.max; v.heat = 0; v.shroud = false; v.charged = false; }
+        if (f.who === 'ren') { v.ward.pc += 3; v.ward.comp += 3; }
+        sfx('technique'); msg = f.en; break;
+      case 'settle': if (cue && cue.side === 'player' && curCard && curCard.kind === 'answer') v.knots = Math.max(0, v.knots - 1); sfx('reveal'); msg = f.en; break;
+      case 'reveal': if (st.intent && st.intent.kind === 'mirror') v.knots = Math.max(0, v.knots - 1); sfx('reveal'); msg = f.en; break;
+      case 'comp':
+        // a companion's own move; Mio's draught at the end of the exchange is
+        // the last change, so the display meets the rules there
+        if (f.who === 'mio' && cue && cue.side === 'enemy') { v.pc = st.pc; v.comp = st.comp; }
+        sfx('reveal'); msg = f.en; break;
+      case 'plea': msg = 'It waits for an answer that doesn\'t come.'; break;
+      case 'rest': msg = 'It hangs back, waiting.'; break;
+      case 'spent': v.charged = false; msg = 'The force it gathered is spent in that blow.'; break;
+      case 'revive': v.pc = st.pc; msg = compName() + ' hauls you back to your feet.'; break;
+      case 'woven': msg = ''; break;
+      default: msg = f.en || '';
     }
-    ui.log.classList.add('hidden');
+    const w = cue && cue.word;
+    const html = w ? wordHtml(w) + (msg ? ' — ' + esc(msg) : '') : esc(msg);
+    if (html) logLine(html);
     renderUi();
+    return { delta: { pc: v.pc - was.pc, comp: v.comp - was.comp } };
   }
+  function seqCtx(extra) {
+    return Object.assign({ comp: st.compId || null, reduce: RB.game.reducedMotion(), view: snapshot(V()) }, extra || {});
+  }
+  const tagSide = (cues, side) => { for (const c of cues) if (c.type === 'beat') c.side = side; return cues; };
+  // Your response, once accepted and applied by the rules: anticipation → the
+  // gesture → the word on paper → its effect on the actual target → recovery.
+  // The finishing response also lets the creature settle before the last line.
+  function playPlayer(card, fx, before, won) {
+    view = before;
+    const ctx = seqCtx({ view: before });
+    const P = RB.battleSeq.choreo.player(card, fx, ctx);
+    let cues = tagSide(P.cues, 'player'), end = P.end;
+    if (won) { const F = RB.battleSeq.choreo.finish(P.end, ctx); cues = cues.concat(F.cues); end = F.end; }
+    phase = won ? 'finish' : 'player';
+    return RB.battleSeq.run(phase, cues, { end, card: card.id, word: P.word.jp, target: P.plan.target, gesture: P.plan.gesture, actors: P.plan.actors, fx: fx.map((f) => f.t) });
+  }
+  // The creature's move as the rules resolved it: preparation → execution →
+  // contact on each actual target → their reactions → recovery.
+  function playEnemy(it, fx, before, wardBlock) {
+    view = before;
+    const ctx = seqCtx({ view: before, wardBlock, foeCol: (enemy.artOpts && enemy.artOpts.col) || null });
+    const E = RB.battleSeq.choreo.enemy(it, fx, ctx);
+    phase = 'enemy';
+    return RB.battleSeq.run('enemy', tagSide(E.cues, 'enemy'), { end: E.end, kind: it.kind, target: it.target, fx: fx.map((f) => f.t + (f.who ? ':' + f.who : '')) });
+  }
+  function playRevive() {
+    view = snapshot(st);
+    view.pc = 0;
+    const R = RB.battleSeq.choreo.revive(seqCtx());
+    phase = 'revive';
+    return RB.battleSeq.run('revive', tagSide(R.cues, 'revive'), { end: R.end });
+  }
+  const port = {
+    beat: applyBeat,
+    log: logLine,
+    // every sequence ends with the screen showing exactly what the rules hold
+    reconcile() { view = null; if (ui && st) renderUi(); },
+  };
 
   // The encounter's place decides its setting (indoors / outdoors), its
   // backdrop and the lines that describe it, not the species: a foe placed
@@ -35405,6 +35626,13 @@ RB.combat = (function () {
     shownWords = new Set();
     H.attach(helpFor);
     ui = buildUi();
+    view = null; sealHeld = null; curCard = null; phase = 'intro'; logFresh = true;
+    amb.v = null; Object.assign(cost, { n: 0, sum: 0, max: 0, seqN: 0, seqSum: 0, seqMax: 0 });
+    RB.battleStage.begin({
+      enemy, overlay: ui.root, view: V, hasComp: () => !!(st && st.compId),
+      looks: () => ({ pc: RB.equip.look(RB.game.s), comp: st && st.compId && RB.content.chars[st.compId] ? RB.content.chars[st.compId].look : null }),
+    });
+    RB.battleSeq.attach(port);
     measure();
     await RB.ui.fade(false, 200);
     let outcome = null;
@@ -35422,6 +35650,7 @@ RB.combat = (function () {
           }
           st.phaseChanged = null;
         }
+        phase = 'choose';
         renderUi();
         RB.audio && RB.audio.sfx('enemy_intent', { vol: 0.5 });
         st.assistedRound = false;
@@ -35432,6 +35661,8 @@ RB.combat = (function () {
           continue;
         }
         ui.resp.innerHTML = '';
+        curCard = card;
+        phase = 'challenge';
         const step = stepFor(card);
         const res = await RB.challenge.runStep(step, {
           header: situationHtml(card),
@@ -35439,22 +35670,28 @@ RB.combat = (function () {
         });
         if (res.cancelled) continue;
         if (st.assistedRound) res.assisted = true;
+        // The rules resolve the exchange (once); the screen then shows it beat by beat.
         const hb = st.harmony;
+        const before = snapshot(st);
         const { fx, countered } = L().playerAct(st, card, res, enemy);
         if (st.compId && st.harmony > hb) fx.push({ t: 'harmony', n: st.harmony, max: st.harmonyMax });
-        await playFx(fx);
-        if (st.knots <= 0) { outcome = 'win'; break; }
+        const won = st.knots <= 0;
+        await playPlayer(card, fx, before, won);
+        if (won) { outcome = 'win'; break; }
+        const it = st.intent, blockedByWard = fx.some((f) => f.t === 'ward' && f.block);
+        const before2 = snapshot(st);
         const efx = L().enemyAct(st, countered);
-        await playFx(efx);
+        await playEnemy(it, efx, before2, blockedByWard);
+        sealHeld = null;
         L().endRound(st, enemy);
         if (st.log.length && st.log[st.log.length - 1].t === 'revive') {
           st.log.pop();
-          const c = RB.content.chars[s.comp];
-          await log(esc(c.name.en + ' hauls you back to your feet.'));
+          await playRevive();
         }
         if (st.over) outcome = st.over;
       }
       if (outcome === 'win') {
+        phase = 'outro';
         RB.audio && RB.audio.playSong('victory');
         if (enemy.settle) { await say(tierOf(enemy.settle) || enemy.settle, enemy.settleWho); RB.ui.dialogue.hide(); }
         if (enemy.reward) {
@@ -35464,15 +35701,19 @@ RB.combat = (function () {
         s.vars.battlesWon = (s.vars.battlesWon || 0) + 1;
       }
     } finally {
+      // the presentation ends first: any unfinished sequence is settled, its input hook released
+      RB.battleSeq.detach();
+      view = null; sealHeld = null; curCard = null; phase = 'idle';
       // Resolve recovers after every encounter: no attrition grinding.
       s.resolve.pc = s.resolve.max;
       s.resolve.comp = s.resolve.max;
       for (const w of shownWords) RB.combatHelp.mark(s, 'word:' + w);
       RB.combatHelp.detach();
       if (ui) { window.removeEventListener('resize', ui.onResize); if (ui.ro) ui.ro.disconnect(); ui.root.remove(); }
-      ui = null; stageCss = null; lastLay = null;
+      ui = null; stageCss = null;
       await RB.ui.fade(true, 200);
       RB.render.setOverride(null);
+      RB.battleStage.end();
       RB.game.popMode('combat');
       await RB.ui.fade(false, 200);
       const m = RB.world.W.map;
@@ -35484,7 +35725,19 @@ RB.combat = (function () {
   }
   // refresh(): redraw the overlay from the current state (tests, tools)
   // context(): where the current encounter happens (tests, tools)
-  return { start, state: () => st, refresh: () => { if (st && ui) renderUi(); }, context: () => enemy && st ? { id: enemy.id, where: enemy.where, setting: enemy.setting, bg: enemy.bgKey, intro: enemy.intro, settle: enemy.settle } : null };
+  // phase(): 'idle' | 'intro' | 'choose' | 'challenge' | 'player' | 'enemy' | 'revive' | 'finish' | 'outro'
+  // shown(): the state as currently displayed (one beat behind the rules during a sequence)
+  // debug(): sequencer and stage counters, the sequence trace and frame cost (tests, tuning)
+  function debug() {
+    return {
+      phase, seq: RB.battleSeq.stats(), stage: RB.battleStage.stats(), trace: RB.battleSeq.trace(),
+      frames: { n: cost.n, avg: cost.n ? +(cost.sum / cost.n).toFixed(3) : 0, max: +cost.max.toFixed(3), seqN: cost.seqN, seqAvg: cost.seqN ? +(cost.seqSum / cost.seqN).toFixed(3) : 0, seqMax: +cost.seqMax.toFixed(3) },
+    };
+  }
+  return {
+    start, state: () => st, refresh: () => { if (st && ui) renderUi(); }, context: () => enemy && st ? { id: enemy.id, where: enemy.where, setting: enemy.setting, bg: enemy.bgKey, intro: enemy.intro, settle: enemy.settle } : null,
+    phase: () => phase, shown: () => (st ? snapshot(V()) : null), debug,
+  };
 })();
 
 
@@ -35850,6 +36103,1509 @@ RB.combatHelp = (function () {
   function mark(s, key) { tips(s)[key] = 1; }
 
   return { gist, intentInfo, statusInfo, harmonyInfo, techOf, compName, attach, detach, show, hide, isOpen, refresh, tips, seen, mark, list, cancels };
+})();
+
+
+/* ==== src/ui/82_battle_seq.js ==== */
+/* Battle presentation sequencer. The rules (RB.combatLogic) decide
+ * everything first and return their authoritative fx events; this file only
+ * STAGES the display of results already computed. It never recomputes,
+ * rerolls or applies a rule: each result reaches the screen through exactly
+ * one `beat` cue, which hands that fx event to the combat UI (the displayed
+ * state steps forward, the log line appears, the sound plays).
+ *
+ *   choreo.player(card, fx, ctx) / enemy(intent, fx, ctx) / finish(…) / revive(…)
+ *       → a list of cues (times in presentation ms)
+ *   run(kind, cues) → Promise that resolves when the sequence has played
+ *
+ * Cues: pose (an adventurer's pose and gesture), foe (the creature's action
+ * pose), fx (a transient effect), strip (the paper-and-ink word), num (a
+ * small number), beat (one authoritative fx event), log, sfx, final.
+ *
+ * Time: a presentation clock advanced from the frame loop (dt clamped to
+ * 100 ms, so a stalled or background tab never bursts through stale beats),
+ * faster with the Text speed setting, ×4 while hurried (Z / Enter / a click
+ * on the battle). Only one sequence runs at a time; starting another first
+ * settles the old one. settle() applies every remaining beat in order at
+ * once and drops the transient visuals — used when the tab is hidden, by a
+ * watchdog if frames stop arriving, and at scene exit — so skipping,
+ * reduced motion or an interrupted playback always ends in the same state. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.battleSeq = (function () {
+  'use strict';
+  // ---- tuning (presentation ms at normal speed) ----------------------------------------------
+  const T = {
+    // the word: travels and unrolls, the ink writes it (≈0.54 s in), it stays, and has
+    // gone by the end of the response (the log keeps it)
+    anticipate: 170, act: 400, stripAt: 120, strip: { travel: 320, unfurl: 200, inkAt: 120, inkEnd: 420, fadeAt: 850, end: 1000 },
+    stripStill: { travel: 0, unfurl: 0, inkAt: 0, inkEnd: 0, fadeAt: 880, end: 980 },
+    beat: 560, beatGap: 150, recoverAt: 900, recover: 240, end: 1140,
+    foePrep: 320, foeExec: 380, contact: 560, foeRecover: 300, secondTarget: 120, react: 420,
+    finishHold: 1000, speed: { normal: 1, fast: 1.4, instant: 2 }, hurry: 4,
+  };
+  let pt = 0, lastT = null, cur = null, port = null, timeScale = 1; // timeScale: tests and captures only
+  const trace = [];
+  const counters = { runs: 0, done: 0, settled: 0, hurried: 0, beats: 0, watchdogs: 0 };
+  const timers = new Set();
+  let onVis = null, onDown = null, layer = null;
+  const stage = () => RB.battleStage;
+
+  function later(fn, ms) { const id = setTimeout(() => { timers.delete(id); fn(); }, ms); timers.add(id); return id; }
+  function clearTimers() { for (const id of timers) clearTimeout(id); timers.clear(); }
+  function speed() {
+    const ts = RB.game.settings && RB.game.settings.textSpeed;
+    return T.speed[ts] || 1;
+  }
+
+  // ---- lifecycle (one attach per encounter) ----------------------------------------------------
+  // p: { beat(f, cue) → info, log(html), reconcile() }
+  function attach(p) {
+    detach();
+    port = p;
+    pt = 0; lastT = null;
+    onVis = () => { if (document.hidden) settle('hidden'); };
+    document.addEventListener('visibilitychange', onVis);
+  }
+  function detach() {
+    if (cur) settle('exit');
+    if (onVis) document.removeEventListener('visibilitychange', onVis);
+    onVis = null;
+    unhook();
+    clearTimers();
+    port = null;
+  }
+  function tick(t) {
+    const dt = lastT == null ? 16 : Math.max(0, Math.min(100, t - lastT));
+    lastT = t;
+    pt += dt * timeScale * (cur ? speed() * (cur.hurried ? T.hurry : 1) : 1);
+    if (cur) step();
+    return pt;
+  }
+  function now() { return pt; }
+
+  // ---- running a sequence --------------------------------------------------------------------------
+  function run(kind, cues, meta) {
+    if (cur) settle('overlap');
+    cues = cues.slice().sort((a, b) => a.at - b.at);
+    const end = cues.reduce((m, c) => Math.max(m, c.at + (c.hold ? 0 : c.d || 0)), 0);
+    const endAt = Math.max(meta && meta.minEnd || 0, cues.reduce((m, c) => Math.max(m, c.type === 'beat' || c.type === 'log' || c.type === 'final' ? c.at : 0), 0) + 1, meta && meta.end != null ? meta.end : end);
+    counters.runs++;
+    return new Promise((resolve) => {
+      cur = { kind, cues, i: 0, t0: pt, end: endAt, resolve, hurried: false, started: performance.now(), rec: { kind, meta: meta || {}, fired: [], beats: [], hurried: false, settled: null, dur: 0 } };
+      hook();
+      // if frames stop arriving (a throttled tab, a stalled canvas), finish anyway
+      const wall = (endAt / (speed() * Math.min(1, timeScale))) * 2 + 2500;
+      cur.watch = later(() => { if (cur && cur.started + wall - 50 <= performance.now()) { counters.watchdogs++; settle('watchdog'); } }, wall);
+      if (document.hidden) { settle('hidden'); return; }
+      step();
+    });
+  }
+  function step() {
+    const el = pt - cur.t0;
+    while (cur && cur.i < cur.cues.length && cur.cues[cur.i].at <= el) fire(cur.cues[cur.i++], false);
+    if (cur && el >= cur.end) finish(null);
+  }
+  // A failing cue never stops the frame loop or the battle: it is reported and skipped
+  // (a beat's result is still reconciled from the rules when the sequence ends).
+  function fire(c, instant) {
+    try { fire1(c, instant); } catch (err) { counters.errors = (counters.errors || 0) + 1; console.error('battle cue', c.type, err); }
+  }
+  function fire1(c, instant) {
+    const S = stage(), at = cur.t0 + c.at;
+    cur.rec.fired.push(c.type + (c.name ? ':' + c.name : c.pose ? ':' + c.who + '=' + c.pose : c.act ? ':' + c.act : ''));
+    switch (c.type) {
+      case 'beat': {
+        counters.beats++;
+        cur.rec.beats.push({ t: c.f.t, at: Math.round(pt - cur.t0), who: c.f.who || c.f.target || null });
+        const info = port ? port.beat(c.f, c) : null;
+        if (!instant && c.then) c.then(info, at);
+        break;
+      }
+      case 'log': if (port) port.log(c.html); break;
+      case 'final': S.finalFoe(true); break;
+      case 'sfx': if (!instant) RB.audio && RB.audio.sfx(c.name); break;
+      default:
+        if (instant) break;
+        if (c.type === 'pose') S.pose(c.who, c.pose, c.gesture, c.d, at);
+        else if (c.type === 'foe') S.foe(c.act, c.d, at, { family: c.family, dir: c.dir, hold: c.hold });
+        else if (c.type === 'fx') S.effect(c.name, c.d, at, c.p);
+        else if (c.type === 'strip') S.strip(c.word, c.from, c.to, at, c.tm);
+        else if (c.type === 'num') S.number(c.to, c.text, c.kind, at);
+    }
+  }
+  // Apply every remaining beat now (in order), drop the transient visuals, resolve.
+  function settle(why) {
+    if (!cur) return;
+    while (cur.i < cur.cues.length) fire(cur.cues[cur.i++], true);
+    stage().clearTransient();
+    counters.settled++;
+    finish(why || 'skip');
+  }
+  function hurry() {
+    if (!cur || cur.hurried) return;
+    cur.hurried = true;
+    cur.rec.hurried = true;
+    counters.hurried++;
+  }
+  function finish(settled) {
+    const c = cur;
+    if (!c) return;
+    cur = null;
+    if (c.watch) { clearTimeout(c.watch); timers.delete(c.watch); }
+    unhook();
+    c.rec.settled = settled;
+    c.rec.dur = Math.round(performance.now() - c.started);
+    trace.push(c.rec);
+    while (trace.length > 40) trace.shift();
+    if (port && port.reconcile) port.reconcile();
+    counters.done++;
+    c.resolve(c.rec);
+  }
+  // While a sequence plays: Z / Enter / Escape (by the player's bindings) or a
+  // fresh press on the battle hurries it. The press is used up here, so it
+  // never also advances the line that follows (that line ignores presses
+  // that began before it appeared).
+  function hook() {
+    unhook();
+    if (!RB.ui || !RB.ui.pushLayer) return;
+    const el = document.createElement('div');
+    el.className = 'cb-seqkey';
+    el.setAttribute('aria-hidden', 'true');
+    layer = { el, name: 'battle-sequence', noAutofocus: true, parent: document.querySelector('.combat-ui') || undefined };
+    layer.onAction = (a) => { if (a === 'ok' || a === 'cancel') { hurry(); return true; } return a !== 'menu' && a !== 'help'; };
+    layer.onCancel = () => hurry();
+    RB.ui.pushLayer(layer);
+    const t0 = performance.now();
+    onDown = (e) => {
+      if (!cur || performance.now() - t0 < 120) return; // not the press that started it
+      const tg = e.target;
+      if (!tg || !tg.closest) return;
+      if (tg.closest('button, a, input, select, textarea, .kwcard, .dlg')) return;
+      if (tg.id === 'world' || tg.closest('.combat-ui')) hurry();
+    };
+    document.addEventListener('pointerdown', onDown, true);
+  }
+  function unhook() {
+    if (layer) { const l = layer; layer = null; RB.ui.popLayer(l); }
+    if (onDown) document.removeEventListener('pointerdown', onDown, true);
+    onDown = null;
+  }
+
+  // ---- choreography: authoritative fx → cues ------------------------------------------------------
+  // What each response looks like: who acts, the gesture, where it lands.
+  const TECH_GESTURE = { nao: 'direct', mio: 'restore', ren: 'ward', suzu: 'flow' };
+  const OUTCOME = { unravel: 1, ward: 1, heal: 1, water: 1, light: 1, bind: 1, warm: 1, bell: 1, settle: 1, reveal: 1, tech: 1, comp: 1 };
+  function wordOf(card) {
+    // the response's own Japanese (a word in kanji with its reading; ほどく, こたえる, みぬく, あわせ as written)
+    const jp = card.kind === 'word' ? card.word.jpK || card.word.jp : card.jp;
+    return { jp, en: card.en, html: RB.ui.jhtml(jp) };
+  }
+  function planOf(card, fx, ctx) {
+    const has = (t) => fx.some((f) => f.t === t);
+    const tags = (card.word && card.word.tags) || [];
+    const tg = (x) => tags.indexOf(x) >= 0;
+    const party = ctx.comp ? 'party' : 'pc';
+    let target = 'foe', gesture = 'direct', travel = null, actors = ['pc'];
+    if (card.kind === 'unravel') { gesture = 'direct'; travel = 'thread'; }
+    else if (card.kind === 'tech') { actors = ['pc', 'comp']; gesture = 'direct'; travel = 'thread'; }
+    else if (card.kind === 'answer') { gesture = 'book'; travel = 'note'; }
+    else if (card.kind === 'truth') { gesture = 'trace'; travel = 'lens'; }
+    else if (tg('ward')) { target = card.target || 'pc'; gesture = 'ward'; travel = 'sealForm'; }
+    else if (tg('heal')) { target = party; gesture = 'restore'; travel = null; }
+    else if (tg('water')) { gesture = 'flow'; travel = 'splash'; }
+    else if (tg('bind')) { gesture = 'trace'; travel = 'rope'; }
+    else if ((tg('light') && (has('light') || !tg('warm'))) || (tg('wind') && !tg('anchor'))) { gesture = tg('wind') && !tg('light') ? 'flow' : 'raise'; travel = tg('wind') && !tg('light') ? 'wind' : 'flash'; }
+    else if (tg('anchor') || tg('stone')) { target = party; gesture = 'ward'; travel = 'stone'; }
+    else if (tg('warm') || tg('fire')) { target = party; gesture = 'raise'; travel = 'warm'; }
+    else if (tg('bell') || tg('voice')) { target = party; gesture = 'raise'; travel = 'rings'; }
+    return { target, gesture, travel, actors };
+  }
+  // The travel/landing effect for a response, placed on the timeline.
+  function travelCue(Q, plan, card, fx, ctx, at) {
+    const from = 'pc';
+    const p = { from, to: plan.target };
+    const has = (t) => fx.some((f) => f.t === t);
+    switch (plan.travel) {
+      case 'thread': {
+        const n = (fx.find((f) => f.t === 'unravel') || { n: 1 }).n;
+        const i = Math.max(0, ctx.view.knots - 1);
+        Q.push({ at, type: 'fx', name: 'thread', d: 560, p: { from, to: 'knot:' + i } });
+        if (n > 1 && ctx.view.knots > 1) Q.push({ at: at + 60, type: 'fx', name: 'thread', d: 560, p: { from: ctx.comp ? 'comp' : from, to: 'knot:' + (i - 1) } });
+        break;
+      }
+      case 'splash': Q.push({ at, type: 'fx', name: 'splash', d: 700, p: Object.assign(p, { steam: has('water') }) }); break;
+      case 'flash': Q.push({ at, type: 'fx', name: 'flash', d: 720, p }); break;
+      case 'wind': Q.push({ at, type: 'fx', name: 'wind', d: 620, p }); break;
+      case 'rope': Q.push({ at, type: 'fx', name: 'rope', d: 760, p }); break;
+      case 'note': Q.push({ at, type: 'fx', name: 'note', d: 640, p: { from, to: 'foe', fade: true } }); break;
+      case 'lens': Q.push({ at: at + 120, type: 'fx', name: 'lens', d: 720, p }); break;
+      case 'sealForm': Q.push({ at: at + 120, type: 'fx', name: 'sealForm', d: 520, p }); break;
+      case 'stone': Q.push({ at: at + 120, type: 'fx', name: 'stone', d: 700, p: { who: ctx.comp ? ['pc', 'comp'] : ['pc'] } }); break;
+      case 'warm': Q.push({ at: at + 120, type: 'fx', name: 'warm', d: 700, p: { who: ctx.comp ? ['pc', 'comp'] : ['pc'] } }); break;
+      case 'rings': Q.push({ at: at + 80, type: 'fx', name: 'rings', d: 720, p }); break;
+      default: break;
+    }
+  }
+  // The reactions that belong to one fx beat (placed at the same moment).
+  function reactions(Q, f, at, ctx, side) {
+    const comp = ctx.comp, both = comp ? ['pc', 'comp'] : ['pc'];
+    const num = (to, text, kind) => Q.push({ at, type: 'num', to, text, kind });
+    switch (f.t) {
+      case 'unravel': {
+        const n = f.n || 1, top = ctx.knotsBefore;
+        for (let j = 0; j < n && top - 1 - j >= 0; j++) Q.push({ at: at + j * 90, type: 'fx', name: 'knotRelease', d: 560, p: { i: top - 1 - j } });
+        Q.push({ at, type: 'fx', name: 'loosen', d: 600, p: {} });
+        Q.push({ at, type: 'foe', act: 'release', d: 420 });
+        ctx.knotsBefore = Math.max(0, top - n);
+        break;
+      }
+      case 'ward': break; // the seal forms with the response; a blocking seal waits for the blow (enemy turn)
+      case 'heal': Q.push({ at: at - 120, type: 'fx', name: 'motes', d: 820, p: { who: both } }); break;
+      case 'water': Q.push({ at, type: 'foe', act: 'recoil', d: 300, dir: 'party' }); break;
+      case 'light': Q.push({ at, type: 'fx', name: 'mistPart', d: 620, p: {} }); break;
+      case 'bind': Q.push({ at, type: 'fx', name: 'scatter', d: 520, p: {} }); Q.push({ at, type: 'foe', act: 'recoil', d: 300, dir: 'party' }); break;
+      case 'warm': Q.push({ at, type: 'fx', name: 'warm', d: 600, p: { who: both } }); break;
+      case 'bell': break;
+      case 'settle': Q.push({ at, type: 'foe', act: 'release', d: 500 }); break;
+      case 'reveal': Q.push({ at, type: 'foe', act: 'recoil', d: 360, dir: 'party' }); break;
+      case 'tech': {
+        const w = f.who || comp;
+        if (w === 'mio') Q.push({ at, type: 'fx', name: 'motes', d: 820, p: { who: both } });
+        if (w === 'ren') for (const x of both) Q.push({ at: at + (x === 'comp' ? 80 : 0), type: 'fx', name: 'sealForm', d: 520, p: { to: x } });
+        if (w === 'suzu') Q.push({ at, type: 'fx', name: 'fizzle', d: 520, p: {} });
+        Q.push({ at: at - 200, type: 'fx', name: 'link', d: 600, p: {} });
+        break;
+      }
+      case 'comp': {
+        const w = f.who;
+        if (w === 'suzu' && side === 'enemy') Q.push({ at, type: 'fx', name: 'miss', d: 560, p: { to: ctx.missAt || 'pc' } });
+        if (comp && w === comp) Q.push({ at: at - 120, type: 'pose', who: 'comp', pose: 'act', gesture: TECH_GESTURE[w] || 'raise', d: 420 });
+        if (w === 'ren' && side === 'player') Q.push({ at, type: 'fx', name: 'flash', d: 520, p: { from: 'comp' } });
+        if (w === 'mio' && side === 'enemy') Q.push({ at: at - 60, type: 'fx', name: 'motes', d: 760, p: { who: both } });
+        break;
+      }
+      case 'cost': Q.push({ at: at - 150, type: 'fx', name: 'drop', d: 420, p: { to: 'pc' } }); num('pc', '-1', 'cost'); break;
+      case 'block': {
+        Q.push({ at, type: 'fx', name: 'sealBlock', d: 440, p: { to: f.who, n: f.n } });
+        Q.push({ at, type: 'pose', who: f.who, pose: 'brace', d: 320 });
+        Q.push({ at: at + 40, type: 'num', to: f.who, text: String(f.n), kind: 'block' });
+        break;
+      }
+      case 'hit': {
+        const partial = ctx.blocked && ctx.blocked[f.who];
+        Q.push({ at, type: 'fx', name: 'impact', d: partial ? 300 : 380, p: { to: f.who, small: !!partial, col: ctx.kind === 'chill' ? '#e4f2ff' : null } });
+        if (ctx.kind === 'chill') Q.push({ at, type: 'fx', name: 'frost', d: 520, p: { to: f.who } });
+        Q.push({ at, type: 'pose', who: f.who, pose: 'hit', d: partial ? 300 : T.react });
+        num(f.who, '-' + f.n, 'hit');
+        break;
+      }
+      case 'stripWard': Q.push({ at, type: 'fx', name: 'sealStrip', d: 560, p: { who: both.filter((w) => (ctx.view.ward[w] || 0) > 0) } }); break;
+      case 'heat': Q.push({ at: at - 60, type: 'fx', name: 'embers', d: 700, p: {} }); break;
+      case 'shroud': break; // the mist roll arrives with the cast
+      case 'charge': break;
+      case 'mend': break;
+      case 'silence': break;
+      case 'countered': if (!ctx.wardBlock) Q.push({ at, type: 'fx', name: 'fizzle', d: 560, p: {} }); break;
+      default: break;
+    }
+  }
+  // how much a heal or a companion's draught actually restored, for the numbers
+  function healNums(Q, at, info) {
+    if (!info || !info.delta) return;
+    for (const w of ['pc', 'comp']) if (info.delta[w] > 0) Q.push({ at, type: 'num', to: w, text: '+' + info.delta[w], kind: 'heal' });
+  }
+
+  const choreo = {
+    // Your response (or your coordinated technique), once accepted and applied by the rules.
+    player(card, fx, ctx) {
+      const Q = [], rd = !!ctx.reduce;
+      ctx.knotsBefore = ctx.view.knots;
+      let t = 0;
+      const cost = fx.find((f) => f.t === 'cost');
+      if (cost) {
+        Q.push({ at: 0, type: 'pose', who: 'pc', pose: 'brace', d: 260 });
+        reactions(Q, cost, 180, ctx, 'player');
+        Q.push({ at: 180, type: 'beat', f: cost });
+        t = 280;
+      }
+      const plan = planOf(card, fx, ctx);
+      const word = wordOf(card);
+      for (const who of plan.actors) {
+        const g = who === 'comp' ? TECH_GESTURE[ctx.comp] || 'book' : plan.gesture;
+        // reduced motion: one held gesture pose instead of anticipation → act → recovery
+        if (rd) { Q.push({ at: t, type: 'pose', who, pose: 'act', gesture: g, d: T.recoverAt + T.recover }); continue; }
+        Q.push({ at: t, type: 'pose', who, pose: 'anticipate', gesture: g, d: T.anticipate });
+        Q.push({ at: t + T.anticipate, type: 'pose', who, pose: 'act', gesture: g, d: T.act });
+      }
+      Q.push({ at: t + T.stripAt, type: 'strip', word, from: plan.actors[0], to: plan.target, tm: rd ? T.stripStill : T.strip, d: rd ? T.stripStill.end : T.strip.end });
+      travelCue(Q, plan, card, fx, ctx, t + 300);
+      // outcome beats, in the rules' order, from the moment the response lands
+      let bt = t + T.beat, first = true;
+      const outs = fx.filter((f) => f.t !== 'cost' && f.t !== 'harmony');
+      for (const f of outs) {
+        reactions(Q, f, bt, ctx, 'player');
+        const cue = { at: bt, type: 'beat', f, word: first ? word : null };
+        if (f.t === 'heal' || (f.t === 'tech' && f.who === 'mio')) cue.then = (info, at) => { const q = []; healNums(q, 0, info); for (const x of q) RB.battleStage.number(x.to, x.text, x.kind, at); };
+        Q.push(cue);
+        first = false;
+        bt += OUTCOME[f.t] ? T.beatGap : 60;
+      }
+      if (first) Q.push({ at: bt, type: 'beat', f: { t: 'woven' }, word });
+      const hm = fx.find((f) => f.t === 'harmony');
+      if (hm) {
+        const at = Math.max(bt + 80, t + T.beat + 220);
+        if (ctx.comp) Q.push({ at: at - 120, type: 'fx', name: 'link', d: 520, p: {} });
+        Q.push({ at, type: 'beat', f: hm });
+        bt = at;
+      }
+      if (!rd) for (const who of plan.actors) Q.push({ at: t + T.recoverAt, type: 'pose', who, pose: 'recover', gesture: who === 'comp' ? TECH_GESTURE[ctx.comp] : plan.gesture, d: T.recover });
+      return { cues: Q, end: Math.max(t + T.end, bt + 200), plan, word };
+    },
+    // The creature's telegraphed move, as the rules resolved it (or its fizzle).
+    enemy(it, fx, ctx) {
+      const Q = [], kind = it.kind, comp = ctx.comp;
+      ctx.kind = kind;
+      ctx.blocked = {};
+      for (const f of fx) if (f.t === 'block') ctx.blocked[f.who] = true;
+      const countered = fx.some((f) => f.t === 'countered');
+      const hits = fx.filter((f) => f.t === 'hit' || f.t === 'block').map((f) => f.who);
+      const single = { strike: 1, lie: 1, mirror: 1, chill: 1 }[kind];
+      const aimed = single ? (it.target === 'comp' && comp ? 'comp' : 'pc') : hits[0] || 'pc';
+      ctx.aimed = aimed;
+      // the one Suzu's flourish spares (a blow that would have left them at 2 or less)
+      ctx.missAt = single ? aimed : ((comp ? ['pc', 'comp'] : ['pc']).find((w) => hits.indexOf(w) < 0) || 'pc');
+      const fam = single ? 'strike' : kind === 'sweep' || kind === 'flood' ? 'sweep' : kind === 'gust' ? 'sweep' : 'cast';
+      const pre = [], post = [];
+      // A Strike or Sweep spends a held Gathering whether it lands or not. The rules clear
+      // it without an event of its own; this display-only beat shows it at the blow (the
+      // reconcile at the end of the sequence would show the same).
+      const spent = (Q, at) => {
+        if ((kind === 'strike' || kind === 'sweep') && ctx.view.charged && !fx.some((f) => f.t === 'countered' && f.kind === 'charge')) {
+          Q.push({ at, type: 'fx', name: 'scatter', d: 480, p: {} });
+          Q.push({ at, type: 'beat', f: { t: 'spent' } });
+        }
+      };
+      // lines the rules put before the move (Atlas) and after it (a companion's draught)
+      let seenMove = false;
+      for (const f of fx) {
+        const draught = f.t === 'comp' && f.who === 'mio';            // always at the end of the exchange
+        const isMove = f.t !== 'settle' && !draught;
+        if (isMove) seenMove = true;
+        else if (draught) post.push(f);
+        else (seenMove ? post : pre).push(f);
+      }
+      let t = 0;
+      for (const f of pre) { Q.push({ at: t, type: 'beat', f }); t += 160; }
+      const dir = fam === 'strike' ? aimed : fam === 'sweep' ? 'party' : null;
+      if (kind === 'rest' && !countered) {
+        Q.push({ at: t, type: 'foe', act: 'rest', d: 700 });
+        Q.push({ at: t + 200, type: 'beat', f: { t: 'rest' } });
+        t += 700;
+      } else if (countered) {
+        Q.push({ at: t, type: 'foe', act: 'prep', d: T.foePrep, dir, family: fam });
+        if (ctx.wardBlock && single) {
+          // the blow is thrown and meets the seal raised in front of its target
+          Q.push({ at: t + T.foePrep, type: 'foe', act: 'exec', d: 320, dir, family: fam });
+          Q.push({ at: t + T.foePrep + 10, type: 'fx', name: 'dart', d: 200, p: { to: aimed } });
+          Q.push({ at: t + T.foePrep + 200, type: 'fx', name: 'sealBlock', d: 420, p: { to: aimed, n: 0 } });
+          Q.push({ at: t + T.foePrep + 200, type: 'pose', who: aimed, pose: 'brace', d: 320 });
+        } else Q.push({ at: t + T.foePrep, type: 'foe', act: 'balk', d: 380 });
+        for (const f of fx.filter((x) => x.t === 'countered')) { reactions(Q, f, t + T.foePrep + 200, ctx, 'enemy'); Q.push({ at: t + T.foePrep + 200, type: 'beat', f }); }
+        spent(Q, t + T.foePrep + 260);
+        t += T.foePrep + 520;
+      } else {
+        Q.push({ at: t, type: 'foe', act: 'prep', d: T.foePrep, dir, family: fam });
+        Q.push({ at: t + T.foePrep, type: 'foe', act: fam === 'cast' ? 'cast' : 'exec', d: fam === 'sweep' ? 460 : T.foeExec, dir, family: fam });
+        const c0 = t + T.contact;
+        if (fam === 'strike') {
+          const col = kind === 'chill' ? '#cfe6ff' : null;
+          if (kind === 'lie' || kind === 'mirror') Q.push({ at: t + T.foePrep, type: 'fx', name: 'pane', d: T.contact - T.foePrep + 40, p: { to: aimed } });
+          else Q.push({ at: t + T.foePrep + 10, type: 'fx', name: 'dart', d: T.contact - T.foePrep + 40, p: { to: aimed, col: col || ctx.foeCol } });
+        } else if (kind === 'gust') Q.push({ at: t + T.foePrep + 10, type: 'fx', name: 'gust', d: 600, p: { col: ctx.foeCol } });
+        else if (fam === 'sweep') Q.push({ at: t + T.foePrep + 10, type: 'fx', name: 'arc', d: 600, p: { who: comp ? ['pc', 'comp'] : ['pc'], col: kind === 'flood' ? '#6aa8d8' : ctx.foeCol, col2: kind === 'flood' ? '#e8f6ff' : null } });
+        else if (kind === 'heat') Q.push({ at: t + T.foePrep, type: 'fx', name: 'gather', d: 360, p: {} });
+        else if (kind === 'charge') Q.push({ at: t + T.foePrep - 80, type: 'fx', name: 'gather', d: 640, p: {} });
+        else if (kind === 'shroud') Q.push({ at: t + T.foePrep + 20, type: 'fx', name: 'mistRoll', d: 560, p: {} });
+        else if (kind === 'silence') Q.push({ at: t + T.foePrep + 20, type: 'fx', name: 'hushWave', d: 520, p: {} });
+        else if (kind === 'plea') Q.push({ at: t + T.foePrep, type: 'fx', name: 'note', d: 760, p: { from: 'foe', to: 'party', fade: true } });
+        else if (kind === 'mend') Q.push({ at: t + T.foePrep, type: 'fx', name: 'mendThread', d: 600, p: { i: Math.min(ctx.view.maxKnots - 1, ctx.view.knots) } });
+        // contact: each result on its actual target, in the rules' order
+        let at = kind === 'gust' ? c0 - 90 : c0;
+        const lastWho = {};
+        for (const f of fx) {
+          if (pre.indexOf(f) >= 0 || post.indexOf(f) >= 0) continue;
+          if (f.t === 'hit' && lastWho[f.who] === 'block') at += 110;        // the ward intercepts, then the smaller hit
+          else if ((f.t === 'hit' || f.t === 'block') && Object.keys(lastWho).length && !lastWho[f.who]) at += T.secondTarget; // the arc reaches the next one
+          reactions(Q, f, at, ctx, 'enemy');
+          Q.push({ at, type: 'beat', f });
+          if (f.t === 'hit' || f.t === 'block') lastWho[f.who] = f.t;
+          if (f.t === 'stripWard') at += 90;
+        }
+        spent(Q, at + 60);
+        Q.push({ at: Math.max(at + 100, t + T.contact + 140), type: 'foe', act: fam === 'cast' ? 'rest' : 'recover', d: fam === 'cast' ? 260 : T.foeRecover, dir, family: fam });
+        t = Math.max(at + 380, t + T.contact + 440);
+      }
+      for (const f of post) {
+        reactions(Q, f, t + 120, ctx, 'enemy');
+        const cue = { at: t + 120, type: 'beat', f };
+        if (f.t === 'comp' && f.who === 'mio') cue.then = (info, at) => { const q = []; healNums(q, 0, info); for (const x of q) RB.battleStage.number(x.to, x.text, x.kind, at); };
+        Q.push(cue);
+        t += 520;
+      }
+      return { cues: Q, end: t + 60 };
+    },
+    // The last knot comes loose: the creature settles and the two of you ease.
+    finish(seqEnd, ctx) {
+      const Q = [], at = Math.max(0, seqEnd - 360);
+      Q.push({ at, type: 'foe', act: 'settle', d: 760, hold: true });
+      Q.push({ at: at + 60, type: 'fx', name: 'release', d: 1000, p: {} });
+      Q.push({ at: at + 300, type: 'pose', who: 'pc', pose: 'cheer', d: 520 });
+      if (ctx.comp) Q.push({ at: at + 380, type: 'pose', who: 'comp', pose: 'cheer', d: 520 });
+      Q.push({ at: at + 760, type: 'final' });
+      return { cues: Q, end: at + T.finishHold };
+    },
+    // Your companion helps you back to your feet (the rules' revive).
+    revive(ctx) {
+      const Q = [];
+      Q.push({ at: 0, type: 'pose', who: 'comp', pose: 'act', gesture: 'restore', d: 520 });
+      Q.push({ at: 100, type: 'fx', name: 'lift', d: 760, p: { to: 'pc' } });
+      Q.push({ at: 280, type: 'pose', who: 'pc', pose: 'recover', gesture: null, d: 460 });
+      Q.push({ at: 320, type: 'beat', f: { t: 'revive' } });
+      return { cues: Q, end: 840 };
+    },
+  };
+
+  function stats() {
+    return { running: !!cur, kind: cur && cur.kind, pt: Math.round(pt), timers: timers.size, layer: !!layer, pointer: !!onDown, attached: !!port, counters: Object.assign({}, counters) };
+  }
+  // setTimeScale(k): slow the presentation clock (k < 1) for frame captures; tests and tools only
+  return { T, attach, detach, tick, now, run, settle, hurry, busy: () => !!cur, choreo, planOf, stats, trace: () => trace.slice(), setTimeScale: (k) => { timeScale = Math.max(0.05, Math.min(4, +k || 1)); } };
+})();
+
+
+/* ==== src/ui/83_battle_stage.js ==== */
+/* The battle stage: where everyone stands and how they are drawn, at art
+ * resolution, from the DISPLAYED battle state (src/ui/80_combat.js keeps it
+ * one beat behind the rules until each result is shown). It owns:
+ * - the arrangement: the two adventurers at the lower left, a little apart
+ *   and staggered in depth, facing up-right toward the creature; an integer
+ *   scale chosen from the stage size and the battle frame (RB.battlers.FRAME);
+ * - the actors' current poses (RB.battlers.draw; a small fallback below
+ *   stands in when that module is absent) and the creature's action pose
+ *   (RB.enemyArt.drawPosed);
+ * - persistent status marks, transient effects (RB.battleFx), small pixel
+ *   numbers, and the paper strip that carries a resolved word (DOM, so the
+ *   Japanese is crisp and keeps its furigana);
+ * - anchors: every effect names its target by id ('pc', 'comp', 'party',
+ *   'foe', 'knot:i') and a part ('hand', 'head', 'chest', 'feet', 'core',
+ *   'top', 'base'), resolved each frame, so a resize mid-effect keeps it on
+ *   its actor. More than one foe would add 'foe:1'… here (see anchor()).
+ * Presentation only: nothing here reads or changes the battle rules. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.battleStage = (function () {
+  'use strict';
+  const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+  const cl = (v) => clamp(v, 0, 1);
+  const bell = (k) => Math.sin(Math.PI * cl(k));
+
+  // ---- fallback battlers ---------------------------------------------------------------------
+  // Used only while RB.battlers (the character art's battle frames) is not
+  // loaded: the straight-back walking sprite with simple offsets per pose and
+  // a tiny prop per gesture, behind the same interface, so the choreography
+  // runs and can be tested. The real module replaces it without changes here.
+  const FALLBACK = (function () {
+    // the road sprite's own frame (40×58 today; 32×48 before the character standard)
+    const RF = () => (RB.sprites && RB.sprites.FRAME) || { w: 32, h: 48 };
+    const RA = () => (RB.sprites && RB.sprites.ANCHOR) || { x: 16, y: 47 };
+    const POSES = ['ready', 'calm', 'anticipate', 'act', 'recover', 'hit', 'brace', 'down', 'cheer'];
+    const GESTURES = ['direct', 'trace', 'book', 'ward', 'restore', 'flow', 'raise'];
+    const cache = new Map();
+    function sprite(look) {
+      const S = RB.sprites;
+      const key = JSON.stringify(look);
+      let spr = cache.get(key);
+      if (!spr) {
+        spr = (typeof S.getArt === 'function' && S.getArt(look, 'up', 0)) || S.get(look, 'up', 0);
+        cache.set(key, spr);
+        while (cache.size > 6) cache.delete(cache.keys().next().value);
+      }
+      return spr;
+    }
+    const R = (c, x, y, w, h, col) => { c.fillStyle = col; c.fillRect(Math.round(x), Math.round(y), w, h); };
+    function prop(c, g, hx, hy, q, k) {
+      if (!g) return;
+      if (g === 'book') { R(c, hx - 5 * q, hy - 2 * q, 10 * q, 5 * q, '#b8a47a'); R(c, hx - 4 * q, hy - 2 * q, 8 * q, 4 * q, '#efe4c8'); R(c, hx, hy - 2 * q, q, 4 * q, '#6e5a48'); }
+      else if (g === 'direct') { for (let i = 0; i < 3; i++) R(c, hx + i * 2 * q, hy - i * 2 * q, 2 * q, q, '#efe4c8'); }
+      else if (g === 'ward') { R(c, hx - q, hy - 2 * q, 3 * q, 4 * q, '#fff4c8'); R(c, hx, hy - q, q, 2 * q, '#c8503a'); }
+      else if (g === 'restore') { R(c, hx - 2 * q, hy - 3 * q - Math.round(2 * k) * q, q, q, '#b4e0a0'); R(c, hx + q, hy - 4 * q - Math.round(3 * k) * q, q, q, '#e8f8d8'); }
+      else if (g === 'flow') { for (let i = 0; i < 4; i++) R(c, hx + i * q, hy - (i % 2) * q, q, q, '#8cc8f0'); }
+      else if (g === 'raise') { R(c, hx - q, hy - q, 3 * q, 3 * q, '#fff4c8'); R(c, hx, hy - 3 * q, q, 7 * q, '#fff4c8'); R(c, hx - 3 * q, hy, 7 * q, q, '#fff4c8'); }
+      else if (g === 'trace') { R(c, hx, hy - 5 * q, q, 6 * q, '#3a2c28'); R(c, hx, hy + q, q, q, '#2a2024'); }
+    }
+    // o: { x, y (the foot point), scale, t, who, pose, gesture, k, reduce, facing }
+    // Offsets below are in 32×48 sprite units, mapped onto the road frame.
+    function draw(c, look, o) {
+      const spr = sprite(look), F = RF(), AN = RA();
+      const s = o.scale || 1, q = s * (F.w / spr.width); // canvas px per source px
+      const fx = F.w / 32, fy = F.h / 48;             // road frame px per 32×48 unit
+      const k = cl(o.k == null ? 1 : o.k), pose = o.pose || 'ready', rd = !!o.reduce;
+      const per = o.who === 'comp' ? 3100 : 2600, ph = o.who === 'comp' ? 1100 : 0;
+      const breathe = (P) => { const u = (((o.t || 0) + ph) % P) / P; return u > 0.5 && u < 0.92 ? 1 : 0; };
+      let dx = 0, dy = 0, lean = 0, sink = 0, hx = 26, hy = 30, g = null;
+      if (pose === 'ready') sink = rd ? 0 : breathe(per);
+      else if (pose === 'calm') sink = rd ? 0 : breathe(per * 1.5);
+      else if (pose === 'anticipate') { sink = k > 0.25 ? 1 : 0; lean = -1; hy = 29; g = o.gesture; }
+      else if (pose === 'act') { lean = k < 0.12 ? 1 : 2; dy = rd ? 0 : -Math.round(bell(k)); hx = 28; hy = o.gesture === 'raise' ? 13 : o.gesture === 'book' ? 26 : 19; g = o.gesture; }
+      else if (pose === 'recover') { lean = k < 0.5 ? 1 : 0; hy = k < 0.5 ? 24 : 29; g = k < 0.4 ? o.gesture : null; }
+      else if (pose === 'hit') { lean = rd ? -1 : k < 0.6 ? -2 : -1; dx = rd ? 0 : -Math.round(2 * (1 - k)); }
+      else if (pose === 'brace') { sink = 1; lean = 1; }
+      else if (pose === 'down') { sink = 6; lean = -1; hy = 34; }
+      else if (pose === 'cheer') { dy = rd ? 0 : -Math.round(3 * bell(k)); hx = 27; hy = 16; }
+      const sp = s;                                   // canvas px per road-frame px
+      const x0 = Math.round(o.x - AN.x * sp) + dx * sp, y0 = Math.round(o.y - AN.y * sp) + dy * sp;
+      const sh = spr.height, sw = spr.width, H = F.h;
+      const cut = Math.round(H * 0.625);              // the upper body leans; the legs stay planted
+      c.imageSmoothingEnabled = false;
+      c.drawImage(spr, 0, ((cut + sink) * sh) / H, sw, ((H - cut - sink) * sh) / H, x0, y0 + (cut + sink) * sp, F.w * sp, (H - cut - sink) * sp);
+      for (let r = 0; r < cut; r += 6) {
+        const bh = Math.min(6, cut - r), off = Math.round(lean * (1 - (r + bh / 2) / cut));
+        c.drawImage(spr, 0, (r * sh) / H, sw, (bh * sh) / H, x0 + off * sp, y0 + (r + sink) * sp, F.w * sp, bh * sp);
+      }
+      const P = (ux, uy) => ({ x: x0 + Math.round(ux * fx) * sp, y: y0 + Math.round(uy * fy) * sp });
+      const hand = P(hx + lean, hy + sink);
+      if (g) prop(c, g, hand.x, hand.y, sp, k);
+      void q;
+      return { hand, head: P(16 + lean, 6 + sink), chest: P(16, 22 + sink), feet: { x: Math.round(o.x), y: Math.round(o.y) } };
+    }
+    return { get FRAME() { return RF(); }, get ANCHOR() { return RA(); }, POSES, GESTURES, draw, fallback: true };
+  })();
+  const battlers = () => (RB.battlers && typeof RB.battlers.draw === 'function' && RB.battlers.FRAME ? RB.battlers : FALLBACK);
+
+  // ---- one encounter's stage -------------------------------------------------------------------
+  let S = null;
+  function begin(env) {
+    end();
+    S = {
+      env, lay: null, anchors: { pc: null, comp: null }, foeOff: { dx: 0, dy: 0 },
+      actors: { pc: null, comp: null }, foe: null, final: false,
+      effects: [], nums: [], strip: null, fxLayer: null, drawn: 0, cost: [],
+    };
+    if (env.overlay) {
+      const L = document.createElement('div');
+      L.className = 'cb-fx';
+      L.setAttribute('aria-hidden', 'true');
+      env.overlay.appendChild(L);
+      S.fxLayer = L;
+    }
+  }
+  function end() {
+    if (!S) return;
+    if (S.fxLayer && S.fxLayer.parentNode) S.fxLayer.parentNode.removeChild(S.fxLayer);
+    S = null;
+  }
+
+  // ---- arrangement -------------------------------------------------------------------------------
+  // Stage rect Sr in art px. The creature keeps the scene's scale rule; the
+  // party gets an integer scale that makes a figure about 44 % of the stage
+  // height (never taller than the creature), so a larger battle frame simply
+  // means scale 1 instead of 2 at the same size.
+  function layout(Sr, w, h) {
+    const env = S.env, art = env.enemy.art || 'wisp', opts = env.enemy.artOpts || {};
+    const scale = Math.max(1, Math.min(3, Math.floor(Math.min(Sr.h / 224, Sr.w / 300))));
+    const ext = RB.enemyArt.extent(art, opts);
+    const foeH = (ext.bottom - ext.top) * scale;
+    const B = battlers(), F = B.FRAME, AN = B.ANCHOR;
+    const want = Math.max(40, Math.min(Sr.h * 0.44, foeH * 0.9, 170));
+    const ps = Math.max(1, Math.round(want / F.h));
+    const pw = F.w * ps, ph = F.h * ps;
+    const hasComp = !!env.hasComp();
+    const foot = Math.round(Sr.y + Sr.h - Math.max(4, ph * 0.05));
+    // the companion a step back on the left; you in front on the right, nearest
+    // the creature, so your gestures reach it without crossing anyone
+    const x0 = Math.round(Sr.x + Math.max(8, Sr.w * 0.06) + AN.x * ps);
+    const comp = hasComp ? { x: x0, y: Math.round(foot - Math.max(4, ph * 0.09)) } : null;
+    const pc = { x: hasComp ? Math.round(x0 + pw * 0.8 + Math.max(6, pw * 0.22)) : Math.round(x0 + pw * 0.3), y: foot };
+    const right = pc.x + (F.w - AN.x) * ps;
+    // the creature: right of centre, clear of the party where the stage allows
+    let ex = Sr.x + Sr.w * 0.62;
+    ex = Math.max(ex, right - ext.left * scale * 0.55);
+    ex = Math.round(Math.min(ex, Sr.x + Sr.w - ext.right * scale * 0.85));
+    let ey = Math.round(Math.min(Sr.y + Sr.h - 100 * scale, Math.max(Sr.y + 80 * scale, Sr.y + Sr.h * 0.44)));
+    ey = Math.min(Math.max(ey, Math.round(Sr.y - ext.top * scale + 2)), Math.round(Sr.y + Sr.h - 64 * scale));
+    const ky = Math.round(Math.min(ey + 88 * scale + 12, Sr.y + Sr.h - 10 * scale));
+    const hz = Math.max(0, Math.min(h - 1, Math.round(Math.min(ey + 36 * scale, foot - ph * 0.66))));
+    const u = scale;
+    const foeR = Math.round(Math.min(ext.right - ext.left, ext.bottom - ext.top) * 0.42 * scale);
+    // the party's box in canvas px (both frames, with room for gestures and seals), for the
+    // backdrop composer to keep clear; px/py/ps as the backdrop expects (top-left, scale)
+    const fr = (f) => ({ x0: f.x - AN.x * ps, y0: f.y - AN.y * ps, x1: f.x + (F.w - AN.x) * ps, y1: f.y + (F.h - AN.y) * ps });
+    const boxes = [fr(pc)].concat(comp ? [fr(comp)] : []);
+    const mx = Math.round(pw * 0.2), my = Math.round(ph * 0.12);
+    const party = { x: Math.min(...boxes.map((q) => q.x0)) - mx, y: Math.min(...boxes.map((q) => q.y0)) - my };
+    party.w = Math.max(...boxes.map((q) => q.x1)) + mx - party.x; party.h = Math.max(...boxes.map((q) => q.y1)) - party.y;
+    // px/py: the backdrop's "old corner" convention (your feet at px + 16·ps, py + 48·ps);
+    // its party box runs from the stage's left edge to px + 140·ps and up to 112·ps above
+    // your feet, which covers you and your companion (a step back, on your left)
+    S.lay = { Sr, scale, ps, pw, ph, pc, comp, ex, ey, ky, hz, ext, u, foeR, wardR: Math.round(ph * 0.34), F, AN, party, px: pc.x - 16 * ps, py: pc.y - 48 * ps, fallback: !!B.fallback };
+    return S.lay;
+  }
+  function knotAt(i, n) {
+    const L = S.lay, a = -Math.PI / 2 + (i - (n - 1) / 2) * 0.5;
+    return { x: Math.round(L.ex + Math.cos(a) * 60 * L.scale), y: Math.round(L.ky + Math.sin(a) * 8) };
+  }
+
+  // ---- anchors ---------------------------------------------------------------------------------
+  function anchor(id, part) {
+    const L = S && S.lay;
+    if (!L) return { x: 0, y: 0 };
+    part = part || 'core';
+    if (id === 'pc' || id === 'comp') {
+      const a = S.anchors[id] || S.anchors.pc;
+      if (a) return a[part === 'core' ? 'chest' : part] || a.chest;
+      const f = id === 'comp' && L.comp ? L.comp : L.pc;
+      return { x: f.x, y: part === 'feet' ? f.y : f.y - L.ph * (part === 'head' ? 0.85 : 0.55) };
+    }
+    if (id === 'party') {
+      const a = anchor('pc', part), b = S.lay.comp ? anchor('comp', part) : a;
+      return { x: Math.round((a.x + b.x) / 2), y: Math.round(Math.min(a.y, b.y)) };
+    }
+    if (id.startsWith('knot:')) {
+      const v = S.env.view();
+      return knotAt(+id.slice(5), v ? v.maxKnots : 1);
+    }
+    // 'foe' (one creature today; 'foe:i' would index a list)
+    const x = L.ex + S.foeOff.dx, y = L.ey + S.foeOff.dy;
+    if (part === 'top') return { x, y: Math.round(y + L.ext.top * L.scale * 0.8) };
+    if (part === 'base') return { x: L.ex, y: L.ky };
+    return { x, y };
+  }
+  function cssPerArt() { return (RB.render.viewSize().scale || 1) / RB.render.ART; }
+  const A = { pt: anchor, get u() { return S.lay.u; }, get foeR() { return S.lay.foeR; }, get wardR() { return S.lay.wardR; }, get partyW() { return S.lay.comp ? Math.abs(S.lay.comp.x - S.lay.pc.x) + S.lay.pw : S.lay.pw; }, get knotSpan() { return 60 * S.lay.scale; } };
+
+  // ---- actions (set by the sequencer; times on the presentation clock) --------------------------
+  function pose(who, p, gesture, d, now) {
+    if (!S) return;
+    S.actors[who] = p ? { pose: p, gesture: gesture || null, t0: now, d: Math.max(1, d) } : null;
+  }
+  function foe(act, d, now, o) {
+    if (!S) return;
+    S.foe = act ? Object.assign({ act, t0: now, d: Math.max(1, d) }, o || {}) : null;
+  }
+  const EFFECT_CAP = 24;
+  function effect(name, d, now, p) {
+    if (!S || !RB.battleFx.fx[name]) return;
+    S.effects.push({ name, t0: now, d: Math.max(1, d), p: p || {} });
+    while (S.effects.length > EFFECT_CAP) S.effects.shift();
+  }
+  const NUM_COL = { hit: '#ffffff', block: '#cfe6ff', heal: '#c8f0b0', cost: '#e8d0c8' };
+  function number(to, text, kind, now, d) {
+    if (!S) return;
+    S.nums.push({ to, text: String(text), kind, col: NUM_COL[kind] || '#ffffff', t0: now, d: d || 900 });
+    while (S.nums.length > 8) S.nums.shift();
+  }
+  function finalFoe(on) { if (S) S.final = !!on; }
+  // the paper strip: word = { html (ruby), en }; from/to = anchor ids; timing on the presentation clock
+  function strip(word, from, to, now, tm) {
+    if (!S || !S.fxLayer) return;
+    dropStrip();
+    const el = document.createElement('div');
+    el.className = 'cb-strip';
+    el.innerHTML = '<span class="cs-w">' + word.html + '</span>' + (word.en ? '<span class="cs-en">' + RB.util.esc(word.en) + '</span>' : '');
+    S.fxLayer.appendChild(el);
+    S.strip = { el, from, to, t0: now, tm, w: el.offsetWidth, h: el.offsetHeight };
+  }
+  function dropStrip() {
+    if (S && S.strip) { if (S.strip.el.parentNode) S.strip.el.parentNode.removeChild(S.strip.el); S.strip = null; }
+  }
+  // everything transient goes at once (settle, skip, scene exit): poses back to rest
+  function clearTransient() {
+    if (!S) return;
+    S.effects = []; S.nums = []; S.actors = { pc: null, comp: null }; S.foe = null;
+    dropStrip();
+  }
+
+  // ---- drawing -------------------------------------------------------------------------------------
+  // fr: { t (real ms), pt (presentation ms), amb (ambient clock, slowed while you
+  // read and write), view (displayed state), reduce, calm, Sr (stage rect, art px), stageCss }
+  function draw(c, w, h, fr) {
+    if (!S) return;
+    const L = fr.lay || layout(fr.Sr, w, h);
+    const v = fr.view, reduce = fr.reduce, env = S.env, Sc = RB.battleScene;
+    const u = L.u;
+    const info = { poses: {}, marks: [], foe: null, foeOff: null, effects: [], nums: [] };
+    // the creature, in its current action pose (or its settled look after the win)
+    let fp = null;
+    if (S.final) fp = { act: 'settle', k: 1 };
+    else if (S.foe) {
+      const k = cl((fr.pt - S.foe.t0) / S.foe.d);
+      if (k >= 1 && !S.foe.hold) S.foe = null;
+      else fp = { act: S.foe.act, k, family: S.foe.family, dir: dirTo(S.foe.dir) };
+    }
+    const art = env.enemy.art || 'wisp', opts = env.enemy.artOpts || {};
+    // its ground shadow stays on the ground (it follows a lunge sideways only)
+    const mo = fp ? RB.enemyArt.motion(art, fp, fr.amb, reduce) : null;
+    Sc.shadow(c, L.ex + Math.round((mo ? mo.dx : 0)) * L.scale, L.ey + 84 * L.scale, 58 * L.scale, 11 * L.scale, 0.5 * (mo ? mo.alpha : 1));
+    const off = RB.enemyArt.drawPosed(c, art, fr.amb, opts, L.ex, L.ey, L.scale, reduce, fp) || { dx: 0, dy: 0 };
+    S.foeOff = off;
+    info.foe = fp ? fp.act : null; info.foeOff = { dx: off.dx, dy: off.dy };
+    // its states: Heat (shimmer, embers), Gathering (circling motes)
+    if (v.heat) { RB.battleFx.status.heat(c, A, Math.min(2, v.heat), fr.t, reduce); info.marks.push('heat:' + Math.min(2, v.heat)); }
+    if (v.charged) { RB.battleFx.status.charge(c, A, fr.t, reduce); info.marks.push('charge'); }
+    // knots: a row of cord loops under it, tied or undone; mist over them while Shrouded
+    for (let i = 0; i < v.maxKnots; i++) {
+      const q = knotAt(i, v.maxKnots);
+      const icon = Sc.knot(i < v.knots);
+      c.drawImage(icon, q.x - 10 * L.scale, q.y - 10 * L.scale, icon.width * L.scale, icon.height * L.scale);
+    }
+    if (v.shroud) { RB.battleFx.status.shroud(c, A, fr.t, reduce); info.marks.push('shroud'); }
+    // the party: the one further back first; each on a contact shadow, wards in front
+    const B = battlers();
+    const s = RB.game.s;
+    const order = L.comp ? ['comp', 'pc'] : ['pc'];
+    for (const who of order) {
+      const f = who === 'comp' ? L.comp : L.pc;
+      const look = who === 'pc' ? env.looks().pc : env.looks().comp;
+      if (!look) continue;
+      Sc.shadow(c, f.x, f.y - Math.round(L.ps), Math.round(L.pw * 0.38), Math.max(3, Math.round(L.ph * 0.085)), 0.55);
+      const a = S.actors[who];
+      let p = null, g = null, k = 1;
+      if (a) {
+        k = cl((fr.pt - a.t0) / a.d);
+        if (k >= 1 && !a.hold) S.actors[who] = null; else { p = a.pose; g = a.gesture; }
+      }
+      const down = (who === 'pc' ? v.pc : v.comp) <= 0;
+      if (!p) p = down ? 'down' : fr.calm ? 'calm' : 'ready';
+      const anc = B.draw(c, look, { x: f.x, y: f.y, scale: L.ps, t: fr.t, who, pose: p, gesture: g, k, reduce, facing: 'upright' });
+      S.anchors[who] = anc || null;
+      info.poses[who] = p + (g ? ':' + g : '');
+      const wn = ((v.ward && v.ward[who]) || 0) + (fr.sealHeld === who ? 1 : 0);
+      if (wn) info.marks.push('ward:' + who + ':' + wn);
+      // its ward points as seal tags (a seal raised to block the telegraphed blow shows as one until it lands)
+      RB.battleFx.status.wards(c, A, who, ((v.ward && v.ward[who]) || 0) + (fr.sealHeld === who ? 1 : 0), fr.t, reduce);
+    }
+    if (v.silenced) { RB.battleFx.status.hush(c, A, fr.t, reduce); info.marks.push('hush'); }
+    if (L.comp && v.compId && v.harmony >= v.harmonyMax && !S.final) { RB.battleFx.status.harmony(c, A, fr.t, reduce); info.marks.push('harmony'); }
+    // transient effects
+    S.effects = S.effects.filter((e) => fr.pt - e.t0 < e.d);
+    for (const e of S.effects) {
+      const k = cl((fr.pt - e.t0) / e.d);
+      if (k >= 0) info.effects.push(e.name + (e.p && e.p.to ? '>' + e.p.to : ''));
+      try { RB.battleFx.fx[e.name](c, e, k, A, fr.t, reduce); } catch (err) { console.warn('battle effect', e.name, err); e.d = 0; }
+    }
+    c.globalAlpha = 1;
+    // numbers: rise a little and fade (a still mark with reduced motion)
+    S.nums = S.nums.filter((n) => fr.pt - n.t0 < n.d);
+    const du = Math.max(2, u);
+    for (const n of S.nums) {
+      const k = cl((fr.pt - n.t0) / n.d), q = anchor(n.to, 'head');
+      info.nums.push(n.to + ':' + n.text);
+      const rise = reduce ? 0 : Math.round(RB.battleFx.ease(Math.min(1, k * 2)) * 8) * u;
+      const na = reduce || k < 0.75 ? 1 : 1 - (k - 0.75) / 0.25;
+      RB.battleFx.digits(c, q.x + 10 * u, q.y - 16 * u - rise, n.text, du, n.col, na);
+      // what a ward absorbed carries a seal mark, so it never reads as damage taken
+      if (n.kind === 'block') RB.battleFx.sealMark(c, q.x + 10 * u - (n.text.length * 2 + 5) * du, q.y - 13 * u - rise, u, na);
+    }
+    placeStrip(fr);
+    S.drawn++;
+    S.frame = info;
+  }
+  function dirTo(id) {
+    if (!id) return { x: -0.8, y: 0.6 };
+    const a = { x: S.lay.ex, y: S.lay.ey }, b = anchor(id, 'chest');
+    const dx = b.x - a.x, dy = b.y - a.y, n = Math.hypot(dx, dy) || 1;
+    return { x: dx / n, y: dy / n };
+  }
+  // The strip travels from the actor's hand to above its target while it
+  // unfurls, the ink writes the word across it, it hangs there, then lifts
+  // and fades. Kept inside the stage (never over the telegraph or the dock).
+  function placeStrip(fr) {
+    const sp = S.strip;
+    if (!sp) return;
+    const tm = sp.tm, k = fr.pt - sp.t0;
+    if (k >= tm.end) { dropStrip(); return; }
+    const kk = (a, b) => cl((k - a) / Math.max(1, b - a));
+    const reduce = fr.reduce;
+    const tr = reduce ? 1 : RB.battleFx.ease(kk(0, tm.travel));
+    const unf = reduce ? 1 : Math.round(kk(0, tm.unfurl) * 10) / 10, ink = reduce ? 1 : kk(tm.inkAt, tm.inkEnd);
+    const fade = kk(tm.fadeAt, tm.end);
+    const cp = cssPerArt();
+    // over an ally: above the head; on the creature: beside its upper body, on
+    // the side facing you (so the word and the creature are both seen)
+    const a = anchor(sp.from, 'hand');
+    const b = sp.to === 'foe' ? { x: S.lay.ex + S.foeOff.dx + S.lay.ext.left * S.lay.scale * 0.95, y: S.lay.ey + S.foeOff.dy + S.lay.ext.top * S.lay.scale * 0.3 } : anchor(sp.to, 'head');
+    const lift = sp.to === 'foe' ? 0 : 14;
+    const x = (a.x + (b.x - a.x) * tr) * cp, y = (a.y + (b.y - a.y) * tr - lift * S.lay.u) * cp - (reduce ? 0 : fade * 10);
+    const r = fr.stageCss;
+    let left = x - sp.w / 2, top = y - sp.h;
+    if (r) {
+      left = clamp(left, r.x + 4, Math.max(r.x + 4, r.x + r.w - sp.w - 4));
+      top = clamp(top, r.y + 2, Math.max(r.y + 2, r.y + r.h - sp.h - 2));
+    }
+    const el = sp.el;
+    el.style.transform = 'translate(' + Math.round(left) + 'px,' + Math.round(top) + 'px)';
+    el.style.setProperty('--u', unf.toFixed(3));
+    el.style.setProperty('--w', ink.toFixed(3));
+    el.style.opacity = (reduce ? (k < tm.fadeAt ? 1 : 1 - fade) : Math.min(1, unf * 3) * (1 - fade)).toFixed(3);
+  }
+
+  function stats() {
+    if (!S) return { active: false, effects: 0, nums: 0, strips: document.querySelectorAll('.cb-strip').length, layers: document.querySelectorAll('.cb-fx').length };
+    return {
+      active: true, effects: S.effects.length, nums: S.nums.length, strips: document.querySelectorAll('.cb-strip').length, layers: document.querySelectorAll('.cb-fx').length,
+      actors: { pc: S.actors.pc && S.actors.pc.pose, comp: S.actors.comp && S.actors.comp.pose }, foe: S.foe && S.foe.act, final: S.final, drawn: S.drawn,
+      lay: S.lay && { scale: S.lay.scale, ps: S.lay.ps, pc: S.lay.pc, comp: S.lay.comp, ex: S.lay.ex, ey: S.lay.ey, frame: S.lay.F, party: S.lay.party, px: S.lay.px, py: S.lay.py, fallback: S.lay.fallback },
+      anchors: S.anchors, frame: S.frame || null, cssPerArt: cssPerArt(),
+      strip: S.strip && { from: S.strip.from, to: S.strip.to, text: S.strip.el.textContent, rect: rectOf(S.strip.el), opacity: +S.strip.el.style.opacity || 0 },
+    };
+  }
+  function rectOf(el) { const r = el.getBoundingClientRect(); return { x: Math.round(r.left), y: Math.round(r.top), w: Math.round(r.width), h: Math.round(r.height) }; }
+
+  return { begin, end, layout, draw, anchor, pose, foe, effect, number, strip, clearTransient, finalFoe, stats, battlers, FALLBACK, cssPerArt, active: () => !!S };
+})();
+
+
+/* ==== src/ui/84_battle_fx.js ==== */
+/* Battle effects and status marks, drawn as pixel shapes at art resolution
+ * (no images, no text glyphs). Pure drawing: every function takes the 2D
+ * context, positions in canvas art px, an integer pixel unit `u` (the
+ * scene's grid) and a progress k (0 → 1) or a clock t. The battle stage
+ * (src/ui/83_battle_stage.js) decides when and where; the sequencer
+ * (src/ui/82_battle_seq.js) decides why. Particles are few, deterministic
+ * (seeded by index, never Math.random) and bounded; with reduced motion
+ * the callers pass `still` and the marks stay put without particles.
+ *
+ * RB.battleFx.fx[name](c, e, k, A, t, still)   transient effect instances
+ * RB.battleFx.status.*                        persistent condition marks
+ * RB.battleFx.digits(c, x, y, text, u, col)   small pixel numbers (3×5) */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.battleFx = (function () {
+  'use strict';
+  const K = () => RB.pxkit;
+  // palette (the game's earthy paper-and-ink materials)
+  const P = {
+    paper: '#efe4c8', paper2: '#dccb9e', paperEdge: '#b8a47a', ink: '#2a2024', ink2: '#4a3a40',
+    verm: '#c8503a', amber: '#e0a848', light: '#fff4c8', warm: '#ffd88a', river: '#8cc0e0',
+    water: '#8cc8f0', foam: '#e8f6ff', frost: '#e4f2ff', ember: '#f08a48', ember2: '#ffc070',
+    heal: '#b4e0a0', heal2: '#e8f8d8', mist: '#dfe5ee', hush: '#c8c4dc', stone: '#a89c88', stone2: '#6e6454',
+    cord: '#e8d8b0',
+  };
+  const clamp01 = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
+  const ease = (k) => 1 - Math.pow(1 - clamp01(k), 3);          // out
+  const easeIn = (k) => Math.pow(clamp01(k), 2);
+  const bell = (k) => Math.sin(Math.PI * clamp01(k));             // 0 → 1 → 0
+  const seg = (k, a, b) => clamp01((k - a) / (b - a));            // local progress of [a, b]
+  const hs = (i, j) => { const x = Math.sin(i * 127.1 + j * 311.7) * 43758.5453; return x - Math.floor(x); }; // 0..1, stable
+  function R(c, x, y, w, h, col, a) {
+    if (a != null) { if (a <= 0.01) return; c.globalAlpha = Math.min(1, a); }
+    if (col) c.fillStyle = col;
+    c.fillRect(Math.round(x), Math.round(y), Math.max(1, Math.round(w)), Math.max(1, Math.round(h)));
+    if (a != null) c.globalAlpha = 1;
+  }
+  // a dotted pixel line from a to b (every `step` px), optional wobble
+  function line(c, a, b, u, col, alpha, o) {
+    o = o || {};
+    const dx = b.x - a.x, dy = b.y - a.y, len = Math.hypot(dx, dy) || 1;
+    const n = Math.max(2, Math.round(len / ((o.step || 2) * u)));
+    const nx = -dy / len, ny = dx / len;
+    c.globalAlpha = clamp01(alpha == null ? 1 : alpha);
+    c.fillStyle = col;
+    const from = o.from || 0, to = o.to == null ? 1 : o.to;
+    for (let i = 0; i <= n; i++) {
+      const s = i / n;
+      if (s < from || s > to) continue;
+      const w = o.wob ? Math.sin(s * Math.PI * (o.waves || 3) + (o.ph || 0)) * o.wob * Math.sin(Math.PI * s) : 0;
+      c.fillRect(Math.round(a.x + dx * s + nx * w), Math.round(a.y + dy * s + ny * w), o.th || u, o.th || u);
+    }
+    c.globalAlpha = 1;
+  }
+  // a quadratic curve a → b bulging by `bend` (px, perpendicular), dotted
+  function curve(c, a, b, bend, u, col, alpha, from, to) {
+    const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2, dx = b.x - a.x, dy = b.y - a.y, len = Math.hypot(dx, dy) || 1;
+    const cx = mx - (dy / len) * bend, cy = my + (dx / len) * bend;
+    const n = Math.max(4, Math.round(len / (2 * u)));
+    c.globalAlpha = clamp01(alpha == null ? 1 : alpha);
+    c.fillStyle = col;
+    for (let i = 0; i <= n; i++) {
+      const s = i / n;
+      if (s < (from || 0) || s > (to == null ? 1 : to)) continue;
+      const x = (1 - s) * (1 - s) * a.x + 2 * s * (1 - s) * cx + s * s * b.x;
+      const y = (1 - s) * (1 - s) * a.y + 2 * s * (1 - s) * cy + s * s * b.y;
+      c.fillRect(Math.round(x), Math.round(y), u, u);
+    }
+    c.globalAlpha = 1;
+  }
+  function qpt(a, b, bend, s) {
+    const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2, dx = b.x - a.x, dy = b.y - a.y, len = Math.hypot(dx, dy) || 1;
+    const cx = mx - (dy / len) * bend, cy = my + (dx / len) * bend;
+    return { x: (1 - s) * (1 - s) * a.x + 2 * s * (1 - s) * cx + s * s * b.x, y: (1 - s) * (1 - s) * a.y + 2 * s * (1 - s) * cy + s * s * b.y };
+  }
+  // A tapered brush stroke along path(s) (s in 0..1) between `from` and `to`:
+  // an ink edge, the body in `col`, a light core near the head. Solid, whole pixels.
+  function brush(c, path, len, from, to, u, col, alpha, th) {
+    if (to <= from || alpha <= 0.01) return;
+    th = th || 2 * u;
+    const n = Math.max(4, Math.round((len * (to - from)) / u));
+    const pts = [];
+    for (let i = 0; i <= n; i++) { const q = path(from + ((to - from) * i) / n); pts.push([Math.round(q.x), Math.round(q.y), i / n]); }
+    c.globalAlpha = clamp01(alpha * 0.8);
+    c.fillStyle = P.ink;
+    for (const [x, y, f] of pts) { const w = Math.max(u, Math.round(th * (0.35 + 0.65 * f))) + 2 * u; c.fillRect(x - (w >> 1), y - (w >> 1), w, w); }
+    c.globalAlpha = clamp01(alpha);
+    c.fillStyle = col;
+    for (const [x, y, f] of pts) { const w = Math.max(u, Math.round(th * (0.35 + 0.65 * f))); c.fillRect(x - (w >> 1), y - (w >> 1), w, w); }
+    c.fillStyle = '#fffaf0';
+    for (const [x, y, f] of pts) if (f > 0.7) c.fillRect(x - (u >> 1), y - (u >> 1), u, u);
+    c.globalAlpha = 1;
+  }
+  // where a blow leaves the creature: its edge on the side facing the target
+  function edge(A, b) {
+    const o = A.pt('foe', 'core'), dx = b.x - o.x, dy = b.y - o.y, n = Math.hypot(dx, dy) || 1;
+    return { x: o.x + (dx / n) * A.foeR * 0.6, y: o.y + (dy / n) * A.foeR * 0.6 };
+  }
+  function ring(c, x, y, r, u, col, alpha) {
+    if (alpha != null && alpha <= 0.01) return;
+    c.globalAlpha = clamp01(alpha == null ? 1 : alpha);
+    c.fillStyle = col;
+    K().ring(c, x, y, Math.max(1, r), u);
+    c.globalAlpha = 1;
+  }
+  function ellipse(c, x, y, rx, ry, u, col, alpha, from, to) {
+    c.globalAlpha = clamp01(alpha == null ? 1 : alpha);
+    c.fillStyle = col;
+    const n = Math.max(12, Math.round((rx + ry) * 1.2 / u));
+    const a0 = from == null ? 0 : from, a1 = to == null ? Math.PI * 2 : to;
+    for (let i = 0; i <= n; i++) {
+      const a = a0 + ((a1 - a0) * i) / n;
+      c.fillRect(Math.round(x + Math.cos(a) * rx), Math.round(y + Math.sin(a) * ry), u, u);
+    }
+    c.globalAlpha = 1;
+  }
+  // a pixel block with a one-pixel dark edge (reads on light and dark backdrops)
+  function dot(c, x, y, w, h, col, alpha, edge) {
+    R(c, x - 1, y - 1, w + 2, h + 2, edge || P.ink, alpha * 0.85);
+    R(c, x, y, w, h, col, alpha);
+  }
+  // a flame pip (one per Heat level): 5×7 creature px, outlined, its tip flickering
+  const FLAME = ['..o..', '.ooo.', '.oyo.', 'ooyyo', 'oyyyo', 'oyyyo', '.ooo.'];
+  function flame(c, x, y, u, t, still, i) {
+    const tip = still ? 0 : Math.sin(t / 110 + i * 1.7) > 0.3 ? 1 : 0;
+    c.fillStyle = '#5a2418';
+    for (let r = 0; r < 7; r++) for (let q = 0; q < 5; q++) if (FLAME[r][q] !== '.') c.fillRect(Math.round(x + (q - 1) * u) - 0, Math.round(y + (r - tip - 1) * u), 3 * u, 3 * u);
+    for (let r = 0; r < 7; r++) for (let q = 0; q < 5; q++) {
+      const ch = FLAME[r][q];
+      if (ch === '.') continue;
+      c.fillStyle = ch === 'y' ? '#ffe08a' : P.ember;
+      c.fillRect(Math.round(x + q * u), Math.round(y + (r - tip) * u), u, u);
+    }
+  }
+  // a small paper tag (a ward seal): paper face, an ink band, a darker edge
+  function tag(c, x, y, u, alpha, lit) {
+    const w = 5 * u, h = 8 * u;
+    R(c, x - w / 2 - u, y - h / 2 - u, w + 2 * u, h + 2 * u, lit ? P.light : P.paperEdge, alpha * (lit ? 0.9 : 0.8));
+    R(c, x - w / 2, y - h / 2, w, h, lit ? '#fffaf0' : P.paper, alpha);
+    R(c, x - u, y - h / 2 + u, 2 * u, h - 2 * u, P.verm, alpha * 0.85);
+  }
+  function spark(c, x, y, r, u, col, alpha) {
+    R(c, x - u / 2, y - r, u, r * 2, col, alpha);
+    R(c, x - r, y - u / 2, r * 2, u, col, alpha);
+  }
+  // mist puffs (stepped discs), drifting by `drift` px
+  function puffs(c, pts, u, alpha, drift) {
+    for (const [dx, dy, r, a] of pts) {
+      c.globalAlpha = clamp01(a * alpha);
+      c.fillStyle = P.mist;
+      K().disc(c, dx + (drift || 0), dy, Math.max(u, Math.round(r)), Math.max(u, Math.round(r * 0.55)));
+    }
+    c.globalAlpha = 1;
+  }
+
+  // ---- 3×5 pixel digits -------------------------------------------------------------------
+  const GLYPH = {
+    0: '111101101101111', 1: '010110010010111', 2: '111001111100111', 3: '111001111001111', 4: '101101111001001',
+    5: '111100111001111', 6: '111100111101111', 7: '111001010010010', 8: '111101111101111', 9: '111101111001111',
+    '+': '000010111010000', '-': '000000111000000', '−': '000000111000000',
+  };
+  function digits(c, x, y, text, u, col, alpha) {
+    const s = String(text);
+    const w = s.length * 4 * u - u;
+    let x0 = Math.round(x - w / 2), y0 = Math.round(y);
+    for (const pass of [0, 1]) {
+      let xx = x0;
+      for (const ch of s) {
+        const g = GLYPH[ch];
+        if (g) for (let i = 0; i < 15; i++) if (g[i] === '1') {
+          const gx = xx + (i % 3) * u, gy = y0 + Math.floor(i / 3) * u;
+          if (pass === 0) R(c, gx - 1, gy - 1, u + 2, u + 2, P.ink, alpha * 0.9);
+          else R(c, gx, gy, u, u, col, alpha);
+        }
+        xx += 4 * u;
+      }
+    }
+  }
+
+  // ---- transient effects ------------------------------------------------------------------
+  // e.p holds the parameters (anchors are ids resolved through A.pt each frame,
+  // so a resize mid-effect keeps them attached to the actors).
+  const fx = {
+    // Unravel: a loose paper-thread drawn from the hand to the knot being freed
+    thread(c, e, k, A, t, still) {
+      const u = A.u, a = A.pt(e.p.from, 'hand'), b = A.pt(e.p.to, 'core');
+      const bend = -0.28 * Math.hypot(b.x - a.x, b.y - a.y); // arcs up and over, never through anyone
+      if (still) { curve(c, a, b, bend, u, P.cord, 0.6 * (1 - seg(k, 0.7, 1))); return; }
+      const head = ease(seg(k, 0, 0.55)), fade = 1 - seg(k, 0.7, 1);
+      const n = Math.max(8, Math.round(Math.hypot(b.x - a.x, b.y - a.y) / (1.5 * u))), wob = 4 * u * (1 - k * 0.6);
+      for (let i = 0; i <= n; i++) {
+        const s = i / n;
+        if (s > head) break;
+        const q = qpt(a, b, bend, s), w = Math.sin(s * Math.PI * 3 + t / 90) * wob * Math.sin(Math.PI * s);
+        R(c, q.x, q.y + w, u, u, i % 5 === 0 ? P.ink2 : P.cord, fade);
+      }
+      const hp = qpt(a, b, bend, head);
+      R(c, hp.x - u, hp.y - u, 3 * u, 3 * u, P.paper, fade);
+    },
+    // Unravel on the creature: short strands of its tangled ink peel off and drift outward
+    loosen(c, e, k, A, t, still) {
+      if (still) return;
+      const u = A.u, o = A.pt('foe', 'core'), n = 6, r0 = A.foeR * 0.55;
+      for (let i = 0; i < n; i++) {
+        const ang = (i / n) * Math.PI * 2 + hs(i, 3) * 0.8, r = r0 + ease(k) * 22 * u;
+        const x = o.x + Math.cos(ang) * r, y = o.y + Math.sin(ang) * r * 0.8;
+        const al = bell(seg(k, 0, 1)) * 0.9;
+        for (let j = 0; j < 4; j++) R(c, x + Math.cos(ang + 1.3) * j * 2 * u, y + Math.sin(ang + 1.3) * j * 2 * u + Math.sin(t / 80 + j) * u, u, u, j % 2 ? P.ink2 : P.cord, al);
+      }
+    },
+    // the knot at e.p.i comes loose: its loop opens, the ends drop, a few paper flecks lift
+    knotRelease(c, e, k, A, t, still) {
+      const u = A.u, q = A.pt('knot:' + e.p.i, 'core');
+      if (still) { ring(c, q.x, q.y, 12 * u, u, P.light, 0.7 * (1 - k)); return; }
+      ring(c, q.x, q.y, Math.round((6 + ease(k) * 16) * u), u, P.light, 1 - k);
+      for (let i = 0; i < 6; i++) {
+        const ang = -Math.PI / 2 + (i - 2.5) * 0.55, r = ease(k) * (14 + hs(i, 7) * 10) * u;
+        R(c, q.x + Math.cos(ang) * r, q.y + Math.sin(ang) * r - easeIn(k) * 6 * u, 2 * u, u, i % 2 ? P.paper : P.cord, 1 - k);
+      }
+      spark(c, q.x, q.y - 2 * u, Math.round((4 - 3 * k) * u), u, '#ffffff', 1 - seg(k, 0, 0.5));
+    },
+    // Protect: a brush stroke sweeps the arc in front of the ally, and the seal tags stand up along it
+    sealForm(c, e, k, A, t, still) {
+      const u = A.u, o = A.pt(e.p.to, 'chest'), r = A.wardR;
+      if (still) return; // the persistent seal shows at once
+      const a0 = -Math.PI * 0.85, a1 = Math.PI * 0.2, s = ease(seg(k, 0, 0.6));
+      ellipse(c, o.x, o.y, r, r * 0.9, u, P.light, (1 - seg(k, 0.6, 1)) * 0.9, a0, a0 + (a1 - a0) * s);
+      if (k < 0.5) spark(c, o.x + Math.cos(a0 + (a1 - a0) * s) * r, o.y + Math.sin(a0 + (a1 - a0) * s) * r * 0.9, 3 * u, u, '#ffffff', 1);
+    },
+    // a ward takes a blow: the tag in front lights up, a small burst where the blow lands
+    sealBlock(c, e, k, A, t, still) {
+      const u = A.u, o = A.pt(e.p.to, 'chest'), r = A.wardR, ang = -Math.PI * 0.25;
+      const x = o.x + Math.cos(ang) * r, y = o.y + Math.sin(ang) * r * 0.9;
+      if (still) { ring(c, x, y, 7 * u, u, P.light, 0.8 * (1 - k)); return; }
+      tag(c, x, y, u, 1 - seg(k, 0.5, 1), true);
+      ring(c, x, y, Math.round((5 + ease(k) * 10) * u), u, P.light, 1 - k);
+      // the spent tags flutter off (one per absorbed point, at most three)
+      for (let i = 0; i < Math.min(3, e.p.n || 1); i++) {
+        const dx = (-6 - i * 5 - ease(k) * 18) * u, dy = (easeIn(k) * 16 - 4 + i * 3) * u;
+        R(c, x + dx, y + dy + Math.sin(t / 70 + i) * u, 3 * u, 4 * u, P.paper, 1 - k);
+      }
+    },
+    // Gust: every seal tag is torn away and blown off to the left
+    sealStrip(c, e, k, A, t, still) {
+      if (still) return;
+      const u = A.u;
+      for (const who of e.p.who || []) {
+        const o = A.pt(who, 'chest'), r = A.wardR;
+        for (let i = 0; i < 4; i++) {
+          const ang = -Math.PI * 0.8 + i * 0.3;
+          const x = o.x + Math.cos(ang) * r - ease(k) * (30 + i * 10) * u, y = o.y + Math.sin(ang) * r * 0.9 - bell(k) * 8 * u + i * 2 * u;
+          R(c, x, y + Math.sin(t / 60 + i) * u, 3 * u, 4 * u, i % 2 ? P.paper : P.paper2, 1 - k);
+        }
+      }
+    },
+    // Heal: paper motes rise around each ally in time with the recovery, a soft ring at the chest
+    motes(c, e, k, A, t, still) {
+      const u = A.u;
+      for (const who of e.p.who || []) {
+        const o = A.pt(who, 'chest');
+        if (still) { spark(c, o.x, o.y - 10 * u, 3 * u, u, P.heal, 0.9 * (1 - seg(k, 0.6, 1))); continue; }
+        ring(c, o.x, o.y, Math.round((4 + ease(seg(k, 0.25, 0.8)) * 14) * u), u, P.heal2, bell(seg(k, 0.25, 0.9)) * 0.8);
+        for (let i = 0; i < 7; i++) {
+          const ph = hs(i, who === 'pc' ? 1 : 2), s = seg(k, ph * 0.35, ph * 0.35 + 0.65);
+          if (s <= 0 || s >= 1) continue;
+          const x = o.x + (hs(i, 9) - 0.5) * 30 * u + Math.sin(t / 200 + i) * u, y = o.y + 12 * u - ease(s) * 34 * u;
+          R(c, x, y, 2 * u, 2 * u, i % 3 ? P.heal2 : P.paper, 1 - s);
+          if (i % 3 === 0) R(c, x, y + 2 * u, 2 * u, u, P.heal, 1 - s);
+        }
+      }
+    },
+    // Water: a compact wave arcs onto the creature, droplets splash, and steam rises where the heat was
+    splash(c, e, k, A, t, still) {
+      const u = A.u, a = A.pt(e.p.from, 'hand'), b = A.pt('foe', 'top');
+      if (still) return;
+      const trav = seg(k, 0, 0.45);
+      if (trav < 1) for (let i = 0; i < 5; i++) {
+        const s = clamp01(trav - i * 0.06);
+        if (s <= 0) continue;
+        const q = qpt(a, b, -40 * u, s);
+        R(c, q.x, q.y, 3 * u, 2 * u, i ? P.water : P.foam, 1);
+      }
+      const hit = seg(k, 0.45, 1);
+      if (hit > 0) {
+        for (let i = 0; i < 9; i++) {
+          const ang = -Math.PI * (0.1 + 0.8 * (i / 8)), r = ease(hit) * (10 + hs(i, 4) * 12) * u;
+          R(c, b.x + Math.cos(ang) * r, b.y + Math.sin(ang) * r * 0.7 + easeIn(hit) * 10 * u, 2 * u, 2 * u, i % 2 ? P.water : P.foam, 1 - hit);
+        }
+        if (e.p.steam) for (let i = 0; i < 5; i++) {
+          const x = b.x + (i - 2) * 7 * u + Math.sin(t / 150 + i) * 2 * u, y = b.y - ease(hit) * (16 + i * 3) * u;
+          c.globalAlpha = 0.55 * (1 - hit);
+          c.fillStyle = '#f4f6f8';
+          K().disc(c, x, y, Math.round((3 + hit * 4) * u), Math.round((2 + hit * 3) * u));
+        }
+        c.globalAlpha = 1;
+      }
+    },
+    // Light: warm light gathers at the hand, then a revealing flash on the creature (no impact)
+    flash(c, e, k, A, t, still) {
+      const u = A.u, b = A.pt('foe', 'core');
+      if (still) return;
+      const a = A.pt(e.p.from, 'hand');
+      const g = seg(k, 0, 0.35);
+      if (g < 1) K().halo(c, a.x, a.y, Math.round((4 + g * 8) * u), '255,244,200', 0.8 * bell(g), 3);
+      const f = seg(k, 0.3, 1);
+      if (f > 0) {
+        K().halo(c, b.x, b.y, Math.round((24 + ease(f) * 40) * u), '255,248,210', 0.55 * (1 - f), 4);
+        for (let i = 0; i < 8; i++) {
+          const ang = (i / 8) * Math.PI * 2, r0 = (10 + ease(f) * 20) * u;
+          line(c, { x: b.x + Math.cos(ang) * r0, y: b.y + Math.sin(ang) * r0 }, { x: b.x + Math.cos(ang) * (r0 + 8 * u), y: b.y + Math.sin(ang) * (r0 + 8 * u) }, u, P.light, 1 - f, { step: 1 });
+        }
+      }
+    },
+    // the mist is pushed apart (light or wind clearing a Shroud)
+    mistPart(c, e, k, A, t, still) {
+      if (still) return;
+      const u = A.u, b = A.pt('foe', 'base');
+      const s = ease(k);
+      puffs(c, [[b.x - (20 + s * 60) * u, b.y - 4 * u, 18 * u, 0.3], [b.x + (20 + s * 60) * u, b.y, 20 * u, 0.3], [b.x - (6 + s * 30) * u, b.y + 10 * u, 14 * u, 0.26]], u, 1 - k);
+    },
+    // Wind: streaks from the hand past the creature
+    wind(c, e, k, A, t, still) {
+      if (still) return;
+      const u = A.u, a = A.pt(e.p.from, 'hand'), b = A.pt('foe', 'core');
+      for (let i = 0; i < 4; i++) {
+        const off = (i - 1.5) * 9 * u, s = seg(k, i * 0.08, 0.6 + i * 0.08);
+        const aa = { x: a.x, y: a.y + off }, bb = { x: b.x + 30 * u, y: b.y + off * 1.6 };
+        curve(c, aa, bb, 10 * u, u, '#f0f4f8', 0.8 * bell(s), Math.max(0, s - 0.35), s);
+      }
+    },
+    // Rope: a loop is thrown round the creature and cinched tight
+    rope(c, e, k, A, t, still) {
+      const u = A.u, o = A.pt('foe', 'core'), rx = A.foeR * 0.7, ry = A.foeR * 0.28;
+      if (still) { ellipse(c, o.x, o.y + 6 * u, rx * 0.8, ry * 0.8, u, P.cord, 0.8 * (1 - seg(k, 0.6, 1))); return; }
+      const draw = ease(seg(k, 0, 0.5)), cinch = seg(k, 0.5, 0.75), fade = 1 - seg(k, 0.75, 1);
+      const sc = 1 - 0.18 * ease(cinch);
+      ellipse(c, o.x, o.y + 6 * u, rx * sc, ry * sc, u, P.cord, fade, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * draw);
+      ellipse(c, o.x, o.y + 6 * u + u, rx * sc, ry * sc, u, P.stone2, fade * 0.6, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * draw);
+      if (cinch > 0) R(c, o.x - 2 * u, o.y + 6 * u + ry * sc - 2 * u, 4 * u, 4 * u, P.cord, fade);
+    },
+    // the gathered force spills away as motes flung outward (Gathering removed)
+    scatter(c, e, k, A, t, still) {
+      if (still) return;
+      const u = A.u, o = A.pt('foe', 'core');
+      for (let i = 0; i < 8; i++) {
+        const ang = (i / 8) * Math.PI * 2 + 0.3, r = (18 + ease(k) * 34) * u;
+        R(c, o.x + Math.cos(ang) * r, o.y + Math.sin(ang) * r * 0.8, 2 * u, 2 * u, P.amber, 1 - k);
+      }
+    },
+    // Stone: a seal circle settles at the party's feet
+    stone(c, e, k, A, t, still) {
+      const u = A.u;
+      for (const who of e.p.who || []) {
+        const f = A.pt(who, 'feet');
+        const s = ease(seg(k, 0, 0.5));
+        ellipse(c, f.x, f.y, (10 + s * 8) * u, (3 + s * 2) * u, u, P.stone, (1 - seg(k, 0.7, 1)) * (still ? 0.7 : 1));
+        if (!still) for (let i = 0; i < 3; i++) R(c, f.x + (i - 1) * 9 * u, f.y - bell(seg(k, 0.1 + i * 0.1, 0.7)) * 5 * u - u, 3 * u, 2 * u, i % 2 ? P.stone : P.stone2, 1 - seg(k, 0.6, 1));
+      }
+    },
+    // Warmth: a warm glow wraps the allies, a few embers rise
+    warm(c, e, k, A, t, still) {
+      const u = A.u;
+      for (const who of e.p.who || []) {
+        const o = A.pt(who, 'chest');
+        if (still) continue;
+        K().halo(c, o.x, o.y, Math.round(18 * u), '255,190,120', 0.45 * bell(k), 3);
+        for (let i = 0; i < 4; i++) R(c, o.x + (hs(i, 5) - 0.5) * 20 * u, o.y + 6 * u - ease(k) * (18 + i * 4) * u, u, 2 * u, i % 2 ? P.ember2 : P.ember, 1 - k);
+      }
+    },
+    // Bell / voice: clear rings spread from the party (and the hush breaks)
+    rings(c, e, k, A, t, still) {
+      const u = A.u, o = A.pt('party', 'head');
+      if (still) { ring(c, o.x, o.y - 6 * u, 10 * u, u, P.light, 0.7 * (1 - k)); return; }
+      for (let i = 0; i < 3; i++) {
+        const s = seg(k, i * 0.15, 0.7 + i * 0.1);
+        if (s > 0 && s < 1) ring(c, o.x, o.y - 6 * u, Math.round((6 + ease(s) * 34) * u), u, P.light, 1 - s);
+      }
+    },
+    // a folded paper note drifting from one side to the other (an answer, or its plea)
+    note(c, e, k, A, t, still) {
+      const u = A.u, a = A.pt(e.p.from, e.p.from === 'foe' ? 'core' : 'hand'), b = A.pt(e.p.to, e.p.to === 'foe' ? 'core' : 'head');
+      const s = still ? 0.5 : ease(seg(k, 0, 0.8)), q = qpt(a, b, -24 * u, s);
+      const al = still ? 0.9 * (1 - seg(k, 0.7, 1)) : 1 - seg(k, 0.8, 1) * (e.p.fade ? 1 : 0.2);
+      R(c, q.x - 4 * u, q.y - 3 * u + (still ? 0 : Math.sin(t / 120) * u), 8 * u, 6 * u, P.paper, al);
+      R(c, q.x - 4 * u, q.y - 3 * u, 8 * u, u, P.paper2, al);
+      R(c, q.x - 2 * u, q.y, 4 * u, u, P.ink2, al * 0.7);
+    },
+    // See through: a pale lens forms over the false promise and a crack runs across it
+    lens(c, e, k, A, t, still) {
+      const u = A.u, o = A.pt('foe', 'core');
+      const r = Math.round(A.foeR * 0.45);
+      ring(c, o.x, o.y, r, u, P.light, (still ? 0.7 : 1) * (1 - seg(k, 0.75, 1)));
+      const cr = still ? 1 : ease(seg(k, 0.3, 0.7));
+      if (cr > 0) line(c, { x: o.x - r * 0.7, y: o.y - r * 0.7 }, { x: o.x + r * 0.7, y: o.y + r * 0.7 }, u, '#ffffff', 1 - seg(k, 0.75, 1), { to: cr, wob: 2 * u, waves: 5, step: 1 });
+    },
+    // the enemy's focused blow: a tapered stroke in the creature's own colour,
+    // from it to the one target it aims at (slightly arched)
+    dart(c, e, k, A, t, still) {
+      if (still) return;
+      const u = A.u, b = A.pt(e.p.to, 'chest'), a = edge(A, b);
+      const len = Math.hypot(b.x - a.x, b.y - a.y), bend = 0.12 * len;
+      const s = ease(k), tail = Math.max(0, s - 0.45);
+      brush(c, (x) => qpt(a, b, bend, x), len, tail, s, u, e.p.col || P.ink2, 1 - seg(k, 0.85, 1), 3 * u);
+    },
+    // a broad sweep: one stroke that passes over every affected ally in turn
+    arc(c, e, k, A, t, still) {
+      if (still) return;
+      const u = A.u, who = e.p.who || [];
+      const tg = who.map((w) => A.pt(w, 'chest'));
+      if (!tg.length) return;
+      const pts = [edge(A, tg[0])].concat(tg);
+      const last = pts[pts.length - 1];
+      pts.push({ x: last.x + 24 * u, y: last.y - 6 * u });
+      const segs = pts.length - 1, lens = [];
+      for (let i = 0; i < segs; i++) lens.push(Math.hypot(pts[i + 1].x - pts[i].x, pts[i + 1].y - pts[i].y));
+      const total = lens.reduce((a, b) => a + b, 0) || 1;
+      const path = (x) => {
+        let d = x * total;
+        for (let i = 0; i < segs; i++) {
+          if (d <= lens[i] || i === segs - 1) return qpt(pts[i], pts[i + 1], i === 0 ? -0.3 * lens[i] : 0.25 * lens[i], Math.min(1, d / (lens[i] || 1)));
+          d -= lens[i];
+        }
+        return pts[pts.length - 1];
+      };
+      const s = ease(k), tail = Math.max(0, s - 0.4);
+      brush(c, path, total, tail, s, u, e.p.col || P.ink2, 1 - seg(k, 0.85, 1), 4 * u);
+      if (e.p.col2) brush(c, (x) => { const q = path(x); return { x: q.x, y: q.y - 3 * u }; }, total, Math.max(tail, s - 0.15), s, u, e.p.col2, 0.8 * (1 - seg(k, 0.85, 1)), 2 * u);
+    },
+    // Gust: wind strokes rake across the party from the creature's side
+    gust(c, e, k, A, t, still) {
+      if (still) return;
+      const u = A.u, o = A.pt('party', 'chest'), f = A.pt('foe', 'core');
+      for (let i = 0; i < 4; i++) {
+        const s = ease(seg(k, i * 0.08, 0.7 + i * 0.06)), y = o.y + (i - 1.5) * 12 * u;
+        const a = { x: f.x - 10 * u, y: y - 24 * u + i * 4 * u }, b = { x: o.x - 60 * u, y: y + 6 * u };
+        const len = Math.hypot(b.x - a.x, b.y - a.y);
+        brush(c, (x) => qpt(a, b, 0.1 * len, x), len, Math.max(0, s - 0.3), s, u, i % 2 ? '#eef2f6' : (e.p.col || '#dfe6ee'), 0.85 * (1 - seg(k, 0.8, 1)), 2 * u);
+      }
+    },
+    // contact on an ally: a compact star and four flecks (brief; one per real hit)
+    impact(c, e, k, A, t, still) {
+      const u = A.u, o = A.pt(e.p.to, 'chest');
+      const x = o.x + (e.p.dx || 0) * u, y = o.y + (e.p.dy || 0) * u;
+      if (still) { spark(c, x, y, 5 * u, u, '#ffffff', 0.9 * (1 - seg(k, 0.5, 1))); return; }
+      const r = Math.round((3 + ease(k) * 7) * u) * (e.p.small ? 0.7 : 1);
+      spark(c, x, y, r, 2 * u, '#ffffff', 1 - k);
+      spark(c, x, y, Math.round(r * 0.5), u, e.p.col || P.amber, 1 - k);
+      for (const [dx, dy] of [[1, 1], [1, -1], [-1, 1], [-1, -1]]) R(c, x + dx * r * 0.8, y + dy * r * 0.8, u, u, '#ffffff', 1 - k);
+    },
+    // Chill: frost sparks where the cold blow lands
+    frost(c, e, k, A, t, still) {
+      if (still) return;
+      const u = A.u, o = A.pt(e.p.to, 'chest');
+      for (let i = 0; i < 6; i++) {
+        const ang = (i / 6) * Math.PI * 2, r = ease(k) * 14 * u;
+        spark(c, o.x + Math.cos(ang) * r, o.y + Math.sin(ang) * r, 2 * u, u, P.frost, 1 - k);
+      }
+    },
+    // a blow that meets empty air (Suzu's flourish): paper confetti where it would have landed
+    miss(c, e, k, A, t, still) {
+      if (still) return;
+      const u = A.u, o = A.pt(e.p.to, 'chest');
+      for (let i = 0; i < 8; i++) {
+        const ang = -Math.PI / 2 + (hs(i, 2) - 0.5) * 2.6, r = ease(k) * (12 + hs(i, 6) * 12) * u;
+        R(c, o.x + Math.cos(ang) * r, o.y + Math.sin(ang) * r + easeIn(k) * 12 * u, 2 * u, u, i % 3 ? P.paper : P.verm, 1 - k);
+      }
+    },
+    // its move comes to nothing: the ink it gathered breaks up in little puffs around it
+    fizzle(c, e, k, A, t, still) {
+      if (still) return;
+      const u = A.u, o = A.pt('foe', 'core');
+      for (let i = 0; i < 7; i++) {
+        const ang = (i / 7) * Math.PI * 2 + 0.4, r = (A.foeR * 0.35) + ease(k) * 16 * u;
+        c.globalAlpha = 0.6 * (1 - k);
+        c.fillStyle = i % 2 ? P.ink2 : '#8a7c84';
+        K().disc(c, o.x + Math.cos(ang) * r, o.y + Math.sin(ang) * r * 0.8, Math.round((3 - 2 * k) * u) + u, Math.round((2 - k) * u) + u);
+      }
+      c.globalAlpha = 1;
+    },
+    // Heat rising: embers burst from the creature
+    embers(c, e, k, A, t, still) {
+      if (still) return;
+      const u = A.u, o = A.pt('foe', 'top');
+      for (let i = 0; i < 10; i++) {
+        const x = o.x + (hs(i, 8) - 0.5) * A.foeR * 1.2, y = o.y + A.foeR * 0.3 - ease(k) * (20 + hs(i, 3) * 26) * u;
+        dot(c, x + Math.sin(t / 90 + i) * u, y, 2 * u, 2 * u, i % 2 ? P.ember : '#ffe08a', 1 - k, '#5a2418');
+      }
+      K().halo(c, A.pt('foe', 'core').x, A.pt('foe', 'core').y, Math.round(A.foeR * 0.8), '255,150,80', 0.35 * bell(k), 3);
+    },
+    // Shroud rising: mist rolls down off the creature over its knots
+    mistRoll(c, e, k, A, t, still) {
+      if (still) return;
+      const u = A.u, o = A.pt('foe', 'core'), b = A.pt('foe', 'base');
+      const s = ease(k);
+      const y = o.y + (b.y - o.y) * s;
+      puffs(c, [[o.x - 30 * u * s, y, 16 * u, 0.3], [o.x + 30 * u * s, y + 4 * u, 18 * u, 0.3], [o.x, y - 8 * u, 14 * u, 0.3]], u, 1 - seg(k, 0.7, 1));
+    },
+    // Gathering: motes spiral in to the creature's core
+    gather(c, e, k, A, t, still) {
+      if (still) return;
+      const u = A.u, o = A.pt('foe', 'core');
+      for (let i = 0; i < 8; i++) {
+        const s = seg(k, i * 0.04, 0.7 + i * 0.03), ang = (i / 8) * Math.PI * 2 + s * 3, r = (1 - ease(s)) * (A.foeR * 0.9);
+        R(c, o.x + Math.cos(ang) * r, o.y + Math.sin(ang) * r * 0.8, 2 * u, 2 * u, P.amber, bell(s));
+      }
+      K().halo(c, o.x, o.y, Math.round(A.foeR * 0.35), '255,210,130', 0.5 * bell(seg(k, 0.5, 1)), 3);
+    },
+    // Re-tying: a thread runs from the creature down to a loose knot, which pulls tight
+    mendThread(c, e, k, A, t, still) {
+      const u = A.u, a = A.pt('foe', 'core'), b = A.pt('knot:' + e.p.i, 'core');
+      if (still) { ring(c, b.x, b.y, 10 * u, u, P.verm, 0.7 * (1 - k)); return; }
+      const s = ease(seg(k, 0, 0.55));
+      line(c, a, b, u, P.cord, 1 - seg(k, 0.7, 1), { to: s, wob: 3 * u, waves: 4, ph: t / 100, step: 1.5 });
+      const g = seg(k, 0.55, 1);
+      if (g > 0) ring(c, b.x, b.y, Math.round((14 - ease(g) * 8) * u), u, P.verm, 1 - g);
+    },
+    // Hush: a pale wave rolls from the creature onto the party
+    hushWave(c, e, k, A, t, still) {
+      if (still) return;
+      const u = A.u, a = A.pt('foe', 'core'), b = A.pt('party', 'head');
+      const s = ease(seg(k, 0, 0.8));
+      const q = { x: a.x + (b.x - a.x) * s, y: a.y + (b.y - a.y) * s };
+      for (let i = 0; i < 3; i++) ellipse(c, q.x, q.y, (8 + i * 6) * u, (5 + i * 4) * u, u, P.hush, (1 - seg(k, 0.8, 1)) * (0.8 - i * 0.2), Math.PI * 0.6, Math.PI * 1.4);
+    },
+    // a mirror or false promise: a pale pane glints and slides toward its target
+    pane(c, e, k, A, t, still) {
+      if (still) return;
+      const u = A.u, a = A.pt('foe', 'core'), b = A.pt(e.p.to, 'chest');
+      const s = ease(seg(k, 0, 0.9)), x = a.x + (b.x - a.x) * s, y = a.y + (b.y - a.y) * s;
+      const w = 10 * u, h = 14 * u;
+      R(c, x - w / 2, y - h / 2, w, h, '#e8eef8', 0.45 * (1 - seg(k, 0.85, 1)));
+      line(c, { x: x - w / 2, y: y + h / 2 }, { x: x + w / 2, y: y - h / 2 }, u, '#ffffff', 0.9, { from: seg(k, 0, 0.6) * 0.7, to: seg(k, 0, 0.6) * 0.7 + 0.3, step: 1 });
+    },
+    // a companion's coordinated gesture joined to yours: a thread of light between two hands
+    link(c, e, k, A, t, still) {
+      const u = A.u, a = A.pt('pc', 'hand'), b = A.pt('comp', 'hand');
+      const al = still ? 0.7 * (1 - seg(k, 0.7, 1)) : bell(k);
+      line(c, a, b, u, P.warm, al, { step: 2, wob: still ? 0 : 3 * u, waves: 2, ph: t / 120 });
+      if (!still) { spark(c, a.x, a.y, 3 * u, u, '#ffffff', al); spark(c, b.x, b.y, 3 * u, u, '#ffffff', al); }
+    },
+    // a small ink drop for a slip of the brush (−1 resolve): falls and spreads on the shoulder
+    drop(c, e, k, A, t, still) {
+      const u = A.u, o = A.pt(e.p.to, 'head');
+      if (still) return;
+      const y = o.y - 18 * u + easeIn(seg(k, 0, 0.5)) * 14 * u;
+      if (k < 0.5) R(c, o.x + 6 * u, y, 2 * u, 3 * u, P.ink, 1);
+      else R(c, o.x + 4 * u, o.y - 4 * u, (2 + 4 * seg(k, 0.5, 0.7)) * u, u, P.ink, 1 - seg(k, 0.7, 1));
+    },
+    // the final knot: the creature's name comes back — soft motes rise from it
+    release(c, e, k, A, t, still) {
+      const u = A.u, o = A.pt('foe', 'core');
+      if (still) return;
+      K().halo(c, o.x, o.y, Math.round(A.foeR * (0.8 + 0.4 * k)), '255,246,220', 0.35 * bell(k), 4);
+      for (let i = 0; i < 12; i++) {
+        const s = seg(k, hs(i, 1) * 0.4, hs(i, 1) * 0.4 + 0.6);
+        if (s <= 0 || s >= 1) continue;
+        const x = o.x + (hs(i, 2) - 0.5) * A.foeR * 1.6, y = o.y + A.foeR * 0.4 - ease(s) * 50 * u;
+        R(c, x + Math.sin(t / 160 + i) * u, y, 2 * u, 2 * u, i % 3 ? P.light : P.paper, 1 - s);
+      }
+    },
+    // revived: a companion helps the player up (a warm column of light)
+    lift(c, e, k, A, t, still) {
+      const u = A.u, o = A.pt(e.p.to, 'feet');
+      if (still) return;
+      K().halo(c, o.x, o.y - 20 * u, Math.round(22 * u), '255,236,180', 0.5 * bell(k), 3);
+      for (let i = 0; i < 5; i++) R(c, o.x + (i - 2) * 5 * u, o.y - ease(seg(k, i * 0.1, 0.8)) * 40 * u, u, 3 * u, P.light, 1 - seg(k, 0.5, 1));
+    },
+  };
+
+  // ---- persistent status marks (drawn every frame from the displayed state) -----------------
+  const status = {
+    // Heat on the creature: one flame pip per level beside its head (the stack you can
+    // count; still with reduced motion) and, in motion, a few outlined embers rising off it
+    heat(c, A, n, t, still) {
+      const u = A.u, o = A.pt('foe', 'top'), core = A.pt('foe', 'core');
+      for (let i = 0; i < n; i++) flame(c, core.x + A.foeR * 0.75 + i * 7 * u, o.y + 2 * u, u, t, still, i);
+      if (still) return;
+      for (let i = 0; i < 2 + 2 * n; i++) {
+        const per = 1500 + hs(i, 11) * 900, s = ((t + hs(i, 12) * per) % per) / per;
+        const x = core.x + (hs(i, 13) - 0.5) * A.foeR * 1.2 + Math.sin(t / 240 + i) * 2 * u, y = o.y + A.foeR * 0.5 - s * (30 + 8 * n) * u;
+        dot(c, x, y, 2 * u, s < 0.5 ? 2 * u : u, i % 2 ? P.ember : '#ffe08a', 0.9 * bell(s), '#5a2418');
+      }
+    },
+    // Shroud: mist lying over its knots and its lower half (localized, drifting slowly)
+    shroud(c, A, t, still) {
+      const u = A.u, b = A.pt('foe', 'base'), o = A.pt('foe', 'core'), w = A.knotSpan || A.foeR;
+      const drift = still ? 0 : Math.round(Math.sin(t / 1300) * 5 * u);
+      puffs(c, [[b.x - w * 0.6, b.y - 2 * u, 16 * u, 0.42], [b.x + w * 0.55, b.y + 2 * u, 18 * u, 0.42], [b.x, b.y + 4 * u, 20 * u, 0.48],
+        [o.x - A.foeR * 0.45, o.y + A.foeR * 0.25, 20 * u, 0.24], [o.x + A.foeR * 0.4, o.y + A.foeR * 0.3, 22 * u, 0.24]], u, 1, drift);
+    },
+    // Gathering: held force — outlined amber motes circling it on a faint orbit, a glow at the core
+    charge(c, A, t, still) {
+      const u = A.u, o = A.pt('foe', 'core');
+      const r = A.foeR * 0.95, ry = 0.5;
+      ellipse(c, o.x, o.y + 4 * u, r, r * ry, u, P.amber, 0.35);
+      for (let i = 0; i < 8; i++) {
+        const ang = (i / 8) * Math.PI * 2 + (still ? 0 : t / 1300);
+        const front = Math.sin(ang) > 0;
+        dot(c, o.x + Math.cos(ang) * r - u, o.y + 4 * u + Math.sin(ang) * r * ry - u, (front ? 3 : 2) * u, (front ? 3 : 2) * u, front ? '#ffd27a' : P.amber, still ? 1 : 0.75 + 0.25 * Math.sin(t / 300 + i), '#4a2a10');
+      }
+      if (!still) K().halo(c, o.x, o.y, Math.round(A.foeR * 0.3), '255,210,130', 0.22 + 0.08 * Math.sin(t / 400), 3);
+    },
+    // Hush over the party: a pale arc above their heads and a mute mark (a ring crossed
+    // through, outlined so it reads on any backdrop)
+    hush(c, A, t, still) {
+      const u = A.u, h = A.pt('party', 'head');
+      const al = still ? 0.9 : 0.7 + 0.2 * Math.sin(t / 700);
+      ellipse(c, h.x, h.y + 6 * u, Math.max(20 * u, A.partyW * 0.55), 12 * u, u, P.hush, al * 0.7, Math.PI * 1.1, Math.PI * 1.9);
+      const x = h.x, y = h.y - 18 * u;
+      for (const [col, d] of [[P.ink, 1], [P.hush, 0]]) {
+        c.globalAlpha = al; c.fillStyle = col;
+        for (let a = 0; a < Math.PI * 2; a += 0.2) c.fillRect(Math.round(x + Math.cos(a) * 6 * u) - d, Math.round(y + Math.sin(a) * 6 * u) - d, u + 2 * d, u + 2 * d);
+        for (let i = -4; i <= 4; i++) c.fillRect(Math.round(x + i * u) - d, Math.round(y - i * u) - d, u + 2 * d, u + 2 * d);
+      }
+      c.globalAlpha = 1;
+    },
+    // a ward: seal tags standing in an arc in front of the ally, one tag per ward point
+    wards(c, A, who, n, t, still) {
+      if (!n) return;
+      const u = A.u, o = A.pt(who, 'chest'), r = A.wardR;
+      const shown = Math.min(n, 6);
+      ellipse(c, o.x, o.y, r, r * 0.9, u, P.light, 0.22, -Math.PI * 0.85, Math.PI * 0.2);
+      for (let i = 0; i < shown; i++) {
+        const ang = -Math.PI * 0.8 + ((i + 0.5) / shown) * Math.PI * 0.95;
+        const bob = still ? 0 : Math.round(Math.sin(t / 700 + i * 1.3) * 0.6) * u;
+        tag(c, o.x + Math.cos(ang) * r, o.y + Math.sin(ang) * r * 0.9 + bob, u, 0.95, false);
+      }
+      if (n > 6) digits(c, o.x + r + 6 * u, o.y - r, String(n), u, P.light, 1);
+    },
+    // Harmony full: a faint thread of light between the two allies' hands
+    harmony(c, A, t, still) {
+      const u = A.u, a = A.pt('pc', 'hand'), b = A.pt('comp', 'hand');
+      line(c, a, b, u, P.warm, still ? 0.55 : 0.35 + 0.2 * Math.sin(t / 500), { step: 3, wob: still ? 0 : 2 * u, waves: 2, ph: t / 400 });
+    },
+  };
+
+  // a small seal tag as a mark (beside the number a ward absorbed)
+  function sealMark(c, x, y, u, alpha) { tag(c, x, y, u, alpha, true); }
+  return { fx, status, digits, sealMark, P, ease, bell, seg };
 })();
 
 

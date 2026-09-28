@@ -7,13 +7,19 @@ RB.combat = (function () {
   'use strict';
   const esc = RB.util.esc;
   const L = () => RB.combatLogic;
-  let st = null, enemy = null, ui = null, fxList = [], shake = 0;
+  let st = null, enemy = null, ui = null;
+  // What the screen shows lags the rules by one beat: the rules apply a whole
+  // exchange at once, and `view` (a copy of the state from before it) steps
+  // forward as each result is shown (RB.battleSeq). null = show `st` itself.
+  let view = null, phase = 'idle', sealHeld = null, curCard = null;
+  const V = () => view || st;
+  const snapshot = (x) => Object.assign({}, x, { ward: Object.assign({}, x.ward) });
 
   // ---- the scene, framed inside the stage: the free area the overlay leaves ----
   // Drawn at art resolution (2 art px per logical px): the regional backdrop
-  // (RB.battleScene), the creature (RB.enemyArt), knots, the party, wards and
-  // effects. Positions below are art px.
-  let stageCss = null, lastLay = null, measureAt = -1e9;
+  // (RB.battleScene), then the stage (RB.battleStage: the creature, knots,
+  // the party, states and effects). Positions are art px.
+  let stageCss = null, measureAt = -1e9;
   function measure() {
     if (!ui || !ui.stage) { stageCss = null; return; }
     const r = ui.stage.getBoundingClientRect();
@@ -26,86 +32,49 @@ RB.combat = (function () {
     const x = Math.max(0, stageCss.x / k), y = Math.max(0, stageCss.y / k);
     return { x, y, w: Math.min(w - x, stageCss.w / k), h: Math.min(h - y, stageCss.h / k) };
   }
-  function partySprite(look) {
-    const S = RB.sprites;
-    if (typeof S.getArt === 'function') { const a = S.getArt(look, 'up', 0); if (a) return a; }
-    return S.get(look, 'up', 0);
+  // While you read, choose and write, the scene stays alive but calm: the
+  // adventurers take their calm stance and the ambient clock (the backdrop's
+  // drifting motes, the creature's idle) runs at half speed. Strong motion
+  // belongs to the committed beats.
+  const calmNow = () => phase === 'choose' || phase === 'challenge';
+  const amb = { v: null, last: null, rate: 1 };
+  function ambient(t) {
+    if (amb.v == null) { amb.v = t; amb.last = t; }
+    const dt = Math.max(0, Math.min(100, t - amb.last));
+    amb.last = t;
+    amb.rate += ((calmNow() ? 0.5 : 1) - amb.rate) * Math.min(1, dt / 400);
+    amb.v += dt * amb.rate;
+    return amb.v;
   }
+  // frame cost (ms spent drawing the battle), for tests and tuning
+  const cost = { n: 0, sum: 0, max: 0, seqN: 0, seqSum: 0, seqMax: 0 };
   function draw(c, w, h, t) {
+    const t0 = performance.now();
     if (t - measureAt > 400) { measureAt = t; measure(); }
     const S = stageBuf(w, h);
     const Sc = RB.battleScene;
     const reduce = RB.game.reducedMotion();
-    const tt = reduce ? 0 : t;
-    const sx = shake > 0 && !reduce ? Math.round(Math.sin(t / 20) * 4) : 0;
-    if (shake > 0) shake -= 16;
-    // integer scale only (pixel art), chosen so the whole scene fits the stage
-    const scale = Math.max(1, Math.min(3, Math.floor(Math.min(S.h / 224, S.w / 300))));
-    const ps = scale;
-    const ex = Math.round(S.x + S.w * 0.62) + sx;
-    let ey = Math.round(Math.min(S.y + S.h - 100 * scale, Math.max(S.y + 80 * scale, S.y + S.h * 0.44)));
-    // a tall creature on a short stage: keep its head inside the stage
-    // (letting its feet sit a little lower) rather than under the foe slip
-    const ext = RB.enemyArt.extent(enemy.art || 'wisp', enemy.artOpts || {});
-    ey = Math.min(Math.max(ey, Math.round(S.y - ext.top * scale + 2)), Math.round(S.y + S.h - 64 * scale));
-    // the party's feet (rear three-quarter battle figures, RB.battlers): the
-    // player a little in from the left, the companion to their right and a
-    // step nearer; px/py keep the old sprite-corner convention (feet at
-    // px+16ps, py+48ps) for the backdrop's party box and effect anchors
-    const B = RB.battlers;
-    const fX = Math.round(Math.max(S.x + S.w * 0.14, S.x + ((B ? B.ANCHOR.x : 16) + 6) * ps)), fY = Math.round(S.y + S.h - 12 - 8 * ps);
-    const px = fX - 16 * ps, py = fY - 48 * ps;
-    const hz = Math.max(0, Math.min(h - 1, Math.round(Math.min(ey + 36 * scale, py + 16 * ps))));
+    const pt = RB.battleSeq.tick(t);
+    const tt = reduce ? 0 : ambient(t);
+    const lay = st && RB.battleStage.active() ? RB.battleStage.layout(S, w, h) : null;
+    const hz = lay ? lay.hz : Math.round(h * 0.62);
     c.imageSmoothingEnabled = false;
-    Sc.backdrop(c, enemy.bgKey || enemy.bg || enemy.region || 'reedwake', w, h, hz, tt, reduce, { S, ex, ey, ext, px, py, ps, scale, art: enemy.art });
-    // creature and its ground shadow
-    Sc.shadow(c, ex, ey + 84 * scale, 58 * scale, 11 * scale, 0.5);
-    if (st && st.over === 'win') c.globalAlpha = 0.5;
-    RB.enemyArt.drawArt(c, enemy.art || 'wisp', tt, enemy.artOpts || {}, ex, ey, scale, reduce);
-    c.globalAlpha = 1;
-    if (st && st.shroud) Sc.mist(c, ex, ey, scale, t, reduce);
-    // knots: a row of cord loops under it, tied or undone
-    if (st) for (let i = 0; i < st.maxKnots; i++) {
-      const a = -Math.PI / 2 + (i - (st.maxKnots - 1) / 2) * 0.5;
-      const kx = Math.round(ex + Math.cos(a) * 60 * scale), ky = Math.round(ey + 88 * scale + 12 + Math.sin(a) * 8);
-      const icon = Sc.knot(i < st.knots);
-      c.drawImage(icon, kx - 10 * scale, ky - 10 * scale, icon.width * scale, icon.height * scale);
+    // (the stage's arrangement, for a backdrop composer that keeps the actors' boxes clear)
+    Sc.backdrop(c, enemy.bgKey || enemy.bg || enemy.region || 'reedwake', w, h, hz, tt, reduce, lay ? { S, ex: lay.ex, ey: lay.ey, ext: lay.ext, px: lay.px, py: lay.py, ps: lay.ps, scale: lay.scale, art: enemy.art, party: lay.party } : null);
+    if (lay) {
+      // the frame loop must survive anything the presentation does wrong
+      try { RB.battleStage.draw(c, w, h, { t, pt, amb: tt, view: V(), reduce, calm: calmNow(), Sr: S, lay, stageCss, sealHeld }); }
+      catch (err) { if (!draw.failed) console.error('battle stage', err); draw.failed = true; }
     }
-    // party (backs to us), each on a small contact shadow
-    const s = RB.game.s;
-    const look = RB.equip.look(s); // with the equipped keepsake, as on the road
-    const feet = [{ x: fX, y: fY, look, who: 'pc' }];
-    if (s.comp) feet.push({ x: fX + 70 * ps, y: fY + 8 * ps, look: RB.content.chars[s.comp].look, who: 'comp' });
-    for (const m of feet) {
-      Sc.shadow(c, m.x, m.y - 2 * ps, 16 * ps, 5 * ps, 0.55);
-      if (B) m.pts = B.draw(c, m.look, { x: m.x, y: m.y, scale: ps, t, who: m.who, pose: st && st.over === 'win' ? 'cheer' : 'ready', k: 1, reduce });
-      else { const spr = partySprite(m.look); c.drawImage(spr, m.x - 16 * ps, m.y - 48 * ps, 32 * ps, 48 * ps); }
-    }
-    lastLay = { ex, ey, px, py, ps, scale, feet };
-    if (st) {
-      Sc.ward(c, feet[0].x, feet[0].y - 50 * ps, 40 * ps, st.ward.pc, ps);
-      if (feet[1]) Sc.ward(c, feet[1].x, feet[1].y - 50 * ps, 40 * ps, st.ward.comp, ps);
-      if (st.heat) { c.fillStyle = `rgba(255,120,60,${0.08 * st.heat})`; c.fillRect(0, 0, w, h); }
-    }
-    // effects
-    fxList = fxList.filter((e) => t - e.t0 < e.d);
-    const at = { ex, ey, px, py };
-    for (const e of fxList) Sc.effect(c, e, (t - e.t0) / e.d, at, 1);
+    const dt = performance.now() - t0;
+    cost.n++; cost.sum += dt; cost.max = Math.max(cost.max, dt);
+    if (RB.battleSeq.busy()) { cost.seqN++; cost.seqSum += dt; cost.seqMax = Math.max(cost.seqMax, dt); }
   }
   draw.art = true;
-  function addFx(kind, extra) {
-    fxList.push(Object.assign({ kind, t0: performance.now(), d: RB.game.reducedMotion() ? 300 : 700 }, extra));
-  }
-  // where the party stands (for effects), in art px; dx/dy in 16×24 sprite units
-  function partyAt(dx, dy) {
-    const l = lastLay || { px: 40, py: 120, ps: 1 };
-    const m = l.feet && l.feet[(dx || 8) >= 20 && l.feet[1] ? 1 : 0];
-    if (m) return { x: m.x, y: m.y - (48 - (dy || 12) * 2) * 1.8 * l.ps };
-    return { x: l.px + (dx || 8) * 2 * l.ps, y: l.py + (dy || 12) * 2 * l.ps };
-  }
   function tierOf(obj) {
     return RB.activities.tier(obj);
   }
+  let linePick = null;
   function intentLine(it) {
     const s = RB.game.s;
     const prof = s.learn.profile;
@@ -120,7 +89,9 @@ RB.combat = (function () {
     let cands = pool;
     if (solo || it.target === 'both') cands = pool.filter((x) => !x.neg);
     if (!cands.length) cands = pool;
-    const pick = cands[(st.round + st.knots) % cands.length];
+    // the line chosen when the move was telegraphed stays put for the whole exchange
+    if (!linePick || linePick.it !== it || linePick.round !== st.round) linePick = { it, round: st.round, i: (st.round + st.knots) % cands.length };
+    const pick = cands[linePick.i % cands.length];
     const nm = { pc: s.player.nameJp || s.player.name, comp: s.comp ? RB.jp.plain(RB.content.chars[s.comp].name.jp) : '' };
     const nmEn = { pc: s.player.name, comp: s.comp ? RB.content.chars[s.comp].name.en : '' };
     const tgt = it.target === 'comp' ? 'comp' : 'pc';
@@ -187,11 +158,11 @@ RB.combat = (function () {
   // (wards are on the party slip).
   const STATUS_ICON = { heat: 'flame', shroud: 'cloud', charge: 'hourglass', silence: 'mute', 'ward:pc': 'shield', 'ward:comp': 'shield' };
   function statusList() {
-    const out = [];
-    if (st.heat) out.push({ key: 'heat', label: 'Heat ' + st.heat });
-    if (st.shroud) out.push({ key: 'shroud', label: 'Shrouded' });
-    if (st.charged) out.push({ key: 'charge', label: 'Gathering' });
-    if (st.silenced) out.push({ key: 'silence', label: 'Hushed' });
+    const out = [], v = V();
+    if (v.heat) out.push({ key: 'heat', label: 'Heat ' + v.heat });
+    if (v.shroud) out.push({ key: 'shroud', label: 'Shrouded' });
+    if (v.charged) out.push({ key: 'charge', label: 'Gathering' });
+    if (v.silenced) out.push({ key: 'silence', label: 'Hushed' });
     return out;
   }
   function intentHtml(compact) {
@@ -224,17 +195,18 @@ RB.combat = (function () {
     }
     if (key === 'harmony') {
       if (!st.compId) return null;
-      const h = H.harmonyInfo(st);
+      const h = H.harmonyInfo(V());
       return { icon: 'join', title: h.title, body: '<p class="kw-now">' + h.now + '</p><p><b>How it fills:</b> ' + h.fills + '</p><p><b>When it is full:</b> ' + h.offers + '</p><p>' + h.more + '</p>' };
     }
-    const i = H.statusInfo(st, key, ws, { pc: esc(s.player.name), comp: esc(compName()) });
+    const i = H.statusInfo(V(), key, ws, { pc: esc(s.player.name), comp: esc(compName()) });
     if (!i) return null;
     return { icon: STATUS_ICON[key], title: i.title, body: p(i.what) + ans(i.answer) };
   }
   function knotsHtml() {
     let h = '';
-    for (let i = 0; i < st.maxKnots; i++) h += '<span class="kn' + (i < st.knots ? ' tied' : '') + '"></span>';
-    return '<span class="knots" role="img" aria-label="Knots still tied: ' + st.knots + ' of ' + st.maxKnots + '">' + h + '</span><span class="kn-t">' + st.knots + ' / ' + st.maxKnots + ' knots</span>';
+    const v = V();
+    for (let i = 0; i < v.maxKnots; i++) h += '<span class="kn' + (i < v.knots ? ' tied' : '') + '"></span>';
+    return '<span class="knots" role="img" aria-label="Knots still tied: ' + v.knots + ' of ' + v.maxKnots + '">' + h + '</span><span class="kn-t">' + v.knots + ' / ' + v.maxKnots + ' knots</span>';
   }
   function renderUi() {
     const s = RB.game.s;
@@ -256,9 +228,10 @@ RB.combat = (function () {
       (ward ? kw('ward:' + who, 'pm-w', '<span class="pill">' + I('shield') + '<span class="wl">Ward </span>' + ward + '</span>', ' in front of ' + name + ' — what this means') : '') + '</div>' +
       '<div class="pm-r"><div class="bar" role="meter" aria-label="' + esc(name) + ' resolve" aria-valuemin="0" aria-valuemax="' + max + '" aria-valuenow="' + v + '"><i style="width:' + Math.round((100 * v) / max) + '%"></i></div>' +
       '<span class="pm-v"><span class="sr">Resolve </span>' + v + ' / ' + max + '</span></div></div>';
+    const v = V();
     ui.bars.innerHTML = (s.comp && st.compId ? harmonyHtml() : '') + '<div class="pm-list">' +
-      member('pc', s.player.name, st.pc, st.max, st.ward.pc) +
-      (s.comp ? member('comp', compName(), st.comp, st.max, st.ward.comp) : '') +
+      member('pc', s.player.name, v.pc, v.max, v.ward.pc) +
+      (s.comp ? member('comp', compName(), v.comp, v.max, v.ward.comp) : '') +
       '<div class="pm-note">' + (st.assist ? 'Assisted: mistakes cost nothing' : 'Mistakes cost at most 1') + '</div></div>';
     RB.combatHelp.refresh(ui.root);
     requestAnimationFrame(measure);
@@ -268,13 +241,14 @@ RB.combat = (function () {
   // own explanation on hover, focus or tap.
   function harmonyHtml() {
     const T = RB.combatHelp.techOf(st);
-    const full = st.harmony >= st.harmonyMax;
+    const v = V();
+    const full = v.harmony >= v.harmonyMax;
     let pips = '';
-    for (let i = 0; i < st.harmonyMax; i++) pips += '<i class="hp' + (i < st.harmony ? ' on' : '') + '"></i>';
+    for (let i = 0; i < v.harmonyMax; i++) pips += '<i class="hp' + (i < v.harmony ? ' on' : '') + '"></i>';
     return kw('harmony', 'cb-harmony' + (full ? ' full' : ''),
       '<span class="hm-a">' + I('join') + '<span class="hm-n">Harmony</span>' +
-      '<span class="hm-pips" aria-hidden="true">' + pips + '</span><span class="hm-v">' + st.harmony + '<span class="sr"> of </span><span aria-hidden="true">/</span>' + st.harmonyMax + '</span></span>' +
-      '<span class="hm-t">' + (full ? '<b>Ready:</b> ' + esc(T.name) + ' is in your responses' : esc(compName()) + '\'s technique at ' + st.harmonyMax + ': ' + esc(T.name)) + '</span>' + Q(),
+      '<span class="hm-pips" aria-hidden="true">' + pips + '</span><span class="hm-v">' + v.harmony + '<span class="sr"> of </span><span aria-hidden="true">/</span>' + v.harmonyMax + '</span></span>' +
+      '<span class="hm-t">' + (full ? '<b>Ready:</b> ' + esc(T.name) + ' is in your responses' : esc(compName()) + '\'s technique at ' + v.harmonyMax + ': ' + esc(T.name)) + '</span>' + Q(),
       ' — what Harmony is and how it fills');
   }
   function words() {
@@ -351,12 +325,15 @@ RB.combat = (function () {
       for (const c of cards) if (c.kind === 'word') shownWords.add(c.word.id);
       ui.resp.innerHTML = '<div class="rcards">' + cards.map((c, i) => cardHtml(c, i, hi)).join('') + '</div>' +
         (st.noFlee ? '' : '<button class="cbtn flee" data-flee>' + I('back') + '<span>Step back from this encounter</span></button>');
-      ui.log.classList.add('hidden');
+      // the last exchange stays readable under the responses (what was woven, what it did)
+      recap();
       showCoach(coachFor());
       // Keyboard focus starts on the responses but may also reach the
       // keywords (telegraph, states, Harmony, wards) and the note above them.
       const layer = { el: ui.resp, name: 'cards', parent: ui.dock, scope: ui.root };
-      const done = (v) => { RB.combatHelp.hide(); showCoach(null); RB.ui.popLayer(layer); ui.dock.insertBefore(ui.resp, ui.log); resolve(v); };
+      // one choice per exchange: a second click (or a double click) is ignored
+      let chosen = false;
+      const done = (v) => { if (chosen) return; chosen = true; RB.combatHelp.hide(); showCoach(null); RB.ui.popLayer(layer); ui.dock.insertBefore(ui.resp, ui.log); resolve(v); };
       ui.resp.onclick = (e) => {
         const b = e.target.closest('[data-i]');
         if (b && !b.disabled) { done(cards[+b.getAttribute('data-i')]); return; }
@@ -405,54 +382,135 @@ RB.combat = (function () {
   function say(line, who) {
     return RB.ui.dialogue.say({ who: who || 'narr', jp: line.jp, en: line.en });
   }
-  function log(text) {
-    ui.log.classList.remove('hidden');
-    ui.log.innerHTML = text;
-    return new Promise((r) => setTimeout(r, RB.game.reducedMotion() ? 500 : 900));
+  // ---- the exchange log: every result as a line, kept for the whole exchange and
+  // left under the responses afterwards as a recap (the resolved word with its
+  // reading, and what it did), so nothing depends on catching the animation.
+  let logFresh = true;
+  function logLine(html) {
+    if (!ui || !html) return;
+    if (logFresh) { ui.log.innerHTML = ''; logFresh = false; }
+    ui.log.classList.remove('hidden', 'recap');
+    ui.log.setAttribute('aria-live', 'polite');
+    const p = document.createElement('p');
+    p.className = 'cl-l';
+    p.innerHTML = html;
+    ui.log.appendChild(p);
+    while (ui.log.children.length > 5) ui.log.removeChild(ui.log.firstChild);
   }
-  async function playFx(fx) {
-    for (const f of fx) {
-      let msg = '';
-      const s = RB.game.s;
-      const nm = (who) => (who === 'comp' ? RB.content.chars[s.comp].name.en : s.player.name);
-      switch (f.t) {
-        case 'unravel': addFx('untie'); RB.audio && RB.audio.sfx('knot_untie'); msg = f.n > 1 ? 'Two knots come loose.' : 'A knot comes loose.'; break;
-        case 'ward': addFx('glyph', partyAt(f.target === 'comp' ? 28 : 8, 12)); RB.audio && RB.audio.sfx('ward'); msg = f.block ? 'The ward catches the blow meant for ' + nm(f.target) + '.' : 'A ward rises before ' + nm(f.target) + '.'; break;
-        case 'water': addFx('water'); RB.audio && RB.audio.sfx('water'); msg = 'Water hisses over the heat — it cools. Heat cleared.'; break;
-        case 'light': addFx('light'); RB.audio && RB.audio.sfx('light'); msg = 'Light burns the mist away — its knots show again.'; break;
-        case 'bind': RB.audio && RB.audio.sfx('ward'); msg = 'The rope holds it fast; the gathered force spills away.'; break;
-        case 'heal': addFx('heal'); RB.audio && RB.audio.sfx('heal'); msg = 'You both breathe easier.'; break;
-        case 'warm': RB.audio && RB.audio.sfx('light'); msg = 'Warmth spreads through your fingers.'; break;
-        case 'bell': RB.audio && RB.audio.sfx('bell'); msg = 'A clear note breaks the hush.'; break;
-        case 'hit': {
-          shake = 200; addFx('hit', partyAt(f.who === 'comp' ? 28 : 8, 16)); RB.audio && RB.audio.sfx('party_hit');
-          const hb = L().heatBonus(st);
-          msg = nm(f.who) + ' is struck (−' + f.n + (hb ? ', with +' + hb + ' from Heat' : '') + ').'; break;
-        }
-        case 'block': RB.audio && RB.audio.sfx('ward'); msg = 'The ward absorbs ' + f.n + '.'; break;
-        case 'heat': RB.audio && RB.audio.sfx('enemy_intent'); msg = 'It overheats: Heat ' + f.n + ' — its blows now hit +' + (f.bonus != null ? f.bonus : f.n) + ' harder until it is cooled.'; break;
-        case 'shroud': RB.audio && RB.audio.sfx('wind'); msg = 'Mist swallows its knots.'; break;
-        case 'charge': RB.audio && RB.audio.sfx('enemy_intent'); msg = 'It gathers itself: its next blow will hit +2 harder.'; break;
-        case 'harmony': {
-          const full = f.n >= f.max;
-          if (full) RB.audio && RB.audio.sfx('harmony_ready');
-          msg = full ? 'In step with ' + compName() + ': Harmony is full — ' + RB.combatHelp.techOf(st).name + ' is ready.' : 'In step with ' + compName() + ': Harmony ' + f.n + ' of ' + f.max + '.';
-          break;
-        }
-        case 'mend': RB.audio && RB.audio.sfx('enemy_intent'); msg = 'It ties one knot back up.'; break;
-        case 'stripWard': RB.audio && RB.audio.sfx('wind'); msg = 'The gust tears your wards away.'; break;
-        case 'silence': RB.audio && RB.audio.sfx('enemy_intent'); msg = 'Sound drains out of the air: you are Hushed.'; break;
-        case 'countered': RB.audio && RB.audio.sfx('reveal'); msg = 'You answered it — its move comes to nothing.'; break;
-        case 'cost': msg = f.en; break;
-        case 'comp': case 'tech': case 'settle': case 'reveal': msg = f.en; RB.audio && RB.audio.sfx(f.t === 'tech' ? 'technique' : 'reveal'); break;
-        case 'plea': msg = 'It waits for an answer that doesn\'t come.'; break;
-        default: msg = '';
+  function recap() {
+    logFresh = true;
+    const any = ui.log.children.length > 0;
+    ui.log.classList.toggle('hidden', !any);
+    ui.log.classList.toggle('recap', any);
+    ui.log.setAttribute('aria-live', 'off');
+  }
+  const wordHtml = (w) => '<span class="cl-w">' + w.html + '</span> <span class="cl-en">' + esc(w.en) + '</span>';
+  // One authoritative fx event reaches the screen: the displayed state steps
+  // forward by exactly this result, its line is logged and its sound plays.
+  // Called once per event by the sequencer (RB.battleSeq), at its beat.
+  function applyBeat(f, cue) {
+    const s = RB.game.s;
+    if (!view) view = snapshot(st);
+    const v = view;
+    const nm = (who) => (who === 'comp' ? RB.content.chars[s.comp].name.en : s.player.name);
+    const was = { pc: v.pc, comp: v.comp };
+    const sfx = (n) => RB.audio && RB.audio.sfx(n);
+    let msg = '';
+    switch (f.t) {
+      case 'unravel': v.knots = Math.max(0, v.knots - (f.n || 1)); sfx('knot_untie'); msg = f.n > 1 ? 'Two knots come loose.' : 'A knot comes loose.'; break;
+      case 'ward':
+        if (f.block) sealHeld = f.target; else v.ward[f.target] = (v.ward[f.target] || 0) + 2;
+        sfx('ward'); msg = f.block ? 'The ward catches the blow meant for ' + nm(f.target) + '.' : 'A ward rises before ' + nm(f.target) + '.'; break;
+      case 'water': v.heat = 0; sfx('water'); msg = 'Water hisses over the heat — it cools. Heat cleared.'; break;
+      case 'light': v.shroud = false; sfx('light'); msg = 'Light burns the mist away — its knots show again.'; break;
+      case 'bind': v.charged = false; sfx('ward'); msg = 'The rope holds it fast; the gathered force spills away.'; break;
+      case 'heal': v.pc = Math.min(v.max, v.pc + 3); if (v.compId) v.comp = Math.min(v.max, v.comp + 3); sfx('heal'); msg = 'You both breathe easier.'; break;
+      case 'warm': sfx('light'); msg = 'Warmth spreads through your fingers.'; break;
+      case 'bell': v.silenced = 0; sfx('bell'); msg = 'A clear note breaks the hush.'; break;
+      case 'hit': {
+        if (f.who === 'comp') v.comp = Math.max(0, v.comp - f.n); else v.pc = Math.max(0, v.pc - f.n);
+        sfx('party_hit');
+        const hb = L().heatBonus(v);
+        msg = nm(f.who) + ' is struck (−' + f.n + (hb ? ', with +' + hb + ' from Heat' : '') + ').'; break;
       }
-      if (msg) { renderUi(); await log(esc(msg)); }
+      case 'block': v.ward[f.who] = Math.max(0, (v.ward[f.who] || 0) - f.n); sfx('ward'); msg = 'The ward absorbs ' + f.n + '.'; break;
+      case 'heat': v.heat = f.n; sfx('enemy_intent'); msg = 'It overheats: Heat ' + f.n + ' — its blows now hit +' + (f.bonus != null ? f.bonus : f.n) + ' harder until it is cooled.'; break;
+      case 'shroud': v.shroud = true; sfx('wind'); msg = 'Mist swallows its knots.'; break;
+      case 'charge': v.charged = true; sfx('enemy_intent'); msg = 'It gathers itself: its next blow will hit +2 harder.'; break;
+      case 'harmony': {
+        v.harmony = f.n;
+        const full = f.n >= f.max;
+        if (full) sfx('harmony_ready');
+        msg = full ? 'In step with ' + compName() + ': Harmony is full — ' + RB.combatHelp.techOf(st).name + ' is ready.' : 'In step with ' + compName() + ': Harmony ' + f.n + ' of ' + f.max + '.';
+        break;
+      }
+      case 'mend': v.knots = Math.min(v.maxKnots, v.knots + 1); sfx('enemy_intent'); msg = 'It ties one knot back up.'; break;
+      case 'stripWard': v.ward.pc = 0; v.ward.comp = 0; sfx('wind'); msg = 'The gust tears your wards away.'; break;
+      case 'silence': v.silenced = 1; sfx('enemy_intent'); msg = 'Sound drains out of the air: you are Hushed.'; break;
+      case 'countered': sealHeld = null; if (f.kind === 'charge') v.charged = false; sfx('reveal'); msg = 'You answered it — its move comes to nothing.'; break;
+      case 'cost': v.pc = Math.max(0, v.pc - 1); msg = f.en; break;
+      case 'tech':
+        if (f.who === 'mio') { v.pc = v.max; v.comp = v.max; v.heat = 0; v.shroud = false; v.charged = false; }
+        if (f.who === 'ren') { v.ward.pc += 3; v.ward.comp += 3; }
+        sfx('technique'); msg = f.en; break;
+      case 'settle': if (cue && cue.side === 'player' && curCard && curCard.kind === 'answer') v.knots = Math.max(0, v.knots - 1); sfx('reveal'); msg = f.en; break;
+      case 'reveal': if (st.intent && st.intent.kind === 'mirror') v.knots = Math.max(0, v.knots - 1); sfx('reveal'); msg = f.en; break;
+      case 'comp':
+        // a companion's own move; Mio's draught at the end of the exchange is
+        // the last change, so the display meets the rules there
+        if (f.who === 'mio' && cue && cue.side === 'enemy') { v.pc = st.pc; v.comp = st.comp; }
+        sfx('reveal'); msg = f.en; break;
+      case 'plea': msg = 'It waits for an answer that doesn\'t come.'; break;
+      case 'rest': msg = 'It hangs back, waiting.'; break;
+      case 'spent': v.charged = false; msg = 'The force it gathered is spent in that blow.'; break;
+      case 'revive': v.pc = st.pc; msg = compName() + ' hauls you back to your feet.'; break;
+      case 'woven': msg = ''; break;
+      default: msg = f.en || '';
     }
-    ui.log.classList.add('hidden');
+    const w = cue && cue.word;
+    const html = w ? wordHtml(w) + (msg ? ' — ' + esc(msg) : '') : esc(msg);
+    if (html) logLine(html);
     renderUi();
+    return { delta: { pc: v.pc - was.pc, comp: v.comp - was.comp } };
   }
+  function seqCtx(extra) {
+    return Object.assign({ comp: st.compId || null, reduce: RB.game.reducedMotion(), view: snapshot(V()) }, extra || {});
+  }
+  const tagSide = (cues, side) => { for (const c of cues) if (c.type === 'beat') c.side = side; return cues; };
+  // Your response, once accepted and applied by the rules: anticipation → the
+  // gesture → the word on paper → its effect on the actual target → recovery.
+  // The finishing response also lets the creature settle before the last line.
+  function playPlayer(card, fx, before, won) {
+    view = before;
+    const ctx = seqCtx({ view: before });
+    const P = RB.battleSeq.choreo.player(card, fx, ctx);
+    let cues = tagSide(P.cues, 'player'), end = P.end;
+    if (won) { const F = RB.battleSeq.choreo.finish(P.end, ctx); cues = cues.concat(F.cues); end = F.end; }
+    phase = won ? 'finish' : 'player';
+    return RB.battleSeq.run(phase, cues, { end, card: card.id, word: P.word.jp, target: P.plan.target, gesture: P.plan.gesture, actors: P.plan.actors, fx: fx.map((f) => f.t) });
+  }
+  // The creature's move as the rules resolved it: preparation → execution →
+  // contact on each actual target → their reactions → recovery.
+  function playEnemy(it, fx, before, wardBlock) {
+    view = before;
+    const ctx = seqCtx({ view: before, wardBlock, foeCol: (enemy.artOpts && enemy.artOpts.col) || null });
+    const E = RB.battleSeq.choreo.enemy(it, fx, ctx);
+    phase = 'enemy';
+    return RB.battleSeq.run('enemy', tagSide(E.cues, 'enemy'), { end: E.end, kind: it.kind, target: it.target, fx: fx.map((f) => f.t + (f.who ? ':' + f.who : '')) });
+  }
+  function playRevive() {
+    view = snapshot(st);
+    view.pc = 0;
+    const R = RB.battleSeq.choreo.revive(seqCtx());
+    phase = 'revive';
+    return RB.battleSeq.run('revive', tagSide(R.cues, 'revive'), { end: R.end });
+  }
+  const port = {
+    beat: applyBeat,
+    log: logLine,
+    // every sequence ends with the screen showing exactly what the rules hold
+    reconcile() { view = null; if (ui && st) renderUi(); },
+  };
 
   // The encounter's place decides its setting (indoors / outdoors), its
   // backdrop and the lines that describe it, not the species: a foe placed
@@ -496,6 +554,13 @@ RB.combat = (function () {
     shownWords = new Set();
     H.attach(helpFor);
     ui = buildUi();
+    view = null; sealHeld = null; curCard = null; phase = 'intro'; logFresh = true;
+    amb.v = null; Object.assign(cost, { n: 0, sum: 0, max: 0, seqN: 0, seqSum: 0, seqMax: 0 });
+    RB.battleStage.begin({
+      enemy, overlay: ui.root, view: V, hasComp: () => !!(st && st.compId),
+      looks: () => ({ pc: RB.equip.look(RB.game.s), comp: st && st.compId && RB.content.chars[st.compId] ? RB.content.chars[st.compId].look : null }),
+    });
+    RB.battleSeq.attach(port);
     measure();
     await RB.ui.fade(false, 200);
     let outcome = null;
@@ -513,6 +578,7 @@ RB.combat = (function () {
           }
           st.phaseChanged = null;
         }
+        phase = 'choose';
         renderUi();
         RB.audio && RB.audio.sfx('enemy_intent', { vol: 0.5 });
         st.assistedRound = false;
@@ -523,6 +589,8 @@ RB.combat = (function () {
           continue;
         }
         ui.resp.innerHTML = '';
+        curCard = card;
+        phase = 'challenge';
         const step = stepFor(card);
         const res = await RB.challenge.runStep(step, {
           header: situationHtml(card),
@@ -530,22 +598,28 @@ RB.combat = (function () {
         });
         if (res.cancelled) continue;
         if (st.assistedRound) res.assisted = true;
+        // The rules resolve the exchange (once); the screen then shows it beat by beat.
         const hb = st.harmony;
+        const before = snapshot(st);
         const { fx, countered } = L().playerAct(st, card, res, enemy);
         if (st.compId && st.harmony > hb) fx.push({ t: 'harmony', n: st.harmony, max: st.harmonyMax });
-        await playFx(fx);
-        if (st.knots <= 0) { outcome = 'win'; break; }
+        const won = st.knots <= 0;
+        await playPlayer(card, fx, before, won);
+        if (won) { outcome = 'win'; break; }
+        const it = st.intent, blockedByWard = fx.some((f) => f.t === 'ward' && f.block);
+        const before2 = snapshot(st);
         const efx = L().enemyAct(st, countered);
-        await playFx(efx);
+        await playEnemy(it, efx, before2, blockedByWard);
+        sealHeld = null;
         L().endRound(st, enemy);
         if (st.log.length && st.log[st.log.length - 1].t === 'revive') {
           st.log.pop();
-          const c = RB.content.chars[s.comp];
-          await log(esc(c.name.en + ' hauls you back to your feet.'));
+          await playRevive();
         }
         if (st.over) outcome = st.over;
       }
       if (outcome === 'win') {
+        phase = 'outro';
         RB.audio && RB.audio.playSong('victory');
         if (enemy.settle) { await say(tierOf(enemy.settle) || enemy.settle, enemy.settleWho); RB.ui.dialogue.hide(); }
         if (enemy.reward) {
@@ -555,15 +629,19 @@ RB.combat = (function () {
         s.vars.battlesWon = (s.vars.battlesWon || 0) + 1;
       }
     } finally {
+      // the presentation ends first: any unfinished sequence is settled, its input hook released
+      RB.battleSeq.detach();
+      view = null; sealHeld = null; curCard = null; phase = 'idle';
       // Resolve recovers after every encounter: no attrition grinding.
       s.resolve.pc = s.resolve.max;
       s.resolve.comp = s.resolve.max;
       for (const w of shownWords) RB.combatHelp.mark(s, 'word:' + w);
       RB.combatHelp.detach();
       if (ui) { window.removeEventListener('resize', ui.onResize); if (ui.ro) ui.ro.disconnect(); ui.root.remove(); }
-      ui = null; stageCss = null; lastLay = null;
+      ui = null; stageCss = null;
       await RB.ui.fade(true, 200);
       RB.render.setOverride(null);
+      RB.battleStage.end();
       RB.game.popMode('combat');
       await RB.ui.fade(false, 200);
       const m = RB.world.W.map;
@@ -575,5 +653,17 @@ RB.combat = (function () {
   }
   // refresh(): redraw the overlay from the current state (tests, tools)
   // context(): where the current encounter happens (tests, tools)
-  return { start, state: () => st, refresh: () => { if (st && ui) renderUi(); }, context: () => enemy && st ? { id: enemy.id, where: enemy.where, setting: enemy.setting, bg: enemy.bgKey, intro: enemy.intro, settle: enemy.settle } : null };
+  // phase(): 'idle' | 'intro' | 'choose' | 'challenge' | 'player' | 'enemy' | 'revive' | 'finish' | 'outro'
+  // shown(): the state as currently displayed (one beat behind the rules during a sequence)
+  // debug(): sequencer and stage counters, the sequence trace and frame cost (tests, tuning)
+  function debug() {
+    return {
+      phase, seq: RB.battleSeq.stats(), stage: RB.battleStage.stats(), trace: RB.battleSeq.trace(),
+      frames: { n: cost.n, avg: cost.n ? +(cost.sum / cost.n).toFixed(3) : 0, max: +cost.max.toFixed(3), seqN: cost.seqN, seqAvg: cost.seqN ? +(cost.seqSum / cost.seqN).toFixed(3) : 0, seqMax: +cost.seqMax.toFixed(3) },
+    };
+  }
+  return {
+    start, state: () => st, refresh: () => { if (st && ui) renderUi(); }, context: () => enemy && st ? { id: enemy.id, where: enemy.where, setting: enemy.setting, bg: enemy.bgKey, intro: enemy.intro, settle: enemy.settle } : null,
+    phase: () => phase, shown: () => (st ? snapshot(V()) : null), debug,
+  };
 })();
