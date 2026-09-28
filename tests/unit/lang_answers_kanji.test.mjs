@@ -105,6 +105,17 @@ export default async (t) => {
       }
     }
   }
+  // combat inscriptions (src/ui/80_combat.js stepFor: accept [w.r, plain(w.jpK || w.jp)], mode 'reading')
+  const insc = [];
+  for (const id in C.words) {
+    const w = C.words[id];
+    const task = { accept: [w.r, J.plain(w.jpK || w.jp)], mode: 'reading' };
+    const k = J.plain(w.jpK || w.jp);
+    if (!K.hasKanji(k)) continue;
+    const r = G.answers.check(k, task), rh = G.answers.check(k, Object.assign({ handwritten: true }, task));
+    if (!r.ok || !rh.ok || !(r.notes || []).some((n) => n.code === 'kanji' && mixedOk(n.en))) insc.push(id + ' ' + k);
+  }
+  t.eq(insc, [], 'combat inscriptions accept their kanji spelling, with a valid "written with kanji" note');
   t.log(`write steps: ${writes.length}; kanji spellings listed ${kanjiForms}, of which writable with the pad's 33 kanji ${handForms}`);
   t.eq(missing, [], "a step's explained kanji spelling of the answer word is in its accept list");
   t.eq(rejected, [], 'every listed kanji spelling is accepted (typed and handwritten)');

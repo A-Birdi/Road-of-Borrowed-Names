@@ -11,7 +11,12 @@
  *   read ("I read this as…"), alternatives and uncertainty; only an
  *   explicit Confirm puts a character into the answer strip.
  * - Choosing a non-top candidate or picking from the chart counts as an
- *   assisted character. */
+ *   assisted character (not the other character of one shape, ロ/口).
+ * - "Read as": Kanji or kana (the task's kana plus the 33 kanji the
+ *   recognizer knows), Either kana, ひらがな, カタカナ. The start follows the
+ *   player's preference (by level: Foundations kana only), never the answer;
+ *   kana practice reads kana only. A kanji drawn while kanji reading is off,
+ *   or a kanji the pad doesn't know, is said so plainly (no kana guesses). */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 /* ---- shared learning-interface helpers ------------------------------------------ */
@@ -199,7 +204,7 @@ RB.pad = (function () {
           '<button class="pbtn" data-a="small" aria-pressed="false" title="Mark as small kana (ゃ, っ…)"><span class="glyph" lang="ja" aria-hidden="true">小</span><span>Small kana</span></button>' +
           '<button class="pbtn" data-a="chart" title="Pick the character from a chart (counts as assisted)">' + I('grid') + '<span>Chart</span></button>' +
           '<button class="pbtn" data-a="model" title="Show how to write it (counts as assisted)">' + I('eye') + '<span>How to write</span></button>' +
-          '<label class="pad-script" title="What the pad reads. Kanji or kana adds the 33 kanji it knows; your choice is remembered."><span>Read as</span><select data-script-sel>' +
+          '<label class="pad-script" title="What the pad reads. Kanji or kana adds the 33 kanji it knows; choosing it or Either kana is remembered for the next questions."><span>Read as</span><select data-script-sel>' +
             '<option value="kanji">Kanji or kana</option><option value="any">Either kana</option><option value="hira">ひらがな</option><option value="kata">カタカナ</option></select></label>' +
         '</div>' +
       '</div>';
@@ -477,7 +482,7 @@ RB.pad = (function () {
     }
     function candButton(cd, twin) {
       const small = SMALL.indexOf(cd.ch) >= 0; // small kana look like their full-size twins: say so
-      const cap = small ? 'small' : twin ? (isKanji(cd.ch) ? 'kanji' : 'kana') : '';
+      const cap = small ? 'small' : !twin ? '' : isKanji(cd.ch) ? 'kanji' : cd.ch === 'ー' ? 'long' : RB.kana.isKata(cd.ch) ? 'katakana' : 'hiragana';
       const b = RB.ui.el('button', 'cand' + (cap ? ' sm' : ''), glyph(cd.ch) + (cap ? '<span class="cap" aria-hidden="true">' + cap + '</span>' : ''));
       b.setAttribute('lang', 'ja');
       b.setAttribute('aria-label', 'I meant ' + (small ? 'small ' : '') + spoken(cd.ch) + (twin ? ', the same shape' : ''));

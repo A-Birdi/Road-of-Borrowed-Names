@@ -12,25 +12,32 @@ Code: `src/recog/20_recognizer.js`. Data: `src/recog/10_strokedata.js`
 - 33 optional kanji, only when the caller enables kanji:
   一二三十人口日月山川木水火土石田力大小上下中名手目雨本入出王門心花.
   All 197 characters exist in KanjiVG; nothing had to be omitted or invented.
+  The writing pad enables them with **Read as › Kanji or kana** (see "Kanji
+  on the writing pad" below).
 
 ## API
 
 ```
 RB.recog.supported({kanji})              -> [characters]
-RB.recog.recognize(strokes, opts)        -> {status, candidates:[{ch,score,dist}], sizeHint, notes}
+RB.recog.recognize(strokes, opts)        -> {status, candidates:[{ch,score,dist}], sizeHint, notes, kanjiHint, kanjiLike}
 RB.recog.reference(ch)                   -> {box:109, strokes:[[{x,y}]]} | null   (real KanjiVG paths)
+RB.recog.sameShape(ch)                   -> ['ロ','口'] | null                     (identical-shape group)
 RB.recog.strokeOrderFeedback(strokes, ch)-> {confident, strokeCountOk, issues:[{stroke,kind,en}], mapping?}
 ```
 
 `opts`: `box {w,h}` (writing square, pad coordinates), `script`
 (`'any'` = hiragana + katakana, `'hira'`, `'kata'`, `'kanji'` = the kanji set
-only), `kanji: true` (also allow kanji in `'any'`), `smallToggle`, and
+only), `kanji: true` (also allow kanji with `'any'`, `'hira'` or `'kata'`),
+`smallToggle`, and
 `mode: 'strict'` (larger reversal/order penalties; the default is lenient).
 `sizeHint` is `null` without a box, or when nothing was recognised
-(`empty`/`nonsense`). `ー` belongs to both kana pads. `recognize` has no parameter for the expected
+(`empty`/`nonsense`, or `kanjiLike`). `ー` belongs to both kana pads. `recognize` has no parameter for the expected
 answer, and the unit tests check that answer-like options change nothing.
 `score = exp(-dist/0.25)` is a similarity for display ordering. It is not a
 calibrated probability.
+
+`kanjiHint` (`{ch, dist}` or `null`) and `kanjiLike` (boolean) describe a
+drawing outside the allowed set; neither adds a candidate (see below).
 
 ## Method
 
@@ -76,7 +83,27 @@ no toggle, the large form comes first.
 **Identical shapes**: へ/ヘ, べ/ベ, ぺ/ペ, and with kanji enabled ー/一, ロ/口,
 カ/力, ニ/二. These are confirmed as the closest template pairs in the data.
 Both forms are returned with a note such as `identical-shape: へ/ヘ`. A
-`'hira'` or `'kata'` pad returns only that script's form.
+`'hira'` or `'kata'` pad returns only that script's form. The kana/kanji
+twins (ー/一, ロ/口, カ/力, ニ/二) are returned **at one distance, kana form
+first**: the tiny template differences between them are not information
+about the drawing, and this keeps every kana reading exactly as it is with
+kanji off. Which one the player meant is left to the pad (context) and the
+answer checker (handwriting counts both as one form).
+
+**Kanji outside the pad's set.** Both checks use the drawing only.
+- `kanjiHint` (kanji not enabled): the same match is run on the 33 kanji
+  templates alone (chamfer shortlist of 6, structured match, refinement of
+  the best 3, skipped when no kanji can come close). If the best kanji is
+  within 0.16 and at least 0.04 better than every allowed character (and is
+  not the twin of the best kana), it is named: note `kanji-hint: 水`.
+- `kanjiLike`: at least 5 strokes, mostly straight (mean chord/length ≥ 0.6;
+  random scribbles are about 0.15), and nothing allowed matches well —
+  rejected as `no-match`/`too-many-strokes`, or the best match is above 0.2,
+  or above 0.27 when the best is a kana with no more than one stroke fewer
+  than drawn (a sloppy ボ or ぎ is not a kanji). Note `kanji-like`;
+  `sizeHint` is then `null`.
+- A kanji is `confident` only at a distance of 0.17 or less (kana: 0.20):
+  33 templates cannot cover the lookalikes of all other kanji (朋 vs 門).
 
 **Status.**
 - `empty`: no usable points.
@@ -86,7 +113,7 @@ Both forms are returned with a note such as `identical-shape: へ/ヘ`. A
   - ink more than 1.6× the densest template (blobs);
   - 5 more sharp reversals than any template (zigzags);
   - best distance above 0.38.
-- `confident`: best distance at most 0.20, and the nearest different shape is
+- `confident`: best distance at most 0.20 (0.17 for a kanji), and the nearest different shape is
   at least 0.02 (and 12%) further away. The gap must be 0.06 when the
   runner-up is the other script's lookalike (り/リ, も/モ).
 - `uncertain`: everything else. The notes give the reason (`close-alternative`,
@@ -101,6 +128,52 @@ It does this only when every paired stroke resembles its reference stroke and
 the optimal assignment beats every alternative by a margin. A count mismatch
 of one is explained (`count` issue) only when a single join or split accounts
 for it unambiguously. Otherwise the result is `confident:false` with no issues.
+
+## Kanji on the writing pad
+
+**Read as** (`src/ui/60_pad.js`, under More on phones) offers **Kanji or
+kana** (the kana the task uses plus the 33 kanji), Either kana, ひらがな and
+カタカナ. It is a real `<select>` (keyboard and touch; at 320 px and 200 %
+text it drops under its label).
+
+- **Where it starts.** A kana-practice step (a `k:` item: kana lessons, kana
+  drills, the Foundations single-kana blanks) reads kana only, in its script.
+  Every other step starts from the player's preference, Settings › Learning ›
+  **Handwriting reads**: *By Japanese level* (the default, and what older
+  settings records without the field get: Foundations kana only, Elementary
+  and above kanji or kana), *Kanji or kana*, or *Kana only*. Choosing Kanji
+  or kana / Either kana on a pad, or "Read kanji too", updates the
+  preference. Why by level: Foundations players are learning kana, so kanji
+  candidates would only add lookalikes to rule out; from Elementary the
+  tasks quote words in kanji and the playtest showed players writing them.
+  **Nothing about the start depends on the task's answer**, and the
+  recognizer still never receives it.
+- **Twins.** For ロ/口, ニ/二, カ/力, ー/一 the pad offers first the one that
+  fits the character written just before it: after a kanji the kanji, after
+  katakana the kana, after hiragana the kanji (ー stays ー: it lengthens a
+  vowel), at the start the kana (一: no word starts with ー). The other one is
+  shown beside it, marked kanji/katakana; choosing it is not "assisted".
+  The answer checker also counts handwritten twins as one form
+  (`RB.answers.check(…, {handwritten:true})`, docs/LANGUAGE.md).
+- **Kanji with kanji reading off** (`kanjiHint`): "Looks like the kanji 水,
+  but kanji reading is off." with **Read kanji too** (one tap re-reads the
+  drawing) and, if a kana was meant, the kana readings. Confirm waits for a
+  choice.
+- **A kanji the pad doesn't know** (`kanjiLike`): "Looks like a kanji the pad
+  doesn't know. Write the word in kana." (with kanji off: "…and kanji
+  reading is off. Try it, or write the word in kana." plus Read kanji too),
+  and the Chart. No candidates are offered, so unrelated kana are never
+  presented as readings.
+- The "looks small" hint appears only when a small kana is among the
+  readings (it used to fire on kanji drawn in a kana pad: 水 → "looks small —
+  小?" with ネ ホ か…).
+- Kanji on the pad (the reading box, candidates, the answer line, the chart)
+  carry furigana: a common reading of the single character
+  (`RB.answers.kanjiReading`), since there is no word yet; the feedback
+  shows the word with its own reading ("{水|みず} (みず) — written in kanji").
+- The chart shows the kana the pad is reading (both scripts for Either kana)
+  and, with kanji on, "Kanji the pad can read" (all 33, with furigana).
+  Chart picks count as assisted.
 
 ## Data provenance
 
@@ -120,11 +193,12 @@ node tools/kanjivg/convert.mjs    # writes src/recog/10_strokedata.js
 
 ## Measured results
 
-Commands (node v22, 2026-09-26):
+Commands (node v22, 2026-09-26; re-run 2026-09-28 after the kana + kanji pad
+change, which left every kana figure below unchanged):
 
 ```
-node tests/run-unit.mjs recog                 # 396 assertions, ~16 s
-node tools/kanjivg/eval.mjs --n 10 --kanji    # full report below, ~85 s
+node tests/run-unit.mjs recog                 # 396 assertions, ~16 s (915 with recog-kanji, ~65 s)
+node tools/kanjivg/eval.mjs --n 10 --kanji    # full report below (~85 s; several minutes with the kana+kanji section)
 ```
 
 **Held-out synthetic data.** Each sample is a KanjiVG reference distorted
@@ -195,9 +269,62 @@ changes were made after inspecting their errors:
 
 Empty input returns `empty`.
 
-**Speed**: 2.8 ms median and 4.6 ms p95 per call over 28.5k calls in node. The
-worst case seen was ~9 ms (8-stroke kanji with kana+kanji allowed). In
-headless Chromium, the median is 2.7 ms.
+**Speed** (before the kanji hint): 2.8 ms median and 4.6 ms p95 per call over
+28.5k calls in node. The worst case seen was ~9 ms (8-stroke kanji with
+kana+kanji allowed). In headless Chromium, the median is 2.7 ms. With the
+kanji hint (the kanji templates are also matched when kanji are off and a
+kanji could still come close) a kana-pad call costs about 1.2–1.3× as much:
+on the same 2,296 held-out kana samples (pad + any pair, two runs on a shared
+machine) the median went from 7.3–7.8 to 9.3–9.5 ms in node, and every kana
+result (status, candidates, size hint) was identical to before. The full
+report run on 2026-09-28 (61.6k calls, with another evaluation running at the
+same time) measured 5.2 ms median, 10.5 ms p95 per call.
+
+### The kana + kanji pad ("Kanji or kana"), 2026-09-28
+
+Commands: `node tests/run-unit.mjs recog-kanji` (unit tests, fixed seeds) and
+`node tools/kanjivg/eval.mjs --n 10 --kanji` (the section "kana + kanji pad").
+Before/after compares the recognizer at commit fd61367 with this one on the
+same held-out samples (all 7 held-out families, 10 samples per character).
+"Top-1" is strict (the character or its small/large partner); for kanji a
+kana/kanji twin read as its twin counts, and "exact" does not.
+
+| held-out, all families | before | after |
+|---|---|---|
+| kana, kana pad (`'any'`), top-1 (n=11,480) | 98.28% | 98.28% (unchanged: every kana result is identical) |
+| kana, kana+kanji pad, top-1 | 97.63% | **98.26%** |
+| kana, kana+kanji pad, a kanji read first | 75 (72 of them ロ→口-type twins) | 3 (ナ→十 ×1, ん→人 as one stroke ×2; all `uncertain`) |
+| kana, kana+kanji pad, `confident` (precision) | 97.73% (99.95%) | 97.73% (99.95%) |
+| kanji, kana+kanji pad, top-1 (n=2,310) | 99.87% | 99.87% |
+| kanji, kana+kanji pad, exact | 97.58% | 87.75% (一二口力 now come second, after their kana twin; the pad reorders by context) |
+| kanji, kana+kanji pad, `confident` (precision) | 98.01% (100%) | 97.01% (100%) (kanji need ≤ 0.17) |
+| kanji drawn with kanji off: named by the hint (n=2,030, twins excluded) | – | 96.8%, never a different kanji |
+| kanji drawn with kanji off: a kana read `confident` | 13.45% | 13.45% (the pad shows the hint instead where there is one) |
+| unknown kanji (composed, n=1,610): read `confident` as a supported kanji, kana+kanji pad | 2.17% | **0.00%** |
+| unknown kanji: flagged kanji-like, kana pad / kana+kanji pad | – | 98.9% / 96.8% |
+| unknown kanji, kana pad: offered kana candidates as if readable | 77.1% | 1.1% |
+
+From the full report (`eval.mjs --n 10 --kanji`, same date):
+- kana in the three pads: kanji-like 0× in 11,480; kanji hint 1× (a ナ whose
+  second stroke came out straight, read as 十; the kana stays offered);
+- kana/kanji confusable sets (29 sets, direction-preserving families, n=2,220,
+  shape-identical pairs count): **99.7%**; errors ナ→十 ×2, ソ→リ ×4. Sets:
+  口ロ 二ニ 力カ 一ー 入人 十ナメ エハタ 三ミ 川ルリり 小ハ 土エ上 王エキ 手キチ
+  木ホ本 大ナ 下トテ 日目ヨ 田ロ 中ロ 心ルい 水ホ 火ソメ 人入ヘ 花イヒ 名タ 山出
+  二こに ソリ川 ノ人. 工, 八 and 夕 are not supported: エ, ハ and タ are read as
+  themselves and no unsupported kanji is ever returned;
+- independent sources: AnimCJK kana in the kana+kanji pad 98.2% top-1 (same
+  as the kana pad); Tomoe kana 90.7% (same); Tomoe kanji in the kana+kanji pad
+  100% top-1 (91.5% exact), and with kanji off the hint names 41 of 43;
+- nonsense: unchanged (never kanji-like, hinted or `confident` in the unit
+  tests' 300 samples in two pads).
+
+**Unknown kanji** are the 23 kanji in `tools/kanjivg/synth.mjs`
+`UNKNOWN_KANJI` (林 明 朋 炎 昌 圭 岩 男 呂 品 森 晶 畑 杏 呆 古 早 杜 相 叶 回 旦 吉),
+each built from the real KanjiVG strokes of supported kanji placed as
+components, then distorted like the other held-out samples. No stroke data
+outside the repository was used. The 4-stroke ones (古, 叶, 旦) are the ones
+not flagged: with so few strokes they are read as uncertain kana or kanji.
 
 ## Limitations (honest)
 
@@ -219,3 +346,18 @@ headless Chromium, the median is 2.7 ms.
   only when the mapping is unambiguous. It does not judge stroke endings
   (とめ/はね/はらい) or calligraphic quality.
 - Test fixtures are in `tests/fixtures/recog/` (LGPL, test-only); see `SOURCES.txt`.
+- **Only 33 kanji.** Any other kanji can only be written in kana (or typed).
+  The kanji-like message is a heuristic (stroke count, straightness, a weak
+  match); it was measured on synthetic composites of supported kanji, not on
+  real unknown kanji, and kanji of four strokes or fewer are rarely flagged.
+  A kanji the pad doesn't know can still be read as a supported one it
+  resembles (0% `confident` in the composites, but `uncertain` readings such
+  as 回 → 田 do occur).
+- The pad cannot tell ロ from 口 (or ニ/二, カ/力, ー/一) by shape; it orders
+  them by the character written before, and the answer checker accepts either
+  for handwriting. A weak ん written in one stroke can come out as 人
+  (`uncertain`, ん second): a one-stroke 人 is allowed like other joins.
+- Furigana on a single handwritten kanji is a common reading of that
+  character (`RB.answers.kanjiReading`), not the reading in the word being
+  written (入り口 shows 入 with い only because い is the table's reading);
+  the feedback shows the word's reading.

@@ -70,9 +70,13 @@ RB.recog = (function () {
     // Outside the allowed set (see docs/RECOGNITION.md "Kanji outside the pad's set"):
     kanjiHintMax: 0.16, // kanji off: a supported kanji must match at least this well to be named...
     kanjiHintGap: 0.04, // ...and beat every allowed character by this much
-    kanjiLikeStrokes: 5, // kanji-like: at least this many strokes (the most any kana has is 6, all short),
+    kanjiLikeStrokes: 5, // kanji-like: at least this many strokes (a kana has at most 6),
     kanjiLikeStraight: 0.6, // mostly straight strokes (mean chord / length; scribbles are ~0.15),
-    // and nothing allowed matches well (a weak match, or rejected as no-match / too many strokes)
+    // and nothing allowed matches well: rejected (no-match / too many strokes), or the best
+    // match is above kanjiLikeWeak — kanjiLikeWeakKana when the best is a kana with no
+    // more than one stroke fewer than drawn (a sloppy ボ or ぎ must not be taken for a kanji)
+    kanjiLikeWeak: 0.2,
+    kanjiLikeWeakKana: 0.27,
   };
 
   // ------------------------------------------------------------ tables
@@ -727,7 +731,7 @@ RB.recog = (function () {
     // kanji matches clearly better than anything allowed: name it (kanjiHint);
     // (b) otherwise, kanji-like (several mostly straight strokes) while nothing
     // allowed matches well: say so (kanjiLike). Both use the drawing only.
-    const outside = (bestDist, bestCh, rejected, confMax) => {
+    const outside = (bestDist, bestCh, rejected) => {
       if (rejected && rejected !== 'no-match' && rejected !== 'too-many-strokes') return;
       const limit = mmin(P.kanjiHintMax, bestDist - P.kanjiHintGap);
       if (!kanjiOn && rejected !== 'too-many-strokes' && limit > 0) {
@@ -739,7 +743,10 @@ RB.recog = (function () {
           return;
         }
       }
-      if (clean.length >= P.kanjiLikeStrokes && bestDist > (confMax || P.confidentMax) && straightness(clean) >= P.kanjiLikeStraight) {
+      const e = bestCh ? t.byChar[bestCh] : null;
+      const kanaLike = e && (e.script !== 'kanji' || TWIN_OF[bestCh]) && clean.length < e.K + 2;
+      const weak = rejected || bestDist > (kanaLike ? P.kanjiLikeWeakKana : P.kanjiLikeWeak);
+      if (clean.length >= P.kanjiLikeStrokes && weak && straightness(clean) >= P.kanjiLikeStraight) {
         result.kanjiLike = true;
         result.sizeHint = null;
         result.notes.push('kanji-like');
@@ -842,7 +849,7 @@ RB.recog = (function () {
     result.status = best.dist <= confMax && !close ? 'confident' : 'uncertain';
     if (close && other) result.notes.push('close-alternative: ' + other.e.ch);
     if (best.dist > confMax) result.notes.push('weak-match');
-    outside(best.dist, bestCh, null, confMax);
+    outside(best.dist, bestCh, null);
     return result;
   }
 
