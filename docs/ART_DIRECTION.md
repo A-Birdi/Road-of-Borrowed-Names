@@ -323,7 +323,7 @@ no place to read (a battle started without a map position).
   doors three to five. They go only into free zones: the floor line by the
   wall at the sides the actors leave, the wall under the beam (hanging
   things hang from the beam or a nail on a rail), the near floor at the
-  edges; a third of one may run past the stage's outer edge. They never
+  edges; up to half of one may run past the stage's outer edge. They never
   touch the creature's box (its drawing measured from its own frames, its
   shadow and its knots, with room to move) or the party's corner (the
   lower-left third, with room for taller battle sprites). Authored with the

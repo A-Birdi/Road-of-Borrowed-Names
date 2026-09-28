@@ -30921,12 +30921,16 @@ RB.battlePlaces = (function () {
       const tries = [];
       zl.forEach((z, zi) => (bands[z] || []).forEach((b) => tries.push(Object.assign({ zi }, b))));
       tries.sort((p, q) => p.zi - q.zi || (p.side === a.side ? 0 : 1) - (q.side === a.side ? 0 : 1));
-      const members = (ax, ay) => cl.items.map(([ref, dx, dy, v]) => {
+      // the whole cluster first; if it fits nowhere, its first piece alone
+      let items = cl.items;
+      const members = (ax, ay) => items.map(([ref, dx, dy, v]) => {
         const s = spriteOf(ref, region, (v + a.variant) % 3);
         if (!s) return null;
         return { ref, s, x: Math.round(ax + dx - s.ax), y: Math.round(ay + dy - s.ay), w: s.w, h: s.h, v: (v + a.variant) % 3 };
       }).filter(Boolean);
       const box = (mem) => { const bx = Math.min(...mem.map((q) => q.x)), by = Math.min(...mem.map((q) => q.y)); return rect(bx, by, Math.max(...mem.map((q) => q.x + q.w)) - bx, Math.max(...mem.map((q) => q.y + q.h)) - by); };
+      for (let pass = 0; pass < 2 && !rec.shown; pass++) {
+      if (pass === 1) { if (cl.items.length < 2) break; items = cl.items.slice(0, 1); rec.partial = true; }
       search: for (const b of tries) {
         // scan the band in 3-px steps from its outer end (or from its middle)
         const probe = members(0, 0);
@@ -30943,14 +30947,15 @@ RB.battlePlaces = (function () {
           // nothing set down on water; what grows by water only by it
           if (b.zone !== 'hang' && b.zone !== 'beam' && b.zone !== 'corner' && wet(bb.x + bb.w * 0.15, bb.x + bb.w * 0.85, b.y - 1)) continue;
           if (cl.needs === 'water' && !(wet(bb.x - 24, bb.x + bb.w + 24, b.y - 1) || wet(bb.x - 24, bb.x + bb.w + 24, b.y + 6) || wet(bb.x - 24, bb.x + bb.w + 24, b.y - 8))) continue;
-          // at most a third of it past the stage's edge
-          if (bb.x + bb.w * 0.66 > b.edge.r || bb.x + bb.w * 0.34 < b.edge.l) continue;
+          // at least half of it inside the stage
+          if (bb.x + bb.w * 0.5 > b.edge.r || bb.x + bb.w * 0.5 < b.edge.l) continue;
           rec.zone = zl[b.zi];
           Object.assign(rec, { shown: true, x: bb.x, y: bb.y, w: bb.w, h: bb.h, spot: b.name, members: mem, rail: cl.rail ? rect(bb.x - 3, b.y - 1, bb.w + 6, 3) : null });
           occ.push(bb);
           for (const q of mem) if (q.s.glow) out.lights.push({ x: q.x + q.s.ax + q.s.glow[0], y: q.y + q.s.ay + q.s.glow[1], r: q.s.glow[2] });
           break search;
         }
+      }
       }
     }
     return out;
@@ -30965,7 +30970,7 @@ RB.battlePlaces = (function () {
   function zonesOf(fr, comp) {
     const { S, C, P, HZ } = fr;
     const z = { base: [], hang: [], beam: [], fore: [], side: [], corner: [] };
-    const over = 14;
+    const over = 24;
     const right0 = C.x + C.w + 2, right1 = S.x + S.w + over, left0 = S.x - over, left1 = Math.min(C.x - 2, S.x + S.w * 0.5);
     const beamY = Math.round(Math.max(S.y + 2, Math.min(HZ - 60, S.y + 8)));
     z.beamY = comp.indoor ? beamY : null;

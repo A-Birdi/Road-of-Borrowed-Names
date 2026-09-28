@@ -101,7 +101,7 @@ async function traceable(rec) {
     return bad;
   }, rec);
 }
-// accessories: inside the stage (a third may run past its outer edge), clear of the creature and the party
+// accessories: at least half inside the stage (the rest may run past its outer edge), clear of the creature and the party
 function zoneProblems(rec) {
   const out = [];
   const F = rec.frame, S = F.stage;
@@ -110,7 +110,7 @@ function zoneProblems(rec) {
     const r = a.rect;
     if (inter(r, F.creature)) out.push(a.id + ' over the creature');
     if (inter(r, F.party)) out.push(a.id + ' over the party');
-    if (r.x + r.w * 0.66 > S.x + S.w + 1 || r.x + r.w * 0.34 < S.x - 1 || r.y < S.y - 2 || r.y + r.h > S.y + S.h + 2) out.push(a.id + ' outside the stage ' + JSON.stringify(r));
+    if (r.x + r.w * 0.5 > S.x + S.w + 1 || r.x + r.w * 0.5 < S.x - 1 || r.y < S.y - 2 || r.y + r.h > S.y + S.h + 2) out.push(a.id + ' outside the stage ' + JSON.stringify(r));
     if ((a.zone === 'hang' || a.zone === 'beam') && (r.y < F.beamY - 2 || r.y > F.beamY + 16)) out.push(a.id + ' hangs without its beam (y ' + r.y + ', beam ' + F.beamY + ')');
     if ((a.zone === 'base' || a.zone === 'side' || a.zone === 'fore') && r.y + r.h < F.HZ) out.push(a.id + ' floats above the floor');
   }
