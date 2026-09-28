@@ -30413,7 +30413,7 @@ RB.battlePlaces = (function () {
     lf_conduit: L({ paint: 'prop', tall: 1, dim: 1 }), sa_pipe: L({ paint: 'prop', wall: 1, tall: 1, dim: 1 }), lf_wheel: L({ paint: 'prop' }), lf_sluicegate: L({ paint: 'prop', big: 1, dim: 1 }), co_sluice: L({ paint: 'prop', big: 1 }),
     sg_lens: L({ paint: 'prop' }), counter: L({ paint: 'prop', wall: 1, dim: 1 }), desk: L({ paint: 'prop' }), noticeboard: L({ paint: 'prop', wall: 1 }), sb_irori: L({ paint: 'prop' }),
     co_stage: L({ paint: 'prop', big: 1 }), sa_gate: L({ paint: 'prop', tall: 1 }), sa_door: L({ paint: 'prop', wall: 1 }), sg_ferry: L({ paint: 'prop', big: 1 }), sg_wreck: L({ paint: 'prop', big: 1 }),
-    boat: L({ paint: 'prop' }), tent: L({ paint: 'prop' }), campfire: L({ paint: 'prop' }), co_lookout: L({ paint: 'prop', big: 1 }), sb_icewall: L({ paint: 'prop', wall: 1, dim: 1 }), pier: L({ paint: 'prop' }),
+    boat: L({ paint: 'prop', wet: 1 }), tent: L({ paint: 'prop' }), campfire: L({ paint: 'prop' }), co_lookout: L({ paint: 'prop', big: 1 }), sb_icewall: L({ paint: 'prop', wall: 1, dim: 1 }), pier: L({ paint: 'prop' }),
     loom: L({ paint: 'prop' }), stove: L({ paint: 'prop', wall: 1 }), co_beam: L({ paint: 'prop' }), lf_grate: L({ paint: 'prop', wall: 1 }), sb_observatory: L({ paint: 'prop', big: 1 }),
     atlas_waystone: L({ paint: 'prop' }), atlas_stone: L({ paint: 'prop' }), atlas_lamp: L({ paint: 'prop' }), atlas_map: L({ paint: 'prop' }),
     // nearby scenery
@@ -30421,7 +30421,7 @@ RB.battlePlaces = (function () {
     reeds: Cx({ group: 'reeds' }), rock: Cx({ group: 'rocks' }), fence: Cx({ group: 'fence' }), lamppost: Cx({}), lantern: Cx({}), deadlantern: Cx({}),
     stump: Cx({}), co_scrub: Cx({ group: 'bushes' }), sb_drift: Cx({}), crate: Cx({}), barrel: Cx({}), hay: Cx({}), net: Cx({}), bench: Cx({}), cart: Cx({}),
     bookpile: Cx({}), pot: Cx({}), bottles: Cx({}), glassware: Cx({}), flowerpot: Cx({}), laundry: Cx({}), co_buckets: Cx({}), co_sheaf: Cx({}), co_hoshigaki: Cx({}),
-    sb_woodpile: Cx({}), sb_icicles: Cx({ wall: 1 }), stone_marker: Cx({}), crystal: Cx({}), co_ashband: Cx({}), sg_bollard: Cx({}), sg_raft: Cx({}), co_bunting: Cx({}),
+    sb_woodpile: Cx({}), sb_icicles: Cx({ wall: 1 }), stone_marker: Cx({}), crystal: Cx({}), co_ashband: Cx({}), sg_bollard: Cx({}), sg_raft: Cx({ wet: 1 }), co_bunting: Cx({}),
     co_glasslantern: Cx({}), sb_frostlamp: Cx({}), sa_lamp: Cx({}), co_flasks: Cx({}), co_seat: Cx({}), chair: Cx({}), table: Cx({}), smalltable: Cx({}), teaset: Cx({}),
     anvil: Cx({}), snowman: Cx({}), sa_grave: Cx({}), co_tablet: Cx({}), sb_snowobs: Cx({}), co_iceblock: Cx({}), sb_bellpost: Cx({}), sg_stall: Cx({}), co_bar: Cx({}), co_wheel: Cx({}),
   };
@@ -30802,6 +30802,9 @@ RB.battlePlaces = (function () {
     const region = comp.palRegion;
     const out = { placed, occ, beamY: null, lights: [], shaft: null, wallTop: Math.max(0, S.y - 40) };
     const PJ = out.P = projector(comp, fr);
+    const wm = out.water = waterMask(comp, fr, PJ);
+    // is a footing (a line along the ground at y from x0 to x1) on water?
+    const wet = (x0, x1, y) => { if (!wm) return false; y = Math.round(y); if (y < 0 || y >= wm.H) return false; for (let x = Math.max(0, Math.round(x0)); x <= Math.min(wm.W - 1, Math.round(x1)); x += 2) if (wm.bytes[y * wm.W + x]) return true; return false; };
     // where a thing standing on map cells (mx..mx+w, bottom row my+h-1) meets the ground here
     const standAt = (it) => { const y = Math.round(PJ.Y(it.my + it.h - 0.35)); return { x: Math.round(PJ.X(it.mx + it.w / 2, y)), y }; };
     // occ[0] is the creature, occ[1] the party; landmarks decide about those two themselves
@@ -30902,7 +30905,7 @@ RB.battlePlaces = (function () {
       for (let k = 0; k <= 10 && !r; k++) {
         const q = rect(x - spr.ax + out1 * k * 3, y - spr.ay, spr.w, spr.h);
         if (!inStage(rect(q.x + q.w * 0.3, q.y + q.h * 0.5, q.w * 0.4, q.h * 0.5))) break;
-        if (free(q, true)) r = q;
+        if (free(q, true) && (it.role.wet || !wet(q.x + q.w * 0.2, q.x + q.w * 0.8, y - 1))) r = q;
       }
       if (!r) continue;
       Object.assign(rec, { shown: true, x: r.x, y: r.y, w: r.w, h: r.h, spr, it });
@@ -30940,6 +30943,8 @@ RB.battlePlaces = (function () {
           const mem = members(ax, b.y);
           const bb = box(mem);
           if (!free(rect(bb.x - 3, bb.y - 1, bb.w + 6, bb.h + 2), true)) continue;
+          // nothing set down on water
+          if (b.zone !== 'hang' && b.zone !== 'beam' && b.zone !== 'corner' && wet(bb.x + bb.w * 0.15, bb.x + bb.w * 0.85, b.y - 1)) continue;
           // at most a third of it past the stage's edge
           if (bb.x + bb.w * 0.66 > b.edge.r || bb.x + bb.w * 0.34 < b.edge.l) continue;
           rec.zone = zl[b.zi];
@@ -30967,7 +30972,7 @@ RB.battlePlaces = (function () {
     const beamY = Math.round(Math.max(S.y + 2, Math.min(HZ - 60, S.y + 8)));
     z.beamY = comp.indoor ? beamY : null;
     const edge = { l: S.x, r: S.x + S.w };
-    const band = (list, side, x0, x1, y, from, name) => { if (x1 - x0 > 8) list.push({ side, x0: Math.round(x0), x1: Math.round(x1), y: Math.round(y), from, name, edge }); };
+    const band = (list, side, x0, x1, y, from, name) => { if (x1 - x0 > 8) list.push({ side, x0: Math.round(x0), x1: Math.round(x1), y: Math.round(y), from, name, edge, zone: name.split(':')[0] }); };
     band(z.base, 'R', right0, right1, HZ + 4, 'right', 'base:R');
     band(z.base, 'L', left0, Math.min(P.x, left1), HZ + 4, 'left', 'base:L');
     if (comp.indoor) {
@@ -31025,20 +31030,19 @@ RB.battlePlaces = (function () {
   // Paint the ground cells that differ from the ground's base: paths, sand,
   // grass, snow, stone, cliffs; then water (textured, with a lit shore where
   // it meets land, reeds on this map's banks) and the bridges over it.
-  function groundCells(g, comp, fr, pal, P) {
+  // Helpers over the ground grid in this frame: the code at a map cell, a
+  // cell's projected corners, whether a row lies on the ground plane, and a
+  // row-by-row fill whose sides, where they meet another kind of ground,
+  // wander by a couple of pixels in steps of three rows (clustered, never
+  // single-pixel noise), so patches read as ground rather than tiles.
+  function cellsOf(comp, fr, P) {
     const G = comp.grid;
-    if (!G) return;
-    const K = RB.propKit, A = Art(), { HZ, H, S } = fr;
-    const baseCode = comp.indoor ? null : CODEOF[comp.ground] || 'g';
     const at = (mx, my) => { const r = G.rows[my - G.y0]; return r ? r[mx - G.x0] || '#' : '#'; };
     const quadPts = (mx, my, w) => {
       const y0 = Math.round(P.Y(my)), y1 = Math.round(P.Y(my + 1));
       return y1 - y0 < 1 ? null : [P.X(mx, y0), y0, P.X(mx + (w || 1), y0), y0, P.X(mx + (w || 1), y1), y1, P.X(mx, y1), y1];
     };
     const near = (my) => (P.land ? my - comp.y >= -3 : my >= comp.view.yBack);
-    // Fill a projected cell row by row; a side that meets another kind of
-    // ground wanders by a couple of pixels in steps of three rows (clustered,
-    // never single-pixel noise), so patches read as ground, not as tiles.
     const fillCell = (ctx, q, col, jl, jr, seed) => {
       ctx.fillStyle = col;
       const top = q[1], bot = q[5];
@@ -31052,6 +31056,39 @@ RB.battlePlaces = (function () {
         if (b > a) ctx.fillRect(a, y, b - a, 1);
       }
     };
+    return { G, at, quadPts, near, fillCell, rowsN: G.rows.length, colsN: G.rows[0].length };
+  }
+  // The water of this frame as a mask (canvas + a byte per pixel), built once
+  // per layout: painted through, and read so that nothing is set down on water.
+  function waterMask(comp, fr, P) {
+    if (!comp.grid) return null;
+    const { at, quadPts, near, fillCell, rowsN, colsN, G } = cellsOf(comp, fr, P), { HZ } = fr;
+    const mask = RB.sprites.makeCanvas(fr.W, fr.H), mg = mask.getContext('2d', { willReadFrequently: true });
+    let any = false, y0 = 1e9, y1 = -1e9;
+    for (let j = 0; j < rowsN; j++) {
+      const my = G.y0 + j;
+      for (let i = 0; i < colsN; i++) {
+        const mx = G.x0 + i;
+        if (at(mx, my) !== 'w' && at(mx, my) !== 'b') continue;
+        let q;
+        if (near(my)) q = quadPts(mx, my);
+        else if (P.land) { const x0 = P.bx(mx), x1 = P.bx(mx + 1); q = [x0, HZ - 6, x1, HZ - 6, x1, HZ + 1, x0, HZ + 1]; }
+        if (!q) continue;
+        const wl = at(mx - 1, my) !== 'w' && at(mx - 1, my) !== 'b', wr = at(mx + 1, my) !== 'w' && at(mx + 1, my) !== 'b';
+        fillCell(mg, [q[0] - (wl ? 0 : 1), q[1], q[2] + (wr ? 0 : 1), q[3], q[4] + (wr ? 0 : 1), q[5], q[6] - (wl ? 0 : 1), q[7]], '#000', wl && near(my), wr && near(my), mx * 17 + my);
+        any = true; y0 = Math.min(y0, q[1]); y1 = Math.max(y1, q[5]);
+      }
+    }
+    if (!any) return null;
+    const d = mg.getImageData(0, 0, fr.W, fr.H).data, bytes = new Uint8Array(fr.W * fr.H);
+    for (let i = 0; i < bytes.length; i++) bytes[i] = d[i * 4 + 3] > 0 ? 1 : 0;
+    return { canvas: mask, bytes, y0, y1, W: fr.W, H: fr.H };
+  }
+  function groundCells(g, comp, fr, pal, P, wm) {
+    if (!comp.grid) return;
+    const K = RB.propKit, A = Art(), { HZ, H, S } = fr;
+    const baseCode = comp.indoor ? null : CODEOF[comp.ground] || 'g';
+    const { at, quadPts, near, fillCell, G } = cellsOf(comp, fr, P);
     const rowsN = G.rows.length, colsN = G.rows[0].length;
     // land cells of another kind than the base
     for (let j = 0; j < rowsN; j++) {
@@ -31071,25 +31108,10 @@ RB.battlePlaces = (function () {
         if (c === 'c') A.R(g, Math.min(q[0], q[2]), q[1], Math.abs(q[2] - q[0]), 2, pal.stone[1]);
       }
     }
-    // water: a mask of the water cells, the horizon strip for water further off
-    const mask = RB.sprites.makeCanvas(fr.W, fr.H), mg = mask.getContext('2d');
-    let any = false, y0 = 1e9, y1 = -1e9;
-    for (let j = 0; j < rowsN; j++) {
-      const my = G.y0 + j;
-      for (let i = 0; i < colsN; i++) {
-        const mx = G.x0 + i;
-        if (at(mx, my) !== 'w' && at(mx, my) !== 'b') continue;
-        let q;
-        if (near(my)) q = quadPts(mx, my);
-        else if (P.land) { const x0 = P.bx(mx), x1 = P.bx(mx + 1); q = [x0, HZ - 6, x1, HZ - 6, x1, HZ + 1, x0, HZ + 1]; }
-        if (!q) continue;
-        const wl = at(mx - 1, my) !== 'w' && at(mx - 1, my) !== 'b', wr = at(mx + 1, my) !== 'w' && at(mx + 1, my) !== 'b';
-        fillCell(mg, [q[0] - (wl ? 0 : 1), q[1], q[2] + (wr ? 0 : 1), q[3], q[4] + (wr ? 0 : 1), q[5], q[6] - (wl ? 0 : 1), q[7]], '#000', wl && near(my), wr && near(my), mx * 17 + my);
-        any = true; y0 = Math.min(y0, q[1]); y1 = Math.max(y1, q[5]);
-      }
-    }
-    if (!any) return;
-    A.waterIn(g, mask, y0, y1, pal, comp.key === 'still' || comp.key === 'archive' || comp.key === 'belltower');
+    // water, through the layout's mask (horizon strips for water further off)
+    if (!wm) return;
+    const y0 = wm.y0, y1 = wm.y1;
+    A.waterIn(g, wm.canvas, y0, y1, pal, comp.key === 'still' || comp.key === 'archive' || comp.key === 'belltower');
     // shore: a lit rim along water cells whose neighbour is land
     const rim = comp.indoor ? 'rgba(10,8,20,0.55)' : pal.sand ? pal.sand[1] : '#e0e0d0';
     const isW = (mx, my) => at(mx, my) === 'w' || at(mx, my) === 'b';
@@ -31110,8 +31132,8 @@ RB.battlePlaces = (function () {
       }
     }
     {
-      const md = mg.getImageData(0, 0, fr.W, fr.H).data, Wd = fr.W;
-      const on = (x, y) => x >= 0 && x < Wd && y >= 0 && y < fr.H && md[(y * Wd + x) * 4 + 3] > 0;
+      const Wd = fr.W;
+      const on = (x, y) => x >= 0 && x < Wd && y >= 0 && y < fr.H && wm.bytes[y * Wd + x] === 1;
       g.fillStyle = rim;
       for (let y = Math.max(HZ + 2, Math.floor(y0)); y < Math.min(fr.H, Math.ceil(y1)); y++) {
         for (let x = 1; x < Wd - 1; x++) {
@@ -31168,7 +31190,7 @@ RB.battlePlaces = (function () {
       for (const d of get('doorway')) A.doorway(g, d.cx, HZ - 5, d.dw, d.dh, region, wall !== 'timber');
       // the floor's own patches, water across it (a channel, a flooded hall) and bridges
       comp.floorCode = floor === 'flags' ? 'o' : floor === 'wood' ? 'd' : null;
-      groundCells(g, comp, fr, pal, lay.P);
+      groundCells(g, comp, fr, pal, lay.P, lay.water);
       for (const q of get('stairs')) A.stairsDown(g, q.sx, q.sy, q.sw, region);
     } else {
       const sky = comp.fam === 'stillOut' ? 'still' : comp.key === 'atlas' ? 'atlas' : A.LAND[comp.palRegion] ? comp.palRegion : A.LAND[comp.key] ? comp.key : 'reedwake';
@@ -31183,7 +31205,7 @@ RB.battlePlaces = (function () {
       if (groups.rocks) for (const x of groups.rocks) A.rocks(g, x - 7, x + 7, HZ, 6, x | 0, region);
       if (groups.reeds) for (const x of groups.reeds) reedClump(g, x, HZ + 1, 12, pal, x | 0);
       if (groups.fence) spans(groups.fence, 20).forEach(([a, b]) => fenceLine(g, a - 8, b + 8, HZ, pal));
-      groundCells(g, comp, fr, pal, lay.P);
+      groundCells(g, comp, fr, pal, lay.P, lay.water);
       // buildings and the wheel, far first
       const bl = lay.placed.filter((p) => p.shown && (p.paint === 'facade' || p.paint === 'wheel')).sort((a, b) => (b.haze || 0) - (a.haze || 0));
       const haze = (A.LAND[sky] || A.LAND.reedwake).haze;
