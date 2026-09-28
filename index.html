@@ -21030,12 +21030,13 @@ RB.world = (function () {
   // says it outright. With no known destination they go through the nearest
   // way out, and test runs list those (RB.test.departures) for review.
   const personOf = (n) => (n.def && (n.def.char || n.def.id)) || n.id;
-  function mapsWith(person, except) {
+  // the maps where `person` appears now (any: where the story ever puts them)
+  function mapsWith(person, except, any) {
     const st = s(), out = [];
     for (const id in RB.content.maps) {
       if (id === except) continue;
       for (const n of RB.content.maps[id].npcs || []) {
-        if ((n.char || n.id) !== person || (n.if && !RB.state.test(st, n.if))) continue;
+        if ((n.char || n.id) !== person || (!any && n.if && !RB.state.test(st, n.if))) continue;
         if (st.comp && n.id === st.comp && !n.alwaysShow) continue;
         out.push(id);
         break;
@@ -21087,8 +21088,11 @@ RB.world = (function () {
     const person = personOf(a), m = W.map;
     let dests = [], reason;
     if (arriving) {
+      // from where they were last seen; not seen yet this session: from the
+      // nearest place the story keeps them (their home, their work)
       const was = W.seenOn[person];
       if (was && was !== m.id) { dests = [was]; reason = 'came from'; }
+      else { dests = mapsWith(person, m.id, true); reason = 'from their place'; }
     } else if (a.def && a.def.leaveTo) { dests = [].concat(a.def.leaveTo); reason = 'authored'; }
     else { dests = mapsWith(person, m.id); reason = 'destination'; }
     const hop = towards(m.id, dests);
@@ -21112,8 +21116,10 @@ RB.world = (function () {
   function leave(a, i) {
     if (!onScreen(a)) return;
     const way = wayFor(a, false);
-    const route = (way.goals && routeOut(a.x, a.y, 160, way.goals)) || routeOut(a.x, a.y, 18) || [];
-    noteDeparture(a, route.length && way.goals ? way : Object.assign({}, way, { goals: null }), route, false);
+    // already standing in the doorway they need: they just go
+    const there = way.goals && way.goals.has(a.x + ',' + a.y);
+    const route = there ? [] : (way.goals && routeOut(a.x, a.y, 160, way.goals)) || routeOut(a.x, a.y, 18) || [];
+    noteDeparture(a, there ? Object.assign({}, way, { reason: way.reason + ', at the way out' }) : route.length && way.goals ? way : Object.assign({}, way, { goals: null }), route, false);
     W.leavers.push(Object.assign({}, a, { mv: null, route, goals: way.goals, alpha: 1, fading: !route.length, wait: (i || 0) * 380 }));
   }
   function arriveOnFoot(a) {
