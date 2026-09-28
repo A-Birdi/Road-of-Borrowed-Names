@@ -209,6 +209,35 @@ All other preferences apply to every campaign.
   (timber for rooms, a faint weave for larger places) with a soft edge
   shadow. The map is never stretched or cropped.
 
+- **Chapter banner** (2026-09-28, player request): chapter openings and
+  endings and time passing ("The next morning") are a paper banner at the
+  top, not a page over the screen. It slides in from the left as it fades
+  in, an ink flourish draws outward from the title, it stays long enough to
+  read (longer for longer lines), then slides away to the right. A click,
+  tap or key moves it on; reduced motion fades without sliding. The place
+  name waits until it has gone.
+- **People move like people** (2026-09-28): someone who leaves walks to
+  the nearest door or way out and fades; someone who arrives walks in. A
+  character a scene gives a line to who is not on the map walks in from
+  the nearest door, stands by you while they speak and walks off after
+  (voices, memories and spirits are marked off-screen and stay unseen).
+  Standing people breathe (head and body settle one art pixel every couple
+  of seconds, each on their own beat) and now and then glance aside; the
+  party breathes in battle too. Crowns of trees, pines and bushes lean one
+  art pixel in a wind that travels across the map, with calm spells. All
+  of it holds still with reduced motion.
+- **Doors:** a building with no inside keeps its door shut (it is solid,
+  and says so when you look). Going in lands on the entry mat.
+- **Battle clarity** (2026-09-28): Harmony is its own band on the party
+  slip — pips, a count, and the name of this companion's technique — and
+  every move, status and ward is a keyword with a note card (hover, focus
+  or tap; a bottom sheet on phones) saying what it does and what answers
+  it. A response used for the first time says "New" and what it answers.
+- **Satchel:** what is worn carries an "Equipped" tag and a framed row
+  (never colour alone); every wearable item shows tags for what it does
+  (Battle start: ward, harmony, resolve; Quicker stride; Appearance), with
+  a key. Keepsakes show on the road, in battle and in portraits.
+
 ## 8. Pixel art
 
 The world keeps its 16-px logical grid. Map IDs, collisions, triggers,
