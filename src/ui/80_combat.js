@@ -530,6 +530,8 @@ RB.combat = (function () {
     if (e.setting === 'outdoor' && INDOOR_BG[bg]) bg = OUTDOOR_BG[e.region] ? e.region : 'reedwake';
     if (e.setting === 'indoor' && OUTDOOR_BG[bg] && !place.bg) console.warn('outdoor backdrop indoors', e.id, where && where.map);
     e.bgKey = bg;
+    // the backdrop's composition for this place, chosen once (RB.battlePlaces)
+    if (RB.battlePlaces) RB.battlePlaces.begin(e, opts);
   }
   async function start(enemyId, opts) {
     opts = opts || {};
@@ -542,6 +544,7 @@ RB.combat = (function () {
     const prevSong = RB.audio && RB.audio.currentSong();
     RB.audio && RB.audio.playSong(enemy.music || (enemy.boss ? 'boss' : 'battle'));
     await RB.ui.fade(true, 200);
+    if (RB.battlers && RB.battlers.prewarm) { RB.battlers.prewarm(RB.equip.look(s), 'pc'); if (s.comp) RB.battlers.prewarm(RB.content.chars[s.comp].look, 'comp'); }
     RB.render.setOverride(draw);
     st = L().init(enemy, s, opts);
     st.noFlee = !!opts.noFlee || !!enemy.boss;

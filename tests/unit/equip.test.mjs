@@ -35,11 +35,14 @@ export default async function (t) {
   const fs = await import('node:fs');
   const path = await import('node:path');
   const { root } = await import('../lib/load.mjs');
-  const sprite = fs.readFileSync(path.join(root, 'src/engine/32_spriteart.js'), 'utf8');
+  // (the road sprites' accessories live in 32k_spriteacc.js)
+  const sprite = fs.readdirSync(path.join(root, 'src/engine')).filter((f) => /^32/.test(f)).map((f) => fs.readFileSync(path.join(root, 'src/engine', f), 'utf8')).join('\n');
   const face = fs.readFileSync(path.join(root, 'src/engine/35_portraits.js'), 'utf8');
+  const battle = fs.readFileSync(path.join(root, 'src/engine/34_battlers.js'), 'utf8');
   for (const id of ids.filter((k) => C.items[k].acc)) {
     const a = C.items[id].acc;
     t.ok(new RegExp('\\n    ' + a + '\\(b').test(sprite), id + ': sprite art draws "' + a + '"');
+    t.ok(battle.includes("case '" + a + "'"), id + ': battle figure art draws "' + a + '"');
     t.ok(face.includes("a.includes('" + a + "')") || face.includes("p.acc.includes('" + a + "')"), id + ': portrait art draws "' + a + '"');
     for (const k in C.items[id].wear || {}) t.ok(/Col$|Stripe$/.test(k) && /^#[0-9a-f]{6}$/i.test(C.items[id].wear[k]), id + ': wear.' + k + ' is a colour');
   }

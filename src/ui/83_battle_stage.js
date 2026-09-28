@@ -29,7 +29,9 @@ RB.battleStage = (function () {
   // a tiny prop per gesture, behind the same interface, so the choreography
   // runs and can be tested. The real module replaces it without changes here.
   const FALLBACK = (function () {
-    const FRAME = { w: 32, h: 48 }, ANCHOR = { x: 16, y: 47 };
+    // the road sprite's own frame (40×58 today; 32×48 before the character standard)
+    const RF = () => (RB.sprites && RB.sprites.FRAME) || { w: 32, h: 48 };
+    const RA = () => (RB.sprites && RB.sprites.ANCHOR) || { x: 16, y: 47 };
     const POSES = ['ready', 'calm', 'anticipate', 'act', 'recover', 'hit', 'brace', 'down', 'cheer'];
     const GESTURES = ['direct', 'trace', 'book', 'ward', 'restore', 'flow', 'raise'];
     const cache = new Map();
@@ -56,9 +58,11 @@ RB.battleStage = (function () {
       else if (g === 'trace') { R(c, hx, hy - 5 * q, q, 6 * q, '#3a2c28'); R(c, hx, hy + q, q, q, '#2a2024'); }
     }
     // o: { x, y (the foot point), scale, t, who, pose, gesture, k, reduce, facing }
+    // Offsets below are in 32×48 sprite units, mapped onto the road frame.
     function draw(c, look, o) {
-      const spr = sprite(look);
-      const s = o.scale || 1, q = s * (32 / spr.width); // canvas px per sprite px (32×48 frame)
+      const spr = sprite(look), F = RF(), AN = RA();
+      const s = o.scale || 1, q = s * (F.w / spr.width); // canvas px per source px
+      const fx = F.w / 32, fy = F.h / 48;             // road frame px per 32×48 unit
       const k = cl(o.k == null ? 1 : o.k), pose = o.pose || 'ready', rd = !!o.reduce;
       const per = o.who === 'comp' ? 3100 : 2600, ph = o.who === 'comp' ? 1100 : 0;
       const breathe = (P) => { const u = (((o.t || 0) + ph) % P) / P; return u > 0.5 && u < 0.92 ? 1 : 0; };
@@ -72,23 +76,23 @@ RB.battleStage = (function () {
       else if (pose === 'brace') { sink = 1; lean = 1; }
       else if (pose === 'down') { sink = 6; lean = -1; hy = 34; }
       else if (pose === 'cheer') { dy = rd ? 0 : -Math.round(3 * bell(k)); hx = 27; hy = 16; }
-      const x0 = Math.round(o.x - ANCHOR.x * q) + dx * q, y0 = Math.round(o.y - ANCHOR.y * q) + dy * q;
-      const cut = 30;
+      const sp = s;                                   // canvas px per road-frame px
+      const x0 = Math.round(o.x - AN.x * sp) + dx * sp, y0 = Math.round(o.y - AN.y * sp) + dy * sp;
+      const sh = spr.height, sw = spr.width, H = F.h;
+      const cut = Math.round(H * 0.625);              // the upper body leans; the legs stay planted
       c.imageSmoothingEnabled = false;
-      // legs (a kneel drops their top rows), then the upper body in bands leaning toward up-right
-      const sq = spr.width / 32; // source px per sprite px (legacy 16×24 art is half size)
-      c.drawImage(spr, 0, (cut + sink) * sq, spr.width, (48 - cut - sink) * sq, x0, y0 + (cut + sink) * q, 32 * q, (48 - cut - sink) * q);
+      c.drawImage(spr, 0, ((cut + sink) * sh) / H, sw, ((H - cut - sink) * sh) / H, x0, y0 + (cut + sink) * sp, F.w * sp, (H - cut - sink) * sp);
       for (let r = 0; r < cut; r += 6) {
         const bh = Math.min(6, cut - r), off = Math.round(lean * (1 - (r + bh / 2) / cut));
-        c.drawImage(spr, 0, r * sq, spr.width, bh * sq, x0 + off * q, y0 + (r + sink) * q, 32 * q, bh * q);
+        c.drawImage(spr, 0, (r * sh) / H, sw, (bh * sh) / H, x0 + off * sp, y0 + (r + sink) * sp, F.w * sp, bh * sp);
       }
-      const hand = { x: x0 + (hx + lean) * q, y: y0 + (hy + sink) * q };
-      if (g) prop(c, g, hand.x, hand.y, q, k);
-      return {
-        hand, head: { x: x0 + (16 + lean) * q, y: y0 + (6 + sink) * q }, chest: { x: x0 + 16 * q, y: y0 + (22 + sink) * q }, feet: { x: Math.round(o.x), y: Math.round(o.y) },
-      };
+      const P = (ux, uy) => ({ x: x0 + Math.round(ux * fx) * sp, y: y0 + Math.round(uy * fy) * sp });
+      const hand = P(hx + lean, hy + sink);
+      if (g) prop(c, g, hand.x, hand.y, sp, k);
+      void q;
+      return { hand, head: P(16 + lean, 6 + sink), chest: P(16, 22 + sink), feet: { x: Math.round(o.x), y: Math.round(o.y) } };
     }
-    return { FRAME, ANCHOR, POSES, GESTURES, draw, fallback: true };
+    return { get FRAME() { return RF(); }, get ANCHOR() { return RA(); }, POSES, GESTURES, draw, fallback: true };
   })();
   const battlers = () => (RB.battlers && typeof RB.battlers.draw === 'function' && RB.battlers.FRAME ? RB.battlers : FALLBACK);
 
@@ -154,7 +158,10 @@ RB.battleStage = (function () {
     const mx = Math.round(pw * 0.2), my = Math.round(ph * 0.12);
     const party = { x: Math.min(...boxes.map((q) => q.x0)) - mx, y: Math.min(...boxes.map((q) => q.y0)) - my };
     party.w = Math.max(...boxes.map((q) => q.x1)) + mx - party.x; party.h = Math.max(...boxes.map((q) => q.y1)) - party.y;
-    S.lay = { Sr, scale, ps, pw, ph, pc, comp, ex, ey, ky, hz, ext, u, foeR, wardR: Math.round(ph * 0.34), F, AN, party, px: party.x + mx, py: party.y + my, fallback: !!B.fallback };
+    // px/py: the backdrop's "old corner" convention (your feet at px + 16·ps, py + 48·ps);
+    // its party box runs from the stage's left edge to px + 140·ps and up to 112·ps above
+    // your feet, which covers you and your companion (a step back, on your left)
+    S.lay = { Sr, scale, ps, pw, ph, pc, comp, ex, ey, ky, hz, ext, u, foeR, wardR: Math.round(ph * 0.34), F, AN, party, px: pc.x - 16 * ps, py: pc.y - 48 * ps, fallback: !!B.fallback };
     return S.lay;
   }
   function knotAt(i, n) {

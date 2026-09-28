@@ -19,6 +19,8 @@ RB.world = (function () {
     emotes: [],         // {who, kind, until}
     flashes: [],
     leavers: [],        // people walking off to a door or exit before they go (drawn, never solid)
+    seenOn: {},         // person id → the map they were last seen on this session (where arrivals come from)
+    departures: [],     // the last few comings and goings: who, from where, to which map, by which exit, and why
     extras: [],         // people who walked in to speak in a scene; they walk off when it ends
     enteredAt: 0,
   };
@@ -107,12 +109,14 @@ RB.world = (function () {
     // door or way out instead of popping in and out (not while a map is
     // still appearing: those people were simply already there, or gone).
     if (W.time - W.enteredAt > 900) {
+      let k = 0;
       for (const [id, a] of keep) {
         if (W.npcs.some((n) => n.id === id) || id === st.comp || a.map !== m.id || renamed.has(id)) continue;
-        leave(a);
+        leave(a, k++);
       }
       for (const a of W.npcs) if (!before.has(a.id) && !keep.has(a.id)) arriveOnFoot(a);
     }
+    for (const a of W.npcs) W.seenOn[personOf(a)] = m.id;
     W.foes = [];
     for (const e of m.def.foes || []) {
       if (e.if && !RB.state.test(st, e.if)) continue;
@@ -129,16 +133,19 @@ RB.world = (function () {
   function waysOut() {
     const st = s(), out = [];
     for (const e of W.map.exits) {
-      if (e.if && !RB.state.test(st, e.if)) continue;
+      if (!usable(e, st)) continue;
       for (let y = e.y; y < e.y + e.h; y++) for (let x = e.x; x < e.x + e.w; x++) out.push(x + ',' + y);
     }
     for (const d of W.map.shut || []) if (!d.if || RB.state.test(st, d.if)) out.push(d.x + ',' + d.y);
     return new Set(out);
   }
-  // Shortest walk (at most `max` steps) from x,y to the nearest way out,
-  // through open ground; people are ignored (they step round each other).
-  function routeOut(x, y, max) {
-    const goals = waysOut();
+  // an exit or door that can be used now: its condition holds and it is not locked
+  function usable(e, st) { return (!e.if || RB.state.test(st, e.if)) && (!e.locked || (e.unlock && RB.state.test(st, e.unlock))); }
+  // Shortest walk (at most `max` steps) from x,y to the nearest of `goals`
+  // (a set of "x,y"; default: every way out), through open ground; people are
+  // ignored (they step round each other), except tiles listed in `avoid`.
+  function routeOut(x, y, max, goals, avoid) {
+    goals = goals || waysOut();
     if (!goals.size) return null;
     const prev = new Map([[x + ',' + y, null]]);
     let q = [[x, y]];
@@ -154,6 +161,7 @@ RB.world = (function () {
         for (const dir in DIRS) {
           const nx = cx + DIRS[dir][0], ny = cy + DIRS[dir][1], nk = nx + ',' + ny;
           if (prev.has(nk) || nx < 0 || ny < 0 || nx >= W.map.w || ny >= W.map.h) continue;
+          if (avoid && avoid.has(nk)) continue;
           if (!goals.has(nk) && RB.maps.blockedStatic(W.map, nx, ny)) continue;
           prev.set(nk, k);
           next.push([nx, ny]);
@@ -163,19 +171,113 @@ RB.world = (function () {
     }
     return null;
   }
+
+  // ---- where someone is going (or coming from) ---------------------------------
+  // A person who leaves heads for where the story now puts them: the maps on
+  // which they appear under the current flags. The way out they take is one
+  // that starts the shortest journey there through the map links (exits and
+  // doors whose conditions hold now, locks respected); distance only chooses
+  // between exits that serve that journey. An authored npc.leaveTo (a map id)
+  // says it outright. With no known destination they go through the nearest
+  // way out, and test runs list those (RB.test.departures) for review.
+  const personOf = (n) => (n.def && (n.def.char || n.def.id)) || n.id;
+  // the maps where `person` appears now (any: where the story ever puts them)
+  function mapsWith(person, except, any) {
+    const st = s(), out = [];
+    for (const id in RB.content.maps) {
+      if (id === except) continue;
+      for (const n of RB.content.maps[id].npcs || []) {
+        if ((n.char || n.id) !== person || (!any && n.if && !RB.state.test(st, n.if))) continue;
+        if (st.comp && n.id === st.comp && !n.alwaysShow) continue;
+        out.push(id);
+        break;
+      }
+    }
+    return out;
+  }
+  // links of an authored map: [{ to, tiles: ["x,y"...] }] for exits and doors usable now
+  function linksOf(id) {
+    const def = RB.content.maps[id], st = s(), out = [];
+    if (!def) return out;
+    for (const e of def.exits || []) {
+      if (!e.to || !usable(e, st)) continue;
+      const tiles = [];
+      for (let y = e.y; y < e.y + (e.h || 1); y++) for (let x = e.x; x < e.x + (e.w || 1); x++) tiles.push(x + ',' + y);
+      out.push({ to: e.to, tiles });
+    }
+    for (const b of def.structs || []) if (b.door != null && b.to && usable(b, st)) out.push({ to: b.to, tiles: [(b.x + b.door) + ',' + (b.y + b.h - 1)] });
+    return out;
+  }
+  // The first hop from `from` toward the nearest of `dests`: { tiles:Set, via, to, hops } or null.
+  function towards(from, dests) {
+    if (!dests.length) return null;
+    const want = new Set(dests);
+    const first = new Map([[from, null]]); // map → the link on `from` that starts the way there
+    let q = [from], hops = 0;
+    while (q.length && hops < 12) {
+      const next = [];
+      for (const id of q) {
+        for (const l of linksOf(id)) {
+          if (first.has(l.to)) continue;
+          first.set(l.to, id === from ? l : first.get(id));
+          if (want.has(l.to)) {
+            const start = first.get(l.to), tiles = new Set();
+            // every exit on this map that starts an equally short journey there
+            for (const k of linksOf(from)) if (k.to === start.to) k.tiles.forEach((t) => tiles.add(t));
+            return { tiles, via: start.to, to: l.to, hops: hops + 1 };
+          }
+          next.push(l.to);
+        }
+      }
+      q = next;
+      hops++;
+    }
+    return null;
+  }
+  // The way out (or in) a person uses on this map: { goals:Set, to, reason }.
+  function wayFor(a, arriving) {
+    const person = personOf(a), m = W.map;
+    let dests = [], reason;
+    if (arriving) {
+      // from where they were last seen; not seen yet this session: from the
+      // nearest place the story keeps them (their home, their work)
+      const was = W.seenOn[person];
+      if (was && was !== m.id) { dests = [was]; reason = 'came from'; }
+      else { dests = mapsWith(person, m.id, true); reason = 'from their place'; }
+    } else if (a.def && a.def.leaveTo) { dests = [].concat(a.def.leaveTo); reason = 'authored'; }
+    else { dests = mapsWith(person, m.id); reason = 'destination'; }
+    const hop = towards(m.id, dests);
+    if (hop && hop.tiles.size) return { goals: hop.tiles, to: hop.to, via: hop.via, reason };
+    return { goals: null, to: dests[0] || null, reason: dests.length ? 'unreachable' : 'unknown' };
+  }
+  // the last few comings and goings (W.departures; test runs keep them all in RB.test.departures)
+  function noteDeparture(a, way, route, arriving) {
+    const end = route && route.length ? route[route.length - 1].join(',') : null;
+    const rec = { id: personOf(a), map: W.map.id, from: a.x + ',' + a.y, to: way.to, via: way.via || null, exit: end, reason: way.goals ? way.reason : 'nearest (' + way.reason + ')', arriving: !!arriving };
+    W.departures.push(rec);
+    if (W.departures.length > 40) W.departures.shift();
+    if (RB.test && RB.test.auto) (RB.test.departures = RB.test.departures || []).push(rec);
+  }
   function onScreen(a) {
     const v = RB.render.viewSize(), c = RB.render.cam;
     const x = a.x * 16 - c.x, y = a.y * 16 - c.y;
     return x > -48 && y > -48 && x < v.w + 48 && y < v.h + 64;
   }
-  function leave(a) {
+  // i: the order of people leaving at once (each sets off a moment after the last)
+  function leave(a, i) {
     if (!onScreen(a)) return;
-    const route = routeOut(a.x, a.y, 18) || [];
-    W.leavers.push(Object.assign({}, a, { mv: null, route, alpha: 1, fading: !route.length }));
+    const way = wayFor(a, false);
+    // already standing in the doorway they need: they just go
+    const there = way.goals && way.goals.has(a.x + ',' + a.y);
+    const route = there ? [] : (way.goals && routeOut(a.x, a.y, 160, way.goals)) || routeOut(a.x, a.y, 18) || [];
+    noteDeparture(a, there ? Object.assign({}, way, { reason: way.reason + ', at the way out' }) : route.length && way.goals ? way : Object.assign({}, way, { goals: null }), route, false);
+    W.leavers.push(Object.assign({}, a, { mv: null, route, goals: way.goals, alpha: 1, fading: !route.length, wait: (i || 0) * 380 }));
   }
   function arriveOnFoot(a) {
     if (!onScreen(a)) return;
-    const route = routeOut(a.x, a.y, 18);
+    const way = wayFor(a, true);
+    const route = (way.goals && routeOut(a.x, a.y, 160, way.goals)) || routeOut(a.x, a.y, 18);
+    noteDeparture(a, route && way.goals ? way : Object.assign({}, way, { goals: null }), route, true);
     if (!route || !route.length) { a.alpha = 0; a.fadeIn = true; return; }
     const path = route.slice(0, -1).reverse().concat([[a.x, a.y]]);
     const [sx, sy] = route[route.length - 1];
@@ -190,9 +292,19 @@ RB.world = (function () {
     const dx = nx - a.x, dy = ny - a.y;
     const dir = dx > 0 ? 'right' : dx < 0 ? 'left' : dy > 0 ? 'down' : 'up';
     if (Math.abs(dx) + Math.abs(dy) !== 1) { a.route = null; return true; }
-    // wait for the player to step aside; after a while just get on with it
+    // someone in the way: step round them if there is another way to the
+    // same place, otherwise wait for them to move; after a while just go on
     a.routeT = (a.routeT || 0) + dt;
-    if (a.routeT < 1500 && ((W.player.x === nx && W.player.y === ny) || (W.comp && W.comp.x === nx && W.comp.y === ny))) return false;
+    const inWay = (W.player.x === nx && W.player.y === ny) || (W.comp && W.comp.x === nx && W.comp.y === ny);
+    if (inWay && a.routeT > 300 && !a.detoured) {
+      a.detoured = true;
+      const last = a.route[a.route.length - 1];
+      const avoid = new Set([W.player.x + ',' + W.player.y].concat(W.comp ? [W.comp.x + ',' + W.comp.y] : []));
+      const round = routeOut(a.x, a.y, a.route.length + 8, a.goals || new Set([last.join(',')]), avoid);
+      if (round && round.length) { a.route = round; a.routeT = 0; return false; }
+    }
+    if (a.routeT < 1500 && inWay) return false;
+    a.detoured = false;
     a.routeT = 0;
     a.route.shift();
     startMove(a, dir, dur);
@@ -200,6 +312,7 @@ RB.world = (function () {
   }
   function updateWalkers(dt) {
     for (const a of W.leavers) {
+      if (a.wait > 0) { a.wait -= dt; continue; } // people leaving together set off one after another
       stepActor(a, dt);
       if (!a.fading && followRoute(a, dt, 260) && !a.mv) a.fading = true;
       if (a.fading) a.alpha -= dt / 260;

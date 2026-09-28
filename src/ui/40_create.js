@@ -56,9 +56,10 @@ RB.ui.create = (function () {
       if (kind === 'walker') {
         const look = { skin: 3, hair: 'short', hairColor: 1, outfit: 5, acc: ['scarf'], scarfCol: '#6a6a7a' };
         const f = reduced ? 0 : Math.floor(t / 180) % 3;
-        const art = RB.sprites.getArt && RB.sprites.getArt(look, 'up', f === 2 ? 2 : f);
+        const art = RB.sprites.getArt && RB.sprites.getArt(look, 'up', reduced ? 0 : 'w' + (Math.floor(t / 90) % 8));
         const y = h * 0.95 - k * h * 0.2;
-        if (art) c.drawImage(art, Math.round(cx - 8), Math.round(y - 24), 16, 24); // logical size; drawn at art resolution by the ×2 transform
+        // logical size (half the art size): drawn at art resolution by the ×2 transform, feet on y
+        if (art) c.drawImage(art, Math.round(cx) - RB.sprites.ANCHOR.x / 2, Math.round(y) - RB.sprites.ANCHOR.y / 2, art.width / 2, art.height / 2);
         else c.drawImage(RB.sprites.get(look, 'up', f === 2 ? 2 : f), Math.round(cx - 8), Math.round(y - 24));
         const gl = c.createRadialGradient(cx + 6, y - 10, 0, cx + 6, y - 10, 18);
         gl.addColorStop(0, 'rgba(255,210,120,0.5)'); gl.addColorStop(1, 'rgba(255,210,120,0)');
@@ -251,13 +252,14 @@ RB.ui.create = (function () {
   function cut(look, expr) {
     return RB.portraits.playerImage(look, expr);
   }
-  // 32×48 art sprite when available (16×24 enlarged otherwise)
+  // the road sprite at the character standard (RB.sprites.FRAME, 40×58 art px)
   function fig(c, look, dir, frame) {
     const art = RB.sprites.getArt && RB.sprites.getArt(look, dir, frame);
     c.imageSmoothingEnabled = false;
     if (art) c.drawImage(art, 0, 0);
-    else c.drawImage(RB.sprites.get(look, dir, frame), 0, 0, 32, 48);
+    else c.drawImage(RB.sprites.get(look, dir, frame), 4, 9, 32, 48);
   }
+  const FIG_W = (RB.sprites.FRAME || { w: 40 }).w, FIG_H = (RB.sprites.FRAME || { h: 58 }).h;
 
   // ---- the stepped registration --------------------------------------------------------------
   // steps: any of ['identity','appearance','background','learning'] in order.
@@ -292,7 +294,7 @@ RB.ui.create = (function () {
       function sheetHtml() {
         return '<aside class="cr-sheet" aria-label="Your traveller"><div class="cr-kick" aria-hidden="true">Your traveller</div>' +
           '<div class="cr-figs" aria-hidden="true"><div class="cr-port"><canvas width="' + RB.portraits.S + '" height="' + RB.portraits.S + '"></canvas></div>' +
-          '<div class="cr-fig" data-dir="down"><canvas width="32" height="48"></canvas></div></div>' +
+          '<div class="cr-fig" data-dir="down"><canvas width="' + FIG_W + '" height="' + FIG_H + '"></canvas></div></div>' +
           '<div class="cr-sum"><div class="cr-nm"></div><div class="cr-sub"></div></div>' +
           '<div class="cr-turn" role="group" aria-label="Turn the figure"><button type="button" class="pbtn" data-a="turnl" aria-label="Turn left">' + I('cr-turnl') + '</button>' +
           '<button type="button" class="pbtn" data-a="turnr" aria-label="Turn right">' + I('cr-turnr') + '</button></div>' +
@@ -320,7 +322,7 @@ RB.ui.create = (function () {
       function tileGroup(key, legend, vals, thumb) {
         return '<fieldset class="field cr-group" data-group="' + key + '"><legend>' + esc(legend) + ' <span class="cr-selected" data-selof="' + key + '"></span></legend><div class="cr-tiles cr-tiles-' + key + '">' +
           vals.map((v) => '<label class="cr-tile"><input type="radio" name="cr-' + key + '" data-set="' + key + '" data-v="' + esc(v) + '"><span class="face">' + tick +
-            (thumb === 'port' ? '<canvas width="' + RB.portraits.S + '" height="' + RB.portraits.S + '" data-th="' + key + ':' + esc(v) + '"></canvas>' : '<canvas width="32" height="48" data-th="' + key + ':' + esc(v) + '"></canvas>') +
+            (thumb === 'port' ? '<canvas width="' + RB.portraits.S + '" height="' + RB.portraits.S + '" data-th="' + key + ':' + esc(v) + '"></canvas>' : '<canvas width="' + FIG_W + '" height="' + FIG_H + '" data-th="' + key + ':' + esc(v) + '"></canvas>') +
             '<span class="nm">' + esc(NAME[key](v)) + '</span></span></label>').join('') + '</div></fieldset>';
       }
       function entryGroup(key, attr, legend, list, iconOf, sr) {
