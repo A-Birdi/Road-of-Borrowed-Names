@@ -605,7 +605,8 @@ body.high-contrast .kwcard { border-color: #000; }
   color: var(--on-cloth); background-color: var(--cloth-800); background-image: var(--cloth-weave);
   border: 1px solid var(--paper-edge); border-radius: 6px; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
 }
-.cb-party .pm-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0 12px; }
+/* at most two members per row (the note spans the row) */
+.cb-party .pm-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(max(130px, 40%), 1fr)); gap: 0 12px; }
 .pm { min-width: 0; }
 .pm-h { display: flex; flex-wrap: wrap; align-items: center; gap: 0 6px; min-height: var(--tap); }
 .pm-n { font-weight: 700; min-width: 0; overflow-wrap: break-word; }
@@ -712,7 +713,7 @@ body.high-contrast .combat-ui .paper, body.high-contrast .combat-ui .rcard { bor
   .combat-ui { grid-template-rows: max-content max-content minmax(60px, 1fr) max-content minmax(240px, min(calc(44 * var(--vh)), 440px)); }
   .cb-dock { height: auto; }
   .combat-ui .cb-party { --pp-t: 4px; --pp-x: 10px; padding: var(--pp-t) var(--pp-x) 6px; font-size: 0.85em; }
-  .cb-party .pm-list { grid-template-columns: repeat(auto-fit, minmax(min(100%, 6em), 1fr)); gap: 0 10px; }
+  .cb-party .pm-list { grid-template-columns: repeat(auto-fit, minmax(max(min(100%, 6em), 40%), 1fr)); gap: 0 10px; }
   /* narrow: the knot marks carry their count (and its label) when a state
    * chip needs the room; a ward shows its shield and number */
   .cb-foe .foe-k.has-st .kn-t { display: none; }
@@ -743,7 +744,7 @@ body.high-contrast .combat-ui .paper, body.high-contrast .combat-ui .rcard { bor
   }
   .cb-foe { max-width: 100%; }
   .combat-ui .intent { justify-self: start; width: min(680px, 100%); }
-  .combat-ui .cb-party { justify-self: start; width: min(380px, 100%); }
+  .combat-ui .cb-party { justify-self: start; width: min(460px, 100%); }
   .cb-dock { margin-top: 52px; }
   .rcards { grid-template-columns: minmax(0, 1fr); }
   .combat-ui .rcard { grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "ic w tg" "ic d d"; padding: 8px 12px 10px; }

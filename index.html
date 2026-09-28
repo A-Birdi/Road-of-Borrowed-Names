@@ -2159,7 +2159,8 @@ body.high-contrast .kwcard { border-color: #000; }
   color: var(--on-cloth); background-color: var(--cloth-800); background-image: var(--cloth-weave);
   border: 1px solid var(--paper-edge); border-radius: 6px; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
 }
-.cb-party .pm-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0 12px; }
+/* at most two members per row (the note spans the row) */
+.cb-party .pm-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(max(130px, 40%), 1fr)); gap: 0 12px; }
 .pm { min-width: 0; }
 .pm-h { display: flex; flex-wrap: wrap; align-items: center; gap: 0 6px; min-height: var(--tap); }
 .pm-n { font-weight: 700; min-width: 0; overflow-wrap: break-word; }
@@ -2266,7 +2267,7 @@ body.high-contrast .combat-ui .paper, body.high-contrast .combat-ui .rcard { bor
   .combat-ui { grid-template-rows: max-content max-content minmax(60px, 1fr) max-content minmax(240px, min(calc(44 * var(--vh)), 440px)); }
   .cb-dock { height: auto; }
   .combat-ui .cb-party { --pp-t: 4px; --pp-x: 10px; padding: var(--pp-t) var(--pp-x) 6px; font-size: 0.85em; }
-  .cb-party .pm-list { grid-template-columns: repeat(auto-fit, minmax(min(100%, 6em), 1fr)); gap: 0 10px; }
+  .cb-party .pm-list { grid-template-columns: repeat(auto-fit, minmax(max(min(100%, 6em), 40%), 1fr)); gap: 0 10px; }
   /* narrow: the knot marks carry their count (and its label) when a state
    * chip needs the room; a ward shows its shield and number */
   .cb-foe .foe-k.has-st .kn-t { display: none; }
@@ -2297,7 +2298,7 @@ body.high-contrast .combat-ui .paper, body.high-contrast .combat-ui .rcard { bor
   }
   .cb-foe { max-width: 100%; }
   .combat-ui .intent { justify-self: start; width: min(680px, 100%); }
-  .combat-ui .cb-party { justify-self: start; width: min(380px, 100%); }
+  .combat-ui .cb-party { justify-self: start; width: min(460px, 100%); }
   .cb-dock { margin-top: 52px; }
   .rcards { grid-template-columns: minmax(0, 1fr); }
   .combat-ui .rcard { grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "ic w tg" "ic d d"; padding: 8px 12px 10px; }
@@ -30671,7 +30672,11 @@ RB.combat = (function () {
         if (st.phaseChanged) {
           const ph = st.phaseChanged;
           if (ph.line) { await say(tierOf(ph.line) || ph.line, ph.who); RB.ui.dialogue.hide(); }
-          if (ph.teach) await RB.challenge.teachCard({ title: 'Something has changed', en: ph.teach.en, jp: ph.teach.jp });
+          if (ph.teach) {
+            await RB.challenge.teachCard({ title: 'Something has changed', en: ph.teach.en, jp: ph.teach.jp });
+            // the authored note has just explained the move now telegraphed
+            RB.combatHelp.mark(s, 'intent:' + st.intent.kind);
+          }
           st.phaseChanged = null;
         }
         renderUi();
@@ -38389,7 +38394,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         teach: { en: 'The tide is rising: a flood strikes you both. A ward (まもる) in front of one of you softens it; light or wind clears the mist; and plain unravelling always works.' } },
       { at: 2, pattern: ['plea:address', 'strike', 'rest'],
         line: { jp: '{判子|はんこ} を {持|も}つ {手|て} が {止|と}まった 。 {書記|しょき} は {読|よ}めない {封筒|ふうとう} を じっと {見|み}て いる 。', en: 'The hand holding the stamp stops. The Clerk is staring at an envelope it cannot read.' },
-        teach: { en: 'It is asking a real question now. Answer it (💬), or keep unravelling.' } },
+        teach: { en: 'It is asking a real question now (a Plea). Choose "Answer" and reply to what it is really asking, or keep unravelling.' } },
     ],
     intro: { jp: '「{宛先|あてさき}{不明|ふめい} 。 {差出人|さしだしにん} に {返送|へんそう} 。 {次|つぎ} 。」', en: '"Address unknown. Returned to sender. Next."' },
     settle: { jp: '{判子|はんこ} が {二|ふた}つ に {割|わ}れた 。 {潮|しお} の {書記|しょき} は {初|はじ}めて {顔|かお} を {上|あ}げた 。', en: 'The stamp splits in two. For the first time, the Tide Clerk looks up.' },
@@ -52650,7 +52655,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       {
         at: 6, pattern: ['heat', 'gust', 'charge', 'strike', 'lie:1'],
         line: T('The Hush starts to use what it has been given to keep — heat, wind, weight — one after another.', '{静寂|しじま} は 、 {預|あず}かって きた {力|ちから} を {次々|つぎつぎ} に {使|つか}い{始|はじ}めた 。'),
-        teach: { en: 'It borrows what other guardians did. Heat: cool it with water or ice. A gust that strips wards: anchor with stone or earth. Gathering force: bind it with rope. And it makes promises — a false promise can be seen through. You already know every answer; read the intent line each time.' },
+        teach: { en: 'It borrows what other guardians did. Heat: cool it with water or ice. A gust that strips wards: hold fast with stone (いし). Gathering force: bind it with rope. And it makes promises — a false promise can be seen through. You already know every answer; read the intent line each time.' },
       },
       {
         at: 4, pattern: ['mirror:1', 'chill', 'plea:1', 'flood', 'mend'],

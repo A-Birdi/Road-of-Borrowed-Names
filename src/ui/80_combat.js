@@ -470,7 +470,11 @@ RB.combat = (function () {
         if (st.phaseChanged) {
           const ph = st.phaseChanged;
           if (ph.line) { await say(tierOf(ph.line) || ph.line, ph.who); RB.ui.dialogue.hide(); }
-          if (ph.teach) await RB.challenge.teachCard({ title: 'Something has changed', en: ph.teach.en, jp: ph.teach.jp });
+          if (ph.teach) {
+            await RB.challenge.teachCard({ title: 'Something has changed', en: ph.teach.en, jp: ph.teach.jp });
+            // the authored note has just explained the move now telegraphed
+            RB.combatHelp.mark(s, 'intent:' + st.intent.kind);
+          }
           st.phaseChanged = null;
         }
         renderUi();
