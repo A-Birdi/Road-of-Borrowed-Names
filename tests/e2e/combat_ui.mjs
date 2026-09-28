@@ -316,7 +316,7 @@ await test('Heat is shown as a state and a real みず exchange clears it; the f
   assert(st.heat === 0 && !st.chip, 'みず cleared Heat: ' + JSON.stringify(st));
   // the Echo's next move is its Heat: introduced once, saying what water does
   assert(st.kind === 'heat' && /New move: Heat/.test(st.coach) && /Heat rises to 1/.test(st.coach) && /みず/.test(st.coach), 'the first Heat move is taught: ' + JSON.stringify(st));
-  assert(/Heat \+1 if not cooled/.test(await p.textContent('.intent .kw.it-kind')), 'the Heat telegraph says what it will do');
+  assert(/Heat\s*rises by 1 unless cooled/.test(await p.textContent('.intent .kw.it-kind')), 'the Heat telegraph says what it will do');
   // left unanswered (resolved through the rules): Heat 1, and the next Strike is telegraphed 1 harder
   await p.evaluate(() => { const L = RB.combatLogic, st = RB.combat.state(); L.enemyAct(st, false); L.endRound(st, Object.assign({ id: 'rw.mill_echo' }, RB.content.enemies['rw.mill_echo'])); RB.combat.refresh(); });
   const next = await p.evaluate(() => ({ kind: RB.combat.state().intent.kind, foe: document.querySelector('.cb-foe').textContent, tele: document.querySelector('.intent .kw.it-kind').textContent }));

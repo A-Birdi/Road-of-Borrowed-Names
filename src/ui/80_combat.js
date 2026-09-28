@@ -249,7 +249,6 @@ RB.combat = (function () {
       member('pc', s.player.name, st.pc, st.max, st.ward.pc) +
       (s.comp ? member('comp', compName(), st.comp, st.max, st.ward.comp) : '') +
       '<div class="pm-note">' + (st.assist ? 'Assisted: mistakes cost nothing' : 'Mistakes cost at most 1') + '</div></div>';
-    ui.root.classList.toggle('has-harmony', !!(s.comp && st.compId));
     RB.combatHelp.refresh(ui.root);
     requestAnimationFrame(measure);
   }

@@ -55,7 +55,7 @@ RB.combatHelp = (function () {
         return st.compId ? n + ' to one of you' : n + ' to you';
       case 'sweep': case 'flood': return st.compId ? n + ' to each of you' : n + ' to you';
       case 'gust': return n + ' to you, strips wards';
-      case 'heat': return (st.heat || 0) >= H.max ? 'stays at Heat ' + H.max : 'Heat +1 if not cooled';
+      case 'heat': return (st.heat || 0) >= H.max ? 'already at its hottest (' + H.max + ')' : 'rises by 1 unless cooled';
       case 'shroud': return 'hides its knots';
       case 'charge': return 'next blow +2';
       case 'mend': return 're-ties a knot';
@@ -268,7 +268,6 @@ RB.combatHelp = (function () {
     if (!render(a)) return;
     anchor = a;
     a.setAttribute('aria-expanded', 'true');
-    card.classList.toggle('tapped', how !== 'hover');
     position(a);
   }
   function hide() {
