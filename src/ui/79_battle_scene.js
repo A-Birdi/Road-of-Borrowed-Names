@@ -369,7 +369,11 @@ RB.battleScene = (function () {
     }
   }
 
-  function backdrop(c, key, w, h, hz, t, still) {
+  // frame (optional): the stage and the actors' places, for RB.battlePlaces,
+  // which composes the backdrop from the encounter's real place; without a
+  // composed place this region painter is the fallback.
+  function backdrop(c, key, w, h, hz, t, still, frame) {
+    if (frame && RB.battlePlaces && RB.battlePlaces.draw(c, key, w, h, hz, t, still, frame)) return;
     const k = (B[key] ? key : 'reedwake') + '|' + w + 'x' + h + '|' + hz;
     let cv = cache.get(k);
     if (!cv) {
