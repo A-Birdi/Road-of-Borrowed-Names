@@ -730,14 +730,21 @@ shows only frost at contact.
 - Your companion stands a step back on the left. You stand in front on the
   right, nearest the creature, so your gestures reach it without crossing
   anyone.
-- Both face up-right (that depends on `RB.battlers`; see below).
+  - The companion's feet are about 0.8 of a frame width plus a gap
+    (≈ 82 art px) to your left, and about 9 % of a figure's height further
+    back.
+  - Both face up-right (`facing: 'upright'`).
 - The party's integer scale makes a figure about 44 % of the stage height,
-  never taller than the creature. A 96-px battle frame therefore draws at
-  scale 1 where the 48-px fallback draws at 2, the same size on screen.
+  never taller than the creature. The 80×104 battle frame draws at scale 1
+  on phones and desktops, and at 2 only on very tall stages.
 - The creature keeps its scale rule. It moves right, clear of the party,
   where the stage allows.
 - The backdrop receives `{ S, ex, ey, ext, px, py, ps, scale, art, party }`.
-  `party` is the party's box in canvas px, so a composer can keep it clear.
+  - `px, py` follow the composer's "old corner" convention: your feet are
+    at `px + 16·ps`, `py + 48·ps`. Its party box, from the stage's left edge
+    to `px + 140·ps` and up to 112·ps above your feet, covers you both.
+  - `party` is the actual box in canvas px (both frames, with room for
+    gestures and seals), for a composer that wants it.
 - The whole-screen shake and Heat tint are gone. All feedback is local to
   the actor it concerns, and nothing moves the DOM overlay.
 
@@ -789,10 +796,15 @@ The stage calls the character art's battle frames, `RB.battlers`:
 - `draw(ctx, look, {x, y, scale, t, who, pose, gesture, k, reduce, facing})`,
   which returns the `hand`, `head`, `chest` and `feet` anchors.
 
-Until that module is present, a fallback in `83_battle_stage.js` stands in.
-It draws the straight-back walking sprite (32×48) with simple band offsets
-per pose and a tiny prop per gesture. Captures made before the merge show
-that stand-in, not the rear-three-quarter art.
+The module is merged (§10: an 80×104 frame, anchor (36, 100)). The stage
+passes the actor's current pose, gesture and progress k, and it attaches
+effects, strips and numbers to the anchors that `draw` returns. At the
+start of a battle, `RB.battlers.prewarm(look, who)` builds each figure's
+idle frames.
+
+If the module is ever absent, a fallback in `83_battle_stage.js` stands in.
+It draws the road sprite (`RB.sprites.FRAME`, 40×58) with simple band
+offsets per pose and a tiny prop per gesture, behind the same interface.
 
 ### Evidence
 
@@ -801,3 +813,12 @@ that stand-in, not the rear-three-quarter art.
   each captured at its beat.
 - `--docs` copies the WebP strips to `docs/screenshots/battle/`.
 - Frames and strips go to `tests/e2e/out/battle_anim/`.
+- Frame cost is the time to draw the whole battle (backdrop, stage,
+  effects), measured by `RB.combat.debug().frames` at 1280×800 in headless
+  Chromium with a software canvas and the real battle figures.
+  - During sequences it averages 1.5–1.7 ms per frame, with a maximum of
+    11–15 ms.
+  - Over all frames it averages about 2 ms. The one-off maximum of about
+    0.2 s is the first frame building the backdrop and figure caches.
+  - With the fallback figures, sequences averaged 0.5–0.7 ms.
+  - Not measured on real phones.

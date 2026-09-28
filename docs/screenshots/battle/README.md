@@ -9,10 +9,10 @@ To make the captures easy to follow, the presentation clock was slowed to
 ×0.2 (×0.25 for the sheets) with `RB.battleSeq.setTimeScale`. This slows the
 frames down but does not change the choreography.
 
-The adventurers here are the **fallback** stand-in: the straight-back
-walking sprite with simple pose offsets. It is used until the character
-art's `RB.battlers` battle frames (rear three-quarter, facing up-right) are
-merged. Re-capture after that merge.
+The adventurers are the character art's `RB.battlers` battle figures (rear
+three-quarter, facing up-right). The backdrops are the location-aware
+composer (`RB.battlePlaces`). Both were merged from
+`claude/stoic-sagan-n3jvgk` at 0b47c13.
 
 | File | What it shows |
 |---|---|
