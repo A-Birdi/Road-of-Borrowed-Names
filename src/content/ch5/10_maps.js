@@ -413,7 +413,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     foes: [
       { id: 'st1', enemy: 'lf.stamp', x: 10, y: 6, patrol: 1, aggro: true },
-      { id: 'st2', enemy: 'lf.blot', x: 18, y: 9, patrol: 2, aggro: true },
+      // (its Hush is answered by すず or こえ, learned later in the chapter: it waits until then)
+      { id: 'st2', enemy: 'lf.blot', x: 18, y: 9, patrol: 2, aggro: true, if: 'word.suzu|word.koe' },
     ],
     exits: [{ x: 2, y: 1, to: 'lf.records', tx: 13, ty: 3, dir: 'up' }],
     onEnter: [{ scene: 'lf.stacks_enter' }],

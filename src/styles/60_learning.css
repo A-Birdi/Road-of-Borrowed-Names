@@ -510,6 +510,12 @@ body.high-contrast :is(.chal, .lsheet) .fb.no, body.high-contrast :is(.chal, .ls
 .kn { width: 14px; height: 14px; border-radius: 50%; border: 2px dashed currentColor; opacity: 0.8; }
 .kn.tied { border-style: solid; background: currentColor; box-shadow: inset 0 0 0 2px var(--cloth-800); opacity: 1; }
 .cb-foe .kn-t { color: var(--on-cloth-2); font-size: 0.88em; }
+/* its state (Heat, Shrouded, Gathering, Hushed) beside its knots */
+.cb-foe .foe-k { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0 12px; }
+.cb-foe .it-states .kw { color: var(--on-cloth); font-size: 0.86em; font-weight: 700; }
+.cb-foe .it-states .kw[data-kw="heat"] svg { color: #ffa27e; }
+.cb-foe .kw:focus-visible { outline: 3px solid var(--focus-cloth); outline-offset: 1px; }
+.cb-foe .kw[aria-expanded="true"] { background: rgba(159, 211, 255, 0.14); }
 
 /* the telegraph: what it is about to do, in Japanese at the player's level */
 .combat-ui .intent {
@@ -519,6 +525,69 @@ body.high-contrast :is(.chal, .lsheet) .fb.no, body.high-contrast :is(.chal, .ls
 .it-label { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; font-size: 0.8em; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--vermilion); }
 .it-label svg { width: 1.6em; height: 1.6em; flex: none; }
 .it-label .st { color: var(--ink-2); border: 1px solid var(--ink-3); border-radius: 2px; padding: 0 0.35em; letter-spacing: 0.03em; }
+.it-label .it-kind { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0 6px; }
+/* the move's gist beside its name (who it hits and how hard, or what it does) */
+.it-label .gist { text-transform: none; letter-spacing: 0; font-weight: 600; font-size: 1.12em; color: var(--ink-2); }
+
+/* ---- keywords: a move or state that explains itself on hover, focus or tap.
+ * The button is the whole 44 px target; the visible mark is a pill inside it.
+ * A dotted underline and a help mark say it can be opened (not colour alone). */
+.combat-ui .kw {
+  display: inline-flex; align-items: center; min-height: var(--tap); margin: 0; padding: 0 2px; font: inherit; color: inherit; text-align: left;
+  background: transparent; border: 0; border-radius: var(--r-1); cursor: help; touch-action: manipulation;
+}
+.combat-ui .paper .kw:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+.combat-ui .kw[aria-expanded="true"] { background: rgba(193, 138, 42, 0.16); }
+.it-label .kw.it-kind .k { text-decoration: underline dotted 2px; text-underline-offset: 0.3em; }
+.combat-ui .kw-q { display: inline-flex; flex: none; color: var(--river); }
+.combat-ui .kw-q svg { width: 1.25em; height: 1.25em; }
+.cb-harmony .kw-q svg { width: 1.2em; height: 1.2em; }
+.it-states { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0 4px; }
+.kw .pill { display: inline-flex; align-items: center; gap: 0.3em; padding: 0.1em 0.45em; border: 1px solid currentColor; border-radius: 2px; letter-spacing: 0.03em; text-decoration: underline dotted 1px; text-underline-offset: 0.25em; }
+.it-states .kw .pill svg { width: 1.35em; height: 1.35em; }
+
+/* the one-time note (coach mark) at the top of the response dock */
+.cb-coachbox { flex: none; position: relative; }
+.cb-coachbox:empty { display: none; }
+.combat-ui .cb-coach { padding: 6px 10px 4px 12px; border-left: 4px solid var(--ribbon); font-size: 0.9em; line-height: 1.4; animation: cb-coach-in 150ms var(--ease); }
+.cb-coach .cc-h { display: flex; align-items: center; gap: 0.4em; font-family: var(--serif); font-size: 1.05em; }
+.cb-coach .cc-h svg { width: 1.35em; height: 1.35em; flex: none; color: var(--vermilion); }
+.cb-coach p { margin: 0.2em 0 0.1em; color: var(--ink); }
+.cb-coach .kwj { font-family: var(--jp-font); }
+.cb-coach .cc-f { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 4px 8px; }
+.cb-coach .cc-more { color: var(--river); text-decoration: underline; text-underline-offset: 0.2em; padding: 0 0.6em; }
+@keyframes cb-coach-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+body.reduced-motion .combat-ui .cb-coach { animation: none; }
+@media (prefers-reduced-motion: reduce) { .combat-ui .cb-coach { animation: none; } }
+
+/* the keyword note card: the word-help card's materials (wide: beside the
+ * keyword; narrow, when tapped or focused: a sheet along the bottom edge) */
+.kwcard {
+  position: absolute; z-index: 55; width: min(380px, calc(100vw - 16px)); max-height: min(70vh, 480px);
+  display: flex; flex-direction: column; background: var(--paper); color: var(--ink);
+  border: 1px solid var(--paper-edge); border-top: 4px solid var(--ribbon); border-radius: 4px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.55); font-size: 0.95em; line-height: 1.45;
+}
+.kwcard .kw-h { display: flex; align-items: center; gap: 8px; padding: 6px 6px 6px 12px; border-bottom: 1px solid var(--rule); }
+.kwcard .kw-h > svg { width: 1.5em; height: 1.5em; flex: none; color: var(--vermilion); }
+.kwcard h3 { flex: 1; min-width: 0; margin: 0; font: 700 1.02em var(--serif); color: var(--ink); overflow-wrap: anywhere; }
+.kwcard .kw-x {
+  flex: none; display: inline-flex; align-items: center; gap: 0.35em; min-height: var(--tap); min-width: var(--tap); padding: 0 0.7em;
+  background: transparent; color: var(--ink-2); border: 1px solid var(--paper-edge); border-radius: var(--r-1); font: inherit; font-size: 0.9em; cursor: pointer; touch-action: manipulation;
+}
+.kwcard .kw-x svg { width: 1.1em; height: 1.1em; }
+.kwcard .kw-x:hover { background: var(--paper-2); color: var(--ink); }
+.kwcard .kw-x:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+.kwcard .kw-b { overflow-y: auto; overscroll-behavior: contain; padding: 4px 12px 10px; }
+.kwcard p { margin: 0.4em 0; color: var(--ink-2); }
+.kwcard b, .kwcard .kw-now { color: var(--ink); }
+.kwcard .kw-now { font-weight: 600; }
+.kwcard .kwj { font-family: var(--jp-font); color: var(--ink); }
+.kwcard.sheet {
+  left: 0 !important; right: 0; top: auto !important; bottom: 0; width: 100% !important; max-height: calc(62 * var(--vh));
+  border-radius: 12px 12px 0 0; border-left: 0; border-right: 0; padding-bottom: env(safe-area-inset-bottom); box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.55);
+}
+body.high-contrast .kwcard { border-color: #000; }
 .it-jp { font-size: 1.22em; }
 .combat-ui .intent .jline, .cb-situ .it-jp .jline { font-size: 1em; line-height: 2.05; }
 .it-en { color: var(--ink-2); font-family: var(--en-font); }
@@ -527,27 +596,53 @@ body.high-contrast :is(.chal, .lsheet) .fb.no, body.high-contrast :is(.chal, .ls
 .combat-ui .pbtn.tr { padding: 0 0.35em; margin-left: -0.35em; }
 .combat-ui .aside, .cb-situ .aside { color: var(--ink-3); }
 
-/* the party: resolve with numbers, wards, harmony; the aim mark when known */
+/* the party: resolve with numbers and wards; Harmony is a separate paper band
+ * tied to the top of the slip (pips, not a bar); the aim mark when known */
 .combat-ui .cb-party {
+  --pp-t: 6px; --pp-x: 12px;
   position: relative; left: auto; bottom: auto; min-width: 0; justify-self: stretch;
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 4px 12px; padding: 6px 12px 8px; font-size: 0.92em;
+  display: flex; flex-direction: column; padding: var(--pp-t) var(--pp-x) 8px; font-size: 0.92em;
   color: var(--on-cloth); background-color: var(--cloth-800); background-image: var(--cloth-weave);
   border: 1px solid var(--paper-edge); border-radius: 6px; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
 }
+/* at most two members per row (the note spans the row) */
+.cb-party .pm-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(max(130px, 40%), 1fr)); gap: 0 12px; }
 .pm { min-width: 0; }
-.pm-h { display: flex; flex-wrap: wrap; align-items: center; gap: 0 6px; min-height: 1.6em; }
+.pm-h { display: flex; flex-wrap: wrap; align-items: center; gap: 0 6px; min-height: var(--tap); }
 .pm-n { font-weight: 700; min-width: 0; overflow-wrap: break-word; }
-.pm-v { margin-left: auto; font-variant-numeric: tabular-nums; color: var(--on-cloth-2); }
-.pm-w { display: inline-flex; align-items: center; gap: 2px; color: var(--focus-cloth); font-weight: 700; }
+.pm-r { display: flex; align-items: center; gap: 8px; }
+.pm-r .bar { flex: 1 1 auto; min-width: 2em; }
+.pm-v { flex: none; white-space: nowrap; font-variant-numeric: tabular-nums; color: var(--on-cloth-2); }
+.combat-ui .kw.pm-w { color: var(--focus-cloth); font-weight: 700; }
+.pm-w .pill { gap: 3px; padding: 0 0.35em; }
 .pm-w svg { width: 1.1em; height: 1.1em; }
+.cb-party .kw:focus-visible { outline: 3px solid var(--focus-cloth); outline-offset: 1px; }
+.cb-party .kw[aria-expanded="true"] { background: rgba(159, 211, 255, 0.14); }
 .pm { position: relative; }
-.aimtag { position: absolute; top: -1.45em; left: -4px; white-space: nowrap; display: inline-flex; align-items: center; gap: 3px; padding: 0 5px; border-radius: 2px; background: var(--paper); color: var(--vermilion); font-size: 0.8em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+.aimtag { white-space: nowrap; display: inline-flex; align-items: center; gap: 3px; padding: 0 5px; border-radius: 2px; background: var(--paper); color: var(--vermilion); font-size: 0.8em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+.combat-ui .cb-harmony {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0 10px; min-height: var(--tap);
+  margin: calc(-1 * var(--pp-t)) calc(-1 * var(--pp-x)) 2px; padding: 3px var(--pp-x) 3px calc(var(--pp-x) - 2px);
+  background: var(--paper); color: var(--ink); border-radius: 5px 5px 0 0; border-bottom: 2px solid var(--ribbon); box-shadow: inset 4px 0 0 var(--ribbon);
+}
+.combat-ui .cb-harmony:focus-visible { outline-offset: -3px; outline-color: var(--focus-paper); }
+.combat-ui .cb-party .cb-harmony[aria-expanded="true"], .combat-ui .cb-harmony:hover { background: var(--paper-2); }
+.cb-harmony .hm-a { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; }
+.cb-harmony .hm-a > svg { width: 1.35em; height: 1.35em; color: var(--ribbon-deep); }
+.cb-harmony .hm-n { font-family: var(--serif); font-size: 1.05em; text-decoration: underline dotted 2px; text-underline-offset: 0.3em; }
+.cb-harmony .hm-pips { display: inline-flex; gap: 5px; padding: 0 2px; }
+.cb-harmony .hp { display: inline-block; width: 9px; height: 9px; transform: rotate(45deg); border: 2px solid var(--ink-2); border-radius: 1px; }
+.cb-harmony .hp.on { background: var(--ribbon); border-color: var(--ribbon-deep); }
+.cb-harmony .hm-v { font-variant-numeric: tabular-nums; color: var(--ink-2); }
+.cb-harmony .hm-t { flex: 1 1 11em; min-width: 0; color: var(--ink-2); font-size: 0.92em; overflow-wrap: anywhere; }
+.cb-harmony .kw-q { margin-left: auto; }
+.cb-harmony.full { border-bottom-color: var(--ok-ink); }
+.cb-harmony.full .hm-t, .cb-harmony.full .hm-t b { color: var(--ok-ink); font-weight: 600; }
 .aimtag svg { width: 1.15em; height: 1.15em; }
 .pm.aimed .bar { outline: 2px solid var(--paper); outline-offset: 1px; }
 .pm-note { grid-column: 1 / -1; font-size: 0.85em; color: var(--on-cloth-2); }
 .combat-ui .bar { height: 10px; background: var(--cloth-950); border: 1px solid var(--paper-edge); border-radius: 2px; overflow: hidden; }
 .combat-ui .bar > i { display: block; height: 100%; background: var(--paper); }
-.combat-ui .bar.h > i { background: var(--ribbon); }
 .combat-ui .atlas-lantern { font-size: 1em; }
 .combat-ui .atlas-lantern .dim { color: var(--on-cloth-2); }
 
@@ -583,6 +678,13 @@ body.high-contrast :is(.chal, .lsheet) .fb.no, body.high-contrast :is(.chal, .ls
 .rcard .rc-tgt { grid-area: tg; justify-self: start; margin: 1px 0 2px; font-size: 0.8em; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--river); border-bottom: 2px solid var(--river); }
 .rcard .rc-d { grid-area: d; font-size: 0.86em; line-height: 1.35; color: var(--ink-2); }
 .rcard .rc-d svg { width: 1.1em; height: 1.1em; vertical-align: -0.2em; margin-right: 0.25em; color: var(--warn-ink); }
+/* a response used in battle for the first time, and the companion's technique */
+.rcard .rc-new { align-self: center; padding: 0 0.45em; border-radius: 2px; font-size: 0.72em; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--paper); background: var(--ok-ink); }
+.combat-ui .rcard.fresh { box-shadow: inset 4px 0 0 var(--ok-ink), 0 2px 0 var(--paper-3), 0 3px 0 var(--paper-edge); }
+.rcard .rc-ans { display: block; margin-top: 0.15em; color: var(--ok-ink); }
+.rcard .rc-ans b { font-weight: 700; }
+.combat-ui .rcard.tech { border-color: var(--ribbon-deep); box-shadow: inset 4px 0 0 var(--ribbon), 0 2px 0 var(--paper-3), 0 3px 0 var(--ribbon-deep); }
+.rcard.tech .rc-new { background: var(--river); }
 .combat-ui .rcard[disabled] { cursor: not-allowed; background: var(--paper-2); border-style: dashed; box-shadow: none; color: var(--ink-2); }
 .combat-ui .rcard[disabled] .ic { color: var(--ink-3); }
 .combat-ui .flee { align-self: stretch; justify-content: center; flex: none; }
@@ -610,7 +712,16 @@ body.high-contrast .combat-ui .paper, body.high-contrast .combat-ui .rcard { bor
 @media (max-width: 899px), (max-height: 559px) {
   .combat-ui { grid-template-rows: max-content max-content minmax(60px, 1fr) max-content minmax(240px, min(calc(44 * var(--vh)), 440px)); }
   .cb-dock { height: auto; }
-  .combat-ui .cb-party { grid-template-columns: repeat(auto-fit, minmax(min(100%, 6em), 1fr)); gap: 2px 10px; padding: 4px 10px 6px; font-size: 0.85em; }
+  .combat-ui .cb-party { --pp-t: 4px; --pp-x: 10px; padding: var(--pp-t) var(--pp-x) 6px; font-size: 0.85em; }
+  .cb-party .pm-list { grid-template-columns: repeat(auto-fit, minmax(max(min(100%, 6em), 40%), 1fr)); gap: 0 10px; }
+  /* narrow: the knot marks carry their count (and its label) when a state
+   * chip needs the room; a ward shows its shield and number */
+  .cb-foe .foe-k.has-st .kn-t { display: none; }
+  .aimtag { text-transform: none; letter-spacing: 0; }
+  .pm-w .wl { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  /* the band in two short lines: name, pips and help mark; then the technique */
+  .cb-harmony .kw-q { order: 2; }
+  .cb-harmony .hm-t { order: 3; flex: 1 0 100%; font-size: 0.88em; line-height: 1.25; padding-bottom: 2px; }
   .pm-note { display: none; }
   .it-jp { font-size: 1.12em; }
 }
@@ -633,7 +744,7 @@ body.high-contrast .combat-ui .paper, body.high-contrast .combat-ui .rcard { bor
   }
   .cb-foe { max-width: 100%; }
   .combat-ui .intent { justify-self: start; width: min(680px, 100%); }
-  .combat-ui .cb-party { justify-self: start; width: min(380px, 100%); }
+  .combat-ui .cb-party { justify-self: start; width: min(460px, 100%); }
   .cb-dock { margin-top: 52px; }
   .rcards { grid-template-columns: minmax(0, 1fr); }
   .combat-ui .rcard { grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "ic w tg" "ic d d"; padding: 8px 12px 10px; }
@@ -661,4 +772,6 @@ body.high-contrast .combat-ui .paper, body.high-contrast .combat-ui .rcard { bor
   .combat-ui .intent .jline { line-height: 1.9; }
   .cb-dock { height: auto; max-height: none; flex: 1 1 auto; }
   .cb-dock-h { display: none; }
+  /* a one-time note stays short here (More opens all of it); responses keep the room */
+  .cb-coach p { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
 }

@@ -67,6 +67,7 @@ for (const profile of profiles) for (const comp of comps) {
     await T.go('rw.mill1', 7, 10, 'up');
     await T.use(10, 2);
     check('gears fixed', s.flags.rw_gears);
+    check('word mizu learned at the gears, before the Echo uses Heat', s.words.includes('mizu'));
     await T.use(2, 2);
     check('in loft', RB.world.W.map.id === 'rw.mill2');
     await T.use(4, 4); await T.use(9, 3); await T.use(9, 6); await T.use(11, 7);

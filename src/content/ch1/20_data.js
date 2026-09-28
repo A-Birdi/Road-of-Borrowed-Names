@@ -382,5 +382,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     intro: { jp: '{石臼|いしうす} の {上|うえ} で 、 {村|むら} じゅう の {声|こえ} が {渦|うず} を {巻|ま}いて いる 。', en: 'Above the millstone, the voices of the whole village are turning in a slow whirlpool.' },
     settle: { jp: '「 ── コウジ 。 そう 、 コウジ 。 」 {声|こえ} は ひとつ ずつ ほどけて 、 {川|かわ} へ {帰|かえ}って いった 。', en: '"…Kōji. Yes — Kōji." One by one the voices come untied and go home to the river.' },
-    reward: { words: ['mizu'] } };
+    // Heat is answered with みず, learned when the mill's gears turn
+    // (rw.m1_gears; rw.m1_boss makes sure of it before the fight).
+  };
 })(RB.content);

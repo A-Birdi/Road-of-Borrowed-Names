@@ -95,7 +95,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       {
         at: 6, pattern: ['heat', 'gust', 'charge', 'strike', 'lie:1'],
         line: T('The Hush starts to use what it has been given to keep — heat, wind, weight — one after another.', '{静寂|しじま} は 、 {預|あず}かって きた {力|ちから} を {次々|つぎつぎ} に {使|つか}い{始|はじ}めた 。'),
-        teach: { en: 'It borrows what other guardians did. Heat: cool it with water or ice. A gust that strips wards: anchor with stone or earth. Gathering force: bind it with rope. And it makes promises — a false promise can be seen through. You already know every answer; read the intent line each time.' },
+        teach: { en: 'It borrows what other guardians did. Heat: cool it with water or ice. A gust that strips wards: hold fast with stone (いし). Gathering force: bind it with rope. And it makes promises — a false promise can be seen through. You already know every answer; read the intent line each time.' },
       },
       {
         at: 4, pattern: ['mirror:1', 'chill', 'plea:1', 'flood', 'mend'],

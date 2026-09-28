@@ -134,6 +134,9 @@ narr: {歯車|はぐるま} の {真|ま}ん{中|なか} に 、 {軸|じく} �
 !take rw_wheel_pin
 !sfx chest
 narr: {軸|じく} が はまり 、 {歯車|はぐるま} が {重|おも}たげ に {回|まわ}り{出|だ}した 。 {外|そと} で 、 {水車|すいしゃ} の きしむ {音|おと} が {変|か}わる 。 || The pin slots in, and the gears begin to turn, heavily. Outside, the creak of the waterwheel changes.
+narr: {床|ゆか} の {下|した} の {水路|すいろ} に 、 {冷|つめ}たい {水|みず} が {戻|もど}って きた 。 {歯車|はぐるま} の {板|いた} の {字|じ} の {中|なか} に 、 {一|ひと}つ だけ {数字|すうじ} で は ない {字|じ} が ある 。 「 {水|みず} 」 。 || Cold water runs back into the millrace under the floor. Among the characters on the gear plates, one isn't a number: the character for water, mizu.
+!word mizu
+narr: 「 みず 」 。 {熱|あつ}く なった もの を {冷|ひ}やす {言葉|ことば} だ 。 {部屋|へや} の {真|ま}ん{中|なか} の {石臼|いしうす} から 、 かすか に {熱|ねつ} を {感|かん}じる 。 || Mizu — water: a word that cools whatever has grown hot. From the millstone in the middle of the room, you feel a faint heat.
 narr: {梯子|はしご} の {上|うえ} の {扉|とびら} が 、 がたん と {開|ひら}いた 。 || The trapdoor above the ladder bangs open.
 !set rw_gears
 !quest rw_mill 2
@@ -208,6 +211,10 @@ narr: {古|ふる}い {箱|はこ} の {中|なか} に 、 {丸|まる}い {石
 narr: {石臼|いしうす} の {上|うえ} に 、 {声|こえ} が {渦|うず} を {巻|ま}いて いる 。 {聞|き}いた こと の ある {声|こえ} 、 {知|し}らない {声|こえ} 、 {名前|なまえ} の ない {呼|よ}び{声|ごえ} 。 || Above the millstone, voices swirl. Voices you know, voices you don't, calls with no names in them.
 echo: …… おかえり 。 …… あした も 。 …… まって 。 || …Welcome back. …Tomorrow too. …Wait.
 narr: この {声|こえ} たち は {怒|おこ}って いる の では ない 。 {行|い}き{場|ば} を なくして いる だけ だ 。 || These voices aren't angry. They've just lost their way home.
+!if word.mizu -> fight
+narr: {石臼|いしうす} が {熱|あつ}く なって いく 。 {床|ゆか} の {下|した} で は 、 {水路|すいろ} の {水|みず} が {鳴|な}って いる 。 {歯車|はぐるま} の {板|いた} に あった {字|じ} を {思|おも}い{出|だ}す 。 「 {水|みず} 」 。 || The millstone is growing hot. Under the floor, the millrace is running. You remember the character on the gear plate: mizu, water.
+!word mizu
+:fight
 !battle rw.mill_echo noflee
 !if var._res=0 -> end
 !set rw_echo_done bridge_fixed

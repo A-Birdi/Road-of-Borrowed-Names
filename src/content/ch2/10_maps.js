@@ -500,7 +500,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ].concat(channel),
     foes: [
       { id: 'm1', enemy: 'sg.moth', x: 6, y: 5, patrol: 2, aggro: true },
-      { id: 'm2', enemy: 'sg.moth', x: 21, y: 15, patrol: 2, aggro: true },
+      // (its Gathering is answered by なわ, learned at the bollard: it waits until then)
+      { id: 'm2', enemy: 'sg.moth', x: 21, y: 15, patrol: 2, aggro: true, if: 'word.nawa' },
       { id: 'g1', enemy: 'sg.golem', x: 17, y: 4, patrol: 1, aggro: true },
     ],
     exits: [

@@ -35,6 +35,48 @@ RB.combatLogic = (function () {
     normal: { powerMod: 0, resolve: 12, knotMod: 0 },
     hard: { powerMod: 1, resolve: 10, knotMod: 1 },
   };
+  // Heat: every Heat intent left unanswered raises the level by one, up to
+  // `max`; while it lasts, each blow it lands hits `per` harder per level.
+  // A water word (or Mio's technique) cools it back to 0. Small and capped.
+  const HEAT = { max: 2, per: 1 };
+  function heatBonus(st) {
+    return Math.min(st.heat || 0, HEAT.max) * HEAT.per;
+  }
+  // Base damage of a telegraphed blow (before difficulty, heat and wards).
+  const BASE_POWER = { strike: 2, lie: 2, mirror: 2, chill: 2, sweep: 1, flood: 1, gust: 1 };
+  function basePower(it) {
+    return it.power || BASE_POWER[it.kind] || 0;
+  }
+  // What an unanswered intent would do to each of you: {per, who: ['pc'|'comp',…]}
+  // or null when it deals no damage. The UI's help text uses this, so the
+  // numbers it shows are the ones enemyAct applies.
+  function blowOf(st, it) {
+    it = it || st.intent;
+    if (!it || !BASE_POWER[it.kind]) return null;
+    const who = it.kind === 'sweep' || it.kind === 'flood' ? (st.compId ? ['pc', 'comp'] : ['pc'])
+      : it.kind === 'gust' ? ['pc'] : [it.target === 'comp' && st.compId ? 'comp' : 'pc'];
+    return { per: Math.max(0, basePower(it) + st.diff.powerMod + heatBonus(st)), who };
+  }
+  // Coordinated techniques: one per companion, decided by who travels with you.
+  // `knots` is how many knots it frees; every technique also cancels the
+  // telegraphed move and empties Harmony.
+  const TECHS = {
+    nao: { name: 'Read the Opening', knots: 2, effect: 'Nao reads where it is about to move: frees 2 knots at once.' },
+    mio: { name: 'Clearwater Draught', knots: 1, effect: 'Restores you both to full resolve, washes away Heat, mist and Gathering, and frees 1 knot.' },
+    ren: { name: 'Lantern Ward', knots: 1, effect: 'Raises a 3-point ward in front of each of you and frees 1 knot.' },
+    suzu: { name: 'Curtain Call', knots: 2, effect: 'Its own move turns back on it: frees 2 knots at once.' },
+  };
+  // The intents a word cancels outright (a ward only cancels a single-target
+  // Strike raised in front of its target; against Sweep/Flood it soaks damage).
+  function answers(word) {
+    const tags = (word && word.tags) || [];
+    const out = [];
+    for (const k in INTENTS) {
+      const c = INTENTS[k].counters;
+      if (tags.some((t) => c.indexOf(t) >= 0 && (t !== 'ward' || INTENTS[k].target !== 'both'))) out.push(k);
+    }
+    return out;
+  }
 
   function init(enemy, s, opts) {
     const d = DIFF[s.learn.difficulty] || DIFF.normal;
@@ -107,7 +149,11 @@ RB.combatLogic = (function () {
         out.push({ id: 'w:' + w.id, kind: 'word', word: w, icon: w.icon || '✦', jp: w.jp, en: w.en, desc: w.effect });
       }
     }
-    if (st.harmony >= st.harmonyMax && st.compId) out.push({ id: 'tech', kind: 'tech', icon: '✧', jp: 'あわせ', en: 'Coordinated technique', desc: 'A single inscription the two of you weave together.' });
+    if (st.harmony >= st.harmonyMax && st.compId) {
+      const T = TECHS[st.compId];
+      out.push({ id: 'tech', kind: 'tech', icon: '✧', jp: 'あわせ', en: T ? T.name : 'Coordinated technique', tech: st.compId,
+        desc: (T ? T.effect + ' ' : '') + 'Also cancels its move. Uses up Harmony.' });
+    }
     return out;
   }
 
@@ -155,20 +201,21 @@ RB.combatLogic = (function () {
       if (it.kind === 'charge' && st.compId === 'ren' && result.ok) { countered = true; fx.push({ t: 'comp', who: 'ren', en: 'Ren\'s lamp flares and interrupts the gathering force.' }); }
     }
     if (it.kind === 'lie' && st.compId === 'suzu' && result.ok && !countered && card.kind !== 'word') { countered = true; fx.push({ t: 'comp', who: 'suzu', en: 'Suzu laughs at the promise until it sounds as hollow as it is.' }); }
-    // harmony builds on clean, meaningful play
-    if (perfect && (countered || card.kind === 'unravel')) st.harmony = Math.min(st.harmonyMax, st.harmony + 1);
+    // harmony builds on clean, meaningful play (a technique spends it: it
+    // starts again from 0, so the technique itself adds nothing)
+    if (perfect && card.kind !== 'tech' && (countered || card.kind === 'unravel')) st.harmony = Math.min(st.harmonyMax, st.harmony + 1);
     if (perfect && countered && st.compId === 'nao' && card.kind !== 'unravel' && card.kind !== 'tech') st.openingBonus = true;
     st.lastCountered = countered;
     return { fx, countered };
   }
   function techUnravel(st) {
-    return st.compId === 'nao' || st.compId === 'suzu' ? 2 : 1;
+    return (TECHS[st.compId] && TECHS[st.compId].knots) || 1;
   }
   function applyTech(st, fx) {
     const c = st.compId;
     if (c === 'nao') fx.push({ t: 'tech', who: 'nao', en: 'Read the Opening: you strike where it was about to move.' });
     if (c === 'mio') { st.pc = st.max; st.comp = st.max; st.heat = 0; st.shroud = false; st.charged = false; fx.push({ t: 'tech', who: 'mio', en: 'Clearwater Draught: both of you steady, every lingering effect washed away.' }); }
-    if (c === 'ren') { st.ward.pc += 3; st.ward.comp += 3; fx.push({ t: 'tech', who: 'ren', en: 'Lantern Ward: light stands between you and the next two blows.' }); }
+    if (c === 'ren') { st.ward.pc += 3; st.ward.comp += 3; fx.push({ t: 'tech', who: 'ren', en: 'Lantern Ward: light stands between you and the next blows.' }); }
     if (c === 'suzu') fx.push({ t: 'tech', who: 'suzu', en: 'Curtain Call: its own intent turns back on it.' });
   }
 
@@ -178,7 +225,7 @@ RB.combatLogic = (function () {
     const fx = [];
     const dmg = (who, p) => {
       if (who === 'comp' && !st.compId) who = 'pc';
-      let power = Math.max(0, p + st.diff.powerMod + (st.heat ? 1 : 0));
+      let power = Math.max(0, p + st.diff.powerMod + heatBonus(st));
       if (st.compId === 'suzu' && !st.misdirectUsed && power > 0 && ((who === 'pc' ? st.pc : st.comp) - power <= 2)) {
         st.misdirectUsed = true;
         fx.push({ t: 'comp', who: 'suzu', en: 'Suzu steps into the blow with a flourish — it meets empty air.' });
@@ -197,12 +244,12 @@ RB.combatLogic = (function () {
     if (!countered) {
       switch (it.kind) {
         case 'strike': case 'lie': case 'mirror': case 'chill':
-          dmg(it.target, it.power || 2); break;
+          dmg(it.target, basePower(it)); break;
         case 'sweep': case 'flood':
-          dmg('pc', it.power || 1); if (st.compId) dmg('comp', it.power || 1); break;
+          dmg('pc', basePower(it)); if (st.compId) dmg('comp', basePower(it)); break;
         case 'gust':
-          st.ward.pc = 0; st.ward.comp = 0; fx.push({ t: 'stripWard' }); dmg('pc', it.power || 1); break;
-        case 'heat': st.heat = Math.min(3, st.heat + 1); fx.push({ t: 'heat', n: st.heat }); break;
+          st.ward.pc = 0; st.ward.comp = 0; fx.push({ t: 'stripWard' }); dmg('pc', basePower(it)); break;
+        case 'heat': st.heat = Math.min(HEAT.max, st.heat + 1); fx.push({ t: 'heat', n: st.heat, bonus: heatBonus(st) }); break;
         case 'shroud': st.shroud = true; fx.push({ t: 'shroud' }); break;
         case 'charge': st.charged = true; fx.push({ t: 'charge' }); break;
         case 'mend': if (st.knots < st.maxKnots) { st.knots++; fx.push({ t: 'mend' }); } break;
@@ -240,5 +287,5 @@ RB.combatLogic = (function () {
     st.phaseChanged = null;
     st.intent = drawIntent(enemy, st);
   }
-  return { INTENTS, DIFF, init, responses, playerAct, enemyAct, endRound, intentDef };
+  return { INTENTS, DIFF, HEAT, TECHS, init, responses, playerAct, enemyAct, endRound, intentDef, heatBonus, basePower, blowOf, answers };
 })();

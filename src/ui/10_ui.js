@@ -32,9 +32,10 @@ RB.ui = (function () {
       upd();
     }
     document.addEventListener('keydown', (e) => {
-      // keep Tab focus inside the top layer
+      // keep Tab focus inside the top layer (or the wider `scope` it declares:
+      // the battle's response list also lets focus reach the keywords above it)
       if (e.key === 'Tab' && layers.length) {
-        const f = focusables(layers[layers.length - 1].el);
+        const f = focusables(scopeOf(layers[layers.length - 1]));
         if (!f.length) return;
         const i = f.indexOf(document.activeElement);
         if (e.shiftKey && (i <= 0)) { e.preventDefault(); f[f.length - 1].focus(); }
@@ -80,6 +81,11 @@ RB.ui = (function () {
   function topLayer() {
     return layers[layers.length - 1] || null;
   }
+  // Where keyboard focus may move while a layer is on top: the layer itself,
+  // or a larger `scope` element that contains it.
+  function scopeOf(layer) {
+    return (layer.scope && layer.scope.isConnected && layer.scope) || layer.el;
+  }
   function focusables(container) {
     return Array.from(container.querySelectorAll('button:not([disabled]), [tabindex="0"], input, select, textarea')).filter((e) => e.offsetParent !== null && !e.closest('.hidden'));
   }
@@ -117,10 +123,10 @@ RB.ui = (function () {
     if (top) {
       if (top.onAction && top.onAction(a, e)) return;
       if (a === 'cancel') { if (top.onCancel) top.onCancel(); return; }
-      if (a === 'up' || a === 'down' || a === 'left' || a === 'right') { moveFocus(top.el, a); return; }
+      if (a === 'up' || a === 'down' || a === 'left' || a === 'right') { moveFocus(scopeOf(top), a); return; }
       if (a === 'ok') {
         const f = document.activeElement;
-        if (f && top.el.contains(f) && (f.tagName === 'BUTTON' || f.getAttribute('role') === 'button')) f.click();
+        if (f && scopeOf(top).contains(f) && (f.tagName === 'BUTTON' || f.getAttribute('role') === 'button')) f.click();
         else if (f && f.classList && f.classList.contains('jt')) RB.ui.help.showFor(f);
         return;
       }

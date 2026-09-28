@@ -230,7 +230,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         teach: { en: 'The tide is rising: a flood strikes you both. A ward (まもる) in front of one of you softens it; light or wind clears the mist; and plain unravelling always works.' } },
       { at: 2, pattern: ['plea:address', 'strike', 'rest'],
         line: { jp: '{判子|はんこ} を {持|も}つ {手|て} が {止|と}まった 。 {書記|しょき} は {読|よ}めない {封筒|ふうとう} を じっと {見|み}て いる 。', en: 'The hand holding the stamp stops. The Clerk is staring at an envelope it cannot read.' },
-        teach: { en: 'It is asking a real question now. Answer it (💬), or keep unravelling.' } },
+        teach: { en: 'It is asking a real question now (a Plea). Choose "Answer" and reply to what it is really asking, or keep unravelling.' } },
     ],
     intro: { jp: '「{宛先|あてさき}{不明|ふめい} 。 {差出人|さしだしにん} に {返送|へんそう} 。 {次|つぎ} 。」', en: '"Address unknown. Returned to sender. Next."' },
     settle: { jp: '{判子|はんこ} が {二|ふた}つ に {割|わ}れた 。 {潮|しお} の {書記|しょき} は {初|はじ}めて {顔|かお} を {上|あ}げた 。', en: 'The stamp splits in two. For the first time, the Tide Clerk looks up.' },

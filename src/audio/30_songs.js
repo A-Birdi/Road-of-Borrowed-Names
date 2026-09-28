@@ -53,7 +53,8 @@
  * PERCUSSION letters (upper case = accent)
  *   k soft kick   t hand tom   l low drum   s shaker   b brush   p hand pat
  *   w woodblock   h high woodblock   r rim   x clock tick   g glass tick
- *   d water drop  c wooden creak   j small bells   . rest   | bar check
+ *   d water drop  c wooden creak   j small bells   o big drum (bosses)
+ *   n frame-drum snap   . rest   | bar check
  *
  * FORM entries: 'A' or { s:'A', i:{track:inst}, o:{track:+1}, m:[muted],
  *   tr: semitones, dyn, key, mode, bpm }. Sections may use from:'A' to
@@ -360,33 +361,41 @@ RB.audio = RB.audio || {};
   const BOSS_B_CH = '1 5:0.5 b2:0.5 6 7 4 5 6 5M';
   const BOSS_C_GLASS = '5, - 1 - 2 - 3 - | 4 - - - - - - - | .:8 | .:8 | 5, - 1 - 2 - 3 - | 4 - - - - - - - | .:8 | .:8';
   const BOSS_C_TOLL = '.:8 | .:8 | b2 - - - - - - - | .:8 | .:8 | .:8 | 5, - - - - - - - | .:8';
+  // the driving figure: a low bowed riff in eighths that never lets up (two bars, with a turn)
+  const BOSS_RIFF = '1 1 5, 1 3 1 5, 1 | 1 1 5, 1 4 3 2 5,';
 
   S('boss', {
     title: 'A Promise Held Too Tightly',
     kind: 'area',
     motifs: ['road', 'hush'],
-    notes: 'Boss theme in C minor with a Phrygian D-flat (108): heavier 3+3+2 drums, still restrained. The Hush motif on glass climbs in even notes while the road motif falls against it (B2 plays both at once) — bosses are places the Hush has touched.',
-    key: 'C', mode: 'aeolian', bpm: 108,
+    notes: 'Boss theme in C minor with a Phrygian D-flat, driven (138): a low bowed riff in eighths that never lets up, an eighth-note bass pedal with octave kicks, big drums on a 3+3+2 accent with a frame-drum snap on the backbeat and a sixteenth-note shaker. The Hush motif on glass climbs in even notes while the road motif falls against it (B2 plays both at once over the full kit); C drops to half time under the bell toll before the last push — bosses are places the Hush has touched.',
+    key: 'C', mode: 'aeolian', bpm: 138, loopFrom: 1,
     tracks: {
-      lead: { i: 'flute', o: 5, v: 0.8, rv: 0.25 },
-      glass: { i: 'glass', o: 5, v: 0.9, rv: 0.45, pan: 0.2 },
+      lead: { i: 'flute', o: 5, v: 0.85, rv: 0.22 },
+      glass: { i: 'glass', o: 5, v: 0.9, rv: 0.4, pan: 0.2 },
       bell: { i: 'bell', o: 5, v: 0.5, rv: 0.35, pan: -0.2 },
-      toll: { i: 'toll', o: 3, v: 0.55, rv: 0.45 },
-      ost: { i: 'pluck', o: 3, pat: true, v: 0.5, rv: 0.1, pan: -0.25 },
-      pad: { i: 'pad', o: 3, hold: true, fold: 'all', win: 5, v: 0.45, rv: 0.3 },
-      bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.75 },
-      drum: { perc: true, v: 0.65 },
-      hat: { perc: true, v: 0.4, pan: 0.3 },
+      toll: { i: 'toll', o: 3, v: 0.6, rv: 0.45 },
+      riff: { i: 'bowed', o: 3, v: 0.62, rv: 0.12, pan: -0.15 },
+      ost: { i: 'pluck', o: 4, pat: true, v: 0.4, rv: 0.1, pan: 0.25 },
+      pad: { i: 'pad', o: 3, hold: true, fold: 'all', win: 5, v: 0.4, rv: 0.3 },
+      bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.72 },
+      drum: { perc: true, v: 0.62 },
+      snap: { perc: true, v: 0.5, pan: 0.1 },
+      hat: { perc: true, v: 0.32, pan: 0.3, u: 0.25 },
     },
-    all: { ost: "0 1 2 0 1 2 1' 2", bass: '0 . . 0 . . 0 .', pad: TRI, drum: 'l..l..t.|l..l..tt', hat: '..s...s.|..s.r.s.' },
+    all: {
+      riff: BOSS_RIFF, ost: "0 2 1' 2 0 2 1' 2", bass: "0 0 0' 0 0 0 0' 0", pad: TRI,
+      drum: 'O..o..O.|O..o..Oo', snap: '....N...|....N..n', hat: 'ssSsssSsssSsssSs',
+    },
     sections: {
-      intro: { bars: 2, ch: '1 1', pad: null, ost: null, hat: null },
+      intro: { bars: 2, ch: '1 1', pad: null, ost: null, snap: null, hat: null, drum: 'O..o..O.|O.o.OoOO' },
       A: { bars: 8, ch: BOSS_A_CH, glass: BOSS_HUSH, bell: BOSS_A_BELL },
       B: { bars: 8, ch: BOSS_B_CH, lead: BOSS_B },
-      C: { bars: 8, ch: '6 6 b2 b2 6 6 5M 5M', glass: BOSS_C_GLASS, toll: BOSS_C_TOLL, drum: 'l.......', hat: null, ost: "0 2 1' 2", dyn: 0.9 },
-      B2: { bars: 8, ch: BOSS_B_CH, lead: BOSS_B, glass: BOSS_HUSH },
+      C: { bars: 8, ch: '6 6 b2 b2 6 6 5M 5M', glass: BOSS_C_GLASS, toll: BOSS_C_TOLL, riff: null, drum: 'O.......|O...o...', snap: null, hat: 's...s...s...s...', ost: "0 2 1' 2", dyn: 0.9 },
+      B2: { bars: 8, ch: BOSS_B_CH, lead: BOSS_B, glass: BOSS_HUSH, drum: 'O..o..O.|O..o.oOO' },
+      A2: { bars: 8, ch: BOSS_A_CH, glass: BOSS_HUSH, bell: BOSS_A_BELL },
     },
-    form: ['intro', 'A', 'B', 'C', { s: 'B2', i: { lead: 'bowed' }, o: { lead: -1 } }],
+    form: ['intro', 'A', 'B', 'C', { s: 'B2', i: { lead: 'bowed' }, o: { lead: -1 } }, { s: 'A2', i: { riff: 'pluck' }, o: { riff: 1 } }],
   });
 
   S('victory', {
