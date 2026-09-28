@@ -27,12 +27,15 @@ RB.battleSeq = (function () {
   'use strict';
   // ---- tuning (presentation ms at normal speed) ----------------------------------------------
   const T = {
-    anticipate: 170, act: 400, strip: { travel: 380, unfurl: 220, inkAt: 150, inkEnd: 520, fadeAt: 1030, end: 1230 },
+    // the word: travels and unrolls, the ink writes it (≈0.54 s in), it stays, and has
+    // gone by the end of the response (the log keeps it)
+    anticipate: 170, act: 400, stripAt: 120, strip: { travel: 320, unfurl: 200, inkAt: 120, inkEnd: 420, fadeAt: 850, end: 1000 },
+    stripStill: { travel: 0, unfurl: 0, inkAt: 0, inkEnd: 0, fadeAt: 880, end: 980 },
     beat: 560, beatGap: 150, recoverAt: 900, recover: 240, end: 1140,
     foePrep: 320, foeExec: 380, contact: 560, foeRecover: 300, secondTarget: 120, react: 420,
     finishHold: 1000, speed: { normal: 1, fast: 1.4, instant: 2 }, hurry: 4,
   };
-  let pt = 0, lastT = null, cur = null, port = null;
+  let pt = 0, lastT = null, cur = null, port = null, timeScale = 1; // timeScale: tests and captures only
   const trace = [];
   const counters = { runs: 0, done: 0, settled: 0, hurried: 0, beats: 0, watchdogs: 0 };
   const timers = new Set();
@@ -66,7 +69,7 @@ RB.battleSeq = (function () {
   function tick(t) {
     const dt = lastT == null ? 16 : Math.max(0, Math.min(100, t - lastT));
     lastT = t;
-    pt += dt * (cur ? speed() * (cur.hurried ? T.hurry : 1) : 1);
+    pt += dt * timeScale * (cur ? speed() * (cur.hurried ? T.hurry : 1) : 1);
     if (cur) step();
     return pt;
   }
@@ -83,7 +86,7 @@ RB.battleSeq = (function () {
       cur = { kind, cues, i: 0, t0: pt, end: endAt, resolve, hurried: false, started: performance.now(), rec: { kind, meta: meta || {}, fired: [], beats: [], hurried: false, settled: null, dur: 0 } };
       hook();
       // if frames stop arriving (a throttled tab, a stalled canvas), finish anyway
-      const wall = (endAt / speed()) * 2 + 2500;
+      const wall = (endAt / (speed() * Math.min(1, timeScale))) * 2 + 2500;
       cur.watch = later(() => { if (cur && cur.started + wall - 50 <= performance.now()) { counters.watchdogs++; settle('watchdog'); } }, wall);
       if (document.hidden) { settle('hidden'); return; }
       step();
@@ -94,7 +97,12 @@ RB.battleSeq = (function () {
     while (cur && cur.i < cur.cues.length && cur.cues[cur.i].at <= el) fire(cur.cues[cur.i++], false);
     if (cur && el >= cur.end) finish(null);
   }
+  // A failing cue never stops the frame loop or the battle: it is reported and skipped
+  // (a beat's result is still reconciled from the rules when the sequence ends).
   function fire(c, instant) {
+    try { fire1(c, instant); } catch (err) { counters.errors = (counters.errors || 0) + 1; console.error('battle cue', c.type, err); }
+  }
+  function fire1(c, instant) {
     const S = stage(), at = cur.t0 + c.at;
     cur.rec.fired.push(c.type + (c.name ? ':' + c.name : c.pose ? ':' + c.who + '=' + c.pose : c.act ? ':' + c.act : ''));
     switch (c.type) {
@@ -316,10 +324,12 @@ RB.battleSeq = (function () {
       const word = wordOf(card);
       for (const who of plan.actors) {
         const g = who === 'comp' ? TECH_GESTURE[ctx.comp] || 'book' : plan.gesture;
+        // reduced motion: one held gesture pose instead of anticipation → act → recovery
+        if (rd) { Q.push({ at: t, type: 'pose', who, pose: 'act', gesture: g, d: T.recoverAt + T.recover }); continue; }
         Q.push({ at: t, type: 'pose', who, pose: 'anticipate', gesture: g, d: T.anticipate });
         Q.push({ at: t + T.anticipate, type: 'pose', who, pose: 'act', gesture: g, d: T.act });
       }
-      Q.push({ at: t + 150, type: 'strip', word, from: plan.actors[0], to: plan.target, tm: rd ? { travel: 0, unfurl: 0, inkAt: 0, inkEnd: 0, fadeAt: 900, end: 1000 } : T.strip, d: rd ? 1000 : T.strip.end });
+      Q.push({ at: t + T.stripAt, type: 'strip', word, from: plan.actors[0], to: plan.target, tm: rd ? T.stripStill : T.strip, d: rd ? T.stripStill.end : T.strip.end });
       travelCue(Q, plan, card, fx, ctx, t + 300);
       // outcome beats, in the rules' order, from the moment the response lands
       let bt = t + T.beat, first = true;
@@ -340,7 +350,7 @@ RB.battleSeq = (function () {
         Q.push({ at, type: 'beat', f: hm });
         bt = at;
       }
-      for (const who of plan.actors) Q.push({ at: t + T.recoverAt, type: 'pose', who, pose: 'recover', gesture: who === 'comp' ? TECH_GESTURE[ctx.comp] : plan.gesture, d: T.recover });
+      if (!rd) for (const who of plan.actors) Q.push({ at: t + T.recoverAt, type: 'pose', who, pose: 'recover', gesture: who === 'comp' ? TECH_GESTURE[ctx.comp] : plan.gesture, d: T.recover });
       return { cues: Q, end: Math.max(t + T.end, bt + 200), plan, word };
     },
     // The creature's telegraphed move, as the rules resolved it (or its fizzle).
@@ -392,9 +402,9 @@ RB.battleSeq = (function () {
         if (fam === 'strike') {
           const col = kind === 'chill' ? '#cfe6ff' : null;
           if (kind === 'lie' || kind === 'mirror') Q.push({ at: t + T.foePrep, type: 'fx', name: 'pane', d: T.contact - T.foePrep + 40, p: { to: aimed } });
-          else Q.push({ at: t + T.foePrep + 10, type: 'fx', name: 'dart', d: T.contact - T.foePrep - 10, p: { to: aimed, col } });
-        } else if (kind === 'gust') Q.push({ at: t + T.foePrep + 10, type: 'fx', name: 'gust', d: 600, p: {} });
-        else if (fam === 'sweep') Q.push({ at: t + T.foePrep + 10, type: 'fx', name: 'arc', d: 560, p: { who: comp ? ['pc', 'comp'] : ['pc'], col: kind === 'flood' ? '#6aa8d8' : null, col2: kind === 'flood' ? '#e8f6ff' : null } });
+          else Q.push({ at: t + T.foePrep + 10, type: 'fx', name: 'dart', d: T.contact - T.foePrep + 40, p: { to: aimed, col: col || ctx.foeCol } });
+        } else if (kind === 'gust') Q.push({ at: t + T.foePrep + 10, type: 'fx', name: 'gust', d: 600, p: { col: ctx.foeCol } });
+        else if (fam === 'sweep') Q.push({ at: t + T.foePrep + 10, type: 'fx', name: 'arc', d: 600, p: { who: comp ? ['pc', 'comp'] : ['pc'], col: kind === 'flood' ? '#6aa8d8' : ctx.foeCol, col2: kind === 'flood' ? '#e8f6ff' : null } });
         else if (kind === 'heat') Q.push({ at: t + T.foePrep, type: 'fx', name: 'gather', d: 360, p: {} });
         else if (kind === 'charge') Q.push({ at: t + T.foePrep - 80, type: 'fx', name: 'gather', d: 640, p: {} });
         else if (kind === 'shroud') Q.push({ at: t + T.foePrep + 20, type: 'fx', name: 'mistRoll', d: 560, p: {} });
@@ -440,8 +450,8 @@ RB.battleSeq = (function () {
       const Q = [];
       Q.push({ at: 0, type: 'pose', who: 'comp', pose: 'act', gesture: 'restore', d: 520 });
       Q.push({ at: 100, type: 'fx', name: 'lift', d: 760, p: { to: 'pc' } });
+      Q.push({ at: 280, type: 'pose', who: 'pc', pose: 'recover', gesture: null, d: 460 });
       Q.push({ at: 320, type: 'beat', f: { t: 'revive' } });
-      Q.push({ at: 360, type: 'pose', who: 'pc', pose: 'recover', gesture: null, d: 420 });
       return { cues: Q, end: 840 };
     },
   };
@@ -449,5 +459,6 @@ RB.battleSeq = (function () {
   function stats() {
     return { running: !!cur, kind: cur && cur.kind, pt: Math.round(pt), timers: timers.size, layer: !!layer, pointer: !!onDown, attached: !!port, counters: Object.assign({}, counters) };
   }
-  return { T, attach, detach, tick, now, run, settle, hurry, busy: () => !!cur, choreo, planOf, stats, trace: () => trace.slice() };
+  // setTimeScale(k): slow the presentation clock (k < 1) for frame captures; tests and tools only
+  return { T, attach, detach, tick, now, run, settle, hurry, busy: () => !!cur, choreo, planOf, stats, trace: () => trace.slice(), setTimeScale: (k) => { timeScale = Math.max(0.05, Math.min(4, +k || 1)); } };
 })();

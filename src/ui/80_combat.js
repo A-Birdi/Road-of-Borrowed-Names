@@ -59,8 +59,13 @@ RB.combat = (function () {
     const lay = st && RB.battleStage.active() ? RB.battleStage.layout(S, w, h) : null;
     const hz = lay ? lay.hz : Math.round(h * 0.62);
     c.imageSmoothingEnabled = false;
-    Sc.backdrop(c, enemy.bgKey || enemy.bg || enemy.region || 'reedwake', w, h, hz, tt, reduce);
-    if (lay) RB.battleStage.draw(c, w, h, { t, pt, amb: tt, view: V(), reduce, calm: calmNow(), Sr: S, lay, stageCss, sealHeld });
+    // (the stage's arrangement, for a backdrop composer that keeps the actors' boxes clear)
+    Sc.backdrop(c, enemy.bgKey || enemy.bg || enemy.region || 'reedwake', w, h, hz, tt, reduce, lay ? { S, ex: lay.ex, ey: lay.ey, ext: lay.ext, px: lay.px, py: lay.py, ps: lay.ps, scale: lay.scale, art: enemy.art, party: lay.party } : null);
+    if (lay) {
+      // the frame loop must survive anything the presentation does wrong
+      try { RB.battleStage.draw(c, w, h, { t, pt, amb: tt, view: V(), reduce, calm: calmNow(), Sr: S, lay, stageCss, sealHeld }); }
+      catch (err) { if (!draw.failed) console.error('battle stage', err); draw.failed = true; }
+    }
     const dt = performance.now() - t0;
     cost.n++; cost.sum += dt; cost.max = Math.max(cost.max, dt);
     if (RB.battleSeq.busy()) { cost.seqN++; cost.seqSum += dt; cost.seqMax = Math.max(cost.seqMax, dt); }
@@ -84,9 +89,8 @@ RB.combat = (function () {
     let cands = pool;
     if (solo || it.target === 'both') cands = pool.filter((x) => !x.neg);
     if (!cands.length) cands = pool;
-    // the line chosen when the move was telegraphed stays put while the exchange plays out
-    const busy = RB.battleSeq.busy();
-    if (!busy || !linePick || linePick.it !== it) linePick = { it, i: (st.round + st.knots) % cands.length };
+    // the line chosen when the move was telegraphed stays put for the whole exchange
+    if (!linePick || linePick.it !== it || linePick.round !== st.round) linePick = { it, round: st.round, i: (st.round + st.knots) % cands.length };
     const pick = cands[linePick.i % cands.length];
     const nm = { pc: s.player.nameJp || s.player.name, comp: s.comp ? RB.jp.plain(RB.content.chars[s.comp].name.jp) : '' };
     const nmEn = { pc: s.player.name, comp: s.comp ? RB.content.chars[s.comp].name.en : '' };
@@ -488,7 +492,7 @@ RB.combat = (function () {
   // contact on each actual target → their reactions → recovery.
   function playEnemy(it, fx, before, wardBlock) {
     view = before;
-    const ctx = seqCtx({ view: before, wardBlock });
+    const ctx = seqCtx({ view: before, wardBlock, foeCol: (enemy.artOpts && enemy.artOpts.col) || null });
     const E = RB.battleSeq.choreo.enemy(it, fx, ctx);
     phase = 'enemy';
     return RB.battleSeq.run('enemy', tagSide(E.cues, 'enemy'), { end: E.end, kind: it.kind, target: it.target, fx: fx.map((f) => f.t + (f.who ? ':' + f.who : '')) });

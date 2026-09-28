@@ -147,7 +147,14 @@ RB.battleStage = (function () {
     const hz = Math.max(0, Math.min(h - 1, Math.round(Math.min(ey + 36 * scale, foot - ph * 0.66))));
     const u = scale;
     const foeR = Math.round(Math.min(ext.right - ext.left, ext.bottom - ext.top) * 0.42 * scale);
-    S.lay = { Sr, scale, ps, pw, ph, pc, comp, ex, ey, ky, hz, ext, u, foeR, wardR: Math.round(ph * 0.34), F, AN, fallback: !!B.fallback };
+    // the party's box in canvas px (both frames, with room for gestures and seals), for the
+    // backdrop composer to keep clear; px/py/ps as the backdrop expects (top-left, scale)
+    const fr = (f) => ({ x0: f.x - AN.x * ps, y0: f.y - AN.y * ps, x1: f.x + (F.w - AN.x) * ps, y1: f.y + (F.h - AN.y) * ps });
+    const boxes = [fr(pc)].concat(comp ? [fr(comp)] : []);
+    const mx = Math.round(pw * 0.2), my = Math.round(ph * 0.12);
+    const party = { x: Math.min(...boxes.map((q) => q.x0)) - mx, y: Math.min(...boxes.map((q) => q.y0)) - my };
+    party.w = Math.max(...boxes.map((q) => q.x1)) + mx - party.x; party.h = Math.max(...boxes.map((q) => q.y1)) - party.y;
+    S.lay = { Sr, scale, ps, pw, ph, pc, comp, ex, ey, ky, hz, ext, u, foeR, wardR: Math.round(ph * 0.34), F, AN, party, px: party.x + mx, py: party.y + my, fallback: !!B.fallback };
     return S.lay;
   }
   function knotAt(i, n) {
@@ -181,7 +188,7 @@ RB.battleStage = (function () {
     return { x, y };
   }
   function cssPerArt() { return (RB.render.viewSize().scale || 1) / RB.render.ART; }
-  const A = { pt: anchor, get u() { return S.lay.u; }, get foeR() { return S.lay.foeR; }, get wardR() { return S.lay.wardR; }, get partyW() { return S.lay.comp ? S.lay.comp.x - S.lay.pc.x + S.lay.pw : S.lay.pw; }, get knotSpan() { return 60 * S.lay.scale; } };
+  const A = { pt: anchor, get u() { return S.lay.u; }, get foeR() { return S.lay.foeR; }, get wardR() { return S.lay.wardR; }, get partyW() { return S.lay.comp ? Math.abs(S.lay.comp.x - S.lay.pc.x) + S.lay.pw : S.lay.pw; }, get knotSpan() { return 60 * S.lay.scale; } };
 
   // ---- actions (set by the sequencer; times on the presentation clock) --------------------------
   function pose(who, p, gesture, d, now) {
@@ -201,7 +208,7 @@ RB.battleStage = (function () {
   const NUM_COL = { hit: '#ffffff', block: '#cfe6ff', heal: '#c8f0b0', cost: '#e8d0c8' };
   function number(to, text, kind, now, d) {
     if (!S) return;
-    S.nums.push({ to, text: String(text), col: NUM_COL[kind] || '#ffffff', t0: now, d: d || 900 });
+    S.nums.push({ to, text: String(text), kind, col: NUM_COL[kind] || '#ffffff', t0: now, d: d || 900 });
     while (S.nums.length > 8) S.nums.shift();
   }
   function finalFoe(on) { if (S) S.final = !!on; }
@@ -301,7 +308,10 @@ RB.battleStage = (function () {
       const k = cl((fr.pt - n.t0) / n.d), q = anchor(n.to, 'head');
       info.nums.push(n.to + ':' + n.text);
       const rise = reduce ? 0 : Math.round(RB.battleFx.ease(Math.min(1, k * 2)) * 8) * u;
-      RB.battleFx.digits(c, q.x + 10 * u, q.y - 16 * u - rise, n.text, du, n.col, k < 0.75 ? 1 : 1 - (k - 0.75) / 0.25);
+      const na = reduce || k < 0.75 ? 1 : 1 - (k - 0.75) / 0.25;
+      RB.battleFx.digits(c, q.x + 10 * u, q.y - 16 * u - rise, n.text, du, n.col, na);
+      // what a ward absorbed carries a seal mark, so it never reads as damage taken
+      if (n.kind === 'block') RB.battleFx.sealMark(c, q.x + 10 * u - (n.text.length * 2 + 5) * du, q.y - 13 * u - rise, u, na);
     }
     placeStrip(fr);
     S.drawn++;
@@ -351,7 +361,7 @@ RB.battleStage = (function () {
     return {
       active: true, effects: S.effects.length, nums: S.nums.length, strips: document.querySelectorAll('.cb-strip').length, layers: document.querySelectorAll('.cb-fx').length,
       actors: { pc: S.actors.pc && S.actors.pc.pose, comp: S.actors.comp && S.actors.comp.pose }, foe: S.foe && S.foe.act, final: S.final, drawn: S.drawn,
-      lay: S.lay && { scale: S.lay.scale, ps: S.lay.ps, pc: S.lay.pc, comp: S.lay.comp, ex: S.lay.ex, ey: S.lay.ey, frame: S.lay.F, fallback: S.lay.fallback },
+      lay: S.lay && { scale: S.lay.scale, ps: S.lay.ps, pc: S.lay.pc, comp: S.lay.comp, ex: S.lay.ex, ey: S.lay.ey, frame: S.lay.F, party: S.lay.party, px: S.lay.px, py: S.lay.py, fallback: S.lay.fallback },
       anchors: S.anchors, frame: S.frame || null, cssPerArt: cssPerArt(),
       strip: S.strip && { from: S.strip.from, to: S.strip.to, text: S.strip.el.textContent, rect: rectOf(S.strip.el), opacity: +S.strip.el.style.opacity || 0 },
     };

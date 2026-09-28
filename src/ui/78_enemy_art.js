@@ -178,7 +178,9 @@ RB.enemyArt = (function () {
       const b = bl(k);
       m.dy = 2 * b; m.sy = 1 - 0.02 * b; m.rate = 0.6;
     }
-    if (still) return { dx: 0, dy: 0, lean: 0, ripple: 0, sy: 1, frame: m.frame, rate: 0, alpha: m.alpha, glow: 0 };
+    // reduced motion: no movement, no posture or frame changes, no fades; only the
+    // settled (released) creature shows as it will stay, at once
+    if (still) return { dx: 0, dy: 0, lean: 0, ripple: 0, sy: 1, frame: null, rate: 0, alpha: a === 'settle' ? 0.45 : 1, glow: 0 };
     return m;
   }
   function pickFrame(spec, which) {

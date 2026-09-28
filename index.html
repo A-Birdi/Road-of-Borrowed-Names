@@ -30067,7 +30067,9 @@ RB.enemyArt = (function () {
       const b = bl(k);
       m.dy = 2 * b; m.sy = 1 - 0.02 * b; m.rate = 0.6;
     }
-    if (still) return { dx: 0, dy: 0, lean: 0, ripple: 0, sy: 1, frame: m.frame, rate: 0, alpha: m.alpha, glow: 0 };
+    // reduced motion: no movement, no posture or frame changes, no fades; only the
+    // settled (released) creature shows as it will stay, at once
+    if (still) return { dx: 0, dy: 0, lean: 0, ripple: 0, sy: 1, frame: null, rate: 0, alpha: a === 'settle' ? 0.45 : 1, glow: 0 };
     return m;
   }
   function pickFrame(spec, which) {
@@ -31520,8 +31522,13 @@ RB.combat = (function () {
     const lay = st && RB.battleStage.active() ? RB.battleStage.layout(S, w, h) : null;
     const hz = lay ? lay.hz : Math.round(h * 0.62);
     c.imageSmoothingEnabled = false;
-    Sc.backdrop(c, enemy.bgKey || enemy.bg || enemy.region || 'reedwake', w, h, hz, tt, reduce);
-    if (lay) RB.battleStage.draw(c, w, h, { t, pt, amb: tt, view: V(), reduce, calm: calmNow(), Sr: S, lay, stageCss, sealHeld });
+    // (the stage's arrangement, for a backdrop composer that keeps the actors' boxes clear)
+    Sc.backdrop(c, enemy.bgKey || enemy.bg || enemy.region || 'reedwake', w, h, hz, tt, reduce, lay ? { S, ex: lay.ex, ey: lay.ey, ext: lay.ext, px: lay.px, py: lay.py, ps: lay.ps, scale: lay.scale, art: enemy.art, party: lay.party } : null);
+    if (lay) {
+      // the frame loop must survive anything the presentation does wrong
+      try { RB.battleStage.draw(c, w, h, { t, pt, amb: tt, view: V(), reduce, calm: calmNow(), Sr: S, lay, stageCss, sealHeld }); }
+      catch (err) { if (!draw.failed) console.error('battle stage', err); draw.failed = true; }
+    }
     const dt = performance.now() - t0;
     cost.n++; cost.sum += dt; cost.max = Math.max(cost.max, dt);
     if (RB.battleSeq.busy()) { cost.seqN++; cost.seqSum += dt; cost.seqMax = Math.max(cost.seqMax, dt); }
@@ -31545,9 +31552,8 @@ RB.combat = (function () {
     let cands = pool;
     if (solo || it.target === 'both') cands = pool.filter((x) => !x.neg);
     if (!cands.length) cands = pool;
-    // the line chosen when the move was telegraphed stays put while the exchange plays out
-    const busy = RB.battleSeq.busy();
-    if (!busy || !linePick || linePick.it !== it) linePick = { it, i: (st.round + st.knots) % cands.length };
+    // the line chosen when the move was telegraphed stays put for the whole exchange
+    if (!linePick || linePick.it !== it || linePick.round !== st.round) linePick = { it, round: st.round, i: (st.round + st.knots) % cands.length };
     const pick = cands[linePick.i % cands.length];
     const nm = { pc: s.player.nameJp || s.player.name, comp: s.comp ? RB.jp.plain(RB.content.chars[s.comp].name.jp) : '' };
     const nmEn = { pc: s.player.name, comp: s.comp ? RB.content.chars[s.comp].name.en : '' };
@@ -31949,7 +31955,7 @@ RB.combat = (function () {
   // contact on each actual target → their reactions → recovery.
   function playEnemy(it, fx, before, wardBlock) {
     view = before;
-    const ctx = seqCtx({ view: before, wardBlock });
+    const ctx = seqCtx({ view: before, wardBlock, foeCol: (enemy.artOpts && enemy.artOpts.col) || null });
     const E = RB.battleSeq.choreo.enemy(it, fx, ctx);
     phase = 'enemy';
     return RB.battleSeq.run('enemy', tagSide(E.cues, 'enemy'), { end: E.end, kind: it.kind, target: it.target, fx: fx.map((f) => f.t + (f.who ? ':' + f.who : '')) });
@@ -32517,12 +32523,15 @@ RB.battleSeq = (function () {
   'use strict';
   // ---- tuning (presentation ms at normal speed) ----------------------------------------------
   const T = {
-    anticipate: 170, act: 400, strip: { travel: 380, unfurl: 220, inkAt: 150, inkEnd: 520, fadeAt: 1030, end: 1230 },
+    // the word: travels and unrolls, the ink writes it (≈0.54 s in), it stays, and has
+    // gone by the end of the response (the log keeps it)
+    anticipate: 170, act: 400, stripAt: 120, strip: { travel: 320, unfurl: 200, inkAt: 120, inkEnd: 420, fadeAt: 850, end: 1000 },
+    stripStill: { travel: 0, unfurl: 0, inkAt: 0, inkEnd: 0, fadeAt: 880, end: 980 },
     beat: 560, beatGap: 150, recoverAt: 900, recover: 240, end: 1140,
     foePrep: 320, foeExec: 380, contact: 560, foeRecover: 300, secondTarget: 120, react: 420,
     finishHold: 1000, speed: { normal: 1, fast: 1.4, instant: 2 }, hurry: 4,
   };
-  let pt = 0, lastT = null, cur = null, port = null;
+  let pt = 0, lastT = null, cur = null, port = null, timeScale = 1; // timeScale: tests and captures only
   const trace = [];
   const counters = { runs: 0, done: 0, settled: 0, hurried: 0, beats: 0, watchdogs: 0 };
   const timers = new Set();
@@ -32556,7 +32565,7 @@ RB.battleSeq = (function () {
   function tick(t) {
     const dt = lastT == null ? 16 : Math.max(0, Math.min(100, t - lastT));
     lastT = t;
-    pt += dt * (cur ? speed() * (cur.hurried ? T.hurry : 1) : 1);
+    pt += dt * timeScale * (cur ? speed() * (cur.hurried ? T.hurry : 1) : 1);
     if (cur) step();
     return pt;
   }
@@ -32573,7 +32582,7 @@ RB.battleSeq = (function () {
       cur = { kind, cues, i: 0, t0: pt, end: endAt, resolve, hurried: false, started: performance.now(), rec: { kind, meta: meta || {}, fired: [], beats: [], hurried: false, settled: null, dur: 0 } };
       hook();
       // if frames stop arriving (a throttled tab, a stalled canvas), finish anyway
-      const wall = (endAt / speed()) * 2 + 2500;
+      const wall = (endAt / (speed() * Math.min(1, timeScale))) * 2 + 2500;
       cur.watch = later(() => { if (cur && cur.started + wall - 50 <= performance.now()) { counters.watchdogs++; settle('watchdog'); } }, wall);
       if (document.hidden) { settle('hidden'); return; }
       step();
@@ -32584,7 +32593,12 @@ RB.battleSeq = (function () {
     while (cur && cur.i < cur.cues.length && cur.cues[cur.i].at <= el) fire(cur.cues[cur.i++], false);
     if (cur && el >= cur.end) finish(null);
   }
+  // A failing cue never stops the frame loop or the battle: it is reported and skipped
+  // (a beat's result is still reconciled from the rules when the sequence ends).
   function fire(c, instant) {
+    try { fire1(c, instant); } catch (err) { counters.errors = (counters.errors || 0) + 1; console.error('battle cue', c.type, err); }
+  }
+  function fire1(c, instant) {
     const S = stage(), at = cur.t0 + c.at;
     cur.rec.fired.push(c.type + (c.name ? ':' + c.name : c.pose ? ':' + c.who + '=' + c.pose : c.act ? ':' + c.act : ''));
     switch (c.type) {
@@ -32806,10 +32820,12 @@ RB.battleSeq = (function () {
       const word = wordOf(card);
       for (const who of plan.actors) {
         const g = who === 'comp' ? TECH_GESTURE[ctx.comp] || 'book' : plan.gesture;
+        // reduced motion: one held gesture pose instead of anticipation → act → recovery
+        if (rd) { Q.push({ at: t, type: 'pose', who, pose: 'act', gesture: g, d: T.recoverAt + T.recover }); continue; }
         Q.push({ at: t, type: 'pose', who, pose: 'anticipate', gesture: g, d: T.anticipate });
         Q.push({ at: t + T.anticipate, type: 'pose', who, pose: 'act', gesture: g, d: T.act });
       }
-      Q.push({ at: t + 150, type: 'strip', word, from: plan.actors[0], to: plan.target, tm: rd ? { travel: 0, unfurl: 0, inkAt: 0, inkEnd: 0, fadeAt: 900, end: 1000 } : T.strip, d: rd ? 1000 : T.strip.end });
+      Q.push({ at: t + T.stripAt, type: 'strip', word, from: plan.actors[0], to: plan.target, tm: rd ? T.stripStill : T.strip, d: rd ? T.stripStill.end : T.strip.end });
       travelCue(Q, plan, card, fx, ctx, t + 300);
       // outcome beats, in the rules' order, from the moment the response lands
       let bt = t + T.beat, first = true;
@@ -32830,7 +32846,7 @@ RB.battleSeq = (function () {
         Q.push({ at, type: 'beat', f: hm });
         bt = at;
       }
-      for (const who of plan.actors) Q.push({ at: t + T.recoverAt, type: 'pose', who, pose: 'recover', gesture: who === 'comp' ? TECH_GESTURE[ctx.comp] : plan.gesture, d: T.recover });
+      if (!rd) for (const who of plan.actors) Q.push({ at: t + T.recoverAt, type: 'pose', who, pose: 'recover', gesture: who === 'comp' ? TECH_GESTURE[ctx.comp] : plan.gesture, d: T.recover });
       return { cues: Q, end: Math.max(t + T.end, bt + 200), plan, word };
     },
     // The creature's telegraphed move, as the rules resolved it (or its fizzle).
@@ -32882,9 +32898,9 @@ RB.battleSeq = (function () {
         if (fam === 'strike') {
           const col = kind === 'chill' ? '#cfe6ff' : null;
           if (kind === 'lie' || kind === 'mirror') Q.push({ at: t + T.foePrep, type: 'fx', name: 'pane', d: T.contact - T.foePrep + 40, p: { to: aimed } });
-          else Q.push({ at: t + T.foePrep + 10, type: 'fx', name: 'dart', d: T.contact - T.foePrep - 10, p: { to: aimed, col } });
-        } else if (kind === 'gust') Q.push({ at: t + T.foePrep + 10, type: 'fx', name: 'gust', d: 600, p: {} });
-        else if (fam === 'sweep') Q.push({ at: t + T.foePrep + 10, type: 'fx', name: 'arc', d: 560, p: { who: comp ? ['pc', 'comp'] : ['pc'], col: kind === 'flood' ? '#6aa8d8' : null, col2: kind === 'flood' ? '#e8f6ff' : null } });
+          else Q.push({ at: t + T.foePrep + 10, type: 'fx', name: 'dart', d: T.contact - T.foePrep + 40, p: { to: aimed, col: col || ctx.foeCol } });
+        } else if (kind === 'gust') Q.push({ at: t + T.foePrep + 10, type: 'fx', name: 'gust', d: 600, p: { col: ctx.foeCol } });
+        else if (fam === 'sweep') Q.push({ at: t + T.foePrep + 10, type: 'fx', name: 'arc', d: 600, p: { who: comp ? ['pc', 'comp'] : ['pc'], col: kind === 'flood' ? '#6aa8d8' : ctx.foeCol, col2: kind === 'flood' ? '#e8f6ff' : null } });
         else if (kind === 'heat') Q.push({ at: t + T.foePrep, type: 'fx', name: 'gather', d: 360, p: {} });
         else if (kind === 'charge') Q.push({ at: t + T.foePrep - 80, type: 'fx', name: 'gather', d: 640, p: {} });
         else if (kind === 'shroud') Q.push({ at: t + T.foePrep + 20, type: 'fx', name: 'mistRoll', d: 560, p: {} });
@@ -32930,8 +32946,8 @@ RB.battleSeq = (function () {
       const Q = [];
       Q.push({ at: 0, type: 'pose', who: 'comp', pose: 'act', gesture: 'restore', d: 520 });
       Q.push({ at: 100, type: 'fx', name: 'lift', d: 760, p: { to: 'pc' } });
+      Q.push({ at: 280, type: 'pose', who: 'pc', pose: 'recover', gesture: null, d: 460 });
       Q.push({ at: 320, type: 'beat', f: { t: 'revive' } });
-      Q.push({ at: 360, type: 'pose', who: 'pc', pose: 'recover', gesture: null, d: 420 });
       return { cues: Q, end: 840 };
     },
   };
@@ -32939,7 +32955,8 @@ RB.battleSeq = (function () {
   function stats() {
     return { running: !!cur, kind: cur && cur.kind, pt: Math.round(pt), timers: timers.size, layer: !!layer, pointer: !!onDown, attached: !!port, counters: Object.assign({}, counters) };
   }
-  return { T, attach, detach, tick, now, run, settle, hurry, busy: () => !!cur, choreo, planOf, stats, trace: () => trace.slice() };
+  // setTimeScale(k): slow the presentation clock (k < 1) for frame captures; tests and tools only
+  return { T, attach, detach, tick, now, run, settle, hurry, busy: () => !!cur, choreo, planOf, stats, trace: () => trace.slice(), setTimeScale: (k) => { timeScale = Math.max(0.05, Math.min(4, +k || 1)); } };
 })();
 
 
@@ -33093,7 +33110,14 @@ RB.battleStage = (function () {
     const hz = Math.max(0, Math.min(h - 1, Math.round(Math.min(ey + 36 * scale, foot - ph * 0.66))));
     const u = scale;
     const foeR = Math.round(Math.min(ext.right - ext.left, ext.bottom - ext.top) * 0.42 * scale);
-    S.lay = { Sr, scale, ps, pw, ph, pc, comp, ex, ey, ky, hz, ext, u, foeR, wardR: Math.round(ph * 0.34), F, AN, fallback: !!B.fallback };
+    // the party's box in canvas px (both frames, with room for gestures and seals), for the
+    // backdrop composer to keep clear; px/py/ps as the backdrop expects (top-left, scale)
+    const fr = (f) => ({ x0: f.x - AN.x * ps, y0: f.y - AN.y * ps, x1: f.x + (F.w - AN.x) * ps, y1: f.y + (F.h - AN.y) * ps });
+    const boxes = [fr(pc)].concat(comp ? [fr(comp)] : []);
+    const mx = Math.round(pw * 0.2), my = Math.round(ph * 0.12);
+    const party = { x: Math.min(...boxes.map((q) => q.x0)) - mx, y: Math.min(...boxes.map((q) => q.y0)) - my };
+    party.w = Math.max(...boxes.map((q) => q.x1)) + mx - party.x; party.h = Math.max(...boxes.map((q) => q.y1)) - party.y;
+    S.lay = { Sr, scale, ps, pw, ph, pc, comp, ex, ey, ky, hz, ext, u, foeR, wardR: Math.round(ph * 0.34), F, AN, party, px: party.x + mx, py: party.y + my, fallback: !!B.fallback };
     return S.lay;
   }
   function knotAt(i, n) {
@@ -33127,7 +33151,7 @@ RB.battleStage = (function () {
     return { x, y };
   }
   function cssPerArt() { return (RB.render.viewSize().scale || 1) / RB.render.ART; }
-  const A = { pt: anchor, get u() { return S.lay.u; }, get foeR() { return S.lay.foeR; }, get wardR() { return S.lay.wardR; }, get partyW() { return S.lay.comp ? S.lay.comp.x - S.lay.pc.x + S.lay.pw : S.lay.pw; }, get knotSpan() { return 60 * S.lay.scale; } };
+  const A = { pt: anchor, get u() { return S.lay.u; }, get foeR() { return S.lay.foeR; }, get wardR() { return S.lay.wardR; }, get partyW() { return S.lay.comp ? Math.abs(S.lay.comp.x - S.lay.pc.x) + S.lay.pw : S.lay.pw; }, get knotSpan() { return 60 * S.lay.scale; } };
 
   // ---- actions (set by the sequencer; times on the presentation clock) --------------------------
   function pose(who, p, gesture, d, now) {
@@ -33147,7 +33171,7 @@ RB.battleStage = (function () {
   const NUM_COL = { hit: '#ffffff', block: '#cfe6ff', heal: '#c8f0b0', cost: '#e8d0c8' };
   function number(to, text, kind, now, d) {
     if (!S) return;
-    S.nums.push({ to, text: String(text), col: NUM_COL[kind] || '#ffffff', t0: now, d: d || 900 });
+    S.nums.push({ to, text: String(text), kind, col: NUM_COL[kind] || '#ffffff', t0: now, d: d || 900 });
     while (S.nums.length > 8) S.nums.shift();
   }
   function finalFoe(on) { if (S) S.final = !!on; }
@@ -33247,7 +33271,10 @@ RB.battleStage = (function () {
       const k = cl((fr.pt - n.t0) / n.d), q = anchor(n.to, 'head');
       info.nums.push(n.to + ':' + n.text);
       const rise = reduce ? 0 : Math.round(RB.battleFx.ease(Math.min(1, k * 2)) * 8) * u;
-      RB.battleFx.digits(c, q.x + 10 * u, q.y - 16 * u - rise, n.text, du, n.col, k < 0.75 ? 1 : 1 - (k - 0.75) / 0.25);
+      const na = reduce || k < 0.75 ? 1 : 1 - (k - 0.75) / 0.25;
+      RB.battleFx.digits(c, q.x + 10 * u, q.y - 16 * u - rise, n.text, du, n.col, na);
+      // what a ward absorbed carries a seal mark, so it never reads as damage taken
+      if (n.kind === 'block') RB.battleFx.sealMark(c, q.x + 10 * u - (n.text.length * 2 + 5) * du, q.y - 13 * u - rise, u, na);
     }
     placeStrip(fr);
     S.drawn++;
@@ -33297,7 +33324,7 @@ RB.battleStage = (function () {
     return {
       active: true, effects: S.effects.length, nums: S.nums.length, strips: document.querySelectorAll('.cb-strip').length, layers: document.querySelectorAll('.cb-fx').length,
       actors: { pc: S.actors.pc && S.actors.pc.pose, comp: S.actors.comp && S.actors.comp.pose }, foe: S.foe && S.foe.act, final: S.final, drawn: S.drawn,
-      lay: S.lay && { scale: S.lay.scale, ps: S.lay.ps, pc: S.lay.pc, comp: S.lay.comp, ex: S.lay.ex, ey: S.lay.ey, frame: S.lay.F, fallback: S.lay.fallback },
+      lay: S.lay && { scale: S.lay.scale, ps: S.lay.ps, pc: S.lay.pc, comp: S.lay.comp, ex: S.lay.ex, ey: S.lay.ey, frame: S.lay.F, party: S.lay.party, px: S.lay.px, py: S.lay.py, fallback: S.lay.fallback },
       anchors: S.anchors, frame: S.frame || null, cssPerArt: cssPerArt(),
       strip: S.strip && { from: S.strip.from, to: S.strip.to, text: S.strip.el.textContent, rect: rectOf(S.strip.el), opacity: +S.strip.el.style.opacity || 0 },
     };
@@ -33384,6 +33411,29 @@ RB.battleFx = (function () {
     const cx = mx - (dy / len) * bend, cy = my + (dx / len) * bend;
     return { x: (1 - s) * (1 - s) * a.x + 2 * s * (1 - s) * cx + s * s * b.x, y: (1 - s) * (1 - s) * a.y + 2 * s * (1 - s) * cy + s * s * b.y };
   }
+  // A tapered brush stroke along path(s) (s in 0..1) between `from` and `to`:
+  // an ink edge, the body in `col`, a light core near the head. Solid, whole pixels.
+  function brush(c, path, len, from, to, u, col, alpha, th) {
+    if (to <= from || alpha <= 0.01) return;
+    th = th || 2 * u;
+    const n = Math.max(4, Math.round((len * (to - from)) / u));
+    const pts = [];
+    for (let i = 0; i <= n; i++) { const q = path(from + ((to - from) * i) / n); pts.push([Math.round(q.x), Math.round(q.y), i / n]); }
+    c.globalAlpha = clamp01(alpha * 0.8);
+    c.fillStyle = P.ink;
+    for (const [x, y, f] of pts) { const w = Math.max(u, Math.round(th * (0.35 + 0.65 * f))) + 2 * u; c.fillRect(x - (w >> 1), y - (w >> 1), w, w); }
+    c.globalAlpha = clamp01(alpha);
+    c.fillStyle = col;
+    for (const [x, y, f] of pts) { const w = Math.max(u, Math.round(th * (0.35 + 0.65 * f))); c.fillRect(x - (w >> 1), y - (w >> 1), w, w); }
+    c.fillStyle = '#fffaf0';
+    for (const [x, y, f] of pts) if (f > 0.7) c.fillRect(x - (u >> 1), y - (u >> 1), u, u);
+    c.globalAlpha = 1;
+  }
+  // where a blow leaves the creature: its edge on the side facing the target
+  function edge(A, b) {
+    const o = A.pt('foe', 'core'), dx = b.x - o.x, dy = b.y - o.y, n = Math.hypot(dx, dy) || 1;
+    return { x: o.x + (dx / n) * A.foeR * 0.6, y: o.y + (dy / n) * A.foeR * 0.6 };
+  }
   function ring(c, x, y, r, u, col, alpha) {
     if (alpha != null && alpha <= 0.01) return;
     c.globalAlpha = clamp01(alpha == null ? 1 : alpha);
@@ -33401,6 +33451,24 @@ RB.battleFx = (function () {
       c.fillRect(Math.round(x + Math.cos(a) * rx), Math.round(y + Math.sin(a) * ry), u, u);
     }
     c.globalAlpha = 1;
+  }
+  // a pixel block with a one-pixel dark edge (reads on light and dark backdrops)
+  function dot(c, x, y, w, h, col, alpha, edge) {
+    R(c, x - 1, y - 1, w + 2, h + 2, edge || P.ink, alpha * 0.85);
+    R(c, x, y, w, h, col, alpha);
+  }
+  // a flame pip (one per Heat level): 5×7 creature px, outlined, its tip flickering
+  const FLAME = ['..o..', '.ooo.', '.oyo.', 'ooyyo', 'oyyyo', 'oyyyo', '.ooo.'];
+  function flame(c, x, y, u, t, still, i) {
+    const tip = still ? 0 : Math.sin(t / 110 + i * 1.7) > 0.3 ? 1 : 0;
+    c.fillStyle = '#5a2418';
+    for (let r = 0; r < 7; r++) for (let q = 0; q < 5; q++) if (FLAME[r][q] !== '.') c.fillRect(Math.round(x + (q - 1) * u) - 0, Math.round(y + (r - tip - 1) * u), 3 * u, 3 * u);
+    for (let r = 0; r < 7; r++) for (let q = 0; q < 5; q++) {
+      const ch = FLAME[r][q];
+      if (ch === '.') continue;
+      c.fillStyle = ch === 'y' ? '#ffe08a' : P.ember;
+      c.fillRect(Math.round(x + q * u), Math.round(y + (r - tip) * u), u, u);
+    }
   }
   // a small paper tag (a ward seal): paper face, an ink band, a darker edge
   function tag(c, x, y, u, alpha, lit) {
@@ -33663,44 +33731,48 @@ RB.battleFx = (function () {
       const cr = still ? 1 : ease(seg(k, 0.3, 0.7));
       if (cr > 0) line(c, { x: o.x - r * 0.7, y: o.y - r * 0.7 }, { x: o.x + r * 0.7, y: o.y + r * 0.7 }, u, '#ffffff', 1 - seg(k, 0.75, 1), { to: cr, wob: 2 * u, waves: 5, step: 1 });
     },
-    // the enemy's focused blow: a short ink streak from the creature to its one target
+    // the enemy's focused blow: a tapered stroke in the creature's own colour,
+    // from it to the one target it aims at (slightly arched)
     dart(c, e, k, A, t, still) {
       if (still) return;
-      const u = A.u, a = A.pt('foe', 'core'), b = A.pt(e.p.to, 'chest');
-      const col = e.p.col || P.ink2;
-      const s = ease(k), tail = Math.max(0, s - 0.3);
-      line(c, a, b, u, col, 0.9, { from: tail, to: s, th: 2 * u, step: 1 });
-      line(c, a, b, u, e.p.glint || P.paper, 0.9, { from: Math.max(0, s - 0.08), to: s, th: u, step: 1 });
+      const u = A.u, b = A.pt(e.p.to, 'chest'), a = edge(A, b);
+      const len = Math.hypot(b.x - a.x, b.y - a.y), bend = 0.12 * len;
+      const s = ease(k), tail = Math.max(0, s - 0.45);
+      brush(c, (x) => qpt(a, b, bend, x), len, tail, s, u, e.p.col || P.ink2, 1 - seg(k, 0.85, 1), 3 * u);
     },
-    // a broad sweep: one arc that passes over every affected ally in turn
+    // a broad sweep: one stroke that passes over every affected ally in turn
     arc(c, e, k, A, t, still) {
       if (still) return;
       const u = A.u, who = e.p.who || [];
-      const pts = [A.pt('foe', 'core')].concat(who.map((w) => A.pt(w, 'chest')));
-      if (pts.length < 2) return;
+      const tg = who.map((w) => A.pt(w, 'chest'));
+      if (!tg.length) return;
+      const pts = [edge(A, tg[0])].concat(tg);
       const last = pts[pts.length - 1];
-      const end = { x: last.x + 22 * u, y: last.y + 4 * u };
-      pts.push(end);
-      const col = e.p.col || P.ink2, col2 = e.p.col2 || P.paper;
-      const s = ease(k), tail = Math.max(0, s - 0.35);
-      const segs = pts.length - 1;
-      for (let i = 0; i < segs; i++) {
-        const a0 = i / segs, a1 = (i + 1) / segs;
-        const f = clamp01((tail - a0) / (a1 - a0)), g = clamp01((s - a0) / (a1 - a0));
-        if (g <= 0 || f >= 1) continue;
-        const bend = i === 0 ? 36 * u : -10 * u;
-        curve(c, pts[i], pts[i + 1], bend, u, col, 0.85, f, g);
-        curve(c, { x: pts[i].x, y: pts[i].y - 3 * u }, { x: pts[i + 1].x, y: pts[i + 1].y - 3 * u }, bend, u, col2, 0.6, f, g);
-      }
+      pts.push({ x: last.x + 24 * u, y: last.y - 6 * u });
+      const segs = pts.length - 1, lens = [];
+      for (let i = 0; i < segs; i++) lens.push(Math.hypot(pts[i + 1].x - pts[i].x, pts[i + 1].y - pts[i].y));
+      const total = lens.reduce((a, b) => a + b, 0) || 1;
+      const path = (x) => {
+        let d = x * total;
+        for (let i = 0; i < segs; i++) {
+          if (d <= lens[i] || i === segs - 1) return qpt(pts[i], pts[i + 1], i === 0 ? -0.3 * lens[i] : 0.25 * lens[i], Math.min(1, d / (lens[i] || 1)));
+          d -= lens[i];
+        }
+        return pts[pts.length - 1];
+      };
+      const s = ease(k), tail = Math.max(0, s - 0.4);
+      brush(c, path, total, tail, s, u, e.p.col || P.ink2, 1 - seg(k, 0.85, 1), 4 * u);
+      if (e.p.col2) brush(c, (x) => { const q = path(x); return { x: q.x, y: q.y - 3 * u }; }, total, Math.max(tail, s - 0.15), s, u, e.p.col2, 0.8 * (1 - seg(k, 0.85, 1)), 2 * u);
     },
-    // Gust: wind lines rake across the party from the creature's side
+    // Gust: wind strokes rake across the party from the creature's side
     gust(c, e, k, A, t, still) {
       if (still) return;
       const u = A.u, o = A.pt('party', 'chest'), f = A.pt('foe', 'core');
-      for (let i = 0; i < 5; i++) {
-        const s = seg(k, i * 0.07, 0.7 + i * 0.06), y = o.y + (i - 2) * 10 * u;
-        const a = { x: f.x - 10 * u, y: y - 20 * u + i * 4 * u }, b = { x: o.x - 60 * u, y: y + 6 * u };
-        curve(c, a, b, 8 * u, u, '#eef2f6', 0.75 * bell(s), Math.max(0, s - 0.3), s);
+      for (let i = 0; i < 4; i++) {
+        const s = ease(seg(k, i * 0.08, 0.7 + i * 0.06)), y = o.y + (i - 1.5) * 12 * u;
+        const a = { x: f.x - 10 * u, y: y - 24 * u + i * 4 * u }, b = { x: o.x - 60 * u, y: y + 6 * u };
+        const len = Math.hypot(b.x - a.x, b.y - a.y);
+        brush(c, (x) => qpt(a, b, 0.1 * len, x), len, Math.max(0, s - 0.3), s, u, i % 2 ? '#eef2f6' : (e.p.col || '#dfe6ee'), 0.85 * (1 - seg(k, 0.8, 1)), 2 * u);
       }
     },
     // contact on an ally: a compact star and four flecks (brief; one per real hit)
@@ -33749,7 +33821,7 @@ RB.battleFx = (function () {
       const u = A.u, o = A.pt('foe', 'top');
       for (let i = 0; i < 10; i++) {
         const x = o.x + (hs(i, 8) - 0.5) * A.foeR * 1.2, y = o.y + A.foeR * 0.3 - ease(k) * (20 + hs(i, 3) * 26) * u;
-        R(c, x + Math.sin(t / 90 + i) * u, y, u, 2 * u, i % 2 ? P.ember : P.ember2, 1 - k);
+        dot(c, x + Math.sin(t / 90 + i) * u, y, 2 * u, 2 * u, i % 2 ? P.ember : '#ffe08a', 1 - k, '#5a2418');
       }
       K().halo(c, A.pt('foe', 'core').x, A.pt('foe', 'core').y, Math.round(A.foeR * 0.8), '255,150,80', 0.35 * bell(k), 3);
     },
@@ -33835,23 +33907,17 @@ RB.battleFx = (function () {
 
   // ---- persistent status marks (drawn every frame from the displayed state) -----------------
   const status = {
-    // Heat on the creature: a restrained shimmer and a few embers per level; still: small flame pips
+    // Heat on the creature: one flame pip per level beside its head (the stack you can
+    // count; still with reduced motion) and, in motion, a few outlined embers rising off it
     heat(c, A, n, t, still) {
       const u = A.u, o = A.pt('foe', 'top'), core = A.pt('foe', 'core');
-      if (still) {
-        for (let i = 0; i < n; i++) { const x = o.x + A.foeR * 0.55 + i * 6 * u, y = o.y + 4 * u; R(c, x, y, 3 * u, 4 * u, P.ember, 1); R(c, x + u, y - 2 * u, u, 2 * u, P.ember2, 1); }
-        return;
-      }
+      for (let i = 0; i < n; i++) flame(c, core.x + A.foeR * 0.75 + i * 7 * u, o.y + 2 * u, u, t, still, i);
+      if (still) return;
       for (let i = 0; i < 2 + 2 * n; i++) {
-        const per = 1600 + hs(i, 11) * 900, s = ((t + hs(i, 12) * per) % per) / per;
-        const x = core.x + (hs(i, 13) - 0.5) * A.foeR * 1.3 + Math.sin(t / 240 + i) * 2 * u, y = o.y + A.foeR * 0.5 - s * (26 + 8 * n) * u;
-        R(c, x, y, u, s < 0.4 ? 2 * u : u, i % 2 ? P.ember : P.ember2, 0.85 * bell(s));
+        const per = 1500 + hs(i, 11) * 900, s = ((t + hs(i, 12) * per) % per) / per;
+        const x = core.x + (hs(i, 13) - 0.5) * A.foeR * 1.2 + Math.sin(t / 240 + i) * 2 * u, y = o.y + A.foeR * 0.5 - s * (30 + 8 * n) * u;
+        dot(c, x, y, 2 * u, s < 0.5 ? 2 * u : u, i % 2 ? P.ember : '#ffe08a', 0.9 * bell(s), '#5a2418');
       }
-      // heat haze: three short wavering columns above it (brighter at level 2)
-      c.globalAlpha = 0.18 + 0.1 * n;
-      c.fillStyle = '#ffd0a0';
-      for (let j = 0; j < 3; j++) for (let i = 0; i < 6; i++) c.fillRect(Math.round(o.x + (j - 1) * 14 * u + Math.sin(t / 180 + i + j) * u), Math.round(o.y - 4 * u - i * 3 * u), u, 2 * u);
-      c.globalAlpha = 1;
     },
     // Shroud: mist lying over its knots and its lower half (localized, drifting slowly)
     shroud(c, A, t, still) {
@@ -33860,24 +33926,31 @@ RB.battleFx = (function () {
       puffs(c, [[b.x - w * 0.6, b.y - 2 * u, 16 * u, 0.42], [b.x + w * 0.55, b.y + 2 * u, 18 * u, 0.42], [b.x, b.y + 4 * u, 20 * u, 0.48],
         [o.x - A.foeR * 0.45, o.y + A.foeR * 0.25, 20 * u, 0.24], [o.x + A.foeR * 0.4, o.y + A.foeR * 0.3, 22 * u, 0.24]], u, 1, drift);
     },
-    // Gathering: motes circling it slowly, and a held glow at the core
+    // Gathering: held force — outlined amber motes circling it on a faint orbit, a glow at the core
     charge(c, A, t, still) {
       const u = A.u, o = A.pt('foe', 'core');
-      const r = A.foeR * 0.75;
-      for (let i = 0; i < 6; i++) {
-        const ang = (i / 6) * Math.PI * 2 + (still ? 0 : t / 1400);
-        R(c, o.x + Math.cos(ang) * r, o.y + Math.sin(ang) * r * 0.55, 2 * u, 2 * u, P.amber, still ? 0.9 : 0.6 + 0.3 * Math.sin(t / 300 + i));
+      const r = A.foeR * 0.95, ry = 0.5;
+      ellipse(c, o.x, o.y + 4 * u, r, r * ry, u, P.amber, 0.35);
+      for (let i = 0; i < 8; i++) {
+        const ang = (i / 8) * Math.PI * 2 + (still ? 0 : t / 1300);
+        const front = Math.sin(ang) > 0;
+        dot(c, o.x + Math.cos(ang) * r - u, o.y + 4 * u + Math.sin(ang) * r * ry - u, (front ? 3 : 2) * u, (front ? 3 : 2) * u, front ? '#ffd27a' : P.amber, still ? 1 : 0.75 + 0.25 * Math.sin(t / 300 + i), '#4a2a10');
       }
-      if (!still) K().halo(c, o.x, o.y, Math.round(A.foeR * 0.25), '255,210,130', 0.18 + 0.08 * Math.sin(t / 400), 3);
+      if (!still) K().halo(c, o.x, o.y, Math.round(A.foeR * 0.3), '255,210,130', 0.22 + 0.08 * Math.sin(t / 400), 3);
     },
-    // Hush over the party: a pale dotted arc above their heads and a small mute mark (ring + bar)
+    // Hush over the party: a pale arc above their heads and a mute mark (a ring crossed
+    // through, outlined so it reads on any backdrop)
     hush(c, A, t, still) {
       const u = A.u, h = A.pt('party', 'head');
-      const al = still ? 0.85 : 0.6 + 0.2 * Math.sin(t / 700);
-      ellipse(c, h.x, h.y + 4 * u, A.partyW * 0.6, 10 * u, u, P.hush, al * 0.8, Math.PI * 1.08, Math.PI * 1.92);
-      const x = h.x, y = h.y - 14 * u;
-      ring(c, x, y, 5 * u, u, P.hush, al);
-      line(c, { x: x - 4 * u, y: y + 4 * u }, { x: x + 4 * u, y: y - 4 * u }, u, P.hush, al, { step: 1 });
+      const al = still ? 0.9 : 0.7 + 0.2 * Math.sin(t / 700);
+      ellipse(c, h.x, h.y + 6 * u, Math.max(20 * u, A.partyW * 0.55), 12 * u, u, P.hush, al * 0.7, Math.PI * 1.1, Math.PI * 1.9);
+      const x = h.x, y = h.y - 18 * u;
+      for (const [col, d] of [[P.ink, 1], [P.hush, 0]]) {
+        c.globalAlpha = al; c.fillStyle = col;
+        for (let a = 0; a < Math.PI * 2; a += 0.2) c.fillRect(Math.round(x + Math.cos(a) * 6 * u) - d, Math.round(y + Math.sin(a) * 6 * u) - d, u + 2 * d, u + 2 * d);
+        for (let i = -4; i <= 4; i++) c.fillRect(Math.round(x + i * u) - d, Math.round(y - i * u) - d, u + 2 * d, u + 2 * d);
+      }
+      c.globalAlpha = 1;
     },
     // a ward: seal tags standing in an arc in front of the ally, one tag per ward point
     wards(c, A, who, n, t, still) {
@@ -33899,7 +33972,9 @@ RB.battleFx = (function () {
     },
   };
 
-  return { fx, status, digits, P, ease, bell, seg };
+  // a small seal tag as a mark (beside the number a ward absorbed)
+  function sealMark(c, x, y, u, alpha) { tag(c, x, y, u, alpha, true); }
+  return { fx, status, digits, sealMark, P, ease, bell, seg };
 })();
 
 

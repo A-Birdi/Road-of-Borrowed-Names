@@ -73,6 +73,29 @@ RB.battleFx = (function () {
     const cx = mx - (dy / len) * bend, cy = my + (dx / len) * bend;
     return { x: (1 - s) * (1 - s) * a.x + 2 * s * (1 - s) * cx + s * s * b.x, y: (1 - s) * (1 - s) * a.y + 2 * s * (1 - s) * cy + s * s * b.y };
   }
+  // A tapered brush stroke along path(s) (s in 0..1) between `from` and `to`:
+  // an ink edge, the body in `col`, a light core near the head. Solid, whole pixels.
+  function brush(c, path, len, from, to, u, col, alpha, th) {
+    if (to <= from || alpha <= 0.01) return;
+    th = th || 2 * u;
+    const n = Math.max(4, Math.round((len * (to - from)) / u));
+    const pts = [];
+    for (let i = 0; i <= n; i++) { const q = path(from + ((to - from) * i) / n); pts.push([Math.round(q.x), Math.round(q.y), i / n]); }
+    c.globalAlpha = clamp01(alpha * 0.8);
+    c.fillStyle = P.ink;
+    for (const [x, y, f] of pts) { const w = Math.max(u, Math.round(th * (0.35 + 0.65 * f))) + 2 * u; c.fillRect(x - (w >> 1), y - (w >> 1), w, w); }
+    c.globalAlpha = clamp01(alpha);
+    c.fillStyle = col;
+    for (const [x, y, f] of pts) { const w = Math.max(u, Math.round(th * (0.35 + 0.65 * f))); c.fillRect(x - (w >> 1), y - (w >> 1), w, w); }
+    c.fillStyle = '#fffaf0';
+    for (const [x, y, f] of pts) if (f > 0.7) c.fillRect(x - (u >> 1), y - (u >> 1), u, u);
+    c.globalAlpha = 1;
+  }
+  // where a blow leaves the creature: its edge on the side facing the target
+  function edge(A, b) {
+    const o = A.pt('foe', 'core'), dx = b.x - o.x, dy = b.y - o.y, n = Math.hypot(dx, dy) || 1;
+    return { x: o.x + (dx / n) * A.foeR * 0.6, y: o.y + (dy / n) * A.foeR * 0.6 };
+  }
   function ring(c, x, y, r, u, col, alpha) {
     if (alpha != null && alpha <= 0.01) return;
     c.globalAlpha = clamp01(alpha == null ? 1 : alpha);
@@ -90,6 +113,24 @@ RB.battleFx = (function () {
       c.fillRect(Math.round(x + Math.cos(a) * rx), Math.round(y + Math.sin(a) * ry), u, u);
     }
     c.globalAlpha = 1;
+  }
+  // a pixel block with a one-pixel dark edge (reads on light and dark backdrops)
+  function dot(c, x, y, w, h, col, alpha, edge) {
+    R(c, x - 1, y - 1, w + 2, h + 2, edge || P.ink, alpha * 0.85);
+    R(c, x, y, w, h, col, alpha);
+  }
+  // a flame pip (one per Heat level): 5×7 creature px, outlined, its tip flickering
+  const FLAME = ['..o..', '.ooo.', '.oyo.', 'ooyyo', 'oyyyo', 'oyyyo', '.ooo.'];
+  function flame(c, x, y, u, t, still, i) {
+    const tip = still ? 0 : Math.sin(t / 110 + i * 1.7) > 0.3 ? 1 : 0;
+    c.fillStyle = '#5a2418';
+    for (let r = 0; r < 7; r++) for (let q = 0; q < 5; q++) if (FLAME[r][q] !== '.') c.fillRect(Math.round(x + (q - 1) * u) - 0, Math.round(y + (r - tip - 1) * u), 3 * u, 3 * u);
+    for (let r = 0; r < 7; r++) for (let q = 0; q < 5; q++) {
+      const ch = FLAME[r][q];
+      if (ch === '.') continue;
+      c.fillStyle = ch === 'y' ? '#ffe08a' : P.ember;
+      c.fillRect(Math.round(x + q * u), Math.round(y + (r - tip) * u), u, u);
+    }
   }
   // a small paper tag (a ward seal): paper face, an ink band, a darker edge
   function tag(c, x, y, u, alpha, lit) {
@@ -352,44 +393,48 @@ RB.battleFx = (function () {
       const cr = still ? 1 : ease(seg(k, 0.3, 0.7));
       if (cr > 0) line(c, { x: o.x - r * 0.7, y: o.y - r * 0.7 }, { x: o.x + r * 0.7, y: o.y + r * 0.7 }, u, '#ffffff', 1 - seg(k, 0.75, 1), { to: cr, wob: 2 * u, waves: 5, step: 1 });
     },
-    // the enemy's focused blow: a short ink streak from the creature to its one target
+    // the enemy's focused blow: a tapered stroke in the creature's own colour,
+    // from it to the one target it aims at (slightly arched)
     dart(c, e, k, A, t, still) {
       if (still) return;
-      const u = A.u, a = A.pt('foe', 'core'), b = A.pt(e.p.to, 'chest');
-      const col = e.p.col || P.ink2;
-      const s = ease(k), tail = Math.max(0, s - 0.3);
-      line(c, a, b, u, col, 0.9, { from: tail, to: s, th: 2 * u, step: 1 });
-      line(c, a, b, u, e.p.glint || P.paper, 0.9, { from: Math.max(0, s - 0.08), to: s, th: u, step: 1 });
+      const u = A.u, b = A.pt(e.p.to, 'chest'), a = edge(A, b);
+      const len = Math.hypot(b.x - a.x, b.y - a.y), bend = 0.12 * len;
+      const s = ease(k), tail = Math.max(0, s - 0.45);
+      brush(c, (x) => qpt(a, b, bend, x), len, tail, s, u, e.p.col || P.ink2, 1 - seg(k, 0.85, 1), 3 * u);
     },
-    // a broad sweep: one arc that passes over every affected ally in turn
+    // a broad sweep: one stroke that passes over every affected ally in turn
     arc(c, e, k, A, t, still) {
       if (still) return;
       const u = A.u, who = e.p.who || [];
-      const pts = [A.pt('foe', 'core')].concat(who.map((w) => A.pt(w, 'chest')));
-      if (pts.length < 2) return;
+      const tg = who.map((w) => A.pt(w, 'chest'));
+      if (!tg.length) return;
+      const pts = [edge(A, tg[0])].concat(tg);
       const last = pts[pts.length - 1];
-      const end = { x: last.x + 22 * u, y: last.y + 4 * u };
-      pts.push(end);
-      const col = e.p.col || P.ink2, col2 = e.p.col2 || P.paper;
-      const s = ease(k), tail = Math.max(0, s - 0.35);
-      const segs = pts.length - 1;
-      for (let i = 0; i < segs; i++) {
-        const a0 = i / segs, a1 = (i + 1) / segs;
-        const f = clamp01((tail - a0) / (a1 - a0)), g = clamp01((s - a0) / (a1 - a0));
-        if (g <= 0 || f >= 1) continue;
-        const bend = i === 0 ? 36 * u : -10 * u;
-        curve(c, pts[i], pts[i + 1], bend, u, col, 0.85, f, g);
-        curve(c, { x: pts[i].x, y: pts[i].y - 3 * u }, { x: pts[i + 1].x, y: pts[i + 1].y - 3 * u }, bend, u, col2, 0.6, f, g);
-      }
+      pts.push({ x: last.x + 24 * u, y: last.y - 6 * u });
+      const segs = pts.length - 1, lens = [];
+      for (let i = 0; i < segs; i++) lens.push(Math.hypot(pts[i + 1].x - pts[i].x, pts[i + 1].y - pts[i].y));
+      const total = lens.reduce((a, b) => a + b, 0) || 1;
+      const path = (x) => {
+        let d = x * total;
+        for (let i = 0; i < segs; i++) {
+          if (d <= lens[i] || i === segs - 1) return qpt(pts[i], pts[i + 1], i === 0 ? -0.3 * lens[i] : 0.25 * lens[i], Math.min(1, d / (lens[i] || 1)));
+          d -= lens[i];
+        }
+        return pts[pts.length - 1];
+      };
+      const s = ease(k), tail = Math.max(0, s - 0.4);
+      brush(c, path, total, tail, s, u, e.p.col || P.ink2, 1 - seg(k, 0.85, 1), 4 * u);
+      if (e.p.col2) brush(c, (x) => { const q = path(x); return { x: q.x, y: q.y - 3 * u }; }, total, Math.max(tail, s - 0.15), s, u, e.p.col2, 0.8 * (1 - seg(k, 0.85, 1)), 2 * u);
     },
-    // Gust: wind lines rake across the party from the creature's side
+    // Gust: wind strokes rake across the party from the creature's side
     gust(c, e, k, A, t, still) {
       if (still) return;
       const u = A.u, o = A.pt('party', 'chest'), f = A.pt('foe', 'core');
-      for (let i = 0; i < 5; i++) {
-        const s = seg(k, i * 0.07, 0.7 + i * 0.06), y = o.y + (i - 2) * 10 * u;
-        const a = { x: f.x - 10 * u, y: y - 20 * u + i * 4 * u }, b = { x: o.x - 60 * u, y: y + 6 * u };
-        curve(c, a, b, 8 * u, u, '#eef2f6', 0.75 * bell(s), Math.max(0, s - 0.3), s);
+      for (let i = 0; i < 4; i++) {
+        const s = ease(seg(k, i * 0.08, 0.7 + i * 0.06)), y = o.y + (i - 1.5) * 12 * u;
+        const a = { x: f.x - 10 * u, y: y - 24 * u + i * 4 * u }, b = { x: o.x - 60 * u, y: y + 6 * u };
+        const len = Math.hypot(b.x - a.x, b.y - a.y);
+        brush(c, (x) => qpt(a, b, 0.1 * len, x), len, Math.max(0, s - 0.3), s, u, i % 2 ? '#eef2f6' : (e.p.col || '#dfe6ee'), 0.85 * (1 - seg(k, 0.8, 1)), 2 * u);
       }
     },
     // contact on an ally: a compact star and four flecks (brief; one per real hit)
@@ -438,7 +483,7 @@ RB.battleFx = (function () {
       const u = A.u, o = A.pt('foe', 'top');
       for (let i = 0; i < 10; i++) {
         const x = o.x + (hs(i, 8) - 0.5) * A.foeR * 1.2, y = o.y + A.foeR * 0.3 - ease(k) * (20 + hs(i, 3) * 26) * u;
-        R(c, x + Math.sin(t / 90 + i) * u, y, u, 2 * u, i % 2 ? P.ember : P.ember2, 1 - k);
+        dot(c, x + Math.sin(t / 90 + i) * u, y, 2 * u, 2 * u, i % 2 ? P.ember : '#ffe08a', 1 - k, '#5a2418');
       }
       K().halo(c, A.pt('foe', 'core').x, A.pt('foe', 'core').y, Math.round(A.foeR * 0.8), '255,150,80', 0.35 * bell(k), 3);
     },
@@ -524,23 +569,17 @@ RB.battleFx = (function () {
 
   // ---- persistent status marks (drawn every frame from the displayed state) -----------------
   const status = {
-    // Heat on the creature: a restrained shimmer and a few embers per level; still: small flame pips
+    // Heat on the creature: one flame pip per level beside its head (the stack you can
+    // count; still with reduced motion) and, in motion, a few outlined embers rising off it
     heat(c, A, n, t, still) {
       const u = A.u, o = A.pt('foe', 'top'), core = A.pt('foe', 'core');
-      if (still) {
-        for (let i = 0; i < n; i++) { const x = o.x + A.foeR * 0.55 + i * 6 * u, y = o.y + 4 * u; R(c, x, y, 3 * u, 4 * u, P.ember, 1); R(c, x + u, y - 2 * u, u, 2 * u, P.ember2, 1); }
-        return;
-      }
+      for (let i = 0; i < n; i++) flame(c, core.x + A.foeR * 0.75 + i * 7 * u, o.y + 2 * u, u, t, still, i);
+      if (still) return;
       for (let i = 0; i < 2 + 2 * n; i++) {
-        const per = 1600 + hs(i, 11) * 900, s = ((t + hs(i, 12) * per) % per) / per;
-        const x = core.x + (hs(i, 13) - 0.5) * A.foeR * 1.3 + Math.sin(t / 240 + i) * 2 * u, y = o.y + A.foeR * 0.5 - s * (26 + 8 * n) * u;
-        R(c, x, y, u, s < 0.4 ? 2 * u : u, i % 2 ? P.ember : P.ember2, 0.85 * bell(s));
+        const per = 1500 + hs(i, 11) * 900, s = ((t + hs(i, 12) * per) % per) / per;
+        const x = core.x + (hs(i, 13) - 0.5) * A.foeR * 1.2 + Math.sin(t / 240 + i) * 2 * u, y = o.y + A.foeR * 0.5 - s * (30 + 8 * n) * u;
+        dot(c, x, y, 2 * u, s < 0.5 ? 2 * u : u, i % 2 ? P.ember : '#ffe08a', 0.9 * bell(s), '#5a2418');
       }
-      // heat haze: three short wavering columns above it (brighter at level 2)
-      c.globalAlpha = 0.18 + 0.1 * n;
-      c.fillStyle = '#ffd0a0';
-      for (let j = 0; j < 3; j++) for (let i = 0; i < 6; i++) c.fillRect(Math.round(o.x + (j - 1) * 14 * u + Math.sin(t / 180 + i + j) * u), Math.round(o.y - 4 * u - i * 3 * u), u, 2 * u);
-      c.globalAlpha = 1;
     },
     // Shroud: mist lying over its knots and its lower half (localized, drifting slowly)
     shroud(c, A, t, still) {
@@ -549,24 +588,31 @@ RB.battleFx = (function () {
       puffs(c, [[b.x - w * 0.6, b.y - 2 * u, 16 * u, 0.42], [b.x + w * 0.55, b.y + 2 * u, 18 * u, 0.42], [b.x, b.y + 4 * u, 20 * u, 0.48],
         [o.x - A.foeR * 0.45, o.y + A.foeR * 0.25, 20 * u, 0.24], [o.x + A.foeR * 0.4, o.y + A.foeR * 0.3, 22 * u, 0.24]], u, 1, drift);
     },
-    // Gathering: motes circling it slowly, and a held glow at the core
+    // Gathering: held force — outlined amber motes circling it on a faint orbit, a glow at the core
     charge(c, A, t, still) {
       const u = A.u, o = A.pt('foe', 'core');
-      const r = A.foeR * 0.75;
-      for (let i = 0; i < 6; i++) {
-        const ang = (i / 6) * Math.PI * 2 + (still ? 0 : t / 1400);
-        R(c, o.x + Math.cos(ang) * r, o.y + Math.sin(ang) * r * 0.55, 2 * u, 2 * u, P.amber, still ? 0.9 : 0.6 + 0.3 * Math.sin(t / 300 + i));
+      const r = A.foeR * 0.95, ry = 0.5;
+      ellipse(c, o.x, o.y + 4 * u, r, r * ry, u, P.amber, 0.35);
+      for (let i = 0; i < 8; i++) {
+        const ang = (i / 8) * Math.PI * 2 + (still ? 0 : t / 1300);
+        const front = Math.sin(ang) > 0;
+        dot(c, o.x + Math.cos(ang) * r - u, o.y + 4 * u + Math.sin(ang) * r * ry - u, (front ? 3 : 2) * u, (front ? 3 : 2) * u, front ? '#ffd27a' : P.amber, still ? 1 : 0.75 + 0.25 * Math.sin(t / 300 + i), '#4a2a10');
       }
-      if (!still) K().halo(c, o.x, o.y, Math.round(A.foeR * 0.25), '255,210,130', 0.18 + 0.08 * Math.sin(t / 400), 3);
+      if (!still) K().halo(c, o.x, o.y, Math.round(A.foeR * 0.3), '255,210,130', 0.22 + 0.08 * Math.sin(t / 400), 3);
     },
-    // Hush over the party: a pale dotted arc above their heads and a small mute mark (ring + bar)
+    // Hush over the party: a pale arc above their heads and a mute mark (a ring crossed
+    // through, outlined so it reads on any backdrop)
     hush(c, A, t, still) {
       const u = A.u, h = A.pt('party', 'head');
-      const al = still ? 0.85 : 0.6 + 0.2 * Math.sin(t / 700);
-      ellipse(c, h.x, h.y + 4 * u, A.partyW * 0.6, 10 * u, u, P.hush, al * 0.8, Math.PI * 1.08, Math.PI * 1.92);
-      const x = h.x, y = h.y - 14 * u;
-      ring(c, x, y, 5 * u, u, P.hush, al);
-      line(c, { x: x - 4 * u, y: y + 4 * u }, { x: x + 4 * u, y: y - 4 * u }, u, P.hush, al, { step: 1 });
+      const al = still ? 0.9 : 0.7 + 0.2 * Math.sin(t / 700);
+      ellipse(c, h.x, h.y + 6 * u, Math.max(20 * u, A.partyW * 0.55), 12 * u, u, P.hush, al * 0.7, Math.PI * 1.1, Math.PI * 1.9);
+      const x = h.x, y = h.y - 18 * u;
+      for (const [col, d] of [[P.ink, 1], [P.hush, 0]]) {
+        c.globalAlpha = al; c.fillStyle = col;
+        for (let a = 0; a < Math.PI * 2; a += 0.2) c.fillRect(Math.round(x + Math.cos(a) * 6 * u) - d, Math.round(y + Math.sin(a) * 6 * u) - d, u + 2 * d, u + 2 * d);
+        for (let i = -4; i <= 4; i++) c.fillRect(Math.round(x + i * u) - d, Math.round(y - i * u) - d, u + 2 * d, u + 2 * d);
+      }
+      c.globalAlpha = 1;
     },
     // a ward: seal tags standing in an arc in front of the ally, one tag per ward point
     wards(c, A, who, n, t, still) {
@@ -588,5 +634,7 @@ RB.battleFx = (function () {
     },
   };
 
-  return { fx, status, digits, P, ease, bell, seg };
+  // a small seal tag as a mark (beside the number a ward absorbed)
+  function sealMark(c, x, y, u, alpha) { tag(c, x, y, u, alpha, true); }
+  return { fx, status, digits, sealMark, P, ease, bell, seg };
 })();
