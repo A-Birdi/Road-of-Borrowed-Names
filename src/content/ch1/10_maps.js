@@ -52,7 +52,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { type: 'house', x: 18, y: 5, w: 7, h: 4, roof: 'tile', wall: 'stone', door: 3, windows: [1, 5], to: 'rw.hall', spawn: [5, 8], lit: true },
       { type: 'house', x: 28, y: 12, w: 5, h: 4, roof: 'thatch', wall: 'wood', door: 2, windows: [0, 4], chimney: true, to: 'rw.tea', spawn: [4, 7], sign: true, signX: 1 },
       { type: 'house', x: 9, y: 12, w: 5, h: 4, roof: 'thatch', door: 2, windows: [0, 4], to: 'rw.apoth', spawn: [4, 7] },
-      { type: 'house', x: 26, y: 22, w: 6, h: 4, roof: 'tile', wall: 'wood', door: 3, windows: [1], to: 'rw.warehouse', spawn: [4, 7] },
+      { type: 'house', x: 26, y: 22, w: 6, h: 4, roof: 'tile', wall: 'wood', door: 3, windows: [1], to: 'rw.warehouse', spawn: [5, 7] },
       { type: 'house', x: 9, y: 22, w: 5, h: 3, roof: 'thatch', wall: 'wood', door: 2, windows: [0, 4], chimney: true, to: 'rw.carpenter', spawn: [4, 6] },
       { type: 'house', x: 3, y: 6, w: 4, h: 3, roof: 'thatch', door: 2, windows: [0], to: 'rw.house1', spawn: [3, 6] },
       { type: 'house', x: 5, y: 26, w: 4, h: 3, roof: 'thatch', door: 2, windows: [0, 3] },
@@ -172,7 +172,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.rect(12, 4, 6, 3, '~').rect(11, 5, 1, 2, '"').rect(18, 4, 1, 3, '"');
     }),
     props: [
-      { p: 'lantern', x: 5, y: 8 }, { p: 'deadlantern', x: 14, y: 8, scene: 'rw.road_lantern' }, { p: 'lantern', x: 24, y: 8 },
+      { p: 'lantern', x: 5, y: 8 }, { p: 'deadlantern', x: 14, y: 8, scene: 'rw.road_lantern', if: '!rw_road_lit' }, { p: 'lantern', x: 14, y: 8, scene: 'rw.road_lantern', if: 'rw_road_lit' }, { p: 'lantern', x: 24, y: 8 },
       { p: 'stone_marker', x: 20, y: 11, scene: 'rw.road_marker' },
     ],
     exits: [

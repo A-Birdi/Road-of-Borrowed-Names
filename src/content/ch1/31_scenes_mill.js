@@ -244,8 +244,11 @@ tsuru: …… {橋|はし} は {手|て} を {振|ふ}らない 。 {渡|わた}
 !faceplayer tsuru
 tsuru: よく やった 。 でも 、 {終|お}わり じゃ ない 。 {名前|なまえ} を {持|も}って いった {何|なに} か は 、 {川|かわ} の {下|しも} へ 、 {西|にし} へ {向|む}かった 。 {灯|ひ} の {道|みち} に {沿|そ}って ね 。 || Well done. But it isn't over. Whatever carried the names away went downriver — west, along the lantern road.
 tsuru: {今夜|こんや} 、 {灯|あか}り{堂|どう} に {来|き}て おくれ 。 あの {四人|よにん} も {呼|よ}んで おく 。 {話|はな}す こと が ある 。 || Come to the Lantern Hall tonight. I'll call those four as well. There's something we need to talk about.
+!fade out 900
 !set rw_night rw_evening
-!quest rw_depart 0
 !music reedwake_night
+!fade in 900
+narr: {日|ひ} が {暮|く}れた 。 {村|むら} の {灯|あか}り が 、 {一|ひと}つ ずつ ともって いく 。 || The sun goes down. One by one, the village lanterns come on.
+!quest rw_depart 0
 !autosave
 `, 'ch1/31_bridge');

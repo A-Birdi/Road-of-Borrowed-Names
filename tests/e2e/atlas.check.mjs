@@ -65,8 +65,8 @@ async function uiStep() {
     if (card && !card.disabled) { card.click(); return 'battle:card'; }
     const dlg = document.querySelector('.dlg');
     if (shown(dlg)) { dlg.querySelector('.b-next').click(); return 'dialogue'; }
-    const c = document.querySelector('.card button');
-    if (c) { c.click(); return 'card'; }
+    const c = document.querySelector('.banner-layer');
+    if (c) { c.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true })); return 'card'; }
     return null;
   });
 }

@@ -77,7 +77,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.scatter('R', 5, 75, [4, 4, 20, 13], '*');
     }),
     structs: [
-      { type: 'house', x: 4, y: 7, w: 6, h: 4, roof: 'snow', wall: 'wood', door: 2, windows: [0, 4], chimney: true, lit: true, to: 'sa.hut', spawn: [5, 6] },
+      { type: 'house', x: 4, y: 7, w: 6, h: 4, roof: 'snow', wall: 'wood', door: 2, windows: [0, 4], chimney: true, lit: true, to: 'sa.hut', spawn: [5, 7] },
     ],
     props: [
       { p: 'lantern', x: 12, y: 15, scene: 'sa.camp_lamp' },
@@ -99,7 +99,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       ] },
       { id: 'sa_oyone', x: 11, y: 14, dir: 'right', if: 'sa_descent&!post', talk: 'sa.oyone_descent' },
       { id: 'kasane', x: 16, y: 15, dir: 'left', if: 'sa_descent&end_kasane_trial&!post', talk: 'sa.kasane_walk' },
-      { id: 'sa_tsuzuri', x: 16, y: 6, dir: 'down', if: 'post&end_archive_closed&sa_clerk_named', talk: 'sa.tsuzuri_post' },
+      { id: 'sa_tsuzuri', was: 'sa_clerk', x: 16, y: 6, dir: 'down', if: 'post&end_archive_closed&sa_clerk_named', talk: 'sa.tsuzuri_post' },
       { id: 'sa_clerk', x: 16, y: 6, dir: 'down', if: 'post&end_archive_closed&!sa_clerk_named', talk: 'sa.clerk_post' },
     ],
     exits: [
@@ -219,7 +219,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         { if: 'seen.sa.clerk_first', scene: 'sa.clerk_again' },
         { scene: 'sa.clerk_first' },
       ] },
-      { id: 'sa_tsuzuri', x: 6, y: 4, dir: 'down', if: 'sa_clerk_named', talk: [{ if: 'post', scene: 'sa.tsuzuri_post' }, { scene: 'sa.tsuzuri_chat' }] },
+      { id: 'sa_tsuzuri', was: 'sa_clerk', x: 6, y: 4, dir: 'down', if: 'sa_clerk_named', talk: [{ if: 'post', scene: 'sa.tsuzuri_post' }, { scene: 'sa.tsuzuri_chat' }] },
       { id: 'kasane', x: 14, y: 8, dir: 'down', if: '!sa_kasane_left', talk: 'sa.kasane_meet' },
       { id: 'kasane', x: 14, y: 6, dir: 'down', if: 'sa_choice_mem&!sa_choice_archive', talk: 'sa.choose_archive' },
       { id: 'kasane', x: 14, y: 5, dir: 'down', if: 'post&end_kasane_keeper&end_archive_library', talk: 'sa.kasane_post' },

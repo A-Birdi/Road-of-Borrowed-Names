@@ -363,7 +363,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.scatter(',', 18, 323, [2, 0, 34, 33], '.');
     }),
     structs: [
-      { type: 'house', x: 2, y: 21, w: 6, h: 4, roof: 'thatch', wall: 'wood', door: 3, windows: [1, 4], chimney: true, to: 'co.ume', spawn: [4, 6] },
+      { type: 'house', x: 2, y: 21, w: 6, h: 4, roof: 'thatch', wall: 'wood', door: 3, windows: [1, 4], chimney: true, to: 'co.ume', spawn: [3, 6] },
     ],
     props: [
       { p: 'stairs', x: 8, y: 27 }, { p: 'stairs', x: 9, y: 27 }, { p: 'stairs', x: 28, y: 20 }, { p: 'stairs', x: 29, y: 20 },
@@ -445,7 +445,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'rock', x: 14, y: 14, if: '!co_w_tsuchi', scene: 'co.ashband' }, { p: 'rock', x: 15, y: 14, if: '!co_w_tsuchi', scene: 'co.ashband' },
       { p: 'stairs', x: 14, y: 14, if: 'co_w_tsuchi' }, { p: 'stairs', x: 15, y: 14, if: 'co_w_tsuchi' },
       { p: 'stairs', x: 30, y: 7 }, { p: 'stairs', x: 31, y: 7 },
-      { p: 'deadlantern', x: 32, y: 2, scene: 'co.upper_lantern' },
+      { p: 'deadlantern', x: 32, y: 2, scene: 'co.upper_lantern', if: '!co_kiln_done' }, { p: 'lantern', x: 32, y: 2, scene: 'co.upper_lantern', if: 'co_kiln_done' },
       { p: 'co_scrub', x: 8, y: 18 }, { p: 'co_scrub', x: 26, y: 10 }, { p: 'co_scrub', x: 12, y: 4 },
     ],
     foes: [
@@ -491,7 +491,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }),
     structs: [
       { type: 'house', x: 16, y: 1, w: 9, h: 5, roof: 'ash', wall: 'stone', door: 4, windows: [] },
-      { type: 'house', x: 34, y: 17, w: 5, h: 3, roof: 'slate', wall: 'stone', door: 2, windows: [], to: 'co.icehouse', spawn: [5, 7] },
+      { type: 'house', x: 34, y: 17, w: 5, h: 3, roof: 'slate', wall: 'stone', door: 2, windows: [], to: 'co.icehouse', spawn: [5, 8] },
     ],
     props: [
       { p: 'co_seal', x: 20, y: 5, if: '!co_seal_broken', scene: 'co.kiln_seal' },
@@ -502,7 +502,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'glassware', x: 19, y: 20, scene: 'co.works_globes' },
       { p: 'barrel', x: 5, y: 9 }, { p: 'crate', x: 9, y: 11 }, { p: 'anvil', x: 30, y: 10 },
       { p: 'co_bar', x: 2, y: 25, if: '!co_shortcut', scene: 'co.shortcut_open' }, { p: 'co_bar', x: 3, y: 25, if: '!co_shortcut', scene: 'co.shortcut_open' },
-      { p: 'deadlantern', x: 23, y: 7, scene: 'co.works_lantern' },
+      { p: 'deadlantern', x: 23, y: 7, scene: 'co.works_lantern', if: '!co_kiln_done' }, { p: 'lantern', x: 23, y: 7, scene: 'co.works_lantern', if: 'co_kiln_done' },
     ],
     foes: [
       { id: 'g1', enemy: 'co.golem', x: 13, y: 15, patrol: 2 },

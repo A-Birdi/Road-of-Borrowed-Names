@@ -4,7 +4,9 @@
 // six chapters and one Atlas expedition.
 // Usage: node tests/e2e/pursue.mjs [profile] [comp|none] [legs] [startMap x y] [flags] [words]
 //   legs: "ch1_done@rw.@rw_mill>ch2_done@sg.@sg_main>…" (flag@mapPrefix@mainQuest)
-import { serve, launch, page } from './lib.mjs';
+import fs from 'node:fs';
+import path from 'node:path';
+import { serve, launch, page, root } from './lib.mjs';
 import { install } from './drive.mjs';
 
 // six chapters, then (after the ending returns you to Reedwake) one complete
@@ -57,7 +59,15 @@ const fin = await p.evaluate(() => ({
   battles: RB.test.log.filter((l) => l.t === 'battle').map((l) => l.enemy + ':' + l.result),
   quests: Object.fromEntries(Object.entries(RB.game.s.quests).map(([k, q]) => [k, q.done ? 'done' : q.stage])),
   flags: ['post', 'postgame', 'ch6_done'].filter((f) => RB.game.s.flags[f]),
+  absent: (RB.test.absentSpeakers || []).map((x) => x.who + ' @ ' + x.map + ' (' + (x.scene || '?') + '): ' + x.en),
+  nightLeaks: RB.test.nightLeaks || [],
 }));
+// lines spoken by characters who are not on the map (reported, reviewed by hand;
+// some are meant — voices through a door, letters, memories)
+if (fin.nightLeaks.length) { ok = false; console.log('left a night-only map during its night: ' + fin.nightLeaks.join(', ')); }
+if (fin.absent.length) console.log('bodiless speakers (' + fin.absent.length + '):\n  ' + fin.absent.join('\n  '));
+fs.mkdirSync(path.join(root, 'tests/e2e/out'), { recursive: true });
+fs.writeFileSync(path.join(root, 'tests/e2e/out', 'speakers-' + profile + '-' + comp + '.json'), JSON.stringify(fin.absent, null, 1));
 const lost = fin.battles.filter((x) => !x.endsWith(':win'));
 if (comp !== 'none' && fin.comp !== comp) { ok = false; console.log('companion ' + fin.comp + ' is not the requested ' + comp); }
 console.log(JSON.stringify({ profile, comp: fin.comp, seconds: Math.round((Date.now() - t0) / 1000), map: fin.map, flags: fin.flags, battles: fin.battles.length, lost, problems: fin.problems, pageErrors: errors.slice(0, 5), quests: fin.quests }, null, 1));

@@ -32,14 +32,17 @@ RB.maps = (function () {
       }
     }
     const exits = [];
+    const shut = []; // doors of buildings you cannot enter: solid, and they say so
     const structs = (def.structs || []).map((s) => Object.assign({}, s));
     for (const s of structs) {
       for (let yy = s.y; yy < s.y + s.h; yy++)
         for (let xx = s.x; xx < s.x + s.w; xx++) if (xx >= 0 && yy >= 0 && xx < w && yy < h) block[yy * w + xx] = 1;
       if (s.door != null) {
         const dx = s.x + s.door, dy = s.y + s.h - 1;
-        block[dy * w + dx] = 0;
-        if (s.to) exits.push({ x: dx, y: dy, w: 1, h: 1, to: s.to, tx: s.spawn ? s.spawn[0] : null, ty: s.spawn ? s.spawn[1] : null, dir: 'up', door: true, if: s.if, locked: s.locked });
+        if (s.to) {
+          block[dy * w + dx] = 0;
+          exits.push({ x: dx, y: dy, w: 1, h: 1, to: s.to, tx: s.spawn ? s.spawn[0] : null, ty: s.spawn ? s.spawn[1] : null, dir: 'up', door: true, if: s.if, locked: s.locked });
+        } else shut.push({ x: dx, y: dy, if: s.if, text: s.shut || null });
       }
     }
     for (const p of def.props || []) {
@@ -54,7 +57,7 @@ RB.maps = (function () {
     }
     for (const e of def.exits || []) exits.push(Object.assign({ w: 1, h: 1 }, e));
     const m = {
-      id, def, w, h, tiles, block, props, structs, exits,
+      id, def, w, h, tiles, block, props, structs, exits, shut,
       region: def.region || 'reedwake',
       triggers: (def.triggers || []).map((t) => Object.assign({ w: 1, h: 1 }, t)),
       staticLayer: null,
@@ -93,8 +96,14 @@ RB.maps = (function () {
     }
     return null;
   }
+  // The shut door of a building with no interior at x,y (if that building is there now).
+  function shutDoorAt(m, x, y) {
+    const s = RB.game && RB.game.s;
+    for (const d of m.shut || []) if (d.x === x && d.y === y && (!d.if || !s || RB.state.test(s, d.if))) return d;
+    return null;
+  }
   function invalidate() {
     for (const k in compiled) delete compiled[k];
   }
-  return { compile, tileAt, blockedStatic, exitAt, invalidate };
+  return { compile, tileAt, blockedStatic, exitAt, shutDoorAt, invalidate };
 })();

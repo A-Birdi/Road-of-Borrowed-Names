@@ -18,6 +18,9 @@ RB.world = (function () {
     time: 0,
     emotes: [],         // {who, kind, until}
     flashes: [],
+    leavers: [],        // people walking off to a door or exit before they go (drawn, never solid)
+    extras: [],         // people who walked in to speak in a scene; they walk off when it ends
+    enteredAt: 0,
   };
 
   function makeActor(x, y, dir, look) {
@@ -44,6 +47,9 @@ RB.world = (function () {
     if (m.def.travel) st.travel[m.def.travel] = true;
     W.player = makeActor(x, y, st.dir, playerLook());
     W.path = null;
+    W.leavers = [];
+    W.extras = [];
+    W.enteredAt = W.time;
     refreshActors();
     placeCompanion();
     unstick(W.player);
@@ -87,16 +93,30 @@ RB.world = (function () {
     const st = s();
     const m = W.map;
     const keep = new Map(W.npcs.map((n) => [n.id, n]));
+    const before = new Set(W.npcs.map((n) => n.id));
+    const renamed = new Set();
     W.npcs = [];
     for (const n of m.def.npcs || []) {
       if (n.if && !RB.state.test(st, n.if)) continue;
       if (st.comp && n.id === st.comp && !n.alwaysShow) continue; // companion travels with the player
       const ch = RB.content.chars[n.char || n.id] || {};
-      const old = keep.get(n.id);
+      // the same person under a new name (npc.was): keep the figure in place
+      let old = keep.get(n.id);
+      if (!old && n.was && keep.has(n.was)) { old = keep.get(n.was); renamed.add(n.was); before.add(n.id); }
       const a = old && old.map === m.id ? old : makeActor(n.x, n.y, n.dir || 'down', n.look || ch.look || RB.sprites.randomLook(RB.util.hashStr(n.id)));
       a.id = n.id; a.def = n; a.map = m.id; a.home = [n.x, n.y];
       a.look = n.look || ch.look || a.look;
       W.npcs.push(a);
+    }
+    // People who come or go while you are here walk to or from the nearest
+    // door or way out instead of popping in and out (not while a map is
+    // still appearing: those people were simply already there, or gone).
+    if (W.time - W.enteredAt > 900) {
+      for (const [id, a] of keep) {
+        if (W.npcs.some((n) => n.id === id) || id === st.comp || a.map !== m.id || renamed.has(id)) continue;
+        leave(a);
+      }
+      for (const a of W.npcs) if (!before.has(a.id) && !keep.has(a.id)) arriveOnFoot(a);
     }
     W.foes = [];
     for (const e of m.def.foes || []) {
@@ -109,9 +129,144 @@ RB.world = (function () {
     }
   }
 
+  // ---- coming and going on foot ---------------------------------------------
+  // Ways in and out: exits (edges and doors) and the shut doors of homes.
+  function waysOut() {
+    const st = s(), out = [];
+    for (const e of W.map.exits) {
+      if (e.if && !RB.state.test(st, e.if)) continue;
+      for (let y = e.y; y < e.y + e.h; y++) for (let x = e.x; x < e.x + e.w; x++) out.push(x + ',' + y);
+    }
+    for (const d of W.map.shut || []) if (!d.if || RB.state.test(st, d.if)) out.push(d.x + ',' + d.y);
+    return new Set(out);
+  }
+  // Shortest walk (at most `max` steps) from x,y to the nearest way out,
+  // through open ground; people are ignored (they step round each other).
+  function routeOut(x, y, max) {
+    const goals = waysOut();
+    if (!goals.size) return null;
+    const prev = new Map([[x + ',' + y, null]]);
+    let q = [[x, y]];
+    for (let d = 0; d <= max && q.length; d++) {
+      const next = [];
+      for (const [cx, cy] of q) {
+        const k = cx + ',' + cy;
+        if (goals.has(k) && d > 0) {
+          const path = [];
+          for (let c = k; c; c = prev.get(c)) path.unshift(c.split(',').map(Number));
+          return path.slice(1);
+        }
+        for (const dir in DIRS) {
+          const nx = cx + DIRS[dir][0], ny = cy + DIRS[dir][1], nk = nx + ',' + ny;
+          if (prev.has(nk) || nx < 0 || ny < 0 || nx >= W.map.w || ny >= W.map.h) continue;
+          if (!goals.has(nk) && RB.maps.blockedStatic(W.map, nx, ny)) continue;
+          prev.set(nk, k);
+          next.push([nx, ny]);
+        }
+      }
+      q = next;
+    }
+    return null;
+  }
+  function onScreen(a) {
+    const v = RB.render.viewSize(), c = RB.render.cam;
+    const x = a.x * 16 - c.x, y = a.y * 16 - c.y;
+    return x > -48 && y > -48 && x < v.w + 48 && y < v.h + 64;
+  }
+  function leave(a) {
+    if (!onScreen(a)) return;
+    const route = routeOut(a.x, a.y, 18) || [];
+    W.leavers.push(Object.assign({}, a, { mv: null, route, alpha: 1, fading: !route.length }));
+  }
+  function arriveOnFoot(a) {
+    if (!onScreen(a)) return;
+    const route = routeOut(a.x, a.y, 18);
+    if (!route || !route.length) { a.alpha = 0; a.fadeIn = true; return; }
+    const path = route.slice(0, -1).reverse().concat([[a.x, a.y]]);
+    const [sx, sy] = route[route.length - 1];
+    a.x = sx; a.y = sy; a.fx = sx; a.fy = sy; a.mv = null;
+    a.route = path; a.alpha = 0; a.fadeIn = true; a.routeT = 0;
+  }
+  // Follow a route one tile at a time; true when it is walked.
+  function followRoute(a, dt, dur) {
+    if (a.mv || !a.route) return !a.route;
+    if (!a.route.length) { a.route = null; return true; }
+    const [nx, ny] = a.route[0];
+    const dx = nx - a.x, dy = ny - a.y;
+    const dir = dx > 0 ? 'right' : dx < 0 ? 'left' : dy > 0 ? 'down' : 'up';
+    if (Math.abs(dx) + Math.abs(dy) !== 1) { a.route = null; return true; }
+    // wait for the player to step aside; after a while just get on with it
+    a.routeT = (a.routeT || 0) + dt;
+    if (a.routeT < 1500 && ((W.player.x === nx && W.player.y === ny) || (W.comp && W.comp.x === nx && W.comp.y === ny))) return false;
+    a.routeT = 0;
+    a.route.shift();
+    startMove(a, dir, dur);
+    return false;
+  }
+  function updateWalkers(dt) {
+    for (const a of W.leavers) {
+      stepActor(a, dt);
+      if (!a.fading && followRoute(a, dt, 260) && !a.mv) a.fading = true;
+      if (a.fading) a.alpha -= dt / 260;
+    }
+    W.leavers = W.leavers.filter((a) => a.alpha > 0);
+    for (const n of W.npcs.concat(W.extras)) {
+      if (n.fadeIn) { n.alpha = Math.min(1, (n.alpha || 0) + dt / 260); if (n.alpha >= 1) n.fadeIn = false; }
+      if (n.extra) { stepActor(n, dt); n.blinkT -= dt; if (n.blinkT < -140) n.blinkT = 2500 + Math.random() * 3000; }
+      if (n.route && !n.mv) {
+        if (followRoute(n, dt, 240) && !n.mv) { n.route = null; if (n.extra) faceTo(n, W.player.x, W.player.y); else n.dir = (n.def && n.def.dir) || n.dir; }
+      }
+    }
+  }
+  // A scene gives a line to someone who is not here: they walk in from the
+  // nearest door or way in and stand near you while it lasts. Characters who
+  // are only ever a voice (chars[id].bodiless) and lines a scene marks as
+  // off-screen (!speakerless) are left alone.
+  function ensureSpeaker(who, sceneId) {
+    if (!who || who === 'narr' || who === 'pc' || !W.map || !RB.render.worldVisible()) return;
+    if (W.comp && (who === 'comp' || W.comp.id === who)) return;
+    if (W.npcs.some((n) => n.id === who) || W.extras.some((n) => n.id === who)) return;
+    // someone about to be known by this name is already standing here
+    if ((W.map.def.npcs || []).some((n) => n.was && n.id === who && W.npcs.some((q) => q.id === n.was))) return;
+    const ch = RB.content.chars[who];
+    if (!ch || !ch.look || ch.bodiless) return;
+    const spot = spotNear(W.player.x, W.player.y);
+    if (!spot) return;
+    const a = makeActor(spot[0], spot[1], 'down', ch.look);
+    a.id = who; a.def = { id: who }; a.home = spot; a.extra = true; a.map = W.map.id;
+    W.extras.push(a);
+    if (RB.test && RB.test.auto) (RB.test.extras = RB.test.extras || []).push(who + ' @ ' + W.map.id + ' (' + (sceneId || '?') + ')');
+    arriveOnFoot(a);
+    if (!a.route) faceTo(a, W.player.x, W.player.y);
+  }
+  // A free tile near x,y to stand on: facing the player first, then the nearest.
+  function spotNear(x, y) {
+    const p = W.player, [fx, fy] = frontTile(), st = s();
+    const ok = (tx, ty) => tx >= 0 && ty >= 0 && tx < W.map.w && ty < W.map.h && !RB.maps.blockedStatic(W.map, tx, ty) && !actorAt(tx, ty) &&
+      !(tx === p.x && ty === p.y) && !(W.comp && W.comp.x === tx && W.comp.y === ty) && !RB.maps.exitAt(W.map, tx, ty) && !triggerAt(tx, ty) && st;
+    if (ok(fx, fy)) return [fx, fy];
+    for (let r = 1; r <= 4; r++) {
+      const ring = [];
+      for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) if (Math.max(Math.abs(dx), Math.abs(dy)) === r) ring.push([x + dx, y + dy]);
+      ring.sort((a, b) => (Math.abs(a[0] - x) + Math.abs(a[1] - y)) - (Math.abs(b[0] - x) + Math.abs(b[1] - y)));
+      for (const [tx, ty] of ring) if (ok(tx, ty)) return [tx, ty];
+    }
+    return null;
+  }
+  // The scene is over: those who walked in walk off (unless they live here now).
+  function dismissExtras() {
+    const st = s();
+    for (const a of W.extras) {
+      const lives = (W.map.def.npcs || []).some((n) => n.id === a.id && (!n.if || RB.state.test(st, n.if)));
+      if (!lives) leave(a);
+    }
+    W.extras = [];
+  }
+
   // ---- collision -----------------------------------------------------------
   function actorAt(x, y, except) {
     for (const n of W.npcs) if (n !== except && ((n.x === x && n.y === y) || (n.mv && n.mv.tx === x && n.mv.ty === y))) return n;
+    for (const n of W.extras) if (n !== except && ((n.x === x && n.y === y) || (n.mv && n.mv.tx === x && n.mv.ty === y))) return n;
     for (const n of W.foes) if (n !== except && ((n.x === x && n.y === y) || (n.mv && n.mv.tx === x && n.mv.ty === y))) return n;
     return null;
   }
@@ -211,13 +366,16 @@ RB.world = (function () {
     st.x = p.x; st.y = p.y; st.dir = p.dir;
     const ex = RB.maps.exitAt(W.map, p.x, p.y);
     if (ex) {
-      if (ex.locked && (!ex.unlock || !RB.state.test(st, ex.unlock))) {
+      // a map can hold you while a story moment lasts (e.g. a night that only
+      // this map has): map.def.hold = [{ if, scene, except: [map ids], doors }]
+      const hold = (W.map.def.hold || []).find((h) => RB.state.test(st, h.if) && !(h.except || []).includes(ex.to) && (h.doors || !ex.door));
+      if (hold || (ex.locked && (!ex.unlock || !RB.state.test(st, ex.unlock)))) {
         W.path = null;
         // step back and explain
         const back = DIRS[OPP[p.dir]];
         p.x += back[0]; p.y += back[1]; p.fx = p.x; p.fy = p.y;
         st.x = p.x; st.y = p.y;
-        if (ex.locked) RB.script.run(ex.locked);
+        RB.script.run(hold ? hold.scene : ex.locked);
         return;
       }
       W.path = null;
@@ -246,6 +404,7 @@ RB.world = (function () {
     }
   }
   function faceTo(a, x, y) {
+    a.glanceFrom = null; a.glanceT = 6000 + Math.random() * 6000;
     const dx = x - a.x, dy = y - a.y;
     if (Math.abs(dx) > Math.abs(dy)) a.dir = dx > 0 ? 'right' : 'left';
     else if (dy) a.dir = dy > 0 ? 'down' : 'up';
@@ -279,11 +438,23 @@ RB.world = (function () {
         W.turnHold = 0;
       }
     }
+    updateWalkers(dt);
     // NPC routines
     for (const n of W.npcs) {
       stepActor(n, dt);
       n.blinkT -= dt;
       if (n.blinkT < -140) n.blinkT = 2500 + Math.random() * 3000;
+      if (n.route) continue;
+      // standing still, people now and then glance to one side and back
+      if (!n.def.wander && !n.mv && RB.game.mode() === 'world' && !RB.game.reducedMotion()) {
+        n.glanceT = (n.glanceT == null ? 4000 + Math.random() * 6000 : n.glanceT) - dt;
+        if (n.glanceT <= 0 && !n.glanceFrom) {
+          const home = n.dir, side = { down: ['left', 'right'], up: ['left', 'right'], left: ['down', 'up'], right: ['down', 'up'] }[home];
+          n.glanceFrom = home; n.dir = side[Math.random() < 0.5 ? 0 : 1]; n.glanceT = 900 + Math.random() * 500;
+        } else if (n.glanceT <= 0 && n.glanceFrom) {
+          n.dir = n.glanceFrom; n.glanceFrom = null; n.glanceT = 5000 + Math.random() * 7000;
+        }
+      } else if (n.glanceFrom) { n.dir = n.glanceFrom; n.glanceFrom = null; }
       const wander = n.def.wander;
       if (!wander || n.mv || RB.game.mode() !== 'world') continue;
       n.wt = (n.wt || 1500 + Math.random() * 2500) - dt;
@@ -353,6 +524,7 @@ RB.world = (function () {
     RB.script.run(scene, { npc: n.id });
     return true;
   }
+  const SHUT = { jp: '{戸|と} は {閉|し}まって いる 。 {誰|だれ} も {出|で}て こない 。', en: 'The door is shut. Nobody comes to it.' };
   function interact() {
     if (W.player.mv) return;
     const [fx, fy] = frontTile();
@@ -370,6 +542,13 @@ RB.world = (function () {
     if (pr) {
       if (pr.scene) RB.script.run(pr.scene, { prop: pr });
       else if (pr.text) RB.script.runInline([{ who: pr.who || 'narr', jp: pr.text.jp, en: pr.text.en }]);
+      return;
+    }
+    // a building you cannot go into: its door is shut, and says so
+    const door = RB.maps.shutDoorAt(W.map, fx, fy);
+    if (door && W.player.dir === 'up') {
+      const t = door.text || SHUT;
+      RB.script.runInline([{ who: 'narr', jp: t.jp, en: t.en }]);
       return;
     }
     // companion: talking to your companion gives contextual banter
@@ -401,6 +580,7 @@ RB.world = (function () {
       if (n2 && talkable(n2)) return { kind: 'talk', label: 'Talk' };
     }
     if (pr) return { kind: 'prop', label: !pr.scene && READ_PROP.test(pr.p) ? 'Read' : 'Look' };
+    if (W.player.dir === 'up' && RB.maps.shutDoorAt(W.map, fx, fy)) return { kind: 'door', label: 'Look' };
     if (W.comp && W.comp.x === fx && W.comp.y === fy) return { kind: 'companion', label: 'Chat' };
     return null;
   }
@@ -480,12 +660,14 @@ RB.world = (function () {
   function actorById(id) {
     if (id === 'pc' || id === 'player') return W.player;
     if (id === 'comp' || (W.comp && W.comp.id === id)) return W.comp;
-    return W.npcs.find((n) => n.id === id) || null;
+    return W.npcs.find((n) => n.id === id) || W.extras.find((n) => n.id === id) || null;
   }
   // Scripted walking (cutscenes): moves an actor tile by tile, ignoring NPC blocking.
   function scriptMove(id, dir, n, dur) {
     const a = actorById(id);
     if (!a) return Promise.resolve();
+    // a scripted move takes over from a walk-in: finish it where it was going
+    if (a.route) { const end = a.route[a.route.length - 1] || [a.x, a.y]; a.x = end[0]; a.y = end[1]; a.fx = a.x; a.fy = a.y; a.mv = null; a.route = null; a.alpha = 1; a.fadeIn = false; }
     return new Promise((res) => {
       let left = n;
       const go = () => {
@@ -500,7 +682,7 @@ RB.world = (function () {
   }
 
   return {
-    W, DIRS, enter, update, interact, tapTile, refreshActors, placeCompanion, emote, actorById, scriptMove,
+    W, DIRS, enter, update, interact, tapTile, refreshActors, placeCompanion, emote, actorById, scriptMove, ensureSpeaker, dismissExtras,
     frontTile, frontAction, checkFoeContact, faceTo, unstick, blocked, _tryMove: tryMovePlayer,
   };
 })();

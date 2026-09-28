@@ -76,7 +76,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'm1a', enemy: 'rw.dustmoth', x: 3, y: 4, patrol: 1, if: 'rw_gears' },
       { id: 'm1b', enemy: 'rw.inkblot', x: 11, y: 6, if: 'rw_loft_done&!rw_echo_done' },
     ],
-    exits: [{ x: 7, y: 11, to: 'rw.millroad', tx: 9, ty: 6, dir: 'down' }],
+    exits: [{ x: 7, y: 11, to: 'rw.millroad', tx: 9, ty: 5, dir: 'down' }],
     triggers: [{ x: 5, y: 6, w: 4, h: 2, scene: 'rw.m1_boss', if: 'rw_loft_done&!rw_echo_done' }],
     onEnter: [{ scene: 'rw.m1_enter', once: true }],
     spawn: { default: [7, 10, 'up'] },
@@ -192,6 +192,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   ];
   C.maps['rw.ferry'].npcs = [];
   C.maps['rw.hall'].onEnter = [{ scene: 'rw.hall_gather', if: 'rw_evening&!rw_hall_gather' }];
+  // the night before departure belongs to the village: the roads out wait for morning
+  C.maps['rw.village'].hold = [{ if: 'rw_night', scene: 'rw.night_hold' }];
   // Pier planks over the river for Old Yasu
   C.maps['rw.village'].terrain = C.maps['rw.village'].terrain.map((row, y) => (y === 25 ? row.slice(0, 33) + '::bb' + row.slice(37) : row));
   C.maps['rw.village'].props = C.maps['rw.village'].props.filter((p) => p.p !== 'pier');

@@ -185,24 +185,51 @@ RB.ui = (function () {
       setTimeout(res, ms || 220);
     });
   }
+  // Chapter openings and endings, and time passing ("The next morning"): a
+  // paper banner at the top of the screen, not a page over everything. It
+  // slides in from the left as it fades in, an ink flourish draws out from
+  // the title, it stays long enough to read, then slides away to the right.
+  // A click, tap or key moves it on; reduced motion fades without sliding.
+  // The place-name label waits until it has gone.
+  let bannerUp = null;
   function card(jp, en) {
     return new Promise((res) => {
-      const c = el('div', 'card');
-      c.innerHTML = '<div class="card-slip">' + (jp ? jhtml(jp) : '') + '<div class="en">' + esc(RB.script.enVars(en)) + '</div></div><button class="cbtn">Continue</button>';
-      const layer = { el: c, name: 'card' };
-      const done = () => { popLayer(layer); clearTimeout(tm); res(); };
+      const c = el('div', 'banner-layer');
+      const txt = (jp ? jhtml(jp) : '') + '<div class="en">' + esc(RB.script.enVars(en)) + '</div>';
+      const stroke = (side) => '<svg class="flourish ' + side + '" viewBox="0 0 120 16" aria-hidden="true" focusable="false"><path d="M2 9 C 30 9, 60 3, 118 8" pathLength="1"/><path d="M40 11 C 60 12, 80 10, 104 11" pathLength="1"/></svg>';
+      c.innerHTML = '<div class="banner" role="status" aria-live="polite">' + stroke('l') + '<div class="banner-txt">' + txt + '</div>' + stroke('r') + '</div>';
+      const b = c.querySelector('.banner');
+      const layer = { el: c, name: 'card', noAutofocus: true };
+      const ff = RB.game.fastForward();
+      const reduce = RB.game.reducedMotion();
+      let out = false, tm = null;
+      bannerUp = new Promise((r) => { layer.release = r; });
+      const done = () => {
+        if (out) return;
+        out = true;
+        clearTimeout(tm);
+        b.classList.remove('in');
+        b.classList.add('out');
+        setTimeout(() => { popLayer(layer); layer.release(); bannerUp = null; res(); }, ff ? 60 : reduce ? 300 : 560);
+      };
       layer.onAction = (a) => { if (a === 'ok' || a === 'cancel') { done(); return true; } return false; };
-      c.querySelector('button').onclick = done;
+      c.addEventListener('pointerdown', (e) => { e.preventDefault(); done(); });
       pushLayer(layer);
-      const tm = setTimeout(done, RB.game.fastForward() ? 300 : 4200);
+      requestAnimationFrame(() => requestAnimationFrame(() => b.classList.add('in')));
+      // time to read: a little longer for longer lines
+      const read = 2600 + Math.min(1400, ((en || '').length + (jp || '').replace(/[{}|a-z\s]/g, '').length * 2) * 18);
+      tm = setTimeout(done, ff ? 300 : read);
     });
   }
   function placeName(name) {
-    const p = el('div', 'place');
-    p.innerHTML = jhtml(name.jp) + '<div class="en">' + esc(name.en) + '</div>';
-    overlay.appendChild(p);
-    setTimeout(() => (p.style.opacity = '0'), 2400);
-    setTimeout(() => p.remove(), 3100);
+    const show = () => {
+      const p = el('div', 'place');
+      p.innerHTML = jhtml(name.jp) + '<div class="en">' + esc(name.en) + '</div>';
+      overlay.appendChild(p);
+      setTimeout(() => (p.style.opacity = '0'), 2400);
+      setTimeout(() => p.remove(), 3100);
+    };
+    if (bannerUp) bannerUp.then(() => setTimeout(show, 250)); else show();
   }
   // A small paper sheet on the cloth: the question, then its answers. The
   // first button is the proposed action (danger-styled when destructive); the

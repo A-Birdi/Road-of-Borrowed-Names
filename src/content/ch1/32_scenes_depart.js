@@ -27,8 +27,18 @@ suzu[smile]: {正直|しょうじき} に {言|い}う と 、 {一座|いちざ
 !faceplayer tsuru
 tsuru: {来|き}た かい 。 {他|ほか} の {連中|れんちゅう} も もう すぐ {来|く}る 。 {座|すわ}って {待|ま}ち な 。 || You came. The others will be here soon. Sit and wait.
 
+@scene rw.night_hold
+!if rw_hall_gather -> after
+narr: {夜|よる} の {道|みち} は {暗|くら}い 。 ツル が {灯|あか}り{堂|どう} で {待|ま}って いる 。 || The roads are dark at night. Tsuru is waiting at the Lantern Hall.
+!end
+:after
+narr: {出発|しゅっぱつ} は {朝|あさ} だ 。 {誰|だれ} と {行|い}く か 、 {灯|あか}り{堂|どう} で {決|き}めて から 。 || You set out in the morning — once you have decided, at the Lantern Hall, who goes with you.
+!end
+
 @scene rw.hall_gather
 !music departure
+!set rw_hall_gather
+!refresh
 narr: {灯|あか}り{堂|どう} に 、 {四人|よにん} が {集|あつ}まって いた 。 {壁|かべ} の {棚|たな} に は {古|ふる}い {記録|きろく} 。 {奥|おく} に は 、 {旅|たび} の {灯|あか}り が {一|ひと}つ 。 || The four have gathered in the Lantern Hall. Old records line the shelves; at the back hangs a single travelling lantern.
 tsuru: {名前|なまえ} を {持|も}って いった {何|なに} か は 、 {灯|ひ} の {道|みち} を {西|にし} へ {下|くだ}った 。 {潮硝子|しおがらす} に は 、 {海|うみ} に {沈|しず}んだ {書庫|しょこ} が ある と いう {噂|うわさ} が ある 。 {追|お}う なら 、 そこ から だろう ね 。 || Whatever took the names went down the lantern road, west. In Saltglass there's a rumour of an archive sunk under the sea. If you're going after it, that's where to start.
 tsuru: {旅|たび} の {灯|あか}り を {貸|か}す 。 ただし 、 {昔|むかし} から の {決|き}まり が ある 。 || I'll lend you the travelling lantern. But there's an old rule.
@@ -37,7 +47,6 @@ tsuru: ここ で は {好|す}きな だけ {時間|じかん} を かけて �
 nao: …… {要|よう} する に 、 {一人|ひとり} しか {連|つ}れて いけない って こと だろ 。 {回|まわ}りくどい 。 || …In short: you can only take one of us. Why not just say so.
 tsuru[smirk]: {年寄|としよ}り は {回|まわ}りくどい もの さ 。 || Old people are allowed to be roundabout.
 narr: {四人|よにん} と {話|はな}して 、 {一緒|いっしょ} に {来|き}て ほしい {人|ひと} に {声|こえ} を かけよう 。 {決|き}まったら 、 {奥|おく} の {灯|あか}り の {前|まえ} へ 。 || Talk with the four and ask the one you want to come with you. When you've decided, go to the lantern at the back.
-!set rw_hall_gather
 !quest rw_depart 0 quiet
 !autosave
 

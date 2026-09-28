@@ -292,6 +292,8 @@ RB.render = (function () {
 
   function drawActor(c, a, t, isFoe) {
     const x = ax(a.fx * TS), y = ay(a.fy * TS);
+    const alpha = a.alpha == null ? 1 : Math.max(0, Math.min(1, a.alpha));
+    if (alpha < 1) c.globalAlpha = alpha;
     // contact shadow
     c.fillStyle = 'rgba(0,0,0,0.25)';
     c.beginPath();
@@ -299,10 +301,25 @@ RB.render = (function () {
     c.fill();
     let frame = a.frame;
     if (!a.mv && a.blinkT != null && a.blinkT < 0) frame = 3;
-    const bob = isFoe && !RB.game.reducedMotion() ? Math.round(Math.sin(t / 300 + a.x) * 3) : 0;
+    const still = RB.game.reducedMotion();
+    const bob = isFoe && !still ? Math.round(Math.sin(t / 300 + a.x) * 3) : 0;
     const art = RB.sprites.getArt && RB.sprites.getArt(a.look, a.dir, frame);
+    if (art && !a.mv && !isFoe && !still) {
+      // idle breathing: every couple of seconds the head and body settle one
+      // art pixel onto the legs, then rise again (each person on their own beat)
+      const ph = a.breath == null ? (a.breath = RB.tiles.hh((a.id || '').length * 31 + (a.home ? a.home[0] * 7 + a.home[1] : 3), 17) % 2600) : a.breath;
+      const u = ((t + ph) % 2600) / 2600;
+      if (u > 0.5 && u < 0.92) {
+        const cut = Math.round(art.height * 0.62);
+        c.drawImage(art, 0, cut, art.width, art.height - cut, x, y - 16 + cut, art.width, art.height - cut);
+        c.drawImage(art, 0, 0, art.width, cut, x, y - 16 + 1, art.width, cut);
+        if (alpha < 1) c.globalAlpha = 1;
+        return;
+      }
+    }
     if (art) c.drawImage(art, x, y - 16 + bob);
     else c.drawImage(RB.sprites.get(a.look, a.dir, frame), x, y - 16 + bob, 32, 48);
+    if (alpha < 1) c.globalAlpha = 1;
   }
 
   // Emote bubbles at art resolution: an inked paper bubble with a tail and a
@@ -446,6 +463,8 @@ RB.render = (function () {
       list.push({ z: (p.y + 1) * TS - 0.5, draw: pd.draw2 ? () => pd.draw2(c, ax(p.x * TS), ay(p.y * TS), pal, t, opts) : () => legacy(c, () => pd.draw(c, lx, ly, pal, t, opts)) });
     }
     for (const n of W.npcs) list.push({ z: n.fy * TS + TS, draw: () => drawActor(c, n, t) });
+    for (const n of W.leavers || []) list.push({ z: n.fy * TS + TS, draw: () => drawActor(c, n, t) });
+    for (const n of W.extras || []) list.push({ z: n.fy * TS + TS, draw: () => drawActor(c, n, t) });
     for (const f of W.foes) list.push({ z: f.fy * TS + TS, draw: () => drawActor(c, f, t, true) });
     if (W.comp) list.push({ z: W.comp.fy * TS + TS - 0.1, draw: () => drawActor(c, W.comp, t) });
     list.push({ z: W.player.fy * TS + TS, draw: () => drawActor(c, W.player, t) });

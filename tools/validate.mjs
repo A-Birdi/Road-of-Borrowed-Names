@@ -120,11 +120,28 @@ for (const id in C.maps) {
   for (const p of def.props || []) {
     if (!RB.props.P[p.p]) E('map ' + id + ': unknown prop ' + p.p);
     if (p.scene) ref(p.scene, 'map ' + id + ' prop ' + p.p);
+    // a dead lantern the player can interact with must either light (a lit
+    // lantern on the same tile under the opposite condition) or be declared
+    // as staying dark — a scene that says it glows must show it glowing
+    if (p.p === 'deadlantern' && p.scene && !(p.o && p.o.staysDark)) {
+      const twin = (def.props || []).some((q) => q !== p && q.x === p.x && q.y === p.y && /lantern|lamp/.test(q.p) && q.p !== 'deadlantern' && q.if && p.if && (q.if === '!' + p.if || p.if === '!' + q.if));
+      if (!twin) E('map ' + id + ': dead lantern at ' + p.x + ',' + p.y + ' (' + p.scene + ') has no lit twin — add one, or mark it o: { staysDark: true }');
+    }
     if (p.text) jcheck(p.text.jp, 'map ' + id + ' prop text');
   }
   for (const s of def.structs || []) if (s.x + s.w > m.w || s.y + s.h > m.h) E('map ' + id + ': structure out of bounds at ' + s.x + ',' + s.y);
+  // going in through a door puts you on the building's entry mat; coming out
+  // puts you on the tile in front of the door
+  for (const s of def.structs || []) {
+    if (s.door == null || !s.to || !C.maps[s.to]) continue;
+    const inner = C.maps[s.to], mat = (inner.props || []).find((q) => q.p === 'exitmat');
+    if (mat && s.spawn && (s.spawn[0] !== mat.x || s.spawn[1] !== mat.y)) E('map ' + id + ': door into ' + s.to + ' spawns at ' + s.spawn + ' but its entry mat is at ' + mat.x + ',' + mat.y);
+    const fx = s.x + s.door, fy = s.y + s.h;
+    for (const e of inner.exits || []) if (e.to === id && e.tx != null && (Math.abs(e.tx - fx) + Math.abs(e.ty - fy) > 0)) E('map ' + s.to + ': exit to ' + id + ' lands at ' + e.tx + ',' + e.ty + ', not in front of its door (' + fx + ',' + fy + ')');
+  }
   for (const t of def.triggers || []) ref(t.scene, 'map ' + id + ' trigger');
   for (const ev of def.onEnter || []) ref(ev.scene, 'map ' + id + ' onEnter');
+  for (const h of def.hold || []) ref(h.scene, 'map ' + id + ' hold');
   for (const f of def.foes || []) { if (!C.enemies[f.enemy]) E('map ' + id + ': foe uses unknown enemy ' + f.enemy); if (!walk(f.x, f.y)) E('map ' + id + ': foe ' + f.id + ' on blocked tile'); if (f.scene) ref(f.scene, 'map ' + id + ' foe'); }
   // reachability of exits from spawn (ignores NPCs; conditional props treated as absent)
   if (sp && walk(sp[0], sp[1])) {

@@ -52,7 +52,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
         if (spec.shadow) { const s = spec.shadow(v, info); if (s) K.shadow(g, s[0], s[1], s[2], s[3], s[4]); }
         g.globalCompositeOperation = 'source-over';
       }));
-      c.drawImage(cv, x + bx, y + by);
+      // wind: the crown (the top `sway` fraction of the sprite) leans one art
+      // pixel with a slow wave that travels across the map, with calm spells
+      const k = spec.sway && t && !o.still ? Math.round(Math.sin(t / 1500 + (o.cx || 0) * 0.45 + (o.cy || 0) * 0.3) * (0.7 + 0.6 * Math.max(0, Math.sin(t / 5200 + (o.cx || 0) * 0.08)))) : 0;
+      if (k) {
+        const cut = Math.round(bh * spec.sway);
+        c.drawImage(cv, 0, cut, bw, bh - cut, x + bx, y + by + cut, bw, bh - cut);
+        c.drawImage(cv, 0, 0, bw, cut, x + bx + k, y + by, bw, cut);
+      } else c.drawImage(cv, x + bx, y + by);
       if (spec.live) spec.live(c, x, y, pal, t || 0, o);
     };
   }
@@ -143,6 +150,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     return cl.sort((a, b) => a.y - b.y);
   }
   art('tree', {
+    sway: 0.42,
     box: [-10, -36, 52, 72],
     v: (o) => cxy(o) % 12,
     draw(g, M, v, f, info) {
@@ -170,6 +178,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // Fruit tree: a lower, rounder crown on a crooked trunk, hung with fruit.
   art('orchard', {
+    sway: 0.4,
     box: [-8, -28, 48, 64],
     v: (o) => cxy(o) % 6,
     draw(g, M, v, f, info, pal) {
@@ -204,6 +213,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Conifer: four drooping tiers of boughs over a short trunk; in snowy
   // regions every exposed upper surface carries snow.
   art('pine', {
+    sway: 0.38,
     box: [-8, -46, 48, 82],
     v: (o) => cxy(o) % 6,
     draw(g, M, v, f, info) {
@@ -261,6 +271,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     if ((r >>> 8) % 4) limb(g, x2, y2, ang + sp * 0.9, len * 0.58, Math.max(1, w - 1), depth - 1, seed + 2, r5);
   }
   art('deadtree', {
+    sway: 0.35,
     box: [-12, -40, 56, 76],
     v: (o) => cxy(o) % 6,
     draw(g, M, v, f, info) {
@@ -280,6 +291,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // Shrub: a low mass of leaf clumps; some are in flower.
   art('bush', {
+    sway: 0.45,
     box: [-6, -4, 44, 40],
     v: (o) => cxy(o) % 6,
     draw(g, M, v, f, info, pal) {

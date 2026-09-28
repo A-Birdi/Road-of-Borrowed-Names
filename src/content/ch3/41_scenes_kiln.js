@@ -68,11 +68,13 @@ narr: {土|つち} の {線|せん} は 、 {逃|に}げ も {隠|かく}れ も
 narr: {灰|はい} の {黒|くろ}い {線|せん} 。 {二十年|にじゅうねん} {分|ぶん} の {土|つち} の {下|した} に 、 ずっと {眠|ねむ}って いた 。 || The black line of ash, asleep under twenty years of soil.
 
 @scene co.upper_lantern
+!if co_kiln_done -> lit
 narr: {道|みち} の {端|はし} の {灯籠|とうろう} 。 {灯|ひ} は {消|き}えて 、 {笠|かさ} の {字|じ} も {白|しろ}く {抜|ぬ}けて いる 。 || A lantern at the path's edge. Its light is out, and the writing on its shade has faded to blank.
 ?(comp=ren) comp[think]: {窯|かま} へ {続|つづ}く {道|みち} の {灯|ひ} です 。 {行|い}き{先|さき} ごと {忘|わす}れさせられて いる 。 …… {帰|かえ}り に 、 {書|か}き{直|なお}しましょう 。 {窯|かま} が {名前|なまえ} を {取|と}り{戻|もど}したら 。 || The lantern for the kiln road. It's been made to forget where it leads. …Let's rewrite it on the way back, once the kiln has its name again.
 ?(comp!=ren) narr: {窯|かま} へ {続|つづ}く {道|みち} の {灯|ひ} なのだろう 。 {行|い}き{先|さき} を {忘|わす}れた {灯|ひ} は 、 {灯|とも}らない 。 || It must be the lantern for the kiln road. A lantern that has forgotten where it leads won't light.
-!if !co_kiln_done -> end
-narr: {笠|かさ} に 、 {薄|うす}く {字|じ} が {戻|もど}って きて いる 。 「 {大窯|おおがま} 」 。 || Faint letters are returning to the shade: 大窯, "the great kiln".
+!end
+:lit
+narr: {笠|かさ} に {字|じ} が {戻|もど}り 、 {灯|ひ} が ともって いる 。 「 {大窯|おおがま} 」 。 || The writing has come back to the shade, and the lantern is lit: 大窯, "the great kiln".
 `, 'ch3/upper');
 
 RB.script.add(`
@@ -101,8 +103,12 @@ narr: {溶|と}けて {歪|ゆが}んだ ガラス の {火屋|ほや} が 、 {
 ?(comp=mio) comp: {祭|まつ}り の {灯籠|とうろう} の {火屋|ほや} です ね 。 {三十個|さんじゅっこ} {焼|や}いて いた 、 と イサオ さん が 。 || The festival lantern globes. Isao said they were firing thirty.
 
 @scene co.works_lantern
+!if co_kiln_done -> lit
 narr: {工房|こうぼう} {通|どお}り の {灯籠|とうろう} 。 {油|あぶら} は {残|のこ}って いる のに 、 {芯|しん} に {火|ひ} が {付|つ}かない 。 || The workshop row's lantern. There's still oil in it, but the wick won't take a flame.
 ?(comp=ren) comp: {名|な} の ない {灯籠|とうろう} は 、 {灯|とも}りません 。 ここ の {名|な} が {戻|もど}る まで 、 {待|ま}って いて ください 。 || A lantern without a name won't light. Wait a little longer, until this place has its name back.
+!end
+:lit
+narr: {工房|こうぼう} {通|どお}り の {灯籠|とうろう} に 、 {火|ひ} が {入|はい}って いる 。 {笠|かさ} に 、 {字|じ} が {戻|もど}って いる 。 「 {工房|こうぼう} {通|どお}り 」 。 || The workshop row's lantern has a flame in it now. Its shade has its writing back: 工房通り, "Workshop Row".
 
 @scene co.kiln_seal
 !if co_seal_broken -> end
@@ -304,6 +310,7 @@ narr: {火屋|ほや} が {置|お}いて あった {場所|ばしょ} に 、 {
 
 @scene co.core_page
 !if co_logpage_taken -> end
+!speakerless co_tomoe
 narr: {焦|こ}げた {紙|かみ} を {拾|ひろ}い{上|あ}げる 。 {窯焚|かまだ}き {日誌|にっし} の 、 {最後|さいご} の {頁|ページ} だ 。 || You pick up the scorched paper. It's the last page of the kiln's firing log.
 narr: {指|ゆび} が {触|ふ}れた {瞬間|しゅんかん} 、 {窯|かま} の {中|なか} が 、 {一瞬|いっしゅん} だけ {二十年前|にじゅうねんまえ} の {夜|よる} に {戻|もど}った 。 || The instant your fingers touch it, for one moment, the kiln is back on that night twenty years ago.
 !music sorrow

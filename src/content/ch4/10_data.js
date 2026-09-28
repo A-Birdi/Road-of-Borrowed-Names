@@ -48,7 +48,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     look: { skin: 3, hair: 'ponytail', hairColor: 0, cloth: ['#4a5a3a', '#3a4a2e', '#a88a5a'], shape: 'coat', acc: ['cape'], capeCol: '#8a8a7a' },
     portrait: { eyes: 'sharp', style: 'ponytail', acc: ['cape'], capeCol: '#8a8a7a', collar: 'high', bg: '#26302a' } });
   // Voices that speak only in scenes (not placed on a map).
-  ch('sb_lampvoice', { name: { en: 'The lamp', jp: '{灯|ひ}' }, voice: { pitch: 1.2 },
+  ch('sb_lampvoice', { name: { en: 'The lamp', jp: '{灯|ひ}' }, bodiless: true, voice: { pitch: 1.2 },
     look: { custom: 'spirit', col: '#cfe4ff' },
     portrait: { skin: ['#d8e8f8', '#b8c8d8'], hair: ['#a8c0d8', '#c8d8e8', '#f4faff'], cloth: ['#8aa8c8', '#6a88a8', '#f4faff'], style: 'long', eyes: 'soft', acc: ['hood'], hoodCol: '#a8c0d8', bg: '#101a2c' } });
 

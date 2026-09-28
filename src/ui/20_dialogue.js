@@ -83,6 +83,20 @@ RB.ui.dialogue = (function () {
     box.querySelector('.b-tr').setAttribute('aria-pressed', showSub ? 'true' : 'false');
   }
 
+  // Test runs record every line spoken by a character who is not on the map
+  // (a voice with no body). Some are meant (letters, memories, voices through
+  // a door); the rest are staging bugs. See tests/e2e/pursue.mjs.
+  function auditSpeaker(line) {
+    const who = line.who;
+    if (!who || who === 'narr' || who === 'pc' || !RB.render.worldVisible()) return;
+    const W = RB.world.W;
+    if (W.comp && (who === 'comp' || who === W.comp.id)) return;
+    if (W.npcs.some((n) => n.id === who) || (W.extras || []).some((n) => n.id === who)) return;
+    if ((W.map.def.npcs || []).some((n) => n.was && n.id === who && W.npcs.some((q) => q.id === n.was))) return;
+    const list = (RB.test.absentSpeakers = RB.test.absentSpeakers || []);
+    const key = who + '|' + W.map.id + '|' + (line.sceneId || '');
+    if (!list.some((x) => x.key === key)) list.push({ key, who, map: W.map.id, scene: line.sceneId || null, en: (line.en || '').slice(0, 70) });
+  }
   function charInfo(who) {
     const s = RB.game.s;
     if (who === 'pc') return { name: { en: s.player.name, jp: s.player.nameJp || s.player.name }, pc: true };
@@ -101,6 +115,7 @@ RB.ui.dialogue = (function () {
     s.backlog.push({ who: line.who, jp: line.jp, en: line.en });
     if (s.backlog.length > 220) s.backlog.splice(0, s.backlog.length - 200);
     const fresh = box.classList.contains('hidden');
+    if (RB.test && RB.test.auto) auditSpeaker(line);
     box.classList.remove('hidden');
     document.body.classList.add('in-dialogue');
     box.classList.toggle('noportrait', !ch || !!line.noPortrait);

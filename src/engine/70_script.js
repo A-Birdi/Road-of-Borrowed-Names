@@ -154,6 +154,7 @@ RB.script = (function () {
       RB.game.popMode('dialogue');
       if (running === 0) {
         RB.ui.dialogue.hide();
+        RB.world.dismissExtras();
         RB.world.refreshActors();
         RB.game.afterScene();
       }
@@ -169,6 +170,7 @@ RB.script = (function () {
       RB.game.popMode('dialogue');
       if (running === 0) {
         RB.ui.dialogue.hide();
+        RB.world.dismissExtras();
         RB.game.afterScene();
       }
     }
@@ -189,9 +191,14 @@ RB.script = (function () {
       if (c.if && !RB.state.test(s, c.if)) continue;
       const a = c.args || [];
       switch (c.op) {
-        case 'say':
-          await RB.ui.dialogue.say({ who: resolveWho(c.who), expr: c.expr, jp: c.jp, en: c.en, sceneId: sc.id, line: c.line });
+        case 'say': {
+          const who = resolveWho(c.who);
+          // someone who speaks should be seen: if they are not here, they walk in
+          // (unless this scene says their voice is off-screen: !speakerless)
+          if (!ctx.offscreenAll && !(ctx.offscreen && ctx.offscreen.has(who))) RB.world.ensureSpeaker(who, sc.id);
+          await RB.ui.dialogue.say({ who, expr: c.expr, jp: c.jp, en: c.en, sceneId: sc.id, line: c.line });
           break;
+        }
         case 'set': a.forEach((f) => (s.flags[f] = true)); break;
         case 'unset': a.forEach((f) => delete s.flags[f]); break;
         case 'var': {
@@ -312,7 +319,9 @@ RB.script = (function () {
         case 'menu': RB.ui.dialogue.hide(); await RB.ui.menu.open(a[0]); break;
         case 'postgame': s.flags.postgame = true; s.atlas.unlocked = true; break;
         case 'credits': RB.ui.dialogue.hide(); await RB.ui.credits(); break;
-        case 'speakerless': break;
+        // voices heard but not seen for the rest of this scene: memories,
+        // voices through a wall, a spirit (no names = every speaker)
+        case 'speakerless': if (a.length) { ctx.offscreen = ctx.offscreen || new Set(); a.forEach((w) => ctx.offscreen.add(w)); } else ctx.offscreenAll = true; break;
         case 'hook': if (RB.hooks && RB.hooks[a[0]]) await RB.hooks[a[0]](a.slice(1), ctx); else console.warn('missing hook', a[0]); break;
         default:
           console.warn('unknown op', c.op, 'in', sc.id);

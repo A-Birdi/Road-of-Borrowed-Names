@@ -1221,8 +1221,8 @@ body.reduced-motion .cr-route *, body.reduced-motion .cr-sheet * { transition: n
  * cloth button (.btn) and generic panel (.panel) still used by some screens. */
 
 /* ---- paper surfaces: ink, furigana and word-help underline on paper ---- */
-.dlg-sheet, .choice, .help, .notice, .toast, .place, .card-slip, .csheet, .panel { --jt-line: rgba(38, 31, 21, 0.45); }
-.dlg-sheet rt, .choice rt, .help rt, .toast rt, .place rt, .card-slip rt, .csheet rt, .panel rt { color: var(--rt-ink); }
+.dlg-sheet, .choice, .help, .notice, .toast, .place, .card-slip, .banner, .csheet, .panel { --jt-line: rgba(38, 31, 21, 0.45); }
+.dlg-sheet rt, .choice rt, .help rt, .toast rt, .place rt, .card-slip rt, .banner rt, .csheet rt, .panel rt { color: var(--rt-ink); }
 body.bulb-on .dlg-sheet .jline .jt, body.bulb-on .choice .jline .jt, body.bulb-on .toast .jline .jt,
 body.bulb-on .place .jline .jt, body.bulb-on .card-slip .jline .jt, body.bulb-on .panel .jline .jt { text-decoration-color: var(--jt-line); }
 .dlg-sheet .jline .jt:hover, .dlg-sheet .jline .jt.active, .choice .jline .jt.active, .panel .jline .jt.active { background: rgba(193, 138, 42, 0.2); }
@@ -1509,17 +1509,36 @@ body.touch-large .touchpad .tp-run { width: 68px; height: 68px; }
 .place .en { color: var(--ink-2); font-family: var(--serif); font-style: italic; }
 
 /* ---- chapter / ending cards --------------------------------------------------------- */
-.card {
-  position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
-  background: var(--cloth-900); background-image: var(--cloth-weave); gap: 18px; padding: 16px;
-}
-.card-slip {
+/* a banner at the top, over the world (10_ui.js card()); the layer only
+ * catches a tap to move on — it draws nothing of its own */
+.banner-layer { position: absolute; inset: 0; z-index: 35; pointer-events: auto; }
+.banner {
+  position: absolute; left: 50%; top: calc(max(14px, env(safe-area-inset-top)) + 3.5vh);
+  display: flex; align-items: center; gap: 0.6em; width: max-content; max-width: calc(100vw - 24px); box-sizing: border-box;
   background: var(--paper); color: var(--ink); border: 1px solid var(--paper-edge); border-top: 4px solid var(--ribbon);
-  box-shadow: 0 18px 50px rgba(0,0,0,0.55); padding: 1.1em 2em 1.3em; max-width: min(680px, 92vw); text-align: center;
+  box-shadow: 0 14px 36px rgba(0,0,0,0.45); padding: 0.55em 1.2em 0.7em; text-align: center;
+  opacity: 0; transform: translateX(calc(-50% - 56px));
+  transition: opacity 520ms var(--ease), transform 560ms var(--ease);
 }
-.card .card-slip .jline { font-size: 1.8em; color: var(--ink); }
-.card .card-slip .en { font-size: 1.15em; color: var(--ink-2); font-family: var(--serif); }
-.card .cbtn { font-size: 1em; }
+.banner.in { opacity: 1; transform: translateX(-50%); }
+.banner.out { opacity: 0; transform: translateX(calc(-50% + 56px)); transition-duration: 480ms, 540ms; }
+.banner-txt { min-width: 0; }
+.banner .jline { font-size: 1.55em; color: var(--ink); line-height: 1.9; }
+.banner .en { font-size: 1.08em; color: var(--ink-2); font-family: var(--serif); font-style: italic; }
+/* ink flourishes either side of the title, drawn outward from it */
+.banner .flourish { flex: none; width: clamp(28px, 7vw, 92px); height: 16px; overflow: visible; }
+.banner .flourish.l { transform: scaleX(-1); }
+.banner .flourish path { fill: none; stroke: var(--ink-2); stroke-width: 1.6; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 900ms var(--ease) 220ms; }
+.banner .flourish path + path { stroke-width: 1.1; opacity: 0.7; transition-delay: 380ms; }
+.banner.in .flourish path, .banner.out .flourish path { stroke-dashoffset: 0; }
+body.reduced-motion .banner, body.reduced-motion .banner.in, body.reduced-motion .banner.out { transform: translateX(-50%); transition: opacity 280ms linear; }
+body.reduced-motion .banner .flourish path { transition: none; stroke-dashoffset: 0; }
+body.high-contrast .banner .flourish path { stroke: #000; opacity: 1; }
+@media (max-width: 599px) {
+  .banner { padding: 0.5em 0.8em 0.6em; gap: 0.35em; }
+  .banner .jline { font-size: 1.3em; }
+  .banner .flourish { width: clamp(18px, 6vw, 40px); }
+}
 
 /* ---- confirmation sheet ---------------------------------------------------------------- */
 .confirm-scrim { z-index: 40; padding: 12px; }
@@ -14775,7 +14794,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
         if (spec.shadow) { const s = spec.shadow(v, info); if (s) K.shadow(g, s[0], s[1], s[2], s[3], s[4]); }
         g.globalCompositeOperation = 'source-over';
       }));
-      c.drawImage(cv, x + bx, y + by);
+      // wind: the crown (the top `sway` fraction of the sprite) leans one art
+      // pixel with a slow wave that travels across the map, with calm spells
+      const k = spec.sway && t && !o.still ? Math.round(Math.sin(t / 1500 + (o.cx || 0) * 0.45 + (o.cy || 0) * 0.3) * (0.7 + 0.6 * Math.max(0, Math.sin(t / 5200 + (o.cx || 0) * 0.08)))) : 0;
+      if (k) {
+        const cut = Math.round(bh * spec.sway);
+        c.drawImage(cv, 0, cut, bw, bh - cut, x + bx, y + by + cut, bw, bh - cut);
+        c.drawImage(cv, 0, 0, bw, cut, x + bx + k, y + by, bw, cut);
+      } else c.drawImage(cv, x + bx, y + by);
       if (spec.live) spec.live(c, x, y, pal, t || 0, o);
     };
   }
@@ -14866,6 +14892,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     return cl.sort((a, b) => a.y - b.y);
   }
   art('tree', {
+    sway: 0.42,
     box: [-10, -36, 52, 72],
     v: (o) => cxy(o) % 12,
     draw(g, M, v, f, info) {
@@ -14893,6 +14920,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // Fruit tree: a lower, rounder crown on a crooked trunk, hung with fruit.
   art('orchard', {
+    sway: 0.4,
     box: [-8, -28, 48, 64],
     v: (o) => cxy(o) % 6,
     draw(g, M, v, f, info, pal) {
@@ -14927,6 +14955,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Conifer: four drooping tiers of boughs over a short trunk; in snowy
   // regions every exposed upper surface carries snow.
   art('pine', {
+    sway: 0.38,
     box: [-8, -46, 48, 82],
     v: (o) => cxy(o) % 6,
     draw(g, M, v, f, info) {
@@ -14984,6 +15013,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     if ((r >>> 8) % 4) limb(g, x2, y2, ang + sp * 0.9, len * 0.58, Math.max(1, w - 1), depth - 1, seed + 2, r5);
   }
   art('deadtree', {
+    sway: 0.35,
     box: [-12, -40, 56, 76],
     v: (o) => cxy(o) % 6,
     draw(g, M, v, f, info) {
@@ -15003,6 +15033,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // Shrub: a low mass of leaf clumps; some are in flower.
   art('bush', {
+    sway: 0.45,
     box: [-6, -4, 44, 40],
     v: (o) => cxy(o) % 6,
     draw(g, M, v, f, info, pal) {
@@ -19961,14 +19992,17 @@ RB.maps = (function () {
       }
     }
     const exits = [];
+    const shut = []; // doors of buildings you cannot enter: solid, and they say so
     const structs = (def.structs || []).map((s) => Object.assign({}, s));
     for (const s of structs) {
       for (let yy = s.y; yy < s.y + s.h; yy++)
         for (let xx = s.x; xx < s.x + s.w; xx++) if (xx >= 0 && yy >= 0 && xx < w && yy < h) block[yy * w + xx] = 1;
       if (s.door != null) {
         const dx = s.x + s.door, dy = s.y + s.h - 1;
-        block[dy * w + dx] = 0;
-        if (s.to) exits.push({ x: dx, y: dy, w: 1, h: 1, to: s.to, tx: s.spawn ? s.spawn[0] : null, ty: s.spawn ? s.spawn[1] : null, dir: 'up', door: true, if: s.if, locked: s.locked });
+        if (s.to) {
+          block[dy * w + dx] = 0;
+          exits.push({ x: dx, y: dy, w: 1, h: 1, to: s.to, tx: s.spawn ? s.spawn[0] : null, ty: s.spawn ? s.spawn[1] : null, dir: 'up', door: true, if: s.if, locked: s.locked });
+        } else shut.push({ x: dx, y: dy, if: s.if, text: s.shut || null });
       }
     }
     for (const p of def.props || []) {
@@ -19983,7 +20017,7 @@ RB.maps = (function () {
     }
     for (const e of def.exits || []) exits.push(Object.assign({ w: 1, h: 1 }, e));
     const m = {
-      id, def, w, h, tiles, block, props, structs, exits,
+      id, def, w, h, tiles, block, props, structs, exits, shut,
       region: def.region || 'reedwake',
       triggers: (def.triggers || []).map((t) => Object.assign({ w: 1, h: 1 }, t)),
       staticLayer: null,
@@ -20022,10 +20056,16 @@ RB.maps = (function () {
     }
     return null;
   }
+  // The shut door of a building with no interior at x,y (if that building is there now).
+  function shutDoorAt(m, x, y) {
+    const s = RB.game && RB.game.s;
+    for (const d of m.shut || []) if (d.x === x && d.y === y && (!d.if || !s || RB.state.test(s, d.if))) return d;
+    return null;
+  }
   function invalidate() {
     for (const k in compiled) delete compiled[k];
   }
-  return { compile, tileAt, blockedStatic, exitAt, invalidate };
+  return { compile, tileAt, blockedStatic, exitAt, shutDoorAt, invalidate };
 })();
 
 
@@ -20136,6 +20176,9 @@ RB.world = (function () {
     time: 0,
     emotes: [],         // {who, kind, until}
     flashes: [],
+    leavers: [],        // people walking off to a door or exit before they go (drawn, never solid)
+    extras: [],         // people who walked in to speak in a scene; they walk off when it ends
+    enteredAt: 0,
   };
 
   function makeActor(x, y, dir, look) {
@@ -20162,6 +20205,9 @@ RB.world = (function () {
     if (m.def.travel) st.travel[m.def.travel] = true;
     W.player = makeActor(x, y, st.dir, playerLook());
     W.path = null;
+    W.leavers = [];
+    W.extras = [];
+    W.enteredAt = W.time;
     refreshActors();
     placeCompanion();
     unstick(W.player);
@@ -20205,16 +20251,30 @@ RB.world = (function () {
     const st = s();
     const m = W.map;
     const keep = new Map(W.npcs.map((n) => [n.id, n]));
+    const before = new Set(W.npcs.map((n) => n.id));
+    const renamed = new Set();
     W.npcs = [];
     for (const n of m.def.npcs || []) {
       if (n.if && !RB.state.test(st, n.if)) continue;
       if (st.comp && n.id === st.comp && !n.alwaysShow) continue; // companion travels with the player
       const ch = RB.content.chars[n.char || n.id] || {};
-      const old = keep.get(n.id);
+      // the same person under a new name (npc.was): keep the figure in place
+      let old = keep.get(n.id);
+      if (!old && n.was && keep.has(n.was)) { old = keep.get(n.was); renamed.add(n.was); before.add(n.id); }
       const a = old && old.map === m.id ? old : makeActor(n.x, n.y, n.dir || 'down', n.look || ch.look || RB.sprites.randomLook(RB.util.hashStr(n.id)));
       a.id = n.id; a.def = n; a.map = m.id; a.home = [n.x, n.y];
       a.look = n.look || ch.look || a.look;
       W.npcs.push(a);
+    }
+    // People who come or go while you are here walk to or from the nearest
+    // door or way out instead of popping in and out (not while a map is
+    // still appearing: those people were simply already there, or gone).
+    if (W.time - W.enteredAt > 900) {
+      for (const [id, a] of keep) {
+        if (W.npcs.some((n) => n.id === id) || id === st.comp || a.map !== m.id || renamed.has(id)) continue;
+        leave(a);
+      }
+      for (const a of W.npcs) if (!before.has(a.id) && !keep.has(a.id)) arriveOnFoot(a);
     }
     W.foes = [];
     for (const e of m.def.foes || []) {
@@ -20227,9 +20287,144 @@ RB.world = (function () {
     }
   }
 
+  // ---- coming and going on foot ---------------------------------------------
+  // Ways in and out: exits (edges and doors) and the shut doors of homes.
+  function waysOut() {
+    const st = s(), out = [];
+    for (const e of W.map.exits) {
+      if (e.if && !RB.state.test(st, e.if)) continue;
+      for (let y = e.y; y < e.y + e.h; y++) for (let x = e.x; x < e.x + e.w; x++) out.push(x + ',' + y);
+    }
+    for (const d of W.map.shut || []) if (!d.if || RB.state.test(st, d.if)) out.push(d.x + ',' + d.y);
+    return new Set(out);
+  }
+  // Shortest walk (at most `max` steps) from x,y to the nearest way out,
+  // through open ground; people are ignored (they step round each other).
+  function routeOut(x, y, max) {
+    const goals = waysOut();
+    if (!goals.size) return null;
+    const prev = new Map([[x + ',' + y, null]]);
+    let q = [[x, y]];
+    for (let d = 0; d <= max && q.length; d++) {
+      const next = [];
+      for (const [cx, cy] of q) {
+        const k = cx + ',' + cy;
+        if (goals.has(k) && d > 0) {
+          const path = [];
+          for (let c = k; c; c = prev.get(c)) path.unshift(c.split(',').map(Number));
+          return path.slice(1);
+        }
+        for (const dir in DIRS) {
+          const nx = cx + DIRS[dir][0], ny = cy + DIRS[dir][1], nk = nx + ',' + ny;
+          if (prev.has(nk) || nx < 0 || ny < 0 || nx >= W.map.w || ny >= W.map.h) continue;
+          if (!goals.has(nk) && RB.maps.blockedStatic(W.map, nx, ny)) continue;
+          prev.set(nk, k);
+          next.push([nx, ny]);
+        }
+      }
+      q = next;
+    }
+    return null;
+  }
+  function onScreen(a) {
+    const v = RB.render.viewSize(), c = RB.render.cam;
+    const x = a.x * 16 - c.x, y = a.y * 16 - c.y;
+    return x > -48 && y > -48 && x < v.w + 48 && y < v.h + 64;
+  }
+  function leave(a) {
+    if (!onScreen(a)) return;
+    const route = routeOut(a.x, a.y, 18) || [];
+    W.leavers.push(Object.assign({}, a, { mv: null, route, alpha: 1, fading: !route.length }));
+  }
+  function arriveOnFoot(a) {
+    if (!onScreen(a)) return;
+    const route = routeOut(a.x, a.y, 18);
+    if (!route || !route.length) { a.alpha = 0; a.fadeIn = true; return; }
+    const path = route.slice(0, -1).reverse().concat([[a.x, a.y]]);
+    const [sx, sy] = route[route.length - 1];
+    a.x = sx; a.y = sy; a.fx = sx; a.fy = sy; a.mv = null;
+    a.route = path; a.alpha = 0; a.fadeIn = true; a.routeT = 0;
+  }
+  // Follow a route one tile at a time; true when it is walked.
+  function followRoute(a, dt, dur) {
+    if (a.mv || !a.route) return !a.route;
+    if (!a.route.length) { a.route = null; return true; }
+    const [nx, ny] = a.route[0];
+    const dx = nx - a.x, dy = ny - a.y;
+    const dir = dx > 0 ? 'right' : dx < 0 ? 'left' : dy > 0 ? 'down' : 'up';
+    if (Math.abs(dx) + Math.abs(dy) !== 1) { a.route = null; return true; }
+    // wait for the player to step aside; after a while just get on with it
+    a.routeT = (a.routeT || 0) + dt;
+    if (a.routeT < 1500 && ((W.player.x === nx && W.player.y === ny) || (W.comp && W.comp.x === nx && W.comp.y === ny))) return false;
+    a.routeT = 0;
+    a.route.shift();
+    startMove(a, dir, dur);
+    return false;
+  }
+  function updateWalkers(dt) {
+    for (const a of W.leavers) {
+      stepActor(a, dt);
+      if (!a.fading && followRoute(a, dt, 260) && !a.mv) a.fading = true;
+      if (a.fading) a.alpha -= dt / 260;
+    }
+    W.leavers = W.leavers.filter((a) => a.alpha > 0);
+    for (const n of W.npcs.concat(W.extras)) {
+      if (n.fadeIn) { n.alpha = Math.min(1, (n.alpha || 0) + dt / 260); if (n.alpha >= 1) n.fadeIn = false; }
+      if (n.extra) { stepActor(n, dt); n.blinkT -= dt; if (n.blinkT < -140) n.blinkT = 2500 + Math.random() * 3000; }
+      if (n.route && !n.mv) {
+        if (followRoute(n, dt, 240) && !n.mv) { n.route = null; if (n.extra) faceTo(n, W.player.x, W.player.y); else n.dir = (n.def && n.def.dir) || n.dir; }
+      }
+    }
+  }
+  // A scene gives a line to someone who is not here: they walk in from the
+  // nearest door or way in and stand near you while it lasts. Characters who
+  // are only ever a voice (chars[id].bodiless) and lines a scene marks as
+  // off-screen (!speakerless) are left alone.
+  function ensureSpeaker(who, sceneId) {
+    if (!who || who === 'narr' || who === 'pc' || !W.map || !RB.render.worldVisible()) return;
+    if (W.comp && (who === 'comp' || W.comp.id === who)) return;
+    if (W.npcs.some((n) => n.id === who) || W.extras.some((n) => n.id === who)) return;
+    // someone about to be known by this name is already standing here
+    if ((W.map.def.npcs || []).some((n) => n.was && n.id === who && W.npcs.some((q) => q.id === n.was))) return;
+    const ch = RB.content.chars[who];
+    if (!ch || !ch.look || ch.bodiless) return;
+    const spot = spotNear(W.player.x, W.player.y);
+    if (!spot) return;
+    const a = makeActor(spot[0], spot[1], 'down', ch.look);
+    a.id = who; a.def = { id: who }; a.home = spot; a.extra = true; a.map = W.map.id;
+    W.extras.push(a);
+    if (RB.test && RB.test.auto) (RB.test.extras = RB.test.extras || []).push(who + ' @ ' + W.map.id + ' (' + (sceneId || '?') + ')');
+    arriveOnFoot(a);
+    if (!a.route) faceTo(a, W.player.x, W.player.y);
+  }
+  // A free tile near x,y to stand on: facing the player first, then the nearest.
+  function spotNear(x, y) {
+    const p = W.player, [fx, fy] = frontTile(), st = s();
+    const ok = (tx, ty) => tx >= 0 && ty >= 0 && tx < W.map.w && ty < W.map.h && !RB.maps.blockedStatic(W.map, tx, ty) && !actorAt(tx, ty) &&
+      !(tx === p.x && ty === p.y) && !(W.comp && W.comp.x === tx && W.comp.y === ty) && !RB.maps.exitAt(W.map, tx, ty) && !triggerAt(tx, ty) && st;
+    if (ok(fx, fy)) return [fx, fy];
+    for (let r = 1; r <= 4; r++) {
+      const ring = [];
+      for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) if (Math.max(Math.abs(dx), Math.abs(dy)) === r) ring.push([x + dx, y + dy]);
+      ring.sort((a, b) => (Math.abs(a[0] - x) + Math.abs(a[1] - y)) - (Math.abs(b[0] - x) + Math.abs(b[1] - y)));
+      for (const [tx, ty] of ring) if (ok(tx, ty)) return [tx, ty];
+    }
+    return null;
+  }
+  // The scene is over: those who walked in walk off (unless they live here now).
+  function dismissExtras() {
+    const st = s();
+    for (const a of W.extras) {
+      const lives = (W.map.def.npcs || []).some((n) => n.id === a.id && (!n.if || RB.state.test(st, n.if)));
+      if (!lives) leave(a);
+    }
+    W.extras = [];
+  }
+
   // ---- collision -----------------------------------------------------------
   function actorAt(x, y, except) {
     for (const n of W.npcs) if (n !== except && ((n.x === x && n.y === y) || (n.mv && n.mv.tx === x && n.mv.ty === y))) return n;
+    for (const n of W.extras) if (n !== except && ((n.x === x && n.y === y) || (n.mv && n.mv.tx === x && n.mv.ty === y))) return n;
     for (const n of W.foes) if (n !== except && ((n.x === x && n.y === y) || (n.mv && n.mv.tx === x && n.mv.ty === y))) return n;
     return null;
   }
@@ -20329,13 +20524,16 @@ RB.world = (function () {
     st.x = p.x; st.y = p.y; st.dir = p.dir;
     const ex = RB.maps.exitAt(W.map, p.x, p.y);
     if (ex) {
-      if (ex.locked && (!ex.unlock || !RB.state.test(st, ex.unlock))) {
+      // a map can hold you while a story moment lasts (e.g. a night that only
+      // this map has): map.def.hold = [{ if, scene, except: [map ids], doors }]
+      const hold = (W.map.def.hold || []).find((h) => RB.state.test(st, h.if) && !(h.except || []).includes(ex.to) && (h.doors || !ex.door));
+      if (hold || (ex.locked && (!ex.unlock || !RB.state.test(st, ex.unlock)))) {
         W.path = null;
         // step back and explain
         const back = DIRS[OPP[p.dir]];
         p.x += back[0]; p.y += back[1]; p.fx = p.x; p.fy = p.y;
         st.x = p.x; st.y = p.y;
-        if (ex.locked) RB.script.run(ex.locked);
+        RB.script.run(hold ? hold.scene : ex.locked);
         return;
       }
       W.path = null;
@@ -20364,6 +20562,7 @@ RB.world = (function () {
     }
   }
   function faceTo(a, x, y) {
+    a.glanceFrom = null; a.glanceT = 6000 + Math.random() * 6000;
     const dx = x - a.x, dy = y - a.y;
     if (Math.abs(dx) > Math.abs(dy)) a.dir = dx > 0 ? 'right' : 'left';
     else if (dy) a.dir = dy > 0 ? 'down' : 'up';
@@ -20397,11 +20596,23 @@ RB.world = (function () {
         W.turnHold = 0;
       }
     }
+    updateWalkers(dt);
     // NPC routines
     for (const n of W.npcs) {
       stepActor(n, dt);
       n.blinkT -= dt;
       if (n.blinkT < -140) n.blinkT = 2500 + Math.random() * 3000;
+      if (n.route) continue;
+      // standing still, people now and then glance to one side and back
+      if (!n.def.wander && !n.mv && RB.game.mode() === 'world' && !RB.game.reducedMotion()) {
+        n.glanceT = (n.glanceT == null ? 4000 + Math.random() * 6000 : n.glanceT) - dt;
+        if (n.glanceT <= 0 && !n.glanceFrom) {
+          const home = n.dir, side = { down: ['left', 'right'], up: ['left', 'right'], left: ['down', 'up'], right: ['down', 'up'] }[home];
+          n.glanceFrom = home; n.dir = side[Math.random() < 0.5 ? 0 : 1]; n.glanceT = 900 + Math.random() * 500;
+        } else if (n.glanceT <= 0 && n.glanceFrom) {
+          n.dir = n.glanceFrom; n.glanceFrom = null; n.glanceT = 5000 + Math.random() * 7000;
+        }
+      } else if (n.glanceFrom) { n.dir = n.glanceFrom; n.glanceFrom = null; }
       const wander = n.def.wander;
       if (!wander || n.mv || RB.game.mode() !== 'world') continue;
       n.wt = (n.wt || 1500 + Math.random() * 2500) - dt;
@@ -20471,6 +20682,7 @@ RB.world = (function () {
     RB.script.run(scene, { npc: n.id });
     return true;
   }
+  const SHUT = { jp: '{戸|と} は {閉|し}まって いる 。 {誰|だれ} も {出|で}て こない 。', en: 'The door is shut. Nobody comes to it.' };
   function interact() {
     if (W.player.mv) return;
     const [fx, fy] = frontTile();
@@ -20488,6 +20700,13 @@ RB.world = (function () {
     if (pr) {
       if (pr.scene) RB.script.run(pr.scene, { prop: pr });
       else if (pr.text) RB.script.runInline([{ who: pr.who || 'narr', jp: pr.text.jp, en: pr.text.en }]);
+      return;
+    }
+    // a building you cannot go into: its door is shut, and says so
+    const door = RB.maps.shutDoorAt(W.map, fx, fy);
+    if (door && W.player.dir === 'up') {
+      const t = door.text || SHUT;
+      RB.script.runInline([{ who: 'narr', jp: t.jp, en: t.en }]);
       return;
     }
     // companion: talking to your companion gives contextual banter
@@ -20519,6 +20738,7 @@ RB.world = (function () {
       if (n2 && talkable(n2)) return { kind: 'talk', label: 'Talk' };
     }
     if (pr) return { kind: 'prop', label: !pr.scene && READ_PROP.test(pr.p) ? 'Read' : 'Look' };
+    if (W.player.dir === 'up' && RB.maps.shutDoorAt(W.map, fx, fy)) return { kind: 'door', label: 'Look' };
     if (W.comp && W.comp.x === fx && W.comp.y === fy) return { kind: 'companion', label: 'Chat' };
     return null;
   }
@@ -20598,12 +20818,14 @@ RB.world = (function () {
   function actorById(id) {
     if (id === 'pc' || id === 'player') return W.player;
     if (id === 'comp' || (W.comp && W.comp.id === id)) return W.comp;
-    return W.npcs.find((n) => n.id === id) || null;
+    return W.npcs.find((n) => n.id === id) || W.extras.find((n) => n.id === id) || null;
   }
   // Scripted walking (cutscenes): moves an actor tile by tile, ignoring NPC blocking.
   function scriptMove(id, dir, n, dur) {
     const a = actorById(id);
     if (!a) return Promise.resolve();
+    // a scripted move takes over from a walk-in: finish it where it was going
+    if (a.route) { const end = a.route[a.route.length - 1] || [a.x, a.y]; a.x = end[0]; a.y = end[1]; a.fx = a.x; a.fy = a.y; a.mv = null; a.route = null; a.alpha = 1; a.fadeIn = false; }
     return new Promise((res) => {
       let left = n;
       const go = () => {
@@ -20618,7 +20840,7 @@ RB.world = (function () {
   }
 
   return {
-    W, DIRS, enter, update, interact, tapTile, refreshActors, placeCompanion, emote, actorById, scriptMove,
+    W, DIRS, enter, update, interact, tapTile, refreshActors, placeCompanion, emote, actorById, scriptMove, ensureSpeaker, dismissExtras,
     frontTile, frontAction, checkFoeContact, faceTo, unstick, blocked, _tryMove: tryMovePlayer,
   };
 })();
@@ -20919,6 +21141,8 @@ RB.render = (function () {
 
   function drawActor(c, a, t, isFoe) {
     const x = ax(a.fx * TS), y = ay(a.fy * TS);
+    const alpha = a.alpha == null ? 1 : Math.max(0, Math.min(1, a.alpha));
+    if (alpha < 1) c.globalAlpha = alpha;
     // contact shadow
     c.fillStyle = 'rgba(0,0,0,0.25)';
     c.beginPath();
@@ -20926,10 +21150,25 @@ RB.render = (function () {
     c.fill();
     let frame = a.frame;
     if (!a.mv && a.blinkT != null && a.blinkT < 0) frame = 3;
-    const bob = isFoe && !RB.game.reducedMotion() ? Math.round(Math.sin(t / 300 + a.x) * 3) : 0;
+    const still = RB.game.reducedMotion();
+    const bob = isFoe && !still ? Math.round(Math.sin(t / 300 + a.x) * 3) : 0;
     const art = RB.sprites.getArt && RB.sprites.getArt(a.look, a.dir, frame);
+    if (art && !a.mv && !isFoe && !still) {
+      // idle breathing: every couple of seconds the head and body settle one
+      // art pixel onto the legs, then rise again (each person on their own beat)
+      const ph = a.breath == null ? (a.breath = RB.tiles.hh((a.id || '').length * 31 + (a.home ? a.home[0] * 7 + a.home[1] : 3), 17) % 2600) : a.breath;
+      const u = ((t + ph) % 2600) / 2600;
+      if (u > 0.5 && u < 0.92) {
+        const cut = Math.round(art.height * 0.62);
+        c.drawImage(art, 0, cut, art.width, art.height - cut, x, y - 16 + cut, art.width, art.height - cut);
+        c.drawImage(art, 0, 0, art.width, cut, x, y - 16 + 1, art.width, cut);
+        if (alpha < 1) c.globalAlpha = 1;
+        return;
+      }
+    }
     if (art) c.drawImage(art, x, y - 16 + bob);
     else c.drawImage(RB.sprites.get(a.look, a.dir, frame), x, y - 16 + bob, 32, 48);
+    if (alpha < 1) c.globalAlpha = 1;
   }
 
   // Emote bubbles at art resolution: an inked paper bubble with a tail and a
@@ -21073,6 +21312,8 @@ RB.render = (function () {
       list.push({ z: (p.y + 1) * TS - 0.5, draw: pd.draw2 ? () => pd.draw2(c, ax(p.x * TS), ay(p.y * TS), pal, t, opts) : () => legacy(c, () => pd.draw(c, lx, ly, pal, t, opts)) });
     }
     for (const n of W.npcs) list.push({ z: n.fy * TS + TS, draw: () => drawActor(c, n, t) });
+    for (const n of W.leavers || []) list.push({ z: n.fy * TS + TS, draw: () => drawActor(c, n, t) });
+    for (const n of W.extras || []) list.push({ z: n.fy * TS + TS, draw: () => drawActor(c, n, t) });
     for (const f of W.foes) list.push({ z: f.fy * TS + TS, draw: () => drawActor(c, f, t, true) });
     if (W.comp) list.push({ z: W.comp.fy * TS + TS - 0.1, draw: () => drawActor(c, W.comp, t) });
     list.push({ z: W.player.fy * TS + TS, draw: () => drawActor(c, W.player, t) });
@@ -21403,6 +21644,7 @@ RB.script = (function () {
       RB.game.popMode('dialogue');
       if (running === 0) {
         RB.ui.dialogue.hide();
+        RB.world.dismissExtras();
         RB.world.refreshActors();
         RB.game.afterScene();
       }
@@ -21418,6 +21660,7 @@ RB.script = (function () {
       RB.game.popMode('dialogue');
       if (running === 0) {
         RB.ui.dialogue.hide();
+        RB.world.dismissExtras();
         RB.game.afterScene();
       }
     }
@@ -21438,9 +21681,14 @@ RB.script = (function () {
       if (c.if && !RB.state.test(s, c.if)) continue;
       const a = c.args || [];
       switch (c.op) {
-        case 'say':
-          await RB.ui.dialogue.say({ who: resolveWho(c.who), expr: c.expr, jp: c.jp, en: c.en, sceneId: sc.id, line: c.line });
+        case 'say': {
+          const who = resolveWho(c.who);
+          // someone who speaks should be seen: if they are not here, they walk in
+          // (unless this scene says their voice is off-screen: !speakerless)
+          if (!ctx.offscreenAll && !(ctx.offscreen && ctx.offscreen.has(who))) RB.world.ensureSpeaker(who, sc.id);
+          await RB.ui.dialogue.say({ who, expr: c.expr, jp: c.jp, en: c.en, sceneId: sc.id, line: c.line });
           break;
+        }
         case 'set': a.forEach((f) => (s.flags[f] = true)); break;
         case 'unset': a.forEach((f) => delete s.flags[f]); break;
         case 'var': {
@@ -21561,7 +21809,9 @@ RB.script = (function () {
         case 'menu': RB.ui.dialogue.hide(); await RB.ui.menu.open(a[0]); break;
         case 'postgame': s.flags.postgame = true; s.atlas.unlocked = true; break;
         case 'credits': RB.ui.dialogue.hide(); await RB.ui.credits(); break;
-        case 'speakerless': break;
+        // voices heard but not seen for the rest of this scene: memories,
+        // voices through a wall, a spirit (no names = every speaker)
+        case 'speakerless': if (a.length) { ctx.offscreen = ctx.offscreen || new Set(); a.forEach((w) => ctx.offscreen.add(w)); } else ctx.offscreenAll = true; break;
         case 'hook': if (RB.hooks && RB.hooks[a[0]]) await RB.hooks[a[0]](a.slice(1), ctx); else console.warn('missing hook', a[0]); break;
         default:
           console.warn('unknown op', c.op, 'in', sc.id);
@@ -22244,6 +22494,13 @@ RB.game = (function () {
       await RB.ui.fade(true, reducedMotion() ? 80 : 220);
       const def = RB.content.maps[mapId];
       if (!def) throw new Error('unknown map ' + mapId);
+      // test runs: walking out of a map while its story-state night is on, into
+      // a map with no such state, is a continuity leak (see tests/e2e/pursue.mjs)
+      if (RB.test && RB.test.auto && RB.world.W.map) {
+        const nightHere = (RB.world.W.map.def.alt || []).some((a) => a.night && RB.state.test(G.s, a.if));
+        const nightThere = (def.alt || []).some((a) => a.night && RB.state.test(G.s, a.if)) || def.region === 'interior' || def.night;
+        if (nightHere && !nightThere) (RB.test.nightLeaks = RB.test.nightLeaks || []).push(RB.world.W.map.id + ' -> ' + mapId);
+      }
       RB.world.enter(mapId, x, y, dir, { sp: opts.sp });
       RB.render.prewarm(); // build the new map's art while the screen is still dark
       await RB.ui.fade(false, reducedMotion() ? 80 : 220);
@@ -23357,24 +23614,51 @@ RB.ui = (function () {
       setTimeout(res, ms || 220);
     });
   }
+  // Chapter openings and endings, and time passing ("The next morning"): a
+  // paper banner at the top of the screen, not a page over everything. It
+  // slides in from the left as it fades in, an ink flourish draws out from
+  // the title, it stays long enough to read, then slides away to the right.
+  // A click, tap or key moves it on; reduced motion fades without sliding.
+  // The place-name label waits until it has gone.
+  let bannerUp = null;
   function card(jp, en) {
     return new Promise((res) => {
-      const c = el('div', 'card');
-      c.innerHTML = '<div class="card-slip">' + (jp ? jhtml(jp) : '') + '<div class="en">' + esc(RB.script.enVars(en)) + '</div></div><button class="cbtn">Continue</button>';
-      const layer = { el: c, name: 'card' };
-      const done = () => { popLayer(layer); clearTimeout(tm); res(); };
+      const c = el('div', 'banner-layer');
+      const txt = (jp ? jhtml(jp) : '') + '<div class="en">' + esc(RB.script.enVars(en)) + '</div>';
+      const stroke = (side) => '<svg class="flourish ' + side + '" viewBox="0 0 120 16" aria-hidden="true" focusable="false"><path d="M2 9 C 30 9, 60 3, 118 8" pathLength="1"/><path d="M40 11 C 60 12, 80 10, 104 11" pathLength="1"/></svg>';
+      c.innerHTML = '<div class="banner" role="status" aria-live="polite">' + stroke('l') + '<div class="banner-txt">' + txt + '</div>' + stroke('r') + '</div>';
+      const b = c.querySelector('.banner');
+      const layer = { el: c, name: 'card', noAutofocus: true };
+      const ff = RB.game.fastForward();
+      const reduce = RB.game.reducedMotion();
+      let out = false, tm = null;
+      bannerUp = new Promise((r) => { layer.release = r; });
+      const done = () => {
+        if (out) return;
+        out = true;
+        clearTimeout(tm);
+        b.classList.remove('in');
+        b.classList.add('out');
+        setTimeout(() => { popLayer(layer); layer.release(); bannerUp = null; res(); }, ff ? 60 : reduce ? 300 : 560);
+      };
       layer.onAction = (a) => { if (a === 'ok' || a === 'cancel') { done(); return true; } return false; };
-      c.querySelector('button').onclick = done;
+      c.addEventListener('pointerdown', (e) => { e.preventDefault(); done(); });
       pushLayer(layer);
-      const tm = setTimeout(done, RB.game.fastForward() ? 300 : 4200);
+      requestAnimationFrame(() => requestAnimationFrame(() => b.classList.add('in')));
+      // time to read: a little longer for longer lines
+      const read = 2600 + Math.min(1400, ((en || '').length + (jp || '').replace(/[{}|a-z\s]/g, '').length * 2) * 18);
+      tm = setTimeout(done, ff ? 300 : read);
     });
   }
   function placeName(name) {
-    const p = el('div', 'place');
-    p.innerHTML = jhtml(name.jp) + '<div class="en">' + esc(name.en) + '</div>';
-    overlay.appendChild(p);
-    setTimeout(() => (p.style.opacity = '0'), 2400);
-    setTimeout(() => p.remove(), 3100);
+    const show = () => {
+      const p = el('div', 'place');
+      p.innerHTML = jhtml(name.jp) + '<div class="en">' + esc(name.en) + '</div>';
+      overlay.appendChild(p);
+      setTimeout(() => (p.style.opacity = '0'), 2400);
+      setTimeout(() => p.remove(), 3100);
+    };
+    if (bannerUp) bannerUp.then(() => setTimeout(show, 250)); else show();
   }
   // A small paper sheet on the cloth: the question, then its answers. The
   // first button is the proposed action (danger-styled when destructive); the
@@ -23953,6 +24237,20 @@ RB.ui.dialogue = (function () {
     box.querySelector('.b-tr').setAttribute('aria-pressed', showSub ? 'true' : 'false');
   }
 
+  // Test runs record every line spoken by a character who is not on the map
+  // (a voice with no body). Some are meant (letters, memories, voices through
+  // a door); the rest are staging bugs. See tests/e2e/pursue.mjs.
+  function auditSpeaker(line) {
+    const who = line.who;
+    if (!who || who === 'narr' || who === 'pc' || !RB.render.worldVisible()) return;
+    const W = RB.world.W;
+    if (W.comp && (who === 'comp' || who === W.comp.id)) return;
+    if (W.npcs.some((n) => n.id === who) || (W.extras || []).some((n) => n.id === who)) return;
+    if ((W.map.def.npcs || []).some((n) => n.was && n.id === who && W.npcs.some((q) => q.id === n.was))) return;
+    const list = (RB.test.absentSpeakers = RB.test.absentSpeakers || []);
+    const key = who + '|' + W.map.id + '|' + (line.sceneId || '');
+    if (!list.some((x) => x.key === key)) list.push({ key, who, map: W.map.id, scene: line.sceneId || null, en: (line.en || '').slice(0, 70) });
+  }
   function charInfo(who) {
     const s = RB.game.s;
     if (who === 'pc') return { name: { en: s.player.name, jp: s.player.nameJp || s.player.name }, pc: true };
@@ -23971,6 +24269,7 @@ RB.ui.dialogue = (function () {
     s.backlog.push({ who: line.who, jp: line.jp, en: line.en });
     if (s.backlog.length > 220) s.backlog.splice(0, s.backlog.length - 200);
     const fresh = box.classList.contains('hidden');
+    if (RB.test && RB.test.auto) auditSpeaker(line);
     box.classList.remove('hidden');
     document.body.classList.add('in-dialogue');
     box.classList.toggle('noportrait', !ch || !!line.noPortrait);
@@ -30483,7 +30782,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   ch('narr', { name: { en: '', jp: '' } });
 
   // ---- places (fast travel) & roads -----------------------------------------------------
-  C.places.reedwake = { name: { en: 'Reedwake', jp: '{葦|あし}ノ{瀬|せ}' }, map: 'rw.village', x: 22, y: 30, dir: 'up', pos: [90, 230], region: 'reedwake', hub: true, desc: 'A riverside village drying out after the storm.' };
+  C.places.reedwake = { name: { en: 'Reedwake', jp: '{葦|あし}ノ{瀬|せ}' }, map: 'rw.village', x: 22, y: 30, dir: 'up', pos: [310, 248], region: 'reedwake', hub: true, desc: 'A riverside village drying out after the storm.' };
   C.places.saltglass = { name: { en: 'Saltglass', jp: '{潮|しお}{硝子|がらす}' }, map: 'sg.harbor', x: 4, y: 20, dir: 'right', pos: [170, 270], region: 'saltglass', hub: true, desc: 'A working harbour of labels, letters and tides.' };
   C.places.cinder = { name: { en: 'Cinder Orchard', jp: '{灰実|はいみ}の{里|さと}' }, map: 'co.village', x: 4, y: 18, dir: 'right', pos: [270, 200], region: 'cinder', hub: true, desc: 'Terraced orchards and glass workshops.' };
   C.places.snowbell = { name: { en: 'Snowbell', jp: '{雪鈴|ゆきすず}' }, map: 'sb.hamlet', x: 4, y: 20, dir: 'up', pos: [330, 90], region: 'snowbell', hub: true, desc: 'A mountain hamlet beneath the old observatory.' };
@@ -31112,7 +31411,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { type: 'house', x: 18, y: 5, w: 7, h: 4, roof: 'tile', wall: 'stone', door: 3, windows: [1, 5], to: 'rw.hall', spawn: [5, 8], lit: true },
       { type: 'house', x: 28, y: 12, w: 5, h: 4, roof: 'thatch', wall: 'wood', door: 2, windows: [0, 4], chimney: true, to: 'rw.tea', spawn: [4, 7], sign: true, signX: 1 },
       { type: 'house', x: 9, y: 12, w: 5, h: 4, roof: 'thatch', door: 2, windows: [0, 4], to: 'rw.apoth', spawn: [4, 7] },
-      { type: 'house', x: 26, y: 22, w: 6, h: 4, roof: 'tile', wall: 'wood', door: 3, windows: [1], to: 'rw.warehouse', spawn: [4, 7] },
+      { type: 'house', x: 26, y: 22, w: 6, h: 4, roof: 'tile', wall: 'wood', door: 3, windows: [1], to: 'rw.warehouse', spawn: [5, 7] },
       { type: 'house', x: 9, y: 22, w: 5, h: 3, roof: 'thatch', wall: 'wood', door: 2, windows: [0, 4], chimney: true, to: 'rw.carpenter', spawn: [4, 6] },
       { type: 'house', x: 3, y: 6, w: 4, h: 3, roof: 'thatch', door: 2, windows: [0], to: 'rw.house1', spawn: [3, 6] },
       { type: 'house', x: 5, y: 26, w: 4, h: 3, roof: 'thatch', door: 2, windows: [0, 3] },
@@ -31232,7 +31531,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.rect(12, 4, 6, 3, '~').rect(11, 5, 1, 2, '"').rect(18, 4, 1, 3, '"');
     }),
     props: [
-      { p: 'lantern', x: 5, y: 8 }, { p: 'deadlantern', x: 14, y: 8, scene: 'rw.road_lantern' }, { p: 'lantern', x: 24, y: 8 },
+      { p: 'lantern', x: 5, y: 8 }, { p: 'deadlantern', x: 14, y: 8, scene: 'rw.road_lantern', if: '!rw_road_lit' }, { p: 'lantern', x: 14, y: 8, scene: 'rw.road_lantern', if: 'rw_road_lit' }, { p: 'lantern', x: 24, y: 8 },
       { p: 'stone_marker', x: 20, y: 11, scene: 'rw.road_marker' },
     ],
     exits: [
@@ -31324,7 +31623,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'm1a', enemy: 'rw.dustmoth', x: 3, y: 4, patrol: 1, if: 'rw_gears' },
       { id: 'm1b', enemy: 'rw.inkblot', x: 11, y: 6, if: 'rw_loft_done&!rw_echo_done' },
     ],
-    exits: [{ x: 7, y: 11, to: 'rw.millroad', tx: 9, ty: 6, dir: 'down' }],
+    exits: [{ x: 7, y: 11, to: 'rw.millroad', tx: 9, ty: 5, dir: 'down' }],
     triggers: [{ x: 5, y: 6, w: 4, h: 2, scene: 'rw.m1_boss', if: 'rw_loft_done&!rw_echo_done' }],
     onEnter: [{ scene: 'rw.m1_enter', once: true }],
     spawn: { default: [7, 10, 'up'] },
@@ -31440,6 +31739,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   ];
   C.maps['rw.ferry'].npcs = [];
   C.maps['rw.hall'].onEnter = [{ scene: 'rw.hall_gather', if: 'rw_evening&!rw_hall_gather' }];
+  // the night before departure belongs to the village: the roads out wait for morning
+  C.maps['rw.village'].hold = [{ if: 'rw_night', scene: 'rw.night_hold' }];
   // Pier planks over the river for Old Yasu
   C.maps['rw.village'].terrain = C.maps['rw.village'].terrain.map((row, y) => (y === 25 ? row.slice(0, 33) + '::bb' + row.slice(37) : row));
   C.maps['rw.village'].props = C.maps['rw.village'].props.filter((p) => p.p !== 'pier');
@@ -31477,7 +31778,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   ch('tomo', { name: { en: 'Tomo', jp: 'トモ' }, voice: { pitch: 1.05 },
     look: { skin: 4, hair: 'long', hairColor: 0, cloth: ['#5a7a9a', '#46607a', '#e8d8b0'], shape: 'dress', acc: ['basket'] },
     portrait: { eyes: 'soft', style: 'long', bg: '#2a3440' } });
-  ch('echo', { name: { en: 'The Mill Echo', jp: 'こだま' }, voice: { pitch: 1.2 },
+  ch('echo', { name: { en: 'The Mill Echo', jp: 'こだま' }, bodiless: true, voice: { pitch: 1.2 },
     look: { custom: 'spirit', col: '#a8c8d8' },
     portrait: { skin: ['#c8dce8', '#a8bcc8'], hair: ['#8aa0b0', '#a8bcc8', '#e8f4fc'], cloth: ['#8aa0b0', '#6a8090', '#e8f4fc'], style: 'long', eyes: 'soft', acc: ['hood'], hoodCol: '#8aa0b0', bg: '#14202a' } });
 
@@ -32416,9 +32717,12 @@ tsuru: …… {橋|はし} は {手|て} を {振|ふ}らない 。 {渡|わた}
 !faceplayer tsuru
 tsuru: よく やった 。 でも 、 {終|お}わり じゃ ない 。 {名前|なまえ} を {持|も}って いった {何|なに} か は 、 {川|かわ} の {下|しも} へ 、 {西|にし} へ {向|む}かった 。 {灯|ひ} の {道|みち} に {沿|そ}って ね 。 || Well done. But it isn't over. Whatever carried the names away went downriver — west, along the lantern road.
 tsuru: {今夜|こんや} 、 {灯|あか}り{堂|どう} に {来|き}て おくれ 。 あの {四人|よにん} も {呼|よ}んで おく 。 {話|はな}す こと が ある 。 || Come to the Lantern Hall tonight. I'll call those four as well. There's something we need to talk about.
+!fade out 900
 !set rw_night rw_evening
-!quest rw_depart 0
 !music reedwake_night
+!fade in 900
+narr: {日|ひ} が {暮|く}れた 。 {村|むら} の {灯|あか}り が 、 {一|ひと}つ ずつ ともって いく 。 || The sun goes down. One by one, the village lanterns come on.
+!quest rw_depart 0
 !autosave
 `, 'ch1/31_bridge');
 
@@ -32453,8 +32757,18 @@ suzu[smile]: {正直|しょうじき} に {言|い}う と 、 {一座|いちざ
 !faceplayer tsuru
 tsuru: {来|き}た かい 。 {他|ほか} の {連中|れんちゅう} も もう すぐ {来|く}る 。 {座|すわ}って {待|ま}ち な 。 || You came. The others will be here soon. Sit and wait.
 
+@scene rw.night_hold
+!if rw_hall_gather -> after
+narr: {夜|よる} の {道|みち} は {暗|くら}い 。 ツル が {灯|あか}り{堂|どう} で {待|ま}って いる 。 || The roads are dark at night. Tsuru is waiting at the Lantern Hall.
+!end
+:after
+narr: {出発|しゅっぱつ} は {朝|あさ} だ 。 {誰|だれ} と {行|い}く か 、 {灯|あか}り{堂|どう} で {決|き}めて から 。 || You set out in the morning — once you have decided, at the Lantern Hall, who goes with you.
+!end
+
 @scene rw.hall_gather
 !music departure
+!set rw_hall_gather
+!refresh
 narr: {灯|あか}り{堂|どう} に 、 {四人|よにん} が {集|あつ}まって いた 。 {壁|かべ} の {棚|たな} に は {古|ふる}い {記録|きろく} 。 {奥|おく} に は 、 {旅|たび} の {灯|あか}り が {一|ひと}つ 。 || The four have gathered in the Lantern Hall. Old records line the shelves; at the back hangs a single travelling lantern.
 tsuru: {名前|なまえ} を {持|も}って いった {何|なに} か は 、 {灯|ひ} の {道|みち} を {西|にし} へ {下|くだ}った 。 {潮硝子|しおがらす} に は 、 {海|うみ} に {沈|しず}んだ {書庫|しょこ} が ある と いう {噂|うわさ} が ある 。 {追|お}う なら 、 そこ から だろう ね 。 || Whatever took the names went down the lantern road, west. In Saltglass there's a rumour of an archive sunk under the sea. If you're going after it, that's where to start.
 tsuru: {旅|たび} の {灯|あか}り を {貸|か}す 。 ただし 、 {昔|むかし} から の {決|き}まり が ある 。 || I'll lend you the travelling lantern. But there's an old rule.
@@ -32463,7 +32777,6 @@ tsuru: ここ で は {好|す}きな だけ {時間|じかん} を かけて �
 nao: …… {要|よう} する に 、 {一人|ひとり} しか {連|つ}れて いけない って こと だろ 。 {回|まわ}りくどい 。 || …In short: you can only take one of us. Why not just say so.
 tsuru[smirk]: {年寄|としよ}り は {回|まわ}りくどい もの さ 。 || Old people are allowed to be roundabout.
 narr: {四人|よにん} と {話|はな}して 、 {一緒|いっしょ} に {来|き}て ほしい {人|ひと} に {声|こえ} を かけよう 。 {決|き}まったら 、 {奥|おく} の {灯|あか}り の {前|まえ} へ 。 || Talk with the four and ask the one you want to come with you. When you've decided, go to the lantern at the back.
-!set rw_hall_gather
 !quest rw_depart 0 quiet
 !autosave
 
@@ -38768,7 +39081,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   ch('co_goat', { name: { en: 'The Director (a goat)', jp: '{座長|ざちょう}' }, voice: { pitch: 0.6 },
     look: { custom: 'co_goat', col: '#e8e0d0' },
     portrait: { skin: ['#e8e0d0', '#c8c0b0'], hair: ['#d8d0c0', '#e8e0d0', '#fff8e8'], cloth: ['#c8a040', '#a88030', '#e8c060'], style: 'shaved', eyes: 'narrow', bg: '#3a3222' } });
-  ch('co_warden', { name: { en: 'The Kiln Warden', jp: '{窯|かま}の{番人|ばんにん}' }, voice: { pitch: 0.6 },
+  ch('co_warden', { name: { en: 'The Kiln Warden', jp: '{窯|かま}の{番人|ばんにん}' }, bodiless: true, voice: { pitch: 0.6 },
     look: { custom: 'golem', col: '#8a6a5a' },
     portrait: { skin: ['#8a6a5a', '#6a4a3a'], hair: ['#4a3028', '#6a4a3a', '#f0a060'], cloth: ['#6a4a3a', '#4a3028', '#8fb8b0'], style: 'shaved', eyes: 'sharp', iris: '#ffd070', bg: '#2a120c' } });
 
@@ -39222,7 +39535,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.scatter(',', 18, 323, [2, 0, 34, 33], '.');
     }),
     structs: [
-      { type: 'house', x: 2, y: 21, w: 6, h: 4, roof: 'thatch', wall: 'wood', door: 3, windows: [1, 4], chimney: true, to: 'co.ume', spawn: [4, 6] },
+      { type: 'house', x: 2, y: 21, w: 6, h: 4, roof: 'thatch', wall: 'wood', door: 3, windows: [1, 4], chimney: true, to: 'co.ume', spawn: [3, 6] },
     ],
     props: [
       { p: 'stairs', x: 8, y: 27 }, { p: 'stairs', x: 9, y: 27 }, { p: 'stairs', x: 28, y: 20 }, { p: 'stairs', x: 29, y: 20 },
@@ -39304,7 +39617,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'rock', x: 14, y: 14, if: '!co_w_tsuchi', scene: 'co.ashband' }, { p: 'rock', x: 15, y: 14, if: '!co_w_tsuchi', scene: 'co.ashband' },
       { p: 'stairs', x: 14, y: 14, if: 'co_w_tsuchi' }, { p: 'stairs', x: 15, y: 14, if: 'co_w_tsuchi' },
       { p: 'stairs', x: 30, y: 7 }, { p: 'stairs', x: 31, y: 7 },
-      { p: 'deadlantern', x: 32, y: 2, scene: 'co.upper_lantern' },
+      { p: 'deadlantern', x: 32, y: 2, scene: 'co.upper_lantern', if: '!co_kiln_done' }, { p: 'lantern', x: 32, y: 2, scene: 'co.upper_lantern', if: 'co_kiln_done' },
       { p: 'co_scrub', x: 8, y: 18 }, { p: 'co_scrub', x: 26, y: 10 }, { p: 'co_scrub', x: 12, y: 4 },
     ],
     foes: [
@@ -39350,7 +39663,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }),
     structs: [
       { type: 'house', x: 16, y: 1, w: 9, h: 5, roof: 'ash', wall: 'stone', door: 4, windows: [] },
-      { type: 'house', x: 34, y: 17, w: 5, h: 3, roof: 'slate', wall: 'stone', door: 2, windows: [], to: 'co.icehouse', spawn: [5, 7] },
+      { type: 'house', x: 34, y: 17, w: 5, h: 3, roof: 'slate', wall: 'stone', door: 2, windows: [], to: 'co.icehouse', spawn: [5, 8] },
     ],
     props: [
       { p: 'co_seal', x: 20, y: 5, if: '!co_seal_broken', scene: 'co.kiln_seal' },
@@ -39361,7 +39674,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'glassware', x: 19, y: 20, scene: 'co.works_globes' },
       { p: 'barrel', x: 5, y: 9 }, { p: 'crate', x: 9, y: 11 }, { p: 'anvil', x: 30, y: 10 },
       { p: 'co_bar', x: 2, y: 25, if: '!co_shortcut', scene: 'co.shortcut_open' }, { p: 'co_bar', x: 3, y: 25, if: '!co_shortcut', scene: 'co.shortcut_open' },
-      { p: 'deadlantern', x: 23, y: 7, scene: 'co.works_lantern' },
+      { p: 'deadlantern', x: 23, y: 7, scene: 'co.works_lantern', if: '!co_kiln_done' }, { p: 'lantern', x: 23, y: 7, scene: 'co.works_lantern', if: 'co_kiln_done' },
     ],
     foes: [
       { id: 'g1', enemy: 'co.golem', x: 13, y: 15, patrol: 2 },
@@ -40425,11 +40738,13 @@ narr: {土|つち} の {線|せん} は 、 {逃|に}げ も {隠|かく}れ も
 narr: {灰|はい} の {黒|くろ}い {線|せん} 。 {二十年|にじゅうねん} {分|ぶん} の {土|つち} の {下|した} に 、 ずっと {眠|ねむ}って いた 。 || The black line of ash, asleep under twenty years of soil.
 
 @scene co.upper_lantern
+!if co_kiln_done -> lit
 narr: {道|みち} の {端|はし} の {灯籠|とうろう} 。 {灯|ひ} は {消|き}えて 、 {笠|かさ} の {字|じ} も {白|しろ}く {抜|ぬ}けて いる 。 || A lantern at the path's edge. Its light is out, and the writing on its shade has faded to blank.
 ?(comp=ren) comp[think]: {窯|かま} へ {続|つづ}く {道|みち} の {灯|ひ} です 。 {行|い}き{先|さき} ごと {忘|わす}れさせられて いる 。 …… {帰|かえ}り に 、 {書|か}き{直|なお}しましょう 。 {窯|かま} が {名前|なまえ} を {取|と}り{戻|もど}したら 。 || The lantern for the kiln road. It's been made to forget where it leads. …Let's rewrite it on the way back, once the kiln has its name again.
 ?(comp!=ren) narr: {窯|かま} へ {続|つづ}く {道|みち} の {灯|ひ} なのだろう 。 {行|い}き{先|さき} を {忘|わす}れた {灯|ひ} は 、 {灯|とも}らない 。 || It must be the lantern for the kiln road. A lantern that has forgotten where it leads won't light.
-!if !co_kiln_done -> end
-narr: {笠|かさ} に 、 {薄|うす}く {字|じ} が {戻|もど}って きて いる 。 「 {大窯|おおがま} 」 。 || Faint letters are returning to the shade: 大窯, "the great kiln".
+!end
+:lit
+narr: {笠|かさ} に {字|じ} が {戻|もど}り 、 {灯|ひ} が ともって いる 。 「 {大窯|おおがま} 」 。 || The writing has come back to the shade, and the lantern is lit: 大窯, "the great kiln".
 `, 'ch3/upper');
 
 RB.script.add(`
@@ -40458,8 +40773,12 @@ narr: {溶|と}けて {歪|ゆが}んだ ガラス の {火屋|ほや} が 、 {
 ?(comp=mio) comp: {祭|まつ}り の {灯籠|とうろう} の {火屋|ほや} です ね 。 {三十個|さんじゅっこ} {焼|や}いて いた 、 と イサオ さん が 。 || The festival lantern globes. Isao said they were firing thirty.
 
 @scene co.works_lantern
+!if co_kiln_done -> lit
 narr: {工房|こうぼう} {通|どお}り の {灯籠|とうろう} 。 {油|あぶら} は {残|のこ}って いる のに 、 {芯|しん} に {火|ひ} が {付|つ}かない 。 || The workshop row's lantern. There's still oil in it, but the wick won't take a flame.
 ?(comp=ren) comp: {名|な} の ない {灯籠|とうろう} は 、 {灯|とも}りません 。 ここ の {名|な} が {戻|もど}る まで 、 {待|ま}って いて ください 。 || A lantern without a name won't light. Wait a little longer, until this place has its name back.
+!end
+:lit
+narr: {工房|こうぼう} {通|どお}り の {灯籠|とうろう} に 、 {火|ひ} が {入|はい}って いる 。 {笠|かさ} に 、 {字|じ} が {戻|もど}って いる 。 「 {工房|こうぼう} {通|どお}り 」 。 || The workshop row's lantern has a flame in it now. Its shade has its writing back: 工房通り, "Workshop Row".
 
 @scene co.kiln_seal
 !if co_seal_broken -> end
@@ -40661,6 +40980,7 @@ narr: {火屋|ほや} が {置|お}いて あった {場所|ばしょ} に 、 {
 
 @scene co.core_page
 !if co_logpage_taken -> end
+!speakerless co_tomoe
 narr: {焦|こ}げた {紙|かみ} を {拾|ひろ}い{上|あ}げる 。 {窯焚|かまだ}き {日誌|にっし} の 、 {最後|さいご} の {頁|ページ} だ 。 || You pick up the scorched paper. It's the last page of the kiln's firing log.
 narr: {指|ゆび} が {触|ふ}れた {瞬間|しゅんかん} 、 {窯|かま} の {中|なか} が 、 {一瞬|いっしゅん} だけ {二十年前|にじゅうねんまえ} の {夜|よる} に {戻|もど}った 。 || The instant your fingers touch it, for one moment, the kiln is back on that night twenty years ago.
 !music sorrow
@@ -43433,7 +43753,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     look: { skin: 3, hair: 'ponytail', hairColor: 0, cloth: ['#4a5a3a', '#3a4a2e', '#a88a5a'], shape: 'coat', acc: ['cape'], capeCol: '#8a8a7a' },
     portrait: { eyes: 'sharp', style: 'ponytail', acc: ['cape'], capeCol: '#8a8a7a', collar: 'high', bg: '#26302a' } });
   // Voices that speak only in scenes (not placed on a map).
-  ch('sb_lampvoice', { name: { en: 'The lamp', jp: '{灯|ひ}' }, voice: { pitch: 1.2 },
+  ch('sb_lampvoice', { name: { en: 'The lamp', jp: '{灯|ひ}' }, bodiless: true, voice: { pitch: 1.2 },
     look: { custom: 'spirit', col: '#cfe4ff' },
     portrait: { skin: ['#d8e8f8', '#b8c8d8'], hair: ['#a8c0d8', '#c8d8e8', '#f4faff'], cloth: ['#8aa8c8', '#6a88a8', '#f4faff'], style: 'long', eyes: 'soft', acc: ['hood'], hoodCol: '#a8c0d8', bg: '#101a2c' } });
 
@@ -47306,7 +47626,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { type: 'house', x: 36, y: 5, w: 8, h: 5, roof: 'indigo', door: 3, windows: [1, 5, 6], to: 'lf.clerks', spawn: [6, 7] },
       { type: 'house', x: 3, y: 26, w: 8, h: 5, roof: 'indigo', wall: 'wood', door: 5, windows: [1, 3], chimney: true, lit: true, sign: true, signX: 2, to: 'lf.inn', spawn: [6, 8] },
       { type: 'house', x: 14, y: 26, w: 6, h: 4, roof: 'tile', door: 4, windows: [1, 2], sign: true, signX: 1, to: 'lf.cafe', spawn: [5, 7] },
-      { type: 'house', x: 22, y: 26, w: 6, h: 4, roof: 'tile', wall: 'wood', door: 3, windows: [1, 5], chimney: true, to: 'lf.bakery', spawn: [4, 6] },
+      { type: 'house', x: 22, y: 26, w: 6, h: 4, roof: 'tile', wall: 'wood', door: 3, windows: [1, 5], chimney: true, to: 'lf.bakery', spawn: [3, 6] },
       { type: 'house', x: 31, y: 26, w: 6, h: 4, roof: 'indigo', wall: 'wood', door: 4, windows: [1, 2], sign: true, signX: 1, to: 'lf.ferry', spawn: [5, 7] },
       { type: 'house', x: 4, y: 33, w: 5, h: 3, roof: 'indigo', door: 4, windows: [1] },
       { type: 'house', x: 13, y: 33, w: 5, h: 3, roof: 'tile', wall: 'wood', door: 4, windows: [1, 2] },
@@ -47434,7 +47754,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'lf_wheel', x: 6, y: 8, scene: 'lf.sluice_wheel' },
       { p: 'stone_marker', x: 10, y: 10, scene: 'lf.memorial' },
       { p: 'flowerpot', x: 9, y: 11 }, { p: 'flowerpot', x: 11, y: 11 },
-      { p: 'pillar', x: 4, y: 16 }, { p: 'pillar', x: 8, y: 19 }, { p: 'deadlantern', x: 6, y: 16, scene: 'lf.drowned_lamp' },
+      { p: 'pillar', x: 4, y: 16 }, { p: 'pillar', x: 8, y: 19 }, { p: 'deadlantern', x: 6, y: 16, scene: 'lf.drowned_lamp', o: { staysDark: true } },
       { p: 'lf_sunktower', x: 24, y: 19, scene: 'lf.tower_view' },
       { p: 'pier', x: 18, y: 17 }, { p: 'pier', x: 19, y: 17 }, { p: 'pier', x: 18, y: 18 }, { p: 'pier', x: 19, y: 18 },
       { p: 'boat', x: 18, y: 19, scene: 'lf.boat_to_tower' },
@@ -51502,7 +51822,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.scatter('R', 5, 75, [4, 4, 20, 13], '*');
     }),
     structs: [
-      { type: 'house', x: 4, y: 7, w: 6, h: 4, roof: 'snow', wall: 'wood', door: 2, windows: [0, 4], chimney: true, lit: true, to: 'sa.hut', spawn: [5, 6] },
+      { type: 'house', x: 4, y: 7, w: 6, h: 4, roof: 'snow', wall: 'wood', door: 2, windows: [0, 4], chimney: true, lit: true, to: 'sa.hut', spawn: [5, 7] },
     ],
     props: [
       { p: 'lantern', x: 12, y: 15, scene: 'sa.camp_lamp' },
@@ -51524,7 +51844,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       ] },
       { id: 'sa_oyone', x: 11, y: 14, dir: 'right', if: 'sa_descent&!post', talk: 'sa.oyone_descent' },
       { id: 'kasane', x: 16, y: 15, dir: 'left', if: 'sa_descent&end_kasane_trial&!post', talk: 'sa.kasane_walk' },
-      { id: 'sa_tsuzuri', x: 16, y: 6, dir: 'down', if: 'post&end_archive_closed&sa_clerk_named', talk: 'sa.tsuzuri_post' },
+      { id: 'sa_tsuzuri', was: 'sa_clerk', x: 16, y: 6, dir: 'down', if: 'post&end_archive_closed&sa_clerk_named', talk: 'sa.tsuzuri_post' },
       { id: 'sa_clerk', x: 16, y: 6, dir: 'down', if: 'post&end_archive_closed&!sa_clerk_named', talk: 'sa.clerk_post' },
     ],
     exits: [
@@ -51644,7 +51964,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         { if: 'seen.sa.clerk_first', scene: 'sa.clerk_again' },
         { scene: 'sa.clerk_first' },
       ] },
-      { id: 'sa_tsuzuri', x: 6, y: 4, dir: 'down', if: 'sa_clerk_named', talk: [{ if: 'post', scene: 'sa.tsuzuri_post' }, { scene: 'sa.tsuzuri_chat' }] },
+      { id: 'sa_tsuzuri', was: 'sa_clerk', x: 6, y: 4, dir: 'down', if: 'sa_clerk_named', talk: [{ if: 'post', scene: 'sa.tsuzuri_post' }, { scene: 'sa.tsuzuri_chat' }] },
       { id: 'kasane', x: 14, y: 8, dir: 'down', if: '!sa_kasane_left', talk: 'sa.kasane_meet' },
       { id: 'kasane', x: 14, y: 6, dir: 'down', if: 'sa_choice_mem&!sa_choice_archive', talk: 'sa.choose_archive' },
       { id: 'kasane', x: 14, y: 5, dir: 'down', if: 'post&end_kasane_keeper&end_archive_library', talk: 'sa.kasane_post' },

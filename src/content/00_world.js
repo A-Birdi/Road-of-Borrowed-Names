@@ -60,7 +60,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   ch('narr', { name: { en: '', jp: '' } });
 
   // ---- places (fast travel) & roads -----------------------------------------------------
-  C.places.reedwake = { name: { en: 'Reedwake', jp: '{葦|あし}ノ{瀬|せ}' }, map: 'rw.village', x: 22, y: 30, dir: 'up', pos: [90, 230], region: 'reedwake', hub: true, desc: 'A riverside village drying out after the storm.' };
+  C.places.reedwake = { name: { en: 'Reedwake', jp: '{葦|あし}ノ{瀬|せ}' }, map: 'rw.village', x: 22, y: 30, dir: 'up', pos: [310, 248], region: 'reedwake', hub: true, desc: 'A riverside village drying out after the storm.' };
   C.places.saltglass = { name: { en: 'Saltglass', jp: '{潮|しお}{硝子|がらす}' }, map: 'sg.harbor', x: 4, y: 20, dir: 'right', pos: [170, 270], region: 'saltglass', hub: true, desc: 'A working harbour of labels, letters and tides.' };
   C.places.cinder = { name: { en: 'Cinder Orchard', jp: '{灰実|はいみ}の{里|さと}' }, map: 'co.village', x: 4, y: 18, dir: 'right', pos: [270, 200], region: 'cinder', hub: true, desc: 'Terraced orchards and glass workshops.' };
   C.places.snowbell = { name: { en: 'Snowbell', jp: '{雪鈴|ゆきすず}' }, map: 'sb.hamlet', x: 4, y: 20, dir: 'up', pos: [330, 90], region: 'snowbell', hub: true, desc: 'A mountain hamlet beneath the old observatory.' };

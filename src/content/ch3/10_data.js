@@ -59,7 +59,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   ch('co_goat', { name: { en: 'The Director (a goat)', jp: '{座長|ざちょう}' }, voice: { pitch: 0.6 },
     look: { custom: 'co_goat', col: '#e8e0d0' },
     portrait: { skin: ['#e8e0d0', '#c8c0b0'], hair: ['#d8d0c0', '#e8e0d0', '#fff8e8'], cloth: ['#c8a040', '#a88030', '#e8c060'], style: 'shaved', eyes: 'narrow', bg: '#3a3222' } });
-  ch('co_warden', { name: { en: 'The Kiln Warden', jp: '{窯|かま}の{番人|ばんにん}' }, voice: { pitch: 0.6 },
+  ch('co_warden', { name: { en: 'The Kiln Warden', jp: '{窯|かま}の{番人|ばんにん}' }, bodiless: true, voice: { pitch: 0.6 },
     look: { custom: 'golem', col: '#8a6a5a' },
     portrait: { skin: ['#8a6a5a', '#6a4a3a'], hair: ['#4a3028', '#6a4a3a', '#f0a060'], cloth: ['#6a4a3a', '#4a3028', '#8fb8b0'], style: 'shaved', eyes: 'sharp', iris: '#ffd070', bg: '#2a120c' } });
 

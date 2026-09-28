@@ -27,7 +27,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   ch('tomo', { name: { en: 'Tomo', jp: 'トモ' }, voice: { pitch: 1.05 },
     look: { skin: 4, hair: 'long', hairColor: 0, cloth: ['#5a7a9a', '#46607a', '#e8d8b0'], shape: 'dress', acc: ['basket'] },
     portrait: { eyes: 'soft', style: 'long', bg: '#2a3440' } });
-  ch('echo', { name: { en: 'The Mill Echo', jp: 'こだま' }, voice: { pitch: 1.2 },
+  ch('echo', { name: { en: 'The Mill Echo', jp: 'こだま' }, bodiless: true, voice: { pitch: 1.2 },
     look: { custom: 'spirit', col: '#a8c8d8' },
     portrait: { skin: ['#c8dce8', '#a8bcc8'], hair: ['#8aa0b0', '#a8bcc8', '#e8f4fc'], cloth: ['#8aa0b0', '#6a8090', '#e8f4fc'], style: 'long', eyes: 'soft', acc: ['hood'], hoodCol: '#8aa0b0', bg: '#14202a' } });
 

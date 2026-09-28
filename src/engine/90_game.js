@@ -223,6 +223,13 @@ RB.game = (function () {
       await RB.ui.fade(true, reducedMotion() ? 80 : 220);
       const def = RB.content.maps[mapId];
       if (!def) throw new Error('unknown map ' + mapId);
+      // test runs: walking out of a map while its story-state night is on, into
+      // a map with no such state, is a continuity leak (see tests/e2e/pursue.mjs)
+      if (RB.test && RB.test.auto && RB.world.W.map) {
+        const nightHere = (RB.world.W.map.def.alt || []).some((a) => a.night && RB.state.test(G.s, a.if));
+        const nightThere = (def.alt || []).some((a) => a.night && RB.state.test(G.s, a.if)) || def.region === 'interior' || def.night;
+        if (nightHere && !nightThere) (RB.test.nightLeaks = RB.test.nightLeaks || []).push(RB.world.W.map.id + ' -> ' + mapId);
+      }
       RB.world.enter(mapId, x, y, dir, { sp: opts.sp });
       RB.render.prewarm(); // build the new map's art while the screen is still dark
       await RB.ui.fade(false, reducedMotion() ? 80 : 220);

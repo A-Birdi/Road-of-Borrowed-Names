@@ -4,8 +4,8 @@
  * cloth button (.btn) and generic panel (.panel) still used by some screens. */
 
 /* ---- paper surfaces: ink, furigana and word-help underline on paper ---- */
-.dlg-sheet, .choice, .help, .notice, .toast, .place, .card-slip, .csheet, .panel { --jt-line: rgba(38, 31, 21, 0.45); }
-.dlg-sheet rt, .choice rt, .help rt, .toast rt, .place rt, .card-slip rt, .csheet rt, .panel rt { color: var(--rt-ink); }
+.dlg-sheet, .choice, .help, .notice, .toast, .place, .card-slip, .banner, .csheet, .panel { --jt-line: rgba(38, 31, 21, 0.45); }
+.dlg-sheet rt, .choice rt, .help rt, .toast rt, .place rt, .card-slip rt, .banner rt, .csheet rt, .panel rt { color: var(--rt-ink); }
 body.bulb-on .dlg-sheet .jline .jt, body.bulb-on .choice .jline .jt, body.bulb-on .toast .jline .jt,
 body.bulb-on .place .jline .jt, body.bulb-on .card-slip .jline .jt, body.bulb-on .panel .jline .jt { text-decoration-color: var(--jt-line); }
 .dlg-sheet .jline .jt:hover, .dlg-sheet .jline .jt.active, .choice .jline .jt.active, .panel .jline .jt.active { background: rgba(193, 138, 42, 0.2); }
@@ -292,17 +292,36 @@ body.touch-large .touchpad .tp-run { width: 68px; height: 68px; }
 .place .en { color: var(--ink-2); font-family: var(--serif); font-style: italic; }
 
 /* ---- chapter / ending cards --------------------------------------------------------- */
-.card {
-  position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
-  background: var(--cloth-900); background-image: var(--cloth-weave); gap: 18px; padding: 16px;
-}
-.card-slip {
+/* a banner at the top, over the world (10_ui.js card()); the layer only
+ * catches a tap to move on — it draws nothing of its own */
+.banner-layer { position: absolute; inset: 0; z-index: 35; pointer-events: auto; }
+.banner {
+  position: absolute; left: 50%; top: calc(max(14px, env(safe-area-inset-top)) + 3.5vh);
+  display: flex; align-items: center; gap: 0.6em; width: max-content; max-width: calc(100vw - 24px); box-sizing: border-box;
   background: var(--paper); color: var(--ink); border: 1px solid var(--paper-edge); border-top: 4px solid var(--ribbon);
-  box-shadow: 0 18px 50px rgba(0,0,0,0.55); padding: 1.1em 2em 1.3em; max-width: min(680px, 92vw); text-align: center;
+  box-shadow: 0 14px 36px rgba(0,0,0,0.45); padding: 0.55em 1.2em 0.7em; text-align: center;
+  opacity: 0; transform: translateX(calc(-50% - 56px));
+  transition: opacity 520ms var(--ease), transform 560ms var(--ease);
 }
-.card .card-slip .jline { font-size: 1.8em; color: var(--ink); }
-.card .card-slip .en { font-size: 1.15em; color: var(--ink-2); font-family: var(--serif); }
-.card .cbtn { font-size: 1em; }
+.banner.in { opacity: 1; transform: translateX(-50%); }
+.banner.out { opacity: 0; transform: translateX(calc(-50% + 56px)); transition-duration: 480ms, 540ms; }
+.banner-txt { min-width: 0; }
+.banner .jline { font-size: 1.55em; color: var(--ink); line-height: 1.9; }
+.banner .en { font-size: 1.08em; color: var(--ink-2); font-family: var(--serif); font-style: italic; }
+/* ink flourishes either side of the title, drawn outward from it */
+.banner .flourish { flex: none; width: clamp(28px, 7vw, 92px); height: 16px; overflow: visible; }
+.banner .flourish.l { transform: scaleX(-1); }
+.banner .flourish path { fill: none; stroke: var(--ink-2); stroke-width: 1.6; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 900ms var(--ease) 220ms; }
+.banner .flourish path + path { stroke-width: 1.1; opacity: 0.7; transition-delay: 380ms; }
+.banner.in .flourish path, .banner.out .flourish path { stroke-dashoffset: 0; }
+body.reduced-motion .banner, body.reduced-motion .banner.in, body.reduced-motion .banner.out { transform: translateX(-50%); transition: opacity 280ms linear; }
+body.reduced-motion .banner .flourish path { transition: none; stroke-dashoffset: 0; }
+body.high-contrast .banner .flourish path { stroke: #000; opacity: 1; }
+@media (max-width: 599px) {
+  .banner { padding: 0.5em 0.8em 0.6em; gap: 0.35em; }
+  .banner .jline { font-size: 1.3em; }
+  .banner .flourish { width: clamp(18px, 6vw, 40px); }
+}
 
 /* ---- confirmation sheet ---------------------------------------------------------------- */
 .confirm-scrim { z-index: 40; padding: 12px; }
