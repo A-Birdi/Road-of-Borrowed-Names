@@ -82,11 +82,12 @@ button.entry .t, button.entry .kind { display: block; }
  * dashed with a minus: the drawback that comes with it; dotted: no effect),
  * and the Key at the foot of the list explains every mark on the page. */
 .worn-tag {
-  display: inline-flex; align-items: center; gap: 0.3em; padding: 0.05em 0.55em 0.05em 0.35em; border-radius: 999px;
+  display: inline-flex; align-items: center; gap: 0.25em; max-width: 100%; box-sizing: border-box; padding: 0.05em 0.5em 0.05em 0.3em; border-radius: 999px;
   background: var(--cloth-700); color: var(--on-cloth); font-size: 0.8em; font-weight: 700; line-height: 1.5;
-  letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; vertical-align: 0.05em;
+  letter-spacing: 0.03em; text-transform: uppercase; vertical-align: 0.05em;
 }
 .worn-tag svg { width: 1.1em; height: 1.1em; flex: none; }
+.worn-tag > span { min-width: 0; overflow-wrap: anywhere; } /* only at the very largest text on the narrowest screens */
 .leaf .worn-tag rt, .leaf .worn-tag .jline { color: var(--on-cloth); }
 .leaf .entry .kind .worn-tag { font-size: 1em; }
 .entry.worn, button.entry.worn { background: var(--worn-paper); box-shadow: inset 0 0 0 1px var(--worn-edge); }

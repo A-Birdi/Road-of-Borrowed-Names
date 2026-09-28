@@ -51,6 +51,12 @@ export default async function (t) {
     ['ribbon', 'cloth-800', 3, 'ribbon marker against the cover'],
     ['ink-3', 'paper-3', 3, 'switch/radio outline on a tucked surface'],
     ['vermilion', 'paper', 3, 'you-are-here mark on the chart'],
+    ['ink', 'worn-paper', 4.5, 'text on an equipped (tinted) row'],
+    ['ink-2', 'worn-paper', 4.5, 'secondary text on an equipped row'],
+    ['ink-3', 'worn-paper', 4.5, 'muted labels on an equipped row'],
+    ['rt-ink', 'worn-paper', 4.5, 'furigana on an equipped row'],
+    ['worn-edge', 'worn-paper', 3, 'the equipped row\'s frame'],
+    ['on-cloth', 'cloth-700', 4.5, 'the Equipped tag'],
   ];
   for (const [set, name] of [[base, 'default'], [hc, 'high contrast']]) {
     for (const [f, b, min, what] of pairs) {

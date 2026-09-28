@@ -234,7 +234,7 @@ const STATES = {
   },
   async journey(p) { await p.evaluate(() => { V.rich('sg.harbor', 20, 22); V.openMenu(['journey', 'journal']); }); await settle(p); },
   async words(p) { await p.evaluate(() => { V.rich('sg.harbor', 20, 22); V.openMenu(['words', 'notebook']); }); await settle(p); },
-  async satchel(p) { await p.evaluate(() => { V.rich('sg.harbor', 20, 22); V.openMenu(['satchel', 'items']); }); await settle(p); },
+  async satchel(p) { await p.evaluate(() => { const s = V.rich('sg.harbor', 20, 22); for (const id of ['rw_mill_charm', 'rw_boots_good', 'atlas_charm_tide']) RB.state.give(s, id, 1); if (RB.equip) { RB.equip.equip(s, 'rw_mill_charm'); RB.equip.equip(s, 'rw_catbell'); } V.openMenu(['satchel', 'items']); }); await settle(p); },
   async map(p) { await p.evaluate(() => { V.rich('sg.harbor', 20, 22); V.openMenu(['map']); }); await settle(p); },
   async settings(p) { await p.evaluate(() => { V.rich('sg.harbor', 20, 22); V.openMenu(['settings']); if (RB.ui.menu.settings) RB.ui.menu.settings(); }); await settle(p); },
   async dialogue(p) {
