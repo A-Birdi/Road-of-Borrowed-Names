@@ -99,7 +99,7 @@ carry what was chosen: `<case>__<map>__<x>_<y>__seed<N>__<zone>`.
 | The Lamp That Waited (observatory dome) | sb.obs_dome 4,6 | 1 | [image](backdrops/boss-sb.boss__sb.obs_dome__4_6__seed1__room-observatory.webp) |
 | The Drowned Bell's Keeper (bell hall) | lf.bellhall 1,5 | 1 | [image](backdrops/boss-lf.keeper__lf.bellhall__1_5__seed1__room-belltower.webp) |
 | The Hush (the Still Archive's heart) | sa.heart 11,11 | 1 | [image](backdrops/boss-sa.hush__sa.heart__11_11__seed1__open-paper.webp) |
-| An Unwritten Atlas room (parchment sky, the room's shelves and pillars) | atlas.7.b1 10,6 | 3 | [image](backdrops/atlas__atlas.7.b1__10_6__seed3__open-stone.webp) |
+| An Unwritten Atlas room (parchment sky and grid, map-symbol hills, the room's own props) | atlas.7.p1 6,6 | 3 | [image](backdrops/atlas__atlas.7.p1__6_6__seed3__open-meadow.webp) |
 | Phone: the mill | rw.mill1 3,4 | 3 | [image](backdrops/phone-m1a__rw.mill1__3_4__seed3__room-mill.webp) |
 | Phone: the mill road by the mill | rw.millroad 11,7 | 3 | [image](backdrops/phone-f3__rw.millroad__11_7__seed3__water-beyond-by-building-mill-trees-meadow.webp) |
 | Phone: the cove | sg.cove 22,12 | 3 | [image](backdrops/phone-c2__sg.cove__22_12__seed3__waterside-cliffs-shore-sand.webp) |
