@@ -62,10 +62,11 @@ conflicting priorities". It does not ask for encounters with several enemies.
   explanation (`src/ui/81_combat_help.js`, the `combat_ui.mjs` tests).
 
 ### Partial scaffolding
-- The new battle presentation is written to be target-aware (see
-  `docs/ART_DIRECTION.md`, "Battle presentation"). Effects anchor to whichever
-  combatant an event names, not to fixed screen spots. A second creature would
-  not need the animation layer rebuilt.
+- The battle presentation is target-aware (`docs/ART_DIRECTION.md` §11).
+  `RB.battleStage.anchor(id, part)` resolves `pc`, `comp`, `party`, `foe` and
+  `knot:i` every frame. Effects and paper strips attach to whichever
+  combatant an event names, and `foe:i` is the reserved extension point for
+  a second creature. The animation layer would not need rebuilding.
 - The rules, the state, the overlay layout (one foe slip, one intent paper)
   and the content format are all single-enemy.
 
