@@ -966,3 +966,11 @@ the chart.
 - **B Layout audit on c7860c4:** `visual.mjs --check` covers 58 states, adding journey_guide and settings_guide. It checks overflow, clipped text, touch targets, furigana contrast, page errors and state errors.
   - English labels at 8 viewports (320x640 … 1920x1080): **464/464 clean**.
   - Japanese labels at 320x640, 390x844 and 1280x800: **174/174 clean**.
+- **B Whole-game matrix on c7860c4** (`node tests/e2e/matrix.mjs FEIA nao,mio,ren,suzu 3`): **16/16**.
+  - Every learning profile × companion played a new campaign through chapters 1–6 and one Atlas expedition, in 11.4–13.7 min each.
+  - These runs include the group placements' settings, the companion's turn in the solver, the quest guidance and the new maps.
+  - The solver answers battles, so these runs show that the game can be finished; they don't judge how it feels.
+- **Not verified:** Firefox (the owner's browser), Safari and real phones.
+  - Real handwriting of the new kanji; the accuracy figures are synthetic.
+  - A human judgement of the group formation, the companion's menu, the markers' helpfulness, the kanji chart's themes and the quest lines' pacing.
+  - A native speaker's review of the new Japanese.
