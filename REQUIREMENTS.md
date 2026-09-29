@@ -262,6 +262,33 @@ commit (VALIDATION.md); screenshots inspected by eye are noted as such.
   - `title_ledger.mjs` "title scene" at 1280×800, 900×1000, 390×844 and 844×390, and "title sky".
   - Captures inspected at 1280×800, 900×1000, 900×865, 390×844, 844×390 and 667×375, with bridge close-ups before and after.
 
+## Quest guidance (owner's question of 2026-09-29: hints in the ledger, map markers; VALIDATION.md "Quest guidance")
+- [v] G1 Where each quest's next step happens is derived from the content (src/engine/56_questguide.js): the scenes that move the quest on, walked the way the runner would against the current state, and the people, props, triggers, arrivals and foes that run them; a person who appears only later is not targeted; places you cannot reach yet are not preferred; what a blocked step waits for is followed two levels deep; more than six places marks none. Optional per-stage `hint` and `at` (validated). Evidence: tests/unit/quest_guide.test.mjs lists every stage of every quest — 116 derived, 1 authored (`rw_depart` 1), 4 set and passed within one scene, 0 missing — and checks live analysis on real states in every chapter; quest_guide.mjs checks it in the browser.
+- [v] G2 Journey: the objective stays first; "Need a nudge?" reveals up to three nudges one at a time (where and who; the authored hint or what to do there and which way; "Show on the map"), bilingual with furigana, generated from names, using words in the lexicon (465 generated lines checked); asking records nothing. Follow one quest at a time (the main road by default); the followed quest is first and marked; the text equivalent of the markers ("Next: Suzu, in Reedwake — south-west of you"). Evidence: quest_guide.mjs, quest_guide.test.mjs.
+- [v] G3 Markers (src/engine/62_questmarks.js): an amber diamond above the target person or thing on this map, distinct from the ▾; an edge pointer when it is off-screen; an arrow over the way out toward another map (none when there is no way); the route chart marks the place and keeps "you are here". Hidden in dialogue, scenes, menus and battles; gentle bob, still with reduced motion; edge pointers clear of the HUD and touch controls. Evidence: quest_guide.mjs (positions from the renderer, pixels for the bob), screenshots in docs/screenshots/quest_guide/.
+- [v] G4 Settings › Quest guidance: Markers and hints (default) / Hints only / Off; defaults when absent. The followed quest is the optional `s.follow` (absent in old saves: the main road); the save schema and its validation are unchanged. Evidence: quest_guide.test.mjs (old save validates, loads and follows the main road), quest_guide.mjs (the three modes through Settings).
+- [v] G5 Accessibility: keyboard focus kept on Follow and on the nudge button; nudges announced (aria-live); guidance buttons ≥ 44 px on a phone; no sideways overflow at 320×640 with 200 % text; Japanese interface labels with furigana. Evidence: quest_guide.mjs; layout audit (visual.mjs --check) of journey, journey_guide, map, settings, settings_guide at 320×640, 390×844, 1280×720, and with Japanese labels at 390×844.
+- [b] G6 Not verified by people: whether the markers make the game too easy or help the right amount; real phones; Firefox and Safari.
+
+## Long quest lines (owner's request of 2026-09-29; VALIDATION.md "Long quest lines"; docs/STORY.md "Long roads")
+- [v] L1 Two quest lines that begin in Chapter 1 and advance over later chapters for players who pay attention:
+  - "A Fare Thirty Years Owed" (`lq_fare`, 6 stages): Reedwake, Saltglass, Cinder Orchard, the Snowbell road, then back to Reedwake and Saltglass.
+  - "The Name Nobody Calls" (`lq_road`, 8 stages): Reedwake, Saltglass, Cinder Orchard, back to Reedwake, the side area Koharuno, Lanternfall, then Koharuno again.
+- [v] L2 Backtracking with old characters in new roles:
+  - Kōji's late mother's fare book; Tamae recognising her mother's seal; Fusa and Grandma Ume; Tetsu's father's boat; Old Yasu remembering his hamlet.
+  - New characters visit old places: Chigusa pays the fare in Hana's teahouse and returns the seal at the Gull; Kayo goes home to Koharuno.
+- [v] L3 A side area that unlocks: once the hamlet's name is written on the blank lantern, the path past the ferry house leads to Koharuno (`lq.koharu`, `lq.koharu_hut`).
+- [v] L4 The companion's battle upgrades come from story beats:
+  - `lq_ally1` is set when Chigusa decides; the companion says they'll act without waiting.
+  - `lq_ally2` is set when both names go on the Koharuno lantern; the companion says they'll stand with you.
+  - Each has a line for every companion. Rewards: two charms and a cosmetic cloth.
+- [v] L5 No one is locked out:
+  - Neither line gates the story.
+  - "Letters from home" start any line not yet begun in the first town after Chapter 2; Kōji, the lantern and Tetsu start them at any time, including after the ending.
+  - Old saves load unchanged: only new flags, quests and items were added.
+- [v] L6 The quest guidance covers both lines: every stage has an authored `hint` and `at`, and the persimmon tree and the Koharuno maps are named for the markers and the chart.
+- [b] L7 Not verified by people: a native speaker's review of the new Japanese, and whether the pacing across chapters feels right.
+
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
 - R1.3/R14.x: tests/e2e/ui.mjs (IndexedDB probe, session-only banner under refusal, reload persistence, copy independence, delete, overwrite confirm, cross-tab read-only, pre-departure recovery, file:// mode).

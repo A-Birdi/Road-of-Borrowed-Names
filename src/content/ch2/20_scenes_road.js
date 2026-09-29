@@ -5,6 +5,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 RB.script.add(`
 @scene sg.arrive
 !set sg_arrived
+!quest rw_depart done quiet
 !chapter 2
 narr: {潮|しお} の {匂|にお}い が 、 {風|かぜ} に {混|ま}じって きた 。 || The smell of the sea has crept into the air.
 !card {第二章|だいにしょう} ・ {潮硝子|しおがらす} || Chapter 2 — Saltglass

@@ -121,3 +121,22 @@ carry what was chosen: `<case>__<map>__<x>_<y>__seed<N>__<zone>`.
 | Phone: the mill | rw.mill1 3,4 | 3 | [image](backdrops/phone-m1a__rw.mill1__3_4__seed3__room-mill.webp) |
 | Phone: the mill road by the mill | rw.millroad 11,7 | 3 | [image](backdrops/phone-f3__rw.millroad__11_7__seed3__water-beyond-by-building-mill-trees-meadow.webp) |
 | Phone: the cove | sg.cove 22,12 | 3 | [image](backdrops/phone-c2__sg.cove__22_12__seed3__waterside-cliffs-shore-sand.webp) |
+
+## Quest guidance (2026-09-29)
+
+Captured by `node tests/e2e/quest_guide.mjs` from the built game with
+synthetic states (no player saves). Desktop 1280×800 at device pixel ratio 1
+(kept at full size: one pixel per CSS pixel); phone captures at ratio 2,
+halved. See docs/ART_DIRECTION.md §7 "Quest markers" and docs/CONTENT.md §4.
+
+| What | Image |
+|---|---|
+| Reedwake, "who haven't you helped yet?": diamonds over Suzu and the south lantern, an edge pointer toward the east lantern | [desktop](quest_guide/world_markers_1280x800.webp) · [phone, touch controls](quest_guide/world_markers_390x844.webp) |
+| Following a side quest (Kiku, in her house): the edge pointer toward her door | [desktop](quest_guide/world_exit_door_1280x800.webp) |
+| The lantern road: the way to the square off-screen, then the arrow over the exit | [edge](quest_guide/world_road_edge_1280x800.webp) · [exit](quest_guide/world_road_exit_1280x800.webp) |
+| Cinder Orchard, "gather what people half-remember": Gorō marked | [desktop](quest_guide/world_co_1280x800.webp) |
+| Journey: the followed quest first; Following; "Next: …" in both languages | [desktop](quest_guide/journey_follow_1280x800.webp) · [phone](quest_guide/journey_390x844.webp) · [320×640, 200 % text](quest_guide/journey_320x640_200pct.webp) |
+| Journey: two nudges revealed, the third is "Show on the map" | [desktop](quest_guide/journey_nudges_1280x800.webp) |
+| Journey with Japanese interface labels | [desktop](quest_guide/journey_ja_1280x800.webp) |
+| Map: the next step marked beside "you are here" | [desktop](quest_guide/map_chart_1280x800.webp) |
+| Settings › Learning & Challenge › Quest guidance | [desktop](quest_guide/settings_guidance_1280x800.webp) |

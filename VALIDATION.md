@@ -668,3 +668,101 @@ comet was suggested); and it is hard to tell whether the view is a window.
   - "title scene" at 1280×800 (beside), 900×1000 (centred), 390×844 (tall) and 844×390 (short landscape): layout detected, noren only where expected, more than 10 stars, and the moon's disc clear of the title's words and the folio; beside the folio, the title starts past the door.
   - "title sky": a shooting star and a comet appear when hurried; with reduced motion the sky is still.
 - **S Captures inspected:** 1280×800, 900×1000, 900×865 (a foldable's inner screen), 390×844, 844×390 and 667×375. Bridge close-ups at 1280×800 and 390×844, before and after. No page errors.
+
+## Quest guidance — owner's question of 2026-09-29 (hints in the ledger, map markers)
+Branch worktree of `claude/stoic-sagan-n3jvgk` from ba6869d. REQUIREMENTS.md G1–G6.
+- **U `tests/unit/quest_guide.test.mjs`** (54 checks, all pass):
+  - Every stage of every quest (33 quests, 121 stages): 116 have a derived
+    place, 1 is authored (`rw_depart` 1: no scene finishes it; the coast
+    road), 4 are set and passed within one scene (`lf_form` 0–1, `lf_mio`
+    0–1), 0 missing. `QG_LIST=1 node tests/run-unit.mjs quest_guide` prints
+    the list.
+  - Live analysis on built states: "ask around the square" → Mio, Nao, Ren,
+    Suzu, Hana (not Tsuru); half done → only those not yet helped (Hana,
+    Suzu, the two lanterns); one lantern lit → the other; all done →
+    Tsuru; Chapter 2 → the three contradictions, not the Drowned Archive
+    (not reachable yet); "ask at three places" → Asahi, Kiyo, Genzō;
+    Chapter 3 → Ume, Gorō, Isao; "look around" → too many, none marked;
+    `lf_akari` 0 → waiting (Akari not targeted before the bell).
+  - 465 generated nudge and "Next:" lines: valid markup, furigana on every
+    kanji, every word known to the lexicon, English present; every target
+    prop has a name.
+  - Following: the main road by default (this chapter's; not the never-closed
+    `rw_depart`), follow, unfollow, finished quest hands back; an old save
+    without `follow` validates, loads and follows the main road; a new
+    campaign has no `follow` field; the setting defaults to markers and hints;
+    every map belongs to a chart place.
+- **B `tests/e2e/quest_guide.mjs`** (added to run.mjs; 50 checks, all pass):
+  derived targets in the page for Chapters 1–6; the diamond centred above
+  Suzu's head (renderer positions), on the south lantern, an edge pointer
+  at the right edge for the east lantern, Tsuru not marked; hidden during
+  dialogue and a battle, back after; bobs (pixel scan over time: 5 heights)
+  and holds still with reduced motion (1 height); the Journey lists the
+  followed quest first, "Following", four "Next:" lines with directions;
+  nudges 1 → 2 → "Show on the map" (the Map opens with the chart's next-step
+  mark in Reedwake and "you are here" kept, the quest followed); learning
+  stats and mastery byte-identical after the nudges; following a side quest
+  reorders the list, keeps focus and moves the arrow to Kiku's door (17,28 →
+  rw.house2); unfollowing hands back to the main road; Settings › Quest
+  guidance → Hints only (no markers, no Follow/Next, two nudges, nothing on
+  the chart) → Off (objectives only); Japanese labels (追う, 手がかり with
+  furigana, English for screen readers); rw.road: the edge pointer toward
+  the exit to the village (31,9) and, closer, the arrow over it pointing
+  out; Snowbell: the arrow leads to the inn; phone 390×844 with touch
+  controls: edge pointers stay between the HUD and the touch pad, guidance
+  buttons ≥ 44 px; 320×640 at 200 % text: no sideways overflow; no page
+  errors. Screenshots in tests/e2e/out/quest_guide/, WebP copies in
+  docs/screenshots/quest_guide/ (all inspected by eye).
+- **B Whole-game audit `node tests/e2e/quest_guide_audit.mjs E nao`**
+  (driver plays a new campaign through Chapters 1–6, following the main road
+  by default): 901 scenes started in the world while a quest was followed;
+  54 of them moved the followed quest on; 52 had been pointed at by the
+  guidance just before; 2 not marked by design (`rw_labels` 0→1 by Tsuru's
+  quiet bookkeeping update while the five people were marked; `co_main`
+  1→2, "look around", more than six places); 0 misses. Analysis time per
+  fresh state (uncached): median 15 ms, 95th percentile 38 ms, max 79 ms
+  (in play it is cached until the state changes). A first run counted
+  arrival scenes as misses because their once-flag is set just before they
+  run; the audit now asks as of the moment before.
+- **B Layout audit** `visual.mjs --check`: journey, journey_guide (new:
+  "Next" and two nudges shown), map, settings, settings_guide (new),
+  world_rw, world_sg at 320×640, 390×844, 1280×720 — all ok; with
+  `--lang ja` at 390×844 (journey, journey_guide, map, settings,
+  settings_guide) — all ok.
+- **B Suites on the final build** (index.html of e13a62a): folio,
+  settings, play_ui, world_view, world_fixes, departures, ui, systems and
+  quest_guide (50 checks) all pass. world_view.mjs: its phone "camera
+  unchanged when the dialogue opens" check is timing-sensitive (the first
+  camera read can fall while the view eases in under the touch reserve).
+  With a whole-game run in parallel it failed on the base build ba6869d
+  (1 of 3) and on this build (3 of 3); without load this build passed 12 of
+  13 runs (this one included) and the base 11 of 11 (the failing run read 118.5,31 → 118.5,55,
+  i.e. mid ease). No quest is set in that test, so the guidance code draws
+  nothing there.
+- **U** unit suite 3707 pass; validator no errors (it now checks stage
+  `hint`/`at`).
+- **H** Not verified: whether markers make the game too easy or help the
+  right amount (needs players); real phones; Firefox and Safari.
+
+## Long quest lines — owner's request of 2026-09-29
+Built by a worker on its own branch (from ba6869d), then merged into the task
+branch (5feb4a0) and re-run there. REQUIREMENTS.md L1–L7.
+- **Worker's runs on its branch:**
+  - Validator: no errors. Unit: 3681.
+  - `long_quests.mjs --fixtures-only --all-companions`: 183 checks, 237 s. Both lines are walked through the real maps by the driver, for every companion, including the side area, the ally flags, the rewards, an old save loaded through a real slot and a post-ending save. Nobody was drawn twice, no speaker was missing, and there were no page errors.
+  - Whole game with both lines as goals: E/Suzu (821 s) and I/Nao (880 s) both finished both lines. `pursue.mjs E mio`: 838 s.
+  - departures, world_fixes, story_ch1 F mio, side_ch3, story_ch3–ch6, systems, equipment and characters all pass.
+- **B On the merge (5feb4a0):** rebuilt; validator no errors; unit 3681; `long_quests.mjs --fixtures-only` passed (113 s); departures and world_fixes pass.
+- **B With the quest guidance merged as well:**
+  - Two gaps between the branches were found by `quest_guide.test.mjs` and fixed: the persimmon tree prop had no name for the markers, and the Koharuno maps had no place on the route chart (now `place: 'reedwake'`).
+  - `QG_LIST=1`: every stage of both lines is authored (15 stages); 0 missing.
+  - Unit 3749; validator no errors.
+  - long_quests (fixtures, 109 s), folio, settings, play_ui, world_fixes, departures, ui (14/14), systems (4/4), equipment, story_ch1 (8/8 runs) and quest_guide pass.
+- **Not verified:** a native speaker's review of the new Japanese; how the pacing across chapters feels to a player.
+
+### Chapter 1's last main step never closed (found by the quest guidance worker)
+- **The bug:** `rw_depart` stage 1 ("Take the lantern road west") was never marked done, so from Chapter 2 on the Journey kept "Two Names" under "Now — the main road".
+- **The fix:** Chapter 2's arrival scene `sg.arrive` now closes it quietly. For saves made before the fix, the Journey reads a main-road quest from an earlier chapter as completed without changing the save.
+- **B `quest_guide.mjs`:**
+  - An older Chapter 2 save with `rw_depart` at stage 1 shows "Two Names" as Completed, the save still holds it open, and the main road shown is `sg_main`.
+  - Running `sg.arrive` marks it completed.

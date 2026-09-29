@@ -119,6 +119,41 @@ real builds: docs/screenshots/ (README indexes them). Evidence: VALIDATION.md
   audit, `--lang ja`), art_shots.mjs, perf.mjs, shots_to_docs.mjs;
   tests/unit/ui_contrast.test.mjs.
 
+## Long quest lines (owner's request of 2026-09-29) — REQUIREMENTS.md L1–L7, VALIDATION.md "Long quest lines", docs/STORY.md "Long roads", docs/CONTENT.md §10
+- **Content:** everything is in src/content/lq/ (lexicon, data, maps with hooks into earlier maps, and scenes for each line and the letters from home).
+- **Test:** tests/e2e/long_quests.mjs. The suite runs `--fixtures-only`; a full run adds `--all-companions`.
+- **Ally flags:** `lq_ally1` (Chigusa decides) and `lq_ally2` (the Koharuno lantern) are set here. The companion's battle actions read them (see the combat notes).
+- **rw_depart:** closed by `sg.arrive`. The Journey reads an earlier chapter's main quest as completed for older saves.
+
+## Quest guidance (owner's question of 2026-09-29) — REQUIREMENTS.md G1–G6, VALIDATION.md "Quest guidance"
+- `RB.questGuide` (src/engine/56_questguide.js) derives where each quest's
+  next step happens by walking, against the current state, the scenes each
+  world entry point would run (talk options, props, triggers, onEnter,
+  foes; `!call`ed scenes included); needs of blocked steps two levels deep;
+  reachability through usable exits, doors, fast travel and `!warp` scenes.
+  Optional per-stage `hint` / `at` (docs/CONTENT.md §4); the validator checks
+  them. API: `analyse(qid, st, {static})`, `targets(qid)` (cached),
+  `followed()`, `follow(id)`, `unfollow(id)`, `nudges(qid)`, `nextLines(r)`,
+  `wayFrom(r)`, `placeOf(map)`, `mode()`.
+- `RB.questMarks` (src/engine/62_questmarks.js) draws the markers, called at
+  the end of `drawWorld` (60_render.js); `RB.questMarks.marks()` reports what
+  was drawn (tests). `RB.world` now exports `towards`, `linksOf`, `mapsWith`.
+- Journey (50_menu.js `guideBlock`, `guideClick`): Follow / Following,
+  "Next: …", nudges; Map: the chart marks the followed step. Settings ›
+  Learning & Challenge › Quest guidance (`settings.questGuide`: full | hints
+  | off; default full). The followed quest is the optional `s.follow`.
+- Tests: tests/unit/quest_guide.test.mjs (every quest stage listed with
+  `QG_LIST=1`), tests/e2e/quest_guide.mjs (in run.mjs),
+  tests/e2e/quest_guide_audit.mjs (whole game, on demand), visual.mjs states
+  `journey_guide`, `settings_guide`.
+- New quests (e.g. under src/content/lq/): run the unit test; a stage listed
+  as missing needs an `at` (or `at: 'open'`); a new kind of target prop needs
+  a noun in `PROP`/`PROP_PREFIX` (56_questguide.js).
+- Content finding, not changed here: `rw_depart` is never marked done (it
+  stays under "Now — the main road" from Chapter 2 on). Guidance ignores it
+  after Chapter 1; the fix would be `!quest rw_depart done quiet` in the
+  Chapter 2 arrival scene.
+
 ## Commands
 - Build: `node tools/build.mjs`
 - Content validation: `node tools/validate.mjs [--filter sg] [--unknown]`

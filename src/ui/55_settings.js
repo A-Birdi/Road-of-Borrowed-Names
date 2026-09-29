@@ -120,7 +120,9 @@ RB.ui.settings = (function () {
       h += '<div class="kind">' + I('settings') + ' For every campaign</div>' +
         radios('input', 'Default way to answer', [['hand', 'Handwriting'], ['choice', 'Choices'], ['ime', 'Keyboard / IME']], null, 'You can switch during any question without losing your place.') +
         radios('padKanji', 'Handwriting reads', [['auto', 'By Japanese level'], ['on', 'Kanji or kana'], ['off', 'Kana only']], null, 'By level: kana only in Foundations, kanji or kana from Elementary on. The pad knows 33 common kanji; writing in kana is always fine. Kana practice reads kana only. You can also change this with Read as on the writing pad.') +
-        sw('strokePractice', 'Show stroke-order notes after handwriting', 'Off keeps handwriting lenient: only the shape is checked.');
+        sw('strokePractice', 'Show stroke-order notes after handwriting', 'Off keeps handwriting lenient: only the shape is checked.') +
+        radios('questGuide', 'Quest guidance', [['full', 'Markers and hints'], ['hints', 'Hints only (no markers)'], ['off', 'Off (objectives only)']], null,
+          'Markers point to where the followed quest’s next step happens. Hints are nudges you open in the Journey page. Asking for them is free and never counts as a mistake.');
     } else if (g === 'controls') {
       const binds = RB.input.getBinds();
       h += '<p class="muted small">Choose Change, then press the key you want. Each key does one thing; taking a key from another action removes it there.</p><ul class="entries keys">' +

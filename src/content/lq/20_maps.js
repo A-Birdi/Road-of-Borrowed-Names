@@ -29,7 +29,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- Koharuno ----------------------------------------------------------------------------
   C.maps['lq.koharu'] = {
-    name: T('Koharuno', '{小春野|こはるの}'), region: 'reedwake', music: 'quiet_road',
+    name: T('Koharuno', '{小春野|こはるの}'), region: 'reedwake', place: 'reedwake', music: 'quiet_road',
     ambient: { weather: 'leaves', tint: 'rgba(255,190,120,0.05)' },
     terrain: K.build(36, 24, '.', (k) => {
       k.ragged('top', 'T', 3, 611).ragged('bottom', 'T', 3, 612).ragged('right', 'T', 3, 613).ragged('left', 'T', 2, 614);
@@ -82,7 +82,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     spawn: { default: [2, 11, 'right'], from_reedwake: [2, 11, 'right'] },
   };
   C.maps['lq.koharu_hut'] = {
-    name: T('The Tree-Keeper\'s Hut', '{木守|きもり} の {小屋|こや}'), region: 'interior', music: null, noTravel: true,
+    name: T('The Tree-Keeper\'s Hut', '{木守|きもり} の {小屋|こや}'), region: 'interior', place: 'reedwake', music: null, noTravel: true,
     ambient: { dark: 0.25 },
     terrain: K.room(9, 8, '_', 4),
     props: [

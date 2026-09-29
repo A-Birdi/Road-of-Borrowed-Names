@@ -26,6 +26,9 @@ RB.game = (function () {
       touchHand: 'right', touchSize: 'normal',
       // handwriting pad reads kanji too: 'auto' (by Japanese level), 'on', 'off' (older records lack it: 'auto')
       padKanji: 'auto',
+      // quest guidance (src/engine/56_questguide.js): 'full' markers and hints, 'hints' only, 'off' objectives only
+      // (older records lack it: 'full')
+      questGuide: 'full',
     };
   }
 

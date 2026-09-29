@@ -63,6 +63,8 @@ RB.ui.folio = (function () {
     knot: '<path d="M4.5 12c0-3.5 4.5-3.5 7.5 0s7.5 3.5 7.5 0-4.5-3.5-7.5 0-7.5 3.5-7.5 0z"/>',
     cost: '<circle cx="12" cy="12" r="8.5"/><path d="M8 12h8"/>',
     none: '<circle cx="12" cy="12" r="8.5" stroke-dasharray="2.4 3"/><path d="M9 12h6"/>',
+    // the quest marker (the amber diamond in the world and on the chart)
+    follow: '<path d="M12 3l6 7.5-6 7.5-6-7.5z"/><path d="M12 10.5v4"/><path d="M8.5 21h7"/>',
   };
   function icon(name, title) {
     const d = P[name] || P.pouch;

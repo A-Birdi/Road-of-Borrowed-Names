@@ -49,7 +49,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   C.quests.rw_depart = { main: true, chapter: 1, title: { jp: 'ふたり の {名前|なまえ}', en: 'Two Names' },
     stages: [
       { jp: '{灯|あか}り{堂|どう} に {行|い}こう 。 {誰|だれ} と {旅|たび} を する か 、 {決|き}める {時|とき} だ 。', en: 'Go to the Lantern Hall. It\'s time to decide who will travel with you.' },
-      { jp: '{西|にし} の {灯|ひ} の {道|みち} へ 。 {潮硝子|しおがらす} を {目指|めざ}そう 。', en: 'Take the lantern road west, toward Saltglass.' },
+      // finished quietly when Chapter 2 begins (sg.arrive); `at` points the guidance at the coast road (docs/CONTENT.md §4)
+      { jp: '{西|にし} の {灯|ひ} の {道|みち} へ 。 {潮硝子|しおがらす} を {目指|めざ}そう 。', en: 'Take the lantern road west, toward Saltglass.', at: { map: 'sg.road' } },
     ] };
   C.quests.rw_tools = { chapter: 1, title: { jp: '{借|か}りた {道具|どうぐ}', en: 'Borrowed Tools' },
     stages: [
