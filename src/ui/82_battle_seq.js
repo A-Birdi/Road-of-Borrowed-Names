@@ -115,11 +115,12 @@ RB.battleSeq = (function () {
       }
       case 'log': if (port) port.log(c.html); break;
       case 'final': S.finalFoe(true); break;
+      case 'settleFoe': S.settleFoe(c.foe); break;
       case 'sfx': if (!instant) RB.audio && RB.audio.sfx(c.name); break;
       default:
         if (instant) break;
         if (c.type === 'pose') S.pose(c.who, c.pose, c.gesture, c.d, at);
-        else if (c.type === 'foe') S.foe(c.act, c.d, at, { family: c.family, dir: c.dir, hold: c.hold });
+        else if (c.type === 'foe') S.foe(c.act, c.d, at, { family: c.family, dir: c.dir, hold: c.hold, foe: c.foe || 0 });
         else if (c.type === 'fx') S.effect(c.name, c.d, at, c.p);
         else if (c.type === 'strip') S.strip(c.word, c.from, c.to, at, c.tm);
         else if (c.type === 'num') S.number(c.to, c.text, c.kind, at);
@@ -184,9 +185,17 @@ RB.battleSeq = (function () {
   }
 
   // ---- choreography: authoritative fx → cues ------------------------------------------------------
+  // ctx: { comp, reduce, view (displayed state before the sequence), foe (the
+  // creature concerned: your target, or the one acting), reach ({foes, allies}
+  // a response reaches), group (more than one creature) }. Every cue about a
+  // creature names it (foe: i; effects p.foe), so a group plays on the right one.
   // What each response looks like: who acts, the gesture, where it lands.
   const TECH_GESTURE = { nao: 'direct', mio: 'restore', ren: 'ward', suzu: 'flow' };
-  const OUTCOME = { unravel: 1, ward: 1, heal: 1, water: 1, light: 1, bind: 1, warm: 1, bell: 1, settle: 1, reveal: 1, tech: 1, comp: 1 };
+  const OUTCOME = { unravel: 1, ward: 1, heal: 1, water: 1, light: 1, bind: 1, warm: 1, bell: 1, settle: 1, reveal: 1, tech: 1, comp: 1, cact: 1, soften: 1, stun: 1, draw: 1 };
+  const fid = (ctx, i) => (i == null ? (ctx.foe == null ? 0 : ctx.foe) : i);
+  const foeId = (ctx, i) => (ctx.group ? 'foe:' + fid(ctx, i) : 'foe');
+  const knotId = (ctx, i, j) => (ctx.group ? 'knot:' + fid(ctx, i) + ':' + j : 'knot:' + j);
+  const fview = (ctx, i) => (ctx.view.foes ? ctx.view.foes[fid(ctx, i)] : ctx.view) || ctx.view;
   function wordOf(card) {
     // the response's own Japanese (a word in kanji with its reading; ほどく, こたえる, みぬく, あわせ as written)
     const jp = card.kind === 'word' ? card.word.jpK || card.word.jp : card.jp;
@@ -197,44 +206,48 @@ RB.battleSeq = (function () {
     const tags = (card.word && card.word.tags) || [];
     const tg = (x) => tags.indexOf(x) >= 0;
     const party = ctx.comp ? 'party' : 'pc';
-    let target = 'foe', gesture = 'direct', travel = null, actors = ['pc'];
-    if (card.kind === 'unravel') { gesture = 'direct'; travel = 'thread'; }
+    const many = ctx.group && ctx.reach && ctx.reach.foes && ctx.reach.foes.length > 1;
+    let target = many ? 'foes' : foeId(ctx), gesture = 'direct', travel = null, actors = ['pc'];
+    if (card.kind === 'unravel') { gesture = 'direct'; travel = 'thread'; target = foeId(ctx); }
     else if (card.kind === 'tech') { actors = ['pc', 'comp']; gesture = 'direct'; travel = 'thread'; }
-    else if (card.kind === 'answer') { gesture = 'book'; travel = 'note'; }
-    else if (card.kind === 'truth') { gesture = 'trace'; travel = 'lens'; }
+    else if (card.kind === 'answer') { gesture = 'book'; travel = 'note'; target = foeId(ctx); }
+    else if (card.kind === 'truth') { gesture = 'trace'; travel = 'lens'; target = foeId(ctx); }
     else if (tg('ward')) { target = card.target || 'pc'; gesture = 'ward'; travel = 'sealForm'; }
     else if (tg('heal')) { target = party; gesture = 'restore'; travel = null; }
     else if (tg('water')) { gesture = 'flow'; travel = 'splash'; }
-    else if (tg('bind')) { gesture = 'trace'; travel = 'rope'; }
-    else if ((tg('light') && (has('light') || !tg('warm'))) || (tg('wind') && !tg('anchor'))) { gesture = tg('wind') && !tg('light') ? 'flow' : 'raise'; travel = tg('wind') && !tg('light') ? 'wind' : 'flash'; }
+    else if (tg('bind')) { gesture = 'trace'; travel = 'rope'; target = foeId(ctx); }
+    else if ((tg('light') && (has('light') || !tg('warm'))) || (tg('wind') && !tg('anchor'))) { gesture = tg('wind') && !tg('light') ? 'flow' : 'raise'; travel = tg('wind') && !tg('light') ? 'wind' : 'flash'; if (!tg('wind')) target = foeId(ctx); }
     else if (tg('anchor') || tg('stone')) { target = party; gesture = 'ward'; travel = 'stone'; }
     else if (tg('warm') || tg('fire')) { target = party; gesture = 'raise'; travel = 'warm'; }
     else if (tg('bell') || tg('voice')) { target = party; gesture = 'raise'; travel = 'rings'; }
     return { target, gesture, travel, actors };
   }
-  // The travel/landing effect for a response, placed on the timeline.
+  // The travel/landing effect for a response, placed on the timeline (on each
+  // creature it reaches, a little apart, when it reaches several).
   function travelCue(Q, plan, card, fx, ctx, at) {
     const from = 'pc';
-    const p = { from, to: plan.target };
     const has = (t) => fx.some((f) => f.t === t);
+    const T = fid(ctx);
+    const each = (plan.target === 'foes' ? ctx.reach.foes : [T]);
+    const on = (name, d, extra, dt) => each.forEach((i, k) => Q.push({ at: at + (dt || 0) + k * 90, type: 'fx', name, d, p: Object.assign({ from, to: foeId(ctx, i), foe: i }, extra || {}) }));
     switch (plan.travel) {
       case 'thread': {
-        const n = (fx.find((f) => f.t === 'unravel') || { n: 1 }).n;
-        const i = Math.max(0, ctx.view.knots - 1);
-        Q.push({ at, type: 'fx', name: 'thread', d: 560, p: { from, to: 'knot:' + i } });
-        if (n > 1 && ctx.view.knots > 1) Q.push({ at: at + 60, type: 'fx', name: 'thread', d: 560, p: { from: ctx.comp ? 'comp' : from, to: 'knot:' + (i - 1) } });
+        const n = (fx.find((f) => f.t === 'unravel' && fid(ctx, f.foe) === T) || { n: 1 }).n;
+        const i = Math.max(0, fview(ctx, T).knots - 1);
+        Q.push({ at, type: 'fx', name: 'thread', d: 560, p: { from, to: knotId(ctx, T, i), foe: T } });
+        if (n > 1 && fview(ctx, T).knots > 1) Q.push({ at: at + 60, type: 'fx', name: 'thread', d: 560, p: { from: ctx.comp ? 'comp' : from, to: knotId(ctx, T, i - 1), foe: T } });
         break;
       }
-      case 'splash': Q.push({ at, type: 'fx', name: 'splash', d: 700, p: Object.assign(p, { steam: has('water') }) }); break;
-      case 'flash': Q.push({ at, type: 'fx', name: 'flash', d: 720, p }); break;
-      case 'wind': Q.push({ at, type: 'fx', name: 'wind', d: 620, p }); break;
-      case 'rope': Q.push({ at, type: 'fx', name: 'rope', d: 760, p }); break;
-      case 'note': Q.push({ at, type: 'fx', name: 'note', d: 640, p: { from, to: 'foe', fade: true } }); break;
-      case 'lens': Q.push({ at: at + 120, type: 'fx', name: 'lens', d: 720, p }); break;
-      case 'sealForm': Q.push({ at: at + 120, type: 'fx', name: 'sealForm', d: 520, p }); break;
+      case 'splash': each.forEach((i, k) => Q.push({ at: at + k * 90, type: 'fx', name: 'splash', d: 700, p: { from, to: foeId(ctx, i), foe: i, steam: fx.some((f) => f.t === 'water' && fid(ctx, f.foe) === i) || (!ctx.group && has('water')) } })); break;
+      case 'flash': on('flash', 720); break;
+      case 'wind': on('wind', 620); break;
+      case 'rope': on('rope', 760); break;
+      case 'note': Q.push({ at, type: 'fx', name: 'note', d: 640, p: { from, to: foeId(ctx), foe: T, fade: true } }); break;
+      case 'lens': on('lens', 720, null, 120); break;
+      case 'sealForm': Q.push({ at: at + 120, type: 'fx', name: 'sealForm', d: 520, p: { from, to: plan.target } }); break;
       case 'stone': Q.push({ at: at + 120, type: 'fx', name: 'stone', d: 700, p: { who: ctx.comp ? ['pc', 'comp'] : ['pc'] } }); break;
       case 'warm': Q.push({ at: at + 120, type: 'fx', name: 'warm', d: 700, p: { who: ctx.comp ? ['pc', 'comp'] : ['pc'] } }); break;
-      case 'rings': Q.push({ at: at + 80, type: 'fx', name: 'rings', d: 720, p }); break;
+      case 'rings': Q.push({ at: at + 80, type: 'fx', name: 'rings', d: 720, p: { from, to: plan.target } }); break;
       default: break;
     }
   }
@@ -242,40 +255,47 @@ RB.battleSeq = (function () {
   function reactions(Q, f, at, ctx, side) {
     const comp = ctx.comp, both = comp ? ['pc', 'comp'] : ['pc'];
     const num = (to, text, kind) => Q.push({ at, type: 'num', to, text, kind });
+    const i = fid(ctx, f.foe);
+    const foeCue = (act, d, extra) => Q.push(Object.assign({ at, type: 'foe', act, d, foe: i }, extra || {}));
     switch (f.t) {
       case 'unravel': {
-        const n = f.n || 1, top = ctx.knotsBefore;
-        for (let j = 0; j < n && top - 1 - j >= 0; j++) Q.push({ at: at + j * 90, type: 'fx', name: 'knotRelease', d: 560, p: { i: top - 1 - j } });
-        Q.push({ at, type: 'fx', name: 'loosen', d: 600, p: {} });
-        Q.push({ at, type: 'foe', act: 'release', d: 420 });
-        ctx.knotsBefore = Math.max(0, top - n);
+        const n = f.n || 1;
+        ctx.kb = ctx.kb || {};
+        const top = ctx.kb[i] != null ? ctx.kb[i] : fview(ctx, i).knots;
+        for (let j = 0; j < n && top - 1 - j >= 0; j++) Q.push({ at: at + j * 90, type: 'fx', name: 'knotRelease', d: 560, p: { i: top - 1 - j, foe: i } });
+        Q.push({ at, type: 'fx', name: 'loosen', d: 600, p: { foe: i } });
+        foeCue('release', 420);
+        ctx.kb[i] = Math.max(0, top - n);
         break;
       }
-      case 'ward': break; // the seal forms with the response; a blocking seal waits for the blow (enemy turn)
-      case 'heal': Q.push({ at: at - 120, type: 'fx', name: 'motes', d: 820, p: { who: both } }); break;
-      case 'water': Q.push({ at, type: 'foe', act: 'recoil', d: 300, dir: 'party' }); break;
-      case 'light': Q.push({ at, type: 'fx', name: 'mistPart', d: 620, p: {} }); break;
-      case 'bind': Q.push({ at, type: 'fx', name: 'scatter', d: 520, p: {} }); Q.push({ at, type: 'foe', act: 'recoil', d: 300, dir: 'party' }); break;
+      case 'ward': if (f.by) Q.push({ at: at - 60, type: 'fx', name: 'sealForm', d: 520, p: { to: f.target } }); break; // your seal forms with the response; a blocking seal waits for the blow
+      case 'heal': Q.push({ at: at - 120, type: 'fx', name: 'motes', d: 820, p: { who: f.who || both } }); break;
+      case 'water': foeCue('recoil', 300, { dir: 'party' }); if (f.by) Q.push({ at: at - 80, type: 'fx', name: 'splash', d: 620, p: { from: 'comp', to: foeId(ctx, i), foe: i, steam: true } }); break;
+      case 'light': Q.push({ at, type: 'fx', name: 'mistPart', d: 620, p: { foe: i } }); break;
+      case 'bind': Q.push({ at, type: 'fx', name: 'scatter', d: 520, p: { foe: i } }); foeCue('recoil', 300, { dir: 'party' }); break;
       case 'warm': Q.push({ at, type: 'fx', name: 'warm', d: 600, p: { who: both } }); break;
-      case 'bell': break;
-      case 'settle': Q.push({ at, type: 'foe', act: 'release', d: 500 }); break;
-      case 'reveal': Q.push({ at, type: 'foe', act: 'recoil', d: 360, dir: 'party' }); break;
+      case 'bell': if (f.by) Q.push({ at: at - 40, type: 'fx', name: 'rings', d: 700, p: {} }); break;
+      case 'settle': foeCue('release', 500); break;
+      case 'reveal': foeCue('recoil', 360, { dir: 'party' }); break;
       case 'tech': {
         const w = f.who || comp;
         if (w === 'mio') Q.push({ at, type: 'fx', name: 'motes', d: 820, p: { who: both } });
         if (w === 'ren') for (const x of both) Q.push({ at: at + (x === 'comp' ? 80 : 0), type: 'fx', name: 'sealForm', d: 520, p: { to: x } });
-        if (w === 'suzu') Q.push({ at, type: 'fx', name: 'fizzle', d: 520, p: {} });
+        if (w === 'suzu') for (const k of f.all && ctx.reach ? ctx.reach.foes : [i]) Q.push({ at: at + (k === i ? 0 : 90), type: 'fx', name: 'fizzle', d: 520, p: { foe: k } });
         Q.push({ at: at - 200, type: 'fx', name: 'link', d: 600, p: {} });
         break;
       }
       case 'comp': {
         const w = f.who;
-        if (w === 'suzu' && side === 'enemy') Q.push({ at, type: 'fx', name: 'miss', d: 560, p: { to: ctx.missAt || 'pc' } });
+        if (w === 'suzu' && side === 'enemy') Q.push({ at, type: 'fx', name: 'miss', d: 560, p: { to: f.missAt || ctx.missAt || 'pc' } });
         if (comp && w === comp) Q.push({ at: at - 120, type: 'pose', who: 'comp', pose: 'act', gesture: TECH_GESTURE[w] || 'raise', d: 420 });
-        if (w === 'ren' && side === 'player') Q.push({ at, type: 'fx', name: 'flash', d: 520, p: { from: 'comp' } });
+        if (w === 'ren' && side === 'player') Q.push({ at, type: 'fx', name: 'flash', d: 520, p: { from: 'comp', foe: i } });
         if (w === 'mio' && side === 'enemy') Q.push({ at: at - 60, type: 'fx', name: 'motes', d: 760, p: { who: both } });
         break;
       }
+      case 'soften': Q.push({ at: at - 200, type: 'fx', name: 'note', d: 420, p: { from: 'comp', to: foeId(ctx, i), foe: i, fade: true } }); foeCue('recoil', 260, { dir: 'party' }); break;
+      case 'stun': Q.push({ at: at - 120, type: 'fx', name: 'rope', d: 620, p: { foe: i } }); foeCue('balk', 380); break;
+      case 'draw': Q.push({ at, type: 'fx', name: 'miss', d: 560, p: { to: 'comp' } }); break;
       case 'cost': Q.push({ at: at - 150, type: 'fx', name: 'drop', d: 420, p: { to: 'pc' } }); num('pc', '-1', 'cost'); break;
       case 'block': {
         Q.push({ at, type: 'fx', name: 'sealBlock', d: 440, p: { to: f.who, n: f.n } });
@@ -292,12 +312,12 @@ RB.battleSeq = (function () {
         break;
       }
       case 'stripWard': Q.push({ at, type: 'fx', name: 'sealStrip', d: 560, p: { who: both.filter((w) => (ctx.view.ward[w] || 0) > 0) } }); break;
-      case 'heat': Q.push({ at: at - 60, type: 'fx', name: 'embers', d: 700, p: {} }); break;
+      case 'heat': Q.push({ at: at - 60, type: 'fx', name: 'embers', d: 700, p: { foe: i } }); break;
       case 'shroud': break; // the mist roll arrives with the cast
       case 'charge': break;
       case 'mend': break;
       case 'silence': break;
-      case 'countered': if (!ctx.wardBlock) Q.push({ at, type: 'fx', name: 'fizzle', d: 560, p: {} }); break;
+      case 'countered': if (!ctx.wardBlock) Q.push({ at, type: 'fx', name: 'fizzle', d: 560, p: { foe: i } }); break;
       default: break;
     }
   }
@@ -306,12 +326,13 @@ RB.battleSeq = (function () {
     if (!info || !info.delta) return;
     for (const w of ['pc', 'comp']) if (info.delta[w] > 0) Q.push({ at, type: 'num', to: w, text: '+' + info.delta[w], kind: 'heal' });
   }
+  const healThen = (info, at) => { const q = []; healNums(q, 0, info); for (const x of q) RB.battleStage.number(x.to, x.text, x.kind, at); };
 
   const choreo = {
     // Your response (or your coordinated technique), once accepted and applied by the rules.
     player(card, fx, ctx) {
       const Q = [], rd = !!ctx.reduce;
-      ctx.knotsBefore = ctx.view.knots;
+      ctx.kb = {};
       let t = 0;
       const cost = fx.find((f) => f.t === 'cost');
       if (cost) {
@@ -337,7 +358,7 @@ RB.battleSeq = (function () {
       for (const f of outs) {
         reactions(Q, f, bt, ctx, 'player');
         const cue = { at: bt, type: 'beat', f, word: first ? word : null };
-        if (f.t === 'heal' || (f.t === 'tech' && f.who === 'mio')) cue.then = (info, at) => { const q = []; healNums(q, 0, info); for (const x of q) RB.battleStage.number(x.to, x.text, x.kind, at); };
+        if (f.t === 'heal' || (f.t === 'tech' && f.who === 'mio')) cue.then = healThen;
         Q.push(cue);
         first = false;
         bt += OUTCOME[f.t] ? T.beatGap : 60;
@@ -353,16 +374,43 @@ RB.battleSeq = (function () {
       if (!rd) for (const who of plan.actors) Q.push({ at: t + T.recoverAt, type: 'pose', who, pose: 'recover', gesture: who === 'comp' ? TECH_GESTURE[ctx.comp] : plan.gesture, d: T.recover });
       return { cues: Q, end: Math.max(t + T.end, bt + 200), plan, word };
     },
-    // The creature's telegraphed move, as the rules resolved it (or its fizzle).
+    // Your companion's support action (after your response, before the creatures):
+    // their gesture, then each result on its actual target.
+    companion(act, fx, ctx) {
+      const Q = [], rd = !!ctx.reduce, who = ctx.comp;
+      const g = act.gesture || TECH_GESTURE[who] || 'raise';
+      if (rd) Q.push({ at: 0, type: 'pose', who: 'comp', pose: 'act', gesture: g, d: 700 });
+      else {
+        Q.push({ at: 0, type: 'pose', who: 'comp', pose: 'anticipate', gesture: g, d: 150 });
+        Q.push({ at: 150, type: 'pose', who: 'comp', pose: 'act', gesture: g, d: 360 });
+        Q.push({ at: 560, type: 'pose', who: 'comp', pose: 'recover', gesture: g, d: 220 });
+      }
+      let at = 360;
+      for (const f of fx) {
+        if (f.t === 'cact' && !f.none && f.foe != null && (act.kind === 'opening' || act.kind === 'mark')) Q.push({ at: at - 80, type: 'fx', name: 'lens', d: 560, p: { foe: f.foe } });
+        if (f.t === 'cact' && act.kind === 'salts') Q.push({ at: at - 60, type: 'fx', name: 'motes', d: 700, p: { who: ctx.comp ? ['pc', 'comp'] : ['pc'] } });
+        if (f.t === 'unravel') Q.push({ at: at - 160, type: 'fx', name: 'thread', d: 520, p: { from: 'comp', to: knotId(ctx, f.foe, Math.max(0, fview(ctx, f.foe).knots - 1)), foe: fid(ctx, f.foe) } });
+        if (f.t === 'harmony') Q.push({ at: at - 120, type: 'fx', name: 'link', d: 520, p: {} });
+        reactions(Q, f, at, ctx, 'companion');
+        const cue = { at, type: 'beat', f };
+        if (f.t === 'heal') cue.then = healThen;
+        Q.push(cue);
+        at += f.t === 'cact' ? 180 : 150;
+      }
+      return { cues: Q, end: Math.max(820, at + 160) };
+    },
+    // One creature's telegraphed move, as the rules resolved it (or its fizzle).
     enemy(it, fx, ctx) {
       const Q = [], kind = it.kind, comp = ctx.comp;
+      const me = fid(ctx), fv = fview(ctx, me);
+      const foeCue = (o) => Q.push(Object.assign({ type: 'foe', foe: me }, o));
       ctx.kind = kind;
       ctx.blocked = {};
       for (const f of fx) if (f.t === 'block') ctx.blocked[f.who] = true;
       const countered = fx.some((f) => f.t === 'countered');
       const hits = fx.filter((f) => f.t === 'hit' || f.t === 'block').map((f) => f.who);
       const single = { strike: 1, lie: 1, mirror: 1, chill: 1 }[kind];
-      const aimed = single ? (it.target === 'comp' && comp ? 'comp' : 'pc') : hits[0] || 'pc';
+      const aimed = single ? (ctx.aim || (it.target === 'comp' && comp ? 'comp' : 'pc')) : hits[0] || 'pc';
       ctx.aimed = aimed;
       // the one Suzu's flourish spares (a blow that would have left them at 2 or less)
       ctx.missAt = single ? aimed : ((comp ? ['pc', 'comp'] : ['pc']).find((w) => hits.indexOf(w) < 0) || 'pc');
@@ -372,9 +420,9 @@ RB.battleSeq = (function () {
       // it without an event of its own; this display-only beat shows it at the blow (the
       // reconcile at the end of the sequence would show the same).
       const spent = (Q, at) => {
-        if ((kind === 'strike' || kind === 'sweep') && ctx.view.charged && !fx.some((f) => f.t === 'countered' && f.kind === 'charge')) {
-          Q.push({ at, type: 'fx', name: 'scatter', d: 480, p: {} });
-          Q.push({ at, type: 'beat', f: { t: 'spent' } });
+        if ((kind === 'strike' || kind === 'sweep') && fv.charged && !fx.some((f) => f.t === 'countered' && f.kind === 'charge')) {
+          Q.push({ at, type: 'fx', name: 'scatter', d: 480, p: { foe: me } });
+          Q.push({ at, type: 'beat', f: { t: 'spent', foe: me } });
         }
       };
       // lines the rules put before the move (Atlas) and after it (a companion's draught)
@@ -390,37 +438,37 @@ RB.battleSeq = (function () {
       for (const f of pre) { Q.push({ at: t, type: 'beat', f }); t += 160; }
       const dir = fam === 'strike' ? aimed : fam === 'sweep' ? 'party' : null;
       if (kind === 'rest' && !countered) {
-        Q.push({ at: t, type: 'foe', act: 'rest', d: 700 });
-        Q.push({ at: t + 200, type: 'beat', f: { t: 'rest' } });
+        foeCue({ at: t, act: 'rest', d: 700 });
+        Q.push({ at: t + 200, type: 'beat', f: { t: 'rest', foe: me } });
         t += 700;
       } else if (countered) {
-        Q.push({ at: t, type: 'foe', act: 'prep', d: T.foePrep, dir, family: fam });
+        foeCue({ at: t, act: 'prep', d: T.foePrep, dir, family: fam });
         if (ctx.wardBlock && single) {
           // the blow is thrown and meets the seal raised in front of its target
-          Q.push({ at: t + T.foePrep, type: 'foe', act: 'exec', d: 320, dir, family: fam });
-          Q.push({ at: t + T.foePrep + 10, type: 'fx', name: 'dart', d: 200, p: { to: aimed } });
+          foeCue({ at: t + T.foePrep, act: 'exec', d: 320, dir, family: fam });
+          Q.push({ at: t + T.foePrep + 10, type: 'fx', name: 'dart', d: 200, p: { to: aimed, foe: me } });
           Q.push({ at: t + T.foePrep + 200, type: 'fx', name: 'sealBlock', d: 420, p: { to: aimed, n: 0 } });
           Q.push({ at: t + T.foePrep + 200, type: 'pose', who: aimed, pose: 'brace', d: 320 });
-        } else Q.push({ at: t + T.foePrep, type: 'foe', act: 'balk', d: 380 });
+        } else foeCue({ at: t + T.foePrep, act: 'balk', d: 380 });
         for (const f of fx.filter((x) => x.t === 'countered')) { reactions(Q, f, t + T.foePrep + 200, ctx, 'enemy'); Q.push({ at: t + T.foePrep + 200, type: 'beat', f }); }
         spent(Q, t + T.foePrep + 260);
         t += T.foePrep + 520;
       } else {
-        Q.push({ at: t, type: 'foe', act: 'prep', d: T.foePrep, dir, family: fam });
-        Q.push({ at: t + T.foePrep, type: 'foe', act: fam === 'cast' ? 'cast' : 'exec', d: fam === 'sweep' ? 460 : T.foeExec, dir, family: fam });
+        foeCue({ at: t, act: 'prep', d: T.foePrep, dir, family: fam });
+        foeCue({ at: t + T.foePrep, act: fam === 'cast' ? 'cast' : 'exec', d: fam === 'sweep' ? 460 : T.foeExec, dir, family: fam });
         const c0 = t + T.contact;
         if (fam === 'strike') {
           const col = kind === 'chill' ? '#cfe6ff' : null;
-          if (kind === 'lie' || kind === 'mirror') Q.push({ at: t + T.foePrep, type: 'fx', name: 'pane', d: T.contact - T.foePrep + 40, p: { to: aimed } });
-          else Q.push({ at: t + T.foePrep + 10, type: 'fx', name: 'dart', d: T.contact - T.foePrep + 40, p: { to: aimed, col: col || ctx.foeCol } });
-        } else if (kind === 'gust') Q.push({ at: t + T.foePrep + 10, type: 'fx', name: 'gust', d: 600, p: { col: ctx.foeCol } });
-        else if (fam === 'sweep') Q.push({ at: t + T.foePrep + 10, type: 'fx', name: 'arc', d: 600, p: { who: comp ? ['pc', 'comp'] : ['pc'], col: kind === 'flood' ? '#6aa8d8' : ctx.foeCol, col2: kind === 'flood' ? '#e8f6ff' : null } });
-        else if (kind === 'heat') Q.push({ at: t + T.foePrep, type: 'fx', name: 'gather', d: 360, p: {} });
-        else if (kind === 'charge') Q.push({ at: t + T.foePrep - 80, type: 'fx', name: 'gather', d: 640, p: {} });
-        else if (kind === 'shroud') Q.push({ at: t + T.foePrep + 20, type: 'fx', name: 'mistRoll', d: 560, p: {} });
-        else if (kind === 'silence') Q.push({ at: t + T.foePrep + 20, type: 'fx', name: 'hushWave', d: 520, p: {} });
-        else if (kind === 'plea') Q.push({ at: t + T.foePrep, type: 'fx', name: 'note', d: 760, p: { from: 'foe', to: 'party', fade: true } });
-        else if (kind === 'mend') Q.push({ at: t + T.foePrep, type: 'fx', name: 'mendThread', d: 600, p: { i: Math.min(ctx.view.maxKnots - 1, ctx.view.knots) } });
+          if (kind === 'lie' || kind === 'mirror') Q.push({ at: t + T.foePrep, type: 'fx', name: 'pane', d: T.contact - T.foePrep + 40, p: { to: aimed, foe: me } });
+          else Q.push({ at: t + T.foePrep + 10, type: 'fx', name: 'dart', d: T.contact - T.foePrep + 40, p: { to: aimed, col: col || ctx.foeCol, foe: me } });
+        } else if (kind === 'gust') Q.push({ at: t + T.foePrep + 10, type: 'fx', name: 'gust', d: 600, p: { col: ctx.foeCol, foe: me } });
+        else if (fam === 'sweep') Q.push({ at: t + T.foePrep + 10, type: 'fx', name: 'arc', d: 600, p: { who: comp ? ['pc', 'comp'] : ['pc'], col: kind === 'flood' ? '#6aa8d8' : ctx.foeCol, col2: kind === 'flood' ? '#e8f6ff' : null, foe: me } });
+        else if (kind === 'heat') Q.push({ at: t + T.foePrep, type: 'fx', name: 'gather', d: 360, p: { foe: me } });
+        else if (kind === 'charge') Q.push({ at: t + T.foePrep - 80, type: 'fx', name: 'gather', d: 640, p: { foe: me } });
+        else if (kind === 'shroud') Q.push({ at: t + T.foePrep + 20, type: 'fx', name: 'mistRoll', d: 560, p: { foe: me } });
+        else if (kind === 'silence') Q.push({ at: t + T.foePrep + 20, type: 'fx', name: 'hushWave', d: 520, p: { foe: me } });
+        else if (kind === 'plea') Q.push({ at: t + T.foePrep, type: 'fx', name: 'note', d: 760, p: { from: 'foe', to: 'party', fade: true, foe: me } });
+        else if (kind === 'mend') Q.push({ at: t + T.foePrep, type: 'fx', name: 'mendThread', d: 600, p: { i: Math.min(fv.maxKnots - 1, fv.knots), foe: me } });
         // contact: each result on its actual target, in the rules' order
         let at = kind === 'gust' ? c0 - 90 : c0;
         const lastWho = {};
@@ -434,23 +482,37 @@ RB.battleSeq = (function () {
           if (f.t === 'stripWard') at += 90;
         }
         spent(Q, at + 60);
-        Q.push({ at: Math.max(at + 100, t + T.contact + 140), type: 'foe', act: fam === 'cast' ? 'rest' : 'recover', d: fam === 'cast' ? 260 : T.foeRecover, dir, family: fam });
+        foeCue({ at: Math.max(at + 100, t + T.contact + 140), act: fam === 'cast' ? 'rest' : 'recover', d: fam === 'cast' ? 260 : T.foeRecover, dir, family: fam });
         t = Math.max(at + 380, t + T.contact + 440);
       }
       for (const f of post) {
         reactions(Q, f, t + 120, ctx, 'enemy');
         const cue = { at: t + 120, type: 'beat', f };
-        if (f.t === 'comp' && f.who === 'mio') cue.then = (info, at) => { const q = []; healNums(q, 0, info); for (const x of q) RB.battleStage.number(x.to, x.text, x.kind, at); };
+        if (f.t === 'comp' && f.who === 'mio') cue.then = healThen;
         Q.push(cue);
         t += 520;
       }
       return { cues: Q, end: t + 60 };
     },
-    // The last knot comes loose: the creature settles and the two of you ease.
+    // One creature of a group has settled (its knots all free) while others stand:
+    // it rises and fades as a lone creature would, and stays settled.
+    settleFoe(i, ctx) {
+      const Q = [];
+      Q.push({ at: 0, type: 'foe', act: 'settle', d: 760, hold: true, foe: i });
+      Q.push({ at: 60, type: 'fx', name: 'release', d: 1000, p: { foe: i } });
+      Q.push({ at: 400, type: 'beat', f: { t: 'settled', foe: i } });
+      Q.push({ at: 760, type: 'settleFoe', foe: i });
+      void ctx;
+      return { cues: Q, end: ctx && ctx.reduce ? 820 : 1000 };
+    },
+    // The last knot comes loose: the creature (every one still standing) settles and the two of you ease.
     finish(seqEnd, ctx) {
       const Q = [], at = Math.max(0, seqEnd - 360);
-      Q.push({ at, type: 'foe', act: 'settle', d: 760, hold: true });
-      Q.push({ at: at + 60, type: 'fx', name: 'release', d: 1000, p: {} });
+      const last = ctx.last && ctx.last.length ? ctx.last : [0];
+      last.forEach((i, k) => {
+        Q.push({ at: at + k * 120, type: 'foe', act: 'settle', d: 760, hold: true, foe: i });
+        Q.push({ at: at + 60 + k * 120, type: 'fx', name: 'release', d: 1000, p: { foe: i } });
+      });
       Q.push({ at: at + 300, type: 'pose', who: 'pc', pose: 'cheer', d: 520 });
       if (ctx.comp) Q.push({ at: at + 380, type: 'pose', who: 'comp', pose: 'cheer', d: 520 });
       Q.push({ at: at + 760, type: 'final' });

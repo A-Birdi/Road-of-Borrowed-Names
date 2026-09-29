@@ -263,11 +263,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'ink', x: 19, y: 15 }, { p: 'ink', x: 9, y: 6 }, { p: 'ink', x: 6, y: 20 },
     ],
     npcs: [],
+    // The last stretch before the Hush: on Standard a placement may bring a
+    // second creature, on Demanding a third (Relaxed: always one). See
+    // RB.combatLogic.groupFor and docs/COMBAT_NOTES.md.
     foes: [
-      { id: 'w1', enemy: 'sa.wraith', x: 10, y: 6, patrol: 2, aggro: true },
-      { id: 'w2', enemy: 'sa.wraith', x: 22, y: 15, patrol: 2, aggro: true },
-      { id: 'm1', enemy: 'sa.moth', x: 26, y: 5, patrol: 2 },
-      { id: 'e1', enemy: 'sa.echo', x: 6, y: 15, patrol: 1, aggro: true },
+      { id: 'w1', enemy: 'sa.wraith', x: 10, y: 6, patrol: 2, aggro: true, group: { normal: ['sa.moth'], hard: ['sa.moth', 'sa.crane'] } },
+      { id: 'w2', enemy: 'sa.wraith', x: 22, y: 15, patrol: 2, aggro: true, group: { normal: ['sa.crane'], hard: ['sa.crane', 'sa.moth'] } },
+      { id: 'm1', enemy: 'sa.moth', x: 26, y: 5, patrol: 2, group: { normal: ['sa.moth'], hard: ['sa.moth', 'sa.moth'] } },
+      { id: 'e1', enemy: 'sa.echo', x: 6, y: 15, patrol: 1, aggro: true, group: { normal: ['sa.moth'], hard: ['sa.moth', 'sa.ghost'] } },
     ],
     exits: [
       { x: 31, y: 12, w: 1, h: 2, to: 'sa.reading', tx: 1, ty: 10, dir: 'right' },
@@ -307,9 +310,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     npcs: [],
     foes: [
-      { id: 'g1', enemy: 'sa.ghost', x: 11, y: 9, patrol: 1, aggro: true },
-      { id: 'g2', enemy: 'sa.ghost', x: 16, y: 18, patrol: 2, aggro: true },
-      { id: 'c1', enemy: 'sa.crane', x: 25, y: 10, patrol: 1 },
+      { id: 'g1', enemy: 'sa.ghost', x: 11, y: 9, patrol: 1, aggro: true, group: { normal: ['sa.ghost'], hard: ['sa.ghost', 'sa.crane'] } },
+      { id: 'g2', enemy: 'sa.ghost', x: 16, y: 18, patrol: 2, aggro: true, group: { normal: ['sa.crane'], hard: ['sa.crane', 'sa.moth'] } },
+      { id: 'c1', enemy: 'sa.crane', x: 25, y: 10, patrol: 1, group: { normal: ['sa.crane'], hard: ['sa.crane', 'sa.crane'] } },
     ],
     exits: [
       { x: 27, y: 3, w: 1, h: 1, to: 'sa.stacks', tx: 14, ty: 20, dir: 'up' },

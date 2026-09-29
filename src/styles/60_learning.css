@@ -759,6 +759,83 @@ body.high-contrast .combat-ui .paper, body.high-contrast .combat-ui .rcard { bor
 .cb-situ .cs-chose svg { width: 1.35em; height: 1.35em; flex: none; color: var(--ink-2); }
 .cb-situ .cs-chose b { color: var(--ink); }
 
+/* ---- several creatures -----------------------------------------------------------------
+ * One slip per creature (a radio each, in their order across the stage): name,
+ * knots, and the move it telegraphs. The target's slip is paper with an ink
+ * bracket down its left edge (shape as well as colour); a preview chevron sits
+ * over every slip a response under the pointer would reach. Settled creatures
+ * keep a dashed, quiet slip. The creatures on the stage can be pressed too
+ * (invisible boxes inside the stage cell). */
+.cb-foe.group { display: flex; flex-direction: column; align-items: stretch; gap: 3px; padding: 3px 8px 7px; max-width: 100%; }
+.cb-foe.group .fs-h { display: inline-flex; align-items: center; gap: 4px; min-height: 0; font-size: 0.78em; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--on-cloth-2); }
+.cb-foe.group .fs-h > svg { width: 1.25em; height: 1.25em; }
+.cb-foe.group .fs-h .kw { min-height: 32px; }
+.cb-foe .fs-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5em), 1fr)); gap: 6px; }
+.cb-foe .fs {
+  position: relative; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 0; min-width: 0; min-height: var(--tap);
+  padding: 3px 10px 5px 16px; margin: 0; text-align: left; font: inherit; color: var(--on-cloth); cursor: pointer; touch-action: manipulation;
+  background: rgba(0, 0, 0, 0.14); border: 1px solid var(--thread); border-radius: 4px;
+}
+.cb-foe .fs[data-locked] { cursor: default; }
+.cb-foe .fs:hover:not(.on):not(.down):not([data-locked]) { background: rgba(255, 255, 255, 0.07); }
+.cb-foe .fs:focus-visible { outline: 3px solid var(--focus-cloth); outline-offset: 2px; }
+.cb-foe .fs .fs-n { font-family: var(--serif); font-weight: 700; font-size: 0.95em; line-height: 1.25; overflow-wrap: anywhere; }
+.cb-foe .fs .fs-n .jline { font-family: var(--jp-font); font-weight: 400; line-height: 1.8; }
+.cb-foe .fs .fs-n .en { font-weight: 600; }
+.cb-foe .fs .fs-l2 { display: flex; flex-wrap: wrap; align-items: center; gap: 0 10px; }
+.cb-foe .fs .fs-k { display: inline-flex; align-items: center; gap: 6px; }
+.cb-foe .fs .kn { width: 11px; height: 11px; }
+.cb-foe .fs .kn-t { font-size: 0.8em; }
+.cb-foe .fs .fs-it { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0 5px; font-size: 0.84em; font-weight: 700; }
+.cb-foe .fs .fs-it svg { width: 1.25em; height: 1.25em; flex: none; }
+.cb-foe .fs .fs-it .gist { font-weight: 600; color: var(--on-cloth-2); }
+.cb-foe .fs .fs-st { display: inline-flex; flex-wrap: wrap; gap: 2px 4px; font-size: 0.78em; font-weight: 700; }
+.cb-foe .fs .fs-st .pill { display: inline-flex; align-items: center; gap: 0.25em; padding: 0 0.35em; border: 1px solid currentColor; border-radius: 2px; }
+.cb-foe .fs .fs-st svg { width: 1.2em; height: 1.2em; }
+.cb-foe .fs .fs-done { display: inline-flex; align-items: center; gap: 4px; font-size: 0.84em; font-weight: 700; }
+.cb-foe .fs .fs-done svg { width: 1.1em; height: 1.1em; }
+/* the target */
+.cb-foe .fs.on { background: var(--paper); color: var(--ink); border-color: var(--paper-edge); box-shadow: 0 2px 0 var(--paper-3); }
+.cb-foe .fs.on rt { color: var(--rt-ink); }
+.cb-foe .fs.on .fs-it .gist, .cb-foe .fs.on .kn-t, .cb-foe .fs.on .fs-n .en { color: var(--ink-2); }
+.cb-foe .fs.on .kn.tied { box-shadow: inset 0 0 0 2px var(--paper); }
+.cb-foe .fs .fs-mark { position: absolute; left: 4px; top: 5px; bottom: 5px; width: 6px; border: 3px solid transparent; border-right: 0; border-radius: 1px; }
+.cb-foe .fs.on .fs-mark { border-color: var(--ink); }
+/* whom a response (or your companion's move) under the pointer would reach */
+.cb-foe .fs.pv::after, .cb-party .pm.pv .pm-n::before {
+  content: ""; display: inline-block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 7px solid var(--paper);
+  filter: drop-shadow(0 1px 0 var(--ink)) drop-shadow(0 -1px 0 var(--ink));
+}
+.cb-foe .fs.pv::after { position: absolute; top: -4px; right: 10px; }
+.cb-foe .fs.on.pv::after { border-top-color: var(--ink); filter: drop-shadow(0 1px 0 var(--paper)); }
+.cb-party .pm.pv .pm-n::before { margin-right: 5px; vertical-align: 0.15em; }
+/* settled */
+.cb-foe .fs.down { cursor: default; background: transparent; border-style: dashed; color: var(--on-cloth-2); }
+/* the telegraphs: the target's in full, the others quieter below it */
+.cb-group .intent .it-block + .it-block { margin-top: 5px; padding-top: 4px; border-top: 1px dashed var(--rule); }
+.cb-group .intent .it-who { display: flex; flex-wrap: wrap; align-items: center; gap: 0 6px; font: 700 0.9em var(--serif); color: var(--ink); }
+.cb-group .intent .it-who .jline { font-family: var(--jp-font); font-weight: 400; line-height: 1.8; }
+.cb-group .intent .it-who .en { color: var(--ink-2); }
+.cb-group .intent .it-who > svg { width: 1.25em; height: 1.25em; flex: none; color: var(--vermilion); }
+.cb-group .intent .it-other { font-size: 0.88em; }
+.cb-group .intent .it-other .it-label { color: var(--ink-2); }
+.cb-group .intent .it-other .it-next { display: none; }
+/* the creatures on the stage can be pressed while you choose */
+.combat-ui > .cb-stage { position: relative; overflow: hidden; }
+.combat-ui > .cb-stage.hits-on > .cb-hit { position: absolute; pointer-events: auto; margin: 0; padding: 0; background: transparent; border: 0; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+/* a response card says whom it acts on; reaching several is marked as such */
+.rcard .rc-tgt.many { border-bottom-style: double; border-bottom-width: 3px; }
+
+/* ---- your companion's turn: your response queued, their support moves ---- */
+.combat-ui .cb-queued { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 2px 8px; padding: 3px 4px 3px 10px; border-left: 4px solid var(--ribbon); }
+.cb-queued .cq-l { display: inline-flex; align-items: center; gap: 6px; min-width: 0; }
+.cb-queued .cq-l > svg { width: 1.3em; height: 1.3em; flex: none; color: var(--ribbon-deep); }
+.cb-queued .cq-t { font-size: 0.8em; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--river); }
+.cb-queued .cq-back { min-height: var(--tap); }
+.cb-dock .ct-sub { margin: 0 4px; font-size: 0.86em; line-height: 1.35; color: var(--on-cloth-2); }
+.combat-ui .ccard .ic { color: var(--ribbon-deep); }
+.rcard .rc-uses { display: block; margin-top: 0.15em; font-weight: 700; color: var(--ink-3); }
+
 /* phones: the dock keeps one height, so the stage (and the scene) never jumps */
 @media (max-width: 899px), (max-height: 559px) {
   .combat-ui { grid-template-rows: max-content max-content minmax(60px, 1fr) max-content minmax(240px, min(calc(44 * var(--vh)), 440px)); }
@@ -784,6 +861,25 @@ body.high-contrast .combat-ui .paper, body.high-contrast .combat-ui .rcard { bor
   .rcard .rc-tgt { justify-self: end; align-self: start; margin-top: 8px; }
   .rcard .rc-d { font-size: 0.84em; }
   .combat-ui .flee { min-height: var(--tap); }
+  /* several creatures on a phone: one row of compact slips (name, knots, its
+     move), the target's telegraph below without repeating its name */
+  .cb-foe.group { justify-self: stretch; padding: 2px 5px 4px; }
+  .cb-foe.group .fs-h { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .cb-foe .fs-row { grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); gap: 4px; }
+  .cb-foe .fs { padding: 1px 4px 3px 11px; font-size: 0.92em; }
+  .cb-foe .fs .fs-mark { left: 2px; width: 5px; }
+  .cb-foe .fs .fs-n { font-size: 0.9em; }
+  .cb-foe .fs .fs-n .en { display: none; }
+  .cb-foe .fs .fs-it { font-size: 0.8em; }
+  .cb-foe .fs .fs-it .gist { display: none; }
+  .cb-foe .fs .kn-t { display: none; }
+  .cb-foe .fs .kn { width: 9px; height: 9px; }
+  .cb-foe .fs .fs-st { font-size: 0.72em; }
+  .cb-group .intent .it-who { display: none; }
+}
+/* a portrait phone with several creatures: the stage needs a little more room than one creature does */
+@media (max-width: 599px) and (min-height: 560px) {
+  .combat-ui.cb-group { grid-template-rows: max-content max-content minmax(60px, 1fr) max-content minmax(210px, min(calc(36 * var(--vh)), 400px)); }
 }
 /* wide: telegraph and party on the left, the dock as a right-hand column */
 @media (min-width: 900px) and (min-height: 560px) {
@@ -794,6 +890,18 @@ body.high-contrast .combat-ui .paper, body.high-contrast .combat-ui .rcard { bor
     gap: 12px 16px; padding: 16px;
   }
   .cb-foe { max-width: 100%; }
+  .cb-foe.group { justify-self: stretch; width: min(760px, 100%); }
+  .cb-foe .fs-row { grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); }
+  /* several creatures: the stage needs the room, so the telegraph moves over
+     the dock on the right (as on a landscape phone) */
+  .combat-ui.cb-group {
+    grid-template-rows: max-content minmax(0, 1fr) max-content;
+    grid-template-areas: "foe side" "stage side" "party side";
+  }
+  .combat-ui.cb-group .cb-side { display: flex; flex-direction: column; gap: 10px; grid-area: side; min-height: 0; pointer-events: none; }
+  .combat-ui.cb-group .cb-side > * { pointer-events: auto; }
+  .combat-ui.cb-group .intent { flex: none; width: auto; margin-top: 52px; justify-self: stretch; }
+  .combat-ui.cb-group .cb-dock { margin-top: 0; flex: 1 1 auto; min-height: 0; }
   .combat-ui .intent { justify-self: start; width: min(680px, 100%); }
   .combat-ui .cb-party { justify-self: start; width: min(460px, 100%); }
   .cb-dock { margin-top: 52px; }

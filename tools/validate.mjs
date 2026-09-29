@@ -169,6 +169,21 @@ for (const id in C.maps) {
     if ((here === 'outdoor' && INDOOR_BG.has(bg)) || (here === 'indoor' && OUTDOOR_BG.has(bg))) E('map ' + id + ': foe ' + f.id + ' (' + f.enemy + ') would fight in front of the ' + bg + ' backdrop, which is not ' + (here === 'indoor' ? 'an interior' : 'out of doors') + ' — give the placement a bg that fits');
     if (f.intro) tiered(f.intro, 'map ' + id + ' foe ' + f.id + ' intro', jen);
     if (f.settle) tiered(f.settle, 'map ' + id + ' foe ' + f.id + ' settle', jen);
+    // a group (more creatures on Standard / Demanding): known creatures, at most
+    // one more on Standard and two on Demanding, never a guardian, and each one's
+    // own settle line (shown when it settles mid-encounter) must fit this place
+    if (f.group) {
+      const g = f.group;
+      for (const k of Object.keys(g)) if (k !== 'normal' && k !== 'hard') E('map ' + id + ': foe ' + f.id + ' group has an unknown setting ' + k + ' (normal | hard)');
+      if ((g.normal || []).length > 1) E('map ' + id + ': foe ' + f.id + ' group brings more than one more creature on Standard');
+      if ((g.hard || []).length > 2) E('map ' + id + ': foe ' + f.id + ' group brings more than two more creatures on Demanding');
+      for (const gid of [...(g.normal || []), ...(g.hard || [])]) {
+        const ge = C.enemies[gid];
+        if (!ge) { E('map ' + id + ': foe ' + f.id + ' group uses unknown enemy ' + gid); continue; }
+        if (ge.boss) E('map ' + id + ': foe ' + f.id + ' group brings a guardian (' + gid + ')');
+        if (ge.setting && ge.setting !== here) E('map ' + id + ': foe ' + f.id + ' group member ' + gid + ' has lines for an ' + ge.setting + ' place, but this is ' + here + 's');
+      }
+    }
   }
   // reachability of exits from spawn (ignores NPCs; conditional props treated as absent)
   if (sp && walk(sp[0], sp[1])) {

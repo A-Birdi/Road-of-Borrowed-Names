@@ -427,12 +427,27 @@ RB.battlePlaces = (function () {
     // its drawing, its shadow (58 wide) and its knots (a fan 60 each side), with room to move
     const hl = Math.max(ab.l, 72) * sc + 10, hr = Math.max(ab.r, 72) * sc + 10;
     const cy1 = Math.max(ey + bot * sc, ey + (88 + 26) * sc + 12 / u);
-    const C = rect(ex - hl, ey + top * sc - 6, hl + hr, cy1 - (ey + top * sc) + 10);
+    let C = rect(ex - hl, ey + top * sc - 6, hl + hr, cy1 - (ey + top * sc) + 10);
+    // several creatures: each one's box (its own drawing, a narrower shadow, its short
+    // row of knots, room to move); what is kept clear is the box round all of them
+    let Cs = null;
+    if (F.creatures && F.creatures.length > 1) {
+      Cs = F.creatures.map((k) => {
+        const b = (k.art && artBox(k.art, k.artOpts || {})) || { l: -(k.ext ? k.ext.left : -80), r: k.ext ? k.ext.right : 80 };
+        const kx = k.ex / u, ky = k.ey / u, t = k.ext ? k.ext.top : -96, bt = k.ext ? k.ext.bottom : 90;
+        const l = Math.max(b.l, 40) * sc + 8, r = Math.max(b.r, 40) * sc + 8;
+        const y1 = Math.max(ky + bt * sc, ky + (62 + 22) * sc + 10 / u);
+        return rect(kx - l, ky + t * sc - 6, l + r, y1 - (ky + t * sc) + 8);
+      });
+      const x0 = Math.min(...Cs.map((q) => q.x)), y0 = Math.min(...Cs.map((q) => q.y));
+      const x1 = Math.max(...Cs.map((q) => q.x + q.w)), y1 = Math.max(...Cs.map((q) => q.y + q.h));
+      C = rect(x0, y0, x1 - x0, y1 - y0);
+    }
     // the party's corner: the lower-left third, and wherever the party stands
     // (with room for taller battle sprites)
     const px1 = Math.max(S.x + S.w * 0.42, px + 140 * ps), py0 = Math.min(S.y + S.h * 0.42, py + 48 * ps - 112 * ps);
     const Pt = rect(Math.min(S.x, px - 10), py0, px1 - Math.min(S.x, px - 10), S.y + S.h - py0 + 40);
-    return { W, H, HZ: Math.round(hz / u), S, C, P: Pt, u, feet: Math.min(S.y + S.h, ey + 84 * sc), key: [W, H, Math.round(hz / u), Math.round(S.x), Math.round(S.y), Math.round(S.w), Math.round(S.h), C.x, C.y, C.w, C.h, Pt.x, Pt.y, Pt.w].join(',') };
+    return { W, H, HZ: Math.round(hz / u), S, C, Cs, P: Pt, u, feet: Math.min(S.y + S.h, ey + 84 * sc), key: [W, H, Math.round(hz / u), Math.round(S.x), Math.round(S.y), Math.round(S.w), Math.round(S.h), C.x, C.y, C.w, C.h, Pt.x, Pt.y, Pt.w].join(',') + (Cs ? '|' + Cs.map((q) => [q.x, q.y, q.w, q.h].join(',')).join(';') : '') };
   }
   const spriteOf = (ref, region, v) => {
     const [t, id] = ref.split(':');
@@ -1080,7 +1095,7 @@ RB.battlePlaces = (function () {
       lines: (cur.lines || []).map((l) => ({ group: l.group, from: l.from })),
       accessories: (cur.accessories || []).map((a) => ({ id: a.cluster, zone: a.zone, side: a.side, variant: a.variant })),
       accessoriesPlaced: placed.filter((p) => p.kind === 'accessory').map((p) => ({ id: p.id, zone: p.zone, spot: p.spot || null, shown: !!p.shown, rect: r(p), members: (p.members || []).map((q) => ({ ref: q.ref, rect: r(q) })) })),
-      frame: cur.frame ? { W: cur.frame.W, H: cur.frame.H, HZ: cur.frame.HZ, u: cur.frame.u, stage: r(cur.frame.S), creature: r(cur.frame.C), party: r(cur.frame.P), beamY: lay ? lay.beamY : null, key: cur.frame.key } : null,
+      frame: cur.frame ? { W: cur.frame.W, H: cur.frame.H, HZ: cur.frame.HZ, u: cur.frame.u, stage: r(cur.frame.S), creature: r(cur.frame.C), creatures: cur.frame.Cs ? cur.frame.Cs.map(r) : null, party: r(cur.frame.P), beamY: lay ? lay.beamY : null, key: cur.frame.key } : null,
       buildMs: cur.buildMs != null ? +cur.buildMs.toFixed(2) : null, builds: cur.builds || 0,
     };
   }

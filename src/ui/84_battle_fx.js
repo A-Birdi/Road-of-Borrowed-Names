@@ -632,6 +632,51 @@ RB.battleFx = (function () {
       const u = A.u, a = A.pt('pc', 'hand'), b = A.pt('comp', 'hand');
       line(c, a, b, u, P.warm, still ? 0.55 : 0.35 + 0.2 * Math.sin(t / 500), { step: 3, wob: still ? 0 : 2 * u, waves: 2, ph: t / 400 });
     },
+    // The current target (a group): two small ink brackets at its feet, either
+    // side of its shadow, edged in paper so they read on any ground. Still.
+    target(c, A, rx, still) {
+      const u = A.u, f = A.pt('foe', 'feet'), th = 2 * u, arm = 7 * u, rise = 6 * u;
+      const y = Math.round(f.y + 2 * u);
+      for (const side of [-1, 1]) {
+        const x = Math.round(f.x + side * (rx + 5 * u));
+        const vx = side < 0 ? x : x - th, hx = side < 0 ? x : x - arm;
+        // paper edge, then ink
+        R(c, vx - u, y - rise - u, th + 2 * u, rise + th + 2 * u, P.paper, 0.9);
+        R(c, hx - u, y - u, arm + 2 * u, th + 2 * u, P.paper, 0.9);
+        R(c, vx, y - rise, th, rise + th, P.ink, 1);
+        R(c, hx, y, arm, th, P.ink, 1);
+      }
+      void still;
+    },
+    // A preview mark: a small downward chevron over someone a response (or a
+    // companion's action) would reach, paper with an ink edge. Still.
+    preview(c, pt, u, still) {
+      const x = Math.round(pt.x), y = Math.round(pt.y - 6 * u);
+      const rows = [[-4, 9], [-3, 7], [-2, 5], [-1, 3]];
+      c.globalAlpha = 0.9;
+      c.fillStyle = P.ink;
+      for (let r = 0; r < rows.length; r++) c.fillRect(x + (rows[r][0] - 1) * u, y + (r - 1) * u, (rows[r][1] + 2) * u, 3 * u);
+      c.fillStyle = P.paper;
+      for (let r = 0; r < rows.length; r++) c.fillRect(x + rows[r][0] * u, y + r * u, rows[r][1] * u, u);
+      c.globalAlpha = 1;
+      void still;
+    },
+    // A companion's support on a creature this round, as small tags by its
+    // head: softened (a tag with a dulled stroke), its eye drawn (a vermilion
+    // pennant toward the party), its move headed off (a tag crossed through).
+    support(c, A, s, t, still) {
+      const u = A.u, o = A.pt('foe', 'top'), core = A.pt('foe', 'core');
+      let x = Math.round(core.x - A.foeR * 0.85), y = Math.round(o.y + 4 * u);
+      const bob = still ? 0 : Math.round(Math.sin(t / 600) * 0.6) * u;
+      if (s.soften) { tag(c, x, y + bob, u, 0.95, false); R(c, x - 2 * u, y - u + bob, 4 * u, u, P.ink, 0.9); if (s.soften > 1) R(c, x - 2 * u, y + 2 * u + bob, 4 * u, u, P.ink, 0.9); y += 11 * u; }
+      if (s.stunned) { tag(c, x, y + bob, u, 0.95, false); for (let i = -2; i <= 2; i++) R(c, x + i * u, y + i * u + bob, u, u, P.ink, 0.95); y += 11 * u; }
+      if (s.drawn) {
+        R(c, x - 4 * u, y - u, 7 * u, 5 * u, P.ink, 0.8);
+        R(c, x - 3 * u, y, 5 * u, 3 * u, P.verm, 1);
+        R(c, x - 5 * u, y + u, 2 * u, u, P.verm, 1);
+        R(c, x + 2 * u, y - 4 * u, u, 12 * u, P.ink2, 0.9);
+      }
+    },
   };
 
   // a small seal tag as a mark (beside the number a ward absorbed)
