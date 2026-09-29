@@ -28,15 +28,15 @@
 
 ## State
 - Complete: engine, UI, saves, learning, combat, recognizer, language, audio,
-  Chapters 1–6 with ending/denouement, the Unwritten Atlas, New Game+.
-- Validator: no errors (`node tools/validate.mjs --stats` for counts).
-  Unit tests: 3084 pass (1866 at the overhaul). Browser: `node tests/e2e/run.mjs` 19/19 scripts on
-  the overhaul build d5d4b95 (UI, systems, settings, folio, play UI, title +
-  ledger, creation, learning UI, audio, Shift/Load regression in both modes,
-  per-chapter story tests, Atlas check, one whole-game run). The 16/16
-  profile × companion whole-game matrix (tests/e2e/matrix.mjs) passed 16/16
-  on the final overhaul build 6031612 (and earlier on the hotfix build).
-  Details and dates in VALIDATION.md.
+  Chapters 1–6 with ending/denouement, the Unwritten Atlas, New Game+; since
+  2026-09-29 also groups of creatures and the companion's turn, two long
+  quest lines with the side area Koharuno, quest guidance (nudges and
+  markers), every displayed kanji on the pad with the kanji chart, and the
+  new title scene.
+- Latest full check (c7860c4, VALIDATION.md "Integration — everything from
+  2026-09-29 together"): validator no errors; unit 4639; `node
+  tests/e2e/run.mjs` 34/34 scripts, including a whole-game run. Earlier
+  milestones and dates are in VALIDATION.md.
 - Test tooling: tests/e2e/drive.mjs (goal-directed driver: walks real maps,
   interacts through the world), pursue.mjs (whole game), matrix.mjs,
   run.mjs (suite runner), explore.mjs (random explorer, weaker).
@@ -222,7 +222,18 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
    Decide on Harmony charges (docs/COMBAT_NOTES.md). Play a few group
    battles (Standard and Demanding, the Stacks and the Conduits) and judge the
    companion's turn by hand; only headless Chromium has played them.
-6. Optional polish found in review: lexicon part-of-speech warnings between
+6. The owner's report of 2026-09-29, to be checked by hand:
+   - the title screen (the inn's doorway, the flat folio, the sky) on the
+     foldable and in Firefox;
+   - the long quest lines' pacing, played across chapters;
+   - whether quest markers help the right amount or make it too easy
+     (Settings › Quest guidance can turn them down);
+   - the kanji chart's themes (keyword-based; about 1 in 12 is debatable);
+   - 守る and other kanji written by real hands (the accuracy figures are
+     synthetic).
+   The battle recording docs/screenshots/battle/play_moth_outside.webm
+   predates the companion's turn; `tests/e2e/battle_video.mjs` re-records it.
+7. Optional polish found in review: lexicon part-of-speech warnings between
    chapters (validator warnings), observatory dome sprite clipped at the top
    of sb.obs_path (cosmetic), credits are a single card.
 

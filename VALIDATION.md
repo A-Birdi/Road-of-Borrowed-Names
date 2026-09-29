@@ -948,3 +948,18 @@ test, **T** = measurement tool, **S** = screenshot inspected by eye.
   - `lang_answers_kanji.test.mjs` found this.
 - **U / validator on the merge:** unit 4639; validator no errors.
 - **B `kanji_chart.mjs` on the merge: 8/8.** It covers 守 on Elementary, 守 + る by hand in a battle, and the chart's search from a battle's pad, which still works with the new target slips and companion's turn.
+
+## Integration — everything from 2026-09-29 together (c7860c4)
+This covers the title screen, the long quest lines, quest guidance, groups
+of creatures with the companion's turn, and every kanji on the pad with
+the chart.
+- **U / validator:** unit 4639; validator no errors.
+- **B Full default suite `node tests/e2e/run.mjs`: 34/34 scripts passed**, including:
+  - ui, systems, settings, folio, equipment and characters;
+  - play_ui, world_view, world_fixes, encounters, departures, quest_guide and backdrops;
+  - title_ledger, create, learning_ui, pad_kanji and kanji_chart;
+  - combat_ui, battle_anim, battle_group, companion_turn and audio;
+  - shift_load_regression in both modes;
+  - story_ch1, story_ch3, side_ch3, story_ch4, story_ch5 and story_ch6;
+  - atlas.check and long_quests (fixtures);
+  - a whole-game `pursue.mjs E mio` in 779 s.
