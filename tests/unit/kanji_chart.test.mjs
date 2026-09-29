@@ -37,6 +37,8 @@ export default async (t) => {
     手: 'body', 口: 'body', 目: 'body', 母: 'body', 道: 'places', 家: 'places', 門: 'places', 町: 'places', 日: 'time', 年: 'time', 一: 'time', 百: 'time',
     心: 'mind', 怒: 'mind', 夢: 'mind', 言: 'speech', 話: 'speech', 読: 'speech', 歩: 'actions', 走: 'actions', 守: 'actions', 刀: 'things', 鍵: 'things',
     王: 'other', 青: 'qualities', 赤: 'qualities', 大: 'qualities', 祭: 'society',
+    // a kanji's word with okurigana leads (強い, 振る "to wave" as a verb, 注ぐ "to pour")
+    強: 'qualities', 力: 'qualities', 振: 'actions', 注: 'water', 焼: 'actions', 学: 'speech',
   };
   const wrong = Object.entries(expectTheme).filter(([ch, th]) => !KI.get(ch) || KI.get(ch).theme !== th).map(([ch, th]) => `${ch}: ${KI.get(ch) && KI.get(ch).theme} (want ${th}; ${KI.get(ch) && KI.get(ch).why})`);
   t.eq(wrong, [], 'themes of clear cases');

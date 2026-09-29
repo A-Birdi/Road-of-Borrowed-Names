@@ -173,7 +173,11 @@ the player meant is left to the pad (context) and the answer checker
   structured match, refinement of the best 3, skipped when no kanji can come
   close). If the best kanji is
   within 0.16 and at least 0.04 better than every allowed character (and is
-  not the twin of the best kana), it is named: note `kanji-hint: 水`.
+  not the twin of the best kana), it is named: note `kanji-hint: 水`. A
+  drawing rejected as a kana for too many strokes or too much ink (森 has 12
+  strokes) has no kana to be compared with; it is named only within 0.14
+  (tuned on `dev-strong` and the odd half of the Tomoe kanji the game does
+  not use).
 - `kanjiLike`: at least 5 strokes, mostly straight (mean chord/length ≥ 0.6;
   random scribbles are about 0.15), and nothing allowed matches well —
   rejected as `no-match`/`too-many-strokes`, or the best match is above 0.2,
@@ -295,16 +299,28 @@ practise any time, at every level).
   keywords (listed in `80_kanjiinfo.js`, ambiguous words such as light, well,
   spring, pass left out) are matched in the first sense of its own word's
   meaning (weight 3; the lexicon has the kanji alone as a word, e.g. 水
-  "water") and of its four most basic words (1 each; the most basic counts 2
-  when there is no word of its own), with 1.5× for the head word ("walking
-  stick" is a stick, "to protect" is protect). KanjiVG's radical adds 1 to a
+  "water") and of its four most basic words (1 each). With no word of its
+  own, one word stands for the kanji and counts 2: its word with okurigana
+  (強い, 守る) when that meaning names a theme, else its most basic word.
+  The head word counts 1.5× ("walking stick" is a stick, "to protect" is
+  protect), and a few nouns read as verbs after "to" ("to wave", "to hand
+  over" are actions, not water or the body). KanjiVG's radical adds 1 to a
   theme the words already point to (氵 → water), never on its own. A theme
   needs a score of 2 and a clear lead (a tie is settled by the head of the
-  most basic word); anything else goes to **Other** (77 of 1,548, 5 %) rather
-  than a guess. Numerals are Time and numbers. The unit test
-  `tests/unit/kanji_chart.test.mjs` checks 40 clear cases (水 海 川 酒 → water,
-  雨 山 雪 火 → nature, 手 口 目 母 → body, 心 怒 夢 → mind, 守 → movement and
-  actions, 王 → other…) and the size of Other.
+  word that stands for the kanji); anything else goes to **Other** (70 of
+  1,548, 4.5 %) rather than a guess. Numerals are Time and numbers. Pages:
+  water 63, nature 70, animals and plants 80, people and the body 137, places
+  102, time and numbers 89, mind 154, speech and writing 127, movement and
+  actions 321, things 146, society 55, colours and qualities 134. The unit
+  test `tests/unit/kanji_chart.test.mjs` checks 46 clear cases (水 海 川 酒 →
+  water, 雨 山 雪 火 → nature, 手 口 目 母 → body, 心 怒 夢 → mind, 守 →
+  movement and actions, 強 力 → qualities, 振 → actions, 王 → other…) and the
+  size of Other. Two samples of 70 read by eye led to the okurigana rule and
+  the verb and keyword fixes; a third (every 22nd kanji in the chart's
+  order, read after the rules were final): 64 of 70 on a page a reader would
+  expect or accept, 6 debatable or wrong (御 御免 → the body, 式 一式 →
+  actions, 福 大福 → things, 章 第五章 → time, 果 効果 → time, 割 "rate" →
+  actions).
 - **Search** (required in battle, there everywhere): by kanji (守), by a word
   written with it (守る), by kana reading in hiragana or katakana (まもる,
   マモル, まも), by rōmaji in Hepburn or wāpuro spelling (mamoru, mamo; long
@@ -380,12 +396,107 @@ unknown taking the rest; then, for kanji that occur only in such compounds, a
 split shaped like on-readings (each kanji one mora, or one mora and
 い/う/ん/き/く/ち/つ/っ) when exactly one exists. Whole-word readings
 (jukujikun such as 今日, 大人, 部屋, 風呂) are never split. A hand-checked list
-covers the 33 kanji this cannot reach (伯 刀 王 為…) and one correction (祖 そ,
-not the voiced ぞ of 先祖). Each distinct word counts once; readings are
-listed most used first, at most four. 1,547 of 1,548 kanji have one; 々 has
-none of its own.
+(`CURATED` in the tool, 33 kanji) gives the readings this cannot reach
+(kanji seen only inside whole-word readings such as 伯父 おじ or in compounds
+the rules do not split, and 王, which the text does not use) and one correction (祖 そ, not the voiced ぞ of 先祖).
+Each distinct word counts once; readings are listed most used first, at most
+four. 1,547 of 1,548 kanji have one; 々 has none of its own.
 
 ## Measured results
+
+### Every kanji in the game, 2026-09-29
+
+Commands (node v22, a 4-core Linux container):
+
+```
+node tools/kanjivg/kanaparity.mjs --n 3                       # kana-only pads: before vs after
+node tools/kanjivg/eval.mjs --kanji --n 10 --kanji-n 2        # full report (40–60 min here)
+node tests/run-unit.mjs recog                                 # recog, recog-accuracy, recog-coverage, recog-kanji
+node tests/e2e/kanji_chart.mjs                                # browser: 守 by pointer, battle, chart, speed
+```
+
+**Kana with kanji reading off: identical.** The recognizer and data of
+ba6869d (33 kanji) and of this branch (1,548) were run on the same samples in
+the kana-only pads (each kana in its own script's pad and in Either kana):
+6,888 held-out results (164 kana × 7 families × 3) and 1,036 more (AnimCJK and
+Tomoe kana, 200 nonsense drawings in three pads). Status, candidates with
+their distances, size hint and reading notes: **identical in 7,924/7,924**;
+the kanji hint and kanji-like flag were also unchanged on all of them. The
+same held-out kana figures as before follow from that (hiragana 99.9 %,
+katakana 99.7 % top-1 in their pads). A kana-pad call costs more because the
+kanji hint now looks through 1,548 kanji: median 4.5 → 7.1 ms.
+
+**Kanji, held out** (every one of the 1,548 kanji, 7 held-out families × 2
+samples = 21,672 per pad; top-1 counts a kana/kanji twin read as its kana):
+
+| pad | top-1 | top-5 | exact | confident (precision) |
+|---|---|---|---|---|
+| kanji only (`script:'kanji'`) | 99.8 % | 99.8 % | 99.8 % | 97.2 % (100.0 %) |
+| Kanji or kana (`'any'` + kanji) | 99.8 % | 99.8 % | 99.3 % | 97.2 % (100.0 %) |
+
+By family (kanji-only pad, top-1): noise, truncated-extended, permuted and
+reversed 100.0 %, joined 99.9 %, affine 99.4 %, mixed (all distortions,
+stronger) 99.2 % (top-5 99.4 %, confident 87.4 %, precision 100.0 %; 99.1 %
+and 99.9 % in the Kanji or kana pad). Every clean reference: 1,548/1,548
+first, all `confident`. Most misses never reach the structured match: of the
+20 affine misses (whole drawing rotated, sheared, stretched) 3 were dropped by
+the coarse pre-filter and 17 by the shortlist of 20 (万→下, 国→風, 星→基,
+田→四…), so they are not among the five candidates either.
+
+**Kanji, independent source: Tomoe** (hand-entered templates, not KanjiVG;
+1,579 entries for the game's kanji; not used for tuning): kanji pad top-1
+**98.7 %**, top-3 99.2 %, top-5 **99.3 %**, confident 91.5 % (precision
+99.9 %); Kanji or kana pad top-1 98.6 % (exact 98.1 %). Errors include 月→用,
+椅→婚, 皆→背, 祈→折, 貴→責, 隅→偶, 字→学, 多→外, 池→沈, 比→北 (one sample each).
+Tomoe's stroke counts sometimes differ from KanjiVG's; those entries fare a
+little worse (96 % in a sample).
+
+**Kana in the Kanji or kana pad** (held out, 11,480): top-1 98.2 % (kana pad
+98.3 %; shape-equivalent 99.6 % / 99.7 %); a kanji read first 7× (0.06 %);
+kanji-like 0×; confusable kana/kanji sets (33 sets, direction-preserving
+families, 2,430 samples) **99.6 %** (errors ナ→十 ×2, 工→ェ, 才→ォ ×2 (twins
+read as the small kana when drawn small), 上→土, ソ→リ ×4). AnimCJK kana 98.2 %
+(as in Either kana); Tomoe kana 88.9 % (90.7 % in Either kana: one more of 54).
+
+**Kanji with kanji reading off (the hint).** Every game kanji but the eight
+twins, held out (21,560): the kana pad names it 96.5 % of the time, another
+kanji 8×; Tomoe's entries for game kanji: 1,486 of 1,571 (94.6 %). Before a
+drawing with more strokes or ink than any kana could be named (it was
+rejected without a name) the first figure was 42.9 %.
+
+**Kanji the game does not use** (Tomoe, 300 real entries: the odd half chose
+the kanji margin and the many-stroke hint limit, the even half is reported):
+- even half (150): in the kana pad flagged kanji-like 82.7 % and named as a
+  game kanji by the hint 15.3 % (so 98 % are said to be a kanji); in the
+  Kanji or kana pad read `confident` as a game kanji 8.7 % (且→旦, 訣→訳,
+  吾→告, 堤→提, 麿→磨…: most differ from a game kanji by one component);
+- odd half (150): kanji-like 90.0 %, hint 8.0 %, `confident` 10.7 %
+  (較→軟, 索→素, 搭→塔…).
+
+The old stand-ins (kanji composed from components, `synth.mjs`
+UNKNOWN_KANJI) are now mostly game kanji themselves (林 明 男 品 森 …).
+
+**Nonsense** (100 each, Either kana): dots, blobs, zigzags 100 % rejected;
+scribbles 93 % rejected, 7 % `uncertain`; tangles 99 %; never `confident`.
+
+**Speed.** Node, over the 142,957 calls of the full report (kana and kanji,
+all pads; short probes ran beside it at times): mean 12.5 ms, median 11.3
+ms, p95 24.1 ms, max 206 ms. Headless Chromium (kanji_chart.mjs §8, 120
+jittered kanji in the Kanji or kana pad, three runs): median 15.4–18.2 ms,
+p95 29–32 ms, max 34–51 ms; the kanji tables 88–144 ms once (prepared in idle
+slices when a kanji pad opens, so the player does not wait for them); the
+chart's index 97–99 ms on first open, the first search 50–70 ms (it builds
+the search keys), then at most 5–9 ms per search.
+
+**Size.** `src/recog/10_strokedata.js` 17 KiB → 185 KiB (189,299 bytes);
+`src/lang/75_kanjiread.js` 17.6 KiB; the chart's data and interface
+(`80_kanjiinfo.js`, `62_kanjichart.js`, styles) about 72 KiB; recognizer
++15 KiB. index.html 4,953,466 → 5,234,631 bytes (+281,165, +5.7 %).
+
+### Earlier measurements (33 kanji)
+
+The text and subsections below describe the recognizer before every game
+kanji was added (33 kanji); the kana figures in them still hold (see above).
 
 Commands (node v22, 2026-09-26; re-run 2026-09-28 after the kana + kanji pad
 change, which left every kana figure below unchanged):
@@ -551,6 +662,11 @@ not flagged: with so few strokes they are read as uncertain kana or kanji.
   length (未/末, 土/士, 刀/力, 日/曰, 人/入/八). The pad reads such a drawing
   `uncertain` and offers the others; the templates are KanjiVG's proportions,
   so a learner's proportions decide which comes first.
+- **Shortlists.** To stay fast, only 100 kanji (by a coarse map of stroke
+  directions) and then 20 (by ink overlap) reach the careful stroke match. A
+  strongly rotated or slanted kanji can be dropped there (0.6 % of the
+  held-out affine samples) and is then not among the candidates at all; the
+  chart's search is the way out.
 - **Themes are keyword-based.** A kanji's theme comes from the English
   meanings of its words; the lists and weights are in `80_kanjiinfo.js` and
   some choices are debatable (麓 "foot (of a mountain)" lands on People and
