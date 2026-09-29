@@ -6,13 +6,18 @@
 // Scanned: every source file the build puts into index.html (tools/build.mjs
 // listSources: core, lang, recog, audio, engine, learn, ui, content, atlas,
 // main.js) plus src/index.template.html — the content, the interface strings,
-// the lexicon (src/lang) and the Atlas. Comments are removed first (a small
-// JavaScript scanner that knows strings, template literals and regular
-// expressions), so a kanji that appears only in a code comment, or as the
-// bound of a regular-expression range, is not counted. Generated recognizer data (src/recog/1*_*.js) is skipped: it is the
-// output, not the text. The result is the set of CJK ideographs (plus 々,
-// which the game writes inside ruby like a kanji) in string literals,
-// template literals and markup.
+// the lexicon (src/lang) and the Atlas. Only the text of string and template
+// literals counts (a small JavaScript scanner that knows comments, strings,
+// template literals and regular expressions): a kanji that appears only in a
+// comment, as an object key or identifier in code (a lookup table such as
+// { 水: 'water' }), or as the bound of a regular-expression range, is not
+// text the game shows. Generated data (src/recog/1*_*.js and
+// src/lang/75_kanjiread.js) is skipped: it is output, not text. The result is
+// the set of CJK ideographs (plus 々, which the game writes inside ruby like a
+// kanji) in those literals and in the page template.
+//
+// The recognizer's set is this list plus the first 33 kanji it supported
+// (tools/kanjivg/chars.mjs allChars), so nothing it could read before is lost.
 //
 // Used by tools/kanjivg/fetch.mjs and convert.mjs (which characters to
 // download and convert) and by tests/unit/recog-coverage.test.mjs (every
@@ -33,6 +38,8 @@ export const isKanjiChar = (c) => /^[㐀-䶿一-鿿豈-﫿々]$/u.test(c);
 // literals intact. Returns the code with comments replaced by spaces.
 // opts.dropRegex: also blank out regular expression literals (a kanji range
 // such as /[一-鿿]/ is code, not text the game shows).
+// opts.literalsOnly: keep only the text of string and template literals
+// (everything else becomes spaces; line breaks are kept).
 export function stripComments(src, opts = {}) {
   let out = '';
   let i = 0;
@@ -118,7 +125,7 @@ export function stripComments(src, opts = {}) {
         continue;
       }
     }
-    out += c; i++;
+    out += opts.literalsOnly && c !== '\n' ? ' ' : c; i++;
     if (!/\s/.test(c)) {
       if (/[A-Za-z0-9_$]/.test(c)) { lastWord = /[A-Za-z0-9_$]/.test(lastSig) ? lastWord + c : c; lastSig = c; }
       else { lastSig = c; lastWord = ''; }
@@ -130,7 +137,7 @@ export function stripComments(src, opts = {}) {
 
 async function sourceFiles() {
   const { listSources } = await import(pathToFileURL(path.join(ROOT, 'tools', 'build.mjs')).href);
-  const files = listSources().filter((f) => !/[\\/]src[\\/]recog[\\/]1\d_[^\\/]+\.js$/.test(f));
+  const files = listSources().filter((f) => !/[\\/]src[\\/](recog[\\/]1\d_[^\\/]+|lang[\\/]75_kanjiread)\.js$/.test(f));
   files.push(path.join(ROOT, 'src', 'index.template.html'));
   return files;
 }
@@ -140,7 +147,7 @@ export async function gameKanji() {
   const where = {};
   for (const f of await sourceFiles()) {
     let text = fs.readFileSync(f, 'utf8');
-    if (f.endsWith('.js')) text = stripComments(text, { dropRegex: true });
+    if (f.endsWith('.js')) text = stripComments(text, { dropRegex: true, literalsOnly: true });
     else text = text.replace(/<!--[\s\S]*?-->/g, ' ');
     const rel = path.relative(ROOT, f).split(path.sep).join('/');
     for (const c of text.match(KANJI_RE) || []) (where[c] = where[c] || new Set()).add(rel);

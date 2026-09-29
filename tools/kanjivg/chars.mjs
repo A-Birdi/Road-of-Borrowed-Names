@@ -17,11 +17,12 @@ export const KANA = [...HIRA, ...KATA];
 export const ALL = [...KANA, ...KANJI];
 
 // Every character that gets recognizer data: the kana plus every kanji the
-// game displays (derived from the source by ./gamekanji.mjs).
+// game displays (derived from the source by ./gamekanji.mjs) and the first 33.
 export async function allChars() {
   const { gameKanji } = await import('./gamekanji.mjs');
   const { chars } = await gameKanji();
-  return { kana: KANA.slice(), kanji: chars, all: [...KANA, ...chars] };
+  const kanji = [...new Set([...chars, ...KANJI])].sort((a, b) => a.codePointAt(0) - b.codePointAt(0));
+  return { kana: KANA.slice(), kanji, all: [...KANA, ...kanji] };
 }
 
 // KanjiVG file name: 5 lowercase hex digits of the code point.
