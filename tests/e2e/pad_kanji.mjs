@@ -5,10 +5,16 @@
 // off, a kanji the pad doesn't know, kana/kanji twins (入り口), the chart's
 // kanji, the Settings control, kana practice staying kana, and layout at
 // 320 px / 200 % text. Strokes are real KanjiVG references (RB.recog.reference)
-// injected with the pad's test hook; unknown kanji are composed from real
-// component strokes (tools/kanjivg/synth.mjs UNKNOWN_KANJI layouts).
+// injected with the pad's test hook. A kanji outside the game is 弦, one of
+// the Tomoe entries of kanji the game does not use
+// (tests/fixtures/recog/tomoe-unknown.json, LGPL, test-only).
 // Usage: node tests/e2e/pad_kanji.mjs [filter]
+import fs from 'node:fs';
 import { serve, launch, page } from './lib.mjs';
+
+// 弦 (not in the game) as Tomoe entered it, in the pad's 0..1 box
+const TOMOE_U = JSON.parse(fs.readFileSync(new URL('../fixtures/recog/tomoe-unknown.json', import.meta.url), 'utf8'));
+const GEN = TOMOE_U.chars.find((c) => c.ch === '弦').strokes.map((st) => st.map(([x, y], i) => ({ x: 0.1 + 0.8 * x / TOMOE_U.box, y: 0.1 + 0.8 * y / TOMOE_U.box, t: i * 16 })));
 
 const only = process.argv[2];
 const { srv, url } = await serve();
@@ -160,17 +166,23 @@ await test('kana only (Foundations): kana unchanged; 水 gets a plain "looks lik
 });
 
 // ---------------------------------------------------------------------------
-await test('a kanji the pad does not know: said plainly, write it in kana; no unrelated candidates', async () => {
+await test('a kanji outside the game (弦): kana reading off: said plainly, no kana guesses; kanji reading on: not sure, the closest kanji to pick from, no Confirm until one is chosen', async () => {
   for (const [profile, off] of [['E', false], ['F', true]]) {
     const { p, errors, ctx } = await openPad(phone(390, 844), profile);
-    await p.evaluate(() => __write(__hayashi()));
+    await p.evaluate((g) => __write(g), GEN);
     const rd = await p.evaluate(() => __read());
-    assert(rd.state === 'outside' && /looks like a kanji/i.test(rd.text) && /kana/i.test(rd.text), profile + ': message ' + JSON.stringify(rd));
-    if (!off) assert(/doesn.t know/i.test(rd.text), 'kanji mode: says the pad does not know it: ' + rd.text);
-    else assert(/kanji reading is off/i.test(rd.text) && rd.acts.includes('kanji'), 'kana mode: offers kanji reading: ' + JSON.stringify(rd));
-    assert(rd.cands.length === 0 && !rd.confirm && !rd.hint && rd.acts.includes('chart'), profile + ': no candidates, no confirm, no size hint, the chart: ' + JSON.stringify(rd));
-    assert(rd.result.kanjiLike, 'recognizer flagged it kanji-like');
-    if (!off) await p.screenshot({ path: 'tests/e2e/out/pad_kanji_unknown.png' });
+    assert(rd.result.kanjiLike, profile + ': recognizer flagged it kanji-like ' + JSON.stringify(rd.result));
+    assert(rd.state === 'outside' && !rd.confirm && !rd.hint && rd.acts.includes('chart'), profile + ': outside, no confirm, no size hint, the chart: ' + JSON.stringify(rd));
+    if (off) {
+      assert(/looks like a kanji/i.test(rd.text) && /kanji reading is off/i.test(rd.text) && rd.acts.includes('kanji') && rd.cands.length === 0, 'kana mode: plain message, Read kanji too, no kana candidates: ' + JSON.stringify(rd));
+    } else {
+      assert(/not sure/i.test(rd.text) && /chart/i.test(rd.text) && rd.cands.length > 0 && rd.cands.every((c) => /^[一-鿿]$/.test(c)), 'kanji mode: the closest kanji to choose from: ' + JSON.stringify(rd));
+      await p.screenshot({ path: 'tests/e2e/out/pad_kanji_unknown.png' });
+      // choosing one lets it be confirmed (assisted)
+      await p.tap('.cands .cand >> nth=0');
+      const after = await p.evaluate(() => __read());
+      assert(after.confirm && after.big.startsWith(rd.cands[0]) && after.state === 'sure', 'a choice enables Confirm: ' + JSON.stringify(after));
+    }
     assert(!errors.length, errors.join('; '));
     await ctx.close();
   }
@@ -221,23 +233,33 @@ await test('one shape, two characters: 入り口 by hand; ロ/口 offered by wha
 });
 
 // ---------------------------------------------------------------------------
-await test('the chart follows Read as: kana sections, and the pad\'s kanji with furigana (assisted)', async () => {
+await test('the chart follows Read as: kana pages for the pad\'s script, every kanji with furigana; picking is assisted (tests/e2e/kanji_chart.mjs covers the chart in full)', async () => {
   const { p, errors, ctx } = await openPad(null, 'E');
   await p.click('[data-a=chart]');
-  await p.waitForSelector('.kchart');
-  const c = await p.evaluate(() => ({ heads: [...document.querySelectorAll('.kchart-h')].map((h) => h.textContent), kanji: [...document.querySelectorAll('.kpick')].filter((b) => b.querySelector('ruby')).map((b) => b.querySelector('ruby').firstChild.textContent + '|' + b.querySelector('rt').textContent), all: document.querySelectorAll('.kpick').length }));
-  assert(c.heads.join(',') === 'Hiragana,Katakana,Kanji the pad can read', 'sections: ' + c.heads.join(','));
-  assert(c.kanji.length === 33 && c.kanji.includes('水|みず') && c.kanji.every((k) => /\|[ぁ-ゖ]+$/.test(k)), 'the 33 kanji, each with furigana: ' + c.kanji.join(' '));
-  await p.click('.kpick[data-c="水"]');
+  await p.waitForSelector('.kjc .kchart');
+  const c = await p.evaluate(() => ({
+    pages: [...document.querySelectorAll('[data-kc-page] option')].map((o) => o.textContent),
+    page: document.querySelector('[data-kc-page]').selectedOptions[0].textContent,
+    kanji: [...document.querySelectorAll('.kjc .kpick')].filter((b) => b.querySelector('ruby')).map((b) => b.querySelector('ruby').firstChild.textContent + '|' + b.querySelector('rt').textContent),
+    all: document.querySelectorAll('.kjc .kpick').length,
+  }));
+  assert(c.pages[0] === 'Hiragana' && c.pages[1] === 'Katakana' && c.pages.length > 20, 'pages: ' + c.pages.slice(0, 4).join(','));
+  assert(c.page === 'Water and liquids' && c.kanji.length === c.all && c.kanji.includes('水|みず') && c.kanji.every((k) => /\|[ぁ-ゖ]+$/.test(k)), 'kanji reading on: the first kanji page, each kanji with furigana: ' + c.kanji.slice(0, 10).join(' '));
+  await p.click('.kjc .kpick[data-c="水"]');
+  await p.waitForSelector('[data-kc=use]');
+  await p.click('[data-kc=use]');
   const t = await p.evaluate(() => ({ text: RB.pad.__last.text(), meta: RB.pad.__last.meta() }));
   assert(t.text === '水' && t.meta.assisted, 'picked from the chart, assisted: ' + JSON.stringify(t));
   await ctx.close();
-  // kana only, hiragana task: hiragana only (as before)
+  // kana only, hiragana task: the chart opens on hiragana (no katakana page); a kana is picked in one tap
   const pg = await openPad(null, 'E', { kind: 'write', item: 'k:ぬ', prompt: { en: 'Write nu' }, answer: 'ぬ', accept: ['ぬ'], mode: 'kana', single: true, script: 'hira' });
   await pg.p.click('[data-a=chart]');
-  await pg.p.waitForSelector('.kchart');
-  const c2 = await pg.p.evaluate(() => ({ heads: document.querySelectorAll('.kchart-h').length, kanji: [...document.querySelectorAll('.kpick')].some((b) => RB.kana.isKanji(b.getAttribute('data-c'))), first: document.querySelector('.kpick').getAttribute('data-c') }));
-  assert(c2.heads === 0 && !c2.kanji && c2.first === 'あ', 'hiragana chart unchanged: ' + JSON.stringify(c2));
+  await pg.p.waitForSelector('.kjc .kchart');
+  const c2 = await pg.p.evaluate(() => ({ pages: [...document.querySelectorAll('[data-kc-page] option')].map((o) => o.textContent), page: document.querySelector('[data-kc-page]').selectedOptions[0].textContent, first: document.querySelector('.kjc .kpick').getAttribute('data-c') }));
+  assert(c2.page === 'Hiragana' && c2.first === 'あ' && !c2.pages.includes('Katakana'), 'hiragana pad: the hiragana page first, no katakana page: ' + JSON.stringify(c2));
+  await pg.p.click('.kjc .kpick[data-c="ぬ"]');
+  const t2 = await pg.p.evaluate(() => ({ text: RB.pad.__last.text(), meta: RB.pad.__last.meta() }));
+  assert(t2.text === 'ぬ' && t2.meta.assisted, 'kana picked in one tap, assisted: ' + JSON.stringify(t2));
   assert(!errors.length && !pg.errors.length, errors.concat(pg.errors).join('; '));
   await pg.ctx.close();
 });
@@ -280,14 +302,14 @@ await test('Read as by keyboard; the choice is remembered; Settings › Handwrit
 // ---------------------------------------------------------------------------
 await test('no horizontal overflow with More open at 320/360 px and 200 % text; the select is at least 44 px', async () => {
   const bad = [];
-  for (const w of [320, 360]) for (const scale of [1, 2]) for (const ink of ['水', 'hayashi']) {
+  for (const w of [320, 360]) for (const scale of [1, 2]) for (const ink of ['水', 'gen']) {
     const { p, errors, ctx } = await page(b, url, phone(w, 800));
     await helpers(p);
     await p.evaluate((k) => { RB.game.settings.textScale = k; RB.game.applySettings(); }, scale);
     await p.evaluate(() => __start({ kind: 'write', item: 'v:水', prompt: { en: 'Water is みず. Write it.' }, answer: 'みず', accept: ['みず', '水'], mode: 'kana' }, 'E'));
     await p.waitForSelector('.pad-ink');
     await p.click('[data-a=more]');
-    await p.evaluate((ink) => __write(ink === 'hayashi' ? __hayashi() : __ink(ink)), ink);
+    await p.evaluate(([ink, g]) => __write(ink === 'gen' ? g : __ink(ink)), [ink, GEN]);
     await p.waitForTimeout(200);
     const r = await p.evaluate(() => {
       const W = innerWidth, out = [];
