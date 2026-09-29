@@ -611,3 +611,32 @@ The world fixes were made directly on this branch (0c78eca, 0c4d36d, 8706340).
   - Firefox (the owner's browser) and Safari. The Next-button cause is a stacking order that holds in any browser, but the fix was run only in Chromium.
   - Real phones or touch hardware, and phone frame rates.
   - A human judgement of the new art and motion.
+
+### Follow-up: player report of 2026-09-29
+- **Duplicate Tsuru after the Mill, reproduced from the content and code.**
+  - In `rw.bridge_scene`, `!set rw_koji_back` + `!refresh` hid Tsuru's evening placement (`tsuru_out`, condition `!rw_koji_back`), so she walked off toward the Hall.
+  - Her next three lines then made `ensureSpeaker('tsuru')` walk a second Tsuru in: it matched by placement id, and walkers leaving weren't counted.
+  - Before that, while she still stood there as `tsuru_out`, a `tsuru:` line would also have walked a duplicate in (id ≠ `tsuru`).
+  - The whole-game speaker audit had been masked by those duplicates. It too matched ids only (hana_out, tsuru_out, the Saltglass harbour cast).
+- **B `departures.mjs` §5 (the real bridge scene in a fresh page):**
+  - At most 1 Tsuru on screen for the whole scene, and 1 for every one of her 38 sampled line frames.
+  - At nightfall she heads to the Lantern Hall door (21,8).
+  - No one is drawn twice.
+- **B `departures.mjs` §6 (a same-person move):** Tsuru's placement moves from 21,15 to `tsuru_out` at 27,17 on the same map. One figure walks there, fully visible.
+- **B `equipment.mjs`:** the Satchel preview shows Front, Side, Back, In battle and Portrait, in order. **S** I inspected it at 1064×783 and 390×844.
+- **B/S Side profile:**
+  - The mouth was drawn 2 px outside `FACE_S`, and is now a notch on the face edge.
+  - The nose tip is joined to the face.
+  - `characters.mjs` 23/23; I inspected the side views of seven looks at 5×; the road review sheets are refreshed in docs/screenshots/after/characters/.
+- **B Suites on 61e7e0e:** characters, world_fixes, play_ui, encounters and departures pass. Unit 3653; validator no errors.
+- **B Whole game `pursue.mjs E nao` (8a498fe, 767 s):**
+  - All chapters and the Atlas, no lost battles, no problems.
+  - **Nobody drawn twice**; pursue.mjs now fails if anyone is.
+  - Unseen speakers: only the 8 intended lines (mill echo, kiln warden, Tomoe's memory, the observatory lamp ×3, the Still Archive memory).
+  - 32 walk-ins to speak.
+  - 49 comings and goings; 3 used the nearest way (arrivals with no known place: Mochi, Tōya, Tae).
+- **Multiple enemies at once: none**, confirmed from the code.
+  - `RB.combat.start` / `RB.combatLogic.init` take one enemy.
+  - Story `!battle` commands: 7, including the Hush's retry path.
+  - Map foes: 49, each its own battle.
+  - Atlas rooms: a guard and/or one roaming foe, each its own battle; climaxes are single.
