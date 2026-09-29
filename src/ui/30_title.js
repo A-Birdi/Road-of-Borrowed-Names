@@ -24,7 +24,7 @@ RB.ui.title = (function () {
     torn: '<path d="M6 3h12v9l-2 1.5 1 2-2 1 1 2.5-2 1H6z"/><path d="M9 8h6M9 11h4"/>',
     blank: '<path d="M6 3h12v18H6z" stroke-dasharray="2.5 2.5"/>',
   });
-  let layer = null;
+  let layer = null, mastObs = null;
 
   // ---- storage status ---------------------------------------------------------------
   // level: 'ok' (works) | 'note' (works with a caveat) | 'bad' (nothing persists)
@@ -107,10 +107,38 @@ RB.ui.title = (function () {
     return (glows[k] = cv);
   }
 
-  function buildScene(w, h) {
+  // The page's title layout (40_title.css): '' centred across the top, 's'
+  // top left beside the folio, 'sl' the same on a short landscape screen
+  // (where the folio reaches nearly to the lintel)
+  const ASIDE = '(min-width: 700px) and (min-aspect-ratio: 1/1)', LOW = '(max-height: 520px)';
+  let asideQ = null, lowQ = null;
+  function mastAside() {
+    if (!asideQ && window.matchMedia) { asideQ = window.matchMedia(ASIDE); lowQ = window.matchMedia(LOW); }
+    return asideQ && asideQ.matches ? (lowQ.matches ? 'sl' : 's') : '';
+  }
+  // The title's words where they sit over the canvas, in art px with a small
+  // margin (the stars keep out from behind them); [] when the title is not up.
+  function mastRects(w, h, el) {
+    const mast = document.querySelector('.title .mast');
+    if (!mast || !el || !el.getBoundingClientRect) return [];
+    const cv = el.getBoundingClientRect();
+    if (!cv.width || !cv.height) return [];
+    const sx = w / cv.width, sy = h / cv.height, out = [];
+    const walk = document.createTreeWalker(mast, NodeFilter.SHOW_TEXT), rg = document.createRange();
+    for (let n = walk.nextNode(); n; n = walk.nextNode()) {
+      if (!n.nodeValue.trim()) continue;
+      rg.selectNodeContents(n);
+      for (const q of rg.getClientRects()) out.push([(q.left - cv.left - 6) * sx, (q.top - cv.top - 6) * sy, (q.right - cv.left + 6) * sx, (q.bottom - cv.top + 6) * sy]);
+    }
+    return out;
+  }
+  function buildScene(w, h, el) {
     const K = RB.pxkit;
     const P = h > w * 1.15 ? PLAN.tall : PLAN.wide;
-    const L = { w, h, tall: P === PLAN.tall, lamps: [], reeds: [], stars: [], water: [] };
+    // where the page puts the title: top left beside the folio (40_title.css),
+    // or centred across the top; the noren and the moon keep clear of it
+    const side = mastAside();
+    const L = { w, h, tall: P === PLAN.tall, side, lamps: [], reeds: [], stars: [], water: [] };
     const cv = canvas(w, h);
     const c = cv.getContext('2d');
     c.imageSmoothingEnabled = false;
@@ -126,14 +154,19 @@ RB.ui.title = (function () {
     const img = c.createImageData(w, hz);
     K.bands(img, w, 0, hz, ['#0b0f22', '#0f1429', '#131a33', '#18203f', '#1f2749', '#292e55', '#373358', '#4a3c5c'], 0.45);
     c.putImageData(img, 0, 0);
-    for (let i = 0; i < 40; i++) L.stars.push([Math.round(rnd() * w), Math.round(rnd() * hz * 0.72), rnd() * 6.28, rnd() < 0.22]);
+    // stars: [x, y, phase, bright, beat ms] — each twinkles on its own beat
+    for (let i = 0; i < 56; i++) L.stars.push([Math.round(rnd() * w), Math.round(rnd() * hz * 0.72), rnd() * 6.28, rnd() < 0.22, 700 + Math.round(rnd() * 2300)]);
+    // with the title centred across the top, much of the sky is behind it:
+    // sow more, all the way down to the ridges (the rest are filtered below)
+    if (L.tall || !side) { const r2 = RB.util.rng(4211); for (let i = 0; i < 80; i++) L.stars.push([Math.round(r2() * w), Math.round(r2() * hz), r2() * 6.28, r2() < 0.2, 700 + Math.round(r2() * 2300)]); }
     // thin moonlit cloud streaks low over the far ridge (away from the title)
     for (let i = 0; i < 4; i++) {
       const cy = Math.round(hz * (0.56 + i * 0.07)), cx = Math.round(w * (L.tall ? 0.2 + i * 0.2 : 0.56 + (i % 2) * 0.16 + i * 0.05)), len = Math.round(w * (0.12 + (i % 3) * 0.05));
       R(cx - len / 2, cy, len, 2, '#2c2d52'); R(cx - len / 2 + 6, cy - 1, len - 16, 1, '#3e3c62'); R(cx - len / 2 + 10, cy + 2, len - 30, 1, '#232548');
     }
     // the moon: a stepped halo and a crescent with a shaded limb and two faint maria
-    const mx = Math.round(P.moon[0] * w), my = Math.round(P.moon[1] * h), mr = Math.max(6, Math.round(Math.min(w, h) * 0.018));
+    const moon = L.tall || side === 's' ? P.moon : side ? [0.72, 0.115] : [0.85, 0.27];
+    const mx = Math.round(moon[0] * w), my = Math.round(moon[1] * h), mr = Math.max(6, Math.round(Math.min(w, h) * 0.018));
     c.drawImage(glowSprite(mr * 5, '200,210,240'), mx - mr * 5, my - mr * 5);
     for (let y = -mr; y <= mr; y++) for (let x = -mr; x <= mr; x++) {
       if (x * x + y * y > mr * mr + mr * 0.6) continue;
@@ -142,13 +175,16 @@ RB.ui.title = (function () {
       const edge = x * x + y * y > (mr - 1.5) * (mr - 1.5);
       R(mx + x, my + y, 1, 1, edge && x > 0 ? '#c9c0a2' : x > mr * 0.35 ? '#dcd4b8' : '#f1e9cc');
     }
+    L.moon = [mx, my, mr];
     R(mx + Math.round(mr * 0.45), my - Math.round(mr * 0.3), 2, 2, '#d2c9ac'); R(mx + Math.round(mr * 0.6), my + Math.round(mr * 0.25), 2, 1, '#d2c9ac');
     // mountains, far to near; the far ridges catch moonlight on their crests
+    const skyline = L.skyline = new Int16Array(w).fill(hz); // the highest ridge in each column
     const ridge = (base, amp, f1, f2, ph, col, rim, crest) => {
       let prev = null;
       for (let x = 0; x < w; x++) {
         const v = Math.sin(x / (w * f1) + ph) * 0.6 + Math.sin(x / (w * f2) + ph * 2.3) * 0.4;
         const top = Math.round(base - amp * (0.55 + v * 0.45));
+        if (top < skyline[x]) skyline[x] = top;
         R(x, top, 1, hz - top + 1, col);
         if (rim && prev != null && top < prev + 1) R(x, top, 1, top < prev ? 2 : 1, rim);
         if (crest) R(x, top + 2 + ((x * 7) % 5 === 0 ? 1 : 0), 1, 1, crest);
@@ -260,7 +296,10 @@ RB.ui.title = (function () {
     for (const uu of [0.22, 0.5, 0.78]) { const x = Math.round(bL + (bR - bL) * uu); R(x, top(x) + 5, 2, by + 4 - top(x) - 4, '#2e1f16'); R(x, top(x) + 5, 1, by + 4 - top(x) - 4, '#3e2a1c'); }
     for (const x of [bL, bR - 1]) { R(x, top(x) - 10, 2, 10, '#3a2619'); R(x - 1, top(x) - 12, 4, 2, '#7a5234'); }
     const cx = Math.round((bL + bR) / 2);
-    L.lamps.push({ x: cx, y: top(cx) - 12, s: 2, bridge: true });
+    L.bridge = { x0: bL - 6, x1: bR + 6, y0: by - ah - 24, y1: by + 6 };
+    // its lantern, and where the lantern shows in the water: mirrored about
+    // the water line and squashed like the bridge's own reflection
+    L.lamps.push({ x: cx, y: top(cx) - 12, s: 2, bridge: true, ry: by + 4 + Math.round((by + 4 - (top(cx) - 12)) * 0.7) });
     R(cx, top(cx) - 10, 2, 5, '#2a1d15');
     // lantern posts along the road, alternating sides, growing with nearness
     P.lamps.forEach((f, i) => {
@@ -309,78 +348,178 @@ RB.ui.title = (function () {
     }
     R(post - 2, lint, 2, h - lint, '#3f2d1f'); R(post - 1, lint, 1, h - lint, '#4c3726'); R(w - post, lint, 2, h - lint, '#2c2017');
     R(0, 0, w, lint, '#1a120d'); R(0, lint - 2, w, 2, '#3a2a1e'); R(0, lint - 1, w, 1, '#46331f');
-    if (!L.tall) {
-      const bl = Math.max(6, Math.round(h * 0.022));
-      R(post, lint, w - 2 * post, bl, '#5c4a2c');
-      for (let y = lint; y < lint + bl; y += 2) R(post, y, w - 2 * post, 1, '#4f3f24');
-      for (let x = post; x < w - post; x += 3) R(x, lint, 1, bl, '#4a3b22');
-      R(post, lint + bl - 1, w - 2 * post, 1, '#3a2e1a'); R(post, lint, w - 2 * post, 1, '#76603a');
-      for (const uu of [0.18, 0.5, 0.82]) { const x = Math.round(post + (w - 2 * post) * uu); R(x, lint, 2, bl + 4, '#c9b58a'); R(x + 1, lint, 1, bl + 4, '#9a8660'); }
+    // the sliding doors of the inn's entrance, pushed open to either side:
+    // pale paper in a lattice, lit warm from the lamp on the left and cool by
+    // the moon on the right (so the frame reads as a doorway, not a window)
+    const sdw = Math.max(12, Math.round(w * (L.tall ? 0.05 : 0.045)));
+    L.shoji = sdw;
+    for (const [x0, warm] of [[post, true], [w - post - sdw, false]]) {
+      const paper = warm ? '#d6c292' : '#7c8098', paper2 = warm ? '#c4ab78' : '#6e7290', wood = '#2a1c13';
+      const pane = Math.max(12, Math.round(h * 0.035));
+      R(x0, lint, sdw, floorY - lint, paper);
+      // paper panes, tall and even; each a touch darker under its rail
+      for (let y = lint + pane; y < floorY; y += pane) { R(x0, y, sdw, 1, wood); R(x0 + 2, y + 1, sdw - 4, 1, paper2); }
+      for (const f of [1 / 3, 2 / 3]) R(x0 + Math.round(sdw * f), lint, 1, floorY - lint, wood);  // kumiko bars
+      R(x0, lint, 2, floorY - lint, wood); R(x0 + sdw - 2, lint, 2, floorY - lint, wood);        // stiles
+      R(x0, floorY - Math.max(6, Math.round(h * 0.03)), sdw, Math.max(6, Math.round(h * 0.03)), '#3a2618'); // kick panel
+      R(x0 + (warm ? sdw - 1 : 0), lint, 1, floorY - lint, 'rgba(0,0,0,0.35)');                 // the edge toward the doorway in shade
     }
+    // a short indigo noren under the lintel, split in four, with a lantern
+    // crest on the middle panels (only where the title sits at the side, below it)
+    if (!L.tall && side) {
+      const nh = Math.max(10, Math.round(h * 0.034)), x0 = post + sdw, nw = w - 2 * (post + sdw);
+      const panes = 4, gap = 2, pw = Math.floor((nw - gap * (panes - 1)) / panes);
+      for (let i = 0; i < panes; i++) {
+        const px0 = x0 + i * (pw + gap);
+        R(px0, lint, pw, nh, '#26325e');
+        for (let y = lint + 2; y < lint + nh; y += 3) R(px0 + 1, y, pw - 2, 1, '#2a3870');          // the weave
+        for (let x = px0 + 9; x < px0 + pw - 4; x += 23) R(x, lint + 2, 2, nh - 3, '#1f2a52');    // soft folds
+        R(px0, lint, pw, 2, '#1a2244'); R(px0, lint + nh - 1, pw, 1, '#1a2244');                   // pole sleeve, hem
+        R(px0 + pw - 1, lint, 1, nh, '#1c2548');
+      }
+      // the crest (a paper lantern in a ring) over the split between the middle two panels
+      const cx0 = x0 + 2 * (pw + gap) - gap / 2, cy0 = lint + Math.round(nh / 2) + 1, cr = Math.max(5, Math.round(nh * 0.4));
+      c.fillStyle = '#d8d0b8'; K.disc(c, cx0, cy0, cr, cr);
+      c.fillStyle = '#24305a'; K.disc(c, cx0, cy0, cr - 1, cr - 1);
+      R(cx0 - 2, cy0 - Math.round(cr * 0.55), 4, Math.max(3, Math.round(cr * 1.1)), '#d8d0b8');
+      R(cx0 - 1, cy0 - Math.round(cr * 0.55) - 1, 2, 1, '#d8d0b8'); R(cx0 - gap / 2, lint, gap, nh, '#131a33');
+      L.norenBottom = lint + nh;
+    }
+    // the threshold sill across the doorway, with the two grooves the doors run in
+    R(post, floorY - 3, w - 2 * post, 3, '#4a3322'); R(post, floorY - 3, w - 2 * post, 1, '#6a4a30');
+    R(post, floorY - 2, w - 2 * post, 1, '#2a1c13'); R(post + 1, floorY - 1, w - 2 * post - 2, 1, '#2a1c13');
     // the writing desk (low, on short legs): a lit front edge, grain, a
     // shadow beneath; the folio, inkstone and brush, a teacup, the lamp
     const dx1 = Math.round(P.desk[2] * w), dy = Math.round(P.desk[1] * h);
     const dt = Math.max(4, Math.round(h * 0.014));
     const ap = Math.max(4, Math.round(h * 0.012));
     R(0, dy + dt + ap, dx1, h - dy - dt - ap, 'rgba(8,5,3,0.45)');
+    // the desk top, seen a little from above (its far edge back toward the doorway)
+    const td = Math.max(6, Math.round(h * (L.tall ? 0.02 : 0.03)));
+    R(0, dy - td, dx1, td, '#7a4c2e'); R(0, dy - td, dx1, 1, '#5a3822');
+    for (let y = dy - td + 2; y < dy; y += 2) for (let x = (y * 7) % 11; x < dx1 - 4; x += 17 + (y % 5)) R(x, y, 7 + (x % 5), 1, '#84543a');
+    R(dx1 - 2, dy - td, 2, td, '#6a4028');
     R(0, dy, dx1, dt, '#6e4428'); R(0, dy, dx1, 1, '#b07a4c'); R(0, dy + 1, dx1, 1, '#8a5a36'); R(dx1 - 2, dy, 2, dt, '#8a5a36');
     for (let x = 8; x < dx1 - 6; x += 13) R(x, dy + 2 + (x % 3 ? 1 : 0), 6 + (x % 4), 1, '#7a4c2e');
     R(0, dy + dt, dx1, ap, '#3a2418'); R(0, dy + dt, dx1, 1, '#24160e'); R(0, dy + dt + ap - 1, dx1, 1, '#2a1a10');
     const leg = Math.max(4, Math.round(w * 0.008));
     for (const x of [post + 4, dx1 - leg - 6]) { R(x, dy + dt + ap, leg, h - dy - dt - ap - 2, '#3a2418'); R(x, dy + dt + ap, 1, h - dy - dt - ap - 2, '#4e321f'); R(x + leg - 1, dy + dt + ap, 1, h - dy - dt - ap - 2, '#2a1a10'); }
+    // the folio, lying closed on the desk top: its cloth cover seen from above,
+    // the page block and binding along its near side, a ribbon over the edge
     const fw = Math.max(36, Math.min(80, Math.round(Math.min(w, h * 1.4) * 0.085)));
-    const fh = Math.max(22, Math.round(fw * 0.62));
-    const fx = Math.max(post + 24, Math.round(dx1 * 0.42)), fy = dy - fh + Math.round(dt / 2) + 2;
-    R(fx + 2, fy + fh, fw, 2, '#1a100a');                                     // shadow
-    R(fx + 3, fy + 2, fw - 1, fh, '#e7dbbd');                                 // page edges
-    for (let y = fy + 4; y < fy + fh; y += 2) R(fx + fw, y, 2, 1, '#c9b98f');
-    R(fx + 3, fy + fh - 1, fw - 1, 1, '#c9b98f');
-    R(fx, fy, fw, fh - 1, '#27305c');                                         // indigo cloth cover
-    for (let y = fy + 2; y < fy + fh - 2; y += 2) for (let x = fx + 5 + ((y >> 1) & 1) * 2; x < fx + fw - 2; x += 4) R(x, y, 2, 1, '#2d3768');
-    R(fx, fy, fw, 1, '#36407a'); R(fx + fw - 1, fy, 1, fh - 1, '#1d2448');
-    R(fx, fy, 4, fh - 1, '#1c2346');                                          // spine
-    for (let y = fy + 3; y < fy + fh - 3; y += 5) { R(fx + 1, y, 2, 2, '#b9a57a'); R(fx + 1, y + 2, 1, 1, '#7a6a4c'); } // binding thread
-    const sw = Math.max(6, Math.round(fw * 0.16)), sh = Math.max(10, Math.round(fh * 0.55));
-    R(fx + 8, fy + 4, sw, sh, '#f2e9d3'); R(fx + 8, fy + 4 + sh - 1, sw, 1, '#cfc3a4'); R(fx + 8 + sw - 1, fy + 4, 1, sh, '#d9ceb2'); // blank title slip
-    const rbx = fx + Math.round(fw * 0.66), rbl = Math.max(6, Math.round(fh * 0.45));
-    R(rbx, fy + fh - 1, 4, rbl, '#c18a2a'); R(rbx + 2, fy + fh - 1, 2, rbl, '#8a5d14');   // ribbon over the desk edge
-    R(rbx, fy + fh - 1 + rbl, 2, 2, '#c18a2a'); R(rbx + 2, fy + fh - 1 + rbl, 2, 1, '#8a5d14');
+    const fdp = Math.max(5, td - 1), fth = Math.max(3, Math.round(fw * 0.06));
+    const fx = Math.max(post + 24, Math.round(dx1 * 0.42)), fy = dy - fdp - 1;       // top of the cover
+    R(fx + 2, dy - 1, fw + 2, 1, '#3a2418');                                          // contact shadow
+    R(fx, fy, fw, fdp, '#27305c');                                                    // the cover, foreshortened
+    for (let y = fy + 1; y < fy + fdp; y += 2) for (let x = fx + 4 + ((y >> 1) & 1) * 2; x < fx + fw - 2; x += 4) R(x, y, 2, 1, '#2d3768');
+    R(fx, fy, fw, 1, '#36407a'); R(fx, fy, 3, fdp, '#1c2346');                        // far edge lit; spine
+    const sw = Math.max(6, Math.round(fw * 0.22)), sh = Math.max(2, Math.round(fdp * 0.5));
+    R(fx + 7, fy + 1, sw, sh, '#f2e9d3'); R(fx + 7, fy + sh, sw, 1, '#cfc3a4');      // the blank title slip, foreshortened
+    R(fx, fy + fdp, fw, fth, '#e7dbbd');                                              // the page block, toward us
+    for (let x = fx + 3; x < fx + fw; x += 3) R(x, fy + fdp + 1, 1, fth - 1, '#d6c9a4');
+    R(fx, fy + fdp + fth - 1, fw, 1, '#b9a87c'); R(fx, fy + fdp, 3, fth, '#1c2346');
+    for (let x = fx + 1; x < fx + 3; x++) for (let y = fy + 1; y < fy + fdp + fth - 1; y += 3) R(x, y, 1, 1, '#b9a57a'); // binding thread
+    const rbx = fx + Math.round(fw * 0.66), rbl = Math.max(6, Math.round(fdp * 1.4));
+    R(rbx, fy + fdp + fth - 1, 3, dy - (fy + fdp + fth - 1) + rbl, '#c18a2a'); R(rbx + 2, fy + fdp + fth - 1, 1, dy - (fy + fdp + fth - 1) + rbl, '#8a5d14'); // ribbon over the desk edge
+    R(rbx, dy + rbl, 2, 2, '#c18a2a');
     const ix = fx + fw + 8;
     if (ix + 24 < dx1) {
       R(ix, dy - 4, 14, 5, '#15131a'); R(ix + 1, dy - 4, 12, 1, '#2c2833'); R(ix + 8, dy - 3, 4, 2, '#0a0a10'); // inkstone and its well
       R(ix + 2, dy - 7, 18, 2, '#8a5a36'); R(ix + 2, dy - 7, 18, 1, '#a8744a'); R(ix + 18, dy - 7, 4, 2, '#1a1418'); // brush
       if (ix + 36 < dx1) { R(ix + 26, dy - 7, 8, 7, '#b8b0a0'); R(ix + 26, dy - 7, 8, 1, '#d8d0c0'); R(ix + 27, dy - 6, 6, 1, '#4a6a4a'); R(ix + 33, dy - 7, 1, 7, '#8e867a'); } // teacup
     }
-    const lx = post + 6, lh = Math.max(14, Math.round(fh * 0.9)), lw = Math.max(10, Math.round(lh * 0.6));
+    const lx = post + 6, lh = Math.max(14, Math.round(fw * 0.56)), lw = Math.max(10, Math.round(lh * 0.6));
     R(lx - 2, dy - 2, lw + 4, 2, '#2a1a10');                                  // base
     R(lx, dy - lh, lw, lh, '#3a2418');                                        // frame
     R(lx - 2, dy - lh - 2, lw + 4, 2, '#2a1a10'); R(lx - 2, dy - lh - 2, lw + 4, 1, '#4a3020'); // cap
     R(lx, dy - 2, 2, 2, '#2a1a10'); R(lx + lw - 2, dy - 2, 2, 2, '#2a1a10');  // feet
     L.lamp = { x: lx, y: dy - lh, w: lw, h: lh };
-    // moving details stay inside the door frame and above the floor
-    L.water = L.water.filter(([x, y, len]) => x > post && x + len < w - post && y < floorY - 2);
-    L.reeds = L.reeds.filter(([x, y]) => x > post && x < w - post && y < floorY - 2);
-    const skyTop = lint + (L.tall ? 2 : Math.max(6, Math.round(h * 0.022)) + 4);
-    const inMast = (x, y) => (L.tall ? x > w * 0.08 && x < w * 0.92 && y < h * 0.25 : x < w * 0.5 && y < h * 0.42);
-    L.stars = L.stars.filter(([x, y]) => x > post + 2 && x < w - post - 4 && y > skyTop && !inMast(x, y));
-    scene.key = w + 'x' + h;
+    // moving details stay inside the doorway (between the open doors, above
+    // the sill) and never over the bridge (glints drift a few px either way)
+    const inX0 = post + sdw, inX1 = w - post - sdw, B = L.bridge;
+    const onBridge = (x, y, len) => B && x + len + 4 > B.x0 && x - 4 < B.x1 && y > B.y0 && y < B.y1;
+    L.water = L.water.filter(([x, y, len]) => x > inX0 + 4 && x + len < inX1 - 4 && y < floorY - 4 && !onBridge(x, y, len));
+    L.reeds = L.reeds.filter(([x, y]) => x > inX0 + 2 && x < inX1 - 2 && y < floorY - 4);
+    const skyTop = L.norenBottom ? L.norenBottom + 3 : lint + 2;
+    const nearMoon = (x, y) => Math.hypot(x - L.moon[0], y - L.moon[1]) < L.moon[2] * 2.2;
+    const words = mastRects(w, h, el);
+    const inMast = words.length ? (x, y) => words.some((q) => x >= q[0] && x <= q[2] && y >= q[1] && y <= q[3])
+      : (x, y) => (L.tall ? x > w * 0.08 && x < w * 0.92 && y < h * 0.2 : side ? x < w * 0.5 && y < h * 0.42 : x > w * 0.12 && x < w * 0.88 && y < h * 0.3);
+    L.stars = L.stars.filter(([x, y]) => x > inX0 + 2 && x < inX1 - 4 && y > skyTop && y < skyline[x] - 4 && !inMast(x, y) && !nearMoon(x, y));
+    L.sky = { x0: inX0 + 4, x1: inX1 - 4, y0: skyTop + 2, y1: Math.round(hz * 0.8), mast: inMast };
+    scene.key = w + 'x' + h + side;
     scene.cv = cv;
     scene.L = L;
   }
 
+  // The night sky: stars twinkling each on its own beat, the bright ones
+  // catching a four-point sparkle at their peak and, now and then, a small one
+  // flaring; a shooting star every so often and, rarely, a slow comet. With
+  // reduced motion the stars hold still and nothing streaks across.
+  const STAR = '240,236,214';
+  function px(c, x, y, a, s) { if (a <= 0.02) return; c.fillStyle = 'rgba(' + STAR + ',' + Math.min(1, a).toFixed(2) + ')'; c.fillRect(Math.round(x), Math.round(y), s || 1, s || 1); }
+  function sparkle(c, x, y, arm, a) {
+    for (let i = 1; i <= arm; i++) { const f = a * (1 - (i - 1) / (arm + 1)); px(c, x - i, y, f); px(c, x + i, y, f); px(c, x, y - i, f); px(c, x, y + i, f); }
+  }
+  function drawSky(c, L, t, still) {
+    const n = L.stars.length;
+    const flare = n ? Math.floor(t / 1700) : 0, fi = n ? (flare * 2654435761 >>> 0) % n : -1, fk = (t % 1700) / 1700;
+    for (let i = 0; i < n; i++) {
+      const [x, y, ph, big, per] = L.stars[i];
+      if (still) { px(c, x, y, big ? 0.75 : 0.5, big ? 2 : 1); continue; }
+      const u = Math.pow((Math.sin(t / per + ph) + 1) / 2, 2.2);
+      px(c, x, y, 0.28 + 0.62 * u, big ? 2 : 1);
+      const cx = big ? x + 0.5 : x, cy = big ? y + 0.5 : y;
+      if (big && u > 0.7) sparkle(c, Math.round(cx), Math.round(cy), 1 + Math.round((u - 0.7) / 0.3 * 2), 0.55 * (u - 0.55));
+      if (i === fi && fk < 0.3) { const k = Math.sin(fk / 0.3 * Math.PI); sparkle(c, x, y, 1 + Math.round(k * 2), 0.6 * k); px(c, x, y, 0.4 + 0.6 * k); }
+    }
+    const S = L.sky;
+    if (still || !S) { scene.fx = null; return; }
+    const F = scene.fx || (scene.fx = { next: t + 3000 + Math.random() * 5000, nextComet: t + 40000 + Math.random() * 50000, m: null, cm: null });
+    if (t < F.next - 60000) { F.next = t + 3000; F.nextComet = t + 40000; } // the clock went back (a new page): start over
+    const inSky = (x, y) => x >= S.x0 && x < S.x1 && y >= S.y0 && y < S.y1;
+    // a shooting star: in from the upper right, down to the left, a fading tail
+    if (!F.m && t > F.next) {
+      const sp = 0.3 + Math.random() * 0.14;
+      F.m = { x: S.x0 + (S.x1 - S.x0) * (0.35 + Math.random() * 0.6), y: S.y0 + (S.y1 - S.y0) * Math.random() * 0.45, vx: -sp, vy: sp * (0.32 + Math.random() * 0.22), t0: t, d: 620 + Math.random() * 380, tail: 16 + Math.round(Math.random() * 18) };
+    }
+    if (F.m) {
+      const m = F.m, e = t - m.t0;
+      if (e > m.d) { F.m = null; F.next = t + 7000 + Math.random() * 12000; }
+      else {
+        const fade = Math.min(1, e / 110, (m.d - e) / 220), hx = m.x + m.vx * e, hy = m.y + m.vy * e, v = Math.hypot(m.vx, m.vy);
+        for (let i = m.tail; i >= 0; i--) {
+          const x = hx - (m.vx / v) * i, y = hy - (m.vy / v) * i;
+          if (inSky(x, y)) px(c, x, y, fade * Math.pow(1 - i / (m.tail + 1), 1.6) * 0.9);
+        }
+        if (inSky(hx, hy)) { px(c, hx - 0.5, hy - 0.5, fade, 2); sparkle(c, Math.round(hx), Math.round(hy), 1, 0.35 * fade); }
+      }
+    }
+    // rarely, a comet: slow, its soft tail streaming away from where it is going
+    if (!F.cm && t > F.nextComet) {
+      const left = Math.random() < 0.5;
+      F.cm = { x: left ? S.x0 + 6 : S.x1 - 6, y: S.y0 + (S.y1 - S.y0) * (0.1 + Math.random() * 0.3), vx: (left ? 1 : -1) * (0.012 + Math.random() * 0.006), vy: 0.0025, t0: t, d: 9000 + Math.random() * 3000, tail: 34 + Math.round(Math.random() * 14) };
+    }
+    if (F.cm) {
+      const m = F.cm, e = t - m.t0;
+      if (e > m.d) { F.cm = null; F.nextComet = t + 70000 + Math.random() * 70000; }
+      else {
+        const fade = Math.min(1, e / 1500, (m.d - e) / 1500), hx = m.x + m.vx * e, hy = m.y + m.vy * e, dir = Math.sign(m.vx);
+        for (let i = m.tail; i >= 1; i--) {
+          const k = 1 - i / (m.tail + 1), x = hx - dir * i, spread = Math.floor(i / 14);
+          for (let j = -spread; j <= spread; j++) if (inSky(x, hy - i * 0.08 + j)) px(c, x, hy - i * 0.08 + j, fade * k * k * (j ? 0.25 : 0.5));
+        }
+        if (inSky(hx, hy)) { px(c, hx - 1, hy - 1, 0.25 * fade, 3); px(c, hx, hy, 0.95 * fade); }
+      }
+    }
+  }
   function drawScene(c, w, h, t) {
-    if (scene.key !== w + 'x' + h) buildScene(w, h);
+    if (scene.key !== w + 'x' + h + mastAside()) buildScene(w, h, c.canvas);
     const L = scene.L;
     const still = RB.game.reducedMotion();
     c.imageSmoothingEnabled = false;
     c.drawImage(scene.cv, 0, 0);
-    // stars: a few, softly twinkling
-    for (const [x, y, ph, big] of L.stars) {
-      const a = still ? 0.55 : 0.35 + 0.35 * (Math.sin(t / 900 + ph) + 1) / 2;
-      c.fillStyle = 'rgba(240,236,214,' + a.toFixed(2) + ')';
-      c.fillRect(x, y, big ? 2 : 1, big ? 2 : 1);
-      if (big) { c.fillStyle = 'rgba(240,236,214,' + (a * 0.35).toFixed(2) + ')'; c.fillRect(x - 2, y, 6, 2); c.fillRect(x, y - 2, 2, 6); }
-    }
+    drawSky(c, L, t, still);
     // water: slow drifting glints and the bridge lantern's reflection
     for (const [x, y, len, ph] of L.water) {
       const k = still ? 0.5 : (Math.sin(t / 1400 + ph) + 1) / 2;
@@ -401,8 +540,8 @@ RB.ui.title = (function () {
         c.drawImage(glowSprite(r, '255,200,110'), p.x - r, p.y - r);
         c.globalAlpha = 1;
         if (p.bridge) {
-          const [wl, wr] = L.river(p.y + 24);
-          if (p.x > wl && p.x < wr) for (let k = 0; k < 4; k++) { c.fillStyle = 'rgba(255,200,110,' + (0.35 - k * 0.07).toFixed(2) + ')'; c.fillRect(p.x - (k % 2) * 2, p.y + 28 + k * 6, 4, 1); }
+          const [wl, wr] = L.river(p.ry);
+          if (p.x > wl && p.x < wr) for (let k = 0; k < 4; k++) { c.fillStyle = 'rgba(255,200,110,' + (0.35 - k * 0.07).toFixed(2) + ')'; c.fillRect(p.x - 1 - (k % 2) * 2, p.ry - 4 + k * 5, 4 + (k % 2), 1); }
         }
       }
       // the lantern box: paper lit (or dark), a darker lower half, a cap
@@ -538,6 +677,12 @@ RB.ui.title = (function () {
       }
     };
     RB.ui.pushLayer(lay);
+    // the stars keep out from behind the title's words: measured afresh now
+    // and whenever the words change size (fonts settling, text size)
+    scene.key = '';
+    if (mastObs) mastObs.disconnect();
+    mastObs = window.ResizeObserver ? new ResizeObserver(() => { scene.key = ''; }) : null;
+    if (mastObs) mastObs.observe(box.querySelector('.mast'));
     // Initial focus goes to Continue (or New Game), never to the Japanese
     // subtitle, whose word help would open over the title.
     const settle = () => {
@@ -555,6 +700,7 @@ RB.ui.title = (function () {
     RB.save.list().then((list) => { chosen = newest(list); settle(); }, () => settle());
   }
   function hide() {
+    if (mastObs) { mastObs.disconnect(); mastObs = null; }
     if (layer) { RB.ui.popLayer(layer); layer = null; }
   }
 
@@ -849,5 +995,8 @@ RB.ui.title = (function () {
     RB.ui.pushLayer(lay);
   }
 
-  return { show, hide, slots, drawBackdrop };
+  // for the browser tests: what the sky is doing, and a way to hurry it along
+  const sky = () => ({ layout: scene.L ? (scene.L.tall ? 'tall' : 'wide') + (scene.L.side ? '/' + scene.L.side : '/centred') : null, noren: !!(scene.L && scene.L.norenBottom), door: scene.L ? (scene.L.post + scene.L.shoji) / scene.L.w : 0, moon: scene.L && scene.L.moon ? [scene.L.moon[0] / scene.L.w, scene.L.moon[1] / scene.L.h, scene.L.moon[2] / scene.L.w] : null, stars: scene.L ? scene.L.stars.length : 0, meteor: !!(scene.fx && scene.fx.m), comet: !!(scene.fx && scene.fx.cm), live: !!scene.fx });
+  sky.soon = () => { if (scene.fx) { scene.fx.next = 0; scene.fx.nextComet = 0; } };
+  return { show, hide, slots, drawBackdrop, sky };
 })();

@@ -293,6 +293,55 @@ for (const w of [320, 360, 390]) {
 }
 
 // ---------------------------------------------------------------------------
+// the scene behind the title: the noren and the moon keep clear of the title
+// wherever the page puts it, the title clears the open door, and the sky is
+// alive (twinkling, a shooting star, a comet) except with reduced motion
+for (const [w, h, layout, noren] of [[1280, 800, 'wide/s', true], [900, 1000, 'wide/centred', false], [390, 844, 'tall/centred', false], [844, 390, 'wide/sl', true]]) {
+  await test(`title scene ${w}x${h}: ${layout}, moon and noren clear of the title and folio`, async () => {
+    const { p, ctx, errors } = await ctxPage({ width: w, height: h });
+    await p.waitForFunction(() => RB.ui.title.sky().layout && RB.ui.title.sky().live);
+    const r = await p.evaluate(() => {
+      const st = RB.ui.title.sky(), cv = document.querySelector('canvas').getBoundingClientRect();
+      // the words themselves (the heading's box spans its whole grid column)
+      const box = (sel) => {
+        const e = document.querySelector(sel); if (!e) return null;
+        const rs = [];
+        if (sel === '.title .deck') rs.push(e.getBoundingClientRect());
+        else { const w = document.createTreeWalker(e, NodeFilter.SHOW_TEXT), rg = document.createRange(); for (let n = w.nextNode(); n; n = w.nextNode()) if (n.nodeValue.trim()) { rg.selectNodeContents(n); rs.push(...rg.getClientRects()); } }
+        return rs.length ? { l: Math.min(...rs.map((q) => q.left)), r: Math.max(...rs.map((q) => q.right)), t: Math.min(...rs.map((q) => q.top)), b: Math.max(...rs.map((q) => q.bottom)) } : null;
+      };
+      return { st, cv: { l: cv.left, t: cv.top, w: cv.width, h: cv.height }, h1: box('.title h1'), jp: box('.title .mast-jp'), deck: box('.title .deck') };
+    });
+    const { st, cv } = r;
+    assert(st.layout === layout, 'layout ' + st.layout + ', expected ' + layout);
+    assert(st.noren === noren, 'noren ' + st.noren);
+    assert(st.stars > 10, 'only ' + st.stars + ' stars');
+    const m = { x: cv.l + st.moon[0] * cv.w, y: cv.t + st.moon[1] * cv.h, r: st.moon[2] * cv.w + 2 };
+    for (const k of ['h1', 'jp', 'deck']) {
+      const q = r[k];
+      const hit = q && m.x + m.r > q.l && m.x - m.r < q.r && m.y + m.r > q.t && m.y - m.r < q.b;
+      assert(!hit, 'the moon at ' + Math.round(m.x) + ',' + Math.round(m.y) + ' is behind the ' + k);
+    }
+    if (layout.startsWith('wide/s')) assert(r.h1.l >= cv.l + st.door * cv.w + 4, 'the title starts at ' + Math.round(r.h1.l) + ' over the open door (to ' + Math.round(cv.l + st.door * cv.w) + ')');
+    assert(!errors.length, errors.join('; '));
+    await ctx.close();
+  });
+}
+await test('title sky: a shooting star and a comet cross it; reduced motion holds it still', async () => {
+  const { p, ctx, errors } = await ctxPage({ width: 1280, height: 800 });
+  await p.waitForFunction(() => RB.ui.title.sky().live);
+  await p.evaluate(() => RB.ui.title.sky.soon());
+  await p.waitForFunction(() => RB.ui.title.sky().meteor && RB.ui.title.sky().comet, null, { timeout: 3000 });
+  await p.screenshot({ path: 'tests/e2e/out/title_sky.png' });
+  await p.evaluate(() => { RB.game.settings.reducedMotion = true; });
+  await p.waitForFunction(() => { const s = RB.ui.title.sky(); return !s.live && !s.meteor && !s.comet; }, null, { timeout: 3000 });
+  await p.waitForTimeout(300);
+  const still = await p.evaluate(() => RB.ui.title.sky());
+  assert(!still.live && !still.meteor, 'reduced motion: the sky still moves ' + JSON.stringify(still));
+  assert(!errors.length, errors.join('; '));
+  await ctx.close();
+});
+
 await test('Settings and About open from the title and Back returns to it', async () => {
   const { p, errors, ctx, hit } = await ctxPage({ width: 390, height: 844 }, { touch: true });
   await hit('.title [data-a=settings]');

@@ -640,3 +640,31 @@ The world fixes were made directly on this branch (0c78eca, 0c4d36d, 8706340).
   - Story `!battle` commands: 7, including the Hush's retry path.
   - Map foes: 49, each its own battle.
   - Atlas rooms: a guard and/or one roaming foe, each its own battle; climaxes are single.
+
+## Title screen — player report of 2026-09-29
+Report: the book looks oddly placed for the table's perspective; the water
+lines clip over the bridge; the stars are too static (a shooting star or
+comet was suggested); and it is hard to tell whether the view is a window.
+- **What the view is:** the open doorway of a roadside inn at dusk, looking out from the threshold, past the writing desk, to the lantern road, the river and the bridge.
+  - The old frame had a rolled blind across the top, which read as a window. It now has sliding paper doors pushed open at each side, a short noren under the lintel and a threshold sill.
+  - The noren is drawn only when the title sits beside the folio, so it never crosses the title.
+- **S The book:** it now lies closed and flat on the desk top. The desk shows its top face, and the book is drawn in the desk's perspective: a foreshortened cover, a page block, the binding and a ribbon over the edge.
+- **S The bridge, reproduced from close-ups (3× captures of the committed build):**
+  - Water glints drifted across the arch.
+  - The bridge lantern's reflection was drawn about 30 px too high, so its dashes sat on the arch and the centre pier.
+  - Fixed: the glints keep clear of the bridge with margin for their ±3 px drift. The reflection is mirrored about the water line, squashed like the bridge's own, and so sits in the water below it.
+- **The sky:**
+  - Stars twinkle on their own beats; bright ones sparkle at their peak; one flares now and then.
+  - A shooting star every 7–19 s, a comet every 70–140 s.
+  - Stars appear only in open sky: never behind the title's words (measured from the page, and again when the text size or fonts change), the moon or the ridges.
+  - With reduced motion, everything holds still.
+- **Layout, found while checking:**
+  - At 900×1000 (the title centred across the top) the noren crossed "The Road of" and the moon sat behind 「の道」.
+  - At 1280×800 and 844×390 the title's first letters lay over the open door's paper.
+  - At 844×390 the moon was hidden behind the folio.
+  - On portrait phones the new star filter left almost no stars.
+  - All fixed: the scene follows the page's title layout, and the title's left padding clears the door.
+- **B `title_ledger.mjs`:**
+  - "title scene" at 1280×800 (beside), 900×1000 (centred), 390×844 (tall) and 844×390 (short landscape): layout detected, noren only where expected, more than 10 stars, and the moon's disc clear of the title's words and the folio; beside the folio, the title starts past the door.
+  - "title sky": a shooting star and a comet appear when hurried; with reduced motion the sky is still.
+- **S Captures inspected:** 1280×800, 900×1000, 900×865 (a foldable's inner screen), 390×844, 844×390 and 667×375. Bridge close-ups at 1280×800 and 390×844, before and after. No page errors.

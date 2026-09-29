@@ -243,6 +243,25 @@ commit (VALIDATION.md); screenshots inspected by eye are noted as such.
   - An Atlas room may hold a guard and a roaming foe, but each is its own one-on-one battle. Some single creatures are drawn as a group (moths circling a lamp, a doubled voice).
 - [b] B12 Blocked on people or hardware; not verified: Firefox and Safari. Your report came from Firefox, and the Next-button fix was reproduced and verified in Chromium only. Also unverified: real phones, touch hardware, frame rate on phones, and a human judgement of the new art and motion.
 
+## Title screen (player report of 2026-09-29; VALIDATION.md "Title screen")
+- [v] T1 The view reads as the open doorway of a roadside inn at dusk, not a window:
+  - sliding paper doors pushed open at each side (lit warm by the desk lamp on the left, cool by the moon on the right);
+  - a short indigo noren under the lintel with a lantern crest (only where the title sits beside the folio, so it never crosses the title);
+  - a threshold sill with the doors' grooves; the rolled blind that read as a window is gone.
+- [v] T2 The folio lies closed and flat on the desk top, drawn in the desk's perspective: the top face of the desk is visible, and the book shows a foreshortened cover, a page block, the binding at the near edge, a blank title slip and a ribbon over the edge.
+- [v] T3 Nothing moving crosses the bridge:
+  - The water glints keep clear of the bridge and its arch, with margin for their drift.
+  - The bridge lantern's reflection was drawn about 30 px too high, over the arch and the centre pier. It now sits in the water below the bridge's own reflection.
+- [v] T4 The night sky is alive:
+  - Each star twinkles on its own beat, the bright ones catch a four-point sparkle at their peak, and now and then one flares.
+  - A shooting star crosses every 7–19 s; rarely (every 70–140 s) a slow comet drifts across.
+  - Stars appear only in open sky: never behind the title's words, the moon or the ridges.
+  - With reduced motion the stars hold still and nothing streaks.
+- [v] T5 The scene follows the page layout. The moon and noren keep clear of the title and the folio in every layout (title beside the folio, the same on a short landscape screen, or centred), and the title clears the open door.
+- Evidence:
+  - `title_ledger.mjs` "title scene" at 1280×800, 900×1000, 390×844 and 844×390, and "title sky".
+  - Captures inspected at 1280×800, 900×1000, 900×865, 390×844, 844×390 and 667×375, with bridge close-ups before and after.
+
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
 - R1.3/R14.x: tests/e2e/ui.mjs (IndexedDB probe, session-only banner under refusal, reload persistence, copy independence, delete, overwrite confirm, cross-tab read-only, pre-departure recovery, file:// mode).

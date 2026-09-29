@@ -79,6 +79,11 @@ Sprite and battle polish (owner's brief of 2026-09-28, amended). The full defaul
   - `RB.battleFx` (84_battle_fx.js) draws effects and status marks; creature motion is in 78_enemy_art.js.
   - `Sc.effect`, `Sc.ward` and `Sc.mist` in 79_battle_scene.js are no longer called.
 - **Multiple enemies and Harmony:** investigated only, in docs/COMBAT_NOTES.md. Nothing is implemented; it awaits the owner's decision.
+Title screen (player report of 2026-09-29; REQUIREMENTS.md T1–T5, VALIDATION.md "Title screen"):
+- The scene in src/ui/30_title.js is the open doorway of a roadside inn: sliding doors, a noren, a sill, and the folio lying flat on the desk.
+- `mastAside()` reads the page's title layout from the same media queries as 40_title.css ('' centred, 's' beside the folio, 'sl' short landscape). The noren and the moon follow it.
+- The stars dodge the title's words as measured on the page (`mastRects`, re-measured by a ResizeObserver), the moon and the ridge skyline.
+- `drawSky()` twinkles the stars and runs the shooting star and comet. `RB.ui.title.sky()` / `.sky.soon()` are the test hooks.
 - Chapter banner: src/ui/10_ui.js card() + 50_play.css .banner.
 - Combat clarity: src/engine/95_combat.js (TECHS, blowOf/heatBonus/answers),
   src/ui/80_combat.js, src/ui/81_combat_help.js; boss theme in
