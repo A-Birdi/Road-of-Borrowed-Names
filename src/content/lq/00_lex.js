@@ -15,6 +15,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 ヨシゾウ||name|F|Yoshizō (a name)
 キミ||name|F|Kimi (a name)
 サブ||name|F|Sabu (a name)
+ヨネ||name|F|Yone (a name)
 小春野|こはるの|name|E|Koharuno (a hamlet; fictional)
 小春|こはる|n|I|koharu: an old name for the tenth lunar month (about November); in this story also a persimmon named after Koharuno
 小春日和|こはるびより|n|I|a mild, sunny day in late autumn or early winter|Not a spring word, despite 春.
@@ -64,10 +65,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
 物覚え|ものおぼえ|n|I|memory, ability to remember things
 念のため|ねんのため|exp|I|just to be sure, for the record
 二枚看板|にまいかんばん|n|A|a double bill, two star attractions
+一往復|いちおうふく|n|I|one round trip, there and back once
 出演者|しゅつえんしゃ|n|A|performer, cast member
 一覧|いちらん|n|I|list, overview
 一列|いちれつ|n|I|a row, a line
 四十二|よんじゅうに|n|E|forty-two
+草履|ぞうり|n|I|straw sandal (zōri)
+灰色|はいいろ|n|E|grey
 # notes
 旧暦|きゅうれき|n|A|the old (lunisolar) calendar
 別名|べつめい|n|I|another name, alias

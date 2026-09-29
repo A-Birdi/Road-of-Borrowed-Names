@@ -56,14 +56,14 @@ yasu: {三十年|さんじゅうねん} {前|まえ} の {大水|おおみず} �
 !if quest.lq_road>=0 -> asked
 tetsu: {葦|あし}ノ{瀬|せ} から {来|き}た ん だった な 。 || You came down from Reedwake, didn't you.
 tetsu: {親父|おやじ} の {船|ふね} は 、 {昔|むかし} {葦|あし}ノ{瀬|せ} の {川|かわ} を {上|のぼ}って いた 。 {渡|わた}し{場|ば} の {先|さき} に 、 {柿|かき} の {村|むら} が あって な 。 {秋|あき} は {柿|かき} を {積|つ}んで {下|くだ}った もん だ 。 || My father's boat used to work up Reedwake's river. Past the ferry landing there was a persimmon village. In autumn he'd come back down loaded with persimmons.
-tetsu: {今|いま} {通|とお}って も 、 {渡|わた}し{場|ば} の {先|さき} に は {道|みち} ひとつ {見|み}え ねえ だろう 。 {名前|なまえ} の ない {灯|あか}り が {立|た}ってる だけ だ 。 || Pass that way now and you won't see so much as a path beyond the landing. Just a lantern with no name.
+tetsu: {今|いま} {通|とお}って も 、 {渡|わた}し{場|ば} の {先|さき} に は {道|みち} ひとつ {見|み}えない だろう 。 {名前|なまえ} の ない {灯|あか}り が {立|た}ってる だけ だ 。 || Pass that way now and you won't see so much as a path beyond the landing. Just a lantern with no name.
 !goto tell
 :asked
 ?(quest.lq_road=0) pc: {葦|あし}ノ{瀬|せ} の {川|かわ} の {向|む}こう に 、 {名前|なまえ} の {消|き}えた {道|みち} が ある ん です 。 {昔|むかし} 、 {村|むら} が あった そう です 。 || Across Reedwake's river there's a road whose name has faded. There used to be a hamlet, they say.
 ?(quest.lq_road=1) pc: {葦|あし}ノ{瀬|せ} の {川|かわ} の {向|む}こう に あった {村|むら} を 、 {知|し}りません か 。 {大|おお}きな {柿|かき} の {木|き} の ある {村|むら} です 。 || Do you know the hamlet that used to be across Reedwake's river? The one with the great persimmon tree?
 tetsu[think]: …… {柿|かき} の {村|むら} だ な 。 {親父|おやじ} の {船|ふね} で 、 よく {柿|かき} を {積|つ}んで {下|くだ}った 。 || …The persimmon village. We used to bring persimmons down on my father's boat.
 :tell
-tetsu[think]: {大水|おおみず} の {年|とし} 、 {親父|おやじ} は その {村|むら} の {人|ひと} を {乗|の}せて {下|くだ}った 。 {俺|おれ} は まだ {子|こ}ども で 、 {船|ふね} に {乗|の}って いた 。 || The flood year, my father brought that village's people downriver. I was just a boy, on the boat with him.
+tetsu[think]: {大水|おおみず} の {年|とし} 、 {親父|おやじ} は その {村|むら} の {人|ひと} を {乗|の}せて {下|くだ}った 。 {俺|おれ} も まだ {若|わか}くて 、 {親父|おやじ} の {船|ふね} を {手伝|てつだ}って いた 。 || The flood year, my father brought that village's people downriver. I was young then, working on his boat.
 tetsu: {泥|どろ} だらけ の {人|ひと} たち が 、 {柿|かき} の {枝|えだ} を {抱|かか}えて いた 。 {実|み} じゃ ない 。 {切|き}った {枝|えだ} だ 。 「 {向|む}こう で {接|つ}ぐ ん だ 」 と {言|い}って 、 {果樹園|かじゅえん} の {方|ほう} へ {上|のぼ}って いった 。 || Mud-covered people, holding persimmon branches. Not fruit — cut branches. "We'll graft them where we're going," they said, and went up toward the orchard country.
 tetsu: {村|むら} の {名前|なまえ} か 。 …… {親父|おやじ} は 「 {柿|かき} の {村|むら} 」 と しか {呼|よ}ばなかった 。 {悪|わる}い な 。 || The village's name? …Dad only ever called it "the persimmon village". Sorry.
 !set lq_road_tetsu
@@ -119,10 +119,10 @@ yasu: {頼|たの}む 。 || Please.
 narr: {笠|かさ} に 「 {小春野|こはるの} 」 の {字|じ} が {入|はい}った 。 {字|じ} は {滑|すべ}り{落|お}ちない 。 {灯|あか}り が 、 {静|しず}か に ともった 。 || The name "Koharuno" goes onto the shade. It doesn't slide off. The lantern lights quietly.
 narr: {草|くさ} の {道|みち} の {先|さき} で 、 {木|き} の {枝|えだ} が {少|すこ}し {分|わ}かれた よう に {見|み}えた 。 || Down the grassy path, the branches seem to part a little.
 yasu: …… {小春野|こはるの} 。 {道|みち} が {思|おも}い{出|だ}した な 。 || …Koharuno. The road's remembered.
-yasu: {小春野|こはるの} の {灯|あか}り に は 、 {昔|むかし} から {決|き}まり が あって な 。 {一緒|いっしょ} に {渡|わた}った {者|もの} は 、 {笠|かさ} の {端|はし} に {二人|ふたり} の {名前|なまえ} を {並|なら}べて {書|か}く 。 {帰|かえ}り {道|みち} を {忘|わす}れない よう に 。 || The Koharuno lantern had a custom. People who crossed together wrote both their names side by side at the edge of the shade. So they'd never forget the way home.
+yasu: {小春野|こはるの} の {灯|あか}り に は 、 {昔|むかし} から {決|き}まり が あって な 。 {一緒|いっしょ} に {渡|わた}った {者|もの} は 、 {笠|かさ} の {端|はし} に {二人|ふたり} の {名前|なまえ} を {並|なら}べて {書|か}く 。 {帰|かえ}り{道|みち} を {忘|わす}れない よう に 。 || The Koharuno lantern had a custom. People who crossed together wrote both their names side by side at the edge of the shade. So they'd never forget the way home.
 yasu: わし と ミツ の {名前|なまえ} も 、 {昔|むかし} は そこ に あった 。 …… あんた たち も {書|か}いて いけ 。 || Mitsu's name and mine used to be there. …You two write yours as well.
 narr: $name が {名前|なまえ} を {書|か}く と 、 その {横|よこ} に 、 {違|ちが}う {字|じ} で 「 $comp 」 。 || You write your name, and beside it, in a different hand: "$comp".
-?(comp=nao) comp[shy]: …… {二人|ふたり} {分|ぶん} の {宛名|あてな} か 。 {悪|わる}く ない 。 {戦|たたか}い で も 、 あんた に {来|く}る もの は 、 {俺|おれ} に も {来|く}る と {思|おも}え 。 {半分|はんぶん} {引|ひ}き{受|う}ける 。 || …An address for two. Not bad. In a fight, too — whatever comes for you, count it as coming for me. I'll take half.
+?(comp=nao) comp[shy]: …… {二人|ふたり} {分|ぶん} の {宛名|あてな} か 。 {悪|わる}く ない 。 {戦|たたか}い でも 、 あんた に {来|く}る もの は 、 {俺|おれ} に も {来|く}る と {思|おも}え 。 {半分|はんぶん} {引|ひ}き{受|う}ける 。 || …An address for two. Not bad. In a fight, too — whatever comes for you, count it as coming for me. I'll take half.
 ?(comp=mio) comp[smile]: {並|なら}んだ {名前|なまえ} って 、 {支|ささ}え{合|あ}って いる みたい です ね 。 …… {戦|たたか}い の {時|とき} も 、 {一人|ひとり} で {受|う}け{止|と}めない で 。 わたし が {隣|となり} に います 。 || Names side by side look like they're holding each other up. …In battle too, don't take it all alone. I'm right beside you.
 ?(comp=ren) comp: {名前|なまえ} は 、 {書|か}き{手|て} が {信|しん}じて いれば {根|ね} を {張|は}る 。 …… {私|わたし} は 、 この {二|ふた}つ の {名前|なまえ} を {信|しん}じて います 。 {戦|たたか}い の {中|なか} でも 、 あなた の {前|まえ} に {立|た}ちます 。 || A name takes root if the writer believes in it. …I believe in these two. In a fight, too, I'll stand in front of you.
 ?(comp=suzu) comp[laugh]: {二枚|にまい}{看板|かんばん} って やつ だ ね ！ …… {真面目|まじめ} に {言|い}う と 、 {戦|たたか}い で あんた が {狙|ねら}われたら 、 {客|きゃく} の {目|め} は {私|わたし} が {引|ひ}き{受|う}ける 。 {二人|ふたり} で {一組|ひとくみ} の {芸|げい} だ から ね 。 || A double bill! …Seriously, though: if something takes aim at you in a fight, I'll draw the audience's eye. We're a two-person act.
@@ -145,7 +145,7 @@ yasu[smile]: カヨ が コウジ の {舟|ふね} で 、 {柿|かき} を {届
 
 @scene lq.kh_arrive
 !set lq_kh_seen
-narr: {道|みち} が {開|ひら}けた 。 {浅|あさ}い {沢|さわ} の {向|む}こう に 、 {屋根|やね} の {落|お}ちた {家|いえ} が {並|なら}んで いる 。 || The path opens out. Beyond a stream stand houses with fallen roofs.
+narr: {道|みち} が {開|ひら}けた 。 {沢|さわ} の {向|む}こう に 、 {誰|だれ} も {住|す}んで いない {家|いえ} が {並|なら}んで いる 。 {屋根|やね} の {藁|わら} は 、 {灰色|はいいろ} に {変|か}わって いた 。 || The path opens out. Beyond a stream stand houses where nobody lives, their thatch gone grey.
 narr: {村|むら} の {真|ま}ん{中|なか} に 、 {大|おお}きな {柿|かき} の {木|き} が {立|た}って いた 。 {採|と}る {人|ひと} の いない {実|み} が 、 {枝|えだ} いっぱい に {赤|あか}く {光|ひか}って いる 。 || In the middle of the hamlet stands a great persimmon tree. Fruit that nobody picks glows red along every branch.
 ?(comp=nao) comp: {誰|だれ} も {住|す}んでない のに 、 {道|みち} が {残|のこ}ってる 。 …… {道|みち} の {方|ほう} も 、 {誰|だれ} か を {待|ま}ってた の かも な 。 || Nobody lives here, yet the path's still here. …Maybe the road was waiting for someone too.
 ?(comp=mio) comp: …… {静|しず}か 。 でも 、 {悲|かな}しい {静|しず}か さ じゃ ない わ 。 {眠|ねむ}って いた だけ みたい 。 || …So quiet. But not a sad quiet. As if it was only asleep.
@@ -167,7 +167,8 @@ narr: {線|せん} の {横|よこ} に 、 {同|おな}じ {名前|なまえ} �
 
 @scene lq.kh_stone
 narr: {苔|こけ} の {生|は}えた {石|いし} に 、 {名前|なまえ} が {並|なら}んで {彫|ほ}って ある 。 {上|うえ} に 「 {小春野|こはるの} の {者|もの} 」 。 || Names are carved in rows on a mossy stone. At the top: "The people of Koharuno".
-narr: 「 ヤス ・ ミツ 」 「 {木守|きもり} ゲンタ ・ ハル ・ カヨ 」 「 トメ 」 「 ヨシゾウ ・ キミ ・ サブ 」 …… {石|いし} の {字|じ} は 、 {一|ひと}つ も {消|き}えて いない 。 || "Yasu, Mitsu". "Genta the tree-keeper, Haru, Kayo". "Tome". "Yoshizō, Kimi, Sabu"… Not one of the carved names has faded.
+narr: 「 ヤス ・ ミツ 」 「 {木守|きもり} ゲンタ ・ ハル ・ カヨ 」 「 トメ 」 「 ヨシゾウ ・ キミ ・ サブ 」 「 ヨネ ・ チグサ 」 …… {石|いし} の {字|じ} は 、 {一|ひと}つ も {消|き}えて いない 。 || "Yasu, Mitsu". "Genta the tree-keeper, Haru, Kayo". "Tome". "Yoshizō, Kimi, Sabu". "Yone, Chigusa"… Not one of the carved names has faded.
+?(lq_fare_found) narr: 「 チグサ 」 。 {峠|とうげ} で お{茶|ちゃ} を いれて いる {人|ひと} と 、 {同|おな}じ {名前|なまえ} だ 。 || "Chigusa" — the same name as the woman who brews tea at the pass.
 ?(comp=nao) comp: {全員|ぜんいん} {分|ぶん} の {宛名|あてな} が 、 ここ に ある 。 {配達先|はいたつさき} が {散|ち}らばった だけ だ 。 || Every one of their addresses is right here. It's only the people who got scattered.
 ?(comp=mio) comp: {石|いし} に {書|か}いた {人|ひと} は 、 {忘|わす}れられる の が {怖|こわ}かった の ね 。 {分|わ}かる わ 。 || Whoever carved these was afraid of being forgotten. I understand that.
 ?(comp=ren) comp: {紙|かみ} の {名前|なまえ} は {薄|うす}れても 、 {石|いし} の {名前|なまえ} は {残|のこ}る 。 {灯守|ひもり} に は 、 {少|すこ}し {悔|くや}しい {話|はなし} です 。 || Names on paper fade; names in stone stay. A slightly galling thing for a lantern keeper to admit.

@@ -10,7 +10,7 @@ RB.script.add(`
 !faceplayer koji
 ?(post) koji: …… そう だ 。 もう {一|ひと}つ 、 {頼|たの}み が ある ん だ 。 || …Oh, right. There's one more thing I wanted to ask.
 ?(!post) koji: {字|じ} の {読|よ}める {人|ひと} に 、 {頼|たの}み が ある 。 || I've a favour to ask of someone who can read.
-koji: {渡|わた}し{小屋|ごや} を {片付|かたづ}けて たら 、 おふくろ の {渡|わた}し{帳|ちょう} が {出|で}て きた 。 {誰|だれ} を {渡|わた}して 、 いくら もらった か 、 {全部|ぜんぶ} {書|か}いて ある 。 || I was tidying the ferry house and turned up Mum's fare book. Who she took across, what they paid — it's all written down.
+koji: {渡|わた}し{小屋|ごや} を {片付|かたづ}けてたら 、 おふくろ の {渡|わた}し{帳|ちょう} が {出|で}て きた 。 {誰|だれ} を {渡|わた}して 、 いくら もらった か 、 {全部|ぜんぶ} {書|か}いて ある 。 || I was tidying the ferry house and turned up Mum's fare book. Who she took across, what they paid — it's all written down.
 koji[think]: {一|ひと}つ だけ 、 {払|はら}って もらってない {渡|わた}し{賃|ちん} が ある 。 {三十年|さんじゅうねん} {前|まえ} の 、 {嵐|あらし} の {夜|よる} の {客|きゃく} だ 。 || There's one fare that was never paid. A passenger from a stormy night, thirty years back.
 koji: おふくろ は {死|し}ぬ まで 、 その {客|きゃく} を {待|ま}ってた 。 {金|かね} の ため じゃ ない 。 「 {払|はら}い に {来|く}る って {約束|やくそく} した ん だ 。 どこか で {生|い}きてる って こと さ 」 って な 。 || Mum waited for that passenger till the day she died. Not for the money. "They promised to come and pay," she'd say. "That means they're alive somewhere."
 hana[sad]: {嵐|あらし} の {季節|きせつ} に なる と 、 {母|はは} は {毎年|まいとし} あの {帳面|ちょうめん} を {開|ひら}いて いた わ 。 || Every year when the storms came, Mother would open that book.
@@ -95,13 +95,16 @@ narr: {小|ちい}さな {屋台|やたい} 。 {厚|あつ}い {湯呑|ゆの}�
 
 @scene lq.fare_chigusa
 !faceplayer
-?(quest.lq_fare=3) pc: チグサ さん です か 。 {昔|むかし} 、 かもめ{亭|てい} で {働|はたら}いて いた 。 || Are you Chigusa? Who used to work at the Gull?
+?(quest.lq_fare=3) pc: {昔|むかし} 、 かもめ{亭|てい} で {働|はたら}いて いた チグサ さん です か 。 || Are you Chigusa, who used to work at the Gull?
 ?(quest.lq_fare=2) pc: …… {昔|むかし} 、 かもめ{亭|てい} で 「 ハトねえ 」 と {呼|よ}ばれて いません でした か 。 || …Weren't you once called "Sister Dove", at the Gull?
 lq_chigusa[surprise]: …… それ を 、 どこ で {聞|き}いた 。 || …Where did you hear that?
 narr: $name は 、 {判子|はんこ} の {跡|あと} の ある {紙|かみ} を {見|み}せた 。 「 かもめ 」 。 || You show her the scrap with the stamp on it. "Kamome".
 lq_chigusa[closed]: …… {葦|あし}ノ{瀬|せ} の 、 {渡|わた}し{場|ば} 。 || …Reedwake. The ferry landing.
 narr: チグサ は {長|なが}い {間|あいだ} 、 {黙|だま}って いた 。 {薬缶|やかん} が {鳴|な}って も 、 {火|ひ} から {下|お}ろさなかった 。 || For a long time Chigusa says nothing. Even when the kettle starts to whistle, she doesn't lift it from the fire.
 lq_chigusa[sad]: {三十年|さんじゅうねん} {前|まえ} の {嵐|あらし} の {夜|よる} だ 。 {母|はは} が {危|あぶ}ない って {聞|き}いて 、 {港|みなと} から {走|はし}った 。 {川|かわ} は {溢|あふ}れそう で 、 {橋|はし} は {流|なが}されて いた 。 || A stormy night, thirty years ago. I'd heard my mother was dying, and I ran from the harbour. The river was about to burst its banks, and the bridge had been swept away.
+lq_chigusa: {母|はは} の {家|いえ} は 、 {葦|あし}ノ{瀬|せ} の {川|かわ} の {向|む}こう の 、 {小|ちい}さな {村|むら} だった 。 …… {村|むら} の {名前|なまえ} も 、 もう {出|で}て こない よ 。 || My mother's house was in a little village across Reedwake's river. …I can't even call up its name anymore.
+?(lq_road_open) pc: …… {小春野|こはるの} です か 。 || …Koharuno?
+?(lq_road_open) lq_chigusa[surprise]: …… {小春野|こはるの} 。 そう だ 。 {母|はは} は 、 {大|おお}きな {柿|かき} の {木|き} の そば に {住|す}んで いた 。 || …Koharuno. That's it. My mother lived near the big persimmon tree.
 lq_chigusa: {渡|わた}し{守|もり} の おばさん は 、 {黙|だま}って {舟|ふね} を {出|だ}して くれた 。 {金|かね} は なかった 。 {持|も}って いた の は 、 {借|か}りた {判子|はんこ} だけ 。 || The ferrywoman took the boat out without a word. I had no money. All I had was a borrowed seal.
 lq_chigusa: 「 {必|かなら}ず {払|はら}い に {来|き}ます 」 って {書|か}いた 。 {母|はは} は {二日|ふつか} {後|ご} に {死|し}んだ 。 || I wrote "I will come back to pay, without fail." My mother died two days later.
 lq_chigusa[tired]: {次|つぎ} の {春|はる} こそ 、 と {毎年|まいとし} {思|おも}った 。 {金|かね} が {貯|た}まる と 、 {今度|こんど} は {遅|おそ}すぎる {気|き} が した 。 {十年|じゅうねん} {過|す}ぎたら 、 {顔|かお} を {出|だ}す の が {怖|こわ}く なった 。 || Every year I thought: next spring, for certain. When I'd saved the money, it felt too late. After ten years, I was afraid to show my face.
@@ -129,7 +132,7 @@ lq_chigusa: …… いい よ 。 {続|つづ}き は {自分|じぶん} で {�
 lq_chigusa: {葦|あし}ノ{瀬|せ} の 、 {茶屋|ちゃや} で {待|ま}ってる 。 …… {逃|に}げない よ 。 もう 。 || I'll wait at the teahouse in Reedwake. …I won't run. Not anymore.
 narr: チグサ が {薬缶|やかん} に {向|む}き{直|なお}る と 、 $comp が {小|ちい}さな {声|こえ} で {話|はな}しかけて きた 。 || As Chigusa turns back to her kettle, $comp speaks to you quietly.
 ?(comp=nao) comp[think]: …… {三十年|さんじゅうねん} {待|ま}って から {動|うご}く の も 、 {悪|わる}く は ない 。 でも 、 {俺|おれ} は {待|ま}たない こと に する 。 {次|つぎ} の {戦|たたか}い から 、 {隙|すき} が {見|み}えたら 、 {合図|あいず} を {待|ま}たず に {動|うご}く 。 || …Moving after thirty years isn't wrong. But I've decided not to wait. From the next fight on, when I see an opening, I'll move without waiting for your signal.
-?(comp=mio) comp: …… わたし も 、 {頼|たの}まれる まで {待|ま}つ {癖|くせ} が ある の 。 もう やめる 。 {戦|たたか}い の {中|なか} で あなた が {傷|きず} を {負|お}ったら 、 {呼|よ}ばれる {前|まえ} に {行|い}く から 。 || …I have a habit of waiting until I'm asked, too. I'm stopping. In a fight, if you're hurt, I'll come before you call.
+?(comp=mio) comp: …… わたし は いつも 、 {頼|たの}まれて から {動|うご}く の 。 {頼|たの}まれたら {断|ことわ}れない くせ に ね 。 でも 、 {戦|たたか}い の {中|なか} で は 、 あなた が {頼|たの}む {前|まえ} に {動|うご}く から 。 || …I always wait to be asked before I move — though once I'm asked I can never say no. But in a fight, I'll move before you have to ask.
 ?(comp=ren) comp: {灯守|ひもり} は 、 {灯|あか}り が {消|き}えて から {気|き}づく ので は {遅|おそ}い んです 。 …… {次|つぎ} から は 、 {言|い}われる {前|まえ} に {灯|あか}り を {掲|かか}げます 。 {戦|たたか}い の {中|なか} でも 。 || A keeper who only notices once the light is out is too late. …From now on I'll raise the light before I'm asked. In a fight, too.
 ?(comp=suzu) comp[smile]: {舞台|ぶたい} の {袖|そで} で {出番|でばん} を {待|ま}つ の は 、 もう おしまい 。 {次|つぎ} の {戦|たたか}い から 、 {出|で}る べき {時|とき} は {自分|じぶん} で {出|で}る よ 。 {合図|あいず} は いらない 。 || No more waiting in the wings for my cue. From the next fight, when it's time to step out, I'll step out on my own. No signal needed.
 !toast {相棒|あいぼう} が {戦|たたか}い で 、 {自分|じぶん} から {動|うご}く よう に なった 。 || Your companion will now act on their own initiative in battle.
@@ -201,12 +204,13 @@ tamae[laugh]: ハトねえ から {手紙|てがみ} が {来|く}る よう に
 @scene lq.fare_koji_after
 !faceplayer koji
 koji: おふくろ の {帳面|ちょうめん} 、 {最後|さいご} の {頁|ページ} まで {埋|う}まった 。 {新|あたら}しい {帳面|ちょうめん} を {下|お}ろした よ 。 || Mum's book is full to the last page now. I've started a new one.
-koji[smirk]: {一行目|いちぎょうめ} は チグサ さん だ 。 {帰|かえ}り も {舟|ふね} に {乗|の}って いった 。 {今度|こんど} は {前払|まえばら}い で な 。 || First line is Chigusa. She took the boat on her way out, too. Paid up front this time.
+koji[smirk]: {一行目|いちぎょうめ} は チグサ さん だ 。 {帰|かえ}る {前|まえ} に 、 {向|む}こう{岸|ぎし} まで {一往復|いちおうふく} 、 {乗|の}って いった 。 {今度|こんど} は {前払|まえばら}い で な 。 || First line is Chigusa. Before she left, she rode across to the far bank and back. Paid up front this time.
 
 @scene lq.chigusa_after
 !faceplayer
 lq_chigusa: {荷車|にぐるま} の {連中|れんちゅう} が 、 「 {最近|さいきん} お{茶|ちゃ} が {甘|あま}く なった 」 って {言|い}う ん だ よ 。 {失礼|しつれい} な 。 {同|おな}じ {濃|こ}さ だ 。 || The carters say my tea's gone soft lately. The cheek. It's exactly as strong as ever.
 lq_chigusa[smile]: …… {湯呑|ゆの}み を {一|ひと}つ {減|へ}らした だけ さ 。 || …All I did was put one cup away.
+?(lq_road_open) lq_chigusa: {小春野|こはるの} に も {行|い}って きた よ 。 {母|はは} の {名前|なまえ} が 、 {石|いし} に {残|のこ}って た 。 {柿|かき} を {一|ひと}つ 、 もらって きた 。 || I went to Koharuno too. My mother's name was still on the stone. I brought back a persimmon.
 
 @scene lq.chigusa_post
 !faceplayer

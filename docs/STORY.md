@@ -136,6 +136,78 @@ helped. Companion-specific epilogue. Then the **Unwritten Atlas** unlocks:
 unstable routes left behind as the world recovers (unmoored names, half-built
 roads). The story stays resolved.
 
+## Long roads: two quest lines across the chapters
+Optional side quests (src/content/lq/) that start in Reedwake, gain a step in
+each later region, and send the player back to earlier places. Neither gates
+the main story; the main story only paces their later steps. Both happened in
+"the storm year" thirty years ago — the same season that flooded Lanternfall
+and washed away Reedwake's bridge (a background link only; neither line
+touches Kasane's story).
+
+**A — "A Fare Thirty Years Owed" (三十年の渡し賃, quest `lq_fare`).** Kōji
+and Hana's late mother, the ferrywoman, kept a fare book. One fare was never
+paid: on a storm night a fifteen-year-old kitchen girl from the Gull in
+Saltglass ("Sister Dove" — Chigusa) crossed to reach her dying mother, left the
+Gull's wooden seal (lent to her by Tamae's mother so inns would trust her) as a
+pledge and wrote "I will come back to pay, without fail". Her mother died; she
+drifted inland, worked three winters in Fusa's kitchen in Cinder Orchard, and
+now keeps a tea stall at the Snowbell pass, a cup always turned upside down
+"for someone I owe". She never went back: first no money, then shame. The
+storm of chapter 1 lifted her name from the book; the carved seal kept its
+word, かもめ.
+1. Ch1 Reedwake — Kōji (teahouse) asks you to look at the book; the ferry
+   house: read the entry and stamp the seal (challenge `lq.c_seal`).
+2. Ch2 Saltglass — Tamae recognises her mother's seal; remembers Sister Dove,
+   her spoon-standing tea and a nameless postcard from the orchards.
+3. Ch3 Cinder Orchard — Fusa knew her as Chigusa and her spare cup; she went up
+   the snow road. (Attentive players recognise the tea at the stall and can
+   skip this step.)
+4. Ch4 Snowbell road — Chigusa's stall: her story; the companion's words
+   decide her; a note sent ahead (challenge `lq.c_note`). **`lq_ally1`**: the
+   companion resolves not to wait to be asked — in battle they now act on
+   their own initiative (framed per companion).
+5. Back to Reedwake (once the Snowbell road is open, ch4_done) — Chigusa pays
+   Kōji at Hana's teahouse; her name goes back into the book, "Paid".
+6. Back to Saltglass — she returns the seal to Tamae herself. Reward: the kept
+   cup (charm, +1 resolve). Afterwards she is at her stall again.
+
+**B — "The Name Nobody Calls" (誰も呼ばない名前, quest `lq_road`).** Across
+Reedwake's river, past Kōji's ferry house, was Koharuno (小春野, fictional), a
+hamlet of ten houses around one great persimmon tree. After the flood its
+people left downriver; nobody called its name, the lantern went blank and the
+road forgot itself (a path that turns you back). The name survived borrowed
+by a fruit: families who fled with cuttings grafted them in Cinder Orchard,
+where the "Koharu" persimmon is called out loud every picking day.
+1. Ch1 Reedwake (after the bridge) — the blank lantern and the looping path
+   past the ferry house; a broken marker ends "…野へ". Old Yasu lived there
+   twenty years (his wife Mitsu's home); he remembers the tree, not the name.
+2. Ch2 Saltglass — Tetsu's father carried the families downriver; some went
+   inland with persimmon cuttings. (Tetsu also starts the line himself.)
+3. Ch3 Cinder Orchard — Grandma Ume: the Koharu persimmon, grafted from a great
+   tree east across a river; she sends a dried one for "the old man".
+4. Back to Reedwake — Yasu tastes it and remembers: Koharuno. He waits by the
+   lantern; the name is written (challenge `lq.c_koharu`). Koharuno's custom:
+   those who crossed together write both names on the shade — the
+   companion writes theirs beside yours. **`lq_ally2`**: they will stand with
+   you in battle (framed per companion). The road opens.
+5. Koharuno (the side area, maps `lq.koharu` and `lq.koharu_hut`) — the tree
+   with a child's height marks ("Kayo, 12"), the stone of names, Yasu and
+   Mitsu's doorpost, the tree-keeper's ledger ("sending our girl to my sister
+   in Lanternfall") and a chest with a kakishibu-dyed cloth (keepsake).
+6. Ch5 Lanternfall — Kayo, the tree-keeper's daughter, tends a persimmon grown
+   from a seed she carried at twelve. Before the bell she can only say
+   "certainly"; after it she can say she is afraid, and decide to go home.
+7. Koharuno — Kayo picks the first fruit and calls "Koharu!", cuts a new
+   height mark ("Kayo, 42"). Reward: persimmon-seed charm (harmony +1). She
+   stays; later lines say families are coming back.
+
+Companions: every step has a line for each of Nao, Mio, Ren and Suzu (Nao:
+letters and addresses; Mio: saying no, plants, care; Ren: lantern names and
+Master Ushio's sayings, and not his sense of direction; Suzu: debts, accounts,
+stage talk). Letters from home (Kōji's, with the seal's stamp; Tsuru's, about
+the lantern) reach players who left Reedwake without hearing of a line, in the
+next town they enter after chapter 2.
+
 ## Style notes for Japanese
 - Natural Japanese for speaker and situation; fantasy formality is not a model
   for everyday speech. Tsuru: plain, elderly, dry (〜じゃ is NOT used; she

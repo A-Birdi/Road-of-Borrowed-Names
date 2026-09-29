@@ -47,16 +47,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.hline(9, 12, 11, 'b', 2);
       k.path([[17, 8], [17, 10]], ':', 1);
       k.path([[26, 8], [26, 10]], ':', 1);
-      k.path([[29, 13], [29, 17]], ':', 1).path([[28, 17], [29, 17]], ':', 1);
+      k.path([[26, 13], [26, 17]], ':', 1).path([[26, 17], [28, 17]], ':', 1);
       // old fence lines by the fields
       k.hline(14, 19, 20, 'f').hline(22, 25, 20, 'f');
     }),
     structs: [
       // Yasu and Mitsu's house
       { type: 'house', x: 15, y: 5, w: 5, h: 3, roof: 'thatch', wall: 'wood', door: 2, windows: [0, 4],
-        shut: T('Two names are carved into the doorpost: "Yasu" and "Mitsu". The door has swollen shut.', '{戸口|とぐち} の {柱|はしら} に 、 {名前|なまえ} が {二|ふた}つ {彫|ほ}って ある 。 「ヤス」 「ミツ」 。 {戸|と} は {膨|ふく}らんで {開|あ}かない 。') },
+        shut: T('Two names are carved into the doorpost: "Yasu" and "Mitsu". The door has swollen shut.', '{戸口|とぐち} の {柱|はしら} に 、 {名前|なまえ} が {二|ふた}つ {彫|ほ}って ある 。 「 ヤス 」 「 ミツ 」 。 {戸|と} は {膨|ふく}らんで {開|あ}かない 。') },
       { type: 'house', x: 24, y: 5, w: 5, h: 3, roof: 'thatch', wall: 'wood', door: 2, windows: [0, 4],
-        shut: T('The roof has fallen in. You can\'t go inside.', '{屋根|やね} が {落|お}ちて いて 、 {中|なか} に は {入|はい}れない 。') },
+        shut: T('The door has swollen shut. Through a crack you can see only dust, and a single straw sandal.', '{戸|と} は {膨|ふく}らんで {開|あ}かない 。 {隙間|すきま} から 、 ほこり と {草履|ぞうり} が {片方|かたほう} だけ {見|み}える 。') },
       { type: 'house', x: 15, y: 15, w: 5, h: 3, roof: 'thatch', door: 2, windows: [0, 4],
         shut: T('A fallen beam blocks the door.', '{倒|たお}れた {梁|はり} が 、 {戸|と} を {塞|ふさ}いで いる 。') },
       // the tree-keeper's hut
@@ -90,7 +90,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'table', x: 1, y: 3, scene: 'lq.kh_book' },
       { p: 'chest', x: 6, y: 2, scene: 'lq.kh_chest', if: '!lq_kh_chest' },
       { p: 'chest', x: 6, y: 2, o: { open: true }, if: 'lq_kh_chest', text: T('The chest is empty now, apart from the smell of old persimmons.', '{箱|はこ} は もう {空|から} だ 。 {古|ふる}い {柿|かき} の {匂|にお}い だけ が {残|のこ}って いる 。') },
-      { p: 'shelf', x: 7, y: 2, text: T('Rows of empty jars, and strings of persimmons dried to leather long ago.', '{空|から} の {瓶|びん} が {並|なら}んで いる 。 ずっと {昔|むかし} に {干|ほ}された {柿|かき} が 、 {革|かわ} の よう に なって {下|さ}がって いる 。') },
+      { p: 'bottles', x: 7, y: 2, text: T('Rows of empty jars, and a string of persimmons dried to leather long ago.', '{空|から} の {瓶|びん} が {並|なら}んで いる 。 ずっと {昔|むかし} に {干|ほ}された {柿|かき} が 、 {革|かわ} の よう に なって {下|さ}がって いる 。') },
       { p: 'crate', x: 7, y: 5 }, { p: 'pot', x: 1, y: 5 },
     ],
     npcs: [],
@@ -104,7 +104,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- Reedwake: the far bank's lost path, the ferry book, the teahouse, the pier ------------------
   // a path east from the ferry house through the trees, a blank lantern and
   // the lower half of a broken waymarker
-  setTiles('rw.village', [[46, 18, ':'], [47, 18, ':'], [48, 18, ':'], [49, 18, ':'], [46, 19, ':'], [47, 19, ':'], [48, 19, ':'], [49, 19, ':'], [48, 17, '.'], [48, 20, '.']]);
+  // (grown over: tall grass beyond the first step)
+  setTiles('rw.village', [[46, 18, ':'], [47, 18, ';'], [48, 18, ';'], [49, 18, ';'], [46, 19, ':'], [47, 19, ';'], [48, 19, ';'], [49, 19, ';'], [48, 17, '.'], [48, 20, '.']]);
   addProps('rw.village', [
     { p: 'deadlantern', x: 48, y: 17, scene: 'lq.road_lantern', if: '!lq_road_open' },
     { p: 'lantern', x: 48, y: 17, scene: 'lq.road_lantern_lit', if: 'lq_road_open' },
