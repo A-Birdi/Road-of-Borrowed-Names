@@ -640,3 +640,126 @@ The world fixes were made directly on this branch (0c78eca, 0c4d36d, 8706340).
   - Story `!battle` commands: 7, including the Hush's retry path.
   - Map foes: 49, each its own battle.
   - Atlas rooms: a guard and/or one roaming foe, each its own battle; climaxes are single.
+
+
+## Every kanji on the pad, and the chart — owner's brief of 2026-09-29
+
+"Expand recognizable drawn kanji to cover every kanji present in the game,
+with pages in the chart to cycle lists of kanji by type … the chart option in
+battles can have a search function" (守る, a default response, could not be
+written or practised on Elementary). Worker branch, headless Chromium 1194 /
+Playwright 1.56.1 / node v22, Linux, 4 cores. **B** = browser test, **U** = unit
+test, **T** = measurement tool, **S** = screenshot inspected by eye.
+
+- **U Coverage** (`tests/unit/recog-coverage.test.mjs`): the game displays
+  1,547 distinct kanji (text of string/template literals in every built source
+  file); all have KanjiVG data (1,548 with 王, one of the first 33); no stale
+  data; every kanji but 々 has a reading for its furigana; the readings table
+  is current; every clean reference reads as itself (1,548/1,548, all
+  `confident`); 守 from 21 held-out samples: first reading 21/21 in the
+  kana+kanji pad, always in the first five; 守 in its standard order gets no
+  stroke-order note, with two strokes swapped an order note; the kana/kanji
+  pairs within 0.09 are exactly the declared one-shape pairs, and the answer
+  checker folds the same ones.
+- **T Kana unchanged** (`node tools/kanjivg/kanaparity.mjs --n 3`, ba6869d vs
+  this branch, kana-only pads, run on the final code): 6,888/6,888 held-out
+  results identical (status, candidates with distances, size hint, reading
+  notes), and 1,036/1,036 more (AnimCJK and Tomoe kana, 200 nonsense
+  drawings); kanji hint and kanji-like unchanged on all of them; median time
+  per call 4.5 → 7.1 ms (the kanji hint now looks through 1,548 kanji).
+- **T Accuracy** (`node tools/kanjivg/eval.mjs --kanji --n 10 --kanji-n 2`): see
+  docs/RECOGNITION.md "Every kanji in the game, 2026-09-29" for the table.
+  Kanji held out (1,548 × 7 families × 2 = 21,672): top-1 99.8 %, top-5
+  99.8 %, `confident` 97.2 % with precision 100.0 % (kanji pad and Kanji or
+  kana pad; exact 99.3 % there, twins read as their kana); hardest family
+  (mixed) 99.2 % / top-5 99.4 %; clean references 1,548/1,548. Tomoe's
+  hand-entered game kanji (1,579, independent): top-1 98.7 %, top-5 99.3 %.
+  Kana unchanged (hiragana 99.9 %, katakana 99.7 % in their pads); kana in
+  the Kanji or kana pad 98.2 % (a kanji first 7× of 11,480); kana/kanji
+  lookalike sets 99.6 % of 2,430. With kanji reading off, the hint names the
+  drawn game kanji 96.5 % (21,560). Kanji the game does not use (Tomoe, held
+  out half): `confident` as a game kanji 8.7 %. Node: median 11.3 ms, p95
+  24.1 ms over 142,957 calls.
+- **U Classification and search** (`tests/unit/kanji_chart.test.mjs`): an
+  entry for all 1,548; themes water 63, nature 70, living 80, body 137,
+  places 102, time 89, mind 154, speech 127, actions 321, things 146, society
+  55, qualities 134, other 70 (4.5 %); uses noun 1,265, verb 529, describing
+  314, counters/numbers 51, names 40; 46 clear cases themed right; search 守 /
+  守る / まもる / マモル / mamoru / Mamoru → 守 first, protect / to protect → 守
+  in the first three, 水 / みず / mizu / water → 水 first, sea → 海 first;
+  searches well under 25 ms; "met" from scenes, inscriptions and practised
+  words.
+- **B `kanji_chart.mjs` 8/8** (added to run.mjs; the final run on the final code):
+  1. Elementary: 守 drawn with real mouse strokes (its KanjiVG reference, three
+     moves per segment) is read as 守 with まも; る; 守る accepted "written
+     with kanji", unassisted, no mistakes.
+  2. In a battle (rw.reedling, Elementary, hand input): the "protect" response
+     opens a pad that reads kanji; the chart from that pad; typing "mamoru"
+     into its search changes nothing in the game (mode, word help, layers);
+     守 / まもる / 守る first and protect → 守 in the first three, no kanji
+     without furigana; ↓ reaches the first result, Enter opens it, Escape
+     returns to the results with focus on 守; in the field Escape clears the
+     search, then closes the chart; then 守 + る drawn by hand, accepted, the
+     exchange resolves.
+  3. Pages: Kana | Kanji by theme | Kanji by use, 16 page names checked (both
+     kana, 8 themes, Other, the 5 uses); opens
+     on Water and liquids; every kanji with furigana and no bare kanji
+     anywhere; Next/Previous and the select move pages; 守 on Movement and
+     actions; on Verbs 守 is met and listed before the unmet kanji, and only
+     unmet kanji follow; the chart reopens on the page it was left on.
+  4. Entry: 守 large with まも, readings, 6 strokes, 守る "to protect" with
+     furigana, the stroke canvas; Practise: 守 drawn in the square → "Read as
+     守 — that's it", "Stroke order and direction match the model"; 字 drawn →
+     not taken for 守; 守 with strokes 4 and 5 swapped → an order note; Show
+     the model toggles; Use in my answer → 守 in the answer, assisted, chart
+     closed.
+  5. Foundations, 390×844 touch: Words › Kanji chart (no task) → search まもる
+     → 守 → no "Use" → practise 守 → read as 守; Escape steps practice → entry
+     → results → cleared → closed, back on Words. A Foundations task pad
+     (kana only) opens the chart on Hiragana, a kanji entry has Practise but
+     no Use (with a note), a kana is still picked in one tap (assisted).
+  6. Kana pad unchanged: み ず ア ン し ツ drawn with the mouse read as
+     themselves; 守 there gets "Looks like the kanji 守, but kanji reading is
+     off".
+  7. Layout: 320×640 at 100 % and 200 % text, 390×844 and 1280×800 at 200 %:
+     list, search, entry and practice have no horizontal overflow; search,
+     page select, ‹ ›, every character, result, action and practice button
+     at least 44 px.
+  8. Browser speed (headless Chromium, this machine; four runs, the last two
+     on the final code, one of them inside the default suite): kanji tables
+     88–144 ms once (prepared in idle slices when a kanji pad opens); a
+     kana+kanji reading of 120 jittered kanji: median 15.4–18.2 ms, p95
+     29–35 ms, max 34–51 ms; the chart index 97–178 ms on first open, the
+     first search 50–70 ms (builds the search keys), then at most 5–20 ms.
+- **B `pad_kanji.mjs` 8/8**: the chart test rewritten for the new chart (kana
+  pages by the pad's script, every kanji with furigana, picking assisted); a
+  kanji outside the game is now 弦 as Tomoe entered it (林, the old stand-in,
+  is a game kanji now): kana reading off → the plain message and Read kanji
+  too, no kana; kanji reading on → "Not sure — pick the kanji you meant, if it
+  is here, or look it up in the chart" with the closest kanji, Confirm after a
+  choice.
+- **B required suites, one after another on the final code**: kanji_chart
+  8/8, pad_kanji 8/8, learning_ui 14/14, ui 14/14, combat_ui 7/7,
+  battle_anim 16/16, create 382/382.
+- **B default suite** (`node tests/e2e/run.mjs`, the build of f5e6b0c): 30/30
+  scripts passed, including the story chapters, atlas.check and pursue.mjs E
+  mio (whole game, 750 s).
+- **U all**: `node tests/run-unit.mjs` 3,765 passed, 0 failed (final code);
+  `node tools/validate.mjs` no errors.
+- **S** Screenshots inspected: the pad reading 守 (まも) with 安 字 完 庁 午 as
+  alternatives (final code); 弦, a kanji outside the game, drawn with kanji
+  reading on: "Not sure" with 呟 to pick and the chart (final code); the chart's Verbs page (met kanji first, the rest dashed and
+  muted); search "protect" in a battle; the 守 entry; practice feedback; the
+  same at 320×640 and 200 % text (it stacks; the sheet's header wraps above
+  the paper). Copies: docs/screenshots/after/kanji_chart/.
+- **Size**: src/recog/10_strokedata.js 17 KiB → 185 KiB (189,299 bytes);
+  index.html 4,953,466 → 5,234,631 bytes (+281,165, +5.7 %).
+- **Not verified**: real handwriting of kanji by people (all accuracy numbers
+  are synthetic distortions of KanjiVG or Tomoe's hand-entered templates);
+  Firefox, Safari and real phones (headless Chromium only); the theme of every
+  one of the 1,548 kanji was not checked by hand: 46 clear cases are tested;
+  three samples of 70 were read by eye (**S**), the first two before the
+  okurigana rule and the verb and keyword fixes they led to, the third
+  (every 22nd kanji, offset 17) after: 64 of 70 expected or acceptable, 6
+  debatable or wrong (御 → People and the body, 式 → actions, 福 → things,
+  章 and 果 → Time and numbers, 割 → actions).

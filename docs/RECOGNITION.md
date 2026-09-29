@@ -325,8 +325,8 @@ practise any time, at every level).
   written with it (守る), by kana reading in hiragana or katakana (まもる,
   マモル, まも), by rōmaji in Hepburn or wāpuro spelling (mamoru, mamo; long
   vowels folded: kyou = kyo) and by English meaning (protect, to protect, sea:
-  a whole gloss of a kanji's own word ranks first). Results as you type (about
-  2–7 ms per search here), up to 60, each with its readings and a word. The
+  a whole gloss of a kanji's own word ranks first). Results as you type (at
+  most 5–20 ms per search in four browser runs here), up to 60, each with its readings and a word. The
   field is a real `type=search` input: typing never reaches the game's keys;
   ↓ or Enter moves to the first result; **Escape clears the search, then
   closes the chart**; outside the field, Back/Escape steps back from practice
@@ -482,11 +482,11 @@ scribbles 93 % rejected, 7 % `uncertain`; tangles 99 %; never `confident`.
 **Speed.** Node, over the 142,957 calls of the full report (kana and kanji,
 all pads; short probes ran beside it at times): mean 12.5 ms, median 11.3
 ms, p95 24.1 ms, max 206 ms. Headless Chromium (kanji_chart.mjs §8, 120
-jittered kanji in the Kanji or kana pad, three runs): median 15.4–18.2 ms,
-p95 29–32 ms, max 34–51 ms; the kanji tables 88–144 ms once (prepared in idle
+jittered kanji in the Kanji or kana pad, four runs): median 15.4–18.2 ms,
+p95 29–35 ms, max 34–51 ms; the kanji tables 88–144 ms once (prepared in idle
 slices when a kanji pad opens, so the player does not wait for them); the
-chart's index 97–99 ms on first open, the first search 50–70 ms (it builds
-the search keys), then at most 5–9 ms per search.
+chart's index 97–178 ms on first open, the first search 50–70 ms (it builds
+the search keys), then at most 5–20 ms per search.
 
 **Size.** `src/recog/10_strokedata.js` 17 KiB → 185 KiB (189,299 bytes);
 `src/lang/75_kanjiread.js` 17.6 KiB; the chart's data and interface

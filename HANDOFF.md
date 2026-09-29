@@ -131,7 +131,12 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
   (src/lang/80_kanjiinfo.js): pages by theme and by use, search, entries,
   practice; from the pad (battles too) and Words › Kanji chart.
 - Regenerate after new text: `node tools/kanjivg/fetch.mjs && node
-  tools/kanjivg/convert.mjs && node tools/kanjiread.mjs`.
+  tools/kanjivg/convert.mjs && node tools/kanjiread.mjs`, then
+  `node tools/build.mjs`. `tests/unit/recog-coverage.test.mjs` names any
+  kanji that needs it. After merging other branches, resolve index.html by
+  rebuilding it, never by hand.
+- Status on the worker branch: unit 3,765/3,765, default browser suite
+  30/30, validator no errors (VALIDATION.md).
 
 ## Commands
 - Build: `node tools/build.mjs`
