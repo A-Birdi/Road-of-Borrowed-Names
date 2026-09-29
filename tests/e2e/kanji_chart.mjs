@@ -452,6 +452,42 @@ await test('layout at 320×640 and 200 % text: the chart (list, search, entry, p
   assert(!bad.length, bad.join('\n   '));
 });
 
+await test('speed in the browser: kanji tables prepared once; a kana+kanji reading well under 50 ms; a chart search under 25 ms', async () => {
+  const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  const r = await p.evaluate(() => {
+    const t0 = performance.now();
+    RB.recog._internal.kanjiTables();
+    const tables = performance.now() - t0;
+    const chars = RB.recog.supported({ kanji: true }).filter((c) => RB.kana.isKanji(c)).filter((_, i) => i % 13 === 0);
+    const rng = RB.util.rng(7);
+    const times = [];
+    for (const ch of chars) {
+      const ref = RB.recog.reference(ch);
+      const strokes = ref.strokes.map((st) => st.map((q, i) => ({ x: q.x * 3 + (rng() - 0.5) * 6, y: q.y * 3 + (rng() - 0.5) * 6, t: i })));
+      const a = performance.now();
+      RB.recog.recognize(strokes, { box: { w: 327, h: 327 }, script: 'any', kanji: true });
+      times.push(performance.now() - a);
+    }
+    times.sort((x, y) => x - y);
+    const s0 = performance.now();
+    RB.kanjiInfo.all();
+    const index = performance.now() - s0;
+    const f0 = performance.now();
+    RB.kanjiInfo.search('a'); // the first search also builds the search keys
+    const firstSearch = performance.now() - f0;
+    const q = [];
+    for (const w of ['protect', 'まもる', 'mamoru', '守る', 'water', 'kyou']) { const a = performance.now(); RB.kanjiInfo.search(w); q.push(performance.now() - a); }
+    q.sort((x, y) => x - y);
+    return { n: times.length, tables: +tables.toFixed(1), median: +times[times.length >> 1].toFixed(1), p95: +times[Math.floor(times.length * 0.95)].toFixed(1), max: +times[times.length - 1].toFixed(1), index: +index.toFixed(1), firstSearch: +firstSearch.toFixed(1), searchMax: +q[q.length - 1].toFixed(1) };
+  });
+  console.log('   browser timing: ' + JSON.stringify(r));
+  fs.writeFileSync('tests/e2e/out/kanji_chart_timing.json', JSON.stringify(r, null, 1));
+  assert(r.median < 50 && r.p95 < 100, 'recognize: median ' + r.median + ' ms, p95 ' + r.p95 + ' ms');
+  assert(r.searchMax < 25, 'search: ' + r.searchMax + ' ms');
+  assert(!errors.length, errors.join('; '));
+  await ctx.close();
+});
+
 await b.close(); srv.close();
 console.log(results.join('\n'));
 console.log(`\n${pass} passed, ${fail} failed`);

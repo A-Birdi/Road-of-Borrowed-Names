@@ -499,7 +499,7 @@ RB.recog = (function () {
 
   // Variants (joins, splits), stroke-structured templates, the chamfer cloud,
   // size/position, ink and sharp turns of one template. Kana get this when the
-  // tables are built; a kanji only when it first reaches the chamfer stage.
+  // tables are built; a kanji only when it first reaches the structured match.
   function finishEntry(entry, nraw) {
     {
       const ch = entry.ch, raw = entry.raw, data = RB.recogData;
@@ -546,7 +546,7 @@ RB.recog = (function () {
       entry.cy = (bb.y0 + bb.y1) / 2 / data.box; // ... and vertical position
       entry.K = nraw.length;
       entry.variants = variants;
-      entry.cloud = makeCloud(nraw);
+      if (!entry.cloud) entry.cloud = makeCloud(nraw);
       if (entry.ink == null) entry.ink = nraw.reduce((acc, s) => acc + polyLen(s), 0);
       if (entry.turns == null) entry.turns = turnsOf(nraw);
       entry.ready = true;
@@ -555,9 +555,10 @@ RB.recog = (function () {
 
   // ------------------------------------------------------------ kanji tables
   // Every kanji the game displays (RB.recogData.k, generated from KanjiVG).
-  // Decoded on first use; each template's structured form is built only when
-  // it first reaches the chamfer stage (finishEntry), so a kana-only pad never
-  // pays for them.
+  // Decoded on first use; each template's chamfer cloud is built when it first
+  // reaches the chamfer stage and its structured form only when it first
+  // reaches the structured match (finishEntry), so a kana-only pad never pays
+  // for them and memory stays small.
   let TK = null, KLIST = null;
   function kanjiChars() {
     if (KLIST) return KLIST;
@@ -609,6 +610,12 @@ RB.recog = (function () {
       if (TK.done) { warming = false; if (done) done(); } else setTimeout(step, 0);
     };
     setTimeout(step, 0);
+  }
+  // the chamfer cloud alone (the coarse pre-filter's 100 need only this; the
+  // structured templates are built for the few that reach the structured match)
+  function cloudOf(e) {
+    if (!e.cloud) e.cloud = makeCloud(e.nraw);
+    return e.cloud;
   }
   function ready(e) {
     if (!e.ready) finishEntry(e, e.nraw);
@@ -986,7 +993,7 @@ RB.recog = (function () {
   function bestKanji(inp, t, ctx, limit) {
     const pool = [];
     for (const { e, sc } of kanjiShortlist(inp, P.hintKeep)) {
-      const cd = cloudDist(inp.cloud, ready(e).cloud);
+      const cd = cloudDist(inp.cloud, cloudOf(e));
       if (P.cloudW * cd <= limit + 0.02) pool.push({ e, cd, sc });
     }
     if (!pool.length) return null;
@@ -1054,7 +1061,7 @@ RB.recog = (function () {
     pool.sort((a, b) => a.cd - b.cd);
     const short = pool.slice(0, P.shortlist);
     if (kanjiOn) {
-      const kpool = kanjiShortlist(inp, P.coarseKeep).map(({ e, sc }) => ({ e, sc, cd: cloudDist(inp.cloud, ready(e).cloud) }));
+      const kpool = kanjiShortlist(inp, P.coarseKeep).map(({ e, sc }) => ({ e, sc, cd: cloudDist(inp.cloud, cloudOf(e)) }));
       kpool.sort((a, b) => (a.cd + P.coarseBlend * a.sc) - (b.cd + P.coarseBlend * b.sc));
       for (const k of kpool.slice(0, P.kanjiShortlist)) short.push({ e: k.e, cd: k.cd });
     }

@@ -20,5 +20,12 @@ tomoe-ja.json
   Licence:   GNU Lesser General Public License v2.1,
              https://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt
   Changes:   only entries for characters the recognizer supports were kept
-             (54 kana entries incl. two そ and two ね forms, 47 kanji entries);
+             (the kana, incl. two そ and two ね forms, and every kanji the game
+             displays that Tomoe has: 1,633 entries for 1,601 characters);
              points unchanged (1000 box).
+
+tomoe-unknown.json
+  Source, copyright, licence: as tomoe-ja.json (Tomoe 0.6.0, LGPL v2.1).
+  Changes:   300 entries for kanji the game does NOT use (every n-th such
+             entry in file order), for measuring what the recognizer does with
+             a kanji outside its set; points unchanged (1000 box).

@@ -13,13 +13,17 @@ Source:     KanjiVG, https://kanjivg.tagaini.net
 Copyright:  Copyright (C) 2009/2010/2011 Ulrich Apel and the KanjiVG project.
 Licence:    Creative Commons Attribution-Share Alike 3.0 Unported (CC BY-SA 3.0),
             https://creativecommons.org/licenses/by-sa/3.0/
-Covers:     hiragana and katakana (basic, voiced, semi-voiced, small forms,
-            ヴ and the long-vowel mark ー) and 33 optional kanji
-            (一二三十人口日月山川木水火土石田力大小上下中名手目雨本入出王門心花).
+Covers:     the 164 hiragana and katakana (basic, voiced, semi-voiced, small
+            forms, the letter vu and the long-vowel mark) and 1,548 kanji:
+            every kanji the game's text uses, and the first 33 the pad read,
+            for the handwriting pad, its numbered stroke-order demonstrations
+            and the kanji chart.
 Changes:    The embedded stroke data (RB.recogData; src/recog/10_strokedata.js in
             the source tree) is a derived, adapted form of the KanjiVG SVG
             files: each stroke path was sampled into a point sequence,
             simplified, quantised to integers in KanjiVG's 109x109 box and
-            packed into a compact text encoding. Stroke order and stroke
-            direction are unchanged. This adapted stroke data is distributed
-            under the same licence, CC BY-SA 3.0.
+            packed into a compact text encoding (kanji points as steps from
+            the one before). Stroke order and stroke direction are unchanged.
+            Each kanji's radical, as KanjiVG marks it, is kept alongside (used
+            only to sort kanji into themes in the chart). This adapted data is
+            distributed under the same licence, CC BY-SA 3.0.
