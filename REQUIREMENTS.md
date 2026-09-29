@@ -177,6 +177,58 @@ commit (VALIDATION.md); screenshots inspected by eye are noted as such.
 - [v] P15 Out-of-bounds and dialogue camera (report of 2026-09-27, V13) — world_view.mjs
 - [v] P16 Multiple-choice questions never give the answer away by position: the options shown are shuffled (the right one had been written first in 657 of 667 authored questions and every generated meaning question, and was shown first 98.7% of the time); the order holds while a question is open and changes from one asking to the next — unit choice_order (every authored and generated question: right option first 32.4% vs chance 32.3%), combat_ui.mjs in battle (old build: first place 17 of 17; new: all four places)
 
+## Sprite and battle polish (brief of 2026-09-28, amended; VALIDATION.md "Sprite and battle polish"; full default suite 29/29 on ecb584b)
+- [v] B1 Current implementation established before editing (code review, recorded in docs/ART_DIRECTION.md §8/§10/§11):
+  - characters were code-drawn 32×48 art px at 2 art px per logical px, and the battle party was the road's straight-back frame;
+  - backdrops were one painter per region key, and battles did not know their place;
+  - the fx event list comes from RB.combatLogic.
+- [v] B2 People leave for where the story puts them next, not the nearest door:
+  - The destination is the map where the person now appears (or an authored npc.leaveTo). The route is the shortest usable chain of map links, with conditions and locks respected; distance only chooses among exits that serve it. Arrivals come from where the person was last seen, or from where the story keeps them.
+  - They walk on open ground, set off one after another, and step round the player.
+  - A map change or save/load duplicates or strands nobody.
+  - Evidence: departures.mjs, 14 checks. It includes the real conversation with Tsuru: Nao, Ren and Suzu take the north road although doors were 5–11 steps nearer. Also the evening walk to the Lantern Hall, and Hana into her tea house.
+  - Whole-game audit: the E/nao run records every coming and going with its reason (pursue.mjs).
+- [v] B3 Encounters follow their place:
+  - Every battle knows where it happens. The setting comes from the map.
+  - A foe placement may carry its own backdrop and lines. The validator requires them whenever a creature's lines or backdrop don't fit its map.
+  - The Flour Moth on the mill road drifts out of the mill, fights by it, and leaves over the roof. Inside the mill it keeps its window line.
+  - Seven more placements were fixed: the wheel-pit Reedling, the observatory-path Frost Wisp, two crabs inside the Drowned Archive, the ember and golem on the Old Workshop Row, and the stamp in the Basement Stacks.
+  - Evidence: encounters.mjs, backdrops.mjs (a), validate.mjs.
+- [v] B4 The Next button after battle:
+  - Root cause, reproduced in Chromium with the real DOM order: the battle overlay was appended after the dialogue sheet, which exists from the opening scenes, so its empty Respond dock covered Next. Clicks never arrived; Z did.
+  - Fixed: the overlay now sits beneath every layer and takes no pointer input during a line. A press that began before a line or its replies appeared cannot dismiss it.
+  - Evidence: encounters.mjs covers the intro and the last line, by mouse and by Z separately, one advance per press, and no click-through from the finishing Continue. battle_anim.mjs covers the finishing line.
+- [v] B5 Character standard:
+  - Road figures are 40×58 art px (anchor 20,55; an adult is 50 px, about 1.3× a door; one-tile collision), for every look, drawn from one rig: an 8-phase walk, idle and blinks. One-sided details stay on their real side.
+  - Battle figures are 80×104 (anchor 36,100) in rear three-quarter view facing up-right, with a pose library.
+  - Evidence: characters.mjs covers 10,132 road frames and 645 battle frames, plus depth sorting, and accessories present in every pose. Also equipment.mjs and create.mjs (382).
+- [v] B6 A lively, grounded battle stance:
+  - Articulated breathing and weight shift with planted feet. Player and companion idle on different loops (5.2 s and 6.0 s; motion correlation 0.32).
+  - Calm while choosing and writing. Reduced motion gives a still stance.
+  - Evidence: characters.mjs, battle_anim.mjs.
+- [v] B7 Location-aware backdrops:
+  - Structure comes from the map's real props, buildings and tiles around the encounter, never invented or moved. Nearby context differs by position.
+  - Accessories are seeded and themed, placed in free zones, and never touch the creature or party.
+  - The layout is stable through turns, hits, states and resizes. The decorative seed never changes battle state.
+  - Evidence: backdrops.mjs 61, unit battle_places 555. All 49 placed foes, 5 scripted bosses and an Atlas room were composed.
+- [v] B8 Response animations:
+  - Each response goes anticipation → gesture → its real word with furigana on paper → effect on the actual target → recovery, from the rules' own events. It plays only after acceptance.
+  - Choice, typing and handwriting share one pipeline.
+  - Evidence: battle_anim.mjs 16/16, gallery of every response.
+- [v] B9 Enemy turns, reactions and states:
+  - Every enemy move family has preparation → execution → contact → recovery, in the creature's own motion.
+  - Damage, partial absorb, full block, healing and down/revive each have their own reaction.
+  - Heat, Shroud, Gathering, Hush, wards and full Harmony each have an application, persistent and removal cue.
+  - The rules run once per exchange and the screen ends equal to them.
+  - Evidence: battle_anim.mjs; the gallery of every move.
+- [v] B10 Learning stays central:
+  - No time pressure, focus stealing or auto-advance. Nothing is drawn over the prompt, pad or cards.
+  - The screen shake and full-screen Heat tint were removed.
+  - Reduced motion keeps word, target and outcome. Hurry, a hidden tab, resizing and consecutive encounters were tested.
+  - Evidence: battle_anim.mjs, learning_ui.mjs, pad_kanji.mjs.
+- [v] B11 Multiple enemies and Harmony were investigated only, not built: docs/COMBAT_NOTES.md covers what exists and gives a recommendation.
+- [b] B12 Blocked on people or hardware; not verified: Firefox and Safari. Your report came from Firefox, and the Next-button fix was reproduced and verified in Chromium only. Also unverified: real phones, touch hardware, frame rate on phones, and a human judgement of the new art and motion.
+
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
 - R1.3/R14.x: tests/e2e/ui.mjs (IndexedDB probe, session-only banner under refusal, reload persistence, copy independence, delete, overwrite confirm, cross-tab read-only, pre-departure recovery, file:// mode).

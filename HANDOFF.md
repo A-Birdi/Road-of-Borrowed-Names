@@ -67,6 +67,18 @@ shown first ~99% of the time) — see REQUIREMENTS.md P1–P16 and VALIDATION.md
   chars[id].bodiless; npc `was` for a renamed figure; 90_game.js play time
   in every mode with a 5-minute idle stop). Test runs list bodiless lines,
   walk-ins and night leaks (tests/e2e/pursue.mjs).
+Sprite and battle polish (owner's brief of 2026-09-28, amended). The full default suite passed 29/29 on ecb584b. See REQUIREMENTS.md B1–B12, VALIDATION.md "Sprite and battle polish" and docs/ART_DIRECTION.md §8, §10 and §11:
+- **World** (src/engine/50_world.js): people leave for where the story puts them next. `wayFor()`, `towards()` and `mapsWith()` find the map where the person now appears (or an authored `npc.leaveTo`) and the first exit on a shortest usable chain of map links. Arrivals come from `W.seenOn` or from where the story keeps them. `W.departures` records every coming and going, and test runs keep them in `RB.test.departures`, which pursue.mjs reports.
+- **Encounter place:** 90_game `startBattle` passes `opts.where`, and 80_combat `placeEnemy()` sets the setting, placement bg/intro/settle and `bgKey`. `RB.combat.context()` reports all of this. Enemies declare `setting` when their lines describe a place, and validate.mjs checks each placement's lines and backdrop against its map.
+- **Next button:** the battle overlay is inserted first in `#ui`, and `body.in-dialogue` turns off its pointer input. In 20_dialogue.js, a press that began before a line or its replies appeared doesn't dismiss it.
+- **Characters:** 32_spriteart.js (40×58 road frames from one rig), 32h_spritehair.js and 32k_spriteacc.js; `RB.battlers` in 34_battlers.js (80×104 rear three-quarter battle figures, with a pose library).
+- **Backdrops:** `RB.battlePlaces` (src/ui/76_battle_places.js, plus 76_battle_placeart.js) composes each backdrop from the map around the encounter, with seeded accessories. The old region painters in 79_battle_scene.js are the fallback.
+- **Battle presentation:**
+  - `RB.battleSeq` (82_battle_seq.js) stages the rules' fx.
+  - `RB.battleStage` (83_battle_stage.js) handles layout and anchors, including `foe:i` for later.
+  - `RB.battleFx` (84_battle_fx.js) draws effects and status marks; creature motion is in 78_enemy_art.js.
+  - `Sc.effect`, `Sc.ward` and `Sc.mist` in 79_battle_scene.js are no longer called.
+- **Multiple enemies and Harmony:** investigated only, in docs/COMBAT_NOTES.md. Nothing is implemented; it awaits the owner's decision.
 - Chapter banner: src/ui/10_ui.js card() + 50_play.css .banner.
 - Combat clarity: src/engine/95_combat.js (TECHS, blowOf/heatBonus/answers),
   src/ui/80_combat.js, src/ui/81_combat_help.js; boss theme in
@@ -135,7 +147,10 @@ real builds: docs/screenshots/ (README indexes them). Evidence: VALIDATION.md
 4. Listen to the new boss theme (checked at signal level only) and play a
    few battles with a companion to judge the Harmony notes and keyword
    cards; try the pad's kanji reading with real handwriting.
-5. Optional polish found in review: lexicon part-of-speech warnings between
+5. In Firefox, the owner's browser: click Next after a battle, and watch the
+   new battle presentation and figures. Only Chromium is installed here.
+   Decide on multiple enemies and Harmony charges (docs/COMBAT_NOTES.md).
+6. Optional polish found in review: lexicon part-of-speech warnings between
    chapters (validator warnings), observatory dome sprite clipped at the top
    of sb.obs_path (cosmetic), credits are a single card.
 

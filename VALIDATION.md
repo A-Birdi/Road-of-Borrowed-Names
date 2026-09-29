@@ -534,3 +534,76 @@ and re-tested on the merged tree.
 - Not verified: how the new boss music sounds; real handwriting; real
   phones; the Atlas intro hand-over was changed by reading the code path
   and re-running the whole game, not by a dedicated test.
+
+## Sprite and battle polish — owner's brief of 2026-09-28 (amended)
+Key as above (**B** browser, **U** unit, **S** inspected by eye). Headless
+Chromium in this container; touch emulated; no real devices; Firefox and
+Safari are not installed here.
+
+The work was built by parallel workers in their own git worktrees and merged
+here. Every merge was rebuilt, validated and re-tested on the merged tree.
+- backdrops: 10e408d..5272dca → 1594aa9
+- characters: c2c5890..ee4216d → 0b47c13
+- battle presentation: 6bd658c..0b83dc7 → ecb584b
+
+The world fixes were made directly on this branch (0c78eca, 0c4d36d, 8706340).
+
+- **Next button after a battle — reproduced before fixing (B).**
+  - My first probes started from a debug state. There the dialogue sheet is created during the battle, after the battle overlay, so the bug did not show.
+  - A mouse-only replay that first creates the sheet (as the opening scenes do in real play) reproduced it. The top element at Next was the overlay's empty Respond dock (`.cb-dock`). Every click on Next was "STUCK after 4 clicks", while Z advanced.
+  - After the fix, the same replay gives "on top of Next: button" and "advanced after 2 clicks". The first click completes the typing; Z behaves the same.
+- **B `tests/e2e/encounters.mjs` (new, 19 checks, 1600×816).** The dialogue sheet exists before the battle, and all input is the real mouse and keyboard.
+  - **The moth on the mill road:** it is met by walking up to it and pressing Z. It fights outdoors (`reedwake` backdrop) with its own intro. The intro is clicked through with Next (the overlay is not on top), and the exchange is answered by mouse.
+  - **The last line:** it says the moth leaves "over the mill roof" (no window). The click that finished the exchange did not dismiss it. Next returns to the mill road with the win recorded once, and no line was skipped.
+  - **Z separately:** Z advances the intro and the last line.
+  - **Inside the mill:** the mill interior and the window line.
+  - **Two more places:** the wheel-pit Reedling and the path Frost Wisp.
+- **B `tests/e2e/departures.mjs` (new, 14 checks). The original sequence:**
+  - A fresh campaign in which everyone has been talked to. Facing Tsuru and pressing Z runs her report and then the kana lesson (paged, practice skipped).
+  - Nao, Ren and Suzu then head for the north road, tiles (22–23, 0), toward `rw.millroad`, for the reason "destination". A door was nearer for each: the tea house at 6 and 5 steps, the apothecary at 11.
+  - They walked only on open ground and were gone in 7.2 s.
+  - **Map change and save/load:**
+    - On the mill road the four stand exactly once.
+    - After loading the save, the village has neither them nor anyone mid-walk, and Tsuru is still there to talk to.
+  - **A second destination:** in the evening gathering they go to the Lantern Hall door (21,8), and Hana goes into the tea house (30,15).
+  - **Detour:** someone leaving steps round the player standing on their route.
+- **B Whole-game departure audit** (`pursue.mjs E nao`, before the art merges, 774 s, all chapters and the Atlas, no problems). It recorded 62 comings and goings.
+  - 23 used the nearest way.
+  - I reviewed them: people standing in their doorway already, and arrivals with no known origin.
+  - As a result, arrivals now come from where the story keeps a person, and a person in the doorway just goes (8706340).
+- **U/B Backdrops:**
+  - Unit `battle_places` (555 checks): every placed foe is composed, every piece traces to the map, no interior outdoors, the seed changes accessories only, a room's structure is the same from any tile, and riverbank, inland and mill positions differ.
+  - B `backdrops.mjs` (61):
+    - The mill-road moth sees the mill front and wheel; the mill1 moth sees the ladder, gears, millstone and stairs; the reading room has none of those.
+    - Six seeds give one structure and six accessory sets.
+    - Locality differs on the mill road, the village and Saltglass.
+    - The static layer is pixel-identical through turns, hits and states, and a resize keeps the same selection.
+    - Two seeds give identical battle state, with no `Math.random`.
+    - No accessory pixels fall in the creature or party boxes.
+  - Build time is 2.5–9.4 ms per composition. Battle frame cost rose by +0.04–0.23 ms.
+  - **S** I inspected the captures: the moth outside and inside, and riverbank vs inland in the village.
+- **B/S Characters (`characters.mjs`, 23):**
+  - 149 looks × 4 directions × 17 frames are the standard size, not blank, anchored and unclipped.
+  - One-sided details stay on their real side, and depth sorting holds.
+  - 5 figures × 129 battle frames: feet planted, accessories present in every pose, reduced motion still, and the two idle timings differ.
+  - `perf.mjs` shows no change within noise.
+  - **S** I inspected the pose sheets, the road cast and the battle composition.
+- **B Battle presentation (`battle_anim.mjs`, 16):**
+  - Choice, typed and handwritten answers reach the same sequence. Wrong or cancelled answers play nothing, and rapid clicks add nothing.
+  - Strike on one target and Sweep on both: each target reacts.
+  - Blocks: full block, partial absorb, plain damage, and a raised seal.
+  - States: Heat, Shroud, Hush and Gathering are each applied, persistent and cleared.
+  - The rules run once per exchange, and the screen ends equal to them.
+  - Robustness: reduced motion, hurry, hidden tab, resize, and three encounters with nothing left over. The finishing line was advanced once by mouse and once by Z.
+  - Timing: a response takes about 1.14 s and an enemy move about 1.0 s. Frame cost is 1.5–1.7 ms average and 11–15 ms maximum during sequences.
+  - **S** I inspected the exchange strips and the galleries (docs/screenshots/battle/).
+- **B A recording of real play** (`tests/e2e/battle_video.mjs`, docs/screenshots/battle/play_moth_outside.webm, 33 s):
+  - It walks up to the mill-road moth, then uses the mouse only.
+  - It shows the intro, Unravel on paper, a knot loosened, the Shroud and 光 clearing it, its Strike (−2), the last Unravel, and the last line advanced with Next.
+  - There were no page errors. **S** I viewed the frames at 13 timestamps.
+- **B Full default suite `node tests/e2e/run.mjs` on ecb584b:** 29 of 29 scripts passed. It adds encounters, departures, characters, backdrops and battle_anim, and includes a whole-game `pursue.mjs E mio` run.
+- **U / validator:** 3653 unit checks passed; `node tools/validate.mjs` reports no errors.
+- **Not verified:**
+  - Firefox (the owner's browser) and Safari. The Next-button cause is a stacking order that holds in any browser, but the fix was run only in Chromium.
+  - Real phones or touch hardware, and phone frame rates.
+  - A human judgement of the new art and motion.

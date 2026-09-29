@@ -14,7 +14,7 @@ const { srv, url } = await serve();
 const b = await launch();
 const dir = path.join(path.dirname(out), 'raw');
 fs.mkdirSync(dir, { recursive: true });
-const ctx = await b.newContext({ viewport: { width: 1280, height: 720 }, recordVideo: { dir, size: { width: 1280, height: 720 } } });
+const ctx = await b.newContext({ viewport: { width: 1280, height: 720 }, recordVideo: { dir, size: { width: 960, height: 540 } } });
 const p = await ctx.newPage();
 const errors = [];
 p.on('pageerror', (e) => errors.push(e.message));
@@ -51,7 +51,14 @@ async function exchange() {
   await p.waitForFunction(() => !!document.querySelector('.rcard[data-i]') && RB.combat.phase && RB.combat.phase() === 'choose', null, { timeout: 20000 }).catch(() => {});
   await pause(1200); // calm readiness while choosing
   await notes();
-  const c = await p.evaluate(() => { const x = [...document.querySelectorAll('.rcard')].find((e) => /unravel/i.test(e.textContent) && !e.disabled); if (!x) return null; const q = x.getBoundingClientRect(); return { x: q.left + q.width / 2, y: q.top + q.height / 2 }; });
+  // Unravel; while it is Shrouded, a light word first (the mist hides the knots)
+  const c = await p.evaluate(() => {
+    const cards = [...document.querySelectorAll('.rcard')].filter((e) => !e.disabled);
+    const x = cards.find((e) => /unravel/i.test(e.textContent)) || cards.find((e) => /光|light/i.test(e.textContent));
+    if (!x) return null;
+    x.scrollIntoView({ block: 'nearest' });
+    const q = x.getBoundingClientRect(); return { x: q.left + q.width / 2, y: q.top + q.height / 2 };
+  });
   if (!c) return false;
   await clickAt(c);
   await p.waitForSelector('.chal .mc .btn');
@@ -73,7 +80,7 @@ async function exchange() {
   await pause(600);
   return true;
 }
-for (let r = 0; r < 4 && (await p.evaluate(() => RB.game.mode())) === 'combat' && !(await p.evaluate(() => RB.ui.dialogue.isOpen())); r++) await exchange();
+for (let r = 0; r < 6 && (await p.evaluate(() => RB.game.mode())) === 'combat' && !(await p.evaluate(() => RB.ui.dialogue.isOpen())); r++) await exchange();
 await nextLines(); // the last line, clicked away with the mouse
 await p.waitForFunction(() => RB.game.mode() === 'world', null, { timeout: 20000 }).catch(() => {});
 await pause(1500);
