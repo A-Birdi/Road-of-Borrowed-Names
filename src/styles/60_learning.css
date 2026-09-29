@@ -766,11 +766,12 @@ body.high-contrast .combat-ui .paper, body.high-contrast .combat-ui .rcard { bor
  * over every slip a response under the pointer would reach. Settled creatures
  * keep a dashed, quiet slip. The creatures on the stage can be pressed too
  * (invisible boxes inside the stage cell). */
-.cb-foe.group { display: flex; flex-direction: column; align-items: stretch; gap: 3px; padding: 3px 8px 7px; max-width: 100%; }
+.cb-foe.group { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: stretch; align-content: start; gap: 3px; padding: 3px 8px 7px; max-width: 100%; }
+/* (a grid, not a column flexbox: a flexbox sizes an auto-fit row of slips as if it wrapped to one per line) */
 .cb-foe.group .fs-h { display: inline-flex; align-items: center; gap: 4px; min-height: 0; font-size: 0.78em; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--on-cloth-2); }
 .cb-foe.group .fs-h > svg { width: 1.25em; height: 1.25em; }
 .cb-foe.group .fs-h .kw { min-height: 32px; }
-.cb-foe .fs-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5em), 1fr)); gap: 6px; }
+.cb-foe .fs-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(9.5em, 1fr)); gap: 6px; }
 .cb-foe .fs {
   position: relative; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 0; min-width: 0; min-height: var(--tap);
   padding: 3px 10px 5px 16px; margin: 0; text-align: left; font: inherit; color: var(--on-cloth); cursor: pointer; touch-action: manipulation;
@@ -834,6 +835,10 @@ body.high-contrast .combat-ui .paper, body.high-contrast .combat-ui .rcard { bor
 .cb-queued .cq-t { font-size: 0.8em; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--river); }
 .cb-queued .cq-back { min-height: var(--tap); }
 .cb-dock .ct-sub { margin: 0 4px; font-size: 0.86em; line-height: 1.35; color: var(--on-cloth-2); }
+/* while your companion chooses, their moves have the dock (the recap of the last exchange returns after) */
+.cb-dock.cb-cturn .clog { display: none; }
+.cb-dock.cb-cturn .ccards { min-height: 0; }
+@media (max-width: 599px), (max-height: 559px) { .cb-dock .ct-sub { display: none; } }
 .combat-ui .ccard .ic { color: var(--ribbon-deep); }
 .rcard .rc-uses { display: block; margin-top: 0.15em; font-weight: 700; color: var(--ink-3); }
 
@@ -866,7 +871,8 @@ body.high-contrast .combat-ui .paper, body.high-contrast .combat-ui .rcard { bor
      move), the target's telegraph below without repeating its name */
   .cb-foe.group { justify-self: stretch; padding: 2px 5px 4px; }
   .cb-foe.group .fs-h { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
-  .cb-foe .fs-row { grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); gap: 4px; }
+  /* one row of three at normal text; fewer across as the text grows (200 %: one per line) */
+  .cb-foe .fs-row { grid-template-columns: repeat(auto-fit, minmax(5.4em, 1fr)); gap: 4px; }
   .cb-foe .fs { padding: 1px 4px 3px 11px; font-size: 0.92em; }
   .cb-foe .fs .fs-mark { left: 2px; width: 5px; }
   .cb-foe .fs .fs-n { font-size: 0.9em; }
@@ -881,6 +887,19 @@ body.high-contrast .combat-ui .paper, body.high-contrast .combat-ui .rcard { bor
 /* a portrait phone with several creatures: the stage needs a little more room than one creature does */
 @media (max-width: 599px) and (min-height: 560px) {
   .combat-ui.cb-group { grid-template-rows: max-content max-content minmax(60px, 1fr) max-content minmax(210px, min(calc(36 * var(--vh)), 400px)); }
+}
+/* a short portrait phone (320×640 and the like): the telegraph tightens (its
+   Translate on the move's line, the sentence a little smaller) so the stage
+   keeps room for the creatures */
+@media (max-width: 599px) and (min-height: 560px) and (max-height: 720px) {
+  .combat-ui .intent { padding: 3px 8px 5px 10px; }
+  .combat-ui .intent, .combat-ui .intent > .it-block { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: 6px; }
+  .combat-ui .intent > *, .combat-ui .intent > .it-block > * { grid-column: 1 / -1; }
+  .combat-ui .intent > .it-label, .combat-ui .intent > .it-block > .it-label { grid-column: 1; grid-row: 1; }
+  .combat-ui .intent > .tr, .combat-ui .intent > .it-block > .tr { grid-column: 2; grid-row: 1; margin: 0; }
+  .combat-ui .intent .pbtn.tr .aside { display: none; }
+  .combat-ui .intent .it-jp { font-size: 1.05em; }
+  .combat-ui .intent .jline { line-height: 1.9; }
 }
 /* wide: telegraph and party on the left, the dock as a right-hand column */
 @media (min-width: 900px) and (min-height: 560px) {

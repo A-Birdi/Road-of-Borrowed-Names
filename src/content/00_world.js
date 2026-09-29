@@ -12,28 +12,28 @@ var RB = (globalThis.RB = globalThis.RB || {});
     look: { skin: 3, hair: 'spiky', hairColor: 1, cloth: ['#5a6a4a', '#46543a', '#c8962e'], pants: '#3a3440', shape: 'tunic', acc: ['scarf', 'satchel'], scarfCol: '#c8962e', bigSatchel: true },
     portrait: { eyes: 'sharp', style: 'spiky', acc: ['scarf', 'satchel', 'pencil'], scarfCol: '#c8962e', bg: '#3a3a2a' },
     role: { en: 'Courier', jp: '{配達人|はいたつにん}' },
-    support: { en: 'Reads what an enemy intends two moves ahead; after a clean counter, the next unravel frees two knots.' },
+    support: { en: 'Reads what a creature intends two moves ahead; on his turn in battle he spots openings and calls out where blows will land.' },
   });
   ch('mio', {
     name: { en: 'Mio', jp: 'ミオ' }, companion: true, voice: { pitch: 1.05 },
     look: { skin: 1, hair: 'bun', hairColor: 0, cloth: ['#6a8a7a', '#50705e', '#e8e0c8'], pants: '#3a3a40', shape: 'apron', acc: ['bottles'] },
     portrait: { eyes: 'soft', style: 'bun', pins: true, collar: 'apron', acc: ['bottles'], bg: '#2a3a36' },
     role: { en: 'Apothecary', jp: '{薬師|くすし}' },
-    support: { en: 'Steadies the pair: recovers a little resolve each exchange and clears lingering effects.' },
+    support: { en: 'Steadies the pair: on her turn in battle, warm draughts and salves, and later vapours that clear lingering effects.' },
   });
   ch('ren', {
     name: { en: 'Ren', jp: 'レン' }, companion: true, voice: { pitch: 0.9 },
     look: { skin: 2, hair: 'ponytail', hairColor: 7, cloth: ['#3a3e6a', '#2a2c50', '#d8b060'], pants: '#2a2a3a', boots: '#5a4636', shape: 'coat', acc: ['lamp', 'patches', 'glasses'] },
     portrait: { eyes: 'narrow', style: 'ponytail', parted: true, collar: 'high', acc: ['glasses', 'lamp', 'patches'], bg: '#262a44' },
     role: { en: 'Lantern keeper', jp: '{灯守|ひもり}' },
-    support: { en: 'Begins each encounter behind a ward and can interrupt a charging enemy with any clean inscription.' },
+    support: { en: 'Begins each encounter behind a small ward; on his turn in battle his lamp wards you and burns off mist and gathering force.' },
   });
   ch('suzu', {
     name: { en: 'Suzu', jp: 'スズ' }, companion: true, voice: { pitch: 1.12 },
     look: { skin: 4, hair: 'wavy', hairColor: 3, cloth: ['#8a3a5a', '#6a2a44', '#e8c070'], pants: '#3a2a34', shape: 'dress', acc: ['ribbon', 'earrings'], ribbonCol: '#c8a0a8' },
     portrait: { eyes: 'round', style: 'wavy', mole: true, acc: ['ribbon', 'earrings'], ribbonCol: '#c8a0a8', bg: '#3a2634' },
     role: { en: 'Travelling performer', jp: '{旅芸人|たびげいにん}' },
-    support: { en: 'Once per encounter, turns a blow aside; a false promise can be answered by any correct inscription.' },
+    support: { en: 'Once per encounter turns a blow aside; on her turn in battle she heckles, draws a creature\'s eye and makes false promises fall flat.' },
   });
 
   // ---- main cast -------------------------------------------------------------

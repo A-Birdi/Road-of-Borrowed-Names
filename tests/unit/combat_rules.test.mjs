@@ -378,6 +378,57 @@ export default async (t) => {
     t.ok(!st.salts, 'for this exchange only');
   }
   {
+    // the late alliances keep the companions' promises (src/content/lq): lq_ally1 "on their own
+    // initiative", lq_ally2 "stand with you"
+    const by = (who) => Object.fromEntries(['lq_ally1', 'lq_ally2'].map((u) => [u, C.companionActions[who].filter((d) => d.unlock === u).map((d) => d.id)]));
+    t.eq(['nao', 'mio', 'ren', 'suzu'].map((w) => by(w).lq_ally1.length + '/' + by(w).lq_ally2.length).join(' '), '1/1 1/1 1/1 1/1', 'one action for each companion at each late alliance');
+    // Nao, "whatever comes for you … I'll take half"
+    const e = foe(['strike', 'sweep', 'strike']);
+    const s = camp({ comp: 'nao', diff: 'hard' });
+    const st = L.init(e, s, {});
+    st.intent.target = 'pc';
+    const per = L.blowOf(st, st.intent).per;
+    const P = L.playerAct(st, { kind: 'word', word: W('iyasu') }, ok, e);
+    L.compAct(st, 'nao_mark', P);
+    const pc0 = st.pc, comp0 = st.comp;
+    const fx = L.enemyAct(st, P.answered);
+    t.ok(per > 1 && pc0 - st.pc === Math.floor(per / 2) && comp0 - st.comp === Math.ceil(per / 2), 'Take half: a blow of ' + per + ' at you is shared, Nao takes the larger half (' + (pc0 - st.pc) + ' / ' + (comp0 - st.comp) + ')');
+    t.ok(fx.some((f) => f.t === 'comp' && f.who === 'nao' && f.share) && hits(fx) === per, 'nothing is lost or added: the hits add up to the blow');
+    L.endRound(st, e);
+    t.ok(!st.share, 'for this exchange only');
+    // the sweep next round lands on both in full again
+    const P2 = L.playerAct(st, { kind: 'word', word: W('iyasu') }, ok, e);
+    const fx2 = L.enemyAct(st, P2.answered);
+    t.ok(fx2.filter((f) => f.t === 'hit' && f.who === 'pc').length === 1 && !fx2.some((f) => f.share), 'without it, nothing is shared');
+  }
+  {
+    // Suzu, "if something takes aim at you, I'll draw the audience's eye": every creature
+    const a = foe(['strike', 'strike']), b = foe(['strike', 'strike']);
+    const s = camp({ comp: 'suzu', diff: 'normal' });
+    const st = L.init(a, s, { group: [b] });
+    for (const f of st.foes) f.intent.target = 'pc';
+    const P = L.playerAct(st, { kind: 'word', word: W('iyasu') }, ok, a);
+    const C1 = L.compAct(st, 'suzu_finale', P);
+    t.ok(st.foes.every((f) => f.drawn) && C1.fx.filter((f) => f.t === 'draw').length === 2, 'Grand gesture: both creatures\' eyes are drawn');
+    const fx = L.enemyAct(st, P.answered);
+    t.ok(fx.filter((f) => f.t === 'hit' || f.t === 'block').every((f) => f.who === 'comp') && fx.some((f) => f.t === 'hit' || f.t === 'comp'), 'every blow aimed at you comes at Suzu (or her flourish turns it aside)');
+  }
+  {
+    // Ren: lq_ally1 "I'll raise the light before I'm asked"; lq_ally2 "I'll stand in front of you"
+    const a = foe(['silence', 'strike']), b = foe(['shroud', 'strike']);
+    const s = camp({ comp: 'ren', diff: 'normal' });
+    const st = L.init(a, s, { group: [b] });
+    st.silenced = 1; st.foes[1].shroud = true;
+    const P = L.playerAct(st, { kind: 'word', word: W('iyasu') }, ok, a);
+    const C1 = L.compAct(st, 'ren_lanterns', P);
+    t.ok(!st.silenced && !st.foes[1].shroud && P.answered[0] && C1.fx.some((f) => f.t === 'bell'), 'Raise the lamps: the Hush breaks, the mist burns off, the Hush about to fall is stopped');
+    L.enemyAct(st, P.answered); L.endRound(st, a);
+    const w0 = st.ward.pc, wc = st.ward.comp;
+    const P2 = L.playerAct(st, { kind: 'word', word: W('iyasu') }, ok, a);
+    L.compAct(st, 'ren_chime', P2);
+    t.ok(st.ward.pc === w0 + 3 && st.ward.comp === wc, 'Stand in front: a 3-point ward before you (not before Ren)');
+  }
+  {
     // resolve in battle follows the difficulty table
     t.eq(['relaxed', 'normal', 'hard'].map((d) => L.init(foe(['rest']), camp({ diff: d }), {}).max), [14, 12, 10], 'battle resolve: Relaxed 14, Standard 12, Demanding 10');
   }

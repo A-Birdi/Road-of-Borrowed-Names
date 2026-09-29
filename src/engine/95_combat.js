@@ -238,7 +238,7 @@ RB.combatLogic = (function () {
       pc: Math.max(0, Math.min(s.resolve.pc + dr, max)), comp: comp ? Math.max(0, Math.min(s.resolve.comp + dr, max)) : 0, max,
       ward: { pc: 0, comp: 0 }, harmony: 0, harmonyMax: 3,
       silenced: 0,
-      compId: comp, misdirectUsed: false, openingBonus: false, compUses: {}, salts: false,
+      compId: comp, misdirectUsed: false, openingBonus: false, compUses: {}, salts: false, share: false,
       round: 0, log: [], over: null, diff: d, mistakeCostThisRound: 0,
       assist: s.learn.assist === 'assist',
     };
@@ -478,6 +478,7 @@ RB.combatLogic = (function () {
       return { foes: [st.cur], allies: [who] };
     }
     if (aim === 'lower') return { foes: [], allies: [st.compId && st.comp < st.pc ? 'comp' : 'pc'] };
+    if (aim === 'pc') return { foes: [], allies: ['pc'] };
     return { foes: [], allies: [] };
   }
   // Resolve the companion's action (after your response, before the creatures).
@@ -505,9 +506,6 @@ RB.combatLogic = (function () {
         if (lp.perfect && lp.answered) { st.openingBonus = true; say('Nao has seen the opening: your next Unravel frees two knots.', { foe: T }); }
         else say('Nao watches for an opening — not this time.', { foe: T, none: true });
         break;
-      case 'mark':
-        st.openingBonus = true; say('Nao marks the loose thread: your next Unravel frees two knots.', { foe: T });
-        break;
       case 'knot':
         if (lp.perfect && st.knots > 0) { st.knots = Math.max(0, st.knots - n); say('Nao lends a hand — another knot comes loose.', { foe: T }); fx.push({ t: 'unravel', n, foe: T, by: who }); }
         else say('Nao reaches in, but the knot holds.', { foe: T, none: true });
@@ -529,6 +527,17 @@ RB.combatLogic = (function () {
         st.foes[T].drawn = true;
         say('Suzu steps into the light and waves: its blow will come at her, not you.', { foe: T });
         fx.push({ t: 'draw', foe: T });
+        break;
+      case 'drawAll':
+        // every creature's blow aimed at you this round comes at the companion
+        for (const i of R.foes) st.foes[i].drawn = true;
+        say(def.say || 'Every eye is drawn away from you.', { foes: R.foes.slice() });
+        for (const i of R.foes) fx.push({ t: 'draw', foe: i });
+        break;
+      case 'share':
+        // this round every blow that lands on you is shared (see foeAct)
+        st.share = true;
+        say(def.say || 'Whatever comes for you this round, they take half.', { allies: ['pc', 'comp'] });
         break;
       case 'stun':
         for (const i of R.foes) { if (!answered[i]) { answered[i] = true; st.foes[i].stunned = who; } }
@@ -558,13 +567,9 @@ RB.combatLogic = (function () {
           // and the move it is about to make, when it is one of those
           if (e.moves && f.intent && e.moves.indexOf(f.intent.kind) >= 0 && !answered[i]) { answered[i] = true; f.stunned = who; fx.push({ t: 'stun', foe: i }); }
         });
+        // (Ren's raised lamps also break the Hush over you)
+        if (e.hush && st.silenced) { st.silenced = 0; fx.push({ t: 'bell', by: who }); }
         say(def.say || 'The air clears.', { foe: R.foes.length === 1 ? R.foes[0] : null, foes: R.foes.slice() });
-        break;
-      case 'hush':
-        st.silenced = 0;
-        for (const i of standing(st)) if (st.foes[i].intent && st.foes[i].intent.kind === 'silence' && !answered[i]) { answered[i] = true; st.foes[i].stunned = who; }
-        say(def.say || 'A clear note: the hush breaks.');
-        fx.push({ t: 'bell', by: who });
         break;
       case 'harmony':
         if (lp.perfect && st.harmony < st.harmonyMax) { st.harmony = Math.min(st.harmonyMax, st.harmony + n); say(def.say || 'In step: Harmony rises.', {}); fx.push({ t: 'harmony', n: st.harmony, max: st.harmonyMax, by: who }); }
@@ -595,6 +600,17 @@ RB.combatLogic = (function () {
         fx.push({ t: 'comp', who: 'suzu', en: 'Suzu steps into the blow with a flourish — it meets empty air.', missAt: who });
         return;
       }
+      // Nao's "take half": a blow that would land on you is shared, the larger half his
+      if (who === 'pc' && st.share && st.compId && st.comp > 0 && power > 1) {
+        const half = Math.ceil(power / 2);
+        fx.push({ t: 'comp', who: st.compId, en: 'Nao takes half of it.', share: half });
+        land('comp', half);
+        land('pc', power - half);
+        return;
+      }
+      land(who, power);
+    };
+    const land = (who, power) => {
       const w = st.ward[who];
       const absorbed = Math.min(w, power);
       st.ward[who] -= absorbed;
@@ -653,6 +669,7 @@ RB.combatLogic = (function () {
   function endRound(st, enemy) {
     st.round++;
     st.salts = false;
+    st.share = false;
     // a creature whose knots are all free settles and stops acting
     st.justSettled = [];
     for (let i = 0; i < st.foes.length; i++) {

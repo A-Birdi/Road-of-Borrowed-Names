@@ -63,13 +63,28 @@ export async function companionTurn(p, o) {
     if (s.c) {
       // (the menu ignores presses in its first moments: a deliberate choice comes after that)
       await p.waitForTimeout(o.delay != null ? o.delay : 320);
+      // the first time, a short note explains the companion's turn: read it, then "Got it"
+      if (await p.evaluate(() => !!document.querySelector('[data-coach-ok]'))) { await p.click('[data-coach-ok]'); await p.waitForTimeout(80); }
       const sel = await p.evaluate((o) => {
         const cs = [...document.querySelectorAll('.ccard:not([disabled])')];
         const c = o.pick != null ? cs.find((x) => x.getAttribute('data-a') === String(o.pick)) : o.match ? cs.find((x) => new RegExp(o.match, 'i').test(x.textContent.replace(/\s+/g, ' '))) : cs[0];
         return c ? { a: c.getAttribute('data-a'), text: c.textContent.replace(/\s+/g, ' ').trim() } : null;
       }, o);
-      if (!sel) throw new Error('no companion action matching ' + JSON.stringify(o));
-      await p.click('.ccard[data-a="' + sel.a + '"]');
+      if (!sel) throw new Error('no companion action matching ' + JSON.stringify(o) + ': ' + JSON.stringify(await p.evaluate(() => ({ ph: RB.combat.phase(), cards: [...document.querySelectorAll('.ccard')].map((c) => c.getAttribute('data-a') + (c.disabled ? ' off' : '') + ' ' + c.textContent.replace(/\s+/g, ' ').slice(0, 40)) }))));
+      // a real click on the visible part of the card (scrolled into view)
+      const q = '.ccard[data-a="' + sel.a + '"]';
+      const pt = await p.evaluate((q) => {
+        const el = document.querySelector(q);
+        el.scrollIntoView({ block: 'start' });
+        const r = el.getBoundingClientRect();
+        // the first visible point down its middle (a card taller than its scroll box is cut off below)
+        const x = r.left + r.width / 2;
+        for (let y = Math.max(r.top, 0) + 6; y < Math.min(r.bottom, innerHeight); y += 6) { const top = document.elementFromPoint(x, y); if (top && top.closest(q)) return { x, y, ok: true }; }
+        const at = document.elementFromPoint(x, Math.min(innerHeight - 2, r.top + 10)); const d = document.querySelector('.cb-dock').getBoundingClientRect(), rc = document.querySelector('.ccards').getBoundingClientRect(), cu = document.querySelector('.combat-ui');
+        return { x, y: r.top, ok: false, r: [r.left, r.top, r.width, r.height], at: at && at.outerHTML.slice(0, 160), dock: [d.top, d.bottom], rcards: [rc.top, rc.bottom], ui: [cu.scrollTop, cu.scrollHeight, cu.clientHeight] };
+      }, q);
+      if (!pt.ok) throw new Error('the companion\'s action is covered: ' + JSON.stringify(pt));
+      await p.mouse.click(pt.x, pt.y);
       return sel.text;
     }
     if (s.ph !== 'challenge' && s.ph !== 'companion') return null;

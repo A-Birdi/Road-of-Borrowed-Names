@@ -36,6 +36,14 @@ RB.combat = (function () {
   // targeting marks: `hover` (a card under the pointer or focus), `lock` (the
   // response whose step is open, kept until it resolves or you back out)
   const tg = { hover: null, lock: null };
+  // a card focused from the keyboard previews; one focused for you (the first
+  // card, when the choice opens) does not until you move
+  let keyAt = -1e9, kbEl = null;
+  if (typeof document !== 'undefined') {
+    document.addEventListener('keydown', () => { keyAt = performance.now(); }, true);
+    document.addEventListener('pointerdown', () => { keyAt = -1e9; }, true);
+  }
+  const byKeys = () => performance.now() - keyAt < 500;
 
   // ---- the scene, framed inside the stage: the free area the overlay leaves ----
   // Drawn at art resolution (2 art px per logical px): the regional backdrop
@@ -530,11 +538,17 @@ RB.combat = (function () {
   function wirePreview(container, reachFor) {
     const at = (e) => e.target && e.target.closest && e.target.closest('[data-i], [data-a]');
     container.onpointerover = (e) => { if (e.pointerType !== 'mouse') return; const b = at(e); if (b && !b.disabled) setHover(reachFor(b)); };
-    container.onpointerout = (e) => { if (e.pointerType !== 'mouse') return; const b = at(e); if (b && !(e.relatedTarget && b.contains(e.relatedTarget))) { const f = document.activeElement && container.contains(document.activeElement) ? at({ target: document.activeElement }) : null; setHover(f && f.matches(':focus-visible') ? reachFor(f) : null); } };
-    container.onfocusin = (e) => { const b = at(e); if (b && !b.disabled) setHover(reachFor(b)); };
-    container.onfocusout = (e) => { if (!(e.relatedTarget && container.contains(e.relatedTarget))) setHover(null); };
+    container.onpointerout = (e) => { if (e.pointerType !== 'mouse') return; const b = at(e); if (b && !(e.relatedTarget && b.contains(e.relatedTarget))) { const f = document.activeElement && container.contains(document.activeElement) ? at({ target: document.activeElement }) : null; setHover(f && f === kbEl && f.matches(':focus-visible') ? reachFor(f) : null); } };
+    // (focusin/focusout have no on… properties: listeners, removed again by unwirePreview)
+    unwireFocus(container);
+    const fi = (e) => { const b = at(e); kbEl = b && byKeys() ? b : null; if (kbEl && !b.disabled) setHover(reachFor(b)); };
+    const fo = (e) => { if (!(e.relatedTarget && container.contains(e.relatedTarget))) { kbEl = null; setHover(null); } };
+    container.addEventListener('focusin', fi);
+    container.addEventListener('focusout', fo);
+    container.__pv = { fi, fo };
   }
-  function unwirePreview(container) { container.onpointerover = container.onpointerout = container.onfocusin = container.onfocusout = null; }
+  function unwireFocus(container) { const w = container.__pv; if (w) { container.removeEventListener('focusin', w.fi); container.removeEventListener('focusout', w.fo); container.__pv = null; } }
+  function unwirePreview(container) { container.onpointerover = container.onpointerout = null; unwireFocus(container); kbEl = null; }
   function pickCard() {
     return new Promise((resolve) => {
       const s = RB.game.s;
@@ -622,6 +636,7 @@ RB.combat = (function () {
       const render = () => {
         const focusedA = document.activeElement && ui.resp.contains(document.activeElement) ? document.activeElement.getAttribute('data-a') : null;
         ui.dockH.textContent = cn + '\'s turn';
+        ui.dock.classList.add('cb-cturn');
         ui.resp.innerHTML =
           '<div class="cb-queued paper" role="status"><span class="cq-l">' + I('seal') + '<span>Queued: <b>' + esc(card.en) + '</b>' + (qlabel ? ' <span class="cq-t">' + esc(qlabel) + '</span>' : '') + '</span></span>' +
             '<button type="button" class="pbtn quiet cq-back" data-back>' + I('back') + '<span>Back to ' + esc(pn) + '</span></button></div>' +
@@ -653,7 +668,10 @@ RB.combat = (function () {
         if (chosen) return; chosen = true; onTarget = null; unwirePreview(ui.resp);
         for (const id of newActs) H.mark(s, 'cact:' + id);
         RB.combatHelp.hide(); showCoach(null); RB.ui.popLayer(layer); ui.dock.insertBefore(ui.resp, ui.log);
+        // (the menu goes: nothing that looks pressable stays while the exchange plays out)
+        ui.resp.innerHTML = '';
         ui.dockH.textContent = 'Respond';
+        ui.dock.classList.remove('cb-cturn');
         resolve(v);
       };
       // presses already on their way when the menu opened (a quick second click on
@@ -1033,11 +1051,13 @@ RB.combat = (function () {
           if (st.harmony > hc && !cfx.some((f) => f.t === 'harmony')) cfx.push({ t: 'harmony', n: st.harmony, max: st.harmonyMax });
         }
         const wonByComp = !won && L().allSettled(st);
+        // (the displayed state starts as `before` and steps forward: keep its knots apart)
+        const knots0 = before.foes.map((f) => f.knots);
         chain = true;
         await playPlayer(card, fx, before, won, reach, T);
         if (!won) {
           // a creature of the group whose last knot your response freed settles now
-          for (let i = 0; i < st.foes.length; i++) if (before.foes[i].knots > 0 && V().foes[i].knots <= 0 && !wonByComp) await playSettle(i);
+          for (let i = 0; i < st.foes.length; i++) if (knots0[i] > 0 && V().foes[i].knots <= 0 && !wonByComp) await playSettle(i);
           if (cfx && cfx.length) {
             const kb = snapshot(V());
             await playCompanion(cact.act, cfx, wonByComp, cact.target != null ? cact.target : T);
