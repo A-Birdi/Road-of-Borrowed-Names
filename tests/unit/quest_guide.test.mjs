@@ -163,6 +163,13 @@ export default async (t) => {
   RB.state.setQuest(s, 'rw_labels', 'done');
   RB.state.setQuest(s, 'rw_mill', 0);
   t.eq(G.followed(s), 'rw_mill', 'a followed quest that is finished hands over to the main road');
+  // a main quest of an earlier chapter left open (rw_depart never completes) is not followed by default
+  const s2 = mk(['departed'], { sg_main: 0 }, { chapter: 2 });
+  RB.state.setQuest(s2, 'rw_depart', 1); s2.quests.rw_depart.t = s2.quests.sg_main.t + 10;
+  RB.game.s = s2;
+  t.eq(G.followed(s2), 'sg_main', 'Chapter 2: the main road is sg_main, not the open Chapter 1 quest');
+  RB.state.setQuest(s2, 'sg_main', 'done'); s2.chapter = 6;
+  t.eq(G.followed(s2), null, 'after the story: nothing followed by default');
   RB.game.s = null;
   t.ok(!('follow' in RB.state.newCampaign()), 'a new campaign has no follow field (the save schema is unchanged)');
   const old = RB.state.newCampaign();

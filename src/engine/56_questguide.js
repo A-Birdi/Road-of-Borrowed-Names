@@ -21,8 +21,13 @@
  *   targets (two levels deep: a need of a need). Needs the player cannot
  *   bring about (a companion, a profile, a flag that would have to be unset,
  *   an earlier stage of this quest) are never followed.
+ * - Only places you can reach now count first (exits and doors usable now,
+ *   known fast-travel places, scenes that `!warp` you); a step somewhere you
+ *   cannot reach yet is named (not routed) only when nothing else is found.
+ *   Of several ways forward, those reaching the nearest stage win.
  * - More than MAX_TARGETS places: none is marked (the objective says "ask
- *   around"); none at all: the quest is waiting on the journey.
+ *   around"); none at all: the quest is waiting on the journey. A stage set
+ *   and passed within one scene is recognised (nothing to mark).
  * - Authored per-stage fields override the derivation: `at` ({map, npc} |
  *   {map, prop, x, y} | {map, x, y} | {map}, or a list of those, or 'open')
  *   and `hint` ({jp, en}, shown as the second nudge).
@@ -641,8 +646,14 @@ RB.questGuide = (function () {
     if (!s) return null;
     if (s.follow === '-') return null;
     if (s.follow && active(s, s.follow)) return s.follow;
+    // the main road of this chapter (a main quest of an earlier chapter left
+    // open is not followed by default: rw_depart is never marked done)
     let best = null;
-    for (const id in s.quests) if (active(s, id) && RB.content.quests[id].main && (!best || s.quests[id].t >= s.quests[best].t)) best = id;
+    for (const id in s.quests) {
+      const d = RB.content.quests[id];
+      if (!active(s, id) || !d.main || (d.chapter && s.chapter && d.chapter < s.chapter)) continue;
+      if (!best || s.quests[id].t >= s.quests[best].t) best = id;
+    }
     return best;
   }
   function chosen(s) { s = s || RB.game.s; return !!(s && s.follow && s.follow !== '-' && active(s, s.follow)); }
@@ -712,9 +723,12 @@ RB.questGuide = (function () {
   function wayFrom(r) {
     const W = RB.world.W;
     if (!W.map || !r || !r.targets.length) return null;
-    const here = r.targets.filter((t) => t.map === W.map.id);
+    // a person, thing or spot here is marked where it is; arriving here (an
+    // onEnter step) has nothing to point at
+    const here = r.targets.filter((t) => t.map === W.map.id && t.kind !== 'enter');
     if (here.length) return { here };
-    const dests = r.targets.map((t) => t.map).filter((m, i, a) => a.indexOf(m) === i);
+    const dests = r.targets.map((t) => t.map).filter((m, i, a) => a.indexOf(m) === i && m !== W.map.id);
+    if (!dests.length) return { here: [] };
     let hop = RB.world.towards(W.map.id, dests);
     if (!hop || !hop.tiles.size) {
       // no way by exits alone: someone or something here may take you (a boat, a lift)

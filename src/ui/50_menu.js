@@ -293,6 +293,7 @@ RB.ui.menu = (function () {
       'Move with the arrow keys or WASD, or tap/click where you want to walk. Hold Shift to walk faster. Z, Enter or Space talks and examines; X or Esc goes back; C opens this folio. Controls can be remapped in Settings.',
       'On a touch screen, use the movement pad and the action button labelled with what it will do (Talk, Look). The folio button opens this book.',
       'A small ▾ marker appears above things you can examine or people you can talk to. Talk to your companion by facing them and pressing Z.',
+      'An amber diamond marks where the quest you follow goes next (the main road, unless you choose another in the Journey); at the edge of the view it points the way, and an amber arrow shows the way out toward another place. The Journey says the same in words and offers nudges, one at a time, if you want them. Asking is free. Settings › Learning & Challenge › Quest guidance turns the markers or the hints off.',
       'Nothing is timed. Take as long as you like to read, write or think.',
     ]],
     ink: ['Inkweaving (battles)', [

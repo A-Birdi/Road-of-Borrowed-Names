@@ -133,6 +133,59 @@ C.banter.push({ comp: 'nao', map: 'sg.*', if: 'cond', scene: 'id' });
 Quest stage text is the journal's "practical next step" — say where to go /
 whom to ask, without spelling out puzzle solutions.
 
+### Where the next step happens (quest guidance)
+The Journey's nudges and the markers in the world and on the chart
+(`src/engine/56_questguide.js`, `62_questmarks.js`) find where a quest's
+next step happens **from the content itself**; most stages need nothing
+extra. Two optional per-stage fields refine it:
+```js
+stages: [
+  { jp, en,
+    hint: { jp: '…', en: '…' },   // the second nudge, shown before the generated "what to do there"
+    at: { map: 'rw.village', npc: 'tsuru' } },          // or { map, prop: 'crate', x, y } | { map, x, y } | { map }
+]                                                      // | [ several of those ] | 'open' (nothing to mark, on purpose)
+```
+`hint` follows the usual rules (furigana, natural Japanese, the same meaning
+in both languages; help the player read, never give the answer to a
+challenge). `at` overrides the derivation for that stage; the validator
+checks that its map, person and prop exist. Use it only where the derivation
+cannot know (e.g. `rw_depart` stage 1: no scene finishes it — Chapter 2
+begins on the coast road).
+
+How the derivation works (so that you can predict it):
+- Every place a scene can start is an entry: a person's `talk` (each
+  option), a prop's `scene`, `triggers`, `onEnter`, and a foe's `scene`.
+  Scenes they `!call` count as theirs.
+- For the current state, each entry is walked the way the runner would:
+  the first talk option that holds; line conditions; `!if`, `!goto`,
+  `!end`; every reply of a `!choice`; a challenge, activity or battle can
+  go either way. An entry whose walk raises the quest past its current stage
+  (to the nearest next stage) is a **target**, if its map can be reached
+  now (usable exits and doors, known fast-travel places, and scenes that
+  `!warp` you, such as a boat).
+- `!quest id n quiet` (bookkeeping, no toast) counts only when no other
+  step does.
+- If nothing can move the quest on yet, the walk also explores the way not
+  taken at each condition and notes what would have to become true (e.g.
+  `rw_bottles_done`, `item.sg_seaglass>=3`, `var.sg_dirs>=3`); the entries
+  that can bring those about now become the targets — e.g. the people not
+  yet helped in "ask around the square" — up to two levels deep. Needs the
+  player cannot bring about (a companion, a level, a flag that would have to
+  be unset, an earlier stage of the same quest) are never followed.
+- More than **6** places: none is marked (the objective reads "ask
+  around"; the nudge says "talk to people in …" or "look around …").
+  None at all: the quest waits on the journey (the nudge says so). A stage
+  that is set and passed within one scene on every way through it (e.g.
+  `lf_mio` 0–1) is recognised and needs nothing.
+- `tests/unit/quest_guide.test.mjs` lists every stage of every quest with
+  its place (`QG_LIST=1 node tests/run-unit.mjs quest_guide`) and fails on
+  a stage with none that is not authored or `'open'`. For a new quest, run it
+  and, if a stage is listed as missing, give it an `at` (or `'open'`).
+- The generated words use each person's name (`chars[id].name`), each map's
+  `name`, and a small table of prop nouns (`PROP`/`PROP_PREFIX` in
+  56_questguide.js): add a noun there for a new kind of prop that is a quest
+  target (the unit test fails on a target prop without one).
+
 ## 5. Learning steps (challenges, drills, battle answers)
 Step kinds:
 ```js

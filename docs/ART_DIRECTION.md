@@ -228,6 +228,35 @@ All other preferences apply to every campaign.
   of it holds still with reduced motion.
 - **Doors:** a building with no inside keeps its door shut (it is solid,
   and says so when you look). Going in lands on the entry mat.
+- **Quest markers** (2026-09-29, owner's question about hints and map
+  markers; `src/engine/62_questmarks.js`, derivation in `56_questguide.js`,
+  rules in docs/CONTENT.md §4). One quest is followed at a time (the main
+  road unless you choose another in the Journey). Its next step is marked:
+  - above the person, thing or spot on this map, an **amber paper diamond**
+    (15×17 art px): ink outline like the characters, lit on the upper-left
+    faces and shaded lower-right, a fold down the middle and a one-pixel
+    glint. It is a different shape and colour from the cream ▾ chevron
+    (which means "you can act here") and sits just above a standing head,
+    lifted above the chevron when you face the same thing. It bobs two art
+    pixels on a slow beat; with reduced motion it holds still;
+  - off-screen, the same diamond at the edge of the view with a small
+    chunky arrow toward it;
+  - on another map, a chunky amber **arrow** over the way out that starts
+    the journey there (the map-link search `RB.world.towards`; a scene that
+    carries you — a boat — counts as a way), pointing out through it and
+    sliding a pixel or two; at the view's edge when it is off-screen; none
+    when there is no way now;
+  - on the route chart, a dashed amber ring round the place and the same
+    diamond beside it (beside the red "you are here" mark when both are the
+    same place). Rooms now count as their village for "you are here".
+  Markers are drawn over the night lighting so they read at night, only in
+  plain walking: never during dialogue, scenes, menus or battles. Edge
+  pointers keep inside the view below the HUD tags and above the touch
+  controls. When several places qualify (up to six), each is marked (those
+  on this map only, when any are); more than six, none. The Journey says the
+  same in words ("Next: Suzu, in Reedwake — south-west of you"), so nothing
+  depends on seeing the marker. Settings › Learning & Challenge › Quest
+  guidance: Markers and hints (default) / Hints only / Off.
 - **Battle clarity** (2026-09-28): Harmony is its own band on the party
   slip — pips, a count, and the name of this companion's technique — and
   every move, status and ward is a keyword with a note card (hover, focus
