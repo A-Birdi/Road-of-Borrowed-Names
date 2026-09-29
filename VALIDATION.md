@@ -701,17 +701,16 @@ Branch worktree of `claude/stoic-sagan-n3jvgk` from ba6869d. REQUIREMENTS.md G1�
   world_rw, world_sg at 320×640, 390×844, 1280×720 — all ok; with
   `--lang ja` at 390×844 (journey, journey_guide, map, settings,
   settings_guide) — all ok.
-- **B Suites** (on the build before the last three small changes: the
-  default follow skipping an earlier chapter, a guide line in Words › Guide,
-  arrival targets in wayFrom): folio, settings, play_ui, world_fixes,
-  departures, ui, systems pass. world_view.mjs: its phone "camera unchanged
-  when the dialogue opens" check is timing-sensitive (the first camera read
-  can fall while the view eases in under the touch reserve). With a
-  whole-game run in parallel it failed on the base build ba6869d (1 of 3)
-  and on this build (3 of 3); without load this build passed 11 of 12 runs
-  and the base 11 of 11 (the failing run read 118.5,31 → 118.5,55, i.e. mid
-  ease). No quest is set in that test, so the guidance code draws nothing
-  there.
+- **B Suites on the final build** (index.html of e13a62a): folio,
+  settings, play_ui, world_view, world_fixes, departures, ui, systems and
+  quest_guide (50 checks) all pass. world_view.mjs: its phone "camera
+  unchanged when the dialogue opens" check is timing-sensitive (the first
+  camera read can fall while the view eases in under the touch reserve).
+  With a whole-game run in parallel it failed on the base build ba6869d
+  (1 of 3) and on this build (3 of 3); without load this build passed 12 of
+  13 runs (this one included) and the base 11 of 11 (the failing run read 118.5,31 → 118.5,55,
+  i.e. mid ease). No quest is set in that test, so the guidance code draws
+  nothing there.
 - **U** unit suite 3707 pass; validator no errors (it now checks stage
   `hint`/`at`).
 - **H** Not verified: whether markers make the game too easy or help the
