@@ -73,7 +73,7 @@ console.log(`RB.recog evaluation — ${kana.length} kana${withKanji ? ` + ${kanj
 console.log('top1 = best candidate is the character or its size partner (つ/っ); "any" mode also accepts shape-identical pairs (へ/ヘ).');
 console.log('exact-size = top-1 is exactly the drawn character, size decided from box-relative size/position (no toggle).\n');
 
-const fams = Object.keys(FAMILIES).filter((f) => (onlyFam ? f === onlyFam : f !== 'dev'));
+const fams = Object.keys(FAMILIES).filter((f) => (onlyFam ? f === onlyFam : !f.startsWith('dev')));
 const overall = { pad: newStats(), any: newStats() }; // kana only
 const perGroupAll = {};
 for (const fam of fams) {

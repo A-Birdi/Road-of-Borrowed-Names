@@ -88,7 +88,7 @@ RB.answers = (function () {
   // groups, checked against RB.recog by tests/unit/lang_answers.test.mjs).
   // A handwritten answer cannot show which one was meant, so with
   // {handwritten:true} they count as one form. Typed answers are never folded.
-  const HAND_SAME = ['へヘ', 'べベ', 'ぺペ', 'ー一', 'ロ口', 'カ力', 'ニ二'];
+  const HAND_SAME = ['へヘ', 'べベ', 'ぺペ', 'ー一', 'ロ口', 'カ力', 'ニ二', 'エ工', 'チ千', 'タ夕', 'オ才'];
   const HAND_ONE = {};
   HAND_SAME.forEach((g) => Array.from(g).forEach((c) => { HAND_ONE[c] = g[0]; }));
   const handFold = (s) => Array.from(s).map((c) => HAND_ONE[c] || c).join('');

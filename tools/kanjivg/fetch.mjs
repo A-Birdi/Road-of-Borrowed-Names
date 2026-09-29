@@ -2,13 +2,14 @@
 // tools/kanjivg/.cache/ (gitignored). Nothing here is needed at game runtime.
 //
 //   node tools/kanjivg/fetch.mjs            KanjiVG SVGs for every needed character
+//                                           (the kana + every kanji the game displays)
 //   node tools/kanjivg/fetch.mjs --fixtures also AnimCJK kana SVGs + Tomoe data
 //                                           (independent test sources only)
 import fs from 'node:fs';
 import path from 'node:path';
 import zlib from 'node:zlib';
 import { fileURLToPath } from 'node:url';
-import { ALL, KANA, hex5, KANJIVG_COMMIT, ANIMCJK_COMMIT, TOMOE_URL } from './chars.mjs';
+import { KANA, hex5, allChars, KANJIVG_COMMIT, ANIMCJK_COMMIT, TOMOE_URL } from './chars.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 export const CACHE = path.join(here, '.cache');
@@ -63,6 +64,7 @@ function untarMember(tgz, wanted) {
 async function main() {
   const fixtures = process.argv.includes('--fixtures');
   const kvgDir = path.join(CACHE, 'kanjivg');
+  const ALL = (await allChars()).all;
   const r = await fetchAll(
     ALL, kvgDir,
     (ch) => `https://raw.githubusercontent.com/KanjiVG/kanjivg/${KANJIVG_COMMIT}/kanji/${hex5(ch)}.svg`,

@@ -50,8 +50,12 @@ export const DIRECTION_CRITICAL = new Set([...'ソンシツゾジヅッ']);
 // Parameter ranges per family. 'dev' is the only family used while tuning
 // recognizer constants; the 'heldout-*' families use different seeds and
 // wider ranges and are only used for reporting.
+// 'dev-strong' is the tuning family for the kanji-at-scale constants (the
+// coarse pre-filter, shortlists, joins, twins; 2026-09-29): as strong as
+// 'heldout-mixed' but with its own seeds; the held-out families stay unseen.
 export const FAMILIES = {
   dev: { rot: 8, shear: 0.1, aniso: 0.12, strokeJit: 2.5, strokeRot: 5, wobble: 1.2, noise: 0.5, trunc: 0.06, ext: 0.05, pJoin: 0.15, pSwap: 0.1, pRev: 0.1 },
+  'dev-strong': { rot: 11, shear: 0.14, aniso: 0.17, strokeJit: 3.5, strokeRot: 7, wobble: 2.0, noise: 0.9, trunc: 0.1, ext: 0.08, pJoin: 0.25, pSwap: 0.2, pRev: 0.2 },
   'heldout-affine': { rot: 12, shear: 0.18, aniso: 0.2, strokeJit: 0, strokeRot: 0, wobble: 0, noise: 0.3, trunc: 0, ext: 0, pJoin: 0, pSwap: 0, pRev: 0 },
   'heldout-noise': { rot: 4, shear: 0.05, aniso: 0.08, strokeJit: 4, strokeRot: 8, wobble: 2.2, noise: 1.0, trunc: 0, ext: 0, pJoin: 0, pSwap: 0, pRev: 0 },
   'heldout-truncext': { rot: 4, shear: 0.05, aniso: 0.08, strokeJit: 1.5, strokeRot: 3, wobble: 0.8, noise: 0.4, trunc: 0.12, ext: 0.1, pJoin: 0, pSwap: 0, pRev: 0 },

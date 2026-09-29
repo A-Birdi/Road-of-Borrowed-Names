@@ -30,7 +30,7 @@ RB.recog = (function () {
   'use strict';
   // Local aliases: global lookups are slow inside some sandboxes (e.g. node vm).
   const sqrt = Math.sqrt, hypot = Math.hypot, floor = Math.floor, round = Math.round;
-  const mmin = Math.min, mmax = Math.max, mabs = Math.abs, mexp = Math.exp, mlog = Math.log;
+  const mmin = Math.min, mmax = Math.max, mabs = Math.abs, mexp = Math.exp, mlog = Math.log, atan2 = Math.atan2, PI = Math.PI;
   const INF = 1e300;
   const F64 = Float64Array, I32 = Int32Array, U8 = Uint8Array;
 
@@ -60,13 +60,15 @@ RB.recog = (function () {
     shortlist: 40, // templates passed from the chamfer pre-filter to the structured matcher
     scoreScale: 0.25, // score = exp(-dist/scoreScale); similarity, not a probability
     confidentMax: 0.2, // best distance must be below this for 'confident'
-    confidentMaxKanji: 0.17, // ...0.17 for a kanji: 33 kanji cannot cover the lookalikes of all the others (朋 vs 門)
+    confidentMaxKanji: 0.17, // ...0.17 for a kanji (a kanji outside the game's set can come close to one inside it)
     nonsenseMin: 0.38, // best distance above this -> 'nonsense'
     smallZ: 0.2, // sizeHint 'small' when (1 - relative size) + smallDyW * (lowering) exceeds this
     smallDyW: 1.5,
     margin: 0.02, // best vs best-other-shape distance gap needed for 'confident'
     marginRatio: 0.12, // ...or relative gap
     marginCross: 0.06, // gap needed when the runner-up is a lookalike from the other script
+    marginKanji: 0.04, // gap needed when the best is a kanji (tuned on dev-strong + half of the
+    marginRatioKanji: 0.25, // Tomoe kanji the game does not use; see docs/RECOGNITION.md)
     // Outside the allowed set (see docs/RECOGNITION.md "Kanji outside the pad's set"):
     kanjiHintMax: 0.16, // kanji off: a supported kanji must match at least this well to be named...
     kanjiHintGap: 0.04, // ...and beat every allowed character by this much
@@ -77,6 +79,14 @@ RB.recog = (function () {
     // more than one stroke fewer than drawn (a sloppy ボ or ぎ must not be taken for a kanji)
     kanjiLikeWeak: 0.2,
     kanjiLikeWeakKana: 0.27,
+    // Kanji at scale (every kanji the game displays; see docs/RECOGNITION.md "At scale"):
+    coarseGrid: 6, // coarse directional feature: G x G cells x 4 orientations
+    coarseKeep: 100, // kanji kept by the coarse pre-filter for the chamfer stage
+    coarseStrokeW: 1.2, // weight of the stroke-count difference in the coarse rank
+    kanjiShortlist: 20, // kanji passed from the chamfer stage to the structured match...
+    coarseBlend: 0.05, // ...ranked by chamfer + this x coarse distance
+    kanjiJoins: 4, // at most this many joined stroke pairs tried for a kanji (greedy)
+    hintKeep: 30, // kanji hint (kanji off): only a close kanji can be named, so fewer are checked
   };
 
   // ------------------------------------------------------------ tables
@@ -89,10 +99,15 @@ RB.recog = (function () {
   }
   // Pairs whose standard written shapes are the same (verified against the
   // templates by tests/unit/recog.test.mjs). Kanji members only apply when
-  // kanji are enabled.
+  // kanji are enabled. The kana/kanji pairs are every pair whose clean
+  // KanjiVG templates read each other within 0.09 (ー/一 0.02, ニ/二 0.03,
+  // エ/工 0.03, ロ/口 0.04, チ/千 0.06, カ/力 0.07, タ/夕 0.08, オ/才 0.09); the
+  // next closest, ナ/十 and ハ/八 (0.11-0.12), stay two shapes
+  // (tests/unit/recog-coverage.test.mjs re-measures this).
   const SAME_SHAPE = [
     ['へ', 'ヘ'], ['べ', 'ベ'], ['ぺ', 'ペ'],
     ['ー', '一'], ['ロ', '口'], ['カ', '力'], ['ニ', '二'],
+    ['エ', '工'], ['チ', '千'], ['タ', '夕'], ['オ', '才'],
   ];
   const SAME_OF = {};
   for (const g of SAME_SHAPE) for (const c of g) SAME_OF[c] = g;
@@ -316,14 +331,17 @@ RB.recog = (function () {
   }
 
   // Hungarian algorithm (square matrix, minimisation). Returns row->col array.
+  // Work buffers are reused between calls (same arithmetic as fresh ones).
+  let HB = { n: -1 };
   function hungarian(a, n) {
+    if (HB.n < n + 1) HB = { n: n + 1, minv: new F64(n + 1), used: new U8(n + 1) };
     const u = new F64(n + 1), v = new F64(n + 1);
     const p = new I32(n + 1), way = new I32(n + 1);
+    const minv = HB.minv, used = HB.used;
     for (let i = 1; i <= n; i++) {
       p[0] = i;
       let j0 = 0;
-      const minv = new F64(n + 1).fill(INF);
-      const used = new U8(n + 1);
+      for (let j = 0; j <= n; j++) { minv[j] = INF; used[j] = 0; }
       do {
         used[j0] = 1;
         const i0 = p[j0];
@@ -393,17 +411,39 @@ RB.recog = (function () {
 
   // ------------------------------------------------------------ templates
   let T = null;
+  let B64IDX = null;
+  function b64idx() {
+    if (B64IDX) return B64IDX;
+    const A = RB.recogData.alphabet;
+    B64IDX = {};
+    for (let i = 0; i < A.length; i++) B64IDX[A[i]] = i;
+    return B64IDX;
+  }
 
+  // Kana: every point is 3 characters encoding x*109+y.
   function decode(str) {
-    const A = RB.recogData.alphabet, box = RB.recogData.box;
-    const idx = {};
-    for (let i = 0; i < A.length; i++) idx[A[i]] = i;
+    const box = RB.recogData.box, idx = b64idx();
     return str.split(' ').map((s) => {
       const pts = [];
       for (let i = 0; i + 2 < s.length; i += 3) {
         const v = (idx[s[i]] << 12) | (idx[s[i + 1]] << 6) | idx[s[i + 2]];
         pts.push([floor(v / box), v % box]);
       }
+      return pts;
+    });
+  }
+  // Kanji: the first point as above, then 2 characters per step (dx+32, dy+32).
+  function decodeDelta(str) {
+    const box = RB.recogData.box, idx = b64idx();
+    return str.split(' ').map((s) => {
+      const v = (idx[s[0]] << 12) | (idx[s[1]] << 6) | idx[s[2]];
+      let x = floor(v / box), y = v % box;
+      const pts = [[x, y]];
+      for (let i = 3; i + 1 < s.length; i += 2) {
+        x += idx[s[i]] - 32; y += idx[s[i + 1]] - 32;
+        pts.push([x, y]);
+      }
+      if (pts.length === 1) pts.push([x, y]);
       return pts;
     });
   }
@@ -448,6 +488,21 @@ RB.recog = (function () {
       byChar[ch] = entry;
       if (entry.small) continue; // small kana are matched through their large form
       const nraw = normalize(raw);
+      finishEntry(entry, nraw);
+      if (nraw.length > maxK) maxK = nraw.length;
+      list.push(entry);
+    }
+    T = { byChar, list, maxK };
+    return T;
+  }
+  function tables() { return T || build(); }
+
+  // Variants (joins, splits), stroke-structured templates, the chamfer cloud,
+  // size/position, ink and sharp turns of one template. Kana get this when the
+  // tables are built; a kanji only when it first reaches the chamfer stage.
+  function finishEntry(entry, nraw) {
+    {
+      const ch = entry.ch, raw = entry.raw, data = RB.recogData;
       const variants = [];
       const rules = VARIANTS[ch] || VARIANTS[baseOf(ch)] || [];
       const nfd = ch.normalize ? ch.normalize('NFD') : ch;
@@ -492,15 +547,158 @@ RB.recog = (function () {
       entry.K = nraw.length;
       entry.variants = variants;
       entry.cloud = makeCloud(nraw);
-      entry.ink = nraw.reduce((acc, s) => acc + polyLen(s), 0);
-      entry.turns = turnsOf(nraw);
-      if (nraw.length > maxK) maxK = nraw.length;
-      list.push(entry);
+      if (entry.ink == null) entry.ink = nraw.reduce((acc, s) => acc + polyLen(s), 0);
+      if (entry.turns == null) entry.turns = turnsOf(nraw);
+      entry.ready = true;
     }
-    T = { byChar, list, maxK };
-    return T;
   }
-  function tables() { return T || build(); }
+
+  // ------------------------------------------------------------ kanji tables
+  // Every kanji the game displays (RB.recogData.k, generated from KanjiVG).
+  // Decoded on first use; each template's structured form is built only when
+  // it first reaches the chamfer stage (finishEntry), so a kana-only pad never
+  // pays for them.
+  let TK = null, KLIST = null;
+  function kanjiChars() {
+    if (KLIST) return KLIST;
+    KLIST = (RB.recogData.k || []).map((line) => String.fromCodePoint(line.codePointAt(0)));
+    return KLIST;
+  }
+  function kanjiTables() { return buildKanji(INF); }
+  // Decodes up to `count` more kanji templates; returns the (possibly still
+  // partial) tables. kanjiTables() finishes them; warm() spreads the work
+  // over idle moments so the first kanji reading does not wait for it.
+  function buildKanji(count) {
+    const data = RB.recogData;
+    const lines = data.k || [];
+    if (!TK) TK = { byChar: {}, list: [], maxK: 0, maxInk: 0, maxTurns: 0, next: 0, done: false };
+    const end = mmin(lines.length, TK.next + count);
+    for (let i = TK.next; i < end; i++) {
+      const line = lines[i];
+      const ch = String.fromCodePoint(line.codePointAt(0));
+      const raw = decodeDelta(line.slice(ch.length));
+      const e = { ch, script: 'kanji', raw, small: false, idx: i, rad: data.rad ? data.rad[i] : null };
+      const nraw = normalize(raw);
+      e.nraw = nraw;
+      e.K = nraw.length;
+      e.ink = nraw.reduce((acc, s) => acc + polyLen(s), 0);
+      e.turns = turnsOf(nraw);
+      e.feat = coarseFeat(nraw);
+      const bb = bbox(raw);
+      e.ext = mmax(bb.w, bb.h) / data.box;
+      e.cy = (bb.y0 + bb.y1) / 2 / data.box;
+      if (e.K > TK.maxK) TK.maxK = e.K;
+      if (e.ink > TK.maxInk) TK.maxInk = e.ink;
+      if (e.turns > TK.maxTurns) TK.maxTurns = e.turns;
+      TK.byChar[ch] = e;
+      TK.list.push(e);
+    }
+    TK.next = end;
+    TK.done = end >= lines.length;
+    return TK;
+  }
+  // Prepare the kanji templates in small slices (a pad that reads kanji calls
+  // this when it opens). Safe to call more than once; `done` runs at the end.
+  let warming = false;
+  function warm(done) {
+    tables();
+    if ((TK && TK.done) || warming) { if (done) setTimeout(done, 0); return; }
+    warming = true;
+    const step = () => {
+      buildKanji(120);
+      if (TK.done) { warming = false; if (done) done(); } else setTimeout(step, 0);
+    };
+    setTimeout(step, 0);
+  }
+  function ready(e) {
+    if (!e.ready) finishEntry(e, e.nraw);
+    return e;
+  }
+  // Any template by character (kana, or a kanji: decoded on demand).
+  function entryOf(ch) {
+    const t = tables();
+    if (t.byChar[ch]) return t.byChar[ch];
+    if (!ch || scriptOf(ch) !== 'kanji' || kanjiChars().indexOf(ch) < 0) return null;
+    return kanjiTables().byChar[ch] || null;
+  }
+
+  // Coarse directional feature (kanji pre-filter): ink length per cell of a
+  // G x G grid over the normalised square, split into 4 orientations (mod
+  // 180°, so stroke direction and order do not matter), with bilinear spread
+  // across cells and orientations; normalised to sum 1, square-rooted
+  // (Hellinger), compared with L1. Cheap enough to rank all kanji per call.
+  function coarseFeat(nstrokes) {
+    const G = P.coarseGrid, f = new F64(G * G * 4);
+    const STEP = 0.05;
+    let total = 0;
+    for (const s of nstrokes) {
+      // walk the stroke in ~0.05 steps: directions over such steps are not
+      // thrown about by the jitter of a drawn line
+      const L0 = polyLen(s);
+      if (L0 < 1e-9) continue;
+      const n = mmax(1, round(L0 / STEP)), step = L0 / n;
+      let px = s[0][0], py = s[0][1], qx = px, qy = py, i = 1;
+      for (let k = 0; k < n; k++) {
+        // the point one step further along the stroke
+        let need = step;
+        while (i < s.length) {
+          const tx = s[i][0] - qx, ty = s[i][1] - qy, tl = sqrt(tx * tx + ty * ty);
+          if (tl >= need) { qx += (tx / tl) * need; qy += (ty / tl) * need; break; }
+          need -= tl; qx = s[i][0]; qy = s[i][1]; i++;
+        }
+        const dx = qx - px, dy = qy - py, L = sqrt(dx * dx + dy * dy);
+        if (L > 1e-9) {
+          let ang = atan2(dy, dx);
+          if (ang < 0) ang += PI;
+          let o = (ang / PI) * 4;
+          if (o >= 4) o = 0;
+          const io = floor(o), fo = o - io, o0 = io & 3, o1 = (io + 1) & 3;
+          const gx = ((px + qx) / 2 + 0.5) * G - 0.5, gy = ((py + qy) / 2 + 0.5) * G - 0.5;
+          const ix = floor(gx), iy = floor(gy), fx = gx - ix, fy = gy - iy;
+          for (let a = 0; a < 2; a++) {
+            const cx = ix + a;
+            if (cx < 0 || cx >= G) continue;
+            const wx = (a ? fx : 1 - fx) * L;
+            for (let b = 0; b < 2; b++) {
+              const cy = iy + b;
+              if (cy < 0 || cy >= G) continue;
+              const w = wx * (b ? fy : 1 - fy), base = (cy * G + cx) * 4;
+              f[base + o0] += w * (1 - fo);
+              f[base + o1] += w * fo;
+            }
+          }
+          total += L;
+        }
+        px = qx; py = qy;
+      }
+    }
+    if (total > 1e-9) for (let i = 0; i < f.length; i++) f[i] = sqrt(f[i] / total);
+    return f;
+  }
+  function coarseDist(a, b) {
+    let s = 0;
+    for (let i = 0; i < a.length; i++) { const d = a[i] - b[i]; s += d < 0 ? -d : d; }
+    return s;
+  }
+  // The kanji worth a closer look for this drawing: coarse distance plus a
+  // stroke-count term (joins and pen lifts are tolerated, so it is soft),
+  // best P.coarseKeep. `filter(e)` may exclude templates.
+  function kanjiShortlist(inp, keep, filter) {
+    const K = kanjiTables();
+    if (!inp.feat) inp.feat = coarseFeat(inp.nraw);
+    const N = inp.S.length;
+    const out = [];
+    for (const e of K.list) {
+      if (filter && !filter(e)) continue;
+      const dk = e.K - N;
+      // more drawn strokes than the template has, or far fewer: costly in the
+      // structured match anyway (unpaired strokes), so ranked down here
+      const sc = coarseDist(inp.feat, e.feat) + P.coarseStrokeW * (dk > 0 ? dk * 0.5 : -dk) / mmax(N, e.K);
+      out.push({ e, sc });
+    }
+    out.sort((a, b) => a.sc - b.sc);
+    return out.slice(0, keep);
+  }
 
   function allowedSet(opts) {
     const script = (opts && opts.script) || 'any';
@@ -551,6 +749,7 @@ RB.recog = (function () {
 
   // ------------------------------------------------------------ structured match
   function matchEntry(inp, entry, ctx) {
+    if (entry.script === 'kanji' && entry.idx != null) return matchKanji(inp, ready(entry), ctx);
     let best = null;
     const N = inp.S.length;
     const consider = (res, pen, tag) => {
@@ -631,23 +830,105 @@ RB.recog = (function () {
     return { e: sc.e, cd: cd2, m: m2, dist: m2.dist + P.cloudW * cd2 + cost, refined: true };
   }
 
+  // Stroke-pair costs are memoised per input stroke for the call: the join
+  // alternatives of a template reuse the same pairs many times. The values are
+  // exactly those of pairCost, so results do not change.
   function makeCtx(strict) {
     const rp = strict ? P.revPenStrict : P.revPen;
-    return { cost: (a, b) => pairCost(a, b, rp), orderPen: strict ? P.orderPenStrict : P.orderPen };
+    const ctx = { orderPen: strict ? P.orderPenStrict : P.orderPen };
+    ctx.cost = (a, b) => {
+      let m = a.memo;
+      if (!m || a.memoCtx !== ctx) { m = a.memo = new Map(); a.memoCtx = ctx; }
+      let c = m.get(b);
+      if (c === undefined) { c = pairCost(a, b, rp); m.set(b, c); }
+      return c;
+    };
+    return ctx;
+  }
+
+  // Structured match for a kanji template. Kanji have no curated variants;
+  // strokes written joined are tried greedily: the best single join, then the
+  // best further join (or a three-stroke join) on top of it, up to
+  // P.kanjiJoins, each at the generic join cost. A pen lift inside one stroke
+  // is tried as for kana.
+  function matchKanji(inp, entry, ctx) {
+    const v = entry.variants[0];
+    const N = inp.S.length, K = v.S.length;
+    let best = assign(inp.S, v.S, ctx);
+    best.tag = '';
+    if (N < K) {
+      // groups: [start, length] over the template strokes, in order
+      let groups = [];
+      for (let j = 0; j < K; j++) groups.push([j, 1]);
+      const colOf = (g) => (g[1] === 1 ? v.S[g[0]] : g[1] === 2 ? v.merged[g[0]] : v.merged3[g[0]]);
+      const steps = mmin(K - N, P.kanjiJoins);
+      let cur = best;
+      for (let step = 1; step <= steps; step++) {
+        let stepBest = null, stepGroups = null;
+        // only joins next to a column the current assignment leaves unpaired
+        const near = new U8(groups.length);
+        const paired = new U8(groups.length);
+        for (const j of cur.map) if (j >= 0) paired[j] = 1;
+        for (let gi = 0; gi < groups.length; gi++) if (!paired[gi]) { near[gi] = 1; if (gi) near[gi - 1] = 1; }
+        for (let gi = 0; gi + 1 < groups.length; gi++) {
+          if (!near[gi]) continue;
+          const a = groups[gi], b = groups[gi + 1];
+          const len = a[1] + b[1];
+          if (len > 3) continue;
+          const ng = groups.slice(0, gi).concat([[a[0], len]], groups.slice(gi + 2));
+          const res = assign(inp.S, ng.map(colOf), ctx);
+          res.dist += P.joinGeneric * step;
+          if (!stepBest || res.dist < stepBest.dist) { stepBest = res; stepGroups = ng; }
+        }
+        if (!stepBest) break;
+        stepBest.tag = 'join×' + step;
+        if (stepBest.dist < best.dist) best = stepBest;
+        groups = stepGroups;
+        cur = stepBest;
+      }
+    } else if (N > K && inp.joins.length) {
+      for (const jn of inp.joins) {
+        const rows = inp.S.slice(0, jn.i).concat([jn.m], inp.S.slice(jn.i + 2));
+        const res = assign(rows, v.S, ctx);
+        res.dist += P.inputJoin;
+        res.tag = 'penlift' + (jn.i + 1);
+        if (res.dist < best.dist) best = res;
+      }
+    }
+    return best;
   }
 
   // ------------------------------------------------------------ public API
   function supported(opts) {
     const t = tables();
     const kanji = !!(opts && opts.kanji);
-    return Object.keys(t.byChar).filter((ch) => kanji || t.byChar[ch].script !== 'kanji');
+    const kana = Object.keys(t.byChar);
+    return kanji ? kana.concat(kanjiChars()) : kana;
+  }
+  // Is this character one the recognizer can read (kanji only with kanji on)?
+  function knows(ch, opts) {
+    if (!ch) return false;
+    if (tables().byChar[ch]) return true;
+    return !!(opts && opts.kanji) && kanjiChars().indexOf(ch) >= 0;
   }
 
   function reference(ch) {
-    const t = tables();
-    const e = t.byChar[ch];
+    const e = entryOf(ch);
     if (!e) return null;
     return { box: RB.recogData.box, strokes: e.raw.map((s) => s.map((p) => ({ x: p[0], y: p[1] }))) };
+  }
+  // KanjiVG's radical for a supported kanji (氵 as 水), or null.
+  function radical(ch) {
+    const i = scriptOf(ch || 'あ') === 'kanji' ? kanjiChars().indexOf(ch) : -1;
+    const r = i >= 0 && RB.recogData.rad ? RB.recogData.rad[i] : null;
+    return r && r !== '・' ? r : null;
+  }
+  // Number of strokes of a supported character (KanjiVG), or 0.
+  function strokeCount(ch) {
+    if (tables().byChar[ch]) return tables().byChar[ch].raw.length;
+    const i = kanjiChars().indexOf(ch);
+    if (i < 0) return 0;
+    return RB.recogData.k[i].slice(ch.length).split(' ').length;
   }
 
   // Box-relative size/position, judged against the standard proportions of the
@@ -663,7 +944,7 @@ RB.recog = (function () {
     return 1 - rel + P.smallDyW * dy > P.smallZ ? 'small' : 'normal';
   }
 
-  function nonsenseCheck(clean, inp, box, t, allowed) {
+  function nonsenseCheck(clean, inp, box, t, allowed, kanjiOn) {
     const b = bbox(clean);
     const ext = mmax(b.w, b.h);
     const side = box && box.w > 0 && box.h > 0 ? mmin(box.w, box.h) : 0;
@@ -674,6 +955,10 @@ RB.recog = (function () {
       if (e.K > maxK) maxK = e.K;
       if (e.ink > maxInk) maxInk = e.ink;
       if (e.turns > maxTurns) maxTurns = e.turns;
+    }
+    if (kanjiOn) {
+      const K = kanjiTables();
+      maxK = mmax(maxK, K.maxK); maxInk = mmax(maxInk, K.maxInk); maxTurns = mmax(maxTurns, K.maxTurns);
     }
     if (clean.length > maxK + 3) return 'too-many-strokes';
     if (inp.ink > maxInk * 1.6) return 'dense-ink';
@@ -693,19 +978,19 @@ RB.recog = (function () {
   }
 
   // The best supported kanji for this drawing, used only when kanji are not in
-  // the allowed set: the same match on the kanji templates alone (chamfer
-  // shortlist of 6, structured match, refinement of the leading 3).
+  // the allowed set: the same match on the kanji templates alone (the coarse
+  // pre-filter's best P.hintKeep, a chamfer shortlist of 6, structured match,
+  // refinement of the leading 3).
   // `limit`: only a kanji closer than this is of interest; templates whose
   // chamfer term alone (with a margin for the refinement) exceeds it are skipped.
   function bestKanji(inp, t, ctx, limit) {
     const pool = [];
-    for (const e of t.list) {
-      if (e.script !== 'kanji') continue;
-      const cd = cloudDist(inp.cloud, e.cloud);
-      if (P.cloudW * cd <= limit + 0.02) pool.push({ e, cd });
+    for (const { e, sc } of kanjiShortlist(inp, P.hintKeep)) {
+      const cd = cloudDist(inp.cloud, ready(e).cloud);
+      if (P.cloudW * cd <= limit + 0.02) pool.push({ e, cd, sc });
     }
     if (!pool.length) return null;
-    pool.sort((a, b) => a.cd - b.cd);
+    pool.sort((a, b) => (a.cd + P.coarseBlend * a.sc) - (b.cd + P.coarseBlend * b.sc));
     const sc = pool.slice(0, 6).map(({ e, cd }) => { const m = matchEntry(inp, e, ctx); return { e, cd, m, dist: m.dist + P.cloudW * cd }; });
     sc.sort((a, b) => a.dist - b.dist);
     for (let k = 0; k < mmin(3, sc.length); k++) {
@@ -743,7 +1028,7 @@ RB.recog = (function () {
           return;
         }
       }
-      const e = bestCh ? t.byChar[bestCh] : null;
+      const e = bestCh ? entryOf(bestCh) : null;
       const kanaLike = e && (e.script !== 'kanji' || TWIN_OF[bestCh]) && clean.length < e.K + 2;
       const weak = rejected || bestDist > (kanaLike ? P.kanjiLikeWeakKana : P.kanjiLikeWeak);
       if (clean.length >= P.kanjiLikeStrokes && weak && straightness(clean) >= P.kanjiLikeStraight) {
@@ -752,18 +1037,27 @@ RB.recog = (function () {
         result.notes.push('kanji-like');
       }
     };
-    const bad = nonsenseCheck(clean, inp, opts.box, t, allowed);
+    const bad = nonsenseCheck(clean, inp, opts.box, t, allowed, kanjiOn);
     if (bad) {
       result.status = 'nonsense';
       result.notes.push('nonsense: ' + bad);
       outside(INF, null, bad);
       return result;
     }
-    // 1) chamfer pre-filter
+    // 1) chamfer pre-filter (kanji: the coarse directional pre-filter first)
+    // kana: the best P.shortlist by chamfer distance (as ever); kanji: the
+    // coarse pre-filter's best P.coarseKeep, then the best P.kanjiShortlist
+    // by chamfer + coarse (among many similar kanji the coarse feature ranks
+    // the right one better than the chamfer alone)
     const pool = [];
     for (const e of t.list) if (allowed(e)) pool.push({ e, cd: cloudDist(inp.cloud, e.cloud) });
     pool.sort((a, b) => a.cd - b.cd);
     const short = pool.slice(0, P.shortlist);
+    if (kanjiOn) {
+      const kpool = kanjiShortlist(inp, P.coarseKeep).map(({ e, sc }) => ({ e, sc, cd: cloudDist(inp.cloud, ready(e).cloud) }));
+      kpool.sort((a, b) => (a.cd + P.coarseBlend * a.sc) - (b.cd + P.coarseBlend * b.sc));
+      for (const k of kpool.slice(0, P.kanjiShortlist)) short.push({ e: k.e, cd: k.cd });
+    }
     // 2) structured match
     const scored = short.map(({ e, cd }) => {
       const m = matchEntry(inp, e, ctx);
@@ -776,7 +1070,10 @@ RB.recog = (function () {
       if (r && r.dist < scored[k].dist) scored[k] = r;
     }
     scored.sort((a, b) => a.dist - b.dist);
-    result.sizeHint = scored.length ? sizeHintOf(clean, opts.box, scored[0].e) : null;
+    // size is judged against the kana form of a kana/kanji twin (エ/工: small ェ)
+    const e0 = scored.length ? scored[0].e : null;
+    const kanaTwin = e0 && e0.script === 'kanji' && TWIN_OF[e0.ch] ? TWIN_OF[e0.ch].find((c) => scriptOf(c) !== 'kanji') : null;
+    result.sizeHint = e0 ? sizeHintOf(clean, opts.box, (kanaTwin && t.byChar[kanaTwin]) || e0) : null;
     // 4) candidates with small/large expansion and script filter
     const script = opts.script || 'any';
     // explicit toggle wins; otherwise box-relative size decides; default is the large form
@@ -807,6 +1104,8 @@ RB.recog = (function () {
       const tw = TWIN_OF[ch] && TWIN_OF[ch].filter((c) => byCh[c]);
       if (tw && tw.length > 1) {
         const d = mmin(...tw.map((c) => byCh[c].dist));
+        // the other character of the same shape comes before a small form (オ 才 ォ)
+        if (!preferSmall) for (const c of tw) push(c, d);
         for (const c of tw) pushChar(c, d);
       } else pushChar(ch, s.dist);
       if (cands.length >= 6) break;
@@ -844,8 +1143,12 @@ RB.recog = (function () {
     const gap = other ? other.dist - best.dist : INF;
     // hiragana/katakana lookalikes (り/リ, も/モ, や/ヤ...) need a wider margin in a mixed pad
     const cross = other && best.e.script !== other.e.script && best.e.script !== 'both' && other.e.script !== 'both';
-    const close = gap < (cross ? P.marginCross : P.margin) || gap < P.marginRatio * best.dist;
-    const confMax = best.e.script === 'kanji' && !TWIN_OF[bestCh] ? P.confidentMaxKanji : P.confidentMax;
+    // a kanji among ~1,550 has many near neighbours: it needs a wider margin
+    const kanjiBest = best.e.script === 'kanji' && !TWIN_OF[bestCh];
+    const close = kanjiBest
+      ? gap < P.marginKanji || gap < P.marginRatioKanji * best.dist
+      : gap < (cross ? P.marginCross : P.margin) || gap < P.marginRatio * best.dist;
+    const confMax = kanjiBest ? P.confidentMaxKanji : P.confidentMax;
     result.status = best.dist <= confMax && !close ? 'confident' : 'uncertain';
     if (close && other) result.notes.push('close-alternative: ' + other.e.ch);
     if (best.dist > confMax) result.notes.push('weak-match');
@@ -877,7 +1180,7 @@ RB.recog = (function () {
     opts = opts || {};
     const t = tables();
     const out = { confident: false, strokeCountOk: false, issues: [] };
-    const entry0 = t.byChar[ch];
+    const entry0 = entryOf(ch);
     if (!entry0) return out;
     const clean = cleanStrokes(strokes);
     if (!clean.length) return out;
@@ -961,11 +1264,15 @@ RB.recog = (function () {
 
   return {
     supported,
+    knows,
+    warm,
     recognize,
     reference,
+    radical,
+    strokeCount,
     strokeOrderFeedback,
     sameShape,
     // exposed for tests and tooling only
-    _internal: { P, tables, SMALL_OF, LARGE_OF, SAME_SHAPE, TWIN_OF, VARIANTS, scriptOf, baseOf, normalize, cleanStrokes, straightness },
+    _internal: { P, tables, kanjiTables, kanjiChars, entryOf, ready, cloudDist, coarseFeat, kanjiShortlist, prepInput, SMALL_OF, LARGE_OF, SAME_SHAPE, TWIN_OF, VARIANTS, scriptOf, baseOf, normalize, cleanStrokes, straightness },
   };
 })();

@@ -29,8 +29,10 @@ export default async (t) => {
   for (const ch of HIRA46 + KATA46 + VOICED + SMALL + 'ー') t.ok(sup.includes(ch), `supported includes ${ch}`);
   t.ok(!sup.some((c) => KANJI.includes(c)), 'no kanji unless enabled');
   const supK = R.supported({ kanji: true });
-  t.eq(supK.length, 164 + 33, 'kanji set adds 33 characters (all present in KanjiVG)');
+  const { chars: gameKanji } = await (await import('../../tools/kanjivg/gamekanji.mjs')).gameKanji();
+  t.eq(supK.length, 164 + gameKanji.length, `kanji set adds every kanji the game displays (${gameKanji.length}, all present in KanjiVG)`);
   for (const ch of KANJI) t.ok(supK.includes(ch), `kanji supported when enabled: ${ch}`);
+  t.ok(supK.includes('守'), 'kanji supported when enabled: 守 (守る, a response every player has)');
   t.eq(JSON.stringify(R.supported()), JSON.stringify(sup), 'supported() defaults to no kanji');
 
   const expectCounts = { 'あ': 3, 'き': 4, 'さ': 3, 'そ': 1, 'り': 2, 'ぬ': 2, 'が': 5, 'ぱ': 4, 'ぽ': 5, 'ヴ': 5, 'ー': 1, 'ボ': 6, '門': 8, 'っ': 1 };
@@ -49,7 +51,7 @@ export default async (t) => {
   t.ok(Math.abs(a1.x - 31) <= 1 && Math.abs(a1.y - 33) <= 1, 'あ stroke 1 starts where KanjiVG says');
   const dataFile = path.join(root, 'src', 'recog', '10_strokedata.js');
   const kb = fs.statSync(dataFile).size / 1024;
-  t.ok(kb < 200, `stroke data compact (${kb.toFixed(1)} KiB < 200)`);
+  t.ok(kb < 200, `stroke data compact: 164 kana + ${gameKanji.length} kanji in ${kb.toFixed(1)} KiB (< 200)`);
   t.ok(/KanjiVG/.test(fs.readFileSync(dataFile, 'utf8').slice(0, 800)) && /CC BY-SA 3\.0/.test(fs.readFileSync(dataFile, 'utf8').slice(0, 800)), 'attribution header in stroke data');
   const notice = fs.readFileSync(path.join(root, 'data', 'NOTICE.txt'), 'utf8');
   t.ok(/KanjiVG/.test(notice) && /Ulrich Apel/.test(notice) && /CC BY-SA 3\.0/.test(notice) && !notice.includes('-->'), 'NOTICE.txt carries KanjiVG attribution and no -->');
