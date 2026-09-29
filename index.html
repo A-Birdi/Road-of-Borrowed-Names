@@ -2434,13 +2434,14 @@ body.high-contrast .combat-ui .paper, body.high-contrast .combat-ui .rcard { bor
 .cb-foe .fs .fs-mark { position: absolute; left: 4px; top: 5px; bottom: 5px; width: 6px; border: 3px solid transparent; border-right: 0; border-radius: 1px; }
 .cb-foe .fs.on .fs-mark { border-color: var(--ink); }
 /* whom a response (or your companion's move) under the pointer would reach */
-.cb-foe .fs.pv::after, .cb-party .pm.pv .pm-n::before {
-  content: ""; display: inline-block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 7px solid var(--paper);
-  filter: drop-shadow(0 1px 0 var(--ink)) drop-shadow(0 -1px 0 var(--ink));
+/* (absolutely placed: a preview never moves anything) */
+.cb-foe .fs.cb-pv::after, .cb-party .pm.cb-pv::before {
+  content: ""; position: absolute; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 7px solid var(--paper);
+  filter: drop-shadow(0 1px 0 var(--ink)) drop-shadow(0 -1px 0 var(--ink)); pointer-events: none;
 }
-.cb-foe .fs.pv::after { position: absolute; top: -4px; right: 10px; }
-.cb-foe .fs.on.pv::after { border-top-color: var(--ink); filter: drop-shadow(0 1px 0 var(--paper)); }
-.cb-party .pm.pv .pm-n::before { margin-right: 5px; vertical-align: 0.15em; }
+.cb-foe .fs.cb-pv::after { top: -4px; right: 10px; }
+.cb-foe .fs.on.cb-pv::after { border-top-color: var(--ink); filter: drop-shadow(0 1px 0 var(--paper)); }
+.cb-party .pm.cb-pv::before { top: 3px; left: -9px; }
 /* settled */
 .cb-foe .fs.down { cursor: default; background: transparent; border-style: dashed; color: var(--on-cloth-2); }
 /* the telegraphs: the target's in full, the others quieter below it */
@@ -25365,7 +25366,7 @@ RB.combatLogic = (function () {
   // Choose whom the next response (or companion action) acts on. Returns false
   // when that creature cannot be targeted (settled or out of range).
   function target(st, i) {
-    if (!(i >= 0 && i < st.foes.length) || st.foes[i].settled || st.foes[i].knots <= 0) return false;
+    if (!Number.isInteger(i) || i < 0 || i >= st.foes.length || st.foes[i].settled || st.foes[i].knots <= 0) return false;
     st.cur = i;
     return true;
   }
@@ -36144,7 +36145,7 @@ RB.combat = (function () {
       const pv = previewFoes().indexOf(i) >= 0 && !down;
       const states = down ? [] : statusList(i).filter((x) => x.key !== 'silence');
       const label = esc(nameOf(i).en) + (down ? ', settled' : ', ' + f.knots + ' of ' + f.maxKnots + ' knots' + (it ? ', about to ' + it.label + (g ? ': ' + g : '') : '') + (states.length ? ', ' + states.map((x) => x.label).join(', ') : ''));
-      h += '<button type="button" class="fs' + (on ? ' on' : '') + (pv ? ' pv' : '') + (down ? ' down' : '') + '" role="radio" data-foe="' + i + '" aria-checked="' + on + '"' +
+      h += '<button type="button" class="fs' + (on ? ' on' : '') + (pv ? ' cb-pv' : '') + (down ? ' down' : '') + '" role="radio" data-foe="' + i + '" aria-checked="' + on + '"' +
         (down ? ' aria-disabled="true"' : '') + ' tabindex="' + (on ? 0 : -1) + '" aria-label="' + label + '"' + (can ? '' : ' data-locked="1"') + '>' +
         '<span class="fs-mark" aria-hidden="true"></span>' +
         '<span class="fs-n" aria-hidden="true">' + RB.ui.jhtml(nameOf(i).jp) + ' <span class="en">' + esc(nameOf(i).en) + '</span></span>' +
@@ -36190,7 +36191,7 @@ RB.combat = (function () {
     const aimed = [];
     if (enShown()) for (const i of L().standing(st)) { if (group && i !== T) continue; const x = st.foes[i].intent; if (x && AIMED[x.kind]) for (const w of (x.target === 'both' ? ['pc', 'comp'] : [L().withFoe(st, i, () => L().aimOf(st, x))])) if (aimed.indexOf(w) < 0) aimed.push(w); }
     const pvA = previewAllies();
-    const member = (who, name, v, max, ward) => '<div class="pm' + (aimed.indexOf(who) >= 0 ? ' aimed' : '') + (pvA.indexOf(who) >= 0 ? ' pv' : '') + '">' +
+    const member = (who, name, v, max, ward) => '<div class="pm' + (aimed.indexOf(who) >= 0 ? ' aimed' : '') + (pvA.indexOf(who) >= 0 ? ' cb-pv' : '') + '">' +
       '<div class="pm-h"><span class="pm-n">' + esc(name) + '</span>' +
       (aimed.indexOf(who) >= 0 ? '<span class="aimtag">' + I('aim') + 'its aim</span>' : '') +
       (ward ? kw('ward:' + who, 'pm-w', '<span class="pill">' + I('shield') + '<span class="wl">Ward </span>' + ward + '</span>', ' in front of ' + name + ' — what this means') : '') + '</div>' +
@@ -36247,7 +36248,7 @@ RB.combat = (function () {
     if (!group) return '';
     if (r.foes.length > 1) return 'on ' + nWord(r.foes.length) + (r.allies.length ? ' · you both' : '');
     if (r.foes.length === 1) return 'on the ' + shortEn(r.foes[0]);
-    if (r.party) return 'for you both · vs ' + (up === 2 ? 'both' : 'all');
+    if (r.party) return 'guards you both';
     if (r.allies.length > 1) return 'on you both';
     if (r.allies.length === 1) return 'on ' + ally(r.allies[0]);
     return '';
@@ -36255,10 +36256,10 @@ RB.combat = (function () {
   function refreshMarks() {
     if (!ui) return;
     const pf = previewFoes(), pa = previewAllies();
-    for (const b of ui.foe.querySelectorAll('.fs')) b.classList.toggle('pv', pf.indexOf(+b.getAttribute('data-foe')) >= 0 && !b.classList.contains('down'));
+    for (const b of ui.foe.querySelectorAll('.fs')) b.classList.toggle('cb-pv', pf.indexOf(+b.getAttribute('data-foe')) >= 0 && !b.classList.contains('down'));
     const pms = ui.bars.querySelectorAll('.pm');
-    if (pms[0]) pms[0].classList.toggle('pv', pa.indexOf('pc') >= 0);
-    if (pms[1]) pms[1].classList.toggle('pv', pa.indexOf('comp') >= 0);
+    if (pms[0]) pms[0].classList.toggle('cb-pv', pa.indexOf('pc') >= 0);
+    if (pms[1]) pms[1].classList.toggle('cb-pv', pa.indexOf('comp') >= 0);
   }
   function setHover(r) { tg.hover = r; refreshMarks(); }
   let onTarget = null; // set while a choice is open: re-deal the cards for the new target
@@ -36384,6 +36385,7 @@ RB.combat = (function () {
     container.onfocusin = (e) => { const b = at(e); if (b && !b.disabled) setHover(reachFor(b)); };
     container.onfocusout = (e) => { if (!(e.relatedTarget && container.contains(e.relatedTarget))) setHover(null); };
   }
+  function unwirePreview(container) { container.onpointerover = container.onpointerout = container.onfocusin = container.onfocusout = null; }
   function pickCard() {
     return new Promise((resolve) => {
       const s = RB.game.s;
@@ -36420,7 +36422,7 @@ RB.combat = (function () {
       const layer = { el: ui.resp, name: 'cards', parent: ui.dock, scope: ui.root };
       // one choice per exchange: a second click (or a double click) is ignored
       let chosen = false;
-      const done = (v) => { if (chosen) return; chosen = true; onTarget = null; RB.combatHelp.hide(); showCoach(null); RB.ui.popLayer(layer); ui.dock.insertBefore(ui.resp, ui.log); resolve(v); };
+      const done = (v) => { if (chosen) return; chosen = true; onTarget = null; unwirePreview(ui.resp); RB.combatHelp.hide(); showCoach(null); RB.ui.popLayer(layer); ui.dock.insertBefore(ui.resp, ui.log); resolve(v); };
       ui.resp.onclick = (e) => {
         const b = e.target.closest('[data-i]');
         if (b && !b.disabled) { const c = cards[+b.getAttribute('data-i')]; tg.lock = reachOf(c); tg.hover = null; done(c); return; }
@@ -36499,18 +36501,24 @@ RB.combat = (function () {
       const layer = { el: ui.resp, name: 'companion', parent: ui.dock, scope: ui.root };
       let chosen = false;
       const done = (v) => {
-        if (chosen) return; chosen = true; onTarget = null;
+        if (chosen) return; chosen = true; onTarget = null; unwirePreview(ui.resp);
         for (const id of newActs) H.mark(s, 'cact:' + id);
         RB.combatHelp.hide(); showCoach(null); RB.ui.popLayer(layer); ui.dock.insertBefore(ui.resp, ui.log);
         ui.dockH.textContent = 'Respond';
         resolve(v);
       };
+      // presses already on their way when the menu opened (a quick second click on
+      // Continue, a held Enter) do not choose anything
+      const readyAt = performance.now() + 250;
+      const early = () => performance.now() < readyAt;
       ui.resp.onclick = (e) => {
+        if (early()) return;
         if (e.target.closest('[data-back]')) { done('back'); return; }
         const b = e.target.closest('[data-a]');
         if (b && !b.disabled) { const o = opts[+b.getAttribute('data-a')]; tg.hover = null; done({ act: o.def, target: tg.compTarget }); }
       };
       layer.onAction = (a) => {
+        if (early() && (a === 'ok' || a === 'cancel')) return true;
         if (a === 'cancel' && RB.combatHelp.isOpen()) { RB.combatHelp.hide(); return true; }
         const onSlip = document.activeElement && document.activeElement.closest && document.activeElement.closest('.cb-foe .fs');
         if (onSlip && (a === 'left' || a === 'right' || a === 'up' || a === 'down')) { stepTarget(a === 'left' || a === 'up' ? -1 : 1, true); return true; }
@@ -36518,7 +36526,7 @@ RB.combat = (function () {
         return false;
       };
       // Back (Escape, or the player's cancel key) returns to your own choice
-      layer.onCancel = () => done('back');
+      layer.onCancel = () => { if (!early()) done('back'); };
       RB.ui.pushLayer(layer);
       ui.dock.insertBefore(ui.resp, ui.log);
       setTimeout(() => { if (!chosen) { const f = ui.resp.querySelector('.ccard:not([disabled])'); if (f && !ui.coach.querySelector('.cb-coach')) f.focus({ preventScroll: true }); } }, 0);
@@ -36857,7 +36865,7 @@ RB.combat = (function () {
           cact = c;
         }
         L().target(st, T);
-        tg.lock = null;
+        tg.lock = null; tg.hover = null;
         // The rules resolve the exchange (once); the screen then shows it beat by beat:
         // your response, your companion's action, then each creature in turn.
         const hb = st.harmony;
@@ -37673,6 +37681,14 @@ RB.battleSeq = (function () {
     for (const w of ['pc', 'comp']) if (info.delta[w] > 0) Q.push({ at, type: 'num', to: w, text: '+' + info.delta[w], kind: 'heal' });
   }
   const healThen = (info, at) => { const q = []; healNums(q, 0, info); for (const x of q) RB.battleStage.number(x.to, x.text, x.kind, at); };
+  // With reduced motion a number is a still mark until it goes: the sequence that
+  // shows it lasts until it has gone, so nothing changes during the next one.
+  function stillNums(Q, rd) {
+    if (!rd) return 0;
+    let last = -1;
+    for (const c of Q) if (c.type === 'num' || (c.type === 'beat' && c.then)) last = Math.max(last, c.at);
+    return last < 0 ? 0 : last + 940;
+  }
 
   const choreo = {
     // Your response (or your coordinated technique), once accepted and applied by the rules.
@@ -37718,7 +37734,7 @@ RB.battleSeq = (function () {
         bt = at;
       }
       if (!rd) for (const who of plan.actors) Q.push({ at: t + T.recoverAt, type: 'pose', who, pose: 'recover', gesture: who === 'comp' ? TECH_GESTURE[ctx.comp] : plan.gesture, d: T.recover });
-      return { cues: Q, end: Math.max(t + T.end, bt + 200), plan, word };
+      return { cues: Q, end: Math.max(t + T.end, bt + 200, stillNums(Q, rd)), plan, word };
     },
     // Your companion's support action (after your response, before the creatures):
     // their gesture, then each result on its actual target.
@@ -37743,7 +37759,7 @@ RB.battleSeq = (function () {
         Q.push(cue);
         at += f.t === 'cact' ? 180 : 150;
       }
-      return { cues: Q, end: Math.max(820, at + 160) };
+      return { cues: Q, end: Math.max(820, at + 160, stillNums(Q, rd)) };
     },
     // One creature's telegraphed move, as the rules resolved it (or its fizzle).
     enemy(it, fx, ctx) {
@@ -65311,6 +65327,28 @@ RB.atlas = (function () {
       }
       if (mods.has('lowtide') && countAnchors(pat, d.variant, '[')) cache(d, 'relic', 'lowtide');
     }
+    // ---- groups: more creatures to a placement on Standard and Demanding (RB.combatLogic.groupFor;
+    // Relaxed always meets one). Chosen from the room's own creatures with a stream of their
+    // own per room, so the rest of a run's plan (and runs already under way) stay as they were.
+    // A guardian brings one more on Standard and two on Demanding; a roaming creature
+    // sometimes one more on Standard and one or two on Demanding. The expedition's guardian
+    // brings attendants of its own (one, or two on Demanding).
+    const regular = C.atlas.regular;
+    for (const key in rooms) {
+      const d = rooms[key];
+      const gr = U.rng((run.seed ^ U.hashStr('group:' + key)) >>> 0);
+      const from = (FOES_BY[d.pattern] || regular).filter((id) => regular.indexOf(id) >= 0);
+      const two = () => { const a = from[gr.int(from.length)], b = from[gr.int(from.length)]; return [a, b]; };
+      if (d.guard) { const [a, b] = two(); d.guard.group = { normal: [a], hard: [a, b] }; }
+      for (const f of d.foes) { const [a, b] = two(); f.group = { normal: gr() < 0.5 ? [a] : [], hard: gr() < 0.5 ? [a, b] : [a] }; }
+    }
+    {
+      const ATT = { cartographer: ['atlas.stray', 'atlas.moth'], bell: ['atlas.echo', 'atlas.lamp'], gate: ['atlas.milestone', 'atlas.toll'] };
+      const gr = U.rng((run.seed ^ U.hashStr('group:climax')) >>> 0);
+      const pool = (ATT[x.boss] || ATT.cartographer).slice();
+      const a = pool.splice(gr.int(pool.length), 1)[0], b = pool[0];
+      x.attendants = { normal: [a], hard: [a, b] };
+    }
     // The companion's own relic: somewhere on a branch (both sides of fork 1 when possible).
     if (compRelic) {
       const hosts = [A1[0], B1[0]].map((k) => rooms[k]).filter((d) => countAnchors(d.pattern, d.variant, '$'));
@@ -65462,11 +65500,11 @@ RB.atlas = (function () {
     // guardian of a wild room
     if (d.guard) {
       const g = (spots.G || [])[0];
-      def.foes.push({ id: 'guard', enemy: d.guard.enemy, x: g[0], y: g[1], patrol: 0, aggro: false, scene: 'atlas.foe.won' });
+      def.foes.push({ id: 'guard', enemy: d.guard.enemy, x: g[0], y: g[1], patrol: 0, aggro: false, scene: 'atlas.foe.won', group: d.guard.group });
     }
     // optional foes
     const fspots = spots['&'] || [];
-    d.foes.forEach((f, i) => { if (fspots[i]) def.foes.push({ id: 'f' + i, enemy: f.enemy, x: fspots[i][0], y: fspots[i][1], patrol: 1, aggro: true, scene: 'atlas.foe.won' }); });
+    d.foes.forEach((f, i) => { if (fspots[i]) def.foes.push({ id: 'f' + i, enemy: f.enemy, x: fspots[i][0], y: fspots[i][1], patrol: 1, aggro: true, scene: 'atlas.foe.won', group: f.group }); });
     // caches
     const cspots = { spot: (spots.$ || []).slice(), lowtide: (spots['['] || []).slice(), promise: (spots[']'] || []).slice() };
     for (const c of d.caches) {
@@ -65805,11 +65843,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
     if (has(ctx, 'bell') && st.compId) st.harmony = Math.min(st.harmonyMax, 1);
     if (has(ctx, 'trim_ren')) { st.ward.pc = Math.max(st.ward.pc, 2); st.ward.comp = Math.max(st.ward.comp, 2); }
     if (ctx.charm === 'reed') { st.ward.pc += 1; st.harmonyMax = 4; }
-    if (enemy.boss && ctx.run) {
-      const k = Math.max(0, Math.min(ctx.run.bonusKnots || 0, st.knots - 2));
-      if (k) { st.knots -= k; st.maxKnots -= k; }
-    }
-    if (has(ctx, 'tag_nao')) preview(st, enemy);
+    // (on the lead creature — the guardian — even when a group's default target is another)
+    L.withFoe(st, 0, () => {
+      if (enemy.boss && ctx.run) {
+        const k = Math.max(0, Math.min(ctx.run.bonusKnots || 0, st.knots - 2));
+        if (k) { st.knots -= k; st.maxKnots -= k; }
+      }
+      if (has(ctx, 'tag_nao')) preview(st, enemy);
+    });
   };
   function preview(st, enemy) {
     st.nextIntents = [0, 1, 2].map((k) => L.intentDef(enemy, st.pattern[(st.pi + k) % st.pattern.length]));
@@ -65903,7 +65944,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     return E.exchange(st, fx, ctx);
   };
   E.endRound = function (st, enemy, ctx) {
-    if (has(ctx, 'tag_nao') && st.intent) preview(st, enemy);
+    if (has(ctx, 'tag_nao')) for (const i of L.standing(st)) L.withFoe(st, i, (f) => { if (f.intent) preview(st, st.foes.length > 1 ? f.def : enemy); });
   };
 
   // ---- wrappers (installed only during battles that need them) -----------------------------------------------
@@ -66577,7 +66618,8 @@ RB.hooks = RB.hooks || {};
     if ((run.promises || 0) >= 2) { run.bonusKnots += 1; await say('narr', { jp: '{守|まも}られた {約束|やくそく} の {分|ぶん} 、 {結|むす}び{目|め} が {軽|かる}い 。', en: 'The promises you restored weigh on it too: another knot is already loose.' }); }
     if (run.relics.indexOf('map') >= 0) { run.bonusKnots += 1; await say('narr', { jp: '{地図|ちず} の {切|き}れ{端|はし} が 、 {相手|あいて} の {弱|よわ}い {所|ところ} を {示|しめ}して いる 。', en: 'The scrap of map shows exactly where it is weakest: one more knot is loose.' }); }
     RB.ui.dialogue.hide();
-    const out = await RB.game.startBattle(cd.enemy, { inScript: true, noFlee: true });
+    // its attendants come with it on Standard (one) and Demanding (two); Relaxed: the guardian alone
+    const out = await RB.game.startBattle(cd.enemy, { inScript: true, noFlee: true, place: r.room.attendants ? { group: r.room.attendants } : null });
     if (out === 'win' && runOf() === run) {
       s.flags[FLAG('climax')] = true;
       run.done.climax = true;

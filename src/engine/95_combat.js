@@ -226,6 +226,9 @@ RB.combatLogic = (function () {
     const others = (opts.group || []).map((g) => (typeof g === 'string' ? Object.assign({ id: g }, (C.enemies || {})[g] || {}) : g)).slice(0, Math.max(0, d.maxFoes - 1));
     const members = [enemy].concat(others);
     const foes = members.map((m) => makeFoe(m, knotsIn(m, members.length, d)));
+    // a group takes turns: each creature after the lead starts a step further into
+    // its own pattern, so their blows do not all open together
+    foes.forEach((f, i) => { if (i) f.pi = i % f.pattern.length; });
     // resolve in battle follows the setting (Relaxed 14, Standard 12, Demanding 10
     // with the campaign's usual 12); it is restored after every encounter
     const dr = (d.resolve || DIFF.normal.resolve) - DIFF.normal.resolve;
@@ -311,7 +314,7 @@ RB.combatLogic = (function () {
   // Choose whom the next response (or companion action) acts on. Returns false
   // when that creature cannot be targeted (settled or out of range).
   function target(st, i) {
-    if (!(i >= 0 && i < st.foes.length) || st.foes[i].settled || st.foes[i].knots <= 0) return false;
+    if (!Number.isInteger(i) || i < 0 || i >= st.foes.length || st.foes[i].settled || st.foes[i].knots <= 0) return false;
     st.cur = i;
     return true;
   }

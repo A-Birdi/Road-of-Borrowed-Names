@@ -36,10 +36,12 @@ RB.combatSim = (function () {
   const sum = (a, f) => a.reduce((n, x) => n + f(x), 0);
   const usesOf = (st) => sum(Object.keys(st.compUses || {}), (k) => st.compUses[k]);
   // How good a state is for the party (after one exchange, from `st0`).
-  function score(x, st0, known) {
+  // `stall`: exchanges since a knot last came loose — a player who notices they
+  // are getting nowhere accepts a little more risk to make progress.
+  function score(x, st0, known, stall) {
     if (L.allSettled(x)) return 1000 + x.pc + x.comp;
     let v = 0;
-    v += 3 * (sum(st0.foes, (f) => Math.max(0, f.knots)) - sum(x.foes, (f) => Math.max(0, f.knots)));
+    v += (3 + 1.2 * Math.min(8, stall || 0)) * (sum(st0.foes, (f) => Math.max(0, f.knots)) - sum(x.foes, (f) => Math.max(0, f.knots)));
     v += 3 * (x.foes.filter((f) => f.knots <= 0).length - st0.foes.filter((f) => f.knots <= 0).length);
     v -= (st0.pc - x.pc) + (st0.comp - x.comp) * 0.8;
     const danger = (r) => (r <= 0 ? 14 : r <= 3 ? (4 - r) * 2 : 0);
@@ -109,7 +111,7 @@ RB.combatSim = (function () {
         const clear = cards.find((c) => c.kind === 'word' && c.word.tags.some((t) => need.indexOf(t) >= 0)) || cards.find((c) => c.kind === 'word') || cards[0];
         pick = { card: clear, target: i };
       }
-      const act = bestAct(st, s, pick.card, pick.target, known);
+      const act = bestAct(st, s, pick.card, pick.target, known, o.stall);
       return Object.assign(pick, act);
     }
     for (const i of up) {
@@ -122,15 +124,15 @@ RB.combatSim = (function () {
     }
     let best = null;
     for (const tr of tries) {
-      const a = bestAct(st, s, tr.card, tr.target, known);
+      const a = bestAct(st, s, tr.card, tr.target, known, o.stall);
       const x = look(st, tr.card, tr.target, a.act, a.actTarget);
-      const v = score(x, st, known) + (tr.card.kind === 'unravel' ? 0.01 : 0);
+      const v = score(x, st, known, o.stall) + (tr.card.kind === 'unravel' ? 0.01 : 0);
       if (!best || v > best.v + 1e-9) best = Object.assign({ v }, tr, a);
     }
     return best || { card: cardsFor(st, up[0], words, known)[0], target: up[0], act: null };
   }
   // the companion's best action for a queued card (tried on a copy)
-  function bestAct(st, s, card, ti, known) {
+  function bestAct(st, s, card, ti, known, stall) {
     if (!st.compId || st.comp <= 0) return { act: null, actTarget: null };
     const defs = compChoices(st, s, card);
     if (!defs.length) return { act: null, actTarget: null };
@@ -140,7 +142,7 @@ RB.combatSim = (function () {
       const targets = d.aim === 'foe' || d.aim === 'aimed' ? L.standing(st) : [ti];
       for (const at of targets) {
         const x = look(st, card, ti, d.id, at);
-        const v = score(x, st, known);
+        const v = score(x, st, known, stall);
         if (!best || v > best.v + 1e-9) best = { v, act: d.id, actTarget: at };
       }
     }
@@ -162,9 +164,11 @@ RB.combatSim = (function () {
     const words = s.words.map((w) => C.words[w]).filter(Boolean);
     const st = core.init(enemy, s, { group: o.group || [] });
     const out = { win: false, rounds: 0, lost: 0, minPc: st.pc, minComp: st.comp, max: st.max, techs: 0, acts: {}, foes: st.foes.map((f) => f.enemyId), knots: st.foes.map((f) => f.maxKnots) };
-    let n = 0;
+    let n = 0, stall = 0;
+    const knotsLeft = () => sum(st.foes, (f) => Math.max(0, f.knots));
     for (let round = 0; round < (o.maxRounds || 60) && !st.over; round++) {
-      const c = choose(st, words, s, o);
+      const k0 = knotsLeft();
+      const c = choose(st, words, s, Object.assign({}, o, { stall }));
       if (!c || !c.card) break;
       L.target(st, c.target);
       n++;
@@ -180,6 +184,7 @@ RB.combatSim = (function () {
       out.lost += Math.max(0, before - (st.pc + st.comp));
       out.minPc = Math.min(out.minPc, st.pc); out.minComp = Math.min(out.minComp, st.comp);
       core.endRound(st, enemy);
+      stall = knotsLeft() < k0 ? 0 : stall + 1;
       if (st.log.length && st.log[st.log.length - 1].t === 'revive') { st.log.pop(); out.revived = true; }
     }
     out.win = st.over === 'win';

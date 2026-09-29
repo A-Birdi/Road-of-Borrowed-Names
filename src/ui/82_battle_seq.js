@@ -327,6 +327,14 @@ RB.battleSeq = (function () {
     for (const w of ['pc', 'comp']) if (info.delta[w] > 0) Q.push({ at, type: 'num', to: w, text: '+' + info.delta[w], kind: 'heal' });
   }
   const healThen = (info, at) => { const q = []; healNums(q, 0, info); for (const x of q) RB.battleStage.number(x.to, x.text, x.kind, at); };
+  // With reduced motion a number is a still mark until it goes: the sequence that
+  // shows it lasts until it has gone, so nothing changes during the next one.
+  function stillNums(Q, rd) {
+    if (!rd) return 0;
+    let last = -1;
+    for (const c of Q) if (c.type === 'num' || (c.type === 'beat' && c.then)) last = Math.max(last, c.at);
+    return last < 0 ? 0 : last + 940;
+  }
 
   const choreo = {
     // Your response (or your coordinated technique), once accepted and applied by the rules.
@@ -372,7 +380,7 @@ RB.battleSeq = (function () {
         bt = at;
       }
       if (!rd) for (const who of plan.actors) Q.push({ at: t + T.recoverAt, type: 'pose', who, pose: 'recover', gesture: who === 'comp' ? TECH_GESTURE[ctx.comp] : plan.gesture, d: T.recover });
-      return { cues: Q, end: Math.max(t + T.end, bt + 200), plan, word };
+      return { cues: Q, end: Math.max(t + T.end, bt + 200, stillNums(Q, rd)), plan, word };
     },
     // Your companion's support action (after your response, before the creatures):
     // their gesture, then each result on its actual target.
@@ -397,7 +405,7 @@ RB.battleSeq = (function () {
         Q.push(cue);
         at += f.t === 'cact' ? 180 : 150;
       }
-      return { cues: Q, end: Math.max(820, at + 160) };
+      return { cues: Q, end: Math.max(820, at + 160, stillNums(Q, rd)) };
     },
     // One creature's telegraphed move, as the rules resolved it (or its fizzle).
     enemy(it, fx, ctx) {

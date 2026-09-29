@@ -294,7 +294,7 @@ RB.combat = (function () {
       const pv = previewFoes().indexOf(i) >= 0 && !down;
       const states = down ? [] : statusList(i).filter((x) => x.key !== 'silence');
       const label = esc(nameOf(i).en) + (down ? ', settled' : ', ' + f.knots + ' of ' + f.maxKnots + ' knots' + (it ? ', about to ' + it.label + (g ? ': ' + g : '') : '') + (states.length ? ', ' + states.map((x) => x.label).join(', ') : ''));
-      h += '<button type="button" class="fs' + (on ? ' on' : '') + (pv ? ' pv' : '') + (down ? ' down' : '') + '" role="radio" data-foe="' + i + '" aria-checked="' + on + '"' +
+      h += '<button type="button" class="fs' + (on ? ' on' : '') + (pv ? ' cb-pv' : '') + (down ? ' down' : '') + '" role="radio" data-foe="' + i + '" aria-checked="' + on + '"' +
         (down ? ' aria-disabled="true"' : '') + ' tabindex="' + (on ? 0 : -1) + '" aria-label="' + label + '"' + (can ? '' : ' data-locked="1"') + '>' +
         '<span class="fs-mark" aria-hidden="true"></span>' +
         '<span class="fs-n" aria-hidden="true">' + RB.ui.jhtml(nameOf(i).jp) + ' <span class="en">' + esc(nameOf(i).en) + '</span></span>' +
@@ -340,7 +340,7 @@ RB.combat = (function () {
     const aimed = [];
     if (enShown()) for (const i of L().standing(st)) { if (group && i !== T) continue; const x = st.foes[i].intent; if (x && AIMED[x.kind]) for (const w of (x.target === 'both' ? ['pc', 'comp'] : [L().withFoe(st, i, () => L().aimOf(st, x))])) if (aimed.indexOf(w) < 0) aimed.push(w); }
     const pvA = previewAllies();
-    const member = (who, name, v, max, ward) => '<div class="pm' + (aimed.indexOf(who) >= 0 ? ' aimed' : '') + (pvA.indexOf(who) >= 0 ? ' pv' : '') + '">' +
+    const member = (who, name, v, max, ward) => '<div class="pm' + (aimed.indexOf(who) >= 0 ? ' aimed' : '') + (pvA.indexOf(who) >= 0 ? ' cb-pv' : '') + '">' +
       '<div class="pm-h"><span class="pm-n">' + esc(name) + '</span>' +
       (aimed.indexOf(who) >= 0 ? '<span class="aimtag">' + I('aim') + 'its aim</span>' : '') +
       (ward ? kw('ward:' + who, 'pm-w', '<span class="pill">' + I('shield') + '<span class="wl">Ward </span>' + ward + '</span>', ' in front of ' + name + ' — what this means') : '') + '</div>' +
@@ -397,7 +397,7 @@ RB.combat = (function () {
     if (!group) return '';
     if (r.foes.length > 1) return 'on ' + nWord(r.foes.length) + (r.allies.length ? ' · you both' : '');
     if (r.foes.length === 1) return 'on the ' + shortEn(r.foes[0]);
-    if (r.party) return 'for you both · vs ' + (up === 2 ? 'both' : 'all');
+    if (r.party) return 'guards you both';
     if (r.allies.length > 1) return 'on you both';
     if (r.allies.length === 1) return 'on ' + ally(r.allies[0]);
     return '';
@@ -405,10 +405,10 @@ RB.combat = (function () {
   function refreshMarks() {
     if (!ui) return;
     const pf = previewFoes(), pa = previewAllies();
-    for (const b of ui.foe.querySelectorAll('.fs')) b.classList.toggle('pv', pf.indexOf(+b.getAttribute('data-foe')) >= 0 && !b.classList.contains('down'));
+    for (const b of ui.foe.querySelectorAll('.fs')) b.classList.toggle('cb-pv', pf.indexOf(+b.getAttribute('data-foe')) >= 0 && !b.classList.contains('down'));
     const pms = ui.bars.querySelectorAll('.pm');
-    if (pms[0]) pms[0].classList.toggle('pv', pa.indexOf('pc') >= 0);
-    if (pms[1]) pms[1].classList.toggle('pv', pa.indexOf('comp') >= 0);
+    if (pms[0]) pms[0].classList.toggle('cb-pv', pa.indexOf('pc') >= 0);
+    if (pms[1]) pms[1].classList.toggle('cb-pv', pa.indexOf('comp') >= 0);
   }
   function setHover(r) { tg.hover = r; refreshMarks(); }
   let onTarget = null; // set while a choice is open: re-deal the cards for the new target
@@ -534,6 +534,7 @@ RB.combat = (function () {
     container.onfocusin = (e) => { const b = at(e); if (b && !b.disabled) setHover(reachFor(b)); };
     container.onfocusout = (e) => { if (!(e.relatedTarget && container.contains(e.relatedTarget))) setHover(null); };
   }
+  function unwirePreview(container) { container.onpointerover = container.onpointerout = container.onfocusin = container.onfocusout = null; }
   function pickCard() {
     return new Promise((resolve) => {
       const s = RB.game.s;
@@ -570,7 +571,7 @@ RB.combat = (function () {
       const layer = { el: ui.resp, name: 'cards', parent: ui.dock, scope: ui.root };
       // one choice per exchange: a second click (or a double click) is ignored
       let chosen = false;
-      const done = (v) => { if (chosen) return; chosen = true; onTarget = null; RB.combatHelp.hide(); showCoach(null); RB.ui.popLayer(layer); ui.dock.insertBefore(ui.resp, ui.log); resolve(v); };
+      const done = (v) => { if (chosen) return; chosen = true; onTarget = null; unwirePreview(ui.resp); RB.combatHelp.hide(); showCoach(null); RB.ui.popLayer(layer); ui.dock.insertBefore(ui.resp, ui.log); resolve(v); };
       ui.resp.onclick = (e) => {
         const b = e.target.closest('[data-i]');
         if (b && !b.disabled) { const c = cards[+b.getAttribute('data-i')]; tg.lock = reachOf(c); tg.hover = null; done(c); return; }
@@ -649,18 +650,24 @@ RB.combat = (function () {
       const layer = { el: ui.resp, name: 'companion', parent: ui.dock, scope: ui.root };
       let chosen = false;
       const done = (v) => {
-        if (chosen) return; chosen = true; onTarget = null;
+        if (chosen) return; chosen = true; onTarget = null; unwirePreview(ui.resp);
         for (const id of newActs) H.mark(s, 'cact:' + id);
         RB.combatHelp.hide(); showCoach(null); RB.ui.popLayer(layer); ui.dock.insertBefore(ui.resp, ui.log);
         ui.dockH.textContent = 'Respond';
         resolve(v);
       };
+      // presses already on their way when the menu opened (a quick second click on
+      // Continue, a held Enter) do not choose anything
+      const readyAt = performance.now() + 250;
+      const early = () => performance.now() < readyAt;
       ui.resp.onclick = (e) => {
+        if (early()) return;
         if (e.target.closest('[data-back]')) { done('back'); return; }
         const b = e.target.closest('[data-a]');
         if (b && !b.disabled) { const o = opts[+b.getAttribute('data-a')]; tg.hover = null; done({ act: o.def, target: tg.compTarget }); }
       };
       layer.onAction = (a) => {
+        if (early() && (a === 'ok' || a === 'cancel')) return true;
         if (a === 'cancel' && RB.combatHelp.isOpen()) { RB.combatHelp.hide(); return true; }
         const onSlip = document.activeElement && document.activeElement.closest && document.activeElement.closest('.cb-foe .fs');
         if (onSlip && (a === 'left' || a === 'right' || a === 'up' || a === 'down')) { stepTarget(a === 'left' || a === 'up' ? -1 : 1, true); return true; }
@@ -668,7 +675,7 @@ RB.combat = (function () {
         return false;
       };
       // Back (Escape, or the player's cancel key) returns to your own choice
-      layer.onCancel = () => done('back');
+      layer.onCancel = () => { if (!early()) done('back'); };
       RB.ui.pushLayer(layer);
       ui.dock.insertBefore(ui.resp, ui.log);
       setTimeout(() => { if (!chosen) { const f = ui.resp.querySelector('.ccard:not([disabled])'); if (f && !ui.coach.querySelector('.cb-coach')) f.focus({ preventScroll: true }); } }, 0);
@@ -1007,7 +1014,7 @@ RB.combat = (function () {
           cact = c;
         }
         L().target(st, T);
-        tg.lock = null;
+        tg.lock = null; tg.hover = null;
         // The rules resolve the exchange (once); the screen then shows it beat by beat:
         // your response, your companion's action, then each creature in turn.
         const hb = st.harmony;

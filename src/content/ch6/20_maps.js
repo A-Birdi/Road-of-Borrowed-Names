@@ -270,7 +270,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'w1', enemy: 'sa.wraith', x: 10, y: 6, patrol: 2, aggro: true, group: { normal: ['sa.moth'], hard: ['sa.moth', 'sa.crane'] } },
       { id: 'w2', enemy: 'sa.wraith', x: 22, y: 15, patrol: 2, aggro: true, group: { normal: ['sa.crane'], hard: ['sa.crane', 'sa.moth'] } },
       { id: 'm1', enemy: 'sa.moth', x: 26, y: 5, patrol: 2, group: { normal: ['sa.moth'], hard: ['sa.moth', 'sa.moth'] } },
-      { id: 'e1', enemy: 'sa.echo', x: 6, y: 15, patrol: 1, aggro: true, group: { normal: ['sa.moth'], hard: ['sa.moth', 'sa.ghost'] } },
+      { id: 'e1', enemy: 'sa.echo', x: 6, y: 15, patrol: 1, aggro: true, group: { normal: ['sa.moth'], hard: ['sa.moth', 'sa.moth'] } },
     ],
     exits: [
       { x: 31, y: 12, w: 1, h: 2, to: 'sa.reading', tx: 1, ty: 10, dir: 'right' },

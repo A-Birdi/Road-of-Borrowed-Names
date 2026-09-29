@@ -217,6 +217,28 @@ RB.atlas = (function () {
       }
       if (mods.has('lowtide') && countAnchors(pat, d.variant, '[')) cache(d, 'relic', 'lowtide');
     }
+    // ---- groups: more creatures to a placement on Standard and Demanding (RB.combatLogic.groupFor;
+    // Relaxed always meets one). Chosen from the room's own creatures with a stream of their
+    // own per room, so the rest of a run's plan (and runs already under way) stay as they were.
+    // A guardian brings one more on Standard and two on Demanding; a roaming creature
+    // sometimes one more on Standard and one or two on Demanding. The expedition's guardian
+    // brings attendants of its own (one, or two on Demanding).
+    const regular = C.atlas.regular;
+    for (const key in rooms) {
+      const d = rooms[key];
+      const gr = U.rng((run.seed ^ U.hashStr('group:' + key)) >>> 0);
+      const from = (FOES_BY[d.pattern] || regular).filter((id) => regular.indexOf(id) >= 0);
+      const two = () => { const a = from[gr.int(from.length)], b = from[gr.int(from.length)]; return [a, b]; };
+      if (d.guard) { const [a, b] = two(); d.guard.group = { normal: [a], hard: [a, b] }; }
+      for (const f of d.foes) { const [a, b] = two(); f.group = { normal: gr() < 0.5 ? [a] : [], hard: gr() < 0.5 ? [a, b] : [a] }; }
+    }
+    {
+      const ATT = { cartographer: ['atlas.stray', 'atlas.moth'], bell: ['atlas.echo', 'atlas.lamp'], gate: ['atlas.milestone', 'atlas.toll'] };
+      const gr = U.rng((run.seed ^ U.hashStr('group:climax')) >>> 0);
+      const pool = (ATT[x.boss] || ATT.cartographer).slice();
+      const a = pool.splice(gr.int(pool.length), 1)[0], b = pool[0];
+      x.attendants = { normal: [a], hard: [a, b] };
+    }
     // The companion's own relic: somewhere on a branch (both sides of fork 1 when possible).
     if (compRelic) {
       const hosts = [A1[0], B1[0]].map((k) => rooms[k]).filter((d) => countAnchors(d.pattern, d.variant, '$'));
@@ -368,11 +390,11 @@ RB.atlas = (function () {
     // guardian of a wild room
     if (d.guard) {
       const g = (spots.G || [])[0];
-      def.foes.push({ id: 'guard', enemy: d.guard.enemy, x: g[0], y: g[1], patrol: 0, aggro: false, scene: 'atlas.foe.won' });
+      def.foes.push({ id: 'guard', enemy: d.guard.enemy, x: g[0], y: g[1], patrol: 0, aggro: false, scene: 'atlas.foe.won', group: d.guard.group });
     }
     // optional foes
     const fspots = spots['&'] || [];
-    d.foes.forEach((f, i) => { if (fspots[i]) def.foes.push({ id: 'f' + i, enemy: f.enemy, x: fspots[i][0], y: fspots[i][1], patrol: 1, aggro: true, scene: 'atlas.foe.won' }); });
+    d.foes.forEach((f, i) => { if (fspots[i]) def.foes.push({ id: 'f' + i, enemy: f.enemy, x: fspots[i][0], y: fspots[i][1], patrol: 1, aggro: true, scene: 'atlas.foe.won', group: f.group }); });
     // caches
     const cspots = { spot: (spots.$ || []).slice(), lowtide: (spots['['] || []).slice(), promise: (spots[']'] || []).slice() };
     for (const c of d.caches) {

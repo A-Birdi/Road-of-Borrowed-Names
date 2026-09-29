@@ -49,3 +49,31 @@ export async function page(browser, url, opts = {}) {
   await p.waitForFunction(() => window.__RB_READY__ === true, null, { timeout: 15000 });
   return { p, ctx, errors, requests, logs };
 }
+
+// After a response's step is answered in battle: if your companion's turn
+// opens (the response is queued), choose their action — the one whose data-a
+// is `pick`, or matching `match` (a RegExp source over the card's text), or
+// the first one available — with a real click. Resolves the action's text, or
+// null when there was no companion's turn (no companion, or the fight ended).
+export async function companionTurn(p, o) {
+  o = o || {};
+  const t0 = Date.now();
+  while (Date.now() - t0 < (o.timeout || 4000)) {
+    const s = await p.evaluate(() => ({ c: !!document.querySelector('.ccard'), ph: RB.combat.phase() }));
+    if (s.c) {
+      // (the menu ignores presses in its first moments: a deliberate choice comes after that)
+      await p.waitForTimeout(o.delay != null ? o.delay : 320);
+      const sel = await p.evaluate((o) => {
+        const cs = [...document.querySelectorAll('.ccard:not([disabled])')];
+        const c = o.pick != null ? cs.find((x) => x.getAttribute('data-a') === String(o.pick)) : o.match ? cs.find((x) => new RegExp(o.match, 'i').test(x.textContent.replace(/\s+/g, ' '))) : cs[0];
+        return c ? { a: c.getAttribute('data-a'), text: c.textContent.replace(/\s+/g, ' ').trim() } : null;
+      }, o);
+      if (!sel) throw new Error('no companion action matching ' + JSON.stringify(o));
+      await p.click('.ccard[data-a="' + sel.a + '"]');
+      return sel.text;
+    }
+    if (s.ph !== 'challenge' && s.ph !== 'companion') return null;
+    await p.waitForTimeout(40);
+  }
+  return null;
+}

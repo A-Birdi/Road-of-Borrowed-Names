@@ -9,28 +9,8 @@
 // make the table true are checked below as well.
 import { load } from '../lib/load.mjs';
 
-// word grants, in story order
-const CH1 = ['mamoru', 'iyasu', 'hikari'];   // Tsuru, Mio's bottles, Ren's lanterns: all before the mill opens (rw_mill_open)
-const MILL = [...CH1, 'mizu'];               // rw.m1_gears grants みず; beyond the gears (loft, cellar, the Echo) it is known
-const CH2 = MILL;                            // かぜ (tide) and なわ (sluice) come during the chapter
-const SLUICE = [...CH2, 'nawa'];             // sg.da_raft grants なわ; the far bank, the vault and the gated moth come after
-const CH3 = [...CH2, 'kaze', 'nawa'];
-const UPPER = [...CH3, 'ishi'];              // co.upper: the foes are above the ridge that いし opens (co.upper_wall)
-const CH4 = [...CH3, 'ishi', 'tsuchi', 'koori'];
-const OBS = [...CH4, 'honoo'];               // the Star Stair only opens after ほのお (sb.stair_ice needs it)
-const CH5 = OBS;
-const BELL = [...CH5, 'suzu'];               // すず and Tokuji's boat to the tower come in one scene (lf.tokuji_story)
-const CH6 = [...BELL, 'koe'];
+import { CH2, SLUICE, CH5, CH6, KNOWN_AT } from '../lib/story_words.mjs';
 
-const KNOWN_AT = {
-  'rw.reedling': CH1, 'rw.dustmoth': CH1, 'rw.inkblot': MILL, 'rw.mill_echo': MILL,
-  'sg.crab': CH2, 'sg.crane': CH2, 'sg.blot': CH2, 'sg.fogwisp': CH2, 'sg.letter': CH2,
-  'sg.moth': SLUICE, 'sg.golem': SLUICE, 'sg.tideclerk': SLUICE,
-  'co.moth': UPPER, 'co.soot': UPPER, 'co.golem': CH3, 'co.ember': CH3, 'co.warden': CH3,
-  'sb.fox': OBS, 'sb.wisp': OBS, 'sb.ghost': OBS, 'sb.moth': OBS, 'sb.golem': OBS, 'sb.boss': OBS,
-  'lf.stamp': CH5, 'lf.blot': BELL, 'lf.mote': BELL, 'lf.conduit': BELL, 'lf.wraith': BELL, 'lf.keeper': BELL,
-  'sa.crane': CH6, 'sa.wraith': CH6, 'sa.ghost': CH6, 'sa.moth': CH6, 'sa.echo': CH6, 'sa.hush': CH6,
-};
 // answered by a built-in response (See through, Answer) or nothing to answer
 const BUILT_IN = new Set(['lie', 'plea', 'mirror', 'rest']);
 
@@ -50,6 +30,45 @@ export default async (t) => {
   // the Unwritten Atlas opens after the ending: every word is known there
   for (const id of Object.keys(C.enemies).filter((x) => x.startsWith('atlas.'))) {
     for (const k of kinds(C.enemies[id])) t.ok(answerable(k, CH6), `${id}: ${k} is answerable in the Atlas`);
+  }
+
+  // ---- groups: every creature a placement brings (on Standard or Demanding) can be
+  // answered with what is known where it is met — the lead's point in the story ----
+  const groups = [];
+  for (const [mid, m] of Object.entries(C.maps)) {
+    for (const f of m.foes || []) {
+      if (!f.group) continue;
+      const known = KNOWN_AT[f.enemy];
+      for (const gid of [...(f.group.normal || []), ...(f.group.hard || [])]) {
+        groups.push(mid + ' ' + f.id + ': ' + gid);
+        t.ok(!!C.enemies[gid], mid + ' ' + f.id + ' group: ' + gid + ' exists');
+        if (!C.enemies[gid] || !known) continue;
+        for (const k of kinds(C.enemies[gid])) t.ok(answerable(k, known), `${mid} ${f.id}: its group's ${gid} can use ${L.INTENTS[k].label}, answerable with what is known there (${known.join(', ')})`);
+        // and no group creature is met earlier in the story than its own first encounter
+        t.ok(KNOWN_AT[gid] && KNOWN_AT[gid].every((w) => known.indexOf(w) >= 0), mid + ' ' + f.id + ': ' + gid + ' is not brought before its own point in the story');
+      }
+    }
+  }
+  // groups appear only in the final stretch of the last chapter (and in the Atlas, generated)
+  const where = new Set(groups.map((g) => g.split(' ')[0]));
+  t.eq([...where].sort(), ['sa.conduits', 'sa.stacks'], 'story groups are authored only for the Stacks and the Conduits: ' + [...where].join(', '));
+  // the Atlas generator's groups use the regular Atlas creatures (all answerable after the ending)
+  t.ok(!!(RB.atlas && RB.atlas.plan), 'the Atlas generator is loaded');
+  if (RB.atlas && RB.atlas.plan) {
+    const s0 = RB.state.newCampaign({});
+    for (let seed = 1; seed <= 12; seed++) {
+      const run = RB.atlas.newRun(s0, [], { seed });
+      const P = RB.atlas.plan(run);
+      t.ok(P.rooms.x && P.rooms.x.attendants && P.rooms.x.attendants.normal.length === 1 && P.rooms.x.attendants.hard.length === 2, 'Atlas run ' + seed + ': the guardian brings one attendant on Standard, two on Demanding');
+      for (const d of Object.values(P.rooms)) {
+        for (const g of [d.guard && d.guard.group, ...d.foes.map((f) => f.group), d.attendants].filter(Boolean)) {
+          for (const gid of [...(g.normal || []), ...(g.hard || [])]) {
+            t.ok(C.atlas.regular.indexOf(gid) >= 0, 'Atlas run ' + seed + ' room ' + d.key + ': group creature ' + gid + ' is a regular Atlas creature');
+            t.ok((g.normal || []).length <= 1 && (g.hard || []).length <= 2, 'Atlas run ' + seed + ' room ' + d.key + ': at most one more on Standard and two on Demanding');
+          }
+        }
+      }
+    }
   }
 
   // ---- the gates the table relies on --------------------------------------------------------

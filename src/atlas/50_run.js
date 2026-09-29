@@ -535,7 +535,8 @@ RB.hooks = RB.hooks || {};
     if ((run.promises || 0) >= 2) { run.bonusKnots += 1; await say('narr', { jp: '{守|まも}られた {約束|やくそく} の {分|ぶん} 、 {結|むす}び{目|め} が {軽|かる}い 。', en: 'The promises you restored weigh on it too: another knot is already loose.' }); }
     if (run.relics.indexOf('map') >= 0) { run.bonusKnots += 1; await say('narr', { jp: '{地図|ちず} の {切|き}れ{端|はし} が 、 {相手|あいて} の {弱|よわ}い {所|ところ} を {示|しめ}して いる 。', en: 'The scrap of map shows exactly where it is weakest: one more knot is loose.' }); }
     RB.ui.dialogue.hide();
-    const out = await RB.game.startBattle(cd.enemy, { inScript: true, noFlee: true });
+    // its attendants come with it on Standard (one) and Demanding (two); Relaxed: the guardian alone
+    const out = await RB.game.startBattle(cd.enemy, { inScript: true, noFlee: true, place: r.room.attendants ? { group: r.room.attendants } : null });
     if (out === 'win' && runOf() === run) {
       s.flags[FLAG('climax')] = true;
       run.done.climax = true;

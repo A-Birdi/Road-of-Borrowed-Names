@@ -802,13 +802,14 @@ body.high-contrast .combat-ui .paper, body.high-contrast .combat-ui .rcard { bor
 .cb-foe .fs .fs-mark { position: absolute; left: 4px; top: 5px; bottom: 5px; width: 6px; border: 3px solid transparent; border-right: 0; border-radius: 1px; }
 .cb-foe .fs.on .fs-mark { border-color: var(--ink); }
 /* whom a response (or your companion's move) under the pointer would reach */
-.cb-foe .fs.pv::after, .cb-party .pm.pv .pm-n::before {
-  content: ""; display: inline-block; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 7px solid var(--paper);
-  filter: drop-shadow(0 1px 0 var(--ink)) drop-shadow(0 -1px 0 var(--ink));
+/* (absolutely placed: a preview never moves anything) */
+.cb-foe .fs.cb-pv::after, .cb-party .pm.cb-pv::before {
+  content: ""; position: absolute; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 7px solid var(--paper);
+  filter: drop-shadow(0 1px 0 var(--ink)) drop-shadow(0 -1px 0 var(--ink)); pointer-events: none;
 }
-.cb-foe .fs.pv::after { position: absolute; top: -4px; right: 10px; }
-.cb-foe .fs.on.pv::after { border-top-color: var(--ink); filter: drop-shadow(0 1px 0 var(--paper)); }
-.cb-party .pm.pv .pm-n::before { margin-right: 5px; vertical-align: 0.15em; }
+.cb-foe .fs.cb-pv::after { top: -4px; right: 10px; }
+.cb-foe .fs.on.cb-pv::after { border-top-color: var(--ink); filter: drop-shadow(0 1px 0 var(--paper)); }
+.cb-party .pm.cb-pv::before { top: 3px; left: -9px; }
 /* settled */
 .cb-foe .fs.down { cursor: default; background: transparent; border-style: dashed; color: var(--on-cloth-2); }
 /* the telegraphs: the target's in full, the others quieter below it */

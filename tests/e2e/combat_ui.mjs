@@ -6,7 +6,7 @@
 // place. Real mouse, keyboard and touch input; answers go through the
 // real challenge in multiple-choice mode.
 // Usage: node tests/e2e/combat_ui.mjs [filter]
-import { serve, launch, page } from './lib.mjs';
+import { serve, launch, page, companionTurn } from './lib.mjs';
 
 const only = process.argv[2];
 const { srv, url } = await serve();
@@ -57,6 +57,8 @@ async function respond(p, match, answer) {
   await p.evaluate((a) => [...document.querySelectorAll('.chal .mc .btn')].find((x) => x.textContent.trim() === a).click(), answer);
   await p.waitForSelector('.fbwrap[data-fb=ok] .fb-go');
   await p.click('.fbwrap[data-fb=ok] .fb-go');
+  // with a companion, their turn comes next (the response is queued)
+  await companionTurn(p);
 }
 async function flee(p) {
   await p.click('[data-flee]');
@@ -355,6 +357,7 @@ await test('multiple-choice questions in battle: the right option is not always 
       seen.push(q);
       await p.waitForSelector('.fbwrap[data-fb=ok] .fb-go');
       await p.click('.fbwrap[data-fb=ok] .fb-go');
+      await companionTurn(p);
       for (let k = 0; k < 200; k++) {
         const st = await p.evaluate(() => ({ done: !!window.__result, dlg: RB.ui.dialogue.isOpen(), cards: !!document.querySelector('.rcard[data-i]:not([disabled])') && !document.querySelector('.chal') }));
         if (st.done || st.cards) break;

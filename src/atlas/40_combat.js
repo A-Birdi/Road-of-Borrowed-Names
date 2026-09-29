@@ -82,11 +82,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
     if (has(ctx, 'bell') && st.compId) st.harmony = Math.min(st.harmonyMax, 1);
     if (has(ctx, 'trim_ren')) { st.ward.pc = Math.max(st.ward.pc, 2); st.ward.comp = Math.max(st.ward.comp, 2); }
     if (ctx.charm === 'reed') { st.ward.pc += 1; st.harmonyMax = 4; }
-    if (enemy.boss && ctx.run) {
-      const k = Math.max(0, Math.min(ctx.run.bonusKnots || 0, st.knots - 2));
-      if (k) { st.knots -= k; st.maxKnots -= k; }
-    }
-    if (has(ctx, 'tag_nao')) preview(st, enemy);
+    // (on the lead creature — the guardian — even when a group's default target is another)
+    L.withFoe(st, 0, () => {
+      if (enemy.boss && ctx.run) {
+        const k = Math.max(0, Math.min(ctx.run.bonusKnots || 0, st.knots - 2));
+        if (k) { st.knots -= k; st.maxKnots -= k; }
+      }
+      if (has(ctx, 'tag_nao')) preview(st, enemy);
+    });
   };
   function preview(st, enemy) {
     st.nextIntents = [0, 1, 2].map((k) => L.intentDef(enemy, st.pattern[(st.pi + k) % st.pattern.length]));
@@ -180,7 +183,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     return E.exchange(st, fx, ctx);
   };
   E.endRound = function (st, enemy, ctx) {
-    if (has(ctx, 'tag_nao') && st.intent) preview(st, enemy);
+    if (has(ctx, 'tag_nao')) for (const i of L.standing(st)) L.withFoe(st, i, (f) => { if (f.intent) preview(st, st.foes.length > 1 ? f.def : enemy); });
   };
 
   // ---- wrappers (installed only during battles that need them) -----------------------------------------------
