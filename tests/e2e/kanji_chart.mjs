@@ -149,6 +149,20 @@ const chartState = (p) => p.evaluate(() => {
     focus: document.activeElement && (document.activeElement.id || document.activeElement.getAttribute('data-c') || document.activeElement.getAttribute('data-kc') || document.activeElement.tagName),
   };
 });
+// kanji shown in the chart outside furigana (a text node not inside <ruby>); 々 has no reading of its own
+const bareKanji = (p) => p.evaluate(() => {
+  const root = document.querySelector('.kjc');
+  if (!root) return [];
+  const out = [];
+  const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  for (let n = w.nextNode(); n; n = w.nextNode()) {
+    if (!/[\u4e00-\u9fff]/.test(n.nodeValue) || n.parentElement.closest('ruby, .sr, option, optgroup')) continue;
+    const cs = getComputedStyle(n.parentElement);
+    if (cs.display === 'none' || cs.visibility === 'hidden') continue;
+    out.push(n.nodeValue.trim().slice(0, 30));
+  }
+  return out;
+});
 async function openChart(p) {
   await p.evaluate(() => { const m = document.querySelector('[data-a=more]'); if (m && m.offsetParent && m.getAttribute('aria-expanded') !== 'true') m.click(); });
   await p.click('[data-a=chart]');
@@ -194,6 +208,7 @@ await test('in a battle (Elementary): the 守る response written as 守 + る b
     await p.waitForTimeout(200);
     st = await chartState(p);
     assert(st.results.slice(0, n).includes(want), `battle search "${q}": ${want} in the first ${n}: ${st.results.slice(0, 6).join('')}`);
+    assert(!(await bareKanji(p)).length, `search "${q}": no kanji without furigana: ` + (await bareKanji(p)).join(' | '));
   }
   await p.screenshot({ path: 'tests/e2e/out/kanji_chart_battle_search.png' });
   // keyboard: ArrowDown to the first result, Enter opens it, Escape back
@@ -246,6 +261,7 @@ await test('the chart\'s pages cycle: kana, kanji by theme, kanji by use; met ka
   }
   assert(st.pageName === 'Water and liquids', 'a pad reading kanji opens on the first kanji page: ' + st.pageName);
   assert(!st.rubyless.length, 'every kanji on the page has furigana: ' + st.rubyless.join(''));
+  assert(!(await bareKanji(p)).length, 'no kanji without furigana in the chart: ' + (await bareKanji(p)).join(' | '));
   // next / previous cycle through the pages
   await p.click('[data-kc=next]');
   st = await chartState(p);
@@ -299,6 +315,7 @@ await test('an entry: readings with furigana, meaning, words, numbered stroke or
   assert(/Readings in the game/.test(e.text) && /まも/.test(e.text) && /6 strokes/.test(e.text), 'readings and stroke count: ' + e.text.slice(0, 200));
   assert(e.wordRuby.includes('守|まも') && e.words.some((w) => /to protect/.test(w)), 'words with furigana, 守る "to protect": ' + JSON.stringify(e));
   assert(e.acts.join(',') === 'practise,use', 'actions: ' + e.acts.join(','));
+  assert(!(await bareKanji(p)).length, 'entry: no kanji without furigana: ' + (await bareKanji(p)).join(' | '));
   await p.screenshot({ path: 'tests/e2e/out/kanji_chart_entry.png' });
   // practice
   await p.click('[data-kc=practise]');
@@ -315,6 +332,7 @@ await test('an entry: readings with furigana, meaning, words, numbered stroke or
   await p.click('[data-pp=check]');
   fb = await p.evaluate(() => ({ kind: document.querySelector('.kc-pp-fb').getAttribute('data-fb'), text: document.querySelector('.kc-pp-fb').textContent.replace(/\s+/g, ' ') }));
   assert(fb.kind !== 'ok' && /字/.test(fb.text), 'practice: 字 is not taken for 守: ' + JSON.stringify(fb));
+  assert(!(await bareKanji(p)).length, 'practice feedback: no kanji without furigana: ' + (await bareKanji(p)).join(' | '));
   // 守 with two strokes in the wrong order: an order note (the injected strokes are the reference with 4 and 5 swapped)
   await p.click('[data-pp=clear]');
   await p.evaluate(() => { const ref = RB.recog.reference('守'); const st = ref.strokes.map((s) => s.map((q, i) => ({ x: 0.1 + 0.8 * q.x / ref.box, y: 0.1 + 0.8 * q.y / ref.box, t: i }))); [st[3], st[4]] = [st[4], st[3]]; RB.kanjiChart._lastPractice()._inject(st); });

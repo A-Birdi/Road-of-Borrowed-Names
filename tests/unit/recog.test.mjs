@@ -30,7 +30,8 @@ export default async (t) => {
   t.ok(!sup.some((c) => KANJI.includes(c)), 'no kanji unless enabled');
   const supK = R.supported({ kanji: true });
   const { chars: gameKanji } = await (await import('../../tools/kanjivg/gamekanji.mjs')).gameKanji();
-  t.eq(supK.length, 164 + gameKanji.length, `kanji set adds every kanji the game displays (${gameKanji.length}, all present in KanjiVG)`);
+  const want = new Set([...gameKanji, ...KANJI]);
+  t.eq(supK.length, 164 + want.size, `kanji set adds every kanji the game displays and the first 33 (${want.size}, all present in KanjiVG)`);
   for (const ch of KANJI) t.ok(supK.includes(ch), `kanji supported when enabled: ${ch}`);
   t.ok(supK.includes('守'), 'kanji supported when enabled: 守 (守る, a response every player has)');
   t.eq(JSON.stringify(R.supported()), JSON.stringify(sup), 'supported() defaults to no kanji');

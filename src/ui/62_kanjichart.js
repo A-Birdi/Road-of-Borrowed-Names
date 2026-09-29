@@ -72,8 +72,12 @@ RB.kanjiChart = (function () {
     const s = RB.game && RB.game.s;
     const met = KI().met(s);
     const pages = buildPages(opts, met);
-    let pi = Math.max(0, pages.findIndex((p) => p.id === (opts.start || lastPage)));
-    if (opts.start == null && !lastPage) pi = Math.max(0, pages.findIndex((p) => (opts.kanjiOn || !pick ? p.kanji : !p.kanji)));
+    // where it opens: the page asked for, else where it was left; a pad that
+    // reads kana only opens on its kana, anything else on a kanji page
+    let pi = pages.findIndex((p) => p.id === (opts.start || lastPage));
+    const kanaFirst = pick && !opts.kanjiOn;
+    if (pi < 0 || (kanaFirst && !opts.start && pages[pi].kanji)) pi = pages.findIndex((p) => (kanaFirst ? !p.kanji : p.kanji));
+    if (pi < 0) pi = 0;
     const lay = { name: 'chart' };
     let view = 'list'; // 'list' | 'entry' | 'practice'
     let entryCh = null, stopDemo = () => {}, practice = null, query = '', listScroll = 0;
@@ -190,8 +194,8 @@ RB.kanjiChart = (function () {
         const hidden = unmet && e.words.length && !words.length;
         info = (ch === '々' ? '<p>The repeat mark: it repeats the kanji before it, as in ' + wordHtml('人々', 'ひとびと') + ' and ' + wordHtml('時々', 'ときどき') + '.</p>' : '') +
           (e.readings.length ? '<p><span class="kc-lab">Readings in the game</span> <span lang="ja" class="kc-rds">' + esc(e.readings.join('・')) + '</span> <span class="muted small">(' + esc(e.readings.map((r) => RB.kana.romaji(r)).join(', ')) + ')</span></p>' : '') +
-          (e.meaning ? '<p><span class="kc-lab">Meaning</span> ' + esc(e.meaning) + '</p>' : '') +
-          (words.length ? '<p class="kc-lab">' + (e.meaning ? 'In words' : 'Meaning, through its words') + '</p><ul class="kc-words">' + words.map((w) => '<li><span class="jline" lang="ja">' + wordHtml(w.w, w.r) + '</span> <span class="en">' + RB.learnUi.mixed(firstGloss(w.m)) + (w.fic ? ' <span class="sealmark small">fictional</span>' : '') + '</span></li>').join('') + '</ul>' : '') +
+          (e.own ? '<p><span class="kc-lab">Meaning</span> ' + RB.learnUi.mixed(firstGloss(e.own.m)) + '</p>' : '') +
+          (words.length ? '<p class="kc-lab">' + (e.own ? 'In words' : 'Meaning, through its words') + '</p><ul class="kc-words">' + words.map((w) => '<li><span class="jline" lang="ja">' + wordHtml(w.w, w.r) + '</span> <span class="en">' + RB.learnUi.mixed(firstGloss(w.m)) + (w.fic ? ' <span class="sealmark small">fictional</span>' : '') + '</span></li>').join('') + '</ul>' : '') +
           (!words.length && e.textWord ? '<p class="kc-lab">In the game</p><ul class="kc-words"><li><span class="jline" lang="ja">' + wordHtml(e.textWord.w, e.textWord.r) + '</span>' + (e.textWord.m ? ' <span class="en">' + RB.learnUi.mixed(firstGloss(e.textWord.m)) + '</span>' : '') + '</li></ul>' : '') +
           (hidden ? '<p class="muted small">Used in a name you haven\'t met yet.</p>' : '') +
           '<p class="muted small">' + esc(themeName(e.theme)) + (e.uses.length ? ' · ' + esc(e.uses.map(useName).join(', ')) : '') + '</p>';

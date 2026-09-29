@@ -21,16 +21,20 @@ Source:     KanjiVG, https://kanjivg.tagaini.net
 Copyright:  Copyright (C) 2009/2010/2011 Ulrich Apel and the KanjiVG project.
 Licence:    Creative Commons Attribution-Share Alike 3.0 Unported (CC BY-SA 3.0),
             https://creativecommons.org/licenses/by-sa/3.0/
-Covers:     hiragana and katakana (basic, voiced, semi-voiced, small forms,
-            ヴ and the long-vowel mark ー) and 33 optional kanji
-            (一二三十人口日月山川木水火土石田力大小上下中名手目雨本入出王門心花).
+Covers:     the 164 hiragana and katakana (basic, voiced, semi-voiced, small
+            forms, the letter vu and the long-vowel mark) and 1,548 kanji:
+            every kanji the game's text uses, and the first 33 the pad read,
+            for the handwriting pad, its numbered stroke-order demonstrations
+            and the kanji chart.
 Changes:    The embedded stroke data (RB.recogData; src/recog/10_strokedata.js in
             the source tree) is a derived, adapted form of the KanjiVG SVG
             files: each stroke path was sampled into a point sequence,
             simplified, quantised to integers in KanjiVG's 109x109 box and
-            packed into a compact text encoding. Stroke order and stroke
-            direction are unchanged. This adapted stroke data is distributed
-            under the same licence, CC BY-SA 3.0.
+            packed into a compact text encoding (kanji points as steps from
+            the one before). Stroke order and stroke direction are unchanged.
+            Each kanji's radical, as KanjiVG marks it, is kept alongside (used
+            only to sort kanji into themes in the chart). This adapted data is
+            distributed under the same licence, CC BY-SA 3.0.
 
 -->
 <style>/* ==== src/styles/00_tokens.css ==== */
@@ -2544,7 +2548,7 @@ body.high-contrast .kc-pp { --pad-paper: #ffffff; --pad-ink: #000000; --pad-guid
 </div>
 <noscript>This game needs JavaScript enabled.</noscript>
 <script>var RB = (globalThis.RB = globalThis.RB || {});
-RB.NOTICE = "The Road of Borrowed Names — embedded third-party data notices.\n\nGame code, story, art and music in this file are original to this project.\nThird-party data embedded in this file is listed below with its licence.\n\n------------------------------------------------------------------------\nKanjiVG stroke data (handwriting recognition templates and numbered\nstroke-order demonstrations)\n------------------------------------------------------------------------\nSource:     KanjiVG, https://kanjivg.tagaini.net\n            https://github.com/KanjiVG/kanjivg\n            (commit 422b5538595676da918c288a4230cb5e22a1ee7e)\nCopyright:  Copyright (C) 2009/2010/2011 Ulrich Apel and the KanjiVG project.\nLicence:    Creative Commons Attribution-Share Alike 3.0 Unported (CC BY-SA 3.0),\n            https://creativecommons.org/licenses/by-sa/3.0/\nCovers:     hiragana and katakana (basic, voiced, semi-voiced, small forms,\n            ヴ and the long-vowel mark ー) and 33 optional kanji\n            (一二三十人口日月山川木水火土石田力大小上下中名手目雨本入出王門心花).\nChanges:    The embedded stroke data (RB.recogData; src/recog/10_strokedata.js in\n            the source tree) is a derived, adapted form of the KanjiVG SVG\n            files: each stroke path was sampled into a point sequence,\n            simplified, quantised to integers in KanjiVG's 109x109 box and\n            packed into a compact text encoding. Stroke order and stroke\n            direction are unchanged. This adapted stroke data is distributed\n            under the same licence, CC BY-SA 3.0.\n";
+RB.NOTICE = "The Road of Borrowed Names — embedded third-party data notices.\n\nGame code, story, art and music in this file are original to this project.\nThird-party data embedded in this file is listed below with its licence.\n\n------------------------------------------------------------------------\nKanjiVG stroke data (handwriting recognition templates and numbered\nstroke-order demonstrations)\n------------------------------------------------------------------------\nSource:     KanjiVG, https://kanjivg.tagaini.net\n            https://github.com/KanjiVG/kanjivg\n            (commit 422b5538595676da918c288a4230cb5e22a1ee7e)\nCopyright:  Copyright (C) 2009/2010/2011 Ulrich Apel and the KanjiVG project.\nLicence:    Creative Commons Attribution-Share Alike 3.0 Unported (CC BY-SA 3.0),\n            https://creativecommons.org/licenses/by-sa/3.0/\nCovers:     the 164 hiragana and katakana (basic, voiced, semi-voiced, small\n            forms, the letter vu and the long-vowel mark) and 1,548 kanji:\n            every kanji the game's text uses, and the first 33 the pad read,\n            for the handwriting pad, its numbered stroke-order demonstrations\n            and the kanji chart.\nChanges:    The embedded stroke data (RB.recogData; src/recog/10_strokedata.js in\n            the source tree) is a derived, adapted form of the KanjiVG SVG\n            files: each stroke path was sampled into a point sequence,\n            simplified, quantised to integers in KanjiVG's 109x109 box and\n            packed into a compact text encoding (kanji points as steps from\n            the one before). Stroke order and stroke direction are unchanged.\n            Each kanji's radical, as KanjiVG marks it, is kept alongside (used\n            only to sort kanji into themes in the chart). This adapted data is\n            distributed under the same licence, CC BY-SA 3.0.\n";
 
 /* ==== src/core/00_ns.js ==== */
 /* Core namespace and small shared utilities.
@@ -10058,7 +10062,7 @@ RB.recog = (function () {
 
   // Variants (joins, splits), stroke-structured templates, the chamfer cloud,
   // size/position, ink and sharp turns of one template. Kana get this when the
-  // tables are built; a kanji only when it first reaches the chamfer stage.
+  // tables are built; a kanji only when it first reaches the structured match.
   function finishEntry(entry, nraw) {
     {
       const ch = entry.ch, raw = entry.raw, data = RB.recogData;
@@ -10105,7 +10109,7 @@ RB.recog = (function () {
       entry.cy = (bb.y0 + bb.y1) / 2 / data.box; // ... and vertical position
       entry.K = nraw.length;
       entry.variants = variants;
-      entry.cloud = makeCloud(nraw);
+      if (!entry.cloud) entry.cloud = makeCloud(nraw);
       if (entry.ink == null) entry.ink = nraw.reduce((acc, s) => acc + polyLen(s), 0);
       if (entry.turns == null) entry.turns = turnsOf(nraw);
       entry.ready = true;
@@ -10114,9 +10118,10 @@ RB.recog = (function () {
 
   // ------------------------------------------------------------ kanji tables
   // Every kanji the game displays (RB.recogData.k, generated from KanjiVG).
-  // Decoded on first use; each template's structured form is built only when
-  // it first reaches the chamfer stage (finishEntry), so a kana-only pad never
-  // pays for them.
+  // Decoded on first use; each template's chamfer cloud is built when it first
+  // reaches the chamfer stage and its structured form only when it first
+  // reaches the structured match (finishEntry), so a kana-only pad never pays
+  // for them and memory stays small.
   let TK = null, KLIST = null;
   function kanjiChars() {
     if (KLIST) return KLIST;
@@ -10168,6 +10173,12 @@ RB.recog = (function () {
       if (TK.done) { warming = false; if (done) done(); } else setTimeout(step, 0);
     };
     setTimeout(step, 0);
+  }
+  // the chamfer cloud alone (the coarse pre-filter's 100 need only this; the
+  // structured templates are built for the few that reach the structured match)
+  function cloudOf(e) {
+    if (!e.cloud) e.cloud = makeCloud(e.nraw);
+    return e.cloud;
   }
   function ready(e) {
     if (!e.ready) finishEntry(e, e.nraw);
@@ -10545,7 +10556,7 @@ RB.recog = (function () {
   function bestKanji(inp, t, ctx, limit) {
     const pool = [];
     for (const { e, sc } of kanjiShortlist(inp, P.hintKeep)) {
-      const cd = cloudDist(inp.cloud, ready(e).cloud);
+      const cd = cloudDist(inp.cloud, cloudOf(e));
       if (P.cloudW * cd <= limit + 0.02) pool.push({ e, cd, sc });
     }
     if (!pool.length) return null;
@@ -10613,7 +10624,7 @@ RB.recog = (function () {
     pool.sort((a, b) => a.cd - b.cd);
     const short = pool.slice(0, P.shortlist);
     if (kanjiOn) {
-      const kpool = kanjiShortlist(inp, P.coarseKeep).map(({ e, sc }) => ({ e, sc, cd: cloudDist(inp.cloud, ready(e).cloud) }));
+      const kpool = kanjiShortlist(inp, P.coarseKeep).map(({ e, sc }) => ({ e, sc, cd: cloudDist(inp.cloud, cloudOf(e)) }));
       kpool.sort((a, b) => (a.cd + P.coarseBlend * a.sc) - (b.cd + P.coarseBlend * b.sc));
       for (const k of kpool.slice(0, P.kanjiShortlist)) short.push({ e: k.e, cd: k.cd });
     }
@@ -32491,8 +32502,12 @@ RB.kanjiChart = (function () {
     const s = RB.game && RB.game.s;
     const met = KI().met(s);
     const pages = buildPages(opts, met);
-    let pi = Math.max(0, pages.findIndex((p) => p.id === (opts.start || lastPage)));
-    if (opts.start == null && !lastPage) pi = Math.max(0, pages.findIndex((p) => (opts.kanjiOn || !pick ? p.kanji : !p.kanji)));
+    // where it opens: the page asked for, else where it was left; a pad that
+    // reads kana only opens on its kana, anything else on a kanji page
+    let pi = pages.findIndex((p) => p.id === (opts.start || lastPage));
+    const kanaFirst = pick && !opts.kanjiOn;
+    if (pi < 0 || (kanaFirst && !opts.start && pages[pi].kanji)) pi = pages.findIndex((p) => (kanaFirst ? !p.kanji : p.kanji));
+    if (pi < 0) pi = 0;
     const lay = { name: 'chart' };
     let view = 'list'; // 'list' | 'entry' | 'practice'
     let entryCh = null, stopDemo = () => {}, practice = null, query = '', listScroll = 0;
@@ -32609,8 +32624,8 @@ RB.kanjiChart = (function () {
         const hidden = unmet && e.words.length && !words.length;
         info = (ch === '々' ? '<p>The repeat mark: it repeats the kanji before it, as in ' + wordHtml('人々', 'ひとびと') + ' and ' + wordHtml('時々', 'ときどき') + '.</p>' : '') +
           (e.readings.length ? '<p><span class="kc-lab">Readings in the game</span> <span lang="ja" class="kc-rds">' + esc(e.readings.join('・')) + '</span> <span class="muted small">(' + esc(e.readings.map((r) => RB.kana.romaji(r)).join(', ')) + ')</span></p>' : '') +
-          (e.meaning ? '<p><span class="kc-lab">Meaning</span> ' + esc(e.meaning) + '</p>' : '') +
-          (words.length ? '<p class="kc-lab">' + (e.meaning ? 'In words' : 'Meaning, through its words') + '</p><ul class="kc-words">' + words.map((w) => '<li><span class="jline" lang="ja">' + wordHtml(w.w, w.r) + '</span> <span class="en">' + RB.learnUi.mixed(firstGloss(w.m)) + (w.fic ? ' <span class="sealmark small">fictional</span>' : '') + '</span></li>').join('') + '</ul>' : '') +
+          (e.own ? '<p><span class="kc-lab">Meaning</span> ' + RB.learnUi.mixed(firstGloss(e.own.m)) + '</p>' : '') +
+          (words.length ? '<p class="kc-lab">' + (e.own ? 'In words' : 'Meaning, through its words') + '</p><ul class="kc-words">' + words.map((w) => '<li><span class="jline" lang="ja">' + wordHtml(w.w, w.r) + '</span> <span class="en">' + RB.learnUi.mixed(firstGloss(w.m)) + (w.fic ? ' <span class="sealmark small">fictional</span>' : '') + '</span></li>').join('') + '</ul>' : '') +
           (!words.length && e.textWord ? '<p class="kc-lab">In the game</p><ul class="kc-words"><li><span class="jline" lang="ja">' + wordHtml(e.textWord.w, e.textWord.r) + '</span>' + (e.textWord.m ? ' <span class="en">' + RB.learnUi.mixed(firstGloss(e.textWord.m)) + '</span>' : '') + '</li></ul>' : '') +
           (hidden ? '<p class="muted small">Used in a name you haven\'t met yet.</p>' : '') +
           '<p class="muted small">' + esc(themeName(e.theme)) + (e.uses.length ? ' · ' + esc(e.uses.map(useName).join(', ')) : '') + '</p>';
