@@ -45,39 +45,43 @@ RB.test = (function () {
     if (step.item) RB.learn.record(step.item, { ok: true, mode: 'choice', assisted: false });
     return { ok: true, firstTry: true, mistakes: 0, assisted: false, mode: 'choice' };
   }
-  // Simulate an Inkweaving encounter with perfect answers.
-  function battle(enemyId) {
+  // Simulate an Inkweaving encounter with perfect answers, through the real
+  // rules (RB.combatLogic, with the Atlas's wrappers when they are installed)
+  // and the player model of RB.combatSim: 'unravel' (the default: unravels the
+  // creature nearest to settling, clears mist or a hush that blocks it, uses
+  // the technique when Harmony is full) or 'smart' (reads every telegraph).
+  // A group (opts.group: the other creatures' ids) is fought creature by
+  // creature like any player would; the companion takes its turn each round.
+  function battle(enemyId, opts) {
+    opts = opts || {};
     const s = RB.game.s;
     const enemy = Object.assign({ id: enemyId }, RB.content.enemies[enemyId] || {});
     if (!RB.content.enemies[enemyId]) { T.problems.push({ where: 'battle ' + enemyId, msg: 'missing enemy' }); return 'win'; }
     const L = RB.combatLogic;
-    const st = L.init(enemy, s, {});
+    const group = (opts.group || []).filter((g) => { if (!RB.content.enemies[g]) { T.problems.push({ where: 'battle ' + enemyId, msg: 'missing enemy in group: ' + g }); return false; } return true; });
+    const st = L.init(enemy, s, { group });
     const words = s.words.map((w) => RB.content.words[w]).filter(Boolean);
-    let rounds = 0;
+    const policy = T.auto.battle === 'smart' ? 'smart' : 'unravel';
+    let rounds = 0, techs = 0;
+    const acts = {};
     while (!st.over && rounds < 120) {
       rounds++;
-      const cards = L.responses(st, words);
-      let card = cards.find((c) => c.kind === 'unravel');
-      if (T.auto.battle === 'smart') {
-        const it = st.intent;
-        const counter = cards.find((c) => c.kind === 'word' && c.word.tags.some((t) => it.counters.indexOf(t) >= 0) && (!c.target || c.target === it.target));
-        if (it.kind === 'plea') card = cards.find((c) => c.kind === 'answer') || card;
-        else if (it.kind === 'lie' || it.kind === 'mirror') card = cards.find((c) => c.kind === 'truth') || card;
-        else if (counter && it.kind !== 'rest') card = counter;
-        if (st.harmony >= st.harmonyMax && cards.find((c) => c.kind === 'tech')) card = cards.find((c) => c.kind === 'tech');
-      }
-      // Unravel is disabled while shrouded: clear it the way the telegraph says (light or wind)
-      if (card.disabled) card = cards.find((c) => c.kind === 'word' && !c.disabled && c.word.tags.some((t) => t === 'light' || t === 'wind')) || cards.find((c) => c.kind === 'word' && !c.disabled) || card;
+      const c = RB.combatSim.choose(st, words, s, { policy });
+      if (!c || !c.card) { T.problems.push({ where: 'battle ' + enemyId, msg: 'no response available' }); break; }
+      L.target(st, c.target);
+      const card = c.card;
       // validate authored answer/truth steps when present
-      if (card.kind === 'answer' && st.intent.answer) solveStep(RB.activities.tier(st.intent.answer) || st.intent.answer, 'battle ' + enemyId + ' answer');
-      if (card.kind === 'truth' && st.intent.truth) solveStep(RB.activities.tier(st.intent.truth) || st.intent.truth, 'battle ' + enemyId + ' truth');
-      const { countered } = L.playerAct(st, card, { ok: true, firstTry: true, mistakes: 0 }, enemy);
-      if (st.knots <= 0) { st.over = 'win'; break; }
-      L.enemyAct(st, countered);
+      if (card.kind === 'answer' && st.intent.answer) solveStep(RB.activities.tier(st.intent.answer) || st.intent.answer, 'battle ' + st.enemyId + ' answer');
+      if (card.kind === 'truth' && st.intent.truth) solveStep(RB.activities.tier(st.intent.truth) || st.intent.truth, 'battle ' + st.enemyId + ' truth');
+      if (card.kind === 'tech') techs++;
+      const P = L.playerAct(st, card, { ok: true, firstTry: true, mistakes: 0 }, enemy);
+      if (c.act) { if (c.actTarget != null) L.target(st, c.actTarget); L.compAct(st, c.act, P); acts[c.act] = (acts[c.act] || 0) + 1; }
+      if (L.allSettled(st)) { st.over = 'win'; break; }
+      L.enemyAct(st, P.answered);
       L.endRound(st, enemy);
     }
-    T.log.push({ t: 'battle', enemy: enemyId, result: st.over, rounds, pc: st.pc, comp: st.comp });
-    if (st.over !== 'win') T.problems.push({ where: 'battle ' + enemyId, msg: 'not won with policy ' + T.auto.battle + ' (' + st.over + ' after ' + rounds + ' rounds)' });
+    T.log.push({ t: 'battle', enemy: enemyId, group: st.foes.slice(1).map((f) => f.enemyId), result: st.over, rounds, pc: st.pc, comp: st.comp, techs, acts });
+    if (st.over !== 'win') T.problems.push({ where: 'battle ' + enemyId + (group.length ? ' +' + group.join('+') : ''), msg: 'not won with policy ' + policy + ' (' + st.over + ' after ' + rounds + ' rounds)' });
     if (st.over === 'win' && enemy.reward) {
       for (const k in enemy.reward.items || {}) RB.state.give(s, k, enemy.reward.items[k]);
       for (const w of enemy.reward.words || []) if (s.words.indexOf(w) < 0) s.words.push(w);
