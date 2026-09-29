@@ -216,3 +216,32 @@ Story hooks needing code: `RB.hooks.name = async (args, ctx) => {…}` then `!ho
 
 Story-state ambience: `alt: [{ if: 'flag', ambient: { dark: 0.5, weather: 'fireflies' }, night: true }]`
 on a map overrides `ambient` (and lights windows when `night`) while the condition holds.
+
+## 10. Quest lines across chapters
+Content that returns to earlier chapters lives in its own directory loaded
+after ch1–ch6 (e.g. `src/content/lq/`) and only *adds* to maps defined
+earlier; it never rewrites an existing scene.
+- **Talk options first:** to give an existing person a new line, prepend
+  guarded options to their `talk` list (the first matching option runs):
+  `n.talk = [{ if: 'quest.lq_fare=1&quest.sg_main>=2', scene: 'lq.fare_tamae' }].concat(n.talk)`.
+  Guard them so they never stand in front of a main-story conversation
+  (e.g. `quest.co_main<8|co_restored`), and make one-off after-lines
+  `…&!seen.<scene>`. When a post-game option would hide someone's `post`
+  line, the new scene can `!call` it first.
+- **One person, one place:** a person with several placements (a stall, a
+  teahouse, an inn) gets mutually exclusive `if` conditions; write them out
+  (conditions have no parentheses: `!a|!b|c`). Moving an existing person for
+  a moment (Yasu waits by the lantern) = an `if` on their usual placement
+  plus a second placement with `char:` and the complementary condition — the
+  world walks the same figure from one to the other.
+- **Late starts:** every line must be reachable from a save already past its
+  first step: re-offer it where the player will pass anyway (a hub
+  `onEnter`, a person in the next town), and let later steps start the quest
+  (`?(!quest.x) !quest x 0`).
+- **Stage fields:** besides `jp`/`en`, a stage may carry `hint: { jp, en }`
+  (one more nudge) and `at: { map, npc }` / `{ map, prop, x, y }` / `{ map, x, y }`
+  (where the next step happens) for the quest guidance.
+- **Companion support flags:** `lq_ally1` and `lq_ally2` are set by the two
+  long lines (docs/STORY.md, "Long roads"); the companion-turn system reads
+  them to unlock support options. Each is set in a scene where the companion
+  says, in their own voice, what they will now do in battle.

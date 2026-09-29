@@ -61643,6 +61643,1085 @@ RB.content.banter.push(
 );
 
 
+/* ==== src/content/lq/00_lex.js ==== */
+/* Lexicon for the long quest lines (Koharuno, the Reedwake fare book,
+ * Chigusa's stall). Format: w|r|pos|lv|meaning|note (see docs/CONTENT.md). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function () {
+  'use strict';
+  RB.lex.add(RB.lex.parseTable(`
+# names and places
+チグサ||name|F|Chigusa (a name)
+カヨ||name|F|Kayo (a name)
+ミツ||name|F|Mitsu (a name)
+ゲンタ||name|F|Genta (a name)
+ハル||name|F|Haru (a name)
+トメ||name|F|Tome (a name)
+ヨシゾウ||name|F|Yoshizō (a name)
+キミ||name|F|Kimi (a name)
+サブ||name|F|Sabu (a name)
+ヨネ||name|F|Yone (a name)
+小春野|こはるの|name|E|Koharuno (a hamlet; fictional)
+小春|こはる|n|I|koharu: an old name for the tenth lunar month (about November); in this story also a persimmon named after Koharuno
+小春日和|こはるびより|n|I|a mild, sunny day in late autumn or early winter|Not a spring word, despite 春.
+野|の|suf|A|field, moor (read の at the end of some place names)
+# the ferry and the fare
+渡し帳|わたしちょう|n|A|ferry book, a ferryman's record of crossings and fares
+渡し賃|わたしちん|n|I|ferry fare
+賃|ちん|n|A|fee, charge (short for 渡し賃 and the like)
+後払い|あとばらい|n|I|paying afterwards, payment later
+前払い|まえばらい|n|I|paying in advance
+小銭|こぜに|n|I|small change, coins
+借用書|しゃくようしょ|n|A|IOU, written acknowledgement of a loan
+質草|しちぐさ|n|A|an article left as a pledge (pawned)
+遅配|ちはい|n|A|late delivery
+人数|にんずう|n|E|number of people
+匙|さじ|n|I|spoon
+はがき||n|E|postcard
+そこら||pn|I|around there; (〜かそこら) or so, or thereabouts
+看病|かんびょう|vs|I|nursing (someone who is ill)
+気長|きなが|adj-na|I|patient, easygoing about time
+余分|よぶん|adj-na|I|extra, spare
+眠気|ねむけ|n|I|sleepiness
+冴える|さえる|v1|A|to be clear, sharp; (目が冴える) to be wide awake
+貯まる|たまる|v5r|I|(money) to be saved up, accumulate
+隙|すき|n|I|an opening, a gap (in someone's guard)
+負う|おう|v5u|A|to bear, suffer (傷を負う: be wounded)
+相棒|あいぼう|n|I|partner, companion (casual)
+今更|いまさら|adv|A|now, after all this time (implies it is too late)
+# Koharuno and persimmons
+木守|きもり|n|A|tree-keeper (here: the person who tended the hamlet's great tree)
+接ぐ|つぐ|v5g|A|to graft (a tree)
+接ぎ木|つぎき|vs|A|grafting (trees)
+大木|たいぼく|n|I|large tree, great tree
+柿渋|かきしぶ|n|A|kakishibu, fermented persimmon tannin used as a dye and waterproofing
+手ぬぐい|てぬぐい|n|I|tenugui, a thin cotton hand towel or cloth
+沢|さわ|n|I|mountain stream, brook
+刃物|はもの|n|I|blade, edged tool
+おば||n|E|aunt
+故郷|こきょう|n|I|home town, birthplace
+背伸び|せのび|vs|I|stretching up (on tiptoe)
+手のひら|てのひら|n|E|palm (of the hand)
+空っぽ|からっぽ|adj-na|I|empty
+こぼれる||v1|I|to spill, overflow
+かじる||v5r|I|to bite into, nibble
+縫う|ぬう|v5u|I|to sew
+生き延びる|いきのびる|v1|I|to survive, live on
+物覚え|ものおぼえ|n|I|memory, ability to remember things
+念のため|ねんのため|exp|I|just to be sure, for the record
+二枚看板|にまいかんばん|n|A|a double bill, two star attractions
+一往復|いちおうふく|n|I|one round trip, there and back once
+出演者|しゅつえんしゃ|n|A|performer, cast member
+一覧|いちらん|n|I|list, overview
+一列|いちれつ|n|I|a row, a line
+四十二|よんじゅうに|n|E|forty-two
+草履|ぞうり|n|I|straw sandal (zōri)
+灰色|はいいろ|n|E|grey
+# notes
+旧暦|きゅうれき|n|A|the old (lunisolar) calendar
+別名|べつめい|n|I|another name, alias
+晩秋|ばんしゅう|n|A|late autumn
+初冬|しょとう|n|A|early winter
+液|えき|n|I|liquid, fluid
+  `), 'lq');
+})();
+
+
+/* ==== src/content/lq/10_data.js ==== */
+/* Two quest lines that span the journey (docs/STORY.md, "Long roads").
+ *   lq_fare — "A Fare Thirty Years Owed": Reedwake → Saltglass → Cinder
+ *             Orchard → the Snowbell road → back to Reedwake and Saltglass.
+ *   lq_road — "The Name Nobody Calls": Reedwake → Saltglass → Cinder
+ *             Orchard → back to Reedwake (the side area Koharuno opens) →
+ *             Lanternfall → Koharuno.
+ * This file: new people, the two quests, items, notebook entries, learning
+ * challenges and a few props. Maps, hooks into earlier chapters and the
+ * scenes live in the other files of this directory. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C) {
+  'use strict';
+  const T = (en, jp) => ({ en, jp });
+
+  // ---- people ----------------------------------------------------------------------------
+  // Chigusa: keeps a tea stall at the Snowbell pass. Plain-spoken, dry, kind
+  // under it; brews tea you could stand a spoon in. Thirty years ago she was
+  // the kitchen girl at the Gull ("Sister Dove") who crossed Reedwake's river
+  // in a storm and never came back to pay the fare.
+  C.chars.lq_chigusa = { name: T('Chigusa', 'チグサ'), voice: { pitch: 0.94 },
+    look: { skin: 2, hair: 'wrap', hairColor: 1, wrapCol: '#8a4a3a', cloth: ['#7a5a4a', '#5e4436', '#d8b88a'], shape: 'apron', acc: ['scarf'], scarfCol: '#6a7a5a' },
+    portrait: { eyes: 'narrow', style: 'wrap', wrapCol: '#8a4a3a', collar: 'apron', acc: ['scarf'], scarfCol: '#6a7a5a', mole: true, bg: '#3a2e28' } };
+  // Kayo: a gardener in Lanternfall, forty-two. At twelve she was the
+  // tree-keeper's daughter in Koharuno, sent to her aunt after the flood.
+  C.chars.lq_kayo = { name: T('Kayo', 'カヨ'), voice: { pitch: 1.06 },
+    look: { skin: 1, hair: 'bob', hairColor: 1, cloth: ['#5a6a4a', '#46543a', '#d8a050'], shape: 'dress', acc: ['hat', 'basket'], hatCol: '#c8a860' },
+    portrait: { eyes: 'soft', style: 'bob', acc: ['hat'], hatCol: '#c8a860', blush: true, bg: '#2a3424' } };
+
+  // ---- quests ------------------------------------------------------------------------------
+  // Stage text is the practical next step; `hint` is one extra nudge and `at`
+  // the place or person where that step happens (read by the quest guidance).
+  C.quests.lq_fare = { chapter: 1, title: T('A Fare Thirty Years Owed', '{三十年|さんじゅうねん} の {渡|わた}し{賃|ちん}'),
+    stages: [
+      { jp: 'コウジ の {母|はは} は 、 {払|はら}われない {渡|わた}し{賃|ちん} を {三十年|さんじゅうねん} {待|ま}って いた 。 {向|む}こう{岸|ぎし} の {渡|わた}し{小屋|ごや} で 、 {渡|わた}し{帳|ちょう} を {見|み}よう 。',
+        en: 'Kōji\'s mother waited thirty years for one unpaid fare. Look at her fare book in the ferry house on the far bank.',
+        hint: T('The book is on the shelf at the back of the ferry house, over the bridge.', '{帳面|ちょうめん} は 、 {橋|はし} を {渡|わた}った {所|ところ} の {渡|わた}し{小屋|ごや} の {奥|おく} に ある 。'),
+        at: { map: 'rw.ferry', prop: 'bookpile', x: 6, y: 2 } },
+      { jp: '{払|はら}わなかった {客|きゃく} は 、 {判子|はんこ} を {置|お}いて いった 。 {判子|はんこ} の {字|じ} は 「 かもめ 」 。 {西|にし} の {港町|みなとまち} に 、 {同|おな}じ {名前|なまえ} の {宿|やど} は ない だろう か 。',
+        en: 'The passenger who never paid left a seal behind. It stamps "kamome" — gull. Is there an inn by that name in the harbour town to the west?',
+        hint: T('The inn in Saltglass is called the Gull. Show Tamae the stamp.', '{潮硝子|しおがらす} の {宿|やど} は 「 かもめ{亭|てい} 」 。 タマエ に {判子|はんこ} の {跡|あと} を {見|み}せよう 。'),
+        at: { map: 'sg.inn', npc: 'tamae' } },
+      { jp: 'タマエ の {話|はなし} ： {判子|はんこ} を {借|か}りた の は 「 ハトねえ 」 。 {匙|さじ} が {立|た}つ ほど {濃|こ}い お{茶|ちゃ} を いれる {人|ひと} だった 。 {果樹園|かじゅえん} の {方|ほう} から はがき が {来|き}た 。 {灰実|はいみ} の {里|さと} の {宿|やど} で {聞|き}こう 。',
+        en: 'Tamae remembers "Sister Dove", who borrowed the seal and brewed tea you could stand a spoon in. Years later a card came from the orchard country. Ask at the inn in Cinder Orchard.',
+        hint: T('The inn in Cinder Orchard is Fusa\'s. Innkeepers remember a strong cup of tea.', '{灰実|はいみ} の {里|さと} の {宿|やど} は フサ の {宿|やど} 。 {宿|やど} の {人|ひと} は 、 {濃|こ}い お{茶|ちゃ} を {忘|わす}れない 。'),
+        at: { map: 'co.inn', npc: 'co_fusa' } },
+      { jp: 'フサ は {覚|おぼ}えて いた 。 {名前|なまえ} は チグサ 。 {雪|ゆき} の {道|みち} を {上|のぼ}って 、 {峠|とうげ} で お{茶|ちゃ} の {屋台|やたい} を {開|ひら}いた らしい 。 {雪鈴|ゆきすず} へ の {坂道|さかみち} で {探|さが}そう 。',
+        en: 'Fusa remembers her: Chigusa. She went up the snow road years ago and keeps a tea stall at the pass. Look for her on the road to Snowbell.',
+        hint: T('The stall is on the western half of the Snowbell road, just north of the path.', '{屋台|やたい} は {坂道|さかみち} の {西|にし} の {方|ほう} 、 {道|みち} の すぐ {北|きた} に ある 。'),
+        at: { map: 'sb.road', npc: 'lq_chigusa' } },
+      { jp: 'チグサ は {雪|ゆき} の {道|みち} が {開|ひら}いたら 、 {葦|あし}ノ{瀬|せ} へ {払|はら}い に {行|い}く 。 ハナ の {茶屋|ちゃや} で {会|あ}おう 。',
+        en: 'Chigusa will go down to Reedwake to pay once the road is open again. Meet her at Hana\'s teahouse.',
+        hint: T('The road opens when the light above Snowbell is lit. You can travel to Reedwake from the route chart.', '{雪鈴|ゆきすず} の {上|うえ} の {灯|あか}り が ともれば 、 {道|みち} は {開|ひら}く 。 {葦|あし}ノ{瀬|せ} へ は {地図|ちず} から {行|い}ける 。'),
+        at: { map: 'rw.tea', npc: 'lq_chigusa' } },
+      { jp: '{渡|わた}し{賃|ちん} は {払|はら}われた 。 チグサ は 「 かもめ 」 の {判子|はんこ} を {自分|じぶん} で {返|かえ}し に {行|い}く 。 {潮硝子|しおがらす} の かもめ{亭|てい} で {会|あ}おう 。',
+        en: 'The fare is paid. Chigusa is taking the Gull\'s seal back herself. Meet her at the Gull in Saltglass.',
+        hint: T('The Gull is the big inn on Saltglass\'s main street.', 'かもめ{亭|てい} は 、 {潮硝子|しおがらす} の {大通|おおどお}り の {大|おお}きな {宿|やど} だ 。'),
+        at: { map: 'sg.inn', npc: 'lq_chigusa' } },
+    ],
+    reward: { flags: ['lq_fare_done'] } };
+
+  C.quests.lq_road = { chapter: 1, title: T('The Name Nobody Calls', '{誰|だれ} も {呼|よ}ばない {名前|なまえ}'),
+    stages: [
+      { jp: 'コウジ の {渡|わた}し{小屋|ごや} の {先|さき} に 、 {名前|なまえ} の {消|き}えた {灯|あか}り が ある 。 その {先|さき} の {道|みち} は 、 {歩|ある}く と {元|もと} に {戻|もど}って しまう 。 {桟橋|さんばし} の ヤス に {聞|き}いて みよう 。',
+        en: 'Past Kōji\'s ferry house stands a lantern whose name has gone, and the path beyond turns you back where you started. Ask Old Yasu on the pier — he has known this river longest.',
+        hint: T('Old Yasu fishes from the pier south of the bridge.', 'ヤス は {橋|はし} の {南|みなみ} の {桟橋|さんばし} に いる 。'),
+        at: { map: 'rw.village', npc: 'yasu' } },
+      { jp: 'ヤス は {昔|むかし} 、 {川|かわ} の {向|む}こう の {村|むら} に {住|す}んで いた 。 {大|おお}きな {柿|かき} の {木|き} は {覚|おぼ}えて いる が 、 {村|むら} の {名前|なまえ} が {出|で}て こない 。 {大水|おおみず} の {後|あと} 、 {村|むら} の {人|ひと} は {舟|ふね} で {川|かわ} を {下|くだ}った 。 {潮硝子|しおがらす} の {船乗|ふなの}り に {聞|き}こう 。',
+        en: 'Yasu once lived in the hamlet across the river. He remembers its great persimmon tree, but not its name. After the flood its people left downriver by boat. Ask the boatmen of Saltglass.',
+        hint: T('Tetsu, who runs the Saltglass ferry, has worked boats since his father\'s day.', '{潮硝子|しおがらす} の {渡|わた}し{船|ぶね} の テツ は 、 {父親|ちちおや} の {代|だい} から {船|ふね} に {乗|の}って いる 。'),
+        at: { map: 'sg.harbor', npc: 'tetsu' } },
+      { jp: 'テツ の {父|ちち} は 、 {大水|おおみず} の {後|あと} 、 {村|むら} の {人|ひと} を {運|はこ}んだ 。 {柿|かき} の {枝|えだ} を {持|も}って 、 {果樹園|かじゅえん} へ {行|い}った {家族|かぞく} も いた 。 {灰実|はいみ} の {里|さと} で {柿|かき} を {育|そだ}てる {人|ひと} に {聞|き}こう 。',
+        en: 'Tetsu\'s father carried the hamlet\'s people after the flood; some families went inland to the orchards with cuttings of their persimmon tree. Ask the persimmon growers of Cinder Orchard.',
+        hint: T('Grandma Ume on the terraces knows every persimmon tree by name.', '{段々畑|だんだんばたけ} の ウメ ばあさん は 、 {柿|かき} の {木|き} の こと なら {何|なん} でも {知|し}って いる 。'),
+        at: { map: 'co.terraces', npc: 'co_ume' } },
+      { jp: 'ウメ の いちばん {古|ふる}い {柿|かき} は 「 {小春|こはる} 」 。 {東|ひがし} の {川|かわ} の {向|む}こう の {大木|たいぼく} から {接|つ}いだ もの だ 。 {実|み} が {村|むら} の {名前|なまえ} を {借|か}りて いた の かも しれない 。 {干|ほ}し{柿|がき} を ヤス に {届|とど}けよう 。',
+        en: 'Ume\'s oldest persimmon is called Koharu, grafted long ago from a great tree across a river in the east. Perhaps the fruit borrowed the hamlet\'s name. Take her dried persimmon to Old Yasu.',
+        hint: T('Yasu said he can still taste those persimmons.', 'ヤス は 「 {柿|かき} の {味|あじ} は {今|いま} でも {覚|おぼ}えて いる 」 と {言|い}って いた 。'),
+        at: { map: 'rw.village', npc: 'yasu' } },
+      { jp: 'ヤス が {思|おも}い{出|だ}した 。 {村|むら} の {名前|なまえ} は {小春野|こはるの} 。 {渡|わた}し{小屋|ごや} の {先|さき} の {灯|あか}り に 、 {名前|なまえ} を {書|か}こう 。',
+        en: 'Yasu remembered: the hamlet was Koharuno. Write the name on the blank lantern past the ferry house.',
+        hint: T('Yasu is waiting by the lantern.', 'ヤス は {灯|あか}り の そば で {待|ま}って いる 。'),
+        at: { map: 'rw.village', prop: 'deadlantern', x: 48, y: 17 } },
+      { jp: '{小春野|こはるの} へ の {道|みち} が {戻|もど}った 。 {渡|わた}し{小屋|ごや} の {先|さき} から {東|ひがし} へ {歩|ある}いて 、 {村|むら} の {大|おお}きな {柿|かき} の {木|き} を {見|み}て みよう 。',
+        en: 'The road to Koharuno holds again. Walk east from the ferry house and look at the great persimmon tree in the middle of the hamlet.',
+        hint: T('The tree stands just north of the path, between the two old houses.', '{柿|かき} の {木|き} は 、 {道|みち} の すぐ {北|きた} 、 {古|ふる}い {家|いえ} の {間|あいだ} に ある 。'),
+        at: { map: 'lq.koharu', prop: 'lq_kaki', x: 20, y: 7 } },
+      { jp: '{柿|かき} の {木|き} に 、 「 かよ 」 と いう {子|こ} の {背|せ} の {高|たか}さ が {刻|きざ}んで ある 。 {木守|きもり} の {娘|むすめ} は 、 {大水|おおみず} の {後|あと} 、 {灯落|ひおち} の おば に {預|あず}けられた 。 {灯落|ひおち} で {柿|かき} を {育|そだ}てて いる {人|ひと} を {探|さが}そう 。',
+        en: 'The tree bears height marks for a child called Kayo — the tree-keeper\'s daughter, sent to her aunt in Lanternfall after the flood. Look for someone growing a persimmon in Lanternfall.',
+        hint: T('Try the Garden Quarter. In Lanternfall everyone answers "certainly" — if an answer sounds hollow, come back once the town can say what it means.', '{庭|にわ} の {区画|くかく} を {探|さが}そう 。 {灯落|ひおち} で は {誰|だれ} も が 「 もちろん 」 と {答|こた}える 。 {答|こた}え が {空|から} に {聞|き}こえたら 、 {町|まち} が {本当|ほんとう} の こと を {言|い}える よう に なって から {来|こ}よう 。'),
+        at: { map: 'lf.gardens', npc: 'lq_kayo' } },
+      { jp: 'カヨ は {小春野|こはるの} に {帰|かえ}る 。 {柿|かき} の {木|き} の {下|した} で {会|あ}おう 。',
+        en: 'Kayo is going home to Koharuno. Meet her under the persimmon tree.',
+        hint: T('Koharuno is reached from the path past Kōji\'s ferry house in Reedwake.', '{小春野|こはるの} へ は 、 {葦|あし}ノ{瀬|せ} の {渡|わた}し{小屋|ごや} の {先|さき} の {道|みち} から {行|い}ける 。'),
+        at: { map: 'lq.koharu', npc: 'lq_kayo' } },
+    ],
+    reward: { flags: ['lq_road_done'] } };
+
+  // ---- items ---------------------------------------------------------------------------------
+  const it = (id, d) => (C.items[id] = d);
+  it('lq_stamp', { name: T('Stamped scrap', '{判子|はんこ} の {跡|あと}'), key: true,
+    desc: 'A scrap of paper stamped with the seal left in the Reedwake ferry book: かもめ, "gull".' });
+  it('lq_koharu_fruit', { name: T('Koharu dried persimmon', '{小春|こはる} の {干|ほ}し{柿|がき}'), key: true,
+    desc: 'From Grandma Ume\'s oldest tree in Cinder Orchard. Wrinkled, sugary, and meant for Old Yasu.' });
+  it('lq_kept_cup', { name: T('The kept cup', '{伏|ふ}せて おいた {湯呑|ゆの}み'), slot: 'charm', effect: { resolve: 1 },
+    desc: 'The thick little cup Chigusa kept upside down on her table for thirty years, for the ferrywoman she owed. "Keep it for the next time you owe someone." Charm: in battle you and your companion stand a little steadier (+1 resolve).' });
+  it('lq_kaki_seed', { name: T('Persimmon-seed charm', '{柿|かき} の {種|たね} の お{守|まも}り'), slot: 'charm', effect: { harmonyStart: 1 },
+    desc: 'A seed from Kayo\'s Lanternfall tree — a grandchild of Koharu — in a pouch she sewed from an old sleeve. "Seeds wait. So can we." Charm: encounters begin with a little harmony already built.' });
+  it('lq_tenugui', { name: T('Persimmon-dyed cloth', '{柿渋|かきしぶ} の {手|て}ぬぐい'), slot: 'cosmetic', acc: 'scarf', wear: { scarfCol: '#9a5a32' },
+    desc: 'Found in the tree-keeper\'s chest in Koharuno: a cotton cloth dyed with kakishibu, the brown-orange dye made from unripe persimmons. Worn at the neck as a keepsake; it changes only how you look.' });
+
+  // ---- notebook ---------------------------------------------------------------------------------
+  C.notes.lq_farebook = { title: T('The Reedwake fare book', '{渡|わた}し{帳|ちょう}'),
+    jp: '{葦|あし}ノ{瀬|せ} の {渡|わた}し{舟|ぶね} の {帳面|ちょうめん} 。 {最後|さいご} の {客|きゃく} の {名前|なまえ} は {消|き}えて 、 「 かもめ 」 の {判子|はんこ} だけ が {残|のこ}った 。',
+    en: 'Kōji\'s mother recorded every crossing and every fare. One entry, from a stormy night thirty years ago, was never paid: the passenger\'s name went blank in this year\'s storm, and only the seal they left as a pledge remains. It stamps かもめ (gull).' };
+  C.notes.lq_koharuno = { title: T('Koharuno', '{小春野|こはるの}'), fiction: true,
+    jp: '{葦|あし}ノ{瀬|せ} の {川|かわ} の {向|む}こう に あった {小|ちい}さな {村|むら} 。 {三十年|さんじゅうねん} {前|まえ} の {大水|おおみず} で {人|ひと} が {去|さ}り 、 {名前|なまえ} を {呼|よ}ぶ {人|ひと} が いなく なった 。',
+    en: 'A hamlet of ten houses across Reedwake\'s river, known for one great persimmon tree. After the flood thirty years ago its people scattered, nobody called its name, and the road to it forgot where it led. The name lived on only in a persimmon grown in Cinder Orchard, "Koharu". (The hamlet and the Koharu persimmon are fiction.)' };
+  C.notes.lq_koharubiyori = { title: T('Koharu and koharu-biyori', '{小春|こはる} と {小春日和|こはるびより}'),
+    jp: '{小春|こはる} は {旧暦|きゅうれき} の {十月|じゅうがつ} の {別名|べつめい} 。 {小春日和|こはるびより} は 、 {晩秋|ばんしゅう} から {初冬|しょとう} の 、 {暖|あたた}かく {穏|おだ}やか な {晴|は}れ の {日|ひ} 。',
+    en: '小春 (koharu) is an old name for the tenth month of the lunar calendar, roughly November today, and 小春日和 (koharu-biyori) is a mild, sunny day in late autumn or early winter. Despite the 春 ("spring") in it, it is not about spring — a common trap for learners.' };
+  C.notes.lq_kakishibu = { title: T('Kakishibu', '{柿渋|かきしぶ}'),
+    jp: '{柿渋|かきしぶ} は 、 {渋|しぶ}い {青|あお}い {柿|かき} を しぼって {作|つく}る {液|えき} 。 {布|ぬの} や {紙|かみ} を {染|そ}めたり 、 {水|みず} に {強|つよ}く したり する 。',
+    en: 'Kakishibu is juice pressed from unripe, astringent persimmons and left to ferment. In Japan it has long been used to dye cloth, paper and wood a brown-orange and to make them more water-resistant.' };
+
+  // ---- learning challenges ------------------------------------------------------------------------
+  const X = C.challenges;
+  // Reedwake (read in chapter 1 or later): the fare book and the pledge seal.
+  X['lq.c_seal'] = { title: T('The fare book', '{渡|わた}し{帳|ちょう}'),
+    tiers: {
+      F: [{ kind: 'write', item: 'v:かもめ', prompt: { en: 'The seal is carved back to front, so you press it on a scrap of paper. It prints three kana: ka-mo-me — "kamome", a gull. Write the word in hiragana.' }, answer: 'かもめ', accept: ['かもめ'], mode: 'kana', explain: { jp: 'かもめ', en: 'かもめ (kamome) — a gull, a seagull.' } }],
+      E: [
+        { kind: 'choose', item: 'c:lq_fare_e', ctx: { jp: 'わたしちん 、 かならず はらい に きます 。', en: '' }, prompt: { en: 'The last entry in the book, in a young person\'s shaky hand. What does it promise?' },
+          options: [{ en: 'I will come back to pay the fare, without fail.', ok: true }, { en: 'I have paid the fare in full.', ok: false, why: { en: 'はらいに きます = "will come to pay": nothing has been paid yet.' } }, { en: 'Please pay the fare when you come.', ok: false, why: { en: 'There is no ください; the writer is the one who will come.' } }],
+          explain: { en: 'Verb stem + に + 来る/行く = "come / go (in order) to do…": はらいに きます = "(I) will come to pay". かならず = "without fail".' } },
+        { kind: 'write', item: 'v:かもめ', prompt: { en: 'Press the seal on a scrap of paper. It prints a word: kamome, a gull. Write it in hiragana.' }, answer: 'かもめ', accept: ['かもめ'], mode: 'kana', explain: { jp: 'かもめ', en: 'かもめ — a gull.' } },
+      ],
+      I: [
+        { kind: 'choose', item: 'c:lq_fare_i', ctx: { jp: '{嵐|あらし} の {夜|よる} 、 {川|かわ} {高|たか}し@高い 。 {娘|むすめ} {一人|ひとり} を {渡|わた}す 。 {賃|ちん} は {後払|あとばら}い 。 かわり に {判|はん} を {預|あず}かる 。', en: '' }, prompt: { en: 'Beside the entry, Kōji\'s mother noted what happened, in a ferrywoman\'s shorthand. What does it say?' },
+          options: [{ en: 'Stormy night, river high. Took one girl across. Fare to be paid later; kept a seal in its place.', ok: true }, { en: 'Stormy night, so no crossing. A girl left her seal and waited for morning.', ok: false, why: { en: '渡す = to take someone across: she did cross.' } }, { en: 'A girl paid double because of the storm.', ok: false, why: { en: '後払い = paying afterwards; nothing was paid that night.' } }],
+          explain: { en: '川高し is a clipped, old-fashioned way of writing 川が高い — note-takers drop particles, and 〜し is the classical adjective ending. 後払い = paying later; 預かる = to keep something in trust for someone.' } },
+        { kind: 'write', item: 'v:かもめ', prompt: { en: 'The seal prints a word meaning "gull" (kamome). Write it.' }, answer: 'かもめ', accept: ['かもめ', 'カモメ'], mode: 'reading', explain: { jp: 'かもめ', en: 'かもめ — a gull.' } },
+      ],
+      A: [
+        { kind: 'choose', item: 'g:keigo_kenjo', ctx: { jp: 'この {判|はん} は {私|わたし} の もの で は ございません 。 {必|かなら}ず {受|う}け{出|だ}し に {参|まい}ります ので 、 それ まで お{預|あず}け いたします 。', en: '' }, prompt: { en: 'Squeezed under the entry, in the girl\'s hand. What is she telling the ferrywoman?' },
+          options: [{ en: 'The seal isn\'t hers; she is leaving it in trust and will come back to redeem it.', ok: true }, { en: 'She is giving the seal away because it means nothing to her.', ok: false, why: { en: '受け出す is to redeem something left as a pledge: she means to reclaim it.' } }, { en: 'She is asking the ferrywoman to deliver the seal to its owner.', ok: false, why: { en: 'お預けいたします = "I leave it with you" (humble); there is no request to deliver anything.' } }],
+          explain: { en: '受け出す: to redeem a pledge. 参ります and お預けいたします are humble forms, and ございません the formal negative — very careful language from a frightened girl who wanted to be taken seriously.' } },
+        { kind: 'write', item: 'v:かもめ', prompt: { en: 'The seal prints a word meaning "gull". Write it.' }, answer: 'かもめ', accept: ['かもめ', 'カモメ'], mode: 'reading', explain: { jp: 'かもめ', en: 'かもめ — a gull.' } },
+      ],
+    } };
+
+  // The Snowbell road (chapter 4): the note Chigusa sends ahead to Kōji.
+  X['lq.c_note'] = { title: T('A note to send ahead', '{先|さき} に {出|だ}す {手紙|てがみ}'),
+    tiers: {
+      F: [{ kind: 'order', item: 'c:lq_note_f', prompt: { en: 'Chigusa: "Help me with the first line. I want to say: I\'m sorry I\'m late." Put the words in order.' },
+        tiles: ['おそく', 'なって', 'ごめんなさい'], answer: ['おそく', 'なって', 'ごめんなさい'], orderHint: { en: 'おそく なって = "having become late"; ごめんなさい = "I\'m sorry".' } }],
+      E: [{ kind: 'order', item: 'c:lq_note_e', prompt: { en: 'Chigusa\'s first line: "I am going to Reedwake to pay the fare." Put it in order.' },
+        tiles: ['{葦|あし}ノ{瀬|せ} へ', '{渡|わた}し{賃|ちん} を', '{払|はら}い に', '{行|い}きます'], answer: ['{葦|あし}ノ{瀬|せ} へ', '{渡|わた}し{賃|ちん} を', '{払|はら}い に', '{行|い}きます'],
+        alts: [['{渡|わた}し{賃|ちん} を', '{払|はら}い に', '{葦|あし}ノ{瀬|せ} へ', '{行|い}きます']],
+        orderHint: { en: 'The verb comes last. 払いに 行きます = "go (in order) to pay" — the same pattern as the promise in the fare book.' } }],
+      I: [{ kind: 'choose', item: 'g:register_polite_plain', prompt: { en: 'Chigusa has never met Kōji. Which opening line suits her letter?' },
+        options: [{ jp: '{突然|とつぜん} の お{手紙|てがみ} 、 {失礼|しつれい} いたします 。', ok: true }, { jp: '{元気|げんき} ？ ひさしぶり ！', ok: false, why: { en: 'Casual, and they have never met — there is no "long time" to speak of.' } }, { jp: 'お{金|かね} を {返|かえ}して ください 。', ok: false, why: { en: 'She is the one who owes.' } }],
+        explain: { en: '突然のお手紙失礼いたします ("Please forgive this sudden letter") is a set phrase for writing to someone who isn\'t expecting to hear from you. いたします is the humble form of します.' } }],
+      A: [{ kind: 'choose', item: 'g:causative', ctx: { jp: '{三十年|さんじゅうねん} も お{待|ま}たせ した {上|うえ} に 、 {今更|いまさら} と お{思|おも}い でしょう が 、 せめて お{約束|やくそく} だけ は {果|は}たさせて ください 。', en: '' }, prompt: { en: 'Chigusa\'s draft. What exactly is she asking of Kōji?' },
+        options: [{ en: 'Knowing it is absurdly late, she asks at least to be allowed to keep her promise.', ok: true }, { en: 'She asks him to forgive the debt.', ok: false, why: { en: '果たさせてください = "please let me fulfil (it)": she wants to pay, not to be let off.' } }, { en: 'She says she will come only if he still wants the money.', ok: false, why: { en: 'There is no condition; せめて〜だけは = "at least…".' } }],
+        explain: { en: '〜た上に = on top of having…; 今更 = now, after all this time (it implies "too late"); せめて〜だけは = at least…; 果たさせてください is causative + request: "please let me fulfil".' } }],
+    } };
+
+  // Back in Reedwake (after chapter 3): writing the lost name on the lantern.
+  X['lq.c_koharu'] = { title: T('The lantern past the ferry house', '{渡|わた}し{小屋|ごや} の {先|さき} の {灯|あか}り'),
+    tiers: {
+      F: [{ kind: 'write', item: 'v:小春', prompt: { en: 'Yasu said the name: Koharuno. The の is already on the shade. Write the first part, "koharu", in hiragana.' }, template: { before: '', after: 'の' }, answer: 'こはる', accept: ['こはる', '小春'], mode: 'kana', explain: { jp: '{小春|こはる}{野|の}', en: 'Koharuno = こはる + の.' } }],
+      E: [{ kind: 'write', item: 'v:小春野', prompt: { en: 'Write the hamlet\'s name on the shade: Koharuno.' }, answer: 'こはるの', accept: ['こはるの', '小春野'], mode: 'reading', explain: { jp: '{小春野|こはるの}', en: 'Koharuno — 小春 (koharu) + 野 (field, here read の).' } }],
+      I: [
+        { kind: 'choose', item: 'v:小春', ctx: { jp: '{小春|こはる} の {頃|ころ} 、 {柿|かき} が {甘|あま}く なる 。', en: '' }, prompt: { en: 'Carved on the lantern post, below the blank shade. When do the persimmons turn sweet?' },
+          options: [{ en: 'In the mild days of late autumn and early winter.', ok: true }, { en: 'In early spring.', ok: false, why: { en: '小春 contains 春 ("spring"), but it is an old name for the tenth lunar month, around November.' } }, { en: 'In the rainy season.', ok: false, why: { en: 'The rainy season is 梅雨 (つゆ).' } }],
+          explain: { en: '小春 is an old name for the tenth month of the lunar calendar (roughly November). 小春日和 is a mild, sunny day in late autumn or early winter.' } },
+        { kind: 'write', item: 'v:小春野', prompt: { en: 'Write the hamlet\'s name on the shade: Koharuno (kana or kanji).' }, answer: 'こはるの', accept: ['こはるの', '小春野'], mode: 'reading', explain: { jp: '{小春野|こはるの}', en: 'Koharuno.' } },
+      ],
+      A: [
+        { kind: 'choose', item: 'c:lq_koharu_a', ctx: { jp: '{名|な} は {呼|よ}ばれて こそ {名|な} 。 {呼|よ}ぶ {者|もの} なき {里|さと} は 、 {地図|ちず} より {先|さき} に {人|ひと} の {口|くち} から {消|き}える 。', en: '' }, prompt: { en: 'A line cut into the lantern frame, older than the paper. What does it claim?' },
+          options: [{ en: 'A place with no one left to say its name vanishes from people\'s mouths before it vanishes from maps.', ok: true }, { en: 'Maps outlast spoken names, so a place name should be written down.', ok: false, why: { en: '地図より先に = "sooner than from maps": speech is lost first, and the line is about calling, not writing.' } }, { en: 'Only the people who live in a place may call its name.', ok: false, why: { en: '呼ぶ者なき = "with no one who calls (it)"; nothing restricts who may.' } }],
+          explain: { en: '〜てこそ = only when… (is it truly…); なき is the literary form of ない before a noun (呼ぶ者なき里 = a hamlet with no one to call it); 〜より先に = before….' } },
+        { kind: 'write', item: 'v:小春野', prompt: { en: 'Write the hamlet\'s name on the shade: Koharuno (kana or kanji).' }, answer: 'こはるの', accept: ['こはるの', '小春野'], mode: 'reading', explain: { jp: '{小春野|こはるの}', en: 'Koharuno.' } },
+      ],
+    } };
+})(RB.content);
+
+// ---- props --------------------------------------------------------------------------------------------
+(function () {
+  'use strict';
+  const P = RB.props && RB.props.P;
+  if (!P) return;
+  const px = (c, x, y, w, h, col) => { c.fillStyle = col; c.fillRect(x, y, w, h); };
+  const def = (id, o, draw) => (P[id] = Object.assign({ id, w: 1, h: 1, block: true }, o, { draw }));
+  const blob = (c, cx, cy, r, col) => { c.fillStyle = col; c.beginPath(); c.arc(cx, cy, r, 0, Math.PI * 2); c.fill(); };
+  const shadow = (c, x, y, w) => { c.fillStyle = 'rgba(0,0,0,0.22)'; c.beginPath(); c.ellipse(x + w / 2, y, w / 2 - 1, 3, 0, 0, Math.PI * 2); c.fill(); };
+  // fixed fruit positions (relative to the canopy centre)
+  const FRUIT = [[-11, -6], [-6, 2], [0, -12], [5, -3], [10, 4], [13, -9], [-14, 5], [7, -15], [-3, -7], [16, 0], [-9, -14], [2, 7]];
+
+  // The great persimmon tree of Koharuno (2×2): an old, gnarled trunk with
+  // height marks, a thinning autumn canopy and the fruit nobody picked.
+  def('lq_kaki', { w: 2, h: 2 }, (c, x, y) => {
+    shadow(c, x, y + 30, 30);
+    px(c, x + 12, y + 6, 8, 24, '#4a3a2e');
+    px(c, x + 12, y + 6, 2, 24, '#5e4a3a');
+    px(c, x + 18, y + 10, 2, 20, '#3a2c22');
+    px(c, x + 6, y + 4, 8, 3, '#4a3a2e'); px(c, x + 19, y + 2, 8, 3, '#4a3a2e');
+    for (let i = 0; i < 4; i++) px(c, x + 13, y + 26 - i * 4, 4, 1, '#c8b89a'); // the height marks
+    blob(c, x + 16, y - 6, 17, '#7a4a24');
+    blob(c, x + 9, y - 2, 10, '#96602a');
+    blob(c, x + 24, y - 1, 10, '#96602a');
+    blob(c, x + 16, y - 12, 11, '#b07a34');
+    blob(c, x + 11, y - 10, 5, '#c89040'); blob(c, x + 22, y - 8, 4, '#c89040');
+    for (const [dx, dy] of FRUIT) { px(c, x + 16 + dx, y - 4 + dy, 3, 3, '#e8742a'); px(c, x + 16 + dx, y - 4 + dy, 1, 1, '#f8b060'); }
+  });
+  // A young persimmon grown from seed (Kayo's tree in Lanternfall).
+  def('lq_kaki_young', {}, (c, x, y) => {
+    shadow(c, x, y + 15, 14);
+    px(c, x + 7, y + 4, 2, 11, '#5a4636');
+    blob(c, x + 8, y, 7, '#6a7a3a');
+    blob(c, x + 6, y - 2, 4, '#8a8a42');
+    blob(c, x + 11, y + 1, 3, '#a07a38');
+    for (const [dx, dy] of [[-3, 1], [2, -3], [4, 3]]) { px(c, x + 8 + dx, y + dy, 2, 2, '#e8742a'); }
+  });
+  // The stone of names in Koharuno (2×1): a low slab with carved lines.
+  def('lq_namestone', { w: 2 }, (c, x, y) => {
+    shadow(c, x, y + 15, 30);
+    px(c, x + 3, y - 6, 26, 20, '#7e7e78');
+    px(c, x + 4, y - 5, 24, 18, '#a2a29a');
+    px(c, x + 4, y - 5, 24, 2, '#b8b8b0');
+    for (let i = 0; i < 5; i++) px(c, x + 7 + (i % 2) * 2, y - 1 + i * 3, 16 - (i % 2) * 4, 1, '#62625c');
+    px(c, x + 4, y + 11, 7, 2, '#6a8a4a'); px(c, x + 22, y + 11, 5, 2, '#6a8a4a');
+  });
+  // Chigusa's tea stall (2×1): a short counter under a cloth awning, a kettle
+  // and a row of thick cups (one always upside down).
+  def('lq_teastall', { w: 2 }, (c, x, y, p) => {
+    px(c, x, y + 2, 32, 13, p.wood[0]);
+    px(c, x, y + 2, 32, 3, p.wood[3]);
+    px(c, x + 2, y - 18, 2, 21, p.wood[2]); px(c, x + 28, y - 18, 2, 21, p.wood[2]);
+    for (let i = 0; i < 6; i++) px(c, x - 2 + i * 6, y - 22, 6, 6, i % 2 ? '#e8dcc8' : '#9a4a3a');
+    px(c, x - 2, y - 16, 36, 1, 'rgba(0,0,0,0.25)');
+    px(c, x + 4, y - 3, 7, 5, '#3a3a40'); px(c, x + 10, y - 2, 3, 1, '#3a3a40'); px(c, x + 6, y - 5, 3, 2, '#3a3a40');
+    for (let i = 0; i < 3; i++) px(c, x + 16 + i * 5, y - 1, 4, 3, '#d8cfc0');
+    px(c, x + 16, y - 2, 4, 1, '#8a8278'); // the cup kept upside down
+  });
+})();
+
+
+/* ==== src/content/lq/20_maps.js ==== */
+/* The long quest lines: the side area Koharuno (reached from Reedwake's far
+ * bank once its name is written again), and every hook into earlier
+ * chapters' maps. Each hook adds to a map defined earlier (this directory
+ * loads after ch1–ch6); none rewrites an existing scene.
+ *
+ * People and where the story keeps them (never two places at once):
+ *   Chigusa  sb.road (her stall)   until found & the Snowbell road is open, and again once the quest is done
+ *            rw.tea                found & ch4_done & fare not yet paid
+ *            sg.inn                fare paid & quest not yet done
+ *   Kayo     lf.gardens            until she decides to go home (lq_kayo_going)
+ *            lq.koharu             from then on
+ *   Yasu     rw.village pier       except while he waits by the lantern (lq_road stage 4)
+ */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C, K) {
+  'use strict';
+  const T = (en, jp) => ({ en, jp });
+  const npc = (map, id) => (C.maps[map].npcs || []).find((n) => n.id === id);
+  // put talk options first (the first matching option is the one that runs)
+  const talkFirst = (map, id, opts) => { const n = npc(map, id); if (n) n.talk = opts.concat(Array.isArray(n.talk) ? n.talk : [{ scene: n.talk }]); };
+  const addProps = (map, props) => { C.maps[map].props = (C.maps[map].props || []).concat(props); };
+  const addNpcs = (map, list) => { C.maps[map].npcs = (C.maps[map].npcs || []).concat(list); };
+  const setTiles = (map, cells) => {
+    const rows = C.maps[map].terrain.slice();
+    for (const [x, y, ch] of cells) rows[y] = rows[y].slice(0, x) + ch + rows[y].slice(x + 1);
+    C.maps[map].terrain = rows;
+  };
+
+  // ---- Koharuno ----------------------------------------------------------------------------
+  C.maps['lq.koharu'] = {
+    name: T('Koharuno', '{小春野|こはるの}'), region: 'reedwake', music: 'quiet_road',
+    ambient: { weather: 'leaves', tint: 'rgba(255,190,120,0.05)' },
+    terrain: K.build(36, 24, '.', (k) => {
+      k.ragged('top', 'T', 3, 611).ragged('bottom', 'T', 3, 612).ragged('right', 'T', 3, 613).ragged('left', 'T', 2, 614);
+      // the side stream, with reeds on both banks
+      k.rect(10, 0, 2, 24, '~');
+      k.vline(9, 0, 23, '"').vline(12, 0, 23, '"');
+      // fields gone back to grass, and flowers
+      k.scatter(';', 46, 621, [13, 3, 20, 18], '.');
+      k.scatter(',', 30, 622, [2, 3, 32, 18], '.;');
+      k.scatter('o', 7, 624, [2, 3, 6, 18], '.,;');
+      // wild persimmon saplings to the east, grown from fallen fruit
+      k.scatter('O', 5, 623, [29, 3, 4, 6], '.,;');
+      // the road in from the ferry, and a plank bridge over the stream
+      k.path([[0, 11], [31, 11]], ':', 2);
+      k.hline(9, 12, 11, 'b', 2);
+      k.path([[17, 8], [17, 10]], ':', 1);
+      k.path([[26, 8], [26, 10]], ':', 1);
+      k.path([[26, 13], [26, 17]], ':', 1).path([[26, 17], [28, 17]], ':', 1);
+      // old fence lines by the fields
+      k.hline(14, 19, 20, 'f').hline(22, 25, 20, 'f');
+    }),
+    structs: [
+      // Yasu and Mitsu's house
+      { type: 'house', x: 15, y: 5, w: 5, h: 3, roof: 'thatch', wall: 'wood', door: 2, windows: [0, 4],
+        shut: T('Two names are carved into the doorpost: "Yasu" and "Mitsu". The door has swollen shut.', '{戸口|とぐち} の {柱|はしら} に 、 {名前|なまえ} が {二|ふた}つ {彫|ほ}って ある 。 「 ヤス 」 「 ミツ 」 。 {戸|と} は {膨|ふく}らんで {開|あ}かない 。') },
+      { type: 'house', x: 24, y: 5, w: 5, h: 3, roof: 'thatch', wall: 'wood', door: 2, windows: [0, 4],
+        shut: T('The door has swollen shut. Through a crack you can see only dust, and a single straw sandal.', '{戸|と} は {膨|ふく}らんで {開|あ}かない 。 {隙間|すきま} から 、 ほこり と {草履|ぞうり} が {片方|かたほう} だけ {見|み}える 。') },
+      { type: 'house', x: 15, y: 15, w: 5, h: 3, roof: 'thatch', door: 2, windows: [0, 4],
+        shut: T('A fallen beam blocks the door.', '{倒|たお}れた {梁|はり} が 、 {戸|と} を {塞|ふさ}いで いる 。') },
+      // the tree-keeper's hut
+      { type: 'house', x: 27, y: 14, w: 4, h: 3, roof: 'thatch', wall: 'wood', door: 1, windows: [3], to: 'lq.koharu_hut', spawn: [4, 6] },
+    ],
+    props: [
+      { p: 'lantern', x: 3, y: 10, o: { lit: true }, scene: 'lq.kh_lantern' },
+      { p: 'stone_marker', x: 5, y: 13, scene: 'lq.kh_marker' },
+      { p: 'lq_kaki', x: 20, y: 7, scene: 'lq.kh_tree' },
+      { p: 'lq_namestone', x: 21, y: 14, scene: 'lq.kh_stone' },
+      { p: 'well', x: 23, y: 16, scene: 'lq.kh_well' },
+      { p: 'bench', x: 31, y: 9, scene: 'lq.kh_view' },
+      { p: 'deadtree', x: 7, y: 16 }, { p: 'stump', x: 14, y: 13 }, { p: 'crate', x: 30, y: 17 },
+    ],
+    npcs: [
+      { id: 'lq_kayo', x: 21, y: 9, dir: 'up', if: 'lq_kayo_going', talk: [
+        { if: 'quest.lq_road=done&post', scene: 'lq.kayo_home_post' },
+        { if: 'quest.lq_road=done', scene: 'lq.kayo_home' },
+        { scene: 'lq.road_home' }] },
+    ],
+    exits: [{ x: 0, y: 11, w: 1, h: 2, to: 'rw.village', tx: 48, ty: 18, dir: 'left' }],
+    onEnter: [{ scene: 'lq.kh_arrive', if: '!lq_kh_seen' }],
+    spawn: { default: [2, 11, 'right'], from_reedwake: [2, 11, 'right'] },
+  };
+  C.maps['lq.koharu_hut'] = {
+    name: T('The Tree-Keeper\'s Hut', '{木守|きもり} の {小屋|こや}'), region: 'interior', music: null, noTravel: true,
+    ambient: { dark: 0.25 },
+    terrain: K.room(9, 8, '_', 4),
+    props: [
+      { p: 'exitmat', x: 4, y: 6 },
+      { p: 'table', x: 1, y: 3, scene: 'lq.kh_book' },
+      { p: 'chest', x: 6, y: 2, scene: 'lq.kh_chest', if: '!lq_kh_chest' },
+      { p: 'chest', x: 6, y: 2, o: { open: true }, if: 'lq_kh_chest', text: T('The chest is empty now, apart from the smell of old persimmons.', '{箱|はこ} は もう {空|から} だ 。 {古|ふる}い {柿|かき} の {匂|にお}い だけ が {残|のこ}って いる 。') },
+      { p: 'bottles', x: 7, y: 2, text: T('Rows of empty jars, and a string of persimmons dried to leather long ago.', '{空|から} の {瓶|びん} が {並|なら}んで いる 。 ずっと {昔|むかし} に {干|ほ}された {柿|かき} が 、 {革|かわ} の よう に なって {下|さ}がって いる 。') },
+      { p: 'crate', x: 7, y: 5 }, { p: 'pot', x: 1, y: 5 },
+    ],
+    npcs: [],
+    exits: [{ x: 4, y: 7, to: 'lq.koharu', tx: 28, ty: 17, dir: 'down' }],
+    spawn: { default: [4, 6, 'up'] },
+  };
+  C.banter.push(
+    { comp: 'nao', map: 'lq.koharu', scene: 'lq.b_nao' }, { comp: 'mio', map: 'lq.koharu', scene: 'lq.b_mio' },
+    { comp: 'ren', map: 'lq.koharu', scene: 'lq.b_ren' }, { comp: 'suzu', map: 'lq.koharu', scene: 'lq.b_suzu' });
+
+  // ---- Reedwake: the far bank's lost path, the ferry book, the teahouse, the pier ------------------
+  // a path east from the ferry house through the trees, a blank lantern and
+  // the lower half of a broken waymarker
+  // (grown over: tall grass beyond the first step)
+  setTiles('rw.village', [[46, 18, ':'], [47, 18, ';'], [48, 18, ';'], [49, 18, ';'], [46, 19, ':'], [47, 19, ';'], [48, 19, ';'], [49, 19, ';'], [48, 17, '.'], [48, 20, '.']]);
+  addProps('rw.village', [
+    { p: 'deadlantern', x: 48, y: 17, scene: 'lq.road_lantern', if: '!lq_road_open' },
+    { p: 'lantern', x: 48, y: 17, scene: 'lq.road_lantern_lit', if: 'lq_road_open' },
+    { p: 'stone_marker', x: 48, y: 20, scene: 'lq.road_marker' },
+  ]);
+  C.maps['rw.village'].exits.push({ x: 49, y: 18, w: 1, h: 2, to: 'lq.koharu', sp: 'from_reedwake', dir: 'right', if: 'lq_road_open' });
+  C.maps['rw.village'].triggers.push({ x: 49, y: 18, w: 1, h: 2, scene: 'lq.road_loops', if: '!lq_road_open' });
+  // Old Yasu leaves the pier only to wait by the lantern while the name is written
+  const yasu = npc('rw.village', 'yasu');
+  yasu.if = '!quest.lq_road=4';
+  talkFirst('rw.village', 'yasu', [
+    { if: 'quest.lq_road=0', scene: 'lq.road_yasu1' },
+    { if: 'quest.lq_road=3', scene: 'lq.road_yasu2' },
+    { if: 'quest.lq_road=done&!seen.lq.road_yasu_after', scene: 'lq.road_yasu_after' },
+  ]);
+  addNpcs('rw.village', [{ id: 'yasu_bank', char: 'yasu', x: 47, y: 18, dir: 'up', if: 'quest.lq_road=4', talk: 'lq.road_yasu_bank' }]);
+  // the fare book in Kōji's ferry house
+  addProps('rw.ferry', [{ p: 'bookpile', x: 6, y: 2, scene: 'lq.fare_book' }]);
+  // Kōji at the teahouse; Chigusa comes here to pay
+  talkFirst('rw.tea', 'koji', [
+    { if: 'quest.lq_fare=4&lq_fare_found&ch4_done&!lq_fare_paid', scene: 'lq.fare_pay' },
+    { if: '!quest.lq_fare', scene: 'lq.fare_koji' },
+    { if: 'quest.lq_fare=0', scene: 'lq.fare_koji_wait' },
+    { if: 'quest.lq_fare=done&!seen.lq.fare_koji_after', scene: 'lq.fare_koji_after' },
+  ]);
+  addNpcs('rw.tea', [{ id: 'lq_chigusa', x: 6, y: 4, dir: 'down', if: 'lq_fare_found&ch4_done&!lq_fare_paid', talk: 'lq.fare_pay' }]);
+
+  // ---- Saltglass: Tamae at the Gull, Tetsu at the ferry ---------------------------------------------
+  talkFirst('sg.inn', 'tamae', [
+    { if: 'lq_fare_paid&!quest.lq_fare=done', scene: 'lq.fare_gull' },
+    { if: 'quest.lq_fare=1&quest.sg_main>=2', scene: 'lq.fare_tamae' },
+    { if: 'quest.lq_fare=done&!seen.lq.fare_tamae_after', scene: 'lq.fare_tamae_after' },
+  ]);
+  addNpcs('sg.inn', [{ id: 'lq_chigusa', x: 6, y: 4, dir: 'right', if: 'lq_fare_paid&!quest.lq_fare=done', talk: 'lq.fare_gull' }]);
+  talkFirst('sg.harbor', 'tetsu', [{ if: 'sg_boss_done&quest.lq_road<=1&!lq_road_tetsu', scene: 'lq.road_tetsu' }]);
+
+  // ---- Cinder Orchard: Fusa at the inn, Grandma Ume on the terraces --------------------------------
+  // (never in place of a main-story conversation: Fusa's evening scene and
+  // Ume's part in the chronicle come first)
+  const F = 'quest.lq_fare=2';
+  talkFirst('co.inn', 'co_fusa', [{ if: F + '&quest.co_main<8|' + F + '&co_restored|' + F + '&ch3_done', scene: 'lq.fare_fusa' }]);
+  const U = 'quest.lq_road>=1&quest.lq_road<=2&!lq_road_name';
+  talkFirst('co.terraces', 'co_ume', [{ if: U + '&!co_chronicle_read|' + U + '&co_hist_ume|' + U + '&ch3_done', scene: 'lq.road_ume' }]);
+
+  // ---- The Snowbell road: Chigusa's stall --------------------------------------------------------------
+  addProps('sb.road', [
+    { p: 'lq_teastall', x: 9, y: 10, scene: 'lq.stall' },
+    { p: 'campfire', x: 12, y: 10, if: '!lq_fare_found|!ch4_done|quest.lq_fare=done' },
+    { p: 'bench', x: 12, y: 12 },
+    { p: 'sign', x: 8, y: 11, scene: 'lq.stall_note', if: 'lq_fare_found&ch4_done&!quest.lq_fare=done' },
+  ]);
+  addNpcs('sb.road', [{ id: 'lq_chigusa', x: 11, y: 11, dir: 'down', if: '!lq_fare_found|!ch4_done|quest.lq_fare=done', talk: [
+    { if: 'quest.lq_fare=done&post', scene: 'lq.chigusa_post' },
+    { if: 'quest.lq_fare=done', scene: 'lq.chigusa_after' },
+    { if: 'quest.lq_fare>=2&quest.lq_fare<=3', scene: 'lq.fare_chigusa' },
+    { if: 'quest.lq_fare=4', scene: 'lq.chigusa_wait' },
+    { scene: 'lq.chigusa_idle' }] }]);
+
+  // ---- Lanternfall: Kayo and her tree in the Garden Quarter -----------------------------------------
+  addProps('lf.gardens', [{ p: 'lq_kaki_young', x: 31, y: 12, scene: 'lq.kayo_tree' }]);
+  addNpcs('lf.gardens', [{ id: 'lq_kayo', x: 30, y: 12, dir: 'right', if: '!lq_kayo_going', talk: [
+    { if: 'quest.lq_road>=6&lf_bell_rung', scene: 'lq.road_kayo' },
+    { if: 'quest.lq_road>=6', scene: 'lq.road_kayo_certainly' },
+    { if: 'lf_bell_rung', scene: 'lq.kayo_idle_after' },
+    { scene: 'lq.kayo_idle' }] }]);
+
+  // ---- letters from home: for players who left Reedwake without hearing of
+  // either line (and saves made before these lines existed), the news
+  // catches up with them in the next town they enter ------------------------------------------------
+  const LETTERS = 'ch2_done&!lq_letters&!quest.lq_fare|ch2_done&!lq_letters&!quest.lq_road';
+  for (const m of ['sg.harbor', 'co.village', 'sb.hamlet', 'lf.town', 'sa.camp']) {
+    C.maps[m].onEnter = (C.maps[m].onEnter || []).concat([{ scene: 'lq.letters_home', if: LETTERS }]);
+  }
+})(RB.content, RB.mapkit);
+
+
+/* ==== src/content/lq/30_fare.js ==== */
+/* Line A — "A Fare Thirty Years Owed" (quest lq_fare).
+ * Reedwake (Kōji, the ferry book) → Saltglass (Tamae at the Gull) → Cinder
+ * Orchard (Fusa) → the Snowbell road (Chigusa; lq_ally1) → Reedwake (the
+ * fare is paid) → Saltglass (the seal goes home). See docs/STORY.md. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.script.add(`
+@scene lq.fare_koji
+?(post) !call rw.koji_post
+!faceplayer koji
+?(post) koji: …… そう だ 。 もう {一|ひと}つ 、 {頼|たの}み が ある ん だ 。 || …Oh, right. There's one more thing I wanted to ask.
+?(!post) koji: {字|じ} の {読|よ}める {人|ひと} に 、 {頼|たの}み が ある 。 || I've a favour to ask of someone who can read.
+koji: {渡|わた}し{小屋|ごや} を {片付|かたづ}けてたら 、 おふくろ の {渡|わた}し{帳|ちょう} が {出|で}て きた 。 {誰|だれ} を {渡|わた}して 、 いくら もらった か 、 {全部|ぜんぶ} {書|か}いて ある 。 || I was tidying the ferry house and turned up Mum's fare book. Who she took across, what they paid — it's all written down.
+koji[think]: {一|ひと}つ だけ 、 {払|はら}って もらってない {渡|わた}し{賃|ちん} が ある 。 {三十年|さんじゅうねん} {前|まえ} の 、 {嵐|あらし} の {夜|よる} の {客|きゃく} だ 。 || There's one fare that was never paid. A passenger from a stormy night, thirty years back.
+koji: おふくろ は {死|し}ぬ まで 、 その {客|きゃく} を {待|ま}ってた 。 {金|かね} の ため じゃ ない 。 「 {払|はら}い に {来|く}る って {約束|やくそく} した ん だ 。 どこか で {生|い}きてる って こと さ 」 って な 。 || Mum waited for that passenger till the day she died. Not for the money. "They promised to come and pay," she'd say. "That means they're alive somewhere."
+hana[sad]: {嵐|あらし} の {季節|きせつ} に なる と 、 {母|はは} は {毎年|まいとし} あの {帳面|ちょうめん} を {開|ひら}いて いた わ 。 || Every year when the storms came, Mother would open that book.
+koji: {名前|なまえ} は …… {今年|ことし} の {嵐|あらし} で 、 {帳面|ちょうめん} から {消|き}えちまった@消える 。 {残|のこ}ってる の は 、 {客|きゃく} が {置|お}いてった@置く {判子|はんこ} だけ だ 。 || The name… went out of the book in this year's storm. All that's left is a seal the passenger left behind.
+koji: {帳面|ちょうめん} は {渡|わた}し{小屋|ごや} の {棚|たな} だ 。 {暇|ひま} が あったら 、 {見|み}て やって くれ 。 || The book's on the shelf in the ferry house. If you've a moment, have a look at it for me.
+!quest lq_fare 0
+?(comp=nao) comp: {届|とど}かなかった {約束|やくそく} か 。 …… {三十年|さんじゅうねん} は {長|なが}い な 。 || A promise that never arrived. …Thirty years is a long time.
+?(comp=mio) comp[think]: {待|ま}つ {人|ひと} の {方|ほう} が 、 {待|ま}たせる {人|ひと} より {重|おも}い もの を {持|も}って いる こと が あります 。 || Sometimes the one who waits carries something heavier than the one who keeps them waiting.
+?(comp=ren) comp: {判子|はんこ} は 、 {名前|なまえ} の {代|か}わり に {約束|やくそく} を {支|ささ}える もの です 。 {見|み}て みましょう 。 || A seal stands behind a promise in place of a name. Let's take a look.
+?(comp=suzu) comp: {未払|みばら}い が {一件|いっけん} 。 {帳簿|ちょうぼ} の {話|はなし} なら 、 {私|わたし} の {得意|とくい} {分野|ぶんや} だ よ 。 || One outstanding payment. If it's a matter of accounts, that's my speciality.
+
+@scene lq.fare_koji_wait
+!faceplayer koji
+koji: {帳面|ちょうめん} は {渡|わた}し{小屋|ごや} の {棚|たな} だ 。 {橋|はし} を {渡|わた}って すぐ の {小屋|こや} さ 。 || The book's on the shelf in the ferry house — the hut just over the bridge.
+
+@scene lq.fare_book
+!if quest.lq_fare>=1 -> again
+narr: {古|ふる}い {渡|わた}し{帳|ちょう} 。 {日付|ひづけ} と {人数|にんずう} と 、 もらった {渡|わた}し{賃|ちん} が 、 {細|こま}かい {字|じ} で {並|なら}んで いる 。 || An old fare book. Dates, numbers of passengers and the fares taken, lined up in small handwriting.
+narr: {最後|さいご} の {方|ほう} の {頁|ページ} に 、 {別|べつ} の {字|じ} が ある 。 {若|わか}い {人|ひと} の 、 {震|ふる}えた {字|じ} だ 。 {小|ちい}さな {木|き} の {判子|はんこ} が 、 {頁|ページ} の {間|あいだ} に {挟|はさ}んで ある 。 || Near the end there's a different hand — a young person's, shaky. A small wooden seal is tucked between the pages.
+?(!quest.lq_fare) !quest lq_fare 0
+!challenge lq.c_seal
+!if var._res=0 -> later
+narr: {判子|はんこ} を {紙|かみ} に {押|お}す と 、 「 かもめ 」 と {出|で}た 。 {名前|なまえ} の {所|ところ} は 、 {白|しろ}い まま だ 。 || Pressed onto paper, the seal prints "kamome" — gull. The space for the name stays blank.
+!give lq_stamp
+!note lq_farebook
+!quest lq_fare 1
+?(!comp) narr: かもめ 。 {西|にし} の {港町|みなとまち} で 、 {聞|き}いて みよう か 。 || Kamome. Perhaps someone in the harbour town to the west will know it.
+?(comp=nao) comp[think]: かもめ …… {宿|やど} の {名前|なまえ} か 、 {船|ふね} の {名前|なまえ} か 。 {港|みなと} の {匂|にお}い が する な 。 || Kamome… the name of an inn, or a boat. Smells like a harbour.
+?(comp=mio) comp: {判子|はんこ} を {置|お}いて いく なんて 、 よほど {急|いそ}いで いた の ね 。 || Leaving a seal behind — they must have been desperate.
+?(comp=ren) comp: {港|みなと} の {宿|やど} に は 、 よく {鳥|とり} の {名前|なまえ} が {付|つ}いて います 。 {潮硝子|しおがらす} なら …… 。 || Harbour inns are often named after birds. If it's Saltglass…
+?(comp=suzu) comp: {判子|はんこ} が {借用書|しゃくようしょ} の {代|か}わり か 。 {貸|か}した {方|ほう} は {三十年|さんじゅうねん} {待|ま}った 。 {利子|りし} は …… {言|い}わない で おこう 。 || So the seal stands in for an IOU. The lender waited thirty years. The interest… let's not.
+!end
+:later
+narr: {判子|はんこ} は {帳面|ちょうめん} に {戻|もど}して おいた 。 また {見|み}に {来|こ}よう 。 || You put the seal back in the book. You can look again later.
+!end
+:again
+narr: 「 {渡|わた}し{賃|ちん} 、 {必|かなら}ず {払|はら}い に {来|き}ます 。 」 {判子|はんこ} の {跡|あと} は 「 かもめ 」 。 || "The fare — I will come back to pay it, without fail." The seal's mark: "kamome".
+?(!lq_fare_paid) narr: {名前|なまえ} の {所|ところ} は 、 まだ {白|しろ}い 。 || The space for the name is still blank.
+?(lq_fare_paid) narr: {白|しろ}かった {所|ところ} に 、 {今|いま} は 「 チグサ 」 。 {横|よこ} に {小|ちい}さく 「 {済|す}み 」 。 || Where it was blank, it now says "Chigusa". Beside it, small: "Paid".
+
+@scene lq.fare_tamae
+!faceplayer tamae
+pc: この {判子|はんこ} の {跡|あと} 、 {見覚|みおぼ}え は ありません か 。 || Do you recognise this stamp?
+tamae[surprise]: …… かもめ 。 うち の {判子|はんこ} じゃ ない か ！ {母|かあ}ちゃん が {自分|じぶん} で {彫|ほ}った {字|じ} だ よ 、 これ 。 || …Kamome. That's our seal! That's Mum's lettering — she carved it herself.
+tamae: {三十年|さんじゅうねん} {前|まえ} に なくなった ん だ 。 …… いや 、 なくなった ん じゃ ない 。 {母|かあ}ちゃん が {貸|か}した ん だ 。 || It went missing thirty years ago. …No — it didn't go missing. Mum lent it out.
+tamae[think]: {台所|だいどころ} に {女|おんな} の {子|こ} が いた ん だ よ 。 {十五|じゅうご} か そこら 。 あたし は {七|なな}つ で 、 「 ハトねえ 」 って {呼|よ}んでた 。 {本当|ほんとう} の {名前|なまえ} は …… {聞|き}いた こと も なかった 。 || There was a girl in the kitchen. Fifteen or so. I was seven, and I called her "Sister Dove". Her real name… I never even asked.
+tamae: {嵐|あらし} の {年|とし} 、 {東|ひがし} に いる {母親|ははおや} が {倒|たお}れた って {知|し}らせ が {来|き}て 、 その {夜|よる} の うち に {出|で}て いった 。 {母|かあ}ちゃん は {金|かね} の {代|か}わり に 、 あの {判子|はんこ} を {持|も}たせた 。 「 どこ の {宿|やど} でも 、 これ を {見|み}せりゃ@見せる かもめ{亭|てい} の {者|もの} だ って {分|わ}かる 」 って ね 。 || The storm year, word came that her mother back east had collapsed, and she left that same night. Instead of money, Mum gave her the seal. "Show this at any inn and they'll know you're one of the Gull's," she said.
+tamae[sad]: {帰|かえ}って は こなかった 。 {何年|なんねん} か して 、 {果樹園|かじゅえん} の {方|ほう} から はがき が {一枚|いちまい} {来|き}た 。 {名前|なまえ} は なし 。 ハト の {絵|え} だけ 。 || She never came back. A few years later a single postcard came from the orchard country. No name. Just a drawing of a dove.
+tamae[laugh]: それ と 、 あの {子|こ} の いれる お{茶|ちゃ} ！ {濃|こ}くて 、 {匙|さじ} が {立|た}つ くらい だった 。 {母|かあ}ちゃん が {毎朝|まいあさ} {文句|もんく} を {言|い}ってた よ 。 || And her tea! So strong you could stand a spoon in it. Mum complained every morning.
+tamae: {灰実|はいみ} の {里|さと} に も {宿|やど} が ある だろう 。 {台所|だいどころ} の {好|す}きな {子|こ} だった 。 どこか に {行|い}った なら 、 {宿|やど} だ よ 。 || There's an inn in Cinder Orchard, isn't there? She loved a kitchen. If she went anywhere, it'd be an inn.
+!quest lq_fare 2
+?(comp=nao) comp: {名前|なまえ} の ない はがき か 。 …… {見|み}つけて ほしい けど 、 {頼|たの}めない 。 そういう {時|とき} に {出|だ}す もん だ 。 || A postcard without a name. …You send those when you want to be found but can't bring yourself to ask.
+?(comp=mio) comp: {濃|こ}い お{茶|ちゃ} は 、 {看病|かんびょう} の {夜|よる} に {飲|の}む もの です 。 お{母|かあ}さん の そば で {覚|おぼ}えた の かも しれません 。 || Strong tea is what you drink sitting up with the sick. Maybe she learned it at her mother's bedside.
+?(comp=ren) comp: {判子|はんこ} を {貸|か}す の は 、 {名前|なまえ} を {貸|か}す こと です 。 …… お{母|かあ}さん は 、 その {子|こ} を {信|しん}じて いた んです ね 。 || Lending a seal is lending your name. …Your mother trusted that girl.
+?(comp=suzu) comp[laugh]: この {宿|やど} は 、 {借|か}り を {気長|きなが} に {待|ま}って くれる ん だ よ ね 。 {私|わたし} も {知|し}ってる 。 || This inn is very patient about debts. I should know.
+
+@scene lq.fare_fusa
+!faceplayer co_fusa
+pc: {匙|さじ} が {立|た}つ くらい {濃|こ}い お{茶|ちゃ} を いれる {人|ひと} を 、 {知|し}りません か 。 || Do you know anyone who makes tea strong enough to stand a spoon in?
+co_fusa[laugh]: …… チグサ ！ あの {子|こ} の こと ね 。 {懐|なつ}かしい わ 。 || …Chigusa! You mean her. Oh, that takes me back.
+co_fusa: {冬|ふゆ} を {三|みっ}つ 、 うち の {台所|だいどころ} に いた の 。 お{客|きゃく} は 「 {苦|にが}い 、 {苦|にが}い 」 って {言|い}い ながら 、 {毎年|まいとし} {飲|の}み に {来|き}た わ 。 || She was in our kitchen three winters. The guests would complain "bitter, bitter" — and come back every year to drink it.
+co_fusa[think]: {変|か}わった {癖|くせ} が あった わ ね 。 {自分|じぶん} の {卓|たく} に 、 いつも {湯呑|ゆの}み を {一|ひと}つ {余分|よぶん} に {伏|ふ}せて おく の 。 「 {借|か}り の ある {人|ひと} の {分|ぶん} 」 って 。 || She had an odd habit. She always kept one extra cup upside down on her table. "For someone I owe," she said.
+co_fusa: それから {雪|ゆき} の {道|みち} を {上|のぼ}って いった 。 {峠|とうげ} を {越|こ}える {荷車|にぐるま} の {人|ひと} に は {熱|あつ}い もの が {要|い}る から って 。 {今|いま} でも {屋台|やたい} を やって いる って {聞|き}く わ よ 。 || Then she went up the snow road. Said the carters crossing the pass needed something hot. I hear she still keeps a stall up there.
+!quest lq_fare 3
+?(comp=nao) comp: 「 {借|か}り の ある {人|ひと} の {分|ぶん} 」 か 。 …… {三十年|さんじゅうねん} 、 {湯呑|ゆの}み を {待|ま}たせてた わけ だ 。 || "For someone I owe." …So a cup's been waiting on a table for thirty years.
+?(comp=mio) comp: {伏|ふ}せた {湯呑|ゆの}み …… 。 {忘|わす}れて いない って 、 {自分|じぶん} に {言|い}い{聞|き}かせる {形|かたち} ね 。 || A cup turned upside down… a way of telling yourself you haven't forgotten.
+?(comp=ren) comp: {灯|あか}り を {一|ひと}つ 、 {点|つ}けた まま に して おく の と {同|おな}じ です 。 || It's like leaving one lantern burning.
+?(comp=suzu) comp: {帳簿|ちょうぼ} に {書|か}かない {借|か}り も ある 。 {一番|いちばん} {重|おも}い やつ だ よ 。 || Some debts never go in the books. They're the heaviest kind.
+
+@scene lq.chigusa_idle
+!faceplayer
+lq_chigusa: お{茶|ちゃ} {一杯|いっぱい} 、 どう だい 。 {峠|とうげ} の {風|かぜ} は {骨|ほね} まで {来|く}る よ 。 || A cup of tea? The wind at the pass gets into your bones.
+narr: {出|だ}された お{茶|ちゃ} は 、 {黒|くろ} に {近|ちか}い {色|いろ} を して いた 。 {一口|ひとくち} で 、 {目|め} が {覚|さ}める 。 || The tea she hands you is nearly black. One sip and you're wide awake.
+lq_chigusa[laugh]: {濃|こ}い だろ 。 {荷車|にぐるま} の {連中|れんちゅう} は 、 これ で {眠気|ねむけ} を {飛|と}ばす ん だ 。 || Strong, eh? The carters drink it to keep awake.
+?(quest.lq_fare=1) narr: {屋台|やたい} の {卓|たく} に は 、 {湯呑|ゆの}み が {一|ひと}つ だけ {伏|ふ}せて ある 。 || On the stall's counter, one cup has been turned upside down.
+?(comp=mio) comp[laugh]: …… {目|め} が {冴|さ}えて 、 {三日|みっか} は {眠|ねむ}れない かも 。 || …I might not sleep for three days.
+?(comp=suzu) comp: {舞台|ぶたい} の {前|まえ} に {一杯|いっぱい} 、 {欲|ほ}しい {味|あじ} だ ね 。 || The sort of cup you want before a show.
+
+@scene lq.stall
+narr: {小|ちい}さな {屋台|やたい} 。 {厚|あつ}い {湯呑|ゆの}み が {並|なら}んで いて 、 {一|ひと}つ だけ {伏|ふ}せて ある 。 || A small stall. A row of thick cups, one of them turned upside down.
+?(quest.lq_fare=done) narr: {伏|ふ}せた {湯呑|ゆの}み は 、 もう ない 。 {全部|ぜんぶ} 、 {上|うえ} を {向|む}いて いる 。 || The upside-down cup is gone. They all face up now.
+
+@scene lq.fare_chigusa
+!faceplayer
+?(quest.lq_fare=3) pc: {昔|むかし} 、 かもめ{亭|てい} で {働|はたら}いて いた チグサ さん です か 。 || Are you Chigusa, who used to work at the Gull?
+?(quest.lq_fare=2) pc: …… {昔|むかし} 、 かもめ{亭|てい} で 「 ハトねえ 」 と {呼|よ}ばれて いません でした か 。 || …Weren't you once called "Sister Dove", at the Gull?
+lq_chigusa[surprise]: …… それ を 、 どこ で {聞|き}いた 。 || …Where did you hear that?
+narr: $name は 、 {判子|はんこ} の {跡|あと} の ある {紙|かみ} を {見|み}せた 。 「 かもめ 」 。 || You show her the scrap with the stamp on it. "Kamome".
+lq_chigusa[closed]: …… {葦|あし}ノ{瀬|せ} の 、 {渡|わた}し{場|ば} 。 || …Reedwake. The ferry landing.
+narr: チグサ は {長|なが}い {間|あいだ} 、 {黙|だま}って いた 。 {薬缶|やかん} が {鳴|な}って も 、 {火|ひ} から {下|お}ろさなかった 。 || For a long time Chigusa says nothing. Even when the kettle starts to whistle, she doesn't lift it from the fire.
+lq_chigusa[sad]: {三十年|さんじゅうねん} {前|まえ} の {嵐|あらし} の {夜|よる} だ 。 {母|はは} が {危|あぶ}ない って {聞|き}いて 、 {港|みなと} から {走|はし}った 。 {川|かわ} は {溢|あふ}れそう で 、 {橋|はし} は {流|なが}されて いた 。 || A stormy night, thirty years ago. I'd heard my mother was dying, and I ran from the harbour. The river was about to burst its banks, and the bridge had been swept away.
+lq_chigusa: {母|はは} の {家|いえ} は 、 {葦|あし}ノ{瀬|せ} の {川|かわ} の {向|む}こう の 、 {小|ちい}さな {村|むら} だった 。 …… {村|むら} の {名前|なまえ} も 、 もう {出|で}て こない よ 。 || My mother's house was in a little village across Reedwake's river. …I can't even call up its name anymore.
+?(lq_road_open) pc: …… {小春野|こはるの} です か 。 || …Koharuno?
+?(lq_road_open) lq_chigusa[surprise]: …… {小春野|こはるの} 。 そう だ 。 {母|はは} は 、 {大|おお}きな {柿|かき} の {木|き} の そば に {住|す}んで いた 。 || …Koharuno. That's it. My mother lived near the big persimmon tree.
+lq_chigusa: {渡|わた}し{守|もり} の おばさん は 、 {黙|だま}って {舟|ふね} を {出|だ}して くれた 。 {金|かね} は なかった 。 {持|も}って いた の は 、 {借|か}りた {判子|はんこ} だけ 。 || The ferrywoman took the boat out without a word. I had no money. All I had was a borrowed seal.
+lq_chigusa: 「 {必|かなら}ず {払|はら}い に {来|き}ます 」 って {書|か}いた 。 {母|はは} は {二日|ふつか} {後|ご} に {死|し}んだ 。 || I wrote "I will come back to pay, without fail." My mother died two days later.
+lq_chigusa[tired]: {次|つぎ} の {春|はる} こそ 、 と {毎年|まいとし} {思|おも}った 。 {金|かね} が {貯|た}まる と 、 {今度|こんど} は {遅|おそ}すぎる {気|き} が した 。 {十年|じゅうねん} {過|す}ぎたら 、 {顔|かお} を {出|だ}す の が {怖|こわ}く なった 。 || Every year I thought: next spring, for certain. When I'd saved the money, it felt too late. After ten years, I was afraid to show my face.
+lq_chigusa: …… おばさん は 、 {元気|げんき} かい 。 || …Is she well, the ferrywoman?
+pc: {何年|なんねん} か {前|まえ} に {亡|な}くなった そう です 。 {渡|わた}し{舟|ぶね} は 、 {息子|むすこ} の コウジ さん が {継|つ}いで います 。 || She passed away some years ago. Her son Kōji runs the ferry now.
+pc: {最後|さいご} まで 、 あなた を {待|ま}って いた そう です 。 「 {約束|やくそく} した ん だ から 、 どこか で {生|い}きてる 」 って 。 || She waited for you to the end. "They promised — so they're alive somewhere," she used to say.
+lq_chigusa[sad]: …… そう かい 。 || …Is that so.
+?(comp=nao) comp: {届|とど}けなかった {手紙|てがみ} なら 、 {俺|おれ} に も ある 。 …… {遅|おそ}すぎる か どう か は 、 {受|う}け{取|と}る {方|ほう} が {決|き}める 。 {出|だ}す {方|ほう} が {決|き}める こと じゃ ない 。 || I've got letters I never delivered, too. …Whether it's too late is for the one receiving to decide. Not the one sending.
+?(comp=mio) comp: チグサ さん 。 {待|ま}って いた {人|ひと} は 、 もう いない かも しれません 。 でも 、 {約束|やくそく} を {聞|き}いた {人|ひと} は 、 まだ います 。 {息子|むすこ} さん も 、 あの {帳面|ちょうめん} も 。 || Chigusa. The one who waited may be gone. But the ones who heard your promise are still there — her son, and that book.
+?(comp=ren) comp: {灯|あか}り の {名前|なまえ} は 、 {書|か}いた {人|ひと} が いなく なって も {残|のこ}ります 。 {読|よ}む {人|ひと} が いる {限|かぎ}り 。 …… あの {帳面|ちょうめん} に は 、 まだ あなた の {約束|やくそく} を {読|よ}む {人|ひと} が います 。 || A lantern's name outlasts the one who wrote it, as long as someone reads it. …There's still someone reading your promise in that book.
+?(comp=suzu) comp: {私|わたし} は ね 、 {借|か}り を {全部|ぜんぶ} {帳面|ちょうめん} に {付|つ}けてる 。 {遅|おく}れて {返|かえ}した {借|か}り は 、 {返|かえ}さなかった {借|か}り より ずっと {軽|かる}い よ 。 …… {持|も}ち{続|つづ}けた もの は 、 {重|おも}く なる ばかり だ から 。 || I keep every debt I owe in a notebook. A debt paid late weighs far less than one never paid. …Things you keep carrying only get heavier.
+lq_chigusa[think]: …… {払|はら}い に {行|い}く よ 。 {息子|むすこ} さん に 、 {直接|ちょくせつ} 。 || …I'll go and pay. To her son, in person.
+lq_chigusa: {先|さき} に {手紙|てがみ} を {出|だ}して おきたい 。 {突然|とつぜん} {行|い}って {驚|おどろ}かせる の は {悪|わる}い 。 …… {書|か}く の を {手伝|てつだ}って くれる かい 。 {字|じ} は {書|か}ける けど 、 {言葉|ことば} が {出|で}て こない ん だ 。 || I want to send a letter ahead. It'd be wrong to turn up out of nowhere and startle him. …Will you help me write it? I can write, but the words won't come.
+!challenge lq.c_note
+!if var._res=0 -> self
+lq_chigusa: …… これ で いい 。 {郵便|ゆうびん} {小屋|ごや} に {預|あず}けて くる よ 。 || …That'll do. I'll leave it at the post shelter.
+!goto decided
+:self
+lq_chigusa: …… いい よ 。 {続|つづ}き は {自分|じぶん} で {書|か}く 。 {三十年|さんじゅうねん} {分|ぶん} だ 。 {時間|じかん} は かかる けど ね 。 || …It's all right. I'll write the rest myself. Thirty years' worth — it'll take a while.
+:decided
+!set lq_fare_found lq_ally1
+!quest lq_fare 4
+?(!ch4_done) lq_chigusa: {吹|ふ}き{溜|だ}まり の {向|む}こう で 、 {荷車|にぐるま} が {止|と}まってる 。 {連中|れんちゅう} に は {熱|あつ}い お{茶|ちゃ} が {要|い}る 。 {道|みち} が {開|ひら}いて 、 {荷車|にぐるま} が {動|うご}き{出|だ}したら 、 {店|みせ} を {閉|し}めて {下|お}りる よ 。 || The carts are stuck behind the drifts, and those lads need their hot tea. Once the road opens and the carts are moving, I'll shut up shop and go down.
+?(ch4_done) lq_chigusa: {道|みち} は {開|ひら}いてる 。 {荷車|にぐるま} も {動|うご}いてる 。 …… {言|い}い{訳|わけ} は 、 もう ない ね 。 {今日|きょう} {下|お}りる よ 。 || The road's open. The carts are moving. …No excuses left, then. I'll go down today.
+lq_chigusa: {葦|あし}ノ{瀬|せ} の 、 {茶屋|ちゃや} で {待|ま}ってる 。 …… {逃|に}げない よ 。 もう 。 || I'll wait at the teahouse in Reedwake. …I won't run. Not anymore.
+narr: チグサ が {薬缶|やかん} に {向|む}き{直|なお}る と 、 $comp が {小|ちい}さな {声|こえ} で {話|はな}しかけて きた 。 || As Chigusa turns back to her kettle, $comp speaks to you quietly.
+?(comp=nao) comp[think]: …… {三十年|さんじゅうねん} {待|ま}って から {動|うご}く の も 、 {悪|わる}く は ない 。 でも 、 {俺|おれ} は {待|ま}たない こと に する 。 {次|つぎ} の {戦|たたか}い から 、 {隙|すき} が {見|み}えたら 、 {合図|あいず} を {待|ま}たず に {動|うご}く 。 || …Moving after thirty years isn't wrong. But I've decided not to wait. From the next fight on, when I see an opening, I'll move without waiting for your signal.
+?(comp=mio) comp: …… わたし は いつも 、 {頼|たの}まれて から {動|うご}く の 。 {頼|たの}まれたら {断|ことわ}れない くせ に ね 。 でも 、 {戦|たたか}い の {中|なか} で は 、 あなた が {頼|たの}む {前|まえ} に {動|うご}く から 。 || …I always wait to be asked before I move — though once I'm asked I can never say no. But in a fight, I'll move before you have to ask.
+?(comp=ren) comp: {灯守|ひもり} は 、 {灯|あか}り が {消|き}えて から {気|き}づく ので は {遅|おそ}い んです 。 …… {次|つぎ} から は 、 {言|い}われる {前|まえ} に {灯|あか}り を {掲|かか}げます 。 {戦|たたか}い の {中|なか} でも 。 || A keeper who only notices once the light is out is too late. …From now on I'll raise the light before I'm asked. In a fight, too.
+?(comp=suzu) comp[smile]: {舞台|ぶたい} の {袖|そで} で {出番|でばん} を {待|ま}つ の は 、 もう おしまい 。 {次|つぎ} の {戦|たたか}い から 、 {出|で}る べき {時|とき} は {自分|じぶん} で {出|で}る よ 。 {合図|あいず} は いらない 。 || No more waiting in the wings for my cue. From the next fight, when it's time to step out, I'll step out on my own. No signal needed.
+!toast {相棒|あいぼう} が {戦|たたか}い で 、 {自分|じぶん} から {動|うご}く よう に なった 。 || Your companion will now act on their own initiative in battle.
+!refresh
+
+@scene lq.chigusa_wait
+!faceplayer
+lq_chigusa: {道|みち} が {開|ひら}いて 、 {荷車|にぐるま} が {動|うご}き{出|だ}したら {下|お}りる 。 {雪鈴|ゆきすず} の {上|うえ} の {灯|あか}り が ともれば 、 {吹|ふ}き{溜|だ}まり も {崩|くず}れる だろう さ 。 || When the road opens and the carts are moving, I'll go down. Once the light above Snowbell is lit, the drifts should give way too.
+lq_chigusa[smile]: …… {手紙|てがみ} は 、 もう {出|だ}した よ 。 {取|と}り{消|け}せない よう に ね 。 || …I've sent the letter already. So I can't take it back.
+
+@scene lq.stall_note
+narr: {屋台|やたい} に {札|ふだ} が {下|さ}がって いる 。 「 {葦|あし}ノ{瀬|せ} へ {行|い}って きます 。 {借|か}り を {返|かえ}したら {戻|もど}ります 。 チグサ 」 || A card hangs on the stall: "Gone to Reedwake. Back once I've paid what I owe. — Chigusa"
+
+@scene lq.fare_pay
+!faceplayer lq_chigusa
+lq_chigusa: …… {来|き}た ね 。 {手紙|てがみ} は {先|さき} に {着|つ}いてた 。 {朝|あさ} から ずっと 、 ここ に {座|すわ}ってる 。 || …You came. My letter got here first. I've been sitting here since morning.
+koji: {座|すわ}ってる だけ で 、 {茶|ちゃ} も {飲|の}まない ん だ 。 {姉|ねえ}さん が {三杯|さんばい} も いれた のに 。 || Just sitting. Won't touch her tea, and my sister's poured her three cups.
+hana[smile]: {薄|うす}い って {顔|かお} を された の 。 {失礼|しつれい} しちゃう わ 。 || She made a face as if it were weak. How rude.
+lq_chigusa[think]: …… {始|はじ}める よ 。 || …Let's begin.
+narr: チグサ は {立|た}ち{上|あ}がって 、 コウジ の {前|まえ} に {小銭|こぜに} を {並|なら}べた 。 {三十年|さんじゅうねん} {前|まえ} の {渡|わた}し{賃|ちん} と 、 {同|おな}じ {額|がく} だ 。 || Chigusa stands and lays coins in front of Kōji — the same sum as a fare thirty years ago.
+lq_chigusa: {嵐|あらし} の {夜|よる} に 、 お{母|かあ}さん に {渡|わた}して もらった {者|もの} です 。 {遅|おそ}く なりました 。 {申|もう}し{訳|わけ} ありません でした 。 || I'm the one your mother took across on a stormy night. I'm late. I'm truly sorry.
+koji[think]: …… {金|かね} は いい 。 おふくろ は {金|かね} を {待|ま}ってた ん じゃ ない 。 || …Keep the money. Mum wasn't waiting for money.
+lq_chigusa: {分|わ}かってる 。 でも 、 {払|はら}わせて おくれ 。 {一|ひと}つ ぐらい 、 {約束|やくそく} を {約束|やくそく} どおり に {守|まも}らせて ほしい ん だ 。 || I know. But let me pay. Let me keep one promise the way I promised it.
+koji: …… {分|わ}かった 。 || …All right.
+narr: コウジ は {小銭|こぜに} を {受|う}け{取|と}り 、 {渡|わた}し{帳|ちょう} を {開|ひら}いた 。 {白|しろ}い {所|ところ} の {横|よこ} に 、 {筆|ふで} を {置|お}く 。 || Kōji takes the coins and opens the fare book, and sets a brush beside the blank space.
+koji: {名前|なまえ} を {書|か}いて くれ 。 {帳面|ちょうめん} に 、 {覚|おぼ}えて おいて もらおう 。 || Write your name. Let the book remember it.
+narr: 「 チグサ 」 。 {今度|こんど} は 、 {震|ふる}えて いない {字|じ} だった 。 その {横|よこ} に 、 コウジ が {小|ちい}さく {書|か}き{足|た}す 。 「 {済|す}み 」 。 || "Chigusa". This time the hand doesn't shake. Beside it, Kōji adds in small letters: "Paid".
+koji[smirk]: それ と 、 これ 。 {質草|しちぐさ} だ 。 …… {質草|しちぐさ} の チグサ さん か 。 {覚|おぼ}え やすい な 。 || And this. The pledge. …Chigusa and her pledge — shichigusa. Easy to remember.
+hana: コウジ ！ || Kōji!
+lq_chigusa[laugh]: …… いい よ 。 {言|い}われ{慣|な}れてる 。 || …It's fine. I've heard that one before.
+lq_chigusa: かもめ{亭|てい} の 、 {女将|おかみ} さん の {判子|はんこ} だ 。 …… {自分|じぶん} で {返|かえ}し に {行|い}く よ 。 {海|うみ} も 、 ひさしぶり に {見|み}たい し ね 。 || It belongs to the Gull — to the landlady there. …I'll take it back myself. I'd like to see the sea again, too.
+hana: また {寄|よ}って ね 。 {次|つぎ} は {濃|こ}い の を いれる から 。 || Come by again. Next time I'll make it strong.
+!set lq_fare_paid
+!quest lq_fare 5
+?(comp=nao) comp[smile]: …… {遅配|ちはい} {三十年|さんじゅうねん} 。 でも 、 {届|とど}いた 。 || …Thirty years overdue. But delivered.
+?(comp=mio) comp[smile]: {名前|なまえ} が {戻|もど}った {帳面|ちょうめん} って 、 いい です ね 。 {薬|くすり} の ラベル を {貼|は}り{直|なお}した {時|とき} みたい 。 || A book with its name back. It's like re-labelling a jar.
+?(comp=ren) comp: 「 {済|す}み 」 。 {短|みじか}い {字|じ} です が 、 どんな {灯|あか}り の {名前|なまえ} より {重|おも}い かも しれません 。 || "Paid". A short word — perhaps heavier than any lantern name.
+?(comp=suzu) comp[laugh]: {帳尻|ちょうじり} が {合|あ}った ！ {三十年|さんじゅうねん} {越|ご}し の {決算|けっさん} だ よ 。 || The books balance! A reckoning thirty years in the making.
+!autosave
+!refresh
+
+@scene lq.fare_gull
+tamae[laugh]: {聞|き}いて よ ！ ハトねえ が {帰|かえ}って きた ん だ よ ！ {三十年|さんじゅうねん} ぶり ！ || Listen to this! Sister Dove came back! After thirty years!
+lq_chigusa[shy]: {大|おお}きな {声|こえ} で {言|い}う ん じゃ ない よ 。 …… {七|なな}つ の {子|こ} が 、 {女将|おかみ} に なってる なんて ね 。 || Don't shout it about. …The seven-year-old's the landlady now. Imagine.
+lq_chigusa: これ 。 お{母|かあ}さん に {借|か}りた もの だ 。 {返|かえ}す の が {遅|おそ}く なった 。 || This. I borrowed it from your mother. I'm late returning it.
+narr: {小|ちい}さな {木|き} の {判子|はんこ} 。 タマエ は それ を {紙|かみ} に {押|お}した 。 「 かもめ 」 。 || The small wooden seal. Tamae presses it onto a slip of paper. "Kamome".
+tamae[sad]: …… {母|かあ}ちゃん は ね 、 「 {貸|か}した だけ だ 。 そのうち {戻|もど}って くる 」 って 、 {最後|さいご} まで {言|い}ってた よ 。 || …Mum always said, right to the end: "I only lent it. It'll come back one of these days."
+tamae[laugh]: {本当|ほんとう} に {戻|もど}って きた よ 、 {母|かあ}ちゃん 。 || It really did come back, Mum.
+lq_chigusa: {判子|はんこ} の {分|ぶん} 、 {台所|だいどころ} で {働|はたら}いて {返|かえ}そう か 。 || Shall I work off the seal in your kitchen?
+tamae: やめて おくれ ！ あんた の お{茶|ちゃ} を {出|だ}したら 、 お{客|きゃく} が {眠|ねむ}れなく なる 。 || Don't you dare! Serve your tea here and the guests won't sleep a wink.
+lq_chigusa[laugh]: …… {峠|とうげ} に {帰|かえ}る よ 。 {荷車|にぐるま} の {連中|れんちゅう} が {待|ま}ってる 。 || …I'm going back to the pass. The carters are waiting.
+!faceplayer lq_chigusa
+lq_chigusa: あんた に は 、 これ を 。 {三十年|さんじゅうねん} 、 {卓|たく} の {上|うえ} に {伏|ふ}せて おいた {湯呑|ゆの}み だ 。 もう {要|い}らない 。 {次|つぎ} に {借|か}り が できた {時|とき} の ため に 、 {持|も}って おいき 。 || This is for you. The cup I kept upside down on my table for thirty years. I don't need it now. Keep it for the next time you owe someone.
+!give lq_kept_cup
+!quest lq_fare done
+?(comp=nao) comp: {貸|か}した {判子|はんこ} と 、 {借|か}りた {渡|わた}し{賃|ちん} 。 {両方|りょうほう} {届|とど}いた 。 {配達人|はいたつにん} と して は 、 {満点|まんてん} だ 。 || A lent seal and an owed fare — both delivered. As a courier, I'd call that full marks.
+?(comp=mio) comp[smile]: {借|か}りた もの を {返|かえ}す と 、 {人|ひと} って {背|せ} が {伸|の}びる の ね 。 チグサ さん 、 {来|き}た {時|とき} より {大|おお}きく {見|み}える 。 || Returning what you borrowed makes people stand taller. Chigusa looks bigger than when she came in.
+?(comp=ren) comp: {判子|はんこ} が {帰|かえ}って 、 {名前|なまえ} が {帰|かえ}って 、 {人|ひと} が {帰|かえ}った 。 …… {灯|あか}り {一|ひと}つ {分|ぶん} くらい 、 {世界|せかい} が {明|あか}るく なった {気|き} が します 。 || The seal came home, the name came home, and a person came home. …The world feels about one lantern brighter.
+?(comp=suzu) comp[smile]: {借|か}り を {返|かえ}した {人|ひと} の {顔|かお} って 、 {舞台|ぶたい} を {降|お}りた {役者|やくしゃ} と {同|おな}じ だ よ 。 {疲|つか}れて 、 {軽|かる}くて 、 ちょっと {寂|さび}しい 。 || Someone who's just paid off a debt has the same face as an actor coming off stage. Tired, light, and a little lonely.
+!set lq_fare_done
+!autosave
+!refresh
+
+@scene lq.fare_tamae_after
+!faceplayer tamae
+tamae: {判子|はんこ} は {台所|だいどころ} の {柱|はしら} に {掛|か}けた よ 。 {母|かあ}ちゃん が {掛|か}けてた {所|ところ} に ね 。 || I hung the seal on the kitchen post — where Mum used to keep it.
+tamae[laugh]: ハトねえ から {手紙|てがみ} が {来|く}る よう に なった ん だ 。 {字|じ} が {濃|こ}くて 、 {読|よ}む と {目|め} が {覚|さ}める 。 || Sister Dove writes to me now. Her handwriting's as strong as her tea — reading it wakes you right up.
+
+@scene lq.fare_koji_after
+!faceplayer koji
+koji: おふくろ の {帳面|ちょうめん} 、 {最後|さいご} の {頁|ページ} まで {埋|う}まった 。 {新|あたら}しい {帳面|ちょうめん} を {下|お}ろした よ 。 || Mum's book is full to the last page now. I've started a new one.
+koji[smirk]: {一行目|いちぎょうめ} は チグサ さん だ 。 {帰|かえ}る {前|まえ} に 、 {向|む}こう{岸|ぎし} まで {一往復|いちおうふく} 、 {乗|の}って いった 。 {今度|こんど} は {前払|まえばら}い で な 。 || First line is Chigusa. Before she left, she rode across to the far bank and back. Paid up front this time.
+
+@scene lq.chigusa_after
+!faceplayer
+lq_chigusa: {荷車|にぐるま} の {連中|れんちゅう} が 、 「 {最近|さいきん} お{茶|ちゃ} が {甘|あま}く なった 」 って {言|い}う ん だ よ 。 {失礼|しつれい} な 。 {同|おな}じ {濃|こ}さ だ 。 || The carters say my tea's gone soft lately. The cheek. It's exactly as strong as ever.
+lq_chigusa[smile]: …… {湯呑|ゆの}み を {一|ひと}つ {減|へ}らした だけ さ 。 || …All I did was put one cup away.
+?(lq_road_open) lq_chigusa: {小春野|こはるの} に も {行|い}って きた よ 。 {母|はは} の {名前|なまえ} が 、 {石|いし} に {残|のこ}って た 。 {柿|かき} を {一|ひと}つ 、 もらって きた 。 || I went to Koharuno too. My mother's name was still on the stone. I brought back a persimmon.
+
+@scene lq.chigusa_post
+!faceplayer
+lq_chigusa: {下|した} から {上|のぼ}って くる {人|ひと} が {増|ふ}えた よ 。 {名前|なまえ} の {戻|もど}った {道|みち} は 、 {人|ひと} を {呼|よ}ぶ ん だ ね 。 || More people come up from below these days. A road that has its name back calls people to it.
+lq_chigusa: {春|はる} に なったら 、 {一度|いちど} {葦|あし}ノ{瀬|せ} の {舟|ふね} に {乗|の}り に {行|い}く 。 {今度|こんど} は {客|きゃく} と して ね 。 || Come spring I'll go and ride the Reedwake ferry once. As an ordinary passenger, this time.
+`, 'lq/30_fare');
+
+
+/* ==== src/content/lq/40_road.js ==== */
+/* Line B — "The Name Nobody Calls" (quest lq_road).
+ * Reedwake (the blank lantern past the ferry house; Old Yasu) → Saltglass
+ * (Tetsu) → Cinder Orchard (Grandma Ume: the Koharu persimmon) → Reedwake
+ * (Yasu remembers; the name is written; lq_ally2; Koharuno opens) →
+ * Koharuno (the tree) → Lanternfall (Kayo) → Koharuno. See docs/STORY.md. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.script.add(`
+@scene lq.road_lantern
+!if quest.lq_road>=4 -> write
+narr: {古|ふる}い {灯|あか}り 。 {笠|かさ} の {紙|かみ} は {破|やぶ}れて いない のに 、 {字|じ} が {一|ひと}つ も ない 。 {嵐|あらし} より ずっと {前|まえ} から {白|しろ}かった よう に {見|み}える 。 || An old lantern. The paper shade isn't torn, yet there isn't a single letter on it. It looks as if it was blank long before the storm.
+narr: {灯|あか}り の {向|む}こう に 、 {草|くさ} に {埋|う}もれた {道|みち} が {東|ひがし} へ {続|つづ}いて いる 。 || Beyond it, a path buried in grass runs east.
+?(quest.lq_road>=1) narr: {書|か}く {名前|なまえ} が {分|わ}からない うち は 、 {笠|かさ} は {白|しろ}い まま だ 。 || Until you know the name to write, the shade stays blank.
+?(!quest.lq_road) !quest lq_road 0
+?(comp=nao) comp: {行|い}き{先|さき} の ない {灯|あか}り か 。 {宛名|あてな} の ない {荷物|にもつ} と {同|おな}じ だ 。 {気味|きみ} が {悪|わる}い 。 || A lantern with no destination. Like a parcel with no address. Gives me the creeps.
+?(comp=mio) comp[worry]: ラベル を {剥|は}がした {瓶|びん} みたい 。 {中身|なかみ} が あった こと まで 、 {忘|わす}れられて しまう の ね 。 || Like a jar with its label peeled off. Even the fact that it held something gets forgotten.
+?(comp=ren) comp[think]: {名前|なまえ} を {失|うしな}った {道|みち} は 、 {行|い}き{先|さき} を {忘|わす}れる 。 …… {師匠|ししょう} の {教|おし}え です 。 {本当|ほんとう} に {見|み}る の は 、 {初|はじ}めて です 。 || A road that loses its name forgets where it leads. …My teacher taught me that. It's the first time I've seen it for real.
+?(comp=suzu) comp: {誰|だれ} も {台詞|せりふ} を {覚|おぼ}えて いない {芝居|しばい} の {舞台|ぶたい} だ ね 。 || A stage for a play nobody remembers the lines to.
+!end
+:write
+!call lq.road_write
+
+@scene lq.road_lantern_lit
+narr: {笠|かさ} に は 「 {小春野|こはるの} 」 。 {端|はし} の {方|ほう} に 、 {名前|なまえ} が {二|ふた}つ {並|なら}んで いる 。 $name と 、 $comp 。 || The shade reads "Koharuno". Near the edge, two names side by side: $name and $comp.
+
+@scene lq.road_loops
+narr: {草|くさ} の {道|みち} を {東|ひがし} へ {進|すす}む 。 {木|き} の {間|あいだ} を {抜|ぬ}けた …… と {思|おも}ったら 、 {目|め} の {前|まえ} に さっき の {灯|あか}り が あった 。 || You follow the grassy path east. You come out between the trees… and there's the same lantern in front of you.
+!move pc left 1
+?(!quest.lq_road) !quest lq_road 0
+?(comp=nao) comp: {道|みち} が {回|まわ}ってる 。 {地図|ちず} が {迷|まよ}ってる ん じゃ ない 。 {道|みち} の {方|ほう} が {迷|まよ}ってる ん だ 。 || The path is going round in circles. It's not the map that's lost — it's the road.
+?(comp=mio) comp[worry]: …… {今|いま} 、 {確|たし}か に {東|ひがし} へ {歩|ある}いた わ よ ね ？ || …We did just walk east, didn't we?
+?(comp=ren) comp[shy]: …… {今|いま} の は 、 {私|わたし} の {方向|ほうこう}{音痴|おんち} の せい で は ありません 。 {念|ねん}のため 。 || …That was not my sense of direction. Just so we're clear.
+?(comp=suzu) comp: {舞台|ぶたい} の {袖|そで} に {入|はい}ったら 、 {反対|はんたい} の {袖|そで} から {出|で}て きた 。 {古|ふる}い {手品|てじな} だ よ 。 || Walk off into the wings and come back on from the other side. It's an old trick.
+
+@scene lq.road_marker
+narr: {折|お}れた {石|いし} の {道標|みちしるべ} 。 {上|うえ} の {半分|はんぶん} は ない 。 {残|のこ}った {所|ところ} に 、 {字|じ} が {少|すこ}し だけ {読|よ}める 。 「 …… {野|の} へ 」 。 || A broken stone waymarker. The top half is gone. What's left still shows a few characters: "…no, this way" — the end of a place name.
+narr: {石|いし} に {彫|ほ}った {字|じ} は {消|き}えない 。 でも 、 {石|いし} ごと なくなる こと は ある 。 || Words carved in stone don't fade. But the stone itself can go missing.
+?(quest.lq_road>=4) narr: {小春野|こはるの} 。 {折|お}れた {石|いし} の {字|じ} と 、 {合|あ}って いる 。 || Koharuno. It fits the broken stone.
+
+@scene lq.road_yasu1
+!faceplayer yasu
+pc: {渡|わた}し{小屋|ごや} の {先|さき} の {灯|あか}り に 、 {名前|なまえ} が ありません でした 。 || The lantern past the ferry house has no name on it.
+yasu[think]: …… あれ を {見|み}た か 。 || …You saw that one, did you.
+yasu: {昔|むかし} 、 {川|かわ} の {向|む}こう に {村|むら} が あった 。 {家|いえ} が {十|とお} ほど の 、 {小|ちい}さな {村|むら} だ 。 わし は {二十年|にじゅうねん} 、 あそこ に {住|す}んで いた 。 {女房|にょうぼう} の {里|さと} で な 。 || Long ago there was a hamlet across the river. Ten houses or so, a small place. I lived there twenty years. It was my wife's home.
+yasu: {真|ま}ん{中|なか} に {大|おお}きな {柿|かき} の {木|き} が あって な 。 {秋|あき} に なる と 、 {枝|えだ} が {折|お}れる ほど {実|み} が なった 。 {甘|あま}い {柿|かき} だった 。 {今|いま} でも {味|あじ} は {覚|おぼ}えて いる 。 || There was a great persimmon tree in the middle. In autumn it bore so much fruit the branches nearly broke. Sweet ones. I can still taste them.
+yasu[sad]: …… だが 、 {村|むら} の {名前|なまえ} が {出|で}て こん@来る=(won't come) 。 {女房|にょうぼう} が {死|し}んで から 、 {誰|だれ} も あの {名前|なまえ} を {口|くち} に しなく なった 。 {気|き} が ついたら 、 わし の {頭|あたま} から も {消|き}えとった 。 || …But the name won't come. After my wife died, nobody said it anymore. Before I knew it, it had gone out of my head too.
+yasu: {三十年|さんじゅうねん} {前|まえ} の {大水|おおみず} で 、 {村|むら} は {流|なが}された 。 みんな {舟|ふね} で {川|かわ} を {下|くだ}って いった 。 {下|しも} の {港|みなと} の {船乗|ふなの}り なら 、 {誰|だれ} を どこ へ {運|はこ}んだ か 、 {覚|おぼ}えて いる かも しれん 。 || The great flood thirty years ago took the hamlet. Everyone went downriver by boat. The boatmen at the harbour downstream might remember who they carried, and where.
+!quest lq_road 1
+?(comp=nao) comp: {下|しも} の {港|みなと} …… {潮硝子|しおがらす} だ な 。 {船|ふね} の {人間|にんげん} は 、 {積|つ}んだ {荷|に} を {忘|わす}れない 。 {人|ひと} も {荷|に} の うち だ 。 || The harbour downstream… Saltglass. Boat people don't forget a cargo. Passengers count.
+?(comp=mio) comp: {味|あじ} を {覚|おぼ}えて いる なら 、 {全部|ぜんぶ} {忘|わす}れた わけ じゃ ありません よ 。 || If you remember the taste, you haven't forgotten everything.
+?(comp=ren) comp: 「 {迷|まよ}ったら 、 {一番|いちばん} {古|ふる}い {名前|なまえ} に {戻|もど}れ 」 。 …… {師匠|ししょう} の {言葉|ことば} です 。 {古|ふる}い {名前|なまえ} を {知|し}って いる {人|ひと} を {探|さが}しましょう 。 || "When in doubt, go back to the oldest name." My teacher's words. Let's find someone who knows the old name.
+?(comp=suzu) comp: {名前|なまえ} は {忘|わす}れて も 、 {柿|かき} の {味|あじ} は {覚|おぼ}えてる 。 {舌|した} の {方|ほう} が {物覚|ものおぼ}え が いい ね 。 || He's forgotten the name but not the taste. His tongue has the better memory.
+
+@scene lq.road_tetsu
+!faceplayer tetsu
+!if quest.lq_road>=0 -> asked
+tetsu: {葦|あし}ノ{瀬|せ} から {来|き}た ん だった な 。 || You came down from Reedwake, didn't you.
+tetsu: {親父|おやじ} の {船|ふね} は 、 {昔|むかし} {葦|あし}ノ{瀬|せ} の {川|かわ} を {上|のぼ}って いた 。 {渡|わた}し{場|ば} の {先|さき} に 、 {柿|かき} の {村|むら} が あって な 。 {秋|あき} は {柿|かき} を {積|つ}んで {下|くだ}った もん だ 。 || My father's boat used to work up Reedwake's river. Past the ferry landing there was a persimmon village. In autumn he'd come back down loaded with persimmons.
+tetsu: {今|いま} {通|とお}って も 、 {渡|わた}し{場|ば} の {先|さき} に は {道|みち} ひとつ {見|み}えない だろう 。 {名前|なまえ} の ない {灯|あか}り が {立|た}ってる だけ だ 。 || Pass that way now and you won't see so much as a path beyond the landing. Just a lantern with no name.
+!goto tell
+:asked
+?(quest.lq_road=0) pc: {葦|あし}ノ{瀬|せ} の {川|かわ} の {向|む}こう に 、 {名前|なまえ} の {消|き}えた {道|みち} が ある ん です 。 {昔|むかし} 、 {村|むら} が あった そう です 。 || Across Reedwake's river there's a road whose name has faded. There used to be a hamlet, they say.
+?(quest.lq_road=1) pc: {葦|あし}ノ{瀬|せ} の {川|かわ} の {向|む}こう に あった {村|むら} を 、 {知|し}りません か 。 {大|おお}きな {柿|かき} の {木|き} の ある {村|むら} です 。 || Do you know the hamlet that used to be across Reedwake's river? The one with the great persimmon tree?
+tetsu[think]: …… {柿|かき} の {村|むら} だ な 。 {親父|おやじ} の {船|ふね} で 、 よく {柿|かき} を {積|つ}んで {下|くだ}った 。 || …The persimmon village. We used to bring persimmons down on my father's boat.
+:tell
+tetsu[think]: {大水|おおみず} の {年|とし} 、 {親父|おやじ} は その {村|むら} の {人|ひと} を {乗|の}せて {下|くだ}った 。 {俺|おれ} も まだ {若|わか}くて 、 {親父|おやじ} の {船|ふね} を {手伝|てつだ}って いた 。 || The flood year, my father brought that village's people downriver. I was young then, working on his boat.
+tetsu: {泥|どろ} だらけ の {人|ひと} たち が 、 {柿|かき} の {枝|えだ} を {抱|かか}えて いた 。 {実|み} じゃ ない 。 {切|き}った {枝|えだ} だ 。 「 {向|む}こう で {接|つ}ぐ ん だ 」 と {言|い}って 、 {果樹園|かじゅえん} の {方|ほう} へ {上|のぼ}って いった 。 || Mud-covered people, holding persimmon branches. Not fruit — cut branches. "We'll graft them where we're going," they said, and went up toward the orchard country.
+tetsu: {村|むら} の {名前|なまえ} か 。 …… {親父|おやじ} は 「 {柿|かき} の {村|むら} 」 と しか {呼|よ}ばなかった 。 {悪|わる}い な 。 || The village's name? …Dad only ever called it "the persimmon village". Sorry.
+!set lq_road_tetsu
+!quest lq_road 2
+?(comp=nao) comp: {実|み} じゃ なくて {枝|えだ} を {持|も}って {逃|に}げた 。 {次|つぎ} が ある と {思|おも}ってた ん だ な 。 || They fled carrying branches, not fruit. They believed there'd be a next time.
+?(comp=mio) comp: {接|つ}ぎ{木|き} なら 、 {元|もと} の {木|き} と {同|おな}じ {実|み} が なります 。 {村|むら} の {柿|かき} は 、 どこか で まだ {生|い}きて いる かも しれません 。 || A graft bears the same fruit as the tree it came from. The village's persimmon may still be alive somewhere.
+?(comp=ren) comp: {灰実|はいみ} の {里|さと} です ね 。 {果樹園|かじゅえん} の {人|ひと} は 、 {木|き} {一本|いっぽん} {一本|いっぽん} に {名前|なまえ} を {付|つ}けます 。 || Cinder Orchard, then. Orchard people name every single tree.
+?(comp=suzu) comp: {逃|に}げる {時|とき} に {持|も}って いく もの で 、 その {人|ひと} が {分|わ}かる って {言|い}う よ ね 。 {枝|えだ} か あ 。 || They say what people take when they run tells you who they are. Branches, huh.
+
+@scene lq.road_ume
+!faceplayer co_ume
+pc: {川|かわ} の {向|む}こう の {村|むら} から {来|き}た {柿|かき} の {木|き} を 、 {知|し}りません か 。 {大水|おおみず} の {年|とし} に 、 {枝|えだ} を {持|も}って きた {人|ひと} たち が いた はず です 。 || Do you know of a persimmon that came from a village across a river? People brought cuttings here the year of the great flood.
+co_ume[surprise]: …… {小春|こはる} の こと かい 。 || …You mean Koharu?
+co_ume: うち の {段|だん} の いちばん {上|うえ} に ある 、 いちばん {甘|あま}い {柿|かき} さ 。 {東|ひがし} の {川|かわ} の {向|む}こう の {大木|たいぼく} から {接|つ}いだ って 、 {母|はは} が {言|い}ってた よ 。 {枝|えだ} を {持|も}って きた {人|ひと} たち は 、 {冬|ふゆ} の {前|まえ} に また どこか へ {行|い}って しまった けど ね 。 || The sweetest persimmon we've got, on the top terrace. My mother said it was grafted from a great old tree across a river in the east. The folk who brought the cuttings moved on again before winter.
+co_ume[think]: {小春|こはる} の {頃|ころ} に {甘|あま}く なる から 、 {小春|こはる} 。 …… そう {思|おも}ってた けど 、 {違|ちが}う の かも しれない ね 。 {実|み} は 、 {生|う}まれた {所|ところ} の {名前|なまえ} を {借|か}りる こと が ある から 。 || It sweetens in the koharu days, so it's called Koharu. …That's what I always thought. But maybe not. Fruit sometimes borrows the name of the place it came from.
+co_ume[smile]: {毎年|まいとし} 、 {採|と}る {日|ひ} に は 「 {小春|こはる} ！ {小春|こはる} ！ 」 って {大声|おおごえ} で {呼|よ}び ながら {採|と}る ん だ よ 。 {呼|よ}ばれない {名前|なまえ} は {枯|か}れる から ね 。 || Every year on picking day we call out "Koharu! Koharu!" as we pick. A name nobody calls withers, you know.
+co_ume: ほら 、 {去年|きょねん} の {干|ほ}し{柿|がき} だ 。 その お{年寄|としよ}り に {食|た}べさせて ごらん 。 {舌|した} は {頭|あたま} より {物覚|ものおぼ}え が いい から ね 。 || Here — a dried one from last year. Let the old man taste it. The tongue remembers better than the head.
+!give lq_koharu_fruit
+!set lq_road_name
+!note lq_koharubiyori
+!quest lq_road 3
+?(comp=nao) comp: {実|み} が {名前|なまえ} を {運|はこ}んでた わけ か 。 {三十年|さんじゅうねん} 、 {誰|だれ} に も {気|き}づかれず に 。 …… {立派|りっぱ} な {配達|はいたつ} だ 。 || So the fruit was carrying the name all along. Thirty years, and nobody noticed. …That's proper delivery.
+?(comp=mio) comp: {植物|しょくぶつ} の {名前|なまえ} は 、 {庭|にわ} より {長|なが}く {生|い}きる こと が ある んです 。 {薬草|やくそう} も そう 。 || Plant names can outlive the gardens they grew in. Herbs are the same.
+?(comp=ren) comp: 「 {迷|まよ}ったら 、 {一番|いちばん} {古|ふる}い {名前|なまえ} に {戻|もど}れ 」 。 …… {柿|かき} の {一番|いちばん} {古|ふる}い {名前|なまえ} が 、 {村|むら} の {名前|なまえ} だった の かも しれません 。 || "When in doubt, go back to the oldest name." …Perhaps the persimmon's oldest name was the village's.
+?(comp=suzu) comp[laugh]: {借|か}りた {名前|なまえ} で {生|い}き{延|の}びて きた わけ だ 。 {芸名|げいめい} みたい な もん だ ね 。 || So it's lived on under a borrowed name. Like a stage name.
+
+@scene lq.road_yasu2
+!faceplayer yasu
+pc: {灰実|はいみ} の {里|さと} に 、 {川|かわ} の {向|む}こう から {来|き}た {柿|かき} が ありました 。 「 {小春|こはる} 」 と {呼|よ}ばれて います 。 || In Cinder Orchard there's a persimmon that came from across a river. They call it Koharu.
+narr: $name は 、 ウメ の {干|ほ}し{柿|がき} を ヤス に {渡|わた}した 。 ヤス は {黙|だま}って 、 {一口|ひとくち} かじった 。 || You hand Yasu Ume's dried persimmon. Without a word, he takes a bite.
+yasu[surprise]: …… {小春|こはる} 。 || …Koharu.
+yasu[sad]: {小春|こはる} …… {小春野|こはるの} 。 {小春野|こはるの} だ 。 ミツ が 「 {小春野|こはるの} の {柿|かき} が いちばん 」 って 、 {毎年|まいとし} {言|い}ってた 。 || Koharu… Koharuno. Koharuno. Mitsu used to say it every year: "Koharuno persimmons are the best."
+yasu: {小春野|こはるの} 。 …… {声|こえ} に {出|だ}す の は 、 {三十年|さんじゅうねん} ぶり だ 。 || Koharuno. …First time I've said it aloud in thirty years.
+yasu: {灯|あか}り に {書|か}いて やって くれ 。 わし の {字|じ} じゃ 、 もう {残|のこ}らん@残る 。 あんた の {字|じ} なら …… 。 || Write it on the lantern for me. My writing won't hold anymore. But yours…
+yasu: {先|さき} に {行|い}って {待|ま}ってる 。 || I'll go ahead and wait there.
+!take lq_koharu_fruit
+!quest lq_road 4
+?(comp=nao) comp: …… {名前|なまえ} が {口|くち} から {出|で}る {瞬間|しゅんかん} って の は 、 {何度|なんど} {見|み}て も いい もん だ な 。 || …The moment a name comes back out of someone's mouth. Never gets old.
+?(comp=mio) comp[smile]: よかった ……。 ヤス さん 、 {顔色|かおいろ} が {変|か}わりました 。 || Oh, good… Yasu's colour has come back.
+?(comp=ren) comp: {名前|なまえ} を {呼|よ}ぶ {人|ひと} が いる 。 これ なら 、 {灯|あか}り に {書|か}いて も {根|ね} を {張|は}ります 。 || Someone calls the name now. Written on the lantern, it'll take root.
+?(comp=suzu) comp[smile]: いい {台詞|せりふ} だった 。 {三十年|さんじゅうねん} {待|ま}った {甲斐|かい} が ある よ 。 || That was a good line. Worth thirty years of waiting.
+!refresh
+
+@scene lq.road_yasu_bank
+!faceplayer yasu_bank
+!call lq.road_write
+
+@scene lq.road_write
+narr: {白|しろ}い {笠|かさ} の {前|まえ} に {立|た}つ 。 ヤス が {隣|となり} で {待|ま}って いた 。 || You stand before the blank shade. Yasu is waiting beside it.
+yasu: {頼|たの}む 。 || Please.
+!challenge lq.c_koharu
+!if var._res=0 -> later
+narr: {笠|かさ} に 「 {小春野|こはるの} 」 の {字|じ} が {入|はい}った 。 {字|じ} は {滑|すべ}り{落|お}ちない 。 {灯|あか}り が 、 {静|しず}か に ともった 。 || The name "Koharuno" goes onto the shade. It doesn't slide off. The lantern lights quietly.
+narr: {草|くさ} の {道|みち} の {先|さき} で 、 {木|き} の {枝|えだ} が {少|すこ}し {分|わ}かれた よう に {見|み}えた 。 || Down the grassy path, the branches seem to part a little.
+yasu: …… {小春野|こはるの} 。 {道|みち} が {思|おも}い{出|だ}した な 。 || …Koharuno. The road's remembered.
+yasu: {小春野|こはるの} の {灯|あか}り に は 、 {昔|むかし} から {決|き}まり が あって な 。 {一緒|いっしょ} に {渡|わた}った {者|もの} は 、 {笠|かさ} の {端|はし} に {二人|ふたり} の {名前|なまえ} を {並|なら}べて {書|か}く 。 {帰|かえ}り{道|みち} を {忘|わす}れない よう に 。 || The Koharuno lantern had a custom. People who crossed together wrote both their names side by side at the edge of the shade. So they'd never forget the way home.
+yasu: わし と ミツ の {名前|なまえ} も 、 {昔|むかし} は そこ に あった 。 …… あんた たち も {書|か}いて いけ 。 || Mitsu's name and mine used to be there. …You two write yours as well.
+narr: $name が {名前|なまえ} を {書|か}く と 、 その {横|よこ} に 、 {違|ちが}う {字|じ} で 「 $comp 」 。 || You write your name, and beside it, in a different hand: "$comp".
+?(comp=nao) comp[shy]: …… {二人|ふたり} {分|ぶん} の {宛名|あてな} か 。 {悪|わる}く ない 。 {戦|たたか}い でも 、 あんた に {来|く}る もの は 、 {俺|おれ} に も {来|く}る と {思|おも}え 。 {半分|はんぶん} {引|ひ}き{受|う}ける 。 || …An address for two. Not bad. In a fight, too — whatever comes for you, count it as coming for me. I'll take half.
+?(comp=mio) comp[smile]: {並|なら}んだ {名前|なまえ} って 、 {支|ささ}え{合|あ}って いる みたい です ね 。 …… {戦|たたか}い の {時|とき} も 、 {一人|ひとり} で {受|う}け{止|と}めない で 。 わたし が {隣|となり} に います 。 || Names side by side look like they're holding each other up. …In battle too, don't take it all alone. I'm right beside you.
+?(comp=ren) comp: {名前|なまえ} は 、 {書|か}き{手|て} が {信|しん}じて いれば {根|ね} を {張|は}る 。 …… {私|わたし} は 、 この {二|ふた}つ の {名前|なまえ} を {信|しん}じて います 。 {戦|たたか}い の {中|なか} でも 、 あなた の {前|まえ} に {立|た}ちます 。 || A name takes root if the writer believes in it. …I believe in these two. In a fight, too, I'll stand in front of you.
+?(comp=suzu) comp[laugh]: {二枚|にまい}{看板|かんばん} って やつ だ ね ！ …… {真面目|まじめ} に {言|い}う と 、 {戦|たたか}い で あんた が {狙|ねら}われたら 、 {客|きゃく} の {目|め} は {私|わたし} が {引|ひ}き{受|う}ける 。 {二人|ふたり} で {一組|ひとくみ} の {芸|げい} だ から ね 。 || A double bill! …Seriously, though: if something takes aim at you in a fight, I'll draw the audience's eye. We're a two-person act.
+!toast {相棒|あいぼう} が {戦|たたか}い で 、 あなた と {並|なら}んで {立|た}つ よう に なった 。 || Your companion will now stand with you in battle.
+!set lq_road_open lq_ally2
+!note lq_koharuno
+!quest lq_road 5
+yasu: …… {先|さき} に {行|い}って {見|み}て きて くれ 。 わし は 、 {足|あし} が {言|い}う こと を {聞|き}く {日|ひ} に {行|い}く 。 || …Go and have a look first. I'll go on a day my legs agree to it.
+yasu[think]: {木守|きもり} の {娘|むすめ} の カヨ は 、 {大水|おおみず} の {後|あと} 、 {灯落|ひおち} の おば の {所|ところ} へ {預|あず}けられた 。 …… {生|い}きて いれば 、 もう {四十|よんじゅう} を {過|す}ぎた ころ だ 。 || The tree-keeper's girl, Kayo, was sent to her aunt in Lanternfall after the flood. …She'd be past forty now, if she's alive.
+!autosave
+!refresh
+!end
+:later
+yasu: {急|いそ}がんで@急ぐ いい 。 {三十年|さんじゅうねん} {待|ま}った ん だ 。 || No need to hurry. It's waited thirty years.
+
+@scene lq.road_yasu_after
+!faceplayer yasu
+yasu: {毎朝|まいあさ} 、 {桟橋|さんばし} で 「 {小春野|こはるの} 」 と {言|い}う こと に した 。 もう {二度|にど} と {滑|すべ}り{落|お}ちない よう に な 。 || I've made a habit of saying "Koharuno" on the pier every morning. So it never slips away again.
+yasu[smile]: カヨ が コウジ の {舟|ふね} で 、 {柿|かき} を {届|とど}けて くれる 。 ミツ の {干|ほ}し{柿|がき} と 、 {同|おな}じ {味|あじ} が する よ 。 || Kayo sends persimmons over on Kōji's boat. They taste just like Mitsu's dried ones.
+
+@scene lq.kh_arrive
+!set lq_kh_seen
+narr: {道|みち} が {開|ひら}けた 。 {沢|さわ} の {向|む}こう に 、 {誰|だれ} も {住|す}んで いない {家|いえ} が {並|なら}んで いる 。 {屋根|やね} の {藁|わら} は 、 {灰色|はいいろ} に {変|か}わって いた 。 || The path opens out. Beyond a stream stand houses where nobody lives, their thatch gone grey.
+narr: {村|むら} の {真|ま}ん{中|なか} に 、 {大|おお}きな {柿|かき} の {木|き} が {立|た}って いた 。 {採|と}る {人|ひと} の いない {実|み} が 、 {枝|えだ} いっぱい に {赤|あか}く {光|ひか}って いる 。 || In the middle of the hamlet stands a great persimmon tree. Fruit that nobody picks glows red along every branch.
+?(comp=nao) comp: {誰|だれ} も {住|す}んでない のに 、 {道|みち} が {残|のこ}ってる 。 …… {道|みち} の {方|ほう} も 、 {誰|だれ} か を {待|ま}ってた の かも な 。 || Nobody lives here, yet the path's still here. …Maybe the road was waiting for someone too.
+?(comp=mio) comp: …… {静|しず}か 。 でも 、 {悲|かな}しい {静|しず}か さ じゃ ない わ 。 {眠|ねむ}って いた だけ みたい 。 || …So quiet. But not a sad quiet. As if it was only asleep.
+?(comp=ren) comp: {灯|あか}り の {名前|なまえ} {一|ひと}つ で 、 {村|むら} が {一|ひと}つ {戻|もど}る 。 …… {灯守|ひもり} に なって 、 よかった 。 || One lantern's name, and a whole hamlet comes back. …I'm glad I became a keeper.
+?(comp=suzu) comp: {幕|まく} が {上|あ}がった 。 {役者|やくしゃ} は まだ いない けど 、 {舞台|ぶたい} は ずっと {待|ま}ってた ね 。 || The curtain's up. No actors yet — but the stage has been waiting all along.
+
+@scene lq.kh_tree
+narr: {太|ふと}い {幹|みき} に 、 {低|ひく}い {所|ところ} から {順|じゅん} に 、 {刃物|はもの} で {刻|きざ}んだ {線|せん} が ある 。 {子|こ}ども の {背|せ} を {測|はか}った {跡|あと} だ 。 || On the thick trunk, from low down upward, are lines cut with a blade — where a child's height was measured.
+narr: {線|せん} の {横|よこ} に 、 {同|おな}じ {名前|なまえ} 。 「 かよ {五|いつ}つ 」 「 かよ {八|やっ}つ 」 …… {一番|いちばん} {上|うえ} は 「 かよ {十二|じゅうに} 」 。 そこ で {止|と}まって いる 。 || Beside each line, the same name. "Kayo, 5". "Kayo, 8"… The highest says "Kayo, 12". There they stop.
+?(quest.lq_road=done) narr: {十二|じゅうに} の {線|せん} の {上|うえ} に 、 {新|あたら}しい {線|せん} が {一本|いっぽん} 。 「 かよ {四十二|よんじゅうに} 」 。 || Above the twelve there is one new line: "Kayo, 42".
+!if quest.lq_road>=6 -> end
+!if quest.lq_road<5 -> end
+!quest lq_road 6
+?(comp=nao&sb_arrived) comp: {十二|じゅうに} で {止|と}まった {背|せ} か 。 …… {雪鈴|ゆきすず} の {石段|いしだん} の {柱|はしら} と {同|おな}じ だ 。 || Height marks that stop at twelve. …Like the post on the stair in Snowbell.
+?(comp=nao&!sb_arrived) comp: {十二|じゅうに} で {止|と}まった {背|せ} か 。 …… その {先|さき} を {測|はか}る {人|ひと} が 、 いなかった わけ だ 。 || Height marks that stop at twelve. …Nobody was left to measure the rest.
+?(comp=mio) comp: …… {背|せ} を {測|はか}って もらえる って 、 {大事|だいじ} に されて いた って こと よ ね 。 || …Having your height measured means someone cherished you.
+?(comp=ren) comp: {刃物|はもの} で {刻|きざ}んだ {名前|なまえ} は 、 {静寂|しじま} に も {消|け}せません 。 {木|き} が {覚|おぼ}えて いて くれた んです 。 || A name cut with a blade can't be lifted even by the Hush. The tree remembered it for her.
+?(comp=suzu) comp: {十二|じゅうに} の {次|つぎ} は 、 {本人|ほんにん} に {刻|きざ}んで もらわない と ね 。 || After twelve — she'll have to come and carve the next one herself.
+
+@scene lq.kh_stone
+narr: {苔|こけ} の {生|は}えた {石|いし} に 、 {名前|なまえ} が {並|なら}んで {彫|ほ}って ある 。 {上|うえ} に 「 {小春野|こはるの} の {者|もの} 」 。 || Names are carved in rows on a mossy stone. At the top: "The people of Koharuno".
+narr: 「 ヤス ・ ミツ 」 「 {木守|きもり} ゲンタ ・ ハル ・ カヨ 」 「 トメ 」 「 ヨシゾウ ・ キミ ・ サブ 」 「 ヨネ ・ チグサ 」 …… {石|いし} の {字|じ} は 、 {一|ひと}つ も {消|き}えて いない 。 || "Yasu, Mitsu". "Genta the tree-keeper, Haru, Kayo". "Tome". "Yoshizō, Kimi, Sabu". "Yone, Chigusa"… Not one of the carved names has faded.
+?(lq_fare_found) narr: 「 チグサ 」 。 {峠|とうげ} で お{茶|ちゃ} を いれて いる {人|ひと} と 、 {同|おな}じ {名前|なまえ} だ 。 || "Chigusa" — the same name as the woman who brews tea at the pass.
+?(comp=nao) comp: {全員|ぜんいん} {分|ぶん} の {宛名|あてな} が 、 ここ に ある 。 {配達先|はいたつさき} が {散|ち}らばった だけ だ 。 || Every one of their addresses is right here. It's only the people who got scattered.
+?(comp=mio) comp: {石|いし} に {書|か}いた {人|ひと} は 、 {忘|わす}れられる の が {怖|こわ}かった の ね 。 {分|わ}かる わ 。 || Whoever carved these was afraid of being forgotten. I understand that.
+?(comp=ren) comp: {紙|かみ} の {名前|なまえ} は {薄|うす}れても 、 {石|いし} の {名前|なまえ} は {残|のこ}る 。 {灯守|ひもり} に は 、 {少|すこ}し {悔|くや}しい {話|はなし} です 。 || Names on paper fade; names in stone stay. A slightly galling thing for a lantern keeper to admit.
+?(comp=suzu) comp: {出演者|しゅつえんしゃ} {一覧|いちらん} だ ね 。 {誰|だれ} も {抜|ぬ}けてない 。 || A cast list. Nobody left out.
+
+@scene lq.kh_lantern
+narr: こちら {側|がわ} の {灯|あか}り の {笠|かさ} に は 、 「 {葦|あし}ノ{瀬|せ} 」 。 {葦|あし}ノ{瀬|せ} の {名前|なまえ} は 、 {毎日|まいにち} {誰|だれ} か が {呼|よ}んで いた から 、 {消|き}えなかった の だろう 。 || The shade on this side says "Ashinose" — Reedwake. Someone was saying that name every day, so it never faded.
+
+@scene lq.kh_marker
+narr: 「 {西|にし} 、 {渡|わた}し{場|ば} 。 {東|ひがし} 、 {小春野|こはるの} 。 」 {古|ふる}い {石|いし} の {道標|みちしるべ} だ 。 || "West: the ferry landing. East: Koharuno." An old stone waymarker.
+
+@scene lq.kh_well
+narr: {古|ふる}い {井戸|いど} 。 {底|そこ} に は {水|みず} で は なく 、 {落|お}ち{葉|ば} が {溜|た}まって いる 。 || An old well. At the bottom there's no water, only fallen leaves.
+
+@scene lq.kh_view
+narr: {腰|こし} を {下|お}ろす と 、 {川|かわ} の {上|かみ} の {方|ほう} に {山|やま} が {重|かさ}なって {見|み}えた 。 {昔|むかし} の {人|ひと} も 、 ここ に {座|すわ}って {柿|かき} を {干|ほ}した の だろう 。 || Sitting down, you can see hills folding into each other upriver. People must once have sat here to dry their persimmons.
+?(quest.lq_road=done) narr: {縁|えん} に 、 {新|あたら}しい {干|ほ}し{柿|がき} が {一列|いちれつ} 、 {吊|つ}るして ある 。 || Along the eaves nearby, a fresh row of persimmons hangs drying.
+
+@scene lq.kh_book
+narr: {木守|きもり} の {帳面|ちょうめん} 。 {毎年|まいとし} の {柿|かき} の {数|かず} が 、 {丁寧|ていねい} な {字|じ} で {書|か}いて ある 。 {名前|なまえ} は {全部|ぜんぶ} {消|き}えて いる が 、 {数|かず} は {残|のこ}って いる 。 || The tree-keeper's ledger. Each year's persimmon count is written out in careful handwriting. The names have all faded, but the numbers remain.
+narr: {最後|さいご} の {頁|ページ} ： 「 {大水|おおみず} 。 {娘|むすめ} を {灯落|ひおち} の {姉|あね} の {所|ところ} へ {預|あず}ける 。 {木|き} は {鳥|とり} に {任|まか}せる 。 」 || The last page: "The flood. Sending our girl to my sister in Lanternfall. I leave the tree to the birds."
+!if quest.lq_road>=6 -> end
+!if quest.lq_road<5 -> end
+narr: {柿|かき} の {木|き} に も 、 {何|なに} か {残|のこ}って いる かも しれない 。 || There may be something on the persimmon tree, too.
+
+@scene lq.kh_chest
+narr: {木|き} の {箱|はこ} を {開|あ}ける と 、 {茶色|ちゃいろ} が かった {橙色|だいだいいろ} の {布|ぬの} が {一枚|いちまい} 、 {畳|たた}んで あった 。 {柿渋|かきしぶ} で {染|そ}めた {手|て}ぬぐい だ 。 || Inside the wooden chest, a single folded cloth of a brownish orange: a cotton cloth dyed with kakishibu.
+narr: {三十年|さんじゅうねん} {経|た}って も 、 {色|いろ} は {褪|あ}せて いない 。 || Thirty years on, the colour hasn't faded.
+!set lq_kh_chest
+!give lq_tenugui
+!note lq_kakishibu
+?(comp=mio) comp: {柿渋|かきしぶ} は {虫|むし} も {水|みず} も {寄|よ}せ{付|つ}けない の 。 {丈夫|じょうぶ} な {布|ぬの} よ 。 || Kakishibu keeps off insects and water. It's tough cloth.
+?(comp=suzu) comp: {似合|にあ}う {似合|にあ}う 。 {柿|かき} の {村|むら} の {衣装|いしょう} だ ね 。 || Suits you. A costume from the persimmon village.
+!refresh
+
+@scene lq.kayo_tree
+narr: {若|わか}い {柿|かき} の {木|き} 。 {大人|おとな} の {背|せ} より {少|すこ}し {高|たか}い くらい 。 {実|み} は まだ {少|すこ}し しか ない 。 || A young persimmon tree, a little taller than a grown person. It bears only a little fruit so far.
+?(quest.lq_road>=3) narr: {葉|は} の {形|かたち} が 、 {灰実|はいみ} の {里|さと} の {小春|こはる} に {似|に}て いる 。 || The shape of its leaves is like the Koharu tree's in Cinder Orchard.
+
+@scene lq.kayo_idle
+!faceplayer
+lq_kayo[smile]: {柿|かき} の {木|き} です か 。 …… はい 、 もちろん 、 {立派|りっぱ} な {木|き} です 。 {子|こ}ども の {頃|ころ} に {持|も}って きた {種|たね} から {育|そだ}てた んです 。 || The persimmon tree? …Yes, certainly, it's a fine tree. I grew it from a seed I brought with me as a child.
+lq_kayo[think]: {生|う}まれた {村|むら} の 、 {大|おお}きな {木|き} の {種|たね} です 。 {村|むら} の {名前|なまえ} は …… 。 || A seed from a great tree in the village where I was born. The village's name…
+lq_kayo[smile]: …… {忘|わす}れて も {平気|へいき} です 。 もちろん 。 || …It's quite all right to forget. Certainly.
+?(comp=mio) comp[worry]: …… {平気|へいき} に は 、 {見|み}えません でした けど 。 || …She didn't look "all right" to me.
+?(comp=nao) comp: {今|いま} の 「 もちろん 」 、 {封|ふう} が {開|あ}いてた な 。 {中身|なかみ} が こぼれてた 。 || That "certainly" had its envelope open. The contents were spilling out.
+?(comp=ren) comp[think]: {種|たね} から {育|そだ}てた {木|き} …… 。 {故郷|こきょう} の {名前|なまえ} を 、 {木|き} に {預|あず}けて いる の かも しれません 。 || A tree grown from a seed… Perhaps she's left her home's name in the tree's keeping.
+?(comp=suzu) comp: {笑|わら}ってる けど 、 {目|め} は {遠|とお}く を {見|み}てた ね 。 || She's smiling, but her eyes were somewhere far away.
+
+@scene lq.kayo_idle_after
+!faceplayer
+lq_kayo: {鐘|かね} が {鳴|な}って から 、 {言|い}える よう に なった んです 。 …… {故郷|こきょう} の {名前|なまえ} を {忘|わす}れた の が 、 {悲|かな}しい 。 {悲|かな}しい です 。 {言|い}えて 、 よかった 。 || Since the bell rang I can say it. …I'm sad that I've forgotten the name of home. Sad. I'm glad I could say so.
+?(comp=mio) comp: {悲|かな}しい 、 と {言|い}える の は 、 {大事|だいじ} な こと です 。 || Being able to say "I'm sad" matters.
+
+@scene lq.road_kayo_certainly
+!faceplayer
+pc: カヨ さん です か 。 {小春野|こはるの} の {木守|きもり} の {娘|むすめ} さん の 。 || Are you Kayo? The tree-keeper's daughter from Koharuno?
+lq_kayo[surprise]: …… {小春野|こはるの} 。 || …Koharuno.
+pc: {道|みち} が {戻|もど}りました 。 {柿|かき} の {木|き} も 、 まだ {立|た}って います 。 {帰|かえ}りません か 。 || The road is back. The persimmon tree is still standing. Won't you go home?
+lq_kayo[smile]: はい 、 もちろん 。 {喜|よろこ}んで 。 || Yes, certainly. With pleasure.
+narr: {笑|わら}って いる のに 、 {手|て} の {鋏|はさみ} が {震|ふる}えて いる 。 || She's smiling, but the shears in her hand are trembling.
+?(comp=nao) comp: …… {今|いま} の 「 もちろん 」 は 、 {中身|なかみ} の ない {封筒|ふうとう} だ 。 || …That "certainly" was an empty envelope.
+?(comp=mio) comp[worry]: …… {無理|むり} に 「 はい 」 と {言|い}わせて しまった 。 この {町|まち} で は 、 {誰|だれ} も {嫌|いや} と {言|い}えない のに 。 || …We made her say yes. In this town, nobody can say no.
+?(comp=ren) comp: {灯|あか}り の {消|き}えた 「 もちろん 」 です 。 {鐘|かね} が {戻|もど}る まで 、 {本当|ほんとう} の {答|こた}え は {聞|き}けない でしょう 。 || A "certainly" with the lamp gone out. Until the bell is back, we won't hear her real answer.
+?(comp=suzu) comp: {台詞|せりふ} の {言|い}い{方|かた} が {違|ちが}う 。 あれ は 「 いいえ 」 の {顔|かお} だ よ 。 || The line reading's wrong. That was a "no" face.
+
+@scene lq.road_kayo
+!faceplayer
+pc: カヨ さん 。 {小春野|こはるの} へ の {道|みち} が {戻|もど}りました 。 || Kayo. The road to Koharuno is back.
+lq_kayo[surprise]: …… {小春野|こはるの} 。 そう 、 {小春野|こはるの} です 。 {言|い}われる まで 、 {思|おも}い{出|だ}せなかった 。 || …Koharuno. Yes — Koharuno. I couldn't remember it until you said it.
+lq_kayo[sad]: …… {正直|しょうじき} に {言|い}います 。 {帰|かえ}る の が 、 {怖|こわ}い んです 。 {誰|だれ} も いない {村|むら} を {見|み}たら 、 {本当|ほんとう} に {終|お}わって しまう {気|き} が して 。 || …I'll be honest. I'm afraid to go back. If I see the village with no one in it, I feel it'll really be over.
+!choice
+* {柿|かき} の {木|き} に 、 あなた の {背|せ} の {線|せん} が {残|のこ}って いました 。 || Your height marks are still on the persimmon tree. -> tree
+* ヤス さん も 、 {元気|げんき} です よ 。 || Yasu is alive and well, you know. -> yasu
+:tree
+lq_kayo[surprise]: …… {十二|じゅうに} で {止|と}まって いる でしょう 。 {父|ちち} が {最後|さいご} に {刻|きざ}んだ {線|せん} です 。 || …It stops at twelve, doesn't it. The last line my father cut.
+!goto both
+:yasu
+lq_kayo[surprise]: ヤス おじさん ！ {生|い}きて いた んです ね 。 ミツ おばさん の {干|ほ}し{柿|がき} 、 {大好|だいす}き でした 。 || Uncle Yasu! He's alive! I loved Aunt Mitsu's dried persimmons.
+:both
+?(comp=mio&quest.lf_mio=done) comp: カヨ さん 。 {怖|こわ}い なら 、 {怖|こわ}い と {言|い}って いい んです 。 {嫌|いや} なら 、 {嫌|いや} と {言|い}って いい 。 …… わたし も 、 それ を {覚|おぼ}えた ばかり です 。 || Kayo. If you're afraid, you can say you're afraid. If you don't want to, you can say no. …I've only just learned that myself.
+?(comp=mio&!quest.lf_mio=done) comp: カヨ さん 。 {怖|こわ}い なら 、 {怖|こわ}い と {言|い}って いい んです 。 {嫌|いや} なら 、 {嫌|いや} と {言|い}って いい 。 …… わたし も 、 まだ {練習|れんしゅう} {中|ちゅう} です けど 。 || Kayo. If you're afraid, you can say you're afraid. If you don't want to, you can say no. …I'm still practising that myself.
+?(comp=nao) comp: {怖|こわ}い の は 、 {大事|だいじ} な もの が まだ そこ に ある から だ 。 {空|から}っぽ なら 、 {怖|こわ}く ない 。 || You're afraid because something that matters is still there. If it were empty, you wouldn't be.
+?(comp=ren) comp: {道|みち} は {名前|なまえ} を {思|おも}い{出|だ}しました 。 {次|つぎ} は 、 {名前|なまえ} を {呼|よ}ぶ {人|ひと} が {帰|かえ}る {番|ばん} です 。 || The road has remembered its name. Now it's the turn of the people who call it.
+?(comp=suzu) comp: {誰|だれ} も いない {舞台|ぶたい} に {立|た}つ の は {怖|こわ}い よ ね 。 でも 、 {立|た}った {瞬間|しゅんかん} に 、 そこ は もう {誰|だれ} も いない {舞台|ぶたい} じゃ なく なる ん だ よ 。 || Standing on an empty stage is frightening. But the moment you step onto it, it isn't empty anymore.
+lq_kayo: …… {行|い}きます 。 {今度|こんど} は 、 「 もちろん 」 じゃ なくて 。 {行|い}きたい から 、 {行|い}きます 。 || …I'll go. Not "certainly" this time. I'll go because I want to.
+lq_kayo: {柿|かき} の {木|き} の {下|した} で {待|ま}って います 。 {葦|あし}ノ{瀬|せ} の {渡|わた}し{場|ば} の {先|さき} です よ ね 。 || I'll wait under the persimmon tree. Past the ferry landing in Reedwake, isn't it?
+!set lq_kayo_going
+!quest lq_road 7
+!refresh
+
+@scene lq.road_home
+!faceplayer
+!music wonder
+lq_kayo[smile]: …… {来|き}て くれた んです ね 。 || …You came.
+lq_kayo: {枝|えだ} が {重|おも}そう 。 {三十年|さんじゅうねん} 、 {誰|だれ} も {採|と}らなかった から 。 {鳥|とり} たち は 、 さぞ {喜|よろこ}んだ でしょう ね 。 || The branches look so heavy. Thirty years and no one picked them. The birds must have been delighted.
+narr: カヨ は {背伸|せの}び を して 、 {実|み} を {一|ひと}つ {採|と}った 。 そして 、 {少|すこ}し {照|て}れ ながら 、 {大|おお}きな {声|こえ} を {出|だ}した 。 || Kayo stretches up and picks one fruit. Then, a little embarrassed, she calls out loud:
+lq_kayo[laugh]: {小春|こはる} ！ {小春|こはる} ！ || Koharu! Koharu!
+lq_kayo: …… {父|ちち} が 、 {採|と}る {日|ひ} に こう {呼|よ}んで いた んです 。 {呼|よ}ばれない {名前|なまえ} は {枯|か}れる から 、 って 。 || …My father used to call out like that on picking day. "A name nobody calls withers," he'd say.
+lq_kayo: {十二|じゅうに} の {線|せん} の {上|うえ} に 、 {今|いま} の {背|せ} を {刻|きざ}んで も いい です か 。 {遅|おそ}すぎます けど 。 || May I cut a line for how tall I am now, above the twelve? It's far too late, but still.
+narr: {新|あたら}しい {線|せん} は 、 {十二|じゅうに} の {線|せん} より {手|て}のひら {一|ひと}つ {分|ぶん} {高|たか}かった 。 {横|よこ} に は 「 かよ {四十二|よんじゅうに} 」 。 || The new line is a hand's breadth above the twelve. Beside it: "Kayo, 42".
+lq_kayo: これ 、 お{礼|れい} です 。 {灯落|ひおち} の {木|き} の {種|たね} 。 {小春|こはる} の {孫|まご} みたい な もの です 。 {古|ふる}い {袖|そで} で {袋|ふくろ} を {縫|ぬ}いました 。 || This is to thank you. A seed from my Lanternfall tree — a sort of grandchild of Koharu. I sewed the little bag from an old sleeve.
+lq_kayo: {種|たね} は {待|ま}つ もの です 。 {何年|なんねん} でも 。 …… {私|わたし} たち と {同|おな}じ です ね 。 || Seeds wait. For years, if they must. …Just like us.
+!give lq_kaki_seed
+!quest lq_road done
+?(comp=nao) comp: …… {名前|なまえ} が {道|みち} を {呼|よ}んで 、 {道|みち} が {人|ひと} を {呼|よ}んだ 。 {配達|はいたつ} {完了|かんりょう} だ 。 || …The name called the road, and the road called the people home. Delivery complete.
+?(comp=mio) comp[smile]: {種|たね} から {育|そだ}てた {木|き} は 、 {親|おや} と {同|おな}じ {実|み} は {付|つ}けない んです 。 でも 、 {子|こ} は {子|こ} です 。 …… きっと 、 いい {木|き} に なります 。 || A tree grown from seed won't bear quite the same fruit as its parent. But a child is a child. …It'll grow into a good tree.
+?(comp=ren) comp: {灯|あか}り {一|ひと}つ 、 {名前|なまえ} {一|ひと}つ 、 {人|ひと} {一人|ひとり} 。 …… {灯守|ひもり} の {仕事|しごと} で 、 {一番|いちばん} いい {仕事|しごと} でした 。 || One lantern, one name, one person. …The best work I've done as a keeper.
+?(comp=suzu) comp[smile]: {初日|しょにち} の {幕|まく} が {上|あ}がった ね 。 {客|きゃく} は {鳥|とり} と {私|わたし} たち だけ だ けど 。 …… {悪|わる}く ない {初日|しょにち} だ よ 。 || Opening night. The audience is us and the birds. …Not a bad opening night.
+!set lq_road_done
+!autosave
+!refresh
+
+@scene lq.kayo_home
+!faceplayer
+lq_kayo: {木守|きもり} の {小屋|こや} の {屋根|やね} を 、 {少|すこ}し ずつ {直|なお}して います 。 {天気|てんき} の いい {日|ひ} に は 、 ヤス おじさん が コウジ さん の {舟|ふね} で {来|き}て くれる んです 。 || I'm mending the tree-keeper's hut, a little at a time. On fine days Uncle Yasu comes over on Kōji's boat.
+lq_kayo[smile]: {朝|あさ} 、 {声|こえ} に {出|だ}して {言|い}う んです 。 「 {小春野|こはるの} 」 って 。 {誰|だれ} も {聞|き}いて いなくて も 。 || Every morning I say it out loud: "Koharuno". Even if no one's listening.
+
+@scene lq.kayo_home_post
+!faceplayer
+lq_kayo: {灯落|ひおち} から {手紙|てがみ} が {来|き}ました 。 {小春野|こはるの} に {戻|もど}りたい って いう {家族|かぞく} が 、 {二|ふた}つ も 。 || Letters came from Lanternfall — two families who want to come back to Koharuno.
+?(end_archive_library) lq_kayo: {山|やま} の {書庫|しょこ} で 、 {村|むら} の {古|ふる}い {地図|ちず} を {写|うつ}させて もらった んです 。 {家|いえ} が {建|た}って いた {場所|ばしょ} が 、 {全部|ぜんぶ} {分|わ}かりました 。 || At the mountain archive they let me copy an old map of the village. Now I know where every house stood.
+lq_kayo[smile]: {来年|らいねん} の {秋|あき} は 、 {採|と}る {人|ひと} が {足|た}りそう です 。 || Next autumn, it looks like there'll be enough of us for the picking.
+`, 'lq/40_road');
+
+
+/* ==== src/content/lq/50_letters.js ==== */
+/* The long quest lines: letters from home (the way in for players who left
+ * Reedwake without hearing of either line, and for saves made before these
+ * lines existed) and companion banter in Koharuno. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.script.add(`
+@scene lq.letters_home
+!set lq_letters
+narr: {道|みち} の {向|む}こう から {配達人|はいたつにん} が {走|はし}って きて 、 $name の {名前|なまえ} を {呼|よ}んだ 。 「 {葦|あし}ノ{瀬|せ} から 、 {手紙|てがみ} です よ ！ 」 || A courier comes running up the road, calling your name. "Letters from Reedwake!"
+!if quest.lq_fare -> road
+narr: {一通|いっつう} は コウジ から 。 {不器用|ぶきよう} な {字|じ} だ 。 || One is from Kōji, in a clumsy hand.
+narr: 「 おふくろ の {渡|わた}し{帳|ちょう} に 、 {払|はら}って もらってない {渡|わた}し{賃|ちん} が {一|ひと}つ ある 。 {三十年|さんじゅうねん} {前|まえ} の {嵐|あらし} の {夜|よる} の {客|きゃく} だ 。 {名前|なまえ} は {消|き}えた 。 {客|きゃく} が {置|お}いてった@置く {判子|はんこ} を {下|した} に {押|お}して おく 。 {旅|たび} の {途中|とちゅう} で {見覚|みおぼ}え が あったら 、 {教|おし}えて くれ 。 」 || "There's one fare in Mum's ferry book that was never paid — a passenger on a stormy night thirty years ago. The name's gone. I've pressed the seal they left, below. If you come across it on your travels, let me know."
+narr: {手紙|てがみ} の {下|した} に 、 {判子|はんこ} の {跡|あと} 。 「 かもめ 」 。 || At the bottom, the seal's stamp: "kamome".
+!give lq_stamp
+!note lq_farebook
+!quest lq_fare 1
+:road
+!if quest.lq_road -> end
+narr: もう {一通|いっつう} は ツル から 。 {短|みじか}い {手紙|てがみ} だ 。 || The other is from Tsuru. It's short.
+narr: 「 コウジ の {渡|わた}し{小屋|ごや} の {先|さき} に 、 {名前|なまえ} の ない {灯|あか}り が ある 。 ヤス は {昔|むかし} 、 その {先|さき} の {村|むら} に {住|す}んで いた そう だ 。 {大|おお}きな {柿|かき} の {木|き} の ある {村|むら} で 、 {大水|おおみず} の {後|あと} 、 {村|むら} の {者|もの} は {舟|ふね} で {川|かわ} を {下|くだ}った 。 {潮硝子|しおがらす} の {船乗|ふなの}り に でも {聞|き}いて みて おくれ 。 ツル 」 || "Past Kōji's ferry house there's a lantern with no name. Yasu says he once lived in the hamlet beyond it — a place with a great persimmon tree. After the flood its people went downriver by boat. Ask the Saltglass boatmen, would you? — Tsuru"
+!quest lq_road 1
+?(comp=nao) comp: {配達人|はいたつにん} に {追|お}いつかれる の は 、 {変|へん} な {気分|きぶん} だ な 。 || Strange feeling, being caught up by a courier.
+?(comp=ren) comp: ツル さん の {字|じ} です ね 。 {灯|あか}り の {名前|なまえ} と {同|おな}じ で 、 {少|すこ}し も {崩|くず}れて いない 。 || That's Tsuru's hand. Like her lantern names — not a stroke out of place.
+
+@scene lq.b_nao
+comp: {誰|だれ} も いない {村|むら} に も 、 {宛名|あてな} は ある 。 {石|いし} の {名前|なまえ} 、 {全部|ぜんぶ} {読|よ}んだ 。 …… {届|とど}ける {先|さき} が ある の は 、 いい もん だ 。 || Even an empty village has addresses. I read every name on the stone. …It's good, having somewhere to deliver to.
+
+@scene lq.b_mio
+comp: {柿|かき} の {葉|は} は 、 {干|ほ}して お{茶|ちゃ} に も できる の よ 。 …… {作|つく}り{方|かた} 、 ラベル に {書|か}いて おかなきゃ 。 || You can dry persimmon leaves and make tea from them, you know. …I must write the method on a label.
+
+@scene lq.b_ren
+comp: {師匠|ししょう} は 、 {灯|あか}り の {名前|なまえ} を {書|か}く {前|まえ} に 、 {必|かなら}ず {声|こえ} に {出|だ}して {読|よ}んで いました 。 …… {理由|りゆう} が 、 やっと {分|わ}かった {気|き} が します 。 || Before writing a lantern's name, my teacher always read it aloud first. …I think I finally understand why.
+
+@scene lq.b_suzu
+comp: {柿|かき} って ね 、 {渋|しぶ}い うち に {採|と}って {干|ほ}す と 、 {甘|あま}く なる んだって 。 {人|ひと} も そう なら いい けど 。 …… {私|わたし} ？ まだ {干|ほ}し{中|ちゅう} 。 || They say if you pick persimmons while they're still bitter and dry them, they turn sweet. Wouldn't it be nice if people worked that way. …Me? Still drying.
+`, 'lq/50_letters');
+
+
 /* ==== src/content/zz_atlas_decor.js ==== */
 /* Settlement details restored by completed Unwritten Atlas expeditions
  * (flags atlas_restore_1..6, set by src/atlas/50_run.js; see docs/ATLAS.md).
