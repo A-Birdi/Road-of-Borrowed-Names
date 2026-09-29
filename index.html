@@ -9635,6 +9635,8 @@ RB.recog = (function () {
     // Outside the allowed set (see docs/RECOGNITION.md "Kanji outside the pad's set"):
     kanjiHintMax: 0.16, // kanji off: a supported kanji must match at least this well to be named...
     kanjiHintGap: 0.04, // ...and beat every allowed character by this much
+    kanjiHintMaxMany: 0.14, // ...or match this well when the drawing has more strokes or ink than any kana
+    // (tuned on dev-strong and the odd half of the Tomoe kanji the game does not use)
     kanjiLikeStrokes: 5, // kanji-like: at least this many strokes (a kana has at most 6),
     kanjiLikeStraight: 0.6, // mostly straight strokes (mean chord / length; scribbles are ~0.15),
     // and nothing allowed matches well: rejected (no-match / too many strokes), or the best
@@ -10587,12 +10589,17 @@ RB.recog = (function () {
     // (b) otherwise, kanji-like (several mostly straight strokes) while nothing
     // allowed matches well: say so (kanjiLike). Both use the drawing only.
     const outside = (bestDist, bestCh, rejected) => {
-      if (rejected && rejected !== 'no-match' && rejected !== 'too-many-strokes') return;
-      const limit = mmin(P.kanjiHintMax, bestDist - P.kanjiHintGap);
-      if (!kanjiOn && rejected !== 'too-many-strokes' && limit > 0) {
+      // a drawing with more strokes or more ink than any kana can still be a
+      // kanji (most kanji have both); dots and zigzags cannot
+      if (rejected && rejected !== 'no-match' && rejected !== 'too-many-strokes' && rejected !== 'dense-ink') return;
+      // with no kana to compare against (too many strokes, too much ink), a
+      // closer match is needed before a kanji is named
+      const hintMax = rejected === 'too-many-strokes' || rejected === 'dense-ink' ? P.kanjiHintMaxMany : P.kanjiHintMax;
+      const limit = mmin(hintMax, bestDist - P.kanjiHintGap);
+      if (!kanjiOn && limit > 0) {
         const k = bestKanji(inp, t, ctx, limit);
         const twin = k && bestCh && TWIN_OF[k.e.ch] && TWIN_OF[k.e.ch].includes(bestCh);
-        if (k && !twin && k.dist <= P.kanjiHintMax && k.dist + P.kanjiHintGap <= bestDist) {
+        if (k && !twin && k.dist <= hintMax && k.dist + P.kanjiHintGap <= bestDist) {
           result.kanjiHint = { ch: k.e.ch, dist: +k.dist.toFixed(4) };
           result.notes.push('kanji-hint: ' + k.e.ch);
           return;
@@ -31647,7 +31654,7 @@ RB.ui.settings = (function () {
       }
       h += '<div class="kind">' + I('settings') + ' For every campaign</div>' +
         radios('input', 'Default way to answer', [['hand', 'Handwriting'], ['choice', 'Choices'], ['ime', 'Keyboard / IME']], null, 'You can switch during any question without losing your place.') +
-        radios('padKanji', 'Handwriting reads', [['auto', 'By Japanese level'], ['on', 'Kanji or kana'], ['off', 'Kana only']], null, 'By level: kana only in Foundations, kanji or kana from Elementary on. The pad knows 33 common kanji; writing in kana is always fine. Kana practice reads kana only. You can also change this with Read as on the writing pad.') +
+        radios('padKanji', 'Handwriting reads', [['auto', 'By Japanese level'], ['on', 'Kanji or kana'], ['off', 'Kana only']], null, 'By level: kana only in Foundations, kanji or kana from Elementary on. The pad knows every kanji in the game (the chart lists them all); writing in kana is always fine. Kana practice reads kana only. You can also change this with Read as on the writing pad.') +
         sw('strokePractice', 'Show stroke-order notes after handwriting', 'Off keeps handwriting lenient: only the shape is checked.');
     } else if (g === 'controls') {
       const binds = RB.input.getBinds();

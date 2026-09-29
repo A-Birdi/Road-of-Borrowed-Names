@@ -7,13 +7,15 @@
 // set (kanjiHint, kanjiLike and their notes) are compared separately: they
 // are expected to change, since there are now many more kanji to name.
 //
-//   node tools/kanjivg/kanaparity.mjs [--rev ba6869d] [--n 2] [--fixtures]
+//   node tools/kanjivg/kanaparity.mjs [--rev ba6869d] [--n 2]
+// Besides the held-out samples it compares the independent kana (AnimCJK,
+// Tomoe) and nonsense drawings (dots, blobs, zigzags, scribbles, tangles).
 import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { FAMILIES, distort } from './synth.mjs';
+import { FAMILIES, distort, nonsense } from './synth.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '..', '..');
@@ -63,11 +65,34 @@ for (const fam of fams) for (const ch of kana) for (let i = 0; i < N; i++) {
     else { const k = `${outside(ro)} -> ${outside(rn)}`; outDiffs[k] = (outDiffs[k] || 0) + 1; }
   }
 }
+const heldN = n, heldSame = same;
+// independent kana and nonsense, in the same two pads
+const fixturesDir = path.join(root, 'tests', 'fixtures', 'recog');
+const extra = [];
+for (const file of ['animcjk-kana.json', 'tomoe-ja.json']) {
+  const fx = JSON.parse(fs.readFileSync(path.join(fixturesDir, file), 'utf8'));
+  for (const c of fx.chars) {
+    if (I.scriptOf(c.ch) === 'kanji') continue;
+    extra.push({ label: file + ' ' + c.ch, strokes: c.strokes.map((st) => st.map(([x, y]) => ({ x, y }))), box: { w: fx.box, h: fx.box }, pads: [{ script: I.scriptOf(c.ch) === 'hira' ? 'hira' : 'kata' }, { script: 'any' }] });
+  }
+}
+for (const kind of ['dot', 'blob', 'zigzag', 'scribble', 'tangle']) for (let i = 0; i < 40; i++) extra.push({ label: kind + i, strokes: nonsense(kind, 5000 + i), box: { w: 300, h: 300 }, pads: [{ script: 'hira' }, { script: 'kata' }, { script: 'any' }] });
+let en = 0, esame = 0, eout = 0;
+const ediff = [];
+for (const x of extra) for (const pad of x.pads) {
+  const opts = { box: x.box, ...pad };
+  const ro = OLD.recognize(x.strokes, opts), rn = NEW.recognize(x.strokes, opts);
+  en++;
+  if (core(ro) === core(rn)) esame++; else if (ediff.length < 10) ediff.push(x.label + ' ' + pad.script);
+  if (outside(ro) === outside(rn)) eout++;
+}
+
 const med = (a) => { const b = a.slice().sort((x, y) => x - y); return b[b.length >> 1].toFixed(1); };
-console.log(`kana-only pads, ${REV} vs working tree: ${kana.length} kana x ${fams.length} held-out families x ${N} samples x 2 pads = ${n} results (${Math.round((Date.now() - t0) / 1000)} s)`);
-console.log(`  identical status, candidates (character + distance), size hint and reading notes: ${same}/${n}`);
+console.log(`kana-only pads, ${REV} vs working tree: ${kana.length} kana x ${fams.length} held-out families x ${N} samples x 2 pads (its script's, and either kana) = ${heldN} results (${Math.round((Date.now() - t0) / 1000)} s)`);
+console.log(`  identical status, candidates (character + distance), size hint and reading notes: ${heldSame}/${heldN}`);
 if (diffs.length) console.log('  DIFFERENCES:\n   ' + diffs.join('\n   '));
 console.log(`  kanji hint / kanji-like unchanged: ${outSame}/${outN}`);
 for (const [k, v] of Object.entries(outDiffs).sort((a, b) => b[1] - a[1])) console.log(`    ${v}x  ${k}`);
-console.log(`  median time per call: ${REV} ${med(tOld)} ms, now ${med(tNew)} ms`);
-process.exit(same === n ? 0 : 1);
+console.log(`  independent kana (AnimCJK, Tomoe) and 200 nonsense drawings, ${en} results: identical ${esame}/${en}; kanji hint / kanji-like unchanged ${eout}/${en}${ediff.length ? '; DIFFERENCES: ' + ediff.join(', ') : ''}`);
+console.log(`  median time per call (held-out): ${REV} ${med(tOld)} ms, now ${med(tNew)} ms`);
+process.exit(heldSame === heldN && esame === en ? 0 : 1);

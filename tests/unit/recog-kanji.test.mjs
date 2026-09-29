@@ -151,8 +151,8 @@ export default async (t) => {
     if (a.kanjiLike) t.ok(a.sizeHint === null, `kanji-like ${c.ch}: no size hint`);
   });
   t.log(`kanji the game does not use (Tomoe, n=${un}): kana pad: kanji-like ${pct(likeKana, un)}, named as a game kanji by the hint ${pct(hintUnk, un)}; kana+kanji pad: read 'confident' as a game kanji ${pct(confMix, un)} (${confWrong.join(' ') || 'none'})`);
-  t.ok(likeKana / un >= 0.85, 'kana pad: a kanji outside the set is flagged kanji-like >= 85%');
-  t.ok(hintUnk / un <= 0.1, 'kana pad: the hint names a game kanji for an unknown one <= 10%');
+  t.ok((likeKana + hintUnk) / un >= 0.9, 'kana pad: a kanji outside the set is said to be a kanji (kanji-like or a hint) >= 90%');
+  t.ok(hintUnk / un <= 0.2, 'kana pad: the hint names a game kanji for an unknown one <= 20% (it resembles one: 較/軟)');
   t.ok(confMix / un <= 0.15, "kana+kanji pad: an unknown kanji is read 'confident' as a game kanji <= 15%");
   // composites of game kanji (the old unknown-kanji stand-ins) are now mostly game kanji themselves
   const comp = Object.entries(UNKNOWN_KANJI);
@@ -184,9 +184,9 @@ export default async (t) => {
     if (r.kanjiLike || r.kanjiHint || r.status === 'confident') nl++;
   }
   t.eq(nl, 0, 'nonsense is never kanji-like, hinted or confident');
-  // a many-stroke kanji in the kana pad: rejected (too many strokes for any kana), flagged kanji-like
+  // a many-stroke kanji in the kana pad: rejected (too many strokes for any kana), and named by the hint
   const mori = R.recognize(draw('森'), { box: BOX, script: 'any' });
-  t.ok(mori.status === 'nonsense' && mori.kanjiLike && mori.candidates.length === 0, '森 (12 strokes) in the kana pad: rejected, flagged kanji-like, no candidates');
+  t.ok(mori.status === 'nonsense' && mori.kanjiHint && mori.kanjiHint.ch === '森' && mori.candidates.length === 0, '森 (12 strokes) in the kana pad: rejected as a kana, named by the hint, no candidates');
   t.eq(top(R.recognize(draw('森'), { box: BOX, ...MIX })), '森', '森 in the kana+kanji pad: 森');
 
   // ---------------------------------------------------------------- nothing answer-like changes the result

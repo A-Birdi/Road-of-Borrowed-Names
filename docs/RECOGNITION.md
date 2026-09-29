@@ -540,14 +540,26 @@ not flagged: with so few strokes they are read as uncertain kana or kanji.
   only when the mapping is unambiguous. It does not judge stroke endings
   (とめ/はね/はらい) or calligraphic quality.
 - Test fixtures are in `tests/fixtures/recog/` (LGPL, test-only); see `SOURCES.txt`.
-- **Only 33 kanji.** Any other kanji can only be written in kana (or typed).
-  The kanji-like message is a heuristic (stroke count, straightness, a weak
-  match); it was measured on synthetic composites of supported kanji, not on
-  real unknown kanji, and kanji of four strokes or fewer are rarely flagged.
-  A kanji the pad doesn't know can still be read as a supported one it
-  resembles (0% `confident` in the composites, but `uncertain` readings such
-  as 回 → 田 do occur).
-- The pad cannot tell ロ from 口 (or ニ/二, カ/力, ー/一) by shape; it orders
+- **Kanji outside the game** (any kanji its text does not use) are not in
+  the set. With kanji reading on, such a kanji is usually read as a game
+  kanji it resembles, sometimes `confident` (較 → 軟: they share 車; see the
+  measurements); the kanji-like message is a heuristic (stroke count,
+  straightness, a weak match), measured on real Tomoe entries but not on
+  learners' writing. A game kanji written with a wrong component can likewise
+  be read as the game kanji it then resembles.
+- **Crowding.** Among 1,548 kanji many differ by one short stroke or its
+  length (未/末, 土/士, 刀/力, 日/曰, 人/入/八). The pad reads such a drawing
+  `uncertain` and offers the others; the templates are KanjiVG's proportions,
+  so a learner's proportions decide which comes first.
+- **Themes are keyword-based.** A kanji's theme comes from the English
+  meanings of its words; the lists and weights are in `80_kanjiinfo.js` and
+  some choices are debatable (麓 "foot (of a mountain)" lands on People and
+  the body). Ties and weak evidence go to Other instead of a guess.
+- **Readings** of a kanji that occurs only in compounds come from splitting
+  those words' readings; the on-reading shape rule can be wrong for a word
+  read as a whole that the list does not know.
+- The pad cannot tell ロ from 口 (or ニ/二, カ/力, ー/一, エ/工, チ/千, タ/夕,
+  オ/才) by shape; it orders
   them by the character written before, and the answer checker accepts either
   for handwriting. A weak ん written in one stroke can come out as 人
   (`uncertain`, ん second): a one-stroke 人 is allowed like other joins.
