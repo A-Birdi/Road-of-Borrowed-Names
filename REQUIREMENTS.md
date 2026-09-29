@@ -226,7 +226,7 @@ commit (VALIDATION.md); screenshots inspected by eye are noted as such.
   - The screen shake and full-screen Heat tint were removed.
   - Reduced motion keeps word, target and outcome. Hurry, a hidden tab, resizing and consecutive encounters were tested.
   - Evidence: battle_anim.mjs, learning_ui.mjs, pad_kanji.mjs.
-- [v] B11 Multiple enemies and Harmony were investigated only, not built: docs/COMBAT_NOTES.md covers what exists and gives a recommendation.
+- [v] B11 Multiple enemies and Harmony were investigated first (docs/COMBAT_NOTES.md). Groups of creatures were then built (E1–E12 below); Harmony charges remain undecided.
 - [v] B13 One person, one figure (player report of 2026-09-29):
   - The bug: after the Mill, Tsuru walked off while a second Tsuru walked in to continue the scene.
   - Speakers are now found by person, not placement id.
@@ -237,7 +237,7 @@ commit (VALIDATION.md); screenshots inspected by eye are noted as such.
   - Evidence: departures.mjs sections 5–6 replay the real bridge scene (Tsuru present once for every line, then heading for the Hall door) and a same-person move. Whole-game runs fail if anyone is drawn twice (pursue.mjs, RB.test.twice).
 - [v] B14 The side view no longer has a floating lip: the mouth sits on the face edge and the nose tip is joined. Evidence: characters.mjs, plus review sheets inspected by eye.
 - [v] B15 The Satchel shows Front, Side, Back, In battle and Portrait. Evidence: equipment.mjs checks the five views in order; the Satchel was inspected at 1064×783 and 390×844.
-- [v] B16 No battle has more than one enemy at once, confirmed from the code:
+- [v] B16 (Before E1–E12, 2026-09-29.) No battle had more than one enemy at once, confirmed from the code:
   - There are 7 scripted battles (the Hush appears twice only as the same boss's retry path).
   - There are 49 placed foes, each fought one at a time.
   - An Atlas room may hold a guard and a roaming foe, but each is its own one-on-one battle. Some single creatures are drawn as a group (moths circling a lamp, a doubled voice).
@@ -288,6 +288,21 @@ commit (VALIDATION.md); screenshots inspected by eye are noted as such.
   - Old saves load unchanged: only new flags, quests and items were added.
 - [v] L6 The quest guidance covers both lines: every stage has an authored `hint` and `at`, and the persimmon tree and the Koharuno maps are named for the markers and the chart.
 - [b] L7 Not verified by people: a native speaker's review of the new Japanese, and whether the pacing across chapters feels right.
+
+## Groups of creatures, the companion's turn, the difficulty curve (lead's brief of 2026-09-29; docs/COMBAT_NOTES.md; VALIDATION.md "Groups of creatures")
+- [v] E1 The setting decides how many creatures come: Relaxed 1, Standard up to 2, Demanding up to 3, at the group placements of the last chapter's final stretch (`sa.stacks`, `sa.conduits`) and in the Atlas (rooms and the guardian's attendants).
+  - Evidence: battle_group.mjs §1 (the Stacks, the Conduits, a seeded Atlas room and the guardian at all three settings); unit combat_fairness and combat_curve (every placement at every setting); validate.mjs checks the group ids and sizes.
+- [v] E2 Targeting: a click or tap on the creature or its slip, the arrow keys on the slips, `[` and `]`; one clear target (a bracket at its feet and a marked slip); a sensible default (the most threatening) that is remembered; screen-reader labels and announcements. Evidence: battle_group.mjs §2 (mouse, keyboard with visible focus, touch at 390×844).
+- [v] E3 Previews on every creature and ally a response reaches (hover and keyboard focus), kept through its step, cleared on "Choose a different response"; group responses from existing words (water, wind) explained in the keyword help. Evidence: battle_group.mjs §3; unit combat_rules (reach).
+- [v] E4 Each creature telegraphs and acts in turn, settles on its own, and the encounter is won after the last; every result applied once, and the screen ends equal to the rules; the placement's flag is set once. Evidence: battle_group.mjs §4 (a Demanding trio of moths played out by mouse); unit combat_rules.
+- [v] E5 Techniques with group effects (Suzu's Curtain Call turns every creature's move back), single-creature numbers unchanged. Evidence: unit combat_rules.
+- [v] E6 Small screens, 200 % text, reduced motion and the Next button after a group battle. Evidence: battle_group.mjs §5 (320×640, 320×640 at 200 %, 1280×800 reduced motion, 844×390): nothing runs off the side, slips ≥ 44 px and not stretched, still marks, Next on top. Limit: a 320×640 portrait stage keeps its 60 px minimum (as with one creature).
+- [v] E7 The companion's turn: after the response's step succeeds it is queued; the companion's support menu (no language step); "Back to <you>" (click or Escape) with nothing lost; then response → companion → creatures. Evidence: companion_turn.mjs §1 (the rules' calls and state checked before and after); §4 plays the late-alliance actions on screen.
+- [v] E8 Companion actions are data (`C.companionActions`) and follow the story: first at recruitment, then `ch2_done`, the personal quest, `lq_ally1`, `lq_ally2`; a new one is announced once; the late-alliance actions keep the scenes' promises. Evidence: companion_turn.mjs §2; unit combat_rules (effects, uses, the late-alliance actions).
+- [v] E9 Companion actions preview whom they act on and can be aimed at another creature without changing yours. Evidence: companion_turn.mjs §3.
+- [v] E10 Companions support; the technique stays their one strong act; old passives folded into actions without counting twice. Evidence: unit combat_rules (no passive draught/opening/lamp/laugh), combat_curve (rounds with a companion ≥ 70 % of rounds alone; the whole arsenal ≥ 85 % of the first action).
+- [v] E11 The difficulty curve reviewed per chapter and setting and recorded (docs/COMBAT_NOTES.md): nothing lost or stalled; Relaxed single and gentle; groups a step up, never a spike; battle resolve 14/12/10. Evidence: unit combat_curve (bounds, and the table it prints).
+- [v] E12 The auto solver (`RB.test.battle`, the whole-game driver) plays groups honestly with the real rules and companion actions (`RB.combatSim`). Evidence: unit combat_curve (the solver against every story group, every setting, every companion); pursue.mjs E nao (one Atlas group met and won) and matrix.mjs FA nao,suzu 2 (4/4) — see VALIDATION.md.
 
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.

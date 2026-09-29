@@ -193,6 +193,17 @@ RB.combatHelp = (function () {
     return null;
   }
 
+  // ---- several creatures -----------------------------------------------------------------------
+  // How a group works, in one note (the "More" of the first group encounter,
+  // and every telegraph's card while there is more than one creature).
+  function groupNote() {
+    return 'More than one creature: each shows its own move before you choose, and each acts in turn after you. ' +
+      'Your response acts on the one you target (the ink bracket at its feet) — press it, or its slip, or use the arrow keys on the slips, or [ and ]. ' +
+      'Some responses reach further: water and wind reach every creature; stone, warmth, a bell or a voice guard you both against that move from every creature. ' +
+      'Unravel, Answer, See through, light and rope act on your target alone; a ward stands before the one you raise it for. ' +
+      'Each response card says whom it acts on, and pointing at one marks them. A creature whose knots are all free settles and stops; the encounter ends when every one has settled.';
+  }
+
   // ---- Harmony ------------------------------------------------------------------------------
   function techOf(st) {
     return L().TECHS[st.compId] || { name: 'Coordinated technique', knots: 1, effect: '' };
@@ -358,5 +369,5 @@ RB.combatHelp = (function () {
   function seen(s, key) { return !!tips(s)[key]; }
   function mark(s, key) { tips(s)[key] = 1; }
 
-  return { gist, intentInfo, statusInfo, harmonyInfo, techOf, compName, attach, detach, show, hide, isOpen, refresh, tips, seen, mark, list, cancels };
+  return { gist, intentInfo, statusInfo, harmonyInfo, techOf, groupNote, compName, attach, detach, show, hide, isOpen, refresh, tips, seen, mark, list, cancels };
 })();

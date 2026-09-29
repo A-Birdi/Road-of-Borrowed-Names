@@ -91,7 +91,9 @@ async function closeMenu(p) { await p.evaluate(() => { RB.ui.menu.close(); }); a
   // reduced motion: no bob; otherwise it bobs
   const ys = async () => { const out = new Set(); for (let i = 0; i < 12; i++) { const mm = await marks(p); const s = mm.marks.find((x) => x.id === 'suzu'); if (s) out.add(s.cssY); await p.waitForTimeout(90); } return out; };
   // the recorded anchor is fixed; the bob is in the drawing: compare the pixels over Suzu instead
-  const px = async () => p.evaluate(() => { const mm = RB.questMarks.marks().marks.find((x) => x.id === 'suzu'); const cv = document.getElementById('world'); const d = devicePixelRatio; const c = document.createElement('canvas'); c.width = 1; c.height = 60; const g = c.getContext('2d'); g.drawImage(cv, Math.round(mm.cssX * d), Math.round((mm.cssY - 50) * d), 1, 60, 0, 0, 1, 60); const a = g.getImageData(0, 0, 1, 60).data; let first = -1; for (let i = 0; i < 60; i++) { const r = a[i * 4], gg = a[i * 4 + 1], bb = a[i * 4 + 2]; if (r > 200 && gg > 150 && gg < 200 && bb < 90) { first = i; break; } } return first; });
+  // (only the band where the diamond sits: when Suzu idles a step, a lantern's amber shade can come
+  // into the column further up)
+  const px = async () => p.evaluate(() => { const mm = RB.questMarks.marks().marks.find((x) => x.id === 'suzu'); const cv = document.getElementById('world'); const d = devicePixelRatio; const c = document.createElement('canvas'); c.width = 1; c.height = 60; const g = c.getContext('2d'); g.drawImage(cv, Math.round(mm.cssX * d), Math.round((mm.cssY - 50) * d), 1, 60, 0, 0, 1, 60); const a = g.getImageData(0, 0, 1, 60).data; let first = -1; for (let i = 14; i < 50; i++) { const r = a[i * 4], gg = a[i * 4 + 1], bb = a[i * 4 + 2]; if (r > 200 && gg > 150 && gg < 200 && bb < 90) { first = i; break; } } return first; });
   const moving = new Set(); for (let i = 0; i < 14; i++) { moving.add(await px()); await p.waitForTimeout(110); }
   await p.evaluate(() => { RB.game.settings.reducedMotion = true; RB.game.applySettings(); });
   await p.waitForTimeout(200);

@@ -20,7 +20,7 @@
 // Usage: node tests/e2e/battle_anim.mjs [filter] [--docs]
 import fs from 'node:fs';
 import path from 'node:path';
-import { serve, launch, page, root } from './lib.mjs';
+import { serve, launch, page, root, companionTurn } from './lib.mjs';
 
 const args = process.argv.slice(2);
 const only = args.find((a) => !a.startsWith('--'));
@@ -156,6 +156,7 @@ async function respond(p, match, how, o) {
       await p.waitForSelector('.fbwrap .fb-go');
       const g = await center(p, '.fbwrap .fb-go');
       await p.mouse.click(g.x, g.y);
+      if (!o.noCompanion) await companionTurn(p, o.comp || {});
       return;
     }
   } else if (how === 'type') {
@@ -178,6 +179,8 @@ async function respond(p, match, how, o) {
   if (o.noContinue) return;
   const g = await center(p, '.fbwrap[data-fb=ok] .fb-go');
   await p.mouse.click(g.x, g.y);
+  // with a companion, their turn comes next: the response is queued until they choose
+  if (!o.noCompanion) await companionTurn(p, o.comp || {});
 }
 // A kanji drawn on the pad with the real mouse, stroke by stroke, along its reference strokes.
 async function drawChar(p, ch) {
@@ -281,6 +284,7 @@ await test('a wrong answer or a cancelled response plays no success sequence; a 
   await p.mouse.click(r2.x, r2.y);
   await p.waitForSelector('.fbwrap[data-fb=ok] .fb-go');
   await p.click('.fbwrap[data-fb=ok] .fb-go');
+  await companionTurn(p);
   await idle(p);
   S = await samples(p);
   const tr = last(await trace(p), 'player');
@@ -305,9 +309,14 @@ await test('rapid input: repeated clicks on a card and on Continue never queue a
   const g = await center(p, '.fbwrap[data-fb=ok] .fb-go');
   for (let i = 0; i < 4; i++) await p.mouse.click(g.x, g.y, { delay: 5 });
   await p.keyboard.press('z'); await p.keyboard.press('Enter');
+  // the extra presses chose nothing in your companion's turn: it is still open, then chosen once
+  await wait(p, 120);
+  const open = await p.evaluate(() => ({ menu: document.querySelectorAll('.ccard').length, phase: RB.combat.phase(), calls: BA.calls.playerAct }));
+  assert(open.menu > 0 && open.phase === 'companion' && open.calls === 0, 'the companion\'s turn is open and nothing has resolved yet: ' + JSON.stringify(open));
+  await companionTurn(p);
   await idle(p);
   const d = await p.evaluate(() => ({ calls: BA.calls, runs: RB.combat.debug().trace.map((r) => r.kind), knots: RB.combat.state().knots }));
-  assert(d.calls.playerAct === 1 && d.calls.enemyAct === 1 && d.runs.join() === 'player,enemy' && d.knots === 3, 'one response, one enemy move, one knot: ' + JSON.stringify(d));
+  assert(d.calls.playerAct === 1 && d.calls.enemyAct === 1 && d.runs.join() === 'player,companion,enemy' && d.knots === 3, 'one response, one companion action, one enemy move, one knot: ' + JSON.stringify(d));
   assert(!errors.length, errors.join('; '));
   await ctx.close();
 });
@@ -518,7 +527,7 @@ await test('reduced motion: the word, its target and the outcome still show — 
   const anc = await p.evaluate(() => { const d = RB.combat.debug().stage; return { head: d.anchors.comp.head, k: d.cssPerArt }; });
   const r = st[0].strip.rect, hx = anc.head.x * anc.k;
   assert(Math.abs(r.x + r.w / 2 - hx) < 90 && r.y + r.h <= anc.head.y * anc.k + 4, 'the strip hangs over the companion\'s head ' + JSON.stringify({ r, hx }));
-  assert(new Set(st.map((s) => s.strip.rect.x + ',' + s.strip.rect.y)).size === 1, 'it does not travel (no movement)');
+  assert(new Set(st.map((s) => s.strip.rect.x + ',' + s.strip.rect.y)).size === 1, 'it does not travel (no movement) ' + [...new Set(st.map((s) => s.strip.rect.x + ',' + s.strip.rect.y + ':' + s.phase))].join(' '));
   assert(P.concat(E).every((s) => !s.foeOff || (s.foeOff.dx === 0 && s.foeOff.dy === 0)), 'the creature does not move');
   assert(E.some((s) => s.poses.pc === 'hit') && E.some((s) => (s.nums || []).indexOf('pc:-2') >= 0), 'the blow on you still shows: a flinch pose and −2');
   assert(seq(P.map((s) => s.marks.find((m) => /^ward:comp/.test(m)) || 'none')).join() === 'none,ward:comp:2', 'the ward before your companion appears (2 tags)');
@@ -588,7 +597,7 @@ await test('a hidden tab settles the sequence at once (no stale burst on return)
   await p.evaluate(() => { Object.defineProperty(document, 'hidden', { value: true, configurable: true }); document.dispatchEvent(new Event('visibilitychange')); });
   await wait(p, 300);
   let s = await p.evaluate(() => ({ busy: RB.battleSeq.busy(), tr: RB.combat.debug().trace.map((r) => r.kind + ':' + r.settled), shown: BA.pick(RB.combat.shown()), real: BA.pick(RB.combat.state()) }));
-  assert(!s.busy && s.tr.join() === 'player:hidden,enemy:hidden' && JSON.stringify(s.shown) === JSON.stringify(s.real), 'hidden: both sequences settled at once, the screen equals the rules ' + JSON.stringify(s));
+  assert(!s.busy && s.tr.join() === 'player:hidden,companion:hidden,enemy:hidden' && JSON.stringify(s.shown) === JSON.stringify(s.real), 'hidden: every sequence of the exchange (yours, your companion\'s, its move) settled at once, the screen equals the rules ' + JSON.stringify(s));
   await p.evaluate(() => { delete document.hidden; document.dispatchEvent(new Event('visibilitychange')); BA.sampleOn(); });
   await wait(p, 600);
   const S = await samples(p);
@@ -716,6 +725,15 @@ await test('learning stays central: calm stances while choosing and writing, not
     assert(focus === 'chal' || focus === 'BODY', 'focus stays with the task: ' + focus);
     const r = await p.evaluate(() => BA.right()); await p.mouse.click(r.x, r.y);
     await p.waitForSelector('.fbwrap[data-fb=ok] .fb-go'); await p.click('.fbwrap[data-fb=ok] .fb-go');
+    // your companion's turn: still calm, nothing drawn over the menu, no focus taken from it
+    await p.waitForSelector('.ccard');
+    await p.evaluate(() => BA.sampleOn());
+    await wait(p, 300);
+    S = await samples(p);
+    assert(S.every((s) => s.phase === 'companion' && s.poses.pc === 'calm' && s.poses.comp === 'calm' && !(s.effects || []).length && !s.strip), 'calm while your companion chooses; nothing drawn');
+    const cf = await p.evaluate(() => { const a = document.activeElement; return a && a.closest('.cb-dock') ? 'dock' : a && a.tagName; });
+    assert(cf === 'dock' || cf === 'BODY', 'focus stays with the companion\'s menu: ' + cf);
+    await companionTurn(p);
     await idle(p);
     const back = await p.evaluate(() => ({ top: RB.ui.topLayer() && RB.ui.topLayer().name, recap: (document.querySelector('.clog.recap') || {}).textContent || '' }));
     assert(back.top === 'cards' && /ほどく/.test(back.recap) && /knot/.test(back.recap), 'the cards come back on top with a recap of the last exchange: ' + JSON.stringify(back));
@@ -748,6 +766,8 @@ async function captureExchange(name, vp, o) {
   await p.waitForSelector('.fbwrap[data-fb=ok] .fb-go');
   await p.evaluate(() => { window.__b0 = RB.battleSeq.stats().counters.beats; });
   await p.click('.fbwrap[data-fb=ok] .fb-go');
+  // your companion's turn (the response is queued); then everything plays in order
+  if (o.comp) await companionTurn(p, o.compPick || {});
   const when = async (label, fn, arg) => { await p.waitForFunction(fn, arg, { timeout: 20000, polling: 'raf' }); await snap(label); };
   await when('2 · anticipation', () => { const f = RB.combat.debug().stage.frame; return f && f.poses.pc && f.poses.pc.startsWith('anticipate'); });
   await when('3 · gesture, the word on paper', () => { const d = RB.combat.debug().stage; return d.strip && d.strip.opacity > 0.9 && d.frame.poses.pc.startsWith('act'); });

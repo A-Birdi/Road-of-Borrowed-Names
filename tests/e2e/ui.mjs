@@ -1,6 +1,6 @@
 // UI, handwriting and persistence tests against the built index.html in Chromium.
 // Usage: node tests/e2e/ui.mjs [filter]
-import { serve, launch, page, chromium } from './lib.mjs';
+import { serve, launch, page, chromium, companionTurn } from './lib.mjs';
 
 const only = process.argv[2];
 const { srv, url } = await serve();
@@ -337,8 +337,11 @@ await test('real combat UI: telegraph, card, choice answer, knot untied, no pena
       cards: !!document.querySelector('.resp[data-i="0"]'),
       chal: !!document.querySelector('.chal'),
       cont: !!document.querySelector('.fbwrap button'),
+      comp: !!document.querySelector('.ccard:not([disabled])'),
     }));
     if (st.over) break;
+    // your companion's turn (the response is queued): their first move
+    if (st.comp) { await companionTurn(p); await p.waitForTimeout(120); continue; }
     if (st.dlg) { await p.evaluate(() => RB.ui.dialogue.advance(true)); await p.waitForTimeout(60); continue; }
     if (st.cont) { await p.click('.fbwrap button'); await p.waitForTimeout(80); continue; }
     if (st.chal) {

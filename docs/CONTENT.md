@@ -99,7 +99,9 @@ C.maps['sg.harbor'] = {
   structs: [{ type: 'house', x, y, w, h, roof: 'tile'|'thatch'|'slate'|'snow'|'indigo'|'ash'|'glass', wall: 'wood'|'stone'|undefined, door: dx, windows: [dx], chimney, lit, sign, to: 'map', spawn: [x, y] }],
   props: [{ p: 'barrel', x, y, scene?: 'id', text?: {jp, en}, if?: 'cond', o?: {…} }],
   npcs: [{ id: 'hana', x, y, dir, wander: 2, if: 'cond', talk: 'scene' | [{ if: 'cond', scene: 'id' }, …] }],
-  foes: [{ id: 'w1', enemy: 'sg.crab', x, y, patrol: 2, aggro: true, if: 'cond' }],
+  foes: [{ id: 'w1', enemy: 'sg.crab', x, y, patrol: 2, aggro: true, if: 'cond',
+          group: { normal: ['sg.crab'], hard: ['sg.crab', 'sg.moth'] } }],  // optional: who comes along on
+          // Standard / Demanding (Relaxed: always one); see docs/COMBAT_NOTES.md
   exits: [{ x, y, w: 1, h: 2, to: 'map', tx, ty, dir, if: 'cond', locked: 'scene' }],
   triggers: [{ x, y, w, h, scene, if, once: true, id }],
   onEnter: [{ scene, if, once }],

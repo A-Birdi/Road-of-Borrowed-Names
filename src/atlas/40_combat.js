@@ -11,7 +11,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   'use strict';
   const AT = RB.atlas, C = RB.content, A = C.atlas;
   const L = RB.combatLogic;
-  const orig = { init: L.init, playerAct: L.playerAct, enemyAct: L.enemyAct, endRound: L.endRound };
+  const orig = { init: L.init, playerAct: L.playerAct, foeAct: L.foeAct, enemyAct: L.enemyAct, endRound: L.endRound };
 
   // ---- context ---------------------------------------------------------------------------------
   function runActive(s) {
@@ -82,11 +82,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
     if (has(ctx, 'bell') && st.compId) st.harmony = Math.min(st.harmonyMax, 1);
     if (has(ctx, 'trim_ren')) { st.ward.pc = Math.max(st.ward.pc, 2); st.ward.comp = Math.max(st.ward.comp, 2); }
     if (ctx.charm === 'reed') { st.ward.pc += 1; st.harmonyMax = 4; }
-    if (enemy.boss && ctx.run) {
-      const k = Math.max(0, Math.min(ctx.run.bonusKnots || 0, st.knots - 2));
-      if (k) { st.knots -= k; st.maxKnots -= k; }
-    }
-    if (has(ctx, 'tag_nao')) preview(st, enemy);
+    // (on the lead creature — the guardian — even when a group's default target is another)
+    L.withFoe(st, 0, () => {
+      if (enemy.boss && ctx.run) {
+        const k = Math.max(0, Math.min(ctx.run.bonusKnots || 0, st.knots - 2));
+        if (k) { st.knots -= k; st.maxKnots -= k; }
+      }
+      if (has(ctx, 'tag_nao')) preview(st, enemy);
+    });
   };
   function preview(st, enemy) {
     st.nextIntents = [0, 1, 2].map((k) => L.intentDef(enemy, st.pattern[(st.pi + k) % st.pattern.length]));
@@ -133,7 +136,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (combo(ctx, 'duet')) st.harmony = Math.max(st.harmony, 1);
     }
   };
-  E.enemy = function (st, countered, ctx) {
+  // One creature's move (every creature of a group in turn): relics and charms soften it.
+  E.move = function (st, countered, ctx) {
     const it = st.intent;
     let tmp = Object.assign({}, it);
     const pre = [];
@@ -151,16 +155,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const before = st.pc + st.comp;
     st.intent = tmp; // the telegraphed intent, softened by relics/charms for this exchange only
     let fx;
-    try { fx = orig.enemyAct(st, countered); } finally { st.intent = it; }
+    try { fx = orig.foeAct(st, countered); } finally { st.intent = it; }
     for (const m of pre) fx.unshift({ t: 'settle', en: m });
     if (has(ctx, 'wick') && !countered && it.kind === 'shroud' && st.shroud && !st._a.wickUsed) { st.shroud = false; st._a.wickUsed = true; fx.push({ t: 'settle', en: 'The spare wick flares — the mist burns off at once.' }); }
-    if (ctx.comp === 'mio' && has(ctx, 'vial_mio')) {
-      const b = st.pc + st.comp;
-      if (st.pc > 0) st.pc = Math.min(st.max, st.pc + 1);
-      if (st.comp > 0) st.comp = Math.min(st.max, st.comp + 1);
-      if (st.heat > 0) st.heat -= 1;
-      if (st.pc + st.comp > b) fx.push({ t: 'comp', who: 'mio', en: 'Mio uncorks the spare vial: a second mouthful, and the air cools.' });
-    }
     if (ctx.run && ctx.run.lantern && ctx.run.lantern.hp > 0 && st.pc + st.comp < before) {
       const lan = ctx.run.lantern;
       lan.hp -= 1;
@@ -169,15 +166,34 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }
     return fx;
   };
+  // After every creature has acted: what happens once per exchange.
+  E.exchange = function (st, fx, ctx) {
+    if (ctx.comp === 'mio' && has(ctx, 'vial_mio')) {
+      const b = st.pc + st.comp;
+      if (st.pc > 0) st.pc = Math.min(st.max, st.pc + 1);
+      if (st.comp > 0) st.comp = Math.min(st.max, st.comp + 1);
+      for (const f of st.foes) if (f.heat > 0 && !f.settled) f.heat -= 1;
+      if (st.pc + st.comp > b) fx.push({ t: 'comp', who: 'mio', en: 'Mio uncorks the spare vial: a mouthful each, and the air cools.' });
+    }
+    return fx;
+  };
+  // the whole exchange: every creature (each softened as above), then the exchange
+  E.enemy = function (st, countered, ctx) {
+    const fx = orig.enemyAct(st, countered, (x, c) => E.move(x, c, ctx));
+    return E.exchange(st, fx, ctx);
+  };
   E.endRound = function (st, enemy, ctx) {
-    if (has(ctx, 'tag_nao') && st.intent) preview(st, enemy);
+    if (has(ctx, 'tag_nao')) for (const i of L.standing(st)) L.withFoe(st, i, (f) => { if (f.intent) preview(st, st.foes.length > 1 ? f.def : enemy); });
   };
 
   // ---- wrappers (installed only during battles that need them) -----------------------------------------------
   const W = {
     init(enemy, s, opts) {
       const ctx = ctxNow();
-      if (ctx) applyEnemy(enemy, ctx);
+      opts = Object.assign({}, opts || {});
+      // every creature of a group is on the same route: each gets the route's intents
+      opts.group = (opts.group || []).map((g) => (typeof g === 'string' ? Object.assign({ id: g }, C.enemies[g] || {}) : g));
+      if (ctx) { applyEnemy(enemy, ctx); for (const g of opts.group) applyEnemy(g, ctx); }
       const st = orig.init(enemy, s, opts);
       if (ctx) { E.init(st, enemy, ctx); st._ctx = true; }
       return st;
@@ -189,10 +205,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (ctx && st._a) E.player(st, card, result, enemy, ctx, out, kb, hb);
       return out;
     },
-    enemyAct(st, countered) {
+    // one creature's move (the rules' enemyAct calls this for each creature in turn)
+    foeAct(st, countered) {
       const ctx = ctxNow();
-      if (!ctx || !st._a) return orig.enemyAct(st, countered);
-      return E.enemy(st, countered, ctx);
+      if (!ctx || !st._a) return orig.foeAct(st, countered);
+      return E.move(st, countered, ctx);
+    },
+    enemyAct(st, countered, act) {
+      const fx = orig.enemyAct(st, countered, act);
+      const ctx = ctxNow();
+      if (ctx && st._a) E.exchange(st, fx, ctx);
+      return fx;
     },
     endRound(st, enemy) {
       const r = orig.endRound(st, enemy);
@@ -243,7 +266,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const out = orig.playerAct(st, card, res, enemy);
       E.player(st, card, res, enemy, ctx, out, kb, hb);
       if (st.knots <= 0) return { win: true, rounds: round + 1, pc: st.pc, comp: st.comp };
-      E.enemy(st, out.countered, ctx);
+      E.enemy(st, out.answered, ctx);
       orig.endRound(st, enemy);
       E.endRound(st, enemy, ctx);
       if (st.over) return { win: st.over === 'win', rounds: round + 1, pc: st.pc, comp: st.comp };

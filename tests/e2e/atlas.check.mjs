@@ -63,6 +63,9 @@ async function uiStep() {
     }
     const card = document.querySelector('.combat-ui .responses [data-i]');
     if (card && !card.disabled) { card.click(); return 'battle:card'; }
+    // your companion's turn (the response is queued): their first move
+    const cc = document.querySelector('.combat-ui .responses .ccard:not([disabled])');
+    if (cc) { cc.click(); return 'battle:companion'; }
     const dlg = document.querySelector('.dlg');
     if (shown(dlg)) { dlg.querySelector('.b-next').click(); return 'dialogue'; }
     const c = document.querySelector('.banner-layer');

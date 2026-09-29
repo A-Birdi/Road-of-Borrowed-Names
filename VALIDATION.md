@@ -766,3 +766,51 @@ branch (5feb4a0) and re-run there. REQUIREMENTS.md L1–L7.
 - **B `quest_guide.mjs`:**
   - An older Chapter 2 save with `rw_depart` at stage 1 shows "Two Names" as Completed, the save still holds it open, and the main road shown is `sg_main`.
   - Running `sg.arrive` marks it completed.
+  - (Superseded by the next section: groups now come at some placements.)
+
+## Groups of creatures, the companion's turn, the difficulty curve — lead's brief of 2026-09-29
+Key as above (**B** browser, **U** unit, **S** inspected by eye). Headless
+Chromium in this container, touch emulated. Built in a worker's git worktree
+(branch `worktree-agent-a8728f8cb6f184752`, from ba6869d); the lead merges it.
+
+- **U `node tests/run-unit.mjs`: 4431 passed, 0 failed** (the final commit). New or extended:
+  - `combat_rules`: group state and accessors, the knot shares, targets, reach per word, per-creature turns and settling, the win after the last, techniques in a group (single-creature numbers unchanged), the companion's actions and their uses, the passives folded into actions (none happens by itself), staggered patterns, a slip costing at most 1 per exchange whatever the group (none in assisted mode), the late-alliance actions (Take half splits a blow and adds up to it; Grand gesture draws both creatures; Raise the lamps breaks the Hush and the mist; Stand in front wards you by 3), battle resolve 14/12/10.
+  - `combat_fairness`: every move of every group creature is answerable with the words known there; story groups only at the Stacks and the Conduits; seeded Atlas groups within size (one more on Standard, two on Demanding) and made of the Atlas's regular creatures.
+  - `combat_curve` (new, 287 checks): the difficulty curve (docs/COMBAT_NOTES.md, whose tables it prints), and the whole-game driver's solver against every story group at every setting with every companion.
+- **Validator:** `node tools/validate.mjs` reports no errors (it now checks group ids and sizes).
+- **B Browser suites on 30a0782** (each script run on its own, in this order): combat_ui 7/7, battle_anim 16/16, companion_turn 3/3 (new), battle_group 6/6 (new), encounters all ok, backdrops 61/61, systems 4/4, ui 14/14, learning_ui 14/14, atlas.check exit 0, equipment exit 0.
+- **B On the final commit** (its index.html differs from 30a0782 only by the link effect for Nao's "take half" in 82_battle_seq.js): companion_turn 4/4 (with the late-alliance test), battle_group 6/6 with `--docs`, battle_anim's exchange capture with `--docs`.
+- **B `battle_group.mjs` (new, 6):**
+  - Counts: the Stacks (w1) and the Conduits (g1) at Relaxed/Standard/Demanding give 1/2/3 creatures, with one slip each in a group; a seeded Atlas room's guardian 1/2/3; the Atlas guardian's attendants 1/2/3.
+  - Targeting with the real mouse (a pixel of the creature on the stage, its slip), the keyboard (Tab to the slips, ArrowRight in stage order with visible focus, `]` and `[` from the responses) and touch (a tap on the creature and on a slip at 390×844); the bracket, the slip, the telegraph and the cards' "on the …" labels follow; a radio group with labels and "Target: …" announced.
+  - Previews: Unravel marks the target only, water all three, healing you both; keyboard focus previews; kept while the step is open ("on all three" in the task); gone after "Choose a different response", with the rules never called.
+  - A Demanding trio of moths played out by mouse: each creature has its own sequence, in order; one settles (its slip, its pose, its line, the target moves on) while the others act; every enemy exchange's resolve lost equals its hits and names its creature; one response and one creature exchange per round; won, the placement's flag set once.
+  - 320×640, 320×640 at 200 % text, 1280×800 reduced motion and 844×390: nothing off the side, three slips of at least 44 px, the row of slips as tall as its fullest slip, the scene and the preview marks still under reduced motion, the fight played out and Next on top after it.
+  - Captures: tests/e2e/out/battle_group/ (WebP copies in docs/screenshots/battle/group_*.webp).
+- **B `companion_turn.mjs` (new, 4):**
+  - After the response's step: the menu (the queued response, "Back to <name>", Mio's two actions, no task), the rules not yet called and the state unchanged; one language step so far.
+  - Back by click, then by Escape: the choice again, the rules untouched, resolve, knots, Harmony and uses exactly as before.
+  - Confirmed: `playerAct`, `compAct`, `enemyAct`, `endRound` in that order; Unravel freed its knot once; then her draught; on screen the response, her action, then both creatures in turn.
+  - Unlocks for all four companions along the story (1, 2, 3, 4, 5 actions; nothing taken away; the quest's action needs the quest); Suzu's menu before and after chapter 2; "Draw its eye" marked New and announced once, not again next exchange; remembered in the campaign's tips.
+  - Previews: Heckle the target, the Grand gesture both creatures; another creature chosen during her menu is marked and heckled, while your own target stays yours.
+  - The late alliances on screen (both creatures' moves set to a Strike at you): Nao's Take half shares every blow (hits on both of you, "Nao takes half of it" in the log); Suzu's Grand gesture sends both blows to her; Ren's Stand in front puts a 3-point ward before you; the screen ends equal to the rules; no page errors.
+- **Fixes the new tests found:** keyboard-focus previews had never worked (focusin/focusout have no on… properties in browsers; now listeners), and the card focused for you at the start no longer previews until you move; the companion's menu stayed on screen, pressable-looking, during the exchange (now cleared); a phone's row of slips was stretched to one-per-line height by a column flexbox (now a grid: 48 px instead of 150 px at 390×844); a short portrait phone's telegraph is tighter.
+- **S** I looked at every capture in `tests/e2e/out/battle_group/` (a pair with the target bracket, a trio with the water preview, a trio on a phone, the companion's turn), at 320×640 with one and three creatures, and at the three refreshed exchange strips in docs/screenshots/battle/.
+- **B Whole game `pursue.mjs E nao` (30a0782, 781 s, Standard):** all six chapters and the first Atlas expedition; 10 battles, none lost; no problems, no page errors, nobody drawn twice; 49 comings and goings (3 by the nearest way). Groups met: 1 (the Atlas cartographer with a stray, won in 4 exchanges). The companion's actions taken by the solver: Spot the opening 20, Call out its aim 14, joining the technique 6. The driver fights only what stands in its way, so it met none of the Stacks or Conduits groups; the driver's own solver (`RB.test.battle`) plays every one of them at every setting with every companion in unit `combat_curve` (all won, no problems), and battle_group.mjs plays one through the screen.
+- **B Whole-game matrix `matrix.mjs FA nao,suzu 2` (30a0782): 4/4** — F/nao, F/suzu, A/nao, A/suzu each played a new campaign through chapters 1–6 and the first Atlas expedition (12.4–12.9 min each). The matrix does not print the groups met.
+- **B Layout audit of the battle states on e03fc56** (`visual.mjs --check --only combat,combat_f,combat_step`; they are single-creature fixtures, and the shorter telegraph on short portrait phones applies to them): English labels at the 8 viewports: **24/24 clean**; Japanese labels at 320x640, 390x844, 1280x800: **9/9 clean**. The group layouts are checked by battle_group.mjs §5 instead.
+- **Not verified:** Firefox, Safari and real phones; a human judgement of the formation and of the companion's menu; the 320×640 portrait stage stays at its 60 px minimum (as with one creature).
+
+### Merged into the task branch (with the title screen, the long quest lines and the quest guidance)
+- Conflicts were only in docs and `tests/e2e/run.mjs`, and both sides were kept. The group checklist items were renumbered E1–E12, because the quest guidance already uses G1–G6.
+- **U / validator on the merge:** unit 4527 (including combat_curve); validator no errors.
+- **B on the merge:**
+  - battle_group 6/6, combat_ui 7/7, battle_anim 16/16, learning_ui 14/14, pad_kanji 8/8, ui 14/14 and systems 4/4.
+  - encounters, backdrops (61/61) and atlas.check pass; long_quests (fixtures) passes in 117 s.
+- **Two test weaknesses showed up under load** (another worker's suite was running at the same time). Both are fixed in the tests; the game was not at fault.
+  - `companion_turn.mjs` assumed the response's step was always multiple choice.
+    - Sometimes it is putting pieces in order, depending on timing. It failed 3 of 5 times under load; labelled waits showed the step open with tiles.
+    - The test now answers either kind with the mouse. Forced to the ordering kind once, it passed (3 steps put in order); then 5 of 5 passed normally.
+  - `quest_guide.mjs` "with reduced motion it holds still" failed once with rows (30, 4).
+    - Its pixel scan covered 60 rows above Suzu. When she idled a step, a lantern's amber shade entered the column 26 px higher.
+    - The scan is now limited to the band where the diamond is drawn. It passed again: the marker held at one row with reduced motion and bobbed across 5 rows without.

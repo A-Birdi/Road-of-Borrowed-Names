@@ -22,7 +22,7 @@
 // Usage: node tests/e2e/backdrops.mjs [--docs] [--only a,b,c,d,e,f,atlas,phone,all]
 import fs from 'node:fs';
 import path from 'node:path';
-import { serve, launch, page, root } from './lib.mjs';
+import { serve, launch, page, root, companionTurn } from './lib.mjs';
 
 const DOCS = process.argv.includes('--docs');
 const oi = process.argv.indexOf('--only');
@@ -215,6 +215,8 @@ async function answerUnravel() {
   });
   await p.waitForSelector('.fbwrap[data-fb=ok] .fb-go');
   await p.click('.fbwrap[data-fb=ok] .fb-go');
+  // with a companion, their turn comes next (the response is queued until they choose)
+  await companionTurn(p);
   return true;
 }
 async function wrapSteps() {

@@ -75,6 +75,12 @@ async function exchange() {
   await p.waitForSelector('.fbwrap[data-fb=ok] .fb-go');
   await pause(900);
   await clickAt(await center('.fbwrap[data-fb=ok] .fb-go'));
+  // Mio's turn: the response is queued; she chooses her warm draught (no language step)
+  if (await p.waitForSelector('.ccard:not([disabled])', { timeout: 5000 }).catch(() => null)) {
+    await pause(900);
+    await notes();
+    await clickAt(await center('.ccard:not([disabled])'));
+  }
   // the exchange plays: the response on paper, its move, the reaction, recovery
   await p.waitForFunction(() => RB.ui.dialogue.isOpen() || (RB.combat.phase && ['choose', 'idle', 'outro'].includes(RB.combat.phase()) && !document.querySelector('.chal')), null, { timeout: 30000 }).catch(() => {});
   await pause(600);

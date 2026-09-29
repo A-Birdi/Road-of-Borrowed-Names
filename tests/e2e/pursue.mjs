@@ -57,6 +57,10 @@ for (const leg of legs) {
 const fin = await p.evaluate(() => ({
   comp: RB.game.s.comp, map: RB.world.W.map.id, problems: RB.test.problems.slice(0, 10),
   battles: RB.test.log.filter((l) => l.t === 'battle').map((l) => l.enemy + ':' + l.result),
+  // several creatures at once (the last chapter's final stretch and the Atlas, on Standard and Demanding)
+  groups: RB.test.log.filter((l) => l.t === 'battle' && l.group && l.group.length).map((l) => [l.enemy].concat(l.group).join('+') + ': ' + l.result + ' in ' + l.rounds),
+  difficulty: RB.game.s.learn.difficulty,
+  compActs: RB.test.log.filter((l) => l.t === 'battle').reduce((m, l) => { for (const k in l.acts || {}) m[k] = (m[k] || 0) + l.acts[k]; return m; }, {}),
   quests: Object.fromEntries(Object.entries(RB.game.s.quests).map(([k, q]) => [k, q.done ? 'done' : q.stage])),
   flags: ['post', 'postgame', 'ch6_done'].filter((f) => RB.game.s.flags[f]),
   absent: (RB.test.absentSpeakers || []).map((x) => x.who + ' @ ' + x.map + ' (' + (x.scene || '?') + '): ' + x.en),
@@ -78,6 +82,8 @@ if (fin.extras.length) console.log('walked in to speak (' + fin.extras.length + 
 const guessed = fin.departures.filter((d) => /\[nearest/.test(d));
 console.log('comings and goings: ' + fin.departures.length + ' (' + guessed.length + ' by the nearest way)' + (guessed.length ? ':\n  ' + guessed.join('\n  ') : ''));
 fs.writeFileSync(path.join(root, 'tests/e2e/out', 'speakers-' + profile + '-' + comp + '.json'), JSON.stringify({ absent: fin.absent, extras: fin.extras, departures: fin.departures }, null, 1));
+console.log('groups met (' + fin.groups.length + ', ' + fin.difficulty + '): ' + fin.groups.join('; '));
+console.log('companion actions taken: ' + JSON.stringify(fin.compActs));
 const lost = fin.battles.filter((x) => !x.endsWith(':win'));
 if (comp !== 'none' && fin.comp !== comp) { ok = false; console.log('companion ' + fin.comp + ' is not the requested ' + comp); }
 console.log(JSON.stringify({ profile, comp: fin.comp, seconds: Math.round((Date.now() - t0) / 1000), map: fin.map, flags: fin.flags, battles: fin.battles.length, lost, problems: fin.problems, pageErrors: errors.slice(0, 5), quests: fin.quests }, null, 1));
