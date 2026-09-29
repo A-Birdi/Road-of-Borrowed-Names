@@ -26631,7 +26631,9 @@ RB.ui.dialogue = (function () {
     if (!who || who === 'narr' || who === 'pc' || !RB.render.worldVisible()) return;
     const W = RB.world.W;
     if (W.comp && (who === 'comp' || who === W.comp.id)) return;
-    if (W.npcs.some((n) => n.id === who) || (W.extras || []).some((n) => n.id === who)) return;
+    // present under any of their placements (hana_out is Hana)
+    const person = (n) => (n.def && (n.def.char || n.def.id)) || n.id;
+    if (W.npcs.some((n) => n.id === who || person(n) === who) || (W.extras || []).some((n) => n.id === who || person(n) === who)) return;
     if ((W.map.def.npcs || []).some((n) => n.was && n.id === who && W.npcs.some((q) => q.id === n.was))) return;
     const list = (RB.test.absentSpeakers = RB.test.absentSpeakers || []);
     const key = who + '|' + W.map.id + '|' + (line.sceneId || '');

@@ -227,6 +227,20 @@ commit (VALIDATION.md); screenshots inspected by eye are noted as such.
   - Reduced motion keeps word, target and outcome. Hurry, a hidden tab, resizing and consecutive encounters were tested.
   - Evidence: battle_anim.mjs, learning_ui.mjs, pad_kanji.mjs.
 - [v] B11 Multiple enemies and Harmony were investigated only, not built: docs/COMBAT_NOTES.md covers what exists and gives a recommendation.
+- [v] B13 One person, one figure (player report of 2026-09-29):
+  - The bug: after the Mill, Tsuru walked off while a second Tsuru walked in to continue the scene.
+  - Speakers are now found by person, not placement id.
+  - Someone walking away who is given a line turns back.
+  - A person whose place on the map changes, or a walked-in speaker who gets a place, walks there as the same figure.
+  - A scene's line waits up to 3 s for its speaker to arrive.
+  - Tsuru stays in the square until evening falls, then walks to the Lantern Hall.
+  - Evidence: departures.mjs sections 5–6 replay the real bridge scene (Tsuru present once for every line, then heading for the Hall door) and a same-person move. Whole-game runs fail if anyone is drawn twice (pursue.mjs, RB.test.twice).
+- [v] B14 The side view no longer has a floating lip: the mouth sits on the face edge and the nose tip is joined. Evidence: characters.mjs, plus review sheets inspected by eye.
+- [v] B15 The Satchel shows Front, Side, Back, In battle and Portrait. Evidence: equipment.mjs checks the five views in order; the Satchel was inspected at 1064×783 and 390×844.
+- [v] B16 No battle has more than one enemy at once, confirmed from the code:
+  - There are 7 scripted battles (the Hush appears twice only as the same boss's retry path).
+  - There are 49 placed foes, each fought one at a time.
+  - An Atlas room may hold a guard and a roaming foe, but each is its own one-on-one battle. Some single creatures are drawn as a group (moths circling a lamp, a doubled voice).
 - [b] B12 Blocked on people or hardware; not verified: Firefox and Safari. Your report came from Firefox, and the Next-button fix was reproduced and verified in Chromium only. Also unverified: real phones, touch hardware, frame rate on phones, and a human judgement of the new art and motion.
 
 ## Evidence index (see VALIDATION.md for commands and dates)
