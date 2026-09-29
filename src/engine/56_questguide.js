@@ -849,7 +849,7 @@ RB.questGuide = (function () {
     return ordered(r.targets || []).map((t) => {
       const n = nameOf(t), pl = placeName(t.map), dir = direction(t);
       const place = t.kind === 'enter' || t.kind === 'trigger' || t.kind === 'spot';
-      let jp = 'つぎ ： ' + (place ? pl.jp : pl.jp + ' の ' + n.jp) + ' 。', en = 'Next: ' + (place ? pl.en : cap(n.en) + ', in ' + pl.en);
+      let jp = 'つぎ ： ' + (place ? pl.jp : pl.jp + ' の ' + n.jp) + ' 。', en = 'Next: ' + (place ? pl.en : n.en + ', in ' + pl.en);
       if (dir && dir.unreachable) { jp += ' ' + NOWAY.jp + ' 。'; en += ' — ' + NOWAY.en; }
       else if (dir && dir.here && t.kind === 'enter') { jp = 'つぎ ： ここ 、 ' + pl.jp + ' 。'; en = 'Next: here, in ' + pl.en; }
       else if (dir && !dir.here) { jp += ' ' + dir.jp + ' 。'; en += ' — ' + dir.en; }

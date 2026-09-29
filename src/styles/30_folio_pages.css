@@ -48,6 +48,7 @@ button.entry .t, button.entry .kind { display: block; }
 .follow-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3em 0.8em; margin: 0.5em 0; }
 .follow-row .muted { flex: 1 1 14em; min-width: 0; }
 .pbtn.follow[aria-pressed="true"] { background: var(--paper-2); border-color: var(--ribbon-deep); box-shadow: inset 0 -3px 0 var(--ribbon); font-weight: 600; }
+.pbtn.follow svg, .qguide .pbtn svg { flex: none; }
 .pbtn.follow[aria-pressed="true"] svg { color: var(--ribbon-deep); }
 .qnext { border-left: 3px solid var(--ribbon); background: rgba(255,255,255,0.35); padding: 0.3em 0.6em 0.4em; margin: 0.4em 0 0.6em; }
 .qnext .kind svg, .qguide .ph svg { width: 1.05em; height: 1.05em; vertical-align: -0.15em; }

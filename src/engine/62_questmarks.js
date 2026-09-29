@@ -105,9 +105,10 @@ RB.questMarks = (function () {
   }
 
   // ---- drawing -----------------------------------------------------------------------------------------
-  const last = { marks: [], qid: null };
+  const last = { marks: [], qid: null, at: -1e9 };
   function draw(c, h, t) {
     last.marks = [];
+    last.at = typeof performance !== 'undefined' ? performance.now() : 0;
     const W = RB.world.W;
     if (!W.map || !shown()) { last.qid = null; return; }
     const I = info(W);
@@ -150,7 +151,7 @@ RB.questMarks = (function () {
         const faced = front && front[0] === Math.round(sp.x) && front[1] === Math.round(sp.y);
         let y;
         // people and things: just above a standing person's head (the ▾'s height), like the ▾ itself
-        if (tg.kind === 'npc' || tg.kind === 'foe' || tg.kind === 'prop') y = h.ay(sp.y * TS) - h.HEAD - (faced ? 15 : 4);
+        if (tg.kind === 'npc' || tg.kind === 'foe' || tg.kind === 'prop') y = h.ay(sp.y * TS) - h.HEAD - (faced ? 17 : 9);
         else y = h.ay(sp.y * TS) + ATS / 2 - 2; // a spot on the ground
         place({ x, y, info: { kind: 'target', target: tg.kind, id: tg.id || tg.p || null, map: tg.map, tx: Math.round(sp.x), ty: Math.round(sp.y) } });
       }
@@ -170,10 +171,12 @@ RB.questMarks = (function () {
     }
     place({ x, y: y + 8, info: { kind: 'exit', tx: ex.x, ty: ex.y, to: ex.to, dest: ex.dest } });
   }
-  // CSS-pixel positions of what was drawn in the last frame (for tests)
+  // CSS-pixel positions of what was drawn in the last frame (for tests); when
+  // the world has not been drawn for a moment (a battle, the title), nothing
   function marks() {
     const k = RB.render.viewSize().scale / RB.render.ART;
-    return { qid: last.qid, marks: last.marks.map((m) => Object.assign({}, m, { cssX: Math.round(m.x * k), cssY: Math.round(m.y * k) })), safe };
+    const fresh = typeof performance !== 'undefined' && performance.now() - last.at < 250;
+    return { qid: fresh ? last.qid : null, fresh, marks: fresh ? last.marks.map((m) => Object.assign({}, m, { cssX: Math.round(m.x * k), cssY: Math.round(m.y * k) })) : [], safe };
   }
   function refresh() { cur = null; safe = null; }
   return { draw, marks, refresh };

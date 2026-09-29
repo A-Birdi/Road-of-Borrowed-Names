@@ -620,11 +620,11 @@ RB.ui.menu = (function () {
       const known = s.travel[p.id];
       const here = p.id === hereId;
       const next = gm && gm.places.includes(p.id);
-      if (next) svg += '<circle class="next-ring" cx="' + p.pos[0] + '" cy="' + p.pos[1] + '" r="13" fill="none" stroke="#c0761c" stroke-width="2.5" stroke-dasharray="4 3"/>';
+      if (next) svg += '<circle class="next-ring" cx="' + p.pos[0] + '" cy="' + p.pos[1] + '" r="14" fill="none" stroke="#c0761c" stroke-width="3" stroke-dasharray="5 3"/>';
       svg += '<circle cx="' + p.pos[0] + '" cy="' + p.pos[1] + '" r="' + (here ? 8 : 6) + '" fill="' + (known ? '#2a2217' : '#efe3c6') + '" stroke="#2a2217" stroke-width="1.5"/>';
       if (here) svg += '<path d="M' + p.pos[0] + ' ' + (p.pos[1] - 12) + ' l-6 -12 h12 z" fill="#a83e27"/>';
       // the quest marker: the same inked amber diamond as in the world (beside the red mark when both are here)
-      if (next) { const dx = p.pos[0] + (here ? 15 : 0), dy = p.pos[1] - (here ? 16 : 14); svg += '<path class="next-mark" d="M' + dx + ' ' + (dy - 14) + ' l7 7 -7 7 -7 -7z" fill="#f0b43c" stroke="#2a2024" stroke-width="1.6"/><path d="M' + dx + ' ' + (dy - 7) + ' v5" stroke="#8a4e12" stroke-width="1.2"/>'; }
+      if (next) { const dx = p.pos[0] + (here ? 19 : 0), dy = p.pos[1] - (here ? 14 : 16); svg += '<path class="next-mark" d="M' + dx + ' ' + (dy - 22) + ' l10 11 -10 11 -10 -11z" fill="#f0b43c" stroke="#2a2024" stroke-width="2"/><path d="M' + dx + ' ' + (dy - 11) + ' v8" stroke="#8a4e12" stroke-width="1.6"/><path d="M' + (dx - 4) + ' ' + (dy - 17) + ' l3 -3" stroke="#fff0b8" stroke-width="1.6"/>'; }
       // labels near the right edge sit left of their dot so they are never cut off; size follows the text-size setting
       const right = p.pos[0] > Wd * 0.62;
       svg += '<text x="' + (p.pos[0] + (right ? -11 : 11)) + '" y="' + (p.pos[1] + 5) + '"' + (right ? ' text-anchor="end"' : '') + ' fill="' + (known ? '#261f15' : '#62553f') + '" font-size="' + fs + '" font-family="Georgia, serif" stroke="#efe3c6" stroke-width="3" paint-order="stroke">' + esc(known ? p.name.en : '? unexplored') + '</text>';

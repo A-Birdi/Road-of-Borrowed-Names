@@ -553,6 +553,7 @@ button.entry .t, button.entry .kind { display: block; }
 .follow-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3em 0.8em; margin: 0.5em 0; }
 .follow-row .muted { flex: 1 1 14em; min-width: 0; }
 .pbtn.follow[aria-pressed="true"] { background: var(--paper-2); border-color: var(--ribbon-deep); box-shadow: inset 0 -3px 0 var(--ribbon); font-weight: 600; }
+.pbtn.follow svg, .qguide .pbtn svg { flex: none; }
 .pbtn.follow[aria-pressed="true"] svg { color: var(--ribbon-deep); }
 .qnext { border-left: 3px solid var(--ribbon); background: rgba(255,255,255,0.35); padding: 0.3em 0.6em 0.4em; margin: 0.4em 0 0.6em; }
 .qnext .kind svg, .qguide .ph svg { width: 1.05em; height: 1.05em; vertical-align: -0.15em; }
@@ -24012,7 +24013,7 @@ RB.questGuide = (function () {
     return ordered(r.targets || []).map((t) => {
       const n = nameOf(t), pl = placeName(t.map), dir = direction(t);
       const place = t.kind === 'enter' || t.kind === 'trigger' || t.kind === 'spot';
-      let jp = 'つぎ ： ' + (place ? pl.jp : pl.jp + ' の ' + n.jp) + ' 。', en = 'Next: ' + (place ? pl.en : cap(n.en) + ', in ' + pl.en);
+      let jp = 'つぎ ： ' + (place ? pl.jp : pl.jp + ' の ' + n.jp) + ' 。', en = 'Next: ' + (place ? pl.en : n.en + ', in ' + pl.en);
       if (dir && dir.unreachable) { jp += ' ' + NOWAY.jp + ' 。'; en += ' — ' + NOWAY.en; }
       else if (dir && dir.here && t.kind === 'enter') { jp = 'つぎ ： ここ 、 ' + pl.jp + ' 。'; en = 'Next: here, in ' + pl.en; }
       else if (dir && !dir.here) { jp += ' ' + dir.jp + ' 。'; en += ' — ' + dir.en; }
@@ -24815,9 +24816,10 @@ RB.questMarks = (function () {
   }
 
   // ---- drawing -----------------------------------------------------------------------------------------
-  const last = { marks: [], qid: null };
+  const last = { marks: [], qid: null, at: -1e9 };
   function draw(c, h, t) {
     last.marks = [];
+    last.at = typeof performance !== 'undefined' ? performance.now() : 0;
     const W = RB.world.W;
     if (!W.map || !shown()) { last.qid = null; return; }
     const I = info(W);
@@ -24860,7 +24862,7 @@ RB.questMarks = (function () {
         const faced = front && front[0] === Math.round(sp.x) && front[1] === Math.round(sp.y);
         let y;
         // people and things: just above a standing person's head (the ▾'s height), like the ▾ itself
-        if (tg.kind === 'npc' || tg.kind === 'foe' || tg.kind === 'prop') y = h.ay(sp.y * TS) - h.HEAD - (faced ? 15 : 4);
+        if (tg.kind === 'npc' || tg.kind === 'foe' || tg.kind === 'prop') y = h.ay(sp.y * TS) - h.HEAD - (faced ? 17 : 9);
         else y = h.ay(sp.y * TS) + ATS / 2 - 2; // a spot on the ground
         place({ x, y, info: { kind: 'target', target: tg.kind, id: tg.id || tg.p || null, map: tg.map, tx: Math.round(sp.x), ty: Math.round(sp.y) } });
       }
@@ -24880,10 +24882,12 @@ RB.questMarks = (function () {
     }
     place({ x, y: y + 8, info: { kind: 'exit', tx: ex.x, ty: ex.y, to: ex.to, dest: ex.dest } });
   }
-  // CSS-pixel positions of what was drawn in the last frame (for tests)
+  // CSS-pixel positions of what was drawn in the last frame (for tests); when
+  // the world has not been drawn for a moment (a battle, the title), nothing
   function marks() {
     const k = RB.render.viewSize().scale / RB.render.ART;
-    return { qid: last.qid, marks: last.marks.map((m) => Object.assign({}, m, { cssX: Math.round(m.x * k), cssY: Math.round(m.y * k) })), safe };
+    const fresh = typeof performance !== 'undefined' && performance.now() - last.at < 250;
+    return { qid: fresh ? last.qid : null, fresh, marks: fresh ? last.marks.map((m) => Object.assign({}, m, { cssX: Math.round(m.x * k), cssY: Math.round(m.y * k) })) : [], safe };
   }
   function refresh() { cur = null; safe = null; }
   return { draw, marks, refresh };
@@ -30332,11 +30336,11 @@ RB.ui.menu = (function () {
       const known = s.travel[p.id];
       const here = p.id === hereId;
       const next = gm && gm.places.includes(p.id);
-      if (next) svg += '<circle class="next-ring" cx="' + p.pos[0] + '" cy="' + p.pos[1] + '" r="13" fill="none" stroke="#c0761c" stroke-width="2.5" stroke-dasharray="4 3"/>';
+      if (next) svg += '<circle class="next-ring" cx="' + p.pos[0] + '" cy="' + p.pos[1] + '" r="14" fill="none" stroke="#c0761c" stroke-width="3" stroke-dasharray="5 3"/>';
       svg += '<circle cx="' + p.pos[0] + '" cy="' + p.pos[1] + '" r="' + (here ? 8 : 6) + '" fill="' + (known ? '#2a2217' : '#efe3c6') + '" stroke="#2a2217" stroke-width="1.5"/>';
       if (here) svg += '<path d="M' + p.pos[0] + ' ' + (p.pos[1] - 12) + ' l-6 -12 h12 z" fill="#a83e27"/>';
       // the quest marker: the same inked amber diamond as in the world (beside the red mark when both are here)
-      if (next) { const dx = p.pos[0] + (here ? 15 : 0), dy = p.pos[1] - (here ? 16 : 14); svg += '<path class="next-mark" d="M' + dx + ' ' + (dy - 14) + ' l7 7 -7 7 -7 -7z" fill="#f0b43c" stroke="#2a2024" stroke-width="1.6"/><path d="M' + dx + ' ' + (dy - 7) + ' v5" stroke="#8a4e12" stroke-width="1.2"/>'; }
+      if (next) { const dx = p.pos[0] + (here ? 19 : 0), dy = p.pos[1] - (here ? 14 : 16); svg += '<path class="next-mark" d="M' + dx + ' ' + (dy - 22) + ' l10 11 -10 11 -10 -11z" fill="#f0b43c" stroke="#2a2024" stroke-width="2"/><path d="M' + dx + ' ' + (dy - 11) + ' v8" stroke="#8a4e12" stroke-width="1.6"/><path d="M' + (dx - 4) + ' ' + (dy - 17) + ' l3 -3" stroke="#fff0b8" stroke-width="1.6"/>'; }
       // labels near the right edge sit left of their dot so they are never cut off; size follows the text-size setting
       const right = p.pos[0] > Wd * 0.62;
       svg += '<text x="' + (p.pos[0] + (right ? -11 : 11)) + '" y="' + (p.pos[1] + 5) + '"' + (right ? ' text-anchor="end"' : '') + ' fill="' + (known ? '#261f15' : '#62553f') + '" font-size="' + fs + '" font-family="Georgia, serif" stroke="#efe3c6" stroke-width="3" paint-order="stroke">' + esc(known ? p.name.en : '? unexplored') + '</text>';
