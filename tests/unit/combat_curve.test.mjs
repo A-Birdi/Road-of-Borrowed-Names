@@ -78,6 +78,27 @@ export default async (t) => {
       }
     }
   }
+  // the whole-game driver's solver (RB.test.battle, with the policy it plays) meets every story group
+  // honestly: the real rules, one creature at a time, the companion's turn each round
+  {
+    const game = RB.game;
+    RB.test.enable({ battle: 'unravel' });
+    for (const diff of DIFFS) for (const comp of COMPS.slice(1)) for (const { f } of places) {
+      const s = RB.state.newCampaign({});
+      const u = unlocks(6);
+      Object.assign(s, { comp }); Object.assign(s.flags, u.flags); Object.assign(s.quests, u.quests);
+      s.learn.difficulty = diff; s.words = CH6.slice();
+      RB.game = { s };
+      const ids = L.groupFor(f.enemy, f, diff);
+      t.eq(RB.test.battle(f.enemy, { group: ids.slice(1) }), 'win', 'the driver\'s solver, ' + diff + ' with ' + comp + ': ' + ids.join('+'));
+    }
+    const logged = RB.test.log.filter((l) => l.t === 'battle');
+    t.ok(logged.some((l) => l.group.length === 2) && logged.some((l) => l.group.length === 1) && logged.some((l) => !l.group.length), 'it fought them as one, two and three creatures (by setting)');
+    t.ok(logged.some((l) => Object.keys(l.acts).length), 'with the companion\'s actions');
+    t.eq(RB.test.problems, [], 'and reported no problem');
+    RB.test.disable();
+    RB.game = game;
+  }
   // a step up, never a spike: against the same creature alone, at the same setting
   const spikes = step.filter((x) => x.dr > 5 || x.dl > 0.5);
   t.ok(!spikes.length, 'every group is within 5 exchanges and half a resolve bar of its lead alone: ' + spikes.slice(0, 4).map((x) => x.diff + ' ' + (x.comp || 'alone') + ' ' + x.ids + ' +' + x.dr + ' rounds, +' + Math.round(x.dl * 100) + '% resolve').join('; '));

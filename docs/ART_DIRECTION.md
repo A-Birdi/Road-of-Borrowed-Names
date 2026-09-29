@@ -562,8 +562,8 @@ directly.
   - `anchor(id, part)` resolves the ids `pc`, `comp`, `party`, `foe` and
     `knot:i` with the parts `hand`, `head`, `chest`, `feet`, `core`, `top`
     and `base`. Anchors are resolved every frame, so a resize keeps effects
-    attached. A second creature would be `foe:1`; nothing in the
-    choreography assumes one creature beyond this id.
+    attached. Each creature of a group is `foe:i` (`foe` alone is the
+    target); every cue of a creature's sequence carries its index.
   - `pose`, `foe`, `effect`, `number`, `strip`, `clearTransient`,
     `finalFoe` and `stats` complete it.
   - It holds a small **fallback** for `RB.battlers` (see below).
@@ -581,8 +581,9 @@ directly.
     and no smoothing.
   - `extent()` now also returns `left` and `right`.
 - `src/ui/80_combat.js` wires it together.
-  - Phases: `intro`, `choose`, `challenge`, `player`, `enemy`, `revive`,
-    `finish`, `outro`, `idle`.
+  - Phases: `intro`, `choose`, `challenge`, `companion` (the companion's
+    menu), `player`, `companion-act`, `enemy`, `revive`, `finish`, `outro`,
+    `idle`.
   - The displayed state is read with `RB.combat.shown()`; `applyBeat()`
     applies one fx event to it.
   - It keeps the exchange log and recap and the calm clock.
@@ -747,6 +748,52 @@ shows only frost at contact.
     gestures and seals), for a composer that wants it.
 - The whole-screen shake and Heat tint are gone. All feedback is local to
   the actor it concerns, and nothing moves the DOM overlay.
+
+### Groups, targeting and the companion's turn (2026-09-29)
+
+Rules and numbers: `docs/COMBAT_NOTES.md`. What the screen does:
+
+- **Formation** (`layout`, several creatures): right of the party, left to
+  right, the lead in front. A pair is one a step back on the left and the
+  lead on the right; a trio is one back on either side and the lead in front
+  between them. On a tall stage the one on the left floats above the
+  party's heads; on a short one they spread across the stage's right two
+  thirds (pair at 50 % and 86 %, trio at 36 %, 64 % and 92 % of its width)
+  and overlap. The formation's integer scale drops until it spans at most
+  72 % of the stage. The creature acting, or else the target, is drawn in
+  front of the others.
+- **The backdrop** receives `creatures` (one box per creature) and keeps
+  every one of them clear, as it did the single creature's box.
+- **Target mark:** small ink corner brackets at the target's feet, drawn
+  only while you choose, write or pick the companion's action (never during
+  a sequence). Its slip is paper-coloured with a bracket at its left edge,
+  so the mark is not colour alone.
+- **Preview marks:** a small knot-ring under each creature a response or a
+  companion's action would reach (and over its slip), and a mark over each
+  ally it acts on. Pointer hover and keyboard focus show them; a card
+  focused for you when the choice opens does not until you move. They stay
+  while the step is open and clear on "Choose a different response".
+  Reduced motion draws them still.
+- **Slips:** one per creature, in stage order, as a radio group (name,
+  knots, its telegraphed move, its states). On phones they are one compact
+  row (the English name and move gist dropped; 200 % text wraps them one per
+  line). The telegraph paper shows the target's move in full.
+- **Pressing creatures:** invisible boxes over the stage follow the drawn
+  creatures; a press is decided by the creature's opaque pixels, front one
+  first.
+- **Sequences of an exchange:** your response → a creature your response
+  settled → the companion's action (≈ 0.8–1.2 s: anticipation, gesture,
+  its line and marks, e.g. softened, drawn, stunned, a ward, a link for
+  "take half") → each standing creature in turn, one sequence each with its
+  own telegraph line → a creature that settles plays its release and is
+  held in its settled pose from then on → the finish after the last.
+  The displayed state is chained through all of them and ends equal to the
+  rules.
+- **Companion's menu:** it takes the response area (heading "<name>'s
+  turn"), with the queued response and "Back to <you>" at its top; the
+  recap log is hidden meanwhile so the cards keep their room on small
+  phones. Presses in its first 250 ms are ignored (a double click on
+  Continue does not choose an action). Once chosen, the menu is cleared.
 
 ### Learning stays central
 

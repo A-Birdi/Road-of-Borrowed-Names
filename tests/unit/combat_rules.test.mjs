@@ -429,6 +429,19 @@ export default async (t) => {
     t.ok(st.ward.pc === w0 + 3 && st.ward.comp === wc, 'Stand in front: a 3-point ward before you (not before Ren)');
   }
   {
+    // a group takes turns: the same creature three times does not open with three of the same move
+    const e = foe(['strike', 'rest', 'heat']);
+    const st = L.init(e, camp({ diff: 'hard' }), { group: [foe(['strike', 'rest', 'heat']), foe(['strike', 'rest', 'heat'])] });
+    t.eq(st.foes.map((f) => f.intent.kind), ['strike', 'rest', 'heat'], 'each creature after the lead starts a step further into its pattern');
+    // a slip costs at most 1 per exchange, whatever the group; nothing in assisted mode
+    const P = L.playerAct(st, { kind: 'unravel' }, { ok: true, firstTry: false, mistakes: 3 }, e);
+    t.ok(P.fx.filter((f) => f.t === 'cost').length === 1 && st.pc === st.max - 1, 'three slips against three creatures: −1, once');
+    const sa = camp({ diff: 'hard' }); sa.learn.assist = 'assist';
+    const st2 = L.init(e, sa, { group: [foe(['strike']), foe(['strike'])] });
+    L.playerAct(st2, { kind: 'unravel' }, { ok: true, firstTry: false, mistakes: 3 }, e);
+    t.eq(st2.pc, st2.max, 'assisted mode: no cost for slips, in a group too');
+  }
+  {
     // resolve in battle follows the difficulty table
     t.eq(['relaxed', 'normal', 'hard'].map((d) => L.init(foe(['rest']), camp({ diff: d }), {}).max), [14, 12, 10], 'battle resolve: Relaxed 14, Standard 12, Demanding 10');
   }

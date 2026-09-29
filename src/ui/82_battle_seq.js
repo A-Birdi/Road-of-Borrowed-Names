@@ -395,7 +395,9 @@ RB.battleSeq = (function () {
       }
       let at = 360;
       for (const f of fx) {
-        if (f.t === 'cact' && !f.none && f.foe != null && (act.kind === 'opening' || act.kind === 'mark')) Q.push({ at: at - 80, type: 'fx', name: 'lens', d: 560, p: { foe: f.foe } });
+        if (f.t === 'cact' && !f.none && f.foe != null && act.kind === 'opening') Q.push({ at: at - 80, type: 'fx', name: 'lens', d: 560, p: { foe: f.foe } });
+        // (Nao's "take half": the two of you bound for this round)
+        if (f.t === 'cact' && act.kind === 'share') Q.push({ at: at - 80, type: 'fx', name: 'link', d: 620, p: {} });
         if (f.t === 'cact' && act.kind === 'salts') Q.push({ at: at - 60, type: 'fx', name: 'motes', d: 700, p: { who: ctx.comp ? ['pc', 'comp'] : ['pc'] } });
         if (f.t === 'unravel') Q.push({ at: at - 160, type: 'fx', name: 'thread', d: 520, p: { from: 'comp', to: knotId(ctx, f.foe, Math.max(0, fview(ctx, f.foe).knots - 1)), foe: fid(ctx, f.foe) } });
         if (f.t === 'harmony') Q.push({ at: at - 120, type: 'fx', name: 'link', d: 520, p: {} });

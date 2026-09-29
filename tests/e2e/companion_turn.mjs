@@ -282,6 +282,39 @@ await test('previews of the companion\'s actions: the target, every creature, yo
   await ctx.close();
 });
 
+// ---------------------------------------------------------------------------------------------------
+await test('the late alliances\' actions on screen: Nao takes half of a blow at you, Suzu draws every eye, Ren stands in front', async () => {
+  const { p, errors, ctx } = await page(b, url, DESK);
+  await helpers(p);
+  const late = { flags: { ch2_done: true, lq_ally1: true, lq_ally2: true } };
+  const strikeAtYou = () => p.evaluate(() => { const st = RB.combat.state(); for (const f of st.foes) f.intent = Object.assign({}, f.intent, { kind: 'strike', target: 'pc', label: 'Strike' }); RB.combat.refresh(); });
+  const seen = {};
+  for (const [comp, act] of [['nao', 'Take half'], ['suzu', 'Grand gesture'], ['ren', 'Stand in front']]) {
+    await battle(p, Object.assign({ map: 'sa.stacks', foe: 'w1', diff: 'normal', comp, tips: { cturn: 1 } }, late));
+    await p.evaluate(() => { G.calls.length = 0; G.exch.length = 0; });
+    await aimAtStrongest(p);
+    await strikeAtYou();
+    await queue(p, 'Unravel');
+    const picked = await companionTurn(p, { match: act, delay: 0 });
+    assert(new RegExp(act).test(picked), comp + ': chose ' + act + ' (' + picked + ')');
+    await idle(p);
+    const ex = await p.evaluate(() => G.exch);
+    const ca = ex.find((x) => x.k === 'compAct'), ea = ex.find((x) => x.k === 'enemyAct');
+    const hits = ea.fx.filter((f) => f.t === 'hit' || f.t === 'block');
+    const log = await p.evaluate(() => document.querySelector('.clog').textContent.replace(/\s+/g, ' '));
+    seen[comp] = { hits: hits.map((f) => f.who + f.n).join(' '), log: log.slice(0, 160) };
+    if (comp === 'nao') assert(ea.fx.some((f) => f.t === 'comp' && f.share) && hits.some((f) => f.who === 'pc') && hits.some((f) => f.who === 'comp') && /takes half/.test(log), 'Take half: the blows at you are shared, and the log says so ' + JSON.stringify(seen.nao));
+    if (comp === 'suzu') assert(ca.fx.filter((f) => f.t === 'draw').length === 2 && !hits.some((f) => f.who === 'pc'), 'Grand gesture: both creatures\' blows go to Suzu (or her flourish turns one aside) ' + JSON.stringify(seen.suzu));
+    if (comp === 'ren') assert(ca.after.ward.pc === ca.before.ward.pc + 3, 'Stand in front: a 3-point ward before you ' + JSON.stringify(ca));
+    const shown = await p.evaluate(() => { const v = RB.combat.shown(), st = RB.combat.state(); return v && st && v.pc === st.pc && v.comp === st.comp && v.ward.pc === st.ward.pc; });
+    assert(shown, comp + ': the screen ends equal to the rules');
+    await flee(p);
+  }
+  console.log('   ' + JSON.stringify(seen));
+  assert(!errors.length, errors.join('; '));
+  await ctx.close();
+});
+
 console.log('\n' + pass + ' passed, ' + fail + ' failed');
 await b.close(); srv.close();
 process.exit(fail ? 1 : 0);

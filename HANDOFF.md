@@ -78,7 +78,13 @@ Sprite and battle polish (owner's brief of 2026-09-28, amended). The full defaul
   - `RB.battleStage` (83_battle_stage.js) handles layout and anchors, including `foe:i` for later.
   - `RB.battleFx` (84_battle_fx.js) draws effects and status marks; creature motion is in 78_enemy_art.js.
   - `Sc.effect`, `Sc.ward` and `Sc.mist` in 79_battle_scene.js are no longer called.
-- **Multiple enemies and Harmony:** investigated only, in docs/COMBAT_NOTES.md. Nothing is implemented; it awaits the owner's decision.
+- **Groups of creatures, the companion's turn, the difficulty curve** (lead's brief of 2026-09-29; docs/COMBAT_NOTES.md, ART_DIRECTION §11; REQUIREMENTS G1–G12):
+  - Rules: `st.foes[]` with `st.cur` the target (95_combat.js `groupFor`, `target`, `reachOf`, `compOptions`, `compAct`, `enemyAct` per creature); Relaxed 1, Standard 2, Demanding 3 creatures, only at the group placements of `sa.stacks`/`sa.conduits` and in the Atlas (30_gen.js). Battle resolve 14/12/10 by setting.
+  - Companion's turn: after the response's step, a support menu (`C.companionActions`, src/content/02_companions.js; unlocks at recruitment, `ch2_done`, the personal quest, `lq_ally1`, `lq_ally2`); Back returns at no cost.
+  - Screen: target slips and bracket, previews, formation, per-creature sequences (80_combat.js, 83_battle_stage.js, 82_battle_seq.js).
+  - Player model `RB.combatSim` (96_combat_sim.js) drives `RB.test.battle` and the curve test `tests/unit/combat_curve.test.mjs`.
+  - Tests: `tests/e2e/battle_group.mjs`, `tests/e2e/companion_turn.mjs` (both in run.mjs); unit combat_rules/combat_fairness/combat_curve.
+  - Harmony charges: still undecided (docs/COMBAT_NOTES.md, last section).
 - Chapter banner: src/ui/10_ui.js card() + 50_play.css .banner.
 - Combat clarity: src/engine/95_combat.js (TECHS, blowOf/heatBonus/answers),
   src/ui/80_combat.js, src/ui/81_combat_help.js; boss theme in
@@ -149,7 +155,9 @@ real builds: docs/screenshots/ (README indexes them). Evidence: VALIDATION.md
    cards; try the pad's kanji reading with real handwriting.
 5. In Firefox, the owner's browser: click Next after a battle, and watch the
    new battle presentation and figures. Only Chromium is installed here.
-   Decide on multiple enemies and Harmony charges (docs/COMBAT_NOTES.md).
+   Decide on Harmony charges (docs/COMBAT_NOTES.md). Play a few group
+   battles (Standard and Demanding, the Stacks and the Conduits) and judge the
+   companion's turn by hand; only headless Chromium has played them.
 6. Optional polish found in review: lexicon part-of-speech warnings between
    chapters (validator warnings), observatory dome sprite clipped at the top
    of sb.obs_path (cosmetic), credits are a single card.
