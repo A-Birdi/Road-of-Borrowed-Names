@@ -963,3 +963,6 @@ the chart.
   - story_ch1, story_ch3, side_ch3, story_ch4, story_ch5 and story_ch6;
   - atlas.check and long_quests (fixtures);
   - a whole-game `pursue.mjs E mio` in 779 s.
+- **B Layout audit on c7860c4:** `visual.mjs --check` covers 58 states, adding journey_guide and settings_guide. It checks overflow, clipped text, touch targets, furigana contrast, page errors and state errors.
+  - English labels at 8 viewports (320x640 … 1920x1080): **464/464 clean**.
+  - Japanese labels at 320x640, 390x844 and 1280x800: **174/174 clean**.
