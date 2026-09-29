@@ -32,16 +32,19 @@ export default async (t) => {
   // ---------------------------------------------------------------- held-out synthetic
   const fams = Object.keys(FAMILIES).filter((f) => f.startsWith('heldout-'));
   const kana = R.supported({ kanji: false });
+  // kanji: a fixed sample of the game's ~1,550 (every 8th, ~194 characters) to
+  // keep the unit run short; tools/kanjivg/eval.mjs --kanji measures all of them
+  const allKanji = R.supported({ kanji: true }).filter((c) => I.scriptOf(c) === 'kanji');
   const groups = {
     hiragana: kana.filter((c) => I.scriptOf(c) === 'hira'),
     katakana: kana.filter((c) => I.scriptOf(c) !== 'hira'),
-    kanji: R.supported({ kanji: true }).filter((c) => I.scriptOf(c) === 'kanji'),
+    kanji: allKanji.filter((_, i) => i % 8 === 0),
   };
   const SAMPLES = 3;
   const conf = {};
   for (const [g, chars] of Object.entries(groups)) {
     let n = 0, top1 = 0, top3 = 0, confident = 0, confRight = 0, rejected = 0, exact = 0;
-    for (const fam of fams) for (const ch of chars) for (let i = 0; i < SAMPLES; i++) {
+    for (const fam of fams) for (const ch of chars) for (let i = 0; i < (g === 'kanji' ? 1 : SAMPLES); i++) {
       const s = distort(R.reference(ch), fam, `unit|${ch}|${i}`, { ch });
       const r = rec(s.strokes, { box: s.box, script: padMode(ch) });
       const c = r.candidates.map((x) => x.ch);
@@ -53,7 +56,7 @@ export default async (t) => {
       if (r.status === 'confident') { confident++; if (ok) confRight++; }
       if (r.status === 'nonsense') rejected++;
     }
-    t.log(`${g} held-out (${fams.length} families x ${SAMPLES}): top1 ${pct(top1, n)}, top3 ${pct(top3, n)}, exact-size ${pct(exact, n)}, confident ${pct(confident, n)} (precision ${pct(confRight, confident)}), falsely rejected ${pct(rejected, n)}, n=${n}`);
+    t.log(`${g} held-out (${chars.length} characters x ${fams.length} families x ${g === 'kanji' ? 1 : SAMPLES}): top1 ${pct(top1, n)}, top3 ${pct(top3, n)}, exact-size ${pct(exact, n)}, confident ${pct(confident, n)} (precision ${pct(confRight, confident)}), falsely rejected ${pct(rejected, n)}, n=${n}`);
     t.ok(top1 / n >= 0.97, `${g}: held-out top-1 >= 97% (${pct(top1, n)})`);
     t.ok(top3 / n >= 0.99, `${g}: held-out top-3 >= 99% (${pct(top3, n)})`);
     t.ok(confRight / Math.max(1, confident) >= 0.99, `${g}: 'confident' is right >= 99% of the time`);
@@ -113,14 +116,17 @@ export default async (t) => {
     const fx = fixture(name);
     const st = { kana: [0, 0, 0], kanji: [0, 0, 0] };
     const errs = [];
+    // Tomoe has ~1,550 of the game's kanji: every 5th here (all in eval.mjs)
+    let ki = 0;
     for (const c of fx.chars) {
+      if (I.scriptOf(c.ch) === 'kanji' && ki++ % 5 !== 0) continue;
       const strokes = c.strokes.map((s) => densify(s, fx.box / 100).map(([x, y], k) => ({ x, y, t: k * 10 })));
       const isK = I.scriptOf(c.ch) === 'kanji';
       const r = rec(strokes, { box: { w: fx.box, h: fx.box }, script: isK ? 'kanji' : padMode(c.ch) });
       const cs = r.candidates.map((x) => x.ch);
       const s = st[isK ? 'kanji' : 'kana'];
       s[0]++;
-      if (cs[0] && sizeEq(c.ch, cs[0])) s[1]++; else errs.push(`${c.ch}→${cs[0] || '∅'}`);
+      if (cs[0] && shapeEq(c.ch, cs[0])) s[1]++; else errs.push(`${c.ch}→${cs[0] || '∅'}`);
       if (cs.slice(0, 3).some((x) => sizeEq(c.ch, x))) s[2]++;
     }
     t.log(`${name}: kana top1 ${st.kana[1]}/${st.kana[0]} (${pct(st.kana[1], st.kana[0])}), top3 ${pct(st.kana[2], st.kana[0])}` +

@@ -26,6 +26,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     週間: 'week(s)', か月: 'month(s)', ヶ月: 'month(s)', 箱: 'boxes', 袋: 'bags', 足: 'pairs of footwear', 着: 'garments', 隻: 'ships', 艘: 'small boats',
     里: 'ri (old distance unit, fictional use here)', 歩: 'steps', 行: 'lines (of text)', 文字: 'characters (letters)', 点: 'points', 件: 'matters/cases', 束: 'bundles',
   };
+  // the counters and numerals, for the kanji chart's "Counters and numbers" (RB.kanjiInfo)
+  RB.jp.counters = COUNTERS;
+  RB.jp.numerals = NUM;
   function counterLookup(tok) {
     const s = tok.surface || '';
     const m = s.match(/^([一二三四五六七八九十百千万何数]+)(.+)$/);

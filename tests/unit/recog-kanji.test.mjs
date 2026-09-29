@@ -1,11 +1,16 @@
-// RB.recog with the kana + kanji pad ("Kanji or kana"): the 33 supported kanji
+// RB.recog with the kana + kanji pad ("Kanji or kana"): the first 33 kanji
 // from real KanjiVG reference strokes (clean and held-out distortions), the
 // kana/kanji confusable pairs, no regression of kana accuracy, the kana/kanji
-// twins (ロ/口, ニ/二, カ/力, ー/一), the kanji hint with kanji reading off,
-// the kanji-like detection for kanji outside the set, and independence from
-// anything answer-like. Numbers are logged; docs/RECOGNITION.md quotes the
-// full report (node tools/kanjivg/eval.mjs --kanji).
+// twins (ロ/口, ニ/二, カ/力, ー/一, エ/工, チ/千, タ/夕, オ/才), the kanji hint
+// with kanji reading off, kanji outside the game's set (real Tomoe entries of
+// kanji the game does not use), and independence from anything answer-like.
+// Every kanji the game displays is covered by recog-coverage.test.mjs.
+// Numbers are logged; docs/RECOGNITION.md quotes the full report
+// (node tools/kanjivg/eval.mjs --kanji).
 import { load } from '../lib/load.mjs';
+import fs from 'node:fs';
+import path from 'node:path';
+import { root } from '../lib/load.mjs';
 import { FAMILIES, distort, nonsense, UNKNOWN_KANJI, composeKanji } from '../../tools/kanjivg/synth.mjs';
 
 const RB = load(['core', 'recog']);
@@ -41,7 +46,7 @@ export default async (t) => {
   t.eq(cleanBad, [], 'every KanjiVG kanji reference is read confidently in the kana+kanji pad (twins: in the first two)');
 
   // ---------------------------------------------------------------- kana/kanji twins
-  for (const [kana, kan] of [['ロ', '口'], ['ニ', '二'], ['カ', '力'], ['ー', '一']]) {
+  for (const [kana, kan] of [['ロ', '口'], ['ニ', '二'], ['カ', '力'], ['ー', '一'], ['エ', '工'], ['チ', '千'], ['タ', '夕'], ['オ', '才']]) {
     for (const ch of [kana, kan]) {
       for (let i = 0; i < 4; i++) {
         const s = i ? distort(R.reference(ch), 'heldout-noise', `twin|${ch}|${i}`, { ch }) : { strokes: draw(ch), box: BOX };
@@ -56,9 +61,8 @@ export default async (t) => {
   }
 
   // ---------------------------------------------------------------- confusable sets across kana and kanji
-  // requested pairs (口/ロ 二/ニ 力/カ 一/ー 入/人 十/ナ/メ; 工/エ 八/ハ 夕/タ, where the kanji
-  // is not supported: the kana must still read as itself) and lookalikes found in the data
-  const SETS = ['口ロ', '二ニ', '力カ', '一ー', '入人', '十ナメ', 'エハタ', '三ミ', '川ルリり', '小ハ', '土エ上', '王エキ', '手キチ', '木ホ本',
+  // requested pairs (口/ロ 二/ニ 力/カ 一/ー 入/人 十/ナ/メ 工/エ 八/ハ 夕/タ) and lookalikes found in the data
+  const SETS = ['口ロ', '二ニ', '力カ', '一ー', '入人', '十ナメ', 'エ工', 'ハ八', 'タ夕', 'チ千', 'オ才', '三ミ', '川ルリり', '小ハ', '土エ上', '王エキ', '手キチ', '木ホ本',
     '大ナ', '下トテ', '日目ヨ', '田ロ', '中ロ', '心ルい', '水ホ', '火ソメ', '人入ヘ', '花イヒ', '名タ', '山出', '二こに', 'ソリ川', 'ノ人'];
   let pn = 0, pok = 0;
   const pairBad = [];
@@ -75,8 +79,9 @@ export default async (t) => {
   }
   t.log(`kana/kanji confusable sets (${SETS.length}), kana+kanji pad: ${pct(pok, pn)} of ${pn}; errors: ${pairBad.join(' ') || 'none'}`);
   t.ok(pok / pn >= 0.97, 'kana/kanji confusable sets overall >= 97%');
-  // 工 八 夕 are not in the set: their kana lookalikes stay kana, and no kanji is invented
-  for (const ch of 'エハタ') t.ok(!chars(R.recognize(draw(ch), { box: BOX, ...MIX })).some((c) => '工八夕'.includes(c)), `${ch}: no unsupported kanji is returned`);
+  // ハ and 八 are close but not one shape in the templates: a clean ハ reads as ハ first
+  t.eq(top(R.recognize(draw('ハ'), { box: BOX, ...MIX })), 'ハ', 'ハ (clean) in the kana+kanji pad: ハ first');
+  t.eq(top(R.recognize(draw('八'), { box: BOX, ...MIX })), '八', '八 (clean) in the kana+kanji pad: 八 first');
 
   // ---------------------------------------------------------------- kana accuracy does not regress with kanji on
   const kana = R.supported({ kanji: false });
@@ -127,25 +132,39 @@ export default async (t) => {
   t.eq(R.recognize(draw('水'), { box: BOX, script: 'hira' }).kanjiHint.ch, '水', 'clean 水 in the hiragana pad: hint 水');
   t.eq(R.recognize(draw('水'), { box: BOX, ...MIX }).kanjiHint, null, 'no hint when kanji are read');
 
-  // ---------------------------------------------------------------- outside the set: kanji-like (kanjiLike)
-  const unk = Object.entries(UNKNOWN_KANJI);
-  let un = 0, likeKana = 0, likeMix = 0, confMix = 0, hintUnk = 0;
+  // ---------------------------------------------------------------- outside the set: kanji the game does not use
+  // Real hand-entered kanji the game does not use (Tomoe, tests/fixtures/recog/tomoe-unknown.json).
+  // The odd-numbered half was used to choose the kanji confidence margin; this is the other half.
+  const U = JSON.parse(fs.readFileSync(path.join(root, 'tests', 'fixtures', 'recog', 'tomoe-unknown.json'), 'utf8'));
+  let un = 0, likeKana = 0, confMix = 0, hintUnk = 0;
   const confWrong = [];
-  for (const fam of fams) for (const [ch, parts] of unk) {
-    const s = distort(composeKanji(R.reference, parts), fam, `unk|${ch}|0`, {});
-    const a = R.recognize(s.strokes, { box: s.box, script: 'any' });
-    const m = R.recognize(s.strokes, { box: s.box, ...MIX });
+  U.chars.forEach((c, i) => {
+    if (i % 2 === 1) return;
+    const s = c.strokes.map((st) => st.map(([x, y]) => ({ x, y })));
+    const box = { w: U.box, h: U.box };
+    const a = R.recognize(s, { box, script: 'any' });
+    const m = R.recognize(s, { box, ...MIX });
     un++;
     if (a.kanjiLike) likeKana++;
     if (a.kanjiHint) hintUnk++;
-    if (m.kanjiLike) likeMix++;
-    if (m.status === 'confident') { confMix++; confWrong.push(`${ch}→${top(m)}`); }
-    if (a.kanjiLike) t.ok(a.sizeHint === null, `kanji-like ${ch}: no size hint`);
+    if (m.status === 'confident') { confMix++; confWrong.push(`${c.ch}→${top(m)}`); }
+    if (a.kanjiLike) t.ok(a.sizeHint === null, `kanji-like ${c.ch}: no size hint`);
+  });
+  t.log(`kanji the game does not use (Tomoe, n=${un}): kana pad: kanji-like ${pct(likeKana, un)}, named as a game kanji by the hint ${pct(hintUnk, un)}; kana+kanji pad: read 'confident' as a game kanji ${pct(confMix, un)} (${confWrong.join(' ') || 'none'})`);
+  t.ok((likeKana + hintUnk) / un >= 0.9, 'kana pad: a kanji outside the set is said to be a kanji (kanji-like or a hint) >= 90%');
+  t.ok(hintUnk / un <= 0.2, 'kana pad: the hint names a game kanji for an unknown one <= 20% (it resembles one: 較/軟)');
+  t.ok(confMix / un <= 0.15, "kana+kanji pad: an unknown kanji is read 'confident' as a game kanji <= 15%");
+  // composites of game kanji (the old unknown-kanji stand-ins) are now mostly game kanji themselves
+  const comp = Object.entries(UNKNOWN_KANJI);
+  let cn = 0, cRight = 0;
+  for (const [ch, parts] of comp) {
+    if (!R.supported({ kanji: true }).includes(ch)) continue;
+    const s = distort(composeKanji(R.reference, parts), 'heldout-noise', `comp|${ch}`, {});
+    const r = R.recognize(s.strokes, { box: s.box, ...MIX });
+    cn++;
+    if (r.candidates.slice(0, 5).some((c) => c.ch === ch)) cRight++;
   }
-  t.log(`unknown kanji composed from KanjiVG components (${unk.length} kanji x ${fams.length} families, n=${un}): kanji-like ${pct(likeKana, un)} kana pad, ${pct(likeMix, un)} kana+kanji pad; kanji hint ${hintUnk}×; confidently read as a supported kanji ${confMix}× (${confWrong.join(' ') || 'none'})`);
-  t.ok(likeKana / un >= 0.9 && likeMix / un >= 0.9, 'unknown kanji flagged kanji-like >= 90% in both pads');
-  t.ok(hintUnk === 0, 'unknown kanji never named as a supported kanji by the hint');
-  t.ok(confMix / un <= 0.03, "unknown kanji read 'confident' as a supported kanji <= 3%");
+  t.log(`composed from components, now game kanji (${cn}): the kanji itself among the first five readings ${cRight}/${cn}`);
   // kana and nonsense are not kanji-like, and get no hint
   let kl = 0, kh = 0, kn2 = 0;
   for (const fam of fams) for (const ch of kana) {
@@ -165,9 +184,10 @@ export default async (t) => {
     if (r.kanjiLike || r.kanjiHint || r.status === 'confident') nl++;
   }
   t.eq(nl, 0, 'nonsense is never kanji-like, hinted or confident');
-  // many-stroke kanji beyond any template: still kanji-like, not just "nonsense"
-  const mori = R.recognize(composeKanji(R.reference, UNKNOWN_KANJI['森']).strokes.map((s) => s.map((p) => ({ x: p.x * 3, y: p.y * 3 }))), { box: BOX, script: 'any' });
-  t.ok(mori.status === 'nonsense' && mori.kanjiLike && mori.candidates.length === 0, '森 (12 strokes) in the kana pad: rejected, flagged kanji-like, no candidates');
+  // a many-stroke kanji in the kana pad: rejected (too many strokes for any kana), and named by the hint
+  const mori = R.recognize(draw('森'), { box: BOX, script: 'any' });
+  t.ok(mori.status === 'nonsense' && mori.kanjiHint && mori.kanjiHint.ch === '森' && mori.candidates.length === 0, '森 (12 strokes) in the kana pad: rejected as a kana, named by the hint, no candidates');
+  t.eq(top(R.recognize(draw('森'), { box: BOX, ...MIX })), '森', '森 in the kana+kanji pad: 森');
 
   // ---------------------------------------------------------------- nothing answer-like changes the result
   for (const [ch, opts] of [['水', MIX], ['水', { script: 'any' }], ['口', MIX], ['ロ', MIX]]) {

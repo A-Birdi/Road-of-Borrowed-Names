@@ -2,12 +2,13 @@
 //   node tools/kanjivg/eval.mjs                 held-out synthetic families + independent fixtures
 //   node tools/kanjivg/eval.mjs --n 20          samples per character per family (default 10)
 //   node tools/kanjivg/eval.mjs --family dev    only the tuning family
-//   node tools/kanjivg/eval.mjs --kanji         include the optional kanji set
+//   node tools/kanjivg/eval.mjs --kanji         include the kanji (every kanji the game displays)
+//   node tools/kanjivg/eval.mjs --kanji --kanji-n 2   samples per kanji per family (default: --n)
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { load } from '../../tests/lib/load.mjs';
-import { FAMILIES, distort, nonsense, UNKNOWN_KANJI, composeKanji } from './synth.mjs';
+import { FAMILIES, distort, nonsense } from './synth.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '..', '..');
@@ -16,6 +17,7 @@ const arg = (k, d) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] :
 const N = +arg('--n', 10);
 const onlyFam = arg('--family', null);
 const withKanji = args.includes('--kanji');
+const KN = +arg('--kanji-n', N);
 
 const RB = load(['core', 'recog']);
 const R = RB.recog;
@@ -34,7 +36,7 @@ function equivalents(ch) {
 }
 const padMode = (ch) => (scriptOf(ch) === 'kanji' ? 'kanji' : scriptOf(ch) === 'both' ? 'kata' : scriptOf(ch));
 
-function newStats() { return { n: 0, top1: 0, top1exact: 0, top3: 0, conf: 0, confRight: 0, unc: 0, rej: 0, conf1: {} }; }
+function newStats() { return { n: 0, top1: 0, top1exact: 0, top3: 0, top5: 0, conf: 0, confRight: 0, unc: 0, rej: 0, conf1: {} }; }
 function tally(st, ch, res, anyMode) {
   st.n++;
   const eq = anyMode ? equivalents(ch) : new Set([ch, I.LARGE_OF[ch] || ch, I.SMALL_OF[ch] || ch]);
@@ -43,6 +45,7 @@ function tally(st, ch, res, anyMode) {
   if (ok1) st.top1++;
   if (c[0] === ch) st.top1exact++;
   if (c.slice(0, 3).some((x) => eq.has(x))) st.top3++;
+  if (c.slice(0, 5).some((x) => eq.has(x))) st.top5++;
   if (res.status === 'confident') { st.conf++; if (ok1) st.confRight++; }
   if (res.status === 'uncertain') st.unc++;
   if (res.status === 'nonsense') st.rej++;
@@ -50,7 +53,7 @@ function tally(st, ch, res, anyMode) {
 }
 const pct = (a, b) => (b ? ((100 * a) / b).toFixed(1) + '%' : '-');
 function line(name, st) {
-  return `${name.padEnd(22)} n=${String(st.n).padStart(5)}  top1 ${pct(st.top1, st.n).padStart(6)}  top3 ${pct(st.top3, st.n).padStart(6)}  exact-size top1 ${pct(st.top1exact, st.n).padStart(6)}  confident ${pct(st.conf, st.n).padStart(6)} (precision ${pct(st.confRight, st.conf)})  uncertain ${pct(st.unc, st.n).padStart(6)}  rejected ${pct(st.rej, st.n).padStart(5)}`;
+  return `${name.padEnd(22)} n=${String(st.n).padStart(5)}  top1 ${pct(st.top1, st.n).padStart(6)}  top3 ${pct(st.top3, st.n).padStart(6)}  top5 ${pct(st.top5, st.n).padStart(6)}  exact-size top1 ${pct(st.top1exact, st.n).padStart(6)}  confident ${pct(st.conf, st.n).padStart(6)} (precision ${pct(st.confRight, st.conf)})  uncertain ${pct(st.unc, st.n).padStart(6)}  rejected ${pct(st.rej, st.n).padStart(5)}`;
 }
 function worst(st, k = 12) {
   return Object.entries(st.conf1).sort((a, b) => b[1] - a[1]).slice(0, k).map(([p, c]) => `${p}×${c}`).join('  ');
@@ -73,7 +76,7 @@ console.log(`RB.recog evaluation — ${kana.length} kana${withKanji ? ` + ${kanj
 console.log('top1 = best candidate is the character or its size partner (つ/っ); "any" mode also accepts shape-identical pairs (へ/ヘ).');
 console.log('exact-size = top-1 is exactly the drawn character, size decided from box-relative size/position (no toggle).\n');
 
-const fams = Object.keys(FAMILIES).filter((f) => (onlyFam ? f === onlyFam : f !== 'dev'));
+const fams = Object.keys(FAMILIES).filter((f) => (onlyFam ? f === onlyFam : !f.startsWith('dev')));
 const overall = { pad: newStats(), any: newStats() }; // kana only
 const perGroupAll = {};
 for (const fam of fams) {
@@ -82,7 +85,7 @@ for (const fam of fams) {
     const stPad = newStats(), stAny = newStats();
     for (const ch of chars) {
       const ref = R.reference(ch);
-      for (let i = 0; i < N; i++) {
+      for (let i = 0; i < (gname === 'kanji' ? KN : N); i++) {
         const s = distort(ref, fam, `${ch}|${i}`, { ch });
         const r1 = run(s.strokes, { box: s.box, script: padMode(ch) });
         tally(stPad, ch, r1, false); tally(fs1, ch, r1, false);
@@ -140,7 +143,7 @@ if (withKanji && fams.length > 1) {
     `confident ${pct(confA, n)} / ${pct(confM, n)}; first reading changed ${changed}×, a kanji first ${kanjiFirst}×; kanji-like ${like}×, kanji hint ${hint}×`);
   const kanjiSet = kanji;
   let kn = 0, k1 = 0, kx = 0, kc = 0, kcOk = 0, hn = 0, h1 = 0, hWrong = 0;
-  for (const fam of fams) for (const ch of kanjiSet) for (let i = 0; i < N; i++) {
+  for (const fam of fams) for (const ch of kanjiSet) for (let i = 0; i < KN; i++) {
     const s = distort(R.reference(ch), fam, `${ch}|${i}`, { ch });
     const m = run(s.strokes, { box: s.box, ...MIX });
     const ok = top(m) && (top(m) === ch || (I.TWIN_OF[ch] && I.TWIN_OF[ch].includes(top(m))));
@@ -154,7 +157,7 @@ if (withKanji && fams.length > 1) {
   }
   console.log(`  kanji (n=${kn}): top-1 ${pct(k1, kn)} (a twin counts as its kana: exact ${pct(kx, kn)}), confident ${pct(kc, kn)} (precision ${pct(kcOk, kc)})`);
   console.log(`  kanji drawn with kanji reading off (n=${hn}, twins excluded): the hint names it ${pct(h1, hn)}, another kanji ${hWrong}×`);
-  const SETS = ['口ロ', '二ニ', '力カ', '一ー', '入人', '十ナメ', 'エハタ', '三ミ', '川ルリり', '小ハ', '土エ上', '王エキ', '手キチ', '木ホ本',
+  const SETS = ['口ロ', '二ニ', '力カ', '一ー', '入人', '十ナメ', 'エ工', 'ハ八', 'タ夕', 'チ千', 'オ才', '三ミ', '川ルリり', '小ハ', '土エ上', '王エキ', '手キチ', '木ホ本',
     '大ナ', '下トテ', '日目ヨ', '田ロ', '中ロ', '心ルい', '水ホ', '火ソメ', '人入ヘ', '花イヒ', '名タ', '山出', '二こに', 'ソリ川', 'ノ人'];
   let pn = 0, pok = 0;
   const perr = {};
@@ -165,20 +168,43 @@ if (withKanji && fams.length > 1) {
     if (top(m) && (equivalents(ch).has(top(m)))) pok++; else { const k = ch + '→' + (top(m) || '∅'); perr[k] = (perr[k] || 0) + 1; }
   }
   console.log(`  kana/kanji confusable sets (${SETS.length}, direction-preserving families): ${pct(pok, pn)} of ${pn}; errors: ${Object.entries(perr).map(([k, v]) => k + '×' + v).join(' ') || 'none'}`);
-  const unk = Object.entries(UNKNOWN_KANJI);
-  let un = 0, lk = 0, lm = 0, hu = 0, cm = 0;
-  const cmList = {};
-  for (const fam of fams) for (const [ch, parts] of unk) for (let i = 0; i < N; i++) {
-    const s = distort(composeKanji(R.reference, parts), fam, `unk|${ch}|${i}`, {});
-    const a = run(s.strokes, { box: s.box, script: 'any' }), m = run(s.strokes, { box: s.box, ...MIX });
-    un++;
-    if (a.kanjiLike) lk++;
-    if (m.kanjiLike) lm++;
-    if (a.kanjiHint) hu++;
-    if (m.status === 'confident') { cm++; const k = ch + '→' + top(m); cmList[k] = (cmList[k] || 0) + 1; }
+  // kanji the game does not use: real Tomoe entries (tests/fixtures/recog/tomoe-unknown.json);
+  // the odd-numbered half chose the kanji confidence margin, so the even half is reported apart
+  const up = path.join(root, 'tests', 'fixtures', 'recog', 'tomoe-unknown.json');
+  if (fs.existsSync(up)) {
+    const U = JSON.parse(fs.readFileSync(up, 'utf8'));
+    for (const half of [0, 1]) {
+      let un = 0, lk = 0, lm = 0, hu = 0, cm = 0;
+      const cmList = [];
+      U.chars.forEach((c, i) => {
+        if (i % 2 !== half) return;
+        const st = c.strokes.map((q) => densify(q, U.box / 100).map(([x, y], k) => ({ x, y, t: k * 10 })));
+        const box = { w: U.box, h: U.box };
+        const a = run(st, { box, script: 'any' }), m = run(st, { box, ...MIX });
+        un++;
+        if (a.kanjiLike) lk++;
+        if (m.kanjiLike) lm++;
+        if (a.kanjiHint) hu++;
+        if (m.status === 'confident') { cm++; cmList.push(c.ch + '→' + top(m)); }
+      });
+      console.log(`  kanji the game does not use (Tomoe, ${half ? 'odd half: used to choose the margin' : 'even half: held out'}, n=${un}): kanji-like ${pct(lk, un)} kana pad / ${pct(lm, un)} kana+kanji pad; ` +
+        `named by the hint ${pct(hu, un)}; read 'confident' as a game kanji ${pct(cm, un)} (${cmList.slice(0, 20).join(' ') || 'none'})`);
+    }
   }
-  console.log(`  kanji it does not know (${unk.length}, composed from KanjiVG components; n=${un}): kanji-like ${pct(lk, un)} kana pad / ${pct(lm, un)} kana+kanji pad; ` +
-    `named by the hint ${hu}×; read 'confident' as a supported kanji ${cm}× (${Object.entries(cmList).map(([k, v]) => k + '×' + v).join(' ') || 'none'})\n`);
+  // every kanji's clean reference
+  let cn = 0, c1 = 0, c5 = 0, cc = 0;
+  const cbad = [];
+  for (const ch of kanjiSet) {
+    const ref = R.reference(ch);
+    const strokes = ref.strokes.map((q, si) => q.map((pt, k) => ({ x: pt.x * 3, y: pt.y * 3, t: si * 300 + k * 10 })));
+    const r = run(strokes, { box: { w: 327, h: 327 }, script: 'kanji' });
+    const c = r.candidates.map((x) => x.ch);
+    cn++;
+    if (c[0] === ch) c1++; else cbad.push(ch + '→' + c[0]);
+    if (c.slice(0, 5).includes(ch)) c5++;
+    if (r.status === 'confident') cc++;
+  }
+  console.log(`  clean KanjiVG references, kanji pad (n=${cn}): top-1 ${pct(c1, cn)}, top-5 ${pct(c5, cn)}, confident ${pct(cc, cn)}${cbad.length ? '; errors ' + cbad.join(' ') : ''}\n`);
 }
 
 // Independent sources (not KanjiVG), used unmodified except for pointer-style densification.

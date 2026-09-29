@@ -11,6 +11,9 @@ Plain scripts on the global `RB`; no DOM access at load; all work in node `vm`
 | `40_grammar.js` | `RB.grammar` | grammar points |
 | `50_answers.js` | `RB.answers` | answer checking, feedback, distractors |
 | `60_kanalessons.js` | `RB.kanaLessons` | Foundations kana sequence |
+| `70_lookup_ext.js` | (extends `RB.jp.lookup`) | number + counter compounds, names; exposes `RB.jp.counters`, `RB.jp.numerals` |
+| `75_kanjiread.js` | `RB.kanjiRead` | generated (`tools/kanjiread.mjs`): each kanji's readings from the game's furigana and lexicon |
+| `80_kanjiinfo.js` | `RB.kanjiInfo` | per-kanji readings, words, theme, uses, search, "met" — the data of the pad's chart |
 
 ## Japanese line markup
 
@@ -92,7 +95,9 @@ Content adds its own words (names with `pos:'name'`) via `RB.lex.add`.
 RB.answers.check(input, {accept:[markup…], mode, scriptFree?, vars?, handwritten?})
   -> {ok, matched, form?, notes?, normalized, feedback:[{code, en, jp?, at?, got?, want?}], assisted:false, closest}
 RB.answers.distractors(answer, {count=3, kind:'kana'|'word', accept?, scriptFree?, seed?})
-RB.answers.kanjiReading(ch) -> kana | null      // a common reading of one kanji (no word context)
+RB.answers.kanjiReading(ch) -> kana | null      // a common reading of one kanji (no word context): the first
+                                                // 33's table, the kanji's own lexicon word, else the reading
+                                                // the game's words use most (RB.kanjiRead); 々 has none
 RB.answers.rubyText(text)  -> markup            // the player's text, each kanji with that reading
 ```
 - **Kanji spellings** are accepted where the step lists them (`accept:
@@ -129,6 +134,22 @@ RB.answers.rubyText(text)  -> markup            // the player's text, each kanji
 - Distractors come from real confusions (diacritics, small/large, long vowels,
   っ, shape pairs, particles, script swap; single kana also get same-row/column
   kana) and never include an accepted answer. Deterministic per answer/seed.
+
+## Kanji data (RB.kanjiInfo)
+
+Built on first use from the lexicon (with the words the content adds),
+`RB.kanjiRead` and `RB.recog` (stroke counts, KanjiVG radicals). Nothing is
+fetched or invented. See docs/RECOGNITION.md "The chart" for how themes and
+uses are derived.
+
+```
+RB.kanjiInfo.get(ch) -> {ch, readings:[kana], words:[lexicon entries, most basic first], own, meaning,
+                         textWord?, uses:['noun'|'verb'|'desc'|'count'|'name'], theme, why, radical, strokes, level}
+RB.kanjiInfo.all() / byTheme(id) / byUse(id) / themes() / uses()
+RB.kanjiInfo.search(query, limit=60) -> [{e, why:'kanji'|'word'|'reading'|'meaning'}]   // kanji, word, kana, rōmaji, English
+RB.kanjiInfo.met(state) -> Set of kanji                // seen scenes, inscriptions, practised and noted words
+RB.kanjiInfo.readings(ch) -> [kana]                    // RB.kanjiRead, without building the index
+```
 
 ## Kana lessons
 

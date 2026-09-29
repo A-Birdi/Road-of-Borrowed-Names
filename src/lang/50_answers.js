@@ -88,15 +88,18 @@ RB.answers = (function () {
   // groups, checked against RB.recog by tests/unit/lang_answers.test.mjs).
   // A handwritten answer cannot show which one was meant, so with
   // {handwritten:true} they count as one form. Typed answers are never folded.
-  const HAND_SAME = ['へヘ', 'べベ', 'ぺペ', 'ー一', 'ロ口', 'カ力', 'ニ二'];
+  const HAND_SAME = ['へヘ', 'べベ', 'ぺペ', 'ー一', 'ロ口', 'カ力', 'ニ二', 'エ工', 'チ千', 'タ夕', 'オ才'];
   const HAND_ONE = {};
   HAND_SAME.forEach((g) => Array.from(g).forEach((c) => { HAND_ONE[c] = g[0]; }));
   const handFold = (s) => Array.from(s).map((c) => HAND_ONE[c] || c).join('');
 
   // A common reading of a single kanji, for furigana where there is no word
   // context (a handwritten character on the pad, a quoted character in
-  // feedback): the 33 kanji the handwriting pad can read (a kun reading, or
-  // the stem a learner meets first: 大 おお(きい), 入 い(る)), then the lexicon.
+  // feedback): the first 33 kanji the handwriting pad could read (a kun
+  // reading, or the stem a learner meets first: 大 おお(きい), 入 い(る)), then
+  // the kanji's own word in the lexicon, then the reading the game's text uses
+  // most for it (RB.kanjiRead via RB.kanjiInfo.readings; every kanji the game
+  // displays has one, but 々, which repeats the kanji before it).
   // Accepted answers are shown with the word's own reading instead.
   const KANJI_READ = {
     一: 'いち', 二: 'に', 三: 'さん', 十: 'じゅう', 人: 'ひと', 口: 'くち', 日: 'ひ', 月: 'つき', 山: 'やま', 川: 'かわ', 木: 'き',
@@ -105,15 +108,20 @@ RB.answers = (function () {
   };
   function kanjiReading(ch) {
     if (KANJI_READ[ch]) return KANJI_READ[ch];
-    const e = RB.lex ? RB.lex.bySurface(ch).find((x) => x.r && K.isKanaString(x.r)) : null;
-    return e ? e.r : null;
+    const e = RB.lex ? RB.lex.bySurface(ch).find((x) => x.r && K.isKanaString(x.r) && !/^(suf|pref|name)$/.test(x.pos)) : null;
+    if (e) return e.r;
+    const rs = RB.kanjiInfo && RB.kanjiInfo.readings ? RB.kanjiInfo.readings(ch) : [];
+    return rs.length ? rs[0] : null;
   }
   // Markup for text the player wrote: each kanji gets its reading on its own
   // where one is known ('み水' → 'み{水|みず}'). Kanji without a known reading
   // stay as they are.
+  // 々 repeats the kanji before it, so it takes that kanji's reading.
   function rubyText(s) {
+    let prev = null;
     return Array.from(String(s || '')).map((c) => {
-      const r = K.isKanji(c) ? kanjiReading(c) : null;
+      const r = c === '々' ? prev : K.isKanji(c) ? kanjiReading(c) : null;
+      prev = r;
       return r ? '{' + c + '|' + r + '}' : c.replace(/[{}|]/g, '');
     }).join('');
   }

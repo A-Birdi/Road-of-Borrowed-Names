@@ -63,11 +63,16 @@ export default async (t) => {
   t.eq(badText, [], 'feedback and notes keep every kanji in ruby (' + all.length + ' messages)');
 
   // ---- readings for the kanji the pad knows; the player's own text in ruby
-  const K33 = R => R.supported({ kanji: true }).filter((c) => RB.kana.isKanji(c));
+  // every kanji the pad can read (all the game displays) has a reading; 々, the
+  // repeat mark, has none of its own: it takes the reading of the kanji before it
+  const K33 = R => R.supported({ kanji: true }).filter((c) => RB.kana.isKanji(c) && c !== '々');
   const noRead = K33(RB.recog).filter((c) => !A.kanjiReading(c) || !RB.kana.isKanaString(A.kanjiReading(c)));
-  t.eq(noRead, [], 'every kanji the pad can read has a kana reading for furigana');
+  t.eq(noRead, [], `every kanji the pad can read has a kana reading for furigana (${K33(RB.recog).length} kanji)`);
+  t.ok(A.kanjiReading('守') === 'まも', "守: the reading the game's words use most (まも, as in 守る): " + A.kanjiReading('守'));
   t.eq(A.rubyText('み水'), 'み{水|みず}', "rubyText puts each kanji's reading in ruby");
-  t.ok(mixedOk(A.rubyText(K33(RB.recog).join(''))), 'rubyText of all 33 kanji is valid mixed text');
+  t.ok(mixedOk(A.rubyText(K33(RB.recog).join(''))), 'rubyText of every kanji the pad can read is valid mixed text');
+  t.eq(A.rubyText('人々'), '{人|ひと}{々|ひと}', 'rubyText: 々 takes the reading of the kanji before it');
+  t.ok(mixedOk(A.rubyText('人々')), 'rubyText of 人々 is valid mixed text');
 
   // ---- the game's write steps
   globalThis.__RB_TEST__ = true;

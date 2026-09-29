@@ -140,3 +140,21 @@ halved. See docs/ART_DIRECTION.md §7 "Quest markers" and docs/CONTENT.md §4.
 | Journey with Japanese interface labels | [desktop](quest_guide/journey_ja_1280x800.webp) |
 | Map: the next step marked beside "you are here" | [desktop](quest_guide/map_chart_1280x800.webp) |
 | Settings › Learning & Challenge › Quest guidance | [desktop](quest_guide/settings_guidance_1280x800.webp) |
+
+## Every kanji on the pad, and the chart (2026-09-29)
+
+Captures made by `tests/e2e/kanji_chart.mjs` and `tests/e2e/pad_kanji.mjs`
+(headless Chromium; desktop at full size, phone captures halved), in
+`after/kanji_chart/`.
+
+| State | Image |
+|---|---|
+| Elementary pad: 守 drawn with pointer strokes, read as 守 (まも) with alternatives | [image](after/kanji_chart/pad_mamoru_1280x800.webp) |
+| In a battle: the chart's search from the pad ("protect") | [image](after/kanji_chart/battle_search_1280x800.webp) |
+| In a battle: 守 + る written by hand for the protect response | [image](after/kanji_chart/battle_mamoru_1280x800.webp) |
+| Chart page Verbs · 1 of 5: kanji met first, the rest dimmed | [image](after/kanji_chart/pages_verbs_1280x800.webp) |
+| Entry for 守: readings, words with furigana, stroke order | [image](after/kanji_chart/entry_mamoru_1280x800.webp) |
+| Practice: 守 read as 守, stroke order right | [image](after/kanji_chart/practice_mamoru_1280x800.webp) |
+| Foundations, Words › Kanji chart, practising 守 (390×844) | [image](after/kanji_chart/foundations_practice_390x844.webp) |
+| 320×640, 200 % text: list, search, entry, practice | [list](after/kanji_chart/list_320x640_text200.webp) · [search](after/kanji_chart/search_320x640_text200.webp) · [entry](after/kanji_chart/entry_320x640_text200.webp) · [practice](after/kanji_chart/practice_320x640_text200.webp) |
+| A kanji outside the game (弦) with kanji reading on: the closest kanji to pick from | [image](after/kanji_chart/pad_outside_kanji_390x844.webp) |

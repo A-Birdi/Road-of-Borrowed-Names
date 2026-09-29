@@ -314,6 +314,7 @@ RB.ui.menu = (function () {
       'Draw one character in the box. The pad shows what it thinks you wrote ("I read this as…") and alternatives. Nothing is submitted until you press Confirm, then Submit.',
       'Tap a character in the answer strip to replace it; tap a gap to insert. Undo removes a stroke; Clear wipes the box. Use 小 for small kana (ゃ, っ…) and the script buttons to choose hiragana or katakana.',
       'If the recogniser can\'t read you, pick the character from the chart. That counts as "assisted" — which is fine, it just isn\'t counted as unaided handwriting.',
+      'The chart lists every kana and every kanji in the game, on pages by theme (water, nature, people…) and by use (nouns, verbs…), with a search by kanji, reading, rōmaji, meaning or word. Each kanji shows its readings, meaning, words from the game and its stroke order, and you can practise writing it. Words › Kanji chart opens it any time.',
       'You can switch to choices or keyboard (IME) at any time without losing your place.',
     ]],
     bulb: ['Word help', [
@@ -334,6 +335,7 @@ RB.ui.menu = (function () {
       ['inscriptions', 'Inscriptions you can weave', '{言霊|ことだま}', s.words.filter((w) => RB.content.words[w]).length],
       ['noted', 'Words you noted', '{控|ひか}え', s.notebook.filter((n) => n.kind === 'word').length],
       ['kana', 'Kana chart', '{仮名|かな}', null],
+      ['kanji', 'Kanji chart', '{漢字|かんじ}', null],
       ['grammar', 'Grammar met on the road', '{文法|ぶんぽう}', gram],
       ['lore', 'Lore & histories', '{言|い}い{伝|つた}え', lore.length],
       ['progress', 'How your learning is going', '{進|すす}み{具合|ぐあい}', null],
@@ -388,6 +390,13 @@ RB.ui.menu = (function () {
       }).join('') + '</ul>' : '<p class="muted">Use word help on any Japanese text and choose “Add to notebook”.</p>';
     }
     if (id === 'kana') return kanaChart(s);
+    if (id === 'kanji') {
+      const met = RB.kanjiInfo ? RB.kanjiInfo.met(s).size : 0;
+      const all = RB.kanjiInfo ? RB.kanjiInfo.all().length : 0;
+      return '<p>Every kanji in the game — ' + all + ' of them — on pages by theme and by use, with a search. Each one shows its readings, meaning, words from the game and its stroke order, and you can practise writing it.</p>' +
+        '<p class="muted small">You have met ' + met + ' of them in the story so far; they come first on each page.</p>' +
+        '<div class="row-acts"><button class="pbtn" data-kchart>' + I('grid') + 'Open the kanji chart</button></div>';
+    }
     if (id === 'grammar') {
       const seen = Object.keys(s.learn.items).filter((k) => k.startsWith('g:')).map((k) => k.slice(2));
       const pts = (RB.grammar && RB.grammar.points ? RB.grammar.points : []).filter((g) => seen.includes(g.id));
@@ -427,6 +436,7 @@ RB.ui.menu = (function () {
   }
   function wireWords(el, s) {
     el.onclick = (e) => {
+      if (e.target.closest('[data-kchart]')) { RB.kanjiChart.open({ mode: 'browse', kana: 'any' }); return; }
       const g = e.target.closest('[data-g]');
       if (g) { stopDemo(); view.words.guide = g.dataset.g; remember(); render(); return; }
       const k = e.target.closest('[data-k]');

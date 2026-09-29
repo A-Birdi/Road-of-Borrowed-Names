@@ -12,11 +12,14 @@
  *   explicit Confirm puts a character into the answer strip.
  * - Choosing a non-top candidate or picking from the chart counts as an
  *   assisted character (not the other character of one shape, ロ/口).
- * - "Read as": Kanji or kana (the task's kana plus the 33 kanji the
- *   recognizer knows), Either kana, ひらがな, カタカナ. The start follows the
- *   player's preference (by level: Foundations kana only), never the answer;
- *   kana practice reads kana only. A kanji drawn while kanji reading is off,
- *   or a kanji the pad doesn't know, is said so plainly (no kana guesses). */
+ * - "Read as": Kanji or kana (the task's kana plus every kanji in the game),
+ *   Either kana, ひらがな, カタカナ. The start follows the player's
+ *   preference (by level: Foundations kana only), never the answer; kana
+ *   practice reads kana only. A kanji drawn while kanji reading is off is said
+ *   so plainly (no kana guesses); a kanji-like drawing nothing matches well is
+ *   said to be possibly outside the game's kanji, with the closest readings.
+ * - The Chart (RB.kanjiChart, src/ui/62_kanjichart.js): kana and every kanji,
+ *   by theme and by use, with search, entries and practice. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 /* ---- shared learning-interface helpers ------------------------------------------ */
@@ -167,6 +170,7 @@ RB.pad = (function () {
     return r ? '<ruby>' + esc(ch) + '<rt>' + esc(r) + '</rt></ruby>' : esc(ch);
   }
   const spoken = (ch) => {
+    if (ch === '々') return 'the repeat mark 々';
     const r = isKanji(ch) && RB.answers && RB.answers.kanjiReading ? RB.answers.kanjiReading(ch) : null;
     return r ? 'the kanji ' + ch + ' (' + r + ')' : ch;
   };
@@ -202,9 +206,9 @@ RB.pad = (function () {
         '<button class="pbtn pad-more-b" data-a="more" aria-expanded="false" aria-controls="pad-extra" title="More writing tools: small kana, chart, how to write, kana type">' + I('dots') + '<span>More</span><span class="more-on" lang="ja" hidden>小</span></button>' +
         '<div class="pad-extra" id="pad-extra">' +
           '<button class="pbtn" data-a="small" aria-pressed="false" title="Mark as small kana (ゃ, っ…)"><span class="glyph" lang="ja" aria-hidden="true"><ruby>小<rt>ちい</rt></ruby></span><span>Small kana</span></button>' +
-          '<button class="pbtn" data-a="chart" title="Pick the character from a chart (counts as assisted)">' + I('grid') + '<span>Chart</span></button>' +
+          '<button class="pbtn" data-a="chart" title="The chart: every kana and kanji, by theme and by use, with search and practice (picking from it counts as assisted)">' + I('grid') + '<span>Chart</span></button>' +
           '<button class="pbtn" data-a="model" title="Show how to write it (counts as assisted)">' + I('eye') + '<span>How to write</span></button>' +
-          '<label class="pad-script" title="What the pad reads. Kanji or kana adds the 33 kanji it knows; choosing it or Either kana is remembered for the next questions."><span>Read as</span><select data-script-sel>' +
+          '<label class="pad-script" title="What the pad reads. Kanji or kana adds every kanji in the game; choosing it or Either kana is remembered for the next questions."><span>Read as</span><select data-script-sel>' +
             '<option value="kanji">Kanji or kana</option><option value="any">Either kana</option><option value="hira">ひらがな</option><option value="kata">カタカナ</option></select></label>' +
         '</div>' +
       '</div>';
@@ -430,11 +434,17 @@ RB.pad = (function () {
         return;
       }
       // Outside what the pad reads: a kanji while kanji reading is off, or a
-      // kanji-like drawing nothing matches. Say so; no unrelated kana guesses.
+      // kanji-like drawing nothing matches well. Say so; no unrelated kana
+      // guesses. With kanji reading on, every kanji in the game is known, so
+      // the closest kanji are offered to choose from (the drawing may still
+      // be a kanji outside the game, or a hard one to read).
       if ((r.kanjiHint || r.kanjiLike) && !P.pick) {
         const off = P.mode !== 'kanji';
+        const near = !off && r.kanjiLike && r.candidates.length ? r.candidates.filter((cd) => isKanji(cd.ch)).slice(0, 4) : [];
         if (r.kanjiHint) {
           setRead('outside', 'Looks like the kanji <span lang="ja">' + glyph(r.kanjiHint.ch) + '</span>, but kanji reading is off.', '');
+        } else if (near.length) {
+          setRead('outside', '<b>Not sure</b> — pick the kanji you meant, if it is here, or look it up in the chart.', '');
         } else {
           setRead('outside', off ? '<b>Looks like a kanji</b>, and kanji reading is off. Try it, or write the word in kana.' : '<b>Looks like a kanji the pad doesn\'t know.</b> Write the word in kana.', '');
         }
@@ -444,6 +454,7 @@ RB.pad = (function () {
           candsEl.appendChild(RB.ui.el('span', 'or', 'or'));
           r.candidates.slice(0, 4).forEach((cd) => candsEl.appendChild(candButton(cd)));
         }
+        near.forEach((cd) => candsEl.appendChild(candButton(cd)));
         if (!r.kanjiHint) candsEl.appendChild(button('chart', 'grid', 'Chart'));
         conf.disabled = true;
         fitAlts();
@@ -573,32 +584,17 @@ RB.pad = (function () {
       comp.querySelector('[data-a=del]').disabled = !P.chars.length;
       if (!P.strokes.length && !P.result) renderRead();
     }
-    // Pick a character by hand (assisted): the kana the pad is reading, and
-    // with kanji reading on, the kanji it knows.
+    // The chart (RB.kanjiChart): every kana and kanji, by theme and by use,
+    // with search. Picking a character puts it in the answer (assisted);
+    // opening a kanji's entry or practising it counts as help, like How to
+    // write. Kanji go into the answer only while the pad reads kanji.
     function chart() {
-      const H = 'あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをんがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽぁぃぅぇぉっゃゅょゎ';
       const kana = P.mode === 'kanji' ? P.kanaScript : P.mode;
-      const secs = [];
-      if (kana !== 'kata') secs.push(['Hiragana', Array.from(H)]);
-      if (kana !== 'hira') secs.push(['Katakana', Array.from(RB.kana.toKata(H) + 'ー')]);
-      if (P.mode === 'kanji') secs.push(['Kanji the pad can read', RB.recog.supported({ kanji: true }).filter(isKanji)]);
-      const lay = { name: 'chart' };
-      const fr = RB.learnUi.sheet({ cls: 'small chart', title: 'Pick a character', meta: secs.map((x) => x[0].split(' ')[0]).join(', '), onClose: () => RB.ui.popLayer(lay), closeLabel: 'Cancel' });
-      fr.el.querySelector('[data-folio-close]').setAttribute('data-x', '');
-      fr.leaf.innerHTML = '<p class="muted small">Characters picked here count as assisted — handy when the recognizer can\'t read your writing.</p>' +
-        secs.map(([t, set]) => (secs.length > 1 ? '<h3 class="kchart-h">' + esc(t) + '</h3>' : '') + '<div class="kchart" lang="ja">' +
-          set.map((c) => '<button class="kpick" data-c="' + c + '"' + (isKanji(c) ? ' aria-label="' + esc(spoken(c)) + '"' : '') + '>' + glyph(c) + '</button>').join('') + '</div>').join('');
-      lay.el = fr.scrim;
-      lay.onCancel = () => RB.ui.popLayer(lay);
-      fr.leaf.onclick = (e) => {
-        const b = e.target.closest('[data-c]');
-        if (!b) return;
-        RB.ui.popLayer(lay);
-        put({ ch: b.getAttribute('data-c'), assisted: true, manual: true });
-        P.onAssist('chart');
-        clearInk();
-      };
-      RB.ui.pushLayer(lay);
+      RB.kanjiChart.open({
+        mode: 'pick', kana, kanjiOn: P.mode === 'kanji',
+        onPick: (ch) => { put({ ch, assisted: true, manual: true }); P.onAssist('chart'); clearInk(); },
+        onLook: () => P.onAssist('chart'),
+      });
     }
     function showModel(ch) {
       if (!ch || !RB.recog.reference(ch)) { RB.ui.notice('No stroke reference is available for that character.', 'info'); return; }
@@ -633,10 +629,13 @@ RB.pad = (function () {
       P.mode = m;
       sel.value = m;
       if (remember && (m === 'kanji' || m === 'any')) rememberKanji(m === 'kanji');
+      if (m === 'kanji' && RB.recog.warm) RB.recog.warm();
       if (P.strokes.length) recognize();
     }
     sel.value = P.mode;
     sel.onchange = () => setMode(sel.value, true);
+    // prepare the kanji templates in idle moments, before the first kanji is written
+    if (P.mode === 'kanji' && RB.recog.warm) RB.recog.warm();
     renderStrip();
     renderRead();
     requestAnimationFrame(layout);

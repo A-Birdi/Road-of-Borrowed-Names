@@ -304,6 +304,18 @@ commit (VALIDATION.md); screenshots inspected by eye are noted as such.
 - [v] E11 The difficulty curve reviewed per chapter and setting and recorded (docs/COMBAT_NOTES.md): nothing lost or stalled; Relaxed single and gentle; groups a step up, never a spike; battle resolve 14/12/10. Evidence: unit combat_curve (bounds, and the table it prints).
 - [v] E12 The auto solver (`RB.test.battle`, the whole-game driver) plays groups honestly with the real rules and companion actions (`RB.combatSim`). Evidence: unit combat_curve (the solver against every story group, every setting, every companion); pursue.mjs E nao (one Atlas group met and won) and matrix.mjs FA nao,suzu 2 (4/4) — see VALIDATION.md.
 
+## Every kanji on the pad, and the chart (owner's brief of 2026-09-29; VALIDATION.md "Every kanji on the pad"; docs/RECOGNITION.md)
+- [v] K1 Every kanji the game displays can be written on the pad: 1,547 derived from the source (tools/kanjivg/gamekanji.mjs) plus the first 33 = 1,548 kanji from KanjiVG; a unit test fails when new text brings one without data. Evidence: U recog-coverage (coverage, no stale data, every clean reference read as itself).
+- [v] K2 守 (守る) on Elementary, from real pointer strokes, is read as 守 and 守る is accepted written with kanji — on a task pad and in a battle's pad. Evidence: B kanji_chart §1–§2; U recog-coverage (守 21/21 held-out).
+- [v] K3 Kana results unchanged with kanji reading off. Evidence: T kanaparity 6,888/6,888 identical held-out results plus the independent kana and nonsense sets; B kanji_chart §6.
+- [v] K4 Recognition at scale measured (top-1/top-5 on clean, held-out synthetic and Tomoe samples; speed). Evidence: T eval.mjs --kanji; U recog-accuracy, recog-kanji; B kanji_chart §8 (median 15–18 ms per reading in headless Chromium). Real handwriting of kanji: not tested (K10).
+- [v] K5 The chart has pages to cycle: kana, kanji by theme (12 themes + a small Other, 4.5 %) and by use (nouns, verbs, describing words, counters and numbers, names), derived from the lexicon's meanings and parts of speech with KanjiVG radicals as corroboration; met kanji first, unmet dimmed, no spoilers in unmet entries; every kanji with furigana. Evidence: U kanji_chart; B kanji_chart §3.
+- [v] K6 Search by kanji, kana reading, rōmaji, English meaning or game word, instant, in and out of battle; typing never reaches the game; ↓/Enter/Escape; Escape clears the search, then closes. Evidence: B kanji_chart §2, §5; U kanji_chart.
+- [v] K7 Each entry: readings with furigana, meaning, words from the game, the numbered stroke-order demonstration, and practice with the pad's reading and stroke-order notes; 守 practisable at every level (Words › Kanji chart on Foundations). Evidence: B kanji_chart §4–§5.
+- [v] K8 Layout at 320×640 and 200 % text, 44 px targets. Evidence: B kanji_chart §7, pad_kanji layout test.
+- [v] K9 Licence and attribution: data/NOTICE.txt and the stroke data header updated (KanjiVG CC BY-SA 3.0, radicals kept); fixture sources updated. Evidence: U recog (NOTICE check).
+- [b] K10 Not verified: learners' real handwriting of kanji; Firefox, Safari and real phones; the theme of each of the 1,548 kanji by a person.
+
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
 - R1.3/R14.x: tests/e2e/ui.mjs (IndexedDB probe, session-only banner under refusal, reload persistence, copy independence, delete, overwrite confirm, cross-tab read-only, pre-departure recovery, file:// mode).
@@ -311,6 +323,7 @@ commit (VALIDATION.md); screenshots inspected by eye are noted as such.
 - R5.x: tests/e2e/story_ch1.mjs (all 4 companions; provisional switch; commitment only via "Set out with…"; lock after departure; no third member).
 - R7.1–R7.3, R7.8: ui.mjs combat test; RB.combatLogic caps mistake cost; RB.test.battle verifies Unravel-only wins.
 - R8.2/R8.3/R10.5: ui.mjs handwriting test (mode switch keeps step; IME Enter during composition does not submit; mastery tallies by mode).
+- K1–K10: tests/unit/recog-coverage.test.mjs, kanji_chart.test.mjs, recog-kanji.test.mjs; tests/e2e/kanji_chart.mjs, pad_kanji.mjs; tools/kanjivg/kanaparity.mjs and eval.mjs --kanji.
 - R9.x: tests/unit/recog*.test.mjs (396 checks) + ui.mjs (reference strokes, wrong kana recognised then explained, nonsense rejected, composition edits, real mouse stroke). Human handwriting NOT tested.
 - R11.1: tools/validate.mjs rejects any kanji without ruby; R11.2/11.3: ui.mjs lightbulb test.
 - R18.1: tools/validate.mjs (also warns on unreachable exits, NPCs and interactable props).
