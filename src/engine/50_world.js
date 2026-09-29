@@ -108,13 +108,28 @@ RB.world = (function () {
     // People who come or go while you are here walk to or from the nearest
     // door or way out instead of popping in and out (not while a map is
     // still appearing: those people were simply already there, or gone).
+    // One person is never on screen twice: when the story moves someone to a
+    // new place on this map (one placement ends as another begins), or
+    // someone who walked in to speak (or was walking away) now has a place
+    // here, that same figure walks to the new place.
     if (W.time - W.enteredAt > 900) {
+      const arriving = W.npcs.filter((a) => !before.has(a.id) && !keep.has(a.id));
       let k = 0;
       for (const [id, a] of keep) {
         if (W.npcs.some((n) => n.id === id) || id === st.comp || a.map !== m.id || renamed.has(id)) continue;
-        leave(a, k++);
+        const b = arriving.find((n) => !n.shifted && personOf(n) === personOf(a));
+        if (b) shiftTo(b, a);
+        else leave(a, k++);
       }
-      for (const a of W.npcs) if (!before.has(a.id) && !keep.has(a.id)) arriveOnFoot(a);
+      for (const b of arriving) {
+        if (b.shifted) continue;
+        const here = W.extras.find((e) => personOf(e) === personOf(b)) || W.leavers.find((e) => personOf(e) === personOf(b));
+        if (here) {
+          W.extras = W.extras.filter((e) => e !== here);
+          W.leavers = W.leavers.filter((e) => e !== here);
+          shiftTo(b, here);
+        } else arriveOnFoot(b);
+      }
     }
     for (const a of W.npcs) W.seenOn[personOf(a)] = m.id;
     W.foes = [];
@@ -258,6 +273,29 @@ RB.world = (function () {
     if (W.departures.length > 40) W.departures.shift();
     if (RB.test && RB.test.auto) (RB.test.departures = RB.test.departures || []).push(rec);
   }
+  // The same person takes up a new place on this map: the figure `b` starts
+  // where `from` stands and walks to b's own spot (no fade, no second figure).
+  function shiftTo(b, from) {
+    b.shifted = true;
+    b.x = from.x; b.y = from.y; b.fx = from.x; b.fy = from.y; b.dir = from.dir; b.mv = null;
+    b.alpha = 1; b.fadeIn = false; b.routeT = 0;
+    const home = b.home ? b.home[0] + ',' + b.home[1] : null;
+    const route = home && (from.x + ',' + from.y) !== home ? routeOut(from.x, from.y, 160, new Set([home])) : null;
+    b.route = route && route.length ? route : null;
+    if (!b.route && home) { b.x = b.home[0]; b.y = b.home[1]; b.fx = b.x; b.fy = b.y; }
+    noteDeparture(b, { goals: new Set(home ? [home] : []), to: W.map.id, via: null, reason: 'moves to a new place here' }, b.route, false);
+  }
+  // Resolves when the person who is about to speak has reached their place
+  // (at most `ms`): a scene's line waits for someone still walking up.
+  function whenArrived(who, ms) {
+    const a = W.npcs.concat(W.extras).find((n) => n.id === who || personOf(n) === who);
+    if (!a || (!a.route && !a.mv) || (RB.test && RB.test.auto)) return Promise.resolve();
+    const t0 = performance.now();
+    return new Promise((res) => {
+      const tick = () => ((!a.route && !a.mv) || performance.now() - t0 > (ms || 3000) || !W.map ? res() : setTimeout(tick, 60));
+      tick();
+    });
+  }
   function onScreen(a) {
     const v = RB.render.viewSize(), c = RB.render.cam;
     const x = a.x * 16 - c.x, y = a.y * 16 - c.y;
@@ -318,6 +356,14 @@ RB.world = (function () {
       if (a.fading) a.alpha -= dt / 260;
     }
     W.leavers = W.leavers.filter((a) => a.alpha > 0);
+    if (RB.test && RB.test.auto) {
+      const seen = new Set();
+      for (const a of W.npcs.concat(W.extras, W.leavers)) {
+        const who = personOf(a);
+        if (seen.has(who)) { const k = who + ' @ ' + W.map.id; const l = (RB.test.twice = RB.test.twice || []); if (!l.includes(k)) l.push(k); }
+        seen.add(who);
+      }
+    }
     for (const n of W.npcs.concat(W.extras)) {
       if (n.fadeIn) { n.alpha = Math.min(1, (n.alpha || 0) + dt / 260); if (n.alpha >= 1) n.fadeIn = false; }
       if (n.extra) { stepActor(n, dt); n.blinkT -= dt; if (n.blinkT < -140) n.blinkT = 2500 + Math.random() * 3000; }
@@ -333,7 +379,18 @@ RB.world = (function () {
   function ensureSpeaker(who, sceneId) {
     if (!who || who === 'narr' || who === 'pc' || !W.map || !RB.render.worldVisible()) return;
     if (W.comp && (who === 'comp' || W.comp.id === who)) return;
-    if (W.npcs.some((n) => n.id === who) || W.extras.some((n) => n.id === who)) return;
+    // already here under any of their placements (tsuru_out is Tsuru)
+    if (W.npcs.some((n) => n.id === who || personOf(n) === who) || W.extras.some((n) => n.id === who || personOf(n) === who)) return;
+    // walking away just now: they stop, turn back and speak (no second figure)
+    const going = W.leavers.find((n) => personOf(n) === who || n.id === who);
+    if (going) {
+      W.leavers = W.leavers.filter((n) => n !== going);
+      Object.assign(going, { route: null, fading: false, alpha: 1, wait: 0, extra: true, goals: null });
+      if (going.mv) { going.x = going.mv.tx; going.y = going.mv.ty; }
+      W.extras.push(going);
+      if (!going.mv) faceTo(going, W.player.x, W.player.y);
+      return;
+    }
     // someone about to be known by this name is already standing here
     if ((W.map.def.npcs || []).some((n) => n.was && n.id === who && W.npcs.some((q) => q.id === n.was))) return;
     const ch = RB.content.chars[who];
@@ -365,7 +422,7 @@ RB.world = (function () {
   function dismissExtras() {
     const st = s();
     for (const a of W.extras) {
-      const lives = (W.map.def.npcs || []).some((n) => n.id === a.id && (!n.if || RB.state.test(st, n.if)));
+      const lives = (W.map.def.npcs || []).some((n) => (n.char || n.id) === personOf(a) && (!n.if || RB.state.test(st, n.if)));
       if (!lives) leave(a);
     }
     W.extras = [];
@@ -791,7 +848,7 @@ RB.world = (function () {
   }
 
   return {
-    W, DIRS, enter, update, interact, tapTile, refreshActors, placeCompanion, emote, actorById, scriptMove, ensureSpeaker, dismissExtras,
+    W, DIRS, enter, update, interact, tapTile, refreshActors, placeCompanion, emote, actorById, scriptMove, ensureSpeaker, whenArrived, dismissExtras,
     frontTile, frontAction, checkFoeContact, faceTo, unstick, blocked, _tryMove: tryMovePlayer,
   };
 })();

@@ -253,6 +253,7 @@ tsuru: よく やった 。 でも 、 {終|お}わり じゃ ない 。 {名前
 tsuru: {今夜|こんや} 、 {灯|あか}り{堂|どう} に {来|き}て おくれ 。 あの {四人|よにん} も {呼|よ}んで おく 。 {話|はな}す こと が ある 。 || Come to the Lantern Hall tonight. I'll call those four as well. There's something we need to talk about.
 !fade out 900
 !set rw_night rw_evening
+!refresh
 !music reedwake_night
 !fade in 900
 narr: {日|ひ} が {暮|く}れた 。 {村|むら} の {灯|あか}り が 、 {一|ひと}つ ずつ ともって いく 。 || The sun goes down. One by one, the village lanterns come on.

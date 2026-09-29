@@ -11,7 +11,10 @@
 // - somebody in the way is walked round;
 // - changing maps mid-walk and saving/loading leave nobody doubled or
 //   stranded: the four are on the mill road exactly once, and gone from the
-//   village; the conversation that follows is still there.
+//   village; the conversation that follows is still there;
+// - one person, one figure: in the bridge scene after the Mill, Tsuru is
+//   there once for every line and walks to the Hall at nightfall; a person
+//   whose place on the map changes walks there (no second figure).
 // Usage: node tests/e2e/departures.mjs
 import { serve, launch, page } from './lib.mjs';
 
@@ -19,7 +22,7 @@ const { srv, url } = await serve();
 const b = await launch();
 let fail = 0;
 const assert = (c, m) => { if (!c) { fail++; console.log('FAIL ' + m); } else console.log('ok   ' + m); };
-const { p, errors } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+let { p, errors } = await page(b, url, { viewport: { width: 1280, height: 800 } });
 
 const ALL = { rw_arrived: true, rw_road_lit: true, rw_met_tsuru: true, rw_met_ren: true, rw_letters_done: true, rw_bottles_done: true, rw_lanterns_done: true, rw_suzu_told: true, rw_hana_cups: true };
 async function start(map, x, y, flags, dir) {
@@ -152,6 +155,63 @@ const detour = await p.evaluate(async () => {
   return { through, ms: Math.round(stood) };
 });
 assert(detour.skipped || !detour.through, 'someone leaving steps round the player standing on their way (' + JSON.stringify(detour) + ')');
+
+// ---- 5. one person, one figure: the bridge scene after the Mill (player report, 2026-09-29) ----
+// Tsuru speaks after Kōji and Hana go in; she must be there once (never a second Tsuru walking
+// in while the first walks off), and at nightfall she walks to the Lantern Hall.
+const AFTER = Object.assign({}, ALL, { rw_mill_open: true, rw_echo_done: true, bridge_fixed: true });
+// a fresh page: nothing left running from the sections above
+({ p } = await page(b, url, { viewport: { width: 1280, height: 800 } }));
+await start('rw.village', 31, 17, AFTER, 'right');
+const bridge = await p.evaluate(async () => {
+  const W = RB.world.W, seen = { most: 0, spoke: [], at: [] };
+  const who = (a) => (a.def && (a.def.char || a.def.id)) || a.id;
+  let done = false;
+  RB.script.run('rw.bridge_scene').then(() => { done = true; });
+  for (let i = 0; i < 1200 && !done; i++) {
+    const figs = W.npcs.concat(W.extras, W.leavers).filter((a) => who(a) === 'tsuru');
+    seen.most = Math.max(seen.most, figs.length);
+    if (i % 20 === 0) (seen.log = seen.log || []).push('[' + RB.game.mode() + ' dlg=' + RB.ui.dialogue.isOpen() + ' ' + ((document.querySelector('.dlg:not(.hidden) .main') || {}).textContent || '').slice(0, 30) + ']');
+    if (RB.ui.dialogue.isOpen()) {
+      const d = document.querySelector('.dlg .who .nm');
+      if (d && /Tsuru/.test(d.textContent)) { seen.spoke.push(figs.length); seen.at.push(figs.map((a) => a.x + ',' + a.y).join('|')); }
+      RB.ui.dialogue.advance(true);
+    }
+    const nx = document.querySelector('[data-a=next][data-ok]'); if (nx) nx.click();
+    const skip = [...document.querySelectorAll('.chal button')].find((x) => /skip practice/i.test(x.textContent)); if (skip) skip.click();
+    await new Promise((r) => setTimeout(r, 50));
+  }
+  // after nightfall: she heads for the Hall
+  const deps = W.departures.filter((d) => d.id === 'tsuru');
+  await new Promise((r) => setTimeout(r, 400));
+  return { most: seen.most, spoke: seen.spoke, at: [...new Set(seen.at)], deps, done, evening: !!RB.game.s.flags.rw_evening, log: [...new Set(seen.log || [])].slice(0, 12) };
+});
+assert(bridge.done && bridge.evening, 'the bridge scene played to nightfall' + (bridge.done ? '' : ' ' + JSON.stringify(bridge.log)));
+assert(bridge.most === 1, 'Tsuru is never on screen twice during the bridge scene (most at once: ' + bridge.most + ')');
+assert(bridge.spoke.length >= 3 && bridge.spoke.every((n) => n === 1), 'every line Tsuru says, she is there — once (' + JSON.stringify(bridge.spoke) + ' at ' + bridge.at.join(' / ') + ')');
+const toHall = bridge.deps.find((d) => !d.arriving && d.to === 'rw.hall');
+assert(toHall && toHall.exit === '21,8', 'at nightfall she walks to the Lantern Hall door (' + JSON.stringify(bridge.deps) + ')');
+// the audit test runs use: nobody drawn twice
+const twice = await p.evaluate(() => { RB.test.auto = true; RB.world.update && RB.world.update(16); const t = RB.test.twice || []; RB.test.auto = false; return t; });
+assert(!twice.length, 'no one drawn twice in the village (' + twice.join(', ') + ')');
+
+// ---- 6. the same person moving to a new place on this map walks there (no second figure) ----
+await start('rw.village', 22, 16, ALL, 'up');
+const shift = await p.evaluate(async () => {
+  const W = RB.world.W;
+  // Tsuru stops being the square's Tsuru and becomes the evening Tsuru at 27,17, on this map
+  const t = W.npcs.find((n) => n.id === 'tsuru');
+  const from = t && [t.x, t.y];
+  Object.assign(RB.game.s.flags, { rw_echo_done: true, rw_mill_open: true });
+  RB.world.refreshActors();
+  const figs = () => W.npcs.concat(W.extras, W.leavers).filter((a) => ((a.def && (a.def.char || a.def.id)) || a.id) === 'tsuru');
+  const n0 = figs().length, start = figs().map((a) => a.x + ',' + a.y);
+  let most = n0;
+  for (let i = 0; i < 160; i++) { most = Math.max(most, figs().length); if (!figs()[0].route && !figs()[0].mv) break; await new Promise((r) => setTimeout(r, 50)); }
+  const end = figs().map((a) => a.id + '@' + a.x + ',' + a.y + ' a' + (figs()[0].alpha));
+  return { from, n0, start, most, end, dep: W.departures.filter((d) => d.id === 'tsuru').pop() };
+});
+assert(shift.most === 1 && shift.start[0] === shift.from.join(',') && /^tsuru_out@27,17 a1$/.test(shift.end[0]), 'one Tsuru walks from her old place (' + shift.from + ') to her new one, fully visible (' + JSON.stringify(shift) + ')');
 
 assert(!errors.length, 'no page errors ' + errors.slice(0, 3).join(' | '));
 await b.close(); srv.close();

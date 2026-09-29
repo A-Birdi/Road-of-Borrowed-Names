@@ -195,7 +195,11 @@ RB.script = (function () {
           const who = resolveWho(c.who);
           // someone who speaks should be seen: if they are not here, they walk in
           // (unless this scene says their voice is off-screen: !speakerless)
-          if (!ctx.offscreenAll && !(ctx.offscreen && ctx.offscreen.has(who))) RB.world.ensureSpeaker(who, sc.id);
+          if (!ctx.offscreenAll && !(ctx.offscreen && ctx.offscreen.has(who))) {
+            RB.world.ensureSpeaker(who, sc.id);
+            // someone still walking to their place speaks once they are there
+            await RB.world.whenArrived(who, 3000);
+          }
           await RB.ui.dialogue.say({ who, expr: c.expr, jp: c.jp, en: c.en, sceneId: sc.id, line: c.line });
           break;
         }

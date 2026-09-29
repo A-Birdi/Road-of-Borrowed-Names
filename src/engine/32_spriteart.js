@@ -568,8 +568,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
     else { b.rect(25, ey, 2, 1, p.eye); b.rect(25, ey + 1, 2, 3, p.iris); b.px(26, ey + 1, p.white); b.px(25, ey + 3, p.irisL); b.px(24, ey, p.eye); }
     if (look.age !== 'old') b.rect(25, ey + 4, 2, 1, p.blush);
     else { b.px(24, ey + 4, sk.s); }
-    b.px(29, ey + 6, p.mouth); b.px(28, ey + 6, mix(p.mouth, sk.S, 0.5));
-    b.px(30, ey + 2, sk.S); b.px(30, ey + 3, sk.s); // nose tip
+    // the profile: a nose tip standing one pixel proud of the face, its
+    // underside joined to it, and the mouth a small notch on the face's own
+    // front edge (FACE_S ends at x 27 on that row) — nothing floats outside
+    b.px(27, ey + 5, p.mouth); b.px(26, ey + 5, mix(p.mouth, sk.S, 0.5));
+    b.px(30, ey + 2, sk.S); b.px(29, ey + 3, sk.s); // nose tip
   }
 
   // ---- side view (facing right; the near side is the one facing the camera) ------------------

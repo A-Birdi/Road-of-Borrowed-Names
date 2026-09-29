@@ -149,7 +149,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { if: 'post', scene: 'rw.tomo_post' }, { if: 'rw_echo_done', scene: 'rw.tomo_after' }, { scene: 'rw.tomo_first' }] },
     { id: 'koji', x: 44, y: 17, dir: 'left', if: 'rw_echo_done&!rw_koji_back', talk: [{ scene: 'rw.koji_bank' }] },
     { id: 'hana_out', char: 'hana', x: 30, y: 16, dir: 'down', if: 'rw_echo_done&!rw_koji_back', talk: [{ scene: 'rw.hana_again' }] },
-    { id: 'tsuru_out', char: 'tsuru', x: 27, y: 17, dir: 'right', if: 'rw_echo_done&!rw_koji_back', talk: [{ scene: 'rw.tsuru_evening' }] },
+    // Tsuru stays in the square until evening falls (she still has things to say
+    // after Kōji goes in), then walks to the Lantern Hall, where she waits
+    { id: 'tsuru_out', char: 'tsuru', x: 27, y: 17, dir: 'right', if: 'rw_echo_done&!rw_evening', talk: [{ scene: 'rw.tsuru_evening' }] },
   ];
   C.maps['rw.hall'].npcs = [
     { id: 'tsuru', x: 5, y: 4, dir: 'down', if: 'rw_echo_done', talk: [

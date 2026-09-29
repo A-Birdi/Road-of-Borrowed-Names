@@ -384,8 +384,8 @@ RB.ui.menu = (function () {
   const ACC_WORD = { hat: 'hat', cap: 'cap', scarf: 'scarf', earrings: 'earrings', flower: 'flower', cape: 'cape' };
   function wearPreview(id, d, s) {
     const rep = EQ().replaces(s.player.look, id).map((a) => ACC_WORD[a] || a);
-    // on the road (front and side, 40×58) and in battle (seen from behind, facing the foe), all at 2 CSS px per art px
-    const views = [['down', 'Front'], ['right', 'Side'], ['battle', 'In battle']];
+    // on the road (front, side and back, 40×58) and in battle (seen from behind, facing the foe), all at 2 CSS px per art px
+    const views = [['down', 'Front'], ['right', 'Side'], ['up', 'Back'], ['battle', 'In battle']];
     const F = RB.sprites.FRAME || { w: 40, h: 58 };
     return '<figure class="wear-prev"><figcaption>How you look wearing it</figcaption><div class="wp-row">' +
       views.map(([dir, cap]) => '<div class="wp' + (dir === 'battle' ? ' wp-battle' : '') + '"><canvas width="' + F.w + '" height="' + F.h + '" data-prev="' + esc(id) + '" data-dir="' + dir + '" role="img" aria-label="' + esc('You wearing the ' + d.name.en + ': ' + cap.toLowerCase()) + '"></canvas><span>' + esc(cap) + '</span></div>').join('') +

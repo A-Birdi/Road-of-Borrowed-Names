@@ -292,10 +292,11 @@ const helpers = (p) => p.evaluate(() => {
   const pv = await p.evaluate(() => {
     const cvs = Array.from(document.querySelectorAll('.leaf-b canvas[data-prev]'));
     const bt = cvs.find((cv) => cv.dataset.dir === 'battle');
-    return { n: cvs.length, drawn: cvs.every((cv) => Array.from(EQT.data(cv)).some((v, i) => i % 4 === 3 && v > 0)), note: document.querySelector('.leaf-b .wear-prev').textContent,
+    return { n: cvs.length, views: cvs.map((cv) => cv.dataset.dir).join(','), caps: Array.from(document.querySelectorAll('.leaf-b .wp span')).map((x) => x.textContent).join(','),
+      drawn: cvs.every((cv) => Array.from(EQT.data(cv)).some((v, i) => i % 4 === 3 && v > 0)), note: document.querySelector('.leaf-b .wear-prev').textContent,
       battle: !!bt && Math.abs(bt.getBoundingClientRect().width - bt.width * 2) <= 2 && bt.height > 60, bw: bt && [bt.width, bt.getBoundingClientRect().width] };
   });
-  assert(pv.n === 4 && pv.drawn && pv.battle, 'a keepsake\'s detail previews the player wearing it (front, side, the battle figure seen from behind at the same 2 px per art px, portrait) ' + JSON.stringify(pv.bw));
+  assert(pv.n === 5 && pv.views === 'down,right,up,battle,face' && pv.caps === 'Front,Side,Back,In battle,Portrait' && pv.drawn && pv.battle, 'a keepsake\'s detail previews the player wearing it: Front, Side, Back, In battle (the battle figure at the same 2 px per art px), Portrait ' + JSON.stringify({ views: pv.views, caps: pv.caps, bw: pv.bw }));
   assert(!errors.length, 'no page errors (Satchel) ' + errors.join('; '));
   await p.context().close();
 }

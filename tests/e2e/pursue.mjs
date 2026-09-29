@@ -61,12 +61,15 @@ const fin = await p.evaluate(() => ({
   flags: ['post', 'postgame', 'ch6_done'].filter((f) => RB.game.s.flags[f]),
   absent: (RB.test.absentSpeakers || []).map((x) => x.who + ' @ ' + x.map + ' (' + (x.scene || '?') + '): ' + x.en),
   nightLeaks: RB.test.nightLeaks || [],
+  twice: RB.test.twice || [],
   extras: [...new Set(RB.test.extras || [])],
   departures: [...new Set((RB.test.departures || []).map((d) => (d.arriving ? 'in  ' : 'out ') + d.id + ' @ ' + d.map + ' ' + d.from + ' → ' + (d.exit || '(fades)') + ' toward ' + (d.to || '?') + ' [' + d.reason + ']'))],
 }));
 // lines spoken by characters who are not on the map (reported, reviewed by hand;
 // some are meant — voices through a door, letters, memories)
 if (fin.nightLeaks.length) { ok = false; console.log('left a night-only map during its night: ' + fin.nightLeaks.join(', ')); }
+// one person, one figure: nobody may be drawn twice at once on a map
+if (fin.twice.length) { ok = false; console.log('the same person drawn twice at once: ' + fin.twice.join(', ')); }
 if (fin.absent.length) console.log('bodiless speakers (' + fin.absent.length + '):\n  ' + fin.absent.join('\n  '));
 fs.mkdirSync(path.join(root, 'tests/e2e/out'), { recursive: true });
 if (fin.extras.length) console.log('walked in to speak (' + fin.extras.length + '):\n  ' + fin.extras.join('\n  '));
