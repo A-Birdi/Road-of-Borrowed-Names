@@ -603,6 +603,10 @@ The world fixes were made directly on this branch (0c78eca, 0c4d36d, 8706340).
   - There were no page errors. **S** I viewed the frames at 13 timestamps.
 - **B Full default suite `node tests/e2e/run.mjs` on ecb584b:** 29 of 29 scripts passed. It adds encounters, departures, characters, backdrops and battle_anim, and includes a whole-game `pursue.mjs E mio` run.
 - **U / validator:** 3653 unit checks passed; `node tools/validate.mjs` reports no errors.
+- **B Final layout audit on c113f3a** (the ecb584b game plus docs), `visual.mjs --check`, same states and checks as before:
+  - English labels at 8 viewports (320x640 … 1920x1080): **448/448 clean**.
+  - Japanese labels at 320x640, 390x844 and 1280x800: **168/168 clean**.
+- **B Whole-game matrix on c113f3a**, `node tests/e2e/matrix.mjs FEIA nao,mio,ren,suzu 3`: **16/16**. Every learning profile × companion played a new campaign through chapters 1–6 and the first Atlas expedition (10.9–12.9 min each), with the new road figures and departure routing. These runs answer battles through the test solver, so they check that the game can be completed, not the battle presentation.
 - **Not verified:**
   - Firefox (the owner's browser) and Safari. The Next-button cause is a stacking order that holds in any browser, but the fix was run only in Chromium.
   - Real phones or touch hardware, and phone frame rates.

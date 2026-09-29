@@ -177,7 +177,7 @@ commit (VALIDATION.md); screenshots inspected by eye are noted as such.
 - [v] P15 Out-of-bounds and dialogue camera (report of 2026-09-27, V13) — world_view.mjs
 - [v] P16 Multiple-choice questions never give the answer away by position: the options shown are shuffled (the right one had been written first in 657 of 667 authored questions and every generated meaning question, and was shown first 98.7% of the time); the order holds while a question is open and changes from one asking to the next — unit choice_order (every authored and generated question: right option first 32.4% vs chance 32.3%), combat_ui.mjs in battle (old build: first place 17 of 17; new: all four places)
 
-## Sprite and battle polish (brief of 2026-09-28, amended; VALIDATION.md "Sprite and battle polish"; full default suite 29/29 on ecb584b)
+## Sprite and battle polish (brief of 2026-09-28, amended; VALIDATION.md "Sprite and battle polish"; full default suite 29/29 on ecb584b; layout audit 448/448 + 168/168 and whole-game matrix 16/16 on c113f3a)
 - [v] B1 Current implementation established before editing (code review, recorded in docs/ART_DIRECTION.md §8/§10/§11):
   - characters were code-drawn 32×48 art px at 2 art px per logical px, and the battle party was the road's straight-back frame;
   - backdrops were one painter per region key, and battles did not know their place;
