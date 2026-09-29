@@ -487,6 +487,8 @@ RB.render = (function () {
       const a = RB.world.actorById(e.who);
       if (a) drawEmote(c, a, e.kind);
     }
+    // the followed quest's next step (src/engine/62_questmarks.js): over the lighting, so it reads at night
+    if (RB.questMarks) RB.questMarks.draw(c, { ax, ay, bw, bh, TS, ART, HEAD: HEAD_TOP }, t);
   }
 
   // Effective ambience: a map may define alt: [{if, ambient, night}] for story states.

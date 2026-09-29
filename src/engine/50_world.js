@@ -850,5 +850,6 @@ RB.world = (function () {
   return {
     W, DIRS, enter, update, interact, tapTile, refreshActors, placeCompanion, emote, actorById, scriptMove, ensureSpeaker, whenArrived, dismissExtras,
     frontTile, frontAction, checkFoeContact, faceTo, unstick, blocked, _tryMove: tryMovePlayer,
+    towards, linksOf, mapsWith, // map-link search (also used by quest guidance, 56_questguide.js)
   };
 })();

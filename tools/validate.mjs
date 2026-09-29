@@ -208,6 +208,19 @@ for (const id in C.maps) {
 
 // ---- quests, items, notes, places -----------------------------------------------------------
 for (const id in C.quests) { const q = C.quests[id]; jen(q.title, 'quest ' + id); (q.stages || []).forEach((s, i) => { jen(s, 'quest ' + id + ' stage ' + i); if (!s.en) E('quest ' + id + ' stage ' + i + ' missing English'); }); if (!q.stages || !q.stages.length) E('quest ' + id + ' has no stages'); }
+// quest guidance (src/engine/56_questguide.js): a stage's authored `hint` is
+// bilingual, and its `at` names real places ({map, npc} | {map, prop, x, y} | {map, x, y} | {map}, a list, or 'open')
+for (const id in C.quests) (C.quests[id].stages || []).forEach((s, i) => {
+  const w = 'quest ' + id + ' stage ' + i;
+  if (s.hint) { jen(s.hint, w + ' hint'); if (!s.hint.en || !s.hint.jp) E(w + ' hint needs jp and en'); }
+  if (s.at == null || s.at === 'open') return;
+  for (const a of [].concat(s.at)) {
+    const m = a && C.maps[a.map];
+    if (!m) { E(w + ' at: unknown map ' + (a && a.map)); continue; }
+    if (a.npc && !(m.npcs || []).some((n) => n.id === a.npc)) E(w + ' at: no npc ' + a.npc + ' on ' + a.map);
+    if (a.prop && !(m.props || []).some((p) => p.x === a.x && p.y === a.y)) E(w + ' at: no prop at ' + a.x + ',' + a.y + ' on ' + a.map);
+  }
+});
 for (const id in C.items) { const it = C.items[id]; jen(it.name, 'item ' + id); if (!it.name || !it.name.en) E('item ' + id + ' missing name'); }
 for (const id in C.notes) { const n = C.notes[id]; jen(n.title, 'note ' + id); jcheck(n.jp, 'note ' + id); }
 for (const id in C.places) { const p = C.places[id]; jen(p.name, 'place ' + id); const m = compiled[p.map]; if (!C.maps[p.map]) E('place ' + id + ': unknown map ' + p.map); else if (m && m.block[p.y * m.w + p.x]) E('place ' + id + ': arrival tile blocked'); }

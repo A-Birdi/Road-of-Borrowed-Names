@@ -40,6 +40,29 @@ button.entry .t, button.entry .kind { display: block; }
 .done-list summary:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
 .history .who { font-size: 0.85em; font-weight: 600; color: var(--ink-3); }
 
+/* Journey: quest guidance (follow, the words for the markers, nudges) */
+.entry .ftag { color: var(--ribbon-deep); white-space: nowrap; }
+.entry .ftag svg { width: 1.05em; height: 1.05em; vertical-align: -0.15em; margin-right: 0.15em; }
+.entry.followed { box-shadow: inset 3px 0 0 var(--ribbon); }
+.qguide { margin: 0.4em 0 0.6em; }
+.follow-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3em 0.8em; margin: 0.5em 0; }
+.follow-row .muted { flex: 1 1 14em; min-width: 0; }
+.pbtn.follow[aria-pressed="true"] { background: var(--paper-2); border-color: var(--ribbon-deep); box-shadow: inset 0 -3px 0 var(--ribbon); font-weight: 600; }
+.pbtn.follow[aria-pressed="true"] svg { color: var(--ribbon-deep); }
+.qnext { border-left: 3px solid var(--ribbon); background: rgba(255,255,255,0.35); padding: 0.3em 0.6em 0.4em; margin: 0.4em 0 0.6em; }
+.qnext .kind svg, .qguide .ph svg { width: 1.05em; height: 1.05em; vertical-align: -0.15em; }
+.nline { margin: 0.25em 0; }
+.nline .en { font-size: 0.95em; }
+.nudges { list-style: none; margin: 0.2em 0 0.3em; padding: 0; }
+.nudges li { padding: 0.35em 0 0.45em; border-bottom: 1px dotted var(--rule); }
+.nudges li:focus { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.nudges .kind { display: block; font-size: 0.78em; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+.qguide .pbtn .count { font-size: 0.85em; color: var(--ink-3); margin-left: 0.2em; }
+.next-note svg { width: 1.1em; height: 1.1em; vertical-align: -0.2em; color: var(--ribbon-deep); }
+.next-kind { color: var(--ribbon-deep) !important; }
+.next-kind svg { width: 1em; height: 1em; vertical-align: -0.15em; }
+.chartbox:focus { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+
 /* Words: filed notes */
 .row-acts { display: flex; flex-wrap: wrap; gap: 8px; margin: 0.6em 0; }
 .filed .written { font-size: 1.35em; line-height: 1.9; }

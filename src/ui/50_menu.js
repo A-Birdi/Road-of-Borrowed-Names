@@ -26,7 +26,7 @@ RB.ui.menu = (function () {
   const COMPANION_QUESTS = { co_suzu: 'suzu', lf_nao: 'nao', lf_mio: 'mio', ren_ushio: 'ren' };
   const view = {
     section: 'journey',
-    journey: { view: 'quests', sel: null },
+    journey: { view: 'quests', sel: null, nudge: {} }, // nudge: quest id + ':' + stage → nudges shown
     words: { sub: null, guide: 'basics' },
     satchel: { sel: null },
     map: {},
@@ -150,10 +150,84 @@ RB.ui.menu = (function () {
     const earlier = (x.d.stages || []).slice(0, x.q.done ? cur + 1 : cur);
     return '<div class="qdetail"><div class="kind">' + esc(kl) + (x.q.done ? ' · completed' : '') + '</div>' +
       '<h3>' + j(x.d.title.jp) + '</h3><p class="en-title">' + esc(x.d.title.en) + '</p>' +
-      (x.q.done ? '<p class="muted">' + I('done') + ' Finished.</p>' : '<div class="ph small-ph">What to do now</div>' + stageOf(x)) +
+      (x.q.done ? '<p class="muted">' + I('done') + ' Finished.</p>' : '<div class="ph small-ph">What to do now</div>' + stageOf(x) + guideBlock(x)) +
       (earlier.length && !x.q.done ? '<div class="ph small-ph">Earlier on this road</div><ol class="earlier">' + earlier.map((st) => '<li>' + j(st.jp) + en(st.en) + '</li>').join('') + '</ol>' : '') +
       (x.q.done && earlier.length ? '<div class="ph small-ph">The steps you took</div><ol class="earlier">' + earlier.map((st) => '<li>' + j(st.jp) + en(st.en) + '</li>').join('') + '</ol>' : '') +
       '</div>';
+  }
+  // Quest guidance (src/engine/56_questguide.js): follow a quest (markers in
+  // the world and on the chart point to its next step), the words for those
+  // markers ("Next: …"), and nudges revealed one at a time on request. A
+  // nudge is free: nothing is recorded and nothing costs anything.
+  const GL = {
+    follow: ['これ を {追|お}う', 'Follow this quest'], following: ['{追|お}って いる', 'Following'],
+    nudge: ['{手|て}がかり', 'Need a nudge?'], show: ['{手|て}がかり を {見|み}る', 'Show a nudge'], more: ['もう {一|ひと}つ', 'Another nudge'],
+    onmap: ['{地図|ちず} で {見|み}る', 'Show on the map'], next: ['つぎ', 'Next'],
+  };
+  const gl = (k) => RB.ui.label(GL[k][0], GL[k][1]);
+  function guideBlock(x) {
+    const G = RB.questGuide, gm = G.mode(), s = RB.game.s;
+    if (gm === 'off' || x.q.done) return '';
+    const J = view.journey, key = x.id + ':' + x.q.stage, n = J.nudge[key] || 0;
+    const N = G.nudges(x.id, s);
+    const mapStep = gm === 'full' && N.markable;
+    const total = N.lines.length + (mapStep ? 1 : 0);
+    let h = '<div class="qguide">';
+    if (gm === 'full') {
+      const on = G.followed(s) === x.id;
+      h += '<div class="follow-row"><button class="pbtn follow' + (on ? ' on' : '') + '" data-follow="' + x.id + '" aria-pressed="' + on + '">' + I('follow') + '<span>' + gl(on ? 'following' : 'follow') + '</span></button>' +
+        '<span class="muted small">' + esc(on ? (G.chosen(s) ? 'Markers in the world and on the Map show the way to its next step. Press again to stop.' : 'Followed as the main road: markers show the way to its next step. Press to stop.') : 'Markers will show the way to this quest’s next step instead.') + '</span></div>';
+      if (on) {
+        const next = G.nextLines(N.result);
+        h += next.length
+          ? '<div class="qnext"><div class="kind">' + I('follow') + ' ' + gl('next') + '</div>' + next.map((l) => '<div class="nline">' + j(l.jp) + en(l.en) + '</div>').join('') + '</div>'
+          : '<p class="muted small qnext-none">' + esc(N.result.how === 'many' ? 'No marker for this step: many places could help, so none is marked.' : 'No marker for this step yet.') + '</p>';
+      }
+    }
+    h += '<div class="ph small-ph">' + I('help') + ' ' + gl('nudge') + '</div>';
+    h += '<ol class="nudges" aria-live="polite">' + N.lines.slice(0, n).map((ls, i) => '<li tabindex="-1"><span class="kind">Nudge ' + (i + 1) + ' of ' + total + '</span>' +
+      ls.map((l) => '<div class="nline">' + j(l.jp) + en(l.en) + '</div>').join('') + '</li>').join('') +
+      (mapStep && n > N.lines.length ? '<li tabindex="-1"><span class="kind">Nudge ' + total + ' of ' + total + '</span><div class="nline"><span class="en">Shown on the map: this quest is followed, and its next step is marked.</span></div></li>' : '') + '</ol>';
+    if (n < total) {
+      const k = n === N.lines.length ? 'onmap' : n === 0 ? 'show' : 'more';
+      h += '<div class="row-acts"><button class="pbtn" data-nudge="' + x.id + '">' + (k === 'onmap' ? I('map') : I('help')) + '<span>' + gl(k) + '</span> <span class="count">' + (n + 1) + ' of ' + total + '</span></button></div>';
+    }
+    return h + '<p class="muted small">Nudges are free: asking never counts as a mistake.</p></div>';
+  }
+  function guideClick(e, x) {
+    const G = RB.questGuide, s = RB.game.s;
+    const f = e.target.closest('[data-follow]');
+    if (f) {
+      const id = f.dataset.follow;
+      if (G.followed(s) === id) G.unfollow(id); else G.follow(id);
+      RB.questMarks && RB.questMarks.refresh();
+      RB.audio && RB.audio.sfx('cursor');
+      remember(); render();
+      const again = fr && fr.box.querySelector('[data-follow="' + id + '"]');
+      if (again) again.focus({ preventScroll: true });
+      return true;
+    }
+    const b = e.target.closest('[data-nudge]');
+    if (b) {
+      const id = b.dataset.nudge, q = s.quests[id], key = id + ':' + q.stage, J = view.journey;
+      const N = G.nudges(id, s);
+      const n = (J.nudge[key] || 0) + 1;
+      J.nudge[key] = n;
+      if (G.mode() === 'full' && N.markable && n > N.lines.length) {
+        // the last nudge: follow this quest and show its next step on the chart
+        G.follow(id);
+        RB.questMarks && RB.questMarks.refresh();
+        go('map');
+        const chart = fr && fr.box.querySelector('.chartbox');
+        if (chart) chart.focus({ preventScroll: false });
+        return true;
+      }
+      remember(); render();
+      const next = fr && (fr.box.querySelector('[data-nudge="' + id + '"]') || [...fr.box.querySelectorAll('.nudges li')].pop());
+      if (next) next.focus({ preventScroll: false });
+      return true;
+    }
+    return false;
   }
   function journey(A, B, two) {
     const s = RB.game.s;
@@ -172,20 +246,23 @@ RB.ui.menu = (function () {
       requestAnimationFrame(() => { if (!view.scroll[key()]) A.scrollTop = A.scrollHeight; });
     } else {
       const qs = Object.keys(s.quests).map((id) => ({ id, q: s.quests[id], d: RB.content.quests[id] })).filter((x) => x.d);
-      const active = qs.filter((x) => !x.q.done).sort((a, b) => (a.d.main ? -1 : 1) - (b.d.main ? -1 : 1) || b.q.t - a.q.t);
+      // the followed quest first (markers point to it), then the main road, then the most recently advanced
+      const fid = RB.questGuide.mode() === 'full' ? RB.questGuide.followed(s) : null;
+      const active = qs.filter((x) => !x.q.done).sort((a, b) => (b.id === fid) - (a.id === fid) || (a.d.main ? -1 : 1) - (b.d.main ? -1 : 1) || b.q.t - a.q.t);
       const done = qs.filter((x) => x.q.done).sort((a, b) => b.q.t - a.q.t);
-      const mains = active.filter((x) => x.d.main), others = active.filter((x) => !x.d.main);
+      const mains = active.filter((x) => x.d.main || x.id === fid), others = active.filter((x) => !x.d.main && x.id !== fid);
       if (!J.sel || !qs.find((x) => x.id === J.sel)) J.sel = (mains[0] || others[0] || done[0] || {}).id || null;
       const row = (x) => {
         const [k, kl] = questKind(x.id, x.d);
         const sel = two && x.id === J.sel;
-        return '<li><button class="entry' + (x.q.done ? ' done' : x.d.main ? ' current' : '') + '" data-q="' + x.id + '" aria-current="' + sel + '"' + (two ? '' : ' aria-expanded="' + (x.id === J.open) + '"') + '>' +
+        const fol = x.id === fid ? ' · <span class="ftag">' + I('follow') + 'Following</span>' : '';
+        return '<li><button class="entry' + (x.q.done ? ' done' : x.d.main || x.id === fid ? ' current' : '') + (x.id === fid ? ' followed' : '') + '" data-q="' + x.id + '" aria-current="' + sel + '"' + (two ? '' : ' aria-expanded="' + (x.id === J.open) + '"') + '>' +
           '<span class="mark">' + I(x.q.done ? 'done' : k) + '</span>' +
-          '<span class="body"><span class="kind">' + esc(x.q.done ? 'Completed' : kl) + '</span><span class="t">' + j(x.d.title.jp) + ' <span class="en">' + esc(x.d.title.en) + '</span></span>' +
+          '<span class="body"><span class="kind">' + esc(x.q.done ? 'Completed' : kl) + fol + '</span><span class="t">' + j(x.d.title.jp) + ' <span class="en">' + esc(x.d.title.en) + '</span></span>' +
           (x.q.done ? '' : stageOf(x)) + '</span></button>' + (!two && x.id === J.open ? '<div class="inline-detail">' + questDetail(x) + '</div>' : '') + '</li>';
       };
       let h = sub;
-      h += '<h3>' + I('main') + ' Now <span class="count">the main road</span></h3>';
+      h += '<h3>' + I('main') + ' Now <span class="count">' + (fid && !RB.content.quests[fid].main ? 'followed, then the main road' : 'the main road') + '</span></h3>';
       h += mains.length ? '<ul class="entries">' + mains.map(row).join('') + '</ul>' : '<p class="muted">Nothing pressing. Walk around; people will tell you what they need.</p>';
       if (others.length) h += '<h3>' + I('side') + ' Also on the way <span class="count">' + others.length + ' optional</span></h3><ul class="entries">' + others.map(row).join('') + '</ul>';
       const notes = (s.journal || []).slice(-8).reverse();
@@ -197,9 +274,11 @@ RB.ui.menu = (function () {
       const dl = A.querySelector('details.done-list');
       if (dl) dl.ontoggle = () => { J.doneOpen = dl.open; };
     }
+    B.onclick = (e) => { guideClick(e); };
     A.onclick = (e) => {
       const v = e.target.closest('[data-jv]');
       if (v) { remember(); J.view = v.dataset.jv; render(); return; }
+      if (guideClick(e)) return;
       const q = e.target.closest('[data-q]');
       if (q) {
         if (two) { J.sel = q.dataset.q; remember(); render(); }
@@ -505,11 +584,28 @@ RB.ui.menu = (function () {
   }
 
   // ---- Map ------------------------------------------------------------------------------------
+  // Where the followed quest's next step is, as chart places (quest guidance, markers on)
+  function guideMarks(s) {
+    const G = RB.questGuide;
+    if (G.mode() !== 'full') return null;
+    const qid = G.followed(s);
+    if (!qid) return null;
+    const r = G.targets(qid, s);
+    const ids = [];
+    for (const t of r.targets) { const p = G.placeOf(t.map); if (p && !ids.includes(p)) ids.push(p); }
+    return ids.length ? { qid, places: ids, title: RB.content.quests[qid].title } : null;
+  }
   function chartSvg(s, curMap) {
     const places = Object.keys(RB.content.places).map((id) => Object.assign({ id }, RB.content.places[id]));
     const Wd = 520, H = 320;
     const fs = Math.round(14 * Math.min(1.5, Math.max(1, (RB.game.settings && RB.game.settings.textScale) || 1)));
-    let svg = '<svg class="chart" viewBox="0 0 ' + Wd + ' ' + H + '" role="img" aria-label="Route chart. Known places: ' + esc(places.filter((p) => s.travel[p.id]).map((p) => p.name.en).join(', ') || 'none yet') + '">';
+    const gm = guideMarks(s);
+    // you are here: the place this map belongs to (rooms count as their village)
+    const hereOld = places.find((p) => curMap.place === p.id || (curMap.region && p.region === curMap.region && p.hub));
+    const hereId = hereOld ? hereOld.id : RB.questGuide.placeOf(s.map);
+    const nextName = gm ? gm.places.map((id) => (s.travel[id] ? RB.content.places[id].name.en : 'an unexplored place')).join(', ') : '';
+    let svg = '<svg class="chart" viewBox="0 0 ' + Wd + ' ' + H + '" role="img" aria-label="Route chart. Known places: ' + esc(places.filter((p) => s.travel[p.id]).map((p) => p.name.en).join(', ') || 'none yet') +
+      (hereId && RB.content.places[hereId] ? '. You are in or near ' + esc(RB.content.places[hereId].name.en) : '') + (gm ? '. The next step of the followed quest is in ' + esc(nextName) : '') + '.">';
     // paper, folds and the sea/mountain washes (decorative)
     svg += '<rect width="' + Wd + '" height="' + H + '" fill="#efe3c6"/><path d="M0 252 Q120 222 200 252 T 520 232 L520 320 L0 320Z" fill="#cfdbd6"/><path d="M60 0 L140 90 L230 60 L300 120 L420 40 L520 80 L520 0Z" fill="#e2d4b2"/>';
     svg += '<path d="M173 0V320M346 0V320M0 160H520" stroke="#b9a57a" stroke-width="1" stroke-dasharray="2 5" opacity="0.8"/>';
@@ -522,9 +618,13 @@ RB.ui.menu = (function () {
     }
     for (const p of places) {
       const known = s.travel[p.id];
-      const here = curMap.place === p.id || (curMap.region && p.region === curMap.region && p.hub);
+      const here = p.id === hereId;
+      const next = gm && gm.places.includes(p.id);
+      if (next) svg += '<circle class="next-ring" cx="' + p.pos[0] + '" cy="' + p.pos[1] + '" r="13" fill="none" stroke="#c0761c" stroke-width="2.5" stroke-dasharray="4 3"/>';
       svg += '<circle cx="' + p.pos[0] + '" cy="' + p.pos[1] + '" r="' + (here ? 8 : 6) + '" fill="' + (known ? '#2a2217' : '#efe3c6') + '" stroke="#2a2217" stroke-width="1.5"/>';
       if (here) svg += '<path d="M' + p.pos[0] + ' ' + (p.pos[1] - 12) + ' l-6 -12 h12 z" fill="#a83e27"/>';
+      // the quest marker: the same inked amber diamond as in the world (beside the red mark when both are here)
+      if (next) { const dx = p.pos[0] + (here ? 15 : 0), dy = p.pos[1] - (here ? 16 : 14); svg += '<path class="next-mark" d="M' + dx + ' ' + (dy - 14) + ' l7 7 -7 7 -7 -7z" fill="#f0b43c" stroke="#2a2024" stroke-width="1.6"/><path d="M' + dx + ' ' + (dy - 7) + ' v5" stroke="#8a4e12" stroke-width="1.2"/>'; }
       // labels near the right edge sit left of their dot so they are never cut off; size follows the text-size setting
       const right = p.pos[0] > Wd * 0.62;
       svg += '<text x="' + (p.pos[0] + (right ? -11 : 11)) + '" y="' + (p.pos[1] + 5) + '"' + (right ? ' text-anchor="end"' : '') + ' fill="' + (known ? '#261f15' : '#62553f') + '" font-size="' + fs + '" font-family="Georgia, serif" stroke="#efe3c6" stroke-width="3" paint-order="stroke">' + esc(known ? p.name.en : '? unexplored') + '</text>';
@@ -536,12 +636,16 @@ RB.ui.menu = (function () {
     const curMap = RB.content.maps[s.map] || {};
     const canTravel = !curMap.noTravel && RB.game.mode() === 'menu';
     const places = Object.keys(RB.content.places).map((id) => Object.assign({ id }, RB.content.places[id])).filter((p) => s.travel[p.id]);
-    const chart = '<div class="chartbox">' + chartSvg(s, curMap) + '</div><p class="muted small">Solid lines are roads you have walked; dashed lines are roads you have heard of. The red mark is where you are.</p>';
+    const gm = guideMarks(s);
+    const chart = '<div class="chartbox" tabindex="-1">' + chartSvg(s, curMap) + '</div><p class="muted small">Solid lines are roads you have walked; dashed lines are roads you have heard of. The red mark is where you are.' +
+      (gm ? ' The amber diamond marks where the next step of the quest you follow is.' : '') + '</p>' +
+      (gm ? '<p class="note-slip next-note">' + I('follow') + ' <span>Next step of <b>' + esc(gm.title.en) + '</b>: ' + esc(gm.places.map((id) => (s.travel[id] ? RB.content.places[id].name.en : 'a place you have not reached yet')).join(', ')) + '.</span></p>' : '');
     const list = '<h3>' + I('travel') + ' Travel <span class="count">' + places.length + ' known</span></h3>' +
       (canTravel ? '' : '<p class="note-slip warn">You can’t travel quickly from here. Step outside first.</p>') +
       '<ul class="entries">' + places.map((p) => {
         const here = curMap.region && p.region === curMap.region && p.hub;
-        return '<li class="entry"><span class="mark">' + I(here ? 'here' : 'map') + '</span><div><div class="t">' + j(p.name.jp) + ' <span class="en">' + esc(p.name.en) + '</span></div>' + (p.desc ? '<div class="muted small">' + esc(p.desc) + '</div>' : '') + (here ? '<div class="kind">you are in this region</div>' : '') + '</div>' +
+        const next = gm && gm.places.includes(p.id);
+        return '<li class="entry"><span class="mark">' + I(here ? 'here' : 'map') + '</span><div><div class="t">' + j(p.name.jp) + ' <span class="en">' + esc(p.name.en) + '</span></div>' + (p.desc ? '<div class="muted small">' + esc(p.desc) + '</div>' : '') + (here ? '<div class="kind">you are in this region</div>' : '') + (next ? '<div class="kind next-kind">' + I('follow') + ' next step of the quest you follow</div>' : '') + '</div>' +
           (canTravel ? '<button class="pbtn" data-go="' + p.id + '">Travel</button>' : '<span></span>') + '</li>';
       }).join('') + '</ul><p class="muted small">Roads you have walked can be travelled quickly.</p>';
     if (two) { A.innerHTML = chart; B.innerHTML = list; } else { A.innerHTML = chart + list; }
