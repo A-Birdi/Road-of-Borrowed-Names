@@ -41,7 +41,11 @@ await p.evaluate(async (a) => {
       const q = RB.questGuide.followed(s);
       if (q) {
         const t0 = performance.now();
-        const r = RB.questGuide.analyse(q, s);
+        // an arrival scene's once-flag is set just before it runs: ask as the moment before
+        let st = s;
+        const key = 'enter:' + s.map + ':' + id;
+        if (s.flags[key] && (RB.content.maps[s.map].onEnter || []).some((ev) => ev.scene === id)) { st = Object.assign({}, s, { flags: Object.assign({}, s.flags) }); delete st.flags[key]; }
+        const r = RB.questGuide.analyse(q, st);
         const ms = performance.now() - t0;
         const scenes = new Set();
         for (const t of r.targets) for (const o of t.opts || []) scenes.add(o.scene);
@@ -53,7 +57,9 @@ await p.evaluate(async (a) => {
     if (pend) Promise.resolve(pr).then(() => {
       const q = RB.game.s && RB.game.s.quests[pend.q];
       const now = q ? (q.done ? 999 : q.stage) : -1;
-      if (now > pend.before) log.push({ q: pend.q, from: pend.before, to: now, scene: pend.id, map: pend.map, how: pend.how, hit: pend.scenes.has(pend.id), way: pend.way, ms: pend.ms });
+      // a quiet (bookkeeping) update: the scene raised the stage only with `!quest … quiet`
+      const quiet = (RB.content.scenes[pend.id] ? [pend.id] : []).some((sid) => RB.content.scenes[sid].cmds.some((c) => c.op === 'quest' && c.args[0] === pend.q && c.args.includes('quiet')) && !RB.content.scenes[sid].cmds.some((c) => c.op === 'quest' && c.args[0] === pend.q && !c.args.includes('quiet')));
+      if (now > pend.before) log.push({ q: pend.q, from: pend.before, to: now, scene: pend.id, map: pend.map, how: pend.how, hit: pend.scenes.has(pend.id), quiet, way: pend.way, ms: pend.ms });
       else log.push({ q: pend.q, none: true, ms: pend.ms });
     });
     return pr;
@@ -76,8 +82,9 @@ const adv = log.filter((x) => !x.none);
 const hits = adv.filter((x) => x.hit);
 const ms = log.map((x) => x.ms).sort((a, b) => a - b);
 console.log('\nscenes started in the world while a quest was followed: ' + log.length + ' (analysis time: median ' + ms[Math.floor(ms.length / 2)] + ' ms, 95th ' + ms[Math.floor(ms.length * 0.95)] + ' ms, max ' + ms[ms.length - 1] + ' ms)');
-console.log('scenes that moved the followed quest on: ' + adv.length + '; pointed at beforehand: ' + hits.length);
-for (const x of adv) console.log((x.hit ? '  hit  ' : '  MISS ') + x.q + ' ' + x.from + '→' + (x.to === 999 ? 'done' : x.to) + ' by ' + x.scene + ' @ ' + x.map + ' [' + x.how + ': ' + x.way.join(', ') + ']');
+const byDesign = adv.filter((x) => !x.hit && (x.how === 'many' || x.quiet));
+console.log('scenes that moved the followed quest on: ' + adv.length + '; pointed at beforehand: ' + hits.length + '; not marked by design (more than six places, or a quiet bookkeeping update while the real steps were marked): ' + byDesign.length + '; misses: ' + (adv.length - hits.length - byDesign.length));
+for (const x of adv) console.log((x.hit ? '  hit  ' : byDesign.includes(x) ? '  (by design) ' : '  MISS ') + x.q + ' ' + x.from + '→' + (x.to === 999 ? 'done' : x.to) + ' by ' + x.scene + (x.quiet ? ' (quiet)' : '') + ' @ ' + x.map + ' [' + x.how + ': ' + x.way.join(', ') + ']');
 fs.mkdirSync(path.join(root, 'tests/e2e/out'), { recursive: true });
 fs.writeFileSync(path.join(root, 'tests/e2e/out/quest_guide_audit-' + profile + '-' + comp + '.json'), JSON.stringify(log, null, 1));
 if (errors.length) { ok = false; console.log('page errors: ' + errors.join('; ')); }
