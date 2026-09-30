@@ -175,10 +175,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
           if (p === 'muzzle') return l[2] > 0.55 ? { R: D } : l[1] < 0 ? { R: U } : { R: U, d: -1 };
           if (p === 'leg' || p === 'hleg' || p === 'paw' || p === 'hpaw') return { R: D };
           if (p === 'haunch') return l[1] < -0.2 ? { R: D } : 0;
-          if (p === 'chest') return l[1] < -0.1 || l[2] > 0.55 ? { R: D } : l[1] > 0.6 ? { R: SD } : 0; // dark chest and a shoulder saddle
-          if (p === 'belly') return l[1] < -0.5 ? { R: D } : l[1] > 0.7 ? { R: SD } : 0;
-          if (p === 'hips') return l[1] > 0.75 ? { R: SD } : 0;
-          if (p === 'tail') return (info.u || 0) > 0.72 ? { R: D } : l[1] > 0.55 ? { R: SD } : 0; // a dark tip, no rings
+          // a dark chest and a dark band across the shoulders (seen from behind), a darker line down the back
+          if (p === 'chest') return l[1] < -0.1 || l[2] > 0.55 ? { R: D } : l[1] > 0.3 ? { R: SD, d: l[1] > 0.6 && Math.abs(l[0]) < 0.4 ? -1 : 0 } : 0;
+          if (p === 'belly') return l[1] < -0.5 ? { R: D } : l[1] > 0.55 && Math.abs(l[0]) < 0.45 ? { R: SD } : 0;
+          if (p === 'hips') return l[1] > 0.6 && Math.abs(l[0]) < 0.45 ? { R: SD } : 0;
+          if (p === 'tail') return (info.u || 0) > 0.66 ? { R: D } : l[1] > 0.1 ? { R: SD } : 0; // darker above, a dark tip, no rings
           return 0;
         },
       };
@@ -457,7 +458,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       q = mv(rotZ((-x * back * 10 + wind * 20) * DEG), q);
       tip = add(b, q);
       const mid = L3(b, tip, 0.5);
-      const fwd = mv(Mh, [0, 0, 1]);
+      // the way the face points, in the world (normals reach the pattern in world space)
+      const fwd = K.dir(mv(Mh, [0, 0, 1]));
       const pts = [at(b), at(mid), at(tip)];
       const rr = [E.r[0], (E.r[0] + E.r[1]) * 0.55, E.r[1]];
       K.chain('ear', pts, rr, { R: M.ear.R, th: M.ear.th, pat: (info, v, l) => {
@@ -612,7 +614,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
     while (cache.size > CAP) cache.delete(cache.keys().next().value);
     return f;
   }
-  function cacheStats() { return { size: cache.size, built, hits, cap: CAP }; }
+  // bytes: the cached frames' pixels (4 bytes each), for the memory report
+  function cacheStats() {
+    let bytes = 0;
+    for (const f of cache.values()) if (f && f.cv) bytes += f.cv.width * f.cv.height * 4;
+    return { size: cache.size, built, hits, cap: CAP, bytes };
+  }
   function clearCache() { cache.clear(); }
 
   Object.assign(A, { LOOKS, LOOK_ORDER, SIZES, frame, cacheStats, clearCache, _mats: mats, _Q: Q });

@@ -80,6 +80,14 @@ RB.hooks = RB.hooks || {};
     curl: (sp) => ({ ms: 1600, key: sp === 'bird' ? { fluff: 1, blink: 1 } : { lie: 1, blink: 1 }, pose: (t) => (sp === 'bird' ? { fluff: sm(t / 700), blink: t > 900 ? 1 : 0 } : { lie: sm(t / 700), blink: t > 1000 ? 1 : 0 }) }),
     // a small happy hop / wag
     hop: (sp) => ({ ms: 900, key: sp === 'dog' ? { wag: 0.8 } : { earF: 0.6 }, pose: (t) => (sp === 'dog' ? { wag: Math.sin(t / 60) * 0.8 } : { earF: 0.6 * bell(t, 50, 800) }), lift: (t) => Math.round(Math.sin(Math.min(1, t / 500) * Math.PI) * 3) }),
+    // a slow blink (a cat's reassurance; the others simply close their eyes a moment)
+    blink: (sp) => ({ ms: 1500, key: { sit: sp === 'bird' ? 0 : 1, blink: 1 }, pose: (t) => ({ sit: sp === 'bird' ? 0 : 1, blink: bell(t, 300, 1100, 250) }) }),
+    // a call you can see: the beak opens (bird), the head lifts (the others)
+    call: (sp) => ({ ms: 900, key: sp === 'bird' ? { beak: 1, hp: -8 } : { hp: -10, earF: 0.4 }, pose: (t) => (sp === 'bird' ? { beak: Math.floor(t / 150) % 2, hp: -8 * bell(t, 50, 800) } : { hp: -10 * bell(t, 50, 800), earF: 0.4 * bell(t, 50, 800) }) }),
+    // a small bow, head down and up again
+    bow: (sp) => ({ ms: 1200, key: { hp: 20, crouch: 0.3 }, pose: (t) => ({ sit: sp === 'bird' ? 0 : 0.5, hp: 20 * bell(t, 150, 900), crouch: 0.3 * bell(t, 150, 900) }) }),
+    // looks away, unimpressed, only the tail tip moving
+    aloof: (sp) => ({ ms: 1600, key: { sit: sp === 'bird' ? 0 : 1, hr: 34 }, pose: (t) => ({ sit: sp === 'bird' ? 0 : 1, hr: 34 * bell(t, 150, 1450), tFlick: Math.sin(t / 120) * bell(t, 400, 1300) }) }),
     // steps back from something too warm, then sits at a safe distance
     back: (sp) => ({ ms: 1100, key: { lean: -0.6, earF: -0.3 }, pose: (t) => ({ lean: -0.6 * bell(t, 50, 700), earF: -0.3 * bell(t, 50, 700), sit: sm((t - 700) / 300) }) }),
   };

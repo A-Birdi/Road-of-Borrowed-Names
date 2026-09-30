@@ -205,6 +205,28 @@ RB.battlePets = (function () {
     return po;
   }
 
+  // Any timeline as the stage would show it (the stance merged under it): for the dev playback and the gallery.
+  // kind: 'react' (name = family), 'impact' (hit | soft | status), 'victory', 'calm' (name = variant index),
+  // 'ready', or a bare stance ('calm' | 'ready' | 'defeat' | 'victory' with t = null). Returns { po, lift, ms }.
+  function sampleAny(sp, kind, name, t, o) {
+    o = o || {};
+    const st = kind === 'react' || kind === 'impact' ? 'ready' : kind === 'victory' ? 'calm' : kind;
+    const base = Object.assign({}, BASE[sp][st] || BASE[sp].calm);
+    let R = null;
+    if (kind === 'react') R = REACT[sp][name] || REACT[sp].support;
+    else if (kind === 'impact') R = IMPACT[sp][name];
+    else if (kind === 'victory') R = VICTORY[sp];
+    else if (kind === 'calm' && name != null) R = CALM[sp][+name];
+    else if (kind === 'ready' && name != null) R = READY[sp];
+    if (!R || t == null) return { po: quant(base), lift: 0, ms: 0 };
+    let over;
+    if (kind === 'react') over = sample(sp, name, t, o);
+    else if (o.reduce) over = kind === 'calm' || kind === 'ready' ? {} : R.keys[Math.min(R.keys.length - 1, R.key)][1];
+    else over = sampleK(R, t);
+    const lift = !o.reduce && R.lift && !o.secondary ? R.lift(t) : 0;
+    return { po: quant(merge(base, over)), lift, ms: o.secondary ? R.ms * 0.62 : R.ms };
+  }
+
   // ---- one encounter ------------------------------------------------------------------------------------------
   let B = null;
   const pt = () => (RB.battleSeq ? RB.battleSeq.now() : 0);
@@ -378,5 +400,5 @@ RB.battlePets = (function () {
     RB.ui.settings.addRows('audio', ({ sw }) => sw('petSounds', 'Quiet pet sounds', 'An occasional soft sound from your pet (never needed: everything it does is also seen).'));
   }
 
-  return { wants, draw, stats, sample, poseAt: (now, t, reduce) => (B ? poseAt(now, t, reduce) : null), REACT, IMPACT, VICTORY, CALM, READY, BASE, LOOK, _begin: begin, _end: end, get _B() { return B; } };
+  return { wants, draw, stats, sample, sampleAny, centreOf, poseAt: (now, t, reduce) => (B ? poseAt(now, t, reduce) : null), REACT, IMPACT, VICTORY, CALM, READY, BASE, LOOK, _begin: begin, _end: end, get _B() { return B; } };
 })();

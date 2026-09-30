@@ -183,6 +183,8 @@ RB.petArt = (function () {
       },
       decal(p, fn, o) { decals.push({ w: toW(p), fn, o: o || {} }); },
       at(p) { const s = proj(cam, toW(p)); return { x: s[0], y: s[1], z: s[2] }; },
+      // a direction in the animal's frame, in the world (the frame patterns see their normals in)
+      dir(v) { return toW(v); },
       mirror: !!cam.mirror,
     };
     build(K);

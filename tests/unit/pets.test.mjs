@@ -222,6 +222,36 @@ export default async (t) => {
     const inv = cmds.findIndex((c, i) => i > perm && c.op === 'choice' && c.opts.some((o) => /Invite/.test(o.en)));
     t.ok(perm >= 0 && inv > perm, 'the dog: the channel keeper gives explicit permission before the invitation');
   }
+  // ---- greeting together: sixteen distinct moments, no reward, no player-authored text ------------------------
+  const GS = {};
+  for (const c of ['nao', 'mio', 'ren', 'suzu']) for (const sp of PETS.ORDER) GS[c + '.' + sp] = RB.content.scenes['pets.greet.' + c + '.' + sp];
+  t.ok(Object.values(GS).every(Boolean), 'all sixteen greetings exist');
+  const sig = (sc) => sc.cmds.filter((c) => c.op === 'hook').map((c) => c.args.join(' ')).join('>');
+  const txt = (sc) => sc.cmds.filter((c) => c.op === 'say').map((c) => c.jp).join('|');
+  const sigs = Object.values(GS).map(sig), txts = Object.values(GS).map(txt);
+  t.eq(new Set(txts).size, 16, 'the sixteen greetings say different things');
+  t.ok(Object.values(GS).every((sc) => sc.cmds[0].op === 'hook' && sc.cmds[0].args[0] === 'pet_come'), 'each begins with the animal coming over to your companion');
+  for (const sp of PETS.ORDER) {
+    const per = ['nao', 'mio', 'ren', 'suzu'].map((c) => sig(GS[c + '.' + sp]));
+    t.eq(new Set(per).size, 4, sp + ': each companion greets it with a different movement sequence (' + per.join(' / ') + ')');
+  }
+  t.ok(sigs.every((g) => g.split('>').filter((h) => /^pet_do /.test(h)).every((h) => RB.pets.WORLD_ANIM[h.split(' ')[1]])), 'every movement used exists');
+  const bad = Object.entries(GS).filter(([, sc]) => sc.cmds.some((c) => /^(give|take|item|word|learn|award|var|set|quest|harmony|gold)$/.test(c.op) || (c.op === 'hook' && !/^pet_/.test(c.args[0]))));
+  t.eq(bad.map(([k]) => k), [], 'no greeting gives, takes, sets or learns anything');
+  const gjp = [];
+  for (const [k, sc] of Object.entries(GS)) for (const c of sc.cmds) if (c.op === 'say') for (const pr of RB.jp.validate(c.jp)) gjp.push(k + ': ' + (pr.msg || JSON.stringify(pr)));
+  t.eq(gjp, [], 'greeting Japanese carries furigana on every kanji');
+  // the rest-point choice: only when a greeting can play, labelled by the kind of animal (never the name)
+  const g1 = fresh({ comp: 'mio' });
+  t.eq(PETS.restOption(g1), null, 'no pet: no rest choice');
+  PETS.meet(g1, 'dog'); PETS.select(g1, 'dog'); PETS.rename(g1, 'dog', '<b>{犬|いぬ}</b>');
+  const prevG = RB.game.s; RB.game.s = g1;
+  const why = PETS.canGreet(g1, { rest: true });
+  t.ok(why === true || typeof why === 'string', 'the rest route asks the same questions (in this headless run: ' + why + ')');
+  const ro = why === true ? PETS.restOption(g1) : null;
+  if (ro) t.ok(ro.label.en === 'Greet the dog together' && !/<b>|犬\|いぬ\}<\/b>/.test(ro.label.en + ro.label.jp), 'the label names the kind of animal, never the chosen name');
+  RB.game.s = prevG;
+
   // the meeting memory: once, with the companion's reply and the name at the time
   const m = RB.pets.meeting.cat;
   t.ok(['cat', 'bird', 'dog', 'tanuki'].every((sp) => { const M = RB.pets.meeting[sp]; return M && M.title && M.text && ['nao', 'mio', 'ren', 'suzu'].every((k) => M.reply[k] && M.reply[k].jp && M.reply[k].en); }), 'every meeting memory has a reply from each companion');

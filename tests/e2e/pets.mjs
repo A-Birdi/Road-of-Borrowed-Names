@@ -233,7 +233,7 @@ for (const sp of SPECIES) {
     // No pet, then this one again (with the keyboard)
     await p.click('[data-pet-choose=""]');
     assert(await p.evaluate(() => RB.pets.active(RB.game.s) === null && document.activeElement && document.activeElement.matches('[data-pet-choose=""]')), 'No pet selected; focus stays on the control');
-    await p.focus('[data-pet-choose="' + (await p.evaluate(() => RB.pets.met(RB.game.s)[0])) + '"]');
+    await p.focus('[data-pet-choose="' + sp + '"]');
     await p.keyboard.press('Enter');
     assert(await p.evaluate(() => !!RB.pets.active(RB.game.s)), 'selected with Enter');
     // rename: markup stays text; long refused; Japanese kept

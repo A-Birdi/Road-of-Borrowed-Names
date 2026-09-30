@@ -42,5 +42,24 @@ var RB = (globalThis.RB = globalThis.RB || {});
 前足|まえあし|n|I|front legs, forepaws
 新人|しんじん|n|I|newcomer, new member
 入団|にゅうだん|vs|A|joining (a troupe, team or company)
+# greeting together
+こすりつける||v1|I|to rub (something) against
+跳ぶ|とぶ|v5b|I|to jump, hop
+つつく||v5k|I|to peck, poke
+あご||n|I|chin, jaw
+とげ||n|I|thorn, splinter
+刺さる|ささる|v5r|I|to stick in, pierce
+くしゃみ||n|I|sneeze
+不満|ふまん|adj-na|I|dissatisfied, discontented
+化ける|ばける|v1|I|to take the form of, change into (as tanuki and foxes do in folk tales)
+嘴|くちばし|n|A|beak, bill
+ぺこり||adv|A|(bowing) with a quick bob of the head
+拍子|ひょうし|n|I|rhythm, beat|拍子をとる: to keep time.
+口笛|くちぶえ|n|I|whistle, whistling
+節|ふし|n|A|tune, melody; a phrase of music
+二重唱|にじゅうしょう|n|A|duet (singing)
+決定|けってい|vs|I|decision; settled
+見得|みえ|n|A|a kabuki actor's frozen dramatic pose|見得を切る: to strike such a pose.
+片足|かたあし|n|I|one leg, one foot
 `), 'pets');
 })();

@@ -245,14 +245,16 @@ RB.pets = (function () {
 
   // ---- greeting together (§4.5, §19.2): a companion × species moment at a safe rest ---------------------
   // true, or why not now (kept available, explained, never lost). No reward, ever.
-  function canGreet(s) {
+  // o.rest: asked from a rest point's menu (already inside the rest moment, which is itself a scene)
+  function canGreet(s, o) {
+    o = o || {};
     const sp = active(s);
     if (!s || !s.comp) return 'Only once someone travels with you.';
     if (!sp) return 'Choose an animal to travel with first.';
     const G = RB.game;
-    if (RB.script && RB.script.isRunning && RB.script.isRunning()) return 'Not in the middle of a scene — try again at a quiet moment.';
+    if (!o.rest && RB.script && RB.script.isRunning && RB.script.isRunning()) return 'Not in the middle of a scene — try again at a quiet moment.';
     const m = G && G.mode && G.mode();
-    if (m && m !== 'world' && m !== 'menu') return 'Not now — try again at a quiet moment.';
+    if (!o.rest && m && m !== 'world' && m !== 'menu') return 'Not now — try again at a quiet moment.';
     const W = RB.world && RB.world.W;
     if (!W || !W.map || !W.comp) return 'Not here — try again where you can both stop for a moment.';
     if (RB.discovery && RB.discovery.busy && RB.discovery.busy()) return 'Not while you are working something out — afterwards.';
@@ -260,10 +262,25 @@ RB.pets = (function () {
     if (!RB.content.scenes['pets.greet.' + s.comp + '.' + sp]) return 'Not now.';
     return true;
   }
-  function greet(s) {
-    if (canGreet(s) !== true) return Promise.resolve(false);
+  function greet(s, o) {
+    o = o || {};
+    if (canGreet(s, o) !== true) return Promise.resolve(false);
     const id = 'pets.greet.' + s.comp + '.' + active(s);
+    RB.bus && RB.bus.emit('pet:greet', { species: active(s), comp: s.comp, from: o.rest ? 'rest' : 'company' });
+    if (o.rest) return RB.script.run(id).then(() => true);
     return new Promise((res) => setTimeout(() => { RB.script.run(id).then(() => res(true)); }, 60));
+  }
+  // A choice for a rest point's menu (RB.company.addRestOption): "Greet <name> together", only when it can
+  // be played there. Nothing is gained; it is a moment, not a reward.
+  function restOption(s) {
+    if (canGreet(s, { rest: true }) !== true) return null;
+    // no player-authored text in the label (the choice list renders markup): the kind of animal only
+    const L = SPECIES[active(s)].label;
+    return {
+      id: 'pet-greet',
+      label: { en: 'Greet the ' + L.en.toLowerCase() + ' together', jp: '{一緒|いっしょ} に ' + L.jp + ' に あいさつ する' },
+      run: () => greet(s, { rest: true }),
+    };
   }
 
   // ---- conditions: pet (any selected), pet=cat (selected), pet.cat (met) --------------------------------
@@ -278,6 +295,6 @@ RB.pets = (function () {
   return {
     ORDER, SPECIES, MAX, species, looks, record, met, active, visible, lookOf, meet, select, rename, resetName, nameAtMeet, setLook, nameOf,
     cleanName, graphemes, portrait, thumb, addVignette, vignetteAction, vignettes: VIGNETTES, hide, show, sceneHidden,
-    AFFECTION, howMet, sound, canGreet, greet,
+    AFFECTION, howMet, sound, canGreet, greet, restOption,
   };
 })();
