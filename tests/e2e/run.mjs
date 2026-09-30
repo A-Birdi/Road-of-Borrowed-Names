@@ -19,6 +19,8 @@ const suites = [
   full ? ['story_ch5.mjs'] : ['story_ch5.mjs', 'A', 'suzu'],
   ...(full ? [0, 1, 2, 3, 4].map((i) => ['story_ch6.mjs', String(i)]) : [['story_ch6.mjs', '2']]),
   ['atlas.check.mjs'],
+  // the companion ending extensions and The Pages We Keep (all four companions; captures to tests/e2e/out/pages)
+  ['pages_ending.mjs'],
   // the two quest lines across the chapters (fixtures; --full adds all four
   // companions and a whole-game run with both lines as goals)
   full ? ['long_quests.mjs', '--all-companions'] : ['long_quests.mjs', '--fixtures-only'],
