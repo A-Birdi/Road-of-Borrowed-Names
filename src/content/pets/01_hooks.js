@@ -29,7 +29,9 @@ RB.hooks = RB.hooks || {};
     RB.pets.nameAtMeet(s, sp, name);
     const M = RB.pets.meeting[sp];
     const comp = s.comp || null;
-    if (M) RB.company.memory(s, { id: 'pet:met:' + sp, kind: 'pets', title: M.title, text: M.text, reply: comp && M.reply ? M.reply[comp] || null : null, map: s.map, pet: { species: sp, name }, ref: 'pet:' + sp });
+    const mp = RB.content.maps[s.map];
+    const place = mp && mp.name ? { jp: mp.name.jp || '', en: mp.name.en || '' } : null;
+    if (M) RB.company.memory(s, { id: 'pet:met:' + sp, kind: 'pets', title: M.title, text: M.text, reply: comp && M.reply ? M.reply[comp] || null : null, map: s.map, place, petName: name, pet: { species: sp, name }, ref: 'pet:' + sp });
     // selection is its own choice: an animal never replaces the one travelling with you by itself
     const cur = RB.pets.active(s);
     const label = RB.pets.species(sp).label.en.toLowerCase();

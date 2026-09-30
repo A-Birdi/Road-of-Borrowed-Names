@@ -20,10 +20,10 @@ RB.company = (function () {
   const CAP = 12;
   // the displayed bond, never the number (addendum §8.1)
   const STAGES = [
-    [0, 'walking', { en: 'Walking Together', jp: '{並|なら}んで{歩|ある}く' }],
-    [3, 'rhythm', { en: 'Finding a Rhythm', jp: '{歩調|ほちょう}が{合|あ}う' }],
-    [6, 'trusted', { en: 'Trusted Company', jp: '{信頼|しんらい}できる{道連|みちづ}れ' }],
-    [10, 'lasting', { en: 'A Lasting Bond', jp: '{続|つづ}く{絆|きずな}' }],
+    [0, 'walking', { en: 'Walking Together', jp: '{並|なら}んで {歩|ある}く' }],
+    [3, 'rhythm', { en: 'Finding a Rhythm', jp: '{歩調|ほちょう} が {合|あ}う' }],
+    [6, 'trusted', { en: 'Trusted Company', jp: '{信頼|しんらい} できる {道連|みちづ}れ' }],
+    [10, 'lasting', { en: 'A Lasting Bond', jp: '{続|つづ}く {絆|きずな}' }],
   ];
   const C = (s) => s.company || (s.company = RB.state.newCampaign().company);
 

@@ -494,6 +494,7 @@ RB.render = (function () {
     if (RB.questMarks) RB.questMarks.draw(c, { ax, ay, bw, bh, TS, ART, HEAD: HEAD_TOP }, t);
     // field weaving (src/ui/57_weave.js): the chosen target's frame, support marks, the action's effect
     if (RB.weaveFx) RB.weaveFx.draw(c, { ax, ay, bw, bh, TS, ART, HEAD: HEAD_TOP }, t);
+    if (RB.company && RB.company.drawIndicator) RB.company.drawIndicator(c, { ax, ay, TS, ART, HEAD: HEAD_TOP }, t); // a topic waits (58_companion.js)
   }
 
   // Effective ambience: a map may define alt: [{if, ambient, night}] for story states.

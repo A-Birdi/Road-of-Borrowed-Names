@@ -33,8 +33,8 @@
 // shots    the real UI: Nao's reply in the ending, Suzu's sincere moment, the
 //          camp menu, Page III's captions, the card on the wall, the Journey
 //          page (wide and phone) and the Company panel.
-// Pets belong to another worker: where a pet is needed, RB.pets is a stand-in
-// ({ visible: () => true }), the only call these scenes make.
+// Where a pet is needed it is met and chosen through the real pets system
+// (RB.pets.meet / select), so the real animal is drawn beside these lines.
 import { serve, launch, page, root } from './lib.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -231,7 +231,7 @@ if (want('endings')) for (const comp of ['nao', 'mio', 'ren', 'suzu']) {
     s.learn.kanaKnown = 'both';
     s.quests.sa_main = { stage: 6, done: false };
     if (comp === 'nao') s.quests.lf_nao = { stage: 1, done: false }; // the letter is still in the bag
-    if (comp === 'mio') { s.quests.lf_mio = { stage: 9, done: true }; s.company.pets.cat = { name: 'Koma' }; s.company.pet = 'cat'; RB.pets = { visible: () => true }; }
+    if (comp === 'mio') { s.quests.lf_mio = { stage: 9, done: true }; RB.pets.meet(s, 'cat', { map: 'rw.village' }); RB.pets.select(s, 'cat'); }
     if (comp === 'ren') { s.quests.ren_ushio = { stage: 9, done: true }; for (const k of ['ch2', 'ch3', 'ch4', 'ch5']) s.company.bond[k] = 1; s.company.bond.pq = 3; RB.company.memory(s, { id: 'test:mill', kind: 'discoveries', title: { jp: '{水車|すいしゃ} の {道|みち}', en: 'The Mill Road' }, comp: 'ren' }); }
     if (comp === 'suzu') s.quests.co_suzu = { stage: 9, done: true };
     window.__plan = { reply: { nao: 'home', mio: 'carry', ren: 'lost', suzu: 'onstage' }[comp], theme: 'later' };

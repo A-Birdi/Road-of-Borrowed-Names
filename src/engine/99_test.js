@@ -96,6 +96,10 @@ RB.test = (function () {
     await wait(30);
     while (Date.now() - t0 < (timeout || 20000)) {
       if (!RB.script.isRunning() && RB.game.mode() === 'world') return true;
+      // the filing sheet ("File the slips…", puzzle F6) waits inside its scene for Done: the automated
+      // player looks at it and closes it unchanged (solving it is tests/e2e/fieldweave.mjs's work)
+      const done = T.auto && typeof document !== 'undefined' && document.querySelector('.arrange-sheet [data-a=done]');
+      if (done) { T.log.push({ t: 'arrange' }); done.click(); }
       // a scene the player chose to end on a page of the folio (a case record, say):
       // the automated player reads it and closes it again, as a person would
       if (!RB.script.isRunning() && RB.game.mode() === 'menu' && RB.ui.menu.isOpen()) {

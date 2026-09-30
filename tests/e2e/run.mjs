@@ -21,6 +21,10 @@ const suites = [
   ['atlas.check.mjs'],
   // the companion ending extensions and The Pages We Keep (all four companions; captures to tests/e2e/out/pages)
   ['pages_ending.mjs'],
+  // companionship: Company › Companion and Shared memories, invitations, reflections, rest (addendum §6–9, §19)
+  ['company.mjs'],
+  ['company_pets.mjs'],
+  ['addendum_integration.mjs'],
   // the two quest lines across the chapters (fixtures; --full adds all four
   // companions and a whole-game run with both lines as goals)
   full ? ['long_quests.mjs', '--all-companions'] : ['long_quests.mjs', '--fixtures-only'],

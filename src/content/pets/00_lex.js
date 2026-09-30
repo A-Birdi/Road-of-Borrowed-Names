@@ -61,5 +61,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
 決定|けってい|vs|I|decision; settled
 見得|みえ|n|A|a kabuki actor's frozen dramatic pose|見得を切る: to strike such a pose.
 片足|かたあし|n|I|one leg, one foot
+居場所|いばしょ|n|I|a place where one belongs, whereabouts
+案内役|あんないやく|n|A|guide (the one who shows the way)
+出迎える|でむかえる|v1|I|to go out to meet, to welcome
 `), 'pets');
 })();

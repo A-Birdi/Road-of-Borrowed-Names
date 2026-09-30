@@ -439,12 +439,11 @@ async function respond(p, name) {
   await answerRight(p);
   await companionTurn(p); // with a companion, their turn comes next (the first action)
 }
-// Step back from an encounter. o.direct: a programmatic click on the button (used on phones at
-// 200 % text, where the battle screen's own layout puts the recap over it; not what these tests check).
+// Step back from an encounter: a real press, on phones at 200 % text too (the recap gives way to it;
+// tests/e2e/combat_small.mjs checks that layout).
 async function flee(p, o) {
   await p.waitForFunction(() => !RB.battleSeq.busy() && document.querySelector('[data-flee]'), null, { timeout: 15000 });
-  if (o && o.direct) await p.evaluate(() => document.querySelector('[data-flee]').click());
-  else await press(p, '[data-flee]');
+  await press(p, '[data-flee]', o && o.touch);
   await p.waitForSelector('[role=alertdialog] .foot button');
   await p.click('[role=alertdialog] .foot button >> nth=0');
   await p.waitForFunction(() => window.__result === 'flee' && RB.game.mode() === 'world', null, { timeout: 15000 });
@@ -593,7 +592,7 @@ for (const [w, h] of [[390, 844], [320, 640]]) {
     await wait(p, 300);
     await battle(p, { map: 'rw.millroad', foe: 'f3', words: ['mamoru', 'hikari'] });
     await cards(p);
-    await flee(p, { direct: true });
+    await flee(p, { touch: true });
     await p.evaluate(() => RB.ui.menu.open('creatures'));
     await p.waitForSelector('.cm-row');
     await press(p, '[data-cr-open="rw.dustmoth"]', true); await wait(p, 300);

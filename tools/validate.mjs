@@ -303,7 +303,8 @@ for (const id in C.activities) {
 for (const k in C.intentText) for (const lv in C.intentText[k]) for (const t of C.intentText[k][lv]) jcheck(t.jp, 'intentText ' + k + ' ' + lv);
 
 // ---- addendum registries: text kept outside scenes (keepsakes, cases and clues, puzzle
-// definitions, companion reactions, pets' meetings, the Pages We Keep, Known Details). Every
+// definitions, companion reactions and conversations, pets' meetings, the Pages We Keep, Known
+// Details). Every
 // `jp` string (and a clue's language word `w`) is checked like a scene line.
 let regTexts = 0;
 {
@@ -325,6 +326,7 @@ let regTexts = 0;
     pets: P && { species: P.SPECIES, vignettes: P.vignettes, meeting: P.meeting },
     pages: PG && { COMPS: PG.COMPS, PQ: PG.PQ, PROJECT: PG.PROJECT, REPLY: PG.REPLY, RET: PG.RET, MEMO_TITLE: PG.MEMO_TITLE, TOPICS: PG.TOPICS, MEM: PG.MEM, SHOW: PG.SHOW },
     known: RB.known && { TYPES: RB.known.TYPES, STATE_WORD: RB.known.STATE_WORD },
+    company: C.company,
   };
   for (const k in roots) walk(roots[k], k);
 }

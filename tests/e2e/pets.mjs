@@ -491,7 +491,9 @@ for (const sp of SPECIES) {
     await p.evaluate(() => [...document.querySelectorAll('.csheet button')].find((x) => /Travel together/.test(x.textContent)).click());
     await wait(p, 900);
     await drain();
-    const rec = await p.evaluate((sp) => ({ r: RB.pets.record(RB.game.s, sp), act: RB.pets.active(RB.game.s), mem: RB.game.s.company.memories.filter((m) => m.id === 'pet:met:' + sp), once: RB.game.s.awarded['pet:met:' + sp] }), sp);
+    const rec = await p.evaluate((sp) => ({ r: RB.pets.record(RB.game.s, sp), act: RB.pets.active(RB.game.s), mem: RB.game.s.company.memories.filter((m) => m.id === 'pet:met:' + sp), all: RB.game.s.company.memories.filter((m) => m.kind === 'pets' && (m.species === sp || (m.pet && m.pet.species === sp) || m.id === 'pet:' + sp)).length, once: RB.game.s.awarded['pet:met:' + sp] }), sp);
+    assert(rec.all === 1, 'one meeting, one Pets memory (the companionship module adds no second one): ' + rec.all);
+    assert(rec.mem[0] && rec.mem[0].petName === 'ちゃちゃ 丸' && rec.mem[0].place && rec.mem[0].place.en, 'the memory carries the chosen name and the place for Shared memories: ' + JSON.stringify(rec.mem[0] && { n: rec.mem[0].petName, p: rec.mem[0].place }));
     assert(rec.r && rec.r.name === 'ちゃちゃ 丸' && rec.r.nameAtMeet === 'ちゃちゃ 丸' && rec.act === sp && rec.mem.length === 1 && rec.mem[0].pet.name === 'ちゃちゃ 丸' && rec.mem[0].reply && rec.once, 'met, named, the memory (with the name then and the companion\'s reply), selected: ' + JSON.stringify(rec).slice(0, 400));
     // it cannot happen twice (the hook again, as a replay would)
     await p.evaluate(async (sp) => { await RB.hooks.pet_meet([sp]); }, sp);

@@ -9,7 +9,8 @@
 // map, settings, dialogue, help, chal, chal_ime, chal_choose, chal_order,
 // chal_unsure, chal_wrong, teach, lesson, activity, activity_letters, combat,
 // combat_f, combat_step, world_rw, world_sg, world_co, world_sb, world_lf,
-// world_sa; title_nosave, title_session, title_details, title_big,
+// world_sa; company, company_pet, company_mem, keepsakes, cases, known,
+// bookmarks, creatures, weave (the addendum's pages); title_nosave, title_session, title_details, title_big,
 // slots_states, slots_new, slots_save, slots_readonly, slots_error,
 // slots_big. File names: <state>_<W>x<H>.png
 import fs from 'node:fs';
@@ -70,6 +71,18 @@ async function prep(p) {
           await RB.save.writeSlot(i + 1, s, { force: true, thumb: RB.render.thumbnail() });
         }
       },
+      // the rich campaign plus the addendum's records: a cat met and chosen, the companion's verified
+      // milestones, two keepsakes, a case with two clues, a kept sentence and a creature met
+      company() {
+        const s = V.rich('sg.harbor', 20, 22);
+        RB.pets.meet(s, 'cat', { map: 'rw.village' }); RB.pets.select(s, 'cat');
+        RB.company.sync(s, 'live'); RB.company.refresh(s);
+        for (const id of Object.keys(RB.content.keepsakes).slice(0, 2)) RB.discovery.keepsake(s, id, { how: 'visual fixture' });
+        for (const c of Object.keys(RB.content.clues).filter((k) => k.startsWith('parcel.')).slice(0, 2)) RB.cases.observe(s, c);
+        RB.bookmarks.keep(s, s.backlog[0]);
+        RB.creatures.meet(s, ['rw.dustmoth'], { where: { map: 'rw.millroad' } });
+        return s;
+      },
       openMenu(names) {
         for (const n of names) { try { RB.ui.menu.open(n); if (RB.ui.menu.isOpen()) return n; } catch (e) { /* try next */ } }
         return null;
@@ -79,6 +92,9 @@ async function prep(p) {
   if (lang) await p.evaluate((l) => { RB.game.settings.uiLang = l; RB.game.applySettings(); }, lang);
 }
 async function settle(p, ms) { await p.waitForTimeout(ms || 500); }
+// settle, then clear the brief "found" notices the fixture's records raised (they fade after 4.8 s in
+// play; the audit is about the page underneath)
+async function quiet(p) { await p.waitForTimeout(1400); await p.evaluate(() => document.querySelectorAll('#overlay .notices > *').forEach((n) => n.remove())); await p.waitForTimeout(100); }
 // learning states: real reference strokes (with a little seeded jitter) for the pad
 async function learnPrep(p) {
   await p.evaluate(() => {
@@ -236,6 +252,24 @@ const STATES = {
   async words(p) { await p.evaluate(() => { V.rich('sg.harbor', 20, 22); V.openMenu(['words', 'notebook']); }); await settle(p); },
   async satchel(p) { await p.evaluate(() => { const s = V.rich('sg.harbor', 20, 22); for (const id of ['rw_mill_charm', 'rw_boots_good', 'atlas_charm_tide']) RB.state.give(s, id, 1); if (RB.equip) { RB.equip.equip(s, 'rw_mill_charm'); RB.equip.equip(s, 'rw_catbell'); } V.openMenu(['satchel', 'items']); }); await settle(p); },
   async map(p) { await p.evaluate(() => { V.rich('sg.harbor', 20, 22); V.openMenu(['map']); }); await settle(p); },
+  // the addendum's pages (a committed companion, a cat met and chosen, real records made through each system's API)
+  async company(p) { await p.evaluate(() => { V.company(); V.openMenu(['companion']); }); await quiet(p); },
+  async company_pet(p) { await p.evaluate(() => { V.company(); V.openMenu(['pet']); }); await quiet(p); },
+  async company_mem(p) { await p.evaluate(() => { V.company(); V.openMenu(['memories']); }); await quiet(p); },
+  async keepsakes(p) { await p.evaluate(() => { V.company(); V.openMenu(['keepsakes']); }); await quiet(p); },
+  async cases(p) { await p.evaluate(() => { V.company(); V.openMenu(['cases']); }); await quiet(p); },
+  async known(p) { await p.evaluate(() => { V.company(); V.openMenu(['known']); }); await quiet(p); },
+  async bookmarks(p) { await p.evaluate(() => { V.company(); V.openMenu(['bookmarks']); }); await quiet(p); },
+  async creatures(p) { await p.evaluate(() => { V.company(); V.openMenu(['creatures']); }); await quiet(p); },
+  async weave(p) {
+    await p.evaluate(async () => {
+      const s = V.rich('rw.village', 33, 24, { dir: 'up' });
+      RB.game.settings.input = 'choice';
+      await new Promise((r) => setTimeout(r, 400));
+      RB.weave.open();
+    });
+    await settle(p, 700);
+  },
   // quest guidance: the followed quest's detail with "Next" and two nudges shown; Settings › Learning & Challenge
   async journey_guide(p) {
     await p.evaluate(() => { V.rich('sg.harbor', 20, 22); V.openMenu(['journey', 'journal']); });

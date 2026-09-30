@@ -60,6 +60,15 @@ RB.petWorld = (function () {
     for (const list of [w.npcs, w.foes, w.extras || [], w.leavers || []]) for (const n of list) if ((n.x === x && n.y === y) || (n.mv && n.mv.tx === x && n.mv.ty === y)) return true;
     return false;
   }
+  // a tile someone stands on and stays on, or is walking onto (a tile being walked off is free: your
+  // companion walks the same trail ahead of it)
+  function heldBy(x, y) {
+    const w = W();
+    const on = (a) => a && (a.mv ? a.mv.tx === x && a.mv.ty === y : a.x === x && a.y === y);
+    if (on(w.player) || on(w.comp)) return true;
+    for (const list of [w.npcs, w.foes, w.extras || [], w.leavers || []]) for (const n of list) if (on(n)) return true;
+    return false;
+  }
   function floor(x, y) { const m = W().map; return x >= 0 && y >= 0 && x < m.w && y < m.h && !RB.maps.blockedStatic(m, x, y); }
   // a tile just above someone standing is behind their head and shoulders on screen: it would not be seen there
   function covered(x, y) { return occupied(x, y + 1); }
@@ -169,6 +178,9 @@ RB.petWorld = (function () {
       const keep = w.comp ? 1 : 0;
       // drop trail tiles that are its own
       while (P.queue.length && P.queue[0][0] === P.x && P.queue[0][1] === P.y) P.queue.shift();
+      // and those someone stands on now (you turned back over the trail, or a person stopped on it): it
+      // never walks onto a person; the next tile is reached by the usual short route or a catch-up
+      while (P.queue.length > keep && heldBy(P.queue[0][0], P.queue[0][1])) P.queue.shift();
       if (P.queue.length > keep) {
         const lag = P.queue.length - keep;
         const [tx, ty] = P.queue[0];
@@ -219,7 +231,9 @@ RB.petWorld = (function () {
     const opts = Object.keys(DIRS).map((d) => [P.x + DIRS[d][0], P.y + DIRS[d][1]]).filter(([x, y]) => restable(x, y));
     if (!opts.length) { if (force) catchUp('crowded'); return false; }
     const [x, y] = opts[Math.floor(rnd() * opts.length)];
-    P.queue.unshift([P.x, P.y]);
+    // giving way to someone: it rejoins the trail where it was; settling off a tile it should not rest on
+    // (yours, the one in front of you, a trigger): it stays off it
+    if (force) P.queue.unshift([P.x, P.y]);
     startMove(x, y, 200, 'walk');
     P.stats.asides++;
     return true;

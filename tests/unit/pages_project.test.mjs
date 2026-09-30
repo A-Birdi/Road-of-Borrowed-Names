@@ -21,7 +21,7 @@ import { load } from '../lib/load.mjs';
 export default async (t) => {
   globalThis.__RB_TEST__ = true;
   const RB = load(['core', 'lang', 'recog', 'engine', 'learn', 'ui', 'content', 'atlas'], { __RB_TEST__: true });
-  const C = RB.content, S = RB.state, PG = RB.pages, K = RB.company;
+  const C = RB.content, S = RB.state, PG = RB.pages, K = RB.company, PETS = RB.pets;
 
   // ---- a minimal stage: the real runner, with dialogue collected and choices picked --------------
   let lines = [], picks = [];
@@ -114,7 +114,7 @@ export default async (t) => {
       const s = fresh(c, { map: 'rw.village' });
       setup(s);
       setBond(s, hi ? 9 : 2);
-      if (pet) { s.company.pets[pet] = { name: '<b>Koma</b>' }; s.company.pet = pet; RB.pets = { visible: () => true }; } else RB.pets = undefined;
+      if (pet) { PETS.meet(s, pet, { map: 'rw.village' }); PETS.select(s, pet); s.company.pets[pet].name = '<b>Koma</b>'; } // the real pets system; an unsafe name kept raw on purpose
       if (hi) K.memory(s, { id: 'm_disc', kind: 'discoveries', title: { jp: '{乾|かわ}いた {隅|すみ}', en: 'A dry corner' }, comp: c });
       const before = snap(s);
       await run('sa.end_comp', byEn('(Just'));
@@ -141,7 +141,6 @@ export default async (t) => {
       t.ok(s.company.memories.length === mems && JSON.stringify(s.awarded) === aw && bond(s, 'ending') === 2, tag + ': replaying the scene awards nothing more');
     }
   }
-  RB.pets = undefined;
   t.log('added ending lines per companion (min–max over the states):', JSON.stringify(Object.fromEntries(Object.entries(addedCount).map(([k, v]) => [k, Math.min(...v) + '–' + Math.max(...v)]))));
   // the three replies are all offered, none is "right"
   for (const c of PG.COMPS) {
@@ -368,7 +367,7 @@ export default async (t) => {
       const p = PG.state(s); p.stage = 3; p.caption = 0; p.ev = { run: 'x', id: 'y', kind: 'inscription', desc: { jp: '', en: '' }, title: { jp: '', en: '' }, ret: 'early' };
       s.atlas.completed = st.done; if (st.done) s.flags.atlas_restore_1 = true;
       if (st.keeps) s.discovery.keepsakes.reed_boat = { t: 1 };
-      if (st.petOn) { s.company.pets.cat = { name: 'x' }; s.company.pet = 'cat'; RB.pets = { visible: () => true }; } else RB.pets = undefined;
+      if (st.petOn) { PETS.meet(s, 'cat', { map: 'rw.village' }); PETS.select(s, 'cat'); }
       if (st.at === 'camp') { s.atlas.run = { id: 'rt', mods: [] }; s.map = 'atlas.rt.c'; } else s.map = 'rw.hall';
       if (c === 'nao') quest(s, 'lf_nao', st.done ? 'done' : 1);
       for (const x of mine) { await run(x.scene); if (lines.length < 1) empty.push(x.id + ' ' + JSON.stringify(st)); }
@@ -376,7 +375,6 @@ export default async (t) => {
       else for (const x of mine.filter((y) => y.slot === 'o1')) { await run(x.scene); if (lines.some((l) => /\b(cat|dog|bird|tanuki)\b/i.test(l.en) && !/harbour dog/.test(l.en))) empty.push(x.id + ' claims a pet'); }
       if (!st.done) for (const x of mine.filter((y) => y.slot === 'r2')) { await run(x.scene); if (lines.some((l) => /(Remember walking an unwritten road|The day we got to the end of a road|lantern at the road's end was mine|The final curtain the day we reached)/.test(l.en))) empty.push(x.id + ' claims a finished road'); }
     }
-    RB.pets = undefined;
     t.eq(empty, [], c + ': every slot has content, and only true content, in all ' + states.length + ' states');
     // selection: at camp once per outing, at home once per homecoming; unseen first; quiet when all heard; no bond
     const s = post(c);
