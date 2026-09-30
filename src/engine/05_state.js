@@ -63,6 +63,30 @@ RB.state = (function () {
       },
       atlas: { unlocked: false, runs: 0, best: 0, relics: [], cosmetics: [], run: null },
       ngplus: 0,
+      // ---- the Living Company and Discovery addendum (docs/ADDENDUM_CONTRACTS.md);
+      // all optional: older saves gain empty records on load (80_save.js migrate)
+      company: {
+        pets: {},        // species -> { name, reading, look, met: {t, map}, nameAtMeet }
+        pet: null,       // the active pet's species, or null (no pet is a complete state)
+        bond: {},        // unique bond event id -> points (see RB.company)
+        memories: [],    // [{ id, kind, t, map, title, text, reply, pet }] chronological
+        talk: {},        // topic id -> { t, variant } (seen / chosen); pending: talk._pending
+        react: {},       // resolved event id -> chosen reaction id (stable across reloads)
+        project: null,   // The Pages We Keep: { stage, theme, page2, page3, ... }
+      },
+      discovery: {
+        puzzles: {},     // puzzle id -> { state, done, method, t, seen: {} }
+        cases: {},       // case id -> { stage, hypothesis, done, t }
+        clues: {},       // clue id -> { t, map, case } observed facts
+        keepsakes: {},   // keepsake id -> { t, map, how } historical discovery
+        display: null,   // one pinned keepsake id (a display choice only)
+        hints: {},       // puzzle/case id -> requested reasoning-hint level
+        known: {},       // map id -> { detail id -> { t, state } } authored annotations
+        pins: {},        // map id -> [{ id, type, note, x, y }] player pins (≤ 20 per map)
+      },
+      bookmarks: [],     // kept sentences [{ id, jp, en, who, src, map, t, title, note }]
+      creatures: {},     // enemy id -> { t, maps: {}, notes: {} } creatures met
+      awarded: {},       // award-bearing event id -> time (RB.state.once: at most once)
     };
   }
 
@@ -134,10 +158,16 @@ RB.state = (function () {
       case 'bg':
         return cmp(s.player.bg, op || '=', val);
       default:
+        // condition heads added by later systems (e.g. pet, bond, keepsake, case)
+        if (TERMS[head]) return TERMS[head](s, rest, op, val, num, cmp);
         if (op) return cmp(s.vars[key] || 0, op, num(val));
         return !!s.flags[key];
     }
   }
+  // Register a condition head: fn(s, rest, op, val, num, cmp) -> boolean. A
+  // head is the part before the first dot ('keepsake' in keepsake.reed_boat).
+  const TERMS = {};
+  function addTerm(head, fn) { TERMS[head] = fn; }
   function test(s, cond) {
     if (cond == null || cond === '') return true;
     return String(cond)
@@ -175,5 +205,13 @@ RB.state = (function () {
     if (typeof p === 'object' && p) return p;
     return P[p] || P.they;
   }
-  return { newCampaign, test, give, take, setQuest, pronouns, PROF_ORDER };
+  // At most once per campaign: true the first time an award-bearing event id is
+  // committed, false ever after (reloads, replays, double clicks, other routes).
+  function once(s, id) {
+    if (!s.awarded) s.awarded = {};
+    if (s.awarded[id]) return false;
+    s.awarded[id] = Date.now();
+    return true;
+  }
+  return { newCampaign, test, give, take, setQuest, pronouns, once, addTerm, PROF_ORDER };
 })();

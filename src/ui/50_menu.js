@@ -1,9 +1,13 @@
-/* The pause folio: four paper tabs — Journey (quests, notes, dialogue
+/* The pause folio: five paper tabs — Journey (quests, notes, dialogue
  * history), Words (inscriptions, noted words, kana, grammar, lore, progress,
  * guide), Satchel (equipment and carried items), Map (route chart and fast
- * travel) — plus Save & Load and Settings as plain utility actions on the
- * folio's foot. Old section names still open the right place
- * (journal, log, notebook, guide, items, settings, save). */
+ * travel), Company (the companion, the pet, shared memories: src/ui/52_company.js)
+ * — plus Save & Load and Settings as plain utility actions on the folio's
+ * foot. Old section names still open the right place (journal, log,
+ * notebook, guide, items, settings, save).
+ *
+ * Later systems add pages without editing this file: addPage('journey' |
+ * 'words' | 'map', def) (see docs/ADDENDUM_CONTRACTS.md). */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.ui.menu = (function () {
@@ -16,20 +20,33 @@ RB.ui.menu = (function () {
     { id: 'words', en: 'Words', jp: '{言葉|ことば}', icon: 'words' },
     { id: 'satchel', en: 'Satchel', jp: '{荷物|にもつ}', icon: 'satchel' },
     { id: 'map', en: 'Map', jp: '{地図|ちず}', icon: 'map' },
+    { id: 'company', en: 'Company', jp: '{道連|みちづ}れ', icon: 'companion' },
   ];
   // old tab ids → [section, sub-view] or a utility
   const ALIAS = {
     journal: ['journey', 'quests'], journey: ['journey'], log: ['journey', 'history'], history: ['journey', 'history'],
     notebook: ['words'], words: ['words'], guide: ['words', 'guide'], items: ['satchel'], satchel: ['satchel'], map: ['map'],
+    company: ['company'], companion: ['company', 'companion'], pet: ['company', 'pet'], pets: ['company', 'pet'], memories: ['company', 'memories'],
+    cases: ['journey', 'cases'], keepsakes: ['journey', 'keepsakes'], bookmarks: ['words', 'bookmarks'], creatures: ['words', 'creatures'], known: ['map', 'known'],
     settings: '@settings', save: '@save',
   };
+  // pages added by later systems: journey views, words pages, map views
+  //   journey/map: { id, en, icon, available?(s), render(A, B, two, api) }
+  //   words:       { id, en, jp, count?(s), available?(s), html(s, api), wire?(el, s, api) }
+  const EXT = { journey: [], words: [], map: [] };
+  function addPage(section, def) { const L = EXT[section]; const i = L.findIndex((d) => d.id === def.id); if (i >= 0) L[i] = def; else L.push(def); }
+  const extOf = (section, id) => EXT[section].find((d) => d.id === id);
+  const avail = (d, s) => !d.available || d.available(s);
+  // what an added page may do: re-render (keeping scroll), close, go elsewhere
+  function api(section) { return { s: RB.game.s, view: view[section], remember, render: () => { remember(); render(); }, close, go, two: F().wide() }; }
   const COMPANION_QUESTS = { co_suzu: 'suzu', lf_nao: 'nao', lf_mio: 'mio', ren_ushio: 'ren' };
   const view = {
     section: 'journey',
     journey: { view: 'quests', sel: null, nudge: {} }, // nudge: quest id + ':' + stage → nudges shown
     words: { sub: null, guide: 'basics' },
     satchel: { sel: null },
-    map: {},
+    map: { view: 'chart' },
+    company: { page: null },
     scroll: {},
   };
   let layer = null, fr = null, tabsApi = null, mq = null, stopDemo = () => {};
@@ -92,7 +109,9 @@ RB.ui.menu = (function () {
   function back() {
     const w = view.words, j = view.journey;
     if (view.section === 'words' && w.sub && !F().wide()) { remember(); w.sub = null; render(); return; }
-    if (view.section === 'journey' && j.view === 'history') { remember(); j.view = 'quests'; render(); return; }
+    if (view.section === 'journey' && j.view !== 'quests') { remember(); j.view = 'quests'; render(); return; }
+    if (view.section === 'map' && view.map.view !== 'chart') { remember(); view.map.view = 'chart'; render(); return; }
+    if (view.section === 'company' && RB.ui.company && RB.ui.company.back && RB.ui.company.back(api('company'))) return;
     close();
   }
   function go(section, sub) {
@@ -105,10 +124,12 @@ RB.ui.menu = (function () {
   function applySub(section, sub) {
     if (section === 'journey') view.journey.view = sub || 'quests';
     if (section === 'words') view.words.sub = sub || view.words.sub;
+    if (section === 'map') view.map.view = sub || 'chart';
+    if (section === 'company' && sub) view.company.page = sub;
   }
   function key() {
     const s = view.section;
-    return s + ':' + (s === 'journey' ? view.journey.view : s === 'words' ? view.words.sub || 'index' : '');
+    return s + ':' + (s === 'journey' ? view.journey.view : s === 'words' ? view.words.sub || 'index' : s === 'map' ? view.map.view : s === 'company' ? view.company.page || '' : '');
   }
   function remember() {
     if (!fr) return;
@@ -127,7 +148,7 @@ RB.ui.menu = (function () {
     fr.box.innerHTML = '<div class="spread' + (two ? ' two' : '') + '" id="folio-page" role="tabpanel" aria-labelledby="tab-' + view.section + '">' +
       '<div class="leaf" tabindex="0" aria-label="' + esc(sec.en) + ' page"></div><div class="leaf leaf-b" tabindex="0" aria-label="' + esc(sec.en) + ' detail page"></div></div>';
     const [A, B] = fr.box.querySelectorAll('.leaf');
-    ({ journey, words, satchel, map })[view.section](A, B, two);
+    ({ journey, words, satchel, map, company })[view.section](A, B, two);
     const sc = view.scroll[key()];
     if (sc) { A.scrollTop = sc[0]; B.scrollTop = sc[1]; }
   }
@@ -234,7 +255,18 @@ RB.ui.menu = (function () {
     const J = view.journey;
     const sub = '<div class="subnav" role="group" aria-label="Journey pages">' +
       '<button class="subbtn" data-jv="quests" aria-pressed="' + (J.view === 'quests') + '">' + I('journey') + 'Quests &amp; notes</button>' +
-      '<button class="subbtn" data-jv="history" aria-pressed="' + (J.view === 'history') + '">' + I('history') + 'Dialogue history</button></div>';
+      '<button class="subbtn" data-jv="history" aria-pressed="' + (J.view === 'history') + '">' + I('history') + 'Dialogue history</button>' +
+      EXT.journey.filter((d) => avail(d, s)).map((d) => '<button class="subbtn" data-jv="' + d.id + '" aria-pressed="' + (J.view === d.id) + '">' + I(d.icon || 'journey') + esc(d.en) + '</button>').join('') + '</div>';
+    const xj = extOf('journey', J.view);
+    if (xj && avail(xj, s)) {
+      A.innerHTML = sub;
+      const holder = RB.ui.el('div', 'xpage');
+      A.appendChild(holder);
+      xj.render(holder, B, two, api('journey'));
+      A.addEventListener('click', (e) => { const v = e.target.closest('[data-jv]'); if (v) { remember(); J.view = v.dataset.jv; render(); } });
+      return;
+    }
+    if (J.view !== 'quests' && J.view !== 'history') J.view = 'quests';
     if (J.view === 'history') {
       const lines = s.backlog.slice(-120);
       A.innerHTML = sub + '<h3>Dialogue history <span class="count">' + lines.length + ' lines, oldest first</span></h3>' +
@@ -340,12 +372,13 @@ RB.ui.menu = (function () {
       ['lore', 'Lore & histories', '{言|い}い{伝|つた}え', lore.length],
       ['progress', 'How your learning is going', '{進|すす}み{具合|ぐあい}', null],
       ['guide', 'Guide: how things work', '{手引|てび}き', null],
-    ];
+    ].concat(EXT.words.filter((d) => avail(d, s)).map((d) => [d.id, d.en, d.jp, d.count ? d.count(s) : null]));
   }
   function words(A, B, two) {
     const s = RB.game.s;
     const W = view.words;
     const subs = wordSubs(s);
+    if (W.sub && !subs.find((x) => x[0] === W.sub)) W.sub = null; // a page not (yet) available
     const ng = s.learn.profile === 'F' && s.learn.kanaKnown !== 'both' ? RB.lessons.nextGroup(s) : null;
     const index = '<h3>Contents</h3><ul class="index">' + subs.map(([id, l, jp, n]) =>
       '<li><button data-sub="' + id + '" aria-current="' + (two && (W.sub || 'inscriptions') === id) + '"><span class="lbl">' + esc(l) + '</span><span class="fill"></span>' + (n != null ? '<span class="n">' + n + '</span>' : '') + '</button></li>').join('') + '</ul>' +
@@ -432,9 +465,13 @@ RB.ui.menu = (function () {
       }
       return h;
     }
+    const xw = extOf('words', id);
+    if (xw) return xw.html(s, api('words'));
     return '';
   }
   function wireWords(el, s) {
+    const xw = extOf('words', view.words.sub || 'inscriptions');
+    if (xw && xw.wire) { xw.wire(el, s, api('words')); return; }
     el.onclick = (e) => {
       if (e.target.closest('[data-kchart]')) { RB.kanjiChart.open({ mode: 'browse', kana: 'any' }); return; }
       const g = e.target.closest('[data-g]');
@@ -650,6 +687,23 @@ RB.ui.menu = (function () {
   }
   function map(A, B, two) {
     const s = RB.game.s;
+    const views = EXT.map.filter((d) => avail(d, s));
+    if (!views.find((d) => d.id === view.map.view)) view.map.view = 'chart';
+    const nav = views.length ? '<div class="subnav" role="group" aria-label="Map pages"><button class="subbtn" data-mv="chart" aria-pressed="' + (view.map.view === 'chart') + '">' + I('map') + 'Route chart</button>' +
+      views.map((d) => '<button class="subbtn" data-mv="' + d.id + '" aria-pressed="' + (view.map.view === d.id) + '">' + I(d.icon || 'map') + esc(d.en) + '</button>').join('') + '</div>' : '';
+    const navClick = (e) => { const v = e.target.closest('[data-mv]'); if (!v) return false; remember(); view.map.view = v.dataset.mv; render(); return true; };
+    if (view.map.view !== 'chart') {
+      A.innerHTML = nav;
+      const holder = RB.ui.el('div', 'xpage');
+      A.appendChild(holder);
+      extOf('map', view.map.view).render(holder, B, two, api('map'));
+      A.addEventListener('click', navClick);
+      return;
+    }
+    mapChart(A, B, two, nav, navClick);
+  }
+  function mapChart(A, B, two, nav, navClick) {
+    const s = RB.game.s;
     const curMap = RB.content.maps[s.map] || {};
     const canTravel = !curMap.noTravel && RB.game.mode() === 'menu';
     const places = Object.keys(RB.content.places).map((id) => Object.assign({ id }, RB.content.places[id])).filter((p) => s.travel[p.id]);
@@ -665,8 +719,9 @@ RB.ui.menu = (function () {
         return '<li class="entry"><span class="mark">' + I(here ? 'here' : 'map') + '</span><div><div class="t">' + j(p.name.jp) + ' <span class="en">' + esc(p.name.en) + '</span></div>' + (p.desc ? '<div class="muted small">' + esc(p.desc) + '</div>' : '') + (here ? '<div class="kind">you are in this region</div>' : '') + (next ? '<div class="kind next-kind">' + I('follow') + ' next step of the quest you follow</div>' : '') + '</div>' +
           (canTravel ? '<button class="pbtn" data-go="' + p.id + '">Travel</button>' : '<span></span>') + '</li>';
       }).join('') + '</ul><p class="muted small">Roads you have walked can be travelled quickly.</p>';
-    if (two) { A.innerHTML = chart; B.innerHTML = list; } else { A.innerHTML = chart + list; }
+    if (two) { A.innerHTML = nav + chart; B.innerHTML = list; } else { A.innerHTML = nav + chart + list; }
     const handler = async (e) => {
+      if (navClick(e)) return;
       const b = e.target.closest('[data-go]');
       if (!b) return;
       const p = RB.content.places[b.dataset.go];
@@ -674,6 +729,12 @@ RB.ui.menu = (function () {
       await RB.game.transition(p.map, p.x, p.y, p.dir || 'down');
     };
     A.onclick = handler; B.onclick = handler;
+  }
+
+  // ---- Company (src/ui/52_company.js draws it) ------------------------------------------------
+  function company(A, B, two) {
+    if (RB.ui.company) RB.ui.company.render(A, B, two, api('company'));
+    else A.innerHTML = '<p class="muted">Nothing here yet.</p>';
   }
 
   // ---- Save & Load (utility sheet) ---------------------------------------------------------------
@@ -708,7 +769,7 @@ RB.ui.menu = (function () {
 
   function settingsStandalone() { return RB.ui.settings.open(); }
 
-  return { open, close, closeAll, settingsStandalone, isOpen: () => !!layer, current: () => ({ section: view.section, journey: view.journey.view, words: view.words.sub }) };
+  return { open, close, closeAll, settingsStandalone, addPage, isOpen: () => !!layer, current: () => ({ section: view.section, journey: view.journey.view, words: view.words.sub, map: view.map.view, company: view.company.page }) };
 })();
 
 RB.ui.credits = function () {

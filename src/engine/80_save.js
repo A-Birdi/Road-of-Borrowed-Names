@@ -14,6 +14,10 @@ RB.save = (function () {
   let db = null;
   const mem = new Map(); // session-only store
   let current = { slot: null, rev: 0, readOnly: false, lockRelease: null };
+  // load-time normalisers registered by later systems (addMigration); each must
+  // be idempotent and must never invent history the save does not record
+  const MIGRATIONS = [];
+  function addMigration(f) { MIGRATIONS.push(f); }
   let chan = null;
   const tabId = Math.random().toString(36).slice(2);
   let persisted = null;
@@ -143,6 +147,9 @@ RB.save = (function () {
     for (const k of ['flags', 'vars', 'quests', 'inv', 'learn', 'seen']) if (!st[k] || typeof st[k] !== 'object') errs.push('missing ' + k);
     if (!Array.isArray(st.words)) errs.push('missing words');
     if (st.comp && !RB.content.chars[st.comp]) errs.push('unknown companion');
+    // optional records added later: absent is fine (migrate fills them), the wrong shape is not
+    for (const k of ['company', 'discovery', 'creatures', 'awarded']) if (k in st && (!st[k] || typeof st[k] !== 'object' || Array.isArray(st[k]))) errs.push('bad ' + k);
+    if ('bookmarks' in st && !Array.isArray(st.bookmarks)) errs.push('bad bookmarks');
     return errs;
   }
   function migrate(st) {
@@ -151,6 +158,9 @@ RB.save = (function () {
     for (const k in base) if (!(k in st)) st[k] = RB.util.deepClone(base[k]);
     for (const k in base.learn) if (!(k in st.learn)) st.learn[k] = RB.util.deepClone(base.learn[k]);
     for (const k in base.atlas) if (!(k in st.atlas)) st.atlas[k] = RB.util.deepClone(base.atlas[k]);
+    for (const ns of ['company', 'discovery']) for (const k in base[ns]) if (!(k in st[ns])) st[ns][k] = RB.util.deepClone(base[ns][k]);
+    // later systems normalise their own records on load (derived milestones, unknown ids kept, ...)
+    for (const f of MIGRATIONS) f(st);
     return st;
   }
   function metaOf(st) {
@@ -417,7 +427,7 @@ RB.save = (function () {
   }
 
   return {
-    detect, status, requestPersist, list, read, writeSlot, writeRecovery, del, copy, validate, migrate,
+    detect, status, requestPersist, list, read, writeSlot, writeRecovery, del, copy, validate, migrate, addMigration,
     loadSettings, saveSettings, claim, takeOver, releaseLock, setReadOnly, setCurrent, manualSave, autosave,
     ConflictError, SLOTS, current: () => current, _mode: () => mode,
   };

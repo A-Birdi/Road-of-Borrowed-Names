@@ -685,6 +685,13 @@ button.entry .kind.slotline { display: flex; flex-wrap: wrap; align-items: cente
 kbd { display: inline-block; min-width: 1.6em; padding: 0 0.4em; border: 1px solid var(--ink-3); border-bottom-width: 2px; border-radius: 3px; background: #fffaf0; color: var(--ink); font: 0.9em var(--ui-font); text-align: center; }
 body.high-contrast .pv-box { background: #000; color: #fff; }
 
+/* ---- Company (src/ui/52_company.js): who is travelling, then the page ---------------------- */
+.co-pair { display: flex; flex-wrap: wrap; gap: 0.35em 1.4em; padding: 0.2em 0.1em 0.55em; margin-bottom: 0.5em; border-bottom: 1px dashed var(--paper-edge); }
+.co-who { display: flex; align-items: center; gap: 0.45em; min-width: 0; overflow-wrap: anywhere; }
+.co-who > svg { width: 1.35em; height: 1.35em; flex: none; }
+.co-page h4 { margin: 0.9em 0 0.3em; display: flex; align-items: center; gap: 0.4em; }
+.co-page h4 > svg { width: 1.15em; height: 1.15em; flex: none; }
+
 /* ==== src/styles/40_title.css ==== */
 /* Title screen, travel ledger (six save slots) and About sheet.
  * The scene is drawn on the canvas; this layer holds the title, the folio
@@ -7616,18 +7623,18 @@ RB.kanjiRead = {
     '的てき;皆みな,みんな;皮かわ;皿さら;盆ぼん;盗ぬす;盛も;盤ばん;目め;直なお,す;相あい,そう;盾たて;省かえり,はぶ;眉まゆ;看かん;真ま;眠ねむ;眩まぶ;眺なが;眼がん;着き,つ;督とく;睨にら;瞬まばた;矛ほこ;矢や;知し;短みじか;石いし;砂すな;研けん;破やぶ;硝しょう;硯すずり;碑ひ;碗わん;確たし;磁じ;磨みが;示しめ;' +
     '礼れい;社しゃ;祈いの;祖そ;祝いわ;神しん;祠ほこら;票ひょう;祭まつ;禁きん;福ふく;秀しゅう;私わたくし,わたし;秋あき;秘ひ;秩ちつ;移うつ;程てい;種たね;稼かせ;稽けい;積つ;穏おだ;穫かく;穴あな;究きゅう;空から,そら,あ,す;突つ;窓まど;窯かま,がま;窺うかが;立た;章しょう;端はし;竹たけ;竿さお,ざお;笑わら;笛ふえ;笠かさ;符ふ;' +
     '第だい;筆ふで;筈はず;等とう;筋すじ;筏いかだ;筒つつ;答こた;箋せん;算さん;管くだ;箱はこ,ばこ;箸はし;節せつ;範はん;築きず;簡かん;簿ぼ;籠かご;米こめ;粉こな,こ;粋すい;粗そ;粘ねば;粛しゅく;粧しょう;精せい;糊のり;糖とう;糧かて;糸いと;約やく;紅べに;納おさ;紐ひも;純じゅん;紙かみ,がみ;紛まぎ;素す;細ほそ,こま;' +
-    '紹しょう;終お;組くみ,く,ぐみ;経た;結むす,ゆ;絞しぼ;絡から;給きゅう;絨じゅう;統とう;絵え;絶た;継つ;続つづ;維い;綱つな;網あみ;綴つづ,と;綺き;綿わた,めん;緑みどり;緒しょ;線せん;締し;編あ;緩ゆる;練れん;縁えん,ふち;縄なわ;縛しば;縞しま;縦たて;縫ぬ;縮しゅく;繁はん;繋つな;繍しゅう;織お;繕つくろ;繰く;' +
-    '缶かん;罅ひび;罪つみ;置お;罰ばち,ばっ,ばつ;署しょ;羊ひつじ;美うつく;義ぎ;羽は,はね;翌よく;習なら;翻ほん;老ろう;考かんが;者もの;耐た;耳みみ;聞き;職しょく;肉にく;肝かん;肩かた;育そだ;肺はい;背せ;胸むね;能あた;脂あぶら;脅おど;脇わき;脈みゃく;脚あし;脱ぬ;腐くさ;腕うで;腰こし;腹なか,はら;膏こう;膝ひざ;' +
-    '膨ふく;膳ぜん;臓ぞう;自じ;臭くさ;至いた;致ち;臼うす;興きょう;舌した,ぜつ;舞ま;舟ふね,ぶね;航こう;舷げん;船ふね,ぶね;艘そう;良よ;色いろ;芋いも;芝しば;芯しん;花はな,ばな;芸げい;苔こけ;苗なえ;若わか;苦くる,にが;英えい;茂しげ;茨いばら;茶ちゃ;草くさ,ぐさ;荒あ,あら;荷に;菓か;菜さい;萎しお;落お;葉は,ば;葦あし;' +
-    '蒸む;蓋ふた;蔵ぞう;薄うす;薙な;薪まき;薬くすり,ぐすり;藁わら;藍あい;蘇よみがえ;虚むな;虫むし;虹にじ;蛇へび;蛍ほたる;蛙かえる;蛾が;蜂はち;蜜みつ;蝋ろう;蝕むしば;螺ら;蟹かに,がに;血ち;行ぎょう,い,おこな,ゆ;街かい;衣い;表ひょう,おもて,あらわ;袋ぶくろ,ふくろ;袖そで;被ひ;裁さば;装そう;裏うら;裕ゆう;補おぎな;複ふく;褒ほ;褪あ;襟えり;' +
-    '襲おそ;西にし;要よう,い;覆おお;見み;規き;覗のぞ;覚おぼ,さ;覧らん;親おや;観かん;角かど,つの;解と,ほど;触さわ,ふ;言こと,い,ごと;訂てい;計けい;討とう;訓くん;託たく;記しる;訪たず;設せつ;許ゆる;訳わけ;診み;証しょう,あかし;評ひょう;詞し;試ため;詫わ;詰つ;話はなし,はな,ばなし;該がい;詳くわ;誇ほこ;誌し;認みと;誓ちか;誕たんじょ;' +
-    '誘さそ;語ご,かた;誠まこと;誤あやま;説せつ;読よ;誰だれ;課か;調しら;談だん;請せい;諍いさか;論ろん;諦あきら;諾だく;謙けん;謝あやま;識しき;譜ふ;警けい;議ぎ;譲ゆず;谷たに;豆まめ;貝かい,がい;負お,ま;財さい;貨か;責せ;貯た;貴き;買か;貸か;費ひ;貼は;賃ちん;資し;賊ぞく;賑にぎ;賛さん;' +
-    '賢かしこ;質たち;賭か;贅ぜい;贈おく;贔ひい;赤あか;走はし;起お;越こ,ご;趣しゅ;足あし,た;距きょ;跡あと;路じ,ろ;跳と,は;踊おど;踏ふ;蹴け;身み;車くるま;軋きし;軒けん,のき;軟なん;転ころ;軸じく;軽かる;載の;輝かがや;輩はい;輪わ;辛から,つら;辞や;農のう;辺あた;辻つじ;込こ;辿たど;迎むか;近ちか;' +
-    '返かえ;迫せま;述の;迷まよ;追お;退しりぞ;送おく;逃に;逆ぎゃく,さか;透す;途と;這は;通つう,とお,どお;逝ゆ;速はや;造ぞう,づく;連つ,つら;週しゅう;進すす;逸そ;遅おく,おそ;遊あそ;運うん,はこ;過す,あやま;道みち;達たつ;違ちが;遠とお,どお;遡さかのぼ;遣づか;適てき;選えら;避さ;那な;邪じゃ;部べ;郵ゆう;郷きょう;配くば;酒さけ;' +
-    '酔よ;酷こく;酸す;釈しゃく;釉くすり;里り,さと;重おも,かさ;野の;量りょう,はか;金きん,かね,がね;釘くぎ;針はり;釣つ;鈍にぶ;鈴すず;鉄てつ;鉛えん;鉢はち,ばち;銅どう;銘めい;銭せん;鋏はさみ;鋤すき;鋭するど;鋳い;錆さ,さび;錠じょう;録ろく;鍋なべ;鍮ちゅう;鍵かぎ;鎌かま;鎖くさり;鎮ちん;鏡かがみ;鐘かね;長なが;門もん;閂かんぬき;閉へい,し,と;' +
-    '開あ,ひら;間かん,ま,あいだ;関かん;閲えつ;闇やみ;防ふせ;阻はば;降お,ふ;限かぎ;除よ,の,のぞ;陰かげ;陸おか;険けん;陽よう;隅すみ;階かい;随ずい;隔かく;隙すき;際ぎわ,さい;隠かく;隣となり;集あつ,つど;雇やと;雑ざつ;離はな;難むずか;雨あめ;雪ゆき;雲くも;零れい;雷かみなり;震ふる;霊れい;霜しも;霧きり;青あお,さお;静しず;非あら;面めん;' +
-    '革かわ;靴くつ;鞄かばん;鞋あい;音おと,ね;響ひび;頁ぺーじ;頂ちょう;頃ころ;項こう;順じゅん;須す;預あず;頑がん;頬ほお;頭とう,あたま,かしら;頷うなず;頼たの,たよ;題だい;額がく,ひたい;顔かお,がお;願ねが;類るい;顧かえり;風かぜ;飛と;食く,た;飯めし,はん;飲の;飴あめ;飼か;飽あ;飾かざ;餅もち;館かん;首くび;香が;馬うま;駄だ;駅えき;' +
-    '駆か;駒こま;騒さわ;験けん;騙だま;騰とう;驚おどろ;骨ほね;高たか;髪かみ;魂たましい;魔ま;魚さかな,ざかな;鮭さけ;鯖さば;鯛たい;鯵あじ;鳥とり;鳴な;鶴つる,づる;鹸けん;鹿しか;麓ふもと;麗れい;麦むぎ;麹こうじ;麻あさ;黄き;黒くろ;黙だま;黴かび;鼓つづみ;鼻はな;齢れい;',
+    '紹しょう;終お;組くみ,く,ぐみ;絆きずな;経た;結むす,ゆ;絞しぼ;絡から;給きゅう;絨じゅう;統とう;絵え;絶た;継つ;続つづ;維い;綱つな;網あみ;綴つづ,と;綺き;綿わた,めん;緑みどり;緒しょ;線せん;締し;編あ;緩ゆる;練れん;縁えん,ふち;縄なわ;縛しば;縞しま;縦たて;縫ぬ;縮しゅく;繁はん;繋つな;繍しゅう;織お;繕つくろ;' +
+    '繰く;缶かん;罅ひび;罪つみ;置お;罰ばち,ばっ,ばつ;署しょ;羊ひつじ;美うつく;義ぎ;羽は,はね;翌よく;習なら;翻ほん;老ろう;考かんが;者もの;耐た;耳みみ;聞き;職しょく;肉にく;肝かん;肩かた;育そだ;肺はい;背せ;胸むね;能あた;脂あぶら;脅おど;脇わき;脈みゃく;脚あし;脱ぬ;腐くさ;腕うで;腰こし;腹なか,はら;膏こう;' +
+    '膝ひざ;膨ふく;膳ぜん;臓ぞう;自じ;臭くさ;至いた;致ち;臼うす;興きょう;舌した,ぜつ;舞ま;舟ふね,ぶね;航こう;舷げん;船ふね,ぶね;艘そう;良よ;色いろ;芋いも;芝しば;芯しん;花はな,ばな;芸げい;苔こけ;苗なえ;若わか;苦くる,にが;英えい;茂しげ;茨いばら;茶ちゃ;草くさ,ぐさ;荒あ,あら;荷に;菓か;菜さい;萎しお;落お;葉は,ば;' +
+    '葦あし;蒸む;蓋ふた;蔵ぞう;薄うす;薙な;薪まき;薬くすり,ぐすり;藁わら;藍あい;蘇よみがえ;虚むな;虫むし;虹にじ;蛇へび;蛍ほたる;蛙かえる;蛾が;蜂はち;蜜みつ;蝋ろう;蝕むしば;螺ら;蟹かに,がに;血ち;行ぎょう,い,おこな,ゆ;街かい;衣い;表ひょう,おもて,あらわ;袋ぶくろ,ふくろ;袖そで;被ひ;裁さば;装そう;裏うら;裕ゆう;補おぎな;複ふく;褒ほ;褪あ;' +
+    '襟えり;襲おそ;西にし;要よう,い;覆おお;見み;規き;覗のぞ;覚おぼ,さ;覧らん;親おや;観かん;角かど,つの;解と,ほど;触さわ,ふ;言こと,い,ごと;訂てい;計けい;討とう;訓くん;託たく;記しる;訪たず;設せつ;許ゆる;訳わけ;診み;証しょう,あかし;評ひょう;詞し;試ため;詫わ;詰つ;話はなし,はな,ばなし;該がい;詳くわ;誇ほこ;誌し;認みと;誓ちか;' +
+    '誕たんじょ;誘さそ;語ご,かた;誠まこと;誤あやま;説せつ;読よ;誰だれ;課か;調しら;談だん;請せい;諍いさか;論ろん;諦あきら;諾だく;謙けん;謝あやま;識しき;譜ふ;警けい;議ぎ;譲ゆず;谷たに;豆まめ;貝かい,がい;負お,ま;財さい;貨か;責せ;貯た;貴き;買か;貸か;費ひ;貼は;賃ちん;資し;賊ぞく;賑にぎ;' +
+    '賛さん;賢かしこ;質たち;賭か;贅ぜい;贈おく;贔ひい;赤あか;走はし;起お;越こ,ご;趣しゅ;足あし,た;距きょ;跡あと;路じ,ろ;跳と,は;踊おど;踏ふ;蹴け;身み;車くるま;軋きし;軒けん,のき;軟なん;転ころ;軸じく;軽かる;載の;輝かがや;輩はい;輪わ;辛から,つら;辞や;農のう;辺あた;辻つじ;込こ;辿たど;迎むか;' +
+    '近ちか;返かえ;迫せま;述の;迷まよ;追お;退しりぞ;送おく;逃に;逆ぎゃく,さか;透す;途と;這は;通つう,とお,どお;逝ゆ;速はや;造ぞう,づく;連つ,つら;週しゅう;進すす;逸そ;遅おく,おそ;遊あそ;運うん,はこ;過す,あやま;道みち;達たつ;違ちが;遠とお,どお;遡さかのぼ;遣づか;適てき;選えら;避さ;那な;邪じゃ;部べ;郵ゆう;郷きょう;配くば;' +
+    '酒さけ;酔よ;酷こく;酸す;釈しゃく;釉くすり;里り,さと;重おも,かさ;野の;量りょう,はか;金きん,かね,がね;釘くぎ;針はり;釣つ;鈍にぶ;鈴すず;鉄てつ;鉛えん;鉢はち,ばち;銅どう;銘めい;銭せん;鋏はさみ;鋤すき;鋭するど;鋳い;錆さ,さび;錠じょう;録ろく;鍋なべ;鍮ちゅう;鍵かぎ;鎌かま;鎖くさり;鎮ちん;鏡かがみ;鐘かね;長なが;門もん;閂かんぬき;' +
+    '閉へい,し,と;開あ,ひら;間かん,ま,あいだ;関かん;閲えつ;闇やみ;防ふせ;阻はば;降お,ふ;限かぎ;除よ,の,のぞ;陰かげ;陸おか;険けん;陽よう;隅すみ;階かい;随ずい;隔かく;隙すき;際ぎわ,さい;隠かく;隣となり;集あつ,つど;雇やと;雑ざつ;離はな;難むずか;雨あめ;雪ゆき;雲くも;零れい;雷かみなり;震ふる;霊れい;霜しも;霧きり;青あお,さお;静しず;非あら;' +
+    '面めん;革かわ;靴くつ;鞄かばん;鞋あい;音おと,ね;響ひび;頁ぺーじ;頂ちょう;頃ころ;項こう;順じゅん;須す;預あず;頑がん;頬ほお;頭とう,あたま,かしら;頷うなず;頼たの,たよ;題だい;額がく,ひたい;顔かお,がお;願ねが;類るい;顧かえり;風かぜ;飛と;食く,た;飯めし,はん;飲の;飴あめ;飼か;飽あ;飾かざ;餅もち;館かん;首くび;香が;馬うま;駄だ;' +
+    '駅えき;駆か;駒こま;騒さわ;験けん;騙だま;騰とう;驚おどろ;骨ほね;高たか;髪かみ;魂たましい;魔ま;魚さかな,ざかな;鮭さけ;鯖さば;鯛たい;鯵あじ;鳥とり;鳴な;鶴つる,づる;鹸けん;鹿しか;麓ふもと;麗れい;麦むぎ;麹こうじ;麻あさ;黄き;黒くろ;黙だま;黴かび;鼓つづみ;鼻はな;齢れい;',
   w: {
     '寸': '寸前|すんぜん',
     '拗': '拗音|ようおん',
@@ -7637,6 +7644,7 @@ RB.kanjiRead = {
     '王': '王|おう',
     '窺': '窺|うかが',
     '筈': '筈|はず',
+    '絆': '絆|きずな',
     '艘': '一艘|いっそう',
     '薙': '薙|な',
     '謙': '謙譲語|けんじょうご',
@@ -8166,7 +8174,7 @@ RB.recogData = {
     'ヮ': 'AyEAz0A5T A1gA-BB8_CCGCD1CD7B-9B5-BzRBpKBguBJD',
     'ー': 'AaYArZCil',
   },
-  rad: '・一一一一一一一一一一一一一一丨丶丶丿丿乙乙乙乙龜亅亅亅亅二二二二亠亠亠人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人八八八八八入人八八八八冂冂冂冂冖冖冖氷氷氷氷几几几凵凵凵刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀力力力力力力力力力力力力力力力力力勹勹匕匕匕匚匸匸匸十十十十十十十十十卩卩卩卩卩卩厂厂厂厶厶丿又又又又又又口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口囗囗囗囗囗囗囗囗囗囗土土土土土土土土土土土土土土土土土土土土土土土土土土土土土士土土夂夂夕夕夕夕夕大大大大大大大大大大大大大大女女女女女女女女女女女女女女女女女女女女女子子子子子子子宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀寸寸寸寸寸寸寸寸寸小小尸尸尸尸尸尸尸尸尸尸尸尸山山山山山山山山山山山巛巛工工工己巾巾巾巾巾巾巾巾巾巾巾巾干干干干干幺广广广广广广广广广广广广广廴廴廾弋弓弓弓弓弓弓弓小彡彡彡彳彳彳彳彳彳彳彳彳彳彳彳彳彳心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心戈戈戈戈戸戸戸戸戸手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手支攴攴攴攴攴攴攴攴攴攴攴攴文齊文文斗斗斤斤方方方方方方无日日日日日日日日日日日日日日日日日日日日日日日日日日日日日日曰曰曰曰曰月肉肉月肉月木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木欠欠欠欠欠止止止止齒止止歹歹殳殳殳殳毋毋母比毛毛氏氏气水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水火火火火火火火火火火火火火火火火火火火火火火火火火火父父片牛牛牛犬犬犬犬犬犬犬犬犬犬玄玉玉玉玉玉玉瓦甘生生用田日日日田田田田田田田田田疋疒疒疒疒疒疒疒疒疒疒癶癶白白白白皮皿皿皿皿皿目目目目目目目目目目目目目目目目矛矢矢矢石石石石石石石石石石石示示示示示示示示示示示示禾禾禾禾禾禾禾禾禾禾禾禾禾穴穴穴穴穴穴穴立立立竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹米米米米米聿米米米米米糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸缶缶网网网网羊羊羊羽羽羽羽老老老而耳耳耳肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉自自至至臼臼舌舛舟舟舟舟舟艮色艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸虍虫虫虫虫虫虫虫虫虫虫虫虫血行行衣衣衣衣衣衣衣衣衣衣衣衣衣衣衣襾襾襾見見見見見見見角角角言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言谷豆貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝赤走走走走足足足足足足足足身車車車車車車車車車車車辛辛辰辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶邑邑邑邑邑酉酉酉酉酉釆釆里里里里金金金金金金金金金金金金金金金金金金金金金金金金金金金長門門門門門門門門阜阜阜阜阜阜阜阜阜阜阜阜阜阜阜阜阜隹隹隹隹隹雨雨雨雨雨雨雨雨雨青青非面革革革革音音頁頁頁頁頁頁頁頁頁頁頁頁頁頁頁頁頁頁風飛食食食食食食食食食首香馬馬馬馬馬馬馬馬馬馬骨高髟鬼鬼魚魚魚魚魚鳥鳥鳥鹵鹿鹿鹿麥麥麻黄黑黑黒鼓鼻齒',
+  rad: '・一一一一一一一一一一一一一一丨丶丶丿丿乙乙乙乙龜亅亅亅亅二二二二亠亠亠人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人八八八八八入人八八八八冂冂冂冂冖冖冖氷氷氷氷几几几凵凵凵刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀力力力力力力力力力力力力力力力力力勹勹匕匕匕匚匸匸匸十十十十十十十十十卩卩卩卩卩卩厂厂厂厶厶丿又又又又又又口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口囗囗囗囗囗囗囗囗囗囗土土土土土土土土土土土土土土土土土土土土土土土土土土土土土士土土夂夂夕夕夕夕夕大大大大大大大大大大大大大大女女女女女女女女女女女女女女女女女女女女女子子子子子子子宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀寸寸寸寸寸寸寸寸寸小小尸尸尸尸尸尸尸尸尸尸尸尸山山山山山山山山山山山巛巛工工工己巾巾巾巾巾巾巾巾巾巾巾巾干干干干干幺广广广广广广广广广广广广广廴廴廾弋弓弓弓弓弓弓弓小彡彡彡彳彳彳彳彳彳彳彳彳彳彳彳彳彳心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心戈戈戈戈戸戸戸戸戸手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手支攴攴攴攴攴攴攴攴攴攴攴攴文齊文文斗斗斤斤方方方方方方无日日日日日日日日日日日日日日日日日日日日日日日日日日日日日日曰曰曰曰曰月肉肉月肉月木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木欠欠欠欠欠止止止止齒止止歹歹殳殳殳殳毋毋母比毛毛氏氏气水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水火火火火火火火火火火火火火火火火火火火火火火火火火火父父片牛牛牛犬犬犬犬犬犬犬犬犬犬玄玉玉玉玉玉玉瓦甘生生用田日日日田田田田田田田田田疋疒疒疒疒疒疒疒疒疒疒癶癶白白白白皮皿皿皿皿皿目目目目目目目目目目目目目目目目矛矢矢矢石石石石石石石石石石石示示示示示示示示示示示示禾禾禾禾禾禾禾禾禾禾禾禾禾穴穴穴穴穴穴穴立立立竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹米米米米米聿米米米米米糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸缶缶网网网网羊羊羊羽羽羽羽老老老而耳耳耳肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉自自至至臼臼舌舛舟舟舟舟舟艮色艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸虍虫虫虫虫虫虫虫虫虫虫虫虫血行行衣衣衣衣衣衣衣衣衣衣衣衣衣衣衣襾襾襾見見見見見見見角角角言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言谷豆貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝赤走走走走足足足足足足足足身車車車車車車車車車車車辛辛辰辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶邑邑邑邑邑酉酉酉酉酉釆釆里里里里金金金金金金金金金金金金金金金金金金金金金金金金金金金長門門門門門門門門阜阜阜阜阜阜阜阜阜阜阜阜阜阜阜阜阜隹隹隹隹隹雨雨雨雨雨雨雨雨雨青青非面革革革革音音頁頁頁頁頁頁頁頁頁頁頁頁頁頁頁頁頁頁風飛食食食食食食食食食首香馬馬馬馬馬馬馬馬馬馬骨高髟鬼鬼魚魚魚魚魚鳥鳥鳥鹵鹿鹿鹿麥麥麻黄黑黑黒鼓鼻齒',
   k: [
     '々BXLgkelV0WuTs BNVyfyejhhigjTwSw BKTxuoojn',
     '一ATlph-e-dxg',
@@ -9252,6 +9260,7 @@ RB.recogData = {
     '紹AzTglWwgiqm BGOflL8ih2b BDKkmjn A1uhkgwgw AoQemYu BFMlw Banmh8ckhhjfpbwclbc B3nencpTu Beqhkj6 BiG8dkhhkc0 Bnn8d',
     '終Av7gielWwqn BCzgkcmM4jh0a A6okljm Awnikgwfw AjIflZv A-Wjljp Bp2fkbnTv BtUlgrdhjekasXqXoVn Bcfnj4yok BnIqkmk BiUsmqo',
     '組AxngkTyhirl BGNflI9ih1a BBdns A0Bhkgxgw AjKfkat BFMlv BcUijg1g2g1 Bhd4dkig1g1g1 Bhy7e BiG7e BMW8f8f',
+    '絆Av4gjelTxhjtl BCzgiekK-giig2Z A6omnkn AyXhjgxgx Ak6fmYt BAHllkp BmjgjdkVr CKSpnmo BeYzgyf BUe5g5f B3ahjg8g9g8',
     '経Av6fkVzgiql BC1fjdkL5ii3Z A8Vmr AtOhjgxgw Afvfkau BAGks BVelg2bighiatYsXpUp BXUpl70nj BUlzfzf BxShjg- BHQnhwfwfvg',
     '結AxleoVzsl BGNfkcnM5ih4Z BBdlnjn AyWijgxgw AhefmZu BG8jljo BUB5e5e B62ijgyfy Bc11f0e Bewijj2 Bj5xfwehjcy Bnnwfwf',
     '絞AzUgjelXwqk BH6fjcnM6ih1Z A-Clmjm A0Chjgxgw AjMfkZv BFNlu ByWijgr BT92e1e BlJdnYq CFdnmmm CFpeoYtXqVo Bh_yxyx',
@@ -14350,6 +14359,30 @@ RB.state = (function () {
       },
       atlas: { unlocked: false, runs: 0, best: 0, relics: [], cosmetics: [], run: null },
       ngplus: 0,
+      // ---- the Living Company and Discovery addendum (docs/ADDENDUM_CONTRACTS.md);
+      // all optional: older saves gain empty records on load (80_save.js migrate)
+      company: {
+        pets: {},        // species -> { name, reading, look, met: {t, map}, nameAtMeet }
+        pet: null,       // the active pet's species, or null (no pet is a complete state)
+        bond: {},        // unique bond event id -> points (see RB.company)
+        memories: [],    // [{ id, kind, t, map, title, text, reply, pet }] chronological
+        talk: {},        // topic id -> { t, variant } (seen / chosen); pending: talk._pending
+        react: {},       // resolved event id -> chosen reaction id (stable across reloads)
+        project: null,   // The Pages We Keep: { stage, theme, page2, page3, ... }
+      },
+      discovery: {
+        puzzles: {},     // puzzle id -> { state, done, method, t, seen: {} }
+        cases: {},       // case id -> { stage, hypothesis, done, t }
+        clues: {},       // clue id -> { t, map, case } observed facts
+        keepsakes: {},   // keepsake id -> { t, map, how } historical discovery
+        display: null,   // one pinned keepsake id (a display choice only)
+        hints: {},       // puzzle/case id -> requested reasoning-hint level
+        known: {},       // map id -> { detail id -> { t, state } } authored annotations
+        pins: {},        // map id -> [{ id, type, note, x, y }] player pins (≤ 20 per map)
+      },
+      bookmarks: [],     // kept sentences [{ id, jp, en, who, src, map, t, title, note }]
+      creatures: {},     // enemy id -> { t, maps: {}, notes: {} } creatures met
+      awarded: {},       // award-bearing event id -> time (RB.state.once: at most once)
     };
   }
 
@@ -14421,10 +14454,16 @@ RB.state = (function () {
       case 'bg':
         return cmp(s.player.bg, op || '=', val);
       default:
+        // condition heads added by later systems (e.g. pet, bond, keepsake, case)
+        if (TERMS[head]) return TERMS[head](s, rest, op, val, num, cmp);
         if (op) return cmp(s.vars[key] || 0, op, num(val));
         return !!s.flags[key];
     }
   }
+  // Register a condition head: fn(s, rest, op, val, num, cmp) -> boolean. A
+  // head is the part before the first dot ('keepsake' in keepsake.reed_boat).
+  const TERMS = {};
+  function addTerm(head, fn) { TERMS[head] = fn; }
   function test(s, cond) {
     if (cond == null || cond === '') return true;
     return String(cond)
@@ -14462,8 +14501,136 @@ RB.state = (function () {
     if (typeof p === 'object' && p) return p;
     return P[p] || P.they;
   }
-  return { newCampaign, test, give, take, setQuest, pronouns, PROF_ORDER };
+  // At most once per campaign: true the first time an award-bearing event id is
+  // committed, false ever after (reloads, replays, double clicks, other routes).
+  function once(s, id) {
+    if (!s.awarded) s.awarded = {};
+    if (s.awarded[id]) return false;
+    s.awarded[id] = Date.now();
+    return true;
+  }
+  return { newCampaign, test, give, take, setQuest, pronouns, once, addTerm, PROF_ORDER };
 })();
+
+
+/* ==== src/engine/06_company.js ==== */
+/* The shared core of the Living Company and Discovery addendum
+ * (docs/ADDENDUM_CONTRACTS.md): the few calls every new system uses, so that
+ * awards happen once, memories are kept truthfully, and a companion's
+ * reaction to what actually happened is chosen from authored lines and then
+ * stays the same across reloads.
+ *
+ *   RB.company.award(s, id, pts)      a unique bond event (at most once)
+ *   RB.company.score(s) / stage(s)    derived bond (capped at 12) and its words
+ *   RB.company.memory(s, m)           a shared memory (at most once per id)
+ *   RB.company.addReactions(list)     authored reactions (data)
+ *   RB.company.react(s, ev)           choose (once) and return a reaction
+ *   RB.discovery.keepsake(s, id, how) record a keepsake discovery (at most once)
+ *
+ * Nothing here changes play: bond never alters battle, rewards or answers. */
+var RB = (globalThis.RB = globalThis.RB || {});
+RB.content.keepsakes = RB.content.keepsakes || {}; // id -> { name:{jp,en}, desc, region, art, source }
+
+RB.company = (function () {
+  'use strict';
+  const CAP = 12;
+  // the displayed bond, never the number (addendum §8.1)
+  const STAGES = [
+    [0, 'walking', { en: 'Walking Together', jp: '{並|なら}んで{歩|ある}く' }],
+    [3, 'rhythm', { en: 'Finding a Rhythm', jp: '{歩調|ほちょう}が{合|あ}う' }],
+    [6, 'trusted', { en: 'Trusted Company', jp: '{信頼|しんらい}できる{道連|みちづ}れ' }],
+    [10, 'lasting', { en: 'A Lasting Bond', jp: '{続|つづ}く{絆|きずな}' }],
+  ];
+  const C = (s) => s.company || (s.company = RB.state.newCampaign().company);
+
+  // A unique bond event: recorded once (its id is the event), never removed.
+  // Returns true only the first time. Callers decide eligibility (who, when).
+  function award(s, id, pts) {
+    if (!s.comp) return false; // the committed companion owns the relationship
+    const c = C(s);
+    if (c.bond[id] != null) return false;
+    if (!RB.state.once(s, 'bond:' + s.comp + ':' + id)) return false;
+    c.bond[id] = pts == null ? 1 : pts;
+    RB.bus.emit('company:bond', { id, pts: c.bond[id] });
+    return true;
+  }
+  function score(s) {
+    const b = (s.company && s.company.bond) || {};
+    let n = 0;
+    for (const k in b) n += +b[k] || 0;
+    return Math.max(0, Math.min(CAP, n));
+  }
+  function stage(s) {
+    const n = score(s);
+    let cur = STAGES[0];
+    for (const st of STAGES) if (n >= st[0]) cur = st;
+    return { id: cur[1], label: cur[2] };
+  }
+
+  // A shared memory: { id, kind: 'together'|'pets'|'discoveries'|'reflections',
+  // title:{jp,en}, text:{jp,en}, reply?:{jp,en}, map?, ref? }. Kept once per id,
+  // with an event-time snapshot of the place and of any pet's name then.
+  function memory(s, m) {
+    const c = C(s);
+    if (!m || !m.id || c.memories.some((x) => x.id === m.id)) return false;
+    const pet = c.pet && c.pets[c.pet] ? { species: c.pet, name: c.pets[c.pet].name } : null;
+    c.memories.push(Object.assign({ t: Date.now(), map: s.map, comp: s.comp || null, pet }, m));
+    RB.bus.emit('company:memory', { id: m.id, kind: m.kind });
+    return true;
+  }
+
+  // Authored reactions (addendum §7.5): { id, comp, event, when?, tone?,
+  // priority?, lines: [{ jp, en, who? }] }. `event` names what happened (e.g.
+  // 'puzzle:f1'); `when` is a condition on the state (RB.state.test) and may
+  // also test facts of the event through `facts` (an object of equalities).
+  const REACT = [];
+  function addReactions(list) { for (const r of list) REACT.push(r); }
+  // Choose a reaction for event ev = { id (unique resolution), event, facts }
+  // for the committed (or provisional) companion. The choice is stored under
+  // ev.id, so a reload or replay shows the same one. Returns the entry or null.
+  function react(s, ev) {
+    const comp = s.comp || s.provisional;
+    if (!comp || !ev || !ev.id) return null;
+    const c = C(s);
+    const kept = c.react[ev.id];
+    if (kept) return REACT.find((r) => r.id === kept) || null;
+    const facts = ev.facts || {};
+    const ok = REACT.filter((r) => r.comp === comp && r.event === ev.event && (!r.when || RB.state.test(s, r.when)) &&
+      (!r.facts || Object.keys(r.facts).every((k) => facts[k] === r.facts[k])));
+    if (!ok.length) return null;
+    const top = Math.max(...ok.map((r) => r.priority || 0));
+    const best = ok.filter((r) => (r.priority || 0) === top);
+    const pick = best[RB.util.hashStr(ev.id) % best.length]; // deterministic, not the game's random stream
+    c.react[ev.id] = pick.id;
+    return pick;
+  }
+  return { award, score, stage, memory, addReactions, react, reactions: REACT, STAGES, CAP };
+})();
+
+RB.discovery = (function () {
+  'use strict';
+  // Record that a keepsake was discovered or entrusted (historical, not the
+  // current inventory). At most once; the first time returns true.
+  function keepsake(s, id, how) {
+    const d = s.discovery || (s.discovery = RB.state.newCampaign().discovery);
+    if (d.keepsakes[id]) return false;
+    if (!RB.state.once(s, 'keepsake:' + id)) return false;
+    d.keepsakes[id] = { t: Date.now(), map: s.map, how: how || null };
+    RB.bus.emit('keepsake:found', { id });
+    return true;
+  }
+  return { keepsake };
+})();
+
+// conditions: keepsake.id, bond>=trusted (by stage id), memory.id
+RB.state.addTerm('keepsake', (s, rest) => !!(s.discovery && s.discovery.keepsakes[rest]));
+RB.state.addTerm('memory', (s, rest) => !!(s.company && s.company.memories.some((m) => m.id === rest)));
+RB.state.addTerm('bond', (s, rest, op, val, num, cmp) => {
+  const order = RB.company.STAGES.map((x) => x[1]);
+  const cur = order.indexOf(RB.company.stage(s).id);
+  const want = order.indexOf(val);
+  return want < 0 ? cmp(RB.company.score(s), op || '>=', num(val)) : cmp(cur, op || '>=', want);
+});
 
 
 /* ==== src/engine/07_equip.js ==== */
@@ -27751,6 +27918,10 @@ RB.save = (function () {
   let db = null;
   const mem = new Map(); // session-only store
   let current = { slot: null, rev: 0, readOnly: false, lockRelease: null };
+  // load-time normalisers registered by later systems (addMigration); each must
+  // be idempotent and must never invent history the save does not record
+  const MIGRATIONS = [];
+  function addMigration(f) { MIGRATIONS.push(f); }
   let chan = null;
   const tabId = Math.random().toString(36).slice(2);
   let persisted = null;
@@ -27880,6 +28051,9 @@ RB.save = (function () {
     for (const k of ['flags', 'vars', 'quests', 'inv', 'learn', 'seen']) if (!st[k] || typeof st[k] !== 'object') errs.push('missing ' + k);
     if (!Array.isArray(st.words)) errs.push('missing words');
     if (st.comp && !RB.content.chars[st.comp]) errs.push('unknown companion');
+    // optional records added later: absent is fine (migrate fills them), the wrong shape is not
+    for (const k of ['company', 'discovery', 'creatures', 'awarded']) if (k in st && (!st[k] || typeof st[k] !== 'object' || Array.isArray(st[k]))) errs.push('bad ' + k);
+    if ('bookmarks' in st && !Array.isArray(st.bookmarks)) errs.push('bad bookmarks');
     return errs;
   }
   function migrate(st) {
@@ -27888,6 +28062,9 @@ RB.save = (function () {
     for (const k in base) if (!(k in st)) st[k] = RB.util.deepClone(base[k]);
     for (const k in base.learn) if (!(k in st.learn)) st.learn[k] = RB.util.deepClone(base.learn[k]);
     for (const k in base.atlas) if (!(k in st.atlas)) st.atlas[k] = RB.util.deepClone(base.atlas[k]);
+    for (const ns of ['company', 'discovery']) for (const k in base[ns]) if (!(k in st[ns])) st[ns][k] = RB.util.deepClone(base[ns][k]);
+    // later systems normalise their own records on load (derived milestones, unknown ids kept, ...)
+    for (const f of MIGRATIONS) f(st);
     return st;
   }
   function metaOf(st) {
@@ -28154,7 +28331,7 @@ RB.save = (function () {
   }
 
   return {
-    detect, status, requestPersist, list, read, writeSlot, writeRecovery, del, copy, validate, migrate,
+    detect, status, requestPersist, list, read, writeSlot, writeRecovery, del, copy, validate, migrate, addMigration,
     loadSettings, saveSettings, claim, takeOver, releaseLock, setReadOnly, setCurrent, manualSave, autosave,
     ConflictError, SLOTS, current: () => current, _mode: () => mode,
   };
@@ -28193,6 +28370,11 @@ RB.game = (function () {
       // quest guidance (src/engine/56_questguide.js): 'full' markers and hints, 'hints' only, 'off' objectives only
       // (older records lack it: 'full')
       questGuide: 'full',
+      // cosmetic pets (docs/ADDENDUM_CONTRACTS.md): shown in exploration / in battle once one is
+      // met; quiet pet sounds follow the effects volume and are never an essential cue
+      petWorld: true, petBattle: true, petSounds: true,
+      // the Roadside Keepsakes catalogue may hide its completion counts
+      keepsakeCounts: true,
     };
   }
 
@@ -30553,6 +30735,7 @@ RB.ui.folio = (function () {
     down: '<path d="M5 9l7 7 7-7"/>',
     main: '<path d="M7 3h10v18l-5-4-5 4z"/>',
     side: '<circle cx="12" cy="12" r="6.5"/><path d="M12 8.5v4l2.5 1.5"/>',
+    paw: '<ellipse cx="12" cy="15.5" rx="4" ry="3.5"/><circle cx="6.5" cy="10" r="1.7"/><circle cx="10" cy="7" r="1.7"/><circle cx="14" cy="7" r="1.7"/><circle cx="17.5" cy="10" r="1.7"/>',
     companion: '<circle cx="9" cy="8" r="3"/><circle cx="16" cy="9" r="2.5"/><path d="M3.5 19c.8-4 3-6 5.5-6s4.7 2 5.5 6"/><path d="M14 14c2.6 0 4.5 1.8 5 5"/>',
     done: '<path d="M4 12.5l5 5L20 6.5"/>',
     note: '<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/><path d="M9 11h7M9 15h7"/>',
@@ -32959,12 +33142,16 @@ RB.ui.create = (function () {
 
 
 /* ==== src/ui/50_menu.js ==== */
-/* The pause folio: four paper tabs — Journey (quests, notes, dialogue
+/* The pause folio: five paper tabs — Journey (quests, notes, dialogue
  * history), Words (inscriptions, noted words, kana, grammar, lore, progress,
  * guide), Satchel (equipment and carried items), Map (route chart and fast
- * travel) — plus Save & Load and Settings as plain utility actions on the
- * folio's foot. Old section names still open the right place
- * (journal, log, notebook, guide, items, settings, save). */
+ * travel), Company (the companion, the pet, shared memories: src/ui/52_company.js)
+ * — plus Save & Load and Settings as plain utility actions on the folio's
+ * foot. Old section names still open the right place (journal, log,
+ * notebook, guide, items, settings, save).
+ *
+ * Later systems add pages without editing this file: addPage('journey' |
+ * 'words' | 'map', def) (see docs/ADDENDUM_CONTRACTS.md). */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.ui.menu = (function () {
@@ -32977,20 +33164,33 @@ RB.ui.menu = (function () {
     { id: 'words', en: 'Words', jp: '{言葉|ことば}', icon: 'words' },
     { id: 'satchel', en: 'Satchel', jp: '{荷物|にもつ}', icon: 'satchel' },
     { id: 'map', en: 'Map', jp: '{地図|ちず}', icon: 'map' },
+    { id: 'company', en: 'Company', jp: '{道連|みちづ}れ', icon: 'companion' },
   ];
   // old tab ids → [section, sub-view] or a utility
   const ALIAS = {
     journal: ['journey', 'quests'], journey: ['journey'], log: ['journey', 'history'], history: ['journey', 'history'],
     notebook: ['words'], words: ['words'], guide: ['words', 'guide'], items: ['satchel'], satchel: ['satchel'], map: ['map'],
+    company: ['company'], companion: ['company', 'companion'], pet: ['company', 'pet'], pets: ['company', 'pet'], memories: ['company', 'memories'],
+    cases: ['journey', 'cases'], keepsakes: ['journey', 'keepsakes'], bookmarks: ['words', 'bookmarks'], creatures: ['words', 'creatures'], known: ['map', 'known'],
     settings: '@settings', save: '@save',
   };
+  // pages added by later systems: journey views, words pages, map views
+  //   journey/map: { id, en, icon, available?(s), render(A, B, two, api) }
+  //   words:       { id, en, jp, count?(s), available?(s), html(s, api), wire?(el, s, api) }
+  const EXT = { journey: [], words: [], map: [] };
+  function addPage(section, def) { const L = EXT[section]; const i = L.findIndex((d) => d.id === def.id); if (i >= 0) L[i] = def; else L.push(def); }
+  const extOf = (section, id) => EXT[section].find((d) => d.id === id);
+  const avail = (d, s) => !d.available || d.available(s);
+  // what an added page may do: re-render (keeping scroll), close, go elsewhere
+  function api(section) { return { s: RB.game.s, view: view[section], remember, render: () => { remember(); render(); }, close, go, two: F().wide() }; }
   const COMPANION_QUESTS = { co_suzu: 'suzu', lf_nao: 'nao', lf_mio: 'mio', ren_ushio: 'ren' };
   const view = {
     section: 'journey',
     journey: { view: 'quests', sel: null, nudge: {} }, // nudge: quest id + ':' + stage → nudges shown
     words: { sub: null, guide: 'basics' },
     satchel: { sel: null },
-    map: {},
+    map: { view: 'chart' },
+    company: { page: null },
     scroll: {},
   };
   let layer = null, fr = null, tabsApi = null, mq = null, stopDemo = () => {};
@@ -33053,7 +33253,9 @@ RB.ui.menu = (function () {
   function back() {
     const w = view.words, j = view.journey;
     if (view.section === 'words' && w.sub && !F().wide()) { remember(); w.sub = null; render(); return; }
-    if (view.section === 'journey' && j.view === 'history') { remember(); j.view = 'quests'; render(); return; }
+    if (view.section === 'journey' && j.view !== 'quests') { remember(); j.view = 'quests'; render(); return; }
+    if (view.section === 'map' && view.map.view !== 'chart') { remember(); view.map.view = 'chart'; render(); return; }
+    if (view.section === 'company' && RB.ui.company && RB.ui.company.back && RB.ui.company.back(api('company'))) return;
     close();
   }
   function go(section, sub) {
@@ -33066,10 +33268,12 @@ RB.ui.menu = (function () {
   function applySub(section, sub) {
     if (section === 'journey') view.journey.view = sub || 'quests';
     if (section === 'words') view.words.sub = sub || view.words.sub;
+    if (section === 'map') view.map.view = sub || 'chart';
+    if (section === 'company' && sub) view.company.page = sub;
   }
   function key() {
     const s = view.section;
-    return s + ':' + (s === 'journey' ? view.journey.view : s === 'words' ? view.words.sub || 'index' : '');
+    return s + ':' + (s === 'journey' ? view.journey.view : s === 'words' ? view.words.sub || 'index' : s === 'map' ? view.map.view : s === 'company' ? view.company.page || '' : '');
   }
   function remember() {
     if (!fr) return;
@@ -33088,7 +33292,7 @@ RB.ui.menu = (function () {
     fr.box.innerHTML = '<div class="spread' + (two ? ' two' : '') + '" id="folio-page" role="tabpanel" aria-labelledby="tab-' + view.section + '">' +
       '<div class="leaf" tabindex="0" aria-label="' + esc(sec.en) + ' page"></div><div class="leaf leaf-b" tabindex="0" aria-label="' + esc(sec.en) + ' detail page"></div></div>';
     const [A, B] = fr.box.querySelectorAll('.leaf');
-    ({ journey, words, satchel, map })[view.section](A, B, two);
+    ({ journey, words, satchel, map, company })[view.section](A, B, two);
     const sc = view.scroll[key()];
     if (sc) { A.scrollTop = sc[0]; B.scrollTop = sc[1]; }
   }
@@ -33195,7 +33399,18 @@ RB.ui.menu = (function () {
     const J = view.journey;
     const sub = '<div class="subnav" role="group" aria-label="Journey pages">' +
       '<button class="subbtn" data-jv="quests" aria-pressed="' + (J.view === 'quests') + '">' + I('journey') + 'Quests &amp; notes</button>' +
-      '<button class="subbtn" data-jv="history" aria-pressed="' + (J.view === 'history') + '">' + I('history') + 'Dialogue history</button></div>';
+      '<button class="subbtn" data-jv="history" aria-pressed="' + (J.view === 'history') + '">' + I('history') + 'Dialogue history</button>' +
+      EXT.journey.filter((d) => avail(d, s)).map((d) => '<button class="subbtn" data-jv="' + d.id + '" aria-pressed="' + (J.view === d.id) + '">' + I(d.icon || 'journey') + esc(d.en) + '</button>').join('') + '</div>';
+    const xj = extOf('journey', J.view);
+    if (xj && avail(xj, s)) {
+      A.innerHTML = sub;
+      const holder = RB.ui.el('div', 'xpage');
+      A.appendChild(holder);
+      xj.render(holder, B, two, api('journey'));
+      A.addEventListener('click', (e) => { const v = e.target.closest('[data-jv]'); if (v) { remember(); J.view = v.dataset.jv; render(); } });
+      return;
+    }
+    if (J.view !== 'quests' && J.view !== 'history') J.view = 'quests';
     if (J.view === 'history') {
       const lines = s.backlog.slice(-120);
       A.innerHTML = sub + '<h3>Dialogue history <span class="count">' + lines.length + ' lines, oldest first</span></h3>' +
@@ -33301,12 +33516,13 @@ RB.ui.menu = (function () {
       ['lore', 'Lore & histories', '{言|い}い{伝|つた}え', lore.length],
       ['progress', 'How your learning is going', '{進|すす}み{具合|ぐあい}', null],
       ['guide', 'Guide: how things work', '{手引|てび}き', null],
-    ];
+    ].concat(EXT.words.filter((d) => avail(d, s)).map((d) => [d.id, d.en, d.jp, d.count ? d.count(s) : null]));
   }
   function words(A, B, two) {
     const s = RB.game.s;
     const W = view.words;
     const subs = wordSubs(s);
+    if (W.sub && !subs.find((x) => x[0] === W.sub)) W.sub = null; // a page not (yet) available
     const ng = s.learn.profile === 'F' && s.learn.kanaKnown !== 'both' ? RB.lessons.nextGroup(s) : null;
     const index = '<h3>Contents</h3><ul class="index">' + subs.map(([id, l, jp, n]) =>
       '<li><button data-sub="' + id + '" aria-current="' + (two && (W.sub || 'inscriptions') === id) + '"><span class="lbl">' + esc(l) + '</span><span class="fill"></span>' + (n != null ? '<span class="n">' + n + '</span>' : '') + '</button></li>').join('') + '</ul>' +
@@ -33393,9 +33609,13 @@ RB.ui.menu = (function () {
       }
       return h;
     }
+    const xw = extOf('words', id);
+    if (xw) return xw.html(s, api('words'));
     return '';
   }
   function wireWords(el, s) {
+    const xw = extOf('words', view.words.sub || 'inscriptions');
+    if (xw && xw.wire) { xw.wire(el, s, api('words')); return; }
     el.onclick = (e) => {
       if (e.target.closest('[data-kchart]')) { RB.kanjiChart.open({ mode: 'browse', kana: 'any' }); return; }
       const g = e.target.closest('[data-g]');
@@ -33611,6 +33831,23 @@ RB.ui.menu = (function () {
   }
   function map(A, B, two) {
     const s = RB.game.s;
+    const views = EXT.map.filter((d) => avail(d, s));
+    if (!views.find((d) => d.id === view.map.view)) view.map.view = 'chart';
+    const nav = views.length ? '<div class="subnav" role="group" aria-label="Map pages"><button class="subbtn" data-mv="chart" aria-pressed="' + (view.map.view === 'chart') + '">' + I('map') + 'Route chart</button>' +
+      views.map((d) => '<button class="subbtn" data-mv="' + d.id + '" aria-pressed="' + (view.map.view === d.id) + '">' + I(d.icon || 'map') + esc(d.en) + '</button>').join('') + '</div>' : '';
+    const navClick = (e) => { const v = e.target.closest('[data-mv]'); if (!v) return false; remember(); view.map.view = v.dataset.mv; render(); return true; };
+    if (view.map.view !== 'chart') {
+      A.innerHTML = nav;
+      const holder = RB.ui.el('div', 'xpage');
+      A.appendChild(holder);
+      extOf('map', view.map.view).render(holder, B, two, api('map'));
+      A.addEventListener('click', navClick);
+      return;
+    }
+    mapChart(A, B, two, nav, navClick);
+  }
+  function mapChart(A, B, two, nav, navClick) {
+    const s = RB.game.s;
     const curMap = RB.content.maps[s.map] || {};
     const canTravel = !curMap.noTravel && RB.game.mode() === 'menu';
     const places = Object.keys(RB.content.places).map((id) => Object.assign({ id }, RB.content.places[id])).filter((p) => s.travel[p.id]);
@@ -33626,8 +33863,9 @@ RB.ui.menu = (function () {
         return '<li class="entry"><span class="mark">' + I(here ? 'here' : 'map') + '</span><div><div class="t">' + j(p.name.jp) + ' <span class="en">' + esc(p.name.en) + '</span></div>' + (p.desc ? '<div class="muted small">' + esc(p.desc) + '</div>' : '') + (here ? '<div class="kind">you are in this region</div>' : '') + (next ? '<div class="kind next-kind">' + I('follow') + ' next step of the quest you follow</div>' : '') + '</div>' +
           (canTravel ? '<button class="pbtn" data-go="' + p.id + '">Travel</button>' : '<span></span>') + '</li>';
       }).join('') + '</ul><p class="muted small">Roads you have walked can be travelled quickly.</p>';
-    if (two) { A.innerHTML = chart; B.innerHTML = list; } else { A.innerHTML = chart + list; }
+    if (two) { A.innerHTML = nav + chart; B.innerHTML = list; } else { A.innerHTML = nav + chart + list; }
     const handler = async (e) => {
+      if (navClick(e)) return;
       const b = e.target.closest('[data-go]');
       if (!b) return;
       const p = RB.content.places[b.dataset.go];
@@ -33635,6 +33873,12 @@ RB.ui.menu = (function () {
       await RB.game.transition(p.map, p.x, p.y, p.dir || 'down');
     };
     A.onclick = handler; B.onclick = handler;
+  }
+
+  // ---- Company (src/ui/52_company.js draws it) ------------------------------------------------
+  function company(A, B, two) {
+    if (RB.ui.company) RB.ui.company.render(A, B, two, api('company'));
+    else A.innerHTML = '<p class="muted">Nothing here yet.</p>';
   }
 
   // ---- Save & Load (utility sheet) ---------------------------------------------------------------
@@ -33669,13 +33913,120 @@ RB.ui.menu = (function () {
 
   function settingsStandalone() { return RB.ui.settings.open(); }
 
-  return { open, close, closeAll, settingsStandalone, isOpen: () => !!layer, current: () => ({ section: view.section, journey: view.journey.view, words: view.words.sub }) };
+  return { open, close, closeAll, settingsStandalone, addPage, isOpen: () => !!layer, current: () => ({ section: view.section, journey: view.journey.view, words: view.words.sub, map: view.map.view, company: view.company.page }) };
 })();
 
 RB.ui.credits = function () {
   return RB.ui.card('{終|お}わり ── そして 、 {道|みち} は {続|つづ}く 。', 'The end — and the road goes on.');
 };
 RB.ui.shop = function () { return Promise.resolve(); };
+
+
+/* ==== src/ui/52_company.js ==== */
+/* Company: the fifth folio section (src/ui/50_menu.js). Who is travelling —
+ * the committed companion and, if one has been met and chosen, a cosmetic
+ * pet — and what the two of you have shared.
+ *
+ * Three internal pages: Companion, Pet and Shared Memories. On a wide screen
+ * the usual two-page spread (identity and choices on the left leaf, the
+ * selected detail on the right); on a phone one page with a clear Back.
+ *
+ * Pages are registered, so the systems that own them draw them:
+ *   RB.ui.company.addPage({ id, en, jp, icon, render(A, B, two, api) })
+ * `api` is the folio's (see 50_menu.js api()): { s, view, render, close, go,
+ * remember, two }, plus `back()` here to leave a detail on a phone. A page
+ * that opens a detail on a phone sets api.view.detail and clears it on back.
+ * The defaults below are honest minimal pages; later files replace them.
+ *
+ * Nothing on these pages changes play: no scores, no bonuses. The pet is a
+ * cosmetic companion. See docs/ADDENDUM_CONTRACTS.md. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.ui.company = (function () {
+  'use strict';
+  const esc = RB.util.esc;
+  const I = (n, t) => RB.ui.folio.icon(n, t);
+  const j = (t) => (t ? RB.ui.jhtml(t) : '');
+  const ORDER = ['companion', 'pet', 'memories'];
+  const PAGES = {};
+  function addPage(def) { PAGES[def.id] = def; }
+
+  const chr = (id) => (id && RB.content.chars[id]) || null;
+  // the species label and name of the active pet (RB.pets draws it once it exists)
+  function petLine(s) {
+    const c = s.company || {};
+    const id = c.pet, p = id && c.pets && c.pets[id];
+    if (!p) return null;
+    const sp = RB.pets && RB.pets.species ? RB.pets.species(id) : null;
+    return { id, name: p.name || (sp && sp.name) || id, label: sp ? sp.label : { en: id } };
+  }
+  // the paired summary at the top: who is travelling (never a third party slot)
+  function summary(s) {
+    const comp = chr(s.comp), prov = !s.comp && chr(s.provisional);
+    const pl = petLine(s);
+    const who = comp ? '<b>' + esc(comp.name.en) + '</b> <span class="muted">' + esc(comp.role ? comp.role.en : '') + '</span>'
+      : prov ? '<b>' + esc(prov.name.en) + '</b> <span class="muted">travelling with you for now; not yet decided</span>'
+        : '<span class="muted">No one has joined you yet.</span>';
+    const pet = pl ? '<b>' + esc(pl.name) + '</b> <span class="muted">' + esc(pl.label.en || '') + '</span>' : '<span class="muted">No pet</span>';
+    return '<div class="co-pair" role="group" aria-label="Travelling together"><div class="co-who">' + I('companion') + '<span>' + who + '</span></div>' +
+      '<div class="co-who">' + I('paw') + '<span>' + pet + '</span></div></div>';
+  }
+  function nav(cur) {
+    return '<div class="subnav" role="group" aria-label="Company pages">' + ORDER.filter((id) => PAGES[id]).map((id) =>
+      '<button class="subbtn" data-cp="' + id + '" aria-pressed="' + (cur === id) + '">' + I(PAGES[id].icon || 'companion') + esc(PAGES[id].en) + '</button>').join('') + '</div>';
+  }
+  function defaultPage(s) {
+    if (s.comp || s.provisional) return 'companion';
+    return s.company && s.company.pet ? 'pet' : 'companion';
+  }
+  function render(A, B, two, api) {
+    const s = api.s;
+    const V = api.view;
+    if (!V.page || !PAGES[V.page]) V.page = defaultPage(s);
+    const page = PAGES[V.page];
+    A.innerHTML = summary(s) + nav(V.page);
+    const holder = RB.ui.el('div', 'xpage co-page');
+    A.appendChild(holder);
+    if (two) B.innerHTML = '';
+    page.render(holder, B, two, Object.assign({ back: () => back(api) }, api));
+    A.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-cp]');
+      if (!b) return;
+      api.remember(); V.page = b.dataset.cp; V.detail = null; api.render();
+    });
+  }
+  // Back on a phone: leave an open detail first; otherwise let the folio close
+  function back(api) {
+    if (api.view.detail && !RB.ui.folio.wide()) { api.view.detail = null; api.render(); return true; }
+    return false;
+  }
+
+  // ---- honest defaults (replaced by the systems that own each page) ---------------------------
+  addPage({ id: 'companion', en: 'Companion', jp: '{相棒|あいぼう}', icon: 'companion', render(A, B, two, api) {
+    const s = api.s, comp = chr(s.comp);
+    if (!comp) {
+      const prov = chr(s.provisional);
+      A.innerHTML = prov ? '<p>' + esc(prov.name.en) + ' is travelling with you for now. Nothing is decided until you set out together.</p>'
+        : '<p class="muted">No one travels with you yet.</p>';
+      return;
+    }
+    const acts = (RB.content.companionActions && RB.content.companionActions[s.comp]) || [];
+    const open = acts.filter((a) => !a.unlock || RB.state.test(s, a.unlock));
+    const html = '<h3>' + j(comp.name.jp) + ' <span class="en">' + esc(comp.name.en) + '</span></h3>' +
+      '<p class="muted">' + esc(comp.role ? comp.role.en : '') + '</p>' +
+      '<h4>' + I('companion') + ' On their turn in battle</h4><ul class="entries">' + open.map((a) => '<li class="entry"><span class="mark">' + I('next') + '</span><div><div class="t">' + j(a.name.jp) + ' <span class="en">' + esc(a.name.en) + '</span></div><div class="muted small">' + esc(a.desc || '') + '</div></div></li>').join('') + '</ul>';
+    A.innerHTML = html;
+  } });
+  addPage({ id: 'pet', en: 'Pet', jp: '{動物|どうぶつ}', icon: 'paw', render(A) {
+    A.innerHTML = '<p class="muted">You haven’t met an animal on the road yet. Travelling without one is a complete way to travel.</p>';
+  } });
+  addPage({ id: 'memories', en: 'Shared memories', jp: '{思|おも}い{出|で}', icon: 'journey', render(A, B, two, api) {
+    const m = (api.s.company || {}).memories || [];
+    A.innerHTML = m.length ? '<ol class="entries">' + m.map((x) => '<li class="entry"><div><div class="t">' + esc(x.title ? x.title.en : x.id) + '</div></div></li>').join('') + '</ol>'
+      : '<p class="muted">Moments you share on the road will be kept here.</p>';
+  } });
+  return { addPage, render, back, summary, pages: PAGES };
+})();
 
 
 /* ==== src/ui/55_settings.js ==== */
@@ -33830,8 +34181,12 @@ RB.ui.settings = (function () {
         '<p>Saves belong to this browser profile and this page\'s address. Clearing site data, private windows, or opening the game from a different address or browser will not see them.' + (ss.persisted ? ' The browser has granted persistent storage (you can still clear it yourself).' : '') + '</p>' +
         (ss.mode !== 'session' && !ss.persisted ? '<div class="row-acts"><button class="pbtn" data-a="persist">Ask the browser to keep saves</button></div>' : '');
     }
+    // rows added by later systems: EXTRA[group] = [({ radios, sw, slider, esc }) => html]
+    for (const f of EXTRA[g] || []) h += f({ radios, sw, slider, esc }) || '';
     return h;
   }
+  const EXTRA = {};
+  function addRows(g, f) { (EXTRA[g] = EXTRA[g] || []).push(f); }
 
   // ---- behaviour (unchanged persistence: apply now, save now; sliders debounce) --------------
   function wire(L) {
@@ -33907,7 +34262,7 @@ RB.ui.settings = (function () {
     if (n) n.focus({ preventScroll: true });
   }
 
-  return { open, close, isOpen: () => !!lay };
+  return { open, close, addRows, isOpen: () => !!lay };
 })();
 
 

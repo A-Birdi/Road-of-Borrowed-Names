@@ -149,8 +149,12 @@ RB.ui.settings = (function () {
         '<p>Saves belong to this browser profile and this page\'s address. Clearing site data, private windows, or opening the game from a different address or browser will not see them.' + (ss.persisted ? ' The browser has granted persistent storage (you can still clear it yourself).' : '') + '</p>' +
         (ss.mode !== 'session' && !ss.persisted ? '<div class="row-acts"><button class="pbtn" data-a="persist">Ask the browser to keep saves</button></div>' : '');
     }
+    // rows added by later systems: EXTRA[group] = [({ radios, sw, slider, esc }) => html]
+    for (const f of EXTRA[g] || []) h += f({ radios, sw, slider, esc }) || '';
     return h;
   }
+  const EXTRA = {};
+  function addRows(g, f) { (EXTRA[g] = EXTRA[g] || []).push(f); }
 
   // ---- behaviour (unchanged persistence: apply now, save now; sliders debounce) --------------
   function wire(L) {
@@ -226,5 +230,5 @@ RB.ui.settings = (function () {
     if (n) n.focus({ preventScroll: true });
   }
 
-  return { open, close, isOpen: () => !!lay };
+  return { open, close, addRows, isOpen: () => !!lay };
 })();

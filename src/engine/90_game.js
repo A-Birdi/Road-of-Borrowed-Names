@@ -29,6 +29,11 @@ RB.game = (function () {
       // quest guidance (src/engine/56_questguide.js): 'full' markers and hints, 'hints' only, 'off' objectives only
       // (older records lack it: 'full')
       questGuide: 'full',
+      // cosmetic pets (docs/ADDENDUM_CONTRACTS.md): shown in exploration / in battle once one is
+      // met; quiet pet sounds follow the effects volume and are never an essential cue
+      petWorld: true, petBattle: true, petSounds: true,
+      // the Roadside Keepsakes catalogue may hide its completion counts
+      keepsakeCounts: true,
     };
   }
 

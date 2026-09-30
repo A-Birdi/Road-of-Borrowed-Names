@@ -22,6 +22,7 @@ RB.ui.folio = (function () {
     down: '<path d="M5 9l7 7 7-7"/>',
     main: '<path d="M7 3h10v18l-5-4-5 4z"/>',
     side: '<circle cx="12" cy="12" r="6.5"/><path d="M12 8.5v4l2.5 1.5"/>',
+    paw: '<ellipse cx="12" cy="15.5" rx="4" ry="3.5"/><circle cx="6.5" cy="10" r="1.7"/><circle cx="10" cy="7" r="1.7"/><circle cx="14" cy="7" r="1.7"/><circle cx="17.5" cy="10" r="1.7"/>',
     companion: '<circle cx="9" cy="8" r="3"/><circle cx="16" cy="9" r="2.5"/><path d="M3.5 19c.8-4 3-6 5.5-6s4.7 2 5.5 6"/><path d="M14 14c2.6 0 4.5 1.8 5 5"/>',
     done: '<path d="M4 12.5l5 5L20 6.5"/>',
     note: '<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/><path d="M9 11h7M9 15h7"/>',

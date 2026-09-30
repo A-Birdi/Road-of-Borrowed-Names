@@ -31,7 +31,7 @@ const state = (p) => p.evaluate(() => ({
   await p.waitForTimeout(60);
   let s = await state(p);
   assert(s.open && s.mode === 'menu', 'menu opens in menu mode');
-  assert(s.tabs.map((t) => t.id).join() === 'journey,words,satchel,map', 'four primary tabs in fixed order: ' + s.tabs.map((t) => t.id).join());
+  assert(s.tabs.map((t) => t.id).join() === 'journey,words,satchel,map,company', 'five primary tabs in fixed order: ' + s.tabs.map((t) => t.id).join());
   assert(await p.evaluate(() => document.querySelector('.tabrail').getAttribute('role') === 'tablist'), 'rail is a tablist');
   assert(s.tabs.every((t) => t.ctl === 'folio-page') && s.panel && s.panel.role === 'tabpanel' && s.panel.by === 'tab-journey', 'tabs control the tabpanel, which is labelled by the selected tab');
   assert(s.tabs.filter((t) => t.sel === 'true').length === 1 && s.tabs[0].sel === 'true' && s.tabs[0].ti === 0 && s.tabs.slice(1).every((t) => t.ti === -1), 'one selected tab with roving tabindex');
@@ -41,7 +41,7 @@ const state = (p) => p.evaluate(() => ({
   s = await state(p);
   assert(s.tabs[2].sel === 'true' && /Satchel/.test(s.title), 'click selects Satchel and shows its page');
   const order = (await state(p)).tabs.map((t) => t.id).join();
-  assert(order === 'journey,words,satchel,map', 'selecting does not reorder the tabs');
+  assert(order === 'journey,words,satchel,map,company', 'selecting does not reorder the tabs');
   // keyboard: arrows, Home/End, wrap
   await p.focus('.ptab[data-id=satchel]');
   await p.keyboard.press('ArrowRight');
@@ -49,14 +49,17 @@ const state = (p) => p.evaluate(() => ({
   assert(s.tabs[3].sel === 'true' && s.focus === 'map', 'ArrowRight selects and focuses Map');
   await p.keyboard.press('ArrowRight');
   s = await state(p);
+  assert(s.tabs[4].sel === 'true' && s.focus === 'company' && /Company/.test(s.title), 'ArrowRight selects Company');
+  await p.keyboard.press('ArrowRight');
+  s = await state(p);
   assert(s.tabs[0].sel === 'true' && s.focus === 'journey', 'ArrowRight wraps to Journey');
   await p.keyboard.press('End');
-  assert((await state(p)).focus === 'map', 'End goes to the last tab');
+  assert((await state(p)).focus === 'company', 'End goes to the last tab');
   await p.keyboard.press('Home');
   assert((await state(p)).focus === 'journey', 'Home goes to the first tab');
   await p.keyboard.press('ArrowLeft');
   s = await state(p);
-  assert(s.focus === 'map' && s.mode === 'menu', 'ArrowLeft wraps; the game did not act on the arrow');
+  assert(s.focus === 'company' && s.mode === 'menu', 'ArrowLeft wraps; the game did not act on the arrow');
   // the overlapping faces never take a neighbour's clicks: probe each tab's box edges
   const probe = await p.evaluate(() => {
     const out = [];
@@ -132,7 +135,7 @@ for (const [w, h, scale] of [[390, 844, 1], [360, 800, 1], [320, 640, 1], [390, 
   if (scale !== 1) await p.evaluate((sc) => { RB.game.settings.textScale = sc; RB.game.applySettings(); }, scale);
   await start(p);
   const tag = w + 'x' + h + (scale !== 1 ? ' @' + scale * 100 + '% text' : '');
-  for (const sec of ['journey', 'words', 'satchel', 'map']) {
+  for (const sec of ['journey', 'words', 'satchel', 'map', 'company']) {
     await openMenu(p, sec);
     await p.waitForTimeout(120);
     const m = await p.evaluate(() => {
