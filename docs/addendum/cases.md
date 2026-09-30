@@ -176,42 +176,107 @@ arrival → Harbour Office door 18, Seto 29, Hama 32, old footing 52, lighthouse
 
 ## 10. Tests run (exact results, this worktree)
 
-- `node tools/validate.mjs`: no errors (unknown tokens from these files: none).
-- `node tests/run-unit.mjs cases`: 194 passed, 0 failed. `quest_guide`: 68/68. `recog-coverage`: 15/15 (after regenerating: 共 燕 紋 謎).
-- Full unit suite and the existing browser suites: see §12 (filled in after the runs).
-- `node tests/e2e/cases.mjs`: 10 flows, all passed (A thorough, A clue-first/early, A strongest help, A evidence kept, B full route through
-  the record, B held up in the world, B strongest help, both after the story, refined sequences + keepsakes, older save claims once).
-- `node tests/e2e/cases_shots.mjs`: all passed (markup in a note shown as text; comparison of two; keyboard Enter/Space/Tab on the sheet; the
-  answer behind a second press; no overflow on a 390×844 phone).
+Where: all browser tests ran in headless Chromium (installed Playwright), in isolated contexts, against synthetic states. No real
+save was touched. Other workers ran their own suites on the same 4-core machine at the same time (load average 30–40), so checks
+that depend on timing are marked below and compared against the base build `aa825c3` under the same load.
+
+**Own tests (final build):**
+- `node tools/validate.mjs`: no errors. The one warning (lexicon conflict 納得, ch2/ch5) predates this work.
+- `node tests/run-unit.mjs cases`: 194 passed, 0 failed. This covers words, the Star Stair geometry against the compiled map,
+  placement (free tiles, reachability with and without the additions), rules, reactions, keepsakes, every original correct form of
+  the refined sequences, talk guards, and Known Details.
+- `node tests/run-unit.mjs quest_guide`: 68 passed, 0 failed. `recog-coverage`: 15/15 after regenerating the stroke data for 共 燕 紋 謎.
+- `node tests/e2e/cases.mjs`: 11 flows, 118 checks, 0 failed:
+  - Case A: thorough order; clue first with an early delivery; strongest help; evidence kept beyond the 120-line history.
+  - Case B: the full route through the record; held up in the world; strongest help.
+  - Both cases after the story.
+  - The refined sequences and their four keepsakes.
+  - An older save claims each keepsake once.
+  - From an Inspect view to the record, and from a Company topic.
+- `node tests/e2e/cases_shots.mjs`: 11 checks, all passed:
+  - A note containing markup is shown as plain text.
+  - Two observations can be compared side by side.
+  - Keyboard: Enter, Space and Tab work on the sheet.
+  - The answer needs a second press.
+  - The sketch can be left framed at the seat.
+  - The solved record keeps the view.
+  - On a 390×844 phone nothing overflows sideways, also at 200 % text with high contrast.
+  - No page errors.
 - `node tests/e2e/known.mjs`: 22 checks, all passed.
 
-All browser tests: headless Chromium (installed Playwright), isolated contexts, synthetic states; no real save touched.
+**Existing suites (final or near-final build):**
+- Full unit suite (`node tests/run-unit.mjs`), final tree: 4861 passed, 3 failed. All three are timing checks under load:
+  - kanji-chart search under 25 ms;
+  - median recognize() under 30 ms (it was 56.9 ms);
+  - p95 recognize() under 60 ms (it was 243 ms).
+
+  The first run, made before two content fixes, had 4860 passed and 4 failed. The two `quest_guide` failures in it (the unknown
+  word 旅路, and nouns for the two new target props) are fixed; `quest_guide` now shows 68/68.
+- Browser suites that passed: `ui`, `systems`, `folio`, `play_ui`, `world_fixes`, `combat_ui`, `battle_group`, `companion_turn`,
+  `long_quests --fixtures-only`, `story_ch4 I ren go` and `settings`.
+- `departures.mjs` FAIL. The Tsuru walk failed in the suite run. Run straight after on both builds, it failed in the same 3 checks
+  with the same messages on base `aa825c3` and on this build (the evening walk to the Hall door, Hana's door, Tsuru's walk). So this
+  is not caused by this work, and it is load-dependent: the earlier run under less load failed only one of them.
+- `battle_anim.mjs` FAIL: 12 passed, 4 failed. All four are timing or animation-order checks: the companion's turn still open after
+  rapid input, a ward block at 617 ms then a hit at 683 ms, the Gathering mark spent at 717 ms after contact at 617 ms, and a
+  20-second frame wait timing out. The same run on base `aa825c3` gave 15 passed and 1 failed (frame cost). A second run on this
+  build, under heavier load, gave 9 passed and 7 failed (timeouts included). The rapid-input test was then run on its own six times,
+  alternating the builds: base failed 3 of 3 with the same message, and this build passed 3 of 3. These checks depend on load, not on
+  this work. No battle file was changed.
+- `quest_guide.mjs` FAIL, 1–2 checks: "near it: the arrow over the exit to the village" and, once, "after stepping back, the markers
+  return". Run back to back, base passed and this build failed the first check. A probe of that exact step (enter the road at
+  24,9, wait 1300 ms, read the markers) gave the opposite: base `edge:true` (a failure) and this build `edge:false`. The arrow sat at
+  x = 624–626 buffer px, right on the on-screen threshold, while the camera was still easing. That makes it a timing check. The
+  quest-guide change here only affects stages that carry `mark`, which only the two case quests do.
+- `learning_ui.mjs` FAIL, 13 passed and 1 failed, twice. The one failure was a timeout ("no horizontal overflow at 320/360/390 and at
+  200% text ...: test timed out after 180s"), not an overflow. That test was run on its own four times, alternating the builds: base timed out 2 of 2 and this build 2 of 2. It is
+  load-bound, and the base build behaves the same way.
+- While checking these, a real side effect of this work was found and fixed: the new stylesheet had given every pressed `.pbtn`
+  (Follow, Keep open, Small kana, Show the model) the case pages' pressed look. The rule is now scoped to the new pages (commit
+  "scope the small and pressed button styles").
+- The unit timing check "a kanji-chart search takes well under 25 ms" failed under load, 3 times of 3 on this tree and once of 2 on
+  base. Timed side by side in one process, the two trees were indistinguishable: 5–98 ms per search on both. The 4 kanji added here
+  are 1556 → 1560 entries. The unit check "p95 recognize() < 60 ms" (p95 86.5 ms under load) is the same kind of check.
 
 ## 11. Evidence
 
-Raw captures: `tests/e2e/out/cases/`, `tests/e2e/out/known/`. Curated (WebP): `docs/screenshots/cases/` (README lines there). Looked at by the
-author: the quay bench and bell, Seto's cottage, the old footing, the Star Stair landmarks, the case records wide and narrow, the sketch
-comparison, the help ladder, Known Details with pins. Visual judgement is the author's only.
+- Raw captures: `tests/e2e/out/cases/` and `tests/e2e/out/known/`.
+- Curated WebP: `docs/screenshots/cases/`, with one README line per image. `node tests/e2e/cases_to_docs.mjs` produces them.
+- The author looked at every curated capture for layout (visual inspection only):
+  - the quay bench and bell, Seto's house, the old footing, the lighthouse window;
+  - the Star Stair landmarks, before and after the sketch is framed, and the chalked tide board;
+  - the case records wide and narrow, the sketch comparison, the help ladder;
+  - Known Details with pins, on a wide screen and on a phone.
+- Two fixes came out of looking at the captures:
+  - The tide-board chalk had been drawn under the board.
+  - Known Details marks were too small on a large map on a phone.
+- This review does not show whether the Japanese reads naturally or whether the cases are fun to play.
 
 ## 12. Limitations and remainder
 
-- Japanese: written by the model, validated for furigana and lexicon coverage only; **no native-speaker review**.
-- The keepsake catalogue, its "found" notice and the Company "Discuss a case" UI belong to D1 and C1: in this worktree a keepsake is recorded
-  (and `keepsake:found` emitted) with an in-dialogue line, but no catalogue notice is shown; C1's Company page is not here.
-- The Mill Road candidate sequence is audited, not changed (D1's files).
-- The views are computed on the map grid; the in-world pictures are schematic (icons placed by bearing), not a rendered perspective.
-- Known Details draws the chosen map only; it does not show fog of war for unwalked parts of a visited map.
-- `RB.known`'s diagram marks and Case B's pictures are SVG; high-contrast mode keeps ink on paper but was not separately audited.
+- Japanese: the model wrote it. It was checked for furigana and lexicon coverage only. **No native speaker has reviewed it.** No
+  person has played the cases.
+- The keepsake catalogue, its "found" notice and the Company "Discuss a case" UI belong to D1 and C1. In this worktree:
+  - a keepsake is recorded, `keepsake:found` is emitted and there is a line in the dialogue, but no catalogue notice is shown;
+  - C1's Company page is not here. `RB.cases.topics(s)[i].open()` opens the record, and the browser test checks this.
+- The Mill Road candidate sequence was audited but not changed, because those are D1's files.
+- The views are computed on the map grid. The in-world pictures are schematic (icons placed by bearing), not a rendered perspective.
+- Known Details draws the chosen map only. It has no fog of war for parts of a visited map that were never walked. Marks scale up on
+  large maps. On a crowded map a number can still sit close to the "you are here" triangle, and the numbered list below carries it.
+- High contrast and 200 % text were checked for fit on the case record only (by the browser test), not for Known Details.
+- Nobody checked how the new pages look with `settings.uiLang = 'ja'`.
+- An existing behaviour was seen but left alone because it is not in these files: the arrival place-name label ("灯台 Lighthouse")
+  stays above the folio if the menu is opened within a few seconds of arriving.
 
 ## 13. Merge notes
 
 - **Shared files touched:** `src/engine/56_questguide.js` (the `mark`/`markAt` branch in `analyse`, the concealed nudge, the cache signature;
   comment updated); `src/content/ch2/22_scenes_tide.js`, `src/content/ch3/41_scenes_kiln.js`, `src/content/ch6/51_scenes_archive.js` (one
   line each in a step-away branch); `src/content/ch4/33_scenes_dungeon.js` (`sb.charts_log`: `-> end` → `-> later` and a 2-line `:later`);
-  `tests/e2e/run.mjs` (three suites added); generated `src/recog/10_strokedata.js`, `src/lang/75_kanjiread.js`, `index.html` (regenerate at
+  `tests/e2e/run.mjs` (three suites added: `cases.mjs`, `cases_shots.mjs`, `known.mjs`; `cases_to_docs.mjs` is a helper, not a suite); generated `src/recog/10_strokedata.js`, `src/lang/75_kanjiread.js`, `index.html` (regenerate at
   merge rather than merge by hand).
-- **New files outside `src/content/cases/`:** `src/content/zz_cases.js` — `src/content/cases/` sorts before `ch1` in the build order, so map
-  placement must live in a file that loads after the chapters; `src/styles/35_cases.css` (new, name chosen not to collide).
+- **New files outside `src/content/cases/`:** `tests/e2e/cases_to_docs.mjs` (WebP helper), `docs/screenshots/cases/` (21 WebP + README); `src/content/zz_cases.js` — `src/content/cases/` sorts before `ch1` in the build order, so map
+  placement must live in a file that loads after the chapters; `src/styles/35_cases.css` (new, name chosen not to collide; every rule is under `.cs-*`/`.kd-*` or scoped to `.cs-record`, `.kd-list`, `.kd-pinform`).
 - **Contract use / extensions:** no contract changed. Added condition heads `case`, `clue` (contract §3 names them). `RB.hooks` entries named
   above. The foundation's `RB.company.react` is used through `case_react`; if C1 adds `RB.company.say`, `case_react` uses it instead.
 - **For D1:** keepsake `art(ctx)` draws in a 32×32 grid (`artSize: 32`); `source.kind` is `'case'` or `'sequence'`. `RB.known.note` and the
