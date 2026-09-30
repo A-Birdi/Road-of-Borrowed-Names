@@ -241,8 +241,9 @@ const state = (p) => p.evaluate(() => JSON.parse(JSON.stringify(RB.game.s)));
   st = await state(p);
   const disc = st.company.memories.find((m) => m.id === 'disc:puzzle:c1_sign');
   const th = await p.evaluate(() => RB.company.thought(RB.game.s));
-  assert(remark.filter((l) => /can be read now/.test(l)).length === 1 && disc && disc.kind === 'discoveries' && /can be read/.test(disc.reply.en) && st.company.bond['puzzle:snowbell'] === 1,
-    'a solved puzzle: one short remark, a Discoveries memory with it, one bond event for the region');
+  // (counted in the dialogue history: the capture above may see one line twice while its text is revealed)
+  assert(remark.some((l) => /can be read now/.test(l)) && st.backlog.filter((l) => /can be read now/.test(l.en || '')).length === 1 && disc && disc.kind === 'discoveries' && /can be read/.test(disc.reply.en) && st.company.bond['puzzle:snowbell'] === 1,
+    'a solved puzzle: one short remark, a Discoveries memory with it, one bond event for the region (' + JSON.stringify({ remark, disc: disc && disc.reply, bond: st.company.bond }) + ')');
   assert(th.kind === 'recent' && /original lettering/.test(th.text.en), 'the longer thought is filed for Company, not spoken');
   await p.evaluate(() => RB.bus.emit('discovery:resolved', { kind: 'puzzle', id: 'c1_sign', region: 'snowbell', method: 'secured' }));
   await p.waitForTimeout(250);
