@@ -124,10 +124,18 @@ RB.weave = (function () {
     layer.onCancel = () => close();
     layer.onAction = (a) => {
       if (a === 'weave') { close(); return true; }
+      // in the list of nearby things the arrow keys change the target (a radio
+      // group); elsewhere in the sheet they move the focus as usual
+      const f = document.activeElement;
+      if ((a === 'left' || a === 'right' || a === 'up' || a === 'down') && f && f.closest && f.closest('.wv-targets') && panel && panel.el.contains(f)) {
+        select(panel.i + (a === 'left' || a === 'up' ? -1 : 1));
+        const nb = panel.el.querySelector('.wv-t[aria-checked="true"]');
+        if (nb) nb.focus({ preventScroll: true });
+        return true;
+      }
       return false;
     };
     el.addEventListener('click', onClick);
-    el.addEventListener('keydown', onKey);
     RB.ui.pushLayer(layer);
     render();
     setTimeout(() => { const f = el.querySelector('.wv-t[aria-checked="true"]') || el.querySelector('.wv-w'); if (f && panel) f.focus({ preventScroll: true }); }, 0);
@@ -233,18 +241,6 @@ RB.weave = (function () {
     if (a === 'cancel') close();
     else if (a === 'hint') { renderHint(true); RB.audio && RB.audio.sfx('page', { vol: 0.5 }); }
     else if (a === 'reset') resetTarget();
-  }
-  // left/right (and up/down) move between nearby things inside the list
-  function onKey(e) {
-    const t = e.target.closest && e.target.closest('.wv-t');
-    if (!t || !panel) return;
-    const k = e.key;
-    if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'ArrowRight' || k === 'ArrowDown') {
-      e.preventDefault(); e.stopPropagation();
-      select(panel.i + (k === 'ArrowLeft' || k === 'ArrowUp' ? -1 : 1));
-      const nb = panel.el.querySelector('.wv-t[aria-checked="true"]');
-      if (nb) nb.focus({ preventScroll: true });
-    }
   }
   // clicking or tapping a nearby thing in the world selects it while the sheet is open
   function onCanvasPointer(e) {

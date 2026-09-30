@@ -68,7 +68,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     exits: [{ x: 10, y: 25, w: 2, h: 1, to: 'rw.village', tx: 22, ty: 1, dir: 'down' }],
     // the narrows are one tile wide between cliffs: its mouth (6,16) is the only
     // way in from either side; the scene pushes back only those heading up
-    triggers: [{ x: 6, y: 16, w: 1, h: 1, scene: 'rw.mr_narrows', if: '!rw_mr_suzu&!rw_echo_done' }],
+    // (mr_mouth: heading up, or heading down for the first time; src/content/discovery/05_millroad.js)
+    triggers: [{ x: 6, y: 16, w: 1, h: 1, scene: 'rw.mr_narrows', if: '!rw_mr_suzu&!rw_echo_done&mr_mouth' }],
     onEnter: [{ scene: 'rw.mr_enter', once: true }],
     spawn: { default: [10, 24, 'up'] },
   };

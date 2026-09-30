@@ -47,7 +47,9 @@ RB.ui.keepsakes = (function () {
   const regionsOfK = (k) => [].concat(k.region || []);
   // every entry except companion mementos, which belong to Shared Journey
   const roadIds = () => Object.keys(K()).filter((id) => K()[id].category !== 'shared');
-  const sharedIds = (s) => Object.keys(K()).filter((id) => K()[id].category === 'shared' && (!K()[id].comp || K()[id].comp === s.comp));
+  // a memento names its companion as `comp` (or `companion`); one without a name belongs to any
+  const compOf = (k) => k.comp || k.companion || null;
+  const sharedIds = (s) => Object.keys(K()).filter((id) => K()[id].category === 'shared' && (!compOf(K()[id]) || compOf(K()[id]) === s.comp));
   function counts(s) {
     const ids = roadIds();
     const known = REGIONS.filter((r) => regionKnown(s, r.id));

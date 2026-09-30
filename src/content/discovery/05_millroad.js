@@ -10,3 +10,11 @@ RB.hooks.mr_heading = async () => {
   const s = RB.game.s, p = RB.world.W.player;
   s.vars._mr_down = p && p.dir === 'down' ? 1 : 0;
 };
+// The narrows' trigger only runs when it has something to do: for whoever
+// arrives at the mouth heading up (the push back), or heading down the first
+// time (one line: the voices only push those going up). Walking down again is
+// just walking: no empty scene interrupts a held key.
+RB.state.addTerm('mr_mouth', (s) => {
+  const p = RB.world && RB.world.W && RB.world.W.player;
+  return !p || p.dir !== 'down' || !s.flags.rw_mr_down_seen;
+});

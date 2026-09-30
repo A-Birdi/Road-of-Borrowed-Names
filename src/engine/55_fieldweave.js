@@ -218,7 +218,10 @@ RB.fieldweave = (function () {
     if (rule && rule.obs) observe(s, pz, rule.obs);
     if (res.effective) {
       r.state = after;
-      r.log.push({ r: rule.act || rule.weave, k: res.key || null, t: Date.now() });
+      // the log keeps how a weave's language step went (mode, help, mistakes): a record
+      // for memories and tests, never an input to what the world does
+      const L = res.lang ? { mode: res.lang.mode || null, assisted: !!res.lang.assisted, firstTry: res.lang.firstTry !== false, mistakes: res.lang.mistakes || 0 } : undefined;
+      r.log.push(Object.assign({ r: rule.act || rule.weave, k: res.key || null, t: Date.now() }, res.word ? { w: res.word } : {}, L ? { lang: L } : {}));
       if (r.log.length > LOG_MAX) r.log.splice(0, r.log.length - LOG_MAX);
       // an object that changed tells the map annotations about it
       for (const k of changed) RB.bus.emit('world:changed', { map: def.map, prop: pz + '.' + k, state: after[k], puzzle: pz });

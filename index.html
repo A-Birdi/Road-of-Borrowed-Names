@@ -26175,7 +26175,10 @@ RB.fieldweave = (function () {
     if (rule && rule.obs) observe(s, pz, rule.obs);
     if (res.effective) {
       r.state = after;
-      r.log.push({ r: rule.act || rule.weave, k: res.key || null, t: Date.now() });
+      // the log keeps how a weave's language step went (mode, help, mistakes): a record
+      // for memories and tests, never an input to what the world does
+      const L = res.lang ? { mode: res.lang.mode || null, assisted: !!res.lang.assisted, firstTry: res.lang.firstTry !== false, mistakes: res.lang.mistakes || 0 } : undefined;
+      r.log.push(Object.assign({ r: rule.act || rule.weave, k: res.key || null, t: Date.now() }, res.word ? { w: res.word } : {}, L ? { lang: L } : {}));
       if (r.log.length > LOG_MAX) r.log.splice(0, r.log.length - LOG_MAX);
       // an object that changed tells the map annotations about it
       for (const k of changed) RB.bus.emit('world:changed', { map: def.map, prop: pz + '.' + k, state: after[k], puzzle: pz });
@@ -34929,10 +34932,18 @@ RB.weave = (function () {
     layer.onCancel = () => close();
     layer.onAction = (a) => {
       if (a === 'weave') { close(); return true; }
+      // in the list of nearby things the arrow keys change the target (a radio
+      // group); elsewhere in the sheet they move the focus as usual
+      const f = document.activeElement;
+      if ((a === 'left' || a === 'right' || a === 'up' || a === 'down') && f && f.closest && f.closest('.wv-targets') && panel && panel.el.contains(f)) {
+        select(panel.i + (a === 'left' || a === 'up' ? -1 : 1));
+        const nb = panel.el.querySelector('.wv-t[aria-checked="true"]');
+        if (nb) nb.focus({ preventScroll: true });
+        return true;
+      }
       return false;
     };
     el.addEventListener('click', onClick);
-    el.addEventListener('keydown', onKey);
     RB.ui.pushLayer(layer);
     render();
     setTimeout(() => { const f = el.querySelector('.wv-t[aria-checked="true"]') || el.querySelector('.wv-w'); if (f && panel) f.focus({ preventScroll: true }); }, 0);
@@ -35038,18 +35049,6 @@ RB.weave = (function () {
     if (a === 'cancel') close();
     else if (a === 'hint') { renderHint(true); RB.audio && RB.audio.sfx('page', { vol: 0.5 }); }
     else if (a === 'reset') resetTarget();
-  }
-  // left/right (and up/down) move between nearby things inside the list
-  function onKey(e) {
-    const t = e.target.closest && e.target.closest('.wv-t');
-    if (!t || !panel) return;
-    const k = e.key;
-    if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'ArrowRight' || k === 'ArrowDown') {
-      e.preventDefault(); e.stopPropagation();
-      select(panel.i + (k === 'ArrowLeft' || k === 'ArrowUp' ? -1 : 1));
-      const nb = panel.el.querySelector('.wv-t[aria-checked="true"]');
-      if (nb) nb.focus({ preventScroll: true });
-    }
   }
   // clicking or tapping a nearby thing in the world selects it while the sheet is open
   function onCanvasPointer(e) {
@@ -35588,7 +35587,9 @@ RB.ui.keepsakes = (function () {
   const regionsOfK = (k) => [].concat(k.region || []);
   // every entry except companion mementos, which belong to Shared Journey
   const roadIds = () => Object.keys(K()).filter((id) => K()[id].category !== 'shared');
-  const sharedIds = (s) => Object.keys(K()).filter((id) => K()[id].category === 'shared' && (!K()[id].comp || K()[id].comp === s.comp));
+  // a memento names its companion as `comp` (or `companion`); one without a name belongs to any
+  const compOf = (k) => k.comp || k.companion || null;
+  const sharedIds = (s) => Object.keys(K()).filter((id) => K()[id].category === 'shared' && (!compOf(K()[id]) || compOf(K()[id]) === s.comp));
   function counts(s) {
     const ids = roadIds();
     const known = REGIONS.filter((r) => regionKnown(s, r.id));
@@ -46373,7 +46374,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     exits: [{ x: 10, y: 25, w: 2, h: 1, to: 'rw.village', tx: 22, ty: 1, dir: 'down' }],
     // the narrows are one tile wide between cliffs: its mouth (6,16) is the only
     // way in from either side; the scene pushes back only those heading up
-    triggers: [{ x: 6, y: 16, w: 1, h: 1, scene: 'rw.mr_narrows', if: '!rw_mr_suzu&!rw_echo_done' }],
+    // (mr_mouth: heading up, or heading down for the first time; src/content/discovery/05_millroad.js)
+    triggers: [{ x: 6, y: 16, w: 1, h: 1, scene: 'rw.mr_narrows', if: '!rw_mr_suzu&!rw_echo_done&mr_mouth' }],
     onEnter: [{ scene: 'rw.mr_enter', once: true }],
     spawn: { default: [10, 24, 'up'] },
   };
@@ -69457,6 +69459,14 @@ RB.hooks.mr_heading = async () => {
   const s = RB.game.s, p = RB.world.W.player;
   s.vars._mr_down = p && p.dir === 'down' ? 1 : 0;
 };
+// The narrows' trigger only runs when it has something to do: for whoever
+// arrives at the mouth heading up (the push back), or heading down the first
+// time (one line: the voices only push those going up). Walking down again is
+// just walking: no empty scene interrupts a held key.
+RB.state.addTerm('mr_mouth', (s) => {
+  const p = RB.world && RB.world.W && RB.world.W.player;
+  return !p || p.dir !== 'down' || !s.flags.rw_mr_down_seen;
+});
 
 
 /* ==== src/content/discovery/10_puzzles.js ==== */
