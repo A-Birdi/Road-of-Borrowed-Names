@@ -350,6 +350,23 @@ const state = (p) => p.evaluate(() => JSON.parse(JSON.stringify(RB.game.s)));
   assert(discs.length === 1 && /A Parcel for a Place That Moved/.test(discs[0].t) && rec2.cur.journey === 'cases' && rec2.rec === 'parcel', 'Shared memories › Discoveries holds the case, and its link opens the record');
   await closeMenu(p);
 
+  // ---- The Pages We Keep (RB.pages): a conversation it has waiting is what "Ask what's on their mind" plays,
+  //      the same one talking to the companion in the world would play first
+  if (await p.evaluate(() => !!(RB.pages && RB.pages.pending))) {
+    await start(p, 'rw.hall', 5, 6, { comp: 'nao', chapter: 6, flags: { ch2_done: true, ch3_done: true, ch4_done: true, ch5_done: true, ch6_done: true, postgame: true } });
+    const pd = await p.evaluate(() => RB.pages.pending(RB.game.s));
+    await openCompany(p, 'companion');
+    const note = await p.evaluate(() => { const b = document.querySelector('[data-co-act=mind]'); return b && b.parentElement.textContent.replace(/\s+/g, ' '); });
+    await p.evaluate(() => document.querySelector('[data-co-act=mind]').click());
+    await p.waitForTimeout(200);
+    const owed = await talk(p, []);
+    await p.waitForTimeout(250);
+    const after = await p.evaluate(() => ({ seen: !!RB.game.s.seen['pages.retro'], open: RB.ui.menu.isOpen(), panel: !!document.querySelector('.pages-shared'), mem: RB.game.s.company.memories.map((m) => m.id) }));
+    assert(pd && pd.id === 'retro' && note && note.includes(pd.en) && owed.length > 0 && after.seen && after.open,
+      'a waiting Pages conversation shows on "Ask what\'s on their mind" and plays from Company, then the page returns (' + (pd && pd.id) + ', ' + owed.length + ' lines)');
+    await closeMenu(p);
+  }
+
   assert(!errors.length, 'no page errors (' + errors.slice(0, 3).join(' | ') + ')');
   assert(!requests.length, 'no external requests');
   await p.context().close();

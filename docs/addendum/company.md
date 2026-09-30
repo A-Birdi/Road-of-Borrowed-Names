@@ -1,7 +1,7 @@
 # Companionship (worker C1): bond, memories, Company, thoughts, invitations, reflections, rest
 
 Addendum sections: 6 (except 6.3), 7, 8, 9, 19 (rituals), 21, 22, 23.3, Appendix B.
-Built on the lead's foundation (aa825c3; `docs/ADDENDUM_CONTRACTS.md`).
+Built on the lead's foundation (aa825c3; `docs/ADDENDUM_CONTRACTS.md`), with the cases branch (f9c3d99) and the endings / Pages We Keep branch (f3fc4e6) merged in and tested against.
 The audit of the existing campaign's decisions is in `docs/addendum/companion_decisions.md`.
 
 ## What was built
@@ -12,14 +12,14 @@ The audit of the existing campaign's decisions is in `docs/addendum/companion_de
 | `src/engine/58_companion.js` | The rules. Extends `RB.company` (see APIs). |
 | `src/ui/53_company_pages.js` | Company › Companion and Company › Shared memories (replacing the scaffold's defaults through `RB.ui.company.addPage`), the HUD topic button, four line icons (`talk`, `mind`, `rest`, `place`) added to `RB.ui.folio.ICONS`. |
 | `src/styles/33_company.css` | Their styles (new file). |
-| `src/content/company/00_lex.js` | 58 lexicon entries for the new text. |
+| `src/content/company/00_lex.js` | 65 lexicon entries for the new text and labels. |
 | `10_core.js` | What the player knows of each companion (progressive, canon only); story memories (setting out, Chapters 2–5, the two long roads, each companion's own quest) whose reply is the companion's actual line from that scene; What We Keep callbacks; words on meeting each of the four animals; the load migration; the entry scenes `co.place`, `co.mind`, `co.rest`. |
 | `20_thoughts.js` | 62 thoughts (quest, rest, fallback) and 70 place entries ("Talk about this place"; the first line is the thought) for every region: Reedwake (before/after the ending), Saltglass, the Drowned Archive, Cinder Orchard, Snowbell, Lanternfall, the Archive road and hut, the Still Archive, Koharuno, the Atlas — before/after each region's resolution. |
 | `30_invites.js` | Three story questions (Saltglass: labels changed by hand; Cinder Orchard: a painful memory; Lanternfall: the word you couldn't say), each with three replies + Not now for all four, and a result-aware follow-up. |
 | `40_reflect.js` | How We Travel and What We Keep for all four (8 scenes). |
 | `50_topics.js` | Six rest topics per companion (the two reflections in slots 1 and 5, 16 new conversations) and a ritual each; the `display` condition. |
 | `60_decisions.js` | Forward recording of 23 reply branches in 9 scenes, 4 watched decisions and 31 thoughts that fill missing perspectives. |
-| `tests/unit/company_bond.test.mjs` | 221 checks (below). |
+| `tests/unit/company_bond.test.mjs` | 233 checks (below). |
 | `tests/e2e/company.mjs` | The browser test (in `tests/e2e/run.mjs`). |
 
 Totals: 37 scenes, 269 spoken lines, 88 reply options; 315 Japanese strings in data.
@@ -53,6 +53,7 @@ kanji (傾 共 凝 推 監 羨 謎 豊 象; `recog-coverage` passes).
 - **Thoughts**: recent result (a decision just made, a discovery's filed thought; 25 minutes of play or leaving the region ends "recent") > the current quest (own quest stages, Snowbell's lamp) > a rest setting > the place > a fallback. Deterministic per map and chapter (no flicker, not the game's random stream). None tells the player what to do.
 - **Invitations**: at most one pending (a story question takes the slot from a reflection that is only waiting; the reflection comes back afterwards); a note over the companion in the world and a labelled HUD button, never a pop-up; Not now → quiet (no note), still reachable from Company; solved first → the result-aware follow-up; expired unsolved → dropped quietly; answered → the reply is a narrative fact (`talk.<id>=<reply>`). After the story questions, How We Travel (from `ch2_done`) and What We Keep (from `ch4_done`) take the slot; late saves get retrospective openings.
 - **Discuss a discovered case**: shown when `RB.cases.discussable(s)`; lists `RB.cases.topics(s)` (worked out / still open) with Talk it over (the case's own `talk` scene, played like any Company conversation) and Open the record (`topic.open()`, the Journey › Cases record). A Discoveries memory for a case links to the same record (`RB.cases.show(id)`).
+- **Ask what's on their mind**: a conversation The Pages We Keep has waiting (`RB.pages.pending(s)`: the owed ending conversation, an unfinished one, a page offer in the Lantern Hall) is named on the action and plays first, as it would when talking to the companion in the world; then a waiting invitation or reflection; then a thought (`co.mind`).
 - **Conversations from Company**: `safeHere()` (world mode under the folio, no scene running, the companion on this map — nobody is walked in — and no creature within 6 tiles); the folio closes, the scene plays through `RB.script.run`, and the folio reopens on the same tab, page and scroll if the world is quiet again; otherwise a notice says it can wait.
 - **Rest**: the inns (`sg.inn`, `co.inn`, `sb.inn`, `sb.inn_room`, `lf.inn`), Hana's teahouse, the Last Lamp hut and camp, the tree-keeper's hut in Koharuno, and Atlas camp rooms. Talking to the companion there (or Company › Rest together) offers the ritual, the next unheard rest topic, options added by `addRestOption`, "Just chat" (the companion's existing banter at that place, which the rest menu would otherwise hide) and Not now. Nothing is awarded; no timer.
 

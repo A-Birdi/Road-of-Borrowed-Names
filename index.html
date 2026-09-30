@@ -35403,6 +35403,14 @@ RB.ui.companyPages = (function () {
       return Array.isArray(t) ? t.filter((x) => x && x.title) : [];
     } catch (e) { return []; }
   }
+  // a conversation The Pages We Keep has waiting (src/content/pages/10_pages.js: pending(s) → {id, scene, en});
+  // the same one talking to the companion in the world would play first
+  function pagesWaiting(s) {
+    try {
+      const pd = RB.pages && RB.pages.pending ? RB.pages.pending(s) : null;
+      return pd && pd.scene && RB.content.scenes[pd.scene] ? pd : null;
+    } catch (e) { return null; }
+  }
   function caseDetail(s, c) {
     const cs = cases(s);
     if (!cs.length) return '';
@@ -35436,6 +35444,7 @@ RB.ui.companyPages = (function () {
   function actions(s, comp, c, V) {
     const who = esc(c.name.en);
     const p = K.pending(s);
+    const pd = pagesWaiting(s);
     const here = K.placeTalk(s);
     const rest = K.restHere(s);
     const cs = cases(s);
@@ -35446,7 +35455,7 @@ RB.ui.companyPages = (function () {
     }
     h += '<h4>' + I('talk') + L('{話|はな}す', 'Talk with ' + who) + '</h4><ul class="co-acts">';
     if (here) h += actionRow('place', 'place', 'Talk about this place', 'この {場所|ばしょ} の {話|はなし}', '');
-    h += actionRow('mind', 'mind', p ? 'Ask what\'s on their mind' : 'Ask what\'s on their mind', '{何|なに} を {考|かんが}えて いる ?', p ? (p.quiet ? 'the topic you put off' : 'something is waiting') : '');
+    h += actionRow('mind', 'mind', 'Ask what\'s on their mind', '{何|なに} を {考|かんが}えて いる ?', pd ? esc(pd.en) : p ? (p.quiet ? 'the topic you put off' : 'something is waiting') : '');
     if (cs.length) h += actionRow('case', 'scroll', 'Discuss a discovered case', '{謎|なぞ} の {話|はなし} を する', cs.length > 1 ? cs.length + ' cases' : '', ' aria-expanded="' + (V.detail === 'cases') + '"');
     if (rest) h += actionRow('rest', 'rest', 'Rest together', '{一緒|いっしょ} に {休|やす}む', 'a quiet moment here');
     h += actionRow('memories', 'journey', 'Shared memories', '{思|おも}い{出|で}', '');
@@ -35531,7 +35540,11 @@ RB.ui.companyPages = (function () {
       if (act === 'place') { await converse(api, () => RB.script.run('co.place')); return; }
       if (act === 'rest') { await converse(api, () => RB.script.run('co.rest')); return; }
       if (act === 'mind') {
-        await converse(api, async () => { if (!(await K.openPending())) await RB.script.run('co.mind'); });
+        await converse(api, async () => {
+          const pd = pagesWaiting(s);
+          if (pd) { await RB.script.run(pd.scene); return; }
+          if (!(await K.openPending())) await RB.script.run('co.mind');
+        });
         return;
       }
       if (act === 'case') { V.detail = V.detail === 'cases' ? null : 'cases'; api.render(); }
