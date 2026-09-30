@@ -126,7 +126,9 @@ const cardSel = async (p, re) => { const i = await p.evaluate((m) => { const c =
 // Answer the open step with the right option (mouse), continue, and take your companion's turn.
 async function answer(p, o) {
   await p.waitForSelector('.chal .mc .btn, .chal[data-kind=order]', { timeout: 10000 }).catch(async () => { throw new Error('no task opened: ' + JSON.stringify(await p.evaluate(() => ({ phase: RB.combat.phase(), chal: !!document.querySelector('.chal'), kind: (document.querySelector('.chal') || { dataset: {} }).dataset.kind, dlg: RB.ui.dialogue.isOpen() })))); });
-  if (await p.$('.chal .mc .btn')) { await p.evaluate(() => G.right()); await clickVisible(p, '.chal .mc .btn[data-right="1"]'); }
+  // the pointer is moved off the options first: left resting on another option's word (where the response
+  // card was), its hover word-help card can open over the right option between measuring and clicking
+  if (await p.$('.chal .mc .btn')) { await p.mouse.move(2, 2); await wait(p, 120); await p.evaluate(() => G.right()); await clickVisible(p, '.chal .mc .btn[data-right="1"]'); }
   else { await p.click('.chal [data-a=reveal]'); }
   await p.waitForSelector('.fbwrap .fb-go', { timeout: 10000 }).catch(async () => { throw new Error('no feedback after answering: ' + JSON.stringify(await p.evaluate(() => ({ fb: (document.querySelector('.fbwrap') || {}).outerHTML && document.querySelector('.fbwrap').getAttribute('data-fb'), kind: document.querySelector('.chal') && document.querySelector('.chal').dataset.kind, mode: document.querySelector('.chal') && document.querySelector('.chal').dataset.mode })))); });
   await clickVisible(p, '.fbwrap .fb-go');
