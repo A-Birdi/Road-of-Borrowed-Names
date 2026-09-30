@@ -25113,10 +25113,37 @@ RB.pets = (function () {
   // An occasional soft sound, never needed (Settings › Audio › Quiet pet sounds). The effects exist in the
   // game's synth; with the setting off, or no audio, nothing plays.
   const SOUND = { cat: 'pet_cat', dog: 'pet_dog', bird: 'pet_bird', tanuki: 'pet_tanuki' };
+  // The four quiet sounds, synthesized like every other effect in the game (no files): a soft trill (cat), a
+  // low "boof" (dog), two small chirps (bird), a snuffle (tanuki). Registered with the effects when first needed.
+  function defineSounds() {
+    const _ = RB.audio && RB.audio._, X = _ && _.sfxDefs, N = _ && _.node;
+    if (!X || !N || X.pet_cat) return !!(X && X.pet_cat);
+    const tone = (g, out, t, o) => {
+      const c = g.ctx, s = N.osc(c, o.type || 'sine', o.f, t), f = N.bq(c, 'lowpass', o.lp || 3000, 0.7), a = N.amp(c, 0);
+      if (o.f2) s.frequency.exponentialRampToValueAtTime(o.f2, t + (o.a || 0.01) + (o.hold || 0) + o.r);
+      a.gain.setValueAtTime(0, t); a.gain.linearRampToValueAtTime(o.v, t + (o.a || 0.01));
+      if (o.hold) a.gain.setValueAtTime(o.v, t + (o.a || 0.01) + o.hold);
+      a.gain.setTargetAtTime(0, t + (o.a || 0.01) + (o.hold || 0), o.r / 3);
+      s.connect(f); f.connect(a); a.connect(out);
+      N.run(c, [s], [s, f, a], t, t + (o.a || 0.01) + (o.hold || 0) + o.r * 2.5);
+    };
+    const hiss = (g, out, t, o) => {
+      const c = g.ctx, n = N.noise(g), f = N.bq(c, 'bandpass', o.f, o.q || 1.5), a = N.amp(c, 0);
+      a.gain.setValueAtTime(0, t); a.gain.linearRampToValueAtTime(o.v, t + (o.a || 0.01)); a.gain.setTargetAtTime(0, t + (o.a || 0.01), o.r / 3);
+      n.connect(f); f.connect(a); a.connect(out);
+      N.run(c, [n], [n, f, a], t, t + (o.a || 0.01) + o.r * 2.5);
+    };
+    X.pet_cat = { len: 0.5, rv: 0.08, gap: 0.6, fn: (g, o, t, p) => { for (let i = 0; i < 3; i++) tone(g, o, t + i * 0.045, { type: 'triangle', f: (470 + i * 40) * p, f2: (560 + i * 50) * p, a: 0.012, r: 0.05, v: 0.11, lp: 1800 }); tone(g, o, t + 0.14, { type: 'triangle', f: 600 * p, f2: 690 * p, a: 0.02, hold: 0.04, r: 0.1, v: 0.12, lp: 1900 }); } };
+    X.pet_dog = { len: 0.4, rv: 0.05, gap: 0.6, fn: (g, o, t, p) => { tone(g, o, t, { f: 190 * p, f2: 135 * p, a: 0.008, hold: 0.03, r: 0.09, v: 0.2, lp: 900 }); hiss(g, o, t, { f: 700 * p, q: 0.9, a: 0.006, r: 0.08, v: 0.06 }); } };
+    X.pet_bird = { len: 0.35, rv: 0.1, gap: 0.5, fn: (g, o, t, p) => { tone(g, o, t, { f: 3300 * p, f2: 4300 * p, a: 0.004, r: 0.03, v: 0.07, lp: 6000 }); tone(g, o, t + 0.09, { f: 3600 * p, f2: 4600 * p, a: 0.004, r: 0.035, v: 0.07, lp: 6000 }); } };
+    X.pet_tanuki = { len: 0.4, rv: 0.04, gap: 0.6, fn: (g, o, t, p) => { hiss(g, o, t, { f: 1500 * p, q: 2.5, a: 0.008, r: 0.05, v: 0.26 }); hiss(g, o, t + 0.1, { f: 1700 * p, q: 2.5, a: 0.008, r: 0.05, v: 0.23 }); hiss(g, o, t + 0.19, { f: 1400 * p, q: 2.5, a: 0.008, r: 0.06, v: 0.2 }); } };
+    return true;
+  }
+  // an occasional quiet sound (never needed: what it does is also seen); off with "Quiet pet sounds"
   function sound(sp, kind) {
     const st = RB.game && RB.game.settings;
-    if (!st || st.petSounds === false || !RB.audio || !RB.audio.sfx) return false;
-    if (RB.audio.sfxList && RB.audio.sfxList().indexOf(SOUND[sp]) < 0) return false;
+    if (!st || st.petSounds === false || !RB.audio || !RB.audio.sfx || !SOUND[sp]) return false;
+    if (!defineSounds()) return false;
     return RB.audio.sfx(SOUND[sp], { vol: kind === 'pat' ? 0.55 : 0.4 });
   }
 
@@ -25160,6 +25187,8 @@ RB.pets = (function () {
     };
   }
 
+  try { defineSounds(); } catch (e) { /* no audio here (tests): defined when first needed */ }
+
   // ---- conditions: pet (any selected), pet=cat (selected), pet.cat (met) --------------------------------
   if (RB.state && RB.state.addTerm) {
     RB.state.addTerm('pet', (s, rest, op, val, num, cmp) => {
@@ -25172,7 +25201,7 @@ RB.pets = (function () {
   return {
     ORDER, SPECIES, MAX, species, looks, record, met, active, visible, lookOf, meet, select, rename, resetName, nameAtMeet, setLook, nameOf,
     cleanName, graphemes, portrait, thumb, addVignette, vignetteAction, vignettes: VIGNETTES, hide, show, sceneHidden,
-    AFFECTION, howMet, sound, canGreet, greet, restOption,
+    AFFECTION, howMet, sound, defineSounds, canGreet, greet, restOption,
   };
 })();
 
@@ -26227,6 +26256,12 @@ RB.pets.dev = (function () {
     RB.pets.meet(s, sp); RB.pets.select(s, sp);
     if (o.look) RB.pets.setLook(s, sp, o.look);
     RB.game.startBattle(o.enemy || 'rw.dustmoth', {});
+    // the panel shows what is playing
+    const el = typeof document !== 'undefined' && document.getElementById('pets-dev');
+    if (el) {
+      const sel = (id, v) => { const q = el.querySelector('#pd-' + id); if (q && v) { q.value = v; q.dispatchEvent(new Event('change')); } };
+      sel('sp', sp); sel('look', RB.pets.lookOf(s, sp)); sel('motion', o.reduce ? 'reduced' : 'full');
+    }
     return true;
   }
   function play(o) {
@@ -26261,10 +26296,14 @@ RB.pets.dev = (function () {
     el.id = 'pets-dev';
     el.setAttribute('role', 'region');
     el.setAttribute('aria-label', 'Pet playback (development)');
-    el.style.cssText = 'position:fixed;left:8px;top:8px;z-index:99999;background:#1c2530;color:#eee;font:13px sans-serif;padding:8px;border:1px solid #567;border-radius:6px;max-width:300px;display:grid;grid-template-columns:auto 1fr;gap:4px 6px;align-items:center';
+    el.style.cssText = 'position:fixed;left:8px;top:8px;z-index:99999;background:rgba(28,37,48,0.94);color:#eee;font:13px sans-serif;padding:8px;border:1px solid #567;border-radius:6px;max-width:300px;display:grid;grid-template-columns:auto 1fr;gap:4px 6px;align-items:center';
+    const css = document.createElement('style');
+    css.textContent = '#pets-dev button,#pets-dev select{font:13px sans-serif;color:#f4f0e6;background:#34485c;border:1px solid #7a90a6;border-radius:4px;min-height:28px;padding:2px 8px}' +
+      '#pets-dev button:hover{background:#40586f}#pets-dev.min>*:not(#pd-toggle){display:none}#pets-dev.min{grid-template-columns:auto}';
+    document.head.appendChild(css);
     const sel = (id, label, opts) => '<label for="pd-' + id + '">' + label + '</label><select id="pd-' + id + '">' + opts.map((v) => '<option>' + v + '</option>').join('') + '</select>';
     const fams = RB.families.LIST.map((f) => 'react:' + f).concat(['impact', 'victory', 'calm', 'ready', 'defeat']);
-    el.innerHTML = '<strong style="grid-column:1/-1">Pet playback (dev)</strong>' +
+    el.innerHTML = '<button type="button" id="pd-toggle" aria-expanded="true" style="grid-column:1/-1">Pet playback (dev) — hide</button>' +
       sel('sp', 'Species', SP()) + sel('look', 'Look', RB.petArt.LOOK_ORDER.cat) + sel('fam', 'Family', fams) +
       sel('actor', 'Actor', ['pc', 'comp', 'foe']) + sel('result', 'Result', ['hit', 'absorbed', 'blocked', 'status']) +
       sel('n', 'Targets', ['1', '2', '3']) + sel('motion', 'Motion', ['full', 'reduced']) +
@@ -26274,6 +26313,10 @@ RB.pets.dev = (function () {
       '<button type="button" id="pd-sheet" style="grid-column:1/-1">Open the coverage sheet</button>';
     document.body.appendChild(el);
     const $ = (id) => el.querySelector('#pd-' + id);
+    // it folds away to one button (and starts folded on a short screen), so the stage stays visible
+    const fold = (min) => { el.classList.toggle('min', min); $('toggle').textContent = min ? 'Pet playback (dev) — show' : 'Pet playback (dev) — hide'; $('toggle').setAttribute('aria-expanded', String(!min)); };
+    $('toggle').addEventListener('click', () => fold(!el.classList.contains('min')));
+    fold(window.innerHeight < 500);
     const syncLooks = () => { $('look').innerHTML = RB.petArt.LOOK_ORDER[$('sp').value].map((v) => '<option>' + v + '</option>').join(''); };
     $('sp').addEventListener('change', syncLooks);
     $('start').addEventListener('click', () => battle({ species: $('sp').value, look: $('look').value, reduce: $('motion').value === 'reduced' }));
@@ -28337,11 +28380,13 @@ RB.petWorld = (function () {
     return false;
   }
   function floor(x, y) { const m = W().map; return x >= 0 && y >= 0 && x < m.w && y < m.h && !RB.maps.blockedStatic(m, x, y); }
+  // a tile just above someone standing is behind their head and shoulders on screen: it would not be seen there
+  function covered(x, y) { return occupied(x, y + 1); }
   // somewhere to settle: floor, nobody there, not a way out, a door, a trigger, a foe's patrol square or the
   // tile in front of you (so it never stands on what you are about to use)
   function restable(x, y) {
     const w = W(), m = w.map;
-    if (!floor(x, y) || occupied(x, y)) return false;
+    if (!floor(x, y) || occupied(x, y) || covered(x, y)) return false;
     if (RB.maps.exitAt(m, x, y) || RB.maps.shutDoorAt(m, x, y) || RB.maps.shutDoorAt(m, x, y - 1)) return false;
     if (m.triggers.some((t) => x >= t.x && x < t.x + t.w && y >= t.y && y < t.y + t.h)) return false;
     const [fx, fy] = RB.world.frontTile();
@@ -28362,7 +28407,8 @@ RB.petWorld = (function () {
     // just met on this map: it starts where it was (the vignette's animal becomes the one that follows)
     const hand = P.handoff && P.handoff.map === w.map.id ? P.handoff : null;
     P.handoff = null;
-    const spot = hand ? [hand.x, hand.y] : cand.find(([x, y]) => floor(x, y) && !occupied(x, y) && !RB.maps.exitAt(w.map, x, y)) || null;
+    const ok = ([x, y]) => floor(x, y) && !occupied(x, y) && !RB.maps.exitAt(w.map, x, y);
+    const spot = hand ? [hand.x, hand.y] : cand.find((q) => ok(q) && !covered(q[0], q[1])) || cand.find(ok) || null;
     if (hand) { P.x = spot[0]; P.y = spot[1]; P.alpha = 1; P.fade = 0; P.fx = P.x; P.fy = P.y; P.dir = hand.dir || p.dir; P.placed = true; return; }
     if (spot) { P.x = spot[0]; P.y = spot[1]; P.alpha = 0; P.fade = 1; }
     else { P.x = lead.x; P.y = lead.y; P.alpha = 0; P.fade = 0; } // nowhere yet: it appears after your first step
@@ -71714,6 +71760,8 @@ RB.hooks = RB.hooks || {};
     const sp = RB.pets.active(RB.game.s);
     const A = sp && RB.pets.WORLD_ANIM[args[0]];
     if (!A) return;
+    // a quiet sound with the moments that have one (also always seen)
+    if (args[0] === 'affection' || args[0] === 'call') RB.pets.sound(sp, 'greet');
     await RB.petWorld.act(typeof A === 'function' ? A(sp) : A);
   };
 

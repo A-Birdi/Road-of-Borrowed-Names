@@ -56,6 +56,8 @@ RB.hooks = RB.hooks || {};
     const sp = RB.pets.active(RB.game.s);
     const A = sp && RB.pets.WORLD_ANIM[args[0]];
     if (!A) return;
+    // a quiet sound with the moments that have one (also always seen)
+    if (args[0] === 'affection' || args[0] === 'call') RB.pets.sound(sp, 'greet');
     await RB.petWorld.act(typeof A === 'function' ? A(sp) : A);
   };
 

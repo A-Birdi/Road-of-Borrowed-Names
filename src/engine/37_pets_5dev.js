@@ -138,6 +138,12 @@ RB.pets.dev = (function () {
     RB.pets.meet(s, sp); RB.pets.select(s, sp);
     if (o.look) RB.pets.setLook(s, sp, o.look);
     RB.game.startBattle(o.enemy || 'rw.dustmoth', {});
+    // the panel shows what is playing
+    const el = typeof document !== 'undefined' && document.getElementById('pets-dev');
+    if (el) {
+      const sel = (id, v) => { const q = el.querySelector('#pd-' + id); if (q && v) { q.value = v; q.dispatchEvent(new Event('change')); } };
+      sel('sp', sp); sel('look', RB.pets.lookOf(s, sp)); sel('motion', o.reduce ? 'reduced' : 'full');
+    }
     return true;
   }
   function play(o) {
@@ -172,10 +178,14 @@ RB.pets.dev = (function () {
     el.id = 'pets-dev';
     el.setAttribute('role', 'region');
     el.setAttribute('aria-label', 'Pet playback (development)');
-    el.style.cssText = 'position:fixed;left:8px;top:8px;z-index:99999;background:#1c2530;color:#eee;font:13px sans-serif;padding:8px;border:1px solid #567;border-radius:6px;max-width:300px;display:grid;grid-template-columns:auto 1fr;gap:4px 6px;align-items:center';
+    el.style.cssText = 'position:fixed;left:8px;top:8px;z-index:99999;background:rgba(28,37,48,0.94);color:#eee;font:13px sans-serif;padding:8px;border:1px solid #567;border-radius:6px;max-width:300px;display:grid;grid-template-columns:auto 1fr;gap:4px 6px;align-items:center';
+    const css = document.createElement('style');
+    css.textContent = '#pets-dev button,#pets-dev select{font:13px sans-serif;color:#f4f0e6;background:#34485c;border:1px solid #7a90a6;border-radius:4px;min-height:28px;padding:2px 8px}' +
+      '#pets-dev button:hover{background:#40586f}#pets-dev.min>*:not(#pd-toggle){display:none}#pets-dev.min{grid-template-columns:auto}';
+    document.head.appendChild(css);
     const sel = (id, label, opts) => '<label for="pd-' + id + '">' + label + '</label><select id="pd-' + id + '">' + opts.map((v) => '<option>' + v + '</option>').join('') + '</select>';
     const fams = RB.families.LIST.map((f) => 'react:' + f).concat(['impact', 'victory', 'calm', 'ready', 'defeat']);
-    el.innerHTML = '<strong style="grid-column:1/-1">Pet playback (dev)</strong>' +
+    el.innerHTML = '<button type="button" id="pd-toggle" aria-expanded="true" style="grid-column:1/-1">Pet playback (dev) — hide</button>' +
       sel('sp', 'Species', SP()) + sel('look', 'Look', RB.petArt.LOOK_ORDER.cat) + sel('fam', 'Family', fams) +
       sel('actor', 'Actor', ['pc', 'comp', 'foe']) + sel('result', 'Result', ['hit', 'absorbed', 'blocked', 'status']) +
       sel('n', 'Targets', ['1', '2', '3']) + sel('motion', 'Motion', ['full', 'reduced']) +
@@ -185,6 +195,10 @@ RB.pets.dev = (function () {
       '<button type="button" id="pd-sheet" style="grid-column:1/-1">Open the coverage sheet</button>';
     document.body.appendChild(el);
     const $ = (id) => el.querySelector('#pd-' + id);
+    // it folds away to one button (and starts folded on a short screen), so the stage stays visible
+    const fold = (min) => { el.classList.toggle('min', min); $('toggle').textContent = min ? 'Pet playback (dev) — show' : 'Pet playback (dev) — hide'; $('toggle').setAttribute('aria-expanded', String(!min)); };
+    $('toggle').addEventListener('click', () => fold(!el.classList.contains('min')));
+    fold(window.innerHeight < 500);
     const syncLooks = () => { $('look').innerHTML = RB.petArt.LOOK_ORDER[$('sp').value].map((v) => '<option>' + v + '</option>').join(''); };
     $('sp').addEventListener('change', syncLooks);
     $('start').addEventListener('click', () => battle({ species: $('sp').value, look: $('look').value, reduce: $('motion').value === 'reduced' }));

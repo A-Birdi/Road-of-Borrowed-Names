@@ -51,6 +51,8 @@ async function world(p, map, x, y, o) {
   await wait(p, 400);
 }
 const pstate = (p) => p.evaluate(() => { const W = RB.world.W, P = RB.petWorld.state(); return Object.assign(P, { px: W.player.x, py: W.player.y, cx: W.comp ? W.comp.x : null, cy: W.comp ? W.comp.y : null, floor: !RB.maps.blockedStatic(W.map, P.x, P.y), map: W.map.id }); });
+// not standing just above you or your companion (behind your head on screen, where it could not be seen)
+const inView = (q) => !(q.x === q.px && q.y === q.py - 1) && !(q.cx != null && q.x === q.cx && q.y === q.cy - 1);
 const blockHash = (p) => p.evaluate(() => { const m = RB.world.W.map; let h = 0; for (let i = 0; i < m.block.length; i++) h = (h * 31 + (m.block[i] ? 1 : 0) + i) | 0; return h; });
 async function hold(p, key, ms) { await p.keyboard.down(key); await wait(p, ms); await p.keyboard.up(key); }
 
@@ -73,7 +75,7 @@ for (const sp of SPECIES) {
     assert(samples.every((q) => q.floor), 'the pet only ever stood on floor');
     assert(samples.some((q) => q.moving), 'it walked');
     assert(settled.shown && settled.alpha === 1, 'it is shown');
-    assert(!(settled.x === settled.px && settled.y === settled.py) && !(settled.x === settled.cx && settled.y === settled.cy), 'settled clear of you and your companion: ' + JSON.stringify(settled));
+    assert(!(settled.x === settled.px && settled.y === settled.py) && !(settled.x === settled.cx && settled.y === settled.cy) && inView(settled), 'settled clear of you and your companion, where it is seen: ' + JSON.stringify(settled));
     assert(Math.abs(settled.x - settled.px) + Math.abs(settled.y - settled.py) <= 4, 'it stays close: ' + JSON.stringify(settled));
     assert(h0 === await blockHash(p), 'the collision grid is unchanged');
     const solid = await p.evaluate(() => { const P = RB.petWorld.state(); return RB.world.blocked(P.x, P.y, {}) !== RB.maps.blockedStatic(RB.world.W.map, P.x, P.y) && !RB.world.W.npcs.some((n) => n.x === P.x && n.y === P.y); });
@@ -122,10 +124,78 @@ for (const sp of SPECIES) {
       const inScene = RB.petWorld.state().shown;
       for (let i = 0; i < 20 && RB.ui.dialogue.isOpen(); i++) { RB.ui.dialogue.advance(true); await new Promise((r) => setTimeout(r, 50)); }
       await run;
-      await new Promise((r) => setTimeout(r, 200));
+      // restored on the next world frame after the scene (a busy machine may take a moment to draw one)
+      for (let i = 0; i < 60 && !RB.petWorld.state().shown; i++) await new Promise((r) => setTimeout(r, 50));
       return { inScene, after: RB.petWorld.state().shown };
     });
     assert(during.inScene === false && during.after === true, 'hidden during the scene, restored after: ' + JSON.stringify(during));
+    assert(!errors.length, 'no page errors: ' + errors.join(' | '));
+    await ctx.close();
+  });
+
+  await test(sp + ': world — a one-tile lane both ways, a cutscene moving you, defeat and back at the last safe place', async () => {
+    const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+    // the lane behind the houses at Cinder Orchard (co.village, row 37, x 44–48: a wall above, trees below)
+    await world(p, 'co.village', 41, 37, { sp, comp: COMPS[sp], dir: 'right', flags: { co_arrived: true, co_met_sayo: true } });
+    const lane = [];
+    const run = async (k, ms) => { await p.keyboard.down(k); const t0 = Date.now(); while (Date.now() - t0 < ms) { lane.push(await pstate(p)); await wait(p, 60); } await p.keyboard.up(k); };
+    await run('ArrowRight', 2600);
+    await wait(p, 1200);
+    const east = await pstate(p);
+    await run('ArrowLeft', 2600);
+    await wait(p, 1500);
+    const west = await pstate(p);
+    assert(lane.every((q) => q.floor), 'in the lane it only ever stood on floor: ' + JSON.stringify(lane.find((q) => !q.floor) || {}));
+    assert(lane.some((q) => q.x >= 44 && q.x <= 48 && q.y === 37), 'it went through the lane');
+    for (const [nm, q] of [['east', east], ['west', west]]) {
+      assert(q.floor && !(q.x === q.px && q.y === q.py) && !(q.x === q.cx && q.y === q.cy) && Math.abs(q.x - q.px) + Math.abs(q.y - q.py) <= 4, 'at the ' + nm + ' end it settled clear of you both, close by: ' + JSON.stringify(q));
+      assert(inView(q), 'at the ' + nm + ' end, where it is seen: ' + JSON.stringify(q));
+    }
+    assert(west.px <= 43, 'you walked back through (' + west.px + ')');
+    await shot(p, sp + '_world_lane');
+    // a cutscene moving you (scriptMove): it follows
+    await world(p, 'rw.village', 20, 20, { sp, comp: COMPS[sp], dir: 'right' });
+    await p.evaluate(async () => { await RB.world.scriptMove('pc', 'right', 4); });
+    await wait(p, 1600);
+    const cut = await pstate(p);
+    assert(cut.px === 24 && cut.floor && Math.abs(cut.x - cut.px) + Math.abs(cut.y - cut.py) <= 3 && !(cut.x === cut.px && cut.y === cut.py), 'after the cutscene moved you, it is beside you: ' + JSON.stringify(cut));
+    // defeat: its stance, then back at the last safe place with you
+    // (with Mio: Suzu's own moves would keep the blow off you, which is not what this checks)
+    await world(p, 'rw.village', 20, 20, { sp, comp: 'mio', dir: 'right' });
+    await p.evaluate(() => {
+      const s = RB.game.s;
+      s.checkpoint = { map: 'rw.village', x: 22, y: 26, dir: 'down' };
+      s.learn.profile = 'E'; s.words = ['mamoru', 'mizu', 'hikari'];
+      RB.game.settings.textSpeed = 'instant'; RB.game.settings.input = 'choice';
+      window.__lost = { res: null, seen: null };
+      // (read at once: the loss goes straight on to the last safe place, so the stance is brief)
+      RB.bus.on('present:scene', (e) => { if (e.phase === 'defeat') window.__lost.seen = RB.battlePets.stats().base; });
+      RB.game.startBattle('rw.dustmoth', {}).then((r) => { window.__lost.res = r; });
+    });
+    for (let i = 0; i < 300; i++) { const st = await p.evaluate(() => ({ dlg: RB.ui.dialogue.isOpen(), c: !!document.querySelector('.rcard[data-i]') && !RB.battleSeq.busy() })); if (st.c) break; if (st.dlg) await p.evaluate(() => RB.ui.dialogue.advance(true)); await wait(p, 50); }
+    // you are down to your last point, your companion is spent; the moth strikes you (again, if a companion's
+    // move turned the blow aside)
+    for (let round = 0; round < 4 && !(await p.evaluate(() => window.__lost.res)); round++) {
+      for (let i = 0; i < 300; i++) { const st = await p.evaluate(() => ({ dlg: RB.ui.dialogue.isOpen(), c: !!document.querySelector('.rcard[data-i]') && !RB.battleSeq.busy(), res: window.__lost.res })); if (st.c || st.res) break; if (st.dlg) await p.evaluate(() => RB.ui.dialogue.advance(true)); await wait(p, 50); }
+      if (await p.evaluate(() => window.__lost.res)) break;
+      await p.evaluate(() => { const st = RB.combat.state(); st.pc = 1; st.comp = 0; st.revived = true; st.shroud = false; st.foes[0].shroud = false; st.intent = Object.assign(RB.combatLogic.intentDef({}, 'strike'), { target: 'pc' }); st.foes[0].intent = st.intent; RB.combat.refresh(); });
+      await wait(p, 200);
+      const uc = await p.evaluate(() => { const e = [...document.querySelectorAll('.rcard')].find((x) => !x.disabled && /Unravel/.test(x.textContent)); e.scrollIntoView({ block: 'nearest' }); const r = e.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
+      await p.mouse.click(uc.x, uc.y);
+      await p.waitForSelector('.chal');
+      if (await p.$('.chal [data-a=reveal]')) await p.click('.chal [data-a=reveal]'); else await p.click('.chal .mc .btn');
+      await p.waitForSelector('.fbwrap .fb-go');
+      await p.click('.fbwrap .fb-go');
+      await companionTurn(p, { match: '^(?!.*(守|protect|ward)).*$' });
+      for (let i = 0; i < 300; i++) { const st = await p.evaluate(() => ({ res: window.__lost.res, dlg: RB.ui.dialogue.isOpen(), done: !RB.battleSeq.busy() && RB.combat.phase() === 'choose' })); if (st.res || st.done) break; if (st.dlg) await p.evaluate(() => RB.ui.dialogue.advance(true)); await wait(p, 50); }
+    }
+    for (let i = 0; i < 200 && !(await p.evaluate(() => window.__lost.res)); i++) { if (await p.evaluate(() => RB.ui.dialogue.isOpen())) await p.evaluate(() => RB.ui.dialogue.advance(true)); await wait(p, 50); }
+    await wait(p, 1200);
+    const lost = await p.evaluate(() => { const P = RB.petWorld.state(), W = RB.world.W; return Object.assign({}, window.__lost, { map: W.map.id, px: W.player.x, py: W.player.y, cx: W.comp ? W.comp.x : null, cy: W.comp ? W.comp.y : null, x: P.x, y: P.y, shown: P.shown, floor: !RB.maps.blockedStatic(W.map, P.x, P.y), mode: RB.game.mode(), ph: RB.combat.phase && RB.combat.phase(), pc: RB.combat.state() && RB.combat.state().pc }); });
+    assert(lost.res === 'lose', 'the encounter was lost: ' + JSON.stringify(lost));
+    assert(lost.seen === 'defeat', 'its defeat stance while the loss is shown: ' + lost.seen);
+    assert(lost.map === 'rw.village' && lost.px === 22 && lost.py === 26 && lost.shown && lost.floor && Math.abs(lost.x - lost.px) + Math.abs(lost.y - lost.py) <= 3 && !(lost.x === lost.px && lost.y === lost.py) && !(lost.x === lost.cx && lost.y === lost.cy) && inView(lost), 'back at the last safe place, it is with you, where it is seen: ' + JSON.stringify(lost));
+    await shot(p, sp + '_world_after_defeat');
     assert(!errors.length, 'no page errors: ' + errors.join(' | '));
     await ctx.close();
   });
@@ -306,6 +376,23 @@ for (const sp of SPECIES) {
       await wait(q, 250);
       assert(await q.evaluate(() => RB.ui.menu.isOpen() && !document.querySelector('.pet-detail')), vp.width + ': Back leaves the detail first');
       await c2.close();
+    }
+    // a phone held sideways (844×390): the page fits, the detail is reachable, every control is 44 px
+    {
+      const { p: q, ctx: c3, errors: e3 } = await page(b, url, { viewport: { width: 844, height: 390 }, touch: true, mobile: true });
+      await world(q, 'rw.village', 20, 18, { sp, comp: COMPS[sp] });
+      await q.evaluate(() => RB.ui.menu.open('pet'));
+      await wait(q, 400);
+      if (!(await q.evaluate(() => !!document.querySelector('.pet-detail')))) { await q.click('[data-pet-sel="' + sp + '"]'); await wait(q, 300); }
+      const land = await q.evaluate(() => {
+        const l = document.querySelector('#folio-page .leaf');
+        const small = [...document.querySelectorAll('#folio-page .pet-detail button, #folio-page .pet-card button, #folio-page .pet-look')].filter((e) => { const r = e.getBoundingClientRect(); return r.width && (r.height < 44 || r.width < 44); }).length;
+        return { detail: !!document.querySelector('.pet-detail'), sw: l.scrollWidth, cw: l.clientWidth, doc: document.documentElement.scrollWidth, vw: innerWidth, small };
+      });
+      assert(land.detail && land.sw <= land.cw + 2 && land.doc <= land.vw + 2 && !land.small, '844×390: the detail, no sideways scrolling, 44 px controls: ' + JSON.stringify(land));
+      await shot(q, sp + '_company_844');
+      assert(!e3.length, 'no page errors: ' + e3.join(' | '));
+      await c3.close();
     }
   });
 }

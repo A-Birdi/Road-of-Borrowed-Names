@@ -61,11 +61,13 @@ RB.petWorld = (function () {
     return false;
   }
   function floor(x, y) { const m = W().map; return x >= 0 && y >= 0 && x < m.w && y < m.h && !RB.maps.blockedStatic(m, x, y); }
+  // a tile just above someone standing is behind their head and shoulders on screen: it would not be seen there
+  function covered(x, y) { return occupied(x, y + 1); }
   // somewhere to settle: floor, nobody there, not a way out, a door, a trigger, a foe's patrol square or the
   // tile in front of you (so it never stands on what you are about to use)
   function restable(x, y) {
     const w = W(), m = w.map;
-    if (!floor(x, y) || occupied(x, y)) return false;
+    if (!floor(x, y) || occupied(x, y) || covered(x, y)) return false;
     if (RB.maps.exitAt(m, x, y) || RB.maps.shutDoorAt(m, x, y) || RB.maps.shutDoorAt(m, x, y - 1)) return false;
     if (m.triggers.some((t) => x >= t.x && x < t.x + t.w && y >= t.y && y < t.y + t.h)) return false;
     const [fx, fy] = RB.world.frontTile();
@@ -86,7 +88,8 @@ RB.petWorld = (function () {
     // just met on this map: it starts where it was (the vignette's animal becomes the one that follows)
     const hand = P.handoff && P.handoff.map === w.map.id ? P.handoff : null;
     P.handoff = null;
-    const spot = hand ? [hand.x, hand.y] : cand.find(([x, y]) => floor(x, y) && !occupied(x, y) && !RB.maps.exitAt(w.map, x, y)) || null;
+    const ok = ([x, y]) => floor(x, y) && !occupied(x, y) && !RB.maps.exitAt(w.map, x, y);
+    const spot = hand ? [hand.x, hand.y] : cand.find((q) => ok(q) && !covered(q[0], q[1])) || cand.find(ok) || null;
     if (hand) { P.x = spot[0]; P.y = spot[1]; P.alpha = 1; P.fade = 0; P.fx = P.x; P.fy = P.y; P.dir = hand.dir || p.dir; P.placed = true; return; }
     if (spot) { P.x = spot[0]; P.y = spot[1]; P.alpha = 0; P.fade = 1; }
     else { P.x = lead.x; P.y = lead.y; P.alpha = 0; P.fade = 0; } // nowhere yet: it appears after your first step

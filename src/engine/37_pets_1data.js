@@ -236,10 +236,37 @@ RB.pets = (function () {
   // An occasional soft sound, never needed (Settings › Audio › Quiet pet sounds). The effects exist in the
   // game's synth; with the setting off, or no audio, nothing plays.
   const SOUND = { cat: 'pet_cat', dog: 'pet_dog', bird: 'pet_bird', tanuki: 'pet_tanuki' };
+  // The four quiet sounds, synthesized like every other effect in the game (no files): a soft trill (cat), a
+  // low "boof" (dog), two small chirps (bird), a snuffle (tanuki). Registered with the effects when first needed.
+  function defineSounds() {
+    const _ = RB.audio && RB.audio._, X = _ && _.sfxDefs, N = _ && _.node;
+    if (!X || !N || X.pet_cat) return !!(X && X.pet_cat);
+    const tone = (g, out, t, o) => {
+      const c = g.ctx, s = N.osc(c, o.type || 'sine', o.f, t), f = N.bq(c, 'lowpass', o.lp || 3000, 0.7), a = N.amp(c, 0);
+      if (o.f2) s.frequency.exponentialRampToValueAtTime(o.f2, t + (o.a || 0.01) + (o.hold || 0) + o.r);
+      a.gain.setValueAtTime(0, t); a.gain.linearRampToValueAtTime(o.v, t + (o.a || 0.01));
+      if (o.hold) a.gain.setValueAtTime(o.v, t + (o.a || 0.01) + o.hold);
+      a.gain.setTargetAtTime(0, t + (o.a || 0.01) + (o.hold || 0), o.r / 3);
+      s.connect(f); f.connect(a); a.connect(out);
+      N.run(c, [s], [s, f, a], t, t + (o.a || 0.01) + (o.hold || 0) + o.r * 2.5);
+    };
+    const hiss = (g, out, t, o) => {
+      const c = g.ctx, n = N.noise(g), f = N.bq(c, 'bandpass', o.f, o.q || 1.5), a = N.amp(c, 0);
+      a.gain.setValueAtTime(0, t); a.gain.linearRampToValueAtTime(o.v, t + (o.a || 0.01)); a.gain.setTargetAtTime(0, t + (o.a || 0.01), o.r / 3);
+      n.connect(f); f.connect(a); a.connect(out);
+      N.run(c, [n], [n, f, a], t, t + (o.a || 0.01) + o.r * 2.5);
+    };
+    X.pet_cat = { len: 0.5, rv: 0.08, gap: 0.6, fn: (g, o, t, p) => { for (let i = 0; i < 3; i++) tone(g, o, t + i * 0.045, { type: 'triangle', f: (470 + i * 40) * p, f2: (560 + i * 50) * p, a: 0.012, r: 0.05, v: 0.11, lp: 1800 }); tone(g, o, t + 0.14, { type: 'triangle', f: 600 * p, f2: 690 * p, a: 0.02, hold: 0.04, r: 0.1, v: 0.12, lp: 1900 }); } };
+    X.pet_dog = { len: 0.4, rv: 0.05, gap: 0.6, fn: (g, o, t, p) => { tone(g, o, t, { f: 190 * p, f2: 135 * p, a: 0.008, hold: 0.03, r: 0.09, v: 0.2, lp: 900 }); hiss(g, o, t, { f: 700 * p, q: 0.9, a: 0.006, r: 0.08, v: 0.06 }); } };
+    X.pet_bird = { len: 0.35, rv: 0.1, gap: 0.5, fn: (g, o, t, p) => { tone(g, o, t, { f: 3300 * p, f2: 4300 * p, a: 0.004, r: 0.03, v: 0.07, lp: 6000 }); tone(g, o, t + 0.09, { f: 3600 * p, f2: 4600 * p, a: 0.004, r: 0.035, v: 0.07, lp: 6000 }); } };
+    X.pet_tanuki = { len: 0.4, rv: 0.04, gap: 0.6, fn: (g, o, t, p) => { hiss(g, o, t, { f: 1500 * p, q: 2.5, a: 0.008, r: 0.05, v: 0.26 }); hiss(g, o, t + 0.1, { f: 1700 * p, q: 2.5, a: 0.008, r: 0.05, v: 0.23 }); hiss(g, o, t + 0.19, { f: 1400 * p, q: 2.5, a: 0.008, r: 0.06, v: 0.2 }); } };
+    return true;
+  }
+  // an occasional quiet sound (never needed: what it does is also seen); off with "Quiet pet sounds"
   function sound(sp, kind) {
     const st = RB.game && RB.game.settings;
-    if (!st || st.petSounds === false || !RB.audio || !RB.audio.sfx) return false;
-    if (RB.audio.sfxList && RB.audio.sfxList().indexOf(SOUND[sp]) < 0) return false;
+    if (!st || st.petSounds === false || !RB.audio || !RB.audio.sfx || !SOUND[sp]) return false;
+    if (!defineSounds()) return false;
     return RB.audio.sfx(SOUND[sp], { vol: kind === 'pat' ? 0.55 : 0.4 });
   }
 
@@ -283,6 +310,8 @@ RB.pets = (function () {
     };
   }
 
+  try { defineSounds(); } catch (e) { /* no audio here (tests): defined when first needed */ }
+
   // ---- conditions: pet (any selected), pet=cat (selected), pet.cat (met) --------------------------------
   if (RB.state && RB.state.addTerm) {
     RB.state.addTerm('pet', (s, rest, op, val, num, cmp) => {
@@ -295,6 +324,6 @@ RB.pets = (function () {
   return {
     ORDER, SPECIES, MAX, species, looks, record, met, active, visible, lookOf, meet, select, rename, resetName, nameAtMeet, setLook, nameOf,
     cleanName, graphemes, portrait, thumb, addVignette, vignetteAction, vignettes: VIGNETTES, hide, show, sceneHidden,
-    AFFECTION, howMet, sound, canGreet, greet, restOption,
+    AFFECTION, howMet, sound, defineSounds, canGreet, greet, restOption,
   };
 })();

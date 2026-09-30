@@ -105,12 +105,44 @@ await test('coverage matrix: 4 species × every family, impacts, victory, idles 
   await ctx.close();
 });
 
-for (const vp of [{ width: 1280, height: 800 }, { width: 390, height: 844 }]) {
+await test('quiet sounds: four synthesized effects (no files), heard but soft, never clipping; none with "Quiet pet sounds" off', async () => {
+  const { p, errors, ctx } = await page(b, url);
+  const r = await p.evaluate(async () => {
+    const out = { list: RB.audio.sfxList().filter((x) => /^pet_/.test(x)).sort(), fx: {} };
+    for (const id of out.list.concat(['confirm'])) { const q = await RB.audio.renderOffline('sfx:' + id, 1.2); out.fx[id] = { peak: q.peak, rms: q.rms, nan: q.nan, clipped: q.clipped }; }
+    RB.game.settings.petSounds = false;
+    out.off = ['cat', 'dog', 'bird', 'tanuki'].map((sp) => RB.pets.sound(sp, 'pat'));
+    return out;
+  });
+  assert(r.list.join() === 'pet_bird,pet_cat,pet_dog,pet_tanuki', 'the four: ' + r.list.join());
+  for (const id of r.list) assert(!r.fx[id].nan && r.fx[id].peak > 0.01 && r.fx[id].peak < r.fx.confirm.peak && !r.fx[id].clipped, id + ' soft (quieter than a menu confirm) and clean: ' + JSON.stringify(r.fx[id]));
+  assert(r.off.every((x) => x === false), 'nothing plays with the setting off');
+  assert(!errors.length, 'no page errors: ' + errors.join(' | '));
+  await ctx.close();
+});
+
+for (const vp of [{ width: 1280, height: 800 }, { width: 390, height: 844 }, { width: 844, height: 390 }]) {
   await test('playback on the real stage at ' + vp.width + '×' + vp.height + ': player, companion, creature (hit and warded), several targets, reduced motion; nothing left over', async () => {
     const { p, errors, ctx } = await page(b, devUrl, { viewport: vp, touch: vp.width < 500, mobile: vp.width < 500 });
     await p.evaluate(() => RB.pets.dev.battle({ species: 'tanuki', look: 'dark', comp: 'suzu' }));
     const choose = async () => { for (let i = 0; i < 300; i++) { const st = await p.evaluate(() => ({ dlg: RB.ui.dialogue.isOpen(), c: !!document.querySelector('.rcard[data-i]') && !RB.battleSeq.busy() })); if (st.c) return true; if (st.dlg) await p.evaluate(() => RB.ui.dialogue.advance(true)); await wait(p, 50); } return false; };
     assert(await choose(), 'the dev encounter reaches the choice');
+    await wait(p, 800);
+    // its place: clear of the response area, the task, the slips, the party panel and the lines
+    const clash = await p.evaluate(() => {
+      const bx = RB.battlePets.stats().box; if (!bx) return 'no box';
+      const hit = (r) => !(bx.x + bx.w <= r.left || r.right <= bx.x || bx.y + bx.h <= r.top || r.bottom <= bx.y);
+      const els = [...document.querySelectorAll('.cb-dock, .rcards, .rcard, .cb-slips, .cb-party, .cb-tele, .dlg:not(.hidden)')].filter((e) => { const r = e.getBoundingClientRect(); return r.width && r.height; });
+      const bad = els.filter((e) => hit(e.getBoundingClientRect())).map((e) => e.className);
+      return bad.length ? bad.join(',') + ' ' + JSON.stringify(bx) : null;
+    });
+    assert(!clash, 'the pet overlaps interface at ' + vp.width + '×' + vp.height + ': ' + clash);
+    // the panel folds to one button (folded already on a short screen), leaving the stage in view
+    if (vp.width < 900) {
+      const folded = await p.evaluate(() => { const el = document.getElementById('pets-dev'); if (!el.classList.contains('min')) el.querySelector('#pd-toggle').click(); const r = el.getBoundingClientRect(); return { min: el.classList.contains('min'), h: r.height }; });
+      assert(folded.min && folded.h < 60, 'the dev panel folds away: ' + JSON.stringify(folded));
+    }
+    if (vp.width === 844) await p.screenshot({ path: path.join(outDir, 'dev_play_landscape.png') });
     const plays = [
       { family: 'fire', actor: 'pc' }, { family: 'heal', actor: 'comp' }, { kind: 'impact', actor: 'foe', result: 'hit' },
       { kind: 'impact', actor: 'foe', result: 'blocked' }, { family: 'wind', actor: 'pc', targets: 3 }, { family: 'technique', actor: 'comp' },
