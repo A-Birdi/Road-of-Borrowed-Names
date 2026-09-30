@@ -45,5 +45,5 @@ These are real captures of the built game, made with synthetic test states (no p
   - With Mio: the screen is inspected with a mouse click, "Weave a word on it…", Protect answered in the real challenge, the ward at the screen, and then the clamp. Mio reacts to the ward route.
   - With Nao: the screen is swung shut by hand, and then the clamp. Nao reacts to the ordinary route.
   - Movement is the game's click-to-walk. The script is `tests/e2e/fieldweave_video.mjs`.
-  - It was re-encoded to a lower bitrate (VP8) with the ffmpeg that ships with Playwright, so it could be kept in the repository.
+  - It was re-encoded with the ffmpeg that ships with Playwright (VP8, 12 fps, about 250 kbit/s; 1 min 45 s, 3.3 MB), so it could be kept in the repository. The title-screen lead-in was trimmed.
   - It was recorded while the machine was heavily loaded by other test runs, so pauses are longer than in play.

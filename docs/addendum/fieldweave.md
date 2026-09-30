@@ -228,8 +228,19 @@ The definitions are data in `10_puzzles.js`. For each puzzle: where it is (and w
 
 ### Common to all six
 
+- **Availability by chapter and profile.** Every learner profile gets the same puzzles and the same evidence; only the language step adapts (kana, or kana or kanji). The browser test checks profiles F, E, I and A.
+
+  | Puzzle | First reachable | Eligible | Woven words available then | Methods recorded |
+  |---|---|---|---|---|
+  | F1 | ch1, Reedwake village | always | mamoru (ch1) | screened, warded |
+  | F2 | ch2, Saltglass harbour | always | mizu (ch1); kaze and nawa (ch2) | filled, cranked, vane |
+  | F3 | ch3, Cinder Orchard | always | hikari (ch1); ishi and tsuchi (ch3) | ordinary, woven, mixed |
+  | F4 | ch4, Snowbell | always | honoo (ch4) | cloth, flame |
+  | F5 | ch5, Lanternfall | always | suzu and koe (ch5) | struck, rung |
+  | F6 | ch6, the Last Lamp Hut | not during the descent; always after it and after the ending | hikari (ch1) | lit, rubbed |
+
 - **Companion reactions.** Every companion has a reaction for every method, plus a fallback: `50_reactions.js`, 1 line each. None explains the route not taken. The reaction chosen is kept in `s.company.react['puzzle:<id>:done']`, so it is the same after a reload and in the catalogue.
-- **Late saves.** A save made before this work has no records, and each puzzle starts fresh when first touched. An invalid record is repaired by the migration. Completed puzzles are never re-awarded, because both `once` and the keepsake check guard the award.
+- **Late saves.** A save made before this work has no records, and each puzzle starts fresh when first touched. No puzzle blocks a main route. If an older save stands on a tile that is now a puzzle object (or a Mill Road reed), the world's own `unstick` moves the player to the nearest free tile on load. The browser test checks this for the reed tiles. An invalid record is repaired by the migration. Completed puzzles are never re-awarded, because both `once` and the keepsake check guard the award.
 - **World changes (§18.1).**
   - The art of every object is drawn from the committed state: the screen clamped, the float in the slot, the tray level with its card, the cover clear, the flower turned, the folders filled.
   - Collision is the props' own and does not change, except the Mill Road reeds.
@@ -282,7 +293,32 @@ The Evidence column uses these tags:
 
 ## 6. Evidence and measured numbers
 
-Filled in at the final runs; see §8 and the final report.
+All runs were on this worktree's build, in headless Chromium, on a 4-CPU machine shared with other workers' test runs (load average 16–41). Wall-clock times reflect that load; they are not play times.
+
+**Unit tests** (`node tests/run-unit.mjs fieldweave`): 390 checks, all passing.
+
+**Browser tests:**
+
+| Test | Checks | Result | Time |
+|---|---|---|---|
+| `tests/e2e/fieldweave.mjs` | 89 | all pass | 198 s on the final build; 270–460 s under heavier load |
+| `tests/e2e/mill_road.mjs` | 36 | all pass | 145 s on the final build; up to 284 s under load |
+| `tests/e2e/keepsakes.mjs` | 32 | all pass | 14 s on the final build; up to 53 s under load |
+
+Sections of `fieldweave.mjs` can be run on their own, for example `node tests/e2e/fieldweave.mjs F2`.
+
+**Content checks:**
+
+- `node tools/validate.mjs`: no errors.
+- `recog-coverage`: 15 of 15 pass after regenerating the data for 14 new kanji. The recogniser now reads 1570 kanji, and every clean reference is confident.
+
+**Build size.** `index.html` grew from 5,589,429 bytes (aa825c3) to 5,865,139 bytes, or +4.9%. That includes the stroke data for the new kanji.
+
+**Captures:**
+
+- Raw: `tests/e2e/out/fieldweave/`, `out/mill_road/`, `out/keepsakes/` (gitignored).
+- Curated, which I looked at myself: `docs/screenshots/fieldweave/` (see its README).
+- Recording: `docs/screenshots/fieldweave/f1_two_routes.webm`, made by `tests/e2e/fieldweave_video.mjs`.
 
 ## 7. Limitations and open points
 
@@ -290,7 +326,13 @@ Filled in at the final runs; see §8 and the final report.
 - **F5's setting.** F5 is an outdoor substitute for "a listening alcove", with a new minor NPC (Fumi). There is no suitable small interior on that map.
 - **No markers.** Quest guidance does not mark optional puzzles; they are not quests. The keepsake hints are the guidance layer. The Mill Road stage text ("Take the north path…") is unchanged.
 - **Validator coverage.** `tools/validate.mjs` does not scan custom registries (`RB.content.keepsakes`, the puzzle definitions, the reactions). The unit test checks their Japanese instead (furigana, dictionary coverage). A future validator pass could include them.
-- **Pre-existing failure.** `tests/e2e/departures.mjs` fails 3 checks both on this branch and on the unmodified foundation build (aa825c3); see the final report.
+- **Failures shared with the foundation build.**
+  - `tests/e2e/departures.mjs` fails 3 checks (the evening gathering routes, Hana, Tsuru). The unmodified foundation build (aa825c3) fails the same 3.
+  - `tests/e2e/learning_ui.mjs` fails its overflow test by timeout (180 s) under this machine's load. The foundation build fails it the same way.
+- **Timing checks under load.**
+  - Two unit timing checks failed once in the full suite (5058 passed, 2 failed) and passed on a rerun: kanji chart search (53/53) and recogniser p95 (37/37).
+  - `battle_anim.mjs` failed its frame-cost and blow-timing checks under load (2 of 16 failed). The foundation build, run under the same load, failed 3 of 16, including the frame-cost check.
+  - None of these touch field weaving: battles draw nothing of mine.
 - **Test side effect.** Running `tests/e2e/quest_guide.mjs` rewrites `docs/screenshots/quest_guide/*.webp`. I restored them after my runs.
 
 ## 8. Merge notes (shared files touched)
