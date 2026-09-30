@@ -111,7 +111,14 @@ RB.cases = (function () {
     const d = D(s);
     if (d.cases[id]) return norm(d.cases[id]);
     const r = d.cases[id] = fresh();
-    for (const cid in d.clues) { const c = clueDef(cid); if (c && c.case === id && !d.clues[cid].case) d.clues[cid].case = id; }
+    const t = now();
+    for (const cid in d.clues) {
+      const c = clueDef(cid), x = d.clues[cid];
+      if (!c || c.case !== id || x.case) continue;
+      x.case = id;
+      // noticed a moment ago, right here (the scene that opened the case): not "before you knew"
+      if (x.early && x.map === (s.map || null) && t - x.t < 120000) delete x.early;
+    }
     if (cd.quest && !s.quests[cd.quest]) RB.state.setQuest(s, cd.quest, 'start');
     RB.bus.emit('case:open', { id });
     return r;

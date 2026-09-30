@@ -28,7 +28,7 @@ const FX = {
   rw_evening: true, rw_hall_gather: true, departed: true, ch1_done: true, rw_letters_done: true,
   sg_arrived: true, sg_harbor_seen: true, sg_boss_done: true, sg_returned: true, sg_main_done: true, sg_road_open_seen: true, ch2_done: true,
   sg_tide_read: true, sg_tide_low: true, sg_fog_cleared: true,
-  co_restored: true, ch3_done: true, sb_arrived: true, sb_lamp_lit: true, ch4_done: true, sb_path_seen: true,
+  co_restored: true, ch3_done: true, sb_arrived: true, sb_lamp_lit: true, ch4_done: true, sb_path_seen: true, sb_stair_open: true,
 };
 const DONE = ['rw_labels', 'rw_mill', 'rw_depart', 'sg_main', 'co_main', 'sb_lamp'];
 const WORDS = ['mamoru', 'mizu', 'hikari', 'iyasu', 'kaze', 'nawa', 'ishi', 'koori', 'tsuchi', 'honoo'];
@@ -193,6 +193,119 @@ const A_PERSIST = async (o) => {
   return out;
 };
 
+
+// ---- Case B: the full route, through the case record's buttons -------------------------------------------
+const B_FULL = async (o) => {
+  const s = await window.CSSetup(o, 'sg.harbor', 27, 12);
+  const out = { drive: [], checks: [] }, K = RB.cases, V = RB.content.caseView;
+  window.PICK = ['May I borrow', '^Carry on', 'Close the book', '^Sit and look out', '^Look out'];
+  const d1 = await RBDrive.run(['cs.view_window']);
+  out.drive.push(Object.assign({ label: 'Saltglass: the sketch in the lighthouse window' }, d1));
+  out.checks.push(['sketch lent, backing paper given, case open', !!s.inv.cs_sketch && !!s.flags.cs_view_backing && K.known(s, 'view')]);
+  RB.questGuide.follow('cs_view');
+  out.checks.push(['concealed before a view is chosen', RB.questGuide.analyse('cs_view', s).how === 'concealed']);
+  const d2 = await RBDrive.run(['cs.view_note', 'cs.view_west', 'cs.view_east', 'cs.view_seat']);
+  out.drive.push(Object.assign({ label: 'Cinder Orchard guestbook; the three places on the Star Stair' }, d2));
+  out.checks.push(['three views observed', ['seat', 'west', 'east'].every((p) => K.observed(s, 'view.' + p))]);
+  const orders = ['seat', 'west', 'east'].map((p) => V.order(p).join(','));
+  out.checks.push(['the three views differ (' + orders.join(' | ') + ')', new Set(orders).size === 3]);
+  const bl = window.CSBacklog();
+  out.checks.push(['each view was described in words from the map', ['seat', 'west', 'east'].every((p) => bl.includes(V.words(V.order(p)).en))]);
+  // the record, with real clicks on its buttons
+  RB.ui.casebook.select('view');
+  RB.ui.menu.open('cases');
+  await new Promise((r) => setTimeout(r, 200));
+  const q = (sel) => document.querySelector('#folio-page ' + sel);
+  const click = async (sel) => { const e = q(sel); if (!e) throw new Error('no ' + sel); e.click(); await new Promise((r) => setTimeout(r, 120)); };
+  out.checks.push(['the sheet starts as it hung (back)', K.rec(s, 'view').sheet.side === 'back']);
+  await click('[data-a="reveal"][data-way="tilt"]');
+  out.checks.push(['tilting it to the light shows the pressed mark', K.observed(s, 'view.impression')]);
+  await click('[data-a="reveal"][data-way="backing"]');
+  await click('[data-a="reveal"][data-way="light"]');
+  const seen = K.rec(s, 'view').sheet.seen;
+  out.checks.push(['all three ways work and show the same thing', !!seen.tilt && !!seen.backing && !!seen.light]);
+  const sheetText = () => (q('.cs-sheet .cs-fig.sheet figcaption') || {}).textContent || '';
+  out.checks.push(['the back reads mirrored: ' + sheetText().slice(0, 90), /bare tree, the little shrine, the stair lantern/.test(sheetText())]);
+  // choose the seat, confirm while it is still back to front: safe, informative
+  const radio = (v) => { const r = q('input[name="cs-hyp-view"][value="' + v + '"]'); r.checked = true; r.dispatchEvent(new Event('change', { bubbles: true })); };
+  radio('seat'); await new Promise((r) => setTimeout(r, 150));
+  await click('[data-a="confirm"]');
+  out.checks.push(['held back to front, the seat view does not match (said so)', K.rec(s, 'view').stage === 'open' && /don.t line up/.test((q('.cs-sheet .note-slip') || {}).textContent || '')]);
+  await click('[data-a="turn"]');
+  out.checks.push(['Turn over: the front', K.rec(s, 'view').sheet.side === 'front' && /stair lantern, the little shrine, the bare tree/.test(sheetText())]);
+  radio('west'); await new Promise((r) => setTimeout(r, 150));
+  await click('[data-a="cmpview"]');
+  out.checks.push(['Compare shows the chosen view beside the sketch', !!q('.cs-sheet .cs-fig.view')]);
+  await click('[data-a="confirm"]');
+  out.checks.push(['front + the west stone: no match, still open', K.rec(s, 'view').stage === 'open']);
+  await click('[data-a="reset"]');
+  out.checks.push(['Reset: back as it hung; evidence kept', K.rec(s, 'view').sheet.side === 'back' && K.observed(s, 'view.impression')]);
+  await click('[data-a="turn"]');
+  radio('seat'); await new Promise((r) => setTimeout(r, 150));
+  q('[data-a="confirm"]').click();
+  await new Promise((r) => setTimeout(r, 300));
+  await RB.test.idle(60000);
+  const r = K.rec(s, 'view');
+  out.checks.push(['front + the stone seat: solved (' + r.method + ')', r.stage === 'done' && r.method === 'note']);
+  out.checks.push(['keepsake Turning Picture; quest done', !!s.discovery.keepsakes.turning_picture && s.quests.cs_view.done]);
+  // leave the sketch at the seat: the framed sketch appears
+  window.PICK = ['Leave the sketch here'];
+  const d3 = await RBDrive.run([{ scene: 'cs.view_seat', again: true }]);
+  out.drive.push(Object.assign({ label: 'leave the sketch at the stone seat' }, d3));
+  const fr = RB.world.W.map.props.find((p) => p.p === 'cs_frame' && RB.state.test(s, p.if));
+  out.checks.push(['the framed sketch stands by the seat; the sketch left there', !!fr && !s.inv.cs_sketch && !!s.flags.cs_view_framed]);
+  return out;
+};
+
+// ---- Case B: held up in the world, no note, no mark examined --------------------------------------------------
+const B_HOLDUP = async (o) => {
+  const s = await window.CSSetup(o, 'sg.harbor', 27, 12);
+  const out = { drive: [], checks: [] }, K = RB.cases;
+  window.PICK = ['May I borrow', '^Carry on', 'as it hung in the window'];
+  const d1 = await RBDrive.run(['cs.view_window', 'cs.view_seat']);
+  out.drive.push(Object.assign({ label: 'borrow; hold it up at the seat as it hung' }, d1));
+  out.checks.push(['as it hung: no match, nothing lost', K.rec(s, 'view').stage === 'open' && !!s.inv.cs_sketch && /don.t line up/.test(window.CSBacklog())]);
+  window.PICK = ['turned over'];
+  const d2 = await RBDrive.run([{ scene: 'cs.view_seat', again: true }]);
+  out.drive.push(Object.assign({ label: 'hold it up turned over' }, d2));
+  const r = K.rec(s, 'view');
+  out.checks.push(['solved by comparing the landmarks alone (' + r.method + ')', r.stage === 'done' && r.method === 'compared']);
+  out.checks.push(['the evidence named is only what was observed (' + r.evidence.join() + ')', JSON.stringify(r.evidence) === JSON.stringify(['view.sketch', 'view.genzo', 'view.seat'])]);
+  return out;
+};
+
+// ---- Case B: the strongest help, then the way there ----------------------------------------------------------
+const B_HELP = async (o) => {
+  const s = await window.CSSetup(o, 'sg.harbor', 27, 12);
+  const out = { drive: [], checks: [] }, K = RB.cases;
+  window.PICK = ['May I borrow', '^Carry on'];
+  const d1 = await RBDrive.run(['cs.view_window']);
+  out.drive.push(Object.assign({ label: 'borrow' }, d1));
+  for (let i = 0; i < 4; i++) K.askHint(s, 'view');
+  RB.questGuide.follow('cs_view');
+  const g = RB.questGuide.analyse('cs_view', s);
+  out.checks.push(['the answer hint discloses the stone seat to the markers (' + g.targets.map((t) => t.map + '@' + t.x + ',' + t.y).join() + ')', g.targets.length === 1 && g.targets[0].map === 'sb.obs_path' && g.targets[0].x === 10 && g.targets[0].y === 36]);
+  window.PICK = ['turned over'];
+  const d2 = await RBDrive.run(['cs.view_seat']);
+  out.drive.push(Object.assign({ label: 'to the seat, turned over' }, d2));
+  const r = K.rec(s, 'view');
+  out.checks.push(['solved with help (' + r.method + '), same keepsake', r.stage === 'done' && r.method === 'helped' && !!s.discovery.keepsakes.turning_picture]);
+  return out;
+};
+
+// ---- after the story: both cases from a postgame save -------------------------------------------------------------
+const POST = async (o) => {
+  const s = await window.CSSetup(o, 'rw.village', 22, 30);
+  const out = { drive: [], checks: [] }, K = RB.cases;
+  window.PICK = ['^Take it along', '^Carry on', 'only came', 'May I borrow', 'turned over'];
+  const d1 = await RBDrive.run(['cs.parcel_shelf', 'cs.hama_parcel', 'cs.view_window', 'cs.view_seat']);
+  out.drive.push(Object.assign({ label: 'postgame: parcel to Hama; sketch to the seat' }, d1));
+  out.checks.push(['both solved after the story', K.solved(s, 'parcel') && K.solved(s, 'view')]);
+  out.checks.push(['both keepsakes, once each', !!s.discovery.keepsakes.parcel_seal && !!s.discovery.keepsakes.turning_picture && RB.discovery.keepsake(s, 'turning_picture') === false]);
+  out.checks.push(['Company topics offered for both (C1)', K.discussable(s) && K.topics(s).length === 2]);
+  return out;
+};
+
 const { srv, url } = await serve();
 const b = await launch();
 const comps = ['nao', 'mio', 'ren', 'suzu'];
@@ -200,6 +313,10 @@ await flow(b, url, 'Case A — thorough order', { comp: 'nao' }, A_THOROUGH);
 await flow(b, url, 'Case A — clue first, early delivery', { comp: 'suzu' }, A_EARLY);
 await flow(b, url, 'Case A — strongest help', { comp: 'ren' }, A_HELP);
 await flow(b, url, 'Case A — evidence kept', { comp: 'mio' }, A_PERSIST);
+await flow(b, url, 'Case B — full route through the record', { comp: 'mio' }, B_FULL);
+await flow(b, url, 'Case B — held up in the world', { comp: 'ren' }, B_HOLDUP);
+await flow(b, url, 'Case B — strongest help', { comp: 'suzu' }, B_HELP);
+await flow(b, url, 'Both cases after the story', { comp: 'nao', post: true }, POST);
 await b.close();
 srv.close();
 console.log(fails ? '\n' + fails + ' FAILED' : '\nall passed');

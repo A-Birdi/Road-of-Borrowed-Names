@@ -45,7 +45,8 @@ RB.ui.casebook = (function () {
   }
   function source(c, x) {
     const pn = placeName((c.source && c.source.map) || (x && x.map));
-    return '<div class="cs-src">' + (c.source ? esc(c.source.en) : '') + (pn ? ' <span class="muted">· ' + esc(pn) + '</span>' : '') +
+    const said = c.source ? c.source.en : '';
+    return '<div class="cs-src">' + esc(said) + (pn && !said.includes(pn) ? ' <span class="muted">· ' + esc(pn) + '</span>' : '') +
       (c.sure === false ? ' <span class="cs-unsure">' + I('help') + 'The speaker wasn’t sure</span>' : '') + '</div>';
   }
   function obsCard(s, id, cid, o) {

@@ -300,10 +300,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
     tree: (x, y, s) => '<path d="M' + x + ' ' + y + ' L' + x + ' ' + (y - 26 * s) + ' M' + x + ' ' + (y - 14 * s) + ' l' + -7 * s + ' ' + -7 * s + ' M' + x + ' ' + (y - 18 * s) + ' l' + 6 * s + ' ' + -8 * s + ' M' + x + ' ' + (y - 8 * s) + ' l' + 5 * s + ' ' + -4 * s + '" stroke="#4a4038" stroke-width="' + 2.2 * s + '" fill="none" stroke-linecap="round"/>',
   };
   const scene = (list, faint, mirror) => {
-    let b = '<rect width="200" height="110" fill="' + (faint ? '#f2ecdc' : '#f7f0de') + '"/><path d="M0 84 Q50 78 100 82 T200 80 L200 110 L0 110 Z" fill="#e6ecf2"/>';
+    let b = '<rect width="200" height="110" fill="' + (faint ? '#f2ecdc' : '#f7f0de') + '"/><path d="M0 90 Q50 84 100 88 T200 86 L200 110 L0 110 Z" fill="#e6ecf2"/>';
     for (const it of list) {
-      const x = 100 + (mirror ? -1 : 1) * it.deg * 1.25, s = Math.max(0.7, Math.min(1.6, 5 / it.f));
-      b += '<g opacity="' + (faint ? 0.55 : 1) + '">' + icon[it.k](x, 88, s) + '</g>';
+      const x = 100 + (mirror ? -1 : 1) * it.deg * 1.25, s = 1.4 * Math.max(0.75, Math.min(1.5, 5 / it.f));
+      b += '<g opacity="' + (faint ? 0.55 : 1) + '">' + icon[it.k](x, 96, s) + '</g>';
     }
     return b;
   };
