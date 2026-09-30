@@ -320,7 +320,7 @@ RB.weave = (function () {
     FW().setHold(res.pz, null);
     const lines = [];
     for (const l of res.say || []) lines.push({ who: 'narr', jp: l.jp, en: l.en });
-    if (res.completed && res.first && def.reward && def.reward.say) for (const l of [].concat(def.reward.say)) lines.push({ who: 'narr', jp: l.jp, en: l.en });
+    if (res.completed && res.first && def.reward && def.reward.say) for (const l of [].concat(def.reward.say)) lines.push({ who: l.who || 'narr', expr: l.expr, jp: l.jp, en: l.en });
     // the companion's first, brief reaction to what actually happened
     if (res.completed && res.first && s.comp && RB.company && RB.company.react) {
       const r = RB.company.react(s, { id: 'puzzle:' + res.pz + ':done', event: 'puzzle:' + res.pz, facts: { method: res.method } });
@@ -547,7 +547,35 @@ RB.weave = (function () {
           c.fillStyle = '#efe4c8'; c.fillRect(x - 2, y + r * 0.75 - 3, 5, 7);
           c.fillStyle = '#c8503a'; c.fillRect(x - 1, y + r * 0.75 - 1, 3, 2);
         } else if (m.mark === 'glow') {
-          halo(c, { x, y }, 8, 'rgba(255,236,170,', 0.35 + (still ? 0 : Math.sin(t / 400) * 0.1));
+          // a soft round glow (the light held where it was woven)
+          const gr = 16 * Math.max(1, o.w), a = 0.32 + (still ? 0 : Math.sin(t / 400) * 0.08);
+          const gy = y - 6, grad = c.createRadialGradient(x, gy, 1, x, gy, gr);
+          grad.addColorStop(0, 'rgba(255,240,180,' + a.toFixed(3) + ')'); grad.addColorStop(1, 'rgba(255,240,180,0)');
+          c.fillStyle = grad; c.fillRect(x - gr, gy - gr, gr * 2, gr * 2);
+        } else if (m.mark === 'rope') {
+          // a woven cord of ink wrapped round the handle and tied off (F2: the crank held)
+          const w = 9 * Math.max(1, o.w), sh = still ? 0 : Math.round(Math.sin(t / 700));
+          for (let i = 0; i < 4; i++) {
+            const yy = y - 6 + i * 4;
+            c.fillStyle = '#241c20'; c.fillRect(x - w, yy - 1, w * 2, 4);
+            c.fillStyle = i % 2 ? '#d8c89a' : '#efe4c8'; c.fillRect(x - w + 1, yy, w * 2 - 2, 2);
+            c.fillStyle = 'rgba(140,110,70,0.9)'; for (let k = -w + 3; k < w - 2; k += 4) c.fillRect(x + k, yy, 1, 2);
+          }
+          // the knot and its two loose ends
+          c.fillStyle = '#241c20'; c.fillRect(x + w - 2, y - 3, 6, 6);
+          c.fillStyle = '#efe4c8'; c.fillRect(x + w - 1, y - 2, 4, 4);
+          c.fillStyle = '#d8c89a'; c.fillRect(x + w + 3, y + 2, 2, 6 + sh); c.fillRect(x + w + 6, y + 1, 2, 5 - sh);
+        } else if (m.mark === 'stone') {
+          // a small block of woven stone under the short foot (F3: the tray set level); the
+          // tray art (fw_tray) leaves that foot short, art rows 27-30 under x 24-27
+          const bx = A.ax(o.x * A.TS) + 22, by = A.ay(o.y * A.TS) + 27;
+          c.fillStyle = '#241c20'; c.fillRect(bx - 1, by - 1, 9, 5);
+          c.fillStyle = '#8a8c90'; c.fillRect(bx, by, 7, 3);
+          c.fillStyle = '#b4b6ba'; c.fillRect(bx, by, 7, 1);
+          c.fillStyle = '#5e6064'; c.fillRect(bx + 2, by + 2, 1, 1); c.fillRect(bx + 5, by + 1, 1, 1);
+          // the faint ink seam that says it was woven, not fetched
+          c.fillStyle = 'rgba(255,244,200,' + (still ? 0.7 : 0.55 + Math.sin(t / 500) * 0.15).toFixed(2) + ')';
+          c.fillRect(bx, by + 3, 7, 1);
         }
       }
     }
@@ -593,6 +621,81 @@ RB.weave = (function () {
   };
   // !hook fw_open <puzzle> <object>  "Weave a word on it…" from the inspection menu
   RB.hooks.fw_open = async (args) => { pendingOpen = { pz: args[0], key: args[1] }; };
+  // !hook fw_arrange <puzzle>        the filing sheet: each item into one place, editable,
+  // with an on-request check that names the visible rule a placement breaks
+  RB.hooks.fw_arrange = async (args) => {
+    RB.ui.dialogue.hide();
+    busy = true;
+    try { await arrangeSheet(args[0]); } finally { busy = false; }
+  };
+  function arrangeSheet(pz) {
+    const s = S(), def = FW().get(pz);
+    if (!def || !def.arrange) return Promise.resolve();
+    return new Promise((resolve) => {
+      const el = RB.ui.el('div', 'weave-sheet arrange-sheet');
+      el.setAttribute('role', 'dialog');
+      el.setAttribute('aria-labelledby', 'ar-title');
+      const layer = { el, name: 'arrange' };
+      let closed = false;
+      const slots = Object.keys(def.folders);
+      function html() {
+        const st = FW().stateOf(s, pz);
+        const look = FW().lookOf(s, pz, def.arrangeObj);
+        const rule = look && look.lines ? look.lines[look.lines.length - 1] : null;
+        const items = FW().lookOf(s, pz, 'slips');
+        const desc = items && items.lines ? items.lines.slice(1) : [];
+        return '<div class="wv-frame"><div class="wv-head"><h2 id="ar-title">' + I('note') + '<span>File the slips</span></h2>' +
+          '<button type="button" class="cbtn" data-a="done">' + I('done') + '<span>Done</span></button></div><div class="wv-body">' +
+          (rule ? '<div class="wv-look slip">' + lookHtml(rule) + '</div>' : '') +
+          def.arrange.map((k, i) => {
+            const d = desc[i];
+            return '<div class="ar-item"><div class="ar-desc">' + (d ? lookHtml(d) : esc(k)) + '</div>' +
+              '<div class="ar-slots" role="radiogroup" aria-label="Folder for slip ' + (i + 1) + '">' +
+              slots.concat(['loose']).map((f) => {
+                const lab = f === 'loose' ? { en: 'Not filed', jp: '' } : def.folders[f];
+                return '<button type="button" class="wv-t" role="radio" data-k="' + k + '" data-f="' + f + '" aria-checked="' + (st[k] === f) + '">' + (lab.jp ? RB.ui.jhtml(lab.jp) : '') + '<span class="en">' + esc(lab.en) + '</span></button>';
+              }).join('') + '</div></div>';
+          }).join('') +
+          '<div class="wv-foot"><button type="button" class="pbtn" data-a="check">' + I('look') + '<span>Check against the rule</span></button></div>' +
+          '<div class="wv-hint ar-check" aria-live="polite"></div></div></div>';
+      }
+      function render(focusK, focusF) {
+        el.innerHTML = html();
+        if (focusK) { const b = el.querySelector('[data-k="' + focusK + '"][data-f="' + focusF + '"]'); if (b) b.focus({ preventScroll: true }); }
+      }
+      function close(res, keep) {
+        if (closed) return;
+        closed = true;
+        RB.ui.popLayer(layer);
+        if (!keep) resolve(res || null);
+      }
+      el.addEventListener('click', async (e) => {
+        const b = e.target.closest('button');
+        if (!b || closed) return;
+        if (b.dataset.k) {
+          const res = FW().arrange(s, pz, { [b.dataset.k]: b.dataset.f });
+          RB.audio && RB.audio.sfx('page', { vol: 0.5 });
+          if (res && res.completed) {
+            // the sheet closes; the scene waits until the result has been shown
+            close(res, true);
+            await present(res, null, { inScene: true, prop: { x: def.objects[def.arrangeObj].x, y: def.objects[def.arrangeObj].y, o: { part: def.arrangeObj } } });
+            resolve(res);
+            return;
+          }
+          if (res && res.effective) RB.save.autosave('progress');
+          render(b.dataset.k, b.dataset.f);
+        } else if (b.dataset.a === 'check') {
+          const out = def.check ? def.check(FW().stateOf(s, pz)) : [];
+          el.querySelector('.ar-check').innerHTML = '<ul class="ar-list">' + out.map((x) => '<li class="' + (x.ok ? 'ok' : x.ok === false ? 'no' : 'unsure') + '">' + RB.ui.jhtml(x.jp) + '<div class="en">' + esc(x.en) + '</div></li>').join('') + '</ul>';
+          const box = el.querySelector('.ar-check');
+          if (box.scrollIntoView) box.scrollIntoView({ block: 'nearest', behavior: RB.game.reducedMotion() ? 'auto' : 'smooth' });
+        } else if (b.dataset.a === 'done') close();
+      });
+      layer.onCancel = () => close();
+      render();
+      RB.ui.pushLayer(layer);
+    });
+  }
 
   // ---- wiring ------------------------------------------------------------------------------------------
   // the remappable Weave key (src/engine/10_input.js asks here first)
@@ -611,8 +714,17 @@ RB.weave = (function () {
   // leaving the map or the game closes the sheet and ends any presentation
   RB.bus.on('map:enter', () => { if (panel) close(); if (cur) finish(); });
 
+  // What a prop may show while an action on its puzzle is being presented
+  // (a vane spinning, a flower turning): { fx, family, kind, k (ms since the
+  // effect's beat), result } or null. Drawing only.
+  function cue(pz) {
+    if (!cur || !cur.res || cur.res.pz !== pz) return null;
+    const k = performance.now() - cur.t0;
+    return { fx: cur.res.fx, family: cur.fam, kind: cur.kind, k: k - cur.B.hit, beat: k - cur.B.beat, res: cur.res };
+  }
+
   return {
-    open, close, onKey, draw, available, known, nearby, finish,
+    open, close, onKey, draw, available, known, nearby, finish, cue,
     busy: () => busy || !!cur, isOpen: () => !!panel, target, select, choose,
     // tests: the sheet's current state
     state: () => ({ open: !!panel, busy, targets: panel ? panel.targets.map((t) => t.pz + '.' + t.key) : nearby().map((t) => t.pz + '.' + t.key), sel: panel && target() ? target().pz + '.' + target().key : null, anim: cur ? { kind: cur.kind, k: performance.now() - cur.t0 } : null }),

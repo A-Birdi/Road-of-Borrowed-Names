@@ -157,6 +157,8 @@ RB.fieldweave = (function () {
       if (l.if && !match(st, l.if)) continue;
       if (l.ifs && !RB.state.test(s, l.ifs)) continue;
       if (l.done != null && !!r.done !== l.done) continue;
+      // a computed description (e.g. the arrangement the player confirmed)
+      if (typeof l.fn === 'function') return Object.assign({}, l, { lines: [].concat(l.fn(st, r, s)) });
       return l;
     }
     return null;
@@ -188,8 +190,9 @@ RB.fieldweave = (function () {
   function applies(s, pz, key, word) {
     const def = DEFS[pz];
     if (!def) return false;
-    const r = weaveRule(def, stateOf(s, pz), key, familyOf(word));
-    return !!(r && r.set && Object.keys(r.set).some((k) => stateOf(s, pz)[k] !== r.set[k]));
+    const st = stateOf(s, pz), r = weaveRule(def, st, key, familyOf(word));
+    const set = r && (typeof r.set === 'function' ? r.set(st, s) : r.set);
+    return !!(set && Object.keys(set).some((k) => st[k] !== set[k]));
   }
 
   let seq = 0;
@@ -200,11 +203,15 @@ RB.fieldweave = (function () {
     const r = rec(s, pz);
     const before = clone(r.state);
     const after = clone(r.state);
-    if (rule && rule.set) Object.assign(after, clone(rule.set));
+    // `set` may be computed from the state (e.g. where a signal goes through
+    // an explicit channel model); `say` may describe the computed result
+    const patch = rule && (typeof rule.set === 'function' ? rule.set(before, s) : rule.set);
+    if (patch) Object.assign(after, clone(patch));
     const changed = Object.keys(after).filter((k) => after[k] !== before[k]);
+    const said = rule && (typeof rule.say === 'function' ? rule.say(before, after, s) : rule.say);
     const res = Object.assign({
       pz, kind, rule: rule ? rule.id : null, act: rule ? rule.act || null : null, before, after, changed,
-      effective: changed.length > 0, say: rule && rule.say ? [].concat(rule.say) : [], fx: rule && rule.fx || null,
+      effective: changed.length > 0, say: said ? [].concat(said) : [], fx: rule && rule.fx || null,
       obs: rule && rule.obs || null, completed: false, method: null, keepsake: null, id: 'fw:' + pz + ':' + (++seq),
       region: def.region,
     }, extra || {});
@@ -245,8 +252,10 @@ RB.fieldweave = (function () {
     const def = DEFS[pz];
     if (!def || !eligible(s, pz)) return null;
     const r0 = peek(s, pz);
-    if (r0.done && !(def.after_acts || []).includes(name)) return apply(s, pz, null, 'act', { key: null, stale: true });
     const rule = actRule(def, r0.state, name);
+    // a finished puzzle keeps its arrangement: only explanations (rules that
+    // change nothing) still answer, e.g. looking in a box again
+    if (r0.done && rule && rule.set && (def.after_acts || []).indexOf(name) < 0) return apply(s, pz, null, 'act', { key: null, stale: true });
     return apply(s, pz, rule, 'act', { key: rule && rule.obj ? [].concat(rule.obj)[0] : null, stale: !rule });
   }
   // A field weave: `word` was already accepted by the language step (lang is
@@ -264,6 +273,17 @@ RB.fieldweave = (function () {
     if (res.effective) { const rr = rec(s, pz); rr.known = rr.known || {}; rr.known[key + ':' + word] = 1; }
     return res;
   }
+  // A free arrangement (e.g. which folder each slip is in), from a keyboard-
+  // and touch-friendly panel: only keys the definition lists in `arrange`,
+  // only values it allows. Returns the result like an ordinary action.
+  function arrange(s, pz, patch) {
+    const def = DEFS[pz];
+    if (!def || !def.arrange || !eligible(s, pz) || peek(s, pz).done) return null;
+    const ok = {};
+    for (const k in patch) if (def.arrange.indexOf(k) >= 0 && (!def.values || !def.values[k] || def.values[k].indexOf(patch[k]) >= 0)) ok[k] = patch[k];
+    if (!Object.keys(ok).length) return null;
+    return apply(s, pz, { id: 'arrange', act: 'arrange', set: ok, say: def.arrangeSay || null }, 'act', { key: def.arrangeObj || null });
+  }
   // A routine repeat of an understood control needs no language step: the
   // same word already worked on this object before (and did something).
   function routine(s, pz, key, word) {
@@ -274,7 +294,7 @@ RB.fieldweave = (function () {
   // keepsake are kept; a finished puzzle is not reset.
   function reset(s, pz) {
     const def = DEFS[pz];
-    if (!def) return false;
+    if (!def || def.noReset) return false;   // e.g. F4: the frost, once cleared, does not come back
     const r = rec(s, pz);
     if (r.done) return false;
     const before = clone(r.state);
@@ -343,7 +363,7 @@ RB.fieldweave = (function () {
 
   return {
     define, get, list, rec, peek, stateOf, view, setHold, match, eligible, methodOf, objectsOn, near, dist,
-    lookOf, observe, act, weave, applies, routine, reset, hint, hintLevel, familyOf, repair, FAMILY, PLAIN,
+    lookOf, observe, act, weave, arrange, applies, routine, reset, hint, hintLevel, familyOf, repair, FAMILY, PLAIN,
     _weaveRule: weaveRule, _actRule: actRule,
   };
 })();

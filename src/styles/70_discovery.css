@@ -45,7 +45,7 @@ body.touch-large .touchpad .tp-weave { width: 72px; height: 72px; }
 .wv-look .wv-name .en { margin-left: 0.5em; font-weight: 400; color: var(--ink-2); font-size: 0.9em; }
 .wv-look .wv-l + .wv-l { margin-top: 4px; }
 .wv-look .en, .wv-hints .en { font-size: 0.9em; color: var(--ink-2); }
-.wv-look rt, .wv-t rt, .wv-w rt, .wv-hints rt { color: var(--rt-ink); }
+.wv-body rt, .wv-look rt, .wv-t rt, .wv-w rt, .wv-hints rt, .ar-list rt { color: var(--rt-ink); }
 .wv-words { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 132px), 1fr)); gap: 8px; }
 .wv-w {
   display: grid; grid-template-columns: 30px 1fr; grid-template-areas: "ic jp" "ic en" "ic r"; align-items: center; column-gap: 6px;
@@ -89,3 +89,52 @@ body.touch-large .touchpad .tp-weave { width: 72px; height: 72px; }
 @media (max-height: 520px) { .weave-sheet.side { top: max(6px, env(safe-area-inset-top)); width: min(420px, 46vw); max-height: calc(100% - 12px); } }
 body.high-contrast .wv-frame { background: #000; }
 body.reduced-motion .wv-w, body.reduced-motion .wv-t { transition: none; }
+
+/* ---- Roadside Keepsakes (Journey › Keepsakes) ------------------------------------------------ */
+.ks-art { image-rendering: pixelated; image-rendering: crisp-edges; display: block; }
+.ks-page h3 .jp-sub { font-size: 0.75em; font-weight: 400; margin-left: 0.4em; }
+.ks-counts { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; margin: 4px 0 8px; font-size: 0.92em; }
+.ks-display { display: flex; align-items: center; gap: 8px; margin: 6px 0 10px; padding: 6px 8px; background: var(--paper-2); border: 1px solid var(--rule); border-radius: var(--r-1); }
+.ks-display .lab { font-size: 0.75em; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-3); }
+.ks-display .en { color: var(--ink-2); font-size: 0.9em; }
+.ks-disp { display: inline-flex; align-items: center; gap: 6px; background: none; border: 0; font: inherit; color: inherit; cursor: pointer; min-height: var(--tap); padding: 0 4px; }
+.ks-disp:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.ks-region { margin: 12px 0 6px; }
+.ks-region .en { font-weight: 400; color: var(--ink-2); font-size: 0.9em; margin-left: 0.4em; }
+.ks-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 120px), 1fr)); gap: 8px; }
+.ks-cell {
+  display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 6px; min-height: var(--tap); cursor: pointer; font: inherit; text-align: center;
+  background: var(--paper); color: var(--ink); border: 1px solid var(--ink-3); border-radius: var(--r-1); box-shadow: 0 2px 0 var(--paper-3);
+}
+.ks-cell.unfound { border-style: dashed; background: var(--paper-2); }
+.ks-cell.on, .ks-cell[aria-pressed="true"] { border-color: var(--ribbon-deep); box-shadow: inset 0 -3px 0 var(--ribbon); }
+.ks-cell:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.ks-cell .nm { font-size: 0.9em; }
+.ks-cell .nm .en { display: block; font-size: 0.85em; color: var(--ink-2); }
+.ks-detail { margin-top: 10px; }
+.ks-big { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px; margin-bottom: 8px; }
+.ks-slot-big { display: inline-block; padding: 8px; background: #f8f1dc; border: 1px solid var(--rule); border-radius: var(--r-1); overflow: auto; max-width: 100%; }
+.ks-zoom { display: flex; gap: 2px; }
+.ks-name .en { font-weight: 400; color: var(--ink-2); font-size: 0.85em; margin-left: 0.4em; }
+.ks-comment { display: flex; gap: 8px; padding: 8px; margin: 8px 0; background: #fbf6e8; border-left: 3px solid var(--ribbon); }
+.ks-comment svg { width: 1.3em; height: 1.3em; flex: none; }
+.ks-comment .who { font-weight: 600; font-size: 0.9em; }
+.ks-comment .en { font-size: 0.9em; color: var(--ink-2); }
+.ks-hint { margin: 6px 0; }
+.ks-hint .lv { display: block; font-size: 0.75em; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-3); }
+.ks-atlas .tag { display: inline-block; margin-left: 0.4em; padding: 0 6px; border: 1px solid var(--ink-3); border-radius: 8px; font-size: 0.85em; }
+.ks-toast .ks-slot { display: inline-block; vertical-align: middle; margin: 0 6px; }
+.ks-page svg, .ks-detail svg { width: 1.15em; height: 1.15em; vertical-align: -0.2em; flex: none; }
+
+/* ---- the filing sheet (F6) ------------------------------------------------------------------ */
+.arrange-sheet .ar-item { padding: 8px 0; border-top: 1px solid var(--rule); }
+.arrange-sheet .ar-desc { margin-bottom: 6px; }
+.arrange-sheet .ar-desc .en { font-size: 0.9em; color: var(--ink-2); }
+.arrange-sheet .ar-slots { display: flex; flex-wrap: wrap; gap: 6px; }
+.ar-list { margin: 8px 0 0; padding-left: 1.4em; }
+.ar-list li { margin: 4px 0; }
+.ar-list li.ok::marker { content: '✓ '; color: var(--ok-ink); }
+.ar-list li.no::marker { content: '✗ '; color: var(--danger-ink); }
+.ar-list li.unsure::marker { content: '? '; color: var(--warn-ink); }
+.ar-list .en { font-size: 0.9em; color: var(--ink-2); }
+@media (min-width: 600px) { .arrange-sheet { top: max(10px, env(safe-area-inset-top)); bottom: max(10px, env(safe-area-inset-bottom)); max-height: none; } }
