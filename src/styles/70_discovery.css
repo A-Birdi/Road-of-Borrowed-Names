@@ -1,0 +1,91 @@
+/* Field discovery: the Weave sheet and its world label (src/ui/57_weave.js),
+ * the Roadside Keepsakes catalogue (src/ui/58_keepsakes.js) and its notices.
+ * Folio materials: a cloth band with a paper sheet; the sheet sits along the
+ * bottom (or the right edge on short landscape screens) so the target in
+ * the middle of the view stays visible. */
+
+/* ---- the Weave control ----------------------------------------------------------- */
+.hud .weave-b.hidden, .touchpad .tp-weave.hidden { display: none; }
+.touchpad .tp-weave {
+  width: 62px; height: 62px; background: rgba(28, 35, 70, 0.9); color: var(--on-cloth); border: 1px solid var(--ribbon);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.35);
+}
+.touchpad .tp-weave .k svg { width: 20px; height: 20px; }
+.touchpad .tp-weave .l { font-size: 0.8em; font-weight: 600; }
+body.touch-large .touchpad .tp-weave { width: 72px; height: 72px; }
+
+/* ---- the sheet -------------------------------------------------------------------------- */
+.weave-sheet {
+  position: absolute; left: 50%; bottom: max(10px, env(safe-area-inset-bottom)); transform: translateX(-50%);
+  width: min(760px, calc(100vw - 20px)); max-height: min(56vh, 520px); display: flex; z-index: 20;
+  pointer-events: auto;
+}
+.weave-sheet.hidden { display: none; }
+.wv-frame {
+  display: flex; flex-direction: column; width: 100%; min-height: 0; border-radius: var(--r-2); overflow: hidden;
+  background: var(--cloth-800); background-image: var(--cloth-weave); border: 1px solid var(--paper-edge);
+  box-shadow: 0 10px 36px rgba(0,0,0,0.55);
+}
+.wv-head { display: flex; align-items: center; gap: 8px; padding: 6px 8px 6px 12px; color: var(--on-cloth); }
+.wv-head h2 { display: flex; align-items: center; gap: 0.4em; margin: 0; font-size: 1.05em; font-weight: 600; }
+.wv-head h2 svg { width: 1.3em; height: 1.3em; color: var(--ribbon); }
+.wv-head .wv-cancel { margin-left: auto; }
+.wv-body { overflow-y: auto; overscroll-behavior: contain; padding: 10px 12px 12px; background: var(--paper); color: var(--ink); min-height: 0; }
+.wv-lab { font-size: 0.8em; font-weight: 600; letter-spacing: 0.04em; color: var(--ink-3); text-transform: uppercase; margin: 2px 0 4px; }
+.wv-targets { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.wv-t {
+  display: inline-flex; flex-direction: column; align-items: flex-start; min-height: var(--tap); padding: 4px 10px; cursor: pointer;
+  background: var(--paper-2); color: var(--ink); border: 1px solid var(--ink-3); border-radius: var(--r-1); font: inherit; text-align: left;
+}
+.wv-t .en { font-size: 0.82em; color: var(--ink-2); }
+.wv-t[aria-checked="true"] { background: var(--paper); border-color: var(--ribbon-deep); box-shadow: inset 0 -3px 0 var(--ribbon); font-weight: 600; }
+.wv-t:focus-visible, .wv-w:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.wv-look { padding: 8px 10px; margin-bottom: 8px; background: #fbf6e8; border: 1px solid var(--rule); border-radius: var(--r-1); }
+.wv-look .wv-name { font-weight: 600; margin-bottom: 4px; }
+.wv-look .wv-name .en { margin-left: 0.5em; font-weight: 400; color: var(--ink-2); font-size: 0.9em; }
+.wv-look .wv-l + .wv-l { margin-top: 4px; }
+.wv-look .en, .wv-hints .en { font-size: 0.9em; color: var(--ink-2); }
+.wv-look rt, .wv-t rt, .wv-w rt, .wv-hints rt { color: var(--rt-ink); }
+.wv-words { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 132px), 1fr)); gap: 8px; }
+.wv-w {
+  display: grid; grid-template-columns: 30px 1fr; grid-template-areas: "ic jp" "ic en" "ic r"; align-items: center; column-gap: 6px;
+  min-height: 52px; padding: 6px 8px; cursor: pointer; text-align: left; font: inherit;
+  background: var(--paper); color: var(--ink); border: 1px solid var(--ink-3); border-radius: var(--r-1); box-shadow: 0 2px 0 var(--paper-3);
+}
+.wv-w:hover { background: #f7efdc; }
+.wv-w .ic { grid-area: ic; width: 26px; height: 26px; color: var(--ink-2); }
+.wv-w .ic svg { width: 100%; height: 100%; }
+.wv-w .wv-wj { grid-area: jp; font-size: 1.1em; }
+.wv-w .wv-we { grid-area: en; font-size: 0.85em; color: var(--ink-2); }
+.wv-w .wv-wr { grid-area: r; font-size: 0.75em; color: var(--ok-ink); }
+.wv-foot { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 8px; }
+.wv-hints { margin: 6px 0 0; padding-left: 1.3em; }
+.wv-hints li { margin: 4px 0; }
+.wv-hints .lv { display: block; font-size: 0.75em; font-weight: 600; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.04em; }
+.wv-situ { display: flex; gap: 8px; align-items: flex-start; }
+.wv-situ svg { width: 1.4em; height: 1.4em; flex: none; }
+/* the chosen thing's name over it in the world */
+.wv-label {
+  position: absolute; transform: translate(-50%, -100%); padding: 2px 8px; pointer-events: none; z-index: 5; white-space: nowrap;
+  background: var(--paper); color: var(--ink); border: 1px solid var(--ink); border-radius: var(--r-1); font-size: 0.85em;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+}
+.wv-label.hidden { display: none; }
+#overlay > .wv-label { pointer-events: none; }
+@media (max-width: 599px) {
+  .weave-sheet { left: 0; right: 0; bottom: 0; transform: none; width: 100%; max-height: 44vh; }
+  .wv-frame { border-radius: 12px 12px 0 0; border-left: 0; border-right: 0; padding-bottom: env(safe-area-inset-bottom); }
+  .weave-sheet.top { top: 0; bottom: auto; }
+  .weave-sheet.top .wv-frame { border-radius: 0 0 12px 12px; padding-top: env(safe-area-inset-top); padding-bottom: 0; }
+}
+@media (min-width: 600px) {
+  .weave-sheet.top { top: max(10px, env(safe-area-inset-top)); bottom: auto; max-height: 44vh; }
+}
+/* beside the player and the target: wide screens and short landscape ones */
+.weave-sheet.side {
+  left: auto; right: max(10px, env(safe-area-inset-right)); top: max(10px, env(safe-area-inset-top)); bottom: auto;
+  transform: none; width: min(400px, 40vw); max-height: calc(100% - 20px);
+}
+@media (max-height: 520px) { .weave-sheet.side { top: max(6px, env(safe-area-inset-top)); width: min(420px, 46vw); max-height: calc(100% - 12px); } }
+body.high-contrast .wv-frame { background: #000; }
+body.reduced-motion .wv-w, body.reduced-motion .wv-t { transition: none; }

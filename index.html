@@ -2697,6 +2697,99 @@ body.high-contrast .kc-pp { --pad-paper: #ffffff; --pad-ink: #000000; --pad-guid
 .kjc .kc-res .en, .kjc .kc-words .en { font-family: var(--ui-font); }
 .folio.lsheet.kjc > .folio-head { flex: none; }
 @media (max-width: 599px) { .folio.lsheet.kjc > .folio-head .meta { display: none; } .kjc .kc-res { gap: 0.5em; padding: 0.3em 0.45em; } .kjc .kc-rg { font-size: 1.45em; } }
+
+/* ==== src/styles/70_discovery.css ==== */
+/* Field discovery: the Weave sheet and its world label (src/ui/57_weave.js),
+ * the Roadside Keepsakes catalogue (src/ui/58_keepsakes.js) and its notices.
+ * Folio materials: a cloth band with a paper sheet; the sheet sits along the
+ * bottom (or the right edge on short landscape screens) so the target in
+ * the middle of the view stays visible. */
+
+/* ---- the Weave control ----------------------------------------------------------- */
+.hud .weave-b.hidden, .touchpad .tp-weave.hidden { display: none; }
+.touchpad .tp-weave {
+  width: 62px; height: 62px; background: rgba(28, 35, 70, 0.9); color: var(--on-cloth); border: 1px solid var(--ribbon);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.35);
+}
+.touchpad .tp-weave .k svg { width: 20px; height: 20px; }
+.touchpad .tp-weave .l { font-size: 0.8em; font-weight: 600; }
+body.touch-large .touchpad .tp-weave { width: 72px; height: 72px; }
+
+/* ---- the sheet -------------------------------------------------------------------------- */
+.weave-sheet {
+  position: absolute; left: 50%; bottom: max(10px, env(safe-area-inset-bottom)); transform: translateX(-50%);
+  width: min(760px, calc(100vw - 20px)); max-height: min(56vh, 520px); display: flex; z-index: 20;
+  pointer-events: auto;
+}
+.weave-sheet.hidden { display: none; }
+.wv-frame {
+  display: flex; flex-direction: column; width: 100%; min-height: 0; border-radius: var(--r-2); overflow: hidden;
+  background: var(--cloth-800); background-image: var(--cloth-weave); border: 1px solid var(--paper-edge);
+  box-shadow: 0 10px 36px rgba(0,0,0,0.55);
+}
+.wv-head { display: flex; align-items: center; gap: 8px; padding: 6px 8px 6px 12px; color: var(--on-cloth); }
+.wv-head h2 { display: flex; align-items: center; gap: 0.4em; margin: 0; font-size: 1.05em; font-weight: 600; }
+.wv-head h2 svg { width: 1.3em; height: 1.3em; color: var(--ribbon); }
+.wv-head .wv-cancel { margin-left: auto; }
+.wv-body { overflow-y: auto; overscroll-behavior: contain; padding: 10px 12px 12px; background: var(--paper); color: var(--ink); min-height: 0; }
+.wv-lab { font-size: 0.8em; font-weight: 600; letter-spacing: 0.04em; color: var(--ink-3); text-transform: uppercase; margin: 2px 0 4px; }
+.wv-targets { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.wv-t {
+  display: inline-flex; flex-direction: column; align-items: flex-start; min-height: var(--tap); padding: 4px 10px; cursor: pointer;
+  background: var(--paper-2); color: var(--ink); border: 1px solid var(--ink-3); border-radius: var(--r-1); font: inherit; text-align: left;
+}
+.wv-t .en { font-size: 0.82em; color: var(--ink-2); }
+.wv-t[aria-checked="true"] { background: var(--paper); border-color: var(--ribbon-deep); box-shadow: inset 0 -3px 0 var(--ribbon); font-weight: 600; }
+.wv-t:focus-visible, .wv-w:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.wv-look { padding: 8px 10px; margin-bottom: 8px; background: #fbf6e8; border: 1px solid var(--rule); border-radius: var(--r-1); }
+.wv-look .wv-name { font-weight: 600; margin-bottom: 4px; }
+.wv-look .wv-name .en { margin-left: 0.5em; font-weight: 400; color: var(--ink-2); font-size: 0.9em; }
+.wv-look .wv-l + .wv-l { margin-top: 4px; }
+.wv-look .en, .wv-hints .en { font-size: 0.9em; color: var(--ink-2); }
+.wv-look rt, .wv-t rt, .wv-w rt, .wv-hints rt { color: var(--rt-ink); }
+.wv-words { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 132px), 1fr)); gap: 8px; }
+.wv-w {
+  display: grid; grid-template-columns: 30px 1fr; grid-template-areas: "ic jp" "ic en" "ic r"; align-items: center; column-gap: 6px;
+  min-height: 52px; padding: 6px 8px; cursor: pointer; text-align: left; font: inherit;
+  background: var(--paper); color: var(--ink); border: 1px solid var(--ink-3); border-radius: var(--r-1); box-shadow: 0 2px 0 var(--paper-3);
+}
+.wv-w:hover { background: #f7efdc; }
+.wv-w .ic { grid-area: ic; width: 26px; height: 26px; color: var(--ink-2); }
+.wv-w .ic svg { width: 100%; height: 100%; }
+.wv-w .wv-wj { grid-area: jp; font-size: 1.1em; }
+.wv-w .wv-we { grid-area: en; font-size: 0.85em; color: var(--ink-2); }
+.wv-w .wv-wr { grid-area: r; font-size: 0.75em; color: var(--ok-ink); }
+.wv-foot { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 8px; }
+.wv-hints { margin: 6px 0 0; padding-left: 1.3em; }
+.wv-hints li { margin: 4px 0; }
+.wv-hints .lv { display: block; font-size: 0.75em; font-weight: 600; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.04em; }
+.wv-situ { display: flex; gap: 8px; align-items: flex-start; }
+.wv-situ svg { width: 1.4em; height: 1.4em; flex: none; }
+/* the chosen thing's name over it in the world */
+.wv-label {
+  position: absolute; transform: translate(-50%, -100%); padding: 2px 8px; pointer-events: none; z-index: 5; white-space: nowrap;
+  background: var(--paper); color: var(--ink); border: 1px solid var(--ink); border-radius: var(--r-1); font-size: 0.85em;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+}
+.wv-label.hidden { display: none; }
+#overlay > .wv-label { pointer-events: none; }
+@media (max-width: 599px) {
+  .weave-sheet { left: 0; right: 0; bottom: 0; transform: none; width: 100%; max-height: 44vh; }
+  .wv-frame { border-radius: 12px 12px 0 0; border-left: 0; border-right: 0; padding-bottom: env(safe-area-inset-bottom); }
+  .weave-sheet.top { top: 0; bottom: auto; }
+  .weave-sheet.top .wv-frame { border-radius: 0 0 12px 12px; padding-top: env(safe-area-inset-top); padding-bottom: 0; }
+}
+@media (min-width: 600px) {
+  .weave-sheet.top { top: max(10px, env(safe-area-inset-top)); bottom: auto; max-height: 44vh; }
+}
+/* beside the player and the target: wide screens and short landscape ones */
+.weave-sheet.side {
+  left: auto; right: max(10px, env(safe-area-inset-right)); top: max(10px, env(safe-area-inset-top)); bottom: auto;
+  transform: none; width: min(400px, 40vw); max-height: calc(100% - 20px);
+}
+@media (max-height: 520px) { .weave-sheet.side { top: max(6px, env(safe-area-inset-top)); width: min(420px, 46vw); max-height: calc(100% - 12px); } }
+body.high-contrast .wv-frame { background: #000; }
+body.reduced-motion .wv-w, body.reduced-motion .wv-t { transition: none; }
 </style>
 </head>
 <body>
@@ -14792,11 +14885,13 @@ RB.input = (function () {
     map: ['KeyM'],
     run: ['ShiftLeft', 'ShiftRight'],
     tr: ['KeyT'],
+    weave: ['KeyV'], // field weaving (src/ui/57_weave.js)
   };
   const ACTION_LABELS = {
     up: 'Move up', down: 'Move down', left: 'Move left', right: 'Move right',
     ok: 'Confirm / talk', cancel: 'Back', menu: 'Menu', help: 'Lightbulb help',
     log: 'Dialogue history', map: 'Map', run: 'Walk faster (hold)', tr: 'Show or hide the translation',
+    weave: 'Weave a word on something nearby',
   };
   let binds = RB.util.deepClone(DEFAULT_BINDS);
   const DIRECTIONS = ['up', 'down', 'left', 'right'];
@@ -14848,6 +14943,7 @@ RB.input = (function () {
     // Space/arrow/Tab must not scroll the page or move focus unexpectedly.
     if (a !== 'run') e.preventDefault();
     if (e.repeat && !(a in held)) return;
+    if (a === 'weave' && RB.weave && RB.weave.onKey(a)) return; // field weaving opens or closes its sheet
     if (handler) handler(a, e);
   }
   function onKeyUp(e) {
@@ -25794,6 +25890,358 @@ RB.world = (function () {
 })();
 
 
+/* ==== src/engine/55_fieldweave.js ==== */
+/* Field Inkweaving: authored field puzzles, their durable state, and the three
+ * separate layers of a field action (addendum §13; docs/ADDENDUM_CONTRACTS.md;
+ * docs/addendum/fieldweave.md).
+ *
+ * A puzzle is data (RB.fieldweave.define): objects anchored on a map, an
+ * initial state, rules that move that state, an outcome predicate
+ * (`complete`) and method classes that name the equivalent routes.
+ *
+ *   rules: { act: 'name' }        an ordinary action, run by id from the
+ *                                 object's inspection scene (!hook fw_act pz name)
+ *          { weave: family|'*', obj: key|'*' }   a field weave of that response
+ *                                 family on that object
+ *          if: cond  set: {…}  say: {jp,en}  obs: 'fact id'  fx: 'cue'
+ *   A rule without `set` (or whose `set` changes nothing) is an ineffective
+ *   attempt: it only explains, physically, why nothing happened.
+ *   cond: { key: value | [values…] } (all must hold), or an array of those (any).
+ *
+ * The three layers are kept apart. Language acceptance happens before this
+ * module is asked anything (the real RB.challenge.runStep); a wrong answer
+ * never reaches it. Applicability (does this response do anything to this
+ * object now?) is the rule lookup; correct Japanese on the wrong object is
+ * neutral physical feedback. Completion (does the world now meet the
+ * outcome?) is the predicate, whichever route produced the state.
+ *
+ * State: s.discovery.puzzles[id] = { state, done, method, t, seen, log, via }.
+ * Completion commits once (RB.state.once 'puzzle:<id>:done'), then emits
+ * discovery:resolved; nothing here uses the gameplay random streams, and the
+ * presentation (src/ui/57_weave.js) reads results and never writes state. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.fieldweave = (function () {
+  'use strict';
+  const DEFS = {};
+  // Each inscription word's response family (the stable ids of
+  // docs/ADDENDUM_CONTRACTS.md §6). Voice shares the bell's family: a sound.
+  const FAMILY = {
+    mamoru: 'protect', mizu: 'water', hikari: 'light', iyasu: 'heal', kaze: 'wind', nawa: 'bind',
+    ishi: 'stone', tsuchi: 'stone', koori: 'ice', honoo: 'fire', suzu: 'bell', koe: 'bell',
+  };
+  // What any response does to an object with no rule for it: something plain
+  // and visible, never a failure of the Japanese (which was already accepted).
+  const PLAIN = {
+    protect: { jp: '{淡|あわ}い {守|まも}り が {一瞬|いっしゅん} {立|た}つ が 、 ここ に は {守|まも}る もの が ない 。 すぐ に {消|き}えた 。', en: 'A pale ward stands for a moment, but there is nothing here for it to hold. It fades.' },
+    water: { jp: '{水|みず} が {少|すこ}し {跳|は}ねて 、 {流|なが}れ{落|お}ちた 。 {何|なに} も {変|か}わらない 。', en: 'A little water splashes and runs off. Nothing changes.' },
+    light: { jp: '{光|ひかり} が はっきり {照|て}らす 。 {見|み}える もの は 、 さっき と {同|おな}じ だ 。', en: 'Light shows it clearly. What you see is what you saw before.' },
+    heal: { jp: '{柔|やわ}らかな {光|ひかり} が {触|ふ}れる が 、 ここ に {癒|いや}す もの は ない 。', en: 'A soft glow touches it, but there is nothing here to heal.' },
+    wind: { jp: '{風|かぜ} が {吹|ふ}き{抜|ぬ}けた 。 {何|なに} も {動|うご}かない 。', en: 'A breeze passes through. Nothing moves.' },
+    bind: { jp: '{縄|なわ} の {形|かたち} が {巻|ま}きついて 、 {結|むす}ぶ ところ が なく ほどけた 。', en: 'The shape of a rope winds round it, finds nothing to tie to, and falls loose.' },
+    stone: { jp: '{重|おも}み が {一瞬|いっしゅん} かかる 。 もともと {動|うご}かない もの だ 。', en: 'A weight settles on it for a moment. It was not moving anyway.' },
+    ice: { jp: '{冷|つめ}たい {霜|しも} が {薄|うす}く {張|は}って 、 すぐ {消|き}えた 。', en: 'A thin frost forms and is gone.' },
+    fire: { jp: '{小|ちい}さな {炎|ほのお} が {揺|ゆ}れて 、 {何|なに} も {焦|こ}がさず に {消|き}えた 。', en: 'A small flame flickers and goes out without scorching anything.' },
+    bell: { jp: '{澄|す}んだ {音|おと} が {響|ひび}いて 、 {消|き}えて いく 。', en: 'A clear note rings out and fades.' },
+    support: { jp: '{何|なに} も {起|お}きない 。', en: 'Nothing happens.' },
+  };
+  const clone = (o) => (o == null ? o : JSON.parse(JSON.stringify(o)));
+  const LOG_MAX = 24;
+
+  // ---- definitions -------------------------------------------------------------------------
+  function define(def) {
+    if (!def || !def.id) throw new Error('fieldweave: a puzzle needs an id');
+    def.objects = def.objects || {};
+    for (const k in def.objects) {
+      const o = def.objects[k];
+      o.key = k; o.w = o.w || 1; o.h = o.h || 1;
+    }
+    def.rules = (def.rules || []).map((r, i) => Object.assign({ n: i }, r, { id: r.id || (r.act ? 'act:' + r.act : 'weave:' + r.weave + '@' + (r.obj || '*')) + '#' + i }));
+    def.init = def.init || {};
+    def.methods = def.methods || [];
+    DEFS[def.id] = def;
+    return def;
+  }
+  const get = (id) => DEFS[id] || null;
+  const list = () => Object.keys(DEFS).map((k) => DEFS[k]);
+
+  // ---- records -----------------------------------------------------------------------------
+  function disc(s) { return s.discovery || (s.discovery = RB.state.newCampaign().discovery); }
+  // The record, created on first touch (reading never writes the save).
+  function rec(s, id) {
+    const d = disc(s), def = DEFS[id];
+    if (!d.puzzles[id]) d.puzzles[id] = { state: clone(def ? def.init : {}), done: false, method: null, t: null, seen: {}, log: [] };
+    return d.puzzles[id];
+  }
+  function peek(s, id) {
+    const r = s && s.discovery && s.discovery.puzzles[id];
+    if (r) return r;
+    const def = DEFS[id];
+    return { state: clone(def ? def.init : {}), done: false, method: null, t: null, seen: {}, log: [], virtual: true };
+  }
+  const stateOf = (s, id) => peek(s, id).state;
+  // What the world draws: the committed state, except while a field action is
+  // being shown (the object changes at the effect's beat, not before it).
+  const hold = {};
+  function view(s, id) { return hold[id] || stateOf(s, id); }
+  function setHold(id, st) { if (st) hold[id] = st; else delete hold[id]; }
+
+  function one(st, cond) {
+    for (const k in cond) {
+      const want = cond[k], have = st[k] == null ? (typeof want === 'boolean' || (Array.isArray(want) && typeof want[0] === 'boolean') ? false : null) : st[k];
+      if (Array.isArray(want) ? want.indexOf(have) < 0 : want !== have) return false;
+    }
+    return true;
+  }
+  function match(st, cond) {
+    if (cond == null) return true;
+    if (typeof cond === 'function') return !!cond(st);
+    if (Array.isArray(cond)) return cond.some((c) => one(st, c));
+    return one(st, cond);
+  }
+  function eligible(s, id) {
+    const def = DEFS[id];
+    return !!def && (!def.eligible || RB.state.test(s, def.eligible));
+  }
+  // The route that produced this state: the first method class whose
+  // condition holds (definitions list them in order of precedence).
+  function methodOf(def, st, rule) {
+    for (const m of def.methods) if (match(st, m.if) && (!m.rule || [].concat(m.rule).indexOf(rule && (rule.act || rule.weave)) >= 0)) return m.id;
+    return 'ordinary';
+  }
+
+  // ---- objects in the world ----------------------------------------------------------------
+  // Every object of every eligible puzzle on a map: { pz, key, o, x, y, w, h }.
+  function objectsOn(s, mapId) {
+    const out = [];
+    for (const id in DEFS) {
+      const def = DEFS[id];
+      if (def.map !== mapId || !eligible(s, id)) continue;
+      for (const k in def.objects) {
+        const o = def.objects[k];
+        if (o.if && !RB.state.test(s, o.if)) continue;
+        out.push({ pz: id, key: k, o, x: o.x, y: o.y, w: o.w, h: o.h, def });
+      }
+    }
+    return out;
+  }
+  // Chebyshev distance from a tile to an object's footprint.
+  function dist(t, x, y) {
+    const dx = x < t.x ? t.x - x : x >= t.x + t.w ? x - (t.x + t.w - 1) : 0;
+    const dy = y < t.y ? t.y - y : y >= t.y + t.h ? y - (t.y + t.h - 1) : 0;
+    return Math.max(dx, dy);
+  }
+  // The weave targets near a tile: the object in front first, then nearest.
+  function near(s, mapId, x, y, dir, radius) {
+    radius = radius == null ? 2 : radius;
+    const D = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] }[dir] || [0, 0];
+    const fx = x + D[0], fy = y + D[1];
+    return objectsOn(s, mapId).filter((t) => t.o.weave !== false && dist(t, x, y) <= radius)
+      .map((t) => Object.assign(t, { d: dist(t, x, y), front: dist(t, fx, fy) === 0 }))
+      .sort((a, b) => (b.front - a.front) || (a.d - b.d) || (a.y - b.y) || (a.x - b.x));
+  }
+  // What the player can see of an object now: the first `look` whose
+  // condition holds (on the puzzle state and, with `ifs`, on the campaign).
+  function lookOf(s, pz, key) {
+    const def = DEFS[pz], o = def && def.objects[key];
+    if (!o) return null;
+    const st = stateOf(s, pz), r = peek(s, pz);
+    for (const l of o.look || []) {
+      if (l.if && !match(st, l.if)) continue;
+      if (l.ifs && !RB.state.test(s, l.ifs)) continue;
+      if (l.done != null && !!r.done !== l.done) continue;
+      return l;
+    }
+    return null;
+  }
+  // an observed fact (kept through a reset; drives hints and descriptions)
+  function observe(s, pz, fact) {
+    if (!fact || !DEFS[pz]) return false;
+    const r = rec(s, pz);
+    if (r.seen[fact]) return false;
+    r.seen[fact] = Date.now();
+    return true;
+  }
+
+  // ---- rules ---------------------------------------------------------------------------------
+  function objOk(r, key) { return !r.obj || r.obj === '*' || [].concat(r.obj).indexOf(key) >= 0; }
+  // the first rule that applies to an ordinary action on an object
+  function actRule(def, st, name) {
+    return def.rules.find((r) => r.act === name && match(st, r.if)) || null;
+  }
+  // the most specific weave rule for this family on this object, in this state
+  function weaveRule(def, st, key, fam) {
+    const cands = def.rules.filter((r) => r.weave && (r.weave === fam || r.weave === '*') && objOk(r, key) && match(st, r.if));
+    const rank = (r) => (r.obj && r.obj !== '*' ? 0 : 2) + (r.weave === fam ? 0 : 1);
+    cands.sort((a, b) => rank(a) - rank(b) || a.n - b.n);
+    return cands[0] || null;
+  }
+  // Would this response change anything here now? (for previews: the same
+  // lookup as weave(), without writing; never used to hide a response)
+  function applies(s, pz, key, word) {
+    const def = DEFS[pz];
+    if (!def) return false;
+    const r = weaveRule(def, stateOf(s, pz), key, familyOf(word));
+    return !!(r && r.set && Object.keys(r.set).some((k) => stateOf(s, pz)[k] !== r.set[k]));
+  }
+
+  let seq = 0;
+  // Apply a rule: the authoritative commit. Returns what happened, for the
+  // presentation to show afterwards.
+  function apply(s, pz, rule, kind, extra) {
+    const def = DEFS[pz];
+    const r = rec(s, pz);
+    const before = clone(r.state);
+    const after = clone(r.state);
+    if (rule && rule.set) Object.assign(after, clone(rule.set));
+    const changed = Object.keys(after).filter((k) => after[k] !== before[k]);
+    const res = Object.assign({
+      pz, kind, rule: rule ? rule.id : null, act: rule ? rule.act || null : null, before, after, changed,
+      effective: changed.length > 0, say: rule && rule.say ? [].concat(rule.say) : [], fx: rule && rule.fx || null,
+      obs: rule && rule.obs || null, completed: false, method: null, keepsake: null, id: 'fw:' + pz + ':' + (++seq),
+      region: def.region,
+    }, extra || {});
+    if (rule && rule.obs) observe(s, pz, rule.obs);
+    if (res.effective) {
+      r.state = after;
+      r.log.push({ r: rule.act || rule.weave, k: res.key || null, t: Date.now() });
+      if (r.log.length > LOG_MAX) r.log.splice(0, r.log.length - LOG_MAX);
+      // an object that changed tells the map annotations about it
+      for (const k of changed) RB.bus.emit('world:changed', { map: def.map, prop: pz + '.' + k, state: after[k], puzzle: pz });
+    }
+    if (!r.done && match(r.state, def.complete)) commit(s, pz, rule, res);
+    return res;
+  }
+  // The outcome holds: record it once, with the route that produced it.
+  function commit(s, pz, rule, res) {
+    const def = DEFS[pz], r = rec(s, pz);
+    const method = methodOf(def, r.state, rule);
+    r.done = true;
+    r.method = method;
+    r.t = Date.now();
+    if (res.lang) r.via = { word: res.word || null, family: res.family || null, mode: res.lang.mode || null, assisted: !!res.lang.assisted };
+    // a temporary support gives way to the lasting ordinary arrangement
+    if (def.after) { r.state = Object.assign(r.state, clone(def.after)); res.after = clone(r.state); }
+    res.completed = true;
+    res.method = method;
+    if (RB.state.once(s, 'puzzle:' + pz + ':done')) {
+      const k = def.reward && def.reward.keepsake;
+      if (k && RB.discovery && RB.discovery.keepsake(s, k, { kind: 'puzzle', id: pz, method })) res.keepsake = k;
+      res.first = true;
+    }
+    RB.bus.emit('discovery:resolved', { kind: 'puzzle', id: pz, region: def.region, method, id2: 'puzzle:' + pz + ':done', map: def.map });
+    return res;
+  }
+
+  // An ordinary action from an inspection scene (by name).
+  function act(s, pz, name) {
+    const def = DEFS[pz];
+    if (!def || !eligible(s, pz)) return null;
+    const r0 = peek(s, pz);
+    if (r0.done && !(def.after_acts || []).includes(name)) return apply(s, pz, null, 'act', { key: null, stale: true });
+    const rule = actRule(def, r0.state, name);
+    return apply(s, pz, rule, 'act', { key: rule && rule.obj ? [].concat(rule.obj)[0] : null, stale: !rule });
+  }
+  // A field weave: `word` was already accepted by the language step (lang is
+  // that step's result, for the record; it never decides applicability).
+  function weave(s, pz, key, word, lang) {
+    const def = DEFS[pz];
+    if (!def || !def.objects[key] || !eligible(s, pz)) return null;
+    const fam = familyOf(word);
+    const r0 = peek(s, pz);
+    const rule = r0.done ? null : weaveRule(def, r0.state, key, fam);
+    const res = apply(s, pz, rule, 'weave', { key, word, family: fam, lang: lang || null });
+    if (!rule || !res.say.length) res.say = [r0.done && def.solvedSay ? def.solvedSay : PLAIN[fam] || PLAIN.support];
+    res.neutral = !res.effective;
+    // the same word on the same object, once understood, may be repeated directly
+    if (res.effective) { const rr = rec(s, pz); rr.known = rr.known || {}; rr.known[key + ':' + word] = 1; }
+    return res;
+  }
+  // A routine repeat of an understood control needs no language step: the
+  // same word already worked on this object before (and did something).
+  function routine(s, pz, key, word) {
+    const r = peek(s, pz);
+    return !!(r.known && r.known[key + ':' + word]);
+  }
+  // Back to the first arrangement: observations, a finished result and its
+  // keepsake are kept; a finished puzzle is not reset.
+  function reset(s, pz) {
+    const def = DEFS[pz];
+    if (!def) return false;
+    const r = rec(s, pz);
+    if (r.done) return false;
+    const before = clone(r.state);
+    r.state = clone(def.init);
+    r.log.push({ r: 'reset', t: Date.now() });
+    if (r.log.length > LOG_MAX) r.log.splice(0, r.log.length - LOG_MAX);
+    for (const k of Object.keys(before)) if (before[k] !== r.state[k]) RB.bus.emit('world:changed', { map: def.map, prop: pz + '.' + k, state: r.state[k], puzzle: pz });
+    return true;
+  }
+  // Layered hints: broad, then specific, then the whole route. No cost.
+  function hintLevel(s, pz) { return (s.discovery && s.discovery.hints[pz]) || 0; }
+  function hint(s, pz) {
+    const def = DEFS[pz];
+    if (!def || !def.hints) return 0;
+    const d = disc(s);
+    d.hints[pz] = Math.min(def.hints.length, (d.hints[pz] || 0) + 1);
+    return d.hints[pz];
+  }
+  function familyOf(word) {
+    return FAMILY[word] || (RB.content.words[word] && RB.content.words[word].family) || 'support';
+  }
+
+  // ---- saves ---------------------------------------------------------------------------------
+  // Repair only what is broken, puzzle by puzzle: an unknown puzzle id is kept
+  // and ignored; a known one with a value its definition does not allow goes
+  // back to its documented safe arrangement (the start, or the solved
+  // arrangement if it was finished). Evidence and results are kept.
+  function repair(st) {
+    const d = st && st.discovery;
+    if (!d || !d.puzzles || typeof d.puzzles !== 'object') return;
+    for (const id in d.puzzles) {
+      const def = DEFS[id];
+      let r = d.puzzles[id];
+      if (!def) continue;
+      if (!r || typeof r !== 'object' || Array.isArray(r)) r = d.puzzles[id] = { state: clone(def.init), done: false, method: null, t: null, seen: {}, log: [], repaired: 'shape' };
+      if (!r.seen || typeof r.seen !== 'object') r.seen = {};
+      if (!Array.isArray(r.log)) r.log = [];
+      r.done = !!r.done;
+      let bad = !r.state || typeof r.state !== 'object' || Array.isArray(r.state);
+      if (!bad && def.values) for (const k in def.values) if (r.state[k] != null && def.values[k].indexOf(r.state[k]) < 0) bad = true;
+      if (!bad && r.done && def.complete && !match(r.state, def.complete)) bad = true;
+      if (bad) {
+        r.state = clone(r.done ? (def.solved || def.init) : def.init);
+        r.repaired = r.done ? 'solved' : 'start';
+      } else for (const k in def.init) if (!(k in r.state)) r.state[k] = clone(def.init[k]);
+      if (r.done && !r.method) r.method = 'ordinary';
+    }
+  }
+  // (registered with RB.save.addMigration by src/content/discovery/10_puzzles.js:
+  // the save module loads after this file)
+
+  // ---- conditions: puzzle.f1=done, puzzle.f1.screen=shut, puzzle.f1 (touched) --------------
+  RB.state.addTerm('puzzle', (s, rest, op, val, num, cmp) => {
+    const dot = rest.indexOf('.');
+    const id = dot < 0 ? rest : rest.slice(0, dot), key = dot < 0 ? null : rest.slice(dot + 1);
+    const r = s.discovery && s.discovery.puzzles[id];
+    if (!key) {
+      if (val === 'done') return cmp(!!(r && r.done), op || '=', true);
+      return op ? cmp(r && r.done ? 'done' : r ? 'open' : 'none', op, val) : !!r;
+    }
+    const v = stateOf(s, id)[key];
+    if (!op) return !!v;
+    const want = val === 'true' ? true : val === 'false' ? false : num(val);
+    return cmp(v == null ? (typeof want === 'boolean' ? false : 'none') : v, op, want);
+  });
+
+  return {
+    define, get, list, rec, peek, stateOf, view, setHold, match, eligible, methodOf, objectsOn, near, dist,
+    lookOf, observe, act, weave, applies, routine, reset, hint, hintLevel, familyOf, repair, FAMILY, PLAIN,
+    _weaveRule: weaveRule, _actRule: actRule,
+  };
+})();
+
+
 /* ==== src/engine/56_questguide.js ==== */
 /* Quest guidance: where the next step of a quest happens, derived honestly
  * from the content itself, and the words that point there.
@@ -27032,8 +27480,10 @@ RB.render = (function () {
     const still = RB.game.reducedMotion();
     const bob = isFoe && !still ? Math.round(Math.sin(t / 300 + a.x) * 3) : 0;
     const art = RB.sprites.getArt && RB.sprites.getArt(a.look, a.dir, actorFrame(a, t, isFoe, still));
-    if (art) c.drawImage(art, fx - RB.sprites.ANCHOR.x, fy - RB.sprites.ANCHOR.y + bob);
-    else c.drawImage(RB.sprites.get(a.look, a.dir, a.frame || 0), fx - 16, fy - 46 + bob, 32, 48);
+    const dy = a.dy || 0; // a knee dip during a field action (src/ui/57_weave.js)
+    if (art) c.drawImage(art, fx - RB.sprites.ANCHOR.x, fy - RB.sprites.ANCHOR.y + bob + dy);
+    else c.drawImage(RB.sprites.get(a.look, a.dir, a.frame || 0), fx - 16, fy - 46 + bob + dy, 32, 48);
+    if (a.overlay) a.overlay(c, fx, fy + dy, t); // the raised hand and brush of a field action
     if (alpha < 1) c.globalAlpha = 1;
   }
   // Top of an adult's head above its tile's top edge, in art px (for bubbles and markers).
@@ -27197,6 +27647,8 @@ RB.render = (function () {
     }
     // the followed quest's next step (src/engine/62_questmarks.js): over the lighting, so it reads at night
     if (RB.questMarks) RB.questMarks.draw(c, { ax, ay, bw, bh, TS, ART, HEAD: HEAD_TOP }, t);
+    // field weaving (src/ui/57_weave.js): the chosen target's frame, support marks, the action's effect
+    if (RB.weaveFx) RB.weaveFx.draw(c, { ax, ay, bw, bh, TS, ART, HEAD: HEAD_TOP }, t);
   }
 
   // Effective ambience: a map may define alt: [{if, ambient, night}] for story states.
@@ -34264,6 +34716,630 @@ RB.ui.settings = (function () {
 
   return { open, close, addRows, isOpen: () => !!lay };
 })();
+
+
+/* ==== src/ui/57_weave.js ==== */
+/* Field weaving: the Weave action beside ordinary Inspect, the target frame
+ * and its readable list, the known response repertoire, the language step
+ * (the real RB.challenge.runStep), and the field presentation of what the
+ * rules decided (addendum §13; docs/addendum/fieldweave.md).
+ *
+ *   V (remappable: Settings › Keys › "Weave a word"), the HUD's Weave tag or
+ *   the touch pad's Weave button opens the sheet when an authored puzzle
+ *   object is within two tiles. Arrow keys / Tab move between nearby things
+ *   and words; Escape, Cancel or V again closes it and changes nothing.
+ *
+ * Order of every field action: language step (only when one is needed) →
+ * RB.fieldweave commits the result → this module shows it: anticipation,
+ * gesture, the paper slip travelling to the actual target, the effect there
+ * (the battle's own paper-and-ink effects, RB.battleFx), the object's change
+ * at that beat, recovery; then the physical explanation, and on completion
+ * the keepsake line and the companion's first, brief reaction. Presentation
+ * never writes state; skipping or reduced motion show the same result. */
+var RB = (globalThis.RB = globalThis.RB || {});
+RB.hooks = RB.hooks || {};
+
+RB.weave = (function () {
+  'use strict';
+  const esc = RB.util.esc;
+  const FW = () => RB.fieldweave;
+  const S = () => RB.game.s;
+  const I = (n) => (RB.ui.folio ? RB.ui.folio.icon(n) : '');
+  const TAG_ICON = [['ward', 'shield'], ['water', 'drop'], ['light', 'sun'], ['heal', 'leaf'], ['wind', 'wind'], ['bind', 'rope'], ['anchor', 'stone'], ['stone', 'stone'], ['fire', 'flame'], ['warm', 'flame'], ['bell', 'bell'], ['voice', 'sound']];
+  const wordIcon = (w) => { for (const [t, n] of TAG_ICON) if ((w.tags || []).indexOf(t) >= 0) return n; return 'words'; };
+  const auto = () => !!(RB.test && RB.test.auto);
+
+  let panel = null;       // the open sheet: { el, layer, targets, i }
+  let busy = false;       // a field action is being chosen, written or shown
+  let pendingOpen = null; // a Weave chosen from an inspection menu: open once the scene is over
+  let cur = null;         // the running presentation
+  let labelEl = null;
+
+  // ---- what the player can weave -------------------------------------------------------------
+  function known(s) {
+    const order = Object.keys(RB.content.words);
+    return (s.words || []).filter((w) => RB.content.words[w]).sort((a, b) => order.indexOf(a) - order.indexOf(b));
+  }
+  function nearby() {
+    const W = RB.world.W, s = S();
+    if (!s || !W.map || !W.player) return [];
+    return FW().near(s, W.map.id, W.player.x, W.player.y, W.player.dir);
+  }
+  function available() {
+    return !!(RB.game.mode() === 'world' && !busy && S() && known(S()).length && nearby().length);
+  }
+  // a condition term for scenes: `weave` holds once any inscription word is known
+  RB.state.addTerm('weave', (s) => (s.words || []).some((w) => RB.content.words[w]));
+
+  // ---- the Weave button (HUD tag and touch pad), kept in step each tick ----------------------------
+  let hudBtn = null, tpBtn = null, lastAvail = null;
+  function ensureButtons() {
+    const hud = document.querySelector('.hud');
+    if (hud && !hudBtn) {
+      hudBtn = RB.ui.el('button', 'hbtn weave-b hidden');
+      hudBtn.type = 'button';
+      hudBtn.innerHTML = I('practice') + '<span class="l">Weave</span><span class="st" aria-hidden="true">' + esc(keyLabel()) + '</span>';
+      hudBtn.onclick = () => open();
+      hud.insertBefore(hudBtn, hud.firstChild);
+    }
+    const acts = document.querySelector('.touchpad .tp-acts');
+    if (acts && !tpBtn) {
+      tpBtn = RB.ui.el('button', 'tp-weave hidden');
+      tpBtn.type = 'button';
+      tpBtn.setAttribute('aria-label', 'Weave a word on something nearby');
+      tpBtn.innerHTML = '<span class="k" aria-hidden="true">' + I('practice') + '</span><span class="l">Weave</span>';
+      tpBtn.addEventListener('click', () => open());
+      acts.insertBefore(tpBtn, acts.firstChild);
+    }
+  }
+  function keyLabel() {
+    const b = RB.input.getBinds().weave;
+    return b && b.length ? RB.input.keyName(b[0]) : '';
+  }
+  let acc = 0;
+  function tick(dt) {
+    acc += dt;
+    if (pendingOpen && RB.game.mode() === 'world' && !RB.script.isRunning()) { const p = pendingOpen; pendingOpen = null; open(p); }
+    if (acc < 150) return;
+    acc = 0;
+    ensureButtons();
+    const on = available();
+    if (on !== lastAvail) {
+      lastAvail = on;
+      if (hudBtn) { hudBtn.classList.toggle('hidden', !on); hudBtn.querySelector('.st').textContent = keyLabel(); }
+      if (tpBtn) tpBtn.classList.toggle('hidden', !on);
+      document.body.classList.toggle('can-weave', on);
+    }
+  }
+
+  // ---- the sheet -----------------------------------------------------------------------------------
+  // o: { pz, key } to start on a particular object (from its inspection menu)
+  function open(o) {
+    if (panel || busy || RB.game.mode() !== 'world') return false;
+    const s = S();
+    const targets = nearby();
+    if (!targets.length) return false;
+    if (!known(s).length) { RB.ui.notice('You do not know any inscription words yet.', 'info'); return false; }
+    let i = 0;
+    if (o) { const j = targets.findIndex((t) => t.pz === o.pz && t.key === o.key); if (j >= 0) i = j; }
+    busy = true;
+    RB.game.pushMode('weave');
+    RB.audio && RB.audio.sfx('menu_open', { vol: 0.6 });
+    const el = RB.ui.el('div', 'weave-sheet');
+    el.setAttribute('role', 'dialog');
+    el.setAttribute('aria-labelledby', 'wv-title');
+    el.innerHTML = '<div class="wv-frame">' +
+      '<div class="wv-head"><h2 id="wv-title">' + I('practice') + '<span>Weave</span></h2>' +
+        '<button type="button" class="cbtn wv-cancel" data-a="cancel">' + I('close') + '<span>Cancel</span></button></div>' +
+      '<div class="wv-body">' +
+        '<div class="wv-near"><div class="wv-lab" id="wv-near-lab">Nearby</div><div class="wv-targets" role="radiogroup" aria-labelledby="wv-near-lab"></div></div>' +
+        '<div class="wv-look slip" aria-live="polite"></div>' +
+        '<div class="wv-lab" id="wv-words-lab">Your words</div>' +
+        '<div class="wv-words" role="group" aria-labelledby="wv-words-lab"></div>' +
+        '<div class="wv-foot"><button type="button" class="pbtn quiet" data-a="hint">' + I('bulb') + '<span>Think it over</span></button>' +
+          '<button type="button" class="pbtn quiet hidden" data-a="reset">' + I('back') + '<span>Set it back as it was</span></button></div>' +
+        '<div class="wv-hint" aria-live="polite"></div>' +
+      '</div></div>';
+    const layer = { el, name: 'weave', noAutofocus: true };
+    panel = { el, layer, targets, i };
+    layer.onCancel = () => close();
+    layer.onAction = (a) => {
+      if (a === 'weave') { close(); return true; }
+      return false;
+    };
+    el.addEventListener('click', onClick);
+    el.addEventListener('keydown', onKey);
+    RB.ui.pushLayer(layer);
+    render();
+    setTimeout(() => { const f = el.querySelector('.wv-t[aria-checked="true"]') || el.querySelector('.wv-w'); if (f && panel) f.focus({ preventScroll: true }); }, 0);
+    return true;
+  }
+  function close(keepBusy) {
+    if (!panel) return;
+    const p = panel;
+    panel = null;
+    RB.ui.popLayer(p.layer);
+    if (labelEl) { labelEl.remove(); labelEl = null; }
+    if (!keepBusy) {
+      busy = false;
+      RB.game.popMode('weave');
+      RB.input.clearHeld && RB.input.clearHeld();
+      if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    }
+  }
+  function target() { return panel ? panel.targets[panel.i] : null; }
+  function select(i) {
+    if (!panel) return;
+    panel.i = (i + panel.targets.length) % panel.targets.length;
+    render(true);
+    RB.audio && RB.audio.sfx('cursor', { vol: 0.5 });
+  }
+  function lookHtml(l) {
+    if (!l) return '';
+    const lines = l.lines || [l];
+    return lines.map((x) => '<div class="wv-l">' + (x.jp ? RB.ui.jhtml(x.jp) : '') + '<div class="en">' + esc(RB.script.enVars(x.en || '')) + '</div></div>').join('');
+  }
+  function render(keepFocus) {
+    if (!panel) return;
+    const s = S(), el = panel.el, T = target();
+    const had = keepFocus && document.activeElement && el.contains(document.activeElement) ? document.activeElement.getAttribute('data-t') : null;
+    el.querySelector('.wv-targets').innerHTML = panel.targets.map((t, i) => {
+      const n = t.o.name || { en: t.key };
+      return '<button type="button" class="wv-t" role="radio" data-t="' + i + '" aria-checked="' + (i === panel.i) + '" tabindex="' + (i === panel.i ? 0 : -1) + '">' +
+        (n.jp ? RB.ui.jhtml(n.jp) : '') + '<span class="en">' + esc(n.en) + '</span></button>';
+    }).join('');
+    const l = FW().lookOf(s, T.pz, T.key);
+    if (l && l.obs) FW().observe(s, T.pz, l.obs);
+    const nm = T.o.name || { en: T.key };
+    el.querySelector('.wv-look').innerHTML = '<div class="wv-name">' + (nm.jp ? RB.ui.jhtml(nm.jp) : '') + '<span class="en">' + esc(nm.en) + '</span></div>' + lookHtml(l);
+    const hi = RB.pad && RB.pad.kanjiPreferred ? RB.pad.kanjiPreferred() : ['I', 'A'].indexOf(s.learn.profile) >= 0;
+    el.querySelector('.wv-words').innerHTML = known(s).map((id) => {
+      const w = RB.content.words[id];
+      return '<button type="button" class="wv-w" data-w="' + id + '">' +
+        '<span class="ic">' + I(wordIcon(w)) + '</span>' +
+        '<span class="wv-wj">' + RB.ui.jhtml(hi && w.jpK ? w.jpK : w.jp) + '</span>' +
+        '<span class="wv-we">' + esc(w.en) + '</span>' +
+        (FW().routine(s, T.pz, T.key, id) ? '<span class="wv-wr">Done here before</span>' : '') + '</button>';
+    }).join('');
+    const def = FW().get(T.pz), r = FW().peek(s, T.pz);
+    const moved = !r.done && !r.virtual && JSON.stringify(r.state) !== JSON.stringify(def.init);
+    el.querySelector('[data-a=reset]').classList.toggle('hidden', !moved || !!def.noReset);
+    el.querySelector('[data-a=hint]').classList.toggle('hidden', !def.hints || !def.hints.length);
+    renderHint(false);
+    if (had != null) { const b = el.querySelector('[data-t="' + panel.i + '"]'); if (b) b.focus({ preventScroll: true }); }
+    dock();
+    placeLabel();
+  }
+  // Keep the player and the chosen thing in view: beside them on wide screens,
+  // otherwise above or below them, whichever side they are not on (the camera
+  // never moves for a panel).
+  function dock() {
+    if (!panel) return;
+    const el = panel.el, T = target(), p = RB.world.W.player;
+    const wide = window.innerWidth >= 900 || (window.innerHeight < 520 && window.innerWidth > window.innerHeight * 1.3);
+    el.classList.toggle('side', wide);
+    if (wide || !T || !p) { el.classList.remove('top'); return; }
+    const ty = RB.render.tileToCss(T.x, T.y - (T.o.tall || 0.6)).y, tb = RB.render.tileToCss(T.x, T.y + T.h).y;
+    const py = RB.render.tileToCss(p.x, p.y - 1).y, pb = RB.render.tileToCss(p.x, p.y + 1).y;
+    const lowest = Math.max(tb, pb), highest = Math.min(ty, py), H = window.innerHeight;
+    // room below the lowest of them vs. room above the highest
+    el.classList.toggle('top', H - lowest < highest);
+  }
+  function renderHint(step) {
+    const s = S(), T = target(), def = FW().get(T.pz), box = panel.el.querySelector('.wv-hint');
+    if (step) FW().hint(s, T.pz);
+    const n = FW().hintLevel(s, T.pz);
+    box.innerHTML = n ? '<ol class="wv-hints">' + def.hints.slice(0, n).map((h, i) => '<li><span class="lv">' + ['A nudge', 'Closer', 'The whole way'][i] + '</span>' + (h.jp ? RB.ui.jhtml(h.jp) : '') + '<div class="en">' + esc(RB.script.enVars(h.en)) + '</div></li>').join('') + '</ol>' : '';
+    const hb = panel.el.querySelector('[data-a=hint] span');
+    hb.textContent = n >= (def.hints || []).length ? 'Thought over' : n ? 'Think a little more' : 'Think it over';
+    panel.el.querySelector('[data-a=hint]').disabled = n >= (def.hints || []).length;
+  }
+  // the object's name over it in the world (text lives in the DOM, never the canvas)
+  function placeLabel() {
+    const T = target();
+    if (!T) return;
+    if (!labelEl) { labelEl = RB.ui.el('div', 'wv-label'); labelEl.setAttribute('aria-hidden', 'true'); document.getElementById('overlay').appendChild(labelEl); }
+    const nm = T.o.name || { en: T.key };
+    labelEl.innerHTML = '<span class="en">' + esc(nm.en) + '</span>';
+    const a = RB.render.tileToCss(T.x, T.y - (T.o.tall || 0.6)), b = RB.render.tileToCss(T.x + T.w, T.y);
+    labelEl.style.left = Math.round((a.x + b.x) / 2) + 'px';
+    labelEl.style.top = Math.round(a.y - 10) + 'px';
+  }
+  function onClick(e) {
+    const b = e.target.closest('button');
+    if (!b || !panel || !panel.el.contains(b) || b.disabled) return;
+    if (b.dataset.t != null) { select(+b.dataset.t); return; }
+    if (b.dataset.w) { choose(b.dataset.w); return; }
+    const a = b.dataset.a;
+    if (a === 'cancel') close();
+    else if (a === 'hint') { renderHint(true); RB.audio && RB.audio.sfx('page', { vol: 0.5 }); }
+    else if (a === 'reset') resetTarget();
+  }
+  // left/right (and up/down) move between nearby things inside the list
+  function onKey(e) {
+    const t = e.target.closest && e.target.closest('.wv-t');
+    if (!t || !panel) return;
+    const k = e.key;
+    if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'ArrowRight' || k === 'ArrowDown') {
+      e.preventDefault(); e.stopPropagation();
+      select(panel.i + (k === 'ArrowLeft' || k === 'ArrowUp' ? -1 : 1));
+      const nb = panel.el.querySelector('.wv-t[aria-checked="true"]');
+      if (nb) nb.focus({ preventScroll: true });
+    }
+  }
+  // clicking or tapping a nearby thing in the world selects it while the sheet is open
+  function onCanvasPointer(e) {
+    if (!panel) return;
+    const cam = RB.render.cam, k = RB.render.viewSize().scale, r = e.target.getBoundingClientRect();
+    const tx = Math.floor(((e.clientX - r.left) / k + cam.x) / RB.render.TS), ty = Math.floor(((e.clientY - r.top) / k + cam.y) / RB.render.TS);
+    const j = panel.targets.findIndex((t) => tx >= t.x && tx < t.x + t.w && ty >= t.y - 1 && ty < t.y + t.h);
+    if (j >= 0) { select(j); const b = panel.el.querySelector('.wv-t[aria-checked="true"]'); if (b) b.focus({ preventScroll: true }); }
+  }
+
+  // ---- choosing a word: language step, then the world decides -------------------------------------
+  function stepFor(w, T) {
+    const s = S();
+    const hi = RB.pad && RB.pad.kanjiPreferred ? RB.pad.kanjiPreferred() : ['I', 'A'].indexOf(s.learn.profile) >= 0;
+    return RB.tasks.prepare({
+      kind: 'write', item: 'v:' + (w.lex || w.r), answer: w.r, accept: [w.r, RB.tasks.plain(w.jpK || w.jp)], mode: 'reading',
+      title: 'Weave the inscription', prompt: { en: 'Write the word for “' + w.en + '”' + (hi ? ' (kana or kanji).' : '.') },
+      explain: { jp: w.jpK || w.jp, en: w.en },
+    });
+    void T;
+  }
+  function situationHtml(w, T) {
+    const nm = T.o.name || { en: T.key };
+    return '<div class="wv-situ">' + I(wordIcon(w)) + '<span>You weave <b>' + esc(w.en) + '</b> on <b>' + esc(nm.en) + '</b>' + (nm.jp ? ' <span class="jp">' + RB.ui.jhtml(nm.jp) + '</span>' : '') + '. Nothing moves until you finish writing.</span></div>';
+  }
+  async function choose(word) {
+    const s = S(), T = target(), w = RB.content.words[word];
+    if (!T || !w) return;
+    const direct = FW().routine(s, T.pz, T.key, word);
+    let lang = null;
+    if (!direct) {
+      // the sheet steps aside for the writing (the frame stays on the target)
+      panel.el.classList.add('hidden');
+      if (labelEl) labelEl.classList.add('hidden');
+      const res = await RB.challenge.runStep(stepFor(w, T), { header: situationHtml(w, T), allowCancel: true, cancelLabel: 'Choose a different word', ctxTag: 'weave:' + T.pz });
+      if (!panel) return;
+      panel.el.classList.remove('hidden');
+      if (labelEl) labelEl.classList.remove('hidden');
+      // backed out: back to the sheet, nothing changed
+      if (res.cancelled) { const b = panel.el.querySelector('[data-w="' + word + '"]'); if (b) b.focus({ preventScroll: true }); return; }
+      lang = { mode: res.mode, assisted: !!res.assisted, firstTry: res.firstTry !== false, mistakes: res.mistakes || 0 };
+    } else lang = { mode: 'routine', assisted: false, firstTry: true, mistakes: 0, routine: true };
+    // the language step is over; now only the world answers
+    close(true);
+    const res = FW().weave(s, T.pz, T.key, word, lang);
+    try { await present(res, T, {}); } finally { busy = false; RB.game.popMode('weave'); RB.input.clearHeld && RB.input.clearHeld(); }
+  }
+  async function resetTarget() {
+    const s = S(), T = target();
+    const def = FW().get(T.pz);
+    close(true);
+    const before = JSON.parse(JSON.stringify(FW().stateOf(s, T.pz)));
+    if (FW().reset(s, T.pz)) {
+      const res = { pz: T.pz, kind: 'reset', before, after: FW().stateOf(s, T.pz), effective: true, say: [def.resetSay || { jp: '{元|もと} の {形|かたち} に {戻|もど}した 。', en: 'You set everything back the way it was.' }], id: 'fw:' + T.pz + ':reset' };
+      try { await present(res, T, {}); } finally { busy = false; RB.game.popMode('weave'); }
+    } else { busy = false; RB.game.popMode('weave'); }
+  }
+
+  // ---- presentation --------------------------------------------------------------------------------
+  // The rules have already committed `res`; this shows it and says why.
+  async function present(res, T, o) {
+    const s = S();
+    const def = FW().get(res.pz);
+    T = T || targetFor(res, o.prop);
+    // the object keeps its old look until the effect's beat
+    if (res.effective) FW().setHold(res.pz, res.before);
+    RB.bus.emit('present:action', {
+      scope: 'field', actor: 'pc', action: res.word || res.act || res.kind, family: res.family || (res.kind === 'act' ? 'support' : null),
+      targets: T ? ['obj:' + res.pz + '.' + T.key] : [], at: T ? { map: def.map, x: T.x, y: T.y } : null,
+      result: res.completed ? 'complete' : res.effective ? 'effective' : 'neutral', id: res.id,
+    });
+    await play(res, T);
+    FW().setHold(res.pz, null);
+    const lines = [];
+    for (const l of res.say || []) lines.push({ who: 'narr', jp: l.jp, en: l.en });
+    if (res.completed && res.first && def.reward && def.reward.say) for (const l of [].concat(def.reward.say)) lines.push({ who: 'narr', jp: l.jp, en: l.en });
+    // the companion's first, brief reaction to what actually happened
+    if (res.completed && res.first && s.comp && RB.company && RB.company.react) {
+      const r = RB.company.react(s, { id: 'puzzle:' + res.pz + ':done', event: 'puzzle:' + res.pz, facts: { method: res.method } });
+      if (r && r.lines && r.lines[0]) { lines.push({ who: r.comp, expr: r.expr || 'smile', jp: r.lines[0].jp, en: r.lines[0].en }); res.reaction = r.id; }
+    }
+    if (lines.length) {
+      if (o.inScene) for (const l of lines) await RB.ui.dialogue.say(l);
+      else await RB.script.runInline(lines);
+    }
+    if (res.effective || res.completed) RB.save.autosave('progress');
+    if (RB.world.W.map) { RB.world.refreshActors(); RB.world.unstick(RB.world.W.player); }
+    return res;
+  }
+  function targetFor(res, prop) {
+    const def = FW().get(res.pz);
+    const key = res.key || (prop && prop.o && prop.o.part);
+    const o = key && def.objects[key];
+    if (o) return { pz: res.pz, key, o, x: o.x, y: o.y, w: o.w, h: o.h };
+    if (prop) return { pz: res.pz, key: null, o: {}, x: prop.x, y: prop.y, w: 1, h: 1 };
+    return null;
+  }
+  // timings (ms) of the beats; reduced motion keeps the beats, drops the travel
+  const BEATS = {
+    weave: { dip: 0, raise: 220, send: 380, hit: 640, beat: 780, fx: 1260, rec: 1560 },
+    act: { dip: 0, raise: 90, send: 90, hit: 200, beat: 260, fx: 420, rec: 560 },
+    reset: { dip: 0, raise: 60, send: 60, hit: 120, beat: 160, fx: 360, rec: 420 },
+  };
+  function play(res, T) {
+    const kind = res.kind === 'weave' ? 'weave' : res.kind === 'reset' ? 'reset' : 'act';
+    const still = RB.game.reducedMotion();
+    let B = BEATS[kind];
+    if (still) B = kind === 'weave' ? { dip: 0, raise: 60, send: 60, hit: 120, beat: 160, fx: 520, rec: 600 } : { dip: 0, raise: 0, send: 0, hit: 0, beat: 0, fx: 220, rec: 260 };
+    if (auto() || !T) { FW().setHold(res.pz, null); return Promise.resolve(); }
+    const W = RB.world.W, p = W.player;
+    // face what you are working on
+    if (T) RB.world.faceTo(p, T.x + Math.floor((T.w - 1) / 2), T.y + T.h - 1);
+    RB.audio && RB.audio.sfx(kind === 'weave' ? 'pen_stroke' : 'cursor', { vol: 0.5 });
+    return new Promise((done) => {
+      cur = { res, T, t0: performance.now(), B, still, kind, fam: res.family, done, beaten: false };
+      p.overlay = (c, fx, fy, t) => drawHand(c, fx, fy, t);
+      // a safety net: a hidden tab or a lost frame never strands the lock
+      cur.timer = setTimeout(() => finish(), B.rec + 1500);
+    });
+  }
+  function finish() {
+    if (!cur) return;
+    const c = cur;
+    cur = null;
+    clearTimeout(c.timer);
+    const p = RB.world.W.player;
+    if (p) { p.overlay = null; p.dy = 0; }
+    FW().setHold(c.res.pz, null);
+    c.done();
+  }
+  // Called each frame from the renderer (src/engine/60_render.js): the target
+  // frame while choosing, persistent support marks, and the running action.
+  function draw(c, env, t) {
+    const W = RB.world.W, s = S();
+    if (!W.map || !s) return;
+    const A = { ax: env.ax, ay: env.ay, TS: env.TS };
+    marks(c, A, s, W.map.id, t);
+    if (panel && target()) frame(c, A, target(), t);
+    if (!cur) return;
+    const k = performance.now() - cur.t0, B = cur.B;
+    if (!cur.hit && k >= B.hit && cur.kind === 'weave') { cur.hit = true; RB.audio && RB.audio.sfx(cur.res.effective ? FAM_SFX[cur.fam] || 'reveal' : 'cancel', { vol: 0.45 }); }
+    if (!cur.beaten && k >= B.beat) { cur.beaten = true; FW().setHold(cur.res.pz, null); if (cur.res.completed) RB.audio && RB.audio.sfx('discover', { vol: 0.45 }); }
+    const p = W.player;
+    p.dy = k < B.raise ? 1 : k < B.fx ? 0 : 0;
+    if (cur.kind === 'weave') weaveFx(c, A, cur, k, t);
+    else if (cur.T && k >= B.hit && k < B.fx + 200) dust(c, A, cur.T, (k - B.hit) / (B.fx + 200 - B.hit));
+    if (cur.res.completed && k >= B.beat) seal(c, A, cur.T, (k - B.beat) / Math.max(1, B.rec - B.beat), cur.still);
+    if (k >= B.rec) finish();
+  }
+  // screen anchors for the battle's effects, adapted to the top-down world
+  function anchors(A) {
+    const W = RB.world.W, p = W.player, T = cur.T;
+    const px = A.ax(p.fx * A.TS) + 16, py = A.ay(p.fy * A.TS) + 30;
+    const side = { up: [7, -34], down: [9, -22], left: [-11, -24], right: [11, -24] }[p.dir] || [9, -22];
+    const tx = A.ax((T.x + T.w / 2) * A.TS), ty = A.ay((T.y + T.h / 2) * A.TS) - 6;
+    const at = { core: { x: tx, y: ty }, chest: { x: tx, y: ty }, top: { x: tx, y: ty - 12 }, head: { x: tx, y: ty - 12 }, base: { x: tx, y: ty + 10 }, feet: { x: tx, y: ty + 12 }, hand: { x: tx, y: ty } };
+    const me = { hand: { x: px + side[0], y: py + side[1] }, chest: { x: px, y: py - 24 }, head: { x: px, y: py - 44 }, core: { x: px, y: py - 24 }, feet: { x: px, y: py }, top: { x: px, y: py - 50 }, base: { x: px, y: py } };
+    return {
+      u: 1, foeR: 14 * Math.max(T.w, T.h), wardR: 16 * Math.max(T.w, T.h), partyW: 24, knotSpan: 10,
+      pt(id, part) { return (id === 'pc' ? me : at)[part] || (id === 'pc' ? me.core : at.core); },
+    };
+  }
+  // quiet sounds that follow the effect (never the only sign of anything)
+  const FAM_SFX = { protect: 'ward', water: 'water', light: 'light', wind: 'wind', bind: 'knot_untie', stone: 'bump', ice: 'water', fire: 'fire_out', bell: 'bell', heal: 'heal' };
+  const FAM_FX = {
+    protect: ['sealForm', { to: 'foe' }], water: ['splash', { from: 'pc' }], light: ['flash', { from: 'pc' }],
+    wind: ['wind', { from: 'pc' }], bind: ['rope', {}], stone: ['stone', { who: ['foe'] }], ice: ['frost', { to: 'foe' }],
+    fire: ['warm', { who: ['foe'] }], bell: ['rings', {}], heal: ['motes', { who: ['foe'] }],
+  };
+  function weaveFx(c, A, run, k, t) {
+    const F = RB.battleFx && RB.battleFx.fx;
+    if (!F) return;
+    const B = run.B, An = anchors(A), still = run.still;
+    const seg = (a, b) => Math.max(0, Math.min(1, (k - a) / Math.max(1, b - a)));
+    // anticipation: ink gathers at the hand
+    if (k < B.send + 80) halo(c, An.pt('pc', 'hand'), 2 + 5 * seg(B.dip, B.raise), 'rgba(42,32,36,', 0.6 * (1 - seg(B.send, B.send + 80)));
+    // the written slip travels to the target
+    if (!still && k >= B.send && k < B.hit + 60) try { F.note(c, { p: { from: 'pc', to: 'foe', fade: true } }, seg(B.send, B.hit + 60), An, t, false); } catch (e) { /* drawing only */ }
+    if (k < B.hit) return;
+    const kk = seg(B.hit, B.fx);
+    if (run.res.effective) {
+      const f = FAM_FX[run.fam];
+      if (f && F[f[0]]) try { F[f[0]](c, { p: f[1] }, kk, An, t, still); } catch (e) { /* drawing only */ }
+      if (still) ring(c, An.pt('foe', 'core'), 14, '#fff4c8', 0.8 * (1 - kk));
+    } else {
+      // the word took form, found nothing here to act on, and the paper settles
+      const o = An.pt('foe', 'core');
+      for (let i = 0; i < 5; i++) {
+        const dx = (i - 2) * 5 + (still ? 0 : Math.sin(t / 160 + i) * 2), dy = still ? 4 : kk * 14 + i;
+        c.globalAlpha = 0.85 * (1 - kk);
+        c.fillStyle = i % 2 ? '#efe4c8' : '#dccb9e';
+        c.fillRect(Math.round(o.x + dx), Math.round(o.y - 6 + dy), 3, 2);
+      }
+      c.globalAlpha = 1;
+    }
+  }
+  function halo(c, p, r, col, a) {
+    if (a <= 0.01) return;
+    for (let i = 3; i >= 1; i--) { c.fillStyle = col + (a * 0.25 * i).toFixed(3) + ')'; const rr = Math.round(r * (1 + (3 - i) * 0.5)); c.fillRect(Math.round(p.x - rr), Math.round(p.y - rr), rr * 2, rr * 2); }
+  }
+  function ring(c, p, r, col, a) {
+    if (a <= 0.01) return;
+    c.globalAlpha = a; c.fillStyle = col;
+    const n = Math.max(12, Math.round(r * 2));
+    for (let i = 0; i < n; i++) { const g = (i / n) * Math.PI * 2; c.fillRect(Math.round(p.x + Math.cos(g) * r), Math.round(p.y + Math.sin(g) * r * 0.8), 2, 2); }
+    c.globalAlpha = 1;
+  }
+  // a small puff where a hand moved something
+  function dust(c, A, T, k) {
+    const x = A.ax((T.x + T.w / 2) * A.TS), y = A.ay((T.y + T.h) * A.TS) - 6;
+    c.globalAlpha = 0.5 * (1 - k); c.fillStyle = '#e8dcc0';
+    for (let i = 0; i < 4; i++) c.fillRect(Math.round(x + (i - 1.5) * 6 * (0.5 + k)), Math.round(y - k * 6 - (i % 2) * 2), 2, 2);
+    c.globalAlpha = 1;
+  }
+  // completion: a paper seal stamps quietly at the object (not fireworks)
+  function seal(c, A, T, k, still) {
+    if (!T || k > 1) return;
+    const x = A.ax((T.x + T.w / 2) * A.TS), y = A.ay(T.y * A.TS) - 10;
+    const a = still ? 0.9 * (1 - k) : Math.sin(Math.PI * Math.min(1, k)) * 0.95;
+    c.globalAlpha = a;
+    c.fillStyle = '#2a2024'; c.fillRect(x - 5, y - 5, 10, 10);
+    c.fillStyle = '#c8503a'; c.fillRect(x - 4, y - 4, 8, 8);
+    c.fillStyle = '#efe4c8'; c.fillRect(x - 2, y - 1, 4, 1); c.fillRect(x - 1, y - 2, 1, 4);
+    c.globalAlpha = 1;
+    if (!still) ring(c, { x, y }, 6 + k * 10, '#fff4c8', 0.7 * (1 - k));
+  }
+  // The raised hand with the brush (anticipation → gesture → recovery),
+  // drawn over the player's own figure in its sleeve colour.
+  function drawHand(c, fx, fy, t) {
+    if (!cur) return;
+    const k = performance.now() - cur.t0, B = cur.B, p = RB.world.W.player;
+    if (k > B.rec) return;
+    const up = Math.max(0, Math.min(1, k < B.raise ? k / Math.max(1, B.raise) : k < B.fx ? 1 : 1 - (k - B.fx) / Math.max(1, B.rec - B.fx)));
+    if (up <= 0.02) return;
+    const pal = RB.sprites._art && p.look && RB.sprites._art.palette ? RB.sprites._art.palette(p.look) : null;
+    const sleeve = pal && pal.cl ? pal.cl : ['#3a2e48', '#4a3c5a', '#5a4a6a', '#6e5e80', '#8a7a9a'];
+    const skin = pal && pal.sk ? pal.sk : ['#c89070', '#f0c8a0'];
+    const dir = p.dir, sx = dir === 'left' ? -1 : 1;
+    // shoulder on the side that faces the work; the forearm lifts toward it
+    const sh = { up: [fx + 8, fy - 34], down: [fx + 9, fy - 32], left: [fx - 4, fy - 32], right: [fx + 4, fy - 32] }[dir] || [fx + 8, fy - 33];
+    const reach = { up: [4, -16], down: [6, -12], left: [-12, -8], right: [12, -8] }[dir] || [4, -14];
+    const hx = Math.round(sh[0] + reach[0] * up), hy = Math.round(sh[1] + reach[1] * up);
+    const seg = (x0, y0, x1, y1, w, col) => {
+      const n = Math.max(1, Math.round(Math.hypot(x1 - x0, y1 - y0)));
+      c.fillStyle = col;
+      for (let i = 0; i <= n; i++) c.fillRect(Math.round(x0 + ((x1 - x0) * i) / n - w / 2), Math.round(y0 + ((y1 - y0) * i) / n - w / 2), w, w);
+    };
+    seg(sh[0], sh[1], hx, hy, 5, '#241c20');
+    seg(sh[0], sh[1], hx, hy, 3, sleeve[2]);
+    seg(sh[0] - 1, sh[1], hx - 1, hy, 1, sleeve[3]);
+    c.fillStyle = '#241c20'; c.fillRect(hx - 2, hy - 3, 5, 5);
+    c.fillStyle = skin[2] || skin[0]; c.fillRect(hx - 1, hy - 2, 3, 3);
+    if (cur.kind === 'weave') {
+      // the brush held upright, its tip inked; a drop of ink at the tip while gathering
+      const bx = hx + (dir === 'left' ? -1 : 1), by = hy - 3;
+      c.fillStyle = '#241c20'; c.fillRect(bx - 1, by - 11, 3, 12);
+      c.fillStyle = '#c89a58'; c.fillRect(bx, by - 9, 1, 9);
+      c.fillStyle = '#e8dcc0'; c.fillRect(bx - 1, by - 13, 3, 2);
+      c.fillStyle = '#1a1626'; c.fillRect(bx - 1, by - 16, 3, 3); c.fillRect(bx, by - 17, 1, 1);
+      if (k < B.send + 60) { c.fillStyle = '#2a2024'; c.fillRect(bx - sx, by - 18 - Math.round((1 - up) * 2), 2, 2); }
+    }
+    void t;
+  }
+  // the chosen target: ink brackets round its footprint (and the art above it)
+  function frame(c, A, T, t) {
+    const still = RB.game.reducedMotion();
+    const pulse = still ? 0 : Math.round((Math.sin(t / 260) + 1) * 0.8);
+    const x0 = A.ax(T.x * A.TS) - 3 - pulse, x1 = A.ax((T.x + T.w) * A.TS) + 2 + pulse;
+    const y0 = A.ay((T.y - (T.o.tall || 0.6)) * A.TS) - 3 - pulse, y1 = A.ay((T.y + T.h) * A.TS) + 2 + pulse;
+    const L = 7;
+    for (const [col, o, w] of [['#241c20', 0, 3], ['#fff4c8', 1, 1]]) {
+      c.fillStyle = col;
+      const r = (x, y, ww, hh) => c.fillRect(x + o, y + o, ww, hh);
+      r(x0, y0, L, w); r(x0, y0, w, L);
+      r(x1 - L - 2 * o, y0, L, w); r(x1 - w - 2 * o, y0, w, L);
+      r(x0, y1 - w - 2 * o, L, w); r(x0, y1 - L - 2 * o, w, L);
+      r(x1 - L - 2 * o, y1 - w - 2 * o, L, w); r(x1 - w - 2 * o, y1 - L - 2 * o, w, L);
+    }
+    if (labelEl && !labelEl.classList.contains('hidden')) placeLabel();
+  }
+  // persistent support drawn from the committed state (e.g. a ward that is
+  // holding something until the ordinary fastening is done)
+  function marks(c, A, s, mapId, t) {
+    const still = RB.game.reducedMotion();
+    for (const d of FW().list()) {
+      if (d.map !== mapId || !d.marks || !FW().eligible(s, d.id)) continue;
+      const st = FW().view(s, d.id);
+      for (const m of d.marks) {
+        if (!FW().match(st, m.if)) continue;
+        const o = d.objects[m.obj];
+        if (!o) continue;
+        const x = A.ax((o.x + o.w / 2) * A.TS), y = A.ay((o.y + o.h / 2) * A.TS) - 6;
+        if (m.mark === 'ward') {
+          const r = 17 * Math.max(o.w, o.h), n = 22, ph = still ? 0 : t / 900;
+          c.fillStyle = '#fff4c8';
+          for (let i = 0; i < n; i++) { if ((i + Math.floor(ph * 4)) % 3 === 0) continue; const g = (i / n) * Math.PI * 2; c.globalAlpha = 0.75; c.fillRect(Math.round(x + Math.cos(g) * r), Math.round(y + Math.sin(g) * r * 0.75), 2, 2); }
+          c.globalAlpha = 1;
+          // a paper seal tag at the front of the ward
+          c.fillStyle = '#241c20'; c.fillRect(x - 3, y + r * 0.75 - 4, 7, 9);
+          c.fillStyle = '#efe4c8'; c.fillRect(x - 2, y + r * 0.75 - 3, 5, 7);
+          c.fillStyle = '#c8503a'; c.fillRect(x - 1, y + r * 0.75 - 1, 3, 2);
+        } else if (m.mark === 'glow') {
+          halo(c, { x, y }, 8, 'rgba(255,236,170,', 0.35 + (still ? 0 : Math.sin(t / 400) * 0.1));
+        }
+      }
+    }
+  }
+
+  // ---- scene hooks: ordinary actions and inspection --------------------------------------------------
+  // !hook fw_act <puzzle> <action>   an ordinary action chosen in an inspection menu
+  RB.hooks.fw_act = async (args, ctx) => {
+    const [pz, name] = args, s = S();
+    const res = FW().act(s, pz, name);
+    if (!res) return;
+    RB.ui.dialogue.hide();
+    busy = true;
+    try { await present(res, null, { inScene: true, prop: ctx && ctx.prop }); } finally { busy = false; }
+  };
+  // !hook fw_look <puzzle> <object>  what the player sees of it now (records the fact)
+  RB.hooks.fw_look = async (args) => {
+    const [pz, key] = args, s = S();
+    const l = FW().lookOf(s, pz, key);
+    if (!l) return;
+    if (l.obs) FW().observe(s, pz, l.obs);
+    for (const x of l.lines || [l]) await RB.ui.dialogue.say({ who: x.who || 'narr', jp: x.jp, en: x.en });
+  };
+  // !hook fw_hint <puzzle>           one more layer of hint (broad → specific → the route)
+  RB.hooks.fw_hint = async (args) => {
+    const [pz] = args, s = S(), def = FW().get(pz);
+    if (!def || !def.hints) return;
+    const n = FW().hint(s, pz);
+    const h = def.hints[n - 1];
+    if (h) await RB.ui.dialogue.say({ who: 'narr', jp: h.jp, en: h.en });
+  };
+  // !hook fw_reset <puzzle>          set a multi-step mechanism back to its start
+  RB.hooks.fw_reset = async (args, ctx) => {
+    const [pz] = args, s = S(), def = FW().get(pz);
+    if (!def) return;
+    const before = JSON.parse(JSON.stringify(FW().stateOf(s, pz)));
+    if (!FW().reset(s, pz)) return;
+    RB.ui.dialogue.hide();
+    busy = true;
+    try {
+      await present({ pz, kind: 'reset', key: ctx && ctx.prop && ctx.prop.o && ctx.prop.o.part, before, after: FW().stateOf(s, pz), effective: true, say: [def.resetSay || { jp: '{元|もと} の {形|かたち} に {戻|もど}した 。', en: 'You set everything back the way it was.' }], id: 'fw:' + pz + ':reset' }, null, { inScene: true, prop: ctx && ctx.prop });
+    } finally { busy = false; }
+  };
+  // !hook fw_open <puzzle> <object>  "Weave a word on it…" from the inspection menu
+  RB.hooks.fw_open = async (args) => { pendingOpen = { pz: args[0], key: args[1] }; };
+
+  // ---- wiring ------------------------------------------------------------------------------------------
+  // the remappable Weave key (src/engine/10_input.js asks here first)
+  function onKey(a) {
+    if (a !== 'weave') return false;
+    if (RB.challenge && RB.challenge.active && RB.challenge.active()) return false; // writing: the key is not ours
+    if (panel) { if (!panel.el.classList.contains('hidden')) close(); return true; }
+    if (RB.game.mode() === 'world') { open(); return true; }
+    return false;
+  }
+  const prevTick = RB.ui.tick;
+  RB.ui.tick = function (dt, t) { if (prevTick) prevTick(dt, t); tick(dt); };
+  if (typeof document !== 'undefined') {
+    document.addEventListener('pointerdown', (e) => { if (panel && e.target && e.target.id === 'world') onCanvasPointer(e); }, true);
+  }
+  // leaving the map or the game closes the sheet and ends any presentation
+  RB.bus.on('map:enter', () => { if (panel) close(); if (cur) finish(); });
+
+  return {
+    open, close, onKey, draw, available, known, nearby, finish,
+    busy: () => busy || !!cur, isOpen: () => !!panel, target, select, choose,
+    // tests: the sheet's current state
+    state: () => ({ open: !!panel, busy, targets: panel ? panel.targets.map((t) => t.pz + '.' + t.key) : nearby().map((t) => t.pz + '.' + t.key), sel: panel && target() ? target().pz + '.' + target().key : null, anim: cur ? { kind: cur.kind, k: performance.now() - cur.t0 } : null }),
+  };
+})();
+RB.weaveFx = { draw: (c, env, t) => RB.weave.draw(c, env, t) };
 
 
 /* ==== src/ui/60_pad.js ==== */
@@ -44777,6 +45853,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const T = (en, jp) => ({ en, jp });
 
   // ---- the mill road ------------------------------------------------------------------
+  // A rocky ridge crosses the road (rows 13-16) from the tree line to the river
+  // reeds. It has two ways through, and only two: the echoing narrows (x 6, the
+  // road itself, where the voices push back whoever heads for the mill until
+  // Suzu's round quiets them) and the animal track behind the reed bed (x 12,
+  // closed by reeds until Nao opens it). Either one is enough; both lead back
+  // down; nobody is ever held on the mill side (docs/addendum/fieldweave.md).
   C.maps['rw.millroad'] = {
     name: T('The Mill Road', '{水車|すいしゃ}{小屋|ごや} へ の {道|みち}'), region: 'reedwake', music: 'mystery', noTravel: false,
     ambient: { weather: 'motes' },
@@ -44786,12 +45868,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.vline(18, 0, 25, '"');
       k.rect(13, 3, 6, 1, '~');
       k.path([[10, 25], [10, 18], [6, 18], [6, 12], [12, 12], [12, 6], [9, 6], [9, 5]], ':', 1);
-      k.path([[11, 18], [12, 18], [12, 13]], ';', 1);          // Nao's shortcut (tall grass path)
-      k.rect(4, 13, 1, 4, '^').rect(8, 13, 1, 4, '^');          // the echoing narrows
-      k.rect(3, 13, 1, 4, '^').rect(9, 14, 2, 3, 'o');
+      k.path([[11, 18], [12, 18], [12, 13]], ';', 1);          // the animal track behind the reeds (Nao's way)
       k.scatter(',', 10, 43, [3, 3, 14, 20], '.');
       k.scatter(';', 12, 44, [3, 3, 14, 20], '.');
       k.scatter('T', 6, 45, [13, 5, 5, 8], '.');
+      // the ridge: cliffs everywhere but the narrows (x 6) and the track (x 12)
+      k.rect(1, 13, 5, 4, '^').rect(7, 13, 5, 4, '^').rect(13, 13, 5, 4, '^');
+      k.set(1, 12, '^').set(2, 12, '^').set(16, 17, '^').set(17, 17, '^').set(3, 17, 'r');
       k.set(10, 25, ':').set(11, 25, ':');
     }),
     structs: [
@@ -44804,11 +45887,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'deadlantern', x: 7, y: 17, scene: 'rw.mr_lantern', if: '!rw_mr_ren' },
       { p: 'lantern', x: 7, y: 17, if: 'rw_mr_ren' },
       { p: 'stone_marker', x: 11, y: 22, scene: 'rw.mr_marker' },
-      { p: 'reeds', x: 12, y: 14, if: '!rw_mr_nao' }, { p: 'reeds', x: 12, y: 15, if: '!rw_mr_nao' },
-      { p: 'reeds', x: 12, y: 16, if: '!rw_mr_nao' }, { p: 'reeds', x: 12, y: 17, if: '!rw_mr_nao' },
-      { p: 'echo', x: 6, y: 14, if: '!rw_mr_suzu' }, { p: 'echo', x: 6, y: 15, if: '!rw_mr_suzu' },
+      // the reed bed that closes the animal track (collision = these four tufts)
+      { p: 'reeds', x: 12, y: 14, if: '!rw_mr_nao', scene: 'rw.mr_reeds' }, { p: 'reeds', x: 12, y: 15, if: '!rw_mr_nao', scene: 'rw.mr_reeds' },
+      { p: 'reeds', x: 12, y: 16, if: '!rw_mr_nao', scene: 'rw.mr_reeds' }, { p: 'reeds', x: 12, y: 17, if: '!rw_mr_nao', scene: 'rw.mr_reeds' },
+      // the voices in the narrows (drawn; the push is the trigger at its mouth)
+      { p: 'echo', x: 6, y: 13, if: '!rw_mr_suzu&!rw_echo_done' }, { p: 'echo', x: 6, y: 14, if: '!rw_mr_suzu&!rw_echo_done' },
+      { p: 'echo', x: 6, y: 15, if: '!rw_mr_suzu&!rw_echo_done' },
       { p: 'barrel', x: 13, y: 22 }, { p: 'crate', x: 17, y: 21 },
-      { p: 'rock', x: 5, y: 11, block: true, scene: 'rw.mr_rock', if: '!rw_mr_suzu' },
+      { p: 'rock', x: 5, y: 11, block: true, scene: 'rw.mr_rock' },
     ],
     npcs: [
       { id: 'sae', x: 15, y: 23, dir: 'left', talk: [{ if: '!rw_mr_mio', scene: 'rw.mr_sae' }, { scene: 'rw.mr_sae2' }] },
@@ -44827,7 +45913,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
         settle: { jp: '{羽|はね} の {字|じ} が {読|よ}める よう に なる と 、 {蛾|が} は {水車|すいしゃ}{小屋|ごや} の {屋根|やね} を こえて {飛|と}んで いった 。', en: 'Once the letters on its wings can be read, the moth flutters up over the mill roof and away.' } },
     ],
     exits: [{ x: 10, y: 25, w: 2, h: 1, to: 'rw.village', tx: 22, ty: 1, dir: 'down' }],
-    triggers: [{ x: 6, y: 16, w: 1, h: 1, scene: 'rw.mr_narrows', if: '!rw_mr_suzu' }],
+    // the narrows are one tile wide between cliffs: its mouth (6,16) is the only
+    // way in from either side; the scene pushes back only those heading up
+    triggers: [{ x: 6, y: 16, w: 1, h: 1, scene: 'rw.mr_narrows', if: '!rw_mr_suzu&!rw_echo_done' }],
     onEnter: [{ scene: 'rw.mr_enter', once: true }],
     spawn: { default: [10, 24, 'up'] },
   };
@@ -45772,8 +46860,19 @@ ren: {私|わたし} は ここ で {灯|あか}り を {見|み}て います �
 
 @scene rw.mr_nao
 !faceplayer nao
+!if !rw_mr_obs_reeds -> tell
+nao: {葦|あし} 、 {見|み}て きた な 。 どう {思|おも}った ？ || You've been looking at the reeds. What did you make of them?
+!choice
+* {下|した} に {細|ほそ}い {道|みち} が ある 。 {茎|くき} は {曲|ま}がってる だけ || There's a track underneath. The stalks are only bent aside. -> read
+* ただ の {葦|あし} に {見|み}えた || They looked like plain reeds to me. -> tell
+:read
+nao[smirk]: よく {見|み}てる 。 {獣道|けものみち} だ 。 {毎晩|まいばん} {何|なに} か が {通|とお}ってる 。 {折|お}らず に {分|わ}ければ 、 {人|ひと} も {通|とお}れる 。 || Sharp eyes. It's an animal track; something uses it every night. Part the reeds without breaking them and people can use it too.
+nao: {崖|がけ} の {方|ほう} は 、 {声|こえ} に {押|お}し{戻|もど}される 。 どっち に する ？ || The narrows push you back with voices. Which way do you want?
+!goto choose
+:tell
 nao: {先|さき} に {見|み}て きた 。 {狭|せま}い {崖|がけ} の {間|あいだ} で 、 {声|こえ} が {全部|ぜんぶ} {跳|は}ね{返|かえ}って くる 。 {通|とお}ろう と する と 、 {押|お}し{戻|もど}される 。 || I went ahead. In the narrows between the cliffs, every voice bounces back at you. Try to go through and you get pushed back.
 nao: {別|べつ} の {道|みち} も ある 。 {小屋|こや} の {裏|うら} 、 {背|せ} の {高|たか}い {葦|あし} の {向|む}こう 。 {獣道|けものみち} が {上|うえ} まで {続|つづ}いてる 。 || There's another way. Behind the shed, past the tall reeds — an animal track that goes all the way up.
+:choose
 !choice
 * {葦|あし} を {分|わ}けて もらう || Ask Nao to clear the reeds. -> clear
 * {崖|がけ} の {道|みち} を {行|い}く || I'll try the narrows. -> narrows
@@ -45791,16 +46890,41 @@ nao[smirk]: {正面|しょうめん} から か 。 {嫌|きら}い じゃ な�
 nao: {上|うえ} で {何|なに} か あったら 、 {走|はし}って {逃|に}げろ 。 {逃|に}げる の は {負|ま}け じゃ ない 。 {配達人|はいたつにん} の {常識|じょうしき} だ 。 || If anything happens up there, run. Running isn't losing. That's just courier sense.
 
 @scene rw.mr_narrows
-!if rw_mr_suzu -> end
+!if rw_mr_suzu|rw_echo_done -> end
+!hook mr_heading
+!if var._mr_down=1 -> down
 narr: {崖|がけ} の {間|あいだ} に {入|はい}る と 、 {自分|じぶん} の {足音|あしおと} が {何重|なんじゅう} に も {返|かえ}って きた 。 {声|こえ} が {壁|かべ} の よう に {押|お}して くる 。 || As you step between the cliffs, your own footsteps come back many times over. The voices push against you like a wall.
 narr: 「 …… どこ ？ …… どこ ？ …… どこ ？ 」 || "…Where? …Where? …Where?"
 !move pc down 2
-narr: {押|お}し{戻|もど}された 。 {歌|うた} でも {歌|うた}えば 、 {違|ちが}う {響|ひび}き に なる だろう か 。 || You're pushed back. Maybe a song would change the echo.
+narr: {押|お}し{戻|もど}された 。 {声|こえ} は いつも 、 {最後|さいご} に {聞|き}こえた {音|おと} を {一|ひと}つ だけ {返|かえ}して くる 。 || You're pushed back. Each time, the voices throw back just one sound: the last one they caught.
+narr: {歌|うた} でも {歌|うた}えば 、 {違|ちが}う {響|ひび}き に なる だろう か 。 || Maybe a song would change the echo.
+!set rw_mr_obs_echo
+!end
+:down
+?(!rw_mr_down_seen) narr: {声|こえ} は {背中|せなか} で {響|ひび}く だけ で 、 {下|くだ}る {足|あし} を {止|と}めない 。 {水車|すいしゃ}{小屋|ごや} へ {向|む}かう {人|ひと} だけ を {押|お}し{返|かえ}す らしい 。 || The voices echo at your back, but they don't stop you going down. They only seem to push back whoever heads for the mill.
+!set rw_mr_down_seen
+
+@scene rw.mr_reeds
+!if rw_mr_nao -> end
+narr: {背|せ} の {高|たか}い {葦|あし} が 、 {壁|かべ} の よう に びっしり {生|は}えて いる 。 {押|お}して も {通|とお}れない 。 || Tall reeds grow packed together like a wall. Pushing gets you nowhere.
+narr: {根元|ねもと} に 、 {踏|ふ}み{固|かた}められた {細|ほそ}い {筋|すじ} が {一本|いっぽん} 、 {奥|おく} へ {続|つづ}いて いる 。 {茎|くき} は {折|お}れて いない 。 {横|よこ} に {曲|ま}がって いる だけ だ 。 || At their roots a thin, trodden line runs on into them. The stalks along it aren't broken, only bent aside.
+narr: {何|なに} か {小|ちい}さな もの が 、 {毎晩|まいばん} ここ を {通|とお}って いる の だろう 。 || Something small must go through here every night.
+!set rw_mr_obs_reeds
 
 @scene rw.mr_suzu_talk
 !faceplayer suzu
+!if !rw_mr_obs_echo -> intro
+suzu: {崖|がけ} に {入|はい}って みた の ？ {声|こえ} は どう だった ？ || You went into the narrows? What were the voices like?
+!choice
+* {最後|さいご} の {音|おと} を {一|ひと}つ ずつ {返|かえ}して くる || They throw back the last sound they caught, one at a time. -> read
+* ただ {押|お}し{返|かえ}された || They just pushed me back. -> intro
+:read
+suzu[laugh]: {一|ひと}つ ずつ ！ それ なら {話|はなし} は {早|はや}い 。 {二|ふた}つ {同時|どうじ} に {聞|き}かせれば いい の 。 {同|おな}じ {歌|うた} を {少|すこ}し ずらして 、 {輪唱|りんしょう} で 。 || One at a time! Then it's easy. We give it two at once: the same song, slightly staggered, as a round.
+!goto choose
+:intro
 suzu: この {崖|がけ} 、 いい {響|ひび}き ！ {劇場|げきじょう} に したい くらい 。 …… ただ 、 {客|きゃく} が {悪|わる}い 。 {同|おな}じ セリフ しか {言|い}わない 。 || These cliffs have wonderful acoustics! I'd love to make it a theatre. …Only, the audience is terrible. They only have one line.
 suzu: {繰|く}り{返|かえ}す {相手|あいて} に は 、 {輪唱|りんしょう} を ぶつける の 。 {同|おな}じ {歌|うた} を 、 {少|すこ}し ずらして 。 そう する と 、 どっち が どっち か わからなく なって 、 {黙|だま}る 。 || Against something that repeats, you throw a round at it. The same song, slightly staggered. It loses track of which is which and goes quiet.
+:choose
 !choice
 * {一緒|いっしょ} に {歌|うた}う || Sing with her. -> sing
 * {本当|ほんとう} に {効|き}く の ？ || Does that really work? -> ask
@@ -67763,6 +68887,437 @@ RB.content.banter.push(
   { comp: 'suzu', map: 'sa.*', if: 'sa_met_kasane&!sa_hush_down', scene: 'sa.b_suzu3' },
   { comp: 'suzu', map: 'sa.*', if: 'sa_hush_down', scene: 'sa.b_suzu4' }
 );
+
+
+/* ==== src/content/discovery/00_lex.js ==== */
+/* Lexicon for field discovery: the Mill Road repair, the field puzzles F1-F6,
+ * field weaving and the Roadside Keepsakes. Format: w|r|pos|lv|meaning|note
+ * (see docs/CONTENT.md). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function () {
+  'use strict';
+  RB.lex.add(RB.lex.parseTable(`
+# the Mill Road
+茎|くき|n|I|stalk, stem
+根元|ねもと|n|I|root, base (of a plant or post)
+# field weaving (what a response does where nothing answers to it)
+重み|おもみ|n|I|weight, heaviness
+焦がす|こがす|v5s|I|to scorch, to burn (the surface of)
+# F1: the slip screen by the river warehouse
+衝立|ついたて|n|I|standing screen, partition
+倉|くら|n|I|storehouse, warehouse
+茶葉|ちゃば|n|I|tea leaves
+平ら|たいら|adj-na|I|flat, level
+留め具|とめぐ|n|A|clamp, fastener
+ねじ留め|ねじどめ|n|A|screw clamp; fastening with a screw
+ねじ||n|I|screw
+締める|しめる|v1|I|to tighten, to fasten
+自体|じたい|n|I|itself (the thing itself)
+放す|はなす|v5s|E|to let go (of), to release
+枠|わく|n|I|frame
+玉|たま|n|E|ball, bead (玉になる: to bead up)
+濡らす|ぬらす|v5s|I|to wet
+伝う|つたう|v5u|I|to run along, to go along (e.g. water down a surface)
+絡む|からむ|v5m|I|to wind round, to get tangled
+引っかける|ひっかける|v1|I|to catch (on something), to snag
+ばたばた||adv|I|flapping, clattering
+`), 'discovery');
+})();
+
+
+/* ==== src/content/discovery/05_millroad.js ==== */
+/* The Mill Road repair (addendum §14.1; the map and scenes are in
+ * src/content/ch1/11_maps_mill.js and 31_scenes_mill.js). The narrows push
+ * back whoever walks up into them, never whoever walks down out of them: this
+ * hook tells the scene which way the player was going when they reached the
+ * narrows' mouth, so a player on the mill side (by the other approach, from an
+ * older save, or coming out of the mill) is never held there. */
+var RB = (globalThis.RB = globalThis.RB || {});
+RB.hooks = RB.hooks || {};
+RB.hooks.mr_heading = async () => {
+  const s = RB.game.s, p = RB.world.W.player;
+  s.vars._mr_down = p && p.dir === 'down' ? 1 : 0;
+};
+
+
+/* ==== src/content/discovery/10_puzzles.js ==== */
+/* The six regional field puzzles (addendum §14.2-14.7) as data for
+ * RB.fieldweave (src/engine/55_fieldweave.js). Each definition carries its
+ * map anchors, eligibility, initial state and allowed values, what the player
+ * can observe, the ordinary actions (run from the objects' inspection scenes
+ * in 30_scenes.js), the field weaves by response family, the outcome
+ * predicate, the method classes of the equivalent routes, the reset, the
+ * reward and its line, persistent support marks, layered hints and the safe
+ * arrangements used to repair an invalid saved state. Design notes, every
+ * accepted route and every ineffective attempt: docs/addendum/fieldweave.md. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (FW) {
+  'use strict';
+  const T = (jp, en) => ({ jp, en });
+
+  // ---- F1: A Dry Place for Names (Reedwake, beside the river warehouse) ----------------------------------
+  // A hinged screen pinned with the warehouse's name slips swings in the draught
+  // off the river. The clamp that would hold it cannot close on a moving edge.
+  // Routes: swing the screen shut against its post, then clamp it; or hold it
+  // with a Protect ward, then clamp it (the ward is a step, not a countdown: it
+  // holds until the clamp does). Same final arrangement either way.
+  FW.define({
+    id: 'f1', region: 'reedwake', map: 'rw.village',
+    title: T('{名札|なふだ} の {乾|かわ}いた {場所|ばしょ}', 'A Dry Place for Names'),
+    eligible: null,
+    init: { screen: 'swing', held: false, clamp: 'open' },
+    values: { screen: ['swing', 'closed'], held: [false, true], clamp: ['open', 'set'] },
+    solved: { screen: 'closed', held: false, clamp: 'set' },
+    objects: {
+      screen: {
+        x: 32, y: 22, tall: 1.1, name: T('{札|ふだ} の {衝立|ついたて}', 'the slip screen'),
+        look: [
+          { done: true, lines: [T('{衝立|ついたて} は {柱|はしら} に {留|と}められて いる 。 {名札|なふだ} は {平|たい}ら に {乾|かわ}いて いて 、 どれ も {読|よ}める 。', 'The screen is clamped fast to its post. The name slips lie flat and dry; every one can be read.')] },
+          { if: { held: true }, obs: 'still', jp: '{守|まも}り の {中|なか} で 、 {衝立|ついたて} は {柱|はしら} に {寄|よ}った まま {止|と}まって いる 。 {留|と}め{具|ぐ} は まだ {開|ひら}いて いる 。', en: 'Inside the ward the screen rests still against its post. The clamp is still open.' },
+          { if: { screen: 'closed' }, obs: 'still', jp: '{衝立|ついたて} は {柱|はしら} に {寄|よ}せて {閉|し}めて ある 。 {川|かわ} の {風|かぜ} は {脇|わき} を {抜|ぬ}けて いく 。 {留|と}め{具|ぐ} は まだ {開|ひら}いて いる 。', en: 'The screen stands shut against its post; the draught off the river slides past it. The clamp is still open.' },
+          { obs: 'draft', lines: [
+            T('{葦|あし} の {紙|かみ} を {張|は}った {軽|かる}い {衝立|ついたて} 。 {名札|なふだ} が {何枚|なんまい} も {留|と}めて ある 。', 'A light screen of reed paper on a hinged frame, pinned with name slips.'),
+            T('{川|かわ} から {風|かぜ} が {吹|ふ}く たび に 、 {衝立|ついたて} が {開|ひら}いて は {戻|もど}る 。 {札|ふだ} の {字|じ} は {揺|ゆ}れて 、 {読|よ}めない 。 {紙|かみ} {自体|じたい} は {乾|かわ}いて いる 。', 'Each gust off the river swings it open and back; the writing on the slips jerks past too fast to read. The paper itself is dry.'),
+          ] },
+        ],
+      },
+      clamp: {
+        x: 33, y: 22, tall: 1, name: T('{留|と}め{具|ぐ}', 'the clamp'),
+        look: [
+          { done: true, jp: '{留|と}め{具|ぐ} が 、 {衝立|ついたて} の {端|はし} を {柱|はしら} に しっかり {押|お}さえて いる 。', en: 'The clamp holds the edge of the screen fast to its post.' },
+          { jp: '{木|き} の ねじ{留|ど}め が 、 {柱|はしら} の {釘|くぎ} に {開|ひら}いた まま {掛|か}かって いる 。 {衝立|ついたて} の {端|はし} を {挟|はさ}む ため の もの だ 。', en: 'A wooden screw clamp hangs open on a nail in the post. It is meant to grip the edge of the screen.' },
+        ],
+      },
+    },
+    rules: [
+      // ordinary actions (inspection menus)
+      { act: 'close', obj: 'screen', if: { screen: 'swing', held: false, clamp: 'open' }, set: { screen: 'closed' }, obs: 'still',
+        say: T('{風|かぜ} の {切|き}れ{目|め} に {衝立|ついたて} を {押|お}さえ 、 {柱|はしら} に {寄|よ}せて {閉|し}めた 。 {風|かぜ} は {脇|わき} を {抜|ぬ}けて いく 。 {今|いま} は {止|と}まって いる が 、 まだ {何|なに} も {留|と}めて いない 。', 'Between gusts you catch the screen and swing it shut against its post. The draught slides past it now. It is still — but nothing holds it yet.') },
+      { act: 'open', obj: 'screen', if: { screen: 'closed', clamp: 'open' }, set: { screen: 'swing' },
+        say: T('{手|て} を {放|はな}す と 、 {次|つぎ} の {風|かぜ} で {衝立|ついたて} は また {開|ひら}いた 。', 'You let go, and the next gust swings the screen open again.') },
+      { act: 'clamp', obj: 'clamp', if: [{ screen: 'closed', clamp: 'open' }, { held: true, clamp: 'open' }], set: { clamp: 'set' },
+        say: T('{衝立|ついたて} が {止|と}まって いる {間|あいだ} に 、 {留|と}め{具|ぐ} で {端|はし} を {挟|はさ}み 、 ねじ を {締|し}めた 。 {札|ふだ} が {平|たい}ら に なり 、 {字|じ} が {読|よ}める 。', 'While the screen is still, you close the clamp on its edge and turn the screw tight. The slips lie flat, and the writing can be read.') },
+      { act: 'clamp', obj: 'clamp', if: { clamp: 'open' }, obs: 'swing',
+        say: T('{風|かぜ} の たび に {衝立|ついたて} が {柱|はしら} から {離|はな}れる 。 {動|うご}く もの を 、 {留|と}め{具|ぐ} は {挟|はさ}めない 。', 'Each gust swings the screen away from the post. The clamp cannot close on an edge that will not keep still.') },
+      // field weaves
+      { weave: 'protect', obj: ['screen', 'clamp'], if: { screen: 'swing', held: false, clamp: 'open' }, set: { held: true }, fx: 'hold',
+        say: T('{守|まも}り が {立|た}ち 、 {衝立|ついたて} を {柱|はしら} に {押|お}し{戻|もど}して {止|と}めた 。 {守|まも}り が {支|ささ}えて いる {間|あいだ} に 、 {何|なに} か で {留|と}めれば いい 。', 'A ward rises, presses the screen back against its post and holds it there. While the ward holds, something only has to fasten it.') },
+      { weave: 'protect', obj: ['screen', 'clamp'], if: { held: true },
+        say: T('{守|まも}り は もう {衝立|ついたて} を {支|ささ}えて いる 。', 'The ward is already holding the screen.') },
+      { weave: 'protect', obj: ['screen', 'clamp'], if: { screen: 'closed' },
+        say: T('{衝立|ついたて} は もう {閉|し}めて あって 、 {動|うご}いて いない 。 {守|まも}る もの が ない 。', 'The screen is already shut and not moving. There is nothing for the ward to hold.') },
+      { weave: 'water', obj: 'screen', obs: 'dry',
+        say: T('{札|ふだ} は {乾|かわ}いて いる 。 {水|みず} は {油|あぶら} を {引|ひ}いた {枠|わく} で {玉|たま} に なり 、 {字|じ} に {触|ふ}れず に {流|なが}れ{落|お}ちた 。 {濡|ぬ}らす {必要|ひつよう} は ない 。', 'The slips are dry. The water beads on the oiled frame and runs off without touching the writing. Nothing here needs wetting.') },
+      { weave: 'water', obj: 'clamp',
+        say: T('{水|みず} が {留|と}め{具|ぐ} を {伝|つた}って {落|お}ちた 。 {留|と}め{具|ぐ} は {固|かた}まって いる わけ で は ない 。 {動|うご}く {端|はし} を {挟|はさ}めない だけ だ 。', 'Water runs down the clamp. The clamp isn\'t stuck; it just can\'t close on a moving edge.') },
+      { weave: 'light', obj: ['screen', 'clamp'], if: { screen: 'swing', held: false }, obs: 'draft',
+        say: T('{光|ひかり} の {中|なか} で よく {見|み}える 。 {川|かわ} から {風|かぜ} が {来|く}る たび に 、 {衝立|ついたて} が {開|ひら}いて は {戻|もど}る 。 {光|ひかり} は {動|うご}き を {見|み}せる が 、 {止|と}め は しない 。', 'In the light you can see it plainly: each gust off the river swings the screen out and back. The light shows the movement; it doesn\'t stop it.') },
+      { weave: 'wind', obj: ['screen', 'clamp'], if: { screen: 'swing' },
+        say: T('{風|かぜ} が {増|ふ}えて 、 {衝立|ついたて} は もっと {大|おお}きく {揺|ゆ}れた 。', 'More wind only swings the screen harder.') },
+      { weave: 'bind', obj: ['screen', 'clamp'], if: { clamp: 'open' },
+        say: T('{縄|なわ} の {形|かたち} が {衝立|ついたて} に {絡|から}んで 、 すぐ {外|はず}れた 。 {揺|ゆ}れて いる {間|あいだ} は 、 {結|むす}ぶ {所|ところ} が ない 。', 'The shape of a rope loops the screen and slips off. While it swings there is nothing steady to tie it to.') },
+    ],
+    complete: { clamp: 'set' },
+    solvedSay: T('{衝立|ついたて} は もう しっかり {留|と}めて ある 。 {何|なに} も {足|た}さなくて いい 。', 'The screen is already fastened. It needs nothing more.'),
+    // the ward was a step: once the clamp holds, it lets go, and the screen stays shut
+    after: { held: false, screen: 'closed' },
+    methods: [{ id: 'screened', if: { screen: 'closed' } }, { id: 'warded', if: { held: true } }],
+    marks: [{ obj: 'screen', if: { held: true }, mark: 'ward' }],
+    reward: {
+      keepsake: 'reed_boat',
+      say: [T('{衝立|ついたて} の {裏|うら} 、 {軒下|のきした} の {乾|かわ}いた {棚|たな} に 、 {葦|あし} の {紙|かみ} で {折|お}った {小|ちい}さな {舟|ふね} が {並|なら}んで いる 。 {子|こ}ども の {字|じ} で 「 ひとつ どうぞ 」 。', 'Behind the screen, on a dry shelf under the eaves, sits a row of little boats folded from reed paper, and a note in a child\'s hand: "Take one."'),
+        T('{一|ひと}つ {手|て} に {取|と}った 。 {乾|かわ}いて いて 、 {軽|かる}い 。', 'You take one. It is dry, and very light.')],
+    },
+    hints: [
+      T('{留|と}め{具|ぐ} が {閉|し}まらない の は なぜ だろう 。 しばらく {衝立|ついたて} を {見|み}て みよう 。', 'Why won\'t the clamp close? Watch the screen for a while.'),
+      T('{衝立|ついたて} が {少|すこ}し の {間|あいだ} {止|と}まって いれば いい 。 {風|かぜ} を よける か 、 {何|なに} か で {支|ささ}える か 。', 'The screen only needs to keep still for a moment: keep the draught off it, or hold it some other way.'),
+      T('{衝立|ついたて} を {調|しら}べて {柱|はしら} に {閉|し}め 、 {留|と}め{具|ぐ} を {締|し}める 。 または 、 {衝立|ついたて} に 「 まもる 」 を {織|お}って {支|ささ}え 、 {留|と}め{具|ぐ} を {締|し}める 。', 'Look at the screen and swing it shut against its post, then close the clamp. Or weave まもる (protect) on the screen to hold it, then close the clamp.'),
+    ],
+  });
+
+  // repairs of invalid saved puzzle state run on every load (src/engine/80_save.js)
+  if (RB.save && RB.save.addMigration) RB.save.addMigration((st) => FW.repair(st));
+})(RB.fieldweave);
+
+
+/* ==== src/content/discovery/20_props.js ==== */
+/* Field puzzle props (addendum §14.2-14.7, §18.1): art at art resolution in
+ * the same kit and rules as src/engine/27_propart.js (light from the upper
+ * left, 5-step ramps, an ink outline on things you can use). Each prop reads
+ * its puzzle's displayed state (RB.fieldweave.view: the committed state, held
+ * back during a field action until the effect's beat), so map art, collision
+ * (conditions on the same state) and inspection always agree.
+ *
+ * Map entries: { p: 'fw_…', x, y, o: { pz: 'f1', part: 'screen' }, scene } */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function () {
+  'use strict';
+  const K = RB.propKit, P = RB.props.P, art = RB.propArt.art, kit = RB.propArt.kit;
+  const { R, ell, poly, line, mix, ramp } = K;
+  const PP = K.FIX.paper, INK = K.FIX.ink, IR = K.FIX.iron, BR = K.FIX.brass, GLS = K.FIX.glass;
+  const st = (o) => (RB.game && RB.game.s && RB.fieldweave ? RB.fieldweave.view(RB.game.s, o.pz) : {});
+  const done = (o) => !!(RB.game && RB.game.s && RB.fieldweave && RB.fieldweave.peek(RB.game.s, o.pz).done);
+  // register a prop id (the legacy 16-px draw is a plain placeholder: every
+  // one of these has art at art resolution)
+  function prop(id, d) {
+    P[id] = Object.assign({ id, w: 1, h: 1, block: true, draw(c, x, y) { c.fillStyle = '#6a5a48'; c.fillRect(x + 3, y + 3, 10, 10); } }, d || {});
+  }
+  // slips of paper with lines of brush dashes (never letter shapes)
+  function slip(g, x, y, w, h, seed, pin) {
+    R(g, x, y, w, h, PP[3]); R(g, x, y, w, 1, PP[4]); R(g, x + w - 1, y + 1, 1, h - 1, PP[1]); R(g, x, y + h - 1, w, 1, PP[1]);
+    for (let k = 0; k < (h - 3) / 2; k++) R(g, x + 1, y + 2 + k * 2, Math.max(1, w - 3 - ((K.hh(seed, k, 5) >>> 2) % 2)), 1, INK[3]);
+    if (pin) R(g, x + (w >> 1), y, 1, 1, '#c83a3a');
+  }
+
+  // ---- F1: the slip screen and its clamp (Reedwake, by the river warehouse) ---------------------------
+  prop('fw_slipscreen');
+  prop('fw_clamppost');
+  // the screen's swing: panel width and how far its free edge drops toward you
+  const SWING = [[24, 0], [21, 2], [15, 4], [21, 2]];
+  art('fw_slipscreen', {
+    box: [-4, -34, 42, 68], ink: true,
+    v: (o) => { const s = st(o); return s.screen === 'closed' || s.held || s.clamp === 'set' ? (s.clamp === 'set' ? 'c' : 's') : 'w'; },
+    f: (t, o) => { const s = st(o); if (s.screen === 'closed' || s.held || s.clamp === 'set') return 0; return o.still ? 1 : K.frame(t, 260, 4, false, 0.3); },
+    draw(g, M, v, f) {
+      const w5 = M.wood, reed = ramp(mix(PP[2], '#c8b27a', 0.35), 0.35, 0.25);
+      // a small shingled eave from the warehouse wall
+      poly(g, [-4, -26, 38, -26, 34, -32, -2, -32], M.roof[2]);
+      for (let x = -2; x < 36; x += 4) R(g, x, -27, 3, 2, M.roof[1]);
+      R(g, -2, -32, 36, 1, M.roof[4]);
+      kit.post(g, 0, -26, 4, 56, w5);
+      R(g, 4, -24, 28, 2, w5[1]); // the rail the hinges hang from
+      const [pw, dy] = SWING[f];
+      const x0 = 5, top = -20, bot = 14;
+      // the panel as a hinged parallelogram (free edge swinging toward you)
+      for (let i = 0; i < pw; i++) {
+        const d = Math.round((dy * i) / pw), edge = i < 2 || i >= pw - 2;
+        R(g, x0 + i, top + d, 1, bot - top, edge ? w5[i < 2 ? 3 : 1] : reed[(i % 3 === 0) ? 1 : 2]);
+        R(g, x0 + i, top + d, 1, 2, w5[3]); R(g, x0 + i, bot + d - 2, 1, 2, w5[1]);
+      }
+      for (let y = top + 6; y < bot - 2; y += 6) for (let i = 2; i < pw - 2; i++) R(g, x0 + i, y + Math.round((dy * i) / pw), 1, 1, reed[1]);
+      // the name slips pinned on it (foreshortened with the panel)
+      const sc = pw / 24;
+      [[3, -16, 8, 9], [13, -15, 8, 8], [3, -4, 8, 9], [13, -3, 8, 10]].forEach(([sx, sy, w, h], i) => {
+        const x = x0 + Math.round(sx * sc), ww = Math.max(2, Math.round(w * sc));
+        slip(g, x, sy + Math.round((dy * (sx + w / 2)) / 24), ww, h, 40 + i, true);
+      });
+      // hinges
+      R(g, x0 - 1, top + 2, 3, 3, IR[2]); R(g, x0 - 1, bot - 6, 3, 3, IR[2]);
+      if (v === 'w') {
+        // motion marks at the free edge, so the swing reads even when still
+        for (let k = 0; k < 3; k++) R(g, x0 + pw + 2 + k, top + 6 + k * 5 + dy, 2, 1, PP[4]);
+      }
+    },
+    shadow: () => [16, 30, 14, 3, 0.3],
+  });
+  art('fw_clamppost', {
+    box: [-8, -30, 40, 64], ink: true,
+    v: (o) => { const s = st(o); return s.clamp === 'set' ? 'set' : 'open'; },
+    draw(g, M, v) {
+      const w5 = M.wood, cl = ramp(mix(w5[3], '#b88a4a', 0.4), 0.45, 0.35);
+      kit.post(g, 0, -24, 5, 54, w5);
+      R(g, -1, -26, 7, 2, w5[4]);
+      if (v === 'open') {
+        // a wooden screw clamp hanging open on a peg
+        R(g, 6, -12, 4, 2, w5[1]);
+        R(g, 12, -14, 3, 20, cl[2]); R(g, 12, -14, 1, 20, cl[3]);
+        R(g, 12, -14, 10, 3, cl[2]); R(g, 12, -14, 10, 1, cl[4]);
+        R(g, 12, 3, 10, 3, cl[1]);
+        R(g, 21, -11, 2, 6, IR[2]); R(g, 21, 0, 2, 3, IR[2]); // jaws, well apart
+        R(g, 23, -10, 6, 2, cl[3]); R(g, 28, -12, 2, 6, cl[1]); // the screw handle
+      } else {
+        // closed on the screen's edge and the post
+        R(g, -8, -8, 3, 14, cl[2]); R(g, -8, -8, 1, 14, cl[3]);
+        R(g, -8, -8, 15, 3, cl[2]); R(g, -8, -8, 15, 1, cl[4]);
+        R(g, -8, 3, 15, 3, cl[1]);
+        R(g, 6, -9, 3, 16, cl[1]);
+        R(g, 9, -3, 7, 2, cl[3]); R(g, 15, -6, 2, 8, cl[1]);
+        R(g, -5, -5, 2, 2, BR[3]);
+      }
+    },
+    // the draught off the river, drawn crossing toward the screen while it swings
+    live(c, x, y, pal, t, o) {
+      const s = st(o);
+      if (s.screen === 'closed' || s.held || s.clamp === 'set') return;
+      c.fillStyle = 'rgba(240,244,236,0.8)';
+      for (let k = 0; k < 3; k++) {
+        const ph = o.still ? 0.4 + k * 0.2 : ((t / 900 + k * 0.33) % 1);
+        const xx = Math.round(x + 44 - ph * 70), yy = y - 16 + k * 10 + Math.round(Math.sin(ph * 6 + k) * 2);
+        c.fillRect(xx, yy, 8, 1); c.fillRect(xx + 8, yy - 1, 3, 1);
+      }
+    },
+    shadow: () => [4, 30, 5, 2, 0.3],
+  });
+
+  RB.fwProps = { prop, slip, st, done };
+})();
+
+
+/* ==== src/content/discovery/30_scenes.js ==== */
+/* Inspection scenes of the field puzzles' objects: what the player sees now
+ * (from the definition, via !hook fw_look), the ordinary actions that fit
+ * the object's current state, a way into Weave for this object, a layered
+ * hint and, for multi-step mechanisms, a reset. The world's answer to each
+ * action comes from the rules (src/content/discovery/10_puzzles.js). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.script.add(`
+@scene fw.f1.screen
+!hook fw_look f1 screen
+!if puzzle.f1=done -> read
+!choice
+* [puzzle.f1.screen=swing&!puzzle.f1.held] {衝立|ついたて} を {柱|はしら} に {寄|よ}せて {閉|し}める || Swing the screen shut against its post. -> close
+* [puzzle.f1.screen=closed] {手|て} を {放|はな}す || Let go of it. -> open
+* [weave] {言葉|ことば} を {織|お}る …… || Weave a word on it… -> weave
+* {考|かんが}えて みる || Think it over. -> hint
+* そのまま に する || Leave it. -> end
+:close
+!hook fw_act f1 close
+!end
+:open
+!hook fw_act f1 open
+!end
+:weave
+!hook fw_open f1 screen
+!end
+:hint
+!hook fw_hint f1
+!end
+:read
+narr: {札|ふだ} に は 、 {倉|くら} の {棚|たな} ごと に 、 {物|もの} を {預|あず}けた {人|ひと} の {名前|なまえ} が {書|か}いて ある 。 || The slips name who has left things on each shelf of the warehouse.
+narr: 「 {一|いち} の {棚|たな} 、 ハナ 、 {茶葉|ちゃば} 。 {二|に} の {棚|たな} 、 ブンタ 、 {釘|くぎ} 。 {三|さん} の {棚|たな} 、 ミオ 、 {干|ほ}した {薬草|やくそう} 。 」 || "Shelf one: Hana, tea leaves. Shelf two: Bunta, nails. Shelf three: Mio, dried herbs."
+narr: {一番|いちばん} {下|した} に 、 {子|こ}ども の {字|じ} で 「 {四|よん} の {棚|たな} 、 こども たち 、 ふね 」 。 || At the bottom, in a child's hand: "Shelf four: the children, boats."
+
+@scene fw.f1.clamp
+!hook fw_look f1 clamp
+!if puzzle.f1=done -> end
+!choice
+* {留|と}め{具|ぐ} で {衝立|ついたて} の {端|はし} を {挟|はさ}む || Close the clamp on the screen's edge. -> clamp
+* [weave] {言葉|ことば} を {織|お}る …… || Weave a word on it… -> weave
+* そのまま に する || Leave it. -> end
+:clamp
+!hook fw_act f1 clamp
+!end
+:weave
+!hook fw_open f1 clamp
+!end
+
+@scene fw.f1_tomo
+!faceplayer tomo
+tomo[smile]: {倉|くら} の {脇|わき} の {衝立|ついたて} 、 {留|と}めて くれた の ね 。 {夜中|よなか} まで ばたばた {揺|ゆ}れて いて 、 {気|き} に なって いた の 。 || You fastened the screen by the warehouse, didn't you. It flapped about half the night; it had been bothering me.
+tomo: {棚|たな} の {舟|ふね} は 、 {子|こ}ども たち が {書|か}き{損|そこ}ない の {紙|かみ} で {折|お}った もの よ 。 {乾|かわ}いた {所|ところ} に {置|お}いて おかない と 、 すぐ {沈|しず}む ん です って 。 || The boats on that shelf are the children's, folded from spoiled paper. They say if you don't keep them somewhere dry, they sink straight away.
+`, 'discovery/scenes');
+
+
+/* ==== src/content/discovery/40_maps.js ==== */
+/* The field puzzles placed in existing maps (addendum §14.2-14.7, §18.1):
+ * props added from here (the pattern of src/content/lq/20_maps.js), with the
+ * few decorative props that stood on the chosen tiles moved aside, and the
+ * small, guarded changes to people whose place changes use. Every spot was
+ * chosen from the map's actual geometry (docs/addendum/fieldweave.md lists
+ * each spot, why, and what it replaced). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C) {
+  'use strict';
+  const drop = (map, pred) => { const m = C.maps[map]; m.props = (m.props || []).filter((p) => !pred(p)); };
+  const at = (p, id, x, y) => p.p === id && p.x === x && p.y === y;
+  const talkFirst = (map, id, opt) => { const n = (C.maps[map].npcs || []).find((q) => q.id === id); if (n) n.talk = [opt].concat(Array.isArray(n.talk) ? n.talk : [{ scene: n.talk }]); };
+
+  // ---- F1, Reedwake: the nook between the river warehouse and the river ------------------------------
+  // (32,22)-(33,22): the crate that stood at (33,22) and the barrel at (32,23)
+  // make room for the screen, its clamp post and a place to stand.
+  drop('rw.village', (p) => at(p, 'crate', 33, 22) || at(p, 'barrel', 32, 23));
+  C.maps['rw.village'].props.push(
+    { p: 'fw_slipscreen', x: 32, y: 22, o: { pz: 'f1', part: 'screen' }, scene: 'fw.f1.screen' },
+    { p: 'fw_clamppost', x: 33, y: 22, o: { pz: 'f1', part: 'clamp' }, scene: 'fw.f1.clamp' },
+  );
+  // Tomo, who does the washing by the river, once the screen stops flapping
+  talkFirst('rw.village', 'tomo', { if: 'puzzle.f1=done&!seen.fw.f1_tomo', scene: 'fw.f1_tomo' });
+})(RB.content);
+
+
+/* ==== src/content/discovery/50_reactions.js ==== */
+/* Companion reactions to the field puzzles (addendum §9): for each puzzle, a
+ * first reaction for all four companions and one for each materially
+ * different route (facts.method, as recorded by RB.fieldweave), plus a
+ * plain fallback. Brief; about what the route actually did; never about the
+ * route not taken. Chosen once per resolution by RB.company.react. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function () {
+  'use strict';
+  const L = (jp, en) => [{ jp, en }];
+  const R = (pz, comp, method, expr, jp, en) => ({ id: pz + '.' + comp + '.' + (method || 'any'), comp, event: 'puzzle:' + pz, facts: method ? { method } : undefined, priority: method ? 1 : 0, expr, lines: L(jp, en) });
+  RB.company.addReactions([
+    // ---- F1: A Dry Place for Names ----------------------------------------------------------------
+    R('f1', 'nao', 'screened', 'smirk', '{風|かぜ} を {止|と}めて から {留|と}める 。 {順番|じゅんばん} どおり だ な 。 {道|みち} も ふさいで ない 。', 'Stop the wind, then fasten it. Right order. And nothing\'s blocking the path.'),
+    R('f1', 'nao', 'warded', 'neutral', '{守|まも}り で {押|お}さえて 、 その {間|あいだ} に {留|と}める か 。 …… {私|わたし} なら {衝立|ついたて} を {閉|し}めた けど 、 {速|はや}かった な 。', 'Hold it with a ward and fasten it meanwhile. …I\'d have shut the screen, but that was quick.'),
+    R('f1', 'nao', null, 'neutral', '{止|と}まった な 。 これ で {名前|なまえ} が {読|よ}める 。', 'It\'s stopped. Now the names can be read.'),
+    R('f1', 'mio', 'screened', 'smile', '{紙|かみ} は {濡|ぬ}れて ない し 、 {端|はし} も {出|で}て ない 。 {袖|そで} を {引|ひ}っかける ところ が ない ね 。', 'The paper\'s dry, and no edge is sticking out. Nothing for a sleeve to catch on.'),
+    R('f1', 'mio', 'warded', 'smile', '{守|まも}り は {少|すこ}し の {間|あいだ} だけ 。 でも {留|と}め{具|ぐ} は ずっと {残|のこ}る 。 それ で {十分|じゅうぶん} だ よ 。', 'The ward only lasted a moment. But the clamp stays. That\'s enough.'),
+    R('f1', 'mio', null, 'smile', 'これ で {誰|だれ} でも {読|よ}める ね 。', 'Now anyone can read it.'),
+    R('f1', 'ren', 'screened', 'smile', '{元|もと} の {札|ふだ} が 、 {元|もと} の {字|じ} の まま {読|よ}める 。 {書|か}き{直|なお}す より 、 ずっと いい です 。', 'The original slips, readable in the original hand. Far better than rewriting them.'),
+    R('f1', 'ren', 'warded', 'think', '{言葉|ことば} で {支|ささ}えて 、 {手|て} で {留|と}める 。 {先生|せんせい} も 、 たしか そう {教|おし}えて いました 。', 'Hold it with a word, fasten it by hand. My teacher taught that too, I believe.'),
+    R('f1', 'ren', null, 'smile', '{名前|なまえ} が {読|よ}める よう に なりました ね 。', 'The names can be read again.'),
+    R('f1', 'suzu', 'screened', 'laugh', '{幕|まく} を {閉|し}めたら 、 {看板|かんばん} が やっと {台詞|せりふ} を {最後|さいご} まで {言|い}えた わ ね 。', 'Close the curtain, and the board finally gets to say its lines to the end.'),
+    R('f1', 'suzu', 'warded', 'smile', '{袖|そで} で {誰|だれ} か が {幕|まく} を {押|お}さえてる {間|あいだ} に 、 {釘|くぎ} を {打|う}つ 。 {舞台|ぶたい} {裏|うら} は いつも そう よ 。', 'Someone holds the curtain in the wings while someone else knocks the nail in. That\'s backstage for you.'),
+    R('f1', 'suzu', null, 'smile', 'はい 、 {静|しず}か に なった 。 {名札|なふだ} の {皆|みな}さん 、 お{待|ま}たせ 。', 'There, quiet at last. Sorry to keep you waiting, names.'),
+  ]);
+})();
+
+
+/* ==== src/content/discovery/60_keepsakes.js ==== */
+/* The six field-puzzle keepsakes of the Roadside Keepsakes catalogue
+ * (addendum §17.2): registry entries in RB.content.keepsakes, each with its
+ * own original pixel art (drawn at 32×32, shown at whole-number scales), its
+ * name with reading, where it came from, and two layers of hint. The other
+ * six (choice milestones and the two cases) are defined by their own systems
+ * in the same registry; the catalogue (src/ui/58_keepsakes.js) reads them all. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C) {
+  'use strict';
+  const T = (jp, en) => ({ jp, en });
+  // a crisp pixel helper on a 32×32 context
+  const R = (g, x, y, w, h, c) => { g.fillStyle = c; g.fillRect(x, y, w, h); };
+  const OUT = '#2a2024';
+  const K = (def) => def;
+
+  // ---- Folded Reed Boat (F1, Reedwake) -----------------------------------------------------------------
+  C.keepsakes.reed_boat = K({
+    name: T('{葦|あし} の {折|お}り{舟|ぶね}', 'Folded Reed Boat'),
+    desc: { en: 'A little boat folded from reed paper by Reedwake\'s children and kept dry on the shelf behind the warehouse\'s name screen. It floats, for a while.' },
+    how: { en: 'Found on the dry shelf behind the slip screen by the river warehouse, once the screen was clamped.' },
+    region: 'reedwake', source: { kind: 'puzzle', id: 'f1' },
+    hint: {
+      broad: { en: 'Somewhere in Reedwake, a draught keeps some names from being read.' },
+      specific: { en: 'Between the river warehouse and the river, a screen of name slips swings in the wind off the water.' },
+    },
+    art(g) {
+      const p = ['#7a6440', '#a8905c', '#d2bc84', '#e8d8a8', '#f8ecc8'];
+      // water line and shadow
+      R(g, 4, 25, 24, 1, '#5a7a96'); R(g, 7, 26, 18, 1, '#8cb0cc'); R(g, 10, 27, 12, 1, '#5a7a96');
+      // hull: an inverted trapezoid with a folded rim
+      for (let y = 18; y < 25; y++) { const inset = Math.floor((y - 18) * 0.9); R(g, 3 + inset, y, 26 - inset * 2, 1, y === 18 ? p[4] : y < 21 ? p[3] : p[2]); }
+      R(g, 3, 18, 26, 1, p[4]); R(g, 9, 21, 14, 1, p[1]);
+      // the sail: two folded triangles meeting at the mast crease
+      for (let y = 6; y < 18; y++) { const w = Math.floor((y - 6) * 0.62); R(g, 16 - w, y, w, 1, p[3]); R(g, 16, y, w + 1, 1, p[2]); }
+      R(g, 16, 6, 1, 12, p[1]);
+      // reed fibres in the paper
+      [[8, 20, 4], [18, 22, 5], [13, 12, 2], [18, 14, 2], [11, 23, 3]].forEach(([x, y, w]) => R(g, x, y, w, 1, p[1]));
+      // outline
+      for (let y = 6; y < 18; y++) { const w = Math.floor((y - 6) * 0.62); R(g, 15 - w, y, 1, 1, OUT); R(g, 17 + w, y, 1, 1, OUT); }
+      R(g, 16, 5, 1, 1, OUT);
+      R(g, 2, 17, 28, 1, OUT); R(g, 2, 18, 1, 1, OUT); R(g, 29, 18, 1, 1, OUT);
+      for (let y = 18; y < 25; y++) { const inset = Math.floor((y - 18) * 0.9); R(g, 2 + inset, y, 1, 1, OUT); R(g, 29 - inset, y, 1, 1, OUT); }
+      R(g, 9, 25, 14, 1, OUT);
+    },
+  });
+})(RB.content);
 
 
 /* ==== src/content/lq/00_lex.js ==== */

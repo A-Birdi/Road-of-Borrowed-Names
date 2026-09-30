@@ -6,6 +6,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const T = (en, jp) => ({ en, jp });
 
   // ---- the mill road ------------------------------------------------------------------
+  // A rocky ridge crosses the road (rows 13-16) from the tree line to the river
+  // reeds. It has two ways through, and only two: the echoing narrows (x 6, the
+  // road itself, where the voices push back whoever heads for the mill until
+  // Suzu's round quiets them) and the animal track behind the reed bed (x 12,
+  // closed by reeds until Nao opens it). Either one is enough; both lead back
+  // down; nobody is ever held on the mill side (docs/addendum/fieldweave.md).
   C.maps['rw.millroad'] = {
     name: T('The Mill Road', '{水車|すいしゃ}{小屋|ごや} へ の {道|みち}'), region: 'reedwake', music: 'mystery', noTravel: false,
     ambient: { weather: 'motes' },
@@ -15,12 +21,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.vline(18, 0, 25, '"');
       k.rect(13, 3, 6, 1, '~');
       k.path([[10, 25], [10, 18], [6, 18], [6, 12], [12, 12], [12, 6], [9, 6], [9, 5]], ':', 1);
-      k.path([[11, 18], [12, 18], [12, 13]], ';', 1);          // Nao's shortcut (tall grass path)
-      k.rect(4, 13, 1, 4, '^').rect(8, 13, 1, 4, '^');          // the echoing narrows
-      k.rect(3, 13, 1, 4, '^').rect(9, 14, 2, 3, 'o');
+      k.path([[11, 18], [12, 18], [12, 13]], ';', 1);          // the animal track behind the reeds (Nao's way)
       k.scatter(',', 10, 43, [3, 3, 14, 20], '.');
       k.scatter(';', 12, 44, [3, 3, 14, 20], '.');
       k.scatter('T', 6, 45, [13, 5, 5, 8], '.');
+      // the ridge: cliffs everywhere but the narrows (x 6) and the track (x 12)
+      k.rect(1, 13, 5, 4, '^').rect(7, 13, 5, 4, '^').rect(13, 13, 5, 4, '^');
+      k.set(1, 12, '^').set(2, 12, '^').set(16, 17, '^').set(17, 17, '^').set(3, 17, 'r');
       k.set(10, 25, ':').set(11, 25, ':');
     }),
     structs: [
@@ -33,11 +40,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'deadlantern', x: 7, y: 17, scene: 'rw.mr_lantern', if: '!rw_mr_ren' },
       { p: 'lantern', x: 7, y: 17, if: 'rw_mr_ren' },
       { p: 'stone_marker', x: 11, y: 22, scene: 'rw.mr_marker' },
-      { p: 'reeds', x: 12, y: 14, if: '!rw_mr_nao' }, { p: 'reeds', x: 12, y: 15, if: '!rw_mr_nao' },
-      { p: 'reeds', x: 12, y: 16, if: '!rw_mr_nao' }, { p: 'reeds', x: 12, y: 17, if: '!rw_mr_nao' },
-      { p: 'echo', x: 6, y: 14, if: '!rw_mr_suzu' }, { p: 'echo', x: 6, y: 15, if: '!rw_mr_suzu' },
+      // the reed bed that closes the animal track (collision = these four tufts)
+      { p: 'reeds', x: 12, y: 14, if: '!rw_mr_nao', scene: 'rw.mr_reeds' }, { p: 'reeds', x: 12, y: 15, if: '!rw_mr_nao', scene: 'rw.mr_reeds' },
+      { p: 'reeds', x: 12, y: 16, if: '!rw_mr_nao', scene: 'rw.mr_reeds' }, { p: 'reeds', x: 12, y: 17, if: '!rw_mr_nao', scene: 'rw.mr_reeds' },
+      // the voices in the narrows (drawn; the push is the trigger at its mouth)
+      { p: 'echo', x: 6, y: 13, if: '!rw_mr_suzu&!rw_echo_done' }, { p: 'echo', x: 6, y: 14, if: '!rw_mr_suzu&!rw_echo_done' },
+      { p: 'echo', x: 6, y: 15, if: '!rw_mr_suzu&!rw_echo_done' },
       { p: 'barrel', x: 13, y: 22 }, { p: 'crate', x: 17, y: 21 },
-      { p: 'rock', x: 5, y: 11, block: true, scene: 'rw.mr_rock', if: '!rw_mr_suzu' },
+      { p: 'rock', x: 5, y: 11, block: true, scene: 'rw.mr_rock' },
     ],
     npcs: [
       { id: 'sae', x: 15, y: 23, dir: 'left', talk: [{ if: '!rw_mr_mio', scene: 'rw.mr_sae' }, { scene: 'rw.mr_sae2' }] },
@@ -56,7 +66,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
         settle: { jp: '{羽|はね} の {字|じ} が {読|よ}める よう に なる と 、 {蛾|が} は {水車|すいしゃ}{小屋|ごや} の {屋根|やね} を こえて {飛|と}んで いった 。', en: 'Once the letters on its wings can be read, the moth flutters up over the mill roof and away.' } },
     ],
     exits: [{ x: 10, y: 25, w: 2, h: 1, to: 'rw.village', tx: 22, ty: 1, dir: 'down' }],
-    triggers: [{ x: 6, y: 16, w: 1, h: 1, scene: 'rw.mr_narrows', if: '!rw_mr_suzu' }],
+    // the narrows are one tile wide between cliffs: its mouth (6,16) is the only
+    // way in from either side; the scene pushes back only those heading up
+    triggers: [{ x: 6, y: 16, w: 1, h: 1, scene: 'rw.mr_narrows', if: '!rw_mr_suzu&!rw_echo_done' }],
     onEnter: [{ scene: 'rw.mr_enter', once: true }],
     spawn: { default: [10, 24, 'up'] },
   };
