@@ -160,6 +160,9 @@ RB.battleStage = (function () {
     const x0 = Math.round(Sr.x + Math.max(8, Sr.w * 0.06) + AN.x * ps);
     const comp = hasComp ? { x: x0, y: Math.round(foot - Math.max(4, ph * 0.09)) } : null;
     const pc = { x: hasComp ? Math.round(x0 + pw * 0.8 + Math.max(6, pw * 0.22)) : Math.round(x0 + pw * 0.3), y: foot };
+    // the cosmetic pet's place (src/ui/85_battle_pets.js): on the ground between the two of you, a little
+    // in front of your companion and behind you (travelling alone: at your left); never a party slot
+    const pet = RB.battlePets && RB.battlePets.wants() ? (hasComp ? { x: Math.round((comp.x + pc.x) / 2 + pw * 0.03), y: Math.round((comp.y + foot) / 2 + 1) } : { x: Math.round(pc.x - pw * 0.52), y: Math.round(foot - Math.max(2, ph * 0.04)) }) : null;
     const right = pc.x + (F.w - AN.x) * ps;
     // one creature: right of centre, clear of the party where the stage allows
     const place1 = (e, fx) => {
@@ -239,7 +242,7 @@ RB.battleStage = (function () {
     // the party's box in canvas px (both frames, with room for gestures and seals), for the
     // backdrop composer to keep clear; px/py/ps as the backdrop expects (top-left, scale)
     const fr = (f) => ({ x0: f.x - AN.x * ps, y0: f.y - AN.y * ps, x1: f.x + (F.w - AN.x) * ps, y1: f.y + (F.h - AN.y) * ps });
-    const boxes = [fr(pc)].concat(comp ? [fr(comp)] : []);
+    const boxes = [fr(pc)].concat(comp ? [fr(comp)] : []).concat(pet ? [{ x0: pet.x - 24 * ps, y0: pet.y - 46 * ps, x1: pet.x + 26 * ps, y1: pet.y + 3 * ps }] : []);
     const mx = Math.round(pw * 0.2), my = Math.round(ph * 0.12);
     const party = { x: Math.min(...boxes.map((q) => q.x0)) - mx, y: Math.min(...boxes.map((q) => q.y0)) - my };
     party.w = Math.max(...boxes.map((q) => q.x1)) + mx - party.x; party.h = Math.max(...boxes.map((q) => q.y1)) - party.y;
@@ -248,7 +251,7 @@ RB.battleStage = (function () {
     // your feet, which covers you and your companion (a step back, on your left)
     S.lay = {
       Sr, scale, ps, pw, ph, pc, comp, ex: L0.ex, ey: L0.ey, ky: L0.ky, hz, ext, u, foeR: L0.foeR, wardR: Math.round(ph * 0.34), F, AN, party,
-      px: pc.x - 16 * ps, py: pc.y - 48 * ps, fallback: !!B.fallback, foes, drawOrder, visual, group: gs,
+      px: pc.x - 16 * ps, py: pc.y - 48 * ps, fallback: !!B.fallback, foes, drawOrder, visual, group: gs, pet,
     };
     return S.lay;
   }
@@ -442,6 +445,8 @@ RB.battleStage = (function () {
     const B = battlers();
     const party = L.comp ? ['comp', 'pc'] : ['pc'];
     for (const who of party) {
+      // the cosmetic pet stands between your companion and you (drawn in that depth order; it only observes)
+      if (who === 'pc' && L.pet && RB.battlePets) { try { RB.battlePets.draw(c, L, fr); } catch (err) { console.warn('battle pet', err); } }
       const f = who === 'comp' ? L.comp : L.pc;
       const look = who === 'pc' ? env.looks().pc : env.looks().comp;
       if (!look) continue;

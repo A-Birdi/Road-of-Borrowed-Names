@@ -858,6 +858,22 @@ RB.combat = (function () {
     return Object.assign({ comp: st.compId || null, reduce: RB.game.reducedMotion(), view: snapshot(V()), group: isGroup(), foe: st.cur }, extra || {});
   }
   const tagSide = (cues, side) => { for (const c of cues) if (c.type === 'beat') c.side = side; return cues; };
+  // Semantic presentation events for observers that never act (the cosmetic pet; docs/ADDENDUM_CONTRACTS.md
+  // §6): emitted once the rules have committed the result, with stable ids, families and timing on the
+  // presentation clock (t0 + beat); nothing an observer does is read back. A failing listener never
+  // stops the battle.
+  let presentN = 0, exchangeN = 0;
+  const OUTS = ['unravel', 'ward', 'heal', 'water', 'light', 'bind', 'warm', 'bell', 'settle', 'reveal', 'tech', 'cact', 'soften', 'stun', 'draw', 'comp'];
+  function present(ev, o) {
+    try { RB.bus.emit('present:' + ev, Object.assign({ scope: 'battle', t0: RB.battleSeq.now(), n: ++presentN, exchange: exchangeN }, o)); } catch (err) { console.warn('present:' + ev, err); }
+  }
+  const firstAt = (cues, test) => { let a = null; for (const c of cues) if (test(c) && (a == null || c.at < a)) a = c.at; return a; };
+  function presentAct(actor, action, family, targets, fx, cues, end, extra) {
+    const out = fx.find((f) => OUTS.indexOf(f.t) >= 0);
+    present('action', Object.assign({ actor, action, family, targets, result: out ? out.t : 'none', id: 'battle:' + (enemy && enemy.id) + ':' + presentN + ':' + actor,
+      beat: firstAt(cues, (c) => c.type === 'beat' && c.f.t !== 'cost' && c.f.t !== 'harmony') || 0, end,
+      victory: firstAt(cues, (c) => c.type === 'pose' && c.pose === 'cheer') }, extra || {}));
+  }
   // Your response, once accepted and applied by the rules: anticipation → the
   // gesture → the word on paper → its effect on the actual target → recovery.
   // The finishing response also lets the creature settle before the last line.
@@ -868,6 +884,7 @@ RB.combat = (function () {
     let cues = tagSide(P.cues, 'player'), end = P.end;
     if (won) { const F = RB.battleSeq.choreo.finish(P.end, Object.assign(ctx, { last: lastStanding(before) })); cues = cues.concat(F.cues); end = F.end; }
     phase = won ? 'finish' : 'player';
+    presentAct('pc', card.id, RB.families.ofCard(card), P.plan.target === 'foes' ? (reach.foes || []).map((i) => 'foe:' + i) : [P.plan.target], fx, cues, end, { kind: card.kind, tech: card.tech || null, actors: P.plan.actors, won: !!won });
     return RB.battleSeq.run(phase, cues, { end, card: card.id, word: P.word.jp, target: P.plan.target, gesture: P.plan.gesture, actors: P.plan.actors, fx: fx.map((f) => f.t + (f.foe != null && isGroup() ? '@' + f.foe : '')) });
   }
   // the creatures that were standing before the exchange's last knot came loose
@@ -883,6 +900,8 @@ RB.combat = (function () {
     let cues = tagSide(C.cues, 'companion'), end = C.end;
     if (won) { const F = RB.battleSeq.choreo.finish(C.end, Object.assign(ctx, { last: lastStanding(ctx.view) })); cues = cues.concat(F.cues); end = F.end; }
     phase = won ? 'finish' : 'companion-act';
+    const aim = act.aim || (act.def && act.def.aim);
+    presentAct('comp', act.id, RB.families.ofAction(act.id), aim === 'allies' ? ['pc', 'comp'] : aim === 'pc' ? ['pc'] : aim === 'foes' ? ['foes'] : aim === 'none' ? [] : aim === 'aimed' || aim === 'lower' ? ['party'] : ['foe:' + (target != null ? target : 0)], fx, cues, end, { won: !!won });
     return RB.battleSeq.run(won ? 'finish' : 'companion', cues, { end, act: act.id, target, fx: fx.map((f) => f.t + (f.foe != null && isGroup() ? '@' + f.foe : '')) });
   }
   // A creature of a group whose knots are all free settles (the others stand).
@@ -898,6 +917,13 @@ RB.combat = (function () {
     const ctx = seqCtx({ view: snapshot(V()), foe: i, wardBlock, foeCol: (m.artOpts && m.artOpts.col) || null, aim: aimHit ? aimHit.who : (V().foes[i] && V().foes[i].drawn && st.compId ? 'comp' : null) });
     const E = RB.battleSeq.choreo.enemy(it, fx, ctx);
     phase = 'enemy';
+    {
+      const hit = fx.filter((f) => f.t === 'hit'), blk = fx.filter((f) => f.t === 'block'), ctr = fx.some((f) => f.t === 'countered');
+      present('enemy', { actor: 'foe:' + i, kind: it.kind, id: 'battle:' + (enemy && enemy.id) + ':' + presentN + ':foe' + i,
+        targets: hit.concat(blk).map((f) => f.who).filter((w, k, a) => a.indexOf(w) === k),
+        outcome: ctr ? 'blocked' : hit.length ? 'hit' : blk.length ? 'absorbed' : 'status',
+        at: firstAt(E.cues, (c) => c.type === 'beat' && ['hit', 'block', 'countered', 'heat', 'shroud', 'charge', 'silence', 'mend', 'stripWard', 'rest', 'plea'].indexOf(c.f.t) >= 0) || 0, end: E.end });
+    }
     return RB.battleSeq.run('enemy', tagSide(E.cues, 'enemy'), { end: E.end, kind: it.kind, target: it.target, foe: i, fx: fx.map((f) => f.t + (f.who ? ':' + f.who : '')) });
   }
   function playRevive() {
@@ -979,6 +1005,8 @@ RB.combat = (function () {
     });
     RB.battleSeq.attach(port);
     measure();
+    exchangeN = 0;
+    present('scene', { phase: 'enter', comp: st.compId || null, foes: members.length });
     await RB.ui.fade(false, 200);
     let outcome = null;
     try {
@@ -998,6 +1026,8 @@ RB.combat = (function () {
           st.foes[i].phaseChanged = null;
         }
         phase = 'choose';
+        exchangeN++;
+        present('scene', { phase: 'calm' });
         tg.hover = null; tg.lock = null;
         renderUi();
         if (RB.creatures) RB.creatures.saw(s, st, members); // the telegraphs now on screen
@@ -1093,7 +1123,9 @@ RB.combat = (function () {
         }
         if (st.over) outcome = st.over;
       }
+      if (outcome === 'lose') present('scene', { phase: 'defeat' });
       if (outcome === 'win') {
+        present('scene', { phase: 'victory' });
         phase = 'outro';
         RB.audio && RB.audio.playSong('victory');
         if (enemy.settle) { await say(tierOf(enemy.settle) || enemy.settle, enemy.settleWho); RB.ui.dialogue.hide(); }
@@ -1108,6 +1140,7 @@ RB.combat = (function () {
       // the presentation ends first: any unfinished sequence is settled, its input hook released
       chain = false;
       RB.battleSeq.detach();
+      present('scene', { phase: 'exit', outcome });
       view = null; sealHeld = null; curCard = null; phase = 'idle';
       tg.hover = null; tg.lock = null; tg.compTarget = null; onTarget = null;
       // Resolve recovers after every encounter: no attrition grinding.
