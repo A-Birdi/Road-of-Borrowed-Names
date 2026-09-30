@@ -25,7 +25,8 @@ const b = await launch();
 let fail = 0;
 const assert = (c, m) => { if (!c) { fail++; console.log('FAIL ' + m); } else console.log('ok   ' + m); };
 const shots = [];
-const shot = async (p, name) => { const f = path.join(OUT, name + '.png'); await p.screenshot({ path: f }); shots.push(f); return f; };
+// (passing notices and toasts are cleared first: they fade on their own in play and are not what a capture shows)
+const shot = async (p, name) => { const f = path.join(OUT, name + '.png'); await p.evaluate(() => document.querySelectorAll('#overlay .notices > *').forEach((n) => n.remove())); await p.screenshot({ path: f }); shots.push(f); return f; };
 
 // a synthetic campaign on a map (flags, companion, chapter); the companion's verified milestones synced
 async function start(p, map, x, y, o) {

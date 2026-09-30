@@ -36,6 +36,9 @@
 // Where a pet is needed it is met and chosen through the real pets system
 // (RB.pets.meet / select), so the real animal is drawn beside these lines.
 import { serve, launch, page, root } from './lib.mjs';
+// a capture shows the screen, not a notice, toast or arrival label that happened to be passing (each fades
+// on its own within seconds in play; the automated run reaches the next moment faster than a person)
+const clearToasts = (p) => p.evaluate(() => document.querySelectorAll('#overlay .notices > *, #overlay > .place').forEach((n) => n.remove()));
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -205,7 +208,7 @@ async function settle(p, ms = 240000) {
   let idle = 0;
   while (Date.now() - t < ms) {
     const a = await uiStep(p);
-    if (a && a.startsWith('shot:')) { await p.waitForTimeout(150); await p.screenshot({ path: path.join(OUT, a.slice(5) + '.png') }); continue; }
+    if (a && a.startsWith('shot:')) { await p.waitForTimeout(150); await clearToasts(p); await p.screenshot({ path: path.join(OUT, a.slice(5) + '.png') }); continue; }
     if (a) { idle = 0; await p.waitForTimeout(20); continue; }
     const st = await p.evaluate(() => ({ mode: RB.game.mode(), running: RB.script.isRunning() }));
     if (st.mode === 'world' && !st.running) { idle++; if (idle > 3) return true; }
@@ -456,6 +459,7 @@ if (want('shots')) {
     // the card on the wall with nobody standing in front of it
     await p.evaluate(() => { RB.test.place(5, 3, 'right'); });
     await p.waitForTimeout(400);
+    await clearToasts(p);
     await p.screenshot({ path: path.join(OUT, 'wall_card_hall_1280x800.png') });
     await p.evaluate(() => { RB.ui.menu.open('journey'); });
     await p.waitForTimeout(300);
@@ -463,6 +467,7 @@ if (want('shots')) {
     await p.waitForTimeout(400);
     const jt = await S(p, () => (document.querySelector('.pages-page') || {}).textContent || '');
     check(/Page III/.test(jt) && /Pinned up on the Lantern Hall wall/.test(jt) && /Turned back from the camp/.test(jt), 'shots: Journey › The Pages We Keep shows the three pages and how the road ended');
+    await clearToasts(p);
     await p.screenshot({ path: path.join(OUT, 'journey_pages_1280x800.png') });
     await p.evaluate(() => { RB.ui.menu.open('companion'); });
     await p.waitForTimeout(400);
@@ -470,6 +475,7 @@ if (want('shots')) {
     check(/An Address for Tomorrow/.test(ct), 'shots: Company shows the shared page');
     await p.evaluate(() => { const b = document.querySelector('.pages-shared'); if (b) b.scrollIntoView({ block: 'center' }); });
     await p.waitForTimeout(200);
+    await clearToasts(p);
     await p.screenshot({ path: path.join(OUT, 'company_panel_1280x800.png') });
     await finish('shots pages', r);
   }
@@ -484,6 +490,7 @@ if (want('shots')) {
     await p.waitForTimeout(400);
     const fit = await p.evaluate(() => ({ w: document.documentElement.scrollWidth, iw: innerWidth, art: !!document.querySelector('.pages-memento canvas') }));
     check(fit.w <= fit.iw + 1 && fit.art, 'phone: the Journey page fits 390 px, the memento drawn (' + fit.w + ' px)');
+    await clearToasts(p);
     await p.screenshot({ path: path.join(OUT, 'journey_pages_390x844.png') });
     await finish('phone', r);
   }
