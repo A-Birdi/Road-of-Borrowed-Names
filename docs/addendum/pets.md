@@ -145,15 +145,45 @@ point refuses (browser test).
 
 ## Evidence
 
-See `docs/screenshots/pets/README.md` for the captures. Test results are listed in the final report of
-worker P with the commands that produced them.
+What was run, on this worktree after merging the task branch at c28d7b7 (commit b381207), headless Chromium
+with synthetic session-only campaigns (never a player's save):
+
+- Unit (`node tests/run-unit.mjs`): 6084 passed, 0 failed. `tests/unit/pets.test.mjs` (164 checks): names and
+  their rules, records, unknown ids kept, never party/equipment/flags, every response, word, technique and
+  companion action mapped to a family (fails on an unmapped one), every family used, the observer's matrix
+  complete, reduced motion held, distinct key poses, identical rules results, enemy choices and answer-option
+  order with no pet, a cat, a gray bird or a hidden dog; the four vignettes (closed before, open after and in
+  the postgame, the field route equal to the ordinary one, neutral for a family that does not fit, the
+  lasting change, nothing after the animal has joined you, the dog's permission before the invitation); the
+  Weave adapter; the sixteen greetings (exist, distinct words and movement sequences per companion, no give,
+  take, set or learn); furigana on every kanji in the pets' Japanese.
+- Content (`node tools/validate.mjs`): no errors; `--filter pets --unknown`: no token without a dictionary entry.
+- Browser, pets (`node tests/e2e/pets.mjs`: 20 passed; `pets_greet.mjs`: 17 passed; `pets_gallery.mjs`: 7
+  passed) — see the headers of those files for exactly what each checks (world following, a one-tile lane,
+  cutscene, defeat and return, doors, bridge, warps, scene hide, setting off; battle place, reactions, Next
+  clicked with the mouse, reduced motion, no pet; Company at 1280×800, 390×844, 320×640 at 200 %, 844×390;
+  every vignette end to end with keys and mouse, naming, memory once, reload; sixteen greetings and the
+  refusals; the dev page and its absence in normal play; the coverage matrix; sounds; playback at three
+  sizes with a resize and a hidden tab mid-reaction).
+- Browser, the rest of the game touched by the hooks (`node tests/e2e/<script>`, same tree): combat_ui,
+  battle_anim, battle_group, companion_turn, world_fixes, world_view, encounters, departures, quest_guide,
+  fieldweave, mill_road, keepsakes, bookmarks, folio, settings, play_ui, systems, ui, `story_ch1.mjs F mio`,
+  `story_ch3.mjs E nao`, side_ch3, `long_quests.mjs --fixtures-only` — all passed.
+- `node tests/e2e/pets_sheets.mjs` (all sixteen species × companion pairs in the world, battle and Company, a
+  different look per pair): no problems (run before the merge).
+- Earlier, under heavy machine load (load average about 30 on 4 cores), two checks failed once on timing and
+  passed when rerun: battle_anim's "rapid input" (a 120 ms wait) and the pets world test's scene restore
+  (now polled). Recorded here so they are not mistaken for passes that never failed.
+
+Captures: `docs/screenshots/pets/README.md` (made before the merge, except the bird's vignette, re-taken after
+its spot moved). The recording is `docs/screenshots/pets/tanuki_battle.webm`.
 
 ## Performance
 
 Measured with `node tests/e2e/pets_perf.mjs` (headless Chromium, 1280×800, dpr 1; Reedwake square before the
 cat's vignette opens, so no other animal is there) on a shared 4-core container whose load average was about
 19–20 during the run, so whole-frame times are noisy; the time spent inside the pet's own code is the useful
-number. The run recorded here (`tests/e2e/out/pets/perf.json`):
+number. The run recorded here (before the merge; `tests/e2e/out/pets/perf.json`):
 
 | | no pet | cat | dog | bird | tanuki |
 |---|---|---|---|---|---|
