@@ -12,6 +12,7 @@
 .co-bondline .en { display: block; font-size: 0.95em; }
 .co-thought { border-left: 3px solid var(--ribbon); background: rgba(255, 255, 255, 0.35); padding: 0.2em 0.7em 0.5em; margin: 0.4em 0 0.8em; }
 .co-thought h4 { margin-top: 0.4em !important; }
+.co-page h4 { flex-wrap: wrap; overflow-wrap: anywhere; min-width: 0; } /* long words at 200 % text on a phone never push the page sideways */
 .co-said .jp { font-size: 1.05em; line-height: 1.9; }
 .co-said .en { color: var(--ink-2); font-size: 0.95em; }
 .co-said.first { margin-top: 0.6em; }

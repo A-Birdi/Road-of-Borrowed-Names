@@ -143,7 +143,7 @@ RB.ui.companyPages = (function () {
     const list = K.topics(s);
     if (!list.length) return '';
     const rest = K.restHere(s);
-    return '<h4>' + I('rest') + L('{休|やす}む {時|とき} の {話|はなし}', 'Conversations at rest') + '</h4><ul class="entries co-topics">' + list.map((x) =>
+    return '<h4>' + I('rest') + L('{休|やす}む {時|とき} の {話|はなし}', 'Talks at a rest stop') + '</h4><ul class="entries co-topics">' + list.map((x) =>
       '<li class="entry"><span class="mark">' + I(x.heard ? 'done' : 'talk') + '</span><div><div class="t">' + j(x.title.jp) + ' <span class="en">' + esc(x.title.en) + '</span></div>' +
       '<div class="kind">' + (x.heard ? 'talked about' : rest ? 'you could talk about this now' : 'new — for a rest stop (an inn, a teahouse, a camp)') + '</div></div>' +
       (rest ? '<button class="pbtn" data-co-topic="' + esc(x.id) + '">' + L('{話|はな}す', x.heard ? 'Again' : 'Talk') + '</button>' : '<span></span>') + '</li>').join('') + '</ul>';
@@ -224,12 +224,14 @@ RB.ui.companyPages = (function () {
     const c = chr(m.comp);
     return c ? c.name.en : 'Your companion';
   }
+  // English kept in a memory: the companion's name as it was then, then the usual placeholders
+  const enOf = (m, en) => esc(RB.script.enVars(String(en || '').replace(/\$comp/g, memName(m))));
   function memItem(m, sel) {
     const k = KIND[m.kind] || KIND.together;
     return '<li class="entry co-mem' + (sel ? ' current' : '') + '" data-kind="' + esc(m.kind) + '"><span class="mark">' + I(k.icon) + '</span><div>' +
       '<div class="kind">' + esc(k.en) + (m.place ? ' · ' + esc(m.place.en || '') : '') + (m.retro ? ' · from the journey\'s record' : '') + '</div>' +
       '<div class="t">' + (m.title && m.title.jp ? j(m.title.jp) + ' ' : '') + '<span class="en">' + esc(m.title ? m.title.en : m.id) + '</span>' + (m.petName ? ' <span class="co-petname">“' + esc(m.petName) + '”</span>' : '') + '</div>' +
-      (m.text ? '<div class="small">' + esc(m.text.en || '') + '</div>' : '') +
+      (m.text ? '<div class="small">' + enOf(m, m.text.en) + '</div>' : '') +
       (m.reply ? '<blockquote class="co-reply"><span class="who">' + esc(memName(m)) + '</span>' + said(m.reply) + '</blockquote>' : '') +
       '<div class="row-acts"><button class="pbtn" data-co-recall="' + esc(m.id) + '" aria-pressed="' + !!sel + '">' + I('history') + L('{思|おも}い{出|だ}す', 'Recollect') + '</button>' +
       refButton(m) + '</div></div></li>';
@@ -257,7 +259,7 @@ RB.ui.companyPages = (function () {
       (m.retro ? '<p class="muted small">This was reconstructed from what your journey records, when it was loaded. The words are how ' + esc(who) + ' speaks of it now.</p>' : '') +
       '<ol class="co-transcript">' + lines.map((l) => '<li class="' + (l.who === 'narr' ? 'narr' : l.who === 'pc' ? 'pc' : 'npc') + '">' +
         (nm(l.who) ? '<span class="who">' + esc(nm(l.who)) + (l.choice ? ' (your reply)' : '') + '</span>' : '') +
-        (l.jp ? '<div class="jp">' + j(l.jp) + '</div>' : '') + '<div class="en">' + esc(l.en || '') + '</div></li>').join('') + '</ol></section>';
+        (l.jp ? '<div class="jp">' + j(l.jp) + '</div>' : '') + '<div class="en">' + enOf(m, l.en) + '</div></li>').join('') + '</ol></section>';
   }
   function pinned(s) {
     const id = s.discovery && s.discovery.display;
