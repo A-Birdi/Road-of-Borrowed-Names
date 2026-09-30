@@ -316,7 +316,7 @@ commit (VALIDATION.md); screenshots inspected by eye are noted as such.
 - [v] K9 Licence and attribution: data/NOTICE.txt and the stroke data header updated (KanjiVG CC BY-SA 3.0, radicals kept); fixture sources updated. Evidence: U recog (NOTICE check).
 - [b] K10 Not verified: learners' real handwriting of kanji; Firefox, Safari and real phones; the theme of each of the 1,548 kanji by a person.
 
-## Living Company and Discovery (owner's addendum of 2026-09-30; docs/addendum/COVERAGE.md; VALIDATION.md "Addendum — integrated validation")
+## Living Company and Discovery (owner's addendum of 2026-09-30; docs/addendum/COVERAGE.md; VALIDATION.md "Addendum — integrated validation"; unit 6321/0, default suite 49/50 then battle_group fixed 6/6, layout audit 536/536 + 201/201 and whole-game matrix 16/16)
 Evidence kinds as in COVERAGE.md: U unit, B browser (headless Chromium), V looked at, S source only.
 - [v] D1 Foundation: save namespaces `company`, `discovery`, `bookmarks`, `creatures`, `awarded` with migration of every older save (nothing deleted, no New Game), bus events, page registries, Company tab. Evidence: U company_core; B addendum_integration (two real slots), folio, settings; docs/ADDENDUM_CONTRACTS.md.
 - [v] D2 Four cosmetic pets (Koma, Mugi, Sora, Ponta): art and looks, world following, battle reactions by response family, four vignettes, naming rules, Company › Pet; no gameplay effect. Evidence: U pets 164; B pets, pets_gallery, pets_sheets (16 pairs × world/battle/Company, V), addendum_integration (ladder, stairs, turning back). docs/addendum/pets.md.

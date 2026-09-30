@@ -44,8 +44,9 @@
   "Addendum — integrated validation"): validator no errors (634 registry
   texts); unit 6321/0; `node tests/e2e/run.mjs` 49/50 (battle_group's phone
   section, a test pointer issue fixed in 24f8730, then 6/6 twice), including a
-  whole-game run; layout audit and the 16-run matrix recorded there. Earlier
-  milestones and dates are in VALIDATION.md.
+  whole-game run; layout audit 536/536 (English, 8 viewports) and 201/201
+  (Japanese, 3); whole-game matrix 16/16. Earlier milestones and dates are in
+  VALIDATION.md.
 - Test tooling: tests/e2e/drive.mjs (goal-directed driver: walks real maps,
   interacts through the world), pursue.mjs (whole game), matrix.mjs,
   run.mjs (suite runner), explore.mjs (random explorer, weaker).

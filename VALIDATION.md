@@ -974,3 +974,83 @@ the chart.
   - Real handwriting of the new kanji; the accuracy figures are synthetic.
   - A human judgement of the group formation, the companion's menu, the markers' helpfulness, the kanji chart's themes and the quest lines' pacing.
   - A native speaker's review of the new Japanese.
+
+## Addendum — integrated validation (Living Company and Discovery, owner's brief of 2026-09-30)
+All six slices are merged: pets, companionship, endings and The Pages We Keep, field weaving
+and keepsakes, cases and Known Details, bookmarks and Creatures Met. Every run below used
+the integrated build, in headless Chromium on Linux (Playwright's headless shell), with
+synthetic campaigns in fresh browser profiles. No player save was used. The acceptance
+matrix is `docs/addendum/COVERAGE.md`, and each area's own record is in `docs/addendum/`.
+- **Validator** (`node tools/validate.mjs`, 5312690): **no errors**.
+  - It now also walks the addendum registries: 634 Japanese texts, every kanji with
+    furigana.
+  - 1270 scenes, 6235 lines, 90 maps, 37 quests.
+- **U Unit** (`node tests/run-unit.mjs`, 5312690): **6321 passed, 0 failed** (4 min 31 s).
+  - Run on their own on the integrated tree: pets 164, company_bond 237, and pages_project
+    601 (now with the real pets system).
+  - The other addendum files (company_core, fieldweave, cases, bookmarks) are inside the
+    6321; their own counts are in their area records.
+- **B Default suite** (`node tests/e2e/run.mjs`, 5312690, 79 min): **49/50 scripts passed**.
+  - The 50 scripts are: every earlier script, and the addendum's fieldweave, mill_road,
+    keepsakes, bookmarks, pets, pets_greet, pets_weave, pets_gallery, pages_ending,
+    company, company_pets, addendum_integration, cases, cases_shots and known.
+  - Also: combat_small, and a whole-game `pursue.mjs E mio`. The whole-game run went
+    through chapters 1–6 and the first Atlas restoration in 1122 s, with no problems and no
+    page errors.
+  - The failure was `battle_group.mjs`, in its phone section. It failed twice: once with
+    "no feedback after answering", and once with the right option covered at 844×390.
+    - Cause: the test leaves the pointer where it clicked the response card. That spot is
+      on another option's word, so that word's hover help card opened over the right option
+      between measuring and clicking.
+    - The game is unchanged. The test now moves the pointer off the options first
+      (24f8730), and passed 6/6 twice.
+    - The section also passed 3/3 alone, both on the final build and on a build without
+      this branch's recap CSS. That rules the CSS out.
+- **B Whole-game matrix** (`node tests/e2e/matrix.mjs FEIA nao,mio,ren,suzu 3`, 24f8730, the same
+  game build): **16/16**.
+  - Every learning profile × companion played a new campaign through chapters 1–6 and one
+    Atlas expedition, in 17.2–21.0 min each.
+  - The field puzzles, cases, pets' meeting places and rest menus were on the way. The
+    test player looks at the Weave and filing sheets and closes them.
+  - The solver answers the language steps, so these runs show that the game can be
+    finished. They don't show how it plays.
+- **B Layout audit** (`visual.mjs --check`, 24f8730, the same game build as 5312690): 67 states. the states now include company,
+  company_pet, company_mem, keepsakes, cases, known, bookmarks, creatures and weave. The
+  audit checks overflow, clipped text, touch targets, furigana contrast, and page and state
+  errors.
+  - English labels at 8 viewports (320x640 … 1920x1080): **536/536 clean**.
+  - Japanese labels at 320x640, 390x844 and 1280x800: **201/201 clean**.
+- **B + V Pets**: the 16 species × companion sheets were made on the integrated build, in
+  the world, in battle and on Company › Pet. `pets_sheets.mjs` found no problems, and all
+  three sheets were looked at.
+- **Integration fixes made and checked here:** see `docs/addendum/COVERAGE.md`, "Integration work in Phase F".
+  - One Pets memory per meeting.
+  - The pet never ends its walk on a person. The fix was checked against the old code,
+    where the pet stopped on the player and shuffled.
+  - Notices no longer take clicks meant for the folio underneath. The check fails without
+    the fix.
+  - The recap gives way to Step back on small phones.
+  - The test driver closes an opened Weave sheet and F6's filing sheet.
+  - The pages tests use the real pets system.
+  - pets_greet settles its fixture first.
+  - The validator walks the addendum registries.
+  - `RB.pix.hex` channels are always two hex digits.
+- **Evidence (§23.7):**
+  - Refreshed on the integrated build: `docs/screenshots/company/`,
+    `docs/screenshots/pages/` and `docs/screenshots/words/`. The capture scripts clear
+    passing notices, toasts and arrival labels first.
+  - Kept from the slices' branches: `docs/screenshots/pets/` (including `tanuki_battle.webm`),
+    `fieldweave/f1_two_routes.webm` and `cases/`.
+- **Build:** `index.html` is 6,887,116 bytes, up from 5,568,246 at c7860c4. It still
+  makes no network request, and the only URLs in it are the licence attributions and the
+  SVG namespace.
+- **Not verified:**
+  - Human play of any of it. Nobody has judged whether puzzles and cases are fair or fun,
+    or whether companions feel like people.
+  - A native speaker's review of the new Japanese.
+  - Firefox (the owner's browser), Safari, real phones, frame rate on a phone.
+  - An audible Japanese voice for "Hear it".
+  - Known and left alone:
+    - Snowbell's tone-1 morning lines never play.
+    - An arrival label or a toast can sit over the first choice for a few seconds while
+      the dialogue box is at the top.
