@@ -44944,6 +44944,1029 @@ var RB = (globalThis.RB = globalThis.RB || {});
 })(RB.content);
 
 
+/* ==== src/content/cases/00_lex.js ==== */
+/* Words used by the cases, the refined sequences and Known Details
+ * (src/content/cases/, src/content/zz_cases.js, src/ui/59_casebook.js,
+ * src/ui/61_known.js). Format: docs/CONTENT.md §1. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.lex.add(RB.lex.parseTable(`
+謎|なぞ|n|I|mystery, riddle
+小包|こづつみ|n|I|parcel, package
+岸壁|がんぺき|n|A|quay, stone wharf
+備品|びひん|n|A|fittings, equipment (belonging to a place)
+共に|ともに|adv|I|together (with)
+土台|どだい|n|I|foundation, footing
+金具|かなぐ|n|A|metal fitting, bracket
+紋|もん|n|I|family crest
+油紙|あぶらがみ|n|A|oiled paper
+部品|ぶひん|n|I|part, component
+鋳物師|いもじ|n|A|metal caster (who casts bells, pots)
+刻印|こくいん|n|A|stamped mark, maker's stamp
+替わる|かわる|v5r|I|to be replaced, to take someone's place
+絵描き|えかき|n|I|painter, artist
+合わん|あわん|exp|A|doesn't match (casual, older speech: 合わない)|Contracted negative, heard from older speakers.
+葉っぱ|はっぱ|n|E|leaf (casual)
+粋|いき|adj-na|A|stylish, chic
+裏返す|うらがえす|v5s|I|to turn over, to turn inside out
+平ら|たいら|adj-na|I|flat, level
+納まる|おさまる|v5r|A|to fit in, to be settled in (a frame, a box)
+気づく|きづく|v5k|I|to notice
+特に|とくに|adv|E|especially
+種明かし|たねあかし|n|A|revealing how a trick is done
+宛名|あてな|n|I|address (the name and place written on a letter)
+宛先|あてさき|n|I|destination, address
+不明|ふめい|n|I|unknown, unclear
+主|あるじ|n|A|master, head (of a house or workshop); keeper
+宛|あて|suf|I|addressed to …
+心当たり|こころあたり|n|A|an idea (of who or what); something that comes to mind
+配達人|はいたつにん|n|I|courier, delivery person
+泣かせ|なかせ|suf|A|a trial for … (… 泣かせ: something that makes … weep)
+一座|いちざ|n|A|troupe, company of players
+役|やく|n|I|role, part
+帳面|ちょうめん|n|I|notebook, ledger
+移り変わり|うつりかわり|n|A|changes over time
+頁|ページ|n|I|page
+渡し船|わたしぶね|n|I|ferry boat
+呼び鈴|よびりん|n|I|bell (rung to call someone)
+刻み目|きざみめ|n|A|notch
+作業台|さぎょうだい|n|I|workbench
+波打ち際|なみうちぎわ|n|A|water's edge (on a beach)
+小屋|こや|n|E|hut, shed
+吊るす|つるす|v5s|I|to hang (something)
+薄れる|うすれる|v1|A|to fade
+花束|はなたば|n|I|bouquet
+彫る|ほる|v5r|I|to carve
+祖父|そふ|n|I|(my) grandfather
+洗濯物|せんたくもの|n|E|washing, laundry
+浮き|うき|n|I|float (for fishing nets)
+師匠|ししょう|n|I|teacher, master (of a craft)
+工房|こうぼう|n|I|workshop
+差出人|さしだしにん|n|A|sender
+控え|ひかえ|n|A|record, copy kept
+似る|にる|v1|E|to resemble
+切り込み|きりこみ|n|A|notch, cut
+肩|かた|n|E|shoulder
+郵便所|ゆうびんじょ|n|A|post house (older word for a post office)
+役目|やくめ|n|I|duty, role
+間に合う|まにあう|v5u|I|to be in time
+透ける|すける|v1|A|to show through
+鉛筆|えんぴつ|n|E|pencil
+斜面|しゃめん|n|I|slope
+海図|かいず|n|A|nautical chart
+敷く|しく|v5k|I|to lay (something) down, to spread
+破る|やぶる|v5r|I|to tear
+客席|きゃくせき|n|I|audience seats
+袖|そで|n|I|sleeve; (on a stage) the wings
+宿|やど|n|I|inn
+書き残す|かきのこす|v5s|A|to write down and leave (for others)
+表|おもて|n|I|front, face (of a sheet)
+裏|うら|n|I|back, reverse side
+隅|すみ|n|I|corner
+軸|じく|n|A|stem (of a leaf); axis
+へこむ||v5m|A|to be dented, to sink in
+眺める|ながめる|v1|I|to gaze at, to look out at
+かざす||v5s|A|to hold up (to the light, to see)
+額|がく|n|A|picture frame
+重なる|かさなる|v5r|I|to overlap, to line up exactly
+写す|うつす|v5s|I|to copy, to trace
+見え方|みえかた|n|I|the way something looks
+元|もと|n|I|origin; the original
+振り返る|ふりかえる|v5r|I|to look back
+見渡す|みわたす|v5s|A|to look out over
+脇|わき|n|I|side, beside
+道端|みちばた|n|I|roadside
+払う|はらう|v5u|I|to brush off (snow, dust)
+枯れ木|かれき|n|I|bare (dead) tree
+枝|えだ|n|E|branch
+本物|ほんもの|n|I|the real thing
+封筒|ふうとう|n|E|envelope
+逆|ぎゃく|n|I|reverse, the other way round
+包み|つつみ|n|I|package, wrapping
+左右|さゆう|n|I|left and right
+教訓|きょうくん|n|A|lesson (learned)
+苦手|にがて|adj-na|I|bad at, not one's strong point
+正解|せいかい|n|I|the right answer
+押し跡|おしあと|n|A|pressed mark, impression
+押す|おす|v5s|E|to press, to stamp
+面|めん|n|I|side, face (of a flat thing)
+景色|けしき|n|E|view, scenery
+向こう側|むこうがわ|n|I|the other side
+`), 'cases');
+
+
+/* ==== src/content/cases/05_art.js ==== */
+/* Cases and refined sequences: props and keepsake art. All procedural and
+ * original (docs/addendum/cases.md). Props draw in logical pixels (a tile is
+ * 16×16; the renderer scales them like the chapters' own custom props).
+ * Keepsake art draws into a 32×32 pixel grid (artSize 32). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function () {
+  'use strict';
+  const P = RB.props.P;
+  const px = (c, x, y, w, h, col) => { c.fillStyle = col; c.fillRect(x, y, w, h); };
+  const def = (id, o, draw) => (P[id] = Object.assign({ id, w: 1, h: 1, block: true }, o, { draw }));
+  const shadow = (c, x, y, w) => { c.fillStyle = 'rgba(0,0,0,0.2)'; c.beginPath(); c.ellipse(x + w / 2, y + 14, w / 2 - 1, 2.5, 0, 0, Math.PI * 2); c.fill(); };
+
+  // River Warehouse: a low shelf for parcels nobody has claimed (o.parcel: one still waits)
+  def('cs_shelf', {}, (c, x, y, p, t, o) => {
+    px(c, x + 1, y - 2, 14, 16, p.wood[2]);
+    px(c, x + 2, y - 1, 12, 14, p.wood[0]);
+    px(c, x + 2, y + 5, 12, 1, p.wood[3]);
+    px(c, x + 3, y + 1, 4, 4, '#c8b48a'); px(c, x + 9, y + 8, 4, 4, '#b8a47a');
+    if (o && o.parcel) {
+      px(c, x + 8, y + 1, 5, 4, '#d8c49a');
+      px(c, x + 10, y + 1, 1, 4, '#7a4a2a');
+      px(c, x + 8, y + 3, 5, 1, '#7a4a2a');
+      px(c, x + 10, y + 3, 1, 1, '#a83e27');
+    }
+    px(c, x + 1, y + 13, 14, 1, 'rgba(0,0,0,0.25)');
+  });
+
+  // Saltglass quay: the repair workbench, its front edge notched at even spacing (3×1).
+  // o.label: the old address label pinned above it (after the delivery).
+  def('cs_workbench', { w: 3 }, (c, x, y, p, t, o) => {
+    shadow(c, x, y, 48);
+    px(c, x + 1, y + 2, 46, 8, p.wood[2]);
+    px(c, x + 2, y + 3, 44, 6, p.wood[1]);
+    for (let i = 0; i < 9; i++) px(c, x + 4 + i * 5, y + 8, 2, 2, '#3a2a1a'); // the notches
+    px(c, x + 3, y + 10, 2, 5, p.wood[2]); px(c, x + 43, y + 10, 2, 5, p.wood[2]);
+    // a coil of rope and a cracked float
+    c.strokeStyle = '#b89a5a'; c.lineWidth = 1.5; c.beginPath(); c.arc(x + 11, y + 4, 3, 0, 7); c.stroke();
+    c.fillStyle = '#7fb0c0'; c.beginPath(); c.arc(x + 32, y + 3, 3, 0, 7); c.fill();
+    px(c, x + 32, y + 1, 1, 3, '#2e4a58');
+    if (o && o.label) { px(c, x + 20, y - 6, 8, 6, '#efe4c8'); px(c, x + 21, y - 4, 6, 1, '#6a5a44'); px(c, x + 21, y - 2, 4, 1, '#6a5a44'); px(c, x + 23, y - 7, 2, 2, '#a83e27'); }
+  });
+  // the ferry's call bell on its post
+  def('cs_bellpost', {}, (c, x, y, p, t, o) => {
+    shadow(c, x + 4, y, 8);
+    px(c, x + 7, y - 10, 2, 24, p.wood[2]);
+    px(c, x + 7, y - 10, 6, 2, p.wood[2]);
+    const sw = RB.game && RB.game.reducedMotion && RB.game.reducedMotion() ? 0 : Math.round(Math.sin((t || 0) / 900));
+    c.fillStyle = (o && o.bright) ? '#e0b85a' : '#b8903e';
+    c.beginPath(); c.moveTo(x + 9 + sw, y - 7); c.lineTo(x + 15 + sw, y - 7); c.lineTo(x + 16 + sw, y - 1); c.lineTo(x + 8 + sw, y - 1); c.closePath(); c.fill();
+    px(c, x + 11 + sw, y - 9, 2, 2, '#8a6a2a');
+    px(c, x + 14 + sw, y - 6, 1, 1, '#5a3a14'); // the notch in its shoulder
+  });
+  // East beach: the old landing's low stone footing and one post with an iron bracket (2×1)
+  def('cs_footing', { w: 2 }, (c, x, y, p) => {
+    px(c, x + 1, y + 7, 30, 6, '#8a8478'); px(c, x + 1, y + 7, 30, 1, '#aaa496'); px(c, x + 1, y + 12, 30, 1, '#5e5a52');
+    px(c, x + 10, y + 7, 1, 6, '#6e6a60'); px(c, x + 20, y + 7, 1, 6, '#6e6a60');
+    px(c, x + 25, y - 8, 3, 16, '#6a5a44'); px(c, x + 25, y - 8, 1, 16, '#8a7a5e');
+    px(c, x + 27, y - 6, 4, 1, '#3a3a40'); px(c, x + 30, y - 6, 1, 3, '#3a3a40');
+  });
+  // Lighthouse window: a sketch on thin paper pinned so the light comes through it
+  def('cs_sketchwin', {}, (c, x, y, p, t, o) => {
+    px(c, x + 1, y - 12, 14, 14, '#4a4a52');
+    px(c, x + 2, y - 11, 12, 12, '#bcd4e0');
+    if (!o || !o.gone) {
+      px(c, x + 3, y - 10, 10, 9, 'rgba(250,244,226,0.85)');
+      px(c, x + 5, y - 7, 1, 4, '#8a8070'); px(c, x + 8, y - 6, 2, 2, '#8a8070'); px(c, x + 11, y - 8, 1, 5, '#8a8070');
+      px(c, x + 7, y - 11, 2, 1, '#a83e27');
+    } else px(c, x + 7, y - 11, 1, 1, '#8a8070');
+  });
+  // Star Stair: the framed sketch on a short post by the stone seat
+  def('cs_frame', {}, (c, x, y, p) => {
+    shadow(c, x + 3, y, 10);
+    px(c, x + 7, y - 2, 2, 16, '#6a5a44');
+    px(c, x + 2, y - 10, 12, 10, '#5a4a36');
+    px(c, x + 3, y - 9, 10, 8, '#f4efe0');
+    px(c, x + 4, y - 7, 1, 4, '#6a6258'); px(c, x + 7, y - 6, 2, 2, '#6a6258'); px(c, x + 11, y - 8, 1, 5, '#6a6258');
+    px(c, x + 2, y - 11, 12, 1, '#e8e8f0');
+  });
+  // a flat stone someone keeps clear of snow: a place to stand and look
+  def('cs_viewstone', {}, (c, x, y) => {
+    shadow(c, x, y, 16);
+    c.fillStyle = '#8c8a90'; c.beginPath(); c.ellipse(x + 8, y + 9, 7, 4, 0, 0, 7); c.fill();
+    c.fillStyle = '#a8a6ac'; c.beginPath(); c.ellipse(x + 8, y + 8, 6, 3, 0, 0, 7); c.fill();
+    px(c, x + 4, y + 5, 8, 1, '#f4f6fa');
+  });
+
+  // ---- keepsake art (32×32 pixel grid; drawn crisp, scaled without smoothing) ------------------------------
+  const K = (RB.content.keepsakeArt = RB.content.keepsakeArt || {});
+  const dot = (c, x, y, col) => px(c, x, y, 1, 1, col);
+  K.shell_button = (c) => {
+    c.fillStyle = '#f2e6d6'; c.beginPath(); c.arc(16, 16, 11, 0, 7); c.fill();
+    c.strokeStyle = '#b89a7a'; c.lineWidth = 1; c.beginPath(); c.arc(16, 16, 11, 0, 7); c.stroke();
+    for (let a = 0; a < 7; a++) { const r = a * 0.9 - 2.7; c.strokeStyle = 'rgba(184,154,122,0.7)'; c.beginPath(); c.moveTo(16, 26); c.lineTo(16 + Math.sin(r) * 10, 16 - Math.cos(r) * 9); c.stroke(); }
+    px(c, 13, 14, 2, 2, '#6a5040'); px(c, 17, 14, 2, 2, '#6a5040'); px(c, 13, 18, 2, 2, '#6a5040'); px(c, 17, 18, 2, 2, '#6a5040');
+    dot(c, 10, 9, '#ffffff'); dot(c, 11, 8, '#ffffff');
+  };
+  K.clay_swallow = (c) => {
+    c.fillStyle = '#b8683e';
+    c.beginPath(); c.moveTo(4, 14); c.lineTo(14, 12); c.lineTo(20, 8); c.lineTo(28, 6); c.lineTo(22, 13); c.lineTo(28, 22); c.lineTo(18, 17); c.lineTo(10, 20); c.closePath(); c.fill();
+    c.fillStyle = '#8a4a2a'; c.beginPath(); c.moveTo(14, 12); c.lineTo(22, 13); c.lineTo(18, 17); c.closePath(); c.fill();
+    px(c, 7, 13, 2, 2, '#2a1a12'); px(c, 3, 14, 2, 1, '#6a3a1e');
+    px(c, 6, 17, 6, 1, '#e8c8a8');
+    c.fillStyle = 'rgba(0,0,0,0.18)'; c.beginPath(); c.ellipse(16, 27, 10, 2, 0, 0, 7); c.fill();
+  };
+  K.star_rosette = (c) => {
+    const cols = ['#e8c85a', '#f0e0a0', '#c89a3a', '#f4ecd0', '#d8b04a'];
+    for (let i = 0; i < 10; i++) {
+      const a = i * Math.PI / 5, r = i % 2 ? 7 : 13;
+      c.fillStyle = cols[i % cols.length];
+      c.beginPath(); c.moveTo(16, 16); c.lineTo(16 + Math.cos(a) * r, 16 + Math.sin(a) * r); c.lineTo(16 + Math.cos(a + Math.PI / 5) * (i % 2 ? 13 : 7), 16 + Math.sin(a + Math.PI / 5) * (i % 2 ? 13 : 7)); c.closePath(); c.fill();
+    }
+    c.fillStyle = '#6a7ab8'; c.beginPath(); c.arc(16, 16, 3, 0, 7); c.fill();
+    px(c, 15, 28, 2, 3, '#a83e27');
+  };
+  K.thread_spool = (c) => {
+    px(c, 9, 5, 14, 3, '#8a6a44'); px(c, 9, 24, 14, 3, '#8a6a44');
+    px(c, 11, 8, 10, 16, '#5a7aa8');
+    for (let y = 9; y < 24; y += 2) px(c, 11, y, 10, 1, '#7a9ac8');
+    px(c, 9, 5, 14, 1, '#aa8a5e'); px(c, 15, 4, 2, 1, '#3a2a1a');
+    c.strokeStyle = '#5a7aa8'; c.lineWidth = 1; c.beginPath(); c.moveTo(21, 20); c.quadraticCurveTo(27, 24, 25, 29); c.stroke();
+  };
+  K.parcel_seal = (c) => {
+    c.fillStyle = '#a83e27'; c.beginPath(); c.arc(16, 16, 11, 0, 7); c.fill();
+    c.fillStyle = '#c8543a'; c.beginPath(); c.arc(15, 15, 9, 0, 7); c.fill();
+    // the bell, with its notch in the right shoulder
+    c.fillStyle = '#7a2414'; c.beginPath(); c.moveTo(12, 12); c.lineTo(20, 12); c.lineTo(22, 21); c.lineTo(10, 21); c.closePath(); c.fill();
+    px(c, 15, 9, 2, 3, '#7a2414'); px(c, 19, 13, 2, 2, '#c8543a');
+    px(c, 11, 22, 10, 1, '#7a2414');
+    dot(c, 9, 9, '#f0a080'); dot(c, 10, 8, '#f0a080');
+  };
+  K.turning_picture = (c) => {
+    px(c, 5, 6, 22, 20, '#6a5a44'); px(c, 6, 7, 20, 18, '#f4efe0');
+    px(c, 6, 22, 20, 3, '#e4e8f0');
+    px(c, 9, 13, 1, 9, '#7a7060'); px(c, 8, 12, 3, 2, '#e8b858');           // the lantern
+    px(c, 14, 15, 5, 4, '#8a6a4a'); px(c, 13, 14, 7, 1, '#5a4a3a');         // the shrine
+    px(c, 22, 12, 1, 10, '#6a6258'); px(c, 20, 14, 2, 1, '#6a6258'); px(c, 23, 15, 2, 1, '#6a6258'); // the bare tree
+    px(c, 7, 23, 2, 1, '#9a9488'); px(c, 8, 22, 1, 1, '#9a9488');           // the pressed leaf
+    c.strokeStyle = '#b8a47a'; c.lineWidth = 1; c.beginPath(); c.moveTo(16, 3); c.quadraticCurveTo(26, 1, 28, 6); c.stroke(); // turning arrow
+    px(c, 27, 6, 2, 2, '#b8a47a');
+  };
+})();
+
+
+/* ==== src/content/cases/10_data.js ==== */
+/* The two deduction cases (addendum §15): people, items, quests, the case
+ * definitions (clues, hypotheses, sufficient evidence, hints) and the
+ * pictures of the evidence, which are drawn from the maps themselves where a
+ * deduction depends on where things are. Scenes: 20_parcel.js, 30_view.js;
+ * placement on the maps: src/content/zz_cases.js. docs/addendum/cases.md. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C) {
+  'use strict';
+  const T = (en, jp) => ({ en, jp });
+
+  // ---- people ------------------------------------------------------------------------------
+  // Hama keeps the repair bench by the ferry on the Saltglass quay: rope, floats, ferry gear.
+  C.chars.cs_hama = {
+    name: { en: 'Hama', jp: 'ハマ' }, voice: { pitch: 0.95 },
+    look: { skin: 3, hair: 'wrap', wrapCol: '#6a8a6a', hairColor: 1, cloth: ['#5a6a5e', '#46544a', '#d8c090'], shape: 'apron', acc: [] },
+    portrait: { eyes: 'narrow', style: 'wrap', wrapCol: '#6a8a6a', collar: 'apron', bg: '#26322a' },
+  };
+  // Seto lives up the hill in Saltglass; her grandfather kept a workshop on the sand.
+  C.chars.cs_seto = {
+    name: { en: 'Seto', jp: 'セト' }, voice: { pitch: 1.0 },
+    look: { skin: 1, hair: 'bun', hairColor: 6, cloth: ['#7a6a5a', '#5e5044', '#c8b8a0'], shape: 'robe', acc: [], age: 'old' },
+    portrait: { eyes: 'soft', style: 'bun', age: 'old', collar: 'high', bg: '#322c28' },
+  };
+
+  // ---- items ---------------------------------------------------------------------------------
+  C.items.cs_parcel = { name: T('Sealed parcel', '{封|ふう} を した {小包|こづつみ}'), key: true,
+    desc: 'Addressed to "the keeper of the bell workshop, the East Landing, Saltglass". No one\'s name. The wax seal shows a small bell.' };
+  C.items.cs_sketch = { name: T('Translucent sketch', '{薄|うす}い {紙|かみ} の {絵|え}'), key: true,
+    desc: 'A traveller\'s sketch on very thin paper, lent by Genzō. The case record in your Journey lets you turn it over and compare it.' };
+
+  // ---- quests (the Journey entries; their next step is never marked until you choose) ----------------
+  const conceal = (id, stage) => Object.assign({ mark: 'afterHypothesis', markAt: (s) => RB.cases.markAt(s, id) }, stage);
+  C.quests.cs_parcel = {
+    title: T('A Parcel for a Place That Moved', '{移|うつ}った {場所|ばしょ} へ の {小包|こづつみ}'),
+    stages: [conceal('parcel', {
+      jp: '{名前|なまえ} の ない {宛名|あてな} の {小包|こづつみ} 。 {本当|ほんとう} は {誰|だれ} に {届|とど}ける もの か 、 {考|かんが}えよう 。',
+      en: 'A parcel addressed to a job and a place, not a name. Work out who it is really for (Journey › Cases keeps what you find).',
+      hint: { jp: '{宛名|あてな} は {仕事|しごと} を {指|さ}して いる 。 その {仕事|しごと} を {今|いま} {続|つづ}けて いる の は {誰|だれ} だろう 。', en: 'The address names a job. Who is doing that job now?' },
+    })],
+  };
+  C.quests.cs_view = {
+    title: T('The View on the Other Side', '{向|む}こう {側|がわ} の {景色|けしき}'),
+    stages: [conceal('view', {
+      jp: 'どこ の {景色|けしき} とも {合|あ}わない {絵|え} 。 どこ で {描|か}かれた の か 、 {考|かんが}えよう 。',
+      en: 'A sketch that matches no view you know. Work out where it was drawn (Journey › Cases: turn it over, compare, reset).',
+      hint: { jp: '{薄|うす}い {紙|かみ} に {描|か}いて ある 。 どちら の {面|めん} を {見|み}て いる だろう 。', en: 'It is drawn on very thin paper. Which side are you looking at?' },
+    })],
+  };
+
+  // ---- Case A: A Parcel for a Place That Moved --------------------------------------------------
+  const clue = (id, d) => (C.clues[id] = Object.assign({ id }, d));
+  clue('parcel.address', { case: 'parcel', kind: 'document', title: T('The address label', '{宛名|あてな} の {札|ふだ}'),
+    source: { en: 'The parcel itself', map: 'rw.warehouse' },
+    jp: '{潮|しお}{硝子|がらす} 、 {東|ひがし} の {渡|わた}し{場|ば} 。 {鈴|すず} の {工房|こうぼう} の {主|あるじ} {様|さま} 。 ／ （{赤|あか}い {判|はん}） {宛先|あてさき} {不明|ふめい} ── {東|ひがし} の {渡|わた}し{場|ば} は ありません 。',
+    en: '"Saltglass, the East Landing. To the keeper of the bell workshop." / (a red stamp) "Address unknown — there is no East Landing."',
+    obs: { en: 'A place and a job, no one\'s name. The harbour sent it back because the East Landing no longer exists.' },
+    lang: [{ w: '{主|あるじ}', en: 'the head of a house or a workshop: whoever keeps it' }, { w: '{渡|わた}し{場|ば}', en: 'a ferry landing' }, { w: '{宛先|あてさき} {不明|ふめい}', en: 'address unknown (a post office stamp)' }, { w: '〜 {様|さま}', en: 'polite "to …" on an address' }] });
+  clue('parcel.seal', { case: 'parcel', kind: 'object', title: T('The wax seal', '{封|ふう} の {蝋|ろう}'),
+    source: { en: 'The parcel itself', map: 'rw.warehouse' },
+    obs: { en: 'Pressed with a small bell that has one notch in its right shoulder.' }, diagram: 'bell_notch' });
+  clue('parcel.record', { case: 'parcel', kind: 'document', title: T('The harbour record of the landings', '{渡|わた}し{場|ば} の {記録|きろく}'),
+    source: { en: 'A ledger in the Harbour Office', map: 'sg.office' },
+    jp: '{東|ひがし} の {渡|わた}し{場|ば} 、 {砂|すな} で {浅|あさ}く なり {閉|と}じる 。 {渡|わた}し{船|ぶね} は {石|いし} の {岸壁|がんぺき} へ {移|うつ}る 。 {工房|こうぼう} の {備品|びひん} ── {渡|わた}し の {呼|よ}び{鈴|りん} 、 {刻|きざ}み{目|め} の ある {作業台|さぎょうだい} ── は 、 {工房|こうぼう} と {共|とも}に {移|うつ}す 。',
+    en: '"East Landing: silted up; closed. The ferry moves to the stone quay. The workshop\'s fittings — the ferry\'s call bell, the notched workbench — go with the workshop."',
+    obs: { en: 'It does not say where the workshop went.' },
+    lang: [{ w: '{備品|びひん}', en: 'fittings, equipment belonging to a place' }, { w: '{共|とも}に', en: 'together with' }, { w: '{呼|よ}び{鈴|りん}', en: 'a bell rung to call someone' }, { w: '{岸壁|がんぺき}', en: 'a stone quay' }],
+    diagram: 'harbour' });
+  clue('parcel.oldsite', { case: 'parcel', kind: 'place', title: T('The old footing on the east beach', '{東|ひがし} の {浜|はま} の {土台|どだい}'),
+    source: { en: 'The east beach, at the water\'s edge', map: 'sg.harbor' },
+    obs: { en: 'A low stone footing where a small hut stood, and a post with an empty iron bracket. Faded letters: "East Landing". No one works here.' },
+    known: { map: 'sg.harbor', id: 'cs_footing', label: T('Old stone footing: "East Landing" (no one works here now)', '{古|ふる}い {土台|どだい}'), state: 'seen', x: 53, y: 31 } });
+  clue('parcel.crest', { case: 'parcel', kind: 'object', title: T('The crest on a door up the hill', '{丘|おか} の {上|うえ} の {紋|もん}'),
+    source: { en: 'The door plate of a small house on the hill', map: 'sg.harbor' },
+    obs: { en: 'A bell with a wavy line beneath it. No notch.' }, diagram: 'bell_wave',
+    known: { map: 'sg.harbor', id: 'cs_seto', label: T('A house with a bell crest', '{紋|もん} の ある {家|いえ}'), state: 'seen', x: 51, y: 4 } });
+  clue('parcel.seto_memory', { case: 'parcel', kind: 'speaker', sure: false, title: T('What Seto remembers', 'セト の {話|はなし}'),
+    source: { en: 'Seto, outside her house on the hill', who: 'cs_seto', map: 'sg.harbor' },
+    jp: 'うち の {祖父|そふ} は 、 {浜|はま} の ほう で {工房|こうぼう} を して いた …… と {思|おも}う の 。 わたし は {小|ちい}さくて 、 よく {覚|おぼ}えて いない けど 。',
+    en: '"My grandfather kept a workshop somewhere down by the shore… I think. I was little; I don\'t really remember."' });
+  clue('parcel.bench', { case: 'parcel', kind: 'object', title: T('The notched workbench on the quay', '{刻|きざ}み{目|め} の {作業台|さぎょうだい}'),
+    source: { en: 'The repair bench by the ferry, on the stone quay', map: 'sg.harbor' },
+    obs: { en: 'Notches cut at even spacing along its front edge, for measuring rope. Older than its keeper\'s teacher, she says.' },
+    known: { map: 'sg.harbor', id: 'cs_bench', label: T('Repair bench by the ferry (notched edge)', '{作業台|さぎょうだい}'), state: 'seen', x: 38, y: 27 } });
+  clue('parcel.bell', { case: 'parcel', kind: 'object', title: T('The call bell by the bench', '{呼|よ}び{鈴|りん}'),
+    source: { en: 'A post beside the repair bench, on the stone quay', map: 'sg.harbor' },
+    obs: { en: 'The ferry\'s call bell. Stamped on its shoulder: a small bell with one notch in its right shoulder.' }, diagram: 'bell_notch' });
+  clue('parcel.makernote', { case: 'parcel', kind: 'document', title: T('The post house\'s record of marks', '{印|しるし} の {控|ひか}え'),
+    source: { en: 'A ledger in Shino\'s Post House', map: 'co.post' },
+    jp: '{鈴|すず} 、 {右|みぎ} の {肩|かた} に {切|き}り{込|こ}み {一|ひと}つ ── {鋳物師|いもじ} トクゾウ の {刻印|こくいん} 。 {呼|よ}び{鈴|りん} など 。 ／ {似|に}た {印|しるし} に {注意|ちゅうい} ： {潮|しお}{硝子|がらす} の セト {家|け} の {紋|もん} は 、 {鈴|すず} の {下|した} に {波|なみ} 。 {切|き}り{込|こ}み なし 。',
+    en: '"A bell with one notch in its right shoulder — the stamp of the caster Tokuzō. On call bells and the like." / "Beware a look-alike: the Seto family crest in Saltglass has a wave beneath the bell, and no notch."',
+    lang: [{ w: '{鋳物師|いもじ}', en: 'a metal caster (makes bells, pots)' }, { w: '{刻印|こくいん}', en: 'a stamped maker\'s mark' }, { w: '〜 {家|け}', en: 'the … family' }] });
+
+  C.cases.parcel = {
+    id: 'parcel', quest: 'cs_parcel', region: 'saltglass', keepsake: 'parcel_seal', talk: 'cs.talk_parcel',
+    title: C.quests.cs_parcel.title,
+    question: T('Who is the parcel really for? The label names a workshop at a landing that no longer exists.', 'この {小包|こづつみ} は 、 {本当|ほんとう} は {誰|だれ} {宛|あて} なのか 。'),
+    clues: ['parcel.address', 'parcel.seal', 'parcel.record', 'parcel.oldsite', 'parcel.crest', 'parcel.seto_memory', 'parcel.bench', 'parcel.bell', 'parcel.makernote'],
+    groups: { fixture: ['parcel.bench', 'parcel.bell'] },
+    hypotheses: [
+      { id: 'oldsite', label: T('The old East Landing itself', '{東|ひがし} の {渡|わた}し{場|ば} の {跡|あと}'), from: ['parcel.address'],
+        place: { map: 'sg.harbor', x: 53, y: 31 }, placeBy: ['parcel.oldsite'],
+        mismatch: T('No workshop and no one stands there now. The address asks for the workshop\'s keeper.') },
+      { id: 'family', label: T('The house up the hill with the bell crest', '{丘|おか} の {上|うえ} の {紋|もん} の {家|いえ}'), from: ['parcel.crest', 'parcel.seto_memory'],
+        place: { map: 'sg.harbor', npc: 'cs_seto' }, placeBy: ['parcel.crest', 'parcel.seto_memory'],
+        mismatch: T('Seto: their crest has a wave under the bell and no notch, and they have kept no workshop for years.') },
+      { id: 'keeper', label: T('Whoever keeps the call bell and the notched workbench now', '{今|いま} 、 {呼|よ}び{鈴|りん} と {作業台|さぎょうだい} を {守|まも}って いる {人|ひと}'), from: ['parcel.record', 'parcel.bench', 'parcel.bell'],
+        place: { map: 'sg.harbor', npc: 'cs_hama' }, placeBy: ['parcel.bench', 'parcel.bell'], correct: true },
+    ],
+    // the transfer record, the address and the fixture as it is now; or the caster's note in place of the record
+    sufficient: [['parcel.address', 'parcel.record', 'fixture'], ['parcel.address', 'parcel.makernote', 'fixture']],
+    hints: [
+      { kind: 'nudge', jp: '{宛名|あてな} に は {人|ひと} の {名前|なまえ} が ない 。 {場所|ばしょ} と {仕事|しごと} だけ だ 。', en: 'The label names no person: only a place and a job. Places can change; jobs can move.' },
+      { kind: 'compare', jp: '{封|ふう} の {印|しるし} を 、 {見|み}た {紋|もん} や {刻印|こくいん} と {比|くら}べて みよう 。 {切|き}り{込|こ}み は ある か 。', en: 'Compare the seal on the parcel with every crest or stamp you have seen. Look for the notch.' },
+      { kind: 'step', jp: '{港|みなと} の {事務所|じむしょ} の {古|ふる}い {記録|きろく} に 、 {東|ひがし} の {渡|わた}し{場|ば} の こと が {書|か}いて ある 。 {備品|びひん} が どう なった か {読|よ}もう 。', en: 'The Harbour Office keeps old records of the East Landing. Read what happened to the workshop\'s fittings — then look for them.' },
+      { kind: 'solution', discloses: 'keeper', jp: '{小包|こづつみ} は 、 {岸壁|がんぺき} の {渡|わた}し{船|ぶね} の そば で {作業台|さぎょうだい} を {守|まも}る ハマ {宛|あて} だ 。 {呼|よ}び{鈴|りん} と {刻|きざ}み{目|め} の {台|だい} は 、 {工房|こうぼう} と {一緒|いっしょ} に そこ へ {移|うつ}った 。', en: 'The parcel is for Hama, who keeps the repair bench beside the ferry on the stone quay: the call bell and the notched bench moved there with the workshop.' },
+    ],
+    hypPrompt: T('Your own conclusion. Nothing here is marked right or wrong: offer the parcel to whoever you think it is for, and the world will tell you.'),
+    result: T('The parcel was for Hama, the workshop\'s keeper now. The address named a job and a place; the workshop moved from the East Landing to the stone quay, and its call bell and notched bench went with it.', '{小包|こづつみ} は 、 {今|いま} の {工房|こうぼう} の {主|あるじ} 、 ハマ {宛|あて} だった 。 {工房|こうぼう} は {東|ひがし} の {渡|わた}し{場|ば} から {岸壁|がんぺき} へ {移|うつ}り 、 {呼|よ}び{鈴|りん} と {台|だい} も {一緒|いっしょ} に {移|うつ}って いた 。'),
+    methods: {
+      reasoned: T('You worked it out from what you had seen and read.'),
+      early: T('You recognised the right person before the whole trail was in your notes — and it was right.'),
+      helped: T('You asked for the answer and delivered it. The keepsake and everything else are the same.'),
+    },
+    method(s, rec, K) {
+      if (K.hintLevel(s, 'parcel') >= 4) return 'helped';
+      return K.sufficient(s, 'parcel') ? 'reasoned' : 'early';
+    },
+    // Hama asks how you knew: only what you actually observed is said
+    acknowledge(s, rec, K) {
+      const o = (id) => K.observed(s, id);
+      const out = [];
+      if (o('parcel.record')) out.push({ who: 'pc', jp: '{港|みなと} の {記録|きろく} に 、 {呼|よ}び{鈴|りん} と {作業台|さぎょうだい} は {工房|こうぼう} と {一緒|いっしょ} に {移|うつ}った 、 と あった ん です 。', en: 'The harbour record said the call bell and the workbench went with the workshop.' });
+      if (o('parcel.makernote')) out.push({ who: 'pc', jp: 'シノ の {郵便所|ゆうびんじょ} の {帳面|ちょうめん} で 、 {封|ふう} の {印|しるし} が {鋳物師|いもじ} の {刻印|こくいん} だ と {分|わ}かりました 。', en: 'The post house book in Cinder Orchard said the seal was the caster\'s stamp.' });
+      if (o('parcel.bell') || o('parcel.bench')) out.push({ who: 'pc', jp: 'それ で 、 {刻|きざ}み{目|め} の {台|だい} と 、 {同|おな}じ {印|しるし} の {呼|よ}び{鈴|りん} を {見|み}て 。', en: 'And then I saw your notched bench, and the call bell with the same mark.' });
+      if (rec && rec.tried && rec.tried.family) out.push({ who: 'pc', jp: '{丘|おか} の {上|うえ} の {紋|もん} は {似|に}て いた けど 、 {違|ちが}いました 。', en: 'The crest up the hill looked alike, but it wasn\'t the same.' });
+      if (!out.length) out.push({ who: 'pc', jp: '{一|ひと}つ ずつ {聞|き}いて {回|まわ}った だけ です 。', en: 'I just asked, one place at a time.' });
+      const m = rec && rec.method;
+      out.push(m === 'reasoned' ? { who: 'cs_hama', expr: 'smile', jp: 'ちゃんと {読|よ}んで 、 ちゃんと {見|み}た ん だ ね 。', en: 'You read it properly and looked properly.' }
+        : m === 'helped' ? { who: 'cs_hama', expr: 'smile', jp: 'どう やって {来|き}た に しろ 、 {届|とど}いた の は ここ だ よ 。', en: 'However you got here, this is where it arrived.' }
+          : { who: 'cs_hama', expr: 'smile', jp: 'いい {目|め} を してる 。', en: 'You\'ve got a good eye.' });
+      return out;
+    },
+  };
+
+  // ---- Case B: The View on the Other Side -------------------------------------------------------
+  // The landmarks and viewpoints on the Star Stair (sb.obs_path). Every view is
+  // computed from these positions — the same props the map draws — so the
+  // pictures, the words and the deduction agree with the world (tests/unit/cases.test.mjs).
+  const VIEW = C.caseView = {
+    map: 'sb.obs_path',
+    landmarks: {
+      lamp: { x: 7, y: 33, w: 1, props: ['deadlantern', 'lantern'], name: T('the stair lantern', '{石段|いしだん} の {灯|あか}り') },
+      shrine: { x: 9, y: 30, w: 2, props: ['shrine'], name: T('the little shrine', '{小|ちい}さな {祠|ほこら}') },
+      tree: { x: 11, y: 32, w: 1, props: ['deadtree'], name: T('the bare tree', '{枯|か}れ{木|き}') },
+    },
+    // where the viewer stands (tile centres) and which way they look
+    points: {
+      seat: { x: 10.0, y: 36.5, dir: 'up', name: T('the stone seat at the foot of the stair', '{石段|いしだん} の {下|した} の {腰掛|こしか}け'), facing: T('looking up the stair (north)', '{石段|いしだん} を {見上|みあ}げて （{北|きた}）'),
+        look: T('You sit on the stone seat and look up the stair, to the north.', '{腰掛|こしか}け に {座|すわ}って 、 {北|きた} へ {石段|いしだん} を {見上|みあ}げる 。') },
+      west: { x: 4.5, y: 31.5, dir: 'right', name: T('the flat stone beside the stair path', '{石段|いしだん} の {脇|わき} の {平|たい}らな {石|いし}'), facing: T('looking across the slope (east)', '{斜面|しゃめん} の {向|む}こう を {見|み}て （{東|ひがし}）'),
+        look: T('You stand by the flat stone and look east, across the slope.', '{平|たい}らな {石|いし} の そば に {立|た}って 、 {東|ひがし} へ {斜面|しゃめん} を {見渡|みわた}す 。') },
+      east: { x: 14.5, y: 33.5, dir: 'left', name: T('the flat stone above the lower path', '{下|した} の {道|みち} の {上|うえ} の {平|たい}らな {石|いし}'), facing: T('looking back along the slope (west)', '{斜面|しゃめん} を {振|ふ}り{返|かえ}って （{西|にし}）'),
+        look: T('You stand by the flat stone and look west, back along the slope.', '{平|たい}らな {石|いし} の そば に {立|た}って 、 {西|にし} へ {斜面|しゃめん} を {振|ふ}り{返|かえ}る 。') },
+    },
+    // the sketch was drawn from here, facing this way
+    target: 'seat',
+  };
+  const FWD = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
+  // bearing of each landmark from a viewpoint (degrees; negative = left), in view order
+  VIEW.see = function (pid) {
+    const v = VIEW.points[pid];
+    return Object.keys(VIEW.landmarks).map((k) => {
+      const l = VIEW.landmarks[k], lx = l.x + l.w / 2, ly = l.y + 0.5;
+      const dx = lx - v.x, dy = ly - v.y, [fx, fy] = FWD[v.dir];
+      const f = dx * fx + dy * fy;
+      const r = v.dir === 'up' ? dx : v.dir === 'down' ? -dx : v.dir === 'left' ? -dy : dy;
+      return { k, f, r, deg: Math.atan2(r, f) * 180 / Math.PI };
+    }).sort((a, b) => a.deg - b.deg);
+  };
+  VIEW.order = (pid) => VIEW.see(pid).map((x) => x.k);
+  VIEW.words = function (order) {
+    const n = order.map((k) => VIEW.landmarks[k].name);
+    return { jp: '{左|ひだり} から 、 ' + n.map((x) => x.jp).join(' 、 ') + ' 。', en: 'From left to right: ' + n.map((x) => x.en).join(', ') + '.' };
+  };
+
+  clue('view.sketch', { case: 'view', kind: 'object', title: T('The sketch in the lighthouse window', '{灯台|とうだい} の {窓|まど} の {絵|え}'),
+    source: { en: 'Pinned in the lighthouse window', map: 'sg.lighthouse' },
+    obs: { en: 'Pencil on paper so thin the window light comes through it. As it hung, facing the room, it showed — from left to right — a bare tree, a little shrine and a lamp on a post. It looks like no place Genzō knows.' } });
+  clue('view.genzo', { case: 'view', kind: 'speaker', sure: false, title: T('What Genzō remembers', 'ゲンゾウ の {話|はなし}'),
+    source: { en: 'Genzō, at the lighthouse', who: 'genzo', map: 'sg.lighthouse' },
+    jp: '{旅|たび} の {絵描|えか}き が {置|お}いて いった 。 {北|きた} の {道|みち} の 、 {座|すわ}って {休|やす}む {場所|ばしょ} から {描|か}いた …… と {言|い}って いた か な 。',
+    en: '"A travelling artist left it. Drew it from somewhere on the road north where you sit and rest… or so I think she said."' });
+  clue('view.note', { case: 'view', kind: 'document', title: T('A page in the inn\'s guestbook', '{宿|やど} の {帳面|ちょうめん}'),
+    source: { en: 'The guestbook at Fusa\'s Inn', map: 'co.inn' },
+    jp: '{薄|うす}い {紙|かみ} に {描|か}いて います 。 {表|おもて} の {隅|すみ} に 、 {葉|は} の {印|しるし} を {押|お}します 。 {軸|じく} は {左|ひだり} 。 {裏|うら} から {見|み}る と 、 {軸|じく} は {右|みぎ} を {向|む}いて 、 へこんで {見|み}えます 。',
+    en: '"I draw on thin paper. In a front corner I press my leaf mark, stem to the left. From the back, the stem points right, and the mark looks sunken."',
+    obs: { en: 'Signed with a little drawing of a leaf instead of a name.' },
+    lang: [{ w: '{表|おもて}', en: 'the front (face) of a sheet' }, { w: '{裏|うら}', en: 'the back' }, { w: '{軸|じく}', en: 'here: a leaf\'s stem' }, { w: 'へこむ', en: 'to be dented, sunken' }], diagram: 'leaf_both' });
+  clue('view.impression', { case: 'view', kind: 'object', title: T('The mark pressed into a corner', '{隅|すみ} の {押|お}し{跡|あと}'),
+    source: { en: 'The sketch itself', map: null },
+    obs: { en: 'A small leaf pressed into a lower corner. On the side that faced the room it is a dent, stem pointing right; on the other side it stands up, stem pointing left.' }, diagram: 'leaf_both' });
+  const viewClue = (pid, title) => clue('view.' + pid, { case: 'view', kind: 'view', title,
+    source: { en: 'The Star Stair above Snowbell', map: 'sb.obs_path' }, diagram: 'view:' + pid,
+    obs: { en: VIEW.points[pid].name.en[0].toUpperCase() + VIEW.points[pid].name.en.slice(1) + ', ' + VIEW.points[pid].facing.en + '.' } });
+  viewClue('seat', T('The view from the stone seat', '{腰掛|こしか}け から の {景色|けしき}'));
+  viewClue('west', T('The view from the flat stone by the path', '{道|みち} の {脇|わき} の {石|いし} から の {景色|けしき}'));
+  viewClue('east', T('The view from the flat stone above the lower path', '{下|した} の {道|みち} の {上|うえ} の {石|いし} から の {景色|けしき}'));
+
+  C.cases.view = {
+    id: 'view', quest: 'cs_view', region: 'snowbell', keepsake: 'turning_picture', talk: 'cs.talk_view',
+    title: C.quests.cs_view.title,
+    question: T('Where was the sketch drawn? It seems to match no view exactly.', 'この {絵|え} は 、 どこ で {描|か}かれた のか 。'),
+    clues: ['view.sketch', 'view.genzo', 'view.note', 'view.impression', 'view.seat', 'view.west', 'view.east'],
+    hypotheses: ['seat', 'west', 'east'].map((pid) => ({ id: pid, label: C.clues['view.' + pid].title, from: ['view.' + pid],
+      place: { map: 'sb.obs_path', x: Math.floor(VIEW.points[pid].x), y: Math.floor(VIEW.points[pid].y) }, placeBy: ['view.' + pid], correct: pid === VIEW.target })),
+    sufficient: [['view.impression', 'view.' + VIEW.target], ['view.note', 'view.' + VIEW.target]],
+    hints: [
+      { kind: 'nudge', jp: 'とても {薄|うす}い {紙|かみ} だ 。 {今|いま} 、 どちら の {面|めん} を {見|み}て いる だろう 。', en: 'The paper is very thin. Which side of it are you looking at?' },
+      { kind: 'compare', jp: '{隅|すみ} の {押|お}し{跡|あと} を よく {見|み}て 、 {絵|え} を {見|み}た {景色|けしき} と {比|くら}べよう 。', en: 'Look closely at the mark pressed into a corner, then compare the sketch with the views you have kept.' },
+      { kind: 'step', jp: '{絵|え} を {裏返|うらがえ}して 、 {雪鈴|ゆきすず} の {星|ほし} の {石段|いしだん} で {座|すわ}れる {場所|ばしょ} から の {景色|けしき} と {比|くら}べよう 。', en: 'Turn the sketch over and compare it with the view from a place to sit on the Star Stair above Snowbell.' },
+      { kind: 'solution', discloses: 'seat', jp: '{裏返|うらがえ}す と 、 {絵|え} は {石段|いしだん} の {下|した} の {腰掛|こしか}け から の {景色|けしき} だ 。 {左|ひだり} から {灯|あか}り 、 {祠|ほこら} 、 {枯|か}れ{木|き} 。', en: 'Turned over, the sketch is the view from the stone seat at the foot of the Star Stair: from the left, the lantern, the shrine, the bare tree.' },
+    ],
+    hypPrompt: T('Which view does it show? Your own choice: compare it with the sketch above, held one way or the other.'),
+    result: T('The sketch shows the view up the Star Stair from the stone seat at its foot. It had hung in the lighthouse window back to front: turned over, the lantern, the shrine and the bare tree fall into place.', '{絵|え} は 、 {星|ほし} の {石段|いしだん} の {下|した} の {腰掛|こしか}け から の {景色|けしき} だった 。 {窓|まど} に {裏|うら} を {向|む}けて {貼|は}られて いた 。'),
+    methods: {
+      noticed: T('You saw which side was the front from the pressed mark, and matched the view yourself.'),
+      note: T('The artist\'s own note told you how her sheets are made, and you matched the view.'),
+      compared: T('You turned it over and matched the view by the landmarks alone.'),
+      helped: T('You asked for the answer. The keepsake and everything else are the same.'),
+    },
+    method(s, rec, K) {
+      if (K.hintLevel(s, 'view') >= 4) return 'helped';
+      if (K.observed(s, 'view.note')) return 'note';
+      return K.observed(s, 'view.impression') ? 'noticed' : 'compared';
+    },
+    // the sheet: Turn over, Compare, Reset (src/ui/59_casebook.js)
+    sheet: {
+      name: T('The sketch'), start: 'back',
+      startText: T('As it hung in the lighthouse window: the side that faced the room.'),
+      turnedText: T('Turned over: the side that faced the glass.'),
+      revealHint: T('Something is pressed into one corner, too faint to make out as it is. Look closer below.'),
+      confirmLabel: T('This is the view, held this way'),
+      reveals: [
+        { id: 'tilt', label: T('Tilt it to the light and look at both sides'), clue: 'view.impression' },
+        { id: 'backing', label: T('Lay it on Genzō\'s white chart paper'), clue: 'view.impression', if: 'cs_view_backing' },
+        { id: 'light', label: T('Weave ひかり behind it'), clue: 'view.impression', if: 'word.hikari' },
+      ],
+      revealed: (s) => RB.cases.observed(s, 'view.impression'),
+      viewOf: (hid) => 'view.' + hid,
+      order: (side) => (side === 'front' ? VIEW.order(VIEW.target) : VIEW.order(VIEW.target).slice().reverse()),
+      matches: (s, side, hid) => !!hid && RB.cases.observed(s, 'view.' + hid) && VIEW.order(hid).join() === (side === 'front' ? VIEW.order(VIEW.target) : VIEW.order(VIEW.target).slice().reverse()).join(),
+      mismatch: () => T('They don\'t line up: the lantern, the shrine and the bare tree are not in the same order.'),
+      draw: (s, side, shown) => RB.content.caseArt.sheet(s, side, shown),
+      solvedScene: 'cs.view_solved',
+    },
+    remembered: (s) => RB.content.caseArt.remembered(s),
+  };
+
+  // ---- pictures of the evidence (inline SVG + a text equivalent) ------------------------------------------
+  const A = (C.caseArt = C.caseArt || {});
+  const svg = (w, h, body, label) => '<svg viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + RB.util.esc(label) + '" xmlns="http://www.w3.org/2000/svg">' + body + '</svg>';
+  const bell = (cx, cy, s, notch, wave) => {
+    let b = '<path d="M' + (cx - 10 * s) + ' ' + (cy + 12 * s) + ' L' + (cx - 7 * s) + ' ' + (cy - 6 * s) + ' Q' + cx + ' ' + (cy - 14 * s) + ' ' + (cx + 7 * s) + ' ' + (cy - 6 * s) + ' L' + (cx + 10 * s) + ' ' + (cy + 12 * s) + ' Z" fill="#8a5a2a" stroke="#2a1a0e" stroke-width="2"/>' +
+      '<rect x="' + (cx - 2 * s) + '" y="' + (cy - 16 * s) + '" width="' + 4 * s + '" height="' + 4 * s + '" fill="#8a5a2a" stroke="#2a1a0e" stroke-width="1.5"/>';
+    if (notch) b += '<path d="M' + (cx + 5 * s) + ' ' + (cy - 9 * s) + ' l' + 5 * s + ' ' + 2 * s + ' l' + -4 * s + ' ' + 4 * s + ' Z" fill="#f7f0de" stroke="#2a1a0e" stroke-width="1.5"/>';
+    if (wave) b += '<path d="M' + (cx - 14 * s) + ' ' + (cy + 20 * s) + ' q' + 3.5 * s + ' ' + -5 * s + ' ' + 7 * s + ' 0 t' + 7 * s + ' 0 t' + 7 * s + ' 0 t' + 7 * s + ' 0" fill="none" stroke="#2a4a6a" stroke-width="2.5"/>';
+    return b;
+  };
+  A.bell_notch = () => ({ svg: svg(120, 90, bell(60, 42, 2, true, false), 'A bell with one notch in its right shoulder'), text: T('A small bell with one notch cut into its right shoulder, and no line beneath it.') });
+  A.bell_wave = () => ({ svg: svg(120, 90, bell(60, 36, 2, false, true), 'A bell with a wave beneath it and no notch'), text: T('A bell with no notch, and a wavy line beneath it.') });
+  // the harbour: where the old landing was and where the ferry is now, from the map itself
+  A.harbour = () => {
+    const m = C.maps['sg.harbor'];
+    const ferry = (m.props || []).find((p) => p.p === 'sg_ferry') || { x: 32, y: 38 };
+    const foot = { x: 53, y: 31 };
+    const W = 56, H = 42, k = 3;
+    const pt = (x, y, lab, col, shape) => (shape === 'x' ? '<path d="M' + (x * k - 5) + ' ' + (y * k - 5) + ' l10 10 M' + (x * k + 5) + ' ' + (y * k - 5) + ' l-10 10" stroke="' + col + '" stroke-width="3"/>' : '<rect x="' + (x * k - 5) + '" y="' + (y * k - 5) + '" width="10" height="10" fill="' + col + '" stroke="#2a2024" stroke-width="1.5"/>') +
+      '<text x="' + (x * k) + '" y="' + (y * k - 9) + '" font-size="9" text-anchor="middle" fill="#261f15" font-family="Georgia, serif">' + lab + '</text>';
+    const body = '<rect width="' + W * k + '" height="' + H * k + '" fill="#efe3c6"/><rect x="0" y="' + 32 * k + '" width="' + W * k + '" height="' + 10 * k + '" fill="#cfdbd6"/>' +
+      '<rect x="' + 12 * k + '" y="' + 24 * k + '" width="' + 32 * k + '" height="' + 5 * k + '" fill="#d0c4a8" stroke="#8a7a5a"/>' +
+      pt(foot.x + 1, foot.y + 0.5, 'old East Landing', '#8a8478', 'x') + pt(ferry.x + 2.5, ferry.y, 'ferry now', '#8a5a2a');
+    return { svg: svg(W * k, H * k, body, 'The old East Landing on the east beach, crossed out; the ferry now at the stone quay to the south-west'), text: T('The old East Landing stood at the east end of the beach (closed); the ferry now lands at the stone quay, south-west of it.') };
+  };
+  // the pressed leaf, both sides
+  const leaf = (x, y, flip, dent) => {
+    const d = flip ? -1 : 1;
+    return '<path d="M' + x + ' ' + y + ' q' + 10 * d + ' -10 ' + 22 * d + ' 0 q' + -12 * d + ' 10 ' + -22 * d + ' 0 Z" fill="' + (dent ? 'none' : '#d8ceb4') + '" stroke="#5a5040" stroke-width="2"' + (dent ? ' stroke-dasharray="3 2"' : '') + '/>' +
+      '<path d="M' + x + ' ' + y + ' l' + -8 * d + ' 0" stroke="#5a5040" stroke-width="2"/>';
+  };
+  A.leaf_both = () => ({
+    svg: svg(200, 80, '<rect width="200" height="80" fill="#f7f0de"/>' + leaf(30, 42, false, false) + '<text x="36" y="72" font-size="10" fill="#261f15" font-family="Georgia, serif">front: raised, stem left</text>' +
+      leaf(170, 42, true, true) + '<text x="100" y="18" font-size="10" fill="#261f15" font-family="Georgia, serif">back: sunken, stem right</text>', 'The leaf mark: raised with its stem to the left on the front; sunken with its stem to the right on the back'),
+    text: T('The leaf mark: on the front it stands up, stem to the left; from the back it is sunken, stem to the right.'),
+  });
+  // icons for the landmarks
+  const icon = {
+    lamp: (x, y, s) => '<rect x="' + (x - 1.5 * s) + '" y="' + (y - 18 * s) + '" width="' + 3 * s + '" height="' + 18 * s + '" fill="#5a4a3a"/><rect x="' + (x - 4 * s) + '" y="' + (y - 24 * s) + '" width="' + 8 * s + '" height="' + 7 * s + '" fill="#e8c060" stroke="#3a2a1a" stroke-width="1.5"/>',
+    shrine: (x, y, s) => '<rect x="' + (x - 7 * s) + '" y="' + (y - 9 * s) + '" width="' + 14 * s + '" height="' + 9 * s + '" fill="#9a6a44" stroke="#3a2a1a" stroke-width="1.5"/><path d="M' + (x - 10 * s) + ' ' + (y - 9 * s) + ' L' + x + ' ' + (y - 16 * s) + ' L' + (x + 10 * s) + ' ' + (y - 9 * s) + ' Z" fill="#6a4a36" stroke="#3a2a1a" stroke-width="1.5"/>',
+    tree: (x, y, s) => '<path d="M' + x + ' ' + y + ' L' + x + ' ' + (y - 26 * s) + ' M' + x + ' ' + (y - 14 * s) + ' l' + -7 * s + ' ' + -7 * s + ' M' + x + ' ' + (y - 18 * s) + ' l' + 6 * s + ' ' + -8 * s + ' M' + x + ' ' + (y - 8 * s) + ' l' + 5 * s + ' ' + -4 * s + '" stroke="#4a4038" stroke-width="' + 2.2 * s + '" fill="none" stroke-linecap="round"/>',
+  };
+  const scene = (list, faint, mirror) => {
+    let b = '<rect width="200" height="110" fill="' + (faint ? '#f2ecdc' : '#f7f0de') + '"/><path d="M0 84 Q50 78 100 82 T200 80 L200 110 L0 110 Z" fill="#e6ecf2"/>';
+    for (const it of list) {
+      const x = 100 + (mirror ? -1 : 1) * it.deg * 1.25, s = Math.max(0.7, Math.min(1.6, 5 / it.f));
+      b += '<g opacity="' + (faint ? 0.55 : 1) + '">' + icon[it.k](x, 88, s) + '</g>';
+    }
+    return b;
+  };
+  // a view from a viewpoint, drawn from the map
+  const viewOf = (pid) => {
+    const list = VIEW.see(pid), P = VIEW.points[pid];
+    const w = VIEW.words(list.map((x) => x.k));
+    return { svg: svg(200, 110, scene(list, false, false), P.facing.en + ': ' + w.en), text: T(P.facing.en[0].toUpperCase() + P.facing.en.slice(1) + '. ' + w.en) };
+  };
+  for (const pid in VIEW.points) A['view:' + pid] = () => viewOf(pid);
+  // the sketch as held: the front shows the target view; the back shows it mirrored and faint
+  A.sheet = (s, side, shown) => {
+    const list = VIEW.see(VIEW.target), back = side !== 'front';
+    let b = scene(list, back, back);
+    if (shown) b += back ? leaf(178, 100, true, true) : leaf(22, 100, false, false);
+    const order = back ? list.map((x) => x.k).reverse() : list.map((x) => x.k);
+    const w = VIEW.words(order);
+    const mark = shown ? (back ? ' In the lower right corner, a pressed leaf: a dent, stem pointing right.' : ' In the lower left corner, a pressed leaf: raised, stem pointing left.') : '';
+    return { svg: svg(200, 110, b, (back ? 'The sketch from the side that faced the room. ' : 'The sketch from the side that faced the glass. ') + w.en + mark), text: T((back ? 'Seen from the side that faced the room, faint through the paper. ' : 'Seen from the side that faced the glass, clear. ') + w.en + mark) };
+  };
+  A.remembered = () => {
+    const a = A.sheet(null, 'front', true), v = viewOf(VIEW.target);
+    return { svg: '<div class="cs-pair">' + a.svg + v.svg + '</div>', text: T('Kept: the sketch, the right way round, beside the view it shows. ' + v.text.en) };
+  };
+
+  // ---- keepsakes this worker defines (the catalogue registry: docs/ADDENDUM_CONTRACTS.md) -----------------
+  const KS = C.keepsakes, ART = C.keepsakeArt || {};
+  const ks = (id, d) => (KS[id] = Object.assign({ id, artSize: 32, art: (c) => ART[id] && ART[id](c) }, d));
+  ks('parcel_seal', { name: T('Parcel Seal', '{封|ふう} の {印|しるし}'), region: 'saltglass', source: { kind: 'case', id: 'parcel' },
+    desc: { en: 'The red wax from the parcel, a small notched bell pressed into it. Hama gave it to you after the delivery.' },
+    hint: { broad: { en: 'Something in Reedwake has been waiting a long time to be carried west.' }, specific: { en: 'A parcel on the River Warehouse\'s shelf of unclaimed things; the Harbour Office in Saltglass remembers the old landings.' } } });
+  ks('turning_picture', { name: T('Turning Picture', '{裏返|うらがえ}し の {絵|え}'), region: 'snowbell', source: { kind: 'case', id: 'view' },
+    desc: { en: 'A small card you traced from the traveller\'s sketch: turn it one way and it is the view from the stone seat; the other way, the back of the same page.' },
+    hint: { broad: { en: 'A picture in a Saltglass window has been looking the wrong way for years.' }, specific: { en: 'Ask Genzō about the sketch in the lighthouse window; the Star Stair above Snowbell has places to stop and look.' } } });
+  ks('shell_button', { name: T('Shell Button', '{貝|かい} の ボタン'), region: 'saltglass', source: { kind: 'sequence', id: 'sg.c_tidetable' },
+    desc: { en: 'A button cut from a shell, from the jar on Shiori\'s shelf. She gives one to people who read the tide right, she says, however long it takes them.' },
+    hint: { broad: { en: 'The tide-watcher in Saltglass keeps something small for careful readers.' }, specific: { en: 'Read Shiori\'s tide table and wait for the low tide; she has a jar of shell buttons.' } } });
+  ks('clay_swallow', { name: T('Clay Swallow', '{土|つち} の {燕|つばめ}'), region: 'cinder', source: { kind: 'sequence', id: 'co.c_kiln' },
+    desc: { en: 'A small fired swallow from Nobu\'s kiln, made in the week the old firing steps were read aloud again.' },
+    hint: { broad: { en: 'A potter in Cinder Orchard is grateful to whoever read the old kiln right.' }, specific: { en: 'Once the Great Kiln\'s firing steps are in order, visit Nobu\'s Pottery.' } } });
+  ks('star_rosette', { name: T('Star Rosette', '{星|ほし} の {飾|かざ}り'), region: 'snowbell', source: { kind: 'sequence', id: 'sb.c_log' },
+    desc: { en: 'A folded paper star with a blue centre, one of dozens Akari made as a child. Hoshino gives it away because, he says, stars are for sharing. It proves nothing about astronomy.' },
+    hint: { broad: { en: 'The astronomer of Snowbell has a drawer of paper stars.' }, specific: { en: 'After the observing log has been read and the lamp relit, visit Hoshino at home.' } } });
+  ks('thread_spool', { name: T('Thread Spool', '{糸巻|いとま}き'), region: 'lanternfall', source: { kind: 'sequence', id: 'lf.ch_gate1' },
+    desc: { en: 'A miniature spool of indigo thread, the kind used to mend the bell tower\'s old rope ladder. A thank-you from the people who look after the tower.' },
+    hint: { broad: { en: 'The tower in Lanternfall is looked after carefully once its gates are read.' }, specific: { en: 'After the drowned bell rings, talk to Tokuji at the sluice shore.' } } });
+})(RB.content);
+
+
+/* ==== src/content/cases/20_parcel.js ==== */
+/* Case A — A Parcel for a Place That Moved (addendum §15.2).
+ * Reedwake: the parcel on the River Warehouse's shelf of unclaimed things.
+ * Saltglass: the Harbour Office's record of the landings; the old footing on
+ * the east beach; Seto's house up the hill (a look-alike crest); Hama's repair
+ * bench by the ferry on the stone quay (the call bell, the notched bench).
+ * Cinder Orchard: the post house's record of marks. Any order; wrong
+ * deliveries are safe (the parcel stays sealed and you are told why it does
+ * not fit); the right one is an ordinary conversation. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.script.add(`
+@scene cs.parcel_shelf
+narr: {誰|だれ} も {取|と}りに {来|こ}ない {荷物|にもつ} の {棚|たな} 。 {紐|ひも} を かけた {小|ちい}さな {包|つつ}み が {一|ひと}つ 。 || A shelf of parcels nobody has come for. One small package, tied with string.
+narr: {宛名|あてな} の {札|ふだ} ： 「 {潮|しお}{硝子|がらす} 、 {東|ひがし} の {渡|わた}し{場|ば} 。 {鈴|すず} の {工房|こうぼう} の {主|あるじ} {様|さま} 」 。 {人|ひと} の {名前|なまえ} は ない 。 || The address label: "Saltglass, the East Landing. To the keeper of the bell workshop." No one's name.
+!hook case_clue parcel.address
+narr: その {上|うえ} に {赤|あか}い {判|はん} 。 「 {宛先|あてさき} {不明|ふめい} ── {東|ひがし} の {渡|わた}し{場|ば} は ありません 。 {潮|しお}{硝子|がらす} {港|みなと} 」 。 || Over it, a red stamp: "Address unknown — there is no East Landing. Saltglass Harbour."
+narr: {封|ふう} の {蝋|ろう} に 、 {小|ちい}さな {鈴|すず} の {印|しるし} 。 {鈴|すず} の {右|みぎ} の {肩|かた} に 、 {切|き}り{込|こ}み が {一|ひと}つ ある 。 || The wax seal carries a small bell. On the bell's right shoulder, a single notch.
+!hook case_clue parcel.seal
+narr: {棚|たな} の {端|はし} に {貼|は}り{紙|がみ} 。 「 {西|にし} へ {行|い}く {方|かた} 、 {一|ひと}つ {持|も}って いって ください 」 。 || A notice at the end of the shelf: "If you're heading west, please take one along."
+?(comp=nao) comp[think]: {名前|なまえ} の ない {宛名|あてな} か 。 {仕事|しごと} と {場所|ばしょ} だけ 。 {配達人|はいたつにん} {泣|な}かせ だ な 。 || An address with no name. Just a job and a place. The kind that makes couriers weep.
+?(comp=mio) comp: {誰|だれ} か が 、 これ を まだ {待|ま}って いる かも しれません ね 。 || Someone might still be waiting for this.
+?(comp=ren) comp: {渡|わた}し{場|ば} は ない 、 と {判|はん} は {言|い}って います 。 でも {宛名|あてな} は 、 まだ {誰|だれ} か を {指|さ}して いる 。 || The stamp says there's no landing. But the address still points at someone.
+?(comp=suzu) comp: {名前|なまえ} じゃ なくて 、 {役|やく} で {呼|よ}んでる の ね 。 {一座|いちざ} の {手紙|てがみ} と {同|おな}じ 。 || Addressed by the role, not the name. Like the troupe's letters.
+!choice
+* {持|も}って いく || Take it along -> take
+* {置|お}いて おく || Leave it here -> end
+:take
+!give cs_parcel
+!hook case_open parcel
+?(comp=nao) comp[smirk]: {預|あず}かった なら 、 {届|とど}ける まで が {仕事|しごと} だ ぞ 。 || Once you've taken it, the job isn't done until it's delivered.
+?(comp=mio) comp[smile]: {潮|しお}{硝子|がらす} に {着|つ}いたら 、 {聞|き}いて みましょう 。 || Let's ask around in Saltglass.
+?(comp=ren) comp: {道|みち} が {変|か}わって も 、 {宛名|あてな} は {残|のこ}る 。 {灯|ひ} の {名|な} と {似|に}て います 。 || The road changes and the address stays. Like a lantern's name.
+?(comp=suzu) comp[laugh]: {謎|なぞ} の {小包|こづつみ} ！ {幕|まく} が {開|あ}いた わ 。 || A mystery parcel! Curtain up.
+!choice
+* {記録|きろく} を {見|み}る || Look at the case record -> page
+* {先|さき} へ {進|すす}む || Carry on -> end
+:page
+!hook case_page parcel
+
+@scene cs.parcel_shelf_empty
+narr: {誰|だれ} も {取|と}りに {来|こ}ない {荷物|にもつ} の {棚|たな} 。 {鈴|すず} の {封|ふう} の {包|つつ}み が あった ところ に 、 {埃|ほこり} の ない {四角|しかく} が {残|のこ}って いる 。 || The shelf of unclaimed parcels. Where the bell-sealed package lay, there's a clean square in the dust.
+?(case.parcel=done) narr: あの {包|つつ}み は もう 、 {届|とど}く べき ところ に {届|とど}いた 。 || That one has reached the place it was meant for.
+
+@scene cs.parcel_record
+narr: {港|みなと} の {古|ふる}い {帳面|ちょうめん} の {山|やま} 。 {一番|いちばん} {上|うえ} の {一冊|いっさつ} の {背|せ} に 、 「 {渡|わた}し{場|ば} の {移|うつ}り{変|か}わり 」 。 || A pile of old harbour ledgers. On the spine of the top one: "The Landings, and How They Changed".
+narr: 「 {東|ひがし} の {渡|わた}し{場|ば} 」 の {頁|ページ} が ある 。 || There's a page headed "East Landing".
+narr: 「 {東|ひがし} の {渡|わた}し{場|ば} 、 {砂|すな} で {浅|あさ}く なり {閉|と}じる 。 {渡|わた}し{船|ぶね} は {石|いし} の {岸壁|がんぺき} へ {移|うつ}る 。 」 || "East Landing: silted up; closed. The ferry moves to the stone quay."
+narr: 「 {工房|こうぼう} の {備品|びひん} ── {渡|わた}し の {呼|よ}び{鈴|りん} 、 {刻|きざ}み{目|め} の ある {作業台|さぎょうだい} ── は 、 {工房|こうぼう} と {共|とも}に {移|うつ}す 。 」 || "The workshop's fittings — the ferry's call bell, the notched workbench — go with the workshop."
+!hook case_clue parcel.record
+narr: {工房|こうぼう} が どこ へ {移|うつ}った か は 、 {書|か}いて いない 。 || Where the workshop went isn't written down.
+!if !case.parcel -> end
+!choice
+* {記録|きろく} を {見|み}る || Look at the case record -> page
+* {閉|と}じる || Close the ledger -> end
+:page
+!hook case_page parcel
+
+@scene cs.parcel_oldsite
+narr: {波打|なみう}ち{際|ぎわ} に 、 {低|ひく}い {石|いし} の {土台|どだい} 。 {小|ちい}さな {小屋|こや} が {建|た}って いた らしい 。 || At the water's edge, a low stone footing. A small hut must have stood here once.
+narr: {残|のこ}った {柱|はしら} に 、 {鉄|てつ} の {金具|かなぐ} 。 {何|なに} か を {吊|つ}るして いた {跡|あと} だ 。 {薄|うす}れた {字|じ} で 「 {東|ひがし} {渡|わた}し 」 。 || On the one post still standing, an empty iron bracket: something used to hang from it. Faded letters: "East Landing".
+!hook case_clue parcel.oldsite
+!if !item.cs_parcel -> end
+!choice
+* ここ に {小包|こづつみ} を {置|お}いて いく || Leave the parcel here -> leave
+* {持|も}った まま に する || Keep it -> end
+:leave
+narr: {宛名|あてな} は 「 {工房|こうぼう} の {主|あるじ} 」 。 でも ここ に は 、 {工房|こうぼう} も {人|ひと} も ない 。 {受|う}け{取|と}る {人|ひと} が いない 。 || The address says "the keeper of the workshop". But there's no workshop here, and no one to take it.
+!hook case_rule parcel oldsite
+?(comp=nao) comp: {誰|だれ} も いない {所|ところ} に {置|お}いたら 、 {届|とど}けた こと に は ならない よ 。 || Leaving it where nobody is doesn't count as delivering.
+?(comp=mio) comp: {雨|あめ} が {降|ふ}ったら {濡|ぬ}れて しまいます 。 {持|も}って いきましょう 。 || If it rains, it'll get soaked. Let's keep it with us.
+?(comp=ren) comp: {場所|ばしょ} は {残|のこ}って いて も 、 {主|あるじ} は ここ に いません 。 || The place is still here, but its keeper isn't.
+?(comp=suzu) comp: {空|から} の {舞台|ぶたい} に 、 {花束|はなたば} は {置|お}けない わ 。 || You can't leave a bouquet on an empty stage.
+narr: {小包|こづつみ} は {封|ふう} を した まま 、 {手|て} に {残|のこ}った 。 || The parcel stays in your hands, still sealed.
+
+@scene cs.seto_door
+narr: {丘|おか} の {上|うえ} の {小|ちい}さな {家|いえ} 。 {戸|と} の {札|ふだ} に {紋|もん} が {彫|ほ}って ある 。 {鈴|すず} と 、 その {下|した} に {波|なみ} の {線|せん} 。 || A small house on the hill. A crest is carved on the door plate: a bell, with a wavy line beneath it.
+!hook case_clue parcel.crest
+
+@scene cs.seto_idle
+cs_seto: {丘|おか} の {上|うえ} は 、 {風|かぜ} が よく {通|とお}る の 。 {洗濯物|せんたくもの} が すぐ {乾|かわ}く わ 。 || The wind comes through nicely up here on the hill. The washing dries in no time.
+cs_seto: うち の {祖父|そふ} は 、 {浜|はま} の ほう で {工房|こうぼう} を して いた …… と {思|おも}う の 。 わたし は {小|ちい}さくて 、 よく {覚|おぼ}えて いない けど 。 || My grandfather kept a workshop somewhere down by the shore… I think. I was little; I don't really remember.
+!hook case_clue parcel.seto_memory
+
+@scene cs.seto_parcel
+pc: この {小包|こづつみ} 、 {心当|こころあ}たり は ありません か 。 || Does this parcel mean anything to you?
+cs_seto[surprise]: あら 、 {封|ふう} の {印|しるし} が うち の {紋|もん} に {似|に}て いる わ ね 。 || Oh, the seal looks like our crest.
+cs_seto[think]: でも ほら 、 うち の は {鈴|すず} の {下|した} に {波|なみ} が ある の 。 それ に 、 {切|き}り{込|こ}み なんて ない わ 。 || But look — ours has a wave under the bell. And no notch.
+cs_seto: {宛名|あてな} も 「 {工房|こうぼう} の {主|あるじ} 」 でしょう 。 うち は もう {長|なが}い こと 、 {工房|こうぼう} なんて して いない の 。 {開|あ}けたら {悪|わる}い わ 。 || And the address asks for the keeper of the workshop. We haven't kept anything like a workshop for a long time. It wouldn't be right for me to open it.
+!hook case_clue parcel.crest quiet
+!hook case_clue parcel.seto_memory quiet
+!hook case_rule parcel family
+narr: {小包|こづつみ} は {封|ふう} を された まま 、 {手|て} に {戻|もど}って きた 。 || The parcel comes back to you, still sealed.
+
+@scene cs.hama_idle
+cs_hama: {縄|なわ} 、 {浮|う}き 、 {渡|わた}し{船|ぶね} の {道具|どうぐ} 。 {壊|こわ}れた もの が あったら 、 {持|も}って おいで 。 || Rope, floats, ferry gear. If something of yours breaks, bring it here.
+cs_hama: この {台|だい} の {刻|きざ}み{目|め} ？ {縄|なわ} の {長|なが}さ を {測|はか}る ため の もの だ よ 。 わたし の {師匠|ししょう} より {古|ふる}い 。 || The notches on this bench? They're for measuring rope. Older than my teacher.
+!hook case_clue parcel.bench
+
+@scene cs.hama_parcel
+pc: この {小包|こづつみ} 、 あなた {宛|あて} では ありません か 。 || Could this parcel be for you?
+cs_hama: どれ どれ 。 「 {東|ひがし} の {渡|わた}し{場|ば} 。 {鈴|すず} の {工房|こうぼう} の {主|あるじ} {様|さま} 」 …… 。 || Let's see. "The East Landing. To the keeper of the bell workshop"…
+cs_hama[surprise]: {東|ひがし} の {渡|わた}し{場|ば} は 、 この {工房|こうぼう} が {始|はじ}まった {場所|ばしょ} だ よ 。 {渡|わた}し が {岸壁|がんぺき} へ {移|うつ}った とき 、 {師匠|ししょう} が {工房|こうぼう} ごと ここ へ {越|こ}して きた 。 あの {呼|よ}び{鈴|りん} も 、 この {台|だい} も 。 || The East Landing is where this workshop started. When the ferry moved to the quay, my teacher brought the whole workshop here — that call bell, this bench, all of it.
+cs_hama: {今|いま} の {主|あるじ} は 、 わたし 。 …… と いう こと は 、 わたし {宛|あて} だ ね 。 || And the keeper now is me. …Which means it's for me.
+!take cs_parcel
+!hook case_resolve parcel
+!sfx discover
+narr: {紐|ひも} を ほどく と 、 {油紙|あぶらがみ} に {包|つつ}まれた {小|ちい}さな {金具|かなぐ} が {出|で}て きた 。 || She unties the string. Inside, wrapped in oiled paper, is a small metal part.
+cs_hama: {呼|よ}び{鈴|りん} の {中|なか} で {音|おと} を {出|だ}す {部品|ぶひん} だ 。 {鋳物師|いもじ} が {新|あたら}しい の を {送|おく}って くれた ん だ ね 。 {何年|なんねん} {前|まえ} の {注文|ちゅうもん} だろう 。 || The part inside the call bell that makes it ring. The caster sent a new one. Heaven knows how many years ago it was ordered.
+cs_hama: よく ここ だ と {分|わ}かった ね 。 {何|なに} で {分|わ}かった の ？ || You worked out it was here. What told you?
+!choice
+* {話|はな}す || Tell her -> explain
+* {届|とど}けた だけ です || I only came to deliver it -> quiet
+:explain
+!hook case_ack parcel
+:quiet
+cs_hama[smile]: {名前|なまえ} が {書|か}いて なくて も 、 {仕事|しごと} を {続|つづ}けて いる {人|ひと} が いれば 、 {宛名|あてな} は {生|い}きて いる もの だ ね 。 || Even with no name on it — as long as someone's still doing the job, the address stays alive.
+cs_hama: {封|ふう} の {蝋|ろう} 、 {持|も}って いき な 。 {届|とど}けて くれた {記念|きねん} に 。 || Take the wax seal with you. Something to remember the delivery by.
+narr: {鈴|すず} の {印|しるし} の {蝋|ろう} を もらった 。 || You receive the wax with the bell mark on it.
+!quest cs_parcel done
+!hook case_react parcel
+!autosave
+
+@scene cs.hama_after
+cs_hama: {新|あたら}しい {部品|ぶひん} で 、 {呼|よ}び{鈴|りん} が よく {鳴|な}る よ 。 {渡|わた}し{船|ぶね} を {呼|よ}ぶ とき 、 {遠|とお}く まで {届|とど}く 。 || With the new part, the call bell rings well. When I call the ferry, it carries a long way.
+cs_hama: {宛名|あてな} の {札|ふだ} は 、 {台|だい} の {上|うえ} に {貼|は}って おいた 。 {次|つぎ} の {主|あるじ} も {読|よ}める よう に 。 || I pinned the address label up over the bench, so the next keeper can read it too.
+
+@scene cs.hama_bench
+narr: {使|つか}い{込|こ}まれた {作業台|さぎょうだい} 。 {手前|てまえ} の {縁|ふち} に 、 {同|おな}じ {間|あいだ} を {空|あ}けて {刻|きざ}み{目|め} が {並|なら}んで いる 。 {縄|なわ} の {束|たば} と 、 ひび の {入|はい}った {浮|う}き 。 || A well-worn workbench. Notches run at even spacing along its front edge. Coils of rope, and a float with a crack in it.
+!hook case_clue parcel.bench
+?(case.parcel=done) narr: {台|だい} の {上|うえ} に 、 {古|ふる}い {宛名|あてな} の {札|ふだ} が {貼|は}って ある 。 「 {東|ひがし} の {渡|わた}し{場|ば} 。 {鈴|すず} の {工房|こうぼう} の {主|あるじ} {様|さま} 」 。 || Pinned above the bench is the old address label: "The East Landing. To the keeper of the bell workshop."
+
+@scene cs.hama_bell
+narr: {作業台|さぎょうだい} の {横|よこ} の {柱|はしら} に 、 {小|ちい}さな {鈴|すず} が {下|さ}がって いる 。 {渡|わた}し{船|ぶね} を {呼|よ}ぶ {呼|よ}び{鈴|りん} だ 。 || From a post beside the workbench hangs a small bell: the call bell for the ferry.
+narr: {鈴|すず} の {肩|かた} に {刻印|こくいん} が ある 。 {小|ちい}さな {鈴|すず} の {形|かたち} で 、 {右|みぎ} の {肩|かた} に {切|き}り{込|こ}み が {一|ひと}つ 。 || There's a stamp on its shoulder: a small bell shape, with one notch in its right shoulder.
+!hook case_clue parcel.bell
+?(case.parcel=done) narr: {中|なか} の {部品|ぶひん} が {新|あたら}しく 、 {光|ひか}って いる 。 || The part inside is new and bright.
+
+@scene cs.parcel_marks
+narr: {郵便所|ゆうびんじょ} の {帳面|ちょうめん} 。 {表紙|ひょうし} に 「 {印|しるし} の {控|ひか}え 」 。 {差出人|さしだしにん} の {分|わ}からない {荷物|にもつ} を 、 {印|しるし} から {調|しら}べる ため の もの らしい 。 || A post-house ledger: "Record of Marks". It seems to be for tracing parcels by their seals when no sender is written.
+narr: 「 {鈴|すず} 、 {右|みぎ} の {肩|かた} に {切|き}り{込|こ}み {一|ひと}つ ── {鋳物師|いもじ} トクゾウ の {刻印|こくいん} 。 {呼|よ}び{鈴|りん} など 。 」 || "A bell with one notch in its right shoulder — the stamp of the caster Tokuzō. On call bells and the like."
+narr: 「 {似|に}た {印|しるし} に {注意|ちゅうい} ： {潮|しお}{硝子|がらす} の セト {家|け} の {紋|もん} は 、 {鈴|すず} の {下|した} に {波|なみ} 。 {切|き}り{込|こ}み なし 。 」 || "Beware a look-alike: the Seto family crest in Saltglass has a wave beneath the bell, and no notch."
+!hook case_clue parcel.makernote
+?(comp=nao) comp[smile]: {印|しるし} の {控|ひか}え か 。 {配達人|はいたつにん} に は {宝|たから} だ よ 。 || A record of marks. For a courier, that's treasure.
+!if !case.parcel -> end
+!choice
+* {記録|きろく} を {見|み}る || Look at the case record -> page
+* {閉|と}じる || Close the ledger -> end
+:page
+!hook case_page parcel
+
+@scene cs.talk_parcel
+!if case.parcel=done -> done
+?(comp=nao) comp[think]: {宛名|あてな} が {人|ひと} じゃ なくて {仕事|しごと} を {指|さ}してる 。 {配達人|はいたつにん} なら 、 まず {仕事|しごと} の {行|ゆ}き{先|さき} を {追|お}う ね 。 || The address points at a job, not a person. A courier would follow where the job went.
+?(comp=mio) comp: {待|ま}って いる {人|ひと} が いる なら 、 {早|はや}く {届|とど}けたい です ね 。 でも 、 {急|いそ}いで {間違|まちが}える の は もっと {嫌|いや} です 。 || If someone's waiting, I'd like to get it to them soon. But getting it wrong in a hurry would be worse.
+?(comp=ren) comp: {名|な} を {持|も}たない {宛名|あてな} は 、 {灯|ひ} の {道|みち} に {似|に}て います 。 {場所|ばしょ} が {動|うご}いて も 、 {役目|やくめ} は {残|のこ}る 。 || An address without a name is like a lantern road. The place can move; the duty stays.
+?(comp=suzu) comp: {役|やく} は {残|のこ}って 、 {役者|やくしゃ} は {替|か}わる 。 {舞台|ぶたい} と {同|おな}じ よ 。 || The role stays and the actor changes. Just like the stage.
+!end
+:done
+?(comp=nao) comp[smile]: {名前|なまえ} の ない {宛名|あてな} でも 、 {届|とど}く ところ に は {届|とど}く 。 …… {気分|きぶん} が いい な 。 || Even with no name, it reached the right place. …That feels good.
+?(comp=mio) comp[smile]: ハマ さん の {呼|よ}び{鈴|りん} 、 いい {音|おと} に なった でしょう ね 。 || Hama's call bell must sound lovely now.
+?(comp=ren) comp: {工房|こうぼう} が {移|うつ}って も 、 {宛名|あてな} は {生|い}きて いた 。 {名|な} と {役目|やくめ} は 、 {引|ひ}っ{越|こ}せる の です ね 。 || The workshop moved and the address stayed alive. Names and duties can move house.
+?(comp=suzu) comp[laugh]: {何年|なんねん} も {遅|おく}れた {配達|はいたつ} ！ でも 、 {間|ま}に {合|あ}う もの も ある の よ ね 。 || A delivery years late! Some things still arrive in time, though.
+`, 'cases/20_parcel');
+
+
+/* ==== src/content/cases/30_view.js ==== */
+/* Case B — The View on the Other Side (addendum §15.3).
+ * Saltglass: the sketch pinned in the lighthouse window (Genzō lends it, with
+ * white chart paper to lay it on). Cinder Orchard: the artist's page in the
+ * guestbook at Fusa's Inn. Snowbell: three places on the Star Stair to stop
+ * and look (the stone seat, and a flat stone at each end of the lower slope).
+ * The case record turns the sheet over, compares and resets it; at a
+ * viewpoint you can also hold it up either way round. The views themselves
+ * are worked out from where the lantern, the shrine and the bare tree stand
+ * on the map (RB.content.caseView in 10_data.js). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function () {
+  'use strict';
+  RB.hooks = RB.hooks || {};
+  // !hook cs_look <viewpoint>: look out; the view (from the map) is kept as an observation
+  RB.hooks.cs_look = async (args) => {
+    const s = RB.game.s, V = RB.content.caseView, pid = args[0], P = V.points[pid];
+    if (!P) return;
+    const res = RB.cases.observe(s, 'view.' + pid);
+    const w = V.words(V.order(pid));
+    await RB.ui.dialogue.say({ who: 'narr', jp: P.look.jp, en: P.look.en, sceneId: 'cs.view_' + pid });
+    await RB.ui.dialogue.say({ who: 'narr', jp: w.jp, en: w.en, sceneId: 'cs.view_' + pid });
+    if (res === 'new' && RB.cases.known(s, 'view')) await RB.ui.toast({ kind: 'note', jp: '{記録|きろく} に {書|か}き{加|くわ}えた', en: 'Added to your case record: ' + RB.content.clues['view.' + pid].title.en });
+  };
+  // !hook cs_holdup <viewpoint> <back|front>: hold the sketch up here, one way round.
+  // var._res = 1 when it lines up with this view.
+  RB.hooks.cs_holdup = async (args) => {
+    const s = RB.game.s, pid = args[0], side = args[1] === 'front' ? 'front' : 'back';
+    const K = RB.cases, cd = K.def('view');
+    s.vars._res = 0;
+    if (!K.known(s, 'view')) return;
+    const r = K.rec(s, 'view');
+    r.sheet = Object.assign({ side: cd.sheet.start, seen: {} }, r.sheet || {}, { side });
+    K.observe(s, 'view.' + pid);
+    if (cd.sheet.matches(s, side, pid)) { K.choose(s, 'view', pid); s.vars._res = 1; }
+  };
+})();
+
+RB.script.add(`
+@scene cs.view_window
+!if case.view -> lent
+narr: {窓|まど} に 、 {薄|うす}い {紙|かみ} の {絵|え} が {留|と}めて ある 。 {外|そと} の {光|ひかり} が {透|す}けて 、 {鉛筆|えんぴつ} の {線|せん} が {浮|う}かんで {見|み}える 。 || A sketch on thin paper is pinned in the window. The light outside shines through it and the pencil lines seem to float.
+narr: {左|ひだり} から 、 {枯|か}れ{木|き} 、 {小|ちい}さな {祠|ほこら} 、 {柱|はしら} の {上|うえ} の {灯|あか}り 。 {雪|ゆき} の {斜面|しゃめん} らしい 。 || From left to right: a bare tree, a little shrine, a lamp on a post. A snowy slope, by the look of it.
+!hook case_clue view.sketch
+genzo: {旅|たび} の {絵描|えか}き が {置|お}いて いった ん だ 。 {北|きた} の {道|みち} の 、 {座|すわ}って {休|やす}む {場所|ばしょ} から {描|か}いた …… と {言|い}って いた か な 。 || A travelling artist left it. Drew it from somewhere on the road north where you sit and rest… or so I think she said.
+genzo[think]: だが 、 どこ の {景色|けしき} とも {合|あ}わん 。 {俺|おれ} は {北|きた} の {道|みち} を {何度|なんど} も {歩|ある}いた が な 。 || Doesn't match anywhere, though. And I've walked the road north plenty of times.
+!hook case_clue view.genzo
+!choice
+* {貸|か}して ください || May I borrow it? -> lend
+* {見|み}る だけ に する || Just look -> end
+:lend
+genzo: {持|も}って いけ 。 {描|か}かれた {場所|ばしょ} が {分|わ}かったら 、 そこ に {返|かえ}して やれ 。 {絵|え} の ほう が {喜|よろこ}ぶ 。 || Take it. If you find where it was drawn, give it back to the place. The picture'll like that better.
+genzo: それ と 、 これ 。 {海図|かいず} の {白|しろ}い {紙|かみ} だ 。 {下|した} に {敷|し}けば 、 よく {見|み}える 。 || And this: white chart paper. Lay it underneath and you'll see it better.
+!give cs_sketch
+!set cs_view_backing
+!hook case_open view
+?(comp=nao) comp: {描|か}いた {人|ひと} の {名前|なまえ} も {場所|ばしょ} も ない {絵|え} か 。 {宛名|あてな} の ない {手紙|てがみ} みたい だ な 。 || No name, no place. Like a letter with no address.
+?(comp=mio) comp: {紙|かみ} が とても {薄|うす}い です ね 。 {破|やぶ}らない よう に 、 {気|き} を つけます 。 || The paper's so thin. I'll be careful not to tear it.
+?(comp=ren) comp: {景色|けしき} は 、 {見|み}る {場所|ばしょ} で {変|か}わります 。 {灯|ひ} の {道|みち} も 、 {上|のぼ}り と {下|くだ}り で は {別|べつ} の {道|みち} です から 。 || A view changes with where you stand. Even a lantern road is a different road going up than coming down.
+?(comp=suzu) comp: {舞台|ぶたい} も ね 、 {客席|きゃくせき} から と {袖|そで} から じゃ 、 {全然|ぜんぜん} {違|ちが}って {見|み}える の よ 。 || A stage looks completely different from the seats than from the wings, you know.
+!choice
+* {記録|きろく} を {見|み}る || Look at the case record -> page
+* {先|さき} へ {進|すす}む || Carry on -> end
+:page
+!hook case_page view
+!end
+:lent
+narr: {窓|まど} に は 、 {絵|え} を {留|と}めて いた {小|ちい}さな {穴|あな} だけ が {残|のこ}って いる 。 || Only the pinholes where the sketch hung are left in the window.
+?(case.view=done) genzo[smile]: {星|ほし} の {石段|いしだん} か 。 {上|のぼ}った こと は なかった な 。 {膝|ひざ} が {許|ゆる}せば 、 {一度|いちど} {座|すわ}って みる か 。 || The Star Stair, eh. Never been up it. If my knees allow, maybe I'll go and sit there once.
+
+@scene cs.view_note
+narr: {宿|やど} の {客|きゃく} が {書|か}き{残|のこ}す {帳面|ちょうめん} 。 {古|ふる}い {頁|ページ} に 、 {丁寧|ていねい} な {字|じ} で {書|か}いた もの が ある 。 || The inn's guestbook, where travellers leave a few lines. On an old page, something in a careful hand.
+narr: 「 {薄|うす}い {紙|かみ} に {描|か}いて います 。 {表|おもて} の {隅|すみ} に 、 {葉|は} の {印|しるし} を {押|お}します 。 {軸|じく} は {左|ひだり} 。 」 || "I draw on thin paper. In a front corner I press my leaf mark, stem to the left."
+narr: 「 {裏|うら} から {見|み}る と 、 {軸|じく} は {右|みぎ} を {向|む}いて 、 へこんで {見|み}えます 。 」 {名前|なまえ} の {代|か}わり に 、 {小|ちい}さな {葉|は} の {絵|え} 。 || "From the back, the stem points right, and the mark looks sunken." Instead of a name, a little drawing of a leaf.
+!hook case_clue view.note
+?(comp=suzu) comp[smile]: {名前|なまえ} の {代|か}わり に {葉|は}っぱ 。 {粋|いき} な {署名|しょめい} ね 。 || A leaf instead of a name. A stylish signature.
+!if !case.view -> end
+!choice
+* {記録|きろく} を {見|み}る || Look at the case record -> page
+* {閉|と}じる || Close the book -> end
+:page
+!hook case_page view
+
+@scene cs.view_seat
+!call sb.path_bench
+!choice
+* しばらく {座|すわ}って {眺|なが}める || Sit and look out a while -> look
+* [item.cs_sketch&case.view=open] {絵|え} を {窓|まど} に {貼|は}って あった とおり に かざす || Hold up the sketch as it hung in the window -> back
+* [item.cs_sketch&case.view=open] {絵|え} を {裏返|うらがえ}して かざす || Hold up the sketch turned over -> front
+* [item.cs_sketch&case.view=done&!cs_view_framed] {絵|え} を ここ に {残|のこ}す || Leave the sketch here, where it was drawn -> frame
+* {先|さき} へ {進|すす}む || Move on -> end
+:look
+!hook cs_look seat
+!end
+:back
+!hook cs_holdup seat back
+!if var._res=1 -> match
+narr: {絵|え} と {景色|けしき} は 、 {重|かさ}ならない 。 {灯|あか}り と {祠|ほこら} と {枯|か}れ{木|き} の {並|なら}び が {違|ちが}う 。 || The sketch and the view don't line up: the lantern, the shrine and the bare tree are in a different order.
+!end
+:front
+!hook cs_holdup seat front
+!if var._res=1 -> match
+narr: {絵|え} と {景色|けしき} は 、 {重|かさ}ならない 。 {灯|あか}り と {祠|ほこら} と {枯|か}れ{木|き} の {並|なら}び が {違|ちが}う 。 || The sketch and the view don't line up: the lantern, the shrine and the bare tree are in a different order.
+!end
+:match
+!call cs.view_solved
+!end
+:frame
+!take cs_sketch
+!set cs_view_framed
+!sfx discover
+narr: {腰掛|こしか}け の {横|よこ} の {柱|はしら} に 、 {小|ちい}さな {額|がく} を {作|つく}って {絵|え} を {納|おさ}めた 。 {表|おもて} を {景色|けしき} の ほう へ {向|む}けて 。 || On the post beside the seat you set the sketch in a small frame, its face turned towards the view.
+?(comp) comp[smile]: {絵|え} も 、 やっと {帰|かえ}って きた ね 。 || The picture's finally come home.
+
+@scene cs.view_west
+narr: {雪|ゆき} を {払|はら}った {平|たい}らな {石|いし} 。 {誰|だれ} か が ここ に {立|た}って 、 {景色|けしき} を {見|み}る らしい 。 || A flat stone, swept clear of snow. Someone seems to stand here to look at the view.
+!choice
+* {景色|けしき} を {見|み}る || Look out -> look
+* [item.cs_sketch&case.view=open] {絵|え} を {窓|まど} に {貼|は}って あった とおり に かざす || Hold up the sketch as it hung in the window -> back
+* [item.cs_sketch&case.view=open] {絵|え} を {裏返|うらがえ}して かざす || Hold up the sketch turned over -> front
+* {先|さき} へ {進|すす}む || Move on -> end
+:look
+!hook cs_look west
+!end
+:back
+!hook cs_holdup west back
+!if var._res=1 -> match
+narr: {絵|え} と {景色|けしき} は 、 {重|かさ}ならない 。 {灯|あか}り と {祠|ほこら} と {枯|か}れ{木|き} の {並|なら}び が {違|ちが}う 。 || The sketch and the view don't line up: the lantern, the shrine and the bare tree are in a different order.
+!end
+:front
+!hook cs_holdup west front
+!if var._res=1 -> match
+narr: {絵|え} と {景色|けしき} は 、 {重|かさ}ならない 。 {灯|あか}り と {祠|ほこら} と {枯|か}れ{木|き} の {並|なら}び が {違|ちが}う 。 || The sketch and the view don't line up: the lantern, the shrine and the bare tree are in a different order.
+!end
+:match
+!call cs.view_solved
+
+@scene cs.view_east
+narr: {雪|ゆき} を {払|はら}った {平|たい}らな {石|いし} 。 {下|した} の {道|みち} が よく {見|み}える 。 || A flat stone, swept clear of snow. You can see the lower path well from here.
+!choice
+* {景色|けしき} を {見|み}る || Look out -> look
+* [item.cs_sketch&case.view=open] {絵|え} を {窓|まど} に {貼|は}って あった とおり に かざす || Hold up the sketch as it hung in the window -> back
+* [item.cs_sketch&case.view=open] {絵|え} を {裏返|うらがえ}して かざす || Hold up the sketch turned over -> front
+* {先|さき} へ {進|すす}む || Move on -> end
+:look
+!hook cs_look east
+!end
+:back
+!hook cs_holdup east back
+!if var._res=1 -> match
+narr: {絵|え} と {景色|けしき} は 、 {重|かさ}ならない 。 {灯|あか}り と {祠|ほこら} と {枯|か}れ{木|き} の {並|なら}び が {違|ちが}う 。 || The sketch and the view don't line up: the lantern, the shrine and the bare tree are in a different order.
+!end
+:front
+!hook cs_holdup east front
+!if var._res=1 -> match
+narr: {絵|え} と {景色|けしき} は 、 {重|かさ}ならない 。 {灯|あか}り と {祠|ほこら} と {枯|か}れ{木|き} の {並|なら}び が {違|ちが}う 。 || The sketch and the view don't line up: the lantern, the shrine and the bare tree are in a different order.
+!end
+:match
+!call cs.view_solved
+
+@scene cs.view_solved
+!hook case_resolve view
+!if var._res=0 -> end
+!sfx discover
+narr: {裏返|うらがえ}した {絵|え} の {灯|あか}り 、 {祠|ほこら} 、 {枯|か}れ{木|き} が 、 {石段|いしだん} の {下|した} の {腰掛|こしか}け から {見上|みあ}げた {景色|けしき} に ぴたり と {重|かさ}なった 。 || Turned over, the sketch's lantern, shrine and bare tree line up exactly with the view up the stair from the stone seat at its foot.
+narr: {絵|え} は 、 {表|おもて} を ガラス に {向|む}けて {窓|まど} に {貼|は}られて いた の だ 。 {部屋|へや} から {見|み}えて いた の は 、 ずっと {裏|うら} だった 。 || It had been pinned with its face to the glass. From inside the room, everyone had only ever seen the back.
+narr: {小|ちい}さな カード に 、 {絵|え} を {写|うつ}した 。 {裏返|うらがえ}す と 、 もう {一|ひと}つ の {見|み}え{方|かた} に なる 。 || You trace it onto a small card. Turn the card over, and there is the other way of seeing it.
+!quest cs_view done
+!hook case_react view
+?(!cs_view_framed) narr: {元|もと} の {絵|え} は 、 {描|か}かれた {場所|ばしょ} に {返|かえ}して も いい 。 {石段|いしだん} の {下|した} の {腰掛|こしか}け に 。 || The original could go back to where it was drawn, if you like: the stone seat at the foot of the stair.
+!autosave
+
+@scene cs.view_frame
+narr: {腰掛|こしか}け の {横|よこ} の {小|ちい}さな {額|がく} 。 {旅|たび} の {絵描|えか}き の {絵|え} が 、 {表|おもて} を {景色|けしき} に {向|む}けて {納|おさ}まって いる 。 || A small frame by the stone seat. The travelling artist's sketch sits in it, its face turned towards the view.
+narr: {絵|え} の {中|なか} の {灯|あか}り と 、 {本物|ほんもの} の {灯|あか}り が 、 {同|おな}じ ところ に ある 。 || The lantern in the sketch and the real one stand in the same place.
+
+@scene cs.talk_view
+!if case.view=done -> done
+?(comp=nao) comp[think]: {宛名|あてな} を {裏|うら} から {読|よ}んだ こと が ある 。 {封筒|ふうとう} が {透|す}けて て な 。 …… {字|じ} が {全部|ぜんぶ} {逆|ぎゃく} だった 。 || I once read an address from the back — the envelope was thin. …Every letter was the wrong way round.
+?(comp=mio) comp: {薬|くすり} の {包|つつ}み も 、 {表|おもて} と {裏|うら} を {間違|まちが}える と 、 {全然|ぜんぜん} {違|ちが}う {字|じ} に {見|み}える んです 。 || Medicine wrappers too — get the front and back mixed up and the writing looks like something else entirely.
+?(comp=ren) comp: {景色|けしき} が {合|あ}わない の は 、 {景色|けしき} の せい では ない かも しれません 。 {見|み}て いる {側|がわ} の せい かも 。 || Maybe the view doesn't match because of how we're looking, not because of the view.
+?(comp=suzu) comp: {客席|きゃくせき} から {見|み}る の と 、 {舞台|ぶたい} の {上|うえ} から {見|み}る の と 。 {左右|さゆう} が {逆|ぎゃく} に なる の よ ね 。 || From the seats, and from the stage. Left and right swap over.
+!end
+:done
+?(comp=nao) comp[smile]: {窓|まど} の {絵|え} 、 {何年|なんねん} も {裏|うら} を {向|む}いて た ん だ な 。 {誰|だれ} も {気|き}づかない まま 。 || That picture faced the wrong way for years. Nobody noticed.
+?(comp=mio) comp[smile]: あの {腰掛|こしか}け 、 アカリ さん の {背|せ} の {印|しるし} が ある {柱|はしら} の そば でした ね 。 {景色|けしき} も 、 {人|ひと} も 、 {覚|おぼ}えて いる {場所|ばしょ} 。 || That seat was by the post with Akari's height marks. A place that remembers a view and people too.
+?(comp=ren) comp: {裏|うら} から {見|み}て いた の は 、 {私|わたし} たち の ほう でした 。 …… {良|よ}い {教訓|きょうくん} です 。 {方角|ほうがく} の {苦手|にがて} な {私|わたし} に は 、 {特|とく}に 。 || We were the ones looking from the back. …A good lesson. Especially for someone as bad with directions as me.
+?(comp=suzu) comp[laugh]: {裏返|うらがえ}す だけ で {正解|せいかい} ！ {一番|いちばん} {好|す}き な {種明|たねあ}かし よ 。 || Just turn it over and there's the answer! My favourite kind of reveal.
+`, 'cases/30_view');
+
+
+/* ==== src/content/cases/50_react.js ==== */
+/* Companion reactions to the two cases (addendum §7.5, §9; contract §7):
+ * data for RB.company.addReactions, event 'case:<id>', facts.method = how it
+ * was actually resolved (the case definitions' method()). Every companion has
+ * a line for every method; the choice is stored once per resolution, so a
+ * reload shows the same one. Asking for help is never judged. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function () {
+  'use strict';
+  const R = [];
+  const add = (event, comp, method, lines) => R.push({ id: event.replace(':', '_') + '_' + comp + '_' + method, comp, event, facts: { method }, priority: 1, lines });
+  const L = (jp, en, expr) => ({ jp, en, expr: expr || null });
+
+  // ---- Case A: the parcel ----------------------------------------------------------------------
+  add('case:parcel', 'nao', 'reasoned', [L('{記録|きろく} を {読|よ}んで 、 {台|だい} と {鈴|すず} を {確|たし}かめて 、 それ から {渡|わた}す 。 …… {配達|はいたつ} の お{手本|てほん} だ よ 。', 'Read the record, checked the bench and the bell, then handed it over. …Textbook delivery.', 'smile')]);
+  add('case:parcel', 'nao', 'early', [L('{鈴|すず} の {印|しるし} で {分|わ}かった の か 。 {勘|かん} じゃ なくて 、 {目|め} が いい ん だ な 。', 'You knew it by the bell\'s mark. That\'s not luck, that\'s a good eye.', 'smirk')]);
+  add('case:parcel', 'nao', 'helped', [L('{届|とど}いた なら 、 それ で いい 。 {道|みち} を {聞|き}く の も {配達人|はいたつにん} の {仕事|しごと} だ 。', 'It got there, and that\'s what counts. Asking the way is part of a courier\'s job too.')]);
+  add('case:parcel', 'mio', 'reasoned', [L('{一|ひと}つ ずつ {確|たし}かめて 、 {間違|まちが}えず に {届|とど}けられました ね 。 ハマ さん 、 {嬉|うれ}しそう でした 。', 'You checked each thing in turn and got it to the right person. Hama looked so pleased.', 'smile')]);
+  add('case:parcel', 'mio', 'early', [L('あの {呼|よ}び{鈴|りん} を {見|み}て 、 すぐ {分|わ}かった んです ね 。 すごい 。', 'You saw that call bell and knew straight away. Impressive.', 'surprise')]);
+  add('case:parcel', 'mio', 'helped', [L('{分|わ}からない とき に {聞|き}く の は 、 {大事|だいじ} な こと です 。 {小包|こづつみ} も 、 ちゃんと {届|とど}きました 。', 'Asking when you don\'t know is important. And the parcel got where it was going.', 'smile')]);
+  add('case:parcel', 'ren', 'reasoned', [L('{宛名|あてな} 、 {記録|きろく} 、 {今|いま} の {道具|どうぐ} 。 {三|みっ}つ が {一|ひと}つ の {場所|ばしょ} を {指|さ}した 。 {灯|ひ} の {名|な} を {読|よ}む の と {同|おな}じ {手順|てじゅん} です 。', 'The address, the record, the tools as they are now: all three pointed to one place. The same way one reads a lantern\'s name.')]);
+  add('case:parcel', 'ren', 'early', [L('{印|しるし} を {覚|おぼ}えて いた の です ね 。 {私|わたし} は {道|みち} は {覚|おぼ}えられません が 、 {印|しるし} なら …… {少|すこ}し は 。', 'You remembered the mark. I can\'t remember roads, but marks… a little.')]);
+  add('case:parcel', 'ren', 'helped', [L('{教|おし}わった {道|みち} で も 、 {歩|ある}いた の は あなた です 。', 'Even on a road someone pointed out, you were the one who walked it.')]);
+  add('case:parcel', 'suzu', 'reasoned', [L('{伏線|ふくせん} を ぜんぶ {回収|かいしゅう} ！ {帳簿|ちょうぼ} も {合|あ}った し 、 {気持|きも}ち いい わ 。', 'Every thread tied up! And the books balance. Lovely.', 'laugh')]);
+  add('case:parcel', 'suzu', 'early', [L('{最後|さいご} の {幕|まく} まで {待|ま}たず に {犯人|はんにん} を {当|あ}てる {観客|かんきゃく} 、 いる の よ ね 。 あなた みたい な 。', 'There\'s always someone in the audience who guesses before the last act. Someone like you.', 'smirk')]);
+  add('case:parcel', 'suzu', 'helped', [L('{台本|だいほん} を {覗|のぞ}いて も 、 {舞台|ぶたい} は {舞台|ぶたい} 。 {届|とど}けた の は {本物|ほんもの} よ 。', 'Peek at the script if you like; the performance is still real. That was a real delivery.', 'smile')]);
+
+  // ---- Case B: the view --------------------------------------------------------------------------------
+  const perspective = {
+    nao: L('{裏|うら} から {見|み}て た から {合|あ}わなかった 。 …… {分|わ}かって みれば 、 {単純|たんじゅん} な {話|はなし} だ な 。', 'We were looking at it from the back, that\'s why nothing matched. …Simple, once you see it.', 'smirk'),
+    mio: L('{同|おな}じ {景色|けしき} でも 、 {向|む}き が {違|ちが}う と {別|べつ} の {場所|ばしょ} に {見|み}える んです ね 。 {人|ひと} の {話|はなし} も 、 {時々|ときどき} そう です 。', 'The same view can look like another place when you face it the other way. People\'s stories are like that sometimes.'),
+    ren: L('{正|ただ}しい {側|がわ} から {見|み}れば 、 {迷|まよ}う こと は ない 。 …… {地図|ちず} も 、 そう で あって ほしい です 。', 'Seen from the right side, there\'s no getting lost. …I wish maps worked like that.'),
+    suzu: L('{袖|そで} から {見|み}た {舞台|ぶたい} と 、 {客席|きゃくせき} から {見|み}た {舞台|ぶたい} 。 {同|おな}じ {芝居|しばい} なのに ね 。', 'The stage from the wings, and the stage from the seats. The same play, all the same.', 'smile'),
+  };
+  for (const c in perspective) {
+    add('case:view', c, 'noticed', [perspective[c]]);
+    add('case:view', c, 'compared', [perspective[c]]);
+  }
+  add('case:view', 'nao', 'note', [L('{描|か}いた {本人|ほんにん} の {書|か}き{置|お}き が {決|き}め{手|て} か 。 {手紙|てがみ} は {読|よ}んで おく もの だ な 。', 'The artist\'s own note settled it. Always worth reading the letter.', 'smile')]);
+  add('case:view', 'nao', 'helped', [L('{裏返|うらがえ}す だけ 、 か 。 {聞|き}いて {損|そん} は なかった な 。', 'Just turn it over, eh. No harm in asking.')]);
+  add('case:view', 'mio', 'note', [L('{宿|やど} の {帳面|ちょうめん} に {残|のこ}って いた {言葉|ことば} が 、 {今|いま} に なって {役|やく}に{立|た}った んです ね 。', 'A few lines left in an inn\'s guestbook turned out to matter, all this time later.', 'smile')]);
+  add('case:view', 'mio', 'helped', [L('{分|わ}かって しまえば 、 {怖|こわ}く ない でしょう 。 {景色|けしき} も 、 ちゃんと {見|み}られました し 。', 'Once you know, it isn\'t daunting at all. And we got to see the view properly.', 'smile')]);
+  add('case:view', 'ren', 'note', [L('{描|か}き{手|て} が {自分|じぶん} で {印|しるし} の {意味|いみ} を {書|か}き{残|のこ}して いた 。 {記録|きろく} を {残|のこ}す {人|ひと} は 、 {信用|しんよう} できます 。', 'The artist wrote down what her mark meant. People who leave records can be trusted.')]);
+  add('case:view', 'ren', 'helped', [L('{方角|ほうがく} を {人|ひと} に {尋|たず}ねる の は 、 {私|わたし} の {得意|とくい} {分野|ぶんや} です 。 {恥|は}ずかしい こと で は ありません 。', 'Asking someone the way is my speciality. There\'s nothing embarrassing about it.')]);
+  add('case:view', 'suzu', 'note', [L('{種|たね} を {書|か}いた {紙|かみ} を 、 {宿|やど} に {置|お}いて いく {手品師|てじなし} なんて ね 。 {粋|いき} だ わ 。', 'A magician who leaves the secret written down at an inn. How stylish.', 'laugh')]);
+  add('case:view', 'suzu', 'helped', [L('{種明|たねあ}かし を {聞|き}いて も 、 この {景色|けしき} は {色褪|いろあ}せない わ よ 。', 'Knowing how the trick works doesn\'t make this view any less lovely.', 'smile')]);
+
+  if (RB.company && RB.company.addReactions) RB.company.addReactions(R);
+  RB.content.caseReactions = R;
+})();
+
+
 /* ==== src/content/ch1/00_lex.js ==== */
 /* Chapter 1 vocabulary (words used in Reedwake content that the core
  * lexicon doesn't already cover). Format: w|reading|pos|level|meaning|note */
@@ -69761,6 +70784,79 @@ narr: {新|あたら}しい {灯籠|とうろう} だ 。 {火袋|ひぶくろ} 
 narr: 「 {葦原|あしはら}{新田|しんでん} 」 || "Ashihara Shinden" — shinden, "new fields": the old way of naming a newly settled village.
 ?(comp) comp: {去年|きょねん} は 、 なかった {村|むら} だ ね 。 || That village wasn't there last year.
 `, 'zz_atlas_decor');
+
+
+/* ==== src/content/zz_cases.js ==== */
+/* Where the cases and the refined sequences sit in the existing maps
+ * (docs/addendum/cases.md). This file only adds to maps defined earlier: it
+ * loads after every chapter (src/content/cases/ itself loads before ch1, so
+ * the placement lives here). Tiles were chosen after reading each map; the
+ * unit test tests/unit/cases.test.mjs checks that every added prop and person
+ * stands on a free tile, blocks no path and that the deduction still holds. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C) {
+  'use strict';
+  const M = (id) => C.maps[id];
+  const props = (map, list) => { const m = M(map); if (m) m.props = (m.props || []).concat(list); };
+  const npcs = (map, list) => { const m = M(map); if (m) m.npcs = (m.npcs || []).concat(list); };
+  const structs = (map, list) => { const m = M(map); if (m) m.structs = (m.structs || []).concat(list); };
+  // give an existing, silent prop a scene (only if it has none)
+  const sceneFor = (map, p, x, y, scene) => { const m = M(map); const pr = m && (m.props || []).find((q) => q.p === p && q.x === x && q.y === y); if (pr && !pr.scene) pr.scene = scene; return !!pr; };
+  // wrap an existing prop's scene: the new scene !calls the old one first
+  const wrap = (map, p, x, y, from, to) => { const m = M(map); const pr = m && (m.props || []).find((q) => q.p === p && q.x === x && q.y === y && q.scene === from); if (pr) pr.scene = to; return !!pr; };
+
+  // ---- Case A: A Parcel for a Place That Moved ------------------------------------------------------------
+  // Reedwake, River Warehouse: the shelf of unclaimed parcels
+  props('rw.warehouse', [
+    { p: 'cs_shelf', x: 6, y: 2, o: { parcel: true }, scene: 'cs.parcel_shelf', if: '!case.parcel' },
+    { p: 'cs_shelf', x: 6, y: 2, scene: 'cs.parcel_shelf_empty', if: 'case.parcel' },
+  ]);
+  // Saltglass, Harbour Office: the pile of ledgers by the bench keeps the record of the landings
+  sceneFor('sg.office', 'bookpile', 9, 6, 'cs.parcel_record');
+  // Saltglass harbour: the old footing, Seto's house up the hill, Hama's bench by the ferry
+  props('sg.harbor', [
+    { p: 'cs_footing', x: 53, y: 31, scene: 'cs.parcel_oldsite' },
+    { p: 'cs_workbench', x: 37, y: 27, across: true, scene: 'cs.hama_bench', if: '!case.parcel=done' },
+    { p: 'cs_workbench', x: 37, y: 27, across: true, o: { label: true }, scene: 'cs.hama_bench', if: 'case.parcel=done' },
+    { p: 'cs_bellpost', x: 40, y: 27, scene: 'cs.hama_bell', if: '!case.parcel=done' },
+    { p: 'cs_bellpost', x: 40, y: 27, o: { bright: true }, scene: 'cs.hama_bell', if: 'case.parcel=done' },
+  ]);
+  structs('sg.harbor', [{ type: 'house', x: 50, y: 2, w: 4, h: 3, roof: 'tile', wall: 'wood', door: 1, windows: [3], to: 'sg.harbor', locked: 'cs.seto_door' }]);
+  npcs('sg.harbor', [
+    { id: 'cs_seto', x: 53, y: 5, dir: 'left', talk: [{ if: 'item.cs_parcel&!case.parcel.tried=family', scene: 'cs.seto_parcel' }, { scene: 'cs.seto_idle' }] },
+    { id: 'cs_hama', x: 38, y: 26, dir: 'down', talk: [{ if: 'item.cs_parcel', scene: 'cs.hama_parcel' }, { if: 'case.parcel=done', scene: 'cs.hama_after' }, { scene: 'cs.hama_idle' }] },
+  ]);
+  // Cinder Orchard, Shino's Post House: the record of marks
+  props('co.post', [{ p: 'bookpile', x: 3, y: 2, scene: 'cs.parcel_marks' }]);
+
+  // ---- Case B: The View on the Other Side -------------------------------------------------------------------
+  props('sg.lighthouse', [
+    { p: 'cs_sketchwin', x: 6, y: 2, scene: 'cs.view_window', if: '!case.view' },
+    { p: 'cs_sketchwin', x: 6, y: 2, o: { gone: true }, scene: 'cs.view_window', if: 'case.view' },
+  ]);
+  props('co.inn', [{ p: 'bookpile', x: 5, y: 2, scene: 'cs.view_note' }]);
+  // the Star Stair: a little shrine and a bare tree near the stair's foot (the
+  // lantern at 7,33 is the stair's own), two flat stones to look out from, and
+  // the stone seat (its own scene first, then the chance to look out)
+  const V = C.caseView;
+  props('sb.obs_path', [
+    { p: 'shrine', x: V.landmarks.shrine.x, y: V.landmarks.shrine.y, scene: 'cs.view_shrine' },
+    { p: 'deadtree', x: V.landmarks.tree.x, y: V.landmarks.tree.y, scene: 'cs.view_tree' },
+    { p: 'cs_viewstone', x: 3, y: 31, scene: 'cs.view_west' },
+    { p: 'cs_viewstone', x: 14, y: 32, scene: 'cs.view_east' },
+    { p: 'cs_frame', x: 11, y: 36, scene: 'cs.view_frame', if: 'cs_view_framed' },
+  ]);
+  wrap('sb.obs_path', 'bench', 9, 36, 'sb.path_bench', 'cs.view_seat');
+
+  RB.script.add(`
+@scene cs.view_shrine
+narr: {道端|みちばた} の {小|ちい}さな {祠|ほこら} 。 {屋根|やね} の {雪|ゆき} を 、 {誰|だれ} か が {払|はら}って いる 。 || A little wayside shrine. Someone keeps the snow brushed off its roof.
+
+@scene cs.view_tree
+narr: {枝|えだ} だけ の {枯|か}れ{木|き} 。 {雪|ゆき} の {中|なか} で 、 {黒|くろ}い {線|せん} の よう に {立|た}って いる 。 || A bare tree, all branches. It stands against the snow like a line of ink.
+`, 'zz_cases');
+})(RB.content);
 
 
 /* ==== src/content/zz_names.js ==== */
