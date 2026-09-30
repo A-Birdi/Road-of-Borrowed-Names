@@ -22,6 +22,8 @@ const suites = [
   // the two quest lines across the chapters (fixtures; --full adds all four
   // companions and a whole-game run with both lines as goals)
   full ? ['long_quests.mjs', '--all-companions'] : ['long_quests.mjs', '--fixtures-only'],
+  // the two deduction cases, the refined sequences and their keepsakes, Known Details (addendum §14.8–§18)
+  ['cases.mjs'], ['cases_shots.mjs'], ['known.mjs'],
   full ? ['matrix.mjs'] : ['pursue.mjs', 'E', 'mio'],
 ];
 const results = [];

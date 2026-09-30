@@ -248,6 +248,7 @@ narr: {札|ふだ} が {足|た}りない 。 {嵌|は}める {穴|あな} が �
 !end
 :later
 narr: {札|ふだ} を {手|て} に した まま 、 {少|すこ}し {考|かんが}える こと に した 。 || You decide to think a little longer, tiles in hand.
+narr: {札|ふだ} の {字|じ} そのもの に 、 {順番|じゅんばん} を {表|あらわ}す {言葉|ことば} が ある 。 {壁|かべ} の {札|ふだ} は 、 {戻|もど}って くる まで {動|うご}かない 。 || The tiles' own words carry their order. The wall will wait until you come back.
 
 @scene co.kiln_wall_done
 narr: {上|うえ} の {窓|まど} が {開|ひら}いて いる 。 {窯|かま} の {中|なか} の {空気|くうき} は 、 {静|しず}か に {上|うえ} へ {流|なが}れて いる 。 {風|かぜ} の ない {夜|よる} の よう に 。 || The upper vent stands open. The air in the kiln flows quietly upward, as on a windless night.
