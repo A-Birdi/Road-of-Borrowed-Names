@@ -126,18 +126,22 @@ var RB = (globalThis.RB = globalThis.RB || {});
     },
     keep: {
       nao: [
+        { when: 'talk.d.quiet_night=share', jp: '{雪鈴|ゆきすず} の {宿|やど} で 、 あんた も {名前|なまえ} を {忘|わす}れる の が {怖|こわ}い って {言|い}った 。 {忘|わす}れたら {俺|おれ} が {教|おし}える 。 あの {約束|やくそく} は 、 まだ {生|い}きてる 。', en: 'At the Snowbell inn you said you were afraid of forgetting a name, too. If you forget, I\'ll tell you. That promise still stands.' },
         { when: 'seen.sb.quiet_nao', jp: '{雪鈴|ゆきすず} の {宿|やど} の {夜|よる} 。 {風|かぜ} が {戸|と} を {叩|たた}く {音|おと} で {眠|ねむ}れなくて 、 {誰|だれ} に も {見|み}せた こと の ない {缶|かん} を {開|あ}けた 。', en: 'That night at the Snowbell inn. The wind knocking at the door kept me awake, and I opened the tin I\'d never shown anyone.' },
         T('{雪鈴|ゆきすず} の {夜|よる} 。 {宛名|あてな} が {戻|もど}った {夜|よる} だ 。', 'That night in Snowbell. The night the addresses came back.'),
       ],
       mio: [
+        { when: 'talk.d.quiet_night=share', jp: '{雪鈴|ゆきすず} の {宿|やど} で 、 {役|やく} に {立|た}たない {日|ひ} も {待|ま}ち{合|あ}おう って {約束|やくそく} しました よね 。 {規則|きそく} {三十二番|さんじゅうにばん} 。 ちゃんと {書|か}いて あります 。', en: 'At the Snowbell inn we promised to wait for each other even on days we\'re no use. Rule number thirty-two. It\'s written down properly.' },
         { when: 'seen.sb.quiet_mio', jp: '{雪鈴|ゆきすず} の {宿|やど} で 、 {眠|ねむ}れなかった {夜|よる} 。 ラベル の ない {瓶|びん} の {話|はなし} を 、 {初|はじ}めて {人|ひと} に しました 。', en: 'The night I couldn\'t sleep at the Snowbell inn. It was the first time I told anyone about the jar with no label.' },
         T('{雪鈴|ゆきすず} で 、 {灯|あか}り が また ともった {夜|よる} 。 みんな の {顔|かお} が {明|あか}るかった 。', 'The night the lamp in Snowbell lit again. Everyone\'s faces were so bright.'),
       ],
       ren: [
+        { when: 'talk.d.quiet_night=keep', jp: '{雪鈴|ゆきすず} の {宿|やど} で 、 {言葉|ことば} が {消|き}えたら {代|か}わり に {覚|おぼ}えて おく 、 と {言|い}って くれた こと 。 {灯守|ひもり} の {台詞|せりふ} を {取|と}られました 。', en: 'At the Snowbell inn, when you said that if the words went, you\'d remember them for me. You stole a keeper\'s line.' },
         { when: 'sb_ren_ushio1', jp: '{雪鈴|ゆきすず} の {天文台|てんもんだい} で 、 {師匠|ししょう} の {似顔絵|にがおえ} を {見|み}た こと 。 {知|し}らない {人|ひと} の {顔|かお} に {見|み}えた の が 、 {正直|しょうじき} 、 {一番|いちばん} {怖|こわ}かった 。', en: 'Seeing my teacher\'s portrait in the Snowbell observatory. Honestly, what frightened me most was that it looked like a stranger.' },
         T('{雪鈴|ゆきすず} で 、 {石段|いしだん} の {灯|あか}り が {上|うえ} の {灯|あか}り を {呼|よ}んで いた {夜|よる} 。', 'The night in Snowbell when the stair lanterns called to the lamp above.'),
       ],
       suzu: [
+        { when: 'talk.d.quiet_night=helped', jp: '{雪鈴|ゆきすず} の {宿|やど} で 、 {私|わたし} の {冗談|じょうだん} に {助|たす}けられた って {言|い}って くれた こと 。 {帳簿|ちょうぼ} に 「 {貸|か}し {一|ひと}つ 」 って {書|か}いた の よ 。', en: 'At the Snowbell inn, when you said my jokes had helped you. I wrote "one in credit" in the book.' },
         { when: 'seen.sb.quiet_suzu', jp: '{雪鈴|ゆきすず} の {宿|やど} で 、 {帳簿|ちょうぼ} の {最後|さいご} の {頁|ページ} を {見|み}せた {夜|よる} 。 {誰|だれ} に も {見|み}せた こと なかった の よ 。', en: 'The night at the Snowbell inn when I showed you the last page of my book. I\'d never shown it to anyone.' },
         T('{雪鈴|ゆきすず} の {満員|まんいん} の {客席|きゃくせき} 。 {主役|しゅやく} は {灯|あか}り だった けど 。', 'That packed house in Snowbell. The lamp had the lead, mind.'),
       ],
@@ -190,7 +194,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
     title: T('{一部|いちぶ} {返済|へんさい}', 'Paid in part'), place: T('{灰実|はいみ} の {里|さと} 、 ヒロ の {工房|こうぼう}', 'Hiro\'s workshop, Cinder Orchard'),
     text: T('スズ は ヒロ に 、 {母親|ははおや} と {火事|かじ} の {本当|ほんとう} の こと を {話|はな}した 。 ヒロ は 、 {席|せき} の {隣|となり} に {座|すわ}って くれ と {言|い}った 。 {二十回|にじゅっかい} の {祭|まつ}り で 、 {少|すこ}し ずつ {返|かえ}す 。', 'Suzu told Hiro the truth about his mother and the fire. He asked her to sit beside the seat — twenty festivals, repaid one at a time.'),
     reply: { suzu: T('…… $name 。 ありがとう 。 {客席|きゃくせき} に いて くれて 。', '…$name. Thank you. For staying in your seat.') },
-    keep: { suzu: T('ヒロ の {工房|こうぼう} で の こと 。 {一部|いちぶ} {返済|へんさい} 。 あなた が {客席|きゃくせき} に いて くれた から 、 {最後|さいご} まで {言|い}えた の 。', 'That day in Hiro\'s workshop. Paid in part. You stayed in your seat, so I could say it all the way to the end.') },
+    keep: {
+      suzu: [
+        { when: 'talk.d.suzu_truth=speak', jp: 'ヒロ の {工房|こうぼう} で 、 あなた が 「 スズ は それ を {言|い}い に {来|き}た 」 って {言|い}って くれた こと 。 {一部|いちぶ} {返済|へんさい} の {半分|はんぶん} は 、 あなた の {分|ぶん} よ 。', en: 'At Hiro\'s workshop, when you told him I\'d come back to say it. Half of "paid in part" is yours.' },
+        { when: 'talk.d.suzu_truth=quiet', jp: 'ヒロ の {工房|こうぼう} で 、 あなた は {黙|だま}って {客席|きゃくせき} に いて くれた 。 {炉|ろ} の {音|おと} しか しない {時間|じかん} 。 あれ が {一番|いちばん} {助|たす}かった の 。', en: 'At Hiro\'s workshop you stayed quietly in your seat. Nothing but the sound of the furnace. That helped most of all.' },
+        T('ヒロ の {工房|こうぼう} で の こと 。 {一部|いちぶ} {返済|へんさい} 。 あなた が {客席|きゃくせき} に いて くれた から 、 {最後|さいご} まで {言|い}えた の 。', 'That day in Hiro\'s workshop. Paid in part. You stayed in your seat, so I could say it all the way to the end.'),
+      ],
+    },
   };
   CC.mem.pq_nao = {
     title: T('「 {読|よ}んだ 」', '"I read it."'), place: T('{灯落|ひおち} の {渡|わた}し{場|ば} {事務所|じむしょ}', 'The ferry office, Lanternfall'),
@@ -221,6 +231,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     },
     keep: {
       ren: [
+        { when: 'sa_ren_took&talk.d.ren_folio=yours', jp: '「 {選|えら}ぶ の は あなた 、 {私|わたし} は ここ に いる 」 。 あの {言葉|ことば} で 、 {開|ひら}く {勇気|ゆうき} が {出|で}ました 。 {師匠|ししょう} は 、 {笑|わら}って いました 。', en: '"You decide. Either way, I\'m here." Those words gave me the courage to open it. My teacher was smiling.' },
+        { when: 'sa_ren_took&talk.d.ren_folio=take', jp: '「 {痛|いた}くて も 、 あなた の もの だ 」 と {言|い}われて 、 {開|ひら}きました 。 {痛|いた}い です 。 でも 、 {師匠|ししょう} は {笑|わら}って いました 。', en: '"Even if it hurts, it\'s yours," you said, and I opened it. It does hurt. But my teacher was smiling.' },
         { when: 'sa_ren_took', jp: '{師匠|ししょう} の {顔|かお} 。 {笑|わら}って いました 。 {眉|まゆ} が {思|おも}った より {太|ふと}かった こと も 、 ちゃんと {記録|きろく} して あります 。', en: 'My teacher\'s face. Smiling. I\'ve put it on record that the eyebrows were thicker than I thought, too.' },
         { when: 'sa_ren_left', jp: '{師匠|ししょう} の {棚|たな} の {前|まえ} で 、 あなた が {待|ま}って くれた こと 。 {選|えら}ばない こと を {選|えら}んだ {私|わたし} を 、 {急|せ}かさなかった 。', en: 'You waiting with me in front of my teacher\'s shelf. When I chose not to choose, you didn\'t hurry me.' },
       ],

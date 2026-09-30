@@ -232,6 +232,23 @@ const state = (p) => p.evaluate(() => JSON.parse(JSON.stringify(RB.game.s)));
   assert(top.some((l) => /stars|lanterns to count/.test(l)) && st.company.talk['t:t.ren.stars'], 'a rest topic plays and is marked as heard');
   assert(JSON.stringify(st.company.bond) === JSON.stringify(before.company.bond) && JSON.stringify(st.inv) === JSON.stringify(before.inv) && st.resolve.pc === before.resolve.pc, 'rituals and rest topics award nothing (bond, items, resolve unchanged)');
 
+  // ---- a solved puzzle (the contract's discovery:resolved): one short remark, a memory, a filed thought ------------
+  await p.evaluate(() => RB.company.addReactions([{ id: 'c1_test_ren', comp: 'ren', event: 'puzzle:c1_sign', facts: { method: 'sheltered' },
+    lines: [{ jp: '{字|じ} が {読|よ}める 。', en: 'The writing can be read now.' }], thought: { jp: '{元|もと} の {字|じ} が {残|のこ}って いる 。', en: 'The original lettering is still there to compare.' } }]));
+  await p.evaluate(() => RB.bus.emit('discovery:resolved', { kind: 'puzzle', id: 'c1_sign', region: 'snowbell', method: 'sheltered', title: { jp: '{看板|かんばん}', en: 'The flapping sign' } }));
+  await p.waitForTimeout(250);
+  const remark = await talk(p, []);
+  st = await state(p);
+  const disc = st.company.memories.find((m) => m.id === 'disc:puzzle:c1_sign');
+  const th = await p.evaluate(() => RB.company.thought(RB.game.s));
+  assert(remark.filter((l) => /can be read now/.test(l)).length === 1 && disc && disc.kind === 'discoveries' && /can be read/.test(disc.reply.en) && st.company.bond['puzzle:snowbell'] === 1,
+    'a solved puzzle: one short remark, a Discoveries memory with it, one bond event for the region');
+  assert(th.kind === 'recent' && /original lettering/.test(th.text.en), 'the longer thought is filed for Company, not spoken');
+  await p.evaluate(() => RB.bus.emit('discovery:resolved', { kind: 'puzzle', id: 'c1_sign', region: 'snowbell', method: 'secured' }));
+  await p.waitForTimeout(250);
+  const again = await p.evaluate(() => ({ dlg: !!document.querySelector('.dlg:not(.hidden)'), bond: RB.game.s.company.bond['puzzle:snowbell'], mem: RB.game.s.company.memories.filter((m) => m.id === 'disc:puzzle:c1_sign').length }));
+  assert(!again.dlg && again.bond === 1 && again.mem === 1, 'the same resolution again: no second remark, award or memory');
+
   // ---- Shared memories: filters, recollection changes nothing ---------------------------------------------------------------------
   await openCompany(p, 'memories');
   const mem0 = await state(p);

@@ -35,6 +35,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
 月謝|げっしゃ|n|A|monthly fee for lessons
 新顔|しんがお|n|A|new face, newcomer
 現実的|げんじつてき|adj-na|I|practical, realistic
+# Company page labels
+絆|きずな|n|I|bond, ties (between people)
+謎|なぞ|n|I|mystery, puzzle
+手助け|てだすけ|n|I|help, a helping hand
+出会い|であい|n|I|meeting, an encounter
 # things and places
 行灯|あんどん|n|A|paper-shaded lamp stand (traditional indoor lamp)
 公文書館|こうぶんしょかん|n|A|public records hall, archives (building)

@@ -185,6 +185,15 @@ export default async (t) => {
     r.flags.ch4_done = true;
     K.refresh(r);
     t.eq(K.pending(r) && K.pending(r).id, 'reflect:keep', 'What We Keep after Chapter 4');
+    // a story question has a moment; a waiting reflection steps aside and comes back afterwards
+    r.quests.lf_main = { stage: 2, done: false, t: 1 };
+    K.refresh(r);
+    t.eq(K.pending(r).id, 'inv.lf_word', 'a story question takes the slot from a waiting reflection');
+    await hook(r, 'co_answer', 'inv.lf_word', 'no');
+    K.refresh(r);
+    t.eq(K.pending(r) && K.pending(r).id, 'reflect:keep', 'and the reflection is offered again');
+    // the rest menu keeps the game's own banter reachable
+    t.ok(RB.content.banter.some((bn) => bn.comp === 'suzu'), 'banter exists to keep reachable (rest menu: Just chat)');
   }
 
   // ---- What We Keep uses a recorded moment, or says honestly that there is none -----------------------------------------

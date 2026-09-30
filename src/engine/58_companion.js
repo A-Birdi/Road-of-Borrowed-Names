@@ -382,12 +382,13 @@ RB.content.company = RB.content.company || {
         }
       } else if (!REFLECT.some((r) => r.id === cur)) t._pending = null; // content removed: let it go
       else if (t[cur] && /^(answered|done)$/.test(t[cur].st)) t._pending = null;
-      if (t._pending) return;
     }
-    // a new story invitation whose moment is now
+    // a new story invitation whose moment is now (it has a moment; a waiting journey reflection can
+    // step aside for it and come back afterwards)
     const invs = CC.invites.filter((x) => forComp(x, comp) && !t[x.id] && RB.state.test(s, x.when) &&
       !(x.solved && RB.state.test(s, x.solved)) && !(x.expire && RB.state.test(s, x.expire)));
     invs.sort((a, b) => (b.prio || 0) - (a.prio || 0));
+    if (t._pending && !(invs[0] && REFLECT.some((r) => r.id === t._pending))) return;
     if (invs[0]) { t._pending = invs[0].id; t[invs[0].id] = { st: 'pending', t: Date.now() }; return; }
     // otherwise a journey reflection that is due (late journeys too: retrospective wording in the scene)
     for (const r of REFLECT) {
@@ -569,6 +570,11 @@ RB.content.company = RB.content.company || {
     const s = S(), th = thought(s);
     if (th) await RB.ui.dialogue.say({ who: s.comp, jp: th.text.jp, en: th.text.en });
   };
+  // the game's own banter for here (90_game.js companionTalk uses the same filter)
+  let chatBypass = false;
+  function banterHere(s) {
+    return (RB.content.banter || []).some((b) => b.comp === s.comp && (!b.map || b.map === s.map || (b.map.endsWith('*') && String(s.map).startsWith(b.map.slice(0, -1)))) && (!b.if || RB.state.test(s, b.if)));
+  }
   // the rest menu: a small ritual, the next rest topic, anything added (the pet greeting), or just rest
   RB.hooks.co_rest = async () => {
     const s = S();
@@ -581,6 +587,8 @@ RB.content.company = RB.content.company || {
     if (rit) opts.push({ jp: rit.title.jp, en: rit.title.en, run: () => RB.script.run(rit.scene) });
     if (top) opts.push({ jp: '{話|はな}す ： ' + top.title.jp, en: 'Talk: ' + top.title.en, run: () => RB.script.run(top.scene) });
     for (const o of extra) opts.push({ jp: o.label.jp, en: o.label.en, run: o.run });
+    // the usual banter stays reachable at a rest stop too
+    if (banterHere(s)) opts.push({ jp: '{少|すこ}し {話|はな}す', en: 'Just chat', run: () => { chatBypass = true; try { RB.game.companionTalk(); } finally { chatBypass = false; } } });
     opts.push({ jp: '{今|いま} は いい', en: 'Not now', run: null });
     const i = await RB.ui.dialogue.choose(opts, {});
     const o = opts[i];
@@ -611,7 +619,7 @@ RB.content.company = RB.content.company || {
   // otherwise the usual banter (90_game.js companionTalk)
   RB.bus.on('companion:chat', (ev) => {
     const g = game();
-    if (!g || !g.s || !g.s.comp || ev.handled) return;
+    if (!g || !g.s || !g.s.comp || ev.handled || chatBypass) return;
     const s = g.s;
     refresh(s);
     const p = pending(s);
