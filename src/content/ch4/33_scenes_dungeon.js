@@ -137,13 +137,16 @@ narr: {南東|なんとう} の {引|ひ}き{出|だ}し は 、 もう {空|か
 !if sb_log_solved -> done
 narr: {開|ひら}いた まま の {観測|かんそく} {日誌|にっし} 。 {七年前|しちねんまえ} の {冬|ふゆ} の {頁|ページ} だ 。 {三|みっ}つ の {時刻|じこく} の {記録|きろく} が 、 {丁寧|ていねい} に {並|なら}んで いる 。 || The observing log, lying open at a winter page from seven years ago. Entries for three different times are set down carefully one after another.
 !challenge sb.c_log
-!if var._res=0 -> end
+!if var._res=0 -> later
 !set sb_log_solved
 !set sb_archive_found
 !sfx discover
 narr: {南東|なんとう} の {引|ひ}き{出|だ}し の {霜|しも} が 、 ぱりん と {割|わ}れた 。 {中|なか} に は 、 {格子|こうし} の {鍵|かぎ} と 、 {折|お}り{畳|たた}んだ {紙|かみ} が {一枚|いちまい} 。 || The frost on the southeast drawer cracks with a snap. Inside: the key to the grille, and a single folded sheet of paper.
 !note sb_archive_light
 !call sb.charts_sketch
+!end
+:later
+narr: {日誌|にっし} は {机|つくえ} の {上|うえ} に {開|ひら}いた まま 。 {時刻|じこく} ごと に {方角|ほうがく} が {書|か}いて ある 。 {引|ひ}き{出|だ}し に も 、 {方角|ほうがく} の {札|ふだ} 。 || The log stays open on the desk. Each time has a direction beside it; the drawers are labelled with directions too.
 !end
 :done
 narr: {日誌|にっし} の {頁|ページ} 。 「 {南東|なんとう} 、 {高|たか}さ {五度|ごど} 。 {白|しろ}い {光|ひかり} 。 {動|うご}かず 。 {星|ほし} に {非|あら}ず 。 」 || The log page: "Southeast, altitude five degrees. White light. Does not move. Not a star."

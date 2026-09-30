@@ -105,4 +105,9 @@ RB.lex.add(RB.lex.parseTable(`
 面|めん|n|I|side, face (of a flat thing)
 景色|けしき|n|E|view, scenery
 向こう側|むこうがわ|n|I|the other side
+燕|つばめ|n|I|swallow (the bird)
+糸巻き|いとまき|n|I|spool, bobbin
+手助け|てだすけ|n|I|help, assistance
+表す|あらわす|v5s|I|to express, to show
+大窯|おおがま|n|A|great kiln
 `), 'cases');

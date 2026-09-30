@@ -60,6 +60,21 @@ var RB = (globalThis.RB = globalThis.RB || {});
   ]);
   wrap('sb.obs_path', 'bench', 9, 36, 'sb.path_bench', 'cs.view_seat');
 
+  // ---- the refined sequences and their keepsakes (src/content/cases/40_refine.js) ------------------------------
+  // a guarded talk option in front of a person's list: it runs once (the keepsake is then recorded),
+  // never in front of a main-story conversation (the guards name the chapter's stages)
+  const firstTalk = (map, id, opt) => { const m = M(map); const n = m && (m.npcs || []).find((q) => q.id === id); if (!n) return false; n.talk = [opt].concat(typeof n.talk === 'string' ? [{ scene: n.talk }] : n.talk || []); return true; };
+  // Saltglass: the tide board outside shows the times once the table has been read; Shiori's shell button
+  wrap('sg.harbor', 'sg_tideboard', 10, 25, 'sg.tidepost', 'cs.tidepost');
+  props('sg.harbor', [{ p: 'cs_tidechalk', x: 10, y: 25, if: 'sg_tide_read' }]);
+  firstTalk('sg.tidehut', 'shiori', { if: 'sg_tide_low&!keepsake.shell_button&!quest.sg_main=5&!quest.sg_main=6', scene: 'cs.shell_shiori' });
+  // Cinder Orchard: Nobu, after the chapter (the kiln's steps read)
+  firstTalk('co.pottery', 'co_nobu', { if: 'co_kiln_open&ch3_done&!keepsake.clay_swallow', scene: 'cs.swallow_nobu' });
+  // Snowbell: a box of paper stars in Hoshino's house, once the log has been read (he need not be home)
+  props('sb.hoshino', [{ p: 'bookpile', x: 5, y: 2, scene: 'cs.rosette_box', if: 'sb_log_solved' }]);
+  // Lanternfall: Tokuji at the sluice shore, after the bell rings
+  firstTalk('lf.sluice', 'lf_tokuji', { if: 'lf_gate_c&lf_bell_rung&!keepsake.thread_spool', scene: 'cs.spool_tokuji' });
+
   RB.script.add(`
 @scene cs.view_shrine
 narr: {道端|みちばた} の {小|ちい}さな {祠|ほこら} 。 {屋根|やね} の {雪|ゆき} を 、 {誰|だれ} か が {払|はら}って いる 。 || A little wayside shrine. Someone keeps the snow brushed off its roof.

@@ -39,6 +39,7 @@ shiori: {岬|みさき} の {道|みち} は {逃|に}げません 。 {潮|し�
 !end
 :later
 shiori: {表|ひょう} は 、 いつでも ここ に あります 。 || The table's always here.
+shiori: {急|いそ}がなくて いい です よ 。 {知|し}らない {言葉|ことば} は 、 {言葉|ことば} の {手助|てだす}け で {読|よ}み{方|かた} と {意味|いみ} が {分|わ}かります 。 || There's no hurry. If a word is new, word help will give you its reading and meaning.
 
 @scene sg.tide_wait
 !fade out

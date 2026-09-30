@@ -68,20 +68,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
     diagram: 'harbour' });
   clue('parcel.oldsite', { case: 'parcel', kind: 'place', title: T('The old footing on the east beach', '{東|ひがし} の {浜|はま} の {土台|どだい}'),
     source: { en: 'The east beach, at the water\'s edge', map: 'sg.harbor' },
-    obs: { en: 'A low stone footing where a small hut stood, and a post with an empty iron bracket. Faded letters: "East Landing". No one works here.' },
-    known: { map: 'sg.harbor', id: 'cs_footing', label: T('Old stone footing: "East Landing" (no one works here now)', '{古|ふる}い {土台|どだい}'), state: 'seen', x: 53, y: 31 } });
+    obs: { en: 'A low stone footing where a small hut stood, and a post with an empty iron bracket. Faded letters: "East Landing". No one works here.' } });
   clue('parcel.crest', { case: 'parcel', kind: 'object', title: T('The crest on a door up the hill', '{丘|おか} の {上|うえ} の {紋|もん}'),
     source: { en: 'The door plate of a small house on the hill', map: 'sg.harbor' },
-    obs: { en: 'A bell with a wavy line beneath it. No notch.' }, diagram: 'bell_wave',
-    known: { map: 'sg.harbor', id: 'cs_seto', label: T('A house with a bell crest', '{紋|もん} の ある {家|いえ}'), state: 'seen', x: 51, y: 4 } });
+    obs: { en: 'A bell with a wavy line beneath it. No notch.' }, diagram: 'bell_wave' });
   clue('parcel.seto_memory', { case: 'parcel', kind: 'speaker', sure: false, title: T('What Seto remembers', 'セト の {話|はなし}'),
     source: { en: 'Seto, outside her house on the hill', who: 'cs_seto', map: 'sg.harbor' },
     jp: 'うち の {祖父|そふ} は 、 {浜|はま} の ほう で {工房|こうぼう} を して いた …… と {思|おも}う の 。 わたし は {小|ちい}さくて 、 よく {覚|おぼ}えて いない けど 。',
     en: '"My grandfather kept a workshop somewhere down by the shore… I think. I was little; I don\'t really remember."' });
   clue('parcel.bench', { case: 'parcel', kind: 'object', title: T('The notched workbench on the quay', '{刻|きざ}み{目|め} の {作業台|さぎょうだい}'),
     source: { en: 'The repair bench by the ferry, on the stone quay', map: 'sg.harbor' },
-    obs: { en: 'Notches cut at even spacing along its front edge, for measuring rope. Older than its keeper\'s teacher, she says.' },
-    known: { map: 'sg.harbor', id: 'cs_bench', label: T('Repair bench by the ferry (notched edge)', '{作業台|さぎょうだい}'), state: 'seen', x: 38, y: 27 } });
+    obs: { en: 'Notches cut at even spacing along its front edge, for measuring rope. Older than its keeper\'s teacher, she says.' } });
   clue('parcel.bell', { case: 'parcel', kind: 'object', title: T('The call bell by the bench', '{呼|よ}び{鈴|りん}'),
     source: { en: 'A post beside the repair bench, on the stone quay', map: 'sg.harbor' },
     obs: { en: 'The ferry\'s call bell. Stamped on its shoulder: a small bell with one notch in its right shoulder.' }, diagram: 'bell_notch' });

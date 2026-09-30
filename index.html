@@ -765,12 +765,12 @@ body.high-contrast .pv-box { background: #000; color: #fff; }
 .cs-hints .kind { display: block; font-size: 0.78em; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
 
 /* Map › Known details */
-.kd-map svg { display: block; width: 100%; height: auto; max-height: 60vh; background: #efe3c6; border: 1px solid var(--paper-edge); touch-action: manipulation; }
-.kd-map svg:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.kd-map svg.kd-svg { display: block; width: 100%; height: auto; max-height: 60vh; background: #efe3c6; border: 1px solid var(--paper-edge); touch-action: manipulation; }
+.kd-map svg.kd-svg:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
 .kd-list { list-style: none; margin: 0.3em 0; padding: 0; }
 .kd-list li { display: grid; grid-template-columns: 2.1em 1fr; gap: 0.2em 0.5em; align-items: start; padding: 0.4em 0; border-bottom: 1px dotted var(--rule); }
-.kd-list .kd-sym { width: 1.9em; height: 1.9em; }
-.kd-list .kd-sym svg { width: 100%; height: 100%; }
+.kd-sym { display: inline-block; width: 1.9em; height: 1.9em; flex: none; }
+.kd-sym svg { display: block; width: 100%; height: 100%; }
 .kd-list .t { font-weight: 600; }
 .kd-list .kd-state { font-size: 0.78em; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 700; color: var(--ink-2); }
 .kd-list .cs-acts { grid-column: 2; }
@@ -782,6 +782,9 @@ body.high-contrast .pv-box { background: #000; color: #fff; }
 .kd-limit { font-size: 0.9em; color: var(--ink-3); }
 .kd-limit.full { color: var(--danger-ink); font-weight: 600; }
 .kd-maps { display: flex; flex-wrap: wrap; gap: 6px; margin: 0.3em 0 0.6em; }
+.kd-h { display: flex; align-items: center; gap: 0.4em; margin: 0.9em 0 0.3em; }
+.kd-h > svg { width: 1.15em; height: 1.15em; flex: none; color: var(--ink-2); }
+.kd-h .count, .kd-h .kd-limit { margin-left: auto; }
 
 /* ==== src/styles/40_title.css ==== */
 /* Title screen, travel ledger (six save slots) and About sheet.
@@ -26930,7 +26933,14 @@ RB.cases = (function () {
     const d = D(s);
     if (d.cases[id]) return norm(d.cases[id]);
     const r = d.cases[id] = fresh();
-    for (const cid in d.clues) { const c = clueDef(cid); if (c && c.case === id && !d.clues[cid].case) d.clues[cid].case = id; }
+    const t = now();
+    for (const cid in d.clues) {
+      const c = clueDef(cid), x = d.clues[cid];
+      if (!c || c.case !== id || x.case) continue;
+      x.case = id;
+      // noticed a moment ago, right here (the scene that opened the case): not "before you knew"
+      if (x.early && x.map === (s.map || null) && t - x.t < 120000) delete x.early;
+    }
     if (cd.quest && !s.quests[cd.quest]) RB.state.setQuest(s, cd.quest, 'start');
     RB.bus.emit('case:open', { id });
     return r;
@@ -34815,7 +34825,8 @@ RB.ui.casebook = (function () {
   }
   function source(c, x) {
     const pn = placeName((c.source && c.source.map) || (x && x.map));
-    return '<div class="cs-src">' + (c.source ? esc(c.source.en) : '') + (pn ? ' <span class="muted">· ' + esc(pn) + '</span>' : '') +
+    const said = c.source ? c.source.en : '';
+    return '<div class="cs-src">' + esc(said) + (pn && !said.includes(pn) ? ' <span class="muted">· ' + esc(pn) + '</span>' : '') +
       (c.sure === false ? ' <span class="cs-unsure">' + I('help') + 'The speaker wasn’t sure</span>' : '') + '</div>';
   }
   function obsCard(s, id, cid, o) {
@@ -35766,6 +35777,294 @@ RB.pad = (function () {
   }
   const api = { create(host, opts) { const p = create(host, opts); api.__last = p; return p; }, BOX, kanjiPreferred, twinFirst };
   return api;
+})();
+
+
+/* ==== src/ui/61_known.js ==== */
+/* Map › Known details (addendum §18.2): a compact local diagram and list for
+ * the current map or one already visited. Authored annotations
+ * (RB.content.knownDetails, src/content/cases/60_known.js) appear only once
+ * their fact is discovered and take their state from the game's flags;
+ * recorded notes (RB.known.note, used by other systems, updated on
+ * `world:changed`) keep theirs in the save. The player may add up to 20 pins
+ * per map — Return here, Question, View, Passage — each with a plain-text note
+ * of at most 200 characters, and edit or remove them; limits are shown before
+ * anything could be lost. Shapes and words carry every meaning, never colour
+ * alone. Only the chosen (visited) map is drawn: nothing beyond its walls.
+ *
+ *   RB.known.note(s, map, id, { label, state, x, y })   record/update a detail
+ *   RB.known.entries(s, map)                          what the page lists
+ *   RB.known.addPin / editPin / removePin(s, map, …)  player pins
+ * State: s.discovery.known[map][id] = { t, state, label?, x, y };
+ *        s.discovery.pins[map] = [{ id, type, note, x, y, t }]. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.known = (function () {
+  'use strict';
+  const MAX_PINS = 20, NOTE_MAX = 200;
+  const TYPES = [
+    { id: 'return', en: 'Return here', jp: 'また {来|く}る' },
+    { id: 'question', en: 'Question', jp: '{疑問|ぎもん}' },
+    { id: 'view', en: 'View', jp: '{眺|なが}め' },
+    { id: 'passage', en: 'Passage', jp: '{抜|ぬ}け{道|みち}' },
+  ];
+  const STATE_WORD = { question: 'Unexplained', barred: 'Barred', seen: 'Noted', solved: 'Solved', opened: 'Opened', view: 'A view', unreadable: 'Unreadable' };
+  const D = (s) => RB.cases._D(s);
+  function note(s, map, id, o) {
+    if (!s || !map || !id) return null;
+    const d = D(s), m = d.known[map] || (d.known[map] = {});
+    const cur = m[id] || (m[id] = { t: Date.now() });
+    if (o) {
+      if (o.state) cur.state = String(o.state);
+      if (o.label) cur.label = typeof o.label === 'string' ? { en: o.label } : { en: o.label.en || '', jp: o.label.jp || null };
+      if (o.x != null) cur.x = +o.x;
+      if (o.y != null) cur.y = +o.y;
+    }
+    return cur;
+  }
+  // D1's field puzzles report changes; a detail recorded for that prop follows its new state
+  RB.bus.on('world:changed', (e) => {
+    const s = RB.game && RB.game.s;
+    if (!s || !e || !e.map) return;
+    const id = e.prop || e.id;
+    const rec = D(s).known[e.map];
+    if (rec && rec[id]) { if (e.state) rec[id].state = String(e.state); }
+    else if (e.label) note(s, e.map, id, e);
+  });
+  // authored details for a map, as known now; then recorded ones
+  function entries(s, map) {
+    const out = [];
+    for (const d of RB.content.knownDetails || []) {
+      if (d.map !== map || !RB.state.test(s, d.show)) continue;
+      const st = d.states.find((x) => !x.if || RB.state.test(s, x.if)) || d.states[d.states.length - 1];
+      out.push({ id: d.id, kind: d.kind, x: d.x, y: d.y, state: st.state, label: st.label, authored: true });
+    }
+    const rec = D(s).known[map] || {};
+    for (const id in rec) {
+      if (out.some((e) => e.id === id)) continue;
+      const r = rec[id];
+      if (!r.label) continue; // a state without words is not shown
+      out.push({ id, kind: r.kind || 'mechanism', x: r.x, y: r.y, state: r.state || 'seen', label: r.label, authored: false });
+    }
+    return out;
+  }
+  // ---- pins -------------------------------------------------------------------------------------------------
+  const pins = (s, map) => { const d = D(s); const L = d.pins[map]; return Array.isArray(L) ? L : []; };
+  function check(s, map, o) {
+    const m = RB.content.maps[map];
+    if (!m) return 'unknown map';
+    if (!TYPES.some((t) => t.id === o.type)) return 'unknown type';
+    return null;
+  }
+  function addPin(s, map, o) {
+    const L = pins(s, map);
+    if (L.length >= MAX_PINS) return { ok: false, reason: 'full' };
+    const bad = check(s, map, o);
+    if (bad) return { ok: false, reason: bad };
+    const c = RB.cases.clean(o.note, NOTE_MAX);
+    const pin = { id: 'p' + Date.now().toString(36) + L.length, type: o.type, note: c.text, x: Math.round(+o.x || 0), y: Math.round(+o.y || 0), t: Date.now() };
+    D(s).pins[map] = L.concat([pin]);
+    return { ok: true, pin, cut: c.cut };
+  }
+  function editPin(s, map, id, o) {
+    const p = pins(s, map).find((q) => q.id === id);
+    if (!p) return { ok: false, reason: 'missing' };
+    if (o.type && TYPES.some((t) => t.id === o.type)) p.type = o.type;
+    let cut = false;
+    if (o.note != null) { const c = RB.cases.clean(o.note, NOTE_MAX); p.note = c.text; cut = c.cut; }
+    if (o.x != null) p.x = Math.round(+o.x);
+    if (o.y != null) p.y = Math.round(+o.y);
+    return { ok: true, pin: p, cut };
+  }
+  function removePin(s, map, id) {
+    const L = pins(s, map), i = L.findIndex((q) => q.id === id);
+    if (i < 0) return false;
+    L.splice(i, 1);
+    return true;
+  }
+  // older saves: pins and notes keep their shape; unknown maps are kept, never deleted
+  function migrate(st) {
+    const d = st.discovery;
+    if (!d) return;
+    if (!d.known || typeof d.known !== 'object' || Array.isArray(d.known)) d.known = {};
+    if (!d.pins || typeof d.pins !== 'object' || Array.isArray(d.pins)) d.pins = {};
+    for (const m in d.pins) if (!Array.isArray(d.pins[m])) delete d.pins[m];
+  }
+  if (RB.save && RB.save.addMigration) RB.save.addMigration(migrate);
+  return { note, entries, pins, addPin, editPin, removePin, migrate, TYPES, STATE_WORD, MAX_PINS, NOTE_MAX };
+})();
+
+RB.ui.known = (function () {
+  'use strict';
+  const esc = RB.util.esc;
+  const I = (n) => RB.ui.folio.icon(n);
+  const KN = RB.known;
+  const V = { map: null, form: null, status: '', focus: null };
+  // shapes (SVG, in a 20×20 box): the meaning is also written beside each
+  const INK = '#261f15';
+  const SHAPE = {
+    question: '<circle cx="10" cy="10" r="8" fill="#f7f0de" stroke="' + INK + '" stroke-width="2"/><text x="10" y="14.5" text-anchor="middle" font-size="12" font-weight="700" fill="' + INK + '" font-family="Georgia, serif">?</text>',
+    barred: '<rect x="2" y="2" width="16" height="16" fill="#f7f0de" stroke="' + INK + '" stroke-width="2"/><path d="M2 10 H18" stroke="' + INK + '" stroke-width="3"/>',
+    seen: '<path d="M10 1 L19 10 L10 19 L1 10 Z" fill="#f7f0de" stroke="' + INK + '" stroke-width="2"/>',
+    solved: '<circle cx="10" cy="10" r="8" fill="#f7f0de" stroke="' + INK + '" stroke-width="2"/><path d="M5.5 10.5 L8.5 13.5 L14.5 6.5" fill="none" stroke="' + INK + '" stroke-width="2.4"/>',
+    opened: '<rect x="2" y="2" width="16" height="16" fill="#f7f0de" stroke="' + INK + '" stroke-width="2" stroke-dasharray="3 2"/><path d="M5 10 H15 M11 6 L15 10 L11 14" fill="none" stroke="' + INK + '" stroke-width="2"/>',
+    view: '<path d="M1 10 Q10 1 19 10 Q10 19 1 10 Z" fill="#f7f0de" stroke="' + INK + '" stroke-width="2"/><circle cx="10" cy="10" r="3" fill="' + INK + '"/>',
+    unreadable: '<rect x="3" y="2" width="14" height="16" fill="#f7f0de" stroke="' + INK + '" stroke-width="2"/><path d="M6 7 H14 M6 11 H12 M6 15 H13" stroke="' + INK + '" stroke-width="1.5" stroke-dasharray="2 2"/>',
+  };
+  const PIN = {
+    return: '<path d="M10 1 L18 8 V19 H2 V8 Z" fill="#fff4c8" stroke="' + INK + '" stroke-width="2"/><rect x="8" y="12" width="4" height="7" fill="' + INK + '"/>',
+    question: '<rect x="2" y="2" width="16" height="16" rx="4" fill="#fff4c8" stroke="' + INK + '" stroke-width="2"/><text x="10" y="14.5" text-anchor="middle" font-size="12" font-weight="700" fill="' + INK + '" font-family="Georgia, serif">?</text>',
+    view: '<path d="M10 2 L19 18 H1 Z" fill="#fff4c8" stroke="' + INK + '" stroke-width="2"/><circle cx="10" cy="13" r="2.5" fill="' + INK + '"/>',
+    passage: '<rect x="1" y="4" width="18" height="12" fill="#fff4c8" stroke="' + INK + '" stroke-width="2"/><path d="M4 10 H16 M7 7 L4 10 L7 13 M13 7 L16 10 L13 13" fill="none" stroke="' + INK + '" stroke-width="1.8"/>',
+  };
+  const sym = (inner, label) => '<svg viewBox="0 0 20 20" role="img" aria-label="' + esc(label) + '">' + inner + '</svg>';
+  const typeOf = (id) => KN.TYPES.find((t) => t.id === id) || KN.TYPES[0];
+  const mapName = (id) => { const m = RB.content.maps[id]; return m && m.name ? m.name.en : id; };
+
+  // the diagram: the map's own tiles, coarse (open ground, walls and solid things, water), with the marks
+  function diagram(s, map, list, pinsL, form) {
+    let m;
+    try { m = RB.maps.compile(map); } catch (e) { return ''; }
+    const k = 10, W = m.w * k, H = m.h * k;
+    let b = '<rect width="' + W + '" height="' + H + '" fill="#efe3c6"/>';
+    for (let y = 0; y < m.h; y++) {
+      let x = 0;
+      while (x < m.w) {
+        const t = m.tiles[y * m.w + x], blk = RB.maps.blockedStatic(m, x, y);
+        const cls = t && t.water ? 'w' : blk ? 'b' : null;
+        let x2 = x + 1;
+        while (x2 < m.w) { const t2 = m.tiles[y * m.w + x2], b2 = RB.maps.blockedStatic(m, x2, y); if ((t2 && t2.water ? 'w' : b2 ? 'b' : null) !== cls) break; x2++; }
+        if (cls) b += '<rect x="' + x * k + '" y="' + y * k + '" width="' + (x2 - x) * k + '" height="' + k + '" fill="' + (cls === 'w' ? '#a9c4cf' : '#9d8b66') + '"/>';
+        x = x2;
+      }
+    }
+    // ways out (open now)
+    for (const e of m.exits) { if (e.if && !RB.state.test(s, e.if)) continue; b += '<rect x="' + e.x * k + '" y="' + e.y * k + '" width="' + (e.w || 1) * k + '" height="' + (e.h || 1) * k + '" fill="none" stroke="#1f5a92" stroke-width="2"/>'; }
+    // a mark: the shape (a 20-unit box) centred on the tile, and its number beside it
+    const put = (x, y, inner, n) => '<g transform="translate(' + (x * k - 5) + ',' + (y * k - 5) + ')">' + inner + (n != null ? '<text x="22" y="9" font-size="10" font-weight="700" fill="' + INK + '" stroke="#efe3c6" stroke-width="3" paint-order="stroke" font-family="Georgia, serif">' + n + '</text>' : '') + '</g>';
+    list.forEach((e, i) => { if (e.x != null) b += put(e.x, e.y, SHAPE[e.state] || SHAPE.seen, i + 1); });
+    pinsL.forEach((p, i) => { b += put(p.x, p.y, PIN[p.type] || PIN.return, 'P' + (i + 1)); });
+    if (form) b += '<g transform="translate(' + (form.x * k - 7) + ',' + (form.y * k - 7) + ')"><rect width="24" height="24" fill="none" stroke="#a83e27" stroke-width="3" stroke-dasharray="4 3"/></g>';
+    if (s.map === map) {
+      const px = s.x != null ? s.x : 0, py = s.y != null ? s.y : 0;
+      b += '<path d="M' + (px * k + 5) + ' ' + (py * k - 2) + ' l6 10 h-12 z" fill="#a83e27" stroke="' + INK + '" stroke-width="1.5"/>';
+    }
+    return '<svg class="kd-svg" viewBox="0 0 ' + W + ' ' + H + '" role="img" tabindex="0" aria-label="' + esc('Diagram of ' + mapName(map) + ': ' + list.length + ' known details and ' + pinsL.length + ' pins, listed below.' + (s.map === map ? ' The red triangle is where you are.' : '')) + '">' + b + '</svg>';
+  }
+  function listBlock(list) {
+    if (!list.length) return '<p class="muted">Nothing noted here yet. Details appear once you have found them: a barred door, a mechanism, an inscription, a shortcut.</p>';
+    return '<ol class="kd-list">' + list.map((e, i) => '<li><span class="kd-sym">' + sym(SHAPE[e.state] || SHAPE.seen, KN.STATE_WORD[e.state] || e.state) + '</span><div><div class="kd-state">' + (i + 1) + ' · ' + esc(KN.STATE_WORD[e.state] || e.state) + '</div><div class="t">' + esc(e.label.en) + '</div></div></li>').join('') + '</ol>';
+  }
+  function pinBlock(s, map, pinsL) {
+    const full = pinsL.length >= KN.MAX_PINS;
+    let h = '<h4 class="kd-h">' + I('here') + ' Your pins <span class="kd-limit' + (full ? ' full' : '') + '">' + pinsL.length + ' of ' + KN.MAX_PINS + ' on this map</span></h4>';
+    h += pinsL.length ? '<ol class="kd-list">' + pinsL.map((p, i) => '<li><span class="kd-sym">' + sym(PIN[p.type] || PIN.return, typeOf(p.type).en) + '</span><div><div class="kd-state">P' + (i + 1) + ' · ' + esc(typeOf(p.type).en) + '</div><div class="t kd-note">' + (p.note ? esc(p.note) : '<span class="muted">(no note)</span>') + '</div></div>' +
+      '<div class="cs-acts"><button class="pbtn small" data-k="edit" data-pin="' + esc(p.id) + '">' + I('note') + '<span>Edit</span></button><button class="pbtn small danger" data-k="remove" data-pin="' + esc(p.id) + '">' + I('trash') + '<span>Remove</span></button></div></li>').join('') + '</ol>' : '<p class="muted small">No pins on this map.</p>';
+    if (V.form && V.form.map === map) h += formBlock(s, map);
+    else h += '<div class="cs-acts"><button class="pbtn" data-k="new"' + (full ? ' disabled aria-describedby="kd-full"' : '') + '>' + I('here') + '<span>Add a pin</span></button></div>' +
+      (full ? '<p class="note-slip warn" id="kd-full">This map already has ' + KN.MAX_PINS + ' pins, the most it can keep. Remove one to add another; nothing is replaced on its own.</p>' : '');
+    return h;
+  }
+  function formBlock(s, map) {
+    const f = V.form, n = RB.cases.graphemes(f.note).length;
+    return '<div class="kd-pinform" role="group" aria-label="' + (f.id ? 'Edit pin' : 'New pin') + '"><fieldset><legend>Kind of pin</legend>' +
+      KN.TYPES.map((t) => '<label class="kd-type"><input type="radio" name="kd-type" value="' + t.id + '"' + (f.type === t.id ? ' checked' : '') + '><span class="kd-sym" aria-hidden="true" style="width:1.4em;height:1.4em;display:inline-block">' + sym(PIN[t.id], t.en) + '</span>' + esc(t.en) + '</label>').join('') + '</fieldset>' +
+      '<p class="small">Position: ' + (f.x + ', ' + f.y) + (s.map === map && f.x === s.x && f.y === s.y ? ' (where you stand)' : '') + '. Tap the diagram to move it, or nudge: ' +
+      '<button class="pbtn small" data-k="mv" data-d="-1,0" aria-label="Move the pin west">←</button><button class="pbtn small" data-k="mv" data-d="0,-1" aria-label="Move the pin north">↑</button><button class="pbtn small" data-k="mv" data-d="0,1" aria-label="Move the pin south">↓</button><button class="pbtn small" data-k="mv" data-d="1,0" aria-label="Move the pin east">→</button></p>' +
+      '<label for="kd-note">Note (optional)</label><textarea id="kd-note" data-k="note" rows="2" spellcheck="false">' + esc(f.note) + '</textarea>' +
+      '<div class="cs-note-foot"><span class="cs-count' + (n > KN.NOTE_MAX ? ' over' : '') + '" aria-live="polite">' + n + ' / ' + KN.NOTE_MAX + (n > KN.NOTE_MAX ? ' — only the first ' + KN.NOTE_MAX + ' characters will be kept' : '') + '</span>' +
+      '<span><button class="pbtn small primary" data-k="save">' + I('save') + '<span>' + (f.id ? 'Save pin' : 'Place pin') + '</span></button> <button class="pbtn small" data-k="cancel"><span>Cancel</span></button></span></div>' +
+      '<p class="muted small">Plain words, just for you. Up to ' + KN.MAX_PINS + ' pins on each map.</p></div>';
+  }
+  function maps(s) {
+    const L = Object.keys(s.visited || {}).filter((id) => RB.content.maps[id]);
+    if (s.map && RB.content.maps[s.map] && !L.includes(s.map)) L.unshift(s.map);
+    return L;
+  }
+  function render(A, B, two, api) {
+    const s = api.s;
+    const L = maps(s);
+    // the page opens on the map you are on; a map chosen from the list stays while you stay put
+    if (V.here !== s.map) { V.here = s.map; V.map = null; V.form = null; }
+    if (!V.map || !L.includes(V.map)) V.map = s.map && RB.content.maps[s.map] ? s.map : L[0];
+    const map = V.map;
+    if (!map) { A.innerHTML = '<p class="muted">No map yet.</p>'; return; }
+    const list = KN.entries(s, map), pinsL = KN.pins(s, map);
+    const sel = '<label class="small" for="kd-map">Map</label> <select id="kd-map" data-k="map">' + L.map((id) => '<option value="' + esc(id) + '"' + (id === map ? ' selected' : '') + '>' + esc(mapName(id)) + (id === s.map ? ' (here)' : '') + '</option>').join('') + '</select>';
+    const head = '<h3>' + I('here') + ' ' + esc(mapName(map)) + '</h3><div class="kd-maps">' + sel + '</div>';
+    const dia = '<div class="kd-map">' + diagram(s, map, list, pinsL, V.form && V.form.map === map ? V.form : null) + '</div><p class="muted small">The shapes: ? unexplained · barred · ◇ noted · ✓ solved · dashed arrow opened · eye a view; pins are pale: a house (return here), ? in a square (question), a triangle (view), arrows (passage). Blue outlines are ways out.</p>';
+    const details = '<h4 class="kd-h">' + I('look') + ' Known details <span class="count">' + list.length + '</span></h4>' + listBlock(list);
+    const status = V.status ? '<p class="sr" role="status">' + esc(V.status) + '</p>' : '';
+    if (two) { A.innerHTML = head + dia; B.innerHTML = details + pinBlock(s, map, pinsL) + status; }
+    else A.innerHTML = head + dia + details + pinBlock(s, map, pinsL) + status;
+    const root = two ? [A, B] : [A];
+    for (const el of root) {
+      el.onclick = (e) => click(e, s, api);
+      el.oninput = (e) => {
+        const t = e.target.closest('[data-k="note"]');
+        if (!t || !V.form) return;
+        V.form.note = t.value;
+        const n = RB.cases.graphemes(t.value).length, cnt = t.parentNode.querySelector('.cs-count');
+        if (cnt) { cnt.textContent = n + ' / ' + KN.NOTE_MAX + (n > KN.NOTE_MAX ? ' — only the first ' + KN.NOTE_MAX + ' characters will be kept' : ''); cnt.classList.toggle('over', n > KN.NOTE_MAX); }
+      };
+      el.onchange = (e) => {
+        const m = e.target.closest('[data-k="map"]');
+        if (m) { V.map = m.value; V.form = null; V.focus = '#kd-map'; api.render(); return; }
+        const r = e.target.closest('input[name="kd-type"]');
+        if (r && V.form) V.form.type = r.value;
+      };
+    }
+    if (V.focus) { const f = V.focus; V.focus = null; requestAnimationFrame(() => { const el = (two ? B.querySelector(f) : null) || A.querySelector(f); if (el) el.focus({ preventScroll: true }); }); }
+  }
+  function click(e, s, api) {
+    const svg = e.target.closest('svg.kd-svg');
+    if (svg && V.form && V.form.map === V.map) {
+      const r = svg.getBoundingClientRect(), vb = svg.viewBox.baseVal;
+      V.form.x = Math.max(0, Math.min(vb.width / 10 - 1, Math.floor((e.clientX - r.left) / r.width * vb.width / 10)));
+      V.form.y = Math.max(0, Math.min(vb.height / 10 - 1, Math.floor((e.clientY - r.top) / r.height * vb.height / 10)));
+      api.render(); return;
+    }
+    const b = e.target.closest('[data-k]');
+    if (!b || b.disabled || b.tagName === 'SELECT' || b.tagName === 'TEXTAREA') return;
+    const map = V.map;
+    switch (b.dataset.k) {
+      case 'new': {
+        const here = s.map === map;
+        const m = RB.maps.compile(map);
+        V.form = { map, id: null, type: 'return', note: '', x: here ? s.x : Math.floor(m.w / 2), y: here ? s.y : Math.floor(m.h / 2) };
+        V.focus = 'input[name="kd-type"][value="return"]'; api.render(); return;
+      }
+      case 'edit': {
+        const p = KN.pins(s, map).find((q) => q.id === b.dataset.pin);
+        if (p) V.form = { map, id: p.id, type: p.type, note: p.note, x: p.x, y: p.y };
+        V.focus = '#kd-note'; api.render(); return;
+      }
+      case 'remove': {
+        const p = KN.pins(s, map).find((q) => q.id === b.dataset.pin);
+        RB.ui.confirm('Remove this pin' + (p && p.note ? ' ("' + p.note.slice(0, 40) + (p.note.length > 40 ? '…' : '') + '")' : '') + '? Its note goes with it.', ['Remove', 'Keep it']).then((r) => {
+          if (r === 0) { KN.removePin(s, map, b.dataset.pin); V.status = 'Pin removed.'; }
+          V.focus = '[data-k="new"]'; api.render();
+        });
+        return;
+      }
+      case 'mv': {
+        if (!V.form) return;
+        const [dx, dy] = b.dataset.d.split(',').map(Number), m = RB.maps.compile(map);
+        V.form.x = Math.max(0, Math.min(m.w - 1, V.form.x + dx)); V.form.y = Math.max(0, Math.min(m.h - 1, V.form.y + dy));
+        V.focus = '[data-k="mv"][data-d="' + b.dataset.d + '"]'; api.render(); return;
+      }
+      case 'cancel': V.form = null; V.focus = '[data-k="new"]'; api.render(); return;
+      case 'save': {
+        const f = V.form;
+        const res = f.id ? KN.editPin(s, map, f.id, f) : KN.addPin(s, map, f);
+        V.status = res.ok ? (f.id ? 'Pin saved.' : 'Pin placed.') + (res.cut ? ' The note was shortened to ' + KN.NOTE_MAX + ' characters.' : '') : res.reason === 'full' ? 'This map is full.' : 'Not saved.';
+        if (res.ok) { V.form = null; RB.audio && RB.audio.sfx('confirm'); }
+        V.focus = '[data-k="new"]'; api.render(); return;
+      }
+    }
+  }
+  RB.ui.menu.addPage('map', { id: 'known', en: 'Known details', icon: 'here', render });
+  return { render, V };
 })();
 
 
@@ -45052,6 +45351,11 @@ RB.lex.add(RB.lex.parseTable(`
 面|めん|n|I|side, face (of a flat thing)
 景色|けしき|n|E|view, scenery
 向こう側|むこうがわ|n|I|the other side
+燕|つばめ|n|I|swallow (the bird)
+糸巻き|いとまき|n|I|spool, bobbin
+手助け|てだすけ|n|I|help, assistance
+表す|あらわす|v5s|I|to express, to show
+大窯|おおがま|n|A|great kiln
 `), 'cases');
 
 
@@ -45271,20 +45575,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
     diagram: 'harbour' });
   clue('parcel.oldsite', { case: 'parcel', kind: 'place', title: T('The old footing on the east beach', '{東|ひがし} の {浜|はま} の {土台|どだい}'),
     source: { en: 'The east beach, at the water\'s edge', map: 'sg.harbor' },
-    obs: { en: 'A low stone footing where a small hut stood, and a post with an empty iron bracket. Faded letters: "East Landing". No one works here.' },
-    known: { map: 'sg.harbor', id: 'cs_footing', label: T('Old stone footing: "East Landing" (no one works here now)', '{古|ふる}い {土台|どだい}'), state: 'seen', x: 53, y: 31 } });
+    obs: { en: 'A low stone footing where a small hut stood, and a post with an empty iron bracket. Faded letters: "East Landing". No one works here.' } });
   clue('parcel.crest', { case: 'parcel', kind: 'object', title: T('The crest on a door up the hill', '{丘|おか} の {上|うえ} の {紋|もん}'),
     source: { en: 'The door plate of a small house on the hill', map: 'sg.harbor' },
-    obs: { en: 'A bell with a wavy line beneath it. No notch.' }, diagram: 'bell_wave',
-    known: { map: 'sg.harbor', id: 'cs_seto', label: T('A house with a bell crest', '{紋|もん} の ある {家|いえ}'), state: 'seen', x: 51, y: 4 } });
+    obs: { en: 'A bell with a wavy line beneath it. No notch.' }, diagram: 'bell_wave' });
   clue('parcel.seto_memory', { case: 'parcel', kind: 'speaker', sure: false, title: T('What Seto remembers', 'セト の {話|はなし}'),
     source: { en: 'Seto, outside her house on the hill', who: 'cs_seto', map: 'sg.harbor' },
     jp: 'うち の {祖父|そふ} は 、 {浜|はま} の ほう で {工房|こうぼう} を して いた …… と {思|おも}う の 。 わたし は {小|ちい}さくて 、 よく {覚|おぼ}えて いない けど 。',
     en: '"My grandfather kept a workshop somewhere down by the shore… I think. I was little; I don\'t really remember."' });
   clue('parcel.bench', { case: 'parcel', kind: 'object', title: T('The notched workbench on the quay', '{刻|きざ}み{目|め} の {作業台|さぎょうだい}'),
     source: { en: 'The repair bench by the ferry, on the stone quay', map: 'sg.harbor' },
-    obs: { en: 'Notches cut at even spacing along its front edge, for measuring rope. Older than its keeper\'s teacher, she says.' },
-    known: { map: 'sg.harbor', id: 'cs_bench', label: T('Repair bench by the ferry (notched edge)', '{作業台|さぎょうだい}'), state: 'seen', x: 38, y: 27 } });
+    obs: { en: 'Notches cut at even spacing along its front edge, for measuring rope. Older than its keeper\'s teacher, she says.' } });
   clue('parcel.bell', { case: 'parcel', kind: 'object', title: T('The call bell by the bench', '{呼|よ}び{鈴|りん}'),
     source: { en: 'A post beside the repair bench, on the stone quay', map: 'sg.harbor' },
     obs: { en: 'The ferry\'s call bell. Stamped on its shoulder: a small bell with one notch in its right shoulder.' }, diagram: 'bell_notch' });
@@ -45503,10 +45804,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
     tree: (x, y, s) => '<path d="M' + x + ' ' + y + ' L' + x + ' ' + (y - 26 * s) + ' M' + x + ' ' + (y - 14 * s) + ' l' + -7 * s + ' ' + -7 * s + ' M' + x + ' ' + (y - 18 * s) + ' l' + 6 * s + ' ' + -8 * s + ' M' + x + ' ' + (y - 8 * s) + ' l' + 5 * s + ' ' + -4 * s + '" stroke="#4a4038" stroke-width="' + 2.2 * s + '" fill="none" stroke-linecap="round"/>',
   };
   const scene = (list, faint, mirror) => {
-    let b = '<rect width="200" height="110" fill="' + (faint ? '#f2ecdc' : '#f7f0de') + '"/><path d="M0 84 Q50 78 100 82 T200 80 L200 110 L0 110 Z" fill="#e6ecf2"/>';
+    let b = '<rect width="200" height="110" fill="' + (faint ? '#f2ecdc' : '#f7f0de') + '"/><path d="M0 90 Q50 84 100 88 T200 86 L200 110 L0 110 Z" fill="#e6ecf2"/>';
     for (const it of list) {
-      const x = 100 + (mirror ? -1 : 1) * it.deg * 1.25, s = Math.max(0.7, Math.min(1.6, 5 / it.f));
-      b += '<g opacity="' + (faint ? 0.55 : 1) + '">' + icon[it.k](x, 88, s) + '</g>';
+      const x = 100 + (mirror ? -1 : 1) * it.deg * 1.25, s = 1.4 * Math.max(0.75, Math.min(1.5, 5 / it.f));
+      b += '<g opacity="' + (faint ? 0.55 : 1) + '">' + icon[it.k](x, 96, s) + '</g>';
     }
     return b;
   };
@@ -45914,6 +46215,93 @@ narr: {絵|え} の {中|なか} の {灯|あか}り と 、 {本物|ほんも�
 `, 'cases/30_view');
 
 
+/* ==== src/content/cases/40_refine.js ==== */
+/* One refined choice/interpretation sequence per region (addendum §14.8) and
+ * the four keepsakes bound to them (§17.2). The original challenges, their
+ * correct forms and their profile tiers are unchanged; what is added is
+ * clearer feedback when the player steps away, a visible or inspectable
+ * consequence where one was missing, Known Details entries whose state
+ * follows the real flags (src/content/cases/60_known.js), and a short local
+ * acknowledgement after the real milestone. Older saves past a milestone
+ * claim the keepsake once from the same person or place. Audit and details:
+ * docs/addendum/cases.md.
+ *   Reedwake — the Mill Road candidates: audited only (worker D1 owns the
+ *     Mill Road repair and its scenes).
+ *   Saltglass — Shiori's tide table (sg.c_tidetable): the tide board outside
+ *     gets its times chalked in; Shell Button from Shiori.
+ *   Cinder Orchard — the kiln firing order (co.c_kiln): Clay Swallow from Nobu.
+ *   Snowbell — Hoshino's observing log (sb.c_log): Star Rosette from a box of
+ *     paper stars Hoshino leaves out for whoever read the log.
+ *   Lanternfall — the three linked gate plates (lf.ch_gate1–3): Thread Spool
+ *     from Tokuji, who keeps the gates, after the bell rings.
+ *   The Still Archive — the charter at the water gate (sa.charter): feedback. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function () {
+  'use strict';
+  RB.hooks = RB.hooks || {};
+  // !hook cs_keepsake <id>: record a keepsake from a refined sequence (once)
+  RB.hooks.cs_keepsake = async (args) => {
+    const k = RB.content.keepsakes[args[0]];
+    RB.discovery.keepsake(RB.game.s, args[0], k ? k.source : null);
+  };
+  // the tide board's chalked times (drawn over the board once Shiori has read the table with you)
+  const P = RB.props.P;
+  P.cs_tidechalk = { id: 'cs_tidechalk', w: 2, h: 1, block: false, draw(c, x, y) {
+    c.fillStyle = '#eef6f6';
+    for (let i = 0; i < 3; i++) c.fillRect(x + 6 + i * 4, y - 5, 2, 3);
+    for (let i = 0; i < 4; i++) c.fillRect(x + 7 + i * 4, y + 1, 2, 3);
+    c.fillRect(x + 20, y - 4, 5, 1); c.fillRect(x + 20, y + 2, 5, 1);
+  } };
+})();
+
+RB.script.add(`
+@scene cs.tidepost
+!if !sg_tide_read -> old
+narr: {外|そと} の {潮見|しおみ} の {板|いた} 。 {空白|くうはく} だった ところ に 、 シオリ の {字|じ} で {時刻|じこく} が {書|か}き{込|こ}まれて いる 。 || The tide board outside. Where the times were blank, Shiori has chalked them in.
+narr: 「 {満潮|まんちょう} {午前|ごぜん} {九時|くじ} ・ {干潮|かんちょう} {午後|ごご} {三時|さんじ} {十五分|じゅうごふん} 。 {岬|みさき} の {道|みち} は 、 {干潮|かんちょう} の {前後|ぜんご} {一時間|いちじかん} 」 。 || "High tide 9:00 a.m. — low tide 3:15 p.m. The causeway: an hour either side of low tide."
+!end
+:old
+!call sg.tidepost
+
+@scene cs.shell_shiori
+shiori: {潮|しお} の {表|ひょう} 、 {正|ただ}しく {読|よ}んで くれました ね 。 {時間|じかん} が かかって も 、 {正|ただ}しければ それ で いい の です 。 || You read the tide table right. However long it takes, right is what matters.
+shiori: {棚|たな} の {瓶|びん} から 、 {貝|かい} の ボタン を {一|ひと}つ どうぞ 。 {浜|はま} の {貝|かい} で {作|つく}った もの です 。 {潮|しお} を {読|よ}めた {人|ひと} に は 、 {渡|わた}す こと に して います 。 || Take a shell button from the jar on the shelf. I cut them from shells on the beach. I give one to everyone who has read the tide.
+?(comp=mio) comp[smile]: {大|おお}きさ の {順|じゅん} に {並|なら}べた {貝殻|かいがら} の 、 {隣|となり} の {瓶|びん} です ね 。 || The jar next to the shells I sorted by size.
+!hook cs_keepsake shell_button
+narr: {貝|かい} の ボタン を もらった 。 || You receive a shell button.
+
+@scene cs.swallow_nobu
+co_nobu: {大窯|おおがま} の {札|ふだ} を 、 {順番|じゅんばん} {通|どお}り に {読|よ}んだ の は お{前|まえ} さん だって な 。 || So you're the one who read the Great Kiln's tiles in the right order.
+co_nobu: トモエ の {字|じ} を 、 {誰|だれ} か が ちゃんと {読|よ}んだ 。 それ で {十分|じゅうぶん} だ 。 || Someone read Tomoe's hand properly. That's enough.
+co_nobu: ほら 、 その {週|しゅう} に うち の {窯|かま} で {焼|や}いた {燕|つばめ} だ 。 {持|も}って いけ 。 {割|わ}る な よ 。 || Here. A swallow I fired in my own kiln that week. Take it. Don't break it.
+!hook cs_keepsake clay_swallow
+narr: {土|つち} の {燕|つばめ} を もらった 。 || You receive a clay swallow.
+
+@scene cs.rosette_box
+narr: {低|ひく}い {棚|たな} に {小|ちい}さな {箱|はこ} 。 {折|お}り{紙|がみ} の {星|ほし} が たくさん {入|はい}って いる 。 || A small box on a low shelf, full of folded paper stars.
+narr: {蓋|ふた} に ホシノ の {字|じ} 。 「 {日誌|にっし} を {読|よ}んで くれた {人|ひと} へ 。 {一|ひと}つ {持|も}って いって ください 。 アカリ が {子|こ}ども の {頃|ころ} に {折|お}った もの です 。 」 || On the lid, in Hoshino's hand: "To whoever read the log. Please take one. Akari folded these as a child."
+!if keepsake.star_rosette -> have
+!choice
+* {一|ひと}つ もらう || Take one -> take
+* そのまま に する || Leave them -> end
+:take
+!hook cs_keepsake star_rosette
+narr: {星|ほし} の {飾|かざ}り を {一|ひと}つ もらった 。 || You take one of the paper stars.
+?(comp=ren) comp: {星|ほし} の {形|かたち} は {方角|ほうがく} を {教|おし}えて くれません が …… {持|も}って いる と 、 {迷|まよ}わない {気|き} が します 。 || A star-shape won't tell you which way is which… but holding one, I feel less lost.
+!end
+:have
+narr: {星|ほし} は まだ たくさん ある 。 {一|ひと}つ で {十分|じゅうぶん} だ 。 || There are still plenty of stars. One is enough.
+
+@scene cs.spool_tokuji
+lf_tokuji: {塔|とう} の {札|ふだ} を {三枚|さんまい} とも 、 {読|よ}んだ {通|とお}り に {動|うご}かした そう だ な 。 || I hear you worked all three of the tower's plates exactly as they read.
+lf_tokuji: {縄|なわ}ばしご を {繕|つくろ}った {糸|いと} の {余|あま}り だ 。 {小|ちい}さく {巻|ま}いて おいた 。 {持|も}って いけ 。 || Thread left over from mending the rope ladder. I wound it small. Take it.
+lf_tokuji: {古|ふる}い もの も 、 {丁寧|ていねい} に {繕|つくろ}えば まだ {使|つか}える 。 {水門|すいもん} も 、 {町|まち} も な 。 || Old things still work if you mend them carefully. Gates. Towns.
+!hook cs_keepsake thread_spool
+narr: {糸巻|いとま}き を もらった 。 || You receive a thread spool.
+`, 'cases/40_refine');
+
+
 /* ==== src/content/cases/50_react.js ==== */
 /* Companion reactions to the two cases (addendum §7.5, §9; contract §7):
  * data for RB.company.addReactions, event 'case:<id>', facts.method = how it
@@ -45965,6 +46353,81 @@ var RB = (globalThis.RB = globalThis.RB || {});
   if (RB.company && RB.company.addReactions) RB.company.addReactions(R);
   RB.content.caseReactions = R;
 })();
+
+
+/* ==== src/content/cases/60_known.js ==== */
+/* Known Details (addendum §18.2): authored annotations on the local map
+ * page (Map › Known details, src/ui/61_known.js). Each appears only once
+ * the player has discovered the fact it records (`show`), describes what is
+ * known rather than what to do, and takes its state from the game's own
+ * flags (`states`, first match), so a solved mechanism never keeps its
+ * question mark. Kinds draw as shapes; every state also has words.
+ * The shortcut entries are the audit of the existing shortcuts (§18.3):
+ * each is labelled from the side it is found, and "opened" once it is. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C) {
+  'use strict';
+  const T = (en, jp) => ({ en, jp: jp || null });
+  const K = (C.knownDetails = C.knownDetails || []);
+  const add = (d) => K.push(d);
+
+  // ---- Case A ------------------------------------------------------------------------------------------------
+  add({ map: 'sg.harbor', id: 'cs_footing', x: 53, y: 31, kind: 'case', show: 'clue.parcel.oldsite',
+    states: [{ state: 'seen', label: T('Old stone footing, "East Landing": no one works here now', '{東|ひがし} の {渡|わた}し{場|ば} の {跡|あと}') }] });
+  add({ map: 'sg.harbor', id: 'cs_seto', x: 51, y: 4, kind: 'case', show: 'clue.parcel.crest|clue.parcel.seto_memory',
+    states: [{ state: 'seen', label: T('Seto\'s house: a bell crest with a wave beneath', 'セト の {家|いえ}') }] });
+  add({ map: 'sg.harbor', id: 'cs_bench', x: 38, y: 27, kind: 'case', show: 'clue.parcel.bench|clue.parcel.bell',
+    states: [{ if: 'case.parcel=done', state: 'solved', label: T('Hama\'s repair bench: the parcel delivered; its label pinned up', 'ハマ の {作業台|さぎょうだい}') },
+      { state: 'seen', label: T('Repair bench by the ferry: a notched edge and a call bell', '{渡|わた}し の そば の {作業台|さぎょうだい}') }] });
+  add({ map: 'sg.office', id: 'cs_record', x: 9, y: 6, kind: 'inscription', show: 'clue.parcel.record',
+    states: [{ state: 'seen', label: T('Ledgers: "The Landings, and How They Changed"', '{渡|わた}し{場|ば} の {記録|きろく}') }] });
+  // ---- Case B ------------------------------------------------------------------------------------------------
+  add({ map: 'sg.lighthouse', id: 'cs_window', x: 6, y: 2, kind: 'case', show: 'clue.view.sketch',
+    states: [{ if: 'case.view=done', state: 'solved', label: T('The window where the sketch hung, back to front', '{絵|え} が {貼|は}って あった {窓|まど}') },
+      { state: 'seen', label: T('A sketch that matches no view, pinned in the window', '{窓|まど} の {絵|え}') }] });
+  const V = C.caseView;
+  for (const pid in V.points) {
+    const P = V.points[pid], name = P.name.en[0].toUpperCase() + P.name.en.slice(1);
+    add({ map: V.map, id: 'cs_view_' + pid, x: Math.floor(P.x), y: Math.floor(P.y), kind: 'view', show: 'clue.view.' + pid,
+      states: (pid === V.target ? [{ if: 'case.view=done', state: 'solved', label: T(name + ': where the sketch was drawn, ' + P.facing.en) }] : [])
+        .concat([{ state: 'view', label: T(name + ': a view, ' + P.facing.en) }]) });
+  }
+  // ---- the refined sequences ------------------------------------------------------------------------------------
+  add({ map: 'sg.harbor', id: 'sg_tideboard', x: 10, y: 25, kind: 'inscription', show: 'seen.sg.tidepost|seen.cs.tidepost|sg_tide_read',
+    states: [{ if: 'sg_tide_read', state: 'solved', label: T('Tide board: the times are chalked in') }, { state: 'question', label: T('Tide board: the times are blank; "ask inside"') }] });
+  add({ map: 'co.kiln', id: 'co_kilnwall', x: 11, y: 3, kind: 'mechanism', show: 'seen.co.kiln_wall|co_kiln_open',
+    states: [{ if: 'co_kiln_open', state: 'solved', label: T('Kiln wall: the three tiles in place, the upper vent open') }, { state: 'question', label: T('Kiln wall: slots for three instruction tiles, and two vents') }] });
+  add({ map: 'sb.obs_charts', id: 'sb_drawers', x: 7, y: 2, kind: 'mechanism', show: 'seen.sb.charts_cabinet|seen.sb.charts_log|sb_log_solved',
+    states: [{ if: 'sb_log_solved', state: 'solved', label: T('Direction drawers: the south-east one opened') }, { state: 'question', label: T('A wall of drawers labelled by direction, frozen shut') }] });
+  add({ map: 'lf.tower_upper', id: 'lf_gates_a', x: 17, y: 9, kind: 'mechanism', show: 'seen.lf.plate_a|seen.lf.wheel_lower|seen.lf.wheel_upper',
+    states: [{ if: 'lf_gate_a', state: 'solved', label: T('Lower gate open: the water drained to the next level') },
+      { if: 'lf_up_closed', state: 'question', label: T('Upper gate (west wheel) closed; lower gate (east wheel) still shut') },
+      { state: 'question', label: T('Two gate wheels, upper (west) and lower (east), linked by the bronze plate') }] });
+  add({ map: 'lf.tower_mid', id: 'lf_gates_b', x: 20, y: 8, kind: 'mechanism', show: 'seen.lf.plate_b|seen.lf.east_door|seen.lf.west_plug',
+    states: [{ if: 'lf_gate_b', state: 'solved', label: T('Gate works drained, and the east door shut again') },
+      { if: 'lf_mid_drained', state: 'question', label: T('Gate works drained; the east door still open') },
+      { state: 'question', label: T('East door and west plug, linked by the second plate') }] });
+  add({ map: 'lf.tower_low', id: 'lf_gates_c', x: 16, y: 3, kind: 'mechanism', show: 'seen.lf.plate_c|seen.lf.south_plug|seen.lf.north_plug',
+    states: [{ if: 'lf_gate_c', state: 'solved', label: T('Both plugs out: the walkway is clear') },
+      { if: 'lf_south_pulled', state: 'question', label: T('South plug out; the north plug still holds the water') },
+      { state: 'question', label: T('South and north plugs; the third plate gives their order') }] });
+  add({ map: 'sa.conduits', id: 'sa_charter', x: 4, y: 13, kind: 'mechanism', show: 'seen.sa.charter_gate|sa_promise_done',
+    states: [{ if: 'sa_promise_done', state: 'opened', label: T('Water gate open; Kasane\'s note has peeled away') }, { state: 'barred', label: T('Water gate: opens for whoever reads the charter rightly') }] });
+  // ---- existing shortcuts, labelled (the audit) --------------------------------------------------------------------
+  const shortcut = (map, id, x, y, show, flag, barred, opened) => add({ map, id, x, y, kind: 'passage', show: show + '|' + flag,
+    states: [{ if: flag, state: 'opened', label: T(opened) }, { state: 'barred', label: T(barred) }] });
+  shortcut('sg.da_entry', 'sg_da_door', 0, 9, 'seen.sg.da_bolted', 'sg_da_shortcut', 'A door bolted from the other side', 'Shortcut: this door to the Reading Room is unbolted');
+  shortcut('sg.da_reading', 'sg_da_stair', 8, 13, 'seen.sg.da_unbolt', 'sg_da_shortcut', 'A bolted stair door', 'Shortcut: this stair back to the Receiving Hall is unbolted');
+  shortcut('co.terraces', 'co_fence', 4, 0, 'seen.co.shortcut_locked', 'co_shortcut', 'A fence gate, barred from the far side', 'Shortcut: the gate up to the Old Workshop Row is open');
+  shortcut('co.oldworks', 'co_barred', 2, 25, 'seen.co.shortcut_open', 'co_shortcut', 'A barred gate down to the Terraces', 'Shortcut: the gate down to the Terraces is open');
+  shortcut('sb.obs_path', 'sb_hut', 20, 4, 'seen.sb.service_door_out', 'sb_shortcut', 'A stone hut door, barred from inside', 'Shortcut: the service stair to the Upper Gallery');
+  shortcut('sb.obs_gallery', 'sb_service', 19, 11, 'seen.sb.service_bolt', 'sb_shortcut', 'A bolted service door', 'Shortcut: the service stair down to the Star Stair');
+  shortcut('lf.tower_top', 'lf_trap', 5, 3, 'seen.lf.trapdoor', 'lf_shortcut', 'A trapdoor fastened from below', 'Shortcut: the rope ladder down to the gate works');
+  shortcut('lf.tower_mid', 'lf_ladder', 3, 3, 'seen.lf.ladder_mid', 'lf_shortcut', 'A rope ladder, hooked up out of reach', 'Shortcut: the rope ladder up to the loft');
+  shortcut('sa.reading', 'sa_door', 26, 9, 'seen.sa.shortcut_locked', 'sa_shortcut', 'A door locked from the other side', 'Shortcut: this door to the Keeper\'s Study is open');
+  shortcut('sa.study', 'sa_study_door', 0, 6, 'seen.sa.shortcut_open', 'sa_shortcut', 'A door to the Reading Room', 'Shortcut: this door back to the Reading Room is open');
+})(RB.content);
 
 
 /* ==== src/content/ch1/00_lex.js ==== */
@@ -50997,6 +51460,7 @@ shiori: {岬|みさき} の {道|みち} は {逃|に}げません 。 {潮|し�
 !end
 :later
 shiori: {表|ひょう} は 、 いつでも ここ に あります 。 || The table's always here.
+shiori: {急|いそ}がなくて いい です よ 。 {知|し}らない {言葉|ことば} は 、 {言葉|ことば} の {手助|てだす}け で {読|よ}み{方|かた} と {意味|いみ} が {分|わ}かります 。 || There's no hurry. If a word is new, word help will give you its reading and meaning.
 
 @scene sg.tide_wait
 !fade out
@@ -56019,6 +56483,7 @@ narr: {札|ふだ} が {足|た}りない 。 {嵌|は}める {穴|あな} が �
 !end
 :later
 narr: {札|ふだ} を {手|て} に した まま 、 {少|すこ}し {考|かんが}える こと に した 。 || You decide to think a little longer, tiles in hand.
+narr: {札|ふだ} の {字|じ} そのもの に 、 {順番|じゅんばん} を {表|あらわ}す {言葉|ことば} が ある 。 {壁|かべ} の {札|ふだ} は 、 {戻|もど}って くる まで {動|うご}かない 。 || The tiles' own words carry their order. The wall will wait until you come back.
 
 @scene co.kiln_wall_done
 narr: {上|うえ} の {窓|まど} が {開|ひら}いて いる 。 {窯|かま} の {中|なか} の {空気|くうき} は 、 {静|しず}か に {上|うえ} へ {流|なが}れて いる 。 {風|かぜ} の ない {夜|よる} の よう に 。 || The upper vent stands open. The air in the kiln flows quietly upward, as on a windless night.
@@ -60840,13 +61305,16 @@ narr: {南東|なんとう} の {引|ひ}き{出|だ}し は 、 もう {空|か
 !if sb_log_solved -> done
 narr: {開|ひら}いた まま の {観測|かんそく} {日誌|にっし} 。 {七年前|しちねんまえ} の {冬|ふゆ} の {頁|ページ} だ 。 {三|みっ}つ の {時刻|じこく} の {記録|きろく} が 、 {丁寧|ていねい} に {並|なら}んで いる 。 || The observing log, lying open at a winter page from seven years ago. Entries for three different times are set down carefully one after another.
 !challenge sb.c_log
-!if var._res=0 -> end
+!if var._res=0 -> later
 !set sb_log_solved
 !set sb_archive_found
 !sfx discover
 narr: {南東|なんとう} の {引|ひ}き{出|だ}し の {霜|しも} が 、 ぱりん と {割|わ}れた 。 {中|なか} に は 、 {格子|こうし} の {鍵|かぎ} と 、 {折|お}り{畳|たた}んだ {紙|かみ} が {一枚|いちまい} 。 || The frost on the southeast drawer cracks with a snap. Inside: the key to the grille, and a single folded sheet of paper.
 !note sb_archive_light
 !call sb.charts_sketch
+!end
+:later
+narr: {日誌|にっし} は {机|つくえ} の {上|うえ} に {開|ひら}いた まま 。 {時刻|じこく} ごと に {方角|ほうがく} が {書|か}いて ある 。 {引|ひ}き{出|だ}し に も 、 {方角|ほうがく} の {札|ふだ} 。 || The log stays open on the desk. Each time has a direction beside it; the drawers are labelled with directions too.
 !end
 :done
 narr: {日誌|にっし} の {頁|ページ} 。 「 {南東|なんとう} 、 {高|たか}さ {五度|ごど} 。 {白|しろ}い {光|ひかり} 。 {動|うご}かず 。 {星|ほし} に {非|あら}ず 。 」 || The log page: "Southeast, altitude five degrees. White light. Does not move. Not a star."
@@ -68626,6 +69094,7 @@ narr: カサネ の {貼|は}り{紙|がみ} が 、 {水|みず} を {吸|す}�
 !end
 :later
 narr: {水|みず} は まだ 、 {橋|はし} を {覆|おお}って いる 。 || Water still covers the bridge.
+narr: {札|ふだ} と {貼|は}り{紙|がみ} と {壁|かべ} の {定|さだ}め は 、 いつ でも {読|よ}み{比|くら}べられる 。 || The plaque, the note and the charter on the wall will still be here to compare.
 !end
 :done
 narr: {定|さだ}め の {札|ふだ} 。 「 {求|もと}められれば 、 {返|かえ}す 」 。 {下|した} の {貼|は}り{紙|がみ} は 、 もう ない 。 || The charter plaque: "If asked, return." The note beneath it is gone.
@@ -70848,6 +71317,21 @@ var RB = (globalThis.RB = globalThis.RB || {});
     { p: 'cs_frame', x: 11, y: 36, scene: 'cs.view_frame', if: 'cs_view_framed' },
   ]);
   wrap('sb.obs_path', 'bench', 9, 36, 'sb.path_bench', 'cs.view_seat');
+
+  // ---- the refined sequences and their keepsakes (src/content/cases/40_refine.js) ------------------------------
+  // a guarded talk option in front of a person's list: it runs once (the keepsake is then recorded),
+  // never in front of a main-story conversation (the guards name the chapter's stages)
+  const firstTalk = (map, id, opt) => { const m = M(map); const n = m && (m.npcs || []).find((q) => q.id === id); if (!n) return false; n.talk = [opt].concat(typeof n.talk === 'string' ? [{ scene: n.talk }] : n.talk || []); return true; };
+  // Saltglass: the tide board outside shows the times once the table has been read; Shiori's shell button
+  wrap('sg.harbor', 'sg_tideboard', 10, 25, 'sg.tidepost', 'cs.tidepost');
+  props('sg.harbor', [{ p: 'cs_tidechalk', x: 10, y: 25, if: 'sg_tide_read' }]);
+  firstTalk('sg.tidehut', 'shiori', { if: 'sg_tide_low&!keepsake.shell_button&!quest.sg_main=5&!quest.sg_main=6', scene: 'cs.shell_shiori' });
+  // Cinder Orchard: Nobu, after the chapter (the kiln's steps read)
+  firstTalk('co.pottery', 'co_nobu', { if: 'co_kiln_open&ch3_done&!keepsake.clay_swallow', scene: 'cs.swallow_nobu' });
+  // Snowbell: a box of paper stars in Hoshino's house, once the log has been read (he need not be home)
+  props('sb.hoshino', [{ p: 'bookpile', x: 5, y: 2, scene: 'cs.rosette_box', if: 'sb_log_solved' }]);
+  // Lanternfall: Tokuji at the sluice shore, after the bell rings
+  firstTalk('lf.sluice', 'lf_tokuji', { if: 'lf_gate_c&lf_bell_rung&!keepsake.thread_spool', scene: 'cs.spool_tokuji' });
 
   RB.script.add(`
 @scene cs.view_shrine
