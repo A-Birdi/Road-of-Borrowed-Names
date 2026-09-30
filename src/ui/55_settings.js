@@ -43,6 +43,8 @@ RB.ui.settings = (function () {
   }
 
   function render() {
+    // a change can finish saving after the page was closed: then there is nothing to redraw
+    if (!lay || !fr) return;
     const two = RB.ui.folio.wide();
     const leaves = fr.box.querySelectorAll('.leaf');
     const keep = leaves.length ? [leaves[0].scrollTop, leaves[1] ? leaves[1].scrollTop : 0] : [0, 0];

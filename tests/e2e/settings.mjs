@@ -50,6 +50,20 @@ const after = await p.evaluate(() => ({
   scale: getComputedStyle(document.documentElement).getPropertyValue('--text-scale').trim(), speed: RB.game.settings.textSpeed,
 }));
 assert(after.hc && after.rm && after.ja && after.speed === 'instant' && Math.abs(parseFloat(after.scale) - 1.3) < 0.01, 'settings persisted across reload: ' + JSON.stringify(after));
+// closing Settings while a change is still being saved leaves nothing to redraw (no error)
+await p.evaluate(async () => {
+  RB.ui.settings.open();
+  await new Promise((r) => setTimeout(r, 200));
+  const box = document.querySelector('.folio-settings');
+  const g = box && [...box.querySelectorAll('[data-grp]')].find((b) => b.dataset.grp === 'display');
+  if (g) { g.click(); await new Promise((r) => setTimeout(r, 150)); }
+  const sw = document.querySelector('.folio-settings [data-sw="reducedMotion"]');
+  sw.checked = !sw.checked;
+  sw.dispatchEvent(new Event('change', { bubbles: true }));
+  RB.ui.settings.close();
+  await new Promise((r) => setTimeout(r, 400));
+});
+assert(!(await p.evaluate(() => RB.ui.settings.isOpen())), 'Settings closed while a switch was saving');
 assert(!errors.length, 'no page errors ' + errors.join('; '));
 await b.close(); srv.close();
 console.log(fail ? fail + ' failed' : 'all ok');

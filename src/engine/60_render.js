@@ -324,8 +324,10 @@ RB.render = (function () {
     const still = RB.game.reducedMotion();
     const bob = isFoe && !still ? Math.round(Math.sin(t / 300 + a.x) * 3) : 0;
     const art = RB.sprites.getArt && RB.sprites.getArt(a.look, a.dir, actorFrame(a, t, isFoe, still));
-    if (art) c.drawImage(art, fx - RB.sprites.ANCHOR.x, fy - RB.sprites.ANCHOR.y + bob);
-    else c.drawImage(RB.sprites.get(a.look, a.dir, a.frame || 0), fx - 16, fy - 46 + bob, 32, 48);
+    const dy = a.dy || 0; // a knee dip during a field action (src/ui/57_weave.js)
+    if (art) c.drawImage(art, fx - RB.sprites.ANCHOR.x, fy - RB.sprites.ANCHOR.y + bob + dy);
+    else c.drawImage(RB.sprites.get(a.look, a.dir, a.frame || 0), fx - 16, fy - 46 + bob + dy, 32, 48);
+    if (a.overlay) a.overlay(c, fx, fy + dy, t); // the raised hand and brush of a field action
     if (alpha < 1) c.globalAlpha = 1;
   }
   // Top of an adult's head above its tile's top edge, in art px (for bubbles and markers).
@@ -489,6 +491,8 @@ RB.render = (function () {
     }
     // the followed quest's next step (src/engine/62_questmarks.js): over the lighting, so it reads at night
     if (RB.questMarks) RB.questMarks.draw(c, { ax, ay, bw, bh, TS, ART, HEAD: HEAD_TOP }, t);
+    // field weaving (src/ui/57_weave.js): the chosen target's frame, support marks, the action's effect
+    if (RB.weaveFx) RB.weaveFx.draw(c, { ax, ay, bw, bh, TS, ART, HEAD: HEAD_TOP }, t);
     if (RB.company && RB.company.drawIndicator) RB.company.drawIndicator(c, { ax, ay, TS, ART, HEAD: HEAD_TOP }, t); // a topic waits (58_companion.js)
   }
 
