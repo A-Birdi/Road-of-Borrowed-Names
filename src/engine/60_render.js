@@ -489,6 +489,7 @@ RB.render = (function () {
     }
     // the followed quest's next step (src/engine/62_questmarks.js): over the lighting, so it reads at night
     if (RB.questMarks) RB.questMarks.draw(c, { ax, ay, bw, bh, TS, ART, HEAD: HEAD_TOP }, t);
+    if (RB.company && RB.company.drawIndicator) RB.company.drawIndicator(c, { ax, ay, TS, ART, HEAD: HEAD_TOP }, t); // a topic waits (58_companion.js)
   }
 
   // Effective ambience: a map may define alt: [{if, ambient, night}] for story states.

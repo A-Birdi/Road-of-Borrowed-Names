@@ -1,0 +1,53 @@
+/* ---- Company › Companion and Shared memories (src/ui/53_company_pages.js) ------------------ */
+.co-id { display: flex; gap: 0.9em; align-items: center; margin: 0.2em 0 0.5em; }
+.co-id.lasting { padding: 0.45em; border: 1px solid var(--paper-edge); border-radius: var(--r-2); box-shadow: inset 0 0 0 3px var(--paper), inset 0 0 0 4px var(--ribbon); } /* the highest stage: a quiet border, never a score */
+.co-portrait { width: 96px; height: 96px; flex: none; image-rendering: pixelated; border: 1px solid var(--paper-edge); border-radius: var(--r-1); background: var(--paper-2); }
+.co-name { min-width: 0; overflow-wrap: anywhere; }
+.co-name h3 { margin: 0; border: 0; }
+.co-name p { margin: 0.15em 0; }
+.co-bond .k { font-size: 0.78em; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; margin-right: 0.3em; }
+.co-bond b { color: var(--ink); }
+.co-bond .jp { color: var(--ink-2); }
+.co-bondline { margin: 0.1em 0 0.6em; color: var(--ink-2); }
+.co-bondline .en { display: block; font-size: 0.95em; }
+.co-thought { border-left: 3px solid var(--ribbon); background: rgba(255, 255, 255, 0.35); padding: 0.2em 0.7em 0.5em; margin: 0.4em 0 0.8em; }
+.co-thought h4 { margin-top: 0.4em !important; }
+.co-said .jp { font-size: 1.05em; line-height: 1.9; }
+.co-said .en { color: var(--ink-2); font-size: 0.95em; }
+.co-said.first { margin-top: 0.6em; }
+.co-know { margin: 0.2em 0 0.6em 1.1em; padding: 0; color: var(--ink-2); }
+.co-know li { margin: 0.25em 0; }
+.co-q .kind { font-size: 0.78em; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; margin-left: 0.4em; }
+.co-pending { display: flex; gap: 0.5em; align-items: flex-start; padding: 0.45em 0.6em; margin: 0.3em 0 0.6em; border: 1px dashed var(--paper-edge); border-radius: var(--r-2); background: rgba(255, 255, 255, 0.4); }
+.co-pending svg { width: 1.3em; height: 1.3em; flex: none; margin-top: 0.1em; color: var(--ribbon-deep); }
+.co-acts { list-style: none; margin: 0.2em 0 0.6em; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.co-acts li { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3em 0.7em; }
+.co-acts .pbtn { min-height: var(--tap); justify-content: flex-start; text-align: left; }
+.co-acts .pbtn[aria-expanded="true"] { background: var(--paper-2); box-shadow: inset 0 -3px 0 var(--ribbon); }
+.co-detail { border-left: 3px solid var(--ribbon); margin: 0 0 0.8em; padding: 0.1em 0 0.3em 0.8em; }
+.co-back { margin-bottom: 0.4em; }
+.co-topics .entry, .co-support .entry { grid-template-columns: 1.6em minmax(0, 1fr) auto; }
+/* shared memories */
+.co-filters { display: flex; flex-wrap: wrap; gap: 6px; margin: 0.2em 0 0.7em; }
+.chip { display: inline-flex; align-items: center; gap: 0.35em; min-height: var(--tap); padding: 0 0.8em; font: inherit; font-size: 0.92em; color: var(--ink-2); background: var(--paper); border: 1px solid var(--paper-edge); border-radius: 999px; cursor: pointer; }
+.chip .n { font-size: 0.85em; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.chip[aria-pressed="true"] { color: var(--ink); background: var(--paper-2); border-color: var(--ribbon-deep); box-shadow: inset 0 -3px 0 var(--ribbon); font-weight: 600; }
+.chip[aria-pressed="true"]::before { content: "✓"; font-weight: 700; } /* selected also by shape, not colour alone */
+.chip:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.co-mem .row-acts { margin: 0.4em 0 0; }
+.co-mem.current { box-shadow: inset 3px 0 0 var(--ribbon); }
+.co-reply { margin: 0.35em 0 0; padding: 0.2em 0 0.2em 0.7em; border-left: 2px solid var(--rule); }
+.co-reply .who, .co-transcript .who { display: block; font-size: 0.78em; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+.co-petname { font-weight: 400; color: var(--ink-2); }
+.co-pinned { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3em 0.6em; margin: 0 0 0.6em; }
+.co-pinned svg { width: 1.2em; height: 1.2em; color: var(--ribbon-deep); }
+.co-recall .kind { font-size: 0.8em; color: var(--ink-3); }
+.co-rtitle { font-weight: 600; margin: 0.3em 0 0.1em; }
+.co-transcript { list-style: none; margin: 0.4em 0 0.6em; padding: 0; }
+.co-transcript li { padding: 0.35em 0 0.45em; border-bottom: 1px dotted var(--rule); }
+.co-transcript li.narr .en { font-style: italic; }
+.co-transcript .en { color: var(--ink-2); font-size: 0.95em; }
+/* the HUD's topic button (only while a topic waits; hidden with the rest of the HUD in scenes) */
+.hud .co-topic[hidden] { display: none; }
+body:not([data-mode="world"]) .hud .co-topic { display: none; }
+@media (max-width: 420px) { .hud .co-topic .l { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } }

@@ -277,6 +277,8 @@ RB.game = (function () {
   }
   function afterScene() {
     if (!G.playing) return;
+    // the story has settled (chapter ends, quests done): src/engine/58_companion.js follows milestones here
+    RB.bus.emit('story:settled', { mode: mode() });
     if (mode() === 'world') {
       // conditional exits/props may have changed
       RB.world.unstick(RB.world.W.player);
@@ -332,6 +334,8 @@ RB.game = (function () {
     const s = G.s;
     const c = s.comp;
     if (!c) return;
+    // a waiting topic or a rest setting first (src/engine/58_companion.js); otherwise banter
+    const chat = { handled: false }; RB.bus.emit('companion:chat', chat); if (chat.handled) return;
     const list = (RB.content.banter || []).filter((b) => b.comp === c && (!b.map || b.map === s.map || (b.map.endsWith('*') && s.map.startsWith(b.map.slice(0, -1)))) && (!b.if || RB.state.test(s, b.if)));
     const unseen = list.find((b) => !s.seen[b.scene]);
     const pick = unseen || list[Math.floor(Math.random() * list.length)];
