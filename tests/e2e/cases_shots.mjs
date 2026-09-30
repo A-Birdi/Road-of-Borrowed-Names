@@ -163,7 +163,9 @@ const b = await launch();
     window.PICK = ['^Take it along', '^Carry on', 'Close the', 'May I borrow'];
     await RBDrive.run(['cs.parcel_shelf', 'cs.parcel_record', 'cs.view_window']);
     RB.test.disable();
-    if (RB.ui.help && RB.ui.help.hide) RB.ui.help.hide(true); // a word card pinned open by a tap during the scenes
+    // the place name shown on arriving at the lighthouse fades by itself: wait for it
+    const t0 = Date.now();
+    while (document.querySelector('.place') && Date.now() - t0 < 9000) await new Promise((r) => setTimeout(r, 100));
     RB.ui.menu.open('cases');
   });
   await p.waitForTimeout(400);

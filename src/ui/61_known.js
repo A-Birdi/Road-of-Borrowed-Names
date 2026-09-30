@@ -161,10 +161,21 @@ RB.ui.known = (function () {
     // beside it; on a large map the marks grow with it so they stay readable
     // when the whole map is fitted to a narrow screen
     const u = Math.max(1, Math.round((Math.max(W, H) / 320) * 4) / 4);
-    // (the number goes on the left when the right-hand side would leave the map)
+    // The number goes to the right of its shape; to the left when that would
+    // leave the map or cover another mark; below when both sides are taken.
+    const marks = list.filter((e) => e.x != null).map((e) => [e.x, e.y]).concat(pinsL.map((p) => [p.x, p.y]));
+    const clear = (x0, x1, y0, y1, self) => x0 >= 0 && x1 <= W && !marks.some(([mx, my]) => (mx !== self[0] || my !== self[1]) &&
+      x0 < mx * k + 5 + 10 * u && x1 > mx * k + 5 - 10 * u && y0 < my * k + 5 + 10 * u && y1 > my * k + 5 - 10 * u);
     const put = (x, y, inner, n) => {
-      const left = n != null && x * k + 5 + (12 + 8 * String(n).length) * u > W;
-      return '<g transform="translate(' + (x * k + 5) + ',' + (y * k + 5) + ') scale(' + u + ') translate(-10,-10)">' + inner + (n != null ? '<text x="' + (left ? -2 : 22) + '" y="9"' + (left ? ' text-anchor="end"' : '') + ' font-size="10" font-weight="700" fill="' + INK + '" stroke="#efe3c6" stroke-width="3" paint-order="stroke" font-family="Georgia, serif">' + n + '</text>' : '') + '</g>';
+      let lab = '';
+      if (n != null) {
+        const cx = x * k + 5, cy = y * k + 5, w = 8 * String(n).length * u;
+        const side = clear(cx + 12 * u, cx + 12 * u + w, cy - 9 * u, cy + u, [x, y]) ? 'r'
+          : clear(cx - 12 * u - w, cx - 12 * u, cy - 9 * u, cy + u, [x, y]) ? 'l' : 'b';
+        const at = side === 'r' ? 'x="22" y="9"' : side === 'l' ? 'x="-2" y="9" text-anchor="end"' : 'x="10" y="31" text-anchor="middle"';
+        lab = '<text ' + at + ' font-size="10" font-weight="700" fill="' + INK + '" stroke="#efe3c6" stroke-width="3" paint-order="stroke" font-family="Georgia, serif">' + n + '</text>';
+      }
+      return '<g transform="translate(' + (x * k + 5) + ',' + (y * k + 5) + ') scale(' + u + ') translate(-10,-10)">' + inner + lab + '</g>';
     };
     list.forEach((e, i) => { if (e.x != null) b += put(e.x, e.y, SHAPE[e.state] || SHAPE.seen, i + 1); });
     pinsL.forEach((p, i) => { b += put(p.x, p.y, PIN[p.type] || PIN.return, 'P' + (i + 1)); });
