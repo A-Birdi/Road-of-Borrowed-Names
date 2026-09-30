@@ -63,8 +63,19 @@ ren: {私|わたし} は ここ で {灯|あか}り を {見|み}て います �
 
 @scene rw.mr_nao
 !faceplayer nao
+!if !rw_mr_obs_reeds -> tell
+nao: {葦|あし} 、 {見|み}て きた な 。 どう {思|おも}った ？ || You've been looking at the reeds. What did you make of them?
+!choice
+* {下|した} に {細|ほそ}い {道|みち} が ある 。 {茎|くき} は {曲|ま}がってる だけ || There's a track underneath. The stalks are only bent aside. -> read
+* ただ の {葦|あし} に {見|み}えた || They looked like plain reeds to me. -> tell
+:read
+nao[smirk]: よく {見|み}てる 。 {獣道|けものみち} だ 。 {毎晩|まいばん} {何|なに} か が {通|とお}ってる 。 {折|お}らず に {分|わ}ければ 、 {人|ひと} も {通|とお}れる 。 || Sharp eyes. It's an animal track; something uses it every night. Part the reeds without breaking them and people can use it too.
+nao: {崖|がけ} の {方|ほう} は 、 {声|こえ} に {押|お}し{戻|もど}される 。 どっち に する ？ || The narrows push you back with voices. Which way do you want?
+!goto choose
+:tell
 nao: {先|さき} に {見|み}て きた 。 {狭|せま}い {崖|がけ} の {間|あいだ} で 、 {声|こえ} が {全部|ぜんぶ} {跳|は}ね{返|かえ}って くる 。 {通|とお}ろう と する と 、 {押|お}し{戻|もど}される 。 || I went ahead. In the narrows between the cliffs, every voice bounces back at you. Try to go through and you get pushed back.
 nao: {別|べつ} の {道|みち} も ある 。 {小屋|こや} の {裏|うら} 、 {背|せ} の {高|たか}い {葦|あし} の {向|む}こう 。 {獣道|けものみち} が {上|うえ} まで {続|つづ}いてる 。 || There's another way. Behind the shed, past the tall reeds — an animal track that goes all the way up.
+:choose
 !choice
 * {葦|あし} を {分|わ}けて もらう || Ask Nao to clear the reeds. -> clear
 * {崖|がけ} の {道|みち} を {行|い}く || I'll try the narrows. -> narrows
@@ -82,16 +93,41 @@ nao[smirk]: {正面|しょうめん} から か 。 {嫌|きら}い じゃ な�
 nao: {上|うえ} で {何|なに} か あったら 、 {走|はし}って {逃|に}げろ 。 {逃|に}げる の は {負|ま}け じゃ ない 。 {配達人|はいたつにん} の {常識|じょうしき} だ 。 || If anything happens up there, run. Running isn't losing. That's just courier sense.
 
 @scene rw.mr_narrows
-!if rw_mr_suzu -> end
+!if rw_mr_suzu|rw_echo_done -> end
+!hook mr_heading
+!if var._mr_down=1 -> down
 narr: {崖|がけ} の {間|あいだ} に {入|はい}る と 、 {自分|じぶん} の {足音|あしおと} が {何重|なんじゅう} に も {返|かえ}って きた 。 {声|こえ} が {壁|かべ} の よう に {押|お}して くる 。 || As you step between the cliffs, your own footsteps come back many times over. The voices push against you like a wall.
 narr: 「 …… どこ ？ …… どこ ？ …… どこ ？ 」 || "…Where? …Where? …Where?"
 !move pc down 2
-narr: {押|お}し{戻|もど}された 。 {歌|うた} でも {歌|うた}えば 、 {違|ちが}う {響|ひび}き に なる だろう か 。 || You're pushed back. Maybe a song would change the echo.
+narr: {押|お}し{戻|もど}された 。 {声|こえ} は いつも 、 {最後|さいご} に {聞|き}こえた {音|おと} を {一|ひと}つ だけ {返|かえ}して くる 。 || You're pushed back. Each time, the voices throw back just one sound: the last one they caught.
+narr: {歌|うた} でも {歌|うた}えば 、 {違|ちが}う {響|ひび}き に なる だろう か 。 || Maybe a song would change the echo.
+!set rw_mr_obs_echo
+!end
+:down
+?(!rw_mr_down_seen) narr: {声|こえ} は {背中|せなか} で {響|ひび}く だけ で 、 {下|くだ}る {足|あし} を {止|と}めない 。 {水車|すいしゃ}{小屋|ごや} へ {向|む}かう {人|ひと} だけ を {押|お}し{返|かえ}す らしい 。 || The voices echo at your back, but they don't stop you going down. They only seem to push back whoever heads for the mill.
+!set rw_mr_down_seen
+
+@scene rw.mr_reeds
+!if rw_mr_nao -> end
+narr: {背|せ} の {高|たか}い {葦|あし} が 、 {壁|かべ} の よう に びっしり {生|は}えて いる 。 {押|お}して も {通|とお}れない 。 || Tall reeds grow packed together like a wall. Pushing gets you nowhere.
+narr: {根元|ねもと} に 、 {踏|ふ}み{固|かた}められた {細|ほそ}い {筋|すじ} が {一本|いっぽん} 、 {奥|おく} へ {続|つづ}いて いる 。 {茎|くき} は {折|お}れて いない 。 {横|よこ} に {曲|ま}がって いる だけ だ 。 || At their roots a thin, trodden line runs on into them. The stalks along it aren't broken, only bent aside.
+narr: {何|なに} か {小|ちい}さな もの が 、 {毎晩|まいばん} ここ を {通|とお}って いる の だろう 。 || Something small must go through here every night.
+!set rw_mr_obs_reeds
 
 @scene rw.mr_suzu_talk
 !faceplayer suzu
+!if !rw_mr_obs_echo -> intro
+suzu: {崖|がけ} に {入|はい}って みた の ？ {声|こえ} は どう だった ？ || You went into the narrows? What were the voices like?
+!choice
+* {最後|さいご} の {音|おと} を {一|ひと}つ ずつ {返|かえ}して くる || They throw back the last sound they caught, one at a time. -> read
+* ただ {押|お}し{返|かえ}された || They just pushed me back. -> intro
+:read
+suzu[laugh]: {一|ひと}つ ずつ ！ それ なら {話|はなし} は {早|はや}い 。 {二|ふた}つ {同時|どうじ} に {聞|き}かせれば いい の 。 {同|おな}じ {歌|うた} を {少|すこ}し ずらして 、 {輪唱|りんしょう} で 。 || One at a time! Then it's easy. We give it two at once: the same song, slightly staggered, as a round.
+!goto choose
+:intro
 suzu: この {崖|がけ} 、 いい {響|ひび}き ！ {劇場|げきじょう} に したい くらい 。 …… ただ 、 {客|きゃく} が {悪|わる}い 。 {同|おな}じ セリフ しか {言|い}わない 。 || These cliffs have wonderful acoustics! I'd love to make it a theatre. …Only, the audience is terrible. They only have one line.
 suzu: {繰|く}り{返|かえ}す {相手|あいて} に は 、 {輪唱|りんしょう} を ぶつける の 。 {同|おな}じ {歌|うた} を 、 {少|すこ}し ずらして 。 そう する と 、 どっち が どっち か わからなく なって 、 {黙|だま}る 。 || Against something that repeats, you throw a round at it. The same song, slightly staggered. It loses track of which is which and goes quiet.
+:choose
 !choice
 * {一緒|いっしょ} に {歌|うた}う || Sing with her. -> sing
 * {本当|ほんとう} に {効|き}く の ？ || Does that really work? -> ask
