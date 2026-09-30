@@ -302,6 +302,33 @@ for (const id in C.activities) {
 // intent texts
 for (const k in C.intentText) for (const lv in C.intentText[k]) for (const t of C.intentText[k][lv]) jcheck(t.jp, 'intentText ' + k + ' ' + lv);
 
+// ---- addendum registries: text kept outside scenes (keepsakes, cases and clues, puzzle
+// definitions, companion reactions, pets' meetings, the Pages We Keep, Known Details). Every
+// `jp` string (and a clue's language word `w`) is checked like a scene line.
+let regTexts = 0;
+{
+  const seen = new Set();
+  const walk = (o, where) => {
+    if (!o || typeof o !== 'object' || seen.has(o)) return;
+    seen.add(o);
+    for (const k of Object.keys(o)) {
+      const v = o[k];
+      if ((k === 'jp' || k === 'w') && typeof v === 'string') { regTexts++; jcheck(v, where); }
+      else if (v && typeof v === 'object') walk(v, where + '.' + k);
+    }
+  };
+  const FW = RB.fieldweave, P = RB.pets, PG = RB.pages;
+  const roots = {
+    keepsakes: C.keepsakes, cases: C.cases, clues: C.clues, caseReactions: C.caseReactions,
+    reactions: RB.company && RB.company.reactions, bondStages: RB.company && RB.company.STAGES,
+    puzzles: FW && FW.list().map((id) => FW.get(id)),
+    pets: P && { species: P.SPECIES, vignettes: P.vignettes, meeting: P.meeting },
+    pages: PG && { COMPS: PG.COMPS, PQ: PG.PQ, PROJECT: PG.PROJECT, REPLY: PG.REPLY, RET: PG.RET, MEMO_TITLE: PG.MEMO_TITLE, TOPICS: PG.TOPICS, MEM: PG.MEM, SHOW: PG.SHOW },
+    known: RB.known && { TYPES: RB.known.TYPES, STATE_WORD: RB.known.STATE_WORD },
+  };
+  for (const k in roots) walk(roots[k], k);
+}
+
 // dangling scene refs
 for (const [id, where] of sceneRefs) if (!C.scenes[id]) E(where + ': missing scene ' + id);
 // lexicon
@@ -313,7 +340,7 @@ const counts = {
   scenes: Object.keys(C.scenes).length, lines: Object.values(C.scenes).reduce((n, s) => n + s.cmds.filter((c) => c.op === 'say').length, 0),
   maps: Object.keys(C.maps).length, quests: Object.keys(C.quests).length, side: Object.values(C.quests).filter((q) => !q.main).length,
   enemies: Object.keys(C.enemies).length, challenges: Object.keys(C.challenges).length, drills: (C.drills || []).length,
-  activities: Object.keys(C.activities).length, lexicon: RB.lex.all().length, unknownTokens: unknownTok.size,
+  activities: Object.keys(C.activities).length, registryTexts: regTexts, lexicon: RB.lex.all().length, unknownTokens: unknownTok.size,
 };
 console.log('content:', JSON.stringify(counts));
 if (args.includes('--stats')) {
