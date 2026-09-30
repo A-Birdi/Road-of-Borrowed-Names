@@ -2697,6 +2697,19 @@ body.high-contrast .kc-pp { --pad-paper: #ffffff; --pad-ink: #000000; --pad-guid
 .kjc .kc-res .en, .kjc .kc-words .en { font-family: var(--ui-font); }
 .folio.lsheet.kjc > .folio-head { flex: none; }
 @media (max-width: 599px) { .folio.lsheet.kjc > .folio-head .meta { display: none; } .kjc .kc-res { gap: 0.5em; padding: 0.3em 0.45em; } .kjc .kc-rg { font-size: 1.45em; } }
+
+/* ==== src/styles/72_pages.css ==== */
+/* The Pages We Keep (src/content/pages/15_ui.js): the Journey page, its memento and the
+   small shared panel on Company › Companion. Icons are inline SVG with no size of their own. */
+.pages-page h3 .en, .pages-memento h4 .en, .pages-shared .en { font-weight: normal; }
+.pages-page p svg, .pages-shared svg { width: 1.1em; height: 1.1em; vertical-align: -0.2em; flex: none; }
+.pages-memento { margin-top: 0.4em; }
+.pages-memento h4 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.35em; margin: 0 0 0.3em; }
+.pages-memento h4 > svg { width: 1.15em; height: 1.15em; align-self: center; flex: none; color: var(--ink-2); }
+.pages-memento canvas { margin: 0.6em 0; }
+.pages-shared { margin-top: 0.8em; }
+.pages-shared canvas { margin: 0.3em 0; }
+.pages-shared .row-acts { margin-top: 0.4em; }
 </style>
 </head>
 <body>
@@ -69656,11 +69669,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const m = C.maps['rw.hall'];
     m.props = (m.props || []).concat([wallCard('nao', 7, 1), wallCard('ren', 2, 1)]);
     // offered automatically at most once each; afterwards they wait to be asked for
-    // (talk to your companion). Only after Tsuru has introduced the Atlas, and
-    // never straight after another of these conversations.
+    // (talk to your companion). The two older-save conversations need only the
+    // postgame (a save from before the Atlas may never have heard Tsuru's
+    // introduction); the Page I offer waits for the Atlas and never follows
+    // straight after another of these conversations.
     m.onEnter = (m.onEnter || []).concat([
-      { scene: 'pages.enter_retro', if: 'post&pages.retro&seen.rw.atlas_intro' },
-      { scene: 'pages.enter_unfinished', if: 'post&pages.unfinished&seen.rw.atlas_intro' },
+      { scene: 'pages.enter_retro', if: 'post&pages.retro' },
+      { scene: 'pages.enter_unfinished', if: 'post&pages.unfinished' },
       { scene: 'pages.enter_offer', if: 'post&pages.offer&seen.rw.atlas_intro&!pages.fresh' },
     ]);
   }

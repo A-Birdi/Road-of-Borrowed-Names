@@ -1,0 +1,11 @@
+/* The Pages We Keep (src/content/pages/15_ui.js): the Journey page, its memento and the
+   small shared panel on Company › Companion. Icons are inline SVG with no size of their own. */
+.pages-page h3 .en, .pages-memento h4 .en, .pages-shared .en { font-weight: normal; }
+.pages-page p svg, .pages-shared svg { width: 1.1em; height: 1.1em; vertical-align: -0.2em; flex: none; }
+.pages-memento { margin-top: 0.4em; }
+.pages-memento h4 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.35em; margin: 0 0 0.3em; }
+.pages-memento h4 > svg { width: 1.15em; height: 1.15em; align-self: center; flex: none; color: var(--ink-2); }
+.pages-memento canvas { margin: 0.6em 0; }
+.pages-shared { margin-top: 0.8em; }
+.pages-shared canvas { margin: 0.3em 0; }
+.pages-shared .row-acts { margin-top: 0.4em; }

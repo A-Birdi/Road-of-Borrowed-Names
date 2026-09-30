@@ -110,11 +110,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const m = C.maps['rw.hall'];
     m.props = (m.props || []).concat([wallCard('nao', 7, 1), wallCard('ren', 2, 1)]);
     // offered automatically at most once each; afterwards they wait to be asked for
-    // (talk to your companion). Only after Tsuru has introduced the Atlas, and
-    // never straight after another of these conversations.
+    // (talk to your companion). The two older-save conversations need only the
+    // postgame (a save from before the Atlas may never have heard Tsuru's
+    // introduction); the Page I offer waits for the Atlas and never follows
+    // straight after another of these conversations.
     m.onEnter = (m.onEnter || []).concat([
-      { scene: 'pages.enter_retro', if: 'post&pages.retro&seen.rw.atlas_intro' },
-      { scene: 'pages.enter_unfinished', if: 'post&pages.unfinished&seen.rw.atlas_intro' },
+      { scene: 'pages.enter_retro', if: 'post&pages.retro' },
+      { scene: 'pages.enter_unfinished', if: 'post&pages.unfinished' },
       { scene: 'pages.enter_offer', if: 'post&pages.offer&seen.rw.atlas_intro&!pages.fresh' },
     ]);
   }
