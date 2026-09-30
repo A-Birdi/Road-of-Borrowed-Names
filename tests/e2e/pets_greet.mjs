@@ -10,7 +10,7 @@
 // Usage: node tests/e2e/pets_greet.mjs [species,…]
 import fs from 'node:fs';
 import path from 'node:path';
-import { serve, launch, page, root } from './lib.mjs';
+import { serve, launch, page as openPage, root } from './lib.mjs';
 
 const args = process.argv.slice(2);
 const SPECIES = (args.find((a) => /^(cat|dog|bird|tanuki)(,|$)/.test(a)) || 'cat,dog,bird,tanuki').split(',');
@@ -21,9 +21,13 @@ const { srv, url } = await serve();
 const b = await launch();
 let pass = 0, fail = 0;
 const results = [];
+// contexts opened by a test are closed when it ends, passed or failed (a failed one must not keep its game running)
+const opened = [];
+const page = async (...a) => { const r = await openPage(...a); opened.push(r.ctx); return r; };
 async function test(name, fn) {
   try { await Promise.race([fn(), new Promise((_, rej) => setTimeout(() => rej(new Error('timed out after 240s')), 240000))]); pass++; results.push('PASS ' + name); console.log('PASS ' + name); }
   catch (e) { fail++; results.push('FAIL ' + name + ': ' + e.message); console.log('FAIL ' + name + ': ' + (e.stack || e.message)); }
+  finally { while (opened.length) await opened.pop().close().catch(() => {}); }
 }
 const assert = (c, m) => { if (!c) throw new Error(m); };
 const wait = (p, ms) => p.waitForTimeout(ms);
@@ -35,6 +39,9 @@ async function start(p, comp, sp) {
     await new Promise((r) => setTimeout(r, 250));
     for (let i = 0; i < 60 && RB.ui.dialogue.isOpen(); i++) { RB.ui.dialogue.advance(true); await new Promise((r) => setTimeout(r, 40)); }
     if (sp) { RB.pets.meet(RB.game.s, sp); RB.pets.select(RB.game.s, sp); }
+    // a settled campaign, as in play: the companion's verified milestones (setting out together) are
+    // recorded when a scene ends, so the synthetic start records them now, before the baseline
+    if (RB.company && RB.company.sync) RB.company.sync(RB.game.s, 'live');
   }, [comp, sp]);
   await wait(p, 400);
   // a few steps, so your companion walks behind you as in play (and the animal follows)
