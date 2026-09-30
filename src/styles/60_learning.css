@@ -720,6 +720,9 @@ body.high-contrast .kwcard { border-color: #000; }
 .combat-ui .clog .cl-en { font-weight: 700; }
 /* …left under the responses as a recap of the last exchange (not announced again) */
 .combat-ui .clog.recap { padding: 3px 12px 5px; font-size: 0.86em; line-height: 1.35; color: var(--ink-2); border-left-color: var(--ribbon); max-height: 6.4em; overflow-y: auto; overscroll-behavior: contain; }
+/* in little room the responses keep theirs: the recap gives way (it scrolls), and Step back is never covered */
+.combat-ui .clog.recap { flex: 0 1 auto; min-height: 2.6em; }
+.combat-ui .responses { min-height: calc(var(--tap, 44px) + 2.4em); }
 .combat-ui .clog.recap::before { content: "Last exchange"; display: block; font-size: 0.8em; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
 .combat-ui .clog.recap .cl-w .jline { font-size: 1.05em; line-height: 1.8; }
 /* the battle's presentation layer: the paper strip that carries a resolved word

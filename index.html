@@ -2528,6 +2528,9 @@ body.high-contrast .kwcard { border-color: #000; }
 .combat-ui .clog .cl-en { font-weight: 700; }
 /* …left under the responses as a recap of the last exchange (not announced again) */
 .combat-ui .clog.recap { padding: 3px 12px 5px; font-size: 0.86em; line-height: 1.35; color: var(--ink-2); border-left-color: var(--ribbon); max-height: 6.4em; overflow-y: auto; overscroll-behavior: contain; }
+/* in little room the responses keep theirs: the recap gives way (it scrolls), and Step back is never covered */
+.combat-ui .clog.recap { flex: 0 1 auto; min-height: 2.6em; }
+.combat-ui .responses { min-height: calc(var(--tap, 44px) + 2.4em); }
 .combat-ui .clog.recap::before { content: "Last exchange"; display: block; font-size: 0.8em; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
 .combat-ui .clog.recap .cl-w .jline { font-size: 1.05em; line-height: 1.8; }
 /* the battle's presentation layer: the paper strip that carries a resolved word
@@ -21046,7 +21049,8 @@ RB.pix = (function () {
     cc.set(c, v);
     return v;
   }
-  const h2 = (n) => (n < 16 ? '0' : '') + Math.max(0, Math.min(255, Math.round(n))).toString(16);
+  // round and clamp first, then pad (15.7 rounds to 16: "10", never "010")
+  const h2 = (n) => { const v = Math.max(0, Math.min(255, Math.round(n) || 0)); return (v < 16 ? '0' : '') + v.toString(16); };
   function hex(v, a) { return '#' + h2(v[0]) + h2(v[1]) + h2(v[2]) + (a != null && a < 255 ? h2(a) : ''); }
   function mix(a, b, t) {
     const A = rgba(a), B = rgba(b);
@@ -33589,6 +33593,12 @@ RB.test = (function () {
       if (!RB.script.isRunning() && RB.game.mode() === 'menu' && RB.ui.menu.isOpen()) {
         T.log.push({ t: 'folio', page: RB.ui.menu.current() });
         RB.ui.menu.close();
+      }
+      // "Weave a word on it…" chosen in an inspection menu opens the Weave sheet once
+      // the scene ends; the automated player looks at it and cancels
+      if (!RB.script.isRunning() && RB.game.mode() === 'weave' && RB.weave && RB.weave.isOpen()) {
+        T.log.push({ t: 'weave', targets: RB.weave.state().targets });
+        RB.weave.close();
       }
       await wait(25);
     }

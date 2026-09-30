@@ -23,7 +23,8 @@ RB.pix = (function () {
     cc.set(c, v);
     return v;
   }
-  const h2 = (n) => (n < 16 ? '0' : '') + Math.max(0, Math.min(255, Math.round(n))).toString(16);
+  // round and clamp first, then pad (15.7 rounds to 16: "10", never "010")
+  const h2 = (n) => { const v = Math.max(0, Math.min(255, Math.round(n) || 0)); return (v < 16 ? '0' : '') + v.toString(16); };
   function hex(v, a) { return '#' + h2(v[0]) + h2(v[1]) + h2(v[2]) + (a != null && a < 255 ? h2(a) : ''); }
   function mix(a, b, t) {
     const A = rgba(a), B = rgba(b);

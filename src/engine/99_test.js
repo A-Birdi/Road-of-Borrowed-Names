@@ -102,6 +102,12 @@ RB.test = (function () {
         T.log.push({ t: 'folio', page: RB.ui.menu.current() });
         RB.ui.menu.close();
       }
+      // "Weave a word on it…" chosen in an inspection menu opens the Weave sheet once
+      // the scene ends; the automated player looks at it and cancels
+      if (!RB.script.isRunning() && RB.game.mode() === 'weave' && RB.weave && RB.weave.isOpen()) {
+        T.log.push({ t: 'weave', targets: RB.weave.state().targets });
+        RB.weave.close();
+      }
       await wait(25);
     }
     throw new Error('timeout waiting for idle (mode ' + RB.game.mode() + ')');
