@@ -232,18 +232,18 @@ const state = (p) => p.evaluate(() => JSON.parse(JSON.stringify(RB.game.s)));
   assert(top.some((l) => /stars|lanterns to count/.test(l)) && st.company.talk['t:t.ren.stars'], 'a rest topic plays and is marked as heard');
   assert(JSON.stringify(st.company.bond) === JSON.stringify(before.company.bond) && JSON.stringify(st.inv) === JSON.stringify(before.inv) && st.resolve.pc === before.resolve.pc, 'rituals and rest topics award nothing (bond, items, resolve unchanged)');
 
-  // ---- a solved puzzle (the contract's discovery:resolved): one short remark, a memory, a filed thought ------------
+  // ---- a solved puzzle (the contract's discovery:resolved): a memory, a bond event, a filed thought; the listener says
+  //      nothing itself (the puzzle shows its own line; a real puzzle is played further down) -------------------------
   await p.evaluate(() => RB.company.addReactions([{ id: 'c1_test_ren', comp: 'ren', event: 'puzzle:c1_sign', facts: { method: 'sheltered' },
     lines: [{ jp: '{字|じ} が {読|よ}める 。', en: 'The writing can be read now.' }], thought: { jp: '{元|もと} の {字|じ} が {残|のこ}って いる 。', en: 'The original lettering is still there to compare.' } }]));
   await p.evaluate(() => RB.bus.emit('discovery:resolved', { kind: 'puzzle', id: 'c1_sign', region: 'snowbell', method: 'sheltered', title: { jp: '{看板|かんばん}', en: 'The flapping sign' } }));
-  await p.waitForTimeout(250);
-  const remark = await talk(p, []);
+  await p.waitForTimeout(400);
+  const quietAfter = await p.evaluate(() => !document.querySelector('.dlg:not(.hidden)') && !RB.script.isRunning());
   st = await state(p);
   const disc = st.company.memories.find((m) => m.id === 'disc:puzzle:c1_sign');
   const th = await p.evaluate(() => RB.company.thought(RB.game.s));
-  // (counted in the dialogue history: the capture above may see one line twice while its text is revealed)
-  assert(remark.some((l) => /can be read now/.test(l)) && st.backlog.filter((l) => /can be read now/.test(l.en || '')).length === 1 && disc && disc.kind === 'discoveries' && /can be read/.test(disc.reply.en) && st.company.bond['puzzle:snowbell'] === 1,
-    'a solved puzzle: one short remark, a Discoveries memory with it, one bond event for the region (' + JSON.stringify({ remark, disc: disc && disc.reply, bond: st.company.bond }) + ')');
+  assert(quietAfter && !st.backlog.some((l) => /can be read now/.test(l.en || '')) && disc && disc.kind === 'discoveries' && /can be read/.test(disc.reply.en) && st.company.bond['puzzle:snowbell'] === 1,
+    'a solved puzzle: a Discoveries memory with the companion\'s words, one bond event for the region, and no line from the listener (' + JSON.stringify({ disc: disc && disc.reply, bond: st.company.bond }) + ')');
   assert(th.kind === 'recent' && /original lettering/.test(th.text.en), 'the longer thought is filed for Company, not spoken');
   await p.evaluate(() => RB.bus.emit('discovery:resolved', { kind: 'puzzle', id: 'c1_sign', region: 'snowbell', method: 'secured' }));
   await p.waitForTimeout(250);
@@ -349,6 +349,34 @@ const state = (p) => p.evaluate(() => JSON.parse(JSON.stringify(RB.game.s)));
   const rec2 = await p.evaluate(() => { const r = document.querySelector('#folio-page .cs-record'); return { cur: RB.ui.menu.current(), rec: r && r.dataset.case }; });
   assert(discs.length === 1 && /A Parcel for a Place That Moved/.test(discs[0].t) && rec2.cur.journey === 'cases' && rec2.rec === 'parcel', 'Shared memories › Discoveries holds the case, and its link opens the record');
   await closeMenu(p);
+
+  // ---- a real field puzzle (F1, the slip screen): its completion shows the companion's line itself; the Company
+  //      listener adds the memory and the bond event and no second line. Then the keepsake it gave, pinned, is
+  //      shown once on Shared memories (the catalogue's display, drawn by this page).
+  if (await p.evaluate(() => !!(RB.fieldweave && RB.fieldweave.get && RB.fieldweave.get('f1') && RB.hooks.fw_act))) {
+    await start(p, 'rw.village', 31, 23, { comp: 'ren', chapter: 2 });
+    await p.evaluate(() => {
+      RB.game.settings.textSpeed = 'instant';
+      RB.script.add('@scene c1.pz_test\n!hook fw_act f1 close\n!hook fw_act f1 clamp\n', 'c1.pz_test');
+      RB.script.run('c1.pz_test');
+    });
+    await p.waitForTimeout(200);
+    await talk(p, [], 120);
+    await p.waitForTimeout(600);
+    const pz = await p.evaluate(() => {
+      const s = RB.game.s, rid = s.company.react['puzzle:f1:done'], r = RB.company.reactions.find((x) => x.id === rid);
+      const line = r && r.lines[0].en;
+      return { rid, line, n: line ? s.backlog.filter((l) => l.en === line).length : -1, mem: s.company.memories.filter((m) => m.id === 'disc:puzzle:f1').length, bond: s.company.bond['puzzle:reedwake'], dlg: !!document.querySelector('.dlg:not(.hidden)'), done: !!(s.discovery.puzzles.f1 && s.discovery.puzzles.f1.done), ks: Object.keys(s.discovery.keepsakes || {}) };
+    });
+    assert(pz.done && pz.rid && pz.n === 1 && pz.mem === 1 && pz.bond === 1 && !pz.dlg, 'a real puzzle: Ren\'s line is said once (' + pz.rid + ', ' + pz.n + ' in the history), one Discoveries memory, one bond event');
+    if (pz.ks.length && (await p.evaluate(() => !!(RB.ui.keepsakes && RB.ui.keepsakes.displayHtml)))) {
+      await p.evaluate((id) => { RB.game.s.discovery.display = id; }, pz.ks[0]);
+      await openCompany(p, 'memories');
+      const pin = await p.evaluate(() => ({ n: document.querySelectorAll('#folio-page .ks-company').length, art: !!document.querySelector('.co-pinned .ks-slot canvas'), see: !!document.querySelector('.co-pinned [data-co-ref=keepsakes]') }));
+      assert(pin.n === 1 && pin.art && pin.see, 'the pinned keepsake shows once on Shared memories, with its picture and a way to the catalogue (' + JSON.stringify(pin) + ')');
+      await closeMenu(p);
+    }
+  }
 
   // ---- The Pages We Keep (RB.pages): a conversation it has waiting is what "Ask what's on their mind" plays,
   //      the same one talking to the companion in the world would play first

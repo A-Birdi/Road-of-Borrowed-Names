@@ -52,3 +52,4 @@
 .hud .co-topic[hidden] { display: none; }
 body:not([data-mode="world"]) .hud .co-topic { display: none; }
 @media (max-width: 420px) { .hud .co-topic .l { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } }
+.co-pinned .ks-display { margin: 0; flex: 1 1 auto; min-width: 0; flex-wrap: wrap; }

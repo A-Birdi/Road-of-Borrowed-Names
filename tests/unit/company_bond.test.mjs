@@ -336,9 +336,26 @@ export default async (t) => {
     t.ok(!/\b(love you|in love|dating|go on a date|kiss|jealous|disappointed in you|resent|abandon)\b/i.test(text) && !/恋人|好き です 。 あなた|嫉妬/.test(text), 'no romance, jealousy or resentment in the words');
   }
 
+  // ---- a real field puzzle (RB.fieldweave, src/engine/55_fieldweave.js): the listener awards and remembers, never speaks
+  // (the puzzle's completion shows the reaction's first line itself, through RB.company.react with the same id)
+  if (RB.fieldweave && RB.fieldweave.get && RB.fieldweave.get('f1')) {
+    const s = committed('ren', { ch2_done: true });
+    s.map = 'rw.village';
+    const prev = RB.game.s; RB.game.s = s;
+    try {
+      RB.fieldweave.act(s, 'f1', 'close');
+      const res = RB.fieldweave.act(s, 'f1', 'clamp');
+      const c = s.company, id = 'puzzle:f1:done';
+      t.ok(res && res.completed && c.react[id] && c.bond['puzzle:reedwake'] === 1 && c.memories.some((m) => m.id === 'disc:puzzle:f1' && m.kind === 'discoveries'), 'a real puzzle: one bond event for Reedwake, a Discoveries memory, the reaction chosen under ' + id);
+      t.ok(!c.talk._remark && !c.talk['said:' + id], 'the listener leaves the line to the puzzle (nothing queued to say)');
+      const again = RB.company.react(s, { id, event: 'puzzle:f1', facts: { method: res.method } });
+      t.ok(again && again.id === c.react[id] && again.comp === 'ren', 'the puzzle reads back the same stored choice (' + (again && again.id) + ')');
+    } finally { RB.game.s = prev; }
+  }
+
   // ---- a real case (RB.cases, src/engine/59_cases.js): the contract's ids line up ------------------------------------------------
   // resolve() emits discovery:resolved {kind:'case', id, id2:'case:<id>:done'}; the case scene's case_react hook
-  // calls say() with {id:'case:<id>:done', event:'case:<id>'}. One choice, one queued remark under that id.
+  // calls say() with {id:'case:<id>:done', event:'case:<id>'}: one choice, and the one line comes from the hook.
   if (RB.cases && RB.cases.def && RB.cases.def('parcel')) {
     const s = committed('mio', { ch2_done: true });
     const prev = RB.game.s; RB.game.s = s;
@@ -350,13 +367,13 @@ export default async (t) => {
       const c = s.company;
       const mem = c.memories.find((m) => m.id === 'disc:case:parcel');
       t.ok(c.react['case:parcel:done'] && !c.react['case:parcel'], 'the reaction is chosen under the resolution id case:parcel:done');
-      t.eq(c.talk._remark && [c.talk._remark.id, c.talk._remark.event], ['case:parcel:done', 'case:parcel'], 'the waiting remark carries the same id the case hook will say');
+      t.ok(!c.talk._remark && !c.talk['said:case:parcel:done'], 'the resolution listener queues no line of its own (the case scene says it)');
       const pick = RB.cases.reaction(s, 'parcel');
       t.ok(pick && pick.id === c.react['case:parcel:done'] && pick.comp === 'mio' && pick.facts.method === 'reasoned', 'the case system reads back the same stored choice (' + (pick && pick.id) + ')');
       t.ok(mem && mem.title.en === 'A Parcel for a Place That Moved' && mem.ref.kind === 'case' && mem.ref.id === 'parcel' && mem.reply && mem.method === 'reasoned', 'the Discoveries memory is named from the case record');
       t.eq(c.bond['puzzle:saltglass'], 1, 'one bond event for the region the case belongs to');
       await hook(s, 'case_react', 'parcel');
-      t.ok(Object.keys(c.react).filter((k) => /parcel/.test(k)).length === 1 && c.talk._remark.id === 'case:parcel:done', 'the case hook adds no second choice and no second remark');
+      t.ok(Object.keys(c.react).filter((k) => /parcel/.test(k)).length === 1 && c.talk._remark && c.talk._remark.id === 'case:parcel:done' && c.talk._remark.event === 'case:parcel', 'the case hook says it under the same id, with no second choice (here, with no screen, it waits for a quiet moment)');
       const again = RB.cases.resolve(s, 'parcel', 'helped');
       t.ok(again === false && c.memories.filter((m) => m.id === 'disc:case:parcel').length === 1 && c.bond['puzzle:saltglass'] === 1, 'resolving again changes nothing');
     } finally { RB.game.s = prev; }

@@ -262,8 +262,11 @@ RB.content.company = RB.content.company || {
     return { title: jt(cd.title), text: jt(cd.result), ref: { kind: 'case', id: ev.id } };
   }
   // A substantial puzzle or case resolved (discovery:resolved, after the result is committed):
-  // bond once per region (three in all), the reaction chosen once, a Discoveries memory, and the
-  // remark queued for the next quiet moment (or said now by the puzzle's own scene via say()).
+  // bond once per region (three in all), the reaction chosen once (the same stored choice the
+  // owning system reads), a Discoveries memory, the longer thought filed for Company. This
+  // listener never speaks: the system that owns the moment shows the line (a field puzzle's
+  // completion shows the reaction's first line, src/ui/57_weave.js; a case's scene calls say()
+  // through its case_react hook), so the remark is never said twice.
   function onResolved(s, ev) {
     if (!s || !ev || !ev.kind || !ev.id) return;
     // the event is '<kind>:<id>' (what reactions are authored for); the resolution id is the
@@ -288,9 +291,6 @@ RB.content.company = RB.content.company || {
       react: r ? r.id : null,
     });
     markRecent(s, rid, 'discovery');
-    if (r && !T(s)['said:' + rid]) T(s)._remark = { id: rid, event: evName, facts: { method: ev.method } };
-    // said now if the moment allows it (the remark never speaks over a scene's own lines)
-    if (hasDom()) setTimeout(flushRemark, 0);
   }
   RB.bus.on('discovery:resolved', (ev) => { const g = game(); if (g) onResolved(g.s, ev); });
 

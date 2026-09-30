@@ -287,7 +287,15 @@ RB.ui.companyPages = (function () {
         (nm(l.who) ? '<span class="who">' + esc(nm(l.who)) + (l.choice ? ' (your reply)' : '') + '</span>' : '') +
         (l.jp ? '<div class="jp">' + j(l.jp) + '</div>' : '') + '<div class="en">' + enOf(m, l.en) + '</div></li>').join('') + '</ol></section>';
   }
+  // the pinned keepsake: the catalogue's own display (src/ui/58_keepsakes.js) when it is there, drawn here
+  // once (its Company decoration is turned off so it is not added a second time), with a way to the catalogue
   function pinned(s) {
+    const KS = RB.ui.keepsakes;
+    if (KS && KS.displayHtml) {
+      if (KS.settings) KS.settings.companyDecor = false;
+      const h = KS.displayHtml(s);
+      return h ? '<div class="co-pinned">' + h + '<button class="pbtn quiet" data-co-ref="keepsakes">See it</button></div>' : '';
+    }
     const id = s.discovery && s.discovery.display;
     const k = id && RB.content.keepsakes && RB.content.keepsakes[id];
     if (!k) return '';
@@ -312,6 +320,10 @@ RB.ui.companyPages = (function () {
       B.innerHTML = '<div class="xpage co-page">' + recollection(s, sel || null) + '</div>';
     } else {
       A.innerHTML = head + pinned(s) + filters + listHtml;
+    }
+    // the pinned keepsake's small picture (the catalogue's art)
+    if (RB.ui.keepsakes && RB.ui.keepsakes.artCanvas) {
+      A.querySelectorAll('.co-pinned .ks-slot[data-art]').forEach((sl) => { sl.innerHTML = ''; sl.appendChild(RB.ui.keepsakes.artCanvas(sl.dataset.art, 1)); });
     }
     const click = (e) => {
       const b = e.target.closest('[data-co-filter],[data-co-recall],[data-co-back],[data-co-ref]');
