@@ -372,6 +372,10 @@ RB.pages = (function () {
   let justEmpty = null; // the outing that just came home with nothing to keep (this homecoming only)
   let retroTalk = false; // the passage being played is the retrospective one
   let freshTalk = false; // one of these conversations just happened here (no second offer straight after)
+  // This map was entered after Tsuru's Atlas introduction. False on the visit the story ends on,
+  // so Page I is not stacked straight onto the ending and the introduction; it waits for the next
+  // time you come into the Lantern Hall (or for you to talk to your companion).
+  let settled = true;
   RB.state.addTerm('pages', (s, rest, op, val, num, cmp) => {
     const p = state(s);
     switch (rest) {
@@ -388,6 +392,7 @@ RB.pages = (function () {
       case 'recall': return !!recallable(s);
       case 'retrotalk': return retroTalk;
       case 'fresh': return freshTalk;
+      case 'settled': return settled;
       case 'reply': { const r = endingRec(s); return cmp((r && r.replyId) || 'none', op || '=', val); }
       case 'completed': return cmp((s.atlas && s.atlas.completed) || 0, op || '>=', num(val));
       case 'keeps': return cmp(Object.keys((s.discovery && s.discovery.keepsakes) || {}).filter((k) => k.indexOf('pages_') !== 0).length, op || '>=', num(val));
@@ -570,7 +575,12 @@ RB.pages = (function () {
       justEmpty = empty ? e.run : null;
     } catch (err) { if (typeof console !== 'undefined') console.warn('pages: end', err); }
   });
-  RB.bus.on('map:enter', (e) => { freshTalk = false; retroTalk = false; if (e && e.id !== 'rw.hall') justEmpty = null; });
+  RB.bus.on('map:enter', (e) => {
+    freshTalk = false; retroTalk = false;
+    if (e && e.id !== 'rw.hall') justEmpty = null;
+    const s = G();
+    settled = !!(s && s.seen && s.seen['rw.atlas_intro']);
+  });
 
   // ---- talking to your companion: a waiting conversation comes first -------------------------
   // (the ordinary banter is RB.game.companionTalk; anything else passes through)

@@ -214,6 +214,20 @@ export default async (t) => {
   const end = (s, kind) => { const id = s.atlas.run.id; RB.bus.emit('atlas:end', { run: id, kind }); s.atlas.run = null; s.map = 'rw.hall'; RB.bus.emit('map:enter', { id: 'rw.hall' }); return id; };
   const awards = (s) => ['project:1', 'project:2', 'project:3'].map((k) => bond(s, k) || 0);
 
+  // Page I is not stacked onto the ending: the visit the story ends on (the introduction plays
+  // inside it) does not offer it; the next time you come into the Lantern Hall does
+  {
+    const s = post('mio');
+    const offerCond = C.maps['rw.hall'].onEnter.find((e) => e.scene === 'pages.enter_offer').if;
+    delete s.seen['rw.atlas_intro'];
+    RB.bus.emit('map:enter', { id: 'rw.hall' }); // the epilogue brings you into the Hall
+    s.seen['rw.atlas_intro'] = true; // Tsuru introduces the Atlas in that visit
+    t.ok(PG.offerOpen(s) && !S.test(s, offerCond), 'Page I is not offered in the visit the story ends on (' + offerCond + ')');
+    t.ok(PG.pending(s, 'hall') && PG.pending(s, 'hall').id === 'offer', '...but talking to your companion there can open it');
+    RB.bus.emit('map:enter', { id: 'rw.village' });
+    RB.bus.emit('map:enter', { id: 'rw.hall' });
+    t.ok(S.test(s, offerCond), 'the next time you come into the Lantern Hall it is offered');
+  }
   for (const c of PG.COMPS) {
     // Page I: offered in the hall, deferrable, never blocking; then a theme
     let s = post(c);

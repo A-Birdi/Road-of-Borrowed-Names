@@ -15,7 +15,8 @@
 //
 // endings  all four companions: sa.epilogue (towns, sa.end_comp, credits,
 //          postgame, the Lantern Hall, Tsuru's introduction) → the passage
-//          once, +2, a memory, no other change → Page I offered and deferred.
+//          once, +2, a memory, no other change → nothing more in that visit;
+//          back into the Hall later → Page I offered and deferred.
 //          Nao's letter stays undelivered, is delivered afterwards with the real
 //          scene, and An Unfinished Conversation follows by talking to Nao.
 // legacy   an older postgame save through a real slot save + page reload +
@@ -239,15 +240,24 @@ if (want('endings')) for (const comp of ['nao', 'mio', 'ren', 'suzu']) {
   const res = await autoRun(p, async () => {
     const before = JSON.stringify([RB.game.s.inv]);
     await RB.script.run('sa.epilogue');
-    for (let i = 0; i < 120 && !RB.game.s.seen['pages.enter_offer']; i++) { await RB.test.wait(120); if (!RB.script.isRunning() && RB.game.mode() === 'world') await RB.test.idle(20000); }
+    for (let i = 0; i < 120 && !RB.game.s.seen['rw.atlas_intro']; i++) { await RB.test.wait(120); if (!RB.script.isRunning() && RB.game.mode() === 'world') await RB.test.idle(20000); }
+    await RB.test.idle(20000);
+    await RB.test.wait(400);
     await RB.test.idle(20000);
     const s = RB.game.s;
-    return { before, inv: JSON.stringify([s.inv]), map: s.map, post: !!s.flags.postgame, intro: !!s.seen['rw.atlas_intro'], offer: !!s.seen['pages.enter_offer'], mem: s.company.memories.filter((m) => /^ending/.test(m.id)).map((m) => m.id + ':' + m.replyId + ':' + m.pq), ending: s.company.bond.ending || 0, proj: !!RB.pages.state(s), problems: RB.test.problems.slice(0, 3) };
+    const out = { before, inv: JSON.stringify([s.inv]), map: s.map, post: !!s.flags.postgame, intro: !!s.seen['rw.atlas_intro'], stacked: !!s.seen['pages.enter_offer'], mem: s.company.memories.filter((m) => /^ending/.test(m.id)).map((m) => m.id + ':' + m.replyId + ':' + m.pq), ending: s.company.bond.ending || 0, problems: RB.test.problems.slice(0, 3) };
+    // out of the Hall and back in: now the companion offers Page I (the plan puts it off)
+    await RB.test.go('rw.village', 21, 10, 'down');
+    await RB.test.go('rw.hall', 5, 8, 'up');
+    for (let i = 0; i < 60 && !s.seen['pages.enter_offer']; i++) await RB.test.wait(100);
+    await RB.test.idle(20000);
+    out.offer = !!s.seen['pages.enter_offer']; out.proj = !!RB.pages.state(s);
+    return out;
   });
   check(res.map === 'rw.hall' && res.post && res.intro && res.problems.length === 0, comp + ': the epilogue ends in the Lantern Hall with the Atlas introduced (' + ((Date.now() - st0) / 1000).toFixed(0) + ' s)' + (res.problems.length ? ' ' + JSON.stringify(res.problems) : ''));
   check(res.mem.length === 1 && res.mem[0].indexOf('ending:' + comp) === 0 && res.ending === 2, comp + ': the passage played once: +2 bond, one memory (' + res.mem.join() + ')');
   check(res.inv === res.before, comp + ': no item given or taken by the passage (no second gift)');
-  check(res.offer && !res.proj, comp + ': Page I offered after the introduction, and deferred without cost');
+  check(!res.stacked && res.offer && !res.proj, comp + ': Page I is not stacked onto the ending; offered on coming back into the Lantern Hall, and deferred without cost');
   if (comp === 'nao') {
     check(await backlogHas(p, "haven't delivered"), 'nao: the undelivered letter acknowledged, no answer spoiled');
     check(!(await backlogHas(p, "I haven't written back")), 'nao: the epilogue in Lanternfall does not pretend Umi has the letter');
