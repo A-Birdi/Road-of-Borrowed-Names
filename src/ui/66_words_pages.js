@@ -22,6 +22,9 @@
  * seen. A kept line whose source has changed or gone is marked as a saved
  * excerpt.
  *
+ * Other pages (evidence, memories) link to an entry with
+ * RB.ui.wordsPages.show('bookmarks' | 'creatures', id).
+ *
  * Creatures met (Words page 'creatures'): each creature you have encountered,
  * drawn with its own battle art, its name and reading, where you met it
  * (indoors or out, and near where), what you saw it do and what answered it,
@@ -38,8 +41,16 @@ RB.ui.keep = (function () {
     if (!F.ICONS.bookmark) F.ICONS.bookmark = '<path d="M7 3h10v18l-5-4.2L7 21z"/><path d="M10 7h4"/>';
     if (!F.ICONS.creature) F.ICONS.creature = '<path d="M4 15c2-6 6-9 10-8 3 .7 5 3 6 6-2-1-4-1-5 0 1 2 0 5-3 6-3 .8-6-.5-8-4z"/><circle cx="14.5" cy="10.5" r="1"/>';
   }
-  let tab = null, box = null, entry = null;
+  let tab = null, box = null, entry = null, told = false;
   const say = (msg) => { if (RB.ui.notice) RB.ui.notice(msg, 'info'); };
+  // a quiet announcement for screen readers (the tab's own label says Keep / Kept)
+  function announce(msg) {
+    if (typeof document === 'undefined' || !RB.ui.root) return;
+    let a = document.getElementById('keep-live');
+    if (!a) { a = document.createElement('div'); a.id = 'keep-live'; a.className = 'sr'; a.setAttribute('aria-live', 'polite'); RB.ui.root.appendChild(a); }
+    a.textContent = '';
+    setTimeout(() => { a.textContent = msg; }, 30);
+  }
   const hasUserText = (b) => !!(b && (b.title || b.note));
 
   // ---- the dialogue box's Keep tab ----------------------------------------------------------------
@@ -89,13 +100,14 @@ RB.ui.keep = (function () {
     if (had) {
       if (hasUserText(had)) { say('This kept sentence has your own words with it: remove it from Words › Kept sentences.'); return 'held'; }
       B.remove(s, had.id);
-      say('No longer kept.');
+      announce('No longer kept.');
       return 'removed';
     }
     const r = B.keep(s, e);
     if (!r.ok) { if (r.why === 'full') say('Your kept sentences are full (' + r.max + '). Remove one in Words › Kept sentences to keep another.'); return r.why === 'full' ? 'full' : null; }
     RB.audio && RB.audio.sfx && RB.audio.sfx('cursor', { vol: 0.5 });
-    say('Kept. Find it in Words › Kept sentences.');
+    // where to find it, once a session; after that the label says it
+    if (!told) { told = true; say('Kept. Find it in Words › Kept sentences.'); } else announce('Kept.');
     return 'kept';
   }
   function toggle() {
@@ -160,7 +172,7 @@ RB.ui.wordsPages = (function () {
   const j = (t, vars) => (t ? RB.ui.jhtml(t, vars ? { vars } : undefined) : '');
   const TX = () => RB.content.wordsText || { pages: {}, heads: {}, setting: {}, objects: {} };
   const lab = (x) => (x ? RB.ui.label(x.jp, x.en) : '');
-  const head = (k, icon) => { const h = TX().heads[k]; return '<h4 class="wp-h">' + I(icon) + '<span>' + lab(h) + '</span></h4>'; };
+  const head = (k, icon) => { const h = TX().heads[k]; return '<h4 class="wd-h">' + I(icon) + '<span>' + lab(h) + '</span></h4>'; };
   const date = (t) => { try { return new Date(t).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }); } catch (e) { return ''; } };
   // player-authored text: always escaped, always marked as the player's own
   const utext = (t, cls) => '<span class="utext' + (cls ? ' ' + cls : '') + '">' + esc(t).replace(/\n/g, '<br>') + '</span>';
@@ -172,7 +184,7 @@ RB.ui.wordsPages = (function () {
     if (el) el.focus({ preventScroll: false });
   }
   function live(msg) {
-    let a = document.querySelector('#folio-page .wp-live');
+    let a = document.querySelector('#folio-page .wd-live');
     if (!a) return;
     a.textContent = '';
     setTimeout(() => { a.textContent = msg; }, 30);
@@ -182,6 +194,7 @@ RB.ui.wordsPages = (function () {
   // Kept sentences
   // =================================================================================================
   const B = () => RB.bookmarks;
+  const PAGE = 40;
   function speakerLine(b) {
     const T = TX();
     if (b.who === 'narr') {
@@ -191,11 +204,11 @@ RB.ui.wordsPages = (function () {
     const n = b.wn || { en: b.who, jp: '' };
     // the player's name is their own text (escaped); a character's name is the game's
     if (b.who === 'pc') return { icon: 'companion', html: (b.choice ? 'You replied' : 'You') + ' <span class="muted">(' + utext(n.en, 'nm') + ')</span>', sr: '' };
-    return { icon: 'companion', html: esc(n.en) + (n.jp ? ' <span class="wp-jpn">' + j(n.jp) + '</span>' : ''), sr: '' };
+    return { icon: 'companion', html: esc(n.en) + (n.jp ? ' <span class="wd-jpn">' + j(n.jp) + '</span>' : ''), sr: '' };
   }
   function placeHtml(b) {
     const p = b.place;
-    return p ? esc(p.en) + (p.jp ? ' <span class="wp-jpn">' + j(p.jp) + '</span>' : '') : '<span class="muted">not recorded</span>';
+    return p ? esc(p.en) + (p.jp ? ' <span class="wd-jpn">' + j(p.jp) + '</span>' : '') : '<span class="muted">not recorded</span>';
   }
   function statusHtml(b) {
     const st = B().status(b);
@@ -256,21 +269,29 @@ RB.ui.wordsPages = (function () {
     if (!canSpeak) h += '<p class="muted small">No Japanese voice on this device, so there is nothing to play; the sentence is kept all the same.</p>';
     return h + '</div>';
   }
+  // another page may link here: show('bookmarks' | 'creatures', id) opens the folio at that entry
+  const pending = { bm: null, cr: null };
+  function show(kind, id) {
+    if (kind === 'creatures') pending.cr = id || null; else pending.bm = id || null;
+    RB.ui.menu.open(kind === 'creatures' ? 'creatures' : 'bookmarks');
+  }
   function bmHtml(s, api) {
     const V = api.view;
+    if (pending.bm) { V.bmOpen = pending.bm; V.bmWord = null; V.bmLimit = PAGE; pending.bm = null; }
     const L = (s.bookmarks || []).filter((b) => b && typeof b.jp === 'string');
-    let h = '<p class="wp-live sr" aria-live="polite"></p>';
+    let h = '<p class="wd-live sr" aria-live="polite"></p>';
     if (!L.length) {
       return h + '<p class="muted">Nothing kept yet.</p><p>Press <b>Keep</b> on the tab above a line in the dialogue box (or <kbd>K</kbd>), or <b>Keep</b> beside a line in Journey › Dialogue history. Signs, notices and tablets you read can be kept the same way.</p>' +
         '<p class="muted small">A kept sentence stays as it was when you saw it, with your own title and note if you like. Keeping one records nothing about your learning.</p>';
     }
     // noted words that these sentences use (only sentences you kept)
-    const nw = noted(s).map((n) => ({ n, uses: B().usesOf(s, n) })).filter((x) => x.uses.length);
+    const nt = noted(s), idx = nt.length ? B().wordIndex(s) : null;
+    const nw = nt.map((n) => ({ n, uses: B().usesOf(s, n, idx) })).filter((x) => x.uses.length);
     if (V.bmWord && !nw.some((x) => x.n.id === V.bmWord)) V.bmWord = null;
     if (nw.length) {
-      h += '<div class="bm-filter">' + head('words', 'words') + '<div class="chips" role="group" aria-label="Show the kept sentences that use a word you noted">' +
-        '<button type="button" class="chip" data-bm-word="" aria-pressed="' + !V.bmWord + '">All <span class="n">' + L.length + '</span></button>' +
-        nw.map((x) => '<button type="button" class="chip" data-bm-word="' + esc(x.n.id) + '" aria-pressed="' + (V.bmWord === x.n.id) + '"><span class="jp">' + notedHtml(x.n) + '</span> <span class="n">' + x.uses.length + '</span></button>').join('') + '</div></div>';
+      h += '<div class="bm-filter">' + head('words', 'words') + '<div class="bm-chips" role="group" aria-label="Show the kept sentences that use a word you noted">' +
+        '<button type="button" class="bm-chip" data-bm-word="" aria-pressed="' + !V.bmWord + '">All <span class="n">' + L.length + '</span></button>' +
+        nw.map((x) => '<button type="button" class="bm-chip" data-bm-word="' + esc(x.n.id) + '" aria-pressed="' + (V.bmWord === x.n.id) + '"><span class="jp">' + notedHtml(x.n) + '</span> <span class="n">' + x.uses.length + '</span></button>').join('') + '</div></div>';
     }
     let shown = L.slice().reverse();
     if (V.bmWord) {
@@ -279,7 +300,13 @@ RB.ui.wordsPages = (function () {
       h += '<p class="muted small bm-for">Kept sentences that use <span class="jp">' + notedHtml(x.n) + '</span> (' + esc(x.n.m || '') + '): ' + shown.length + '.</p>';
     }
     h += '<p class="muted small">Newest first. ' + L.length + ' of at most ' + B().MAX + ' kept.</p>';
-    h += '<ol class="entries bm-list">' + shown.map((b) => bmRow(b, V.bmOpen === b.id, s)).join('') + '</ol>';
+    // a page of them at a time (a full notebook would otherwise redraw hundreds of lines on every press)
+    let limit = V.bmLimit || PAGE;
+    const at = V.bmOpen ? shown.findIndex((b) => b.id === V.bmOpen) : -1;
+    if (at >= limit) limit = Math.ceil((at + 1) / PAGE) * PAGE;
+    V.bmLimit = limit;
+    h += '<ol class="entries bm-list">' + shown.slice(0, limit).map((b) => bmRow(b, V.bmOpen === b.id, s)).join('') + '</ol>';
+    if (shown.length > limit) h += '<div class="row-acts"><button type="button" class="pbtn" data-bm-more>' + I('down') + '<span>Show older ones (' + Math.min(PAGE, shown.length - limit) + ' more of ' + (shown.length - limit) + ')</span></button></div>';
     return h;
   }
   async function practise(s, id) {
@@ -309,7 +336,16 @@ RB.ui.wordsPages = (function () {
       const op = t.closest('[data-bm-open]');
       if (op) { const id = op.getAttribute('data-bm-open'); V.bmOpen = V.bmOpen === id ? null : id; again(api, '[data-bm-open="' + id + '"]'); return; }
       const w = t.closest('[data-bm-word]');
-      if (w) { V.bmWord = w.getAttribute('data-bm-word') || null; V.bmOpen = null; again(api, '[data-bm-word="' + (V.bmWord || '') + '"]'); return; }
+      if (w) { V.bmWord = w.getAttribute('data-bm-word') || null; V.bmOpen = null; V.bmLimit = PAGE; again(api, '[data-bm-word="' + (V.bmWord || '') + '"]'); return; }
+      if (t.closest('[data-bm-more]')) {
+        const n = el.querySelectorAll('.bm-list > li').length;
+        V.bmLimit = (V.bmLimit || PAGE) + PAGE;
+        api.render();
+        // the keyboard goes to the first of the newly shown ones
+        const next = document.querySelectorAll('#folio-page .bm-list > li .bm-row')[n];
+        if (next) next.focus({ preventScroll: false });
+        return;
+      }
       const hr = t.closest('[data-bm-hear]');
       if (hr) {
         const b = B().byId(s, hr.getAttribute('data-bm-hear'));
@@ -373,7 +409,7 @@ RB.ui.wordsPages = (function () {
     if (how === 'truth') return '<b>See through</b> (<span lang="ja">みぬく</span>)';
     if (how === 'unravel') return '<b>Unravel</b>';
     const w = RB.content.words[how];
-    return w ? '<span class="cr-w">' + j(w.jpK || w.jp) + '</span> (' + esc(w.en) + ')' : esc(how);
+    return w ? '<span class="cm-w">' + j(w.jpK || w.jp) + '</span> (' + esc(w.en) + ')' : esc(how);
   }
   // one observation, in words taken from the battle's own messages
   function noteHtml(key, n, c) {
@@ -394,10 +430,11 @@ RB.ui.wordsPages = (function () {
   function lineHtml(l) {
     if (!l) return '';
     const who = l.who && l.who !== 'narr' && RB.content.chars[l.who] ? '<span class="kind">' + esc(RB.content.chars[l.who].name.en) + '</span>' : '';
-    return '<div class="cr-line">' + who + (l.jp ? '<div class="cr-jp">' + j(l.jp) + '</div>' : '') + (l.en ? '<div class="cr-en">' + esc(RB.script.enVars(l.en)) + '</div>' : '') + '</div>';
+    return '<div class="cm-line">' + who + (l.jp ? '<div class="cm-jp">' + j(l.jp) + '</div>' : '') + (l.en ? '<div class="cm-en">' + esc(RB.script.enVars(l.en)) + '</div>' : '') + '</div>';
   }
+  // the first place where its opening line was seen: { k, intro, ... } or null
   function firstSight(c) {
-    const ps = Object.keys(c.maps || {}).map((k) => c.maps[k]).sort((a, b) => (a.t || 0) - (b.t || 0));
+    const ps = Object.keys(c.maps || {}).map((k) => Object.assign({ k }, c.maps[k])).sort((a, b) => (a.t || 0) - (b.t || 0));
     return ps.find((p) => p.intro) || null;
   }
   function artAlt(id, c) {
@@ -410,8 +447,8 @@ RB.ui.wordsPages = (function () {
     const nm = c.name || (d && d.name) || { en: id, jp: '' };
     const places = Object.keys(c.maps || {}).map((k) => c.maps[k]).sort((a, b) => (a.t || 0) - (b.t || 0));
     const first = places[0];
-    return '<li class="cr-item' + (open ? ' open' : '') + '"><button type="button" class="entry cr-row" data-cr-open="' + esc(id) + '" aria-expanded="' + open + '">' +
-      '<span class="cr-thumbbox" aria-hidden="true">' + (d ? '<canvas class="cr-art" data-cr-art="' + esc(id) + '" data-max="56" width="8" height="8"></canvas>' : I('creature')) + '</span>' +
+    return '<li class="cm-item' + (open ? ' open' : '') + '"><button type="button" class="entry cm-row" data-cr-open="' + esc(id) + '" aria-expanded="' + open + '">' +
+      '<span class="cm-thumbbox" aria-hidden="true">' + (d ? '<canvas class="cm-art" data-cr-art="' + esc(id) + '" data-max="56" width="8" height="8"></canvas>' : I('creature')) + '</span>' +
       '<span class="body"><span class="t">' + j(nm.jp) + ' <span class="en">' + esc(nm.en) + '</span></span>' +
       '<span class="kind">' + (first && first.name ? 'First met: ' + esc(first.name.en) : 'Met') + (places.length > 1 ? ' · ' + places.length + ' places' : '') + (c.settled ? ' · settled' : '') + '</span>' +
       (d ? '' : '<span class="muted small">No longer drawn in this version of the game; your notes are kept.</span>') + '</span></button>' +
@@ -422,38 +459,39 @@ RB.ui.wordsPages = (function () {
     const d = RB.content.enemies[id];
     const places = Object.keys(c.maps || {}).map((k) => Object.assign({ k }, c.maps[k])).sort((a, b) => (a.t || 0) - (b.t || 0));
     const f = firstSight(c);
-    let h = '<div class="cr-detail inline-detail" role="region" aria-label="' + esc(((c.name && c.name.en) || id) + ': what you have seen') + '">';
-    h += '<figure class="cr-fig">' + (d ? '<div class="cr-frame"><canvas class="cr-art" data-cr-art="' + esc(id) + '" data-max="176" width="8" height="8" role="img" aria-label="' + esc(artAlt(id, c)) + '"></canvas></div>' : '') +
+    let h = '<div class="cm-detail inline-detail" role="region" aria-label="' + esc(((c.name && c.name.en) || id) + ': what you have seen') + '">';
+    h += '<figure class="cm-fig">' + (d ? '<div class="cm-frame"><canvas class="cm-art" data-cr-art="' + esc(id) + '" data-max="176" width="8" height="8" role="img" aria-label="' + esc(artAlt(id, c)) + '"></canvas></div>' : '') +
       '<figcaption>' + (f ? '<div class="kind">First seen</div>' + lineHtml(f.intro) : '<span class="muted">You met it alongside another creature and saw no opening words of its own.</span>') + '</figcaption></figure>';
     // where: the species is one thing; each place you met it is another
-    h += head('places', 'map') + '<ul class="cr-places">' + places.map((p) => {
-      const set = p.set && T.setting[p.set] ? '<span class="cr-set">' + I(p.set === 'indoor' ? 'here' : 'travel') + lab(T.setting[p.set]) + '</span>' : '';
-      const nm = p.name ? esc(p.name.en) + (p.name.jp ? ' <span class="wp-jpn">' + j(p.name.jp) + '</span>' : '') : '<span class="muted">a place not recorded</span>';
+    h += head('places', 'map') + '<ul class="cm-places">' + places.map((p) => {
+      const set = p.set && T.setting[p.set] ? '<span class="cm-set">' + I(p.set === 'indoor' ? 'here' : 'travel') + lab(T.setting[p.set]) + '</span>' : '';
+      const nm = p.name ? esc(p.name.en) + (p.name.jp ? ' <span class="wd-jpn">' + j(p.name.jp) + '</span>' : '') : '<span class="muted">a place not recorded</span>';
       const near = p.near && p.name && p.near.en !== p.name.en ? ' <span class="muted small">near ' + esc(p.near.en) + '</span>' : '';
       const withL = p.with && RB.content.enemies[p.with] && p.with !== id ? '<div class="muted small">Met alongside the ' + esc(RB.content.enemies[p.with].name.en) + '.</div>' : '';
-      return '<li><div class="cr-pl">' + nm + near + ' ' + set + '</div>' + withL + (p.intro && p !== f ? lineHtml(p.intro) : '') + '</li>';
+      return '<li><div class="cm-pl">' + nm + near + ' ' + set + '</div>' + withL + (p.intro && (!f || p.k !== f.k) ? lineHtml(p.intro) : '') + '</li>';
     }).join('') + '</ul>';
     const mv = RB.creatures.moves(c);
     if (mv.length) {
-      h += head('moves', 'look') + '<ul class="cr-moves">' + mv.map((m) =>
-        '<li><div class="cr-mv">' + I(INTENT_ICON[m.kind] || 'strike') + '<b>' + esc(moveTitle(m.kind, s)) + '</b></div><ul class="cr-notes">' + m.notes.filter((n) => n.key[0] !== 'i').map((n) => noteHtml(n.key, n, c)).join('') + '</ul></li>').join('') + '</ul>';
+      h += head('moves', 'look') + '<ul class="cm-moves">' + mv.map((m) =>
+        '<li><div class="cm-mv">' + I(INTENT_ICON[m.kind] || 'strike') + '<b>' + esc(moveTitle(m.kind, s)) + '</b></div><ul class="cm-notes">' + m.notes.filter((n) => n.key[0] !== 'i').map((n) => noteHtml(n.key, n, c)).join('') + '</ul></li>').join('') + '</ul>';
     } else h += head('moves', 'look') + '<p class="muted small">Nothing yet: you have not seen it make a move.</p>';
     const ph = RB.creatures.phases(c);
-    if (ph.length) h += head('changes', 'next') + '<ul class="cr-phases">' + ph.map((p) => '<li>' + (p.line ? lineHtml(p.line) : 'It changed its ways partway through.') + '</li>').join('') + '</ul>';
+    if (ph.length) h += head('changes', 'next') + '<ul class="cm-phases">' + ph.map((p) => '<li>' + (p.line ? lineHtml(p.line) : 'It changed its ways partway through.') + '</li>').join('') + '</ul>';
     if (c.settled) {
       const sp = places.find((p) => p.settle);
       h += head('settled', 'done') + (sp ? lineHtml(sp.settle) : '<p>You settled it.</p>');
     }
-    h += '<p class="muted small cr-foot">Only what you have seen is written here. Reading it changes nothing in a battle.</p>';
+    h += '<p class="muted small cm-foot">Only what you have seen is written here. Reading it changes nothing in a battle.</p>';
     return h + '</div>';
   }
   function crHtml(s, api) {
     const V = api.view;
+    if (pending.cr) { V.crOpen = pending.cr; pending.cr = null; }
     const ids = RB.creatures.met(s);
-    let h = '<p class="wp-live sr" aria-live="polite"></p>';
+    let h = '<p class="wd-live sr" aria-live="polite"></p>';
     if (!ids.length) return h + '<p class="muted">No creatures yet.</p><p>When you meet one on the road, it is noted here: how it looks, where you met it, and what you saw it do.</p>';
     h += '<p class="muted small">In the order you met them. Choose one to read your notes.</p>';
-    h += '<ul class="entries cr-list">' + ids.map((id) => crRow(id, s.creatures[id], V.crOpen === id, s)).join('') + '</ul>';
+    h += '<ul class="entries cm-list">' + ids.map((id) => crRow(id, s.creatures[id], V.crOpen === id, s)).join('') + '</ul>';
     return h;
   }
   // a creature's battle art, cropped to the creature, whole pixels when enlarged
@@ -500,10 +538,10 @@ RB.ui.wordsPages = (function () {
       html: bmHtml, wire: bmWire,
     });
     RB.ui.menu.addPage('words', {
-      id: 'creatures', en: 'Creatures met', jp: '{観察|かんさつ} {記録|きろく}',
+      id: 'creatures', en: 'Creatures met', jp: '{見|み}た もの の {記録|きろく}',
       count: (s) => (RB.creatures ? RB.creatures.met(s).length : 0),
       html: crHtml, wire: crWire,
     });
   }
-  return { bmHtml, crHtml, moveTitle, drawArt };
+  return { bmHtml, crHtml, moveTitle, drawArt, show };
 })();

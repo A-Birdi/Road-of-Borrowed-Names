@@ -60,6 +60,19 @@ export default async (t) => {
   t.ok(plain.includes('ナオ') && plain.includes('アキ') && !plain.includes('ベニ'), 'the kept Japanese reads with the names it was shown with');
   s.player.name = 'Aki'; s.player.nameJp = 'アキ'; s.comp = 'nao';
 
+  // a placeholder another system adds (a pet's name, as a pets system might add
+  // it to the scene variables): kept with the name it was shown with
+  const jv = RB.script.jpVars, ev = RB.script.enVars;
+  RB.script.jpVars = () => Object.assign(jv(), { pet: 'ミケ' });
+  RB.script.enVars = (x) => ev(x).replace(/\$pet\b/g, 'Mike');
+  const bpet = BM.keep(s, show(s, { who: 'narr', jp: '$pet が {鳴|な}いた 。', en: '$pet mewed.', sceneId: 'wt.unit' })).b;
+  RB.script.jpVars = () => Object.assign(jv(), { pet: 'タマ' });
+  RB.script.enVars = (x) => ev(x).replace(/\$pet\b/g, 'Tama');
+  const petPlain = RB.jp.plain(bpet.jp, bpet.v);
+  t.ok(bpet.v.pet === 'ミケ' && bpet.en === 'Mike mewed.' && petPlain.includes('ミケ') && !petPlain.includes('タマ'), 'a pet renamed later: the kept line keeps the name it was shown with');
+  RB.script.jpVars = jv; RB.script.enVars = ev;
+  BM.remove(s, bpet.id);
+
   // a reply: its context waits until the scene runner adds its history entry
   BM.chose({ jp: '$comp と {行|い}く', en: 'Go with $comp' }, s);
   s.backlog.push({ who: 'pc', jp: '$comp と {行|い}く', en: 'Go with $comp', choice: true });

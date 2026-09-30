@@ -1,8 +1,9 @@
 /* Words pages (addendum §20): the labels the Kept sentences and Creatures met
  * pages show, the names of the things you can read in the world, and the
  * load-time normalisers for their records. Japanese labels appear when the
- * interface is in Japanese; every kanji has its reading
- * (tests/unit/bookmarks.test.mjs checks them against the lexicon). */
+ * interface is in Japanese; every kanji has its reading, and every word is
+ * one the lexicon already knows (tests/unit/bookmarks.test.mjs checks them),
+ * so these pages add no lexicon entries. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 (function (C) {
@@ -11,27 +12,27 @@ var RB = (globalThis.RB = globalThis.RB || {});
   C.wordsText = {
     pages: {
       bookmarks: T('Kept sentences', '{栞|しおり}'),
-      creatures: T('Creatures met', '{観察|かんさつ} {記録|きろく}'),
+      creatures: T('Creatures met', '{見|み}た もの の {記録|きろく}'),
     },
     heads: {
       sentence: T('The sentence', '{文|ぶん}'),
       yours: T('Your own words', '{自分|じぶん} の {言葉|ことば}'),
       words: T('Your noted words in these sentences', '{控|ひか}えた {言葉|ことば}'),
-      places: T('Where you have met it', '{出会|であ}った {場所|ばしょ}'),
+      places: T('Where you have met it', '{会|あ}った {場所|ばしょ}'),
       moves: T('What you have seen it do', '{見|み}た {動|うご}き'),
       changes: T('How it changed', '{変|か}わった ところ'),
       settled: T('When it settled', '{静|しず}まった とき'),
     },
     setting: {
-      indoor: T('Indoors', '{屋内|おくない}'),
-      outdoor: T('Out of doors', '{屋外|おくがい}'),
+      indoor: T('Indoors', '{建物|たてもの} の {中|なか}'),
+      outdoor: T('Out of doors', '{外|そと}'),
     },
     // What a line read from a thing in the world was written on (by prop type).
     objects: {
       sign: T('Sign', '{看板|かんばん}'),
       signblank: T('Blank sign', '{白|しろ}い {看板|かんばん}'),
       noticeboard: T('Notice board', '{掲示板|けいじばん}'),
-      stone_marker: T('Stone marker', '{石碑|せきひ}'),
+      stone_marker: T('Stone marker', '{碑|ひ}'),
       co_tablet: T('Tablet', '{石板|せきばん}'),
       lq_namestone: T('Name stone', '{名前|なまえ} の {石|いし}'),
       mailbox: T('Post box', '{郵便受|ゆうびんう}け'),
@@ -51,12 +52,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
       sa_grave: T('Grave', '{墓|はか}'),
       lantern: T('Lantern', '{提灯|ちょうちん}'),
       deadlantern: T('Unlit lantern', '{消|き}えた {提灯|ちょうちん}'),
-      sa_cabinet: T('Cabinet', '{戸棚|とだな}'),
+      sa_cabinet: T('Cabinet', '{棚|たな}'),
       sg_drawers: T('Drawers', '{引|ひ}き{出|だ}し'),
       telescope: T('Telescope', '{望遠鏡|ぼうえんきょう}'),
     },
     thing: T('Something you looked at', '{見|み}た もの'),
-    narration: T('Narration', 'ナレーション'),
+    narration: T('Narration', '{語|かた}り'),
   };
 
   // load-time normalisers for the two records (keep every record; repair shape only)

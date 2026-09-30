@@ -243,9 +243,17 @@ RB.bookmarks = (function () {
 
   // ---- the words in a kept sentence ---------------------------------------------------------------
   const CONTENT = (e) => e && e.pos && ['prt', 'aux', 'suf', 'name', 'cop'].indexOf(e.pos) < 0;
+  // (a kept sentence never changes, so its words are worked out once per session)
+  const WORDS = new Map();
   function wordsOf(b) {
+    if (!b) return [];
+    const key = b.id + '|' + b.jp;
+    if (!WORDS.has(key)) { if (WORDS.size > 1000) WORDS.clear(); WORDS.set(key, parseWords(b)); }
+    return WORDS.get(key);
+  }
+  function parseWords(b) {
     const out = [];
-    if (!b || !RB.jp || !RB.jp.parse) return out;
+    if (!RB.jp || !RB.jp.parse) return out;
     let toks;
     try { toks = RB.jp.parse(b.jp, Object.assign({}, b.v || {})); } catch (e) { return out; }
     for (const t of toks) {
@@ -261,11 +269,24 @@ RB.bookmarks = (function () {
   // kept sentences that use it: only sentences the player kept, so never a
   // line they have not seen.
   function notedLemma(n) { const x = String(n.id || '').slice(2).split('|')[0]; return x || n.surface || ''; }
-  function uses(b, n) {
-    const lemma = notedLemma(n);
-    return wordsOf(b).some((w) => w.lemma === lemma || w.surface === n.surface || (w.entry && w.entry.w === lemma));
+  // every kept sentence by the words in it (dictionary form, surface, lexicon headword)
+  function wordIndex(s) {
+    const m = new Map();
+    for (const b of list(s)) for (const w of wordsOf(b)) for (const k of [w.lemma, w.surface, w.entry && w.entry.w]) {
+      if (!k) continue;
+      let a = m.get(k);
+      if (!a) m.set(k, (a = new Set()));
+      a.add(b);
+    }
+    return m;
   }
-  function usesOf(s, n) { return list(s).filter((b) => uses(b, n)); }
+  // idx: a wordIndex(s) to reuse when asking for several words
+  function usesOf(s, n, idx) {
+    idx = idx || wordIndex(s);
+    const hit = new Set();
+    for (const k of [notedLemma(n), n.surface]) for (const b of idx.get(k) || []) hit.add(b);
+    return list(s).filter((b) => hit.has(b));
+  }
 
   // ---- optional practice ------------------------------------------------------------------------------
   // The game's own word-recognition template (as RB.tasks.vocabStep builds it:
@@ -313,5 +334,5 @@ RB.bookmarks = (function () {
     }
   }
 
-  return { capture, chose, keep, find, remove, rename, setNote, byId, status, wordsOf, usesOf, practiceSteps, eligible, clean, migrate, placeName, MAX, TITLE_MAX, NOTE_MAX, _hash: hash };
+  return { capture, chose, keep, find, remove, rename, setNote, byId, status, wordsOf, usesOf, wordIndex, practiceSteps, eligible, clean, migrate, placeName, MAX, TITLE_MAX, NOTE_MAX, _hash: hash };
 })();
