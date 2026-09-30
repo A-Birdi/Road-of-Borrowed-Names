@@ -9,9 +9,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
 (function (C) {
   'use strict';
   const M = (id) => C.maps[id];
-  const props = (map, list) => { const m = M(map); if (m) m.props = (m.props || []).concat(list); };
-  const npcs = (map, list) => { const m = M(map); if (m) m.npcs = (m.npcs || []).concat(list); };
-  const structs = (map, list) => { const m = M(map); if (m) m.structs = (m.structs || []).concat(list); };
+  // everything added here carries cs: 1, so the placement test can compare each map with and without it
+  const tag = (list) => list.map((x) => Object.assign({ cs: 1 }, x));
+  const props = (map, list) => { const m = M(map); if (m) m.props = (m.props || []).concat(tag(list)); };
+  const npcs = (map, list) => { const m = M(map); if (m) m.npcs = (m.npcs || []).concat(tag(list)); };
+  const structs = (map, list) => { const m = M(map); if (m) m.structs = (m.structs || []).concat(tag(list)); };
   // give an existing, silent prop a scene (only if it has none)
   const sceneFor = (map, p, x, y, scene) => { const m = M(map); const pr = m && (m.props || []).find((q) => q.p === p && q.x === x && q.y === y); if (pr && !pr.scene) pr.scene = scene; return !!pr; };
   // wrap an existing prop's scene: the new scene !calls the old one first
@@ -39,7 +41,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     { id: 'cs_hama', x: 38, y: 26, dir: 'down', talk: [{ if: 'item.cs_parcel', scene: 'cs.hama_parcel' }, { if: 'case.parcel=done', scene: 'cs.hama_after' }, { scene: 'cs.hama_idle' }] },
   ]);
   // Cinder Orchard, Shino's Post House: the record of marks
-  props('co.post', [{ p: 'bookpile', x: 3, y: 2, scene: 'cs.parcel_marks' }]);
+  props('co.post', [{ p: 'bookpile', x: 5, y: 2, scene: 'cs.parcel_marks' }]);
 
   // ---- Case B: The View on the Other Side -------------------------------------------------------------------
   props('sg.lighthouse', [

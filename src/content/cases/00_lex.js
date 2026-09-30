@@ -106,6 +106,11 @@ RB.lex.add(RB.lex.parseTable(`
 景色|けしき|n|E|view, scenery
 向こう側|むこうがわ|n|I|the other side
 燕|つばめ|n|I|swallow (the bird)
+勘|かん|n|I|intuition, hunch
+伏線|ふくせん|n|A|foreshadowing, a planted plot thread
+回収|かいしゅう|vs|A|collecting; (伏線を回収する) tying up a plot thread
+損|そん|n|I|loss, disadvantage
+手品師|てじなし|n|A|conjurer, stage magician
 糸巻き|いとまき|n|I|spool, bobbin
 手助け|てだすけ|n|I|help, assistance
 表す|あらわす|v5s|I|to express, to show

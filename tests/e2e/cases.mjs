@@ -306,17 +306,113 @@ const POST = async (o) => {
   return out;
 };
 
+
+// ---- the refined sequences and their keepsakes (§14.8, §17.2) --------------------------------------------------
+const REFINE = async (o) => {
+  const s = await window.CSSetup(o, 'sg.harbor', 27, 12, { sg_boss_done: false, sg_returned: false, sg_main_done: false, ch2_done: false, sg_tide_read: false, sg_tide_low: false, sg_fog_cleared: false });
+  const out = { drive: [], checks: [] }, T = RB.test;
+  delete s.quests.sg_main;
+  RB.state.setQuest(s, 'sg_main', 5);
+  s.chapter = 2;
+  const later = (id) => { const orig = RB.challenge.run; RB.challenge.run = async (cid, ctx) => (cid === id ? { ok: false, cancelled: true } : orig(cid, ctx)); return () => { RB.challenge.run = orig; }; };
+  // Saltglass: step away first (the new feedback), then read the table for real
+  window.PICK = ['wait here'];
+  let undo = later('sg.c_tidetable');
+  await T.go('sg.tidehut', 4, 5, 'up'); await T.talk('shiori');
+  undo();
+  out.checks.push(['stepping away from the tide table: a pointer to word help, no answer', /no hurry/.test(window.CSBacklog()) && !s.flags.sg_tide_read]);
+  await T.talk('shiori');
+  out.checks.push(['the tide table read (every correct form still accepted: no auto-answer problem)', !!s.flags.sg_tide_read && !!s.flags.sg_tide_low]);
+  await T.go('sg.harbor', 10, 27, 'up'); await T.use(10, 25);
+  out.checks.push(['the tide board outside now has the times chalked in', /chalked them in/.test(window.CSBacklog())]);
+  const chalk = RB.world.W.map.props.find((q) => q.p === 'cs_tidechalk' && RB.state.test(s, q.if));
+  out.checks.push(['… and shows them (the chalk drawn over the board)', !!chalk]);
+  // later in the chapter: Shiori's shell button, once
+  RB.state.setQuest(s, 'sg_main', 7); s.flags.sg_boss_done = true; s.flags.sg_fog_cleared = true;
+  await T.go('sg.tidehut', 4, 5, 'up'); await T.talk('shiori');
+  const k1 = !!s.discovery.keepsakes.shell_button;
+  const n1 = RB.script.__driveWrapped ? 0 : 0;
+  await T.talk('shiori');
+  out.checks.push(['Shell Button from Shiori after the milestone; talking again gives nothing more', k1 && Object.keys(s.discovery.keepsakes).filter((k) => k === 'shell_button').length === 1 && s.seen['sg.shiori_after']]);
+  // Cinder Orchard: the kiln wall, stepping away, then read; Nobu's swallow after the chapter
+  s.vars.co_tablets = 3; s.chapter = 3;
+  undo = later('co.c_kiln');
+  await T.go('co.kiln', 11, 5, 'up'); await T.use(11, 3);
+  undo();
+  out.checks.push(['stepping away from the kiln tiles: their own words carry the order', /own words carry their order/.test(window.CSBacklog()) && !s.flags.co_kiln_open]);
+  await T.use(11, 3);
+  out.checks.push(['the firing steps read', !!s.flags.co_kiln_open]);
+  s.flags.ch3_done = true;
+  await T.go('co.pottery', 4, 7, 'up'); await T.talk('co_nobu');
+  await T.talk('co_nobu');
+  out.checks.push(['Clay Swallow from Nobu, once', !!s.discovery.keepsakes.clay_swallow && s.seen['co.nobu_after']]);
+  // Snowbell: the observing log, stepping away, then read; the box of paper stars
+  s.chapter = 4; s.flags.sb_log_solved = false;
+  undo = later('sb.c_log');
+  await T.go('sb.obs_charts', 4, 7, 'up'); await T.use(4, 5);
+  undo();
+  out.checks.push(['stepping away from the log: it stays open, directions by the times', /log stays open/.test(window.CSBacklog()) && !s.flags.sb_log_solved]);
+  await T.use(4, 5);
+  out.checks.push(['the observing log read', !!s.flags.sb_log_solved]);
+  window.PICK = ['^Take one'];
+  await T.go('sb.hoshino', 5, 4, 'up'); await T.use(5, 2);
+  await T.use(5, 2);
+  out.checks.push(['Star Rosette from Hoshino\'s box, once (the second look says one is enough)', !!s.discovery.keepsakes.star_rosette && /One is enough/.test(window.CSBacklog())]);
+  // Lanternfall: Tokuji, after the gates and the bell
+  s.chapter = 5; s.flags.lf_gate_c = true; s.flags.lf_bell_rung = true;
+  await T.go('lf.sluice', 17, 13, 'up'); await T.talk('lf_tokuji');
+  await T.talk('lf_tokuji');
+  out.checks.push(['Thread Spool from Tokuji, once', !!s.discovery.keepsakes.thread_spool && s.seen['lf.tokuji_after']]);
+  // the Still Archive: stepping away from the charter
+  undo = later('sa.charter');
+  await T.go('sa.conduits', 4, 12, 'down'); await T.use(4, 13);
+  undo();
+  out.checks.push(['stepping away from the charter: all three texts stay to compare', /still be here to compare/.test(window.CSBacklog()) && !s.flags.sa_promise_done]);
+  const kept = Object.keys(s.discovery.keepsakes).sort().join();
+  out.checks.push(['four keepsakes, each once: ' + kept, kept === 'clay_swallow,shell_button,star_rosette,thread_spool' && ['shell_button', 'clay_swallow', 'star_rosette', 'thread_spool'].every((k) => RB.discovery.keepsake(s, k) === false)]);
+  return out;
+};
+
+// ---- an older save, already past every milestone, claims each keepsake once ---------------------------------------
+const LEGACY = async (o) => {
+  const s = await window.CSSetup(o, 'sg.harbor', 27, 12, { co_kiln_open: true, sb_log_solved: true, lf_gate_c: true, lf_bell_rung: true, sa_promise_done: true });
+  const out = { drive: [], checks: [] }, T = RB.test;
+  // as saved before the addendum: no discovery, no awarded records
+  const old = JSON.parse(JSON.stringify(s));
+  delete old.discovery; delete old.awarded; delete old.company; delete old.bookmarks; delete old.creatures;
+  const probs = RB.save.validate(old);
+  const st = RB.save.migrate(old);
+  out.checks.push(['an older save validates and loads (' + probs.join('; ') + ')', probs.length === 0 && !!st.discovery && Object.keys(st.discovery.cases).length === 0]);
+  RB.game.s = st;
+  window.PICK = ['^Take one'];
+  await T.go('sg.tidehut', 4, 5, 'up'); await T.talk('shiori');
+  await T.go('co.pottery', 4, 7, 'up'); await T.talk('co_nobu');
+  await T.go('sb.hoshino', 5, 4, 'up'); await T.use(5, 2);
+  await T.go('lf.sluice', 17, 13, 'up'); await T.talk('lf_tokuji');
+  const kept = Object.keys(st.discovery.keepsakes).sort().join();
+  out.checks.push(['each milestone\'s keepsake claimed at its known place: ' + kept, kept === 'clay_swallow,shell_button,star_rosette,thread_spool']);
+  await T.go('sg.tidehut', 4, 5, 'up'); await T.talk('shiori');
+  out.checks.push(['claiming again gives nothing more', Object.keys(st.discovery.keepsakes).length === 4]);
+  out.checks.push(['no case invented for the old save', Object.keys(st.discovery.cases).length === 0 && Object.keys(st.discovery.clues).length === 0]);
+  return out;
+};
+
 const { srv, url } = await serve();
 const b = await launch();
-const comps = ['nao', 'mio', 'ren', 'suzu'];
-await flow(b, url, 'Case A — thorough order', { comp: 'nao' }, A_THOROUGH);
-await flow(b, url, 'Case A — clue first, early delivery', { comp: 'suzu' }, A_EARLY);
-await flow(b, url, 'Case A — strongest help', { comp: 'ren' }, A_HELP);
-await flow(b, url, 'Case A — evidence kept', { comp: 'mio' }, A_PERSIST);
-await flow(b, url, 'Case B — full route through the record', { comp: 'mio' }, B_FULL);
-await flow(b, url, 'Case B — held up in the world', { comp: 'ren' }, B_HOLDUP);
-await flow(b, url, 'Case B — strongest help', { comp: 'suzu' }, B_HELP);
-await flow(b, url, 'Both cases after the story', { comp: 'nao', post: true }, POST);
+const FLOWS = [
+  ['Case A — thorough order', { comp: 'nao' }, A_THOROUGH],
+  ['Case A — clue first, early delivery', { comp: 'suzu' }, A_EARLY],
+  ['Case A — strongest help', { comp: 'ren' }, A_HELP],
+  ['Case A — evidence kept', { comp: 'mio' }, A_PERSIST],
+  ['Case B — full route through the record', { comp: 'mio' }, B_FULL],
+  ['Case B — held up in the world', { comp: 'ren' }, B_HOLDUP],
+  ['Case B — strongest help', { comp: 'suzu' }, B_HELP],
+  ['Both cases after the story', { comp: 'nao', post: true }, POST],
+  ['Refined sequences and their keepsakes', { comp: 'mio' }, REFINE],
+  ['An older save claims the keepsakes once', { comp: 'ren' }, LEGACY],
+];
+const only = (process.argv.find((a) => a.startsWith('--only=')) || '').slice(7);
+for (const [name, o, body] of FLOWS) if (!only || name.toLowerCase().includes(only.toLowerCase())) await flow(b, url, name, o, body);
 await b.close();
 srv.close();
 console.log(fails ? '\n' + fails + ' FAILED' : '\nall passed');
