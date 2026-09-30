@@ -651,6 +651,7 @@ RB.world = (function () {
       startMove(f, d, 380);
     }
     W.emotes = W.emotes.filter((e) => e.until > W.time);
+    if (RB.petWorld) RB.petWorld.update(dt); // the cosmetic pet follows (src/engine/57_petworld.js; never solid)
   }
   function triggerAt(x, y) {
     return W.map.triggers.some((t) => x >= t.x && x < t.x + t.w && y >= t.y && y < t.y + t.h);

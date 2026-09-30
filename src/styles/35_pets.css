@@ -1,0 +1,43 @@
+/* ---- Company › Pet (src/ui/54_company_pet.js) ---------------------------------------------------- */
+.pet-cards { display: grid; gap: 0.5em; }
+.pet-card { display: flex; align-items: center; gap: 0.6em; flex-wrap: wrap; border: 1px solid var(--paper-edge); border-radius: var(--r-2); padding: 0.35em 0.5em; background: rgba(255, 255, 255, 0.25); }
+.pet-card.on { border-color: var(--ribbon-deep); box-shadow: inset 4px 0 0 var(--ribbon); background: rgba(255, 255, 255, 0.45); }
+.pet-card > .entry { flex: 1 1 12em; min-width: 0; display: flex; align-items: center; gap: 0.6em; border: 0; background: transparent; padding: 0.2em; margin: 0; text-align: left; font: inherit; color: inherit; cursor: pointer; min-height: 44px; }
+.pet-card > .entry:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+.pet-card > .entry[aria-current="true"] .pet-name { text-decoration: underline; text-decoration-color: var(--ribbon-deep); text-underline-offset: 0.2em; }
+.pet-card .body { display: flex; flex-direction: column; min-width: 0; }
+.pet-card .pet-choose { flex: none; min-height: 44px; min-width: 6.5em; margin-left: auto; }
+.pet-card.none .mark { width: 48px; display: flex; justify-content: center; }
+.pet-card.none .mark svg { width: 1.6em; height: 1.6em; }
+.pet-face { width: 48px; height: 48px; flex: none; image-rendering: pixelated; }
+.pet-name { overflow-wrap: anywhere; word-break: break-word; }
+.pet-reading { color: var(--ink-2); font-size: 0.92em; overflow-wrap: anywhere; }
+.pet-state { display: flex; align-items: center; gap: 0.3em; font-size: 0.9em; }
+.pet-state svg { width: 1.1em; height: 1.1em; color: var(--ribbon-deep); flex: none; }
+.pet-head { display: flex; flex-wrap: wrap; gap: 0.6em 1em; align-items: center; }
+.pet-live { width: 144px; height: 144px; flex: none; image-rendering: pixelated; background: radial-gradient(ellipse at 50% 70%, rgba(255, 250, 235, 0.9), rgba(236, 226, 200, 0.2) 70%); border: 1px solid var(--paper-edge); border-radius: 50%; }
+.pet-id { flex: 1 1 12em; min-width: 0; display: flex; flex-direction: column; gap: 0.3em; align-items: flex-start; }
+.pet-id .pbtn { min-height: 44px; }
+.pet-title { margin: 0; }
+.pet-about { font-family: var(--serif); color: var(--ink-2); margin: 0.6em 0; }
+.pet-detail .row-acts { display: flex; flex-wrap: wrap; gap: 8px; margin: 0.3em 0 0.5em; }
+.pet-detail .row-acts .pbtn { min-height: 44px; }
+.pet-rename .field { margin: 0.4em 0; }
+.pet-rename input[type="text"] { width: 100%; max-width: 22em; min-height: 44px; font: inherit; padding: 0.3em 0.5em; border: 1px solid var(--ink-3); border-radius: var(--r-1, 3px); background: #fffaf0; color: var(--ink); }
+.pet-err { color: var(--danger-ink); min-height: 1.2em; margin: 0.2em 0; }
+.pet-err:empty { min-height: 0; }
+.pet-looks { border: 0; padding: 0; margin: 0.8em 0 0.4em; }
+.pet-looks legend { font-weight: 600; display: flex; align-items: center; gap: 0.4em; padding: 0; margin-bottom: 0.3em; }
+.pet-looks legend span { display: flex; align-items: center; gap: 0.4em; }
+.pet-looks legend svg { width: 1.15em; height: 1.15em; }
+.pet-look-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.pet-look { display: flex; flex-direction: column; align-items: center; gap: 0.15em; padding: 0.3em 0.5em; border: 1px solid var(--paper-edge); border-radius: var(--r-2); cursor: pointer; min-width: 5.5em; min-height: 44px; text-align: center; font-size: 0.92em; }
+.pet-look canvas { width: 48px; height: 48px; image-rendering: pixelated; }
+.pet-look.on { border: 2px solid var(--ribbon-deep); background: rgba(255, 255, 255, 0.45); }
+.pet-look .chosen { font-weight: 600; }
+.pet-look input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.pet-look:focus-within { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.pet-cosmetic { display: flex; gap: 0.5em; align-items: flex-start; background: var(--paper-2); border-left: 4px solid var(--ribbon); padding: 0.5em 0.8em; margin: 1em 0 0.4em; color: var(--ink-2); }
+.pet-cosmetic svg { width: 1.2em; height: 1.2em; flex: none; margin-top: 0.15em; }
+.leaf h3.pet-set { margin-top: 1.2em; }
+body.high-contrast .pet-card.on, body.high-contrast .pet-look.on { border-color: #000; box-shadow: inset 4px 0 0 #000; }
