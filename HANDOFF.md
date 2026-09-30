@@ -40,9 +40,11 @@
   Mill Road and puzzles F1–F6, two deduction cases with evidence pages and
   Known Details, twelve Roadside Keepsakes, sentence bookmarks and Creatures
   Met. See the section below and docs/addendum/COVERAGE.md.
-- Latest full check (c7860c4, VALIDATION.md "Integration — everything from
-  2026-09-29 together"): validator no errors; unit 4639; `node
-  tests/e2e/run.mjs` 34/34 scripts, including a whole-game run. Earlier
+- Latest full check (5312690 + the test-only fix 24f8730, VALIDATION.md
+  "Addendum — integrated validation"): validator no errors (634 registry
+  texts); unit 6321/0; `node tests/e2e/run.mjs` 49/50 (battle_group's phone
+  section, a test pointer issue fixed in 24f8730, then 6/6 twice), including a
+  whole-game run; layout audit and the 16-run matrix recorded there. Earlier
   milestones and dates are in VALIDATION.md.
 - Test tooling: tests/e2e/drive.mjs (goal-directed driver: walks real maps,
   interacts through the world), pursue.mjs (whole game), matrix.mjs,
