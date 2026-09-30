@@ -12,7 +12,7 @@ Nothing here claims natural Japanese, fun, or human playtesting.
 | File | What it holds |
 |---|---|
 | `src/engine/37_pets_0family.js` | `RB.families`: `LIST` (unravel, protect, light, heal, water, wind, bind, stone, ice, fire, bell, interpret, technique, support); `ofResponse(id)`, `ofCard(card)`, `ofAction(id)`, `ofPassive(comp)`, `base('technique', comp)`. Every player response, word, technique and companion action maps to a family (unit test fails on an unmapped one). |
-| `src/engine/37_pets_1data.js` | `RB.pets`: `ORDER`, `SPECIES`, `species(id) → { name, reading, label: {en, jp}, about }` (null if unknown), `looks(sp)`, `record(s, sp)`, `met(s)`, `active(s)`, `visible(s, 'world' \| 'battle')`, `lookOf`, `meet(s, sp, where)` (once: `RB.state.once(s, 'pet:met:<sp>')`, emits `pet:met`), `select(s, sp \| null)` (emits `pet:select`), `rename`, `resetName`, `nameAtMeet`, `setLook` (emits `pet:change`), `nameOf`, `cleanName`, `portrait(canvas, sp, look)`, `thumb`, `addVignette`, `vignetteAction(id, family)`, `vignettes`, `hide/show/sceneHidden`, `AFFECTION`, `howMet`, `sound(sp, kind)`, `defineSounds()`, `canGreet(s, {rest})`, `greet(s, {rest})`, `restOption(s)`; conditions `pet`, `pet=cat`, `pet.cat` (`RB.state.addTerm`). |
+| `src/engine/37_pets_1data.js` | `RB.pets`: `ORDER`, `SPECIES`, `species(id) → { name, reading, label: {en, jp}, about }` (null if unknown), `looks(sp)`, `record(s, sp)`, `met(s)`, `active(s)`, `visible(s, 'world' \| 'battle')`, `lookOf`, `meet(s, sp, where)` (once: `RB.state.once(s, 'pet:met:<sp>')`, emits `pet:met`), `select(s, sp \| null)` (emits `pet:select`), `rename`, `resetName`, `nameAtMeet`, `setLook` (emits `pet:change`), `nameOf`, `cleanName`, `portrait(canvas, sp, look)`, `thumb`, `addVignette`, `vignetteAction(id, family)`, `vignettes`, `hide/show/sceneHidden`, `AFFECTION`, `howMet`, `sound(sp, kind)`, `defineSounds()`, `canGreet(s, {rest})`, `greet(s, {rest})`, `restOption(s)`, `fieldTargets(s, map, x, y)`, `fieldWeave(s, id, family)`; conditions `pet`, `pet=cat`, `pet.cat` (`RB.state.addTerm`). |
 | `src/engine/37_pets_2art.js` | `RB.petArt` volume rasterizer: posed ellipsoids and tapered chains, depth buffer, 5-step hue-shifted ramps, part-local patterns, contours, selective outline; `camera`, `render`, `K.dir` (a body direction in world space). |
 | `src/engine/37_pets_3rig.js` | The four rigs, three looks each, the views (road: 4 directions; battle: rear three-quarter; preview; portrait), `frame(sp, look, view, pose)`, the LRU frame cache (900 frames) and `cacheStats()` (entries, pixel bytes). |
 | `src/engine/37_pets_5dev.js` | `RB.pets.dev` (development only; refuses unless the page has `?dev=pets`): `rows`, `layout`, `cellRect`, `cells`, `sheet` (the coverage matrix), `battle`, `play`, `panel`. |
@@ -83,6 +83,11 @@ ready idle.
 
 ## World
 
+A field weave nearby (`present:action` with `scope: 'field'`, which the Weave presentation emits as the word
+goes out): it turns toward where the word lands and gives a small reaction by family (braces for protect and
+stone, draws back from wind, water, fire and ice, sniffs at a binding or an unravelling, looks up at light and
+a voice; a small happy hop when the result is complete), on its own time — the emitter never waits for it.
+
 It follows the tiles you walked, one step behind your companion (or you), runs when three steps behind,
 catches up discreetly (a fade) after a door, a warp, a cutscene move or a broken trail, steps aside when
 someone walks onto it, never stands on anything solid, never changes the collision grid, and settles on a free
@@ -97,10 +102,19 @@ Each has a visible cause you can inspect, one or two ordinary interactions, a me
 good (no missable window; still there in the postgame). The field route is `RB.pets.vignetteAction(id,
 family)` and ends in the same state as the ordinary one.
 
+For the Weave sheet (`src/ui/57_weave.js`, from the field-puzzle work) there is a small adapter, so wiring it
+is a few lines at merge: `RB.pets.fieldTargets(s, mapId, x, y, radius = 2)` lists the vignette causes within
+reach that a weave can still settle (`{ id, x, y, families, label: {jp, en} }`; none once settled or once the
+animal has joined you), and `RB.pets.fieldWeave(s, id, family)` applies one and returns
+`{ id, family, effective, say: [{jp, en}] }` — the physical result line, or for a family that does not fit, a
+neutral line saying why nothing happened (the Japanese has already been accepted before this is asked). It
+also emits `present:action { scope: 'field', targets: ['pet:<id>'], at, result }` like any other field action.
+The vignettes are not registered as `RB.fieldweave` puzzles (that module's own tests fix its puzzle set).
+
 | Species | Where / when | Cause | Ordinary interactions | Accepted families |
 |---|---|---|---|---|
 | Cat — *A Dry Corner* | Reedwake, by the carpenter's eaves; after Chapter 1 (`rw_echo_done`) | a loose reed screen keeps knocking it out of its dry corner | set the screen's foot back on its stone or tie its cord to the nail; offer a hand or sit nearby and wait | bind, stone |
-| Bird — *The Ribbon by the Perch* | Saltglass quay, the old mooring post; once the harbour is yours (`quest.sg_main>=1`) | a faded ribbon on the post flicks it off its perch | untie the knot or wind and tuck the ribbon; stand still or hold out an open palm | unravel, wind |
+| Bird — *The Ribbon by the Perch* | Saltglass, the old mooring post at the east end of the quay (43,26), the bird's sand a row below (44,27), clear of the tide window's machinery and the tiles you stand on to use it; once the harbour is yours (`quest.sg_main>=1`) | a faded ribbon on the post flicks it off its perch | untie the knot or wind and tuck the ribbon; stand still or hold out an open palm | unravel, wind |
 | Dog — *The Gate That Will Not Stay* | Cinder Orchard, the channel keeper's yard; once the village is yours to walk about (`co_met_sayo`) | a gate swings into the corner he sleeps in | drop the latch loop or push the stop peg in; crouch or sit by the barrel; Tamotsu, the keeper, says he may go with you before the invitation | bind, stone |
 | Tanuki — *Paper in the Clearing* | the Orchard Road under the trees; from your arrival there (`co_arrived`) | old festival notices blow across its hollow under a root | weigh them with a stone or tuck them into the rock's lee; sit and wait quietly | wind, stone |
 
@@ -190,5 +204,10 @@ include everything the page did in between (maps, battles), not only the pets.
   at merge), `index.html` (built).
 - `RB.company.addRestOption` is consumed if present (companionship worker); the memory id is
   `pet:met:<species>`, kind `pets`.
+- Merged the task branch at c28d7b7 into this worktree (generated files regenerated). `RB.pets.visible(s,
+  'world')` keeps its name and signature (the endings use it). The field-weave hook-up for the vignettes is the
+  adapter above; `src/ui/57_weave.js` was not changed.
+- The bird's resting spot was moved from (44,26) to (44,27) after the merge, because the tide window puzzle
+  (F2) now stands at 44–46, 24–25 and (44,26) is where you stand to use its inlet.
 - Reported, not changed: `RB.pix.hex` (src/engine/31_pixel.js) pads before rounding, so a channel can come out
   as three digits and give an invalid colour; the pet art uses its own `hex6`.
