@@ -357,7 +357,7 @@ await section('F1: the ordinary route, and another companion', async () => {
 });
 
 // ==== F2: the three routes, reset, reload mid-puzzle, wrong answer then right, assistance ===========================
-await section('F2 The Float That Will Not Rise', async () => {
+await section('F2 The Signal Float', async () => {
   const at = ['sg.harbor', 45, 27, 'up', { flags: { ch2_start: true } }];
   // filled: the vent first, then water — typed, with a wrong answer first
   await start(...at.slice(0, 4), Object.assign({}, at[4], { words, input: 'ime', comp: 'ren' }));
@@ -386,6 +386,7 @@ await section('F2 The Float That Will Not Rise', async () => {
   assert(r.result === 'complete' && d.done && d.method === 'filled' && d.state.float === 'slot', 'water through the funnel: the float rises to the slot (filled)');
   assert(lg && lg.lang.firstTry === false && lg.lang.mistakes === 1, 'the mistyped first answer is recorded as a language mistake, and the world still answers the right word');
   assert((await p.evaluate(() => !!RB.game.s.discovery.keepsakes.cork_float)), 'the Painted Cork Float');
+  const resolvedPlain = (await ev('discovery:resolved')).pop();
   await shot('f2_filled');
   // cranked: ordinary, no words
   await start(...at.slice(0, 4), Object.assign({}, at[4], { words: [], comp: 'mio' }));
@@ -395,16 +396,20 @@ await section('F2 The Float That Will Not Rise', async () => {
   await inspect('f2', 'crank', /Wind the crank/);
   let dd = await rec('f2');
   assert(dd.done && dd.method === 'cranked' && (await reactionText('f2')).id === 'f2.mio.cranked', 'catch, then the crank: done by "cranked"; Mio\'s line for it');
-  // vane: bind (with assistance) then wind (choice)
+  // vane: bind (choice) then wind, the finishing step answered with "I don't know" (assisted)
   await start(...at.slice(0, 4), Object.assign({}, at[4], { words, input: 'choice', comp: 'suzu' }));
-  r = await weave('f2', 'crank', 'nawa', 'assist');
+  r = await weave('f2', 'crank', 'nawa', 'choice');
   const s2 = await st('f2');
-  const lg2 = (await rec('f2')).log.filter((x) => x.lang).pop();
-  assert(r.result === 'effective' && s2.bound && s2.catch === 'on' && lg2.lang.assisted, 'an assisted Bind still binds the crank and sets the catch (recorded as assisted)');
-  r = await weave('f2', 'post', 'kaze', 'choice', { frames: 6, frameName: 'f2_vane_anim' });
+  assert(r.result === 'effective' && s2.bound && s2.catch === 'on', 'Bind on the crank ties the line and sets the catch');
+  r = await weave('f2', 'post', 'kaze', 'assist', { frames: 6, frameName: 'f2_vane_anim' });
   dd = await rec('f2');
+  const lg2 = dd.log.filter((x) => x.lang).pop();
   assert(r.result === 'complete' && dd.done && dd.method === 'vane' && dd.state.bound === false && dd.state.catch === 'on', 'Wind on the vane lifts the float; the cord lets go and the catch holds (vane)');
+  assert(lg2.w === 'kaze' && lg2.lang.assisted && dd.via && dd.via.assisted, 'the finishing Wind was given with help (recorded as assisted)');
   assert((await p.evaluate(() => Object.keys(RB.game.s.discovery.keepsakes).join())) === 'cork_float' && (await reactionText('f2')).id === 'f2.suzu.vane', 'assisted completion: the same keepsake, Suzu\'s line for the vane');
+  const resolvedHelp = (await ev('discovery:resolved')).pop();
+  const shape = (e) => JSON.stringify(Object.assign({}, e, { method: 0 }));
+  assert(resolvedPlain && resolvedHelp && shape(resolvedPlain) === shape(resolvedHelp) && !('assisted' in resolvedHelp), 'discovery:resolved (what bond and pets listen to) is the same with or without help: ' + shape(resolvedHelp));
   await shot('f2_vane');
 });
 
@@ -439,7 +444,7 @@ await section('F3 The Maker\'s Mark', async () => {
 });
 
 // ==== F4: wrong boxes explain themselves; flame or cloth =====================================================================
-await section('F4 The Frozen Parcel Box', async () => {
+await section('F4 The Frosted Compartments', async () => {
   await start('sb.hamlet', 34, 30, 'up', { words, input: 'choice', comp: 'nao' });
   await inspect('f4', 'b', /Open box ②/);
   const fz = await said();
@@ -470,7 +475,7 @@ await section('F4 The Frozen Parcel Box', async () => {
 });
 
 // ==== F5: the sound goes where the channels send it =========================================================================
-await section('F5 The Bell That Rings the Wrong Room', async () => {
+await section('F5 A Room That Answers Twice', async () => {
   await start('lf.gardens', 18, 15, 'up', { words, input: 'choice', comp: 'mio' });
   await inspect('f5', 'alcove', /Strike the chime/);
   assert((await st('f5')).sent === 'nook' && /nook|reading/i.test(await said()), 'as found, the chime sounds in the reading nook (explained)');
@@ -495,7 +500,7 @@ await section('F5 The Bell That Rings the Wrong Room', async () => {
 });
 
 // ==== F6: marks by light or rubbing, then the filing sheet =====================================================================
-await section('F6 The Index That Files Itself Wrong', async () => {
+await section('F6 The Unbound Index', async () => {
   // not offered during the descent
   await start('sa.hut', 9, 5, 'up', { words, input: 'choice', comp: 'suzu', flags: { sa_descent: true } });
   assert(!(await p.evaluate(() => RB.weave.available())) && !(await p.evaluate(() => RB.fieldweave.eligible(RB.game.s, 'f6'))), 'during the descent the index box is not a puzzle (and nothing is offered)');
@@ -524,6 +529,26 @@ await section('F6 The Index That Files Itself Wrong', async () => {
   await settle();
   d = await rec('f6');
   assert(d.done && d.method === 'rubbed' && (await reactionText('f6')).id === 'f6.mio.rubbed', 'charcoal rubbing, filed in another order: done (rubbed), with no words at all');
+});
+
+// ==== every learner profile, and kanji accepted where the profile prefers it ==========================================
+await section('profiles', async () => {
+  for (const [prof, typed] of [['F', 'まもる'], ['E', 'まもる'], ['I', '守る'], ['A', '守る']]) {
+    await start('rw.village', 32, 23, 'up', { words: ['mamoru'], input: 'ime', comp: 'ren', profile: prof });
+    await p.evaluate(() => window.__standBy('f1', 'screen'));
+    await p.keyboard.press('KeyV');
+    await p.waitForSelector('.weave-sheet:not(.hidden) .wv-t');
+    await mark();
+    await p.click('.weave-sheet .wv-w[data-w="mamoru"]');
+    await p.waitForSelector('#ime-in');
+    const prompt = await p.textContent('.chal-prompt');
+    await p.fill('#ime-in', typed);
+    await p.press('#ime-in', 'Enter');
+    await p.waitForSelector('.chal .fbwrap[data-fb=ok]');
+    await p.click('.chal .fbwrap [data-a=continue]');
+    await settle();
+    assert((await st('f1')).held === true, 'profile ' + prof + ': typing ' + typed + ' weaves Protect (' + prompt.replace(/\s+/g, ' ').trim().slice(0, 50) + ')');
+  }
 });
 
 // ==== phone: touch Weave, docking clear of the target, tap-to-select ==============================================
