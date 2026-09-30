@@ -29372,9 +29372,10 @@ RB.petWorld = (function () {
       const keep = w.comp ? 1 : 0;
       // drop trail tiles that are its own
       while (P.queue.length && P.queue[0][0] === P.x && P.queue[0][1] === P.y) P.queue.shift();
-      // and those someone stands on now (you turned back over the trail, or a person stopped on it): it
-      // never walks onto a person; the next tile is reached by the usual short route or a catch-up
-      while (P.queue.length > keep && heldBy(P.queue[0][0], P.queue[0][1])) P.queue.shift();
+      // the tile it would stop on, when someone stands there or is walking onto it (you turned back over
+      // the trail, or a person stopped on it): it stops short rather than end on a person (passing
+      // through on the way, behind your companion, is fine)
+      while (P.queue.length - keep === 1 && heldBy(P.queue[0][0], P.queue[0][1])) P.queue.shift();
       if (P.queue.length > keep) {
         const lag = P.queue.length - keep;
         const [tx, ty] = P.queue[0];
