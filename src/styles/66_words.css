@@ -1,0 +1,104 @@
+/* Words › Kept sentences, Words › Creatures met, and the dialogue's Keep tab
+ * (src/ui/66_words_pages.js). */
+
+/* ---- the Keep tab: a paper tab on the sheet's top edge, at the right --------------------- */
+/* It shares the sheet's tab row with the speaker's tab (which is on the left),
+ * so it takes no room from the text or from the control row: Next keeps its place. */
+.dlg-keep {
+  grid-area: tab; justify-self: end; align-self: end; position: relative; z-index: 1;
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.35em;
+  min-height: var(--tap, 44px); min-width: var(--tap, 44px); margin: 0 14px -1px 0; padding: 0 0.85em;
+  background: var(--paper-2); color: var(--ink-2); border: 1px solid var(--paper-edge); border-bottom: 0; border-radius: 8px 8px 0 0;
+  font: inherit; font-size: 0.86em; cursor: pointer; touch-action: manipulation;
+}
+.dlg-keep svg { width: 1.2em; height: 1.2em; flex: none; }
+.dlg-keep:hover { background: var(--paper); color: var(--ink); }
+.dlg-keep:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+.dlg-keep.kept { color: var(--ink); background: var(--paper); box-shadow: inset 0 3px 0 var(--vermilion); font-weight: 600; }
+.dlg-keep.kept svg { color: var(--vermilion); fill: rgba(168, 62, 39, 0.28); }
+/* the speaker's tab leaves room for it */
+.dlg.has-keep .dlg-tab { max-width: calc(100% - 7.5em); }
+@media (max-width: 599px) {
+  .dlg-keep { margin-right: 8px; }
+  .dlg.has-keep .dlg-tab { max-width: calc(100% - 6.5em); }
+}
+body.high-contrast .dlg-keep { border-color: #000; color: #000; }
+
+/* ---- shared ---------------------------------------------------------------------------------- */
+.wp-h { display: flex; align-items: center; gap: 0.45em; margin: 1em 0 0.35em; font-size: 1em; }
+.wp-h > svg { width: 1.15em; height: 1.15em; flex: none; color: var(--ink-2); }
+.wp-jpn { color: var(--ink-2); font-size: 0.92em; }
+/* the player's own words (titles, notes, names): never markup, and never
+ * mistaken for the game's text: a handwritten-looking face and a pencil rule */
+.utext { font-family: var(--hand, "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive); font-style: italic; color: var(--ink); overflow-wrap: anywhere; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 0.4em; min-height: var(--tap, 44px); min-width: var(--tap, 44px); padding: 0 0.8em;
+  background: var(--paper); color: var(--ink); border: 1px solid var(--ink-3); border-radius: 999px; font: inherit; font-size: 0.92em; cursor: pointer;
+}
+.chip .n { color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.chip[aria-pressed="true"] { background: var(--paper-2); border-color: var(--ribbon-deep); box-shadow: inset 0 -3px 0 var(--ribbon); font-weight: 600; }
+.chip:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+
+/* ---- Kept sentences ------------------------------------------------------------------------------ */
+.bm-list { margin-top: 0.3em; }
+.bm-row .body { display: block; min-width: 0; }
+.bm-row .bm-title { display: flex; align-items: center; gap: 0.35em; margin-bottom: 0.15em; }
+.bm-row .bm-title svg { width: 1em; height: 1em; flex: none; color: var(--ribbon-deep); }
+.bm-row .bm-jp, .bm-row .bm-en { display: block; }
+.bm-row .bm-jp .jline { font-size: 1.05em; line-height: 2; }
+.bm-row .bm-en { color: var(--ink-2); margin: 0.1em 0 0.25em; }
+.bm-row .kind { text-transform: none; letter-spacing: 0; font-weight: 400; font-size: 0.86em; }
+.bm-item.open > .bm-row { background: rgba(193, 138, 42, 0.1); box-shadow: inset 4px 0 0 var(--ribbon); }
+.bm-detail { padding: 0.4em 0.2em 0.9em 2.2em; border-bottom: 1px solid var(--rule); }
+.bm-meta { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 0.25em 0.8em; margin: 0.2em 0 0.6em; }
+.bm-meta dt { color: var(--ink-3); font-size: 0.9em; }
+.bm-meta dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.bm-meta dd > svg { width: 1em; height: 1em; vertical-align: -0.15em; color: var(--ink-2); }
+.bm-words .bm-wl { list-style: none; margin: 0.2em 0 0.4em; padding: 0; display: grid; gap: 0.15em; }
+.bm-user { margin-top: 0.4em; padding: 0.2em 0.8em 0.6em; background: var(--paper-2); border-left: 4px dashed var(--ribbon-deep); border-radius: 2px; }
+.bm-user .wp-h { margin-top: 0.4em; }
+.bm-form { display: grid; gap: 0.3em; margin: 0.5em 0; }
+.bm-form label { font-weight: 600; }
+.bm-in { display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch; }
+.bm-in.end { justify-content: flex-end; }
+.bm-form input, .bm-form textarea {
+  flex: 1 1 12em; min-width: 0; width: 100%; min-height: var(--tap, 44px); padding: 0.4em 0.6em; box-sizing: border-box;
+  font: inherit; font-family: var(--hand, "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive); font-style: italic;
+  color: var(--ink); background: #fffaf0; border: 1px solid var(--ink-3); border-radius: var(--r-1, 4px); resize: vertical;
+}
+.bm-form input:focus-visible, .bm-form textarea:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+.bm-acts { margin-top: 0.6em; }
+.bm-for .jp, .chip .jp { font-size: 1em; }
+.bm-ctx { margin: 0.2em 0 0.6em; }
+.bm-ctx .jline { line-height: 2; }
+
+/* ---- Creatures met ---------------------------------------------------------------------------------- */
+.cr-row { grid-template-columns: 64px minmax(0, 1fr) auto; }
+.cr-thumbbox { width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 4px;
+  background: linear-gradient(#cfc4a6, #b3a888); box-shadow: inset 0 0 0 1px var(--paper-edge); overflow: hidden; }
+.cr-thumbbox > svg { width: 60%; height: 60%; color: var(--ink-2); }
+.cr-row .body { display: block; min-width: 0; }
+.cr-row .kind { text-transform: none; letter-spacing: 0; font-weight: 400; font-size: 0.86em; }
+canvas.cr-art { image-rendering: auto; }
+canvas.cr-art.px { image-rendering: pixelated; image-rendering: crisp-edges; }
+.cr-item.open > .cr-row { background: rgba(193, 138, 42, 0.1); box-shadow: inset 4px 0 0 var(--ribbon); }
+.cr-detail { padding: 0.4em 0.2em 0.9em 0.4em; border-bottom: 1px solid var(--rule); }
+.cr-fig { display: flex; flex-wrap: wrap; gap: 0.8em 1em; align-items: center; margin: 0.2em 0 0.4em; }
+.cr-frame { flex: none; padding: 10px; border-radius: 4px; background: linear-gradient(#cfc4a6, #ada184); box-shadow: inset 0 0 0 1px var(--paper-edge), 0 2px 0 var(--paper-3); max-width: 100%; box-sizing: border-box; }
+.cr-frame canvas { display: block; max-width: 100%; height: auto; }
+.cr-fig figcaption { flex: 1 1 14em; min-width: 0; }
+.cr-line { margin: 0.2em 0; }
+.cr-line .jline { line-height: 2; }
+.cr-line .cr-en { color: var(--ink-2); }
+.cr-places, .cr-moves, .cr-phases { list-style: none; margin: 0; padding: 0; }
+.cr-places > li, .cr-moves > li, .cr-phases > li { padding: 0.35em 0; border-bottom: 1px dotted var(--rule); }
+.cr-pl { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.2em 0.5em; }
+.cr-set { display: inline-flex; align-items: center; gap: 0.25em; font-size: 0.86em; padding: 0 0.5em; border: 1px solid var(--ink-3); border-radius: 999px; color: var(--ink-2); }
+.cr-set svg { width: 1em; height: 1em; }
+.cr-mv { display: flex; align-items: center; gap: 0.45em; }
+.cr-mv > svg { width: 1.2em; height: 1.2em; flex: none; color: var(--ink-2); }
+.cr-notes { margin: 0.15em 0 0 1.65em; padding: 0; list-style: disc; }
+.cr-notes li { margin: 0.1em 0; }
+.cr-w .jline { line-height: 1.9; }
+.cr-foot { margin-top: 0.8em; }

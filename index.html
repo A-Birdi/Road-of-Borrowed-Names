@@ -2697,6 +2697,112 @@ body.high-contrast .kc-pp { --pad-paper: #ffffff; --pad-ink: #000000; --pad-guid
 .kjc .kc-res .en, .kjc .kc-words .en { font-family: var(--ui-font); }
 .folio.lsheet.kjc > .folio-head { flex: none; }
 @media (max-width: 599px) { .folio.lsheet.kjc > .folio-head .meta { display: none; } .kjc .kc-res { gap: 0.5em; padding: 0.3em 0.45em; } .kjc .kc-rg { font-size: 1.45em; } }
+
+/* ==== src/styles/66_words.css ==== */
+/* Words › Kept sentences, Words › Creatures met, and the dialogue's Keep tab
+ * (src/ui/66_words_pages.js). */
+
+/* ---- the Keep tab: a paper tab on the sheet's top edge, at the right --------------------- */
+/* It shares the sheet's tab row with the speaker's tab (which is on the left),
+ * so it takes no room from the text or from the control row: Next keeps its place. */
+.dlg-keep {
+  grid-area: tab; justify-self: end; align-self: end; position: relative; z-index: 1;
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.35em;
+  min-height: var(--tap, 44px); min-width: var(--tap, 44px); margin: 0 14px -1px 0; padding: 0 0.85em;
+  background: var(--paper-2); color: var(--ink-2); border: 1px solid var(--paper-edge); border-bottom: 0; border-radius: 8px 8px 0 0;
+  font: inherit; font-size: 0.86em; cursor: pointer; touch-action: manipulation;
+}
+.dlg-keep svg { width: 1.2em; height: 1.2em; flex: none; }
+.dlg-keep:hover { background: var(--paper); color: var(--ink); }
+.dlg-keep:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+.dlg-keep.kept { color: var(--ink); background: var(--paper); box-shadow: inset 0 3px 0 var(--vermilion); font-weight: 600; }
+.dlg-keep.kept svg { color: var(--vermilion); fill: rgba(168, 62, 39, 0.28); }
+/* the speaker's tab leaves room for it */
+.dlg.has-keep .dlg-tab { max-width: calc(100% - 7.5em); }
+@media (max-width: 599px) {
+  .dlg-keep { margin-right: 8px; }
+  .dlg.has-keep .dlg-tab { max-width: calc(100% - 6.5em); }
+}
+body.high-contrast .dlg-keep { border-color: #000; color: #000; }
+
+/* ---- shared ---------------------------------------------------------------------------------- */
+.wp-h { display: flex; align-items: center; gap: 0.45em; margin: 1em 0 0.35em; font-size: 1em; }
+.wp-h > svg { width: 1.15em; height: 1.15em; flex: none; color: var(--ink-2); }
+.wp-jpn { color: var(--ink-2); font-size: 0.92em; }
+/* the player's own words (titles, notes, names): never markup, and never
+ * mistaken for the game's text: a handwritten-looking face and a pencil rule */
+.utext { font-family: var(--hand, "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive); font-style: italic; color: var(--ink); overflow-wrap: anywhere; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 0.4em; min-height: var(--tap, 44px); min-width: var(--tap, 44px); padding: 0 0.8em;
+  background: var(--paper); color: var(--ink); border: 1px solid var(--ink-3); border-radius: 999px; font: inherit; font-size: 0.92em; cursor: pointer;
+}
+.chip .n { color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.chip[aria-pressed="true"] { background: var(--paper-2); border-color: var(--ribbon-deep); box-shadow: inset 0 -3px 0 var(--ribbon); font-weight: 600; }
+.chip:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+
+/* ---- Kept sentences ------------------------------------------------------------------------------ */
+.bm-list { margin-top: 0.3em; }
+.bm-row .body { display: block; min-width: 0; }
+.bm-row .bm-title { display: flex; align-items: center; gap: 0.35em; margin-bottom: 0.15em; }
+.bm-row .bm-title svg { width: 1em; height: 1em; flex: none; color: var(--ribbon-deep); }
+.bm-row .bm-jp, .bm-row .bm-en { display: block; }
+.bm-row .bm-jp .jline { font-size: 1.05em; line-height: 2; }
+.bm-row .bm-en { color: var(--ink-2); margin: 0.1em 0 0.25em; }
+.bm-row .kind { text-transform: none; letter-spacing: 0; font-weight: 400; font-size: 0.86em; }
+.bm-item.open > .bm-row { background: rgba(193, 138, 42, 0.1); box-shadow: inset 4px 0 0 var(--ribbon); }
+.bm-detail { padding: 0.4em 0.2em 0.9em 2.2em; border-bottom: 1px solid var(--rule); }
+.bm-meta { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 0.25em 0.8em; margin: 0.2em 0 0.6em; }
+.bm-meta dt { color: var(--ink-3); font-size: 0.9em; }
+.bm-meta dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.bm-meta dd > svg { width: 1em; height: 1em; vertical-align: -0.15em; color: var(--ink-2); }
+.bm-words .bm-wl { list-style: none; margin: 0.2em 0 0.4em; padding: 0; display: grid; gap: 0.15em; }
+.bm-user { margin-top: 0.4em; padding: 0.2em 0.8em 0.6em; background: var(--paper-2); border-left: 4px dashed var(--ribbon-deep); border-radius: 2px; }
+.bm-user .wp-h { margin-top: 0.4em; }
+.bm-form { display: grid; gap: 0.3em; margin: 0.5em 0; }
+.bm-form label { font-weight: 600; }
+.bm-in { display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch; }
+.bm-in.end { justify-content: flex-end; }
+.bm-form input, .bm-form textarea {
+  flex: 1 1 12em; min-width: 0; width: 100%; min-height: var(--tap, 44px); padding: 0.4em 0.6em; box-sizing: border-box;
+  font: inherit; font-family: var(--hand, "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive); font-style: italic;
+  color: var(--ink); background: #fffaf0; border: 1px solid var(--ink-3); border-radius: var(--r-1, 4px); resize: vertical;
+}
+.bm-form input:focus-visible, .bm-form textarea:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+.bm-acts { margin-top: 0.6em; }
+.bm-for .jp, .chip .jp { font-size: 1em; }
+.bm-ctx { margin: 0.2em 0 0.6em; }
+.bm-ctx .jline { line-height: 2; }
+
+/* ---- Creatures met ---------------------------------------------------------------------------------- */
+.cr-row { grid-template-columns: 64px minmax(0, 1fr) auto; }
+.cr-thumbbox { width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 4px;
+  background: linear-gradient(#cfc4a6, #b3a888); box-shadow: inset 0 0 0 1px var(--paper-edge); overflow: hidden; }
+.cr-thumbbox > svg { width: 60%; height: 60%; color: var(--ink-2); }
+.cr-row .body { display: block; min-width: 0; }
+.cr-row .kind { text-transform: none; letter-spacing: 0; font-weight: 400; font-size: 0.86em; }
+canvas.cr-art { image-rendering: auto; }
+canvas.cr-art.px { image-rendering: pixelated; image-rendering: crisp-edges; }
+.cr-item.open > .cr-row { background: rgba(193, 138, 42, 0.1); box-shadow: inset 4px 0 0 var(--ribbon); }
+.cr-detail { padding: 0.4em 0.2em 0.9em 0.4em; border-bottom: 1px solid var(--rule); }
+.cr-fig { display: flex; flex-wrap: wrap; gap: 0.8em 1em; align-items: center; margin: 0.2em 0 0.4em; }
+.cr-frame { flex: none; padding: 10px; border-radius: 4px; background: linear-gradient(#cfc4a6, #ada184); box-shadow: inset 0 0 0 1px var(--paper-edge), 0 2px 0 var(--paper-3); max-width: 100%; box-sizing: border-box; }
+.cr-frame canvas { display: block; max-width: 100%; height: auto; }
+.cr-fig figcaption { flex: 1 1 14em; min-width: 0; }
+.cr-line { margin: 0.2em 0; }
+.cr-line .jline { line-height: 2; }
+.cr-line .cr-en { color: var(--ink-2); }
+.cr-places, .cr-moves, .cr-phases { list-style: none; margin: 0; padding: 0; }
+.cr-places > li, .cr-moves > li, .cr-phases > li { padding: 0.35em 0; border-bottom: 1px dotted var(--rule); }
+.cr-pl { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.2em 0.5em; }
+.cr-set { display: inline-flex; align-items: center; gap: 0.25em; font-size: 0.86em; padding: 0 0.5em; border: 1px solid var(--ink-3); border-radius: 999px; color: var(--ink-2); }
+.cr-set svg { width: 1em; height: 1em; }
+.cr-mv { display: flex; align-items: center; gap: 0.45em; }
+.cr-mv > svg { width: 1.2em; height: 1.2em; flex: none; color: var(--ink-2); }
+.cr-notes { margin: 0.15em 0 0 1.65em; padding: 0; list-style: disc; }
+.cr-notes li { margin: 0.1em 0; }
+.cr-w .jline { line-height: 1.9; }
+.cr-foot { margin-top: 0.8em; }
 </style>
 </head>
 <body>
@@ -27543,6 +27649,558 @@ RB.questMarks = (function () {
 })();
 
 
+/* ==== src/engine/63_bookmarks.js ==== */
+/* Sentence bookmarks (addendum §20.1): "Keep this sentence" on the line in
+ * the dialogue box, on a line in the dialogue history, or on a readable
+ * inscription (the lines a sign, notice or tablet shows in the same box).
+ *
+ * A kept sentence is stored in the campaign (s.bookmarks) as it was shown:
+ * the original Japanese with its reading markup, the placeholder values it
+ * was shown with (the player's or companion's name then), the faithful
+ * English as it read then, who said it or what it was written on, where,
+ * and a compact reference to its source (scene, prop or encounter) with a
+ * hash of the source text. The page never re-reads the source to display a
+ * bookmark: a later content change cannot silently give it another meaning.
+ * If the source line has changed or gone, the bookmark says it is a saved
+ * excerpt (status()).
+ *
+ * Event-time context: every line shown in the dialogue box gets a small
+ * context record on its dialogue-history entry (entry.k: map, source,
+ * placeholder values, resolved English, the speaker's name then), so a line
+ * kept later from the history is still truthful. History entries from before
+ * this existed have none; a sentence kept from one says its names are shown
+ * as they are now (approx).
+ *
+ * Keeping never records learning: no mastery, no counts, no introduction.
+ * Optional practice from a kept sentence uses the game's own vocabulary
+ * recognition template with real lexicon meanings and records nothing.
+ *
+ *   RB.bookmarks.capture(line, entry, s)   context for a line being shown
+ *   RB.bookmarks.chose(opt, s)             context for a reply being chosen
+ *   RB.bookmarks.keep(s, entry)            keep (returns the bookmark, or a reason)
+ *   RB.bookmarks.find(s, entry)            the bookmark for this line, if kept
+ *   RB.bookmarks.remove / rename / setNote
+ *   RB.bookmarks.status(b)                 'ok' | 'changed' | 'removed' | 'unknown'
+ *   RB.bookmarks.wordsOf(b)                lexicon words in a kept sentence
+ *   RB.bookmarks.usesOf(s, noted)          kept sentences that use a noted word
+ *   RB.bookmarks.practiceSteps(b, n)       optional practice steps (no record) */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.bookmarks = (function () {
+  'use strict';
+  const MAX = 300;          // kept sentences per campaign (never evicted: Keep says when full)
+  const TITLE_MAX = 60;     // characters (code points)
+  const NOTE_MAX = 280;
+  const PH = /\$([A-Za-z][A-Za-z0-9]*)/g;
+  const hash = (jp, en) => RB.util.hashStr(String(jp || '') + '||' + String(en || '')).toString(36);
+
+  // ---- user text: plain, bounded, no control or direction-override characters ----
+  function clean(t, max, multiline) {
+    let x = String(t == null ? '' : t).replace(/\r\n?/g, '\n');
+    x = x.replace(multiline ? /[\u0000-\u0009\u000B-\u001F\u007F-\u009F]/g : /[\u0000-\u001F\u007F-\u009F]/g, ' ');
+    x = x.replace(/[\u200B-\u200F\u2028-\u202E\u2060-\u2069\uFEFF]/g, '');
+    if (multiline) x = x.replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n');
+    else x = x.replace(/\s+/g, ' ');
+    x = x.trim();
+    const cps = Array.from(x);
+    return cps.length > max ? cps.slice(0, max).join('').trim() : x;
+  }
+
+  // ---- event-time context --------------------------------------------------------------------
+  const placeholders = (jp) => { const out = []; String(jp || '').replace(PH, (m, k) => { if (out.indexOf(k) < 0) out.push(k); return m; }); return out; };
+  function varsFor(jp) {
+    const ks = placeholders(jp);
+    if (!ks.length || !RB.script) return null;
+    const all = RB.script.jpVars();
+    const v = {};
+    for (const k of ks) if (Object.prototype.hasOwnProperty.call(all, k)) v[k] = String(all[k]);
+    return Object.keys(v).length ? v : null;
+  }
+  const liveMap = (s) => { const W = RB.world && RB.world.W; return (W && W.map && W.map.id) || (s && s.map) || null; };
+  // the prop in front of the player (the one being read), when it is the source of this line
+  function propInFront(line) {
+    const W = RB.world && RB.world.W;
+    if (!W || !W.map || !W.player || !RB.world.frontTile) return null;
+    const [fx, fy] = RB.world.frontTile();
+    for (const pr of W.map.props || []) {
+      const pd = (RB.props && RB.props.P && RB.props.P[pr.p]) || {};
+      const pw = pr.w || pd.w || 1, ph = pr.h || pd.h || 1;
+      if (!(fx >= pr.x && fx < pr.x + pw && fy >= pr.y && fy < pr.y + ph)) continue;
+      if (line.sceneId ? pr.scene === line.sceneId : pr.text && pr.text.jp === line.jp) return pr;
+    }
+    return null;
+  }
+  function sourceOf(line, s) {
+    const m = liveMap(s);
+    const inBattle = RB.combat && RB.combat.state && RB.combat.state();
+    if (line.sceneId) {
+      const pr = line.who === 'narr' && !inBattle ? propInFront(line) : null;
+      return pr ? { k: 'sc', id: line.sceneId, o: pr.p, x: pr.x, y: pr.y } : { k: 'sc', id: line.sceneId };
+    }
+    if (inBattle) { const c = RB.combat.context && RB.combat.context(); return { k: 'bt', id: c ? c.id : null }; }
+    const pr = line.who === 'narr' ? propInFront(line) : null;
+    if (pr) return { k: 'pr', m, x: pr.x, y: pr.y, o: pr.p };
+    return { k: 'ln' };
+  }
+  // Called for every line shown in the dialogue box (src/ui/20_dialogue.js):
+  // the context is kept on the line's dialogue-history entry.
+  let lastLine = null;
+  function capture(line, entry, s) {
+    s = s || (RB.game && RB.game.s);
+    if (!line || !entry || !s) return null;
+    flushChoice(s);
+    lastLine = line;
+    const k = { m: liveMap(s), src: sourceOf(line, s) };
+    const v = varsFor(line.jp);
+    if (v) k.v = v;
+    const en = line.en && RB.script ? RB.script.enVars(line.en) : line.en || '';
+    if (en !== (line.en || '')) k.e = en;
+    if (line.who === 'pc') k.n = { en: s.player.name, jp: s.player.nameJp || s.player.name };
+    entry.k = k;
+    return k;
+  }
+  // A reply chosen from the choices: its history entry is added by the scene
+  // runner right after, so the context waits here until that entry exists.
+  let pendingChoice = null;
+  function chose(opt, s) {
+    s = s || (RB.game && RB.game.s);
+    if (!opt || !s) return;
+    // (the reply belongs to the scene of the line it answers)
+    const cur = lastLine;
+    const k = { m: liveMap(s), src: cur && cur.sceneId ? { k: 'sc', id: cur.sceneId } : { k: 'ln' } };
+    const v = varsFor(opt.jp);
+    if (v) k.v = v;
+    const en = opt.en && RB.script ? RB.script.enVars(opt.en) : opt.en || '';
+    if (en !== (opt.en || '')) k.e = en;
+    k.n = { en: s.player.name, jp: s.player.nameJp || s.player.name };
+    pendingChoice = { jp: opt.jp, en: opt.en, k, n: s.backlog.length };
+    setTimeout(() => flushChoice(s), 0);
+  }
+  function flushChoice(s) {
+    const p = pendingChoice;
+    if (!p || !s || !s.backlog) return;
+    for (let i = s.backlog.length - 1; i >= Math.max(0, p.n - 2); i--) {
+      const e = s.backlog[i];
+      if (e && e.choice && !e.k && e.jp === p.jp && e.en === p.en) { e.k = p.k; pendingChoice = null; return; }
+    }
+    if (s.backlog.length > p.n + 4) pendingChoice = null; // the reply was never recorded here: drop the wait
+  }
+
+  // ---- keeping -----------------------------------------------------------------------------------
+  const eligible = (entry) => !!(entry && typeof entry.jp === 'string' && entry.jp.trim());
+  const list = (s) => (Array.isArray(s.bookmarks) ? s.bookmarks : (s.bookmarks = []));
+  // the English as it read when the line was shown (or now, for an old history entry)
+  const enOf = (entry) => (entry.k && entry.k.e != null ? entry.k.e : entry.en && RB.script ? RB.script.enVars(entry.en) : entry.en || '');
+  const keyOf = (who, jp, en) => hash(String(who || '') + '|' + jp, en);
+  function find(s, entry) {
+    if (!s || !eligible(entry)) return null;
+    const key = keyOf(entry.who, entry.jp, enOf(entry));
+    return list(s).find((b) => b.key === key) || null;
+  }
+  function placeName(mapId) {
+    if (!mapId) return null;
+    if (/^atlas\./.test(mapId)) return { en: 'The Unwritten Atlas', jp: '{書|か}かれて いない {地図|ちず}' };
+    const d = RB.content.maps[mapId];
+    return d && d.name ? { en: d.name.en, jp: d.name.jp || '' } : null;
+  }
+  function whoName(entry) {
+    if (entry.who === 'narr') return null;
+    if (entry.who === 'pc') {
+      const n = entry.k && entry.k.n;
+      const s = RB.game && RB.game.s;
+      return n ? { en: n.en, jp: n.jp } : s ? { en: s.player.name, jp: s.player.nameJp || s.player.name } : null;
+    }
+    const c = RB.content.chars[entry.who];
+    return c && c.name ? { en: c.name.en, jp: c.name.jp || '' } : { en: String(entry.who), jp: '' };
+  }
+  // Keep a line: a dialogue-history entry { who, jp, en, choice?, k? } or a
+  // line being shown with its entry's context. Returns { ok, b } or { ok: false, why }.
+  function keep(s, entry) {
+    if (!s) return { ok: false, why: 'none' };
+    if (!eligible(entry)) return { ok: false, why: 'ineligible' };
+    const had = find(s, entry);
+    if (had) return { ok: true, b: had, already: true };
+    const L = list(s);
+    if (L.length >= MAX) return { ok: false, why: 'full', max: MAX };
+    const k = entry.k || null;
+    const v = k ? k.v || null : varsFor(entry.jp);
+    const en = enOf(entry);
+    const src = k && k.src ? Object.assign({}, k.src) : { k: 'ln' };
+    const map = (k && k.m) || (src.k === 'pr' ? src.m : null) || null;
+    const b = {
+      id: 'bm' + RB.util.uid(), t: Date.now(), key: keyOf(entry.who, entry.jp, en),
+      jp: entry.jp, en, who: entry.who || 'narr', wn: whoName(entry),
+      src, map, place: placeName(map), h: hash(entry.jp, entry.en), title: '', note: '',
+    };
+    if (v) b.v = v;
+    if (src.o) b.obj = src.o;
+    if (entry.choice) b.choice = true;
+    if (!k) b.approx = true; // an old history entry: names are as they are now
+    L.push(b);
+    return { ok: true, b };
+  }
+  function byId(s, id) { return list(s).find((b) => b.id === id) || null; }
+  function remove(s, id) {
+    const L = list(s), i = L.findIndex((b) => b.id === id);
+    if (i < 0) return false;
+    L.splice(i, 1);
+    return true;
+  }
+  function rename(s, id, title) { const b = byId(s, id); if (!b) return null; b.title = clean(title, TITLE_MAX, false); return b; }
+  function setNote(s, id, note) { const b = byId(s, id); if (!b) return null; b.note = clean(note, NOTE_MAX, true); return b; }
+
+  // ---- the source, now ---------------------------------------------------------------------------
+  // 'ok': the line is still in its source; 'changed': the source exists but the
+  // line (Japanese or English) is not there any more; 'removed': the source is
+  // gone; 'unknown': no source that can be checked (a generated or unrecorded line).
+  function status(b) {
+    const src = (b && b.src) || {};
+    const C = RB.content;
+    const same = (jp, en) => jp != null && hash(jp, en) === b.h;
+    const tierHas = (x) => {
+      if (!x) return false;
+      if (x.jp != null || x.en != null) return same(x.jp, x.en);
+      return ['F', 'E', 'I', 'A'].some((t) => x[t] && same(x[t].jp, x[t].en));
+    };
+    if (src.k === 'sc') {
+      const sc = C.scenes[src.id];
+      if (!sc) return 'removed';
+      for (const c of sc.cmds) {
+        if (c.op === 'say' && same(c.jp, c.en)) return 'ok';
+        if (c.op === 'choice' && c.opts.some((o) => same(o.jp, o.en))) return 'ok';
+      }
+      return 'changed';
+    }
+    if (src.k === 'pr') {
+      const m = C.maps[src.m];
+      if (!m) return 'removed';
+      const pr = (m.props || []).find((p) => p.x === src.x && p.y === src.y && (!src.o || p.p === src.o));
+      if (!pr) return 'removed';
+      return pr.text && same(pr.text.jp, pr.text.en) ? 'ok' : 'changed';
+    }
+    if (src.k === 'bt') {
+      const e = src.id && C.enemies[src.id];
+      if (!e) return 'removed';
+      if (tierHas(e.intro) || tierHas(e.settle) || (e.phases || []).some((p) => tierHas(p.line))) return 'ok';
+      // a placement's own lines (a foe placed on a map)
+      for (const id in C.maps) for (const f of C.maps[id].foes || []) {
+        if (f.enemy !== src.id) continue;
+        const pl = f.place || f;
+        if (tierHas(pl.intro) || tierHas(pl.settle)) return 'ok';
+      }
+      return 'changed';
+    }
+    return 'unknown';
+  }
+
+  // ---- the words in a kept sentence ---------------------------------------------------------------
+  const CONTENT = (e) => e && e.pos && ['prt', 'aux', 'suf', 'name', 'cop'].indexOf(e.pos) < 0;
+  function wordsOf(b) {
+    const out = [];
+    if (!b || !RB.jp || !RB.jp.parse) return out;
+    let toks;
+    try { toks = RB.jp.parse(b.jp, Object.assign({}, b.v || {})); } catch (e) { return out; }
+    for (const t of toks) {
+      if (t.punct || t.ph || !/[぀-ヿ一-鿿々]/.test(t.surface)) continue;
+      let info = null;
+      try { info = RB.jp.lookup(t); } catch (e) { info = null; }
+      if (!info || info.unknown) continue;
+      out.push({ surface: t.surface, reading: t.reading, lemma: info.lemma || t.surface, entry: info.entry || null });
+    }
+    return out;
+  }
+  // A noted word (s.notebook, kind 'word', id 'w:<lemma>|<reading>') and the
+  // kept sentences that use it: only sentences the player kept, so never a
+  // line they have not seen.
+  function notedLemma(n) { const x = String(n.id || '').slice(2).split('|')[0]; return x || n.surface || ''; }
+  function uses(b, n) {
+    const lemma = notedLemma(n);
+    return wordsOf(b).some((w) => w.lemma === lemma || w.surface === n.surface || (w.entry && w.entry.w === lemma));
+  }
+  function usesOf(s, n) { return list(s).filter((b) => uses(b, n)); }
+
+  // ---- optional practice ------------------------------------------------------------------------------
+  // The game's own word-recognition template (as RB.tasks.vocabStep builds it:
+  // "What does this word mean?", the word with its reading, the lexicon
+  // meaning as the one right option and other words' meanings of the same part
+  // of speech as the rest) for up to n content words of the sentence. Built
+  // here without RB.tasks.vocabStep because that reads the learning record
+  // through RB.learn.rec, which creates records; these steps carry no learning
+  // item, so running them records nothing (and the caller passes noRecord).
+  // The option order comes from its own seeded generator, not a game stream.
+  function practiceSteps(b, n) {
+    const out = [], seen = new Set();
+    if (!RB.tasks || !RB.tasks.kanaWordIndex) return out;
+    const index = RB.tasks.kanaWordIndex();
+    const label = (e) => (e.w !== e.r ? e.w : e.r);
+    for (const w of wordsOf(b)) {
+      const e = w.entry;
+      if (!CONTENT(e) || !e.m || !e.r || seen.has(e.w)) continue;
+      const pool = index.filter((x) => x.m !== e.m && x.pos === e.pos && x.w !== e.w && x.r !== e.r);
+      if (pool.length < 2) continue;
+      const rr = RB.util.rng(RB.util.hashStr(b.id + '|' + e.w) | 0);
+      const wrong = rr.shuffle(pool.slice()).slice(0, 3);
+      seen.add(e.w);
+      out.push({
+        kind: 'choose', fromBookmark: b.id,
+        prompt: { en: 'What does this word mean?' }, ctx: { jp: e.w !== e.r ? '{' + e.w + '|' + e.r + '}' : e.w, big: true },
+        options: [{ en: e.m, ok: true }].concat(wrong.map((x) => ({ en: x.m, ok: false, why: { en: 'That would be ' + label(x) + '（' + x.r + '）.' } }))),
+        explain: { en: label(e) + '（' + e.r + '）: ' + e.m + (e.n ? '. ' + e.n : '') },
+      });
+      if (out.length >= (n || 3)) break;
+    }
+    return out;
+  }
+
+  // ---- load-time normalisation (RB.save.addMigration; registered from src/content/words) ----
+  // Keeps every record; fills an id where one is missing; never invents history.
+  function migrate(st) {
+    if (!Array.isArray(st.bookmarks)) return;
+    for (const b of st.bookmarks) {
+      if (!b || typeof b !== 'object') continue;
+      if (!b.id) b.id = 'bm' + RB.util.uid();
+      if (typeof b.title !== 'string') b.title = '';
+      if (typeof b.note !== 'string') b.note = '';
+      if (!b.key && typeof b.jp === 'string') b.key = keyOf(b.who, b.jp, b.en || '');
+    }
+  }
+
+  return { capture, chose, keep, find, remove, rename, setNote, byId, status, wordsOf, usesOf, practiceSteps, eligible, clean, migrate, placeName, MAX, TITLE_MAX, NOTE_MAX, _hash: hash };
+})();
+
+
+/* ==== src/engine/64_creatures.js ==== */
+/* Creatures Met (addendum §20.2): an observation notebook of the creatures
+ * the player has actually encountered, kept in the campaign (s.creatures).
+ *
+ * A creature is registered when an encounter with it begins (never when its
+ * definition loads). The record keeps the species apart from its placements:
+ *   s.creatures[enemyId] = {
+ *     t, name: {en, jp},                      first met; its name then
+ *     maps: { placeKey: { t, set: 'indoor'|'outdoor'|null, name, near,
+ *                         intro?: {jp, en, who}, settle?: {jp, en}, with? } },
+ *     notes: { key: { t, m, line? } },         observations, once each
+ *     settled: { t, m } | undefined            a settled observation (a win)
+ *   }
+ * placeKey is the map id (every Unwritten Atlas room is 'atlas'). Places are
+ * bounded (MAX_PLACES); notes are bounded by what the rules can produce
+ * (a move kind × what answered it), so repeated encounters add nothing new.
+ *
+ * Notes, only after they genuinely happen on screen:
+ *   i:<kind>            its move was telegraphed (Strike, Heat, …)
+ *   s:<effect>          a move took effect (heat, shroud, charge, silence, stripWard, mend)
+ *   a:<kind>:<how>      its move was answered (how: a word id, unravel, answer, truth,
+ *                       tech:<comp>, comp:<comp>)
+ *   c:<state>:<how>     a state of its was cleared (heat, shroud, charge)
+ *   w:<kind>            a standing ward soaked some of its blow
+ *   p:<n>               it changed its ways (a phase that has begun), with the line shown
+ * There are no counts: no wins, no defeats, nothing to farm, nothing to
+ * capture, and nothing here changes a battle. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.creatures = (function () {
+  'use strict';
+  const MAX_PLACES = 24;
+  const tierOf = (x) => {
+    if (!x) return null;
+    if (x.jp != null || x.en != null) return x;
+    const t = RB.activities && RB.activities.tier ? RB.activities.tier(x) : null;
+    return t && (t.jp != null || t.en != null) ? t : x.F || x.E || x.I || x.A || null;
+  };
+  const line = (x, who) => { const t = tierOf(x); return t && (t.jp || t.en) ? Object.assign({ jp: t.jp || '', en: t.en || '' }, who ? { who } : {}) : null; };
+  const book = (s) => (s.creatures && typeof s.creatures === 'object' && !Array.isArray(s.creatures) ? s.creatures : (s.creatures = {}));
+  const placeKey = (mapId) => (!mapId ? null : /^atlas\./.test(mapId) ? 'atlas' : mapId);
+  function nearOf(mapId) {
+    if (!mapId || /^atlas\./.test(mapId) || !RB.questGuide || !RB.questGuide.placeOf) return null;
+    let p = null;
+    try { p = RB.questGuide.placeOf(mapId); } catch (e) { p = null; }
+    const P = p && RB.content.places[p];
+    return P && P.name ? { en: P.name.en, jp: P.name.jp || '' } : null;
+  }
+  function rec(s, id, when) {
+    const d = RB.content.enemies[id];
+    const B = book(s);
+    if (!B[id]) {
+      if (!d) return null;
+      B[id] = { t: when || Date.now(), name: { en: d.name ? d.name.en : id, jp: d.name ? d.name.jp || '' : '' }, maps: {}, notes: {} };
+    }
+    const c = B[id];
+    if (!c.maps || typeof c.maps !== 'object') c.maps = {};
+    if (!c.notes || typeof c.notes !== 'object') c.notes = {};
+    return c;
+  }
+  function note(c, key, m, extra) {
+    if (!c || c.notes[key]) return false;
+    c.notes[key] = Object.assign({ t: Date.now(), m: m || null }, extra || {});
+    return true;
+  }
+  const curPlace = (s) => { const W = RB.world && RB.world.W; return placeKey((W && W.map && W.map.id) || s.map); };
+
+  // An encounter begins: ids are its creatures (the lead first), opts the
+  // battle's options ({ where, place } as RB.game.startBattle passes them).
+  // The lead's opening line is kept as the first sighting at that place when
+  // the encounter shows it (not in automated test battles, which show nothing).
+  function meet(s, ids, opts) {
+    if (!s || !ids || !ids.length) return [];
+    opts = opts || {};
+    const W = RB.world && RB.world.W;
+    const mapId = (opts.where && opts.where.map) || (W && W.map && W.map.id) || s.map || null;
+    const live = W && W.map && W.map.id === mapId ? W.map : null;
+    const set = live && RB.render && RB.render.enclosed ? (RB.render.enclosed(live) ? 'indoor' : 'outdoor') : null;
+    const pk = placeKey(mapId);
+    const shown = !(RB.test && RB.test.auto);
+    const now = Date.now();
+    const out = [];
+    ids.forEach((id, i) => {
+      const c = rec(s, id, now);
+      if (!c) return;
+      out.push(id);
+      if (!pk) return;
+      let p = c.maps[pk];
+      if (!p) {
+        if (Object.keys(c.maps).length >= MAX_PLACES) return;
+        p = c.maps[pk] = { t: now, set, name: RB.bookmarks.placeName(mapId), near: nearOf(mapId) };
+      } else if (!p.set && set) p.set = set;
+      if (i > 0 && !p.with) p.with = ids[0];
+      if (i === 0 && shown && !p.intro) {
+        const d = RB.content.enemies[id];
+        const pl = opts.place || {};
+        const l = line(pl.intro != null ? pl.intro : d.intro, pl.introWho || d.introWho || 'narr');
+        if (l) p.intro = l;
+      }
+    });
+    return out;
+  }
+
+  // What the screen has just shown. Without `ex`: the telegraphs now on
+  // screen (and a new phase just announced). With ex = { fx, card, answered,
+  // comp }: the results of your response and your companion's action; with
+  // ex = { fx, enemy: true }: the creatures' moves as they landed.
+  // members: the encounter's creatures by the rules' index.
+  function saw(s, st, members, ex) {
+    if (!s || !st || !st.foes) return;
+    const pk = curPlace(s);
+    const idOf = (i) => (members && members[i] && members[i].id) || (st.foes[i] && st.foes[i].enemyId);
+    const recOf = (i) => { const id = idOf(i); return id && book(s)[id] ? book(s)[id] : null; };
+    const kindOf = (i) => { const f = st.foes[i]; return f && f.intent ? f.intent.kind : null; };
+    if (!ex) {
+      st.foes.forEach((f, i) => {
+        if (f.settled || f.knots <= 0) return;
+        const c = recOf(i);
+        if (!c) return;
+        if (f.intent) note(c, 'i:' + f.intent.kind, pk);
+        if (f.phase >= 0) {
+          const d = (members && members[i]) || f.def || RB.content.enemies[idOf(i)] || {};
+          const ph = (d.phases || [])[f.phase];
+          note(c, 'p:' + f.phase, pk, ph && ph.line ? { line: line(ph.line, ph.who || 'narr') } : null);
+        }
+      });
+      return;
+    }
+    const compId = st.compId || null;
+    const card = ex.card || null;
+    const howCard = () => {
+      if (!card) return null;
+      if (card.kind === 'word') return card.word && card.word.id ? card.word.id : 'word';
+      if (card.kind === 'tech') return 'tech:' + (card.tech || compId || '');
+      return card.kind; // unravel | answer | truth
+    };
+    const byComp = (by) => by && RB.content.chars[by] ? 'comp:' + by : null;
+    for (const f of ex.fx || []) {
+      const i = f.foe != null ? f.foe : st.cur;
+      const c = recOf(i);
+      if (!c) continue;
+      if (ex.enemy) {
+        if (f.t === 'heat' || f.t === 'shroud' || f.t === 'charge' || f.t === 'silence' || f.t === 'stripWard' || f.t === 'mend') note(c, 's:' + f.t, pk);
+        if (f.t === 'block' && kindOf(i)) note(c, 'w:' + kindOf(i), pk);
+        continue;
+      }
+      const how = byComp(f.by) || (f.by === 'wind' || f.by === 'light' || !f.by ? howCard() : null);
+      if (!how) continue;
+      if (f.t === 'water') note(c, 'c:heat:' + how, pk);
+      if (f.t === 'light') note(c, 'c:shroud:' + how, pk);
+      if (f.t === 'bind') note(c, 'c:charge:' + how, pk);
+    }
+    if (!ex.enemy && ex.answered) {
+      ex.answered.forEach((yes, i) => {
+        const k = kindOf(i);
+        if (!yes || !k || k === 'rest') return;
+        const c = recOf(i);
+        if (!c) return;
+        const f = st.foes[i];
+        const how = f && f.stunned && compId ? 'comp:' + compId : howCard();
+        if (how) note(c, 'a:' + k + ':' + how, pk);
+      });
+    }
+  }
+
+  // A win: every creature of the encounter settled. The lines the screen showed
+  // as they settled are kept with the place (the lead's settle line was said;
+  // the others' were written in the exchange log).
+  function settle(s, members, lead) {
+    if (!s || !members) return;
+    const pk = curPlace(s);
+    const shown = !(RB.test && RB.test.auto);
+    members.forEach((m, i) => {
+      const c = m && book(s)[m.id];
+      if (!c) return;
+      if (!c.settled) c.settled = { t: Date.now(), m: pk };
+      const p = pk && c.maps[pk];
+      if (shown && p && !p.settle) {
+        const src = i === 0 && lead ? lead.settle : m.settle;
+        const l = line(src, i === 0 && lead ? lead.settleWho || 'narr' : 'narr');
+        if (l) p.settle = l;
+      }
+    });
+  }
+
+  // ---- reading the notebook -----------------------------------------------------------------------
+  // The notes grouped by the move they concern, in the order first seen.
+  const EFFECT_MOVE = { heat: 'heat', shroud: 'shroud', charge: 'charge', silence: 'silence', stripWard: 'gust', mend: 'mend' };
+  function moves(c) {
+    const by = {};
+    const add = (kind, key, n) => { (by[kind] = by[kind] || { kind, t: Infinity, notes: [] }); by[kind].notes.push(Object.assign({ key }, n)); by[kind].t = Math.min(by[kind].t, n.t || 0); };
+    for (const key in (c && c.notes) || {}) {
+      const n = c.notes[key], p = key.split(':');
+      if (p[0] === 'i') add(p[1], key, n);
+      else if (p[0] === 's') add(EFFECT_MOVE[p[1]] || p[1], key, n);
+      else if (p[0] === 'a' || p[0] === 'w') add(p[1], key, n);
+      else if (p[0] === 'c') add(p[1] === 'charge' ? 'charge' : p[1], key, n);
+    }
+    const out = Object.values(by).sort((a, b) => a.t - b.t);
+    // (a move is listed once it was telegraphed; results without a telegraph are kept under it too)
+    for (const m of out) m.notes.sort((a, b) => (a.key[0] === 'i' ? -1 : b.key[0] === 'i' ? 1 : a.t - b.t));
+    return out;
+  }
+  function phases(c) {
+    const out = [];
+    for (const key in (c && c.notes) || {}) if (key.startsWith('p:')) out.push(Object.assign({ n: +key.slice(2) }, c.notes[key]));
+    return out.sort((a, b) => a.n - b.n);
+  }
+  function met(s) {
+    const B = (s && s.creatures) || {};
+    return Object.keys(B).filter((id) => B[id] && typeof B[id] === 'object').sort((a, b) => (B[a].t || 0) - (B[b].t || 0));
+  }
+
+  // ---- load-time normalisation (registered from src/content/words) ----------------------------------
+  // Keeps every record (an unknown id from a content change stays, and the page
+  // shows its stored name); only repairs the shape.
+  function migrate(st) {
+    if (!st.creatures || typeof st.creatures !== 'object' || Array.isArray(st.creatures)) return;
+    for (const id in st.creatures) {
+      const c = st.creatures[id];
+      if (!c || typeof c !== 'object') continue;
+      if (!c.maps || typeof c.maps !== 'object') c.maps = {};
+      if (!c.notes || typeof c.notes !== 'object') c.notes = {};
+    }
+  }
+
+  // the battle calls these (src/ui/80_combat.js): a notebook fault must never disturb a battle
+  const guard = (f, name) => function () { try { return f.apply(null, arguments); } catch (err) { console.error('creatures.' + name, err); return null; } };
+  return { meet: guard(meet, 'meet'), saw: guard(saw, 'saw'), settle: guard(settle, 'settle'), moves, phases, met, migrate, placeKey, MAX_PLACES, _tierOf: tierOf };
+})();
+
+
 /* ==== src/engine/70_script.js ==== */
 /* Scene script DSL (see docs/CONTENT.md) — parser and async runner.
  *
@@ -30982,6 +31640,8 @@ RB.ui.dialogue = (function () {
     box.querySelector('.b-words').onclick = () => { RB.ui.help.toggle(); syncCtrl(); };
     box.querySelector('.b-skip').onclick = () => { RB.game.setFastForward(true); advance(); };
     RB.ui.root.appendChild(box);
+    // Keep this sentence: a tab in the sheet's tab row, outside the text and the controls (src/ui/66_words_pages.js)
+    if (RB.ui.keep) RB.ui.keep.attach(box);
     choicesEl = RB.ui.el('div', 'choices hidden');
     choicesEl.setAttribute('role', 'group');
     choicesEl.setAttribute('aria-label', 'Your reply');
@@ -31048,6 +31708,7 @@ RB.ui.dialogue = (function () {
     const ch = charInfo(line.who);
     s.backlog.push({ who: line.who, jp: line.jp, en: line.en });
     if (s.backlog.length > 220) s.backlog.splice(0, s.backlog.length - 200);
+    if (RB.ui.keep) RB.ui.keep.line(line, s.backlog[s.backlog.length - 1]); // event-time context for keeping it
     const fresh = box.classList.contains('hidden');
     if (RB.test && RB.test.auto) auditSpeaker(line);
     box.classList.remove('hidden');
@@ -31230,6 +31891,7 @@ RB.ui.dialogue = (function () {
           : '<span class="enline">' + esc(RB.script.enVars(op.en || '')) + '</span>' + (op.jp ? '<span class="en">' + RB.ui.jhtml(op.jp) + '</span>' : '')) + '</span>';
         b.onclick = (e) => {
           if (e && e.detail !== 0 && lastDown < at) return; // a press from before the replies appeared
+          if (RB.ui.keep) RB.ui.keep.chose(op); // the reply's event-time context, for keeping it later
           RB.ui.popLayer(layer);
           choicesEl.classList.add('hidden');
           choicesEl.innerHTML = '';
@@ -33416,7 +34078,8 @@ RB.ui.menu = (function () {
       A.innerHTML = sub + '<h3>Dialogue history <span class="count">' + lines.length + ' lines, oldest first</span></h3>' +
         (lines.length ? '<ol class="entries history">' + lines.map((l) => {
           const ch = l.who === 'pc' ? { name: { en: s.player.name } } : RB.content.chars[l.who];
-          return '<li class="entry"><span class="mark">' + I(l.choice ? 'next' : 'history') + '</span><div><div class="who">' + (l.choice ? 'You chose' : ch ? esc(ch.name.en) : '') + '</div>' + j(l.jp) + en(l.en) + '</div></li>';
+          return '<li class="entry"><span class="mark">' + I(l.choice ? 'next' : 'history') + '</span><div><div class="who">' + (l.choice ? 'You chose' : ch ? esc(ch.name.en) : '') + '</div>' + j(l.jp) + en(l.en) + '</div>' +
+            (RB.ui.keep ? RB.ui.keep.historyButton(s, l) : '') + '</li>'; // Keep this sentence (src/ui/66_words_pages.js)
         }).join('') + '</ol>' : '<p class="muted">Nothing said yet.</p>');
       B.innerHTML = '<p class="muted">The history keeps the last 120 lines, in both languages. Replay a line’s voice from the dialogue box while it is on screen.</p>';
       requestAnimationFrame(() => { if (!view.scroll[key()]) A.scrollTop = A.scrollHeight; });
@@ -33460,6 +34123,7 @@ RB.ui.menu = (function () {
     A.onclick = (e) => {
       const v = e.target.closest('[data-jv]');
       if (v) { remember(); J.view = v.dataset.jv; render(); return; }
+      if (RB.ui.keep && RB.ui.keep.historyClick(e)) return;
       if (guideClick(e)) return;
       const q = e.target.closest('[data-q]');
       if (q) {
@@ -35946,6 +36610,518 @@ RB.challenge = (function () {
   }
 
   return { run, runStep, practice, active: isActive, noteHelp, teachCard, check, choicesFor };
+})();
+
+
+/* ==== src/ui/66_words_pages.js ==== */
+/* Words › Kept sentences and Words › Creatures met (addendum §20), and the
+ * Keep control on dialogue lines.
+ *
+ * Keep (RB.ui.keep):
+ * - In the dialogue box a paper tab on the sheet's top edge, at the right
+ *   (the speaker's tab is on the left): "Keep" / "Kept". It sits in the
+ *   sheet's tab row, outside the text and outside the control row, so Next
+ *   keeps its place and a press on the tab never advances the line. K keeps
+ *   the line on screen from the keyboard (when K is not bound to anything).
+ *   Pressing Kept again, before you have written a title or a note for it,
+ *   un-keeps it; once it has your words it is removed only from its page.
+ * - In Journey › Dialogue history, a Keep button on each line
+ *   (src/ui/50_menu.js calls historyButton / historyClick).
+ *
+ * Kept sentences (Words page 'bookmarks'): each kept line with its reading
+ * markup and faithful English as it was shown, who said it or what it was
+ * written on, where, and when; your own title and note (plain text, set apart
+ * from the game's words); Hear it through the device's local Japanese voice
+ * when there is one; Remove; optional practice of its words (the game's
+ * recognition template, recorded nowhere). A noted word (Words › Words you
+ * noted) lists the kept sentences that use it — never a line you have not
+ * seen. A kept line whose source has changed or gone is marked as a saved
+ * excerpt.
+ *
+ * Creatures met (Words page 'creatures'): each creature you have encountered,
+ * drawn with its own battle art, its name and reading, where you met it
+ * (indoors or out, and near where), what you saw it do and what answered it,
+ * how it changed, and how it settled. Only what happened; no counts. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.ui.keep = (function () {
+  'use strict';
+  const esc = RB.util.esc;
+  const I = (n) => RB.ui.folio.icon(n);
+  const F = RB.ui.folio;
+  // two icons of our own for the folio set
+  if (F && F.ICONS) {
+    if (!F.ICONS.bookmark) F.ICONS.bookmark = '<path d="M7 3h10v18l-5-4.2L7 21z"/><path d="M10 7h4"/>';
+    if (!F.ICONS.creature) F.ICONS.creature = '<path d="M4 15c2-6 6-9 10-8 3 .7 5 3 6 6-2-1-4-1-5 0 1 2 0 5-3 6-3 .8-6-.5-8-4z"/><circle cx="14.5" cy="10.5" r="1"/>';
+  }
+  let tab = null, box = null, entry = null;
+  const say = (msg) => { if (RB.ui.notice) RB.ui.notice(msg, 'info'); };
+  const hasUserText = (b) => !!(b && (b.title || b.note));
+
+  // ---- the dialogue box's Keep tab ----------------------------------------------------------------
+  function attach(b) {
+    try {
+      if (tab || !b) return;
+      box = b;
+      tab = document.createElement('button');
+      tab.type = 'button';
+      tab.className = 'dlg-keep hidden';
+      tab.setAttribute('aria-pressed', 'false');
+      tab.title = 'Keep this sentence (K)';
+      tab.innerHTML = I('bookmark') + '<span class="kl">Keep</span>';
+      // its own press: never the text's (which advances) and never Next's
+      tab.addEventListener('click', (e) => { e.stopPropagation(); toggle(); });
+      box.insertBefore(tab, box.querySelector('.dlg-sheet'));
+    } catch (err) { console.error('keep tab', err); }
+  }
+  // A line is on screen (and its dialogue-history entry has just been added).
+  function line(l, e) {
+    try {
+      entry = e || null;
+      if (e && RB.bookmarks) RB.bookmarks.capture(l, e, RB.game.s);
+      sync();
+    } catch (err) { console.error('keep line', err); }
+  }
+  function chose(op) {
+    try { if (RB.bookmarks) RB.bookmarks.chose(op, RB.game.s); } catch (err) { console.error('keep reply', err); }
+  }
+  function sync() {
+    if (!tab) return;
+    const s = RB.game.s;
+    const ok = !!(s && entry && RB.bookmarks && RB.bookmarks.eligible(entry));
+    tab.classList.toggle('hidden', !ok);
+    if (box) box.classList.toggle('has-keep', ok);
+    if (!ok) return;
+    const kept = !!RB.bookmarks.find(s, entry);
+    tab.classList.toggle('kept', kept);
+    tab.setAttribute('aria-pressed', kept ? 'true' : 'false');
+    tab.querySelector('.kl').textContent = kept ? 'Kept' : 'Keep';
+    tab.setAttribute('aria-label', kept ? 'Kept — in Words, Kept sentences' : 'Keep this sentence');
+  }
+  // keep or un-keep a history entry; returns 'kept' | 'removed' | 'held' | 'full' | null
+  function toggleEntry(s, e) {
+    const B = RB.bookmarks;
+    const had = B.find(s, e);
+    if (had) {
+      if (hasUserText(had)) { say('This kept sentence has your own words with it: remove it from Words › Kept sentences.'); return 'held'; }
+      B.remove(s, had.id);
+      say('No longer kept.');
+      return 'removed';
+    }
+    const r = B.keep(s, e);
+    if (!r.ok) { if (r.why === 'full') say('Your kept sentences are full (' + r.max + '). Remove one in Words › Kept sentences to keep another.'); return r.why === 'full' ? 'full' : null; }
+    RB.audio && RB.audio.sfx && RB.audio.sfx('cursor', { vol: 0.5 });
+    say('Kept. Find it in Words › Kept sentences.');
+    return 'kept';
+  }
+  function toggle() {
+    try {
+      const s = RB.game.s;
+      if (!s || !entry || !RB.bookmarks.eligible(entry)) return;
+      toggleEntry(s, entry);
+      sync();
+    } catch (err) { console.error('keep', err); }
+  }
+  // K keeps the line on screen (only while the dialogue is the top thing, and
+  // only when K is not one of the player's bound keys)
+  if (typeof document !== 'undefined') {
+    document.addEventListener('keydown', (e) => {
+      if (e.code !== 'KeyK' || e.repeat || e.altKey || e.ctrlKey || e.metaKey || e.isComposing) return;
+      const t = e.target, tag = t && t.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t && t.isContentEditable)) return;
+      if (!RB.ui.dialogue || !RB.ui.dialogue.isOpen() || (RB.ui.topLayer && RB.ui.topLayer())) return;
+      const binds = RB.input && RB.input.getBinds ? RB.input.getBinds() : {};
+      for (const a in binds) if ((binds[a] || []).indexOf('KeyK') >= 0) return;
+      if (!tab || tab.classList.contains('hidden')) return;
+      e.preventDefault();
+      toggle();
+    });
+  }
+
+  // ---- Journey › Dialogue history (50_menu.js) ------------------------------------------------------
+  function historyButton(s, l) {
+    try {
+      if (!RB.bookmarks || !RB.bookmarks.eligible(l)) return '';
+      const i = s.backlog.lastIndexOf(l);
+      if (i < 0) return '';
+      const kept = !!RB.bookmarks.find(s, l);
+      return '<button type="button" class="pbtn hkeep' + (kept ? ' kept' : '') + '" data-hkeep="' + i + '" aria-pressed="' + kept + '" aria-label="' + (kept ? 'Kept — in Words, Kept sentences' : 'Keep this sentence') + '">' +
+        I('bookmark') + '<span>' + (kept ? 'Kept' : 'Keep') + '</span></button>';
+    } catch (err) { console.error('keep history', err); return ''; }
+  }
+  function historyClick(e) {
+    const b = e.target && e.target.closest && e.target.closest('[data-hkeep]');
+    if (!b) return false;
+    try {
+      const s = RB.game.s, l = s.backlog[+b.getAttribute('data-hkeep')];
+      if (!l) return true;
+      toggleEntry(s, l);
+      const kept = !!RB.bookmarks.find(s, l);
+      b.classList.toggle('kept', kept);
+      b.setAttribute('aria-pressed', kept ? 'true' : 'false');
+      b.setAttribute('aria-label', kept ? 'Kept — in Words, Kept sentences' : 'Keep this sentence');
+      b.querySelector('span').textContent = kept ? 'Kept' : 'Keep';
+      if (entry === l) sync();
+    } catch (err) { console.error('keep history', err); }
+    return true;
+  }
+
+  return { attach, line, chose, sync, toggle, historyButton, historyClick, _entry: () => entry };
+})();
+
+RB.ui.wordsPages = (function () {
+  'use strict';
+  const esc = RB.util.esc;
+  const I = (n) => RB.ui.folio.icon(n);
+  const j = (t, vars) => (t ? RB.ui.jhtml(t, vars ? { vars } : undefined) : '');
+  const TX = () => RB.content.wordsText || { pages: {}, heads: {}, setting: {}, objects: {} };
+  const lab = (x) => (x ? RB.ui.label(x.jp, x.en) : '');
+  const head = (k, icon) => { const h = TX().heads[k]; return '<h4 class="wp-h">' + I(icon) + '<span>' + lab(h) + '</span></h4>'; };
+  const date = (t) => { try { return new Date(t).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }); } catch (e) { return ''; } };
+  // player-authored text: always escaped, always marked as the player's own
+  const utext = (t, cls) => '<span class="utext' + (cls ? ' ' + cls : '') + '">' + esc(t).replace(/\n/g, '<br>') + '</span>';
+  // the folio re-draws a page on change: put the keyboard back where it was
+  function again(api, sel) {
+    api.render();
+    if (!sel) return;
+    const el = document.querySelector('#folio-page ' + sel);
+    if (el) el.focus({ preventScroll: false });
+  }
+  function live(msg) {
+    let a = document.querySelector('#folio-page .wp-live');
+    if (!a) return;
+    a.textContent = '';
+    setTimeout(() => { a.textContent = msg; }, 30);
+  }
+
+  // =================================================================================================
+  // Kept sentences
+  // =================================================================================================
+  const B = () => RB.bookmarks;
+  function speakerLine(b) {
+    const T = TX();
+    if (b.who === 'narr') {
+      if (b.obj) { const o = T.objects[b.obj] || T.thing; return { icon: 'look', html: lab(o), sr: 'Written on or seen: ' + o.en }; }
+      return { icon: 'scroll', html: lab(T.narration), sr: 'Narration' };
+    }
+    const n = b.wn || { en: b.who, jp: '' };
+    // the player's name is their own text (escaped); a character's name is the game's
+    if (b.who === 'pc') return { icon: 'companion', html: (b.choice ? 'You replied' : 'You') + ' <span class="muted">(' + utext(n.en, 'nm') + ')</span>', sr: '' };
+    return { icon: 'companion', html: esc(n.en) + (n.jp ? ' <span class="wp-jpn">' + j(n.jp) + '</span>' : ''), sr: '' };
+  }
+  function placeHtml(b) {
+    const p = b.place;
+    return p ? esc(p.en) + (p.jp ? ' <span class="wp-jpn">' + j(p.jp) + '</span>' : '') : '<span class="muted">not recorded</span>';
+  }
+  function statusHtml(b) {
+    const st = B().status(b);
+    let h = '';
+    if (st === 'changed' || st === 'removed') {
+      h += '<p class="note-slip warn bm-excerpt" role="note">' + I('warn') + ' <b>Saved excerpt.</b> ' +
+        (st === 'removed' ? 'Where this line came from is no longer in the game.' : 'The line where this came from has changed since you kept it.') +
+        ' This is the text exactly as you kept it.</p>';
+    }
+    if (b.approx) h += '<p class="muted small bm-approx">Kept from a history line recorded before sentences could be kept: any names in it are shown as they are now.</p>';
+    return h;
+  }
+  function noted(s) { return (s.notebook || []).filter((n) => n.kind === 'word'); }
+  function notedHtml(n) {
+    const hasKanji = /[一-鿿々]/.test(n.surface || '');
+    return j(hasKanji && n.reading ? '{' + n.surface + '|' + n.reading + '}' : n.surface || '');
+  }
+  function bmRow(b, open, s) {
+    const who = speakerLine(b);
+    const title = b.title ? '<span class="bm-title">' + I('note') + '<span class="sr">Your title: </span>' + utext(b.title) + '</span>' : '';
+    return '<li class="bm-item' + (open ? ' open' : '') + '"><button type="button" class="entry bm-row" data-bm-open="' + esc(b.id) + '" aria-expanded="' + open + '">' +
+      '<span class="mark">' + I('bookmark') + '</span><span class="body">' + title +
+      '<span class="bm-jp">' + j(b.jp, b.v) + '</span><span class="bm-en">' + esc(b.en) + '</span>' +
+      '<span class="kind">' + (who.sr ? '<span class="sr">' + esc(who.sr) + ' — </span>' : '') + '<span aria-hidden="' + (who.sr ? 'true' : 'false') + '">' + who.html + '</span> · ' + placeHtml(b) + '</span></span></button>' +
+      (open ? bmDetail(b, s) : '') + '</li>';
+  }
+  function bmDetail(b, s) {
+    const who = speakerLine(b);
+    const canSpeak = RB.voice && RB.voice.status && RB.voice.status().localJaCount > 0;
+    const words = B().wordsOf(b).filter((w) => w.entry && w.entry.m && ['prt', 'aux', 'suf', 'cop'].indexOf(w.entry.pos) < 0);
+    const uniq = [];
+    for (const w of words) if (!uniq.some((u) => u.entry.w === w.entry.w)) uniq.push(w);
+    const practice = B().practiceSteps(b, 1).length > 0;
+    const id = esc(b.id);
+    let h = '<div class="bm-detail inline-detail" role="region" aria-label="Kept sentence">';
+    h += '<dl class="bm-meta">' +
+      '<dt>' + (b.who === 'narr' ? (b.obj ? 'Read on' : 'From') : 'Said by') + '</dt><dd>' + I(who.icon) + ' ' + who.html + '</dd>' +
+      '<dt>Where</dt><dd>' + I('map') + ' ' + placeHtml(b) + '</dd>' +
+      '<dt>Kept</dt><dd>' + esc(date(b.t)) + '</dd></dl>';
+    h += statusHtml(b);
+    if (uniq.length) {
+      h += '<div class="bm-words"><div class="kind">Words in it</div><ul class="bm-wl">' + uniq.slice(0, 8).map((w) =>
+        '<li><span class="bm-w">' + j(w.entry.w !== w.entry.r ? '{' + w.entry.w + '|' + w.entry.r + '}' : w.entry.w) + '</span> <span class="muted">' + esc(w.entry.m) + '</span></li>').join('') + '</ul></div>';
+    }
+    // the player's own words, set apart from the game's
+    h += '<div class="bm-user" role="group" aria-label="Your own words for this sentence">' + head('yours', 'note') +
+      '<form class="bm-form" data-bm-form="title" data-id="' + id + '"><label for="bmt-' + id + '">Your title <span class="muted small">(up to ' + B().TITLE_MAX + ' characters)</span></label>' +
+      '<div class="bm-in"><input id="bmt-' + id + '" type="text" maxlength="' + B().TITLE_MAX + '" autocomplete="off" spellcheck="false" value="' + esc(b.title || '') + '">' +
+      '<button type="submit" class="pbtn" data-bm-save="title">Save title</button></div></form>' +
+      '<form class="bm-form" data-bm-form="note" data-id="' + id + '"><label for="bmn-' + id + '">Your note <span class="muted small">(up to ' + B().NOTE_MAX + ' characters)</span></label>' +
+      '<textarea id="bmn-' + id + '" rows="3" maxlength="' + B().NOTE_MAX + '" spellcheck="false">' + esc(b.note || '') + '</textarea>' +
+      '<div class="bm-in end"><button type="submit" class="pbtn" data-bm-save="note">Save note</button></div></form></div>';
+    h += '<div class="acts bm-acts">' +
+      (canSpeak ? '<button type="button" class="pbtn" data-bm-hear="' + id + '">' + I('sound') + '<span>Hear it</span></button>' : '') +
+      (practice ? '<button type="button" class="pbtn" data-bm-practice="' + id + '">' + I('practice') + '<span>Practise its words</span></button>' : '') +
+      '<button type="button" class="pbtn danger" data-bm-remove="' + id + '">' + I('trash') + '<span>Remove</span></button></div>';
+    if (practice) h += '<p class="muted small">Practice here is optional and just for you: it is not counted in your learning record.</p>';
+    if (!canSpeak) h += '<p class="muted small">No Japanese voice on this device, so there is nothing to play; the sentence is kept all the same.</p>';
+    return h + '</div>';
+  }
+  function bmHtml(s, api) {
+    const V = api.view;
+    const L = (s.bookmarks || []).filter((b) => b && typeof b.jp === 'string');
+    let h = '<p class="wp-live sr" aria-live="polite"></p>';
+    if (!L.length) {
+      return h + '<p class="muted">Nothing kept yet.</p><p>Press <b>Keep</b> on the tab above a line in the dialogue box (or <kbd>K</kbd>), or <b>Keep</b> beside a line in Journey › Dialogue history. Signs, notices and tablets you read can be kept the same way.</p>' +
+        '<p class="muted small">A kept sentence stays as it was when you saw it, with your own title and note if you like. Keeping one records nothing about your learning.</p>';
+    }
+    // noted words that these sentences use (only sentences you kept)
+    const nw = noted(s).map((n) => ({ n, uses: B().usesOf(s, n) })).filter((x) => x.uses.length);
+    if (V.bmWord && !nw.some((x) => x.n.id === V.bmWord)) V.bmWord = null;
+    if (nw.length) {
+      h += '<div class="bm-filter">' + head('words', 'words') + '<div class="chips" role="group" aria-label="Show the kept sentences that use a word you noted">' +
+        '<button type="button" class="chip" data-bm-word="" aria-pressed="' + !V.bmWord + '">All <span class="n">' + L.length + '</span></button>' +
+        nw.map((x) => '<button type="button" class="chip" data-bm-word="' + esc(x.n.id) + '" aria-pressed="' + (V.bmWord === x.n.id) + '"><span class="jp">' + notedHtml(x.n) + '</span> <span class="n">' + x.uses.length + '</span></button>').join('') + '</div></div>';
+    }
+    let shown = L.slice().reverse();
+    if (V.bmWord) {
+      const x = nw.find((y) => y.n.id === V.bmWord);
+      shown = x.uses.slice().reverse();
+      h += '<p class="muted small bm-for">Kept sentences that use <span class="jp">' + notedHtml(x.n) + '</span> (' + esc(x.n.m || '') + '): ' + shown.length + '.</p>';
+    }
+    h += '<p class="muted small">Newest first. ' + L.length + ' of at most ' + B().MAX + ' kept.</p>';
+    h += '<ol class="entries bm-list">' + shown.map((b) => bmRow(b, V.bmOpen === b.id, s)).join('') + '</ol>';
+    return h;
+  }
+  async function practise(s, id) {
+    const b = B().byId(s, id);
+    if (!b) return;
+    const steps = B().practiceSteps(b, 3);
+    if (!steps.length) return;
+    RB.ui.menu.close();
+    RB.game.pushMode('challenge');
+    try {
+      for (let i = 0; i < steps.length; i++) {
+        const step = steps[i]; // no learning item: nothing is recorded (and noRecord below)
+        step.title = 'Words from a kept sentence ' + (i + 1) + ' / ' + steps.length + ' (optional)';
+        const header = '<div class="bm-ctx"><div class="kind">From your kept sentence</div>' + j(b.jp, b.v) + '</div>';
+        const r = await RB.challenge.runStep(step, { header, noRecord: true, ctxTag: 'bookmark', cancelLabel: 'Stop practising' });
+        if (r.cancelled) break;
+      }
+    } finally {
+      RB.game.popMode('challenge');
+    }
+    RB.ui.menu.open('bookmarks');
+  }
+  function bmWire(el, s, api) {
+    const V = api.view;
+    el.onclick = async (e) => {
+      const t = e.target;
+      const op = t.closest('[data-bm-open]');
+      if (op) { const id = op.getAttribute('data-bm-open'); V.bmOpen = V.bmOpen === id ? null : id; again(api, '[data-bm-open="' + id + '"]'); return; }
+      const w = t.closest('[data-bm-word]');
+      if (w) { V.bmWord = w.getAttribute('data-bm-word') || null; V.bmOpen = null; again(api, '[data-bm-word="' + (V.bmWord || '') + '"]'); return; }
+      const hr = t.closest('[data-bm-hear]');
+      if (hr) {
+        const b = B().byId(s, hr.getAttribute('data-bm-hear'));
+        if (b && RB.voice) {
+          const vars = Object.assign({}, RB.script.jpVars(), b.v || {});
+          const ch = RB.content.chars[b.who];
+          RB.voice.speak(RB.jp && RB.jp.reading ? RB.jp.reading(b.jp, vars) : RB.ui.plainJp(b.jp), { pitch: ch && ch.voice ? ch.voice.pitch : 1 });
+        }
+        return;
+      }
+      const pr = t.closest('[data-bm-practice]');
+      if (pr) { await practise(s, pr.getAttribute('data-bm-practice')); return; }
+      const rm = t.closest('[data-bm-remove]');
+      if (rm) {
+        const id = rm.getAttribute('data-bm-remove'), b = B().byId(s, id);
+        if (!b) return;
+        const r = await RB.ui.confirm('Remove this kept sentence?' + (hasUser(b) ? ' Your title and note go with it.' : ''), ['Remove', 'Keep it'], { danger: true });
+        if (r !== 0) { const back = document.querySelector('#folio-page [data-bm-remove="' + id + '"]'); if (back) back.focus(); return; }
+        B().remove(s, id);
+        V.bmOpen = null;
+        RB.ui.keep.sync();
+        again(api, '.bm-list .bm-row, [data-bm-word], .leaf');
+        live('Removed.');
+      }
+    };
+    el.onsubmit = (e) => {
+      const f = e.target.closest('[data-bm-form]');
+      if (!f) return;
+      e.preventDefault();
+      const id = f.getAttribute('data-id'), kind = f.getAttribute('data-bm-form');
+      const v = f.querySelector(kind === 'title' ? 'input' : 'textarea').value;
+      const b = kind === 'title' ? B().rename(s, id, v) : B().setNote(s, id, v);
+      if (!b) return;
+      again(api, kind === 'title' ? '#bmt-' + cssId(id) : '#bmn-' + cssId(id));
+      live(kind === 'title' ? (b.title ? 'Title saved.' : 'Title cleared.') : (b.note ? 'Note saved.' : 'Note cleared.'));
+    };
+  }
+  const hasUser = (b) => !!(b.title || b.note);
+  const cssId = (id) => (typeof CSS !== 'undefined' && CSS.escape ? CSS.escape(id) : id.replace(/[^\w-]/g, '\\$&'));
+
+  // =================================================================================================
+  // Creatures met
+  // =================================================================================================
+  const INTENT_ICON = { strike: 'strike', sweep: 'sweep', heat: 'flame', shroud: 'cloud', charge: 'hourglass', gust: 'gust', mend: 'needle', lie: 'mask', plea: 'history', rest: 'rest', flood: 'waves', chill: 'snow', silence: 'mute', mirror: 'mirror' };
+  // the move's name and what it is, as the battle's own help puts it (RB.combatHelp)
+  function moveTitle(kind, s) {
+    const L = RB.combatLogic;
+    const it = Object.assign({ key: kind, kind }, (L && L.INTENTS[kind]) || { label: kind });
+    try {
+      const st = { compId: s.comp || null, foes: [{ soften: 0, drawn: false }], cur: 0, diff: L.DIFF.normal, heat: 0, knots: 1, maxKnots: 1, ward: { pc: 0, comp: 0 }, charged: false };
+      const inf = RB.combatHelp.intentInfo(st, it, []);
+      return inf && inf.title ? inf.title : it.label;
+    } catch (e) { return it.label; }
+  }
+  const compName = (id) => (RB.content.chars[id] ? RB.content.chars[id].name.en : 'your companion');
+  function howHtml(how) {
+    if (!how) return '';
+    if (how.startsWith('comp:')) return esc(compName(how.slice(5)));
+    if (how.startsWith('tech:')) { const T = RB.combatLogic.TECHS[how.slice(5)]; return T ? esc(T.name) + ' (with ' + esc(compName(how.slice(5))) + ')' : 'a coordinated technique'; }
+    if (how === 'answer') return '<b>Answer</b> (<span lang="ja">こたえる</span>)';
+    if (how === 'truth') return '<b>See through</b> (<span lang="ja">みぬく</span>)';
+    if (how === 'unravel') return '<b>Unravel</b>';
+    const w = RB.content.words[how];
+    return w ? '<span class="cr-w">' + j(w.jpK || w.jp) + '</span> (' + esc(w.en) + ')' : esc(how);
+  }
+  // one observation, in words taken from the battle's own messages
+  function noteHtml(key, n, c) {
+    const p = key.split(':');
+    const how = p.slice(2).join(':');
+    let h = '';
+    switch (p[0]) {
+      case 'i': h = 'It showed this move.'; break;
+      case 's': h = ({ heat: 'Left unanswered, it overheated: its blows hit harder until it was cooled.', shroud: 'Left unanswered, mist hid its knots.', charge: 'Left unanswered, it gathered force for a harder blow.', silence: 'Left unanswered, sound drained out of the air: you were Hushed.', stripWard: 'Its gust tore your wards away.', mend: 'It tied a loosened knot back up.' })[p[1]] || ''; break;
+      case 'a': h = (p[1] === 'strike' && RB.content.words[how] && (RB.content.words[how].tags || []).indexOf('ward') >= 0 ? 'A ward in front of the one it aimed at blocked it: ' : how.startsWith('comp:') ? 'Its move came to nothing, thanks to ' : 'Answered with ') + howHtml(how) + '.'; break;
+      case 'c': h = ({ heat: 'Its Heat was cooled by ', shroud: 'Its mist was cleared by ', charge: 'The force it gathered was spilled by ' })[p[1]] + howHtml(how) + '.'; break;
+      case 'w': h = 'A standing ward soaked some of its blow.'; break;
+      default: h = '';
+    }
+    const where = c && Object.keys(c.maps || {}).length > 1 && n.m && c.maps[n.m] && c.maps[n.m].name ? ' <span class="muted small">(seen at ' + esc(c.maps[n.m].name.en) + ')</span>' : '';
+    return h ? '<li>' + h + where + '</li>' : '';
+  }
+  function lineHtml(l) {
+    if (!l) return '';
+    const who = l.who && l.who !== 'narr' && RB.content.chars[l.who] ? '<span class="kind">' + esc(RB.content.chars[l.who].name.en) + '</span>' : '';
+    return '<div class="cr-line">' + who + (l.jp ? '<div class="cr-jp">' + j(l.jp) + '</div>' : '') + (l.en ? '<div class="cr-en">' + esc(RB.script.enVars(l.en)) + '</div>' : '') + '</div>';
+  }
+  function firstSight(c) {
+    const ps = Object.keys(c.maps || {}).map((k) => c.maps[k]).sort((a, b) => (a.t || 0) - (b.t || 0));
+    return ps.find((p) => p.intro) || null;
+  }
+  function artAlt(id, c) {
+    const f = firstSight(c);
+    const nm = (c.name && c.name.en) || id;
+    return 'Picture of the ' + nm + ' as it looks in battle' + (f && f.intro && f.intro.en ? '. First seen: ' + RB.script.enVars(f.intro.en) : '.');
+  }
+  function crRow(id, c, open, s) {
+    const d = RB.content.enemies[id];
+    const nm = c.name || (d && d.name) || { en: id, jp: '' };
+    const places = Object.keys(c.maps || {}).map((k) => c.maps[k]).sort((a, b) => (a.t || 0) - (b.t || 0));
+    const first = places[0];
+    return '<li class="cr-item' + (open ? ' open' : '') + '"><button type="button" class="entry cr-row" data-cr-open="' + esc(id) + '" aria-expanded="' + open + '">' +
+      '<span class="cr-thumbbox" aria-hidden="true">' + (d ? '<canvas class="cr-art" data-cr-art="' + esc(id) + '" data-max="56" width="8" height="8"></canvas>' : I('creature')) + '</span>' +
+      '<span class="body"><span class="t">' + j(nm.jp) + ' <span class="en">' + esc(nm.en) + '</span></span>' +
+      '<span class="kind">' + (first && first.name ? 'First met: ' + esc(first.name.en) : 'Met') + (places.length > 1 ? ' · ' + places.length + ' places' : '') + (c.settled ? ' · settled' : '') + '</span>' +
+      (d ? '' : '<span class="muted small">No longer drawn in this version of the game; your notes are kept.</span>') + '</span></button>' +
+      (open ? crDetail(id, c, s) : '') + '</li>';
+  }
+  function crDetail(id, c, s) {
+    const T = TX();
+    const d = RB.content.enemies[id];
+    const places = Object.keys(c.maps || {}).map((k) => Object.assign({ k }, c.maps[k])).sort((a, b) => (a.t || 0) - (b.t || 0));
+    const f = firstSight(c);
+    let h = '<div class="cr-detail inline-detail" role="region" aria-label="' + esc(((c.name && c.name.en) || id) + ': what you have seen') + '">';
+    h += '<figure class="cr-fig">' + (d ? '<div class="cr-frame"><canvas class="cr-art" data-cr-art="' + esc(id) + '" data-max="176" width="8" height="8" role="img" aria-label="' + esc(artAlt(id, c)) + '"></canvas></div>' : '') +
+      '<figcaption>' + (f ? '<div class="kind">First seen</div>' + lineHtml(f.intro) : '<span class="muted">You met it alongside another creature and saw no opening words of its own.</span>') + '</figcaption></figure>';
+    // where: the species is one thing; each place you met it is another
+    h += head('places', 'map') + '<ul class="cr-places">' + places.map((p) => {
+      const set = p.set && T.setting[p.set] ? '<span class="cr-set">' + I(p.set === 'indoor' ? 'here' : 'travel') + lab(T.setting[p.set]) + '</span>' : '';
+      const nm = p.name ? esc(p.name.en) + (p.name.jp ? ' <span class="wp-jpn">' + j(p.name.jp) + '</span>' : '') : '<span class="muted">a place not recorded</span>';
+      const near = p.near && p.name && p.near.en !== p.name.en ? ' <span class="muted small">near ' + esc(p.near.en) + '</span>' : '';
+      const withL = p.with && RB.content.enemies[p.with] && p.with !== id ? '<div class="muted small">Met alongside the ' + esc(RB.content.enemies[p.with].name.en) + '.</div>' : '';
+      return '<li><div class="cr-pl">' + nm + near + ' ' + set + '</div>' + withL + (p.intro && p !== f ? lineHtml(p.intro) : '') + '</li>';
+    }).join('') + '</ul>';
+    const mv = RB.creatures.moves(c);
+    if (mv.length) {
+      h += head('moves', 'look') + '<ul class="cr-moves">' + mv.map((m) =>
+        '<li><div class="cr-mv">' + I(INTENT_ICON[m.kind] || 'strike') + '<b>' + esc(moveTitle(m.kind, s)) + '</b></div><ul class="cr-notes">' + m.notes.filter((n) => n.key[0] !== 'i').map((n) => noteHtml(n.key, n, c)).join('') + '</ul></li>').join('') + '</ul>';
+    } else h += head('moves', 'look') + '<p class="muted small">Nothing yet: you have not seen it make a move.</p>';
+    const ph = RB.creatures.phases(c);
+    if (ph.length) h += head('changes', 'next') + '<ul class="cr-phases">' + ph.map((p) => '<li>' + (p.line ? lineHtml(p.line) : 'It changed its ways partway through.') + '</li>').join('') + '</ul>';
+    if (c.settled) {
+      const sp = places.find((p) => p.settle);
+      h += head('settled', 'done') + (sp ? lineHtml(sp.settle) : '<p>You settled it.</p>');
+    }
+    h += '<p class="muted small cr-foot">Only what you have seen is written here. Reading it changes nothing in a battle.</p>';
+    return h + '</div>';
+  }
+  function crHtml(s, api) {
+    const V = api.view;
+    const ids = RB.creatures.met(s);
+    let h = '<p class="wp-live sr" aria-live="polite"></p>';
+    if (!ids.length) return h + '<p class="muted">No creatures yet.</p><p>When you meet one on the road, it is noted here: how it looks, where you met it, and what you saw it do.</p>';
+    h += '<p class="muted small">In the order you met them. Choose one to read your notes.</p>';
+    h += '<ul class="entries cr-list">' + ids.map((id) => crRow(id, s.creatures[id], V.crOpen === id, s)).join('') + '</ul>';
+    return h;
+  }
+  // a creature's battle art, cropped to the creature, whole pixels when enlarged
+  function drawArt(cv) {
+    const id = cv.getAttribute('data-cr-art'), d = RB.content.enemies[id];
+    const EA = RB.enemyArt;
+    if (!d || !EA) return;
+    const art = d.art || 'wisp', o = d.artOpts || {};
+    const pad = 4;
+    if (EA.has(art) || !EA.A[art]) {
+      const e = EA.extent(EA.has(art) ? art : 'wisp', o);
+      cv.width = Math.max(8, Math.ceil(e.right - e.left) + pad * 2 + 1);
+      cv.height = Math.max(8, Math.ceil(e.bottom - e.top) + pad * 2);
+      const c = cv.getContext('2d');
+      c.clearRect(0, 0, cv.width, cv.height);
+      EA.drawArt(c, art, 0, o, pad - e.left, pad - e.top, 1, true);
+    } else {
+      cv.width = 132; cv.height = 132;
+      const c = cv.getContext('2d');
+      c.clearRect(0, 0, cv.width, cv.height);
+      c.save(); c.translate(66, 70); c.scale(2, 2); EA.draw(c, art, 0, o); c.restore();
+    }
+    const max = +cv.getAttribute('data-max') || 96;
+    const k = Math.min(max / cv.width, max / cv.height);
+    const kk = k >= 1 ? Math.floor(k) : k;
+    cv.style.width = Math.round(cv.width * kk) + 'px';
+    cv.style.height = Math.round(cv.height * kk) + 'px';
+    cv.classList.toggle('px', kk >= 1);
+  }
+  function crWire(el, s, api) {
+    const V = api.view;
+    for (const cv of el.querySelectorAll('canvas[data-cr-art]')) { try { drawArt(cv); } catch (err) { console.error('creature art', err); } }
+    el.onclick = (e) => {
+      const op = e.target.closest('[data-cr-open]');
+      if (op) { const id = op.getAttribute('data-cr-open'); V.crOpen = V.crOpen === id ? null : id; again(api, '[data-cr-open="' + id + '"]'); }
+    };
+  }
+
+  // ---- registration -----------------------------------------------------------------------------------
+  if (RB.ui.menu && RB.ui.menu.addPage) {
+    RB.ui.menu.addPage('words', {
+      id: 'bookmarks', en: 'Kept sentences', jp: '{栞|しおり}',
+      count: (s) => (Array.isArray(s.bookmarks) ? s.bookmarks.length : 0),
+      html: bmHtml, wire: bmWire,
+    });
+    RB.ui.menu.addPage('words', {
+      id: 'creatures', en: 'Creatures met', jp: '{観察|かんさつ} {記録|きろく}',
+      count: (s) => (RB.creatures ? RB.creatures.met(s).length : 0),
+      html: crHtml, wire: crWire,
+    });
+  }
+  return { bmHtml, crHtml, moveTitle, drawArt };
 })();
 
 
@@ -41418,6 +42594,7 @@ RB.combat = (function () {
     opts = opts || {};
     const s = RB.game.s;
     const ids = groupOf(enemyId, opts).filter((id, k) => k === 0 || RB.content.enemies[id]);
+    if (RB.creatures) RB.creatures.meet(s, ids, opts); // Creatures met: the encounter begins (src/engine/64_creatures.js)
     if (RB.test && RB.test.auto) return RB.test.battle(enemyId, { group: ids.slice(1) });
     enemy = Object.assign({ id: enemyId }, RB.content.enemies[enemyId] || {});
     if (!RB.content.enemies[enemyId]) console.warn('missing enemy', enemyId);
@@ -41469,6 +42646,7 @@ RB.combat = (function () {
         phase = 'choose';
         tg.hover = null; tg.lock = null;
         renderUi();
+        if (RB.creatures) RB.creatures.saw(s, st, members); // the telegraphs now on screen
         RB.audio && RB.audio.sfx('enemy_intent', { vol: 0.5 });
         st.assistedRound = false;
         const card = await pickCard();
@@ -41535,6 +42713,7 @@ RB.combat = (function () {
           }
         }
         endChain();
+        if (RB.creatures) RB.creatures.saw(s, st, members, { fx: fx.concat(cfx || []), card, answered: P.answered }); // what your response and your companion's did
         if (won || wonByComp) { outcome = 'win'; break; }
         // each creature still standing acts in turn
         const standing = L().standing(st);
@@ -41551,6 +42730,7 @@ RB.combat = (function () {
           await playEnemy(i, intents[i], mine, blockedByWard);
         }
         endChain();
+        if (RB.creatures) RB.creatures.saw(s, st, members, { fx: efx, enemy: true }); // their moves as they landed
         sealHeld = null;
         L().endRound(st, enemy);
         if (st.log.length && st.log[st.log.length - 1].t === 'revive') {
@@ -41563,6 +42743,7 @@ RB.combat = (function () {
         phase = 'outro';
         RB.audio && RB.audio.playSong('victory');
         if (enemy.settle) { await say(tierOf(enemy.settle) || enemy.settle, enemy.settleWho); RB.ui.dialogue.hide(); }
+        if (RB.creatures) RB.creatures.settle(s, members, enemy); // a settled observation (no count)
         if (enemy.reward) {
           for (const k in enemy.reward.items || {}) { RB.state.give(s, k, enemy.reward.items[k]); const it = RB.content.items[k]; if (it) await RB.ui.toast({ kind: 'item', jp: it.name.jp, en: it.name.en }); }
           for (const wd of enemy.reward.words || []) if (s.words.indexOf(wd) < 0) { s.words.push(wd); const W = RB.content.words[wd]; if (W) await RB.ui.toast({ kind: 'word', jp: W.jp, en: W.en }); }
@@ -68842,6 +70023,95 @@ comp: {師匠|ししょう} は 、 {灯|あか}り の {名前|なまえ} を {
 @scene lq.b_suzu
 comp: {柿|かき} って ね 、 {渋|しぶ}い うち に {採|と}って {干|ほ}す と 、 {甘|あま}く なる んだって 。 {人|ひと} も そう なら いい けど 。 …… {私|わたし} ？ まだ {干|ほ}し{中|ちゅう} 。 || They say if you pick persimmons while they're still bitter and dry them, they turn sweet. Wouldn't it be nice if people worked that way. …Me? Still drying.
 `, 'lq/50_letters');
+
+
+/* ==== src/content/words/00_lex.js ==== */
+/* Lexicon for the Words pages (Kept sentences, Creatures met): the words in
+ * their Japanese labels. Format: w|r|pos|lv|meaning|note (see docs/CONTENT.md). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function () {
+  'use strict';
+  RB.lex.add(RB.lex.parseTable(`
+観察|かんさつ|vs|I|observation, watching closely
+出会う|であう|v5u|E|to meet (by chance), to come across
+屋内|おくない|n|I|indoors
+屋外|おくがい|n|I|outdoors, out of doors
+石碑|せきひ|n|A|stone monument, an inscribed stone
+戸棚|とだな|n|I|cupboard, cabinet
+ナレーション||n|I|narration (the storyteller's voice, as opposed to what people say)
+`));
+})();
+
+
+/* ==== src/content/words/10_text.js ==== */
+/* Words pages (addendum §20): the labels the Kept sentences and Creatures met
+ * pages show, the names of the things you can read in the world, and the
+ * load-time normalisers for their records. Japanese labels appear when the
+ * interface is in Japanese; every kanji has its reading
+ * (tests/unit/bookmarks.test.mjs checks them against the lexicon). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C) {
+  'use strict';
+  const T = (en, jp) => ({ en, jp });
+  C.wordsText = {
+    pages: {
+      bookmarks: T('Kept sentences', '{栞|しおり}'),
+      creatures: T('Creatures met', '{観察|かんさつ} {記録|きろく}'),
+    },
+    heads: {
+      sentence: T('The sentence', '{文|ぶん}'),
+      yours: T('Your own words', '{自分|じぶん} の {言葉|ことば}'),
+      words: T('Your noted words in these sentences', '{控|ひか}えた {言葉|ことば}'),
+      places: T('Where you have met it', '{出会|であ}った {場所|ばしょ}'),
+      moves: T('What you have seen it do', '{見|み}た {動|うご}き'),
+      changes: T('How it changed', '{変|か}わった ところ'),
+      settled: T('When it settled', '{静|しず}まった とき'),
+    },
+    setting: {
+      indoor: T('Indoors', '{屋内|おくない}'),
+      outdoor: T('Out of doors', '{屋外|おくがい}'),
+    },
+    // What a line read from a thing in the world was written on (by prop type).
+    objects: {
+      sign: T('Sign', '{看板|かんばん}'),
+      signblank: T('Blank sign', '{白|しろ}い {看板|かんばん}'),
+      noticeboard: T('Notice board', '{掲示板|けいじばん}'),
+      stone_marker: T('Stone marker', '{石碑|せきひ}'),
+      co_tablet: T('Tablet', '{石板|せきばん}'),
+      lq_namestone: T('Name stone', '{名前|なまえ} の {石|いし}'),
+      mailbox: T('Post box', '{郵便受|ゆうびんう}け'),
+      door: T('Door', '{戸|と}'),
+      sa_door: T('Door', '{扉|とびら}'),
+      shelf: T('Shelf', '{棚|たな}'),
+      sb_mailshelf: T('Mail shelf', '{郵便|ゆうびん} の {棚|たな}'),
+      bookpile: T('Books', '{本|ほん}'),
+      desk: T('Desk', '{机|つくえ}'),
+      smalltable: T('Table', 'テーブル'),
+      table: T('Table', 'テーブル'),
+      sb_starchart: T('Star chart', '{星図|せいず}'),
+      sg_tideboard: T('Tide board', '{潮|しお} の {表|ひょう}'),
+      shrine: T('Shrine', '{祠|ほこら}'),
+      statue: T('Statue', '{像|ぞう}'),
+      sa_statue: T('Statue', '{像|ぞう}'),
+      sa_grave: T('Grave', '{墓|はか}'),
+      lantern: T('Lantern', '{提灯|ちょうちん}'),
+      deadlantern: T('Unlit lantern', '{消|き}えた {提灯|ちょうちん}'),
+      sa_cabinet: T('Cabinet', '{戸棚|とだな}'),
+      sg_drawers: T('Drawers', '{引|ひ}き{出|だ}し'),
+      telescope: T('Telescope', '{望遠鏡|ぼうえんきょう}'),
+    },
+    thing: T('Something you looked at', '{見|み}た もの'),
+    narration: T('Narration', 'ナレーション'),
+  };
+
+  // load-time normalisers for the two records (keep every record; repair shape only)
+  if (RB.save && RB.save.addMigration) {
+    RB.save.addMigration((st) => { if (RB.bookmarks) RB.bookmarks.migrate(st); });
+    RB.save.addMigration((st) => { if (RB.creatures) RB.creatures.migrate(st); });
+  }
+})(RB.content);
 
 
 /* ==== src/content/zz_atlas_decor.js ==== */
