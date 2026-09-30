@@ -1,6 +1,9 @@
 /* Chapter 6 ending: the descent, the denouement walk through the changed
  * towns, the companion-specific endings, credits, and the hand-over to the
- * Unwritten Atlas in Reedwake's Lantern Hall. */
+ * Unwritten Atlas in Reedwake's Lantern Hall.
+ * Each companion's branch of sa.end_comp calls its relationship passage
+ * (end.<companion>.*, src/content/pages/20_ending.js) at fixed points, so the
+ * ending stays one scene; the +2 bond is committed there once. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.script.add(`
@@ -88,9 +91,12 @@ sa_tae[surprise]: …… そう かい 。 あの {子|こ} だった の かい
 ?(end_kasane_trial) sa_tae: {謝|あやま}って {済|す}む こと じゃ ない よ 。 …… でも 、 {聞|き}いた 。 {聞|き}いた から ね 。 || Sorry doesn't settle it. …But I've heard you. I've heard you.
 akari: $name さん ！ …… {父|ちち} と 、 {手紙|てがみ} が やり{取|と}り できる よう に なりました 。 {宛先|あてさき} が 、 ちゃんと {読|よ}める {字|じ} で {届|とど}く んです 。 || $name! …My father and I can write to each other now. The addresses arrive in writing anyone can read.
 ?(sb_hoshino_goes) akari[smile]: {父|ちち} は 、 {今|いま} こっち に いる んです 。 {灯|あか}り を {人|ひと} に {頼|たの}んで 、 {山|やま} を {下|お}りて きて 。 {毎晩|まいばん} 、 {窓|まど} から {雪鈴|ゆきすず} の {方|ほう} を {見|み}て います 。 || My father's here now. He left the lamp in someone's care and came down the mountain. Every night he looks out of the window towards Snowbell.
-?(comp=nao) umi: …… {返事|へんじ} は 、 まだ {書|か}いて ない 。 {書|か}く か どう か も 、 {決|き}めて ない 。 || …I haven't written back. I haven't decided whether I will.
-?(comp=nao) umi: {決|き}めなくて いい って 、 あんた {言|い}った よ ね 。 || You said I didn't have to decide.
-?(comp=nao) nao: {言|い}った 。 {今|いま} も そう {思|おも}う 。 {手紙|てがみ} は {届|とど}いた 。 {配達人|はいたつにん} の {仕事|しごと} は 、 そこ まで だ 。 || I did. I still think so. The letter arrived. That's where a courier's job ends.
+?(comp=nao&quest.lf_nao=done) umi: …… {返事|へんじ} は 、 まだ {書|か}いて ない 。 {書|か}く か どう か も 、 {決|き}めて ない 。 || …I haven't written back. I haven't decided whether I will.
+?(comp=nao&quest.lf_nao=done) umi: {決|き}めなくて いい って 、 あんた {言|い}った よ ね 。 || You said I didn't have to decide.
+?(comp=nao&quest.lf_nao=done) nao: {言|い}った 。 {今|いま} も そう {思|おも}う 。 {手紙|てがみ} は {届|とど}いた 。 {配達人|はいたつにん} の {仕事|しごと} は 、 そこ まで だ 。 || I did. I still think so. The letter arrived. That's where a courier's job ends.
+?(comp=nao&quest.lf_nao>=1&!quest.lf_nao=done) umi: …… あ 、 {配達|はいたつ} の {人|ひと} 。 {出直|でなお}す って {言|い}って た のに 。 || …Oh, the courier. You said you'd come back.
+?(comp=nao&quest.lf_nao>=1&!quest.lf_nao=done) nao[closed]: …… {近|ちか}い うち に {行|い}く 。 {受|う}け{取|と}る か どう か は 、 {君|きみ} が {決|き}めて いい 。 || …I'll come soon. Whether you take it is up to you.
+?(comp=nao&!quest.lf_nao>=1) nao[think]: …… この {町|まち} に 、 まだ {届|とど}けて ない {手紙|てがみ} が {一通|いっつう} ある 。 {近|ちか}い うち に 。 || …There's still one letter I haven't delivered in this town. Soon.
 ?(comp=mio) lf_yae: ミオ さん 、 {町|まち} に {残|のこ}って {薬屋|くすりや} を {開|ひら}いて くれない かしら 。 {皆|みな} 、 {頼|たよ}り に して いる の よ 。 || Mio, won't you stay and open an apothecary here? Everyone's come to rely on you.
 ?(comp=mio) mio: ごめんなさい 。 お{断|ことわ}り します 。 {葦|あし}ノ{瀬|せ} に 、 {店|みせ} が あります ので 。 || I'm sorry. I'll have to say no. I have a shop in Reedwake.
 ?(comp=mio) mio[laugh]: …… {聞|き}いた ？ {今|いま} の 。 {断|ことわ}った 。 ちゃんと 、 {丁寧|ていねい} に 。 || …Did you hear that? I said no. Properly, and politely.
@@ -192,11 +198,14 @@ nao: {次|つぎ} の {配達|はいたつ} 、 もう {決|き}まってる ん
 ?(end_kasane_trial) nao: {灯落|ひおち} で カサネ が {書|か}き{写|うつ}す {名前|なまえ} を 、 {一|ひと}つ ずつ {持|も}ち{主|ぬし} に {届|とど}ける 。 {気|き} の {長|なが}い {仕事|しごと} だ 。 {嫌|きら}い じゃ ない 。 || Every name Kasane copies out in Lanternfall, I'll carry to its owner. One at a time. Slow work. I don't mind it.
 narr: ナオ は {鞄|かばん} から 、 {古|ふる}い {紙|かみ} の {束|たば} を {出|だ}した 。 {宛名|あてな} の ラベル 。 {何百枚|なんびゃくまい} も 。 || From the satchel, Nao draws out a bundle of old paper. Address labels. Hundreds of them.
 nao[shy]: {書|か}き{直|なお}した ラベル 、 {全部|ぜんぶ} {取|と}って ある 。 {笑|わら}う な よ 。 || Every label I ever rewrote. Kept them all. Don't laugh.
+!call end.nao.core
 nao: …… これ は 、 $name に 。 || …This one's for you.
 narr: {一枚|いちまい} の ラベル 。 ナオ の {字|じ} で 、 {名前|なまえ} だけ が {書|か}いて ある 。 「 $name 」 。 || One label. In Nao's hand, just a name: "$name".
 nao: {住所|じゅうしょ} は {書|か}いて ない 。 {要|い}らない から 。 {道|みち} に {迷|まよ}ったら 、 それ を どこ か に {貼|は}っとけ 。 {探|さが}し に {行|い}く 。 || No address. You don't need one. If you ever get lost, stick that up somewhere. I'll come and find you.
 nao[smirk]: {出口|でぐち} は 、 いつ も {確|たし}かめてる から な 。 {入口|いりぐち} も 。 {両方|りょうほう} 、 {知|し}ってる 。 || I always know where the exits are, remember. The entrances too. Both.
+!call end.nao.b
 nao[smile]: …… {一緒|いっしょ} に {歩|ある}けて 、 よかった 。 {次|つぎ} の {道|みち} も 、 {声|こえ} を かけろ 。 {断|ことわ}る {理由|りゆう} は 、 {今|いま} の ところ {一|ひと}つ も ない 。 || …I'm glad we walked it together. Call me for the next road too. So far I haven't got a single reason to say no.
+!call end.nao.c
 !end
 :mio
 !music companion_mio
@@ -205,11 +214,14 @@ mio: {見|み}て 。 {新|あたら}しい {札|ふだ} 。 || Look. A new sign
 narr: {戸口|とぐち} の {札|ふだ} に は 、 こう {書|か}いて ある 。 「 {水曜|すいよう} は {休|やす}み 。 {急|きゅう}{患|かん} {以外|いがい} は 、 お{断|ことわ}り します 。 」 || The sign on the door reads: "Closed Wednesdays. Emergencies only — everything else, I will politely refuse."
 mio[laugh]: {書|か}いた {時|とき} 、 {手|て} が {震|ふる}えた の 。 {笑|わら}える でしょ 。 「 {断|ことわ}る 」 って {字|じ} だけ で 。 || My hand shook when I wrote it. Funny, isn't it? Just the word "refuse".
 mio: でも 、 {灯落|ひおち} で {分|わ}かった 。 「 いいえ 」 が {言|い}えない {所|ところ} は 、 {優|やさ}しい ん じゃ なくて 、 {苦|くる}しい ん だ って 。 || But Lanternfall taught me. A place where no one can say no isn't kind. It's suffocating.
+!call end.mio.core
 narr: ミオ は {棚|たな} の {奥|おく} から 、 {空|から} の {瓶|びん} を {一|ひと}つ {取|と}り{出|だ}した 。 ラベル に 、 $name の {名前|なまえ} 。 || From the back of the shelf, Mio takes out an empty bottle. The label bears your name.
 mio: {旅|たび} の {間|あいだ} 、 ずっと {作|つく}ろう と して た {薬|くすり} 。 「 {長|なが}い {道|みち} に {効|き}く {薬|くすり} 」 。 …… {結局|けっきょく} 、 {中身|なかみ} は {作|つく}れなかった 。 || A remedy I've been trying to make the whole journey. "For long roads." …In the end, I couldn't make what goes inside.
 mio[smile]: たぶん 、 {一緒|いっしょ} に {歩|ある}く {人|ひと} が {中身|なかみ} な んだ と {思|おも}う 。 だから 、 {瓶|びん} だけ 。 {持|も}って て 。 || I think maybe the person walking beside you is what goes inside. So — just the bottle. Keep it.
 mio: …… それ から 、 {約束|やくそく} 。 これから は 、 $name に も 、 {時々|ときどき} 「 いいえ 」 って {言|い}う から ね 。 || …And a promise. From now on, I'll say no to you too, sometimes.
 mio[laugh]: {嬉|うれ}しそう な {顔|かお} 、 しない で よ 。 || Don't look so pleased about it.
+!call end.mio.b
+!call end.mio.c
 !end
 :ren
 !music companion_ren
@@ -219,10 +231,13 @@ ren: {師匠|ししょう} の {灯|ひ} です 。 カサネ さん が 、 {�
 ?(sa_ren_took) ren: {最後|さいご} の {口論|こうろん} も 、 {一緒|いっしょ} に {戻|もど}って きました 。 {痛|いた}い です 。 でも 、 {痛|いた}い {所|ところ} に 、 {師匠|ししょう} が いる 。 || The last quarrel came back with it. It hurts. But where it hurts is where my teacher is.
 ?(sa_ren_left) ren: {顔|かお} は 、 {書庫|しょこ} に {置|お}いて きました 。 {後悔|こうかい} は …… {毎日|まいにち} {少|すこ}し ずつ して います 。 {体|からだ} に いい {程度|ていど} に 。 || I left the face at the Archive. Regrets… I have a small one every day. A healthy dose.
 ?(sa_ren_left) ren: {教|おし}え は 、 {全部|ぜんぶ} ここ に ある 。 {師匠|ししょう} が {一番|いちばん} {残|のこ}したかった の は 、 たぶん こっち です 。 || The lessons are all here. I suspect that's what my teacher most wanted to leave behind.
+!call end.ren.core
 ren: {灯|ひ} の {道|みち} は 、 まだ {途中|とちゅう} です 。 {書|か}き{直|なお}す {名前|なまえ} が 、 {山|やま} ほど ある 。 || The lantern roads are only half mended. There are mountains of names to rewrite.
 ren[think]: {師匠|ししょう} の {教|おし}え を 、 {一|ひと}つ {足|た}して も いい です か 。 「 {道|みち} を {知|し}る {者|もの} より 、 {一緒|いっしょ} に {迷|まよ}って くれる {者|もの} を {連|つ}れて いけ 」 。 || May I add one to my teacher's lessons? "Take someone who'll get lost with you, over someone who knows the way."
 ren[smirk]: …… {今|いま} {考|かんが}えました 。 でも 、 {師匠|ししょう} なら {言|い}った と {思|おも}います 。 {解説|かいせつ} は {要|い}りません ね 。 || …I just made that one up. But I think my teacher would have said it. No explanation needed, I trust.
+!call end.ren.b
 ren[smile]: {次|つぎ} も 、 {一緒|いっしょ} に {迷|まよ}って ください 。 $name 。 || Get lost with me next time too, $name.
+!call end.ren.c
 !end
 :suzu
 !music companion_suzu
@@ -231,8 +246,11 @@ suzu: {帳簿|ちょうぼ} 、 {閉|と}じた よ 。 {借|か}り は {全部
 suzu[laugh]: {新|あたら}しい {芝居|しばい} を {書|か}いてる んだ 。 {題|だい} は 『 {借|か}りた {名前|なまえ} の {道|みち} 』 。 {主役|しゅやく} が {誰|だれ} か 、 {分|わ}かる よ ね 。 || I'm writing a new play. It's called "The Road of Borrowed Names". You know who the lead is.
 suzu: {最後|さいご} の {台詞|せりふ} で 、 {迷|まよ}ってる 。 「 みんな {幸|しあわ}せ に {暮|く}らしました 」 に する か …… || I'm stuck on the last line. Whether to go with "And everyone lived happily ever after"…
 suzu[closed]: …… ううん 。 「 みんな 、 {生|い}きて いきました 」 に する 。 {幸|しあわ}せ か どう か は 、 {見|み}た {人|ひと} が {決|き}める 。 || …No. "And everyone went on living." Whether it was happily, the audience can decide.
+!call end.suzu.a
+!call end.suzu.b
 suzu: それ と 、 これ 。 || And — this.
 narr: スズ は {髪|かみ} の {古|ふる}い リボン を ほどいて 、 $name の {手首|てくび} に {結|むす}んだ 。 || Suzu unties the faded ribbon from her hair and ties it around your wrist.
 suzu: {貸|か}し じゃ ない よ 。 {預|あず}ける だけ 。 {次|つぎ} の {幕|まく} まで 。 …… {返|かえ}し に {来|き}て よ ね 。 {必|かなら}ず 。 {曖昧|あいまい} じゃ ない ほう の {必|かなら}ず 。 || It's not a loan. I'm just leaving it with you. Until the next act. …Come and give it back. Without fail. The kind of "without fail" that isn't vague.
+!call end.suzu.c
 !end
 `, 'ch6/scenes-ending');
