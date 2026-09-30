@@ -336,6 +336,32 @@ export default async (t) => {
     t.ok(!/\b(love you|in love|dating|go on a date|kiss|jealous|disappointed in you|resent|abandon)\b/i.test(text) && !/恋人|好き です 。 あなた|嫉妬/.test(text), 'no romance, jealousy or resentment in the words');
   }
 
+  // ---- a real case (RB.cases, src/engine/59_cases.js): the contract's ids line up ------------------------------------------------
+  // resolve() emits discovery:resolved {kind:'case', id, id2:'case:<id>:done'}; the case scene's case_react hook
+  // calls say() with {id:'case:<id>:done', event:'case:<id>'}. One choice, one queued remark under that id.
+  if (RB.cases && RB.cases.def && RB.cases.def('parcel')) {
+    const s = committed('mio', { ch2_done: true });
+    const prev = RB.game.s; RB.game.s = s;
+    try {
+      t.eq(RB.cases.discussable(s), false, 'no case to discuss before one is known');
+      RB.cases.open(s, 'parcel');
+      t.ok(RB.cases.discussable(s) && RB.cases.topics(s).length === 1, 'a known case becomes a topic');
+      RB.cases.resolve(s, 'parcel', 'reasoned');
+      const c = s.company;
+      const mem = c.memories.find((m) => m.id === 'disc:case:parcel');
+      t.ok(c.react['case:parcel:done'] && !c.react['case:parcel'], 'the reaction is chosen under the resolution id case:parcel:done');
+      t.eq(c.talk._remark && [c.talk._remark.id, c.talk._remark.event], ['case:parcel:done', 'case:parcel'], 'the waiting remark carries the same id the case hook will say');
+      const pick = RB.cases.reaction(s, 'parcel');
+      t.ok(pick && pick.id === c.react['case:parcel:done'] && pick.comp === 'mio' && pick.facts.method === 'reasoned', 'the case system reads back the same stored choice (' + (pick && pick.id) + ')');
+      t.ok(mem && mem.title.en === 'A Parcel for a Place That Moved' && mem.ref.kind === 'case' && mem.ref.id === 'parcel' && mem.reply && mem.method === 'reasoned', 'the Discoveries memory is named from the case record');
+      t.eq(c.bond['puzzle:saltglass'], 1, 'one bond event for the region the case belongs to');
+      await hook(s, 'case_react', 'parcel');
+      t.ok(Object.keys(c.react).filter((k) => /parcel/.test(k)).length === 1 && c.talk._remark.id === 'case:parcel:done', 'the case hook adds no second choice and no second remark');
+      const again = RB.cases.resolve(s, 'parcel', 'helped');
+      t.ok(again === false && c.memories.filter((m) => m.id === 'disc:case:parcel').length === 1 && c.bond['puzzle:saltglass'] === 1, 'resolving again changes nothing');
+    } finally { RB.game.s = prev; }
+  }
+
   // ---- conditions used by the content ------------------------------------------------------------------------------------------
   {
     const s = committed('nao'); s.map = 'sb.inn_room';

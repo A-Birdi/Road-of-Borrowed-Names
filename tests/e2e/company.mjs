@@ -298,6 +298,58 @@ const state = (p) => p.evaluate(() => JSON.parse(JSON.stringify(RB.game.s)));
   await closeMenu(p);
   await p.evaluate(() => { RB.game.settings.uiLang = 'en'; RB.game.applySettings(); });
 
+  // ---- a real case (RB.cases): its resolution emits discovery:resolved and its scene calls the case's reaction
+  //      hook; between them exactly one remark. Company › Discuss a discovered case lists the real records.
+  await start(p, 'sg.harbor', 20, 22, { comp: 'mio', chapter: 3, flags: { sg_arrived: true, ch2_done: true } });
+  await openCompany(p);
+  const noCase = await p.evaluate(() => !!document.querySelector('[data-co-act=case]'));
+  await closeMenu(p);
+  await p.evaluate(() => {
+    RB.cases.open(RB.game.s, 'parcel');
+    RB.script.add('@scene c1.case_test\n!hook case_resolve parcel reasoned\n!hook case_react parcel\n', 'c1.case_test');
+    RB.script.run('c1.case_test');
+  });
+  await p.waitForTimeout(150);
+  const caseLines = await talk(p, []);
+  await p.waitForTimeout(400);
+  st = await state(p);
+  const caseMem = st.company.memories.find((m) => m.id === 'disc:case:parcel');
+  const caseOnce = st.backlog.filter((l) => /checked each thing in turn/.test(l.en || '')).length;
+  const quiet = await p.evaluate(() => !document.querySelector('.dlg:not(.hidden)') && !RB.script.isRunning());
+  assert(!noCase && caseLines.some((l) => /checked each thing in turn/.test(l)) && caseOnce === 1 && quiet && !st.company.talk._remark,
+    'a resolved case: the discovery listener and the case\'s own reaction hook say one remark between them (' + caseOnce + ' in the history; none offered before a case was known)');
+  assert(caseMem && caseMem.title.en === 'A Parcel for a Place That Moved' && caseMem.ref && caseMem.ref.kind === 'case' && /checked each thing/.test(caseMem.reply.en) &&
+    st.company.react['case:parcel:done'] && !st.company.react['case:parcel'] && st.company.bond['puzzle:saltglass'] === 1,
+    'the Discoveries memory is named from the case record, the reaction is chosen once under the contract\'s id, one bond event for Saltglass');
+  await openCompany(p);
+  await p.click('[data-co-act=case]');
+  await p.waitForTimeout(80);
+  const caseList = await p.evaluate(() => ({ items: Array.from(document.querySelectorAll('.co-cases .entry .t .en')).map((e) => e.textContent), talk: !!document.querySelector('[data-co-case-talk="case:parcel"]'), exp: document.querySelector('[data-co-act=case]').getAttribute('aria-expanded') }));
+  assert(caseList.items.length === 1 && caseList.items[0] === 'A Parcel for a Place That Moved' && caseList.talk && caseList.exp === 'true', 'Discuss a discovered case lists the real record (RB.cases.topics) with Talk it over and Open the record');
+  await shot(p, 'case_detail_1280x800');
+  await p.evaluate(() => document.querySelector('[data-co-case-talk="case:parcel"]').click());
+  await p.waitForTimeout(200);
+  const over = await talk(p, []);
+  await p.waitForTimeout(250);
+  const backCase = await p.evaluate(() => ({ open: RB.ui.menu.isOpen(), cur: RB.ui.menu.current() }));
+  assert(over.some((l) => /call bell must sound lovely/.test(l)) && backCase.open && backCase.cur.company === 'companion', 'Talk it over plays the case\'s own conversation (solved wording) and returns to Company');
+  // (the page may come back with the list still open: it returns as it was left)
+  if (!(await p.$('[data-co-case-open="case:parcel"]'))) { await p.click('[data-co-act=case]'); await p.waitForTimeout(80); }
+  await p.click('[data-co-case-open="case:parcel"]');
+  await p.waitForTimeout(250);
+  const rec = await p.evaluate(() => { const r = document.querySelector('#folio-page .cs-record'); return { open: RB.ui.menu.isOpen(), cur: RB.ui.menu.current(), rec: r && r.dataset.case }; });
+  assert(rec.open && rec.cur.journey === 'cases' && rec.rec === 'parcel', 'Open the record goes to the case\'s record in Journey');
+  await closeMenu(p);
+  await openCompany(p, 'memories');
+  await p.click('[data-co-filter=discoveries]');
+  await p.waitForTimeout(60);
+  const discs = await p.evaluate(() => Array.from(document.querySelectorAll('.co-mem')).map((e) => ({ k: e.dataset.kind, t: e.textContent.replace(/\s+/g, ' ') })));
+  await p.click('.co-mem [data-co-ref=cases]');
+  await p.waitForTimeout(250);
+  const rec2 = await p.evaluate(() => { const r = document.querySelector('#folio-page .cs-record'); return { cur: RB.ui.menu.current(), rec: r && r.dataset.case }; });
+  assert(discs.length === 1 && /A Parcel for a Place That Moved/.test(discs[0].t) && rec2.cur.journey === 'cases' && rec2.rec === 'parcel', 'Shared memories › Discoveries holds the case, and its link opens the record');
+  await closeMenu(p);
+
   assert(!errors.length, 'no page errors (' + errors.slice(0, 3).join(' | ') + ')');
   assert(!requests.length, 'no external requests');
   await p.context().close();

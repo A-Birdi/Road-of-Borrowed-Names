@@ -253,30 +253,42 @@ RB.content.company = RB.content.company || {
   // addDescriber('puzzle', (id, ev) => ({ title:{jp,en}, text:{jp,en}, ref?:{kind,id} }))
   const DESCRIBE = {};
   function addDescriber(kind, fn) { DESCRIBE[kind] = fn; }
+  // a case names itself from its own record (RB.cases, src/engine/59_cases.js) when present
+  function describeCase(ev) {
+    if (ev.kind !== 'case' || !RB.cases || !RB.cases.def) return null;
+    const cd = RB.cases.def(ev.id);
+    if (!cd) return null;
+    const jt = (o) => (o && o.jp != null && o.en != null ? { jp: o.jp, en: o.en } : null);
+    return { title: jt(cd.title), text: jt(cd.result), ref: { kind: 'case', id: ev.id } };
+  }
   // A substantial puzzle or case resolved (discovery:resolved, after the result is committed):
   // bond once per region (three in all), the reaction chosen once, a Discoveries memory, and the
   // remark queued for the next quiet moment (or said now by the puzzle's own scene via say()).
   function onResolved(s, ev) {
     if (!s || !ev || !ev.kind || !ev.id) return;
-    const rid = ev.kind + ':' + ev.id;
+    // the event is '<kind>:<id>' (what reactions are authored for); the resolution id is the
+    // contract's id2 ('case:<id>:done') when given, so a say() from the system's own scene and
+    // this listener pick, store and speak the same single remark
+    const evName = ev.kind + ':' + ev.id;
+    const rid = ev.id2 || evName;
     if (s.comp && !ev.minor) {
       const region = ev.region || rid;
       const used = Object.keys(C(s).bond).filter((k) => k.startsWith('puzzle:'));
       if (used.length < 3 && !used.includes('puzzle:' + region)) K.award(s, 'puzzle:' + region, 1);
     }
-    const r = react(s, { id: rid, event: rid, facts: Object.assign({ method: ev.method }, ev.preserved != null ? { preserved: ev.preserved } : {}) });
+    const r = react(s, { id: rid, event: evName, facts: Object.assign({ method: ev.method }, ev.preserved != null ? { preserved: ev.preserved } : {}) });
     if (r) fileThought(s, { id: rid }, r);
-    const d = (DESCRIBE[ev.kind] && DESCRIBE[ev.kind](ev.id, ev)) || {};
+    const d = (DESCRIBE[ev.kind] && DESCRIBE[ev.kind](ev.id, ev)) || describeCase(ev) || {};
     const words = r && r.lines && r.lines[0] ? { jp: r.lines.map((l) => l.jp).join(' '), en: r.lines.map((l) => l.en).join(' ') } : null;
     K.memory(s, {
-      id: 'disc:' + rid, kind: 'discoveries',
+      id: 'disc:' + evName, kind: 'discoveries',
       title: d.title || ev.title || (ev.kind === 'case' ? { jp: '{解|と}けた {謎|なぞ}', en: 'A case worked out together' } : { jp: '{解|と}けた {仕掛|しか}け', en: 'A puzzle solved together' }),
       text: d.text || ev.text || null, reply: words, place: ev.place || placeName(s), method: ev.method || null,
       ref: d.ref || (ev.kind === 'case' ? { kind: 'case', id: ev.id } : ev.keepsake ? { kind: 'keepsake', id: ev.keepsake } : null),
       react: r ? r.id : null,
     });
     markRecent(s, rid, 'discovery');
-    if (r && !T(s)['said:' + rid]) T(s)._remark = { id: rid, event: rid, facts: { method: ev.method } };
+    if (r && !T(s)['said:' + rid]) T(s)._remark = { id: rid, event: evName, facts: { method: ev.method } };
     // said now if the moment allows it (the remark never speaks over a scene's own lines)
     if (hasDom()) setTimeout(flushRemark, 0);
   }

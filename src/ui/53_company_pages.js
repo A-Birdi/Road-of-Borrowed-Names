@@ -84,11 +84,23 @@ RB.ui.companyPages = (function () {
     const acts = (RB.content.companionActions && RB.content.companionActions[comp]) || [];
     return acts.filter((a) => !a.unlock || RB.state.test(s, a.unlock));
   }
+  // the cases the player has records for (src/engine/59_cases.js: discussable(s), topics(s) →
+  // [{ id, case, title, state, scene, recap, open() }]); nothing when there are none
   function cases(s) {
     try {
-      const d = RB.cases && RB.cases.discussable ? RB.cases.discussable(s) : null;
-      return Array.isArray(d) ? d : d ? [d] : [];
+      if (!RB.cases || !RB.cases.discussable || !RB.cases.discussable(s)) return [];
+      const t = RB.cases.topics ? RB.cases.topics(s) : [];
+      return Array.isArray(t) ? t.filter((x) => x && x.title) : [];
     } catch (e) { return []; }
+  }
+  function caseDetail(s, c) {
+    const cs = cases(s);
+    if (!cs.length) return '';
+    return '<section class="co-detail" aria-label="Cases to talk about"><h4>' + I('scroll') + L('{謎|なぞ} の {話|はなし}', 'Talk over a case with ' + esc(c.name.en)) + '</h4><ul class="entries co-cases">' + cs.map((x) =>
+      '<li class="entry"><span class="mark">' + I(x.state === 'done' ? 'done' : 'scroll') + '</span><div><div class="t">' + (x.title.jp ? j(x.title.jp) + ' ' : '') + '<span class="en">' + esc(x.title.en || '') + '</span></div>' +
+      '<div class="kind">' + (x.state === 'done' ? 'worked out' : 'still open') + '</div>' +
+      '<div class="row-acts">' + (x.scene && RB.content.scenes[x.scene] ? '<button class="pbtn" data-co-case-talk="' + esc(x.id) + '">' + I('talk') + L('{話|はな}す', 'Talk it over') + '</button>' : '') +
+      '<button class="pbtn quiet" data-co-case-open="' + esc(x.id) + '">' + I('scroll') + L('{記録|きろく} を {開|ひら}く', 'Open the record') + '</button></div></div></li>').join('') + '</ul></section>';
   }
   function identity(s, comp, c) {
     const st = K.stage(s);
@@ -125,7 +137,7 @@ RB.ui.companyPages = (function () {
     h += '<h4>' + I('talk') + L('{話|はな}す', 'Talk with ' + who) + '</h4><ul class="co-acts">';
     if (here) h += actionRow('place', 'place', 'Talk about this place', 'この {場所|ばしょ} の {話|はなし}', '');
     h += actionRow('mind', 'mind', p ? 'Ask what\'s on their mind' : 'Ask what\'s on their mind', '{何|なに} を {考|かんが}えて いる ?', p ? (p.quiet ? 'the topic you put off' : 'something is waiting') : '');
-    if (cs.length) h += actionRow('case', 'scroll', 'Discuss a discovered case', '{謎|なぞ} の {話|はなし} を する', '');
+    if (cs.length) h += actionRow('case', 'scroll', 'Discuss a discovered case', '{謎|なぞ} の {話|はなし} を する', cs.length > 1 ? cs.length + ' cases' : '', ' aria-expanded="' + (V.detail === 'cases') + '"');
     if (rest) h += actionRow('rest', 'rest', 'Rest together', '{一緒|いっしょ} に {休|やす}む', 'a quiet moment here');
     h += actionRow('memories', 'journey', 'Shared memories', '{思|おも}い{出|で}', '');
     if (qi) h += actionRow('quest', qi.done ? 'done' : 'side', 'Personal quest details', '{自分|じぶん} の {道|みち}', '', ' aria-expanded="' + (V.detail === 'quest') + '"');
@@ -175,9 +187,9 @@ RB.ui.companyPages = (function () {
     }
     const idHtml = identity(s, comp, c);
     const actHtml = actions(s, comp, c, V);
-    const qd = V.detail === 'quest' ? questDetail(s, comp, c) : '';
+    const qd = V.detail === 'quest' ? questDetail(s, comp, c) : V.detail === 'cases' ? caseDetail(s, c) : '';
     const rest = topicsBlock(s, c) + supportBlock(s, comp, c);
-    if (!two && V.detail === 'quest') {
+    if (!two && (V.detail === 'quest' || V.detail === 'cases') && qd) {
       A.innerHTML = '<button class="pbtn quiet co-back" data-co-back>' + I('back') + L('{戻|もど}る', 'Back') + '</button>' + qd;
     } else if (two) {
       A.innerHTML = idHtml;
@@ -188,9 +200,16 @@ RB.ui.companyPages = (function () {
     const cv = A.querySelector('.co-portrait');
     if (cv) RB.portraits.draw(cv, comp, K.stage(s).id === 'walking' ? 'neutral' : 'smile');
     const click = async (e) => {
-      const b = e.target.closest('[data-co-act],[data-co-topic],[data-co-back]');
+      const b = e.target.closest('[data-co-act],[data-co-topic],[data-co-back],[data-co-case-talk],[data-co-case-open]');
       if (!b) return;
       if (b.hasAttribute('data-co-back')) { V.detail = null; api.render(); return; }
+      if (b.dataset.coCaseTalk || b.dataset.coCaseOpen) {
+        const tp = cases(s).find((x) => x.id === (b.dataset.coCaseTalk || b.dataset.coCaseOpen));
+        if (!tp) return;
+        if (b.dataset.coCaseTalk) await converse(api, () => RB.script.run(tp.scene));
+        else { api.remember(); tp.open(); }
+        return;
+      }
       if (b.dataset.coTopic) {
         const tp = CC.topics.find((x) => x.id === b.dataset.coTopic);
         if (tp) await converse(api, () => RB.script.run(tp.scene));
@@ -205,13 +224,7 @@ RB.ui.companyPages = (function () {
         await converse(api, async () => { if (!(await K.openPending())) await RB.script.run('co.mind'); });
         return;
       }
-      if (act === 'case') {
-        const cs = cases(s);
-        const first = cs[0];
-        if (first && first.scene && RB.content.scenes[first.scene]) await converse(api, () => RB.script.run(first.scene));
-        else if (first && RB.cases.discuss) await converse(api, () => RB.cases.discuss(s, first.id || first));
-        else api.go('journey', 'cases');
-      }
+      if (act === 'case') { V.detail = V.detail === 'cases' ? null : 'cases'; api.render(); }
     };
     A.onclick = null;
     // (the scaffold listens on A for its own page tabs; this page listens on its holder and on B)
@@ -240,7 +253,7 @@ RB.ui.companyPages = (function () {
     const r = m.ref;
     if (!r) return '';
     if (r.kind === 'keepsake' && RB.content.keepsakes && RB.content.keepsakes[r.id]) return '<button class="pbtn quiet" data-co-ref="keepsakes">' + I('keepsake') + 'See the keepsake</button>';
-    if (r.kind === 'case' && RB.cases) return '<button class="pbtn quiet" data-co-ref="cases">' + I('scroll') + 'Open the case</button>';
+    if (r.kind === 'case' && RB.cases) return '<button class="pbtn quiet" data-co-ref="cases" data-id="' + esc(r.id) + '">' + I('scroll') + L('{記録|きろく} を {開|ひら}く', 'Open the case') + '</button>';
     return '';
   }
   // the recollection: only a transcript of what was kept; reading it runs nothing and changes nothing
@@ -293,6 +306,7 @@ RB.ui.companyPages = (function () {
       if (b.dataset.coFilter) { V.filter = b.dataset.coFilter; api.render(); return; }
       if (b.dataset.coRecall) { V.sel = b.dataset.coRecall; if (!two) V.detail = 'recall'; api.render(); return; }
       if (b.hasAttribute('data-co-back')) { V.detail = null; api.render(); return; }
+      if (b.dataset.coRef === 'cases' && b.dataset.id && RB.cases && RB.cases.show) { api.remember(); RB.cases.show(b.dataset.id); return; }
       if (b.dataset.coRef) api.go('journey', b.dataset.coRef);
     };
     A.addEventListener('click', click);
