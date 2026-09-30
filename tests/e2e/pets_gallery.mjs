@@ -8,7 +8,8 @@
 //   with reduced motion; sheets for the first look and for the other looks (tests/e2e/out/pets/gallery_*.png);
 // - playback on the real stage: a dev encounter; families played for you, your companion, the creature (hit and
 //   warded), a status, several targets, reduced motion — the real observer reacts, the battle is left untouched (still choosing);
-//   at 1280×800, 390×844 and 844×390, clear of the interface; the dev panel folds away on small screens;
+//   at 1280×800, 390×844 and 844×390, clear of the interface; the dev panel folds away on small screens; a
+//   resize and a hidden tab mid-reaction leave nothing held;
 // - quiet sounds: the four synthesized effects render, soft and clean, and nothing plays with the setting off.
 // Usage: node tests/e2e/pets_gallery.mjs
 import fs from 'node:fs';
@@ -166,6 +167,19 @@ for (const vp of [{ width: 1280, height: 800 }, { width: 390, height: 844 }, { w
     assert(still.same && still.drawn > 0, 'reduced motion: still afterwards (and still drawn): ' + JSON.stringify(still));
     const after = await p.evaluate(() => ({ phase: RB.combat.phase(), busy: RB.battleSeq.busy(), cards: document.querySelectorAll('.rcard[data-i]').length }));
     assert(after.phase === 'choose' && !after.busy && after.cards > 0, 'the battle is untouched (still choosing, no sequence stuck): ' + JSON.stringify(after));
+    if (vp.width === 1280) {
+      // mid-reaction, the window is resized and the tab is hidden and shown again: nothing waits on the pet
+      await p.evaluate(() => { RB.game.settings.reducedMotion = false; RB.game.applySettings(); RB.pets.dev.play({ family: 'unravel', actor: 'pc' }); });
+      await wait(p, 150);
+      await p.setViewportSize({ width: 1024, height: 700 });
+      await p.evaluate(() => { Object.defineProperty(document, 'hidden', { configurable: true, get: () => true }); document.dispatchEvent(new Event('visibilitychange')); });
+      await wait(p, 600);
+      await p.evaluate(() => { Object.defineProperty(document, 'hidden', { configurable: true, get: () => false }); document.dispatchEvent(new Event('visibilitychange')); });
+      await p.setViewportSize({ width: 1280, height: 800 });
+      await wait(p, 1500);
+      const back = await p.evaluate(() => ({ phase: RB.combat.phase(), busy: RB.battleSeq.busy(), cards: document.querySelectorAll('.rcard[data-i]').length, pet: RB.battlePets.stats().on, box: RB.battlePets.stats().box }));
+      assert(back.phase === 'choose' && !back.busy && back.cards > 0 && back.pet && back.box, 'after a resize and a hidden tab mid-reaction: still choosing, nothing held, the pet still in its place: ' + JSON.stringify(back));
+    }
     assert(!errors.length, 'no page errors: ' + errors.join(' | '));
     await ctx.close();
   });
