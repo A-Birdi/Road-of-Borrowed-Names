@@ -171,6 +171,10 @@ with synthetic session-only campaigns (never a player's save):
   `story_ch3.mjs E nao`, side_ch3, `long_quests.mjs --fixtures-only` — all passed.
 - `node tests/e2e/pets_sheets.mjs` (all sixteen species × companion pairs in the world, battle and Company, a
   different look per pair): no problems (run before the merge).
+- `node tests/e2e/pursue.mjs E mio` (the whole game) stops in Chapter 1 in rw.warehouse ("timeout waiting for
+  idle (mode menu)", with the cases' `cs_parcel` at 0) — and stops at the same place, in the same way, on
+  c28d7b7 itself (checked from a plain copy of that commit), so it is not from this work; not investigated
+  further here.
 - Earlier, under heavy machine load (load average about 30 on 4 cores), two checks failed once on timing and
   passed when rerun: battle_anim's "rapid input" (a 120 ms wait) and the pets world test's scene restore
   (now polled). Recorded here so they are not mistaken for passes that never failed.
