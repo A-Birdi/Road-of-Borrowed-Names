@@ -18,7 +18,7 @@
 // Usage: node tests/e2e/pets.mjs [species,…] [filter]      (default: every species)
 import fs from 'node:fs';
 import path from 'node:path';
-import { serve, launch, page, root, companionTurn } from './lib.mjs';
+import { serve, launch, page as openPage, root, companionTurn } from './lib.mjs';
 
 const args = process.argv.slice(2);
 const SPECIES = (args.find((a) => /^(cat|dog|bird|tanuki)(,|$)/.test(a)) || 'cat,dog,bird,tanuki').split(',');
@@ -29,10 +29,14 @@ const { srv, url } = await serve();
 const b = await launch();
 let pass = 0, fail = 0;
 const results = [];
+// contexts opened by a test are closed when it ends, passed or failed (a failed one must not keep its game running)
+const opened = [];
+const page = async (...a) => { const r = await openPage(...a); opened.push(r.ctx); return r; };
 async function test(name, fn) {
   if (only && !name.includes(only)) return;
   try { await Promise.race([fn(), new Promise((_, rej) => setTimeout(() => rej(new Error('timed out after 240s')), 240000))]); pass++; results.push('PASS ' + name); console.log('PASS ' + name); }
   catch (e) { fail++; results.push('FAIL ' + name); console.log('FAIL ' + name + ': ' + String(e && e.stack || e).slice(0, 1500)); }
+  finally { while (opened.length) await opened.pop().close().catch(() => {}); }
 }
 const assert = (c, m) => { if (!c) throw new Error(m); };
 const wait = (p, ms) => p.waitForTimeout(ms);

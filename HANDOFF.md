@@ -33,6 +33,13 @@
   quest lines with the side area Koharuno, quest guidance (nudges and
   markers), every displayed kanji on the pad with the kanji chart, and the
   new title scene.
+- Since 2026-09-30 also the owner's **Living Company and Discovery addendum**
+  (all of it, integrated): four cosmetic pets, the Company tab (Companion,
+  Pet, Shared memories), bond, companion thoughts/invitations/reflections/rest
+  topics, ending extensions and The Pages We Keep, Field Inkweaving with the
+  Mill Road and puzzles F1–F6, two deduction cases with evidence pages and
+  Known Details, twelve Roadside Keepsakes, sentence bookmarks and Creatures
+  Met. See the section below and docs/addendum/COVERAGE.md.
 - Latest full check (c7860c4, VALIDATION.md "Integration — everything from
   2026-09-29 together"): validator no errors; unit 4639; `node
   tests/e2e/run.mjs` 34/34 scripts, including a whole-game run. Earlier
@@ -184,6 +191,28 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
 - Status on the worker branch: unit 3,765/3,765, default browser suite
   30/30, validator no errors (VALIDATION.md).
 
+## Living Company and Discovery addendum (owner's brief of 2026-09-30) — REQUIREMENTS.md D1–D13, VALIDATION.md "Addendum — integrated validation", docs/addendum/
+- Built in slices by workers on top of a foundation (docs/ADDENDUM_CONTRACTS.md:
+  save namespaces, `RB.company`/`RB.discovery` core, bus events, page registries),
+  then merged and integrated here. One record per slice in docs/addendum/:
+  `pets.md`, `company.md` (+ `companion_decisions.md`), `endings_pages.md`,
+  `fieldweave.md`, `cases.md`, `words.md`; the combined §23 matrix is
+  `COVERAGE.md`, with the integration fixes found by testing the merged tree.
+- Where things live: engine `src/engine/06_company.js` (core), `37_pets_*.js`,
+  `57_petworld.js`, `58_companion.js`, `55_fieldweave.js`, `59_cases.js`,
+  `63_bookmarks.js`, `64_creatures.js`; UI `src/ui/52_company.js`,
+  `53_company_pages.js`, `54_company_pet.js`, `57_weave.js`, `58_keepsakes.js`,
+  `59_casebook.js`, `61_known.js`, `66_words_pages.js`, `85_battle_pets.js`;
+  content `src/content/{pets,company,pages,discovery,cases,words}/`.
+- Tests: unit `pets`, `company_core`, `company_bond`, `pages_project`,
+  `fieldweave`, `cases`, `bookmarks`; browser `pets*.mjs`, `company*.mjs`,
+  `addendum_integration.mjs`, `pages_ending.mjs`, `fieldweave.mjs`,
+  `mill_road.mjs`, `keepsakes.mjs`, `cases*.mjs`, `known.mjs`, `bookmarks.mjs`;
+  `visual.mjs` audits the new pages. All in `tests/e2e/run.mjs`.
+- Save compatibility: older saves migrate (namespaces filled, legacy milestones
+  rebuilt from verified flags only); nothing is deleted and no New Game is
+  needed. No export/import was added.
+
 ## Commands
 - Build: `node tools/build.mjs`
 - Content validation: `node tools/validate.mjs [--filter sg] [--unknown]`
@@ -236,6 +265,16 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
 7. Optional polish found in review: lexicon part-of-speech warnings between
    chapters (validator warnings), observatory dome sprite clipped at the top
    of sb.obs_path (cosmetic), credits are a single card.
+
+8. The addendum (2026-09-30), by hand: meet an animal and watch it follow and
+   react in battle; play a puzzle two ways; try a case without help; finish the
+   game with a committed companion and a pet and read the ending extension; one
+   Atlas outing of The Pages We Keep. Only headless Chromium has played any of
+   it, answering through the solver. A native speaker should read the new
+   Japanese (src/content/{pets,company,pages,discovery,cases}/).
+9. Found, left alone: Snowbell's tone-1 morning lines never play
+   (docs/addendum/companion_decisions.md); the arrival place label can sit over
+   a folio opened at once.
 
 ## Known issues / limits
 - No human handwriting samples tested (synthetic + font-derived only).

@@ -316,6 +316,22 @@ commit (VALIDATION.md); screenshots inspected by eye are noted as such.
 - [v] K9 Licence and attribution: data/NOTICE.txt and the stroke data header updated (KanjiVG CC BY-SA 3.0, radicals kept); fixture sources updated. Evidence: U recog (NOTICE check).
 - [b] K10 Not verified: learners' real handwriting of kanji; Firefox, Safari and real phones; the theme of each of the 1,548 kanji by a person.
 
+## Living Company and Discovery (owner's addendum of 2026-09-30; docs/addendum/COVERAGE.md; VALIDATION.md "Addendum — integrated validation")
+Evidence kinds as in COVERAGE.md: U unit, B browser (headless Chromium), V looked at, S source only.
+- [v] D1 Foundation: save namespaces `company`, `discovery`, `bookmarks`, `creatures`, `awarded` with migration of every older save (nothing deleted, no New Game), bus events, page registries, Company tab. Evidence: U company_core; B addendum_integration (two real slots), folio, settings; docs/ADDENDUM_CONTRACTS.md.
+- [v] D2 Four cosmetic pets (Koma, Mugi, Sora, Ponta): art and looks, world following, battle reactions by response family, four vignettes, naming rules, Company › Pet; no gameplay effect. Evidence: U pets 164; B pets, pets_gallery, pets_sheets (16 pairs × world/battle/Company, V), addendum_integration (ladder, stairs, turning back). docs/addendum/pets.md.
+- [v] D3 Sixteen companion × animal greetings (Company and the rest menu); nothing gained. Evidence: B pets_greet 17/17, company_pets.
+- [v] D4 Company › Companion and Shared memories; bond with the exact table, cap 12, four descriptors, no loss, no farming, no combat effect; legacy rebuild from verified milestones only. Evidence: U company_bond 237, company_core; B company, company_pets. docs/addendum/company.md.
+- [v] D5 Companion thoughts, invitations, reflections, six rest topics and a ritual each, reactions to what happened; decisions audit. Evidence: U company_bond; B company, side_ch3. docs/addendum/companion_decisions.md.
+- [v] D6 Ending extensions for all four companions and The Pages We Keep (three pages each, camp and homecoming, early return, defeat, save/load at each point), 48 post-project topics. Evidence: U pages_project 601 (real pets); B pages_ending. docs/addendum/endings_pages.md.
+- [v] D7 Field Inkweaving (the Weave sheet, V key), the Mill Road repair, puzzles F1–F6 with several valid routes; language, applicability and success kept apart. Evidence: U fieldweave 390; B fieldweave 89, mill_road 36, pets_weave. docs/addendum/fieldweave.md.
+- [v] D8 Two deduction cases with evidence pages, layered help, refined choice sequences, Known Details annotations and pins; shortcuts audited. Evidence: U cases 194; B cases, cases_shots, known. docs/addendum/cases.md.
+- [v] D9 Twelve Roadside Keepsakes, the catalogue and display, Shared Journey. Evidence: B keepsakes 32, cases (REFINE/LEGACY). 
+- [v] D10 Sentence bookmarks and Creatures Met. Evidence: U bookmarks; B bookmarks. docs/addendum/words.md.
+- [v] D11 Every new Japanese text passes the validator (scenes and the registries: 634 texts), furigana on every kanji. Evidence: tools/validate.mjs.
+- [v] D12 Integration of the six slices (one memory per meeting, the pets' rest option, the Pages panel on the Companion page, keepsake display once, case topics in Company). Evidence: B company_pets, addendum_integration, company, pages_ending; COVERAGE.md "Integration work".
+- [b] D13 Not verified: human play (fairness and fun of puzzles and cases, whether companions feel like people), native-speaker review of the new Japanese, Firefox, Safari, real phones, audible Japanese voice.
+
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
 - R1.3/R14.x: tests/e2e/ui.mjs (IndexedDB probe, session-only banner under refusal, reload persistence, copy independence, delete, overwrite confirm, cross-tab read-only, pre-departure recovery, file:// mode).
@@ -323,6 +339,7 @@ commit (VALIDATION.md); screenshots inspected by eye are noted as such.
 - R5.x: tests/e2e/story_ch1.mjs (all 4 companions; provisional switch; commitment only via "Set out with…"; lock after departure; no third member).
 - R7.1–R7.3, R7.8: ui.mjs combat test; RB.combatLogic caps mistake cost; RB.test.battle verifies Unravel-only wins.
 - R8.2/R8.3/R10.5: ui.mjs handwriting test (mode switch keeps step; IME Enter during composition does not submit; mastery tallies by mode).
+- D1–D12: docs/addendum/COVERAGE.md maps every addendum acceptance item (§23) to its tests and captures.
 - K1–K10: tests/unit/recog-coverage.test.mjs, kanji_chart.test.mjs, recog-kanji.test.mjs; tests/e2e/kanji_chart.mjs, pad_kanji.mjs; tools/kanjivg/kanaparity.mjs and eval.mjs --kanji.
 - R9.x: tests/unit/recog*.test.mjs (396 checks) + ui.mjs (reference strokes, wrong kana recognised then explained, nonsense rejected, composition edits, real mouse stroke). Human handwriting NOT tested.
 - R11.1: tools/validate.mjs rejects any kanji without ruby; R11.2/11.3: ui.mjs lightbulb test.
