@@ -596,11 +596,12 @@ RB.content.company = RB.content.company || {
     const top = nextTopic(s);
     const extra = restOptions(s, setting);
     const opts = [];
+    // the ordinary talk comes first where there is some (the ritual and the topic are opt-in extras,
+    // §19.2: confirming straight away does what talking to the companion always did)
+    if (banterHere(s)) opts.push({ jp: '{少|すこ}し {話|はな}す', en: 'Just chat', run: () => { chatBypass = true; try { RB.game.companionTalk(); } finally { chatBypass = false; } } });
     if (rit) opts.push({ jp: rit.title.jp, en: rit.title.en, run: () => RB.script.run(rit.scene) });
     if (top) opts.push({ jp: '{話|はな}す ： ' + top.title.jp, en: 'Talk: ' + top.title.en, run: () => RB.script.run(top.scene) });
     for (const o of extra) opts.push({ jp: o.label.jp, en: o.label.en, run: o.run });
-    // the usual banter stays reachable at a rest stop too
-    if (banterHere(s)) opts.push({ jp: '{少|すこ}し {話|はな}す', en: 'Just chat', run: () => { chatBypass = true; try { RB.game.companionTalk(); } finally { chatBypass = false; } } });
     opts.push({ jp: '{今|いま} は いい', en: 'Not now', run: null });
     const i = await RB.ui.dialogue.choose(opts, {});
     const o = opts[i];
