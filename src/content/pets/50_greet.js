@@ -105,7 +105,7 @@ ren[closed]: よい {聞|き}き{手|て} です 。 || A good listener.
 
 @scene pets.greet.ren.bird
 !hook pet_come comp
-narr: {小鳥|ことり} が レン の {前|まえ} に {降|お}りて 、 {一声|ひとこえ} {鳴|な}いた 。 {嘴|くちばし} が {開|ひら}く の が {見|み}えた 。 || The bird drops down in front of Ren and gives one call; you see its beak open.
+narr: {小鳥|ことり} が レン の {前|まえ} に {降|お}りて 、 {一声|ひとこえ} {鳴|な}いた 。 くちばし が {開|ひら}く の が {見|み}えた 。 || The bird drops down in front of Ren and gives one call; you see its beak open.
 !hook pet_do call
 ren[think]: {鳥|とり} の {言葉|ことば} は 、 まだ {読|よ}めません 。 {辞書|じしょ} が {要|い}ります ね 。 || I can't read bird yet. I'll need a dictionary.
 !hook pet_do hop
@@ -144,7 +144,7 @@ suzu[laugh]: {振|ふ}り{付|つ}け 、 {変|か}えた でしょ ! || You cha
 !hook pet_come comp
 narr: スズ が {短|みじか}く {口笛|くちぶえ} を {吹|ふ}く 。 || Suzu whistles a short phrase.
 !hook pet_do call
-narr: {小鳥|ことり} が {嘴|くちばし} を {開|ひら}いて 、 {同|おな}じ {節|ふし} を {返|かえ}した 。 || The bird opens its beak and sends the same phrase back.
+narr: {小鳥|ことり} が くちばし を {開|ひら}いて 、 {同|おな}じ {節|ふし} を {返|かえ}した 。 || The bird opens its beak and sends the same phrase back.
 !hook pet_do mirror
 suzu[surprise]: {今|いま} の 、 {完璧|かんぺき} じゃない ? {二重唱|にじゅうしょう} 、 {決定|けってい} ! || Wait, that was perfect! A duet it is!
 

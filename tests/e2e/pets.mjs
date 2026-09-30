@@ -3,13 +3,15 @@
 // - world: the selected pet follows the trail you walked (floor only, over the bridge, never on water or
 //   walls), keeps off your tile and your companion's, never changes the collision grid or what is solid,
 //   catches up after a warp and a door, hides with "Show pet in exploration" off and in a scene that asks,
-//   and is restored after it;
+//   and is restored after it; through a one-tile lane both ways, after a cutscene moves you, and after a real
+//   defeat, back at the last safe place with you — always settling where it can be seen;
 // - battle: it takes its place between the two of you, reacts to your response (its family) and your
 //   companion's action (a short acknowledgement in the same exchange), to the creature's move, cheers the
 //   last knot; nothing over the response area; the post-battle Next button is clicked with the mouse;
 //   reduced motion holds still poses; no pet, nothing drawn;
 // - Company › Pet: cards, Select / Selected / No pet, rename (Japanese, long, markup — escaped), reset,
-//   the three looks, the Pat preview, keyboard, 44-px targets, the phone page with Back, 320×640 at 200 %;
+//   the three looks, the Pat preview, keyboard, 44-px targets, the phone page with Back, 320×640 at 200 %,
+//   a phone held sideways (844×390);
 // - the vignette, with the keyboard and the mouse: the cause, one ordinary interaction, the meeting, the
 //   invitation, naming, the meeting memory once, selection as its own choice; save, reload, still there.
 // Captures go to tests/e2e/out/pets/.

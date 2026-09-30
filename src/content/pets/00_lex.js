@@ -52,7 +52,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 くしゃみ||n|I|sneeze
 不満|ふまん|adj-na|I|dissatisfied, discontented
 化ける|ばける|v1|I|to take the form of, change into (as tanuki and foxes do in folk tales)
-嘴|くちばし|n|A|beak, bill
+くちばし||n|I|beak, bill
 ぺこり||adv|A|(bowing) with a quick bob of the head
 拍子|ひょうし|n|I|rhythm, beat|拍子をとる: to keep time.
 口笛|くちぶえ|n|I|whistle, whistling

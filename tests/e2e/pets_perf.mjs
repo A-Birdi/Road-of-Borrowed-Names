@@ -28,7 +28,7 @@ const heap = async () => { await cdp.send('HeapProfiler.collectGarbage'); const 
 // ---- world -----------------------------------------------------------------------------------------------------
 async function worldRun(sp, cold) {
   return p.evaluate(async ([sp, cold]) => {
-    RB.game.debugStart('rw.village', 17, 24, { comp: 'mio', flags: { rw_arrived: true, rw_road_lit: true, rw_echo_done: true, departed: true, ch1_done: true, 'pet_cat_seen': true } });
+    RB.game.debugStart('rw.village', 17, 24, { comp: 'mio', flags: { rw_arrived: true, rw_road_lit: true, departed: true, ch1_done: true } }); // (before the cat's vignette opens: no other animal in the square)
     await new Promise((r) => setTimeout(r, 300));
     while (RB.ui.dialogue.isOpen()) { RB.ui.dialogue.advance(true); await new Promise((r) => setTimeout(r, 30)); }
     const s = RB.game.s;

@@ -7,8 +7,9 @@
 //   reduced-motion hold per cell; every cell drawn; every family moves in full motion and holds one still pose
 //   with reduced motion; sheets for the first look and for the other looks (tests/e2e/out/pets/gallery_*.png);
 // - playback on the real stage: a dev encounter; families played for you, your companion, the creature (hit and
-//   warded), several targets, reduced motion — the real observer reacts, nothing is left over, Next still works;
-//   at 1280×800 and 390×844.
+//   warded), a status, several targets, reduced motion — the real observer reacts, the battle is left untouched (still choosing);
+//   at 1280×800, 390×844 and 844×390, clear of the interface; the dev panel folds away on small screens;
+// - quiet sounds: the four synthesized effects render, soft and clean, and nothing plays with the setting off.
 // Usage: node tests/e2e/pets_gallery.mjs
 import fs from 'node:fs';
 import path from 'node:path';
@@ -122,7 +123,7 @@ await test('quiet sounds: four synthesized effects (no files), heard but soft, n
 });
 
 for (const vp of [{ width: 1280, height: 800 }, { width: 390, height: 844 }, { width: 844, height: 390 }]) {
-  await test('playback on the real stage at ' + vp.width + '×' + vp.height + ': player, companion, creature (hit and warded), several targets, reduced motion; nothing left over', async () => {
+  await test('playback on the real stage at ' + vp.width + '×' + vp.height + ': player, companion, creature (hit, warded, status), several targets, reduced motion; nothing left over', async () => {
     const { p, errors, ctx } = await page(b, devUrl, { viewport: vp, touch: vp.width < 500, mobile: vp.width < 500 });
     await p.evaluate(() => RB.pets.dev.battle({ species: 'tanuki', look: 'dark', comp: 'suzu' }));
     const choose = async () => { for (let i = 0; i < 300; i++) { const st = await p.evaluate(() => ({ dlg: RB.ui.dialogue.isOpen(), c: !!document.querySelector('.rcard[data-i]') && !RB.battleSeq.busy() })); if (st.c) return true; if (st.dlg) await p.evaluate(() => RB.ui.dialogue.advance(true)); await wait(p, 50); } return false; };
@@ -145,7 +146,7 @@ for (const vp of [{ width: 1280, height: 800 }, { width: 390, height: 844 }, { w
     if (vp.width === 844) await p.screenshot({ path: path.join(outDir, 'dev_play_landscape.png') });
     const plays = [
       { family: 'fire', actor: 'pc' }, { family: 'heal', actor: 'comp' }, { kind: 'impact', actor: 'foe', result: 'hit' },
-      { kind: 'impact', actor: 'foe', result: 'blocked' }, { family: 'wind', actor: 'pc', targets: 3 }, { family: 'technique', actor: 'comp' },
+      { kind: 'impact', actor: 'foe', result: 'blocked' }, { kind: 'impact', actor: 'foe', result: 'status' }, { family: 'wind', actor: 'pc', targets: 3 }, { family: 'technique', actor: 'comp' },
       { family: 'bell', actor: 'pc', reduce: true },
     ];
     const seen = [];
@@ -153,13 +154,13 @@ for (const vp of [{ width: 1280, height: 800 }, { width: 390, height: 844 }, { w
       await p.evaluate((o) => RB.pets.dev.play(o), o);
       await wait(p, 450);
       if (vp.width === 1280 && i === 0) await p.screenshot({ path: path.join(outDir, 'dev_play_wide.png') });
-      if (vp.width < 500 && i === 4) await p.screenshot({ path: path.join(outDir, 'dev_play_phone.png') });
+      if (vp.width < 500 && i === 5) await p.screenshot({ path: path.join(outDir, 'dev_play_phone.png') });
       await wait(p, 900);
       seen.push(await p.evaluate(() => { const st = RB.battlePets.stats(); return { t: st.trace[st.trace.length - 1], reduce: RB.game.reducedMotion(), q: st.queued }; }));
     }
     const fam = seen.map((x) => x.t && (x.t.family || x.t.outcome));
-    assert(fam.join() === 'fire,heal,hit,blocked,wind,technique,bell', 'the observer saw each played event: ' + JSON.stringify(seen));
-    assert(seen[6].reduce === true, 'reduced motion switched on for the last');
+    assert(fam.join() === 'fire,heal,hit,blocked,status,wind,technique,bell', 'the observer saw each played event: ' + JSON.stringify(seen));
+    assert(seen[7].reduce === true, 'reduced motion switched on for the last');
     await wait(p, 1200); // the held key pose has ended: back to its stance
     const still = await p.evaluate(async () => { const a = JSON.stringify(RB.battlePets.stats().pose); const n = RB.battlePets.stats().stats.drawn; await new Promise((r) => setTimeout(r, 700)); const st = RB.battlePets.stats(); return { same: a === JSON.stringify(st.pose), a, b: JSON.stringify(st.pose), drawn: st.stats.drawn - n, base: st.base }; });
     assert(still.same && still.drawn > 0, 'reduced motion: still afterwards (and still drawn): ' + JSON.stringify(still));

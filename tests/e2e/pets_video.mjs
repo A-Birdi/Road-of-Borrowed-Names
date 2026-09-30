@@ -4,7 +4,7 @@
 // companion's action (a short acknowledgement), the creature's move (its safe nearby reaction) — the
 // finishing response (its settled-victory gesture with your cheer) and the last line clicked away.
 // Writes a WebM (Playwright's recorder).
-// Usage: node tests/e2e/pets_video.mjs [cat|dog|bird|tanuki] [out.webm] [--reduce]
+// Usage: node tests/e2e/pets_video.mjs [cat|dog|bird|tanuki] [out.webm] [--reduce] [--short]
 import fs from 'node:fs';
 import path from 'node:path';
 import { serve, launch, root } from './lib.mjs';
@@ -53,7 +53,9 @@ async function nextLines() {
 }
 await pause(700);
 await nextLines();
-await p.evaluate(() => { const st = RB.combat.state(); if (st) { st.knots = st.maxKnots = 3; st.foes[0].knots = st.foes[0].maxKnots = 3; RB.combat.refresh(); } });
+// --short: two knots (two exchanges: Unravel, then 守る against the Strike, then the last knot)
+const KNOTS = process.argv.includes('--short') ? 2 : 3;
+await p.evaluate((n) => { const st = RB.combat.state(); if (st) { st.knots = st.maxKnots = n; st.foes[0].knots = st.foes[0].maxKnots = n; RB.combat.refresh(); } }, KNOTS);
 async function notes() { const g = await p.evaluate(() => { const b = [...document.querySelectorAll('.cb-coach button, [data-coach-ok]')].find((x) => /got it/i.test(x.textContent)); if (!b) return null; const q = b.getBoundingClientRect(); return { x: q.left + q.width / 2, y: q.top + q.height / 2 }; }); if (g) { await clickAt(g); await pause(300); } }
 async function exchange(r) {
   await p.waitForFunction(() => !!document.querySelector('.rcard[data-i]') && RB.combat.phase && RB.combat.phase() === 'choose', null, { timeout: 20000 }).catch(() => {});
