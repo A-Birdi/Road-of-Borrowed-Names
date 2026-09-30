@@ -186,9 +186,45 @@ export default async (t) => {
   t.eq(visibleProps(c1).sort(), ['pet_screen_fixed', 'pet_spot'], 'once steady: the steadied screen (the lasting change) and the cat');
   const late = fresh({ chapter: 6, flags: { rw_echo_done: true, ch5_done: true, postgame: true } });
   t.eq(visibleProps(late).sort(), ['pet_screen', 'pet_spot'], 'still there in the postgame (no missable window)');
+  // ---- the bird, the dog and the tanuki: the same shape ------------------------------------------------------------
+  const OTHER = {
+    bird: { map: 'sg.harbor', on: { quests: { sg_main: { stage: 1 } } }, fit: ['unravel', 'wind'], misfit: 'fire', before: [], open: ['pet_post', 'pet_spot'], fixed: ['pet_post_fixed', 'pet_spot'], flag: { unravel: 'pet_bird_untied', wind: 'pet_bird_blown' } },
+    dog: { map: 'co.village', on: { flags: { co_met_sayo: true } }, fit: ['bind', 'stone'], misfit: 'water', before: [], open: ['pet_gate', 'pet_spot'], fixed: ['pet_gate_fixed', 'pet_spot'], flag: { bind: 'pet_dog_by_rope', stone: 'pet_dog_by_peg' } },
+    tanuki: { map: 'co.road', on: { flags: { co_arrived: true } }, fit: ['wind', 'stone'], misfit: 'fire', before: [], open: ['pet_hollow', 'pet_look', 'pet_papers'], fixed: ['pet_hollow', 'pet_look', 'pet_papers_tidy'], flag: { wind: 'pet_tanuki_by_lee', stone: 'pet_tanuki_by_stone' } },
+  };
+  for (const sp in OTHER) {
+    const O = OTHER[sp], V = PETS.vignettes[sp], mp = C.maps[O.map];
+    const mk = (extra) => { const st = fresh(Object.assign({ comp: 'mio', chapter: 3 }, extra || {})); if (O.on.flags) Object.assign(st.flags, O.on.flags); if (O.on.quests) Object.assign(st.quests, JSON.parse(JSON.stringify(O.on.quests))); return st; };
+    t.ok(V && V.species === sp && V.map === O.map && O.fit.every((f) => V.families.indexOf(f) >= 0), sp + ': the vignette is registered on ' + O.map + ' and accepts ' + O.fit.join(' and '));
+    const vis = (st) => mp.props.filter((q) => /^pet_/.test(q.p) && (!q.if || S.test(st, q.if))).map((q) => q.p).sort();
+    t.eq(vis(fresh({ comp: 'mio' })), O.before, sp + ': nothing of it before it opens');
+    t.eq(vis(mk()), O.open.slice().sort(), sp + ': once open, the cause and the animal are there');
+    t.eq(vis(mk({ chapter: 6, flags: { postgame: true, ch5_done: true } })), O.open.slice().sort(), sp + ': still there in the postgame (no missable window)');
+    for (const f of O.fit) {
+      const st = mk();
+      RB.game.s = st;
+      t.eq(PETS.vignetteAction(sp, O.misfit), false, sp + ': a family that does not fit (' + O.misfit + ') changes nothing');
+      t.eq([PETS.vignetteAction(sp, f), st.vars['pet_' + sp], !!st.flags[O.flag[f]]], [true, 2, true], sp + ': the field route with ' + f + ' ends in the same state as the ordinary one');
+      t.eq(PETS.vignetteAction(sp, O.fit[0]), false, sp + ': once settled, nothing more to do');
+      t.eq(vis(st), O.fixed.slice().sort(), sp + ': the lasting change shows');
+      PETS.meet(st, sp);
+      t.ok(!vis(st).includes('pet_spot'), sp + ': once met, the animal is no longer waiting there');
+      t.eq(PETS.vignetteAction(sp, f), false, sp + ': nothing happens after it has joined');
+    }
+    const sc = RB.content.scenes;
+    if (sc) t.ok(['notice', sp].every((k) => sc['pets.' + sp + '.' + k]), sp + ': the notice and the meeting scenes exist');
+  }
+  const scenesSrc = RB.content.scenes;
+  const dogMeet = scenesSrc['pets.dog.dog'];
+  if (dogMeet) {
+    const cmds = dogMeet.cmds;
+    const perm = cmds.findIndex((c) => c.who === 'co_tamotsu');
+    const inv = cmds.findIndex((c, i) => i > perm && c.op === 'choice' && c.opts.some((o) => /Invite/.test(o.en)));
+    t.ok(perm >= 0 && inv > perm, 'the dog: the channel keeper gives explicit permission before the invitation');
+  }
   // the meeting memory: once, with the companion's reply and the name at the time
   const m = RB.pets.meeting.cat;
-  t.ok(m && m.title && m.text && ['nao', 'mio', 'ren', 'suzu'].every((k) => m.reply[k] && m.reply[k].jp && m.reply[k].en), 'the meeting memory has a reply from each companion');
+  t.ok(['cat', 'bird', 'dog', 'tanuki'].every((sp) => { const M = RB.pets.meeting[sp]; return M && M.title && M.text && ['nao', 'mio', 'ren', 'suzu'].every((k) => M.reply[k] && M.reply[k].jp && M.reply[k].en); }), 'every meeting memory has a reply from each companion');
   const jpProblems = [];
   for (const sp in RB.pets.meeting) {
     const M = RB.pets.meeting[sp];

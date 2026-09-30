@@ -28348,6 +28348,36 @@ RB.petWorld = (function () {
     }
   }
   function wild(id) { return WILD.find((d) => d.id === id) || null; }
+  // Where a vignette's animal comes to sit by you: a free tile beside you (seen, not under the dialogue box),
+  // then the upper diagonals, then the lower ones, then below/above. `from` is where it starts: the straight
+  // way there must not cross anything solid (it never walks through a barrel). `own`: its own spot tiles
+  // (solid for you, not for it); `avoid`: tiles it keeps off (a prop it would stand on); `leave`: it gets up
+  // and comes out (never stays where it was).
+  function nearTile(from, o) {
+    o = o || {};
+    const w = W(), p = w.player, m = w.map;
+    if (!p || !m) return o.fallback || from;
+    const has = (list, x, y) => (list || []).some((q) => q[0] === x && q[1] === y);
+    const open = (x, y) => has(o.own, x, y) || (!RB.maps.blockedStatic(m, x, y) && !RB.maps.exitAt(m, x, y));
+    const free = (x, y) => open(x, y) && !(x === p.x && y === p.y) && !(w.comp && w.comp.x === x && w.comp.y === y) && !w.npcs.some((n) => n.x === x && n.y === y) && !has(o.avoid, x, y) && !(o.leave && x === from[0] && y === from[1]);
+    const clear = (x, y) => {
+      const n = Math.max(Math.abs(x - from[0]), Math.abs(y - from[1])) * 3;
+      for (let i = 1; i < n; i++) { const tx = Math.round(from[0] + ((x - from[0]) * i) / n), ty = Math.round(from[1] + ((y - from[1]) * i) / n); if (!open(tx, ty) || (tx === p.x && ty === p.y)) return false; }
+      return true;
+    };
+    const C = [[1, 0], [-1, 0], [1, -1], [-1, -1], [1, 1], [-1, 1], [0, 1], [0, -1]];
+    if (from[0] < p.x) { C[0] = [-1, 0]; C[1] = [1, 0]; C[2] = [-1, -1]; C[3] = [1, -1]; C[4] = [-1, 1]; C[5] = [1, 1]; }
+    for (const [dx, dy] of C) { const x = p.x + dx, y = p.y + dy; if (free(x, y) && clear(x, y)) return [x, y]; }
+    for (const [dx, dy] of C) { const x = p.x + dx, y = p.y + dy; if (free(x, y)) return [x, y]; }
+    return o.fallback || from;
+  }
+  // which way to face you from a tile
+  function faceFrom(to) {
+    const p = W().player;
+    if (!p) return 'down';
+    const dx = p.x - to[0], dy = p.y - to[1];
+    return Math.abs(dx) >= Math.abs(dy) && dx ? (dx > 0 ? 'right' : 'left') : dy < 0 ? 'up' : 'down';
+  }
 
   // ---- drawing (called from the renderer: pushes into its y-sorted list) ---------------------------------------
   function push(list, c, ax, ay, t) {
@@ -28445,7 +28475,7 @@ RB.petWorld = (function () {
       } catch (err) { /* cosmetic */ }
     });
   }
-  return { update, push, state, act, come, face: (who) => { const a = RB.world.actorById(who); if (a) face(a); }, place: () => { P.placed = false; }, addWild, wild, WILD, _P: P };
+  return { update, push, state, act, come, face: (who) => { const a = RB.world.actorById(who); if (a) face(a); }, place: () => { P.placed = false; }, addWild, wild, nearTile, faceFrom, WILD, _P: P };
 })();
 
 
@@ -71316,6 +71346,25 @@ var RB = (globalThis.RB = globalThis.RB || {});
 手のひら|てのひら|n|I|palm of the hand
 かしげる||v1|A|to tilt (one's head)|首をかしげる: to tilt one's head (puzzled or curious).
 ぴょん||adv|I|with a hop (the sound and look of a small jump)
+# the dog: The Gate That Will Not Stay
+人懐っこい|ひとなつっこい|adj-i|I|friendly, sociable (with people)
+突っ込む|つっこむ|v5m|I|to thrust into, plunge into
+しゃがむ||v5m|I|to crouch, squat down
+のそのそ||adv|A|slowly, lumberingly
+お日様|おひさま|n|I|the sun (familiar)|お日様の匂い: the smell of things dried in the sun.
+そいつ||pn|I|that one, that fellow (rough)
+押し込む|おしこむ|v5m|I|to push in, press in
+戸締まり|とじまり|n|I|locking up, shutting the doors and gates
+ぐるり||adv|A|(turning) all the way round
+満足|まんぞく|adj-na|I|satisfied, content
+# the tanuki: Paper in the Clearing
+たぬき||n|E|tanuki, raccoon dog
+根元|ねもと|n|I|root, base (of a tree or plant)
+くぼみ||n|I|hollow, dip, recess
+ぴくぴく||adv|I|twitching
+前足|まえあし|n|I|front legs, forepaws
+新人|しんじん|n|I|newcomer, new member
+入団|にゅうだん|vs|A|joining (a troupe, team or company)
 `), 'pets');
 })();
 
@@ -71368,6 +71417,7 @@ RB.hooks = RB.hooks || {};
   };
   RB.hooks.pet_vig = async (args) => {
     const v = RB.pets.vignettes[args[0]];
+    RB.pets.staged = { id: args[0], name: args[1], t: performance.now() };
     if (v && v.stage) await v.stage(args[1], args.slice(2));
   };
   RB.hooks.pet_hide = async () => { RB.pets.hide('scene'); };
@@ -71538,10 +71588,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const W = RB.world.W;
       if (name === 'near' && W.player) {
         // to a free tile at your side (left or right, where it is seen), then it sits and looks up
-        const p = W.player, m = W.map;
-        const free = (x, y) => !RB.maps.blockedStatic(m, x, y) && !RB.maps.exitAt(m, x, y) && !(W.comp && W.comp.x === x && W.comp.y === y) && !W.npcs.some((n) => n.x === x && n.y === y);
-        const to = [[p.x + 1, p.y], [p.x - 1, p.y], [p.x, p.y + 1]].find(([x, y]) => free(x, y)) || [p.x + 1, p.y];
-        V.near = { t0: performance.now(), from: CORNER, to, dir: to[0] > CORNER[0] ? 'right' : to[0] < CORNER[0] ? 'left' : to[1] > CORNER[1] ? 'down' : 'up', face: W.player.x < to[0] ? 'left' : W.player.x > to[0] ? 'right' : W.player.y < to[1] ? 'up' : 'down' };
+        const to = RB.petWorld.nearTile(CORNER, { own: [CORNER, [CORNER[0] + 1, CORNER[1]]], avoid: [SCREEN] });
+        V.near = { t0: performance.now(), from: CORNER, to, dir: to[0] > CORNER[0] ? 'right' : to[0] < CORNER[0] ? 'left' : to[1] > CORNER[1] ? 'down' : 'up', face: RB.petWorld.faceFrom(to) };
         return new Promise((r) => setTimeout(r, RB.test && RB.test.auto ? 0 : 950));
       }
       if (name === 'back') { V.near = null; }
@@ -71637,6 +71685,720 @@ narr: {猫|ねこ} が {少|すこ}し ずつ {軒下|のきした} に {入|は
 ?(pet_cat_by_cord) narr: すだれ は {釘|くぎ} に {結|むす}ばれて 、 {静|しず}か に {立|た}って いる 。 || The screen stands quietly, tied to the nail.
 ?(!pet_cat_by_cord) narr: すだれ は {石|いし} の {上|うえ} に {戻|もど}って 、 {静|しず}か に {立|た}って いる 。 || The screen stands quietly, back on its stone.
 `, 'pets/cat');
+})(RB.content);
+
+
+/* ==== src/content/pets/20_bird.js ==== */
+/* Pet vignette: the small bird — "The Ribbon by the Perch" (addendum §5.2). Saltglass, once the
+ * harbour is yours to wander (quest.sg_main>=1: after meeting the harbourmaster), for good.
+ *
+ * Where: the old mooring post at the east end of the quay (sg.harbor 43,26), the beach beside it
+ * (44,26) — clear of the market, the stalls, the piers, the sea-glass and every person.
+ * Cause (visible, inspectable): a faded ribbon knotted to a nail on the post jumps in every gust and
+ * flicks away the little bird that keeps trying to land on its familiar perch.
+ * State (var.pet_bird): 0 not looked at, 1 looked at, 2 the ribbon is dealt with.
+ * Ordinary route: look at the post, then untie the knot and take the ribbon off, OR wind the loose end
+ * round the post and tuck it in. The bird settles on the post; stay still or hold out an open palm, it
+ * hops closer, and it is invited (or "Not now": it stays on its post). No snatching, no cage, no
+ * hearing-only clue (a chirp is also shown).
+ * Field route (RB.pets.vignetteAction('bird', family)): 'unravel' (the knot comes loose) or 'wind' (a
+ * gentle breeze lifts the ribbon off the nail and away along the quay, never at the bird). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C) {
+  'use strict';
+  const T = (en, jp) => ({ en, jp });
+  const map = C.maps['sg.harbor'];
+  const POST = [43, 26], SAND = [44, 26];
+  const ON = 'quest.sg_main>=1';
+  const K = RB.propKit;
+  const LOOP = 4800, GUST = 2600;
+
+  // the mooring post: weathered timber, a rope collar, a nail with the ribbon (fluttering), or bare
+  function postArt(id, fixed) {
+    RB.props.P[id] = {
+      id, w: 1, h: 1, block: true,
+      draw(c, x, y, pal, t, o) { c.save(); c.scale(0.5, 0.5); this.draw2(c, x * 2, y * 2, pal, t, o); c.restore(); },
+      draw2(c, x, y, pal, t, o) {
+        o = o || {};
+        const ph = (t || 0) % LOOP;
+        const fl = fixed ? 0 : o.still ? 1 : ph > GUST && ph < GUST + 700 ? 1 + (Math.floor((ph - GUST) / 90) % 3) : 0;
+        const key = id + '|' + K.palInfo(pal).key + '|' + fl + '|' + (o.by || '');
+        const cv = K.cached(key, () => K.make(40, 48, (g) => {
+          const M = K.mat(pal), w5 = M.wood;
+          // the post: a thick round timber, darker where the sea has reached, a rope collar
+          K.R(g, 12, 8, 12, 36, w5[2]); K.R(g, 12, 8, 3, 36, w5[3]); K.R(g, 21, 8, 3, 36, w5[1]);
+          K.R(g, 13, 6, 10, 3, w5[4]); K.R(g, 12, 34, 12, 10, w5[0]);
+          K.R(g, 11, 22, 14, 3, '#9a8a64'); K.R(g, 11, 22, 14, 1, '#c8b88a'); K.R(g, 11, 24, 14, 1, '#6a5a40');
+          K.R(g, 24, 15, 3, 2, '#46444f'); // the nail
+          const rib = '#b05a6a', rib2 = '#d88a94';
+          if (!fixed) {
+            // the ribbon knotted on the nail, its tail flicking in the gust (fl 0 hangs)
+            K.R(g, 25, 14, 3, 4, rib);
+            const tail = fl === 0 ? [[27, 17], [28, 21], [27, 25], [28, 29]] : fl === 1 ? [[28, 16], [32, 16], [35, 14], [38, 15]] : fl === 2 ? [[28, 15], [31, 12], [34, 9], [37, 8]] : [[28, 17], [32, 19], [35, 22], [38, 21]];
+            let prev = [26, 16];
+            for (const q of tail) { K.line(g, prev[0], prev[1], q[0], q[1], rib, 2); K.line(g, prev[0], prev[1] - 1, q[0], q[1] - 1, rib2, 1); prev = q; }
+          } else if (o.by === 'tucked') {
+            // wound round the post and tucked in
+            K.R(g, 12, 17, 12, 2, rib); K.R(g, 12, 17, 12, 1, rib2); K.R(g, 12, 20, 12, 1, rib);
+          }
+          K.outline(g, 40, 48, 'sel');
+          g.globalCompositeOperation = 'destination-over';
+          K.shadow(g, 18, 44, 9, 2.5, 0.3);
+          g.globalCompositeOperation = 'source-over';
+        }));
+        c.drawImage(cv, x - 2, y - 16);
+      },
+    };
+  }
+  postArt('pet_post', false);
+  postArt('pet_post_fixed', true);
+
+  map.props.push(
+    { p: 'pet_post', x: POST[0], y: POST[1], scene: 'pets.bird.post', if: ON + '&var.pet_bird<2' },
+    { p: 'pet_post_fixed', x: POST[0], y: POST[1], scene: 'pets.bird.post', if: ON + '&var.pet_bird>=2&!pet_bird_tucked', o: { by: 'untied' } },
+    { p: 'pet_post_fixed', x: POST[0], y: POST[1], scene: 'pets.bird.post', if: ON + '&var.pet_bird>=2&pet_bird_tucked', o: { by: 'tucked' } },
+    { p: 'pet_spot', x: SAND[0], y: SAND[1], scene: 'pets.bird.bird', if: ON + '&!pet.bird' },
+  );
+  map.onEnter = (map.onEnter || []).concat([{ scene: 'pets.bird.notice', if: ON + '&!pet.bird&!seen.pets.bird.bird&!seen.pets.bird.post&comp', once: true }]);
+
+  // ---- the bird before it joins you: tries the post, the ribbon flicks, it flutters down to the sand -------------
+  const V = { near: null };
+  const sm = (k) => (k <= 0 ? 0 : k >= 1 ? 1 : k * k * (3 - 2 * k));
+  RB.petWorld.addWild({
+    id: 'bird', species: 'bird', look: 'brown', map: 'sg.harbor',
+    show: (s) => RB.state.test(s, ON + '&!pet.bird'),
+    place(s, t, reduce) {
+      const step = (s.vars && s.vars.pet_bird) || 0;
+      if (V.near) {
+        const k = reduce ? 1 : Math.min(1, (performance.now() - V.near.t0) / 800);
+        return { x: POST[0] + (V.near.to[0] - POST[0]) * sm(k), y: POST[1] + (V.near.to[1] - POST[1]) * sm(k), dir: V.near.face, po: k < 1 ? { wing: 1, flap: (t / 150) % 1 } : { hr: 16, hp: -8 }, up: k < 1 ? Math.round(14 * (1 - k) + Math.sin(k * Math.PI) * 4) : 0 };
+      }
+      if (step >= 2) {
+        // on its post at last: fluffed, preening now and then
+        const pr = !reduce && (t % 6000) > 4200 && (t % 6000) < 5200;
+        return { x: POST[0], y: POST[1], dir: 'left', po: pr ? { preen: 0.8, fluff: 0.4 } : { fluff: 0.4, blink: !reduce && (t % 3900) < 150 ? 1 : 0 }, up: 17 };
+      }
+      if (reduce) return { x: SAND[0], y: SAND[1], dir: 'left', po: { hp: -14 } };
+      const ph = t % LOOP;
+      if (ph < 1400) return { x: SAND[0], y: SAND[1], dir: 'left', po: { hp: -14, hr: ph > 600 && ph < 1000 ? 18 : 0 } };                        // looks up at the post
+      if (ph < 2000) { const k = (ph - 1400) / 600; return { x: SAND[0] - k, y: SAND[1], dir: 'left', po: { wing: 1, flap: (t / 140) % 1 }, up: Math.round(17 * sm(k)) }; } // flies up
+      if (ph < GUST) return { x: POST[0], y: POST[1], dir: 'left', po: { wing: 0.3, flap: 0.2 }, up: 17 };                                       // lands
+      if (ph < GUST + 250) return { x: POST[0], y: POST[1], dir: 'right', po: { wing: 1, flap: (t / 110) % 1, fluff: 1 }, up: 19 };            // the ribbon flicks: startled
+      if (ph < GUST + 900) { const k = (ph - GUST - 250) / 650; return { x: POST[0] + k, y: POST[1], dir: 'right', po: { wing: 1, flap: (t / 140) % 1 }, up: Math.round(19 * (1 - sm(k))) }; }
+      return { x: SAND[0], y: SAND[1], dir: 'left', po: { fluff: 0.6, hp: -6 } };
+    },
+  });
+  function done(s, how) {
+    if (((s.vars && s.vars.pet_bird) || 0) >= 2 || RB.pets.record(s, 'bird')) return false;
+    s.vars.pet_bird = 2;
+    s.flags['pet_bird_' + how] = true;
+    return true;
+  }
+  RB.pets.addVignette('bird', {
+    species: 'bird', map: 'sg.harbor', families: ['unravel', 'wind'],
+    title: T('The Ribbon by the Perch', '{止|と}まり{木|ぎ} の リボン'),
+    met: T('At the old mooring post on the Saltglass quay, once the ribbon stopped flicking it away.', '{潮硝子|しおがらす} の {岸壁|がんぺき} の {古|ふる}い {杭|くい} で 、 リボン が {跳|は}ねなく なって から 。'),
+    // ほどく loosens the salt-stiff knot; a gentle 風 lifts the ribbon off the nail, away along the quay
+    apply(s, family) { return done(s, family === 'wind' ? 'blown' : 'untied'); },
+    state: (s) => ({ step: (s.vars && s.vars.pet_bird) || 0, met: !!RB.pets.record(s, 'bird') }),
+    stage(name) {
+      const W = RB.world.W;
+      if (name === 'near' && W.player) {
+        const p = W.player;
+        const to = [p.x + (p.x < POST[0] ? 1 : p.x > POST[0] ? -1 : 0), p.y + (p.x === POST[0] ? (p.y < POST[1] ? 1 : -1) : 0)];
+        V.near = { t0: performance.now(), to: to[0] === POST[0] && to[1] === POST[1] ? SAND : to, face: p.x < POST[0] ? 'left' : 'right' };
+        return new Promise((r) => setTimeout(r, RB.test && RB.test.auto ? 0 : 850));
+      }
+      if (name === 'back') V.near = null;
+      return null;
+    },
+  });
+  RB.bus.on('map:enter', () => { V.near = null; });
+
+  RB.pets.meeting.bird = {
+    title: T('The Ribbon by the Perch', '{止|と}まり{木|ぎ} の リボン'),
+    text: T('At the east end of the Saltglass quay, a small bird kept landing on an old mooring post and being flicked away by a knotted ribbon. Once the ribbon was dealt with, it sat on its post — and then chose to come along.', '{潮硝子|しおがらす} の {岸壁|がんぺき} の {東|ひがし} の {端|はし} 。 {小鳥|ことり} が {古|ふる}い {杭|くい} に {止|と}まろう と して は 、 {結|むす}ばれた リボン に {追|お}われて いた 。 リボン が {片付|かたづ}く と 、 {小鳥|ことり} は {杭|くい} に {止|と}まり 、 やがて {一緒|いっしょ} に {来|く}る こと を {選|えら}んだ 。'),
+    reply: {
+      nao: T('Somebody tied that ribbon there once and forgot it. Not our business why. The bird’s business was the post.', '{誰|だれ} か が {昔|むかし} あそこ に {結|むす}んで 、 {忘|わす}れた ん だろ 。 {理由|りゆう} は {知|し}らない 。 {鳥|とり} に とって は 、 {杭|くい} の ほう が {大事|だいじ} だった 。'),
+      mio: T('It only needed its post back. Most of what helps is like that — small, and exactly the right thing.', '{杭|くい} を {返|かえ}して あげた だけ 。 {役|やく} に {立|た}つ こと って 、 だいたい {小|ちい}さくて 、 ちょうど いい もの なの よ 。'),
+      ren: T('A perch is a kind of lantern post for a bird — a place it knows to come back to. I understand that very well.', '{止|と}まり{木|ぎ} は 、 {鳥|とり} に とって の {灯|あか}り の {柱|はしら} です 。 {帰|かえ}る {場所|ばしょ} が わかる 。 よく わかります 。'),
+      suzu: T('It kept trying for the same spot on stage. Stubborn. I like it already.', '{同|おな}じ {立|た}ち{位置|いち} を {何度|なんど} も {狙|ねら}って た ね 。 {頑固|がんこ} 。 もう {好|す}き に なっちゃった 。'),
+    },
+  };
+
+  RB.script.add(`
+@scene pets.bird.notice
+?(party=nao) nao: {岸壁|がんぺき} の {端|はし} の {杭|くい} 、 {小鳥|ことり} が {何度|なんど} も {止|と}まり{損|そこ}ねてる 。 || The post at the end of the quay — a little bird keeps missing its landing.
+?(party=mio) mio: {見|み}て 。 {岸壁|がんぺき} の {端|はし} に 、 {小|ちい}さな {鳥|とり} が いる 。 || Look — a little bird at the end of the quay.
+?(party=ren) ren: {東|ひがし} の {杭|くい} に 、 {鳥|とり} が {止|と}まろう と して います 。 うまく いかない よう です 。 || A bird is trying to land on the east post. It isn't managing.
+?(party=suzu) suzu: {岸壁|がんぺき} の {端|はし} 、 {小鳥|ことり} が {着地|ちゃくち} に {失敗|しっぱい} してる 。 {何回目|なんかいめ} かな 。 || End of the quay — a little bird fluffing its landing. How many tries is that?
+
+@scene pets.bird.bird
+!if var.pet_bird>=2 -> settled
+narr: {茶色|ちゃいろ} の {小鳥|ことり} が 、 {古|ふる}い {杭|くい} の {上|うえ} に {止|と}まろう と する 。 {風|かぜ} が {吹|ふ}く と 、 {杭|くい} の リボン が {跳|は}ねて 、 {鳥|とり} は {砂|すな} の {上|うえ} に {逃|に}げる 。 || A small brown bird tries to land on top of the old post. When the wind gusts, the ribbon on the post jumps and the bird flees to the sand.
+?(party=nao) nao: {好|す}きな {場所|ばしょ} が ある ん だな 。 {他|ほか} の {杭|くい} じゃ だめ らしい 。 || It's got a favourite spot. No other post will do, apparently.
+?(party=mio) mio: あの リボン が {怖|こわ}い の ね 。 || It's the ribbon it's afraid of.
+?(party=ren) ren: {帰|かえ}る {場所|ばしょ} が 、 {落|お}ち{着|つ}かない 。 {困|こま}り ます ね 。 || The place it comes back to won't keep still. That's hard.
+?(party=suzu) suzu: {毎回|まいかい} {同|おな}じ {所|ところ} で {転|ころ}ぶ {役者|やくしゃ} みたい 。 || Like an actor who trips on the same board every night.
+!var pet_bird = 1
+!end
+:settled
+narr: {小鳥|ことり} は {杭|くい} の {上|うえ} で {羽|はね} を ふくらませて 、 こちら を {見|み}て いる 。 || The bird sits on top of the post with its feathers fluffed, watching you.
+!choice
+* {杭|くい} の {横|よこ} で じっと {待|ま}つ || Stand still beside the post and wait. -> still
+* {手|て}のひら を {上|うえ} に {向|む}けて {出|だ}す || Hold out an open palm. -> palm
+* そっと して おく || Leave it be. -> end
+:still
+narr: {波|なみ} の {音|おと} を {聞|き}きながら 、 しばらく {動|うご}かず に いる 。 || You stay still a while, listening to the waves.
+narr: {小鳥|ことり} は {首|くび} を かしげて 、 ぴょん と {近|ちか}く に {降|お}りて きた 。 || The bird tilts its head, then hops down close to you.
+!goto met
+:palm
+narr: {手|て}のひら を {上|うえ} に {向|む}けて 、 {低|ひく}く {出|だ}す 。 {何|なに} も {持|も}って いない こと が 、 {鳥|とり} に も {見|み}える 。 || You hold out an open palm, low. The bird can see there is nothing in it.
+narr: {小鳥|ことり} は {少|すこ}し {迷|まよ}って から 、 {指|ゆび} の {先|さき} に {一度|いちど} だけ {止|と}まって 、 {横|よこ} に {降|お}りた 。 || After a moment's doubt it perches once on your fingertip, then drops down beside you.
+:met
+!hook pet_vig bird near
+?(party=nao) nao: {軽|かる}い な 。 {手紙|てがみ} {一通|いっつう} ぐらい だ 。 || Light thing. About one letter's worth.
+?(party=mio) mio[smile]: {落|お}ち{着|つ}いた {顔|かお} を してる 。 || It looks settled now.
+?(party=ren) ren: {鳥|とり} は {道|みち} を {空|そら} から {見|み}ます 。 {私|わたし} より ずっと {確|たし}か です 。 || Birds see the road from the sky. Far more reliably than I do.
+?(party=suzu) suzu[laugh]: {最前列|さいぜんれつ} の {席|せき} 、 {確保|かくほ} ! || Front-row seat, secured!
+narr: {小鳥|ことり} は {一|ひと}つ {鳴|な}いて 、 あなた の {肩|かた} の {高|たか}さ まで {飛|と}んで 、 また {降|お}りた 。 ついて {来|く}る つもり の よう だ 。 || The bird gives one chirp — you see its beak open — flies up to your shoulder's height and settles again. It seems to mean to come along.
+!choice
+* {一緒|いっしょ} に {行|い}こう か || Invite it to come with you. -> invite
+* また {今度|こんど} ね || Not now. -> notnow
+:invite
+!hook pet_meet bird
+!end
+:notnow
+!hook pet_vig bird back
+narr: {小鳥|ことり} は {杭|くい} の {上|うえ} に {戻|もど}った 。 ここ に {来|く}れば 、 また {会|あ}える 。 || The bird goes back to its post. It will be here whenever you come by.
+
+@scene pets.bird.post
+!if var.pet_bird>=2&!pet.bird -> bird
+!if var.pet_bird>=2 -> fixed
+narr: {岸壁|がんぺき} の {端|はし} に 、 {古|ふる}い {杭|くい} が {立|た}って いる 。 {杭|くい} の {釘|くぎ} に 、 {色|いろ} の あせた リボン が {結|むす}ばれた まま に なって いる 。 || An old mooring post stands at the end of the quay. A faded ribbon is still knotted to a nail on it.
+narr: {風|かぜ} が {吹|ふ}く たびに 、 リボン の {端|はし} が {跳|は}ねて 、 {杭|くい} の {上|うえ} を {払|はら}う 。 {結|むす}び{目|め} は {潮|しお} で {固|かた}く なって いる 。 || Each gust flips the ribbon's end up across the top of the post. The knot has gone stiff with salt.
+!var pet_bird = 1
+!choice
+* {結|むす}び{目|め} を ほどいて 、 リボン を {外|はず}す || Work the knot loose and take the ribbon off. -> untie
+* リボン を {杭|くい} に {巻|ま}きつけて 、 {端|はし} を {挟|はさ}む || Wind the ribbon round the post and tuck the end in. -> tuck
+* そのまま に して おく || Leave it for now. -> end
+:untie
+narr: {固|かた}い {結|むす}び{目|め} を 、 {少|すこ}し ずつ ゆるめる 。 やがて ほどけて 、 リボン は あなた の {手|て} の {中|なか} に {残|のこ}った 。 || Bit by bit you ease the stiff knot. At last it gives, and the ribbon is left in your hand.
+!var pet_bird = 2
+!set pet_bird_untied
+!goto after
+:tuck
+narr: リボン を {杭|くい} に {二回|にかい} {巻|ま}いて 、 {端|はし} を {巻|ま}いた {下|した} に {挟|はさ}む 。 もう {跳|は}ねない 。 || You wind the ribbon twice round the post and tuck the end under the turns. It can't flap now.
+!var pet_bird = 2
+!set pet_bird_tucked
+:after
+?(party=nao) nao: よし 。 {着陸|ちゃくりく} {許可|きょか} {出|で}た ぞ 。 || Right. Cleared to land.
+?(party=mio) mio: これで {止|と}まれる ね 。 || Now it can land.
+?(party=ren) ren: {杭|くい} が 、 {杭|くい} に {戻|もど}りました 。 || The post is a post again.
+?(party=suzu) suzu: {舞台|ぶたい} の {片付|かたづ}け 、 {完了|かんりょう} ! || Stage cleared!
+narr: {小鳥|ことり} が {杭|くい} の {上|うえ} に {降|お}りて 、 {今度|こんど} は {逃|に}げない 。 {羽|はね} を ふくらませて 、 {落|お}ち{着|つ}いた 。 || The bird drops onto the post, and this time it stays. It fluffs its feathers and settles.
+!end
+:bird
+!call pets.bird.bird
+!end
+:fixed
+?(pet_bird_tucked) narr: リボン は {杭|くい} に {巻|ま}きついて 、 もう {跳|は}ねない 。 || The ribbon is wound round the post and doesn't flap any more.
+?(!pet_bird_tucked) narr: {杭|くい} の {釘|くぎ} に は 、 もう {何|なに} も {結|むす}ばれて いない 。 || Nothing is tied to the nail any more.
+`, 'pets/bird');
+})(RB.content);
+
+
+/* ==== src/content/pets/30_dog.js ==== */
+/* Pet vignette: the dog — "The Gate That Will Not Stay" (addendum §5.2). Cinder Orchard, once the
+ * village is yours to walk about (co_met_sayo), for good (postgame too).
+ *
+ * Where: the channel keeper's yard by the water (co.village): the little gate at 31,26 and the corner
+ * behind it (32–33, 26), between Tamotsu's barrel and the reeds — clear of the square, the paths, the
+ * bridge and every person's place.
+ * Cause (visible, inspectable): a sociable dog, used to travellers, keeps lying down in the corner, and
+ * the yard's gate — its latch loop slipped off, its stop peg lying in the grass — swings across the
+ * corner in each gust down the channel, and he has to get up again.
+ * State (var.pet_dog): 0 not looked at, 1 looked at, 2 the gate stays shut.
+ * Ordinary route: look at the gate, then drop the latch loop back over its post OR push the stop peg
+ * back into the ground. He settles; crouch and let him sniff your hand or sit down nearby. Permission:
+ * Tamotsu, the channel keeper, in whose yard he sleeps, says plainly that he is nobody's dog and may
+ * go if he chooses — before the invitation (which offers "Not now"). He is not abandoned, rescued or
+ * exchanged: he chooses, and knows his way home.
+ * Field route (RB.pets.vignetteAction('dog', family)): 'bind' (a rope word ties the gate to its post)
+ * or 'stone' (a stone word weighs the stop). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C) {
+  'use strict';
+  const T = (en, jp) => ({ en, jp });
+  const map = C.maps['co.village'];
+  const GATE = [31, 26], CORNER = [32, 26], OUT = [33, 25];
+  const ON = 'co_met_sayo';
+  const K = RB.propKit;
+  const LOOP = 5200, SWING = 2400;
+
+  function gateArt(id, fixed) {
+    RB.props.P[id] = {
+      id, w: 1, h: 1, block: true,
+      draw(c, x, y, pal, t, o) { c.save(); c.scale(0.5, 0.5); this.draw2(c, x * 2, y * 2, pal, t, o); c.restore(); },
+      draw2(c, x, y, pal, t, o) {
+        o = o || {};
+        // loose: it swings open across the corner (to the right) and bangs back
+        const ph = (t || 0) % LOOP;
+        const open = fixed || o.still ? 0 : ph > SWING && ph < SWING + 500 ? Math.round(Math.sin(((ph - SWING) / 500) * Math.PI) * 3) : 0;
+        const key = id + '|' + K.palInfo(pal).key + '|' + open + '|' + (o.by || '');
+        const cv = K.cached(key, () => K.make(48, 40, (g) => {
+          const M = K.mat(pal), w5 = M.wood;
+          // the hinge post on the left and the latch post on the right
+          K.R(g, 4, 6, 5, 28, w5[1]); K.R(g, 4, 6, 2, 28, w5[3]); K.R(g, 4, 5, 5, 2, w5[4]);
+          K.R(g, 33, 12, 4, 22, w5[1]); K.R(g, 33, 12, 1, 22, w5[3]);
+          // the gate: rails and slats, foreshortened as it swings open (0 shut .. 3 wide open)
+          const len = [26, 21, 14, 8][open], dip = [0, 2, 4, 5][open];
+          for (const ry of [13, 25]) { K.R(g, 9, ry + dip, len, 3, w5[2]); K.R(g, 9, ry + dip, len, 1, w5[4]); }
+          for (let sx = 0; sx < len; sx += 5) { K.R(g, 10 + sx, 11 + dip, 3, 20, w5[2]); K.R(g, 10 + sx, 11 + dip, 1, 20, w5[3]); }
+          if (open) K.R(g, 9 + len, 11 + dip, 1, 20, w5[0]);
+          if (fixed && o.by === 'loop') { K.R(g, 32, 15, 6, 3, '#8a7a5a'); K.R(g, 32, 15, 6, 1, '#b8a67a'); }            // the latch loop over the post
+          else if (fixed && o.by === 'peg') { K.R(g, 30, 30, 3, 6, w5[0]); K.R(g, 30, 30, 3, 1, w5[3]); }              // the stop peg back in
+          else { K.R(g, 22, 34, 8, 2, w5[1]); K.R(g, 32, 17, 5, 2, '#8a7a5a'); }                                        // the peg in the grass, the loop hanging
+          K.outline(g, 48, 40, 'sel');
+          g.globalCompositeOperation = 'destination-over';
+          K.shadow(g, 22, 35, 16, 2.5, 0.25);
+          g.globalCompositeOperation = 'source-over';
+        }));
+        c.drawImage(cv, x - 6, y - 6);
+      },
+    };
+  }
+  gateArt('pet_gate', false);
+  gateArt('pet_gate_fixed', true);
+
+  map.props.push(
+    { p: 'pet_gate', x: GATE[0], y: GATE[1], scene: 'pets.dog.gate', if: ON + '&var.pet_dog<2' },
+    { p: 'pet_gate_fixed', x: GATE[0], y: GATE[1], scene: 'pets.dog.gate', if: ON + '&var.pet_dog>=2&!pet_dog_by_peg', o: { by: 'loop' } },
+    { p: 'pet_gate_fixed', x: GATE[0], y: GATE[1], scene: 'pets.dog.gate', if: ON + '&var.pet_dog>=2&pet_dog_by_peg', o: { by: 'peg' } },
+    { p: 'pet_spot', x: CORNER[0], y: CORNER[1], w: 2, scene: 'pets.dog.dog', if: ON + '&!pet.dog' },
+  );
+  map.onEnter = (map.onEnter || []).concat([{ scene: 'pets.dog.notice', if: ON + '&!pet.dog&!seen.pets.dog.dog&!seen.pets.dog.gate&comp', once: true }]);
+
+  // ---- the dog before he joins you: lies down, the gate swings into him, he gets up and circles ---------------
+  const V = { near: null };
+  const sm = (k) => (k <= 0 ? 0 : k >= 1 ? 1 : k * k * (3 - 2 * k));
+  RB.petWorld.addWild({
+    id: 'dog', species: 'dog', look: 'cream', map: 'co.village',
+    show: (s) => RB.state.test(s, ON + '&!pet.dog'),
+    place(s, t, reduce) {
+      const step = (s.vars && s.vars.pet_dog) || 0;
+      if (V.near) {
+        const k = reduce ? 1 : Math.min(1, (performance.now() - V.near.t0) / 900);
+        const [bx, by] = V.near.to;
+        return { x: CORNER[0] + (bx - CORNER[0]) * sm(k), y: CORNER[1] + (by - CORNER[1]) * sm(k), dir: k < 1 ? V.near.dir : V.near.face, po: k < 1 ? { gait: 'walk', ph: (t / 360) % 1 } : { sit: 1, wag: reduce ? 0.5 : Math.sin(t / 90) * 0.7, hp: -8 } };
+      }
+      if (step >= 2) {
+        const wag = !reduce && (t % 5000) < 700 ? Math.sin(t / 80) * 0.6 : 0;
+        return { x: CORNER[0], y: CORNER[1], dir: 'down', po: { lie: 1, wag, blink: !reduce && (t % 3700) < 160 ? 1 : 0 } };
+      }
+      if (reduce) return { x: OUT[0], y: OUT[1], dir: 'left', po: { sit: 1, earF: 0.4 } };
+      const ph = t % LOOP;
+      if (ph < SWING) return { x: CORNER[0], y: CORNER[1], dir: 'down', po: { lie: ph < 400 ? ph / 400 : 1 } };                             // lies down
+      if (ph < SWING + 300) return { x: CORNER[0], y: CORNER[1], dir: 'down', po: { sit: 1, earF: -0.6 } };                                 // the gate bumps him
+      if (ph < SWING + 900) { const k = (ph - SWING - 300) / 600; return { x: CORNER[0] + k, y: CORNER[1] - k, dir: 'right', po: { gait: 'walk', ph: (t / 360) % 1 } }; } // gets up, out
+      if (ph < 4400) return { x: OUT[0], y: OUT[1], dir: 'left', po: { sit: 1, hy: -10, wag: Math.sin(t / 150) * 0.2 } };                   // looks back at the corner
+      const k = (ph - 4400) / 800;
+      return { x: OUT[0] - k, y: OUT[1] + k, dir: 'left', po: { gait: 'walk', ph: (t / 360) % 1 } };                                         // tries again
+    },
+  });
+  function shut(s, how) {
+    if (((s.vars && s.vars.pet_dog) || 0) >= 2 || RB.pets.record(s, 'dog')) return false;
+    s.vars.pet_dog = 2;
+    s.flags['pet_dog_by_' + how] = true;
+    return true;
+  }
+  RB.pets.addVignette('dog', {
+    species: 'dog', map: 'co.village', families: ['bind', 'stone'],
+    title: T('The Gate That Will Not Stay', '{閉|し}まらない {戸|と}'),
+    met: T('In the channel keeper’s yard at Cinder Orchard, once the gate stayed shut — with Tamotsu’s blessing.', '{灰実|はいみ}の{里|さと} の {水番|みずばん} の {庭|にわ} で 、 {戸|と} が {閉|し}まる よう に なって から 。 タモツ も {認|みと}めて くれた 。'),
+    // 縄 ties the gate to its post; 石 or 土 weighs the stop down
+    apply(s, family) { return shut(s, family === 'bind' ? 'rope' : 'peg'); },
+    state: (s) => ({ step: (s.vars && s.vars.pet_dog) || 0, met: !!RB.pets.record(s, 'dog') }),
+    stage(name) {
+      const W = RB.world.W;
+      if (name === 'near' && W.player) {
+        const to = RB.petWorld.nearTile(CORNER, { own: [CORNER, [CORNER[0] + 1, CORNER[1]]], avoid: [GATE], fallback: CORNER, leave: true });
+        V.near = { t0: performance.now(), to, dir: to[0] > CORNER[0] ? 'right' : to[0] < CORNER[0] ? 'left' : to[1] > CORNER[1] ? 'down' : 'up', face: RB.petWorld.faceFrom(to) };
+        return new Promise((r) => setTimeout(r, RB.test && RB.test.auto ? 0 : 950));
+      }
+      if (name === 'back') V.near = null;
+      return null;
+    },
+  });
+  RB.bus.on('map:enter', () => { V.near = null; });
+
+  RB.pets.meeting.dog = {
+    title: T('The Gate That Will Not Stay', '{閉|し}まらない {戸|と}'),
+    text: T('By the channel keeper’s barrels in Cinder Orchard, a dog who greets every traveller kept being bumped out of his corner by a loose gate. Once it stayed shut he lay down at last — and then, with Tamotsu’s word, chose the road with you.', '{灰実|はいみ}の{里|さと} の {水番|みずばん} の {樽|たる} の {横|よこ} 。 {旅|たび}の{人|ひと} を {迎|むか}える {犬|いぬ} が 、 {緩|ゆる}んだ {戸|と} に {何度|なんど} も {隅|すみ} から {追|お}い{出|だ}されて いた 。 {戸|と} が {閉|し}まる と 、 やっと {横|よこ} に なり 、 タモツ の {一言|ひとこと} で 、 {一緒|いっしょ} の {道|みち} を {選|えら}んだ 。'),
+    reply: {
+      nao: T('He walks like he’s delivering something. I like him.', '{配達|はいたつ} {中|ちゅう} みたい な {歩|ある}き{方|かた} だ 。 {気|き} に {入|い}った 。'),
+      mio: T('Tamotsu didn’t say it, but he’ll miss him. We should come back through here sometimes.', 'タモツ さん 、 {口|くち} に は {出|だ}さない けど 、 {寂|さび}しく なる と {思|おも}う 。 ときどき ここ を {通|とお}りましょう ね 。'),
+      ren: T('A guide who knows the way home. I will try not to take it personally.', '{帰|かえ}り{道|みち} を {知|し}って いる {案内役|あんないやく} です ね 。 {気|き} に しない よう に します 。'),
+      suzu: T('Every traveller got a welcome from him. It’s only fair somebody finally took him along for the show.', '{旅|たび}の{人|ひと} を {全員|ぜんいん} {出迎|でむか}えて きた ん だ もの 。 {一度|いちど} くらい 、 {一緒|いっしょ} に {旅|たび} に {出|で}て も いい よ ね 。'),
+    },
+  };
+
+  RB.script.add(`
+@scene pets.dog.notice
+?(party=nao) nao: {水番|みずばん} の {庭|にわ} に 、 {犬|いぬ} が いる 。 {落|お}ち{着|つ}かない {顔|かお} だ 。 || There's a dog in the channel keeper's yard. Doesn't look settled.
+?(party=mio) mio: {水路|すいろ} の {横|よこ} の {庭|にわ} 、 {犬|いぬ} が {何度|なんど} も {起|お}きて は {寝|ね}て を {繰|く}り{返|かえ}してる 。 || The yard by the channel — that dog keeps lying down and getting up again.
+?(party=ren) ren: {水路|すいろ} の そば に 、 {人懐|ひとなつ}っこい {犬|いぬ} が います ね 。 || There's a friendly-looking dog by the channel.
+?(party=suzu) suzu: {水番|みずばん} さん の {庭|にわ} に 、 {看板|かんばん} {犬|いぬ} {発見|はっけん} 。 でも 、 {寝|ね}られない みたい 。 || Spotted: one star dog in the channel keeper's yard. But he can't get to sleep.
+
+@scene pets.dog.dog
+!if var.pet_dog>=2 -> settled
+narr: {薄|うす}い {茶色|ちゃいろ} の {犬|いぬ} が 、 {樽|たる} の {横|よこ} の {隅|すみ} で {横|よこ} に なろう と する 。 {水路|すいろ} から {風|かぜ} が {吹|ふ}く と 、 {小|ちい}さな {戸|と} が {開|ひら}いて {隅|すみ} に {当|あ}たり 、 {犬|いぬ} は また {起|お}き{上|あ}がる 。 || A pale fawn dog tries to lie down in the corner beside the barrel. When the wind comes up the channel, the little gate swings open into the corner, and he gets up again.
+?(party=nao) nao: {寝床|ねどこ} に {扉|とびら} が {突|つ}っ{込|こ}んで くる ん じゃ 、 {寝|ね}られない よな 。 || Can't sleep with a door swinging into your bed.
+?(party=mio) mio: {戸|と} が ちゃんと {閉|し}まれば 、 {休|やす}める のに 。 || If the gate would just stay shut, he could rest.
+?(party=ren) ren: {風|かぜ} の {通|とお}り{道|みち} に {戸|と} が ある 。 {原因|げんいん} は あれ です ね 。 || There's a gate in the wind's path. That's the cause.
+?(party=suzu) suzu: {幕|まく} が {閉|し}まらない {舞台|ぶたい} みたい 。 {落|お}ち{着|つ}かない よ ね 。 || Like a stage where the curtain won't stay down. Unsettling.
+!var pet_dog = 1
+!end
+:settled
+narr: {犬|いぬ} は {隅|すみ} で {長|なが}く {伸|の}びて いる 。 あなた を {見|み}る と 、 しっぽ で {地面|じめん} を {一度|いちど} たたいた 。 || The dog is stretched out in the corner. When he sees you, his tail thumps the ground once.
+!choice
+* しゃがんで 、 {手|て} の {匂|にお}い を かがせる || Crouch and let him sniff your hand. -> hand
+* {樽|たる} の {横|よこ} に {座|すわ}って {待|ま}つ || Sit down by the barrel and wait. -> sit
+* そっと して おく || Leave him be. -> end
+:hand
+narr: しゃがんで 、 {手|て} を {低|ひく}く {出|だ}す 。 {犬|いぬ} は {起|お}き{上|あ}がって {匂|にお}い を かぎ 、 {頭|あたま} を {押|お}しつけて きた 。 || You crouch and hold out a hand, low. He gets up, sniffs it, and presses his head into it.
+!goto met
+:sit
+narr: {樽|たる} の {横|よこ} に {腰|こし} を {下|お}ろす 。 {水路|すいろ} の {水|みず} の {音|おと} が する 。 || You sit down by the barrel. There is the sound of the channel water.
+narr: {犬|いぬ} は のそのそ と {起|お}きて きて 、 あなた の {隣|となり} に {座|すわ}った 。 || He gets up without hurrying, comes over and sits down next to you.
+:met
+!hook pet_vig dog near
+?(party=nao) nao[smirk]: {道|みち} を {知|し}ってる {顔|かお} だ 。 || He looks like he knows the roads.
+?(party=mio) mio[smile]: あったかい 。 {背中|せなか} が お{日様|ひさま} の {匂|にお}い 。 || He's warm. His back smells of sunshine.
+?(party=ren) ren: {頼|たの}もしい {目|め} を して います 。 || He has a dependable look.
+?(party=suzu) suzu[laugh]: {拍手|はくしゅ} の {代|か}わり に 、 しっぽ ! || Instead of applause — a tail!
+co_tamotsu: そいつ は {誰|だれ} の {犬|いぬ} でも ない 。 {俺|おれ} の {庭|にわ} で {寝|ね}て 、 {橋|はし} で {旅|たび}の{人|ひと} を {迎|むか}える 。 || He's nobody's dog. Sleeps in my yard, meets every traveller at the bridge.
+co_tamotsu: {行|い}きたい なら 、 {連|つ}れて {行|い}け 。 {帰|かえ}り{道|みち} は {知|し}ってる やつ だ 。 || If he wants to go with you, take him. He knows his way home.
+narr: {犬|いぬ} は あなた の {顔|かお} を {見上|みあ}げて 、 {立|た}ち{上|あ}がった 。 {一緒|いっしょ} に {行|い}く {気|き} で いる よう だ 。 || The dog looks up at your face and stands. He seems ready to go with you.
+!choice
+* {一緒|いっしょ} に {来|く}る ? || Invite him to come with you. -> invite
+* また {今度|こんど} ね || Not now. -> notnow
+:invite
+!hook pet_meet dog
+!end
+:notnow
+!hook pet_vig dog back
+narr: {犬|いぬ} は {隅|すみ} に {戻|もど}って 、 {長|なが}く {伸|の}びた 。 ここ に {来|く}れば 、 また {会|あ}える 。 || He goes back to his corner and stretches out. He'll be here whenever you come by.
+
+@scene pets.dog.gate
+!if var.pet_dog>=2&!pet.dog -> dog
+!if var.pet_dog>=2 -> fixed
+narr: {低|ひく}い {木|き} の {戸|と} が 、 {片方|かたほう} の {柱|はしら} だけ に {下|さ}がって いる 。 {留|と}め{輪|わ} が {柱|はしら} から {外|はず}れて 、 {戸|と} を {止|と}める {杭|くい} は {草|くさ} の {中|なか} に {落|お}ちて いる 。 || A low wooden gate hangs from one post only. Its latch loop has slipped off the other post, and the stop peg that held it shut lies in the grass.
+!var pet_dog = 1
+!choice
+* {留|と}め{輪|わ} を {柱|はしら} に かけ{直|なお}す || Drop the latch loop back over the post. -> loop
+* {杭|くい} を {地面|じめん} に {打|う}ち{直|なお}す || Push the stop peg back into the ground. -> peg
+* そのまま に して おく || Leave it for now. -> end
+:loop
+narr: {留|と}め{輪|わ} を {柱|はしら} に かけ{直|なお}す 。 {戸|と} は かたん と {閉|し}まって 、 もう {動|うご}かない 。 || You drop the latch loop back over the post. The gate clacks shut and stays.
+!var pet_dog = 2
+!set pet_dog_by_loop
+!goto after
+:peg
+narr: {杭|くい} を {戸|と} の {前|まえ} に {強|つよ}く {押|お}し{込|こ}む 。 {風|かぜ} が {来|き}て も 、 {戸|と} は もう {開|ひら}かない 。 || You push the stop peg firmly into the ground in front of the gate. The wind comes, and the gate no longer opens.
+!var pet_dog = 2
+!set pet_dog_by_peg
+:after
+?(party=nao) nao: {戸締|とじ}まり 、 {完了|かんりょう} 。 || Gate secured.
+?(party=mio) mio: これで {寝|ね}られる わ ね 。 || Now he can sleep.
+?(party=ren) ren: {小|ちい}さな {戸|と} ほど 、 よく {開|ひら}き ます から ね 。 || The small gates are always the ones that swing.
+?(party=suzu) suzu: {幕|まく} 、 {下|お}りました ! || Curtain down!
+narr: {犬|いぬ} は {隅|すみ} で ぐるり と {一回|いっかい} {回|まわ}って 、 {満足|まんぞく} そう に {横|よこ} に なった 。 || The dog turns round once in the corner and lies down, satisfied.
+!end
+:dog
+!call pets.dog.dog
+!end
+:fixed
+?(pet_dog_by_peg) narr: {杭|くい} が {戸|と} を しっかり {止|と}めて いる 。 || The peg holds the gate firmly shut.
+?(!pet_dog_by_peg) narr: {留|と}め{輪|わ} が {柱|はしら} に かかって 、 {戸|と} は {閉|し}まった まま だ 。 || The latch loop is over the post; the gate stays shut.
+`, 'pets/dog');
+})(RB.content);
+
+
+/* ==== src/content/pets/40_tanuki.js ==== */
+/* Pet vignette: the tanuki — "Paper in the Clearing" (addendum §5.2). The Orchard Road, the wooded
+ * approach to Cinder Orchard, from your arrival there in Chapter 3 (co_arrived) and for good.
+ *
+ * Where: the edge of the tall grass under the tree line (co.road): a hollow at 6,3 under a big tree, the
+ * gap in the trees at 5,2 where the draught comes in, the loose papers at 5,4 — off the road, clear of the
+ * lanterns, the bench, the north path and its scrub.
+ * Cause (visible, inspectable): a few loose sheets of paper (old festival notices, soft with weather)
+ * lie by the hollow; each time the draught slips through the gap in the trees they lift and skitter
+ * across the tanuki's path, and it backs off.
+ * State (var.pet_tanuki): 0 not looked at, 1 looked at, 2 the clearing is tidy.
+ * Ordinary route: look at the gap (optional; it tells you where the wind comes in) or at the papers,
+ * then gather them and weigh them under a flat stone OR tuck them into the rock's lee. Then wait
+ * quietly — the pause is told, never timed — and it comes out to you; the invitation offers "Not now".
+ * No food, no trap, nothing that frightens it.
+ * Field route (RB.pets.vignetteAction('tanuki', family)): 'wind' (a gentle breeze carries the sheets
+ * into the rock's lee, where they settle) or 'stone' (a stone word weighs them down): the same tidy end. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C) {
+  'use strict';
+  const T = (en, jp) => ({ en, jp });
+  const map = C.maps['co.road'];
+  const HOLLOW = [6, 3], GAP = [5, 2], PAPERS = [5, 4], EDGE = [8, 3];
+  const ON = 'co_arrived';
+  const K = RB.propKit;
+  const LOOP = 5600, GUST = 3000;
+
+  function papersArt(id, tidy) {
+    RB.props.P[id] = {
+      id, w: 1, h: 1, block: true,
+      draw(c, x, y, pal, t, o) { c.save(); c.scale(0.5, 0.5); this.draw2(c, x * 2, y * 2, pal, t, o); c.restore(); },
+      draw2(c, x, y, pal, t, o) {
+        o = o || {};
+        const ph = (t || 0) % LOOP;
+        // the loose sheets lift in the gust and skitter (a frame of 0..3); tidy: a neat stack
+        const f = tidy || o.still ? 0 : ph > GUST && ph < GUST + 800 ? 1 + (Math.floor((ph - GUST) / 180) % 3) : 0;
+        const key = id + '|' + K.palInfo(pal).key + '|' + f + '|' + (o.by || '');
+        const cv = K.cached(key, () => K.make(56, 44, (g) => {
+          const pp = K.FIX.paper, M = K.mat(pal);
+          const sheet = (x0, y0, w, h, lift) => {
+            K.R(g, x0, y0 - lift, w, h, pp[3]); K.R(g, x0, y0 - lift, w, 1, pp[4]); K.R(g, x0, y0 - lift + h - 1, w, 1, pp[1]);
+            K.R(g, x0 + 2, y0 - lift + 2, w - 5, 1, '#8a7a6a'); K.R(g, x0 + 2, y0 - lift + 4, w - 7, 1, '#8a7a6a');
+          };
+          if (tidy) {
+            // a neat stack, a flat stone on top — or tucked into the lee of the rock
+            const st = M.stone;
+            if (o.by === 'lee') {
+              // tucked in behind a boulder, out of the draught: only their edges show
+              for (let i = 0; i < 4; i++) sheet(22 - i, 24 - i, 14, 9, 0);
+              K.ell(g, 37, 28, 12, 7, st[0]); K.ell(g, 36, 27, 11, 6.2, st[1]); K.ell(g, 35, 26, 8.5, 4.6, st[2]); K.ell(g, 33, 24.5, 5, 2.2, st[3]); K.R(g, 31, 23, 3, 1, st[4]);
+              K.line(g, 41, 25, 43, 30, st[0], 1); K.line(g, 28, 31, 46, 31, st[0], 1);
+            } else {
+              // a neat stack, a flat river stone on top
+              for (let i = 0; i < 4; i++) sheet(18 - i, 26 - i, 16, 9, 0);
+              K.ell(g, 23, 21.5, 7, 3.2, st[0]); K.ell(g, 22.5, 21, 6.5, 2.6, st[1]); K.ell(g, 22, 20.5, 5, 1.8, st[2]); K.R(g, 19, 20, 3, 1, st[4]);
+            }
+          } else {
+            const L = [[6, 28, 0], [22, 32, 0], [36, 26, 0], [14, 20, 0]];
+            if (f) { L[0][2] = f === 1 ? 5 : f === 2 ? 9 : 3; L[2][2] = f === 2 ? 4 : f === 3 ? 8 : 2; L[0][0] += f * 4; L[2][0] += f * 3; }
+            for (const [x0, y0, lift] of L) sheet(x0, y0, 14, 9, lift);
+          }
+          K.outline(g, 56, 44, 'sel');
+          g.globalCompositeOperation = 'destination-over';
+          K.shadow(g, 28, 38, 20, 3, 0.18);
+          g.globalCompositeOperation = 'source-over';
+        }));
+        c.drawImage(cv, x - 12, y - 10);
+      },
+    };
+  }
+  papersArt('pet_papers', false);
+  papersArt('pet_papers_tidy', true);
+  // the tanuki's hollow: a den dug in under the roots at the foot of the big tree (seen, and solid for you)
+  const SOIL = ['#2e2118', '#46321f', '#5f462c', '#7b5d3b', '#98794f'];
+  RB.props.P.pet_hollow = {
+    id: 'pet_hollow', w: 1, h: 1, block: true,
+    draw(c, x, y, pal, t, o) { c.save(); c.scale(0.5, 0.5); this.draw2(c, x * 2, y * 2, pal, t, o); c.restore(); },
+    draw2(c, x, y, pal) {
+      // art px (a tile is 32×32); the roots reach up into the trunk of the tree above
+      const cv = K.cached('pet_hollow|' + K.palInfo(pal).key, () => K.make(38, 40, (g) => {
+        const M = K.mat(pal), tr = M.trunk;
+        // the earth thrown up round the entrance, lit from the upper left
+        K.ell(g, 19, 30, 16, 7.5, SOIL[1]);
+        K.ell(g, 18, 29, 15, 6.5, SOIL[2]);
+        K.ell(g, 15, 27, 9, 3.5, SOIL[3]);
+        K.ell(g, 12, 26, 4, 1.5, SOIL[4]);
+        // the entrance: dark, deeper inside, a lit lip at the front
+        K.ell(g, 20, 29.5, 8.5, 5, '#1b130d');
+        K.ell(g, 20, 30.5, 6, 3.5, '#0f0b08');
+        K.R(g, 14, 34, 12, 1, SOIL[3]);
+        // a thick old root arches over the entrance (the den is dug in under it), rootlets run off into the earth
+        const bark = (pts, w) => {
+          for (let i = 0; i + 3 < pts.length; i += 2) K.line(g, pts[i], pts[i + 1], pts[i + 2], pts[i + 3], tr[0], w + 1);
+          for (let i = 0; i + 3 < pts.length; i += 2) K.line(g, pts[i], pts[i + 1], pts[i + 2], pts[i + 3], tr[2], w);
+          for (let i = 0; i + 3 < pts.length; i += 2) K.line(g, pts[i], pts[i + 1] - Math.floor(w / 2), pts[i + 2], pts[i + 3] - Math.floor(w / 2), tr[4], 1);
+        };
+        bark([1, 29, 6, 25, 11, 23, 17, 22, 23, 22, 29, 24, 33, 27, 37, 30], 3);
+        bark([8, 24, 5, 21, 3, 20], 1);
+        bark([28, 23, 31, 20, 34, 19], 1);
+        K.R(g, 16, 21, 2, 1, tr[4]); K.R(g, 22, 21, 1, 1, tr[4]);
+        // fallen leaves on the earth
+        const LV = ['#b8541e', '#d9822e', '#8e3a1a', '#e3a240'];
+        [[5, 31, 0], [9, 35, 1], [29, 33, 2], [25, 36, 3], [33, 30, 1], [3, 27, 3]].forEach(([lx, ly, k]) => K.R(g, lx, ly, 2, 1, LV[k]));
+        K.outline(g, 38, 40, 'sel');
+        g.globalCompositeOperation = 'destination-over';
+        K.shadow(g, 19, 33, 15, 3, 0.2);
+        g.globalCompositeOperation = 'source-over';
+      }));
+      c.drawImage(cv, x - 3, y - 10);
+    },
+  };
+  // the gap in the trees where the draught comes in: nothing drawn (the trees are the map's), only looked at
+  if (!RB.props.P.pet_look) RB.props.P.pet_look = { id: 'pet_look', w: 1, h: 1, block: false, draw() {}, draw2() {} };
+
+  map.props.push(
+    { p: 'pet_look', x: GAP[0], y: GAP[1], scene: 'pets.tanuki.gap', if: ON },
+    { p: 'pet_papers', x: PAPERS[0], y: PAPERS[1], scene: 'pets.tanuki.papers', if: ON + '&var.pet_tanuki<2' },
+    { p: 'pet_papers_tidy', x: PAPERS[0], y: PAPERS[1], scene: 'pets.tanuki.papers', if: ON + '&var.pet_tanuki>=2&!pet_tanuki_by_lee', o: { by: 'stone' } },
+    { p: 'pet_papers_tidy', x: PAPERS[0], y: PAPERS[1], scene: 'pets.tanuki.papers', if: ON + '&var.pet_tanuki>=2&pet_tanuki_by_lee', o: { by: 'lee' } },
+    { p: 'pet_hollow', x: HOLLOW[0], y: HOLLOW[1], scene: 'pets.tanuki.tanuki', if: ON + '&!pet.tanuki' },
+    { p: 'pet_hollow', x: HOLLOW[0], y: HOLLOW[1], scene: 'pets.tanuki.empty', if: ON + '&pet.tanuki' },
+  );
+  map.onEnter = (map.onEnter || []).concat([{ scene: 'pets.tanuki.notice', if: ON + '&!pet.tanuki&!seen.pets.tanuki.tanuki&!seen.pets.tanuki.papers&comp', once: true }]);
+
+  // ---- the tanuki before it joins you: comes toward its hollow, the papers skitter, it backs off --------------
+  const V = { near: null };
+  const sm = (k) => (k <= 0 ? 0 : k >= 1 ? 1 : k * k * (3 - 2 * k));
+  RB.petWorld.addWild({
+    id: 'tanuki', species: 'tanuki', look: 'warm', map: 'co.road',
+    show: (s) => RB.state.test(s, ON + '&!pet.tanuki'),
+    place(s, t, reduce) {
+      const step = (s.vars && s.vars.pet_tanuki) || 0;
+      if (V.near) {
+        const k = reduce ? 1 : Math.min(1, (performance.now() - V.near.t0) / 1100);
+        const [bx, by] = V.near.to;
+        return { x: HOLLOW[0] + (bx - HOLLOW[0]) * sm(k), y: HOLLOW[1] + (by - HOLLOW[1]) * sm(k), dir: k < 1 ? V.near.dir : V.near.face, po: k < 1 ? { gait: 'walk', ph: (t / 420) % 1 } : { sit: 1, paws: 1, hp: -8 } };
+      }
+      if (V.peek) return { x: HOLLOW[0], y: HOLLOW[1], dir: 'down', po: { sit: 0.6, hp: -6, nose: reduce ? 0 : Math.floor(t / 200) % 2 } };
+      if (step >= 2) return { x: HOLLOW[0], y: HOLLOW[1], dir: 'down', po: { lie: 1, blink: !reduce && (t % 4400) < 170 ? 1 : 0.5 } };
+      if (reduce) return { x: EDGE[0], y: EDGE[1], dir: 'left', po: { sit: 1, earF: -0.4 } };
+      const ph = t % LOOP;
+      if (ph < 1600) return { x: EDGE[0], y: EDGE[1], dir: 'left', po: { sit: 1, nose: Math.floor(t / 220) % 2 } };
+      if (ph < 2600) { const k = (ph - 1600) / 1000; return { x: EDGE[0] - 2 * k, y: EDGE[1], dir: 'left', po: { gait: 'walk', ph: (t / 420) % 1 } }; }
+      if (ph < GUST) return { x: HOLLOW[0], y: HOLLOW[1], dir: 'left', po: { hp: 10, nose: 1 } };
+      if (ph < GUST + 300) return { x: HOLLOW[0], y: HOLLOW[1], dir: 'left', po: { lean: -0.8, crouch: 0.4, earF: -0.8 } };  // the papers skitter at it
+      if (ph < GUST + 1000) { const k = (ph - GUST - 300) / 700; return { x: HOLLOW[0] + 2 * sm(k), y: HOLLOW[1], dir: 'right', po: { gait: 'run', ph: (t / 300) % 1 } }; }
+      return { x: EDGE[0], y: EDGE[1], dir: 'left', po: { sit: 1, earF: -0.3 } };
+    },
+  });
+  function tidy(s, how) {
+    if (((s.vars && s.vars.pet_tanuki) || 0) >= 2 || RB.pets.record(s, 'tanuki')) return false;
+    s.vars.pet_tanuki = 2;
+    s.flags['pet_tanuki_by_' + how] = true;
+    return true;
+  }
+  RB.pets.addVignette('tanuki', {
+    species: 'tanuki', map: 'co.road', families: ['wind', 'stone'],
+    title: T('Paper in the Clearing', '{草|くさ}むら の {紙|かみ}'),
+    met: T('At the edge of the trees on the Orchard Road, once the loose papers stopped skittering past its hollow.', '{灰実|はいみ} へ の {坂道|さかみち} の {木|き} の {下|した} で 、 {紙|かみ} が {舞|ま}わなく なって から 。'),
+    // a gentle 風 carries the sheets into the rock's lee, where they settle; 石 or 土 weighs them down
+    apply(s, family) { return tidy(s, family === 'wind' ? 'lee' : 'stone'); },
+    state: (s) => ({ step: (s.vars && s.vars.pet_tanuki) || 0, met: !!RB.pets.record(s, 'tanuki') }),
+    stage(name) {
+      const W = RB.world.W;
+      if (name === 'peek') { V.peek = true; return new Promise((r) => setTimeout(r, RB.test && RB.test.auto ? 0 : 600)); }
+      if (name === 'near' && W.player) {
+        V.peek = false;
+        const to = RB.petWorld.nearTile(HOLLOW, { own: [HOLLOW], avoid: [PAPERS, GAP], fallback: EDGE, leave: true });
+        V.near = { t0: performance.now(), to, dir: to[0] > HOLLOW[0] ? 'right' : to[0] < HOLLOW[0] ? 'left' : 'down', face: RB.petWorld.faceFrom(to) };
+        return new Promise((r) => setTimeout(r, RB.test && RB.test.auto ? 0 : 1150));
+      }
+      if (name === 'back') { V.near = null; V.peek = false; }
+      return null;
+    },
+  });
+  RB.bus.on('map:enter', () => { V.near = null; V.peek = false; });
+
+  RB.pets.meeting.tanuki = {
+    title: T('Paper in the Clearing', '{草|くさ}むら の {紙|かみ}'),
+    text: T('Under the trees by the Orchard Road, old notices kept blowing across a tanuki’s hollow. Once they were gathered up, you waited — and after a while it came out, sat down beside you, and decided to come along.', '{灰実|はいみ} へ の {坂道|さかみち} の {木|き} の {下|した} 。 {古|ふる}い {貼|は}り{紙|がみ} が 、 たぬき の {寝床|ねどこ} の {前|まえ} を {何度|なんど} も {飛|と}んで いた 。 {紙|かみ} を まとめて 、 しばらく {待|ま}つ と 、 たぬき は {出|で}て きて {隣|となり} に {座|すわ}り 、 {一緒|いっしょ} に {来|く}る こと に した 。'),
+    reply: {
+      nao: T('It copied the way you sat. Watch it — it’ll be sorting letters by next week.', 'お{前|まえ} の {座|すわ}り{方|かた} 、 まね してた な 。 {来週|らいしゅう} に は {手紙|てがみ} を {仕分|しわ}けてる かも な 。'),
+      mio: T('It wasn’t frightened of us — only of the paper. That’s rather sweet.', '{私|わたし}たち じゃ なくて 、 {紙|かみ} が {怖|こわ}かった の ね 。 なんだか かわいい 。'),
+      ren: T('Old notices in the grass, and a creature who only wanted quiet. The Hush would have tidied it differently. I prefer this.', '{草|くさ} の {中|なか} の {古|ふる}い {貼|は}り{紙|がみ} と 、 {静|しず}か に {休|やす}みたい だけ の {生|い}き{物|もの} 。 しじま なら 、 {違|ちが}う やり{方|かた} で {片付|かたづ}けた でしょう 。 {私|わたし} は こちら が いい 。'),
+      suzu: T('A born understudy. It learns every move by watching. We’ll get along.', '{生|う}まれつき の {代役|だいやく} だ ね 。 {見|み}て {全部|ぜんぶ} {覚|おぼ}える 。 きっと {気|き} が {合|あ}う よ 。'),
+    },
+  };
+
+  RB.script.add(`
+@scene pets.tanuki.notice
+?(party=nao) nao: {道|みち} の {北|きた} 、 {木|き} の {下|した} に たぬき が いる 。 {何|なに} か を {気|き} に してる 。 || North of the road, under the trees — a tanuki. Something's bothering it.
+?(party=mio) mio: あそこ 、 {木|き} の {下|した} 。 たぬき が {行|い}ったり {来|き}たり してる 。 || There, under the trees. A tanuki, going back and forth.
+?(party=ren) ren: {木|き} の {根元|ねもと} に 、 たぬき が います 。 {落|お}ち{着|つ}けない よう です ね 。 || There's a tanuki at the foot of the trees. It can't seem to settle.
+?(party=suzu) suzu: {見|み}て {見|み}て 、 たぬき ! {木|き} の {下|した} で 、 {出|で}たり {入|はい}ったり 。 || Look, look — a tanuki! In and out under the trees.
+
+@scene pets.tanuki.tanuki
+!if var.pet_tanuki>=2 -> settled
+narr: たぬき が 、 {大|おお}きな {木|き} の {根元|ねもと} の くぼみ に {戻|もど}ろう と する 。 {風|かぜ} が {吹|ふ}く と 、 {草|くさ} の {上|うえ} の {紙|かみ} が {舞|ま}い{上|あ}がって 、 たぬき は {後|うし}ろ に {下|さ}がって しまう 。 || A tanuki keeps trying to get back to the hollow at the foot of the big tree. When the wind blows, the papers in the grass fly up, and it backs away.
+?(party=nao) nao: {紙|かみ} が {苦手|にがて} な たぬき 、 か 。 {俺|おれ} と は {気|き} が {合|あ}わない な 。 || A tanuki that can't stand paper. We wouldn't get on.
+?(party=mio) mio: {寝床|ねどこ} の {前|まえ} が 、 {散|ち}らかって いる の ね 。 || The front of its bed is all cluttered.
+?(party=ren) ren: {風|かぜ} は どこ から {入|はい}って くる の でしょう 。 {木|き} の {間|あいだ} か な 。 || Where is the wind getting in? Between the trees, perhaps.
+?(party=suzu) suzu: {出番|でばん} の たびに {紙吹雪|かみふぶき} 。 {本人|ほんにん} は {嬉|うれ}しくない みたい 。 || Confetti at every entrance. It doesn't seem pleased.
+!var pet_tanuki = 1
+!end
+:settled
+narr: たぬき は くぼみ の {中|なか} で {丸|まる}く なって いる 。 {目|め} だけ が こちら を {見|み}て いる 。 || The tanuki is curled up in the hollow. Only its eyes are on you.
+!choice
+* {道|みち} の {端|はし} に {座|すわ}って 、 {静|しず}か に {待|ま}つ || Sit at the edge of the path and wait quietly. -> wait
+* そっと して おく || Leave it be. -> end
+:wait
+narr: {道|みち} の {端|はし} に {腰|こし} を {下|お}ろす 。 {葉|は} が {一枚|いちまい} 、 {落|お}ちて くる 。 || You sit down at the edge of the path. A leaf drifts down.
+narr: もう {一枚|いちまい} 。 {遠|とお}く で 、 {鳥|とり} が {鳴|な}いた 。 || Then another. Far off, a bird calls.
+!hook pet_vig tanuki peek
+narr: くぼみ から 、 {黒|くろ}い {鼻|はな} が {少|すこ}し だけ {出|で}て きた 。 {鼻|はな} が ぴくぴく {動|うご}く 。 || A black nose edges out of the hollow. It twitches.
+narr: たぬき は ゆっくり {出|で}て きて 、 あなた の {靴|くつ} の {匂|にお}い を かいで 、 {隣|となり} に {座|すわ}った 。 {座|すわ}り{方|かた} が 、 あなた と そっくり だ 。 || The tanuki comes out slowly, sniffs your boots, and sits down beside you. It sits exactly the way you do.
+!hook pet_vig tanuki near
+?(party=nao) nao[smirk]: まね が {上手|うま}い な 。 || Good at copying, isn't it.
+?(party=mio) mio[smile]: {前足|まえあし} を そろえて いる 。 お{行儀|ぎょうぎ} が いい の ね 。 || Front paws together. Very well-mannered.
+?(party=ren) ren: {待|ま}つ こと が 、 {一番|いちばん} の {言葉|ことば} でした ね 。 || Waiting said more than anything we could have.
+?(party=suzu) suzu[laugh]: {新人|しんじん} {役者|やくしゃ} 、 {入団|にゅうだん} {希望|きぼう} ! || A new player, hoping to join the company!
+narr: たぬき は あなた を {見上|みあ}げて 、 {首|くび} を かしげた 。 {一緒|いっしょ} に {来|く}る {気|き} が ある よう だ 。 || The tanuki looks up at you and tilts its head. It seems willing to come along.
+!choice
+* {一緒|いっしょ} に {来|く}る ? || Invite it to come with you. -> invite
+* また {今度|こんど} ね || Not now. -> notnow
+:invite
+!hook pet_meet tanuki
+!end
+:notnow
+!hook pet_vig tanuki back
+narr: たぬき は くぼみ に {戻|もど}って 、 また {丸|まる}く なった 。 ここ に {来|く}れば 、 また {会|あ}える 。 || The tanuki goes back into its hollow and curls up again. It will be here whenever you come by.
+
+@scene pets.tanuki.empty
+narr: {木|き} の {根元|ねもと} の くぼみ 。 {今|いま} は {空|から} だ 。 {落|お}ち{葉|ば} が {少|すこ}し {入|はい}って いる 。 || The hollow at the foot of the tree. Empty now, with a few fallen leaves inside.
+
+@scene pets.tanuki.gap
+narr: {木|き} と {木|き} の {間|あいだ} に 、 {隙間|すきま} が ある 。 {坂|さか} の {下|した} から {来|く}る {風|かぜ} が 、 ここ で {細|ほそ}く なって {草|くさ} の {上|うえ} を {抜|ぬ}けて いく 。 || There's a gap between the trees. The wind coming up the slope narrows here and slips across the grass.
+?(var.pet_tanuki<2) narr: {風|かぜ} の {通|とお}り{道|みち} の {先|さき} に 、 {紙|かみ} が {何枚|なんまい} か {散|ち}らばって いる 。 {岩|いわ} の {陰|かげ} なら 、 {風|かぜ} は {届|とど}かない 。 || A few sheets of paper lie scattered where the draught runs. Behind the rock, the wind wouldn't reach.
+?(var.pet_tanuki<1) !var pet_tanuki = 1
+
+@scene pets.tanuki.papers
+!if var.pet_tanuki>=2&!pet.tanuki -> tanuki
+!if var.pet_tanuki>=2 -> fixed
+narr: {古|ふる}い {祭|まつ}り の {貼|は}り{紙|がみ} が 、 {何枚|なんまい} か {草|くさ} の {上|うえ} に {落|お}ちて いる 。 {雨|あめ} で やわらかく なって いて 、 {風|かぜ} が {来|く}る たびに {浮|う}き{上|あ}がる 。 || A few old festival notices lie in the grass, soft with rain. Every time the wind comes, they lift.
+!var pet_tanuki = 1
+!choice
+* {紙|かみ} を まとめて 、 {平|たい}らな {石|いし} で {押|お}さえる || Gather them up and weigh them down with a flat stone. -> stone
+* {紙|かみ} を まとめて 、 {岩|いわ} の {陰|かげ} に {入|い}れる || Gather them up and tuck them into the rock's lee. -> lee
+* そのまま に して おく || Leave them for now. -> end
+:stone
+narr: {紙|かみ} を {一枚|いちまい} ずつ {拾|ひろ}って {重|かさ}ね 、 {平|たい}らな {石|いし} を {上|うえ} に {置|お}く 。 {風|かぜ} が {来|き}て も 、 もう {動|うご}かない 。 || You pick up the sheets one by one, stack them, and set a flat stone on top. The wind comes, and they no longer move.
+!var pet_tanuki = 2
+!set pet_tanuki_by_stone
+!goto after
+:lee
+narr: {紙|かみ} を まとめて 、 {岩|いわ} の {陰|かげ} に {差|さ}し{込|こ}む 。 {風|かぜ} は {岩|いわ} の {上|うえ} を {通|とお}り{過|す}ぎて いく 。 || You gather the sheets and slip them into the lee of the rock. The wind passes over the top of it.
+!var pet_tanuki = 2
+!set pet_tanuki_by_lee
+:after
+?(party=nao) nao: {配達|はいたつ} {前|まえ} の {手紙|てがみ} みたい に なった な 。 || Looks like a bundle ready for delivery.
+?(party=mio) mio: {片付|かたづ}いた ね 。 {入|はい}り{口|ぐち} が すっきり した 。 || That's tidy. The way in is clear now.
+?(party=ren) ren: {紙|かみ} は {飛|と}ばさず に 、 {残|のこ}して おきましょう 。 {誰|だれ} か の {字|じ} です から 。 || Better to keep the papers than let them blow away. Someone wrote them.
+?(party=suzu) suzu: {紙吹雪|かみふぶき} 、 {片付|かたづ}け {完了|かんりょう} ! || Confetti cleared!
+narr: {風|かぜ} が {吹|ふ}いて も 、 もう {何|なに} も {舞|ま}わない 。 たぬき が くぼみ に {入|はい}って 、 {丸|まる}く なった 。 || The wind blows and nothing flies any more. The tanuki slips into its hollow and curls up.
+!end
+:tanuki
+!call pets.tanuki.tanuki
+!end
+:fixed
+?(pet_tanuki_by_lee) narr: {紙|かみ} は {岩|いわ} の {陰|かげ} に まとまって いる 。 || The papers are gathered in the rock's lee.
+?(!pet_tanuki_by_lee) narr: {紙|かみ} は {石|いし} の {下|した} に きちんと {重|かさ}なって いる 。 || The papers lie neatly stacked under the stone.
+`, 'pets/tanuki');
 })(RB.content);
 
 

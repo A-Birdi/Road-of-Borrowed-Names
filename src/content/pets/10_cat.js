@@ -126,10 +126,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const W = RB.world.W;
       if (name === 'near' && W.player) {
         // to a free tile at your side (left or right, where it is seen), then it sits and looks up
-        const p = W.player, m = W.map;
-        const free = (x, y) => !RB.maps.blockedStatic(m, x, y) && !RB.maps.exitAt(m, x, y) && !(W.comp && W.comp.x === x && W.comp.y === y) && !W.npcs.some((n) => n.x === x && n.y === y);
-        const to = [[p.x + 1, p.y], [p.x - 1, p.y], [p.x, p.y + 1]].find(([x, y]) => free(x, y)) || [p.x + 1, p.y];
-        V.near = { t0: performance.now(), from: CORNER, to, dir: to[0] > CORNER[0] ? 'right' : to[0] < CORNER[0] ? 'left' : to[1] > CORNER[1] ? 'down' : 'up', face: W.player.x < to[0] ? 'left' : W.player.x > to[0] ? 'right' : W.player.y < to[1] ? 'up' : 'down' };
+        const to = RB.petWorld.nearTile(CORNER, { own: [CORNER, [CORNER[0] + 1, CORNER[1]]], avoid: [SCREEN] });
+        V.near = { t0: performance.now(), from: CORNER, to, dir: to[0] > CORNER[0] ? 'right' : to[0] < CORNER[0] ? 'left' : to[1] > CORNER[1] ? 'down' : 'up', face: RB.petWorld.faceFrom(to) };
         return new Promise((r) => setTimeout(r, RB.test && RB.test.auto ? 0 : 950));
       }
       if (name === 'back') { V.near = null; }

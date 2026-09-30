@@ -23,5 +23,24 @@ var RB = (globalThis.RB = globalThis.RB || {});
 手のひら|てのひら|n|I|palm of the hand
 かしげる||v1|A|to tilt (one's head)|首をかしげる: to tilt one's head (puzzled or curious).
 ぴょん||adv|I|with a hop (the sound and look of a small jump)
+# the dog: The Gate That Will Not Stay
+人懐っこい|ひとなつっこい|adj-i|I|friendly, sociable (with people)
+突っ込む|つっこむ|v5m|I|to thrust into, plunge into
+しゃがむ||v5m|I|to crouch, squat down
+のそのそ||adv|A|slowly, lumberingly
+お日様|おひさま|n|I|the sun (familiar)|お日様の匂い: the smell of things dried in the sun.
+そいつ||pn|I|that one, that fellow (rough)
+押し込む|おしこむ|v5m|I|to push in, press in
+戸締まり|とじまり|n|I|locking up, shutting the doors and gates
+ぐるり||adv|A|(turning) all the way round
+満足|まんぞく|adj-na|I|satisfied, content
+# the tanuki: Paper in the Clearing
+たぬき||n|E|tanuki, raccoon dog
+根元|ねもと|n|I|root, base (of a tree or plant)
+くぼみ||n|I|hollow, dip, recess
+ぴくぴく||adv|I|twitching
+前足|まえあし|n|I|front legs, forepaws
+新人|しんじん|n|I|newcomer, new member
+入団|にゅうだん|vs|A|joining (a troupe, team or company)
 `), 'pets');
 })();

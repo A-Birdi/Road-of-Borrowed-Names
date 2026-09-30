@@ -317,6 +317,36 @@ RB.petWorld = (function () {
     }
   }
   function wild(id) { return WILD.find((d) => d.id === id) || null; }
+  // Where a vignette's animal comes to sit by you: a free tile beside you (seen, not under the dialogue box),
+  // then the upper diagonals, then the lower ones, then below/above. `from` is where it starts: the straight
+  // way there must not cross anything solid (it never walks through a barrel). `own`: its own spot tiles
+  // (solid for you, not for it); `avoid`: tiles it keeps off (a prop it would stand on); `leave`: it gets up
+  // and comes out (never stays where it was).
+  function nearTile(from, o) {
+    o = o || {};
+    const w = W(), p = w.player, m = w.map;
+    if (!p || !m) return o.fallback || from;
+    const has = (list, x, y) => (list || []).some((q) => q[0] === x && q[1] === y);
+    const open = (x, y) => has(o.own, x, y) || (!RB.maps.blockedStatic(m, x, y) && !RB.maps.exitAt(m, x, y));
+    const free = (x, y) => open(x, y) && !(x === p.x && y === p.y) && !(w.comp && w.comp.x === x && w.comp.y === y) && !w.npcs.some((n) => n.x === x && n.y === y) && !has(o.avoid, x, y) && !(o.leave && x === from[0] && y === from[1]);
+    const clear = (x, y) => {
+      const n = Math.max(Math.abs(x - from[0]), Math.abs(y - from[1])) * 3;
+      for (let i = 1; i < n; i++) { const tx = Math.round(from[0] + ((x - from[0]) * i) / n), ty = Math.round(from[1] + ((y - from[1]) * i) / n); if (!open(tx, ty) || (tx === p.x && ty === p.y)) return false; }
+      return true;
+    };
+    const C = [[1, 0], [-1, 0], [1, -1], [-1, -1], [1, 1], [-1, 1], [0, 1], [0, -1]];
+    if (from[0] < p.x) { C[0] = [-1, 0]; C[1] = [1, 0]; C[2] = [-1, -1]; C[3] = [1, -1]; C[4] = [-1, 1]; C[5] = [1, 1]; }
+    for (const [dx, dy] of C) { const x = p.x + dx, y = p.y + dy; if (free(x, y) && clear(x, y)) return [x, y]; }
+    for (const [dx, dy] of C) { const x = p.x + dx, y = p.y + dy; if (free(x, y)) return [x, y]; }
+    return o.fallback || from;
+  }
+  // which way to face you from a tile
+  function faceFrom(to) {
+    const p = W().player;
+    if (!p) return 'down';
+    const dx = p.x - to[0], dy = p.y - to[1];
+    return Math.abs(dx) >= Math.abs(dy) && dx ? (dx > 0 ? 'right' : 'left') : dy < 0 ? 'up' : 'down';
+  }
 
   // ---- drawing (called from the renderer: pushes into its y-sorted list) ---------------------------------------
   function push(list, c, ax, ay, t) {
@@ -414,5 +444,5 @@ RB.petWorld = (function () {
       } catch (err) { /* cosmetic */ }
     });
   }
-  return { update, push, state, act, come, face: (who) => { const a = RB.world.actorById(who); if (a) face(a); }, place: () => { P.placed = false; }, addWild, wild, WILD, _P: P };
+  return { update, push, state, act, come, face: (who) => { const a = RB.world.actorById(who); if (a) face(a); }, place: () => { P.placed = false; }, addWild, wild, nearTile, faceFrom, WILD, _P: P };
 })();

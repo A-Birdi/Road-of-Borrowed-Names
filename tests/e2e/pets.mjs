@@ -313,6 +313,9 @@ for (const sp of SPECIES) {
 // ---- the vignettes: the ordinary route with keys and the mouse, naming, memory once, selection separate, reload ----
 const VIG = {
   cat: { map: 'rw.village', flags: { rw_echo_done: true }, comp: 'mio', start: [17, 24], steps: [{ at: [17, 23], dir: 'left', say: /creeping/ }, { at: [14, 24], dir: 'up', pick: /Tie the cord/ }, { at: [15, 24], dir: 'up', pick: /Offer a hand/ }], invite: /Invite/ },
+  bird: { map: 'sg.harbor', chapter: 2, quests: { sg_main: 1 }, comp: 'ren', start: [45, 28], steps: [{ at: [44, 27], dir: 'up', say: /flees to the sand/ }, { at: [43, 27], dir: 'up', pick: /Wind the ribbon/ }, { at: [44, 27], dir: 'up', pick: /open palm/ }], invite: /Invite/ },
+  dog: { map: 'co.village', chapter: 3, flags: { co_arrived: true, co_met_sayo: true }, comp: 'nao', start: [30, 25], steps: [{ at: [33, 25], dir: 'down', say: /fawn dog/ }, { at: [31, 25], dir: 'down', pick: /latch loop/ }, { at: [33, 25], dir: 'down', pick: /Crouch/ }], invite: /Invite/, permission: /take him/ },
+  tanuki: { map: 'co.road', chapter: 3, flags: { co_arrived: true }, comp: 'suzu', start: [10, 5], steps: [{ at: [7, 3], dir: 'left', say: /hollow at the foot/ }, { at: [6, 4], dir: 'left', pick: /flat stone/ }, { at: [7, 3], dir: 'left', pick: /Sit at the edge/ }], invite: /Invite/ },
 };
 for (const sp of SPECIES) {
   const V = VIG[sp];
@@ -321,19 +324,28 @@ for (const sp of SPECIES) {
     const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 800 } });
     await p.evaluate(async (V) => {
       const st = RB.state.newCampaign({ profile: 'E' });
-      Object.assign(st, { chapter: 2, comp: V.comp, map: V.map, x: V.start[0], y: V.start[1], dir: 'left' });
+      Object.assign(st, { chapter: V.chapter || 2, comp: V.comp, map: V.map, x: V.start[0], y: V.start[1], dir: 'left' });
+      for (const q in V.quests || {}) st.quests[q] = { stage: V.quests[q] };
       Object.assign(st.flags, { rw_arrived: true, rw_road_lit: true, departed: true, ch1_done: true }, V.flags);
       for (const id in RB.content.maps) for (const ev of RB.content.maps[id].onEnter || []) if (!/^pets\./.test(ev.scene)) st.flags['enter:' + id + ':' + ev.scene] = true;
       await RB.save.writeSlot(1, st, { force: true });
+      RB.ui.title.hide();
       await RB.game.loadCampaign(1);
       RB.game.settings.textSpeed = 'instant';
     }, V);
     await wait(p, 800);
     // lines are advanced with the mouse on Next (a choice, when it comes, is chosen with the mouse too)
+    const seen = [];
+    let nearShot = false;
     const drain = async () => {
       for (let i = 0; i < 80; i++) {
-        const o = await p.evaluate(() => { const nb = document.querySelector('.dlg:not(.hidden) .b-next'); if (!RB.ui.dialogue.isOpen() || document.querySelector('.choices:not(.hidden) button.choice') || !nb) return null; const r = nb.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
+        const o = await p.evaluate(() => { const nb = document.querySelector('.dlg:not(.hidden) .b-next'); if (!RB.ui.dialogue.isOpen() || document.querySelector('.choices:not(.hidden) button.choice') || !nb) return null; const r = nb.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2, text: document.querySelector('.dlg').textContent }; });
         if (!o) break;
+        if (seen[seen.length - 1] !== o.text) seen.push(o.text);
+        if (!nearShot) {
+          const el = await p.evaluate(() => (RB.pets.staged && RB.pets.staged.name === 'near' ? performance.now() - RB.pets.staged.t : -1));
+          if (el >= 0) { await wait(p, Math.max(0, 1300 - el)); await shot(p, sp + '_vignette_near'); nearShot = true; }
+        }
         await wait(p, 120);
         if (await p.evaluate(() => !!document.querySelector('.choices:not(.hidden) button.choice'))) break;
         await p.mouse.click(o.x, o.y);
@@ -364,6 +376,7 @@ for (const sp of SPECIES) {
     await p.waitForSelector('.choices:not(.hidden) button.choice');
     const nn = await p.evaluate(() => [...document.querySelectorAll('.choices:not(.hidden) button.choice')].map((b) => b.textContent));
     assert(nn.some((t) => /Not now/.test(t)), 'the invitation offers Not now: ' + nn.join(' | '));
+    if (V.permission) assert(seen.some((t) => V.permission.test(t)), 'the caretaker gives permission before the invitation: ' + seen.slice(-4).join(' | '));
     const inv = await p.evaluate((re) => { const b = [...document.querySelectorAll('.choices:not(.hidden) button.choice')].find((x) => new RegExp(re).test(x.textContent)); const r = b.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }, V.invite.source);
     await p.mouse.click(inv.x, inv.y);
     await p.waitForSelector('#pn-name');
@@ -387,7 +400,7 @@ for (const sp of SPECIES) {
     await p.evaluate(async () => { await RB.save.writeSlot(1, RB.game.s, { force: true }); });
     await p.reload();
     await p.waitForFunction(() => window.__RB_READY__ === true);
-    await p.evaluate(async () => { await RB.game.loadCampaign(1); });
+    await p.evaluate(async () => { RB.ui.title.hide(); await RB.game.loadCampaign(1); });
     await wait(p, 900);
     const back = await p.evaluate((sp) => ({ r: RB.pets.record(RB.game.s, sp), act: RB.pets.active(RB.game.s), pw: RB.petWorld.state() }), sp);
     assert(back.r.name === 'ちゃちゃ 丸' && back.act === sp && back.pw.shown && back.pw.sp === sp, 'after reloading: still there, still named, following: ' + JSON.stringify(back).slice(0, 300));

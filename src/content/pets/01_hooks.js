@@ -45,6 +45,7 @@ RB.hooks = RB.hooks || {};
   };
   RB.hooks.pet_vig = async (args) => {
     const v = RB.pets.vignettes[args[0]];
+    RB.pets.staged = { id: args[0], name: args[1], t: performance.now() };
     if (v && v.stage) await v.stage(args[1], args.slice(2));
   };
   RB.hooks.pet_hide = async () => { RB.pets.hide('scene'); };
