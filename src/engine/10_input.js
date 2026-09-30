@@ -18,11 +18,13 @@ RB.input = (function () {
     map: ['KeyM'],
     run: ['ShiftLeft', 'ShiftRight'],
     tr: ['KeyT'],
+    weave: ['KeyV'], // field weaving (src/ui/57_weave.js)
   };
   const ACTION_LABELS = {
     up: 'Move up', down: 'Move down', left: 'Move left', right: 'Move right',
     ok: 'Confirm / talk', cancel: 'Back', menu: 'Menu', help: 'Lightbulb help',
     log: 'Dialogue history', map: 'Map', run: 'Walk faster (hold)', tr: 'Show or hide the translation',
+    weave: 'Weave a word on something nearby',
   };
   let binds = RB.util.deepClone(DEFAULT_BINDS);
   const DIRECTIONS = ['up', 'down', 'left', 'right'];
@@ -74,6 +76,7 @@ RB.input = (function () {
     // Space/arrow/Tab must not scroll the page or move focus unexpectedly.
     if (a !== 'run') e.preventDefault();
     if (e.repeat && !(a in held)) return;
+    if (a === 'weave' && RB.weave && RB.weave.onKey(a)) return; // field weaving opens or closes its sheet
     if (handler) handler(a, e);
   }
   function onKeyUp(e) {

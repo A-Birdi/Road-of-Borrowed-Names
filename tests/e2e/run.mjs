@@ -11,7 +11,7 @@ import { fileURLToPath } from 'node:url';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const full = process.argv.includes('--full');
 const suites = [
-  ['ui.mjs'], ['systems.mjs'], ['settings.mjs'], ['folio.mjs'], ['equipment.mjs'], ['characters.mjs'], ['play_ui.mjs'], ['world_view.mjs'], ['world_fixes.mjs'], ['encounters.mjs'], ['departures.mjs'], ['quest_guide.mjs'], ['backdrops.mjs'], ['title_ledger.mjs'], ['create.mjs'], ['learning_ui.mjs'], ['pad_kanji.mjs'], ['kanji_chart.mjs'], ['combat_ui.mjs'], ['battle_anim.mjs'], ['battle_group.mjs'], ['companion_turn.mjs'], ['pets.mjs'], ['pets_greet.mjs'], ['pets_gallery.mjs'], ['audio.check.mjs'],
+  ['ui.mjs'], ['systems.mjs'], ['settings.mjs'], ['folio.mjs'], ['equipment.mjs'], ['characters.mjs'], ['play_ui.mjs'], ['world_view.mjs'], ['world_fixes.mjs'], ['encounters.mjs'], ['departures.mjs'], ['quest_guide.mjs'], ['fieldweave.mjs'], ['mill_road.mjs'], ['keepsakes.mjs'], ['backdrops.mjs'], ['title_ledger.mjs'], ['create.mjs'], ['learning_ui.mjs'], ['pad_kanji.mjs'], ['kanji_chart.mjs'], ['combat_ui.mjs'], ['battle_anim.mjs'], ['battle_group.mjs'], ['companion_turn.mjs'], ['bookmarks.mjs'], ['pets.mjs'], ['pets_greet.mjs'], ['pets_gallery.mjs'], ['audio.check.mjs'],
   ['shift_load_regression.mjs', '--origin'], ['shift_load_regression.mjs'], // hotfix regressions (http origin, file://)
   full ? ['story_ch1.mjs'] : ['story_ch1.mjs', 'F', 'mio'],
   full ? ['story_ch3.mjs'] : ['story_ch3.mjs', 'E', 'nao'], ['side_ch3.mjs'],
@@ -19,9 +19,13 @@ const suites = [
   full ? ['story_ch5.mjs'] : ['story_ch5.mjs', 'A', 'suzu'],
   ...(full ? [0, 1, 2, 3, 4].map((i) => ['story_ch6.mjs', String(i)]) : [['story_ch6.mjs', '2']]),
   ['atlas.check.mjs'],
+  // the companion ending extensions and The Pages We Keep (all four companions; captures to tests/e2e/out/pages)
+  ['pages_ending.mjs'],
   // the two quest lines across the chapters (fixtures; --full adds all four
   // companions and a whole-game run with both lines as goals)
   full ? ['long_quests.mjs', '--all-companions'] : ['long_quests.mjs', '--fixtures-only'],
+  // the two deduction cases, the refined sequences and their keepsakes, Known Details (addendum §14.8–§18)
+  ['cases.mjs'], ['cases_shots.mjs'], ['known.mjs'],
   full ? ['matrix.mjs'] : ['pursue.mjs', 'E', 'mio'],
 ];
 const results = [];

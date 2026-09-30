@@ -222,6 +222,30 @@ export default async (t) => {
     const inv = cmds.findIndex((c, i) => i > perm && c.op === 'choice' && c.opts.some((o) => /Invite/.test(o.en)));
     t.ok(perm >= 0 && inv > perm, 'the dog: the channel keeper gives explicit permission before the invitation');
   }
+  // ---- the Weave sheet's route: targets near the cause, a result line, neutral for a family that does not fit ----
+  const FIELDQ = { cat: ['rw.village', { flags: { rw_echo_done: true } }], bird: ['sg.harbor', { quests: { sg_main: { stage: 1 } } }], dog: ['co.village', { flags: { co_met_sayo: true } }], tanuki: ['co.road', { flags: { co_arrived: true } }] };
+  const seenEv = [];
+  const offEv = RB.bus.on('present:action', (e) => { if (e.scope === 'field') seenEv.push(e); });
+  for (const sp in FIELDQ) {
+    const V = PETS.vignettes[sp], [mapId, on] = FIELDQ[sp];
+    const st = fresh({ comp: 'mio', chapter: 3 });
+    if (on.flags) Object.assign(st.flags, on.flags);
+    if (on.quests) Object.assign(st.quests, JSON.parse(JSON.stringify(on.quests)));
+    const c = V.cause;
+    t.eq(PETS.fieldTargets(fresh({ comp: 'mio' }), mapId, c.x, c.y + 1).length, 0, sp + ': no Weave target before the vignette opens');
+    const tg = PETS.fieldTargets(st, mapId, c.x, c.y + 1);
+    t.ok(tg.length === 1 && tg[0].id === sp && tg[0].families.join() === V.families.join() && tg[0].label.en, sp + ': the cause is a Weave target within two tiles: ' + JSON.stringify(tg));
+    t.eq(PETS.fieldTargets(st, mapId, c.x + 3, c.y).length, 0, sp + ': not from three tiles away');
+    RB.game.s = st;
+    const miss = PETS.fieldWeave(st, sp, 'fire' === V.families[0] ? 'water' : 'fire');
+    t.ok(miss && !miss.effective && miss.say.length === 1 && (st.vars['pet_' + sp] || 0) < 2, sp + ': a family that does not fit is neutral, with a physical reason');
+    const hit = PETS.fieldWeave(st, sp, V.families[1]);
+    t.ok(hit && hit.effective && hit.say.length === 1 && st.vars['pet_' + sp] === 2, sp + ': ' + V.families[1] + ' settles it, with its own line');
+    t.eq(PETS.fieldTargets(st, mapId, c.x, c.y + 1).length, 0, sp + ': once settled it is no longer a target');
+  }
+  if (typeof offEv === 'function') offEv();
+  t.ok(seenEv.length === 8 && seenEv.every((e) => e.targets[0].startsWith('pet:') && e.at && e.at.map), 'each weave at a cause is announced as a field action (for the pet and anything else watching): ' + seenEv.length);
+
   // ---- greeting together: sixteen distinct moments, no reward, no player-authored text ------------------------
   const GS = {};
   for (const c of ['nao', 'mio', 'ren', 'suzu']) for (const sp of PETS.ORDER) GS[c + '.' + sp] = RB.content.scenes['pets.greet.' + c + '.' + sp];
@@ -260,6 +284,6 @@ export default async (t) => {
     const M = RB.pets.meeting[sp];
     for (const o of [M.title, M.text].concat(Object.values(M.reply))) for (const pr of RB.jp.validate(o.jp)) jpProblems.push(sp + ': ' + (pr.msg || JSON.stringify(pr)));
   }
-  for (const id in PETS.vignettes) { const V = PETS.vignettes[id]; for (const o of [V.title, V.met]) if (o && o.jp) for (const pr of RB.jp.validate(o.jp)) jpProblems.push(id + ': ' + (pr.msg || JSON.stringify(pr))); }
+  for (const id in PETS.vignettes) { const V = PETS.vignettes[id]; for (const o of [V.title, V.met, V.cause && V.cause.label].concat(Object.values(V.fieldSay || {}), Object.values(V.fieldNeutral || {}))) if (o && o.jp) for (const pr of RB.jp.validate(o.jp)) jpProblems.push(id + ': ' + (pr.msg || JSON.stringify(pr))); }
   t.eq(jpProblems, [], 'memory and vignette Japanese carries furigana on every kanji');
 };

@@ -271,6 +271,7 @@ narr: カサネ の {貼|は}り{紙|がみ} が 、 {水|みず} を {吸|す}�
 !end
 :later
 narr: {水|みず} は まだ 、 {橋|はし} を {覆|おお}って いる 。 || Water still covers the bridge.
+narr: {札|ふだ} と {貼|は}り{紙|がみ} と {壁|かべ} の {定|さだ}め は 、 いつ でも {読|よ}み{比|くら}べられる 。 || The plaque, the note and the charter on the wall will still be here to compare.
 !end
 :done
 narr: {定|さだ}め の {札|ふだ} 。 「 {求|もと}められれば 、 {返|かえ}す 」 。 {下|した} の {貼|は}り{紙|がみ} は 、 もう ない 。 || The charter plaque: "If asked, return." The note beneath it is gone.

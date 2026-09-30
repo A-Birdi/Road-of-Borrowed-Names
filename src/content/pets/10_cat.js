@@ -117,6 +117,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
   RB.pets.addVignette('cat', {
     species: 'cat', map: 'rw.village', families: ['bind', 'stone'],
+    // the Weave sheet's target (RB.pets.fieldTargets / fieldWeave)
+    open: (s) => RB.state.test(s, ON),
+    cause: { x: SCREEN[0], y: SCREEN[1], label: T('the loose reed screen', 'すだれ') },
+    fieldSay: {
+      bind: T('The shape of a rope ties the screen to its post. It will not fall now.', '{縄|なわ} の {形|かたち} が すだれ を {柱|はしら} に {結|むす}びつけた 。 もう {倒|たお}れない 。'),
+      stone: T('A stone’s weight holds the screen’s foot down. It will not fall now.', '{石|いし} の {重|おも}み が すだれ の {足|あし} を {押|お}さえた 。 もう {倒|たお}れない 。'),
+    },
+    fieldNeutral: { '*': T('The screen still sways in the wind. It needs tying, or something to hold it down.', 'すだれ は まだ {風|かぜ} で {揺|ゆ}れて いる 。 {結|むす}ぶ か 、 {押|お}さえる もの が {要|い}る 。') },
     title: T('A Dry Corner', '{乾|かわ}いた {隅|すみ}'),
     met: T('Under the carpenter’s eaves in Reedwake, once the loose reed screen was steadied.', '{葦|あし}ノ{瀬|せ} の {大工|だいく} の {軒下|のきした} で 、 すだれ を {直|なお}した あと 。'),
     // a known, gentle field response steadies the same screen: 縄 ties it, 石 or 土 weighs its foot

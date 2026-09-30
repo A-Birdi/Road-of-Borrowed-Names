@@ -974,6 +974,7 @@ RB.combat = (function () {
     opts = opts || {};
     const s = RB.game.s;
     const ids = groupOf(enemyId, opts).filter((id, k) => k === 0 || RB.content.enemies[id]);
+    if (RB.creatures) RB.creatures.meet(s, ids, opts); // Creatures met: the encounter begins (src/engine/64_creatures.js)
     if (RB.test && RB.test.auto) return RB.test.battle(enemyId, { group: ids.slice(1) });
     enemy = Object.assign({ id: enemyId }, RB.content.enemies[enemyId] || {});
     if (!RB.content.enemies[enemyId]) console.warn('missing enemy', enemyId);
@@ -1029,6 +1030,7 @@ RB.combat = (function () {
         present('scene', { phase: 'calm' });
         tg.hover = null; tg.lock = null;
         renderUi();
+        if (RB.creatures) RB.creatures.saw(s, st, members); // the telegraphs now on screen
         RB.audio && RB.audio.sfx('enemy_intent', { vol: 0.5 });
         st.assistedRound = false;
         const card = await pickCard();
@@ -1095,6 +1097,7 @@ RB.combat = (function () {
           }
         }
         endChain();
+        if (RB.creatures) RB.creatures.saw(s, st, members, { fx: fx.concat(cfx || []), card, answered: P.answered }); // what your response and your companion's did
         if (won || wonByComp) { outcome = 'win'; break; }
         // each creature still standing acts in turn
         const standing = L().standing(st);
@@ -1111,6 +1114,7 @@ RB.combat = (function () {
           await playEnemy(i, intents[i], mine, blockedByWard);
         }
         endChain();
+        if (RB.creatures) RB.creatures.saw(s, st, members, { fx: efx, enemy: true }); // their moves as they landed
         sealHeld = null;
         L().endRound(st, enemy);
         if (st.log.length && st.log[st.log.length - 1].t === 'revive') {
@@ -1125,6 +1129,7 @@ RB.combat = (function () {
         phase = 'outro';
         RB.audio && RB.audio.playSong('victory');
         if (enemy.settle) { await say(tierOf(enemy.settle) || enemy.settle, enemy.settleWho); RB.ui.dialogue.hide(); }
+        if (RB.creatures) RB.creatures.settle(s, members, enemy); // a settled observation (no count)
         if (enemy.reward) {
           for (const k in enemy.reward.items || {}) { RB.state.give(s, k, enemy.reward.items[k]); const it = RB.content.items[k]; if (it) await RB.ui.toast({ kind: 'item', jp: it.name.jp, en: it.name.en }); }
           for (const wd of enemy.reward.words || []) if (s.words.indexOf(wd) < 0) { s.words.push(wd); const W = RB.content.words[wd]; if (W) await RB.ui.toast({ kind: 'word', jp: W.jp, en: W.en }); }

@@ -104,6 +104,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
   RB.pets.addVignette('dog', {
     species: 'dog', map: 'co.village', families: ['bind', 'stone'],
+    // the Weave sheet's target (RB.pets.fieldTargets / fieldWeave)
+    open: (s) => RB.state.test(s, ON),
+    cause: { x: GATE[0], y: GATE[1], label: T('the gate that will not stay shut', '{閉|し}まらない {戸|と}') },
+    fieldSay: {
+      bind: T('The shape of a rope ties the gate to its post. The wind comes, and it stays shut.', '{縄|なわ} の {形|かたち} が {戸|と} を {柱|はしら} に {結|むす}んだ 。 {風|かぜ} が {来|き}て も 、 もう {開|ひら}かない 。'),
+      stone: T('A stone’s weight sinks the stop peg into the ground. The gate stays shut.', '{石|いし} の {重|おも}み が {杭|くい} を {地面|じめん} に {沈|しず}めた 。 {戸|と} は もう {開|ひら}かない 。'),
+    },
+    fieldNeutral: { '*': T('The gate is still swinging open and shut in the wind.', '{戸|と} は まだ {風|かぜ} で {開|ひら}いたり {閉|し}まったり して いる 。') },
     title: T('The Gate That Will Not Stay', '{閉|し}まらない {戸|と}'),
     met: T('In the channel keeper’s yard at Cinder Orchard, once the gate stayed shut — with Tamotsu’s blessing.', '{灰実|はいみ}の{里|さと} の {水番|みずばん} の {庭|にわ} で 、 {戸|と} が {閉|し}まる よう に なって から 。 タモツ も {認|みと}めて くれた 。'),
     // 縄 ties the gate to its post; 石 or 土 weighs the stop down

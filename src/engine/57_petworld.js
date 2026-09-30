@@ -433,11 +433,28 @@ RB.petWorld = (function () {
     return {
       sp: P.sp, look: P.look, shown: !!(st && P.sp && shown()), x: P.x, y: P.y, fx: P.fx, fy: P.fy, dir: P.dir, moving: !!P.mv, gait: P.mv ? P.mv.gait : null,
       queue: P.queue.length, still: Math.round(P.still), alpha: +P.alpha.toFixed(2), map: P.map, stats: Object.assign({}, P.stats), last: P.lastDraw || null, drawn: P.drawn || 0,
-      acting: !!P.act, lastCatchUp: P.lastCatchUp || null, pose: P.sp ? poseNow() : null,
+      acting: !!P.act, lastCatchUp: P.lastCatchUp || null, lastField: P.lastField || null, pose: P.sp ? poseNow() : null,
     };
   }
 
+  // A field weave near you (present:action with scope 'field', emitted by the Weave presentation as the word
+  // goes out): it turns toward where the word lands and gives its small reaction on its own time — nothing
+  // waits for it, and it changes nothing. A finished result gets a small happy hop (the dog: a wag).
+  const FIELD = { protect: 'sit', stone: 'sit', light: 'lookup', water: 'back', wind: 'back', fire: 'back', ice: 'back', bind: 'sniff', unravel: 'sniff', heal: 'lookup', bell: 'call', interpret: 'lookup', support: 'lookup', technique: 'lookup' };
+  function fieldReact(e) {
+    const st = s(), w = W();
+    if (!st || !P.sp || !P.placed || !shown() || P.mv || P.act || !w.map || P.map !== w.map.id) return;
+    if (e.at && e.at.map && e.at.map !== w.map.id) return;
+    if (e.at && e.at.x != null) face({ x: e.at.x, y: e.at.y });
+    const key = e.result === 'complete' ? 'hop' : FIELD[e.family] || 'lookup';
+    const A = RB.pets.WORLD_ANIM && RB.pets.WORLD_ANIM[key];
+    if (A) act(typeof A === 'function' ? A(P.sp) : A);
+    P.stats.field = (P.stats.field || 0) + 1;
+    P.lastField = { family: e.family || null, key, result: e.result || null };
+  }
+
   if (RB.bus) {
+    RB.bus.on('present:action', (e) => { try { if (e && e.scope === 'field') fieldReact(e); } catch (err) { /* cosmetic */ } });
     RB.bus.on('map:enter', () => { try { P.placed = false; } catch (e) { /* cosmetic */ } });
     RB.bus.on('pet:select', (e) => {
       try {

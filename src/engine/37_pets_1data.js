@@ -212,6 +212,33 @@ RB.pets = (function () {
     if (!v || !s || (v.families || []).indexOf(family) < 0) return false;
     return !!v.apply(s, family);
   }
+  // For the Weave sheet (src/ui/57_weave.js; wired at merge): the vignette causes near a tile that a field
+  // weave can still settle — { id, x, y, families, label: {jp, en} } — and the result of weaving one:
+  // { id, family, effective, say: [{jp, en}] } (an ineffective family is neutral physical feedback; the
+  // Japanese was already accepted before this is asked). A settled cause, or one whose animal has joined
+  // you, is no longer a target.
+  function fieldTargets(s, mapId, x, y, radius) {
+    radius = radius == null ? 2 : radius;
+    const out = [];
+    for (const id in VIGNETTES) {
+      const v = VIGNETTES[id], c = v.cause;
+      if (!c || v.map !== mapId || !v.open || !v.open(s)) continue;
+      const st = v.state ? v.state(s) : {};
+      if (st.met || st.step >= 2) continue;
+      const d = Math.max(Math.abs(c.x - x), Math.abs(c.y - y));
+      if (d <= radius) out.push({ id, x: c.x, y: c.y, d, families: (v.families || []).slice(), label: c.label });
+    }
+    return out.sort((a, b) => a.d - b.d);
+  }
+  function fieldWeave(s, id, family) {
+    const v = VIGNETTES[id];
+    if (!v || !s) return null;
+    const ok = vignetteAction(id, family);
+    const said = ok ? v.fieldSay && v.fieldSay[family] : v.fieldNeutral && (v.fieldNeutral[family] || v.fieldNeutral['*']);
+    const res = { id, family, effective: ok, say: said ? [].concat(said) : [] };
+    if (RB.bus) RB.bus.emit('present:action', { scope: 'field', actor: 'pc', action: 'weave', family, targets: ['pet:' + id], at: v.cause ? { map: v.map, x: v.cause.x, y: v.cause.y } : null, result: ok ? 'complete' : 'neutral', id: 'pet:' + id + ':' + family });
+    return res;
+  }
 
   // ---- affection (the species' rest/affection vocabulary, §4.2): a pose through k 0..1, and the key
   // moment held with reduced motion. Used by the Company page's Pat preview and by greetings in the world.
@@ -324,6 +351,6 @@ RB.pets = (function () {
   return {
     ORDER, SPECIES, MAX, species, looks, record, met, active, visible, lookOf, meet, select, rename, resetName, nameAtMeet, setLook, nameOf,
     cleanName, graphemes, portrait, thumb, addVignette, vignetteAction, vignettes: VIGNETTES, hide, show, sceneHidden,
-    AFFECTION, howMet, sound, defineSounds, canGreet, greet, restOption,
+    AFFECTION, howMet, sound, defineSounds, canGreet, greet, restOption, fieldTargets, fieldWeave,
   };
 })();

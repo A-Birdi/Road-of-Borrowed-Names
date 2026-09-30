@@ -56,6 +56,8 @@ RB.ui.dialogue = (function () {
     box.querySelector('.b-words').onclick = () => { RB.ui.help.toggle(); syncCtrl(); };
     box.querySelector('.b-skip').onclick = () => { RB.game.setFastForward(true); advance(); };
     RB.ui.root.appendChild(box);
+    // Keep this sentence: a tab in the sheet's tab row, outside the text and the controls (src/ui/66_words_pages.js)
+    if (RB.ui.keep) RB.ui.keep.attach(box);
     choicesEl = RB.ui.el('div', 'choices hidden');
     choicesEl.setAttribute('role', 'group');
     choicesEl.setAttribute('aria-label', 'Your reply');
@@ -122,6 +124,7 @@ RB.ui.dialogue = (function () {
     const ch = charInfo(line.who);
     s.backlog.push({ who: line.who, jp: line.jp, en: line.en });
     if (s.backlog.length > 220) s.backlog.splice(0, s.backlog.length - 200);
+    if (RB.ui.keep) RB.ui.keep.line(line, s.backlog[s.backlog.length - 1]); // event-time context for keeping it
     const fresh = box.classList.contains('hidden');
     if (RB.test && RB.test.auto) auditSpeaker(line);
     box.classList.remove('hidden');
@@ -304,6 +307,7 @@ RB.ui.dialogue = (function () {
           : '<span class="enline">' + esc(RB.script.enVars(op.en || '')) + '</span>' + (op.jp ? '<span class="en">' + RB.ui.jhtml(op.jp) + '</span>' : '')) + '</span>';
         b.onclick = (e) => {
           if (e && e.detail !== 0 && lastDown < at) return; // a press from before the replies appeared
+          if (RB.ui.keep) RB.ui.keep.chose(op); // the reply's event-time context, for keeping it later
           RB.ui.popLayer(layer);
           choicesEl.classList.add('hidden');
           choicesEl.innerHTML = '';

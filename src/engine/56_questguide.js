@@ -31,6 +31,12 @@
  * - Authored per-stage fields override the derivation: `at` ({map, npc} |
  *   {map, prop, x, y} | {map, x, y} | {map}, or a list of those, or 'open')
  *   and `hint` ({jp, en}, shown as the second nudge).
+ * - Investigation stages (cases, addendum §16.4) may carry `mark`:
+ *   'now' (the default: marked as above), 'afterHypothesis' or 'onRequest'
+ *   (never derived in live play; `markAt(st)` returns the place the player
+ *   chose, or one a requested hint disclosed, as an `at`, else nothing is
+ *   marked and the nudge says the step is theirs to work out). The static
+ *   listing still derives them, so tests can see where they lead.
  *
  * The same interpreter, run with every condition not about this quest
  * treated as unknown (both ways possible), gives the static per-stage
@@ -527,6 +533,15 @@ RB.questGuide = (function () {
     if (!d || !q || q.done) return { stage: q ? q.stage : -1, targets: [], how: q && q.done ? 'done' : 'none' };
     const k = q.stage;
     const stage = d.stages && d.stages[Math.min(k, d.stages.length - 1)];
+    // An investigation stage whose next step is the answer itself (addendum
+    // §16.4): `mark: 'afterHypothesis' | 'onRequest'` keeps the derived place
+    // unmarked; `markAt(st)` returns only what the player has chosen or asked
+    // to be shown (an `at`), and that is what the markers point to.
+    if (stage && stage.mark && stage.mark !== 'now' && !opts.static && !opts.derive) {
+      const at = typeof stage.markAt === 'function' ? stage.markAt(st) : null;
+      if (!at) return { stage: k, targets: [], how: 'concealed', mark: stage.mark };
+      return Object.assign(authored(at, st, k), { mark: stage.mark });
+    }
     if (stage && stage.at && !opts.derive) return authored(stage.at, st, k);
     const ctx = { Q: qid, k, static: !!opts.static, memo: new Map() };
     const base = cloneSt(st);
@@ -679,7 +694,9 @@ RB.questGuide = (function () {
     let f = 0;
     for (const k in s.flags) if (s.flags[k]) f++;
     return (s.map || '') + '|' + JSON.stringify(s.quests) + '|' + f + '|' + JSON.stringify(s.inv) + '|' + JSON.stringify(s.vars) + '|' + (s.comp || '') + (s.provisional || '') +
-      '|' + Object.keys(s.seen).length + '|' + (s.words || []).length + '|' + s.chapter + '|' + (s.learn && s.learn.profile);
+      '|' + Object.keys(s.seen).length + '|' + (s.words || []).length + '|' + s.chapter + '|' + (s.learn && s.learn.profile) +
+      // a chosen hypothesis or a requested hint can disclose a concealed step's place
+      (s.discovery ? '|' + JSON.stringify(s.discovery.cases) + JSON.stringify(s.discovery.hints) : '');
   }
   function targets(qid, s) {
     s = s || RB.game.s;
@@ -778,6 +795,7 @@ RB.questGuide = (function () {
     stone_marker: ['{石|いし}', 'the stone marker'], shrine: ['{祠|ほこら}', 'the shrine'], gears: ['{歯車|はぐるま}', 'the gears'],
     water: ['{水|みず}', 'the water'], mailbox: ['ポスト', 'the post box'], bell: ['{鐘|かね}', 'the bell'],
     lq_kaki: ['{柿|かき} の {木|き}', 'the persimmon tree'],
+    bench: ['{腰掛|こしか}け', 'the bench'], cs_viewstone: ['{平|たい}らな {石|いし}', 'the flat stone'],
   };
   const PROP_PREFIX = [
     [/icewall/, '{氷|こおり}', 'the ice'], [/dial/, '{仕掛|しか}け', 'the dial mechanism'], [/crank/, 'ハンドル', 'the crank'], [/lamp/, '{灯|あか}り', 'the lamp'],
@@ -873,6 +891,8 @@ RB.questGuide = (function () {
     });
   }
   const WAIT = { jp: 'いま は まだ {先|さき} に {進|すす}めない 。 {旅|たび} を {続|つづ}けよう 。', en: 'You can’t take this further just yet. Carry on with your journey.' };
+  // a concealed investigation step: nothing is pointed at until you choose or ask
+  const THINK = { jp: 'ここ は {自分|じぶん} で {考|かんが}える ところ 。 {旅路|たびじ} の {記録|きろく} に 、 {見|み}つけた こと が {残|のこ}って いる 。', en: 'This step is yours to work out. The record in your Journey keeps what you have found, and reasoning help is there if you want it.' };
   // The nudges for a quest, in order: [ [lines of nudge 1], [lines of nudge 2] ].
   // 1: where and who; 2: the authored hint (if any), then what to do there and which way.
   function nudges(qid, s) {
@@ -892,7 +912,8 @@ RB.questGuide = (function () {
       out.push([people * 2 >= r.many.length
         ? { jp: pl.jp + ' で いろいろ な {人|ひと} と {話|はな}そう 。', en: 'Talk to different people in ' + pl.en + '.' }
         : { jp: pl.jp + ' の あちこち を {見|み}て みよう 。', en: 'Look around all over ' + pl.en + '.' }]);
-    } else if (!list.length) out.push([WAIT]);
+    } else if (r.how === 'concealed') out.push([THINK]);
+    else if (!list.length) out.push([WAIT]);
     else out.push(list.map(whereLine));
     const second = [];
     if (stage && stage.hint) second.push({ jp: stage.hint.jp, en: stage.hint.en });

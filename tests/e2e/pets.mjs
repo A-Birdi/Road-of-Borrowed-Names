@@ -83,6 +83,19 @@ for (const sp of SPECIES) {
     const solid = await p.evaluate(() => { const P = RB.petWorld.state(); return RB.world.blocked(P.x, P.y, {}) !== RB.maps.blockedStatic(RB.world.W.map, P.x, P.y) && !RB.world.W.npcs.some((n) => n.x === P.x && n.y === P.y); });
     assert(!solid, 'its tile is not solid because of it');
     await shot(p, sp + '_world_follow');
+    // a field weave nearby (the Weave presentation's present:action, scope 'field'): it turns to where the word
+    // lands and reacts on its own time; the emitter never waits for it
+    const fieldR = await p.evaluate(() => {
+      const P0 = RB.petWorld.state(), W = RB.world.W;
+      const at = { map: W.map.id, x: P0.x + 2, y: P0.y };
+      const t0 = performance.now();
+      RB.bus.emit('present:action', { scope: 'field', actor: 'pc', action: 'kaze', family: 'wind', targets: ['obj:test'], at, result: 'effective', id: 'test' });
+      const took = performance.now() - t0;
+      const P = RB.petWorld.state();
+      return { took, last: P.lastField, acting: P.acting, dir: P.dir };
+    });
+    assert(fieldR.last && fieldR.last.family === 'wind' && fieldR.last.key === 'back' && fieldR.acting && fieldR.dir === 'right' && fieldR.took < 30, 'a field weave nearby: it turns to it and reacts, nothing waits: ' + JSON.stringify(fieldR));
+    await wait(p, 1500);
     // the bridge: over the planks and never on the water
     await world(p, 'rw.village', 32, 17, { sp, comp: COMPS[sp], dir: 'right', flags: { bridge_fixed: true } });
     const over = [];
@@ -402,7 +415,7 @@ for (const sp of SPECIES) {
 // ---- the vignettes: the ordinary route with keys and the mouse, naming, memory once, selection separate, reload ----
 const VIG = {
   cat: { map: 'rw.village', flags: { rw_echo_done: true }, comp: 'mio', start: [17, 24], steps: [{ at: [17, 23], dir: 'left', say: /creeping/ }, { at: [14, 24], dir: 'up', pick: /Tie the cord/ }, { at: [15, 24], dir: 'up', pick: /Offer a hand/ }], invite: /Invite/ },
-  bird: { map: 'sg.harbor', chapter: 2, quests: { sg_main: 1 }, comp: 'ren', start: [45, 28], steps: [{ at: [44, 27], dir: 'up', say: /flees to the sand/ }, { at: [43, 27], dir: 'up', pick: /Wind the ribbon/ }, { at: [44, 27], dir: 'up', pick: /open palm/ }], invite: /Invite/ },
+  bird: { map: 'sg.harbor', chapter: 2, quests: { sg_main: 1 }, comp: 'ren', start: [45, 28], steps: [{ at: [44, 28], dir: 'up', say: /flees to the sand/ }, { at: [42, 26], dir: 'right', pick: /Wind the ribbon/ }, { at: [44, 28], dir: 'up', pick: /open palm/ }], invite: /Invite/ },
   dog: { map: 'co.village', chapter: 3, flags: { co_arrived: true, co_met_sayo: true }, comp: 'nao', start: [30, 25], steps: [{ at: [33, 25], dir: 'down', say: /fawn dog/ }, { at: [31, 25], dir: 'down', pick: /latch loop/ }, { at: [33, 25], dir: 'down', pick: /Crouch/ }], invite: /Invite/, permission: /take him/ },
   tanuki: { map: 'co.road', chapter: 3, flags: { co_arrived: true }, comp: 'suzu', start: [10, 5], steps: [{ at: [7, 3], dir: 'left', say: /hollow at the foot/ }, { at: [6, 4], dir: 'left', pick: /flat stone/ }, { at: [7, 3], dir: 'left', pick: /Sit at the edge/ }], invite: /Invite/ },
 };

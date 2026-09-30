@@ -155,6 +155,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
   RB.pets.addVignette('tanuki', {
     species: 'tanuki', map: 'co.road', families: ['wind', 'stone'],
+    // the Weave sheet's target (RB.pets.fieldTargets / fieldWeave)
+    open: (s) => RB.state.test(s, ON),
+    cause: { x: PAPERS[0], y: PAPERS[1], label: T('the loose papers in the grass', '{草|くさ} の {上|うえ} の {紙|かみ}') },
+    fieldSay: {
+      wind: T('A gentle breeze gathers the sheets and carries them into the rock’s lee. They will not fly from there.', 'やさしい {風|かぜ} が {紙|かみ} を {集|あつ}めて 、 {岩|いわ} の {陰|かげ} に そっと {運|はこ}んだ 。 そこ なら もう {舞|ま}わない 。'),
+      stone: T('A stone’s weight holds the sheets down. The wind comes, and they no longer move.', '{石|いし} の {重|おも}み が {紙|かみ} を {押|お}さえた 。 {風|かぜ} が {来|き}て も 、 もう {動|うご}かない 。'),
+    },
+    fieldNeutral: { '*': T('The sheets still lift each time the wind comes.', '{紙|かみ} は まだ {風|かぜ} が {来|く}る たびに {浮|う}き{上|あ}がる 。') },
     title: T('Paper in the Clearing', '{草|くさ}むら の {紙|かみ}'),
     met: T('At the edge of the trees on the Orchard Road, once the loose papers stopped skittering past its hollow.', '{灰実|はいみ} へ の {坂道|さかみち} の {木|き} の {下|した} で 、 {紙|かみ} が {舞|ま}わなく なって から 。'),
     // a gentle 風 carries the sheets into the rock's lee, where they settle; 石 or 土 weighs them down

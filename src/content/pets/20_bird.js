@@ -1,8 +1,9 @@
 /* Pet vignette: the small bird — "The Ribbon by the Perch" (addendum §5.2). Saltglass, once the
  * harbour is yours to wander (quest.sg_main>=1: after meeting the harbourmaster), for good.
  *
- * Where: the old mooring post at the east end of the quay (sg.harbor 43,26), the beach beside it
- * (44,26) — clear of the market, the stalls, the piers, the sea-glass and every person.
+ * Where: the old mooring post at the east end of the quay (sg.harbor 43,26), the beach just below it
+ * (44,27) — clear of the market, the stalls, the piers, the sea-glass, the tide window's machinery (44–46,
+ * 24–25) and every person.
  * Cause (visible, inspectable): a faded ribbon knotted to a nail on the post jumps in every gust and
  * flicks away the little bird that keeps trying to land on its familiar perch.
  * State (var.pet_bird): 0 not looked at, 1 looked at, 2 the ribbon is dealt with.
@@ -18,7 +19,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
   'use strict';
   const T = (en, jp) => ({ en, jp });
   const map = C.maps['sg.harbor'];
-  const POST = [43, 26], SAND = [44, 26];
+  // (the sand spot is a row below the post, clear of the tide window's machinery at 44–46, 24–25 and the
+  // tiles you stand on to use it)
+  const POST = [43, 26], SAND = [44, 27];
+  const lerp = (a, b, k) => [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k];
   const ON = 'quest.sg_main>=1';
   const K = RB.propKit;
   const LOOP = 4800, GUST = 2600;
@@ -91,10 +95,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (reduce) return { x: SAND[0], y: SAND[1], dir: 'left', po: { hp: -14 } };
       const ph = t % LOOP;
       if (ph < 1400) return { x: SAND[0], y: SAND[1], dir: 'left', po: { hp: -14, hr: ph > 600 && ph < 1000 ? 18 : 0 } };                        // looks up at the post
-      if (ph < 2000) { const k = (ph - 1400) / 600; return { x: SAND[0] - k, y: SAND[1], dir: 'left', po: { wing: 1, flap: (t / 140) % 1 }, up: Math.round(17 * sm(k)) }; } // flies up
+      if (ph < 2000) { const k = (ph - 1400) / 600, q = lerp(SAND, POST, sm(k)); return { x: q[0], y: q[1], dir: 'left', po: { wing: 1, flap: (t / 140) % 1 }, up: Math.round(17 * sm(k)) }; } // flies up
       if (ph < GUST) return { x: POST[0], y: POST[1], dir: 'left', po: { wing: 0.3, flap: 0.2 }, up: 17 };                                       // lands
       if (ph < GUST + 250) return { x: POST[0], y: POST[1], dir: 'right', po: { wing: 1, flap: (t / 110) % 1, fluff: 1 }, up: 19 };            // the ribbon flicks: startled
-      if (ph < GUST + 900) { const k = (ph - GUST - 250) / 650; return { x: POST[0] + k, y: POST[1], dir: 'right', po: { wing: 1, flap: (t / 140) % 1 }, up: Math.round(19 * (1 - sm(k))) }; }
+      if (ph < GUST + 900) { const k = (ph - GUST - 250) / 650, q = lerp(POST, SAND, sm(k)); return { x: q[0], y: q[1], dir: 'right', po: { wing: 1, flap: (t / 140) % 1 }, up: Math.round(19 * (1 - sm(k))) }; }
       return { x: SAND[0], y: SAND[1], dir: 'left', po: { fluff: 0.6, hp: -6 } };
     },
   });
@@ -106,6 +110,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
   RB.pets.addVignette('bird', {
     species: 'bird', map: 'sg.harbor', families: ['unravel', 'wind'],
+    // the Weave sheet's target (RB.pets.fieldTargets / fieldWeave)
+    open: (s) => RB.state.test(s, ON),
+    cause: { x: POST[0], y: POST[1], label: T('the ribbon on the old post', '{古|ふる}い {杭|くい} の リボン') },
+    fieldSay: {
+      unravel: T('The stiff knot comes undone and the ribbon slips off the nail.', '{固|かた}い {結|むす}び{目|め} が ほどけて 、 リボン が {釘|くぎ} から {外|はず}れた 。'),
+      wind: T('A gentle breeze lifts the ribbon off the nail and carries it away along the quay, never toward the bird.', 'やさしい {風|かぜ} が リボン を {釘|くぎ} から {持|も}ち{上|あ}げて 、 {岸壁|がんぺき} の {向|む}こう へ {運|はこ}んで いった 。 {鳥|とり} の {方|ほう} へ は {吹|ふ}かない 。'),
+    },
+    fieldNeutral: { '*': T('The ribbon stays knotted to the nail, flicking in the wind.', 'リボン は {釘|くぎ} に {結|むす}ばれた まま 、 {風|かぜ} に {跳|は}ねて いる 。') },
     title: T('The Ribbon by the Perch', '{止|と}まり{木|ぎ} の リボン'),
     met: T('At the old mooring post on the Saltglass quay, once the ribbon stopped flicking it away.', '{潮硝子|しおがらす} の {岸壁|がんぺき} の {古|ふる}い {杭|くい} で 、 リボン が {跳|は}ねなく なって から 。'),
     // ほどく loosens the salt-stiff knot; a gentle 風 lifts the ribbon off the nail, away along the quay
