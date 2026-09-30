@@ -315,6 +315,22 @@ export default async (t) => {
     t.ok(!PG.state(s).ev, 'finding a relic is not a qualifying event');
     t.ok(PG.page3(s, 0) === false && PG.accept(s, 'sure') === false, 'no skipping ahead, no second acceptance');
   }
+  // seeds and route generation never see the project (§11.3): the same save plans the same road
+  {
+    const s = post('mio');
+    s.atlas.started = 3; s.atlas.completed = 1;
+    const gen = (extra) => { const r = RB.atlas.newRun(s, ['escort']); delete r.started; Object.assign(r, extra || {}); const pl = RB.atlas.plan(r); delete r.pages; return JSON.stringify({ r, pl }); };
+    const before = gen();
+    await run('pages.offer', (opts) => opts.findIndex((o) => o.en === PG.PROJECT.mio.themes.share.en));
+    const accepted = gen();
+    startRun(s); ev(s, 'lanterns', { pattern: 'lanterns' });
+    const captured = gen({ pages: { ev: PG.state(s).ev.id } });
+    end(s, 'early');
+    await run('pages.home2', (opts) => { const i = opts.findIndex((o) => o.en === PG.PROJECT.mio.aspects.turns.en); return i >= 0 ? i : byEn('now')(opts); });
+    const done = gen();
+    t.ok(PG.state(s).stage >= 2, 'the project moved on meanwhile (stage ' + PG.state(s).stage + ')');
+    t.ok(before === accepted && accepted === captured && captured === done, 'the seed, the route plan and the climax are the same before, during and after the project');
+  }
   // bond and project belong to the committed companion only
   {
     const s = post('suzu');

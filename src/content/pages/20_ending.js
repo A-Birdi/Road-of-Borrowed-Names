@@ -122,6 +122,7 @@ ren: {朝|あさ} の {灯|ひ} の {見回|みまわ}り に も 、 {付|つ}�
 
 @scene end.ren.c
 narr: レン は {磨|みが}き{終|お}えた {二|ふた}つ の {灯|ひ} に {火|ひ} を {入|い}れ 、 {灯|あか}り{堂|どう} の {戸口|とぐち} の {両側|りょうがわ} に {一|ひと}つ ずつ {置|お}いた 。 || Ren lights the two polished lamps and sets one on each side of the Lantern Hall door.
+ren: {一|ひと}つ は あなた の {分|ぶん} です 。 {遅|おそ}く {帰|かえ}って きて も 、 {見|み}える よう に 。 || One of them is yours. So you can see it, even if you come home late.
 !call end.pet.ren
 !hook pages_end_done
 
