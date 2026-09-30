@@ -7,7 +7,7 @@
 .cs-record h4 > svg { width: 1.15em; height: 1.15em; flex: none; color: var(--ink-2); }
 .cs-record h4 .count { margin-left: auto; font-size: 0.85em; color: var(--ink-3); }
 .cs-q { border-left: 3px solid var(--ink-3); padding: 0.2em 0.7em; margin: 0.4em 0 0.6em; }
-.cs-q .kind, .cs-recap .kind, .cs-ways .kind { font-size: 0.78em; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+.cs-q .kind, .cs-recap .kind, .cs-ways .kind, .cs-compnote .kind { font-size: 0.78em; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
 .cs-recap { background: rgba(255,255,255,0.35); border: 1px dashed var(--paper-edge); padding: 0.3em 0.7em; margin: 0.6em 0; }
 .cs-recap p { margin: 0.2em 0; }
 .cs-recap .kind svg, .cs-ways .kind svg { width: 1em; height: 1em; vertical-align: -0.15em; }

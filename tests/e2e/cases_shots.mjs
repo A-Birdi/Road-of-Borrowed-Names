@@ -36,7 +36,14 @@ async function setup(p, map, x, y, dir, comp) {
   }, [FX, map, x, y, dir, comp]);
 }
 const shot = async (p, name) => { await p.evaluate(() => document.querySelectorAll('.notice,.toast').forEach((n) => n.remove())); await p.screenshot({ path: path.join(OUT, name + '.png') }); };
-const go = (p, map, x, y, dir) => p.evaluate(async ([map, x, y, dir]) => { RB.test.disable(); await RB.game.transition(map, x, y, dir); await new Promise((r) => setTimeout(r, 1400)); }, [map, x, y, dir]);
+// arrive, then wait (on the condition, not a fixed time) until the place-name label has gone
+const go = (p, map, x, y, dir) => p.evaluate(async ([map, x, y, dir]) => {
+  RB.test.disable(); await RB.game.transition(map, x, y, dir);
+  const t0 = Date.now();
+  await new Promise((r) => setTimeout(r, 300));
+  while (document.querySelector('.place') && Date.now() - t0 < 9000) await new Promise((r) => setTimeout(r, 100));
+  await new Promise((r) => setTimeout(r, 400));
+}, [map, x, y, dir]);
 
 const { srv, url } = await serve();
 const b = await launch();
@@ -120,6 +127,26 @@ const b = await launch();
   say(warn.w && warn.lvl === 3 && /answer outright/.test(warn.txt), 'the answer is labelled and needs a second press (level still 3)');
   await shot(p, 'record_view_help_1280x800');
   await p.evaluate(() => RB.ui.menu.close());
+  // after solving: the remembered view in the record; the tide board chalked in; the framed sketch by the seat
+  await p.evaluate(async () => {
+    const s = RB.game.s;
+    RB.test.enable({ battle: 'unravel', choose: (opts) => { for (const re of window.PICK) { const i = opts.findIndex((q) => new RegExp(re, 'i').test(q.en)); if (i >= 0) return i; } return 0; } });
+    window.PICK = ['turned over', 'Leave the sketch here'];
+    await RBDrive.run(['cs.view_seat', { scene: 'cs.view_seat', again: true }]);
+    s.flags.sg_tide_read = true;
+    RB.test.disable();
+  });
+  await p.evaluate(() => { RB.ui.casebook.select('view'); RB.ui.menu.open('cases'); });
+  await p.waitForTimeout(400);
+  await p.evaluate(() => { const e = document.querySelector('#folio-page .cs-remember'); if (e) e.scrollIntoView(); });
+  const rem = await p.evaluate(() => !!document.querySelector('#folio-page .cs-remember svg'));
+  say(rem, 'the solved record keeps the remembered view');
+  await shot(p, 'record_view_solved_1280x800');
+  await p.evaluate(() => RB.ui.menu.close());
+  await go(p, 'sb.obs_path', 11, 37, 'up');
+  await shot(p, 'world_seat_framed_1280x800');
+  await go(p, 'sg.harbor', 11, 27, 'up');
+  await shot(p, 'world_tideboard_chalk_1280x800');
   say(!errors.length, 'no page errors (wide)' + (errors.length ? ': ' + errors.slice(0, 3).join(' | ') : ''));
   await ctx.close();
 }

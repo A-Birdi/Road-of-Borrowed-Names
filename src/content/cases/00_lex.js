@@ -105,6 +105,7 @@ RB.lex.add(RB.lex.parseTable(`
 面|めん|n|I|side, face (of a flat thing)
 景色|けしき|n|E|view, scenery
 向こう側|むこうがわ|n|I|the other side
+旅路|たびじ|n|A|journey; (in the folio) the Journey section
 燕|つばめ|n|I|swallow (the bird)
 勘|かん|n|I|intuition, hunch
 伏線|ふくせん|n|A|foreshadowing, a planted plot thread

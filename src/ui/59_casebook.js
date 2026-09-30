@@ -132,6 +132,11 @@ RB.ui.casebook = (function () {
         '<p><b>It rested on:</b> ' + esc(ev.length ? ev.map((c) => c.title.en).join('; ') : 'your own recognition, before any record was kept') + '.</p>' +
         (cd.methods && cd.methods[r.method] ? '<p class="muted">' + esc(cd.methods[r.method].en) + '</p>' : '') +
         (cd.keepsake ? '<p><button class="pbtn" data-a="keepsake">' + I('keepsake') + '<span>See the keepsake</span></button></p>' : '');
+      // the companion's note: the reaction actually chosen when it was solved (read, never chosen here)
+      const kept = s.company && s.company.react && s.company.react['case:' + id + ':done'];
+      const re = kept && RB.company && RB.company.reactions.find((x) => x.id === kept);
+      const who = re && RB.content.chars[re.comp];
+      if (re && who) h += '<blockquote class="cs-orig cs-compnote"><div class="kind">' + esc(who.name.en) + ', afterwards</div>' + re.lines.map((l) => j(l.jp) + '<div class="en">' + esc(l.en) + '</div>').join('') + '</blockquote>';
       if (cd.remembered) h += '<div class="cs-remember">' + cd.remembered(s).svg + '<p class="muted small">' + esc(cd.remembered(s).text.en) + '</p></div>';
       return h + '</section>';
     }

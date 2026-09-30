@@ -795,6 +795,7 @@ RB.questGuide = (function () {
     stone_marker: ['{石|いし}', 'the stone marker'], shrine: ['{祠|ほこら}', 'the shrine'], gears: ['{歯車|はぐるま}', 'the gears'],
     water: ['{水|みず}', 'the water'], mailbox: ['ポスト', 'the post box'], bell: ['{鐘|かね}', 'the bell'],
     lq_kaki: ['{柿|かき} の {木|き}', 'the persimmon tree'],
+    bench: ['{腰掛|こしか}け', 'the bench'], cs_viewstone: ['{平|たい}らな {石|いし}', 'the flat stone'],
   };
   const PROP_PREFIX = [
     [/icewall/, '{氷|こおり}', 'the ice'], [/dial/, '{仕掛|しか}け', 'the dial mechanism'], [/crank/, 'ハンドル', 'the crank'], [/lamp/, '{灯|あか}り', 'the lamp'],

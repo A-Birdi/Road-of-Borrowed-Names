@@ -397,6 +397,33 @@ const LEGACY = async (o) => {
   return out;
 };
 
+
+// ---- from an object's Inspect view straight to its record, and back to the world -----------------------------------
+const PAGE = async (o) => {
+  const s = await window.CSSetup(o, 'rw.village', 22, 30);
+  const out = { drive: [], checks: [] };
+  window.PICK = ['^Take it along', 'Look at the case record'];
+  // walk in and look at the shelf (the scene ends by opening the folio, so no waiting for the world here)
+  await RB.test.go('rw.warehouse', 6, 3, 'up');
+  RB.world.interact();
+  const t0 = Date.now();
+  while (!RB.ui.menu.isOpen() && Date.now() - t0 < 20000) await new Promise((r) => setTimeout(r, 50));
+  await new Promise((r) => setTimeout(r, 300));
+  const cur = RB.ui.menu.current();
+  const rec = document.querySelector('#folio-page .cs-record');
+  out.checks.push(['the folio opened at the parcel\'s record (' + JSON.stringify(cur) + ')', RB.ui.menu.isOpen() && cur.section === 'journey' && cur.journey === 'cases' && rec && rec.dataset.case === 'parcel']);
+  RB.ui.menu.close();
+  await new Promise((r) => setTimeout(r, 200));
+  out.checks.push(['closing it returns to the world (mode ' + RB.game.mode() + ')', RB.game.mode() === 'world' && !RB.script.isRunning()]);
+  // and a companion topic opens the same record (C1's "Discuss a discovered case")
+  const tp = RB.cases.topics(s)[0];
+  tp.open();
+  await new Promise((r) => setTimeout(r, 200));
+  out.checks.push(['a Company topic opens the record too', RB.ui.menu.isOpen() && RB.ui.menu.current().journey === 'cases']);
+  RB.ui.menu.close();
+  return out;
+};
+
 const { srv, url } = await serve();
 const b = await launch();
 const FLOWS = [
@@ -410,6 +437,7 @@ const FLOWS = [
   ['Both cases after the story', { comp: 'nao', post: true }, POST],
   ['Refined sequences and their keepsakes', { comp: 'mio' }, REFINE],
   ['An older save claims the keepsakes once', { comp: 'ren' }, LEGACY],
+  ['From an Inspect view to the record', { comp: 'nao' }, PAGE],
 ];
 const only = (process.argv.find((a) => a.startsWith('--only=')) || '').slice(7);
 for (const [name, o, body] of FLOWS) if (!only || name.toLowerCase().includes(only.toLowerCase())) await flow(b, url, name, o, body);
