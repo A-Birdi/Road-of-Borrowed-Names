@@ -211,7 +211,35 @@ foundation `aa825c3` on `claude/stoic-sagan-n3jvgk`.
 - Browser captures: `tests/e2e/out/words/`. The curated WebP set is in
   `docs/screenshots/words/` (README there). I looked at every capture
   myself; nobody else has.
-- Test logs: the commands and results are in the final report.
+- Tests run on the final build (headless Chromium; other workers' tests
+  were running on the same machine, at a load average of about 7 to 65):
+  - `node tools/validate.mjs`: no errors.
+  - `node tests/run-unit.mjs`: 4733 passed and 2 failed at load 30–50.
+    Both failures were timing limits: `kanji_chart` "a search takes well
+    under 25 ms" and `recog-accuracy` "p95 recognize() < 60 ms". Rerun at
+    load 7, both pass (53/53 and 64/64). `bookmarks`: 65/65. `choice_order`
+    passes. `recog-coverage` passes, with `75_kanjiread.js` unchanged.
+  - `node tests/e2e/bookmarks.mjs`: 6/6.
+  - Passed on the final build:
+    - `world_fixes`, `combat_ui`, `play_ui`, `folio`, `ui` and `systems`;
+    - `battle_group`, `companion_turn` and `learning_ui` (14/14);
+    - `quest_guide`, `long_quests --fixtures-only` and `story_ch1 F mio`;
+    - `create`, `settings` and `encounters`;
+    - `departures`;
+    - `battle_anim` (16/16).
+  - At a load average of 30–65, some of those failed, all on timing:
+    - `departures`: walkers not started within the test's 200 ms. At load
+      19 it passed on the base build, then on mine right after.
+    - `battle_anim`: the frame-cost limit and beat order, and "rapid
+      input" (the base build failed it 2 of 4 times at the same load,
+      mine 1 of 3).
+    - `learning_ui`: a 180 s per-test timeout.
+    - `create`: a visual-viewport resize.
+    - `quest_guide`: a marker not yet drawn.
+    Every one of them passed on a later run.
+  - An earlier full regression run on this code, before the last
+    page-only changes (paging, links, labels), passed every suite above
+    except one `quest_guide` flake, which passed when rerun.
 
 ## Measured
 
