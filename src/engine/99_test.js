@@ -96,6 +96,12 @@ RB.test = (function () {
     await wait(30);
     while (Date.now() - t0 < (timeout || 20000)) {
       if (!RB.script.isRunning() && RB.game.mode() === 'world') return true;
+      // a scene the player chose to end on a page of the folio (a case record, say):
+      // the automated player reads it and closes it again, as a person would
+      if (!RB.script.isRunning() && RB.game.mode() === 'menu' && RB.ui.menu.isOpen()) {
+        T.log.push({ t: 'folio', page: RB.ui.menu.current() });
+        RB.ui.menu.close();
+      }
       await wait(25);
     }
     throw new Error('timeout waiting for idle (mode ' + RB.game.mode() + ')');

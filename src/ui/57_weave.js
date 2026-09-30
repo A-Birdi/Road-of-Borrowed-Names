@@ -42,7 +42,19 @@ RB.weave = (function () {
   function nearby() {
     const W = RB.world.W, s = S();
     if (!s || !W.map || !W.player) return [];
-    return FW().near(s, W.map.id, W.player.x, W.player.y, W.player.dir);
+    const out = FW().near(s, W.map.id, W.player.x, W.player.y, W.player.dir);
+    // an animal's meeting place (src/content/pets/): its restless cause can be settled by a gentle word
+    // too (RB.pets.fieldTargets / fieldWeave); the ordinary way there needs no word at all
+    if (RB.pets && RB.pets.fieldTargets) {
+      for (const t of RB.pets.fieldTargets(s, W.map.id, W.player.x, W.player.y)) out.push({ pet: t.id, pz: null, key: 'pet:' + t.id, x: t.x, y: t.y, w: 1, h: 1, d: t.d, o: { name: t.label } });
+    }
+    return out;
+  }
+  // what the player sees of an animal's meeting place (the vignette's own words for its state)
+  function petLook(T) {
+    const v = RB.pets.vignettes[T.pet];
+    const l = v && v.fieldNeutral && (v.fieldNeutral['*'] || null);
+    return l ? { lines: [l] } : null;
   }
   function available() {
     return !!(RB.game.mode() === 'world' && !busy && S() && known(S()).length && nearby().length);
@@ -175,8 +187,8 @@ RB.weave = (function () {
       return '<button type="button" class="wv-t" role="radio" data-t="' + i + '" aria-checked="' + (i === panel.i) + '" tabindex="' + (i === panel.i ? 0 : -1) + '">' +
         (n.jp ? RB.ui.jhtml(n.jp) : '') + '<span class="en">' + esc(n.en) + '</span></button>';
     }).join('');
-    const l = FW().lookOf(s, T.pz, T.key);
-    if (l && l.obs) FW().observe(s, T.pz, l.obs);
+    const l = T.pet ? petLook(T) : FW().lookOf(s, T.pz, T.key);
+    if (!T.pet && l && l.obs) FW().observe(s, T.pz, l.obs);
     const nm = T.o.name || { en: T.key };
     el.querySelector('.wv-look').innerHTML = '<div class="wv-name">' + (nm.jp ? RB.ui.jhtml(nm.jp) : '') + '<span class="en">' + esc(nm.en) + '</span></div>' + lookHtml(l);
     const hi = RB.pad && RB.pad.kanjiPreferred ? RB.pad.kanjiPreferred() : ['I', 'A'].indexOf(s.learn.profile) >= 0;
@@ -186,8 +198,16 @@ RB.weave = (function () {
         '<span class="ic">' + I(wordIcon(w)) + '</span>' +
         '<span class="wv-wj">' + RB.ui.jhtml(hi && w.jpK ? w.jpK : w.jp) + '</span>' +
         '<span class="wv-we">' + esc(w.en) + '</span>' +
-        (FW().routine(s, T.pz, T.key, id) ? '<span class="wv-wr">Done here before</span>' : '') + '</button>';
+        (!T.pet && FW().routine(s, T.pz, T.key, id) ? '<span class="wv-wr">Done here before</span>' : '') + '</button>';
     }).join('');
+    if (T.pet) {
+      el.querySelector('[data-a=reset]').classList.add('hidden');
+      el.querySelector('[data-a=hint]').classList.add('hidden');
+      el.querySelector('.wv-hint').innerHTML = '';
+      if (had != null) { const b = el.querySelector('[data-t="' + panel.i + '"]'); if (b) b.focus({ preventScroll: true }); }
+      dock(); placeLabel();
+      return;
+    }
     const def = FW().get(T.pz), r = FW().peek(s, T.pz);
     const moved = !r.done && !r.virtual && JSON.stringify(r.state) !== JSON.stringify(def.init);
     el.querySelector('[data-a=reset]').classList.toggle('hidden', !moved || !!def.noReset);
@@ -213,6 +233,7 @@ RB.weave = (function () {
     el.classList.toggle('top', H - lowest < highest);
   }
   function renderHint(step) {
+    if (target() && target().pet) return;
     const s = S(), T = target(), def = FW().get(T.pz), box = panel.el.querySelector('.wv-hint');
     if (step) FW().hint(s, T.pz);
     const n = FW().hintLevel(s, T.pz);
@@ -269,7 +290,7 @@ RB.weave = (function () {
   async function choose(word) {
     const s = S(), T = target(), w = RB.content.words[word];
     if (!T || !w) return;
-    const direct = FW().routine(s, T.pz, T.key, word);
+    const direct = !T.pet && FW().routine(s, T.pz, T.key, word);
     let lang = null;
     if (!direct) {
       // the sheet steps aside for the writing (the frame stays on the target)
@@ -285,6 +306,15 @@ RB.weave = (function () {
     } else lang = { mode: 'routine', assisted: false, firstTry: true, mistakes: 0, routine: true };
     // the language step is over; now only the world answers
     close(true);
+    if (T.pet) {
+      // an animal's meeting place: the same state the ordinary interaction reaches (or neutral words)
+      const fam = RB.families && RB.families.ofResponse ? RB.families.ofResponse('w:' + word) : null;
+      const r = RB.pets.fieldWeave(s, T.pet, fam) || { say: [] };
+      try {
+        if (r.say.length && !auto()) await RB.script.runInline(r.say.map((l) => ({ who: 'narr', jp: l.jp, en: l.en })));
+      } finally { busy = false; RB.game.popMode('weave'); RB.input.clearHeld && RB.input.clearHeld(); }
+      return;
+    }
     const res = FW().weave(s, T.pz, T.key, word, lang);
     try { await present(res, T, {}); } finally { busy = false; RB.game.popMode('weave'); RB.input.clearHeld && RB.input.clearHeld(); }
   }
