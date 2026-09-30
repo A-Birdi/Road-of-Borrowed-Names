@@ -692,6 +692,97 @@ body.high-contrast .pv-box { background: #000; color: #fff; }
 .co-page h4 { margin: 0.9em 0 0.3em; display: flex; align-items: center; gap: 0.4em; }
 .co-page h4 > svg { width: 1.15em; height: 1.15em; flex: none; }
 
+/* ==== src/styles/35_cases.css ==== */
+/* Journey › Cases (src/ui/59_casebook.js) and Map › Known details
+ * (src/ui/61_known.js): evidence records, the turnable sketch, local
+ * annotations and pins. Shapes and words carry every state; colour only
+ * repeats them. */
+
+.cs-record h4 { display: flex; align-items: center; gap: 0.4em; margin: 1em 0 0.4em; font-size: 1.05em; }
+.cs-record h4 > svg { width: 1.15em; height: 1.15em; flex: none; color: var(--ink-2); }
+.cs-record h4 .count { margin-left: auto; font-size: 0.85em; color: var(--ink-3); }
+.cs-q { border-left: 3px solid var(--ink-3); padding: 0.2em 0.7em; margin: 0.4em 0 0.6em; }
+.cs-q .kind, .cs-recap .kind, .cs-ways .kind { font-size: 0.78em; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+.cs-recap { background: rgba(255,255,255,0.35); border: 1px dashed var(--paper-edge); padding: 0.3em 0.7em; margin: 0.6em 0; }
+.cs-recap p { margin: 0.2em 0; }
+.cs-recap .kind svg, .cs-ways .kind svg { width: 1em; height: 1em; vertical-align: -0.15em; }
+
+.cs-obs { border: 1px solid var(--rule); border-left: 4px solid var(--paper-edge); background: rgba(255,255,255,0.3); padding: 0.4em 0.7em 0.5em; margin: 0.5em 0; }
+.cs-obs.cmp { border-left-color: var(--ribbon); box-shadow: inset 0 0 0 1px var(--ribbon); }
+.cs-obs header { display: block; }
+.cs-obs h5 { margin: 0.1em 0 0.1em; font-size: 1em; }
+.cs-obs h5 .en { font-weight: 600; }
+.cs-kind { display: inline-block; font-size: 0.75em; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 700; color: var(--ink-2); border: 1px solid var(--ink-3); padding: 0 0.35em; }
+.cs-tag { font-size: 0.78em; color: var(--ink-3); font-style: italic; }
+.cs-src { font-size: 0.9em; color: var(--ink-2); }
+.cs-unsure { display: inline-flex; align-items: center; gap: 0.2em; font-style: italic; color: var(--warn-ink); }
+.cs-unsure svg { width: 1em; height: 1em; }
+.cs-orig { margin: 0.4em 0; padding: 0.2em 0 0.2em 0.7em; border-left: 2px solid var(--rule); }
+.cs-orig .en { font-size: 0.95em; color: var(--ink-2); }
+.cs-what { margin: 0.3em 0; }
+.cs-alt-l { font-weight: 600; color: var(--ink-2); }
+.cs-lang { margin: 0.3em 0; padding-left: 1.2em; font-size: 0.95em; }
+.cs-lang li { margin: 0.15em 0; }
+.cs-acts { display: flex; flex-wrap: wrap; gap: 6px; margin: 0.4em 0 0.2em; }
+.pbtn.small { min-height: 36px; padding: 0 0.6em; font-size: 0.92em; }
+.pbtn[aria-pressed="true"] { background: var(--paper-2); border-color: var(--ribbon-deep); box-shadow: inset 0 -3px 0 var(--ribbon); }
+
+.cs-fig { margin: 0.4em 0; }
+.cs-fig svg { display: block; width: 100%; max-width: 360px; height: auto; background: #f7f0de; border: 1px solid var(--paper-edge); }
+.cs-fig figcaption { font-size: 0.9em; color: var(--ink-2); margin-top: 0.2em; }
+.cs-pair { display: grid; grid-template-columns: 1fr; gap: 8px; }
+@media (min-width: 900px) { .cs-pair { grid-template-columns: 1fr 1fr; } }
+.cs-grid { display: grid; gap: 8px; grid-template-columns: 1fr; }
+@media (min-width: 900px) { .cs-grid.n2 { grid-template-columns: 1fr 1fr; } .cs-grid.n3 { grid-template-columns: 1fr 1fr 1fr; } }
+.cs-grid .cs-obs { margin: 0; }
+.cs-compare h4 .pbtn { margin-left: auto; }
+
+.cs-sheet { border: 1px solid var(--paper-edge); background: rgba(255,255,255,0.25); padding: 0.3em 0.7em 0.6em; margin: 0.8em 0; }
+.cs-ways { margin-top: 0.4em; }
+
+.cs-hyps { border: 0; padding: 0; margin: 0.3em 0; }
+.cs-hyps legend { font-weight: 600; padding: 0; margin-bottom: 0.2em; }
+.cs-hyp { display: flex; align-items: flex-start; gap: 0.5em; min-height: var(--tap); padding: 0.3em 0.2em; border-bottom: 1px dotted var(--rule); cursor: pointer; }
+.cs-hyp input { width: 1.2em; height: 1.2em; margin-top: 0.25em; flex: none; accent-color: var(--ribbon-deep); }
+.cs-hyp input:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.cs-hyp .en { display: block; }
+.cs-hyp.tried .en { text-decoration: line-through; text-decoration-color: var(--ink-3); }
+.cs-tried { display: flex; align-items: center; gap: 0.3em; font-size: 0.9em; color: var(--warn-ink); }
+.cs-tried svg { width: 1em; height: 1em; flex: none; }
+.cs-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3em 0.8em; margin: 0.5em 0; }
+.cs-nav .muted { flex: 1 1 14em; }
+.cs-result { border-left: 4px solid var(--ok-ink); padding: 0.2em 0.7em; margin: 0.4em 0; background: rgba(255,255,255,0.35); }
+.cs-remember svg { display: block; width: 100%; max-width: 360px; height: auto; }
+
+.cs-note textarea { width: 100%; box-sizing: border-box; min-height: 4.5em; font: inherit; color: var(--ink); background: #fbf6e9; border: 1px solid var(--paper-edge); padding: 0.4em; resize: vertical; }
+.cs-note textarea:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+.cs-note-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5em; justify-content: space-between; margin-top: 0.3em; }
+.cs-count { font-size: 0.9em; color: var(--ink-3); }
+.cs-count.over { color: var(--danger-ink); font-weight: 600; }
+.cs-hints { list-style: none; margin: 0.2em 0; padding: 0; }
+.cs-hints li { padding: 0.35em 0 0.45em; border-bottom: 1px dotted var(--rule); }
+.cs-hints li:focus { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.cs-hints .kind { display: block; font-size: 0.78em; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+
+/* Map › Known details */
+.kd-map svg { display: block; width: 100%; height: auto; max-height: 60vh; background: #efe3c6; border: 1px solid var(--paper-edge); touch-action: manipulation; }
+.kd-map svg:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.kd-list { list-style: none; margin: 0.3em 0; padding: 0; }
+.kd-list li { display: grid; grid-template-columns: 2.1em 1fr; gap: 0.2em 0.5em; align-items: start; padding: 0.4em 0; border-bottom: 1px dotted var(--rule); }
+.kd-list .kd-sym { width: 1.9em; height: 1.9em; }
+.kd-list .kd-sym svg { width: 100%; height: 100%; }
+.kd-list .t { font-weight: 600; }
+.kd-list .kd-state { font-size: 0.78em; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 700; color: var(--ink-2); }
+.kd-list .cs-acts { grid-column: 2; }
+.kd-pinform { border: 1px solid var(--paper-edge); background: rgba(255,255,255,0.35); padding: 0.4em 0.7em; margin: 0.5em 0; }
+.kd-pinform fieldset { border: 0; padding: 0; margin: 0.2em 0; display: flex; flex-wrap: wrap; gap: 0.2em 0.9em; }
+.kd-pinform legend { font-weight: 600; padding: 0; }
+.kd-pinform label.kd-type { display: inline-flex; align-items: center; gap: 0.35em; min-height: var(--tap); cursor: pointer; }
+.kd-pinform textarea { width: 100%; box-sizing: border-box; font: inherit; background: #fbf6e9; border: 1px solid var(--paper-edge); padding: 0.4em; min-height: 3.5em; }
+.kd-limit { font-size: 0.9em; color: var(--ink-3); }
+.kd-limit.full { color: var(--danger-ink); font-weight: 600; }
+.kd-maps { display: flex; flex-wrap: wrap; gap: 6px; margin: 0.3em 0 0.6em; }
+
 /* ==== src/styles/40_title.css ==== */
 /* Title screen, travel ledger (six save slots) and About sheet.
  * The scene is drawn on the canvas; this layer holds the title, the folio
@@ -25828,6 +25919,12 @@ RB.world = (function () {
  * - Authored per-stage fields override the derivation: `at` ({map, npc} |
  *   {map, prop, x, y} | {map, x, y} | {map}, or a list of those, or 'open')
  *   and `hint` ({jp, en}, shown as the second nudge).
+ * - Investigation stages (cases, addendum §16.4) may carry `mark`:
+ *   'now' (the default: marked as above), 'afterHypothesis' or 'onRequest'
+ *   (never derived in live play; `markAt(st)` returns the place the player
+ *   chose, or one a requested hint disclosed, as an `at`, else nothing is
+ *   marked and the nudge says the step is theirs to work out). The static
+ *   listing still derives them, so tests can see where they lead.
  *
  * The same interpreter, run with every condition not about this quest
  * treated as unknown (both ways possible), gives the static per-stage
@@ -26324,6 +26421,15 @@ RB.questGuide = (function () {
     if (!d || !q || q.done) return { stage: q ? q.stage : -1, targets: [], how: q && q.done ? 'done' : 'none' };
     const k = q.stage;
     const stage = d.stages && d.stages[Math.min(k, d.stages.length - 1)];
+    // An investigation stage whose next step is the answer itself (addendum
+    // §16.4): `mark: 'afterHypothesis' | 'onRequest'` keeps the derived place
+    // unmarked; `markAt(st)` returns only what the player has chosen or asked
+    // to be shown (an `at`), and that is what the markers point to.
+    if (stage && stage.mark && stage.mark !== 'now' && !opts.static && !opts.derive) {
+      const at = typeof stage.markAt === 'function' ? stage.markAt(st) : null;
+      if (!at) return { stage: k, targets: [], how: 'concealed', mark: stage.mark };
+      return Object.assign(authored(at, st, k), { mark: stage.mark });
+    }
     if (stage && stage.at && !opts.derive) return authored(stage.at, st, k);
     const ctx = { Q: qid, k, static: !!opts.static, memo: new Map() };
     const base = cloneSt(st);
@@ -26476,7 +26582,9 @@ RB.questGuide = (function () {
     let f = 0;
     for (const k in s.flags) if (s.flags[k]) f++;
     return (s.map || '') + '|' + JSON.stringify(s.quests) + '|' + f + '|' + JSON.stringify(s.inv) + '|' + JSON.stringify(s.vars) + '|' + (s.comp || '') + (s.provisional || '') +
-      '|' + Object.keys(s.seen).length + '|' + (s.words || []).length + '|' + s.chapter + '|' + (s.learn && s.learn.profile);
+      '|' + Object.keys(s.seen).length + '|' + (s.words || []).length + '|' + s.chapter + '|' + (s.learn && s.learn.profile) +
+      // a chosen hypothesis or a requested hint can disclose a concealed step's place
+      (s.discovery ? '|' + JSON.stringify(s.discovery.cases) + JSON.stringify(s.discovery.hints) : '');
   }
   function targets(qid, s) {
     s = s || RB.game.s;
@@ -26670,6 +26778,8 @@ RB.questGuide = (function () {
     });
   }
   const WAIT = { jp: 'いま は まだ {先|さき} に {進|すす}めない 。 {旅|たび} を {続|つづ}けよう 。', en: 'You can’t take this further just yet. Carry on with your journey.' };
+  // a concealed investigation step: nothing is pointed at until you choose or ask
+  const THINK = { jp: 'ここ は {自分|じぶん} で {考|かんが}える ところ 。 {旅路|たびじ} の {記録|きろく} に 、 {見|み}つけた こと が {残|のこ}って いる 。', en: 'This step is yours to work out. The record in your Journey keeps what you have found, and reasoning help is there if you want it.' };
   // The nudges for a quest, in order: [ [lines of nudge 1], [lines of nudge 2] ].
   // 1: where and who; 2: the authored hint (if any), then what to do there and which way.
   function nudges(qid, s) {
@@ -26689,7 +26799,8 @@ RB.questGuide = (function () {
       out.push([people * 2 >= r.many.length
         ? { jp: pl.jp + ' で いろいろ な {人|ひと} と {話|はな}そう 。', en: 'Talk to different people in ' + pl.en + '.' }
         : { jp: pl.jp + ' の あちこち を {見|み}て みよう 。', en: 'Look around all over ' + pl.en + '.' }]);
-    } else if (!list.length) out.push([WAIT]);
+    } else if (r.how === 'concealed') out.push([THINK]);
+    else if (!list.length) out.push([WAIT]);
     else out.push(list.map(whereLine));
     const second = [];
     if (stage && stage.hint) second.push({ jp: stage.hint.jp, en: stage.hint.en });
@@ -26702,6 +26813,396 @@ RB.questGuide = (function () {
     MAX_TARGETS, index, reset, analyse, passing, reachable, firstHop, targets, followed, chosen, follow, unfollow, mode, placeOf, spotOf, wayFrom,
     nudges, nextLines, nameOf, placeName, compass, _needsOf: needsOf, _negDnf: negDnf, _parseTerm: parseTerm,
   };
+})();
+
+
+/* ==== src/engine/59_cases.js ==== */
+/* Cases: permanent evidence records for the deduction cases of the Living
+ * Company and Discovery addendum (§15, §16; docs/addendum/cases.md).
+ *
+ * Content (src/content/cases/) defines
+ *   RB.content.cases[id] = { id, quest, region, keepsake, title, question,
+ *     clues: [clue ids], groups: { name: [clue ids] } (equivalent evidence),
+ *     hypotheses: [{ id, label, from: [clue ids] (when it can be chosen),
+ *       place: { map, x, y } | { map, npc } (where it points), placeBy: [clue ids],
+ *       correct?: true }],
+ *     sufficient: [[clue id | group name, …], …] (evidence that establishes it),
+ *     hints: [{ level, kind: 'nudge'|'compare'|'step'|'solution', spoiler, jp, en,
+ *       discloses?: hypothesis id (navigation it may show) }],
+ *     method?(s, rec) (how it was resolved: a stable id for reactions),
+ *     acknowledge?(s, rec) (lines naming only what was actually observed),
+ *     talk? (a scene for Company's "Discuss a discovered case") }
+ *   RB.content.clues[id] = { case, title, kind: 'document'|'object'|'speaker'|'place',
+ *     source: { en, jp?, who?, map }, jp, en, lang: [{ w, en }], sure: true|false,
+ *     obs: { en } (what was observed, in plain words), diagram?: id, alt?: { en },
+ *     fromSeen?: scene id (an older save that saw this scene has observed it) }
+ *
+ * State (campaign-local, docs/ADDENDUM_CONTRACTS.md §1):
+ *   s.discovery.cases[id] = { stage: 'open'|'done', t, hypothesis, support: [],
+ *     note, tried: { hid: t }, done, method, evidence: [], sheet? }
+ *   s.discovery.clues[cid] = { t, map, case (null until the case is known), bm? }
+ *   s.discovery.hints['case:' + id] = reasoning-help level asked for (0…n)
+ *   s.discovery.hints['clue:' + cid] = 1 once language help was opened
+ * Observed and Concluded stay apart: clues are what was seen or heard (with
+ * who said it and whether they were sure); the hypothesis is the player's own
+ * choice from a bounded authored set; only the world (a delivery, a match)
+ * confirms it. Nothing is auto-connected and nothing is graded from free text.
+ *
+ * Conditions: case.<id> (known), case.<id>=open|done, case.<id>.hyp=<hid>,
+ * case.<id>.tried=<hid>, case.<id>.hint>=N, clue.<cid> (observed).
+ * Scene hooks (!hook …): case_clue, case_open, case_page, case_rule,
+ * case_resolve, case_react, case_ack, case_bookmark.
+ * Company (worker C1): RB.cases.discussable(s), RB.cases.topics(s). */
+var RB = (globalThis.RB = globalThis.RB || {});
+RB.content.cases = RB.content.cases || {};
+RB.content.clues = RB.content.clues || {};
+
+RB.cases = (function () {
+  'use strict';
+  const NOTE_MAX = 200;   // grapheme clusters in a personal note
+  const COMPARE_MAX = 3;  // observations side by side
+  const SUPPORT_MAX = 4;  // supporting observations marked for a hypothesis
+
+  function D(s) {
+    if (!s.discovery || typeof s.discovery !== 'object') s.discovery = RB.state.newCampaign().discovery;
+    const d = s.discovery;
+    for (const k of ['cases', 'clues', 'hints', 'known', 'pins']) if (!d[k] || typeof d[k] !== 'object' || Array.isArray(d[k])) d[k] = {};
+    return d;
+  }
+  const def = (id) => RB.content.cases[id] || null;
+  const clueDef = (id) => RB.content.clues[id] || null;
+  const now = () => Date.now();
+
+  // ---- plain text (notes) ----------------------------------------------------------------
+  let seg = null;
+  function graphemes(str) {
+    str = String(str == null ? '' : str);
+    try {
+      if (!seg && typeof Intl !== 'undefined' && Intl.Segmenter) seg = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
+      if (seg) return Array.from(seg.segment(str), (x) => x.segment);
+    } catch (e) { /* older engines: code points */ }
+    return Array.from(str);
+  }
+  // Player-authored text is plain text: control characters removed (a line
+  // break becomes a space), trimmed, at most `max` grapheme clusters. Never
+  // markup: every renderer escapes it.
+  function clean(text, max) {
+    const flat = String(text == null ? '' : text).replace(/[\u0000-\u001f\u007f-\u009f\u2028\u2029]+/g, ' ').replace(/\s+/g, ' ').trim();
+    const g = graphemes(flat);
+    const m = max == null ? NOTE_MAX : max;
+    return { text: g.slice(0, m).join(''), length: Math.min(g.length, m), cut: g.length > m };
+  }
+
+  // ---- records -------------------------------------------------------------------------------
+  const rec = (s, id) => D(s).cases[id] || null;
+  const known = (s, id) => !!rec(s, id);
+  const solved = (s, id) => !!(rec(s, id) && rec(s, id).stage === 'done');
+  const observed = (s, cid) => !!D(s).clues[cid];
+  function fresh() { return { stage: 'open', t: now(), hypothesis: null, support: [], note: '', tried: {}, done: null, method: null, evidence: [] }; }
+  function norm(r) {
+    if (!r.support || !Array.isArray(r.support)) r.support = [];
+    if (!r.tried || typeof r.tried !== 'object') r.tried = {};
+    if (typeof r.note !== 'string') r.note = '';
+    if (!Array.isArray(r.evidence)) r.evidence = [];
+    if (r.stage !== 'done') r.stage = 'open';
+    if (r.hypothesis === undefined) r.hypothesis = null;
+    return r;
+  }
+
+  // Record that a clue was observed. Kept even before its case is known (and
+  // tied to the case when it is); observing again changes nothing.
+  function observe(s, cid) {
+    const c = clueDef(cid);
+    if (!c) return false;
+    const d = D(s);
+    if (d.clues[cid]) return 'again';
+    d.clues[cid] = { t: now(), map: s.map || null, case: known(s, c.case) ? c.case : null };
+    if (!known(s, c.case)) d.clues[cid].early = true;
+    if (c.known && RB.known) RB.known.note(s, c.known.map, c.known.id, c.known);
+    RB.bus.emit('case:clue', { id: cid, case: c.case });
+    return 'new';
+  }
+  // Recognise a case: its record starts, clues seen earlier are tied to it,
+  // and its Journey entry appears (the quest, if it has one).
+  function open(s, id) {
+    const cd = def(id);
+    if (!cd) return null;
+    const d = D(s);
+    if (d.cases[id]) return norm(d.cases[id]);
+    const r = d.cases[id] = fresh();
+    for (const cid in d.clues) { const c = clueDef(cid); if (c && c.case === id && !d.clues[cid].case) d.clues[cid].case = id; }
+    if (cd.quest && !s.quests[cd.quest]) RB.state.setQuest(s, cd.quest, 'start');
+    RB.bus.emit('case:open', { id });
+    return r;
+  }
+  function bookmark(s, cid, on) {
+    const x = D(s).clues[cid];
+    if (!x) return false;
+    if (on === false) delete x.bm; else x.bm = 1;
+    return true;
+  }
+
+  // ---- evidence ------------------------------------------------------------------------------
+  // the observed clues of a case, in the order the case lists them
+  function evidence(s, id) {
+    const cd = def(id);
+    if (!cd) return [];
+    return (cd.clues || []).filter((cid) => observed(s, cid));
+  }
+  // clues observed before their case was recognised and bookmarked (loose)
+  function loose(s) {
+    const d = D(s);
+    return Object.keys(d.clues).filter((cid) => { const c = clueDef(cid); return c && d.clues[cid].bm && !known(s, c.case); });
+  }
+  // a clue id or an equivalence group ("the current fixture": the counter or the bell)
+  function has(s, id, key) {
+    const cd = def(id);
+    const grp = cd && cd.groups && cd.groups[key];
+    return grp ? grp.some((cid) => observed(s, cid)) : observed(s, key);
+  }
+  // Does what was observed establish the answer? Any one authored sufficient set.
+  function sufficient(s, id) {
+    const cd = def(id);
+    return !!(cd && (cd.sufficient || []).some((set) => set.every((k) => has(s, id, k))));
+  }
+
+  // ---- hypotheses (the player's own, from a bounded authored set) ----------------------------------
+  function hypDef(id, hid) { const cd = def(id); return cd && (cd.hypotheses || []).find((h) => h.id === hid) || null; }
+  const reachable = (s, h) => !h.from || !h.from.length || h.from.some((cid) => observed(s, cid));
+  function hyps(s, id) {
+    const cd = def(id), r = rec(s, id);
+    if (!cd) return [];
+    return (cd.hypotheses || []).filter((h) => reachable(s, h) || (r && (r.hypothesis === h.id || r.tried[h.id]))).map((h) => ({
+      id: h.id, label: h.label, place: placeOf(s, h), chosen: !!(r && r.hypothesis === h.id), tried: !!(r && r.tried[h.id]), mismatch: r && r.tried[h.id] ? h.mismatch || null : null,
+    }));
+  }
+  function placeOf(s, h) {
+    if (!h.place) return null;
+    if (h.placeBy && h.placeBy.length && !h.placeBy.some((cid) => observed(s, cid))) return null; // a place you have not found yet
+    return h.place;
+  }
+  function choose(s, id, hid) {
+    const r = rec(s, id) || open(s, id);
+    if (!r || r.stage === 'done') return false;
+    if (hid == null) { r.hypothesis = null; changed(); return true; }
+    const h = hypDef(id, hid);
+    if (!h || !(reachable(s, h) || r.tried[hid])) return false;
+    r.hypothesis = hid;
+    changed();
+    RB.bus.emit('case:hypothesis', { id, hypothesis: hid });
+    return true;
+  }
+  function setSupport(s, id, list) {
+    const r = rec(s, id);
+    if (!r) return false;
+    const cd = def(id);
+    r.support = (list || []).filter((cid, i, a) => a.indexOf(cid) === i && (cd.clues || []).includes(cid) && observed(s, cid)).slice(0, SUPPORT_MAX);
+    return true;
+  }
+  function setNote(s, id, text) {
+    const r = rec(s, id);
+    if (!r) return null;
+    const c = clean(text, NOTE_MAX);
+    r.note = c.text;
+    return c;
+  }
+  // A wrong hypothesis tested in the world: kept as a fact ("tried, and
+  // why it did not fit"), never a penalty. The choice itself stays the player's.
+  function rule(s, id, hid) {
+    const r = rec(s, id) || open(s, id);
+    if (!r || !hypDef(id, hid)) return false;
+    if (!r.tried[hid]) r.tried[hid] = now();
+    changed();
+    return true;
+  }
+
+  // ---- help: language, navigation, reasoning -------------------------------------------------------
+  const hintKey = (id) => 'case:' + id;
+  function hintLevel(s, id) { return +D(s).hints[hintKey(id)] || 0; }
+  function hintsOf(id) { const cd = def(id); return (cd && cd.hints) || []; }
+  // Reasoning help, one step at a time; free, and remembered across saves.
+  function askHint(s, id) {
+    const n = hintLevel(s, id), max = hintsOf(id).length;
+    if (n >= max) return null;
+    D(s).hints[hintKey(id)] = n + 1;
+    changed();
+    return hintsOf(id)[n];
+  }
+  function langHelp(s, cid) { if (clueDef(cid)) D(s).hints['clue:' + cid] = 1; }
+  const langOpen = (s, cid) => !!D(s).hints['clue:' + cid];
+  // Where markers may point for a concealed step: the destination the player
+  // chose (once its place is known), or one a requested hint disclosed.
+  function markAt(s, id) {
+    const r = rec(s, id);
+    if (!r || r.stage === 'done') return null;
+    if (r.hypothesis) {
+      const h = hypDef(id, r.hypothesis);
+      const p = h && placeOf(s, h);
+      if (p) return p;
+    }
+    const lvl = hintLevel(s, id);
+    for (let i = Math.min(lvl, hintsOf(id).length) - 1; i >= 0; i--) {
+      const hn = hintsOf(id)[i];
+      if (hn && hn.discloses) { const h = hypDef(id, hn.discloses); if (h && h.place) return h.place; }
+    }
+    return null;
+  }
+
+  // ---- resolution ------------------------------------------------------------------------------------
+  function methodOf(s, id) {
+    const cd = def(id), r = rec(s, id);
+    if (cd && cd.method) return cd.method(s, r, api);
+    if (hintLevel(s, id) >= hintsOf(id).length && hintsOf(id).length) return 'helped';
+    return sufficient(s, id) ? 'reasoned' : 'early';
+  }
+  // Commit the result once (unique id case:<id>:done): the record, the
+  // evidence it rested on (only what was observed), the keepsake, the quest.
+  // Presentation (dialogue, reactions) comes after and never writes state.
+  function resolve(s, id, how) {
+    const cd = def(id);
+    if (!cd) return false;
+    const r = rec(s, id) || open(s, id);
+    if (r.stage === 'done') return false;
+    const first = RB.state.once(s, 'case:' + id + ':done');
+    r.method = how || methodOf(s, id);
+    r.stage = 'done';
+    r.done = now();
+    r.evidence = evidence(s, id);
+    const right = (cd.hypotheses || []).find((h) => h.correct);
+    if (right) r.hypothesis = right.id;
+    if (cd.keepsake) RB.discovery.keepsake(s, cd.keepsake, { kind: 'case', id });
+    if (cd.quest) RB.state.setQuest(s, cd.quest, 'done');
+    changed();
+    if (first) RB.bus.emit('discovery:resolved', { kind: 'case', id, region: cd.region || null, method: r.method, id2: 'case:' + id + ':done' });
+    return first;
+  }
+  // the companion's reaction to this resolution (chosen once, stable on reload)
+  function reaction(s, id) {
+    const r = rec(s, id);
+    if (!r || r.stage !== 'done' || !RB.company) return null;
+    return RB.company.react(s, { id: 'case:' + id + ':done', event: 'case:' + id, facts: { method: r.method } });
+  }
+
+  // ---- words for the record ------------------------------------------------------------------------------
+  const placeName = (map) => { const m = RB.content.maps[map]; return m && m.name ? m.name : null; };
+  // A factual recap: what is being investigated, what has been observed and
+  // where, the chosen hypothesis. The answer only if it was found.
+  function recap(s, id) {
+    const cd = def(id), r = rec(s, id);
+    if (!cd || !r) return null;
+    const ev = evidence(s, id);
+    const places = [];
+    for (const cid of ev) { const c = clueDef(cid); const pn = placeName(c.source && c.source.map); if (pn && !places.some((p) => p.en === pn.en)) places.push(pn); }
+    const h = r.hypothesis ? hypDef(id, r.hypothesis) : null;
+    return {
+      question: cd.question, observed: ev.length, places, hypothesis: h ? h.label : null,
+      tried: Object.keys(r.tried).map((hid) => hypDef(id, hid)).filter(Boolean).map((x) => x.label),
+      done: r.stage === 'done', result: r.stage === 'done' ? cd.result || null : null,
+    };
+  }
+  // Company (worker C1): is there a case to talk about, and which
+  function discussable(s) { return !!s && Object.keys(D(s).cases).some((id) => def(id)); }
+  function topics(s) {
+    if (!s) return [];
+    return Object.keys(D(s).cases).filter((id) => def(id)).map((id) => {
+      const cd = def(id), r = rec(s, id);
+      return { id: 'case:' + id, case: id, title: cd.title, state: r.stage, scene: cd.talk || null, recap: recap(s, id), open: () => show(id) };
+    });
+  }
+  // open the folio at this case's record (from an Inspect view or Company)
+  function show(id) {
+    if (RB.ui && RB.ui.casebook) RB.ui.casebook.select(id);
+    if (RB.ui && RB.ui.menu) {
+      if (RB.ui.menu.isOpen()) RB.ui.menu.open('cases');
+      else RB.ui.menu.open('cases');
+    }
+  }
+  function changed() { if (RB.questMarks) RB.questMarks.refresh(); }
+
+  // ---- older saves ------------------------------------------------------------------------------------------
+  // Only what the save itself records: a clue whose scene the save has seen,
+  // a case whose quest was started. Unknown ids are kept, never deleted.
+  function migrate(st) {
+    const d = D(st);
+    for (const id in d.cases) if (d.cases[id] && typeof d.cases[id] === 'object') norm(d.cases[id]); else delete d.cases[id];
+    for (const cid in RB.content.clues) {
+      const c = RB.content.clues[cid];
+      if (c.fromSeen && st.seen && st.seen[c.fromSeen] && !d.clues[cid]) d.clues[cid] = { t: 0, map: null, case: d.cases[c.case] ? c.case : null, legacy: true };
+    }
+    for (const id in RB.content.cases) {
+      const cd = RB.content.cases[id];
+      const q = cd.quest && st.quests && st.quests[cd.quest];
+      if (q && !d.cases[id]) { d.cases[id] = fresh(); d.cases[id].t = q.t || 0; }
+      const r = d.cases[id];
+      if (r && r.stage === 'done' && cd.quest && st.quests && !(st.quests[cd.quest] && st.quests[cd.quest].done)) RB.state.setQuest(st, cd.quest, 'done');
+      if (r) for (const cid of cd.clues || []) if (d.clues[cid] && !d.clues[cid].case) d.clues[cid].case = id;
+    }
+  }
+  // (registered by src/ui/59_casebook.js: RB.save is defined after this file)
+
+  // ---- conditions ----------------------------------------------------------------------------------------------
+  RB.state.addTerm('case', (s, rest, op, val, num, cmp) => {
+    const parts = rest.split('.');
+    const r = s.discovery && s.discovery.cases && s.discovery.cases[parts[0]];
+    const sub = parts[1];
+    if (!sub) return op ? (r ? cmp(val === 'known' ? 'known' : r.stage, op, val === 'known' ? 'known' : val) : cmp('none', op, val)) : !!r;
+    if (!r) return op === '!=';
+    if (sub === 'hyp') return cmp(r.hypothesis || 'none', op || '=', val);
+    if (sub === 'tried') return op ? (op === '!=' ? !r.tried[val] : !!r.tried[val]) : Object.keys(r.tried).length > 0;
+    if (sub === 'hint') return cmp(+((s.discovery.hints || {})['case:' + parts[0]] || 0), op || '>=', num(val));
+    return false;
+  });
+  RB.state.addTerm('clue', (s, rest) => !!(s.discovery && s.discovery.clues && s.discovery.clues[rest]));
+
+  // ---- scene hooks ----------------------------------------------------------------------------------------------
+  RB.hooks = RB.hooks || {};
+  const S = () => RB.game.s;
+  // !hook case_clue <clue id>: observed (a note on the page when its case is known)
+  RB.hooks.case_clue = async (args) => {
+    const s = S(), cid = args[0], c = clueDef(cid);
+    const res = observe(s, cid);
+    if (res === 'new' && c && known(s, c.case) && RB.ui && RB.ui.toast && !args.includes('quiet')) {
+      await RB.ui.toast({ kind: 'note', jp: '{記録|きろく} に {書|か}き{加|くわ}えた', en: 'Added to your case record: ' + (c.title ? c.title.en : '') });
+    }
+  };
+  // !hook case_open <id>
+  RB.hooks.case_open = async (args) => {
+    const s = S(), id = args[0], cd = def(id);
+    if (!cd || known(s, id)) return;
+    open(s, id);
+    if (RB.ui && RB.ui.toast) await RB.ui.toast({ kind: 'quest_new', jp: cd.title.jp, en: cd.title.en + ' (Journey › Cases)' });
+  };
+  // !hook case_page <id>: the folio opens at the record (the last command of an Inspect scene)
+  RB.hooks.case_page = async (args) => { if (RB.ui && RB.ui.dialogue) RB.ui.dialogue.hide(); show(args[0]); };
+  // !hook case_rule <id> <hypothesis>: tested in the world, and it did not fit
+  RB.hooks.case_rule = async (args) => { rule(S(), args[0], args[1]); };
+  // !hook case_bookmark <clue id>
+  RB.hooks.case_bookmark = async (args) => { bookmark(S(), args[0], true); };
+  // !hook case_resolve <id> [method]: var._res = 1 the first time
+  RB.hooks.case_resolve = async (args) => { const s = S(); s.vars._res = resolve(s, args[0], args[1] || null) ? 1 : 0; };
+  // !hook case_ack <id>: the acknowledgement names only what was actually observed
+  RB.hooks.case_ack = async (args) => {
+    const s = S(), cd = def(args[0]);
+    if (!cd || !cd.acknowledge) return;
+    for (const l of cd.acknowledge(s, rec(s, args[0]), api) || []) await RB.ui.dialogue.say({ who: l.who === 'comp' ? (s.comp || s.provisional || 'narr') : l.who, expr: l.expr || null, jp: l.jp, en: l.en, sceneId: 'case:' + args[0] });
+  };
+  // !hook case_react <id>: the companion's reaction (the Company's say() when it exists)
+  RB.hooks.case_react = async (args) => {
+    const s = S(), id = args[0], r = rec(s, id);
+    if (!r || r.stage !== 'done' || !(s.comp || s.provisional)) return;
+    const ev = { id: 'case:' + id + ':done', event: 'case:' + id, facts: { method: r.method } };
+    if (RB.company && RB.company.say) { await RB.company.say(s, ev); return; }
+    const pick = reaction(s, id);
+    if (!pick) return;
+    for (const l of pick.lines) await RB.ui.dialogue.say({ who: l.who || s.comp || s.provisional, expr: l.expr || null, jp: l.jp, en: l.en, sceneId: 'case:' + id });
+  };
+
+  const api = {
+    NOTE_MAX, COMPARE_MAX, SUPPORT_MAX, def, clueDef, rec, known, solved, observed, observe, open, bookmark, evidence, loose, has, sufficient,
+    hyps, hypDef, placeOf, choose, setSupport, setNote, rule, hintLevel, hintsOf, askHint, langHelp, langOpen, markAt, methodOf, resolve, reaction,
+    recap, discussable, topics, show, graphemes, clean, migrate, _D: D,
+  };
+  return api;
 })();
 
 
@@ -34263,6 +34764,337 @@ RB.ui.settings = (function () {
   }
 
   return { open, close, addRows, isOpen: () => !!lay };
+})();
+
+
+/* ==== src/ui/59_casebook.js ==== */
+/* Journey › Cases: the permanent case records (addendum §16; the rules are
+ * in src/engine/59_cases.js, the cases themselves in src/content/cases/).
+ *
+ * A record shows the question; a factual "where you left off"; what was
+ * Observed (each with who or what it came from, where, whether the speaker was
+ * sure, the original Japanese with its reading, the translation and word
+ * notes on request, and any picture with a text equivalent); what the player
+ * Concluded (a hypothesis chosen from a bounded set, optional supporting
+ * observations, tested wrong guesses with why they did not fit); a personal
+ * note (plain text, at most 200 characters); two or three observations side
+ * by side; and help kept apart: language help (never the answer), navigation
+ * help (only to a place the player chose or a hint disclosed) and reasoning
+ * help one step at a time, labelled by how much it gives away. Asking is free.
+ *
+ * A case may add a turnable translucent sheet (Case B): Turn over, Compare,
+ * Reset and the ways to see its pressed mark, all as ordinary buttons.
+ * Everything the player typed is escaped plain text. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.ui.casebook = (function () {
+  'use strict';
+  const esc = RB.util.esc;
+  const I = (n) => RB.ui.folio.icon(n);
+  const j = (t) => (t ? RB.ui.jhtml(t) : '');
+  const K = () => RB.cases;
+  const V = { sel: null, compare: {}, lang: {}, warn: {}, draft: {}, status: '', focus: null };
+  function select(id) { V.sel = id; }
+
+  const KIND = { document: 'Written', object: 'Seen', speaker: 'Heard', place: 'Place', view: 'View' };
+  const HINT = {
+    nudge: 'A nudge — gives nothing away',
+    compare: 'Something to compare — a small spoiler',
+    step: 'A concrete next step — a clear pointer',
+    solution: 'The answer — a full spoiler',
+  };
+  const placeName = (map) => { const m = RB.content.maps[map]; return m && m.name ? m.name.en : ''; };
+  const art = (id) => (RB.content.caseArt && RB.content.caseArt[id]) || null;
+
+  // ---- pieces --------------------------------------------------------------------------------
+  function picture(s, c) {
+    const f = c.diagram && art(c.diagram);
+    if (!f) return '';
+    const p = f(s, c);
+    return '<figure class="cs-fig">' + p.svg + '<figcaption><span class="cs-alt-l">Picture:</span> ' + esc(p.text.en) + '</figcaption></figure>';
+  }
+  function source(c, x) {
+    const pn = placeName((c.source && c.source.map) || (x && x.map));
+    return '<div class="cs-src">' + (c.source ? esc(c.source.en) : '') + (pn ? ' <span class="muted">· ' + esc(pn) + '</span>' : '') +
+      (c.sure === false ? ' <span class="cs-unsure">' + I('help') + 'The speaker wasn’t sure</span>' : '') + '</div>';
+  }
+  function obsCard(s, id, cid, o) {
+    const c = K().clueDef(cid), x = K()._D(s).clues[cid] || {};
+    const r = K().rec(s, id);
+    const cmp = !!(V.compare[id] && V.compare[id].includes(cid));
+    const sup = !!(r && r.support.includes(cid));
+    const lang = V.lang[cid];
+    let h = '<article class="cs-obs' + (cmp ? ' cmp' : '') + '" data-cid="' + esc(cid) + '"><header><span class="cs-kind">' + esc(KIND[c.kind] || 'Noted') + '</span>' +
+      (x.early ? ' <span class="cs-tag">noticed before you knew it mattered</span>' : '') + (x.legacy ? ' <span class="cs-tag">from an earlier visit</span>' : '') +
+      '<h5>' + (c.title.jp ? j(c.title.jp) + ' ' : '') + '<span class="en">' + esc(c.title.en) + '</span></h5></header>' + source(c, x);
+    if (c.jp) h += '<blockquote class="cs-orig">' + j(c.jp) + '<div class="en">' + esc(RB.script.enVars(c.en || '')) + '</div></blockquote>';
+    if (c.obs) h += '<p class="cs-what"><span class="cs-alt-l">What you saw:</span> ' + esc(c.obs.en) + '</p>';
+    h += picture(s, c);
+    if (lang && c.lang && c.lang.length) h += '<ul class="cs-lang" aria-label="Language help">' + c.lang.map((l) => '<li>' + j(l.w) + ' <span class="en">— ' + esc(l.en) + '</span></li>').join('') + '</ul>';
+    if (!o || !o.bare) {
+      h += '<div class="cs-acts">' +
+        '<button class="pbtn small" data-a="cmp" data-cid="' + esc(cid) + '" aria-pressed="' + cmp + '">' + I('copy') + '<span>Compare</span></button>' +
+        (r && r.hypothesis && r.stage !== 'done' ? '<button class="pbtn small" data-a="sup" data-cid="' + esc(cid) + '" aria-pressed="' + sup + '">' + I('done') + '<span>Supports my hypothesis</span></button>' : '') +
+        (c.lang && c.lang.length ? '<button class="pbtn small" data-a="lang" data-cid="' + esc(cid) + '" aria-pressed="' + !!lang + '">' + I('bulb') + '<span>Language help</span></button>' : '') +
+        '</div>';
+    }
+    return h + '</article>';
+  }
+  function recapBlock(s, id) {
+    const R = K().recap(s, id);
+    if (!R) return '';
+    const bits = [];
+    bits.push(R.observed ? 'You have ' + R.observed + ' observation' + (R.observed > 1 ? 's' : '') + (R.places.length ? ', from ' + R.places.map((p) => p.en).join(', ') : '') + '.' : 'Nothing observed yet.');
+    if (R.tried.length) bits.push('Tried and did not fit: ' + R.tried.map((l) => l.en).join('; ') + '.');
+    bits.push(R.hypothesis ? 'Your current hypothesis: ' + R.hypothesis.en + '.' : 'You have not chosen a hypothesis.');
+    return '<div class="cs-recap" role="note"><div class="kind">' + I('history') + ' Where you left off</div><p>' + esc(bits.join(' ')) + '</p></div>';
+  }
+
+  // ---- the sheet (a case with cd.sheet: Turn over / Compare / Reset) -----------------------------------
+  function sheetOf(s, id) {
+    const r = K().rec(s, id), cd = K().def(id);
+    if (!r.sheet || typeof r.sheet !== 'object') r.sheet = { side: cd.sheet.start, seen: {} };
+    if (r.sheet.side !== 'front' && r.sheet.side !== 'back') r.sheet.side = cd.sheet.start;
+    if (!r.sheet.seen || typeof r.sheet.seen !== 'object') r.sheet.seen = {};
+    return r.sheet;
+  }
+  function sheetBlock(s, id) {
+    const cd = K().def(id), sh = cd.sheet, r = K().rec(s, id);
+    const st = sheetOf(s, id);
+    const shown = sh.revealed(s);
+    const d = sh.draw(s, st.side, shown);
+    const views = K().hyps(s, id);
+    const cur = r.hypothesis && views.find((v) => v.id === r.hypothesis);
+    let h = '<section class="cs-sheet" aria-labelledby="cs-sheet-h"><h4 id="cs-sheet-h">' + I('scroll') + ' ' + esc(sh.name.en) + '</h4>' +
+      '<p class="muted small">' + esc(st.side === sh.start ? sh.startText.en : sh.turnedText.en) + '</p>' +
+      '<div class="cs-pair"><figure class="cs-fig sheet">' + d.svg + '<figcaption><span class="cs-alt-l">As you hold it:</span> ' + esc(d.text.en) + '</figcaption></figure>';
+    if (V.compare[id + ':view'] && cur) {
+      const vc = K().clueDef(sh.viewOf(cur.id));
+      const vp = vc && art(vc.diagram) ? art(vc.diagram)(s, vc) : null;
+      if (vp) h += '<figure class="cs-fig view">' + vp.svg + '<figcaption><span class="cs-alt-l">' + esc(vc.title.en) + ':</span> ' + esc(vp.text.en) + '</figcaption></figure>';
+    }
+    h += '</div><div class="cs-acts" role="group" aria-label="The sketch">' +
+      '<button class="pbtn" data-a="turn">' + I('next') + '<span>Turn over</span></button>' +
+      '<button class="pbtn" data-a="cmpview" aria-pressed="' + !!V.compare[id + ':view'] + '"' + (views.length ? '' : ' disabled') + '>' + I('copy') + '<span>Compare</span></button>' +
+      '<button class="pbtn" data-a="reset">' + I('back') + '<span>Reset</span></button></div>';
+    if (!views.length) h += '<p class="muted small">Compare needs a view to compare with: look out from somewhere and it will be kept here.</p>';
+    else if (!cur) h += '<p class="muted small">Choose a view below to compare the sketch with.</p>';
+    // the ways to see the pressed mark (they all show the same thing)
+    const ways = sh.reveals.filter((w) => !w.if || RB.state.test(s, w.if));
+    h += '<div class="cs-ways"><div class="kind">' + I('look') + ' Look closer</div><div class="cs-acts">' + ways.map((w) =>
+      '<button class="pbtn small" data-a="reveal" data-way="' + esc(w.id) + '" aria-pressed="' + !!st.seen[w.id] + '">' + esc(w.label.en) + '</button>').join('') + '</div>' +
+      (shown ? '' : '<p class="muted small">' + esc(sh.revealHint.en) + '</p>') + '</div>';
+    if (r.stage !== 'done') {
+      h += '<div class="cs-acts"><button class="pbtn primary" data-a="confirm"' + (cur ? '' : ' disabled') + '>' + I('done') + '<span>' + esc(sh.confirmLabel.en) + '</span></button></div>';
+      if (V.status && V.status.id === id && V.status.kind === 'sheet') h += '<p class="note-slip warn" role="status">' + esc(V.status.en) + '</p>';
+    }
+    return h + '</section>';
+  }
+
+  // ---- Concluded -----------------------------------------------------------------------------------------
+  function concluded(s, id) {
+    const cd = K().def(id), r = K().rec(s, id);
+    let h = '<section class="cs-concl" aria-labelledby="cs-concl-h"><h4 id="cs-concl-h">' + I('done') + ' Concluded</h4>';
+    if (r.stage === 'done') {
+      const ev = r.evidence.map((cid) => K().clueDef(cid)).filter(Boolean);
+      h += '<div class="cs-result">' + (cd.result ? j(cd.result.jp) + '<div class="en">' + esc(cd.result.en) + '</div>' : '') + '</div>' +
+        '<p><b>It rested on:</b> ' + esc(ev.length ? ev.map((c) => c.title.en).join('; ') : 'your own recognition, before any record was kept') + '.</p>' +
+        (cd.methods && cd.methods[r.method] ? '<p class="muted">' + esc(cd.methods[r.method].en) + '</p>' : '') +
+        (cd.keepsake ? '<p><button class="pbtn" data-a="keepsake">' + I('keepsake') + '<span>See the keepsake</span></button></p>' : '');
+      if (cd.remembered) h += '<div class="cs-remember">' + cd.remembered(s).svg + '<p class="muted small">' + esc(cd.remembered(s).text.en) + '</p></div>';
+      return h + '</section>';
+    }
+    const hs = K().hyps(s, id);
+    h += '<p class="muted small">' + esc(cd.hypPrompt ? cd.hypPrompt.en : 'Your own conclusion. Nothing here is marked right or wrong: the world will tell you.') + '</p>';
+    h += '<fieldset class="cs-hyps"><legend>Your hypothesis</legend>' +
+      '<label class="cs-hyp"><input type="radio" name="cs-hyp-' + esc(id) + '" value=""' + (r.hypothesis ? '' : ' checked') + '> <span>Not decided yet</span></label>' +
+      hs.map((x) => '<label class="cs-hyp' + (x.tried ? ' tried' : '') + '"><input type="radio" name="cs-hyp-' + esc(id) + '" value="' + esc(x.id) + '"' + (x.chosen ? ' checked' : '') + '> <span>' +
+        (x.label.jp ? j(x.label.jp) + ' ' : '') + '<span class="en">' + esc(x.label.en) + '</span>' +
+        (x.tried ? '<span class="cs-tried">' + I('warn') + ' Tried: ' + esc(x.mismatch ? x.mismatch.en : 'it did not fit.') + '</span>' : '') + '</span></label>').join('') + '</fieldset>';
+    if (!hs.length) h += '<p class="muted small">No possibility stands out yet.</p>';
+    if (r.hypothesis && r.support.length) h += '<p class="small"><b>Supporting it:</b> ' + esc(r.support.map((cid) => K().clueDef(cid).title.en).join('; ')) + '</p>';
+    // navigation help: only to the place chosen (or disclosed by a hint)
+    const at = K().markAt(s, id);
+    const gm = RB.questGuide.mode();
+    if (at) {
+      const following = cd.quest && RB.questGuide.followed(s) === cd.quest;
+      h += '<div class="cs-nav"><button class="pbtn" data-a="nav" aria-pressed="' + following + '"' + (gm === 'full' ? '' : ' disabled') + '>' + I('follow') + '<span>' + (following ? 'Markers point there' : 'Mark the way there') + '</span></button>' +
+        '<span class="muted small">' + esc(gm === 'full' ? 'Navigation help: markers lead to ' + (placeName(at.map) || 'the place') + ' — only because you chose it or asked.' : 'Markers are off (Settings › Quest guidance).') + '</span></div>';
+    } else if (r.hypothesis) h += '<p class="muted small">You have not found where that is yet, so there is nothing to mark.</p>';
+    return h + '</section>';
+  }
+
+  // ---- note and help --------------------------------------------------------------------------------------
+  function noteBlock(s, id) {
+    const r = K().rec(s, id);
+    const draft = V.draft[id] != null ? V.draft[id] : r.note;
+    const n = K().graphemes(draft).length, M = K().NOTE_MAX;
+    return '<section class="cs-note"><h4>' + I('note') + ' Your note</h4><label class="sr" for="cs-note-' + esc(id) + '">Your note</label>' +
+      '<textarea id="cs-note-' + esc(id) + '" data-note="' + esc(id) + '" rows="3" spellcheck="false">' + esc(draft) + '</textarea>' +
+      '<div class="cs-note-foot"><span class="cs-count' + (n > M ? ' over' : '') + '" aria-live="polite">' + n + ' / ' + M + (n > M ? ' — only the first ' + M + ' characters will be kept' : '') + '</span>' +
+      '<button class="pbtn small" data-a="savenote">' + I('save') + '<span>Keep note</span></button></div>' +
+      '<p class="muted small">Just for you: plain words, kept with this journey. Never checked or graded.</p></section>';
+  }
+  function helpBlock(s, id) {
+    const hs = K().hintsOf(id), n = K().hintLevel(s, id), r = K().rec(s, id);
+    let h = '<section class="cs-help" aria-labelledby="cs-help-h"><h4 id="cs-help-h">' + I('help') + ' Reasoning help</h4>' +
+      '<ol class="cs-hints" aria-live="polite">' + hs.slice(0, n).map((x, i) => '<li tabindex="-1"><span class="kind">Hint ' + (i + 1) + ' of ' + hs.length + ' · ' + esc(HINT[x.kind] || '') + '</span>' + j(x.jp) + '<div class="en">' + esc(x.en) + '</div></li>').join('') + '</ol>';
+    if (n < hs.length && r.stage !== 'done') {
+      const next = hs[n];
+      if (next.kind === 'solution' && !V.warn[id]) h += '<div class="cs-acts"><button class="pbtn" data-a="hint">' + I('help') + '<span>Show hint ' + (n + 1) + ' of ' + hs.length + ' (' + esc(HINT[next.kind]) + ')</span></button></div>';
+      else if (next.kind === 'solution') h += '<div class="note-slip warn" role="alert"><p>The next hint tells you the answer outright. Nothing is lost by reading it.</p><div class="cs-acts"><button class="pbtn primary" data-a="hintyes">' + I('help') + '<span>Show the answer</span></button><button class="pbtn" data-a="hintno"><span>Not yet</span></button></div></div>';
+      else h += '<div class="cs-acts"><button class="pbtn" data-a="hint">' + I('help') + '<span>Show hint ' + (n + 1) + ' of ' + hs.length + ' (' + esc(HINT[next.kind]) + ')</span></button></div>';
+    }
+    return h + '<p class="muted small">Asking is free. Keepsakes, your companion and your journey’s ending are the same with or without help. Language help (on each observation) explains words and never the answer.</p></section>';
+  }
+
+  // ---- the record and the list ------------------------------------------------------------------------------
+  function record(s, id, two) {
+    const cd = K().def(id), r = K().rec(s, id);
+    if (!cd || !r) return '<p class="muted">Choose a case.</p>';
+    const ev = K().evidence(s, id);
+    let h = (two ? '' : '<div class="backline"><button class="pbtn quiet" data-a="list">' + I('back') + 'All cases</button></div>') +
+      '<div class="qdetail cs-record" data-case="' + esc(id) + '"><div class="kind">Case · ' + (r.stage === 'done' ? 'solved' : 'open') + '</div>' +
+      '<h3>' + j(cd.title.jp) + '</h3><p class="en-title">' + esc(cd.title.en) + '</p>' +
+      '<div class="cs-q"><div class="kind">The question</div>' + j(cd.question.jp) + '<div class="en">' + esc(cd.question.en) + '</div></div>' +
+      recapBlock(s, id);
+    h += '<section class="cs-observed" aria-labelledby="cs-obs-h"><h4 id="cs-obs-h">' + I('look') + ' Observed <span class="count">' + ev.length + '</span></h4>' +
+      (ev.length ? ev.map((cid) => obsCard(s, id, cid)).join('') : '<p class="muted">Nothing yet.</p>') + '</section>';
+    const cmp = (V.compare[id] || []).filter((cid) => ev.includes(cid));
+    if (cmp.length >= 2) {
+      h += '<section class="cs-compare" aria-label="Side by side"><h4>' + I('copy') + ' Side by side <button class="pbtn quiet small" data-a="cmpclear">Clear</button></h4><div class="cs-grid n' + cmp.length + '">' +
+        cmp.map((cid) => obsCard(s, id, cid, { bare: true })).join('') + '</div></section>';
+    } else if (cmp.length === 1) h += '<p class="muted small cs-cmp-hint">Choose one or two more observations to see them side by side.</p>';
+    if (cd.sheet) h += sheetBlock(s, id);
+    h += concluded(s, id) + noteBlock(s, id) + helpBlock(s, id) + '</div>';
+    if (V.status && V.status.id === id && V.status.kind !== 'sheet') h += '<p class="sr" role="status">' + esc(V.status.en) + '</p>';
+    return h;
+  }
+  function list(s, two) {
+    const d = K()._D(s);
+    const ids = Object.keys(d.cases).filter((id) => K().def(id)).sort((a, b) => (d.cases[a].stage === 'done') - (d.cases[b].stage === 'done') || d.cases[b].t - d.cases[a].t);
+    let h = '<h3>' + I('book') + ' Cases <span class="count">' + ids.length + '</span></h3>';
+    h += ids.length ? '<ul class="entries">' + ids.map((id) => {
+      const cd = K().def(id), r = d.cases[id];
+      return '<li><button class="entry' + (r.stage === 'done' ? ' done' : ' current') + '" data-case="' + esc(id) + '" aria-current="' + (two && V.sel === id) + '"><span class="mark">' + I(r.stage === 'done' ? 'done' : 'help') + '</span>' +
+        '<span class="body"><span class="kind">' + (r.stage === 'done' ? 'Solved' : 'Open') + '</span><span class="t">' + j(cd.title.jp) + ' <span class="en">' + esc(cd.title.en) + '</span></span>' +
+        '<span class="muted small">' + esc(cd.question.en) + '</span></span></button></li>';
+    }).join('') + '</ul>' : '<p class="muted">No case yet.</p>';
+    const lo = K().loose(s);
+    if (lo.length) {
+      h += '<h3>' + I('note') + ' Details you noted <span class="count">' + lo.length + '</span></h3><p class="muted small">Kept before you knew what they belong to.</p><ul class="entries">' +
+        lo.map((cid) => { const c = K().clueDef(cid); return '<li class="entry"><span class="mark">' + I('note') + '</span><div><div class="t">' + esc(c.title.en) + '</div>' + source(c, d.clues[cid]) + (c.obs ? '<div class="muted small">' + esc(c.obs.en) + '</div>' : '') + '</div></li>'; }).join('') + '</ul>';
+    }
+    return h;
+  }
+
+  // ---- render and events ---------------------------------------------------------------------------------------
+  function available(s) { return !!s && (Object.keys(K()._D(s).cases).some((id) => K().def(id)) || K().loose(s).length > 0); }
+  function render(A, B, two, api) {
+    const s = api.s;
+    const d = K()._D(s);
+    if (V.sel && !d.cases[V.sel]) V.sel = null;
+    if (two && !V.sel) V.sel = Object.keys(d.cases).filter((id) => K().def(id)).sort((a, b) => (d.cases[a].stage === 'done') - (d.cases[b].stage === 'done') || d.cases[b].t - d.cases[a].t)[0] || null;
+    if (two) { A.innerHTML = list(s, true); B.innerHTML = V.sel ? record(s, V.sel, true) : '<p class="muted">Choose a case to read its record.</p>'; }
+    else A.innerHTML = V.sel ? record(s, V.sel, false) : list(s, false);
+    const handler = (e) => click(e, s, api);
+    A.onclick = handler; B.onclick = handler;
+    const onInput = (e) => {
+      const t = e.target.closest('[data-note]');
+      if (!t) return;
+      V.draft[t.dataset.note] = t.value;
+      const n = K().graphemes(t.value).length, M = K().NOTE_MAX, cnt = t.parentNode.querySelector('.cs-count');
+      if (cnt) { cnt.textContent = n + ' / ' + M + (n > M ? ' — only the first ' + M + ' characters will be kept' : ''); cnt.classList.toggle('over', n > M); }
+    };
+    A.oninput = onInput; B.oninput = onInput;
+    const onChange = (e) => {
+      const rb = e.target.closest('input[type=radio][name^="cs-hyp-"]');
+      if (!rb) return;
+      const id = rb.name.slice(7);
+      K().choose(s, id, rb.value || null);
+      RB.audio && RB.audio.sfx('cursor');
+      V.status = { id, en: rb.value ? 'Hypothesis kept.' : 'No hypothesis.' };
+      V.focus = 'input[name="cs-hyp-' + id + '"][value="' + rb.value + '"]';
+      api.render();
+    };
+    A.onchange = onChange; B.onchange = onChange;
+    if (V.focus) {
+      const f = V.focus; V.focus = null;
+      requestAnimationFrame(() => { const el = (two ? B : A).querySelector(f) || A.querySelector(f); if (el) el.focus({ preventScroll: true }); });
+    }
+  }
+  function refocus(sel) { V.focus = sel; }
+  async function click(e, s, api) {
+    const cb = e.target.closest('[data-case]');
+    if (cb && cb.tagName === 'BUTTON') { V.sel = cb.dataset.case; api.render(); return; }
+    const b = e.target.closest('[data-a]');
+    if (!b || b.disabled) return;
+    const id = V.sel, a = b.dataset.a, cid = b.dataset.cid;
+    const cd = id && K().def(id);
+    switch (a) {
+      case 'list': V.sel = null; api.render(); return;
+      case 'cmp': {
+        const L = V.compare[id] || (V.compare[id] = []);
+        const i = L.indexOf(cid);
+        if (i >= 0) L.splice(i, 1); else { L.push(cid); if (L.length > K().COMPARE_MAX) L.shift(); }
+        refocus('[data-a="cmp"][data-cid="' + cid + '"]'); api.render(); return;
+      }
+      case 'cmpclear': V.compare[id] = []; api.render(); return;
+      case 'sup': {
+        const r = K().rec(s, id), L = r.support.slice(), i = L.indexOf(cid);
+        if (i >= 0) L.splice(i, 1); else L.push(cid);
+        K().setSupport(s, id, L);
+        refocus('[data-a="sup"][data-cid="' + cid + '"]'); api.render(); return;
+      }
+      case 'lang': V.lang[cid] = !V.lang[cid]; if (V.lang[cid]) K().langHelp(s, cid); refocus('[data-a="lang"][data-cid="' + cid + '"]'); api.render(); return;
+      case 'savenote': {
+        const res = K().setNote(s, id, V.draft[id] != null ? V.draft[id] : K().rec(s, id).note);
+        delete V.draft[id];
+        V.status = { id, en: 'Note kept' + (res && res.cut ? ' (shortened to ' + K().NOTE_MAX + ' characters)' : '') + '.' };
+        RB.audio && RB.audio.sfx('confirm');
+        refocus('[data-note="' + id + '"]'); api.render(); return;
+      }
+      case 'hint': {
+        const next = K().hintsOf(id)[K().hintLevel(s, id)];
+        if (next && next.kind === 'solution') { V.warn[id] = true; refocus('[data-a="hintyes"]'); api.render(); return; }
+        K().askHint(s, id); refocus('.cs-hints li:last-child'); api.render(); return;
+      }
+      case 'hintyes': K().askHint(s, id); V.warn[id] = false; refocus('.cs-hints li:last-child'); api.render(); return;
+      case 'hintno': V.warn[id] = false; refocus('[data-a="hint"]'); api.render(); return;
+      case 'nav': {
+        const G = RB.questGuide;
+        if (cd.quest) { if (G.followed(s) === cd.quest && G.chosen(s)) G.unfollow(cd.quest); else G.follow(cd.quest); }
+        RB.questMarks && RB.questMarks.refresh();
+        refocus('[data-a="nav"]'); api.render(); return;
+      }
+      case 'keepsake': api.go('journey', 'keepsakes'); return;
+      // the sheet
+      case 'turn': { const st = sheetOf(s, id); st.side = st.side === 'front' ? 'back' : 'front'; RB.audio && RB.audio.sfx('page'); V.status = null; refocus('[data-a="turn"]'); api.render(); return; }
+      case 'reset': { const st = sheetOf(s, id); st.side = cd.sheet.start; V.compare[id + ':view'] = false; V.status = null; refocus('[data-a="reset"]'); api.render(); return; }
+      case 'cmpview': V.compare[id + ':view'] = !V.compare[id + ':view']; refocus('[data-a="cmpview"]'); api.render(); return;
+      case 'reveal': {
+        const st = sheetOf(s, id), way = b.dataset.way;
+        st.seen[way] = Date.now();
+        const w = cd.sheet.reveals.find((x) => x.id === way);
+        if (w && w.clue) K().observe(s, w.clue);
+        refocus('[data-a="reveal"][data-way="' + way + '"]'); api.render(); return;
+      }
+      case 'confirm': {
+        const st = sheetOf(s, id), r = K().rec(s, id);
+        if (cd.sheet.matches(s, st.side, r.hypothesis)) {
+          api.close();
+          await RB.script.run(cd.sheet.solvedScene);
+          return;
+        }
+        V.status = { id, kind: 'sheet', en: cd.sheet.mismatch(s, st.side, r.hypothesis).en };
+        refocus('[data-a="confirm"]'); api.render(); return;
+      }
+    }
+  }
+
+  RB.ui.menu.addPage('journey', { id: 'cases', en: 'Cases', icon: 'book', available, render });
+  if (RB.save && RB.save.addMigration) RB.save.addMigration((st) => RB.cases.migrate(st));
+  return { select, render, V, sheetOf };
 })();
 
 

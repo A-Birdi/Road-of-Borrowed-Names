@@ -1,0 +1,89 @@
+/* Journey › Cases (src/ui/59_casebook.js) and Map › Known details
+ * (src/ui/61_known.js): evidence records, the turnable sketch, local
+ * annotations and pins. Shapes and words carry every state; colour only
+ * repeats them. */
+
+.cs-record h4 { display: flex; align-items: center; gap: 0.4em; margin: 1em 0 0.4em; font-size: 1.05em; }
+.cs-record h4 > svg { width: 1.15em; height: 1.15em; flex: none; color: var(--ink-2); }
+.cs-record h4 .count { margin-left: auto; font-size: 0.85em; color: var(--ink-3); }
+.cs-q { border-left: 3px solid var(--ink-3); padding: 0.2em 0.7em; margin: 0.4em 0 0.6em; }
+.cs-q .kind, .cs-recap .kind, .cs-ways .kind { font-size: 0.78em; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+.cs-recap { background: rgba(255,255,255,0.35); border: 1px dashed var(--paper-edge); padding: 0.3em 0.7em; margin: 0.6em 0; }
+.cs-recap p { margin: 0.2em 0; }
+.cs-recap .kind svg, .cs-ways .kind svg { width: 1em; height: 1em; vertical-align: -0.15em; }
+
+.cs-obs { border: 1px solid var(--rule); border-left: 4px solid var(--paper-edge); background: rgba(255,255,255,0.3); padding: 0.4em 0.7em 0.5em; margin: 0.5em 0; }
+.cs-obs.cmp { border-left-color: var(--ribbon); box-shadow: inset 0 0 0 1px var(--ribbon); }
+.cs-obs header { display: block; }
+.cs-obs h5 { margin: 0.1em 0 0.1em; font-size: 1em; }
+.cs-obs h5 .en { font-weight: 600; }
+.cs-kind { display: inline-block; font-size: 0.75em; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 700; color: var(--ink-2); border: 1px solid var(--ink-3); padding: 0 0.35em; }
+.cs-tag { font-size: 0.78em; color: var(--ink-3); font-style: italic; }
+.cs-src { font-size: 0.9em; color: var(--ink-2); }
+.cs-unsure { display: inline-flex; align-items: center; gap: 0.2em; font-style: italic; color: var(--warn-ink); }
+.cs-unsure svg { width: 1em; height: 1em; }
+.cs-orig { margin: 0.4em 0; padding: 0.2em 0 0.2em 0.7em; border-left: 2px solid var(--rule); }
+.cs-orig .en { font-size: 0.95em; color: var(--ink-2); }
+.cs-what { margin: 0.3em 0; }
+.cs-alt-l { font-weight: 600; color: var(--ink-2); }
+.cs-lang { margin: 0.3em 0; padding-left: 1.2em; font-size: 0.95em; }
+.cs-lang li { margin: 0.15em 0; }
+.cs-acts { display: flex; flex-wrap: wrap; gap: 6px; margin: 0.4em 0 0.2em; }
+.pbtn.small { min-height: 36px; padding: 0 0.6em; font-size: 0.92em; }
+.pbtn[aria-pressed="true"] { background: var(--paper-2); border-color: var(--ribbon-deep); box-shadow: inset 0 -3px 0 var(--ribbon); }
+
+.cs-fig { margin: 0.4em 0; }
+.cs-fig svg { display: block; width: 100%; max-width: 360px; height: auto; background: #f7f0de; border: 1px solid var(--paper-edge); }
+.cs-fig figcaption { font-size: 0.9em; color: var(--ink-2); margin-top: 0.2em; }
+.cs-pair { display: grid; grid-template-columns: 1fr; gap: 8px; }
+@media (min-width: 900px) { .cs-pair { grid-template-columns: 1fr 1fr; } }
+.cs-grid { display: grid; gap: 8px; grid-template-columns: 1fr; }
+@media (min-width: 900px) { .cs-grid.n2 { grid-template-columns: 1fr 1fr; } .cs-grid.n3 { grid-template-columns: 1fr 1fr 1fr; } }
+.cs-grid .cs-obs { margin: 0; }
+.cs-compare h4 .pbtn { margin-left: auto; }
+
+.cs-sheet { border: 1px solid var(--paper-edge); background: rgba(255,255,255,0.25); padding: 0.3em 0.7em 0.6em; margin: 0.8em 0; }
+.cs-ways { margin-top: 0.4em; }
+
+.cs-hyps { border: 0; padding: 0; margin: 0.3em 0; }
+.cs-hyps legend { font-weight: 600; padding: 0; margin-bottom: 0.2em; }
+.cs-hyp { display: flex; align-items: flex-start; gap: 0.5em; min-height: var(--tap); padding: 0.3em 0.2em; border-bottom: 1px dotted var(--rule); cursor: pointer; }
+.cs-hyp input { width: 1.2em; height: 1.2em; margin-top: 0.25em; flex: none; accent-color: var(--ribbon-deep); }
+.cs-hyp input:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.cs-hyp .en { display: block; }
+.cs-hyp.tried .en { text-decoration: line-through; text-decoration-color: var(--ink-3); }
+.cs-tried { display: flex; align-items: center; gap: 0.3em; font-size: 0.9em; color: var(--warn-ink); }
+.cs-tried svg { width: 1em; height: 1em; flex: none; }
+.cs-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3em 0.8em; margin: 0.5em 0; }
+.cs-nav .muted { flex: 1 1 14em; }
+.cs-result { border-left: 4px solid var(--ok-ink); padding: 0.2em 0.7em; margin: 0.4em 0; background: rgba(255,255,255,0.35); }
+.cs-remember svg { display: block; width: 100%; max-width: 360px; height: auto; }
+
+.cs-note textarea { width: 100%; box-sizing: border-box; min-height: 4.5em; font: inherit; color: var(--ink); background: #fbf6e9; border: 1px solid var(--paper-edge); padding: 0.4em; resize: vertical; }
+.cs-note textarea:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+.cs-note-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5em; justify-content: space-between; margin-top: 0.3em; }
+.cs-count { font-size: 0.9em; color: var(--ink-3); }
+.cs-count.over { color: var(--danger-ink); font-weight: 600; }
+.cs-hints { list-style: none; margin: 0.2em 0; padding: 0; }
+.cs-hints li { padding: 0.35em 0 0.45em; border-bottom: 1px dotted var(--rule); }
+.cs-hints li:focus { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.cs-hints .kind { display: block; font-size: 0.78em; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+
+/* Map › Known details */
+.kd-map svg { display: block; width: 100%; height: auto; max-height: 60vh; background: #efe3c6; border: 1px solid var(--paper-edge); touch-action: manipulation; }
+.kd-map svg:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.kd-list { list-style: none; margin: 0.3em 0; padding: 0; }
+.kd-list li { display: grid; grid-template-columns: 2.1em 1fr; gap: 0.2em 0.5em; align-items: start; padding: 0.4em 0; border-bottom: 1px dotted var(--rule); }
+.kd-list .kd-sym { width: 1.9em; height: 1.9em; }
+.kd-list .kd-sym svg { width: 100%; height: 100%; }
+.kd-list .t { font-weight: 600; }
+.kd-list .kd-state { font-size: 0.78em; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 700; color: var(--ink-2); }
+.kd-list .cs-acts { grid-column: 2; }
+.kd-pinform { border: 1px solid var(--paper-edge); background: rgba(255,255,255,0.35); padding: 0.4em 0.7em; margin: 0.5em 0; }
+.kd-pinform fieldset { border: 0; padding: 0; margin: 0.2em 0; display: flex; flex-wrap: wrap; gap: 0.2em 0.9em; }
+.kd-pinform legend { font-weight: 600; padding: 0; }
+.kd-pinform label.kd-type { display: inline-flex; align-items: center; gap: 0.35em; min-height: var(--tap); cursor: pointer; }
+.kd-pinform textarea { width: 100%; box-sizing: border-box; font: inherit; background: #fbf6e9; border: 1px solid var(--paper-edge); padding: 0.4em; min-height: 3.5em; }
+.kd-limit { font-size: 0.9em; color: var(--ink-3); }
+.kd-limit.full { color: var(--danger-ink); font-weight: 600; }
+.kd-maps { display: flex; flex-wrap: wrap; gap: 6px; margin: 0.3em 0 0.6em; }
