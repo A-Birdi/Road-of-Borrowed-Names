@@ -11,7 +11,7 @@ const PICK = [
   ['cases', 'world_tideboard_chalk_1280x800'],
   ['cases', 'record_parcel_1280x800'], ['cases', 'record_parcel_compare_1280x800'], ['cases', 'record_view_sheet_1280x800'],
   ['cases', 'record_view_turned_1280x800'], ['cases', 'record_view_help_1280x800'], ['cases', 'record_view_solved_1280x800'],
-  ['cases', 'record_list_390x844'], ['cases', 'record_view_390x844'], ['cases', 'record_view_sheet_390x844'],
+  ['cases', 'record_list_390x844'], ['cases', 'record_view_390x844'], ['cases', 'record_view_sheet_390x844'], ['cases', 'record_view_sheet_390x844_text200'],
   ['known', 'known_tower_solved_1280x800'], ['known', 'known_pins_1280x800'], ['known', 'known_harbour_390x844'], ['known', 'known_harbour_list_390x844'],
 ];
 const out = path.join(root, 'docs', 'screenshots', 'cases');

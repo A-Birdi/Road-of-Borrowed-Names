@@ -29,11 +29,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
   // the tide board's chalked times (drawn over the board once Shiori has read the table with you)
   const P = RB.props.P;
-  P.cs_tidechalk = { id: 'cs_tidechalk', w: 2, h: 1, block: false, draw(c, x, y) {
-    c.fillStyle = '#eef6f6';
-    for (let i = 0; i < 3; i++) c.fillRect(x + 6 + i * 4, y - 5, 2, 3);
-    for (let i = 0; i < 4; i++) c.fillRect(x + 7 + i * 4, y + 1, 2, 3);
-    c.fillRect(x + 20, y - 4, 5, 1); c.fillRect(x + 20, y + 2, 5, 1);
+  // h: 2 so it sorts after the board it is drawn on (a non-blocking prop is
+  // otherwise drawn a little early, under whatever stands on its tile).
+  P.cs_tidechalk = { id: 'cs_tidechalk', w: 2, h: 2, block: false, draw(c, x, y) {
+    // Shiori's chalk: a ring on the high and the low of the curve, and a
+    // row of written figures beside each (the words live in the scene).
+    c.fillStyle = '#fff0b0';
+    c.fillRect(x + 9, y - 6, 3, 1); c.fillRect(x + 9, y - 3, 3, 1); c.fillRect(x + 8, y - 5, 1, 2); c.fillRect(x + 12, y - 5, 1, 2);
+    c.fillRect(x + 21, y + 2, 3, 1); c.fillRect(x + 21, y + 5, 3, 1); c.fillRect(x + 20, y + 3, 1, 2); c.fillRect(x + 24, y + 3, 1, 2);
+    for (let i = 0; i < 3; i++) c.fillRect(x + 15 + i * 3, y - 5, 2, 3);
+    for (let i = 0; i < 3; i++) c.fillRect(x + 5 + i * 3, y + 2, 2, 3);
   } };
 })();
 

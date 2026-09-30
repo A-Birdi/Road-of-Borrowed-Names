@@ -128,14 +128,20 @@ const b = await launch();
   await shot(p, 'record_view_help_1280x800');
   await p.evaluate(() => RB.ui.menu.close());
   // after solving: the remembered view in the record; the tide board chalked in; the framed sketch by the seat
-  await p.evaluate(async () => {
+  const fr = await p.evaluate(async () => {
     const s = RB.game.s;
-    RB.test.enable({ battle: 'unravel', choose: (opts) => { for (const re of window.PICK) { const i = opts.findIndex((q) => new RegExp(re, 'i').test(q.en)); if (i >= 0) return i; } return 0; } });
+    const seen = [];
+    RB.test.enable({ battle: 'unravel', choose: (opts) => { seen.push(opts.map((q) => q.en).join(' / ')); for (const re of window.PICK) { const i = opts.findIndex((q) => new RegExp(re, 'i').test(q.en)); if (i >= 0) return i; } return 0; } });
     window.PICK = ['turned over', 'Leave the sketch here'];
-    await RBDrive.run(['cs.view_seat', { scene: 'cs.view_seat', again: true }]);
+    const had = s.inv.cs_sketch || 0;
+    // (the seat's scene already ran above, when you first sat there: both visits are 'again')
+    const d1 = await RBDrive.run([{ scene: 'cs.view_seat', again: true }]).catch((e) => ({ ok: false, fail: String(e) }));
+    const d = d1.ok ? await RBDrive.run([{ scene: 'cs.view_seat', again: true }]).catch((e) => ({ ok: false, fail: String(e) })) : d1;
     s.flags.sg_tide_read = true;
     RB.test.disable();
+    return { ok: d.ok, fail: d.fail, had, framed: !!s.flags.cs_view_framed, seen };
   });
+  say(fr.ok && fr.framed, 'the sketch was solved at the seat and then left there in its frame (' + JSON.stringify(fr) + ')');
   await p.evaluate(() => { RB.ui.casebook.select('view'); RB.ui.menu.open('cases'); });
   await p.waitForTimeout(400);
   await p.evaluate(() => { const e = document.querySelector('#folio-page .cs-remember'); if (e) e.scrollIntoView(); });
@@ -143,7 +149,7 @@ const b = await launch();
   say(rem, 'the solved record keeps the remembered view');
   await shot(p, 'record_view_solved_1280x800');
   await p.evaluate(() => RB.ui.menu.close());
-  await go(p, 'sb.obs_path', 11, 37, 'up');
+  await go(p, 'sb.obs_path', 13, 36, 'left');
   await shot(p, 'world_seat_framed_1280x800');
   await go(p, 'sg.harbor', 11, 27, 'up');
   await shot(p, 'world_tideboard_chalk_1280x800');
@@ -157,6 +163,7 @@ const b = await launch();
     window.PICK = ['^Take it along', '^Carry on', 'Close the', 'May I borrow'];
     await RBDrive.run(['cs.parcel_shelf', 'cs.parcel_record', 'cs.view_window']);
     RB.test.disable();
+    if (RB.ui.help && RB.ui.help.hide) RB.ui.help.hide(true); // a word card pinned open by a tap during the scenes
     RB.ui.menu.open('cases');
   });
   await p.waitForTimeout(400);
@@ -170,6 +177,13 @@ const b = await launch();
   say(ov2, 'no horizontal overflow on a phone (record)');
   await p.evaluate(() => { document.querySelector('#folio-page .cs-sheet').scrollIntoView(); });
   await shot(p, 'record_view_sheet_390x844');
+  // the largest text size and high contrast: still no sideways scrolling, every control reachable
+  await p.evaluate(() => { RB.game.settings.textScale = 2; RB.game.settings.contrast = 'high'; RB.game.applySettings(); RB.ui.menu.close(); RB.ui.menu.open('cases'); });
+  await p.waitForTimeout(400);
+  const big = await p.evaluate(() => { const l = document.querySelector('#folio-page .leaf'); const bad = [...document.querySelectorAll('#folio-page button')].filter((b) => b.getBoundingClientRect().right > innerWidth + 1).length; return { fit: l.scrollWidth <= l.clientWidth + 1, bad }; });
+  say(big.fit && big.bad === 0, 'at 200 % text with high contrast: no sideways scrolling, no button off-screen (' + JSON.stringify(big) + ')');
+  await p.evaluate(() => document.querySelector('#folio-page .cs-sheet').scrollIntoView());
+  await shot(p, 'record_view_sheet_390x844_text200');
   say(!errors.length, 'no page errors (phone)' + (errors.length ? ': ' + errors.slice(0, 3).join(' | ') : ''));
   await ctx.close();
 }

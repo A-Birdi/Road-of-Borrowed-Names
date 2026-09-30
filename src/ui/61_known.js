@@ -157,14 +157,21 @@ RB.ui.known = (function () {
     }
     // ways out (open now)
     for (const e of m.exits) { if (e.if && !RB.state.test(s, e.if)) continue; b += '<rect x="' + e.x * k + '" y="' + e.y * k + '" width="' + (e.w || 1) * k + '" height="' + (e.h || 1) * k + '" fill="none" stroke="#1f5a92" stroke-width="2"/>'; }
-    // a mark: the shape (a 20-unit box) centred on the tile, and its number beside it
-    const put = (x, y, inner, n) => '<g transform="translate(' + (x * k - 5) + ',' + (y * k - 5) + ')">' + inner + (n != null ? '<text x="22" y="9" font-size="10" font-weight="700" fill="' + INK + '" stroke="#efe3c6" stroke-width="3" paint-order="stroke" font-family="Georgia, serif">' + n + '</text>' : '') + '</g>';
+    // a mark: the shape (a 20-unit box) centred on the tile, and its number
+    // beside it; on a large map the marks grow with it so they stay readable
+    // when the whole map is fitted to a narrow screen
+    const u = Math.max(1, Math.round((Math.max(W, H) / 320) * 4) / 4);
+    // (the number goes on the left when the right-hand side would leave the map)
+    const put = (x, y, inner, n) => {
+      const left = n != null && x * k + 5 + (12 + 8 * String(n).length) * u > W;
+      return '<g transform="translate(' + (x * k + 5) + ',' + (y * k + 5) + ') scale(' + u + ') translate(-10,-10)">' + inner + (n != null ? '<text x="' + (left ? -2 : 22) + '" y="9"' + (left ? ' text-anchor="end"' : '') + ' font-size="10" font-weight="700" fill="' + INK + '" stroke="#efe3c6" stroke-width="3" paint-order="stroke" font-family="Georgia, serif">' + n + '</text>' : '') + '</g>';
+    };
     list.forEach((e, i) => { if (e.x != null) b += put(e.x, e.y, SHAPE[e.state] || SHAPE.seen, i + 1); });
     pinsL.forEach((p, i) => { b += put(p.x, p.y, PIN[p.type] || PIN.return, 'P' + (i + 1)); });
-    if (form) b += '<g transform="translate(' + (form.x * k - 7) + ',' + (form.y * k - 7) + ')"><rect width="24" height="24" fill="none" stroke="#a83e27" stroke-width="3" stroke-dasharray="4 3"/></g>';
+    if (form) b += '<g transform="translate(' + (form.x * k + 5) + ',' + (form.y * k + 5) + ') scale(' + u + ') translate(-12,-12)"><rect width="24" height="24" fill="none" stroke="#a83e27" stroke-width="3" stroke-dasharray="4 3"/></g>';
     if (s.map === map) {
       const px = s.x != null ? s.x : 0, py = s.y != null ? s.y : 0;
-      b += '<path d="M' + (px * k + 5) + ' ' + (py * k - 2) + ' l6 10 h-12 z" fill="#a83e27" stroke="' + INK + '" stroke-width="1.5"/>';
+      b += '<g transform="translate(' + (px * k + 5) + ',' + (py * k + 5) + ') scale(' + u + ')"><path d="M0 -7 l6 10 h-12 z" fill="#a83e27" stroke="' + INK + '" stroke-width="1.5"/></g>';
     }
     return '<svg class="kd-svg" viewBox="0 0 ' + W + ' ' + H + '" role="img" tabindex="0" aria-label="' + esc('Diagram of ' + mapName(map) + ': ' + list.length + ' known details and ' + pinsL.length + ' pins, listed below.' + (s.map === map ? ' The red triangle is where you are.' : '')) + '">' + b + '</svg>';
   }
