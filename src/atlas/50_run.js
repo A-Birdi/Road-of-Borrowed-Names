@@ -271,6 +271,7 @@ RB.hooks = RB.hooks || {};
     }
     run.done[o.id] = true;
     run.stats.objectives++;
+    RB.bus.emit('atlas:event', { run: run.id, id: o.id, kind: o.type, room: r.key, pattern: r.room.pattern, branch: r.room.branch || null, assisted: !!res.assisted }); // (The Pages We Keep)
     const c = compOk();
     if (c) await say('comp', c, 'smile');
     RB.world.refreshActors();
@@ -296,6 +297,7 @@ RB.hooks = RB.hooks || {};
     if (res.cancelled) { await compSay(COMP_LATER); return; }
     s.flags[fk] = true;
     if (run.names.indexOf(npc.name) < 0) run.names.push(npc.name);
+    RB.bus.emit('atlas:event', { run: run.id, id: okey, kind: 'name', name: npc.name, room: r.key, pattern: r.room.pattern, branch: r.room.branch || null }); // (The Pages We Keep)
     RB.audio && RB.audio.sfx('discover');
     await say('narr', nd.moored);
     await note('atlas_name_' + npc.name);
@@ -464,6 +466,7 @@ RB.hooks = RB.hooks || {};
       s.flags[FLAG(o.id)] = true;
       r.run.done[o.id] = true;
       r.run.stats.objectives++;
+      RB.bus.emit('atlas:event', { run: r.run.id, id: o.id, kind: 'doors', read: !!os.read, room: r.key, pattern: r.room.pattern, branch: r.room.branch || null }); // (The Pages We Keep)
       RB.audio && RB.audio.sfx('reveal');
       await say('narr', { jp: '{扉|とびら} の {向|む}こう に 、 {道|みち} が {続|つづ}いて いる 。', en: os.read ? 'Beyond the door, the road goes on — just as the tablet said.' : 'Beyond the door, the road goes on. (A lucky guess — the tablet by the entrance would have told you.)' });
       if (clean) { const c = compOk(); if (c) await say('comp', c, 'smile'); }
@@ -495,6 +498,7 @@ RB.hooks = RB.hooks || {};
     const s = S();
     const what = args && args[0];
     if (what === 'rest') {
+      RB.bus.emit('atlas:camp', { run: r.run.id, room: r.key }); // (The Pages We Keep)
       s.atlas.camps = (s.atlas.camps || 0) + 1;
       s.vars.atlas_camp_i = (s.atlas.camps - 1) % 3;
       if (r.run.lantern && !r.run.campRested) {
@@ -541,6 +545,7 @@ RB.hooks = RB.hooks || {};
       s.flags[FLAG('climax')] = true;
       run.done.climax = true;
       s.vars.atlas_won = 1;
+      RB.bus.emit('atlas:event', { run: run.id, id: 'climax', kind: 'climax', boss, room: r.key, pattern: r.room.pattern }); // (The Pages We Keep)
       RB.world.refreshActors();
     }
   };
@@ -552,7 +557,7 @@ RB.hooks = RB.hooks || {};
     // A guardian settled opens the room; an optional foe just lets you pass in peace.
     const guardDown = s.flags['foe:' + s.map + ':guard'];
     s.vars.atlas_guard = guardDown && r.room.guard && !r.run.done['guard_' + r.key] ? 1 : 0;
-    if (s.vars.atlas_guard) r.run.done['guard_' + r.key] = true;
+    if (s.vars.atlas_guard) { r.run.done['guard_' + r.key] = true; RB.bus.emit('atlas:event', { run: r.run.id, id: 'guard_' + r.key, kind: 'guardian', room: r.key, pattern: r.room.pattern, branch: r.room.branch || null }); } // (The Pages We Keep)
   };
 
   // =====================================================================================
@@ -569,6 +574,7 @@ RB.hooks = RB.hooks || {};
   function endRun(s, why) {
     const run = s.atlas.run;
     if (!run) return;
+    RB.bus.emit('atlas:end', { run: run.id, kind: why }); // (The Pages We Keep: copies its summary out before cleanup)
     s.atlas.run = null;
     AT.cleanFlags(s, run.id);
     delete s.vars.atlas_ok; delete s.vars.atlas_won;

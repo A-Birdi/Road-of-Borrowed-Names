@@ -167,9 +167,18 @@ narr: {焚|た}き{火|び} に {火|ひ} を {入|い}れて 、 {二人|ふた
 ?(comp=suzu&var.atlas_camp_i=0) comp: {今日|きょう} の {出費|しゅっぴ} 、 つけて おく ね 。 {焚|た}き{木|ぎ} {三本|さんぼん} 、 {笑|わら}い {二回|にかい} 。 || I'll note down today's expenses. Three sticks of firewood, two laughs.
 ?(comp=suzu&var.atlas_camp_i=1) comp: {嘘|うそ} の ない {旅|たび} って 、 {思|おも}った より {楽|らく} だ ね 。 {荷物|にもつ} が {軽|かる}い 。 || Travelling without lies is easier than I thought. Lighter luggage.
 ?(comp=suzu&var.atlas_camp_i=2) comp: ねえ 、 {火|ひ} の {前|まえ} で {一曲|いっきょく} どう ？ …… {冗談|じょうだん} 。 {半分|はんぶん} は ね 。 || Hey, how about a song by the fire? …Joking. Half joking.
+:menu
 !choice
 * {先|さき} へ {進|すす}む || Go on -> go
 * {今日|きょう} は ここ まで に する || Head home from here (keep what you found) -> home
+* [pages.camp] {残|のこ}す {頁|ページ} の {話|はなし} を する || Talk about the page we're keeping -> pages
+* [pages.roadcamp] この {道|みち} の {話|はなし} を する || Talk about this road -> road
+:pages
+!call pages.camp
+!goto menu
+:road
+!call pages.road.camp
+!goto menu
 :home
 ?(comp) comp: {引|ひ}き{返|かえ}す の も 、 {旅|たび} の うち だ よ 。 || Turning back is part of travelling too.
 !hook atlas_extract early
@@ -258,6 +267,7 @@ narr: {灯|あか}り は あなた の {腰|こし} に {収|おさ}まって �
 ?(var.atlas_kind=1&comp=ren) comp: {地図|ちず} に {道|みち} を {一本|いっぽん} {書|か}き{足|た}しました 。 {方角|ほうがく} は 、 {後|あと} で {確|たし}かめて ください 。 || I've added a road to the map. Please check the directions later.
 ?(var.atlas_kind=1&comp=suzu) comp[laugh]: {本日|ほんじつ} の {公演|こうえん} 、 これ に て {終幕|しゅうまく} ！ || And that concludes today's performance!
 ?(var.atlas_kind=2&comp) comp: {引|ひ}き{返|かえ}す {勇気|ゆうき} も 、 {大事|だいじ} だ よ 。 || It takes nerve to turn back, too.
+!call pages.home
 
 @scene atlas.banter.nao1
 comp: {地図|ちず} に ない {道|みち} を {歩|ある}く の は 、 {配達人|はいたつにん} の {夢|ゆめ} だ 。 …… {悪夢|あくむ} かも しれない けど 。 || Walking roads that aren't on any map is a courier's dream. …Or nightmare.

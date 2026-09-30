@@ -2849,6 +2849,19 @@ body.high-contrast .kc-pp { --pad-paper: #ffffff; --pad-ink: #000000; --pad-guid
 .kjc .kc-res .en, .kjc .kc-words .en { font-family: var(--ui-font); }
 .folio.lsheet.kjc > .folio-head { flex: none; }
 @media (max-width: 599px) { .folio.lsheet.kjc > .folio-head .meta { display: none; } .kjc .kc-res { gap: 0.5em; padding: 0.3em 0.45em; } .kjc .kc-rg { font-size: 1.45em; } }
+
+/* ==== src/styles/72_pages.css ==== */
+/* The Pages We Keep (src/content/pages/15_ui.js): the Journey page, its memento and the
+   small shared panel on Company › Companion. Icons are inline SVG with no size of their own. */
+.pages-page h3 .en, .pages-memento h4 .en, .pages-shared .en { font-weight: normal; }
+.pages-page p svg, .pages-shared svg { width: 1.1em; height: 1.1em; vertical-align: -0.2em; flex: none; }
+.pages-memento { margin-top: 0.4em; }
+.pages-memento h4 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.35em; margin: 0 0 0.3em; }
+.pages-memento h4 > svg { width: 1.15em; height: 1.15em; align-self: center; flex: none; color: var(--ink-2); }
+.pages-memento canvas { margin: 0.6em 0; }
+.pages-shared { margin-top: 0.8em; }
+.pages-shared canvas { margin: 0.3em 0; }
+.pages-shared .row-acts { margin-top: 0.4em; }
 </style>
 </head>
 <body>
@@ -7748,7 +7761,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.kanjiRead = {
-  r: '一いち,ひと,いっ;丁ちょう;七なな,しち;万まん;丈たけ;三さん,み,みっ;上うえ,うわ,あ,かみ;下した,お,しも,くだ;不ふ;与あた;世よ;丘おか;両りょう;並な,なら;中なか,ちゅう,じゅう;丸まる;主あるじ,ぬし;久ひさ;乗の;九きゅう,く,ここの;乱みだ;乳ちち;乾かわ;亀かめ;了りょう;予よ;争あらそ;事ごと;二に,ふた;互たが;五ご,いつ;井い,じょう;亡な;交か;亭てい;人にん,ひと,じん,びと;今いま;介かい;仕し;他ほか;' +
+  r: '一いち,ひと,いっ;丁ちょう;七なな,しち;万まん;丈たけ;三さん,み,みっ;上あ,うえ,うわ,じょう;下した,お,しも,くだ;不ふ;与あた;世よ;丘おか;両りょう;並な,なら;中ちゅう,なか,じゅう;丸まる;主あるじ,ぬし;久ひさ;乗の;九きゅう,く,ここの;乱みだ;乳ちち;乾かわ;亀かめ;了りょう;予よ;争あらそ;事ごと;二に,ふた;互たが;五ご,いつ;井い,じょう;亡な;交か;亭てい;人にん,ひと,じん,びと;今いま;介かい;仕し;他ほか;' +
     '付つ;代だい,か;令れい;以もっ;仮かり;仰おお;仲なか;件けん;任まか;伏ふ;休やす;会あ;伝つた,づた;伯はく;伴ともな;伸の;伺うかが;似に;但ただ;位い;低ひく;住す;体からだ;何なん,なに;余あま;作つく;使つか;例れい;供そな;依よ;価か;便びん,たよ;係かかり,がかり;促うなが;保たも;信しん;修しゅう;俺おれ;倉そう;個こ;' +
     '倍ばい;倒たお;候こう;借か;値あたい;偉えら;健けな;側がわ,そば;偶ぐう;偽いつわ,にせ;傘かさ;備そな;催さい;傷きず;傾かたむ;働はたら;像ぞう;僕ぼく;僚りょう;儀ぎ;償つぐな;優やさ;元もと;兄あに,にい;先さき;光ひか,ひかり;免めん;入い,はい;全すべ,まった;八はち,や,やっ;公こう;六ろく,むっ;共とも;具ぐ;内うち;円えん;冊さつ;再さい,ふたた;冗じょう;写うつ;' +
     '冥みょう;冬ふゆ;冴さ;冷さ,つめ,ひ;凍い,こお,こご;凝こ;几き;処しょ;凪なぎ;凹へこ;出で,だ;函かん;刀かたな,とう;刃は;分ぶん,ふん,わ;切き;刈か;列れつ;初はつ,はじ;判はん;別べつ,わか;利き;到とう;制せい;刷さつ;刺さ;刻きざ;則そく;削けず;前まえ;剣けん;剥は;副ふく;割わり,わ;劇げき;力ちから;功こう;加くわ;助たす;努ど;' +
@@ -7760,7 +7773,7 @@ RB.kanjiRead = {
     '孤こ;学まな;孫まご;守まも,もり,も;安やす;完かん;官かん;宙ちゅう;定さだ;宛あて,あ;宝たから;実じつ,み,みの;客きゃく;室しつ;宮きゅう;害がい;宵よい;家いえ,うち,が,け;容よう;宿やど;寂さび;寄よ;密みつ;寒さむ;寝ね;察さっ;寧ねい;審しん;寸すん;対たい;封ふう;専せん;射しゃ;将しょう;尊そん;尋たず;導みちび;小ちい;少すく,すこ;尻じり;' +
     '尽つ;尾お,び;局きょく;居い,きい;屈くつ;届とど;屋や;屑くず;屓き;層そう;履は;山やま;岩いわ;岬みさき;岸ぎし,きし;峠とうげ;峰みね;島しま;崖がけ;崩くず;嵌は;嵐あらし;川かわ;巡めぐ;工く;左ひだり;差さ;巻ま;市いち;布ぬの;希き;師し;席せき;帯お,おび,たい;帰かえ;帳ちょう;常じょう;帽ぼう;幅はば;幕まく;' +
     '干ひ,ほ;平たい,ひら;年ねん,とし;幸さいわ,しあわ;幹みき;幽ゆう;庁ちょう;広ひろ;庇かば;床ゆか;序じょ;底そこ;店みせ;度ど,たび;座ざ,すわ;庫こ;庭にわ;廃はい;廊ろう;延の;建た;弁べん;式しき;引ひ;弟おとうと;弧こ;弱よわ;張は,ば,ぱ;強つよ,し;弾ひ;当とう,あ;形けい,かたち;彫ほ;影かげ;彷ほう;役やく;彼かれ;彿ふつ;往ゆ;待ま;' +
-    '律りつ;後ご,あと,うし,のち;従したが;得え;御お,おん;復ふく;微び;徳とく;心こころ;必かなら;忘わす;忙いそが;応こた;快かい;念ねん;怒いか,おこ;怖こわ;思おも;急きゅう,いそ,せ;性しょう;怪あや;怯おび;恋こい;恐おそ;恥は;恨うら;恩おん;息いき;恵え;悔くや;悟ご;患かん;悩なや;悪わる;悲かな;情なさ;惑わく;惜お;想そう;意い;' +
+    '律りつ;後あと,ご,うし,のち;従したが;得え;御お,おん;復ふく;微び;徳とく;心こころ;必かなら;忘わす;忙いそが;応こた;快かい;念ねん;怒いか,おこ;怖こわ;思おも;急きゅう,いそ,せ;性しょう;怪あや;怯おび;恋こい;恐おそ;恥は;恨うら;恩おん;息いき;恵え;悔くや;悟ご;患かん;悩なや;悪わる;悲かな;情なさ;惑わく;惜お;想そう;意い;' +
     '愚おろ;愛あい;感かん;慈じ;態たい;慌あわ;慎つつし;慢まん;慣な;慮りょ;慰なぐさ;慶よろこ;憎にく;憩けい;憶おく;懐なつ,ふところ;懲こ,ご;懸けん,か;成な;我が;戚せき;戦たたか;戸と;戻もど;房ふさ;所ところ;扉とびら;手て;才さい;打う;払はら,ぱら;扱あつか;批ひ;承うけたまわ;技わざ;投な;抗あらが;折お,おり;抜ぬ;抱いだ,かか,だ;' +
     '抵てい;押お;担かつ;拍はく;拒こば;拗よう;招まね;拝はい;拠こ;括かつ;拭ふ;拶さつ;拾ひろ;持も;指さ,ゆび;挙あ;挟はさ;挨あい;振ふ;挽ひ;捌さば;捏こ;捕つか;捨す;掃そう;排はい;掘ほ;掛か;採と;探さが,さぐ;接つ,は;控ひか;推すい;掲かか;掴つか;掻か;揃そろ;揉も;描か,えが;提さ;' +
     '換か;握にぎ;援えん;揺ゆ;損そん,そこ;搾しぼ;摺す;撃げき;撒ま;撞つ;撫な;操そう;擦す,こす;攣つ;支ささ;改あらた;放はな,ほう;故こ;救すく;敗はい;教おし,おそ;散ち;敬けい;数すう,かず,かぞ;整ととの;敵がたき,てき;敷し;文ぶん;斉せい;斎さい;斐い;料りょう;斜しゃ;断ことわ;新あたら;方ほう,かた,がた;施せ;旅たび;旋せん;族ぞく;' +
@@ -7770,7 +7783,7 @@ RB.kanjiRead = {
     '機き,はた;櫂かい;櫓やぐら;欄らん;欠か;次つぎ;欲ほ;歌うた;歓かん;止と,ど,や;正ただ;歩ある,ふ;歪ゆが;歯は;歳さい,とし;歴れき;死し;残のこ;段だん;殺ころ;殻がら;殿どの;母はは,かあ;毎まい;毒どく;比くら;毛け;毯たん;氏し;民みん;気き,け;水みず;氷こおり,ごおり;永えい;汁しる;求もと;汗あせ;汚きたな,よご;江え;池いけ;' +
     '決き,けっ;沈しず;沖おき;没ぼつ;沢さわ;河が;沸わ;油あぶら;治なお;沿そ,ぞ;況きょう;泉いずみ;泊と;法ほう;波なみ;泣な;泥どろ;注そそ,つ;泳およ;洒じゃ;洗あら;洪こう;派は;流なが;浅あさ;浜はま;浮う;浴あ;海うみ;浸つ;消け,き;涙なみだ;液えき;涼すず;淀よど;淡あわ;深ふか;混こ,ま;淹い;添そ;' +
     '清きよ;渇かわ;済す,ず;渋しぶ;減へ;渡わた;渦うず;温あたた,あった;測はか;港みなと;渾こん;湖みずうみ;湯ゆ;湿しめ;満まん,み;源げん;準じゅん;溜た,だ;溝みぞ;溢あふ;溶と;溺おぼ;滅ほろ;滑すべ;滝たき;滲にじ;滴したた;漁りょう;漂ただよ;漏も;演えん;漕こ;漢かん;潮しお;潰つぶ;澄す;激はげ;濁にご;濃こ;濡ぬ;' +
-    '濯たく;瀬せ;火ひ,び;灯ひ,あか,とも;灰はい,ばい;災わざわ;炉ろ;炊た;炎ほのお;炭すみ;点てん,つ;為ため;烏からす;焙あぶ;焚た;無な;焦こ;然しか;焼や;煎せん;煙けむり;煤すす;照て;煮に;熊くま;熟う;熱ねつ,あつ;燃も;燕つばめ;父ちち,とう;爺じい;片かた,けら;牛うし;物もの,ぶつ;特とく;犬いぬ;犯はん;状じょう;狐きつね;狙ねら;' +
+    '濯たく;瀬せ;火ひ,び;灯ひ,あか,とも;灰はい,ばい;災わざわ;炉ろ;炊た;炎ほのお;炭すみ;点てん,つ;為ため;烏からす;焙あぶ;焚た;無な;焦あせ,こ;然しか;焼や;煎せん;煙けむり;煤すす;照て;煮に;熊くま;熟う;熱ねつ,あつ;燃も;燕つばめ;父ちち,とう;爺じい;片かた,けら;牛うし;物もの,ぶつ;特とく;犬いぬ;犯はん;状じょう;狐きつね;狙ねら;' +
     '独ひと;狭せま;猫ねこ;猶ゆう;獣けもの;率そつ,りつ;玉だま;王おう;珍めずら;現あらわ;理り;璧へき;瓶びん;甘あま;生い,う,お,は;産う;用よう;田た;由ゆう;甲か;申もう;男おとこ;町まち;画かく;界かい;畑はたけ;留と;番ばん;異い;畳たた;疑うたが;疲つか;病びょう;症しょう;痒かゆ;痛いた;痩や;痴ち;療りょう;癒いや;' +
     '癖くせ;発た;登のぼ;白しろ,しら;百ひゃく;的てき;皆みな,みんな;皮かわ;皿さら;盆ぼん;盗ぬす;盛も;監かん;盤ばん;目め;直なお,す;相あい,そう;盾たて;省かえり,はぶ;眉まゆ;看かん;真ま;眠ねむ;眩まぶ;眺なが;眼がん;着き,つ;督とく;睨にら;瞬まばた;矛ほこ;矢や;知し;短みじか;石いし;砂すな;研けん;破やぶ;硝しょう;硯すずり;' +
     '碑ひ;碗わん;確たし;磁じ;磨みが;示しめ;礼れい;社しゃ;祈いの;祖そ;祝いわ;神しん;祠ほこら;票ひょう;祭まつ;禁きん;福ふく;秀しゅう;私わたくし,わたし;秋あき;秘ひ;秩ちつ;移うつ;程てい;種たね;稼かせ;稽けい;積つ;穏おだ;穫かく;穴あな;究きゅう;空から,そら,あ,す;突つ;窓まど;窯かま,がま;窺うかが;立た;章しょう;端はし;' +
@@ -70801,7 +70814,10 @@ kasane: {次|つぎ} に {来|く}る {時|とき} は 、 {反対|はんたい}
 /* ==== src/content/ch6/53_scenes_ending.js ==== */
 /* Chapter 6 ending: the descent, the denouement walk through the changed
  * towns, the companion-specific endings, credits, and the hand-over to the
- * Unwritten Atlas in Reedwake's Lantern Hall. */
+ * Unwritten Atlas in Reedwake's Lantern Hall.
+ * Each companion's branch of sa.end_comp calls its relationship passage
+ * (end.<companion>.*, src/content/pages/20_ending.js) at fixed points, so the
+ * ending stays one scene; the +2 bond is committed there once. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.script.add(`
@@ -70889,9 +70905,12 @@ sa_tae[surprise]: …… そう かい 。 あの {子|こ} だった の かい
 ?(end_kasane_trial) sa_tae: {謝|あやま}って {済|す}む こと じゃ ない よ 。 …… でも 、 {聞|き}いた 。 {聞|き}いた から ね 。 || Sorry doesn't settle it. …But I've heard you. I've heard you.
 akari: $name さん ！ …… {父|ちち} と 、 {手紙|てがみ} が やり{取|と}り できる よう に なりました 。 {宛先|あてさき} が 、 ちゃんと {読|よ}める {字|じ} で {届|とど}く んです 。 || $name! …My father and I can write to each other now. The addresses arrive in writing anyone can read.
 ?(sb_hoshino_goes) akari[smile]: {父|ちち} は 、 {今|いま} こっち に いる んです 。 {灯|あか}り を {人|ひと} に {頼|たの}んで 、 {山|やま} を {下|お}りて きて 。 {毎晩|まいばん} 、 {窓|まど} から {雪鈴|ゆきすず} の {方|ほう} を {見|み}て います 。 || My father's here now. He left the lamp in someone's care and came down the mountain. Every night he looks out of the window towards Snowbell.
-?(comp=nao) umi: …… {返事|へんじ} は 、 まだ {書|か}いて ない 。 {書|か}く か どう か も 、 {決|き}めて ない 。 || …I haven't written back. I haven't decided whether I will.
-?(comp=nao) umi: {決|き}めなくて いい って 、 あんた {言|い}った よ ね 。 || You said I didn't have to decide.
-?(comp=nao) nao: {言|い}った 。 {今|いま} も そう {思|おも}う 。 {手紙|てがみ} は {届|とど}いた 。 {配達人|はいたつにん} の {仕事|しごと} は 、 そこ まで だ 。 || I did. I still think so. The letter arrived. That's where a courier's job ends.
+?(comp=nao&quest.lf_nao=done) umi: …… {返事|へんじ} は 、 まだ {書|か}いて ない 。 {書|か}く か どう か も 、 {決|き}めて ない 。 || …I haven't written back. I haven't decided whether I will.
+?(comp=nao&quest.lf_nao=done) umi: {決|き}めなくて いい って 、 あんた {言|い}った よ ね 。 || You said I didn't have to decide.
+?(comp=nao&quest.lf_nao=done) nao: {言|い}った 。 {今|いま} も そう {思|おも}う 。 {手紙|てがみ} は {届|とど}いた 。 {配達人|はいたつにん} の {仕事|しごと} は 、 そこ まで だ 。 || I did. I still think so. The letter arrived. That's where a courier's job ends.
+?(comp=nao&quest.lf_nao>=1&!quest.lf_nao=done) umi: …… あ 、 {配達|はいたつ} の {人|ひと} 。 {出直|でなお}す って {言|い}って た のに 。 || …Oh, the courier. You said you'd come back.
+?(comp=nao&quest.lf_nao>=1&!quest.lf_nao=done) nao[closed]: …… {近|ちか}い うち に {行|い}く 。 {受|う}け{取|と}る か どう か は 、 {君|きみ} が {決|き}めて いい 。 || …I'll come soon. Whether you take it is up to you.
+?(comp=nao&!quest.lf_nao>=1) nao[think]: …… この {町|まち} に 、 まだ {届|とど}けて ない {手紙|てがみ} が {一通|いっつう} ある 。 {近|ちか}い うち に 。 || …There's still one letter I haven't delivered in this town. Soon.
 ?(comp=mio) lf_yae: ミオ さん 、 {町|まち} に {残|のこ}って {薬屋|くすりや} を {開|ひら}いて くれない かしら 。 {皆|みな} 、 {頼|たよ}り に して いる の よ 。 || Mio, won't you stay and open an apothecary here? Everyone's come to rely on you.
 ?(comp=mio) mio: ごめんなさい 。 お{断|ことわ}り します 。 {葦|あし}ノ{瀬|せ} に 、 {店|みせ} が あります ので 。 || I'm sorry. I'll have to say no. I have a shop in Reedwake.
 ?(comp=mio) mio[laugh]: …… {聞|き}いた ？ {今|いま} の 。 {断|ことわ}った 。 ちゃんと 、 {丁寧|ていねい} に 。 || …Did you hear that? I said no. Properly, and politely.
@@ -70993,11 +71012,14 @@ nao: {次|つぎ} の {配達|はいたつ} 、 もう {決|き}まってる ん
 ?(end_kasane_trial) nao: {灯落|ひおち} で カサネ が {書|か}き{写|うつ}す {名前|なまえ} を 、 {一|ひと}つ ずつ {持|も}ち{主|ぬし} に {届|とど}ける 。 {気|き} の {長|なが}い {仕事|しごと} だ 。 {嫌|きら}い じゃ ない 。 || Every name Kasane copies out in Lanternfall, I'll carry to its owner. One at a time. Slow work. I don't mind it.
 narr: ナオ は {鞄|かばん} から 、 {古|ふる}い {紙|かみ} の {束|たば} を {出|だ}した 。 {宛名|あてな} の ラベル 。 {何百枚|なんびゃくまい} も 。 || From the satchel, Nao draws out a bundle of old paper. Address labels. Hundreds of them.
 nao[shy]: {書|か}き{直|なお}した ラベル 、 {全部|ぜんぶ} {取|と}って ある 。 {笑|わら}う な よ 。 || Every label I ever rewrote. Kept them all. Don't laugh.
+!call end.nao.core
 nao: …… これ は 、 $name に 。 || …This one's for you.
 narr: {一枚|いちまい} の ラベル 。 ナオ の {字|じ} で 、 {名前|なまえ} だけ が {書|か}いて ある 。 「 $name 」 。 || One label. In Nao's hand, just a name: "$name".
 nao: {住所|じゅうしょ} は {書|か}いて ない 。 {要|い}らない から 。 {道|みち} に {迷|まよ}ったら 、 それ を どこ か に {貼|は}っとけ 。 {探|さが}し に {行|い}く 。 || No address. You don't need one. If you ever get lost, stick that up somewhere. I'll come and find you.
 nao[smirk]: {出口|でぐち} は 、 いつ も {確|たし}かめてる から な 。 {入口|いりぐち} も 。 {両方|りょうほう} 、 {知|し}ってる 。 || I always know where the exits are, remember. The entrances too. Both.
+!call end.nao.b
 nao[smile]: …… {一緒|いっしょ} に {歩|ある}けて 、 よかった 。 {次|つぎ} の {道|みち} も 、 {声|こえ} を かけろ 。 {断|ことわ}る {理由|りゆう} は 、 {今|いま} の ところ {一|ひと}つ も ない 。 || …I'm glad we walked it together. Call me for the next road too. So far I haven't got a single reason to say no.
+!call end.nao.c
 !end
 :mio
 !music companion_mio
@@ -71006,11 +71028,14 @@ mio: {見|み}て 。 {新|あたら}しい {札|ふだ} 。 || Look. A new sign
 narr: {戸口|とぐち} の {札|ふだ} に は 、 こう {書|か}いて ある 。 「 {水曜|すいよう} は {休|やす}み 。 {急|きゅう}{患|かん} {以外|いがい} は 、 お{断|ことわ}り します 。 」 || The sign on the door reads: "Closed Wednesdays. Emergencies only — everything else, I will politely refuse."
 mio[laugh]: {書|か}いた {時|とき} 、 {手|て} が {震|ふる}えた の 。 {笑|わら}える でしょ 。 「 {断|ことわ}る 」 って {字|じ} だけ で 。 || My hand shook when I wrote it. Funny, isn't it? Just the word "refuse".
 mio: でも 、 {灯落|ひおち} で {分|わ}かった 。 「 いいえ 」 が {言|い}えない {所|ところ} は 、 {優|やさ}しい ん じゃ なくて 、 {苦|くる}しい ん だ って 。 || But Lanternfall taught me. A place where no one can say no isn't kind. It's suffocating.
+!call end.mio.core
 narr: ミオ は {棚|たな} の {奥|おく} から 、 {空|から} の {瓶|びん} を {一|ひと}つ {取|と}り{出|だ}した 。 ラベル に 、 $name の {名前|なまえ} 。 || From the back of the shelf, Mio takes out an empty bottle. The label bears your name.
 mio: {旅|たび} の {間|あいだ} 、 ずっと {作|つく}ろう と して た {薬|くすり} 。 「 {長|なが}い {道|みち} に {効|き}く {薬|くすり} 」 。 …… {結局|けっきょく} 、 {中身|なかみ} は {作|つく}れなかった 。 || A remedy I've been trying to make the whole journey. "For long roads." …In the end, I couldn't make what goes inside.
 mio[smile]: たぶん 、 {一緒|いっしょ} に {歩|ある}く {人|ひと} が {中身|なかみ} な んだ と {思|おも}う 。 だから 、 {瓶|びん} だけ 。 {持|も}って て 。 || I think maybe the person walking beside you is what goes inside. So — just the bottle. Keep it.
 mio: …… それ から 、 {約束|やくそく} 。 これから は 、 $name に も 、 {時々|ときどき} 「 いいえ 」 って {言|い}う から ね 。 || …And a promise. From now on, I'll say no to you too, sometimes.
 mio[laugh]: {嬉|うれ}しそう な {顔|かお} 、 しない で よ 。 || Don't look so pleased about it.
+!call end.mio.b
+!call end.mio.c
 !end
 :ren
 !music companion_ren
@@ -71020,10 +71045,13 @@ ren: {師匠|ししょう} の {灯|ひ} です 。 カサネ さん が 、 {�
 ?(sa_ren_took) ren: {最後|さいご} の {口論|こうろん} も 、 {一緒|いっしょ} に {戻|もど}って きました 。 {痛|いた}い です 。 でも 、 {痛|いた}い {所|ところ} に 、 {師匠|ししょう} が いる 。 || The last quarrel came back with it. It hurts. But where it hurts is where my teacher is.
 ?(sa_ren_left) ren: {顔|かお} は 、 {書庫|しょこ} に {置|お}いて きました 。 {後悔|こうかい} は …… {毎日|まいにち} {少|すこ}し ずつ して います 。 {体|からだ} に いい {程度|ていど} に 。 || I left the face at the Archive. Regrets… I have a small one every day. A healthy dose.
 ?(sa_ren_left) ren: {教|おし}え は 、 {全部|ぜんぶ} ここ に ある 。 {師匠|ししょう} が {一番|いちばん} {残|のこ}したかった の は 、 たぶん こっち です 。 || The lessons are all here. I suspect that's what my teacher most wanted to leave behind.
+!call end.ren.core
 ren: {灯|ひ} の {道|みち} は 、 まだ {途中|とちゅう} です 。 {書|か}き{直|なお}す {名前|なまえ} が 、 {山|やま} ほど ある 。 || The lantern roads are only half mended. There are mountains of names to rewrite.
 ren[think]: {師匠|ししょう} の {教|おし}え を 、 {一|ひと}つ {足|た}して も いい です か 。 「 {道|みち} を {知|し}る {者|もの} より 、 {一緒|いっしょ} に {迷|まよ}って くれる {者|もの} を {連|つ}れて いけ 」 。 || May I add one to my teacher's lessons? "Take someone who'll get lost with you, over someone who knows the way."
 ren[smirk]: …… {今|いま} {考|かんが}えました 。 でも 、 {師匠|ししょう} なら {言|い}った と {思|おも}います 。 {解説|かいせつ} は {要|い}りません ね 。 || …I just made that one up. But I think my teacher would have said it. No explanation needed, I trust.
+!call end.ren.b
 ren[smile]: {次|つぎ} も 、 {一緒|いっしょ} に {迷|まよ}って ください 。 $name 。 || Get lost with me next time too, $name.
+!call end.ren.c
 !end
 :suzu
 !music companion_suzu
@@ -71032,9 +71060,12 @@ suzu: {帳簿|ちょうぼ} 、 {閉|と}じた よ 。 {借|か}り は {全部
 suzu[laugh]: {新|あたら}しい {芝居|しばい} を {書|か}いてる んだ 。 {題|だい} は 『 {借|か}りた {名前|なまえ} の {道|みち} 』 。 {主役|しゅやく} が {誰|だれ} か 、 {分|わ}かる よ ね 。 || I'm writing a new play. It's called "The Road of Borrowed Names". You know who the lead is.
 suzu: {最後|さいご} の {台詞|せりふ} で 、 {迷|まよ}ってる 。 「 みんな {幸|しあわ}せ に {暮|く}らしました 」 に する か …… || I'm stuck on the last line. Whether to go with "And everyone lived happily ever after"…
 suzu[closed]: …… ううん 。 「 みんな 、 {生|い}きて いきました 」 に する 。 {幸|しあわ}せ か どう か は 、 {見|み}た {人|ひと} が {決|き}める 。 || …No. "And everyone went on living." Whether it was happily, the audience can decide.
+!call end.suzu.a
+!call end.suzu.b
 suzu: それ と 、 これ 。 || And — this.
 narr: スズ は {髪|かみ} の {古|ふる}い リボン を ほどいて 、 $name の {手首|てくび} に {結|むす}んだ 。 || Suzu unties the faded ribbon from her hair and ties it around your wrist.
 suzu: {貸|か}し じゃ ない よ 。 {預|あず}ける だけ 。 {次|つぎ} の {幕|まく} まで 。 …… {返|かえ}し に {来|き}て よ ね 。 {必|かなら}ず 。 {曖昧|あいまい} じゃ ない ほう の {必|かなら}ず 。 || It's not a loan. I'm just leaving it with you. Until the next act. …Come and give it back. Without fail. The kind of "without fail" that isn't vague.
+!call end.suzu.c
 !end
 `, 'ch6/scenes-ending');
 
@@ -73813,6 +73844,1878 @@ comp: {師匠|ししょう} は 、 {灯|あか}り の {名前|なまえ} を {
 @scene lq.b_suzu
 comp: {柿|かき} って ね 、 {渋|しぶ}い うち に {採|と}って {干|ほ}す と 、 {甘|あま}く なる んだって 。 {人|ひと} も そう なら いい けど 。 …… {私|わたし} ？ まだ {干|ほ}し{中|ちゅう} 。 || They say if you pick persimmons while they're still bitter and dry them, they turn sweet. Wouldn't it be nice if people worked that way. …Me? Still drying.
 `, 'lq/50_letters');
+
+
+/* ==== src/content/pages/00_lex.js ==== */
+/* Lexicon for the ending extensions, The Pages We Keep and the road topics
+ * (src/content/pages/). Only words no earlier file defines.
+ * Format: w|r|pos|lv|meaning|note (see docs/CONTENT.md). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function () {
+  'use strict';
+  RB.lex.add(RB.lex.parseTable(`
+# people, animals, the body
+たぬき||n|E|tanuki, raccoon dog|In folklore said to shapeshift (化ける).
+あくび||n|E|yawn
+くしゃみ||n|E|sneeze
+真顔|まがお|n|A|a straight face, a serious look
+番犬|ばんけん|n|I|watchdog
+相方|あいかた|n|A|partner (in a double act, on stage)
+相手役|あいてやく|n|A|the other part in a scene, co-star
+名人|めいじん|n|I|master, expert
+仲|なか|n|I|terms, relationship (仲がいい: to get on well)
+# verbs
+覗き込む|のぞきこむ|v5m|I|to peer into
+かしげる||v1|A|to tilt (one's head)
+言いそびれる|いいそびれる|v1|A|to miss the chance to say something
+仕上げる|しあげる|v1|I|to finish (a piece of work)
+見落とす|みおとす|v5s|I|to overlook, to miss
+焦る|あせる|v5r|I|to be in a hurry, to be impatient
+飽きる|あきる|v1|I|to get tired of, to lose interest in
+化ける|ばける|v1|I|to take another shape, to disguise oneself (foxes and tanuki in folklore)
+横切る|よこぎる|v5r|I|to cross, to cut across
+# work, records, the stage
+受取|うけとり|n|I|receipt; receiving (a delivery)
+分担|ぶんたん|vs|I|dividing up the work; one's share
+回数|かいすう|n|I|number of times
+公表|こうひょう|vs|A|making public, publishing
+記述|きじゅつ|vs|A|written description, account
+清書|せいしょ|vs|I|making a fair copy, writing out neatly
+候補|こうほ|n|I|candidate
+統計|とうけい|n|A|statistics
+精度|せいど|n|A|accuracy, precision
+確率|かくりつ|n|I|probability
+一割|いちわり|n|I|ten percent (one tenth)
+五割|ごわり|n|I|fifty percent (five tenths)
+九割|きゅうわり|n|I|ninety percent (nine tenths)
+品切れ|しなぎれ|n|I|sold out, out of stock
+収入|しゅうにゅう|n|I|income
+道順|みちじゅん|n|I|route, the way (to somewhere)
+出演|しゅつえん|vs|I|appearing (in a play), performing
+登場人物|とうじょうじんぶつ|n|A|character (in a story or play)
+未確認|みかくにん|n|A|unconfirmed
+見回り|みまわり|n|I|rounds, a patrol
+大金持ち|おおがねもち|n|I|a very rich person
+練習台|れんしゅうだい|n|A|someone or something to practise on
+番付|ばんづけ|n|A|programme (of a performance), playbill; ranking list
+木戸銭|きどせん|n|A|admission fee (to a show; old-fashioned)
+上演|じょうえん|vs|I|staging (a play), putting on a performance
+脚色|きゃくしょく|vs|A|dramatizing; embellishing a story
+脚本|きゃくほん|n|I|script, screenplay
+効果音|こうかおん|n|A|sound effect
+出演料|しゅつえんりょう|n|A|performer's fee
+任命|にんめい|vs|A|appointment (to a post)
+一列目|いちれつめ|n|I|the first row
+三杯目|さんばいめ|n|I|the third cup
+# time, manner, feelings
+後回し|あとまわし|n|I|putting off, leaving till later
+未定|みてい|n|I|not yet decided, to be announced
+延長|えんちょう|vs|I|extending, extension
+最中|さいちゅう|n|I|in the middle of (doing)
+普段|ふだん|n|E|usual, everyday
+機会|きかい|n|I|opportunity, chance
+念|ねん|n|A|care, attention (念のため: just in case)
+一理|いちり|n|A|a point, some truth (一理ある: to have a point)
+一目|いちもく|n|A|(一目置く) to acknowledge someone's worth, to hold in respect
+勘|かん|n|I|intuition, instinct
+野営|やえい|vs|I|camping out, bivouac
+完全|かんぜん|adj-na|I|complete, perfect
+慎重|しんちょう|adj-na|I|careful, cautious
+身軽|みがる|adj-na|I|light, unburdened, nimble
+誇らしい|ほこらしい|adj-i|I|proud (of something)
+歩幅|ほはば|n|A|stride, length of a step
+見落とし|みおとし|n|I|oversight, something missed
+`), 'pages');
+})();
+
+
+/* ==== src/content/pages/10_pages.js ==== */
+/* The ending extensions and The Pages We Keep (addendum §10, §11): the
+ * authoritative state, its once-only commits and the hooks the scenes call.
+ * The words people say live in 20_ending.js, 30_project.js and 40_topics.js.
+ *
+ *   RB.pages.state(s)          the committed companion's project (or null)
+ *   RB.pages.pending(s, where) the conversation waiting to be had here, or null
+ *                              { id, scene, en } — for Company and the Chat key
+ *   RB.pages.capture(s, ev)    Page II evidence from an Atlas event (atlas:event)
+ *   RB.pages.runEnded(s, ev)   the outing's return type (atlas:end)
+ *   RB.pages.accept / page2 / page3 / endingDone / unfinishedDone   commits
+ *   RB.pages.topic(s, where)   the next "Talk about this road" topic
+ *
+ * Saved state (campaign-local, docs/ADDENDUM_CONTRACTS.md §1):
+ *   s.company.project = { v, comp, stage 1..3, theme, t1..t3, ev, aspect, where,
+ *     caption, lastEmpty, road: { camp, home, lastEnd, recent, quiet } }
+ *     ev = { run, id, kind, desc, title, room, branch, mods, pet, t, ret }
+ *     (copied out of the run when it happens, so the Atlas cleanup cannot lose it;
+ *     the run itself keeps only run.pages = { ev: id } as a reference)
+ *   s.company.talk['road:<topic>'] = { t, variant }   topics heard
+ *   memories: ending:<c> | ending_retro:<c> | unfinished:<c> | pages:1..3
+ * Bond: RB.company.award(s, 'ending', 2) and 'project:1..3' (+1 each). Topics,
+ * replies and deferrals award nothing. Nothing here changes battle, rewards or
+ * answers; nothing reads the game's random streams. */
+var RB = (globalThis.RB = globalThis.RB || {});
+RB.hooks = RB.hooks || {};
+
+RB.pages = (function () {
+  'use strict';
+  const C = RB.content;
+  const COMPS = ['nao', 'mio', 'ren', 'suzu'];
+  const PQ = { nao: 'lf_nao', mio: 'lf_mio', ren: 'ren_ushio', suzu: 'co_suzu' };
+  const J = (jp, en) => ({ jp, en });
+
+  // ---- authored data the hooks present and the folio shows ------------------------------------
+  // Each companion's project (§11.3), the two themes offered at Page I, the
+  // aspects asked about at Page II, and the captions chosen at Page III.
+  const PROJECT = {
+    nao: {
+      title: J('{明日|あした} の {宛先|あてさき}', 'An Address for Tomorrow'),
+      themes: {
+        next: J('{次|つぎ} に {歩|ある}く {人|ひと} へ の {道案内|みちあんない}', 'A useful instruction for the next traveller'),
+        back: J('{帰|かえ}り{道|みち} を {見|み}つける ため の {一言|ひとこと}', 'A message about finding the way back'),
+      },
+      aspects: {
+        read: J('{動|うご}く {前|まえ} に {確|たし}かめた こと', 'What we checked before we moved'),
+        decide: J('{決|き}めた の は 、 {歩|ある}いた {二人|ふたり} だ と いう こと', 'That the two who walked it decided'),
+        home: J('そこ から {帰|かえ}り{道|みち} が {見|み}えた こと', 'That you could see the way home from there'),
+      },
+      captions: {
+        next: [J('{読|よ}んで から 、 {進|すす}め 。', 'Read it first. Then go on.'), J('{決|き}める の は 、 {歩|ある}く {人|ひと} 。', 'The one who walks it decides.')],
+        back: [J('{来|き}た {道|みち} も 、 {道|みち} の うち 。', 'The way you came counts as a road too.'), J('{迷|まよ}ったら 、 {声|こえ} を かけろ 。', 'If you get lost, call out.')],
+      },
+      memento: 'pages_nao',
+      place: J('{灯|あか}り{堂|どう} の {壁|かべ}', 'the Lantern Hall wall'),
+    },
+    mio: {
+      title: J('{荷|に} を {下|お}ろす {場所|ばしょ}', 'A Place to Set Things Down'),
+      themes: {
+        pause: J('{休|やす}む こと が {怖|こわ}くなかった {理由|りゆう}', 'What made a pause feel safe'),
+        share: J('{仕事|しごと} を {分|わ}け{合|あ}えた {理由|りゆう}', 'What made sharing the work easier'),
+      },
+      aspects: {
+        stop: J('{止|と}まって 、 {座|すわ}った こと', 'That we stopped and sat down'),
+        turns: J('{交代|こうたい} で やった こと', 'That we took turns'),
+        enough: J('「 {今日|きょう} は ここ まで 」 と {言|い}えた こと', 'That we could say "that\'s enough for today"'),
+      },
+      captions: {
+        pause: [J('{座|すわ}って いい {場所|ばしょ} 。', 'A place where it\'s all right to sit down.'), J('{急|いそ}がない {日|ひ} も 、 {旅|たび} の うち 。', 'Unhurried days are part of the journey too.')],
+        share: [J('{荷物|にもつ} は 、 {半分|はんぶん} ずつ 。', 'Half the load each.'), J('{頼|たの}む の も 、 {頼|たの}まれる の も 、 {少|すこ}し ずつ 。', 'Asking and being asked — a little at a time.')],
+      },
+      memento: 'pages_mio',
+      place: J('ハナ の {茶屋|ちゃや} の {壁|かべ}', 'the wall of Hana\'s teahouse'),
+    },
+    ren: {
+      title: J('{次|つぎ} の {灯守|ひもり} へ の {余白|よはく}', 'A Margin for the Next Keeper'),
+      themes: {
+        sure: J('{役|やく} に {立|た}つ 、 {確|たし}か な こと', 'A useful certainty'),
+        unsure: J('{正直|しょうじき} に 「 {分|わ}からない 」 と {書|か}く こと', 'An uncertainty, honestly labelled'),
+      },
+      aspects: {
+        known: J('{今|いま} は {確|たし}か に {分|わ}かって いる こと', 'What we know for certain now'),
+        unknown: J('まだ {分|わ}からない まま の こと', 'What we still don\'t know'),
+        way: J('どっち へ {行|い}った か （ {選|えら}んだ の は わたし で は ない ）', 'Which way we went (not my choice, for once)'),
+      },
+      captions: {
+        sure: [J('{確|たし}か な こと ： {読|よ}めば 、 {道|みち} は {続|つづ}く 。', 'Certain: read it, and the road goes on.'), J('{確|たし}か な こと ： {一人|ひとり} で {守|まも}る {名|な} は ない 。', 'Certain: no one keeps a name alone.')],
+        unsure: [J('{分|わ}からない こと は 、 {分|わ}からない と {書|か}く 。', 'What we don\'t know, we write down as not known.'), J('{方角|ほうがく} ： {未確認|みかくにん} 。 {連|つ}れ に {聞|き}く こと 。', 'Direction: unconfirmed. Ask your companion.')],
+      },
+      memento: 'pages_ren',
+      place: J('{灯|あか}り{堂|どう} の {壁|かべ}', 'the Lantern Hall wall'),
+    },
+    suzu: {
+      title: J('{旅|たび} と {旅|たび} の {幕間|まくあい}', 'The Scene Between Adventures'),
+      themes: {
+        funny: J('{小|ちい}さな 、 {笑|わら}える {場面|ばめん}', 'A small funny moment'),
+        quiet: J('{舞台|ぶたい} で は {省|はぶ}かれる 、 {静|しず}か な {場面|ばめん}', 'A quiet moment a performance usually leaves out'),
+      },
+      aspects: {
+        asis: J('{起|お}きた まま に {書|か}く', 'Write it just as it happened'),
+        pause: J('{間|ま} を 、 そのまま {残|のこ}す', 'Leave the pause in'),
+        watch: J('わたし が {見|み}て いた だけ の ところ', 'The part where I only watched'),
+      },
+      captions: {
+        funny: [J('{本日|ほんじつ} の {出費|しゅっぴ} ： {笑|わら}い {一回|いっかい} 。', 'Today\'s expenses: one laugh.'), J('{主役|しゅやく} {不在|ふざい} でも 、 {幕|まく} は {上|あ}がる 。', 'No lead needed — the curtain goes up anyway.')],
+        quiet: [J('{台詞|せりふ} の ない {場面|ばめん} 。', 'A scene with no lines.'), J('{拍手|はくしゅ} は 、 いらない 。', 'No applause needed.')],
+      },
+      memento: 'pages_suzu',
+      place: J('ハナ の {茶屋|ちゃや} の {壁|かべ}', 'the wall of Hana\'s teahouse'),
+    },
+  };
+  const LATER = {
+    theme: J('{今|いま} は まだ {決|き}めない', 'Not now — maybe later'),
+    aspect: J('{家|いえ} に {帰|かえ}って から {話|はな}そう', 'Let\'s talk about it at home'),
+    caption: J('{今日|きょう} は ここ まで に しよう', 'Let\'s finish it another day'),
+  };
+  // The ending's optional reply (§10.2.3): two sincere answers and a quiet one,
+  // none of them "right". resp: what the Company memory keeps of the answer.
+  const REPLY = {
+    nao: [
+      { id: 'walk', jp: '{次|つぎ} の {道|みち} も 、 {一緒|いっしょ} に {歩|ある}こう 。', en: 'Let\'s walk the next road together too.', resp: J('ナオ は 「 {道|みち} は {二人|ふたり} で {選|えら}ぶ 」 と {答|こた}えた 。', 'Nao said the two of you would choose the roads together.') },
+      { id: 'home', jp: '{帰|かえ}る {場所|ばしょ} が ある から 、 {遠|とお}く へ {行|い}ける 。', en: 'Having somewhere to come back to is what lets me go far.', resp: J('ナオ は 、 {帰|かえ}り{道|みち} は いつ でも {覚|おぼ}えて おく と {言|い}った 。', 'Nao said they would always remember the way back.') },
+      { id: 'quiet', jp: '（ {黙|だま}って うなずく ）', en: '(Just nod.)', resp: J('ナオ も 、 {黙|だま}って うなずいた 。', 'Nao nodded back, without a word.') },
+    ],
+    mio: [
+      { id: 'carry', jp: '{今度|こんど} は 、 {荷物|にもつ} を {少|すこ}し {持|も}たせて 。', en: 'Next time, let me carry some of the load.', resp: J('ミオ は 、 {重|おも}い {方|ほう} を {渡|わた}す と {笑|わら}った 。', 'Mio laughed and said you would get the heavy bag.') },
+      { id: 'rest', jp: '{水曜|すいよう} は 、 {一緒|いっしょ} に {何|なに} も しない {日|ひ} に しよう 。', en: 'Let\'s make Wednesdays a day we do nothing together.', resp: J('ミオ は 、 お{茶|ちゃ} {係|がかり} は {交代|こうたい} だ と {言|い}った 。', 'Mio said you would take turns making the tea.') },
+      { id: 'quiet', jp: '（ {黙|だま}って {瓶|びん} を {受|う}け{取|と}る ）', en: '(Just take the bottle.)', resp: J('ミオ は 、 {何|なに} も {言|い}わず に {頷|うなず}いた 。', 'Mio nodded, and said nothing more.') },
+    ],
+    ren: [
+      { id: 'map', jp: '{地図|ちず} は わたし が {読|よ}む 。 {名前|なまえ} は レン が {読|よ}んで 。', en: 'I\'ll read the maps. You read the names.', resp: J('レン は 、 {公平|こうへい} な {分担|ぶんたん} だ と {答|こた}えた 。', 'Ren called it a fair division of labour.') },
+      { id: 'lost', jp: '{迷|まよ}う の も 、 {一緒|いっしょ} なら {悪|わる}くない 。', en: 'Getting lost isn\'t bad, if we do it together.', resp: J('レン は 、 それ を {師匠|ししょう} の {教|おし}え の {横|よこ} に {書|か}き{足|た}した 。', 'Ren wrote it down beside their teacher\'s lessons.') },
+      { id: 'quiet', jp: '（ {黙|だま}って {灯|ひ} を {受|う}け{取|と}る ）', en: '(Just take the lamp to hold.)', resp: J('レン は 、 {灯|ひ} を {少|すこ}し {高|たか}く {掲|かか}げた 。', 'Ren raised the lamp a little higher.') },
+    ],
+    suzu: [
+      { id: 'seat', jp: '{主役|しゅやく} じゃ なくて いい 。 {客席|きゃくせき} を {一|ひと}つ {取|と}って おいて 。', en: 'I don\'t need to be the lead. Just keep me a seat.', resp: J('スズ は 、 {一番|いちばん} {前|まえ} の {席|せき} を {約束|やくそく} した 。', 'Suzu promised you a seat in the front row.') },
+      { id: 'onstage', jp: 'スズ も 、 {語|かた}り{手|て} じゃ なくて {登場人物|とうじょうじんぶつ} に なって 。', en: 'Put yourself in the play too — not just as the narrator.', resp: J('スズ は 、 {自分|じぶん} の {台詞|せりふ} を {一|ひと}つ {書|か}く と {言|い}った 。', 'Suzu said she would write herself one line.') },
+      { id: 'quiet', jp: '（ {黙|だま}って {笑|わら}う ）', en: '(Just smile.)', resp: J('スズ も 、 {台詞|せりふ} なし で {笑|わら}った 。', 'Suzu smiled back, no lines needed.') },
+    ],
+  };
+  const MEMO_TITLE = {
+    ending: { nao: J('{橋|はし} の {上|うえ} で', 'On the bridge at sundown'), mio: J('{水曜|すいよう} の {札|ふだ}', 'The Wednesday sign'), ren: J('{二|ふた}つ の {灯|ひ}', 'Two lamps'), suzu: J('{最後|さいご} の {台詞|せりふ}', 'The last line') },
+    retro: J('{言|い}いそびれて いた {話|はなし}', 'A Conversation We Still Owe Ourselves'),
+    unfinished: J('{途中|とちゅう} だった {話|はなし}', 'An Unfinished Conversation'),
+    p1: J('{何|なに} を {残|のこ}そう か', 'What Shall We Keep?'),
+    p2: J('{残|のこ}したい {一瞬|いっしゅん}', 'A Moment Worth Keeping'),
+    p3: J('{本当|ほんとう} の {場所|ばしょ} に {置|お}く', 'Put It Somewhere Real'),
+  };
+  const RET = {
+    complete: J('{道|みち} の {終|お}わり まで {歩|ある}いて 、 {帰|かえ}った', 'Walked to the road\'s end and came home'),
+    early: J('{野営地|やえいち} から {引|ひ}き{返|かえ}した', 'Turned back from the camp'),
+    defeat: J('{道|みち} が {折|お}り{畳|たた}まれ 、 {灯|あか}り{堂|どう} に {戻|もど}された', 'The road folded up and set us down in the Lantern Hall'),
+    folded: J('{道|みち} が {見|み}つからなく なり 、 {灯|あか}り{堂|どう} に {戻|もど}った', 'The road could not be found again; we were back in the Lantern Hall'),
+  };
+
+  // ---- small helpers ------------------------------------------------------------------------------
+  const G = () => RB.game && RB.game.s;
+  const comp = (s) => (s && s.comp && COMPS.indexOf(s.comp) >= 0 ? s.comp : null);
+  const co = (s) => s.company || (s.company = RB.state.newCampaign().company);
+  const mem = (s, id) => !!(s.company && s.company.memories.some((m) => m.id === id));
+  const memOf = (s, id) => (s.company && s.company.memories.find((m) => m.id === id)) || null;
+  const pqDone = (s, c) => { const q = s.quests && s.quests[PQ[c]]; return !!(q && q.done); };
+  const onAtlas = (s) => typeof s.map === 'string' && s.map.indexOf('atlas.') === 0;
+  const liveRun = (s) => (s.atlas && s.atlas.run) || null;
+  function petNow(s) {
+    const c = s.company || {};
+    const sp = c.pet, p = sp && c.pets && c.pets[sp];
+    return p ? { species: sp, name: p.name || null } : null;
+  }
+  // A pet that is truly active and shown in the world (pets worker: RB.pets.visible).
+  function petVisible(s) {
+    try { return !!(RB.pets && RB.pets.visible && s.company && s.company.pet && RB.pets.visible(s, 'world')); } catch (e) { return false; }
+  }
+
+  // The project belongs to the companion who accepted it (the committed one).
+  function state(s) {
+    const p = s && s.company && s.company.project;
+    return p && p.comp && p.comp === comp(s) ? p : null;
+  }
+  function endingRec(s) {
+    const c = comp(s);
+    return c ? memOf(s, 'ending:' + c) || memOf(s, 'ending_retro:' + c) : null;
+  }
+  const endingHad = (s) => !!endingRec(s);
+  // A save that finished the story before this passage existed (§10.4).
+  const needRetro = (s) => !!(s && s.flags && s.flags.postgame && comp(s) && !endingHad(s));
+  // The personal quest was open at the ending and has since been resolved.
+  function needUnfinished(s) {
+    const c = comp(s), r = endingRec(s);
+    return !!(c && r && r.pq === false && pqDone(s, c) && !mem(s, 'unfinished:' + c));
+  }
+  const offerOpen = (s) => !!(s && s.flags && s.flags.postgame && comp(s) && endingHad(s) && !state(s));
+  // Page II evidence has come home: the outing it came from is over.
+  function returned(s) {
+    const p = state(s), ev = p && p.ev;
+    if (!ev) return false;
+    if (ev.ret) return true;
+    const run = liveRun(s);
+    return !(run && run.id === ev.run);
+  }
+  const retOf = (s) => { const p = state(s); return p && p.ev ? p.ev.ret || (returned(s) ? 'folded' : null) : null; };
+  function campOpen(s) {
+    const p = state(s), run = liveRun(s);
+    return !!(p && p.stage === 1 && p.ev && run && p.ev.run === run.id && p.ev.campAsk !== run.id && onAtlas(s));
+  }
+  const home2Open = (s) => { const p = state(s); return !!(p && p.stage === 1 && p.ev && returned(s)); };
+  const home3Open = (s) => { const p = state(s); return !!(p && p.stage === 2 && returned(s)); };
+  const done = (s) => { const p = state(s); return !!(p && p.stage >= 3); };
+  function roadCampOpen(s) {
+    const p = state(s), run = liveRun(s);
+    return !!(p && p.stage >= 3 && run && onAtlas(s) && (p.road || {}).camp !== run.id);
+  }
+  function roadHomeOpen(s) {
+    const p = state(s);
+    const r = p && p.road;
+    return !!(p && p.stage >= 3 && r && r.lastEnd && r.home !== r.lastEnd && !liveRun(s));
+  }
+
+  // ---- commits (authoritative first; the scene speaks afterwards) ------------------------------
+  function award(s, id, pts) { try { return RB.company.award(s, id, pts); } catch (e) { return false; } }
+  function memory(s, m) { try { return RB.company.memory(s, m); } catch (e) { return false; } }
+
+  // Page I: accept the project with a theme. Creates the record once.
+  function accept(s, theme) {
+    const c = comp(s);
+    if (!c || state(s) || !PROJECT[c].themes[theme] || !offerOpen(s)) return false;
+    co(s).project = { v: 1, comp: c, stage: 1, theme, t1: Date.now(), ev: null, road: {} };
+    award(s, 'project:1', 1);
+    const P = PROJECT[c];
+    memory(s, { id: 'pages:1', kind: 'reflections', title: MEMO_TITLE.p1,
+      text: J(P.title.jp + ' ── ' + P.themes[theme].jp + ' 。', P.title.en + ': you agreed to keep a page together — ' + P.themes[theme].en.toLowerCase() + '.'), ref: 'pages' });
+    return true;
+  }
+
+  // Page II evidence: the first qualifying event of an outing after Page I.
+  // A correctly assisted objective counts; nothing is required to be perfect.
+  function describe(ev) {
+    const A = (C.atlas || {});
+    const k = ev.kind, pat = ev.pattern;
+    if (k === 'inscription') {
+      if (pat === 'threshold') return [J('{書|か}きかけ の {門|もん} に 、 {欠|か}けた {言葉|ことば} を {戻|もど}した', 'put the missing word back into the half-written gate'), J('{書|か}きかけ の {門|もん} の {言葉|ことば}', 'The word in the half-written gate')];
+      if (pat === 'stacks') return [J('{題|だい} の ない {棚|たな} に 、 {言葉|ことば} を {一|ひと}つ {戻|もど}した', 'gave a word back to the shelves without titles'), J('{題|だい} の ない {棚|たな}', 'The shelves without titles')];
+      if (pat === 'margin') return [J('{紙|かみ} の {余白|よはく} に 、 {言葉|ことば} を {一|ひと}つ {戻|もど}した', 'put a word back into the margins'), J('{余白|よはく} の {言葉|ことば}', 'A word in the margins')];
+      return [J('{刻|きざ}まれた {言葉|ことば} を {一|ひと}つ {戻|もど}した', 'restored a carved word'), J('{刻|きざ}まれた {言葉|ことば}', 'A carved word')];
+    }
+    if (k === 'lanterns') return [J('{白|しろ}い {灯籠|とうろう} に {言葉|ことば} を {戻|もど}して 、 {灯|ひ} を ともした', 'gave the blank lanterns back their words and lit them'), J('{白|しろ}い {灯籠|とうろう} の {列|れつ}', 'The row of blank lanterns')];
+    if (k === 'sign') {
+      if (pat === 'crossing') return [J('{橋|はし} の {立|た}て{札|ふだ} を {並|なら}べ{直|なお}して 、 {板|いた} を {呼|よ}び{戻|もど}した', 'put the bridge sign back in order, and the planks came back'), J('{途中|とちゅう} で {終|お}わる {橋|はし}', 'The unfinished bridge')];
+      if (pat === 'tide') return [J('{潮|しお} の {階段|かいだん} の {立|た}て{札|ふだ} を {並|なら}べ{直|なお}した', 'put the sign on the tidal stair back in order'), J('{潮|しお} の {階段|かいだん}', 'The tidal stair')];
+      return [J('ばらばら の {立|た}て{札|ふだ} を {並|なら}べ{直|なお}した', 'put a scattered road sign back in order'), J('{立|た}て{札|ふだ}', 'A road sign')];
+    }
+    if (k === 'promise') return [J('{持|も}ち{主|ぬし} から {離|はな}れた {約束|やくそく} を 、 {正|ただ}しく {読|よ}んだ', 'read what a loose promise really committed someone to'), J('{持|も}ち{主|ぬし} の いない {約束|やくそく}', 'A promise with no one to keep it')];
+    if (k === 'name') {
+      const nd = A.names && A.names[ev.name];
+      const t = nd ? nd.title : J('{迷子|まいご} の {名前|なまえ}', 'A lost name');
+      return [J('「 ' + t.jp + ' 」 と いう {名前|なまえ} に 、 {帰|かえ}る {場所|ばしょ} を {思|おも}い{出|だ}して もらった', 'helped "' + t.en + '" remember where it belonged'), t];
+    }
+    if (k === 'doors') {
+      return [ev.read ? J('{石板|せきばん} を {読|よ}んで 、 {三|みっ}つ の {扉|とびら} から {正|ただ}しい {一|ひと}つ を {選|えら}んだ', 'read the tablet and chose the right one of three doors')
+        : J('{三|みっ}つ の {扉|とびら} から 、 {先|さき} へ {続|つづ}く {一|ひと}つ を {見|み}つけた', 'found the one of three doors that went on'), J('{三|みっ}つ の {扉|とびら}', 'The hall of three doors')];
+    }
+    if (k === 'guardian') return [J('{白紙|はくし} の {道|みち} を ふさいで いた もの を 、 {落|お}ち{着|つ}かせた', 'settled what was blocking the unwritten road'), J('{道|みち} を ふさいで いた もの', 'What blocked the road')];
+    if (k === 'climax') {
+      const cd = A.climaxes && A.climaxes[ev.boss];
+      const t = cd ? cd.name : J('{道|みち} の {終|お}わり を {守|まも}る {者|もの}', 'The keeper of the road\'s end');
+      return [J('{道|みち} の {終|お}わり で 、 「 ' + t.jp + ' 」 と {向|む}き{合|あ}った', 'faced "' + t.en + '" at the road\'s end'), t];
+    }
+    return [J('{道|みち} の {上|うえ} で 、 {一|ひと}つ {書|か}き{直|なお}した', 'mended one thing on the road'), J('{道|みち} の {上|うえ} の こと', 'Something on the road')];
+  }
+  const QUALIFY = ['inscription', 'lanterns', 'sign', 'promise', 'name', 'doors', 'guardian', 'climax'];
+  function capture(s, e) {
+    const p = state(s);
+    if (!p || p.stage !== 1 || p.ev || !e || QUALIFY.indexOf(e.kind) < 0) return false;
+    const run = liveRun(s);
+    if (!run || run.id !== e.run) return false;
+    const [desc, title] = describe(e);
+    const A = C.atlas || {};
+    p.ev = {
+      run: run.id, id: String(e.id || e.kind), kind: e.kind, desc, title, room: e.room || null,
+      branch: e.branch && A.branchTypes && A.branchTypes[e.branch] ? e.branch : null,
+      mods: (run.mods || []).slice(), pet: petNow(s), t: Date.now(), ret: null,
+    };
+    run.pages = { ev: p.ev.id }; // a temporary reference only; the summary lives above
+    return true;
+  }
+  // An outing ended (atlas:end). Record how it came home, or that it had nothing to keep.
+  function runEnded(s, e) {
+    const p = state(s);
+    if (!p || !e || !e.run) return;
+    const kind = { complete: 'complete', early: 'early', defeat: 'defeat' }[e.kind] || 'folded';
+    if (p.ev && p.ev.run === e.run && !p.ev.ret) p.ev.ret = kind;
+    else if (p.stage === 1 && !p.ev) p.lastEmpty = e.run;
+    p.road = p.road || {};
+    p.road.lastEnd = e.run;
+    p.road.lastKind = kind;
+  }
+  function page2(s, aspect, where) {
+    const p = state(s), c = comp(s);
+    if (!p || p.stage !== 1 || !p.ev || !PROJECT[c].aspects[aspect]) return false;
+    if (where === 'home' ? !returned(s) : !campOpen(s)) return false;
+    if (where === 'home' && !p.ev.ret) p.ev.ret = 'folded';
+    p.stage = 2; p.aspect = aspect; p.where = where === 'home' ? 'home' : 'camp'; p.t2 = Date.now();
+    award(s, 'project:2', 1);
+    memory(s, { id: 'pages:2', kind: 'reflections', title: MEMO_TITLE.p2,
+      text: J(p.ev.title.jp + ' ── ' + PROJECT[c].aspects[aspect].jp + ' 。', 'On the unwritten road you ' + p.ev.desc.en + '. To keep: ' + PROJECT[c].aspects[aspect].en.toLowerCase() + '.'), ref: 'pages' });
+    return true;
+  }
+  function page3(s, ci) {
+    const p = state(s), c = comp(s);
+    const caps = p && PROJECT[c].captions[p.theme];
+    if (!p || p.stage !== 2 || !returned(s) || !caps || !caps[ci]) return false;
+    if (!p.ev.ret) p.ev.ret = 'folded';
+    p.stage = 3; p.caption = ci; p.t3 = Date.now();
+    p.road = p.road || {};
+    if (p.road.lastEnd) p.road.home = p.road.lastEnd; // this homecoming's conversation was the page itself
+    RB.discovery.keepsake(s, PROJECT[c].memento, 'pages');
+    award(s, 'project:3', 1);
+    memory(s, { id: 'pages:3', kind: 'reflections', title: MEMO_TITLE.p3,
+      text: J('「 ' + caps[ci].jp + ' 」 ── ' + PROJECT[c].place.jp + ' に {貼|は}った 。', '"' + caps[ci].en + '" — pinned up on ' + PROJECT[c].place.en + '.'), ref: 'pages', keepsake: PROJECT[c].memento });
+    return true;
+  }
+  // The ending passage (fresh) or its retrospective (older postgame saves).
+  const pick = { last: null, reply: null };
+  function endingDone(s, retro) {
+    const c = comp(s);
+    if (!c) return false;
+    if (retro && !needRetro(s)) return false;
+    const rep = REPLY[c].find((r) => r.id === pick.reply) || null;
+    const id = (retro ? 'ending_retro:' : 'ending:') + c;
+    if (!retro && mem(s, 'ending_retro:' + c)) return false;
+    const pet = petVisible(s) ? petNow(s) : null;
+    const ok = memory(s, { id, kind: 'reflections', title: retro ? MEMO_TITLE.retro : MEMO_TITLE.ending[c],
+      text: rep ? J('「 ' + rep.jp + ' 」', 'You said: "' + rep.en + '"') : J('{言葉|ことば} は なかった 。 それ で よかった 。', 'Few words were needed.'),
+      reply: rep ? rep.resp : null, replyId: rep ? rep.id : null, pq: pqDone(s, c), retro: !!retro, petSeen: pet ? pet.species : null });
+    award(s, 'ending', 2);
+    pick.reply = null;
+    if (retro) freshTalk = true;
+    return ok;
+  }
+  function unfinishedDone(s) {
+    const c = comp(s);
+    if (!needUnfinished(s)) return false;
+    freshTalk = true;
+    return memory(s, { id: 'unfinished:' + c, kind: 'reflections', title: MEMO_TITLE.unfinished,
+      text: c === 'nao' ? J('ウミ へ の {手紙|てがみ} は 、 {届|とど}いた 。', 'The letter for Umi was delivered, after all.') : J('ミオ は 、 {自分|じぶん} の {声|こえ} で {断|ことわ}った 。', 'Mio said no, in her own voice.') });
+  }
+
+  // ---- what is waiting to be talked about, here -----------------------------------------------
+  // where: 'hall' (the Atlas hub), 'safe' (any other ordinary map), 'atlas'.
+  function whereOf(s) { return onAtlas(s) ? 'atlas' : s.map === 'rw.hall' ? 'hall' : 'safe'; }
+  function pending(s, where) {
+    if (!s || !comp(s)) return null;
+    where = where || whereOf(s);
+    if (where === 'atlas') return null;
+    if (needRetro(s)) return { id: 'retro', scene: 'pages.retro', en: 'A conversation you still owe each other' };
+    if (needUnfinished(s)) return { id: 'unfinished', scene: 'pages.unfinished', en: 'An unfinished conversation' };
+    if (where !== 'hall') return null;
+    if (offerOpen(s)) return { id: 'offer', scene: 'pages.offer', en: 'The Pages We Keep: what shall we keep?' };
+    if (home2Open(s)) return { id: 'home2', scene: 'pages.home2', en: 'The Pages We Keep: the moment worth keeping' };
+    if (home3Open(s)) return { id: 'home3', scene: 'pages.home3', en: 'The Pages We Keep: put it somewhere real' };
+    if (roadHomeOpen(s)) return { id: 'road', scene: 'pages.road.home', en: 'Talk about this road' };
+    return null;
+  }
+
+  // ---- condition heads for the scenes -----------------------------------------------------------
+  //   pages.retro / .unfinished / .offer / .camp / .home2 / .home3 / .empty / .roadcamp / .roadhome / .done
+  //   pages.stage>=2   pages.theme=next   pages.aspect=read   pages.caption=0   pages.ret=early
+  //   pages.pick=walk  (the last choice presented by a hook)   pages.recall (a shared memory to recall)
+  //   pages.at=camp|home   pages.evpet (a pet was with you at the event)   pages.retrotalk (this passage is the retrospective)
+  //   pages.fresh (one of these talks just happened here)   pages.reply=walk (the ending reply recorded)
+  //   pages.completed>=1 (expeditions walked to the end)   pages.keeps>=1 (roadside keepsakes, not these pages)
+  //   petvis / petvis=cat  (an active pet is shown in the world)
+  let justEmpty = null; // the outing that just came home with nothing to keep (this homecoming only)
+  let retroTalk = false; // the passage being played is the retrospective one
+  let freshTalk = false; // one of these conversations just happened here (no second offer straight after)
+  // This map was entered after Tsuru's Atlas introduction. False on the visit the story ends on,
+  // so Page I is not stacked straight onto the ending and the introduction; it waits for the next
+  // time you come into the Lantern Hall (or for you to talk to your companion).
+  let settled = true;
+  RB.state.addTerm('pages', (s, rest, op, val, num, cmp) => {
+    const p = state(s);
+    switch (rest) {
+      case 'retro': return needRetro(s);
+      case 'unfinished': return needUnfinished(s);
+      case 'offer': return offerOpen(s);
+      case 'camp': return campOpen(s);
+      case 'home2': return home2Open(s);
+      case 'home3': return home3Open(s);
+      case 'empty': return !!(p && p.stage === 1 && !p.ev && justEmpty && p.lastEmpty === justEmpty);
+      case 'roadcamp': return roadCampOpen(s);
+      case 'roadhome': return roadHomeOpen(s);
+      case 'done': return done(s);
+      case 'recall': return !!recallable(s);
+      case 'retrotalk': return retroTalk;
+      case 'fresh': return freshTalk;
+      case 'settled': return settled;
+      case 'reply': { const r = endingRec(s); return cmp((r && r.replyId) || 'none', op || '=', val); }
+      case 'completed': return cmp((s.atlas && s.atlas.completed) || 0, op || '>=', num(val));
+      case 'keeps': return cmp(Object.keys((s.discovery && s.discovery.keepsakes) || {}).filter((k) => k.indexOf('pages_') !== 0).length, op || '>=', num(val));
+      case 'evpet': return !!(p && p.ev && p.ev.pet);
+      case 'stage': return cmp(p ? p.stage : 0, op || '>=', num(val));
+      case 'theme': return !!p && cmp(p.theme, op || '=', val);
+      case 'aspect': return !!p && cmp(p.aspect, op || '=', val);
+      case 'caption': return !!p && cmp(p.caption, op || '=', num(val));
+      case 'ret': return cmp(retOf(s) || 'none', op || '=', val);
+      case 'where': return !!p && cmp(p.where || 'none', op || '=', val);
+      case 'pick': return cmp(pick.last || 'none', op || '=', val);
+      case 'at': return cmp(onAtlas(s) ? 'camp' : 'home', op || '=', val);
+      default: return false;
+    }
+  });
+  RB.state.addTerm('petvis', (s, rest, op, val) => petVisible(s) && (!op || (op === '=' ? s.company.pet === val : s.company.pet !== val)));
+
+  // ---- recalling one actual shared event (§10.2.1) -----------------------------------------------
+  // Only memories this companion shared, with a Japanese title to say; never
+  // this passage's own records. Discoveries first, then time together,
+  // reflections and pets; the most recent of the best kind.
+  const RANK = { discoveries: 4, together: 3, reflections: 2, pets: 1 };
+  function recallable(s) {
+    const c = comp(s);
+    if (!c || !s.company) return null;
+    let best = null;
+    for (const m of s.company.memories) {
+      if (m.comp && m.comp !== c) continue;
+      if (!m.title || !m.title.jp || !RANK[m.kind]) continue;
+      if (/^(ending|ending_retro|unfinished|pages):/.test(m.id)) continue;
+      if (!best || RANK[m.kind] > RANK[best.kind] || (RANK[m.kind] === RANK[best.kind] && (m.t || 0) >= (best.t || 0))) best = m;
+    }
+    return best;
+  }
+
+  // ---- "Talk about this road" (§11.6): the next topic --------------------------------------------
+  // Topics are registered by 40_topics.js: { id, comp, slot, where: 'any'|'camp'|'home', scene }.
+  const TOPICS = [];
+  function addTopics(list) { for (const t of list) TOPICS.push(t); }
+  const ORDER = ['h1', 'r1', 'o1', 'h2', 'r2', 'o2', 'h3', 'r3', 'o3', 'h4', 'r4', 'o4'];
+  // A topic is heard once per true state ("variant": e.g. with or without a
+  // pet, before or after a road was walked to its end); a changed fact may
+  // bring its slot back, but never one of the last four topics heard.
+  const variantOf = (s, t) => (t.variant ? String(t.variant(s)) : 'base');
+  function topic(s, where) {
+    const c = comp(s), p = state(s);
+    if (!c || !p || p.stage < 3) return null;
+    const talk = co(s).talk;
+    const recent = ((p.road || {}).recent || []);
+    const mine = TOPICS.filter((t) => t.comp === c && (t.where === 'any' || t.where === where))
+      .sort((a, b) => ORDER.indexOf(a.slot) - ORDER.indexOf(b.slot));
+    const heard = (t) => { const h = talk['road:' + t.id]; return !!h && (h.variants ? h.variants.indexOf(variantOf(s, t)) >= 0 : h.variant === variantOf(s, t)); };
+    const fresh = mine.find((t) => !talk['road:' + t.id] && recent.indexOf(t.id) < 0 && (!t.when || RB.state.test(s, t.when))) ||
+      mine.find((t) => !heard(t) && recent.indexOf(t.id) < 0 && (!t.when || RB.state.test(s, t.when)));
+    return fresh || null; // none left: a brief ordinary line (road.<c>.quiet)
+  }
+  function topicHeard(s, t, where) {
+    const p = state(s);
+    if (!p || !t) return;
+    const talk = co(s).talk;
+    const v = variantOf(s, t), prev = talk['road:' + t.id];
+    const vs = prev && prev.variants ? prev.variants.slice() : prev ? [prev.variant] : [];
+    if (vs.indexOf(v) < 0) vs.push(v);
+    talk['road:' + t.id] = { t: Date.now(), variant: v, variants: vs };
+    p.road = p.road || {};
+    p.road.recent = [t.id].concat((p.road.recent || []).filter((x) => x !== t.id)).slice(0, 4);
+    markRoad(s, where);
+  }
+  function markRoad(s, where) {
+    const p = state(s);
+    if (!p) return;
+    p.road = p.road || {};
+    const run = liveRun(s);
+    if (where === 'camp' && run) p.road.camp = run.id;
+    if (where === 'home') p.road.home = p.road.lastEnd || null;
+  }
+
+  // ---- hooks ---------------------------------------------------------------------------------------
+  const H = RB.hooks;
+  async function say(who, line, expr) {
+    const s = G();
+    if (who === 'comp') who = comp(s) || 'narr';
+    await RB.ui.dialogue.say({ who, expr: expr || null, jp: line.jp, en: line.en });
+  }
+  async function choose(opts) {
+    const s = G();
+    const i = await RB.ui.dialogue.choose(opts.map((o) => ({ jp: o.jp, en: o.en })));
+    const o = opts[Math.max(0, Math.min(opts.length - 1, i | 0))];
+    if (s) s.backlog.push({ who: 'pc', jp: o.jp, en: o.en, choice: true });
+    return o;
+  }
+  // !hook pages_choose theme|aspect|caption|reply — present authored options,
+  // commit the choice, and leave it in `pages.pick` for the lines that follow.
+  H.pages_choose = async (args) => {
+    const s = G(), c = comp(s);
+    pick.last = null;
+    if (!s || !c) return;
+    const P = PROJECT[c], what = args[0], where = args[1] || 'camp';
+    const p = state(s);
+    let opts = [];
+    if (what === 'theme') opts = Object.keys(P.themes).map((k) => Object.assign({ id: k }, P.themes[k])).concat([Object.assign({ id: 'later' }, LATER.theme)]);
+    else if (what === 'aspect') opts = Object.keys(P.aspects).map((k) => Object.assign({ id: k }, P.aspects[k])).concat([Object.assign({ id: 'later' }, where === 'home' ? LATER.caption : LATER.aspect)]);
+    else if (what === 'caption' && p) opts = P.captions[p.theme].map((x, i) => Object.assign({ id: String(i) }, x)).concat([Object.assign({ id: 'later' }, LATER.caption)]);
+    else if (what === 'reply') opts = REPLY[c].slice();
+    if (!opts.length) return;
+    const o = await choose(opts);
+    pick.last = o.id;
+    if (what === 'theme' && o.id !== 'later') accept(s, o.id);
+    else if (what === 'aspect' && o.id !== 'later') page2(s, o.id, where);
+    else if (what === 'aspect' && o.id === 'later' && where !== 'home' && p && p.ev) p.ev.campAsk = (liveRun(s) || {}).id || null;
+    else if (what === 'caption' && o.id !== 'later') page3(s, +o.id);
+    else if (what === 'reply') pick.reply = o.id;
+  };
+  // !hook pages_event camp|home — the narrator names the recorded moment.
+  H.pages_event = async (args) => {
+    const s = G(), p = state(s);
+    if (!p || !p.ev) return;
+    const here = args[0] === 'home';
+    const fromThis = !here && liveRun(s) && liveRun(s).id === p.ev.run;
+    const lead = fromThis ? J('{今日|きょう} 、 {二人|ふたり} は ', 'Today, the two of you ') : J('あの {道|みち} で 、 {二人|ふたり} は ', 'On that road, the two of you ');
+    await say('narr', J(lead.jp + p.ev.desc.jp + ' 。', lead.en + p.ev.desc.en + '.'));
+  };
+  // !hook pages_recall — the companion recalls one recorded shared moment by its title.
+  const RECALL = {
+    nao: { lead: (t) => J('「 ' + t.jp + ' 」 。 …… {覚|おぼ}えてる か ？', '"' + t.en + '." …Remember?'),
+      discoveries: J('あれ は 、 {二人|ふたり} で {出|だ}した {答|こた}え だ 。 {宛名|あてな} の {控|ひか}え より 、 よっぽど {残|のこ}る 。', 'We worked that one out together. It sticks better than any copied address.'),
+      together: J('ああ いう {日|ひ} の ため に 、 {鞄|かばん} を {重|おも}く して {歩|ある}いてる んだ と {思|おも}う 。', 'I think days like that are why I carry such a heavy bag.'),
+      reflections: J('あの {時|とき} {話|はな}した こと 、 {今|いま} でも {時々|ときどき} {考|かんが}える 。', 'I still think about what we said then, now and again.'),
+      pets: J('あいつ に {会|あ}った {日|ひ} だ 。 {道|みち} の {連|つ}れ が 、 {一匹|いっぴき} {増|ふ}えた 。', 'The day we met that one. One more on the road with us.') },
+    mio: { lead: (t) => J('「 ' + t.jp + ' 」 …… {覚|おぼ}えてる ？', '"' + t.en + '"… Do you remember?'),
+      discoveries: J('あの {時|とき} 、 {一人|ひとり} だったら {諦|あきら}めて いた と {思|おも}う 。 {二人|ふたり} だった から 、 {落|お}ち{着|つ}いて {考|かんが}えられた 。', 'On my own, I think I\'d have given up. With two of us, I could think calmly.'),
+      together: J('ああ いう {時間|じかん} が ある と 、 {長|なが}い {道|みち} も {平気|へいき} に なる の 。', 'With times like that, even a long road is all right.'),
+      reflections: J('あの {時|とき} の {話|はなし} 、 {帳面|ちょうめん} の {一番|いちばん} {後|うし}ろ に {書|か}いて ある の 。', 'I wrote down what we talked about then, at the very back of my notebook.'),
+      pets: J('あの {子|こ} に {会|あ}った {日|ひ} 。 {包帯|ほうたい} より 、 {撫|な}でる {手|て} が {役|やく} に {立|た}った 。', 'The day we met that little one. A hand to pet it did more good than any bandage.') },
+    ren: { lead: (t) => J('「 ' + t.jp + ' 」 。 {記録|きろく} に 、 そう {書|か}いて あります 。', '"' + t.en + '." That\'s how I recorded it.'),
+      discoveries: J('あの {答|こた}え は 、 {二人|ふたり} で {読|よ}んで {出|で}た もの です 。 {方角|ほうがく} だけ は 、 あなた の {手柄|てがら} です が 。', 'We read that answer out together. The directions were entirely your doing, though.'),
+      together: J('{灯守|ひもり} の {記録|きろく} に 、 {書|か}く {必要|ひつよう} の ない こと です 。 でも 、 {書|か}きました 。', 'Nothing a lantern keeper\'s record needs. I wrote it down anyway.'),
+      reflections: J('あの {時|とき} の {言葉|ことば} は 、 {一字|いちじ} も {書|か}き{直|なお}して いません 。', 'I haven\'t rewritten a single word of what we said then.'),
+      pets: J('{小|ちい}さな {連|つ}れ に {会|あ}った {日|ひ} です 。 あの {子|こ} の {方|ほう} が 、 わたし より {道|みち} を {知|し}って います 。', 'The day we met our small companion. It knows the roads better than I do.') },
+    suzu: { lead: (t) => J('「 ' + t.jp + ' 」 。 …… {題|だい} を つける なら 、 そう なる かな 。', '"' + t.en + '." …If I had to give it a title, that\'s the one.'),
+      discoveries: J('あれ は 、 {台本|だいほん} なし で うまく いった {場面|ばめん} 。 {二人|ふたり} で ね 。', 'That scene worked with no script at all. Both of us.'),
+      together: J('{客席|きゃくせき} の ない {場面|ばめん} だった けど 、 わたし の {帳簿|ちょうぼ} で は {大入|おおい}り 。', 'No audience for that one, but in my ledger it was a full house.'),
+      reflections: J('あの {時|とき} は 、 {冗談|じょうだん} で {逃|に}げなかった 。 {珍|めずら}しい でしょ 。', 'I didn\'t hide behind a joke that time. Rare, right?'),
+      pets: J('あの {子|こ} が {仲間|なかま} に なった {日|ひ} ！ {配役|はいやく} が {一人|ひとり} {増|ふ}えた 。', 'The day that little one joined the company! One more in the cast.') },
+  };
+  H.pages_recall = async () => {
+    const s = G(), c = comp(s), m = recallable(s);
+    if (!c || !m) return;
+    const R = RECALL[c];
+    await say(c, R.lead(m.title), 'think');
+    await say(c, R[m.kind] || R.together, 'smile');
+  };
+  // !hook pages_end_done [retro] — the passage is complete: +2 bond and a Reflections memory, once.
+  H.pages_end_done = async (args) => { const s = G(); if (s) endingDone(s, args[0] === 'retro'); retroTalk = false; };
+  H.pages_retro_begin = async () => { retroTalk = true; };
+  H.pages_unfinished_done = async () => { const s = G(); if (s) unfinishedDone(s); };
+  // !hook pages_topic camp|home — play the next topic (or a brief ordinary line).
+  H.pages_topic = async (args) => {
+    const s = G(), c = comp(s), where = args[0] === 'home' ? 'home' : 'camp';
+    if (!s || !c || !state(s)) return;
+    const t = topic(s, where);
+    if (t) { topicHeard(s, t, where); await RB.script.run(t.scene); return; }
+    const p = state(s);
+    p.road = p.road || {};
+    const q = ((p.road.quiet || 0) % 3) + 1;
+    p.road.quiet = q;
+    markRoad(s, where);
+    await RB.script.run('road.' + c + '.quiet' + q);
+  };
+
+  // ---- the Atlas tells us what happened (src/atlas/50_run.js emits these) ---------------------
+  RB.bus.on('atlas:event', (e) => { try { const s = G(); if (s) capture(s, e); } catch (err) { if (typeof console !== 'undefined') console.warn('pages: capture', err); } });
+  RB.bus.on('atlas:end', (e) => {
+    try {
+      const s = G();
+      if (!s) return;
+      const p = state(s);
+      const empty = p && p.stage === 1 && !p.ev;
+      runEnded(s, e);
+      justEmpty = empty ? e.run : null;
+    } catch (err) { if (typeof console !== 'undefined') console.warn('pages: end', err); }
+  });
+  RB.bus.on('map:enter', (e) => {
+    freshTalk = false; retroTalk = false;
+    if (e && e.id !== 'rw.hall') justEmpty = null;
+    const s = G();
+    settled = !!(s && s.seen && s.seen['rw.atlas_intro']);
+  });
+
+  // ---- talking to your companion: a waiting conversation comes first -------------------------
+  // (the ordinary banter is RB.game.companionTalk; anything else passes through)
+  if (RB.game && RB.game.companionTalk) {
+    const base = RB.game.companionTalk;
+    RB.game.companionTalk = function () {
+      const s = G();
+      const pd = s && pending(s);
+      if (pd && RB.content.scenes[pd.scene]) return RB.script.run(pd.scene);
+      return base.apply(this, arguments);
+    };
+  }
+
+  return {
+    COMPS, PQ, PROJECT, REPLY, RET, MEMO_TITLE, TOPICS,
+    state, pending, capture, runEnded, accept, page2, page3, endingDone, unfinishedDone,
+    needRetro, needUnfinished, offerOpen, returned, retOf, campOpen, home2Open, home3Open, roadCampOpen, roadHomeOpen,
+    recallable, describe, addTopics, topic, topicHeard, petVisible, pqDone,
+    _pick: pick,
+  };
+})();
+
+
+/* ==== src/content/pages/15_ui.js ==== */
+/* The Pages We Keep, made visible: the four companion mementos (Shared
+ * Journey keepsakes with pixel art), the finished page pinned up in an
+ * existing place in Reedwake, the Journey page that shows the project, a
+ * small shared-page panel on Company's Companion page, and the Lantern Hall's
+ * automatic offers (each at most once; afterwards: talk to your companion).
+ * Player-written text (a pet's name) is always escaped plain text. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C) {
+  'use strict';
+  const PG = RB.pages;
+  const J = (jp, en) => ({ jp, en });
+
+  // ---- pixel art: a 16×16 drawing, scaled up by whole pixels, never blurred ----------------------
+  const INK = '#2a2420', PAPER = '#f4ecd8', PAPER2 = '#e2d6b8', SHADE = '#c9b994';
+  const ART = {
+    // Nao: a folded route card — ochre band, a dotted route with an arrow, the fold down the middle
+    nao(R) {
+      R(2, 3, 12, 10, SHADE); R(2, 2, 12, 10, PAPER); R(8, 2, 6, 10, PAPER2); R(8, 2, 1, 10, SHADE);
+      R(2, 2, 12, 2, '#c8962e'); R(2, 3, 12, 1, '#a8781e');
+      for (const [x, y] of [[3, 10], [4, 9], [5, 9], [6, 8], [7, 7], [9, 7], [10, 6], [11, 6]]) R(x, y, 1, 1, '#5a6a4a');
+      R(12, 5, 1, 3, INK); R(11, 5, 3, 1, INK);
+      R(3, 5, 3, 1, INK); R(3, 6, 2, 1, '#8a7a5a');
+    },
+    // Mio: a rest card with two cups and steam, a green border (her apron)
+    mio(R) {
+      R(2, 3, 12, 11, SHADE); R(2, 2, 12, 11, PAPER); R(2, 2, 12, 1, '#6a8a7a'); R(2, 12, 12, 1, '#6a8a7a'); R(2, 2, 1, 11, '#6a8a7a'); R(13, 2, 1, 11, '#6a8a7a');
+      for (const x of [4, 9]) { R(x, 8, 4, 3, '#e8e0c8'); R(x, 8, 4, 1, '#8aa89a'); R(x + 1, 10, 2, 1, SHADE); R(x + 4, 9, 1, 1, '#8aa89a'); }
+      R(5, 5, 1, 2, '#b8b0a0'); R(6, 4, 1, 2, '#b8b0a0'); R(10, 5, 1, 2, '#b8b0a0'); R(11, 4, 1, 2, '#b8b0a0');
+      R(3, 11, 10, 1, '#a8906a');
+    },
+    // Ren: a lantern page — a lantern drawn in ink and gold, notes down the margin
+    ren(R) {
+      R(3, 2, 11, 12, SHADE); R(2, 1, 11, 12, PAPER); R(10, 1, 1, 12, '#c8b890');
+      R(5, 3, 2, 1, INK); R(4, 4, 4, 1, '#3a3e6a'); R(4, 5, 4, 4, '#d8b060'); R(5, 6, 2, 2, '#f4d890'); R(4, 9, 4, 1, '#3a3e6a'); R(5, 10, 2, 1, INK);
+      for (const y of [3, 5, 7, 9, 11]) R(11, y, 1, 1, INK);
+      R(3, 11, 5, 1, '#8a7a5a');
+    },
+    // Suzu: a folded programme — a little curtained stage and her ribbon's pink
+    suzu(R) {
+      R(3, 3, 11, 11, SHADE); R(2, 2, 11, 11, PAPER);
+      R(4, 4, 7, 5, '#3a2634'); R(4, 4, 2, 5, '#8a3a5a'); R(9, 4, 2, 5, '#8a3a5a'); R(4, 4, 7, 1, '#6a2a44');
+      R(6, 7, 3, 2, '#e8c070');
+      R(4, 10, 6, 1, INK); R(4, 11, 4, 1, '#8a7a5a');
+      R(11, 1, 2, 5, '#c8a0a8'); R(12, 6, 1, 2, '#c8a0a8'); R(10, 1, 1, 1, '#a88088');
+    },
+  };
+  function drawArt(which, target) {
+    const g = target && target.getContext ? target.getContext('2d') : target;
+    if (!g || !ART[which]) return;
+    const cv = g.canvas || { width: 32, height: 32 };
+    const k = Math.max(1, Math.floor(Math.min(cv.width, cv.height) / 16));
+    const ox = Math.floor((cv.width - 16 * k) / 2), oy = Math.floor((cv.height - 16 * k) / 2);
+    g.imageSmoothingEnabled = false;
+    ART[which]((x, y, w, h, c) => { g.fillStyle = c; g.fillRect(ox + x * k, oy + y * k, w * k, h * k); });
+  }
+
+  // ---- the mementos: Shared Journey keepsakes, one per companion (only yours counts) ---------------
+  const MEM = {
+    nao: { name: J('{折|お}り{畳|たた}んだ {道順|みちじゅん} の {札|ふだ}', 'Folded Route Card'), desc: 'A route card Nao folded from one real outing on the unwritten roads, with a caption you chose together.' },
+    mio: { name: J('お{茶|ちゃ} の {席|せき} の {札|ふだ}', 'Tea-Place Card'), desc: 'A small rest card Mio drew with two cups on it, from one real pause on the unwritten roads.' },
+    ren: { name: J('{書|か}き{込|こ}み の ある {灯|ひ} の {頁|ページ}', 'Annotated Lantern Page'), desc: 'A lantern page you and Ren annotated together in the margin, from one real outing on the unwritten roads.' },
+    suzu: { name: J('{幕間|まくあい} の {番付|ばんづけ}', 'Interval Programme'), desc: 'A little programme Suzu illustrated for a scene between adventures — one that really happened.' },
+  };
+  C.keepsakes = C.keepsakes || {};
+  for (const c of PG.COMPS) {
+    C.keepsakes['pages_' + c] = {
+      name: MEM[c].name, desc: { en: MEM[c].desc }, region: 'reedwake', category: 'shared', comp: c,
+      source: { kind: 'project', id: 'pages:' + c },
+      art: (target) => drawArt(c, target),
+      hint: { broad: { en: 'Something the two of you make together after the story, from a day on the unwritten roads.' },
+        specific: { en: 'Talk with your companion in the Lantern Hall about keeping a page, then bring one moment home from an outing.' } },
+    };
+  }
+
+  // ---- the finished page, pinned up in an existing place --------------------------------------------
+  // A small card on the back wall (a wall tile: it adds no new obstacle and
+  // changes no path). Shown only once that companion's page is finished.
+  if (RB.props && RB.props.P) {
+    const COL = { nao: ['#c8962e', '#5a6a4a'], mio: ['#6a8a7a', '#e8e0c8'], ren: ['#3a3e6a', '#d8b060'], suzu: ['#8a3a5a', '#c8a0a8'] };
+    RB.props.P.pages_card = { id: 'pages_card', w: 1, h: 1, block: true, draw(c, x, y, p, t, o) {
+      const col = COL[(o && o.kind) || 'nao'] || COL.nao;
+      c.fillStyle = 'rgba(0,0,0,0.25)'; c.fillRect(x + 5, y + 5, 8, 9);
+      c.fillStyle = PAPER; c.fillRect(x + 4, y + 4, 8, 9);
+      c.fillStyle = col[0]; c.fillRect(x + 4, y + 4, 8, 2);
+      c.fillStyle = col[1]; c.fillRect(x + 6, y + 8, 4, 2);
+      c.fillStyle = INK; c.fillRect(x + 5, y + 11, 5, 1); c.fillRect(x + 7, y + 3, 2, 2);
+    } };
+    const pa = RB.propArt, K = RB.propKit;
+    if (pa && K) {
+      pa.art('pages_card', {
+        box: [0, 0, 32, 32],
+        v: (o) => Math.max(0, PG.COMPS.indexOf((o && o.kind) || 'nao')),
+        draw(g, M, v) {
+          const R = K.R;
+          const w = PG.COMPS[v] || 'nao';
+          R(g, 9, 9, 17, 19, 'rgba(0,0,0,0.28)');
+          R(g, 7, 7, 17, 19, PAPER);
+          R(g, 7, 7, 17, 1, '#fffaf0');
+          const k = { x0: 8, y0: 9 };
+          // the memento itself, drawn small on the card
+          ART[w]((x, y, ww, hh, col) => R(g, k.x0 + Math.round(x * 15 / 16), k.y0 + Math.round(y * 15 / 16), Math.max(1, Math.round(ww * 15 / 16)), Math.max(1, Math.round(hh * 15 / 16)), col));
+          R(g, 14, 4, 3, 3, '#b84a3a'); R(g, 15, 5, 1, 1, '#f0a090'); // the pin
+        },
+      });
+    }
+  }
+  const wallCard = (kind, x, y) => ({ p: 'pages_card', x, y, o: { kind }, if: 'comp=' + kind + '&keepsake.pages_' + kind, scene: 'pages.display' });
+  if (C.maps['rw.hall']) {
+    const m = C.maps['rw.hall'];
+    m.props = (m.props || []).concat([wallCard('nao', 7, 1), wallCard('ren', 2, 1)]);
+    // offered automatically at most once each; afterwards they wait to be asked for
+    // (talk to your companion). The two older-save conversations need only the
+    // postgame (a save from before the Atlas may never have heard Tsuru's
+    // introduction). The Page I offer waits for a visit that begins after the
+    // introduction (not the one the story ends on) and never follows straight
+    // after another of these conversations.
+    m.onEnter = (m.onEnter || []).concat([
+      { scene: 'pages.enter_retro', if: 'post&pages.retro' },
+      { scene: 'pages.enter_unfinished', if: 'post&pages.unfinished' },
+      { scene: 'pages.enter_offer', if: 'post&pages.offer&seen.rw.atlas_intro&pages.settled&!pages.fresh' },
+    ]);
+  }
+  if (C.maps['rw.tea']) {
+    const m = C.maps['rw.tea'];
+    m.props = (m.props || []).concat([wallCard('mio', 4, 1), wallCard('suzu', 5, 1)]);
+  }
+
+  // ---- the Journey page -------------------------------------------------------------------------------
+  const esc = (t) => RB.util.esc(t);
+  const jh = (t) => (t ? RB.ui.jhtml(t) : '');
+  const I = (n) => RB.ui.folio.icon(n);
+  const chr = (id) => RB.content.chars[id];
+  function canvasFor(c, px) {
+    if (typeof document === 'undefined') return null;
+    const cv = document.createElement('canvas');
+    cv.width = cv.height = px;
+    cv.style.cssText = 'width:' + px + 'px;height:' + px + 'px;image-rendering:pixelated;display:block;margin:0.4em 0';
+    cv.setAttribute('role', 'img');
+    cv.setAttribute('aria-label', MEM[c].name.en);
+    drawArt(c, cv);
+    return cv;
+  }
+  function petText(pet) {
+    if (!pet) return '';
+    const sp = RB.pets && RB.pets.species ? RB.pets.species(pet.species) : null;
+    const label = sp && sp.label ? sp.label.en : pet.species;
+    return (pet.name ? esc(pet.name) + ' (' + esc(label) + ')' : esc(label)) + ' was with you.';
+  }
+  const row = (icon, t, sub) => '<li class="entry"><span class="mark">' + I(icon) + '</span><div><div class="t">' + t + '</div>' + (sub ? '<div class="muted small">' + sub + '</div>' : '') + '</div></li>';
+  function statusHtml(s) {
+    const c = s.comp, P = PG.PROJECT[c], p = PG.state(s), name = chr(c) ? chr(c).name.en : c;
+    const pend = PG.pending(s, 'hall');
+    let h = '<h3>' + jh(P.title.jp) + ' <span class="en">' + esc(P.title.en) + '</span></h3>' +
+      '<p class="muted small">A page you and ' + esc(name) + ' keep from one real day on the unwritten roads. Optional, finite, and never in a hurry.</p><ul class="entries">';
+    if (!p) h += row('note', 'Page I — What Shall We Keep?', esc(name) + ' would like to start one. Talk to ' + esc(name) + ' in the Lantern Hall whenever you like.');
+    else {
+      h += row('done', 'Page I — What Shall We Keep?', jh(P.themes[p.theme].jp) + ' <span class="en">' + esc(P.themes[p.theme].en) + '</span>');
+      const ev = p.ev;
+      if (!ev) h += row('journey', 'Page II — A Moment Worth Keeping', 'On your next outing, anything you mend or answer on the road can become this page.' + (p.lastEmpty ? ' (The last road set you home before anything happened. There will be another.)' : ''));
+      else {
+        const route = [];
+        const A = C.atlas || {};
+        if (ev.mods && ev.mods.length) route.push(ev.mods.map((m) => (A.modifiers && A.modifiers[m] ? A.modifiers[m].name.en : m)).join(' + '));
+        else route.push('a quiet road');
+        if (ev.branch && A.branchTypes && A.branchTypes[ev.branch]) route.push(A.branchTypes[ev.branch].name.en);
+        const ret = PG.retOf(s);
+        const sub = 'You ' + esc(ev.desc.en) + '. Route: ' + esc(route.join(', ')) + '.' + (ret ? ' ' + esc(PG.RET[ret].en) + '.' : ' (You are still out on that road.)') + (ev.pet ? ' ' + petText(ev.pet) : '');
+        h += row(p.stage >= 2 ? 'done' : 'journey', 'Page II — A Moment Worth Keeping', jh(ev.title.jp) + ' <span class="en">' + esc(ev.title.en) + '</span><div class="muted small">' + sub + '</div>' +
+          (p.stage >= 2 ? '<div class="small">To keep: ' + esc(P.aspects[p.aspect].en) + '</div>' : ''));
+      }
+      if (p.stage >= 3) {
+        const cap = P.captions[p.theme][p.caption];
+        h += row('done', 'Page III — Put It Somewhere Real', '“' + jh(cap.jp) + '” <span class="en">' + esc(cap.en) + '</span><div class="muted small">Pinned up on ' + esc(P.place.en) + '. The ' + esc(MEM[c].name.en) + ' is in your keepsakes (Shared Journey).</div>');
+      } else h += row('note', 'Page III — Put It Somewhere Real', p.stage === 2 ? 'Once you are home from that road, finish it together.' : 'After the moment is written, you finish it together at home.');
+    }
+    h += '</ul>';
+    if (pend && /offer|home2|home3/.test(pend.id)) h += '<p class="note-slip">' + I('companion') + ' Waiting: ' + esc(pend.en) + ' — talk to ' + esc(name) + ' in the Lantern Hall.</p>';
+    if (p && p.stage >= 3) h += '<p class="muted small">' + I('companion') + ' The page is finished. ' + esc(name) + ' still likes to talk about the road — at a camp, or back at the Lantern Hall after an outing.</p>';
+    return h;
+  }
+  if (RB.ui && RB.ui.menu && RB.ui.menu.addPage) {
+    RB.ui.menu.addPage('journey', {
+      id: 'pages', en: 'The Pages We Keep', icon: 'book',
+      available: (s) => !!(s && s.comp && PG.PROJECT[s.comp] && (PG.state(s) || PG.offerOpen(s))),
+      render(A, B, two, api) {
+        const s = api.s, c = s.comp, p = PG.state(s);
+        const wrap = RB.ui.el('div', 'pages-page');
+        wrap.innerHTML = statusHtml(s);
+        A.appendChild(wrap);
+        const side = two ? B : A;
+        if (p && p.stage >= 3) {
+          const box = RB.ui.el('div', 'pages-memento');
+          const cap = PG.PROJECT[c].captions[p.theme][p.caption];
+          box.innerHTML = '<h4>' + I('keepsake') + ' ' + jh(MEM[c].name.jp) + ' <span class="en">' + esc(MEM[c].name.en) + '</span></h4>';
+          const cv = canvasFor(c, 96);
+          if (cv) box.appendChild(cv);
+          box.insertAdjacentHTML('beforeend', '<p>“' + jh(cap.jp) + '”</p><p class="en small">' + esc(cap.en) + '</p><p class="muted small">' + esc(MEM[c].desc) + '</p>');
+          side.appendChild(box);
+        } else if (two) B.innerHTML = '<p class="muted">The finished page will appear here.</p>';
+      },
+    });
+  }
+
+  // ---- Company: a small shared page on the Companion page (whoever draws that page) ---------------
+  if (RB.ui && RB.ui.company && RB.ui.company.pages && RB.ui.company.pages.companion) {
+    const base = RB.ui.company.pages.companion;
+    RB.ui.company.addPage(Object.assign({}, base, {
+      render(A, B, two, api) {
+        base.render(A, B, two, api);
+        try {
+          const s = api.s, p = PG.state(s);
+          if (!p) return;
+          const c = s.comp, P = PG.PROJECT[c];
+          const box = RB.ui.el('div', 'pages-shared note-slip');
+          const cap = p.stage >= 3 ? P.captions[p.theme][p.caption] : null;
+          box.innerHTML = '<div class="t">' + I('book') + ' ' + jh(P.title.jp) + ' <span class="en">' + esc(P.title.en) + '</span></div>' +
+            (cap ? '<div class="small">“' + jh(cap.jp) + '” <span class="en">' + esc(cap.en) + '</span></div>' : '<div class="small muted">Page ' + ['I', 'II', 'III'][Math.min(2, p.stage)] + ' is next, whenever you are both ready.</div>') +
+            '<div class="row-acts"><button class="pbtn" data-pages-open>' + I('next') + 'The Pages We Keep</button></div>';
+          if (cap) { const cv = canvasFor(c, 48); if (cv) box.insertBefore(cv, box.firstChild.nextSibling); }
+          A.appendChild(box);
+          const btn = box.querySelector('[data-pages-open]');
+          if (btn) btn.onclick = () => api.go('journey', 'pages');
+        } catch (e) { /* the companion page stands on its own */ }
+      },
+    }));
+  }
+
+  RB.pages.drawArt = drawArt;
+  RB.pages.MEM = MEM;
+})(RB.content);
+
+
+/* ==== src/content/pages/20_ending.js ==== */
+/* The companion-specific ending extensions (addendum §10), called from inside
+ * each branch of sa.end_comp (src/content/ch6/53_scenes_ending.js), so the
+ * ending stays one scene: recognition of one real shared moment (or the main
+ * journey), the personal quest as it really stands, an optional reply that is
+ * never scored, an invitation to keep walking, a small gesture, and a pet in
+ * the background only when one is truly with you.
+ *
+ * Also: A Conversation We Still Owe Ourselves (a save that finished the story
+ * before this passage existed: the same passage, told afterwards, in the
+ * Lantern Hall) and An Unfinished Conversation (a personal quest finished
+ * after the ending). The +2 bond and the Reflections memory are committed once
+ * by !hook pages_end_done (src/content/pages/10_pages.js). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.script.add(`
+# ======================================================================================
+# Nao — messages, entrusted names, agency, knowing the way back
+# ======================================================================================
+@scene end.nao.core
+!if pages.recall -> recall
+nao: {灯落|ひおち} の {鐘|かね} も 、 {書庫|しょこ} へ の {坂|さか} も 、 {一緒|いっしょ} だった 。 {宛名|あてな} の {控|ひか}え は ない けど 、 {覚|おぼ}えてる 。 || Lanternfall's bell, the slope up to the Archive — we did those together. No copies of those addresses, but I remember.
+!goto pq
+:recall
+!hook pages_recall
+:pq
+?(quest.lf_nao=done) nao[closed]: ウミ の {封筒|ふうとう} から はがした ラベル も 、 {束|たば} の {中|なか} に ある 。 {返事|へんじ} は {一行|いちぎょう} だけ 。 でも 、 {決|き}めた の は ウミ だ 。 || The label I peeled off Umi's envelope is in the bundle too. One line of reply. But Umi was the one who decided.
+?(!quest.lf_nao=done) nao[think]: …… {鞄|かばん} の {底|そこ} に 、 まだ {届|とど}けて ない {手紙|てがみ} が {一通|いっつう} ある 。 どう する か は 、 {受|う}け{取|と}る {人|ひと} が {決|き}める 。 {灯落|ひおち} へ {持|も}って いって 、 {聞|き}いて みる 。 || …At the bottom of the bag there's still one letter I haven't delivered. What happens to it is up to the person it's for. I'll take it to Lanternfall and ask.
+nao: {前|まえ} は 、 {重|おも}い {手紙|てがみ} を {一人|ひとり} で {抱|かか}えて た 。 {今|いま} は 、 {半分|はんぶん} くらい {持|も}って もらってる {気|き} が する 。 || I used to carry the heavy letters alone. These days it feels like you've been carrying about half.
+?(bond>=trusted) nao[smirk]: {配達|はいたつ} の {順番|じゅんばん} に まで {口|くち} を {出|だ}す {相棒|あいぼう} は 、 {初|はじ}めて だ けど な 。 || First partner I've had who argues about the delivery order, mind you.
+
+@scene end.nao.reply
+nao: …… {次|つぎ} の {道|みち} の {話|はなし} だ 。 {聞|き}いて おきたい 。 $name は 、 どう {思|おも}ってる ？ || …About the next road. I want to hear it. What do you think?
+!hook pages_choose reply
+?(pages.pick=walk) nao[smile]: うん 。 {道|みち} は {二人|ふたり} で {選|えら}ぶ 。 {先|さき} に {一人|ひとり} で {決|き}めたり は しない 。 || Yeah. We pick the roads together. I won't go deciding ahead of you on my own.
+?(pages.pick=home) nao: {分|わ}かる 。 {帰|かえ}り{道|みち} を {覚|おぼ}えて おく の は 、 {配達人|はいたつにん} の {一番|いちばん} {大事|だいじ} な {仕事|しごと} だ 。 {任|まか}せろ 。 || I get it. Remembering the way back is a courier's most important job. Leave it to me.
+?(pages.pick=quiet) nao[smirk]: …… {頷|うなず}き {一|ひと}つ か 。 {受|う}け{取|と}った 。 {受取|うけとり} の {判子|はんこ} は いらない な 。 || …A nod. Received. No need to stamp for it.
+
+@scene end.nao.b
+!call end.nao.reply
+nao: {明日|あした} は 、 ツル の {所|ところ} へ {行|い}こう 。 {見|み}せたい もの が ある って さ 。 {何|なに} か は 、 {知|し}らない 。 || Tomorrow, let's go and see Tsuru. She says there's something she wants to show us. No idea what.
+nao: それ に 、 {五日|いつか} に {一度|いちど} は {潮硝子|しおがらす} {回|まわ}り の {配達|はいたつ} が ある 。 {暇|ひま} なら 、 {荷物|にもつ} を {半分|はんぶん} {持|も}て 。 || And every fifth day there's the Saltglass round. If you're free, carry half the parcels.
+
+@scene end.nao.c
+narr: ナオ は {鞄|かばん} を {肩|かた} に {掛|か}け{直|なお}し 、 {癖|くせ} で {橋|はし} の {両端|りょうはし} を {確|たし}かめた 。 それから 、 {少|すこ}し {笑|わら}った 。 || Nao shoulders the satchel again and, out of habit, checks both ends of the bridge. Then gives a small laugh.
+!call end.pet.nao
+!hook pages_end_done
+
+@scene end.pet.nao
+?(petvis=cat) narr: {猫|ねこ} が {下|お}ろした {鞄|かばん} の {上|うえ} に {乗|の}って 、 {宛名|あてな} の {束|たば} を {枕|まくら} に した 。 ナオ は {追|お}い{払|はら}わなかった 。 || The cat climbs onto the satchel and uses the bundle of labels as a pillow. Nao doesn't shoo it off.
+?(petvis=dog) narr: {犬|いぬ} が {少|すこ}し {先|さき} まで {走|はし}って 、 {戻|もど}って きた 。 {出口|でぐち} を {確|たし}かめる {係|かかり} が 、 {一匹|いっぴき} {増|ふ}えた 。 || The dog runs a little way ahead and comes back. One more of you checking the exits.
+?(petvis=bird) narr: {鳥|とり} が ナオ の {肩|かた} に {止|と}まって 、 ラベル の {端|はし} を つついた 。 || The bird lands on Nao's shoulder and pecks at the corner of a label.
+?(petvis=tanuki) narr: たぬき が ナオ の {足元|あしもと} で {丸|まる}く なって 、 {大|おお}きな あくび を した 。 || The tanuki curls up at Nao's feet and gives an enormous yawn.
+
+# ======================================================================================
+# Mio — mutual support, healthy refusal, rest as growth
+# ======================================================================================
+@scene end.mio.core
+!if pages.recall -> recall
+mio: {雪鈴|ゆきすず} の {吹雪|ふぶき} も 、 {書庫|しょこ} の {長|なが}い {階段|かいだん} も 、 {一緒|いっしょ} に {越|こ}えた ね 。 {薬|くすり} より 、 {隣|となり} に {誰|だれ}か が いる こと の {方|ほう} が {効|き}いた 。 || We got through Snowbell's blizzard together, and the Archive's long stairs. Having someone beside me worked better than any medicine.
+!goto pq
+:recall
+!hook pages_recall
+:pq
+?(quest.lf_mio=done) mio: {記録館|きろくかん} で タダシ さん に {言|い}えた の も 、 $name が {背中|せなか} に {手|て} を {当|あ}てて くれた から 。 {一人|ひとり} じゃ 、 {声|こえ} が {出|で}なかった 。 || I could say it to Tadashi at the Records Hall because you had a hand on my back. On my own, my voice wouldn't have come out.
+?(!quest.lf_mio=done&quest.lf_mio>=2) mio[think]: {灯落|ひおち} に 、 まだ {返事|へんじ} を して いない {頼|たの}み{事|ごと} が {一|ひと}つ ある の 。 {自分|じぶん} の {声|こえ} で 、 ちゃんと {返|かえ}す 。 {急|いそ}がない けど 。 || There's still one request in Lanternfall I haven't answered. I'll answer it properly, in my own voice. Not in a hurry, though.
+?(!quest.lf_mio>=2) mio[think]: {断|ことわ}る の は 、 まだ {練習|れんしゅう} {中|ちゅう} 。 {店|みせ} の {札|ふだ} が 、 {最初|さいしょ} の {一枚|いちまい} 。 || I'm still practising saying no. The sign on my shop is the first page.
+mio: {旅|たび} の {間|あいだ} 、 わたし ばかり {薬|くすり} を {配|くば}って いた {気|き} が する けど 、 {本当|ほんとう} は わたし の {方|ほう} が {休|やす}ませて もらって た 。 || All through the journey it felt like I was the one handing out remedies. Really, you were the one letting me rest.
+?(bond>=trusted) mio[smile]: {具合|ぐあい} を {聞|き}かれる {側|がわ} に なる の 、 {最初|さいしょ} は {落|お}ち{着|つ}かなかった の よ 。 {今|いま} は 、 {少|すこ}し {慣|な}れた 。 || Being the one asked how I'm feeling unsettled me at first. I'm a little used to it now.
+
+@scene end.mio.reply
+?(!pages.retrotalk) mio: …… ねえ 。 {続|つづ}き の {話|はなし} 。 これから の こと 、 どう {思|おも}ってる ？ || …Hey. About what comes next. How do you feel about it?
+?(pages.retrotalk) mio: …… ねえ 。 これから の こと 、 あなた は どう {思|おも}ってる ？ {聞|き}いて なかった から 。 || …Hey. What comes next — how do you feel about it? I never asked.
+!hook pages_choose reply
+?(pages.pick=carry) mio[laugh]: いい の ？ じゃあ 、 {重|おも}い {方|ほう} の {鞄|かばん} を お{願|ねが}い 。 …… {冗談|じょうだん} 。 {半分|はんぶん} ずつ に しよう 。 || Really? Then you get the heavy bag. …Joking. Half each.
+?(pages.pick=rest) mio[smile]: {水曜|すいよう} は {休|やす}み だ から 、 {何|なに} も しない の は {得意|とくい} よ 。 お{茶|ちゃ} は {交代|こうたい} で {淹|い}れよう 。 {今週|こんしゅう} は あなた 。 || Wednesdays I'm closed, so doing nothing is my speciality. We'll take turns making the tea. This week it's you.
+?(pages.pick=quiet) mio: …… うん 。 それ で いい 。 {言葉|ことば} に しなくて も 、 {分|わ}かる こと も ある 。 || …Mm. That's enough. Some things you understand without saying them.
+
+@scene end.mio.b
+!call end.mio.reply
+mio: ツル さん が {灯|あか}り{堂|どう} で {何|なに}か {見|み}せたい って 。 {包帯|ほうたい} と お{茶|ちゃ} を {持|も}って 、 {一緒|いっしょ} に {行|い}こう 。 …… {水曜|すいよう} {以外|いがい} なら ね 。 || Tsuru wants to show us something at the Lantern Hall. Let's go together, with bandages and tea. …Any day but Wednesday.
+mio: それ から 、 {約束|やくそく} を {一|ひと}つ 。 {疲|つか}れたら 、 {先|さき} に {言|い}う 。 わたし も 、 あなた も 。 || And one promise. Whoever gets tired says so first. Me, and you.
+
+@scene end.mio.c
+narr: ミオ は {戸口|とぐち} の {札|ふだ} を 、 {指|ゆび} で {少|すこ}し だけ {直|なお}した 。 もう {十分|じゅうぶん} まっすぐ だった のに 。 || Mio straightens the sign on the door by a hair with one finger. It was already perfectly straight.
+!call end.pet.mio
+!hook pages_end_done
+
+@scene end.pet.mio
+?(petvis=cat) narr: {猫|ねこ} が ミオ の {瓶|びん} の {袋|ふくろ} の {匂|にお}い を {嗅|か}いだ 。 「 あなた の {分|ぶん} は ない の よ 」 と 、 ミオ は {笑|わら}った 。 || The cat sniffs at Mio's bag of bottles. "Nothing in there for you," Mio laughs.
+?(petvis=dog) narr: {犬|いぬ} が {二人|ふたり} の {足元|あしもと} に {伏|ふ}せた 。 {休|やす}み の {日|ひ} の {番犬|ばんけん} の よう に 。 || The dog lies down at your feet, like a watchdog for a day off.
+?(petvis=bird) narr: {鳥|とり} が {棚|たな} の {上|うえ} に {止|と}まって 、 {二人|ふたり} を {見下|みお}ろして いる 。 || The bird perches on top of the shelves, looking down at the two of you.
+?(petvis=tanuki) narr: たぬき が ミオ の {薬草|やくそう} の {袋|ふくろ} を {覗|のぞ}き{込|こ}んで 、 そっと {戻|もど}された 。 || The tanuki peers into Mio's bag of herbs and is gently put back.
+
+# ======================================================================================
+# Ren — the choice they made, room for uncertainty, shared navigation
+# ======================================================================================
+@scene end.ren.pq
+?(sa_ren_took) ren: {師匠|ししょう} の {顔|かお} は 、 {今|いま} は ちゃんと {思|おも}い{出|だ}せます 。 {眉|まゆ} が {太|ふと}い 。 {最後|さいご} の {口論|こうろん} も 、 {一緒|いっしょ} に 。 || I can picture my teacher's face properly now. Heavy eyebrows. The last quarrel came with it.
+?(sa_ren_left) ren: {師匠|ししょう} の {顔|かお} は 、 {書庫|しょこ} に {預|あず}けた まま です 。 {選|えら}ばない こと を 、 {選|えら}びました 。 {教|おし}え は 、 ここ に あります 。 || My teacher's face is still left at the Archive. I chose not to choose. The lessons are here.
+
+@scene end.ren.core
+!if pages.recall -> recall
+ren: {鐘楼|しょうろう} の {鐘|かね} も 、 {書庫|しょこ} の {門|もん} も 、 あなた が {隣|となり} に いました 。 {記録|きろく} に は {書|か}いて いません が 、 {覚|おぼ}えて います 。 || The bell tower's bell, the Archive gate — you were beside me for both. It isn't in the record, but I remember.
+!goto next
+:recall
+!hook pages_recall
+:next
+ren: {一人|ひとり} で {灯|ひ} を {守|まも}って いた {頃|ころ} は 、 {分|わ}からない こと が {怖|こわ}かった 。 {今|いま} は 、 {分|わ}からない まま {二人|ふたり} で {歩|ある}ける 。 || When I kept the lamps alone, not knowing frightened me. Now the two of us can walk on without knowing.
+?(bond>=trusted) ren[smirk]: {迷|まよ}った {回数|かいすう} も 、 {全部|ぜんぶ} {数|かぞ}えて あります 。 {公表|こうひょう} は しません 。 || I've also counted every time we got lost. I won't be publishing the figures.
+
+@scene end.ren.reply
+ren: …… {真面目|まじめ} な {質問|しつもん} を {一|ひと}つ 。 これから {一緒|いっしょ} に {歩|ある}く と したら 、 どう {分担|ぶんたん} します か 。 || …One serious question. If we go on walking together, how shall we divide the work?
+!hook pages_choose reply
+?(pages.pick=map) ren: {公平|こうへい} です 。 {地図|ちず} は あなた 、 {名前|なまえ} は わたし 。 {方角|ほうがく} で {揉|も}めたら 、 {地図|ちず} の {方|ほう} を {信|しん}じて ください 。 || Fair. You the maps, me the names. If we disagree about direction, trust the map.
+?(pages.pick=lost) ren[smile]: …… {書|か}き{留|と}めて おきます 。 {師匠|ししょう} の {教|おし}え の {横|よこ} に 。 {字|じ} は 、 {少|すこ}し {右|みぎ} に {跳|は}ねさせて 。 || …I'll write that down. Next to my teacher's lessons. With the last stroke kicking a little to the right.
+?(pages.pick=quiet) ren: …… それ で 、 {返事|へんじ} は {十分|じゅうぶん} です 。 || …That will do for an answer.
+
+@scene end.ren.b
+!call end.ren.reply
+ren: ツル さん が 、 {何|なに}か {見|み}せたい もの が ある そう です 。 {明日|あした} の {朝|あさ} 、 {名前|なまえ} を {書|か}き{直|なお}して から 、 {一緒|いっしょ} に {行|い}きましょう 。 || Tsuru says she has something to show us. Tomorrow morning, after I've rewritten the names, let's go together.
+ren: {朝|あさ} の {灯|ひ} の {見回|みまわ}り に も 、 {付|つ}き{合|あ}って ください 。 {地図|ちず} を {持|も}って くれれば 、 {昼|ひる} まで に は {帰|かえ}れます 。 || And come on the morning lamp rounds with me. If you carry the map, we will be back by noon.
+
+@scene end.ren.c
+narr: レン は {磨|みが}き{終|お}えた {二|ふた}つ の {灯|ひ} に {火|ひ} を {入|い}れ 、 {灯|あか}り{堂|どう} の {戸口|とぐち} の {両側|りょうがわ} に {一|ひと}つ ずつ {置|お}いた 。 || Ren lights the two polished lamps and sets one on each side of the Lantern Hall door.
+ren: {一|ひと}つ は あなた の {分|ぶん} です 。 {遅|おそ}く {帰|かえ}って きて も 、 {見|み}える よう に 。 || One of them is yours. So you can see it, even if you come home late.
+!call end.pet.ren
+!hook pages_end_done
+
+@scene end.pet.ren
+?(petvis=cat) narr: {猫|ねこ} が レン の {灯|ひ} の {横|よこ} に {座|すわ}って 、 {温|あたた}かい {方|ほう} へ {少|すこ}し ずつ {寄|よ}って いった 。 || The cat sits down beside Ren's lamp and edges, little by little, towards the warm side.
+?(petvis=dog) narr: {犬|いぬ} が {灯|ひ} の {匂|にお}い を {嗅|か}いで 、 {大|おお}きな くしゃみ を した 。 レン は {真顔|まがお} で 「 お{大事|だいじ} に 」 と {言|い}った 。 || The dog sniffs a lamp and sneezes hugely. "Bless you," says Ren, completely straight-faced.
+?(petvis=bird) narr: {鳥|とり} が {近|ちか}く の {灯籠|とうろう} に {止|と}まり 、 {灯|ひ} の {番|ばん} を する よう に {首|くび} を かしげた 。 || The bird lands on a lantern nearby and tilts its head, as if keeping watch over the light.
+?(petvis=tanuki) narr: たぬき が {灯|ひ} の {横|よこ} で {丸|まる}く なり 、 {一緒|いっしょ} に {番|ばん} を {始|はじ}めた 。 || The tanuki curls up beside the lamp and starts keeping watch with it.
+
+# ======================================================================================
+# Suzu — one sincere moment without a performance; humour and precision kept
+# ======================================================================================
+@scene end.suzu.a
+narr: スズ は {舞台|ぶたい} の {端|はし} に {腰|こし} を {下|お}ろした 。 {舞台|ぶたい} の {声|こえ} を 、 {少|すこ}し {落|お}とす 。 || Suzu sits down on the edge of the stage and lets her voice drop out of its stage pitch.
+suzu: {一|ひと}つ だけ 、 {衣装|いしょう} なし で {言|い}わせて 。 || Let me say one thing without a costume.
+!call end.suzu.core
+
+@scene end.suzu.core
+!if pages.recall -> recall
+suzu: {灰実|はいみ} の {工房|こうぼう} で 、 あなた は {客席|きゃくせき} に いて くれた 。 {灯落|ひおち} の {鐘|かね} の {時|とき} も 、 {書庫|しょこ} の {上|うえ} でも 。 {台本|だいほん} の ない {所|ところ} で 、 ずっと 。 || In the Cinder Orchard workshop, you stayed in the audience for me. At Lanternfall's bell, and up at the Archive too. Everywhere without a script.
+!goto pq
+:recall
+!hook pages_recall
+:pq
+suzu: ヒロ が 、 {次|つぎ} の {祭|まつ}り で も {本当|ほんとう} の {話|はなし} を {聞|き}かせて くれ って 。 {嘘|うそ} じゃ ない {話|はなし} も 、 {稽古|けいこ} が いる んだ ね 。 {帳簿|ちょうぼ} に は 、 まだ 「 {一部|いちぶ} {返済|へんさい} 」 。 || Hiro wants the true version at the festivals, too. Turns out even a true story needs rehearsing. In my ledger it still says "paid in part".
+suzu[closed]: …… {主役|しゅやく} って {書|か}いた けど 、 あなた は {一度|いちど} も {舞台|ぶたい} を {欲|ほ}しがらなかった 。 ただ 、 {歩|ある}いて いた 。 そこ を 、 ちゃんと {書|か}きたい の 。 || …I wrote you in as the lead, but you never once asked for a stage. You just walked. That's the part I want to get right.
+?(bond>=trusted) suzu[laugh]: …… はい 、 {今|いま} の は {台本|だいほん} に {載|の}せない 。 {照|て}れる から 。 || …Right, that bit's not going in the script. Too embarrassing.
+
+@scene end.suzu.reply
+?(!pages.retrotalk) suzu: {最後|さいご} の {幕|まく} の {前|まえ} に 、 {聞|き}いて おく 。 {次|つぎ} の {幕|まく} で 、 あなた は どこ に いたい ？ || Before the final curtain, I'll ask. In the next act, where do you want to be?
+?(pages.retrotalk) suzu: {次|つぎ} の {幕|まく} の {前|まえ} に 、 {聞|き}いて おく 。 あなた は どこ に いたい ？ || Before the next act, I'll ask. Where do you want to be?
+!hook pages_choose reply
+?(pages.pick=seat) suzu[laugh]: {一番|いちばん} {前|まえ} の {席|せき} 、 {予約|よやく} {済|ず}み 。 {木戸銭|きどせん} は いらない 。 {帳簿|ちょうぼ} に も つけない 。 || Front row, reserved. No admission. I won't even put it in the ledger.
+?(pages.pick=onstage) suzu[surprise]: …… わたし も ？ …… {分|わ}かった 。 {一行|いちぎょう} だけ 、 {自分|じぶん} の {台詞|せりふ} を {書|か}く 。 {嘘|うそ} の ない やつ 。 || …Me too? …All right. I'll write myself one line. One without a lie in it.
+?(pages.pick=quiet) suzu[smile]: …… {台詞|せりふ} なし 。 いい {芝居|しばい} は 、 そういう の が {一番|いちばん} {効|き}く の 。 || …No lines. In a good play, that's what lands hardest.
+
+@scene end.suzu.b
+!call end.suzu.reply
+suzu: {次|つぎ} の {幕|まく} は 、 ツル さん の {灯|あか}り{堂|どう} から {始|はじ}まる らしい よ 。 それ と 、 {雨|あめ} の {日|ひ} は ハナ の {茶屋|ちゃや} で {小|ちい}さな {芝居|しばい} 。 あなた は {見|み}てる だけ で いい 。 || The next act starts at Tsuru's Lantern Hall, apparently. And on rainy days, a little play at Hana's teahouse. You only have to watch.
+
+@scene end.suzu.c
+narr: スズ は {帳簿|ちょうぼ} を {開|ひら}いて 、 {最後|さいご} の {頁|ページ} に {一行|いちぎょう} {書|か}き{足|た}した 。 「 {預|あず}け{物|もの} 、 リボン {一本|いっぽん} 。 {返却|へんきゃく} 、 {次|つぎ} の {幕|まく} 。 {必|かなら}ず 。 」 || Suzu opens her ledger and adds a line on the last page: "Left in safekeeping: one ribbon. To be returned: next act. Without fail."
+!call end.pet.suzu
+!hook pages_end_done
+
+@scene end.pet.suzu
+?(petvis=cat) narr: {猫|ねこ} が {二人|ふたり} の {真|ま}ん{中|なか} に {座|すわ}り{込|こ}んだ 。 スズ は 「 {主役|しゅやく} を {取|と}られた 」 と {笑|わら}った 。 || The cat sits down right between the two of you. "Upstaged," Suzu laughs.
+?(petvis=dog) narr: {犬|いぬ} が スズ の {前|まえ} で {尻尾|しっぽ} を {振|ふ}って いる 。 {客席|きゃくせき} の {一列目|いちれつめ} は 、 もう {埋|う}まって いた 。 || The dog wags its tail in front of Suzu. The front row is already taken.
+?(petvis=bird) narr: {鳥|とり} が {一声|ひとこえ} {鳴|な}いた 。 {幕|まく} の {合図|あいず} の よう に 。 || The bird calls once, like the cue for the curtain.
+?(petvis=tanuki) narr: たぬき が スズ の {荷物|にもつ} の {陰|かげ} から {顔|かお} を {出|だ}した 。 スズ は {真面目|まじめ} な {顔|かお} で 、 {小道具|こどうぐ} {係|がかり} に {任命|にんめい} した 。 || The tanuki pokes its head out from behind Suzu's luggage. Straight-faced, Suzu appoints it head of props.
+
+# ======================================================================================
+# A Conversation We Still Owe Ourselves (§10.4): an older postgame save, told now
+# ======================================================================================
+@scene pages.enter_retro
+?(comp=nao) nao: $name 。 {少|すこ}し いい か 。 {言|い}いそびれてた こと が ある 。 || $name. Got a minute? There's something I never got round to saying.
+?(comp=mio) mio: $name 、 {少|すこ}し {座|すわ}らない ？ {話|はな}して おきたい こと が ある の 。 || $name, sit down a moment? There's something I'd like to talk about.
+?(comp=ren) ren: $name 。 {少|すこ}し {時間|じかん} を ください 。 {言|い}って おく べき こと が あります 。 || $name. Give me a little time. There's something I ought to say.
+?(comp=suzu) suzu: $name 、 {幕間|まくあい} を {少|すこ}し だけ ちょうだい 。 {言|い}いそびれた {台詞|せりふ} が ある の 。 || $name, give me a short interval. There's a line I never got to say.
+!choice
+* {今|いま} {話|はな}そう || Let's talk now -> now
+* また {後|あと} で || Later -> later
+:later
+?(comp=nao) nao: いつ でも いい 。 {声|こえ} を かけて くれ 。 || Whenever. Just say.
+?(comp=mio) mio: うん 。 {急|いそ}がない から 。 {話|はな}したく なったら 、 {声|こえ} を かけて ね 。 || Mm. No hurry. When you feel like talking, just say.
+?(comp=ren) ren: {承知|しょうち} しました 。 {話|はなし} は 、 {逃|に}げません 。 || Understood. It isn't going anywhere.
+?(comp=suzu) suzu: {了解|りょうかい} 。 {開演|かいえん} は 、 あなた の {合図|あいず} で 。 || Understood. Curtain up on your cue.
+!end
+:now
+!call pages.retro
+
+@scene pages.retro
+!hook pages_retro_begin
+!if comp=nao -> nao
+!if comp=mio -> mio
+!if comp=ren -> ren
+!if comp=suzu -> suzu
+!end
+:nao
+narr: ナオ は {鞄|かばん} を {下|お}ろして 、 {灯|あか}り{堂|どう} の {壁|かべ} に もたれた 。 || Nao sets the satchel down and leans against the Lantern Hall wall.
+nao: {旅|たび} が {終|お}わって から 、 {配達|はいたつ} ばっかり で 、 ちゃんと {話|はな}して なかった な 。 {今|いま} {言|い}って おく 。 || Since the journey ended it's been nothing but deliveries. We never properly talked. I'll say it now.
+!call end.nao.core
+!call end.nao.reply
+nao: {地図|ちず} に ない {道|みち} も 、 {潮硝子|しおがらす} {回|まわ}り も 、 {次|つぎ} は {二人|ふたり} で {選|えら}ぼう 。 {断|ことわ}る {理由|りゆう} は 、 {今|いま} の ところ ない 。 || Roads that aren't on any map, the Saltglass round — next time, we choose them together. So far I haven't got a reason to say no.
+narr: ナオ は {鞄|かばん} を {背負|せお}い{直|なお}して 、 {出口|でぐち} を {確|たし}かめ 、 それから {入口|いりぐち} も {確|たし}かめた 。 || Nao shoulders the satchel, checks the exit, and then checks the entrance too.
+!call end.pet.nao
+!hook pages_end_done retro
+!end
+:mio
+narr: ミオ は {灯|あか}り{堂|どう} の {長椅子|ながいす} に {腰|こし} を {下|お}ろした 。 {珍|めずら}しく 、 {先|さき} に {座|すわ}った 。 || Mio sits down on a bench in the Lantern Hall. For once, she sits down first.
+mio: {旅|たび} が {終|お}わって から 、 {店|みせ} の こと ばかり で 、 ちゃんと {話|はな}して なかった 。 …… {少|すこ}し だけ {聞|き}いて 。 || Since the journey ended, it's been all about the shop. We never properly talked. …Just listen for a bit.
+!call end.mio.core
+!call end.mio.reply
+mio: {書|か}かれて いない {道|みち} に {出|で}る {日|ひ} は 、 {包帯|ほうたい} と お{茶|ちゃ} を {持|も}って 。 {出|で}ない {日|ひ} は 、 {茶屋|ちゃや} で {何|なに} も しない 。 どっち も 、 {一緒|いっしょ} に 。 || On days we go out on the unwritten roads, bandages and tea. On days we don't, doing nothing at the teahouse. Either way, together.
+narr: ミオ は ツル の {机|つくえ} の {帳面|ちょうめん} を {揃|そろ}え かけて 、 {手|て} を {止|と}めた 。 {一冊|いっさつ} だけ 、 {曲|ま}がった まま に した 。 || Mio starts to straighten the ledgers on Tsuru's desk, then stops. She leaves one of them crooked.
+!call end.pet.mio
+!hook pages_end_done retro
+!end
+:ren
+narr: レン は {灯|ひ} を {床|ゆか} に {置|お}いて 、 {眼鏡|めがね} を {拭|ふ}いた 。 {拭|ふ}く {必要|ひつよう} は なかった 。 || Ren sets the lamp down on the floor and cleans their glasses. They didn't need cleaning.
+ren: {橋|はし} を {渡|わた}って {帰|かえ}って きた {日|ひ} 、 {言|い}う べき こと を {言|い}い{忘|わす}れて いました 。 {記録|きろく} の {漏|も}れ は 、 {直|なお}さない と 。 || The day we crossed the bridge home, I forgot to say something I should have. Gaps in the record have to be fixed.
+!call end.ren.pq
+!call end.ren.core
+!call end.ren.reply
+ren: ツル さん の {帳面|ちょうめん} の {道|みち} に は 、 まだ {歩|ある}いて いない もの が あります 。 あなた が {地図|ちず} を 、 わたし が {灯|ひ} を 。 || There are still roads in Tsuru's ledger we haven't walked. You take the map, I'll take the lamp.
+narr: レン は {灯|あか}り{堂|どう} の {灯籠|とうろう} の {芯|しん} を {切|き}り{揃|そろ}え 、 {少|すこ}し {迷|まよ}って から 、 {自分|じぶん} の {灯|ひ} を $name に {持|も}たせた 。 || Ren trims the wick of the Hall's lantern and, after a moment's hesitation, hands you their own lamp to hold.
+!call end.pet.ren
+!hook pages_end_done retro
+!end
+:suzu
+narr: スズ は {声|こえ} の {張|は}り を {落|お}とした 。 {衣装|いしょう} を {脱|ぬ}ぐ みたい に 。 || Suzu lets her voice drop, like taking off a costume.
+suzu: {幕|まく} が {下|お}りた {後|あと} の {台詞|せりふ} って 、 {一番|いちばん} {難|むずか}しい の 。 だから {後回|あとまわ}し に して た 。 {今|いま} {言|い}う ね 。 || The lines after the curtain comes down are the hardest. So I kept putting them off. I'll say them now.
+!call end.suzu.core
+!call end.suzu.reply
+suzu: {次|つぎ} の {幕|まく} は 、 {書|か}かれて いない {道|みち} で も 、 ハナ の {茶屋|ちゃや} で も いい 。 あなた は {見|み}てる だけ で いい から ね 。 || The next act can be on the unwritten roads or at Hana's teahouse. You only have to watch.
+narr: スズ は {帳簿|ちょうぼ} に {一行|いちぎょう} {書|か}き{足|た}した 。 「 {言|い}いそびれた {台詞|せりふ} 、 {一|ひと}つ 。 {支払|しはら}い {済|ず}み 。 」 || Suzu adds a line to her ledger: "One line left unsaid. Paid."
+!call end.pet.suzu
+!hook pages_end_done retro
+!end
+
+# ======================================================================================
+# An Unfinished Conversation (§10.4): a personal quest finished after the ending
+# ======================================================================================
+@scene pages.enter_unfinished
+?(comp=nao&memory.ending:nao) nao: $name 。 {橋|はし} の {上|うえ} の {話|はなし} の 、 {続|つづ}き が ある 。 || $name. There's more to what I said on the bridge.
+?(comp=nao&!memory.ending:nao) nao: $name 。 この {前|まえ} の {話|はなし} の 、 {続|つづ}き が ある 。 || $name. There's more to what I said the other day.
+?(comp=mio) mio: $name 、 {聞|き}いて ほしい こと が ある の 。 {前|まえ} の {話|はなし} の {続|つづ}き 。 || $name, there's something I want you to hear. The rest of what I said before.
+!choice
+* {聞|き}かせて || Tell me -> now
+* また {後|あと} で || Later -> later
+:later
+?(comp=nao) nao: {分|わ}かった 。 {急|いそ}ぐ {話|はなし} じゃ ない 。 || Right. It's not urgent.
+?(comp=mio) mio: うん 。 また {今度|こんど} 。 || Mm. Another time.
+!end
+:now
+!call pages.unfinished
+
+@scene pages.unfinished
+!if comp=nao -> nao
+!if comp=mio -> mio
+!end
+:nao
+narr: ナオ が 、 {鞄|かばん} の {底|そこ} を {軽|かる}く {叩|たた}いた 。 {手紙|てがみ} の {分|ぶん} だけ 、 {軽|かる}く なって いる 。 || Nao gives the bottom of the satchel a light pat. It's one letter lighter.
+?(memory.ending:nao) nao: {橋|はし} の {上|うえ} で {言|い}った {手紙|てがみ} 、 {届|とど}けた 。 || That letter I mentioned on the bridge — I delivered it.
+?(!memory.ending:nao) nao: {前|まえ} に {言|い}った {手紙|てがみ} 、 {届|とど}けた 。 || That letter I mentioned before — I delivered it.
+nao: ウミ は {一行|いちぎょう} だけ {書|か}いた 。 「 {読|よ}みました 」 って 。 {許|ゆる}す とも 、 {許|ゆる}さない とも {書|か}いて なかった 。 || Umi wrote one line. "I read it." Didn't say she forgives him, didn't say she doesn't.
+nao: それ で いい 。 {決|き}めた の は ウミ だ 。 {配達人|はいたつにん} の {仕事|しごと} は 、 そこ まで 。 || That's right. Umi decided. That's where a courier's job ends.
+nao[smile]: …… {途中|とちゅう} で {止|と}まってた {話|はなし} 、 これ で {最後|さいご} まで {言|い}えた な 。 {鞄|かばん} が {軽|かる}い 。 || …So I've finally finished what I started saying. The bag's lighter.
+!hook pages_unfinished_done
+!end
+:mio
+mio[laugh]: {聞|き}いて 。 {言|い}えた の 。 タダシ さん に 、 {自分|じぶん} の {声|こえ} で 。 「 お{断|ことわ}り します 」 って 。 || Listen. I said it. To Tadashi, in my own voice. "I refuse."
+mio: {前|まえ} に 、 まだ {返事|へんじ} して いない {頼|たの}み{事|ごと} が ある って {言|い}った でしょ 。 あれ 、 {片付|かたづ}いた 。 || Remember I said there was still a request I hadn't answered? That's done now.
+mio: {手|て} は 、 やっぱり {震|ふる}えた 。 でも 、 {声|こえ} は {震|ふる}えなかった 。 {少|すこ}し しか 。 || My hands shook, of course. But my voice didn't. Hardly at all.
+mio[smile]: {背中|せなか} に {手|て} を {当|あ}てて くれて 、 ありがとう 。 {次|つぎ} は 、 わたし が {当|あ}てる {番|ばん} ね 。 || Thank you for the hand on my back. Next time, it's my turn.
+!hook pages_unfinished_done
+!end
+`, 'pages/ending');
+
+
+/* ==== src/content/pages/30_project.js ==== */
+/* The Pages We Keep (addendum §11): one finite project for the committed
+ * companion, in the existing Atlas preparation, camp and homecoming flow.
+ *   Page I   pages.offer   the Lantern Hall (offered once on entering; afterwards
+ *                          talk to your companion there). Never blocks a run.
+ *   Page II  pages.camp    at the first camp after a real event of that outing
+ *            pages.home2   or at home, if the camp talk was put off
+ *   Page III pages.home3   after coming home from that outing (any return)
+ *   pages.home             called at the end of atlas.home (the homecoming)
+ * The choices are presented and committed by !hook pages_choose (10_pages.js).
+ * Every return is honest: an early return is a real decision, a defeat is the
+ * road sending you home, an outing with nothing in it leaves the page open. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.script.add(`
+# ---- Page I: What Shall We Keep? ----------------------------------------------------------------
+@scene pages.enter_offer
+!call pages.offer
+
+@scene pages.offer
+!if comp=nao -> nao
+!if comp=mio -> mio
+!if comp=ren -> ren
+!if comp=suzu -> suzu
+!end
+:nao
+nao: ツル の {新|あたら}しい {帳面|ちょうめん} 、 {見|み}た か ？ {道|みち} が どこ へ {続|つづ}く か は {書|か}いて ある 。 でも 、 {帰|かえ}り{方|かた} は {誰|だれ} も {書|か}いて ない 。 || Seen Tsuru's new ledger? It says where the roads go. Nobody's written down how to get back.
+nao: だから 、 {二人|ふたり} で {一枚|いちまい} 、 {札|ふだ} を {作|つく}らない か 。 {本当|ほんとう} に {歩|ある}いた {道|みち} から 、 {一|ひと}つ だけ {選|えら}んで 。 || So how about the two of us make one card? From a road we actually walk. Just one thing from it.
+?(quest.lf_nao=done) nao: ウミ の {時|とき} に {分|わ}かった 。 {道|みち} を {知|し}ってる の と 、 {人|ひと} の {代|か}わり に {決|き}める の は 、 {別|べつ} だ 。 そういう の を {書|か}いて おきたい 。 || Umi taught me something. Knowing a road and deciding for someone else are different things. That's the kind of thing I want written down.
+?(!quest.lf_nao=done) nao: {道|みち} を {知|し}ってる の と 、 {人|ひと} の {代|か}わり に {決|き}める の は 、 {別|べつ} だ 。 {最近|さいきん} 、 よく そう {思|おも}う 。 そういう の を {書|か}いて おきたい 。 || Knowing a road and deciding for someone else are different things. I think about that a lot lately. That's the kind of thing I want written down.
+?(bond>=trusted) nao[smirk]: {誰|だれ} に でも {頼|たの}む {話|はなし} じゃ ない けど な 。 || Not something I'd ask just anyone, mind.
+nao: {次|つぎ} に {歩|ある}く {誰|だれ}か の ため に する か 、 {自分|じぶん} たち の {帰|かえ}り{道|みち} の ため に する か 。 どっち が いい ？ || For whoever walks it next, or for finding our own way back. Which do you want?
+!hook pages_choose theme
+!if pages.pick=later -> nlater
+?(pages.pick=next) nao[smile]: {道案内|みちあんない} か 。 {配達人|はいたつにん} の {得意|とくい} {分野|ぶんや} だ 。 {決|き}め{付|つ}けない {書|か}き{方|かた} を {考|かんが}えよう 。 || Directions, then. A courier's speciality. We'll work out how to write it without telling anyone what to do.
+?(pages.pick=back) nao: {帰|かえ}り{道|みち} の {一言|ひとこと} 、 か 。 …… {鞄|かばん} に {入|い}れて おく の に ちょうど いい 。 || A line for the way back… Just the right size to keep in the bag.
+nao: {次|つぎ} に {書|か}かれて いない {道|みち} へ {出|で}たら 、 {本当|ほんとう} に あった こと を {一|ひと}つ {覚|おぼ}えて おこう 。 {焚|た}き{火|び} の {所|ところ} で {話|はな}そう 。 || Next time we're out on an unwritten road, let's remember one thing that really happens. We'll talk it over at the campfire.
+!end
+:nlater
+nao: {急|いそ}ぐ {話|はなし} じゃ ない 。 {気|き} が {向|む}いたら 、 {声|こえ} を かけて くれ 。 || No rush. Say the word when you feel like it.
+!end
+:mio
+mio: ねえ 、 $name 。 {旅|たび} の {間|あいだ} 、 わたし は ずっと {誰|だれ}か の {荷物|にもつ} を {持|も}って いた {気|き} が する の 。 || You know, $name, all through the journey I felt like I was always carrying someone's load.
+mio: だから 、 {今度|こんど} は {荷|に} を {下|お}ろせた {場所|ばしょ} の こと を 、 {一枚|いちまい} {残|のこ}したい 。 {書|か}かれて いない {道|みち} で 、 {本当|ほんとう} に {休|やす}めた {所|ところ} を 。 || So this time I'd like to keep one page about a place where we could set things down. Somewhere on an unwritten road where we really rested.
+?(quest.lf_mio=done) mio: {断|ことわ}る の を {覚|おぼ}えた から 、 {休|やす}む の も {覚|おぼ}えたい の 。 {順番|じゅんばん} と して は 、 {合|あ}ってる でしょ ？ || I've learned to say no, so I'd like to learn to rest too. That's the right order, isn't it?
+?(!quest.lf_mio=done) mio: {休|やす}む の も 、 {断|ことわ}る の と {同|おな}じ で 、 {練習|れんしゅう} が いる みたい 。 || Resting seems to need practice too, same as saying no.
+?(bond>=trusted) mio[smile]: あなた と なら 、 {休|やす}む の が {上手|じょうず} に なれる {気|き} が する の 。 || With you, I think I could get good at resting.
+mio: {休|やす}んで も {怖|こわ}くなかった {理由|りゆう} を {書|か}く か 、 {仕事|しごと} を {分|わ}け{合|あ}えた {理由|りゆう} を {書|か}く か 。 どっち に する ？ || Shall we write about why a pause felt safe, or about how we managed to share the work?
+!hook pages_choose theme
+!if pages.pick=later -> mlater
+?(pages.pick=pause) mio[smile]: うん 。 {休|やす}む {練習|れんしゅう} の {記録|きろく} ね 。 {処方|しょほう} より 、 ずっと {大事|だいじ} かも 。 || Mm. A record of practising rest. Maybe more important than any prescription.
+?(pages.pick=share) mio: {分|わ}け{合|あ}う {方|ほう} ね 。 …… わたし が {全部|ぜんぶ} やろう と したら 、 {止|と}めて よ 。 || Sharing, then. …If I try to do everything myself, stop me.
+mio: {次|つぎ} の {道|みち} で 、 {一|ひと}つ だけ {覚|おぼ}えて おこう 。 {無理|むり} に じゃ なくて 、 {自然|しぜん} に 。 || On the next road, let's remember just one thing. Not forcing it — naturally.
+!end
+:mlater
+mio: いい の 。 {急|いそ}がない の も 、 {練習|れんしゅう} の うち 。 || That's fine. Not hurrying is part of the practice too.
+!end
+:ren
+ren: {灯守|ひもり} の {帳面|ちょうめん} に は 、 {余白|よはく} が あります 。 {次|つぎ} の {灯守|ひもり} へ の {書|か}き{込|こ}み の ため の 。 || A lantern keeper's register has margins. For notes to the next keeper.
+?(sa_ren_took) ren: {師匠|ししょう} の {余白|よはく} は 、 {字|じ} が {右|みぎ} に {跳|は}ねて いて 、 {読|よ}む と {顔|かお} が {浮|う}かびます 。 || My teacher's margins kick to the right. When I read them, I can see the face.
+?(!sa_ren_took) ren: {師匠|ししょう} の {余白|よはく} は 、 {顔|かお} を {知|し}らなくて も 、 {声|こえ} が {聞|き}こえる {字|じ} でした 。 || My teacher's margins were written so you could hear the voice, even without knowing the face.
+ren: わたし たち も 、 {一枚|いちまい} {書|か}きません か 。 {書|か}かれて いない {道|みち} で 、 {実際|じっさい} に {見|み}た こと から 。 || Shall we write one too? From something we actually see on an unwritten road.
+?(bond>=trusted) ren[smirk]: {方角|ほうがく} の {記述|きじゅつ} は 、 あなた に お{願|ねが}い します 。 {念|ねん} の ため 。 || Directions I'll leave to you. Just to be safe.
+ren: {確|たし}か な こと を {書|か}く か 。 それとも 、 {分|わ}からない こと を 、 {分|わ}からない と {正直|しょうじき} に {書|か}く か 。 || Do we write down something certain? Or write down something we don't know, and say honestly that we don't?
+!hook pages_choose theme
+!if pages.pick=later -> rlater
+?(pages.pick=sure) ren: {確|たし}か な こと 。 …… {方角|ほうがく} {以外|いがい} で 、 {探|さが}しましょう 。 || Something certain. …We'll look for one that isn't about directions.
+?(pages.pick=unsure) ren[smile]: {分|わ}からない こと を {分|わ}からない と {書|か}く 。 {灯守|ひもり} に は 、 {一番|いちばん} {難|むずか}しい {仕事|しごと} です 。 {好|す}き です 。 || Writing what we don't know as not known. The hardest job a lantern keeper has. I like it.
+ren: {次|つぎ} の {道|みち} で 、 {書|か}き{留|と}める もの を {一|ひと}つ {見|み}つけましょう 。 {野営|やえい} の {時|とき} に 、 {相談|そうだん} を 。 || On the next road, let's find one thing worth writing down. We can talk it over at camp.
+!end
+:rlater
+ren: {承知|しょうち} しました 。 {余白|よはく} は 、 {逃|に}げません 。 || Understood. The margins aren't going anywhere.
+!end
+:suzu
+suzu: ねえ 、 {芝居|しばい} に は {大|おお}きな {場面|ばめん} の {間|あいだ} に 、 {小|ちい}さな {場面|ばめん} が ある の 。 {誰|だれ} も {書|か}き{残|のこ}さない やつ 。 || You know, in a play there are small scenes between the big ones. The ones nobody ever writes down.
+suzu: {書|か}かれて いない {道|みち} で 、 そういう {場面|ばめん} を {一|ひと}つ {拾|ひろ}って こない ？ {本当|ほんとう} に あった こと だけ 。 {嘘|うそ} は {一|ひと}つ も なし 。 || How about we bring one of those back from an unwritten road? Only something that really happens. Not a single lie.
+?(bond>=trusted) suzu[smile]: {相方|あいかた} が あなた なら 、 {台本|だいほん} なし でも {怖|こわ}くない し 。 || With you as my partner, even no script isn't scary.
+suzu: {笑|わら}える {場面|ばめん} に する か 、 {静|しず}か な {場面|ばめん} に する か 。 あなた は {演|えん}じなくて いい から ね 。 || A funny scene, or a quiet one? And you don't have to act in it.
+!hook pages_choose theme
+!if pages.pick=later -> slater
+?(pages.pick=funny) suzu[laugh]: {笑|わら}える {方|ほう} ！ {台本|だいほん} なし で {笑|わら}える の が 、 {一番|いちばん} {難|むずか}しい の よ 。 || Funny it is! Getting a laugh without a script is the hardest thing there is.
+?(pages.pick=quiet) suzu[smile]: {静|しず}か な {方|ほう} 。 …… {舞台|ぶたい} で は いつも {削|けず}られる ところ 。 {今度|こんど} は 、 {残|のこ}そう 。 || The quiet one. …The bit that always gets cut on stage. This time we keep it.
+suzu: {次|つぎ} の {道|みち} で {何|なに}か {起|お}きたら 、 {焚|た}き{火|び} の {前|まえ} で {話|はな}そう 。 {帳簿|ちょうぼ} は わたし が つける 。 || If something happens on the next road, let's talk it over by the fire. I'll keep the books.
+!end
+:slater
+suzu: {了解|りょうかい} 。 {開演|かいえん} {時間|じかん} は 、 {未定|みてい} で 。 || Understood. Curtain time: to be announced.
+!end
+
+# ---- Page II: A Moment Worth Keeping ------------------------------------------------------------
+# the companion connects the recorded event to the theme and asks what to keep
+@scene pages.p2q
+?(comp=nao&pages.theme=next) nao: {次|つぎ} に ここ を {歩|ある}く {誰|だれ}か に 、 {何|なに} を {残|のこ}す ？ {正解|せいかい} じゃ なくて 、 {役|やく} に {立|た}つ こと を 。 || What do we leave for whoever walks there next? Not the right answer — something useful.
+?(comp=nao&pages.theme=back) nao: {帰|かえ}り{道|みち} の {一言|ひとこと} に する なら 、 あの {道|みち} の どこ を {書|か}く ？ || If it's a line for the way back, which part of that road goes in?
+?(comp=mio&pages.theme=pause&pages.at=camp) mio: {今|いま} 、 こうして {座|すわ}って いて も 、 {落|お}ち{着|つ}かない {感|かん}じ が しない の 。 どうして だろう ね 。 || Sitting here like this, I don't feel restless at all. I wonder why.
+?(comp=mio&pages.theme=pause&pages.at=home) mio: あの {道|みち} で 、 {休|やす}む の が {怖|こわ}くなかった の は 、 どうして だった と {思|おも}う ？ || On that road, why do you think resting didn't feel frightening?
+?(comp=mio&pages.theme=share) mio: {一人|ひとり} で {全部|ぜんぶ} やろう と しなくて {済|す}んだ の は 、 {何|なに} が {良|よ}かった の かな 。 || What was it that meant I didn't have to try to do everything myself?
+?(comp=ren&pages.theme=sure) ren: {確|たし}か な こと を {一|ひと}つ {書|か}く なら 、 {何|なに} に します か 。 {方角|ほうがく} {以外|いがい} で 。 || If we write down one certain thing, what shall it be? Apart from directions.
+?(comp=ren&pages.theme=unsure) ren: {分|わ}からない こと を {分|わ}からない と {書|か}く なら 、 {何|なに} を {書|か}きます か 。 {候補|こうほ} は {山|やま} ほど あります が 。 || If we write down something we don't know, what shall it be? There are plenty of candidates.
+?(comp=suzu&pages.theme=funny) suzu: {笑|わら}える {場面|ばめん} に する なら 、 どこ を {切|き}り{取|と}る ？ {脚色|きゃくしょく} は なし で 。 || If it's a funny scene, which bit do we cut out? No embellishing.
+?(comp=suzu&pages.theme=quiet) suzu: {静|しず}か な {場面|ばめん} に する なら 、 どこ を {残|のこ}す ？ {拍手|はくしゅ} の {来|こ}ない ところ を 。 || If it's a quiet scene, what do we keep? The part where no applause comes.
+
+# the companion answers what the player chose to keep (values, not claims about the player)
+@scene pages.p2r
+?(comp=nao&pages.aspect=read) nao: {確|たし}かめて から 、 {動|うご}く 。 {急|いそ}ぐ {奴|やつ} ほど 、 それ を {忘|わす}れる 。 {書|か}いて おこう 。 || Check first, then move. The ones in a hurry always forget that. Let's write it down.
+?(comp=nao&pages.aspect=decide) nao[smile]: {決|き}める の は 、 {歩|ある}く {二人|ふたり} 。 {道|みち} を {知|し}ってる {奴|やつ} が {決|き}める んじゃ ない 。 …… いい {札|ふだ} に なる 。 || The two who walk it decide. Not whoever happens to know the road. …That'll make a good card.
+?(comp=nao&pages.aspect=home) nao: {帰|かえ}り{道|みち} が {見|み}える と 、 {先|さき} へ も {行|い}ける 。 {配達人|はいたつにん} の {基本|きほん} だ 。 || When you can see the way home, you can go further. Courier basics.
+?(comp=mio&pages.aspect=stop) mio: {止|と}まる の も 、 {道|みち} の うち 。 {薬|くすり} の {帳面|ちょうめん} に は {書|か}けない こと ね 。 || Stopping is part of the road too. Not something you can write in a remedy book.
+?(comp=mio&pages.aspect=turns) mio: {交代|こうたい} で やる と 、 どっち も {倒|たお}れない 。 {当|あ}たり{前|まえ} の こと ほど 、 {書|か}いて おかない と {忘|わす}れちゃう の よ 。 || Take turns, and neither of you falls over. The more obvious a thing is, the more you need to write it down or you forget.
+?(comp=mio&pages.aspect=enough) mio: 「 {今日|きょう} は ここ まで 」 って {言|い}える の は 、 {弱|よわ}さ じゃ ない 。 …… {自分|じぶん} に {言|い}い{聞|き}かせてる の 。 || Being able to say "that's enough for today" isn't weakness. …I'm telling myself, too.
+?(comp=ren&pages.aspect=known) ren: {確|たし}か な こと は 、 {短|みじか}く {書|か}く に {限|かぎ}ります 。 {長|なが}く {書|か}く と 、 {確|たし}か じゃ なく なる 。 || Certain things are best written short. Write them long and they stop being certain.
+?(comp=ren&pages.aspect=unknown) ren: {分|わ}からない 、 と {書|か}いて おけば 、 {次|つぎ} の {人|ひと} が {続|つづ}き を {書|か}けます 。 {余白|よはく} は 、 その ため に ある 。 || Write "not known", and the next person can write what comes after. That's what margins are for.
+?(comp=ren&pages.aspect=way) ren[smirk]: …… {方角|ほうがく} は 、 {全部|ぜんぶ} あなた が {選|えら}びました 。 {余白|よはく} に {書|か}いて おきます 。 「 {道案内|みちあんない} ： わたし で は ない 」 。 || …You chose every direction. I'll note it in the margin: "Navigator: not me."
+?(comp=suzu&pages.aspect=asis) suzu: {起|お}きた まま に 。 {脚色|きゃくしょく} なし 。 …… わたし に は 、 {一番|いちばん} {難|むずか}しい {注文|ちゅうもん} ね 。 || Just as it happened. No embellishment. …The hardest order you could give me.
+?(comp=suzu&pages.aspect=pause) suzu: {間|ま} を {残|のこ}す 。 {分|わ}かってる じゃない 。 {間|ま} の ない {芝居|しばい} は 、 {息|いき} が できない の 。 || Leave the pause in. You know your stuff. A play with no pauses can't breathe.
+?(comp=suzu&pages.aspect=watch) suzu[smile]: {見|み}て いた だけ の ところ 。 …… {客席|きゃくせき} から の {場面|ばめん} ね 。 {演|えん}じなくて いい 。 それ で {十分|じゅうぶん} 。 || The part where you only watched. …A scene from the audience's side. No acting needed. That's plenty.
+
+@scene pages.camp
+!hook pages_event camp
+!call pages.p2q
+!hook pages_choose aspect camp
+!if pages.pick=later -> later
+!call pages.p2r
+?(comp=nao) nao: {清書|せいしょ} は 、 {帰|かえ}って から 。 {折|お}り{方|かた} も {決|き}めよう 。 || We'll write it out properly back home. Decide how to fold it, too.
+?(comp=mio) mio: {絵|え} は 、 {帰|かえ}って から {描|か}く ね 。 お{茶|ちゃ} を {淹|い}れ ながら 。 || I'll draw it when we're home. While the tea brews.
+?(comp=ren) ren: {清書|せいしょ} は {灯|あか}り{堂|どう} で 。 {余白|よはく} に は 、 {二人|ふたり} で {書|か}き{込|こ}みましょう 。 || We'll make the fair copy in the Lantern Hall. And both write in the margin.
+?(comp=suzu) suzu: {番付|ばんづけ} は {帰|かえ}って から {描|か}く 。 {絵|え} は わたし 、 {題|だい} は あなた 。 || I'll draw the programme back home. Pictures by me, title by you.
+!end
+:later
+?(comp=nao) nao: {分|わ}かった 。 {家|いえ} で {話|はな}そう 。 {覚|おぼ}えて おく 。 || Right. We'll talk at home. I'll remember.
+?(comp=mio) mio: うん 。 {急|いそ}がない 。 {帰|かえ}って から に しよう 。 || Mm. No hurry. Let's leave it till we're home.
+?(comp=ren) ren: {承知|しょうち} しました 。 {帰|かえ}って から 、 {改|あらた}めて 。 || Understood. Once we're home, then.
+?(comp=suzu) suzu: {了解|りょうかい} 。 {続|つづ}き は {家|いえ} で 。 || Got it. To be continued at home.
+
+# ---- coming home ------------------------------------------------------------------------------------
+# honest words for how the outing ended (early return: a real decision; defeat: the road sent us home)
+@scene pages.p2ret
+?(comp=nao&pages.ret=complete) nao: {最後|さいご} まで {歩|ある}いた {道|みち} だ 。 {書|か}く こと は {多|おお}い けど 、 {一|ひと}つ に {絞|しぼ}ろう 。 || We walked that one to the end. Plenty to write about, but let's pick just one.
+?(comp=nao&pages.ret=early) nao: {途中|とちゅう} で {引|ひ}き{返|かえ}した けど 、 あれ は {本当|ほんとう} に あった こと だ 。 || We turned back partway, but that really happened.
+?(comp=nao&pages.ret=defeat) nao: {道|みち} に {追|お}い{返|かえ}された 。 それ でも 、 あそこ まで は {二人|ふたり} で {行|い}った 。 || The road threw us back. Even so, we got that far together.
+?(comp=nao&pages.ret=folded) nao: {道|みち} ごと {消|き}えちゃった 。 でも 、 {覚|おぼ}えてる こと は {消|き}えない 。 || The whole road vanished on us. What we remember doesn't.
+?(comp=mio&pages.ret=complete) mio: {最後|さいご} まで {行|い}けた {道|みち} ね 。 {帰|かえ}って {来|こ}られて 、 よかった 。 || A road we got to the end of. I'm glad we came home.
+?(comp=mio&pages.ret=early) mio: {途中|とちゅう} で {帰|かえ}って きた {道|みち} 。 {引|ひ}き{返|かえ}す って {決|き}められた の も 、 {書|か}いて いい こと よ 。 || A road we came back from partway. Being able to decide to turn back is worth writing down too.
+?(comp=mio&pages.ret=defeat) mio: {道|みち} に {帰|かえ}された けど 、 {二人|ふたり} とも ここ に いる 。 それ が {一番|いちばん} 。 || The road sent us back, but we're both here. That's what matters most.
+?(comp=mio&pages.ret=folded) mio: {道|みち} は {消|き}えちゃった けど 、 {覚|おぼ}えて いる こと は {消|き}えない の 。 || The road's gone, but what we remember isn't.
+?(comp=ren&pages.ret=complete) ren: {道|みち} の {終|お}わり まで 、 {記録|きろく} が {続|つづ}いた {道|みち} です 。 || A road whose record runs all the way to its end.
+?(comp=ren&pages.ret=early) ren: {途中|とちゅう} で {引|ひ}き{返|かえ}した {道|みち} です が 、 {記録|きろく} と して は {完全|かんぜん} です 。 {帰|かえ}り{道|みち} も 、 {道|みち} です から 。 || We turned back partway, but as a record it's complete. The way home is a road too.
+?(comp=ren&pages.ret=defeat) ren: {道|みち} に {折|お}り{畳|たた}まれて 、 {帰|かえ}って きました 。 {正直|しょうじき} に {書|か}きます 。 その {前|まえ} に あった こと も 、 {正直|しょうじき} に 。 || The road folded us up and sent us back. I'll write that honestly. And what happened before it, just as honestly.
+?(comp=ren&pages.ret=folded) ren: {道|みち} そのもの が {見|み}つからなく なりました 。 {記録|きろく} だけ は 、 {残|のこ}って います 。 || The road itself can't be found any more. Only the record remains.
+?(comp=suzu&pages.ret=complete) suzu: {千秋楽|せんしゅうらく} まで {行|い}った {道|みち} ね 。 || A road that ran all the way to closing night.
+?(comp=suzu&pages.ret=early) suzu: {途中|とちゅう} で {幕|まく} を {下|お}ろした {道|みち} 。 でも 、 {幕間|まくあい} は ちゃんと あった 。 || A road where we brought the curtain down early. But there was a proper interval.
+?(comp=suzu&pages.ret=defeat) suzu: {公演|こうえん} {中止|ちゅうし} に なった {道|みち} 。 でも 、 {中止|ちゅうし} の {前|まえ} の {場面|ばめん} は 、 {本物|ほんもの} だった 。 || A road where the show was cancelled. But the scenes before that were real.
+?(comp=suzu&pages.ret=folded) suzu: {劇場|げきじょう} ごと {消|き}えちゃった 。 {番付|ばんづけ} だけ は {残|のこ}せる 。 || The whole theatre vanished. We can still keep the programme.
+
+@scene pages.home2
+!hook pages_event home
+!call pages.p2ret
+!call pages.p2q
+!hook pages_choose aspect home
+!if pages.pick=later -> later
+!call pages.p2r
+!call pages.ask3
+!end
+:later
+?(comp=nao) nao: {分|わ}かった 。 {札|ふだ} は {逃|に}げない 。 || Right. The card's not going anywhere.
+?(comp=mio) mio: また {今度|こんど} 。 {頁|ページ} は 、 {待|ま}って て くれる から 。 || Another time. The page will wait for us.
+?(comp=ren) ren: {承知|しょうち} しました 。 {余白|よはく} は 、 {空|あ}けて おきます 。 || Understood. I'll keep the margin clear.
+?(comp=suzu) suzu: {了解|りょうかい} 。 {幕間|まくあい} を {延|の}ばそう 。 || Got it. Let's make the interval longer.
+
+@scene pages.ask3
+?(comp=nao) nao: …… {札|ふだ} 、 {今|いま} {仕上|しあ}げる か ？ || …Shall we finish the card now?
+?(comp=mio) mio: …… {頁|ページ} 、 {今|いま} {仕上|しあ}げて しまう ？ || …Shall we finish the page now?
+?(comp=ren) ren: …… {頁|ページ} の {清書|せいしょ} 、 {今|いま} {始|はじ}めます か 。 || …Shall we start the fair copy now?
+?(comp=suzu) suzu: …… {番付|ばんづけ} 、 {今|いま} {仕上|しあ}げちゃう ？ || …Shall we finish the programme now?
+!choice
+* {今|いま} {仕上|しあ}げよう || Let's finish it now -> now
+* また {今度|こんど} || Another time -> later
+:later
+?(comp=nao) nao: いつ でも いい 。 {灯|あか}り{堂|どう} で {声|こえ} を かけて くれ 。 || Whenever. Just say so in the Lantern Hall.
+?(comp=mio) mio: うん 。 {灯|あか}り{堂|どう} で {声|こえ} を かけて ね 。 || Mm. Just say so in the Lantern Hall.
+?(comp=ren) ren: では 、 {灯|あか}り{堂|どう} で 。 {声|こえ} を かけて ください 。 || The Lantern Hall, then. Just say the word.
+?(comp=suzu) suzu: {灯|あか}り{堂|どう} で {声|こえ} を かけて 。 {楽屋|がくや} で {待|ま}ってる 。 || Call me in the Lantern Hall. I'll be waiting in the dressing room.
+!end
+:now
+!call pages.home3
+
+# ---- Page III: Put It Somewhere Real ------------------------------------------------------------
+@scene pages.home3
+!if pages.where=home -> made
+?(comp=nao&pages.ret=complete) nao: {最後|さいご} まで {歩|ある}いて 、 {帰|かえ}って きた 。 {札|ふだ} に する の に 、 ちょうど いい {日|ひ} だ 。 || We walked it to the end and came home. Just the right day for a card.
+?(comp=nao&pages.ret=early) nao: {途中|とちゅう} で {引|ひ}き{返|かえ}した {道|みち} の {札|ふだ} だ 。 {引|ひ}き{返|かえ}す の も 、 {帰|かえ}り{方|かた} の うち 。 || It's a card from a road we turned back on. Turning back is one way of getting home.
+?(comp=nao&pages.ret=defeat|comp=nao&pages.ret=folded) nao: {途中|とちゅう} で {終|お}わった {道|みち} でも 、 {札|ふだ} は {作|つく}れる 。 {嘘|うそ} は {書|か}かない 。 {道|みち} に {帰|かえ}された 、 と {書|か}く 。 || A road that ended partway can still make a card. We won't write anything untrue. We'll write that the road sent us back.
+?(comp=mio&pages.ret=complete) mio: {最後|さいご} まで {行|い}って 、 {帰|かえ}って {来|こ}られた 。 まず 、 {座|すわ}ろう 。 || We went all the way and came home. First, let's sit down.
+?(comp=mio&pages.ret=early) mio: {途中|とちゅう} で {帰|かえ}って きた {日|ひ} の {札|ふだ} 。 {引|ひ}き{返|かえ}す の も 、 {休|やす}み の {一種|いっしゅ} よ 。 || A card from a day we came back early. Turning back is a kind of rest too.
+?(comp=mio&pages.ret=defeat|comp=mio&pages.ret=folded) mio: {最後|さいご} まで は {行|い}けなかった 。 でも 、 {二人|ふたり} とも ここ に いる 。 {札|ふだ} に は 、 {本当|ほんとう} の こと だけ {書|か}こう 。 || We didn't make it to the end. But we're both here. Let's put only what's true on the card.
+?(comp=ren&pages.ret=complete) ren: {道|みち} の {終|お}わり まで の {記録|きろく} です 。 {頁|ページ} に {清書|せいしょ} しましょう 。 || A record all the way to the road's end. Let's make the fair copy.
+?(comp=ren&pages.ret=early) ren: {途中|とちゅう} で {引|ひ}き{返|かえ}した {記録|きろく} です 。 {引|ひ}き{返|かえ}した 、 と {書|か}く の も 、 {正確|せいかく} さ の うち です 。 || A record of turning back partway. Writing "we turned back" is part of being accurate.
+?(comp=ren&pages.ret=defeat|comp=ren&pages.ret=folded) ren: {道|みち} に {帰|かえ}された 、 と {正直|しょうじき} に {書|か}きます 。 その {前|まえ} に あった こと も 、 {同|おな}じ {正直|しょうじき} さ で 。 || I'll write honestly that the road sent us home. And what happened before it, just as honestly.
+?(comp=suzu&pages.ret=complete) suzu: {千秋楽|せんしゅうらく} まで {演|えん}じきった {道|みち} ね 。 {番付|ばんづけ} に しよう 。 || A road we played all the way to closing night. Let's make the programme.
+?(comp=suzu&pages.ret=early) suzu: {途中|とちゅう} で {幕|まく} を {下|お}ろした {日|ひ} の {番付|ばんづけ} 。 {幕間|まくあい} は 、 ちゃんと あった から 。 || A programme from a day we brought the curtain down early. There was a proper interval, after all.
+?(comp=suzu&pages.ret=defeat|comp=suzu&pages.ret=folded) suzu: {公演|こうえん} は {途中|とちゅう} で {中止|ちゅうし} 。 でも 、 {中止|ちゅうし} の {前|まえ} の {場面|ばめん} は {本物|ほんもの} 。 {番付|ばんづけ} に は 、 そう {書|か}く 。 || The show was stopped partway. But the scene before that was real. That's what the programme will say.
+:made
+!if comp=nao -> nao
+!if comp=mio -> mio
+!if comp=ren -> ren
+!if comp=suzu -> suzu
+!end
+:nao
+narr: ナオ は {厚|あつ}い {紙|かみ} を {出|だ}して 、 {道|みち} の {線|せん} を {引|ひ}き 、 {半分|はんぶん} に {折|お}った 。 {宛名|あてな} の {欄|らん} は 、 {空|あ}けて ある 。 || Nao takes out a sheet of stiff paper, draws the line of the road, and folds it in half. The address space is left blank.
+nao: {誰|だれ} に {届|とど}く か は 、 {読|よ}む {人|ひと} が {決|き}める 。 {表|おもて} の {一言|ひとこと} だけ 、 $name が {選|えら}んで くれ 。 || Who it's for is up to whoever reads it. You choose just the line for the front.
+!hook pages_choose caption
+!if pages.pick=later -> nlater
+nao[smile]: いい {札|ふだ} だ 。 {灯|あか}り{堂|どう} の {壁|かべ} に {貼|は}って おこう 。 {次|つぎ} に {出|で}る {誰|だれ}か の {目|め} に も {入|はい}る 。 || Good card. Let's pin it on the Lantern Hall wall. Whoever heads out next will see it.
+narr: {札|ふだ} が {灯|あか}り{堂|どう} の {壁|かべ} に {留|と}められた 。 {同|おな}じ {札|ふだ} を もう {一枚|いちまい} {折|お}って 、 ナオ は $name に {渡|わた}した 。 || The card is pinned to the Lantern Hall wall. Nao folds a second one just like it and hands it to you.
+?(bond>=trusted) nao[smirk]: {壁|かべ} の {分|ぶん} と 、 $name の {分|ぶん} 。 {控|ひか}え は {取|と}らない 。 …… {嘘|うそ} だ 。 {三枚目|さんまいめ} は {鞄|かばん} に {入|い}れる 。 || One for the wall, one for you. No copy for me. …That's a lie. The third goes in the bag.
+nao: {札|ふだ} は {一枚|いちまい} で いい 。 {道|みち} の {話|はなし} は 、 これから も {焚|た}き{火|び} で しよう 。 || One card is enough. We'll keep talking about the road by the fire.
+!end
+:nlater
+nao: {分|わ}かった 。 {紙|かみ} は {鞄|かばん} に {入|い}れて おく 。 || Right. I'll keep the paper in the bag.
+!end
+:mio
+narr: ミオ は {小|ちい}さな {札|ふだ} に 、 {湯呑|ゆの}み を {二|ふた}つ {描|か}いた 。 {湯気|ゆげ} も {二|ふた}つ 。 {片方|かたほう} は {少|すこ}し {曲|ま}がって いる 。 || On a small card, Mio draws two teacups with two curls of steam. One of them is a little crooked.
+mio: {文字|もじ} は あなた が {選|えら}んで 。 {絵|え} は わたし が {描|か}いた から 。 {分担|ぶんたん} ね 。 || You choose the words. I did the drawing. Division of labour.
+!hook pages_choose caption
+!if pages.pick=later -> mlater
+mio[smile]: うん 。 それ に しよう 。 || Mm. That one.
+narr: その {日|ひ} の うち に {茶屋|ちゃや} へ {寄|よ}る と 、 ハナ は {壁|かべ} の {一番|いちばん} {明|あか}るい {所|ところ} を {空|あ}けて くれた 。 {札|ふだ} は そこ に {留|と}められた 。 || That same day you stop at the teahouse, and Hana clears the brightest spot on the wall for it. The card is pinned there.
+narr: ミオ は {同|おな}じ {絵|え} を もう {一枚|いちまい} {描|か}いて 、 $name に {渡|わた}した 。 {湯気|ゆげ} は 、 {今度|こんど} は {二|ふた}つ とも まっすぐ だった 。 || Mio draws the same picture once more and gives it to you. This time both curls of steam come out straight.
+mio: {傷|きず} を {治|なお}す {薬|くすり} じゃ ない よ 。 {座|すわ}って いい {場所|ばしょ} の {印|しるし} 。 それ だけ 。 || It's not a remedy for anything. Just a mark for a place where it's all right to sit. That's all.
+!end
+:mlater
+mio: いい の 。 {絵|え} は 、 {描|か}き{直|なお}せる から 。 || That's fine. I can always redraw it.
+!end
+:ren
+narr: レン は {灯|ひ} の {頁|ページ} を {広|ひろ}げ 、 {灯籠|とうろう} を {一|ひと}つ {描|か}いた 。 {線|せん} は まっすぐ 。 {右|みぎ} の {余白|よはく} だけ が 、 {白|しろ}い まま だ 。 || Ren spreads out a lantern page and draws a single lantern. Straight lines. Only the right-hand margin stays blank.
+ren: {余白|よはく} に は 、 {二人|ふたり} で {一行|いちぎょう} ずつ 。 {最初|さいしょ} の {一行|いちぎょう} を 、 {選|えら}んで ください 。 || In the margin, one line each. Choose the first line.
+!hook pages_choose caption
+!if pages.pick=later -> rlater
+?(pages.theme=sure) narr: $name が {一行|いちぎょう} {書|か}き 、 その {下|した} に レン が {小|ちい}さく {書|か}き{足|た}した 。 「 {確認|かくにん} {済|ず}み 。 {灯守|ひもり} 」 。 || You write your line, and under it Ren adds, small: "Confirmed. — Lantern keeper."
+?(pages.theme=unsure) narr: $name が {一行|いちぎょう} {書|か}き 、 その {下|した} に レン が {小|ちい}さく {書|か}き{足|た}した 。 「 {同意|どうい} 。 {灯守|ひもり} 」 。 || You write your line, and under it Ren adds, small: "Agreed. — Lantern keeper."
+ren: {灯|あか}り{堂|どう} の {壁|かべ} に {貼|は}りましょう 。 {道|みち} を {変|か}える {力|ちから} は ありません が 、 {読|よ}んだ {人|ひと} の {足|あし} を 、 {少|すこ}し {軽|かる}く する かも しれません 。 || Let's pin it on the Lantern Hall wall. It has no power to change a road, but it might make a reader's steps a little lighter.
+narr: {頁|ページ} が {壁|かべ} に {留|と}められた 。 レン は {写|うつ}し を もう {一枚|いちまい} {作|つく}って 、 $name に {渡|わた}した 。 {余白|よはく} の {二人|ふたり} {分|ぶん} の {字|じ} まで 、 そのまま {写|うつ}して ある 。 || The page is pinned to the wall. Ren makes one more copy and hands it to you, both hands in the margin copied exactly.
+!end
+:rlater
+ren: {承知|しょうち} しました 。 {余白|よはく} は 、 {逃|に}げません 。 || Understood. The margin isn't going anywhere.
+!end
+:suzu
+narr: スズ は {小|ちい}さな {番付|ばんづけ} を {描|か}いた 。 {幕|まく} と 、 {客席|きゃくせき} と 、 {二人|ふたり} {分|ぶん} の {影|かげ} 。 {題|だい} の {所|ところ} だけ 、 {空|あ}いて いる 。 || Suzu draws a little programme: a curtain, a few seats, two shadows. Only the space for the title is empty.
+suzu: {題|だい} は あなた が {決|き}めて 。 わたし が {決|き}める と 、 {盛|も}りすぎる から 。 || You choose the title. If I do it, I'll overdo it.
+!hook pages_choose caption
+!if pages.pick=later -> slater
+suzu[laugh]: {決|き}まり ！ …… で 、 {読|よ}む ？ {貼|は}る だけ ？ {見|み}てる だけ でも いい よ 。 {義務|ぎむ} は なし 。 || Decided! …So, do we read it out, or just pin it up? Just watching is fine too. No obligations.
+!choice
+* スズ が {読|よ}む の を {聞|き}く || Listen to Suzu read it -> listen
+* {一緒|いっしょ} に {声|こえ} に {出|だ}して {読|よ}む || Read it aloud together -> both
+* {貼|は}る だけ に する || Just pin it up -> pin
+:listen
+narr: スズ は {番付|ばんづけ} を {持|も}って 、 {小|ちい}さな {声|こえ} で {一度|いちど} だけ {読|よ}んだ 。 {舞台|ぶたい} の {声|こえ} で は なく 、 {普段|ふだん} の {声|こえ} で 。 || Suzu holds up the programme and reads it through once, quietly. Not in her stage voice — in her everyday one.
+!goto pin
+:both
+narr: {二人|ふたり} で {声|こえ} を {揃|そろ}えて 、 {題|だい} を {読|よ}んだ 。 {少|すこ}し ずれた 。 スズ は 、 それ も {気|き} に {入|い}った らしい 。 || You read the title aloud together, slightly out of time. Suzu seems to like that too.
+:pin
+narr: {番付|ばんづけ} は ハナ の {茶屋|ちゃや} の {壁|かべ} に {貼|は}られた 。 スズ は {同|おな}じ もの を もう {一枚|いちまい} {描|か}いて 、 $name に {渡|わた}した 。 || The programme goes up on the wall of Hana's teahouse. Suzu draws one more just like it and gives it to you.
+suzu: {上演|じょうえん} は 、 {気|き} が {向|む}いた {時|とき} だけ 。 {帳簿|ちょうぼ} に も 、 {貸|か}し は なし 。 || We only stage it when we feel like it. And there's no debt in the ledger, either.
+!end
+:slater
+suzu: {了解|りょうかい} 。 {題|だい} {未定|みてい} の まま 、 {楽屋|がくや} に {置|お}いて おく 。 || Understood. It'll wait in the dressing room, untitled.
+!end
+
+# ---- the homecoming (called at the end of atlas.home) -------------------------------------------
+@scene pages.home
+!if pages.empty -> empty
+!if pages.home2 -> two
+!if pages.home3 -> three
+!end
+:empty
+?(comp=nao) nao: {今日|きょう} は 、 {札|ふだ} に {書|か}く こと が {起|お}きる {前|まえ} に {戻|もど}された な 。 {札|ふだ} は {逃|に}げない 。 {道|みち} は 、 また {開|ひら}く 。 || Today we got sent back before anything happened to put on the card. The card's not going anywhere. The road will open again.
+?(comp=mio) mio: {今日|きょう} の {頁|ページ} は 、 {白紙|はくし} の まま 。 それ で いい の 。 {次|つぎ} の {道|みち} が ある から 。 || Today's page stays blank. That's fine. There'll be another road.
+?(comp=ren) ren: {書|か}き{留|と}める こと は 、 まだ {起|お}きて いません でした 。 {余白|よはく} は 、 {次|つぎ} の {道|みち} まで {取|と}って おきます 。 || Nothing worth recording had happened yet. I'll save the margin for the next road.
+?(comp=suzu) suzu: {幕|まく} が {上|あ}がる {前|まえ} に {中止|ちゅうし} 。 {払|はら}い{戻|もど}し は なし 、 {次|つぎ} の {公演|こうえん} に {振|ふ}り{替|か}え ！ || Called off before the curtain went up. No refunds — tickets carry over to the next show!
+!end
+:two
+?(comp=nao) nao: …… {札|ふだ} の {話|はなし} 、 {今|いま} {少|すこ}し いい か ？ || …About the card — got a minute now?
+?(comp=mio) mio: …… {頁|ページ} の {話|はなし} 、 {今|いま} {少|すこ}し いい ？ お{茶|ちゃ} {淹|い}れる から 。 || …About our page — have you got a minute? I'll make tea.
+?(comp=ren) ren: …… {余白|よはく} の {件|けん} 、 {今|いま} {相談|そうだん} して も いい です か 。 || …About the margin. May we talk it over now?
+?(comp=suzu) suzu: …… {番付|ばんづけ} の {打|う}ち{合|あ}わせ 、 {今|いま} やる ？ || …Shall we have the programme meeting now?
+!choice
+* {今|いま} {話|はな}そう || Let's talk now -> talk
+* また {後|あと} で || Later -> later
+:talk
+!call pages.home2
+!end
+:later
+?(comp=nao) nao: いつ でも いい 。 {灯|あか}り{堂|どう} で {声|こえ} を かけて くれ 。 || Whenever. Just say so in the Lantern Hall.
+?(comp=mio) mio: うん 。 {灯|あか}り{堂|どう} で {声|こえ} を かけて ね 。 || Mm. Just say so in the Lantern Hall.
+?(comp=ren) ren: では 、 {灯|あか}り{堂|どう} で 。 {声|こえ} を かけて ください 。 || The Lantern Hall, then. Just say the word.
+?(comp=suzu) suzu: {灯|あか}り{堂|どう} で {声|こえ} を かけて 。 {楽屋|がくや} で {待|ま}ってる 。 || Call me in the Lantern Hall. I'll be waiting in the dressing room.
+!end
+:three
+!call pages.ask3
+
+# ---- the finished page, pinned up -----------------------------------------------------------------
+@scene pages.display
+!hook pages_display
+`, 'pages/project');
+
+(function () {
+  'use strict';
+  const J = (jp, en) => ({ jp, en });
+  // What the pinned page shows when you look at it (its caption was chosen by you).
+  const SHOW = {
+    nao: { narr: (c) => J('{壁|かべ} に 、 {折|お}り{畳|たた}んだ {道順|みちじゅん} の {札|ふだ} が {留|と}めて ある 。 {表|おもて} に は ナオ の {字|じ} で 「 ' + c.jp + ' 」 。', 'A folded route card is pinned to the wall. On the front, in Nao\'s hand: "' + c.en + '"'),
+      inside: (t) => J('{中|なか} に は {道|みち} の {線|せん} と 、 「 ' + t.jp + ' 」 の こと 。', 'Inside: the line of the road, and a note about "' + t.en + '".'),
+      say: J('{読|よ}んだ {誰|だれ}か が 、 {自分|じぶん} で {決|き}めて {歩|ある}けば いい 。', 'I hope whoever reads it decides for themselves.') },
+    mio: { narr: (c) => J('{壁|かべ} に 、 {湯呑|ゆの}み を {二|ふた}つ {描|か}いた {小|ちい}さな {札|ふだ} 。 「 ' + c.jp + ' 」 と {書|か}いて ある 。', 'On the wall, a small card with two teacups drawn on it. It says: "' + c.en + '"'),
+      inside: (t) => J('{隅|すみ} に {小|ちい}さく 、 「 ' + t.jp + ' 」 。', 'In the corner, small: "' + t.en + '".'),
+      say: J('{見|み}る と 、 {少|すこ}し {座|すわ}りたく なる でしょ 。', 'Looking at it makes you want to sit down a moment, doesn\'t it.') },
+    ren: { narr: (c) => J('{壁|かべ} に 、 {灯籠|とうろう} の {頁|ページ} が {一枚|いちまい} 。 {余白|よはく} に 「 ' + c.jp + ' 」 。 {下|した} に 、 {灯守|ひもり} の {小|ちい}さな {字|じ} 。', 'On the wall, a page with a lantern drawn on it. In the margin: "' + c.en + '" And under that, a lantern keeper\'s small handwriting.'),
+      inside: (t) => J('{頁|ページ} の {題|だい} は 「 ' + t.jp + ' 」 。', 'The page is headed "' + t.en + '".'),
+      say: J('{字|じ} が {二人|ふたり} {分|ぶん} ある {頁|ページ} は 、 {珍|めずら}しい の です よ 。', 'A page with two people\'s handwriting is a rare thing, you know.') },
+    suzu: { narr: (c) => J('{壁|かべ} に 、 {小|ちい}さな {番付|ばんづけ} 。 {演目|えんもく} は 「 ' + c.jp + ' 」 。 {出演|しゅつえん} 、 {二人|ふたり} 。', 'On the wall, a little programme. Title: "' + c.en + '" Cast: two.'),
+      inside: (t) => J('{場面|ばめん} の {説明|せつめい} に は 、 「 ' + t.jp + ' 」 。', 'The scene is described as "' + t.en + '".'),
+      say: J('{上演|じょうえん} は 、 {気|き} が {向|む}いた {時|とき} に ね 。', 'We stage it whenever we feel like it.') },
+  };
+  RB.hooks.pages_display = async () => {
+    const s = RB.game.s, p = RB.pages.state(s);
+    if (!p || p.stage < 3) return;
+    const c = s.comp, S = SHOW[c];
+    const cap = RB.pages.PROJECT[c].captions[p.theme][p.caption];
+    await RB.ui.dialogue.say({ who: 'narr', jp: S.narr(cap).jp, en: S.narr(cap).en });
+    if (p.ev) await RB.ui.dialogue.say({ who: 'narr', jp: S.inside(p.ev.title).jp, en: S.inside(p.ev.title).en });
+    await RB.ui.dialogue.say({ who: c, expr: 'smile', jp: S.say.jp, en: S.say.en });
+  };
+  RB.pages.SHOW = SHOW;
+})();
+
+
+/* ==== src/content/pages/40_topics.js ==== */
+/* Talk about this road (addendum §11.6): after the page is finished, a finite
+ * bank of 12 topics per companion — four everyday travel habits (h1–h4), four
+ * reflections on what you actually shared (r1–r4) and four observations about
+ * current discoveries, pets and places (o1–o4). Every slot has a line for each
+ * true state (a pet or none, expeditions finished or not, keepsakes or none,
+ * camp or home), so nothing is claimed that did not happen.
+ * Offered only when asked: "Talk about this road" at an Atlas camp (once per
+ * outing) and by talking to your companion in the Lantern Hall after coming
+ * home (once per homecoming). No bond, no reward, no counter; recently heard
+ * topics are skipped, and when every topic has been heard a brief ordinary
+ * line is enough. Selection: RB.pages.topic (10_pages.js). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.script.add(`
+@scene pages.road.camp
+!hook pages_topic camp
+
+@scene pages.road.home
+!hook pages_topic home
+
+# ======================================================================================
+# Nao
+# ======================================================================================
+@scene road.nao.h1
+nao: {新|あたら}しい {場所|ばしょ} に {入|はい}ったら 、 まず {出口|でぐち} を {二|ふた}つ {数|かぞ}える 。 {癖|くせ} だ 。 || When I walk into a new place, first thing I count two exits. Habit.
+?(pages.at=camp) nao: ここ は …… {来|き}た {道|みち} と 、 {先|さき} の {分|わ}かれ{道|みち} 。 {二|ふた}つ ある 。 {落|お}ち{着|つ}く 。 || Here it's… the way we came and the fork ahead. Two. That settles me.
+?(pages.at=home) nao: {灯|あか}り{堂|どう} は {戸口|とぐち} が {一|ひと}つ しか ない 。 でも 、 ここ は {帰|かえ}って くる {場所|ばしょ} だ から 、 {数|かぞ}えなくて いい 。 || The Lantern Hall's only got the one door. But this is where we come back to, so I don't need to count.
+pc: {入口|いりぐち} も {数|かぞ}える の ？ || Do you count the entrances too?
+nao[smirk]: {入口|いりぐち} は 、 {誰|だれ}か が {入|はい}って くる {所|ところ} だ 。 そっち の {方|ほう} が {大事|だいじ} な {時|とき} も ある 。 || Entrances are where someone comes in. Sometimes that matters more.
+
+@scene road.nao.h2
+nao: {宛名|あてな} を {書|か}き{直|なお}す {時|とき} 、 {元|もと} の {字|じ} の {癖|くせ} を {少|すこ}し だけ {残|のこ}す んだ 。 || When I rewrite an address, I leave a little of the original handwriting's quirks in.
+nao: {全部|ぜんぶ} きれい に したら 、 {誰|だれ} が {書|か}いた か {分|わ}からなく なる 。 {誰|だれ} から か {分|わ}からない {手紙|てがみ} は 、 {半分|はんぶん} しか {届|とど}いて ない 。 || Make it all neat and you can't tell who wrote it. A letter you can't tell who it's from has only half arrived.
+pc: …… {灯落|ひおち} の {宛名|あてな} みたい に ？ || …Like the addresses in Lanternfall?
+nao: そう 。 あそこ の {字|じ} は 、 {上手|じょうず} すぎて {誰|だれ} の でも なかった 。 || Right. The writing there was so neat it belonged to nobody.
+
+@scene road.nao.h3
+nao: {鞄|かばん} の {詰|つ}め{方|かた} に は {順番|じゅんばん} が ある 。 {急|いそ}ぎ の {手紙|てがみ} は {一番|いちばん} {上|うえ} 、 {重|おも}い {物|もの} は {背中|せなか} {側|がわ} 。 || There's an order to packing the bag. Urgent letters on top, heavy things against your back.
+nao: {宛名|あてな} の {束|たば} は …… {一番|いちばん} {下|した} 。 {一番|いちばん} {重|おも}い から 。 {重|おも}さ の {意味|いみ} は 、 {聞|き}く な よ 。 || The bundle of labels goes… at the very bottom. It's the heaviest. Don't ask what I mean by heavy.
+?(bond>=trusted) nao[smirk]: {鞄|かばん} の {中身|なかみ} を {人|ひと} に {話|はな}す の は 、 {初|はじ}めて だ 。 {配達人|はいたつにん} の {秘密|ひみつ} だ ぞ 。 || First time I've told anyone what's in the bag. That's a courier secret, mind.
+
+@scene road.nao.h4
+nao: {近道|ちかみち} は {好|す}き だ 。 でも 、 {二人|ふたり} で {歩|ある}く {時|とき} は 、 {遠回|とおまわ}り も {悪|わる}くない 。 || I like shortcuts. But when there are two of us, the long way round isn't bad either.
+nao: {一人|ひとり} だ と {急|いそ}ぐ 。 {急|いそ}ぐ と 、 {見落|みお}とす 。 {配達|はいたつ} で {一番|いちばん} {怖|こわ}い の は 、 {見落|みお}とし だ 。 || On my own I hurry. When I hurry, I miss things. The scariest thing in deliveries is missing something.
+
+@scene road.nao.r1
+nao: {灯|あか}り{堂|どう} の {壁|かべ} の {札|ふだ} 、 {時々|ときどき} {見|み}に {行|い}く んだ 。 || I go and look at the card on the Lantern Hall wall now and then.
+?(pages.theme=next) nao: {次|つぎ} の {誰|だれ}か が あれ を {読|よ}んで 、 {自分|じぶん} で {決|き}めて {歩|ある}いて くれたら いい 。 || I hope whoever comes next reads it, and then decides for themselves.
+?(pages.theme=back) nao: {帰|かえ}り{道|みち} の {札|ふだ} が {壁|かべ} に ある と 、 {出|で}かける {時|とき} {気|き} が {楽|らく} だ 。 {変|へん} だ よ な 。 || Having a way-home card on the wall makes it easier to set out. Funny, that.
+nao: {表|おもて} の {一言|ひとこと} を {選|えら}んだ の は $name だ 。 {読|よ}む たび に 、 それ を {思|おも}い{出|だ}す 。 || You chose the line on the front. I remember that every time I read it.
+
+@scene road.nao.r2
+?(pages.completed>=1) nao: {書|か}かれて いない {道|みち} を 、 {最後|さいご} まで {歩|ある}いた {日|ひ} が ある だろ 。 {灯|ひ} の {中|なか} に {葦|あし}ノ{瀬|せ} の {字|じ} が {見|み}えた {時|とき} 。 || Remember walking an unwritten road all the way to the end? When we saw Reedwake's name inside the lantern.
+?(pages.completed>=1) nao: {宛先|あてさき} が {読|よ}める って 、 やっぱり いい もん だ 。 || Being able to read where you're going — still a good feeling.
+?(!pages.completed>=1) nao: {書|か}かれて いない {道|みち} を 、 まだ {一度|いちど} も {最後|さいご} まで {歩|ある}いて ない な 。 || We haven't walked an unwritten road all the way to the end yet.
+?(!pages.completed>=1) nao: {焦|あせ}らなくて いい 。 {引|ひ}き{返|かえ}す の も 、 {立派|りっぱ} な {帰|かえ}り{方|かた} だ 。 || No need to rush. Turning back is a perfectly good way home.
+
+@scene road.nao.r3
+?(memory.ending:nao) nao: {橋|はし} の {上|うえ} で {話|はな}した {日|ひ} から 、 {配達|はいたつ} の {予定|よてい} を {一人|ひとり} で {決|き}めなく なった 。 || Since that day we talked on the bridge, I've stopped planning the rounds on my own.
+?(!memory.ending:nao) nao: {灯|あか}り{堂|どう} で やっと {話|はな}した {日|ひ} から 、 {配達|はいたつ} の {予定|よてい} を {一人|ひとり} で {決|き}めなく なった 。 || Since the day we finally talked in the Lantern Hall, I've stopped planning the rounds on my own.
+nao: {相談|そうだん} する {相手|あいて} が いる と 、 {道|みち} が {一本|いっぽん} {増|ふ}える 。 {不思議|ふしぎ} だ 。 || Having someone to talk it over with is like having one more road. Strange.
+
+@scene road.nao.r4
+?(quest.lf_nao=done) nao: ウミ の {一行|いちぎょう} の {返事|へんじ} 、 {時々|ときどき} {思|おも}い{出|だ}す 。 「 {読|よ}みました 」 。 {短|みじか}い のに 、 {重|おも}さ が ちょうど いい 。 || I think about Umi's one-line reply sometimes. "I read it." Short, but exactly the right weight.
+?(quest.lf_nao=done) nao: {届|とど}けて 、 {決|き}めて もらう 。 {配達人|はいたつにん} の {仕事|しごと} は 、 それ で {全部|ぜんぶ} だ 。 || Deliver it, and let them decide. That's the whole of a courier's job.
+?(!quest.lf_nao=done) nao: {鞄|かばん} の {底|そこ} の {手紙|てがみ} 、 まだ {持|も}ってる 。 {届|とど}ける {日|ひ} は 、 {自分|じぶん} で {決|き}める 。 {逃|に}げてる わけ じゃ ない 。 || The letter at the bottom of the bag — I've still got it. I'll pick the day to deliver it myself. I'm not running from it.
+?(!quest.lf_nao=done) nao: …… {灯落|ひおち} に {寄|よ}る {時|とき} は 、 {付|つ}き{合|あ}って くれ 。 || …When we pass through Lanternfall, come with me.
+
+@scene road.nao.o1
+?(petvis=cat) nao: {猫|ねこ} は {地図|ちず} の {上|うえ} に {座|すわ}る の が {好|す}き だ な 。 {一番|いちばん} {大事|だいじ} な {所|ところ} を {必|かなら}ず {隠|かく}す 。 || The cat loves sitting on the map. Always right on the important bit.
+?(petvis=dog) nao: {犬|いぬ} は {道|みち} を {鼻|はな} で {覚|おぼ}える 。 {字|じ} が {読|よ}めなくて も 、 {帰|かえ}り{道|みち} は {間違|まちが}えない 。 いい な 。 || Dogs learn roads with their noses. Can't read, never mistake the way home. Must be nice.
+?(petvis=bird) nao: {鳥|とり} は {上|うえ} から {道|みち} を {見|み}てる 。 {出口|でぐち} を {数|かぞ}える {必要|ひつよう} も ない ん だろう な 。 || Birds see the road from above. Probably never need to count exits.
+?(petvis=tanuki) nao: たぬき って 、 {鞄|かばん} の {匂|にお}い を {確|たし}かめて から じゃ ない と {寝|ね}ない んだ な 。 {慎重|しんちょう} な {奴|やつ} だ 。 || The tanuki won't sleep till it's sniffed the bag. Careful creature.
+?(petvis) nao: {連|つ}れ が {一匹|いっぴき} いる と 、 {見張|みは}り も {気|き} が {楽|らく} だ 。 || With one more along, keeping watch is easier.
+?(!petvis) nao: {港|みなと} の {犬|いぬ} に は 、 {昔|むかし} よく {荷物|にもつ} を {盗|ぬす}まれた 。 {動物|どうぶつ} の {連|つ}れ は いない けど 、 {今|いま} の {荷物|にもつ} は {安全|あんぜん} だ 。 || The harbour dog used to steal from my bags all the time. No animal travelling with us — but the luggage is safe these days.
+?(!petvis) nao: {二人|ふたり} で ちょうど いい 。 {見張|みは}り も 、 {交代|こうたい} で {回|まわ}る 。 || Two's just right. We take turns keeping watch.
+
+@scene road.nao.o2
+?(atlas_restore_1) nao: {渡|わた}し{場|ば} の {新|あたら}しい {看板|かんばん} 、 {見|み}た か ？ {字|じ} が {太|ふと}くて 、 {霧|きり} の {朝|あさ} でも {読|よ}める 。 {誰|だれ} が {書|か}いた か 、 {知|し}ってる か ？ || Seen the new signboard at the ferry landing? Thick letters — you can read it even on a foggy morning. Know who wrote it?
+?(atlas_restore_1) pc: {知|し}らない 。 || No idea.
+?(atlas_restore_1) nao[smirk]: こっち も {知|し}らない 。 {良|よ}い {字|じ} は 、 {名前|なまえ} が なくて も {届|とど}く 。 || Me neither. Good handwriting gets through even without a name.
+?(!atlas_restore_1) nao: {灯|あか}り{堂|どう} の {灯籠|とうろう} の {名前|なまえ} 、 {全部|ぜんぶ} {読|よ}める 。 {当|あ}たり{前|まえ} に なった けど 、 {前|まえ} は {当|あ}たり{前|まえ} じゃ なかった 。 || Every name on the Lantern Hall's lanterns can be read. It's become normal, but it didn't used to be.
+
+@scene road.nao.o3
+?(pages.keeps>=1) nao: {道|みち} で {見|み}つけた {小|ちい}さな {物|もの} の こと 、 $name は ちゃんと {覚|おぼ}えてる よ な 。 {届|とど}け{先|さき} の ない {荷物|にもつ} を {預|あず}かってる みたい で 、 {嫌|きら}い じゃ ない 。 || You remember the little things we've found on the road, don't you. Like holding parcels with no addressee. I don't mind it.
+?(!pages.keeps>=1) nao: {灯|あか}り{堂|どう} の {札|ふだ} の {他|ほか} に 、 {形|かたち} の ある {土産|みやげ} は まだ ない な 。 それ で いい 。 {荷物|にもつ} は {軽|かる}い {方|ほう} が いい 。 || Apart from the card in the Lantern Hall, we haven't brought home much you can hold. That's fine. Lighter bags.
+
+@scene road.nao.o4
+?(pages.at=camp) nao: {書|か}かれて いない {道|みち} で {焚|た}き{火|び} を する の 、 {最初|さいしょ} は {変|へん} な {感|かん}じ だった 。 {紙|かみ} の {上|うえ} で {火|ひ} を {使|つか}う みたい で 。 || Making a fire on the unwritten roads felt odd at first. Like using fire on paper.
+?(pages.at=camp) nao: {今|いま} は 、 {手紙|てがみ} の {上|うえ} で {休|やす}んでる みたい で 、 {悪|わる}くない 。 || Now it's like resting on top of a letter. Not bad.
+?(pages.at=home) nao: {灯|あか}り{堂|どう} に {帰|かえ}る と 、 {最初|さいしょ} に ツル の {机|つくえ} を {見|み}る 。 {帳面|ちょうめん} の {位置|いち} が {変|か}わって ない と 、 {安心|あんしん} する 。 || When we get back to the Lantern Hall, the first thing I look at is Tsuru's desk. If the ledgers haven't moved, I relax.
+?(pages.at=home) nao: {変|か}わらない {物|もの} が {一|ひと}つ ある と 、 {他|ほか} が {全部|ぜんぶ} {変|か}わって も {帰|かえ}って {来|こ}られる 。 || If one thing stays put, you can find your way back even if everything else changes.
+
+@scene road.nao.quiet1
+nao: …… {今日|きょう} は {特|とく}に ない 。 {黙|だま}って {歩|ある}く の も 、 {悪|わる}くない だろ 。 || …Nothing much today. Walking quiet's not bad either, right?
+@scene road.nao.quiet2
+nao: {話|はなし} は {尽|つ}きた 。 …… {嘘|うそ} だ 。 {明日|あした} に {取|と}って おく 。 || I'm all out of things to say. …That's a lie. I'm saving them for tomorrow.
+@scene road.nao.quiet3
+nao: {出口|でぐち} は {二|ふた}つ 。 {連|つ}れ は {一人|ひとり} 。 {問題|もんだい} なし 。 || Two exits. One companion. No problems.
+
+# ======================================================================================
+# Mio
+# ======================================================================================
+@scene road.mio.h1
+mio: {瓶|びん} の ラベル 、 {少|すこ}し でも {曲|ま}がって いる と {気|き} に なる の 。 {旅|たび} の {間|あいだ} も 、 {毎晩|まいばん} {直|なお}して た 。 || If a bottle label's even slightly crooked, it bothers me. I straightened them every night on the journey.
+mio: {最近|さいきん} は 、 {一|ひと}つ だけ {曲|ま}がった まま に して おく {練習|れんしゅう} を してる の 。 …… {三日|みっか} で {直|なお}しちゃった けど 。 || Lately I've been practising leaving just one crooked. …I fixed it after three days.
+
+@scene road.mio.h2
+mio: お{茶|ちゃ} は 、 {疲|つか}れて いる {時|とき} ほど {薄|うす}く {淹|い}れる の 。 {濃|こ}い と 、 {眠|ねむ}れなく なる から 。 || The more tired you are, the weaker I make the tea. Strong tea keeps you awake.
+?(pages.at=camp) mio: だから 、 ここ の お{茶|ちゃ} は {少|すこ}し {薄|うす}め 。 …… {意味|いみ} は 、 {分|わ}かる でしょ ？ || So the tea out here is a little weak. …You get what that means?
+?(pages.at=home) mio: {今日|きょう} の お{茶|ちゃ} は 、 {普通|ふつう} の {濃|こ}さ 。 {帰|かえ}って きた {日|ひ} は 、 それ で いい の 。 || Today's tea is the normal strength. On a day we get home, that's right.
+
+@scene road.mio.h3
+mio: {人|ひと} の {顔色|かおいろ} を {見|み}る の は 、 {仕事|しごと} の {癖|くせ} 。 でも 、 {言|い}わない で おく の も {覚|おぼ}えた 。 || Checking people's colour is a work habit. But I've learned to keep quiet about it too.
+mio: {言|い}われたく ない {時|とき} も ある でしょ 。 {休|やす}みたい か どう か は 、 {本人|ほんにん} が {決|き}める こと 。 || Sometimes people don't want to be told. Whether you want a rest is your call.
+pc: …… {今|いま} は ？ || …And right now?
+mio[smile]: {聞|き}かれた から {言|い}う ね 。 {大丈夫|だいじょうぶ} そう 。 || Since you asked: you look fine.
+
+@scene road.mio.h4
+mio: {一日|いちにち} {一回|いっかい} 、 {何|なに}か に 「 いいえ 」 と {言|い}う {練習|れんしゅう} を してる の 。 {小|ちい}さな こと で いい から 。 || Once a day I practise saying "no" to something. Small things are fine.
+mio: {昨日|きのう} は 、 {三杯目|さんばいめ} の お{茶|ちゃ} を {断|ことわ}った 。 {自分|じぶん} で {淹|い}れた お{茶|ちゃ} だ けど 。 || Yesterday I turned down a third cup of tea. One I'd made myself.
+?(bond>=trusted) mio[laugh]: …… $name に も 、 {今度|こんど} {何|なに}か {断|ことわ}って みよう かな 。 {練習台|れんしゅうだい} に なって くれる ？ || …Maybe I'll try refusing you something next. Will you be my practice partner?
+
+@scene road.mio.r1
+?(pages.theme=pause) mio: ハナ さん の {茶屋|ちゃや} の {壁|かべ} の {札|ふだ} 、 {見|み}る と {座|すわ}りたく なる の 。 {効|き}き{目|め} が ある みたい 。 || Every time I see the card on Hana's teahouse wall, I want to sit down. It seems to work.
+?(pages.theme=share) mio: ハナ さん の {茶屋|ちゃや} の {壁|かべ} の {札|ふだ} 、 {見|み}る たび に 、 {一人|ひとり} で {全部|ぜんぶ} やらなくて いい って {思|おも}い{出|だ}す の 。 || Every time I see the card on Hana's teahouse wall, I remember I don't have to do everything alone.
+mio: {言葉|ことば} を {選|えら}んだ の は あなた 。 {絵|え} を {描|か}いた の は わたし 。 {分担|ぶんたん} も 、 ちょうど よかった 。 || You chose the words. I drew the picture. A good division of work, too.
+
+@scene road.mio.r2
+?(pages.completed>=1) mio: {道|みち} の {終|お}わり まで {行|い}けた {日|ひ} 、 {正直|しょうじき} 、 {少|すこ}し {誇|ほこ}らしかった 。 {無理|むり} を しない {旅|たび} でも 、 {最後|さいご} まで {行|い}ける んだ って 。 || The day we got to the end of a road, honestly, I was a little proud. You can get all the way even on a journey where nobody overdoes it.
+?(!pages.completed>=1) mio: まだ {道|みち} の {終|お}わり まで は {行|い}って ない けど 、 {困|こま}って ない の 。 {途中|とちゅう} で {帰|かえ}って くる の も 、 {立派|りっぱ} な {旅|たび} よ 。 || We haven't reached the end of a road yet, but I don't mind. Coming back partway is a proper journey too.
+
+@scene road.mio.r3
+mio: あの {日|ひ} 、 {店|みせ} で {瓶|びん} を {渡|わた}した でしょ 。 {中身|なかみ} の ない {瓶|びん} 。 || That day at the shop, I gave you a bottle. An empty one.
+mio: {今|いま} {思|おも}う と 、 {中身|なかみ} が ない から 、 {何|なに} でも {入|い}れられる の よ ね 。 || Thinking about it now — because there's nothing in it, you can put anything in.
+?(memory.ending_retro:mio) mio: {灯|あか}り{堂|どう} で {話|はな}した {日|ひ} から 、 {少|すこ}し {肩|かた} の {力|ちから} が {抜|ぬ}けた の 。 {言|い}いそびれて いた こと って 、 {重|おも}い の ね 。 || And since the day we talked in the Lantern Hall, my shoulders have loosened a little. Things you never got round to saying are heavy.
+
+@scene road.mio.r4
+?(quest.lf_mio=done) mio: {記録館|きろくかん} で {断|ことわ}った {日|ひ} の こと 、 {今|いま} でも {時々|ときどき} {夢|ゆめ} に {見|み}る の 。 {怖|こわ}い {夢|ゆめ} じゃ ない 。 {声|こえ} が ちゃんと {出|で}る {夢|ゆめ} 。 || I still dream about the day I refused at the Records Hall sometimes. Not a frightening dream. One where my voice comes out properly.
+?(!quest.lf_mio=done&quest.lf_mio>=2) mio: {灯落|ひおち} の {返事|へんじ} は 、 まだ {返|かえ}して ない 。 {忘|わす}れて は いない よ 。 {自分|じぶん} の {声|こえ} で 、 いつか 。 || I still haven't given my answer in Lanternfall. I haven't forgotten. In my own voice, someday.
+?(!quest.lf_mio=done) mio: {断|ことわ}る の は 、 まだ {上手|じょうず} じゃ ない 。 でも 、 {上手|じょうず} に ならなくて も いい って 、 {最近|さいきん} {思|おも}う の 。 {言|い}えれば 、 それ で いい 。 || I'm still not good at refusing. But lately I think I don't have to be good at it. Being able to say it is enough.
+
+@scene road.mio.o1
+?(petvis=cat) mio: {猫|ねこ} は 、 {一番|いちばん} {暖|あたた}かい {場所|ばしょ} を {知|し}って いる の 。 {休|やす}む {場所|ばしょ} は 、 あの {子|こ} に {任|まか}せよう かしら 。 || The cat always knows the warmest spot. Maybe I'll leave choosing where we rest to it.
+?(petvis=dog) mio: {犬|いぬ} って 、 {疲|つか}れたら すぐ {寝|ね}る でしょ 。 {我慢|がまん} しない の 。 {見習|みなら}いたい わ 。 || Dogs fall asleep the moment they're tired, don't they. No enduring it. I'd like to learn from that.
+?(petvis=bird) mio: {鳥|とり} は {朝|あさ} {早|はや}く {起|お}きて 、 {夜|よる} は {早|はや}く {寝|ね}る 。 {一番|いちばん} {体|からだ} に いい {暮|く}らし を して いる の は 、 あの {子|こ} ね 。 || The bird gets up early and goes to bed early. That one lives the healthiest life of any of us.
+?(petvis=tanuki) mio: たぬき って 、 {困|こま}ったら {寝|ね}た {振|ふ}り を する って {言|い}う でしょ 。 {休|やす}み {方|かた} の {名人|めいじん} よ ね 。 || They say tanuki pretend to be asleep when they're in trouble. A master of resting.
+?(!petvis) mio: {動物|どうぶつ} の {連|つ}れ は いない けど 、 {薬草|やくそう} の {袋|ふくろ} に は 、 よく {虫|むし} が {住|す}み{着|つ}く の 。 …… {連|つ}れ と は {呼|よ}ばない けど 。 || No animal travels with us, but insects are always moving into my herb bags. …I wouldn't call them companions.
+
+@scene road.mio.o2
+?(atlas_restore_1) mio: {渡|わた}し{場|ば} の {看板|かんばん} 、 {新|あたら}しく なった ね 。 {霧|きり} の {朝|あさ} でも 、 {迷|まよ}う {人|ひと} が {減|へ}る わ 。 || The ferry landing's sign is new. Fewer people will get lost on foggy mornings.
+?(!atlas_restore_1) mio: {葦|あし}ノ{瀬|せ} の {橋|はし} 、 {毎日|まいにち} {渡|わた}って も {飽|あ}きない の 。 {向|む}こう {岸|ぎし} に {届|とど}いてる だけ で 、 {嬉|うれ}しく なる 。 || I never get tired of crossing Reedwake's bridge. Just seeing it reach the other bank makes me happy.
+
+@scene road.mio.o3
+?(pages.keeps>=1) mio: {道|みち} で {見|み}つけた {物|もの} 、 {棚|たな} に {並|なら}べる なら 、 ラベル は わたし が {書|か}く わ 。 まっすぐ に 。 || If you ever line up the things we've found on the roads, I'll write the labels. Straight ones.
+?(!pages.keeps>=1) mio: {形|かたち} に {残|のこ}って いる もの は 、 あの {札|ふだ} {一枚|いちまい} 。 でも 、 {覚|おぼ}えて いる こと は 、 {棚|たな} に {入|はい}り{切|き}らない くらい ある 。 || The only thing we've kept that you can hold is that one card. But what we remember wouldn't fit on a shelf.
+
+@scene road.mio.o4
+?(pages.at=camp) mio: {焚|た}き{火|び} の {煙|けむり} って 、 {服|ふく} に {残|のこ}る でしょ 。 {帰|かえ}って から も 、 {旅|たび} の {匂|にお}い が する 。 わたし 、 あれ が {好|す}き 。 || Campfire smoke stays in your clothes. Even after you get home, you smell of the journey. I like that.
+?(pages.at=home) mio: {灯|あか}り{堂|どう} って 、 {帰|かえ}って くる と {少|すこ}し {暗|くら}い の 。 {目|め} が {慣|な}れる まで 、 {一緒|いっしょ} に {立|た}ち{止|ど}まる の が {好|す}き 。 || The Lantern Hall's always a bit dark when we come back in. I like standing still together until our eyes adjust.
+
+@scene road.mio.quiet1
+mio: {今日|きょう} は 、 {話|はなし} より お{茶|ちゃ} に しよう か 。 || Tea instead of talk today?
+@scene road.mio.quiet2
+mio: …… {特|とく}に {何|なに} も 。 {何|なに} も ない {日|ひ} が 、 {一番|いちばん} いい {日|ひ} よ 。 || …Nothing in particular. Days with nothing in them are the best days.
+@scene road.mio.quiet3
+mio: {話|はな}す こと が ない の も 、 {仲|なか} が いい {証拠|しょうこ} なんだって 。 {誰|だれ} が {言|い}った の か は {忘|わす}れた けど 。 || Having nothing to say is a sign of being close, apparently. I forget who said it.
+
+# ======================================================================================
+# Ren
+# ======================================================================================
+@scene road.ren.h1
+ren: この {靴|くつ} 、 {直|なお}そう と {思|おも}って から 、 もう {何年|なんねん} {経|た}つ でしょう 。 || How many years has it been since I meant to mend these boots?
+ren: {灯|ひ} は {毎朝|まいあさ} {磨|みが}く のに 、 {靴|くつ} は {磨|みが}かない 。 {優先順位|ゆうせんじゅんい} の {問題|もんだい} です 。 || I polish the lamp every morning, and never the boots. A question of priorities.
+pc: {靴|くつ} も {大事|だいじ} だ よ 。 || Boots matter too, you know.
+ren[smirk]: …… {灯|ひ} を {持|も}った まま {転|ころ}ぶ {方|ほう} が 、 {危|あぶ}ない です ね 。 {一理|いちり} あります 。 || …Falling over while holding a lamp would be more dangerous, yes. You have a point.
+
+@scene road.ren.h2
+ren: {分|わ}かれ{道|みち} で わたし が {右|みぎ} だ と {思|おも}ったら 、 {大抵|たいてい} {左|ひだり} です 。 {統計|とうけい} を {取|と}りました 。 || When I think it's right at a fork, it's usually left. I've kept statistics.
+ren: {最近|さいきん} は 、 {自分|じぶん} の {勘|かん} を {逆|ぎゃく} に {使|つか}う {方法|ほうほう} を {研究|けんきゅう} して います 。 …… {精度|せいど} は 、 {五割|ごわり} です 。 || Lately I've been researching how to use my instincts in reverse. …Accuracy: fifty percent.
+
+@scene road.ren.h3
+ren: {旅|たび} の {間|あいだ} に {見|み}た {名前|なまえ} は 、 {全部|ぜんぶ} {帳面|ちょうめん} に {書|か}き{写|うつ}して あります 。 {字|じ} の {形|かたち} ごと 。 || Every name I saw on the journey, I copied into my notebook. Down to the shape of the letters.
+ren: {名前|なまえ} は 、 {書|か}いた {人|ひと} の {手|て} で {読|よ}む もの です から 。 {同|おな}じ {字|じ} でも 、 {書|か}く {人|ひと} で {伝|つた}わる もの が {少|すこ}し {変|か}わる 。 || A name is read in the hand that wrote it. Even the same character carries a little something different, depending on who wrote it.
+
+@scene road.ren.h4
+ren: {灯守|ひもり} の {仕事|しごと} で {一番|いちばん} {大事|だいじ} な の は 、 {灯|ひ} を {絶|た}やさない こと です 。 || The most important thing in a lantern keeper's work is never letting the light go out.
+ren: {二番目|にばんめ} は 、 {冗談|じょうだん} を {絶|た}やさない こと 。 …… {今|いま} {決|き}めました 。 || The second is never letting the jokes run out. …I just decided that.
+
+@scene road.ren.r1
+?(pages.theme=sure) ren: {灯|あか}り{堂|どう} の {壁|かべ} の {頁|ページ} に 、 {確|たし}か な こと を {一|ひと}つ {書|か}きました ね 。 {読|よ}み{返|かえ}す と 、 {今|いま} でも {確|たし}か です 。 {安心|あんしん} しました 。 || On the page on the Lantern Hall wall, we wrote down one certain thing. When I reread it, it's still certain. What a relief.
+?(pages.theme=unsure) ren: {灯|あか}り{堂|どう} の {壁|かべ} の {頁|ページ} 、 「 {分|わ}からない 」 と {書|か}いた {所|ところ} が 、 {一番|いちばん} {読|よ}まれて いる {気|き} が します 。 || On the page on the Lantern Hall wall, I have a feeling the part where we wrote "not known" gets read the most.
+ren: {余白|よはく} の {書|か}き{込|こ}み に 、 {二人|ふたり} {分|ぶん} の {字|じ} が ある 。 {灯守|ひもり} の {帳面|ちょうめん} で は 、 {珍|めずら}しい こと です 。 || There are two people's handwriting in the margin. Rare, in a lantern keeper's register.
+
+@scene road.ren.r2
+?(pages.completed>=1) ren: {道|みち} の {終|お}わり の {灯籠|とうろう} の {字|じ} 、 やはり わたし の {字|じ} だった と {思|おも}います 。 {九割|きゅうわり} の {確率|かくりつ} で 。 || I still think the writing on the lantern at the road's end was mine. Ninety percent certain.
+?(pages.completed>=1) ren: {残|のこ}り の {一割|いちわり} は 、 {記録|きろく} に 「 {不明|ふめい} 」 と {書|か}いて あります 。 || The remaining ten percent is recorded as "unknown".
+?(!pages.completed>=1) ren: まだ {道|みち} の {終|お}わり の {灯籠|とうろう} を {見|み}て いません 。 {見|み}る {日|ひ} まで 、 {楽|たの}しみ を {取|と}って おきます 。 || We haven't seen the lantern at a road's end yet. I'll save the anticipation until we do.
+
+@scene road.ren.r3
+ren: {灯|あか}り{堂|どう} の {前|まえ} で {灯|ひ} を {磨|みが}いて いた {日|ひ} 、 {師匠|ししょう} の {教|おし}え を {一|ひと}つ {足|た}しました ね 。 {一緒|いっしょ} に {迷|まよ}って くれる {者|もの} を 、 と 。 || The day I was polishing lamps outside the Lantern Hall, I added a lesson to my teacher's. Someone who'll get lost with you.
+ren: {今|いま} でも 、 あれ が {一番|いちばん} {出来|でき} の いい {教|おし}え だ と {思|おも}って います 。 {作|つく}った の は わたし です が 。 || I still think it's the best lesson of the lot. Even if I'm the one who made it up.
+?(memory.ending_retro:ren) ren: {灯|あか}り{堂|どう} で {遅|おそ}く なった {話|はなし} を した {日|ひ} から 、 {帳面|ちょうめん} に {書|か}く {前|まえ} に 、 あなた に {聞|き}く よう に なりました 。 || And since the day we had that overdue talk in the Lantern Hall, I ask you before I write things down.
+
+@scene road.ren.r4
+?(sa_ren_took) ren: {師匠|ししょう} の {顔|かお} を {思|おも}い{出|だ}す と 、 {最近|さいきん} は {口論|こうろん} より {先|さき} に 、 {笑|わら}った {顔|かお} が {出|で}て きます 。 {順番|じゅんばん} が {入|い}れ{替|か}わりました 。 || When I think of my teacher's face these days, the smile comes before the quarrel. The order has swapped.
+?(!sa_ren_took) ren: {書庫|しょこ} に {預|あず}けた {顔|かお} の こと 、 {時々|ときどき} {考|かんが}えます 。 {取|と}り に {行|い}く か どう か 、 まだ {決|き}めて いません 。 {決|き}めない まま で いる の も 、 {悪|わる}くない 。 || I think about the face I left at the Archive sometimes. I still haven't decided whether to go for it. Not deciding isn't so bad.
+
+@scene road.ren.o1
+?(petvis=cat) ren: {猫|ねこ} が わたし の {灯|ひ} の {横|よこ} で {寝|ね}て いる と 、 {動|うご}けません 。 {灯守|ひもり} が 、 {灯|ひ} に {守|まも}られて いる よう な もの です 。 || When the cat sleeps next to my lamp, I can't move. As if the keeper were being kept by the light.
+?(petvis=dog) ren: {間違|まちが}った {道|みち} に {入|はい}ったら 、 あの {子|こ} が {止|と}めて くれる かも しれません 。 {期待|きたい} して います 。 || If I turn down a wrong road, perhaps that one will stop me. I'm counting on it.
+?(petvis=bird) ren: {鳥|とり} は {北|きた} が {分|わ}かる と {言|い}います 。 {聞|き}いて みました 。 {返事|へんじ} は ありません でした 。 || They say birds can tell which way is north. I asked. No reply.
+?(petvis=tanuki) ren: たぬき は {化|ば}ける と {言|い}われて います が 、 {灯|ひ} の {前|まえ} で は たぬき の まま です 。 {正直|しょうじき} な {子|こ} です 。 || Tanuki are said to shapeshift, but in front of the lamp it stays a tanuki. An honest one.
+?(!petvis) ren: {動物|どうぶつ} の {連|つ}れ は いません が 、 {灯|ひ} に {寄|よ}って くる {蛾|が} なら 、 {毎晩|まいばん} います 。 {名前|なまえ} は つけて いません 。 || No animal travels with us, but moths come to the lamp every night. I haven't named them.
+
+@scene road.ren.o2
+?(atlas_restore_1) ren: {渡|わた}し{場|ば} の {看板|かんばん} 、 {良|よ}い {字|じ} です 。 {誰|だれ} の {字|じ} か {調|しら}べよう と しました が 、 {途中|とちゅう} で {迷子|まいご} に なりました 。 || The ferry landing sign is in a good hand. I tried to find out whose, but I got lost on the way.
+?(!atlas_restore_1) ren: {葦|あし}ノ{瀬|せ} の {灯籠|とうろう} の {名前|なまえ} は 、 {帰|かえ}る たび に {確|たし}かめて います 。 {今|いま} の ところ 、 {一|ひと}つ も {消|き}えて いません 。 || I check the names on Reedwake's lanterns every time we come home. So far, not a single one has faded.
+
+@scene road.ren.o3
+?(pages.keeps>=1) ren: {道|みち} で {見|み}つけた {小|ちい}さな {物|もの} も 、 {名前|なまえ} を {付|つ}けて {記録|きろく} して あります 。 {灯守|ひもり} の {癖|くせ} です 。 || The small things we've found on the roads are in my record too, each with a name. A lantern keeper's habit.
+?(!pages.keeps>=1) ren: {記録|きろく} に {残|のこ}って いる {品|しな} は 、 {灯|あか}り{堂|どう} の {頁|ページ} {一枚|いちまい} だけ です 。 {少|すく}ない ほど 、 {一|ひと}つ {一|ひと}つ が {重|おも}く なります 。 || The only item in the record is the page in the Lantern Hall. The fewer there are, the more each one weighs.
+
+@scene road.ren.o4
+?(pages.at=camp) ren: {焚|た}き{火|び} の {灯|ひ} で {見|み}る と 、 {地面|じめん} に {下書|したが}き の {線|せん} が {透|す}けて {見|み}えます 。 {誰|だれ}か が 、 {先|さき} に {道|みち} を {考|かんが}えて いた ん です ね 。 || In the firelight you can see pencil lines under the ground. Someone thought this road through before us.
+?(pages.at=home) ren: {灯|あか}り{堂|どう} の {灯|ひ} は 、 {出|で}かける {前|まえ} と {帰|かえ}った {後|あと} で 、 {同|おな}じ {明|あか}るさ です 。 {当|あ}たり{前|まえ} の こと を 、 {毎回|まいかい} {確|たし}かめて しまいます 。 || The Lantern Hall's lamps are just as bright when we leave as when we come back. I check that obvious thing every single time.
+
+@scene road.ren.quiet1
+ren: {特|とく}に {報告|ほうこく} は ありません 。 {平和|へいわ} で 、 {結構|けっこう} です 。 || Nothing to report. Peaceful. Excellent.
+@scene road.ren.quiet2
+ren: …… {今日|きょう} の {冗談|じょうだん} は 、 {品切|しなぎ}れ です 。 {明日|あした} {入荷|にゅうか} します 。 || …Today's jokes are sold out. More in tomorrow.
+@scene road.ren.quiet3
+ren: {黙|だま}って {灯|ひ} を {見|み}る {時間|じかん} も 、 {灯守|ひもり} の {仕事|しごと} の うち です 。 || Watching the flame in silence is part of a lantern keeper's work too.
+
+# ======================================================================================
+# Suzu
+# ======================================================================================
+@scene road.suzu.h1
+suzu: {今日|きょう} の {帳簿|ちょうぼ} 、 {聞|き}きたい ？ {出費|しゅっぴ} ： お{茶|ちゃ} {二杯|にはい} 。 {収入|しゅうにゅう} ： なし 。 {笑|わら}い ： {数|かぞ}え{切|き}れない 。 || Want to hear today's accounts? Expenses: two cups of tea. Income: none. Laughs: too many to count.
+suzu: {笑|わら}い を {収入|しゅうにゅう} に {入|い}れる か 、 {毎回|まいかい} {迷|まよ}う の 。 {入|い}れたら 、 {大金持|おおがねも}ち に なっちゃう から 。 || I can never decide whether laughs count as income. If I did, I'd be rich.
+
+@scene road.suzu.h2
+suzu: {歩|ある}き ながら 、 {頭|あたま} の {中|なか} で {台詞|せりふ} を {稽古|けいこ} してる の 。 {時々|ときどき} {声|こえ} に {出|で}ちゃう けど 。 || I rehearse lines in my head while I walk. Sometimes they slip out loud.
+suzu: {今日|きょう} の {台詞|せりふ} は 「 {荷物|にもつ} 、 {持|も}とう か 」 。 …… {相手|あいて} が いない と 、 {言|い}う {機会|きかい} が ない の よ ね 。 || Today's line is "Want me to carry that?" …Without someone there, I'd never get to say it.
+
+@scene road.suzu.h3
+suzu: リボン が ない と 、 {髪|かみ} が {顔|かお} に {掛|か}かる の 。 {風|かぜ} の {強|つよ}い {日|ひ} は 、 {前|まえ} が {見|み}えない 。 || Without the ribbon, my hair gets in my face. On windy days I can't see a thing.
+suzu[smirk]: {返|かえ}して 、 って {意味|いみ} じゃ ない よ 。 {預|あず}けた もの は 、 {次|つぎ} の {幕|まく} まで 。 {約束|やくそく} は {約束|やくそく} 。 || That's not a hint to give it back. What's left with you stays until the next act. A promise is a promise.
+
+@scene road.suzu.h4
+suzu: {休憩|きゅうけい} の こと 、 {幕間|まくあい} って {呼|よ}んじゃう の 。 {一座|いちざ} に いた {頃|ころ} から の {癖|くせ} ね 。 || I call breaks "intervals". A habit from my troupe days.
+suzu: {幕間|まくあい} に は 、 {必|かなら}ず お{茶|ちゃ} を {飲|の}む 。 {次|つぎ} の {幕|まく} で 、 {声|こえ} が {枯|か}れない よう に 。 {旅|たび} も 、 {同|おな}じ 。 || Every interval, I drink tea. So my voice doesn't give out in the next act. Travelling's the same.
+
+@scene road.suzu.r1
+?(pages.theme=funny) suzu: ハナ の {茶屋|ちゃや} の {番付|ばんづけ} 、 {見|み}た {人|ひと} が {笑|わら}って くれたら いい な 。 {本当|ほんとう} に あった こと だ って 、 {信|しん}じて くれなくて も 。 || I hope whoever sees the programme at Hana's teahouse laughs. Even if they don't believe it really happened.
+?(pages.theme=quiet) suzu: ハナ の {茶屋|ちゃや} の {番付|ばんづけ} 、 {静|しず}か な {場面|ばめん} な のに 、 ちゃんと {芝居|しばい} に なってる の 。 {不思議|ふしぎ} ね 。 || The programme at Hana's teahouse is for a quiet scene, and it still works as a play. Funny, that.
+suzu: {題|だい} を {決|き}めた の は あなた 。 {絵|え} を {描|か}いた の は わたし 。 {二人|ふたり} で {書|か}いた {脚本|きゃくほん} って やつ ね 。 || You chose the title. I drew the pictures. Co-written, you might say.
+
+@scene road.suzu.r2
+?(pages.completed>=1) suzu: {道|みち} の {終|お}わり まで {行|い}った {日|ひ} の {終幕|しゅうまく} 、 われ ながら {良|よ}かった と {思|おも}う 。 {拍手|はくしゅ} は 、 {家|いえ} で もらった し ね 。 || The final curtain the day we reached a road's end — pretty good, if I say so myself. And we took our applause at home.
+?(!pages.completed>=1) suzu: {書|か}かれて いない {道|みち} で は 、 まだ {最終幕|さいしゅうまく} まで {行|い}った こと が ない の よ ね 。 {途中|とちゅう} で {終|お}わる {芝居|しばい} も 、 {嫌|きら}い じゃ ない けど 。 || We've never made it to the final act on an unwritten road. I don't mind plays that stop partway, though.
+
+@scene road.suzu.r3
+suzu: {広場|ひろば} の {舞台|ぶたい} で 、 {最後|さいご} の {台詞|せりふ} を {変|か}えた でしょ 。 「 みんな 、 {生|い}きて いきました 」 。 || On the stage in the square, I changed the last line, remember? "And everyone went on living."
+?(pages.reply=onstage) suzu: あなた に {言|い}われて 、 {自分|じぶん} の {台詞|せりふ} も {一行|いちぎょう} {書|か}いた 。 まだ {誰|だれ} に も {聞|き}かせて ない 。 {初日|しょにち} まで {秘密|ひみつ} 。 || Because you told me to, I wrote myself a line too. Haven't let anyone hear it yet. Secret till opening night.
+?(!pages.reply=onstage) suzu: あの {台詞|せりふ} に して 、 よかった 。 {幸|しあわ}せ か どう か は 、 {今|いま} も {毎日|まいにち} {決|き}めて いる {最中|さいちゅう} 。 || I'm glad I went with that line. Whether it's happily or not, I'm still deciding, every day.
+
+@scene road.suzu.r4
+suzu: ヒロ の {祭|まつ}り で は 、 {空|あ}いた {席|せき} の {隣|となり} に {座|すわ}る の 。 {二十回|にじゅっかい} {分|ぶん} の {一回|いっかい} ずつ 。 {帳簿|ちょうぼ} に は 、 {線|せん} を {引|ひ}かず に {書|か}き{足|た}して いく 。 || At Hiro's festivals I sit next to the empty seat. One of the twenty, one at a time. In the ledger I add them without crossing anything out.
+suzu[closed]: {本当|ほんとう} の {話|はなし} は 、 {何度|なんど} {話|はな}して も {慣|な}れない 。 {慣|な}れない ほう が 、 いい の かも ね 。 || The true story never gets easier to tell, however many times. Maybe it's better that it doesn't.
+
+@scene road.suzu.o1
+?(petvis=cat) suzu: {猫|ねこ} って 、 {一番|いちばん} いい {場面|ばめん} で {必|かなら}ず {舞台|ぶたい} を {横切|よこぎ}る の よ 。 {生|う}まれつき の {役者|やくしゃ} ね 。 || Cats always cross the stage at the best moment. Born performers.
+?(petvis=dog) suzu: {犬|いぬ} は {最高|さいこう} の {観客|かんきゃく} 。 {何|なに} を {見|み}せて も 、 {尻尾|しっぽ} で {拍手|はくしゅ} して くれる 。 || Dogs are the best audience. Whatever you show them, they applaud with their tails.
+?(petvis=bird) suzu: {鳥|とり} の {声|こえ} って 、 {舞台|ぶたい} の {効果音|こうかおん} より ずっと いい 。 {出演料|しゅつえんりょう} は 、 お{米|こめ} で いい かしら 。 || Birdsong beats any stage sound effect. Would it take its fee in rice?
+?(petvis=tanuki) suzu: たぬき は {化|ば}ける って {言|い}う でしょ 。 {役者|やくしゃ} {仲間|なかま} と して 、 {一目|いちもく} {置|お}いて いる の 。 || They say tanuki can shapeshift. As a fellow performer, I have to respect that.
+?(!petvis) suzu: {動物|どうぶつ} の {相手役|あいてやく} は いない けど 、 {二人|ふたり} {芝居|しばい} も {悪|わる}くない 。 {台詞|せりふ} の {取|と}り{合|あ}い に ならない し 。 || No animal co-stars, but a two-hander isn't bad. Nobody fighting over lines.
+
+@scene road.suzu.o2
+?(atlas_restore_1) suzu: {渡|わた}し{場|ば} の {看板|かんばん} 、 {字|じ} が {大|おお}きくて いい ね 。 {看板|かんばん} も {芝居|しばい} と {同|おな}じ 。 {後|うし}ろ の {席|せき} から {読|よ}めない と 、 {意味|いみ} が ない の 。 || The ferry landing sign has nice big letters. Signs are like plays: if the back row can't read it, it's pointless.
+?(!atlas_restore_1) suzu: {葦|あし}ノ{瀬|せ} の {広場|ひろば} 、 {小|ちい}さな {舞台|ぶたい} に ちょうど いい {広|ひろ}さ なの よ 。 {測|はか}った の 。 {歩幅|ほはば} で 。 || Reedwake's square is just the right size for a little stage. I measured it. In paces.
+
+@scene road.suzu.o3
+?(pages.keeps>=1) suzu: {道|みち} で {見|み}つけた {物|もの} って 、 {小道具|こどうぐ} に したく なる の よ ね 。 {使|つか}わない けど 。 {飾|かざ}る だけ 。 || The things we've found on the road make me want to use them as props. I won't. Just look at them.
+?(!pages.keeps>=1) suzu: {持|も}って {帰|かえ}った {物|もの} は 、 {番付|ばんづけ} {一枚|いちまい} だけ 。 {身軽|みがる} な {一座|いちざ} ね 。 || All we've brought home is one programme. A troupe that travels light.
+
+@scene road.suzu.o4
+?(pages.at=camp) suzu: {焚|た}き{火|び} って 、 {照明|しょうめい} と して は {最高|さいこう} なの 。 {顔|かお} が みんな {優|やさ}しく {見|み}える 。 || A campfire is the best stage lighting there is. Every face looks kind.
+?(pages.at=home) suzu: {灯|あか}り{堂|どう} は {声|こえ} が よく {響|ひび}く の 。 {一度|いちど} {小声|こごえ} で {稽古|けいこ} したら 、 ツル さん に {全部|ぜんぶ} {聞|き}かれて た 。 || The Lantern Hall has wonderful acoustics. I rehearsed in a whisper once, and Tsuru heard every word.
+
+@scene road.suzu.quiet1
+suzu: {今日|きょう} は {台本|だいほん} が {白紙|はくし} 。 {即興|そっきょう} で {黙|だま}って みる ？ || Today's script is blank. Shall we improvise some silence?
+@scene road.suzu.quiet2
+suzu: {特|とく}に {言|い}う こと なし 。 …… これ も {立派|りっぱ} な {台詞|せりふ} よ 。 || Nothing to say. …That's a perfectly good line too.
+@scene road.suzu.quiet3
+suzu: {幕間|まくあい} 、 {延長|えんちょう} 。 {話|はなし} は また {次|つぎ} の {幕|まく} で 。 || Interval extended. More in the next act.
+`, 'pages/topics');
+
+// The bank: 12 topics per companion, in three kinds (see the header). A slot
+// whose lines depend on a fact has a variant: the fact's current value.
+(function () {
+  'use strict';
+  const T = (s, cond) => RB.state.test(s, cond);
+  const V = {
+    at: (s) => (T(s, 'pages.at=camp') ? 'camp' : 'home'),
+    o1: (s) => (RB.pages.petVisible(s) ? 'pet:' + s.company.pet : 'nopet'),
+    r2: (s) => (T(s, 'pages.completed>=1') ? 'done' : 'notyet'),
+    o2: (s) => (s.flags.atlas_restore_1 ? 'restored' : 'plain'),
+    o3: (s) => (T(s, 'pages.keeps>=1') ? 'keeps' : 'none'),
+    r4: (s) => (s.comp === 'ren' ? (s.flags.sa_ren_took ? 'took' : 'left') : RB.pages.pqDone(s, s.comp) ? 'done' : 'open'),
+  };
+  V.o4 = V.at;
+  const PER = { 'nao.h1': V.at, 'mio.h2': V.at };
+  const list = [];
+  for (const c of ['nao', 'mio', 'ren', 'suzu']) {
+    for (const k of ['h', 'r', 'o']) for (let i = 1; i <= 4; i++) {
+      const slot = k + i, id = c + '.' + slot;
+      list.push({ id, comp: c, slot, kind: { h: 'habit', r: 'reflection', o: 'observation' }[k], where: 'any', scene: 'road.' + c + '.' + slot, variant: PER[id] || V[slot] || null });
+    }
+  }
+  RB.pages.addTopics(list);
+})();
 
 
 /* ==== src/content/zz_atlas_decor.js ==== */
@@ -77149,6 +79052,7 @@ RB.hooks = RB.hooks || {};
     }
     run.done[o.id] = true;
     run.stats.objectives++;
+    RB.bus.emit('atlas:event', { run: run.id, id: o.id, kind: o.type, room: r.key, pattern: r.room.pattern, branch: r.room.branch || null, assisted: !!res.assisted }); // (The Pages We Keep)
     const c = compOk();
     if (c) await say('comp', c, 'smile');
     RB.world.refreshActors();
@@ -77174,6 +79078,7 @@ RB.hooks = RB.hooks || {};
     if (res.cancelled) { await compSay(COMP_LATER); return; }
     s.flags[fk] = true;
     if (run.names.indexOf(npc.name) < 0) run.names.push(npc.name);
+    RB.bus.emit('atlas:event', { run: run.id, id: okey, kind: 'name', name: npc.name, room: r.key, pattern: r.room.pattern, branch: r.room.branch || null }); // (The Pages We Keep)
     RB.audio && RB.audio.sfx('discover');
     await say('narr', nd.moored);
     await note('atlas_name_' + npc.name);
@@ -77342,6 +79247,7 @@ RB.hooks = RB.hooks || {};
       s.flags[FLAG(o.id)] = true;
       r.run.done[o.id] = true;
       r.run.stats.objectives++;
+      RB.bus.emit('atlas:event', { run: r.run.id, id: o.id, kind: 'doors', read: !!os.read, room: r.key, pattern: r.room.pattern, branch: r.room.branch || null }); // (The Pages We Keep)
       RB.audio && RB.audio.sfx('reveal');
       await say('narr', { jp: '{扉|とびら} の {向|む}こう に 、 {道|みち} が {続|つづ}いて いる 。', en: os.read ? 'Beyond the door, the road goes on — just as the tablet said.' : 'Beyond the door, the road goes on. (A lucky guess — the tablet by the entrance would have told you.)' });
       if (clean) { const c = compOk(); if (c) await say('comp', c, 'smile'); }
@@ -77373,6 +79279,7 @@ RB.hooks = RB.hooks || {};
     const s = S();
     const what = args && args[0];
     if (what === 'rest') {
+      RB.bus.emit('atlas:camp', { run: r.run.id, room: r.key }); // (The Pages We Keep)
       s.atlas.camps = (s.atlas.camps || 0) + 1;
       s.vars.atlas_camp_i = (s.atlas.camps - 1) % 3;
       if (r.run.lantern && !r.run.campRested) {
@@ -77419,6 +79326,7 @@ RB.hooks = RB.hooks || {};
       s.flags[FLAG('climax')] = true;
       run.done.climax = true;
       s.vars.atlas_won = 1;
+      RB.bus.emit('atlas:event', { run: run.id, id: 'climax', kind: 'climax', boss, room: r.key, pattern: r.room.pattern }); // (The Pages We Keep)
       RB.world.refreshActors();
     }
   };
@@ -77430,7 +79338,7 @@ RB.hooks = RB.hooks || {};
     // A guardian settled opens the room; an optional foe just lets you pass in peace.
     const guardDown = s.flags['foe:' + s.map + ':guard'];
     s.vars.atlas_guard = guardDown && r.room.guard && !r.run.done['guard_' + r.key] ? 1 : 0;
-    if (s.vars.atlas_guard) r.run.done['guard_' + r.key] = true;
+    if (s.vars.atlas_guard) { r.run.done['guard_' + r.key] = true; RB.bus.emit('atlas:event', { run: r.run.id, id: 'guard_' + r.key, kind: 'guardian', room: r.key, pattern: r.room.pattern, branch: r.room.branch || null }); } // (The Pages We Keep)
   };
 
   // =====================================================================================
@@ -77447,6 +79355,7 @@ RB.hooks = RB.hooks || {};
   function endRun(s, why) {
     const run = s.atlas.run;
     if (!run) return;
+    RB.bus.emit('atlas:end', { run: run.id, kind: why }); // (The Pages We Keep: copies its summary out before cleanup)
     s.atlas.run = null;
     AT.cleanFlags(s, run.id);
     delete s.vars.atlas_ok; delete s.vars.atlas_won;
@@ -77885,9 +79794,18 @@ narr: {焚|た}き{火|び} に {火|ひ} を {入|い}れて 、 {二人|ふた
 ?(comp=suzu&var.atlas_camp_i=0) comp: {今日|きょう} の {出費|しゅっぴ} 、 つけて おく ね 。 {焚|た}き{木|ぎ} {三本|さんぼん} 、 {笑|わら}い {二回|にかい} 。 || I'll note down today's expenses. Three sticks of firewood, two laughs.
 ?(comp=suzu&var.atlas_camp_i=1) comp: {嘘|うそ} の ない {旅|たび} って 、 {思|おも}った より {楽|らく} だ ね 。 {荷物|にもつ} が {軽|かる}い 。 || Travelling without lies is easier than I thought. Lighter luggage.
 ?(comp=suzu&var.atlas_camp_i=2) comp: ねえ 、 {火|ひ} の {前|まえ} で {一曲|いっきょく} どう ？ …… {冗談|じょうだん} 。 {半分|はんぶん} は ね 。 || Hey, how about a song by the fire? …Joking. Half joking.
+:menu
 !choice
 * {先|さき} へ {進|すす}む || Go on -> go
 * {今日|きょう} は ここ まで に する || Head home from here (keep what you found) -> home
+* [pages.camp] {残|のこ}す {頁|ページ} の {話|はなし} を する || Talk about the page we're keeping -> pages
+* [pages.roadcamp] この {道|みち} の {話|はなし} を する || Talk about this road -> road
+:pages
+!call pages.camp
+!goto menu
+:road
+!call pages.road.camp
+!goto menu
 :home
 ?(comp) comp: {引|ひ}き{返|かえ}す の も 、 {旅|たび} の うち だ よ 。 || Turning back is part of travelling too.
 !hook atlas_extract early
@@ -77976,6 +79894,7 @@ narr: {灯|あか}り は あなた の {腰|こし} に {収|おさ}まって �
 ?(var.atlas_kind=1&comp=ren) comp: {地図|ちず} に {道|みち} を {一本|いっぽん} {書|か}き{足|た}しました 。 {方角|ほうがく} は 、 {後|あと} で {確|たし}かめて ください 。 || I've added a road to the map. Please check the directions later.
 ?(var.atlas_kind=1&comp=suzu) comp[laugh]: {本日|ほんじつ} の {公演|こうえん} 、 これ に て {終幕|しゅうまく} ！ || And that concludes today's performance!
 ?(var.atlas_kind=2&comp) comp: {引|ひ}き{返|かえ}す {勇気|ゆうき} も 、 {大事|だいじ} だ よ 。 || It takes nerve to turn back, too.
+!call pages.home
 
 @scene atlas.banter.nao1
 comp: {地図|ちず} に ない {道|みち} を {歩|ある}く の は 、 {配達人|はいたつにん} の {夢|ゆめ} だ 。 …… {悪夢|あくむ} かも しれない けど 。 || Walking roads that aren't on any map is a courier's dream. …Or nightmare.
