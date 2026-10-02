@@ -66,40 +66,40 @@ async function keysOf(p, id, variants) {
 async function composeSheet(p, id, before, after, ref) {
   return p.evaluate(async ([id, before, after, ref]) => {
     const load = async (u) => { const im = new Image(); im.src = u; await im.decode(); return im; };
-    // a frame cropped to the union of the drawn area of before and after (plus a margin)
+    // the drawn area of a frame
     const crop = (im) => { const c = document.createElement('canvas'); c.width = im.width; c.height = im.height; const g = c.getContext('2d'); g.drawImage(im, 0, 0); const d = g.getImageData(0, 0, im.width, im.height).data; let x0 = 1e9, y0 = 1e9, x1 = -1, y1 = -1; for (let y = 0; y < im.height; y++) for (let x = 0; x < im.width; x++) if (d[(y * im.width + x) * 4 + 3]) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); } return x1 < 0 ? [0, 0, im.width, im.height] : [x0, y0, x1 + 1, y1 + 1]; };
+    const union = (bs) => bs.reduce((m, b) => [Math.min(m[0], b[0]), Math.min(m[1], b[1]), Math.max(m[2], b[2]), Math.max(m[3], b[3])], [1e9, 1e9, -1, -1]);
     const names = after.rows[0].map((r) => r.name);
-    const B = before ? await Promise.all(before.rows[0].map((r) => load(r.url))) : [];
     const A = await Promise.all(after.rows[0].map((r) => load(r.url)));
-    const bName = before ? before.rows[0].map((r) => r.name) : [];
-    // the union box of every pose, per build (so poses line up at the same size)
-    const box = (ims) => ims.reduce((m, im) => { const b = crop(im); return [Math.min(m[0], b[0]), Math.min(m[1], b[1]), Math.max(m[2], b[2]), Math.max(m[3], b[3])]; }, [1e9, 1e9, -1, -1]);
-    const bb = B.length ? box(B) : null, ab = box(A);
+    const Bm = {};
+    if (before) { const ims = await Promise.all(before.rows[0].map((r) => load(r.url))); before.rows[0].forEach((r, i) => { Bm[r.name] = ims[i]; }); }
+    const B = names.map((n) => Bm[n] || null);
     const pad = 6;
-    const bw = bb ? bb[2] - bb[0] + pad * 2 : 0, bh = bb ? bb[3] - bb[1] + pad * 2 : 0, aw = ab[2] - ab[0] + pad * 2, ah = ab[3] - ab[1] + pad * 2;
+    // one box per pose (before and after share it, so each pair lines up)
+    const boxes = names.map((n, i) => { const bb = [crop(A[i])].concat(B[i] ? [crop(B[i])] : []); const u = union(bb); return [u[0] - pad, u[1] - pad, u[2] + pad, u[3] + pad]; });
+    const bw = (b) => b[2] - b[0], bh = (b) => b[3] - b[1];
+    const H1 = Math.max(...boxes.map(bh)), W1 = boxes.reduce((s, b) => s + bw(b) + 4, 0);
+    const pick = [0, Math.min(1, names.length - 1), Math.min(2, names.length - 1)].filter((v, i, a) => a.indexOf(v) === i);
+    const H3 = Math.max(...pick.map((i) => bh(boxes[i]))) * 3, W3 = pick.reduce((s, i) => s + bw(boxes[i]) * 3 + 8, 0);
     const R = ref ? await load(ref) : null;
-    // layout: row 1 native (before poses | after poses), row 2 the idle and two key poses at 3×
-    // (before | after), the reference (if given) at the right scaled to the 3× row's height
-    const n = names.length, lab = 22;
-    const w1 = (bb ? n * bw + 24 : 0) + n * aw;
-    const pick = [0, Math.min(1, n - 1), Math.min(2, n - 1)].filter((v, i, a) => a.indexOf(v) === i);
-    const h3 = Math.max(bh, ah) * 3;
-    const w3 = (bb ? pick.length * bw * 3 + 24 : 0) + pick.length * aw * 3;
-    const refW = R ? Math.round(R.width * (h3 / R.height)) : 0;
-    const W = Math.max(w1, w3 + (R ? refW + 24 : 0)) + 16, H = lab + Math.max(bh, ah) + 16 + lab + h3 + 16;
+    const refH = H3 * 2 + 30, refW = R ? Math.round(R.width * (refH / R.height)) : 0;
+    const lab = 18, gap = 10;
+    const W = Math.max(W1, W3 + (R ? refW + 16 : 0)) + 16;
+    const H = (lab + H1 + gap) * (before ? 2 : 1) + (lab + H3 + gap) * (before ? 2 : 1) + 8;
     const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
     const g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
     g.fillStyle = '#4e4640'; g.fillRect(0, 0, W, H);
-    g.font = '13px monospace'; g.fillStyle = '#efe4c8';
-    const put = (im, b, x, y, s) => g.drawImage(im, b[0] - pad, b[1] - pad, b[2] - b[0] + pad * 2, b[3] - b[1] + pad * 2, x, y, (b[2] - b[0] + pad * 2) * s, (b[3] - b[1] + pad * 2) * s);
-    let x = 8, y = lab;
-    if (bb) { g.fillText('before (1x)', x, 15); names.forEach((nm, i) => { const j = bName.indexOf(nm); if (j >= 0) put(B[j], bb, x + i * bw, y, 1); g.fillText(nm, x + i * bw + 2, y + bh - 2); }); x += n * bw + 24; }
-    g.fillText('after (1x)', x, 15); names.forEach((nm, i) => { put(A[i], ab, x + i * aw, y, 1); g.fillText(nm, x + i * aw + 2, y + ah - 2); });
-    y += Math.max(bh, ah) + 16 + lab; x = 8;
-    if (bb) { g.fillText('before (3x)', x, y - 6); pick.forEach((i, k) => { const j = bName.indexOf(names[i]); if (j >= 0) put(B[j], bb, x + k * bw * 3, y, 3); }); x += pick.length * bw * 3 + 24; }
-    g.fillText('after (3x): ' + pick.map((i) => names[i]).join(', '), x, y - 6); pick.forEach((i, k) => put(A[i], ab, x + k * aw * 3, y, 3));
-    x += pick.length * aw * 3 + 24;
-    if (R) { g.fillText('reference (art direction, not in the repository)', x, y - 6); g.drawImage(R, x, y, refW, h3); }
+    g.font = '13px monospace';
+    const put = (im, b, x, y, s) => { if (im) g.drawImage(im, b[0], b[1], bw(b), bh(b), x, y, bw(b) * s, bh(b) * s); };
+    let y = 4;
+    const row1 = (ims, label) => { g.fillStyle = '#efe4c8'; g.fillText(label, 8, y + 13); y += lab; let x = 8; names.forEach((n, i) => { put(ims[i], boxes[i], x, y + H1 - bh(boxes[i]), 1); g.fillStyle = '#c8bca4'; g.fillText(n, x + 2, y + H1 - 2); x += bw(boxes[i]) + 4; }); y += H1 + gap; };
+    const row3 = (ims, label) => { g.fillStyle = '#efe4c8'; g.fillText(label, 8, y + 13); y += lab; let x = 8; pick.forEach((i) => { put(ims[i], boxes[i], x, y + H3 - bh(boxes[i]) * 3, 3); x += bw(boxes[i]) * 3 + 8; }); y += H3 + gap; };
+    if (before) row1(B, 'before — native size (1 art px): ' + id);
+    row1(A, 'after — native size (1 art px): ' + id);
+    const y3 = y;
+    if (before) row3(B, 'before — 3x: ' + pick.map((i) => names[i]).join(', '));
+    row3(A, 'after — 3x: ' + pick.map((i) => names[i]).join(', '));
+    if (R) { const x = W3 + 16; g.fillStyle = '#efe4c8'; g.fillText('reference (art direction only; not in the repository)', x, y3 + 13); g.drawImage(R, x, y3 + lab, refW, refH); }
     return { png: cv.toDataURL('image/png'), webp: cv.toDataURL('image/webp', 0.92) };
   }, [id, before, after, ref]);
 }

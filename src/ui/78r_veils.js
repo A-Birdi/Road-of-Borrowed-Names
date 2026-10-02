@@ -110,6 +110,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         return Math.abs(y - cyAt(k)) <= wAt(k);
       }, M, (x, y) => { const k = (sx - x) / len, d = (y - cyAt(k)) / Math.max(1, wAt(k)); const crease = Math.cos(k * 13 + d * 2) > 0.55; return S.step(d < -0.45 ? 5 : d > 0.5 ? 2 : crease ? 3 : 4, 7); });
     }
+    S.clean(B, M, { sliver: true });
     S.outline(B); S.outline(arm);
     S.cast(arm, B, 2, 3, 1);
     // blank scraps drifting near it (flung out when it spreads or loosens)

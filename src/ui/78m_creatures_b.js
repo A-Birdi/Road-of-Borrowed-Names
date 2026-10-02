@@ -434,14 +434,20 @@ RB.creaturesB = (function () {
     }
     // stray single pixels (no 4-neighbour of the same colour) folded into the colour most of their
     // neighbours share (at least three of the four), within one material
-    function clean(L, only) {
+    // o.sliver: also one-pixel-wide slivers (the same other colour on both sides, left and right or
+    // above and below) — so strand clusters are at least two pixels across, never hatching
+    function clean(L, only, o) {
       const { w, h, px, mt } = L, bb = bbox(L);
       if (!bb) return L;
-      const out = px.slice();
+      const out = px.slice(), sliver = !!(o && o.sliver);
       for (let y = Math.max(1, bb[1]); y <= Math.min(h - 2, bb[3]); y++) for (let x = Math.max(1, bb[0]); x <= Math.min(w - 2, bb[2]); x++) {
         const i = y * w + x, c = px[i];
         if (!(c >>> 24) || (only && mt[i] !== only.id)) continue;
         const nb = [px[i - 1], px[i + 1], px[i - w], px[i + w]];
+        if (sliver) {
+          if (nb[0] === nb[1] && nb[0] !== c && (nb[0] >>> 24) && mt[i - 1] === mt[i]) { out[i] = nb[0]; continue; }
+          if (nb[2] === nb[3] && nb[2] !== c && (nb[2] >>> 24) && mt[i - w] === mt[i]) { out[i] = nb[2]; continue; }
+        }
         if (nb.includes(c)) continue;
         for (const v of nb) if (v >>> 24 && nb.filter((u) => u === v).length >= 3) { out[i] = v; break; }
       }

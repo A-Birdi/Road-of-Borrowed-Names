@@ -191,7 +191,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }
     // ---- clusters, coloured outlines, cast shadows from near parts onto far ones, the rim light
     const uniq = (a) => a.filter((x, i) => a.indexOf(x) === i);
-    for (const X of uniq([tailL, tailF, body, haunch, chest, nearL, head])) for (const M of [furM, ruffM]) S.clean(X, M);
+    for (const X of uniq([tailL, tailF, body, haunch, chest, nearL, head])) for (const M of [furM, ruffM]) S.clean(X, M, { sliver: true });
     for (const X of uniq([tailL, farL, body, haunch, chest, nearL, tailF, headB, head, fire])) S.outline(X);
     S.cast(body, tailL, 2, 3, 1);
     if (!stretched) { S.cast(haunch, tailL, 2, 3, 1); S.cast(chest, haunch, 2, 2, 1); S.cast(chest, body, 2, 2, 1); }
