@@ -1263,3 +1263,64 @@ campaigns in fresh profiles; no player save was used.
 - **Not verified:** Firefox, Safari, a real phone or the foldable; play by a person; a native speaker's
   review.
 
+## Battle playtest round — the owner's report of 2026-10-02 (cadence, creature plates, Adaptive intents, the opening lines, the art restyle)
+The owner played the battle addendum's build in Firefox (about 2000 × 1090) and reported: the scene
+animated faster while the opening lines were up than once the battle was in focus; the Adaptive intent
+display still showed the telegraph panel; the creature's name sat in a solid navy box in the top-left
+instead of above it; blank panels during the opening lines; and, with the reference re-supplied, that
+the battle art should be reshaped toward its style (keeping the Moth's and the Mill Echo's motion).
+Every run below was in headless Chromium on Linux (Playwright) with synthetic campaigns in fresh
+profiles; no player save was used; nothing was checked in Firefox.
+- **Build identity:** `index.html` 9,003,781 bytes, 2,750,955 gzip -9, sha256 `1b1a85e9d01d4817…` (3ae7e37: the three restyles merged; b11290a after it changes a test helper only). Growth over the battle addendum's final build (a6a8f20d…): +151,673 bytes.
+- **Cadence (6855ba1).** Cause: while choosing, writing or choosing support, the ambient clock (the
+  creatures' idle, the backdrop, lingering effects) ran at half speed and the party took its quieter
+  calm stance. Now one clock at the authored rate in every phase; ready stances while choosing; calm
+  only during the language task. Test: battle_presentation "one cadence" — the clock against the page's
+  over a second: 1.005 (opening lines), 1.016 (choosing), 1.000 (choosing support); fails on the build
+  before (calm stances while choosing).
+- **Adaptive intents (§13.3), creature plates, the opening lines (febb86e … dbaf196).** A routine move is
+  its badge only; the panel holds just the passages to read (promise, mirror, plea) and is otherwise
+  absent; the badge card gained Translate (assisted) and Nao's foresight. Each creature's name, knots
+  and conditions sit on a translucent plate above it, with its badge (pushed apart → compact → a rail
+  along the top of the scene); a group's plates choose the target; a settled creature keeps its plate.
+  During the opening lines the decision surfaces are away and inert and the party slip is filled; they
+  come in at the first decision. Found while testing and fixed: a plate's keyword note opened over the
+  plate, under the pointer that opened it (8dbbb23); compact plates were 42 px tall (target buttons keep
+  44 px).
+- **Art restyle (three workers, merged aeb2c12, 9b8f10d, 3ae7e37).** Party (the player in every look
+  option and the four companions), creatures A (Chapters 1–3; the Flour Moth and the Mill Echo first)
+  and creatures B (Chapters 4–6 and the Atlas) reshaped and re-rendered toward the reference: three-
+  quarter forms, coloured selective outlines, hue-shifted high-contrast ramps, one key light and a cool
+  rim, cast shadows, a recipe per material. Motion kept: every pose, delivery, contact beat and idle
+  cadence (the party's ready idle now changes pose 7–10 times a second, was 3–5). Records:
+  `docs/battle/party.md` (round 2), `creatures_a.md` ("The restyle round"), `creatures_b.md` ("Restyle
+  round"); evidence in `docs/screenshots/battle/{party,creatures_a,creatures_b}_restyle/`. Every art
+  judgement is the workers' and the integrator's self-review; no person has looked at it.
+- **Each merge on its merged build:** party — unit 15,339/0, battle_party 14/14, characters 23/23,
+  battle_presentation 13/13, battle_pets_overworld 3/3; creatures B and A — see the integrated runs.
+- **Integrated build, every run on 1b1a85e9:** validator no errors; unit **15,388 passed, 0 failed**;
+  battle_presentation **13/13**, combat_ui 7/7, battle_group 6/6, companion_turn 4/4, playtest_repairs
+  7/7, battle_party 14/14, characters 23/23, creatures_a 15/15, battle_creatures_b 26/26,
+  battle_backdrops 38/38, encounters ok, battle_pets_overworld --battles-only 3/3, battle_cycle stable
+  (listeners 101 → 101, nodes 247 → 245 from battle 5 to 20).
+  - battle_anim **15/16**: "learning stays central" timed out on a click — the third time across runs
+    (also on the build before the restyle). Root cause: left where the language task's Continue was,
+    the pointer rested on the phone layout's Harmony keyword; its hover note covered the coach's "Got
+    it" that the shared helper then pressed. Fixed in the helper (b11290a: the pointer moves off
+    first); the test then passed 3 of 3 alone under load.
+- **Geometry** (`battle_geometry.mjs --doc`): 21 scenes, all targets met; action-safe height 640 at
+  390×844 alone and 600 with three creatures (target 300), 476 and 396 at 320×640 (target 240).
+- **Invariance** (`battle_invariance.mjs`, full): **544 configurations, 16 fixtures, every fixture
+  identical** across its presentation settings (1,551 s).
+- **Memory budget** (`battle_budget.mjs`): 30/30 encounters; largest **38.58 MiB** of 48 (party 5.84,
+  creatures 28.92, pets 3.83; three Snow Foxes). The shared creature cache is now bounded by 140 frames
+  and 30 MiB, whichever comes first.
+- **Recordings** (`docs/screenshots/battle/presentation/`, remade on this build): Normal 18.4 s, Fast
+  16.6 s, Instant 13.2 s, reduced motion 18.8 s, a 390×844 phone by taps 24.6 s (three Flour Moths, a
+  badge card), with stills of the badge card and the blue and red banners; layout stills
+  (`docs/screenshots/battle/layout/`) at 320×640, 390×844, 844×390, 200 % text and Japanese-led.
+- **Default suite** (`node tests/e2e/run.mjs`) and **layout audit** (`visual.mjs --check`): running at
+  this commit; recorded in the next.
+- **Not verified:** Firefox (the owner's browser), Safari, a real phone or the foldable; the art judged by
+  a person; frame rate on named hardware.
+

@@ -274,6 +274,14 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
   party, so at contact a moth's near wing passes behind the adventurer it strikes (creatures_a.md).
 - Not verified: Firefox (the owner's browser), Safari, a real phone or the foldable, the art judged by a
   person (every rubric is a self-review), a native speaker's review, frame rate on named hardware.
+- The owner's playtest of 2026-10-02 (Firefox, about 2000 × 1090), answered on this branch
+  (VALIDATION.md "Battle playtest round", REQUIREMENTS BA17–BA21): one cadence in every phase (the scene
+  had run at half speed once the opening lines closed); Adaptive shows a routine move as its badge only
+  (§13.3); each creature's name, knots and conditions on a translucent plate above it with its badge
+  (the solid navy slip is gone); no empty panels during the opening lines; the battle art restyled
+  toward the owner's reference by three workers (party, creatures A with the Flour Moth and the Mill
+  Echo first, creatures B) — records in docs/battle/party.md (round 2), creatures_a.md ("The restyle
+  round"), creatures_b.md ("Restyle round"); evidence in docs/screenshots/battle/*_restyle/.
 - The full-game matrix with both addenda in ran after both were complete, as the owner asked:
   16/16 whole-game runs, layout audit clean (VALIDATION.md "Full-game matrix — both addenda").
   What remains is by hand (Next concrete actions, item 10).
@@ -345,7 +353,11 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
    reduced motion; open a badge by hover, focus and tap; watch the banner and the
    menus withdraw and return; try 140 % and 200 % text; turn or unfold the device
    during an exchange. Judge the new party, creature and backdrop art (the rubrics in
-   docs/battle/*.md are self-reviews).
+   docs/battle/*.md are self-reviews). After the playtest round: does the scene keep its pace once the
+   opening lines close; do the plates above the creatures read well over each backdrop; is the restyled
+   art (start with the Flour Moth and the Mill Echo) closer to the reference — the workers list what is
+   still short of it (the crane and clerk stay fairly frontal; an 80 × 104 party figure cannot carry the
+   reference's detail density).
 
 ## Known issues / limits
 - No human handwriting samples tested (synthetic + font-derived only).
