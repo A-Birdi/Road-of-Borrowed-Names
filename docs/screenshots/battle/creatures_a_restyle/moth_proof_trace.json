@@ -13,7 +13,7 @@
      "who": "pc"
     }
    ],
-   "wallMs": 1299
+   "wallMs": 1301
   },
   {
    "label": "fully warded Strike (the seal at the contact)",
@@ -26,7 +26,7 @@
      "who": null
     }
    ],
-   "wallMs": 1303
+   "wallMs": 1304
   },
   {
    "label": "softened hit (one ward point)",
@@ -44,7 +44,7 @@
      "who": "pc"
     }
    ],
-   "wallMs": 1315
+   "wallMs": 1306
   },
   {
    "label": "Shroud applied (flour over its knots)",
@@ -57,7 +57,7 @@
      "who": null
     }
    ],
-   "wallMs": 1509
+   "wallMs": 1512
   },
   {
    "label": "light clears the Shroud",
@@ -70,7 +70,7 @@
      "who": null
     }
    ],
-   "wallMs": 758
+   "wallMs": 760
   }
  ]
 }

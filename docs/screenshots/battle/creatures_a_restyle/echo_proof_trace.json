@@ -9,11 +9,11 @@
    "beats": [
     {
      "t": "hit",
-     "at": 600,
+     "at": 633,
      "who": "pc"
     }
    ],
-   "wallMs": 1189
+   "wallMs": 1205
   },
   {
    "label": "Mirror (the shards lock into a pane)",
@@ -22,11 +22,11 @@
    "beats": [
     {
      "t": "hit",
-     "at": 717,
+     "at": 633,
      "who": "pc"
     }
    ],
-   "wallMs": 1217
+   "wallMs": 1212
   },
   {
    "label": "Heat (its rings warm and quicken)",
@@ -39,7 +39,7 @@
      "who": null
     }
    ],
-   "wallMs": 1200
+   "wallMs": 1208
   },
   {
    "label": "Plea",
@@ -52,7 +52,7 @@
      "who": null
     }
    ],
-   "wallMs": 1258
+   "wallMs": 1262
   }
  ]
 }
