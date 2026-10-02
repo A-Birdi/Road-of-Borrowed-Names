@@ -114,8 +114,10 @@ RB.battlerMoves = (function () {
   const STANCE = {
     // slightly staggered feet (the near, right foot forward), knees soft, leaning in, turned a little
     // further toward the foe than the body; the folio at the left hip, the right hand free and half open
+    // (the weight on the back, left leg: that hip up, the free right hip dropped, the shoulders set
+    // against it — a readable weight shift with the near foot forward)
     pc: {
-      pelvis: [0, -1.9, 0], spinePitch: 10, spineYaw: 5, headYaw: 12, headPitch: -5,
+      pelvis: [-0.6, -1.9, 0], pelvisRoll: 2.6, spineRoll: -2, spinePitch: 10, spineYaw: 5, headYaw: 12, headPitch: -5, headRoll: 1,
       footR: [6.2, 0, 4.8], footRYaw: 24, footL: [-6, 0, -3.8], footLYaw: 8,
       handR: [11.4, 31.5, 5.6], elbowR: [1, -0.6, -1], handShapeR: 'relaxed', palmR: [-1, -0.1, 0.3],
       handL: [-10.4, 29.4, -1.2], elbowL: [-1, -0.2, -0.6],

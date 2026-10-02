@@ -265,7 +265,9 @@ RB.battlers = (function () {
     // (a true grey takes a cool steel hue; a warm or cool near-black keeps its own)
     const grey = s < 0.1;
     if (s < 0.035) h = o.greyHue == null ? 222 : o.greyHue;
-    const sat = o.sat || 1, hs = o.hs || 1, cool = o.cool || 250, warm = o.warm || 52, dsk = o.ds == null ? 1 : o.ds, ssh = o.ssh || 1;
+    // (pale colours — creams, whites, bleached cloth — shade toward a cool grey rather than through red)
+    const pale = l > 0.74 && s < 0.5 && o.hs == null;
+    const sat = o.sat || 1, hs = o.hs || (pale ? 0.4 : 1), cool = o.cool || 250, warm = o.warm || 52, dsk = o.ds == null ? (pale ? 0 : 1) : o.ds, ssh = o.ssh || (pale ? 0.4 : 1);
     // white materials keep their shadows lighter; dark ones lift less toward their highlight
     const lo = o.lo || (l > 0.78 ? 0.62 : l > 0.62 ? 0.8 : 1), hi = (o.hi || 1) * (l < 0.3 ? 0.7 : 1);
     const S = (x) => Math.max(0, Math.min(1, x));
@@ -328,7 +330,7 @@ RB.battlers = (function () {
       let v = levelOf(l, f, HAIR_TH);
       if (u < 0.14 && face > 0.6) v -= 1;
       const along = info.u != null ? info.u : 1 - info.h;
-      if (along > hiAt[0] && along < hiAt[1] && u > 0.25 && u < 0.8 && l > 0.25) v = l > 0.62 ? 5 : Math.max(v, 4);
+      if (along > hiAt[0] && along < hiAt[1] && u > 0.32 && u < 0.62 && dot(info.n, LIGHT) > 0.4) v = l > 0.66 ? 5 : Math.max(v, 4);
       return v;
     };
   }
@@ -378,7 +380,7 @@ RB.battlers = (function () {
       skin6: hramp(col.skin[0], { cool: 352, warm: 42, hs: 0.72, ds: 0, ssh: 0.6, lo: 0.55, rim: '#b8d0ff' }),
       // hair: the lock colour between its mid and light, saturated; shadows cool, the band warm
       // (very dark hair takes a cool sheen)
-      hair6: P.lum(hc[1]) < 0.2 ? hramp(P.mix(hc[1], hc[2] || hc[1], 0.3), { sat: 1.1, warm: 225, hi: 0.85 }) : hramp(P.mix(hc[1], hc[2] || hc[1], 0.2), { sat: 1.12, hs: 1.15 }),
+      hair6: P.lum(hc[1]) < 0.2 ? hramp(P.mix(hc[1], hc[2] || hc[1], 0.3), { sat: 1.1, warm: 225, hi: 0.85 }) : hramp(P.mix(hc[1], hc[2] || hc[1], 0.2), { sat: P.lum(hc[1]) > 0.55 ? 0.98 : 1.12, hs: 1.15 }),
       cloth6: hramp(cm, { sat: 1.22 }),
       acc6: hramp(ca, { sat: 1.15 }),
       pants6: hramp(col.pants, { sat: 1.2 }),
@@ -437,12 +439,15 @@ RB.battlers = (function () {
           return 0;
         },
       }),
-      hair: mk(p.hair6, { kind: 'hair', top: 5, lev: hairCapLev(7, [0.14, 0.42]) }),
+      // (spiky hair: the spikes carry the light; the cap under them stays plain)
+      hair: mk(p.hair6, { kind: 'hair', top: 5, lev: hairCapLev(7, look.hair === 'spiky' ? [-2, -2] : [0.14, 0.42]) }),
       hairTail: mk(p.hair6, { kind: 'hair', top: 5, lev: strandLev(4, [0.08, 0.3], (i) => i.ax) }),
       hairTuft: mk(p.hair6, { kind: 'hair', top: 5, lev: strandLev(2, [-1, -1], (i) => i.ax) }),
       hairStrand: mk(p.hair6, { kind: 'hair', top: 5, lev: strandLev(4, [-1, -1], (i) => i.ax) }),
-      hairV: mk(p.hair6, { kind: 'hair', top: 5, lev: strandLev(13, [0.1, 0.24], (i) => i.ey) }),
-      hairCurl: mk(p.hair6, { kind: 'hair', top: 5, th: [0.58, 0.22, -0.15, -0.5], pat: (info, v, l) => (l > 0.78 ? 1 : 0) }),
+      // a spike of hair: lit on its upper-left flank toward the tip, its underside in shadow
+      hairSpike: mk(p.hair6, { kind: 'hair', top: 5, th: [0.94, 0.36, 0.1, -0.45], pat: (info, v, l) => (info.u < 0.3 && l < 0.2 ? -1 : 0) }),
+      hairV: mk(p.hair6, { kind: 'hair', top: 5, lev: strandLev(8, [0.1, 0.22], (i) => i.ey) }),
+      hairCurl: mk(p.hair6, { kind: 'hair', top: 5, th: [0.9, 0.3, 0.05, -0.5], pat: (info, v, l) => (l > 0.82 && info.l && info.l[0] < -0.2 ? 1 : 0) }),
       hairBun: mk(p.hair6, { kind: 'hair', top: 5, lev: hairCapLev(5, [0.2, 0.46]) }),
       hairBraid: mk(p.hair6, { kind: 'hair', top: 5, th: [0.55, 0.15, -0.2, -0.5], pat: (info, v, l) => (info.l && info.l[1] < -0.4 ? -1 : l > 0.72 ? 1 : 0) }),
       wrap: mk(p.wrap6, { kind: 'cloth', pat: (info) => { const u = ((info.h != null ? info.h * 5 : (info.l ? info.l[1] * 3 : 0)) + 10) % 1; return u < 0.2 ? -1 : 0; } }),
@@ -671,22 +676,23 @@ RB.battlers = (function () {
     const back = (dx, dy, dz) => add(waist, mv(Ms, [dx, dy, -6.3 * g + dz]));
     // a bow: each loop folds into the knot (its inner end in shadow, its outer end lit), the knot a step
     // darker, the tails hanging from it
-    const bow = (mat, tails) => {
+    const bow = (mat, tails, sc) => {
+      sc = sc || 1;
       const loop = (sd) => Object.assign({}, mat, { pat: (info, v) => (info.l ? (info.l[0] * -sd > 0.35 ? -1 : info.l[0] * -sd < -0.55 && v >= 3 ? 1 : 0) : 0) });
       // the loops flattened and tipped up and outward from the knot
-      for (const sd of [-1, 1]) K.E(back(sd * 2.5, 0.7, -0.6), mm(Ms, rotZ(-sd * 22 * DEG)), [2.7, 1.55, 1.0], loop(sd), GRP.acc);
+      for (const sd of [-1, 1]) K.E(back(sd * 2.5 * sc, 0.7, -0.6), mm(Ms, rotZ(-sd * 22 * DEG)), [2.7 * sc, 1.55 * sc, 1.0], loop(sd), GRP.acc);
       K.E(back(0, 0.3, -1.1), Ms, [1.1, 1.3, 0.9], Object.assign({}, mat, { pat: () => -1 }), GRP.acc);
       if (tails) {
         // two short tails, an inverted V
-        K.C(back(-0.5, -0.6, -0.9), back(-2.3 + sway * 0.3, -4.4, -1.2), 0.8, 0.55, mat, GRP.acc);
-        K.C(back(0.5, -0.6, -0.9), back(2.0 + sway * 0.3, -3.8, -1.2), 0.8, 0.55, mat, GRP.acc);
+        K.C(back(-0.5, -0.6, -0.9), back(-2.3 * sc + sway * 0.3, -4.4 * sc, -1.2), 0.8, 0.55, mat, GRP.acc);
+        K.C(back(0.5, -0.6, -0.9), back(2.0 * sc + sway * 0.3, -3.8 * sc, -1.2), 0.8, 0.55, mat, GRP.acc);
       }
     };
     if (sh === 'robe') bow(Mt.accent, false);
     if (sh === 'dress') bow(Mt.accent, true);
     if (sh === 'apron') {
       // apron strings tied at the small of the back; the bib's straps cross the back
-      bow(Mt.ivory, true);
+      bow(Mt.ivory, true, 0.78);
       const J = K.J, outward = (n) => dot(n, mv(BODY, mv(Ms, [0, 0, -1]))) > -0.3;
       K.C(add(J.shR, mv(Ms, [-2.2, 1.4, -2.2])), back(-5.4, 0.8, 1.4), 0.7, 0.7, Mt.ivory, GRP.acc, { keep: outward });
       K.C(add(J.shL, mv(Ms, [2.2, 1.4, -2.2])), back(5.4, 0.8, 1.4), 0.7, 0.7, Mt.ivory, GRP.acc, { keep: outward });
@@ -739,7 +745,7 @@ RB.battlers = (function () {
     cap(tight, (l) => face(l) && (!earsShow || ears(l)) && l[1] > nape - tipAt(l));
     // clumps of hair that stand out at the back and sides and end in points: the head's outline is
     // locks, not a ball (short and tied-back styles; under a hat they stay below its brim)
-    if (['short', 'ponytail', 'braid', 'twintails', 'spiky'].includes(st)) {
+    if (['short', 'ponytail', 'braid', 'twintails'].includes(st)) {
       const R0 = hr[0] * tight[0] / hs, Rz = hr[2] * tight[2] / hs;
       const tufts = [[132, -0.4, 1.1], [160, -0.3, 1], [-170, -0.46, 1.15], [-136, -0.4, 1.05]];
       for (const [deg, y0, sc] of tufts) {
@@ -749,8 +755,9 @@ RB.battlers = (function () {
       }
     }
     if (st === 'spiky') {
-      const sp = [[-6, 12, -6], [0, 14, -3], [6, 12, -5], [-10, 6, -8], [9, 7, -9], [-3, 9, -12], [4, 5, -13]];
-      for (const q of sp) { if (covered && q[1] > 6) continue; const d = norm(q); K.C(H(mul(d, 11)), H(mul(d, 17)), 3.4, 0.7, Mt.hairTuft, GRP.hair); }
+      // (pointing up, out and back, so that from behind they read in profile on the outline, not end-on)
+      const sp = [[-6, 13, -3], [1, 14, -4], [8, 12, -2], [-12, 7, -3], [12, 6, -3], [-6, 10, -10], [6, 9, -10], [-13, 0, -6], [13, -1, -5]];
+      for (const q of sp) { if (covered && q[1] > 6) continue; const d = norm(q); K.C(H(mul(d, 9.6)), H(mul(d, 19.5)), 4.4, 0.6, Mt.hairSpike, GRP.hair); }
     }
     if (st === 'bob') {
       // a blunt, chin-length bob: the sides and back fall straight to the jaw
@@ -891,12 +898,19 @@ RB.battlers = (function () {
     for (const a of acc) {
       switch (a) {
         case 'scarf': {
-          const S = flat(look.scarfCol || '#c8962e', { pat: look.scarfStripe ? (info) => 0 : null });
-          const St = look.scarfStripe ? flat(look.scarfStripe) : S;
-          ring(J.neckB, 4.9 * g, 4.4 * g, 0.9, 14, 2.1, S, Ms);
-          // the tail over the left shoulder blade, streaming a little
-          chain([Sp([-2.4, ch + 0.4, -4.8]), Sp([-3.4 + sway * 0.4, ch - 5, -6.3]), Sp([-4 + sway, ch - 10, -6.9])], 2, 1.7, S);
-          if (look.scarfStripe) { K.S(Sp([-3 + sway * 0.2, ch - 3, -6.2]), 1.9, St, GRP.acc); K.S(Sp([-3.8 + sway * 0.7, ch - 8, -7]), 1.8, St, GRP.acc); }
+          // a wrap of cloth round the neck (folds round it), a knot at the back on the left, and the tail
+          // streaming over the shoulder blade, folded along its length, splitting into two ends
+          const col = look.scarfCol || '#c8962e';
+          const W = flat(col, { lev: foldLev(5, { off: 0.15 }) }), T = flat(col, { lev: strandLev(3, [-1, -1], (i) => i.ax) });
+          const St = look.scarfStripe ? flat(look.scarfStripe, { lev: strandLev(3, [-1, -1], (i) => i.ax) }) : null;
+          K.Lf(Sp([0, ch - 1.4, -0.3]), Sp([0, ch + 2.1, 0.2]), Ms, [[0, 5.7 * g, 5.1 * g], [0.5, 6.0 * g, 5.4 * g], [1, 5.0 * g, 4.5 * g]], W, GRP.acc);
+          K.E(Sp([-2.6, ch + 0.2, -5.0 * g]), Ms, [2, 1.7, 1.3], Object.assign({}, W, { lev: null, pat: () => -1 }), GRP.acc);
+          const t0 = Sp([-2.9, ch - 0.6, -5.3 * g]), t1 = Sp([-3.6 + sway * 0.4, ch - 4.6, -6.4]), t2 = Sp([-4.1 + sway * 0.8, ch - 7.8, -6.9]);
+          chain([t0, t1, t2], 2.0, 1.6, T);
+          // the split ends
+          K.C(t2, Sp([-5.3 + sway * 1.1, ch - 10.8, -7.0]), 1.2, 0.45, T, GRP.acc);
+          K.C(t2, Sp([-3.3 + sway * 1.2, ch - 10.4, -7.3]), 1.1, 0.45, T, GRP.acc);
+          if (St) { K.C(lerp(t0, t1, 0.45), lerp(t0, t1, 0.62), 2.05, 2.0, St, GRP.acc); K.C(lerp(t1, t2, 0.5), lerp(t1, t2, 0.68), 1.85, 1.8, St, GRP.acc); }
           break;
         }
         case 'satchel': {
@@ -944,7 +958,7 @@ RB.battlers = (function () {
         case 'cape': {
           const R = flat(look.capeCol || '#6a3a4a');
           const top = add(J.neckB, mv(Ms, [0, -0.4, -0.6])), bot = [J.pel[0] + sway * 1.4, 11, J.pel[2] - 1.6];
-          K.Lf(bot, top, Ms, [[0, 12.6 * g, 10.4 * g], [0.55, 10.6 * g, 8.6 * g], [0.9, 9.6 * g, 7 * g], [1, 5.4 * g, 4.4 * g]], Object.assign({ pat: (info) => { const u = ((info.a / (2 * Math.PI)) * 6 + 10.4) % 1; return u < 0.12 && info.h < 0.9 ? -1 : 0; } }, R), GRP.cape, (lx, h, lz) => lz < 1.5 - h * 1.2);
+          K.Lf(bot, top, Ms, [[0, 12.6 * g, 10.4 * g], [0.55, 10.6 * g, 8.6 * g], [0.9, 9.6 * g, 7 * g], [1, 5.4 * g, 4.4 * g]], Object.assign({}, R, { lev: foldLev(6, { off: 0.4 }) }), GRP.cape, (lx, h, lz) => lz < 1.5 - h * 1.2);
           K.S(Sp([0, ch + 0.4, 5]), 1, Mt.gold, GRP.acc);
           break;
         }
