@@ -115,6 +115,8 @@ RB.creaturesA = (function () {
     };
     return { pts, inside, fill: (L, M, sh) => L.fill(x0, y0, x1, y1, inside, M, sh) };
   }
+  // fpoly(L, pts, M, sh): L.poly on the precompiled test (for big facets drawn every frame)
+  const fpoly = (L, pts, M, sh) => poly(pts).fill(L, M, sh);
 
   // stone(L, pts, M, o): the same dressed-stone shading as L.stone (pxkit), on the precompiled
   // polygon test — used for the many stones a posed golem, crab or clerk frame redraws.
@@ -366,12 +368,13 @@ RB.creaturesA = (function () {
   // ball(cx, cy, rx, ry, o) → a shading function (0 … 1) for a rounded form under the key light, in
   // crisp bands when quantised: a lit cap up-left, the mid tone, a core shadow, and a narrow band
   // of reflected light along the shadowed rim (o.refl) — volume without pillow shading.
-  // o.lift raises it all (a pale or glowing material), o.k sharpens the light/shadow split.
+  // o.lift raises it all (a pale or glowing material), o.k sharpens the light/shadow split,
+  // o.mirror for a form drawn in mirrored coordinates (the light stays upper left on screen).
   function ball(cx, cy, rx, ry, o) {
     o = o || {};
-    const lift = o.lift || 0, refl = o.refl == null ? 0.1 : o.refl, k = o.k || 1;
+    const lift = o.lift || 0, refl = o.refl == null ? 0.1 : o.refl, k = o.k || 1, mx = o.mirror ? -1 : 1;
     return (x, y) => {
-      const nx = (x - cx) / rx, ny = (y - cy) / (ry || rx), d = nx * nx + ny * ny;
+      const nx = (mx * (x - cx)) / rx, ny = (y - cy) / (ry || rx), d = nx * nx + ny * ny;
       const nz = Math.sqrt(Math.max(0, 1 - d));
       const f = -(nx * 0.56 + ny * 0.68) * k + nz * 0.42;
       let v = 0.46 + f * 0.5 + lift;
@@ -394,6 +397,6 @@ RB.creaturesA = (function () {
   // (onBuilt: set by 84a — the first idle frame of a creature built in a battle schedules the
   // prewarm of its action frames)
   const api = { FAMILIES, resolve, style, q, side, lerp, family, poly, stone, outline, deliver, queue, outcome, kit, audit, auditFamily, auditEnemy, K, onBuilt: null,
-    hramp, hmat, toward, stepOf, nudge, cast, flank, rim, despeckle, band, finish, ball };
+    fpoly, hramp, hmat, toward, stepOf, nudge, cast, flank, rim, despeckle, band, finish, ball };
   return api;
 })();
