@@ -327,6 +327,7 @@ let regTexts = 0;
     pages: PG && { COMPS: PG.COMPS, PQ: PG.PQ, PROJECT: PG.PROJECT, REPLY: PG.REPLY, RET: PG.RET, MEMO_TITLE: PG.MEMO_TITLE, TOPICS: PG.TOPICS, MEM: PG.MEM, SHOW: PG.SHOW },
     known: RB.known && { TYPES: RB.known.TYPES, STATE_WORD: RB.known.STATE_WORD },
     company: C.company,
+    wordplay: { content: C.wordplay, BAND: RB.wordplay && RB.wordplay.BAND, LEVEL: RB.wordplay && RB.wordplay.LEVEL }, // companion shiritori (docs/practice/wordplay.md)
   };
   for (const k in roots) walk(roots[k], k);
 }

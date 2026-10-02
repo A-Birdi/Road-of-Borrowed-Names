@@ -1,0 +1,175 @@
+/* Companion shiritori (src/ui/87_wordplay*.js): the table, its preparation sheet,
+ * results and look back, and the Wordplay card in Company. Paper on cloth like
+ * the folio; 44 px targets; Japanese in the text font; scenery compresses before
+ * the input does; reduced motion keeps every rule cue and drops the gestures. */
+.wp-folio .leafbox { grid-template-rows: minmax(0, 1fr); }
+.wp-folio .wp-leaf { padding-top: 10px; }
+.wp-folio .folio-head h2 .wp-with { font-weight: 400; font-size: 0.85em; color: var(--on-cloth-2); }
+.wp-leaf [hidden] { display: none !important; }
+.wp-kana { font-family: var(--jp-font); font-weight: 700; font-size: 1.25em; padding: 0 0.15em; color: var(--vermilion); }
+.wp-say { margin: 0.3em 0 0.5em; padding: 0.35em 0.6em; border-left: 3px solid var(--ribbon); background: rgba(255, 255, 255, 0.35); border-radius: 0 var(--r-2) var(--r-2) 0; }
+.wp-say .who { display: block; font-size: 0.8em; font-weight: 600; color: var(--ink-3); }
+.wp-say .jp, .wp-say .jline { display: block; }
+.wp-say .en { display: block; font-size: 0.92em; }
+.wp-head { display: flex; gap: 12px; align-items: flex-start; }
+.wp-head > div { min-width: 0; flex: 1; }
+.wp-face, .wp-face-pc { width: 72px; height: 72px; image-rendering: pixelated; border: 1px solid var(--paper-edge); border-radius: 4px; flex: none; background: var(--cloth-800); }
+.wp-mini { width: 32px; height: 32px; image-rendering: pixelated; border-radius: 3px; vertical-align: middle; margin-right: 0.35em; border: 1px solid var(--paper-edge); }
+
+/* ---- preparation ------------------------------------------------------------ */
+.wp-field { border: 0; padding: 0; margin: 0.7em 0; min-width: 0; }
+.wp-field legend { font-weight: 600; padding: 0; margin-bottom: 0.25em; }
+.wp-opt { display: flex; align-items: flex-start; gap: 0.55em; min-height: var(--tap); padding: 0.35em 0.4em; border-bottom: 1px dotted var(--rule); cursor: pointer; }
+.wp-opt input { width: 1.25em; height: 1.25em; margin: 0.15em 0 0; flex: none; accent-color: var(--ink); }
+.wp-opt input:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.wp-opt.off { color: var(--ink-3); cursor: not-allowed; }
+.wp-opt > span { min-width: 0; }
+.wp-waiting, .wp-nobank, .wp-journey, .wp-stamp { display: flex; gap: 0.6em; align-items: flex-start; padding: 0.5em 0.7em; margin: 0.6em 0; border: 1px dashed var(--paper-edge); border-radius: var(--r-2); background: rgba(255, 255, 255, 0.4); }
+.wp-journey { display: block; }
+.wp-waiting svg, .wp-nobank svg, .wp-stamp svg { width: 1.4em; height: 1.4em; flex: none; color: var(--ribbon-deep); margin-top: 0.15em; }
+.wp-prov svg, .wp-bond svg { width: 1.1em; height: 1.1em; vertical-align: -0.2em; margin-right: 0.3em; }
+.wp-prov { color: var(--warn-ink); }
+
+/* ---- the table ----------------------------------------------------------------- */
+.wp-table { display: grid; gap: 10px; grid-template-columns: minmax(0, 1fr); grid-template-areas: 'scene' 'status' 'entry' 'chain' 'help'; }
+.wp-scene { grid-area: scene; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: 'cpu board pc' 'say say say' 'gest gest gest'; gap: 4px 10px; align-items: center; position: relative; }
+.wp-seat { margin: 0; text-align: center; font-size: 0.8em; color: var(--ink-3); }
+.wp-cpu { grid-area: cpu; }
+.wp-pc { grid-area: pc; }
+.wp-board { grid-area: board; min-height: 48px; border-radius: 6px; background: linear-gradient(#8a6a44, #6e5232); box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.15), 0 3px 0 #4a3420; display: flex; align-items: center; justify-content: center; padding: 6px; }
+.wp-slips { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.wp-slips .slip { background: #fbf4e2; color: var(--ink); border: 1px solid var(--paper-edge); border-radius: 2px; padding: 0.15em 0.45em; font-size: 0.9em; box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25); }
+.wp-slips .slip[data-actor="cpu"] { transform: rotate(-2deg); }
+.wp-slips .slip[data-actor="pc"] { transform: rotate(2deg); }
+.wp-slips .slip:last-child { border-color: var(--ribbon-deep); }
+.wp-pet { position: absolute; right: 2px; top: 60px; width: 40px; height: 40px; image-rendering: pixelated; }
+.wp-scene .wp-say { grid-area: say; min-height: 2.6em; }
+.wp-scene .wp-say:empty { display: none; }
+.wp-gesture { grid-area: gest; margin: 0; font-style: italic; }
+.wp-status { grid-area: status; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; padding: 0.4em 0.6em; border: 1px solid var(--paper-edge); border-radius: var(--r-2); background: rgba(255, 255, 255, 0.45); }
+.wp-turn { font-weight: 600; }
+.wp-turn:focus { outline: none; }
+.wp-req { font-size: 1.05em; }
+.wp-req .wp-kana { font-size: 1.9em; vertical-align: -0.12em; }
+.wp-count { flex-basis: 100%; }
+.wp-restslip { flex-basis: 100%; border-top: 1px dotted var(--rule); }
+.wp-table[data-turn="cpu"] .wp-entry { opacity: 0.75; }
+.wp-chainbox { grid-area: chain; min-width: 0; }
+.wp-chainbox h4, .wp-card h4 { margin: 0.2em 0 0.3em; display: flex; align-items: center; gap: 0.35em; }
+.wp-chainbox h4 svg, .wp-card h4 svg { width: 1.1em; height: 1.1em; }
+.wp-chain { list-style: none; margin: 0; padding: 0; max-height: 15.5em; overflow: auto; border-top: 1px solid var(--rule); }
+.wp-slip { display: grid; grid-template-columns: 4.6em minmax(0, auto) minmax(0, 1fr) auto; gap: 0 0.6em; align-items: baseline; padding: 0.25em 0.2em; border-bottom: 1px solid var(--rule); }
+.wp-slip .by { font-size: 0.8em; color: var(--ink-3); font-weight: 600; }
+.wp-slip .w .jline { line-height: 1.9; }
+.wp-slip .r { color: var(--ink-2); font-size: 0.9em; }
+.wp-slip .m { color: var(--ink-2); font-size: 0.9em; overflow-wrap: anywhere; grid-column: 2 / 4; }
+.wp-slip .t { grid-row: 1; grid-column: 4; white-space: nowrap; }
+.wp-slip .also { grid-column: 2 / -1; color: var(--ink-3); }
+.wp-slip.last { background: rgba(193, 138, 42, 0.13); box-shadow: inset 4px 0 0 var(--ribbon); }
+.wp-slip[data-actor="start"] .by { color: var(--ink-2); font-style: italic; }
+.wp-entry { grid-area: entry; min-width: 0; }
+.wp-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+.wp-tab[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); box-shadow: 0 2px 0 var(--ribbon-deep); }
+.wp-pane { min-width: 0; }
+.wp-pane .pad-area { max-width: 520px; }
+/* in shiritori there is no target word, so the pad's stroke model for "the answer" does not apply
+   (the chart still shows any character's strokes) */
+.wp-pane .pad-area [data-a="model"] { display: none; }
+.wp-pane input[type="text"], .wp-filter { font: inherit; font-family: var(--jp-font); font-size: 1.15em; min-height: var(--tap); width: min(100%, 22em); padding: 0 0.5em; border: 1px solid var(--ink-3); border-radius: var(--r-1); background: #fffaf0; color: var(--ink); box-sizing: border-box; }
+.wp-pane input:focus-visible, .wp-filter:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+.ime-lab { display: block; font-weight: 600; margin-bottom: 0.25em; }
+.wp-pickhead { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.wp-pickhead .wp-filter { width: 6em; }
+.wp-bank { list-style: none; margin: 0.3em 0 0; padding: 0; max-height: 18em; overflow: auto; border-top: 1px solid var(--rule); }
+.wp-word { display: grid; grid-template-columns: minmax(0, auto) minmax(0, auto) minmax(0, 1fr) auto auto; gap: 0 0.6em; align-items: baseline; width: 100%; min-height: var(--tap); padding: 0.25em 0.4em; text-align: left; font: inherit; background: transparent; border: 0; border-bottom: 1px solid var(--rule); color: var(--ink); }
+button.wp-word { cursor: pointer; }
+button.wp-word:hover { background: rgba(193, 138, 42, 0.1); }
+button.wp-word:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: -3px; }
+button.wp-word[aria-disabled="true"] { color: var(--ink-3); text-decoration: line-through; text-decoration-color: var(--ink-3); cursor: not-allowed; }
+.wp-word .m { color: var(--ink-2); font-size: 0.9em; overflow-wrap: anywhere; }
+.wp-word .tag { font-size: 0.78em; border: 1px solid var(--ink-3); border-radius: 3px; padding: 0 0.3em; color: var(--ink-2); white-space: nowrap; }
+.wp-word .tag.n { border-style: dashed; }
+.wp-locked { padding: 0.5em; border: 1px dashed var(--paper-edge); border-radius: var(--r-2); }
+.wp-draft { margin-top: 8px; padding: 0.45em 0.6em; border: 1px solid var(--paper-edge); border-radius: var(--r-2); background: rgba(255, 255, 255, 0.5); }
+.wp-dline .w { font-family: var(--jp-font); font-size: 1.2em; }
+.wp-dmsg { min-height: 1.5em; }
+.wp-dmsg.flash { animation: wp-flash 0.6s ease-out 1; }
+@keyframes wp-flash { from { background: rgba(193, 138, 42, 0.35); } to { background: transparent; } }
+.wp-readings, .wp-senses { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 0.3em 0; }
+.wp-readings .pbtn[aria-pressed="true"], .wp-senses .pbtn[aria-pressed="true"] { background: var(--paper-2); box-shadow: inset 0 -3px 0 var(--ribbon); text-decoration: none; }
+.wp-dacts { margin-bottom: 0.2em; }
+.wp-warn { margin-top: 0.4em; padding: 0.5em 0.7em; border: 2px solid var(--danger-ink); background: var(--danger-bg); border-radius: var(--r-2); }
+.wp-warn p { margin: 0 0 0.3em; font-weight: 600; color: var(--danger-ink); display: flex; gap: 0.4em; align-items: flex-start; }
+.wp-warn svg { width: 1.2em; height: 1.2em; flex: none; }
+.wp-help { grid-area: help; }
+.wp-stuckbox { padding: 0.4em 0.6em; border: 1px dashed var(--paper-edge); border-radius: var(--r-2); }
+
+/* wide: the scene and the chain beside the writing */
+@media (min-width: 900px) {
+  .wp-table { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); grid-template-rows: auto auto minmax(0, 1fr) auto; grid-template-areas: 'scene entry' 'status entry' 'chain entry' 'chain help'; align-items: start; }
+  .wp-chain { max-height: 22em; }
+}
+/* short landscape phones: the scenery compresses before the input does */
+@media (max-height: 500px) and (orientation: landscape) {
+  .wp-table { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); grid-template-rows: auto auto minmax(0, 1fr) auto; grid-template-areas: 'status entry' 'scene entry' 'chain entry' 'chain help'; align-items: start; }
+  .wp-face, .wp-face-pc { width: 48px; height: 48px; }
+  .wp-board { min-height: 36px; }
+  .wp-gesture { display: none; }
+  .wp-chain { max-height: 9em; }
+}
+@media (max-width: 420px) {
+  .wp-face, .wp-face-pc { width: 56px; height: 56px; }
+  .wp-slip { grid-template-columns: 3.8em minmax(0, 1fr) auto; }
+  .wp-slip .r { grid-column: 2; }
+  .wp-slip .m { grid-column: 2 / -1; }
+  .wp-slip .t { grid-column: 3; }
+  .wp-word { grid-template-columns: minmax(0, auto) minmax(0, 1fr) auto; }
+  .wp-word .m { grid-column: 1 / -1; }
+}
+
+/* gestures: short, finite, none with reduced motion */
+.wp-seat.mv .wp-face { animation: wp-lean 0.6s ease-out 1; }
+.wp-seat[data-motion="arrange"].mv .wp-face { animation-name: wp-arrange; }
+.wp-seat[data-motion="lamp"].mv .wp-face { animation-name: wp-lamp; }
+.wp-seat[data-motion="flourish"].mv .wp-face { animation-name: wp-flourish; }
+@keyframes wp-lean { 40% { transform: translateY(3px) scale(1.04); } }
+@keyframes wp-arrange { 30% { transform: translateX(-3px); } 60% { transform: translateX(3px); } }
+@keyframes wp-lamp { 50% { filter: brightness(1.18); } }
+@keyframes wp-flourish { 40% { transform: rotate(-4deg); } 70% { transform: rotate(3deg); } }
+.wp-pet.tilt { animation: wp-tilt 0.6s ease-out 1; }
+.wp-pet.hop { animation: wp-hop 0.6s ease-out 1; }
+@keyframes wp-tilt { 50% { transform: rotate(-12deg); } }
+@keyframes wp-hop { 40% { transform: translateY(-6px); } }
+body.reduced-motion .wp-seat.mv .wp-face, body.reduced-motion .wp-pet, body.reduced-motion .wp-dmsg.flash { animation: none !important; }
+
+/* ---- result, rules, look back ------------------------------------------------------- */
+.wp-reason { font-size: 1.02em; }
+.wp-bond { color: var(--ink-2); }
+.wp-rulelist li { margin: 0.25em 0; }
+.wp-turnbtn { display: contents; font: inherit; color: inherit; }
+.wp-review-chain .wp-slip { padding: 0; }
+.wp-review-chain .wp-turnbtn { display: grid; grid-template-columns: inherit; width: 100%; min-height: var(--tap); padding: 0.25em 0.2em; background: transparent; border: 0; text-align: left; cursor: pointer; grid-column: 1 / -1; gap: 0 0.6em; grid-template-columns: 4.6em minmax(0, auto) minmax(0, 1fr) auto; align-items: baseline; }
+.wp-review-chain .wp-turnbtn:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: -3px; }
+.wp-review-chain .wp-slip.sel { background: rgba(193, 138, 42, 0.16); box-shadow: inset 4px 0 0 var(--ribbon); }
+.wp-review-chain .wp-slip.before .w { opacity: 0.8; }
+.wp-turninfo { margin-top: 0.5em; padding: 0.4em 0.6em; border: 1px dashed var(--paper-edge); border-radius: var(--r-2); }
+.wp-turninfo h4 { margin: 0 0 0.2em; }
+.wp-trlist .wp-tr { width: 100%; justify-content: flex-start; flex-wrap: wrap; text-align: left; height: auto; padding: 0.3em 0.6em; }
+
+/* ---- Company › Wordplay ----------------------------------------------------------- */
+.wp-card .row-acts { margin: 0.3em 0 0.4em; }
+.wp-grid { border-collapse: collapse; width: 100%; margin: 0.4em 0; font-size: 0.92em; }
+.wp-grid th, .wp-grid td { border: 1px solid var(--rule); padding: 0.3em 0.35em; text-align: center; vertical-align: middle; }
+.wp-grid th[scope="row"] { text-align: left; font-weight: 600; }
+.wp-grid thead th { font-weight: 600; color: var(--ink-2); }
+.wp-cell[data-state="none"] { color: var(--ink-3); }
+.wp-cell[data-state="won"] { font-weight: 700; color: var(--ink); background: rgba(168, 62, 39, 0.07); }
+.wp-ink { display: block; font-size: 1.2em; line-height: 1; color: var(--ink-3); }
+.wp-ink.won { color: var(--vermilion); }
+.wp-mark { display: block; font-size: 0.75em; color: var(--ink-2); border-top: 1px dotted var(--rule); margin-top: 0.15em; }
+.wp-latest p { margin: 0.1em 0; }
+.wp-row { margin: 0.3em 0; }
+.wp-receipts summary { cursor: pointer; min-height: var(--tap); display: flex; align-items: center; font-weight: 600; }
+.wp-receipts ul { padding-left: 1.1em; }
+.wp-receipts li { margin: 0.4em 0; }
+.wp-reflect .pbtn { margin-left: auto; }

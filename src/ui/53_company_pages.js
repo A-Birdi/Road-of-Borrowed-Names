@@ -273,9 +273,14 @@ RB.ui.companyPages = (function () {
       '<div class="row-acts"><button class="pbtn" data-co-recall="' + esc(m.id) + '" aria-pressed="' + !!sel + '">' + I('history') + L('{思|おも}い{出|だ}す', 'Recollect') + '</button>' +
       refButton(m) + '</div></div></li>';
   }
+  // a memory's link to a record another system owns (Practice addendum: Wordplay receipts):
+  // addRef(kind, { html(m) -> string with data-co-ref="<kind>", click(button, s, api) })
+  const REFS = {};
+  function addRef(kind, def) { REFS[kind] = def; }
   function refButton(m) {
     const r = m.ref;
     if (!r) return '';
+    if (REFS[r.kind]) { try { return REFS[r.kind].html(m) || ''; } catch (e) { return ''; } }
     if (r.kind === 'keepsake' && RB.content.keepsakes && RB.content.keepsakes[r.id]) return '<button class="pbtn quiet" data-co-ref="keepsakes">' + I('keepsake') + 'See the keepsake</button>';
     if (r.kind === 'case' && RB.cases) return '<button class="pbtn quiet" data-co-ref="cases" data-id="' + esc(r.id) + '">' + I('scroll') + L('{記録|きろく} を {開|ひら}く', 'Open the case') + '</button>';
     return '';
@@ -343,6 +348,7 @@ RB.ui.companyPages = (function () {
       if (b.dataset.coRecall) { V.sel = b.dataset.coRecall; if (!two) V.detail = 'recall'; api.render(); return; }
       if (b.hasAttribute('data-co-back')) { V.detail = null; api.render(); return; }
       if (b.dataset.coRef === 'cases' && b.dataset.id && RB.cases && RB.cases.show) { api.remember(); RB.cases.show(b.dataset.id); return; }
+      if (REFS[b.dataset.coRef]) { api.remember(); REFS[b.dataset.coRef].click(b, s, api); return; }
       if (b.dataset.coRef) api.go('journey', b.dataset.coRef);
     };
     A.addEventListener('click', click);
@@ -382,5 +388,5 @@ RB.ui.companyPages = (function () {
   }
   for (const ev of ['company:changed', 'company:talk', 'map:enter', 'company:bond']) RB.bus.on(ev, () => setTimeout(hudUpdate, 0));
 
-  return { converse, recollection, hudUpdate, addSection };
+  return { converse, recollection, hudUpdate, addSection, addRef };
 })();
