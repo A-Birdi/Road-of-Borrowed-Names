@@ -1,0 +1,104 @@
+/* Fishing pace (Practice addendum §7, §20.2; src/ui/69_pace.js): the Pace bar on
+ * the challenge frame, the Ready card, the pause/expiry sheet, the pad's repair
+ * row and the Pace control for the fishing preparation sheet. Targets are at
+ * least 44 px (--tap); every state is said in words, never by colour alone. */
+
+/* ---- the bar (on cloth, under the challenge title) ---------------------------------- */
+.pace-bar {
+  position: relative; z-index: 2; flex: none; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px;
+  margin: 0 2px 6px; padding: 4px 8px; border: 1px dashed var(--thread); border-radius: var(--r-2);
+  color: var(--on-cloth); font-size: 0.92em; line-height: 1.3;
+}
+.pace-lab { font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.82em; color: var(--on-cloth-2); }
+.pace-mode { font-weight: 600; min-width: 0; overflow-wrap: anywhere; }
+.pace-line { flex: none; width: 7.5em; height: 1.65em; overflow: visible; }
+.pace-line .rod { stroke: var(--on-cloth-2); stroke-width: 2.4; stroke-linecap: round; fill: none; }
+.pace-line .ln { stroke: var(--on-cloth); stroke-width: 1.6; fill: none; stroke-linecap: round; transition: d 0.2s linear; }
+.pace-line .fl { fill: var(--vermilion); stroke: var(--on-cloth); stroke-width: 1; }
+.pace-bar.dashed .pace-line .ln { stroke-dasharray: 4 3; }
+.pace-secs { font-variant-numeric: tabular-nums; font-weight: 600; }
+.pace-st { flex: 1 1 10em; min-width: 0; color: var(--on-cloth-2); overflow-wrap: anywhere; }
+.pace-bar[data-state="paused"] .pace-st, .pace-bar[data-state="expired"] .pace-st { color: var(--on-cloth); font-weight: 600; }
+.pace-acts { display: flex; flex-wrap: wrap; gap: 6px; margin-left: auto; }
+.pace-b { padding: 0 0.75em; }
+.pace-b svg { width: 1.1em; height: 1.1em; }
+body.reduced-motion .pace-line .ln { transition: none; }
+@media (prefers-reduced-motion: reduce) { .pace-line .ln { transition: none; } }
+
+/* ---- before Ready: the task is readable, the answer area waits ------------------------ */
+.chal.pace-gated .chal-sheet > .pane, .chal.pace-gated .chal-answer { display: none !important; }
+.chal.pace-gated .chal-frame { height: auto; max-height: min(820px, calc(100% - 24px)); }
+.pace-cover { display: flex; flex-direction: column; gap: 8px; padding: 4px 2px; color: var(--ink); }
+.pace-cover p { margin: 0; }
+.pace-gh { font-size: 1.05em; }
+.pace-gn { color: var(--warn-ink); font-weight: 600; }
+.pace-gx { color: var(--ink-2); }
+.pace-repr { border: 1px solid var(--rule); border-radius: var(--r-1); padding: 4px 10px 8px; margin: 0; display: flex; flex-wrap: wrap; gap: 4px 14px; }
+.pace-repr legend { padding: 0 4px; font-weight: 600; font-size: 0.92em; }
+.pace-repr label, .pace-check, .pace-opt { display: flex; align-items: center; gap: 0.5em; min-height: var(--tap); cursor: pointer; }
+.pace-repr input, .pace-check input, .pace-opt input { width: 1.25em; height: 1.25em; flex: none; margin: 0; accent-color: var(--ink); }
+.pace-gacts, .pace-vacts { display: flex; flex-wrap: wrap; gap: 8px; }
+.pace-ready { min-width: 8em; }
+.pace-ready svg, .pace-vacts svg { width: 1.1em; height: 1.1em; }
+
+/* ---- the pause / expiry sheet over the task (the bar stays visible above it) ---------- */
+.pace-veil {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; display: flex; align-items: flex-start; justify-content: center;
+  padding: 12px; background: rgba(12, 15, 32, 0.88); border-radius: 0 0 10px 10px; overflow-y: auto;
+}
+/* centred by auto margins, which fall back to the top when the card is taller than the
+ * sheet (so it scrolls instead of being cut off above) */
+.pace-card {
+  margin: auto 0; max-width: min(32em, 100%); background: var(--paper); color: var(--ink); border: 1px solid var(--paper-edge); border-radius: var(--r-1);
+  box-shadow: 0 2px 0 var(--paper-3), 0 10px 30px rgba(0, 0, 0, 0.45); padding: 14px 16px; display: flex; flex-direction: column; gap: 10px;
+}
+.pace-card p { margin: 0; }
+.pace-exp { font-size: 1.12em; line-height: 1.45; }
+.pace-card .pbtn:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+
+/* ---- the pad's repair row (pace attempts only; always present, so the canvas keeps its size) */
+.pad-repair { flex: 1 0 100%; display: flex; justify-content: flex-end; }
+.pad-repair .pbtn { padding: 0 0.8em; font-size: 0.9em; }
+.pad-repair .pbtn svg { width: 1.2em; height: 1.2em; }
+.fbwrap .fb-misread { margin-top: 6px; }
+.fbwrap .fb-misread svg { width: 1.2em; height: 1.2em; }
+
+/* ---- the Pace control (a preparation sheet embeds it; RB.pace.openSetup shows it alone) */
+.pace-setup { border: 1px solid var(--rule); border-radius: var(--r-1); padding: 6px 12px 10px; margin: 0; display: flex; flex-direction: column; gap: 6px; color: var(--ink); min-width: 0; }
+.pace-setup legend { padding: 0 4px; font-weight: 700; font-family: var(--serif); font-size: 1.1em; }
+.pace-setup p { margin: 0; }
+.pace-what, .pace-how { color: var(--ink-2); }
+.pace-opts { display: flex; flex-direction: column; gap: 2px; }
+.pace-opt { align-items: flex-start; padding: 6px 4px; border-radius: var(--r-1); }
+.pace-opt input { margin-top: 0.2em; }
+.pace-opt:hover { background: var(--paper-2); }
+.pace-opt .t { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.pace-opt .d { color: var(--ink-2); font-size: 0.92em; }
+.pace-custom { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 4px; }
+.pace-custom .pbtn { min-width: var(--tap); padding: 0; font-size: 1.15em; }
+.pace-seclab { display: inline-flex; align-items: center; gap: 0.4em; }
+.pace-seclab input { width: 4.2em; min-height: var(--tap); font: inherit; padding: 0 0.4em; border: 1px solid var(--ink-3); border-radius: var(--r-1); background: var(--pad-paper, #fffaf0); color: var(--ink); }
+.pace-seclab input:focus-visible, .pace-opt input:focus-visible, .pace-check input:focus-visible, .pace-repr input:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.pace-buckets { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; font-size: 0.92em; }
+.pace-buckets li { display: flex; flex-wrap: wrap; gap: 2px 10px; border-bottom: 1px dotted var(--rule); padding-bottom: 3px; }
+.pace-buckets .k { flex: 1 1 14em; min-width: 0; }
+.pace-buckets .v { color: var(--ink-2); }
+.pace-recal { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.pace-recal .small { color: var(--ink-2); flex: 1 1 12em; }
+.pace-comfort { display: flex; flex-wrap: wrap; gap: 8px; }
+.pace-sheet .leaf { padding: 10px 12px; }
+.pace-dev .pace-tab { border-collapse: collapse; width: 100%; font-size: 0.88em; }
+.pace-dev .pace-tab th, .pace-dev .pace-tab td { border-bottom: 1px solid var(--rule); padding: 3px 6px; text-align: left; vertical-align: top; }
+.pace-dev h3 { margin: 10px 0 4px; font-size: 1em; }
+
+/* short landscape pins the writing sheet in view (60_learning.css); before Ready it
+ * holds only the Ready card, which must scroll with the task instead */
+@media (max-height: 559px) and (min-width: 600px) {
+  .chal.pace-gated[data-mode="hand"] .chal-work { position: static; height: auto; min-height: 0; }
+}
+@media (max-width: 599px), (max-height: 559px) {
+  .pace-bar { margin: 0 0 4px; padding: 2px 6px; gap: 2px 8px; font-size: 0.86em; }
+  .pace-line { width: 5em; }
+  .pace-st { flex-basis: 8em; }
+  .pace-b { padding: 0 0.6em; }
+}

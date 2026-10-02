@@ -191,6 +191,8 @@ RB.pad = (function () {
 
   function create(host, opts) {
     opts = opts || {};
+    // fishing pace hooks (src/ui/69_pace.js), passed only by RB.pace.attempt; null for every other pad
+    const PH = opts.pace || null;
     const el = RB.ui.el('div', 'pad-area');
     el.innerHTML =
       '<div class="pad-hold"><div class="pad-box"><canvas class="pad-bg" aria-hidden="true"></canvas><canvas class="pad-ink" role="img" aria-label="Writing pad: draw one character"></canvas></div></div>' +
@@ -226,6 +228,10 @@ RB.pad = (function () {
     const candsEl = el.querySelector('.cands');
     const readas = el.querySelector('.readas');
     const live = el.querySelector('.pad-inspect [aria-live]');
+    // Practice addendum §4.2: "That is not what I wrote", even after a confident reading.
+    // Its own row, present for the whole pace attempt, so the canvas never resizes.
+    const misread = PH ? RB.ui.el('div', 'pad-repair', '<button class="pbtn" data-a="notwrote" disabled>' + I('unsure') + '<span>That is not what I wrote</span></button>') : null;
+    if (misread) el.querySelector('.pad-inspect').appendChild(misread);
     const P = {
       strokes: [],      // [[{x,y,t}]] in 0..1 box units
       cur: null,        // stroke in progress
@@ -345,6 +351,7 @@ RB.pad = (function () {
       try { ink.setPointerCapture(e.pointerId); } catch (err) { /* synthetic pointers */ }
       P.pointerId = e.pointerId;
       P.cur = [pos(e)];
+      if (PH) PH.stroke('down', e);
       RB.audio && RB.audio.sfx('pen_down', { vol: 0.4 });
       redraw();
     });
@@ -359,8 +366,10 @@ RB.pad = (function () {
       }
       redraw();
     });
-    const end = (e, cancelled) => {
+    const end = (e, cancelled, lost) => {
       if (e.pointerId !== P.pointerId) return;
+      // a cancelled pointer or capture lost mid-stroke is unexpected; a normal release is not
+      if (PH) PH.stroke(lost ? 'lost' : cancelled ? 'cancel' : 'up', e);
       P.pointerId = null;
       if (!P.cur) return;
       if (!cancelled) P.strokes.push(P.cur);
@@ -373,7 +382,7 @@ RB.pad = (function () {
     };
     ink.addEventListener('pointerup', (e) => end(e, false));
     ink.addEventListener('pointercancel', (e) => end(e, true));
-    ink.addEventListener('lostpointercapture', (e) => { if (P.pointerId === e.pointerId) end(e, false); });
+    ink.addEventListener('lostpointercapture', (e) => { if (P.pointerId === e.pointerId) end(e, false, true); });
     // Block page scroll/zoom gestures over the writing canvas only.
     for (const t of ['touchstart', 'touchmove']) ink.addEventListener(t, (e) => e.preventDefault(), { passive: false });
     ink.addEventListener('contextmenu', (e) => e.preventDefault());
@@ -390,10 +399,13 @@ RB.pad = (function () {
       const strokes = P.strokes.map((s) => s.map((p) => ({ x: p.x * BOX, y: p.y * BOX, t: p.t })));
       try {
         const kanji = P.mode === 'kanji';
+        if (PH) PH.busy(true); // input-blocked processing is left out of a pace, once
         P.result = RB.recog.recognize(strokes, { box: { w: BOX, h: BOX }, script: kanji ? P.kanaScript : P.mode, kanji, smallToggle: P.small });
       } catch (err) {
         P.result = { status: 'nonsense', candidates: [], notes: ['error'] };
         console.error(err);
+      } finally {
+        if (PH) PH.busy(false);
       }
       renderRead();
     }
@@ -428,6 +440,11 @@ RB.pad = (function () {
       const conf = el.querySelector('[data-a=confirm]');
       candsEl.innerHTML = '';
       P.list = [];
+      if (PH) {
+        // while a pace is stopped for review, one press inserts the character and continues
+        conf.lastChild.textContent = PH.reviewing() ? 'Confirm character & continue' : 'Confirm';
+        misread.firstChild.disabled = !(r && r.status !== 'empty' && P.strokes.length);
+      }
       if (!r || r.status === 'empty') {
         setRead(P.strokes.length ? 'wait' : 'empty', P.strokes.length ? 'Reading…' : emptyCaption(), '');
         conf.disabled = true;
@@ -498,7 +515,7 @@ RB.pad = (function () {
       b.setAttribute('lang', 'ja');
       b.setAttribute('aria-label', 'I meant ' + (small ? 'small ' : '') + spoken(cd.ch) + (twin ? ', the same shape' : ''));
       b.title = twin ? 'The same shape as a different character: choose the one you meant' : 'Similarity ' + Math.round(cd.score * 100) + '% (a match score, not a probability)';
-      b.onclick = () => { P.pick = cd.ch; renderRead(); };
+      b.onclick = () => { P.pick = cd.ch; if (PH) PH.review('candidate'); renderRead(); };
       return b;
     }
     // Show as many other readings as fit on the row beside Confirm (the rest
@@ -534,6 +551,7 @@ RB.pad = (function () {
       }
       put(entry);
       if (assisted) P.onAssist('correction');
+      if (PH) PH.confirmed();
       clearInk();
       RB.audio && RB.audio.sfx('confirm', { vol: 0.5 });
     }
@@ -620,6 +638,12 @@ RB.pad = (function () {
       if (a === 'chart') chart();
       if (a === 'kanji') setMode('kanji', true);
       if (a === 'model') opts.modelFor && showModel(opts.modelFor());
+      if (a === 'notwrote' && PH) {
+        // recognition repair: stops a pace, costs nothing, never a Japanese mistake
+        PH.review('repair');
+        renderRead();
+        live.textContent = 'Choose the character you meant, write it again, or pick it from the chart. This does not count against you.';
+      }
     };
     el.addEventListener('click', onClick);
     if (opts.composeHost) comp.addEventListener('click', onClick);
@@ -651,6 +675,7 @@ RB.pad = (function () {
         };
       },
       hasPending() { return P.strokes.length > 0; },
+      strokeActive() { return P.pointerId != null; },
       confirmPending() { if (P.result && P.result.candidates && P.result.candidates.length) confirm(); },
       reset() { P.chars = []; P.cursor = 0; P.replace = -1; clearInk(); renderStrip(); },
       remove,

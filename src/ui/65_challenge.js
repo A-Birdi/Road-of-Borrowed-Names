@@ -86,6 +86,9 @@ RB.challenge = (function () {
       if (step.kind === 'write' && !MODES.some((m) => m.id === mode)) mode = 'hand';
       const res = { ok: false, firstTry: null, mistakes: 0, assisted: false, mode: null, recogMisses: 0 };
       active = { step, helpUsed: false };
+      // Fishing pace hooks (src/ui/69_pace.js): passed only by RB.pace.attempt.
+      // Without them (every other challenge) nothing here is timed or changes.
+      const PH = opts.pace || null;
       const canLeave = opts.allowCancel !== false;
       const tid = 'chal-t' + Math.random().toString(36).slice(2, 7);
       const wrap = RB.ui.el('div', 'chal');
@@ -131,7 +134,7 @@ RB.challenge = (function () {
         const trSlot = wrap.querySelector('.task-tr');
         trSlot.innerHTML = step.ctx && step.ctx.jp && step.ctx.en && !showEn ? '<button class="pbtn quiet tr" data-a="tr" title="Show the English (counts as assisted)">' + I('note') + '<span>Translate <span class="aside">(assisted)</span></span></button>' : '';
         const tr = trSlot.querySelector('[data-a=tr]');
-        if (tr) tr.onclick = () => { showEn = true; active.helpUsed = true; renderCtx(); };
+        if (tr) tr.onclick = () => { showEn = true; active.helpUsed = true; if (PH) PH.assist('translation'); renderCtx(); };
       }
 
       // ---- 2 · the sheet: one pane per input mode, kept when switching ----
@@ -144,8 +147,9 @@ RB.challenge = (function () {
             kanji: kanaTask(step) ? false : undefined,
             guide: step.copy ? Array.from(plain(step.answer))[0] : null,
             composeHost: line,
-            onChange: () => { if (step.copy && pad) pad.setGuide(Array.from(plain(step.answer))[pad.text().length] || null); },
-            onAssist: (why) => { if (why !== 'model' || !step.copy) active.helpUsed = true; },
+            pace: PH,
+            onChange: () => { if (step.copy && pad) pad.setGuide(Array.from(plain(step.answer))[pad.text().length] || null); if (PH) PH.draft(); },
+            onAssist: (why) => { if (why !== 'model' || !step.copy) active.helpUsed = true; if (PH) PH.assist(why); },
             modelFor: () => Array.from(plain(step.answer))[pad ? Math.min(pad.text().length, Array.from(plain(step.answer)).length - 1) : 0],
           });
         },
@@ -254,6 +258,7 @@ RB.challenge = (function () {
         }
         if (wrap.querySelector('.fbwrap.hint')) setHint();
         syncSubmit();
+        if (PH) PH.modeShown(m, how);
       }
       function syncSubmit() {
         let ready = true;
@@ -267,7 +272,7 @@ RB.challenge = (function () {
         w.className = 'fbwrap hint';
         wrap.classList.remove('fb-on');
         w.removeAttribute('data-fb');
-        w.innerHTML = '<span class="muted">' + (mode === 'choice' ? (step.kind === 'choose' ? 'Choose the best answer. A wrong choice can be tried again.' : 'Choose the answer. Nothing is timed.') : 'Take your time — nothing happens until you submit.') + '</span>';
+        w.innerHTML = '<span class="muted">' + ((PH && PH.hint(mode)) || (mode === 'choice' ? (step.kind === 'choose' ? 'Choose the best answer. A wrong choice can be tried again.' : 'Choose the answer. Nothing is timed.') : 'Take your time — nothing happens until you submit.')) + '</span>';
       }
 
       // ---- 3 · answer and feedback ----
@@ -305,6 +310,7 @@ RB.challenge = (function () {
         if (tabsApi) tabsApi.el.querySelectorAll('.ptab').forEach((b) => b.setAttribute('aria-disabled', 'true'));
       }
       function success(modeUsed, notes) {
+        if (PH) PH.outcome('ok');
         lock();
         res.ok = true;
         res.mode = modeUsed;
@@ -322,6 +328,7 @@ RB.challenge = (function () {
         if (opts.autoContinue) setTimeout(() => { if (wrap.isConnected) finish(false); }, opts.autoContinue);
       }
       function evaluate(text, modeUsed, meta) {
+        if (PH) PH.submit(modeUsed); // stamped before evaluation: on time stays on time
         const r = check(text, step, { handwritten: modeUsed === 'hand' });
         if (r.ok) {
           if (meta.assisted) active.helpUsed = true;
@@ -331,23 +338,38 @@ RB.challenge = (function () {
         // Wrong: was it the recognizer's uncertainty or a language mistake?
         if (modeUsed === 'hand' && meta.uncertain) {
           res.recogMisses++;
+          if (PH) PH.outcome('unsure');
           RB.audio && RB.audio.sfx('recog_unsure');
           fb('unsure', 'I could not read that clearly',
             '<p>This doesn\'t count against you. Your answer reads <span class="jp big" lang="ja">' + ownText(text) + '</span> — if you meant something else, tap it to rewrite it, or use the chart.</p>');
           return;
         }
+        const firstBefore = res.firstTry;
         res.mistakes++;
         if (res.firstTry == null) res.firstTry = false;
+        if (PH) PH.outcome('wrong');
         RB.audio && RB.audio.sfx('answer_wrong');
         const msgs = (r.feedback || []).map((f) => '<div class="fb-why">' + (f.jp && !/\{[^|}]+\|/.test(f.en || '') ? RB.ui.jhtml(f.jp) + ' ' : '') + enRuby(f.en) + '</div>').join('') || '<div class="fb-why">That isn\'t what this needs.</div>';
         fb('no', 'Not quite.', '<p>You gave <span class="jp big" lang="ja">' + ownText(plain(text)) + '</span>.</p>' + msgs + '<p class="muted small">Try again — take all the time you need.</p>');
         if (opts.onMistake) opts.onMistake(r);
-        if (pad && modeUsed === 'hand') pad.reset();
+        if (PH && modeUsed === 'hand') {
+          // a pace attempt keeps the draft, and a misread the player reports is a recognition
+          // repair (Practice addendum §4.2, §6.4): no mistake, no Japanese error, no cost
+          const mis = RB.ui.el('button', 'pbtn fb-misread', I('unsure') + '<span>That is not what I wrote</span>');
+          mis.onclick = () => {
+            res.mistakes--; res.firstTry = firstBefore; res.recogMisses++;
+            PH.outcome('misread');
+            fb('unsure', 'That does not count against you', '<p>Tap the character the pad misread in your answer, write it again, then submit.</p>');
+          };
+          wrap.querySelector('.fbwrap').appendChild(mis);
+        } else if (pad && modeUsed === 'hand') pad.reset();
       }
       function evaluateChoice(o, btn) {
+        if (PH) PH.submit('choice');
         if (o.ok) { btn.classList.add('on'); success('choice'); return; }
         res.mistakes++;
         if (res.firstTry == null) res.firstTry = false;
+        if (PH) PH.outcome('wrong');
         btn.disabled = true;
         btn.classList.add('tried');
         RB.audio && RB.audio.sfx('answer_wrong');
@@ -357,9 +379,11 @@ RB.challenge = (function () {
       function evaluateOrder(arr) {
         const norm = (a) => a.map(plain).join('');
         const alts = [step.answer].concat(step.alts || []);
+        if (PH) PH.submit('order');
         if (alts.some((a) => norm(a) === norm(arr))) { success('choice'); return; }
         res.mistakes++;
         if (res.firstTry == null) res.firstTry = false;
+        if (PH) PH.outcome('wrong');
         RB.audio && RB.audio.sfx('answer_wrong');
         fb('no', 'Not quite.', '<div class="fb-why">' + (step.orderHint ? esc(step.orderHint.en) : 'Check where the particles and the verb go.') + '</div><p class="muted small">Try again.</p>');
         if (opts.onMistake) opts.onMistake({});
@@ -380,6 +404,7 @@ RB.challenge = (function () {
       function revealAnswer() {
         active.helpUsed = true;
         res.assisted = true;
+        if (PH) PH.assist('reveal');
         let ans = '';
         if (step.kind === 'write') ans = plain(step.answer);
         if (step.kind === 'choose') ans = (step.options.find((o) => o.ok) || {}).en || (step.options.find((o) => o.ok) || {}).jp || '';
@@ -418,6 +443,7 @@ RB.challenge = (function () {
       if (vv) { vv.addEventListener('resize', syncVV); vv.addEventListener('scroll', syncVV); }
 
       function finish(cancelled) {
+        if (PH) PH.finish(cancelled, res);
         if (vv) { vv.removeEventListener('resize', syncVV); vv.removeEventListener('scroll', syncVV); }
         if (tabsApi) { tabsApi.destroy(); tabsApi = null; }
         if (pad) { pad.destroy(); pad = null; }
@@ -440,6 +466,7 @@ RB.challenge = (function () {
         else if (a === 'reveal' && !locked) revealAnswer();
       });
       layer.onAction = (a, e) => {
+        if (PH && PH.onAction(a, e)) return true; // the pace's own pause/expiry sheet answers first
         // Backspace while writing edits the answer line instead of leaving
         if (a === 'cancel' && e && e.code === 'Backspace' && mode === 'hand' && pad && !locked) { pad.remove(); return true; }
         if (a === 'cancel' && canLeave && !locked) { finish(true); return true; }
@@ -459,6 +486,7 @@ RB.challenge = (function () {
       showMode(mode, 'init');
       RB.ui.pushLayer(layer);
       syncVV();
+      if (PH) PH.mount({ wrap, frame: $('.chal-frame'), body, sheet, answer: $('.chal-answer'), layer, step, mode: () => mode, pad: () => pad, ime: () => ime, finish, setHint: () => { if (wrap.querySelector('.fbwrap.hint')) setHint(); } });
     });
   }
 
