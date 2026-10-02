@@ -113,7 +113,11 @@ RB.pace = (function () {
     const customSec = o.budgetSec != null ? o.budgetSec : settings.fishingCustomSec;
     const measureOff = !!settings.fishingPaceMeasure;
     const reps = C.representations(step).filter((r) => r !== 'select');
-    let repr = reps.length > 1 ? (o.representation && reps.indexOf(o.representation) >= 0 ? o.representation : (RB.pad && RB.pad.kanjiPreferred && RB.pad.kanjiPreferred() ? 'mixed' : 'kana')) : reps[0] || null;
+    // the intended representation: the caller's or the player's explicit choice; otherwise
+    // handwriting follows the pad's kanji preference (never the answer) and typing starts on kana
+    let reprChosen = !!(o.representation && reps.indexOf(o.representation) >= 0);
+    let repr = reps.length > 1 ? (reprChosen ? o.representation : 'kana') : reps[0] || null;
+    const defaultRepr = (input) => (reps.length < 2 || reprChosen ? repr : input === 'hand' && RB.pad && RB.pad.kanjiPreferred && RB.pad.kanjiPreferred() ? 'mixed' : 'kana');
     let api = null, plan = null, clk = null, phase = 'init', disposed = false;
     let mode = null, ptr = null, readyPtr = null, ptrNote = '';
     let lastInput = { t: -1, kind: null }, blurred = false, strokeOn = false, composing = false, pendingExpiry = false, expiryShown = false;
@@ -129,6 +133,7 @@ RB.pace = (function () {
 
     function replan() {
       const input = mode || 'hand';
+      if (phase === 'gate' || phase === 'init') repr = defaultRepr(input);
       if (input === 'hand') ptr = readyPtr || lastPtr || guessPtr();
       else if (input === 'choice' || input === 'order') ptr = readyPtr || (lastInput.kind || guessPtr());
       else ptr = null;
@@ -298,11 +303,12 @@ RB.pace = (function () {
         h += '<fieldset class="pace-repr"><legend>How you will write it</legend>' +
           ['kana', 'mixed'].map((r) => '<label><input type="radio" name="pace-repr" value="' + r + '"' + (repr === r ? ' checked' : '') + '><span>' + (r === 'kana' ? 'Kana' : 'Supported mixed-kanji writing') + '</span></label>').join('') + '</fieldset>';
       }
+      h += '<div class="pace-gacts"><button class="pbtn primary pace-ready" data-pace="ready">' + PLAY_SVG + '<span>Ready</span></button>' +
+        '<button class="pbtn" data-pace="untimed">' + (p.clock === 'timed' ? 'Answer untimed instead' : 'Answer without measuring') + '</button></div>';
+      // the explanation follows the buttons, so Ready stays in view on short screens
       h += '<p class="pace-gx small">' + (p.clock === 'timed'
         ? 'Read the task first. The clock starts when you press Ready and runs only while you answer. Word help, checking what the pad read, Pause and leaving the game stop it. If it runs out, the line loosens and you can still finish untimed. Pace never changes the fish.'
         : 'Nothing is timed. Help, Pause and leaving the game are left out of the measurement. Pace never changes the fish.') + '</p>';
-      h += '<div class="pace-gacts"><button class="pbtn primary pace-ready" data-pace="ready">' + PLAY_SVG + '<span>Ready</span></button>' +
-        '<button class="pbtn" data-pace="untimed">' + (p.clock === 'timed' ? 'Answer untimed instead' : 'Answer without measuring') + '</button></div>';
       return h;
     }
     function renderGate() {
@@ -313,6 +319,7 @@ RB.pace = (function () {
           const r = e.target.closest('input[name=pace-repr]');
           if (!r) return;
           repr = r.value;
+          reprChosen = true;
           if (api.pad() && api.pad().setMode) api.pad().setMode(repr === 'mixed' ? 'kanji' : (RB.pad && api.pad()._state ? api.pad()._state.kanaScript : 'any'));
           replan();
           render();

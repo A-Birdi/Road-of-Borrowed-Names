@@ -89,6 +89,11 @@ body.reduced-motion .pace-line .ln { transition: none; }
 .pace-dev .pace-tab th, .pace-dev .pace-tab td { border-bottom: 1px solid var(--rule); padding: 3px 6px; text-align: left; vertical-align: top; }
 .pace-dev h3 { margin: 10px 0 4px; font-size: 1em; }
 
+/* short landscape pins the writing sheet in view (60_learning.css); before Ready it
+ * holds only the Ready card, which must scroll with the task instead */
+@media (max-height: 559px) and (min-width: 600px) {
+  .chal.pace-gated[data-mode="hand"] .chal-work { position: static; height: auto; min-height: 0; }
+}
 @media (max-width: 599px), (max-height: 559px) {
   .pace-bar { margin: 0 0 4px; padding: 2px 6px; gap: 2px 8px; }
   .pace-line { width: 6em; }
