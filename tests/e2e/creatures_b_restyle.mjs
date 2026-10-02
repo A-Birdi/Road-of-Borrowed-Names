@@ -138,7 +138,7 @@ if (mode === 'battle') {
   // where the battle happens (the backdrop is composed from the real place): map:x:y
   const [mapId, mx, my] = opt('--map', 'rw.millroad:10:22').split(':');
   for (const [w, h] of vps) {
-    for (const [tag, rel] of [['after', ''], ['before', hasBefore ? beforeRel : null]]) {
+    for (const [tag, rel] of [['after', afterRel], ['before', hasBefore ? beforeRel : null]]) {
       if (rel == null) continue;
       const { p, ctx, errors } = await page(b, url + rel, { viewport: { width: w, height: h } });
       await p.evaluate(([ids, mapId, mx, my]) => {

@@ -8,6 +8,7 @@
 
 ## Summary
 
+- **Restyle round (latest):** every family reshaped and re-rendered toward the owner's style reference — three-quarter forms, coloured outlines, hue-shifted high-contrast ramps, one key light with a cool rim, cast shadows, materials rendered distinctly — with every pose, delivery, contact and timing kept. The Snow Fox and the Keeper are the proof items. See "Restyle round" below for the standard, the gap list, the self-review, the budget and the tests; the sections after it describe the rigs, deliveries and audit, which this round did not change.
 - **Built:** all eleven families as rigs (`RB.creaturesB.rig`) with authored poses — **829 authored
   action frames** across them (plus 6–10 idle poses each) — and **46 move deliveries** (every move
   kind any of the fourteen enemies uses, through patterns, phases and intents; a `'*'` catch-all per family), with
@@ -31,6 +32,166 @@
   `story_ch4` (F/mio), `story_ch5` (F/mio), `story_ch6` (run 0) pass.
 
 
+## Restyle round: reshaped toward the owner's style reference
+
+**Why.** The owner played the addendum build (Chapter 1 only) and wrote of the Flour Moth and the Mill Echo: "solid
+animations, but I'd like it to try to be reshaped to fit more in line with the supplied style". That verdict applies
+to every creature. This round keeps every family's motion — the idle loops and their cadence, every authored action
+frame, the deliveries with their contacts and ends, the reactions, reduced motion — and re-renders the forms.
+
+**What was measured first** (`tests/e2e/creatures_b_restyle.mjs sheets --ref <reference>`: the key poses at native size
+and 3×, the before build beside the after, the reference beside both; the reference is never copied into the
+repository, so the committed sheets leave it out). Across all eleven families the old art was soft: front-on mirrored
+silhouettes; ramps of ~0.075 lightness per step on light bases (low value contrast, little hue shift); outlines mixed
+toward near-black; smooth sphere/cylinder light quantised into rings that follow the outline ("pillow" shading); no rim
+light, no cast shadows between parts; materials told apart mostly by base colour.
+
+### The standard (all families)
+
+| | Rule | Where |
+|---|---|---|
+| **Frame size** | Unchanged (the table under "Frame standard per family"): the creatures already fill the stage at whole-pixel scale; detail came from craft at the same density, so the stage layout, the extents and the cache figures stay as they were | — |
+| **Silhouette** | Three-quarter toward the party (left): near forms larger and lit, far forms foreshortened and in shade, overlapping; faces, plates and markings wrap round round bodies toward the near side (`asin(x / halfWidth)`), the far eye narrowed; bands and rims bow (seen a little from above or below); a lean toward the party where the anatomy allows (the Keeper, the Cartographer) | each family's `draw` |
+| **Ramps** | 4–7 tones per material, hand-picked (fur, bronze, brass, iron, paper, veil, parchment) or made by `S.ramp(base)`: the value range ~0.1–0.95, hue moving up to ~40° toward violet-blue in the shadows (saturation up) and ~25° toward warm yellow in the lights | `78m` `S.ramp`, family `PAL`s |
+| **Outlines** | Every material's outline is its own darkest tone pushed darker and toward navy/violet (`S.deep`), a little lighter on edges that face the light (`lineLit`); a near part's outline lies on the far part behind it; then interior lines (an outline pixel with all four neighbours filled) take the material's second-darkest tone, so form lines are lighter than the silhouette (`S.inner`) | `S.mat`, `S.outline`, `S.inner` |
+| **Light** | One key light from the upper left (−0.6, −0.7, 0.4); shading quantised into a few wide bands (`S.sph`, `S.cyl`, flat facets), never a smooth gradient; a cool rim light (`M.rim`, a pale blue/cyan) on the right-hand silhouette, two pixels deep where the form is wide (`S.rim`); cast shadows where a near part overlaps a far one (`S.cast`: the far part's pixels step down their own ramp under the near part's offset silhouette) | `78m` |
+| **Metal** | Hard bands across the form: lit edge, a near-white specular streak, light and mid planes, shadow, a dark reflected band, reflected light at the far edge (`S.METAL`); a bright line inside lit top edges (`S.lit`); pipes banded the same way with collars (`S.pipe`) | bells, Keeper, Conduit, lantern caps, rollers |
+| **Fur and cloth** | Band edges broken by strand clusters: tufts a few px wide narrowing to a point along the way the fur or cloth lies (`S.strands`), pointed tufts on the silhouette (`S.tuft`); stray single pixels and one-pixel slivers folded into their neighbours so every cluster is at least 2 px across (`S.clean`, `sliver`) | foxes, veils, paper fibre |
+| **Paper lit from inside** | A cylinder lit from within: bright through the middle, the grazing limbs deep in the flame's hue (the far one darker), stepped; fibre clusters on the band edges; ribs and lattice as dark bars with lit lips on the near side | lanterns, the Lamp |
+| **Small accents** | Eyes, glints, claws, rivets, bolts, whisker pores, frost glints, inscription strokes: a few deliberate pixels each | all |
+
+The kit (`RB.creaturesB.S`, `src/ui/78m_creatures_b.js`): `ramp`, `deep`, `mat` (coloured outline, `rim` tone,
+translucency), `sph`, `cyl`, `facet`, `strands`, `tuft`, `pipe`, `METAL`, and the passes `outline` (the coloured
+selective outline, done only round the drawn area), `clean`, `cast`, `lit`, `rim`, `inner`, `bbox`. Nothing here is
+random (hashes of fixed coordinates); everything is cached by the shared frame cache as before.
+
+### Per family: gaps before → after
+
+| Family (enemies) | Before (measured on the sheets) | After |
+|---|---|---|
+| `sb_snowfox`, `fox` (sb.fox, atlas.fox) — **proof** | front-on sitting fox, ears and chest mirrored; pale ramp (near-white → pale blue); sphere pillow shading on haunch and chest; near-black outline; a smooth sausage tail with a few edge tufts; the leap read as separate balls | sitting three-quarter toward the party: chest and head forward-left, near haunch behind-right, far foreleg and far ear in shade, muzzle forward with the near eye full and the far eye foreshortened; snow fur `#353f8c → #fffbe4` (blue-violet shadows, warm white lights), warm fox `#3c142e → #ffe6a2` with a pale ruff and dark socks; fur in tuft clusters following the flow; a full tail banded by its segments with a tapered pale tip; cast shadows (head on chest, leg on chest, haunch on tail); cyan rim; stretched poses share one light and an arched back; claws, toe splits, whisker pores, frost glints; the scarf folded with lettering |
+| `lf_keeper` (lf.keeper) — **proof** | front-on trapezoid on four splayed legs like a table; flat sage bronze with one faint stripe; a flat rectangular plate; small eyes; the wheel edge-on | a cone leaning toward the party, seen from a little above (curved lip and rings); face, plate and eyes wrapped to the near side; four legs on a circle (the front leg nearest and lowest, the back leg half hidden, the side legs behind the lip); bronze `#0e1024 → #e4f2bc` in hard metal bands with a specular streak and a dark reflected band; a brass plate with thickness and a lit top edge, grooves bowing as they wrap; blued iron legs banded with collars; verdigris running in streaks from the bands; wet streaks under the plate; sockets with almond eye lights; a handwheel lying flat; cast shadows (body on the back leg, legs on the lip, wheel on the crown) |
+| `lantern` (sb.ghost, sa.ghost, atlas.lamp, atlas.mothlamp) | face centred; pale paper with a smooth radial glow; faint ribs; flat caps | a barrel lit from inside (bright middle, deep flame-hue limbs) with 6 tones from each flame colour; face and grin wrapped to the near side; ribs bowing toward us with lit lips; seams wrapping; the loop turned with the barrel; lacquered caps with an elliptical top and a specular streak; outlined translucent tail; Heat runs every lantern toward orange-white; moths and smoke redrawn (lit wing, shaded wing; puffs lit top-left) |
+| `sb_frostlamp` (sb.boss) | front-on box with a flat panel, a flat roof, a flat foot | a three-quarter andon: front face toward the party and a receding side face, a hip roof with two slopes under heaped snow, a kumiko lattice with lit edges on both faces, three corner posts, the door leaf; a stone foot block seen from above; snow, ice, stone, wood and paper ramps; the roof's cast shadow on the panel |
+| `lf_conduit` (lf.conduit) | grey-violet pipe, soft shading, a flat spout | blued iron in hard metal bands with a specular streak; flanged collars with bolts and a dark seam; rust in tapering streaks; a flared spout seen from above (rim, dark mouth, the spirit's light inside, lit eye slits); a base slab seen from above; light beads with glints |
+| `bell` (lf.wraith, atlas.bell) | front-on; a soft gradient with one lit stripe; flat rows of bosses | seen a little from below and turned: bands bow, bosses, inscription and eyes wrap to the near side, the far eye narrowed, the loop turned; the inside of the mouth lit along its far rim; hard metal bands from the bell's colour; verdigris clusters and streaks; cool rim |
+| `hush` (sa.wraith) | a symmetric ghost with cosine stripe folds, low contrast; the sleeve joined its shoulder with a hard seam | hood peaked toward the party, the ring face set to the near side; the near side full, the far side foreshortened; folds with lit ridges and hard shadow sides opening below the hood; a lacquer ring with a shadow crescent; the hem translucent and trailing longer on the far side, small tears near it, a stitched hood edge; the sleeve grows out of the near side as a fold (no seam) |
+| `sa_hush` (sa.hush) | a soft disc; pale flat page rectangles | a thick rim lit on its upper left round a funnel throat set to the near side; a luminous three-tone eye ring narrowed across; pages as lit sheets with a fold shadow and writing, the far orbit fainter, some turning edge-on; glossy ink |
+| `atlas_cartographer` (atlas.cartographer) | front-on; pale panels with a grid | hood peaked toward the party with its opening to the near side; panels as facets (near lit, middle, far in shade) with creases and a lit hem; parchment with violet-brown shadows; map inks (sepia grid, teal contours, vermilion route); chart facets on wooden rollers; a banded brush with an ink tip; cast shadows (hood, chart) |
+| `spirit` (unused) | soft round veil | the same kit (ramp, coloured outline, rim, eyes to the near side); still recorded as below target (no enemy uses it) |
+| effects (`84m`) | pale, greyish, near-black edges | recoloured to the families' ramps (violet-navy edges, saturated water, frost and foxfire, the Keeper's lash banded like its legs); lifecycles and timings untouched |
+
+### Proof items: iterations (self-review against the reference at 3×)
+
+- **Snow Fox / Name-borrowing Fox.** Pass 1: three-quarter skeleton (leg 2 the near foreleg), new head, kit ramps —
+  read too blue and too noisy (single-pixel strand noise). Pass 2: lighter, white-dominant ramp (bias), strands made
+  tuft-shaped (a triangle per cell), stretched poses merged into one form, tapered tail tip, teardrop foxfire, scarf
+  folds. Pass 3: an arched back in the leap; interior lines lighter than the silhouette; whisker pores and frost glints;
+  sliver cleanup so fur clusters are at least two pixels across (no hatching).
+- **Keeper.** Pass 1: cone in three-quarter, wrapped plate, flat handwheel — the bronze read pale and low-contrast and
+  the legs as two mirrored pairs. Pass 2: deeper bronze ramp, legs on a circle with near/side/back depth, fewer flutes,
+  verdigris as streaks, eye sockets, plate thickness, moving water in the sluice. Pass 3: lighter interior lines, wet
+  streaks under the plate, larger sockets with almond eye lights.
+
+### Self-review against the brief's seven points (SELF-REVIEW, not a human review)
+
+Scores: 0 missing · 1 partly · 2 meets the point · 3 close to the reference's craft. Looked at native size, 3× beside
+the reference, and in battle at 1920 × 1080, 1280 × 800 and 390 × 844.
+
+| Family | 1 Silhouette & pose | 2 Outlines | 3 Hue-shifted ramps | 4 Light | 5 Materials | 6 Clusters | 7 Detail density |
+|---|---|---|---|---|---|---|---|
+| sb_snowfox / fox | 2 | 2 | 3 | 2 | 2 | 2 | 2 |
+| lf_keeper | 2 | 2 | 2 | 3 | 3 | 2 | 2 |
+| lantern | 1 | 2 | 3 | 2 | 2 | 2 | 2 |
+| sb_frostlamp | 2 | 2 | 2 | 2 | 2 | 2 | 2 |
+| lf_conduit | 2 | 2 | 2 | 3 | 3 | 2 | 2 |
+| bell | 1 | 2 | 2 | 3 | 3 | 2 | 2 |
+| hush | 2 | 2 | 2 | 2 | 2 | 2 | 1 |
+| sa_hush | 1 | 2 | 2 | 2 | 2 | 2 | 2 |
+| atlas_cartographer | 2 | 2 | 2 | 2 | 2 | 2 | 2 |
+| spirit (unused) | 1 | 2 | 2 | 2 | 1 | 2 | 1 |
+
+Notes behind the scores: lanterns, bells and the Hush are round, hung or abstract forms whose silhouette stays
+rotationally symmetric — their three-quarter turn is carried by the wrapped faces and bowed bands, not the outline
+(1). The veil's folds still read as regular vertical bands in places and its accents are few (tears, a stitched hood edge) (1). The fox's line of
+action is mostly upright in the sitting idle (2, not 3). No family reaches the reference's density of authored
+accents (armour seams, rivets, tassels) at its size; the Keeper and the Conduit come closest.
+
+### Budget and timings
+
+- **Frame sizes and counts unchanged**, so the per-family figures in "Cache budget and resources" are unchanged; the
+  shared cache is still `RB.enemyArt`'s (140 canvases, least recently used out; the creatures A area owns that file
+  this round and may cap it by bytes). `battle_budget` measured: every creature family alone and in threes, with the party and pets — the largest estimated residency **37.81 MiB** of 48 (after the Snow Fox ×3: party 5.01, creatures **28.915**, pets 3.89). The creature cache's figure is the same as before this round (28.915 MiB at the same step on the task branch's build), as it must be with unchanged frame sizes and the 140-frame cap.
+- **Frame build cost** (Chromium, `tests/e2e/creatures_b_sheets.mjs`, every idle and action frame, first build):
+  medians before → after this round, same machine and tool, load average 4–6: bell 4.5 → 3.8 ms, Keeper 7.2 → 7.9, lantern 5.5 → 5.3, the Lamp 7.3 → 9.7, Conduit 5.4 → 5.7, foxes 9.5 → 14.4 (max 45), Hush Wraith 8.2 → 9.8, the Hush 8.6 → 7.2, Cartographer 8.8 → 8.1, spirit 2.1 → 1.4. The foxes cost the most (eleven layers, strand clusters): a battle that opens on a fox builds its 8 idle frames in about 115 ms (was about 75 ms). The restyle first cost more (the snow fox ~55 ms a frame in Node); the passes now work only round the
+  drawn area, which brought the costs back to the earlier range. Idle frames are still built when a battle opens and a
+  move's frames are still prewarmed while you choose (`battle_creatures_b` resources: no frame of the telegraphed move
+  built while it plays).
+- **Timings unchanged:** no delivery, contact, end, act length or idle cadence was touched (the delivery timing table
+  above stands; `creatures_b` unit test and `battle_creatures_b` check them).
+
+### Tests run this round
+
+| Command | Build | Result |
+|---|---|---|
+| `node tools/validate.mjs` | final | no errors |
+| `node tests/run-unit.mjs` | final | 15334 passed, 0 failed |
+| `node tests/run-unit.mjs creatures_b` | final | 941 passed, 0 failed |
+| `node tests/e2e/battle_creatures_b.mjs` | `720aa31` | 25 passed, 0 failed |
+| `node tests/e2e/battle_creatures_b.mjs` (with the new playback-speed test, 26 tests) | final | 24 passed, 2 failed while other captures ran beside it (`atlas.bell`: a UI wait timed out; `lf.wraith` ward: the 260 ms balk was not sampled) — both **rerun alone: passed** |
+| — the playback-speed test (new) | final | passed: the Snow Fox's Strike 1316 ms at Normal, 923 at Fast, 1 at Instant; the Keeper's Flood 1959 / 1363 / 2; the same results at every speed; no creature movement at Instant |
+| `node tests/e2e/battle_budget.mjs` | final | exit 0 (37.81 MiB of 48, above) |
+| `node tests/e2e/battle_group.mjs` | `720aa31` / final | 6 passed / 5 passed, 1 failed under load (a response card off-screen at 320 × 640) — **rerun alone: passed** |
+| `node tests/e2e/encounters.mjs` | `720aa31` / final | all ok / all ok |
+| `node tests/e2e/battle_cycle.mjs` | `720aa31` / final | stable (no growth over 20 entries) / stable |
+| `node tests/e2e/battle_presentation.mjs` | `720aa31` / final | 11 passed, 0 failed / 11 passed, 0 failed |
+| `node tests/e2e/battle_anim.mjs` | `720aa31` / final | 15 passed, 1 failed ("learning stays central": a technique overlay intercepted a click — the Chapter 1 Dustmoth with Suzu, not this area; **rerun alone on the final build: passed**) / 16 passed, 0 failed |
+| `node tests/e2e/combat_ui.mjs` | `720aa31` / final | 7 passed, 0 failed / 7 passed, 0 failed |
+| `node tests/e2e/battle_creatures_b.mjs "sb.fox (" --narrow` | final and the task branch's build before this round | fails before the move on both (pre-existing: the Harmony help note covers Mio's card) |
+| `node tests/e2e/creatures_b_sheets.mjs` | final | every frame of every family inside its canvas; build times above |
+
+"Final" is the build of this round's last art commit; `720aa31` differs from it only in drawing (the veil's sleeve root and
+tears, the lantern and bell loops, the lantern's Heat colour). Failures under load were rerun alone before being
+reported; the machine was shared with other workers throughout (load average 4–9).
+
+### Evidence (docs/screenshots/battle/creatures_b_restyle/)
+
+| File | What it shows |
+|---|---|
+| `sheet_<family>.webp` | every family: the key poses (idle, the held key of every move, a recoil) before and after at native size, then the idle and two key poses at 3× before and after. The same sheets with the reference beside them are made by `creatures_b_restyle.mjs sheets --ref <image>` into `tests/e2e/out/restyle_b/` (the reference is not in the repository) |
+| `battle_sb.fox_{1920x1080,1280x800,390x844}.webp` | the Snow Fox (proof) in battle on the snowbell road, deciding |
+| `battle_lf.keeper_{1920x1080,1280x800,390x844}.webp` | the Keeper (proof) in battle at the sluice, deciding |
+| `battle_atlas_trio_{1920x1080,1280x800,390x844}.webp` | the Atlas trio (Moth and Lantern, the Name-borrowing Fox, the Guttering Lantern; Demanding; diagnostic fixture on the mill road) |
+| `battle_<enemy>_1280x800.webp` | every other enemy of these families in battle, deciding (diagnostic fixtures; places chosen to match each enemy's chapter) |
+| `strip_sb.fox_strike{,_wide}.webp`, `strip_lf.keeper_flood{,_wide}.webp` | the proof items' key moves at fixed presentation times (clock slowed to 0.1× for the capture) at 1280 × 800 and 1920 × 1080 |
+| `snowfox_strike_chill.webm`, `keeper_strike_flood.webm` | Normal speed, real time: the Snow Fox's Strike and Chill on the snowbell road; the Keeper's Strike and Flood at the sluice (diagnostic fixtures; Unravel answered with the mouse, Mio's turn taken) |
+
+### Limitations (this round)
+
+- **Self-review only.** Every art judgement above is the implementing agent's, made from captures; no person has looked
+  at the restyled creatures. Real devices and other browsers were not tried.
+- **No larger native frame.** Frame sizes were kept (the creatures already fill the stage and the shared cache is
+  counted in canvases); the reference's density of authored accents (armour seams, rivets, tassels) is not reached at
+  these sizes.
+- **Round, hung and abstract forms** (lanterns, bells, the Hush) keep rotationally symmetric silhouettes: their turn
+  toward the party is carried by wrapped faces, bowed bands and turned loops, not by the outline.
+- **The fox's head** is drawn at one three-quarter angle; the old `turn` parameter no longer changes the face, so the
+  whirl's look over its back shows the same head. The skeleton's legs swapped roles (leg 2 is now the near foreleg);
+  the sitting key pose (and the leap's proportions) were re-authored, and every pose built from them was checked on the
+  every-frame sheet (no clipped frame).
+- **Paper lit from inside** (lanterns, the Lamp) still steps in rings round the flame; fibre clusters break the edges,
+  but the rings follow the barrel.
+- **Effects** were recoloured to the new ramps, not redrawn (except the Keeper's lash, now banded); their lifecycles
+  and timings are as they were.
+- **390 × 844 move strip.** `battle_creatures_b.mjs --narrow` stops before the move on this build and on the task
+  branch's build before this round (the Harmony help note covers Mio's card on the phone layout; the harness cannot
+  press it) — outside this area. The phone views here are decision views.
+- **The reference** is not in the repository; the sheets with it beside the art are made locally
+  (`creatures_b_restyle.mjs sheets --ref <image>`).
+- **Moth and Lantern** is still recognised by its flame colour (`#d8c0a0`).
+- `index.html` is generated and not committed here.
+
+
 ## Files and APIs
 
 | File | What it holds |
@@ -43,6 +204,8 @@
 | `src/ui/78r_veils.js` | `hush` and `spirit`. |
 | `src/ui/78s_hush.js` | `sa_hush` (thirteen borrowed moves). |
 | `src/ui/78t_cartographer.js` | `atlas_cartographer`. |
+| `src/ui/78m_creatures_b.js` (`RB.creaturesB.S`) | The restyle kit: ramps (`ramp`, `deep`), materials with coloured outlines and a rim tone (`mat`), banded light (`sph`, `cyl`, `facet`, `METAL`), strand clusters and tufts (`strands`, `tuft`), metal pipes (`pipe`), and the passes `outline`, `clean`, `cast`, `lit`, `rim`, `inner`, `bbox`. |
+| `tests/e2e/creatures_b_restyle.mjs` | Restyle evidence: before/after key-pose sheets at native size and 3× (`sheets`, optional `--ref`), and the decision view of a battle at chosen viewports and places (`battle`). |
 | `src/ui/78z_creatures_b_audit.js` | `RB.creaturesB.auditRows()`: the audit row of every enemy, built from the registries plus the reviewed disposition. |
 | `src/ui/84m_creatures_b_fx.js` | The families' effects (`RB.battleFx.fx.cb*`): `cbToll` (strike / dull / sweep / mute / lie), `cbTag`, `cbGather`, `cbLash`, `cbFlood`, `cbPane`, `cbNote`, `cbFlameLick`, `cbHeatWave`, `cbSmoke`, `cbFalseLight`, `cbMend`, `cbFrostBreath`, `cbSnowBurst`, `cbWrap`, `cbJet`, `cbPageLance`, `cbPageFling`, `cbPageFog`, `cbPageGust`, `cbMirror`, `cbChartLash`, `cbErase`, `cbBite`, `cbFoxfire`, `cbDouble`. Also calls `RB.creaturesB.flush()`. |
 | `tests/unit/creatures_b.test.mjs` | Unit tests (below). |
@@ -134,17 +297,17 @@ sliding sluice plate, tendrils, a skeleton, a chart, a brush, eighteen pages).
 
 | Family | Anatomy | Material palette |
 |---|---|---|
-| sb_snowfox | grounded animal (the fox skeleton): sits, crouches, springs, bites, lands on its forepaws; breath that smokes in the cold | white fur #eef4fa (6 steps, blue-grey shadows), frost tips #dff0ff, blue marks #7a9ac8, eyes #4a7ab0, breath #e2f0ff |
-| lantern | hung lantern (constructed): one hinge at the loop, a lagging internal flame seen through the paper, a torn grin, a trailing ghost-flame tail | flame from artOpts.col (blue #8ab8f0 / lavender #9aa8d8 / guttering orange #e8a060 / pale #d8c0a0 with its moths), paper #f4ead0 tinted by the flame (6 steps), dark wood #4a3630, bamboo #8a7048 |
-| sb_frostlamp | standing lamp, large boss (constructed): rocks on the edge of its stone foot, a hinged door leaf, roof snow that shakes loose, icicles, an internal cold flame | wood #2e2c3e, paper #d8e8f4 (warms to #f8ecc8), cold flame #8ab8f0 (white when gathering, #f8a040 when released), snow #eef4fa, ice #bcd8ee, stone #6a6878 |
-| lf_conduit | pipe (fluid): a fixed base plate, a body that bends from the base, collars at the joints, an aiming spout with a hinged valve lid; pressure climbs from the base; spray, drips and a puddle as residue | iron #3a3850 (6 steps) with #5a5878 lights, rust #8a5a40, spirit light from artOpts.col #8a90c8, water mixed toward #cfe0ff |
-| bell | bell (constructed): one hinge at the loop, a lagging clapper on its own hinge, trailing ghost strands | metal ramp from artOpts.col (6 steps, warm lights / cool shadows), verdigris by hue, pale eyes, bone-pink strands |
-| lf_keeper | large constructed boss (bell-bronze on four pipe tendrils): body hinge at the crown, turning gate wheel, sliding sluice plate, clapper on a chain, dripping water | bronze #4a5a52 (6 steps), brass #b8984a, verdigris #7fae9a, iron pipe #3a3850, water #a0bee6 |
-| hush | cloth / spirit veil: the crown leads, the folds bend and the hem lags; coherent gathering, spreading and return; a sleeve fold that reaches; one hem strip that lengthens | veil #e8e6f0 (6 steps, translucent hem ramps at alpha 170 / 90), ring #1a1830, void #0e0c1a, blank scraps #f0eee6 with a grey line |
-| sa_hush | abstract boss: a hollow that swells and contracts, a ring eye that narrows and shuts, eighteen pages on two orbits that leave to form a lance, a fan, a pane, a vortex, a knot-stitch, a scatter, and return | core #0a0a14, indigo #282846, edge #44466a in three stepped opacities (no dither), eye #f0ecff, pages #eeeae0 / #cfcadf (blank, amber, frost and ink tints for the borrowed moves) |
-| fox | grounded animal (skeleton): haunch, chest, two-bone forelegs with planted paws, hind foot, head with ears and mouth, a segmented tail; the borrowed name worn as a scarf with trailing ends | fur from artOpts.col #e8d0a0 (6 steps), ruff and tail tip mixed to white, inner ear #b86a70 mix, blue eyes #3a5a8a, vermilion marks #c85a4a, paper scarf #efe4c8 with a #c8503a seal |
-| atlas_cartographer | paper / cloth boss: flat creased facets that lean from the hem, panels that swing out and settle, a hood that bows, a chart that bends along its length from the right hand, a brush in the left | paper #e8dcc0 (6 steps; pale #f0e8d4 with o.pale), grid #b4a684, route #8a5a3a, hood #2a2a3a, eyes #9ec4f0, chart #f8f2e2, brush wood #6a4a3a and ink #2a2030, blank sheets #fbf8f0 |
-| spirit | spirit (generic veil; unused by the current bestiary): a round head that swells and stretches, a streaming tail | veil from artOpts.col (default #e8e4ff), translucent tail |
+| sb_snowfox | grounded animal (the fox skeleton), sitting three-quarter toward the party: sits, crouches, springs, bites, lands on its forepaws; breath that smokes in the cold; frost glints | white fur #353f8c-#fffbe4 (6, blue-violet shadows, warm white lights), pale ruff #55619e-#fffbe6, far parts #28306e-#aebde8, inner ear #5a2c6e-#eaaccc, blue marks, icy eyes; coloured outlines; cool rim #a4e0ff |
+| lantern | hung lantern (constructed), turned three-quarter toward the party: one hinge at the loop, a lagging internal flame lighting the paper from inside, the face and torn grin wrapped round the barrel, ribs bowing toward us, a trailing ghost-flame tail | flame ramp from artOpts.col (blue #8ab8f0 / lavender #9aa8d8 / guttering orange #e8a060 / pale #d8c0a0 with its moths), hue-shifted 5 tones; paper 6 tones from the flame hue (deep at the grazing limbs, cream where lit through); lacquered wood #120c1c-#c49a76 with a specular streak; bamboo #2a1a1c-#ecd896; coloured outlines; cool rim |
+| sb_frostlamp | standing andon, large boss (constructed), seen three-quarter: a front face toward the party and a receding side face, a hip roof with two slopes under snow, a kumiko lattice over paper lit from inside, a hinged door leaf, icicles, a stone foot block seen from above; rocks on the edge of its foot | wood #0c0a1c-#8a84aa (6), paper cold #2a3a76-#f6fbff (6) warming to #5a2a2a-#fff6dc, cold flame #8ab8f0 ramp (white when gathering, #f8a040 when released), snow #3c4892-#fffdf0 (6), ice #2c5a9a-#e2f6ff (translucent), stone #16142a-#b8b6c6; coloured outlines; cool rim |
+| lf_conduit | pipe (fluid): a bolted base slab seen from above, a body that bends from the base in banded runs, flanged collars with bolts at the joints, a flared spout seen from a little above with its dark mouth and lit eyes, a hinged valve lid; pressure climbs from the base; spray, drips and a puddle as residue | blued iron #0c0a20-#e6e8f8 (7, hard metal bands with a specular streak), rust #3a1418-#e8904a in tapering streaks, spirit light from artOpts.col #8a90c8 (4), water mixed toward #9ad0ff (translucent); coloured outlines; cool rim #86b4f0 |
+| bell | bell (constructed), seen a little from below and turned toward the party: one hinge at the loop, a lagging clapper on its own hinge, bands bowing as they wrap, bosses and inscription wrapped round the shoulder, the dark inside of its mouth, trailing ghost strands | cast metal: a 7-tone ramp from artOpts.col (deep violet-navy shadow → warm specular) in hard bands with a near-white specular streak and a dark reflected band; verdigris #1a5458-#96dcbc (more on green bronze); strands #d898b0 ramp (translucent); coloured outlines; cool rim #9ccaf4 |
+| lf_keeper | large constructed boss, seen three-quarter: a bell-bronze cone with its face (sluice plate and eyes) wrapped toward the party, four pipe legs round a circle (the front leg nearest and lowest, the back leg half hidden), a brass handwheel lying flat on its crown, the clapper on a chain, dripping water | bronze #0e1024-#e4f2bc (7, hard metal bands, specular streak, dark reflected band), brass #2a1210-#fff2b4 (6), blued iron #100e26-#c6cceb (6), verdigris streaks #14484e-#86dcb4, water #2a5aa4-#d4f0ff (translucent); coloured outlines; cool rim #7ab8e8 |
+| hush | cloth / spirit veil, turned toward the party: the hood peaked forward with the ring face set to the near side, the near side full and the far side foreshortened; folds with lit ridges and hard shadows that open below the hood; the hem lags (the far side trails longer); a sleeve fold that reaches; one hem strip that lengthens | veil #262050-#fffcf0 (7, violet shadows, warm white ridges; translucent toward the hem at alpha 180 / 100), lacquer ring #08061a-#4a4678, void #05040e-#2a2050, blank scraps #5a5470-#fbf8f0; coloured outlines; cool rim #a8e4ff |
+| sa_hush | abstract boss: a hollow whose thick rim is lit on its upper left (a funnel turned toward the party, its throat set to the near side), a luminous ring eye that narrows and shuts, eighteen pages on two orbits (the far ones fainter) that leave to form a lance, a fan, a pane, a vortex, a knot-stitch, a scatter, and return | indigo #06050e-#7070a8 (6; ember #1a0806-#ffb860 when it smoulders), stepped edge rings at alpha 200 / 140 / 80, eye #6a66a8-#ffffff (warm when it burns), pages as lit sheets (pale #3a3660-#fffcf2; blank, amber, frost and ink ramps for the borrowed moves); coloured outlines; cool rim #9ab8ff |
+| fox | grounded animal (skeleton), sitting three-quarter toward the party: the chest and head forward and left, the near haunch behind on the right, the far foreleg and far ear in shade; a full tail banded in fur clusters; the borrowed name worn as a folded paper scarf with trailing ends | fur #3c142e-#ffe6a2 (6, orange-gold, violet-red shadows), pale ruff #62467a-#fffcf2, dark socks and ear backs #1c0a1e-#7e3c36, inner ear #4a1830-#e09488, blue eyes, vermilion marks; paper scarf #5a3e48-#fffaee with a seal; coloured outlines; cool rim #8ab8f4 |
+| atlas_cartographer | paper / cloth boss, turned toward the party: the hood peaked forward with its opening to the near side, three cloak panels as facets (the near one wide and lit, the far one foreshortened in shade) with creases and a lit hem, a chart on wooden rollers bending by facets from the right hand, a lacquered brush in the left | parchment #2c1c2c-#fbefcc (6; pale #3a2c3a-#fff8e4), map inks (sepia grid #8a6a48, teal contours #3a6a6a, vermilion route #b0301e), hood #06060e-#36365a with pale eyes, chart paper #4a3a44-#fffbee, rollers and brush wood #1c0e14-#e0b070, blank sheets #5a5464-#ffffff; coloured outlines; cool rim #9ac0f0 |
+| spirit | spirit (generic veil; unused by the current bestiary): a round head lit from the upper left, turned a little toward the party, that swells and stretches; a streaming tail | veil ramp from artOpts.col (default #e8e4ff, 6 tones), translucent tail; coloured outline; cool rim |
 
 
 ## Delivery timings
@@ -372,6 +535,9 @@ Scratch captures, timing traces (`timings.json`), the resources figures (`perf.j
 
 ## Merge notes (shared files touched)
 
+- **Restyle round:** only this area's files (`src/ui/78m`–`78t`, `84m`, its tests and this record) plus one row in
+  `docs/screenshots/battle/README.md` (the `creatures_b_restyle/` folder). `src/ui/78_enemy_art.js` (the shared frame
+  cache), `RB.pxkit` and the stage were not touched; the new drawing helpers live in `78m` (`RB.creaturesB.S`).
 - `src/ui/82_battle_seq.js` (integrator): **one line** in `fire1` — a `foe` cue's `travel` is now passed to
   `RB.battleStage.foe(…)` (`travel: c.travel`). The seam documented `travel` on foe cues and `83_battle_stage.js`
   reads it, but `fire1` dropped it, so no delivery could move a creature bodily. Creature worker A needs the same line;
