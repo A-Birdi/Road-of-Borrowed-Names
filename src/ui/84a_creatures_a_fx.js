@@ -475,7 +475,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
   function pump(deadline) {
     tick = null;
     const t0 = performance.now();
-    while (pending.length && (deadline ? deadline.timeRemaining() > 6 : performance.now() - t0 < 8)) {
+    // at least one frame per call (an animated battle leaves short idle gaps; the timeout keeps it moving),
+    // more while the browser has idle time to spare
+    let n = 0;
+    while (pending.length && (n++ === 0 || (deadline ? deadline.timeRemaining() > 4 : performance.now() - t0 < 6))) {
       const [id, o, key, i, n] = pending.shift();
       try {
         if (!cv1) cv1 = RB.sprites && RB.sprites.makeCanvas ? RB.sprites.makeCanvas(1, 1) : null;
@@ -488,7 +491,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
   function schedule() {
     if (tick) return;
-    if (typeof requestIdleCallback === 'function') tick = requestIdleCallback(pump, { timeout: 400 });
+    if (typeof requestIdleCallback === 'function') tick = requestIdleCallback(pump, { timeout: 120 });
     else tick = setTimeout(() => pump(null), 30);
   }
   A.prewarm = { pending: () => pending.length, cap: PREWARM_CAP };

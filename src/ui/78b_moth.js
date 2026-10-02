@@ -408,7 +408,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
     spec: { w: 224, h: 192, ox: 112, oy: 100, ms: 105, seq: [0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 8], bob: (t) => Math.sin(t / 520) * 4 },
     base, idle, poseTable, rig,
     recoil: { push: 5 },
-    still: { 'exec.strike': 1, 'cast.shroud': 0.4 },
     veil: (o) => ({ kind: 'flour', cols: [mixh(o.col || '#c8c0e0', '#fffaf0', 0.55), mixh(o.col || '#c8c0e0', '#ffffff', 0.2), mixh(o.col || '#c8c0e0', o.col2 || '#9a8ab8', 0.45)] }),
   });
 

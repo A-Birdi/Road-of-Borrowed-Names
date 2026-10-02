@@ -120,7 +120,11 @@ export default async (t) => {
   const r2 = A.resolve(moth, { act: 'exec', family: 'strike@3', k: 0.1 }, false);
   t.ok(r2 && r2.act === 'exec.strike' && Math.floor(r2.k * moth.poses['exec.strike']) === 3, 'a held key pose (@3)');
   const r3 = A.resolve(moth, { act: 'recoil', k: 0.7 }, true);
-  t.ok(r3 && Math.floor(r3.k * moth.poses.recoil) === 0, 'reduced motion holds one key frame');
+  t.ok(r3 && !moth.poses[r3.act], 'reduced motion: a shared reaction keeps the still idle drawing');
+  const r4 = A.resolve(moth, { act: 'exec', family: 'strike@3', k: 0.1 }, true);
+  t.ok(r4 && r4.act === 'exec.strike' && Math.floor(r4.k * moth.poses['exec.strike']) === 3, 'reduced motion: a delivery\'s held key pose shows');
+  const r5 = A.resolve(moth, { act: 'settle', k: 0.2 }, true);
+  t.ok(r5 && Math.floor(r5.k * moth.poses.settle) === moth.poses.settle - 1, 'reduced motion: the settled look at once');
   t.eq(A.resolve(moth, { act: 'recoil', k: 0.7 }, false), null, 'a plain act in motion is the seam\'s own');
 
   // every family: authored reactions and rest; every enemy: a disposition

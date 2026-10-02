@@ -9,8 +9,8 @@
  *    `family` chooses a frame set: act 'exec' + family 'strike' draws spec.poses['exec.strike']
  *    when the definition has it (else the plain act's frames). 'strike@2' holds frame 2 of that
  *    set for the whole cue (a held key pose). spec.alias maps one set onto another's frames (one
- *    cache entry). With reduced motion every posed act shows one key frame instead of stepping
- *    (spec.still[key] or a default per act: a held pose, no frame changes). The stage still sees
+ *    cache entry). With reduced motion nothing steps through frames: a delivery's held key poses
+ *    (@k) show, the settled look shows at once, and every other cue keeps the still idle drawing. The stage still sees
  *    the plain act ('exec', 'cast' …), so the rest of the game reads the action as before.
  * 2. A rig helper: a family draws every frame from one parametric function rig(L, q, o, H) with a
  *    pose q; idle frames and authored action frames are tables of q over a neutral pose.
@@ -29,8 +29,8 @@ RB.creaturesA = (function () {
   const FAMILIES = ['wisp', 'moth', 'blot', 'echo', 'crab', 'crane', 'golem', 'sg_letter', 'clerk', 'warden'];
 
   // ---- 1. posed-frame variants -------------------------------------------------------------
-  // where a reduced-motion pose holds, as a share of the set (0 first frame … 1 last)
-  const STILL_AT = { prep: 1, exec: 1, cast: 0.5, recover: 1, recoil: 0, release: 0.5, balk: 0, settle: 1, rest: 0.5 };
+  // where the settled look holds with reduced motion, as a share of its set (1: the last frame)
+  const STILL_AT = { settle: 1 };
   function resolve(spec, pose, still) {
     const P = spec.poses;
     if (!P || !spec.pose || !pose || !pose.act) return null;
@@ -45,8 +45,11 @@ RB.creaturesA = (function () {
     let k = pose.k;
     if (hold >= 0) k = (Math.min(n - 1, hold) + 0.5) / n;
     else if (still) {
-      const base = pose.act.split('.')[0];
-      const sa = spec.still && spec.still[key] != null ? spec.still[key] : STILL_AT[base] != null ? STILL_AT[base] : 0;
+      // reduced motion: only a creature's own delivery asks for a held key pose (@k); every other cue
+      // (the shared reactions, an interrupted move, Rest) keeps its still idle drawing, as the seam's
+      // motion does — and the settled creature shows as it will stay, at once
+      if (pose.act !== 'settle') return Object.assign({}, pose, { act: pose.act + '~still' });
+      const sa = spec.still && spec.still[key] != null ? spec.still[key] : STILL_AT.settle;
       k = (Math.round(sa * (n - 1)) + 0.5) / n;
     }
     if (key === pose.act && k === pose.k) return null;

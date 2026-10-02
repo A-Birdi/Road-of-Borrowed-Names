@@ -336,7 +336,8 @@ await test('enemy turns: a Strike on one target, a Sweep over both; preparation 
   const acts = seq(E.map((s) => s.foe));
   assert(acts.join(' ').indexOf('prep exec') >= 0 && acts.indexOf('recover') > acts.indexOf('exec'), 'the creature prepares, strikes, recovers: ' + acts.join(' → '));
   assert(E.some((s) => s.foeOff && Math.abs(s.foeOff.dx) >= 6), 'the moth moves toward its target (not a whole-scene shake)');
-  assert(E.some((s) => (s.effects || []).indexOf('dart>comp') >= 0) && E.some((s) => (s.effects || []).indexOf('impact>comp') >= 0), 'a focused streak and an impact on the companion');
+  // (a creature with its own delivery shows its own approach instead of the generic streak: the Flour Moth swoops — Creatures A)
+  assert(E.some((s) => (s.effects || []).some((x) => /^(dart|wingWake|scaleShed)>comp$/.test(x))) && E.some((s) => (s.effects || []).indexOf('impact>comp') >= 0), 'a focused streak (or the creature\'s own swoop) and an impact on the companion');
   assert(E.some((s) => s.poses.comp === 'hit') && !E.some((s) => s.poses.pc === 'hit'), 'the companion recoils; you do not');
   const cv = seq(E.map((s) => s.shown.comp));
   assert(cv.length === 2, 'the companion\'s resolve changes once, at contact: ' + cv.join('→'));
