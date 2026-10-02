@@ -283,15 +283,53 @@ RB.creaturesA = (function () {
     if (j < 0) return;
     L.px[i] = M.c[clamp(j + k, 0, M.n - 1)];
   }
+  // bbox(L) → [x0, y0, x1, y1] of the pixels a layer holds (null when empty): the helpers below
+  // work inside it only (a frame's canvas is mostly empty)
+  function bbox(L) {
+    const { w, h, px } = L;
+    let y0 = -1, y1 = -1, x0 = w, x1 = -1;
+    for (let y = 0; y < h; y++) {
+      const r = y * w;
+      let any = false;
+      for (let x = 0; x < w; x++) if (px[r + x] >>> 24) { any = true; if (x < x0) x0 = x; break; }
+      if (!any) continue;
+      for (let x = w - 1; x > x1; x--) if (px[r + x] >>> 24) { x1 = x; break; }
+      if (y0 < 0) y0 = y;
+      y1 = y;
+    }
+    return y0 < 0 ? null : [x0, y0, x1, y1];
+  }
+  // over(dst, src): src composited over dst inside src's box (the same pixels as L.over)
+  function over(dst, src) {
+    const B = bbox(src);
+    if (!B) return dst;
+    const w = dst.w;
+    for (let y = B[1]; y <= B[3]; y++) for (let x = B[0], i = y * w + B[0]; x <= B[2]; x++, i++) {
+      const t = src.px[i];
+      if (!(t >>> 24)) continue;
+      const d = dst.px[i], sa = t >>> 24;
+      if (sa >= 255 || !(d >>> 24)) dst.px[i] = t;
+      else {
+        // (pxkit's blend, for the translucent pixels)
+        const k = sa / 255, da = d >>> 24;
+        const r = (t & 255) * k + (d & 255) * (1 - k), g = ((t >> 8) & 255) * k + ((d >> 8) & 255) * (1 - k), bl = ((t >> 16) & 255) * k + ((d >> 16) & 255) * (1 - k);
+        const al = Math.min(255, sa + da * (1 - k));
+        dst.px[i] = (((al & 255) << 24) | ((bl & 255) << 16) | ((g & 255) << 8) | (r & 255)) >>> 0;
+      }
+      dst.mt[i] = src.mt[i];
+    }
+    return dst;
+  }
   // cast(back, front, dx, dy, k, mats?): the front layer's shadow on the back one — every back
   // pixel that the front form would cover if moved by (dx, dy) (down-right: the key light is upper
   // left), and that the front form does not cover itself, steps k tones darker in its own ramp
   function cast(back, front, dx, dy, k, only) {
-    const { w, h } = back, fp = front.px, bp = back.px;
-    for (let y = 0; y < h; y++) {
+    const { w, h } = back, fp = front.px, bp = back.px, B = bbox(front);
+    if (!B) return back;
+    for (let y = Math.max(0, B[1] + dy); y <= Math.min(h - 1, B[3] + dy); y++) {
       const sy = y - dy;
       if (sy < 0 || sy >= h) continue;
-      for (let x = 0; x < w; x++) {
+      for (let x = Math.max(0, B[0] + dx); x <= Math.min(w - 1, B[2] + dx); x++) {
         const i = y * w + x;
         if (!(bp[i] >>> 24) || (fp[i] >>> 24)) continue;
         const sx = x - dx;
@@ -323,8 +361,9 @@ RB.creaturesA = (function () {
   // tone; o.w (1 or 2) widens it, o.down also lights lower edges on the right half
   function rim(L, only, o) {
     o = o || {};
-    const { w, h, px, mt } = L, out = px.slice(), wd = o.w || 1;
-    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const { w, h, px, mt } = L, out = px.slice(), wd = o.w || 1, B = bbox(L);
+    if (!B) return L;
+    for (let y = B[1]; y <= B[3]; y++) for (let x = B[0]; x <= B[2]; x++) {
       const i = y * w + x;
       if (!(px[i] >>> 24) || (only && !only.includes(mt[i]))) continue;
       const M = K.MATS[mt[i]];
@@ -342,8 +381,9 @@ RB.creaturesA = (function () {
   // despeckle(L): a lone pixel whose four neighbours all share one other tone of the same material
   // takes that tone (clusters, not noise); deliberate accents are drawn after it
   function despeckle(L) {
-    const { w, h, px, mt } = L, out = px.slice();
-    for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) {
+    const { w, h, px, mt } = L, out = px.slice(), B = bbox(L);
+    if (!B) return L;
+    for (let y = Math.max(1, B[1]); y <= Math.min(h - 2, B[3]); y++) for (let x = Math.max(1, B[0]); x <= Math.min(w - 2, B[2]); x++) {
       const i = y * w + x, v = px[i];
       if (!(v >>> 24)) continue;
       const a = px[i - 1];
@@ -397,6 +437,6 @@ RB.creaturesA = (function () {
   // (onBuilt: set by 84a — the first idle frame of a creature built in a battle schedules the
   // prewarm of its action frames)
   const api = { FAMILIES, resolve, style, q, side, lerp, family, poly, stone, outline, deliver, queue, outcome, kit, audit, auditFamily, auditEnemy, K, onBuilt: null,
-    fpoly, hramp, hmat, toward, stepOf, nudge, cast, flank, rim, despeckle, band, finish, ball };
+    fpoly, bbox, over, hramp, hmat, toward, stepOf, nudge, cast, flank, rim, despeckle, band, finish, ball };
   return api;
 })();

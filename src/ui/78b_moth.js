@@ -164,13 +164,34 @@ var RB = (globalThis.RB = globalThis.RB || {});
     if (v > 0.2 && v < 0.8) v += 0.12 * (1 - cl((y - x * 0.15) / 30));
     return cl(v) * 0.999;
   }
+  // The wing's own coordinates (radial position, angle, pattern tone) depend only on the point in
+  // the wing's frame, so they are sampled once into grids at load (one unit apart) and looked up
+  // per pixel — the same pattern at a fraction of the cost per frame.
+  function grid(fn, box) {
+    const [x0, y0, x1, y1] = box, W = x1 - x0 + 1, Hh = y1 - y0 + 1, g = new Float32Array(W * Hh);
+    for (let y = 0; y < Hh; y++) for (let x = 0; x < W; x++) g[y * W + x] = fn(x0 + x, y0 + y);
+    return (x, y) => { const X = Math.round(x - x0), Y = Math.round(y - y0); return X < 0 || Y < 0 || X >= W || Y >= Hh ? fn(x, y) : g[Y * W + X]; };
+  }
+  const lineZone = (x, y) => { const u = UF(x, y) + 0.014 * Math.sin(Math.atan2(y, x) * 11); return (u > 0.3 && u < 0.345) || (u > 0.665 && u < 0.71) ? 1 : 0; };
+  // the chequered fringe folded into the pattern: every third scale along the margin two tones darker
+  const withFringe = (tone, U, lo) => (x, y) => {
+    const v = tone(x, y);
+    if (U(x, y) <= lo || Math.floor(Math.atan2(y, x) * 34) % 3) return v;
+    return (Math.max(0, Math.floor(v * 6) - 2) + 0.5) / 6;
+  };
+  const FT = grid(withFringe(foreTone, UF, 0.955), FBOX), HT = grid(withFringe(hindTone, UH, 0.95), HBOX), LZ = grid(lineZone, FBOX);
   // the scalloped, chequered fringe: notches between the vein ends, alternating pale and dark scales
-  function fringe(Lw, M, U, ends, lo, box) {
+  // the scalloped margin: notches between the vein ends (the chequered scales are in the pattern)
+  function fringe(Lw, ends) {
     for (let i = 1; i < ends.length; i++) {
       const [x0, y0] = ends[i - 1], [x1, y1] = ends[i];
       Lw.eraseEll((x0 + x1) / 2 + (x1 - x0) * 0.02, (y0 + y1) / 2, 2.2, 2.2);
     }
-    A.band(Lw, M, (x, y) => U(x, y) > lo, (x, y, k) => { const a = Math.atan2(y, x); return (Math.floor(a * 34) % 3) ? -1 : Math.max(0, k - 2); }, box);
+  }
+  // a vein drawn point by point in the wing's frame, passing under the cross lines (they stay whole)
+  function vein(Lw, M, x0, y0, x1, y1, k, under) {
+    const n = Math.max(2, Math.ceil(Math.hypot(x1 - x0, y1 - y0) * 1.4));
+    for (let i = 0; i <= n; i++) { const x = x0 + ((x1 - x0) * i) / n, y = y0 + ((y1 - y0) * i) / n; if (!under || LZ(x, y) < 0.5) Lw.dot(x, y, M, k); }
   }
   function eyespot(Lw, M, cx, cy, r, far) {
     const ry = r * 0.9;
@@ -183,16 +204,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
   function forewing(Lw, M, far) {
     const W = far ? M.wingF : M.wing;
-    PFW.fill(Lw, W, M.dark ? (x, y) => foreTone(x, y) * 0.62 + 0.02 : foreTone);
+    PFW.fill(Lw, W, M.dark ? (x, y) => FT(x, y) * 0.62 + 0.02 : FT);
     // veins: dark, with a lit side above; the discal cell
     const vt = M.dark ? null : 1;
     for (const [[x0, y0], [x1, y1]] of FVEINS) {
       const xe = x0 + (x1 - x0) * 0.92, ye = y0 + (y1 - y0) * 0.92;
       if (M.dark) Lw.line(x0, y0, xe, ye, M.paleMk, 1);
-      else Lw.line(x0, y0, xe, ye, W, vt + 1);
+      else vein(Lw, W, x0, y0, xe, ye, vt + 1, true);
     }
-    Lw.line(8, -9, 38, -27, W, 1); Lw.line(9, -4, 41, -15, W, 1); Lw.line(38, -27, 41, -15, W, 1);
-    if (!M.dark) A.band(Lw, W, (x, y) => { const u = UF(x, y) + 0.014 * Math.sin(Math.atan2(y, x) * 11); return (u > 0.3 && u < 0.345) || (u > 0.665 && u < 0.71); }, 0, FBOX);
+    for (const [x0, y0, x1, y1] of [[8, -9, 38, -27], [9, -4, 41, -15], [38, -27, 41, -15]]) vein(Lw, W, x0, y0, x1, y1, 1, !M.dark);
     // the costa's lit edge
     for (let i = 1; i < 7; i++) Lw.line(COSTA[i - 1][0] + 0.5, COSTA[i - 1][1] + 1.2, COSTA[i][0], COSTA[i][1] + 1.2, W, W.n - 1);
     // dark blotches in the outer cells (clusters, two tones)
@@ -200,16 +220,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
       Lw.ell(bx, by, bw / 2 + 0.5, bh / 2 + 0.5, W, 1);
       Lw.ell(bx - 0.5, by - 0.5, bw / 2 - 0.6, bh / 2 - 0.6, W, 0);
     }
-    if (M.dark) Lw.scan(FBOX[0], FBOX[1], FBOX[2], FBOX[3], (x, y) => { const u = UF(x, y) + 0.014 * Math.sin(Math.atan2(y, x) * 11); return (u > 0.3 && u < 0.345) || (u > 0.665 && u < 0.71); }, (i) => { if (Lw.mt[i] === W.id) { Lw.px[i] = M.paleMk.c[2]; Lw.mt[i] = M.paleMk.id; } });
+    if (M.dark) Lw.scan(FBOX[0], FBOX[1], FBOX[2], FBOX[3], (x, y) => LZ(x, y) > 0.5, (i) => { if (Lw.mt[i] === W.id) { Lw.px[i] = M.paleMk.c[2]; Lw.mt[i] = M.paleMk.id; } });
     A.despeckle(Lw);
     eyespot(Lw, M, 43, -25, far ? 7 : 8, far);
     // a torn notch in the outer margin, and the fringe
     if (!far) Lw.erasePoly([[92, -41], [82, -37], [91, -33]]);
-    fringe(Lw, W, UF, [[89, -61], [91, -53], [89, -45], [87, -35], [83, -25], [77, -15], [69, -6], [60, 2]], 0.955, FBOX);
+    fringe(Lw, [[89, -61], [91, -53], [89, -45], [87, -35], [83, -25], [77, -15], [69, -6], [60, 2]]);
   }
   function hindwing(Lw, M, far, lag) {
     const W = far ? M.hindF : M.hind;
-    PHW.fill(Lw, W, M.dark ? (x, y) => hindTone(x, y) * 0.8 + 0.04 : hindTone);
+    PHW.fill(Lw, W, M.dark ? (x, y) => HT(x, y) * 0.8 + 0.04 : HT);
     for (const [[x0, y0], [x1, y1]] of HVEINS) Lw.line(x0, y0, x0 + (x1 - x0) * 0.86, y0 + (y1 - y0) * 0.86, W, 1);
     // the hair at its root
     for (let i = 0; i < 7; i++) Lw.line(2 + i * 2, 1 + (i % 2), 6 + i * 2, 6 + (i % 3), W, i % 2 ? 2 : 3);
@@ -223,7 +243,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     Lw.poly([[36, 52], [47, 51], [tx + 3, ty - 9], [tx + 2, ty], [tx - 3, ty + 1], [tx - 3, ty - 8]], W, (x, y) => (x - (36 + (tx - 36) * cl((y - 52) / (ty - 52))) < 1 ? 3 : 1) / W.n + 0.01);
     Lw.ell(tx - 0.5, ty - 2, 3, 3.5, W, W.n - 1);
     Lw.ell(tx, ty - 1.5, 1.6, 2, W, W.n - 2);
-    fringe(Lw, W, UH, [[55, 22], [59, 33], [56, 44], [49, 51]], 0.95, HBOX);
+    fringe(Lw, [[55, 22], [59, 33], [56, 44], [49, 51]]);
   }
 
   // ---- the body -----------------------------------------------------------------------------
@@ -388,8 +408,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     A.cast(nF, bod, 2, 3, 1); A.cast(nH, bod, 2, 3, 1); A.cast(ab, bod, 1, 3, 1);
     A.cast(fF, bod, -2, 3, 1); A.cast(fF, an, 1, 2, 1);
     for (const Lr of [fH, fF, lgF, ab, nH, nF, bod, lgN, an]) A.outline(Lr);
-    const out = fH.over(fF).over(lgF).over(ab).over(nH).over(nF).over(bod).over(lgN).over(an);
-    if (q.dust > 0) { const dl = L.like(); dust(dl, M, margin, q.dust, q.dk || 'flour', (fi | 0) * 5 + (act ? act.length : 0)); out.over(dl); }
+    let out = fH;
+    for (const Lr of [fF, lgF, ab, nH, nF, bod, lgN, an]) out = A.over(out, Lr);
+    if (q.dust > 0) { const dl = L.like(); dust(dl, M, margin, q.dust, q.dk || 'flour', (fi | 0) * 5 + (act ? act.length : 0)); A.over(out, dl); }
     return out;
   }
 
