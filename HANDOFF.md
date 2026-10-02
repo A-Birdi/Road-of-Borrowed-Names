@@ -231,32 +231,44 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
   whole-game run passed. Audits and the 3,600-game benchmark unchanged.
 - Not verified: human play, native review, real handwriting, Firefox/Safari/devices, fish captions.
 
-## Battle art, adaptive combat UI and playtest repairs addendum (owner's brief of 2026-10-02) — IN PROGRESS; REQUIREMENTS.md BA1–BA12, docs/BATTLE_ART_CONTRACTS.md, docs/battle/
+## Battle art, adaptive combat UI and playtest repairs addendum (owner's brief of 2026-10-02) — complete on this branch; REQUIREMENTS.md BA1–BA16, VALIDATION.md "Battle addendum — Phases A and B" and "— Phase F", docs/battle/, docs/BATTLE_ART_CONTRACTS.md
 - Phase A (32edf8c, 982c8df): playtest repairs RBN-01 (target-aware tap-to-interact, 50_world.js),
   RBN-02 (prompts name the script they accept; validator check), RBN-04 (truthful heal lines),
-  RBN-05 (neutral letter lead), RBN-07 (guided gears example); the art seams (authored creature
-  poses, creature travel, `RB.battleSeq.addDelivery`, the effect registry), the shared contracts and
-  the battle-content inventory (docs/battle/INVENTORY.md).
-- Phase B (integrator, docs/battle/PRESENTATION.md): Battle animations Normal / Fast / Instant
-  independent of Text speed; the current-action banner (src/ui/82b_battle_banner.js); per-creature
+  RBN-05 (neutral letter lead), RBN-07 (guided gears example); the reconciliation ledger for RBN-01 to
+  -08 (docs/battle/LEDGER.md); the art seams (authored creature poses, creature travel,
+  `RB.battleSeq.addDelivery`, the effect registry), the shared contracts and the battle-content
+  inventory (docs/battle/INVENTORY.md).
+- Phase B (50e44f7, the integrator; docs/battle/PRESENTATION.md): Battle animations Normal / Fast /
+  Instant independent of Text speed; the current-action banner (src/ui/82b_battle_banner.js); per-creature
   intent badges and the inspector, Adaptive / Expanded intent display, reading-critical moves named
   neutrally with their wording kept in view (src/ui/82c_battle_intents.js, 80_combat.js); menus that
-  withdraw on commitment, inert while away, Keep visible; Skip; fresh-press ownership and focus
-  return; Resolve and Harmony visible in every state (status inset on the language sheet; help sheets
-  rise above the party slip); portrait phones put the dock above the party slip. Measured: geometry at
-  the eight §22.2 viewports (docs/battle/GEOMETRY.md), rules invariance across presentation settings
-  (tests/e2e/battle_invariance.mjs), 20-battle cleanup (tests/e2e/battle_cycle.mjs).
-- Phases C–E run in five worker worktrees (party art; creatures A with the Flour Moth proof; creatures
-  B; contextual backdrops; pets in battle and overworld parity), each with docs/battle/<area>.md, to be
-  merged and wired by the integrator. Pets/overworld (efc9ba0), creatures B (be02d0e) and backdrops
-  (4d987b2) have finished on their branches; party art and creatures A are still working. Both creature
-  branches fix the same line in `82_battle_seq.js` `fire1` (a foe cue's `travel` was not passed to the
-  stage). Phase F (integrated validation, recordings, handoff) follows.
-- Found by workers, left for the owner: Nao's "missing third floorboard" in rw.warehouse is not drawn
-  (§2.9; the line is also quoted by the comparisons item C07, so softening it means editing C07 too);
-  learning task picks use the page's shared `Math.random`, which world blink timers also draw from, so
-  which item a battle task asks about varies with frame timing (no rule uses it).
-- The owner's instruction: the full-game matrix waits until both addenda are complete.
+  withdraw on commitment, inert while away, Keep visible; Skip; fresh-press ownership and focus return;
+  Resolve and Harmony visible in every state; portrait phones put the dock above the party slip.
+- Phases C–E (five workers, merged e21bf2f, 04ad864, 03cb94a, 6f90736, ba3f4cb): party art (an
+  articulated rig, pose library, party choreography `RB.partyChoreo`, word motifs and effects;
+  docs/battle/party.md), creatures A (Chapter 1–3 families and the Flour Moth proof;
+  creatures_a.md), creatures B (Chapter 4–6 and Atlas families; creatures_b.md), contextual backdrops
+  (backdrops.md), pets in battle and overworld parity (pets_overworld.md). Each record has its files and
+  APIs, frame standard, pose/timing tables, a self-review against the rubric, cache budget, results and
+  limitations. What the merges changed in the seams: docs/BATTLE_ART_CONTRACTS.md.
+- Phase F (integrated validation; VALIDATION.md): fixed on the merged build — at large text the banner
+  scrolled off the top of a phone and wrapped into the half right of centre, and the stage moved during
+  an exchange (the withdrawn menus re-sized behind it; a condition line on a creature's slip); the
+  overlay's rows and the withdrawn menus now hold their committed sizes until the menus return.
+  Measured: geometry (docs/battle/GEOMETRY.md), rules invariance, the 20-battle cleanup, the §21.5 memory
+  budget (37.12 MiB of 48; tests/e2e/battle_budget.mjs). Evidence: recordings in
+  docs/screenshots/battle/presentation/ (Normal, Fast, Instant, reduced motion, a 390×844 phone), layout
+  stills in docs/screenshots/battle/layout/, each area's folder (index: docs/screenshots/battle/README.md).
+- Found, left for the owner: Nao's "missing third floorboard" in rw.warehouse is not drawn (§2.9; the
+  line is also quoted by the comparisons item C07, so softening it means editing C07 too); learning task
+  picks use the page's shared `Math.random`, which world blink timers also draw from, so which item a
+  battle task asks about varies with frame timing (no rule uses it); Moth and Lantern is recognised by its
+  flame colour because its `artOpts` carry no variant flag (creatures_b.md); creatures are drawn before the
+  party, so at contact a moth's near wing passes behind the adventurer it strikes (creatures_a.md).
+- Not verified: Firefox (the owner's browser), Safari, a real phone or the foldable, the art judged by a
+  person (every rubric is a self-review), a native speaker's review, frame rate on named hardware.
+- Next: the full-game matrix with both addenda in (`node tests/e2e/run.mjs --full`; the owner's
+  instruction: it waits until both addenda are complete — they now are).
 
 ## Commands
 - Build: `node tools/build.mjs`
@@ -320,6 +332,12 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
 9. Found, left alone: Snowbell's tone-1 morning lines never play
    (docs/addendum/companion_decisions.md); the arrival place label can sit over
    a folio opened at once.
+10. The battle addendum (2026-10-02), by hand, in Firefox and on the foldable
+   (folded and open): a few battles at Normal, Fast and Instant, with and without
+   reduced motion; open a badge by hover, focus and tap; watch the banner and the
+   menus withdraw and return; try 140 % and 200 % text; turn or unfold the device
+   during an exchange. Judge the new party, creature and backdrop art (the rubrics in
+   docs/battle/*.md are self-reviews).
 
 ## Known issues / limits
 - No human handwriting samples tested (synthetic + font-derived only).

@@ -1151,3 +1151,77 @@ timing assertions that failed under that load are listed with their rerun.
   "(kana or kanji)" while accepting only the hiragana reading or the kanji (RBN-02).
 - **Not verified:** Firefox, Safari, a real phone or the foldable; the art and the badges by a person;
   a native speaker's review; real handwriting.
+
+## Battle addendum — Phase F (the five art areas merged; integrated validation)
+The party art, creatures A (with the Flour Moth proof), creatures B, contextual backdrops and pets /
+overworld parity were merged into the task branch (e21bf2f, 04ad864, 03cb94a, 6f90736, ba3f4cb), each
+checked on the merged build before the next (VALIDATION entries in each area's record,
+`docs/battle/<area>.md`; what the merges changed in the seams: `docs/BATTLE_ART_CONTRACTS.md`).
+Every run below was in headless Chromium on Linux (Playwright) with synthetic campaigns in fresh
+profiles; no player save was used. The machine was shared with other runs (load average 3–8 on 4 cores).
+- **Build identities.** `ba3f4cb` (all five merges): `index.html` 8,850,097 bytes, sha256
+  `e039152a7510f798…`. **Final** (this entry's commit: ba3f4cb + the fixes below): `index.html` 8,852,108 bytes, sha256 `a6a8f20d729d976b…` (built in a scratch copy of this source; the committed `index.html` is rebuilt after the default suite, which runs against ba3f4cb's, has finished).
+- **Validator:** no errors (final source).
+- **U Unit** (`node tests/run-unit.mjs`): **15,334 passed, 0 failed** on ba3f4cb's source with
+  `cacheStats()`; on the final source: running at this commit (recorded in the next).
+- **Merges, each on its merged build:** pets / overworld — battle_pets_overworld 3/3, pets 20/20;
+  backdrops — battle_backdrops 38/38, backdrops 61/61, encounters ok; creatures B — battle_creatures_b
+  25/25; party — battle_party 14/14, battle_anim 16/16, characters 23/23; creatures A — its browser test
+  15/15, including playback Normal 1,310 ms / Fast 910 ms / Instant 1 ms for the moth's Strike.
+- **Found and fixed in Phase F** (on ba3f4cb's build; each fix checked by a test that fails before it):
+  - At 200 % text on a phone the battle overlay scrolls, and the action banner scrolled with it: its
+    top was 59 px above the screen for the whole exchange. It was also squeezed into the half of the
+    screen right of centre (`left: 50%` shrink-to-fit), so "Wayfarer — ほどく Unravel" took two lines at
+    390 px and four at 200 % text. Now it is as wide as its words need and stays at the top of what is
+    in view (`82b_battle_banner.js`, `60_learning.css`).
+  - The stage moved during an exchange: at 140 % and 200 % text the withdrawn dock and telegraph
+    (prepared for the next decision while hidden) changed height, shrinking the stage from 274 to
+    128 px (140 %) or shifting it 74 px (200 %); at 100 % text the stage dropped 14 px when Shroud
+    put a condition line on a creature's slip. The overlay's rows and the withdrawn menus now keep
+    their committed sizes until the menus return; a resize measures them again (`80_combat.js`
+    `hold`). Remaining: a slip that grows mid-exchange extends into the withdrawn telegraph's space
+    (portrait), or in the wide and landscape group layouts into the row gap and at most a few pixels
+    of the scene's top edge, until the menus return.
+  - New test (battle_presentation, "large text on a phone", 100 / 140 / 200 %): the banner in view in
+    every frame of an exchange, one line at 100 %, the stage's place and size constant. On ba3f4cb's
+    build it fails (stage top 224–239 at 100 %); on the final build it passes.
+  - Tests only: the phone recording is driven by taps (its mouse path crossed a keyword whose hover
+    help covered the badge); companion_turn presses a card once it has stopped moving (the menus slide
+    back in over 200 ms; in the suite under load a point measured mid-slide missed the card — it passes
+    4/4 alone on both builds); battle_geometry moves the pointer off the clicked card before the
+    language view (its hover word help covered the sheet in a still; the measurements never counted it).
+- **B Battle suites on the final build:** battle_presentation **10/10**, combat_ui 7/7, companion_turn
+  4/4, battle_group 6/6, battle_anim 16/16, battle_party 14/14, playtest_repairs 7/7.
+- **B Geometry** (`battle_geometry.mjs --doc`, final build): 21 scenes, **all targets met**: action-safe
+  height 488 at 390×844 alone and 444 with three creatures (target 300), 308 and 256 at 320×640
+  (target 240); at 200 % text 328 (was 284 with the four-line banner). The wider banner costs 4 px of
+  height at 390×844 and 320×640 with three creatures and gives the full 392 px width. Report:
+  `docs/battle/GEOMETRY.md`; stills of the narrow, landscape-phone, large-text and Japanese-led scenes
+  (decision, language and action views): `docs/screenshots/battle/layout/`.
+- **B Invariance** (`battle_invariance.mjs`): on ba3f4cb's build **544 configurations, 16 fixtures,
+  every fixture identical** across Normal / Fast / Instant, reduced motion, Adaptive / Keep visible,
+  Text speed and pet variations (1,646 s). On the final build, `--quick`: **52 configurations, 5 fixtures, every fixture identical** (154 s).
+- **B Long session** (`battle_cycle.mjs`): 20 battle entries and exits — on ba3f4cb's build listeners
+  101 → 101, DOM nodes 247 → 245 from battle 5 to 20; on the final build listeners 101 → 101, nodes
+  247 → 245 (the banner's scroll listener and the resize hold are removed with the battle).
+- **B Memory budget** (`battle_budget.mjs`, §21.5; ba3f4cb + `cacheStats()`): one page, 30 encounters
+  (each of the 15 creature families alone and in threes, every companion and pet in turn, one exchange
+  each, Step back): largest estimated residency **37.12 MiB** after three Snow Foxes with Nao and the
+  cat (party 4.38 MiB in 138 frames, creatures 28.89 MiB in 140 frames — the shared cache's cap — pets
+  3.85 MiB in 415 frames), under the 48 MiB budget; no encounter failed. Caps: party 22.85 MiB, creature
+  cache 140 frames, pet cache 900 frames. These are pixel estimates (w × h × 4 per cached frame), not
+  measured process memory; backdrop layers are reported by battle_backdrops.
+- **B Recordings** (`battle_presentation_video.mjs`, final build): five real-time clips (VP8, no sound) of one exchange in
+  the Mill — Unravel answered right with real clicks at an unhurried pace, Mio's Warm draught, the Flour
+  Moth's move — a diagnostic placement of the party in the Mill: `normal_1280.webm` 19.2 s,
+  `fast_1280.webm` 17.6 s, `instant_1280.webm` 13.3 s (no movement, no banner; the recap in the log),
+  `reduced_1280.webm` 18.9 s, and `narrow_390.webm` 24.9 s (a 390×844 phone driven by taps, three Flour
+  Moths, a badge card opened, read and closed). The clips share the same fixed pauses, so the
+  differences in length are the exchange's playback. WebP stills: the badge card, your response's blue
+  banner, the creature's red banner. In `docs/screenshots/battle/presentation/`; durations read in
+  Chromium.
+- **B Default suite** (`node tests/e2e/run.mjs`, on ba3f4cb's build with the working tree's tests):
+  running at this commit; recorded in the next commit.
+- **Not verified:** Firefox (Robin's browser), Safari, a real phone or the foldable; the art by a
+  person (every rubric is a self-review); a native speaker's review; frame rate on named hardware
+  (headless playback and video cadence are not frame-rate measurements).
