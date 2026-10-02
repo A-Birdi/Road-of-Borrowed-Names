@@ -402,6 +402,99 @@ var RB = (globalThis.RB = globalThis.RB || {});
         c.globalAlpha = 0.45 * (1 - bst); c.fillStyle = '#f6fbff'; K().disc(c, T.x, T.y, Math.round((6 + bst * 10) * u), Math.round((4 + bst * 6) * u)); c.globalAlpha = 1;
       }
     },
+
+    // ---- the conduit ---------------------------------------------------------------------------------
+    // a jet under pressure from the spout: its landing point sweeps across the party, reaching
+    // each recipient in turn (0.34, then 0.49), the stream flowing from the mouth (never back);
+    // splashes where it lands, and drops left on the ground as it stops
+    cbJet(c, e, k, A, t, still) {
+      const u = A.u, p = e.p, M = on(A, p), who = (p.who || ['pc']).map((w) => A.pt(w, 'chest'));
+      const col = tint(p.col || '#8a90c8', 0.35), foam = '#eef4ff';
+      if (still) { for (const q of who) { R(c, q.x - 8 * u, q.y - 2 * u, 16 * u, 4 * u, col, 0.7 * (1 - seg(k, 0.7, 1))); } return; }
+      const near = lerpP(who[0], M, 0.25), far = { x: who[who.length - 1].x - 24 * u, y: who[who.length - 1].y + 4 * u };
+      const ks = [0.34, 0.49];
+      let Lp;
+      if (k < ks[0]) Lp = lerpP(near, who[0], seg(k, 0.12, ks[0]));
+      else if (who.length > 1 && k < ks[1]) Lp = lerpP(who[0], who[1], seg(k, ks[0], ks[1]));
+      else Lp = lerpP(who[who.length - 1], far, seg(k, who.length > 1 ? ks[1] : ks[0], 0.62));
+      const on1 = seg(k, 0.06, 0.14), off = seg(k, 0.62, 0.78);
+      const len = Math.hypot(Lp.x - M.x, Lp.y - M.y), apex = -0.35 * len;
+      if (on1 > 0 && off < 1) {
+        const n = Math.max(10, Math.round(len / (2 * u)));
+        for (let i = 0; i <= n; i++) {
+          const s = i / n;
+          if (s > on1 || s < off) continue;
+          const q = qpt(M, Lp, apex, s), w = Math.max(2, Math.round((5 - 2 * s) * u));
+          const flow = ((s * 8 - t / 60) % 1 + 1) % 1;
+          R(c, q.x - w / 2, q.y - w / 2, w, w, flow < 0.25 ? foam : col, 0.9);
+        }
+        // spray where it lands
+        for (let i = 0; i < 6; i++) { const a = -Math.PI * (0.15 + 0.7 * hs(i, Math.round(t / 80))), r = (4 + hs(i, 3) * 10) * u; R(c, Lp.x + Math.cos(a) * r, Lp.y + Math.sin(a) * r, 2 * u, 2 * u, i % 2 ? foam : col, 0.8 * (1 - off)); }
+      }
+      // each recipient is drenched as the jet passes
+      who.forEach((q, i) => { const s = seg(k, ks[i], ks[i] + 0.25); if (s > 0 && s < 1) for (let j = 0; j < 7; j++) { const a = -Math.PI / 2 + (j - 3) * 0.45, r = ease(s) * (8 + hs(j, i) * 10) * u; R(c, q.x + Math.cos(a) * r, q.y + Math.sin(a) * r + easeIn(s) * 12 * u, 2 * u, 2 * u, j % 2 ? foam : col, 1 - s); } });
+      // drops left behind on the floor
+      if (k > 0.55) { const s = seg(k, 0.55, 1); for (const q of who) { const f = A.pt('pc', 'feet'); R(c, q.x - 10 * u, f.y - u, 20 * u, u, col, 0.6 * (1 - s)); } }
+    },
+
+    // ---- foxes ---------------------------------------------------------------------------------------
+    // a bite on the one target: two rows of fangs snap shut (≈ 0.1) and a few flecks fly;
+    // p.short: the jaws close on the seal in front of it
+    cbBite(c, e, k, A, t, still) {
+      const u = A.u, p = e.p, T0 = A.pt(p.to, 'chest'), F = A.pt('foe', 'core'), T = p.short ? lerpP(T0, F, 0.3) : T0;
+      const al = still ? 0.85 * (1 - seg(k, 0.6, 1)) : 1 - seg(k, 0.5, 0.9);
+      const cls = still ? 1 : ease(seg(k, 0, 0.12)), gap = (1 - cls) * 10 * u;
+      for (const s of [-1, 1]) {
+        const y = T.y + s * (3 * u + gap);
+        arc(c, T.x, y, 9 * u, 4 * u, s < 0 ? Math.PI * 0.15 : Math.PI * 1.15, s < 0 ? Math.PI * 0.85 : Math.PI * 1.85, u, '#fff8f0', al, 2 * u);
+        for (let i = -2; i <= 2; i++) R(c, T.x + i * 4 * u, y + s * u, u, -s * 3 * u + (s < 0 ? 0 : 0), '#ffffff', al);
+      }
+      if (!still && k > 0.1) { const f = seg(k, 0.1, 0.6); for (let i = 0; i < 6; i++) { const a = (i / 6) * Math.PI * 2 + 0.5; R(c, T.x + Math.cos(a) * ease(f) * 14 * u, T.y + Math.sin(a) * ease(f) * 10 * u, 2 * u, u, i % 2 ? '#ffffff' : '#f0d8c8', 1 - f); } }
+    },
+    // foxfire whirled off the tail: flames run along an arc across the party, passing each
+    // recipient in turn (0.3, then 0.45), and flicker out
+    cbFoxfire(c, e, k, A, t, still) {
+      const u = A.u, p = e.p, M = on(A, p), who = (p.who || ['pc']).map((w) => A.pt(w, 'chest'));
+      if (still) { for (const q of who) { K().halo(c, q.x, q.y, 9 * u, '154,224,232', 0.5 * (1 - seg(k, 0.7, 1)), 3); } return; }
+      const far = who[who.length - 1], pts = [M].concat(who).concat([{ x: far.x - 30 * u, y: far.y - 20 * u }]);
+      const ks = [0.3, 0.45];
+      const at = (kk) => {
+        // the flame front along M → who[0] → who[1] → beyond, timed to reach each at ks[i]
+        if (kk <= ks[0]) return qpt(pts[0], pts[1], -0.35 * Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y), kk / ks[0]);
+        if (who.length > 1 && kk <= ks[1]) return qpt(pts[1], pts[2], -20 * u, (kk - ks[0]) / (ks[1] - ks[0]));
+        const i0 = who.length, k0 = who.length > 1 ? ks[1] : ks[0];
+        return qpt(pts[i0], pts[i0 + 1], -10 * u, Math.min(1, (kk - k0) / 0.25));
+      };
+      for (let j = 0; j < 9; j++) {
+        const kk = k - j * 0.025;
+        if (kk <= 0) continue;
+        const q = at(kk), al = (1 - seg(k, 0.65, 0.9)) * (1 - j / 10);
+        const r = (5 - j * 0.35) * u, fl = Math.sin(t / 50 + j) * u;
+        R(c, q.x - r, q.y - r * 1.6 + fl, r * 2, r * 2.4, '#5ac0d0', al * 0.7);
+        R(c, q.x - r * 0.6, q.y - r * 1.2 + fl, r * 1.2, r * 1.6, '#9ae0e8', al);
+        R(c, q.x - r * 0.25, q.y - r * 0.6 + fl, r * 0.5, r * 0.8, '#f0ffff', al);
+      }
+      who.forEach((q, i) => { const s = seg(k, ks[i], ks[i] + 0.3); if (s > 0 && s < 1) for (let m = 0; m < 5; m++) { const a = -Math.PI / 2 + (m - 2) * 0.5; R(c, q.x + Math.cos(a) * ease(s) * 12 * u, q.y + Math.sin(a) * ease(s) * 12 * u - s * 8 * u, 2 * u, 3 * u, '#9ae0e8', 1 - s); } });
+    },
+    // the borrowed face: a pale double of the fox glides to its target (≈ 0.65), where it pops
+    // into a leaf that flutters down
+    cbDouble(c, e, k, A, t, still) {
+      const u = A.u, p = e.p, M = on(A, p), T = A.pt(p.to, 'chest');
+      if (still) { K().halo(c, T.x, T.y, 10 * u, '240,232,210', 0.45 * (1 - seg(k, 0.7, 1)), 3); return; }
+      const s = ease(seg(k, 0, 0.65)), pop = seg(k, 0.65, 1);
+      if (pop <= 0) {
+        const q = lerpP(M, T, s), al = 0.45 + 0.15 * Math.sin(t / 70);
+        c.globalAlpha = al; c.fillStyle = '#f4ecd8';
+        K().disc(c, q.x, q.y + 6 * u, 9 * u, 8 * u); K().disc(c, q.x - 2 * u, q.y - 6 * u, 7 * u, 6 * u);
+        c.fillRect(Math.round(q.x - 8 * u), Math.round(q.y - 16 * u), 3 * u, 5 * u); c.fillRect(Math.round(q.x + 3 * u), Math.round(q.y - 16 * u), 3 * u, 5 * u);
+        c.globalAlpha = 1;
+        R(c, q.x - 5 * u, q.y - 7 * u, 2 * u, u, '#3a5a8a', al + 0.3); R(c, q.x + u, q.y - 7 * u, 2 * u, u, '#3a5a8a', al + 0.3);
+      } else {
+        const x = T.x + Math.sin(pop * 8) * 6 * u, y = T.y + easeIn(pop) * 22 * u;
+        blk(c, x - 3 * u, y - 2 * u, 6 * u, 3 * u, '#6a9a48', 1 - pop, '#2a3a18');
+        for (let i = 0; i < 6; i++) { const a = (i / 6) * Math.PI * 2; R(c, T.x + Math.cos(a) * ease(pop) * 12 * u, T.y + Math.sin(a) * ease(pop) * 9 * u, u, u, '#f4ecd8', 1 - pop); }
+      }
+    },
   };
   Object.assign(FX.fx, fx);
 

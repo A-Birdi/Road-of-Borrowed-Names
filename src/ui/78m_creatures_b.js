@@ -153,6 +153,59 @@ RB.creaturesB = (function () {
   // the target and the creature is thrown back (its balk). Returns the travel scale and parts.
   const blocked = (a) => !!(a.countered && a.wardBlock);
 
+  // ---- prewarm (§21.4) ----------------------------------------------------------------------------
+  // While you choose (the presentation is calm), the frames each creature will need for the move
+  // it has telegraphed are built in small slices (≤ 6 ms each, spaced out), so its performance does
+  // not stall on first use. Only the encounter's own creatures and their telegraphed moves; the
+  // frames go into RB.enemyArt's bounded cache (140 canvases, least recently used out first).
+  const warm = { q: [], timer: null, built: 0, ms: 0, runs: 0 };
+  let warmCv = null;
+  function pump() {
+    warm.timer = null;
+    const t0 = performance.now();
+    while (warm.q.length && performance.now() - t0 < 6) {
+      const job = warm.q.shift();
+      const a = performance.now();
+      try { job(); } catch (err) { /* a frame that cannot be built now is built when drawn */ }
+      warm.ms += performance.now() - a; warm.built++;
+    }
+    if (warm.q.length) warm.timer = setTimeout(pump, 24);
+  }
+  function stopWarm() { warm.q.length = 0; if (warm.timer) { clearTimeout(warm.timer); warm.timer = null; } }
+  // queue the frames of creature `art` (options o) for the move `kind` (and its reactions)
+  function warmFor(art, o, kind, still) {
+    const R = RIGS[art];
+    if (!R || typeof document === 'undefined') return 0;
+    if (!warmCv) { warmCv = document.createElement('canvas'); warmCv.width = warmCv.height = 1; }
+    const c = warmCv.getContext('2d');
+    const names = still ? ['key:' + kind] : Object.keys(R.poses).filter((a) => a.endsWith(':' + kind) && !a.startsWith('key:')).concat(['prep', 'balk', 'recoil', 'release']);
+    let n = 0;
+    for (const act of names) {
+      const cnt = R.poses[act];
+      if (!cnt) continue;
+      for (let i = 0; i < cnt; i++) { warm.q.push(() => EA.drawPosed(c, art, 0, o, 0, 0, 1, false, { act, k: (i + 0.5) / cnt, dir: { x: -0.8, y: 0.6 } })); n++; }
+    }
+    return n;
+  }
+  function onScene(e) {
+    if (!e || e.scope !== 'battle') return;
+    if (e.phase === 'exit') { stopWarm(); return; }
+    if (e.phase !== 'enter' && e.phase !== 'calm') return;
+    const C = RB.combat, st = C && C.state && C.state();
+    if (!st || !C.members) return;
+    const still = !!(RB.game && RB.game.reducedMotion && RB.game.reducedMotion());
+    const ids = C.members();
+    let n = 0;
+    ids.forEach((id, i) => {
+      const d = RB.content && RB.content.enemies[id], f = st.foes && st.foes[i];
+      if (!d || !f || f.knots <= 0 || !f.intent) return;
+      n += warmFor(d.art, d.artOpts || {}, f.intent.kind, still);
+    });
+    if (n) { warm.runs++; if (!warm.timer) warm.timer = setTimeout(pump, 60); }
+  }
+  if (RB.bus && RB.bus.on) RB.bus.on('present:scene', (e) => { try { onScene(e); } catch (err) { /* cosmetic */ } });
+  const warmStats = () => ({ queued: warm.q.length, built: warm.built, ms: +warm.ms.toFixed(1), runs: warm.runs, active: !!warm.timer });
+
   // ---- audit (docs/battle/creatures_b.md) --------------------------------------------------------
   // Every enemy that uses one of these families has a row: its disposition and the reasoning
   // the record keeps. Filled in by each family file; checked by tests/unit/creatures_b.test.mjs.
@@ -175,5 +228,5 @@ RB.creaturesB = (function () {
     return { w: S.w, h: S.h, idle, acts, bytesIdle: px * idle, bytesAll: px * (idle + acts) };
   }
 
-  return { rig, RIGS, play, deliver, flush, PENDING, targets, colOf, blocked, tween, keys, mixQ, E, damp, cl, lerp, FAMILIES, AUDIT, FAMILY, family, audit, budget };
+  return { rig, RIGS, play, deliver, flush, PENDING, warmFor, warmStats, stopWarm, targets, colOf, blocked, tween, keys, mixQ, E, damp, cl, lerp, FAMILIES, AUDIT, FAMILY, family, audit, budget };
 })();

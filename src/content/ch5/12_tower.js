@@ -316,46 +316,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
     R(c, 6, 6, 1, 1, '#f0f0ff'); R(c, 9, 6, 1, 1, '#f0f0ff');
   };
 
-  // ---- battle art (pixel art at art resolution; see src/ui/78_enemy_art.js) --------------------------
-  // A conduit that woke: an iron pipe snaking up in an S with bolted
-  // collars, a flared spout for a head with two lit eyes, and spirit-light
-  // rising along it. Options: col (the light).
-  RB.enemyArt.def('lf_conduit', {
-    w: 144, h: 200, ox: 72, oy: 96, dy: -6, frames: 8, ms: 120,
-    build(L, f, o, H) {
-      const K = H.K;
-      const col = o.col || '#8a90c8';
-      const iron = K.mat('#3a3850', { n: 5, at: 2, step: 0.08, shift: 1.2 });
-      const light = K.mat(col, { n: 3, at: 1, step: 0.12, line: false });
-      const sway = [0, 1, 2, 1, 0, -1, -2, -1][f];
-      const P = [[-14, 84, 18], [-26, 58, 16], [-20, 30, 16], [0, 10, 16], [16, -10, 16], [14, -36, 16], [4 + sway, -56, 16]];
-      const glow = L.like(), B = L.like(), fx = L.like();
-      H.pipe(B, P, 16, iron);
-      B.stone([[-30, 84], [2, 84], [6, 92], [-34, 92]], iron, { bevel: 2, face: 1 });
-      // flared spout head
-      const hx = 4 + sway;
-      B.poly([[hx - 14, -58], [hx + 14, -58], [hx + 20, -78], [hx - 20, -78]], iron, (x, y) => K.clamp(0.55 - (x - hx) / 60 - (y + 78) / 90, 0, 0.99));
-      B.ell(hx, -78, 20, 5, iron, 3);
-      B.ell(hx, -78, 15, 3, K.mat('#141222', { n: 2, at: 0, line: false }), 0);
-      // bolts on the collars
-      for (let i = 1; i < P.length - 1; i++) B.rect(P[i][0] - 6, P[i][1] - 1, 2, 2, iron, 4);
-      B.outline();
-      for (const s of [-1, 1]) { B.rect(hx + s * 7 - 2, -68, 4, 3, light, 2); B.dot(hx + s * 7 - 2, -68, K.solid('#ffffff', { line: false }), 0); }
-      // rising droplets of light beside the pipe
-      for (let i = 0; i < 6; i++) {
-        const k = ((f / 8) + i / 6) % 1;
-        const seg = Math.min(P.length - 2, Math.floor((1 - k) * (P.length - 1)));
-        const u = (1 - k) * (P.length - 1) - seg;
-        const x = P[seg][0] + (P[seg + 1][0] - P[seg][0]) * u + (i % 2 ? 12 : -12), y = P[seg][1] + (P[seg + 1][1] - P[seg][1]) * u;
-        fx.ell(x, y, 3, 3, light, k < 0.8 ? 2 : 1);
-        H.glow(glow, x, y, 8, 8, col, 0.3, 2);
-      }
-      H.glow(glow, hx, -70, 18, 8, col, 0.3, 2);
-      return glow.over(B).over(fx);
-    },
-  });
-  // The Drowned Bell's Keeper's battle art (lf_keeper) is drawn by src/ui/78o_bells.js
-  // (battle addendum, Creatures B): a rig with authored action poses and deliveries.
+  // ---- battle art --------------------------------------------------------------------------------------
+  // The Conduit Spirit (lf_conduit) and the Drowned Bell's Keeper (lf_keeper) are drawn by
+  // src/ui/78p_conduit.js and src/ui/78o_bells.js (battle addendum, Creatures B): rigs with
+  // authored action poses and their own deliveries.
 
   // ---- tower maps ---------------------------------------------------------------------------------------
   const TOWER = { region: 'lanternfall', music: 'belltower', noTravel: true };

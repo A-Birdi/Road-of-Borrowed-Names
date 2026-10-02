@@ -306,6 +306,7 @@ for (const [enemy, fam, moves] of ROSTER) {
       else {
         assert(acts.some((a) => /^(prep|exec|cast):/.test(a)), enemy + ' ' + kind + ': its own authored acts: ' + acts.join('→'));
         assert(!effects.some((e) => GENERIC.includes(e)), enemy + ' ' + kind + ': no generic fallback effect: ' + effects.join(','));
+        assert(effects.some((e) => /^cb[A-Z]/.test(e)), enemy + ' ' + kind + ': its own effect plays: ' + effects.join(','));
       }
       // every rules result, once, in order
       const fx = (r.ex[r.ex.length - 1] || { fx: [] }).fx;
