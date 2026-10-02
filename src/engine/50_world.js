@@ -49,6 +49,7 @@ RB.world = (function () {
     if (m.def.travel) st.travel[m.def.travel] = true;
     W.player = makeActor(x, y, st.dir, playerLook());
     W.path = null;
+    W.pathTarget = null;
     W.leavers = [];
     W.extras = [];
     W.enteredAt = W.time;
@@ -559,13 +560,10 @@ RB.world = (function () {
       }
     }
     if (W.path && W.path.length === 0) {
+      const pt = W.pathTarget && W.pathTarget.path === W.path ? W.pathTarget : null;
       W.path = null;
-      if (W.pathTarget) {
-        const t = W.pathTarget;
-        W.pathTarget = null;
-        faceTo(p, t[0], t[1]);
-        interact();
-      }
+      W.pathTarget = null;
+      if (pt) arriveAt(pt);
     }
   }
   function faceTo(a, x, y) {
@@ -772,6 +770,9 @@ RB.world = (function () {
 
   // ---- tap to move -------------------------------------------------------------
   function bfs(tx, ty, allowAdjacent) {
+    return bfsGoal((x, y) => (x === tx && y === ty) || (allowAdjacent && Math.abs(x - tx) + Math.abs(y - ty) === 1), tx, ty);
+  }
+  function bfsGoal(goal, tx, ty) {
     const p = W.player;
     const m = W.map;
     const start = p.x + ',' + p.y;
@@ -780,8 +781,7 @@ RB.world = (function () {
     let found = null;
     while (q.length) {
       const [x, y] = q.shift();
-      if (x === tx && y === ty) { found = [x, y]; break; }
-      if (allowAdjacent && Math.abs(x - tx) + Math.abs(y - ty) === 1) { found = [x, y]; break; }
+      if (goal(x, y)) { found = [x, y]; break; }
       for (const d in DIRS) {
         const nx = x + DIRS[d][0], ny = y + DIRS[d][1];
         const k = nx + ',' + ny;
@@ -804,21 +804,84 @@ RB.world = (function () {
     }
     return path;
   }
+  // A tap on something you can interact with (a person, an interactive prop, your companion)
+  // walks to a free tile beside it (any tile of a larger prop), faces it and does what the
+  // action key would do there, exactly once. The target is remembered by identity and checked
+  // again on arrival: gone, moved away or no longer shown means nothing happens. A tap on an
+  // interactive prop you are standing on steps off it first. A new tap, a direction key, a
+  // scene, a battle or a map change drops the queued interaction (the path it belonged to ends).
+  function tapTargetAt(tx, ty) {
+    const n = actorAt(tx, ty);
+    if (n) return { kind: 'actor', ref: n };
+    const pr = propAt(tx, ty);
+    const cpr = pr || propAt(tx, ty, true);
+    if (pr || (cpr && (cpr.p === 'counter' || cpr.across))) return { kind: 'prop', ref: pr || cpr };
+    if (W.comp && W.comp.x === tx && W.comp.y === ty) return { kind: 'comp', ref: W.comp };
+    return null;
+  }
+  function tilesOf(t) {
+    if (t.kind !== 'prop') return [[t.ref.x, t.ref.y]];
+    const pd = RB.props.P[t.ref.p];
+    const w = t.ref.w || (pd && pd.w) || 1, h = t.ref.h || (pd && pd.h) || 1;
+    const out = [];
+    for (let x = t.ref.x; x < t.ref.x + w; x++) for (let y = t.ref.y; y < t.ref.y + h; y++) out.push([x, y]);
+    return out;
+  }
+  function stillThere(t) {
+    if (!W.map) return false;
+    if (t.kind === 'actor') return W.npcs.includes(t.ref) || W.extras.includes(t.ref) || W.foes.includes(t.ref);
+    if (t.kind === 'prop') return W.map.props.includes(t.ref) && (!t.ref.if || RB.state.test(s(), t.ref.if));
+    return W.comp === t.ref;
+  }
+  const beside = (tiles, x, y) => tiles.find(([a, b]) => Math.abs(a - x) + Math.abs(b - y) === 1);
+  function arriveAt(pt) {
+    const p = W.player;
+    if (pt.tile) { faceTo(p, pt.tile[0], pt.tile[1]); interact(); return; }
+    if (!stillThere(pt.target)) return;
+    const t = beside(tilesOf(pt.target), p.x, p.y);
+    if (!t) return; // it moved away while you walked
+    faceTo(p, t[0], t[1]);
+    interact();
+  }
   function tapTile(tx, ty) {
     if (!W.map || RB.game.mode() !== 'world') return;
     const p = W.player;
-    if (tx === p.x && ty === p.y) return;
+    W.pathTarget = null;
+    const target = tapTargetAt(tx, ty);
     const solid = blocked(tx, ty, { except: p, ignorePlayer: true });
-    const target = actorAt(tx, ty) || propAt(tx, ty) || (W.comp && W.comp.x === tx && W.comp.y === ty);
-    if (Math.abs(tx - p.x) + Math.abs(ty - p.y) === 1 && (solid || target)) {
-      faceTo(p, tx, ty);
-      interact();
+    if (!target) {
+      if (tx === p.x && ty === p.y) return;
+      // a solid tile next to you (a shut door, a wall): the action key's answer
+      if (solid && Math.abs(tx - p.x) + Math.abs(ty - p.y) === 1) { faceTo(p, tx, ty); interact(); return; }
+      const path = bfs(tx, ty, solid);
+      if (!path) return;
+      W.path = path;
+      W.pathTarget = solid ? { tile: [tx, ty], path } : null;
       return;
     }
-    const path = bfs(tx, ty, solid);
+    const tiles = tilesOf(target);
+    const on = tiles.some(([x, y]) => x === p.x && y === p.y);
+    const near = !on && beside(tiles, p.x, p.y);
+    if (near) { faceTo(p, near[0], near[1]); interact(); return; }
+    const path = on ? stepOff(tiles) : bfsGoal((x, y) => !tiles.some(([a, b]) => a === x && b === y) && !!beside(tiles, x, y));
     if (!path) return;
     W.path = path;
-    W.pathTarget = solid || target ? [tx, ty] : null;
+    W.pathTarget = { target, path };
+  }
+  // standing on a nonblocking interactive prop: the nearest free tile beside you that is not
+  // part of it (the one behind you first, so you turn round to face it)
+  function stepOff(tiles) {
+    const p = W.player;
+    const order = [OPP[p.dir], p.dir, 'left', 'right', 'up', 'down'];
+    for (const d of order) {
+      if (!d || !DIRS[d]) continue;
+      const nx = p.x + DIRS[d][0], ny = p.y + DIRS[d][1];
+      if (tiles.some(([a, b]) => a === nx && b === ny)) continue;
+      if (nx < 0 || ny < 0 || nx >= W.map.w || ny >= W.map.h) continue;
+      if (blocked(nx, ny, { except: p, ignorePlayer: true }) || RB.maps.exitAt(W.map, nx, ny)) continue;
+      return [[nx, ny]];
+    }
+    return null;
   }
 
   function emote(who, kind, ms) {

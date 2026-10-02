@@ -64,13 +64,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
         { kind: 'choose', item: 'c:sb_hearth_i', ctx: { jp: '{火|ひ} は {消|き}えて いない のに 、 {炎|ほのお} が {上|あ}がらない 。 {寒|さむ}さ に {押|お}さえつけられて いる みたい 。', en: '' }, prompt: { en: 'What is Yae describing?' },
           options: [o('The fire is still alive, but the cold is holding the flames down.', true), o('The fire has gone out completely.', false, '消えていない = has NOT gone out.'), o('The flames are too high to control.', false, '上がらない = do not rise.')],
           explain: { en: '〜のに = "even though"; 押さえつけられている = "is being pressed down" (passive); みたい = "it seems".' } },
-        honooWrite('Write the word that will lift the flames: honoo (kana or kanji).'),
+        honooWrite('Write the word that will lift the flames: honoo (hiragana or kanji).'),
       ],
       A: [
         { kind: 'choose', item: 'c:sb_hearth_a', ctx: { jp: '{炭|すみ} は {火|ひ} を {抱|いだ}いて も 、 {炎|ほのお} は {見|み}せない 。 {人|ひと} も また {然|しか}り 、 だ 。', en: '' }, prompt: { en: 'Denji mutters a saying of his own while the fire sinks. What does he mean?' },
           options: [o('Like embers, a person can hold warmth inside without ever showing it.', true), o('Charcoal is useless unless it flames.', false, 'He says the embers do hold fire (火を抱く).'), o('People should always show what they feel.', false, 'He describes, rather than prescribes — and the point is the hidden warmth.')],
           explain: { en: '〜ても = even if; 然り (しかり, literary) = "it is so"; 〜もまた然り = "the same is true of…".' } },
-        honooWrite('Write the inscription on the ash: honoo (kana or kanji).'),
+        honooWrite('Write the inscription on the ash: honoo (hiragana or kanji).'),
       ],
     } };
 
@@ -78,8 +78,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     tiers: {
       F: [Object.assign(honooWrite('Melt the ice with the flame word: honoo.'), { mode: 'kana' })],
       E: [Object.assign(honooWrite('The stair is sealed in ice. Write the word for flame (honoo).'), { ctx: { jp: '{氷|こおり} を とかす {言葉|ことば} は ？', en: 'Which word will melt the ice?' } })],
-      I: [Object.assign(honooWrite('Write the word that answers ice (kana or kanji).'), { ctx: { jp: '{昨夜|ゆうべ} {囲炉裏|いろり} に {書|か}いた {字|じ} なら 、 {氷|こおり} も とける はず だ 。', en: 'The word you wrote on the hearth last night should melt ice too.' } })],
-      A: [Object.assign(honooWrite('Write the inscription (kana or kanji).'), { ctx: { jp: '{凍|い}て{付|つ}いた {石段|いしだん} を {解|と}く に は 、 {冷|つめ}たさ に {抗|あらが}う {言葉|ことば} を {以|もっ}て する ほか ない 。', en: '' } })],
+      I: [Object.assign(honooWrite('Write the word that answers ice (hiragana or kanji).'), { ctx: { jp: '{昨夜|ゆうべ} {囲炉裏|いろり} に {書|か}いた {字|じ} なら 、 {氷|こおり} も とける はず だ 。', en: 'The word you wrote on the hearth last night should melt ice too.' } })],
+      A: [Object.assign(honooWrite('Write the inscription (hiragana or kanji).'), { ctx: { jp: '{凍|い}て{付|つ}いた {石段|いしだん} を {解|と}く に は 、 {冷|つめ}たさ に {抗|あらが}う {言葉|ことば} を {以|もっ}て する ほか ない 。', en: '' } })],
     } };
 
   // ---- the dial door: directions and times --------------------------------------------------

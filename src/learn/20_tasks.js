@@ -67,7 +67,7 @@ RB.tasks = (function () {
       const i = word.indexOf(ch);
       return {
         kind: 'write', item: 'k:' + ch, answer: ch, accept: [ch], mode: 'kana', script: kata ? 'kata' : 'hira',
-        prompt: { en: 'Complete the word “' + e.m + '”: write the missing kana (' + rom + ').', jp: '' },
+        prompt: { en: 'Complete the word “' + e.m + '”: write the missing ' + (kata ? 'katakana' : 'hiragana') + ' (' + rom + ').', jp: '' },
         template: { before: word.slice(0, i), after: word.slice(i + 1) },
         word: { w: e.w, r: word, m: e.m },
         explain: { en: word + ' (' + RB.kana.romaji(word) + ') — ' + e.m + '.' },
@@ -80,6 +80,11 @@ RB.tasks = (function () {
       explain: { en: ch + ' is read ' + rom + '.' }, single: true,
     };
   }
+  // "in hiragana", "in katakana", "in hiragana or in kanji" … for a lexicon entry's recall task
+  function scriptAsk(e) {
+    const sc = RB.kana.isKata(e.r[0]) ? 'katakana' : 'hiragana';
+    return e.w !== e.r ? 'in ' + sc + ', or in kanji' : 'in ' + sc;
+  }
   function vocabStep(key, opts) {
     opts = opts || {};
     const e = findWord(key);
@@ -91,7 +96,9 @@ RB.tasks = (function () {
       return {
         kind: 'write', item: 'v:' + e.w, answer: e.r, accept: e.w !== e.r ? [e.r, e.w] : [e.r], mode: 'reading',
         script: RB.kana.isKata(e.r[0]) ? 'kata' : 'hira',
-        prompt: { en: 'Write the word for “' + e.m + '”.' + (e.w !== e.r ? ' Kana is fine.' : '') },
+        // the prompt states exactly what the check accepts: the word's own kana script (and
+        // its kanji spelling, when it has one); the other kana script is not this word
+        prompt: { en: 'Write the word for “' + e.m + '” ' + scriptAsk(e) + '.' },
         explain: { en: wordLabel(e) + (e.w !== e.r ? '（' + e.r + '）' : '') + ' — ' + e.m + (e.n ? '. ' + e.n : '.') },
       };
     }

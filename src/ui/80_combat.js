@@ -766,6 +766,18 @@ RB.combat = (function () {
   // One authoritative fx event reaches the screen: the displayed state steps
   // forward by exactly this result, its line is logged and its sound plays.
   // Called once per event by the sequencer (RB.battleSeq), at its beat.
+  // What a recovery did, from the actual change: solo is singular, one of two names who it was,
+  // and at full resolve nobody "breathes easier" (battle addendum RBN-04).
+  function healLine(d, pair, by) {
+    const s = RB.game.s, cn = pair ? compName() : '';
+    const pc = d.pc > 0, cp = pair && d.comp > 0;
+    const lead = by && pair ? cn + ' tends to you. ' : '';
+    if (pc && cp) return lead + 'You both breathe easier (+' + d.pc + ' for you, +' + d.comp + ' for ' + cn + ').';
+    if (pc) return lead + 'You breathe easier (+' + d.pc + ')' + (pair ? '; ' + cn + ' was already steady.' : '.');
+    if (cp) return lead + cn + ' breathes easier (+' + d.comp + '); you were already steady.';
+    void s;
+    return lead + (pair ? 'No recovery was needed: you are both already steady.' : 'No recovery was needed: you are already steady.');
+  }
   function applyBeat(f, cue) {
     const s = RB.game.s;
     if (!view) view = snapshot(st);
@@ -790,7 +802,11 @@ RB.combat = (function () {
         const n = f.n || 3, ws = f.who || ['pc', 'comp'];
         if (ws.indexOf('pc') >= 0 && v.pc > 0 || (!f.by && ws.indexOf('pc') >= 0)) v.pc = Math.min(v.max, v.pc + n);
         if (v.compId && ws.indexOf('comp') >= 0 && (v.comp > 0 || !f.by)) v.comp = Math.min(v.max, v.comp + n);
-        sfx('heal'); msg = f.by ? '' : 'You both breathe easier.'; break;
+        sfx(f.gain === 0 ? 'enemy_intent' : 'heal');
+        // the line says who actually recovered, from the real change (the companion's own action
+        // carries its line on the 'cact' event before this one)
+        msg = f.by ? '' : healLine(f.d || { pc: v.pc - was.pc, comp: v.comp - was.comp }, !!v.compId);
+        break;
       }
       case 'warm': sfx('light'); msg = 'Warmth spreads through your fingers.'; break;
       case 'bell': v.silenced = 0; sfx('bell'); msg = f.by ? '' : 'A clear note breaks the hush.'; break;
@@ -827,7 +843,7 @@ RB.combat = (function () {
         if (f.who === 'mio' && cue && cue.side === 'enemy') { v.pc = st.pc; v.comp = st.comp; }
         sfx('reveal'); msg = f.en; break;
       // your companion's support action
-      case 'cact': sfx(f.none ? 'enemy_intent' : 'reveal'); msg = f.en; break;
+      case 'cact': sfx(f.none ? 'enemy_intent' : 'reveal'); msg = f.en || (f.heal && f.d ? healLine(f.d, !!v.compId, f.who) : ''); break;
       case 'soften': fo.soften = (fo.soften || 0) + (f.n || 1); break;
       case 'stun': fo.stunned = fo.stunned || s.comp || 'comp'; break;
       case 'draw': fo.drawn = true; break;

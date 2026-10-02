@@ -260,7 +260,7 @@ RB.answers = (function () {
         const r = kanjiReading(c);
         return r ? 'the kanji {' + c + '|' + r + '}' : 'a kanji';
       };
-      return { code: 'wrong_char', en: 'The answer has ' + desc(want) + ' where you wrote ' + desc(got) + '.' };
+      return { code: 'wrong_char', en: 'The answer has ' + desc(want) + ' where you ' + vb() + ' ' + desc(got) + '.' };
     }
     // particles は/わ, を/お, へ/え
     const pairs = { 'はわ': 'particle_wa', 'わは': 'particle_wa', 'をお': 'particle_o', 'おを': 'particle_o', 'へえ': 'particle_e', 'えへ': 'particle_e' };
@@ -269,7 +269,7 @@ RB.answers = (function () {
       const isPrt = particleAt(acc, j, vars);
       if (pk === 'particle_wa') {
         return want === 'は'
-          ? { code: 'particle_wa', en: isPrt ? 'The topic particle is written は, even though it is pronounced wa. You wrote わ.' : 'This word is spelled with は here; you wrote わ.' }
+          ? { code: 'particle_wa', en: isPrt ? 'The topic particle is written は, even though it is pronounced wa. You ' + vb() + ' わ.' : 'This word is spelled with は here; you ' + vb() + ' わ.' }
           : { code: 'particle_wa', en: 'This word is spelled with わ. は is read wa only when it is the topic particle.' };
       }
       if (pk === 'particle_o') {
@@ -282,17 +282,17 @@ RB.answers = (function () {
         : { code: 'particle_e', en: 'This word is spelled with え. へ is read e only as the direction particle.' };
     }
     if (K.toHira(got) === K.toHira(want) && got !== want) {
-      return { code: 'script', en: want + ' is ' + (K.isKata(want) ? 'katakana' : 'hiragana') + '; you wrote the ' + (K.isKata(got) ? 'katakana' : 'hiragana') + ' ' + got + '.' };
+      return { code: 'script', en: want + ' is ' + (K.isKata(want) ? 'katakana' : 'hiragana') + '; you ' + vb() + ' the ' + (K.isKata(got) ? 'katakana' : 'hiragana') + ' ' + got + '.' };
     }
     if (K.base(got) === K.base(want)) {
       const wd = K.hasDakuten(want), wh = K.hasHandakuten(want), gd = K.hasDakuten(got), gh = K.hasHandakuten(got);
       if ((wh && gd) || (wd && gh)) {
         return { code: 'handakuten_mixup', en: 'The answer has ' + want + ' (' + roma(want) + '), not ' + got + ' (' + roma(got) + '): ゜ (handakuten) gives a p- sound, ゛ (dakuten) a b- sound.' };
       }
-      if (wh && !gh) return { code: 'handakuten_mixup', en: want + ' (' + roma(want) + ') has the small circle ゜ (handakuten); you wrote ' + got + ' (' + roma(got) + ').' };
-      if (gh && !wh) return { code: 'handakuten_mixup', en: 'The answer has ' + want + ' (' + roma(want) + ') without ゜; you wrote ' + got + ' (' + roma(got) + ').' };
-      if (wd && !gd) return { code: 'missing_dakuten', en: want + ' (' + roma(want) + ') has dakuten ゛; you wrote ' + got + ' (' + roma(got) + ') without it.' };
-      if (gd && !wd) return { code: 'extra_dakuten', en: 'The answer has ' + want + ' (' + roma(want) + ') without dakuten; you wrote ' + got + ' (' + roma(got) + ').' };
+      if (wh && !gh) return { code: 'handakuten_mixup', en: want + ' (' + roma(want) + ') has the small circle ゜ (handakuten); you ' + vb() + ' ' + got + ' (' + roma(got) + ').' };
+      if (gh && !wh) return { code: 'handakuten_mixup', en: 'The answer has ' + want + ' (' + roma(want) + ') without ゜; you ' + vb() + ' ' + got + ' (' + roma(got) + ').' };
+      if (wd && !gd) return { code: 'missing_dakuten', en: want + ' (' + roma(want) + ') has dakuten ゛; you ' + vb() + ' ' + got + ' (' + roma(got) + ') without it.' };
+      if (gd && !wd) return { code: 'extra_dakuten', en: 'The answer has ' + want + ' (' + roma(want) + ') without dakuten; you ' + vb() + ' ' + got + ' (' + roma(got) + ').' };
     }
     if (K.toLarge(got) === K.toLarge(want) && got !== want) {
       const wantSmall = K.isSmall(want);
@@ -303,13 +303,13 @@ RB.answers = (function () {
       return { code: 'small_large', en: 'Here it should be ' + (wantSmall ? 'small ' : 'full-size ') + want + ', not ' + (wantSmall ? 'full-size ' : 'small ') + got + '.' + why };
     }
     if ((want === 'ー' || got === 'ー' || VOWEL_KANA[want] || VOWEL_KANA[got]) && ctx.prev && (extendsVowel(ctx.prev, want) || extendsVowel(ctx.prev, got))) {
-      if (want === 'ー') return { code: 'long_vowel', en: 'In katakana a long vowel is written with ー; you wrote ' + got + '.' };
+      if (want === 'ー') return { code: 'long_vowel', en: 'In katakana a long vowel is written with ー; you ' + vb() + ' ' + got + '.' };
       if (got === 'ー') return { code: 'long_vowel', en: 'In hiragana a long vowel is written with a vowel kana (here ' + want + '), not ー.' };
       return { code: 'long_vowel', en: 'The long vowel here is spelled ' + ctx.prev + want + ', not ' + ctx.prev + got + '.' };
     }
     const note = SHAPE_MAP.has(got) && SHAPE_MAP.get(got).get(want);
     if (note) return { code: 'confusable', en: got + ' and ' + want + ' look alike. ' + note + ' The answer has ' + want + '.' };
-    return { code: 'wrong_char', en: 'The answer has ' + want + ' (' + roma(want) + ') where you wrote ' + got + ' (' + roma(got) + ').' };
+    return { code: 'wrong_char', en: 'The answer has ' + want + ' (' + roma(want) + ') where you ' + vb() + ' ' + got + ' (' + roma(got) + ').' };
   }
 
   function charFeedback(input, target, ctx) {
@@ -319,7 +319,7 @@ RB.answers = (function () {
       if (o.op === 'eq') return;
       const prevT = o.j > 0 ? b[o.j - 1] : null;
       if (o.op === 'swap') {
-        out.push({ code: 'swapped', en: 'Two characters are swapped: the answer has ' + o.want + ', you wrote ' + o.got + '.', at: o.j });
+        out.push({ code: 'swapped', en: 'Two characters are swapped: the answer has ' + o.want + ', you ' + vb() + ' ' + o.got + '.', at: o.j });
       } else if (o.op === 'sub') {
         const f = explainSub(o.got, o.want, Object.assign({}, ctx, { j: o.j, prev: prevT }));
         f.at = o.j;
@@ -410,8 +410,15 @@ RB.answers = (function () {
    * handwritten: the input came from the handwriting pad, so characters written
    * with one shape (ロ/口, へ/ヘ…) count as one form. On success, `form` is the
    * accepted spelling that matched and `notes` (mixed text) say how it was written. */
+  // how the player gave the answer, for feedback wording only (set for the duration of one check)
+  let VERB = 'wrote';
+  const vb = () => VERB;
   function check(input, task) {
     task = task || {};
+    VERB = task.input === 'choice' ? 'chose' : task.input === 'ime' ? 'typed' : 'wrote';
+    try { return check1(input, task); } finally { VERB = 'wrote'; }
+  }
+  function check1(input, task) {
     const mode = task.mode || 'reading';
     const accept = (task.accept || []).filter((x) => x != null && x !== '');
     const res = { ok: false, matched: null, normalized: '', feedback: [], assisted: false, closest: null };

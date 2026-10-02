@@ -384,7 +384,14 @@ RB.combatLogic = (function () {
         if (blocker != null) { answered[blocker] = true; fx.push({ t: 'ward', target: card.target, block: true, foe: blocker }); }
         else { st.ward[card.target] += 2; fx.push({ t: 'ward', target: card.target, n: 2 }); }
       }
-      if (tags.indexOf('heal') >= 0) { st.pc = Math.min(st.max, st.pc + 3); if (st.compId) st.comp = Math.min(st.max, st.comp + 3); fx.push({ t: 'heal', n: 3 }); }
+      if (tags.indexOf('heal') >= 0) {
+        const was = { pc: st.pc, comp: st.comp };
+        st.pc = Math.min(st.max, st.pc + 3); if (st.compId) st.comp = Math.min(st.max, st.comp + 3);
+        // who it reaches and what each actually recovered (for truthful feedback; battle addendum RBN-04)
+        const aim = st.compId ? ['pc', 'comp'] : ['pc'];
+        const d = { pc: st.pc - was.pc, comp: st.compId ? st.comp - was.comp : 0 };
+        fx.push({ t: 'heal', n: 3, aim, who: aim.filter((w) => d[w] > 0), d, gain: d.pc + d.comp });
+      }
       // what it does to each creature it reaches, one creature at a time (in order across the stage)
       const reached = reach.foes.slice().sort((a, b) => a - b);
       const reachTag = (tg, i) => (TAG_REACH[tg] === 'all' ? reached.indexOf(i) >= 0 : TAG_REACH[tg] === 'target' ? i === T : false);
@@ -549,13 +556,17 @@ RB.combatLogic = (function () {
         say(def.say || 'A ward rises.', { allies: R.allies.slice(), n });
         break;
       case 'heal': {
-        const before = st.pc + st.comp;
+        const was = { pc: st.pc, comp: st.comp };
         for (const a of R.allies) {
           if (a === 'pc' && st.pc > 0) st.pc = Math.min(st.max, st.pc + n);
           if (a === 'comp' && st.comp > 0) st.comp = Math.min(st.max, st.comp + n);
         }
-        say(def.say || 'You breathe easier.', { allies: R.allies.slice(), n });
-        fx.push({ t: 'heal', n, who: R.allies.slice(), by: who, gain: st.pc + st.comp - before });
+        const d = { pc: st.pc - was.pc, comp: st.comp - was.comp };
+        // the authored line names an amount; it is said only when that is what happened
+        // (otherwise the display words the actual result: RB.ui.combat, battle addendum RBN-04)
+        const full = R.allies.every((a) => d[a] === n);
+        say(full ? def.say || 'You breathe easier.' : null, { allies: R.allies.slice(), n, d, heal: true });
+        fx.push({ t: 'heal', n, aim: R.allies.slice(), who: R.allies.filter((a) => d[a] > 0), by: who, d, gain: d.pc + d.comp });
         break;
       }
       case 'clear':

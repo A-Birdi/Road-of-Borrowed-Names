@@ -256,6 +256,19 @@ function checkStep(s, where) {
     if (s.template) { jcheck(s.template.before, where + ' before'); jcheck(s.template.after, where + ' after'); }
     if (s.choices) { const ch = s.choices.map((x) => RB.jp.plain(x)); if (!ch.some((c) => acc.indexOf(c) >= 0)) E(where + ': choices do not include an accepted answer'); }
     if (!['kana', 'reading', 'exact', 'meaning'].includes(s.mode || 'kana')) E(where + ': bad mode ' + s.mode);
+    // The prompt and the check come from one objective (battle addendum RBN-02): a prompt that
+    // promises "kana" in general must accept both scripts; otherwise it names the script the
+    // check requires (choice mode offers the other script's spelling as a wrong option).
+    const pen = (s.prompt && s.prompt.en) || '';
+    if (/(^|[^a-z])kana([^a-z]|$)/i.test(pen) && !s.scriptFree) {
+      const kanaAcc = acc.filter((a) => /^[\u3040-\u30ffー]+$/.test(a));
+      const scripts = new Set(kanaAcc.map((a) => RB.kana.script(a)));
+      if (!(scripts.has('hira') && scripts.has('kata'))) E(where + ': the prompt says "kana" but only ' + ([...scripts].join('/') || 'no kana') + ' is accepted — name the script (hiragana/katakana)');
+    }
+    if (s.choices) {
+      const ch = s.choices.map((x) => RB.jp.plain(x));
+      for (const c of ch) if (acc.indexOf(c) < 0 && acc.some((a) => a !== c && RB.kana.toHira(a) === RB.kana.toHira(c)) && !/hiragana|katakana/i.test(pen)) E(where + ': a choice differs from an accepted answer only by script, but the prompt does not name the script');
+    }
   } else if (s.kind === 'choose') {
     if (!s.options || !s.options.some((o) => o.ok)) E(where + ': choose step has no correct option');
     for (const o of s.options || []) jcheck(o.jp, where + ' option');
@@ -295,6 +308,7 @@ for (const id in C.activities) {
   const a = C.activities[id];
   jen(a.title, 'activity ' + id);
   if (a.type === 'orders') for (const c of a.customers) { tiered(c.line, 'activity ' + id, jen); for (const k in c.want) if (!a.menu.find((m) => m.id === k)) E('activity ' + id + ': wants unknown menu item ' + k); }
+  if (a.lead) tiered(a.lead, 'activity ' + id + ' lead', jen);
   if (a.type === 'letters') for (const l of a.letters) { tiered(l.text, 'activity ' + id, jen); if (!a.recipients.find((r) => r.id === l.to)) E('activity ' + id + ': letter to unknown recipient ' + l.to); }
   if (a.type === 'signpost') for (const arm of a.arms) { tiered(arm.clue, 'activity ' + id, jen); if (!a.places.find((p) => p.id === arm.to)) E('activity ' + id + ': arm to unknown place'); }
   if (a.type === 'history') { for (const f of a.fragments) tiered(f, 'activity ' + id, jen); if (a.question) tiered(a.question, 'activity ' + id + ' question', checkStep); if (a.note && !C.notes[a.note]) E('activity ' + id + ': unknown note ' + a.note); }

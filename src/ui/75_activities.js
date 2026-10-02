@@ -122,7 +122,10 @@ RB.activities = (function () {
         const L = list[i];
         const t = tier(L.text);
         P.fr.setTitle(RB.ui.jhtml(a.title.jp) + ' ' + esc(a.title.en), 'Letter ' + (i + 1) + ' of ' + list.length);
-        P.body.innerHTML = '<p class="muted small act-lead">The address has run in the rain. Read the letter: who is it for?</p>' +
+        // a neutral lead unless the activity supplies its own truthful one (`lead`, tiered): the
+        // scene before it may question why the addresses are gone (battle addendum RBN-05)
+        const lead = a.lead ? tier(a.lead) : null;
+        P.body.innerHTML = '<p class="muted small act-lead">' + (lead ? (lead.jp ? RB.ui.jhtml(lead.jp) + ' ' : '') + esc(lead.en) : 'The address is missing. Read the letter: who is it for?') + '</p>' +
           '<article class="letter" aria-label="The letter">' + RB.learnUi.icon('letter') + '<div class="letter-jp">' + RB.ui.jhtml(t.jp) + '</div>' + (showEn ? '<div class="act-en">' + esc(RB.script.enVars(t.en)) + '</div>' : '') + '</article>' +
           (showEn ? '' : '<div class="act-tr">' + trButton() + '</div>') +
           '<h3>' + RB.learnUi.icon('companion') + '<span>Deliver to…</span></h3><ul class="entries recips">' + a.recipients.map((r) => '<li><button class="entry recip" data-to="' + r.id + '"><span class="mark">' + RB.learnUi.icon('here') + '</span><span class="body"><span class="t">' + esc(r.name.en) + ' ' + RB.ui.jhtml(r.name.jp) + '</span><span class="d">' + RB.ui.jhtml(tier(r.desc).jp) + (showEn ? '<span class="en">' + esc(tier(r.desc).en) + '</span>' : '') + '</span></span></button></li>').join('') + '</ul>' +

@@ -116,13 +116,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
         { kind: 'choose', item: 'c:rw_lantern1', ctx: { jp: '{灯|ひ} の {消|き}えた {道|みち} は 、 {行|ゆ}き{先|さき} を {忘|わす}れる 。', en: 'A road whose lantern has gone out forgets where it leads.' }, prompt: { en: 'An older line is carved into the post. What does it say happens?' },
           options: [{ en: 'The road forgets where it leads.', ok: true }, { en: 'Travellers forget their names.', ok: false, why: { en: '忘れる here has 道 (the road) as its subject, and 行き先 (destination) as what is forgotten.' } }, { en: 'The lantern will light itself again.', ok: false, why: { en: 'Nothing here says it relights; 消えた is "went out".' } }],
           explain: { en: '行き先 (ゆきさき/いきさき) means "destination". 灯の消えた道 = "a road whose light has gone out" — here の marks the subject inside a noun-modifying clause.' } },
-        { kind: 'write', item: 'v:葦ノ瀬', prompt: { en: 'Restore the destination on the shade: the village of Ashinose (kana or kanji).' }, answer: 'あしのせ', accept: ['あしのせ', '葦ノ瀬'], mode: 'reading', explain: { jp: '{葦|あし}ノ{瀬|せ}', en: 'Ashinose.' } },
+        { kind: 'write', item: 'v:葦ノ瀬', prompt: { en: 'Restore the destination on the shade: the village of Ashinose (hiragana or kanji).' }, answer: 'あしのせ', accept: ['あしのせ', '葦ノ瀬'], mode: 'reading', explain: { jp: '{葦|あし}ノ{瀬|せ}', en: 'Ashinose.' } },
       ],
       A: [
         { kind: 'choose', item: 'c:rw_lantern1a', ctx: { jp: '{名|な} を {失|うしな}いし {道|みち} 、 {往|ゆ}く{先|さき} を {知|し}らず 。', en: '' }, prompt: { en: 'The oldest line on the post is in a literary style. Which modern sentence says the same thing?' },
           options: [{ jp: '{名前|なまえ} を なくした {道|みち} は 、 どこ へ {行|い}く の か わからない 。', ok: true }, { jp: '{名前|なまえ} の ない {道|みち} を {行|い}って は いけない 。', ok: false, why: { en: 'There is no prohibition in the original; 知らず is simply "does not know".' } }, { jp: '{道|みち} の {名前|なまえ} を {知|し}らない {人|ひと} は {先|さき} へ {進|すす}めない 。', ok: false, why: { en: 'The subject that "does not know" is the road itself, not a traveller.' } }],
           explain: { en: 'Literary 〜し is a past form (≈ 〜た) used before a noun: 失いし道 = 失った道. 〜ず is the literary negative (≈ 〜ない). 往く is an old way of writing 行く.' } },
-        { kind: 'write', item: 'v:葦ノ瀬', prompt: { en: 'Write the destination\'s name on the shade (kana or kanji).' }, answer: 'あしのせ', accept: ['あしのせ', '葦ノ瀬'], mode: 'reading', explain: { jp: '{葦|あし}ノ{瀬|せ}', en: 'Ashinose.' } },
+        { kind: 'write', item: 'v:葦ノ瀬', prompt: { en: 'Write the destination\'s name on the shade (hiragana or kanji).' }, answer: 'あしのせ', accept: ['あしのせ', '葦ノ瀬'], mode: 'reading', explain: { jp: '{葦|あし}ノ{瀬|せ}', en: 'Ashinose.' } },
       ],
     } };
 
@@ -169,13 +169,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
         { kind: 'choose', item: 'c:rw_rec2', ctx: { jp: '{嵐|あらし} の {前|まえ} は 「 しおがらす まで {二日|ふつか} 」 と {書|か}いて あった はず だ が 、 {記録|きろく} に よって は {三日|みっか} と ある 。 {橋|はし} が {流|なが}された {年|とし} の もの だ 。', en: '' }, prompt: { en: 'Ren frowns at two records. Why do some say three days?' },
           options: [{ en: 'They were written the year the bridge was washed away, when the way was longer.', ok: true }, { en: 'Ren copied them wrongly before the storm.', ok: false, why: { en: 'はずだ expresses Ren\'s expectation about the old writing, not a mistake.' } }, { en: 'Saltglass moved further away after the storm.', ok: false, why: { en: 'The records point to the bridge (橋が流された年), not to the town moving.' } }],
           explain: { en: '〜によっては = "depending on (which)…"; 〜はずだ = "should have been, as far as I know".' } },
-        { kind: 'write', item: 'v:潮硝子', prompt: { en: 'Write the destination\'s name on the shade (kana or kanji).' }, answer: 'しおがらす', accept: ['しおがらす', '潮硝子'], mode: 'reading', explain: { jp: '{潮硝子|しおがらす}', en: 'Saltglass.' } },
+        { kind: 'write', item: 'v:潮硝子', prompt: { en: 'Write the destination\'s name on the shade (hiragana or kanji).' }, answer: 'しおがらす', accept: ['しおがらす', '潮硝子'], mode: 'reading', explain: { jp: '{潮硝子|しおがらす}', en: 'Saltglass.' } },
       ],
       A: [
         { kind: 'choose', item: 'c:rw_rec3', ctx: { jp: '{道|みち} の {名|な} は 、 {書|か}き{手|て} が それ を {信|しん}じて いなければ 、 {根|ね} を {張|は}らない 。', en: '' }, prompt: { en: 'A line in Ren\'s teacher\'s handwriting. What does it suggest about why Ren\'s names keep sliding off?' },
           options: [{ en: 'The writer must believe the promise the name makes — and Ren is not sure anymore.', ok: true }, { en: 'Names only take hold if the ink is fresh.', ok: false, why: { en: 'Nothing about ink; the condition is 信じていなければ — "unless (the writer) believes it".' } }, { en: 'Only the original writer can rewrite a name.', ok: false, why: { en: '書き手 means whoever writes, not the first writer.' } }],
           explain: { en: '根を張る (to put down roots) is used figuratively here: the name "takes hold". 〜なければ〜ない is a double negative: "won\'t… unless…".' } },
-        { kind: 'write', item: 'v:潮硝子', prompt: { en: 'Write the destination\'s name on the shade (kana or kanji).' }, answer: 'しおがらす', accept: ['しおがらす', '潮硝子'], mode: 'reading', explain: { jp: '{潮硝子|しおがらす}', en: 'Saltglass.' } },
+        { kind: 'write', item: 'v:潮硝子', prompt: { en: 'Write the destination\'s name on the shade (hiragana or kanji).' }, answer: 'しおがらす', accept: ['しおがらす', '潮硝子'], mode: 'reading', explain: { jp: '{潮硝子|しおがらす}', en: 'Saltglass.' } },
       ],
     } };
 
@@ -189,13 +189,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
           explain: { en: '渡し守 (わたしもり) is an old word for a ferryman.' } },
       ],
       I: [
-        { kind: 'write', item: 'v:向こう岸', prompt: { en: 'Write the name on the bridge lantern: the far bank (kana or kanji).' }, answer: 'むこうぎし', accept: ['むこうぎし', '向こう岸'], mode: 'reading', explain: { jp: '{向|む}こう{岸|ぎし}', en: 'The far bank.' } },
+        { kind: 'write', item: 'v:向こう岸', prompt: { en: 'Write the name on the bridge lantern: the far bank (hiragana or kanji).' }, answer: 'むこうぎし', accept: ['むこうぎし', '向こう岸'], mode: 'reading', explain: { jp: '{向|む}こう{岸|ぎし}', en: 'The far bank.' } },
         { kind: 'choose', item: 'c:rw_rec5', ctx: { jp: '{向|む}こう{岸|ぎし} の {灯|あか}り に は 、 {渡|わた}し{守|もり} の {名|な} も {添|そ}えて ある 。 {片方|かたほう} だけ で は 、 {橋|はし} は {届|とど}かない 。', en: '' }, prompt: { en: 'Why won\'t the bridge reach even with the far bank\'s name restored?' },
           options: [{ en: 'The lantern also needs the ferryman\'s name; one name alone isn\'t enough.', ok: true }, { en: 'The bridge was never finished.', ok: false, why: { en: 'The record says the bridge reaches when both names are there.' } }, { en: 'Only a ferryman may light it.', ok: false, why: { en: '添えてある = "is added alongside"; it is about the name, not who lights it.' } }],
           explain: { en: '〜も添えてある = "is also written alongside"; 片方だけでは = "with only one of them".' } },
       ],
       A: [
-        { kind: 'write', item: 'v:向こう岸', prompt: { en: 'Write the name on the bridge lantern: the far bank (kana or kanji).' }, answer: 'むこうぎし', accept: ['むこうぎし', '向こう岸'], mode: 'reading', explain: { jp: '{向|む}こう{岸|ぎし}', en: 'The far bank.' } },
+        { kind: 'write', item: 'v:向こう岸', prompt: { en: 'Write the name on the bridge lantern: the far bank (hiragana or kanji).' }, answer: 'むこうぎし', accept: ['むこうぎし', '向こう岸'], mode: 'reading', explain: { jp: '{向|む}こう{岸|ぎし}', en: 'The far bank.' } },
         { kind: 'choose', item: 'c:rw_rec6', ctx: { jp: '{渡|わた}し{守|もり} の {名|な} を {欠|か}いた まま で は 、 {橋|はし} と いえど も {向|む}こう{岸|ぎし} に {届|とど}く べく も ない 。', en: '' }, prompt: { en: 'A formal note under the lantern\'s frame. What is its point?' },
           options: [{ en: 'Without the ferryman\'s name, even a bridge cannot possibly reach the far bank.', ok: true }, { en: 'A bridge should never be named after a ferryman.', ok: false, why: { en: '欠いたままでは = "while (it) lacks…"; nothing forbids anything.' } }, { en: 'The ferryman is supposed to repair the bridge.', ok: false, why: { en: 'べくもない means "there is no way that…", not a duty.' } }],
           explain: { en: '〜といえども = "even though it is…"; 〜べくもない = "there is no possibility of…" (formal).' } },
@@ -205,7 +205,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   X['rw.c_mill_gears'] = { title: { jp: '{止|と}まった {歯車|はぐるま}', en: 'The jammed gears' },
     tiers: {
       F: [{ kind: 'order', item: 'c:rw_gears_f', prompt: { en: 'The gear plates are numbered in kana. Set them in counting order: ichi, ni, san, yon.' }, tiles: ['いち=(one)', 'に=(two)', 'さん=(three)', 'よん=(four)'], answer: ['いち=(one)', 'に=(two)', 'さん=(three)', 'よん=(four)'], orderHint: { en: 'いち (1), に (2), さん (3), よん (4).' } }],
-      E: [{ kind: 'order', item: 'c:rw_gears_e', ctx: { jp: 'まず 、 つぎ に 、 それから 、 さいご に', en: '' }, prompt: { en: 'Each plate starts with a sequence word. Put them in order.' }, tiles: ['まず', 'つぎ に', 'それから', 'さいご に'], answer: ['まず', 'つぎ に', 'それから', 'さいご に'], orderHint: { en: 'まず "first", つぎに "next", それから "after that", さいごに "finally".' } }],
+      E: [{ kind: 'order', item: 'c:rw_gears_e', ctx: { jp: 'まず 、 つぎ に 、 それから 、 さいご に', en: '' }, prompt: { en: 'Each plate starts with a sequence word. Put them in order.' }, guided: { en: 'A guided first look: the order is shown above. It counts as practice with help.' }, tiles: ['まず', 'つぎ に', 'それから', 'さいご に'], answer: ['まず', 'つぎ に', 'それから', 'さいご に'], orderHint: { en: 'まず "first", つぎに "next", それから "after that", さいごに "finally".' } }],
       I: [{ kind: 'order', item: 'g:v_te_kara', ctx: { jp: '「 {軸|じく} を {入|い}れて から 、 {歯車|はぐるま} を {回|まわ}す 。 {回|まわ}す {前|まえ} に 、 {水門|すいもん} を {少|すこ}し {開|あ}けて おく 。 {石臼|いしうす} は {最後|さいご} に {下|お}ろす 。 」', en: '' }, prompt: { en: 'Sae\'s father\'s instructions. Put the steps in the order you must do them.' },
         tiles: ['{水門|すいもん} を {少|すこ}し {開|あ}ける', '{軸|じく} を {入|い}れる', '{歯車|はぐるま} を {回|まわ}す', '{石臼|いしうす} を {下|お}ろす'],
         answer: ['{水門|すいもん} を {少|すこ}し {開|あ}ける', '{軸|じく} を {入|い}れる', '{歯車|はぐるま} を {回|まわ}す', '{石臼|いしうす} を {下|お}ろす'],
@@ -220,14 +220,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
     tiers: {
       F: [{ kind: 'write', item: 'v:葦ノ瀬', prompt: { en: 'Relight the mill lantern with the village\'s name: Ashinose.' }, answer: 'あしのせ', accept: ['あしのせ', '葦ノ瀬'], mode: 'kana', explain: { jp: '{葦|あし}ノ{瀬|せ}', en: 'Ashinose.' } }],
       E: [{ kind: 'write', item: 'v:葦ノ瀬', prompt: { en: 'Relight the mill lantern with the village\'s name (Ashinose).' }, answer: 'あしのせ', accept: ['あしのせ', '葦ノ瀬'], mode: 'reading', explain: { jp: '{葦|あし}ノ{瀬|せ}', en: 'Ashinose.' } }],
-      I: [{ kind: 'write', item: 'v:葦ノ瀬', prompt: { en: 'Relight the mill lantern with the village\'s name (kana or kanji).' }, answer: 'あしのせ', accept: ['あしのせ', '葦ノ瀬'], mode: 'reading', explain: { jp: '{葦|あし}ノ{瀬|せ}', en: 'Ashinose.' } }],
-      A: [{ kind: 'write', item: 'v:葦ノ瀬', prompt: { en: 'Relight the mill lantern with the village\'s name (kana or kanji).' }, answer: 'あしのせ', accept: ['あしのせ', '葦ノ瀬'], mode: 'reading', explain: { jp: '{葦|あし}ノ{瀬|せ}', en: 'Ashinose.' } }],
+      I: [{ kind: 'write', item: 'v:葦ノ瀬', prompt: { en: 'Relight the mill lantern with the village\'s name (hiragana or kanji).' }, answer: 'あしのせ', accept: ['あしのせ', '葦ノ瀬'], mode: 'reading', explain: { jp: '{葦|あし}ノ{瀬|せ}', en: 'Ashinose.' } }],
+      A: [{ kind: 'write', item: 'v:葦ノ瀬', prompt: { en: 'Relight the mill lantern with the village\'s name (hiragana or kanji).' }, answer: 'あしのせ', accept: ['あしのせ', '葦ノ瀬'], mode: 'reading', explain: { jp: '{葦|あし}ノ{瀬|せ}', en: 'Ashinose.' } }],
     } };
 
   X['rw.c_boots_sign'] = { title: { jp: 'オト の {看板|かんばん}', en: 'Oto\'s sign' },
     tiers: {
       F: [{ kind: 'write', item: 'v:靴', prompt: { en: 'The sign should say what Oto mends: kutsu (shoes).' }, answer: 'くつ', accept: ['くつ', '靴'], mode: 'kana', explain: { jp: 'くつ', en: 'くつ — shoes.' } }],
-      E: [{ kind: 'write', item: 'v:靴屋', prompt: { en: 'A shoe shop is a kutsuya. Write the sign (kana or kanji).' }, answer: 'くつや', accept: ['くつや', '靴屋'], mode: 'reading', explain: { jp: '{靴屋|くつや}', en: '〜屋 (や) makes a shop or trade: 本屋 bookshop, 花屋 florist.' } }],
+      E: [{ kind: 'write', item: 'v:靴屋', prompt: { en: 'A shoe shop is a kutsuya. Write the sign (hiragana or kanji).' }, answer: 'くつや', accept: ['くつや', '靴屋'], mode: 'reading', explain: { jp: '{靴屋|くつや}', en: '〜屋 (や) makes a shop or trade: 本屋 bookshop, 花屋 florist.' } }],
       I: [{ kind: 'choose', item: 'c:rw_sign_i', ctx: { jp: '「 {修理|しゅうり} {承|うけたまわ}ります 」', en: '' }, prompt: { en: 'Oto found the old sign\'s second line. What does it tell customers?' },
         options: [{ en: 'Repairs taken on (we accept repair work).', ok: true }, { en: 'Closed for repairs.', ok: false, why: { en: 'That would be 修理中 or 休業.' } }, { en: 'Repairs cost extra.', ok: false, why: { en: '承ります is a humble "we accept / will undertake".' } }],
         explain: { en: '承る (うけたまわる) is humble: "to receive, accept (an order)". It\'s common on shop signs.' } }],
@@ -264,13 +264,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
         { kind: 'choose', item: 'c:rw_mr_i', ctx: { jp: '{迷|まよ}ったら 、 {一番|いちばん} {古|ふる}い {名前|なまえ} に {戻|もど}れ 。', en: '' }, prompt: { en: 'Ren\'s teacher\'s advice. Which paraphrase keeps its meaning?' },
           options: [{ jp: 'わから なく なったら 、 {最初|さいしょ} の {名前|なまえ} を {使|つか}いなさい 。', ok: true }, { jp: '{古|ふる}い {名前|なまえ} は {捨|す}てて 、 {新|あたら}しく {付|つ}けなさい 。', ok: false, why: { en: 'The advice is to go back TO the oldest name, not discard it.' } }, { jp: '{道|みち} に {迷|まよ}う の は 、 {名前|なまえ} が {古|ふる}い から だ 。', ok: false, why: { en: 'It gives an instruction (戻れ), not a cause.' } }],
           explain: { en: '戻れ is the plain imperative of 戻る — a teacher\'s blunt instruction.' } },
-        { kind: 'write', item: 'v:水車小屋', prompt: { en: 'Write the lantern\'s name (kana or kanji).' }, answer: 'すいしゃごや', accept: ['すいしゃごや', '水車小屋'], mode: 'reading', explain: { jp: '{水車|すいしゃ}{小屋|ごや}', en: 'Water mill.' } },
+        { kind: 'write', item: 'v:水車小屋', prompt: { en: 'Write the lantern\'s name (hiragana or kanji).' }, answer: 'すいしゃごや', accept: ['すいしゃごや', '水車小屋'], mode: 'reading', explain: { jp: '{水車|すいしゃ}{小屋|ごや}', en: 'Water mill.' } },
       ],
       A: [
         { kind: 'choose', item: 'c:rw_mr_a', ctx: { jp: '{名|な} は {呼|よ}ばれて こそ {名|な} で ある 。 {誰|だれ} に も {呼|よ}ばれなく なった {名|な} は 、 {灯|あか}り に {書|か}いて も {長|なが}く は {持|も}たない 。', en: '' }, prompt: { en: 'A note tied to the lantern post. What does it imply about why names are fading?' },
           options: [{ en: 'A name lives by being used; one nobody calls anymore won\'t hold, even if written.', ok: true }, { en: 'Names must be shouted to be written.', ok: false, why: { en: '〜てこそ = "only when… (is it truly…)", not a rule about shouting.' } }, { en: 'Lantern names last longer than spoken ones.', ok: false, why: { en: 'It says written names do NOT last long if no one calls them.' } }],
           explain: { en: '〜てこそ emphasises a necessary condition: "a name is a name precisely because it is called".' } },
-        { kind: 'write', item: 'v:水車小屋', prompt: { en: 'Write the lantern\'s name (kana or kanji).' }, answer: 'すいしゃごや', accept: ['すいしゃごや', '水車小屋'], mode: 'reading', explain: { jp: '{水車|すいしゃ}{小屋|ごや}', en: 'Water mill.' } },
+        { kind: 'write', item: 'v:水車小屋', prompt: { en: 'Write the lantern\'s name (hiragana or kanji).' }, answer: 'すいしゃごや', accept: ['すいしゃごや', '水車小屋'], mode: 'reading', explain: { jp: '{水車|すいしゃ}{小屋|ごや}', en: 'Water mill.' } },
       ],
     } };
 

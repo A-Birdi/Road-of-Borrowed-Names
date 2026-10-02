@@ -128,7 +128,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Reedwake (read in chapter 1 or later): the fare book and the pledge seal.
   X['lq.c_seal'] = { title: T('The fare book', '{渡|わた}し{帳|ちょう}'),
     tiers: {
-      F: [{ kind: 'write', item: 'v:かもめ', prompt: { en: 'The seal is carved back to front, so you press it on a scrap of paper. It prints three kana: ka-mo-me — "kamome", a gull. Write the word in hiragana.' }, answer: 'かもめ', accept: ['かもめ'], mode: 'kana', explain: { jp: 'かもめ', en: 'かもめ (kamome) — a gull, a seagull.' } }],
+      F: [{ kind: 'write', item: 'v:かもめ', prompt: { en: 'The seal is carved back to front, so you press it on a scrap of paper. It prints three hiragana: ka-mo-me — "kamome", a gull. Write the word in hiragana.' }, answer: 'かもめ', accept: ['かもめ'], mode: 'kana', explain: { jp: 'かもめ', en: 'かもめ (kamome) — a gull, a seagull.' } }],
       E: [
         { kind: 'choose', item: 'c:lq_fare_e', ctx: { jp: 'わたしちん 、 かならず はらい に きます 。', en: '' }, prompt: { en: 'The last entry in the book, in a young person\'s shaky hand. What does it promise?' },
           options: [{ en: 'I will come back to pay the fare, without fail.', ok: true }, { en: 'I have paid the fare in full.', ok: false, why: { en: 'はらいに きます = "will come to pay": nothing has been paid yet.' } }, { en: 'Please pay the fare when you come.', ok: false, why: { en: 'There is no ください; the writer is the one who will come.' } }],
@@ -175,13 +175,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
         { kind: 'choose', item: 'v:小春', ctx: { jp: '{小春|こはる} の {頃|ころ} 、 {柿|かき} が {甘|あま}く なる 。', en: '' }, prompt: { en: 'Carved on the lantern post, below the blank shade. When do the persimmons turn sweet?' },
           options: [{ en: 'In the mild days of late autumn and early winter.', ok: true }, { en: 'In early spring.', ok: false, why: { en: '小春 contains 春 ("spring"), but it is an old name for the tenth lunar month, around November.' } }, { en: 'In the rainy season.', ok: false, why: { en: 'The rainy season is 梅雨 (つゆ).' } }],
           explain: { en: '小春 is an old name for the tenth month of the lunar calendar (roughly November). 小春日和 is a mild, sunny day in late autumn or early winter.' } },
-        { kind: 'write', item: 'v:小春野', prompt: { en: 'Write the hamlet\'s name on the shade: Koharuno (kana or kanji).' }, answer: 'こはるの', accept: ['こはるの', '小春野'], mode: 'reading', explain: { jp: '{小春野|こはるの}', en: 'Koharuno.' } },
+        { kind: 'write', item: 'v:小春野', prompt: { en: 'Write the hamlet\'s name on the shade: Koharuno (hiragana or kanji).' }, answer: 'こはるの', accept: ['こはるの', '小春野'], mode: 'reading', explain: { jp: '{小春野|こはるの}', en: 'Koharuno.' } },
       ],
       A: [
         { kind: 'choose', item: 'c:lq_koharu_a', ctx: { jp: '{名|な} は {呼|よ}ばれて こそ {名|な} 。 {呼|よ}ぶ {者|もの} なき {里|さと} は 、 {地図|ちず} より {先|さき} に {人|ひと} の {口|くち} から {消|き}える 。', en: '' }, prompt: { en: 'A line cut into the lantern frame, older than the paper. What does it claim?' },
           options: [{ en: 'A place with no one left to say its name vanishes from people\'s mouths before it vanishes from maps.', ok: true }, { en: 'Maps outlast spoken names, so a place name should be written down.', ok: false, why: { en: '地図より先に = "sooner than from maps": speech is lost first, and the line is about calling, not writing.' } }, { en: 'Only the people who live in a place may call its name.', ok: false, why: { en: '呼ぶ者なき = "with no one who calls (it)"; nothing restricts who may.' } }],
           explain: { en: '〜てこそ = only when… (is it truly…); なき is the literary form of ない before a noun (呼ぶ者なき里 = a hamlet with no one to call it); 〜より先に = before….' } },
-        { kind: 'write', item: 'v:小春野', prompt: { en: 'Write the hamlet\'s name on the shade: Koharuno (kana or kanji).' }, answer: 'こはるの', accept: ['こはるの', '小春野'], mode: 'reading', explain: { jp: '{小春野|こはるの}', en: 'Koharuno.' } },
+        { kind: 'write', item: 'v:小春野', prompt: { en: 'Write the hamlet\'s name on the shade: Koharuno (hiragana or kanji).' }, answer: 'こはるの', accept: ['こはるの', '小春野'], mode: 'reading', explain: { jp: '{小春野|こはるの}', en: 'Koharuno.' } },
       ],
     } };
 })(RB.content);

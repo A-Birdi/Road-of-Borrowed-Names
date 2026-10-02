@@ -474,8 +474,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
 
   // ---- drills (region: the Still Archive) ------------------------------------------------------------------------
-  const kanaDrill = (id, word, en, before, ans, after, item) => ({ id, lv: 'F', tags: ['still'], kind: 'write', item: item || ('k:' + ans), prompt: { en: 'Complete the word "' + en + '": write the missing kana.' }, template: { before, after }, answer: ans, accept: [ans], mode: 'kana', single: true, explain: { en: word + ' — ' + en + '.' } });
-  const read = (id, lv, w, r, en, extra) => Object.assign({ id, lv, tags: ['still'], kind: 'write', item: 'v:' + w, prompt: { en: 'Write the word for "' + en + '" (kana is fine).' }, answer: r, accept: [r, w], mode: 'reading', explain: { jp: '{' + w + '|' + r + '}', en: en + '.' } }, extra || {});
+  const kanaDrill = (id, word, en, before, ans, after, item) => ({ id, lv: 'F', tags: ['still'], kind: 'write', item: item || ('k:' + ans), prompt: { en: 'Complete the word "' + en + '": write the missing ' + (RB.kana.isKata(ans) ? 'katakana' : 'hiragana') + '.' }, template: { before, after }, answer: ans, accept: [ans], mode: 'kana', single: true, explain: { en: word + ' — ' + en + '.' } });
+  const read = (id, lv, w, r, en, extra) => Object.assign({ id, lv, tags: ['still'], kind: 'write', item: 'v:' + w, prompt: { en: 'Write the word for "' + en + '" (in hiragana, or in kanji).' }, answer: r, accept: [r, w], mode: 'reading', explain: { jp: '{' + w + '|' + r + '}', en: en + '.' } }, extra || {});
   const mc = (id, lv, item, prompt, ctx, options, explain) => ({ id, lv, tags: ['still'], kind: 'choose', item, prompt: { en: prompt }, ctx, options, explain });
   C.addDrills([
     // Foundations: kana inside the chapter's everyday words

@@ -33,7 +33,7 @@ RB.challenge = (function () {
     // { ok, feedback, limit?, head?, html? } — `limit` means "outside what this can read", not wrong
     if (typeof step.judge === 'function') { try { return step.judge(input, opts || {}) || { ok: false }; } catch (e) { console.error('judge', e); return { ok: false, feedback: [] }; } }
     const accept = (step.accept && step.accept.length ? step.accept : [step.answer]).map(String);
-    if (RB.answers && RB.answers.check) return RB.answers.check(input, { accept, mode: step.mode || 'kana', scriptFree: !!step.scriptFree, handwritten: !!(opts && opts.handwritten) });
+    if (RB.answers && RB.answers.check) return RB.answers.check(input, { accept, mode: step.mode || 'kana', scriptFree: !!step.scriptFree, handwritten: !!(opts && opts.handwritten), input: opts && opts.input });
     const norm = (s) => plain(s).replace(/\s/g, '');
     const ok = accept.some((a) => norm(a) === norm(input));
     return { ok, feedback: ok ? [] : [{ code: 'generic', en: 'That is not what this needs.' }] };
@@ -128,6 +128,9 @@ RB.challenge = (function () {
           if (step.ctx.en && showEn) h += '<div class="chal-en">' + esc(RB.script.enVars(step.ctx.en)) + '</div>';
         }
         if (step.prompt) h += '<div class="chal-prompt">' + esc(RB.script.enVars(step.prompt.en || '')) + (step.prompt.jp ? ' ' + RB.ui.jhtml(step.prompt.jp) : '') + '</div>';
+        // a guided example shows its model on the task (battle addendum RBN-07): said so, and
+        // recorded as assisted — never as independent recall or deduction
+        if (step.guided) h += '<div class="chal-guided muted small">' + I('help') + '<span>' + esc(step.guided.en || 'A guided example: the model is shown above.') + '</span></div>';
         if (step.kind === 'write' && step.template && (step.template.before || step.template.after)) {
           h += '<div class="chal-tpl">' + RB.ui.jhtml(step.template.before || '') + '<span class="blank jp" role="img" aria-label="the missing part">？</span>' + RB.ui.jhtml(step.template.after || '') + '</div>';
         }
@@ -318,11 +321,12 @@ RB.challenge = (function () {
         res.ok = true;
         res.mode = modeUsed;
         if (res.firstTry == null) res.firstTry = true;
-        if (active.helpUsed) res.assisted = true;
+        if (active.helpUsed || step.guided) res.assisted = true;
+        if (step.guided) res.guided = true;
         RB.audio && RB.audio.sfx('answer_right');
         // how it was written: "水 (みず) — written in kanji", one-shape characters
         const how = (notes || []).map((n) => '<div class="fb-how" data-note="' + esc(n.code) + '">' + enRuby(n.en) + '</div>').join('');
-        fb('ok', 'Yes.', how + (res.assisted ? '<span class="muted small">Assisted — that\'s fine.</span>' : '') + explainHtml());
+        fb('ok', 'Yes.', how + (res.assisted ? '<span class="muted small">' + (res.guided ? 'Guided practice' : 'Assisted') + ' — that\'s fine.</span>' : '') + explainHtml());
         const w = wrap.querySelector('.fbwrap');
         const btn = continueBtn();
         btn.onclick = () => finish(false);
@@ -332,7 +336,7 @@ RB.challenge = (function () {
       }
       function evaluate(text, modeUsed, meta) {
         if (PH) PH.submit(modeUsed); // stamped before evaluation: on time stays on time
-        const r = check(text, step, { handwritten: modeUsed === 'hand' });
+        const r = check(text, step, { handwritten: modeUsed === 'hand', input: modeUsed });
         if (r.ok) {
           if (meta.assisted) active.helpUsed = true;
           res.given = { text: plain(text), mode: modeUsed, matched: r.matched != null ? r.matched : null, family: r.family != null ? r.family : null };

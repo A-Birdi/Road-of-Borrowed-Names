@@ -115,7 +115,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     tiers: {
       F: [{ kind: 'write', item: 'v:石', prompt: { en: 'The stones keep sliding. Write the word for stone — ishi — on the wall so it holds.' }, answer: 'いし', accept: ['いし', '石'], mode: 'reading', explain: { jp: '{石|いし}', en: 'いし (石) — stone. As an inscription it stands firm against gusts and floods.' },
         teach: { title: 'New inscription: いし', jp: '{石|いし}', en: 'いし (ishi) means stone — an ordinary word. Woven with clear intent, it stands firm: it answers gusts and rising water in battle.' } }],
-      E: [{ kind: 'write', item: 'v:石', ctx: { jp: '{段|だん} の {壁|かべ} は 、 {石|いし} を {積|つ}んで {作|つく}って ある 。', en: 'The terrace walls are built of stacked stone.' }, prompt: { en: 'Weave the word for "stone" into the loose wall. (Kana or kanji.)' }, answer: 'いし', accept: ['いし', '石'], mode: 'reading', explain: { jp: '{石|いし}', en: 'いし — stone. 石を積む = to stack stones.' },
+      E: [{ kind: 'write', item: 'v:石', ctx: { jp: '{段|だん} の {壁|かべ} は 、 {石|いし} を {積|つ}んで {作|つく}って ある 。', en: 'The terrace walls are built of stacked stone.' }, prompt: { en: 'Weave the word for "stone" into the loose wall. (Hiragana or kanji.)' }, answer: 'いし', accept: ['いし', '石'], mode: 'reading', explain: { jp: '{石|いし}', en: 'いし — stone. 石を積む = to stack stones.' },
         teach: { title: 'New inscription: いし', jp: '{石|いし}', en: 'いし (ishi) means stone. Woven with clear intent, it stands firm: it answers gusts and rising water in battle.' } }],
       I: [
         { kind: 'choose', item: 'c:co_ishi_i', ctx: { jp: '{火|ひ} が {来|き}て も 、 {石|いし} は {燃|も}えない 。 だから 、 {上|うえ} の {段|だん} で は {石垣|いしがき} だけ が {残|のこ}った 。', en: '' },
@@ -273,7 +273,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
           options: [{ jp: '{小皿|こざら} {三十枚|さんじゅうまい} ・ {湯呑|ゆの}み {二十個|にじゅっこ} ・ とっくり {十本|じゅっぽん}', ok: true },
             noJ('{小皿|こざら} {三十本|さんじゅっぽん} ・ {湯呑|ゆの}み {二十枚|にじゅうまい} ・ とっくり {十個|じゅっこ}', 'That is how thirty flasks happened.'),
             noJ('{小皿|こざら} {三十個|さんじゅっこ} ・ {湯呑|ゆの}み {二十本|にじゅっぽん} ・ とっくり {十枚|じゅうまい}', 'Flasks aren\'t flat; cups aren\'t long.')], explain: { en: '枚 flat · 個 small objects · 本 long objects.' } },
-        { kind: 'write', item: 'g:counters', prompt: { en: 'How do you say "thirty (long objects)" — 30 + 本 — in kana? Watch the sound change.' }, answer: 'さんじゅっぽん', accept: ['さんじゅっぽん', 'さんじっぽん', '三十本', '30本'], mode: 'reading', explain: { jp: '{三十本|さんじゅっぽん}', en: 'After じゅう, 本 becomes っぽん: さんじゅっぽん (also さんじっぽん).' } },
+        { kind: 'write', item: 'g:counters', prompt: { en: 'How do you say "thirty (long objects)" — 30 + 本 — in hiragana? Watch the sound change.' }, answer: 'さんじゅっぽん', accept: ['さんじゅっぽん', 'さんじっぽん', '三十本', '30本'], mode: 'reading', explain: { jp: '{三十本|さんじゅっぽん}', en: 'After じゅう, 本 becomes っぽん: さんじゅっぽん (also さんじっぽん).' } },
       ],
       A: [
         { kind: 'choose', item: 'c:co_count_a', ctx: { jp: 'サヨ が ノブ に {詫|わ}び{状|じょう} を {書|か}く 。', en: 'Sayo is writing Nobu a note of apology.' }, prompt: { en: 'Which draft is the most fitting — polite, owning the mistake, making the new request clear?' },

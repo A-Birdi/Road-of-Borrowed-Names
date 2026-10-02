@@ -197,7 +197,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     tiers: {
       F: [
         { kind: 'write', item: 'v:三時', ctx: { jp: 'ひきしお ： ごご 3:00', en: 'Low tide: 3:00 p.m.' },
-          prompt: { en: 'Shiori: "When is low tide?" Write the hour in kana: three o\'clock is さんじ (sanji).' },
+          prompt: { en: 'Shiori: "When is low tide?" Write the hour in hiragana: three o\'clock is さんじ (sanji).' },
           template: { before: 'ごご ', after: '' }, answer: 'さんじ', accept: ['さんじ', '3じ', '{三時|さんじ}'], mode: 'reading',
           explain: { jp: 'ごご {三時|さんじ}', en: 'ごご さんじ — 3 p.m. (ごご = afternoon, p.m.)' } },
         { kind: 'choose', item: 'g:mae_ato', prompt: { en: 'The causeway is dry from an hour BEFORE low tide. When can you start walking?' },
@@ -281,7 +281,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
             { jp: '{風|かぜ} が {止|や}めば {動|うご}く 。', en: 'It moves when the wind stops.', ok: false, why: no('When the wind stops, the fog SETTLES (すわる).') },
             { jp: '{座|すわ}れば {消|き}える 。', en: 'It disappears once it settles.', ok: false, why: no('Settled fog stays until the wind moves it.') },
           ], explain: { jp: '〜で しか 〜ない ＝ only by …', en: 'しか + negative: かぜ で しか うごかん = moves only with the wind. (うごかん is a casual form of うごかない.)' } },
-        { kind: 'write', item: 'v:風', prompt: { en: 'Write "wind" into the vane\'s grooves (kana or kanji).' },
+        { kind: 'write', item: 'v:風', prompt: { en: 'Write "wind" into the vane\'s grooves (hiragana or kanji).' },
           answer: 'かぜ', accept: ['かぜ', '{風|かぜ}'], mode: 'reading', explain: { jp: '{風|かぜ}', en: 'かぜ — wind.' } },
       ],
       A: [
@@ -403,7 +403,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
             { jp: '{馬鹿|ばか} は {縄|なわ} を {持|も}って いない 。', en: 'Fools don\'t own rope.', ok: false, why: no('The subject is "going near water without rope" (の is a nominaliser).') },
             { jp: '{縄|なわ} は {馬鹿|ばか} の ため の もの だ 。', en: 'Rope is for fools.', ok: false, why: no('Other way round.') },
           ], explain: { jp: '〜の は …… だけ だ', en: 'X のは Y だけだ — "the only ones who X are Y".' } },
-        { kind: 'write', item: 'v:縄', prompt: { en: 'Write "rope" (kana or kanji).' },
+        { kind: 'write', item: 'v:縄', prompt: { en: 'Write "rope" (hiragana or kanji).' },
           answer: 'なわ', accept: ['なわ', '{縄|なわ}'], mode: 'reading', explain: { jp: '{縄|なわ}', en: 'なわ — rope.' } },
       ],
       A: [
