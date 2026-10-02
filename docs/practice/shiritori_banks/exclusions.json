@@ -1,0 +1,1094 @@
+{
+ "note": "Candidate nouns that were checked (or considered) but are not in any shipped bank, with the reason. They are not playable: a word outside the match bank is answered with \"outside this match's word bank\".",
+ "candidates": [
+  {
+   "id": "w.asagao",
+   "reading": "あさがお",
+   "forms": [
+    "朝顔"
+   ],
+   "en": "morning glory",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.inaka",
+   "reading": "いなか",
+   "forms": [
+    "田舎"
+   ],
+   "en": "the countryside",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.inoshishi",
+   "reading": "いのしし",
+   "forms": [],
+   "en": "wild boar",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.imomushi",
+   "reading": "いもむし",
+   "forms": [
+    "芋虫"
+   ],
+   "en": "caterpillar",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.uguisu",
+   "reading": "うぐいす",
+   "forms": [],
+   "en": "bush warbler",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.uchiwa",
+   "reading": "うちわ",
+   "forms": [],
+   "en": "round fan",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.unagi",
+   "reading": "うなぎ",
+   "forms": [],
+   "en": "eel",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.enogu",
+   "reading": "えのぐ",
+   "forms": [
+    "絵の具"
+   ],
+   "en": "paints",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.epuron",
+   "reading": "えぷろん",
+   "forms": [
+    "エプロン"
+   ],
+   "en": "apron",
+   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 13, Extended 24 losing words)"
+  },
+  {
+   "id": "w.eri",
+   "reading": "えり",
+   "forms": [
+    "襟"
+   ],
+   "en": "collar",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.ono",
+   "reading": "おの",
+   "forms": [
+    "斧"
+   ],
+   "en": "axe",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.gakubuchi",
+   "reading": "がくぶち",
+   "forms": [
+    "額縁"
+   ],
+   "en": "picture frame",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.katatsumuri",
+   "reading": "かたつむり",
+   "forms": [],
+   "en": "snail",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.kaba",
+   "reading": "かば",
+   "forms": [],
+   "en": "hippopotamus",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.kabu",
+   "reading": "かぶ",
+   "forms": [],
+   "en": "turnip",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.kamakiri",
+   "reading": "かまきり",
+   "forms": [],
+   "en": "praying mantis",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.kamome",
+   "reading": "かもめ",
+   "forms": [],
+   "en": "seagull",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.karuta",
+   "reading": "かるた",
+   "forms": [],
+   "en": "karuta (card game)",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.karendaa",
+   "reading": "かれんだー",
+   "forms": [
+    "カレンダー"
+   ],
+   "en": "calendar",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.kiku",
+   "reading": "きく",
+   "forms": [
+    "菊"
+   ],
+   "en": "chrysanthemum",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.kiji",
+   "reading": "きじ",
+   "forms": [],
+   "en": "pheasant",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.kyuusu",
+   "reading": "きゅうす",
+   "forms": [
+    "急須"
+   ],
+   "en": "teapot",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.gyouza",
+   "reading": "ぎょうざ",
+   "forms": [],
+   "en": "gyoza dumpling",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.kushi",
+   "reading": "くし",
+   "forms": [],
+   "en": "comb",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.kujaku",
+   "reading": "くじゃく",
+   "forms": [],
+   "en": "peacock",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.kukkii",
+   "reading": "くっきー",
+   "forms": [
+    "クッキー"
+   ],
+   "en": "biscuit, cookie",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.kurage",
+   "reading": "くらげ",
+   "forms": [],
+   "en": "jellyfish",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.kureyon",
+   "reading": "くれよん",
+   "forms": [
+    "クレヨン"
+   ],
+   "en": "crayon",
+   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 13, Extended 24 losing words)"
+  },
+  {
+   "id": "w.kuwa",
+   "reading": "くわ",
+   "forms": [
+    "鍬"
+   ],
+   "en": "hoe",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.kendama",
+   "reading": "けんだま",
+   "forms": [],
+   "en": "kendama (cup-and-ball toy)",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.koara",
+   "reading": "こあら",
+   "forms": [
+    "コアラ"
+   ],
+   "en": "koala",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.koujou",
+   "reading": "こうじょう",
+   "forms": [
+    "工場"
+   ],
+   "en": "factory",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.kouba",
+   "reading": "こうば",
+   "forms": [
+    "工場"
+   ],
+   "en": "factory, workshop",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.koshou",
+   "reading": "こしょう",
+   "forms": [],
+   "en": "pepper (spice)",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.kotatsu",
+   "reading": "こたつ",
+   "forms": [],
+   "en": "kotatsu (heated table)",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.gobou",
+   "reading": "ごぼう",
+   "forms": [],
+   "en": "burdock root",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.goma",
+   "reading": "ごま",
+   "forms": [],
+   "en": "sesame",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.zaru",
+   "reading": "ざる",
+   "forms": [],
+   "en": "colander basket",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.shiba",
+   "reading": "しば",
+   "forms": [
+    "芝"
+   ],
+   "en": "lawn grass",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.shimauma",
+   "reading": "しまうま",
+   "forms": [],
+   "en": "zebra",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.shouji",
+   "reading": "しょうじ",
+   "forms": [
+    "障子"
+   ],
+   "en": "paper screen door",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.shinbun",
+   "reading": "しんぶん",
+   "forms": [
+    "新聞"
+   ],
+   "en": "newspaper",
+   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 13, Extended 24 losing words)"
+  },
+  {
+   "id": "w.suisen",
+   "reading": "すいせん",
+   "forms": [
+    "水仙"
+   ],
+   "en": "daffodil, narcissus",
+   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 13, Extended 24 losing words)"
+  },
+  {
+   "id": "w.zugara",
+   "reading": "ずがら",
+   "forms": [
+    "図柄"
+   ],
+   "en": "design, pattern",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.sukoppu",
+   "reading": "すこっぷ",
+   "forms": [
+    "スコップ"
+   ],
+   "en": "shovel, scoop",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.suzuri",
+   "reading": "すずり",
+   "forms": [
+    "硯"
+   ],
+   "en": "inkstone",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.sudare",
+   "reading": "すだれ",
+   "forms": [],
+   "en": "bamboo blind",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.supuun",
+   "reading": "すぷーん",
+   "forms": [
+    "スプーン"
+   ],
+   "en": "spoon",
+   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 13, Extended 24 losing words)"
+  },
+  {
+   "id": "w.suberidai",
+   "reading": "すべりだい",
+   "forms": [
+    "滑り台"
+   ],
+   "en": "playground slide",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.sumomo",
+   "reading": "すもも",
+   "forms": [],
+   "en": "Japanese plum",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.sensu",
+   "reading": "せんす",
+   "forms": [
+    "扇子"
+   ],
+   "en": "folding fan",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.zoukin",
+   "reading": "ぞうきん",
+   "forms": [
+    "雑巾"
+   ],
+   "en": "floor cloth",
+   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 13, Extended 24 losing words)"
+  },
+  {
+   "id": "w.sofaa",
+   "reading": "そふぁー",
+   "forms": [
+    "ソファー"
+   ],
+   "en": "sofa",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.sori",
+   "reading": "そり",
+   "forms": [],
+   "en": "sled, sledge",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.daikon",
+   "reading": "だいこん",
+   "forms": [
+    "大根"
+   ],
+   "en": "daikon radish",
+   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 13, Extended 24 losing words)"
+  },
+  {
+   "id": "w.takenoko",
+   "reading": "たけのこ",
+   "forms": [],
+   "en": "bamboo shoot",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.dachou",
+   "reading": "だちょう",
+   "forms": [],
+   "en": "ostrich",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.tamanegi",
+   "reading": "たまねぎ",
+   "forms": [
+    "玉ねぎ"
+   ],
+   "en": "onion",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.daruma",
+   "reading": "だるま",
+   "forms": [],
+   "en": "daruma doll",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.tawashi",
+   "reading": "たわし",
+   "forms": [],
+   "en": "scrubbing brush",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.tanpopo",
+   "reading": "たんぽぽ",
+   "forms": [],
+   "en": "dandelion",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.chikyuu",
+   "reading": "ちきゅう",
+   "forms": [
+    "地球"
+   ],
+   "en": "the Earth",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.chikuwa",
+   "reading": "ちくわ",
+   "forms": [],
+   "en": "chikuwa (fish-paste tube)",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.chouchin",
+   "reading": "ちょうちん",
+   "forms": [
+    "提灯"
+   ],
+   "en": "paper lantern",
+   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 13, Extended 24 losing words)"
+  },
+  {
+   "id": "w.chiritori",
+   "reading": "ちりとり",
+   "forms": [],
+   "en": "dustpan",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.tsukushi",
+   "reading": "つくし",
+   "forms": [],
+   "en": "horsetail shoot",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.tsubo",
+   "reading": "つぼ",
+   "forms": [],
+   "en": "pot, jar",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.tsumiki",
+   "reading": "つみき",
+   "forms": [
+    "積み木"
+   ],
+   "en": "toy building blocks",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.denkyuu",
+   "reading": "でんきゅう",
+   "forms": [
+    "電球"
+   ],
+   "en": "light bulb",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.tentoumushi",
+   "reading": "てんとうむし",
+   "forms": [],
+   "en": "ladybird",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.dougu",
+   "reading": "どうぐ",
+   "forms": [
+    "道具"
+   ],
+   "en": "tool",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.douro",
+   "reading": "どうろ",
+   "forms": [
+    "道路"
+   ],
+   "en": "road",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.tourou",
+   "reading": "とうろう",
+   "forms": [
+    "灯籠"
+   ],
+   "en": "garden lantern",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.tokage",
+   "reading": "とかげ",
+   "forms": [],
+   "en": "lizard",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.nae",
+   "reading": "なえ",
+   "forms": [
+    "苗"
+   ],
+   "en": "seedling",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.ninjin",
+   "reading": "にんじん",
+   "forms": [],
+   "en": "carrot",
+   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 13, Extended 24 losing words)"
+  },
+  {
+   "id": "w.nuigurumi",
+   "reading": "ぬいぐるみ",
+   "forms": [],
+   "en": "soft toy",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.nurie",
+   "reading": "ぬりえ",
+   "forms": [
+    "塗り絵"
+   ],
+   "en": "colouring picture",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.nokogiri",
+   "reading": "のこぎり",
+   "forms": [],
+   "en": "saw",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.hakaba",
+   "reading": "はかば",
+   "forms": [
+    "墓場"
+   ],
+   "en": "graveyard",
+   "why": "dropped before selection: no JMdict common-priority tag; subject matter"
+  },
+  {
+   "id": "w.hakama",
+   "reading": "はかま",
+   "forms": [
+    "袴"
+   ],
+   "en": "hakama (pleated trousers)",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.hakari",
+   "reading": "はかり",
+   "forms": [],
+   "en": "weighing scales",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.hakuchou",
+   "reading": "はくちょう",
+   "forms": [
+    "白鳥"
+   ],
+   "en": "swan",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.hake",
+   "reading": "はけ",
+   "forms": [
+    "刷毛"
+   ],
+   "en": "paintbrush (flat)",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.basha",
+   "reading": "ばしゃ",
+   "forms": [
+    "馬車"
+   ],
+   "en": "horse-drawn carriage",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.pajama",
+   "reading": "ぱじゃま",
+   "forms": [
+    "パジャマ"
+   ],
+   "en": "pyjamas",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.hachimaki",
+   "reading": "はちまき",
+   "forms": [],
+   "en": "headband",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.batta",
+   "reading": "ばった",
+   "forms": [],
+   "en": "grasshopper",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.hanko",
+   "reading": "はんこ",
+   "forms": [],
+   "en": "personal seal, stamp",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.piasu",
+   "reading": "ぴあす",
+   "forms": [
+    "ピアス"
+   ],
+   "en": "earring (pierced)",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.piiman",
+   "reading": "ぴーまん",
+   "forms": [
+    "ピーマン"
+   ],
+   "en": "green pepper",
+   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 13, Extended 24 losing words)"
+  },
+  {
+   "id": "w.piero",
+   "reading": "ぴえろ",
+   "forms": [
+    "ピエロ"
+   ],
+   "en": "clown",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.hikidashi",
+   "reading": "ひきだし",
+   "forms": [
+    "引き出し"
+   ],
+   "en": "drawer",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.hige",
+   "reading": "ひげ",
+   "forms": [],
+   "en": "beard, whiskers",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.piza",
+   "reading": "ぴざ",
+   "forms": [
+    "ピザ"
+   ],
+   "en": "pizza",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.bisuketto",
+   "reading": "びすけっと",
+   "forms": [
+    "ビスケット"
+   ],
+   "en": "biscuit",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.hitode",
+   "reading": "ひとで",
+   "forms": [],
+   "en": "starfish",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.byouin",
+   "reading": "びょういん",
+   "forms": [
+    "病院"
+   ],
+   "en": "hospital",
+   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 13, Extended 24 losing words)"
+  },
+  {
+   "id": "w.biwa",
+   "reading": "びわ",
+   "forms": [],
+   "en": "loquat",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.pinsetto",
+   "reading": "ぴんせっと",
+   "forms": [
+    "ピンセット"
+   ],
+   "en": "tweezers",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.fugu",
+   "reading": "ふぐ",
+   "forms": [],
+   "en": "pufferfish",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.fuji",
+   "reading": "ふじ",
+   "forms": [
+    "藤"
+   ],
+   "en": "wisteria",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.puragu",
+   "reading": "ぷらぐ",
+   "forms": [
+    "プラグ"
+   ],
+   "en": "electric plug",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.buranko",
+   "reading": "ぶらんこ",
+   "forms": [],
+   "en": "swing (playground)",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.purin",
+   "reading": "ぷりん",
+   "forms": [
+    "プリン"
+   ],
+   "en": "custard pudding",
+   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 13, Extended 24 losing words)"
+  },
+  {
+   "id": "w.furoshiki",
+   "reading": "ふろしき",
+   "forms": [
+    "風呂敷"
+   ],
+   "en": "wrapping cloth",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.heso",
+   "reading": "へそ",
+   "forms": [],
+   "en": "navel",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.beruto",
+   "reading": "べると",
+   "forms": [
+    "ベルト"
+   ],
+   "en": "belt",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.penki",
+   "reading": "ぺんき",
+   "forms": [
+    "ペンキ"
+   ],
+   "en": "house paint",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.booto",
+   "reading": "ぼーと",
+   "forms": [
+    "ボート"
+   ],
+   "en": "rowing boat",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.posutaa",
+   "reading": "ぽすたー",
+   "forms": [
+    "ポスター"
+   ],
+   "en": "poster",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.potto",
+   "reading": "ぽっと",
+   "forms": [
+    "ポット"
+   ],
+   "en": "pot, thermos flask",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.manaita",
+   "reading": "まないた",
+   "forms": [],
+   "en": "cutting board",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.mari",
+   "reading": "まり",
+   "forms": [],
+   "en": "ball (handball)",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.mushimegane",
+   "reading": "むしめがね",
+   "forms": [
+    "虫眼鏡"
+   ],
+   "en": "magnifying glass",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.mejiro",
+   "reading": "めじろ",
+   "forms": [],
+   "en": "white-eye (small bird)",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.medaka",
+   "reading": "めだか",
+   "forms": [],
+   "en": "killifish",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.mogura",
+   "reading": "もぐら",
+   "forms": [],
+   "en": "mole (animal)",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.monosashi",
+   "reading": "ものさし",
+   "forms": [
+    "物差し"
+   ],
+   "en": "ruler (for measuring)",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.yashiro",
+   "reading": "やしろ",
+   "forms": [
+    "社"
+   ],
+   "en": "shrine",
+   "why": "dropped before selection: 社 is usually read しゃ; no JMdict priority tag"
+  },
+  {
+   "id": "w.yasuri",
+   "reading": "やすり",
+   "forms": [],
+   "en": "file (tool)",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.yamori",
+   "reading": "やもり",
+   "forms": [],
+   "en": "gecko",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.yukata",
+   "reading": "ゆかた",
+   "forms": [
+    "浴衣"
+   ],
+   "en": "yukata (summer kimono)",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.yuzu",
+   "reading": "ゆず",
+   "forms": [],
+   "en": "yuzu citrus",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.rakuda",
+   "reading": "らくだ",
+   "forms": [],
+   "en": "camel",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.rakko",
+   "reading": "らっこ",
+   "forms": [],
+   "en": "sea otter",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.rappa",
+   "reading": "らっぱ",
+   "forms": [],
+   "en": "bugle, trumpet",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.ruupe",
+   "reading": "るーぺ",
+   "forms": [
+    "ルーペ"
+   ],
+   "en": "magnifying loupe",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.ruri",
+   "reading": "るり",
+   "forms": [
+    "瑠璃"
+   ],
+   "en": "lapis lazuli",
+   "why": "replaced by ルビー (more familiar) when Everyday needed a る reply; left out of Extended to keep 360 groups"
+  },
+  {
+   "id": "w.retasu",
+   "reading": "れたす",
+   "forms": [
+    "レタス"
+   ],
+   "en": "lettuce",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.roopu",
+   "reading": "ろーぷ",
+   "forms": [
+    "ロープ"
+   ],
+   "en": "rope",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.roketto",
+   "reading": "ろけっと",
+   "forms": [
+    "ロケット"
+   ],
+   "en": "rocket",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.roba",
+   "reading": "ろば",
+   "forms": [],
+   "en": "donkey",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.wakame",
+   "reading": "わかめ",
+   "forms": [],
+   "en": "wakame seaweed",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  },
+  {
+   "id": "w.wasabi",
+   "reading": "わさび",
+   "forms": [],
+   "en": "wasabi",
+   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+  }
+ ]
+}
