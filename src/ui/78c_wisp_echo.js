@@ -22,6 +22,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const cl = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
   const AIM = [-0.74, 0.67];
   const TAU = Math.PI * 2;
+  const hs = (i, j) => { const x = Math.sin(i * 127.1 + j * 311.7) * 43758.5453; return x - Math.floor(x); };
 
   // =============================================================================================
   // WISP
@@ -310,53 +311,171 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // =============================================================================================
   // ECHO
   // =============================================================================================
-  function echoRig(L, q, o, H) {
-    const col0 = o.col || '#a8c8d8';
-    const col = q.warm > 0 ? mixh(col0, '#f0a060', 0.55 * q.warm) : col0;
-    const lightAng = Math.atan2(-0.66, -0.56);
-    const ra = Math.round(235 * q.rint), rb = Math.round(150 * q.rint), rc = Math.round(80 * q.rint);
-    const R = [K.mat(col, { n: 4, at: 2, step: 0.1, alpha: Math.max(20, ra) }), K.mat(col, { n: 4, at: 2, step: 0.1, alpha: Math.max(14, rb), line: false }), K.mat(col, { n: 4, at: 2, step: 0.1, alpha: Math.max(8, rc), line: false })];
-    const shard = K.mat(col, { n: 5, at: 3, step: 0.1 });
-    const coreM = K.mat(q.warm > 0 ? mixh('#1c2a34', '#3a1a10', q.warm) : '#1c2a34', { n: 4, at: 1, step: 0.07 });
-    const rings = L.like(), shards = L.like(), core = L.like();
-    // rings spreading out of it (spacing, phase and strength)
-    for (let i = 0; i < 3; i++) {
-      const r = (28 + ((i * 18 + q.rph * 54) % 54)) * q.rsp * q.coreS;
-      const M = R[r < 46 ? 0 : r < 66 ? 1 : 2];
-      const th = r < 46 ? 2 : 1.5;
-      rings.fill(-r - 3, -r - 3, r + 3, r + 3, (x, y) => { const d = Math.hypot(x, y); return d <= r + th && d >= r - th; }, M,
-        (x, y) => K.clamp(0.5 + 0.45 * Math.cos(Math.atan2(y, x) - lightAng), 0, 0.99));
+  // The echo (the restyle): a swirl of lost voices — a dark glass core with a three-quarter face,
+  // its rings of sound spreading on a tilted plane seen at a three-quarter angle (the far half
+  // behind the core, the near half in front, broken into arcs that taper at their gaps), mirror
+  // shards orbiting on that plane (rendered like the reference's metal: hard facets, a white
+  // specular edge, a dark reflected band, navy outline; the far ones smaller and a step darker),
+  // and two ribbons of voice and mill dust wrapped round it — one behind, rising to the upper
+  // right, one in front, trailing toward the party — that taper into ragged motes.
+  const TILT = -0.24, RY = 0.56, PY = 8;
+  const plane = (u, v) => { const y = v * RY; return [u * Math.cos(TILT) - y * Math.sin(TILT), u * Math.sin(TILT) + y * Math.cos(TILT) + PY]; };
+  const unplane = (x, y) => { const X = x, Y = y - PY; const u = X * Math.cos(TILT) + Y * Math.sin(TILT), w = -X * Math.sin(TILT) + Y * Math.cos(TILT); return [u, w / RY]; };
+  const echoMatCache = new Map();
+  function echoMats(o, warm) {
+    const col0 = o.col || '#a8c8d8', wk = Math.round(cl(warm) * 4) / 4, key = col0 + '|' + wk;
+    if (echoMatCache.has(key)) return echoMatCache.get(key);
+    const col = wk > 0 ? mixh(col0, '#f0a060', 0.55 * wk) : col0;
+    const ringO = { n: 6, at: 3, lo: 0.16, hi: 0.97, sat: 1.35, hd: 30, hl: 20 };
+    const M = {
+      ring: [255, 200, 140].map((a) => A.hmat(col, Object.assign({ alpha: a }, ringO))),
+      shard: A.hmat(mixh(col, '#d8e4ee', 0.25), { n: 6, at: 3, lo: 0.12, hi: 0.98, sat: 0.95, hd: 40, hl: 26 }),
+      shardF: A.hmat(mixh(col, '#5a6a80', 0.3), { n: 6, at: 3, lo: 0.1, hi: 0.86, sat: 0.95, hd: 40, hl: 26 }),
+      swirl: A.hmat(mixh(col, '#f2ead8', 0.45), { n: 6, at: 4, lo: 0.2, hi: 0.98, sat: 1.05, hd: 55, hl: 14, rim: mixh(col, '#e8fbff', 0.6) }),
+      core: A.hmat(wk > 0 ? mixh('#1c2a34', '#4a1e10', wk) : mixh('#1c2a34', col0, 0.12), { n: 6, at: 1, lo: 0.05, hi: 0.62, sat: 1.4, hd: 20, hl: 40, rim: mixh(col, '#e8fbff', 0.45) }),
+      eye: A.hmat(mixh(col, '#ffffff', 0.5), { n: 4, at: 2, lo: 0.5, hi: 0.99, line: false }),
+      hollow: K.mat(null, { cols: ['#04070a', '#0b131b', '#14202c'], at: 0, line: false }),
+      shine: K.solid('#ffffff', { line: false }),
+      mote: [K.solid(mixh(col, '#fff8ec', 0.65), { line: false }), K.solid(mixh(col, '#f2ead8', 0.35), { line: false })],
+    };
+    echoMatCache.set(key, M);
+    if (echoMatCache.size > 16) echoMatCache.delete(echoMatCache.keys().next().value);
+    return M;
+  }
+  // one glass shard: two facets split along its length (the one facing the key light lit), a white
+  // specular edge on the lit facet, a dark reflected band along the shadowed edge
+  const SHARDS = [[[-8, -2], [6, -5], [16, -1], [7, 4], [-7, 3]], [[-6, -4], [11, -2], [4, 6], [-5, 3]]];
+  function shard(Ls, M, cx, cy, ang, sc, kind) {
+    const pts = SHARDS[kind % 2].map(([x, y]) => [x * sc, y * sc]);
+    // world-space facing of the two facets (local normals (0, −1) and (0, 1) turned by ang)
+    const nUx = Math.sin(ang), nUy = -Math.cos(ang);
+    const fU = -(nUx * 0.6 + nUy * 0.8), fD = -fU;
+    const tone = (f) => (f > 0.35 ? 4 : f > -0.2 ? 3 : 2);
+    Ls.save().translate(cx, cy).rotate(ang);
+    Ls.poly(pts, M, (x, y) => ((y < 0.3 ? tone(fU) : tone(fD)) + 0.5) / M.n);
+    // the specular edge along the lit facet's outer edge, the reflected band along the other
+    const lit = fU > fD ? -1 : 1;
+    Ls.line(pts[0][0] + 1, pts[0][1] * 0.6 + lit * 0.4, pts[2][0] - 2, pts[2][1] * 0.6 + lit * 0.4, M, lit < 0 ? 5 : 1);
+    Ls.line(-3 * sc, lit * -2 * sc, 5 * sc, lit * -2.5 * sc, M, lit < 0 ? 1 : 5);
+    Ls.restore();
+  }
+  // a ribbon of voice and dust along a spiral round the core (angles in screen space, y-down),
+  // tapering to a ragged end of motes
+  function ribbon(Lr, M, th0, dth, r0, r1, w0, rise, sq, seed) {
+    const pts = [], N = 12;
+    for (let i = 0; i <= N; i++) {
+      const t = i / N, th = th0 + dth * t, r = r0 + (r1 - r0) * t;
+      pts.push([Math.cos(th) * r, Math.sin(th) * r * sq - rise * t, Math.max(1.2, w0 * Math.pow(1 - t, 0.9) + 1)]);
     }
-    // shards: orbiting, gathered toward the party, flung along the aim, or locked into a pane
+    const body = pts.slice(0, N - 1);
+    // a flat ribbon: lit along the edge facing the key light, a core shadow along the other
+    for (let i = 1; i < body.length; i++) {
+      const [xa, ya] = body[i - 1], [xb, yb, w] = body[i];
+      const dx = xb - xa, dy = yb - ya, len = Math.hypot(dx, dy) || 1;
+      let nx = -dy / len, ny = dx / len;
+      if (-(nx * 0.6 + ny * 0.8) < 0) { nx = -nx; ny = -ny; }
+      Lr.seg(xa, ya, xb, yb, w, M, (x, y) => { const d = ((x - xa) * nx + (y - ya) * ny) / (w / 2); return d > 0.45 ? 5.5 / 6 : d > -0.2 ? 4.5 / 6 : d > -0.65 ? 3.5 / 6 : 2.5 / 6; });
+    }
+    // the ragged end: the last stretch breaks into motes
+    for (let k = 0; k < 4; k++) {
+      const t = (N - 1.6 + k * 0.7) / N, th = th0 + dth * t, r = r0 + (r1 - r0) * t + (hs(seed, k) - 0.5) * 6;
+      const x = Math.cos(th) * r + k * 1.5, y = Math.sin(th) * r * sq - rise * t + (hs(k, seed) - 0.5) * 5;
+      const sz = 2.4 - k * 0.45;
+      if (sz > 0.9) Lr.ell(x, y, sz, sz * 0.8, M, k % 2 ? 4 : 5);
+    }
+  }
+  function echoRig(L, q, o, H) {
+    const M = echoMats(o, q.warm);
+    const back = L.like(), swA = L.like(), core = L.like(), swB = L.like(), front = L.like();
+    const cs = q.coreS;
+    // rings of sound on the tilted plane, spreading out (spacing, phase, strength); broken into
+    // three arcs each whose gaps turn with the phase; the far half behind the core
+    const ra = cl(q.rint);
+    for (let i = 0; i < 3; i++) {
+      const r = (30 + ((i * 18 + q.rph * 54) % 54)) * q.rsp * cs;
+      const Mr = M.ring[r < 46 ? 0 : r < 66 ? 1 : 2];
+      if (ra < 0.35 && r > 60) continue;
+      const th = (r < 46 ? 3.6 : r < 66 ? 2.8 : 2.1) * (0.6 + 0.4 * ra);
+      const g0 = i * 2.1 + q.rph * 2.4;
+      const inside = (x, y) => {
+        const [u, v] = unplane(x, y), d = Math.hypot(u, v);
+        if (Math.abs(d - r) > th) return false;
+        const a = Math.atan2(v, u), gp = ((a - g0) % (TAU / 2) + TAU) % (TAU / 2);
+        const gap = Math.min(gp, TAU / 2 - gp);
+        return gap > 0.16 && Math.abs(d - r) <= th * Math.min(1, (gap - 0.16) / 0.35 + 0.3);
+      };
+      const tone = (x, y) => {
+        const [u, v] = unplane(x, y), d = Math.hypot(u, v), e = (d - r) / th;
+        let k = e > 0.3 ? 5 : e > -0.3 ? 4 : 2;
+        if (v < 0) k -= 2;                         // the far half recedes (in shadow)
+        return (Math.max(1, k) + 0.5) / Mr.n;
+      };
+      const ext = r + th + 2;
+      back.fill(-ext, PY - ext, ext, PY + ext, (x, y) => inside(x, y) && unplane(x, y)[1] < 0, Mr, tone);
+      front.fill(-ext, PY - ext, ext, PY + ext, (x, y) => inside(x, y) && unplane(x, y)[1] >= 0, Mr, tone);
+    }
+    // mill dust caught in the rings: a few motes on the plane, turning with the phase
+    for (let k = 0; k < 7; k++) {
+      const a = k * 0.9 + q.rph * 1.6 + hs(k, 3) * 0.6, r = (34 + hs(k, 9) * 30) * q.rsp;
+      const [x, y] = plane(Math.cos(a) * r, Math.sin(a) * r);
+      (Math.sin(a) < 0 ? back : front).rect(Math.round(x), Math.round(y), 2, k % 3 ? 1 : 2, M.mote[k % 2], 0);
+    }
+    // shards: orbiting on the plane, gathered toward the party, flung along the aim, or a pane
     const aimA = Math.atan2(AIM[1], AIM[0]);
     for (let i = 0; i < 8; i++) {
-      let a = (i * Math.PI) / 4 + q.rot + (i % 2 ? 0.2 : 0);
-      let r0 = (i % 2 ? 50 : 40) * q.shR;
-      if (q.aim > 0) { const tgt = aimA + (i - 3.5) * 0.18, d = ((((tgt - a) % TAU) + TAU * 1.5) % TAU) - Math.PI; a += d * q.aim; r0 *= 1 - 0.15 * q.aim; }
-      let cx = Math.cos(a) * r0, cy = Math.sin(a) * r0;
+      const a0 = (i * Math.PI) / 4 + q.rot + (i % 2 ? 0.2 : 0);
+      const r0 = (i % 2 ? 52 : 42) * q.shR;
+      let [cx, cy] = plane(Math.cos(a0) * r0, Math.sin(a0) * r0);
+      const depth = Math.sin(a0);
+      let ang = Math.atan2(cy - PY, cx), sc = 0.82 + 0.22 * depth;
+      if (q.aim > 0) {
+        const ta = aimA + (i - 3.5) * 0.17, tr = r0 * 0.78;
+        cx += (Math.cos(ta) * tr - cx) * q.aim; cy += (Math.sin(ta) * tr + 6 - cy) * q.aim;
+        ang += (((ta - ang + 3 * Math.PI) % TAU) - Math.PI) * q.aim; sc += (1 - sc) * q.aim;
+      }
       if (q.out > 0) { const fl = q.out * (22 + (i % 3) * 14); cx += AIM[0] * fl; cy += AIM[1] * fl; }
       if (q.pane > 0) {
-        // a pane in front of it, toward the party: shards tile a tilted square
         const px = -46 + (i % 3) * 9 - Math.floor(i / 3) * 3, py = 14 + Math.floor(i / 3) * 10 - (i % 3) * 2;
-        cx = cx + (px - cx) * q.pane; cy = cy + (py - cy) * q.pane;
-        a = a + ((-0.4 - a) % (Math.PI * 2)) * q.pane;
+        cx += (px - cx) * q.pane; cy += (py - cy) * q.pane;
+        ang += (((-0.4 - ang + 3 * Math.PI) % TAU) - Math.PI) * q.pane; sc += (1 - sc) * q.pane;
       }
-      shards.save().translate(cx, cy).rotate(a);
-      shards.stone([[-6, -3], [10, -5], [16, 0], [9, 5], [-5, 3]], shard, { bevel: 2, face: 2 });
-      shards.restore();
+      const far = depth < -0.2 && q.aim < 0.5 && q.pane < 0.5 && q.out < 0.3;
+      shard(far ? back : front, far ? M.shardF : M.shard, cx, cy, ang, sc, i);
     }
-    if (q.pane > 0.6) shards.line(-50, 4, -30, 30, K.solid('#ffffff', { line: false }), 0); // its glint
-    const cs = q.coreS;
-    core.ell(0, 0, 21 * cs, 21 * cs, coreM, K.sphere(0, 0, 21 * cs, 21 * cs, { amb: 0.1, rim: 0.25 }));
-    core.fill(-24 * cs, -24 * cs, 24 * cs, 24 * cs, (x, y) => { const d = Math.hypot(x, y); return d <= 23 * cs && d > 21 * cs; }, shard, (x, y) => K.clamp(0.45 + 0.5 * Math.cos(Math.atan2(y, x) - lightAng), 0, 0.99));
+    if (q.pane > 0.6) front.line(-50, 4, -30, 30, M.shine, 0); // the pane's glint
+    // the ribbons of voice and dust: one behind (rising to the upper right), one in front
+    // (trailing toward the party), swaying with the rings' phase
+    const sw = Math.sin(q.rph * TAU) * 0.12, open = 1 + (q.coreS - 1) * 2 + (q.mouth || 0) * 0.08;
+    ribbon(swA, M.swirl, 2.75 + sw, 2.75, 25 * cs, 58 * open, 10, 26, 0.8, 3);
+    ribbon(swB, M.swirl, 0.15 + sw, 1.75, 24 * cs, 38 * open, 7, -4, 0.8, 7);
+    // the core: dark glass in hard bands, a crisp specular highlight up left, a reflected band low
+    // right, a cool rim on the right edge
+    const R = 23 * cs;
+    core.ell(0, 0, R, R, M.core, (x, y) => { const nx = x / R, ny = y / R, f = -(nx * 0.6 + ny * 0.8), d = nx * nx + ny * ny; return ((f > 0.45 ? 3 : f > 0.05 ? 2 : f > -0.5 ? 1 : 0) + (d > 0.8 && f < -0.3 ? 1 : 0) + 0.5) / M.core.n; });
+    core.save().translate(-8 * cs, -10 * cs).rotate(-0.6);
+    core.ell(0, 0, 7 * cs, 3.4 * cs, M.core, 4);
+    core.ell(-0.5, -0.5, 4.6 * cs, 1.8 * cs, M.core, 5);
+    core.restore();
+    core.dot(-14 * cs, -2 * cs, M.core, 4); core.dot(-14 * cs, -1 * cs, M.core, 3);
+    // the three-quarter face: turned toward the party, the far eye narrower at the left
     const lx = q.look > 0.5 ? -2 : 0, ly = q.look > 0.5 ? 1 : 0;
-    if (q.eye < 0.25) for (const s of [-1, 1]) core.line(s * 7 - 2 + lx, -4, s * 7 + 2 + lx, -4, shard, 4);
-    else H.eyes(core, lx, -5 + ly, 7, { col: mixh(col, '#ffffff', 0.4), rx: 2.5, ry: 3.5 * Math.max(0.4, q.eye), shine: false });
-    const mo = q.mouth;
-    core.ell(lx, 9 + ly, 3 + mo * 3, 2.5 + mo * 4, K.mat('#0a1016', { n: 2, at: 0, line: false }), 0);
-    core.fill(-8, 4, 8, 18, (x, y) => { const d = Math.hypot((x - lx) / (5 + mo * 3), (y - 9 - ly) / (4.5 + mo * 4)); return d <= 1 && d > 0.72 && y < 9 + ly; }, shard, 1);
-    A.outline(rings); A.outline(shards); A.outline(core);
-    const out = rings.over(shards).over(core);
+    const eyes = [[-12, -4, 2.4], [-1, -5, 3.6]];
+    for (const [ex, ey, rx] of eyes) {
+      const x = ex * cs + lx, y = ey * cs + ly;
+      if (q.eye < 0.25) { core.line(x - rx - 1, y + 1, x + rx + 1, y + 1, M.eye, 2); continue; }
+      const ry = 3.8 * Math.max(0.4, q.eye) * cs;
+      core.ell(x, y, rx, ry, M.eye, (px, py) => (py < y - ry * 0.2 ? 3.5 : 2.5) / 4);
+      if (rx > 3) core.dot(x - 1, y - 2, M.shine, 0);
+    }
+    // the mouth: a hollow that opens as it calls, lit along its lower lip
+    const mo = q.mouth, mx = -5 * cs + lx, my = 9 * cs + ly, mrx = 3 + mo * 3, mry = 2.4 + mo * 4;
+    core.ell(mx, my, mrx + 1.2, mry + 1.2, M.core, 3);
+    core.ell(mx, my, mrx, mry, M.hollow, (x, y) => (y > my + mry * 0.4 ? 1.5 : 0.5) / 3);
+    A.rim(core, [M.core.id], { w: 2 });
+    A.rim(swA, [M.swirl.id]); A.rim(swB, [M.swirl.id]);
+    A.cast(swA, core, 2, 3, 1); A.cast(core, swB, 2, 3, 1); A.cast(core, front, 2, 2, 1); A.cast(back, swA, 2, 2, 1);
+    for (const Lr of [back, swA, core, swB, front]) A.outline(Lr);
+    const out = back.over(swA).over(core).over(swB).over(front);
     if (q.dim < 1) out.fade(q.dim);
     return out;
   }
