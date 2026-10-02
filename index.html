@@ -55354,12 +55354,29 @@ RB.enemyArt = (function () {
   const K = RB.pxkit;
   const A = {};
   const P = {};
+  // The shared frame cache (every creature family; battle addendum §21.5): an LRU bounded by bytes
+  // (w × h × 4 per frame) as well as by count, so larger native frames cannot grow it past its share
+  // of the 48 MiB battle-art budget — at most CAP frames and CAP_BYTES of pixels, whichever is
+  // reached first; the least recently used frames go first.
   const cache = new Map();
-  const CAP = 140;
+  const CAP = 140, CAP_BYTES = 30 * 1048576;
+  let held = 0;
+  const sizeOf = (cv) => (cv && cv.width ? cv.width * cv.height * 4 : 0);
+  function put(key, cv) {
+    const old = cache.get(key);
+    if (old) { held -= sizeOf(old); cache.delete(key); }
+    cache.set(key, cv);
+    held += sizeOf(cv);
+    while (cache.size > CAP || (held > CAP_BYTES && cache.size > 1)) {
+      const k = cache.keys().next().value;
+      held -= sizeOf(cache.get(k));
+      cache.delete(k);
+    }
+  }
 
   function def(id, spec) {
     P[id] = spec;
-    for (const k of [...cache.keys()]) if (k.startsWith(id + '|')) cache.delete(k);
+    for (const k of [...cache.keys()]) if (k.startsWith(id + '|')) { held -= sizeOf(cache.get(k)); cache.delete(k); }
     return spec;
   }
   function seqOf(spec) {
@@ -55398,8 +55415,7 @@ RB.enemyArt = (function () {
       spec._boxX = [l1 < 0 ? 0 : l0, l1 < 0 ? out.w - 1 : l1];
     }
     cv = out.canvas();
-    cache.set(key, cv);
-    while (cache.size > CAP) cache.delete(cache.keys().next().value);
+    put(key, cv);
     return cv;
   }
   function has(id) { return !!P[id]; }
@@ -55539,8 +55555,7 @@ RB.enemyArt = (function () {
     const L = K.layer(spec.w, spec.h, spec.ox, spec.oy);
     const out = spec.pose(L, act, i, n, o || {}, H, side) || L;
     cv = out.canvas();
-    cache.set(key, cv);
-    while (cache.size > CAP) cache.delete(cache.keys().next().value);
+    put(key, cv);
     return cv;
   }
   function posedOf(spec, pose) {
@@ -56444,11 +56459,12 @@ RB.enemyArt = (function () {
     },
   });
 
-  // estimated resident pixels of the cached creature frames (battle addendum §21.5): w × h × 4 bytes each
+  // estimated resident pixels of the cached creature frames (battle addendum §21.5): w × h × 4 bytes
+  // each, counted afresh from the cache itself (not from the running total the eviction uses)
   function cacheStats() {
     let bytes = 0;
-    for (const cv of cache.values()) if (cv && cv.width) bytes += cv.width * cv.height * 4;
-    return { frames: cache.size, cap: CAP, bytes, mib: +(bytes / 1048576).toFixed(3) };
+    for (const cv of cache.values()) bytes += sizeOf(cv);
+    return { frames: cache.size, cap: CAP, capBytes: CAP_BYTES, capMib: CAP_BYTES / 1048576, bytes, mib: +(bytes / 1048576).toFixed(3) };
   }
   return { def, P, A, draw, drawArt, drawPosed, motion, styleOf, STYLE, MOVES, frame, has, frameAt, extent, H, cacheStats };
 })();
@@ -56572,6 +56588,8 @@ RB.creaturesA = (function () {
     };
     return { pts, inside, fill: (L, M, sh) => L.fill(x0, y0, x1, y1, inside, M, sh) };
   }
+  // fpoly(L, pts, M, sh): L.poly on the precompiled test (for big facets drawn every frame)
+  const fpoly = (L, pts, M, sh) => poly(pts).fill(L, M, sh);
 
   // stone(L, pts, M, o): the same dressed-stone shading as L.stone (pxkit), on the precompiled
   // polygon test — used for the many stones a posed golem, crab or clerk frame redraws.
@@ -56681,9 +56699,218 @@ RB.creaturesA = (function () {
   function auditFamily(id, rec) { audit.families[id] = rec; }
   function auditEnemy(id, art, disposition, note) { audit.enemies[id] = { art, disposition, note: note || '' }; }
 
+  // ---- 5. the restyle standard: ramps, outlines, light ------------------------------------------
+  // (docs/battle/creatures_a.md, "The rendering standard"). Every material is a 5–7 tone ramp whose
+  // hue moves as it brightens (shadows cooler and more saturated, highlights warmer and paler), with
+  // a high value range; its outline is a COLOUR — the material's darkest tone pushed further toward
+  // deep violet / navy / red-brown — and its lit-edge outline a lighter tone of the same family.
+  const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+  function toward(h, target, deg) { const d = ((target - h + 540) % 360) - 180; return h + clamp(d, -deg, deg); }
+  const hx = (h, s, l) => K.hex(K.hsl2rgb(h, clamp(s, 0, 1), clamp(l, 0.02, 0.98)));
+  // hramp(base, o) → n hex colours, dark → light. The base colour is the tone at index `at`.
+  //   o: n (6), at (≈ 0.55 of the way), lo / hi (lightness of the ends), cool / warm (hue targets),
+  //   hd / hl (max hue travel in degrees toward them), sat (mid saturation ×), sd (darkest
+  //   saturation), sl (lightest saturation ×)
+  function hramp(base, o) {
+    o = o || {};
+    const c = K.parse(base), hsl = K.rgb2hsl(c[0], c[1], c[2]);
+    const h = hsl[0], s = hsl[1], l = hsl[2], grey = s < 0.09;
+    const n = o.n || 6, at = o.at != null ? o.at : Math.round((n - 1) * 0.55);
+    const lo = o.lo != null ? o.lo : 0.13, hi = o.hi != null ? o.hi : 0.92;
+    const cool = o.cool != null ? o.cool : 250, warm = o.warm != null ? o.warm : 50;
+    const hd = o.hd != null ? o.hd : 34, hl = o.hl != null ? o.hl : 22;
+    const sm = clamp(s * (o.sat != null ? o.sat : 1.2) + (grey ? 0.05 : 0), 0, 0.85);
+    const D = [grey ? cool : toward(h, cool, hd), clamp(o.sd != null ? o.sd : Math.max(sm * 1.05, grey ? 0.16 : 0.32), 0, 0.9), lo];
+    const Lt = [grey ? warm : toward(h, warm, hl), clamp(sm * (o.sl != null ? o.sl : 0.62) + (grey ? 0.05 : 0), 0, 0.9), hi];
+    const B = [h, sm, clamp(o.l != null ? o.l : l, lo + 0.08, hi - 0.06)];
+    const out = [];
+    for (let i = 0; i < n; i++) {
+      let a, b, k;
+      if (i <= at) { a = D; b = B; k = at ? i / at : 1; } else { a = B; b = Lt; k = (i - at) / (n - 1 - at); }
+      const dh = ((b[0] - a[0] + 540) % 360) - 180;
+      out.push(hx(a[0] + dh * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k));
+    }
+    return out;
+  }
+  // hmat(base, o) → a pxkit material from hramp, with a coloured outline (o.line, else the darkest
+  // tone pushed toward o.lineHue), a lighter lit-edge outline (o.lineLit) and a cool rim tone
+  // (o.rim, used by rim()). o.line: false for marks drawn inside another form.
+  function hmat(base, o) {
+    o = o || {};
+    const cols = o.cols || hramp(base, o);
+    const d = K.parse(cols[0]), dh = K.rgb2hsl(d[0], d[1], d[2]);
+    const lh = o.lineHue != null ? o.lineHue : toward(dh[0], o.cool != null ? o.cool : 250, 22);
+    const line = o.line === false ? false : o.line || hx(lh, Math.max(0.42, Math.min(0.75, dh[1] + 0.12)), o.lineL != null ? o.lineL : Math.max(0.06, dh[2] * 0.55));
+    const lineLit = o.line === false ? undefined : o.lineLit || K.hex(K.mix(K.parse(line), K.parse(cols[1]), 0.55));
+    const M = K.mat(null, { cols, at: o.at != null ? o.at : Math.round((cols.length - 1) * 0.55), line, lineLit, alpha: o.alpha });
+    if (o.alpha != null && !M._a) { M._a = 1; for (let i = 0; i < M.c.length; i++) { const v = K.parse(cols[i]); v[3] = o.alpha; M.rgba[i] = v; M.c[i] = K.pack(v); } }
+    if (!M.rimC) M.rimC = K.pack(K.parse(o.rim || K.hex(K.mix(K.parse(cols[Math.max(0, cols.length - 2)]), [150, 186, 255, 255], 0.5))));
+    return M;
+  }
+  // the ramp index of a pixel inside its own material (−1 if it is not one of its tones)
+  const stepOf = (L, i) => { const M = K.MATS[L.mt[i]]; return M ? M.c.indexOf(L.px[i]) : -1; };
+  function nudge(L, i, k) {
+    const M = K.MATS[L.mt[i]];
+    if (!M) return;
+    const j = M.c.indexOf(L.px[i]);
+    if (j < 0) return;
+    L.px[i] = M.c[clamp(j + k, 0, M.n - 1)];
+  }
+  // bbox(L) → [x0, y0, x1, y1] of the pixels a layer holds (null when empty): the helpers below
+  // work inside it only (a frame's canvas is mostly empty)
+  function bbox(L) {
+    const { w, h, px } = L;
+    let y0 = -1, y1 = -1, x0 = w, x1 = -1;
+    for (let y = 0; y < h; y++) {
+      const r = y * w;
+      let any = false;
+      for (let x = 0; x < w; x++) if (px[r + x] >>> 24) { any = true; if (x < x0) x0 = x; break; }
+      if (!any) continue;
+      for (let x = w - 1; x > x1; x--) if (px[r + x] >>> 24) { x1 = x; break; }
+      if (y0 < 0) y0 = y;
+      y1 = y;
+    }
+    return y0 < 0 ? null : [x0, y0, x1, y1];
+  }
+  // over(dst, src): src composited over dst inside src's box (the same pixels as L.over)
+  function over(dst, src) {
+    const B = bbox(src);
+    if (!B) return dst;
+    const w = dst.w;
+    for (let y = B[1]; y <= B[3]; y++) for (let x = B[0], i = y * w + B[0]; x <= B[2]; x++, i++) {
+      const t = src.px[i];
+      if (!(t >>> 24)) continue;
+      const d = dst.px[i], sa = t >>> 24;
+      if (sa >= 255 || !(d >>> 24)) dst.px[i] = t;
+      else {
+        // (pxkit's blend, for the translucent pixels)
+        const k = sa / 255, da = d >>> 24;
+        const r = (t & 255) * k + (d & 255) * (1 - k), g = ((t >> 8) & 255) * k + ((d >> 8) & 255) * (1 - k), bl = ((t >> 16) & 255) * k + ((d >> 16) & 255) * (1 - k);
+        const al = Math.min(255, sa + da * (1 - k));
+        dst.px[i] = (((al & 255) << 24) | ((bl & 255) << 16) | ((g & 255) << 8) | (r & 255)) >>> 0;
+      }
+      dst.mt[i] = src.mt[i];
+    }
+    return dst;
+  }
+  // cast(back, front, dx, dy, k, mats?): the front layer's shadow on the back one — every back
+  // pixel that the front form would cover if moved by (dx, dy) (down-right: the key light is upper
+  // left), and that the front form does not cover itself, steps k tones darker in its own ramp
+  function cast(back, front, dx, dy, k, only) {
+    const { w, h } = back, fp = front.px, bp = back.px, B = bbox(front);
+    if (!B) return back;
+    for (let y = Math.max(0, B[1] + dy); y <= Math.min(h - 1, B[3] + dy); y++) {
+      const sy = y - dy;
+      if (sy < 0 || sy >= h) continue;
+      for (let x = Math.max(0, B[0] + dx); x <= Math.min(w - 1, B[2] + dx); x++) {
+        const i = y * w + x;
+        if (!(bp[i] >>> 24) || (fp[i] >>> 24)) continue;
+        const sx = x - dx;
+        if (sx < 0 || sx >= w || !(fp[sy * w + sx] >>> 24)) continue;
+        if (only && !only.includes(back.mt[i])) continue;
+        nudge(back, i, -(k || 1));
+      }
+    }
+    return back;
+  }
+  // inner shadow of a form on itself: pixels whose (dx, dy) neighbour lies outside the form, i.e.
+  // its lower-right flank, step k darker (a crisp core shadow band, not pillow shading)
+  function flank(L, dx, dy, k, only) {
+    const { w, h, px } = L, out = px.slice();
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const i = y * w + x;
+      if (!(px[i] >>> 24) || (only && !only.includes(L.mt[i]))) continue;
+      const X = x + dx, Y = y + dy;
+      if (X >= 0 && Y >= 0 && X < w && Y < h && px[Y * w + X] >>> 24 && L.mt[Y * w + X] === L.mt[i]) continue;
+      const M = K.MATS[L.mt[i]];
+      const j = M ? M.c.indexOf(px[i]) : -1;
+      if (j >= 0) out[i] = M.c[clamp(j - (k || 1), 0, M.n - 1)];
+    }
+    L.px = out;
+    return L;
+  }
+  // rim(L, mats, o): the cool back light along the right-hand edges of the given materials — each
+  // pixel whose right neighbour is empty (and that is not a 1-px sliver) takes its material's rim
+  // tone; o.w (1 or 2) widens it, o.down also lights lower edges on the right half
+  function rim(L, only, o) {
+    o = o || {};
+    const { w, h, px, mt } = L, out = px.slice(), wd = o.w || 1, B = bbox(L);
+    if (!B) return L;
+    for (let y = B[1]; y <= B[3]; y++) for (let x = B[0]; x <= B[2]; x++) {
+      const i = y * w + x;
+      if (!(px[i] >>> 24) || (only && !only.includes(mt[i]))) continue;
+      const M = K.MATS[mt[i]];
+      if (!M || !M.rimC) continue;
+      let edge = false;
+      for (let k = 1; k <= wd && !edge; k++) if (x + k >= w || !(px[i + k] >>> 24)) edge = true;
+      if (edge && x > 0 && !(px[i - 1] >>> 24)) edge = false;
+      if (!edge && o.down && y + 1 < h && !(px[i + w] >>> 24) && x + 1 < w && !(px[i + w + 1] >>> 24) && x > 0 && px[i - 1] >>> 24) edge = true;
+      if (edge && y > 0 && !(px[i - w] >>> 24) && !o.top) edge = false;
+      if (edge) out[i] = M.rimC;
+    }
+    L.px = out;
+    return L;
+  }
+  // despeckle(L): a lone pixel whose four neighbours all share one other tone of the same material
+  // takes that tone (clusters, not noise); deliberate accents are drawn after it
+  function despeckle(L) {
+    const { w, h, px, mt } = L, out = px.slice(), B = bbox(L);
+    if (!B) return L;
+    for (let y = Math.max(1, B[1]); y <= Math.min(h - 2, B[3]); y++) for (let x = Math.max(1, B[0]); x <= Math.min(w - 2, B[2]); x++) {
+      const i = y * w + x, v = px[i];
+      if (!(v >>> 24)) continue;
+      const a = px[i - 1];
+      if (a === v || !(a >>> 24) || px[i + 1] !== a || px[i - w] !== a || px[i + w] !== a) continue;
+      if (mt[i - 1] !== mt[i]) continue;
+      out[i] = a;
+    }
+    L.px = out;
+    return L;
+  }
+  // band(L, M, k, test): re-tone every pixel of material M inside a local-space test to step k (or
+  // by a function of x, y → step) — hard-edged material bands, specular streaks and blotches
+  function band(L, M, test, k, box) {
+    const B = box || [-1e4, -1e4, 1e4, 1e4];
+    return L.scan(B[0], B[1], B[2], B[3], test, (i, lx, ly) => {
+      if (!L.px[i] || L.mt[i] !== M.id) return;
+      const kk = typeof k === 'function' ? k(lx, ly, stepOf(L, i)) : k;
+      if (kk == null || kk < 0) return;
+      L.px[i] = M.c[clamp(kk | 0, 0, M.n - 1)];
+    });
+  }
+  // ball(cx, cy, rx, ry, o) → a shading function (0 … 1) for a rounded form under the key light, in
+  // crisp bands when quantised: a lit cap up-left, the mid tone, a core shadow, and a narrow band
+  // of reflected light along the shadowed rim (o.refl) — volume without pillow shading.
+  // o.lift raises it all (a pale or glowing material), o.k sharpens the light/shadow split,
+  // o.mirror for a form drawn in mirrored coordinates (the light stays upper left on screen).
+  function ball(cx, cy, rx, ry, o) {
+    o = o || {};
+    const lift = o.lift || 0, refl = o.refl == null ? 0.1 : o.refl, k = o.k || 1, mx = o.mirror ? -1 : 1;
+    return (x, y) => {
+      const nx = (mx * (x - cx)) / rx, ny = (y - cy) / (ry || rx), d = nx * nx + ny * ny;
+      const nz = Math.sqrt(Math.max(0, 1 - d));
+      const f = -(nx * 0.56 + ny * 0.68) * k + nz * 0.42;
+      let v = 0.46 + f * 0.5 + lift;
+      if (d > 0.74 && f < 0.02) v += refl;
+      return clamp(v, 0, 0.999);
+    };
+  }
+  // the standard finish for a set of overlapping layers (back → front): outline each in its own
+  // colours, then each nearer layer casts its shadow (dx, dy, one step) on the ones behind it
+  function finish(layers, o) {
+    o = o || {};
+    const sh = o.shadow == null ? [2, 3] : o.shadow;
+    for (let i = layers.length - 1; i > 0; i--) if (sh && layers[i]) for (let j = 0; j < i; j++) if (layers[j]) cast(layers[j], layers[i], sh[0], sh[1], 1);
+    for (const Lr of layers) if (Lr) outline(Lr);
+    let out = null;
+    for (const Lr of layers) if (Lr) out = out ? out.over(Lr) : Lr;
+    return out;
+  }
+
   // (onBuilt: set by 84a — the first idle frame of a creature built in a battle schedules the
   // prewarm of its action frames)
-  const api = { FAMILIES, resolve, style, q, side, lerp, family, poly, stone, outline, deliver, queue, outcome, kit, audit, auditFamily, auditEnemy, K, onBuilt: null };
+  const api = { FAMILIES, resolve, style, q, side, lerp, family, poly, stone, outline, deliver, queue, outcome, kit, audit, auditFamily, auditEnemy, K, onBuilt: null,
+    fpoly, bbox, over, hramp, hmat, toward, stepOf, nudge, cast, flank, rim, despeckle, band, finish, ball };
   return api;
 })();
 
@@ -56694,19 +56921,32 @@ RB.creaturesA = (function () {
  * body aim, appendage follow-through, a stable hover over its shadow and a controlled arrest
  * of travel.
  *
- * Native frame 224 × 192, origin (112, 100) (it was 188 × 160): the wider canvas holds what the
- * actions add beyond the idle silhouette — wings thrown up to brake, legs reaching out, flour
- * shaken from the wing margins — at the same idle size (wingspan ≈ 176 art px). Detail: a
- * hooked forewing with a costal highlight, veins, ante- and postmedial lines, a pale
- * subterminal row, an eye-spot and a chequered fringe; a lighter hind wing with a scalloped
- * margin; a furred thorax with lit tufts, banded abdomen, bipectinate antennae, jointed legs.
+ * Form (the restyle, docs/battle/creatures_a.md "The rendering standard"): a three-quarter
+ * stance turned toward the party at the lower left — the body's axis leans (head up and toward
+ * the party, abdomen swinging down behind), the near wings (screen right) large and in front,
+ * overlapping the abdomen and casting their shadow on it, the far wings (screen left)
+ * foreshortened to two thirds of their span, a ramp step darker, behind the head. Falcate
+ * forewings with a hooked apex, a torn notch and a scalloped, chequered fringe; hind wings with a
+ * tapered tail that lags the beat (secondary motion). Wing membrane: a warm 6-tone ramp whose
+ * shadows run toward red-violet and highlights toward cream, painted as the moth's own pattern —
+ * a darker basal area, ante- and postmedial lines with pale edges, a pale band, a dark
+ * subterminal band, the veins with a lit side, dark blotches, an eye-spot with a saturated iris,
+ * a pupil and a catch-light. A furred thorax of clustered tufts (lit tips upper left, a core
+ * shadow lower right, a cool rim on the right), a banded abdomen with pale hair bands, a dark
+ * head with a three-quarter face (near eye larger), bipectinate antennae, jointed legs with pale
+ * claws. Every form has a coloured outline (the darkest tone pushed toward violet), lighter on
+ * lit edges; nearer forms cast a one-step shadow on the ones behind.
  *
- * Rig pose q (see rig): x, y body offset; roll (+ turns the belly and legs to the party at the
- * lower left); wa [near, far] forewing angle (− raised); wsy stroke foreshortening; wsx span
- * (the near wing narrows as it turns toward the target); hl hind-wing lag; ant antenna sweep
- * (+ back); legs 0 tucked … 1 reaching to the target; grip; abd abdomen swing (follow-through);
- * fur; eye (1 open, 0 shut); dust 0 … 1 material shaken from the wing margins; dk its kind
- * ('flour' the creature's own powder, 'ash', 'frost').
+ * Native frame 224 × 192, origin (112, 100) (unchanged: the stance fits the old canvas; the far
+ * wing's foreshortening gives the raised wings and reaching legs their room).
+ *
+ * Rig pose q (see rig): x, y body offset; roll (+ turns the belly and legs further to the party
+ * at the lower left, on top of the stance's lean); wa [far (screen left), near (screen right)]
+ * forewing angle (− raised); wsy stroke foreshortening; wsx span (the near wing narrows as it
+ * turns toward the target); hl hind-wing lag (its tail trails it); ant antenna sweep (+ back);
+ * legs 0 tucked … 1 reaching to the target; grip; abd abdomen swing (follow-through); fur; eye
+ * (1 open, 0 shut); look; dust 0 … 1 material shaken from the wing margins; dk its kind ('flour'
+ * the creature's own powder, 'ash', 'frost').
  *
  * Moves (deliveries, Normal ms; contact = when the rules' result shows):
  *   strike  the swoop (§18.2): 0–260 aim (wings draw back, belly to the target), 260–640 an
@@ -56725,159 +56965,321 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const mixh = (a, b, k) => K.hex(K.mix(a, b, k));
   const S = A.side;
   const cl = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
-
-  // wing outlines (the right wing in its own coordinates; the left is mirrored)
-  const FW = [[4, -8], [13, -21], [25, -33], [41, -44], [58, -51], [74, -53], [84, -48], [87, -39], [84, -27], [78, -14], [69, -3], [57, 6], [42, 11], [26, 12], [12, 8], [5, 3]];
-  const HW = [[4, -1], [16, 4], [30, 9], [44, 16], [55, 27], [58, 39], [52, 49], [40, 54], [27, 51], [16, 42], [8, 28], [3, 14]];
-  const inset = (pts, k, cx, cy) => pts.map(([x, y]) => [cx + (x - cx) * k, cy + (y - cy) * k]);
-  const PFW = A.poly(FW), PFWI = A.poly(inset(FW, 0.86, 20, -18)), PHW = A.poly(HW);
+  const TAU = Math.PI * 2;
   const hs = (i, j) => { const x = Math.sin(i * 127.1 + j * 311.7) * 43758.5453; return x - Math.floor(x); };
   // the direction of the party (lower left), on screen
   const AIM = [-0.74, 0.67];
+  // the three-quarter stance: the body's lean (head toward the party) and the far wings' span
+  const LEAN = 0.16, FAR = 0.66, WY = 0.78, HS = 0.92;
+  // wing roots on the thorax (body frame) and their resting angles [far, near]
+  const ROOT = { fore: [[-4, -8], [5, -7]], hind: [[-3, -3], [4, -2]] };
+  const REST = { fore: [-0.04, 0.26], hind: [-0.04, 0.1] };
 
+  // ---- wing outlines (the near wing in its own frame: root at 0,0, the costa running up-right;
+  // the far wing is the same, mirrored and foreshortened) -------------------------------------
+  const FW = [[1, -4], [7, -14], [17, -26], [31, -38], [47, -48], [63, -55], [77, -59], [89, -61], [94, -58], [91, -53], [89, -45], [87, -35], [83, -25], [77, -15], [69, -6], [60, 2], [48, 8], [34, 11], [20, 10], [9, 6], [2, 2]];
+  const COSTA = FW.slice(0, 8);
+  const HW = [[1, -2], [15, 1], [31, 5], [45, 12], [55, 22], [59, 33], [56, 44], [49, 51], [44, 54], [33, 55], [21, 49], [11, 38], [4, 24], [0, 10]];
+  const PFW = A.poly(FW), PHW = A.poly(HW);
+  const FBOX = [-1, -63, 96, 13], HBOX = [-2, -4, 64, 76];
+  // the forewing's veins: from the discal cell to the margin (stopping short of it)
+  const FVEINS = [[[38, -27], [58, -53]], [[39, -26], [73, -58]], [[40, -24], [86, -59]], [[42, -21], [89, -47]], [[42, -18], [86, -33]], [[41, -15], [80, -21]], [[38, -12], [71, -8]], [[30, -8], [60, 1]], [[8, 3], [46, 8]]];
+  const HVEINS = [[[6, 2], [44, 12]], [[6, 3], [56, 26]], [[6, 4], [58, 39]], [[6, 5], [50, 50]], [[5, 6], [34, 54]], [[4, 7], [18, 46]]];
+  // radial position of a point between the root (0) and the outer margin (1), by a ray table
+  function radial(pts) {
+    const NB = 96, tab = new Float64Array(NB);
+    const P = A.poly(pts);
+    for (let b = 0; b < NB; b++) {
+      const a = -Math.PI + (b + 0.5) * (TAU / NB);
+      let r = 0;
+      for (let d = 1; d < 140; d += 0.5) { if (P.inside(Math.cos(a) * d, Math.sin(a) * d)) r = d; }
+      tab[b] = r || 1;
+    }
+    return (x, y) => { const f = ((Math.atan2(y, x) + Math.PI) / TAU) * NB - 0.5, b0 = Math.floor(f), k = f - b0, i0 = (b0 + NB) % NB, i1 = (b0 + 1) % NB; return Math.hypot(x, y) / (tab[i0] + (tab[i1] - tab[i0]) * k); };
+  }
+  const UF = radial(FW), UH = radial(HW);
+  const costaY = (x) => { for (let i = 1; i < COSTA.length; i++) if (x <= COSTA[i][0]) { const [x0, y0] = COSTA[i - 1], [x1, y1] = COSTA[i]; return y0 + ((y1 - y0) * (x - x0)) / (x1 - x0 || 1); } return COSTA[COSTA.length - 1][1]; };
+  const vang = FVEINS.map(([[x0, y0], [x1, y1]]) => Math.atan2(y1 - y0, x1 - x0));
+
+  // ---- materials ---------------------------------------------------------------------------
   const matCache = new Map();
   function mats(o) {
     const col = o.col || '#c8c0e0', col2 = o.col2 || '#9a8ab8', key = col + col2;
     if (matCache.has(key)) return matCache.get(key);
-    const dark = K.rgb2hsl(...K.parse(col))[2] < 0.35; // a dark-winged moth (the Chart Moth): pale marks
+    const hsl = K.rgb2hsl(...K.parse(col).slice(0, 3));
+    const dark = hsl[2] < 0.35; // a dark-winged moth (the Chart Moth): pale marks
+    const grey = hsl[1] < 0.12;
     const sol = (c, a) => K.solid([...K.parse(c).slice(0, 3), a], { line: false });
+    const wingO = dark ? { n: 6, at: 2, lo: 0.06, hi: 0.66, sat: 1.25, hd: 26, hl: 30 } : { n: 6, at: 4, lo: 0.11, hi: 0.97, sat: grey ? 1 : 1.3, hd: 30, hl: 12, sd: grey ? 0.1 : 0.36 };
+    const hindO = dark ? { n: 6, at: 3, lo: 0.1, hi: 0.86, sat: 0.8, hd: 30 } : { n: 6, at: 3, lo: 0.11, hi: 0.92, sat: grey ? 1.1 : 1.7, hd: 50, hl: 20, sd: grey ? 0.12 : 0.42 };
+    const bodyC = mixh('#3a3050', col2, 0.18);
     const M = {
-      wing: K.mat(col, { n: 5, at: 3, step: 0.09 }),
-      mar: K.mat(mixh(col, col2, 0.62), { n: 4, at: 2, step: 0.09 }),
-      mark: K.mat(dark ? mixh(col2, '#ffffff', 0.25) : mixh(col2, '#3a3050', 0.4), { n: 3, at: 1, step: 0.1, line: false }),
-      pale: K.solid(dark ? mixh(col2, '#ffffff', 0.55) : mixh(col, '#fffaf0', 0.7), { line: false }),
-      hind: K.mat(col2, { n: 5, at: 3, step: 0.09 }),
-      body: K.mat(mixh('#3a3050', col2, 0.18), { n: 5, at: 2, step: 0.085 }),
-      fur: K.mat(mixh(col, '#fff4dc', 0.3), { n: 4, at: 2, step: 0.09 }),
-      leg: K.mat(mixh('#2a2238', col2, 0.15), { n: 3, at: 1, step: 0.1 }),
-      eye: K.mat('#f0e8ff', { n: 3, at: 1, step: 0.1, line: false }),
-      ink: K.mat(null, { cols: ['#120e1c', '#1e1830', '#2c2440'], at: 1, line: false }),
+      dark,
+      wing: A.hmat(col, wingO),
+      wingF: A.hmat(mixh(col, '#5a5070', 0.1), Object.assign({}, wingO, { hi: wingO.hi - 0.1, lo: wingO.lo - 0.02 })),
+      hind: A.hmat(col2, hindO),
+      hindF: A.hmat(mixh(col2, '#5a5070', 0.12), Object.assign({}, hindO, { hi: hindO.hi - 0.1, lo: hindO.lo - 0.02 })),
+      // the eye-spot's iris: the hind wing's colour, saturated and warmed
+      iris: A.hmat(mixh(col2, dark ? '#e8b050' : '#d0703a', dark ? 0.5 : 0.45), { n: 5, at: 2, lo: 0.2, hi: 0.86, sat: 1.4, line: false }),
+      // pale marks on a dark wing (the Chart Moth); on a light wing the marks are its own dark tones
+      paleMk: A.hmat(mixh(col2, '#ffffff', 0.3), { n: 4, at: 2, lo: 0.45, hi: 0.95, line: false }),
+      body: A.hmat(bodyC, { n: 6, at: 2, lo: 0.07, hi: 0.66, sat: 1.3, hd: 20, hl: 30, rim: '#8c9ee0' }),
+      fur: A.hmat(mixh(col, '#fff6e4', 0.4), { n: 6, at: 4, lo: 0.24, hi: 0.98, sat: 0.9, hd: 40, hl: 10, sd: 0.12, rim: '#c4d8ff' }),
+      leg: A.hmat(mixh('#2a2238', col2, 0.15), { n: 5, at: 2, lo: 0.07, hi: 0.6, sat: 1.2, rim: '#8090d0' }),
+      eye: A.hmat('#e8e2f4', { n: 4, at: 2, lo: 0.42, hi: 0.98, sat: 1, hd: 20, line: '#160c22', lineLit: '#2c1c3c' }),
+      ink: K.mat(null, { cols: ['#0c0814', '#1a1228', '#2c2040'], at: 1, line: false }),
+      shine: K.solid('#fffaf0', { line: false }),
       dust: {
-        flour: [sol(mixh(col, '#fffaf0', 0.55), 235), sol(mixh(col, '#ffffff', 0.25), 175), sol(mixh(col, col2, 0.4), 120)],
-        ash: [sol('#c8c0b8', 225), sol('#968e88', 175), sol('#605a58', 120)],
-        frost: [sol('#f4faff', 235), sol('#c8e4f8', 180), sol('#96c4e8', 120)],
+        flour: [sol(mixh(col, '#fffaf0', 0.6), 240), sol(mixh(col, '#ffffff', 0.25), 190), sol(mixh(col, col2, 0.5), 140)],
+        ash: [sol('#d0c8c0', 230), sol('#968e88', 185), sol('#5a5250', 140)],
+        frost: [sol('#f4faff', 240), sol('#c8e4f8', 190), sol('#86b8e8', 140)],
       },
     };
     matCache.set(key, M);
     if (matCache.size > 12) matCache.delete(matCache.keys().next().value);
     return M;
   }
-  // a wavy line through points (moth markings)
-  function wavy(L, pts, M, k, amp) {
+
+  // ---- the wings ---------------------------------------------------------------------------
+  // forewing value (0 … 1 → the ramp's tones): the moth's own pattern in clean bands, lit from
+  // the costa, darker at the root under the body
+  function foreTone(x, y) {
+    const u0 = UF(x, y), a = Math.atan2(y, x);
+    const u = u0 + 0.014 * Math.sin(a * 11);
+    let v;
+    if (u < 0.3) v = 0.5;
+    else if (u < 0.345) v = 0.1;
+    else if (u < 0.385) v = 0.86;
+    else if (u < 0.665) v = 0.76;
+    else if (u < 0.71) v = 0.1;
+    else if (u < 0.765) v = 0.88;
+    else if (u < 0.895) v = 0.52;
+    else v = 0.36;
+    // lit near the leading edge
+    const dc = y - costaY(Math.min(89, Math.max(1, x)));
+    if (v > 0.2) v += 0.14 * (1 - cl(dc / 20)) - 0.06;
+    // each cell lighter along its upper vein (the stripes of a membrane between veins)
+    if (u > 0.39 && u < 0.66) {
+      for (let i = 0; i < vang.length - 2; i++) {
+        const a0 = vang[i], a1 = vang[i + 1];
+        const aa = Math.atan2(y + 20, x - 40);
+        if (aa >= a0 && aa < a1) { const t = (aa - a0) / (a1 - a0 || 1); if (t < 0.22) v += 0.1; else if (t > 0.8) v -= 0.08; break; }
+      }
+    }
+    if (Math.hypot(x, y) < 13) v -= 0.16;
+    return cl(v) * 0.999;
+  }
+  function hindTone(x, y) {
+    const u0 = UH(x, y), a = Math.atan2(y, x);
+    const u = u0 + 0.02 * Math.sin(a * 13);
+    let v;
+    if (u < 0.26) v = 0.22;
+    else if (u < 0.7) v = 0.56 - (u - 0.26) * 0.25;
+    else if (u < 0.74) v = 0.84;
+    else if (u < 0.88) v = 0.28;
+    else v = 0.66;
+    // lit along its upper edge (the forewing's shadow falls there instead: see cast())
+    if (v > 0.2 && v < 0.8) v += 0.12 * (1 - cl((y - x * 0.15) / 30));
+    return cl(v) * 0.999;
+  }
+  // The wing's own coordinates (radial position, angle, pattern tone) depend only on the point in
+  // the wing's frame, so they are sampled once into grids at load (one unit apart) and looked up
+  // per pixel — the same pattern at a fraction of the cost per frame.
+  function grid(fn, box) {
+    const [x0, y0, x1, y1] = box, W = x1 - x0 + 1, Hh = y1 - y0 + 1, g = new Float32Array(W * Hh);
+    for (let y = 0; y < Hh; y++) for (let x = 0; x < W; x++) g[y * W + x] = fn(x0 + x, y0 + y);
+    return (x, y) => { const X = Math.round(x - x0), Y = Math.round(y - y0); return X < 0 || Y < 0 || X >= W || Y >= Hh ? fn(x, y) : g[Y * W + X]; };
+  }
+  const lineZone = (x, y) => { const u = UF(x, y) + 0.014 * Math.sin(Math.atan2(y, x) * 11); return (u > 0.3 && u < 0.345) || (u > 0.665 && u < 0.71) ? 1 : 0; };
+  // the chequered fringe folded into the pattern: every third scale along the margin two tones darker
+  const withFringe = (tone, U, lo) => (x, y) => {
+    const v = tone(x, y);
+    if (U(x, y) <= lo || Math.floor(Math.atan2(y, x) * 34) % 3) return v;
+    return (Math.max(0, Math.floor(v * 6) - 2) + 0.5) / 6;
+  };
+  const FT = grid(withFringe(foreTone, UF, 0.955), FBOX), HT = grid(withFringe(hindTone, UH, 0.95), HBOX), LZ = grid(lineZone, FBOX);
+  // the scalloped, chequered fringe: notches between the vein ends, alternating pale and dark scales
+  // the scalloped margin: notches between the vein ends (the chequered scales are in the pattern)
+  function fringe(Lw, ends) {
+    for (let i = 1; i < ends.length; i++) {
+      const [x0, y0] = ends[i - 1], [x1, y1] = ends[i];
+      Lw.eraseEll((x0 + x1) / 2 + (x1 - x0) * 0.02, (y0 + y1) / 2, 2.2, 2.2);
+    }
+  }
+  // a vein drawn point by point in the wing's frame, passing under the cross lines (they stay whole)
+  function vein(Lw, M, x0, y0, x1, y1, k, under) {
+    const n = Math.max(2, Math.ceil(Math.hypot(x1 - x0, y1 - y0) * 1.4));
+    for (let i = 0; i <= n; i++) { const x = x0 + ((x1 - x0) * i) / n, y = y0 + ((y1 - y0) * i) / n; if (!under || LZ(x, y) < 0.5) Lw.dot(x, y, M, k); }
+  }
+  function eyespot(Lw, M, cx, cy, r, far) {
+    const ry = r * 0.9;
+    Lw.ell(cx + 0.5, cy - 0.5, r + 1, ry + 1, M.wing, M.wing.n - 1);   // the pale halo, lit side
+    Lw.ell(cx + 1, cy, r + 1, ry + 1, M.wing, M.wing.n - 3);
+    Lw.ell(cx, cy, r, ry, M.wing, 0);                                   // the dark ring
+    Lw.ell(cx, cy, r - 2, ry - 2, M.iris, (x, y) => cl(0.62 - ((x - cx) * 0.6 + (y - cy) * 0.8) / (r * 1.6)) * 0.999);
+    Lw.ell(cx + 1, cy + 1, r * 0.42, ry * 0.42, M.ink, 0);              // the pupil
+    if (!far) { Lw.rect(Math.round(cx - r * 0.5), Math.round(cy - ry * 0.55), 2, 2, M.shine, 0); Lw.dot(cx + 2, cy + 2, M.iris, 4); }
+  }
+  function forewing(Lw, M, far) {
+    const W = far ? M.wingF : M.wing;
+    PFW.fill(Lw, W, M.dark ? (x, y) => FT(x, y) * 0.62 + 0.02 : FT);
+    // veins: dark, with a lit side above; the discal cell
+    const vt = M.dark ? null : 1;
+    for (const [[x0, y0], [x1, y1]] of FVEINS) {
+      const xe = x0 + (x1 - x0) * 0.92, ye = y0 + (y1 - y0) * 0.92;
+      if (M.dark) Lw.line(x0, y0, xe, ye, M.paleMk, 1);
+      else vein(Lw, W, x0, y0, xe, ye, vt + 1, true);
+    }
+    for (const [x0, y0, x1, y1] of [[8, -9, 38, -27], [9, -4, 41, -15], [38, -27, 41, -15]]) vein(Lw, W, x0, y0, x1, y1, 1, !M.dark);
+    // the costa's lit edge
+    for (let i = 1; i < 7; i++) Lw.line(COSTA[i - 1][0] + 0.5, COSTA[i - 1][1] + 1.2, COSTA[i][0], COSTA[i][1] + 1.2, W, W.n - 1);
+    // dark blotches in the outer cells (clusters, two tones)
+    for (const [bx, by, bw, bh] of far ? [[72, -40, 6, 4]] : [[72, -40, 7, 5], [76, -24, 5, 4]]) {
+      Lw.ell(bx, by, bw / 2 + 0.5, bh / 2 + 0.5, W, 1);
+      Lw.ell(bx - 0.5, by - 0.5, bw / 2 - 0.6, bh / 2 - 0.6, W, 0);
+    }
+    if (M.dark) Lw.scan(FBOX[0], FBOX[1], FBOX[2], FBOX[3], (x, y) => LZ(x, y) > 0.5, (i) => { if (Lw.mt[i] === W.id) { Lw.px[i] = M.paleMk.c[2]; Lw.mt[i] = M.paleMk.id; } });
+    A.despeckle(Lw);
+    eyespot(Lw, M, 43, -25, far ? 7 : 8, far);
+    // a torn notch in the outer margin, and the fringe
+    if (!far) Lw.erasePoly([[92, -41], [82, -37], [91, -33]]);
+    fringe(Lw, [[89, -61], [91, -53], [89, -45], [87, -35], [83, -25], [77, -15], [69, -6], [60, 2]]);
+  }
+  function hindwing(Lw, M, far, lag) {
+    const W = far ? M.hindF : M.hind;
+    PHW.fill(Lw, W, M.dark ? (x, y) => HT(x, y) * 0.8 + 0.04 : HT);
+    for (const [[x0, y0], [x1, y1]] of HVEINS) Lw.line(x0, y0, x0 + (x1 - x0) * 0.86, y0 + (y1 - y0) * 0.86, W, 1);
+    // the hair at its root
+    for (let i = 0; i < 7; i++) Lw.line(2 + i * 2, 1 + (i % 2), 6 + i * 2, 6 + (i % 3), W, i % 2 ? 2 : 3);
+    // the ocellus
+    // a small discal spot ringed pale (the forewing carries the eye-spot)
+    Lw.ell(34, 29, 4.6, 4, W, W.n - 1);
+    Lw.ell(34.5, 29.5, 3, 2.6, W, 0);
+    Lw.dot(33, 28, W, 2);
+    // the tail: tapering from the lower margin, trailing the beat, a pale spatulate tip
+    const tx = 41 + lag * 16, ty = 66 - Math.abs(lag) * 5;
+    Lw.poly([[36, 52], [47, 51], [tx + 3, ty - 9], [tx + 2, ty], [tx - 3, ty + 1], [tx - 3, ty - 8]], W, (x, y) => (x - (36 + (tx - 36) * cl((y - 52) / (ty - 52))) < 1 ? 3 : 1) / W.n + 0.01);
+    Lw.ell(tx - 0.5, ty - 2, 3, 3.5, W, W.n - 1);
+    Lw.ell(tx, ty - 1.5, 1.6, 2, W, W.n - 2);
+    fringe(Lw, [[55, 22], [59, 33], [56, 44], [49, 51]]);
+  }
+
+  // ---- the body -----------------------------------------------------------------------------
+  // a lit / shadowed value from a surface normal (upper-left key light), in crisp bands
+  const facing = (nx, ny) => -(nx * 0.6 + ny * 0.8);
+  function ballTone(cx, cy, rx, ry, lift) {
+    return (x, y) => {
+      const nx = (x - cx) / rx, ny = (y - cy) / ry, d = Math.min(1, nx * nx + ny * ny);
+      const f = facing(nx, ny) * (0.55 + 0.45 * Math.sqrt(d));
+      return cl(0.46 + (lift || 0) + f * 0.48 - (d > 0.82 && f < 0 ? 0.1 : 0)) * 0.999;
+    };
+  }
+  // fur: a fluffy mass of tufts — pointed, radiating, overlapping downward; lit tips upper left
+  function fluff(Lb, M, cx, cy, rx, ry, fz, seed) {
+    // the mass in three crisp bands (lit cap upper left, mid, core shadow lower right)
+    const tone = (x, y) => { const f = facing((x - cx) / rx, (y - cy) / ry); return f > 0.32 ? M.n - 1 : f > -0.12 ? M.n - 2 : f > -0.5 ? M.n - 3 : M.n - 4; };
+    Lb.ell(cx, cy, rx, ry, M, (x, y) => (tone(x, y) + 0.5) / M.n);
+    // tufts along its edge: pointed, radiating, the lower ones first (the upper tufts lie over them)
+    const n = 20, tufts = [];
+    for (let i = 0; i < n; i++) tufts.push((i / n) * TAU + (hs(i, seed) - 0.5) * 0.22);
+    tufts.sort((p, q) => Math.sin(q) - Math.sin(p));
+    for (const a of tufts) {
+      const ca = Math.cos(a), sa = Math.sin(a), len = 3 + fz * 1.5 + hs(a * 10, seed) * 2.5 + (sa > 0.3 ? 2.5 : 0);
+      const bx = cx + ca * rx * 0.8, by = cy + sa * ry * 0.8;
+      const tx = cx + ca * (rx + len), ty = cy + sa * (ry + len * 0.8) + 1.5;
+      const px = -sa * 3.8, py = ca * 2.8;
+      const k = tone(bx + ca * 2, by + sa * 2);
+      Lb.poly([[bx - px, by - py], [bx + px, by + py], [tx, ty]], M, k);
+    }
+    // inside: a few tuft partings — short downward chevrons one tone darker than where they lie
+    for (let r = 0; r < 2; r++) for (let i = 0; i < 4; i++) {
+      const x = cx - rx * 0.55 + i * (rx * 0.36) + (r ? rx * 0.18 : 0), y = cy - ry * 0.3 + r * ry * 0.48;
+      const k = Math.max(0, tone(x, y) - 1);
+      Lb.line(x - 2, y - 1, x, y + 1 + fz, M, k); Lb.line(x, y + 1 + fz, x + 2, y - 1, M, k);
+    }
+  }
+  // bipectinate antenna: a curved shaft, a comb of barbs leaning to the tip (two tones)
+  function antenna(Lb, M, x0, y0, s, sweep, sc) {
+    const pts = [];
+    for (let i = 0; i <= 6; i++) {
+      const t = i / 6, a = -1.45 + s * (0.62 + sweep) + t * s * 0.95 * (1 + sweep * 0.4);
+      const prev = pts[pts.length - 1] || [x0, y0];
+      pts.push(i ? [prev[0] + Math.cos(a) * 5.4 * sc, prev[1] + Math.sin(a) * 5.4 * sc] : [x0, y0]);
+    }
     for (let i = 1; i < pts.length; i++) {
-      const x0 = pts[i - 1][0], y0 = pts[i - 1][1], x1 = pts[i][0], y1 = pts[i][1];
-      const n = Math.max(2, Math.round(Math.hypot(x1 - x0, y1 - y0) / 3));
-      let px = x0, py = y0;
-      for (let j = 1; j <= n; j++) {
-        const u = j / n, w = j === n ? 0 : Math.sin((i * n + j) * 1.9) * (amp || 1);
-        const x = x0 + (x1 - x0) * u + w, y = y0 + (y1 - y0) * u;
-        L.line(px, py, x, y, M, k);
-        px = x; py = y;
+      const [ax, ay] = pts[i - 1], [bx, by] = pts[i];
+      const dx = bx - ax, dy = by - ay, len = Math.hypot(dx, dy) || 1, ux = dx / len, uy = dy / len, nx = -uy, ny = ux;
+      for (const tt of [0.25, 0.75]) {
+        const px = ax + dx * tt, py = ay + dy * tt, b = Math.max(1.6, (4.6 - i * 0.55) * sc);
+        Lb.line(px, py, px + nx * b + ux * b * 0.75, py + ny * b + uy * b * 0.75, M.leg, 3);
+        Lb.line(px, py, px - nx * b + ux * b * 0.75, py - ny * b + uy * b * 0.75, M.leg, 1);
       }
     }
+    Lb.path(pts, 2, M.leg, 1);
+    for (let i = 1; i < pts.length; i++) Lb.line(pts[i - 1][0], pts[i - 1][1], pts[i][0], pts[i][1], M.leg, 3);
   }
-  const VEINS = [[[38, -28], [64, -49]], [[39, -24], [79, -45]], [[40, -19], [83, -31]], [[40, -15], [77, -15]], [[36, -12], [65, -3]], [[30, -9], [51, 7]]];
-  function forewing(L, M, lit) {
-    // the darker marginal band, then the field: soft concentric light falling from the costa
-    PFW.fill(L, M.mar, (x) => cl(0.35 + lit * 0.5 + x / 500));
-    PFWI.fill(L, M.wing, (x, y) => cl(0.86 + lit - Math.hypot((x - 38) / 1.3, y + 34) / 62));
-    // a lit costal edge just inside the leading edge
-    for (let i = 1; i < 6; i++) L.line(FW[i - 1][0] + 2, FW[i - 1][1] + 2, FW[i][0] + 1, FW[i][1] + 2, M.wing, 4);
-    // the discal cell and the veins leaving it (stopping short of the margin)
-    L.line(14, -12, 38, -28, M.wing, 2); L.line(14, -7, 40, -14, M.wing, 2); L.line(38, -28, 40, -14, M.wing, 2);
-    for (const [[x0, y0], [x1, y1]] of VEINS) L.line(x0, y0, x0 + (x1 - x0) * 0.9, y0 + (y1 - y0) * 0.9, M.wing, 2);
-    L.line(8, 2, 40, 10, M.wing, 2);
-    // antemedial and postmedial lines (the postmedial edged pale outside), pale subterminal dashes
-    wavy(L, [[25, -32], [28, -18], [24, -4], [22, 9]], M.mark, 1, 0.8);
-    wavy(L, [[60, -50], [66, -35], [64, -20], [57, -6], [47, 8]], M.mark, 0, 1);
-    wavy(L, [[62, -50], [68, -35], [66, -20], [59, -6], [49, 8]], M.pale, 0, 1);
-    for (const [x, y, x2, y2] of [[76, -45, 79, -40], [80, -32, 81, -27], [77, -19, 75, -14], [69, -8, 66, -4]]) L.line(x, y, x2, y2, M.pale, 0);
-    // the eye-spot: a dark ring, a pale iris, a pupil in the hind-wing colour, its catch-light
-    L.ell(46, -26, 9, 8, M.mar, 0);
-    L.ell(46, -26, 6.5, 5.6, M.wing, 4);
-    L.ell(47, -25, 3.6, 3.2, M.hind, 1);
-    L.rect(44, -29, 2, 2, M.pale, 0);
-  }
-  function hindwing(L, M, lit) {
-    // darker at the root, lighter toward the scalloped margin
-    PHW.fill(L, M.hind, (x, y) => cl(0.22 + lit + Math.hypot(x - 4, y - 2) / 110 - Math.max(0, y - 36) / 90));
-    for (const [x1, y1] of [[50, 22], [55, 37], [46, 50], [30, 50]]) L.line(7, 4, 7 + (x1 - 7) * 0.88, 4 + (y1 - 4) * 0.88, M.hind, 2);
-    wavy(L, [[47, 19], [52, 32], [47, 44], [34, 47]], M.mark, 0, 0.7);
-    L.ell(34, 31, 6, 5, M.hind, 4);
-    L.ell(34, 31, 3, 2.4, M.body, 1);
-    for (const [cx, cy] of [[57, 34], [53, 46], [42, 53], [30, 51]]) L.eraseEll(cx + 2.4, cy + 2.4, 3.1, 3.1);
-  }
-  // bipectinate antenna: a curved shaft, a comb of barbs on both sides leaning to the tip
-  const SHAFT = [[3, -32], [6, -41], [11, -49], [18, -55], [25, -58], [31, -58]];
-  function antenna(L, M, sweep) {
-    L.save().translate(3, -32).rotate(sweep).translate(-3, 32);
-    L.path(SHAFT, 2, M.body, 2);
-    for (let i = 1; i < SHAFT.length; i++) {
-      const ax = SHAFT[i - 1][0], ay = SHAFT[i - 1][1], dx = SHAFT[i][0] - ax, dy = SHAFT[i][1] - ay;
-      const len = Math.hypot(dx, dy) || 1, ux = dx / len, uy = dy / len, nx = -uy, ny = ux;
-      for (const tt of [0.3, 0.8]) {
-        const px = ax + dx * tt, py = ay + dy * tt, b = Math.max(1.5, 4.4 - i * 0.6);
-        L.line(px, py, px + nx * b + ux * b * 0.7, py + ny * b + uy * b * 0.7, M.body, 1);
-        L.line(px, py, px - nx * b + ux * b * 0.7, py - ny * b + uy * b * 0.7, M.body, 3);
-      }
-    }
-    L.restore();
-  }
-  // legs: tucked stubs under the thorax, or reaching toward the party on screen whatever the
-  // body's lean (dir: the aim in this side's own coordinates)
-  function legs(L, M, reach, grip, dir, s) {
+  // legs: femur, tibia, tarsus, a pale claw; tucked under the thorax or reaching to the party
+  function legs(Lb, M, reach, grip, dir, near) {
     const r = cl(reach), g = cl(grip);
-    for (let j = 0; j < 3; j++) {
-      const hx = 6 - j, hy = -5 + j * 4, len = 30 - j * 5;
-      const tx = hx + 7, ty = hy + 6;                       // tucked foot
+    const js = near ? (reach > 0.3 ? [0, 1, 2] : [0, 1]) : [0, 1];
+    for (const j of js) {
+      const hx = (near ? -1 : -6) - j * 2, hy = -5 + j * 3.5, len = (near ? 31 : 25) - j * 5;
+      const tx = hx - (near ? 5 : 4) + j * 2, ty = hy + 8 - j;
       const fx = A.lerp(tx, hx + dir[0] * len, r), fy = A.lerp(ty, hy + dir[1] * len, r);
-      // the knee bulges away from the body (up and outward)
-      const kx = (hx + fx) / 2 + (-dir[1]) * 5 * r * (s < 0 ? 1 : -1) + 3 * (1 - r), ky = (hy + fy) / 2 + dir[0] * 5 * r * (s < 0 ? 1 : -1) - 1;
-      L.path([[hx, hy], [kx, ky], [fx, fy]], 2, M.leg, j === 0 ? 2 : 1);
+      const kx = (hx + fx) / 2 - dir[1] * 6 * r - 2 * (1 - r), ky = (hy + fy) / 2 + dir[0] * 4 * r - 2;
+      const lw = near ? 2.6 : 2.2;
+      Lb.path([[hx, hy, lw], [kx, ky, lw], [fx, fy, 1.6]], lw, M.leg, 1);
+      Lb.line(hx, hy - 1, kx, ky - 1, M.leg, near ? 4 : 3);
+      if (r > 0.3) Lb.line(kx, ky - 1, fx, fy - 1, M.leg, 3);
+      Lb.dot(kx, ky - 1, M.leg, 4);
       if (r > 0.3) {
-        const cx = dir[0] * 3, cy = dir[1] * 3;
-        L.line(fx, fy, fx + cx - dir[1] * (2 - g * 2), fy + cy + dir[0] * (2 - g * 2), M.leg, 0);
-        L.line(fx, fy, fx + cx + dir[1] * (2 - g * 2), fy + cy - dir[0] * (2 - g * 2), M.leg, 0);
+        const cx = dir[0] * 3, cy = dir[1] * 3, sp = 2.4 - g * 2;
+        Lb.line(fx, fy, fx + cx - dir[1] * sp, fy + cy + dir[0] * sp, M.fur, 3);
+        Lb.line(fx, fy, fx + cx + dir[1] * sp, fy + cy - dir[0] * sp, M.fur, 2);
+      } else Lb.dot(fx, fy + 1, M.fur, 3);
+    }
+  }
+  function abdomen(Lb, M, q) {
+    // six banded segments from the tip up (each overlaps the one behind it); the tip swings behind
+    for (let i = 5; i >= 0; i--) {
+      const x = q.abd * Math.pow(i / 5, 1.6) + i * 0.9, y = 6 + i * 6.2, r = 8.8 - i * 0.98, ry = 4.8;
+      Lb.ell(x, y, r, ry, M.body, ballTone(x - 1, y - 1, r + 1, ry + 2, 0.04));
+      // the pale hair band along its hind edge, in clusters
+      for (let k = -2; k <= 2; k++) {
+        const bx = x + k * r * 0.36, f = facing(k / 3, 0.4);
+        Lb.rect(Math.round(bx - 1), Math.round(y + ry - 2), 2 + (k & 1), 1 + (k === 0 ? 1 : 0), M.fur, f > 0 ? 5 : f > -0.3 ? 4 : 3);
       }
     }
   }
-  function body(L, M, q) {
-    // abdomen: six banded segments; the tip swings behind the body (follow-through)
-    for (let i = 5; i >= 0; i--) {
-      const x = q.abd * Math.pow(i / 5, 1.6), y = 6 + i * 6.4, r = 8.6 - i * 0.95;
-      L.ell(x, y, r, 5, M.body, K.sphere(x, y, r, 5, { amb: 0.22 }));
-      L.line(x - r + 2, y + 3, x + r - 2, y + 3, M.body, 0);
-      L.line(x - r + 3, y - 3, x - 1, y - 3, M.fur, 1); // a band of pale hairs
+  function head(Lb, M, q) {
+    const hx = -3, hy = -27;
+    Lb.ell(hx, hy, 11, 9.5, M.body, ballTone(hx, hy, 11, 9.5, 0.06));
+    // the palps: two furry bumps under the face
+    Lb.ell(hx - 6, hy + 8, 2.6, 2.4, M.fur, 2); Lb.ell(hx - 1.5, hy + 9, 3, 2.4, M.fur, 3);
+    // the three-quarter face: the far eye narrow at the head's left edge, the near eye full
+    const lx = q.look > 0.5 ? -1 : 0, ly = q.look > 0.5 ? 1 : 0;
+    const op = q.eye;
+    for (const [ex, ey, rx, ry0] of [[hx - 7.5, hy - 1, 2.6, 4.4], [hx + 1.5, hy - 1.5, 4.8, 5.2]]) {
+      if (op < 0.3) { Lb.line(ex - rx, ey + 1, ex + rx, ey + 1, M.ink, 1); Lb.line(ex - rx + 1, ey + 2, ex + rx - 1, ey + 2, M.body, 3); continue; }
+      const ry = ry0 * Math.max(0.5, op);
+      Lb.ell(ex, ey, rx, ry, M.eye, (x, y) => cl(0.7 + facing((x - ex) / rx, (y - ey) / ry) * 0.45) * 0.999);
+      const pw = rx > 3 ? 2 : 1;
+      Lb.rect(Math.round(ex - pw / 2) + lx, Math.round(ey - 1) + ly, pw, op < 0.8 ? 2 : 3, M.ink, 0);
+      if (rx > 3) Lb.dot(ex - 2 + lx, ey - 2 + ly, M.shine, 0);
     }
-    L.ell(0, -8, 11, 12, M.body, K.sphere(0, -8, 11, 12, { amb: 0.2 }));
-    // the fur collar: two rows of tufts, lit on their tips
-    const fz = q.fur || 0;
-    L.ell(0, -17 - fz, 13 + fz, 6 + fz, M.fur, K.sphere(0, -17 - fz, 13 + fz, 6 + fz, { amb: 0.3 }));
-    for (let x = -12; x <= 10; x += 4) L.poly([[x, -14], [x + 4, -14], [x + 2, -9 + fz]], M.fur, (x + 12) % 8 ? 1 : 2);
-    for (let x = -10; x <= 8; x += 4) L.poly([[x, -21 - fz], [x + 4, -21 - fz], [x + 2, -25 - fz * 2]], M.fur, 3);
-    // head, palps
-    L.ell(0, -27, 8.5, 7, M.body, K.sphere(0, -27, 8.5, 7, { amb: 0.24 }));
-    L.rect(-3, -22, 2, 3, M.body, 1); L.rect(1, -22, 2, 3, M.body, 1);
+    // the mouth: a small dark line under the face
+    Lb.line(hx - 6 + lx, hy + 5, hx - 3 + lx, hy + 6, M.ink, 1);
   }
-  function eyes(L, M, open, look) {
-    const lx = look > 0.5 ? -1 : 0, ly = look > 0.5 ? 1 : 0;
-    for (const s of [-1, 1]) {
-      const ex = s * 5, ey = -28;
-      if (open < 0.3) { L.line(ex - 2, ey + 1, ex + 2, ey + 1, M.eye, 2); L.line(ex - 2, ey, ex + 2, ey, M.body, 0); continue; }
-      const ry = 3.2 * Math.max(0.5, open);
-      L.ell(ex, ey, 3, ry, M.eye, K.sphere(ex, ey, 3, ry, { amb: 0.4 }));
-      L.rect(Math.round(ex) - 1 + lx, Math.round(ey) - 1 + ly, 2, open < 0.8 ? 2 : 3, M.ink, 0);
-    }
-  }
-  // powder (or ash, frost) shaken from the wing margins: soft clusters falling below them
+
+  // powder (or ash, frost) shaken from the wing margins: clusters falling below them
   function dust(L, M, pts, amount, kind, seed) {
     const D = M.dust[kind] || M.dust.flour;
-    const n = Math.round(amount * 9);
+    const n = Math.round(amount * 8);
     pts.forEach(([x, y], k) => {
       for (let i = 0; i < n; i++) {
         const u = hs(seed + k * 13, i), v = hs(i * 7 + k, seed + 3);
         const px = x + (u - 0.5) * 14, py = y + 3 + v * 26 * amount;
-        const r = 0.8 + hs(i, k + seed) * 1.6;
+        const r = 1 + hs(i, k + seed) * 1.4;
         L.ell(px, py, r, r * 0.8, D[i % 3], 0);
       }
       if (amount > 0.5) L.ell(x + (hs(k, seed) - 0.5) * 6, y + 10 * amount, 6 * amount, 4 * amount, D[2], 0);
@@ -56886,29 +57288,47 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   function rig(L, q, o, H, act, fi) {
     const M = mats(o);
-    const hind = L.like(), fore = L.like(), lg = L.like(), bod = L.like();
-    // the body leans by q.roll (+ toward the party) about the thorax
-    const T = (Lr) => Lr.save().translate(q.x, q.y).translate(0, -6).rotate(-q.roll).translate(0, 6);
-    const ca = Math.cos(q.roll), sa = Math.sin(q.roll);
+    const fH = L.like(), fF = L.like(), lgF = L.like(), ab = L.like(), nH = L.like(), nF = L.like(), bod = L.like(), lgN = L.like(), an = L.like();
+    const lean = q.roll + LEAN;
+    // the body frame: the stance's lean plus the pose's roll, about the thorax
+    const T = (Lr) => Lr.save().translate(q.x, q.y + 4).translate(0, -6).rotate(-lean).translate(0, 6);
+    const ca = Math.cos(lean), sa = Math.sin(lean);
     const aim = [AIM[0] * ca - AIM[1] * sa, AIM[0] * sa + AIM[1] * ca]; // the party's direction, in the leaning body
     const margin = [];
     for (const s of [-1, 1]) {
-      const i = s < 0 ? 0 : 1, lit = s < 0 ? 0.08 : -0.04;
-      const ang = S(q.wa, i), sy = S(q.wsy, i), sx = S(q.wsx, i);
-      T(hind).scale(s * sx, 1).translate(6, 0).rotate(ang * 0.55 + S(q.hl, i)).scale(1, 0.94 + (sy - 0.94) * 0.5).translate(-6, 0);
-      hindwing(hind, M, lit);
-      hind.restore();
-      T(fore).scale(s * sx, 1).translate(6, -4).rotate(ang).scale(1, sy).translate(-6, 4);
-      forewing(fore, M, lit);
-      if (q.dust > 0) for (const k of [7, 9, 11]) { const p = fore.fwd(FW[k][0], FW[k][1]); margin.push([p[0] - L.ox, p[1] - L.oy]); }
-      fore.restore();
-      T(bod).scale(s, 1); antenna(bod, M, S(q.ant, i)); bod.restore();
-      T(lg).scale(s, 1); legs(lg, M, q.legs, q.grip, [aim[0] * s, aim[1]], s); lg.restore();
+      const i = s < 0 ? 0 : 1, far = s < 0;
+      const ang = S(q.wa, i), sy = S(q.wsy, i), sx = S(q.wsx, i) * (far ? FAR : 1), hl = S(q.hl, i);
+      const LH = far ? fH : nH, LF = far ? fF : nF;
+      const rh = ROOT.hind[i], rf = ROOT.fore[i];
+      T(LH).translate(rh[0], rh[1]).scale(s * sx * HS, HS).rotate(ang * 0.55 + hl + REST.hind[i]).scale(1, 0.94 + (sy - 0.94) * 0.5);
+      hindwing(LH, M, far, hl * 2.4 + ang * 0.2);
+      LH.restore();
+      T(LF).translate(rf[0], rf[1]).scale(s * sx, 1).rotate(ang + REST.fore[i]).scale(1, sy * WY);
+      forewing(LF, M, far);
+      if (q.dust > 0) for (const k of [10, 12, 14]) { const p = LF.fwd(FW[k][0], FW[k][1]); margin.push([p[0] - L.ox, p[1] - L.oy]); }
+      LF.restore();
     }
-    T(bod); body(bod, M, q); eyes(bod, M, q.eye, q.look); bod.restore();
-    A.outline(hind); A.outline(fore); A.outline(lg); A.outline(bod);
-    const out = hind.over(fore).over(lg).over(bod);
-    if (q.dust > 0) { const dl = L.like(); dust(dl, M, margin, q.dust, q.dk || 'flour', (fi | 0) * 5 + (act ? act.length : 0)); out.over(dl); }
+    T(lgF); legs(lgF, M, q.legs, q.grip, aim, false); lgF.restore();
+    T(lgN); legs(lgN, M, q.legs, q.grip, aim, true); lgN.restore();
+    T(ab); abdomen(ab, M, q); ab.restore();
+    T(bod);
+    fluff(bod, M.fur, 2, -15 - (q.fur || 0) * 0.5, 16 + (q.fur || 0), 11 + (q.fur || 0) * 0.6, q.fur || 0, 3);
+    head(bod, M, q);
+    bod.restore();
+    // antennae from the top of the head: the far one up-left, the near one up-right and larger
+    T(an);
+    antenna(an, M, -7, -35, -1, -S(q.ant, 0) * 0.8 + 0.05, 0.86);
+    antenna(an, M, 0, -36, 1, S(q.ant, 1) * 0.8, 1);
+    an.restore();
+    // light: a cool rim down the right edges of the body; each nearer form's shadow on the one behind
+    A.rim(bod, [M.fur.id, M.body.id]); A.rim(ab, [M.body.id, M.fur.id]); A.rim(lgN, [M.leg.id]); A.rim(nF, [M.wing.id]); A.rim(nH, [M.hind.id]);
+    A.cast(fH, fF, 2, 3, 1); A.cast(nH, nF, 2, 3, 1); A.cast(ab, nH, 2, 2, 1);
+    A.cast(nF, bod, 2, 3, 1); A.cast(nH, bod, 2, 3, 1); A.cast(ab, bod, 1, 3, 1);
+    A.cast(fF, bod, -2, 3, 1); A.cast(fF, an, 1, 2, 1);
+    for (const Lr of [fH, fF, lgF, ab, nH, nF, bod, lgN, an]) A.outline(Lr);
+    let out = fH;
+    for (const Lr of [fF, lgF, ab, nH, nF, bod, lgN, an]) out = A.over(out, Lr);
+    if (q.dust > 0) { const dl = L.like(); dust(dl, M, margin, q.dust, q.dk || 'flour', (fi | 0) * 5 + (act ? act.length : 0)); A.over(out, dl); }
     return out;
   }
 
@@ -57096,7 +57516,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
   };
   A.family('moth', {
-    spec: { w: 224, h: 192, ox: 112, oy: 100, ms: 105, seq: [0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 8], bob: (t) => Math.sin(t / 520) * 4 },
+    spec: { w: 224, h: 216, ox: 112, oy: 124, ms: 105, seq: [0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 8], bob: (t) => Math.sin(t / 520) * 4 },
     base, idle, poseTable, rig,
     recoil: { push: 5 },
     veil: (o) => ({ kind: 'flour', cols: [mixh(o.col || '#c8c0e0', '#fffaf0', 0.55), mixh(o.col || '#c8c0e0', '#ffffff', 0.2), mixh(o.col || '#c8c0e0', o.col2 || '#9a8ab8', 0.45)] }),
@@ -57247,56 +57667,118 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const cl = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
   const AIM = [-0.74, 0.67];
   const TAU = Math.PI * 2;
+  const hs = (i, j) => { const x = Math.sin(i * 127.1 + j * 311.7) * 43758.5453; return x - Math.floor(x); };
 
   // =============================================================================================
   // WISP
   // =============================================================================================
+  // The wisp (the restyle): a lantern-spirit seen three-quarter — the head an egg of its own light
+  // with a flame tuft curling back from its crown (a tapered extremity that sways), the face turned
+  // toward the party (the far eye narrow at the left edge, the near eye full), lit from inside (a
+  // warm core cluster up left) and by the key light in crisp bands, a cool rim on its right edge,
+  // a coloured outline; its tail a flat ribbon lit along one edge that splits into two strands at
+  // its end and thins into translucent tones; sparks of its light hang round it.
+  const wispMatCache = new Map();
+  function wispMats(col) {
+    if (wispMatCache.has(col)) return wispMatCache.get(col);
+    const o = { n: 6, at: 3, lo: 0.15, hi: 0.95, sat: 1.18, hd: 36, hl: 26 };
+    const M = {
+      body: A.hmat(col, Object.assign({ rim: mixh(col, '#f4fbff', 0.7) }, o)),
+      tail: A.hmat(col, Object.assign({ alpha: 215 }, o)),
+      fade: A.hmat(col, Object.assign({ alpha: 135, line: false }, o)),
+      hot: K.mat(null, { cols: [mixh(col, '#fff6dc', 0.55), mixh(col, '#fffbee', 0.85)], at: 1, line: false }),
+      spark: [K.solid(mixh(col, '#fffbee', 0.7), { line: false }), K.solid(mixh(col, '#ffffff', 0.35), { line: false })],
+      eye: K.mat(null, { cols: ['#0c0a18', '#1c1830', '#302a48'], at: 0, line: false }),
+      shine: K.solid('#ffffff', { line: false }),
+      fire: A.hmat(mixh(col, '#ff9a3a', 0.6), { n: 5, at: 2, lo: 0.3, hi: 0.95, sat: 1.4, hd: 30, hl: 30 }),
+      fireHot: K.mat(null, { cols: ['#ffd27a', '#fff3c4'], at: 1, line: false }),
+    };
+    wispMatCache.set(col, M);
+    if (wispMatCache.size > 12) wispMatCache.delete(wispMatCache.keys().next().value);
+    return M;
+  }
+  // a streaming ribbon from (x, y0) down `len`, w0 wide at the top, swaying with phase ph; flat,
+  // lit along its left edge; splits into two strands over its last third
+  function streamer(Lb, M, x, y0, len, w0, ph, q) {
+    const amp = q.tamp, curl = q.tcurl, lean = q.tlean;
+    const cx = (y, k) => x + lean * y + Math.sin(ph + y / curl + (k || 0)) * amp * Math.min(1, y / (len * 0.45));
+    const hw = (y) => w0 * Math.pow(Math.max(0, 1 - y / len), 0.8) + 1;
+    const split = len * 0.66;
+    const band = (n) => (n < -0.45 ? 4.5 : n < 0.25 ? 3.5 : n < 0.7 ? 2.5 : 1.5);
+    const mat = (y) => (y < len * 0.55 ? M.tail : M.fade);
+    for (const Mx of [M.tail, M.fade]) {
+      const lx = Math.abs(lean) * len + w0 + amp + 3;
+      Lb.fill(x - lx, y0, x + lx, y0 + len + 2, (px, py) => {
+        const y = py - y0;
+        if (y < 0 || y > len || mat(y) !== Mx) return false;
+        if (y < split) return Math.abs(px - cx(y)) <= hw(y);
+        // two strands: the near one longer, the far one turning away
+        const t = (y - split) / (len - split), sw = hw(y) * 0.55;
+        const a = cx(y) - hw(split) * 0.45 * t * 1.6, b = cx(y, 0.6) + hw(split) * 0.5 * t * 1.8;
+        return (Math.abs(px - a) <= sw && t < 1) || (Math.abs(px - b) <= sw * 0.9 && t < 0.82);
+      }, Mx, (px, py) => { const y = py - y0, n = (px - cx(y)) / hw(y); return band(n) / 6; });
+    }
+  }
   function wispRig(L, q, o, H) {
     const col = o.col || '#9fb8e8';
-    const M = K.mat(col, { n: 5, at: 3, step: 0.1 });
-    const Mt = K.mat(col, { n: 4, at: 2, step: 0.1, alpha: 205, line: false });
-    const Mf = K.mat(col, { n: 3, at: 1, step: 0.1, alpha: 130, line: false });
-    const hot = K.solid(K.mix(K.parse(col), [255, 252, 236, 255], 0.75), { line: false });
-    const aura = L.like(), body = L.like();
+    const M = wispMats(col);
+    const aura = L.like(), tail = L.like(), body = L.like();
     const hx = q.hx, hy = q.hy, rx = q.rx, ry = q.ry;
-    H.glow(aura, hx, hy + 4, 46 * q.glow, 44 * q.glow, col, Math.min(0.5, 0.32 * q.glow), 3);
-    // the tail: one tapering ribbon from under the head, streaming, coiling or hanging
-    H.tail(body, hx + q.tlean * 4, hy + 12, q.tlen, q.tw, q.ph, [[0, q.tlen * 0.57, M], [q.tlen * 0.57, q.tlen * 0.8, Mt], [q.tlen * 0.8, 400, Mf]], { amp: q.tamp, curl: q.tcurl, lean: q.tlean });
-    // the head: a sphere, or (point) an egg drawn out along its flight toward the party — the
-    // round front leading, the back tapering into the streaming tail
+    // its light: a faint two-step glow and sparks hanging in it
+    H.glow(aura, hx, hy + 4, 40 * q.glow, 38 * q.glow, col, Math.min(0.32, 0.2 * q.glow), 2);
+    for (let k = 0; k < 6; k++) {
+      const a = k * 1.05 + q.ph * 0.5, r = (34 + (k % 3) * 7) * Math.min(1.3, q.glow);
+      aura.rect(Math.round(hx + Math.cos(a) * r), Math.round(hy + 2 + Math.sin(a) * r * 0.9), k % 2 ? 1 : 2, k % 2 ? 2 : 1, M.spark[k % 2], 0);
+    }
+    streamer(tail, M, hx + q.tlean * 4, hy + 12, q.tlen, q.tw, q.ph, q);
+    // the head: an egg of light (drawn out along its flight when it darts), and a flame tuft from
+    // its crown curling back up-right
     const p = q.point, ax = AIM[0], ay = AIM[1];
     const fr = Math.max(rx, ry) * (1 + 0.12 * p), br = Math.max(rx, ry) * (1 + 0.55 * p), side = Math.min(rx, ry) * (1 - 0.1 * p);
+    const shade = A.ball(hx - 3 + ax * 3 * p, hy - 3 + ay * 3 * p, rx + 3, ry + 3, { lift: -0.06, refl: 0.14 });
     body.fill(hx - rx - 30, hy - ry - 30, hx + rx + 30, hy + ry + 30, (x, y) => {
       if (p <= 0) { const a = (x - hx) / rx, b = (y - hy) / ry; return a * a + b * b <= 1; }
-      const u = (x - hx) * ax + (y - hy) * ay, v = -(x - hx) * ay + (y - hy) * ax; // along / across the flight
+      const u = (x - hx) * ax + (y - hy) * ay, v = -(x - hx) * ay + (y - hy) * ax;
       const a = u / (u >= 0 ? fr : br), b = v / side;
       return a * a + b * b <= 1;
-    }, M, K.sphere(hx - 2 + ax * 3 * p, hy - 2 + ay * 3 * p, rx + 2, ry + 2, { amb: 0.2, rim: 0.12 }));
+    }, M.body, shade);
+    const sway = Math.sin(q.ph) * 3, tl = (1 - p * 0.6);
+    const tx = hx + 12 + sway + 6 * (1 - tl), ty = hy - ry - 13 * tl;
+    body.poly([[hx - 4, hy - ry + 6], [hx + 6, hy - ry - 4 * tl], [tx, ty], [hx + rx * 0.7 + sway * 0.3, hy - ry * 0.45]], M.body, (x, y) => (y < hy - ry + 1 ? (x < hx + 8 ? 4.5 : 3.5) : 3.5) / 6);
+    body.poly([[hx + 4, hy - ry - 1], [tx - 1, ty + 2], [hx + rx * 0.55, hy - ry * 0.55]], M.body, 4);
     if (q.crown > 0) {
       // the Ember Wisp's flare: flame tongues standing up from the head
-      const fl = K.mat(mixh(col, '#ffd27a', 0.5), { n: 4, at: 2, step: 0.12 });
-      const fy = K.mat('#fff0b8', { n: 3, at: 1, step: 0.1, line: false });
       for (let i = 0; i < 5; i++) {
         const x = hx - 18 + i * 9, h = (10 + ((i * 7) % 5) * 3 + (i === 2 ? 6 : 0)) * q.crown, sw = Math.sin(q.ph + i * 1.3) * 3 * q.crown;
-        body.poly([[x - 6, hy - ry + 6], [x + sw, hy - ry - h], [x + 6, hy - ry + 6]], fl, 2);
-        body.poly([[x - 3, hy - ry + 6], [x + sw * 1.2, hy - ry - h * 0.6], [x + 3, hy - ry + 6]], fy, 1);
+        body.poly([[x - 6, hy - ry + 7], [x + sw, hy - ry - h], [x + 6, hy - ry + 7]], M.fire, (xx) => (xx < x + sw * 0.5 ? 3.5 : 2.5) / 5);
+        body.poly([[x - 3, hy - ry + 7], [x + sw * 1.2, hy - ry - h * 0.6], [x + 3, hy - ry + 7]], M.fireHot, 1);
       }
     }
-    A.outline(body);
-    // inner light: a warm core cluster up-left of centre
+    A.despeckle(body);
+    // inner light: a warm core cluster up-left of centre, its hottest point inside it
     body.onto((b) => {
-      b.ell(hx - 8, hy - 9, 9 * (0.8 + 0.3 * q.core), 7 * (0.8 + 0.3 * q.core), M, 4);
-      b.ell(hx - 11, hy - 12, 4 + q.core * 2, 3 + q.core, hot, 0);
+      const k = 0.8 + 0.3 * q.core;
+      b.ell(hx - 9, hy - 9, 8 * k, 6 * k, M.body, 4);
+      b.ell(hx - 10, hy - 10, 5 * k, 3.6 * k, M.body, 5);
+      b.ell(hx - 11, hy - 11, 2.5 + q.core * 1.5, 1.8 + q.core, M.hot, 1);
+      b.rect(Math.round(hx - 13), Math.round(hy - 13), 2, 1, M.shine, 0);
     });
-    // eyes (narrowed, shut, or pleading), and a mouth when it breathes out
+    A.rim(body, [M.body.id]);
+    // the three-quarter face: the far eye narrow at the left, the near eye full; a mouth to breathe
     const lx = q.look > 0.5 ? -2 : 0, ly = q.look > 0.5 ? 1 : 0;
-    if (q.eye < 0.25) for (const s of [-1, 1]) { body.line(hx + s * 10 - 3, hy + 3, hx + s * 10 + 3, hy + 3, H.ink, 1); body.dot(hx + s * 10 + (s < 0 ? -3 : 3), hy + 2, H.ink, 1); }
-    else {
-      H.eyes(body, hx + 1 + lx, hy + 2 + ly, 10, { rx: 3.5, ry: 6 * Math.max(0.35, q.eye) });
-      if (q.droop > 0) for (const s of [-1, 1]) body.line(hx + s * 10 - 4 + lx, hy - 5 + (s < 0 ? 2 : -0) * q.droop + ly, hx + s * 10 + 4 + lx, hy - 5 + (s < 0 ? 0 : 2) * q.droop + ly, M, 1);
+    const EY = [[-12, 2.8], [2, 3.8]];
+    if (q.eye < 0.25) for (const [ex, er] of EY) { body.line(hx + ex - er, hy + 3, hx + ex + er, hy + 3, M.eye, 1); body.dot(hx + ex + er, hy + 2, M.eye, 1); }
+    else for (const [ex, er] of EY) {
+      const ery = 6 * Math.max(0.35, q.eye), x = hx + ex + lx, y = hy + 2 + ly;
+      body.ell(x, y, er, ery, M.eye, (px, py) => (py > y + ery * 0.3 ? 1.5 : 0.5) / 3);
+      if (er > 3) body.rect(Math.round(x - er * 0.5), Math.round(y - ery * 0.6), 2, 2, M.shine, 0);
+      else body.dot(x - 1, y - ery * 0.5, M.shine, 0);
+      if (q.droop > 0) body.line(x - er - 1, y - ery - 1 + (ex < 0 ? 2 : 0) * q.droop, x + er + 1, y - ery - 1 + (ex < 0 ? 0 : 2) * q.droop, M.body, 1);
     }
-    if (q.mouth > 0) body.ell(hx + lx, hy + 13 + ly, 2 + q.mouth * 3, 1.5 + q.mouth * 3, H.ink, 0);
-    return body.under(aura);
+    if (q.mouth > 0) body.ell(hx - 5 + lx, hy + 13 + ly, 2 + q.mouth * 3, 1.5 + q.mouth * 3, M.eye, 0);
+    A.cast(tail, body, 2, 3, 1);
+    A.outline(tail); A.outline(body);
+    return tail.over(body).under(aura);
   }
   const wBase = { hx: 0, hy: 0, rx: 30, ry: 29, point: 0, tlen: 70, tw: 25, tamp: 11, tcurl: 11, tlean: 0, ph: 0, glow: 1, core: 0.5, eye: 1, look: 0, mouth: 0, crown: 0, droop: 0 };
   const PH = (f, n) => (f / n) * Math.PI * 2;
@@ -57535,53 +58017,171 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // =============================================================================================
   // ECHO
   // =============================================================================================
-  function echoRig(L, q, o, H) {
-    const col0 = o.col || '#a8c8d8';
-    const col = q.warm > 0 ? mixh(col0, '#f0a060', 0.55 * q.warm) : col0;
-    const lightAng = Math.atan2(-0.66, -0.56);
-    const ra = Math.round(235 * q.rint), rb = Math.round(150 * q.rint), rc = Math.round(80 * q.rint);
-    const R = [K.mat(col, { n: 4, at: 2, step: 0.1, alpha: Math.max(20, ra) }), K.mat(col, { n: 4, at: 2, step: 0.1, alpha: Math.max(14, rb), line: false }), K.mat(col, { n: 4, at: 2, step: 0.1, alpha: Math.max(8, rc), line: false })];
-    const shard = K.mat(col, { n: 5, at: 3, step: 0.1 });
-    const coreM = K.mat(q.warm > 0 ? mixh('#1c2a34', '#3a1a10', q.warm) : '#1c2a34', { n: 4, at: 1, step: 0.07 });
-    const rings = L.like(), shards = L.like(), core = L.like();
-    // rings spreading out of it (spacing, phase and strength)
-    for (let i = 0; i < 3; i++) {
-      const r = (28 + ((i * 18 + q.rph * 54) % 54)) * q.rsp * q.coreS;
-      const M = R[r < 46 ? 0 : r < 66 ? 1 : 2];
-      const th = r < 46 ? 2 : 1.5;
-      rings.fill(-r - 3, -r - 3, r + 3, r + 3, (x, y) => { const d = Math.hypot(x, y); return d <= r + th && d >= r - th; }, M,
-        (x, y) => K.clamp(0.5 + 0.45 * Math.cos(Math.atan2(y, x) - lightAng), 0, 0.99));
+  // The echo (the restyle): a swirl of lost voices — a dark glass core with a three-quarter face,
+  // its rings of sound spreading on a tilted plane seen at a three-quarter angle (the far half
+  // behind the core, the near half in front, broken into arcs that taper at their gaps), mirror
+  // shards orbiting on that plane (rendered like the reference's metal: hard facets, a white
+  // specular edge, a dark reflected band, navy outline; the far ones smaller and a step darker),
+  // and two ribbons of voice and mill dust wrapped round it — one behind, rising to the upper
+  // right, one in front, trailing toward the party — that taper into ragged motes.
+  const TILT = -0.24, RY = 0.58, PY = 14;
+  const plane = (u, v) => { const y = v * RY; return [u * Math.cos(TILT) - y * Math.sin(TILT), u * Math.sin(TILT) + y * Math.cos(TILT) + PY]; };
+  const unplane = (x, y) => { const X = x, Y = y - PY; const u = X * Math.cos(TILT) + Y * Math.sin(TILT), w = -X * Math.sin(TILT) + Y * Math.cos(TILT); return [u, w / RY]; };
+  const echoMatCache = new Map();
+  function echoMats(o, warm) {
+    const col0 = o.col || '#a8c8d8', wk = Math.round(cl(warm) * 4) / 4, key = col0 + '|' + wk;
+    if (echoMatCache.has(key)) return echoMatCache.get(key);
+    const col = wk > 0 ? mixh(col0, '#f0a060', 0.55 * wk) : col0;
+    const ringO = { n: 6, at: 3, lo: 0.16, hi: 0.97, sat: 1.35, hd: 30, hl: 20 };
+    const M = {
+      ring: [255, 200, 140].map((a) => A.hmat(col, Object.assign({ alpha: a }, ringO))),
+      shard: A.hmat(mixh(col, '#d8e4ee', 0.25), { n: 6, at: 3, lo: 0.12, hi: 0.98, sat: 0.95, hd: 40, hl: 26 }),
+      shardF: A.hmat(mixh(col, '#5a6a80', 0.3), { n: 6, at: 3, lo: 0.1, hi: 0.86, sat: 0.95, hd: 40, hl: 26 }),
+      swirl: A.hmat(mixh(col, '#f2ead8', 0.45), { n: 6, at: 4, lo: 0.2, hi: 0.98, sat: 1.05, hd: 55, hl: 14, rim: mixh(col, '#e8fbff', 0.6) }),
+      core: A.hmat(wk > 0 ? mixh('#1c2a34', '#4a1e10', wk) : mixh('#1c2a34', col0, 0.12), { n: 6, at: 1, lo: 0.05, hi: 0.62, sat: 1.4, hd: 20, hl: 40, rim: mixh(col, '#e8fbff', 0.45) }),
+      eye: A.hmat(mixh(col, '#ffffff', 0.5), { n: 4, at: 2, lo: 0.5, hi: 0.99, line: false }),
+      hollow: K.mat(null, { cols: ['#04070a', '#0b131b', '#14202c'], at: 0, line: false }),
+      shine: K.solid('#ffffff', { line: false }),
+      mote: [K.solid(mixh(col, '#fff8ec', 0.65), { line: false }), K.solid(mixh(col, '#f2ead8', 0.35), { line: false })],
+    };
+    echoMatCache.set(key, M);
+    if (echoMatCache.size > 16) echoMatCache.delete(echoMatCache.keys().next().value);
+    return M;
+  }
+  // one glass shard: two facets split along its length (the one facing the key light lit), a white
+  // specular edge on the lit facet, a dark reflected band along the shadowed edge
+  const SHARDS = [[[-8, -2], [6, -5], [16, -1], [7, 4], [-7, 3]], [[-6, -4], [11, -2], [4, 6], [-5, 3]]];
+  function shard(Ls, M, cx, cy, ang, sc, kind) {
+    const pts = SHARDS[kind % 2].map(([x, y]) => [x * sc, y * sc]);
+    // world-space facing of the two facets (local normals (0, −1) and (0, 1) turned by ang)
+    const nUx = Math.sin(ang), nUy = -Math.cos(ang);
+    const fU = -(nUx * 0.6 + nUy * 0.8), fD = -fU;
+    const tone = (f) => (f > 0.35 ? 4 : f > -0.2 ? 3 : 2);
+    Ls.save().translate(cx, cy).rotate(ang);
+    Ls.poly(pts, M, (x, y) => ((y < 0.3 ? tone(fU) : tone(fD)) + 0.5) / M.n);
+    // the specular edge along the lit facet's outer edge, the reflected band along the other
+    const lit = fU > fD ? -1 : 1;
+    Ls.line(pts[0][0] + 1, pts[0][1] * 0.6 + lit * 0.4, pts[2][0] - 2, pts[2][1] * 0.6 + lit * 0.4, M, lit < 0 ? 5 : 1);
+    Ls.line(-3 * sc, lit * -2 * sc, 5 * sc, lit * -2.5 * sc, M, lit < 0 ? 1 : 5);
+    Ls.restore();
+  }
+  // a ribbon of voice and dust along a spiral round the core (angles in screen space, y-down),
+  // tapering to a ragged end of motes
+  function ribbon(Lr, M, th0, dth, r0, r1, w0, rise, sq, seed) {
+    const pts = [], N = 12;
+    for (let i = 0; i <= N; i++) {
+      const t = i / N, th = th0 + dth * t, r = r0 + (r1 - r0) * t;
+      pts.push([Math.cos(th) * r, Math.sin(th) * r * sq - rise * t, Math.max(1.2, w0 * Math.pow(1 - t, 0.9) + 1)]);
     }
-    // shards: orbiting, gathered toward the party, flung along the aim, or locked into a pane
+    const body = pts.slice(0, N - 1);
+    // a flat ribbon: lit along the edge facing the key light, a core shadow along the other
+    for (let i = 1; i < body.length; i++) {
+      const [xa, ya] = body[i - 1], [xb, yb, w] = body[i];
+      const dx = xb - xa, dy = yb - ya, len = Math.hypot(dx, dy) || 1;
+      let nx = -dy / len, ny = dx / len;
+      if (-(nx * 0.6 + ny * 0.8) < 0) { nx = -nx; ny = -ny; }
+      Lr.seg(xa, ya, xb, yb, w, M, (x, y) => { const d = ((x - xa) * nx + (y - ya) * ny) / (w / 2); return d > 0.45 ? 5.5 / 6 : d > -0.2 ? 4.5 / 6 : d > -0.65 ? 3.5 / 6 : 2.5 / 6; });
+    }
+    // the ragged end: the last stretch breaks into motes
+    for (let k = 0; k < 4; k++) {
+      const t = (N - 1.6 + k * 0.7) / N, th = th0 + dth * t, r = r0 + (r1 - r0) * t + (hs(seed, k) - 0.5) * 6;
+      const x = Math.cos(th) * r + k * 1.5, y = Math.sin(th) * r * sq - rise * t + (hs(k, seed) - 0.5) * 5;
+      const sz = 2.4 - k * 0.45;
+      if (sz > 0.9) Lr.ell(x, y, sz, sz * 0.8, M, k % 2 ? 4 : 5);
+    }
+  }
+  function echoRig(L, q, o, H) {
+    const M = echoMats(o, q.warm);
+    const back = L.like(), swA = L.like(), core = L.like(), swB = L.like(), front = L.like();
+    const cs = q.coreS;
+    // rings of sound on the tilted plane, spreading out (spacing, phase, strength); broken into
+    // three arcs each whose gaps turn with the phase; the far half behind the core
+    const ra = cl(q.rint);
+    for (let i = 0; i < 3; i++) {
+      const r = (30 + ((i * 18 + q.rph * 54) % 54)) * q.rsp * cs;
+      const Mr = M.ring[r < 46 ? 0 : r < 66 ? 1 : 2];
+      if (ra < 0.35 && r > 60) continue;
+      const th = (r < 46 ? 3.6 : r < 66 ? 2.8 : 2.1) * (0.6 + 0.4 * ra);
+      const g0 = i * 2.1 + q.rph * 2.4;
+      const inside = (x, y) => {
+        const [u, v] = unplane(x, y), d = Math.hypot(u, v);
+        if (Math.abs(d - r) > th) return false;
+        const a = Math.atan2(v, u), gp = ((a - g0) % (TAU / 2) + TAU) % (TAU / 2);
+        const gap = Math.min(gp, TAU / 2 - gp);
+        return gap > 0.16 && Math.abs(d - r) <= th * Math.min(1, (gap - 0.16) / 0.35 + 0.3);
+      };
+      const tone = (x, y) => {
+        const [u, v] = unplane(x, y), d = Math.hypot(u, v), e = (d - r) / th;
+        let k = e > 0.3 ? 5 : e > -0.3 ? 4 : 2;
+        if (v < 0) k -= 2;                         // the far half recedes (in shadow)
+        return (Math.max(1, k) + 0.5) / Mr.n;
+      };
+      const ext = r + th + 2;
+      back.fill(-ext, PY - ext, ext, PY + ext, (x, y) => inside(x, y) && unplane(x, y)[1] < 0, Mr, tone);
+      front.fill(-ext, PY - ext, ext, PY + ext, (x, y) => inside(x, y) && unplane(x, y)[1] >= 0, Mr, tone);
+    }
+    // mill dust caught in the rings: a few motes on the plane, turning with the phase
+    for (let k = 0; k < 7; k++) {
+      const a = k * 0.9 + q.rph * 1.6 + hs(k, 3) * 0.6, r = (34 + hs(k, 9) * 30) * q.rsp;
+      const [x, y] = plane(Math.cos(a) * r, Math.sin(a) * r);
+      (Math.sin(a) < 0 ? back : front).rect(Math.round(x), Math.round(y), 2, k % 3 ? 1 : 2, M.mote[k % 2], 0);
+    }
+    // shards: orbiting on the plane, gathered toward the party, flung along the aim, or a pane
     const aimA = Math.atan2(AIM[1], AIM[0]);
     for (let i = 0; i < 8; i++) {
-      let a = (i * Math.PI) / 4 + q.rot + (i % 2 ? 0.2 : 0);
-      let r0 = (i % 2 ? 50 : 40) * q.shR;
-      if (q.aim > 0) { const tgt = aimA + (i - 3.5) * 0.18, d = ((((tgt - a) % TAU) + TAU * 1.5) % TAU) - Math.PI; a += d * q.aim; r0 *= 1 - 0.15 * q.aim; }
-      let cx = Math.cos(a) * r0, cy = Math.sin(a) * r0;
+      const a0 = (i * Math.PI) / 4 + q.rot + (i % 2 ? 0.2 : 0);
+      const r0 = (i % 2 ? 52 : 42) * q.shR;
+      let [cx, cy] = plane(Math.cos(a0) * r0, Math.sin(a0) * r0);
+      const depth = Math.sin(a0);
+      let ang = Math.atan2(cy - PY, cx), sc = 0.82 + 0.22 * depth;
+      if (q.aim > 0) {
+        const ta = aimA + (i - 3.5) * 0.17, tr = r0 * 0.78;
+        cx += (Math.cos(ta) * tr - cx) * q.aim; cy += (Math.sin(ta) * tr + 6 - cy) * q.aim;
+        ang += (((ta - ang + 3 * Math.PI) % TAU) - Math.PI) * q.aim; sc += (1 - sc) * q.aim;
+      }
       if (q.out > 0) { const fl = q.out * (22 + (i % 3) * 14); cx += AIM[0] * fl; cy += AIM[1] * fl; }
       if (q.pane > 0) {
-        // a pane in front of it, toward the party: shards tile a tilted square
         const px = -46 + (i % 3) * 9 - Math.floor(i / 3) * 3, py = 14 + Math.floor(i / 3) * 10 - (i % 3) * 2;
-        cx = cx + (px - cx) * q.pane; cy = cy + (py - cy) * q.pane;
-        a = a + ((-0.4 - a) % (Math.PI * 2)) * q.pane;
+        cx += (px - cx) * q.pane; cy += (py - cy) * q.pane;
+        ang += (((-0.4 - ang + 3 * Math.PI) % TAU) - Math.PI) * q.pane; sc += (1 - sc) * q.pane;
       }
-      shards.save().translate(cx, cy).rotate(a);
-      shards.stone([[-6, -3], [10, -5], [16, 0], [9, 5], [-5, 3]], shard, { bevel: 2, face: 2 });
-      shards.restore();
+      const far = depth < -0.2 && q.aim < 0.5 && q.pane < 0.5 && q.out < 0.3;
+      shard(far ? back : front, far ? M.shardF : M.shard, cx, cy, ang, sc, i);
     }
-    if (q.pane > 0.6) shards.line(-50, 4, -30, 30, K.solid('#ffffff', { line: false }), 0); // its glint
-    const cs = q.coreS;
-    core.ell(0, 0, 21 * cs, 21 * cs, coreM, K.sphere(0, 0, 21 * cs, 21 * cs, { amb: 0.1, rim: 0.25 }));
-    core.fill(-24 * cs, -24 * cs, 24 * cs, 24 * cs, (x, y) => { const d = Math.hypot(x, y); return d <= 23 * cs && d > 21 * cs; }, shard, (x, y) => K.clamp(0.45 + 0.5 * Math.cos(Math.atan2(y, x) - lightAng), 0, 0.99));
+    if (q.pane > 0.6) front.line(-50, 4, -30, 30, M.shine, 0); // the pane's glint
+    // the ribbons of voice and dust: one behind (rising to the upper right), one in front
+    // (trailing toward the party), swaying with the rings' phase
+    const sw = Math.sin(q.rph * TAU) * 0.12, open = 1 + (q.coreS - 1) * 2 + (q.mouth || 0) * 0.08;
+    ribbon(swA, M.swirl, 2.75 + sw, 2.75, 25 * cs, 58 * open, 10, 26, 0.8, 3);
+    ribbon(swB, M.swirl, 0.15 + sw, 1.75, 24 * cs, 40 * open, 7, -10, 0.86, 7);
+    // the core: dark glass in hard bands, a crisp specular highlight up left, a reflected band low
+    // right, a cool rim on the right edge
+    const R = 23 * cs;
+    core.ell(0, 0, R, R, M.core, (x, y) => { const nx = x / R, ny = y / R, f = -(nx * 0.6 + ny * 0.8), d = nx * nx + ny * ny; return ((f > 0.45 ? 3 : f > 0.05 ? 2 : f > -0.5 ? 1 : 0) + (d > 0.8 && f < -0.3 ? 1 : 0) + 0.5) / M.core.n; });
+    core.save().translate(-8 * cs, -10 * cs).rotate(-0.6);
+    core.ell(0, 0, 7 * cs, 3.4 * cs, M.core, 4);
+    core.ell(-0.5, -0.5, 4.6 * cs, 1.8 * cs, M.core, 5);
+    core.restore();
+    core.dot(-14 * cs, -2 * cs, M.core, 4); core.dot(-14 * cs, -1 * cs, M.core, 3);
+    // the three-quarter face: turned toward the party, the far eye narrower at the left
     const lx = q.look > 0.5 ? -2 : 0, ly = q.look > 0.5 ? 1 : 0;
-    if (q.eye < 0.25) for (const s of [-1, 1]) core.line(s * 7 - 2 + lx, -4, s * 7 + 2 + lx, -4, shard, 4);
-    else H.eyes(core, lx, -5 + ly, 7, { col: mixh(col, '#ffffff', 0.4), rx: 2.5, ry: 3.5 * Math.max(0.4, q.eye), shine: false });
-    const mo = q.mouth;
-    core.ell(lx, 9 + ly, 3 + mo * 3, 2.5 + mo * 4, K.mat('#0a1016', { n: 2, at: 0, line: false }), 0);
-    core.fill(-8, 4, 8, 18, (x, y) => { const d = Math.hypot((x - lx) / (5 + mo * 3), (y - 9 - ly) / (4.5 + mo * 4)); return d <= 1 && d > 0.72 && y < 9 + ly; }, shard, 1);
-    A.outline(rings); A.outline(shards); A.outline(core);
-    const out = rings.over(shards).over(core);
+    const eyes = [[-12, -4, 2.4], [-1, -5, 3.6]];
+    for (const [ex, ey, rx] of eyes) {
+      const x = ex * cs + lx, y = ey * cs + ly;
+      if (q.eye < 0.25) { core.line(x - rx - 1, y + 1, x + rx + 1, y + 1, M.eye, 2); continue; }
+      const ry = 3.8 * Math.max(0.4, q.eye) * cs;
+      core.ell(x, y, rx, ry, M.eye, (px, py) => (py < y - ry * 0.2 ? 3.5 : 2.5) / 4);
+      if (rx > 3) core.dot(x - 1, y - 2, M.shine, 0);
+    }
+    // the mouth: a hollow that opens as it calls, lit along its lower lip
+    const mo = q.mouth, mx = -5 * cs + lx, my = 9 * cs + ly, mrx = 3 + mo * 3, mry = 2.4 + mo * 4;
+    core.ell(mx, my, mrx + 1.2, mry + 1.2, M.core, 3);
+    core.ell(mx, my, mrx, mry, M.hollow, (x, y) => (y > my + mry * 0.4 ? 1.5 : 0.5) / 3);
+    A.rim(core, [M.core.id], { w: 2 });
+    A.rim(swA, [M.swirl.id]); A.rim(swB, [M.swirl.id]);
+    A.cast(swA, core, 2, 3, 1); A.cast(core, swB, 2, 3, 1); A.cast(core, front, 2, 2, 1); A.cast(back, swA, 2, 2, 1);
+    for (const Lr of [back, swA, core, swB, front]) A.outline(Lr);
+    const out = back.over(swA).over(core).over(swB).over(front);
     if (q.dim < 1) out.fade(q.dim);
     return out;
   }
@@ -57791,32 +58391,61 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // −1 pressed shut), rip (the edge rippling), dim (gloss)
   // =============================================================================================
   const LOBES = [[-46, 42, 20, 9], [44, 43, 22, 8], [-12, 47, 32, 9], [20, 39, 26, 11], [-30, 38, 20, 10], [58, 47, 8, 4], [-62, 47, 7, 3]];
+  // The blot (the restyle): glossy ink in the reference's metal manner — a deep hue-shifted ramp
+  // (near-black indigo to a cool violet sheen), the dome in crisp bands with a hard near-white
+  // specular streak along its lit shoulder, a dark reflected band and a cool rim on its right edge;
+  // its crown pulled into a curling crest that leans toward the party (a tapered extremity that
+  // follows the lean); a three-quarter face; the puddle a separate form under it, its lobes lit on
+  // their tops, in the dome's cast shadow; drips with a lit side.
+  const blotMatCache = new Map();
+  function blotMats(col, dim) {
+    const dk = Math.round(cl(dim) * 4) / 4, key = col + '|' + dk;
+    if (blotMatCache.has(key)) return blotMatCache.get(key);
+    const M = {
+      ink: A.hmat(col, { n: 6, at: 1, lo: 0.05, hi: 0.66, sat: 1.5, hd: 24, hl: 60, warm: 280, rim: mixh(col, '#b8c8ff', 0.6) }),
+      gloss: K.solid(mixh(col, '#f2f4ff', 0.86 * dk), { line: false }),
+      gloss2: K.solid(mixh(col, '#c0c8f4', 0.55 * dk), { line: false }),
+      pale: A.hmat('#ece8fa', { n: 4, at: 2, lo: 0.5, hi: 0.99, line: false }),
+      eye: K.mat(null, { cols: ['#08060e', '#141022', '#221c36'], at: 0, line: false }),
+      shine: K.solid('#ffffff', { line: false }),
+    };
+    blotMatCache.set(key, M);
+    if (blotMatCache.size > 16) blotMatCache.delete(blotMatCache.keys().next().value);
+    return M;
+  }
   function blotRig(L, q, o, H) {
     const col = o.col || '#241f3a';
-    const M = K.mat(col, { n: 5, at: 1, step: 0.085, lt: 1.1 });
-    const gloss = K.solid(mixh(col, '#eef0ff', 0.78 * q.dim), { line: false });
-    const gloss2 = K.solid(mixh(col, '#c8ccf0', 0.45 * q.dim), { line: false });
-    const pale = K.mat('#f1edff', { n: 3, at: 1, step: 0.1, line: false });
-    const w = q.w, B = L.like();
+    const M = blotMats(col, q.dim), Mi = M.ink;
+    const w = q.w, P = L.like(), B = L.like();
     const sh = (y) => q.lean * -0.5 * (44 - y);          // shear: + lean leans the top toward the party (left)
     const rip = (y) => (q.rip ? Math.sin(y / 5 + q.d * 1.6) * q.rip : 0);
-    // puddle lobes (spreading in a surge)
+    // puddle lobes (spreading in a surge), lit along their tops
     for (const [x, y, rx, ry] of LOBES) {
-      const xx = x * q.sp + (x > 0 ? w : -w) * 0.5 + (x < 0 ? q.lean * -6 : 0);
-      B.ell(xx, y, rx * (0.7 + 0.3 * q.sp), ry, M, (px, py) => K.clamp(0.28 - (py - y) / 40 + (px < 0 ? 0.08 : 0), 0, 0.99));
+      const xx = x * q.sp + (x > 0 ? w : -w) * 0.5 + (x < 0 ? q.lean * -6 : 0), rr = rx * (0.7 + 0.3 * q.sp);
+      P.ell(xx, y, rr, ry, Mi, (px, py) => { const t = (py - (y - ry)) / (2 * ry); return (t < 0.28 ? (px < xx ? 3.5 : 2.5) : t < 0.6 ? 1.5 : 0.5) / 6; });
     }
     // the dome (squash, lean and lift) and its base widening into the puddle
     const rx = 38 + w, ry = 42 - w - q.lift * 0.5, cy = 2 + w - q.lift;
-    B.fill(-rx - 50, cy - ry - 2, rx + 50, cy + ry + 2, (x, y) => { const a = (x - sh(y) - rip(y)) / rx, b = (y - cy) / ry; return a * a + b * b <= 1; }, M, (x, y) => K.sphere(-2, -6, rx + 4, ry + 4, { amb: 0.08, k: 0.9 })(x - sh(y), y));
-    B.fill(-rx - 50, 10, rx + 50, 44, (x, y) => Math.abs(x - sh(y) - rip(y)) <= rx * (0.86 + (y - 10) / 110) && y <= 44, M, (x, y) => K.clamp(0.25 - (y - 10) / 120 + (x - sh(y) < 0 ? 0.1 : -0.04), 0, 0.99));
+    const domeShade = A.ball(-4, cy - 8, rx + 4, ry + 4, { refl: 0.12, k: 1.15 });
+    // a drop of ink: round below, drawn up into a point that leans with it (toward the party when
+    // it rears, back when it recoils) — the crown's tip a little off-centre, toward the party
+    const tipX = -6 - q.lean * 14, drop = (x, y) => {
+      const b = (y - cy) / ry;
+      if (b >= -0.15) { const a = (x - sh(y) - rip(y)) / rx; return a * a + b * b <= 1; }
+      const t = (-b - 0.15) / 0.95, half = rx * Math.sqrt(Math.max(0, 1 - 0.0225)) * Math.pow(Math.max(0, 1 - t), 0.62);
+      const c = sh(y) + rip(y) + tipX * t * t;
+      return Math.abs(x - c) <= half && t < 1;
+    };
+    B.fill(-rx - 50, cy - ry - 4, rx + 50, cy + ry + 2, drop, Mi, (x, y) => domeShade(x - sh(y), y) * 0.86);
+    B.fill(-rx - 50, 10, rx + 50, 44, (x, y) => Math.abs(x - sh(y) - rip(y)) <= rx * (0.86 + (y - 10) / 110) && y <= 44, Mi, (x, y) => Math.min(domeShade(x - sh(y), Math.min(y, cy + ry * 0.7)) * 0.86, (y > 30 ? 1.5 : 2.5) / 6));
     // drips on the flanks, with a drop falling
     for (const [side, y0, len, sd] of [[-1, 4, 18, 0], [1, 10, 14, 1], [-1, 20, 10, 2]]) {
       const x = side < 0 ? -rx + 6 + (sd === 2 ? 10 : 0) : rx - 8;
       const L2 = len + ((Math.floor(q.d) + sd) % 4), xs = x + sh(y0), dx = side < 0 ? -2 : 2;
-      B.path([[xs, y0], [xs + dx, y0 + L2 * 0.6], [xs + dx, y0 + L2]], 5, M, 1);
-      B.ell(xs + dx, y0 + L2 + 1, 3.5, 3.5, M, 1);
+      B.path([[xs, y0], [xs + dx, y0 + L2 * 0.6], [xs + dx, y0 + L2]], 5, Mi, (px) => (px < xs + dx - 0.5 ? 3.5 : 1.5) / 6);
+      B.ell(xs + dx, y0 + L2 + 1, 3.5, 3.5, Mi, A.ball(xs + dx - 1, y0 + L2, 4, 4, { k: 1.2 }));
       const fall = ((q.d * 7 + sd * 11) % 28);
-      if (fall < 22) B.ell(xs + dx * 1.5, y0 + L2 + 8 + fall, 2, 2.5, M, 1);
+      if (fall < 22) B.ell(xs + dx * 1.5, y0 + L2 + 8 + fall, 2, 2.5, Mi, 2);
     }
     // the tendril: from the flank toward the party, tapering to a club that bursts at the tip
     if (q.reach > 0.02) {
@@ -57825,41 +58454,43 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const n = Math.hypot(ux, uy), dx = ux / n, dy = uy / n, len = 74 * r;
       const bend = Math.sin(r * Math.PI) * 10;
       const pts = [[fx, fy, 13], [fx + dx * len * 0.35, fy + dy * len * 0.35 - bend, 10], [fx + dx * len * 0.7, fy + dy * len * 0.7 - bend * 0.6, 7], [fx + dx * len, fy + dy * len, 5]];
-      B.path(pts, 12, M, (x, y) => K.clamp(0.42 - (y - fy) / 60, 0, 0.99));
+      H.pipe(B, pts, 12, Mi, { collars: false });
       const tx = fx + dx * len, ty = fy + dy * len;
-      B.ell(tx, ty, 5 + 3 * r, 4 + 3 * r, M, K.sphere(tx - 1, ty - 2, 7, 6, { amb: 0.2 }));
-      if (q.splat > 0) for (let i = 0; i < 6; i++) { const a = -2.4 + i * 0.95; B.ell(tx + Math.cos(a) * (8 + 6 * q.splat), ty + Math.sin(a) * (6 + 5 * q.splat), 2.2, 2, M, 1); }
+      B.ell(tx, ty, 5 + 3 * r, 4 + 3 * r, Mi, A.ball(tx - 1, ty - 2, 7, 6, { k: 1.2 }));
+      if (q.splat > 0) for (let i = 0; i < 6; i++) { const a = -2.4 + i * 0.95; B.ell(tx + Math.cos(a) * (8 + 6 * q.splat), ty + Math.sin(a) * (6 + 5 * q.splat), 2.2, 2, Mi, 3); }
     }
-    A.outline(B);
-    // gloss: a curved streak and two glints up-left, a cool sheen low right
+    A.despeckle(B);
+    A.rim(B, [Mi.id], { w: 2 });
+    // gloss: a hard curved streak and its band on the lit shoulder, window glints, a cool sheen low right
     B.onto((b) => {
       const gy = -22 + w - q.lift;
       b.save().translate(-15 + sh(gy), gy).rotate(-0.7);
-      b.ell(0, 0, 11, 4, gloss2, 0);
-      b.ell(-1, -1, 8, 2.2, gloss, 0);
+      b.ell(0, 1, 13, 4.5, Mi, 4);
+      b.ell(-1, -0.5, 10, 2.2, M.gloss2, 0);
+      b.ell(-2, -1, 6.5, 1.3, M.gloss, 0);
       b.restore();
-      b.rect(-26 + sh(-8), -8 + w - q.lift, 3, 3, gloss, 0);
-      b.rect(-6 + sh(-34), -34 + w - q.lift, 4, 2, gloss2, 0);
-      b.save().translate(22 + sh(22), 22).rotate(0.9);
-      b.ell(0, 0, 9, 2, gloss2, 0);
-      b.restore();
-      b.ell(-40, 40, 8, 2, gloss2, 0);
+      b.rect(-27 + sh(-8), -8 + w - q.lift, 3, 3, M.gloss, 0);
+      b.rect(-6 + sh(-34), -34 + w - q.lift, 4, 2, M.gloss2, 0);
     });
-    // pale eyes with dark pupils (looking toward the party), a wavering / open / shut mouth
+    P.onto((b) => { b.ell(-44, 38, 7, 1.5, M.gloss2, 0); b.ell(50, 40, 5, 1.2, M.gloss2, 0); });
+    // the three-quarter face: pale eyes turned toward the party (the far eye narrower), pupils
+    // on the party, a wavering / open / shut mouth
     const ey = -6 + w - q.lift, lx = q.look > 0.5 ? -2 : 0;
-    for (const s of [-1, 1]) {
-      const ex = s * 12 + sh(ey);
-      if (q.eye < 0.25) { B.line(ex - 5, ey + 1, ex + 5, ey + 1, pale, 1); continue; }
+    for (const [ex0, ew] of [[-17, 4.6], [6, 6.2]]) {
+      const ex = ex0 + sh(ey);
+      if (q.eye < 0.25) { B.line(ex - ew, ey + 1, ex + ew, ey + 1, M.pale, 2); continue; }
       const er = 8 * Math.max(0.35, q.eye);
-      B.ell(ex, ey + (8 - er) * 0.5, 6, er, pale, K.sphere(ex, ey, 6, er, { amb: 0.5 }));
-      B.ell(ex + 1 + lx, ey + 2 + (8 - er) * 0.4, 3, Math.min(4, er * 0.5), H.ink, 0);
-      B.rect(ex - 3, ey - er + 3, 2, 2, H.white, 0);
+      B.ell(ex, ey + (8 - er) * 0.5, ew, er, M.pale, (x, y) => (y > ey + er * 0.35 || x > ex + ew * 0.5 ? 1.5 : 3.5) / 4);
+      B.ell(ex + 1 + lx, ey + 2 + (8 - er) * 0.4, ew * 0.5, Math.min(4, er * 0.5), M.eye, 0);
+      if (ew > 5) B.rect(Math.round(ex - 3), Math.round(ey - er + 3), 2, 2, M.shine, 0);
     }
-    const my = 12 + w - q.lift, mx = sh(my) + lx;
-    if (q.mouth > 0.3) B.ell(mx, my + 1, 5 + q.mouth * 3, 2 + q.mouth * 4, H.ink, 0);
-    else if (q.mouth < -0.3) B.line(mx - 7, my + 1, mx + 7, my + 1, pale, 0);
-    else { const mw = [[-8, 12], [-4, 14], [0, 12], [4, 14], [8, 12]]; for (let i = 1; i < mw.length; i++) B.line(mx + mw[i - 1][0], mw[i - 1][1] + w - q.lift + (Math.floor(q.d) % 2), mx + mw[i][0], mw[i][1] + w - q.lift, pale, 0); }
-    return B;
+    const my = 12 + w - q.lift, mx = sh(my) + lx - 6;
+    if (q.mouth > 0.3) B.ell(mx, my + 1, 5 + q.mouth * 3, 2 + q.mouth * 4, M.eye, 0);
+    else if (q.mouth < -0.3) B.line(mx - 7, my + 1, mx + 7, my + 1, M.pale, 1);
+    else { const mw = [[-8, 12], [-4, 14], [0, 12], [4, 14], [8, 12]]; for (let i = 1; i < mw.length; i++) B.line(mx + mw[i - 1][0], mw[i - 1][1] + w - q.lift + (Math.floor(q.d) % 2), mx + mw[i][0], mw[i][1] + w - q.lift, M.pale, 1); }
+    A.cast(P, B, 3, 3, 1);
+    A.outline(P); A.outline(B);
+    return P.over(B);
   }
   const bBase = { w: 0, lean: 0, lift: 0, sp: 1, d: 0, reach: 0, tdir: 0, splat: 0, eye: 1, look: 0, mouth: 0, rip: 0, dim: 1 };
   const bIdle = [0, 1, 2, 3, 4, 5, 6, 7].map((f) => ({ w: [0, 1, 2, 1, 0, -1, -2, -1][f], d: f * 0.5, rip: f % 4 === 1 ? 0.6 : 0, look: 0.3 }));
@@ -57969,7 +58600,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
   };
   A.family('blot', {
-    spec: { w: 220, h: 152, ox: 128, oy: 62, dy: 30, ms: 160 },
+    spec: { w: 248, h: 168, ox: 128, oy: 78, dy: 30, ms: 160 },
     base: bBase, idle: bIdle, poseTable: bTable, rig: blotRig, recoil: { push: 3 },
   });
   // Strike: rears, lashes a tendril; contact 560, ~1,050 ms
@@ -58027,70 +58658,117 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // (stepping), cN / cF claws { up (raise, rad), out (reach 0 … 1), open (0 … 1) } as arrays
   // [near, far], eyes (stalk lean, + back), eo (eyes open), tags (flutter)
   // =============================================================================================
+  // The crab (the restyle): seen three-quarter from the party's side — the near half of the shell
+  // (screen left) fuller and lower, the near claw larger and in front of the shell, the far claw and
+  // the far legs smaller, a step darker and behind it; glossy chitin in crisp bands (a lit shoulder,
+  // a near-white glint, a core shadow, a cool rim on the right), a carapace rim lit along its edge,
+  // bumps and pits as clusters, segmented legs lit along their tops with dark claw tips, heavy
+  // chelae with a lit ridge, toothed fingers and pale tips; paper tags with a folded corner.
+  const crabMatCache = new Map();
+  function crabMats(col) {
+    if (crabMatCache.has(col)) return crabMatCache.get(col);
+    const so = { n: 6, at: 3, lo: 0.1, hi: 0.9, sat: 1.25, hd: 30, hl: 30 };
+    const M = {
+      shell: A.hmat(col, Object.assign({ rim: mixh(col, '#c8e0ff', 0.55) }, so)),
+      far: A.hmat(mixh(col, '#3a2a40', 0.22), Object.assign({}, so, { hi: so.hi - 0.12 })),
+      belly: A.hmat(mixh(col, '#f6e8d0', 0.55), { n: 5, at: 3, lo: 0.3, hi: 0.96, sat: 1.1, hd: 40, hl: 14 }),
+      tag: A.hmat('#efe6d2', { n: 5, at: 3, lo: 0.36, hi: 0.98, sat: 1, hd: 50, hl: 12 }),
+      string: K.solid('#7a5a3a', { line: false }),
+      ink: K.mat(null, { cols: ['#0a0812', '#1a1424', '#2e2638'], at: 0, line: false }),
+      shine: K.solid('#fffaf2', { line: false }),
+      tip: A.hmat(mixh(col, '#2a1820', 0.6), { n: 4, at: 1, lo: 0.08, hi: 0.5 }),
+    };
+    crabMatCache.set(col, M);
+    if (crabMatCache.size > 12) crabMatCache.delete(crabMatCache.keys().next().value);
+    return M;
+  }
   function crabRig(L, q, o, H) {
-    const col = o.col || '#c86a4a';
-    const M = K.mat(col, { n: 5, at: 2, step: 0.1, shift: 1.2 });
-    const belly = K.mat(mixh(col, '#f0e0c8', 0.5), { n: 4, at: 2, step: 0.08 });
-    const tag = K.mat('#f0e8d8', { n: 4, at: 2, step: 0.07 });
-    const string = K.solid('#8a6a4a', { line: false });
-    const legs = L.like(), B = L.like(), claws = L.like();
+    const M = crabMats(o.col || '#c86a4a');
+    const legF = L.like(), clawF = L.like(), legN = L.like(), B = L.like(), clawN = L.like();
     const T = (Lr) => Lr.save().translate(q.bx, q.by).translate(0, 20).rotate(-q.tilt).translate(0, -20);
     // legs: the feet stay planted on the ground line (they do not ride the body's lean), the knees
-    // follow the body; a stepping phase lifts alternate feet
+    // follow the body; a stepping phase lifts alternate feet. Near legs (left) heavier, far ones
+    // thinner and darker; each segment lit along its top, a dark claw tip at the foot
     for (const s of [-1, 1]) for (let i = 0; i < 3; i++) {
+      const near = s < 0, Lr = near ? legN : legF, Ml = near ? M.shell : M.far, wd = near ? 7 : 5.5;
       const up = Math.max(0, Math.sin(q.lp + i * 2.1 + (s > 0 ? 1.05 : 0))) * 4;
-      const hip = [s * 28 + q.bx, 20 + i * 6 + q.by];
-      const kx = s * (50 + i * 5) + q.bx * 0.7, ky = 8 + i * 9 - up + q.by * 0.6 - (s < 0 ? q.tilt * 10 : -q.tilt * 10);
-      const fx = s * (60 + i * 4) + q.bx * 0.35 + Math.sin(q.lp + i) * 2, fy = 46 + i * 3 - up;
-      legs.path([[hip[0], hip[1], 7], [kx, ky, 7], [fx, fy, 4]], 7, M, (x, y) => K.clamp(0.5 - (y - 10) / 90 + (s < 0 ? 0.1 : -0.05), 0, 0.99));
-      legs.rect(kx - 2, ky - 3, 4, 2, M, 3);
+      const hip = [s * (near ? 30 : 24) + q.bx, 20 + i * 6 + q.by - (near ? 0 : 3)];
+      const kx = s * ((near ? 52 : 44) + i * 5) + q.bx * 0.7, ky = 8 + i * 9 - up + q.by * 0.6 - (s < 0 ? q.tilt * 10 : -q.tilt * 10) - (near ? 0 : 4);
+      const fx = s * ((near ? 62 : 52) + i * 4) + q.bx * 0.35 + Math.sin(q.lp + i) * 2, fy = 46 + i * 3 - up - (near ? 0 : 3);
+      Lr.path([[hip[0], hip[1], wd], [kx, ky, wd], [fx, fy, wd * 0.55]], wd, Ml, (x, y) => { const t = (y - Math.min(ky, hip[1])) / 14; return (t < 0.25 ? 4.5 : t < 0.6 ? 3.5 : 2.5) / 6; });
+      Lr.line(hip[0], hip[1] - wd / 2 + 1, kx, ky - wd / 2 + 1, Ml, 5);
+      Lr.rect(kx - 2, ky - 3, 4, 2, Ml, 5);
+      Lr.path([[fx - s * 1, fy - 3, 3], [fx + s * 1, fy + 2, 1.5]], 3, M.tip, 1);
     }
-    // shell: wide dome with a pale rim and bumps
+    // shell: three-quarter — the near (left) half fuller and lower, the far half turned away
     T(B);
-    B.ell(0, 16, 46, 26, belly, 1);
-    B.ell(0, 10, 45, 25, M, K.sphere(-10, 0, 50, 30, { amb: 0.18, rim: 0.12 }));
-    B.fill(-44, 14, 44, 30, (x, y) => { const e = (x / 44) ** 2 + ((y - 10) / 24) ** 2; return e <= 1 && e > 0.72 && y > 18; }, belly, (x) => K.clamp(0.6 - x / 120, 0, 0.99));
-    for (const [x, y] of [[-24, -4], [-12, -10], [4, -12], [18, -8], [30, 0], [-32, 6]]) { B.rect(x, y, 4, 3, M, 3); B.rect(x + 1, y + 3, 3, 1, M, 1); }
-    // eye stalks (leaning back when startled, forward when it aims)
-    for (const s of [-1, 1]) {
-      const lean = q.eyes * 6;
-      B.path([[s * 9, -10], [s * 12 + lean * 0.5, -22 + Math.abs(lean) * 0.2], [s * 13 + lean, -28 + Math.abs(lean) * 0.3]], 4, M, 2);
-      const ex = s * 13 + lean, ey = -30 + Math.abs(lean) * 0.3;
-      if (q.eo < 0.3) B.rect(ex - 4, ey, 8, 2, H.ink, 1);
-      else { B.ell(ex, ey, 5, 5 * Math.max(0.5, q.eo), H.ink, 1); B.rect(ex - 2, ey - 3, 2, 2, H.white, 0); }
+    const sx = (x) => (x < 0 ? x * 1.06 : x * 0.9);
+    const inShell = (x, y, rx, ry, cy) => { const xx = x < 0 ? x / 1.06 : x / 0.9, a = xx / rx, b = (y - cy - (x < 0 ? -x * 0.02 : x * 0.04)) / ry; return a * a + b * b <= 1; };
+    B.fill(-52, -12, 48, 44, (x, y) => inShell(x, y, 46, 26, 16), M.belly, (x, y) => ((y < 22 ? 3.5 : 2.5) + (x < -10 ? 1 : 0)) / 5);
+    const shade = A.ball(-14, -2, 54, 32, { refl: 0.12, k: 1.1 });
+    B.fill(-52, -18, 48, 38, (x, y) => inShell(x, y, 45, 25, 10), M.shell, shade);
+    // the carapace rim: a lit lip along its front edge, the belly's shadow under it
+    B.fill(-52, 10, 48, 38, (x, y) => { const xx = x < 0 ? x / 1.06 : x / 0.9, e = (xx / 45) ** 2 + ((y - 10 - (x < 0 ? -x * 0.02 : x * 0.04)) / 25) ** 2; return e <= 1 && e > 0.8 && y > 17; }, M.shell, (x) => (x < -24 ? 5.5 : x < 2 ? 4.5 : x < 24 ? 3.5 : 2.5) / 6);
+    // bumps (lit top-left, shadow under) and a few pits
+    for (const [x, y] of [[-26, -4], [-14, -10], [2, -12], [16, -8], [28, 0], [-34, 6], [-8, 2]]) {
+      const X = sx(x);
+      B.rect(X, y, 4, 3, M.shell, 4); B.rect(X + 1, y, 2, 1, M.shell, 5); B.rect(X + 1, y + 3, 4, 1, M.shell, 1);
     }
-    // cargo tags on the shell, each with a string and unreadable lines (they flutter)
-    for (const [x, y, r] of [[-20, 2, -0.2], [8, -2, 0.16]]) {
-      B.save().translate(x, y).rotate(r + q.tags * (x < 0 ? -0.2 : 0.25));
-      A.stone(B, [[-8, -5], [8, -5], [10, 0], [8, 5], [-8, 5]], tag, { bevel: 2, face: 2 });
-      B.ell(6, 0, 1.5, 1.5, M, 0);
-      B.line(-5, -2, 2, -2, H.ink, 2); B.line(-5, 1, 0, 1, H.ink, 2);
-      B.line(7, 0, 12, -6, string, 0);
+    for (const [x, y] of [[-20, 8], [10, 4], [22, 10]]) B.rect(sx(x), y, 2, 1, M.shell, 1);
+    // a glint on the lit shoulder
+    B.rect(-30, -6, 3, 2, M.shine, 0); B.dot(-26, -8, M.shine, 0);
+    // eye stalks (leaning back when startled, forward when it aims): the near one taller
+    for (const s of [-1, 1]) {
+      const near = s < 0, lean = q.eyes * 6, sc = near ? 1.08 : 0.88;
+      const bx = s * (near ? 10 : 7), top = -30 * sc + Math.abs(lean) * 0.3;
+      B.path([[bx, -10], [bx + s * 3 + lean * 0.5, -22 * sc + Math.abs(lean) * 0.2], [bx + s * 4 + lean, top + 2]], 4, near ? M.shell : M.far, (x) => (x < bx + lean * 0.5 ? 4.5 : 2.5) / 6);
+      const ex = bx + s * 4 + lean, ey = top, er = near ? 5.4 : 4.2;
+      if (q.eo < 0.3) B.rect(ex - er, ey, er * 2, 2, M.ink, 1);
+      else { B.ell(ex, ey, er, er * Math.max(0.5, q.eo), M.ink, (x, y) => (x + y < ex + ey ? 1.5 : 0.5) / 3); B.rect(Math.round(ex - er * 0.55), Math.round(ey - er * 0.6), 2, 2, M.shine, 0); }
+    }
+    // cargo tags on the shell, each with a string, a folded corner and unreadable lines (they flutter)
+    for (const [x, y, r] of [[-20, 2, -0.2], [10, -2, 0.16]]) {
+      B.save().translate(sx(x), y).rotate(r + q.tags * (x < 0 ? -0.2 : 0.25));
+      A.stone(B, [[-8, -5], [8, -5], [10, 0], [8, 5], [-8, 5]], M.tag, { bevel: 2, face: 3 });
+      B.poly([[-8, 5], [-8, 1], [-4, 5]], M.tag, 1);
+      B.ell(6, 0, 1.5, 1.5, M.shell, 1);
+      B.line(-5, -2, 2, -2, M.ink, 2); B.line(-5, 1, 0, 1, M.ink, 2);
+      B.line(7, 0, 12, -6, M.string, 0);
       B.restore();
     }
-    B.path([[-6, 26], [6, 26]], 2, H.ink, 1);
+    B.path([[-8, 26], [4, 26]], 2, M.ink, 1);
     B.restore();
-    // claws: a bent arm from the shoulder (raised, reaching), a heavy palm, two fingers that part
+    // claws: a bent arm from the shoulder (raised, reaching), a heavy palm with a lit ridge, two
+    // fingers with teeth on their inner edges and pale tips. The near claw larger and in front
     for (const s of [-1, 1]) {
-      const i = s < 0 ? 0 : 1, up = S(q.cup, i), out = S(q.cout, i), open = S(q.copen, i), lit = s < 0 ? 0.1 : -0.08;
-      T(claws).translate(s * 34, 8).rotate(s * -up).translate(-s * 34, -8);
-      const ex = s * (50 + out * 22), ey = 4 - out * 6, hx = s * (54 + out * 30), hy = -10 - out * 4;
-      claws.path([[s * 34, 8, 9], [ex, ey, 9], [hx, hy, 8]], 9, M, (x, y) => K.clamp(0.5 - y / 90 + lit, 0, 0.99));
-      claws.save().translate(hx - s * 2, hy - 14).scale(s, 1).rotate(-0.5 + S(q.cw, i));
-      claws.ell(0, 0, 16, 12, M, (x, y) => K.clamp(0.62 - (x * s * 0.6 + y) / 34 + lit, 0, 0.99));
-      claws.rect(-6, -7, 6, 3, M, 4);
-      claws.save().translate(10, -5).rotate(-open * 0.6);
-      claws.poly([[0, -5], [14, -10], [26, -9], [30, -5], [20, -3], [4, 4]], M, (x, y) => K.clamp(0.7 - y / 20 + lit, 0, 0.99));
-      claws.line(8, -5, 24, -6, M, 1);
-      claws.restore();
-      claws.save().translate(10, 5).rotate(open * 0.42);
-      claws.poly([[0, -4], [16, -3], [24, 0], [18, 4], [2, 5]], M, (x, y) => K.clamp(0.4 - y / 24 + lit, 0, 0.99));
-      claws.restore();
-      claws.restore();
-      claws.restore();
+      const i = s < 0 ? 0 : 1, near = s < 0, up = S(q.cup, i), out = S(q.cout, i), open = S(q.copen, i);
+      const Lr = near ? clawN : clawF, Mc = near ? M.shell : M.far, k = near ? 1.12 : 0.84;
+      const sh = s * (near ? 34 : 28);
+      T(Lr).translate(sh, 8).rotate(s * -up).translate(-sh, -8);
+      const ex = s * ((near ? 52 : 44) + out * 22), ey = 4 - out * 6, hx = s * ((near ? 57 : 47) + out * 30), hy = -10 - out * 4;
+      Lr.path([[sh, 8, 9 * k], [ex, ey, 9 * k], [hx, hy, 8 * k]], 9 * k, Mc, (x, y) => (y < Math.min(ey, hy) + 2 ? 4.5 : y < Math.max(ey, hy) ? 3.5 : 2.5) / 6);
+      Lr.save().translate(hx - s * 2, hy - 14).scale(s * k, k).rotate(-0.5 + S(q.cw, i));
+      Lr.ell(0, 0, 16, 12, Mc, A.ball(-4, -4, 18, 14, { k: 1.2 }));
+      Lr.line(-12, -7, 8, -11, Mc, 5); Lr.line(-10, -6, 6, -9, Mc, 4);
+      for (const [bx, by] of [[-6, 2], [2, -2], [6, 5]]) { Lr.rect(bx, by, 2, 2, Mc, 4); Lr.dot(bx + 1, by + 2, Mc, 1); }
+      Lr.save().translate(10, -5).rotate(-open * 0.6);
+      Lr.poly([[0, -5], [14, -10], [26, -9], [30, -5], [20, -3], [4, 4]], Mc, (x, y) => (y < -6 ? 4.5 : y < -3 ? 3.5 : 2.5) / 6);
+      for (let t = 6; t < 22; t += 4) Lr.dot(t, -3 + (t > 14 ? -1 : 0), Mc, 1);
+      Lr.poly([[24, -9], [30, -5], [27, -4], [22, -6]], M.tip, 3);
+      Lr.restore();
+      Lr.save().translate(10, 5).rotate(open * 0.42);
+      Lr.poly([[0, -4], [16, -3], [24, 0], [18, 4], [2, 5]], Mc, (x, y) => (y < -1 ? 3.5 : 1.5) / 6);
+      for (let t = 5; t < 18; t += 4) Lr.dot(t, -3, Mc, 4);
+      Lr.poly([[18, -2], [24, 0], [20, 3]], M.tip, 3);
+      Lr.restore();
+      Lr.restore();
+      Lr.restore();
     }
-    A.outline(legs); A.outline(B); A.outline(claws);
-    return legs.over(B).over(claws);
+    A.despeckle(B);
+    A.rim(B, [M.shell.id]); A.rim(clawN, [M.shell.id]);
+    A.cast(legF, B, 2, 3, 1); A.cast(clawF, B, 2, 3, 1); A.cast(B, clawN, 3, 3, 1); A.cast(legN, B, 2, 3, 1);
+    for (const Lr of [legF, clawF, legN, B, clawN]) A.outline(Lr);
+    return legF.over(clawF).over(legN).over(B).over(clawN);
   }
   const cBase = { bx: 0, by: 0, tilt: 0, lp: 0, cup: [0, 0], cout: [0, 0], copen: [0.06, 0.06], cw: [0, 0], eyes: 0, eo: 1, tags: 0 };
   const cIdle = [0, 1, 2, 3, 4, 5].map((f) => ({ by: [0, 1, 1, 0, -1, -1][f], lp: (f / 6) * Math.PI * 2 * 0.5, copen: [[0.42, 0.06], [0.42, 0.06], [0.06, 0.06], [0.06, 0.42], [0.06, 0.42], [0.06, 0.06]][f], cup: [[0, 0.04], [0.04, 0], [0.06, 0], [0.04, 0.04], [0, 0.06], [0, 0.04]][f], eyes: [0, 0.2, 0.3, 0.1, -0.2, -0.2][f], tags: [0, 0.4, 0.2, 0, -0.3, -0.2][f] }));
@@ -58185,7 +58863,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
   };
   A.family('crab', {
-    spec: { w: 228, h: 156, ox: 124, oy: 66, dy: 26, ms: 170 },
+    spec: { w: 244, h: 180, ox: 140, oy: 90, dy: 26, ms: 170 },
     base: cBase, idle: cIdle, poseTable: cTable, rig: crabRig, recoil: { push: 3 },
   });
   // Strike: crouch, near claw up; sidles in on its legs (no arc: along the ground), thrusts and
@@ -58233,77 +58911,117 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // aN / aF arm swing at the shoulder (rad, − raised forward/up), eN / eF elbow bend, core
   // (chest glow 0 … 1.5), eye (slit glow), tilt (head), wet (water from its cracks), frost, kneel
   // =============================================================================================
+  // The golem (the restyle): blocks seen three-quarter from the upper left — every big stone shows
+  // its front face (dressed: bevels lit by their facing, a dark seam on the shadowed edges), a lit
+  // top plane and a dark side plane on its right with a cool rim, so the figure reads as boxes
+  // turned toward the party; the near arm (screen left) larger and in front, the far arm smaller,
+  // darker, behind the torso; glass golems (a saturated colour) get the reference's metal manner —
+  // a crisp near-white streak along each lit bevel, a dark reflected band low on each face — stone
+  // ones get cracks, chips and moss in clusters; a glowing core and eye-slit, turned with the head.
+  const golemMatCache = new Map();
+  function golemMats(col, coreC) {
+    const key = col + coreC;
+    if (golemMatCache.has(key)) return golemMatCache.get(key);
+    const hsl = K.rgb2hsl(...K.parse(col).slice(0, 3)), glass = hsl[1] > 0.2;
+    const so = { n: 6, at: 3, lo: 0.1, hi: 0.94, sat: glass ? 1.3 : 1.05, hd: 34, hl: 24, rim: mixh(col, '#d8ecff', 0.6) };
+    const M = {
+      glass,
+      M: A.hmat(col, so),
+      Md: A.hmat(mixh(col, '#2a2a3a', 0.2), Object.assign({}, so, { hi: so.hi - 0.1 })),
+      far: A.hmat(mixh(col, '#2a2a3a', 0.3), Object.assign({}, so, { hi: so.hi - 0.16 })),
+      moss: A.hmat(mixh(mixh(col, '#5a6a3a', 0.4), '#7f9a3e', 0.5), { n: 4, at: 2, lo: 0.25, hi: 0.75, line: false }),
+      core: A.hmat(coreC, { n: 5, at: 2, lo: 0.3, hi: 0.97, sat: 1.3, hd: 30, hl: 30, line: false }),
+      coreHot: K.solid(mixh(coreC, '#ffffff', 0.75), { line: false }),
+      shine: K.solid(mixh(col, '#ffffff', 0.85), { line: false }),
+      frost: A.hmat('#e8f6ff', { n: 4, at: 2, lo: 0.5, hi: 0.99 }),
+      water: A.hmat('#6aa8d8', { n: 4, at: 2, lo: 0.3, hi: 0.9, alpha: 220 }),
+    };
+    golemMatCache.set(key, M);
+    if (golemMatCache.size > 12) golemMatCache.delete(golemMatCache.keys().next().value);
+    return M;
+  }
   function golemRig(L, q, o, H) {
-    const col = o.col || '#8fb8b0', coreC = o.core || '#f0a060';
-    const M = K.mat(col, { n: 5, at: 2, step: 0.1, shift: 1.2 });
-    const Md = K.mat(K.tone(col, -1.5), { n: 5, at: 2, step: 0.09 });
-    const moss = K.mat(mixh(K.tone(col, -0.5), '#7f9a3e', 0.5), { n: 3, at: 1, step: 0.09, line: false });
-    const Mc = K.mat(coreC, { n: 4, at: 2, step: 0.12, line: false });
+    const coreC = o.core || '#f0a060';
+    const G = golemMats(o.col || '#8fb8b0', coreC), M = G.M, Md = G.Md;
     const back = L.like(), mid = L.like(), front = L.like(), glow = L.like();
+    // a block: side and top planes (depth d up and to the right), then the dressed front face
     const St = (Lr, x, y, w, h, Mx, o2) => {
-      const c = (o2 && o2.c) || 5;
+      o2 = o2 || {};
+      const c = o2.c || 5, d = o2.d != null ? o2.d : Math.min(8, Math.round(Math.min(w, h) * 0.22));
       const j = (k) => ((K.hh(x + 50, y + 50, k) % 5) - 2);
-      A.stone(Lr, [[x + c, y + j(1)], [x + w - c + j(2), y], [x + w, y + c], [x + w + j(3) * 0.5, y + h - c], [x + w - c, y + h], [x + c + j(4), y + h + j(5) * 0.5], [x, y + h - c], [x + j(6) * 0.5, y + c]], Mx, Object.assign({ bevel: 4 }, o2));
-      const n = Math.floor((w * h) / 600);
-      for (let i = 0; i < n; i++) {
-        const px = x + 8 + (K.hh(x, y, 20 + i) % Math.max(1, w - 16)), py = y + 8 + (K.hh(x, y, 40 + i) % Math.max(1, h - 16));
-        K.cluster(Lr, px, py, 4 + (K.hh(x, y, 60 + i) % 4), Mx, (i % 3) ? 1 : 3, K.hh(x, y, 80 + i));
+      if (d > 0) {
+        Lr.poly([[x + w - 3, y + c - 1], [x + w + d, y + c - d * 0.55], [x + w + d, y + h - c - d * 0.55], [x + w - 3, y + h - c + 1]], Mx, (px, py) => (py < y + c + 2 - d * 0.4 ? 2.5 : 1.5) / 6);
+        Lr.poly([[x + c - 1, y + 3], [x + c + d, y - d * 0.55], [x + w - c + d, y - d * 0.55], [x + w - c + 1, y + 3]], Mx, (px) => (px < x + w * 0.5 ? 5.5 : 4.5) / 6);
+      }
+      A.stone(Lr, [[x + c, y + j(1)], [x + w - c + j(2), y], [x + w, y + c], [x + w + j(3) * 0.5, y + h - c], [x + w - c, y + h], [x + c + j(4), y + h + j(5) * 0.5], [x, y + h - c], [x + j(6) * 0.5, y + c]], Mx, Object.assign({ bevel: 4, face: 3 }, o2));
+      if (G.glass && w > 18 && h > 14) {
+        // the metal manner: a crisp streak along the lit bevel, a dark reflected band low on the face
+        Lr.line(x + 2, y + c + 1, x + c + 1, y + 2, G.shine, 0);
+        Lr.line(x + c + 2, y + 2, x + w * 0.55, y + 2, G.shine, 0);
+        Lr.line(x + 5, y + h - 5, x + w - 6, y + h - 5, Mx, 1);
+        Lr.line(x + w * 0.3, y + 6, x + w * 0.18, y + h * 0.6, Mx, 4);
+      } else {
+        const n = Math.floor((w * h) / 600);
+        for (let i = 0; i < n; i++) {
+          const px = x + 8 + (K.hh(x, y, 20 + i) % Math.max(1, w - 16)), py = y + 8 + (K.hh(x, y, 40 + i) % Math.max(1, h - 16));
+          K.cluster(Lr, px, py, 4 + (K.hh(x, y, 60 + i) % 4), Mx, (i % 3) ? 2 : 4, K.hh(x, y, 80 + i));
+        }
       }
       return Lr;
     };
     const cr = q.crouch * 10 + q.kneel * 18;
     // legs: planted; the near one steps forward (and kneels)
     const legN = [-30 - q.step * 8, 50 + cr * 0.4], legF = [6, 50 + cr * 0.4];
-    if (q.kneel > 0.5) { St(back, -36, 64, 30, 20, Md); St(back, 4, 54 + cr * 0.3, 24, 20, Md); St(back, 2, 70, 28, 14, Md); }
+    if (q.kneel > 0.5) { St(back, -36, 64, 30, 20, Md); St(back, 4, 54 + cr * 0.3, 24, 20, G.far); St(back, 2, 70, 28, 14, G.far); }
     else {
+      St(back, legF[0], legF[1], 22, 20 - cr * 0.3, G.far); St(back, legF[0] - 2, 66, 26, 18, G.far);
       St(back, legN[0], legN[1], 24, 20 - cr * 0.3, Md); St(back, legN[0] - 2, 66, 28, 18, Md);
-      St(back, legF[0], legF[1], 24, 20 - cr * 0.3, Md); St(back, legF[0] - 2, 66, 28, 18, Md);
     }
     // the upper body leans about the hips (and sinks with a crouch)
     const T = (Lr) => Lr.save().translate(0, cr).translate(0, 50).rotate(-q.lean).translate(0, -50);
-    // arms: pauldron, upper arm, fist — swung about the shoulder, bent at the elbow
+    // arms: pauldron, upper arm, fist — swung about the shoulder, bent at the elbow; the near arm in
+    // front at full size, the far one behind the torso, smaller and darker
     for (const s of [-1, 1]) {
-      const i = s < 0 ? 0 : 1, sw = S(s < 0 ? q.aN : q.aF, 0), el = s < 0 ? q.eN : q.eF;
-      const Lr = s < 0 ? front : back, px = s * 46, py = -4;
-      T(Lr).translate(px, py).rotate(s * -sw).translate(-px, -py);
-      St(Lr, px + (s < 0 ? -18 : -6), 10, 24, 30, Md, { c: 4 });
+      const sw = s < 0 ? q.aN : q.aF, el = s < 0 ? q.eN : q.eF, near = s < 0;
+      const Lr = near ? front : back, px = s * (near ? 46 : 40), py = near ? -4 : -8, Ma = near ? M : G.far, Mb = near ? Md : G.far, k = near ? 1 : 0.86;
+      T(Lr).translate(px, py).rotate(s * -sw).scale(k, k).translate(-px, -py);
+      St(Lr, px + (near ? -18 : -6), 10, 24, 30, Mb, { c: 4 });
       Lr.save().translate(px + s * 2, 38).rotate(s * el).translate(-(px + s * 2), -38);
-      St(Lr, px + (s < 0 ? -20 : -8), 38, 28, 24, M, { c: 6 });
-      Lr.line(px + (s < 0 ? -13 : -1), 48, px + (s < 0 ? -13 : -1), 56, M, 0); Lr.line(px + (s < 0 ? -6 : 6), 48, px + (s < 0 ? -6 : 6), 56, M, 0);
-      if (q.frost > 0 && s < 0) for (let k = 0; k < 4; k++) Lr.poly([[px - 16 + k * 6, 62], [px - 13 + k * 6, 62 + 6 + (k % 2) * 4 * q.frost], [px - 10 + k * 6, 62]], K.mat('#e8f6ff', { n: 3, at: 2, step: 0.1 }), 2);
+      St(Lr, px + (near ? -20 : -8), 38, 28, 24, Ma, { c: 6 });
+      Lr.line(px + (near ? -13 : -1), 48, px + (near ? -13 : -1), 56, Ma, 0); Lr.line(px + (near ? -6 : 6), 48, px + (near ? -6 : 6), 56, Ma, 0);
+      if (q.frost > 0 && near) for (let kk = 0; kk < 4; kk++) Lr.poly([[px - 16 + kk * 6, 62], [px - 13 + kk * 6, 62 + 6 + (kk % 2) * 4 * q.frost], [px - 10 + kk * 6, 62]], G.frost, (xx) => (xx < px - 13 + kk * 6 ? 3.5 : 2.5) / 4);
       Lr.restore();
-      St(Lr, px + (s < 0 ? -22 : -6), -20, 28, 34, M, { c: 8 });
+      St(Lr, px + (near ? -22 : -6), -20, 28, 34, Ma, { c: 8 });
       Lr.restore();
-      void i;
     }
-    // torso and head
+    // torso and head (the head turned with the body: its slit and eyes off-centre toward the party)
     T(mid);
     St(mid, -26, 22, 52, 32, Md, { c: 7 });
-    St(mid, -38, -22, 76, 50, M, { c: 10, bevel: 5 });
+    St(mid, -38, -22, 76, 50, M, { c: 10, bevel: 5, d: 9 });
     mid.save().translate(0, -40).rotate(-q.tilt).translate(0, 40);
-    St(mid, -21, -60, 42, 38, M, { c: 11, bevel: 5 });
-    mid.rect(-18, -40, 36, 9, Md, 0); // eye slit
-    mid.rect(-18, -41, 36, 1, M, 1);
-    mid.rect(-17, -31, 34, 1, M, 3);
-    for (const s of [-1, 1]) { mid.rect(s * 8 - 4, -37, 8, 3, Mc, 1 + Math.round(q.eye * 2)); mid.rect(s * 8 - 3, -37, 4, 1, Mc, Math.min(3, 2 + Math.round(q.eye))); }
+    St(mid, -21, -60, 42, 38, M, { c: 11, bevel: 5, d: 8 });
+    mid.rect(-20, -40, 34, 9, Md, 0); // eye slit
+    mid.rect(-20, -41, 34, 1, M, 1);
+    mid.rect(-19, -31, 32, 1, M, 5);
+    for (const [ex, ew] of [[-13, 8], [2, 7]]) { mid.rect(ex, -37, ew, 3, G.core, 1 + Math.round(q.eye * 2)); mid.rect(ex + 1, -37, ew - 4, 1, G.core, Math.min(4, 2 + Math.round(q.eye * 2))); }
     mid.restore();
     for (const c2 of [[[-30, -6], [-22, 0], [-25, 10]], [[26, 2], [31, 10], [28, 18]], [[8, -58], [4, -50], [7, -46]]]) {
-      for (let k = 1; k < c2.length; k++) { mid.line(c2[k - 1][0], c2[k - 1][1], c2[k][0], c2[k][1], M, 0); mid.line(c2[k - 1][0] + 1, c2[k - 1][1] + 1, c2[k][0] + 1, c2[k][1] + 1, M, 3); }
+      for (let kk = 1; kk < c2.length; kk++) { mid.line(c2[kk - 1][0], c2[kk - 1][1], c2[kk][0], c2[kk][1], M, 0); mid.line(c2[kk - 1][0] + 1, c2[kk - 1][1] + 1, c2[kk][0] + 1, c2[kk][1] + 1, M, 5); }
     }
-    for (const [x, y, sz] of [[-26, -20, 9], [-12, -21, 5], [22, -20, 6], [-12, -58, 8], [10, -59, 5], [-20, 24, 6]]) K.cluster(mid, x, y, sz, moss, 1, K.hh(x + 99, y + 99, 3));
-    mid.ell(0, 2, 12, 12, Md, 0);
-    mid.ell(0, 2, 9, 9, Mc, (x, y) => K.clamp(0.25 + q.core * 0.35 + (-(x + y - 2) / 28), 0, 0.99));
-    mid.rect(-3, -3, 3, 3, K.solid(mixh(coreC, '#ffffff', 0.7), { line: false }), 0);
+    if (!G.glass) for (const [x, y, sz] of [[-26, -20, 9], [-12, -21, 5], [22, -20, 6], [-12, -58, 8], [10, -59, 5], [-20, 24, 6]]) K.cluster(mid, x, y, sz, G.moss, 2, K.hh(x + 99, y + 99, 3));
+    // the core: a socket, a ringed glowing stone, its hot point
+    mid.ell(-2, 2, 12, 12, Md, 0);
+    mid.ell(-2, 2, 9, 9, G.core, (x, y) => K.clamp(0.25 + q.core * 0.35 + (-(x + 2 + y - 2) / 28), 0, 0.99));
+    mid.rect(-6, -3, 3, 3, G.coreHot, 0); mid.dot(-2, -4, G.coreHot, 0);
     // water running from its cracks (the Ledger Heap's Flood)
-    if (q.wet > 0) {
-      const W = K.mat('#6aa8d8', { n: 4, at: 2, step: 0.1, alpha: 220 });
-      for (const [x, y] of [[-25, 10], [28, 18], [7, -46]]) mid.path([[x, y], [x + (x < 0 ? -3 : 3), y + 10 * q.wet], [x + (x < 0 ? -4 : 4), y + 22 * q.wet]], 3, W, 2);
-    }
+    if (q.wet > 0) for (const [x, y] of [[-25, 10], [28, 18], [7, -46]]) mid.path([[x, y], [x + (x < 0 ? -3 : 3), y + 10 * q.wet], [x + (x < 0 ? -4 : 4), y + 22 * q.wet]], 3, G.water, (px) => (px < x ? 3.5 : 1.5) / 4);
     mid.restore();
+    A.rim(back, [G.far.id, Md.id]); A.rim(mid, [M.id, Md.id], { w: 2 }); A.rim(front, [M.id, Md.id]);
+    A.cast(back, mid, 3, 3, 1); A.cast(mid, front, 3, 3, 1);
     A.outline(back); A.outline(mid); A.outline(front);
     const gr = 20 + q.core * 6;
-    H.glow(glow, Math.round(-q.lean * 40), 2 + cr, gr, gr, coreC, Math.min(0.5, 0.18 + q.core * 0.16), 3);
-    if (q.eye > 0.6) H.glow(glow, Math.round(-q.lean * 80), -36 + cr, 24, 6, coreC, 0.12 + q.eye * 0.08, 2);
+    H.glow(glow, Math.round(-q.lean * 40) - 2, 2 + cr, gr, gr, coreC, Math.min(0.42, 0.14 + q.core * 0.14), 2);
+    if (q.eye > 0.6) H.glow(glow, Math.round(-q.lean * 80) - 4, -36 + cr, 22, 6, coreC, 0.1 + q.eye * 0.08, 2);
     return back.over(mid).over(front).over(glow);
   }
   const gBase = { lean: 0, crouch: 0, step: 0, aN: 0, aF: 0, eN: 0, eF: 0, core: 0.5, eye: 0.5, tilt: 0, wet: 0, frost: 0, kneel: 0 };
@@ -58544,11 +59262,30 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // =============================================================================================
   // CRANE (drawn in its own right-facing coordinates, mirrored so it faces the party)
   // =============================================================================================
+  // The crane (the restyle): folded paper in hard planes — a 6-tone paper ramp (white with warm
+  // highlights, shadows going warm grey to violet), each facet one flat tone chosen by how it faces
+  // the key light, every crease a lit ridge beside a dark valley line, paper fibre as sparse
+  // clusters on the big planes, ink strokes along the near wing (marks, not letters), a red beak
+  // tip with its own ramp, a coloured outline; the near wing casts its shadow on the body, the body
+  // on the far wing.
+  const craneMatCache = new Map();
+  function craneMats(col) {
+    if (craneMatCache.has(col)) return craneMatCache.get(col);
+    const M = {
+      P: A.hmat(col, { n: 6, at: 4, lo: 0.2, hi: 0.985, sat: 0.55, hd: 90, hl: 12, sd: 0.1, rim: mixh(col, '#cfe0ff', 0.6) }),
+      red: A.hmat('#c85a4a', { n: 4, at: 2, lo: 0.2, hi: 0.72, sat: 1.2, hd: 26 }),
+      writing: K.solid(mixh(col, '#2e2a48', 0.7), { line: false }),
+    };
+    craneMatCache.set(col, M);
+    if (craneMatCache.size > 12) craneMatCache.delete(craneMatCache.keys().next().value);
+    return M;
+  }
+  // a crease from a to b: a lit ridge on one side, the dark valley on the other
+  const crease = (Lr, M, a, b, lit) => { Lr.line(a[0], a[1], b[0], b[1], M, lit ? 5 : 1); Lr.line(a[0] + 1, a[1], b[0] + 1, b[1], M, lit ? 2 : 4); };
+  const fibre = (Lr, M, pts, k, seed) => Lr.onto((b) => { const [p0, p1, p2] = pts; for (let i = 0; i < 4; i++) { const u = hs(seed, i), v = hs(i, seed) * (1 - u); const x = p0[0] + (p1[0] - p0[0]) * u + (p2[0] - p0[0]) * v, y = p0[1] + (p1[1] - p0[1]) * u + (p2[1] - p0[1]) * v; b.rect(Math.round(x), Math.round(y), 2 + (i % 2), 1, M, k); } });
   function craneRig(L, q, o, H) {
     const col = o.col || '#f4efe0';
-    const M = K.mat(col, { n: 5, at: 3, step: 0.085, shift: 1.3 });
-    const red = K.mat('#c85a4a', { n: 4, at: 2, step: 0.1 });
-    const writing = K.solid(mixh(col, '#3a3450', 0.6), { line: false });
+    const C = craneMats(col), M = C.P;
     const back = L.like(), mid = L.like(), front = L.like();
     const T = (Lr) => Lr.save().scale(-1, 1).translate(0, 20).rotate(-q.pitch).translate(0, -20);
     // wing tips from the beat (0 high → 1 low), measured round each wing's root
@@ -58558,54 +59295,63 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const downN = q.wn > 0.7, downF = q.wf > 0.7;
     // far wing (behind the body, in shade)
     T(back);
-    back.poly([[4, 2], [18, 6], tipF], M, downF ? 1 : 2);
-    back.poly([[4, 2], [-4, 10], tipF], M, downF ? 0 : 1);
-    back.line(4, 2, tipF[0], tipF[1], M, 0);
+    A.fpoly(back, [[4, 2], [18, 6], tipF], M, downF ? 1 : 3);
+    A.fpoly(back, [[4, 2], [-4, 10], tipF], M, downF ? 1 : 2);
+    crease(back, M, [4, 2], tipF, false);
     back.restore();
     // tail, neck and head, body
     T(mid);
     mid.save().translate(-6, 18).rotate(q.tail).translate(6, -18);
-    mid.poly([[-10, 14], [-4, 22], [-80, -12]], M, 3);
-    mid.poly([[-4, 22], [-12, 26], [-80, -12]], M, 1);
+    A.fpoly(mid, [[-10, 14], [-4, 22], [-80, -12]], M, 4);
+    A.fpoly(mid, [[-4, 22], [-12, 26], [-80, -12]], M, 2);
+    crease(mid, M, [-4, 22], [-80, -12], true);
     mid.restore();
     const nb = [12, 18], na = -0.825 + q.neckA, nl = 71 * q.neckL;
     const tip = [nb[0] + Math.cos(na) * nl, nb[1] + Math.sin(na) * nl];
     // the neck: two facets; drawn back it kinks into an S (a fold at its middle)
     const kink = q.neckL < 0.95 ? (0.95 - q.neckL) * 40 : 0;
     const mpt = [(nb[0] + tip[0]) / 2 - kink, (nb[1] + tip[1]) / 2 + kink * 0.4];
-    mid.poly([[8, 14], [16, 22], mpt], M, 2); mid.poly([[16, 22], [22, 18], mpt], M, 1);
-    mid.poly([[mpt[0] - 3, mpt[1] + 2], [mpt[0] + 3, mpt[1] - 2], tip], M, 2);
-    mid.poly([[mpt[0] + 3, mpt[1] - 2], [mpt[0] + 6, mpt[1] + 3], tip], M, 1);
+    A.fpoly(mid, [[8, 14], [16, 22], mpt], M, 3); A.fpoly(mid, [[16, 22], [22, 18], mpt], M, 2);
+    A.fpoly(mid, [[mpt[0] - 3, mpt[1] + 2], [mpt[0] + 3, mpt[1] - 2], tip], M, 4);
+    A.fpoly(mid, [[mpt[0] + 3, mpt[1] - 2], [mpt[0] + 6, mpt[1] + 3], tip], M, 2);
+    crease(mid, M, [16, 22], mpt, true); crease(mid, M, [mpt[0] + 3, mpt[1] - 2], tip, true);
     // head and beak along the head angle
     const ha = 0.72 + q.headA, ca = Math.cos(ha - 0.72), sa = Math.sin(ha - 0.72);
     const R = (dx, dy) => [tip[0] + dx * ca - dy * sa, tip[1] + dx * sa + dy * ca];
-    mid.poly([R(-4, 4), R(0, -2), R(16, 12), R(12, 16)], M, 3);
-    mid.poly([R(10, 13), R(16, 12), R(20, 20)], red, 2);
+    A.fpoly(mid, [R(-4, 4), R(0, -2), R(16, 12), R(12, 16)], M, 5);
+    A.fpoly(mid, [R(-4, 4), R(12, 16), R(6, 14)], M, 3);
+    A.fpoly(mid, [R(10, 13), R(16, 12), R(20, 20)], C.red, 2);
+    A.fpoly(mid, [R(13, 15), R(20, 20), R(12, 16)], C.red, 1);
     // body: a diamond split by its centre crease (lit on the side toward the light once mirrored)
-    mid.poly([[0, -6], [-26, 20], [0, 44]], M, 1);
-    mid.poly([[0, -6], [26, 20], [0, 44]], M, 3);
-    mid.poly([[26, 20], [0, 44], [10, 22]], M, 2);
-    mid.line(0, -6, 0, 44, M, 0);
+    A.fpoly(mid, [[0, -6], [-26, 20], [0, 44]], M, 2);
+    A.fpoly(mid, [[0, -6], [26, 20], [0, 44]], M, 5);
+    A.fpoly(mid, [[26, 20], [0, 44], [10, 22]], M, 3);
+    crease(mid, M, [0, -6], [0, 44], false);
+    crease(mid, M, [10, 22], [26, 20], true);
+    fibre(mid, M, [[2, 0], [24, 20], [2, 40]], 4, 3);
     mid.restore();
-    // near wing (in front, lit from above unless lowered), writing along it
+    // near wing (in front, lit from above unless lowered), ink strokes along it
     T(front);
-    front.poly([[-2, 0], [-16, 8], tipN], M, downN ? 2 : 4);
-    front.poly([[-2, 0], [8, 6], tipN], M, downN ? 1 : 3);
-    front.line(-2, 0, tipN[0], tipN[1], M, downN ? 0 : 1);
+    A.fpoly(front, [[-2, 0], [-16, 8], tipN], M, downN ? 3 : 5);
+    A.fpoly(front, [[-2, 0], [8, 6], tipN], M, downN ? 2 : 4);
+    crease(front, M, [-2, 0], tipN, !downN);
+    fibre(front, M, [[-2, 0], [-16, 8], tipN], downN ? 2 : 4, 7);
     front.onto((b) => {
       const ux = tipN[0] + 2, uy = tipN[1], len = Math.hypot(ux, uy) || 1, dx = ux / len, dy = uy / len;
       for (let r = 0; r < 4; r++) for (let s = 0; s < 3; s++) {
         const at = 16 + r * 13 + s * 4, off = -4 - s * 5;
         const x0 = dx * at - dy * off, y0 = dy * at + dx * off, l2 = 3 + ((r * 3 + s * 5) % 4);
-        b.line(x0, y0, x0 + dx * l2, y0 + dy * l2, writing, 0);
+        b.line(x0, y0, x0 + dx * l2, y0 + dy * l2, C.writing, 0);
       }
     });
     front.restore();
+    A.rim(mid, [M.id]);
+    A.cast(back, mid, 2, 3, 1); A.cast(mid, front, 2, 3, 1);
     A.outline(back); A.outline(mid); A.outline(front);
     const out = back.over(mid).over(front);
     if (q.damp > 0) {
       // wet pulp shaken from the wing edges (cached with the frame; the veil itself is 84a's)
-      const dl = L.like(), P = K.solid([...K.mix(col, '#8a94a0', 0.35).slice(0, 3), 200], { line: false }), P2 = K.solid([...K.mix(col, '#ffffff', 0.2).slice(0, 3), 160], { line: false });
+      const dl = L.like(), P = K.solid([...K.mix(col, '#8a94a0', 0.4).slice(0, 3), 210], { line: false }), P2 = K.solid([...K.mix(col, '#ffffff', 0.2).slice(0, 3), 170], { line: false });
       const pts = [[-tipN[0], tipN[1]], [-tipF[0], tipF[1]], [10, 30], [-20, 26]];
       pts.forEach(([x, y], k) => { for (let i = 0; i < Math.round(q.damp * 7); i++) dl.ell(x + (hs(k, i) - 0.5) * 16, y + 4 + hs(i, k + 3) * 24 * q.damp, 1.6, 2.2, i % 2 ? P : P2, 0); });
       out.over(dl);
@@ -58727,7 +59473,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
   };
   A.family('crane', {
-    spec: { w: 236, h: 196, ox: 128, oy: 104, ms: 130, bob: (t) => Math.sin(t / 300) * 3 },
+    spec: { w: 244, h: 196, ox: 136, oy: 104, ms: 130, bob: (t) => Math.sin(t / 300) * 3 },
     base: crBase, idle: crIdle, poseTable: crTable, rig: craneRig, recoil: { push: 5 },
     veil: (o) => ({ kind: 'pulp', cols: [mixh(o.col || '#f4efe0', '#c8ccd0', 0.35), mixh(o.col || '#f4efe0', '#ffffff', 0.2), mixh(o.col || '#f4efe0', '#7a8490', 0.4)] }),
   });
@@ -58783,67 +59529,114 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // =============================================================================================
   // LETTER (the Undelivered Letter; its definition moved here from content/ch2/01_art.js)
   // =============================================================================================
+  // The letter (the restyle): an envelope turned three-quarter toward the party — sheared so its
+  // far (right) edge recedes, its thickness showing as a darker edge behind it; paper in a 6-tone
+  // ramp with each flap one flat tone by its facing, every fold a lit ridge beside a dark valley,
+  // the top flap casting its shadow on the face; a glossy wax seal (a hard highlight, a pressed
+  // ring), a stamp with a perforated edge; two paper strips that twist (their faces alternating
+  // lit and shaded along their length) and fray into split ends; three-quarter eyes.
+  const letterMatCache = new Map();
+  function letterMats(pcol) {
+    if (letterMatCache.has(pcol)) return letterMatCache.get(pcol);
+    const po = { n: 6, at: 4, lo: 0.2, hi: 0.985, sat: 0.75, hd: 70, hl: 12, sd: 0.12 };
+    const M = {
+      paper: A.hmat(pcol, Object.assign({ rim: mixh(pcol, '#cfe0ff', 0.6) }, po)),
+      edge: A.hmat(mixh(pcol, '#8a7a7a', 0.35), Object.assign({}, po, { hi: 0.8 })),
+      strip: A.hmat(pcol, po),
+      stripF: A.hmat(pcol, Object.assign({ alpha: 140, line: false }, po)),
+      seal: A.hmat('#b84a3a', { n: 5, at: 2, lo: 0.14, hi: 0.86, sat: 1.25, hd: 24, hl: 30 }),
+      stamp: A.hmat('#7a9ab8', { n: 5, at: 2, lo: 0.2, hi: 0.9, sat: 1.2 }),
+      note: A.hmat('#fbf6e8', po),
+      ink: K.solid('#4a4058', { line: false }),
+      eye: K.mat(null, { cols: ['#0c0a18', '#1c1830', '#302a48'], at: 0, line: false }),
+      shine: K.solid('#ffffff', { line: false }),
+    };
+    letterMatCache.set(pcol, M);
+    if (letterMatCache.size > 8) letterMatCache.delete(letterMatCache.keys().next().value);
+    return M;
+  }
+  // a paper strip hanging from (x, y0): a flat ribbon whose face turns as it twists, fraying into
+  // two ends
+  function strip(Lr, M, x, y0, len, w0, ph, amp, lean) {
+    const cx = (y, k) => x + lean * y + Math.sin(ph + y / 7 + (k || 0)) * amp * Math.min(1, y / (len * 0.45));
+    const hw = (y) => w0 * Math.pow(Math.max(0, 1 - y / len), 0.6) + 1;
+    const split = len * 0.72;
+    for (const Mx of [M.strip, M.stripF]) {
+      const ext = Math.abs(lean) * len + w0 + amp + 3;
+      Lr.fill(x - ext, y0, x + ext, y0 + len + 2, (px, py) => {
+        const y = py - y0;
+        if (y < 0 || y > len || (y < len * 0.5 ? M.strip : M.stripF) !== Mx) return false;
+        if (y < split) return Math.abs(px - cx(y)) <= hw(y);
+        const t = (y - split) / (len - split), sw = Math.max(0.8, hw(y) * 0.5);
+        return Math.abs(px - (cx(y) - t * 3)) <= sw || (Math.abs(px - (cx(y, 0.7) + t * 3)) <= sw && t < 0.8);
+      }, Mx, (px, py) => { const y = py - y0, face = Math.cos(ph * 0.7 + y / 6) > 0; return ((face ? 4 : 2) + ((px - cx(y)) < -hw(y) * 0.4 ? 1 : 0) + 0.5) / 6; });
+    }
+  }
   function letterRig(L, q, o, H) {
     const pcol = o.col || '#f4ecd8';
-    const paper = K.mat(pcol, { n: 5, at: 3, step: 0.08, shift: 1.2 });
-    const seal = K.mat('#b84a3a', { n: 5, at: 2, step: 0.1 });
-    const ink = K.solid('#6a6070', { line: false });
-    const stampM = K.mat('#7a9ab8', { n: 3, at: 1, step: 0.1 });
-    const strip = K.mat(pcol, { n: 4, at: 2, step: 0.08 });
-    const stripF = K.mat(pcol, { n: 3, at: 1, step: 0.08, alpha: 130, line: false });
-    const noteM = K.mat('#fbf6e8', { n: 4, at: 2, step: 0.07 });
-    const tails = L.like(), N = L.like(), E = L.like(), F = L.like();
-    for (let i = 0; i < 2; i++) H.tail(tails, -26 + i * 30, 30, (50 - i * 10) * q.slen, 6, q.ph + i * 1.9, [[0, 24, strip], [24, 70, stripF]], { amp: q.samp, curl: 7, dark: 0.3, lean: q.slean });
-    const T = (Lr) => Lr.save().rotate(q.rot).scale(q.sx, 1);
+    const M = letterMats(pcol), paper = M.paper;
+    const tails = L.like(), N = L.like(), D = L.like(), E = L.like(), F = L.like();
+    for (let i = 0; i < 2; i++) strip(tails, M, -26 + i * 30, 30, (50 - i * 10) * q.slen, 6, q.ph + i * 1.9, q.samp, q.slean);
+    // the three-quarter turn: the far (right) edge recedes — a shear on top of the pose's own turn
+    const T = (Lr) => Lr.save().rotate(q.rot).scale(q.sx, 1).mul(0.94, 0.07, 0, 1, 0, 0);
     // a folded note sliding out of its side toward you (behind the front of the envelope)
     if (q.note > 0) {
       T(N);
       const nx = -40 - q.note * 46, ny = -24;
-      N.rect(nx, ny, 60, 40, noteM, (x, y) => K.clamp(0.75 - (x - nx) / 160 - (y - ny) / 140, 0, 0.99));
-      N.line(nx + 20, ny, nx + 20, ny + 40, noteM, 1);
-      for (let r = 0; r < 3; r++) N.line(nx + 4, ny + 8 + r * 5, nx + 14 - (r % 2) * 4, ny + 8 + r * 5, ink, 0);
+      N.rect(nx, ny, 60, 40, M.note, (x) => (x < nx + 20 ? 5.5 : 4.5) / 6);
+      N.line(nx + 20, ny, nx + 20, ny + 40, M.note, 2); N.line(nx + 21, ny, nx + 21, ny + 40, M.note, 5);
+      for (let r = 0; r < 3; r++) N.line(nx + 4, ny + 8 + r * 5, nx + 14 - (r % 2) * 4, ny + 8 + r * 5, M.ink, 0);
       N.restore();
     }
+    // its thickness: the envelope's edge seen behind it, up and to the right
+    T(D); D.rect(-55, -41, 116, 76, M.edge, 2); D.rect(-55, -41, 116, 2, M.edge, 4); D.restore();
     T(E);
     E.rect(-58, -38, 116, 76, paper, 3);
-    E.poly([[-58, -38], [-58, 38], [-4, 4]], paper, 4);
-    E.poly([[58, -38], [58, 38], [4, 4]], paper, 2);
-    E.poly([[-58, 38], [58, 38], [0, 0]], paper, 3);
-    E.line(-58, 38, -2, 2, paper, 1); E.line(58, 38, 2, 2, paper, 1);
+    A.fpoly(E, [[-58, -38], [-58, 38], [-4, 4]], paper, 5);
+    A.fpoly(E, [[58, -38], [58, 38], [4, 4]], paper, 3);
+    A.fpoly(E, [[-58, 38], [58, 38], [0, 0]], paper, 4);
+    // the folds: lit ridge, dark valley
+    E.line(-58, 38, -2, 2, paper, 1); E.line(-57, 37, -1, 2, paper, 5);
+    E.line(58, 38, 2, 2, paper, 1); E.line(57, 38, 1, 3, paper, 3);
     E.onto((b) => {
-      for (let r = 0; r < 3; r++) for (let s = 0; s < 3; s++) { const x = -40 + s * 9 + (r % 2) * 3, y = 20 + r * 5; b.line(x, y, x + 3 + ((r + s * 2) % 4), y, ink, 0); }
-      A.stone(b, [[32, 16], [48, 16], [48, 30], [32, 30]], stampM, { bevel: 2, face: 1 });
-      for (let x = 30; x < 50; x += 2) b.dot(x, 23 + (x % 4 === 0 ? -1 : 1), paper, 4);
+      for (let r = 0; r < 3; r++) for (let s = 0; s < 3; s++) { const x = -40 + s * 9 + (r % 2) * 3, y = 20 + r * 5; b.line(x, y, x + 3 + ((r + s * 2) % 4), y, M.ink, 0); }
+      A.stone(b, [[32, 16], [48, 16], [48, 30], [32, 30]], M.stamp, { bevel: 2, face: 2 });
+      b.rect(36, 20, 8, 6, M.stamp, 4); b.rect(37, 21, 3, 2, M.stamp, 1);
+      for (let x = 31; x < 50; x += 2) { b.dot(x, 15, paper, 5); b.dot(x, 30, paper, 5); }
+      for (let y = 17; y < 30; y += 2) { b.dot(31, y, paper, 5); b.dot(48, y, paper, 5); }
     });
     E.restore();
     // the top flap: shut it lies down over the face (apex at 12); it lifts and opens upward
     T(F);
     const apex = A.lerp(12, -86, q.flap), inner = q.flap > 0.5;
-    F.poly([[-58, -38], [58, -38], [0, apex]], paper, inner ? 2 : 3);
-    if (!inner) { F.line(-57, -37, 0, apex + 1, paper, 0); F.line(57, -37, 0, apex + 1, paper, 0); F.line(-55, -35, -1, apex + 2, paper, 1); }
-    F.rect(-58, -38, 116, 2, paper, 4);
-    // the wax seal rides the flap's tip (it lifts with it)
+    A.fpoly(F, [[-58, -38], [58, -38], [0, apex]], paper, inner ? 2 : 4);
+    if (!inner) { F.line(-57, -37, 0, apex + 1, paper, 1); F.line(57, -37, 0, apex + 1, paper, 1); F.line(-55, -35, -1, apex + 2, paper, 5); }
+    F.rect(-58, -38, 116, 2, paper, 5);
+    // the wax seal rides the flap's tip (it lifts with it): glossy, a pressed ring, a hard highlight
     const sy = A.lerp(12, -60, q.flap);
-    F.ell(0, sy, 11, 10, seal, K.sphere(-3, sy - 4, 12, 11, { amb: 0.2 }));
-    if (q.flap < 0.3) { F.ell(-8, sy + 8, 3, 3, seal, 1); F.ell(7, sy + 9, 2.5, 3, seal, 1); }
-    F.fill(-8, sy - 8, 8, sy + 8, (x, y) => { const d = Math.hypot(x, y - sy); return d <= 6 && d >= 4.5; }, seal, (x, y) => K.clamp(0.5 - (x + y - sy) / 16, 0, 0.99));
-    F.rect(-1, sy - 1, 2, 2, seal, 4);
+    F.ell(0, sy, 11, 10, M.seal, A.ball(-3, sy - 3, 12, 11, { k: 1.2 }));
+    if (q.flap < 0.3) { F.ell(-8, sy + 8, 3, 3, M.seal, 1); F.ell(7, sy + 9, 2.5, 3, M.seal, 1); }
+    F.fill(-8, sy - 8, 8, sy + 8, (x, y) => { const d = Math.hypot(x, y - sy); return d <= 6 && d >= 4.5; }, M.seal, (x, y) => (x + y - sy < 0 ? 0.5 : 3.5) / 5);
+    F.rect(-6, sy - 7, 3, 2, M.shine, 0);
     F.restore();
-    A.outline(N); A.outline(E); A.outline(F);
-    // the eyes sit on the envelope's face, over the flap as they always have (pleading: inner ends raised)
+    A.rim(E, [paper.id]);
+    A.cast(E, F, 1, 3, 1); A.cast(D, E, 1, 2, 1); A.cast(tails, E, 2, 3, 1);
+    A.outline(D); A.outline(N); A.outline(E); A.outline(F); A.outline(tails);
+    // the eyes sit on the envelope's face, over the flap as they always have (pleading: inner ends
+    // raised); turned three-quarter: the far eye narrower
     const EY = L.like();
-    ((b) => {
-      b.save().rotate(q.rot).scale(q.sx, 1);
-      const lx = q.look > 0.5 ? -3 : 0;
-      if (q.eye < 0.25) for (const s of [-1, 1]) b.line(s * 15 - 4 + lx, -9, s * 15 + 4 + lx, -9, H.ink, 1);
-      else {
-        H.eyes(b, lx, -10, 15, { rx: 3.5, ry: 5 * Math.max(0.4, q.eye) });
-        if (q.droop > 0) for (const s of [-1, 1]) b.line(s * 15 - 5 + lx, -18 + (s < 0 ? 2 : -1) * q.droop, s * 15 + 5 + lx, -18 + (s < 0 ? -1 : 2) * q.droop, paper, 0);
-      }
-      b.restore();
-    })(EY);
-    A.outline(tails);
-    return tails.over(N).over(E).over(F).over(EY);
+    EY.save().rotate(q.rot).scale(q.sx, 1).mul(0.94, 0.07, 0, 1, 0, 0);
+    const lx = q.look > 0.5 ? -3 : 0;
+    for (const [ex, er] of [[-19, 3], [9, 4]]) {
+      const x = ex + lx;
+      if (q.eye < 0.25) { EY.line(x - 4, -9, x + 4, -9, M.eye, 1); continue; }
+      const ery = 5 * Math.max(0.4, q.eye);
+      EY.ell(x, -10, er, ery, M.eye, (px, py) => (py > -10 + ery * 0.3 ? 1.5 : 0.5) / 3);
+      EY.rect(Math.round(x - er * 0.5), Math.round(-10 - ery * 0.6), er > 3.5 ? 2 : 1, 2, M.shine, 0);
+      if (q.droop > 0) EY.line(x - 5, -18 + (ex < 0 ? 2 : -1) * q.droop, x + 5, -18 + (ex < 0 ? -1 : 2) * q.droop, paper, 1);
+    }
+    EY.restore();
+    return tails.over(D).over(N).over(E).over(F).over(EY);
   }
   const lBase = { rot: 0, sx: 1, flap: 0, note: 0, samp: 6, slean: -0.55, slen: 1, ph: 0, eye: 1, look: 0, droop: 0 };
   const lIdle = [0, 1, 2, 3, 4, 5].map((f) => ({ ph: (f / 6) * Math.PI * 2, rot: Math.sin((f / 6) * Math.PI * 2) * 0.07, flap: [0, 0.02, 0.04, 0.02, 0, 0][f], droop: 0.6 }));
@@ -58906,7 +59699,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
   };
   A.family('sg_letter', {
-    spec: { w: 196, h: 200, ox: 100, oy: 76, ms: 150, bob: (t) => Math.sin(t / 420) * 6 },
+    spec: { w: 196, h: 220, ox: 100, oy: 96, ms: 150, bob: (t) => Math.sin(t / 420) * 6 },
     base: lBase, idle: lIdle, poseTable: lTable, rig: letterRig, recoil: { push: 5 },
   });
   A.deliver('sg_letter', 'plea', (a) => {
@@ -58938,15 +59731,46 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // =============================================================================================
   // CLERK (drawn in its own right-facing coordinates, mirrored so it faces the party)
   // =============================================================================================
+  // The clerk (the restyle): cloth in the reference's manner — a hue-shifted robe ramp, folds as
+  // clean vertical shadow shapes with a lit ridge on each (not sine banding), the far side and the
+  // hem in shadow, a cool rim down its right edge, the collar casting its shadow on the chest; the
+  // cap a felt form in crisp bands with a paper band; the face a void with two pale eye-glints; the
+  // stamp a turned wooden handle (grain, a lit edge), a brass ferrule with a specular point and a
+  // vermilion seal; loose sheets with a folded corner and a lit edge.
+  const clerkMatCache = new Map();
+  function clerkMats(col, glow) {
+    const gk = Math.round(cl(glow) * 4) / 4, key = col + '|' + gk;
+    if (clerkMatCache.has(key)) return clerkMatCache.get(key);
+    const M = {
+      robe: A.hmat(col, { n: 6, at: 2, lo: 0.08, hi: 0.78, sat: 1.25, hd: 26, hl: 34, rim: mixh(col, '#cfe4ff', 0.55) }),
+      paper: A.hmat('#e8e0cc', { n: 5, at: 3, lo: 0.3, hi: 0.98, sat: 1.1, hd: 60, hl: 12, sd: 0.14 }),
+      wood: A.hmat('#6a4a3a', { n: 5, at: 2, lo: 0.1, hi: 0.72, sat: 1.25, hd: 24, hl: 24 }),
+      brass: A.hmat('#c09a4a', { n: 5, at: 2, lo: 0.16, hi: 0.92, sat: 1.2, hd: 30, hl: 24 }),
+      seal: A.hmat(gk > 0 ? mixh('#c85a4a', '#ffb070', gk * 0.5) : '#c85a4a', { n: 5, at: 2, lo: 0.16, hi: 0.86, sat: 1.25, hd: 24, hl: 30 }),
+      shade: K.mat(null, { cols: [K.hex(K.mix(K.parse(col), [6, 6, 14, 255], 0.86)), K.hex(K.mix(K.parse(col), [10, 10, 22, 255], 0.74))], at: 0, line: false }),
+      skin: A.hmat('#d8c8b8', { n: 4, at: 2, lo: 0.36, hi: 0.94, sat: 0.8, hd: 16 }),
+      lines: K.solid('#4a4458', { line: false }),
+      eye: K.solid('#eef0ff', { line: false }), eye2: K.solid('#9aa8e0', { line: false }),
+      shine: K.solid('#ffffff', { line: false }), gloss: K.solid('#dfe8f4', { line: false }),
+    };
+    clerkMatCache.set(key, M);
+    if (clerkMatCache.size > 16) clerkMatCache.delete(clerkMatCache.keys().next().value);
+    return M;
+  }
+  // a cloth tone: the key light across the form plus clean folds (a lit ridge, a shadow valley)
+  const foldTone = (x, y, base, period, ph) => {
+    const f = Math.cos((x + ph) / period);
+    let k = base + (f > 0.72 ? 1 : f < -0.45 ? -1 : 0);
+    return k;
+  };
+  function sheet(Lr, M, w, h) {
+    A.stone(Lr, [[-w, -h], [w, -h], [w, h], [-w, h]], M.paper, { bevel: 2, face: 3 });
+    Lr.poly([[w - 5, h], [w, h - 5], [w, h]], M.paper, 1);
+    Lr.poly([[w - 5, h], [w, h - 5], [w - 4, h - 4]], M.paper, 4);
+    for (let r = 0; r < 3; r++) Lr.line(-w + 4, -h + 5 + r * 3, w - 6 - (r % 2) * 5, -h + 5 + r * 3, M.lines, 0);
+  }
   function clerkRig(L, q, o, H) {
-    const col = o.col || '#4a6a8a';
-    const robe = K.mat(col, { n: 5, at: 2, step: 0.09 });
-    const paperM = K.mat('#e8e0cc', { n: 4, at: 2, step: 0.08 });
-    const woodM = K.mat('#6a4a3a', { n: 4, at: 2, step: 0.1 });
-    const seal = K.mat(q.glow > 0 ? mixh('#c85a4a', '#ffb070', q.glow * 0.5) : '#c85a4a', { n: 4, at: 2, step: 0.1 });
-    const shade = K.mat(K.tone(col, -3.5), { n: 3, at: 1, step: 0.05 });
-    const skin = K.mat('#d8c8b8', { n: 3, at: 1, step: 0.08 });
-    const lines = K.solid('#5a5468', { line: false });
+    const M = clerkMats(o.col || '#4a6a8a', q.glow), robe = M.robe;
     const back = L.like(), mid = L.like(), front = L.like(), glow = L.like();
     const T = (Lr) => Lr.save().scale(-1, 1).translate(0, 60).rotate(q.lean).translate(0, -60);
     // loose sheets drifting at its side (spread out wide when it calls up a tide or a fog)
@@ -58956,55 +59780,77 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const ph = q.sph + i * 1.7, dy = Math.sin(ph) * 2;
       const sx = -54 - i * 5 - q.sheets * (10 + i * 5), sy = 22 - i * 18 + dy - q.sheets * (i % 2 ? 12 : -6);
       back.save().translate(sx, sy).rotate(-0.28 + i * 0.2 + Math.sin(ph) * 0.06 + q.sheets * (i - 2) * 0.25);
-      A.stone(back, [[-11, -8], [11, -8], [11, 8], [-11, 8]], paperM, { bevel: 2, face: 2 });
-      for (let r = 0; r < 3; r++) back.line(-7, -3 + r * 3, 5 - (r % 2) * 5, -3 + r * 3, lines, 0);
+      sheet(back, M, 11, 8);
       back.restore();
     }
     back.restore();
-    // robe with folds (light from the left once mirrored), the hem swaying
+    // robe with folds (light from the left once mirrored: + x is screen left), the hem swaying
     T(mid);
     const hm = (k) => Math.round(Math.sin(q.hem + k) * 2);
     const robeP = [[-20, -26], [20, -26], [30, 16], [35, 66 + hm(0)], [26, 64 + hm(1)], [18, 68 + hm(2)], [8, 64 + hm(3)], [-2, 68 + hm(4)], [-12, 64 + hm(5)], [-22, 68 + hm(6)], [-35, 66 + hm(7)], [-30, 16]];
-    A.poly(robeP).fill(mid, robe, (x, y) => K.clamp(0.4 + x / 110 + 0.16 * Math.cos((x + 3 + q.hem) / 5.2) * Math.min(1, (y + 20) / 40), 0, 0.99));
+    // (+ x is screen left, toward the light) — the cone lit on its near side, folds falling from
+    // the waist as tapered valleys that widen toward the hem, each with a lit ridge beside it
+    const halfW = (y) => (y < 16 ? 20 + (y + 26) * 0.24 : 30 + (y - 16) * 0.1);
+    A.poly(robeP).fill(mid, robe, (x, y) => {
+      const u = x / halfW(y), t = cl((y - 4) / 62);
+      let k = u > 0.38 ? 4 : u > -0.2 ? 3 : u > -0.66 ? 2 : 1;
+      if (y < -14 && u > 0.1) k += 1;
+      if (y > 4) for (const uk of [-0.62, -0.18, 0.26, 0.66]) {
+        const c = uk + Math.sin(q.hem + uk * 3) * 0.04 * t, w = 0.03 + 0.09 * t;
+        if (Math.abs(u - c) < w) { k -= t > 0.55 ? 2 : 1; break; }
+        if (u > c + w && u < c + w + 0.06 + 0.04 * t) { k += 1; break; }
+      }
+      if (y > 60) k -= 1;
+      return (Math.max(0, Math.min(5, k)) + 0.5) / 6;
+    });
     // far sleeve: hanging, or holding up a document (for a false promise, a mirror, a plea)
     const dU = q.doc;
-    mid.poly([[-19, -24], [-34, -8 - dU * 12], [-44 + dU * 4, 30 - dU * 44], [-28, 36 - dU * 40], [-22, 2]], robe, (x, y) => K.clamp(0.36 + 0.14 * Math.cos(x / 4) - (y + 24) / 200, 0, 0.99));
-    mid.ell(-35 + dU * 2, 34 - dU * 42, 5, 4, skin, 1);
+    mid.poly([[-19, -24], [-34, -8 - dU * 12], [-44 + dU * 4, 30 - dU * 44], [-28, 36 - dU * 40], [-22, 2]], robe, (x, y) => ((Math.cos(x / 4) > 0.5 ? 2 : 1) + 0.5) / 6);
+    mid.ell(-35 + dU * 2, 34 - dU * 42, 5, 4, M.skin, 1);
     if (dU > 0.2) {
       const dx = -36 + dU * 2, dy = 4 - dU * 46;
       mid.save().translate(dx, dy).rotate(-0.12);
-      mid.rect(-14, -20, 26, 32, paperM, (x, y) => K.clamp(0.75 - (x + 14) / 80 - (y + 20) / 120, 0, 0.99));
-      for (let r = 0; r < 4; r++) mid.line(-10, -14 + r * 6, 6 - (r % 2) * 6, -14 + r * 6, lines, 0);
-      if (q.gloss > 0) { mid.line(-12, 8, 8, -16, K.solid('#ffffff', { line: false }), 0); mid.line(-9, 10, 10, -12, K.solid('#dfe8f4', { line: false }), 0); }
-      mid.ell(4, 6, 4, 4, seal, 2);
+      mid.rect(-14, -20, 26, 32, M.paper, (x, y) => (x < -6 ? 4.5 : 3.5) / 5);
+      mid.line(-14, -20, 12, -20, M.paper, 4); mid.poly([[7, 12], [12, 7], [12, 12]], M.paper, 1);
+      for (let r = 0; r < 4; r++) mid.line(-10, -14 + r * 6, 6 - (r % 2) * 6, -14 + r * 6, M.lines, 0);
+      if (q.gloss > 0) { mid.line(-12, 8, 8, -16, M.shine, 0); mid.line(-9, 10, 10, -12, M.gloss, 0); }
+      mid.ell(4, 6, 4, 4, M.seal, 2); mid.dot(3, 4, M.seal, 4);
       mid.restore();
     }
-    // collar, cap, face in shadow with pale eyes
-    mid.poly([[-13, -26], [13, -26], [0, -6]], paperM, 3);
-    mid.poly([[-6, -26], [6, -26], [0, -14]], robe, 1);
-    mid.ell(0, -30, 13, 10, shade, 0);
+    // collar (its shadow on the chest), cap, face in shadow with pale eyes
+    mid.poly([[-13, -26], [13, -26], [0, -6]], M.paper, 3);
+    mid.poly([[2, -26], [13, -26], [0, -6]], M.paper, 4);
+    mid.line(-12, -25, 0, -7, M.paper, 1);
+    mid.poly([[-6, -26], [6, -26], [0, -14]], robe, 0);
+    mid.ell(0, -30, 13, 10, M.shade, 0);
     mid.save().translate(0, -40).rotate(q.cap).translate(0, 40);
-    mid.poly([[-15, -40], [-14, -58], [-8, -66], [8, -66], [14, -58], [15, -40]], robe, K.sphere(2, -56, 18, 16, { amb: 0.2 }));
-    mid.rect(-16, -44, 32, 5, paperM, (x) => K.clamp(0.4 + (x + 16) / 60, 0, 0.99));
+    mid.poly([[-15, -40], [-14, -58], [-8, -66], [8, -66], [14, -58], [15, -40]], robe, A.ball(6, -60, 20, 18, { k: 1.2, lift: 0.04, mirror: true }));
+    mid.rect(-16, -44, 32, 5, M.paper, (x) => (x > 6 ? 4.5 : x > -6 ? 3.5 : 2.5) / 5);
+    mid.line(-16, -40, 16, -40, M.paper, 1);
     mid.restore();
     const eo = q.eye;
     for (const s of [-1, 1]) {
-      if (eo < 0.3) { mid.rect(s * 5 - 2, -32, 4, 1, K.solid('#b8c0e0', { line: false }), 0); continue; }
-      mid.rect(s * 5 - 2, -33, 4, 2, K.solid('#eef0ff', { line: false }), 0); mid.dot(s * 5 + 1, -34, K.solid('#b8c0e0', { line: false }), 0);
+      if (eo < 0.3) { mid.rect(s * 5 - 2, -32, 4, 1, M.eye2, 0); continue; }
+      mid.rect(s * 5 - 2, -33, s > 0 ? 4 : 3, 2, M.eye, 0); mid.dot(s * 5 + 1, -34, M.eye2, 0);
     }
     mid.restore();
-    // the stamping arm (near the party): sleeve, gripping hand, handle and the vermilion seal
+    // the stamping arm (near the party): sleeve, gripping hand, handle, ferrule and the seal
     T(front);
     const sy = q.sy, rx = q.reach * 18;
-    front.poly([[18, -24], [32, -16], [44 + rx, sy + 4], [34 + rx, sy + 12], [24, -2]], robe, (x, y) => K.clamp(0.55 + (x - 18) / 120, 0, 0.99));
-    front.rect(36 + rx, sy - 22, 7, 22, woodM, K.cyl(39.5 + rx, 3.5));
-    front.ell(39.5 + rx, sy - 24, 6, 4, woodM, K.sphere(39.5 + rx, sy - 25, 6, 4));
-    front.ell(38 + rx, sy - 8, 6, 5, skin, K.sphere(37 + rx, sy - 9, 6, 5));
-    A.stone(front, [[29 + rx, sy], [50 + rx, sy], [50 + rx, sy + 9], [29 + rx, sy + 9]], seal, { bevel: 2, face: 2 });
-    if (sy > 0) for (const [x1, y1, x2, y2] of [[26, sy + 12, 21, sy + 14], [53, sy + 12, 58, sy + 14], [30, sy + 15, 26, sy + 19], [49, sy + 15, 53, sy + 19]]) front.line(x1 + rx, y1, x2 + rx, y2, paperM, 3);
+    front.poly([[18, -24], [32, -16], [44 + rx, sy + 4], [34 + rx, sy + 12], [24, -2]], robe, (x, y) => ((x > 30 + rx * 0.5 && y < sy + 6 ? 4 : 3) + (Math.cos((x + y) / 4) > 0.7 ? 1 : 0) + 0.5) / 6);
+    front.rect(36 + rx, sy - 22, 7, 20, M.wood, (x, y) => ((x > 40.5 + rx ? 3 : x > 38 + rx ? 2 : 1) + 0.5) / 5);
+    for (let k = 0; k < 3; k++) front.line(37 + rx + k * 2, sy - 20 + k * 5, 37 + rx + k * 2, sy - 17 + k * 5, M.wood, k === 2 ? 4 : 0);
+    front.ell(39.5 + rx, sy - 24, 6, 4, M.wood, A.ball(41 + rx, sy - 26, 6, 4, { k: 1.2, mirror: true }));
+    front.rect(35 + rx, sy - 4, 9, 4, M.brass, (x) => ((x > 41 + rx ? 4 : x > 38 + rx ? 2 : 1) + 0.5) / 5);
+    front.dot(42 + rx, sy - 4, M.shine, 0);
+    front.ell(38 + rx, sy - 9, 6, 5, M.skin, A.ball(40 + rx, sy - 11, 6, 5, { k: 1.2, mirror: true }));
+    A.stone(front, [[29 + rx, sy], [50 + rx, sy], [50 + rx, sy + 9], [29 + rx, sy + 9]], M.seal, { bevel: 2, face: 2 });
+    if (sy > 0) for (const [x1, y1, x2, y2] of [[26, sy + 12, 21, sy + 14], [53, sy + 12, 58, sy + 14], [30, sy + 15, 26, sy + 19], [49, sy + 15, 53, sy + 19]]) front.line(x1 + rx, y1, x2 + rx, y2, M.paper, 4);
     front.restore();
+    A.rim(mid, [robe.id], { w: 2 }); A.rim(front, [robe.id]);
+    A.cast(back, mid, 2, 3, 1); A.cast(mid, front, 2, 3, 1);
     A.outline(back); A.outline(mid); A.outline(front);
-    if (q.glow > 0) { T(glow); H.glow(glow, 40 + rx, sy + 4, 18 + q.glow * 8, 14 + q.glow * 6, '#ffb070', 0.18 + q.glow * 0.14, 3); glow.restore(); }
+    if (q.glow > 0) { T(glow); H.glow(glow, 40 + rx, sy + 4, 18 + q.glow * 8, 14 + q.glow * 6, '#ffb070', 0.18 + q.glow * 0.14, 2); glow.restore(); }
     return back.over(mid).over(front).over(glow);
   }
   const kBase = { sy: -8, reach: 0, lean: 0, hem: 0, sheets: 0, sph: 0, doc: 0, gloss: 0, glow: 0, eye: 1, cap: 0 };
@@ -59158,7 +60004,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
   };
   A.family('clerk', {
-    spec: { w: 224, h: 212, ox: 116, oy: 102, dy: 14, ms: 150 },
+    spec: { w: 252, h: 212, ox: 116, oy: 102, dy: 14, ms: 150 },
     base: kBase, idle: kIdle, poseTable: kTable, rig: clerkRig, recoil: { push: 3 },
     alias: { 'recover.mirror': 'recover.lie', 'prep.mend': 'prep.charge', 'recover.mend': 'recover.hover' },
     veil: () => ({ kind: 'scrap', cols: ['#dfe5ee', '#eef2f6', '#e8e0cc'] }),
@@ -59254,91 +60100,139 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const mixh = (a, b, k) => K.hex(K.mix(a, b, k));
   const cl = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
 
+  // The restyle: a beehive kiln seen three-quarter from a little above — its brick courses curve
+  // round it (each course a shallow arc), its firebox and eyes turned toward the party (left of
+  // centre, the mouth's far jamb foreshortened); bricks in a hue-shifted clay ramp, each its own
+  // tint, lit along its top edge, the mortar dark; the key light up left, the far side in shadow
+  // with a cool rim; the fire lighting the bricks round its mouth from inside (a warm ramp that
+  // fades with distance); a glossy glazed band with a hard specular streak and a reflected band;
+  // soot streaks under a turned chimney; flames in hard bands with embers; smoke in lit clusters.
+  const wardenMatCache = new Map();
+  function wardenMats(col, fb, eyeG) {
+    const fk = Math.round(cl(fb) * 4) / 4, ek = Math.round(cl(eyeG) * 4) / 4, key = col + '|' + fk + '|' + ek;
+    if (wardenMatCache.has(key)) return wardenMatCache.get(key);
+    const hot = (c) => mixh(c, '#fff4c8', 0.45 * fk);
+    const M = {
+      clay: A.hmat(col, { n: 6, at: 3, lo: 0.08, hi: 0.74, sat: 1.3, hd: 26, hl: 20, rim: mixh(col, '#a8c8ff', 0.55) }),
+      lit: A.hmat(mixh(col, '#ff9a40', 0.5), { n: 4, at: 2, lo: 0.3, hi: 0.86, sat: 1.4, hd: 20, hl: 20 }),
+      glaze: A.hmat('#8fb8b0', { n: 6, at: 3, lo: 0.12, hi: 0.95, sat: 1.3, hd: 34, hl: 26 }),
+      soot: A.hmat('#2a1a16', { n: 3, at: 1, lo: 0.04, hi: 0.24 }),
+      fireR: K.mat(null, { cols: [hot('#a8301e'), hot('#d8502a')], at: 1, line: false }),
+      fireO: K.mat(null, { cols: [hot('#e0782a'), hot('#f0962e')], at: 1, line: false }),
+      fireY: K.mat(null, { cols: [hot('#ffc860'), hot('#fff0b0')], at: 1, line: false }),
+      eye: K.mat(null, { cols: [mixh('#f0a040', '#ffffff', 0.2 * ek), mixh('#ffd070', '#ffffff', 0.4 * ek), mixh('#fff4c8', '#ffffff', 0.5 * ek)], at: 1, line: false }),
+      smoke: A.hmat('#8a8490', { n: 4, at: 2, lo: 0.3, hi: 0.8, alpha: 160, line: false }),
+      mortarHot: K.solid(mixh('#f08a40', '#ffd070', 0.5), { line: false }),
+      ember: K.solid('#ffd070', { line: false }),
+      shine: K.solid('#f2fffc', { line: false }),
+    };
+    wardenMatCache.set(key, M);
+    if (wardenMatCache.size > 24) wardenMatCache.delete(wardenMatCache.keys().next().value);
+    return M;
+  }
   function wardenRig(L, q, o, H) {
-    const clay = K.mat(o.col || '#8a5a40', { n: 5, at: 2, step: 0.085 });
-    const glazeM = K.mat('#8fb8b0', { n: 5, at: 2, step: 0.1 });
-    const soot = K.mat('#2a1a16', { n: 3, at: 1, step: 0.05 });
-    const hot = (c) => mixh(c, '#fff4c8', 0.45 * q.fb);
-    const fireR = K.mat(hot('#d8502a'), { n: 3, at: 1, step: 0.1, line: false });
-    const fireO = K.mat(hot('#f0902e'), { n: 3, at: 1, step: 0.1, line: false });
-    const fireY = K.mat(hot('#ffd070'), { n: 3, at: 1, step: 0.1, line: false });
-    const eye = K.mat(mixh('#ffd070', '#ffffff', 0.4 * q.eyeG), { n: 3, at: 1, step: 0.1, line: false });
-    const smokeM = K.mat('#8a8490', { n: 3, at: 1, step: 0.08, alpha: 150, line: false });
-    const mortarHot = K.solid(mixh('#f08a40', '#ffd070', 0.5), { line: false });
+    const M = wardenMats(o.col || '#8a5a40', q.fb, q.eyeG), clay = M.clay;
     const glowL = L.like(), body = L.like(), fx = L.like(), fire = L.like();
     // the whole kiln rocks on its base and stretches as it breathes
     const sx = 1 + q.sq * 0.6, sy = 1 - q.sq;
     const T = (Lr) => Lr.save().translate(0, 70).rotate(-q.lean).scale(sx, sy).translate(0, -70);
     const hw = (y) => (y >= -18 ? 54 + Math.max(0, y - 40) * 0.2 : 54 * Math.sqrt(Math.max(0, 1 - ((y + 18) / 54) ** 2)));
+    // the turn: the mouth and eyes sit left of centre; courses curve (lower at the front)
+    const MX = -8, curve = (x, y) => y - (1 - Math.min(1, (x / (hw(y) || 1)) ** 2)) * 3;
+    const mouthIn = (x, y) => { const u = x - MX, w = 22 * (u > 0 ? 0.84 : 1); return y >= 14 && y < 60 && Math.abs(u) <= w * (y < 26 ? Math.sqrt(Math.max(0, 1 - ((26 - y) / 12) ** 2)) : 1); };
+    const archIn = (x, y) => { const u = x - MX, w = 27 * (u > 0 ? 0.84 : 1); return y >= 10 && y < 62 && Math.abs(u) <= w * (y < 26 ? Math.sqrt(Math.max(0, 1 - ((26 - y) / 16) ** 2)) : 1); };
     T(body);
-    A.stone(body, [[-9, -88], [9, -88], [10, -64], [-10, -64]], clay, { bevel: 3, face: 1 });
-    body.rect(-11, -90, 22, 4, soot, 1);
+    // the chimney: a turned flue, lit on its left, soot at its lip
+    body.fill(-10, -90, 10, -62, (x, y) => Math.abs(x + 1) <= 9 + (y + 90) * 0.04, clay, (x) => ((x < -5 ? 4 : x < 2 ? 3 : 1) + 0.5) / 6);
+    body.ell(-1, -89, 10, 2.6, M.soot, 1);
+    body.ell(-1, -89.5, 7, 1.4, M.soot, 0);
+    // the dome of bricks
     body.fill(-60, -72, 60, 70, (x, y) => y >= -72 && y < 70 && Math.abs(x) <= hw(y), clay, (x, y) => {
-      const row = Math.floor((y + 72) / 8), jx = Math.floor((row % 2) * 7 + x + 60) % 14;
-      const my = Math.floor(y + 72) % 8;
+      const yc = curve(x, y);
+      const row = Math.floor((yc + 72) / 8), jx = Math.floor((row % 2) * 7 + x + 60) % 14, my = ((Math.floor(yc + 72) % 8) + 8) % 8;
       const nx = x / (hw(y) || 1);
-      const base = 0.46 - nx * 0.28 - (y > 40 ? 0.08 : 0) + (y < -30 ? 0.12 * (1 + nx) : 0);
-      const tint = ((K.hh(Math.floor((x + 60 + (row % 2) * 7) / 14), row, 5) % 3) - 1) * 0.07;
-      if (my === 7 || jx === 0) return K.clamp(base - 0.28, 0, 0.99);
-      if (my === 0 || jx === 1) return K.clamp(base + 0.12 + tint, 0, 0.99);
-      return K.clamp(base + tint, 0, 0.99);
+      // the key light up left; the shoulder of the dome lit; the base and the far side in shadow
+      let k = nx < -0.45 ? 4 : nx < 0.15 ? 3 : nx < 0.62 ? 2 : 1;
+      if (y < -50 && nx < 0) k += 1;
+      if (y > 46) k -= 1;
+      const tint = (K.hh(Math.floor((x + 60 + (row % 2) * 7) / 14), row, 5) % 3) - 1;
+      if (my === 7 || jx === 0) k = Math.max(0, k - 2);
+      else if (my === 0) k = k + 1;
+      else k += tint > 0 && k < 3 ? 1 : tint < 0 && k > 1 && ((row + jx) & 1) ? -1 : 0;
+      // soot running down under the chimney
+      if (y < -44 && Math.abs(x + 1) < 9 - (y + 72) * 0.25 && (Math.floor((x + 61) / 3) % 2) && my > 0 && my < 7) k = Math.max(0, k - 1);
+      return (Math.max(0, Math.min(5, k)) + 0.5) / 6;
     });
-    // the glazed band; its shimmer travels along it when it turns your words back
-    body.fill(-58, -4, 58, 6, (x, y) => y >= -4 && y < 5 && Math.abs(x) <= hw(y) + 1, glazeM, (x, y) => {
-      const sh = q.glaze > 0 ? Math.max(0, 1 - Math.abs(x - (q.glaze * 140 - 70)) / 14) * 0.5 : 0;
-      return K.clamp(0.62 - x / 140 - (y + 4) / 18 + sh, 0, 0.99);
+    // chipped bricks (clusters)
+    for (const [x, y] of [[-36, -40], [24, -52], [38, 20], [-44, 36], [14, -14]]) { body.rect(x, y, 3, 2, clay, 0); body.dot(x, y - 1, clay, 5); }
+    // the fire lighting the bricks round its mouth from inside
+    body.scan(MX - 44, 0, MX + 44, 70, (x, y) => Math.hypot((x - MX) * 0.9, (y - 36) * 1.2) < 38 && !archIn(x, y), (i, x, y) => {
+      if (body.mt[i] !== clay.id) return;
+      const d = Math.hypot((x - MX) * 0.9, (y - 36) * 1.2) / 38, j = A.stepOf(body, i);
+      if (d > 0.62 + 0.25 * q.fire * 0.5 || j < 1) return;
+      body.px[i] = M.lit.c[Math.max(0, Math.min(3, j - 1 + (d < 0.4 ? 1 : 0)))]; body.mt[i] = M.lit.id;
     });
-    body.rect(-40, -3, 14, 1, glazeM, 4);
-    const mouthIn = (x, y) => y >= 14 && y < 60 && Math.abs(x) <= 24 * (y < 26 ? Math.sqrt(Math.max(0, 1 - ((26 - y) / 12) ** 2)) : 1);
-    const archIn = (x, y) => y >= 10 && y < 62 && Math.abs(x) <= 29 * (y < 26 ? Math.sqrt(Math.max(0, 1 - ((26 - y) / 16) ** 2)) : 1);
-    body.fill(-30, 8, 30, 62, archIn, clay, (x, y) => K.clamp(0.72 - (y - 10) / 90 - x / 120, 0, 0.99));
-    body.fill(-24, 14, 24, 60, mouthIn, soot, 0);
+    // the glazed band: glossy, its shimmer travels along it when it turns your words back
+    body.fill(-58, -8, 58, 8, (x, y) => { const yc = y + (1 - Math.min(1, (x / 56) ** 2)) * 3; return yc >= -4 && yc < 5 && Math.abs(x) <= hw(y) + 1; }, M.glaze, (x, y) => {
+      const yc = y + (1 - Math.min(1, (x / 56) ** 2)) * 3, nx = x / 56;
+      let k = yc < -2 ? 5 : yc < 1 ? (nx < 0.2 ? 4 : 3) : yc < 3 ? 2 : 1;
+      if (nx > 0.6) k = Math.max(1, k - 1);
+      if (q.glaze > 0 && Math.abs(x - (q.glaze * 140 - 70)) < 9) k = 5;
+      return (k + 0.5) / 6;
+    });
+    body.line(-44, -4, -22, -4, M.shine, 0);
+    // the firebox: an arch of fire-lit bricks, the soot-black mouth
+    body.fill(-40, 8, 30, 62, archIn, M.lit, (x, y) => ((y < 18 ? 3 : x - MX < 0 ? 2 : 1) + 0.5) / 4);
+    body.fill(-40, 14, 30, 60, mouthIn, M.soot, 0);
+    A.rim(body, [clay.id], { w: 2 });
     A.outline(body);
     // the mortar glowing as it gathers (on the lit seams of the dome)
     if (q.brick > 0) body.onto((b) => {
-      for (let y = -64; y < 60; y += 8) { const w = hw(y) * 0.86; for (let x = -w; x < w; x += 3) if (((x + 60) | 0) % 6 < 2 * q.brick + 0.5 && !(y > 8 && Math.abs(x) < 30)) b.dot(x, y + 7, mortarHot, 0); }
+      for (let y = -64; y < 60; y += 8) { const w = hw(y) * 0.86; for (let x = -w; x < w; x += 3) if (((x + 60) | 0) % 6 < 2 * q.brick + 0.5 && !(y > 8 && Math.abs(x - MX) < 30)) b.dot(x, curve(x, y) + 7, M.mortarHot, 0); }
     });
     // flames rolling in the firebox (taller with fire; licking out toward the party with lick)
     const tongues = [[-14, 5], [-4, 9], [7, 6], [16, 4]];
     for (let i = 0; i < tongues.length; i++) {
-      const [x, hgt] = tongues[i];
+      const [x0, hgt] = tongues[i], x = x0 * 0.92 + MX;
       const h = (hgt + ((Math.round(q.sph * 3) + i * 2) % 3) * 4) * q.fire;
       const top = 60 - h * 3, sway = ((Math.round(q.sph * 3) + i) % 3) - 1;
-      fire.poly([[x - 7, 60], [x + sway * 2, top], [x + 7, 60]], fireR, 1);
-      fire.poly([[x - 4, 60], [x + sway * 3, top + 8], [x + 4, 60]], fireO, 1);
-      fire.poly([[x - 2, 60], [x + sway * 3, top + 18], [x + 2, 60]], fireY, 1);
+      A.fpoly(fire, [[x - 7, 60], [x + sway * 2, top], [x + 7, 60]], M.fireR, (px) => (px < x + sway ? 1.5 : 0.5) / 2);
+      A.fpoly(fire, [[x - 4, 60], [x + sway * 3, top + 8], [x + 4, 60]], M.fireO, 1);
+      A.fpoly(fire, [[x - 2, 60], [x + sway * 3, top + 18], [x + 2, 60]], M.fireY, (px, py) => (py < top + 26 ? 1.5 : 0.5) / 2);
     }
+    for (let i = 0; i < 3; i++) { const ex = MX - 10 + ((i * 9 + Math.round(q.sph * 5)) % 22), ey = 50 - ((i * 7 + Math.round(q.sph * 4)) % 22) * q.fire; fire.dot(ex, ey, M.ember, 0); }
     fire.erase(-60, -100, 60, 100, (x, y) => !mouthIn(x, y));
     if (q.lick > 0) {
       // tongues of flame leaving the mouth toward the party (lower left once on screen)
       for (let i = 0; i < 3; i++) {
-        const len = (18 + i * 8) * q.lick, y0 = 30 + i * 9;
-        fire.poly([[-20, y0 - 6], [-20 - len, y0 - 2 + i * 3], [-20, y0 + 6]], fireR, 1);
-        fire.poly([[-20, y0 - 3], [-20 - len * 0.7, y0 + i * 2], [-20, y0 + 3]], fireO, 1);
-        fire.poly([[-20, y0 - 1], [-20 - len * 0.4, y0 + i], [-20, y0 + 2]], fireY, 1);
+        const len = (18 + i * 8) * q.lick, y0 = 30 + i * 9, x0 = MX - 18;
+        A.fpoly(fire, [[x0, y0 - 6], [x0 - len, y0 - 2 + i * 3], [x0, y0 + 6]], M.fireR, 1);
+        A.fpoly(fire, [[x0, y0 - 3], [x0 - len * 0.7, y0 + i * 2], [x0, y0 + 3]], M.fireO, 1);
+        A.fpoly(fire, [[x0, y0 - 1], [x0 - len * 0.4, y0 + i], [x0, y0 + 2]], M.fireY, 1);
+        fire.dot(x0 - len - 3, y0 - 4 + i * 3, M.ember, 0);
       }
     }
     body.over(fire);
-    // ember eyes in the dome (narrowed, wide, or softened)
-    for (const s of [-1, 1]) {
-      const h = 2 + 3 * q.eyeW, dr = q.droop * (s < 0 ? -2 : 2);
-      body.poly([[s * 8, -30 - h * 0.6 + dr * 0.3], [s * 22, -34 - h * 0.4 - dr], [s * 20, -28 + h * 0.3], [s * 9, -26 + h * 0.3]], soot, 0);
-      body.poly([[s * 10, -30 - h * 0.3 + dr * 0.3], [s * 20, -32 - h * 0.2 - dr], [s * 19, -29 + h * 0.2], [s * 10, -28 + h * 0.2]], eye, 2);
+    // ember eyes in the dome, turned toward the party (the far eye shorter): narrowed, wide, softened
+    for (const [s, ex, sc] of [[-1, -10, 1], [1, 9, 0.8]]) {
+      const h = 2 + 3 * q.eyeW, dr = q.droop * (s < 0 ? -2 : 2), X = (v) => ex + s * v * sc;
+      A.fpoly(body, [[X(0), -30 - h * 0.6 + dr * 0.3], [X(13), -34 - h * 0.4 - dr], [X(11), -28 + h * 0.3], [X(1), -26 + h * 0.3]], M.soot, 0);
+      A.fpoly(body, [[X(2), -30 - h * 0.3 + dr * 0.3], [X(11), -32 - h * 0.2 - dr], [X(10), -29 + h * 0.2], [X(2), -28 + h * 0.2]], M.eye, (x, y) => (y < -30 ? 2.5 : 1.5) / 3);
     }
     body.restore();
-    // smoke from the chimney (more as it stokes up; a thin line when calm)
+    // smoke from the chimney (more as it stokes up; a thin line when calm), lit on its upper left
     T(fx);
     const nS = 3 + Math.round(q.smoke);
     for (let i = 0; i < nS; i++) {
       const k = ((q.sph / 6) + i / nS) % 1, big = 1 + 0.4 * q.smoke;
-      const sy0 = -94 - k * (34 + 8 * q.smoke);
-      fx.ell(-2 + Math.sin(k * 6 + i) * 4 + k * 10, sy0, (5 + k * 6) * big, (4 + k * 4) * big, smokeM, (x, y) => K.clamp(0.8 - k * 0.5 - (y - sy0) / 20, 0, 0.99));
+      const sy0 = -94 - k * (34 + 8 * q.smoke), cx = -2 + Math.sin(k * 6 + i) * 4 + k * 10, rx = (5 + k * 6) * big, ry = (4 + k * 4) * big;
+      fx.ell(cx, sy0, rx, ry, M.smoke, (x, y) => { const f = -((x - cx) / rx * 0.6 + (y - sy0) / ry * 0.8); return ((f > 0.35 ? 3 : f > -0.2 ? 2 : 1) - (k > 0.6 ? 1 : 0) + 0.5) / 4; });
     }
     fx.restore();
     T(glowL);
-    H.glow(glowL, -6 * q.lick, 58, 44 + 10 * q.fire, 10 + 4 * q.fire, '#f09040', Math.min(0.5, 0.2 + 0.14 * q.fire), 3);
-    H.glow(glowL, 0, -30, 26, 8, '#ffb050', 0.08 + 0.08 * q.eyeG, 2);
-    if (q.brick > 0) H.glow(glowL, 0, -10, 58, 62, '#f08a40', 0.1 * q.brick, 3);
+    H.glow(glowL, MX - 6 * q.lick, 58, 44 + 10 * q.fire, 10 + 4 * q.fire, '#f09040', Math.min(0.42, 0.16 + 0.12 * q.fire), 2);
+    H.glow(glowL, -2, -30, 24, 8, '#ffb050', 0.08 + 0.08 * q.eyeG, 2);
+    if (q.brick > 0) H.glow(glowL, 0, -10, 58, 62, '#f08a40', 0.1 * q.brick, 2);
     glowL.restore();
     return glowL.over(body).over(fx);
   }
@@ -59478,7 +60372,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
   };
   A.family('warden', {
-    spec: { w: 220, h: 262, ox: 110, oy: 150, dy: 12, ms: 140 },
+    spec: { w: 220, h: 278, ox: 110, oy: 166, dy: 12, ms: 140 },
     base: wBase, idle: wIdle, poseTable: wTable, rig: wardenRig, recoil: { push: 2 },
   });
   // Strike: breathes in, belches a ball of fire at one of you (contact 620), rocks back — ~1,200
@@ -67497,6 +68391,32 @@ var RB = (globalThis.RB = globalThis.RB || {});
     c.globalAlpha = 1;
   }
 
+  // The restyle's particles: a small cluster with a darker edge on its lower right (form under the
+  // key light, like the sprites' outlines) rather than a flat dot; colours from the creature's own
+  // hue-shifted ramp (A.hramp, cached by colour).
+  const ramps = new Map();
+  function rampOf(col) {
+    let r = ramps.get(col);
+    if (!r) { r = A.hramp(col, { n: 6 }); ramps.set(col, r); if (ramps.size > 32) ramps.delete(ramps.keys().next().value); }
+    return r;
+  }
+  function chip(c, x, y, w, h, u, light, dark, a) {
+    if (a <= 0.01) return;
+    R(c, x, y, w, h, dark, a);
+    R(c, x, y, Math.max(u, w - u), Math.max(u, h - u), light, a);
+  }
+  // a ring on the echo's tilted plane (its sprite's rings lie on it): points along a rotated ellipse
+  function ering(c, cx, cy, rx, ry, tilt, u, col, a) {
+    if (a <= 0.01) return;
+    c.globalAlpha = Math.min(1, a); c.fillStyle = col;
+    const n = Math.max(24, Math.round((rx + ry) * 3.2 / u)), ct = Math.cos(tilt), st = Math.sin(tilt);
+    for (let i = 0; i < n; i++) {
+      const th = (i / n) * Math.PI * 2, X = Math.cos(th) * rx, Y = Math.sin(th) * ry;
+      c.fillRect(Math.round(cx + X * ct - Y * st), Math.round(cy + X * st + Y * ct), u, u);
+    }
+    c.globalAlpha = 1;
+  }
+
   // ---- deliveries ----------------------------------------------------------------------------
   if (RB.battleSeq && RB.battleSeq.addDelivery) for (const [art, kind, fn] of A.queue) RB.battleSeq.addDelivery(art, kind, fn);
 
@@ -67607,7 +68527,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const s = seg(k, i * 0.07, i * 0.07 + 0.55);
       if (s <= 0 || s >= 1) continue;
       const x = o.x + (12 + i * 5) * u + (hs(i, 9) - 0.5) * 10 * u, y = o.y - (4 - i * 2) * u + easeIn(s) * 14 * u;
-      R(c, x, y, u, u, V.cols[i % 2], 0.8 * (1 - s));
+      chip(c, x, y, 2 * u, (i % 3 ? 2 : 3) * u, u, V.cols[i % 2], rampOf(colOf(e.p.foe, '#c8c0e0'))[1], 0.85 * (1 - s));
     }
   };
   // contact: a small burst of wing scales where the moth meets its target (or the seal before it)
@@ -67619,7 +68539,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     if (still) { disc(c, x, y, 6 * u, 4 * u, V.cols[0], 0.6 * (1 - seg(k, 0.5, 1))); return; }
     for (let i = 0; i < 10; i++) {
       const ang = -Math.PI * 0.15 - (i / 9) * Math.PI * 0.9 + (hs(i, 5) - 0.5) * 0.4, r = ease(k) * (8 + hs(i, 6) * 14) * u;
-      R(c, x + Math.cos(ang) * r, y + Math.sin(ang) * r * 0.8 + easeIn(k) * 10 * u, u * (i % 3 ? 1 : 2), u, V.cols[i % 3], 1 - k);
+      chip(c, x + Math.cos(ang) * r, y + Math.sin(ang) * r * 0.8 + easeIn(k) * 10 * u, u * (i % 3 ? 2 : 3), 2 * u, u, V.cols[i % 3 === 2 ? 1 : 0], rampOf(colOf(e.p.foe, '#c8c0e0'))[1], 1 - k);
     }
     disc(c, x, y, (3 + 5 * ease(k)) * u, (2 + 3 * ease(k)) * u, V.cols[1], 0.35 * (1 - k));
   };
@@ -67632,7 +68552,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (s <= 0 || s >= 1) continue;
       const y0 = f.y - 10 * u + (hs(i, 2) - 0.5) * 50 * u, y1 = o.y + (hs(i, 3) - 0.5) * 60 * u;
       const x = f.x + (o.x - 50 * u - f.x) * ease(s), y = y0 + (y1 - y0) * s + Math.sin(t / 90 + i) * 2 * u;
-      R(c, x, y, i % 3 ? u : 2 * u, u, i % 2 ? '#8a8480' : '#c8c0b8', 0.85 * (1 - s));
+      chip(c, x, y, (i % 3 ? 2 : 3) * u, 2 * u, u, i % 2 ? '#a8a098' : '#d8d0c8', '#4a4248', 0.85 * (1 - s));
     }
   };
   // cold dust fanned from the wings to one target
@@ -67644,7 +68564,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (s <= 0 || s >= 1) continue;
       const sp = (hs(i, 2) - 0.5) * 30 * u * (1 - s);
       const x = a.x + (b.x - a.x) * ease(s), y = a.y + (b.y - a.y) * ease(s) + sp - bell(s) * 14 * u;
-      R(c, x, y, u * (i % 4 ? 1 : 2), u, i % 3 ? '#e4f2ff' : '#ffffff', 0.9 * (1 - s * s));
+      chip(c, x, y, u * (i % 4 ? 2 : 3), 2 * u, u, i % 3 ? '#e4f2ff' : '#ffffff', '#5a8ac8', 0.9 * (1 - s * s));
     }
   };
 
@@ -67658,7 +68578,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const s = seg(k, i * 0.06, i * 0.06 + 0.5);
       if (s <= 0 || s >= 1) continue;
       const x = o.x + (14 + i * 4) * u + Math.sin(i * 2.1) * 4 * u, y = o.y - (6 - i) * u + Math.cos(i * 1.7) * 3 * u;
-      R(c, x - u, y - u, 2 * u, 2 * u, i % 3 ? col : '#ffffff', 0.85 * (1 - s));
+      const rp = rampOf(col);
+      R(c, x - u, y - u, 2 * u, 2 * u, i % 3 ? rp[3] : rp[4], 0.85 * (1 - s));
+      R(c, x - u, y - u, u, u, rp[5], 0.85 * (1 - s));
     }
   };
   // an echo's volley: its shards fly out on slightly different arcs and arrive together at contact
@@ -67674,21 +68596,24 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const mx = (a.x + bx) / 2 - bend * 0.6, my = (a.y + by) / 2 - 20 * u + bend;
       const x = (1 - s) * (1 - s) * a.x + 2 * s * (1 - s) * mx + s * s * bx, y = (1 - s) * (1 - s) * a.y + 2 * s * (1 - s) * my + s * s * by;
       const al = k < 0.85 ? 1 : 1 - seg(k, 0.85, 1);
-      R(c, x - 2 * u, y - u, 4 * u, 2 * u, '#1c2a34', al * 0.8);
-      R(c, x - 2 * u + u, y - u, 2 * u, u, col, al);
+      const rp = rampOf(col);
+      R(c, x - 3 * u, y - u, 6 * u, 3 * u, '#101a28', al * 0.9);
+      R(c, x - 2 * u, y - u, 4 * u, 2 * u, rp[3], al);
+      R(c, x - 2 * u, y - u, 3 * u, u, rp[5], al);
     }
   };
   // rings travelling out from an echo (its Heat: warm and quick; its Plea: soft)
   fx.echoRings = function (c, e, k, Ah, t, still) {
     const u = Ah.u, o = Ah.pt('foe', 'core'), col = e.p.warm ? '#f0a060' : colOf(e.p.foe, '#a8c8d8');
-    if (still) { c.globalAlpha = 0.5 * (1 - seg(k, 0.5, 1)); c.fillStyle = col; K().ring(c, o.x, o.y, Math.round(Ah.foeR * 1.1), u); c.globalAlpha = 1; return; }
+    const rp = rampOf(col), cy = o.y + 14 * u, TL = -0.24, RYK = 0.58;
+    if (still) { const r = Math.round(Ah.foeR * 1.1); ering(c, o.x, cy, r, r * RYK, TL, u, rp[4], 0.5 * (1 - seg(k, 0.5, 1))); return; }
     for (let i = 0; i < 3; i++) {
       const s = seg(k, i * 0.18, 0.6 + i * 0.13);
       if (s <= 0 || s >= 1) continue;
-      c.globalAlpha = 0.7 * (1 - s); c.fillStyle = col;
-      K().ring(c, o.x, o.y, Math.round(Ah.foeR * (0.8 + 1.3 * ease(s))), u);
+      const r = Math.round(Ah.foeR * (0.8 + 1.3 * ease(s)));
+      ering(c, o.x, cy, r - u, (r - u) * RYK, TL, u, rp[1], 0.6 * (1 - s));
+      ering(c, o.x, cy, r, r * RYK, TL, u, rp[5], 0.75 * (1 - s));
     }
-    c.globalAlpha = 1;
   };
 
   // where a blow lands: the target's chest, or the seal raised in front of it
@@ -67734,9 +68659,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const sh = 1 - ease(seg(k, 0, 0.3)), fade = 1 - seg(k, 0.4, 1);
     for (const sgn of [-1, 1]) for (let i = 0; i < 5; i++) {
       const a = sgn * (0.5 + sh * 0.9) + (i - 2) * 0.12;
-      R(c, b.x + 10 * u - Math.cos(a) * 12 * u, b.y + Math.sin(a) * 10 * u, 2 * u, 2 * u, '#f0e0c8', fade);
+      chip(c, b.x + 10 * u - Math.cos(a) * 12 * u, b.y + Math.sin(a) * 10 * u, 2 * u, 2 * u, u, '#f6e8d4', '#8a4a3a', fade);
     }
-    for (let i = 0; i < 6; i++) { const r = ease(seg(k, 0.25, 1)) * (8 + hs(i, 3) * 10) * u, a = -Math.PI * 0.2 - i * 0.5; R(c, b.x + Math.cos(a) * r, b.y + Math.sin(a) * r + easeIn(seg(k, 0.25, 1)) * 8 * u, u, u, '#d8c0a0', 1 - seg(k, 0.3, 1)); }
+    for (let i = 0; i < 6; i++) { const r = ease(seg(k, 0.25, 1)) * (8 + hs(i, 3) * 10) * u, a = -Math.PI * 0.2 - i * 0.5; chip(c, b.x + Math.cos(a) * r, b.y + Math.sin(a) * r + easeIn(seg(k, 0.25, 1)) * 8 * u, 2 * u, 2 * u, u, rampOf(colOf(e.p.foe, '#c86a4a'))[4], rampOf(colOf(e.p.foe, '#c86a4a'))[1], 1 - seg(k, 0.3, 1)); }
   };
   // water (or the Ledger Heap's ink-wash) rolling across the party from the creature's side
   fx.tideWash = function (c, e, k, Ah, t, still) {
@@ -67759,7 +68684,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const u = Ah.u, b = landAt(Ah, e), col = colOf(e.p.foe, '#9a9a7a');
     if (still) { disc(c, b.x, b.y, 10 * u, 5 * u, '#b8b0a0', 0.6 * (1 - seg(k, 0.5, 1))); return; }
     for (let i = 0; i < 5; i++) disc(c, b.x + (i - 2) * 7 * u, b.y + 4 * u - ease(k) * (6 + i % 3 * 4) * u, (4 + 6 * ease(k)) * u, (3 + 3 * ease(k)) * u, '#c8c0b0', 0.45 * (1 - k));
-    for (let i = 0; i < 8; i++) { const a = -Math.PI * 0.15 - i * 0.36, r = ease(k) * (10 + hs(i, 5) * 14) * u; R(c, b.x + Math.cos(a) * r, b.y + Math.sin(a) * r * 0.7 + easeIn(k) * 14 * u, 2 * u, 2 * u, i % 2 ? col : '#5a564a', 1 - k); }
+    for (let i = 0; i < 8; i++) { const a = -Math.PI * 0.15 - i * 0.36, r = ease(k) * (10 + hs(i, 5) * 14) * u; chip(c, b.x + Math.cos(a) * r, b.y + Math.sin(a) * r * 0.7 + easeIn(k) * 14 * u, (i % 2 ? 3 : 2) * u, 2 * u, u, rampOf(col)[i % 2 ? 4 : 3], rampOf(col)[0], 1 - k); }
   };
   // ice: shards of frost flying from the creature to one target
   fx.iceShard = function (c, e, k, Ah, t, still) {
@@ -67784,7 +68709,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const x0 = b.x - 14 * u, y0 = b.y - 12 * u + s * 8 * u, len = 28 * u;
       for (let i = 0; i <= 10 * kk; i++) R(c, x0 + i * len / 10, y0 + i * len / 16, 2 * u, u, i % 4 ? '#fffaf0' : '#3a3450', fade);
     }
-    for (let i = 0; i < 5; i++) { const s = seg(k, 0.2, 1); R(c, b.x + (hs(i, 1) - 0.5) * 24 * u, b.y + (hs(i, 2) - 0.5) * 10 * u + easeIn(s) * 16 * u, 3 * u, 2 * u, '#f4ecd8', 1 - s); }
+    for (let i = 0; i < 5; i++) { const s = seg(k, 0.2, 1); chip(c, b.x + (hs(i, 1) - 0.5) * 24 * u, b.y + (hs(i, 2) - 0.5) * 10 * u + easeIn(s) * 16 * u, 3 * u, 3 * u, u, '#fbf6ea', '#7a6a72', 1 - s); }
   };
   // the crane's gust carries scraps of paper over the party
   fx.paperFlurry = function (c, e, k, Ah, t, still) {
@@ -67795,7 +68720,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (s <= 0 || s >= 1) continue;
       const x = f.x + (o.x - 60 * u - f.x) * ease(s), y = f.y - 20 * u + (o.y + (hs(i, 3) - 0.5) * 50 * u - f.y + 20 * u) * s + Math.sin(t / 80 + i) * 3 * u;
       const tw = Math.sin(t / 60 + i * 2) > 0;
-      R(c, x, y, (tw ? 3 : 1) * u, 2 * u, i % 3 ? '#f2eee2' : '#c8c0a8', 0.9 * (1 - s * 0.6));
+      chip(c, x, y, (tw ? 4 : 2) * u, (tw ? 3 : 2) * u, u, i % 3 ? '#fbf6ea' : '#d8d0b8', '#7a6a72', 0.9 * (1 - s * 0.6));
     }
   };
   // a clerk's seal: a vermilion square stamped on its target (or on the seal before it, or on a knot)
@@ -67813,7 +68738,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
 
   // the Kiln Warden's mouth (its firebox, low on the dome, on the party's side)
-  function mouthOf(Ah) { const o = Ah.pt('foe', 'core'); return { x: o.x - 14 * Ah.u, y: o.y + Ah.foeR * 0.35 }; }
+  function mouthOf(Ah) { const o = Ah.pt('foe', 'core'); return { x: o.x - 20 * Ah.u, y: o.y + Ah.foeR * 0.35 }; }
   // a ball of fire from its mouth to one of you (or the seal before you), trailing sparks
   fx.kilnBolt = function (c, e, k, Ah, t, still) {
     const u = Ah.u, a = mouthOf(Ah), b = landAt(Ah, e);
@@ -67896,10 +68821,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
   for (const [id, art, d, note] of AUD) A.auditEnemy(id, art, d, note);
 
   // ---- prewarm --------------------------------------------------------------------------------
-  // The acts a creature will need (its moves' frame sets, then the reactions), built in idle slices
-  // after its first frame appears in a battle. Bounded: at most PREWARM_CAP frames per creature (a
-  // share of 96 when several different creatures meet), and the enemy-art cache itself holds a fixed
-  // number of frames (LRU, 140).
+  // The rest of a creature's idle loop, then the acts it will need (its moves' frame sets, then the
+  // reactions), built in idle slices after its first frame appears in a battle. Bounded: at most
+  // PREWARM_CAP posed frames per creature (a share of 96 when several different creatures meet), and
+  // the enemy-art cache itself is bounded (LRU: 140 frames and 30 MiB of pixels).
   const PREWARM_CAP = 44;
   const pending = [], seen = new Map();
   let tick = null, cv1 = null;
@@ -67927,7 +68852,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
     try { distinct = Math.max(1, new Set((RB.combat.members() || []).map((mid) => { const e = RB.content.enemies[mid]; return e ? e.art + JSON.stringify(e.artOpts || {}) : mid; })).size); } catch (e) { /* one */ }
     const cap = Math.min(PREWARM_CAP, Math.floor(96 / distinct));
     const out = [];
-    for (const key of keys) for (let i = 0; i < spec.poses[key] && out.length < cap; i++) out.push([key, i, spec.poses[key]]);
+    // the rest of its idle loop first (the first drawing is already built), then its moves
+    const seq = spec.seq ? [...new Set(spec.seq)] : [...Array(spec.frames || 1).keys()];
+    for (const f of seq.slice(1)) out.push(['idle', f, 0]);
+    let posed = 0;
+    for (const key of keys) for (let i = 0; i < spec.poses[key] && posed < cap; i++, posed++) out.push([key, i, spec.poses[key]]);
     return out;
   }
   function pump(deadline) {
@@ -67941,6 +68870,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       try {
         if (!cv1) cv1 = RB.sprites && RB.sprites.makeCanvas ? RB.sprites.makeCanvas(1, 1) : null;
         if (!cv1) { pending.length = 0; break; }
+        if (key === 'idle') { EA.frame(id, i, o); continue; }
         const [act, fam] = key.split('.');
         EA.drawPosed(cv1.getContext('2d'), id, 0, o, -9999, -9999, 1, false, { act, family: fam || null, k: (i + 0.5) / n, dir: { x: -0.8, y: 0.6 } });
       } catch (e) { pending.length = 0; break; }
