@@ -18,91 +18,139 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const mixh = (a, b, k) => K.hex(K.mix(a, b, k));
   const cl = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
 
+  // The restyle: a beehive kiln seen three-quarter from a little above — its brick courses curve
+  // round it (each course a shallow arc), its firebox and eyes turned toward the party (left of
+  // centre, the mouth's far jamb foreshortened); bricks in a hue-shifted clay ramp, each its own
+  // tint, lit along its top edge, the mortar dark; the key light up left, the far side in shadow
+  // with a cool rim; the fire lighting the bricks round its mouth from inside (a warm ramp that
+  // fades with distance); a glossy glazed band with a hard specular streak and a reflected band;
+  // soot streaks under a turned chimney; flames in hard bands with embers; smoke in lit clusters.
+  const wardenMatCache = new Map();
+  function wardenMats(col, fb, eyeG) {
+    const fk = Math.round(cl(fb) * 4) / 4, ek = Math.round(cl(eyeG) * 4) / 4, key = col + '|' + fk + '|' + ek;
+    if (wardenMatCache.has(key)) return wardenMatCache.get(key);
+    const hot = (c) => mixh(c, '#fff4c8', 0.45 * fk);
+    const M = {
+      clay: A.hmat(col, { n: 6, at: 3, lo: 0.08, hi: 0.74, sat: 1.3, hd: 26, hl: 20, rim: mixh(col, '#a8c8ff', 0.55) }),
+      lit: A.hmat(mixh(col, '#ff9a40', 0.5), { n: 4, at: 2, lo: 0.3, hi: 0.86, sat: 1.4, hd: 20, hl: 20 }),
+      glaze: A.hmat('#8fb8b0', { n: 6, at: 3, lo: 0.12, hi: 0.95, sat: 1.3, hd: 34, hl: 26 }),
+      soot: A.hmat('#2a1a16', { n: 3, at: 1, lo: 0.04, hi: 0.24 }),
+      fireR: K.mat(null, { cols: [hot('#a8301e'), hot('#d8502a')], at: 1, line: false }),
+      fireO: K.mat(null, { cols: [hot('#e0782a'), hot('#f0962e')], at: 1, line: false }),
+      fireY: K.mat(null, { cols: [hot('#ffc860'), hot('#fff0b0')], at: 1, line: false }),
+      eye: K.mat(null, { cols: [mixh('#f0a040', '#ffffff', 0.2 * ek), mixh('#ffd070', '#ffffff', 0.4 * ek), mixh('#fff4c8', '#ffffff', 0.5 * ek)], at: 1, line: false }),
+      smoke: A.hmat('#8a8490', { n: 4, at: 2, lo: 0.3, hi: 0.8, alpha: 160, line: false }),
+      mortarHot: K.solid(mixh('#f08a40', '#ffd070', 0.5), { line: false }),
+      ember: K.solid('#ffd070', { line: false }),
+      shine: K.solid('#f2fffc', { line: false }),
+    };
+    wardenMatCache.set(key, M);
+    if (wardenMatCache.size > 24) wardenMatCache.delete(wardenMatCache.keys().next().value);
+    return M;
+  }
   function wardenRig(L, q, o, H) {
-    const clay = K.mat(o.col || '#8a5a40', { n: 5, at: 2, step: 0.085 });
-    const glazeM = K.mat('#8fb8b0', { n: 5, at: 2, step: 0.1 });
-    const soot = K.mat('#2a1a16', { n: 3, at: 1, step: 0.05 });
-    const hot = (c) => mixh(c, '#fff4c8', 0.45 * q.fb);
-    const fireR = K.mat(hot('#d8502a'), { n: 3, at: 1, step: 0.1, line: false });
-    const fireO = K.mat(hot('#f0902e'), { n: 3, at: 1, step: 0.1, line: false });
-    const fireY = K.mat(hot('#ffd070'), { n: 3, at: 1, step: 0.1, line: false });
-    const eye = K.mat(mixh('#ffd070', '#ffffff', 0.4 * q.eyeG), { n: 3, at: 1, step: 0.1, line: false });
-    const smokeM = K.mat('#8a8490', { n: 3, at: 1, step: 0.08, alpha: 150, line: false });
-    const mortarHot = K.solid(mixh('#f08a40', '#ffd070', 0.5), { line: false });
+    const M = wardenMats(o.col || '#8a5a40', q.fb, q.eyeG), clay = M.clay;
     const glowL = L.like(), body = L.like(), fx = L.like(), fire = L.like();
     // the whole kiln rocks on its base and stretches as it breathes
     const sx = 1 + q.sq * 0.6, sy = 1 - q.sq;
     const T = (Lr) => Lr.save().translate(0, 70).rotate(-q.lean).scale(sx, sy).translate(0, -70);
     const hw = (y) => (y >= -18 ? 54 + Math.max(0, y - 40) * 0.2 : 54 * Math.sqrt(Math.max(0, 1 - ((y + 18) / 54) ** 2)));
+    // the turn: the mouth and eyes sit left of centre; courses curve (lower at the front)
+    const MX = -8, curve = (x, y) => y - (1 - Math.min(1, (x / (hw(y) || 1)) ** 2)) * 3;
+    const mouthIn = (x, y) => { const u = x - MX, w = 22 * (u > 0 ? 0.84 : 1); return y >= 14 && y < 60 && Math.abs(u) <= w * (y < 26 ? Math.sqrt(Math.max(0, 1 - ((26 - y) / 12) ** 2)) : 1); };
+    const archIn = (x, y) => { const u = x - MX, w = 27 * (u > 0 ? 0.84 : 1); return y >= 10 && y < 62 && Math.abs(u) <= w * (y < 26 ? Math.sqrt(Math.max(0, 1 - ((26 - y) / 16) ** 2)) : 1); };
     T(body);
-    A.stone(body, [[-9, -88], [9, -88], [10, -64], [-10, -64]], clay, { bevel: 3, face: 1 });
-    body.rect(-11, -90, 22, 4, soot, 1);
+    // the chimney: a turned flue, lit on its left, soot at its lip
+    body.fill(-10, -90, 10, -62, (x, y) => Math.abs(x + 1) <= 9 + (y + 90) * 0.04, clay, (x) => ((x < -5 ? 4 : x < 2 ? 3 : 1) + 0.5) / 6);
+    body.ell(-1, -89, 10, 2.6, M.soot, 1);
+    body.ell(-1, -89.5, 7, 1.4, M.soot, 0);
+    // the dome of bricks
     body.fill(-60, -72, 60, 70, (x, y) => y >= -72 && y < 70 && Math.abs(x) <= hw(y), clay, (x, y) => {
-      const row = Math.floor((y + 72) / 8), jx = Math.floor((row % 2) * 7 + x + 60) % 14;
-      const my = Math.floor(y + 72) % 8;
+      const yc = curve(x, y);
+      const row = Math.floor((yc + 72) / 8), jx = Math.floor((row % 2) * 7 + x + 60) % 14, my = ((Math.floor(yc + 72) % 8) + 8) % 8;
       const nx = x / (hw(y) || 1);
-      const base = 0.46 - nx * 0.28 - (y > 40 ? 0.08 : 0) + (y < -30 ? 0.12 * (1 + nx) : 0);
-      const tint = ((K.hh(Math.floor((x + 60 + (row % 2) * 7) / 14), row, 5) % 3) - 1) * 0.07;
-      if (my === 7 || jx === 0) return K.clamp(base - 0.28, 0, 0.99);
-      if (my === 0 || jx === 1) return K.clamp(base + 0.12 + tint, 0, 0.99);
-      return K.clamp(base + tint, 0, 0.99);
+      // the key light up left; the shoulder of the dome lit; the base and the far side in shadow
+      let k = nx < -0.45 ? 4 : nx < 0.15 ? 3 : nx < 0.62 ? 2 : 1;
+      if (y < -50 && nx < 0) k += 1;
+      if (y > 46) k -= 1;
+      const tint = (K.hh(Math.floor((x + 60 + (row % 2) * 7) / 14), row, 5) % 3) - 1;
+      if (my === 7 || jx === 0) k = Math.max(0, k - 2);
+      else if (my === 0) k = k + 1;
+      else k += tint > 0 && k < 3 ? 1 : tint < 0 && k > 1 && ((row + jx) & 1) ? -1 : 0;
+      // soot running down under the chimney
+      if (y < -44 && Math.abs(x + 1) < 9 - (y + 72) * 0.25 && (Math.floor((x + 61) / 3) % 2) && my > 0 && my < 7) k = Math.max(0, k - 1);
+      return (Math.max(0, Math.min(5, k)) + 0.5) / 6;
     });
-    // the glazed band; its shimmer travels along it when it turns your words back
-    body.fill(-58, -4, 58, 6, (x, y) => y >= -4 && y < 5 && Math.abs(x) <= hw(y) + 1, glazeM, (x, y) => {
-      const sh = q.glaze > 0 ? Math.max(0, 1 - Math.abs(x - (q.glaze * 140 - 70)) / 14) * 0.5 : 0;
-      return K.clamp(0.62 - x / 140 - (y + 4) / 18 + sh, 0, 0.99);
+    // chipped bricks (clusters)
+    for (const [x, y] of [[-36, -40], [24, -52], [38, 20], [-44, 36], [14, -14]]) { body.rect(x, y, 3, 2, clay, 0); body.dot(x, y - 1, clay, 5); }
+    // the fire lighting the bricks round its mouth from inside
+    body.scan(MX - 44, 0, MX + 44, 70, (x, y) => Math.hypot((x - MX) * 0.9, (y - 36) * 1.2) < 38 && !archIn(x, y), (i, x, y) => {
+      if (body.mt[i] !== clay.id) return;
+      const d = Math.hypot((x - MX) * 0.9, (y - 36) * 1.2) / 38, j = A.stepOf(body, i);
+      if (d > 0.62 + 0.25 * q.fire * 0.5 || j < 1) return;
+      body.px[i] = M.lit.c[Math.max(0, Math.min(3, j - 1 + (d < 0.4 ? 1 : 0)))]; body.mt[i] = M.lit.id;
     });
-    body.rect(-40, -3, 14, 1, glazeM, 4);
-    const mouthIn = (x, y) => y >= 14 && y < 60 && Math.abs(x) <= 24 * (y < 26 ? Math.sqrt(Math.max(0, 1 - ((26 - y) / 12) ** 2)) : 1);
-    const archIn = (x, y) => y >= 10 && y < 62 && Math.abs(x) <= 29 * (y < 26 ? Math.sqrt(Math.max(0, 1 - ((26 - y) / 16) ** 2)) : 1);
-    body.fill(-30, 8, 30, 62, archIn, clay, (x, y) => K.clamp(0.72 - (y - 10) / 90 - x / 120, 0, 0.99));
-    body.fill(-24, 14, 24, 60, mouthIn, soot, 0);
+    // the glazed band: glossy, its shimmer travels along it when it turns your words back
+    body.fill(-58, -8, 58, 8, (x, y) => { const yc = y + (1 - Math.min(1, (x / 56) ** 2)) * 3; return yc >= -4 && yc < 5 && Math.abs(x) <= hw(y) + 1; }, M.glaze, (x, y) => {
+      const yc = y + (1 - Math.min(1, (x / 56) ** 2)) * 3, nx = x / 56;
+      let k = yc < -2 ? 5 : yc < 1 ? (nx < 0.2 ? 4 : 3) : yc < 3 ? 2 : 1;
+      if (nx > 0.6) k = Math.max(1, k - 1);
+      if (q.glaze > 0 && Math.abs(x - (q.glaze * 140 - 70)) < 9) k = 5;
+      return (k + 0.5) / 6;
+    });
+    body.line(-44, -4, -22, -4, M.shine, 0);
+    // the firebox: an arch of fire-lit bricks, the soot-black mouth
+    body.fill(-40, 8, 30, 62, archIn, M.lit, (x, y) => ((y < 18 ? 3 : x - MX < 0 ? 2 : 1) + 0.5) / 4);
+    body.fill(-40, 14, 30, 60, mouthIn, M.soot, 0);
+    A.rim(body, [clay.id], { w: 2 });
     A.outline(body);
     // the mortar glowing as it gathers (on the lit seams of the dome)
     if (q.brick > 0) body.onto((b) => {
-      for (let y = -64; y < 60; y += 8) { const w = hw(y) * 0.86; for (let x = -w; x < w; x += 3) if (((x + 60) | 0) % 6 < 2 * q.brick + 0.5 && !(y > 8 && Math.abs(x) < 30)) b.dot(x, y + 7, mortarHot, 0); }
+      for (let y = -64; y < 60; y += 8) { const w = hw(y) * 0.86; for (let x = -w; x < w; x += 3) if (((x + 60) | 0) % 6 < 2 * q.brick + 0.5 && !(y > 8 && Math.abs(x - MX) < 30)) b.dot(x, curve(x, y) + 7, M.mortarHot, 0); }
     });
     // flames rolling in the firebox (taller with fire; licking out toward the party with lick)
     const tongues = [[-14, 5], [-4, 9], [7, 6], [16, 4]];
     for (let i = 0; i < tongues.length; i++) {
-      const [x, hgt] = tongues[i];
+      const [x0, hgt] = tongues[i], x = x0 * 0.92 + MX;
       const h = (hgt + ((Math.round(q.sph * 3) + i * 2) % 3) * 4) * q.fire;
       const top = 60 - h * 3, sway = ((Math.round(q.sph * 3) + i) % 3) - 1;
-      fire.poly([[x - 7, 60], [x + sway * 2, top], [x + 7, 60]], fireR, 1);
-      fire.poly([[x - 4, 60], [x + sway * 3, top + 8], [x + 4, 60]], fireO, 1);
-      fire.poly([[x - 2, 60], [x + sway * 3, top + 18], [x + 2, 60]], fireY, 1);
+      A.fpoly(fire, [[x - 7, 60], [x + sway * 2, top], [x + 7, 60]], M.fireR, (px) => (px < x + sway ? 1.5 : 0.5) / 2);
+      A.fpoly(fire, [[x - 4, 60], [x + sway * 3, top + 8], [x + 4, 60]], M.fireO, 1);
+      A.fpoly(fire, [[x - 2, 60], [x + sway * 3, top + 18], [x + 2, 60]], M.fireY, (px, py) => (py < top + 26 ? 1.5 : 0.5) / 2);
     }
+    for (let i = 0; i < 3; i++) { const ex = MX - 10 + ((i * 9 + Math.round(q.sph * 5)) % 22), ey = 50 - ((i * 7 + Math.round(q.sph * 4)) % 22) * q.fire; fire.dot(ex, ey, M.ember, 0); }
     fire.erase(-60, -100, 60, 100, (x, y) => !mouthIn(x, y));
     if (q.lick > 0) {
       // tongues of flame leaving the mouth toward the party (lower left once on screen)
       for (let i = 0; i < 3; i++) {
-        const len = (18 + i * 8) * q.lick, y0 = 30 + i * 9;
-        fire.poly([[-20, y0 - 6], [-20 - len, y0 - 2 + i * 3], [-20, y0 + 6]], fireR, 1);
-        fire.poly([[-20, y0 - 3], [-20 - len * 0.7, y0 + i * 2], [-20, y0 + 3]], fireO, 1);
-        fire.poly([[-20, y0 - 1], [-20 - len * 0.4, y0 + i], [-20, y0 + 2]], fireY, 1);
+        const len = (18 + i * 8) * q.lick, y0 = 30 + i * 9, x0 = MX - 18;
+        A.fpoly(fire, [[x0, y0 - 6], [x0 - len, y0 - 2 + i * 3], [x0, y0 + 6]], M.fireR, 1);
+        A.fpoly(fire, [[x0, y0 - 3], [x0 - len * 0.7, y0 + i * 2], [x0, y0 + 3]], M.fireO, 1);
+        A.fpoly(fire, [[x0, y0 - 1], [x0 - len * 0.4, y0 + i], [x0, y0 + 2]], M.fireY, 1);
+        fire.dot(x0 - len - 3, y0 - 4 + i * 3, M.ember, 0);
       }
     }
     body.over(fire);
-    // ember eyes in the dome (narrowed, wide, or softened)
-    for (const s of [-1, 1]) {
-      const h = 2 + 3 * q.eyeW, dr = q.droop * (s < 0 ? -2 : 2);
-      body.poly([[s * 8, -30 - h * 0.6 + dr * 0.3], [s * 22, -34 - h * 0.4 - dr], [s * 20, -28 + h * 0.3], [s * 9, -26 + h * 0.3]], soot, 0);
-      body.poly([[s * 10, -30 - h * 0.3 + dr * 0.3], [s * 20, -32 - h * 0.2 - dr], [s * 19, -29 + h * 0.2], [s * 10, -28 + h * 0.2]], eye, 2);
+    // ember eyes in the dome, turned toward the party (the far eye shorter): narrowed, wide, softened
+    for (const [s, ex, sc] of [[-1, -10, 1], [1, 9, 0.8]]) {
+      const h = 2 + 3 * q.eyeW, dr = q.droop * (s < 0 ? -2 : 2), X = (v) => ex + s * v * sc;
+      A.fpoly(body, [[X(0), -30 - h * 0.6 + dr * 0.3], [X(13), -34 - h * 0.4 - dr], [X(11), -28 + h * 0.3], [X(1), -26 + h * 0.3]], M.soot, 0);
+      A.fpoly(body, [[X(2), -30 - h * 0.3 + dr * 0.3], [X(11), -32 - h * 0.2 - dr], [X(10), -29 + h * 0.2], [X(2), -28 + h * 0.2]], M.eye, (x, y) => (y < -30 ? 2.5 : 1.5) / 3);
     }
     body.restore();
-    // smoke from the chimney (more as it stokes up; a thin line when calm)
+    // smoke from the chimney (more as it stokes up; a thin line when calm), lit on its upper left
     T(fx);
     const nS = 3 + Math.round(q.smoke);
     for (let i = 0; i < nS; i++) {
       const k = ((q.sph / 6) + i / nS) % 1, big = 1 + 0.4 * q.smoke;
-      const sy0 = -94 - k * (34 + 8 * q.smoke);
-      fx.ell(-2 + Math.sin(k * 6 + i) * 4 + k * 10, sy0, (5 + k * 6) * big, (4 + k * 4) * big, smokeM, (x, y) => K.clamp(0.8 - k * 0.5 - (y - sy0) / 20, 0, 0.99));
+      const sy0 = -94 - k * (34 + 8 * q.smoke), cx = -2 + Math.sin(k * 6 + i) * 4 + k * 10, rx = (5 + k * 6) * big, ry = (4 + k * 4) * big;
+      fx.ell(cx, sy0, rx, ry, M.smoke, (x, y) => { const f = -((x - cx) / rx * 0.6 + (y - sy0) / ry * 0.8); return ((f > 0.35 ? 3 : f > -0.2 ? 2 : 1) - (k > 0.6 ? 1 : 0) + 0.5) / 4; });
     }
     fx.restore();
     T(glowL);
-    H.glow(glowL, -6 * q.lick, 58, 44 + 10 * q.fire, 10 + 4 * q.fire, '#f09040', Math.min(0.5, 0.2 + 0.14 * q.fire), 3);
-    H.glow(glowL, 0, -30, 26, 8, '#ffb050', 0.08 + 0.08 * q.eyeG, 2);
-    if (q.brick > 0) H.glow(glowL, 0, -10, 58, 62, '#f08a40', 0.1 * q.brick, 3);
+    H.glow(glowL, MX - 6 * q.lick, 58, 44 + 10 * q.fire, 10 + 4 * q.fire, '#f09040', Math.min(0.42, 0.16 + 0.12 * q.fire), 2);
+    H.glow(glowL, -2, -30, 24, 8, '#ffb050', 0.08 + 0.08 * q.eyeG, 2);
+    if (q.brick > 0) H.glow(glowL, 0, -10, 58, 62, '#f08a40', 0.1 * q.brick, 2);
     glowL.restore();
     return glowL.over(body).over(fx);
   }
@@ -242,7 +290,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
   };
   A.family('warden', {
-    spec: { w: 220, h: 262, ox: 110, oy: 150, dy: 12, ms: 140 },
+    spec: { w: 220, h: 278, ox: 110, oy: 166, dy: 12, ms: 140 },
     base: wBase, idle: wIdle, poseTable: wTable, rig: wardenRig, recoil: { push: 2 },
   });
   // Strike: breathes in, belches a ball of fire at one of you (contact 620), rocks back — ~1,200
