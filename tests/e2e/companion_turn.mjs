@@ -92,7 +92,17 @@ async function cards(p) {
   await wait(p, 150);
 }
 const cardSel = async (p, re) => { const i = await p.evaluate((m) => { const c = [...document.querySelectorAll('.rcard[data-i]')].find((x) => !x.disabled && new RegExp(m, 'i').test(x.textContent.replace(/\s+/g, ' '))); return c ? c.getAttribute('data-i') : null; }, re); assert(i != null, 'no card matching ' + re); return '.rcard[data-i="' + i + '"]'; };
-const center = (p, sel) => p.evaluate((s) => { const e = document.querySelector(s); e.scrollIntoView({ block: 'center' }); const r = e.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }, sel);
+// where to press: measured once the element has stopped moving (the menus slide back in over 200 ms
+// when an exchange ends; a point measured mid-slide can miss the card once it has settled)
+const center = (p, sel) => p.evaluate(async (s) => {
+  const e = document.querySelector(s);
+  e.scrollIntoView({ block: 'center' });
+  const at = () => { const r = e.getBoundingClientRect(); return [r.left, r.top, r.width, r.height].map(Math.round).join(','); };
+  let last = at(), same = 0;
+  for (let k = 0; k < 120 && same < 3; k++) { await new Promise((r) => requestAnimationFrame(r)); const now = at(); same = now === last ? same + 1 : 0; last = now; }
+  const r = e.getBoundingClientRect();
+  return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+}, sel);
 // choose a response and do its step right (the mouse); then Continue: the companion's menu opens
 // each wait names its step when it times out
 const step = async (p, sel, what) => {
