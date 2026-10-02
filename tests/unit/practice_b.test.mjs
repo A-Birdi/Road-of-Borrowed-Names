@@ -277,7 +277,10 @@ export default async (t) => {
   }
 
   // ---- kept pages: the shared six, never a silent deletion ---------------------------------------------
-  {
+  // (1) suite B's own fallback, used when the writing desk (suite A) is absent
+  const DESK = RB.practiceDesk;
+  RB.practiceDesk = undefined;
+  try {
     const s = fresh();
     const page = (i) => ({ id: 'proof:T' + i, kind: 'proof', mode: 'proof', typeset: { task: 'P01', lv: 'E', lines: ['{右|みぎ}'] }, label: 'page ' + i, created: 1, updated: 1 });
     for (let i = 0; i < 6; i++) t.ok((await PB.keepPage(s, page(i))).ok, 'page ' + (i + 1) + ' of six kept');
@@ -293,6 +296,27 @@ export default async (t) => {
     const mem = RB.practice.mementos(s).filter((m) => m.source === 'proof');
     t.ok(mem.length === 6 && mem.every((m) => /typeset/.test(m.note)), 'Practice mementos list them, labelled typeset (not handwriting)');
     t.eq(RB.proof.pageFor(C.proof[0], Object.assign({ lv: 'E' }, C.proof[0].tiers.E), 'x', ['a']).kind, 'proof', 'page records: kind proof');
+  } finally { RB.practiceDesk = DESK; }
+  // (2) through the writing desk when it is present (the game as built): RB.practiceDesk.keepPage
+  // owns the six-page budget and its replace/cancel sheet; a test chooser stands in for the sheet
+  if (DESK && DESK.keepPage) {
+    const s = fresh();
+    const page = (i) => ({ id: 'proof:D' + i, kind: 'proof', mode: 'proof', typeset: { task: 'P01', lv: 'E', lines: ['{右|みぎ}'] }, label: 'page ' + i, created: 1, updated: 1 });
+    const sheet = DESK.chooser();
+    let asked = null, answer = null;
+    DESK.setChooser(async (st, pages) => { asked = pages.length; return answer; });
+    try {
+      for (let i = 0; i < 6; i++) t.ok((await PB.keepPage(s, page(i))).ok, 'desk: page ' + (i + 1) + ' of six kept');
+      const r7 = await PB.keepPage(s, page(6));
+      t.ok(!r7.ok && r7.why === 'cancelled' && asked === 6 && s.practice.deskPages.length === 6, 'desk: a seventh asks first; Cancel changes nothing');
+      answer = { replace: 'proof:D2' };
+      const r8 = await PB.keepPage(s, page(7));
+      t.ok(r8.ok && r8.replaced === 'proof:D2' && s.practice.deskPages.length === 6 && s.practice.deskPages.some((x) => x.id === 'proof:D7') && !s.practice.deskPages.some((x) => x.id === 'proof:D2'), 'desk: replacing is an explicit choice of which page');
+      const big = page(9); big.typeset.lines = ['あ'.repeat(200000)];
+      t.eq((await PB.keepPage(s, big)).why, 'too-large', 'desk: a page over 256 KiB is refused');
+      t.ok(s.practice.deskPages.every((x) => x.kind === 'proof' && x.bytes > 0 && x.saved === false), 'desk: kept pages record their size; with no save slot none claims to be saved');
+      t.eq(RB.practice.mementos(s).filter((m) => m.source === 'proof').length, 6, 'desk: Practice mementos list the six');
+    } finally { DESK.setChooser(sheet); }
   }
 
   // ---- records: namespaces, migration, bounds ----------------------------------------------------------------

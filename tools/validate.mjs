@@ -299,6 +299,8 @@ for (const id in C.activities) {
   if (a.type === 'signpost') for (const arm of a.arms) { tiered(arm.clue, 'activity ' + id, jen); if (!a.places.find((p) => p.id === arm.to)) E('activity ' + id + ': arm to unknown place'); }
   if (a.type === 'history') { for (const f of a.fragments) tiered(f, 'activity ' + id, jen); if (a.question) tiered(a.question, 'activity ' + id + ' question', checkStep); if (a.note && !C.notes[a.note]) E('activity ' + id + ': unknown note ' + a.note); }
 }
+// A Quiet Cast: every situation's four task variants are ordinary steps (docs/practice/fishing.md)
+if (RB.fishing) for (const id in RB.fishing.SITU) for (const k in RB.fishing.SITU[id].tasks) checkStep(RB.fishing.SITU[id].tasks[k], 'fishing ' + id + '[' + k + ']');
 // intent texts
 for (const k in C.intentText) for (const lv in C.intentText[k]) for (const t of C.intentText[k][lv]) jcheck(t.jp, 'intentText ' + k + ' ' + lv);
 
@@ -331,6 +333,7 @@ let regTexts = 0;
     practiceB: C.practiceB, // practice suite B: letters, proofreading, comparisons (docs/practice/suite_b.md)
     wordplay: { content: C.wordplay, BAND: RB.wordplay && RB.wordplay.BAND, LEVEL: RB.wordplay && RB.wordplay.LEVEL }, // companion shiritori (docs/practice/wordplay.md)
     practiceA: C.practiceA, // Practice suite A: lamps, writing desk, mementos (src/content/practice_a/)
+    fishing: RB.fishing && RB.fishing.content(), // A Quiet Cast (docs/practice/fishing.md)
   };
   for (const k in roots) walk(roots[k], k);
 }

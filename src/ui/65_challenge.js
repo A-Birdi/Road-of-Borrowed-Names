@@ -152,7 +152,7 @@ RB.challenge = (function () {
             composeHost: line,
             pace: PH,
             onChange: () => { if (step.copy && pad) pad.setGuide(Array.from(plain(step.answer))[pad.text().length] || null); if (PH) PH.draft(); },
-            onAssist: (why) => { if (why !== 'model' || !step.copy) active.helpUsed = true; if (PH) PH.assist(why); },
+            onAssist: (why) => { if (why !== 'model' || !step.copy) active.helpUsed = true; if (why === 'correction') res.recogRepairs = (res.recogRepairs || 0) + 1; if (PH) PH.assist(why); },
             modelFor: () => Array.from(plain(step.answer))[pad ? Math.min(pad.text().length, Array.from(plain(step.answer)).length - 1) : 0],
           });
         },
@@ -356,6 +356,9 @@ RB.challenge = (function () {
           if (pad && modeUsed === 'hand') pad.reset();
           return;
         }
+        // opts.wrongNote(text): real Japanese for another action this task doesn't support here (explained as such)
+        const note = opts.wrongNote ? opts.wrongNote(text, modeUsed) : null;
+        if (note && note.length) r.feedback = note;
         const firstBefore = res.firstTry;
         res.mistakes++;
         if (res.firstTry == null) res.firstTry = false;
@@ -363,18 +366,26 @@ RB.challenge = (function () {
         RB.audio && RB.audio.sfx('answer_wrong');
         const msgs = (r.feedback || []).map((f) => '<div class="fb-why">' + (f.jp && !/\{[^|}]+\|/.test(f.en || '') ? RB.ui.jhtml(f.jp) + ' ' : '') + enRuby(f.en) + '</div>').join('') || '<div class="fb-why">That isn\'t what this needs.</div>';
         fb('no', 'Not quite.', '<p>You gave <span class="jp big" lang="ja">' + ownText(plain(text)) + '</span>.</p>' + msgs + '<p class="muted small">Try again — take all the time you need.</p>');
-        if (opts.onMistake) opts.onMistake(r);
-        if (PH && modeUsed === 'hand') {
-          // a pace attempt keeps the draft, and a misread the player reports is a recognition
-          // repair (Practice addendum §4.2, §6.4): no mistake, no Japanese error, no cost
-          const mis = RB.ui.el('button', 'pbtn fb-misread', I('unsure') + '<span>That is not what I wrote</span>');
-          mis.onclick = () => {
-            res.mistakes--; res.firstTry = firstBefore; res.recogMisses++;
-            PH.outcome('misread');
-            fb('unsure', 'That does not count against you', '<p>Tap the character the pad misread in your answer, write it again, then submit.</p>');
+        // "That is not what I wrote" (pace attempts and opts.misread): the pad misread you, which is
+        // a recognition repair, never a mistake in Japanese (Practice addendum §4.2, §6.4). The
+        // mistake is withdrawn and the strokes stay so a character can be rewritten.
+        if ((PH || opts.misread) && modeUsed === 'hand') {
+          const w = wrap.querySelector('.fbwrap');
+          const mb = RB.ui.el('button', 'pbtn fb-misread chal-misread', I('unsure') + '<span>That is not what I wrote</span>');
+          mb.setAttribute('data-a', 'misread');
+          mb.onclick = () => {
+            res.mistakes = Math.max(0, res.mistakes - 1);
+            res.firstTry = firstBefore;
+            res.recogMisses++;
+            res.misreads = (res.misreads || 0) + 1;
+            if (PH) PH.outcome('misread');
+            fb('unsure', 'The pad misread it',
+              '<p>This doesn\'t count against you. Tap the character it got wrong in your answer to write it again (or use the chart), then submit.</p>');
           };
-          wrap.querySelector('.fbwrap').appendChild(mis);
-        } else if (pad && modeUsed === 'hand') pad.reset();
+          w.appendChild(mb);
+        }
+        if (opts.onMistake) opts.onMistake(r);
+        if (pad && modeUsed === 'hand' && !PH && !opts.misread) pad.reset();
       }
       function evaluateChoice(o, btn) {
         if (PH) PH.submit('choice');
@@ -416,6 +427,7 @@ RB.challenge = (function () {
       function revealAnswer() {
         active.helpUsed = true;
         res.assisted = true;
+        res.revealed = true;
         if (PH) PH.assist('reveal');
         let ans = '';
         if (step.kind === 'write') ans = plain(step.answer);

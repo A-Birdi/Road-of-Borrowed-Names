@@ -1,0 +1,306 @@
+{
+ "nao+cat": {
+  "comp": [
+   "lean",
+   "notes",
+   "rest",
+   "settle",
+   "splash",
+   "watch"
+  ],
+  "pet": [
+   "calm",
+   "follow",
+   "splash"
+  ],
+  "phases": 10
+ },
+ "nao+dog": {
+  "comp": [
+   "lean",
+   "notes",
+   "rest",
+   "settle",
+   "splash",
+   "watch"
+  ],
+  "pet": [
+   "calm",
+   "follow",
+   "splash"
+  ],
+  "phases": 10
+ },
+ "nao+bird": {
+  "comp": [
+   "lean",
+   "notes",
+   "rest",
+   "settle",
+   "splash",
+   "watch"
+  ],
+  "pet": [
+   "calm",
+   "follow",
+   "splash"
+  ],
+  "phases": 10
+ },
+ "nao+tanuki": {
+  "comp": [
+   "lean",
+   "notes",
+   "rest",
+   "settle",
+   "splash",
+   "watch"
+  ],
+  "pet": [
+   "calm",
+   "follow",
+   "splash"
+  ],
+  "phases": 10
+ },
+ "nao+none": {
+  "comp": [
+   "lean",
+   "notes",
+   "rest",
+   "settle",
+   "splash",
+   "watch"
+  ],
+  "pet": [],
+  "phases": 10
+ },
+ "mio+cat": {
+  "comp": [
+   "lean",
+   "notes",
+   "rest",
+   "settle",
+   "splash",
+   "watch"
+  ],
+  "pet": [
+   "calm",
+   "follow",
+   "splash"
+  ],
+  "phases": 10
+ },
+ "mio+dog": {
+  "comp": [
+   "lean",
+   "notes",
+   "rest",
+   "settle",
+   "splash",
+   "watch"
+  ],
+  "pet": [
+   "calm",
+   "follow",
+   "splash"
+  ],
+  "phases": 10
+ },
+ "mio+bird": {
+  "comp": [
+   "lean",
+   "notes",
+   "rest",
+   "settle",
+   "splash",
+   "watch"
+  ],
+  "pet": [
+   "calm",
+   "follow",
+   "splash"
+  ],
+  "phases": 10
+ },
+ "mio+tanuki": {
+  "comp": [
+   "lean",
+   "notes",
+   "rest",
+   "settle",
+   "splash",
+   "watch"
+  ],
+  "pet": [
+   "calm",
+   "follow",
+   "splash"
+  ],
+  "phases": 10
+ },
+ "mio+none": {
+  "comp": [
+   "lean",
+   "notes",
+   "rest",
+   "settle",
+   "splash",
+   "watch"
+  ],
+  "pet": [],
+  "phases": 10
+ },
+ "ren+cat": {
+  "comp": [
+   "lean",
+   "notes",
+   "rest",
+   "settle",
+   "splash",
+   "watch"
+  ],
+  "pet": [
+   "calm",
+   "follow",
+   "splash"
+  ],
+  "phases": 10
+ },
+ "ren+dog": {
+  "comp": [
+   "lean",
+   "notes",
+   "rest",
+   "settle",
+   "splash",
+   "watch"
+  ],
+  "pet": [
+   "calm",
+   "follow",
+   "splash"
+  ],
+  "phases": 10
+ },
+ "ren+bird": {
+  "comp": [
+   "lean",
+   "notes",
+   "rest",
+   "settle",
+   "splash",
+   "watch"
+  ],
+  "pet": [
+   "calm",
+   "follow",
+   "splash"
+  ],
+  "phases": 10
+ },
+ "ren+tanuki": {
+  "comp": [
+   "lean",
+   "notes",
+   "rest",
+   "settle",
+   "splash",
+   "watch"
+  ],
+  "pet": [
+   "calm",
+   "follow",
+   "splash"
+  ],
+  "phases": 10
+ },
+ "ren+none": {
+  "comp": [
+   "lean",
+   "notes",
+   "rest",
+   "settle",
+   "splash",
+   "watch"
+  ],
+  "pet": [],
+  "phases": 10
+ },
+ "suzu+cat": {
+  "comp": [
+   "lean",
+   "notes",
+   "rest",
+   "settle",
+   "splash",
+   "watch"
+  ],
+  "pet": [
+   "calm",
+   "follow",
+   "splash"
+  ],
+  "phases": 10
+ },
+ "suzu+dog": {
+  "comp": [
+   "lean",
+   "notes",
+   "rest",
+   "settle",
+   "splash",
+   "watch"
+  ],
+  "pet": [
+   "calm",
+   "follow",
+   "splash"
+  ],
+  "phases": 10
+ },
+ "suzu+bird": {
+  "comp": [
+   "lean",
+   "notes",
+   "rest",
+   "settle",
+   "splash",
+   "watch"
+  ],
+  "pet": [
+   "calm",
+   "follow",
+   "splash"
+  ],
+  "phases": 10
+ },
+ "suzu+tanuki": {
+  "comp": [
+   "lean",
+   "notes",
+   "rest",
+   "settle",
+   "splash",
+   "watch"
+  ],
+  "pet": [
+   "calm",
+   "follow",
+   "splash"
+  ],
+  "phases": 10
+ },
+ "suzu+none": {
+  "comp": [
+   "lean",
+   "notes",
+   "rest",
+   "settle",
+   "splash",
+   "watch"
+  ],
+  "pet": [],
+  "phases": 10
+ }
+}

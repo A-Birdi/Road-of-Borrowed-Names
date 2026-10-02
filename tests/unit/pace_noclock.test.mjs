@@ -25,8 +25,12 @@ export default async (t) => {
   t.eq(clockMakers, ['src/ui/69_pace.js'], 'one place creates a pace clock: the fishing attempt');
   const callers = Object.keys(src).filter((f) => !PACE.has(f) && /RB\.pace\.attempt\(/.test(src[f]));
   t.ok(callers.every(FISHING), 'only fishing calls RB.pace.attempt (' + (callers.join(', ') || 'none in this checkout') + ')');
-  const paceOpts = Object.keys(src).filter((f) => !PACE.has(f) && /\bpace\s*:/.test(src[f]));
+  // fishing's own `pace:` keys are its options to RB.pace.attempt, its cast record and a label;
+  // it is checked separately below for the runner
+  const paceOpts = Object.keys(src).filter((f) => !PACE.has(f) && !FISHING(f) && /\bpace\s*:/.test(src[f]));
   t.eq(paceOpts, ['src/ui/65_challenge.js'], 'no caller passes a pace option to the challenge runner; the runner only hands its own hooks to the pad');
+  const fishRunner = Object.keys(src).filter((f) => FISHING(f) && (/RB\.challenge\.runStep\(/.test(src[f]) || /runOpts\s*:\s*\{[^}]*\bpace\s*:/.test(src[f])));
+  t.eq(fishRunner, [], 'fishing never calls the challenge runner itself and puts no pace option in runOpts (only RB.pace.attempt does)');
   t.ok(/const PH = opts\.pace \|\| null;/.test(src['src/ui/65_challenge.js']) && /const PH = opts\.pace \|\| null;/.test(src['src/ui/60_pad.js']), 'the runner and the pad have hooks only when given');
   t.ok(/pace: PH,/.test(src['src/ui/65_challenge.js']), 'the runner passes the pad only its own (possibly null) hooks');
   const run = src['src/ui/65_challenge.js'];
