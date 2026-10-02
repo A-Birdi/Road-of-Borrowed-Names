@@ -26,7 +26,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 (function () {
   'use strict';
-  const CB = RB.creaturesB, K = RB.pxkit, E = CB.E;
+  const CB = RB.creaturesB, K = RB.pxkit, E = CB.E, S = CB.S;
   const mixh = (a, b, k) => K.hex(K.mix(a, b, k));
   const LPIV = -68; // the lantern's hinge (top of its loop)
 
@@ -38,109 +38,145 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const a = q.tilt || 0, c = Math.cos(a), s = Math.sin(a), dy = y - LPIV;
     return [Math.round(x * c - dy * s), Math.round(LPIV + x * s + dy * c + (q.lift || 0))];
   }
+  // ramps for one flame colour: the flame itself (hue-shifted, a white core), the paper lit by it
+  // from inside (deep at the grazing limbs, glowing round the flame), the ghost tail (translucent)
+  const lanPal = (fl, hot) => {
+    const fr = S.ramp(fl, { n: 6, at: 3, lo: 0.2, hi: 0.94, cs: 30, ws: 18 });
+    const warm = (c, k) => mixh(c, '#fff4dc', k + 0.3 * (hot || 0));
+    return {
+      flame: S.ramp(fl, { n: 5, at: 2, hi: 0.93, lo: 0.32, cs: 24 }),
+      // the paper: deep flame-hue shadows at the grazing edges, cream lit through near the flame
+      paper: [fr[0], fr[1], fr[2], warm(fr[3], 0.3), warm(fr[4], 0.5), warm('#fffdf4', 0.2)],
+      ghost: S.ramp(fl, { n: 4, at: 2, lo: 0.32, hi: 0.86, cs: 30 }),
+    };
+  };
+  const LROT = -0.36; // where the face is centred round the barrel (the near-left side faces the party)
   function drawLantern(L, o, q, H) {
     const fl0 = o.col || '#8aa8e8';
     const moths = !!o.moths || String(fl0).toLowerCase() === MOTHLAMP;
     const fl = q.false > 0.5 ? mixh(fl0, '#f0a050', 0.7) : q.hot > 0 ? mixh(fl0, '#fff0b0', 0.55 * q.hot) : fl0;
     const dim = q.dim || 0, glowK = (q.glow == null ? 1 : q.glow) * (1 - dim * 0.6);
-    const paper = K.mat(mixh(mixh('#f4ead0', fl, 0.16), q.hot > 0 ? '#fff4d0' : '#f4ead0', 0.3 * (q.hot || 0)), { n: 6, at: 3, step: 0.075 });
-    const wood = K.mat('#4a3630', { n: 5, at: 2, step: 0.085 });
-    const bamboo = K.mat('#8a7048', { n: 4, at: 2, step: 0.09 });
-    const flameM = K.mat(mixh(fl, '#fff6d8', 0.35 + 0.3 * (q.hot || 0)), { n: 4, at: 2, step: 0.12, line: false });
-    const core = K.solid(mixh(fl, '#ffffff', 0.8), { line: false });
-    const ghost = K.mat(fl, { n: 4, at: 2, step: 0.1, alpha: 185, line: false });
-    const ghost2 = K.mat(fl, { n: 3, at: 1, step: 0.1, alpha: 105, line: false });
-    const tongue = K.mat('#d8707a', { n: 3, at: 1, line: false });
-    const blush = K.solid('#e89a90', { line: false });
-    const smokeM = K.mat('#8a8498', { n: 3, at: 1, step: 0.08, alpha: 150, line: false });
-    const smokeM2 = K.mat('#a8a2b4', { n: 3, at: 1, step: 0.08, alpha: 90, line: false });
-    const mothM = K.mat('#f2ead8', { n: 4, at: 2, step: 0.08, lineCol: '#4a4038' });
-    const aura = L.like(), tail = L.like(), B = L.like(), fx = L.like(), front = L.like();
+    const P = lanPal(fl, q.hot);
+    const paper = S.mat(P.paper, { at: 3, rim: mixh(fl, '#c8e8ff', 0.6), litk: 0.15 });
+    const wood = S.mat(['#120c1c', '#26162a', '#3e2430', '#5e3a36', '#8a5e4a', '#c49a76'], { at: 2, rim: '#7a9ad8', litk: 0.15 });
+    const bamboo = S.mat(['#2a1a1c', '#5a3e2a', '#8e6e3e', '#c4a460', '#ecd896'], { at: 2, litk: 0.15 });
+    const flameM = S.mat(P.flame, { at: 2, line: false });
+    const core = K.solid(mixh(fl, '#ffffff', 0.85), { line: false });
+    const ghost = S.mat(P.ghost, { at: 2, alpha: 200, line: S.deep(P.ghost[0], 0.2) });
+    const ghost2 = S.mat(P.ghost, { at: 2, alpha: 120, line: false });
+    const ink = S.mat(['#0e0a18', '#22182e', '#3a2c44'], { at: 0, line: false });
+    const tongue = S.mat(['#8a2a4a', '#cc5a6e', '#f29aa0'], { at: 1, line: false });
+    const blush = S.mat(['#d8707a', '#f0a0a0'], { at: 0, line: false });
+    const smokeM = S.mat(['#3e3a58', '#6a6484', '#9a94ae', '#c8c2d4'], { at: 2, alpha: 170, line: '#2a2640' });
+    const smokeM2 = S.mat(['#5a5674', '#8a84a0', '#b8b2c8'], { at: 1, alpha: 100, line: false });
+    const mothM = S.mat(['#4a3e52', '#9a8a8a', '#d8ccb8', '#f8f2e2', '#fffef6'], { at: 3, line: '#2a2030' });
+    const white = K.solid('#fffdf6', { line: false });
+    const aura = L.like(), tail = L.like(), B = L.like(), fx = L.like(), front = L.like(), mothB = L.like();
     // ---- light around it (stepped, never a blur)
     const ac = lanPt(q, 0, -2);
     H.glow(aura, ac[0], ac[1], 46 + (q.flame || 1) * 4, 52 + (q.flame || 1) * 4, fl, 0.24 * glowK, 3);
     // ---- the ghost tail, hanging from the lower cap; it trails the swing
     const tb = lanPt(q, 0, 44);
     const tlen = q.tlen || 60;
-    H.tail(tail, tb[0], tb[1], tlen, 17, q.tph || 0, [[0, 26, ghost], [26, 120, ghost2]], { amp: q.tamp == null ? 7 : q.tamp, curl: 10, dark: 0.1, lean: (q.tlean || 0) - Math.sin(q.tilt || 0) * 0.6 });
+    H.tail(tail, tb[0], tb[1], tlen, 17, q.tph || 0, [[0, 30, ghost], [30, 120, ghost2]], { amp: q.tamp == null ? 7 : q.tamp, curl: 10, dark: 0.1, lean: (q.tlean || 0) - Math.sin(q.tilt || 0) * 0.6 });
     // ---- the lantern (swung about its loop)
     B.save().translate(0, q.lift || 0).translate(0, LPIV).rotate(q.tilt || 0).translate(0, -LPIV);
-    // bamboo loop with a binding where it meets the cap
-    B.path([[-12, -52], [-11, -61], [-5, -67], [5, -67], [11, -61], [12, -52]], 3, bamboo, (x, y) => K.clamp(0.7 - (x + 12) / 40 - (y + 67) / 60, 0, 0.99));
-    B.rect(-13, -55, 4, 3, wood, 1); B.rect(9, -55, 4, 3, wood, 1);
+    // bamboo loop with bindings where it meets the cap (the near arm lit, the far arm in shade)
+    S.pipe(B, [[-12, -52], [-11, -61], [-5, -67], [5, -67], [11, -61], [12, -52]], 3, bamboo, { collars: false, bands: [[-1, 3], [-0.3, 2], [0.4, 1]] });
+    B.rect(-14, -56, 5, 4, wood, 3); B.rect(9, -56, 5, 4, wood, 1); B.line(-14, -54, -10, -54, wood, 1);
     const br = q.breathe || 0;
     const hwAt = (y) => 22 + br + (9 + br * 0.6) * Math.cos(((y + 3) / 46) * (Math.PI / 2));
+    const th = (x, y) => Math.asin(Math.max(-1, Math.min(1, x / hwAt(y))));
     // the flame's place inside (it lags the swing)
-    const fxp = (q.fl || 0), fyp = 10 - (q.flame || 1) * 2;
-    B.fill(-36 - br, -46, 36 + br, 40, (x, y) => y >= -46 && y < 40 && Math.abs(x) <= hwAt(y), paper, (x, y) => {
-      const n = Math.abs(x) / hwAt(y);
-      const g = 1 - Math.hypot((x - fxp) / (30 + br), (y - fyp) / 40);
-      return K.clamp(0.24 + g * (0.58 + (q.flame || 1) * 0.07) * glowK - n * n * 0.25 + (x < 0 ? 0.05 : -0.04) - dim * 0.15, 0, 0.99);
-    });
-    // paper strips (faint vertical joins) and the bamboo ribs curving with the barrel
-    B.onto((b) => {
-      for (const sx of [-0.55, 0.05, 0.6]) for (let y = -44; y < 38; y++) { const x = Math.round(sx * hwAt(y)); if ((y + 44) % 3) b.dot(x, y, paper, 1); }
-      for (let y = -37; y < 36; y += 9) {
-        const hw = hwAt(y);
-        for (let x = -Math.floor(hw) + 1; x < hw - 1; x++) b.dot(x, y + Math.round((x / hw) * (x / hw) * 2), paper, Math.abs(x) / hw > 0.7 ? 0 : 1);
+    const fxp = (q.fl || 0) - 3, fyp = 10 - (q.flame || 1) * 2, fs = q.flame || 1;
+    // the paper lit from inside: rings of light round the flame (hard steps), darker toward the
+    // grazing edges, the key light adding a little on the left, the cool rim on the right
+    // the paper's long fibres break each band edge into short vertical clusters
+    const fibre = S.strands(Math.PI / 2, { w: 3, len: 7, amp: 0.09, seed: 31 });
+    const paperFn = (x, y) => {
+      // a cylinder lit from inside: bright through the middle, falling off toward the grazing
+      // limbs (the right one more: it also faces away from the key light) and away from the flame
+      const u = (x - fxp * 0.3) / hwAt(y), dy = (y - fyp) / (44 + fs * 6);
+      let v = (0.95 + fs * 0.08) * glowK - Math.pow(Math.abs(u), 2.2) * 0.8 - dy * dy * 0.7 - (u > 0 ? u * 0.3 : 0) - dim * 0.35 + fibre(x, y);
+      return v > 0.82 ? 5 : v > 0.6 ? 4 : v > 0.36 ? 3 : v > 0.12 ? 2 : v > -0.15 ? 1 : 0;
+    };
+    const paperStep = (x, y) => paperFn(x, y);
+    B.fill(-36 - br, -46, 36 + br, 40, (x, y) => y >= -46 && y < 40 && Math.abs(x) <= hwAt(y), paper, (x, y) => S.step(paperFn(x, y), 6));
+    // the bamboo ribs round the barrel: each a dark line curving toward us, a lit lip above it on
+    // the near side, the paper just under it in the rib's shadow
+    for (let yr = -37; yr < 36; yr += 9) {
+      const hw = hwAt(yr);
+      for (let x = -Math.floor(hw) + 1; x < hw - 1; x++) {
+        const t = x / hw, y = Math.round(yr + 3 * Math.sqrt(Math.max(0, 1 - t * t)));
+        const v = Math.max(0, paperStep(x, y) - 2);
+        B.dot(x, y, paper, v);
+        if (t < -0.3 && t > -0.8) B.dot(x, y - 1, paper, Math.min(5, paperStep(x, y - 1) + 1));
       }
-      // a small tear (upper right) with the flame showing through its ragged edge
-      b.poly([[14, -30], [19, -33], [22, -27], [19, -22], [15, -24]], K.solid('#2a1e24', { line: false }), 0);
-      b.poly([[16, -29], [19, -30], [20, -26], [17, -25]], flameM, 2);
-    });
-    // caps: dark wood with a lit bevel and grain
-    B.rect(-25 - br * 0.5, -53, 50 + br, 8, wood, (x, y) => K.clamp(0.6 - (y + 53) / 16 + (x < 0 ? 0.12 : -0.1), 0, 0.99));
-    B.rect(-23 - br * 0.5, 38, 46 + br, 7, wood, (x, y) => K.clamp(0.55 - (y - 38) / 14 + (x < 0 ? 0.12 : -0.1), 0, 0.99));
-    for (const x of [-16, -3, 11]) { B.line(x, -51, x + 4, -51, wood, 3); B.line(x + 2, 40, x + 6, 40, wood, 3); }
+    }
+    // paper seams (vertical joins), spaced as they wrap
+    for (const a of [LROT - 0.9, LROT + 0.1, LROT + 1.05]) {
+      if (Math.abs(a) > 1.35) continue;
+      for (let y = -44; y < 38; y++) { if ((y + 44) % 9 === 7) continue; B.dot(Math.round(hwAt(y) * Math.sin(a)), y, paper, a > 0.4 ? 0 : 1); }
+    }
+    // a tear (upper right) with the flame showing through its ragged edge
+    B.poly([[14, -31], [19, -34], [22, -28], [20, -22], [15, -24], [16, -28]], ink, 1);
+    B.poly([[16, -29], [19, -31], [20, -26], [17, -25]], flameM, 3);
+    // caps: dark lacquered wood — the top cap's upper face seen as an ellipse, banded fronts, a
+    // specular streak on the near-left, grain
+    const capSh = (x, y, y0) => { const u = x / 26; return S.step(u < -0.78 ? 3 : u < -0.6 ? 5 : u < -0.2 ? 3 : u < 0.4 ? 2 : u < 0.78 ? 1 : 2, 6); };
+    B.fill(-27 - br, -53, 27 + br, -44, (x, y) => y >= -53 && y < -44 + Math.round(2 * Math.sqrt(Math.max(0, 1 - (x / (25 + br * 0.5)) ** 2))) && Math.abs(x) <= 25 + br * 0.5, wood, (x, y) => capSh(x, y));
+    B.ell(0, -53, 25 + br * 0.5, 3, wood, (x, y) => S.step(x < -6 ? 4 : x < 10 ? 3 : 2, 6));
+    B.fill(-25 - br, 38, 25 + br, 47, (x, y) => y >= 38 && y < 44 + Math.round(2 * Math.sqrt(Math.max(0, 1 - (x / (23 + br * 0.5)) ** 2))) && Math.abs(x) <= 23 + br * 0.5, wood, (x, y) => capSh(x, y));
+    for (const [x, y] of [[-16, -50], [-3, -49], [11, -50], [-13, 41], [2, 42], [14, 41]]) B.line(x, y, x + 4, y, wood, x < 0 ? 4 : 2);
+    // ---- the face (on the paper, turned toward the party: the far eye narrowed by the curve)
+    const eyes = q.false > 0.5 ? 'soft' : q.eyes || 'open';
+    for (const [a, sz] of [[LROT - 0.4, 0.75], [LROT + 0.36, 1]]) {
+      const ey = -14, ex = Math.round(hwAt(ey) * Math.sin(a)), w = Math.max(2, Math.round(4 * sz));
+      if (eyes === 'shut') { B.line(ex - w, ey + 1, ex + w, ey + 1, ink, 0); B.dot(ex - w, ey, ink, 0); B.dot(ex + w, ey, ink, 0); }
+      else if (eyes === 'half') { B.ell(ex, ey + 2, w, 2.5, ink, 0); B.rect(ex - 1, ey + 1, 2, 1, white, 0); }
+      else if (eyes === 'soft') { B.line(ex - w, ey + 1, ex, ey - 2, ink, 0); B.line(ex, ey - 2, ex + w, ey + 1, ink, 0); B.rect(ex - w - 2, ey + 4, 3, 1, blush, 0); B.rect(ex + w - 1, ey + 4, 3, 1, blush, 1); }
+      else if (eyes === 'squint') { B.poly([[ex - w - 1, ey - 1], [ex + w, ey + 1], [ex - w, ey + 3]], ink, 0); }
+      else if (eyes === 'wide') { B.ell(ex, ey, w + 0.5, 6, ink, 0); B.rect(ex - 1, ey - 4, 2, 2, white, 0); B.dot(ex + 1, ey + 2, white, 0); }
+      else { B.ell(ex, ey, w - 0.5, 5, ink, 0); B.rect(ex - 1, ey - 3, 2, 2, white, 0); B.dot(ex + 1, ey + 2, ink, 2); }
+    }
+    // the mouth: a torn grin that shows the flame (closed / grin / wide), or the false smile
+    const mx0 = Math.round(hwAt(10) * Math.sin(LROT)) + 2;
+    if (q.false > 0.5) {
+      for (let x = -7; x <= 7; x++) B.dot(mx0 + x, 14 - Math.round((x * x) / 14), ink, 0);
+    } else {
+      const m = q.mouth == null ? 1 : q.mouth, sy = 0.45 + 0.4 * m, sx = (x) => mx0 + x * (1 + 0.06 * m) * (x < 0 ? 0.82 : 1);
+      const g = [[-15, 6], [-9, 11], [-5, 7], [0, 12], [5, 7], [10, 12], [15, 5], [12, 16], [4, 20], [-5, 20], [-12, 15]].map(([x, y]) => [sx(x), 6 + (y - 6) * sy]);
+      B.poly(g, ink, 1);
+      B.poly([[-10, 13], [-4, 10], [0, 14], [5, 10], [10, 14], [6, 18], [-6, 18]].map(([x, y]) => [sx(x), 6 + (y - 6) * sy]), flameM, (x, y) => S.step(y < 6 + 12 * sy ? 3 : 2, 5));
+      if (m > 1.3) B.ell(mx0 + fxp * 0.3, 6 + 10 * sy, 4, 3 * sy, core, 0);
+      B.ell(mx0 + 3, 6 + 12 * sy, 4, 3 * Math.min(1, sy), tongue, (x, y) => S.step(y < 6 + 11 * sy ? 2 : 1, 3));
+      // the torn paper's edge round the grin: a lit lip above it
+      for (const [x, y] of g.slice(0, 7)) B.dot(Math.round(x), Math.round(y) - 1, paper, 5);
+    }
     B.restore();
-    B.outline();
-    // ---- the face (on the paper, swung with it)
-    B.onto((b) => {
-      b.save().translate(0, q.lift || 0).translate(0, LPIV).rotate(q.tilt || 0).translate(0, -LPIV);
-      const eyes = q.false > 0.5 ? 'soft' : q.eyes || 'open';
-      for (const s of [-1, 1]) {
-        const ex = s * 11, ey = -14;
-        if (eyes === 'shut') { b.line(ex - 4, ey + 1, ex + 4, ey + 1, H.ink, 1); b.dot(ex - 4, ey, H.ink, 1); b.dot(ex + 4, ey, H.ink, 1); }
-        else if (eyes === 'half') { b.ell(ex, ey + 2, 3.5, 2.5, H.ink, 1); b.rect(ex - 2, ey + 1, 2, 1, H.white, 0); }
-        else if (eyes === 'soft') { b.line(ex - 4, ey + 1, ex, ey - 2, H.ink, 1); b.line(ex, ey - 2, ex + 4, ey + 1, H.ink, 1); b.rect(ex - 6, ey + 4, 3, 1, blush, 0); b.rect(ex + 3, ey + 4, 3, 1, blush, 0); }
-        else if (eyes === 'squint') { b.poly([[ex - 5, ey - 1], [ex + 4, ey + 1], [ex - 4, ey + 3]], H.ink, 1); }
-        else if (eyes === 'wide') { b.ell(ex, ey, 4.5, 6, H.ink, 1); b.rect(ex - 2, ey - 4, 2, 2, H.white, 0); b.dot(ex + 1, ey + 2, H.white, 0); }
-        else { b.ell(ex, ey, 3.5, 5, H.ink, 1); b.rect(ex - 2, ey - 4, 2, 2, H.white, 0); }
-      }
-      // the mouth: a torn grin that shows the flame (closed / grin / wide), or the false smile
-      if (q.false > 0.5) {
-        for (let x = -7; x <= 7; x++) b.dot(x, 14 - Math.round((x * x) / 14), H.ink, 1);
-      } else {
-        const m = q.mouth == null ? 1 : q.mouth, sy = 0.45 + 0.4 * m;
-        const g = [[-15, 6], [-9, 11], [-5, 7], [0, 12], [5, 7], [10, 12], [15, 5], [12, 16], [4, 20], [-5, 20], [-12, 15]].map(([x, y]) => [x * (1 + 0.06 * m), 6 + (y - 6) * sy]);
-        b.poly(g, H.ink, 1);
-        b.poly([[-10, 13], [-4, 10], [0, 14], [5, 10], [10, 14], [6, 18], [-6, 18]].map(([x, y]) => [x * (1 + 0.06 * m), 6 + (y - 6) * sy]), flameM, 1 + (q.flame > 1.2 ? 1 : 0));
-        if (m > 1.3) b.ell(fxp * 0.3, 6 + 10 * sy, 4, 3 * sy, core, 0);
-        b.ell(3, 6 + 12 * sy, 4, 3 * Math.min(1, sy), tongue, 1);
-      }
-      b.restore();
-    });
     // ---- heat shimmer off the cap
     if (q.hot > 0.05) {
-      const sh = K.solid(mixh(fl, '#fff8d0', 0.6), { line: false });
+      const sh = S.mat(P.flame.slice(2), { at: 1, line: false });
       for (let i = 0; i < 4; i++) {
         const [x0, y0] = lanPt(q, -15 + i * 10, -56);
-        for (let y = 0; y < 10 + q.hot * 14; y += 2) fx.dot(x0 + Math.round(Math.sin((y + i * 5 + (q.tph || 0) * 6) / 3) * 1.5), y0 - y, sh, 0);
+        for (let y = 0; y < 10 + q.hot * 14; y += 2) fx.rect(x0 + Math.round(Math.sin((y + i * 5 + (q.tph || 0) * 6) / 3) * 1.5), y0 - y, 1, 2, sh, y < 6 ? 2 : 1);
       }
-      fx.fade(0.5 + 0.4 * q.hot);
+      fx.fade(0.55 + 0.4 * q.hot);
     }
-    // ---- smoke pouring from the lower cap and the grin (Shroud)
+    // ---- smoke pouring from the lower cap and the grin (Shroud): puffs with a lit top-left
     if (q.smoke > 0.05) {
-      const n = Math.round(3 + q.smoke * 6);
+      const n = Math.round(3 + q.smoke * 6), sm = L.like();
       for (let i = 0; i < n; i++) {
         const k = ((i / n) + (q.sph || 0)) % 1;
         const [x0, y0] = lanPt(q, (i % 3 - 1) * 12, 44);
         const x = x0 + Math.round(Math.sin(i * 2.3 + k * 3) * 10 * k), y = y0 + Math.round(k * 46 * q.smoke);
         const r = 5 + k * 9;
-        fx.ell(x, y, r, r * 0.6, k < 0.5 ? smokeM : smokeM2, (px, py) => K.clamp(0.75 - (py - y + r) / (r * 3), 0, 0.99));
+        sm.ell(x, y, r, r * 0.62, k < 0.5 ? smokeM : smokeM2, (px, py) => S.step(py < y - r * 0.2 && px < x + r * 0.2 ? (k < 0.5 ? 3 : 2) : py > y + r * 0.3 ? 0 : 1, k < 0.5 ? 4 : 3));
       }
-      const [mx, my] = lanPt(q, 0, 14);
-      fx.ell(mx - 8, my + 6, 6, 4, smokeM2, 1);
+      const [mx, my] = lanPt(q, mx0, 14);
+      sm.ell(mx - 8, my + 6, 6, 4, smokeM2, 1);
+      sm.outline();
+      fx.over(sm);
     }
     // ---- Moth and Lantern: white moths circling it (part of the creature)
     if (moths) {
@@ -151,16 +187,22 @@ var RB = (globalThis.RB = globalThis.RB || {});
         const [cx, cy] = lanPt(q, 0, -8);
         const x = Math.round(cx + Math.cos(a) * rx), y = Math.round(cy + Math.sin(a) * ry);
         const up = (Math.round((q.mph || 0) * 4) + i) % 2;
-        const Lr = Math.sin(a) > 0 ? front : tail;          // the near side passes in front
-        Lr.ell(x, y, 1.5, 3, mothM, 1);
-        Lr.poly(up ? [[x, y - 1], [x - 7, y - 6], [x - 6, y + 1]] : [[x, y - 1], [x - 7, y + 2], [x - 5, y + 3]], mothM, 3);
-        Lr.poly(up ? [[x, y - 1], [x + 7, y - 6], [x + 6, y + 1]] : [[x, y - 1], [x + 7, y + 2], [x + 5, y + 3]], mothM, 2);
-        Lr.dot(x - 1, y - 3, mothM, 0); Lr.dot(x + 1, y - 3, mothM, 0);
+        const Lr = Math.sin(a) > 0 ? front : mothB;          // the near side passes in front
+        // far wing (shade), body, near wing (lit), antennae
+        Lr.poly(up ? [[x, y - 1], [x + 7, y - 6], [x + 6, y + 1]] : [[x, y - 1], [x + 7, y + 2], [x + 5, y + 3]], mothM, 1);
+        Lr.ell(x, y, 1.5, 3, mothM, (px, py) => S.step(py < y - 1 ? 2 : 1, 5));
+        Lr.poly(up ? [[x, y - 1], [x - 7, y - 6], [x - 6, y + 1]] : [[x, y - 1], [x - 7, y + 2], [x - 5, y + 3]], mothM, (px, py) => S.step(px < x - 3 ? 4 : 3, 5));
+        Lr.dot(x - 4, y - (up ? 3 : 0), mothM, 1);
+        Lr.dot(x - 1, y - 4, mothM, 0); Lr.dot(x + 1, y - 4, mothM, 0);
       }
-      front.outline();
     }
-    tail.outline({});
-    return aura.over(tail).over(B).over(fx).over(front);
+    // ---- outlines, cast shadows, the rim
+    tail.outline(); B.outline(); front.outline(); mothB.outline();
+    S.lit(B, wood, 4, { left: false, test: (x, y) => y < -50 });
+    S.cast(B, tail, 2, 3, 1);
+    const out = aura.over(mothB).over(tail).over(B);
+    S.rim(out, { w: 1, y0: 0 });
+    return out.over(fx).over(front);
   }
   const LB = { tilt: 0, lift: 0, flame: 1, fl: 0, glow: 1, mouth: 1, eyes: 'open', tph: 0, tamp: 7, tlean: 0, tlen: 60, breathe: 0, hot: 0, smoke: 0, sph: 0, false: 0, mph: 0, mspread: 0, dim: 0 };
   // idle: a slow pendulum (1.4 s), the flame lagging and flickering through three shapes, a blink
@@ -263,114 +305,152 @@ var RB = (globalThis.RB = globalThis.RB || {});
     // positive rock tips the top toward the party (left): rotate by -a
     return [Math.round(px + dx * c + dy * s), Math.round(py - dx * s + dy * c + (q.lift || 0))];
   }
+  // The andon seen three-quarter: its front face turned toward the party (x −44…22), its right side
+  // face receding (x 22…44, raised by the depth). A hip roof with two visible slopes under snow, a
+  // kumiko lattice over paper lit from inside, a door leaf in the front face, a stone foot block.
+  const FX0 = -44, FX1 = 22, SDX = 22, SDY = -6; // front face x range; the depth offset of the side face
+  const FPAL = {
+    wood: ['#0c0a1c', '#1a1830', '#2a2846', '#3e3a5e', '#5c5680', '#8a84aa'],
+    paperCold: ['#2a3a76', '#46609e', '#7092c8', '#a6c4e8', '#d6e8fa', '#f6fbff'],
+    paperWarm: ['#5a2a2a', '#8e4a34', '#c47a46', '#eab06a', '#f8dc9e', '#fff6dc'],
+    snow: ['#3c4892', '#6676bc', '#9eb0e2', '#d4e0f6', '#f6f9ff', '#fffdf0'],
+    ice: ['#2c5a9a', '#5a92d0', '#98ccf0', '#e2f6ff'],
+    stone: ['#16142a', '#2a2840', '#44425c', '#625f7a', '#8a879e', '#b8b6c6'],
+  };
   function drawFrostLamp(L, o, q, H) {
     const warmth = Math.max(o.warm ? 1 : 0, q.warm || 0);
-    const wood = K.mat('#2e2c3e', { n: 5, at: 2, step: 0.08 });
-    const woodHi = K.mat('#4a4058', { n: 4, at: 2, step: 0.08 });
-    const paperCol = mixh('#d8e8f4', '#f8ecc8', warmth);
-    const paper = K.mat(paperCol, { n: 6, at: 3, step: 0.07 });
+    const wood = S.mat(FPAL.wood, { at: 3, rim: '#7ea6e6', litk: 0.15 });
+    const paper = S.mat(FPAL.paperCold.map((c, i) => mixh(c, FPAL.paperWarm[i], warmth)), { at: 3, rim: '#bfe4ff', litk: 0.15 });
     const flameC = mixh(q.white ? mixh('#8ab8f0', '#f4fbff', q.white) : '#8ab8f0', '#f8a040', warmth);
-    const flameM = K.mat(flameC, { n: 4, at: 2, step: 0.12, line: false });
-    const coreM = K.solid(mixh(flameC, '#ffffff', 0.75), { line: false });
-    const snow = K.mat('#eef4fa', { n: 5, at: 3, step: 0.06 });
-    const ice = K.mat('#bcd8ee', { n: 4, at: 2, step: 0.1, alpha: 230 });
-    const stone = K.mat('#6a6878', { n: 5, at: 2, step: 0.08 });
-    const mote = K.mat('#e6f4ff', { n: 2, at: 1, line: false });
-    const cav = K.mat('#121220', { n: 3, at: 0, step: 0.05, line: false });
-    const letter = K.mat('#efe4c8', { n: 4, at: 2, step: 0.07 });
-    const aura = L.like(), B = L.like(), door = L.like(), fx = L.like(), ground = L.like();
+    const flameM = S.mat(S.ramp(flameC, { n: 5, at: 2, hi: 0.95, lo: 0.3, cs: 24 }), { at: 2, line: false });
+    const coreM = K.solid(mixh(flameC, '#ffffff', 0.78), { line: false });
+    const snow = S.mat(FPAL.snow, { at: 3, rim: '#bfe8ff', litk: 0.16 });
+    const ice = S.mat(FPAL.ice, { at: 2, alpha: 235, litk: 0.2 });
+    const stone = S.mat(FPAL.stone, { at: 3, rim: '#8ab0e8', litk: 0.15 });
+    const mote = S.mat(['#9ad0f4', '#e6f6ff', '#ffffff'], { at: 1, line: false });
+    const cav = S.mat(['#05050e', '#0e0e1e', '#1a1a30'], { at: 0, line: false });
+    const ink = S.mat(['#0a0a1a', '#1e1c34', '#34304e'], { at: 0, line: false });
+    const white = K.solid('#fbfdff', { line: false });
+    const letter = S.mat(['#5a4a4a', '#a8967e', '#e2d4b4', '#fbf4e2'], { at: 2 });
+    const aura = L.like(), B = L.like(), door = L.like(), fx = L.like(), ground = L.like(), roof = L.like();
     const fs = q.flame == null ? 1 : q.flame, dim = q.dim || 0;
-    const ac = frostPt(q, 0, -4);
+    const ac = frostPt(q, -6, -4);
     H.glow(aura, ac[0], ac[1], 60 + fs * 4, 72 + fs * 4, flameC, 0.24 * (1 - dim * 0.6), 3);
-    // the foot stays on the ground (stone) — drawn unrocked except when it tips
     const rockT = (Lr) => { const a = q.rock || 0, px = a > 0 ? -36 : a < 0 ? 36 : 0; Lr.save().translate(0, q.lift || 0).translate(px, 86).rotate(-a).translate(-px, -86); };
-    rockT(B);
-    // roof: wide cap, ridge and its snow (shaken loose as q.snow falls)
-    B.poly([[-56, -76], [-42, -91], [42, -91], [56, -76], [50, -72], [-50, -72]], wood, (x, y) => K.clamp(0.62 - (y + 91) / 30 - x / 200, 0, 0.99));
-    B.line(-50, -73, 50, -73, woodHi, 3);
-    B.rect(-10, -97, 20, 6, wood, 2); B.rect(-12, -98, 24, 2, woodHi, 2);
-    const sn = q.snow == null ? 1 : q.snow;
-    if (sn > 0.05) B.fill(-46, -102, 46, -86, (x, y) => y >= -93 - Math.round(Math.sin(x / 6) * 1.5) - Math.round(sn * 2) && y < -87 && Math.abs(x) < (42 - (y + 93) * 0.5) * (0.4 + 0.6 * sn) + (K.hh(Math.round(x), 3, 1) % 3), snow, (x, y) => K.clamp(0.82 - (x + 40) / 160 - (y + 93) / 20, 0, 0.99));
-    // posts, the lit paper panel and its lattice
-    B.rect(-42, -72, 84, 136, paper, (x, y) => {
-      const g = 1 - Math.hypot((x - (q.fl || 0)) / 44, (y + 4) / 70);
-      return K.clamp(0.2 + g * (0.7 + fs * 0.06) * (1 - dim * 0.5) + (x < 0 ? 0.04 : -0.04), 0, 0.99);
-    });
-    // the door leaf (front left): its opening shows the dark inside and the flame itself
-    const dr = q.door || 0;
+    rockT(B); rockT(roof);
+    // the side face as a parallelogram (x across it 0..1, y down it)
+    const side = (u, y) => [FX1 + u * SDX, y + u * SDY];
+    // ---- the paper panels, lit from inside: the front face bright round the flame, the side face
+    // seen at an angle (darker, the cool rim at its far edge)
+    const fl = q.fl || 0, dr = q.door || 0;
+    const glowAt = (x, y) => (1 - Math.hypot((x - fl + 10) / 46, (y + 4) / 66)) * (0.95 + fs * 0.07) * (1 - dim * 0.55);
+    const fibre = S.strands(Math.PI / 2, { w: 3, len: 7, amp: 0.07, seed: 41 });
+    const frontStep = (x, y) => { const v = glowAt(x, y) + (x < -30 ? 0.05 : 0) + fibre(x, y); return v > 0.62 ? 5 : v > 0.42 ? 4 : v > 0.22 ? 3 : v > 0.02 ? 2 : 1; };
+    B.rect(FX0, -72, FX1 - FX0, 136, paper, (x, y) => S.step(frontStep(x, y), 6));
+    B.poly([side(0, -72), side(1, -72), side(1, 64), side(0, 64)], paper, (x, y) => { const u = (x - FX1) / SDX, v = glowAt(FX1, y) * 0.55 - u * 0.25; return S.step(v > 0.3 ? 3 : v > 0.12 ? 2 : 1, 6); });
+    // the door leaf's opening (front left): the dark inside and the flame itself
     if (dr > 0.02) {
-      B.rect(-36, -66, 36, 122, cav, (x, y) => K.clamp(0.15 + (1 - Math.hypot((x + 14) / 30, (y - 10) / 60)) * 0.6, 0, 0.99));
-      // the flame, seen whole through the open door
-      const fx0 = -14 + (q.fl || 0), fy0 = 18;
-      B.ell(fx0, fy0 - fs * 6, 7 + fs * 3, 14 + fs * 6, flameM, (x, y) => K.clamp(0.9 - Math.hypot((x - fx0) / 10, (y - fy0) / 22) * 0.8, 0, 0.99));
+      B.rect(-38, -66, 32, 122, cav, (x, y) => S.step(Math.hypot((x + 20) / 26, (y - 10) / 56) < 0.6 ? 2 : Math.hypot((x + 20) / 26, (y - 10) / 56) < 0.85 ? 1 : 0, 3));
+      const fx0 = -20 + fl, fy0 = 18;
+      B.ell(fx0, fy0 - fs * 6, 7 + fs * 3, 14 + fs * 6, flameM, (x, y) => { const d = Math.hypot((x - fx0) / 10, (y - fy0 + fs * 6) / 20); return S.step(d < 0.35 ? 4 : d < 0.6 ? 3 : x < fx0 ? 2 : 1, 5); });
       B.ell(fx0, fy0 - fs * 3, 3 + fs, 7 + fs * 3, coreM, 0);
-      B.rect(fx0 - 5, fy0 + 10, 10, 4, wood, 2); // the wick cup
+      B.rect(fx0 - 5, fy0 + 10, 10, 4, wood, (x) => S.step(x < fx0 ? 4 : 2, 6));
     }
-    for (const x of [-42, 36]) B.rect(x, -72, 6, 136, wood, x < 0 ? 3 : 1);
-    B.rect(-42, -72, 84, 5, wood, 3);
-    B.rect(-42, 56, 84, 8, wood, 1);
-    if (dr > 0.02) B.rect(-3, -67, 5, 123, wood, 2); // the centre stile (the open door's other edge)
-    B.onto((b) => {
-      for (const y of [-40, -8, 24]) b.line(2, y, 36, y, wood, 1);
-      b.line(18, -67, 18, 56, wood, 1);
-      if (dr <= 0.02) { for (const y of [-40, -8, 24]) b.line(-36, y, -3, y, wood, 1); b.line(-19, -67, -19, 56, wood, 1); b.line(0, -67, 0, 56, wood, 1); }
-    });
-    // the cold flame, seen through the paper (when the door is shut it glows through)
-    if (dr <= 0.02) {
-      B.ell(q.fl || 0, 10, 10 + fs * 2, 20 + fs * 4, paper, 5);
-      B.ell(q.fl || 0, 16, 5 + fs, 10 + fs * 3, K.solid(warmth > 0.5 ? '#fff4b0' : '#f2f8ff', { line: false }), 0);
+    // the cold flame glowing through the paper when the door is shut
+    if (dr <= 0.02) { B.ell(fl - 10, 10, 9 + fs * 2, 19 + fs * 4, paper, 5); B.ell(fl - 10, 16, 4 + fs, 9 + fs * 3, K.solid(warmth > 0.5 ? '#fff4b0' : '#f2f8ff', { line: false }), 0); }
+    // posts: the near-left corner (lit), the front-right corner, the far-right corner (in shade)
+    B.rect(FX0, -72, 6, 136, wood, (x) => S.step(x < FX0 + 2 ? 5 : x < FX0 + 4 ? 4 : 3, 6));
+    B.rect(FX1 - 3, -72, 6, 136, wood, (x) => S.step(x < FX1 ? 3 : 1, 6));
+    B.poly([side(1, -72), [FX1 + SDX + 3, -72 + SDY], [FX1 + SDX + 3, 64 + SDY], side(1, 64)], wood, () => S.step(1, 6));
+    // rails top and bottom (front and side)
+    B.rect(FX0, -72, FX1 - FX0, 5, wood, (x) => S.step(x < FX0 + 30 ? 4 : 3, 6));
+    B.rect(FX0, 56, FX1 - FX0, 8, wood, (x, y) => S.step(y < 58 ? 3 : 2, 6));
+    B.poly([side(0, -72), side(1, -72), side(1, -67), side(0, -67)], wood, () => S.step(2, 6));
+    B.poly([side(0, 56), side(1, 56), side(1, 64), side(0, 64)], wood, () => S.step(1, 6));
+    if (dr > 0.02) B.rect(-6, -67, 4, 123, wood, (x) => S.step(x < -4 ? 3 : 2, 6)); // the centre stile (the open door's other edge)
+    // the kumiko lattice: thin dark bars with a lit edge, on both faces
+    for (const y of [-40, -8, 24]) {
+      for (let x = (dr > 0.02 ? -2 : FX0 + 6); x < FX1 - 3; x++) { B.dot(x, y, wood, 2); B.dot(x, y - 1, wood, 4); }
+      for (let u = 0.1; u < 1; u += 0.06) { const [x, yy] = side(u, y); B.dot(Math.round(x), Math.round(yy), wood, 1); }
     }
-    // mournful eyes on the paper (right half; the door leaf carries none)
+    for (const x of (dr > 0.02 ? [8] : [-27, -6, 8])) for (let y = -67; y < 56; y++) { B.dot(x, y, wood, 2); B.dot(x - 1, y, wood, 4); }
+    for (let y = -67; y < 56; y++) { const [x, yy] = side(0.5, y); B.dot(Math.round(x), Math.round(yy), wood, 1); }
+    // mournful eyes on the paper (the near one on the panel right of the door, the far one painted
+    // on the door leaf; the leaf carries it away when it opens)
     const eyes = q.eyes || 'mourn';
-    for (const s of [-1, 1]) {
-      const ex = s * 13, ey = -30;
-      if (s < 0 && dr > 0.3) continue;
-      if (eyes === 'shut') { B.line(ex - 6, ey + 1, ex + 6, ey + 2, H.ink, 1); }
-      else if (eyes === 'down') { B.poly([[ex - 6, ey + 1], [ex + 6, ey - 1], [ex + 6, ey + 4], [ex - 5, ey + 4]], H.ink, 1); B.rect(ex - 1, ey + 2, 2, 1, H.white, 0); }
-      else if (eyes === 'wide') { B.ell(ex, ey + 1, 6, 4, H.ink, 1); B.rect(ex - 2, ey - 1, 2, 2, H.white, 0); }
-      else if (eyes === 'warm') { B.line(ex - 5, ey + 2, ex, ey - 1, H.ink, 1); B.line(ex, ey - 1, ex + 5, ey + 2, H.ink, 1); }
-      else { B.poly([[s * 7, -30], [s * 19, -34], [s * 19, -26], [s * 8, -24]], H.ink, 1); B.rect(s * 12 - 1, -31, 2, 2, H.white, 0); }
+    const eye = (ex, ey, w) => {
+      if (eyes === 'shut') { B.line(ex - w, ey + 1, ex + w, ey + 2, ink, 0); }
+      else if (eyes === 'down') { B.poly([[ex - w, ey + 1], [ex + w, ey - 1], [ex + w, ey + 4], [ex - w + 1, ey + 4]], ink, 0); B.rect(ex - 1, ey + 2, 2, 1, white, 0); }
+      else if (eyes === 'wide') { B.ell(ex, ey + 1, w, 4, ink, 0); B.rect(ex - 2, ey - 1, 2, 2, white, 0); }
+      else if (eyes === 'warm') { B.line(ex - w + 1, ey + 2, ex, ey - 1, ink, 0); B.line(ex, ey - 1, ex + w - 1, ey + 2, ink, 0); }
+      else { B.poly([[ex - w, ey], [ex + w, ey - 4], [ex + w, ey + 4], [ex - w + 1, ey + 6]], ink, 0); B.rect(ex - 1, ey - 1, 2, 2, white, 0); B.dot(ex + 2, ey + 3, ink, 2); }
+    };
+    eye(4, -30, 6);
+    if (dr <= 0.3) eye(-24, -29, 5);
+    // ---- the roof: a hip roof, its front slope lit and its right slope in shade, eaves of dark wood
+    const eL = [-56, -74], eR = [30, -74], eB = [54, -80], rL = [-14, -98], rR = [16, -101];
+    roof.poly([eL, eR, rR, rL], wood, (x, y) => S.step(y > -78 ? 2 : x < -20 ? 4 : 3, 6));
+    roof.poly([eR, eB, rR], wood, (x, y) => S.step(y > -80 ? 1 : 2, 6));
+    roof.rect(-56, -76, 86, 3, wood, (x) => S.step(x < -40 ? 5 : 4, 6));
+    roof.poly([eR, [eB[0], eB[1]], [eB[0], eB[1] + 3], [eR[0], eR[1] + 3]], wood, () => S.step(1, 6));
+    roof.rect(-6, -106, 12, 7, wood, (x) => S.step(x < -2 ? 4 : 2, 6)); // the finial
+    // snow on the roof (shaken loose as q.snow falls): heaped on the front slope, a lip over the
+    // eave, lit on top, blue in the shade, its lower edge in lumps
+    const sn = q.snow == null ? 1 : q.snow;
+    if (sn > 0.05) {
+      const top = -100 - Math.round(sn * 3);
+      roof.fill(-58, top - 6, 56, -72, (x, y) => {
+        const yEave = -75 + (x > 30 ? (x - 30) * -0.25 : 0);
+        const ridge = x < -14 ? -98 + (x + 14) * -0.92 : x > 16 ? -101 + (x - 16) * 0.55 : -98 - (x + 14) * 0.1;
+        const lump = Math.round(Math.sin(x / 5) * 1.5 + (K.hh(Math.round(x / 3), 7, 2) % 3));
+        const depth = (yEave - ridge) * (0.35 + 0.6 * sn);
+        return y >= ridge - 3 * sn && y <= ridge + depth + lump && x > -58 && x < 54;
+      }, snow, (x, y) => S.step(x > 28 ? (y < -88 ? 2 : 1) : y < -94 ? 5 : y < -86 ? 4 : x < -30 ? 4 : 3, 6));
     }
-    // icicles on the eaves (they lengthen as the cold gathers)
+    // icicles on the eaves (they lengthen as the cold gathers): lit on the left, a bright tip
     const ic = q.ice == null ? 1 : q.ice;
-    const icicle = (Lr, x, y, len) => Lr.poly([[x - 3, y], [x + 3, y], [x, y + len]], ice, (px) => K.clamp(0.75 - (px - x + 3) / 8, 0, 0.99));
-    for (let i = 0; i < 9; i++) icicle(B, -44 + i * 11, -72, Math.round((6 + ((i * 5) % 9)) * (0.6 + 0.6 * ic)));
-    B.restore();
-    // the door leaf itself, swung open on its hinge at the left post (foreshortened)
+    const icicle = (Lr, x, y, len) => { Lr.poly([[x - 3, y], [x + 3, y], [x, y + len]], ice, (px) => S.step(px < x - 1 ? 3 : px < x + 1 ? 2 : 1, 4)); Lr.dot(x, y + len - 1, ice, 3); };
+    for (let i = 0; i < 8; i++) icicle(roof, -50 + i * 11, -73, Math.round((6 + ((i * 5) % 9)) * (0.6 + 0.6 * ic)));
+    for (let i = 0; i < 2; i++) icicle(roof, 36 + i * 9, -77 - i * 2, Math.round((5 + i * 3) * (0.6 + 0.6 * ic)));
+    B.restore(); roof.restore();
+    // the door leaf, swung open on its hinge at the near-left post (toward you, foreshortened)
     if (dr > 0.02) {
       rockT(door);
-      // hinged at the left post, it swings out toward you: seen nearly edge-on when wide open,
-      // its free edge (nearer) a little taller
-      const w = Math.max(3, Math.round(33 * Math.cos(dr * 1.35))), sk = Math.round(Math.sin(dr * 1.35) * 4);
-      const x0 = -36, x1 = -36 + w;
-      door.poly([[x0, -66], [x1, -66 - sk], [x1, 56 + sk], [x0, 56]], paper, (x, y) => K.clamp(0.66 - (x - x0) / 70 - dr * 0.15, 0, 0.99));
-      door.rect(x1 - 2, -67 - sk, 3, 124 + 2 * sk, wood, 2);
-      door.rect(x0, -67, 2, 124, wood, 1);
-      for (const y of [-40, -8, 24]) door.line(x0, y, x1, y + Math.round(sk * (y - -5) / 61), wood, 1);
-      // the left eye is painted on this leaf: it turns away with it
-      if (w > 14 && (q.eyes || 'mourn') !== 'shut') {
-        const sx = (x) => x0 + ((x + 36) / 33) * w;
-        door.poly([[sx(-7), -30], [sx(-19), -34], [sx(-19), -26], [sx(-8), -24]], H.ink, 1);
-      }
-      // a letter tucked in the door (its plea)
+      const w = Math.max(3, Math.round(32 * Math.cos(dr * 1.35))), sk = Math.round(Math.sin(dr * 1.35) * 5);
+      const x0 = -38, x1 = -38 + w;
+      door.poly([[x0, -66], [x1, -66 - sk], [x1, 56 + sk], [x0, 56]], paper, (x) => S.step(x < x0 + 3 ? 4 : 3 - Math.round(dr), 6));
+      door.rect(x1 - 2, -67 - sk, 3, 124 + 2 * sk, wood, (x) => S.step(x < x1 ? 4 : 2, 6));
+      door.rect(x0, -67, 2, 124, wood, 3);
+      for (const y of [-40, -8, 24]) door.line(x0, y, x1, y + Math.round(sk * (y - -5) / 61), wood, 2);
+      if (w > 14 && (q.eyes || 'mourn') !== 'shut') { const sx = (x) => x0 + ((x + 38) / 32) * w; door.poly([[sx(-18), -29], [sx(-29), -33], [sx(-29), -25], [sx(-19), -23]], ink, 0); }
       if (q.letter > 0.05 && w > 10) door.stone([[x0 + 3, 4], [x1 - 3, 3], [x1 - 3, 17], [x0 + 3, 16]], letter, { bevel: 1, face: 2 });
       door.restore();
     }
-    // the foot: a stone block on the ground (it tips with the lamp)
+    // ---- the foot: a stone block seen from a little above (its top face, front and right side)
     rockT(ground);
-    ground.stone([[-32, 64], [32, 64], [38, 74], [-38, 74]], stone, { bevel: 2, face: 2 });
-    ground.rect(-7, 74, 14, 12, stone, 1);
-    ground.stone([[-14, 84], [14, 84], [16, 88], [-16, 88]], stone, { bevel: 1, face: 1 });
-    for (let i = 0; i < 6; i++) icicle(ground, -30 + i * 12, 74, Math.round((5 + ((i * 7) % 8)) * (0.6 + 0.6 * ic)));
+    ground.poly([[-36, 64], [26, 64], [40, 60], [-22, 60]], stone, (x) => S.step(x < -10 ? 5 : 4, 6));
+    ground.rect(-36, 64, 62, 10, stone, (x, y) => S.step(x < -26 ? 4 : y > 71 ? 2 : 3, 6));
+    ground.poly([[26, 64], [40, 60], [40, 70], [26, 74]], stone, () => S.step(1, 6));
+    ground.rect(-10, 74, 16, 12, stone, (x) => S.step(x < -6 ? 4 : x < 2 ? 3 : 1, 6));
+    ground.poly([[-18, 84], [12, 84], [20, 81], [-10, 81]], stone, () => S.step(4, 6));
+    ground.rect(-18, 84, 30, 4, stone, (x) => S.step(x < -10 ? 3 : 2, 6));
+    for (const [x, y, s] of [[-26, 68, 4], [14, 67, 3], [32, 66, 3]]) K.cluster(ground, x, y, s, stone, 1, K.hh(x, y, 5));
+    for (const [x, l] of [[-30, 5], [-22, 3], [18, 4]]) icicle(ground, x, 74, Math.round(l * (0.6 + 0.6 * ic)));
     ground.restore();
-    B.outline(); door.outline(); ground.outline();
+    // ---- outlines, cast shadows (the roof on the panel, the panel on the foot), the rim
+    B.outline(); roof.outline(); door.outline(); ground.outline();
+    S.cast(roof, B, 2, 4, 2);
+    S.cast(B, ground, 2, 3, 1);
+    S.cast(door, B, 2, 3, 1);
+    const out = aura.over(ground).over(B).over(roof).over(door);
+    S.rim(out, { w: 2 });
     // snow shaken off the roof, falling (sprite-local clumps)
     if (q.fall > 0.02) {
       for (let i = 0; i < 7; i++) {
         const [x0, y0] = frostPt(q, -40 + i * 13, -90);
         const k = q.fall;
         const x = x0 - Math.round(k * (24 + (i % 3) * 8)), y = y0 - Math.round(Math.sin(k * Math.PI) * (8 + (i % 2) * 6)) + Math.round(k * k * (50 + (i % 3) * 24));
-        fx.ell(x, y, 3 + (i % 2), 2 + (i % 2), snow, 3);
+        fx.ell(x, y, 3 + (i % 2), 2 + (i % 2), snow, (px, py) => S.step(py < y ? 4 : 2, 6));
       }
     }
     // frost motes circling (they swirl inward while the cold gathers)
@@ -380,16 +460,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const r = (70 + (i % 3) * 8) * mr;
       const x = Math.round(Math.cos(a) * r), y = Math.round(Math.sin(a) * r * 0.55) - 4 + (q.lift || 0);
       if (warmth > 0.6) { fx.dot(x, y, K.solid('#ffd890', { line: false }), 0); continue; }
-      fx.rect(x - 1, y, 3, 1, mote, 1); fx.rect(x, y - 1, 1, 3, mote, 1);
-      if ((i + Math.round((q.mph || 0) * 3)) % 4 === 0) fx.dot(x, y, K.solid('#ffffff', { line: false }), 0);
+      fx.rect(x - 1, y, 3, 1, mote, 0); fx.rect(x, y - 1, 1, 3, mote, 0); fx.dot(x, y, mote, (i + Math.round((q.mph || 0) * 3)) % 4 === 0 ? 2 : 1);
     }
     // cold breath at the open door
     if (q.breath > 0.05) {
-      const [bx, by] = frostPt(q, -40, 4);
-      const pm = K.mat('#e2f0ff', { n: 3, at: 1, step: 0.06, alpha: 170, line: false });
-      for (let i = 0; i < 4; i++) fx.ell(bx - i * 8 * q.breath, by + i * 2 - 4, 4 + i * 2, 3 + i, pm, 2 - (i > 1 ? 1 : 0));
+      const [bx, by] = frostPt(q, -44, 4), pf = L.like();
+      const pm = S.mat(['#a8bcec', '#d8e6fa', '#fbfdff'], { at: 1, alpha: 215, line: '#7486c4' });
+      for (let i = 0; i < 4; i++) { const x = bx - i * 8 * q.breath, y = by + i * 2 - 4, rx = 4 + i * 2, ry = 3 + i; pf.ell(x, y, rx, ry, pm, (px, py) => S.step(py < y && px < x ? 2 : 1, 3)); }
+      pf.outline();
+      fx.over(pf);
     }
-    return aura.over(ground).over(B).over(door).over(fx);
+    return out.over(fx);
   }
   const FB = { rock: 0, lift: 0, flame: 1, fl: 0, dim: 0, door: 0, white: 0, warm: 0, eyes: 'mourn', snow: 1, fall: 0, ice: 1, mr: 1, mph: 0, breath: 0, letter: 0 };
   const frostIdle = [];
