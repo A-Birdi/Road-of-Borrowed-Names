@@ -175,7 +175,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       }
       const [mx, my] = lanPt(q, mx0, 14);
       sm.ell(mx - 8, my + 6, 6, 4, smokeM2, 1);
-      sm.outline();
+      S.outline(sm);
       fx.over(sm);
     }
     // ---- Moth and Lantern: white moths circling it (part of the creature)
@@ -197,7 +197,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       }
     }
     // ---- outlines, cast shadows, the rim
-    tail.outline(); B.outline(); front.outline(); mothB.outline();
+    S.outline(tail); S.outline(B); S.outline(front); S.outline(mothB);
     S.lit(B, wood, 4, { left: false, test: (x, y) => y < -50 });
     S.cast(B, tail, 2, 3, 1);
     const out = aura.over(mothB).over(tail).over(B);
@@ -438,7 +438,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     for (const [x, l] of [[-30, 5], [-22, 3], [18, 4]]) icicle(ground, x, 74, Math.round(l * (0.6 + 0.6 * ic)));
     ground.restore();
     // ---- outlines, cast shadows (the roof on the panel, the panel on the foot), the rim
-    B.outline(); roof.outline(); door.outline(); ground.outline();
+    S.outline(B); S.outline(roof); S.outline(door); S.outline(ground);
     S.cast(roof, B, 2, 4, 2);
     S.cast(B, ground, 2, 3, 1);
     S.cast(door, B, 2, 3, 1);
@@ -467,7 +467,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const [bx, by] = frostPt(q, -44, 4), pf = L.like();
       const pm = S.mat(['#a8bcec', '#d8e6fa', '#fbfdff'], { at: 1, alpha: 215, line: '#7486c4' });
       for (let i = 0; i < 4; i++) { const x = bx - i * 8 * q.breath, y = by + i * 2 - 4, rx = 4 + i * 2, ry = 3 + i; pf.ell(x, y, rx, ry, pm, (px, py) => S.step(py < y && px < x ? 2 : 1, 3)); }
-      pf.outline();
+      S.outline(pf);
       fx.over(pf);
     }
     return out.over(fx);

@@ -129,7 +129,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (q.drift > 0 && j === 0) { x = x + (-96 - x) * q.drift; y = y + (-30 - y) * q.drift; ang = Math.sin((q.rot || 0) * 3) * 0.6; front = true; }
       drawP(j, x, y, ang, front ? page : page2, front);
     }
-    backP.outline(); frontP.outline(); hollow.outline(); inkL.outline();
+    S.outline(backP); S.outline(frontP); S.outline(hollow); S.outline(inkL);
     backP.fade(0.78);
     S.cast(frontP, hollow, 2, 3, 1);
     // the marks it took, rising off the hollow as short strokes (more when a knot comes loose)

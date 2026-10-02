@@ -135,7 +135,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }
     H.glow(glow, Sp.x, Sp.y - 14, 18, 8, col, 0.3 * gl, 2);
     // ---- outlines, cast shadows, rim
-    for (const X of [base, B, head, lid]) X.outline();
+    for (const X of [base, B, head, lid]) S.outline(X);
     S.cast(head, B, 2, 3, 1); S.cast(lid, head, 2, 2, 1); S.cast(B, base, 2, 2, 1);
     const out = glow.over(base).over(B).over(head).over(lid);
     S.rim(out, { w: 2 });

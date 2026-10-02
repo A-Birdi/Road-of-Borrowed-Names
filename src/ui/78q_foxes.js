@@ -186,13 +186,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
       leaf.poly([[-9, 0], [-4, -4], [4, -4], [9, 0], [4, 3], [-4, 3]], lf, (x, y) => S.step(y < -1 ? (x < 2 ? 4 : 3) : x < -2 ? 2 : 1, 5));
       leaf.line(-8, 0, 8, 0, lf, 1); leaf.line(8, 0, 11, 2, lf, 0);
       leaf.restore();
-      leaf.outline();
+      S.outline(leaf);
       head.over(leaf);
     }
     // ---- clusters, coloured outlines, cast shadows from near parts onto far ones, the rim light
     const uniq = (a) => a.filter((x, i) => a.indexOf(x) === i);
     for (const X of uniq([tailL, tailF, body, haunch, chest, nearL, head])) for (const M of [furM, ruffM]) S.clean(X, M);
-    for (const X of uniq([tailL, farL, body, haunch, chest, nearL, tailF, headB, head, fire])) X.outline();
+    for (const X of uniq([tailL, farL, body, haunch, chest, nearL, tailF, headB, head, fire])) S.outline(X);
     S.cast(body, tailL, 2, 3, 1);
     if (!stretched) { S.cast(haunch, tailL, 2, 3, 1); S.cast(chest, haunch, 2, 2, 1); S.cast(chest, body, 2, 2, 1); }
     for (const X of uniq([chest, haunch])) S.cast(nearL, X, 2, 2, 1);
@@ -211,7 +211,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         const x = m[0] - 5 - k * (22 + b0 * 20), y = m[1] - 2 - k * 7, rx = 2 + k * 6 + b0 * 3, ry = 2 + k * 3 + b0 * 2;
         pf.ell(x, y, rx, ry, puff, (xx, yy) => S.step(yy < y - ry * 0.2 && xx < x + rx * 0.2 ? 2 : yy > y + ry * 0.45 ? 0 : 1, 3));
       }
-      pf.outline();
+      S.outline(pf);
       fx.over(pf);
     }
     return out.over(fire).over(fx);

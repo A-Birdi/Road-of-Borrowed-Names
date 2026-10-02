@@ -110,7 +110,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         return Math.abs(y - cyAt(k)) <= wAt(k);
       }, M, (x, y) => { const k = (sx - x) / len, d = (y - cyAt(k)) / Math.max(1, wAt(k)); const crease = Math.cos(k * 13 + d * 2) > 0.55; return S.step(d < -0.45 ? 5 : d > 0.5 ? 2 : crease ? 3 : 4, 7); });
     }
-    B.outline(); arm.outline();
+    S.outline(B); S.outline(arm);
     S.cast(arm, B, 2, 3, 1);
     // blank scraps drifting near it (flung out when it spreads or loosens)
     const sc = q.scatter || 0;
@@ -123,7 +123,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       bits.line(-2, 0, 2, 0, ink, 0);
       bits.restore();
     }
-    bits.outline();
+    S.outline(bits);
     if (Math.round(q.sph || 0) % 3 !== 1) bits.fade(0.85);
     const out = B.over(arm);
     S.rim(out, { w: 2 });
@@ -210,7 +210,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     // a round head lit from the upper left (hard bands), turned a little toward the party
     H.tail(B, lx * 0.6 + 2, -16, 76 * (q.tl || 1), 22 * sx, q.tph || 0, [[0, 50, M], [50, 120, Mt]], { amp: q.tamp == null ? 6 : q.tamp, curl: 12, lean: q.tlean || 0 });
     B.ell(lx, -22, 24 * sx, 26 * sy, M, S.sph(lx - 4, -28, 26 * sx, 28 * sy, 6, { bias: 0.15 }));
-    B.outline();
+    S.outline(B);
     for (const [ex, w] of [[lx - 13, 2], [lx + 1, 3]]) { if (q.blink) B.rect(ex - w, -18, w * 2, 1, ink, 0); else { B.ell(ex, -18, w, 5, ink, 0); B.rect(ex - 1, -21, 2, 2, white, 0); } }
     const out = glow.over(B);
     S.rim(out, { w: 2 });

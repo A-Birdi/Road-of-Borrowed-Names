@@ -354,8 +354,10 @@ RB.creaturesB = (function () {
     function strands(ang, o) {
       o = o || {};
       const wd = o.w || 4, len = o.len || 8, amp = o.amp == null ? 0.3 : o.amp, seed = o.seed || 1, bias = o.sign || 0;
+      const fixed = typeof ang !== 'function', ca0 = fixed ? Math.cos(ang) : 0, sa0 = fixed ? Math.sin(ang) : 0;
       return (x, y) => {
-        const a = typeof ang === 'function' ? ang(x, y) : ang, ca = Math.cos(a), sa = Math.sin(a);
+        let ca = ca0, sa = sa0;
+        if (!fixed) { const a = ang(x, y); ca = Math.cos(a); sa = Math.sin(a); }
         const u = x * ca + y * sa, w = -x * sa + y * ca;
         const cw = Math.floor(w / wd), wl = w - cw * wd;
         const uu = u + (K.hh(cw + 99, seed, 3) % len);
@@ -400,8 +402,9 @@ RB.creaturesB = (function () {
     // the shadow a near part (front) casts on a far one (back): back pixels the front would cover
     // if moved (dx, dy) away from the light step k tones down their own ramp
     function cast(front, back, dx, dy, k) {
-      const { w, h } = back, fp = front.px, bp = back.px, bm = back.mt;
-      for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const { w, h } = back, fp = front.px, bp = back.px, bm = back.mt, bb = bbox(back);
+      if (!bb) return back;
+      for (let y = bb[1]; y <= bb[3]; y++) for (let x = bb[0]; x <= bb[2]; x++) {
         const i = y * w + x;
         if (!(bp[i] >>> 24) || (fp[i] >>> 24)) continue;
         const sx = x - dx, sy = y - dy;
@@ -432,8 +435,10 @@ RB.creaturesB = (function () {
     // stray single pixels (no 4-neighbour of the same colour) folded into the colour most of their
     // neighbours share (at least three of the four), within one material
     function clean(L, only) {
-      const { w, h, px, mt } = L, out = px.slice();
-      for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) {
+      const { w, h, px, mt } = L, bb = bbox(L);
+      if (!bb) return L;
+      const out = px.slice();
+      for (let y = Math.max(1, bb[1]); y <= Math.min(h - 2, bb[3]); y++) for (let x = Math.max(1, bb[0]); x <= Math.min(w - 2, bb[2]); x++) {
         const i = y * w + x, c = px[i];
         if (!(c >>> 24) || (only && mt[i] !== only.id)) continue;
         const nb = [px[i - 1], px[i + 1], px[i - w], px[i + w]];
@@ -448,6 +453,49 @@ RB.creaturesB = (function () {
       const ca = Math.cos(ang), sa = Math.sin(ang), b = bend || 0;
       const px = -sa, py = ca;
       L.poly([[x + px * wd / 2, y + py * wd / 2], [x + ca * len * 0.55 + px * (wd * 0.3 + b * 0.5), y + sa * len * 0.55 + py * (wd * 0.3 + b * 0.5)], [x + ca * len + px * b, y + sa * len + py * b], [x - px * wd / 2 + ca * len * 0.3, y - py * wd / 2 + sa * len * 0.3]], M, k);
+      return L;
+    }
+    // the rows and columns that hold any pixel (the passes below work only there)
+    function bbox(L) {
+      const { w, h, px } = L;
+      let x0 = w, x1 = -1, y0 = -1, y1 = -1;
+      for (let y = 0; y < h; y++) {
+        const r = y * w;
+        let any = false;
+        for (let x = 0; x < w; x++) if (px[r + x]) { any = true; if (x < x0) x0 = x; break; }
+        if (!any) continue;
+        for (let x = w - 1; x >= 0; x--) if (px[r + x]) { if (x > x1) x1 = x; break; }
+        if (y0 < 0) y0 = y;
+        y1 = y;
+      }
+      return y0 < 0 ? null : [x0, y0, x1, y1];
+    }
+    // the coloured selective outline (as RB.pxkit's Layer.outline: every empty pixel touching a
+    // shape takes the neighbour material's outline tone, lighter where the edge faces the light),
+    // done only round the drawn area — the same result at a fraction of the cost on large frames
+    function outline(L) {
+      const bb = bbox(L);
+      if (!bb) return L;
+      const { w, h, px, mt } = L, out = px.slice(), omt = mt.slice();
+      const X0 = Math.max(0, bb[0] - 1), X1 = Math.min(w - 1, bb[2] + 1), Y0 = Math.max(0, bb[1] - 1), Y1 = Math.min(h - 1, bb[3] + 1);
+      for (let y = Y0; y <= Y1; y++) for (let x = X0; x <= X1; x++) {
+        const i = y * w + x;
+        if (px[i] >>> 24) continue;
+        let dark = 0, lit = 0, m = 0;
+        const chk = (j, isLit) => {
+          if (!(px[j] >>> 24)) return;
+          const M = MATS[mt[j]];
+          if (!M || !M.line) return;
+          if (isLit) { if (!lit) { lit = M.lineLit; m = m || M.id; } } else if (!dark) { dark = M.line; m = M.id; }
+        };
+        if (x + 1 < w) chk(i + 1, true);
+        if (y + 1 < h) chk(i + w, true);
+        if (x > 0) chk(i - 1, false);
+        if (y > 0) chk(i - w, false);
+        const col = dark || lit;
+        if (col) { out[i] = col; omt[i] = m; }
+      }
+      L.px = out; L.mt = omt;
       return L;
     }
     // the four-neighbour edge test used by detail passes: is (x, y) (buffer px) filled?
@@ -473,7 +521,7 @@ RB.creaturesB = (function () {
       }
       return L;
     }
-    return { LK, ramp, deep, mat, T, band, step, lam, sph, cyl, facet, strands, rim, cast, lit, clean, tuft, filled, mixh, toward, hslOf, fromHsl, METAL, pipe };
+    return { LK, ramp, deep, mat, T, band, step, lam, sph, cyl, facet, strands, rim, cast, lit, clean, tuft, filled, mixh, toward, hslOf, fromHsl, METAL, pipe, bbox, outline };
   })();
 
   return { rig, RIGS, play, deliver, flush, PENDING, warmFor, warmStats, stopWarm, targets, colOf, blocked, tween, keys, mixQ, E, damp, cl, lerp, FAMILIES, AUDIT, FAMILY, family, audit, budget, S };

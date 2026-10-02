@@ -172,7 +172,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       fx.restore();
     }
     // ---- outlines, cast shadows (the hood on the shoulders, the chart on the cloak), the rim
-    for (const X of [back, B, hoodL, front, fx]) X.outline();
+    for (const X of [back, B, hoodL, front, fx]) S.outline(X);
     S.cast(hoodL, B, 2, 4, 2); S.cast(front, B, 2, 3, 1); S.cast(fx, B, 2, 3, 1); S.cast(B, back, 2, 2, 1);
     const out = back.over(B).over(hoodL).over(front);
     S.rim(out, { w: 2 });

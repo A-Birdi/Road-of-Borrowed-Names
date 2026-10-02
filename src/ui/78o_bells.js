@@ -156,7 +156,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }
     B.restore();
     // ---- outlines, the toll, compositing, rim
-    strands.outline(); B.outline(); clap.outline();
+    S.outline(strands); S.outline(B); S.outline(clap);
     S.cast(B, strands, 2, 3, 1);
     // the clapper shows inside the dark mouth and below the lip, never through the metal
     for (let i = 0; i < clap.px.length; i++) if (clap.px[i] >>> 24 && (!(B.px[i] >>> 24) || B.mt[i] === cav.id)) { B.px[i] = clap.px[i]; B.mt[i] = clap.mt[i]; }
@@ -509,7 +509,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       farT.dot(cx - 3, cy + 1, ironFar, 4);
     }
     // ---- passes: clusters, coloured outlines, cast shadows, the lit edges of the metal, rim light
-    for (const X of [farT, sideT, nearT, lash, B, wheelL]) X.outline();
+    for (const X of [farT, sideT, nearT, lash, B, wheelL]) S.outline(X);
     S.lit(B, bronze, 6, { left: false, test: (x, y) => y < -66 });
     S.cast(B, farT, 2, 3, 1); S.cast(B, sideT, 2, 3, 2);
     S.cast(nearT, B, 2, 3, 1);
