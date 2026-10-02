@@ -31,7 +31,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     if (a != null) c.globalAlpha = 1;
   }
   // a block with a dark one-pixel edge (reads on light and dark backdrops)
-  function blk(c, x, y, w, h, col, a, edge) { R(c, x - 1, y - 1, w + 2, h + 2, edge || '#2a2024', a * 0.85); R(c, x, y, w, h, col, a); }
+  function blk(c, x, y, w, h, col, a, edge) { R(c, x - 1, y - 1, w + 2, h + 2, edge || '#24162a', a * 0.85); R(c, x, y, w, h, col, a); }
   // a point on the acting creature (its art px) → canvas
   function on(A, p) { const o = A.pt('foe', 'core'); return { x: o.x + (p.dx || 0) * A.u, y: o.y + (p.dy || 0) * A.u }; }
   const lerpP = (a, b, s) => ({ x: a.x + (b.x - a.x) * s, y: a.y + (b.y - a.y) * s });
@@ -64,9 +64,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   function page(c, x, y, turn, u, col, alpha) {
     if (alpha <= 0.01) return;
     const t4 = ((turn % 4) + 4) % 4, w = [6, 5, 2, 5][t4] * u, h = [4, 5, 5, 4][t4] * u;
-    R(c, x - w / 2 - u, y - h / 2 - u, w + 2 * u, h + 2 * u, '#2a2840', alpha * 0.8);
+    R(c, x - w / 2 - u, y - h / 2 - u, w + 2 * u, h + 2 * u, '#262050', alpha * 0.8);
     R(c, x - w / 2, y - h / 2, w, h, col, alpha);
-    if (t4 !== 2) R(c, x - w / 2 + u, y, Math.max(u, w - 2 * u), u, '#8a86a0', alpha * 0.8);
+    if (t4 !== 2) R(c, x - w / 2 + u, y, Math.max(u, w - 2 * u), u, '#5a5680', alpha * 0.8);
   }
 
   const fx = {
@@ -80,7 +80,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (p.mode === 'strike' || p.mode === 'dull') {
         const T = A.pt(p.to, 'chest');
         const at = p.mode === 'dull' ? lerpP(T, M, 0.32) : T;
-        if (still) { ring(c, at.x, at.y, 12 * u, u, p.mode === 'dull' ? '#b8b4c0' : col, 0.8 * (1 - seg(k, 0.6, 1))); return; }
+        if (still) { ring(c, at.x, at.y, 12 * u, u, p.mode === 'dull' ? '#a8a4cc' : col, 0.8 * (1 - seg(k, 0.6, 1))); return; }
         const n = p.mode === 'dull' ? 1 : 3;
         for (let i = 0; i < n; i++) {
           const s = seg(k, i * 0.12, 0.55 + i * 0.12);
@@ -131,15 +131,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
       }
       if (p.mode === 'mute') {
         const T = A.pt(p.to || 'party', 'head');
-        if (still) { arc(c, T.x, T.y + 4 * u, 22 * u, 9 * u, Math.PI * 1.1, Math.PI * 1.9, u, '#a8a4b8', 0.8 * (1 - seg(k, 0.6, 1)), 2 * u); return; }
+        if (still) { arc(c, T.x, T.y + 4 * u, 22 * u, 9 * u, Math.PI * 1.1, Math.PI * 1.9, u, '#8a86b4', 0.8 * (1 - seg(k, 0.6, 1)), 2 * u); return; }
         const s = ease(seg(k, 0, 0.7));
         const q = lerpP(M, { x: T.x, y: T.y - 4 * u }, s);
         // a choked note: grey, no shine, flattening as it goes; it settles as a lid over them
         for (let i = 0; i < 3; i++) {
           const rx = (10 + i * 6 + s * 10) * u, ry = (8 + i * 4) * u * (1 - 0.55 * s);
-          arc(c, q.x, q.y, rx, ry, Math.PI * 0.55, Math.PI * 1.45, u, i ? '#8a8698' : '#b8b4c4', (1 - seg(k, 0.75, 1)) * (0.85 - i * 0.22), i ? u : 2 * u);
+          arc(c, q.x, q.y, rx, ry, Math.PI * 0.55, Math.PI * 1.45, u, i ? '#6a6694' : '#a8a4cc', (1 - seg(k, 0.75, 1)) * (0.85 - i * 0.22), i ? u : 2 * u);
         }
-        if (k > 0.6) arc(c, T.x, T.y + 4 * u, 24 * u, 8 * u, Math.PI * 1.1, Math.PI * 1.9, u, '#b8b4c4', bell(seg(k, 0.6, 1)) * 0.7, 2 * u);
+        if (k > 0.6) arc(c, T.x, T.y + 4 * u, 24 * u, 8 * u, Math.PI * 1.1, Math.PI * 1.9, u, '#a8a4cc', bell(seg(k, 0.6, 1)) * 0.7, 2 * u);
         return;
       }
       if (p.mode === 'lie') {
@@ -161,9 +161,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const al = still ? 0.9 * (1 - seg(k, 0.7, 1)) : 1 - seg(k, 0.75, 1);
       const sway = still ? 0 : Math.round(Math.sin(t / 90) * u);
       const w = 6 * u, h = 14 * u;
-      blk(c, q.x - w / 2 + sway, q.y - h / 2, w, h, '#efe4c8', al, '#5a4a3a');
-      for (let i = 0; i < 3; i++) R(c, q.x - w / 2 + 2 * u + sway, q.y - h / 2 + (2 + i * 3) * u, 2 * u, u, '#3a2c28', al * 0.8);
-      R(c, q.x - u + sway, q.y + h / 2 - 3 * u, 2 * u, 2 * u, '#c8503a', al);
+      blk(c, q.x - w / 2 + sway, q.y - h / 2, w, h, '#f4ead2', al, '#4a2e38');
+      for (let i = 0; i < 3; i++) R(c, q.x - w / 2 + 2 * u + sway, q.y - h / 2 + (2 + i * 3) * u, 2 * u, u, '#2a1a24', al * 0.8);
+      R(c, q.x - u + sway, q.y + h / 2 - 3 * u, 2 * u, 2 * u, '#b02a24', al);
     },
     // force drawn in to one point of the creature (Gathering), in its own colour
     cbGather(c, e, k, A, t, still) {
@@ -171,7 +171,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (still) { ring(c, o.x, o.y, 10 * u, u, col, 0.7 * (1 - seg(k, 0.7, 1))); return; }
       for (let i = 0; i < 10; i++) {
         const s = seg(k, i * 0.035, 0.65 + i * 0.03), ang = (i / 10) * Math.PI * 2 + s * 3.2, r = (1 - ease(s)) * (A.foeR * 0.95);
-        blk(c, o.x + Math.cos(ang) * r, o.y + Math.sin(ang) * r * 0.75, 2 * u, 2 * u, col, bell(s), '#3a2a18');
+        blk(c, o.x + Math.cos(ang) * r, o.y + Math.sin(ang) * r * 0.75, 2 * u, 2 * u, col, bell(s), '#3a1e2e');
       }
       K().halo(c, o.x, o.y, Math.round(A.foeR * 0.32), '255,220,150', 0.45 * bell(seg(k, 0.45, 1)), 3);
     },
@@ -187,15 +187,20 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const al = still ? 0.8 * (1 - seg(k, 0.7, 1)) : 1;
       for (let i = 0; i <= n; i++) {
         const s = (i / n) * reach, q = qpt(M, T, -18 * u, s), w = Math.max(3, Math.round(9 - 4 * (i / n))) * u;
-        R(c, q.x - w / 2 - u, q.y - w / 2 - u, w + 2 * u, w + 2 * u, '#141222', al);
-        R(c, q.x - w / 2, q.y - w / 2, w, w, '#3a3850', al);
-        R(c, q.x - w / 2, q.y - w / 2, w, u, '#6a6888', al);
-        if (i % 4 === 2) R(c, q.x - w / 2 - u, q.y - u, w + 2 * u, 2 * u, '#5a5878', al);
+        R(c, q.x - w / 2 - u, q.y - w / 2 - u, w + 2 * u, w + 2 * u, '#100e26', al);
+        R(c, q.x - w / 2, q.y - w / 2, w, w, '#33335e', al);
+        // banded like the Keeper's legs: a lit top with a specular streak, a dark reflected band, the
+        // cool rim along the underside
+        R(c, q.x - w / 2, q.y - w / 2, w, u, '#7e84b4', al);
+        if (w > 3 * u) R(c, q.x - w / 2, q.y - w / 2 + u, w, u, '#c6cceb', al);
+        R(c, q.x - w / 2, q.y + w / 2 - 2 * u, w, u, '#1f1e40', al);
+        R(c, q.x - w / 2, q.y + w / 2 - u, w, u, '#86b8ee', al * 0.9);
+        if (i % 4 === 2) R(c, q.x - w / 2 - u, q.y - u, w + 2 * u, 2 * u, '#4e5084', al);
       }
-      R(c, tip.x - 4 * u, tip.y - 4 * u, 8 * u, 8 * u, '#4a4868', al);
+      R(c, tip.x - 4 * u, tip.y - 4 * u, 8 * u, 8 * u, '#4e5084', al);
       if (!still && k > 0.38 && k < 0.6) {
         const s = seg(k, 0.38, 0.6);
-        for (let i = 0; i < 5; i++) { const a = -Math.PI / 2 + (i - 2) * 0.6; R(c, tip.x + Math.cos(a) * s * 14 * u, tip.y + Math.sin(a) * s * 10 * u, 2 * u, 2 * u, '#a0bee6', 1 - s); }
+        for (let i = 0; i < 5; i++) { const a = -Math.PI / 2 + (i - 2) * 0.6; R(c, tip.x + Math.cos(a) * s * 14 * u, tip.y + Math.sin(a) * s * 10 * u, 2 * u, 2 * u, '#8cc2f0', 1 - s); }
       }
     },
     // the keeper's flood: water bursts from the sluice, falls, and a wave rolls along the floor,
@@ -203,7 +208,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     // leaving a wet sheen. p.who: the recipients; p.col/p.col2: the water (ink for the Hush).
     cbFlood(c, e, k, A, t, still) {
       const u = A.u, p = e.p, M = on(A, p), who = (p.who || ['pc']).map((w) => ({ c: A.pt(w, 'chest'), f: A.pt(w, 'feet') }));
-      const W = p.col || '#7aa8d8', F = p.col2 || '#eef6ff', D = p.col3 || '#4a78a8';
+      const W = p.col || '#4f8ad2', F = p.col2 || '#eef8ff', D = p.col3 || '#2a5aa4';
       const floor = Math.max(...who.map((q) => q.f.y)) - 2 * u;
       const far = Math.min(...who.map((q) => q.f.x)) - 30 * u;
       if (still) {
@@ -266,9 +271,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const s = still ? 1 : ease(seg(k, 0, 0.85)), q = lerpP(M, T, s);
       const al = still ? 0.8 * (1 - seg(k, 0.7, 1)) : 0.85 * (1 - seg(k, 0.85, 1));
       const w = 12 * u, h = 16 * u;
-      R(c, q.x - w / 2 - u, q.y - h / 2 - u, w + 2 * u, h + 2 * u, '#6a6a88', al * 0.7);
-      R(c, q.x - w / 2, q.y - h / 2, w, h, '#e8eef8', al * 0.6);
-      if (p.smile) { for (let i = -3; i <= 3; i++) R(c, q.x + i * u, q.y + 2 * u + Math.round((i * i) / 4) * u, u, u, '#5a5a78', al); }
+      R(c, q.x - w / 2 - u, q.y - h / 2 - u, w + 2 * u, h + 2 * u, '#3a3660', al * 0.7);
+      R(c, q.x - w / 2, q.y - h / 2, w, h, '#e2eaf8', al * 0.6);
+      if (p.smile) { for (let i = -3; i <= 3; i++) R(c, q.x + i * u, q.y + 2 * u + Math.round((i * i) / 4) * u, u, u, '#3a3660', al); }
       if (!still) { const g = seg(k, 0, 0.6); for (let i = 0; i < 4; i++) R(c, q.x - w / 2 + (g * 1.4 * w) - i * u, q.y - h / 2 + i * 4 * u, u, 4 * u, '#ffffff', al * (1 - g)); }
     },
     // a plea: a folded letter that leaves the creature and drifts to the party (p.drip: wet)
@@ -277,10 +282,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const s = still ? 0.6 : ease(seg(k, 0, 0.75)), q = qpt(M, { x: T.x, y: T.y - 14 * u }, -36 * u, s);
       const al = still ? 0.9 * (1 - seg(k, 0.75, 1)) : 1 - seg(k, 0.82, 1);
       const sway = still ? 0 : Math.round(Math.sin(t / 140) * 2) * u;
-      blk(c, q.x - 5 * u + sway, q.y - 4 * u, 10 * u, 7 * u, '#efe4c8', al, '#5a4a3a');
-      R(c, q.x - 5 * u + sway, q.y - 4 * u, 10 * u, u, '#dccb9e', al);
-      R(c, q.x - 3 * u + sway, q.y, 6 * u, u, '#4a3a40', al * 0.7);
-      if (p.drip && !still) for (let i = 0; i < 3; i++) { const d = ((k * 3 + i / 3) % 1); R(c, q.x - 2 * u + i * 2 * u + sway, q.y + 4 * u + d * 12 * u, u, 2 * u, '#a0bee6', al * (1 - d)); }
+      blk(c, q.x - 5 * u + sway, q.y - 4 * u, 10 * u, 7 * u, '#f4ead2', al, '#4a2e38');
+      R(c, q.x - 5 * u + sway, q.y - 4 * u, 10 * u, u, '#c8ae86', al);
+      R(c, q.x - 3 * u + sway, q.y, 6 * u, u, '#3a2430', al * 0.7);
+      if (p.drip && !still) for (let i = 0; i < 3; i++) { const d = ((k * 3 + i / 3) % 1); R(c, q.x - 2 * u + i * 2 * u + sway, q.y + 4 * u + d * 12 * u, u, 2 * u, '#8cc2f0', al * (1 - d)); }
     },
 
     // ---- lanterns ----------------------------------------------------------------------------------
@@ -301,7 +306,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
           R(c, q.x - w / 2, q.y - w / 2 + wob, w, w, pass === 0 ? col : pass === 1 ? mid : hot, al * (pass === 0 ? 0.9 : 1));
         }
       }
-      if (!still && k > 0.4 && k < 0.7) { const s = seg(k, 0.4, 0.7); for (let i = 0; i < 6; i++) { const a = -Math.PI / 2 + (i - 2.5) * 0.5; blk(c, T.x + Math.cos(a) * s * 16 * u, T.y + Math.sin(a) * s * 12 * u - s * 6 * u, 2 * u, 2 * u, i % 2 ? hot : mid, 1 - s, '#3a2418'); } }
+      if (!still && k > 0.4 && k < 0.7) { const s = seg(k, 0.4, 0.7); for (let i = 0; i < 6; i++) { const a = -Math.PI / 2 + (i - 2.5) * 0.5; blk(c, T.x + Math.cos(a) * s * 16 * u, T.y + Math.sin(a) * s * 12 * u - s * 6 * u, 2 * u, 2 * u, i % 2 ? hot : mid, 1 - s, '#3a1428'); } }
     },
     // Heat: a shimmer rolls off the lantern in rings and hot sparks lift (strongest ≈ 0.5)
     cbHeatWave(c, e, k, A, t, still) {
@@ -316,7 +321,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         for (let j = 0; j < nn; j++) { const a = (j / nn) * Math.PI * 2, rr = r + Math.sin(a * 6 + t / 60) * 2 * u; c.fillRect(Math.round(o.x + Math.cos(a) * rr), Math.round(o.y + Math.sin(a) * rr * 0.8), u, u); }
         c.globalAlpha = 1;
       }
-      for (let i = 0; i < 8; i++) { const s = seg(k, 0.3 + hs(i, 3) * 0.2, 0.9); if (s <= 0 || s >= 1) continue; blk(c, o.x + (hs(i, 5) - 0.5) * A.foeR * 1.4 + Math.sin(t / 80 + i) * u, o.y - ease(s) * (30 + hs(i, 7) * 30) * u, 2 * u, 2 * u, i % 2 ? '#ffe08a' : col, 1 - s, '#5a2418'); }
+      for (let i = 0; i < 8; i++) { const s = seg(k, 0.3 + hs(i, 3) * 0.2, 0.9); if (s <= 0 || s >= 1) continue; blk(c, o.x + (hs(i, 5) - 0.5) * A.foeR * 1.4 + Math.sin(t / 80 + i) * u, o.y - ease(s) * (30 + hs(i, 7) * 30) * u, 2 * u, 2 * u, i % 2 ? '#ffe08a' : col, 1 - s, '#4a1428'); }
       K().halo(c, o.x, o.y, Math.round(A.foeR * 0.9), '255,200,120', 0.3 * bell(seg(k, 0.2, 0.9)), 3);
     },
     // Shroud from a lantern: smoke rolls from its lower cap down over its knots (covers them ≈ 0.55);
@@ -324,13 +329,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
     cbSmoke(c, e, k, A, t, still) {
       const u = A.u, p = e.p, o = on(A, p), b = A.pt('foe', 'base'), w = A.knotSpan || A.foeR;
       const al = 1 - seg(k, 0.75, 1);
-      if (still) { for (let i = 0; i < 3; i++) { c.globalAlpha = 0.4 * al; c.fillStyle = '#9a94a8'; K().disc(c, b.x + (i - 1) * w * 0.6, b.y, 14 * u, 7 * u); } c.globalAlpha = 1; return; }
+      if (still) { for (let i = 0; i < 3; i++) { c.globalAlpha = 0.4 * al; c.fillStyle = '#7a7494'; K().disc(c, b.x + (i - 1) * w * 0.6, b.y, 14 * u, 7 * u); } c.globalAlpha = 1; return; }
       for (let i = 0; i < 9; i++) {
         const s = seg(k, i * 0.04, 0.55 + i * 0.04);
         if (s <= 0) continue;
         const x = o.x + (b.x + (i % 3 - 1) * w * 0.7 - o.x) * ease(s) + Math.sin(i * 2.1 + t / 400) * 3 * u, y = o.y + (b.y - o.y) * ease(s);
         const r = (6 + ease(s) * 12) * u;
-        c.globalAlpha = 0.42 * al * Math.min(1, s * 3); c.fillStyle = i % 2 ? '#8a8498' : '#a8a2b4';
+        c.globalAlpha = 0.42 * al * Math.min(1, s * 3); c.fillStyle = i % 2 ? '#6a6484' : '#9a94ae';
         K().disc(c, x, y, Math.round(r), Math.round(r * 0.55));
       }
       c.globalAlpha = 1;
@@ -339,7 +344,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         if (s <= 0 || s >= 1) continue;
         const a = i * 1.3 + s * 5, r = (16 + s * 40) * u;
         const x = o.x + Math.cos(a) * r, y = o.y - 20 * u + Math.sin(a) * r * 0.5 + s * 30 * u, up = Math.round(t / 60 + i) % 2;
-        R(c, x - 3 * u, y - (up ? 2 : 0) * u, 3 * u, 2 * u, '#f2ead8', 1 - s); R(c, x + u, y - (up ? 2 : 0) * u, 3 * u, 2 * u, '#f2ead8', 1 - s); R(c, x, y, u, 2 * u, '#6a5a48', 1 - s);
+        R(c, x - 3 * u, y - (up ? 2 : 0) * u, 3 * u, 2 * u, '#f8f2e2', 1 - s); R(c, x + u, y - (up ? 2 : 0) * u, 3 * u, 2 * u, '#f8f2e2', 1 - s); R(c, x, y, u, 2 * u, '#4a2e38', 1 - s);
       }
     },
     // the false promise of a lantern: a warm light floats to its target (arrives ≈ 0.71) and there
@@ -350,10 +355,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const s = ease(seg(k, 0, 0.71)), q = qpt(M, T, -26 * u, s), br = seg(k, 0.71, 1);
       if (br <= 0) {
         K().halo(c, q.x, q.y + Math.sin(t / 120) * u, Math.round((11 + Math.sin(t / 90) * 2) * u), '255,200,120', 0.6, 3);
-        blk(c, q.x - 3 * u, q.y - 4 * u, 6 * u, 7 * u, '#ffd890', 1, '#6a3a20');
+        blk(c, q.x - 3 * u, q.y - 4 * u, 6 * u, 7 * u, '#ffd890', 1, '#5a1e2a');
         R(c, q.x - u, q.y - 2 * u, 2 * u, 3 * u, '#fff8e0', 1);
       } else {
-        for (let i = 0; i < 7; i++) { const a = (i / 7) * Math.PI * 2 + 0.3, r = ease(br) * 14 * u; R(c, T.x + Math.cos(a) * r, T.y + Math.sin(a) * r + easeIn(br) * 8 * u, 2 * u, 2 * u, i % 2 ? '#bcd0ee' : '#e8eef8', 1 - br); }
+        for (let i = 0; i < 7; i++) { const a = (i / 7) * Math.PI * 2 + 0.3, r = ease(br) * 14 * u; R(c, T.x + Math.cos(a) * r, T.y + Math.sin(a) * r + easeIn(br) * 8 * u, 2 * u, 2 * u, i % 2 ? '#bcd0ee' : '#e2eaf8', 1 - br); }
         ring(c, T.x, T.y, (4 + br * 10) * u, u, '#bcd0ee', 0.8 * (1 - br));
       }
     },
@@ -384,7 +389,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     // the front arrives ≈ 0.48, rime forms on them; p.short: it stops at a seal
     cbFrostBreath(c, e, k, A, t, still) {
       const u = A.u, p = e.p, M = on(A, p), T0 = A.pt(p.to, 'chest'), T = p.short ? lerpP(T0, M, 0.3) : T0;
-      if (still) { for (let i = 0; i < 5; i++) spark(c, T.x + (i - 2) * 5 * u, T.y + ((i % 2) * 4 - 2) * u, 3 * u, u, '#e4f2ff', 0.85 * (1 - seg(k, 0.7, 1))); return; }
+      if (still) { for (let i = 0; i < 5; i++) spark(c, T.x + (i - 2) * 5 * u, T.y + ((i % 2) * 4 - 2) * u, 3 * u, u, '#cfeaff', 0.85 * (1 - seg(k, 0.7, 1))); return; }
       const front = ease(seg(k, 0, 0.48)), stop = seg(k, 0.6, 0.9);
       const len = Math.hypot(T.x - M.x, T.y - M.y);
       for (let i = 0; i < 26; i++) {
@@ -393,25 +398,25 @@ var RB = (globalThis.RB = globalThis.RB || {});
         const q = qpt(M, T, 0.06 * len, s), spread = (2 + s * 10) * u;
         const x = q.x + (hs(i, 2) - 0.5) * spread, y = q.y + (hs(i, 3) - 0.5) * spread;
         if (i % 3 === 0) spark(c, x, y, 2 * u, u, '#ffffff', 0.9 * (1 - seg(k, 0.85, 1)));
-        else blk(c, x, y, (i % 2 ? 2 : 1) * u, u, i % 2 ? '#e4f2ff' : '#bcd8ee', 0.85 * (1 - seg(k, 0.85, 1)), '#4a6a8a');
+        else blk(c, x, y, (i % 2 ? 2 : 1) * u, u, i % 2 ? '#cfeaff' : '#98ccf0', 0.85 * (1 - seg(k, 0.85, 1)), '#2c4c8c');
       }
       // a misty body to the stream
-      for (let i = 0; i < 6; i++) { const s = (i / 6) * front; if (s < stop) continue; const q = qpt(M, T, 0.06 * len, s); c.globalAlpha = 0.22 * (1 - seg(k, 0.8, 1)); c.fillStyle = '#e2f0ff'; K().disc(c, q.x, q.y, Math.round((3 + s * 9) * u), Math.round((2 + s * 6) * u)); }
+      for (let i = 0; i < 6; i++) { const s = (i / 6) * front; if (s < stop) continue; const q = qpt(M, T, 0.06 * len, s); c.globalAlpha = 0.22 * (1 - seg(k, 0.8, 1)); c.fillStyle = '#d8ecff'; K().disc(c, q.x, q.y, Math.round((3 + s * 9) * u), Math.round((2 + s * 6) * u)); }
       c.globalAlpha = 1;
-      if (k > 0.46) { const g = seg(k, 0.46, 1); for (let i = 0; i < 6; i++) { const a = (i / 6) * Math.PI * 2; spark(c, T.x + Math.cos(a) * (6 + g * 6) * u, T.y + Math.sin(a) * (6 + g * 6) * u, (3 - g * 2) * u, u, '#e4f2ff', 1 - g); } }
+      if (k > 0.46) { const g = seg(k, 0.46, 1); for (let i = 0; i < 6; i++) { const a = (i / 6) * Math.PI * 2; spark(c, T.x + Math.cos(a) * (6 + g * 6) * u, T.y + Math.sin(a) * (6 + g * 6) * u, (3 - g * 2) * u, u, '#cfeaff', 1 - g); } }
     },
     // the snow off the Lamp's roof flung at its target (lands ≈ 0.23), bursting in a puff
     cbSnowBurst(c, e, k, A, t, still) {
       const u = A.u, p = e.p, M = on(A, p), T0 = A.pt(p.to, 'chest'), T = p.short ? lerpP(T0, M, 0.3) : T0;
-      if (still) { for (let i = 0; i < 4; i++) { c.globalAlpha = 0.6 * (1 - seg(k, 0.6, 1)); c.fillStyle = '#eef4fa'; K().disc(c, T.x + (i - 1.5) * 6 * u, T.y - 2 * u, 4 * u, 3 * u); } c.globalAlpha = 1; return; }
+      if (still) { for (let i = 0; i < 4; i++) { c.globalAlpha = 0.6 * (1 - seg(k, 0.6, 1)); c.fillStyle = '#f4f7ff'; K().disc(c, T.x + (i - 1.5) * 6 * u, T.y - 2 * u, 4 * u, 3 * u); } c.globalAlpha = 1; return; }
       const fl = seg(k, 0, 0.23);
       if (fl < 1) for (let i = 0; i < 5; i++) {
         const s = cl(fl * 1.1 - i * 0.03), q = qpt(M, T, -0.3 * Math.hypot(T.x - M.x, T.y - M.y), s);
-        blk(c, q.x - 2 * u + (i - 2) * 2 * u, q.y - 2 * u + (i % 2) * 2 * u, (4 - (i % 2)) * u, 3 * u, i % 2 ? '#dce8f4' : '#f6fbff', 1, '#6a7a90');
+        blk(c, q.x - 2 * u + (i - 2) * 2 * u, q.y - 2 * u + (i % 2) * 2 * u, (4 - (i % 2)) * u, 3 * u, i % 2 ? '#d4e0f6' : '#f6fbff', 1, '#3c4892');
       }
       const bst = seg(k, 0.23, 1);
       if (bst > 0) {
-        for (let i = 0; i < 9; i++) { const a = -Math.PI * (0.1 + 0.8 * hs(i, 4)), r = ease(bst) * (8 + hs(i, 6) * 14) * u; blk(c, T.x + Math.cos(a) * r, T.y + Math.sin(a) * r + easeIn(bst) * 18 * u, 2 * u, 2 * u, i % 2 ? '#eef4fa' : '#ffffff', 1 - bst, '#6a7a90'); }
+        for (let i = 0; i < 9; i++) { const a = -Math.PI * (0.1 + 0.8 * hs(i, 4)), r = ease(bst) * (8 + hs(i, 6) * 14) * u; blk(c, T.x + Math.cos(a) * r, T.y + Math.sin(a) * r + easeIn(bst) * 18 * u, 2 * u, 2 * u, i % 2 ? '#f4f7ff' : '#ffffff', 1 - bst, '#3c4892'); }
         c.globalAlpha = 0.45 * (1 - bst); c.fillStyle = '#f6fbff'; K().disc(c, T.x, T.y, Math.round((6 + bst * 10) * u), Math.round((4 + bst * 6) * u)); c.globalAlpha = 1;
       }
     },
@@ -421,7 +426,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     // p.short: it wraps only the seal raised in front of them
     cbWrap(c, e, k, A, t, still) {
       const u = A.u, p = e.p, T0 = A.pt(p.to, 'chest'), F = A.pt('foe', 'core'), T = p.short ? lerpP(T0, F, 0.3) : T0;
-      const col = p.col || '#e8e6f0', shade = '#a8a4b8';
+      const col = p.col || '#e8e6f0', shade = '#8a86b4';
       const al = still ? 0.8 * (1 - seg(k, 0.6, 1)) : 1 - seg(k, 0.65, 1);
       const wrap = still ? 1 : ease(seg(k, 0, 0.2)), tight = seg(k, 0.2, 0.45);
       const rx = (16 - 4 * ease(tight)) * u, ry = (7 - 2 * ease(tight)) * u;
@@ -441,7 +446,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     // splashes where it lands, and drops left on the ground as it stops
     cbJet(c, e, k, A, t, still) {
       const u = A.u, p = e.p, M = on(A, p), who = (p.who || ['pc']).map((w) => A.pt(w, 'chest'));
-      const col = tint(p.col || '#8a90c8', 0.35), foam = '#eef4ff';
+      const col = tint(p.col || '#8a90c8', 0.35), foam = '#eef8ff';
       if (still) { for (const q of who) { R(c, q.x - 8 * u, q.y - 2 * u, 16 * u, 4 * u, col, 0.7 * (1 - seg(k, 0.7, 1))); } return; }
       const near = lerpP(who[0], M, 0.25), far = { x: who[who.length - 1].x - 24 * u, y: who[who.length - 1].y + 4 * u };
       const ks = [0.34, 0.49];
@@ -478,10 +483,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const fly = seg(k, 0, 0.43), dir = Math.atan2(T.y - M.y, T.x - M.x);
       if (fly < 1) {
         const head = lerpP(M, T, easeIn(fly) * 0.6 + fly * 0.4);
-        for (let i = 0; i < 10; i++) { const back = i * 5 * u; page(c, head.x - Math.cos(dir) * back, head.y - Math.sin(dir) * back, 0, u, i % 2 ? '#cfcadf' : '#eeeae0', 1 - i * 0.05); }
+        for (let i = 0; i < 10; i++) { const back = i * 5 * u; page(c, head.x - Math.cos(dir) * back, head.y - Math.sin(dir) * back, 0, u, i % 2 ? '#c4c0d8' : '#eeeae0', 1 - i * 0.05); }
       } else {
         const b = seg(k, 0.43, 1);
-        for (let i = 0; i < 10; i++) { const a = (i / 10) * Math.PI * 2 + hs(i, 4), r = ease(b) * (10 + hs(i, 2) * 22) * u; page(c, T.x + Math.cos(a) * r, T.y + Math.sin(a) * r * 0.8 + easeIn(b) * 20 * u, i + Math.round(b * 4), u, i % 2 ? '#cfcadf' : '#eeeae0', 1 - b); }
+        for (let i = 0; i < 10; i++) { const a = (i / 10) * Math.PI * 2 + hs(i, 4), r = ease(b) * (10 + hs(i, 2) * 22) * u; page(c, T.x + Math.cos(a) * r, T.y + Math.sin(a) * r * 0.8 + easeIn(b) * 20 * u, i + Math.round(b * 4), u, i % 2 ? '#c4c0d8' : '#eeeae0', 1 - b); }
         ring(c, T.x, T.y, (6 + ease(b) * 16) * u, u, '#f0ecff', 0.7 * (1 - b));
       }
     },
@@ -497,7 +502,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const r = rAt(k), al = 1 - seg(k, 0.55, 0.85);
       for (let i = 0; i < 14; i++) {
         const a = dir - 0.6 + (i / 13) * 1.2, rr = r - (i % 3) * 4 * u;
-        page(c, M.x + Math.cos(a) * rr, M.y + Math.sin(a) * rr * 0.62 + easeIn(seg(k, 0.5, 1)) * 20 * u, i + Math.round(k * 6), u, i % 2 ? '#cfcadf' : '#eeeae0', al);
+        page(c, M.x + Math.cos(a) * rr, M.y + Math.sin(a) * rr * 0.62 + easeIn(seg(k, 0.5, 1)) * 20 * u, i + Math.round(k * 6), u, i % 2 ? '#c4c0d8' : '#eeeae0', al);
       }
       who.forEach((q, i) => { const s = seg(k, ks[i], ks[i] + 0.25); if (s > 0 && s < 1) ring(c, q.x, q.y, (6 + ease(s) * 14) * u, u, '#f0ecff', 1 - s); });
     },
@@ -518,34 +523,34 @@ var RB = (globalThis.RB = globalThis.RB || {});
     cbPageGust(c, e, k, A, t, still) {
       const u = A.u, p = e.p, M = on(A, p), who = (p.who || ['pc']).map((w) => A.pt(w, 'chest'));
       const end = { x: Math.min(...who.map((q) => q.x)) - 40 * u, y: who[0].y };
-      if (still) { for (const q of who) arc(c, q.x, q.y, 18 * u, 8 * u, Math.PI * 0.2, Math.PI * 1.6, u, '#eef2f6', 0.7 * (1 - seg(k, 0.7, 1)), 2 * u); return; }
+      if (still) { for (const q of who) arc(c, q.x, q.y, 18 * u, 8 * u, Math.PI * 0.2, Math.PI * 1.6, u, '#e6ecf8', 0.7 * (1 - seg(k, 0.7, 1)), 2 * u); return; }
       const s = seg(k, 0, 0.75), cx = lerpP(M, end, ease(s) * 0.55 + s * 0.45), al = 1 - seg(k, 0.7, 0.95);
       for (let i = 0; i < 4; i++) {
         const y = cx.y + (i - 1.5) * 10 * u, len = (30 + i * 8) * u;
-        for (let j = 0; j < 10; j++) R(c, cx.x + j * len / 10, y + Math.sin(j * 0.8 + t / 50 + i) * 2 * u, u, u, i % 2 ? '#eef2f6' : '#dfe6ee', al * (1 - j / 12));
+        for (let j = 0; j < 10; j++) R(c, cx.x + j * len / 10, y + Math.sin(j * 0.8 + t / 50 + i) * 2 * u, u, u, i % 2 ? '#e6ecf8' : '#c8d2ec', al * (1 - j / 12));
       }
       for (let i = 0; i < 12; i++) {
         const a = i * 0.52 + k * 14, r = (8 + i * 2.2) * u;
-        page(c, cx.x + Math.cos(a) * r, cx.y + Math.sin(a) * r * 0.55, i + Math.round(k * 9), u, i % 2 ? '#cfcadf' : '#eeeae0', al);
+        page(c, cx.x + Math.cos(a) * r, cx.y + Math.sin(a) * r * 0.55, i + Math.round(k * 9), u, i % 2 ? '#c4c0d8' : '#eeeae0', al);
       }
     },
     // a mirror of pages flashes and its reflection strikes the one target (≈ 0.62); p.short: the
     // reflection breaks on the seal
     cbMirror(c, e, k, A, t, still) {
       const u = A.u, p = e.p, M = on(A, p), T0 = A.pt(p.to, 'chest'), T = p.short ? lerpP(T0, M, 0.3) : T0;
-      if (still) { R(c, T.x - 6 * u, T.y - 8 * u, 12 * u, 16 * u, '#e4f2ff', 0.45 * (1 - seg(k, 0.7, 1))); return; }
+      if (still) { R(c, T.x - 6 * u, T.y - 8 * u, 12 * u, 16 * u, '#cfeaff', 0.45 * (1 - seg(k, 0.7, 1))); return; }
       const fl = seg(k, 0, 0.3);
       if (fl > 0 && fl < 1) { K().halo(c, M.x, M.y, Math.round((10 + fl * 14) * u), '240,248,255', 0.6 * bell(fl), 3); spark(c, M.x - 6 * u, M.y - 8 * u, (6 * bell(fl)) * u, u, '#ffffff', bell(fl)); }
       const bm = seg(k, 0.25, 0.62);
       if (bm > 0) {
         const head = lerpP(M, T, ease(bm)), tail = lerpP(M, T, Math.max(0, ease(bm) - 0.35));
         const n = Math.max(6, Math.round(Math.hypot(head.x - tail.x, head.y - tail.y) / (2 * u)));
-        for (let i = 0; i <= n; i++) { const q = lerpP(tail, head, i / n); R(c, q.x - u, q.y - u, 3 * u, 3 * u, i % 3 ? '#e4f2ff' : '#ffffff', 0.9 * (1 - seg(k, 0.7, 0.85))); }
+        for (let i = 0; i <= n; i++) { const q = lerpP(tail, head, i / n); R(c, q.x - u, q.y - u, 3 * u, 3 * u, i % 3 ? '#cfeaff' : '#ffffff', 0.9 * (1 - seg(k, 0.7, 0.85))); }
       }
       const hit = seg(k, 0.62, 1);
       if (hit > 0) {
         // the reflection: a pale outline of whoever it was sent at, flashing and fading
-        c.globalAlpha = 0.55 * (1 - hit); c.fillStyle = '#e4f2ff';
+        c.globalAlpha = 0.55 * (1 - hit); c.fillStyle = '#cfeaff';
         c.fillRect(Math.round(T.x - 6 * u), Math.round(T.y - 14 * u), Math.round(12 * u), Math.round(26 * u));
         c.fillRect(Math.round(T.x - 4 * u), Math.round(T.y - 22 * u), Math.round(8 * u), Math.round(8 * u));
         c.globalAlpha = 1;
@@ -564,11 +569,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const len = Math.hypot(T.x - M.x, T.y - M.y), n = Math.max(6, Math.round((len * reach) / (3 * u)));
       for (let i = 0; i <= n; i++) {
         const s = (i / n) * reach, q = qpt(M, T, (still ? 0 : Math.sin(k * 12) * 0.12) * len - 0.1 * len, s), w = 8 * u;
-        R(c, q.x - w / 2 - u, q.y - w / 2 - u, w + 2 * u, w + 2 * u, '#6a5a48', al);
-        R(c, q.x - w / 2, q.y - w / 2, w, w, i % 2 ? '#f8f2e2' : '#efe6d0', al);
-        if (i % 3 === 1) R(c, q.x - w / 2 + u, q.y, w - 2 * u, u, '#b4a684', al);
+        R(c, q.x - w / 2 - u, q.y - w / 2 - u, w + 2 * u, w + 2 * u, '#4a2e38', al);
+        R(c, q.x - w / 2, q.y - w / 2, w, w, i % 2 ? '#f8f0dc' : '#ecdcb4', al);
+        if (i % 3 === 1) R(c, q.x - w / 2 + u, q.y, w - 2 * u, u, '#8a6a48', al);
       }
-      if (!still && k > 0.32 && k < 0.6) { const s = seg(k, 0.32, 0.6); spark(c, T.x, T.y, (6 - 4 * s) * u, u, '#ffffff', 1 - s); for (let i = 0; i < 5; i++) { const a = (i / 5) * Math.PI * 2; R(c, T.x + Math.cos(a) * s * 14 * u, T.y + Math.sin(a) * s * 10 * u, 2 * u, u, '#efe6d0', 1 - s); } }
+      if (!still && k > 0.32 && k < 0.6) { const s = seg(k, 0.32, 0.6); spark(c, T.x, T.y, (6 - 4 * s) * u, u, '#ffffff', 1 - s); for (let i = 0; i < 5; i++) { const a = (i / 5) * Math.PI * 2; R(c, T.x + Math.cos(a) * s * 14 * u, T.y + Math.sin(a) * s * 10 * u, 2 * u, u, '#ecdcb4', 1 - s); } }
     },
     // its brush dragged in one long erasing stroke across the party: the stroke's head reaches
     // each recipient in turn (0.28, then 0.42), leaving a pale wash that fades
@@ -583,11 +588,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
       for (let i = 0; i <= n; i++) {
         const kk = (i / n) * head, q = at(kk), w = (10 + Math.sin(kk * 20) * 2) * u;
         // a pale wash with a faint ink edge, so it reads on light ground too
-        R(c, q.x - 2 * u, q.y - w / 2 - u, 4 * u, w + 2 * u, '#6a5a48', 0.3 * fade * (0.6 + 0.4 * (i / n)));
+        R(c, q.x - 2 * u, q.y - w / 2 - u, 4 * u, w + 2 * u, '#4a2e38', 0.3 * fade * (0.6 + 0.4 * (i / n)));
         R(c, q.x - 2 * u, q.y - w / 2, 4 * u, w, '#fbf8f0', 0.6 * fade * (0.6 + 0.4 * (i / n)));
       }
       const hq = at(head);
-      if (k < 0.62) R(c, hq.x - 3 * u, hq.y - 6 * u, 6 * u, 12 * u, '#2a2030', 0.8);
+      if (k < 0.62) R(c, hq.x - 3 * u, hq.y - 6 * u, 6 * u, 12 * u, '#1a1428', 0.8);
       who.forEach((q, i) => { const s = seg(k, ks[i + 1], ks[i + 1] + 0.3); if (s > 0 && s < 1) for (let j = 0; j < 4; j++) R(c, q.x + (j - 1.5) * 7 * u, q.y + ((j % 2) * 6 - 6) * u - s * 6 * u, 5 * u, 4 * u, '#fbf8f0', 1 - s); });
     },
 
@@ -624,11 +629,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
         if (kk <= 0) continue;
         const q = at(kk), al = (1 - seg(k, 0.65, 0.9)) * (1 - j / 10);
         const r = (5 - j * 0.35) * u, fl = Math.sin(t / 50 + j) * u;
-        R(c, q.x - r, q.y - r * 1.6 + fl, r * 2, r * 2.4, '#5ac0d0', al * 0.7);
-        R(c, q.x - r * 0.6, q.y - r * 1.2 + fl, r * 1.2, r * 1.6, '#9ae0e8', al);
-        R(c, q.x - r * 0.25, q.y - r * 0.6 + fl, r * 0.5, r * 0.8, '#f0ffff', al);
+        R(c, q.x - r, q.y - r * 1.6 + fl, r * 2, r * 2.4, '#1e94b4', al * 0.7);
+        R(c, q.x - r * 0.6, q.y - r * 1.2 + fl, r * 1.2, r * 1.6, '#4cd0d8', al);
+        R(c, q.x - r * 0.25, q.y - r * 0.6 + fl, r * 0.5, r * 0.8, '#c8fff8', al);
       }
-      who.forEach((q, i) => { const s = seg(k, ks[i], ks[i] + 0.3); if (s > 0 && s < 1) for (let m = 0; m < 5; m++) { const a = -Math.PI / 2 + (m - 2) * 0.5; R(c, q.x + Math.cos(a) * ease(s) * 12 * u, q.y + Math.sin(a) * ease(s) * 12 * u - s * 8 * u, 2 * u, 3 * u, '#9ae0e8', 1 - s); } });
+      who.forEach((q, i) => { const s = seg(k, ks[i], ks[i] + 0.3); if (s > 0 && s < 1) for (let m = 0; m < 5; m++) { const a = -Math.PI / 2 + (m - 2) * 0.5; R(c, q.x + Math.cos(a) * ease(s) * 12 * u, q.y + Math.sin(a) * ease(s) * 12 * u - s * 8 * u, 2 * u, 3 * u, '#4cd0d8', 1 - s); } });
     },
     // the borrowed face: a pale double of the fox glides to its target (≈ 0.65), where it pops
     // into a leaf that flutters down
@@ -638,15 +643,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const s = ease(seg(k, 0, 0.65)), pop = seg(k, 0.65, 1);
       if (pop <= 0) {
         const q = lerpP(M, T, s), al = 0.45 + 0.15 * Math.sin(t / 70);
-        c.globalAlpha = al; c.fillStyle = '#f4ecd8';
+        c.globalAlpha = al; c.fillStyle = '#f8ead0';
         K().disc(c, q.x, q.y + 6 * u, 9 * u, 8 * u); K().disc(c, q.x - 2 * u, q.y - 6 * u, 7 * u, 6 * u);
         c.fillRect(Math.round(q.x - 8 * u), Math.round(q.y - 16 * u), 3 * u, 5 * u); c.fillRect(Math.round(q.x + 3 * u), Math.round(q.y - 16 * u), 3 * u, 5 * u);
         c.globalAlpha = 1;
-        R(c, q.x - 5 * u, q.y - 7 * u, 2 * u, u, '#3a5a8a', al + 0.3); R(c, q.x + u, q.y - 7 * u, 2 * u, u, '#3a5a8a', al + 0.3);
+        R(c, q.x - 5 * u, q.y - 7 * u, 2 * u, u, '#244a8a', al + 0.3); R(c, q.x + u, q.y - 7 * u, 2 * u, u, '#244a8a', al + 0.3);
       } else {
         const x = T.x + Math.sin(pop * 8) * 6 * u, y = T.y + easeIn(pop) * 22 * u;
-        blk(c, x - 3 * u, y - 2 * u, 6 * u, 3 * u, '#6a9a48', 1 - pop, '#2a3a18');
-        for (let i = 0; i < 6; i++) { const a = (i / 6) * Math.PI * 2; R(c, T.x + Math.cos(a) * ease(pop) * 12 * u, T.y + Math.sin(a) * ease(pop) * 9 * u, u, u, '#f4ecd8', 1 - pop); }
+        blk(c, x - 3 * u, y - 2 * u, 6 * u, 3 * u, '#56a03e', 1 - pop, '#1e3a22');
+        for (let i = 0; i < 6; i++) { const a = (i / 6) * Math.PI * 2; R(c, T.x + Math.cos(a) * ease(pop) * 12 * u, T.y + Math.sin(a) * ease(pop) * 9 * u, u, u, '#f8ead0', 1 - pop); }
       }
     },
   };
