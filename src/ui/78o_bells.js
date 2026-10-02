@@ -206,6 +206,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     w: 212, h: 232, ox: 106, oy: 92, ms: 150,
     base: BB, idle: bellIdle, acts: bellActs,
     keys: { strike: ['exec:strike', 3], sweep: ['exec:sweep', 2], charge: ['cast:charge', 5], silence: ['cast:silence', 4], lie: ['exec:lie', 2] },
+    alias: { prep: 'prep:strike' },
     draw: drawBell,
   });
 
@@ -448,6 +449,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     w: 236, h: 244, ox: 118, oy: 116, ms: 150,
     base: KB, idle: keeperIdle, acts: keeperActs,
     keys: { strike: ['exec:strike', 1], flood: ['exec:flood', 1], silence: ['cast:silence', 5], lie: ['exec:lie', 3], plea: ['cast:plea', 5], charge: ['cast:charge', 6] },
+    alias: { prep: ['cast:charge', 0, 4] },
     draw: drawKeeper,
   });
   const kpt = (act, i, x, y) => keeperPt(keeperActs[act][i], x, y);

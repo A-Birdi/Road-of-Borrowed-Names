@@ -150,9 +150,10 @@ async function battle(p, enemy, o) {
 }
 async function cards(p) {
   for (let i = 0; i < 400; i++) {
-    const st = await p.evaluate(() => ({ dlg: RB.ui.dialogue.isOpen(), cards: !!document.querySelector('.rcard[data-i]') && !document.querySelector('.chal') && !RB.battleSeq.busy(), coach: !!document.querySelector('[data-coach-ok]') }));
+    const st = await p.evaluate(() => ({ dlg: RB.ui.dialogue.isOpen(), cards: !!document.querySelector('.rcard[data-i]') && !document.querySelector('.chal') && !RB.battleSeq.busy(), coach: !!document.querySelector('[data-coach-ok]'), teach: !!document.querySelector('button[data-ok]') }));
     if (st.cards) break;
     if (st.coach) await p.click('[data-coach-ok]').catch(() => {});
+    if (st.teach) await p.click('button[data-ok]').catch(() => {});
     if (st.dlg) await p.evaluate(() => RB.ui.dialogue.advance(true));
     await wait(p, 50);
   }
@@ -183,14 +184,19 @@ async function respond(p, match) {
   await companionTurn(p, { match: 'draught|salve|tonic|beside' }).catch(() => companionTurn(p, {}));
 }
 async function idle(p) {
-  for (let i = 0; i < 600; i++) {
-    const s = await p.evaluate(() => ({ busy: RB.battleSeq.busy(), cards: !!document.querySelector('.rcard[data-i]') && !document.querySelector('.chal'), dlg: RB.ui.dialogue.isOpen(), mode: RB.game.mode(), res: window.__result, coach: !!document.querySelector('[data-coach-ok]') }));
+  const t0 = Date.now();
+  let s = null;
+  while (Date.now() - t0 < 90000) {
+    s = await p.evaluate(() => ({ busy: RB.battleSeq.busy(), kind: RB.battleSeq.stats().kind, phase: RB.combat.phase(), cards: !!document.querySelector('.rcard[data-i]') && !document.querySelector('.chal'), ccards: !!document.querySelector('.ccard:not([disabled])'), dlg: RB.ui.dialogue.isOpen(), mode: RB.game.mode(), res: window.__result, coach: !!document.querySelector('[data-coach-ok]'), teach: !!document.querySelector('button[data-ok]') }));
     if (s.coach) await p.click('[data-coach-ok]').catch(() => {});
+    // a guardian's new phase is told (its own line) and explained on a card: read, then "Got it"
+    if (!s.busy && s.teach) await p.click('button[data-ok]').catch(() => {});
     if (!s.busy && (s.cards || s.mode !== 'combat' || s.res)) { await wait(p, 60); return s; }
     if (!s.busy && s.dlg) { await p.evaluate(() => RB.ui.dialogue.advance(true)); }
+    if (!s.busy && s.ccards && s.phase === 'companion') await companionTurn(p, {}).catch(() => {});
     await wait(p, 40);
   }
-  throw new Error('the exchange did not settle');
+  throw new Error('the exchange did not settle: ' + JSON.stringify(s));
 }
 // One round in which creature i performs `kind` (after an Unravel); returns what was seen.
 async function round(p, kind, o) {
@@ -200,7 +206,19 @@ async function round(p, kind, o) {
   await p.evaluate(([k, t, i]) => BA.setIntent(k, t, i), [kind, target, o.foe || 0]);
   await p.evaluate(() => BA.sampleOn());
   const shot = o.shots ? captureMove(p, o.shots) : null;
-  await respond(p, o.response || 'Unravel|ほどく');
+  // a response that leaves the move alone: Unravel (unless the mist hides the knots, or it would
+  // answer a rest); water (it only answers Heat); light (it answers Shroud, Re-tying and Mirror)
+  let resp = o.response;
+  if (!resp) {
+    const en = await p.evaluate(() => [...document.querySelectorAll('.rcard')].filter((x) => !x.disabled).map((x) => x.textContent.replace(/\s+/g, ' ')));
+    const has = (re) => en.some((t) => new RegExp(re, 'i').test(t));
+    const cand = [];
+    if (!(kind === 'rest' && !o.countered)) cand.push('Unravel|ほどく');
+    if (kind !== 'heat') cand.push('water|水');
+    if (!['shroud', 'mend', 'mirror'].includes(kind)) cand.push('light|光');
+    resp = cand.find(has) || cand[0];
+  }
+  await respond(p, resp);
   await idle(p);
   if (shot) await compose(await shot, o.shots.name);
   const S = await p.evaluate(() => BA.sampleOff());
@@ -263,19 +281,28 @@ async function compose(files, name, cols) {
 for (const [enemy, fam, moves] of ROSTER) {
   await test(enemy + ' (' + fam + '): every move it uses plays its own delivery; each result once; display = rules', async () => {
     const { p, errors, ctx } = await page(b, url, DESK);
+    p.on('pageerror', (e) => console.log('  page error (' + enemy + '):', e.message, (e.stack || '').split('\n').slice(0, 3).join(' | ')));
     await helpers(p);
     await battle(p, enemy, {});
     const ok = await p.evaluate((fam) => RB.combat.members()[0] && RB.enemyArt.P[fam] && !!RB.enemyArt.P[fam].rig, fam);
     assert(ok, enemy + ': the ' + fam + ' rig is defined');
     const row = [];
     for (const kind of moves) {
+      if (process.env.CBV) console.log('  ', enemy, kind);
       const r = await round(p, kind, { shots: shots && kind === SHOT[enemy] && { name: enemy + '_' + kind, at: [0, 150, 300, 450, 600, 700, 800, 950, 1100, 1300, 1500, 1800] } });
       assert(!r.end.result || r.end.result === 'done', enemy + ' ' + kind + ': battle went on');
       const seqR = r.enemySeq[r.enemySeq.length - 1];
       assert(seqR && seqR.meta.kind === kind, enemy + ' ' + kind + ': the creature performed it: ' + JSON.stringify(r.enemySeq.map((x) => x.meta.kind)));
       const acts = seqOf(r.E.map((s) => s.foes && s.foes[0]));
       const effects = uniq([].concat(...r.E.map((s) => s.effects || [])).map((e) => e.split(/[>@]/)[0]));
-      if (kind === 'rest') assert(acts.includes('rest'), enemy + ' rest: its authored rest: ' + acts.join('→'));
+      if (kind === 'rest') {
+        assert(acts.includes('rest'), enemy + ' rest: its authored rest: ' + acts.join('→'));
+        // an Unravel answers a rest: the move that began comes to nothing (its own prep and balk)
+        const r2 = await round(p, 'rest', { countered: true });
+        const acts2 = seqOf(r2.E.map((s) => s.foes && s.foes[0]));
+        const posed = await p.evaluate((fam) => Object.keys(RB.enemyArt.P[fam].poses), fam);
+        assert(acts2.join() === 'prep,balk' && posed.includes('prep') && posed.includes('balk'), enemy + ' answered rest: its own wind-up and balk: ' + acts2.join('→'));
+      }
       else {
         assert(acts.some((a) => /^(prep|exec|cast):/.test(a)), enemy + ' ' + kind + ': its own authored acts: ' + acts.join('→'));
         assert(!effects.some((e) => GENERIC.includes(e)), enemy + ' ' + kind + ': no generic fallback effect: ' + effects.join(','));

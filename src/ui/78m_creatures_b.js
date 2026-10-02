@@ -14,6 +14,7 @@
  *     idle: [ { … }, … ],                  idle frames (overrides of base)
  *     acts: { 'exec:strike': [ … ], … },   authored action frames (overrides of base)
  *     keys: { strike: ['exec:strike', 2] } one held frame per move for reduced motion
+ *     alias: { prep: 'prep:strike' }       an act drawn with another act's frames
  *     draw(L, o, q, H, at) })              at: { act, i, n, f } ('idle' acts carry f)
  *
  * Act names: the sequencer's own reactions use the seam's names (recoil, release, balk,
@@ -82,6 +83,13 @@ RB.creaturesB = (function () {
     const idle = (spec.idle || [{}]).map(mk);
     const acts = {};
     for (const a of Object.keys(spec.acts || {})) acts[a] = spec.acts[a].map(mk);
+    // aliases: an act drawn with another act's frames (the sequencer's generic 'prep', used when a
+    // move is answered before it lands, borrows the family's usual wind-up), optionally a slice
+    for (const a of Object.keys(spec.alias || {})) {
+      const [src, from, to] = [].concat(spec.alias[a]);
+      if (!acts[src]) throw new Error('creaturesB: ' + id + ' alias ' + a + ' names a missing act ' + src);
+      acts[a] = acts[src].slice(from || 0, to == null ? undefined : to);
+    }
     for (const kn of Object.keys(spec.keys || {})) {
       const [a, i] = spec.keys[kn];
       if (!acts[a]) throw new Error('creaturesB: ' + id + ' key ' + kn + ' names a missing act ' + a);

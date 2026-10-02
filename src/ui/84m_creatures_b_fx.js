@@ -270,6 +270,138 @@ var RB = (globalThis.RB = globalThis.RB || {});
       R(c, q.x - 3 * u + sway, q.y, 6 * u, u, '#4a3a40', al * 0.7);
       if (p.drip && !still) for (let i = 0; i < 3; i++) { const d = ((k * 3 + i / 3) % 1); R(c, q.x - 2 * u + i * 2 * u + sway, q.y + 4 * u + d * 12 * u, u, 2 * u, '#a0bee6', al * (1 - d)); }
     },
+
+    // ---- lanterns ----------------------------------------------------------------------------------
+    // a lick of flame from the grin to the one target (its head arrives ≈ 0.43), then drawn back
+    cbFlameLick(c, e, k, A, t, still) {
+      const u = A.u, p = e.p, M = on(A, p), T0 = A.pt(p.to, 'chest'), T = p.short ? lerpP(T0, M, 0.3) : T0;
+      const col = p.col || '#8aa8e8', mid = tint(col, 0.45), hot = tint(col, 0.85);
+      const head = still ? 0.95 : k < 0.43 ? ease(k / 0.43) : k < 0.55 ? 1 : 1 - easeIn((k - 0.55) / 0.35);
+      const tailS = still ? 0 : Math.max(0, head - 0.75);
+      if (head <= 0.02) return;
+      const al = still ? 0.8 * (1 - seg(k, 0.7, 1)) : 1 - seg(k, 0.85, 1);
+      const len = Math.hypot(T.x - M.x, T.y - M.y), n = Math.max(8, Math.round((len * (head - tailS)) / (2 * u)));
+      for (let pass = 0; pass < 3; pass++) {
+        for (let i = 0; i <= n; i++) {
+          const s = tailS + ((head - tailS) * i) / n, q = qpt(M, T, -0.18 * len, s);
+          const f = i / n, wob = still ? 0 : Math.sin(s * 14 - t / 40) * 1.5 * u;
+          const w = Math.max(u, Math.round((7 - 4 * f) * u * (pass === 0 ? 1.3 : pass === 1 ? 0.8 : 0.4)));
+          R(c, q.x - w / 2, q.y - w / 2 + wob, w, w, pass === 0 ? col : pass === 1 ? mid : hot, al * (pass === 0 ? 0.9 : 1));
+        }
+      }
+      if (!still && k > 0.4 && k < 0.7) { const s = seg(k, 0.4, 0.7); for (let i = 0; i < 6; i++) { const a = -Math.PI / 2 + (i - 2.5) * 0.5; blk(c, T.x + Math.cos(a) * s * 16 * u, T.y + Math.sin(a) * s * 12 * u - s * 6 * u, 2 * u, 2 * u, i % 2 ? hot : mid, 1 - s, '#3a2418'); } }
+    },
+    // Heat: a shimmer rolls off the lantern in rings and hot sparks lift (strongest ≈ 0.5)
+    cbHeatWave(c, e, k, A, t, still) {
+      const u = A.u, p = e.p, o = on(A, p), col = tint(p.col || '#f0a060', 0.5);
+      if (still) { ring(c, o.x, o.y, A.foeR * 0.8, u, '#ffe8b0', 0.7 * (1 - seg(k, 0.7, 1))); return; }
+      for (let i = 0; i < 3; i++) {
+        const s = seg(k, 0.15 + i * 0.12, 0.65 + i * 0.12);
+        if (s <= 0 || s >= 1) continue;
+        const r = A.foeR * (0.5 + ease(s) * 0.9);
+        c.globalAlpha = 0.75 * (1 - s); c.fillStyle = i % 2 ? col : '#fff0c0';
+        const nn = Math.max(16, Math.round(r / u));
+        for (let j = 0; j < nn; j++) { const a = (j / nn) * Math.PI * 2, rr = r + Math.sin(a * 6 + t / 60) * 2 * u; c.fillRect(Math.round(o.x + Math.cos(a) * rr), Math.round(o.y + Math.sin(a) * rr * 0.8), u, u); }
+        c.globalAlpha = 1;
+      }
+      for (let i = 0; i < 8; i++) { const s = seg(k, 0.3 + hs(i, 3) * 0.2, 0.9); if (s <= 0 || s >= 1) continue; blk(c, o.x + (hs(i, 5) - 0.5) * A.foeR * 1.4 + Math.sin(t / 80 + i) * u, o.y - ease(s) * (30 + hs(i, 7) * 30) * u, 2 * u, 2 * u, i % 2 ? '#ffe08a' : col, 1 - s, '#5a2418'); }
+      K().halo(c, o.x, o.y, Math.round(A.foeR * 0.9), '255,200,120', 0.3 * bell(seg(k, 0.2, 0.9)), 3);
+    },
+    // Shroud from a lantern: smoke rolls from its lower cap down over its knots (covers them ≈ 0.55);
+    // p.moths: Moth and Lantern's moths whirl out through it
+    cbSmoke(c, e, k, A, t, still) {
+      const u = A.u, p = e.p, o = on(A, p), b = A.pt('foe', 'base'), w = A.knotSpan || A.foeR;
+      const al = 1 - seg(k, 0.75, 1);
+      if (still) { for (let i = 0; i < 3; i++) { c.globalAlpha = 0.4 * al; c.fillStyle = '#9a94a8'; K().disc(c, b.x + (i - 1) * w * 0.6, b.y, 14 * u, 7 * u); } c.globalAlpha = 1; return; }
+      for (let i = 0; i < 9; i++) {
+        const s = seg(k, i * 0.04, 0.55 + i * 0.04);
+        if (s <= 0) continue;
+        const x = o.x + (b.x + (i % 3 - 1) * w * 0.7 - o.x) * ease(s) + Math.sin(i * 2.1 + t / 400) * 3 * u, y = o.y + (b.y - o.y) * ease(s);
+        const r = (6 + ease(s) * 12) * u;
+        c.globalAlpha = 0.42 * al * Math.min(1, s * 3); c.fillStyle = i % 2 ? '#8a8498' : '#a8a2b4';
+        K().disc(c, x, y, Math.round(r), Math.round(r * 0.55));
+      }
+      c.globalAlpha = 1;
+      if (p.moths) for (let i = 0; i < 5; i++) {
+        const s = seg(k, 0.1 + i * 0.05, 0.8 + i * 0.04);
+        if (s <= 0 || s >= 1) continue;
+        const a = i * 1.3 + s * 5, r = (16 + s * 40) * u;
+        const x = o.x + Math.cos(a) * r, y = o.y - 20 * u + Math.sin(a) * r * 0.5 + s * 30 * u, up = Math.round(t / 60 + i) % 2;
+        R(c, x - 3 * u, y - (up ? 2 : 0) * u, 3 * u, 2 * u, '#f2ead8', 1 - s); R(c, x + u, y - (up ? 2 : 0) * u, 3 * u, 2 * u, '#f2ead8', 1 - s); R(c, x, y, u, 2 * u, '#6a5a48', 1 - s);
+      }
+    },
+    // the false promise of a lantern: a warm light floats to its target (arrives ≈ 0.71) and there
+    // turns cold and breaks
+    cbFalseLight(c, e, k, A, t, still) {
+      const u = A.u, p = e.p, M = on(A, p), T = A.pt(p.to, 'chest');
+      if (still) { K().halo(c, T.x, T.y, 10 * u, '255,210,140', 0.5 * (1 - seg(k, 0.7, 1)), 3); return; }
+      const s = ease(seg(k, 0, 0.71)), q = qpt(M, T, -26 * u, s), br = seg(k, 0.71, 1);
+      if (br <= 0) {
+        K().halo(c, q.x, q.y + Math.sin(t / 120) * u, Math.round((7 + Math.sin(t / 90) * 1.5) * u), '255,200,120', 0.6, 3);
+        blk(c, q.x - 2 * u, q.y - 2 * u, 4 * u, 4 * u, '#ffe0a0', 1, '#6a3a20');
+      } else {
+        for (let i = 0; i < 7; i++) { const a = (i / 7) * Math.PI * 2 + 0.3, r = ease(br) * 14 * u; R(c, T.x + Math.cos(a) * r, T.y + Math.sin(a) * r + easeIn(br) * 8 * u, 2 * u, 2 * u, i % 2 ? '#bcd0ee' : '#e8eef8', 1 - br); }
+        ring(c, T.x, T.y, (4 + br * 10) * u, u, '#bcd0ee', 0.8 * (1 - br));
+      }
+    },
+    // Re-tying from a point of the creature (a lantern's tail tip, a veil's hem, a spout): a
+    // thread runs to the loose knot p.i and pulls it tight (≈ 0.62). p.i == null: there is nothing
+    // to re-tie — the thread reaches, frays and falls away (no knot changes)
+    cbMend(c, e, k, A, t, still) {
+      const u = A.u, p = e.p, a = on(A, p), col = p.col || '#e8d8b0', bright = tint(col, 0.6);
+      const b = p.i != null ? A.pt('knot:' + p.i, 'core') : { x: A.pt('foe', 'base').x, y: A.pt('foe', 'base').y - 6 * u };
+      if (still) { if (p.i != null) ring(c, b.x, b.y, 10 * u, u, bright, 0.8 * (1 - seg(k, 0.7, 1))); return; }
+      const s = ease(seg(k, 0, 0.55)), fade = 1 - seg(k, 0.8, 1);
+      const n = Math.max(8, Math.round(Math.hypot(b.x - a.x, b.y - a.y) / (1.5 * u)));
+      for (let i = 0; i <= n; i++) {
+        const f = i / n;
+        if (f > s) break;
+        const q = qpt(a, b, 10 * u, f), w = Math.sin(f * Math.PI * 4 + t / 90) * 2 * u * (1 - seg(k, 0.5, 0.62));
+        R(c, q.x, q.y + w, u, u, i % 4 ? bright : col, fade);
+      }
+      if (p.i != null) {
+        const g = seg(k, 0.55, 0.8);
+        if (g > 0) { ring(c, b.x, b.y, (14 - ease(g) * 8) * u, u, bright, 1 - seg(k, 0.8, 1)); spark(c, b.x, b.y - 2 * u, (4 - 2 * g) * u, u, '#ffffff', 1 - g); }
+      } else if (k > 0.55) {
+        const f = seg(k, 0.55, 1);
+        for (let i = 0; i < 5; i++) R(c, b.x + (i - 2) * 3 * u, b.y + easeIn(f) * 12 * u, u, u, col, 1 - f);
+      }
+    },
+    // Chill: a stream of frost from an opening (the lamp's door, a fox's mouth) to the one target;
+    // the front arrives ≈ 0.48, rime forms on them; p.short: it stops at a seal
+    cbFrostBreath(c, e, k, A, t, still) {
+      const u = A.u, p = e.p, M = on(A, p), T0 = A.pt(p.to, 'chest'), T = p.short ? lerpP(T0, M, 0.3) : T0;
+      if (still) { for (let i = 0; i < 5; i++) spark(c, T.x + (i - 2) * 5 * u, T.y + ((i % 2) * 4 - 2) * u, 3 * u, u, '#e4f2ff', 0.85 * (1 - seg(k, 0.7, 1))); return; }
+      const front = ease(seg(k, 0, 0.48)), stop = seg(k, 0.6, 0.9);
+      const len = Math.hypot(T.x - M.x, T.y - M.y);
+      for (let i = 0; i < 26; i++) {
+        const ph = (hs(i, 1) + k * 2.2) % 1, s = ph * front;
+        if (s < stop) continue;
+        const q = qpt(M, T, 0.06 * len, s), spread = (2 + s * 10) * u;
+        const x = q.x + (hs(i, 2) - 0.5) * spread, y = q.y + (hs(i, 3) - 0.5) * spread;
+        if (i % 3 === 0) spark(c, x, y, 2 * u, u, '#ffffff', 0.9 * (1 - seg(k, 0.85, 1)));
+        else blk(c, x, y, (i % 2 ? 2 : 1) * u, u, i % 2 ? '#e4f2ff' : '#bcd8ee', 0.85 * (1 - seg(k, 0.85, 1)), '#4a6a8a');
+      }
+      // a misty body to the stream
+      for (let i = 0; i < 6; i++) { const s = (i / 6) * front; if (s < stop) continue; const q = qpt(M, T, 0.06 * len, s); c.globalAlpha = 0.22 * (1 - seg(k, 0.8, 1)); c.fillStyle = '#e2f0ff'; K().disc(c, q.x, q.y, Math.round((3 + s * 9) * u), Math.round((2 + s * 6) * u)); }
+      c.globalAlpha = 1;
+      if (k > 0.46) { const g = seg(k, 0.46, 1); for (let i = 0; i < 6; i++) { const a = (i / 6) * Math.PI * 2; spark(c, T.x + Math.cos(a) * (6 + g * 6) * u, T.y + Math.sin(a) * (6 + g * 6) * u, (3 - g * 2) * u, u, '#e4f2ff', 1 - g); } }
+    },
+    // the snow off the Lamp's roof flung at its target (lands ≈ 0.23), bursting in a puff
+    cbSnowBurst(c, e, k, A, t, still) {
+      const u = A.u, p = e.p, M = on(A, p), T0 = A.pt(p.to, 'chest'), T = p.short ? lerpP(T0, M, 0.3) : T0;
+      if (still) { for (let i = 0; i < 4; i++) { c.globalAlpha = 0.6 * (1 - seg(k, 0.6, 1)); c.fillStyle = '#eef4fa'; K().disc(c, T.x + (i - 1.5) * 6 * u, T.y - 2 * u, 4 * u, 3 * u); } c.globalAlpha = 1; return; }
+      const fl = seg(k, 0, 0.23);
+      if (fl < 1) for (let i = 0; i < 5; i++) {
+        const s = cl(fl * 1.1 - i * 0.03), q = qpt(M, T, -0.3 * Math.hypot(T.x - M.x, T.y - M.y), s);
+        blk(c, q.x - 2 * u + (i - 2) * 2 * u, q.y - 2 * u + (i % 2) * 2 * u, (4 - (i % 2)) * u, 3 * u, i % 2 ? '#dce8f4' : '#f6fbff', 1, '#6a7a90');
+      }
+      const bst = seg(k, 0.23, 1);
+      if (bst > 0) {
+        for (let i = 0; i < 9; i++) { const a = -Math.PI * (0.1 + 0.8 * hs(i, 4)), r = ease(bst) * (8 + hs(i, 6) * 14) * u; blk(c, T.x + Math.cos(a) * r, T.y + Math.sin(a) * r + easeIn(bst) * 18 * u, 2 * u, 2 * u, i % 2 ? '#eef4fa' : '#ffffff', 1 - bst, '#6a7a90'); }
+        c.globalAlpha = 0.45 * (1 - bst); c.fillStyle = '#f6fbff'; K().disc(c, T.x, T.y, Math.round((6 + bst * 10) * u), Math.round((4 + bst * 6) * u)); c.globalAlpha = 1;
+      }
+    },
   };
   Object.assign(FX.fx, fx);
 
