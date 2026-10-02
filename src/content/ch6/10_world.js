@@ -432,61 +432,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     };
   }
 
-  if (RB.enemyArt && RB.enemyArt.def) {
-    // The Hush itself (pixel art at art resolution; see src/ui/78_enemy_art.js):
-    // a hollow — a near-black core, a deep indigo ring and an edge that
-    // dissolves in a deliberate dither — with a pale ring for an eye, two
-    // rings of blank pages orbiting (behind and in front), and the marks it
-    // took rising off it as short strokes.
-    RB.enemyArt.def('sa_hush', {
-      w: 228, h: 228, ox: 114, oy: 110, frames: 8, ms: 140,
-      bob: (t) => Math.sin(t / 900) * 4,
-      build(L, f, o, H) {
-        const K = H.K;
-        const core = K.mat('#0a0a14', { n: 3, at: 0, step: 0.04, line: false });
-        const indigo = K.mat('#282846', { n: 4, at: 1, step: 0.06, line: false });
-        const edge = K.mat('#44466a', { n: 3, at: 1, step: 0.06, alpha: 200, line: false });
-        const eye = K.mat('#f0ecff', { n: 3, at: 1, line: false });
-        const page = K.mat('#eeeae0', { n: 4, at: 2, step: 0.07, lineCol: '#2a2840' });
-        const page2 = K.mat('#cfcadf', { n: 4, at: 2, step: 0.07, lineCol: '#2a2840' });
-        const mark = K.mat('#e8e4d2', { n: 2, at: 1, alpha: 200, line: false });
-        const backP = L.like(), hollow = L.like(), frontP = L.like(), fx = L.like();
-        // the hollow
-        hollow.fill(-48, -48, 48, 48, (x, y) => {
-          const d = Math.hypot(x, y);
-          return d < 38 || (d < 46 && K.bayer(Math.floor(x + 200), Math.floor(y + 200)) > (d - 38) / 8);
-        }, edge, 1);
-        hollow.ell(0, 0, 38, 38, indigo, (x, y) => K.clamp(0.2 + (Math.hypot(x, y) / 38) * 0.6 - (x + y) / 160, 0, 0.99));
-        hollow.ell(0, 0, 28, 28, core, (x, y) => K.clamp(Math.hypot(x, y) / 40, 0, 0.99));
-        const er = 17 + [0, 1, 2, 1, 0, 1, 2, 1][f];
-        hollow.fill(-er - 2, -er - 2, er + 2, er + 2, (x, y) => { const d = Math.hypot(x, y); return d <= er && d >= er - 2; }, eye, (x, y) => K.clamp(0.5 - (x + y) / (er * 3), 0, 0.99));
-        // pages on two counter-rotating rings; those in the lower half pass in front
-        const ring = (n, r, dir, M, off) => {
-          for (let i = 0; i < n; i++) {
-            const a = off + i * (Math.PI * 2 / n) + dir * (f / 8) * (Math.PI * 2 / n);
-            const x = Math.cos(a) * r, y = Math.sin(a) * r * 0.62;
-            const Lr = Math.sin(a) > 0 ? frontP : backP;
-            Lr.save().translate(Math.round(x), Math.round(y)).rotate(a * 0.5 + i);
-            Lr.stone([[-6, -4], [4, -4], [6, -2], [6, 4], [-6, 4]], M, { bevel: 1, face: 2, seam: false });
-            Lr.line(-4, 0, 3, 0, M, 1);
-            Lr.restore();
-          }
-        };
-        ring(9, 58, 1, page, 0);
-        ring(9, 72, -1, page2, 0.35);
-        backP.outline(); frontP.outline();
-        backP.fade(0.8);
-        // marks it took, rising off the hollow as short strokes
-        for (let i = 0; i < 6; i++) {
-          const k = ((f / 8) + i / 6) % 1;
-          const x = Math.round(Math.sin(i * 2.1) * 30 * (1 - k)), y = Math.round(-34 - k * 56);
-          fx.rect(x, y, 2, 4 - (i % 2), mark, k < 0.6 ? 1 : 0);
-        }
-        fx.fade(0.9);
-        return backP.over(hollow).over(frontP).over(fx);
-      },
-    });
-  }
+  // The Hush's battle art (sa_hush) is drawn by src/ui/78s_hush.js (battle addendum, Creatures B):
+  // a rig with authored action poses and its own deliveries for every move it borrows.
 })();
 
 // ---- hooks ---------------------------------------------------------------------------------------------
