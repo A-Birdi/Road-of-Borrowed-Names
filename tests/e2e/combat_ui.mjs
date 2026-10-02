@@ -207,21 +207,22 @@ await test('keyword help: hover and keyboard focus explain the move and the stat
   // every keyword is a 44 px target
   const small = await p.evaluate(() => [...document.querySelectorAll('.combat-ui .kw')].map((e) => { const r = e.getBoundingClientRect(); return [e.getAttribute('data-kw'), Math.round(r.width), Math.round(r.height)]; }).filter(([, w, h]) => w < 44 || h < 44));
   assert(!small.length, 'keywords under 44px: ' + JSON.stringify(small));
-  // Adaptive: no telegraph panel for a routine Strike; its badge's card says the same, and its note has the real numbers
+  // Adaptive: no telegraph panel for a routine move (the Sweep set above, with Heat 1); its badge's card
+  // says what the telegraph said, with the real numbers
   await p.evaluate(() => { RB.game.settings.intentDisplay = 'adaptive'; RB.combat.refresh(); });
   await p.mouse.move(2, 2);
   await p.waitForTimeout(300);
   const panel = await p.evaluate(() => getComputedStyle(document.querySelector('.combat-ui .intent')).display);
-  assert(panel === 'none', 'Adaptive: no telegraph panel for a routine Strike (' + panel + ')');
+  assert(panel === 'none', 'Adaptive: no telegraph panel for a routine Sweep (' + panel + ')');
   const bd = await p.evaluate(() => { const b = RB.battleIntents.state().badges[0]; return { x: b.x + b.w / 2, y: b.y + b.h / 2 }; });
   await p.mouse.click(bd.x, bd.y);
   await p.waitForSelector('#cb-icard .ic-more');
   const ct = await p.evaluate(() => document.querySelector('#cb-icard').textContent.replace(/\s+/g, ' '));
-  assert(/Strike/.test(ct) && /3 to one of you/.test(ct), 'the badge card: ' + ct);
+  assert(/Sweep/.test(ct) && /to each of you/.test(ct) && /2 each \(\+1 from Heat\)/.test(ct), 'the badge card: ' + ct);
   await p.click('#cb-icard .ic-more');
   await p.waitForSelector('.kwcard');
   t = await cardText(p);
-  assert(/for 3 \(\+1 from Heat\)/.test(t), 'its note has the real numbers: ' + t);
+  assert(/Sweep/.test(t) && /\+1 from Heat/.test(t), 'its note has the real numbers: ' + t);
   assert(!errors.length, errors.join('; '));
   await ctx.close();
 });
