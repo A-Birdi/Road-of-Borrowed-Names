@@ -327,6 +327,7 @@ let regTexts = 0;
     pages: PG && { COMPS: PG.COMPS, PQ: PG.PQ, PROJECT: PG.PROJECT, REPLY: PG.REPLY, RET: PG.RET, MEMO_TITLE: PG.MEMO_TITLE, TOPICS: PG.TOPICS, MEM: PG.MEM, SHOW: PG.SHOW },
     known: RB.known && { TYPES: RB.known.TYPES, STATE_WORD: RB.known.STATE_WORD },
     company: C.company,
+    practiceB: C.practiceB, // practice suite B: letters, proofreading, comparisons (docs/practice/suite_b.md)
   };
   for (const k in roots) walk(roots[k], k);
 }
