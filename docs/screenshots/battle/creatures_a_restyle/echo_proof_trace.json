@@ -1,0 +1,58 @@
+{
+ "speed": "Normal (presentation clock ×1)",
+ "viewport": "1280×720 (recorded at 1280×720)",
+ "moves": [
+  {
+   "label": "shard-volley Strike",
+   "kind": "strike",
+   "end": 1210,
+   "beats": [
+    {
+     "t": "hit",
+     "at": 600,
+     "who": "pc"
+    }
+   ],
+   "wallMs": 1189
+  },
+  {
+   "label": "Mirror (the shards lock into a pane)",
+   "kind": "mirror",
+   "end": 1210,
+   "beats": [
+    {
+     "t": "hit",
+     "at": 717,
+     "who": "pc"
+    }
+   ],
+   "wallMs": 1217
+  },
+  {
+   "label": "Heat (its rings warm and quicken)",
+   "kind": "heat",
+   "end": 1210,
+   "beats": [
+    {
+     "t": "heat",
+     "at": 683,
+     "who": null
+    }
+   ],
+   "wallMs": 1200
+  },
+  {
+   "label": "Plea",
+   "kind": "plea",
+   "end": 1260,
+   "beats": [
+    {
+     "t": "plea",
+     "at": 650,
+     "who": null
+    }
+   ],
+   "wallMs": 1258
+  }
+ ]
+}

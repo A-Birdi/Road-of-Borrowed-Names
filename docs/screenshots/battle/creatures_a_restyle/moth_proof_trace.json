@@ -1,0 +1,76 @@
+{
+ "speed": "Normal (presentation clock ×1)",
+ "viewport": "1280×720 (recorded at 1280×720)",
+ "moves": [
+  {
+   "label": "unblocked swoop Strike",
+   "kind": "strike",
+   "end": 1310,
+   "beats": [
+    {
+     "t": "hit",
+     "at": 650,
+     "who": "pc"
+    }
+   ],
+   "wallMs": 1299
+  },
+  {
+   "label": "fully warded Strike (the seal at the contact)",
+   "kind": "strike",
+   "end": 1310,
+   "beats": [
+    {
+     "t": "countered",
+     "at": 650,
+     "who": null
+    }
+   ],
+   "wallMs": 1303
+  },
+  {
+   "label": "softened hit (one ward point)",
+   "kind": "strike",
+   "end": 1310,
+   "beats": [
+    {
+     "t": "block",
+     "at": 650,
+     "who": "pc"
+    },
+    {
+     "t": "hit",
+     "at": 767,
+     "who": "pc"
+    }
+   ],
+   "wallMs": 1315
+  },
+  {
+   "label": "Shroud applied (flour over its knots)",
+   "kind": "shroud",
+   "end": 1510,
+   "beats": [
+    {
+     "t": "shroud",
+     "at": 767,
+     "who": null
+    }
+   ],
+   "wallMs": 1509
+  },
+  {
+   "label": "light clears the Shroud",
+   "kind": "rest",
+   "end": 760,
+   "beats": [
+    {
+     "t": "rest",
+     "at": 200,
+     "who": null
+    }
+   ],
+   "wallMs": 758
+  }
+ ]
+}
