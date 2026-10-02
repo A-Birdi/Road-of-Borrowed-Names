@@ -44,7 +44,8 @@ async function test(name, fn) {
 }
 const assert = (c, m) => { if (!c) throw new Error(m); };
 const wait = (p, ms) => p.waitForTimeout(ms);
-const DESK = { viewport: { width: 1280, height: 800 } };
+// --narrow: a narrow portrait window (390 × 844) instead of the desktop one (a layout check of the same battles)
+const DESK = args.includes('--narrow') ? { viewport: { width: 390, height: 844 } } : { viewport: { width: 1280, height: 800 } };
 const MOVES = ['strike', 'sweep', 'rest', 'heat', 'shroud', 'charge', 'gust', 'mend', 'lie', 'plea', 'flood', 'chill', 'silence', 'mirror'];
 // every enemy of these families and every move its pattern and phases use (docs/battle/INVENTORY.md)
 const ROSTER = [
@@ -295,7 +296,7 @@ for (const [enemy, fam, moves] of ROSTER) {
     const row = [];
     for (const kind of moves) {
       if (process.env.CBV) console.log('  ', enemy, kind);
-      const r = await round(p, kind, { shots: shots && kind === SHOT[enemy] && { name: enemy + '_' + kind, at: [0, 150, 300, 450, 600, 700, 800, 950, 1100, 1300, 1500, 1800] } });
+      const r = await round(p, kind, { shots: shots && kind === SHOT[enemy] && { name: enemy + '_' + kind + (args.includes('--narrow') ? '_narrow' : ''), at: [0, 150, 300, 450, 600, 700, 800, 950, 1100, 1300, 1500, 1800] } });
       assert(!r.end.result || r.end.result === 'done', enemy + ' ' + kind + ': battle went on');
       const seqR = r.enemySeq[r.enemySeq.length - 1];
       assert(seqR && seqR.meta.kind === kind, enemy + ' ' + kind + ': the creature performed it: ' + JSON.stringify(r.enemySeq.map((x) => x.meta.kind)));

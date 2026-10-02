@@ -210,8 +210,10 @@ Reactions placed by the sequencer use the family's authored poses: `rest` 700 ms
 
 **Self-review by the implementing agent, not a human review.** Reviewed at native size and 3× (`keys_*.webp`,
 `sheet_*.webp`), in battle at 1280 × 800 on a slowed presentation clock (`strip_*.webp`), and once in real time
-(`keeper_flood_exchange.webm`). **Not reviewed:** phone portrait sizes (the layouts are exercised by
-`battle_group.mjs`, but nobody looked at these creatures there), real devices, other browsers. Scores 0 missing ·
+(`keeper_flood_exchange.webm`); one family in a narrow portrait window, 390 × 844 (the Snow Fox's Strike,
+`strip_sb.fox_strike_narrow.webp`: the leap scales with the real distance, but the drawing does not shrink, so the fox
+covers most of the small stage and overlaps you at the bite). **Not reviewed:** the other families at phone sizes (the
+layouts are exercised by `battle_group.mjs`, which passes), real devices, other browsers. Scores 0 missing ·
 1 inconsistent · 2 coherent · 3 notably polished; the target is 2 everywhere.
 
 | Family | Silhouette & identity | Form & materials | Weight & anchors | Action identity | Secondary motion | Outcome truthfulness | Language visibility | Scene integration |
@@ -308,6 +310,7 @@ foxes and the Lamp), so without prewarm a move's first frames could each cost a 
 | `node tests/run-unit.mjs battle_seams` | 12 passed, 0 failed |
 | `node tests/e2e/battle_creatures_b.mjs` | 25 passed, 0 failed |
 | `node tests/e2e/battle_creatures_b.mjs <enemy> --shots` | strips of one move per enemy (tests/e2e/out/battle_creatures_b/) |
+| `node tests/e2e/battle_creatures_b.mjs "sb.fox (" --shots --narrow` | 1 passed, 0 failed (390 × 844 window) |
 | `node tests/e2e/battle_group.mjs` | 6 passed, 0 failed |
 | `node tests/e2e/combat_ui.mjs` | 7 passed, 0 failed |
 | `node tests/e2e/story_ch4.mjs F mio`, `story_ch5.mjs F mio`, `story_ch6.mjs 0` | pass (auto-resolved battles: they check the content edits, not the art) |
@@ -336,6 +339,7 @@ Name-borrowing Fox, the Guttering Lantern) and the resources check. Every check 
 | `before_<family>.webp` | the old idle frames (at 2×), for comparison |
 | `strip_<enemy>_<move>.webp` | one move per enemy in battle at 1280 × 800, captured at fixed presentation times (clock slowed to 0.1× for the capture) |
 | `atlas_group.webp` | the Atlas trio fixture (diagnostic) |
+| `strip_sb.fox_strike_narrow.webp` | the Snow Fox's Strike in a narrow portrait window (390 × 844), same fixture |
 | `keeper_flood_exchange.webm` | real time, Normal speed: the Keeper's telegraphed Flood, Unravel answered with the mouse, Mio's turn, your response, her draught, the Flood (diagnostic fixture) |
 
 Scratch captures, timing traces (`timings.json`), the resources figures (`perf.json`) and logs are in
@@ -345,7 +349,9 @@ Scratch captures, timing traces (`timings.json`), the resources figures (`perf.j
 ## Limitations
 
 - **No human review.** The rubric above is a self-review; no one else has looked at these creatures, at any size.
-  Phone portrait was not reviewed visually.
+  Of the phone sizes only the Snow Fox's Strike in a 390 × 844 window was looked at: on that small stage the larger
+  creatures (the foxes, the Keeper, the Hush) take most of it, because the stage keeps whole-pixel scale 1 there and
+  the drawings were not made smaller.
 - **Machine load.** All browser runs were on a 4-core machine shared by five workers (load average 20–35): frame-gap
   figures are not meaningful performance measurements; per-frame build times are pessimistic.
 - **First use outside the prewarm.** Idle frames are built when the battle opens, and a reaction the prewarm did not
