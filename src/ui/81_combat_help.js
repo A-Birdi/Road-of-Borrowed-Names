@@ -274,9 +274,10 @@ RB.combatHelp = (function () {
     const h = card.offsetHeight || 160;
     // beside the panel the keyword sits in (below the telegraph, above the
     // party), so the card never covers the line being read
-    let box = (a.closest('.intent, .cb-party, .cb-coach, .cb-foe') || a).getBoundingClientRect();
-    // the foe's slip sits over the telegraph: open below both
-    const tele = a.closest('.cb-foe') && document.querySelector('.combat-ui .intent');
+    // (a creature's plate on the scene: beside that plate, never over it)
+    let box = (a.closest('.intent, .cb-party, .cb-coach, .cb-foe.onstage [data-foe], .cb-foe') || a).getBoundingClientRect();
+    // the creatures' slip row (off the scene) sits over the telegraph: open below both
+    const tele = a.closest('.cb-foe:not(.onstage)') && document.querySelector('.combat-ui .intent');
     if (tele) { const t = tele.getBoundingClientRect(); box = { top: Math.min(box.top, t.top), bottom: Math.max(box.bottom, t.bottom) }; }
     let top = box.bottom + 8;
     if (top + h > window.innerHeight - 8) top = box.top - h - 8;
