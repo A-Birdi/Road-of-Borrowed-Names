@@ -262,7 +262,9 @@ RB.ui.proof = (function () {
         try { r = await U.keepFlow(s, page); } finally { S.lay.el.classList.remove('pb-hidden'); }
         if (!session.alive()) return;
         const fbel = S.leaf.querySelector('.fbwrap');
-        if (r.ok) { U.fb(fbel, 'ok', r.replaced ? 'Kept (a page was replaced, as you chose)' : 'Kept', '<p>Find it in Journey › Practice mementos. It is typeset, not handwriting.</p>'); b.querySelector('span').textContent = 'Kept'; }
+        // kept but not written to a save slot (no slot, a read-only tab, session-only storage): say so
+        const unsaved = r.ok && r.saved === false ? (RB.ui.desk && RB.ui.desk.statusText ? RB.ui.desk.statusText(r) : 'Kept in this journey, but not saved yet.') : '';
+        if (r.ok) { U.fb(fbel, 'ok', r.replaced ? 'Kept (a page was replaced, as you chose)' : 'Kept', '<p>Find it in Journey › Practice mementos. It is typeset, not handwriting.</p>' + (unsaved ? '<p class="muted small pb-unsaved">' + unsaved + '</p>' : '')); b.querySelector('span').textContent = 'Kept'; }
         else { b.disabled = false; U.fb(fbel, 'info', r.why === 'cancelled' ? 'Not kept' : 'Could not keep it', '<p>' + (r.why === 'cancelled' ? 'Nothing was changed.' : 'Your other pages are untouched; this sheet stays on screen but is not saved.') + '</p>'); }
       };
       S.lay.onCancel = done;

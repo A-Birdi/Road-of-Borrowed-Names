@@ -356,7 +356,10 @@ await test('the Proofreader\'s Tray: a fine portion explained, the wrong one fou
   await press(p, '[data-pb-keepok]');
   await p.waitForFunction(() => document.querySelector('.pb-result .fbwrap[data-fb=ok]'), null, { timeout: 4000 });
   let pages = await p.evaluate(() => RB.game.s.practice.deskPages);
-  assert(pages.length === 1 && pages[0].kind === 'proof' && pages[0].mode === 'proof' && pages[0].label === 'North door <b>' && pages[0].saved && pages[0].bytes > 0 && pages[0].typeset.lines.length, 'the page is kept, typeset, with its label as plain text: ' + JSON.stringify(pages));
+  // this synthetic campaign has no save slot: the page is kept in the journey and honestly marked
+  // not saved (RB.practiceDesk.keepPage marks a page saved only after a slot write succeeds)
+  assert(pages.length === 1 && pages[0].kind === 'proof' && pages[0].mode === 'proof' && pages[0].label === 'North door <b>' && pages[0].saved === false && pages[0].bytes > 0 && pages[0].typeset.lines.length, 'the page is kept, typeset, with its label as plain text: ' + JSON.stringify(pages));
+  assert(await p.evaluate(() => /no save slot/.test((document.querySelector('.pb-result .pb-unsaved') || {}).textContent || '')), 'the tray says it is kept but not saved (no slot)');
   await press(p, '.pb-result [data-pb-ok]');
   // P12: nothing can be settled; ask
   await press(p, '[data-pb-task="P12"]');

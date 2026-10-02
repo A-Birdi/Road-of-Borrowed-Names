@@ -674,6 +674,9 @@ RB.pad = (function () {
           count: P.chars.length,
         };
       },
+      // the confirmed characters with the player's own strokes (0..1 box units); a
+      // character picked from the chart has none (Practice suite A keeps desk pages)
+      ink() { return P.chars.map((c) => ({ ch: c.ch, strokes: (c.strokes || []).map((st) => st.map((q) => ({ x: q.x, y: q.y }))), assisted: !!c.assisted, manual: !!c.manual })); },
       hasPending() { return P.strokes.length > 0; },
       strokeActive() { return P.pointerId != null; },
       confirmPending() { if (P.result && P.result.candidates && P.result.candidates.length) confirm(); },

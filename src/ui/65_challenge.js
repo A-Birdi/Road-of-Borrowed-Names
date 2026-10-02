@@ -458,6 +458,7 @@ RB.challenge = (function () {
         if (PH) PH.finish(cancelled, res);
         if (vv) { vv.removeEventListener('resize', syncVV); vv.removeEventListener('scroll', syncVV); }
         if (tabsApi) { tabsApi.destroy(); tabsApi = null; }
+        if (opts.keepInk && pad) res.ink = pad.ink(); // opts.keepInk: the handwritten characters' strokes (writing desk pages)
         if (pad) { pad.destroy(); pad = null; }
         RB.ui.popLayer(layer);
         RB.ui.help.hide(true);

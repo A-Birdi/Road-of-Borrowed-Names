@@ -34,6 +34,7 @@ const suites = [
   ['practice_b.mjs'], // practice suite B: letters, the Proofreader's Tray, One word two moments (docs/practice/suite_b.md)
   ['wordplay.mjs'], // companion shiritori: the table, records, bond and talk priority (docs/practice/wordplay.md)
   ['wordplay_layout.mjs'], // companion shiritori: layouts, four companions at the table, Japanese labels
+  ['practice_a_lamps.mjs'], ['practice_a_desk.mjs'], ['practice_a_layout.mjs'], // Practice suite A: lamps, writing desk, mementos (addendum §15, §16)
   full ? ['matrix.mjs'] : ['pursue.mjs', 'E', 'mio'],
 ];
 const results = [];
