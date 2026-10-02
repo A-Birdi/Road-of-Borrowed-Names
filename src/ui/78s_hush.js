@@ -27,7 +27,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 (function () {
   'use strict';
-  const CB = RB.creaturesB, K = RB.pxkit, E = CB.E;
+  const CB = RB.creaturesB, K = RB.pxkit, E = CB.E, S = CB.S;
   const mixh = (a, b, k) => K.hex(K.mix(a, b, k));
   const TINT = { pale: ['#eeeae0', '#cfcadf'], blank: ['#fbf9f4', '#f0eee8'], amber: ['#f0c070', '#d89048'], frost: ['#e4f2ff', '#bcd8ee'], ink: ['#4a4870', '#2e2c48'] };
 
@@ -45,45 +45,71 @@ var RB = (globalThis.RB = globalThis.RB || {});
       default: return null;
     }
   }
+  // page tints (paper ramps: violet-grey shadow → warm white), the hollow's indigo, the eye
+  const PTINT = {
+    pale: ['#3a3660', '#7a76a2', '#c4c0d8', '#eeeae2', '#fffcf2'],
+    blank: ['#56546e', '#a8a6bc', '#e6e4ea', '#fbf9f4', '#ffffff'],
+    amber: ['#5a1e1a', '#a8502a', '#e09a48', '#f6cc78', '#fff0bc'],
+    frost: ['#2e4c8c', '#6a98d0', '#b4d8f4', '#e8f6ff', '#ffffff'],
+    ink: ['#100e22', '#242242', '#3a3862', '#56548a', '#7a78aa'],
+  };
   function drawHush(L, o, q, H) {
-    const pal = TINT[q.tint] || TINT.pale;
-    const core = K.mat('#0a0a14', { n: 3, at: 0, step: 0.04, line: false });
-    const indigo = K.mat(q.ember > 0 ? mixh('#282846', '#6a2a20', q.ember * 0.6) : '#282846', { n: 4, at: 1, step: 0.06, line: false });
-    const edgeA = [200, 140, 80].map((a) => K.mat(q.ember > 0 ? mixh('#44466a', '#c86a3a', q.ember * 0.7) : '#44466a', { n: 3, at: 1, step: 0.06, alpha: a, line: false }));
-    const eyeM = K.mat(q.eyeGlow ? '#fff4d8' : '#f0ecff', { n: 3, at: 1, line: false });
-    const page = K.mat(pal[0], { n: 4, at: 2, step: 0.07, lineCol: '#2a2840' });
-    const page2 = K.mat(pal[1], { n: 4, at: 2, step: 0.07, lineCol: '#2a2840' });
-    const markM = K.mat('#e8e4d2', { n: 2, at: 1, alpha: 200, line: false });
-    const inkM = K.mat('#2e2c48', { n: 3, at: 1, step: 0.08, line: false });
-    const lineM = K.solid(q.tint === 'amber' ? '#8a3a20' : '#8a86a0', { line: false });
-    const backP = L.like(), hollow = L.like(), frontP = L.like(), fx = L.like(), aura = L.like();
+    const pr = PTINT[q.tint] || PTINT.pale;
+    const em = q.ember || 0;
+    const IND = ['#06050e', '#100e22', '#1e1c3c', '#30305a', '#4a4a7e', '#7070a8'].map((c, i) => (em > 0 ? mixh(c, ['#1a0806', '#3a1008', '#6a2414', '#a8441e', '#e07a34', '#ffb860'][i], em * 0.7) : c));
+    const core = S.mat(IND.slice(0, 3), { at: 0, line: false });
+    const indigo = S.mat(IND, { at: 2, rim: em > 0.3 ? '#ffc890' : '#9ab8ff', litk: 0.2 });
+    const edgeA = [200, 140, 80].map((a) => S.mat([IND[2], IND[3], IND[4]], { at: 1, alpha: a, line: false }));
+    const eyeM = S.mat(q.eyeGlow ? ['#c87a30', '#ffd890', '#fff6dc', '#ffffff'] : ['#6a66a8', '#c4c0f0', '#f2f0ff', '#ffffff'], { at: 2, line: false });
+    const page = S.mat(pr, { at: 3, litk: 0.2 });
+    const page2 = S.mat(pr.slice(0, 4), { at: 2, litk: 0.15 });
+    const markM = S.mat(['#b8b4c8', '#ece8dc'], { at: 1, alpha: 210, line: false });
+    const inkM = S.mat(PTINT.ink, { at: 2, line: '#06050e' });
+    const lineM = K.solid(q.tint === 'amber' ? '#7a2a14' : q.tint === 'ink' ? '#a8a6cc' : '#5a5680', { line: false });
+    const backP = L.like(), hollow = L.like(), frontP = L.like(), fx = L.like(), aura = L.like(), inkL = L.like();
     const hr = q.hr || 1, sw = q.swell || 0;
-    // the hollow: stepped edge rings of falling opacity (a soft, deliberate edge)
     const R0 = 38 * hr;
-    if (q.ember > 0.05) H.glow(aura, 0, 0, R0 + 20, R0 + 18, '#f08040', 0.28 * q.ember, 3);
+    if (em > 0.05) H.glow(aura, 0, 0, R0 + 20, R0 + 18, '#f08040', 0.28 * em, 3);
     if (q.eyeGlow) H.glow(aura, 0, 0, 30, 30, '#fff0c0', 0.2, 2);
+    // the hollow's thinning edge: stepped rings of falling opacity (a soft, deliberate edge)
     for (let i = 2; i >= 0; i--) {
       const r = R0 + 3 + (i + 1) * (2.6 + sw * 2.4);
-      hollow.fill(-r - 2, -r - 2, r + 2, r + 2, (x, y) => { const d = Math.hypot(x, y) + Math.sin(Math.atan2(y, x) * 5 + (q.rot || 0) * 3) * (1 + sw); return d <= r; }, edgeA[i], 1);
+      hollow.fill(-r - 2, -r - 2, r + 2, r + 2, (x, y) => { const d = Math.hypot(x, y) + Math.sin(Math.atan2(y, x) * 5 + (q.rot || 0) * 3) * (1 + sw); return d <= r; }, edgeA[i], i === 0 ? 2 : 1);
     }
-    hollow.ell(0, 0, R0, R0, indigo, (x, y) => K.clamp(0.2 + (Math.hypot(x, y) / R0) * 0.6 - (x + y) / 160, 0, 0.99));
-    hollow.ell(0, 0, 28 * hr, 28 * hr, core, (x, y) => K.clamp(Math.hypot(x, y) / (40 * hr), 0, 0.99));
-    // the eye: a pale ring (it narrows to a slit and shuts to a line)
-    const er = (17 + (q.er || 0)) * (q.eyeR || 1), eo = q.eye == null ? 1 : q.eye;
-    if (eo < 0.08) hollow.rect(-er, -1, er * 2, 2, eyeM, 1);
-    else hollow.fill(-er - 2, -er - 2, er + 2, er + 2, (x, y) => { const d = Math.hypot(x, y / eo); return d <= er && d >= er - 2 - (1 - eo) * 2; }, eyeM, (x, y) => K.clamp(0.5 - (x + y) / (er * 3), 0, 0.99));
-    // ink welling out of the hollow (flood)
+    // the rim of the hollow as a thick ring seen a little turned: its outer face lit on the upper
+    // left (hard bands), the inner lip lit on the far (lower right) side where the light falls in
+    hollow.ell(0, 0, R0, R0, indigo, (x, y) => {
+      const d = Math.hypot(x, y) / R0, a = (x * S.LK[0] + y * S.LK[1]) / Math.max(1, Math.hypot(x, y));
+      let k = d > 0.86 ? (a > 0.55 ? 5 : a > 0.1 ? 4 : a > -0.5 ? 3 : 2) : d > 0.76 ? (a < -0.45 ? 4 : 2) : 1;
+      return S.step(k, 6);
+    });
+    // (the funnel turned toward the party: its throat set off to the near side, the far inner wall seen)
+    hollow.ell(-6, 1, 28 * hr * 0.88, 28 * hr, core, (x, y) => { const d = Math.hypot((x + 6) / 0.88, y - 1) / (28 * hr); return S.step(d > 0.82 ? 2 : d > 0.55 ? 1 : 0, 3); });
+    // the eye: a luminous ring, turned toward the party (narrower across); it narrows to a slit and
+    // shuts to a line
+    const er = (17 + (q.er || 0)) * (q.eyeR || 1), eo = q.eye == null ? 1 : q.eye, ex = -7;
+    if (eo < 0.08) { hollow.rect(ex - er, -1, er * 2, 2, eyeM, 2); hollow.rect(ex - er + 3, -1, 6, 1, eyeM, 3); }
+    else hollow.fill(ex - er - 2, -er - 2, ex + er + 2, er + 2, (x, y) => { const d = Math.hypot((x - ex) / 0.88, y / eo); return d <= er && d >= er - 2.5 - (1 - eo) * 2; }, eyeM, (x, y) => S.step(x - ex + y < -er * 0.6 ? 3 : x - ex + y < er * 0.4 ? 2 : 1, 4));
+    // ink welling out of the hollow (flood): dark, glossy, with a lit drop at each tip
     if (q.ink > 0.05) {
       const n = Math.round(3 + q.ink * 5);
-      for (let i = 0; i < n; i++) { const x = -18 + i * 7 + Math.sin(i * 2 + (q.rot || 0) * 4) * 3, len = 10 + q.ink * (20 + (i % 3) * 14); hollow.rect(Math.round(x), 24, 5, Math.round(len), inkM, 1); hollow.ell(Math.round(x) + 2, 24 + len, 4, 3, inkM, 1); }
+      for (let i = 0; i < n; i++) {
+        const x = Math.round(-18 + i * 7 + Math.sin(i * 2 + (q.rot || 0) * 4) * 3), len = Math.round(10 + q.ink * (20 + (i % 3) * 14));
+        inkL.rect(x, 24, 5, len, inkM, (px) => S.step(px < x + 2 ? 3 : 1, 5));
+        inkL.ell(x + 2, 24 + len, 4, 3, inkM, (px, py) => S.step(py < 24 + len && px < x + 2 ? 4 : 2, 5));
+        inkL.dot(x + 1, 25 + len - 2, inkM, 4);
+      }
     }
-    // the pages: two counter-rotating orbits, each page drawn to its place in the formation
+    // the pages: two counter-rotating orbits, each a sheet with a lit edge, a fold shadow and a
+    // written line; the far ones cooler and fainter, the near ones bright
     const fk = q.fk || 0;
     const drawP = (j, x, y, a, M, front) => {
       const Lr = front ? frontP : backP;
-      Lr.save().translate(Math.round(x), Math.round(y)).rotate(a);
-      Lr.stone([[-6, -4], [4, -4], [6, -2], [6, 4], [-6, 4]], M, { bevel: 1, face: 2, seam: false });
-      Lr.line(-4, 0, 3, 0, q.tint === 'blank' ? M : lineM, q.tint === 'blank' ? 3 : 0);
+      const fore = 0.55 + 0.45 * Math.abs(Math.cos(a * 0.7 + j)); // some turn edge-on as they orbit
+      Lr.save().translate(Math.round(x), Math.round(y)).rotate(a).scale(fore, 1);
+      Lr.poly([[-6, -4], [4, -4], [6, -2], [6, 4], [-6, 4]], M, (px, py) => S.step(py < -2.5 || px < -4.5 ? M.n - 1 : px > 3 && py < 0 ? 1 : M.n - 2, M.n));
+      Lr.line(-4, 0, 3, 0, q.tint === 'blank' ? M : lineM, q.tint === 'blank' ? M.n - 3 : 0);
+      if (j % 3 === 0 && q.tint !== 'blank') Lr.line(-4, 2, 1, 2, lineM, 0);
       if (q.tint === 'amber' && j % 2) Lr.line(-6, 4, 6, 4, K.solid('#ff9040', { line: false }), 0);
       Lr.restore();
     };
@@ -96,24 +122,28 @@ var RB = (globalThis.RB = globalThis.RB || {});
       let front = Math.sin(a) > 0;
       const F = fk > 0 ? formPos(q.form, j, q) : null;
       if (F) {
-        const sk = Math.min(1, Math.max(0, fk * 1.25 - (j / 17) * 0.25));    // pages leave one after another
+        const sk = Math.min(1, Math.max(0, fk * 1.25 - (j / 17) * 0.25));
         x = x + (F[0] - x) * sk; y = y + (F[1] - y) * sk; ang = ang + (F[2] - ang) * sk;
         if (sk > 0.5) front = true;
       }
       if (q.drift > 0 && j === 0) { x = x + (-96 - x) * q.drift; y = y + (-30 - y) * q.drift; ang = Math.sin((q.rot || 0) * 3) * 0.6; front = true; }
-      drawP(j, x, y, ang, ringI ? page2 : page, front);
+      drawP(j, x, y, ang, front ? page : page2, front);
     }
-    backP.outline(); frontP.outline();
-    backP.fade(0.8);
+    backP.outline(); frontP.outline(); hollow.outline(); inkL.outline();
+    backP.fade(0.78);
+    S.cast(frontP, hollow, 2, 3, 1);
     // the marks it took, rising off the hollow as short strokes (more when a knot comes loose)
     const nm = Math.round(6 * (q.marks == null ? 1 : q.marks));
     for (let i = 0; i < nm; i++) {
       const k = (((q.mph || 0) / 8) + i / Math.max(1, nm)) % 1;
       const x = Math.round(Math.sin(i * 2.1) * 30 * (1 - k)), y = Math.round(-34 * hr - k * 56);
       fx.rect(x, y, 2, 4 - (i % 2), markM, k < 0.6 ? 1 : 0);
+      if (i % 2) fx.dot(x + 2, y + 1, markM, 0);
     }
     fx.fade(0.9);
-    return aura.over(backP).over(hollow).over(frontP).over(fx);
+    const out = aura.over(backP).over(hollow).over(inkL);
+    S.rim(out, { w: 2 });
+    return out.over(frontP).over(fx);
   }
   const HB = { hr: 1, swell: 0, eye: 1, eyeR: 1, er: 0, eyeGlow: false, rot: 0, rr: 1, fl: 0.62, form: 'orbit', fk: 0, tint: 'pale', marks: 1, mph: 0, ink: 0, ember: 0, drift: 0 };
   const hushIdle = [];
