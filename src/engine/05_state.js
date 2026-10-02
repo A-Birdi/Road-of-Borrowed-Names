@@ -87,6 +87,7 @@ RB.state = (function () {
       bookmarks: [],     // kept sentences [{ id, jp, en, who, src, map, t, title, note }]
       creatures: {},     // enemy id -> { t, maps: {}, notes: {} } creatures met
       awarded: {},       // award-bearing event id -> time (RB.state.once: at most once)
+      practice: RB.practice ? RB.practice.fresh() : undefined, // roadside activities (src/engine/08_practice.js)
     };
   }
 

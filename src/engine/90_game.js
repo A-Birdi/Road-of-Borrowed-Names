@@ -34,6 +34,10 @@ RB.game = (function () {
       petWorld: true, petBattle: true, petSounds: true,
       // the Roadside Keepsakes catalogue may hide its completion counts
       keepsakeCounts: true,
+      activityChatter: 'normal', // roadside activities: 'quiet' drops incidental remarks, never rule information
+      hideTotals: false,         // shiritori win/loss totals (stage receipts stay visible)
+      fishSeconds: false,        // fishing pace: a numeric seconds display beside the line
+      fishWait: true,            // fishing: the short waiting animation before a bite
     };
   }
 
@@ -166,6 +170,7 @@ RB.game = (function () {
 
   // ---- campaign lifecycle ---------------------------------------------------------------
   async function startNewCampaign(slot, st) {
+    RB.bus.emit('campaign:changing', { to: 'new' }); // an open activity is disposed first (src/engine/09_activity.js)
     G.s = st;
     RB.save.setCurrent(slot, 0);
     const claim = await RB.save.claim(slot);
@@ -189,6 +194,7 @@ RB.game = (function () {
   }
 
   async function loadCampaign(slot, which) {
+    RB.bus.emit('campaign:changing', { to: 'load', slot });
     const r = await RB.save.read(slot, which);
     const claim = await RB.save.claim(slot);
     if (claim === 'busy') {
@@ -217,6 +223,7 @@ RB.game = (function () {
     return true;
   }
   async function toTitle() {
+    RB.bus.emit('campaign:changing', { to: 'title' });
     RB.voice && RB.voice.cancel();
     RB.save.releaseLock();
     G.playing = false;
@@ -356,6 +363,7 @@ RB.game = (function () {
   // Development/test helper: start a session-only campaign directly on a map.
   function debugStart(mapId, x, y, opts) {
     opts = opts || {};
+    RB.bus.emit('campaign:changing', { to: 'debug' });
     const st = RB.state.newCampaign(opts);
     Object.assign(st.flags, opts.flags || {});
     if (opts.comp) st.comp = opts.comp;

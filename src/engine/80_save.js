@@ -148,7 +148,7 @@ RB.save = (function () {
     if (!Array.isArray(st.words)) errs.push('missing words');
     if (st.comp && !RB.content.chars[st.comp]) errs.push('unknown companion');
     // optional records added later: absent is fine (migrate fills them), the wrong shape is not
-    for (const k of ['company', 'discovery', 'creatures', 'awarded']) if (k in st && (!st[k] || typeof st[k] !== 'object' || Array.isArray(st[k]))) errs.push('bad ' + k);
+    for (const k of ['company', 'discovery', 'creatures', 'awarded', 'practice']) if (k in st && (!st[k] || typeof st[k] !== 'object' || Array.isArray(st[k]))) errs.push('bad ' + k);
     if ('bookmarks' in st && !Array.isArray(st.bookmarks)) errs.push('bad bookmarks');
     return errs;
   }
@@ -160,6 +160,7 @@ RB.save = (function () {
     for (const k in base.atlas) if (!(k in st.atlas)) st.atlas[k] = RB.util.deepClone(base.atlas[k]);
     for (const ns of ['company', 'discovery']) for (const k in base[ns]) if (!(k in st[ns])) st[ns][k] = RB.util.deepClone(base[ns][k]);
     // later systems normalise their own records on load (derived milestones, unknown ids kept, ...)
+    if (RB.practice) RB.practice.of(st); // practice: empty for an older save, pace Off (nothing inferred)
     for (const f of MIGRATIONS) f(st);
     return st;
   }

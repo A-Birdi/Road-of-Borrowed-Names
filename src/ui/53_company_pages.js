@@ -28,6 +28,15 @@ RB.ui.companyPages = (function () {
   });
   const I = (n, t) => F().icon(n, t);
   const L = (jp, en) => RB.ui.label(jp, en);
+  // sections other systems add below the companion's own blocks (Practice addendum §20.1:
+  // Wordplay). def: { id, order?, html(s, comp, view) -> string, click?(button, s, api) -> bool|Promise }
+  const SECTIONS = [];
+  function addSection(def) {
+    const i = SECTIONS.findIndex((d) => d.id === def.id);
+    if (i >= 0) SECTIONS[i] = def; else SECTIONS.push(def);
+    SECTIONS.sort((a, b) => (a.order || 50) - (b.order || 50));
+  }
+  const sectionsHtml = (s, comp, V) => SECTIONS.map((d) => { try { return d.html(s, comp, V) || ''; } catch (e) { console.error('company section ' + d.id, e); return ''; } }).join('');
   const j = (t) => (t ? RB.ui.jhtml(t) : '');
   const chr = (id) => (id && RB.content.chars[id]) || null;
   const said = (t, cls) => (t ? '<div class="co-said' + (cls ? ' ' + cls : '') + '">' + (t.jp ? '<div class="jp">' + j(t.jp) + '</div>' : '') + (t.en ? '<div class="en">' + RB.ui.ehtml(t.en) + '</div>' : '') + '</div>' : '');
@@ -197,7 +206,7 @@ RB.ui.companyPages = (function () {
     const idHtml = identity(s, comp, c);
     const actHtml = actions(s, comp, c, V);
     const qd = V.detail === 'quest' ? questDetail(s, comp, c) : V.detail === 'cases' ? caseDetail(s, c) : '';
-    const rest = topicsBlock(s, c) + supportBlock(s, comp, c);
+    const rest = topicsBlock(s, c) + supportBlock(s, comp, c) + sectionsHtml(s, comp, V);
     if (!two && (V.detail === 'quest' || V.detail === 'cases') && qd) {
       A.innerHTML = '<button class="pbtn quiet co-back" data-co-back>' + I('back') + L('{戻|もど}る', 'Back') + '</button>' + qd;
     } else if (two) {
@@ -209,6 +218,8 @@ RB.ui.companyPages = (function () {
     const cv = A.querySelector('.co-portrait');
     if (cv) RB.portraits.draw(cv, comp, K.stage(s).id === 'walking' ? 'neutral' : 'smile');
     const click = async (e) => {
+      const sb = e.target.closest('[data-co-sec]');
+      if (sb) { const d = SECTIONS.find((x) => x.id === sb.dataset.coSec); if (d && d.click) await d.click(sb, s, api); return; }
       const b = e.target.closest('[data-co-act],[data-co-topic],[data-co-back],[data-co-case-talk],[data-co-case-open]');
       if (!b) return;
       if (b.hasAttribute('data-co-back')) { V.detail = null; api.render(); return; }
@@ -371,5 +382,5 @@ RB.ui.companyPages = (function () {
   }
   for (const ev of ['company:changed', 'company:talk', 'map:enter', 'company:bond']) RB.bus.on(ev, () => setTimeout(hudUpdate, 0));
 
-  return { converse, recollection, hudUpdate };
+  return { converse, recollection, hudUpdate, addSection };
 })();

@@ -14877,6 +14877,7 @@ RB.state = (function () {
       bookmarks: [],     // kept sentences [{ id, jp, en, who, src, map, t, title, note }]
       creatures: {},     // enemy id -> { t, maps: {}, notes: {} } creatures met
       awarded: {},       // award-bearing event id -> time (RB.state.once: at most once)
+      practice: RB.practice ? RB.practice.fresh() : undefined, // roadside activities (src/engine/08_practice.js)
     };
   }
 
@@ -15262,6 +15263,326 @@ RB.equip = (function () {
   }
 
   return { SLOTS, slot, SAME_PLACE, lookWith, look, replaces, refresh, equip, unequip, isWorn, tags, note, defineEffect, knownEffect, T };
+})();
+
+
+/* ==== src/engine/08_practice.js ==== */
+/* Roadside practice: the shared core of the Practice, Fishing and Shiritori
+ * addendum (docs/PRACTICE_CONTRACTS.md). Activities keep their own records in
+ * s.practice; ordinary learning stays in s.learn and is written only through
+ * the adapter below, at most once per authored objective.
+ *
+ *   RB.practice.fresh()                 a new, empty practice state
+ *   RB.practice.of(s)                   s.practice, created/filled when missing
+ *   RB.practice.addNamespace(key, def, norm)  an activity's own sub-state
+ *   RB.practice.settings(s) / set(s,k,v)      per-campaign activity setup
+ *   RB.practice.seq(s)                  the next session/cast sequence number
+ *   RB.practice.stream(s, name, extra)  a seeded random stream (never Math.random)
+ *   RB.practice.objectives(session)     assess(objId, item, res, o): one mastery
+ *                                       event per objective; practice tallies
+ *   RB.practice.tally(s, kind, fields)  bounded counts kept apart from mastery
+ *   RB.practice.cooldown()              no immediate repeat; a missed objective
+ *                                       waits four objectives
+ *   RB.practice.pickItems(pool, n, cd)  the scheduler's choice within the cooldown
+ *   RB.practice.addActivity(def)        an entry in Words › Ways to practise
+ *   RB.practice.addMementoSource(def)   finite cosmetic practice mementos (Journey)
+ *
+ * Nothing here reads the wall clock for eligibility, keeps a streak, or awards
+ * bond: the two wordplay relationship events go through RB.company.award. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.practice = (function () {
+  'use strict';
+  const V = 1;
+  // per-campaign setup that a fresh campaign starts with (addendum §20.3)
+  const SETTINGS = {
+    fishingPace: 'off',          // off | gentle | brisk | custom
+    fishingCustomSec: null,      // 5–180 when custom
+    shiritoriFormat: 'competitive', // competitive | cooperative
+    shiritoriBand: 'pocket',     // pocket | everyday | extended | journey
+    shiritoriLevel: 'casual',    // casual | thoughtful | sharp (cooperative: partner)
+    shiritoriSupport: 'open',    // open | recall
+    shiritoriChain: 12,          // cooperative goal: 6 | 12 | 20
+    demoSeen: false,             // shiritori rules demonstration offered once
+  };
+  const NS = {};   // key -> { def: () => obj, norm?: (x) => x }
+  const LIMITS = { tallyKinds: 64, recent: 50 };
+
+  function fresh() {
+    const p = {
+      v: V, nextSessionSeq: 0, settings: {},
+      fishing: { observed: {}, siteQueues: {}, milestones: {}, calibration: {}, recentAttempts: [], lastCommittedCatchSeq: 0, active: null },
+      shiritori: { byCompanion: {}, active: null },
+      deskPages: [],
+      activityCompletion: {},
+      tally: {},
+    };
+    for (const k in NS) p[k] = NS[k].def();
+    return p;
+  }
+  const isObj = (x) => !!x && typeof x === 'object' && !Array.isArray(x);
+  // fill what is missing, keep everything present (unknown future ids included)
+  function fill(p) {
+    const f = fresh();
+    for (const k in f) {
+      if (p[k] == null) p[k] = f[k];
+      else if (isObj(f[k]) && isObj(p[k])) { for (const j in f[k]) if (p[k][j] == null) p[k][j] = f[k][j]; }
+    }
+    if (!Array.isArray(p.deskPages)) p.deskPages = [];
+    if (!Array.isArray(p.fishing.recentAttempts)) p.fishing.recentAttempts = [];
+    for (const k in NS) if (NS[k].norm) p[k] = NS[k].norm(p[k]) || p[k];
+    return p;
+  }
+  function of(s) {
+    if (!s) return null;
+    if (!isObj(s.practice)) s.practice = fresh();
+    else if (!s.practice._ok) { fill(s.practice); Object.defineProperty(s.practice, '_ok', { value: true, enumerable: false, configurable: true }); }
+    return s.practice;
+  }
+  function addNamespace(key, def, norm) { NS[key] = { def, norm }; }
+
+  function settings(s) {
+    const p = of(s);
+    return Object.assign({}, SETTINGS, p ? p.settings : {});
+  }
+  function set(s, k, v) { const p = of(s); if (p) p.settings[k] = v; }
+
+  function seq(s) { const p = of(s); p.nextSessionSeq = (p.nextSessionSeq | 0) + 1; return p.nextSessionSeq; }
+
+  // A seeded stream for one purpose: species queues, strategy tie-breaks,
+  // decorative motion and so on each get their own, so one never shifts another.
+  function stream(s, name, extra) {
+    const id = (s && (s.id || s.created)) || 'campaign';
+    return RB.util.rng(RB.util.hashStr(String(id) + '|' + name + '|' + (extra == null ? '' : extra)));
+  }
+
+  // ---- learning evidence (addendum §4) ----------------------------------------------------
+  // An objective is one authored assessment inside a session. The first
+  // confirmed result for it may become one ordinary mastery event; anything
+  // after it (a corrected or assisted continuation, a replay) is practice
+  // evidence only. Exposed answers (traced, copied, shown) never promote recall.
+  function objectives(session) {
+    const done = new Set();
+    return {
+      assess(objId, item, res, o) {
+        o = o || {};
+        const s = (RB.game && RB.game.s) || o.s;
+        if (!objId || !res || res.cancelled) return false;
+        const first = !done.has(objId);
+        done.add(objId);
+        const mode = res.mode === 'hand' ? 'hand' : res.mode === 'ime' ? 'ime' : 'choice';
+        if (s) tally(s, o.kind || (session && session.kind) || 'practice', { n: 1, ok: res.firstTry !== false ? 1 : 0, assisted: res.assisted ? 1 : 0, exposed: o.exposed ? 1 : 0 });
+        if (!first || o.exposed || o.paced || !item) { if (item) [].concat(item).forEach((i) => RB.learn.markIntroduced(i)); return false; }
+        RB.learn.record(item, { ok: res.firstTry !== false, mode, assisted: !!res.assisted, ctx: 'practice:' + ((session && session.kind) || o.kind || '') });
+        [].concat(item).forEach((i) => RB.learn.markIntroduced(i));
+        return true;
+      },
+      seen: (objId) => done.has(objId),
+    };
+  }
+  // bounded counts kept apart from mastery (wordplay use, motor practice, paced attempts…)
+  function tally(s, kind, fields) {
+    const p = of(s);
+    if (!p) return;
+    if (!p.tally[kind] && Object.keys(p.tally).length >= LIMITS.tallyKinds) return;
+    const t = p.tally[kind] || (p.tally[kind] = {});
+    for (const k in fields) t[k] = (t[k] || 0) + (+fields[k] || 0);
+  }
+
+  // ---- caller-side cooldowns (addendum §4.4) --------------------------------------------
+  function cooldown() {
+    const hist = []; // { id, missed }
+    return {
+      allow(id) {
+        if (!hist.length) return true;
+        if (hist[hist.length - 1].id === id) return false;          // never the identical objective again at once
+        const k = hist.slice(-4).findIndex((h) => h.id === id && h.missed);
+        return k < 0;                                                // a miss waits four objectives
+      },
+      push(id, missed) { hist.push({ id, missed: !!missed }); if (hist.length > 32) hist.shift(); },
+      history: () => hist.slice(),
+    };
+  }
+  // up to n items from pool, chosen by the scheduler but only among those the
+  // cooldown allows; a short pool gives a short session (never repeats to fill)
+  function pickItems(pool, n, cd) {
+    const ok = Array.from(new Set(pool)).filter((id) => !cd || cd.allow(id));
+    if (!ok.length) return [];
+    return Array.from(new Set(RB.learn.pick(ok, Math.min(n, ok.length)))).slice(0, n);
+  }
+
+  // ---- Words › Ways to practise (src/ui/68_practice_index.js renders it) ------------------
+  // def: { id, en, jp, icon, order, where:{en,jp}, available(s)→bool, here(s)→bool,
+  //        note(s)→string (why not / where), begin()→Promise (only when here and safe) }
+  const ACTS = [];
+  function addActivity(def) {
+    const i = ACTS.findIndex((d) => d.id === def.id);
+    if (i >= 0) ACTS[i] = def; else ACTS.push(def);
+    ACTS.sort((a, b) => (a.order || 50) - (b.order || 50));
+  }
+  const activities = () => ACTS.slice();
+
+  // ---- Practice mementos (Journey; addendum §8.1, §16.3) ------------------------------------------
+  // A source lists what it has to show: fishing's rod ribbon and framed illustration,
+  // the writing desk's kept pages, the proofreader's kept page. Finite, cosmetic, never
+  // part of the twelve Roadside Keepsakes. def: { id, order?, list(s) -> [{ id, title:{jp,en},
+  //   kind, note?, draw?(canvas), html?() }] }
+  const MEMS = [];
+  function addMementoSource(def) {
+    const i = MEMS.findIndex((d) => d.id === def.id);
+    if (i >= 0) MEMS[i] = def; else MEMS.push(def);
+    MEMS.sort((a, b) => (a.order || 50) - (b.order || 50));
+  }
+  function mementos(s) {
+    const out = [];
+    for (const d of MEMS) { try { for (const m of d.list(s) || []) out.push(Object.assign({ source: d.id }, m)); } catch (e) { console.error('memento source ' + d.id, e); } }
+    return out;
+  }
+
+  // Old saves: practice starts empty, pace Off; nothing is inferred from older flags
+  // (§21.4). RB.save.migrate calls of(st) (the save module loads after this one).
+
+  return { V, SETTINGS, LIMITS, fresh, of, fill, addNamespace, settings, set, seq, stream, objectives, tally, cooldown, pickItems, addActivity, activities, addMementoSource, mementos };
+})();
+
+
+/* ==== src/engine/09_activity.js ==== */
+/* The one foreground activity session (Practice addendum §3). Fishing,
+ * shiritori, the lamps, the writing desk, letters, the proofreader's tray and
+ * the comparisons all start, run and end through here, so exactly one owns the
+ * screen at a time and every way out returns the game to a valid state.
+ *
+ *   RB.activity.register(kind, def)   def: { title:{en,jp},
+ *        eligible(s, ctx) -> { ok, why },     checked again at the moment of launch
+ *        run(session) -> Promise<result>,     the activity's own UI and rules
+ *        dispose?(session) }                  tear down overlays/workers/timers
+ *   RB.activity.launch(kind, ctx) -> Promise<{ ok, why?, result? }>
+ *        ctx: { source: 'company'|'companion-talk'|'world-prop'|'words', returnView? }
+ *   RB.activity.active()              the current session or null
+ *   RB.activity.eligible(kind, ctx)   { ok, why } without launching
+ *
+ * A session: { id, kind, ctx, state, campaignId, companionId, mapId, alive(),
+ *   set(state), result }. States: eligible → preparing → active → resolving →
+ *   result → (preparing again | exiting), or suspended / converted-to-untimed /
+ *   abandoned. alive() is false once the campaign changes or the session ended:
+ *   an asynchronous callback must check it before writing anything.
+ *
+ * While a session runs the game is in mode 'activity': the world (movement,
+ * wandering people, patrols, triggers) is paused under it. Ending it briefly
+ * holds input so the closing click or key cannot also walk, talk or start
+ * another session. Events: activity:session-start, activity:session-resolved
+ * { kind, id, result }. Never discovery:resolved (that one awards bond). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.activity = (function () {
+  'use strict';
+  const DEFS = {};
+  let cur = null;
+  let lastEnd = -1e9;
+  const STATES = ['eligible', 'preparing', 'active', 'resolving', 'result', 'suspended', 'converted-to-untimed', 'abandoned', 'exiting'];
+
+  function register(kind, def) { DEFS[kind] = def; }
+  const game = () => RB.game && RB.game.s;
+
+  // world safety shared by every activity: the companionship module's check when present
+  function safe() {
+    if (RB.company && RB.company.safeHere) return RB.company.safeHere();
+    return { ok: RB.game.mode() === 'world' };
+  }
+  function eligible(kind, ctx) {
+    const def = DEFS[kind], s = game();
+    if (!def) return { ok: false, why: 'unknown' };
+    if (!s) return { ok: false, why: 'Not in a campaign.' };
+    if (cur) return { ok: false, why: 'Something else is already open.' };
+    if (RB.script && RB.script.isRunning && RB.script.isRunning()) return { ok: false, why: 'Not in the middle of a scene.' };
+    try { return def.eligible ? def.eligible(s, ctx || {}) || { ok: false, why: 'Not here.' } : { ok: true }; }
+    catch (e) { return { ok: false, why: 'Not here.' }; }
+  }
+
+  async function launch(kind, ctx) {
+    ctx = Object.assign({ source: 'world-prop' }, ctx || {});
+    const s = game();
+    // menus may have been open while deciding: the folio is closed before play
+    const menuOpen = RB.ui && RB.ui.menu && RB.ui.menu.isOpen && RB.ui.menu.isOpen();
+    if (menuOpen && !ctx.returnView) ctx.returnView = { page: RB.ui.menu.current(), scroll: scrollNow() };
+    if (menuOpen) RB.ui.menu.close();
+    // checked again now, atomically: reading the Ledger reserves nothing (§3.2)
+    const el = eligible(kind, ctx);
+    if (!el.ok) return { ok: false, why: el.why };
+    const def = DEFS[kind];
+    const session = {
+      id: RB.practice.seq(s), kind, ctx, state: 'preparing', result: null,
+      campaignId: s.id, companionId: s.comp || null, mapId: s.map,
+      _dead: false,
+      alive() { return !this._dead && cur === this && game() && game().id === this.campaignId; },
+      set(st) { if (STATES.indexOf(st) < 0) throw new Error('activity state ' + st); if (!this._dead) this.state = st; },
+    };
+    cur = session;
+    RB.game.pushMode('activity');
+    RB.input && RB.input.clearHeld && RB.input.clearHeld();
+    RB.bus.emit('activity:session-start', { kind, id: session.id, source: ctx.source });
+    let result = null;
+    try {
+      result = await def.run(session);
+    } catch (e) {
+      console.error('activity ' + kind, e);
+      result = { abandoned: true, error: String(e && e.message || e) };
+    }
+    if (session._dead) return { ok: false, why: 'The campaign changed.' };
+    finish(session, result);
+    return { ok: true, result };
+  }
+
+  function scrollNow() {
+    const pg = typeof document !== 'undefined' && document.querySelector('#folio-page');
+    return pg ? pg.scrollTop : 0;
+  }
+
+  function finish(session, result) {
+    session.result = result;
+    session.set('exiting');
+    session._dead = true;
+    try { if (DEFS[session.kind].dispose) DEFS[session.kind].dispose(session); } catch (e) { console.error(e); }
+    cur = null;
+    lastEnd = typeof performance !== 'undefined' ? performance.now() : Date.now();
+    RB.game.popMode('activity');
+    // hold input for a moment: the click/key that closed the activity does nothing else
+    RB.game.pushMode('activity-exit');
+    RB.input && RB.input.clearHeld && RB.input.clearHeld();
+    setTimeout(() => { RB.game.popMode('activity-exit'); RB.input && RB.input.clearHeld && RB.input.clearHeld(); reopen(session); }, 220);
+    RB.bus.emit('activity:session-resolved', { kind: session.kind, id: session.id, result });
+  }
+  // back to the page it was opened from, only when the world is safe to show it over
+  function reopen(session) {
+    const rv = session.ctx && session.ctx.returnView;
+    if (!rv || !rv.page || !game() || game().id !== session.campaignId) return;
+    if (RB.game.mode() !== 'world' || !safe().ok) return;
+    try {
+      RB.ui.menu.open(rv.page);
+      if (rv.scroll) setTimeout(() => { const pg = document.querySelector('#folio-page'); if (pg) pg.scrollTop = rv.scroll; }, 0);
+    } catch (e) { /* the page may have gone: the world is a valid place to be */ }
+  }
+
+  // a campaign change (load, new game, title, debug start) disposes the old session first (§3.5)
+  function disposeAll() {
+    const s0 = cur;
+    if (!s0) return;
+    s0._dead = true;
+    s0.state = 'abandoned';
+    try { if (DEFS[s0.kind].dispose) DEFS[s0.kind].dispose(s0); } catch (e) { console.error(e); }
+    cur = null;
+    RB.game.popMode('activity');
+    RB.game.popMode('activity-exit');
+  }
+  if (RB.bus) RB.bus.on('campaign:changing', disposeAll);
+
+  return {
+    register, launch, eligible, safe, STATES,
+    active: () => cur,
+    kinds: () => Object.keys(DEFS),
+    sinceEnd: () => (typeof performance !== 'undefined' ? performance.now() : Date.now()) - lastEnd,
+    _dispose: disposeAll,
+  };
 })();
 
 
@@ -32532,6 +32853,253 @@ RB.script = (function () {
 })();
 
 
+/* ==== src/engine/71_shiritori.js ==== */
+/* Companion shiritori: the rules core (Practice addendum §10–§12). The
+ * Roadside House Rules, word-bank building, the public game state and the
+ * Casual policy live here; the full banks, the searching opponents and the
+ * table UI are built on this contract (docs/PRACTICE_CONTRACTS.md).
+ *
+ *   RB.shiritori.RULES                 'roadside-1'
+ *   RB.shiritori.norm(text)            NFKC, trimmed, katakana → hiragana (matching copy)
+ *   RB.shiritori.boundary(reading)     { head, tail, terminal } under the house rules
+ *   RB.shiritori.validateEntry(e)      problems with one bank entry ([] when fine)
+ *   RB.shiritori.buildBank(def)        { id, version, hash, entries, groups, edges, byHead, … }
+ *   RB.shiritori.addBank(def) / bank(id) / banks()
+ *   RB.shiritori.resolve(bank, text)   what a typed/written/selected input could be
+ *   RB.shiritori.newGame(bank, o)      a game from a neutral starter
+ *   RB.shiritori.check / play / concede / safeReplies / safeGroups / legalEdges
+ *   RB.shiritori.casualMove(state, bank, rng)   uniform among safe groups, or null (concede)
+ *
+ * Entries: { id, lemmaId?, repeatGroup?, reading | readings[], forms[], display:{jp,en},
+ *   nounKind: 'common'|'established-compound', themes?, lexicalLevel, provenance[] }.
+ * Both sides use exactly the same frozen bank; nothing here consults a
+ * dictionary, the player's learning record or the network. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.shiritori = (function () {
+  'use strict';
+  const RULES = 'roadside-1';
+  const SMALL = { 'ぁ': 'あ', 'ぃ': 'い', 'ぅ': 'う', 'ぇ': 'え', 'ぉ': 'お', 'っ': 'つ', 'ゃ': 'や', 'ゅ': 'ゆ', 'ょ': 'よ', 'ゎ': 'わ', 'ゕ': 'か', 'ゖ': 'け' };
+  // the vowel each kana ends in (for a final ー)
+  const VOW = {};
+  [['あ', 'あかがさざただなはばぱまやらわぁゃゎ'], ['い', 'いきぎしじちぢにひびぴみりぃゐ'], ['う', 'うくぐすずつづぬふぶぷむゆるぅゅっゔ'], ['え', 'えけげせぜてでねへべぺめれぇゑ'], ['お', 'おこごそぞとどのほぼぽもよろをぉょ']]
+    .forEach(([v, ks]) => { for (const k of ks) VOW[k] = v; });
+
+  function toHira(str) {
+    let o = '';
+    for (const ch of str) {
+      const c = ch.codePointAt(0);
+      o += c >= 0x30a1 && c <= 0x30f6 ? String.fromCodePoint(c - 0x60) : ch;
+    }
+    return o;
+  }
+  // a matching copy only: the original string is kept for display
+  function norm(text) {
+    if (text == null) return '';
+    let t = String(text);
+    try { t = t.normalize('NFKC'); } catch (e) { /* very old engines: compare as typed */ }
+    return toHira(t.trim());
+  }
+  const isKana = (ch) => /^[ぁ-ゖー]$/.test(ch);
+
+  // head and tail under the Roadside House Rules (§10.3)
+  function boundary(reading) {
+    const r = Array.from(norm(reading));
+    if (!r.length) return null;
+    const head = r[0];
+    let i = r.length - 1;
+    let tail = r[i];
+    if (tail === 'ー') {
+      let j = i - 1;
+      while (j >= 0 && r[j] === 'ー') j--;
+      tail = j >= 0 ? VOW[r[j]] || null : null; // the vowel of the preceding mora
+    } else if (SMALL[tail]) tail = SMALL[tail]; // final small kana: its full-size form, for the boundary only
+    return { head, tail, terminal: tail === 'ん' };
+  }
+
+  function readingsOf(e) { return (e.readings && e.readings.length ? e.readings : [e.reading]).filter(Boolean); }
+  function validateEntry(e) {
+    const p = [];
+    if (!e || !e.id) return ['entry without id'];
+    const rs = readingsOf(e);
+    if (!rs.length) p.push(e.id + ': no reading');
+    for (const r of rs) {
+      if (r !== norm(r)) p.push(e.id + ': reading not in canonical hiragana: ' + r);
+      if (!Array.from(r).every(isKana)) p.push(e.id + ': reading has non-kana: ' + r);
+      const b = boundary(r);
+      if (!b || !b.tail) p.push(e.id + ': no tail for ' + r);
+      else if (SMALL[b.head] || b.head === 'ー' || b.head === 'ん') p.push(e.id + ': cannot start with ' + b.head);
+    }
+    if (!Array.isArray(e.forms) || !e.forms.length) p.push(e.id + ': no forms');
+    if (!e.display || !e.display.jp || !e.display.en) p.push(e.id + ': no display');
+    if (e.nounKind && e.nounKind !== 'common' && e.nounKind !== 'established-compound') p.push(e.id + ': nounKind ' + e.nounKind);
+    return p;
+  }
+
+  // ---- banks ----------------------------------------------------------------------------------
+  // Repeat-groups: an entry's own group, joined with every entry sharing a
+  // canonical reading (homophones never give two uses) — union-find.
+  function buildBank(def) {
+    const entries = def.entries.slice().sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+    const parent = {};
+    const find = (x) => { while (parent[x] !== x) { parent[x] = parent[parent[x]]; x = parent[x]; } return x; };
+    const union = (a, b) => { a = find(a); b = find(b); if (a !== b) { if (a < b) parent[b] = a; else parent[a] = b; } };
+    const byReading = {};
+    const problems = [];
+    for (const e of entries) {
+      problems.push(...validateEntry(e));
+      const g0 = 'g:' + (e.repeatGroup || e.lemmaId || e.id);
+      if (!(g0 in parent)) parent[g0] = g0;
+      e._g0 = g0;
+      for (const r of readingsOf(e)) {
+        const key = 'r:' + norm(r);
+        if (!(key in parent)) parent[key] = key;
+        union(g0, key);
+        (byReading[norm(r)] = byReading[norm(r)] || []).push(e.id);
+      }
+    }
+    const groups = {}, edges = [], byHead = {}, forms = {}, entryById = {};
+    for (const e of entries) {
+      const gid = find(e._g0);
+      delete e._g0;
+      entryById[e.id] = e;
+      (groups[gid] = groups[gid] || { id: gid, entries: [] }).entries.push(e.id);
+      readingsOf(e).forEach((r, i) => {
+        const rr = norm(r), b = boundary(rr);
+        if (!b || !b.tail) return;
+        const edge = { id: e.id + '#' + i, entry: e.id, reading: rr, head: b.head, tail: b.tail, terminal: b.terminal, group: gid };
+        edges.push(edge);
+        (byHead[b.head] = byHead[b.head] || []).push(edge);
+      });
+      for (const f of e.forms.concat(readingsOf(e))) { const k = norm(f); (forms[k] = forms[k] || new Set()).add(e.id); }
+    }
+    const canon = JSON.stringify(entries.map((e) => [e.id, readingsOf(e), e.forms, e.repeatGroup || '']));
+    return {
+      id: def.id, version: def.version || 1, rules: RULES, hash: RB.util.hashStr(canon).toString(36),
+      entries, entryById, groups, groupCount: Object.keys(groups).length, edges, byHead, forms, byReading, problems,
+      starters: (def.starters || []).slice(), meta: def.meta || {},
+    };
+  }
+  const BANKS = {};
+  function addBank(def) { const b = buildBank(def); BANKS[b.id] = b; return b; }
+  const bank = (id) => BANKS[id] || null;
+  const banks = () => Object.keys(BANKS);
+
+  // What an input could be (§10.2): every entry whose approved form or reading
+  // matches, with the reading edges it allows. A kanji form with several approved
+  // readings needs the player's choice; nothing is chosen to make a move legal.
+  function resolve(b, text) {
+    const k = norm(text);
+    if (!k) return { input: text, key: k, matches: [] };
+    const ids = b.forms[k] ? Array.from(b.forms[k]) : [];
+    const matches = ids.map((id) => {
+      const e = b.entryById[id];
+      const typedReading = b.byReading[k] && b.byReading[k].indexOf(id) >= 0;
+      const edges = b.edges.filter((x) => x.entry === id && (!typedReading || x.reading === k));
+      return { entry: e, edges, needsReading: !typedReading && new Set(edges.map((x) => x.reading)).size > 1 };
+    });
+    return { input: text, key: k, matches };
+  }
+
+  // ---- the game (public state only) ------------------------------------------------------------
+  const other = (a) => (a === 'pc' ? 'cpu' : 'pc');
+  function newGame(b, o) {
+    o = o || {};
+    const st = b.edges.find((x) => x.entry === o.starter || x.id === o.starter) || b.edges[0];
+    const state = {
+      rules: RULES, bank: b.id, bankVersion: b.version, bankHash: b.hash,
+      used: {}, required: st.tail, next: o.first || 'pc', over: null,
+      history: [{ actor: 'start', edge: st.id, entry: st.entry, reading: st.reading, group: st.group, tail: st.tail }],
+    };
+    state.used[st.group] = true;
+    if (!safeReplies(state, b).length) state.over = { winner: other(state.next), reason: 'no-safe-reply' };
+    return state;
+  }
+  const legalEdges = (state, b, head) => (b.byHead[head || state.required] || []).filter((x) => !state.used[x.group]);
+  const safeReplies = (state, b, head) => legalEdges(state, b, head).filter((x) => !x.terminal);
+  const safeGroups = (state, b, head) => Array.from(new Set(safeReplies(state, b, head).map((x) => x.group)));
+  // an invalid draft is not a move: it is explained and the turn is kept (§10.4)
+  function check(state, b, edge, actor) {
+    if (state.over) return { ok: false, why: 'over' };
+    if (actor && actor !== state.next) return { ok: false, why: 'not-your-turn' };
+    if (!edge || !b.edges.some((x) => x.id === edge.id)) return { ok: false, why: 'not-in-bank' };
+    if (edge.head !== state.required) return { ok: false, why: 'wrong-head' };
+    if (state.used[edge.group]) return { ok: false, why: 'repeat' };
+    return { ok: true, terminal: edge.terminal };
+  }
+  function play(state, b, edge, actor, extra) {
+    const c = check(state, b, edge, actor || state.next);
+    if (!c.ok) return c;
+    const who = actor || state.next;
+    state.used[edge.group] = true;
+    state.history.push(Object.assign({ actor: who, edge: edge.id, entry: edge.entry, reading: edge.reading, group: edge.group, tail: edge.tail }, extra || {}));
+    if (edge.terminal) { state.over = { winner: other(who), reason: 'terminal-n' }; return { ok: true, over: state.over }; }
+    state.required = edge.tail;
+    state.next = other(who);
+    if (!safeReplies(state, b).length) state.over = { winner: who, reason: 'no-safe-reply' };
+    return { ok: true, over: state.over };
+  }
+  function concede(state, actor) {
+    if (state.over) return state.over;
+    state.over = { winner: other(actor), reason: actor === 'pc' ? 'human-concession' : 'cpu-concession' };
+    return state.over;
+  }
+  // committed non-ん word moves by the two players (the starter excluded; §10.1)
+  function moves(state, actor) {
+    return state.history.filter((h) => h.actor !== 'start' && (!actor || h.actor === actor) && h.tail !== 'ん').length;
+  }
+
+  // Casual (§12.2): uniform seeded choice among safe groups, then among that
+  // group's safe readings; no planning, no illegal moves, no hidden mercy.
+  function casualMove(state, b, rng) {
+    const groups = safeGroups(state, b);
+    if (!groups.length) return null; // only ん words (or nothing) left: the computer concedes
+    const g = groups[Math.floor(rng() * groups.length)];
+    const opts = safeReplies(state, b).filter((x) => x.group === g);
+    return opts[Math.floor(rng() * opts.length)];
+  }
+
+  return { RULES, SMALL, VOW, toHira, norm, boundary, validateEntry, readingsOf, buildBank, addBank, bank, banks, resolve, newGame, legalEdges, safeReplies, safeGroups, check, play, concede, moves, casualMove, other };
+})();
+
+
+/* ==== src/engine/72_shiritori_ai.js ==== */
+/* Companion shiritori: the computer opponents (Practice addendum §12).
+ *
+ * PROVISIONAL (foundation): every level plays the Casual policy until the
+ * searching opponents land. The contract below is what the table UI calls;
+ * the real implementation keeps these names and result fields.
+ *
+ *   RB.shiritori.chooseMove(state, bank, level, rng, o) -> Promise<{
+ *       edge|null (null = concede: only ん words or nothing left), level,
+ *       depth, exact, nodes, fallback, provisional }>
+ *     level: 'partner' | 'casual' | 'thoughtful' | 'sharp'; the choice depends only
+ *     on the public state, the bank, the level and the seeded rng — never on the
+ *     player's draft, learning record, pet, sound or animation settings.
+ *   RB.shiritori.analyse(state, bank) -> Promise<{ notes: [...] }>   post-match review
+ *     (only claims a forced finish when an exhaustive search proved it). */
+var RB = (globalThis.RB = globalThis.RB || {});
+(function (SH) {
+  'use strict';
+  // the learning partner prefers a word that leaves you a reply (§9.2 cooperative)
+  function partner(state, bank, rng) {
+    const safe = SH.safeReplies(state, bank);
+    if (!safe.length) return null;
+    const ok = safe.filter((e) => {
+      const used = Object.assign({}, state.used); used[e.group] = true;
+      return (bank.byHead[e.tail] || []).some((x) => !used[x.group] && !x.terminal);
+    });
+    const pool = ok.length ? ok : safe;
+    return pool[Math.floor(rng() * pool.length)];
+  }
+  SH.chooseMove = async function (state, bank, level, rng) {
+    const edge = level === 'partner' ? partner(state, bank, rng) : SH.casualMove(state, bank, rng);
+    return { edge, level, depth: 0, exact: false, nodes: 0, fallback: false, provisional: level === 'thoughtful' || level === 'sharp' };
+  };
+  SH.analyse = async function (state, bank) { return { notes: [], provisional: true }; };
+})(RB.shiritori);
+
+
 /* ==== src/engine/80_save.js ==== */
 /* Persistence: six campaign slots in IndexedDB (localStorage fallback,
  * session-only as last resort), bounded recovery snapshots, schema
@@ -32683,7 +33251,7 @@ RB.save = (function () {
     if (!Array.isArray(st.words)) errs.push('missing words');
     if (st.comp && !RB.content.chars[st.comp]) errs.push('unknown companion');
     // optional records added later: absent is fine (migrate fills them), the wrong shape is not
-    for (const k of ['company', 'discovery', 'creatures', 'awarded']) if (k in st && (!st[k] || typeof st[k] !== 'object' || Array.isArray(st[k]))) errs.push('bad ' + k);
+    for (const k of ['company', 'discovery', 'creatures', 'awarded', 'practice']) if (k in st && (!st[k] || typeof st[k] !== 'object' || Array.isArray(st[k]))) errs.push('bad ' + k);
     if ('bookmarks' in st && !Array.isArray(st.bookmarks)) errs.push('bad bookmarks');
     return errs;
   }
@@ -32695,6 +33263,7 @@ RB.save = (function () {
     for (const k in base.atlas) if (!(k in st.atlas)) st.atlas[k] = RB.util.deepClone(base.atlas[k]);
     for (const ns of ['company', 'discovery']) for (const k in base[ns]) if (!(k in st[ns])) st[ns][k] = RB.util.deepClone(base[ns][k]);
     // later systems normalise their own records on load (derived milestones, unknown ids kept, ...)
+    if (RB.practice) RB.practice.of(st); // practice: empty for an older save, pace Off (nothing inferred)
     for (const f of MIGRATIONS) f(st);
     return st;
   }
@@ -33006,6 +33575,10 @@ RB.game = (function () {
       petWorld: true, petBattle: true, petSounds: true,
       // the Roadside Keepsakes catalogue may hide its completion counts
       keepsakeCounts: true,
+      activityChatter: 'normal', // roadside activities: 'quiet' drops incidental remarks, never rule information
+      hideTotals: false,         // shiritori win/loss totals (stage receipts stay visible)
+      fishSeconds: false,        // fishing pace: a numeric seconds display beside the line
+      fishWait: true,            // fishing: the short waiting animation before a bite
     };
   }
 
@@ -33138,6 +33711,7 @@ RB.game = (function () {
 
   // ---- campaign lifecycle ---------------------------------------------------------------
   async function startNewCampaign(slot, st) {
+    RB.bus.emit('campaign:changing', { to: 'new' }); // an open activity is disposed first (src/engine/09_activity.js)
     G.s = st;
     RB.save.setCurrent(slot, 0);
     const claim = await RB.save.claim(slot);
@@ -33161,6 +33735,7 @@ RB.game = (function () {
   }
 
   async function loadCampaign(slot, which) {
+    RB.bus.emit('campaign:changing', { to: 'load', slot });
     const r = await RB.save.read(slot, which);
     const claim = await RB.save.claim(slot);
     if (claim === 'busy') {
@@ -33189,6 +33764,7 @@ RB.game = (function () {
     return true;
   }
   async function toTitle() {
+    RB.bus.emit('campaign:changing', { to: 'title' });
     RB.voice && RB.voice.cancel();
     RB.save.releaseLock();
     G.playing = false;
@@ -33328,6 +33904,7 @@ RB.game = (function () {
   // Development/test helper: start a session-only campaign directly on a map.
   function debugStart(mapId, x, y, opts) {
     opts = opts || {};
+    RB.bus.emit('campaign:changing', { to: 'debug' });
     const st = RB.state.newCampaign(opts);
     Object.assign(st.flags, opts.flags || {});
     if (opts.comp) st.comp = opts.comp;
@@ -37827,6 +38404,7 @@ RB.ui.menu = (function () {
     notebook: ['words'], words: ['words'], guide: ['words', 'guide'], items: ['satchel'], satchel: ['satchel'], map: ['map'],
     company: ['company'], companion: ['company', 'companion'], pet: ['company', 'pet'], pets: ['company', 'pet'], memories: ['company', 'memories'],
     cases: ['journey', 'cases'], keepsakes: ['journey', 'keepsakes'], bookmarks: ['words', 'bookmarks'], creatures: ['words', 'creatures'], known: ['map', 'known'],
+    practice: ['words', 'practice'],
     settings: '@settings', save: '@save',
   };
   // pages added by later systems: journey views, words pages, map views
@@ -38717,6 +39295,15 @@ RB.ui.companyPages = (function () {
   });
   const I = (n, t) => F().icon(n, t);
   const L = (jp, en) => RB.ui.label(jp, en);
+  // sections other systems add below the companion's own blocks (Practice addendum §20.1:
+  // Wordplay). def: { id, order?, html(s, comp, view) -> string, click?(button, s, api) -> bool|Promise }
+  const SECTIONS = [];
+  function addSection(def) {
+    const i = SECTIONS.findIndex((d) => d.id === def.id);
+    if (i >= 0) SECTIONS[i] = def; else SECTIONS.push(def);
+    SECTIONS.sort((a, b) => (a.order || 50) - (b.order || 50));
+  }
+  const sectionsHtml = (s, comp, V) => SECTIONS.map((d) => { try { return d.html(s, comp, V) || ''; } catch (e) { console.error('company section ' + d.id, e); return ''; } }).join('');
   const j = (t) => (t ? RB.ui.jhtml(t) : '');
   const chr = (id) => (id && RB.content.chars[id]) || null;
   const said = (t, cls) => (t ? '<div class="co-said' + (cls ? ' ' + cls : '') + '">' + (t.jp ? '<div class="jp">' + j(t.jp) + '</div>' : '') + (t.en ? '<div class="en">' + RB.ui.ehtml(t.en) + '</div>' : '') + '</div>' : '');
@@ -38886,7 +39473,7 @@ RB.ui.companyPages = (function () {
     const idHtml = identity(s, comp, c);
     const actHtml = actions(s, comp, c, V);
     const qd = V.detail === 'quest' ? questDetail(s, comp, c) : V.detail === 'cases' ? caseDetail(s, c) : '';
-    const rest = topicsBlock(s, c) + supportBlock(s, comp, c);
+    const rest = topicsBlock(s, c) + supportBlock(s, comp, c) + sectionsHtml(s, comp, V);
     if (!two && (V.detail === 'quest' || V.detail === 'cases') && qd) {
       A.innerHTML = '<button class="pbtn quiet co-back" data-co-back>' + I('back') + L('{戻|もど}る', 'Back') + '</button>' + qd;
     } else if (two) {
@@ -38898,6 +39485,8 @@ RB.ui.companyPages = (function () {
     const cv = A.querySelector('.co-portrait');
     if (cv) RB.portraits.draw(cv, comp, K.stage(s).id === 'walking' ? 'neutral' : 'smile');
     const click = async (e) => {
+      const sb = e.target.closest('[data-co-sec]');
+      if (sb) { const d = SECTIONS.find((x) => x.id === sb.dataset.coSec); if (d && d.click) await d.click(sb, s, api); return; }
       const b = e.target.closest('[data-co-act],[data-co-topic],[data-co-back],[data-co-case-talk],[data-co-case-open]');
       if (!b) return;
       if (b.hasAttribute('data-co-back')) { V.detail = null; api.render(); return; }
@@ -39060,7 +39649,7 @@ RB.ui.companyPages = (function () {
   }
   for (const ev of ['company:changed', 'company:talk', 'map:enter', 'company:bond']) RB.bus.on(ev, () => setTimeout(hudUpdate, 0));
 
-  return { converse, recollection, hudUpdate };
+  return { converse, recollection, hudUpdate, addSection };
 })();
 
 
@@ -43483,6 +44072,101 @@ RB.ui.wordsPages = (function () {
     });
   }
   return { bmHtml, crHtml, moveTitle, drawArt, show };
+})();
+
+
+/* ==== src/ui/68_practice_index.js ==== */
+/* Words › Ways to practise (Practice addendum §20.1): where each roadside
+ * activity is offered and whether it can begin from here. It never launches a
+ * physical activity remotely: "Begin here" appears only when you are at its
+ * place and the world is safe; otherwise the page says where to go. Entries
+ * are registered with RB.practice.addActivity (src/engine/08_practice.js). */
+RB.ui.practiceIndex = (function () {
+  'use strict';
+  const esc = RB.util.esc;
+  const I = (n) => (RB.ui.folio ? RB.ui.folio.icon(n) : '');
+  const J = (jp) => (jp ? '<span class="jt-wrap">' + RB.ui.jhtml(jp) + '</span> ' : '');
+
+  function status(d, s) {
+    let available = true, here = false, note = '';
+    try { available = d.available ? !!d.available(s) : true; } catch (e) { available = false; }
+    try { here = available && d.here ? !!d.here(s) : false; } catch (e) { here = false; }
+    try { note = d.note ? d.note(s) || '' : ''; } catch (e) { note = ''; }
+    const safe = RB.activity ? RB.activity.safe() : { ok: false };
+    return { available, here, canBegin: here && safe.ok && !!d.begin, why: here && !safe.ok ? (safe.why === 'danger' ? 'Not with a creature close by.' : 'Not just now.') : '', note };
+  }
+
+  function html(s) {
+    const acts = RB.practice.activities();
+    let h = '<p class="muted small">Optional ways to use your Japanese along the road. None is needed for the story; none keeps a streak or a clock (fishing\'s pace is off unless you choose it).</p>';
+    if (!acts.length) return h + '<p class="muted">Nothing is offered yet.</p>';
+    h += '<ul class="entries pr-index">';
+    for (const d of acts) {
+      const st = status(d, s);
+      h += '<li class="entry pr-act" data-pr="' + esc(d.id) + '"><span class="mark">' + I(d.icon || 'practice') + '</span><div>' +
+        '<div class="t">' + J(d.jp) + '<span class="en">' + esc(d.en) + '</span></div>' +
+        (d.where ? '<div class="small">' + I('map') + ' ' + J(d.where.jp) + '<span class="en">' + esc(d.where.en) + '</span></div>' : '') +
+        '<div class="small muted">' + esc(!st.available ? (st.note || 'Not available yet.') : st.canBegin ? 'You are here.' : st.why || st.note || 'Offered at its place.') + '</div>' +
+        (st.canBegin ? '<div class="row-acts"><button class="pbtn" data-pr-begin="' + esc(d.id) + '">' + I('practice') + 'Begin here</button></div>' : '') +
+        '</div></li>';
+    }
+    return h + '</ul>';
+  }
+  function wire(el, s) {
+    el.onclick = async (e) => {
+      const b = e.target.closest('[data-pr-begin]');
+      if (!b || b.disabled) return;
+      const d = RB.practice.activities().find((x) => x.id === b.dataset.prBegin);
+      if (!d || !status(d, s).canBegin) return;
+      b.disabled = true;
+      try { await d.begin({ source: 'words' }); } finally { b.disabled = false; }
+    };
+  }
+  if (RB.ui.menu && RB.ui.menu.addPage) {
+    RB.ui.menu.addPage('words', {
+      id: 'practice', en: 'Ways to practise', jp: '{練習|れんしゅう} の {場所|ばしょ}',
+      count: (s) => RB.practice.activities().filter((d) => status(d, s).available).length,
+      available: () => RB.practice.activities().length > 0,
+      html, wire,
+    });
+  }
+  if (RB.ui.settings && RB.ui.settings.addRows) {
+    RB.ui.settings.addRows('learning', ({ radios, sw }) => '<h3 class="pr-set">Ways to practise</h3>' +
+      radios('activityChatter', 'Companion remarks during activities', [['normal', 'Normal'], ['quiet', 'Quiet']], null, 'Quiet keeps rules and results, and drops incidental comments.') +
+      sw('hideTotals', 'Hide shiritori win/loss totals', 'Stage records stay visible.') +
+      sw('fishSeconds', 'Show seconds beside the fishing line', 'Only when you choose a pace; fishing is untimed by default.') +
+      sw('fishWait', 'Waiting animation before a bite', 'Off goes straight to the bite; the fish is the same.'));
+  }
+  return { html, status };
+})();
+
+
+/* ==== src/ui/69_pace.js ==== */
+/* Fishing pace (Practice addendum §7): the optional response-entry clock.
+ *
+ * PROVISIONAL (foundation): untimed only. attempt() runs the step through the
+ * ordinary challenge runner with nothing recorded to mastery (the caller's
+ * RB.practice.objectives adapter decides), and reports paced: { kind: 'off' }.
+ * The full implementation keeps this contract:
+ *
+ *   RB.pace.attempt(step, o) -> Promise<result>
+ *     o: { pace: 'off'|'gentle'|'brisk'|'custom', budgetSec?, header?, ctxTag?, representation?,
+ *          session? }   (the clock starts only on Ready, after the task is shown)
+ *     result: the runStep result + paced: { kind, budgetMs, activeMs, expired,
+ *          pauseReasons, inputMode, pointerClass, representation, recognitionRepair,
+ *          assistance, convertedToUntimed, onTime }
+ *   RB.pace.budgets(s, ctx) -> { gentle, brisk, samples, needed, reason }
+ *   RB.pace.available(s, ctx) -> bool     a pace other than Off can be offered */
+RB.pace = (function () {
+  'use strict';
+  async function attempt(step, o) {
+    o = o || {};
+    const res = await RB.challenge.runStep(step, Object.assign({ noRecord: true, allowCancel: true }, o.runOpts || {}, { header: o.header, ctxTag: o.ctxTag || 'fishing' }));
+    res.paced = { kind: 'off', budgetMs: null, activeMs: null, expired: false, pauseReasons: [], inputMode: res.mode || null, pointerClass: null, representation: o.representation || null, recognitionRepair: false, assistance: !!res.assisted, convertedToUntimed: false, onTime: null, provisional: true };
+    return res;
+  }
+  const budgets = () => ({ gentle: null, brisk: null, samples: 0, needed: 12, reason: 'provisional' });
+  return { attempt, budgets, available: () => false, provisional: true };
 })();
 
 
