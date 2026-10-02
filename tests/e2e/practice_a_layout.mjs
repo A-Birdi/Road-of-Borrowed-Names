@@ -6,7 +6,7 @@
 // focus starts on a control. Captures: docs/screenshots/practice_a/layout_*.png (a selection).
 // Usage: node tests/e2e/practice_a_layout.mjs [filter]
 import { serve, launch, page } from './lib.mjs';
-import { start, press, wait, overflow, smallTargets, shot, phone, drawMouse } from './practice_a_lib.mjs';
+import { start, press, wait, overflow, smallTargets, shot, phone, drawMouse, PROOF_PAGE, proofSource } from './practice_a_lib.mjs';
 
 const only = process.argv[2];
 const { srv, url } = await serve();
@@ -52,9 +52,12 @@ async function deskOpen(p, text, mode) {
 async function sixPages(p) {
   await p.evaluate(async () => {
     const ref = (w) => [{ ch: w, strokes: RB.recog.reference(w).strokes.map((st) => st.map((q) => ({ x: q.x / 109, y: q.y / 109 }))) }];
-    for (const w of ['山', '川', '石', '木', '月']) await RB.practiceDesk.keepPage(RB.game.s, { word: w, mode: 'copy', ink: ref(w), label: 'Copied ' + w });
+    for (const w of ['山', '川', '石', '木']) await RB.practiceDesk.keepPage(RB.game.s, { word: w, mode: 'copy', ink: ref(w), label: 'Copied ' + w });
     await RB.practiceDesk.keepPage(RB.game.s, { word: '星', reading: 'ほし', mode: 'typeset', typeset: { jp: '{星|ほし}', layout: 'card', paper: 'grid', en: 'star' }, label: 'Star, typeset' });
   });
+  // the sixth: a proofreading page in suite B's shape (one budget for both)
+  await p.evaluate((pg) => RB.practiceDesk.keepPage(RB.game.s, pg), PROOF_PAGE);
+  await proofSource(p);
 }
 
 const STATES = {

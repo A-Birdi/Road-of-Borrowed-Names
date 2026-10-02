@@ -20,7 +20,7 @@ Chromium against the built `index.html`, synthetic campaigns in fresh profiles),
 | `src/content/practice_a/10_text.js` | `RB.content.practiceA` (every Japanese label, the twenty cards), note `pa_lamps`, scenes `pa.lamps`, `pa.desk`. |
 | `src/content/practice_a/20_world.js` | Prop `pa_lamprack` (+ art), its placement in the Lantern Hall, the desk scene on the Gull's small table, the load normaliser registration. |
 | `src/styles/77_practice_a.css` | Styles for all three. |
-| `tests/unit/practice_a.test.mjs` | 228 checks. |
+| `tests/unit/practice_a.test.mjs` | 234 checks. |
 | `tests/e2e/practice_a_lamps.mjs`, `practice_a_desk.mjs`, `practice_a_layout.mjs`, `practice_a_lib.mjs` | Browser tests and helpers (real mouse strokes, DevTools touch events, IME composition). |
 
 ### `RB.practiceDesk.keepPage(s, page)` — the shared six-page contract (for suite B)
@@ -35,7 +35,9 @@ const r = await RB.practiceDesk.keepPage(RB.game.s, {
   typeset: { jp: '{右|みぎ} へ', layout: 'card', paper: 'plain', en: '…', lines: ['…', { jp, en }] },
   label: 'The notice, mended',  // ≤ 40 characters, plain text (escaped when shown)
 });
-// r: { ok, id?, replaced?, cancelled?, updated?, saved?, why?, error?, page }
+// r: { ok, id?, replaced? (the replaced page's id), cancelled?, updated?, saved?, why?, error?, page }
+// why when not kept: 'cancelled' | 'too-large' | 'error' (storage refused) | 'invalid';
+// why when kept but not saved: 'no-slot' | 'read-only' | 'session'
 ```
 
 - One budget for every page kind: at most **six** records in `s.practice.deskPages`, each at most
@@ -55,6 +57,14 @@ const r = await RB.practiceDesk.keepPage(RB.game.s, {
   `typesetHtml(page)` (`typeset.jp` or `typeset.lines`). Proof pages show "Proofreading page".
 - Suite B lists its own pages in Practice mementos with its own `RB.practice.addMementoSource`
   (the desk's source lists `kind: 'desk'` only, so nothing is shown twice).
+- Checked against suite B's documented shape (`docs/practice/suite_b.md` at e7f47db, read only):
+  `{ id: 'proof:<task>:<tier>', kind: 'proof', mode: 'proof', typeset: { task, lv, lines, title },
+  label, saved, created, updated }` is kept as given (id, kind, mode, typeset untouched, never
+  handwriting); keeping the same task again updates it in place keeping the first `created`;
+  a cancelled seventh returns `why: 'cancelled'`, which suite B's keep flow reads; previews show the
+  typeset title and lines with furigana; Practice mementos shows its `kind: 'proof'` entries with
+  their own `html()` art (unit + browser, the browser test using a stand-in source of the same
+  shape when suite B's code is absent).
 
 Page record (stored): `{ id, kind, mode, word?, reading?, item?, strokes?: [{ ch, s: [packed] }],
 typeset?, label, bytes, saved, created, updated }` — `created`/`updated` are records of when,
@@ -185,22 +195,23 @@ here. The page is listed when there is at least one memento.
 | `node tools/build.mjs` | built `index.html` — 237 source files |
 | `node tools/validate.mjs` | no errors (existing lexicon-conflict warnings only) |
 | `node tools/validate.mjs --unknown` | no unknown tokens in `practiceA` registry text or `pa.` scenes |
-| `node tests/run-unit.mjs practice_a` | 228 passed, 0 failed |
-| `node tests/run-unit.mjs` | see the final report (full suite rerun after the last change) |
+| `node tests/run-unit.mjs practice_a` | 234 passed, 0 failed |
+| `node tests/run-unit.mjs` | 6621 passed, 0 failed (base c86d615: 6387) |
 | `node tests/e2e/practice_a_lamps.mjs` | 51/51 |
-| `node tests/e2e/practice_a_desk.mjs` | 40/40 |
+| `node tests/e2e/practice_a_desk.mjs` | 45/45 |
 | `node tests/e2e/practice_a_layout.mjs` | 350/350 (7 configurations × 13 screens: overflow, 44 px targets, focus, no errors) |
-| Related existing browser suites | listed in the final report |
+| Related existing browser suites (shared files touched: pad, challenge runner, Company page, journey pages) | learning_ui 14/0, pad_kanji 8/0, keepsakes 32/32, company all passed, folio, settings, ui 14/0, play_ui, addendum_integration, systems 4/0 — all passed. kanji_chart: 7/8 on the first run (its timing check, recognize p95 114.8 ms, while other tests ran on the shared machine); rerun: the speed check passed twice and the full file 8/8. |
 
-Bundle: `index.html` 6,923,624 → 7,063,888 bytes raw (+137 KiB), 2,166,446 → 2,206,566 gzip
-(+39 KiB). Largest additions: `src/ui/89_desk.js` 48.7 KB, `src/ui/88_lanterns.js` 20.2 KB,
-`src/engine/78_desk.js` 18.6 KB, `src/styles/77_practice_a.css` 15.6 KB.
+Bundle: `index.html` 6,923,624 → 7,066,361 bytes raw (+139 KiB), 2,166,446 → 2,207,244 gzip
+(+40 KiB). Largest additions: `src/ui/89_desk.js` 49.5 KB, `src/ui/88_lanterns.js` 20.4 KB,
+`src/engine/78_desk.js` 18.9 KB, `src/styles/77_practice_a.css` 16.3 KB.
 
 Captures (inspected): `docs/screenshots/practice_a/` — `lamps_*` (world rack, preparation, a lamp
 step, handwriting, between lamps, end, short pool, new word card, topic, Words index, phone),
 `desk_*` (rest menu, word lists per mode, trace before/after, prompt task and page, typeset,
 replace sheet and its confirmation, mementos, pinned on Shared memories, copy on a phone, unsaved
-after a refused write), `layout_*` at 320×640 with 200 % text and at 844×390.
+after a refused write, the replace sheet with a proofreading page), `mementos_with_proof_1280`,
+`lamps_end_foundations_1280`, `layout_*` at 320×640 with 200 % text and at 844×390.
 
 ## Limitations (honest)
 
@@ -234,3 +245,13 @@ after a refused write), `layout_*` at 320×640 with 200 % text and at 844×390.
 
 Integrator: `docs/PRACTICE_CONTRACTS.md` may take the `keepPage` paragraph above (suite B calls
 it by name). Namespaces added: `lanterns`, `desk`, `mementoDisplay`.
+
+**Not yet merged with e7f47db.** The integrator asked for `git merge e7f47db` (suite B, fishing
+pace, the shiritori engine) in this worktree; the merge command was refused by this session's
+permission check, so it was not run and not worked around. Everything above was tested on this
+branch alone (base c86d615). Expected overlaps when merging: `src/ui/65_challenge.js` (this
+branch adds one line, `opts.keepInk`, in `finish()` before the pad is destroyed; e7f47db adds pace
+hooks, `step.judge` and `res.given`), `tools/validate.mjs` roots (one line each), `tests/e2e/run.mjs`
+(one line each), `index.html` (rebuild). After merging: rebuild and rerun
+`node tests/run-unit.mjs`, `node tests/e2e/practice_a_lamps.mjs`, `practice_a_desk.mjs`,
+`practice_a_layout.mjs` (the desk test's suite-B block then uses suite B's real memento source).

@@ -20,7 +20,8 @@
  *     label, bytes, saved, created, updated }
  *
  *   RB.practiceDesk.keepPage(s, page) -> Promise<{ ok, id?, replaced?, cancelled?, updated?,
- *        saved?, why?, error? }>
+ *        saved?, why?, error?, page }>   (why: 'cancelled' | 'too-large' | 'error' | 'invalid' when
+ *        not kept; 'no-slot' | 'read-only' | 'session' when kept but not saved)
  *     Normalises and compacts the page, refuses one over 256 KiB, and at six pages asks
  *     the chooser (the replace/cancel sheet with previews, src/ui/89_desk.js) which page
  *     to replace; nothing is ever removed without that explicit choice. It then writes
@@ -220,9 +221,9 @@ RB.practiceDesk = (function () {
   async function keepPage(s, page) {
     if (!s || !RB.practice.of(s)) return { ok: false, error: 'no-campaign' };
     let rec;
-    try { rec = makePage(s, page || {}); } catch (e) { return { ok: false, error: 'invalid' }; }
+    try { rec = makePage(s, page || {}); } catch (e) { return { ok: false, error: 'invalid', why: 'invalid' }; }
     rec.bytes = measure(rec);
-    if (rec.bytes > MAX_BYTES) return { ok: false, error: 'too-large', bytes: rec.bytes, page: rec };
+    if (rec.bytes > MAX_BYTES) return { ok: false, error: 'too-large', why: 'too-large', bytes: rec.bytes, page: rec };
     const L = list(s);
     const before = L.slice();
     let replaced = null, updated = false;
@@ -231,11 +232,11 @@ RB.practiceDesk = (function () {
     else if (L.length >= MAX_PAGES) {
       // six pages are kept: only an explicit choice replaces one (with previews), or nothing happens
       const pick = chooser ? await chooser(s, L.slice(), rec) : null;
-      if (!pick || !pick.replace) return { ok: false, cancelled: true, page: rec };
-      if (RB.game && RB.game.s && RB.game.s !== s) return { ok: false, cancelled: true, error: 'campaign-changed', page: rec };
+      if (!pick || !pick.replace) return { ok: false, cancelled: true, why: 'cancelled', page: rec };
+      if (RB.game && RB.game.s && RB.game.s !== s) return { ok: false, cancelled: true, why: 'cancelled', error: 'campaign-changed', page: rec };
       const L2 = list(s);
       const j = L2.findIndex((x) => x && x.id === pick.replace);
-      if (j < 0) return { ok: false, cancelled: true, error: 'gone', page: rec };
+      if (j < 0) return { ok: false, cancelled: true, why: 'cancelled', error: 'gone', page: rec };
       replaced = L2[j].id;
       before.length = 0; before.push(...L2);
       L2.splice(j, 1, rec);

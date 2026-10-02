@@ -51,6 +51,9 @@ RB.ui.practiceMementos = (function () {
     } catch (e) { box.innerHTML = I('keepsake'); }
     return box;
   }
+  // a source may give a short kind id ('proof') or a sentence ('Your handwriting · traced')
+  const KIND = { proof: 'Proofreading page — typeset, not handwriting', desk: 'Writing desk page' };
+  const kindText = (m) => KIND[m.kind] || m.kind || '';
   function title(m) { return (m.title && m.title.jp ? J(m.title.jp) + ' ' : '') + '<span class="en">' + esc((m.title && m.title.en) || m.id) + '</span>'; }
 
   function render(A, B, two, api) {
@@ -64,7 +67,7 @@ RB.ui.practiceMementos = (function () {
     h += '<div class="pm-shelf"><span class="lab">' + J(tx.shelf.jp) + ' <span class="en">' + esc(tx.shelf.en) + '</span></span>' +
       (shelf ? '<button type="button" class="pm-shelfitem" data-pm-sel="' + esc(key(shelf)) + '"><span class="pm-slot" data-pm-art="' + esc(key(shelf)) + '"></span><span class="nm">' + title(shelf) + '</span></button>' : '<span class="muted">Nothing on the shelf. Choose a memento and put it there.</span>') + '</div>';
     if (!ms.length) h += '<p class="muted">Nothing here yet. Pages you keep at the writing desk, and mementos from other pastimes, will be shown here.</p>';
-    else h += '<div class="pm-grid">' + ms.map((m) => '<button type="button" class="pm-cell' + (sel === key(m) ? ' on' : '') + '" data-pm-sel="' + esc(key(m)) + '" aria-pressed="' + (sel === key(m)) + '"><span class="pm-slot" data-pm-art="' + esc(key(m)) + '"></span><span class="nm">' + title(m) + '</span><span class="k">' + esc(m.kind || '') + (m.note ? ' · ' + esc(m.note) : '') + '</span></button>').join('') + '</div>';
+    else h += '<div class="pm-grid">' + ms.map((m) => '<button type="button" class="pm-cell' + (sel === key(m) ? ' on' : '') + '" data-pm-sel="' + esc(key(m)) + '" aria-pressed="' + (sel === key(m)) + '"><span class="pm-slot" data-pm-art="' + esc(key(m)) + '"></span><span class="nm">' + title(m) + '</span><span class="k">' + esc(kindText(m)) + (m.note && m.source === 'desk' ? ' · ' + esc(m.note) : '') + '</span></button>').join('') + '</div>';
     const holder = RB.ui.el('div', 'pm-page');
     holder.innerHTML = h;
     A.appendChild(holder);
@@ -81,7 +84,7 @@ RB.ui.practiceMementos = (function () {
   function detail(el, s, m) {
     const d = disp(s), k = key(m);
     const page = m.source === 'desk' && m.page ? m.page : null;
-    let h = '<div class="pm-big"></div><h3 class="pm-name">' + title(m) + '</h3><p class="muted small">' + esc(m.kind || '') + '</p>';
+    let h = '<div class="pm-big"></div><h3 class="pm-name">' + title(m) + '</h3><p class="muted small">' + esc(kindText(m)) + '</p>' + (m.note && m.source !== 'desk' ? '<p class="small">' + esc(m.note) + '</p>' : '');
     if (page && page.saved === false) h += '<p class="pm-unsaved">' + I('warn') + ' Not saved yet: it is kept in this journey but has not been written to storage. <button type="button" class="pbtn" data-pm-save>' + I('save') + 'Try saving again</button></p>';
     const acts = [];
     acts.push('<button type="button" class="pbtn" data-pm-shelf="' + esc(k) + '" aria-pressed="' + (d.shelf === k) + '">' + I('keepsake') + (d.shelf === k ? 'On the shelf (take it off)' : 'Put on the practice shelf') + '</button>');

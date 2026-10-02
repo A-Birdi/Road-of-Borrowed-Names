@@ -18,7 +18,7 @@
 //  - a refused storage write leaves the art on screen marked unsaved and the pages as they were.
 // Captures: docs/screenshots/practice_a/desk_*.png. Usage: node tests/e2e/practice_a_desk.mjs
 import { serve, launch, page } from './lib.mjs';
-import { start, useSlot, interactAndChoose, drawMouse, drawTouch, press, wait, shot, phone } from './practice_a_lib.mjs';
+import { start, useSlot, interactAndChoose, drawMouse, drawTouch, press, wait, shot, phone, PROOF_PAGE, proofSource } from './practice_a_lib.mjs';
 
 const { srv, url } = await serve();
 const b = await launch();
@@ -307,6 +307,43 @@ async function writeAll(p, how) {
   assert(await p.evaluate(() => RB.game.s.practice.deskPages.length === 1 && RB.game.s.practice.deskPages[0].saved), 'trying again once storage works: kept and saved');
   await press(p, '[data-dk=leave]', 'touch');
   await wait(p, 400);
+  assert(!errors.length, 'no errors: ' + errors.join('; '));
+  await ctx.close();
+}
+
+// ---- the seam with suite B: a proofreading page shares the budget and shows in Practice mementos ----------
+{
+  const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  await start(p, { at: 'desk' });
+  const k = await p.evaluate((pg) => RB.practiceDesk.keepPage(RB.game.s, pg), PROOF_PAGE);
+  assert(k.ok && k.id === 'proof:P01:E', 'a page in suite B\'s shape is kept through keepPage (' + JSON.stringify({ ok: k.ok, id: k.id, why: k.why }) + ')');
+  const src = await proofSource(p);
+  await p.evaluate(async () => {
+    const ref = (w) => [{ ch: w, strokes: RB.recog.reference(w).strokes.map((st) => st.map((q) => ({ x: q.x / 109, y: q.y / 109 }))) }];
+    for (const w of ['山', '川', '石', '木', '月']) await RB.practiceDesk.keepPage(RB.game.s, { word: w, mode: 'copy', ink: ref(w), label: 'Copied ' + w });
+  });
+  await p.evaluate(() => { RB.practiceA.launch('copying', { source: 'world-prop' }); });
+  await p.waitForSelector('.dk-cards');
+  await p.evaluate(() => { RB.practiceDesk.keepPage(RB.game.s, { word: '雨', mode: 'trace', ink: [{ ch: '雨', strokes: [[{ x: 0.2, y: 0.2 }, { x: 0.8, y: 0.2 }]] }], label: 'Rain' }); });
+  await p.waitForSelector('.pa-replace .dk-replist');
+  const proofPrev = await p.evaluate(() => { const li = [...document.querySelectorAll('.pa-replace .dk-repitem')].find((x) => /Which door/.test(x.textContent)); return li ? { kind: /Proofreading page/.test(li.textContent), ruby: !!li.querySelector('ruby'), title: /Which door\?/.test(li.textContent) } : null; });
+  assert(proofPrev && proofPrev.kind && proofPrev.ruby && proofPrev.title, 'the replace sheet previews the proofreading page (title, typeset lines with furigana): ' + JSON.stringify(proofPrev));
+  await shot(p, 'desk_replace_with_proof_1280');
+  await press(p, '.pa-replace [data-x]');
+  await wait(p, 300);
+  await press(p, '[data-dk=leave]');
+  await wait(p, 500);
+  await p.evaluate(() => RB.ui.menu.open('journey'));
+  await press(p, '[data-jv=mementos]');
+  await p.waitForSelector('.pm-grid');
+  const cell = await p.evaluate(() => { const c = [...document.querySelectorAll('.pm-cell')].find((x) => /Which door/.test(x.textContent)); return c ? c.textContent.replace(/\s+/g, ' ') : null; });
+  assert(cell && /Proofreading page/.test(cell), 'Practice mementos lists the proofreading page from the "proof" source (' + src + '): ' + cell);
+  await press(p, '.pm-cell:last-child');
+  await wait(p, 200);
+  const det = await p.evaluate(() => ({ html: !!document.querySelector('.pm-detail .pm-big .pb-kept, .pm-detail .pm-big .dk-type'), ruby: !!document.querySelector('.pm-detail .pm-big ruby'), remove: !!document.querySelector('.pm-detail [data-pm-remove]') }));
+  assert(det.html && det.ruby && !det.remove, 'its detail shows the source\'s own typeset page with furigana; no desk-only actions on it');
+  await shot(p, 'mementos_with_proof_1280');
+  await p.evaluate(() => RB.ui.menu.close());
   assert(!errors.length, 'no errors: ' + errors.join('; '));
   await ctx.close();
 }

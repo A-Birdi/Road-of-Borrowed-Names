@@ -3349,6 +3349,12 @@ body.reduced-motion .pa-lamp.glow-in::before, body.reduced-motion .pa-lamp.glow-
 .pm-art .pm-cv { display: block; max-width: 100%; height: auto; }
 .pm-art.small .pm-cv:not([style*="width"]) { max-height: 56px; width: auto; }
 .pm-art.small .dk-type { font-size: 0.42em; min-width: 0; padding: 6px 8px; }
+/* another source's own HTML art (the proofreader's page): a small, clipped thumbnail in the grid */
+.pm-art.small > :not(canvas):not(.dk-type) { font-size: 0.55em; max-height: 72px; overflow: hidden; text-align: left; }
+.dk-type .dk-type-title { font-size: 1.05em; font-weight: 600; }
+.dk-type .dk-type-title .en { font-weight: 400; color: #4c4030; margin-left: 0.3em; }
+.dk-type.lined-text { align-items: flex-start; }
+.dk-type.lined-text .dk-type-jp { font-size: 1.1em; line-height: 1.9; }
 .pm-art.big .pm-cv:not([style*="width"]) { max-height: 46vh; width: auto; }
 .pm-detail { margin-top: 10px; }
 .pm-big { margin-bottom: 6px; max-width: 100%; overflow: auto; }
@@ -33536,7 +33542,8 @@ RB.lanterns = (function () {
  *     label, bytes, saved, created, updated }
  *
  *   RB.practiceDesk.keepPage(s, page) -> Promise<{ ok, id?, replaced?, cancelled?, updated?,
- *        saved?, why?, error? }>
+ *        saved?, why?, error?, page }>   (why: 'cancelled' | 'too-large' | 'error' | 'invalid' when
+ *        not kept; 'no-slot' | 'read-only' | 'session' when kept but not saved)
  *     Normalises and compacts the page, refuses one over 256 KiB, and at six pages asks
  *     the chooser (the replace/cancel sheet with previews, src/ui/89_desk.js) which page
  *     to replace; nothing is ever removed without that explicit choice. It then writes
@@ -33736,9 +33743,9 @@ RB.practiceDesk = (function () {
   async function keepPage(s, page) {
     if (!s || !RB.practice.of(s)) return { ok: false, error: 'no-campaign' };
     let rec;
-    try { rec = makePage(s, page || {}); } catch (e) { return { ok: false, error: 'invalid' }; }
+    try { rec = makePage(s, page || {}); } catch (e) { return { ok: false, error: 'invalid', why: 'invalid' }; }
     rec.bytes = measure(rec);
-    if (rec.bytes > MAX_BYTES) return { ok: false, error: 'too-large', bytes: rec.bytes, page: rec };
+    if (rec.bytes > MAX_BYTES) return { ok: false, error: 'too-large', why: 'too-large', bytes: rec.bytes, page: rec };
     const L = list(s);
     const before = L.slice();
     let replaced = null, updated = false;
@@ -33747,11 +33754,11 @@ RB.practiceDesk = (function () {
     else if (L.length >= MAX_PAGES) {
       // six pages are kept: only an explicit choice replaces one (with previews), or nothing happens
       const pick = chooser ? await chooser(s, L.slice(), rec) : null;
-      if (!pick || !pick.replace) return { ok: false, cancelled: true, page: rec };
-      if (RB.game && RB.game.s && RB.game.s !== s) return { ok: false, cancelled: true, error: 'campaign-changed', page: rec };
+      if (!pick || !pick.replace) return { ok: false, cancelled: true, why: 'cancelled', page: rec };
+      if (RB.game && RB.game.s && RB.game.s !== s) return { ok: false, cancelled: true, why: 'cancelled', error: 'campaign-changed', page: rec };
       const L2 = list(s);
       const j = L2.findIndex((x) => x && x.id === pick.replace);
-      if (j < 0) return { ok: false, cancelled: true, error: 'gone', page: rec };
+      if (j < 0) return { ok: false, cancelled: true, why: 'cancelled', error: 'gone', page: rec };
       replaced = L2[j].id;
       before.length = 0; before.push(...L2);
       L2.splice(j, 1, rec);
@@ -44889,6 +44896,9 @@ RB.ui.practiceMementos = (function () {
     } catch (e) { box.innerHTML = I('keepsake'); }
     return box;
   }
+  // a source may give a short kind id ('proof') or a sentence ('Your handwriting · traced')
+  const KIND = { proof: 'Proofreading page — typeset, not handwriting', desk: 'Writing desk page' };
+  const kindText = (m) => KIND[m.kind] || m.kind || '';
   function title(m) { return (m.title && m.title.jp ? J(m.title.jp) + ' ' : '') + '<span class="en">' + esc((m.title && m.title.en) || m.id) + '</span>'; }
 
   function render(A, B, two, api) {
@@ -44902,7 +44912,7 @@ RB.ui.practiceMementos = (function () {
     h += '<div class="pm-shelf"><span class="lab">' + J(tx.shelf.jp) + ' <span class="en">' + esc(tx.shelf.en) + '</span></span>' +
       (shelf ? '<button type="button" class="pm-shelfitem" data-pm-sel="' + esc(key(shelf)) + '"><span class="pm-slot" data-pm-art="' + esc(key(shelf)) + '"></span><span class="nm">' + title(shelf) + '</span></button>' : '<span class="muted">Nothing on the shelf. Choose a memento and put it there.</span>') + '</div>';
     if (!ms.length) h += '<p class="muted">Nothing here yet. Pages you keep at the writing desk, and mementos from other pastimes, will be shown here.</p>';
-    else h += '<div class="pm-grid">' + ms.map((m) => '<button type="button" class="pm-cell' + (sel === key(m) ? ' on' : '') + '" data-pm-sel="' + esc(key(m)) + '" aria-pressed="' + (sel === key(m)) + '"><span class="pm-slot" data-pm-art="' + esc(key(m)) + '"></span><span class="nm">' + title(m) + '</span><span class="k">' + esc(m.kind || '') + (m.note ? ' · ' + esc(m.note) : '') + '</span></button>').join('') + '</div>';
+    else h += '<div class="pm-grid">' + ms.map((m) => '<button type="button" class="pm-cell' + (sel === key(m) ? ' on' : '') + '" data-pm-sel="' + esc(key(m)) + '" aria-pressed="' + (sel === key(m)) + '"><span class="pm-slot" data-pm-art="' + esc(key(m)) + '"></span><span class="nm">' + title(m) + '</span><span class="k">' + esc(kindText(m)) + (m.note && m.source === 'desk' ? ' · ' + esc(m.note) : '') + '</span></button>').join('') + '</div>';
     const holder = RB.ui.el('div', 'pm-page');
     holder.innerHTML = h;
     A.appendChild(holder);
@@ -44919,7 +44929,7 @@ RB.ui.practiceMementos = (function () {
   function detail(el, s, m) {
     const d = disp(s), k = key(m);
     const page = m.source === 'desk' && m.page ? m.page : null;
-    let h = '<div class="pm-big"></div><h3 class="pm-name">' + title(m) + '</h3><p class="muted small">' + esc(m.kind || '') + '</p>';
+    let h = '<div class="pm-big"></div><h3 class="pm-name">' + title(m) + '</h3><p class="muted small">' + esc(kindText(m)) + '</p>' + (m.note && m.source !== 'desk' ? '<p class="small">' + esc(m.note) + '</p>' : '');
     if (page && page.saved === false) h += '<p class="pm-unsaved">' + I('warn') + ' Not saved yet: it is kept in this journey but has not been written to storage. <button type="button" class="pbtn" data-pm-save>' + I('save') + 'Try saving again</button></p>';
     const acts = [];
     acts.push('<button type="button" class="pbtn" data-pm-shelf="' + esc(k) + '" aria-pressed="' + (d.shelf === k) + '">' + I('keepsake') + (d.shelf === k ? 'On the shelf (take it off)' : 'Put on the practice shelf') + '</button>');
@@ -53880,7 +53890,9 @@ RB.ui.deskPage = (function () {
     const lines = Array.isArray(spec.lines) && spec.lines.length ? spec.lines.map((l) => (typeof l === 'string' ? { jp: l } : l)) : [{ jp: spec.jp || page.word || '' }];
     const layout = ['card', 'vertical', 'sentence'].indexOf(spec.layout) >= 0 ? spec.layout : 'card';
     const paper = ['plain', 'grid', 'lined'].indexOf(spec.paper) >= 0 ? spec.paper : 'plain';
-    return '<div class="dk-type lay-' + layout + ' paper-' + paper + '" role="img" aria-label="' + esc('Typeset page: ' + (page.word || '') + (page.reading && page.reading !== page.word ? ' (' + page.reading + ')' : '')) + '">' +
+    const title = spec.title && typeof spec.title === 'object' ? spec.title : null;
+    return '<div class="dk-type lay-' + layout + ' paper-' + paper + (Array.isArray(spec.lines) && spec.lines.length ? ' lined-text' : '') + '" role="img" aria-label="' + esc((page.kind === 'proof' ? 'Proofreading page: ' : 'Typeset page: ') + (page.word || page.label || '') + (page.reading && page.reading !== page.word ? ' (' + page.reading + ')' : '')) + '">' +
+      (title ? '<div class="dk-type-title">' + (title.jp ? RB.ui.jhtml(title.jp) + ' ' : '') + (title.en ? '<span class="en">' + esc(title.en) + '</span>' : '') + '</div>' : '') +
       lines.map((l) => '<div class="dk-type-jp">' + RB.ui.jhtml(l.jp || '') + '</div>' + (l.en ? '<div class="dk-type-en">' + esc(l.en) + '</div>' : '')).join('') +
       (spec.en ? '<div class="dk-type-en">' + esc(spec.en) + '</div>' : '') +
       (spec.sentence && layout === 'sentence' ? '<div class="dk-type-sent">' + RB.ui.jhtml(spec.sentence) + '</div>' : '') +

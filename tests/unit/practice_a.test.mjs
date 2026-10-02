@@ -296,6 +296,23 @@ export default async (t) => {
     t.ok(se.ok && !se.saved && se.why === 'session' && D.pages(s6).every((p) => p.saved === false), 'session-only storage: never marked saved');
     RB.save.status = () => ({ mode: 'idb' });
     t.ok((await D.persist(s6)).saved && D.pages(s6).every((p) => p.saved === true), 'a later successful write marks them saved');
+    // suite B's proofreading page (docs/practice/suite_b.md) goes through the same budget, unchanged
+    {
+      const s7 = fresh(); RB.game.s = s7;
+      const proof = { id: 'proof:P01:E', kind: 'proof', mode: 'proof', typeset: { task: 'P01', lv: 'E', lines: ['{右|みぎ} の {戸|と} から {入|はい}って ください 。'], title: { jp: '{戸|と}', en: 'Which door?' } }, label: 'Which door?', saved: false, created: 1000, updated: 1000 };
+      const k1 = await D.keepPage(s7, proof);
+      const pg = D.pages(s7)[0];
+      t.ok(k1.ok && k1.saved && pg.id === 'proof:P01:E' && pg.kind === 'proof' && pg.mode === 'proof' && pg.typeset.task === 'P01' && pg.typeset.title.en === 'Which door?' && !pg.strokes && !D.handwritten(pg), 'a proofreading page keeps its id, kind, typeset lines and title; never handwriting');
+      const k2 = await D.keepPage(s7, Object.assign({}, proof, { label: 'The door, mended', created: 2000 }));
+      t.ok(k2.ok && k2.updated && D.pages(s7).length === 1 && D.pages(s7)[0].created === 1000 && D.pages(s7)[0].label === 'The door, mended', 'the same task kept again: updated in place (first created kept), no second page');
+      const html = RB.ui.deskPage.typesetHtml(D.pages(s7)[0]);
+      t.ok(/Which door\?/.test(html) && /Proofreading page/.test(html) && /<ruby|jline/.test(html), 'its preview shows the title and the typeset lines with furigana');
+      for (let k = 0; k < 5; k++) await D.keepPage(s7, page(k));
+      D.setChooser(async () => null);
+      const k3 = await D.keepPage(s7, Object.assign({}, proof, { id: 'proof:P02:E' }));
+      t.ok(!k3.ok && k3.cancelled && k3.why === 'cancelled' && D.pages(s7).length === 6, 'a seventh, cancelled, says why: cancelled (as suite B reads it)');
+      t.ok(!P.mementos(s7).some((m) => m.source === 'desk' && m.id.indexOf('proof:') === 0), 'the desk\'s memento source never lists proofreading pages (suite B lists its own)');
+    }
     // rename / remove are explicit; editing grants nothing
     const comp0 = snap(s6.company);
     t.ok(D.rename(s6, D.pages(s6)[0].id, '<b>Mine</b>') && D.pages(s6)[0].label === '<b>Mine</b>', 'a label is kept as plain text (escaped when shown)');

@@ -180,6 +180,12 @@ body.reduced-motion .pa-lamp.glow-in::before, body.reduced-motion .pa-lamp.glow-
 .pm-art .pm-cv { display: block; max-width: 100%; height: auto; }
 .pm-art.small .pm-cv:not([style*="width"]) { max-height: 56px; width: auto; }
 .pm-art.small .dk-type { font-size: 0.42em; min-width: 0; padding: 6px 8px; }
+/* another source's own HTML art (the proofreader's page): a small, clipped thumbnail in the grid */
+.pm-art.small > :not(canvas):not(.dk-type) { font-size: 0.55em; max-height: 72px; overflow: hidden; text-align: left; }
+.dk-type .dk-type-title { font-size: 1.05em; font-weight: 600; }
+.dk-type .dk-type-title .en { font-weight: 400; color: #4c4030; margin-left: 0.3em; }
+.dk-type.lined-text { align-items: flex-start; }
+.dk-type.lined-text .dk-type-jp { font-size: 1.1em; line-height: 1.9; }
 .pm-art.big .pm-cv:not([style*="width"]) { max-height: 46vh; width: auto; }
 .pm-detail { margin-top: 10px; }
 .pm-big { margin-bottom: 6px; max-width: 100%; overflow: auto; }

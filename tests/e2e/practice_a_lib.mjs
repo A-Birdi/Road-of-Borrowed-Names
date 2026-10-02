@@ -161,6 +161,17 @@ export async function smallTargets(p, sel) {
     .map((e) => { const r = e.getBoundingClientRect(); return [e.getAttribute('data-pa') || e.getAttribute('data-dk') || e.getAttribute('data-card') || e.className, Math.round(r.width), Math.round(r.height)]; })
     .filter(([, w, h]) => w < 43.5 || h < 43.5).slice(0, 6), sel);
 }
+// Suite B's proofreading page, in the shape docs/practice/suite_b.md gives, and — until suite B is
+// merged into this build — a stand-in for its memento source with the same list item shape
+// (on a merged build its own source is there and the stand-in is not added).
+export const PROOF_PAGE = { id: 'proof:P01:E', kind: 'proof', mode: 'proof', typeset: { task: 'P01', lv: 'E', lines: ['{右|みぎ} の {戸|と} から {入|はい}って ください 。'], title: { jp: '{戸|と}', en: 'Which door?' } }, label: 'Which door?', saved: false, created: 1000, updated: 1000 };
+export async function proofSource(p) {
+  return p.evaluate(() => {
+    const has = RB.practice.mementos(RB.game.s).some((m) => m.source === 'proof');
+    if (!has) RB.practice.addMementoSource({ id: 'proof', order: 60, list: (s) => RB.practiceDesk.pages(s, 'proof').map((pg) => ({ id: pg.id, kind: 'proof', title: { jp: pg.typeset.title.jp, en: pg.label }, note: 'A proofreading page, typeset in the game\'s lettering (not handwriting).', html: () => '<div class="pb-kept">' + pg.typeset.lines.map((l) => '<p>' + RB.ui.jhtml(l) + '</p>').join('') + '</div>' })) });
+    return has ? 'suite B' : 'stand-in';
+  });
+}
 export async function shot(p, name) {
   await p.screenshot({ path: path.join(SHOTS, name + '.png') });
 }

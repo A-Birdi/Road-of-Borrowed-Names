@@ -102,7 +102,9 @@ RB.ui.deskPage = (function () {
     const lines = Array.isArray(spec.lines) && spec.lines.length ? spec.lines.map((l) => (typeof l === 'string' ? { jp: l } : l)) : [{ jp: spec.jp || page.word || '' }];
     const layout = ['card', 'vertical', 'sentence'].indexOf(spec.layout) >= 0 ? spec.layout : 'card';
     const paper = ['plain', 'grid', 'lined'].indexOf(spec.paper) >= 0 ? spec.paper : 'plain';
-    return '<div class="dk-type lay-' + layout + ' paper-' + paper + '" role="img" aria-label="' + esc('Typeset page: ' + (page.word || '') + (page.reading && page.reading !== page.word ? ' (' + page.reading + ')' : '')) + '">' +
+    const title = spec.title && typeof spec.title === 'object' ? spec.title : null;
+    return '<div class="dk-type lay-' + layout + ' paper-' + paper + (Array.isArray(spec.lines) && spec.lines.length ? ' lined-text' : '') + '" role="img" aria-label="' + esc((page.kind === 'proof' ? 'Proofreading page: ' : 'Typeset page: ') + (page.word || page.label || '') + (page.reading && page.reading !== page.word ? ' (' + page.reading + ')' : '')) + '">' +
+      (title ? '<div class="dk-type-title">' + (title.jp ? RB.ui.jhtml(title.jp) + ' ' : '') + (title.en ? '<span class="en">' + esc(title.en) + '</span>' : '') + '</div>' : '') +
       lines.map((l) => '<div class="dk-type-jp">' + RB.ui.jhtml(l.jp || '') + '</div>' + (l.en ? '<div class="dk-type-en">' + esc(l.en) + '</div>' : '')).join('') +
       (spec.en ? '<div class="dk-type-en">' + esc(spec.en) + '</div>' : '') +
       (spec.sentence && layout === 'sentence' ? '<div class="dk-type-sent">' + RB.ui.jhtml(spec.sentence) + '</div>' : '') +
