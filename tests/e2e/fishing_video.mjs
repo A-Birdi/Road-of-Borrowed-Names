@@ -39,7 +39,8 @@ async function clickSel(sel) {
   await p.mouse.move(q.x, q.y, { steps: 12 });
   await pause(220);
   await p.mouse.click(q.x, q.y);
-  await p.mouse.move(6, 6, { steps: 4 });
+  // rest the pointer outside the activity's frame (not over a word, which would open its help card)
+  await p.mouse.move(1272, 752, { steps: 4 });
 }
 async function start(site, comp, pet) {
   await p.evaluate(({ site, comp, pet }) => {

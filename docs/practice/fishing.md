@@ -37,30 +37,40 @@ Public calls other areas may use: `RB.fishing.counts(s)`, `RB.fishing.entries(s)
 `fish.frame`, `fish.spread`, `fish.reflection`, `fish.count>=n`, `fish.seen.<id>`, and the
 bus event `fishing:catch { seq, fish, site, isNew, milestones }` (never `discovery:resolved`).
 
-### The pace seam (for the pace worker)
+### The pace seam
 
 Every response entry goes through exactly one function, `respond(step, ctx)` in
-`src/ui/86_fishing.js`, which calls
+`src/ui/86_fishing.js` (exported as `RB.ui.fishing.respond`), which makes the call the
+integrator specified for the pace module:
 
 ```js
-RB.pace.attempt(step, { pace, budgetSec, header, ctxTag: 'fishing', representation, session,
-  runOpts: { mode, cancelLabel, continueLabel, misread: true, wrongNote } })
+const st = RB.practice.settings(s);
+RB.pace.attempt(step, { pace: st.fishingPace, budgetSec: st.fishingCustomSec, header,
+  ctxTag: 'fishing', taskId: 'fishing:<situation>:<profile>', session,
+  runOpts: { mode, cancelLabel: 'Back to the water', continueLabel: 'Bring it in', misread: true, wrongNote } })
 ```
 
-with `pace = RB.practice.settings(s).fishingPace` (Off for every campaign). The result's
-`paced` record is passed into `RB.fishing.commitCatch` (stored in the attempt record:
-`paceKind`, `budgetMs`, `activeMs`, `expired`) and into the learning adapter as
-`{ paced: result.paced.kind !== 'off' }`, so a timed attempt never touches ordinary
-mastery. The preparation panel's pace selector reads `RB.pace.available(s, ctx)` and
-`RB.pace.budgets(s, ctx)`: today Off is selected and Gentle/Brisk/Custom are shown disabled
-with the honest note "not available yet: the optional pace for fishing is still being
-built. Every cast is untimed." When `available()` turns true, Custom enables; Gentle/Brisk
-enable when `budgets()` returns numbers (otherwise the note says how many comparable
-untimed answers are still needed). Choosing writes `fishingPace` with
-`RB.practice.set`. Ready, the clock, soft expiry and calibration are the pace module's
-work inside `attempt()`; fishing needs no further change. One thing the pace worker may
-want: `ctx.representation` (Kana / mixed-kanji, §7.4) is passed through but fishing does
-not yet ask the player for it — the pace module can ask before Ready.
+The pace is read from the campaign's settings at the moment of answering (Off for every
+campaign until the player chooses otherwise). With the result:
+
+* `paced` is stored in the catch's attempt record (`paceKind`, `budgetMs`, `activeMs`,
+  `expired`), and `{ paced: paced.timed }` goes to `RB.practice.objectives(session).assess`
+  (the provisional module reports only `kind`; then "timed" means `kind !== 'off'`), so a
+  timed answer never touches ordinary mastery.
+* `res.cancelled && res.paced.letGo` ("Let it go") ends the cast: `RB.fishing.abandon`,
+  nothing caught, nothing lost, back to the preparation sheet. Any other cancel is "Back
+  to the water": the same fish, the situation again, nothing recorded.
+* The preparation sheet embeds the pace module's own control, `RB.pace.setupHtml(s)` wired
+  with `RB.pace.wireSetup(el, s, { onChange })`, when the module provides them. The
+  provisional module in this branch does not, so the sheet shows its own selector (Off
+  selected; Gentle/Brisk/Custom disabled with the note "not available yet … Every cast is
+  untimed").
+
+**State of this branch:** the real pace module (task branch, merge `4e67a21`, tip
+`e7f47db`) is **not merged here** — see §14 and §15. The wiring above follows the call the
+integrator gave and feature-detects `setupHtml`/`wireSetup`/`paced.timed`/`paced.letGo`;
+it was exercised only against the provisional module (browser test "pace Off"). The
+Gentle half of the requested pace browser test is reported as **SKIP** in this build.
 
 ## 2. The three sites (existing maps only)
 
@@ -348,7 +358,7 @@ are art, not captions, and should also be looked at by someone who knows the fis
 | §6.1 complete catch, wait/Skip/fishWait, indefinite bite, one task, commit once, observation until dismissed, Cast again/Review/Leave | 86_fishing | browser (real clicks, keyboard, touch) |
 | §6.2/§6.3 18 situations × 4 profiles | 30_situations | unit (72 variants, all forms) |
 | §6.4 uncertain/misread/content error/alternate/unsupported/help | 65_challenge (opt-in), 86_fishing | browser repair test; unit (other-action words) |
-| §7 pace | seam only (`respond`) | Off shown; Gentle/Brisk/Custom disabled honestly — **pace module pending (pace worker)** |
+| §7 pace | the seam `respond` (the integrator's call), Let it go, the module's setup control when present | browser "pace Off" (one `RB.pace.attempt` call per answer with the campaign's settings, untimed, recorded off); Gentle **not tested here** — the pace module is not merged in this branch (§14) |
 | §8.1 catalogue, counts setting, milestones 1/3/6/9, mementos, two memories, no bond | 86_fishing_notes, 75_fishing | unit; browser notes page, survey, reload |
 | §8.2 stage, 12 poses, 7 behaviours × 4, fish presentation, reduced motion, dressing | 86_fishing_stage | browser stats + captures (visual inspection by the author) |
 | §8.3 remarks ≥ 6 × 4, limits, Quiet; pets × 4 + none | 40_remarks, 86_fishing, stage | unit; browser (ambient ≤ 2/3 casts, Quiet, 16 pairs + no pet) |
@@ -356,11 +366,38 @@ are art, not captions, and should also be looked at by someone who knows the fis
 | §4.3 one mastery event; paced/exposed never | 75_fishing + adapter | unit |
 | §20.2 44 px targets, 5 layouts + 200 % text, keyboard/mouse/touch, no sideways scroll | 74_fishing.css | browser layout test (with captures) |
 | §21 records, bounds, idempotency, migration, NG+ | 75_fishing | unit; browser reload |
-| §23.3 timed variants (Gentle/Brisk/Custom, fake clock, calibration) | — | **not here: pace worker** |
+| §23.3 timed variants (Gentle/Brisk/Custom, fake clock, calibration) | the pace module | **not verified in this branch** (pace module not merged; the Gentle half of the fishing pace test is a reported SKIP) |
 
 ## 12. Commands and results
 
-(see §13 for the final run, filled in at hand-off)
+Final runs on this branch's final sources and build (2 October 2026, headless Chromium
+from the installed Playwright; the machine was shared with other workers, load average
+around 16 on 4 cores):
+
+| Command | Result |
+|---|---|
+| `node tools/build.mjs` | `built index.html — 241 source files, 7032.1 KiB` |
+| `node tools/validate.mjs` | no errors; 15 warnings — the same 15 as the base commit `c86d615` (map reachability and lexicon conflicts elsewhere; none from fishing) |
+| `node tools/validate.mjs --unknown` | 19 tokens without a dictionary entry, none from fishing content (base: 20; `結び目` is now known) |
+| `node tests/run-unit.mjs` | **7057 passed, 0 failed** (`fishing.test.mjs`: 670 checks) |
+| `node tests/e2e/fishing.mjs` | **10 passed, 0 failed, 1 skipped** — Yasu; one complete catch with real clicks + Fishing notes; recognition repair; three-catch survey from Words; reload; every companion and pet (+ 16 pairs and no pet); layouts (320×640, 390×844, 844×390, 1280×800, 200 % text at 390 and 1280); keyboard + touch; reduced motion + Quiet; pace Off. Skipped: pace Gentle (provisional pace module in this build, §14). |
+| `node tests/e2e/learning_ui.mjs` | 14 passed, 0 failed (shared `65_challenge.js`) |
+| `node tests/e2e/pad_kanji.mjs` | 8 passed, 0 failed (pad + challenge) |
+| `node tests/e2e/folio.mjs` | all ok (menu alias, Journey page) |
+| `node tests/e2e/settings.mjs` | all ok |
+| `node tests/e2e/company.mjs` | all passed (Shared memories) |
+| `node tests/e2e/fishing_video.mjs` | wrote `docs/screenshots/fishing/fishing_catch.webm` (about 75 s; frames checked by decoding them in Chromium) |
+
+Earlier runs, kept for honesty: in the first full runs three browser tests failed for
+test-side reasons, fixed without loosening any check — the misread character was
+selected by a selector that also counted the strip's insertion gaps; the reload
+comparison included the companion system's own retroactive `story:recruit` memory (now
+only `fish:*` memories are compared, still exactly); at 844×390 and 320×640 a click aimed
+at a word inside a button opened that word's help card over the button (the helper now
+presses a plain part of the control). One later full run failed the repair test once:
+the synthetic ink of あ was first read as ぁ (§14); the test now picks the meant
+character among the pad's readings, as a player would. The full `tests/e2e/run.mjs` was
+not run (it takes an hour or more on this machine).
 
 ## 13. Evidence list
 
@@ -398,8 +435,19 @@ in its `README.md`. **Recording**: `docs/screenshots/fishing/fishing_catch.webm`
   repair test uses the recognizer's own reference strokes, scaled and jittered), no real
   phone/stylus, no Firefox/Safari.
 * Natural-history captions pending a source check (§9).
-* The optional pace (§7, the timed parts of §23.3) is the pace worker's; fishing calls it
-  for every response and shows it unavailable until then.
+* **The real pace module is not merged into this branch.** The integrator asked for a
+  merge of `e7f47db` (task branch: the fishing pace module, shiritori, practice suite B)
+  and for the wiring and a browser test of a cast with pace Off and with Gentle. In this
+  environment the merge was refused by the permission system, and so was reading
+  `docs/practice/pace.md` from that commit. What was done without it: `respond()` makes
+  exactly the call the integrator specified, uses `paced.timed` for the learning adapter,
+  handles `paced.letGo`, and embeds `RB.pace.setupHtml`/`wireSetup` when present (all
+  feature-detected, so the provisional module keeps working); the browser test "pace Off"
+  checks the call and the untimed record; the Gentle half is a reported SKIP in this
+  build. Still to do after the merge: run the suite on the merged build, write the Gentle
+  half against the pace module's documented test hooks, check the `taskId` convention
+  (`fishing:<situation>:<profile>` here) against `docs/practice/pace.md` §1, and look at
+  the embedded setup control in the preparation sheet at the five layouts.
 * The stage is original pixel art judged only by its author from captures.
 * Observed while testing, outside this slice (not changed here): (a) the shared word-help
   card (`src/ui/10_ui.js`), opened by pointing at a word inside a button, is placed below
@@ -423,7 +471,21 @@ in its `README.md`. **Recording**: `docs/screenshots/fishing/fishing_catch.webm`
 | `src/lang/75_kanjiread.js` | regenerated by `node tools/kanjiread.mjs` (two readings added: 増 ま, 辺 へん). Resolve conflicts by regenerating. | new words |
 | `index.html` | rebuilt (`node tools/build.mjs`); resolve by rebuilding. | deliverable |
 | Maps (no map file edited) | `src/content/fishing/20_sites.js` adds props to `rw.village`, `rw.road`, `sg.harbor` and turns `rw.village` (34,20)'s terrain tuft into a conditional `reeds` prop (`!post`); inserts two options into Yasu's talk list before `rw.yasu_post`. | §5.1, §5.2 |
-| `tests/e2e/run.mjs` | 1 line: `['fishing.mjs']`. | suite |
+| `tests/e2e/run.mjs` | 1 line (+ a comment): `['fishing.mjs']`. | suite |
+| `RB.ui.folio.ICONS` (runtime, no file edit) | `src/ui/86_fishing.js` adds a `fish` icon to the folio's icon table when it loads. | the notes page, the Words entry |
+| Words › Ways to practise styling (no shared file edit) | `src/styles/74_fishing.css` ends with one rule scoped to `.pr-index` that sizes the page's inline "where" icon (the foundation's page has no stylesheet; without it the icon filled the page). Move it to the page's own stylesheet when there is one. | §20.1 |
+
+**Merging the task branch (`e7f47db`, not done here — see §14).** Between the common base
+`c86d615` and `e7f47db` the task branch also changed `src/ui/65_challenge.js`,
+`src/ui/50_menu.js`, `tests/e2e/run.mjs`, `tools/validate.mjs`, `src/lang/75_kanjiread.js`,
+`src/recog/10_strokedata.js` and `index.html` (plus its own `src/ui/69_pace.js` and
+`src/styles/75_pace.css`, which this branch does not touch). Expected resolution: keep
+both sides' additions in `65_challenge.js` (this branch's are the opt-in `wrongNote` and
+`misread` options and the additive `res.recogRepairs`/`res.revealed`), keep both sides'
+lines in `50_menu.js`, `run.mjs` and `validate.mjs`; regenerate the generated files
+(`node tools/kanjivg/fetch.mjs && node tools/kanjivg/convert.mjs && node
+tools/kanjiread.mjs && node tools/build.mjs`) rather than merging them by hand. These are
+expectations from the list of changed files only: the other side's contents were not read.
 
 Not touched: `src/ui/69_pace.js`, shiritori files, other workers' areas, HANDOFF.md,
 REQUIREMENTS.md, VALIDATION.md (the integrator records the merged results).

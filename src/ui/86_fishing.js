@@ -12,12 +12,15 @@
  * observation page (until you close it) → release → Cast again / Review / Leave.
  *
  * THE PACE SEAM: every response entry goes through respond() below, which
- * calls RB.pace.attempt(step, o) — Off included — with o.pace from the
- * campaign's setting (RB.practice.settings(s).fishingPace). When the real
- * pace module replaces the provisional one (src/ui/69_pace.js, same API),
- * Gentle/Brisk/Custom work here with no further fishing change: the result's
- * `paced` record is stored in the attempt, and a timed attempt never touches
- * ordinary mastery ({ paced: true } to the learning adapter).
+ * calls RB.pace.attempt(step, { pace: st.fishingPace, budgetSec:
+ * st.fishingCustomSec, header, ctxTag: 'fishing', taskId, session, runOpts })
+ * with st = RB.practice.settings(s) — Off included. The result's `paced`
+ * record is stored in the attempt; { paced: paced.timed } goes to the
+ * learning adapter (a timed answer never touches ordinary mastery); a
+ * cancelled result with paced.letGo is "Let it go" (the cast ends, nothing
+ * lost). The preparation sheet embeds RB.pace.setupHtml(s) / wireSetup()
+ * when the pace module provides them, and otherwise shows its own selector
+ * (Off, the others marked unavailable) for the provisional module.
  *
  *   RB.ui.fishing.respond(step, ctx) -> Promise<result>   (the seam)
  *   RB.ui.fishing.current()                               the open activity (tests)
@@ -39,15 +42,19 @@ RB.ui.fishing = (function () {
   if (RB.ui.folio && RB.ui.folio.ICONS) RB.ui.folio.ICONS.fish = '<path d="M3 12c3-4 8-5 12-3l4-3v12l-4-3c-4 2-9 1-12-3z"/><circle cx="8" cy="11" r="0.9"/>';
 
   // ---- the seam: one response entry (§7 is the pace module's; §4 the adapter's) ----------------------------------------
-  // ctx: { s, header, pace, budgetSec, mode, wrongNote, session }
+  // ctx: { s, header, taskId, mode, wrongNote, session }. The pace and its Custom seconds are the campaign's
+  // practice settings (fishingPace, fishingCustomSec), read here at the moment of answering.
   function respond(step, ctx) {
     ctx = ctx || {};
+    const st = ctx.s ? RB.practice.settings(ctx.s) : {};
     return RB.pace.attempt(step, {
-      pace: ctx.pace || 'off', budgetSec: ctx.budgetSec || null, header: ctx.header, ctxTag: 'fishing',
-      representation: ctx.representation || null, session: ctx.session || null,
+      pace: st.fishingPace || 'off', budgetSec: st.fishingCustomSec == null ? null : st.fishingCustomSec, header: ctx.header, ctxTag: 'fishing',
+      taskId: ctx.taskId || null, session: ctx.session || null,
       runOpts: { mode: ctx.mode, cancelLabel: 'Back to the water', continueLabel: 'Bring it in', misread: true, wrongNote: ctx.wrongNote || null },
     });
   }
+  // whether an answer was timed: the pace module's paced.timed (the provisional module reports only a kind)
+  const wasTimed = (paced) => !!(paced && (paced.timed != null ? paced.timed : paced.kind && paced.kind !== 'off'));
 
   // ---- launching from the world (after the station's scene has ended) ------------------------------------------------------
   let pending = null;
@@ -189,15 +196,22 @@ RB.ui.fishing = (function () {
       session.set('active');
       stage.go('task');
       ui.panel('<p class="fp-status">' + L('answer') + '</p><p class="muted small">Answering on the sheet — nothing here is timed.</p>');
-      res = await respond(step, { s, header: headerHtml(C, sit, task), pace: paceKind(C), mode: step.kind === 'write' ? C.mode : undefined, wrongNote: wrongNoteFor(task), session });
+      res = await respond(step, { s, header: headerHtml(C, sit, task), taskId: 'fishing:' + a.variant, mode: step.kind === 'write' ? C.mode : undefined, wrongNote: wrongNoteFor(task), session });
       if (!session.alive()) return 'leave';
+      // "Let it go" (offered by the pace module): this cast ends with nothing caught and nothing lost
+      if (res && res.cancelled && res.paced && res.paced.letGo) {
+        F.abandon(s, a.seq);
+        ui.panel('<p class="fp-status">You let this one go.</p><p class="muted small">Nothing is lost: the water is still there, and every record stays.</p>');
+        await wait(RB.game.fastForward() ? 50 : 900);
+        return session.alive() ? 'again' : 'leave';
+      }
       if (res && res.cancelled) { stage.go('situation'); continue; } // back to the water: no loss, nothing recorded
       break;
     }
     // commit the catch and its learning outcome, once (§21.2)
     session.set('resolving');
     const paced = res.paced || { kind: 'off' };
-    const isPaced = !!(paced && paced.kind && paced.kind !== 'off');
+    const isPaced = wasTimed(paced);
     const exposed = !!step.copy || (!!res.revealed && res.firstTry !== false);
     const obj = C.obj || (C.obj = RB.practice.objectives(session));
     const out = F.commitCatch(s, a.seq, {
@@ -338,7 +352,11 @@ RB.ui.fishing = (function () {
       const pv = F.preview(s, S.id, C.how, C.patch, C.look);
       C.ui.stage.set({ patch: pv ? pv.patch : C.patch });
       const html = prepHtml(C, pv, unseen);
-      const k = await C.ui.ask(html, null);
+      // the pace module's own control, when it has one, is wired into this sheet (it saves its own settings)
+      const k = await C.ui.ask(html, null, 0, null, (el) => {
+        const host = el.querySelector('[data-pace-host]');
+        if (host && RB.pace.wireSetup) RB.pace.wireSetup(host, s, { onChange: () => {} }); // respond() reads the choice when answering
+      });
       if (!C.session.alive()) return { action: 'leave' };
       if (k === 'leave') return { action: 'leave' };
       if (k === 'cast') return { action: 'cast', how: C.how, patch: C.how === 'patch' ? C.patch : pv ? pv.patch : C.patch, look: C.look };
@@ -390,7 +408,7 @@ RB.ui.fishing = (function () {
     const modes = [['hand', 'Write'], ['choice', 'Choose'], ['ime', 'Type']];
     h += '<fieldset class="fp-opts"><legend>' + L('input') + '</legend><div class="seg" role="group">' + modes.map(([m, en]) => '<button class="pbtn small' + (C.mode === m ? ' on' : '') + '" data-k="mode:' + m + '" aria-pressed="' + (C.mode === m) + '">' + esc(en) + '</button>').join('') + '</div>' +
       '<p class="fp-sub">You can switch on the answer sheet too. Some tasks are choices or arrangements whatever you pick.</p></fieldset>';
-    h += paceHtml(C);
+    h += RB.pace.setupHtml ? '<div class="fp-opts fp-pace" data-pace-host>' + RB.pace.setupHtml(s) + '</div>' : paceHtml(C);
     h += '<fieldset class="fp-opts"><legend>' + L('casts') + '</legend><div class="seg" role="group">' + [1, 3, 5].map((n) => '<button class="pbtn small' + (C.casts === n ? ' on' : '') + '" data-k="casts:' + n + '" aria-pressed="' + (C.casts === n) + '">' + n + '</button>').join('') + '</div>' +
       '<p class="fp-sub">A suggested stopping point, not a promise: leave whenever you like.</p></fieldset>';
     const M = A.milestones;

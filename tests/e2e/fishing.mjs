@@ -26,7 +26,7 @@ fs.mkdirSync(OUT, { recursive: true });
 const only = process.argv[2];
 const { srv, url } = await serve();
 const b = await launch();
-let pass = 0, fail = 0;
+let pass = 0, fail = 0, skip = 0;
 const results = [];
 async function test(name, fn) {
   if (only && !name.includes(only)) return;
@@ -562,8 +562,37 @@ await test('reduced motion: still poses and a brief dissolve; the same catch and
   await ctx.close();
 });
 
+await test('pace Off: a real cast through the one seam (RB.pace.attempt with the campaign\'s settings), untimed, recorded as off', async () => {
+  const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  await start(p, { site: 'fish.reedwake.current', comp: 'nao' });
+  // watch the seam: every response entry is one RB.pace.attempt call with the campaign's settings
+  await p.evaluate(() => {
+    window.__pace = [];
+    const orig = RB.pace.attempt;
+    RB.pace.attempt = async (step, o) => { const r = await orig(step, o); window.__pace.push({ o: { pace: o.pace, budgetSec: o.budgetSec, ctxTag: o.ctxTag, taskId: o.taskId, session: !!o.session, header: !!o.header }, paced: r.paced, cancelled: !!r.cancelled }); return r; };
+  });
+  await launchAt(p, 'fish.reedwake.current');
+  const r = await oneCatch(p, { how: 'discover', noSkip: true });
+  const off = await p.evaluate(() => ({ calls: window.__pace, at: RB.fishing.st(RB.game.s).recentAttempts.slice(-1)[0] }));
+  assert(off.calls.length === 1, 'one response entry, one RB.pace.attempt call: ' + JSON.stringify(off.calls));
+  const c = off.calls[0];
+  assert(c.o.pace === 'off' && c.o.ctxTag === 'fishing' && c.o.taskId === 'fishing:' + r.before.active.situation + ':' + r.before.active.profile && c.o.session && c.o.header, 'the call carries the campaign\'s pace (off), the task id, the session and the header: ' + JSON.stringify(c.o));
+  assert(!(c.paced && c.paced.timed) && off.at.paceKind === 'off' && off.at.budgetMs === null && !off.at.expired, 'pace Off: untimed (no budget), recorded as off: ' + JSON.stringify({ paced: c.paced, at: off.at }));
+  assert(r.after.obs[r.before.active.fish], 'the fish is caught');
+  await leave(p);
+  const provisional = await p.evaluate(() => !!RB.pace.provisional);
+  assert(!errors.length, 'errors ' + errors.join('; '));
+  await ctx.close();
+  if (provisional) {
+    // the provisional pace module (src/ui/69_pace.js) is untimed only: Gentle cannot be tried in this build
+    skip++; results.push('SKIP pace Gentle: this build has the provisional (untimed) pace module; Gentle needs the pace worker\'s module merged'); console.log('SKIP pace Gentle (provisional pace module in this build)');
+    return;
+  }
+  throw new Error('pace Gentle: the pace module is present, but this half of the test has not been written against it yet (docs/practice/pace.md)');
+});
+
 console.log('\n' + results.join('\n'));
-console.log(`\n${pass} passed, ${fail} failed`);
+console.log(`\n${pass} passed, ${fail} failed` + (skip ? `, ${skip} skipped` : ''));
 await b.close();
 srv.close();
 process.exit(fail ? 1 : 0);
