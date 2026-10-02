@@ -132,7 +132,8 @@ RB.wordplay = (function () {
   const installed = () => BANDS.filter((b) => !!SH().bank(b));
   function strategyVersion() {
     const S = SH();
-    return String(S.STRATEGY || S.AI_VERSION || (S.chooseMove && S.chooseMove.version) || 'provisional-1');
+    // the engine's opponents export SH.ai.STRATEGY ('roadside-ai-1', docs/practice/shiritori_engine.md §2)
+    return String((S.ai && S.ai.STRATEGY) || S.STRATEGY || S.AI_VERSION || (S.chooseMove && S.chooseMove.version) || 'provisional-1');
   }
   // a compact frozen copy of the approved entries, enough to finish the game under the original
   // bank (§21.5); rebuilding it gives the same content hash

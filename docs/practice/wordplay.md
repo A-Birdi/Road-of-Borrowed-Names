@@ -87,7 +87,7 @@ Events: `wordplay:stage-cleared { stage, comp, session, first }` (after the reco
   bank are available before play. The first Start offers a short demonstration built from the
   installed bank, or *Skip demonstration* (`demoSeen`). With no bank installed the sheet says *The
   shiritori word banks are not installed in this copy of the game* and Start is disabled. While the
-  opponents are the foundation's stub (no `RB.shiritori.STRATEGY` export), the sheet says plainly that
+  opponents are the foundation's stub (no `RB.shiritori.ai.STRATEGY` export), the sheet says plainly that
   every level currently plays the Casual policy.
 - **The table**: the required kana is always shown; the chain lists every committed word with
   furigana, reading, meaning, who played it and the kana it passes on (and the homophones its reading
@@ -127,7 +127,7 @@ Events: `wordplay:stage-cleared { stage, comp, session, first }` (after the reco
   the other side had after it, and the words already used. Computer moves are labelled by what the
   search actually did (`exact` → proven; otherwise "looked stronger within the checked moves"; Casual →
   no search). *More analysis* calls `RB.shiritori.analyse` only on the exact frozen bank and shows its
-  notes with the same labels; the stub's empty answer is shown as "No further analysis is available in
+  notes tagged by their own `label`/`proven` (a fact of this chain / proven / within the checked moves, not proven); the stub's empty answer is shown as "No further analysis is available in
   this build". *Practise words from this chain* (when a chain word has a word card) runs ordinary
   practice through `RB.challenge.runStep(..., { noRecord: true })` and `RB.practice.objectives`, at most
   one assessment event per word — the game's moves themselves are never mastery events.
@@ -282,20 +282,24 @@ Evidence: U = unit test, B = browser test, I = author's inspection of captures, 
 
 Environment: this worktree (branch `worktree-agent-a2b4665ba0214bd49`, from c86d615), node v22.22.2,
 headless Chromium 141.0.7390.37 (Playwright), Linux, a machine shared with five other workers (load
-average 16–22 during the runs). Build `node tools/build.mjs` → `index.html` 7,140,109 bytes
-(c86d615: 6,923,624; +216,485 raw, +58,388 gzip -9; the wordplay sources are 215,550 bytes).
+average 12–22 during the runs). Build `node tools/build.mjs` → `index.html` 7,141,444 bytes
+(c86d615: 6,923,624; +217,820 raw, +58,787 gzip -9).
 
-Final verification on **0446a1e** (`wp_final` run; source unchanged since except test diagnostics and this document):
+Final verification on the commit that adds this text (after f520480) for the wordplay checks below.
+The full unit run and recog-coverage are from 0446a1e; the source changes since are keyboard focus in
+`87_wordplay.js` and the two engine-compatibility fixes in §9, plus tests and this document. All of
+this is against the foundation's stub opponents and a test-only fixture bank, **not** the engine
+worker's real banks and opponents (see §9: the merge of the engine was not done in this worktree).
 
 | Command | Result |
 |---|---|
 | `node tools/validate.mjs --unknown` | **no errors**; `registryTexts` 848 (634 at c86d615), `unknownTokens` 20 (= c86d615: none from this slice) |
-| `node tests/run-unit.mjs` | 6701 passed, 1 failed — the failure is `recog-accuracy` "p95 recognize() time < 60 ms" (61.6 ms at load ≈ 22; the recognizer is untouched here). Rerun alone: `node tests/run-unit.mjs recog-accuracy` **64/0** (p95 23.8 ms). |
-| `node tests/run-unit.mjs wordplay` | **315/0** (`wordplay` 147, `wordplay_bond` 168) |
-| `node tests/run-unit.mjs recog-coverage` | **15/0** after `node tools/kanjiread.mjs` (see merge notes) |
-| `node tests/e2e/wordplay.mjs` | 77 passed, 1 failed in the full run: "keyboard: … Enter plays it" (focus was on Play word; the move did not register within 6 s under load). The keyboard section rerun alone (`--only=keyboard`) **7/0 three times out of three**. See §8. |
-| `node tests/e2e/wordplay_layout.mjs --docs` | **63/0** (5 viewports incl. 200 % text, 4 companions, Japanese, reduced motion) |
-| `node tests/e2e/company.mjs` | **61/0** (the Company page with the Wordplay card added; an earlier run caught a visually-hidden table caption counted as sideways overflow — fixed by labelling the table instead) |
+| `node tests/run-unit.mjs` (0446a1e) | 6701 passed, 1 failed — the failure is `recog-accuracy` "p95 recognize() time < 60 ms" (61.6 ms at load ≈ 22; the recognizer is untouched here). Rerun alone: `node tests/run-unit.mjs recog-accuracy` **64/0** (p95 23.8 ms). |
+| `node tests/run-unit.mjs wordplay` | **317/0** (`wordplay` 149, `wordplay_bond` 168) |
+| `node tests/run-unit.mjs recog-coverage` (0446a1e) | **15/0** after `node tools/kanjiread.mjs` (see merge notes) |
+| `node tests/e2e/wordplay.mjs` | **82/0** (83/0 on f520480; the count varies by one because the reading step is asserted only when the picked word has two readings). Earlier full runs failed intermittently in the keyboard (and once the touch) section; a diagnostic showed the cause: when the opening ended in こ the test picked 工場, and the table — correctly — asked which approved reading was meant. The tests now choose the reading meant, and the keyboard section checks that choice by keyboard alone. The same diagnosis found a real keyboard defect, fixed: the redrawn reading buttons dropped focus to the page; focus now moves to the reading choice and then to Play word. |
+| `node tests/e2e/wordplay_layout.mjs` | **63/0** (5 viewports incl. 200 % text, 4 companions, Japanese, reduced motion); captures from the `--docs` run on 0446a1e (layout unchanged since) |
+| `node tests/e2e/company.mjs` | **all passed** (61 checks on 0446a1e; the Company page with the Wordplay card added; an earlier run caught a visually-hidden table caption counted as sideways overflow — fixed by labelling the table instead) |
 | `node tests/e2e/company_pets.mjs` | all ok (13), exit 0 (on 1a77db8) |
 | `node tests/e2e/pets_greet.mjs` | 17/0 (on 1a77db8) |
 | `node tests/e2e/side_ch3.mjs` | 3/3 configurations (banter at the Cinder inn still first) (on 1a77db8) |
@@ -338,11 +342,15 @@ overlapped the player's name; the chain's auto-scroll scrolled the whole leaf aw
 
 ## 8. Limitations (honest)
 
-- **No real word banks yet.** Every game in the tests uses a test-only fixture (or abstract kana
-  chains in unit tests) registered by the test. In the shipped build, with only the foundation, the
-  sheet shows *not installed*.
-- **Provisional opponents.** Until the engine worker's `72_shiritori_ai.js` lands, Thoughtful and Sharp
-  play Casual; the sheet and every receipt say so (`ai: provisional-1`, transcript `prov`).
+- **Not yet run against the real banks and opponents.** The engine (three certified banks, searching
+  opponents) was merged on the task branch at e7f47db after this work; merging it into this worktree
+  was refused by the session's permission system, so it was not done here. Every game in the tests
+  uses a test-only fixture (or abstract kana chains in unit tests) registered by the test, against
+  the foundation's stub opponents. Compatibility with e7f47db was checked **by reading its code and
+  `docs/practice/shiritori_engine.md` only** (§9). On this branch alone the sheet shows *not
+  installed*.
+- **Provisional opponents on this branch.** With the stub, Thoughtful and Sharp play Casual; the sheet
+  and every receipt say so (`ai: provisional-1`, transcript `prov`).
 - **Handwriting** was exercised with pointer strokes along KanjiVG references (synthetic), not real
   hands; kana with small marks were typed or chosen instead.
 - **No human play, no native-speaker review** of the 124 table lines, 4 reflections (37 lines) and 16 thoughts
@@ -360,17 +368,42 @@ Shared files touched (each a small, documented change):
    memories click handler, exported. Existing keepsake and case links unchanged.
 2. `tools/validate.mjs` — one line in the registry roots: `wordplay: { content: C.wordplay, BAND, LEVEL }`.
 3. `tests/e2e/run.mjs` — two single-line entries: `['wordplay.mjs']`, `['wordplay_layout.mjs']`.
-4. `index.html` — regenerated by `node tools/build.mjs` (rebuild after merging; never resolve by hand).
+4. `src/lang/75_kanjiread.js` — regenerated by `node tools/kanjiread.mjs` (two lines). On a conflict
+   take either side and regenerate (`node tools/kanjivg/fetch.mjs && node tools/kanjivg/convert.mjs &&
+   node tools/kanjiread.mjs`).
+5. `index.html` — regenerated by `node tools/build.mjs` (rebuild after merging; never resolve by hand).
 No other worker's file was edited. `71_shiritori.js` / `72_shiritori_ai.js` were not touched.
 
-What changes when the engine worker's real banks and opponents land (nothing to edit here):
-- Banks registered as `RB.shiritori.addBank({ id: 'pocket'|'everyday'|'extended', version, entries,
-  starters })` appear on the sheet with their sizes; `starters` are taken as the certified openings
-  (stage clears require one); From my journey takes the union of installed banks.
-- If the opponents export a version (`RB.shiritori.STRATEGY`, or `AI_VERSION`, or
-  `chooseMove.version`), the provisional note disappears and receipts carry that version.
-- `chooseMove` result fields read: `edge`, `depth`, `exact`, `nodes`, `fallback`, `provisional`
-  (extra fields such as `label`, `mode` are ignored). `analyse(state, bank)` notes are shown with
-  `n.en` (or `n.text`) and labelled by `n.exact`.
-- Requests for the engine (none blocking): export a strategy version string; keep `starters` as entry
-  ids; keep `buildBank`'s hash input stable (the snapshot rebuild depends on it).
+**Merge status.** The integrator asked for `git merge e7f47db` (task branch with the real engine, Pace
+and suite B) into this worktree branch; the session's permission system refused the merge, so this
+branch is still based on c86d615 and nothing here was run against the real engine. The merge (a
+merge commit, generated files regenerated as above) and a rerun of `node tests/run-unit.mjs wordplay`,
+`node tests/e2e/wordplay.mjs` and `node tests/e2e/wordplay_layout.mjs` on the merged build remain to
+be done by whoever holds that permission. `src/content/shiritori/` and `src/engine/71_*`/`72_*` do not
+overlap with this slice's files, so conflicts are expected only in the generated files.
+
+Compatibility with e7f47db, **by reading its code and `docs/practice/shiritori_engine.md` §2 only**:
+- Banks: `SH.bank('pocket'|'everyday'|'extended')` with `entries` carrying `display: { jp, en }`,
+  `forms`, `reading`, `repeatGroup`, `lemmaId`, and `starters` as entry ids (e.g. `w.atama`) — the
+  shapes this table reads. `buildBank`'s hash input is unchanged (`[id, readings, forms,
+  repeatGroup]`), so the compact snapshot rebuild here keeps matching; `bank.hash` is still on the bank.
+- Rules core: `resolve` still returns `key` and `matches[].entry/edges` (`why`, `display`,
+  `needsReading` are new and not needed: the table asks for a reading itself); `check` reasons
+  `wrong-head`/`repeat` unchanged; `newGame`, `play`, `concede`, `moves`, `safeReplies`, `safeGroups`,
+  `legalEdges`, `casualMove`, `readingsOf` exported with the same signatures.
+- Opponents: `chooseMove(state, bank, level, rng, o)` with level ids `partner|casual|thoughtful|sharp`
+  (the same as `RB.wordplay.LEVEL`); the result's `edge`, `depth`, `exact`, `nodes`, `fallback`,
+  `provisional:false` are what the table stores. The table stores its own decided move
+  (`active.cpuMove`, before any animation, reload-stable) and does not use `decide`/`state.cpuChoice`;
+  `play` clearing `state.cpuChoice` is harmless here.
+- **Fixed here after reading it:** (1) the strategy version is exported as `SH.ai.STRATEGY`
+  (`'roadside-ai-1'`), which `strategyVersion()` did not read — receipts would have said
+  `provisional-1` and the sheet would have kept the provisional note; it now reads it first (unit
+  check added). (2) `analyse` notes carry `label: 'fact'|'proven'|'checked'` and `proven`, not
+  `exact`; More analysis would have tagged every fact as "looked stronger within the checked moves".
+  Notes are now tagged by `label`/`proven` (fact / proven / within the checked moves, not proven),
+  with the old `exact` wording kept for notes that have neither.
+- Not adopted (left as is, worth a look after the merge): `SH.pickStarter` and `SH.snapshot/thaw`
+  (this table has its own starter rotation per bank hash and its own compact snapshot);
+  `analyse(…, { deep: true })` for More analysis (its timing with the real search was not measured
+  here, so More analysis asks for the default notes only).

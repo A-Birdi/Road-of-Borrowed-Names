@@ -409,4 +409,12 @@ export default async (t) => {
   }
   RB.game.s = null;
   SH.chooseMove = realChoose;
+  // the opponents' version: the stub has none (provisional); the engine's opponents export SH.ai.STRATEGY
+  {
+    const had = Object.prototype.hasOwnProperty.call(SH, 'ai'), was = SH.ai;
+    if (!had || !(was && was.STRATEGY)) t.eq(WP.strategyVersion(), 'provisional-1', 'without an exported strategy the opponents are named provisional');
+    SH.ai = Object.assign({}, was || {}, { STRATEGY: 'roadside-ai-1' });
+    t.eq(WP.strategyVersion(), 'roadside-ai-1', 'SH.ai.STRATEGY is the version receipts record (the provisional note goes away)');
+    if (had) SH.ai = was; else delete SH.ai;
+  }
 };

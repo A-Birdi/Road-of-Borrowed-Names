@@ -177,7 +177,15 @@ RB.ui.wordplay = RB.ui.wordplay || {};
     } catch (e) { r = null; }
     const notes = (r && r.notes) || [];
     if (!notes.length) { box.textContent = r && r.provisional ? 'No further analysis is available in this build (the analysis is provisional).' : 'No further notes for this chain.'; return; }
-    box.innerHTML = '<ul>' + notes.map((n) => '<li>' + esc(n.en || n.text || '') + ' <i>' + esc(n.exact ? '(proven by an exhaustive search of that position)' : '(looked stronger within the checked moves)') + '</i></li>').join('') + '</ul>';
+    box.innerHTML = '<ul>' + notes.map((n) => '<li>' + esc(n.en || n.text || '') + ' <i>' + esc(noteTag(n)) + '</i></li>').join('') + '</ul>';
+  }
+  // how sure a note is, in the engine's own terms: a fact of the chain, a proven result, or a
+  // preference within a bounded search (never stated as proof). Older notes carry only `exact`.
+  function noteTag(n) {
+    if (n.label === 'fact') return '(a fact of this chain)';
+    if (n.label === 'proven' || n.proven === true) return '(proven)';
+    if (n.label === 'checked' || n.proven === false) return '(within the checked moves; not proven)';
+    return n.exact ? '(proven by an exhaustive search of that position)' : '(looked stronger within the checked moves)';
   }
   // Optional ordinary practice from the look back (§4.3): words of this chain that have a word
   // card, asked through the shared challenge runner and the practice adapter, so each gives at
