@@ -39,7 +39,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   function craneMats(col) {
     if (craneMatCache.has(col)) return craneMatCache.get(col);
     const M = {
-      P: A.hmat(col, { n: 6, at: 4, lo: 0.2, hi: 0.985, sat: 0.75, hd: 70, hl: 12, sd: 0.12, rim: mixh(col, '#cfe0ff', 0.6) }),
+      P: A.hmat(col, { n: 6, at: 4, lo: 0.2, hi: 0.985, sat: 0.55, hd: 90, hl: 12, sd: 0.1, rim: mixh(col, '#cfe0ff', 0.6) }),
       red: A.hmat('#c85a4a', { n: 4, at: 2, lo: 0.2, hi: 0.72, sat: 1.2, hd: 26 }),
       writing: K.solid(mixh(col, '#2e2a48', 0.7), { line: false }),
     };
