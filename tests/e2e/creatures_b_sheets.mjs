@@ -4,8 +4,9 @@
 // Also measures each family's frame build time (first build, uncached) for the record.
 // Usage: node tests/e2e/creatures_b_sheets.mjs [family …] [--scale N] [--docs]
 //   writes tests/e2e/out/battle_creatures_b/sheets/<family>.png (native ×scale, default 2)
-//   with --docs: docs/screenshots/battle/creatures_b/sheet_<family>.webp (native) and
-//   keys_<family>.webp (key poses at 3×)
+//   with --docs: docs/screenshots/battle/creatures_b/sheet_<family>.webp (every frame, native,
+//   lossy), keys1x_<family>.webp (key poses, native, every variant) and keys_<family>.webp (key
+//   poses at 3×, first variant)
 import fs from 'node:fs';
 import path from 'node:path';
 import { serve, launch, page, root } from './lib.mjs';
@@ -89,8 +90,15 @@ for (const id of fams) {
     kc.width = cols * spec.w * ks; kc.height = opts.length * rowsPer * spec.h * ks;
     const g = kc.getContext('2d'); g.imageSmoothingEnabled = false; g.fillStyle = '#5a5048'; g.fillRect(0, 0, kc.width, kc.height);
     opts.forEach((oo, v) => kfr.forEach((fr, n) => { const x = n % cols, y = v * rowsPer + Math.floor(n / cols); const B = build(fr, oo); g.drawImage(B.cv, x * spec.w * ks, y * spec.h * ks, spec.w * ks, spec.h * ks); g.fillStyle = '#efe4c8'; g.font = '22px monospace'; g.fillText(fr.name, x * spec.w * ks + 8, y * spec.h * ks + 26); }));
+    // for the record: key poses at native size for every variant (one row each), and at 3× for
+    // the first variant only
+    const k1 = document.createElement('canvas'); k1.width = kfr.length * spec.w; k1.height = opts.length * spec.h;
+    const g1 = k1.getContext('2d'); g1.fillStyle = '#5a5048'; g1.fillRect(0, 0, k1.width, k1.height);
+    opts.forEach((oo, v) => kfr.forEach((fr, n) => g1.drawImage(build(fr, oo).cv, n * spec.w, v * spec.h)));
+    const k3 = document.createElement('canvas'); k3.width = cols * spec.w * ks; k3.height = rowsPer * spec.h * ks;
+    const g3 = k3.getContext('2d'); g3.imageSmoothingEnabled = false; g3.drawImage(kc, 0, 0, k3.width, k3.height, 0, 0, k3.width, k3.height);
     times.sort((a, b) => a - b);
-    return { url: cv.toDataURL('image/png'), keys: kc.toDataURL('image/png'), keysW: kc.width, w: spec.w, h: spec.h, rows: rows.map((r) => r.name + ':' + r.frames.length), median: times[times.length >> 1], max: times[times.length - 1], clipped };
+    return { url: cv.toDataURL('image/png'), keys: kc.toDataURL('image/png'), keys1: k1.toDataURL('image/png'), keys3: k3.toDataURL('image/png'), keysW: kc.width, w: spec.w, h: spec.h, rows: rows.map((r) => r.name + ':' + r.frames.length), median: times[times.length >> 1], max: times[times.length - 1], clipped };
   }, [id, FAM[id], scale]);
   if (r.err) { console.log(id, r.err); continue; }
   const png = path.join(outDir, id + '.png');
@@ -99,9 +107,9 @@ for (const id of fams) {
   report.push({ id, w: r.w, h: r.h, rows: r.rows, buildMs: { median: +r.median.toFixed(2), max: +r.max.toFixed(2) }, clipped: r.clipped });
   console.log(id, r.w + 'x' + r.h, 'build median', r.median.toFixed(2), 'ms max', r.max.toFixed(2), 'ms', r.clipped.length ? 'CLIPPED: ' + r.clipped.join(', ') : 'no clipped frames');
   if (toDocs) {
-    // WebP copies for the record (lossless)
-    const toWebp = async (dataUrl, file) => {
-      const webp = await p.evaluate(async (u) => { const im = new Image(); im.src = u; await im.decode(); const c = document.createElement('canvas'); c.width = im.width; c.height = im.height; c.getContext('2d').drawImage(im, 0, 0); return c.toDataURL('image/webp', 1); }, dataUrl);
+    // WebP copies for the record (key poses lossless; the every-frame sheet lossy, q 0.85)
+    const toWebp = async (dataUrl, file, q) => {
+      const webp = await p.evaluate(async ([u, q]) => { const im = new Image(); im.src = u; await im.decode(); const c = document.createElement('canvas'); c.width = im.width; c.height = im.height; c.getContext('2d').drawImage(im, 0, 0); return c.toDataURL('image/webp', q); }, [dataUrl, q == null ? 1 : q]);
       fs.writeFileSync(file, Buffer.from(webp.split(',')[1], 'base64'));
     };
     // native size sheet (re-rendered at 1×) and key poses at 3×
@@ -116,9 +124,10 @@ for (const id of fams) {
         rows.forEach((row, y) => row.forEach((fr, x) => { const L = K.layer(spec.w, spec.h, spec.ox, spec.oy); const out = (fr.act ? spec.pose(L, fr.act, fr.i, fr.n, o, EA.H, -1) : spec.build(L, fr.f, o, EA.H)) || L; c.drawImage(out.canvas(), x * spec.w, y * spec.h); }));
         return cv.toDataURL('image/png');
       }, [id, FAM[id][0]]);
-      await toWebp(r1, path.join(docDir, 'sheet_' + id + '.webp'));
-    } else await toWebp(r.url, path.join(docDir, 'sheet_' + id + '.webp'));
-    await toWebp(r.keys, path.join(docDir, 'keys_' + id + '.webp'));
+      await toWebp(r1, path.join(docDir, 'sheet_' + id + '.webp'), 0.85);
+    } else await toWebp(r.url, path.join(docDir, 'sheet_' + id + '.webp'), 0.85);
+    await toWebp(r.keys3, path.join(docDir, 'keys_' + id + '.webp'));
+    await toWebp(r.keys1, path.join(docDir, 'keys1x_' + id + '.webp'));
   }
 }
 fs.writeFileSync(path.join(outDir, 'report.json'), JSON.stringify(report, null, 1));

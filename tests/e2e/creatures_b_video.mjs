@@ -15,7 +15,7 @@ const { srv, url } = await serve();
 const b = await launch();
 const dir = path.join(path.dirname(out), 'raw_' + path.basename(out, '.webm'));
 fs.mkdirSync(dir, { recursive: true });
-const ctx = await b.newContext({ viewport: { width: 1280, height: 720 }, recordVideo: { dir, size: { width: 1280, height: 720 } } });
+const ctx = await b.newContext({ viewport: { width: 1280, height: 720 }, recordVideo: { dir, size: { width: 960, height: 540 } } });
 const p = await ctx.newPage();
 const errors = [];
 p.on('pageerror', (e) => errors.push(e.message));
