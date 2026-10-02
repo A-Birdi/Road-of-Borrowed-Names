@@ -31,6 +31,7 @@ const suites = [
   // the two deduction cases, the refined sequences and their keepsakes, Known Details (addendum §14.8–§18)
   ['cases.mjs'], ['cases_shots.mjs'], ['known.mjs'],
   ['pace.mjs'], // fishing pace: the optional response-entry clock, calibration, records (Practice addendum §7, §23.3)
+  ['practice_b.mjs'], // practice suite B: letters, the Proofreader's Tray, One word two moments (docs/practice/suite_b.md)
   full ? ['matrix.mjs'] : ['pursue.mjs', 'E', 'mio'],
 ];
 const results = [];

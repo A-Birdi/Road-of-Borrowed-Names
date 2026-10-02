@@ -328,6 +328,7 @@ let regTexts = 0;
     known: RB.known && { TYPES: RB.known.TYPES, STATE_WORD: RB.known.STATE_WORD },
     company: C.company,
     shiritori: RB.shiritori && RB.shiritori.texts && RB.shiritori.texts(), // shiritori word banks (src/content/shiritori/)
+    practiceB: C.practiceB, // practice suite B: letters, proofreading, comparisons (docs/practice/suite_b.md)
   };
   for (const k in roots) walk(roots[k], k);
 }

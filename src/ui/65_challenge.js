@@ -29,6 +29,9 @@ RB.challenge = (function () {
   // are written with one shape (ロ/口, へ/ヘ…) count as one (RB.answers).
   function check(input, step, opts) {
     if (step.kind !== 'write') return { ok: false };
+    // an authored bounded answer space (practice suite B): the step judges its own replies;
+    // { ok, feedback, limit?, head?, html? } — `limit` means "outside what this can read", not wrong
+    if (typeof step.judge === 'function') { try { return step.judge(input, opts || {}) || { ok: false }; } catch (e) { console.error('judge', e); return { ok: false, feedback: [] }; } }
     const accept = (step.accept && step.accept.length ? step.accept : [step.answer]).map(String);
     if (RB.answers && RB.answers.check) return RB.answers.check(input, { accept, mode: step.mode || 'kana', scriptFree: !!step.scriptFree, handwritten: !!(opts && opts.handwritten) });
     const norm = (s) => plain(s).replace(/\s/g, '');
@@ -332,6 +335,7 @@ RB.challenge = (function () {
         const r = check(text, step, { handwritten: modeUsed === 'hand' });
         if (r.ok) {
           if (meta.assisted) active.helpUsed = true;
+          res.given = { text: plain(text), mode: modeUsed, matched: r.matched != null ? r.matched : null, family: r.family != null ? r.family : null };
           success(modeUsed, r.notes);
           return;
         }
@@ -342,6 +346,14 @@ RB.challenge = (function () {
           RB.audio && RB.audio.sfx('recog_unsure');
           fb('unsure', 'I could not read that clearly',
             '<p>This doesn\'t count against you. Your answer reads <span class="jp big" lang="ja">' + ownText(text) + '</span> — if you meant something else, tap it to rewrite it, or use the chart.</p>');
+          return;
+        }
+        // Outside the step's authored answer space: a limit of the practice, never a mistake
+        if (r.limit) {
+          res.limits = (res.limits || 0) + 1;
+          if (PH) PH.outcome('unsure');
+          fb('unsure', r.head || 'Outside what this can read', '<p>You gave <span class="jp big" lang="ja">' + ownText(plain(text)) + '</span>.</p>' + (r.html || ''));
+          if (pad && modeUsed === 'hand') pad.reset();
           return;
         }
         const firstBefore = res.firstTry;
@@ -366,7 +378,7 @@ RB.challenge = (function () {
       }
       function evaluateChoice(o, btn) {
         if (PH) PH.submit('choice');
-        if (o.ok) { btn.classList.add('on'); success('choice'); return; }
+        if (o.ok) { btn.classList.add('on'); res.given = { option: o, mode: 'choice' }; success('choice'); return; }
         res.mistakes++;
         if (res.firstTry == null) res.firstTry = false;
         if (PH) PH.outcome('wrong');
@@ -380,7 +392,7 @@ RB.challenge = (function () {
         const norm = (a) => a.map(plain).join('');
         const alts = [step.answer].concat(step.alts || []);
         if (PH) PH.submit('order');
-        if (alts.some((a) => norm(a) === norm(arr))) { success('choice'); return; }
+        if (alts.some((a) => norm(a) === norm(arr))) { res.given = { order: arr.slice(), mode: 'choice' }; success('choice'); return; }
         res.mistakes++;
         if (res.firstTry == null) res.firstTry = false;
         if (PH) PH.outcome('wrong');

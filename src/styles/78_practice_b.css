@@ -1,0 +1,140 @@
+/* Practice suite B: villagers' letters, the Proofreader's Tray, One word two moments
+   (src/ui/90_letters.js, 91_proof.js, 92_compare.js). Paper and ink of the folio; every
+   state carries words or a shape as well as any tint; controls keep the 44 px target. */
+
+.folio.lsheet.pb .leaf { overflow-wrap: anywhere; }
+.pb-hidden { display: none !important; }
+.lsheet.pb h3 { display: flex; align-items: center; gap: 0.4em; font-size: 1em; margin: 0.9em 0 0.35em; }
+.lsheet.pb h3 svg { width: 1.15em; height: 1.15em; flex: none; color: var(--ink-2); }
+.lsheet.pb .slip-lab { font-size: 0.76em; letter-spacing: 0.07em; text-transform: uppercase; font-weight: 700; color: var(--ink-3); margin-bottom: 2px; }
+.pb-bi .en { font-size: 0.82em; color: var(--ink-2); font-family: var(--ui-font, inherit); }
+.lsheet.pb .note-slip svg, .pb-hdr svg { width: 1.1em; height: 1.1em; vertical-align: -0.2em; }
+
+/* the trays: cards are ruled entries; disabled ones say why in words */
+.pb-cards .pb-card { min-height: var(--tap); }
+.pb-cards .pb-card .d { display: block; color: var(--ink-2); font-size: 0.92em; }
+.pb-cards .pb-card .kind { display: block; margin-top: 0.15em; }
+.pb-cards .pb-card[data-state="open"] { box-shadow: inset 4px 0 0 var(--ribbon); }
+.pb-cards .pb-card[disabled] { cursor: not-allowed; opacity: 0.72; }
+
+/* a letter */
+.pb-from { align-items: flex-start; }
+.pb-from .letter { margin-top: 0.3em; }
+.pb-task, .pb-scope, .pb-sent, .pb-purpose { margin: 0.6em 0; padding: 0.5em 0.75em; background: var(--paper-2); border: 1px solid var(--paper-edge); border-radius: 2px; }
+.pb-task p, .pb-scope p, .pb-purpose p { margin: 0.2em 0; }
+.pb-task-en { font-weight: 600; }
+.pb-line { list-style: none; margin: 0; padding: 4px; display: flex; flex-wrap: wrap; gap: 6px; min-height: calc(var(--tap) + 8px); background: var(--pad-paper, #fffcf3); border: 1px solid var(--paper-edge); border-radius: 3px; }
+.pb-line li.empty { padding: 0.6em; }
+.pb-pieces { margin-bottom: 0.4em; }
+.lsheet.pb .tile { min-height: var(--tap); min-width: var(--tap); }
+.pb-other { margin-top: 0.4em; }
+.pb-shapes { margin: 0.3em 0 0.5em; padding-left: 1.2em; }
+.pb-shapes li { margin: 0.25em 0; }
+.pb-shapes li svg { width: 1em; height: 1em; vertical-align: -0.15em; }
+.pb-shapes li.no { color: var(--ink-2); }
+.pb-known { border-top: 1px solid var(--rule); margin-top: 0.6em; }
+.pb-ack { margin: 0.6em 0; }
+.pb-explain { margin: 0.7em 0; padding: 0.5em 0.75em; border-left: 4px solid var(--ok-ink); background: rgba(45, 95, 40, 0.06); }
+.pb-explain p { margin: 0.2em 0; }
+.pb-replay, .pb-open { margin-top: 0; }
+
+/* the challenge runner's task slip, carrying the letter / the notice and its evidence / the pair */
+.chal-situ .pb-hdr { font-size: 0.95em; }
+.pb-hdr .kind { font-size: 0.76em; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 700; color: var(--ink-3); }
+.pb-hdr-task { margin-top: 0.3em; font-weight: 600; }
+.pb-hdr .act-en { color: var(--ink-2); }
+.pb-hdr details { margin-top: 0.4em; }
+.pb-hdr summary, .pb-f-known summary, .pb-trq summary { cursor: pointer; min-height: var(--tap); display: flex; align-items: center; color: var(--river); }
+.pb-hdr summary:focus-visible, .pb-f-known summary:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.pb-hdr .pb-ev { margin: 0.35em 0; }
+
+/* evidence */
+.pb-sheet { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.6em; }
+@media (min-width: 860px) { .pb-sheet { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+.pb-notice-wrap, .pb-evidence { padding: 0.5em 0.75em; border: 1px solid var(--paper-edge); background: var(--pad-paper, #fffcf3); border-radius: 2px; min-width: 0; }
+.pb-ev { margin: 0.3em 0 0.6em; }
+.pb-ev-t { font-weight: 600; margin-bottom: 0.2em; }
+.pb-ico { width: 2.6em; height: 2.6em; color: var(--ink); flex: none; }
+.pb-plan { display: flex; flex-wrap: wrap; gap: 8px; }
+.pb-cell { flex: 1 1 8em; min-width: 0; display: grid; justify-items: center; text-align: center; gap: 2px; padding: 0.4em; border: 1px solid var(--rule); border-radius: 2px; }
+.pb-cell[data-state="closed"] { background: repeating-linear-gradient(135deg, transparent 0 6px, rgba(38, 31, 21, 0.06) 6px 9px); }
+.pb-cell-s { font-weight: 700; display: flex; align-items: center; gap: 0.25em; }
+.pb-cell-s svg { width: 1.1em; height: 1.1em; }
+.pb-cell[data-state="closed"] .pb-cell-s { color: var(--danger-ink); }
+.pb-cell[data-state="open"] .pb-cell-s { color: var(--ok-ink); }
+.pb-count { display: flex; flex-wrap: wrap; gap: 4px; }
+.pb-count .pb-ico { width: 2em; height: 2em; }
+.pb-count.per .pb-unit { display: inline-flex; flex-direction: column; align-items: center; padding: 2px 4px; border: 1px solid var(--rule); border-radius: 2px; }
+.pb-count.per .pb-sub { display: flex; }
+.pb-count.per .pb-sub .pb-ico { width: 1.2em; height: 1.2em; }
+.pb-ev-cap { margin-top: 0.2em; font-weight: 600; }
+.pb-slip, .pb-rule { padding: 0.4em 0.6em; border: 1px dashed var(--paper-edge); background: var(--paper); }
+.pb-rule .en, .pb-slip .en { color: var(--ink-2); font-size: 0.9em; }
+.pb-steps { margin: 0.2em 0 0.4em; padding-left: 1.4em; }
+.pb-seq { list-style: none; margin: 0.2em 0; padding: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+.pb-seq li { display: flex; align-items: center; gap: 4px; }
+.pb-arrow svg { width: 1.2em; height: 1.2em; color: var(--ink-2); }
+.pb-box { display: inline-flex; align-items: center; gap: 0.35em; padding: 0.3em 0.5em; border: 1px solid var(--ink-3); border-radius: 2px; background: var(--paper); }
+.pb-n { font-weight: 700; font-variant-numeric: tabular-nums; color: var(--ink-2); }
+.pb-objs { display: flex; flex-wrap: wrap; gap: 8px; }
+.pb-obj { flex: 1 1 9em; min-width: 0; display: grid; justify-items: center; text-align: center; gap: 2px; padding: 0.4em; border: 1px solid var(--rule); border-radius: 2px; }
+.pb-obj-n { font-weight: 700; }
+.pb-table { border-collapse: collapse; width: 100%; font-size: 0.95em; }
+.pb-table th, .pb-table td { border: 1px solid var(--rule); padding: 0.3em 0.45em; text-align: left; vertical-align: top; }
+.pb-table thead th { background: var(--paper-2); }
+.pb-measure { display: grid; gap: 6px; }
+.pb-bar { display: grid; grid-template-columns: minmax(0, 8em) minmax(0, 1fr) auto; gap: 6px; align-items: center; }
+.pb-bar-track { height: 0.9em; border: 1px solid var(--ink-3); background: var(--paper); }
+.pb-bar-fill { display: block; height: 100%; background: repeating-linear-gradient(90deg, var(--ink-2) 0 4px, transparent 4px 6px); }
+.pb-bar-v { font-variant-numeric: tabular-nums; font-weight: 600; }
+@media (max-width: 420px) { .pb-bar { grid-template-columns: minmax(0, 1fr) auto; } .pb-bar-track { grid-column: 1 / -1; grid-row: 2; } }
+
+/* the notice, in selectable portions */
+.pb-notice { font-size: 1.15em; margin: 0.3em 0; line-height: 2.1; }
+.pb-notice.list { padding-left: 1.6em; line-height: 1.9; }
+.pb-notice.pick .pb-seg {
+  font: inherit; color: var(--ink); background: var(--paper); border: 1px dashed var(--ink-3); border-radius: 3px;
+  min-height: var(--tap); min-width: var(--tap); padding: 0 0.35em; margin: 2px 0; cursor: pointer; touch-action: manipulation; line-height: 2;
+}
+.pb-notice.pick.list li { margin: 4px 0; }
+.pb-notice.pick .pb-seg[aria-pressed="true"] { border: 2px solid var(--ink); background: rgba(193, 138, 42, 0.16); box-shadow: inset 0 -3px 0 var(--ribbon); }
+.pb-notice.pick .pb-seg:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.pb-seg.sel { text-decoration: underline 2px; text-underline-offset: 0.25em; }
+mark.pb-fixed { background: rgba(45, 95, 40, 0.14); color: inherit; border-bottom: 3px double var(--ok-ink); padding: 0 0.15em; }
+.pb-find { margin: 0.7em 0; }
+.pb-find .mc { display: grid; gap: 8px; }
+.pb-consequence { display: flex; gap: 0.6em; align-items: flex-start; margin: 0.7em 0; padding: 0.6em 0.8em; border: 2px solid var(--ok-ink); border-radius: 3px; background: rgba(45, 95, 40, 0.06); }
+.pb-consequence > svg { width: 1.4em; height: 1.4em; flex: none; color: var(--ok-ink); }
+.pb-consequence p { margin: 0.15em 0; }
+.pb-repaired { margin: 0.4em 0; padding: 0.5em 0.75em; border: 1px solid var(--paper-edge); background: var(--pad-paper, #fffcf3); }
+.pb-asked { font-size: 1.1em; }
+.pb-kept p { margin: 0.2em 0; }
+.pb-pages .pb-prev { margin: 0.3em 0; padding: 0.3em 0.5em; background: var(--paper-2); }
+.pb-label label { display: block; font-weight: 600; margin: 0.4em 0 0.2em; }
+.pb-label input { width: 100%; min-height: var(--tap); font: inherit; padding: 0 0.5em; border: 1px solid var(--ink-3); border-radius: var(--r-1); background: var(--paper); color: var(--ink); }
+
+/* a pair of quotations */
+.pb-quote { margin: 0.45em 0; padding: 0.45em 0.7em; border-left: 4px double var(--paper-edge); background: var(--paper-2); }
+.pb-quote.teach { border-left-style: dashed; border-left-color: var(--ink-3); }
+.pb-quote figcaption { display: flex; flex-wrap: wrap; gap: 0.2em 0.8em; font-size: 0.88em; color: var(--ink-2); }
+.pb-q-who { font-weight: 700; color: var(--ink); display: inline-flex; align-items: center; gap: 0.3em; flex-wrap: wrap; }
+.pb-q-who svg { width: 1em; height: 1em; }
+.pb-q-jp { margin: 0.2em 0 0; font-size: 1.1em; }
+.pb-q-en { color: var(--ink-2); font-size: 0.92em; margin-top: 0.15em; }
+.pb-trq p { margin: 0.2em 0; }
+.pb-pair-small .pb-quote { font-size: 0.95em; }
+.pb-empty p { display: inline; }
+.pb-folder .pb-f-msg, .pb-folder .pb-f-reply, .pb-folder .pb-f-ack { margin: 0.35em 0; }
+.pb-folder .pb-f-msg { padding: 0.3em 0.6em; background: var(--pad-paper, #fffcf3); border-left: 4px double var(--paper-edge); }
+.pb-folder .act-en { font-size: 0.9em; }
+.pb-marks .pb-quote { margin: 0.3em 0; }
+/* a primary action that cannot be used yet must not look ready (e.g. Send with nothing placed) */
+.lsheet.pb .pbtn.primary[disabled] { background: var(--paper); color: var(--ink-3); border-color: var(--ink-3); }
+/* long labels wrap inside their button at large text sizes instead of running off a phone screen */
+.lsheet.pb .folio-foot .cbtn { max-width: 100%; flex-shrink: 1; }
+.lsheet.pb .folio-foot .cbtn > span { min-width: 0; overflow-wrap: anywhere; text-align: center; }
+.lsheet.pb .folio-head > .cbtn { flex: 0 1 auto; max-width: 100%; }
+.lsheet.pb .folio-head > .cbtn > span { min-width: 0; overflow-wrap: anywhere; text-align: center; }
+/* a safety net: an icon nothing else sizes stays text-sized (zero specificity, so any rule wins) */
+:where(.lsheet.pb svg[viewBox="0 0 24 24"]) { width: 1.2em; height: 1.2em; flex: none; }
+.pb-asked svg { width: 1.2em; height: 1.2em; vertical-align: -0.25em; color: var(--ink-2); }
