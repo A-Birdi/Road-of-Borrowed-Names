@@ -379,7 +379,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // specular edge, a dark reflected band, navy outline; the far ones smaller and a step darker),
   // and two ribbons of voice and mill dust wrapped round it — one behind, rising to the upper
   // right, one in front, trailing toward the party — that taper into ragged motes.
-  const TILT = -0.24, RY = 0.56, PY = 8;
+  const TILT = -0.24, RY = 0.58, PY = 14;
   const plane = (u, v) => { const y = v * RY; return [u * Math.cos(TILT) - y * Math.sin(TILT), u * Math.sin(TILT) + y * Math.cos(TILT) + PY]; };
   const unplane = (x, y) => { const X = x, Y = y - PY; const u = X * Math.cos(TILT) + Y * Math.sin(TILT), w = -X * Math.sin(TILT) + Y * Math.cos(TILT); return [u, w / RY]; };
   const echoMatCache = new Map();
@@ -508,7 +508,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     // (trailing toward the party), swaying with the rings' phase
     const sw = Math.sin(q.rph * TAU) * 0.12, open = 1 + (q.coreS - 1) * 2 + (q.mouth || 0) * 0.08;
     ribbon(swA, M.swirl, 2.75 + sw, 2.75, 25 * cs, 58 * open, 10, 26, 0.8, 3);
-    ribbon(swB, M.swirl, 0.15 + sw, 1.75, 24 * cs, 38 * open, 7, -4, 0.8, 7);
+    ribbon(swB, M.swirl, 0.15 + sw, 1.75, 24 * cs, 40 * open, 7, -10, 0.86, 7);
     // the core: dark glass in hard bands, a crisp specular highlight up left, a reflected band low
     // right, a cool rim on the right edge
     const R = 23 * cs;

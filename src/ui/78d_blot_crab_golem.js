@@ -239,7 +239,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
   };
   A.family('blot', {
-    spec: { w: 220, h: 168, ox: 128, oy: 78, dy: 30, ms: 160 },
+    spec: { w: 248, h: 168, ox: 128, oy: 78, dy: 30, ms: 160 },
     base: bBase, idle: bIdle, poseTable: bTable, rig: blotRig, recoil: { push: 3 },
   });
   // Strike: rears, lashes a tendril; contact 560, ~1,050 ms

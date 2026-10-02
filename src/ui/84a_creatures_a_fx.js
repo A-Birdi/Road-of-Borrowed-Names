@@ -443,10 +443,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
   for (const [id, art, d, note] of AUD) A.auditEnemy(id, art, d, note);
 
   // ---- prewarm --------------------------------------------------------------------------------
-  // The acts a creature will need (its moves' frame sets, then the reactions), built in idle slices
-  // after its first frame appears in a battle. Bounded: at most PREWARM_CAP frames per creature (a
-  // share of 96 when several different creatures meet), and the enemy-art cache itself holds a fixed
-  // number of frames (LRU, 140).
+  // The rest of a creature's idle loop, then the acts it will need (its moves' frame sets, then the
+  // reactions), built in idle slices after its first frame appears in a battle. Bounded: at most
+  // PREWARM_CAP posed frames per creature (a share of 96 when several different creatures meet), and
+  // the enemy-art cache itself is bounded (LRU: 140 frames and 30 MiB of pixels).
   const PREWARM_CAP = 44;
   const pending = [], seen = new Map();
   let tick = null, cv1 = null;
@@ -474,7 +474,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
     try { distinct = Math.max(1, new Set((RB.combat.members() || []).map((mid) => { const e = RB.content.enemies[mid]; return e ? e.art + JSON.stringify(e.artOpts || {}) : mid; })).size); } catch (e) { /* one */ }
     const cap = Math.min(PREWARM_CAP, Math.floor(96 / distinct));
     const out = [];
-    for (const key of keys) for (let i = 0; i < spec.poses[key] && out.length < cap; i++) out.push([key, i, spec.poses[key]]);
+    // the rest of its idle loop first (the first drawing is already built), then its moves
+    const seq = spec.seq ? [...new Set(spec.seq)] : [...Array(spec.frames || 1).keys()];
+    for (const f of seq.slice(1)) out.push(['idle', f, 0]);
+    let posed = 0;
+    for (const key of keys) for (let i = 0; i < spec.poses[key] && posed < cap; i++, posed++) out.push([key, i, spec.poses[key]]);
     return out;
   }
   function pump(deadline) {
@@ -488,6 +492,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       try {
         if (!cv1) cv1 = RB.sprites && RB.sprites.makeCanvas ? RB.sprites.makeCanvas(1, 1) : null;
         if (!cv1) { pending.length = 0; break; }
+        if (key === 'idle') { EA.frame(id, i, o); continue; }
         const [act, fam] = key.split('.');
         EA.drawPosed(cv1.getContext('2d'), id, 0, o, -9999, -9999, 1, false, { act, family: fam || null, k: (i + 0.5) / n, dir: { x: -0.8, y: 0.6 } });
       } catch (e) { pending.length = 0; break; }

@@ -22,12 +22,29 @@ RB.enemyArt = (function () {
   const K = RB.pxkit;
   const A = {};
   const P = {};
+  // The shared frame cache (every creature family; battle addendum §21.5): an LRU bounded by bytes
+  // (w × h × 4 per frame) as well as by count, so larger native frames cannot grow it past its share
+  // of the 48 MiB battle-art budget — at most CAP frames and CAP_BYTES of pixels, whichever is
+  // reached first; the least recently used frames go first.
   const cache = new Map();
-  const CAP = 140;
+  const CAP = 140, CAP_BYTES = 30 * 1048576;
+  let held = 0;
+  const sizeOf = (cv) => (cv && cv.width ? cv.width * cv.height * 4 : 0);
+  function put(key, cv) {
+    const old = cache.get(key);
+    if (old) { held -= sizeOf(old); cache.delete(key); }
+    cache.set(key, cv);
+    held += sizeOf(cv);
+    while (cache.size > CAP || (held > CAP_BYTES && cache.size > 1)) {
+      const k = cache.keys().next().value;
+      held -= sizeOf(cache.get(k));
+      cache.delete(k);
+    }
+  }
 
   function def(id, spec) {
     P[id] = spec;
-    for (const k of [...cache.keys()]) if (k.startsWith(id + '|')) cache.delete(k);
+    for (const k of [...cache.keys()]) if (k.startsWith(id + '|')) { held -= sizeOf(cache.get(k)); cache.delete(k); }
     return spec;
   }
   function seqOf(spec) {
@@ -66,8 +83,7 @@ RB.enemyArt = (function () {
       spec._boxX = [l1 < 0 ? 0 : l0, l1 < 0 ? out.w - 1 : l1];
     }
     cv = out.canvas();
-    cache.set(key, cv);
-    while (cache.size > CAP) cache.delete(cache.keys().next().value);
+    put(key, cv);
     return cv;
   }
   function has(id) { return !!P[id]; }
@@ -207,8 +223,7 @@ RB.enemyArt = (function () {
     const L = K.layer(spec.w, spec.h, spec.ox, spec.oy);
     const out = spec.pose(L, act, i, n, o || {}, H, side) || L;
     cv = out.canvas();
-    cache.set(key, cv);
-    while (cache.size > CAP) cache.delete(cache.keys().next().value);
+    put(key, cv);
     return cv;
   }
   function posedOf(spec, pose) {
@@ -1112,11 +1127,12 @@ RB.enemyArt = (function () {
     },
   });
 
-  // estimated resident pixels of the cached creature frames (battle addendum §21.5): w × h × 4 bytes each
+  // estimated resident pixels of the cached creature frames (battle addendum §21.5): w × h × 4 bytes
+  // each, counted afresh from the cache itself (not from the running total the eviction uses)
   function cacheStats() {
     let bytes = 0;
-    for (const cv of cache.values()) if (cv && cv.width) bytes += cv.width * cv.height * 4;
-    return { frames: cache.size, cap: CAP, bytes, mib: +(bytes / 1048576).toFixed(3) };
+    for (const cv of cache.values()) bytes += sizeOf(cv);
+    return { frames: cache.size, cap: CAP, capBytes: CAP_BYTES, capMib: CAP_BYTES / 1048576, bytes, mib: +(bytes / 1048576).toFixed(3) };
   }
   return { def, P, A, draw, drawArt, drawPosed, motion, styleOf, STYLE, MOVES, frame, has, frameAt, extent, H, cacheStats };
 })();
