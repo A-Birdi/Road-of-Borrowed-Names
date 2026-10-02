@@ -98,7 +98,16 @@ export default async (t) => {
     t.ok(I.ready.length >= 6 && I.ready.length <= 8 && I.calm.length >= 3 && I.calm.length < I.ready.length, id + ': ' + I.ready.length + ' idle key poses, ' + I.calm.length + ' quieter calm ones');
     const keys = new Set();
     for (let tt = 0; tt < 60000; tt += 7) keys.add(MV.idleKey(id, 'ready', tt, false));
-    t.ok(keys.size <= I.ready.length * 4, id + ': the idle uses a bounded set of frames (' + keys.size + ' over a minute)');
+    // (per key: two in-betweens, the settling frame, the hold, and the battle-ready pulse's dip and breath)
+    t.ok(keys.size <= I.ready.length * 6, id + ': the idle uses a bounded set of frames (' + keys.size + ' over a minute)');
+    // the ready stance stays alive: about 6–12 pose changes a second, no still hold longer than a pulse step
+    {
+      const L = MV._.loopOf(id, 'ready');
+      let prev = null, n = 0, run = 0, longest = 0;
+      for (let tt = 0; tt < L; tt += 2) { const k = MV.idleKey(id, 'ready', tt, false); if (k !== prev) { if (prev != null) n++; prev = k; run = 0; } else { run += 2; longest = Math.max(longest, run); } }
+      const rate = n / (L / 1000);
+      t.ok(rate >= 6 && rate <= 12 && longest <= 260, id + ': the ready idle changes pose ' + rate.toFixed(1) + ' times a second (longest still ' + longest + ' ms)');
+    }
     t.eq(MV.idleKey(id, 'ready', 12345, true), '0.0', id + ': reduced motion holds one still key');
   }
   t.ok(['nao', 'mio', 'ren', 'suzu'].every((id) => MV._.loopOf(id, 'ready') !== MV._.loopOf('pc', 'ready') && MV.IDLE[id].off !== MV.IDLE.pc.off), 'each companion\'s idle runs on its own loop and phase, apart from yours');

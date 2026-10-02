@@ -1,8 +1,271 @@
 # Party art in battle — the player, Nao, Mio, Ren and Suzu
 
 **Area:** party worker (docs/BATTLE_ART_CONTRACTS.md). **Brief:** battle addendum §5–§8, §10 (party side),
-§17, §18.3, §21.4–21.5, §22.4, §23.5 (party). **Base:** 982c8df. Everything here is presentation: no
+§17, §18.3, §21.4–21.5, §22.4, §23.5 (party); round 2: the owner's restyle brief. **Base:** 982c8df (round 1),
+6855ba1 (round 2). Everything here is presentation: no
 damage, target, knot, learning, Harmony, Bond, reward or party-size rule was changed.
+
+# Round 2 — the restyle against the owner's reference (2 October 2026)
+
+**Why.** The owner played the addendum's build (Firefox, about 2000 × 1090) and asked for the battle art to be
+"reshaped to fit more in line with the supplied style" (the armoured-knight reference: strong silhouette,
+coloured outlines, hue-shifted ramps, a cool rim light, cast shadows, material-specific rendering, clean
+clusters, dense authored detail). In battle the player "read more like a standard idle". **Base:** 6855ba1 (the
+lead's fix that keeps the party in the ready stance while choosing). Poses, gestures, deliveries, contact beats,
+timings and every rule are unchanged; this round changes the form and the rendering, and fills the idle's holds.
+
+## Files (round 2)
+
+| File | Change |
+|---|---|
+| `src/engine/34_battlers.js` | new colour system (`hramp`: six hue-shifted tones, outline, lit-edge and rim tones per material), per-material recipes, the craft passes in `render1` (cast shadows, form lines, seams, rim, clusters, coloured selective outline), hair locks / tufts / spikes, bows, scarf, cape folds, folio brass, cuff buttons, belt buckle; head ×0.9 and shoulders 9.1 (were 8.6) |
+| `src/engine/34m_battler_moves.js` | the battle-ready pulse (`PULSE`, idle keys `i.4` dip and `i.5` breath); the player's stance gains a weight shift (pelvis roll 2.6°, shoulders −2°) |
+| `tests/unit/battle_party.test.mjs` | idle frame bound 6 per key (was 4: the pulse adds two drawings per key); the cadence is asserted (6–12 changes a second, no still hold over 260 ms) |
+| `tests/e2e/battle_party_restyle.mjs` | new: before/after sheets, cadence, in-battle captures, the Normal clip |
+| `docs/battle/party.md`, `docs/screenshots/battle/party_restyle/`, `docs/screenshots/battle/README.md` (one row) | this record and its evidence |
+
+No change to `src/ui/84p_party_fx.js`, `84p_party_word.js` or `84p_party_choreo.js` (the effects sit on the new
+figures without a colour change; reviewed in `families_gallery` captures of the `battle_party` run), the overworld
+sprites, portraits, pets, the stage's `layout()` or any rule.
+
+## The frame standard, measured again: 80 × 104 stays
+
+The 96 × 128 working frame (`GRIDS.w96`) was put on the stage (FRAME/ANCHOR overridden in the page, the rig
+drawn on that grid) with Mio, a cat and three Flour Moths (the Mill, a diagnostic placement), and compared
+with 80 × 104 (scratch probe, Chromium, CSS px = art px at these phone widths):
+
+| Viewport, creatures | Frame | Figure height | Player's box inside the lead creature's frame box | Mio's box inside a creature's frame box |
+|---|---|---|---|---|
+| 390 × 844, three | 80 × 104 | 81 px | 13 % (lead), 14 % (back left) | 27 % |
+| 390 × 844, three | 96 × 128 | 94 px | 45 % (lead), 27 % (back left) | 43 % |
+| 844 × 390, three | 80 × 104 | 81 px | 0 %, 33 % | 33 % |
+| 844 × 390, three | 96 × 128 | 94 px | 25 %, 44 % | 54 % |
+| 1280 × 800 / 1920 × 1080, one | either | — | 3 % → 9 % / 0 % | 0 % |
+
+(The creatures' boxes are their frame extents, larger than their drawn wings, so the shares overstate contact; the
+captures show the larger party's heads entering the lead moth's lower wings at 390 × 844, which the shipped size
+does not.) A larger frame would also move the companion and the pet apart (`layout()` spaces by frame width) and
+change the pets' measured figure height (`src/ui/85_battle_pets.js` sizes the pet against the companions'
+ready height). **Decision: 80 × 104 at 1.14 art px per body unit stays**; the gain goes into form and rendering.
+The pets' measure after the reshape: companions' mean ready height 80 px (base 81.75 px) → the pet's density stays
+1.0 (unchanged).
+
+## The new standard
+
+**Proportions.** Head radii × 0.9 (child × 0.94), shoulder half-width 9.1 units (was 8.6): the shoulder line reads
+past the head from behind; the hair is drawn relative to the head. The player's stance carries a weight shift
+(the left hip up, the free right hip dropped, the shoulders set against it, the near foot forward).
+
+**Ramps (`hramp`).** Six tones per material, the material's own colour as tone 3 (the lit plane):
+
+| Tone | Lightness | Hue | Saturation |
+|---|---|---|---|
+| 0 deep shadow | l × (1 − 0.6·lo) | 30° toward the cool target | + 0.16 |
+| 1 shadow | l × (1 − 0.41·lo) | 19° toward cool | + 0.11 |
+| 2 half-light | l × (1 − 0.2·lo) | 8° toward cool | + 0.05 |
+| 3 lit plane | l | — | — |
+| 4 highlight | l + (1 − l) × 0.36 | 13° toward the warm target | − 0.02 |
+| 5 sheen / specular | l + (1 − l) × 0.66 | 24° toward warm | − 0.1 |
+| outline (OL) | l × 0.26, clamped 0.07–0.19 | 42° toward cool | + 0.22 |
+
+Cool target 250° (blue-violet; warm hues reach it through crimson, so orange hair and gold shade to red-brown),
+warm target 52° (yellow-cream); blues (170–255°) brighten toward cyan instead of round through violet. `lo` is 1 for mid colours, 0.8 above l 0.62, 0.62 above l 0.78; dark colours lift
+less toward their highlight. Pale colours (l > 0.74, s < 0.5: creams, whites, ivory) shade toward a cool grey
+(hue shift × 0.4, shadow saturation × 0.4). A true grey (s < 0.035) takes a steel hue (222°). LIT (the lit-edge
+line) is OL mixed 55 % toward tone 1; RIM is tone 3 mixed 50 % with `#8ec0ff` (skin: `#b8d0ff`).
+
+**Light.** One key light, upper left and a little toward the viewer (unchanged vector). Terminators are sharper
+(thresholds on n·L for tones 4 / 3 / 2 / 1: 0.74 / 0.3 / 0.1 / −0.5; cloth 0.72 / 0.3 / 0.1 / −0.5, so a garment's
+upper-left planes take a broad lit tone against a clear shadow side; hair 0.9 / 0.32 / 0.12 / −0.45, its light is
+in the locks and the arc): planes, not staircase gradients round the outline. Tone 5 only where a recipe puts it.
+
+**The passes (`render1`), in order.**
+1. *Cast shadows*: from each pixel's surface point, four samples toward the light (1.2–4.6 body units) through the
+   depth buffer; when a nearer part of another form (0.5–7 units in front) lies on that path, a lit pixel drops to
+   tone 1, a shaded one a step. Shapes: under the head and hair on the collar and nape, under an arm on the side,
+   under a hat's brim, a strap, a bow.
+2. *Form lines*: a pixel beside a nearer part of another form (> 2.4 units) takes its own tone 0 — a line on the
+   farther form, lighter than the silhouette's outline. *Seams*: where two different colours meet at nearly one depth
+   (a belt on a coat, a cuff, a boot's top, a trim), the one underneath (toward the light) takes −1 and the raised
+   one's top edge +1.
+3. *Rim*: on the outer right silhouette (three empty pixels to the right), where the surface faces right and is not
+   in the key light, the material's RIM tone — a 1 px cool strip down the figure's right side.
+4. *Clusters*: a lone pixel whose four neighbours agree on another tone of its ramp takes theirs.
+5. *Outline*: every pixel round the silhouette takes the OL of the material it borders (the one below first);
+   on upper-left edges of lit forms it breaks into LIT. A look's `outlineCol` still overrides it.
+
+**Per-material recipes.**
+
+| Material | Base colour | Recipe |
+|---|---|---|
+| Skin, face, hands | the look's skin | shadows toward crimson (352°), desaturated × 0.6, lo 0.55; outline dark red-brown; the cheek in rear view: a jaw shadow, a lit cheekbone; hands never below tone 2 |
+| Hair cap | between the hair's mid and light colour (sat × 1.12; × 0.98 for light hair; very dark hair a cool sheen, warm target 225°) | seven locks hanging from the crown, each lit on its left flank (the normal bent across the lock), a dark parting low between locks, a light only in a lock's middle; a highlight arc of one ≤ 2 px dash per lock where the head turns to the light; the nape edge is the locks' tips |
+| Hair tufts | same | short, ponytail, braid and twintails: four clumps at the back and sides ending in points (the outline is locks, not a ball); none on bun, spiky, long styles |
+| Tails, braids, long falls | same | strands along the form, lit flank, one highlight dash high on a tail |
+| Spikes | same | nine spikes aimed up, out and back so they read on the outline in profile (not end-on), their undersides shaded; the cap under them plain |
+| Curls | same | sharp terminator; one glint only on the lit curls |
+| Cloth: skirts, coats, robes, capes | the outfit's main colour (sat × 1.22) | folds round the form (7; robes 9; capes 6), each a lit ridge and a shadow valley, deeper toward the hem; a crease line low in each valley; gathers under the belt; the hem turned up; a coat's back vent |
+| Cloth: sleeves, trousers | same | creases ringing the elbow and knee, lit on top |
+| Cloth: back | same | a centre-back seam below the shoulder blades |
+| Belt, cuffs, trims, collar | the outfit's accent | the belt's lit top edge and dark lower edge; a gold buckle at the near hip (tunic, coat, apron); a button glint on each cuff |
+| Bows (dress, robe, apron) | accent / ivory | loops tipped up and out, folding into the knot (inner end shaded, outer end lit), the knot a step darker, two short tails in an inverted V |
+| Scarf | the scarf's colour | a wrap with folds round the neck, a knot at the back-left, a folded tail streaming over the shoulder blade that splits into two ends; a striped keepsake carries its stripes on the tail |
+| Leather: boots, satchel, folio | boot colour (near-black lifted toward brown), `#8a6a3a`, `#9a4a3c` | boots: a dark sole, a toe-cap glint, a lit turned-down top; the folio: brass corners and a clasp on the fore-edge |
+| Metal: brass, gold, iron | `#e0b850`, `#4a4450` | hard bands only (tones 0/2/4/5 by the light), a near-white streak where it faces the light |
+| Glass: Mio's vial | `#5aa898` | a dark rim, the body, one glint |
+| Paper, ivory | `#f0e6cc`, `#ece4d4` | pale ramps (cool-grey shadows) |
+| Glow (the lamp) | fixed warm ramp | no rim; flares a step lighter |
+
+## The idle: a battle-ready pulse
+
+Measured on the base build (one loop, drawn frames compared): the ready idle changed pose **3.2–5.2 times a second
+with still holds up to 0.78–1.08 s** — the keys (300–1,800 ms holds) read as standing still between moves. Now,
+while a ready key is held (after its settling frame), each person keeps a small rhythm, one drawing per step:
+dip (knees give, the hair settles) → the key → breath in (the chest lifts) → the key. The keys, their order, holds
+and transitions are unchanged; the calm stance (language task open) and reduced motion are unchanged (calm keeps
+its quiet keys; reduced motion holds one drawing).
+
+| Actor | Pulse step | Character | Ready idle, base → now (drawn changes a second) | Longest still, base → now | Distinct frames, base → now |
+|---|---|---|---|---|---|
+| player | 130 ms | knees and breath | 4.42 → 8.40 | 776 → 128 ms | 32 → 47 |
+| Nao | 112 ms | quick, springy | 4.44 → 9.77 | 696 → 296 ms | 26 → 40 |
+| Mio | 150 ms | a composed breath, the head tilting | 3.20 → 7.52 | 896 → 148 ms | 22 → 34 |
+| Ren | 160 ms | grounded, slow | 3.77 → 7.14 | 1,076 → 156 ms | 28 → 42 |
+| Suzu | 124 ms | her rhythm, a sway of the hip | 5.23 → 9.23 | 776 → 156 ms | 29 → 38 |
+
+(`node tests/e2e/battle_party_restyle.mjs cadence`; the unit test asserts 6–12 key changes a second.)
+
+## Gap list per item, before → after
+
+Measured on sheets at 1× and 3× beside the reference (scratch sheets; the reference is not committed) and in
+battle at 1920 × 1080, 1280 × 800 and 390 × 844. Numbers refer to the reference points: 1 silhouette and pose,
+2 outlines, 3 ramps, 4 light, 5 materials, 6 clusters, 7 detail density.
+
+| Item | Before (round 1) | After (round 2) |
+|---|---|---|
+| **The player in the owner's look** (auburn ponytail, green coat, pink flower; proof 1) | 1: a ball of a head as wide as the shoulders, the shoulders hidden, upright and symmetric. 2: one near-black outline everywhere, thin interior lines. 3: pale, low-contrast green; orange hair with little range. 4: no rim, no cast shadows; the cheek a flat skin plane. 5: hair as even stripes, cloth as stripes, boots dark blobs, the folio a flat block. 6: single-pixel stripes and staircase bands. 7: a belt and cuffs only. Idle: 4.4 changes a second, holds to 0.78 s | 1: head × 0.9, shoulders wider, a weight shift (hip up on the standing leg, shoulders against it); the hair's outline locks with pointed tips. 2: coloured outlines (plum on hair, deep green on the coat, red-brown on skin), lighter on lit edges; form lines on the far form. 3: six-tone ramps (green shadows toward teal, lights toward yellow-green; hair shadows crimson, highlights gold). 4: a cool rim down the right; shadows under the hair on the nape, under the arms. 5: locks with a highlight arc; folds with lit ridges and creases, a back vent; leather boots with sole and toe cap; the folio's brass corners and clasp. 6: clusters (lone pixels folded in; lock and fold shapes). 7: cuff buttons, a buckle and the belt's hanging end, the vent, the clasp. The coat's lit plane is a light green against a dark-green shadow side. Idle 8.4 changes a second |
+| **Unravel's thread** (proof 1) | the strip a pale sliver | the strip in the pale-paper ramp with its own outline; the hand's skin and cuff read against the coat |
+| **Mio** (proof 2) | soft teal, a grey-black bun, a white apron bow that read as a blob, a pale vial | deep teal with cool shadows; black hair with a cool sheen and a lit bun; the bow's loops fold into a darker knot (ivory shading toward cool grey, no orange); the vial's glass rim and glint; idle 7.5 changes a second |
+| **Nao** | spiky hair seen end-on (dark spots), a scarf as a ring of beads | spikes in profile on the outline; the scarf a folded wrap with a knot and a tail splitting into two ends; the big satchel's leather and strap; 9.8 changes a second |
+| **Ren** | a violet-leaning, low-contrast navy coat, blue-black hair flat | a navy ramp: lights toward cyan, shadows toward violet, deep blue outline; a cyan sheen on the hair; the lamp's warm glow unchanged; patches, glasses and the coat's belt end; 7.1 changes a second |
+| **Suzu** | wavy hair flat, dress hem soft | strands in the long fall with one highlight band, the hem trim lit, the ribbon on its own ramp and outline; 9.2 changes a second |
+| **Every hairstyle** (13 incl. bald) | locks as stripes, ball silhouettes | caps with locks and arcs; tufts on short/tied styles; bob, long and wavy falls in strands; spikes in profile; curls with single glints; shaved stubble and the wrap's bands on the new ramps |
+| **Cuts and palettes** (5 cuts, 8 palettes) | pale fills | each palette on its ramp (gold outfit deeper ochre, white outfit cream with cool-grey shadows); folds per cut |
+| **Skins and hair colours** (7, 10) | — | every skin on the crimson-leaning skin ramp; light hair desaturated so gold stays gold; dark hair a cool sheen |
+| **Accessories and keepsakes** (8 + 15) | flat colour fills | every one on its own ramp and outline; scarf and keepsake scarves folded with split ends; capes folded; hats, caps, bells, ribbons, leaf, quill, sash, pin, lamplet drawn by the same passes (sheet `looks_accessories`) |
+
+## Self-review against the reference points (self-review by the implementing agent; no human review)
+
+Scores per point: 0 missing, 1 present but weak, 2 clearly there, 3 matches the reference's craft at this size.
+
+| Item | 1 silhouette | 2 outline | 3 ramps | 4 light | 5 materials | 6 clusters | 7 density | Notes |
+|---|---|---|---|---|---|---|---|---|
+| Player (owner's look) | 2 | 3 | 3 | 2 | 2 | 2 | 2 | The weight shift and lock tips help; the coat is still a bell from behind, with no overlapping cloth forms like the reference's plates. |
+| Mio | 2 | 3 | 3 | 2 | 2 | 2 | 2 | The apron bow is clean but small; at 1× it reads as a pale accent at the waist. |
+| Nao | 2 | 3 | 3 | 2 | 2 | 2 | 2 | Spikes read; spike highlights are a little busy at 3×. |
+| Ren | 2 | 3 | 3 | 2 | 2 | 2 | 2 | Bluer navy than round 1 (which leaned violet); the lamp carries his light. |
+| Suzu | 2 | 3 | 3 | 2 | 2 | 2 | 2 | The long fall is one mass; its strands are quiet by design. |
+| Player looks (all options) | 2 | 3 | 3 | 2 | 2 | 2 | 2 | No option keeps the old rendering (one renderer); a few combinations (white hair on cream cloth) have lower separation. |
+
+What does not reach the reference: its detail per square pixel (an 81-px figure cannot carry plate seams and rivets
+at that density), its hand-placed cluster shapes, and its dynamic three-quarter contrapposto (our poses
+are the round-1 poses, which keep the rear view required by the stage).
+
+## Budget and build times (round 2)
+
+- Frame size unchanged (80 × 104 × 4 = 33,280 bytes); cache cap unchanged (720 frames = 22.85 MiB); keys still name
+  the idle key frame (now `i.0`–`i.5`), never elapsed time (unit-tested).
+- Idle frames per actor (ready): ≤ 48 (measured 34–47 distinct drawings; round 1: ≤ 32). Prewarm covers them
+  (`idleTimes` includes the dip and breath of every held key), built in 6 ms slices in idle time as before.
+- Resident party frames after real encounters (`battle_party` resources test, Chromium): 57–166 frames, 1.81–5.27 MiB per encounter (round 1: 42–111 frames, 1.33–3.52 MiB); the round-1 diagnostic
+  fixtures that perform every action of a companion in one battle stay under the 720-frame cap.
+- Whole battle-art budget (`battle_budget`: every creature family alone and in threes, a companion and a pet):
+  the largest estimated residency is 37.41 MiB of 48 (party 5.08, creatures 28.92, pets 3.42 MiB; round 1's final
+  build: 37.12 MiB); the party's own largest was 5.27 MiB (166 frames).
+- Build time per frame: in Chromium, mean 7.4–10.4 ms, worst 69.8 ms (`battle_party` resources test) (round 1: mean 13–17 ms, worst 239 ms under
+  load); in node (unwarmed, load ≈ 6), mean 18–27 ms per frame, worst 137 ms (the first frame, JIT).
+  The craft passes cost about four depth-buffer samples per drawn pixel (cast shadows) plus three neighbour passes.
+
+## Tests (round 2), on this branch's final build
+
+Chromium headless (software canvas), browser suites one at a time on a shared 4-core machine (load average in
+brackets). Unit tests and the validator in node.
+
+| Command | Result |
+|---|---|
+| `node tests/run-unit.mjs` | **15,339 passed, 0 failed** (`battle_party`: 73 passed, with the changed idle bound and the new cadence check) |
+| `node tools/validate.mjs` | no errors |
+| `node tests/e2e/battle_party.mjs` | 14 passed, 0 failed (load 6.7): solo, the four diagnostic fixtures, Protect at Normal (word fully readable 700 ms, ward at 633 ms), Heal truthfulness, every family, the customization registry (1,250 frames drawn, planted, unclipped), frame sheets, resources, the Mio exchange, the Satchel preview, the recording |
+| `node tests/e2e/characters.mjs` | 23 passed, 0 failed (load 5.9): 2,970 battle frames planted and unclipped, every gesture/hit/brace back to the stance pixel for pixel, accessories attached in every pose, reduced motion still, normal motion alive with the feet planted |
+| `node tests/e2e/battle_anim.mjs` | 15 passed, 1 failed in the full run (load 8.8: "learning stays central" — `page.click` timed out after 30 s); re-run alone: passed. It passed in the full run on the previous checkpoint build (16 of 16). Recorded as timing under load |
+| `node tests/e2e/battle_pets_overworld.mjs --battles-only` | 3 passed, 0 failed (load 10.2): the pet stays in its place, clear of the adventurers' feet and the badges, in every sampled frame |
+| `node tests/e2e/battle_budget.mjs` | completed (load 16.3): largest estimated residency **37.41 MiB of 48** (after sb.fox ×3: party 5.08, creatures 28.92, pets 3.42); the party's largest 5.27 MiB (166 frames) |
+| `node tests/e2e/battle_cycle.mjs` | completed (load 10.8): 20 entries and exits, every battle-only element gone, listeners 101 → 101 |
+| `node tests/e2e/battle_presentation.mjs` | 11 passed, 0 failed (load 6.8), including "one cadence" and Normal / Fast / Instant |
+| `node tests/e2e/battle_group.mjs` | 6 passed, 0 failed (load 7.3) |
+| `node tests/e2e/combat_ui.mjs` | 7 passed, 0 failed (load 4.7) |
+| `node tests/e2e/fishing.mjs every companion` | 1 passed, 0 failed (the fishing stage draws its figures through this rig) |
+| `node tests/e2e/battle_party_restyle.mjs --docs` | 4 passed, 0 failed: the sheets, the cadence (asserts 6–12 changes a second per actor), the in-battle captures, the recording |
+
+Changed tests: `tests/unit/battle_party.test.mjs` — the idle's frame bound is 6 per key instead of 4, because the
+pulse deliberately adds a dip and a breath to each held key; a new assertion checks the ready idle's cadence (6–12
+key changes a second, no still hold longer than 260 ms). No browser test was changed.
+
+## Evidence (`docs/screenshots/battle/party_restyle/`)
+
+All made by `node tests/e2e/battle_party_restyle.mjs --docs` from the built `index.html` ("after") and the base build
+6855ba1 ("before", `git show 6855ba1:index.html`), Chromium headless. The owner's reference is not in any committed
+image (it may not enter the repository); the side-by-side sheets with the reference used for the review are scratch
+files, not committed.
+
+| File | What it shows |
+|---|---|
+| `proof_robin.webp` | Proof 1: the player in the owner's look (auburn ponytail, green coat, pink flower) — ready, a pulse dip, calm, Unravel's thread (anticipation, lift, draw, drawn, recovery), a hit and its catch, the cheer and its settle; before / after at 1× and 3× |
+| `proof_mio.webp` | Proof 2: Mio — ready, a pulse dip, calm, her warm draught (anticipation, uncork, tip, pour, recovery), dab, waft, salts, tonic, help |
+| `pc_gestures.webp`, `pc_reactions.webp` | The player: all 15 own gestures (anticipation and release); every reaction (hit, softened hit, brace, wary, guard, soothed, hush, gust, chill, slip, down, cheer) and the rise |
+| `mio_all.webp`, `nao_all.webp`, `ren_all.webp`, `suzu_all.webp` | Each companion: stance, a pulse dip, calm, every own gesture (anticipation and release), the technique, every reaction |
+| `looks_hair.webp` | All 12 hairstyles and bald |
+| `looks_cut_palette.webp` | All 5 cuts on one palette, then all 8 clothing palettes |
+| `looks_skin_haircolour.webp` | All 7 skin tones, all 10 hair colours |
+| `looks_accessories.webp` | The 8 creation accessories and the 15 keepsakes as worn |
+| `battle_1920x1080.webp`, `battle_1280x800.webp`, `battle_390x844_three_cat.webp` | The Mill's Flour Moth with the player (owner's look) and Mio while choosing; at 390 × 844 three moths and a cat (diagnostic placement) |
+| `battle_*_party_before_after.webp` | The party region of each, before and after, enlarged (whole pixels) |
+| `unravel_and_draught_normal.webm` | Playwright's real-time recording at Normal (1280 × 720): 2.6 s of the ready idle, the player's Unravel, Mio's warm draught (DIAGNOSTIC FIXTURE: every support action unlocked in a Chapter 1 room). 1,992,393 bytes; the response took 1,568 ms and the draught 1,377 ms on the presentation clock. Not machine-reviewed frame by frame (headless Chromium here does not decode video). |
+
+The round-1 sheets in `docs/screenshots/battle/party/` show the art before this round.
+
+## Limitations (round 2)
+
+- Every art judgement here is a self-review by the implementing agent; no human review, no playtest.
+- Chromium only; the owner plays in Firefox. The art is canvas pixels at whole-number scales, so no browser-specific
+  rendering is expected, but it was not checked.
+- The frame stays 80 × 104: the reference's density of authored detail cannot be reached on an 81-px figure; detail
+  was added where it reads (lock tips, folds, brass, buttons, buckle, the belt's end).
+- The poses are round 1's (the rear view the stage needs); only the player's stance gained a weight shift. A
+  stronger three-quarter contrapposto for every person would need re-authoring the gestures that start from it.
+- The fishing stage draws its figures through this rig, so it shows the new rendering too (its poses and test are
+  unchanged; `fishing.mjs` "every companion" re-run below).
+- The pets size themselves against the companions' ready height (now 80 px, base 81.75 px); their density rounds
+  to the same 1.0, but a further change of the figures' height could change it.
+- The ready pulse runs at a fixed step per person; it is not re-timed by the playback speed (the idle never was).
+- Observed, not changed: in the Protect-at-Normal trace the player's poses run anticipate:ward → act:ward → ready →
+  recover:ward, i.e. at least one sampled frame shows the stance between the act and the recovery. The base build
+  6855ba1 shows the same trace (run on it for comparison), so it predates this round; it is choreography timing
+  (`84p_party_choreo.js`), which this round does not touch.
+
+## Merge notes (round 2)
+
+- Own area only: `src/engine/34_battlers.js`, `src/engine/34m_battler_moves.js`, `tests/unit/battle_party.test.mjs`,
+  the new `tests/e2e/battle_party_restyle.mjs`, this file and `docs/screenshots/battle/party_restyle/`.
+- Shared, one line: `docs/screenshots/battle/README.md` gains the `party_restyle/` row (and the `party/` row says it
+  is round 1).
+- No stage change: the frame stays 80 × 104, so `layout()`, the pets' placement and the fishing stage's anchors are
+  untouched. `RB.battlers` keeps its API (`draw`, `preview`, `anchors`, `prewarm`, `retain`, `budget`, `_.render`,
+  `_.poseAt`, `_.measure`); `RB.battlerMoves` adds `PULSE` and idle keys `i.4`/`i.5`.
+- `index.html` is generated and not committed on this branch: rebuild after merging.
+
+
+# Round 1 — the articulated rig (the battle addendum)
 
 ## What was built
 
@@ -71,7 +334,7 @@ _.measure(look, o)      -> anchors, drawn box, pixel count without a canvas (nod
 `RB.partyChoreo`: `player`, `companion`, `react`, `finish`, `revive`, `planOf`, `wordOf`, `resolvedOf`,
 `familyOf`, `coverage()`, tables `FAM`, `TECH`, `SUPPORT`, `WORD_FAMILY`.
 
-## The native frame standard (§6.2): 80 × 104 stays
+## The native frame standard (§6.2): 80 × 104 stays (round 1; measured again in round 2, above)
 
 **Measured** (battle at eight CSS viewports, Chromium, `RB.battleStage.stats().lay`):
 
@@ -127,7 +390,7 @@ a time; one-sided things keep their side.
 | ren | wide and grounded; lamp out at his left; right hand raised, flat | 7 / 4 | 7420 | 3100 | ward (lamp), shade, flare, vigil, lanterns, front, help |
 | suzu | weight on the left leg, hand on hip, free foot turned out | 8 / 4 | 5740 | 900 | flourish, heckle, beckon, clap, feint, grand, help |
 
-- **Idle (§7.3):** each key is held (300–1,800 ms) and reached through two in-betweens, then one
+- **Idle (§7.3):** each key is held (300–1,800 ms; round 2: the hold carries the battle-ready pulse) and reached through two in-betweens, then one
   settling frame where hair and cloth overshoot and come back (they keep the last key's values through the
   in-betweens: delayed secondary motion). Characteristic keys: the player settles the grip on the folio and
   glances at it; Nao's quick looks left and right and a tap on the satchel; Mio's look to you and a touch at
@@ -272,7 +535,8 @@ second thread (his point); the existing revive: the companion's `help` (crouch, 
 - Cache keys: look, actor, pose, gesture or variant, progress (12 steps; ½ steps with reduced motion),
   the idle key frame, facing, grid — never elapsed time (unit- and browser-tested).
 - Idle: at most 4 frames per key (2 in-betweens, settling, hold): ≤ 32 frames per actor for `ready`
-  (the old continuous idle needed 104–120 frames per loop pair).
+  (the old continuous idle needed 104–120 frames per loop pair). *Round 2: the pulse adds a dip and a breath per
+  held key: ≤ 6 per key, ≤ 48 frames per actor for `ready` (measured 34–47 distinct drawings).*
 - Prewarm: only the encounter's actors (the player and the committed companion), idle and calm keys.
 - Retain: on `present:scene` enter, every other look's frames are released.
 - Estimated resident party frames (80 × 104 × 4 = 33,280 bytes each), measured after real encounters in
