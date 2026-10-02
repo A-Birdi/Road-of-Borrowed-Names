@@ -3,8 +3,9 @@
 // is seeded by the test (an init script) and reseeded just before each battle, so runs are comparable.
 //
 // Battles (the Flour Moth on the mill road; the real mouse picks responses, answers and companion actions):
-//  - no pet, a cat, a dog, a bird and a tanuki, and a cat hidden by the setting, with Mio: no page errors; the
-//    tasks put in front of you, every sequence's schedule (each cue's time, type, length, actor, pose, effect)
+//  - no pet, a cat, a dog, a bird and a tanuki, and a cat hidden by the setting, with Mio: no page errors; no call to
+//    the game's Math.random during the battle comes from a pet module (stack lines vs the modules' lines); the
+//    tasks put in front of you (each generated from the same point of the seeded stream), every sequence's schedule (each cue's time, type, length, actor, pose, effect)
 //    and the end state are identical for all six; each shown species reacted (actions and the creature's
 //    moves) and the hidden one never appeared;
 //  - while it plays, sampled through every exchange: the pet's box never contains an adventurer's foot anchor
@@ -37,7 +38,20 @@ const assert = (c, m) => { if (!c) throw new Error(m); };
 const wait = (p, ms) => p.waitForTimeout(ms);
 const only = process.argv.find((a) => a === '--battles-only' || a === '--world-only');
 // a seeded Math.random from the start (test instrumentation), and window.__reseed(n)
-const SEED = `(() => { let s = 0x2545F491; const f = () => { s = (s + 0x6d2b79f5) | 0; let x = s; x = Math.imul(x ^ (x >>> 15), x | 1); x ^= x + Math.imul(x ^ (x >>> 7), x | 61); return ((x ^ (x >>> 14)) >>> 0) / 4294967296; }; Math.random = f; window.__reseed = (n) => { s = n | 0; }; })();`;
+// Every Math.random call while __rcOn also records the source lines on its stack (to show that none comes from
+// the pet modules).
+const SEED = `(() => { let s = 0x2545F491; const f = () => { s = (s + 0x6d2b79f5) | 0; let x = s; x = Math.imul(x ^ (x >>> 15), x | 1); x ^= x + Math.imul(x ^ (x >>> 7), x | 61); return ((x ^ (x >>> 14)) >>> 0) / 4294967296; };
+  window.__rcLines = new Set(); window.__rcN = 0; window.__rcOn = false;
+  Math.random = function () { if (window.__rcOn) { window.__rcN++; if (window.__rcLines.size < 5000) for (const l of new Error().stack.split('\\n').slice(2, 14)) { const m = /:(\\d+):\\d+\\)?$/.exec(l); if (m) window.__rcLines.add(+m[1]); } } return f(); };
+  window.__reseed = (n) => { s = n | 0; }; })();`;
+// the line ranges of the pet modules in the built page (the build marks each source file)
+const PET_RANGES = (() => {
+  const lines = fs.readFileSync(path.join(root, 'index.html'), 'utf8').split('\n');
+  const out = []; let cur = null;
+  lines.forEach((ln, i) => { const m = /^\/\* ==== (src\/[^ ]+) ==== \*\/$/.exec(ln); if (m) { if (cur) { cur.to = i; out.push(cur); } cur = { file: m[1], from: i + 1 }; } });
+  if (cur) { cur.to = lines.length; out.push(cur); }
+  return out.filter((r) => /pets|petworld|battle_pets|company_pet/.test(r.file));
+})();
 async function open(o) {
   const ctx = await b.newContext({ viewport: o.viewport || { width: 1280, height: 800 } });
   await ctx.addInitScript(SEED);
@@ -57,6 +71,9 @@ async function battle(o) {
     if (o.hide) RB.game.settings.petBattle = false;
     // instrumentation: the steps you are given and every sequence's schedule (read only)
     window.__steps = []; window.__seq = []; window.__samples = [];
+    // each task is generated from the same point of the game's stream in every run: the world's NPC blink timers
+    // also draw from Math.random on real time while a battle plays, so without this a slower frame changes the task
+    const next = RB.tasks.next; let tn = 0; RB.tasks.next = (a, b2) => { window.__reseed(9000 + (tn++)); return next(a, b2); };
     const run = RB.challenge.runStep; RB.challenge.runStep = (step, x) => { window.__step = step; window.__steps.push([step.kind, step.item, step.answer, (step.accept || []).join('|'), step.mode]); return run(step, x); };
     const srun = RB.battleSeq.run;
     RB.battleSeq.run = (kind, cues, meta) => { window.__seq.push([kind, meta && meta.end, cues.map((c) => [c.at, c.type, c.d || 0, c.who || c.side || null, c.pose || c.act || null, c.gesture || null, c.name || null, c.f ? c.f.t + ':' + (c.f.who || '') + ':' + (c.f.n || 0) : null])]); return srun(kind, cues, meta); };
@@ -77,7 +94,7 @@ async function battle(o) {
   const pause = (ms) => p.waitForTimeout(ms);
   const center = (sel) => p.evaluate((sel) => { const e = document.querySelector(sel); if (!e) return null; const q = e.getBoundingClientRect(); return { x: q.left + q.width / 2, y: q.top + q.height / 2 }; }, sel);
   const clickAt = async (pt) => { await p.mouse.move(pt.x, pt.y, { steps: 4 }); await p.mouse.click(pt.x, pt.y); };
-  await p.evaluate(() => { window.__reseed(777); RB.game.startBattle('rw.dustmoth', {}); });
+  await p.evaluate(() => { window.__reseed(777); window.__rcOn = true; RB.game.startBattle('rw.dustmoth', {}); });
   async function lines() { for (let i = 0; i < 20 && (await p.evaluate(() => RB.ui.dialogue.isOpen())); i++) { await pause(300); const pt = await center('.dlg:not(.hidden) .b-next'); if (pt) await clickAt(pt); else await p.evaluate(() => RB.ui.dialogue.advance(true)); await pause(150); } }
   // the encounter's opening lines, then its first decision
   for (let i = 0; i < 80; i++) {
@@ -119,7 +136,8 @@ async function battle(o) {
   const res = await p.evaluate(() => {
     clearInterval(window.__sampler);
     const st = RB.combat.state && RB.combat.state();
-    return { exchanges: 0, steps: window.__steps, seq: window.__seq, samples: window.__samples, pet: RB.battlePets.stats(), cache: RB.petArt.cacheStats(), end: st ? { pc: st.pc, comp: st.comp, harmony: st.harmony, knots: st.foes.map((f) => f.knots), round: st.round } : null };
+    window.__rcOn = false;
+    return { exchanges: 0, rcN: window.__rcN, rcLines: [...window.__rcLines], steps: window.__steps, seq: window.__seq, samples: window.__samples, pet: RB.battlePets.stats(), cache: RB.petArt.cacheStats(), end: st ? { pc: st.pc, comp: st.comp, harmony: st.harmony, knots: st.foes.map((f) => f.knots), round: st.round } : null };
   });
   res.exchanges = exchanges;
   if (o.shot) await p.screenshot({ path: path.join(outDir, o.shot) });
@@ -137,8 +155,15 @@ if (only !== '--world-only') {
   await test('battles with no pet, each species and a hidden pet: no page errors; identical tasks, schedule and end state', async () => {
     const SET = { none: {}, cat: { pet: 'cat' }, dog: { pet: 'dog', look: 'blacktan' }, bird: { pet: 'bird' }, tanuki: { pet: 'tanuki', look: 'graybrown' }, hidden: { pet: 'cat', hide: true } };
     for (const k in SET) if (!process.env.BP_ONLY || process.env.BP_ONLY === k) runs[k] = await battle(Object.assign({ comp: 'mio', shot: 'battle_' + k + '.png' }, SET[k]));
-    if (process.env.BP_DEBUG) console.log(JSON.stringify(Object.fromEntries(Object.entries(runs).map(([k, r]) => [k, { ex: r.exchanges, mode: r.mode, seq: r.seq.length, steps: r.steps.length, pet: r.pet.stats }]))));
+    if (process.env.BP_DEBUG) console.log(JSON.stringify(Object.fromEntries(Object.entries(runs).map(([k, r]) => [k, { ex: r.exchanges, mode: r.mode, seq: r.seq.length, steps: r.steps.length, stepsH: h(r.steps), steps0: r.steps, pet: r.pet.stats }]))));
     const bad = Object.entries(runs).filter(([, r]) => r.errors.length || r.mode !== 'world').map(([k, r]) => k + ': ' + r.mode + ' ' + r.errors.join(' | '));
+    // no call to the game's Math.random during the battle comes from (or through) a pet module
+    assert(PET_RANGES.length >= 6, 'the pet modules are found in the built page: ' + PET_RANGES.map((r) => r.file).join(', '));
+    for (const [k, r] of Object.entries(runs)) {
+      const hits = r.rcLines.filter((l) => PET_RANGES.some((q) => l >= q.from && l <= q.to));
+      assert(!hits.length, k + ': Math.random was called from a pet module at lines ' + hits.join(','));
+    }
+    console.log('   Math.random calls during each battle: ' + Object.entries(runs).map(([k, r]) => k + ' ' + r.rcN).join(', ') + ' (callers outside the pet modules: ' + PET_RANGES.length + ' pet files checked)');
     assert(!bad.length, 'every battle completed without page errors: ' + bad.join('; '));
     const base = runs.none;
     assert(base.seq.length >= 6 && base.steps.length >= 3, 'the battle ran (' + base.seq.length + ' sequences, ' + base.steps.length + ' tasks)');
