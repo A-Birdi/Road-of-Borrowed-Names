@@ -437,16 +437,22 @@ RB.ui.help = (function () {
     const sheet = window.innerWidth < 600 && via !== 'hover';
     panel.classList.toggle('docked', !!padOpen && !sheet);
     panel.classList.toggle('sheet', sheet);
-    if (sheet || padOpen) { panel.style.left = ''; panel.style.top = ''; return; }
+    if (sheet || padOpen) { panel.style.left = ''; panel.style.top = ''; panel.style.maxHeight = ''; return; }
     const r = anchor.getBoundingClientRect();
     const pw = Math.min(400, window.innerWidth - 16);
     const left = Math.min(window.innerWidth - pw - 8, Math.max(8, r.left + r.width / 2 - pw / 2));
     panel.style.left = left + 'px';
+    // Never over the word itself (with large text the card can be taller than the room
+    // above it, and a card under the pointer takes the clicks meant for the word's button):
+    // the roomier side, the card's height capped to it and scrolled inside.
+    panel.style.maxHeight = '';
     const ph = panel.offsetHeight || 180;
-    let top = r.top - ph - 12;
-    if (top < 8) top = r.bottom + 12;
-    if (top + ph > window.innerHeight - 8) top = Math.max(8, window.innerHeight - ph - 8);
-    panel.style.top = top + 'px';
+    const above = r.top - 20, below = window.innerHeight - r.bottom - 20;
+    const up = ph <= above || (ph > below && above >= below);
+    const room = Math.max(96, up ? above : below);
+    const h = Math.min(ph, room);
+    if (h < ph) { panel.style.maxHeight = room + 'px'; panel.style.overflowY = 'auto'; }
+    panel.style.top = Math.max(8, up ? r.top - h - 12 : r.bottom + 12) + 'px';
   }
   function addToNotebook(tok, info) {
     const s = RB.game.s;

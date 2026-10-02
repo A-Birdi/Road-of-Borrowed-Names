@@ -74,7 +74,9 @@ RB.activity.launch(kind, { source: 'company'|'companion-talk'|'world-prop'|'word
   converted-to-untimed, abandoned, exiting.
 - Events: `activity:session-start` and `activity:session-resolved`. Never emit
   `discovery:resolved`, because its listeners award regional bond.
-- World safety is `RB.activity.safe()`, which uses `RB.company.safeHere()`. Rest places
+- World safety is `RB.activity.safe(o)`, which uses `RB.company.safeHere()`. A solitary
+  activity does not need the companion beside you; pass `{ companion: true }` (or set
+  `companion: true` on the `addActivity` entry) for one that does, such as shiritori. Rest places
   come from `RB.company.restHere(s)`. Rest-menu choices are added with
   `RB.company.addRestOption(fn)`. *Just chat* stays first; activities come after the
   existing choices.
@@ -82,7 +84,7 @@ RB.activity.launch(kind, { source: 'company'|'companion-talk'|'world-prop'|'word
 ## Navigation hooks
 
 - **Words › Ways to practise.** Call `RB.practice.addActivity({ id, en, jp, icon, order,
-  where: {en, jp}, available(s), here(s), note(s), begin(ctx) })`. *Begin here* is shown only
+  where: {en, jp}, companion?, available(s), here(s), note(s), begin(ctx) })`. *Begin here* is shown only
   when `here(s)` is true and the world is safe; there is no remote launch.
 - **Company › Companion sections.** Call `RB.ui.companyPages.addSection({ id, order,
   html(s, comp, view), click(button, s, api) })`. Buttons carry `data-co-sec="<id>"`.

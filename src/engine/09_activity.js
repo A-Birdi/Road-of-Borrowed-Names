@@ -35,10 +35,17 @@ RB.activity = (function () {
   function register(kind, def) { DEFS[kind] = def; }
   const game = () => RB.game && RB.game.s;
 
-  // world safety shared by every activity: the companionship module's check when present
-  function safe() {
-    if (RB.company && RB.company.safeHere) return RB.company.safeHere();
-    return { ok: RB.game.mode() === 'world' };
+  // World safety shared by every activity: the companionship module's check (no battle,
+  // scene, transition or challenge; no creature within six tiles). A solitary activity
+  // (the post box, the desk, the lamps, fishing) does not need the companion beside you;
+  // pass { companion: true } for one that does (shiritori).
+  function safe(o) {
+    const r = RB.company && RB.company.safeHere ? RB.company.safeHere() : { ok: !!RB.game && RB.game.mode() === 'world' };
+    if (r.ok || r.why !== 'apart' || (o && o.companion)) return r;
+    const W = RB.world && RB.world.W;
+    if (!W || !W.map || !W.player) return { ok: false, why: 'none' };
+    if ((W.foes || []).some((f) => Math.abs(f.x - W.player.x) + Math.abs(f.y - W.player.y) <= 6)) return { ok: false, why: 'danger' };
+    return { ok: true };
   }
   function eligible(kind, ctx) {
     const def = DEFS[kind], s = game();

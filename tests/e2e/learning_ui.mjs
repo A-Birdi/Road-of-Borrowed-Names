@@ -286,6 +286,49 @@ await test('a touch scroll over the choices does not choose; a tap does', async 
 });
 
 // ---------------------------------------------------------------------------
+// A hover card never covers the word it describes (at 200 % text it can be taller than the
+// room above the word); a click on a hovered answer reaches the answer, not the card.
+await test('word help at 200 % text in a desktop window stays off the hovered word; the click chooses', async () => {
+  const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  await helpers(p);
+  await p.evaluate(() => { RB.game.settings.lightbulb = true; __start({ kind: 'write', item: 'v:水', ctx: __mizu.ctx, prompt: { en: 'Water.' }, answer: 'みず', accept: ['みず'], mode: 'kana', choices: ['みす', 'みず', 'ミズ'] }, 'choice'); });
+  await setTextScale(p, 2);
+  await p.waitForSelector('.mc .btn .jt');
+  await p.waitForTimeout(300);
+  const spots = await p.evaluate(() => [...document.querySelectorAll('.chal .jt')].map((el, i) => { el.dataset.wt = i; const r = el.getBoundingClientRect(); return { i, x: r.left + r.width / 2, y: r.top + r.height / 2, vis: r.width > 0 && r.top >= 0 && r.bottom <= innerHeight }; }).filter((q) => q.vis));
+  assert(spots.length >= 4, 'visible words: ' + spots.length);
+  const bad = [];
+  for (const q of spots.slice(0, 12)) {
+    await p.mouse.move(5, 5);
+    await p.evaluate(() => RB.ui.help.hide(true));
+    await p.mouse.move(q.x, q.y);
+    await p.waitForTimeout(220);
+    const o = await p.evaluate((i) => {
+      const h = document.querySelector('.help'), a = document.querySelector('[data-wt="' + i + '"]');
+      if (!h) return { none: true };
+      const r = h.getBoundingClientRect(), w = a.getBoundingClientRect();
+      const over = !(r.bottom <= w.top || r.top >= w.bottom || r.right <= w.left || r.left >= w.right);
+      return { over, inView: r.top >= 0 && r.bottom <= innerHeight + 1, h: Math.round(r.height), word: Math.round(w.top) };
+    }, q.i);
+    if (o.none || o.over || !o.inView) bad.push(q.i + ':' + JSON.stringify(o));
+  }
+  assert(!bad.length, 'cards over their word or off screen: ' + bad.join(' '));
+  // hover the right answer's word (the last card closed first, as when the pointer leaves
+  // it), then click it: the answer is chosen
+  await p.mouse.move(5, 5);
+  await p.evaluate(() => RB.ui.help.hide(true));
+  const c = await p.evaluate(() => { const bt = [...document.querySelectorAll('.mc .btn')].find((x) => x.textContent === 'みず'); const r = bt.querySelector('.jt').getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
+  await p.mouse.move(c.x, c.y);
+  await p.waitForTimeout(220);
+  assert(await p.evaluate(() => !!document.querySelector('.help')), 'hover opened the card');
+  assert(await p.evaluate((c) => { const e = document.elementFromPoint(c.x, c.y); return !!e && !e.closest('.help') && !!e.closest('.mc .btn'); }, c), 'the answer, not the card, is under the pointer');
+  await p.mouse.click(c.x, c.y);
+  await p.waitForSelector('.fbwrap[data-fb=ok]', { timeout: 5000 });
+  assert(!errors.length, errors.join('; '));
+  await ctx.close();
+});
+
+// ---------------------------------------------------------------------------
 await test('long-press on Japanese in an answer opens word help; a tap chooses (touch)', async () => {
   const { p, errors, ctx } = await page(b, url, phone(390, 844));
   await helpers(p);
