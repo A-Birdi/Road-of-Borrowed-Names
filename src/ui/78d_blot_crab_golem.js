@@ -30,32 +30,61 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // −1 pressed shut), rip (the edge rippling), dim (gloss)
   // =============================================================================================
   const LOBES = [[-46, 42, 20, 9], [44, 43, 22, 8], [-12, 47, 32, 9], [20, 39, 26, 11], [-30, 38, 20, 10], [58, 47, 8, 4], [-62, 47, 7, 3]];
+  // The blot (the restyle): glossy ink in the reference's metal manner — a deep hue-shifted ramp
+  // (near-black indigo to a cool violet sheen), the dome in crisp bands with a hard near-white
+  // specular streak along its lit shoulder, a dark reflected band and a cool rim on its right edge;
+  // its crown pulled into a curling crest that leans toward the party (a tapered extremity that
+  // follows the lean); a three-quarter face; the puddle a separate form under it, its lobes lit on
+  // their tops, in the dome's cast shadow; drips with a lit side.
+  const blotMatCache = new Map();
+  function blotMats(col, dim) {
+    const dk = Math.round(cl(dim) * 4) / 4, key = col + '|' + dk;
+    if (blotMatCache.has(key)) return blotMatCache.get(key);
+    const M = {
+      ink: A.hmat(col, { n: 6, at: 1, lo: 0.05, hi: 0.66, sat: 1.5, hd: 24, hl: 60, warm: 280, rim: mixh(col, '#b8c8ff', 0.6) }),
+      gloss: K.solid(mixh(col, '#f2f4ff', 0.86 * dk), { line: false }),
+      gloss2: K.solid(mixh(col, '#c0c8f4', 0.55 * dk), { line: false }),
+      pale: A.hmat('#ece8fa', { n: 4, at: 2, lo: 0.5, hi: 0.99, line: false }),
+      eye: K.mat(null, { cols: ['#08060e', '#141022', '#221c36'], at: 0, line: false }),
+      shine: K.solid('#ffffff', { line: false }),
+    };
+    blotMatCache.set(key, M);
+    if (blotMatCache.size > 16) blotMatCache.delete(blotMatCache.keys().next().value);
+    return M;
+  }
   function blotRig(L, q, o, H) {
     const col = o.col || '#241f3a';
-    const M = K.mat(col, { n: 5, at: 1, step: 0.085, lt: 1.1 });
-    const gloss = K.solid(mixh(col, '#eef0ff', 0.78 * q.dim), { line: false });
-    const gloss2 = K.solid(mixh(col, '#c8ccf0', 0.45 * q.dim), { line: false });
-    const pale = K.mat('#f1edff', { n: 3, at: 1, step: 0.1, line: false });
-    const w = q.w, B = L.like();
+    const M = blotMats(col, q.dim), Mi = M.ink;
+    const w = q.w, P = L.like(), B = L.like();
     const sh = (y) => q.lean * -0.5 * (44 - y);          // shear: + lean leans the top toward the party (left)
     const rip = (y) => (q.rip ? Math.sin(y / 5 + q.d * 1.6) * q.rip : 0);
-    // puddle lobes (spreading in a surge)
+    // puddle lobes (spreading in a surge), lit along their tops
     for (const [x, y, rx, ry] of LOBES) {
-      const xx = x * q.sp + (x > 0 ? w : -w) * 0.5 + (x < 0 ? q.lean * -6 : 0);
-      B.ell(xx, y, rx * (0.7 + 0.3 * q.sp), ry, M, (px, py) => K.clamp(0.28 - (py - y) / 40 + (px < 0 ? 0.08 : 0), 0, 0.99));
+      const xx = x * q.sp + (x > 0 ? w : -w) * 0.5 + (x < 0 ? q.lean * -6 : 0), rr = rx * (0.7 + 0.3 * q.sp);
+      P.ell(xx, y, rr, ry, Mi, (px, py) => { const t = (py - (y - ry)) / (2 * ry); return (t < 0.28 ? (px < xx ? 3.5 : 2.5) : t < 0.6 ? 1.5 : 0.5) / 6; });
     }
     // the dome (squash, lean and lift) and its base widening into the puddle
     const rx = 38 + w, ry = 42 - w - q.lift * 0.5, cy = 2 + w - q.lift;
-    B.fill(-rx - 50, cy - ry - 2, rx + 50, cy + ry + 2, (x, y) => { const a = (x - sh(y) - rip(y)) / rx, b = (y - cy) / ry; return a * a + b * b <= 1; }, M, (x, y) => K.sphere(-2, -6, rx + 4, ry + 4, { amb: 0.08, k: 0.9 })(x - sh(y), y));
-    B.fill(-rx - 50, 10, rx + 50, 44, (x, y) => Math.abs(x - sh(y) - rip(y)) <= rx * (0.86 + (y - 10) / 110) && y <= 44, M, (x, y) => K.clamp(0.25 - (y - 10) / 120 + (x - sh(y) < 0 ? 0.1 : -0.04), 0, 0.99));
+    const domeShade = A.ball(-4, cy - 8, rx + 4, ry + 4, { refl: 0.12, k: 1.15 });
+    // a drop of ink: round below, drawn up into a point that leans with it (toward the party when
+    // it rears, back when it recoils) — the crown's tip a little off-centre, toward the party
+    const tipX = -6 - q.lean * 14, drop = (x, y) => {
+      const b = (y - cy) / ry;
+      if (b >= -0.15) { const a = (x - sh(y) - rip(y)) / rx; return a * a + b * b <= 1; }
+      const t = (-b - 0.15) / 0.95, half = rx * Math.sqrt(Math.max(0, 1 - 0.0225)) * Math.pow(Math.max(0, 1 - t), 0.62);
+      const c = sh(y) + rip(y) + tipX * t * t;
+      return Math.abs(x - c) <= half && t < 1;
+    };
+    B.fill(-rx - 50, cy - ry - 4, rx + 50, cy + ry + 2, drop, Mi, (x, y) => domeShade(x - sh(y), y) * 0.86);
+    B.fill(-rx - 50, 10, rx + 50, 44, (x, y) => Math.abs(x - sh(y) - rip(y)) <= rx * (0.86 + (y - 10) / 110) && y <= 44, Mi, (x, y) => Math.min(domeShade(x - sh(y), Math.min(y, cy + ry * 0.7)) * 0.86, (y > 30 ? 1.5 : 2.5) / 6));
     // drips on the flanks, with a drop falling
     for (const [side, y0, len, sd] of [[-1, 4, 18, 0], [1, 10, 14, 1], [-1, 20, 10, 2]]) {
       const x = side < 0 ? -rx + 6 + (sd === 2 ? 10 : 0) : rx - 8;
       const L2 = len + ((Math.floor(q.d) + sd) % 4), xs = x + sh(y0), dx = side < 0 ? -2 : 2;
-      B.path([[xs, y0], [xs + dx, y0 + L2 * 0.6], [xs + dx, y0 + L2]], 5, M, 1);
-      B.ell(xs + dx, y0 + L2 + 1, 3.5, 3.5, M, 1);
+      B.path([[xs, y0], [xs + dx, y0 + L2 * 0.6], [xs + dx, y0 + L2]], 5, Mi, (px) => (px < xs + dx - 0.5 ? 3.5 : 1.5) / 6);
+      B.ell(xs + dx, y0 + L2 + 1, 3.5, 3.5, Mi, A.ball(xs + dx - 1, y0 + L2, 4, 4, { k: 1.2 }));
       const fall = ((q.d * 7 + sd * 11) % 28);
-      if (fall < 22) B.ell(xs + dx * 1.5, y0 + L2 + 8 + fall, 2, 2.5, M, 1);
+      if (fall < 22) B.ell(xs + dx * 1.5, y0 + L2 + 8 + fall, 2, 2.5, Mi, 2);
     }
     // the tendril: from the flank toward the party, tapering to a club that bursts at the tip
     if (q.reach > 0.02) {
@@ -64,41 +93,43 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const n = Math.hypot(ux, uy), dx = ux / n, dy = uy / n, len = 74 * r;
       const bend = Math.sin(r * Math.PI) * 10;
       const pts = [[fx, fy, 13], [fx + dx * len * 0.35, fy + dy * len * 0.35 - bend, 10], [fx + dx * len * 0.7, fy + dy * len * 0.7 - bend * 0.6, 7], [fx + dx * len, fy + dy * len, 5]];
-      B.path(pts, 12, M, (x, y) => K.clamp(0.42 - (y - fy) / 60, 0, 0.99));
+      H.pipe(B, pts, 12, Mi, { collars: false });
       const tx = fx + dx * len, ty = fy + dy * len;
-      B.ell(tx, ty, 5 + 3 * r, 4 + 3 * r, M, K.sphere(tx - 1, ty - 2, 7, 6, { amb: 0.2 }));
-      if (q.splat > 0) for (let i = 0; i < 6; i++) { const a = -2.4 + i * 0.95; B.ell(tx + Math.cos(a) * (8 + 6 * q.splat), ty + Math.sin(a) * (6 + 5 * q.splat), 2.2, 2, M, 1); }
+      B.ell(tx, ty, 5 + 3 * r, 4 + 3 * r, Mi, A.ball(tx - 1, ty - 2, 7, 6, { k: 1.2 }));
+      if (q.splat > 0) for (let i = 0; i < 6; i++) { const a = -2.4 + i * 0.95; B.ell(tx + Math.cos(a) * (8 + 6 * q.splat), ty + Math.sin(a) * (6 + 5 * q.splat), 2.2, 2, Mi, 3); }
     }
-    A.outline(B);
-    // gloss: a curved streak and two glints up-left, a cool sheen low right
+    A.despeckle(B);
+    A.rim(B, [Mi.id], { w: 2 });
+    // gloss: a hard curved streak and its band on the lit shoulder, window glints, a cool sheen low right
     B.onto((b) => {
       const gy = -22 + w - q.lift;
       b.save().translate(-15 + sh(gy), gy).rotate(-0.7);
-      b.ell(0, 0, 11, 4, gloss2, 0);
-      b.ell(-1, -1, 8, 2.2, gloss, 0);
+      b.ell(0, 1, 13, 4.5, Mi, 4);
+      b.ell(-1, -0.5, 10, 2.2, M.gloss2, 0);
+      b.ell(-2, -1, 6.5, 1.3, M.gloss, 0);
       b.restore();
-      b.rect(-26 + sh(-8), -8 + w - q.lift, 3, 3, gloss, 0);
-      b.rect(-6 + sh(-34), -34 + w - q.lift, 4, 2, gloss2, 0);
-      b.save().translate(22 + sh(22), 22).rotate(0.9);
-      b.ell(0, 0, 9, 2, gloss2, 0);
-      b.restore();
-      b.ell(-40, 40, 8, 2, gloss2, 0);
+      b.rect(-27 + sh(-8), -8 + w - q.lift, 3, 3, M.gloss, 0);
+      b.rect(-6 + sh(-34), -34 + w - q.lift, 4, 2, M.gloss2, 0);
     });
-    // pale eyes with dark pupils (looking toward the party), a wavering / open / shut mouth
+    P.onto((b) => { b.ell(-44, 38, 7, 1.5, M.gloss2, 0); b.ell(50, 40, 5, 1.2, M.gloss2, 0); });
+    // the three-quarter face: pale eyes turned toward the party (the far eye narrower), pupils
+    // on the party, a wavering / open / shut mouth
     const ey = -6 + w - q.lift, lx = q.look > 0.5 ? -2 : 0;
-    for (const s of [-1, 1]) {
-      const ex = s * 12 + sh(ey);
-      if (q.eye < 0.25) { B.line(ex - 5, ey + 1, ex + 5, ey + 1, pale, 1); continue; }
+    for (const [ex0, ew] of [[-17, 4.6], [6, 6.2]]) {
+      const ex = ex0 + sh(ey);
+      if (q.eye < 0.25) { B.line(ex - ew, ey + 1, ex + ew, ey + 1, M.pale, 2); continue; }
       const er = 8 * Math.max(0.35, q.eye);
-      B.ell(ex, ey + (8 - er) * 0.5, 6, er, pale, K.sphere(ex, ey, 6, er, { amb: 0.5 }));
-      B.ell(ex + 1 + lx, ey + 2 + (8 - er) * 0.4, 3, Math.min(4, er * 0.5), H.ink, 0);
-      B.rect(ex - 3, ey - er + 3, 2, 2, H.white, 0);
+      B.ell(ex, ey + (8 - er) * 0.5, ew, er, M.pale, (x, y) => (y > ey + er * 0.35 || x > ex + ew * 0.5 ? 1.5 : 3.5) / 4);
+      B.ell(ex + 1 + lx, ey + 2 + (8 - er) * 0.4, ew * 0.5, Math.min(4, er * 0.5), M.eye, 0);
+      if (ew > 5) B.rect(Math.round(ex - 3), Math.round(ey - er + 3), 2, 2, M.shine, 0);
     }
-    const my = 12 + w - q.lift, mx = sh(my) + lx;
-    if (q.mouth > 0.3) B.ell(mx, my + 1, 5 + q.mouth * 3, 2 + q.mouth * 4, H.ink, 0);
-    else if (q.mouth < -0.3) B.line(mx - 7, my + 1, mx + 7, my + 1, pale, 0);
-    else { const mw = [[-8, 12], [-4, 14], [0, 12], [4, 14], [8, 12]]; for (let i = 1; i < mw.length; i++) B.line(mx + mw[i - 1][0], mw[i - 1][1] + w - q.lift + (Math.floor(q.d) % 2), mx + mw[i][0], mw[i][1] + w - q.lift, pale, 0); }
-    return B;
+    const my = 12 + w - q.lift, mx = sh(my) + lx - 6;
+    if (q.mouth > 0.3) B.ell(mx, my + 1, 5 + q.mouth * 3, 2 + q.mouth * 4, M.eye, 0);
+    else if (q.mouth < -0.3) B.line(mx - 7, my + 1, mx + 7, my + 1, M.pale, 1);
+    else { const mw = [[-8, 12], [-4, 14], [0, 12], [4, 14], [8, 12]]; for (let i = 1; i < mw.length; i++) B.line(mx + mw[i - 1][0], mw[i - 1][1] + w - q.lift + (Math.floor(q.d) % 2), mx + mw[i][0], mw[i][1] + w - q.lift, M.pale, 1); }
+    A.cast(P, B, 3, 3, 1);
+    A.outline(P); A.outline(B);
+    return P.over(B);
   }
   const bBase = { w: 0, lean: 0, lift: 0, sp: 1, d: 0, reach: 0, tdir: 0, splat: 0, eye: 1, look: 0, mouth: 0, rip: 0, dim: 1 };
   const bIdle = [0, 1, 2, 3, 4, 5, 6, 7].map((f) => ({ w: [0, 1, 2, 1, 0, -1, -2, -1][f], d: f * 0.5, rip: f % 4 === 1 ? 0.6 : 0, look: 0.3 }));
@@ -208,7 +239,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
   };
   A.family('blot', {
-    spec: { w: 220, h: 152, ox: 128, oy: 62, dy: 30, ms: 160 },
+    spec: { w: 220, h: 168, ox: 128, oy: 78, dy: 30, ms: 160 },
     base: bBase, idle: bIdle, poseTable: bTable, rig: blotRig, recoil: { push: 3 },
   });
   // Strike: rears, lashes a tendril; contact 560, ~1,050 ms
