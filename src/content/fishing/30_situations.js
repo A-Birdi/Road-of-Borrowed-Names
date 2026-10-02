@@ -444,11 +444,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
           { jp: 'もう {一度|いちど} {沖|おき} へ {出|だ}す 。', ok: false, why: no('Nothing in the note sends it back out.') },
         ], explain: { jp: 'A より B ＝ B rather than A', en: 'より ranks speed below quiet.' } }),
       A: CH({ item: 'g:comp_yori_hou', reading: 'じかん を かけて よせる', meaning: { en: 'take your time rather than rush it' },
-        note: { jp: 'メモ ： 「ここ まで {来|く}れば 、 {急|いそ}ぐ {理由|りゆう} は もう ない 。 {焦|あせ}って {暴|あば}れさせる くらい なら 、 {時間|じかん} を かけた ほう が いい 。」', en: 'Note: "Once it is this far, there is no reason to hurry. Rather than rush and make it thrash, it\'s better to take your time."' },
+        note: { jp: 'メモ ： 「ここ まで {来|く}れば 、 {急|いそ}ぐ {理由|りゆう} は もう ない 。 {焦|あせ}って あばれさせる くらい なら 、 {時間|じかん} を かけた ほう が いい 。」', en: 'Note: "Once it is this far, there is no reason to hurry. Rather than rush and make it thrash, it\'s better to take your time."' },
         prompt: { en: 'What does the note ask?' },
         options: [
           { jp: '{時間|じかん} を かけて 、 ゆっくり {寄|よ}せる 。', ok: true },
-          { jp: '{暴|あば}れる {前|まえ} に 、 {急|いそ}いで {引|ひ}き{上|あ}げる 。', ok: false, why: no('くらいなら: rather than rush and make it thrash, take your time.') },
+          { jp: 'あばれる {前|まえ} に 、 {急|いそ}いで {引|ひ}き{上|あ}げる 。', ok: false, why: no('くらいなら: rather than rush and make it thrash, take your time.') },
           { jp: '{理由|りゆう} が ない ので 、 {糸|いと} を {切|き}る 。', ok: false, why: no('The note says there is no reason to HURRY — not to cut the line.') },
         ], explain: { jp: '〜 くらい なら 〜 ほう が いい', en: 'Rather than X, better to Y.' } }),
     } });
@@ -512,12 +512,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
           { jp: '{杭|くい} に {糸|いと} を {結|むす}ぶ', ok: false, why: no('Nothing in the note ties the line to the post.') },
         ], explain: { jp: '〜 と ＝ when / if …', en: 'A reliable consequence keeps you off the post side.' } }),
       A: CH({ item: 'g:v_yasui_nikui', reading: 'ひらけた みぎ へ みちびく', meaning: { en: 'lead it into the open water on the right' },
-        note: { jp: 'メモ ： 「{杭|くい} の {周|まわ}り は {糸|いと} が {絡|から}みやすい 。 {港|みなと} の {開|ひら}けた ほう へ {導|みちび}けば 、 {魚|さかな} も {暴|あば}れずに {済|す}む 。」', en: 'Note: "Lines tangle easily around the post. Lead it toward the open harbour and the fish won\'t need to thrash either."' },
+        note: { jp: 'メモ ： 「{杭|くい} の {周|まわ}り は {糸|いと} が {絡|から}みやすい 。 {港|みなと} の {開|ひら}けた ほう へ {導|みちび}けば 、 {魚|さかな} も あばれずに {済|す}む 。」', en: 'Note: "Lines tangle easily around the post. Lead it toward the open harbour and the fish won\'t need to thrash either."' },
         prompt: { en: 'What does the note ask?' },
         options: [
           { jp: '{開|ひら}けた {右|みぎ} へ {導|みちび}く 。', ok: true },
           { jp: '{杭|くい} を {使|つか}って {魚|さかな} を {止|と}める 。', ok: false, why: no('絡みやすい: around the post is where lines tangle.') },
-          { jp: '{魚|さかな} を {暴|あば}れさせて 、 {疲|つか}れさせる 。', ok: false, why: no('The note says leading it to open water spares it from thrashing (暴れずに済む).') },
+          { jp: '{魚|さかな} を あばれさせて 、 {疲|つか}れさせる 。', ok: false, why: no('The note says leading it to open water spares it from thrashing (あばれずに済む).') },
         ], explain: { jp: '〜 やすい ・ 〜 ずに {済|す}む', en: '“Easy to tangle” there; “spared from thrashing” here.' } }),
     } });
 
@@ -581,7 +581,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
           { jp: '「{波|なみ} {高|たか}い」 の ほう', ok: false, why: no('見えにくい: high waves make the float hard to see.') },
         ], explain: { jp: '〜 にくい ＝ hard to …', en: 'The reason points to the calm tag.' } }),
       A: CH({ item: 'g:comp_yori_hou', reading: 'うちがわ の めじるし', meaning: { en: 'the marker tagged “inside”: calmer than the outside' }, labels: { a: '{内側|うちがわ}', b: '{外側|そとがわ}' },
-        note: { jp: 'メモ ： 「{防波堤|ぼうはてい} の {内側|うちがわ} は 、 {外側|そとがわ} より {波|なみ} が {穏|おだ}やか だ 。 {穏|おだ}やか な ほう で {記録|きろく} を とる こと 。」', en: 'Note: "Inside the breakwater the waves are gentler than outside. Take the record on the gentle side."' },
+        note: { jp: 'メモ ： 「{桟橋|さんばし} の {内側|うちがわ} は 、 {外側|そとがわ} より {波|なみ} が {穏|おだ}やか だ 。 {穏|おだ}やか な ほう で {記録|きろく} を とる こと 。」', en: 'Note: "Between the piers the waves are gentler than outside them. Take the record on the gentle side."' },
         prompt: { en: 'The two red markers are tagged 内側 and 外側. Which do you use?' },
         options: [
           { jp: '「{内側|うちがわ}」 の {目印|めじるし}', ok: true },

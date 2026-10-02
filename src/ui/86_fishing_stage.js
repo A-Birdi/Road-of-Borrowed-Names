@@ -110,6 +110,15 @@ RB.fishStage = (function () {
   };
   const BEHAVIOURS = ['settle', 'notes', 'watch', 'splash', 'lean', 'respond', 'rest'];
 
+  // the pet: watching, never acting (§8.3) — a cat follows the float from dry ground, a dog leans
+  // toward a splash, a bird turns toward ripples, a tanuki copies your attentive posture (late)
+  const PETK = {
+    cat: { calm: { sit: 1 }, follow: (u) => ({ sit: 1, hy: clamp(u * 60, -40, 40), hp: -6, earF: 0.5 }), splash: { sit: 1, earF: 0.8, hp: -10, tall: 0.6 }, attend: { sit: 1, earF: 0.4, hp: -4 } },
+    dog: { calm: { sit: 1 }, follow: (u) => ({ sit: 1, hy: clamp(u * 30, -24, 24), earF: 0.4 }), splash: { sit: 0, lean: 0.7, earF: 0.9, hp: -10 }, attend: { sit: 1, earF: 0.7, hp: -6 } },
+    bird: { calm: {}, follow: (u) => ({ hy: clamp(u * 40, -30, 30), hp: -4 }), splash: { hy: 20, hp: -10, wing: 0.3 }, attend: { hp: -8 }, ripple: (u) => ({ hy: clamp(u * 70, -50, 50), hp: -10 }) },
+    tanuki: { calm: { sit: 1 }, follow: (u) => ({ sit: 0.6, hy: clamp(u * 40, -30, 30) }), splash: { sit: 1, paws: 1, earF: 0.6, blink: 0.5 }, attend: { sit: 0.4, rise: 0.3, paws: 0.8, earF: 0.4, hp: -4 } },
+  };
+
   // ---- the stage -------------------------------------------------------------------------------------------------------
   function create(host, opts) {
     opts = opts || {};
@@ -187,9 +196,19 @@ RB.fishStage = (function () {
         // the open sea's horizon, the two piers running out, a moored boat
         R(0, Math.round(shore * 0.9), AW, 2, RB.propKit.mix(W[1], '#ffffff', 0.25));
         R(0, shore - 2, AW, 2, W[3]);
-        for (const [x0, w] of [[AW * 0.04, AW * 0.09], [AW * 0.86, AW * 0.09]]) {
-          for (let y = Math.round(shore + 4); y < AH * 0.8; y += 1) R(x0 + (y - shore) * 0.05, y, w + (y - shore) * 0.12, 1, (y & 3) ? Wd[2] : Wd[1]);
-          for (let y = Math.round(shore + 8); y < AH * 0.8; y += 14) R(x0 + (y - shore) * 0.05 - 1, y, 3, 8, Wd[0]);
+        // the two piers, as decks running out from the quay: planks lengthwise, posts under the water-side edge
+        const yFar = Math.round(shore + 10), yNear = Math.round(AH * 0.8);
+        for (const side of [-1, 1]) {
+          const xNear = side < 0 ? AW * 0.02 : AW * 0.86, wNear = AW * 0.12, xFar = side < 0 ? AW * 0.12 : AW * 0.8, wFar = AW * 0.035;
+          for (let y = yFar; y < yNear; y++) {
+            const k = (y - yFar) / (yNear - yFar), x0 = lerp(xFar, xNear, k), w = lerp(wFar, wNear, k);
+            for (let i = 0; i < w; i++) R(x0 + i, y, 1, 1, (Math.floor((i / w) * 7) !== Math.floor(((i + 1) / w) * 7)) ? Wd[0] : (i < 1 ? Wd[3] : Wd[2]));
+            // the deck's thickness on its water-facing edge, and posts going down into the water
+            const ex = side < 0 ? x0 + w : x0 - 1, th = Math.max(1, Math.round(1 + k * 3));
+            R(ex, y, 1, th, Wd[1]);
+            if ((y - yFar) % Math.max(6, Math.round(6 + k * 14)) === 0) R(side < 0 ? ex - 1 : ex, y + th, Math.max(1, Math.round(1 + k * 2)), Math.round(3 + k * 9), Wd[0]);
+          }
+          R(xFar, yFar - 1, wFar, 1, Wd[3]);
         }
         R(AW * 0.7, shore + 12, 22, 5, Wd[1]); R(AW * 0.7 + 2, shore + 10, 18, 3, Wd[2]); R(AW * 0.7 + 9, shore + 2, 1, 9, Wd[0]);
       } else {
@@ -369,13 +388,6 @@ RB.fishStage = (function () {
       g.drawImage(f.cv, o.x - BT().ANCHOR.x, o.y - BT().ANCHOR.y);
       return { head: { x: o.x + f.head.x, y: o.y + f.head.y } };
     }
-    // the pet: watching, never acting (§8.3)
-    const PETK = {
-      cat: { calm: { sit: 1 }, follow: (u) => ({ sit: 1, hy: clamp(u * 60, -40, 40), hp: -6, earF: 0.5 }), splash: { sit: 1, earF: 0.8, hp: -10, tall: 0.6 }, attend: { sit: 1, earF: 0.4, hp: -4 } },
-      dog: { calm: { sit: 1 }, follow: (u) => ({ sit: 1, hy: clamp(u * 30, -24, 24), earF: 0.4 }), splash: { sit: 0, lean: 0.7, earF: 0.9, hp: -10 }, attend: { sit: 1, earF: 0.7, hp: -6 } },
-      bird: { calm: {}, follow: (u) => ({ hy: clamp(u * 40, -30, 30), hp: -4 }), splash: { hy: 20, hp: -10, wing: 0.3 }, attend: { hp: -8 }, ripple: (u) => ({ hy: clamp(u * 70, -50, 50), hp: -10 }) },
-      tanuki: { calm: { sit: 1 }, follow: (u) => ({ sit: 0.6, hy: clamp(u * 40, -30, 30) }), splash: { sit: 1, paws: 1, earF: 0.6, blink: 0.5 }, attend: { sit: 0.4, rise: 0.3, paws: 0.8, earF: 0.4, hp: -4 } },
-    };
     function petPose(t, floatX) {
       const sp = pet.species, K = PETK[sp] || PETK.cat;
       const o = G.pet();
@@ -709,5 +721,5 @@ RB.fishStage = (function () {
       destroy() { dead = true; if (raf) cancelAnimationFrame(raf); clearTimeout(sayT); if (ro) ro.disconnect(); figCache.clear(); wrap.remove(); capEl.remove(); },
     };
   }
-  return { create, PC, COMP, BEHAVIOURS, proj, ZS };
+  return { create, PC, COMP, PETK, BEHAVIOURS, proj, ZS };
 })();

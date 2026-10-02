@@ -22,7 +22,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
 川岸|かわぎし|n|E|riverbank
 波止場|はとば|n|I|quay, wharf
 岸壁|がんぺき|n|A|quay wall
-防波堤|ぼうはてい|n|A|breakwater
 下流|かりゅう|n|I|downstream, lower reaches
 木陰|こかげ|n|I|the shade of a tree
 きわ||n|I|edge, brink (際)
@@ -35,7 +34,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 食いつく|くいつく|v5k|I|to bite (of a fish taking bait); to bite into
 巻きつく|まきつく|v5k|I|to wind round, to coil round
 巻く|まく|v5k|E|to wind, to roll (糸を巻く: to wind a line in)
-暴れる|あばれる|v1|I|to thrash about; to act violently
+あばれる||v1|I|to thrash about
 増す|ます|v5s|I|to increase, to grow
 すばやい||adj-i|I|quick, nimble
 二回|にかい|n|E|twice, two times

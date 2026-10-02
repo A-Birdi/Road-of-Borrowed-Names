@@ -30,6 +30,8 @@ const suites = [
   full ? ['long_quests.mjs', '--all-companions'] : ['long_quests.mjs', '--fixtures-only'],
   // the two deduction cases, the refined sequences and their keepsakes, Known Details (addendum §14.8–§18)
   ['cases.mjs'], ['cases_shots.mjs'], ['known.mjs'],
+  // A Quiet Cast: the three fishing sites, a complete catch, repair, survey, reload, captures, layouts (practice addendum §5–§8)
+  ['fishing.mjs'],
   full ? ['matrix.mjs'] : ['pursue.mjs', 'E', 'mio'],
 ];
 const results = [];
