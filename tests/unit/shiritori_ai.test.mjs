@@ -255,11 +255,13 @@ export default async (t) => {
     if (SH.safeReplies(Object.assign({}, g, { used: Object.assign({}, g.used, { [m.edge.group]: true }) }), P, m.edge.tail).length) leaves++;
   }
   t.eq(leaves, possible, 'the learning partner never closes the chain when a continuing word exists (' + leaves + '/' + possible + ')');
+  t.log('learning partner: ' + leaves + '/' + possible + ' positions with a continuing word');
   // Casual is uniform among safe groups
   const gc = SH.newGame(X, { starter: X.starters[0], first: 'cpu' });
   const groups = SH.safeGroups(gc, X), counts = {};
   for (let s = 0; s < 3000; s++) { const m = await SH.chooseMove(gc, X, 'casual', RB.util.rng(s + 1), S); counts[m.edge.group] = (counts[m.edge.group] || 0) + 1; }
   const exp = 3000 / groups.length, chi = groups.reduce((a, g) => a + Math.pow((counts[g] || 0) - exp, 2) / exp, 0);
+  t.log('casual uniformity: chi-square ' + chi.toFixed(1) + ' over ' + groups.length + ' groups, 3,000 seeds');
   t.ok(Object.keys(counts).length === groups.length && chi < 3 * groups.length + 20, 'Casual picks every safe group about equally often (χ² ' + chi.toFixed(1) + ', ' + groups.length + ' groups)');
 
   // ---- full games: every computer move legal, finite, ends truthfully ----

@@ -461,7 +461,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       order = order.slice().sort((a, b) => vals.get(b) - vals.get(a) || order.indexOf(a) - order.indexOf(b));
       if (done.heuristic === 0) break;                      // the whole tree was searched: deeper adds nothing
       if (Math.abs(best) >= PROVEN && best > 0) break;     // a proven win was found
-      if (S.nodes >= pol.nodes) { out.reason = 'nodes'; break; }
+      if (S.nodes >= S.budget) { out.reason = 'nodes'; break; }
       if (run.safeguard && run.clock() - run.t0 >= pol.safeguardMs) { out.fallback = true; out.reason = 'time'; break; }
     }
     out.nodes += S.nodes;

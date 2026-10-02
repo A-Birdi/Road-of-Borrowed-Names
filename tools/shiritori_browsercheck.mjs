@@ -47,8 +47,14 @@ const out = await p.evaluate(async (npos) => {
     if (g.over) continue;
     for (const level of ['sharp', 'thoughtful']) {
       const a = performance.now();
-      const m = await SH.chooseMove(g, X, level, SH.strategyRng(i, g, X, level), {});
-      decisions.push({ level, ms: +(performance.now() - a).toFixed(1), depth: m.depth, nodes: m.nodes, mode: m.mode, fallback: m.fallback, slices: m.slices, maxSliceMs: +m.maxSliceMs.toFixed(2), label: m.label });
+      // a clock that also records the longest gap between consecutive reads inside a slice
+      let lastRead = null, gap = 0;
+      const clock = () => { const t = performance.now(); if (lastRead !== null && t - lastRead > gap) gap = t - lastRead; lastRead = t; return t; };
+      const ch = new MessageChannel(); const q = []; ch.port1.onmessage = () => q.shift()();
+      const yieldFn = () => new Promise((r) => { lastRead = null; q.push(r); ch.port2.postMessage(0); });
+      const m = await SH.chooseMove(g, X, level, SH.strategyRng(i, g, X, level), { clock, yield: yieldFn });
+      ch.port1.close();
+      decisions.push({ level, ms: +(performance.now() - a).toFixed(1), depth: m.depth, nodes: m.nodes, mode: m.mode, fallback: m.fallback, slices: m.slices, maxSliceMs: +m.maxSliceMs.toFixed(2), label: m.label, gap: +gap.toFixed(2) });
     }
   }
   // an exact Pocket endgame
@@ -66,7 +72,7 @@ const out = await p.evaluate(async (npos) => {
   running = false;
   if (po) po.disconnect();
   const by = (lv) => decisions.filter((d) => d.level === lv);
-  const sum = (lv) => { const d = by(lv); return d.length ? { n: d.length, msMax: Math.max(...d.map((x) => x.ms)), msMedian: d.map((x) => x.ms).sort((a, b) => a - b)[d.length >> 1], maxSliceMs: Math.max(...d.map((x) => x.maxSliceMs)), fallbacks: d.filter((x) => x.fallback).length, depths: d.map((x) => x.depth + (x.label === 'exact' ? 'x' : '')).join(' ') } : null; };
+  const sum = (lv) => { const d = by(lv); return d.length ? { n: d.length, msMax: Math.max(...d.map((x) => x.ms)), msMedian: d.map((x) => x.ms).sort((a, b) => a - b)[d.length >> 1], maxSliceMs: Math.max(...d.map((x) => x.maxSliceMs)), slicesOver8_5: d.filter((x) => x.maxSliceMs > 8.5).length, maxGapBetweenClockReadsMs: Math.max(...d.map((x) => x.gap || 0)), fallbacks: d.filter((x) => x.fallback).length, depths: d.map((x) => x.depth + (x.label === 'exact' ? 'x' : '')).join(' ') } : null; };
   res.detail = decisions.map((d) => d.level[0] + d.depth + ":" + d.maxSliceMs + "/" + d.ms + "/" + d.slices).join(" ");
   res.sharp = sum('sharp'); res.thoughtful = sum('thoughtful'); res.endgame = sum('sharp-endgame');
   res.longTasks = { count: longs.length, maxMs: longs.length ? +Math.max(...longs).toFixed(1) : 0 };
