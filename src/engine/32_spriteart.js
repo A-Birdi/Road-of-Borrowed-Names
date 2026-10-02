@@ -816,6 +816,41 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }
     return cv;
   };
+  // Turning on the spot (overworld parity pass, battle addendum §20). The game turns an actor at once (its
+  // facing, its interaction tile and its collision never wait); the drawing follows through a pivot: a
+  // half-turn (up ↔ down, left ↔ right) passes through the in-between view for PIVOT ms — up ↔ down through
+  // a side view (the right one, or the left for actors whose id hashes odd, so a crowd does not turn in
+  // step), left ↔ right through the front view — and a quarter turn shows the settled breath frame for SETTLE
+  // ms, a small weight shift onto the new foot. Walking, creatures and reduced motion are drawn as before.
+  //   RB.sprites.view(actor, t, still, frame) -> { dir, frame, turn }   (drawActor asks it for each actor)
+  const PIVOT = 90, SETTLE = 70;
+  const OPP = { up: 'down', down: 'up', left: 'right', right: 'left' };
+  const turnStats = { half: 0, quarter: 0 };
+  SP.view = function (a, t, still, frame) {
+    const d = a.dir;
+    if (!a.look || a.look.custom || still) { a._vd = d; a._turn = null; return { dir: d, frame, turn: null }; }
+    if (a._vd == null) a._vd = d;
+    if (d !== a._vd) {
+      const from = a._vd;
+      a._vd = d;
+      if (a.mv) a._turn = null;
+      else if (OPP[from] === d) { a._turn = { kind: 'half', from, to: d, at: t }; turnStats.half++; }
+      else { a._turn = { kind: 'quarter', from, to: d, at: t }; turnStats.quarter++; }
+    }
+    const q = a._turn;
+    if (!q || a.mv) { a._turn = null; return { dir: d, frame, turn: null }; }
+    const k = t - q.at;
+    if (q.kind === 'half' && k < PIVOT) {
+      const odd = ((a.id || '').length + (a.home ? a.home[0] : 0)) % 2 === 1;
+      const mid = q.from === 'left' || q.from === 'right' ? 'down' : odd ? 'left' : 'right';
+      return { dir: mid, frame: typeof frame === 'string' && frame.endsWith('b') ? 'i1b' : 'i1', turn: 'half' };
+    }
+    if (q.kind === 'quarter' && k < SETTLE) return { dir: d, frame: typeof frame === 'string' && frame.endsWith('b') ? 'i1b' : 'i1', turn: 'quarter' };
+    a._turn = null;
+    return { dir: d, frame, turn: null };
+  };
+  SP.turnStats = () => Object.assign({}, turnStats);
+  SP.TURN = { PIVOT, SETTLE };
   // The frame standard (art px): size, and the foot anchor that stands on the tile.
   SP.FRAME = { w: W, h: H };
   SP.ANCHOR = { x: AX, y: AY + TOP };

@@ -20,11 +20,23 @@
  *   whoever acts. One dominant reaction per exchange; a second action in the
  *   same exchange gets a short acknowledgement of its family instead of a
  *   second flourish. A technique is one combined culmination, not three.
- * - A creature's move nearby: the species' safe nearby-impact reaction (never
- *   an injury cue, whether the blow landed or a ward took it).
+ * - A creature's move nearby: while it prepares, a glance at it and a small
+ *   brace; at contact the species' safe nearby-impact reaction (never an injury
+ *   cue, whether the blow landed or a ward took it); after it, a settle.
  * - The final knot: the settled-victory gesture with your cheer; defeat: it
  *   keeps low and close (not hurt). Arrival: it trots in beside you; exit: gone.
  * - Reduced motion: every reaction is its key pose held (no hops, no travel).
+ *
+ * Battle art addendum (§11; docs/battle/pets_overworld.md):
+ * - Every reaction is fitted into the action it answers (from its beat to the
+ *   action's own end, at most 1.6× faster); an instant-length action gets none
+ *   (the recap carries the result); the next decision eases any reaction out.
+ * - Poses change at most every 80 ms while it reacts and every 100 ms while
+ *   idle (held drawings, not a tween); a new timeline cross-fades from the last
+ *   pose shown; the tail and ears follow the body by 90 and 50 ms.
+ * - Its place is computed every frame from the live party anchors (place()):
+ *   never on an adventurer's foot anchor, a creature or a reported badge; aside
+ *   or resting when crowded. Its art density follows the party's drawn height.
  *
  *   RB.battlePets.wants() (the stage reserves its place), draw(c, lay, fr), stats(),
  *   RB.battlePets.sample(species, look, family, t, o) -> pose (the coverage gallery, tests),
@@ -42,7 +54,7 @@ RB.battlePets = (function () {
     cat: { calm: { sit: 1 }, ready: { sit: 1, earF: 0.5, hp: -4 }, defeat: { sit: 1, crouch: 0.5, earF: -0.6, hy: 40 }, victory: { sit: 1, tall: 1, tUp: 38, blink: 0.5, earF: 0.4 } },
     dog: { calm: { sit: 1 }, ready: { sit: 0, lean: 0.35, earF: 0.7, hp: -4 }, defeat: { lie: 1, earF: -0.7, hy: 45 }, victory: { sit: 1, earF: 0.5, hp: -8 } },
     bird: { calm: {}, ready: { earF: 0, hp: -6, lean: 0.2 }, defeat: { crouch: 0.6, fluff: 0.8, hy: 50 }, victory: { hp: -10 } },
-    tanuki: { calm: { sit: 1 }, ready: { sit: 0.5, rise: 0.25, paws: 0.6, earF: 0.3 }, defeat: { sit: 1, crouch: 0.5, paws: 1, earF: -0.6, hy: 40 }, victory: { sit: 1, paws: 1, blink: 0.5 } },
+    tanuki: { calm: { sit: 1 }, ready: { sit: 1, rise: 0.15, paws: 0.5, earF: 0.3, hp: -4 }, defeat: { sit: 1, crouch: 0.5, paws: 1, earF: -0.6, hy: 40 }, victory: { sit: 1, paws: 1, blink: 0.5 } },
   };
   // Where it looks: at you (on its right), at your companion (over its left shoulder), at the creature.
   const LOOK = { pc: 52, comp: -70, foe: 6 };
@@ -128,6 +140,28 @@ RB.battlePets = (function () {
     bird: { hit: K(700, [[0, {}], [100, { wing: 0.45, flap: 0.3, fluff: 0.5 }], [260, { wing: 0.3, flap: 0.8 }], [440, { fluff: 0.3 }], [700, {}]], 3, hop(80, 2, 260)), soft: K(600, [[0, {}], [140, { fluff: 0.6, tuck: 0.5 }], [600, {}]], 1), status: K(650, [[0, {}], [200, { hr: 18, hp: -8 }], [650, {}]], 1) },
     tanuki: { hit: K(850, [[0, {}], [120, { lean: -0.6, crouch: 0.35 }], [440, { lean: -0.2, crouch: 0.2, paws: 0.6 }], [850, {}]], 1), soft: K(700, [[0, {}], [160, { lean: -0.3, spread: 0.4 }], [700, {}]], 1), status: K(700, [[0, {}], [220, { hp: -8, nose: 1 }], [700, {}]], 1) },
   };
+  // Around a creature's move (battle addendum §11): while it prepares, a glance at it and a small brace
+  // (ears back, weight down, feathers sleeked) that holds until contact; after the move, a settle (the cat
+  // re-curls its tail, the dog shakes out its ruff, the bird fluffs and smooths, the tanuki folds its paws).
+  // Neither is an injury cue, and neither is ever a target, a number or a mark.
+  const PREP = {
+    cat: K(520, [[0, {}], [180, { hy: LOOK.foe, earF: -0.45, crouch: 0.2, tSide: 14 }], [520, { hy: LOOK.foe, earF: -0.5, crouch: 0.25, tSide: 18 }]], 2),
+    dog: K(520, [[0, {}], [180, { hy: LOOK.foe, earF: 0.9, lean: -0.25, spread: 0.4 }], [520, { hy: LOOK.foe, earF: 0.9, lean: -0.3, spread: 0.5, crouch: 0.15 }]], 2),
+    bird: K(480, [[0, {}], [160, { hr: 12, fluff: -0.2, tuck: 0.3 }], [480, { hr: 12, tuck: 0.45, crouch: 0.3 }]], 2),
+    tanuki: K(560, [[0, {}], [200, { hy: LOOK.foe, earF: -0.4, paws: 0.8, crouch: 0.15 }], [560, { hy: LOOK.foe, earF: -0.45, paws: 1, crouch: 0.2 }]], 2),
+  };
+  const SETTLE = {
+    cat: K(620, [[0, {}], [180, { tCurl: 20, tFlick: 24, earR: 0.4 }], [400, { tFlick: -10 }], [620, {}]], 1),
+    dog: K(640, [[0, {}], [120, { hr: 12, earF: -0.3 }], [240, { hr: -12, earF: -0.3 }], [360, { hr: 8 }], [480, { hr: -4 }], [640, {}]], 2),
+    bird: K(600, [[0, {}], [180, { fluff: 0.9 }], [340, { fluff: 0.2, wing: 0.18 }], [600, {}]], 1),
+    tanuki: K(640, [[0, {}], [220, { paws: 1, breath: 1 }], [460, { paws: 0.8, breath: 0, blink: 1 }], [640, {}]], 1),
+  };
+  // the flinch itself is quick (0.7 of its first timing); the settle carries the recovery
+  const quick = (R, f) => K(Math.round(R.ms * f), R.keys.map(([ms, po]) => [Math.round(ms * f), po]), R.key, R.lift ? ((g) => (tt) => g(tt / f))(R.lift) : undefined);
+  for (const sp in IMPACT) {
+    for (const k of ['hit', 'soft', 'status']) IMPACT[sp][k] = quick(IMPACT[sp][k], 0.7);
+    IMPACT[sp].prep = PREP[sp]; IMPACT[sp].settle = SETTLE[sp];
+  }
   // The settled-victory gesture (with your cheer).
   const VICTORY = {
     cat: K(1300, [[0, {}], [300, { tall: 1, tUp: 40, earF: 0.4 }], [700, { tall: 1, tUp: 40, blink: 1 }], [1000, { tall: 1, tUp: 36 }], [1300, { tall: 1, tUp: 38, blink: 0.5 }]], 2),
@@ -242,19 +276,41 @@ RB.battlePets = (function () {
     // the look is taken once, here: nothing changes the animal halfway through an exchange
     B = {
       on: true, sp, look: RB.pets.lookOf(s, sp), base: 'calm', q: [], idle: null, idleAt: 0, enterT: null, ex: -1, dom: 0,
-      stats: { reactions: 0, secondary: 0, impacts: 0, families: {}, calmIdles: 0, victory: 0, drawn: 0, maxParticles: 0 }, trace: [],
-      comp: e && e.comp,
+      stats: { reactions: 0, secondary: 0, impacts: 0, preps: 0, settles: 0, skipped: 0, fitted: 0, families: {}, calmIdles: 0, victory: 0, drawn: 0, maxParticles: 0 }, trace: [],
+      comp: e && e.comp, gen: (B0 = (B0 + 1) | 0),
     };
   }
+  let B0 = 0;
   function end() { B = null; }
-  function schedule(r) {
-    if (!B) return;
+  // Fit a reaction into the action it answers (battle addendum §11: reactions overlap the action and never
+  // outlast it into the next decision). `from`..`until` is the window on the presentation clock; a reaction
+  // longer than its window plays faster (never more than 1.6×) and is eased out at the next calm. A window
+  // shorter than 120 ms (instant playback) plays nothing: the recap carries the result, not the pet.
+  const MIN_WIN = 120, MAX_RATE = 1.6, SETTLE_GRACE = 450;
+  function fit(r, R, from, until, optional) {
+    const dur = r.secondary ? R.ms * 0.62 : R.ms;
+    if (until != null && until - from < MIN_WIN) return null;
+    // a brace or a settle that cannot fit even at the fastest rate is left out (it is optional)
+    if (optional && until != null && until - from < dur / MAX_RATE) return null;
+    let rate = 1;
+    if (until != null && until - from < dur) { rate = Math.min(MAX_RATE, dur / Math.max(1, until - from)); B.stats.fitted++; }
+    r.at = from; r.rate = rate; r.dur = dur / rate;
+    return r;
+  }
+  function schedule(r, R, until) {
+    if (!B) return false;
+    const traced = { kind: r.kind, family: r.family || null, impact: r.impact || null, actor: r.actor || null, secondary: !!r.secondary, outcome: r.outcome || null };
+    const optional = r.impact === 'prep' || r.impact === 'settle';
+    if (!fit(r, R, r.at, until, optional)) { if (!optional) { B.stats.skipped++; traced.skipped = 'instant'; B.trace.push(traced); while (B.trace.length > 60) B.trace.shift(); } return false; }
+    traced.rate = Math.round(r.rate * 100) / 100;
     B.q.push(r);
     B.q.sort((a, b) => a.at - b.at);
     while (B.q.length > 8) B.q.shift();
-    B.trace.push({ kind: r.kind, family: r.family || null, actor: r.actor || null, secondary: !!r.secondary, outcome: r.outcome || null });
+    B.trace.push(traced);
     while (B.trace.length > 60) B.trace.shift();
+    return true;
   }
+  const reactOf = (sp, family) => REACT[sp][family] || REACT[sp].support;
   function onAction(e) {
     if (!B || !B.on || e.scope !== 'battle') return;
     const family = RB.families.LIST.indexOf(e.family) >= 0 ? e.family : 'support';
@@ -262,38 +318,70 @@ RB.battlePets = (function () {
     const secondary = B.ex === e.exchange && B.dom > 0;
     if (B.ex !== e.exchange) { B.ex = e.exchange; B.dom = 0; }
     B.dom++;
-    const at = (e.t0 || pt()) + Math.max(0, (e.beat || 400) - 180);
+    const t0 = e.t0 != null ? e.t0 : pt();
+    const at = t0 + Math.max(0, (e.beat || 400) - 180);
+    const until = e.end != null ? t0 + e.end : null;
     // a technique: its own combined culmination (the base family is how it began)
-    schedule({ kind: 'react', family, base: family === 'technique' ? RB.families.base('technique', e.tech || B.comp) : null, actor: e.actor, secondary, at, targets: e.targets || [] });
-    B.stats.reactions++; if (secondary) B.stats.secondary++;
-    B.stats.families[family] = (B.stats.families[family] || 0) + 1;
+    const ok = schedule({ kind: 'react', family, base: family === 'technique' ? RB.families.base('technique', e.tech || B.comp) : null, actor: e.actor, secondary, at, targets: e.targets || [] }, reactOf(B.sp, family), until);
+    if (ok) { B.stats.reactions++; if (secondary) B.stats.secondary++; B.stats.families[family] = (B.stats.families[family] || 0) + 1; }
     B.base = 'ready';
-    if (e.won && e.victory != null) schedule({ kind: 'victory', at: (e.t0 || pt()) + e.victory });
+    if (e.won && e.victory != null) schedule({ kind: 'victory', at: t0 + e.victory }, VICTORY[B.sp], null);
   }
   function onEnemy(e) {
     if (!B || !B.on || e.scope !== 'battle') return;
     const kind = e.outcome === 'hit' ? 'hit' : e.outcome === 'status' ? 'status' : 'soft';
-    schedule({ kind: 'impact', impact: kind, outcome: e.outcome, at: (e.t0 || pt()) + Math.max(0, (e.at || 500) - 60), targets: e.targets || [] });
-    B.stats.impacts++;
+    const t0 = e.t0 != null ? e.t0 : pt();
+    const contact = t0 + Math.max(0, (e.at || 500) - 60);
+    const until = e.end != null ? t0 + e.end : null;
+    const I = IMPACT[B.sp];
+    // while it prepares: a glance at it and a brace, held until contact
+    if (contact - t0 >= 200 && schedule({ kind: 'impact', impact: 'prep', at: t0, targets: e.targets || [] }, I.prep, contact)) B.stats.preps++;
+    if (schedule({ kind: 'impact', impact: kind, outcome: e.outcome, at: contact, targets: e.targets || [] }, I[kind], until)) B.stats.impacts++;
+    // after it: a settle — the pet's own recovery, alongside the creature's; it may run up to SETTLE_GRACE
+    // past the creature's recovery (the next decision eases it out; nothing waits for it)
+    const last = B.q.length ? B.q[B.q.length - 1] : null;
+    if (last && last.impact === kind && until != null && schedule({ kind: 'impact', impact: 'settle', at: last.at + last.dur, targets: [] }, I.settle, until + SETTLE_GRACE)) B.stats.settles++;
     B.base = 'ready';
   }
   function onScene(e) {
     if (e.scope !== 'battle') return;
-    if (e.phase === 'enter') { begin(e); if (B) B.enterT = pt(); return; }
+    if (e.phase === 'enter') {
+      begin(e);
+      if (B) {
+        B.enterT = pt();
+        // measure the party's figure height now (once per frame size), not on the first drawn frame
+        try { figureH({ F: RB.battlers && RB.battlers.FRAME }); } catch (err) { /* measured on the first draw instead */ }
+      }
+      return;
+    }
     if (!B) return;
     if (e.phase === 'exit') { end(); return; }
     if (e.phase === 'calm') {
       B.base = 'calm';
-      // anything still pending from a settled (skipped) sequence is dropped: nothing replays later
-      const now = pt();
-      B.q = B.q.filter((r) => r.at <= now && now - r.at < 400);
+      // the next decision: anything pending from a settled (skipped) sequence is dropped (nothing replays
+      // later), and a reaction still playing eases out to the stance
+      B.q = [];
     }
     if (e.phase === 'ready') B.base = 'ready';
     if (e.phase === 'victory') { B.base = 'victory'; B.stats.victory++; }
     if (e.phase === 'defeat') B.base = 'defeat';
   }
   // ---- the pose now -----------------------------------------------------------------------------------------------
+  const TAIL = ['tUp', 'tSide', 'tFlick', 'tCurl', 'wag'], EARS = ['earF', 'earL', 'earR'];
+  const lerpPose = (a, b, k) => { const o = {}; const ks = new Set(Object.keys(a).concat(Object.keys(b))); for (const n of ks) { const va = typeof a[n] === 'number' ? a[n] : 0, vb = typeof b[n] === 'number' ? b[n] : 0; o[n] = va + (vb - va) * k; } return o; };
+  function timelineOf(sp, cur) { return cur.kind === 'victory' ? VICTORY[sp] : cur.kind === 'impact' ? IMPACT[sp][cur.impact] : reactOf(sp, cur.family); }
+  // one timeline's override at its own time tt (ms of its authored timing)
+  function overAt(sp, cur, R, tt, reduce) {
+    if (cur.kind === 'react') return sample(sp, cur.family, tt, { reduce, secondary: cur.secondary, actor: cur.actor });
+    return reduce ? Object.assign({}, R.keys[Math.min(R.keys.length - 1, R.key)][1]) : sampleK(R, tt);
+  }
+  // Pose cadence (battle addendum §5.2, §9.4): the animal changes drawing at most every CADENCE ms of the
+  // presentation clock (12.5 a second) while it reacts, and every IDLE_STEP ms of real time while idle (10 a
+  // second, the battle figures' idle step) — held poses, not a tween redrawn every display frame.
+  const CADENCE = 80, IDLE_STEP = 100;
   function poseAt(now, t, reduce) {
+    now = Math.floor(now / CADENCE) * CADENCE;
+    t = Math.floor(t / IDLE_STEP) * IDLE_STEP;
     const sp = B.sp;
     const base = BASE[sp][B.base] || BASE[sp].calm;
     let po = Object.assign({}, base);
@@ -309,25 +397,39 @@ RB.battlePets = (function () {
         return { po, lift, dx };
       }
     }
-    // the reaction playing now (the latest one started)
+    // the reaction playing now (the latest one started), on its fitted clock
     let cur = null;
     for (const r of B.q) if (r.at <= now) cur = r;
-    if (cur) {
-      const R = cur.kind === 'victory' ? VICTORY[sp] : cur.kind === 'impact' ? IMPACT[sp][cur.impact] : (REACT[sp][cur.family] || REACT[sp].support);
-      const dur = cur.secondary ? R.ms * 0.62 : R.ms;
-      const tt = now - cur.at;
-      if (tt < dur) {
-        let over;
-        if (cur.kind === 'react') over = sample(sp, cur.family, tt, { reduce, secondary: cur.secondary, actor: cur.actor });
-        else over = reduce ? R.keys[Math.min(R.keys.length - 1, R.key)][1] : sampleK(R, tt);
-        if (cur.kind === 'impact' && cur.targets.length && !reduce && over.hy == null && sp !== 'bird') over.hy = (cur.targets[0] === 'comp' ? LOOK.comp : LOOK.pc) * 0.5 * sm(tt / 300);
-        po = merge(po, over);
-        if (R.lift && !reduce && !cur.secondary) lift = R.lift(tt);
-        if (cur.kind === 'victory' && tt > dur - 1) B.base = 'victory';
-        return { po, lift, dx };
+    if (cur && now - cur.at < cur.dur) {
+      const R = timelineOf(sp, cur);
+      const tt = (now - cur.at) * cur.rate;
+      let over = overAt(sp, cur, R, tt, reduce);
+      if (!reduce) {
+        // follow-through: the tail answers about 90 ms after the body and the ears about 50 ms after it
+        const tl = overAt(sp, cur, R, Math.max(0, tt - 90), false), er = overAt(sp, cur, R, Math.max(0, tt - 50), false);
+        for (const n of TAIL) { if (tl[n] != null) over[n] = tl[n]; else delete over[n]; }
+        for (const n of EARS) { if (er[n] != null) over[n] = er[n]; else delete over[n]; }
+        // a new timeline takes over from the last pose shown (no pop between a brace and the flinch)
+        if (B.lastOver && B.lastR !== cur) B.blend = { r: cur, at: now, from: B.lastOver };
+        if (B.blend && B.blend.r === cur && now - B.blend.at < 110) over = lerpPose(B.blend.from, over, sm((now - B.blend.at) / 110));
       }
-      if (cur.kind === 'victory') B.base = 'victory';
+      B.release = null;
+      if (cur.kind === 'impact' && cur.impact !== 'settle' && cur.targets.length && !reduce && over.hy == null && sp !== 'bird') over.hy = (cur.targets[0] === 'comp' ? LOOK.comp : LOOK.pc) * 0.5 * sm(tt / 300);
+      B.lastOver = over; B.lastR = cur;
+      po = merge(po, over);
+      if (R.lift && !reduce && !cur.secondary) lift = R.lift(tt);
+      if (cur.kind === 'victory' && now - cur.at > cur.dur - 1) B.base = 'victory';
+      return { po, lift, dx };
     }
+    // the victory gesture ends in the victory stance itself (nothing to ease back from)
+    if (cur && cur.kind === 'victory') { B.base = 'victory'; B.lastOver = null; }
+    // eased back to the stance after a reaction (or after one cut short by the next decision)
+    if (B.lastOver && !reduce) {
+      if (!B.release) B.release = { at: now, from: B.lastOver };
+      const k = (now - B.release.at) / 160;
+      if (k < 1) return { po: merge(po, lerpPose(B.release.from, {}, sm(k))), lift, dx };
+    }
+    B.lastOver = null; B.lastR = null; B.release = null; B.blend = null;
     // idle: calm variants on their own irregular clock; ready's small movements; nothing with reduced motion
     if (reduce) return { po, lift, dx };
     if (B.base === 'calm' || B.base === 'ready') {
@@ -342,7 +444,9 @@ RB.battlePets = (function () {
       }
       if (B.idle) {
         const it = t - B.idle.t0;
-        po = merge(po, sampleK(B.idle.R, it));
+        const iv = sampleK(B.idle.R, it), tl = sampleK(B.idle.R, Math.max(0, it - 90));
+        for (const n of TAIL) { if (tl[n] != null) iv[n] = tl[n]; else delete iv[n]; }
+        po = merge(po, iv);
         if (B.idle.R.lift) lift = B.idle.R.lift(it);
       }
       // a slow breath while sitting (quantized: a pixel, not a shimmer)
@@ -350,24 +454,109 @@ RB.battlePets = (function () {
     }
     return { po, lift, dx };
   }
+  // ---- where it sits (from the live party anchors, every frame) ----------------------------------------------------
+  // Between your companion and you, a little in front of your companion and behind you; alone, at your left.
+  // Its ground footprint never covers an adventurer's foot anchor (the anchor ± 15 % of the battle frame's
+  // width: the planted feet and a margin), nor a creature or an intent badge; when the gap between the two of you is too narrow it moves to
+  // the far side of your companion, and when there is no room there either it lies down in the gap (a resting
+  // pose is narrower). Positions are canvas px, recomputed from L every frame, so a withdrawn panel or a
+  // growing stage never leaves it on old coordinates. Nothing here writes to the layout.
+  function badgeRects(L) {
+    const out = [];
+    for (const f of L.foes || []) {
+      const e = f.ext, sc = L.scale || 1;
+      if (e) out.push({ x0: f.ex + e.left * sc, y0: f.ey + e.top * sc, x1: f.ex + e.right * sc, y1: f.ey + e.bottom * sc, foe: true });
+    }
+    for (const b of L.badges || []) out.push(b);
+    return out;
+  }
+  function footSpans(L) {
+    const ps = L.ps || 1, half = Math.round((L.F ? L.F.w : 80) * ps * 0.15);
+    return [L.pc].concat(L.comp ? [L.comp] : []).filter(Boolean).map((a) => ({ x0: a.x - half, x1: a.x + half, y: a.y, ax: a.x }));
+  }
+  function place(L, w, h) {
+    const ps = L.ps || 1, pc = L.pc, comp = L.comp, Sr = L.Sr || { x: 0, y: 0, w: 1e9, h: 1e9 };
+    const spans = footSpans(L), half = Math.ceil(w / 2) + ps;
+    const hit = (x, y, hh) => {
+      for (const s of spans) if (x + half > s.x0 && x - half < s.x1 && y > s.y - h * 0.9 && y - hh < s.y + 2 * ps) return true;
+      for (const b of badgeRects(L)) if (x + half > b.x0 && x - half < b.x1 && y > b.y0 && y - hh < b.y1) return true;
+      return false;
+    };
+    const inside = (x) => x - half >= Sr.x && x + half <= Sr.x + Sr.w;
+    let x, y;
+    if (comp) { x = Math.round((comp.x + pc.x) / 2 + (L.pw || 80) * 0.03); y = Math.round((comp.y + pc.y) / 2 + ps); }
+    else { x = Math.round(pc.x - (L.pw || 80) * 0.52); y = Math.round(pc.y - Math.max(2, (L.ph || 104) * 0.04)); }
+    if (!hit(x, y, h) && inside(x)) return { x, y, mode: comp ? 'between' : 'beside' };
+    // between them but crowded: the middle of the actual gap, if the animal fits there
+    if (comp) {
+      const a = spans[1], b = spans[0], mid = Math.round((a.x1 + b.x0) / 2);
+      if (!hit(mid, y, h) && inside(mid)) return { x: mid, y, mode: 'gap' };
+      // the far side of your companion
+      const lx = a.x0 - half - ps, ly = comp.y + ps;
+      if (!hit(lx, ly, h) && inside(lx)) return { x: lx, y: ly, mode: 'outside' };
+    } else {
+      const lx = spans[0].x0 - half - ps;
+      if (!hit(lx, y, h) && inside(lx)) return { x: lx, y, mode: 'beside' };
+    }
+    // no room anywhere clear: lying down (a lower, narrower outline) just behind the line of your feet
+    return { x: comp ? Math.round((spans[1].x1 + spans[0].x0) / 2) : Math.round(spans[0].x0 - half), y: Math.round(Math.min(pc.y, comp ? comp.y : pc.y) - (L.ph || 104) * 0.06), mode: 'rest' };
+  }
+  // The party's drawn height (art px) sets the animal's own art density, so a larger party frame gives the
+  // pet more drawn detail at the same proportion (never a stretched sprite: the pet stays on the party's grid).
+  // Measured once per battle frame size from the four companions' ready stances (their mean: 81.75 px at the
+  // base commit's 80×104 frame) — a reference that does not change with the player's hat or hair.
+  const TUNED_H = 82;
+  let figMemo = null;
+  function heightOf(cv) {
+    const d = cv.getContext('2d').getImageData(0, 0, cv.width, cv.height).data;
+    let y0 = -1, y1 = -1;
+    for (let y = 0; y < cv.height && y0 < 0; y++) for (let x = 0; x < cv.width; x++) if (d[(y * cv.width + x) * 4 + 3] > 100) { y0 = y; break; }
+    for (let y = cv.height - 1; y >= 0 && y1 < 0; y--) for (let x = 0; x < cv.width; x++) if (d[(y * cv.width + x) * 4 + 3] > 100) { y1 = y; break; }
+    return y0 >= 0 && y1 > y0 ? y1 - y0 + 1 : 0;
+  }
+  function figureH(L) {
+    const F = L.F || { w: 80, h: 104 };
+    const key = F.w + 'x' + F.h;
+    if (figMemo && figMemo.key === key) return figMemo.h;
+    let hgt = F.h * (TUNED_H / 104);
+    try {
+      const hs = ['nao', 'mio', 'ren', 'suzu'].map((id) => RB.content.chars[id] && RB.battlers.preview ? heightOf(RB.battlers.preview(RB.content.chars[id].look, 'ready', null, 0)) : 0).filter((v) => v > 0);
+      if (hs.length) hgt = hs.reduce((a, v) => a + v, 0) / hs.length;
+    } catch (err) { /* keep the estimate from the frame */ }
+    figMemo = { key, h: hgt };
+    return hgt;
+  }
+  const densityOf = (L) => Math.max(0.75, Math.min(2.5, Math.round((figureH(L) / TUNED_H) * 20) / 20));
   // ---- drawing (called by the stage, between your companion and you) ------------------------------------------------
   function draw(c, L, fr) {
-    if (!B || !B.on || !L.pet) return;
+    if (!B || !B.on || !L.pc) return;
     const reduce = !!fr.reduce;
     const now = fr.pt, t = fr.t;
-    const { po, lift, dx } = poseAt(now, t, reduce);
-    const f = RB.petArt.frame(B.sp, B.look, { kind: 'battle' }, quant(po));
-    if (!f) return;
+    let { po, lift, dx } = poseAt(now, t, reduce);
+    const dens = densityOf(L);
+    const view = { kind: 'battle', density: dens };
     const s = L.ps || 1;
-    // centred on its place by how it looks sitting (its drawing leans back toward you in this view)
-    if (B.offX == null) B.offX = centreOf(RB.petArt.frame(B.sp, B.look, { kind: 'battle' }, quant(BASE[B.sp].calm)));
-    const x = L.pet.x + (dx - B.offX) * s, y = L.pet.y;
-    RB.battleScene.shadow(c, x + Math.round(B.offX * s), y - s, Math.round((B.sp === 'bird' ? 7 : B.sp === 'dog' ? 15 : 13) * s), Math.max(2, Math.round(3 * s)), 0.5);
+    // where it can be: measured from its sitting outline at this density
+    const sitF = RB.petArt.frame(B.sp, B.look, view, quant(BASE[B.sp].calm));
+    if (!sitF) return;
+    if (B.offX == null || B.dens !== dens) { B.offX = centreOf(sitF); B.dens = dens; B.ext = extentOf(sitF); }
+    const P = place(L, B.ext.w * s, B.ext.h * s);
+    if (P.mode === 'rest') { po = Object.assign({}, po, B.sp === 'bird' ? { crouch: 0.8, fluff: 0.6, tuck: 1 } : { sit: 0, lie: 1 }); lift = 0; }
+    const f = RB.petArt.frame(B.sp, B.look, view, quant(po));
+    if (!f) return;
+    // the arrival walks in from the left, but never through your companion's feet: it starts beside them
+    let dxs = dx * dens * s;
+    if (dxs && L.comp && L.comp.x < P.x) {
+      const minX = footSpans(L)[1].x1 + (B.ext.w * s) / 2 + s;
+      if (P.x + dxs < minX) dxs = Math.min(0, minX - P.x);
+    }
+    const x = P.x + dxs - B.offX * s, y = P.y;
+    RB.battleScene.shadow(c, x + Math.round(B.offX * s), y - s, Math.round((B.sp === 'bird' ? 7 : B.sp === 'dog' ? 15 : 13) * dens * s), Math.max(2, Math.round(3 * dens * s)), 0.5);
     c.imageSmoothingEnabled = false;
-    const px = Math.round(x - f.ax * s), py = Math.round(y - f.ay * s - lift * s);
+    const px = Math.round(x - f.ax * s), py = Math.round(y - f.ay * s - lift * dens * s);
     c.drawImage(f.cv, px, py, f.w * s, f.h * s);
     B.stats.drawn++;
-    B.last = { x: px, y: py, w: f.w * s, h: f.h * s, pose: po, base: B.base };
+    B.last = { x: px, y: py, w: f.w * s, h: f.h * s, s, f, pose: po, base: B.base, place: P, density: dens, foot: { x: Math.round(x + B.offX * s), y }, ground: { x0: Math.round(P.x - B.ext.w * s / 2), x1: Math.round(P.x + B.ext.w * s / 2), y } };
   }
   // the horizontal middle of a frame's drawing, from its anchor (art px)
   function centreOf(f) {
@@ -378,11 +567,35 @@ RB.battlePets = (function () {
       return x1 < 0 ? 0 : Math.round((x0 + x1) / 2 - f.ax);
     } catch (e) { return 0; }
   }
+  // the drawn width and height of a frame (art px)
+  function extentOf(f) {
+    try {
+      const d = f.cv.getContext('2d').getImageData(0, 0, f.w, f.h).data;
+      let x0 = f.w, x1 = -1, y0 = f.h;
+      for (let i = 3; i < d.length; i += 4) if (d[i]) { const p = (i - 3) / 4, x = p % f.w, yy = (p / f.w) | 0; if (x < x0) x0 = x; if (x > x1) x1 = x; if (yy < y0) y0 = yy; }
+      return x1 < 0 ? { w: f.w, h: f.h } : { w: x1 - x0 + 1, h: f.ay - y0 + 1 };
+    } catch (e) { return { w: f.w, h: f.h }; }
+  }
+  function bodyOf(L) {
+    try {
+      const f = L.f, d = f.cv.getContext('2d').getImageData(0, 0, f.w, f.h).data;
+      let x0 = f.w, y0 = f.h, x1 = -1, y1 = -1;
+      for (let i = 3; i < d.length; i += 4) if (d[i] > 100) { const q = (i - 3) / 4, x = q % f.w, yy = (q / f.w) | 0; if (x < x0) x0 = x; if (x > x1) x1 = x; if (yy < y0) y0 = yy; if (yy > y1) y1 = yy; }
+      return x1 < 0 ? null : { x: L.x + x0 * L.s, y: L.y + y0 * L.s, w: (x1 - x0 + 1) * L.s, h: (y1 - y0 + 1) * L.s };
+    } catch (e) { return null; }
+  }
   function stats() {
     if (!B) return { on: false };
     const cp = RB.battleStage.cssPerArt ? RB.battleStage.cssPerArt() : 1;
     const box = B.last ? { x: Math.round(B.last.x * cp), y: Math.round(B.last.y * cp), w: Math.round(B.last.w * cp), h: Math.round(B.last.h * cp) } : null;
-    return { on: B.on, sp: B.sp, look: B.look, base: B.base, queued: B.q.length, stats: JSON.parse(JSON.stringify(B.stats)), trace: B.trace.slice(), box, art: B.last ? { x: B.last.x, y: B.last.y, w: B.last.w, h: B.last.h } : null, pose: B.last ? B.last.pose : null };
+    const L = B.last;
+    return {
+      on: B.on, sp: B.sp, look: B.look, base: B.base, queued: B.q.length, stats: JSON.parse(JSON.stringify(B.stats)), trace: B.trace.slice(), box,
+      art: L ? { x: L.x, y: L.y, w: L.w, h: L.h } : null, pose: L ? L.pose : null, place: L ? L.place.mode : null, density: L ? L.density : null,
+      ground: L ? L.ground : null, foot: L ? L.foot : null, cssPerArt: cp,
+      // the animal's drawn pixels (opaque bounding box, canvas art px) — what it actually covers
+      body: L ? bodyOf(L) : null,
+    };
   }
 
   if (RB.bus) {
@@ -400,5 +613,5 @@ RB.battlePets = (function () {
     RB.ui.settings.addRows('audio', ({ sw }) => sw('petSounds', 'Quiet pet sounds', 'An occasional soft sound from your pet (never needed: everything it does is also seen).'));
   }
 
-  return { wants, draw, stats, sample, sampleAny, centreOf, poseAt: (now, t, reduce) => (B ? poseAt(now, t, reduce) : null), REACT, IMPACT, VICTORY, CALM, READY, BASE, LOOK, _begin: begin, _end: end, get _B() { return B; } };
+  return { wants, draw, stats, sample, sampleAny, centreOf, extentOf, place, footSpans, densityOf, poseAt: (now, t, reduce) => (B ? poseAt(now, t, reduce) : null), REACT, IMPACT, PREP, SETTLE, VICTORY, CALM, READY, BASE, LOOK, MIN_WIN, MAX_RATE, SETTLE_GRACE, CADENCE, IDLE_STEP, _begin: begin, _end: end, get _B() { return B; } };
 })();

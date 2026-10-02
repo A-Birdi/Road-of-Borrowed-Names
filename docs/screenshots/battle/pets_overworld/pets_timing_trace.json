@@ -1,0 +1,246 @@
+{
+ "cat": {
+  "sampleEveryMs": 40,
+  "samples": 68,
+  "poseChanges": 24,
+  "distinctPoses": 25,
+  "changesPerSecond": 8.8,
+  "trace": [
+   {
+    "kind": "react",
+    "family": "unravel",
+    "impact": null,
+    "actor": "pc",
+    "secondary": false,
+    "outcome": null,
+    "rate": 1.25
+   },
+   {
+    "kind": "impact",
+    "family": null,
+    "impact": "prep",
+    "actor": null,
+    "secondary": false,
+    "outcome": null,
+    "rate": 1
+   },
+   {
+    "kind": "impact",
+    "family": null,
+    "impact": "hit",
+    "actor": null,
+    "secondary": false,
+    "outcome": "hit",
+    "rate": 1
+   },
+   {
+    "kind": "impact",
+    "family": null,
+    "impact": "settle",
+    "actor": null,
+    "secondary": false,
+    "outcome": null,
+    "rate": 1.11
+   }
+  ],
+  "stats": {
+   "reactions": 1,
+   "secondary": 0,
+   "impacts": 1,
+   "preps": 1,
+   "settles": 1,
+   "skipped": 0,
+   "fitted": 2,
+   "families": {
+    "unravel": 1
+   },
+   "calmIdles": 0,
+   "victory": 0,
+   "drawn": 0,
+   "maxParticles": 0
+  }
+ },
+ "dog": {
+  "sampleEveryMs": 40,
+  "samples": 68,
+  "poseChanges": 25,
+  "distinctPoses": 26,
+  "changesPerSecond": 9.2,
+  "trace": [
+   {
+    "kind": "react",
+    "family": "unravel",
+    "impact": null,
+    "actor": "pc",
+    "secondary": false,
+    "outcome": null,
+    "rate": 1.25
+   },
+   {
+    "kind": "impact",
+    "family": null,
+    "impact": "prep",
+    "actor": null,
+    "secondary": false,
+    "outcome": null,
+    "rate": 1
+   },
+   {
+    "kind": "impact",
+    "family": null,
+    "impact": "hit",
+    "actor": null,
+    "secondary": false,
+    "outcome": "hit",
+    "rate": 1
+   },
+   {
+    "kind": "impact",
+    "family": null,
+    "impact": "settle",
+    "actor": null,
+    "secondary": false,
+    "outcome": null,
+    "rate": 1.31
+   }
+  ],
+  "stats": {
+   "reactions": 1,
+   "secondary": 0,
+   "impacts": 1,
+   "preps": 1,
+   "settles": 1,
+   "skipped": 0,
+   "fitted": 2,
+   "families": {
+    "unravel": 1
+   },
+   "calmIdles": 0,
+   "victory": 0,
+   "drawn": 0,
+   "maxParticles": 0
+  }
+ },
+ "bird": {
+  "sampleEveryMs": 40,
+  "samples": 68,
+  "poseChanges": 25,
+  "distinctPoses": 26,
+  "changesPerSecond": 9.2,
+  "trace": [
+   {
+    "kind": "react",
+    "family": "unravel",
+    "impact": null,
+    "actor": "pc",
+    "secondary": false,
+    "outcome": null,
+    "rate": 1.18
+   },
+   {
+    "kind": "impact",
+    "family": null,
+    "impact": "prep",
+    "actor": null,
+    "secondary": false,
+    "outcome": null,
+    "rate": 1
+   },
+   {
+    "kind": "impact",
+    "family": null,
+    "impact": "hit",
+    "actor": null,
+    "secondary": false,
+    "outcome": "hit",
+    "rate": 1
+   },
+   {
+    "kind": "impact",
+    "family": null,
+    "impact": "settle",
+    "actor": null,
+    "secondary": false,
+    "outcome": null,
+    "rate": 1
+   }
+  ],
+  "stats": {
+   "reactions": 1,
+   "secondary": 0,
+   "impacts": 1,
+   "preps": 1,
+   "settles": 1,
+   "skipped": 0,
+   "fitted": 1,
+   "families": {
+    "unravel": 1
+   },
+   "calmIdles": 0,
+   "victory": 0,
+   "drawn": 0,
+   "maxParticles": 0
+  }
+ },
+ "tanuki": {
+  "sampleEveryMs": 40,
+  "samples": 68,
+  "poseChanges": 27,
+  "distinctPoses": 28,
+  "changesPerSecond": 9.9,
+  "trace": [
+   {
+    "kind": "react",
+    "family": "unravel",
+    "impact": null,
+    "actor": "pc",
+    "secondary": false,
+    "outcome": null,
+    "rate": 1.32
+   },
+   {
+    "kind": "impact",
+    "family": null,
+    "impact": "prep",
+    "actor": null,
+    "secondary": false,
+    "outcome": null,
+    "rate": 1
+   },
+   {
+    "kind": "impact",
+    "family": null,
+    "impact": "hit",
+    "actor": null,
+    "secondary": false,
+    "outcome": "hit",
+    "rate": 1
+   },
+   {
+    "kind": "impact",
+    "family": null,
+    "impact": "settle",
+    "actor": null,
+    "secondary": false,
+    "outcome": null,
+    "rate": 1.22
+   }
+  ],
+  "stats": {
+   "reactions": 1,
+   "secondary": 0,
+   "impacts": 1,
+   "preps": 1,
+   "settles": 1,
+   "skipped": 0,
+   "fitted": 2,
+   "families": {
+    "unravel": 1
+   },
+   "calmIdles": 0,
+   "victory": 0,
+   "drawn": 0,
+   "maxParticles": 0
+  }
+ }
+}

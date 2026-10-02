@@ -21337,14 +21337,22 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
   // Exit mat (interactable): a straw mat with a dark border and a woven
   // diamond, lying just inside a doorway.
+  // Exit mat (a way out of a room or a map). Overworld parity pass (battle addendum §20): the old mat was
+  // brown on brown and nearly vanished on wooden floors at the ordinary zoom; it is now an indigo-dyed mat
+  // with a parchment binding and a pale diamond — the game's indigo-cloth-and-parchment motif — which reads
+  // on wood, stone, grass and snow alike. Same place on the tile, same size; it stays flat (no height that
+  // could suggest something solid).
   art('exitmat', {
     box: [0, 0, 32, 32], ink: true,
     draw(g) {
-      const b = ramp('#7a5236', 0.45, 0.35), m = ramp('#9a6a44', 0.45, 0.4);
-      R(g, 3, 19, 26, 12, b[2]); R(g, 3, 19, 26, 1, b[3]); R(g, 3, 30, 26, 1, b[1]);
+      const b = K.FIX.paper, m = ramp('#3d4c78', 0.4, 0.4);
+      R(g, 3, 19, 26, 12, b[2]); R(g, 3, 19, 26, 1, b[3]); R(g, 3, 30, 26, 1, b[1]); R(g, 28, 20, 1, 10, b[1]);
       R(g, 5, 21, 22, 8, m[2]);
-      for (let y = 21; y < 29; y++) for (let x = 5 + (y % 2); x < 27; x += 2) R(g, x, y, 1, 1, m[3]);
-      for (let k = 0; k < 4; k++) { R(g, 16 - k, 22 + k, 1, 1, m[4]); R(g, 15 + k, 22 + k, 1, 1, m[4]); R(g, 16 - k, 28 - k, 1, 1, m[1]); R(g, 15 + k, 28 - k, 1, 1, m[1]); }
+      // the weave: a lighter thread every other pick, the darker row under the binding
+      for (let y = 21; y < 29; y++) for (let x = 5 + (y % 2); x < 27; x += 2) if (y % 3 !== 0) R(g, x, y, 1, 1, m[3]);
+      R(g, 5, 28, 22, 1, m[1]);
+      // the diamond (hishi), an open outline pale on the indigo, lit on its upper edges
+      for (let k = 0; k < 3; k++) { R(g, 15 - k, 22 + k, 1, 1, b[4]); R(g, 16 + k, 22 + k, 1, 1, b[4]); R(g, 15 - k, 27 - k, 1, 1, b[3]); R(g, 16 + k, 27 - k, 1, 1, b[3]); }
       for (let x = 4; x < 28; x += 3) { R(g, x, 18, 1, 1, b[3]); R(g, x, 31, 1, 1, b[1]); }
     },
   });
@@ -23407,6 +23415,41 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }
     return cv;
   };
+  // Turning on the spot (overworld parity pass, battle addendum §20). The game turns an actor at once (its
+  // facing, its interaction tile and its collision never wait); the drawing follows through a pivot: a
+  // half-turn (up ↔ down, left ↔ right) passes through the in-between view for PIVOT ms — up ↔ down through
+  // a side view (the right one, or the left for actors whose id hashes odd, so a crowd does not turn in
+  // step), left ↔ right through the front view — and a quarter turn shows the settled breath frame for SETTLE
+  // ms, a small weight shift onto the new foot. Walking, creatures and reduced motion are drawn as before.
+  //   RB.sprites.view(actor, t, still, frame) -> { dir, frame, turn }   (drawActor asks it for each actor)
+  const PIVOT = 90, SETTLE = 70;
+  const OPP = { up: 'down', down: 'up', left: 'right', right: 'left' };
+  const turnStats = { half: 0, quarter: 0 };
+  SP.view = function (a, t, still, frame) {
+    const d = a.dir;
+    if (!a.look || a.look.custom || still) { a._vd = d; a._turn = null; return { dir: d, frame, turn: null }; }
+    if (a._vd == null) a._vd = d;
+    if (d !== a._vd) {
+      const from = a._vd;
+      a._vd = d;
+      if (a.mv) a._turn = null;
+      else if (OPP[from] === d) { a._turn = { kind: 'half', from, to: d, at: t }; turnStats.half++; }
+      else { a._turn = { kind: 'quarter', from, to: d, at: t }; turnStats.quarter++; }
+    }
+    const q = a._turn;
+    if (!q || a.mv) { a._turn = null; return { dir: d, frame, turn: null }; }
+    const k = t - q.at;
+    if (q.kind === 'half' && k < PIVOT) {
+      const odd = ((a.id || '').length + (a.home ? a.home[0] : 0)) % 2 === 1;
+      const mid = q.from === 'left' || q.from === 'right' ? 'down' : odd ? 'left' : 'right';
+      return { dir: mid, frame: typeof frame === 'string' && frame.endsWith('b') ? 'i1b' : 'i1', turn: 'half' };
+    }
+    if (q.kind === 'quarter' && k < SETTLE) return { dir: d, frame: typeof frame === 'string' && frame.endsWith('b') ? 'i1b' : 'i1', turn: 'quarter' };
+    a._turn = null;
+    return { dir: d, frame, turn: null };
+  };
+  SP.turnStats = () => Object.assign({}, turnStats);
+  SP.TURN = { PIVOT, SETTLE };
   // The frame standard (art px): size, and the foot anchor that stands on the tile.
   SP.FRAME = { w: W, h: H };
   SP.ANCHOR = { x: AX, y: AY + TOP };
@@ -27094,7 +27137,18 @@ RB.petArt = (function () {
       const l = add(o, mul(d, s));
       if (pr.keep && !pr.keep(l)) continue;
       const n = norm(mv(M, [l[0] / rad[0], l[1] / rad[1], l[2] / rad[2]]));
-      const [R, v] = stepOf(cam, n, mat, { l, n, part: pr.part, u: pr.u });
+      // light on a mass: the normal is bent toward the normal of the larger form the part belongs to
+      // (the trunk, the head), so neighbouring volumes share one light, mid and shadow plane instead
+      // of each small sphere carrying its own bands (patterns still see the part's own normal)
+      let nl = n;
+      const ms = pr.mass;
+      if (ms) {
+        const wp = add(rayO(cam, px, py), mul(cam.DIR, s));
+        const q = mtv(ms.M, sub(wp, ms.c));
+        const nb = norm(mv(ms.M, [q[0] / (ms.r[0] * ms.r[0]), q[1] / (ms.r[1] * ms.r[1]), q[2] / (ms.r[2] * ms.r[2])]));
+        nl = norm(lerp(n, nb, ms.k));
+      }
+      const [R, v] = stepOf(cam, nl, mat, { l, n, part: pr.part, u: pr.u });
       write(r, i, z, grp, R, v, pr.flag || mat.flag);
     }
   }
@@ -27118,10 +27172,14 @@ RB.petArt = (function () {
     const groups = {};
     const gOf = (name) => (name == null ? gid++ : groups[name] != null ? groups[name] : (groups[name] = gid++));
     const decals = [];
+    // the current light mass (K.mass): parts drawn while it is set share its planes
+    let mass = null;
     const K = {
+      // K.mass(c, r, k) in the animal's frame: centre, radii, how far normals bend toward it (0..1); null ends it
+      mass(c, rr, k) { mass = c ? { c: toW(c), M: toM(M_ID), r: rr, k: k == null ? 0.45 : k } : null; },
       ell(part, c, rad, mat, o) {
         o = o || {};
-        ellipsoid(r, { c: toW(c), M: toM(o.M || M_ID), rad, mat, grp: gOf(o.grp || part), part, keep: o.keep, bias: o.bias, flag: o.flag, u: o.u });
+        ellipsoid(r, { c: toW(c), M: toM(o.M || M_ID), rad, mat, grp: gOf(o.grp || part), part, keep: o.keep, bias: o.bias, flag: o.flag, u: o.u, mass: o.mass === false ? null : mass });
       },
       chain(part, pts, radii, mat, o) {
         o = o || {};
@@ -27139,12 +27197,13 @@ RB.petArt = (function () {
             const t = j / n, c = lerp(a, b, t), rr = radii[k] + (radii[k + 1] - radii[k]) * t;
             const u = L ? (acc + sl * t) / L : 0;
             const fl = o.flat || [1, 1];
-            ellipsoid(r, { c: toW(c), M: toM(F), rad: [Math.max(0.3, rr * fl[0]), Math.max(0.3, rr * fl[1]), Math.max(0.3, rr)], mat, grp, part, u, keep: o.keep, flag: o.flag });
+            ellipsoid(r, { c: toW(c), M: toM(F), rad: [Math.max(0.3, rr * fl[0]), Math.max(0.3, rr * fl[1]), Math.max(0.3, rr)], mat, grp, part, u, keep: o.keep, flag: o.flag, mass: o.mass === false ? null : mass });
           }
           acc += sl;
         }
       },
-      decal(p, fn, o) { decals.push({ w: toW(p), fn, o: o || {} }); },
+      // o.grp: the decal belongs to that part's group (an eye or a nose is never stamped on the chest)
+      decal(p, fn, o) { o = o || {}; decals.push({ w: toW(p), fn, o, grp: o.grp != null ? gOf(o.grp) : null }); },
       at(p) { const s = proj(cam, toW(p)); return { x: s[0], y: s[1], z: s[2] }; },
       // a direction in the animal's frame, in the world (the frame patterns see their normals in)
       dir(v) { return toW(v); },
@@ -27155,6 +27214,7 @@ RB.petArt = (function () {
     // contour: a pixel beside a nearer part of another group is drawn darker
     const NB = [[1, 0], [-1, 0], [0, 1], [0, -1]];
     const cgap = opts.contour == null ? 1.6 : opts.contour;
+    const cont = new Uint8Array(n);
     for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
       const i = y * W + x;
       if (r.g[i] < 0 || r.flag[i] & 2) continue;
@@ -27163,7 +27223,21 @@ RB.petArt = (function () {
         if (X < 0 || Y < 0 || X >= W || Y >= H) continue;
         const j = Y * W + X;
         if (r.g[j] < 0 || r.g[j] === r.g[i] || (r.flag[j] & 2)) continue;
-        if (r.z[j] > r.z[i] + cgap) { lv[i] = Math.max(0, Math.min(r.lv[i] - 2, 1)); break; }
+        if (r.z[j] > r.z[i] + cgap) { lv[i] = Math.max(0, Math.min(r.lv[i] - 2, 1)); cont[i] = 1; break; }
+      }
+    }
+    // Cast shadow (the larger views): just below a nearer part of another group — under the chin, the
+    // haunch over a hind paw, the head over the shoulders — the surface is a step darker for two rows,
+    // so overlapping forms read as forms, not as one silhouette.
+    if (opts.cast) {
+      for (let y = 1; y < H; y++) for (let x = 0; x < W; x++) {
+        const i = y * W + x;
+        if (r.g[i] < 0 || cont[i] || r.flag[i] & 2) continue;
+        for (let k = 1; k <= 2 && y - k >= 0; k++) {
+          const j = i - k * W;
+          if (r.g[j] < 0 || r.g[j] === r.g[i] || (r.flag[j] & 2)) continue;
+          if (r.z[j] > r.z[i] + cgap) { lv[i] = Math.max(0, Math.min(lv[i], r.lv[i] - 1)); break; }
+        }
       }
     }
     // a lone pixel whose four neighbours agree on another step of the same ramp takes that step
@@ -27179,8 +27253,36 @@ RB.petArt = (function () {
       }
       if (same && v !== lv[i]) lv2[i] = v;
     }
+    // Clusters, not speckle (opts.cluster passes): a pixel that shares its colour (ramp and step) with at
+    // most one of its eight neighbours, where five or more of them agree on another colour of the same
+    // group, takes that colour. Patterns and planes become grouped shapes; contour lines and decals stay.
+    let R2 = r.R;
+    for (let pass = 0; pass < (opts.cluster || 0); pass++) {
+      const nl = lv2.slice(), nR = R2.slice();
+      for (let y = 1; y < H - 1; y++) for (let x = 1; x < W - 1; x++) {
+        const i = y * W + x;
+        if (r.g[i] < 0 || r.flag[i] & 1 || cont[i]) continue;
+        let same = 0;
+        const tally = [];
+        for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+          if (!dx && !dy) continue;
+          const j = i + dy * W + dx;
+          if (r.g[j] !== r.g[i] || cont[j]) continue;
+          if (R2[j] === R2[i] && lv2[j] === lv2[i]) { same++; continue; }
+          let t = tally.find((q) => q.R === R2[j] && q.v === lv2[j]);
+          if (!t) tally.push((t = { R: R2[j], v: lv2[j], n: 0 }));
+          t.n++;
+        }
+        if (same > 1) continue;
+        let best = null;
+        for (const q of tally) if (q.n >= 5 && (!best || q.n > best.n)) best = q;
+        if (best) { nl[i] = best.v; nR[i] = best.R; }
+      }
+      for (let i = 0; i < n; i++) { lv2[i] = nl[i]; }
+      R2 = nR;
+    }
     const b = new P.Buf(W, H);
-    for (let i = 0; i < n; i++) if (r.g[i] >= 0) b.put(i % W, (i / W) | 0, P.rgba(r.R[i][lv2[i]]));
+    for (let i = 0; i < n; i++) if (r.g[i] >= 0) b.put(i % W, (i / W) | 0, P.rgba(R2[i][lv2[i]]));
     // decals: drawn where their point is not hidden behind a nearer part
     for (const d of decals) {
       const s = proj(cam, d.w);
@@ -27188,6 +27290,7 @@ RB.petArt = (function () {
       if (px < 0 || py < 0 || px >= W || py >= H) continue;
       const i = py * W + px;
       if (!d.o.always && r.g[i] >= 0 && r.z[i] > s[2] + (d.o.tol == null ? 0.9 : d.o.tol)) continue;
+      if (d.grp != null && r.g[i] !== d.grp) continue;
       d.fn({ b, x: px, y: py, sx: s[0], sy: s[1], zs: cam.zs, mirror: !!cam.mirror });
     }
     if (opts.outline !== false) b.outline(opts.outlineCol || '#241c20', { minA: 100 });
@@ -27210,7 +27313,10 @@ RB.petArt = (function () {
     const [h, s, l] = P.toHsl(P.rgba(c));
     if (k < 0) {
       const n = -k, grey = s < 0.1 ? 0.05 : 0;
-      out = hex6(P.fromHsl(toward(h, 250, 10 * n), s + (0.05 + grey) * n, l - (l < 0.25 ? 0.055 : l < 0.5 ? 0.09 : 0.11) * n));
+      // fur in shadow: warm coats (ginger, cream, tan) lean only a little toward violet, and do not
+      // gain saturation — the shortest way to violet from orange runs through red, which reads as raw skin
+      const warm = h < 70 || h > 330;
+      out = hex6(P.fromHsl(toward(h, 250, (warm ? 4 : 10) * n), Math.min(warm ? s : 1, s + (warm ? -0.02 : 0.05 + grey) * n), l - (l < 0.25 ? 0.055 : l < 0.5 ? 0.09 : 0.11) * n));
     } else {
       const n = k;
       out = hex6(P.fromHsl(toward(h, 48, 7 * n), s * (l > 0.7 ? 0.9 : 1) + (l < 0.6 ? 0.03 : 0) * n, l + (l < 0.25 ? 0.075 : l > 0.8 ? 0.05 : 0.085) * n));
@@ -27318,8 +27424,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const under = (info) => {
         const l = info.l, p = info.part;
         if (p === 'belly' && l[1] < -0.45) return true;
-        if (p === 'chest' && l[1] < -0.2 && l[2] > -0.2) return true;
-        if (p === 'chest' && L.bib && l[2] > 0.35 && l[1] < 0.3) return true;
+        // the pale chest is on the front only (never a line round the neck seen from behind)
+        if (p === 'chest' && l[1] < -0.5 && l[2] > 0.2) return true;
+        if (p === 'chest' && L.bib && l[2] > 0.45 && l[1] < 0.3) return true;
+        // (the throat stays the coat colour: seen from the side it read as a collar line)
         if (p === 'muzzle' && (l[1] < 0.1 || calico)) return true;
         if (p === 'head' && l[2] > 0.55 && l[1] < -0.25) return true;
         if ((p === 'paw' || p === 'hpaw')) return true;
@@ -27338,26 +27446,30 @@ var RB = (globalThis.RB = globalThis.RB || {});
             if (p === 'hips' && blob(l, [-0.1, 0.85, -0.2], 0.5)) return { R: PB };
             if (p === 'belly' && (blob(l, [-0.5, 0.75, 0.3], 0.55) || blob(l, [0.6, 0.6, -0.6], 0.5))) return { R: l[0] > 0 ? PA : PB };
             if (p === 'chest' && blob(l, [0.6, 0.7, -0.3], 0.5)) return { R: PB };
+            if (p === 'neck') return l[1] > 0.45 ? { R: PA } : { R };
             if (p === 'tail') return { R: info.u > 0.62 ? PB : PA };
             if (p === 'haunch' && blob(l, [0.2, 0.75, -0.55], 0.55)) return { R: PA };
             return { R };
           }
           if (under(info)) return { R: U, d: v < 2 ? 0 : 0 };
           if (!tabby) return 0;
-          // tabby: dark stripes over the back and flanks, rings on legs and tail, lines on the brow
+          // tabby: a dark line down the spine, broad bands curving down the upper flanks (fading toward
+          // the belly), rings on the legs and tail, and lines on the brow and down the nape — few and
+          // wide enough to stay bands at battle size, never a speckle
           if (p === 'belly' || p === 'hips' || p === 'chest') {
-            if (l[1] < -0.35) return 0;
-            const s = frac(l[2] * 2.1 + Math.abs(l[0]) * 0.35 + (p === 'hips' ? 0.45 : p === 'chest' ? 0.2 : 0));
-            if (s < 0.3) return { R: S, d: 0 };
-            if (l[1] > 0.82) return { R: S };
-            return 0;
+            if (l[1] > 0.8 && Math.abs(l[0]) < 0.42) return { R: S };
+            if (l[1] < -0.15 + Math.abs(l[0]) * 0.1) return 0;
+            const s = frac(l[2] * 1.45 - l[1] * 0.35 + (p === 'hips' ? 0.42 : p === 'chest' ? 0.12 : 0));
+            return s < 0.36 ? { R: S } : 0;
           }
-          if (p === 'haunch') return frac(l[1] * 1.6 + 0.2) < 0.3 ? { R: S } : 0;
-          if (p === 'leg' || p === 'hleg') return info.u != null && info.u < 0.7 && frac(info.u * 2.6) < 0.35 ? { R: S } : 0;
-          if (p === 'tail') return frac((info.u || 0) * 5.2) < 0.34 || info.u > 0.9 ? { R: S } : 0;
+          if (p === 'haunch') return l[1] > -0.2 && frac(l[1] * 1.2 - l[2] * 0.4 + 0.25) < 0.34 ? { R: S } : 0;
+          if (p === 'leg' || p === 'hleg') return info.u != null && info.u < 0.7 && frac(info.u * 2.2) < 0.4 ? { R: S } : 0;
+          if (p === 'tail') return frac((info.u || 0) * 4.2) < 0.4 || info.u > 0.9 ? { R: S } : 0;
           if (p === 'head') {
             if (l[1] > 0.35 && l[2] > 0.05 && frac(l[0] * 2.4 + 0.5) < 0.34) return { R: S };
             if (l[1] > 0.1 && l[1] < 0.35 && Math.abs(l[0]) > 0.7 && l[2] > -0.2) return { R: S };
+            // the nape: two bands running back from the crown
+            if (l[2] < -0.25 && l[1] > -0.1 && frac(Math.abs(l[0]) * 1.8 + 0.1) < 0.4) return { R: S };
           }
           return 0;
         },
@@ -27373,6 +27485,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         if (p === 'muzzle') return l[1] < 0.35 || l[2] > 0.5;
         if (p === 'head') return (l[2] > 0.4 && l[1] < -0.1) || (l[1] < -0.45);
         if (p === 'chest') return l[2] > 0.1 && l[1] < 0.25 || l[1] < -0.3;
+        // (the neck keeps the coat colour: a pale or tan throat read as a collar in the sitting view)
         if (p === 'belly') return l[1] < -0.35;
         if (p === 'paw' || p === 'hpaw') return true;
         if (p === 'leg') return (info.u || 0) > 0.55;
@@ -27401,7 +27514,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       M.ear = { R: E, th, pat(info) { return info.inner ? { R: ramp(L.inner) } : 0; } };
       M.nose = { R: A.flat(L.nose, 0.5), flag: 3 };
     } else if (sp === 'tanuki') {
-      const D = ramp(L.dark), SD = ramp(L.saddle);
+      const D = ramp(L.dark), SD = ramp(L.saddle), FR = ramp(A.mix(L.base, L.under, 0.24));
       M.fur = {
         R, th, pat(info) {
           const l = info.l, p = info.part;
@@ -27416,12 +27529,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
             return 0;
           }
           if (p === 'muzzle') return l[2] > 0.55 ? { R: D } : l[1] < 0 ? { R: U } : { R: U, d: -1 };
+          // the cheek ruff: pale tufts with a dark root where they leave the face
+          if (p === 'ruff') return (info.u || 0) < 0.25 ? { R: D } : { R: U };
           if (p === 'leg' || p === 'hleg' || p === 'paw' || p === 'hpaw') return { R: D };
-          if (p === 'haunch') return l[1] < -0.2 ? { R: D } : 0;
-          // a dark chest and a dark band across the shoulders (seen from behind), a darker line down the back
-          if (p === 'chest') return l[1] < -0.1 || l[2] > 0.55 ? { R: D } : l[1] > 0.3 ? { R: SD, d: l[1] > 0.6 && Math.abs(l[0]) < 0.4 ? -1 : 0 } : 0;
-          if (p === 'belly') return l[1] < -0.5 ? { R: D } : l[1] > 0.55 && Math.abs(l[0]) < 0.45 ? { R: SD } : 0;
-          if (p === 'hips') return l[1] > 0.6 && Math.abs(l[0]) < 0.45 ? { R: SD } : 0;
+          if (p === 'haunch') return l[1] < -0.2 ? { R: D } : l[1] > 0.55 ? { R: FR } : 0;
+          if (p === 'neck') return l[1] < -0.2 ? { R: D } : l[1] > 0.4 ? { R: SD } : 0;
+          // a dark chest and a dark band across the shoulders running down to the forelegs, a darker
+          // line down the back, and the grizzled, frost-tipped coat over the back and hips
+          if (p === 'chest') return l[1] < -0.1 || l[2] > 0.55 ? { R: D } : l[1] > 0.3 ? { R: SD, d: l[1] > 0.6 && Math.abs(l[0]) < 0.4 ? -1 : 0 } : Math.abs(l[0]) > 0.6 && l[2] > 0 ? { R: SD } : 0;
+          if (p === 'belly') return l[1] < -0.5 ? { R: D } : l[1] > 0.55 && Math.abs(l[0]) < 0.4 ? { R: SD } : l[1] > 0.62 ? { R: FR } : 0;
+          if (p === 'hips') return l[1] > 0.6 && Math.abs(l[0]) < 0.4 ? { R: SD } : l[1] > 0.45 && Math.abs(l[0]) < 0.7 ? { R: FR } : 0;
           if (p === 'tail') return (info.u || 0) > 0.66 ? { R: D } : l[1] > 0.1 ? { R: SD } : 0; // darker above, a dark tip, no rings
           return 0;
         },
@@ -27438,7 +27555,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
           if (p === 'head') {
             if (l[1] > 0.32) return { R: CAP };
             if (l[2] > 0.35 && l[1] < -0.2) return { R: sparrow ? ramp('#3a2c28') : U }; // bib
-            if (Math.abs(l[0]) > 0.45 && l[1] < 0.3 && l[1] > -0.5) return sparrow && blob(l, [Math.sign(l[0]) * 0.85, -0.2, -0.1], 0.2) ? { R: ramp('#3a2c28') } : { R: CH };
+            if (Math.abs(l[0]) > 0.58 && l[1] < 0.22 && l[1] > -0.4) return sparrow && blob(l, [Math.sign(l[0]) * 0.85, -0.15, -0.15], 0.24) ? { R: ramp('#3a2c28') } : { R: CH };
             return 0;
           }
           if (p === 'body') {
@@ -27447,10 +27564,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
             return 0;
           }
           if (p === 'wing') {
+            // folded: coverts, one pale wing bar, the darker secondaries, the primaries at the tip — in bands
+            // along the wing (no speckle); spread: the same bands from the root out
             const u = info.u || 0;
-            if (u > 0.72) return { R: ST };
-            if (frac(u * 3.2 + 0.1) < 0.18) return { R: BAR };
-            return frac(info.l[0] * 2 + u * 4) < 0.3 ? { R: ST, d: 1 } : { R: BK };
+            if (u > 0.74) return { R: ST };
+            if (u > 0.3 && u < 0.4) return { R: BAR };
+            if (u >= 0.4) return { R: BK, d: -1 };
+            return { R: BK };
           }
           if (p === 'tailf') return { R: ST };
           return 0;
@@ -27594,13 +27714,19 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const SM = along(spine, [0, 1, 0]);
     const mid = L3(hips, chest, 0.5);
     const blen = len(spine);
+    // the trunk as one light mass (the larger views): body, haunches and legs share its planes
+    if (sc >= 1.4) {
+      const top = Math.max(chest[1] + k.chestR[1], hips[1] + k.hipsR[1]);
+      const rz = Math.abs(chest[2] - hips[2]) / 2 + Math.max(k.chestR[2], k.hipsR[2]);
+      K.mass([0, top * 0.5, (chest[2] + hips[2]) / 2], [Math.max(k.chestR[0], k.hipsR[0]) * 1.3, top * 0.5 + 1, rz], 0.5);
+    }
     // belly and body
     K.ell('belly', mid, [S.bellyR[0], S.bellyR[1] - (po.tuck || 0) * 0.4, blen * 0.62], M.fur, { M: SM, grp: 'body' });
     K.ell('hips', hips, k.hipsR, M.fur, { M: SM, grp: 'body' });
     K.ell('chest', chest, add(k.chestR, [0, breath * 0.5, 0]), M.fur, { M: SM, grp: 'body' });
     // neck to the head
     const neckA = add(chest, mul(SM[2], k.chestR[2] * 0.55)), neckB = add(head, [0, -1.4, -1.0]);
-    K.chain('chest', [add(neckA, [0, 0.8, 0]), neckB], [S.neckR, S.neckR * 0.9], M.fur, { grp: 'body' });
+    K.chain('neck', [add(neckA, [0, 0.8, 0]), neckB], [S.neckR, S.neckR * 0.9], M.fur, { grp: 'body' });
 
     // legs: the four paws, planted or lifted by the gait, the hind legs with a haunch and a hock
     const fr = (side) => {
@@ -27648,10 +27774,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
     // draw order does not matter (depth buffer); groups separate the contour
     fr(1); fr(-1); hi(1); hi(-1);
 
-    // tail
+    // tail (its own form) and head (its own mass: brow, cheeks and muzzle share the head's planes)
+    K.mass(null);
     tail(K, sp, M, po, k, dy, st, sit, lie, ph, walking);
-    // head
+    if (sc >= 1.4) K.mass(head, S.headR.map((v) => v * 1.3), 0.35);
     headOf(K, sp, M, po, head, sc);
+    K.mass(null);
     return { head, chest };
   }
   function tail(K, sp, M, po, k, dy, st, sit, lie, ph, walking) {
@@ -27686,7 +27814,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
     // the muzzle (cats: small, dogs: long, tanuki: pointed)
     K.ell('muzzle', at(S.muzzle.off), S.muzzle.r, M.fur, { M: Mh, grp: 'head' });
     if (sp === 'dog') K.ell('muzzle', at([0, -0.4, 4.6]), [1.25, 1.1, 1.3], M.fur, { M: Mh, grp: 'head' });
-    if (sp === 'tanuki') K.ell('head', at([0, -0.6, -0.4]), [3.9, 2.6, 2.8], M.fur, { M: Mh, grp: 'head' }); // cheek ruff
+    if (sp === 'tanuki') {
+      K.ell('head', at([0, -0.6, -0.4]), [3.9, 2.6, 2.8], M.fur, { M: Mh, grp: 'head' }); // cheek ruff
+      // the ruff's tufts: pale fur swept out and down from each cheek (the tanuki's silhouette)
+      for (const x of [1, -1]) K.chain('ruff', [at([x * 2.8, -1.0, 0.7]), at([x * 4.2, -1.9, 0.1]), at([x * 4.9, -2.8, -0.3])], [1.25, 0.85, 0.3], M.fur, { grp: 'head' });
+    }
     // ears: flattened tapering cones; the inner ear shows on the side facing forward
     const E = S.ears;
     for (const x of [1, -1]) {
@@ -27720,19 +27852,21 @@ var RB = (globalThis.RB = globalThis.RB || {});
         const b = d.b;
         if (blink > 0.6) { b.rect(d.x - (big ? 1 : 0), d.y, big ? 3 : 2, 1, '#241c20'); return; }
         if (big) {
-          // a 2×3 eye: dark rim, iris, a glint toward the light
-          b.rect(d.x - 1, d.y - 1, 3, 3, '#241c20');
-          b.rect(d.x, d.y - 1, 1, 2, eye);
-          if (blink > 0.25) b.rect(d.x - 1, d.y - 1, 3, 1, '#241c20');
+          // an upper lid, a 2×2 iris with its pupil (a cat's is a slit), a glint toward the light
+          b.rect(d.x - 1, d.y - 2, 3, 1, '#241c20');
+          b.rect(d.x - 1, d.y - 1, 2, 2, eye);
+          b.px(d.x, d.y - 1, '#241c20');
+          if (sp === 'cat') b.px(d.x, d.y, '#241c20');
+          if (blink > 0.25) b.rect(d.x - 1, d.y - 1, 2, 1, '#241c20');
           else b.px(d.x - 1, d.y - 1, '#fff8ee');
         } else {
           b.px(d.x, d.y, '#241c20');
           if (blink < 0.25) b.px(d.x, d.y - 1, sp === 'cat' ? eye : '#241c20');
         }
-      }, { tol: 1.2 });
+      }, { tol: 1.2, grp: 'head' });
     }
-    K.decal(at(S.nose), (d) => { d.b.px(d.x, d.y, M.nose.R[1]); if (big) d.b.px(d.x + (d.mirror ? 1 : -1), d.y, M.nose.R[2]); }, { tol: 1.4 });
-    if ((po.nose || 0) > 0.5 && sp === 'tanuki') K.decal(at(add(S.nose, [0, 0.4, -0.1])), (d) => d.b.px(d.x, d.y - 1, '#241c20'), { tol: 1.4 });
+    K.decal(at(S.nose), (d) => { d.b.px(d.x, d.y, M.nose.R[1]); if (big) d.b.px(d.x + (d.mirror ? 1 : -1), d.y, M.nose.R[2]); }, { tol: 1.4, grp: 'head' });
+    if ((po.nose || 0) > 0.5 && sp === 'tanuki') K.decal(at(add(S.nose, [0, 0.4, -0.1])), (d) => d.b.px(d.x, d.y - 1, '#241c20'), { tol: 1.4, grp: 'head' });
   }
 
   // ---- the bird --------------------------------------------------------------------------------------------
@@ -27747,13 +27881,18 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const lean = (po.lean || 0) * 14 * DEG;
     const bodyM = rotX(-24 * DEG + lean + (po.lie || 0) * 14 * DEG);
     const body = [0, bodyY, 0];
+    const bigB = sc >= 1.4;
+    // the body, wings and tail as one light mass in the larger views
+    if (bigB) K.mass(body, [3.0 + fluff, 3.0 + fluff, 3.8], 0.45);
     K.ell('body', body, [2.35 + fluff, 2.3 + fluff, 2.9 + fluff * 0.5], M.fur, { M: bodyM, grp: 'body' });
     // head: round, set forward on the body; a preen turns it back to the shoulder
     const preen = po.preen || 0;
     const head = add(body, [preen * 1.0, 2.5 - tuck * 0.9 - preen * 0.6 + (po.headY || 0), 1.7 - preen * 1.6 + (po.headZ || 0)]);
     const Mh = mm(rotY(((po.hy || 0) + preen * 120) * DEG), mm(rotX(((po.hp || 0) + preen * 20) * DEG), rotZ((po.hr || 0) * DEG)));
     const at = (o) => add(head, mv(Mh, o));
+    if (bigB) K.mass(head, [2.3, 2.2, 2.3], 0.3);
     K.ell('head', head, [1.85 + fluff * 0.3, 1.75 + fluff * 0.3, 1.85], M.fur, { M: Mh, grp: 'head' });
+    if (bigB) K.mass(body, [3.0 + fluff, 3.0 + fluff, 3.8], 0.45);
     // beak: a short cone (two halves: it opens a little when it calls)
     const bo = (po.beak || 0) * 0.5;
     K.chain('beak', [at([0, -0.1 + bo * 0.3, 1.45]), at([0, -0.3, 2.75])], [0.62, 0.12], M.beak, { grp: 'head' });
@@ -27782,11 +27921,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }
     // legs (tucked while it hops or flies)
     const legUp = Math.max(tuck, spread > 0.3 ? 1 : 0, po.hopping ? 1 : 0);
+    K.mass(null);
+    // thin legs (finer in the larger views, where a leg was a two-pixel block), toes forward
+    const lr = bigB ? 0.8 : 1;
     for (const x of [1, -1]) {
       const top = add(body, [x * 0.85, -1.7, 0.2]);
       const foot = legUp ? add(top, [0, -0.8, -0.7]) : [x * 0.85, 0.35, 0.5];
-      K.chain('leg', [top, foot], [0.42, 0.33], M.leg, { grp: 'leg' + x });
-      if (!legUp) K.chain('leg', [add(foot, [0, 0, -0.5]), add(foot, [0, 0, 1.1])], [0.33, 0.28], M.leg, { grp: 'leg' + x });
+      K.chain('leg', [top, foot], [0.42 * lr, 0.3 * lr], M.leg, { grp: 'leg' + x });
+      if (!legUp) K.chain('leg', [add(foot, [0, 0, -0.5]), add(foot, [0, 0, 1.1])], [0.3 * lr, 0.24 * lr], M.leg, { grp: 'leg' + x });
     }
     // eye
     const blink = po.blink || 0, big = sc >= 1.5;
@@ -27796,7 +27938,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         if (blink > 0.6) { b.rect(d.x, d.y, big ? 2 : 1, 1, '#3a2c2c'); return; }
         b.px(d.x, d.y, M.eye);
         if (big) { b.px(d.x, d.y - 1, M.eye); b.px(d.x + (d.mirror ? 1 : -1), d.y - 1, '#fff8ee'); }
-      }, { tol: 1.1 });
+      }, { tol: 1.1, grp: 'head' });
     }
     return { head, chest: body };
   }
@@ -27805,11 +27947,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // World: 32×32 (the bird 24×24), feet at the anchor; Battle: 48×48 (the bird 40×40).
   const SIZES = {
     world: { quad: { w: 32, h: 32, ax: 16, ay: 29, zs: 1 }, bird: { w: 24, h: 24, ax: 12, ay: 21, zs: 1.2 } },
-    battle: { quad: { w: 48, h: 52, ax: 22, ay: 45, zs: 1.72 }, bird: { w: 40, h: 40, ax: 20, ay: 35, zs: 1.9 } },
+    battle: { quad: { w: 48, h: 56, ax: 22, ay: 45, zs: 1.72 }, bird: { w: 40, h: 40, ax: 20, ay: 35, zs: 1.9 } }, // (quad h 56: the tanuki's tail lying on the ground was cut at 52)
   };
   const YAW = { up: 0, right: 90, down: 180, left: -90 };
   // battle scale per species: sitting, each is about 40–45 % of an adventurer's 86 px (the bird less)
-  const BZS = { cat: 1.72, dog: 1.5, tanuki: 1.78, bird: 1.9 };
+  const BZS = { cat: 1.72, dog: 1.5, tanuki: 1.78, bird: 2.25 }; // the bird a little larger than before (1.9): its wing bar, cap and cheek read
   const cache = new Map();
   let built = 0, hits = 0;
   const CAP = 900;
@@ -27822,7 +27964,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     po = po || {};
     if (!LOOKS[sp]) return null;
     if (!LOOKS[sp][lk]) lk = LOOK_ORDER[sp][0];
-    const vk = view.kind === 'world' ? 'w' + view.dir + (view.turn != null ? '~' + view.turn : '') : view.kind === 'portrait' ? 'p' + view.size + (view.yaw != null ? '~' + view.yaw : '') : view.kind === 'preview' ? 'v' : 'b';
+    // battle density: the party's drawn height over the 86 px these sizes were tuned for (0.75..2.5, in 0.05 steps)
+    const dens = view.kind === 'battle' && view.density ? Math.max(0.75, Math.min(2.5, Math.round(view.density * 20) / 20)) : 1;
+    const vk = view.kind === 'world' ? 'w' + view.dir + (view.turn != null ? '~' + view.turn : '') : view.kind === 'portrait' ? 'p' + view.size + (view.yaw != null ? '~' + view.yaw : '') : view.kind === 'preview' ? 'v' : 'b' + (dens !== 1 ? dens : '');
     const key = sp + '|' + lk + '|' + vk + '|' + poseKey(po);
     let f = cache.get(key);
     if (f) { hits++; cache.delete(key); cache.set(key, f); return f; }
@@ -27844,13 +27988,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
       box = { w: s, h: s, ax: Math.round(s * 0.5), ay: Math.round(s * (kind === 'bird' ? 1.3 : 1.18)), zs: s / (kind === 'bird' ? 11 : 16) };
       cam = A.camera(Object.assign({}, box, { pitch: 12, yaw: 152 }));
     } else {
-      box = SIZES.battle[kind];
-      // (the bird stands more side-on, so its head and beak read against the ground)
-      cam = A.camera(Object.assign({}, box, { pitch: 20, yaw: sp === 'bird' ? 58 : 36, zs: BZS[sp] || box.zs }));
+      const b0 = SIZES.battle[kind];
+      box = dens === 1 ? b0 : { w: Math.ceil(b0.w * dens), h: Math.ceil(b0.h * dens), ax: Math.round(b0.ax * dens), ay: Math.round(b0.ay * dens) };
+      // seen from a little further round than the adventurers (54° rather than their 36°), still facing the
+      // creature: the head's profile — eye, muzzle, ears — reads at this size (the bird stands more side-on still)
+      cam = A.camera(Object.assign({}, box, { pitch: 20, yaw: sp === 'bird' ? 58 : 54, zs: (BZS[sp] || b0.zs) * dens }));
     }
     const M = mats(sp, lk);
     let J = null;
-    const cv = A.render(cam, (K) => { J = kind === 'bird' ? bird(K, M, po, cam.zs) : quadruped(K, sp, M, po, cam.zs); J = { head: K.at(J.head), chest: K.at(J.chest) }; }, { contour: kind === 'bird' ? 1.2 : 1.6 }).toCanvas();
+    // the larger views (battle, preview, portrait) group their planes and cast shadows under overlaps
+    const big = cam.zs >= 1.4;
+    const cv = A.render(cam, (K) => { J = kind === 'bird' ? bird(K, M, po, cam.zs) : quadruped(K, sp, M, po, cam.zs); J = { head: K.at(J.head), chest: K.at(J.chest) }; }, { contour: kind === 'bird' ? 1.2 : 1.6, cast: big, cluster: big ? 2 : 0 }).toCanvas();
     built++;
     f = { cv, ax: box.ax, ay: box.ay, w: box.w, h: box.h, head: J.head, chest: J.chest };
     cache.set(key, f);
@@ -27907,7 +28055,7 @@ RB.pets.dev = (function () {
   function rows(sp) {
     const out = [];
     for (const f of RB.families.LIST) out.push({ kind: 'react', name: f, label: f });
-    for (const k of ['hit', 'soft', 'status']) out.push({ kind: 'impact', name: k, label: 'creature: ' + k });
+    for (const k of ['prep', 'hit', 'soft', 'status', 'settle']) out.push({ kind: 'impact', name: k, label: k === 'prep' ? 'creature prepares: brace' : k === 'settle' ? 'after its move: settle' : 'creature: ' + k });
     out.push({ kind: 'victory', name: null, label: 'settled victory' });
     (BP().CALM[sp] || []).forEach((_, i) => out.push({ kind: 'calm', name: i, label: 'calm idle ' + (i + 1) }));
     out.push({ kind: 'ready', name: 0, label: 'ready idle' });
@@ -28034,7 +28182,7 @@ RB.pets.dev = (function () {
       return true;
     }
     if (o.actor === 'foe' || kind === 'impact') {
-      RB.bus.emit('present:enemy', { scope: 'battle', actor: 'foe:0', kind: 'strike', id: 'dev', targets, outcome: o.result || 'hit', at: 200, t0 });
+      RB.bus.emit('present:enemy', { scope: 'battle', actor: 'foe:0', kind: 'strike', id: 'dev', targets, outcome: o.result || 'hit', at: 640, end: 1250, t0 });
       return true;
     }
     RB.bus.emit('present:action', { scope: 'battle', actor: o.actor || 'pc', action: 'dev', family: o.family || 'unravel', targets, result: o.result || 'hit', exchange: o.exchange || ++EX, t0, beat: 300 });
@@ -32421,7 +32569,9 @@ RB.render = (function () {
     c.fill();
     const still = RB.game.reducedMotion();
     const bob = isFoe && !still ? Math.round(Math.sin(t / 300 + a.x) * 3) : 0;
-    const art = RB.sprites.getArt && RB.sprites.getArt(a.look, a.dir, actorFrame(a, t, isFoe, still));
+    // (a turn on the spot is drawn through a pivot: RB.sprites.view, src/engine/32_spriteart.js — drawing only)
+    const fr0 = actorFrame(a, t, isFoe, still), vw = RB.sprites.view ? RB.sprites.view(a, t, still || isFoe, fr0) : null;
+    const art = RB.sprites.getArt && RB.sprites.getArt(a.look, vw ? vw.dir : a.dir, vw ? vw.frame : fr0);
     const dy = a.dy || 0; // a knee dip during a field action (src/ui/57_weave.js)
     if (art) c.drawImage(art, fx - RB.sprites.ANCHOR.x, fy - RB.sprites.ANCHOR.y + bob + dy);
     else c.drawImage(RB.sprites.get(a.look, a.dir, a.frame || 0), fx - 16, fy - 46 + bob + dy, 32, 48);
@@ -59132,11 +59282,23 @@ RB.battleFx = (function () {
  *   whoever acts. One dominant reaction per exchange; a second action in the
  *   same exchange gets a short acknowledgement of its family instead of a
  *   second flourish. A technique is one combined culmination, not three.
- * - A creature's move nearby: the species' safe nearby-impact reaction (never
- *   an injury cue, whether the blow landed or a ward took it).
+ * - A creature's move nearby: while it prepares, a glance at it and a small
+ *   brace; at contact the species' safe nearby-impact reaction (never an injury
+ *   cue, whether the blow landed or a ward took it); after it, a settle.
  * - The final knot: the settled-victory gesture with your cheer; defeat: it
  *   keeps low and close (not hurt). Arrival: it trots in beside you; exit: gone.
  * - Reduced motion: every reaction is its key pose held (no hops, no travel).
+ *
+ * Battle art addendum (§11; docs/battle/pets_overworld.md):
+ * - Every reaction is fitted into the action it answers (from its beat to the
+ *   action's own end, at most 1.6× faster); an instant-length action gets none
+ *   (the recap carries the result); the next decision eases any reaction out.
+ * - Poses change at most every 80 ms while it reacts and every 100 ms while
+ *   idle (held drawings, not a tween); a new timeline cross-fades from the last
+ *   pose shown; the tail and ears follow the body by 90 and 50 ms.
+ * - Its place is computed every frame from the live party anchors (place()):
+ *   never on an adventurer's foot anchor, a creature or a reported badge; aside
+ *   or resting when crowded. Its art density follows the party's drawn height.
  *
  *   RB.battlePets.wants() (the stage reserves its place), draw(c, lay, fr), stats(),
  *   RB.battlePets.sample(species, look, family, t, o) -> pose (the coverage gallery, tests),
@@ -59154,7 +59316,7 @@ RB.battlePets = (function () {
     cat: { calm: { sit: 1 }, ready: { sit: 1, earF: 0.5, hp: -4 }, defeat: { sit: 1, crouch: 0.5, earF: -0.6, hy: 40 }, victory: { sit: 1, tall: 1, tUp: 38, blink: 0.5, earF: 0.4 } },
     dog: { calm: { sit: 1 }, ready: { sit: 0, lean: 0.35, earF: 0.7, hp: -4 }, defeat: { lie: 1, earF: -0.7, hy: 45 }, victory: { sit: 1, earF: 0.5, hp: -8 } },
     bird: { calm: {}, ready: { earF: 0, hp: -6, lean: 0.2 }, defeat: { crouch: 0.6, fluff: 0.8, hy: 50 }, victory: { hp: -10 } },
-    tanuki: { calm: { sit: 1 }, ready: { sit: 0.5, rise: 0.25, paws: 0.6, earF: 0.3 }, defeat: { sit: 1, crouch: 0.5, paws: 1, earF: -0.6, hy: 40 }, victory: { sit: 1, paws: 1, blink: 0.5 } },
+    tanuki: { calm: { sit: 1 }, ready: { sit: 1, rise: 0.15, paws: 0.5, earF: 0.3, hp: -4 }, defeat: { sit: 1, crouch: 0.5, paws: 1, earF: -0.6, hy: 40 }, victory: { sit: 1, paws: 1, blink: 0.5 } },
   };
   // Where it looks: at you (on its right), at your companion (over its left shoulder), at the creature.
   const LOOK = { pc: 52, comp: -70, foe: 6 };
@@ -59240,6 +59402,28 @@ RB.battlePets = (function () {
     bird: { hit: K(700, [[0, {}], [100, { wing: 0.45, flap: 0.3, fluff: 0.5 }], [260, { wing: 0.3, flap: 0.8 }], [440, { fluff: 0.3 }], [700, {}]], 3, hop(80, 2, 260)), soft: K(600, [[0, {}], [140, { fluff: 0.6, tuck: 0.5 }], [600, {}]], 1), status: K(650, [[0, {}], [200, { hr: 18, hp: -8 }], [650, {}]], 1) },
     tanuki: { hit: K(850, [[0, {}], [120, { lean: -0.6, crouch: 0.35 }], [440, { lean: -0.2, crouch: 0.2, paws: 0.6 }], [850, {}]], 1), soft: K(700, [[0, {}], [160, { lean: -0.3, spread: 0.4 }], [700, {}]], 1), status: K(700, [[0, {}], [220, { hp: -8, nose: 1 }], [700, {}]], 1) },
   };
+  // Around a creature's move (battle addendum §11): while it prepares, a glance at it and a small brace
+  // (ears back, weight down, feathers sleeked) that holds until contact; after the move, a settle (the cat
+  // re-curls its tail, the dog shakes out its ruff, the bird fluffs and smooths, the tanuki folds its paws).
+  // Neither is an injury cue, and neither is ever a target, a number or a mark.
+  const PREP = {
+    cat: K(520, [[0, {}], [180, { hy: LOOK.foe, earF: -0.45, crouch: 0.2, tSide: 14 }], [520, { hy: LOOK.foe, earF: -0.5, crouch: 0.25, tSide: 18 }]], 2),
+    dog: K(520, [[0, {}], [180, { hy: LOOK.foe, earF: 0.9, lean: -0.25, spread: 0.4 }], [520, { hy: LOOK.foe, earF: 0.9, lean: -0.3, spread: 0.5, crouch: 0.15 }]], 2),
+    bird: K(480, [[0, {}], [160, { hr: 12, fluff: -0.2, tuck: 0.3 }], [480, { hr: 12, tuck: 0.45, crouch: 0.3 }]], 2),
+    tanuki: K(560, [[0, {}], [200, { hy: LOOK.foe, earF: -0.4, paws: 0.8, crouch: 0.15 }], [560, { hy: LOOK.foe, earF: -0.45, paws: 1, crouch: 0.2 }]], 2),
+  };
+  const SETTLE = {
+    cat: K(620, [[0, {}], [180, { tCurl: 20, tFlick: 24, earR: 0.4 }], [400, { tFlick: -10 }], [620, {}]], 1),
+    dog: K(640, [[0, {}], [120, { hr: 12, earF: -0.3 }], [240, { hr: -12, earF: -0.3 }], [360, { hr: 8 }], [480, { hr: -4 }], [640, {}]], 2),
+    bird: K(600, [[0, {}], [180, { fluff: 0.9 }], [340, { fluff: 0.2, wing: 0.18 }], [600, {}]], 1),
+    tanuki: K(640, [[0, {}], [220, { paws: 1, breath: 1 }], [460, { paws: 0.8, breath: 0, blink: 1 }], [640, {}]], 1),
+  };
+  // the flinch itself is quick (0.7 of its first timing); the settle carries the recovery
+  const quick = (R, f) => K(Math.round(R.ms * f), R.keys.map(([ms, po]) => [Math.round(ms * f), po]), R.key, R.lift ? ((g) => (tt) => g(tt / f))(R.lift) : undefined);
+  for (const sp in IMPACT) {
+    for (const k of ['hit', 'soft', 'status']) IMPACT[sp][k] = quick(IMPACT[sp][k], 0.7);
+    IMPACT[sp].prep = PREP[sp]; IMPACT[sp].settle = SETTLE[sp];
+  }
   // The settled-victory gesture (with your cheer).
   const VICTORY = {
     cat: K(1300, [[0, {}], [300, { tall: 1, tUp: 40, earF: 0.4 }], [700, { tall: 1, tUp: 40, blink: 1 }], [1000, { tall: 1, tUp: 36 }], [1300, { tall: 1, tUp: 38, blink: 0.5 }]], 2),
@@ -59354,19 +59538,41 @@ RB.battlePets = (function () {
     // the look is taken once, here: nothing changes the animal halfway through an exchange
     B = {
       on: true, sp, look: RB.pets.lookOf(s, sp), base: 'calm', q: [], idle: null, idleAt: 0, enterT: null, ex: -1, dom: 0,
-      stats: { reactions: 0, secondary: 0, impacts: 0, families: {}, calmIdles: 0, victory: 0, drawn: 0, maxParticles: 0 }, trace: [],
-      comp: e && e.comp,
+      stats: { reactions: 0, secondary: 0, impacts: 0, preps: 0, settles: 0, skipped: 0, fitted: 0, families: {}, calmIdles: 0, victory: 0, drawn: 0, maxParticles: 0 }, trace: [],
+      comp: e && e.comp, gen: (B0 = (B0 + 1) | 0),
     };
   }
+  let B0 = 0;
   function end() { B = null; }
-  function schedule(r) {
-    if (!B) return;
+  // Fit a reaction into the action it answers (battle addendum §11: reactions overlap the action and never
+  // outlast it into the next decision). `from`..`until` is the window on the presentation clock; a reaction
+  // longer than its window plays faster (never more than 1.6×) and is eased out at the next calm. A window
+  // shorter than 120 ms (instant playback) plays nothing: the recap carries the result, not the pet.
+  const MIN_WIN = 120, MAX_RATE = 1.6, SETTLE_GRACE = 450;
+  function fit(r, R, from, until, optional) {
+    const dur = r.secondary ? R.ms * 0.62 : R.ms;
+    if (until != null && until - from < MIN_WIN) return null;
+    // a brace or a settle that cannot fit even at the fastest rate is left out (it is optional)
+    if (optional && until != null && until - from < dur / MAX_RATE) return null;
+    let rate = 1;
+    if (until != null && until - from < dur) { rate = Math.min(MAX_RATE, dur / Math.max(1, until - from)); B.stats.fitted++; }
+    r.at = from; r.rate = rate; r.dur = dur / rate;
+    return r;
+  }
+  function schedule(r, R, until) {
+    if (!B) return false;
+    const traced = { kind: r.kind, family: r.family || null, impact: r.impact || null, actor: r.actor || null, secondary: !!r.secondary, outcome: r.outcome || null };
+    const optional = r.impact === 'prep' || r.impact === 'settle';
+    if (!fit(r, R, r.at, until, optional)) { if (!optional) { B.stats.skipped++; traced.skipped = 'instant'; B.trace.push(traced); while (B.trace.length > 60) B.trace.shift(); } return false; }
+    traced.rate = Math.round(r.rate * 100) / 100;
     B.q.push(r);
     B.q.sort((a, b) => a.at - b.at);
     while (B.q.length > 8) B.q.shift();
-    B.trace.push({ kind: r.kind, family: r.family || null, actor: r.actor || null, secondary: !!r.secondary, outcome: r.outcome || null });
+    B.trace.push(traced);
     while (B.trace.length > 60) B.trace.shift();
+    return true;
   }
+  const reactOf = (sp, family) => REACT[sp][family] || REACT[sp].support;
   function onAction(e) {
     if (!B || !B.on || e.scope !== 'battle') return;
     const family = RB.families.LIST.indexOf(e.family) >= 0 ? e.family : 'support';
@@ -59374,38 +59580,70 @@ RB.battlePets = (function () {
     const secondary = B.ex === e.exchange && B.dom > 0;
     if (B.ex !== e.exchange) { B.ex = e.exchange; B.dom = 0; }
     B.dom++;
-    const at = (e.t0 || pt()) + Math.max(0, (e.beat || 400) - 180);
+    const t0 = e.t0 != null ? e.t0 : pt();
+    const at = t0 + Math.max(0, (e.beat || 400) - 180);
+    const until = e.end != null ? t0 + e.end : null;
     // a technique: its own combined culmination (the base family is how it began)
-    schedule({ kind: 'react', family, base: family === 'technique' ? RB.families.base('technique', e.tech || B.comp) : null, actor: e.actor, secondary, at, targets: e.targets || [] });
-    B.stats.reactions++; if (secondary) B.stats.secondary++;
-    B.stats.families[family] = (B.stats.families[family] || 0) + 1;
+    const ok = schedule({ kind: 'react', family, base: family === 'technique' ? RB.families.base('technique', e.tech || B.comp) : null, actor: e.actor, secondary, at, targets: e.targets || [] }, reactOf(B.sp, family), until);
+    if (ok) { B.stats.reactions++; if (secondary) B.stats.secondary++; B.stats.families[family] = (B.stats.families[family] || 0) + 1; }
     B.base = 'ready';
-    if (e.won && e.victory != null) schedule({ kind: 'victory', at: (e.t0 || pt()) + e.victory });
+    if (e.won && e.victory != null) schedule({ kind: 'victory', at: t0 + e.victory }, VICTORY[B.sp], null);
   }
   function onEnemy(e) {
     if (!B || !B.on || e.scope !== 'battle') return;
     const kind = e.outcome === 'hit' ? 'hit' : e.outcome === 'status' ? 'status' : 'soft';
-    schedule({ kind: 'impact', impact: kind, outcome: e.outcome, at: (e.t0 || pt()) + Math.max(0, (e.at || 500) - 60), targets: e.targets || [] });
-    B.stats.impacts++;
+    const t0 = e.t0 != null ? e.t0 : pt();
+    const contact = t0 + Math.max(0, (e.at || 500) - 60);
+    const until = e.end != null ? t0 + e.end : null;
+    const I = IMPACT[B.sp];
+    // while it prepares: a glance at it and a brace, held until contact
+    if (contact - t0 >= 200 && schedule({ kind: 'impact', impact: 'prep', at: t0, targets: e.targets || [] }, I.prep, contact)) B.stats.preps++;
+    if (schedule({ kind: 'impact', impact: kind, outcome: e.outcome, at: contact, targets: e.targets || [] }, I[kind], until)) B.stats.impacts++;
+    // after it: a settle — the pet's own recovery, alongside the creature's; it may run up to SETTLE_GRACE
+    // past the creature's recovery (the next decision eases it out; nothing waits for it)
+    const last = B.q.length ? B.q[B.q.length - 1] : null;
+    if (last && last.impact === kind && until != null && schedule({ kind: 'impact', impact: 'settle', at: last.at + last.dur, targets: [] }, I.settle, until + SETTLE_GRACE)) B.stats.settles++;
     B.base = 'ready';
   }
   function onScene(e) {
     if (e.scope !== 'battle') return;
-    if (e.phase === 'enter') { begin(e); if (B) B.enterT = pt(); return; }
+    if (e.phase === 'enter') {
+      begin(e);
+      if (B) {
+        B.enterT = pt();
+        // measure the party's figure height now (once per frame size), not on the first drawn frame
+        try { figureH({ F: RB.battlers && RB.battlers.FRAME }); } catch (err) { /* measured on the first draw instead */ }
+      }
+      return;
+    }
     if (!B) return;
     if (e.phase === 'exit') { end(); return; }
     if (e.phase === 'calm') {
       B.base = 'calm';
-      // anything still pending from a settled (skipped) sequence is dropped: nothing replays later
-      const now = pt();
-      B.q = B.q.filter((r) => r.at <= now && now - r.at < 400);
+      // the next decision: anything pending from a settled (skipped) sequence is dropped (nothing replays
+      // later), and a reaction still playing eases out to the stance
+      B.q = [];
     }
     if (e.phase === 'ready') B.base = 'ready';
     if (e.phase === 'victory') { B.base = 'victory'; B.stats.victory++; }
     if (e.phase === 'defeat') B.base = 'defeat';
   }
   // ---- the pose now -----------------------------------------------------------------------------------------------
+  const TAIL = ['tUp', 'tSide', 'tFlick', 'tCurl', 'wag'], EARS = ['earF', 'earL', 'earR'];
+  const lerpPose = (a, b, k) => { const o = {}; const ks = new Set(Object.keys(a).concat(Object.keys(b))); for (const n of ks) { const va = typeof a[n] === 'number' ? a[n] : 0, vb = typeof b[n] === 'number' ? b[n] : 0; o[n] = va + (vb - va) * k; } return o; };
+  function timelineOf(sp, cur) { return cur.kind === 'victory' ? VICTORY[sp] : cur.kind === 'impact' ? IMPACT[sp][cur.impact] : reactOf(sp, cur.family); }
+  // one timeline's override at its own time tt (ms of its authored timing)
+  function overAt(sp, cur, R, tt, reduce) {
+    if (cur.kind === 'react') return sample(sp, cur.family, tt, { reduce, secondary: cur.secondary, actor: cur.actor });
+    return reduce ? Object.assign({}, R.keys[Math.min(R.keys.length - 1, R.key)][1]) : sampleK(R, tt);
+  }
+  // Pose cadence (battle addendum §5.2, §9.4): the animal changes drawing at most every CADENCE ms of the
+  // presentation clock (12.5 a second) while it reacts, and every IDLE_STEP ms of real time while idle (10 a
+  // second, the battle figures' idle step) — held poses, not a tween redrawn every display frame.
+  const CADENCE = 80, IDLE_STEP = 100;
   function poseAt(now, t, reduce) {
+    now = Math.floor(now / CADENCE) * CADENCE;
+    t = Math.floor(t / IDLE_STEP) * IDLE_STEP;
     const sp = B.sp;
     const base = BASE[sp][B.base] || BASE[sp].calm;
     let po = Object.assign({}, base);
@@ -59421,25 +59659,39 @@ RB.battlePets = (function () {
         return { po, lift, dx };
       }
     }
-    // the reaction playing now (the latest one started)
+    // the reaction playing now (the latest one started), on its fitted clock
     let cur = null;
     for (const r of B.q) if (r.at <= now) cur = r;
-    if (cur) {
-      const R = cur.kind === 'victory' ? VICTORY[sp] : cur.kind === 'impact' ? IMPACT[sp][cur.impact] : (REACT[sp][cur.family] || REACT[sp].support);
-      const dur = cur.secondary ? R.ms * 0.62 : R.ms;
-      const tt = now - cur.at;
-      if (tt < dur) {
-        let over;
-        if (cur.kind === 'react') over = sample(sp, cur.family, tt, { reduce, secondary: cur.secondary, actor: cur.actor });
-        else over = reduce ? R.keys[Math.min(R.keys.length - 1, R.key)][1] : sampleK(R, tt);
-        if (cur.kind === 'impact' && cur.targets.length && !reduce && over.hy == null && sp !== 'bird') over.hy = (cur.targets[0] === 'comp' ? LOOK.comp : LOOK.pc) * 0.5 * sm(tt / 300);
-        po = merge(po, over);
-        if (R.lift && !reduce && !cur.secondary) lift = R.lift(tt);
-        if (cur.kind === 'victory' && tt > dur - 1) B.base = 'victory';
-        return { po, lift, dx };
+    if (cur && now - cur.at < cur.dur) {
+      const R = timelineOf(sp, cur);
+      const tt = (now - cur.at) * cur.rate;
+      let over = overAt(sp, cur, R, tt, reduce);
+      if (!reduce) {
+        // follow-through: the tail answers about 90 ms after the body and the ears about 50 ms after it
+        const tl = overAt(sp, cur, R, Math.max(0, tt - 90), false), er = overAt(sp, cur, R, Math.max(0, tt - 50), false);
+        for (const n of TAIL) { if (tl[n] != null) over[n] = tl[n]; else delete over[n]; }
+        for (const n of EARS) { if (er[n] != null) over[n] = er[n]; else delete over[n]; }
+        // a new timeline takes over from the last pose shown (no pop between a brace and the flinch)
+        if (B.lastOver && B.lastR !== cur) B.blend = { r: cur, at: now, from: B.lastOver };
+        if (B.blend && B.blend.r === cur && now - B.blend.at < 110) over = lerpPose(B.blend.from, over, sm((now - B.blend.at) / 110));
       }
-      if (cur.kind === 'victory') B.base = 'victory';
+      B.release = null;
+      if (cur.kind === 'impact' && cur.impact !== 'settle' && cur.targets.length && !reduce && over.hy == null && sp !== 'bird') over.hy = (cur.targets[0] === 'comp' ? LOOK.comp : LOOK.pc) * 0.5 * sm(tt / 300);
+      B.lastOver = over; B.lastR = cur;
+      po = merge(po, over);
+      if (R.lift && !reduce && !cur.secondary) lift = R.lift(tt);
+      if (cur.kind === 'victory' && now - cur.at > cur.dur - 1) B.base = 'victory';
+      return { po, lift, dx };
     }
+    // the victory gesture ends in the victory stance itself (nothing to ease back from)
+    if (cur && cur.kind === 'victory') { B.base = 'victory'; B.lastOver = null; }
+    // eased back to the stance after a reaction (or after one cut short by the next decision)
+    if (B.lastOver && !reduce) {
+      if (!B.release) B.release = { at: now, from: B.lastOver };
+      const k = (now - B.release.at) / 160;
+      if (k < 1) return { po: merge(po, lerpPose(B.release.from, {}, sm(k))), lift, dx };
+    }
+    B.lastOver = null; B.lastR = null; B.release = null; B.blend = null;
     // idle: calm variants on their own irregular clock; ready's small movements; nothing with reduced motion
     if (reduce) return { po, lift, dx };
     if (B.base === 'calm' || B.base === 'ready') {
@@ -59454,7 +59706,9 @@ RB.battlePets = (function () {
       }
       if (B.idle) {
         const it = t - B.idle.t0;
-        po = merge(po, sampleK(B.idle.R, it));
+        const iv = sampleK(B.idle.R, it), tl = sampleK(B.idle.R, Math.max(0, it - 90));
+        for (const n of TAIL) { if (tl[n] != null) iv[n] = tl[n]; else delete iv[n]; }
+        po = merge(po, iv);
         if (B.idle.R.lift) lift = B.idle.R.lift(it);
       }
       // a slow breath while sitting (quantized: a pixel, not a shimmer)
@@ -59462,24 +59716,109 @@ RB.battlePets = (function () {
     }
     return { po, lift, dx };
   }
+  // ---- where it sits (from the live party anchors, every frame) ----------------------------------------------------
+  // Between your companion and you, a little in front of your companion and behind you; alone, at your left.
+  // Its ground footprint never covers an adventurer's foot anchor (the anchor ± 15 % of the battle frame's
+  // width: the planted feet and a margin), nor a creature or an intent badge; when the gap between the two of you is too narrow it moves to
+  // the far side of your companion, and when there is no room there either it lies down in the gap (a resting
+  // pose is narrower). Positions are canvas px, recomputed from L every frame, so a withdrawn panel or a
+  // growing stage never leaves it on old coordinates. Nothing here writes to the layout.
+  function badgeRects(L) {
+    const out = [];
+    for (const f of L.foes || []) {
+      const e = f.ext, sc = L.scale || 1;
+      if (e) out.push({ x0: f.ex + e.left * sc, y0: f.ey + e.top * sc, x1: f.ex + e.right * sc, y1: f.ey + e.bottom * sc, foe: true });
+    }
+    for (const b of L.badges || []) out.push(b);
+    return out;
+  }
+  function footSpans(L) {
+    const ps = L.ps || 1, half = Math.round((L.F ? L.F.w : 80) * ps * 0.15);
+    return [L.pc].concat(L.comp ? [L.comp] : []).filter(Boolean).map((a) => ({ x0: a.x - half, x1: a.x + half, y: a.y, ax: a.x }));
+  }
+  function place(L, w, h) {
+    const ps = L.ps || 1, pc = L.pc, comp = L.comp, Sr = L.Sr || { x: 0, y: 0, w: 1e9, h: 1e9 };
+    const spans = footSpans(L), half = Math.ceil(w / 2) + ps;
+    const hit = (x, y, hh) => {
+      for (const s of spans) if (x + half > s.x0 && x - half < s.x1 && y > s.y - h * 0.9 && y - hh < s.y + 2 * ps) return true;
+      for (const b of badgeRects(L)) if (x + half > b.x0 && x - half < b.x1 && y > b.y0 && y - hh < b.y1) return true;
+      return false;
+    };
+    const inside = (x) => x - half >= Sr.x && x + half <= Sr.x + Sr.w;
+    let x, y;
+    if (comp) { x = Math.round((comp.x + pc.x) / 2 + (L.pw || 80) * 0.03); y = Math.round((comp.y + pc.y) / 2 + ps); }
+    else { x = Math.round(pc.x - (L.pw || 80) * 0.52); y = Math.round(pc.y - Math.max(2, (L.ph || 104) * 0.04)); }
+    if (!hit(x, y, h) && inside(x)) return { x, y, mode: comp ? 'between' : 'beside' };
+    // between them but crowded: the middle of the actual gap, if the animal fits there
+    if (comp) {
+      const a = spans[1], b = spans[0], mid = Math.round((a.x1 + b.x0) / 2);
+      if (!hit(mid, y, h) && inside(mid)) return { x: mid, y, mode: 'gap' };
+      // the far side of your companion
+      const lx = a.x0 - half - ps, ly = comp.y + ps;
+      if (!hit(lx, ly, h) && inside(lx)) return { x: lx, y: ly, mode: 'outside' };
+    } else {
+      const lx = spans[0].x0 - half - ps;
+      if (!hit(lx, y, h) && inside(lx)) return { x: lx, y, mode: 'beside' };
+    }
+    // no room anywhere clear: lying down (a lower, narrower outline) just behind the line of your feet
+    return { x: comp ? Math.round((spans[1].x1 + spans[0].x0) / 2) : Math.round(spans[0].x0 - half), y: Math.round(Math.min(pc.y, comp ? comp.y : pc.y) - (L.ph || 104) * 0.06), mode: 'rest' };
+  }
+  // The party's drawn height (art px) sets the animal's own art density, so a larger party frame gives the
+  // pet more drawn detail at the same proportion (never a stretched sprite: the pet stays on the party's grid).
+  // Measured once per battle frame size from the four companions' ready stances (their mean: 81.75 px at the
+  // base commit's 80×104 frame) — a reference that does not change with the player's hat or hair.
+  const TUNED_H = 82;
+  let figMemo = null;
+  function heightOf(cv) {
+    const d = cv.getContext('2d').getImageData(0, 0, cv.width, cv.height).data;
+    let y0 = -1, y1 = -1;
+    for (let y = 0; y < cv.height && y0 < 0; y++) for (let x = 0; x < cv.width; x++) if (d[(y * cv.width + x) * 4 + 3] > 100) { y0 = y; break; }
+    for (let y = cv.height - 1; y >= 0 && y1 < 0; y--) for (let x = 0; x < cv.width; x++) if (d[(y * cv.width + x) * 4 + 3] > 100) { y1 = y; break; }
+    return y0 >= 0 && y1 > y0 ? y1 - y0 + 1 : 0;
+  }
+  function figureH(L) {
+    const F = L.F || { w: 80, h: 104 };
+    const key = F.w + 'x' + F.h;
+    if (figMemo && figMemo.key === key) return figMemo.h;
+    let hgt = F.h * (TUNED_H / 104);
+    try {
+      const hs = ['nao', 'mio', 'ren', 'suzu'].map((id) => RB.content.chars[id] && RB.battlers.preview ? heightOf(RB.battlers.preview(RB.content.chars[id].look, 'ready', null, 0)) : 0).filter((v) => v > 0);
+      if (hs.length) hgt = hs.reduce((a, v) => a + v, 0) / hs.length;
+    } catch (err) { /* keep the estimate from the frame */ }
+    figMemo = { key, h: hgt };
+    return hgt;
+  }
+  const densityOf = (L) => Math.max(0.75, Math.min(2.5, Math.round((figureH(L) / TUNED_H) * 20) / 20));
   // ---- drawing (called by the stage, between your companion and you) ------------------------------------------------
   function draw(c, L, fr) {
-    if (!B || !B.on || !L.pet) return;
+    if (!B || !B.on || !L.pc) return;
     const reduce = !!fr.reduce;
     const now = fr.pt, t = fr.t;
-    const { po, lift, dx } = poseAt(now, t, reduce);
-    const f = RB.petArt.frame(B.sp, B.look, { kind: 'battle' }, quant(po));
-    if (!f) return;
+    let { po, lift, dx } = poseAt(now, t, reduce);
+    const dens = densityOf(L);
+    const view = { kind: 'battle', density: dens };
     const s = L.ps || 1;
-    // centred on its place by how it looks sitting (its drawing leans back toward you in this view)
-    if (B.offX == null) B.offX = centreOf(RB.petArt.frame(B.sp, B.look, { kind: 'battle' }, quant(BASE[B.sp].calm)));
-    const x = L.pet.x + (dx - B.offX) * s, y = L.pet.y;
-    RB.battleScene.shadow(c, x + Math.round(B.offX * s), y - s, Math.round((B.sp === 'bird' ? 7 : B.sp === 'dog' ? 15 : 13) * s), Math.max(2, Math.round(3 * s)), 0.5);
+    // where it can be: measured from its sitting outline at this density
+    const sitF = RB.petArt.frame(B.sp, B.look, view, quant(BASE[B.sp].calm));
+    if (!sitF) return;
+    if (B.offX == null || B.dens !== dens) { B.offX = centreOf(sitF); B.dens = dens; B.ext = extentOf(sitF); }
+    const P = place(L, B.ext.w * s, B.ext.h * s);
+    if (P.mode === 'rest') { po = Object.assign({}, po, B.sp === 'bird' ? { crouch: 0.8, fluff: 0.6, tuck: 1 } : { sit: 0, lie: 1 }); lift = 0; }
+    const f = RB.petArt.frame(B.sp, B.look, view, quant(po));
+    if (!f) return;
+    // the arrival walks in from the left, but never through your companion's feet: it starts beside them
+    let dxs = dx * dens * s;
+    if (dxs && L.comp && L.comp.x < P.x) {
+      const minX = footSpans(L)[1].x1 + (B.ext.w * s) / 2 + s;
+      if (P.x + dxs < minX) dxs = Math.min(0, minX - P.x);
+    }
+    const x = P.x + dxs - B.offX * s, y = P.y;
+    RB.battleScene.shadow(c, x + Math.round(B.offX * s), y - s, Math.round((B.sp === 'bird' ? 7 : B.sp === 'dog' ? 15 : 13) * dens * s), Math.max(2, Math.round(3 * dens * s)), 0.5);
     c.imageSmoothingEnabled = false;
-    const px = Math.round(x - f.ax * s), py = Math.round(y - f.ay * s - lift * s);
+    const px = Math.round(x - f.ax * s), py = Math.round(y - f.ay * s - lift * dens * s);
     c.drawImage(f.cv, px, py, f.w * s, f.h * s);
     B.stats.drawn++;
-    B.last = { x: px, y: py, w: f.w * s, h: f.h * s, pose: po, base: B.base };
+    B.last = { x: px, y: py, w: f.w * s, h: f.h * s, s, f, pose: po, base: B.base, place: P, density: dens, foot: { x: Math.round(x + B.offX * s), y }, ground: { x0: Math.round(P.x - B.ext.w * s / 2), x1: Math.round(P.x + B.ext.w * s / 2), y } };
   }
   // the horizontal middle of a frame's drawing, from its anchor (art px)
   function centreOf(f) {
@@ -59490,11 +59829,35 @@ RB.battlePets = (function () {
       return x1 < 0 ? 0 : Math.round((x0 + x1) / 2 - f.ax);
     } catch (e) { return 0; }
   }
+  // the drawn width and height of a frame (art px)
+  function extentOf(f) {
+    try {
+      const d = f.cv.getContext('2d').getImageData(0, 0, f.w, f.h).data;
+      let x0 = f.w, x1 = -1, y0 = f.h;
+      for (let i = 3; i < d.length; i += 4) if (d[i]) { const p = (i - 3) / 4, x = p % f.w, yy = (p / f.w) | 0; if (x < x0) x0 = x; if (x > x1) x1 = x; if (yy < y0) y0 = yy; }
+      return x1 < 0 ? { w: f.w, h: f.h } : { w: x1 - x0 + 1, h: f.ay - y0 + 1 };
+    } catch (e) { return { w: f.w, h: f.h }; }
+  }
+  function bodyOf(L) {
+    try {
+      const f = L.f, d = f.cv.getContext('2d').getImageData(0, 0, f.w, f.h).data;
+      let x0 = f.w, y0 = f.h, x1 = -1, y1 = -1;
+      for (let i = 3; i < d.length; i += 4) if (d[i] > 100) { const q = (i - 3) / 4, x = q % f.w, yy = (q / f.w) | 0; if (x < x0) x0 = x; if (x > x1) x1 = x; if (yy < y0) y0 = yy; if (yy > y1) y1 = yy; }
+      return x1 < 0 ? null : { x: L.x + x0 * L.s, y: L.y + y0 * L.s, w: (x1 - x0 + 1) * L.s, h: (y1 - y0 + 1) * L.s };
+    } catch (e) { return null; }
+  }
   function stats() {
     if (!B) return { on: false };
     const cp = RB.battleStage.cssPerArt ? RB.battleStage.cssPerArt() : 1;
     const box = B.last ? { x: Math.round(B.last.x * cp), y: Math.round(B.last.y * cp), w: Math.round(B.last.w * cp), h: Math.round(B.last.h * cp) } : null;
-    return { on: B.on, sp: B.sp, look: B.look, base: B.base, queued: B.q.length, stats: JSON.parse(JSON.stringify(B.stats)), trace: B.trace.slice(), box, art: B.last ? { x: B.last.x, y: B.last.y, w: B.last.w, h: B.last.h } : null, pose: B.last ? B.last.pose : null };
+    const L = B.last;
+    return {
+      on: B.on, sp: B.sp, look: B.look, base: B.base, queued: B.q.length, stats: JSON.parse(JSON.stringify(B.stats)), trace: B.trace.slice(), box,
+      art: L ? { x: L.x, y: L.y, w: L.w, h: L.h } : null, pose: L ? L.pose : null, place: L ? L.place.mode : null, density: L ? L.density : null,
+      ground: L ? L.ground : null, foot: L ? L.foot : null, cssPerArt: cp,
+      // the animal's drawn pixels (opaque bounding box, canvas art px) — what it actually covers
+      body: L ? bodyOf(L) : null,
+    };
   }
 
   if (RB.bus) {
@@ -59512,7 +59875,7 @@ RB.battlePets = (function () {
     RB.ui.settings.addRows('audio', ({ sw }) => sw('petSounds', 'Quiet pet sounds', 'An occasional soft sound from your pet (never needed: everything it does is also seen).'));
   }
 
-  return { wants, draw, stats, sample, sampleAny, centreOf, poseAt: (now, t, reduce) => (B ? poseAt(now, t, reduce) : null), REACT, IMPACT, VICTORY, CALM, READY, BASE, LOOK, _begin: begin, _end: end, get _B() { return B; } };
+  return { wants, draw, stats, sample, sampleAny, centreOf, extentOf, place, footSpans, densityOf, poseAt: (now, t, reduce) => (B ? poseAt(now, t, reduce) : null), REACT, IMPACT, PREP, SETTLE, VICTORY, CALM, READY, BASE, LOOK, MIN_WIN, MAX_RATE, SETTLE_GRACE, CADENCE, IDLE_STEP, _begin: begin, _end: end, get _B() { return B; } };
 })();
 
 

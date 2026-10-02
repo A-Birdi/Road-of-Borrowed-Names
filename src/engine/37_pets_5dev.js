@@ -35,7 +35,7 @@ RB.pets.dev = (function () {
   function rows(sp) {
     const out = [];
     for (const f of RB.families.LIST) out.push({ kind: 'react', name: f, label: f });
-    for (const k of ['hit', 'soft', 'status']) out.push({ kind: 'impact', name: k, label: 'creature: ' + k });
+    for (const k of ['prep', 'hit', 'soft', 'status', 'settle']) out.push({ kind: 'impact', name: k, label: k === 'prep' ? 'creature prepares: brace' : k === 'settle' ? 'after its move: settle' : 'creature: ' + k });
     out.push({ kind: 'victory', name: null, label: 'settled victory' });
     (BP().CALM[sp] || []).forEach((_, i) => out.push({ kind: 'calm', name: i, label: 'calm idle ' + (i + 1) }));
     out.push({ kind: 'ready', name: 0, label: 'ready idle' });
@@ -162,7 +162,7 @@ RB.pets.dev = (function () {
       return true;
     }
     if (o.actor === 'foe' || kind === 'impact') {
-      RB.bus.emit('present:enemy', { scope: 'battle', actor: 'foe:0', kind: 'strike', id: 'dev', targets, outcome: o.result || 'hit', at: 200, t0 });
+      RB.bus.emit('present:enemy', { scope: 'battle', actor: 'foe:0', kind: 'strike', id: 'dev', targets, outcome: o.result || 'hit', at: 640, end: 1250, t0 });
       return true;
     }
     RB.bus.emit('present:action', { scope: 'battle', actor: o.actor || 'pc', action: 'dev', family: o.family || 'unravel', targets, result: o.result || 'hit', exchange: o.exchange || ++EX, t0, beat: 300 });

@@ -75,8 +75,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const under = (info) => {
         const l = info.l, p = info.part;
         if (p === 'belly' && l[1] < -0.45) return true;
-        if (p === 'chest' && l[1] < -0.2 && l[2] > -0.2) return true;
-        if (p === 'chest' && L.bib && l[2] > 0.35 && l[1] < 0.3) return true;
+        // the pale chest is on the front only (never a line round the neck seen from behind)
+        if (p === 'chest' && l[1] < -0.5 && l[2] > 0.2) return true;
+        if (p === 'chest' && L.bib && l[2] > 0.45 && l[1] < 0.3) return true;
+        // (the throat stays the coat colour: seen from the side it read as a collar line)
         if (p === 'muzzle' && (l[1] < 0.1 || calico)) return true;
         if (p === 'head' && l[2] > 0.55 && l[1] < -0.25) return true;
         if ((p === 'paw' || p === 'hpaw')) return true;
@@ -95,26 +97,30 @@ var RB = (globalThis.RB = globalThis.RB || {});
             if (p === 'hips' && blob(l, [-0.1, 0.85, -0.2], 0.5)) return { R: PB };
             if (p === 'belly' && (blob(l, [-0.5, 0.75, 0.3], 0.55) || blob(l, [0.6, 0.6, -0.6], 0.5))) return { R: l[0] > 0 ? PA : PB };
             if (p === 'chest' && blob(l, [0.6, 0.7, -0.3], 0.5)) return { R: PB };
+            if (p === 'neck') return l[1] > 0.45 ? { R: PA } : { R };
             if (p === 'tail') return { R: info.u > 0.62 ? PB : PA };
             if (p === 'haunch' && blob(l, [0.2, 0.75, -0.55], 0.55)) return { R: PA };
             return { R };
           }
           if (under(info)) return { R: U, d: v < 2 ? 0 : 0 };
           if (!tabby) return 0;
-          // tabby: dark stripes over the back and flanks, rings on legs and tail, lines on the brow
+          // tabby: a dark line down the spine, broad bands curving down the upper flanks (fading toward
+          // the belly), rings on the legs and tail, and lines on the brow and down the nape — few and
+          // wide enough to stay bands at battle size, never a speckle
           if (p === 'belly' || p === 'hips' || p === 'chest') {
-            if (l[1] < -0.35) return 0;
-            const s = frac(l[2] * 2.1 + Math.abs(l[0]) * 0.35 + (p === 'hips' ? 0.45 : p === 'chest' ? 0.2 : 0));
-            if (s < 0.3) return { R: S, d: 0 };
-            if (l[1] > 0.82) return { R: S };
-            return 0;
+            if (l[1] > 0.8 && Math.abs(l[0]) < 0.42) return { R: S };
+            if (l[1] < -0.15 + Math.abs(l[0]) * 0.1) return 0;
+            const s = frac(l[2] * 1.45 - l[1] * 0.35 + (p === 'hips' ? 0.42 : p === 'chest' ? 0.12 : 0));
+            return s < 0.36 ? { R: S } : 0;
           }
-          if (p === 'haunch') return frac(l[1] * 1.6 + 0.2) < 0.3 ? { R: S } : 0;
-          if (p === 'leg' || p === 'hleg') return info.u != null && info.u < 0.7 && frac(info.u * 2.6) < 0.35 ? { R: S } : 0;
-          if (p === 'tail') return frac((info.u || 0) * 5.2) < 0.34 || info.u > 0.9 ? { R: S } : 0;
+          if (p === 'haunch') return l[1] > -0.2 && frac(l[1] * 1.2 - l[2] * 0.4 + 0.25) < 0.34 ? { R: S } : 0;
+          if (p === 'leg' || p === 'hleg') return info.u != null && info.u < 0.7 && frac(info.u * 2.2) < 0.4 ? { R: S } : 0;
+          if (p === 'tail') return frac((info.u || 0) * 4.2) < 0.4 || info.u > 0.9 ? { R: S } : 0;
           if (p === 'head') {
             if (l[1] > 0.35 && l[2] > 0.05 && frac(l[0] * 2.4 + 0.5) < 0.34) return { R: S };
             if (l[1] > 0.1 && l[1] < 0.35 && Math.abs(l[0]) > 0.7 && l[2] > -0.2) return { R: S };
+            // the nape: two bands running back from the crown
+            if (l[2] < -0.25 && l[1] > -0.1 && frac(Math.abs(l[0]) * 1.8 + 0.1) < 0.4) return { R: S };
           }
           return 0;
         },
@@ -130,6 +136,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         if (p === 'muzzle') return l[1] < 0.35 || l[2] > 0.5;
         if (p === 'head') return (l[2] > 0.4 && l[1] < -0.1) || (l[1] < -0.45);
         if (p === 'chest') return l[2] > 0.1 && l[1] < 0.25 || l[1] < -0.3;
+        // (the neck keeps the coat colour: a pale or tan throat read as a collar in the sitting view)
         if (p === 'belly') return l[1] < -0.35;
         if (p === 'paw' || p === 'hpaw') return true;
         if (p === 'leg') return (info.u || 0) > 0.55;
@@ -158,7 +165,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       M.ear = { R: E, th, pat(info) { return info.inner ? { R: ramp(L.inner) } : 0; } };
       M.nose = { R: A.flat(L.nose, 0.5), flag: 3 };
     } else if (sp === 'tanuki') {
-      const D = ramp(L.dark), SD = ramp(L.saddle);
+      const D = ramp(L.dark), SD = ramp(L.saddle), FR = ramp(A.mix(L.base, L.under, 0.24));
       M.fur = {
         R, th, pat(info) {
           const l = info.l, p = info.part;
@@ -173,12 +180,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
             return 0;
           }
           if (p === 'muzzle') return l[2] > 0.55 ? { R: D } : l[1] < 0 ? { R: U } : { R: U, d: -1 };
+          // the cheek ruff: pale tufts with a dark root where they leave the face
+          if (p === 'ruff') return (info.u || 0) < 0.25 ? { R: D } : { R: U };
           if (p === 'leg' || p === 'hleg' || p === 'paw' || p === 'hpaw') return { R: D };
-          if (p === 'haunch') return l[1] < -0.2 ? { R: D } : 0;
-          // a dark chest and a dark band across the shoulders (seen from behind), a darker line down the back
-          if (p === 'chest') return l[1] < -0.1 || l[2] > 0.55 ? { R: D } : l[1] > 0.3 ? { R: SD, d: l[1] > 0.6 && Math.abs(l[0]) < 0.4 ? -1 : 0 } : 0;
-          if (p === 'belly') return l[1] < -0.5 ? { R: D } : l[1] > 0.55 && Math.abs(l[0]) < 0.45 ? { R: SD } : 0;
-          if (p === 'hips') return l[1] > 0.6 && Math.abs(l[0]) < 0.45 ? { R: SD } : 0;
+          if (p === 'haunch') return l[1] < -0.2 ? { R: D } : l[1] > 0.55 ? { R: FR } : 0;
+          if (p === 'neck') return l[1] < -0.2 ? { R: D } : l[1] > 0.4 ? { R: SD } : 0;
+          // a dark chest and a dark band across the shoulders running down to the forelegs, a darker
+          // line down the back, and the grizzled, frost-tipped coat over the back and hips
+          if (p === 'chest') return l[1] < -0.1 || l[2] > 0.55 ? { R: D } : l[1] > 0.3 ? { R: SD, d: l[1] > 0.6 && Math.abs(l[0]) < 0.4 ? -1 : 0 } : Math.abs(l[0]) > 0.6 && l[2] > 0 ? { R: SD } : 0;
+          if (p === 'belly') return l[1] < -0.5 ? { R: D } : l[1] > 0.55 && Math.abs(l[0]) < 0.4 ? { R: SD } : l[1] > 0.62 ? { R: FR } : 0;
+          if (p === 'hips') return l[1] > 0.6 && Math.abs(l[0]) < 0.4 ? { R: SD } : l[1] > 0.45 && Math.abs(l[0]) < 0.7 ? { R: FR } : 0;
           if (p === 'tail') return (info.u || 0) > 0.66 ? { R: D } : l[1] > 0.1 ? { R: SD } : 0; // darker above, a dark tip, no rings
           return 0;
         },
@@ -195,7 +206,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
           if (p === 'head') {
             if (l[1] > 0.32) return { R: CAP };
             if (l[2] > 0.35 && l[1] < -0.2) return { R: sparrow ? ramp('#3a2c28') : U }; // bib
-            if (Math.abs(l[0]) > 0.45 && l[1] < 0.3 && l[1] > -0.5) return sparrow && blob(l, [Math.sign(l[0]) * 0.85, -0.2, -0.1], 0.2) ? { R: ramp('#3a2c28') } : { R: CH };
+            if (Math.abs(l[0]) > 0.58 && l[1] < 0.22 && l[1] > -0.4) return sparrow && blob(l, [Math.sign(l[0]) * 0.85, -0.15, -0.15], 0.24) ? { R: ramp('#3a2c28') } : { R: CH };
             return 0;
           }
           if (p === 'body') {
@@ -204,10 +215,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
             return 0;
           }
           if (p === 'wing') {
+            // folded: coverts, one pale wing bar, the darker secondaries, the primaries at the tip — in bands
+            // along the wing (no speckle); spread: the same bands from the root out
             const u = info.u || 0;
-            if (u > 0.72) return { R: ST };
-            if (frac(u * 3.2 + 0.1) < 0.18) return { R: BAR };
-            return frac(info.l[0] * 2 + u * 4) < 0.3 ? { R: ST, d: 1 } : { R: BK };
+            if (u > 0.74) return { R: ST };
+            if (u > 0.3 && u < 0.4) return { R: BAR };
+            if (u >= 0.4) return { R: BK, d: -1 };
+            return { R: BK };
           }
           if (p === 'tailf') return { R: ST };
           return 0;
@@ -351,13 +365,19 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const SM = along(spine, [0, 1, 0]);
     const mid = L3(hips, chest, 0.5);
     const blen = len(spine);
+    // the trunk as one light mass (the larger views): body, haunches and legs share its planes
+    if (sc >= 1.4) {
+      const top = Math.max(chest[1] + k.chestR[1], hips[1] + k.hipsR[1]);
+      const rz = Math.abs(chest[2] - hips[2]) / 2 + Math.max(k.chestR[2], k.hipsR[2]);
+      K.mass([0, top * 0.5, (chest[2] + hips[2]) / 2], [Math.max(k.chestR[0], k.hipsR[0]) * 1.3, top * 0.5 + 1, rz], 0.5);
+    }
     // belly and body
     K.ell('belly', mid, [S.bellyR[0], S.bellyR[1] - (po.tuck || 0) * 0.4, blen * 0.62], M.fur, { M: SM, grp: 'body' });
     K.ell('hips', hips, k.hipsR, M.fur, { M: SM, grp: 'body' });
     K.ell('chest', chest, add(k.chestR, [0, breath * 0.5, 0]), M.fur, { M: SM, grp: 'body' });
     // neck to the head
     const neckA = add(chest, mul(SM[2], k.chestR[2] * 0.55)), neckB = add(head, [0, -1.4, -1.0]);
-    K.chain('chest', [add(neckA, [0, 0.8, 0]), neckB], [S.neckR, S.neckR * 0.9], M.fur, { grp: 'body' });
+    K.chain('neck', [add(neckA, [0, 0.8, 0]), neckB], [S.neckR, S.neckR * 0.9], M.fur, { grp: 'body' });
 
     // legs: the four paws, planted or lifted by the gait, the hind legs with a haunch and a hock
     const fr = (side) => {
@@ -405,10 +425,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
     // draw order does not matter (depth buffer); groups separate the contour
     fr(1); fr(-1); hi(1); hi(-1);
 
-    // tail
+    // tail (its own form) and head (its own mass: brow, cheeks and muzzle share the head's planes)
+    K.mass(null);
     tail(K, sp, M, po, k, dy, st, sit, lie, ph, walking);
-    // head
+    if (sc >= 1.4) K.mass(head, S.headR.map((v) => v * 1.3), 0.35);
     headOf(K, sp, M, po, head, sc);
+    K.mass(null);
     return { head, chest };
   }
   function tail(K, sp, M, po, k, dy, st, sit, lie, ph, walking) {
@@ -443,7 +465,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
     // the muzzle (cats: small, dogs: long, tanuki: pointed)
     K.ell('muzzle', at(S.muzzle.off), S.muzzle.r, M.fur, { M: Mh, grp: 'head' });
     if (sp === 'dog') K.ell('muzzle', at([0, -0.4, 4.6]), [1.25, 1.1, 1.3], M.fur, { M: Mh, grp: 'head' });
-    if (sp === 'tanuki') K.ell('head', at([0, -0.6, -0.4]), [3.9, 2.6, 2.8], M.fur, { M: Mh, grp: 'head' }); // cheek ruff
+    if (sp === 'tanuki') {
+      K.ell('head', at([0, -0.6, -0.4]), [3.9, 2.6, 2.8], M.fur, { M: Mh, grp: 'head' }); // cheek ruff
+      // the ruff's tufts: pale fur swept out and down from each cheek (the tanuki's silhouette)
+      for (const x of [1, -1]) K.chain('ruff', [at([x * 2.8, -1.0, 0.7]), at([x * 4.2, -1.9, 0.1]), at([x * 4.9, -2.8, -0.3])], [1.25, 0.85, 0.3], M.fur, { grp: 'head' });
+    }
     // ears: flattened tapering cones; the inner ear shows on the side facing forward
     const E = S.ears;
     for (const x of [1, -1]) {
@@ -477,19 +503,21 @@ var RB = (globalThis.RB = globalThis.RB || {});
         const b = d.b;
         if (blink > 0.6) { b.rect(d.x - (big ? 1 : 0), d.y, big ? 3 : 2, 1, '#241c20'); return; }
         if (big) {
-          // a 2×3 eye: dark rim, iris, a glint toward the light
-          b.rect(d.x - 1, d.y - 1, 3, 3, '#241c20');
-          b.rect(d.x, d.y - 1, 1, 2, eye);
-          if (blink > 0.25) b.rect(d.x - 1, d.y - 1, 3, 1, '#241c20');
+          // an upper lid, a 2×2 iris with its pupil (a cat's is a slit), a glint toward the light
+          b.rect(d.x - 1, d.y - 2, 3, 1, '#241c20');
+          b.rect(d.x - 1, d.y - 1, 2, 2, eye);
+          b.px(d.x, d.y - 1, '#241c20');
+          if (sp === 'cat') b.px(d.x, d.y, '#241c20');
+          if (blink > 0.25) b.rect(d.x - 1, d.y - 1, 2, 1, '#241c20');
           else b.px(d.x - 1, d.y - 1, '#fff8ee');
         } else {
           b.px(d.x, d.y, '#241c20');
           if (blink < 0.25) b.px(d.x, d.y - 1, sp === 'cat' ? eye : '#241c20');
         }
-      }, { tol: 1.2 });
+      }, { tol: 1.2, grp: 'head' });
     }
-    K.decal(at(S.nose), (d) => { d.b.px(d.x, d.y, M.nose.R[1]); if (big) d.b.px(d.x + (d.mirror ? 1 : -1), d.y, M.nose.R[2]); }, { tol: 1.4 });
-    if ((po.nose || 0) > 0.5 && sp === 'tanuki') K.decal(at(add(S.nose, [0, 0.4, -0.1])), (d) => d.b.px(d.x, d.y - 1, '#241c20'), { tol: 1.4 });
+    K.decal(at(S.nose), (d) => { d.b.px(d.x, d.y, M.nose.R[1]); if (big) d.b.px(d.x + (d.mirror ? 1 : -1), d.y, M.nose.R[2]); }, { tol: 1.4, grp: 'head' });
+    if ((po.nose || 0) > 0.5 && sp === 'tanuki') K.decal(at(add(S.nose, [0, 0.4, -0.1])), (d) => d.b.px(d.x, d.y - 1, '#241c20'), { tol: 1.4, grp: 'head' });
   }
 
   // ---- the bird --------------------------------------------------------------------------------------------
@@ -504,13 +532,18 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const lean = (po.lean || 0) * 14 * DEG;
     const bodyM = rotX(-24 * DEG + lean + (po.lie || 0) * 14 * DEG);
     const body = [0, bodyY, 0];
+    const bigB = sc >= 1.4;
+    // the body, wings and tail as one light mass in the larger views
+    if (bigB) K.mass(body, [3.0 + fluff, 3.0 + fluff, 3.8], 0.45);
     K.ell('body', body, [2.35 + fluff, 2.3 + fluff, 2.9 + fluff * 0.5], M.fur, { M: bodyM, grp: 'body' });
     // head: round, set forward on the body; a preen turns it back to the shoulder
     const preen = po.preen || 0;
     const head = add(body, [preen * 1.0, 2.5 - tuck * 0.9 - preen * 0.6 + (po.headY || 0), 1.7 - preen * 1.6 + (po.headZ || 0)]);
     const Mh = mm(rotY(((po.hy || 0) + preen * 120) * DEG), mm(rotX(((po.hp || 0) + preen * 20) * DEG), rotZ((po.hr || 0) * DEG)));
     const at = (o) => add(head, mv(Mh, o));
+    if (bigB) K.mass(head, [2.3, 2.2, 2.3], 0.3);
     K.ell('head', head, [1.85 + fluff * 0.3, 1.75 + fluff * 0.3, 1.85], M.fur, { M: Mh, grp: 'head' });
+    if (bigB) K.mass(body, [3.0 + fluff, 3.0 + fluff, 3.8], 0.45);
     // beak: a short cone (two halves: it opens a little when it calls)
     const bo = (po.beak || 0) * 0.5;
     K.chain('beak', [at([0, -0.1 + bo * 0.3, 1.45]), at([0, -0.3, 2.75])], [0.62, 0.12], M.beak, { grp: 'head' });
@@ -539,11 +572,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }
     // legs (tucked while it hops or flies)
     const legUp = Math.max(tuck, spread > 0.3 ? 1 : 0, po.hopping ? 1 : 0);
+    K.mass(null);
+    // thin legs (finer in the larger views, where a leg was a two-pixel block), toes forward
+    const lr = bigB ? 0.8 : 1;
     for (const x of [1, -1]) {
       const top = add(body, [x * 0.85, -1.7, 0.2]);
       const foot = legUp ? add(top, [0, -0.8, -0.7]) : [x * 0.85, 0.35, 0.5];
-      K.chain('leg', [top, foot], [0.42, 0.33], M.leg, { grp: 'leg' + x });
-      if (!legUp) K.chain('leg', [add(foot, [0, 0, -0.5]), add(foot, [0, 0, 1.1])], [0.33, 0.28], M.leg, { grp: 'leg' + x });
+      K.chain('leg', [top, foot], [0.42 * lr, 0.3 * lr], M.leg, { grp: 'leg' + x });
+      if (!legUp) K.chain('leg', [add(foot, [0, 0, -0.5]), add(foot, [0, 0, 1.1])], [0.3 * lr, 0.24 * lr], M.leg, { grp: 'leg' + x });
     }
     // eye
     const blink = po.blink || 0, big = sc >= 1.5;
@@ -553,7 +589,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         if (blink > 0.6) { b.rect(d.x, d.y, big ? 2 : 1, 1, '#3a2c2c'); return; }
         b.px(d.x, d.y, M.eye);
         if (big) { b.px(d.x, d.y - 1, M.eye); b.px(d.x + (d.mirror ? 1 : -1), d.y - 1, '#fff8ee'); }
-      }, { tol: 1.1 });
+      }, { tol: 1.1, grp: 'head' });
     }
     return { head, chest: body };
   }
@@ -562,11 +598,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // World: 32×32 (the bird 24×24), feet at the anchor; Battle: 48×48 (the bird 40×40).
   const SIZES = {
     world: { quad: { w: 32, h: 32, ax: 16, ay: 29, zs: 1 }, bird: { w: 24, h: 24, ax: 12, ay: 21, zs: 1.2 } },
-    battle: { quad: { w: 48, h: 52, ax: 22, ay: 45, zs: 1.72 }, bird: { w: 40, h: 40, ax: 20, ay: 35, zs: 1.9 } },
+    battle: { quad: { w: 48, h: 56, ax: 22, ay: 45, zs: 1.72 }, bird: { w: 40, h: 40, ax: 20, ay: 35, zs: 1.9 } }, // (quad h 56: the tanuki's tail lying on the ground was cut at 52)
   };
   const YAW = { up: 0, right: 90, down: 180, left: -90 };
   // battle scale per species: sitting, each is about 40–45 % of an adventurer's 86 px (the bird less)
-  const BZS = { cat: 1.72, dog: 1.5, tanuki: 1.78, bird: 1.9 };
+  const BZS = { cat: 1.72, dog: 1.5, tanuki: 1.78, bird: 2.25 }; // the bird a little larger than before (1.9): its wing bar, cap and cheek read
   const cache = new Map();
   let built = 0, hits = 0;
   const CAP = 900;
@@ -579,7 +615,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     po = po || {};
     if (!LOOKS[sp]) return null;
     if (!LOOKS[sp][lk]) lk = LOOK_ORDER[sp][0];
-    const vk = view.kind === 'world' ? 'w' + view.dir + (view.turn != null ? '~' + view.turn : '') : view.kind === 'portrait' ? 'p' + view.size + (view.yaw != null ? '~' + view.yaw : '') : view.kind === 'preview' ? 'v' : 'b';
+    // battle density: the party's drawn height over the 86 px these sizes were tuned for (0.75..2.5, in 0.05 steps)
+    const dens = view.kind === 'battle' && view.density ? Math.max(0.75, Math.min(2.5, Math.round(view.density * 20) / 20)) : 1;
+    const vk = view.kind === 'world' ? 'w' + view.dir + (view.turn != null ? '~' + view.turn : '') : view.kind === 'portrait' ? 'p' + view.size + (view.yaw != null ? '~' + view.yaw : '') : view.kind === 'preview' ? 'v' : 'b' + (dens !== 1 ? dens : '');
     const key = sp + '|' + lk + '|' + vk + '|' + poseKey(po);
     let f = cache.get(key);
     if (f) { hits++; cache.delete(key); cache.set(key, f); return f; }
@@ -601,13 +639,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
       box = { w: s, h: s, ax: Math.round(s * 0.5), ay: Math.round(s * (kind === 'bird' ? 1.3 : 1.18)), zs: s / (kind === 'bird' ? 11 : 16) };
       cam = A.camera(Object.assign({}, box, { pitch: 12, yaw: 152 }));
     } else {
-      box = SIZES.battle[kind];
-      // (the bird stands more side-on, so its head and beak read against the ground)
-      cam = A.camera(Object.assign({}, box, { pitch: 20, yaw: sp === 'bird' ? 58 : 36, zs: BZS[sp] || box.zs }));
+      const b0 = SIZES.battle[kind];
+      box = dens === 1 ? b0 : { w: Math.ceil(b0.w * dens), h: Math.ceil(b0.h * dens), ax: Math.round(b0.ax * dens), ay: Math.round(b0.ay * dens) };
+      // seen from a little further round than the adventurers (54° rather than their 36°), still facing the
+      // creature: the head's profile — eye, muzzle, ears — reads at this size (the bird stands more side-on still)
+      cam = A.camera(Object.assign({}, box, { pitch: 20, yaw: sp === 'bird' ? 58 : 54, zs: (BZS[sp] || b0.zs) * dens }));
     }
     const M = mats(sp, lk);
     let J = null;
-    const cv = A.render(cam, (K) => { J = kind === 'bird' ? bird(K, M, po, cam.zs) : quadruped(K, sp, M, po, cam.zs); J = { head: K.at(J.head), chest: K.at(J.chest) }; }, { contour: kind === 'bird' ? 1.2 : 1.6 }).toCanvas();
+    // the larger views (battle, preview, portrait) group their planes and cast shadows under overlaps
+    const big = cam.zs >= 1.4;
+    const cv = A.render(cam, (K) => { J = kind === 'bird' ? bird(K, M, po, cam.zs) : quadruped(K, sp, M, po, cam.zs); J = { head: K.at(J.head), chest: K.at(J.chest) }; }, { contour: kind === 'bird' ? 1.2 : 1.6, cast: big, cluster: big ? 2 : 0 }).toCanvas();
     built++;
     f = { cv, ax: box.ax, ay: box.ay, w: box.w, h: box.h, head: J.head, chest: J.chest };
     cache.set(key, f);
