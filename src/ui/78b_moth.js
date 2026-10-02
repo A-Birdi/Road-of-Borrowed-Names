@@ -283,16 +283,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // legs: femur, tibia, tarsus, a pale claw; tucked under the thorax or reaching to the party
   function legs(Lb, M, reach, grip, dir, near) {
     const r = cl(reach), g = cl(grip);
-    const js = near ? [0, 1, 2] : [0, 1];
+    const js = near ? (reach > 0.3 ? [0, 1, 2] : [0, 1]) : [0, 1];
     for (const j of js) {
       const hx = (near ? -1 : -6) - j * 2, hy = -5 + j * 3.5, len = (near ? 31 : 25) - j * 5;
       const tx = hx - (near ? 5 : 4) + j * 2, ty = hy + 8 - j;
       const fx = A.lerp(tx, hx + dir[0] * len, r), fy = A.lerp(ty, hy + dir[1] * len, r);
       const kx = (hx + fx) / 2 - dir[1] * 6 * r - 2 * (1 - r), ky = (hy + fy) / 2 + dir[0] * 4 * r - 2;
-      Lb.path([[hx, hy, 3], [kx, ky, 3], [fx, fy, 2]], 3, M.leg, 2);
-      Lb.line(hx, hy - 1, kx, ky - 1, M.leg, 4);
-      Lb.line(kx, ky - 1, fx, fy - 1, M.leg, 3);
-      Lb.dot(kx, ky, M.leg, 4);
+      const lw = near ? 2.6 : 2.2;
+      Lb.path([[hx, hy, lw], [kx, ky, lw], [fx, fy, 1.6]], lw, M.leg, 1);
+      Lb.line(hx, hy - 1, kx, ky - 1, M.leg, near ? 4 : 3);
+      if (r > 0.3) Lb.line(kx, ky - 1, fx, fy - 1, M.leg, 3);
+      Lb.dot(kx, ky - 1, M.leg, 4);
       if (r > 0.3) {
         const cx = dir[0] * 3, cy = dir[1] * 3, sp = 2.4 - g * 2;
         Lb.line(fx, fy, fx + cx - dir[1] * sp, fy + cy + dir[0] * sp, M.fur, 3);
@@ -382,7 +383,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     antenna(an, M, 0, -36, 1, S(q.ant, 1) * 0.8, 1);
     an.restore();
     // light: a cool rim down the right edges of the body; each nearer form's shadow on the one behind
-    A.rim(bod, [M.fur.id, M.body.id]); A.rim(ab, [M.body.id, M.fur.id]); A.rim(lgN, [M.leg.id]);
+    A.rim(bod, [M.fur.id, M.body.id]); A.rim(ab, [M.body.id, M.fur.id]); A.rim(lgN, [M.leg.id]); A.rim(nF, [M.wing.id]); A.rim(nH, [M.hind.id]);
     A.cast(fH, fF, 2, 3, 1); A.cast(nH, nF, 2, 3, 1); A.cast(ab, nH, 2, 2, 1);
     A.cast(nF, bod, 2, 3, 1); A.cast(nH, bod, 2, 3, 1); A.cast(ab, bod, 1, 3, 1);
     A.cast(fF, bod, -2, 3, 1); A.cast(fF, an, 1, 2, 1);
