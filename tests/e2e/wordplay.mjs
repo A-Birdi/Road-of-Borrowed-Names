@@ -657,8 +657,10 @@ if (want('keyboard')) {
   await waitTurn(p);
   await p.keyboard.press('Escape');
   await p.waitForSelector('.csheet');
+  // (the sheet moves focus to its safe choice a moment after it appears: wait for it rather than race it)
+  await p.waitForFunction(() => /Keep playing/.test((document.activeElement && document.activeElement.textContent) || ''), null, { timeout: 2000 }).catch(() => {});
   const safeFocus = await p.evaluate(() => document.activeElement && document.activeElement.textContent);
-  assert(/Keep playing/.test(safeFocus || ''), 'Escape asks before leaving, with Keep playing focused');
+  assert(/Keep playing/.test(safeFocus || ''), 'Escape asks before leaving, with Keep playing focused (' + (safeFocus || '').trim().slice(0, 40) + ')');
   await p.keyboard.press('Enter');
   await p.waitForTimeout(100);
   assert(!!(await st(p)).active && (await st(p)).activity, 'and Keep playing keeps the table');
