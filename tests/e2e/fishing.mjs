@@ -256,11 +256,21 @@ await test('a recognition repair costs nothing: "That is not what I wrote", rewr
   const chars = Array.from(info.answer);
   // the first character right, the last one "misread": write a different kana in its place
   const wrong = { 'ぎ': 'き', 'つ': 'う', 'り': 'い', 'る': 'ろ', 'け': 'は', 'こ': 'に', 'く': 'し', 'せ': 'ぜ', 'だ': 'た', 'ぐ': 'く' }[chars[chars.length - 1]] || 'の';
-  for (let i = 0; i < chars.length; i++) {
-    const ch = i === chars.length - 1 ? wrong : chars[i];
+  // write one character; when it is meant to be read right and the pad offers a twin first (ぁ for あ:
+  // the same shape), pick the meant one among its readings, as a person would before confirming
+  const writeChar = async (ch, meant) => {
     await p.evaluate(async (ch) => { RB.pad.__last._inject(__ink(ch)); await new Promise((r) => setTimeout(r, 80)); }, ch);
+    if (meant) {
+      const top = await p.evaluate(() => { const P = RB.pad.__last._state; return P.pick || (P.list && P.list[0] ? P.list[0].ch : null); });
+      if (top !== meant) {
+        const i = await p.evaluate((c) => [...document.querySelectorAll('.chal .cand')].findIndex((x) => { const g = x.cloneNode(true); g.querySelectorAll('.cap,rt').forEach((y) => y.remove()); return g.textContent.trim() === c; }), meant);
+        assert(i >= 0, 'the pad read ' + top + ' for ' + meant + ' and does not offer ' + meant);
+        await click(p, '.chal .cand >> nth=' + i);
+      }
+    }
     await click(p, '.chal [data-a=confirm]');
-  }
+  };
+  for (let i = 0; i < chars.length; i++) await writeChar(i === chars.length - 1 ? wrong : chars[i], i === chars.length - 1 ? null : chars[i]);
   await click(p, '.chal [data-a=submit]');
   await p.waitForSelector('.chal [data-a=misread]', { timeout: 6000 });
   await shot(p, 'repair_wrong_read');
@@ -272,8 +282,9 @@ await test('a recognition repair costs nothing: "That is not what I wrote", rewr
   // (the strip's insertion gaps are cells too: count only the written characters)
   await click(p, '.chal .strip .cell:not(.ins) >> nth=' + (chars.length - 1));
   assert(await p.evaluate(() => { const c = document.querySelector('.chal .strip .cell.cur:not(.ins)'); return !!c; }), 'the misread character is selected for rewriting');
-  await p.evaluate(async (ch) => { RB.pad.__last._inject(__ink(ch)); await new Promise((r) => setTimeout(r, 80)); }, chars[chars.length - 1]);
-  await click(p, '.chal [data-a=confirm]');
+  await writeChar(chars[chars.length - 1], chars[chars.length - 1]);
+  const strip = await p.evaluate(() => [...document.querySelectorAll('.chal .strip .cell:not(.ins)')].map((c) => c.textContent.trim()).join(''));
+  assert(strip === info.answer, 'the answer strip now reads ' + strip + ' (' + info.answer + ')');
   await click(p, '.chal [data-a=submit]');
   await click(p, '.chal [data-a=continue]');
   await p.waitForSelector('.fish-panel [data-k=release]', { timeout: 12000 });

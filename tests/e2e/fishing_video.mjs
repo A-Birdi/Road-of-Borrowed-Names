@@ -27,10 +27,18 @@ async function clickSel(sel) {
   const el = p.locator(sel).first();
   await el.waitFor({ state: 'visible', timeout: 15000 });
   await el.scrollIntoViewIfNeeded();
-  const q = await el.boundingBox();
-  await p.mouse.move(q.x + q.width / 2, q.y + q.height / 2, { steps: 12 });
+  // a plain part of the control (pointing at a word inside it opens the word's help card)
+  const q = await el.evaluate((t) => {
+    const r = t.getBoundingClientRect();
+    for (const fy of [0.5, 0.2, 0.8]) for (const fx of [0.5, 0.06, 0.94, 0.25, 0.75]) {
+      const x = r.left + r.width * fx, y = r.top + r.height * fy, e = document.elementFromPoint(x, y);
+      if (e && (e === t || t.contains(e)) && !(e.closest && e.closest('.jt'))) return { x, y };
+    }
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  });
+  await p.mouse.move(q.x, q.y, { steps: 12 });
   await pause(220);
-  await p.mouse.click(q.x + q.width / 2, q.y + q.height / 2);
+  await p.mouse.click(q.x, q.y);
   await p.mouse.move(6, 6, { steps: 4 });
 }
 async function start(site, comp, pet) {
@@ -97,7 +105,8 @@ await catchOne(false);
 await clickSel('.fish-panel [data-k=leave]');
 await pause(2200);
 await start('fish.saltglass.harbor', 'suzu', 'tanuki');
-await p.evaluate(() => RB.activity.launch('fishing', { source: 'world-prop', site: 'fish.saltglass.harbor' }));
+// (launch resolves when the outing ends: not awaited here)
+await p.evaluate(() => { window.__launch = RB.activity.launch('fishing', { source: 'world-prop', site: 'fish.saltglass.harbor' }); });
 await p.waitForSelector('.fish-panel [data-k=cast]');
 await pause(1200);
 // (the first cast here waits: it is the first catch of this campaign; Skip shows from the second)

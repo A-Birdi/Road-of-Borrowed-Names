@@ -364,18 +364,53 @@ are art, not captions, and should also be looked at by someone who knows the fis
 
 ## 13. Evidence list
 
-Captures are in `docs/screenshots/fishing/` (index in its README) and the recording
-`docs/screenshots/fishing/fishing_catch.webm` (made by `tests/e2e/fishing_video.mjs`).
+**Unit/content tests** (`tests/unit/fishing.test.mjs`, node, no browser): the roster
+(nine fish exactly, three per site, each patch's fish); every one of the 72 variants (an
+existing task kind; reading, meaning, explanation, learning item; the I/A note; every
+accepted form checked typed and handwritten; another action's words not accepted and
+explained; every wrong option explained; Foundations through `RB.tasks.prepare`); the
+queue and Discover the waters (three discovery catches = three different fish, at every
+site), manual patch (unseen first), the bag, Look for this fish, abandoning consumes
+nothing, the species frozen at the cast; `commitCatch` idempotency (the same seq twice, a
+save round-trip through `RB.save.migrate`, a lower seq); milestones at 1/3/6/9 with the
+ribbon, frame, spread and their mementos; no bond change; the two shared memories (only
+with the companion present); record bounds (recent attempts ≤ 50, recent situations
+≤ 12); the learning adapter called once per catch (`exposed`/`paced` never promote); the
+situation cooldown; remarks (≥ 6 kinds per companion, the limits); companion behaviours
+and pet reactions for all 16 pairs; silhouettes (36 pairs, IoU < 0.9); map reachability
+identical before/after the stations appear; access and Yasu's option order; old saves,
+unknown fish ids, a new campaign and New Game+.
+
+**Browser tests of the built `index.html`** (`tests/e2e/fishing.mjs`, headless
+Chromium, synthetic campaigns in fresh contexts): see the list at the top of the file and
+§12 for the results. Every click in them is a real mouse click (or touch tap) on the
+control; scenes are advanced with Enter.
+
+**Captures** (visual inspection by the author only): `docs/screenshots/fishing/` — index
+in its `README.md`. **Recording**: `docs/screenshots/fishing/fishing_catch.webm`, made by
+`node tests/e2e/fishing_video.mjs` (two whole catches with the mouse).
+
+**Human play: none.** **Native-speaker review: none.**
 
 ## 14. Limitations and what remains
 
 * No human play, no native-speaker review of the new Japanese, no real handwriting (the
-  repair test uses synthetic reference strokes), no real phone/stylus, no Firefox/Safari.
+  repair test uses the recognizer's own reference strokes, scaled and jittered), no real
+  phone/stylus, no Firefox/Safari.
 * Natural-history captions pending a source check (§9).
 * The optional pace (§7, the timed parts of §23.3) is the pace worker's; fishing calls it
   for every response and shows it unavailable until then.
 * The stage is original pixel art judged only by its author from captures.
-* The menu's Fishing notes page opens from the station's scene with the alias `fishing`.
+* Observed while testing, outside this slice (not changed here): (a) the shared word-help
+  card (`src/ui/10_ui.js`), opened by pointing at a word inside a button, is placed below
+  the word and on short landscape windows (844×390) covers the rest of that button until
+  the pointer moves away — the browser tests therefore click a plain part of a control;
+  (b) with the synthetic ink of the tests, the pad's first reading of a full-size あ or ゆ
+  is the small twin (ぁ, ゅ), with the full-size one offered next to it — the repair test
+  picks the meant one, as a player would.
+* Practice index styling: the foundation's Words › Ways to practise page has no
+  stylesheet; its "where" icon was unsized (it filled the page). A two-line scoped rule in
+  `src/styles/74_fishing.css` sizes it; it can move to the page's own stylesheet.
 
 ## 15. Merge notes — every shared file touched
 
