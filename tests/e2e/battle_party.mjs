@@ -114,6 +114,10 @@ const center = (p, sel) => p.evaluate((s) => { const e = document.querySelector(
 async function respond(p, match, comp) {
   const i = await p.evaluate((m) => { const c = [...document.querySelectorAll('.rcard')].find((x) => !x.disabled && new RegExp(m, 'i').test(x.textContent.replace(/\s+/g, ' '))); return c ? c.getAttribute('data-i') : null; }, match);
   assert(i != null, 'no enabled response card matching ' + match + ': ' + JSON.stringify(await p.evaluate(() => [...document.querySelectorAll('.rcard')].map((x) => x.textContent.replace(/\s+/g, ' ').slice(0, 50)))));
+  // the pointer is moved off first: resting on a word where the last exchange left it, that word's
+  // hover help can open over the card about to be pressed
+  await p.mouse.move(2, 2);
+  await wait(p, 350);
   const c = await center(p, '.rcard[data-i="' + i + '"]');
   await p.mouse.click(c.x, c.y);
   await p.waitForSelector('.chal');

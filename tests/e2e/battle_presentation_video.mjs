@@ -6,6 +6,7 @@
 //   instant_1280.webm   Instant (no movement, no banner; the recap in the log)
 //   reduced_1280.webm   Normal with reduced motion
 //   narrow_390.webm     a 390×844 phone, three Flour Moths: a badge pressed open and closed, then an exchange
+// and WebP stills of the Normal and phone clips: the badge card, your response's banner, the creature's.
 // Synthetic campaigns in fresh profiles (a diagnostic placement: the party in the Mill); no save touched.
 // Usage: node tests/e2e/battle_presentation_video.mjs [outDir]   (default docs/screenshots/battle/presentation)
 import fs from 'node:fs';
@@ -55,6 +56,12 @@ async function clip(name, o) {
     throw new Error(name + ': no decision');
   };
   const at = (sel) => p.evaluate((q) => { const e = typeof q === 'string' ? document.querySelector(q) : null; if (!e) return null; e.scrollIntoView({ block: 'center' }); const r = e.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }, sel);
+  // a still, as WebP at the page's size (for review without a video decoder)
+  const still = async (nm) => {
+    const png = await p.screenshot();
+    const b64 = await p.evaluate(async (d) => { const img = new Image(); img.src = 'data:image/png;base64,' + d; await img.decode(); const cv = document.createElement('canvas'); cv.width = img.width; cv.height = img.height; cv.getContext('2d').drawImage(img, 0, 0); return cv.toDataURL('image/webp', 0.86).split(',')[1]; }, png.toString('base64'));
+    fs.writeFileSync(path.join(outDir, nm + '.webp'), Buffer.from(b64, 'base64'));
+  };
   const press = async (sel) => { const pt = await at(sel); if (!pt) throw new Error(name + ': nothing at ' + sel); await p.mouse.move(pt.x, pt.y, { steps: 8 }); await pause(250); await p.mouse.click(pt.x, pt.y); };
   await decision();
   await pause(1200);
@@ -62,7 +69,9 @@ async function clip(name, o) {
     // a badge pressed open, read, and closed again
     await p.evaluate(() => { const b = [...document.querySelectorAll('.cb-ib')][1] || document.querySelector('.cb-ib'); b.setAttribute('data-video', '1'); });
     await press('.cb-ib[data-video="1"]');
-    await pause(2200);
+    await pause(900);
+    if (o.stills) await still(name + '_badge_card');
+    await pause(1300);
     await press('#cb-icard [data-ic-close]');
     await pause(700);
   }
@@ -87,6 +96,11 @@ async function clip(name, o) {
   await p.evaluate(() => { const c = [...document.querySelectorAll('.ccard[data-a]')].find((x) => !x.disabled && /Warm draught/.test(x.textContent)) || document.querySelector('.ccard[data-a]:not([disabled])'); c.setAttribute('data-video', 'support'); });
   await press('.ccard[data-video="support"]');
   await p.mouse.move(2, 2);
+  if (o.stills) {
+    // mid-action: your response's banner (blue), then the creature's (red)
+    if (await p.waitForFunction(() => RB.battleBanner.state().side === 'party', null, { timeout: 8000 }).then(() => true, () => false)) { await pause(250); await still(name + '_party_action'); }
+    if (await p.waitForFunction(() => RB.battleBanner.state().side === 'enemy', null, { timeout: 15000 }).then(() => true, () => false)) { await pause(350); await still(name + '_creature_action'); }
+  }
   await decision();
   await pause(2500);
   const v = p.video();
@@ -98,11 +112,11 @@ async function clip(name, o) {
   console.log('recorded ' + path.relative(root, dst) + ' (' + Math.round(fs.statSync(dst).size / 1024) + ' KiB)');
 }
 
-await clip('normal_1280', { anim: 'normal' });
+await clip('normal_1280', { anim: 'normal', stills: true });
 await clip('fast_1280', { anim: 'fast' });
 await clip('instant_1280', { anim: 'instant' });
 await clip('reduced_1280', { anim: 'normal', reduce: true });
-await clip('narrow_390', { anim: 'normal', foes: 3, badge: true, vp: { width: 390, height: 844 }, mobile: true });
+await clip('narrow_390', { anim: 'normal', foes: 3, badge: true, stills: true, vp: { width: 390, height: 844 }, mobile: true });
 await b.close();
 srv.close();
 if (problems.length) { console.log('page errors:\n  ' + problems.join('\n  ')); process.exit(1); }
