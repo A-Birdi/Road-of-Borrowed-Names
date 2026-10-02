@@ -436,7 +436,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }
     if (oc === 'soft') {
       // checked by the seal, then pressing through to the smaller hit (shown 110 ms later)
-      c.F(640, 'exec', 130, 'push', { to, peak, shape: 'hold' });
+      c.F(640, 'exec', 120, 'push', { to, peak, shape: 'hold' });
       c.X(640, 'scaleShed', 300, { to, seal: true });
     } else if (oc === 'miss') {
       c.F(640, 'exec', 120, 'miss', { to, peak, shape: 'hold' });
@@ -503,7 +503,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     if (c.rd) { c.F(0, 'prep', 300, 'chill@1').F(300, 'exec', 320, 'chill@1').F(620, 'recover', 420, 'chill@1'); c.X(320, 'frostDust', 320, { to }); return c.done(600, 1100); }
     c.F(0, 'prep', 280, 'chill');
     c.F(280, 'exec', 340, 'chill', { to, peak: 0.12, shape: 'out' });
-    c.X(320, 'frostDust', 330, { to });
+    c.X(320, 'frostDust', 330, { to, seal: A.outcome(a) === 'ward' || A.outcome(a) === 'block' });
     c.F(620, 'recover', 440, 'chill', { to, peak: 0.12, shape: 'back' });
     c.F(1060, 'recover', 90, 'hover');
     return c.done(600, 1150);

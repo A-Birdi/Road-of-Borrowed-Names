@@ -44,6 +44,25 @@ export async function helpers(p) {
       RB.combat.refresh();
       return it.kind;
     };
+    // every distinct creature frame drawn (idle, posed, prewarmed): raw RGBA bytes (w × h × 4) —
+    // what the enemy-art cache can hold (its LRU keeps at most 140 frames)
+    CA.keys = new Map();
+    const EA = RB.enemyArt, dp = EA.drawPosed;
+    EA.drawPosed = function (c, id, t, o, x, y, s, still, pose) {
+      const spec = EA.P[id];
+      if (spec) {
+        const v = pose && RB.creaturesA ? RB.creaturesA.resolve(spec, pose, still) : null, pz = v || pose;
+        const n = pz && spec.poses ? spec.poses[pz.act] | 0 : 0;
+        const key = id + JSON.stringify(o || {}) + (n ? pz.act + ':' + Math.min(n - 1, Math.floor(pz.k * n)) : 'idle:' + EA.frameAt(spec, t, still));
+        if (!CA.keys.has(key)) CA.keys.set(key, spec.w * spec.h * 4);
+      }
+      return dp.apply(this, arguments);
+    };
+    CA.cache = () => {
+      const sizes = [...CA.keys.values()].sort((a, b) => b - a), all = sizes.reduce((m, v) => m + v, 0);
+      const held = sizes.slice(0, 140).reduce((m, v) => m + v, 0);
+      return { frames: sizes.length, MiB: +(all / 1048576).toFixed(2), heldMiB: +(held / 1048576).toFixed(2), pending: RB.creaturesA.prewarm ? RB.creaturesA.prewarm.pending() : null };
+    };
     CA.sampleOn = () => {
       CA.samples = []; CA.sampling = true;
       const loop = () => {

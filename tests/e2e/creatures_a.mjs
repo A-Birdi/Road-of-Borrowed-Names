@@ -135,7 +135,11 @@ await test('the Flour Moth on the mill road (exterior, solo): its own lines; the
   await idle(p);
   const S = await samples(p), P = during(S, 'player');
   assert(seq(P.map((s) => (s.marks || []).indexOf('shroud') >= 0)).join() === 'true,false' && P.some((s) => (s.effects || []).indexOf('mistPart') >= 0), 'light clears it: the same veil disperses at the beat');
-  // the banner of a Shroud (when present) lasts only through its own action, not the condition
+  // resources: every distinct moth frame this battle drew (idle, posed, prewarmed), as raw RGBA
+  await wait(p, 2500);
+  const cache = await p.evaluate(() => CA.cache());
+  notes.push('cache (moth battle, all variants + Shroud + prewarm): ' + cache.frames + ' frames, ' + cache.MiB + ' MiB raw RGBA (prewarm pending ' + cache.pending + ')');
+  assert(cache.MiB < 48, 'within the 48 MiB budget: ' + JSON.stringify(cache));
   assert(!errors.length, errors.join('; '));
   notes.push('moth exterior placement lines: ' + lines.slice(0, 1).join(' ').slice(0, 90));
   await ctx.close();
@@ -241,6 +245,10 @@ await test('DIAGNOSTIC FIXTURE (three creatures on the mill road: moth, reedling
   const acted = new Set(S.flatMap((s) => (s.foes || []).filter((f) => f.act === 'exec').map((f) => f.i)));
   assert(acted.size === 3, 'each creature performed its own approach: ' + [...acted]);
   const stage = await p.evaluate(() => RB.battleStage.stats().lay.foes.length);
+  await wait(p, 3000);
+  const cache = await p.evaluate(() => CA.cache());
+  notes.push('cache (diagnostic trio: moth, reedling, blot): ' + cache.frames + ' distinct frames drawn, ' + cache.MiB + ' MiB raw RGBA; at most ' + cache.heldMiB + ' MiB held by the 140-frame LRU (prewarm pending ' + cache.pending + ')');
+  assert(cache.heldMiB < 48, 'within the 48 MiB budget: ' + JSON.stringify(cache));
   assert(stage === 3, 'three on the stage');
   assert(!errors.length, errors.join('; '));
   await ctx.close();

@@ -185,7 +185,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // cold dust fanned from the wings to one target
   fx.frostDust = function (c, e, k, Ah, t, still) {
     if (still) return;
-    const u = Ah.u, a = Ah.pt('foe', 'core'), b = Ah.pt(e.p.to || 'pc', 'chest');
+    const u = Ah.u, a = Ah.pt('foe', 'core'), b = landAt(Ah, e);
     for (let i = 0; i < 18; i++) {
       const s = seg(k, hs(i, 1) * 0.35, hs(i, 1) * 0.35 + 0.65);
       if (s <= 0 || s >= 1) continue;
@@ -311,7 +311,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ice: shards of frost flying from the creature to one target
   fx.iceShard = function (c, e, k, Ah, t, still) {
     if (still) return;
-    const u = Ah.u, a = Ah.pt('foe', 'core'), b = Ah.pt(e.p.to || 'pc', 'chest');
+    const u = Ah.u, a = Ah.pt('foe', 'core'), b = landAt(Ah, e);
     for (let i = 0; i < 4; i++) {
       const s = ease(clamp01(seg(k, i * 0.06, 0.85 + i * 0.03)));
       if (s <= 0 || s >= 1) continue;
@@ -444,8 +444,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- prewarm --------------------------------------------------------------------------------
   // The acts a creature will need (its moves' frame sets, then the reactions), built in idle slices
-  // after its first frame appears in a battle. Bounded: at most PREWARM_CAP frames per creature,
-  // and the enemy-art cache itself holds a fixed number of frames (LRU).
+  // after its first frame appears in a battle. Bounded: at most PREWARM_CAP frames per creature (a
+  // share of 96 when several different creatures meet), and the enemy-art cache itself holds a fixed
+  // number of frames (LRU, 140).
   const PREWARM_CAP = 44;
   const pending = [], seen = new Map();
   let tick = null, cv1 = null;
@@ -468,8 +469,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const push = (k) => { if (spec.poses[k] && keys.indexOf(k) < 0) keys.push(k); };
     for (const kd of kinds) { for (const act of ['prep', 'exec', 'cast', 'recover']) push(act + '.' + kd); push('prep.' + (FAMILY_OF[kd] || 'cast')); push('exec.' + (FAMILY_OF[kd] || 'cast')); }
     for (const k of ['exec.impact', 'recover.hover', 'recover.deflect', 'rest', 'recoil', 'release', 'balk', 'settle']) push(k);
+    // the encounter's creatures share the cache: each prewarms its share (the moves first)
+    let distinct = 1;
+    try { distinct = Math.max(1, new Set((RB.combat.members() || []).map((mid) => { const e = RB.content.enemies[mid]; return e ? e.art + JSON.stringify(e.artOpts || {}) : mid; })).size); } catch (e) { /* one */ }
+    const cap = Math.min(PREWARM_CAP, Math.floor(96 / distinct));
     const out = [];
-    for (const key of keys) for (let i = 0; i < spec.poses[key] && out.length < PREWARM_CAP; i++) out.push([key, i, spec.poses[key]]);
+    for (const key of keys) for (let i = 0; i < spec.poses[key] && out.length < cap; i++) out.push([key, i, spec.poses[key]]);
     return out;
   }
   function pump(deadline) {

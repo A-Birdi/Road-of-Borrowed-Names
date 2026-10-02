@@ -276,7 +276,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     if (c.rd) { c.F(0, 'prep', 260, 'chill@1').F(260, 'exec', 340, 'chill@1').F(600, 'recover', 440, 'chill@1'); c.X(280, 'frostDust', 320, { to }); return c.done(580, 1050); }
     c.F(0, 'prep', 260, 'chill');
     c.F(260, 'exec', 340, 'chill', { to, peak: 0.1, shape: 'out' });
-    c.X(280, 'frostDust', 320, { to });
+    c.X(280, 'frostDust', 320, { to, seal: A.outcome(a) === 'ward' || A.outcome(a) === 'block' });
     c.F(600, 'recover', 400, 'chill', { to, peak: 0.1, shape: 'back' });
     return c.done(580, 1050);
   });

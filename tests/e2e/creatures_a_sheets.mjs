@@ -102,6 +102,56 @@ for (const fam of FAM) {
   console.log(r.fam, r.w + '×' + r.h, 'frames', r.frames, 'MiB', (r.bytes / 1048576).toFixed(2), 'gen ms', JSON.stringify(r.ms));
 }
 fs.writeFileSync(path.join(outDir, 'sheets_report.json'), JSON.stringify(report, null, 1));
+
+// --roster: every enemy id of these families (the audit's list) — its idle drawing and the key
+// pose of each move it uses — in its own palette, at native size, labelled
+if (args.includes('--roster')) {
+  const r = await p.evaluate(() => {
+    const EA = RB.enemyArt, A = RB.creaturesA;
+    const ids = Object.keys(A.audit.enemies).sort((a, b) => (A.audit.enemies[a].art + a).localeCompare(A.audit.enemies[b].art + b));
+    const kindsOf = (e) => { const ks = new Set(); const add = (k) => ks.add(String(k).split(':')[0]); (e.pattern || []).forEach(add); (e.phases || []).forEach((ph) => (ph.pattern || []).forEach(add)); Object.keys(e.intents || {}).forEach(add); return [...ks].filter((k) => k !== 'rest'); };
+    const FAMOF = { strike: 'strike', lie: 'lie', mirror: 'mirror', chill: 'chill' };
+    const rows = ids.map((id) => {
+      const e = RB.content.enemies[id], fam = e.art, spec = EA.P[fam], o = Object.assign({}, e.artOpts || {});
+      const cells = [{ label: 'idle', cv: EA.frame(fam, spec.seq ? spec.seq[0] : 0, o) }];
+      for (const k of kindsOf(e)) {
+        // the move's key pose: the last exec frame (strike-like) or the middle cast frame
+        const cand = ['exec.' + k, 'cast.' + k, 'exec.' + (FAMOF[k] || k)].find((x) => spec.poses[x] || (spec.alias && spec.alias[x]));
+        if (!cand) continue;
+        const key = spec.alias && spec.alias[cand] ? spec.alias[cand] : cand, n = spec.poses[key], i = key.startsWith('exec') ? n - 1 : Math.floor(n / 2);
+        const c = document.createElement('canvas'); c.width = spec.w; c.height = spec.h;
+        const [act, fm] = cand.split('.');
+        EA.drawPosed(c.getContext('2d'), fam, 0, o, spec.ox, spec.oy - (spec.dy || 0), 1, false, { act, family: fm + '@' + i, k: 0.5, dir: { x: -0.8, y: 0.6 } });
+        cells.push({ label: k, cv: c });
+      }
+      return { id, name: e.name && e.name.en, fam, d: A.audit.enemies[id].disposition, cells };
+    });
+    const CW = 160, CH = 150, pad = 4, lab = 30, maxC = Math.max(...rows.map((r) => r.cells.length));
+    const perRow = 2, colW = 150 + maxC * (CW + pad);
+    const sheet = document.createElement('canvas');
+    sheet.width = perRow * colW + pad; sheet.height = Math.ceil(rows.length / perRow) * (CH + lab) + pad;
+    const g = sheet.getContext('2d');
+    g.fillStyle = '#6f6a62'; g.fillRect(0, 0, sheet.width, sheet.height); g.imageSmoothingEnabled = false;
+    rows.forEach((r, ri) => {
+      const x0 = (ri % perRow) * colW + pad, y0 = Math.floor(ri / perRow) * (CH + lab) + pad;
+      g.fillStyle = '#f4ecd8'; g.font = 'bold 12px sans-serif'; g.fillText(r.id, x0, y0 + 14); g.font = '11px sans-serif'; g.fillText((r.name || '') + ' · ' + r.fam + ' · ' + r.d, x0, y0 + 28);
+      r.cells.forEach((c, ci) => {
+        const x = x0 + 150 + ci * (CW + pad) - 150 + (ci === 0 ? 0 : 0);
+        const cx = x0 + ci * (CW + pad), cy = y0 + lab;
+        g.fillStyle = '#7d776e'; g.fillRect(cx, cy, CW, CH - 6);
+        // fit the native frame (scale 1, cropped about its origin if larger than the cell)
+        const s = Math.min(1, CW / c.cv.width, (CH - 6) / c.cv.height);
+        g.drawImage(c.cv, cx + (CW - c.cv.width * s) / 2, cy + (CH - 6 - c.cv.height * s) / 2, c.cv.width * s, c.cv.height * s);
+        g.fillStyle = '#f4ecd8'; g.font = '10px sans-serif'; g.fillText(c.label, cx + 3, cy + 12);
+        void x;
+      });
+    });
+    return { png: sheet.toDataURL('image/png'), webp: sheet.toDataURL('image/webp', 0.9), n: rows.length };
+  });
+  fs.writeFileSync(path.join(outDir, 'roster_all_enemies.png'), Buffer.from(r.png.split(',')[1], 'base64'));
+  if (toDocs) fs.writeFileSync(path.join(docDir, 'roster_all_enemies.webp'), Buffer.from(r.webp.split(',')[1], 'base64'));
+  console.log('roster: ' + r.n + ' enemies');
+}
 console.log(errors.length ? 'page errors: ' + errors.join(' | ') : 'no page errors');
 await b.close(); srv.close();
 process.exit(errors.length ? 1 : 0);
