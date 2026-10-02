@@ -224,8 +224,160 @@ RB.creaturesA = (function () {
   function auditFamily(id, rec) { audit.families[id] = rec; }
   function auditEnemy(id, art, disposition, note) { audit.enemies[id] = { art, disposition, note: note || '' }; }
 
+  // ---- 5. the restyle standard: ramps, outlines, light ------------------------------------------
+  // (docs/battle/creatures_a.md, "The rendering standard"). Every material is a 5–7 tone ramp whose
+  // hue moves as it brightens (shadows cooler and more saturated, highlights warmer and paler), with
+  // a high value range; its outline is a COLOUR — the material's darkest tone pushed further toward
+  // deep violet / navy / red-brown — and its lit-edge outline a lighter tone of the same family.
+  const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+  function toward(h, target, deg) { const d = ((target - h + 540) % 360) - 180; return h + clamp(d, -deg, deg); }
+  const hx = (h, s, l) => K.hex(K.hsl2rgb(h, clamp(s, 0, 1), clamp(l, 0.02, 0.98)));
+  // hramp(base, o) → n hex colours, dark → light. The base colour is the tone at index `at`.
+  //   o: n (6), at (≈ 0.55 of the way), lo / hi (lightness of the ends), cool / warm (hue targets),
+  //   hd / hl (max hue travel in degrees toward them), sat (mid saturation ×), sd (darkest
+  //   saturation), sl (lightest saturation ×)
+  function hramp(base, o) {
+    o = o || {};
+    const c = K.parse(base), hsl = K.rgb2hsl(c[0], c[1], c[2]);
+    const h = hsl[0], s = hsl[1], l = hsl[2], grey = s < 0.09;
+    const n = o.n || 6, at = o.at != null ? o.at : Math.round((n - 1) * 0.55);
+    const lo = o.lo != null ? o.lo : 0.13, hi = o.hi != null ? o.hi : 0.92;
+    const cool = o.cool != null ? o.cool : 250, warm = o.warm != null ? o.warm : 50;
+    const hd = o.hd != null ? o.hd : 34, hl = o.hl != null ? o.hl : 22;
+    const sm = clamp(s * (o.sat != null ? o.sat : 1.2) + (grey ? 0.05 : 0), 0, 0.85);
+    const D = [grey ? cool : toward(h, cool, hd), clamp(o.sd != null ? o.sd : Math.max(sm * 1.05, grey ? 0.16 : 0.32), 0, 0.9), lo];
+    const Lt = [grey ? warm : toward(h, warm, hl), clamp(sm * (o.sl != null ? o.sl : 0.62) + (grey ? 0.05 : 0), 0, 0.9), hi];
+    const B = [h, sm, clamp(o.l != null ? o.l : l, lo + 0.08, hi - 0.06)];
+    const out = [];
+    for (let i = 0; i < n; i++) {
+      let a, b, k;
+      if (i <= at) { a = D; b = B; k = at ? i / at : 1; } else { a = B; b = Lt; k = (i - at) / (n - 1 - at); }
+      const dh = ((b[0] - a[0] + 540) % 360) - 180;
+      out.push(hx(a[0] + dh * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k));
+    }
+    return out;
+  }
+  // hmat(base, o) → a pxkit material from hramp, with a coloured outline (o.line, else the darkest
+  // tone pushed toward o.lineHue), a lighter lit-edge outline (o.lineLit) and a cool rim tone
+  // (o.rim, used by rim()). o.line: false for marks drawn inside another form.
+  function hmat(base, o) {
+    o = o || {};
+    const cols = o.cols || hramp(base, o);
+    const d = K.parse(cols[0]), dh = K.rgb2hsl(d[0], d[1], d[2]);
+    const lh = o.lineHue != null ? o.lineHue : toward(dh[0], o.cool != null ? o.cool : 250, 22);
+    const line = o.line === false ? false : o.line || hx(lh, Math.max(0.42, Math.min(0.75, dh[1] + 0.12)), o.lineL != null ? o.lineL : Math.max(0.06, dh[2] * 0.55));
+    const lineLit = o.line === false ? undefined : o.lineLit || K.hex(K.mix(K.parse(line), K.parse(cols[1]), 0.55));
+    const M = K.mat(null, { cols, at: o.at != null ? o.at : Math.round((cols.length - 1) * 0.55), line, lineLit, alpha: o.alpha });
+    if (o.alpha != null && !M._a) { M._a = 1; for (let i = 0; i < M.c.length; i++) { const v = K.parse(cols[i]); v[3] = o.alpha; M.rgba[i] = v; M.c[i] = K.pack(v); } }
+    if (!M.rimC) M.rimC = K.pack(K.parse(o.rim || K.hex(K.mix(K.parse(cols[Math.max(0, cols.length - 2)]), [150, 186, 255, 255], 0.5))));
+    return M;
+  }
+  // the ramp index of a pixel inside its own material (−1 if it is not one of its tones)
+  const stepOf = (L, i) => { const M = K.MATS[L.mt[i]]; return M ? M.c.indexOf(L.px[i]) : -1; };
+  function nudge(L, i, k) {
+    const M = K.MATS[L.mt[i]];
+    if (!M) return;
+    const j = M.c.indexOf(L.px[i]);
+    if (j < 0) return;
+    L.px[i] = M.c[clamp(j + k, 0, M.n - 1)];
+  }
+  // cast(back, front, dx, dy, k, mats?): the front layer's shadow on the back one — every back
+  // pixel that the front form would cover if moved by (dx, dy) (down-right: the key light is upper
+  // left), and that the front form does not cover itself, steps k tones darker in its own ramp
+  function cast(back, front, dx, dy, k, only) {
+    const { w, h } = back, fp = front.px, bp = back.px;
+    for (let y = 0; y < h; y++) {
+      const sy = y - dy;
+      if (sy < 0 || sy >= h) continue;
+      for (let x = 0; x < w; x++) {
+        const i = y * w + x;
+        if (!(bp[i] >>> 24) || (fp[i] >>> 24)) continue;
+        const sx = x - dx;
+        if (sx < 0 || sx >= w || !(fp[sy * w + sx] >>> 24)) continue;
+        if (only && !only.includes(back.mt[i])) continue;
+        nudge(back, i, -(k || 1));
+      }
+    }
+    return back;
+  }
+  // inner shadow of a form on itself: pixels whose (dx, dy) neighbour lies outside the form, i.e.
+  // its lower-right flank, step k darker (a crisp core shadow band, not pillow shading)
+  function flank(L, dx, dy, k, only) {
+    const { w, h, px } = L, out = px.slice();
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const i = y * w + x;
+      if (!(px[i] >>> 24) || (only && !only.includes(L.mt[i]))) continue;
+      const X = x + dx, Y = y + dy;
+      if (X >= 0 && Y >= 0 && X < w && Y < h && px[Y * w + X] >>> 24 && L.mt[Y * w + X] === L.mt[i]) continue;
+      const M = K.MATS[L.mt[i]];
+      const j = M ? M.c.indexOf(px[i]) : -1;
+      if (j >= 0) out[i] = M.c[clamp(j - (k || 1), 0, M.n - 1)];
+    }
+    L.px = out;
+    return L;
+  }
+  // rim(L, mats, o): the cool back light along the right-hand edges of the given materials — each
+  // pixel whose right neighbour is empty (and that is not a 1-px sliver) takes its material's rim
+  // tone; o.w (1 or 2) widens it, o.down also lights lower edges on the right half
+  function rim(L, only, o) {
+    o = o || {};
+    const { w, h, px, mt } = L, out = px.slice(), wd = o.w || 1;
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const i = y * w + x;
+      if (!(px[i] >>> 24) || (only && !only.includes(mt[i]))) continue;
+      const M = K.MATS[mt[i]];
+      if (!M || !M.rimC) continue;
+      let edge = false;
+      for (let k = 1; k <= wd && !edge; k++) if (x + k >= w || !(px[i + k] >>> 24)) edge = true;
+      if (edge && x > 0 && !(px[i - 1] >>> 24)) edge = false;
+      if (!edge && o.down && y + 1 < h && !(px[i + w] >>> 24) && x + 1 < w && !(px[i + w + 1] >>> 24) && x > 0 && px[i - 1] >>> 24) edge = true;
+      if (edge && y > 0 && !(px[i - w] >>> 24) && !o.top) edge = false;
+      if (edge) out[i] = M.rimC;
+    }
+    L.px = out;
+    return L;
+  }
+  // despeckle(L): a lone pixel whose four neighbours all share one other tone of the same material
+  // takes that tone (clusters, not noise); deliberate accents are drawn after it
+  function despeckle(L) {
+    const { w, h, px, mt } = L, out = px.slice();
+    for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) {
+      const i = y * w + x, v = px[i];
+      if (!(v >>> 24)) continue;
+      const a = px[i - 1];
+      if (a === v || !(a >>> 24) || px[i + 1] !== a || px[i - w] !== a || px[i + w] !== a) continue;
+      if (mt[i - 1] !== mt[i]) continue;
+      out[i] = a;
+    }
+    L.px = out;
+    return L;
+  }
+  // band(L, M, k, test): re-tone every pixel of material M inside a local-space test to step k (or
+  // by a function of x, y → step) — hard-edged material bands, specular streaks and blotches
+  function band(L, M, test, k, box) {
+    const B = box || [-1e4, -1e4, 1e4, 1e4];
+    return L.scan(B[0], B[1], B[2], B[3], test, (i, lx, ly) => {
+      if (!L.px[i] || L.mt[i] !== M.id) return;
+      const kk = typeof k === 'function' ? k(lx, ly, stepOf(L, i)) : k;
+      if (kk == null || kk < 0) return;
+      L.px[i] = M.c[clamp(kk | 0, 0, M.n - 1)];
+    });
+  }
+  // the standard finish for a set of overlapping layers (back → front): outline each in its own
+  // colours, then each nearer layer casts its shadow (dx, dy, one step) on the ones behind it
+  function finish(layers, o) {
+    o = o || {};
+    const sh = o.shadow == null ? [2, 3] : o.shadow;
+    for (let i = layers.length - 1; i > 0; i--) if (sh && layers[i]) for (let j = 0; j < i; j++) if (layers[j]) cast(layers[j], layers[i], sh[0], sh[1], 1);
+    for (const Lr of layers) if (Lr) outline(Lr);
+    let out = null;
+    for (const Lr of layers) if (Lr) out = out ? out.over(Lr) : Lr;
+    return out;
+  }
+
   // (onBuilt: set by 84a — the first idle frame of a creature built in a battle schedules the
   // prewarm of its action frames)
-  const api = { FAMILIES, resolve, style, q, side, lerp, family, poly, stone, outline, deliver, queue, outcome, kit, audit, auditFamily, auditEnemy, K, onBuilt: null };
+  const api = { FAMILIES, resolve, style, q, side, lerp, family, poly, stone, outline, deliver, queue, outcome, kit, audit, auditFamily, auditEnemy, K, onBuilt: null,
+    hramp, hmat, toward, stepOf, nudge, cast, flank, rim, despeckle, band, finish };
   return api;
 })();
