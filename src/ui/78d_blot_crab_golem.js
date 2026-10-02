@@ -550,77 +550,117 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // aN / aF arm swing at the shoulder (rad, − raised forward/up), eN / eF elbow bend, core
   // (chest glow 0 … 1.5), eye (slit glow), tilt (head), wet (water from its cracks), frost, kneel
   // =============================================================================================
+  // The golem (the restyle): blocks seen three-quarter from the upper left — every big stone shows
+  // its front face (dressed: bevels lit by their facing, a dark seam on the shadowed edges), a lit
+  // top plane and a dark side plane on its right with a cool rim, so the figure reads as boxes
+  // turned toward the party; the near arm (screen left) larger and in front, the far arm smaller,
+  // darker, behind the torso; glass golems (a saturated colour) get the reference's metal manner —
+  // a crisp near-white streak along each lit bevel, a dark reflected band low on each face — stone
+  // ones get cracks, chips and moss in clusters; a glowing core and eye-slit, turned with the head.
+  const golemMatCache = new Map();
+  function golemMats(col, coreC) {
+    const key = col + coreC;
+    if (golemMatCache.has(key)) return golemMatCache.get(key);
+    const hsl = K.rgb2hsl(...K.parse(col).slice(0, 3)), glass = hsl[1] > 0.2;
+    const so = { n: 6, at: 3, lo: 0.1, hi: 0.94, sat: glass ? 1.3 : 1.05, hd: 34, hl: 24, rim: mixh(col, '#d8ecff', 0.6) };
+    const M = {
+      glass,
+      M: A.hmat(col, so),
+      Md: A.hmat(mixh(col, '#2a2a3a', 0.2), Object.assign({}, so, { hi: so.hi - 0.1 })),
+      far: A.hmat(mixh(col, '#2a2a3a', 0.3), Object.assign({}, so, { hi: so.hi - 0.16 })),
+      moss: A.hmat(mixh(mixh(col, '#5a6a3a', 0.4), '#7f9a3e', 0.5), { n: 4, at: 2, lo: 0.25, hi: 0.75, line: false }),
+      core: A.hmat(coreC, { n: 5, at: 2, lo: 0.3, hi: 0.97, sat: 1.3, hd: 30, hl: 30, line: false }),
+      coreHot: K.solid(mixh(coreC, '#ffffff', 0.75), { line: false }),
+      shine: K.solid(mixh(col, '#ffffff', 0.85), { line: false }),
+      frost: A.hmat('#e8f6ff', { n: 4, at: 2, lo: 0.5, hi: 0.99 }),
+      water: A.hmat('#6aa8d8', { n: 4, at: 2, lo: 0.3, hi: 0.9, alpha: 220 }),
+    };
+    golemMatCache.set(key, M);
+    if (golemMatCache.size > 12) golemMatCache.delete(golemMatCache.keys().next().value);
+    return M;
+  }
   function golemRig(L, q, o, H) {
-    const col = o.col || '#8fb8b0', coreC = o.core || '#f0a060';
-    const M = K.mat(col, { n: 5, at: 2, step: 0.1, shift: 1.2 });
-    const Md = K.mat(K.tone(col, -1.5), { n: 5, at: 2, step: 0.09 });
-    const moss = K.mat(mixh(K.tone(col, -0.5), '#7f9a3e', 0.5), { n: 3, at: 1, step: 0.09, line: false });
-    const Mc = K.mat(coreC, { n: 4, at: 2, step: 0.12, line: false });
+    const coreC = o.core || '#f0a060';
+    const G = golemMats(o.col || '#8fb8b0', coreC), M = G.M, Md = G.Md;
     const back = L.like(), mid = L.like(), front = L.like(), glow = L.like();
+    // a block: side and top planes (depth d up and to the right), then the dressed front face
     const St = (Lr, x, y, w, h, Mx, o2) => {
-      const c = (o2 && o2.c) || 5;
+      o2 = o2 || {};
+      const c = o2.c || 5, d = o2.d != null ? o2.d : Math.min(8, Math.round(Math.min(w, h) * 0.22));
       const j = (k) => ((K.hh(x + 50, y + 50, k) % 5) - 2);
-      A.stone(Lr, [[x + c, y + j(1)], [x + w - c + j(2), y], [x + w, y + c], [x + w + j(3) * 0.5, y + h - c], [x + w - c, y + h], [x + c + j(4), y + h + j(5) * 0.5], [x, y + h - c], [x + j(6) * 0.5, y + c]], Mx, Object.assign({ bevel: 4 }, o2));
-      const n = Math.floor((w * h) / 600);
-      for (let i = 0; i < n; i++) {
-        const px = x + 8 + (K.hh(x, y, 20 + i) % Math.max(1, w - 16)), py = y + 8 + (K.hh(x, y, 40 + i) % Math.max(1, h - 16));
-        K.cluster(Lr, px, py, 4 + (K.hh(x, y, 60 + i) % 4), Mx, (i % 3) ? 1 : 3, K.hh(x, y, 80 + i));
+      if (d > 0) {
+        Lr.poly([[x + w - 3, y + c - 1], [x + w + d, y + c - d * 0.55], [x + w + d, y + h - c - d * 0.55], [x + w - 3, y + h - c + 1]], Mx, (px, py) => (py < y + c + 2 - d * 0.4 ? 2.5 : 1.5) / 6);
+        Lr.poly([[x + c - 1, y + 3], [x + c + d, y - d * 0.55], [x + w - c + d, y - d * 0.55], [x + w - c + 1, y + 3]], Mx, (px) => (px < x + w * 0.5 ? 5.5 : 4.5) / 6);
+      }
+      A.stone(Lr, [[x + c, y + j(1)], [x + w - c + j(2), y], [x + w, y + c], [x + w + j(3) * 0.5, y + h - c], [x + w - c, y + h], [x + c + j(4), y + h + j(5) * 0.5], [x, y + h - c], [x + j(6) * 0.5, y + c]], Mx, Object.assign({ bevel: 4, face: 3 }, o2));
+      if (G.glass && w > 18 && h > 14) {
+        // the metal manner: a crisp streak along the lit bevel, a dark reflected band low on the face
+        Lr.line(x + 2, y + c + 1, x + c + 1, y + 2, G.shine, 0);
+        Lr.line(x + c + 2, y + 2, x + w * 0.55, y + 2, G.shine, 0);
+        Lr.line(x + 5, y + h - 5, x + w - 6, y + h - 5, Mx, 1);
+        Lr.line(x + w * 0.3, y + 6, x + w * 0.18, y + h * 0.6, Mx, 4);
+      } else {
+        const n = Math.floor((w * h) / 600);
+        for (let i = 0; i < n; i++) {
+          const px = x + 8 + (K.hh(x, y, 20 + i) % Math.max(1, w - 16)), py = y + 8 + (K.hh(x, y, 40 + i) % Math.max(1, h - 16));
+          K.cluster(Lr, px, py, 4 + (K.hh(x, y, 60 + i) % 4), Mx, (i % 3) ? 2 : 4, K.hh(x, y, 80 + i));
+        }
       }
       return Lr;
     };
     const cr = q.crouch * 10 + q.kneel * 18;
     // legs: planted; the near one steps forward (and kneels)
     const legN = [-30 - q.step * 8, 50 + cr * 0.4], legF = [6, 50 + cr * 0.4];
-    if (q.kneel > 0.5) { St(back, -36, 64, 30, 20, Md); St(back, 4, 54 + cr * 0.3, 24, 20, Md); St(back, 2, 70, 28, 14, Md); }
+    if (q.kneel > 0.5) { St(back, -36, 64, 30, 20, Md); St(back, 4, 54 + cr * 0.3, 24, 20, G.far); St(back, 2, 70, 28, 14, G.far); }
     else {
+      St(back, legF[0], legF[1], 22, 20 - cr * 0.3, G.far); St(back, legF[0] - 2, 66, 26, 18, G.far);
       St(back, legN[0], legN[1], 24, 20 - cr * 0.3, Md); St(back, legN[0] - 2, 66, 28, 18, Md);
-      St(back, legF[0], legF[1], 24, 20 - cr * 0.3, Md); St(back, legF[0] - 2, 66, 28, 18, Md);
     }
     // the upper body leans about the hips (and sinks with a crouch)
     const T = (Lr) => Lr.save().translate(0, cr).translate(0, 50).rotate(-q.lean).translate(0, -50);
-    // arms: pauldron, upper arm, fist — swung about the shoulder, bent at the elbow
+    // arms: pauldron, upper arm, fist — swung about the shoulder, bent at the elbow; the near arm in
+    // front at full size, the far one behind the torso, smaller and darker
     for (const s of [-1, 1]) {
-      const i = s < 0 ? 0 : 1, sw = S(s < 0 ? q.aN : q.aF, 0), el = s < 0 ? q.eN : q.eF;
-      const Lr = s < 0 ? front : back, px = s * 46, py = -4;
-      T(Lr).translate(px, py).rotate(s * -sw).translate(-px, -py);
-      St(Lr, px + (s < 0 ? -18 : -6), 10, 24, 30, Md, { c: 4 });
+      const sw = s < 0 ? q.aN : q.aF, el = s < 0 ? q.eN : q.eF, near = s < 0;
+      const Lr = near ? front : back, px = s * (near ? 46 : 40), py = near ? -4 : -8, Ma = near ? M : G.far, Mb = near ? Md : G.far, k = near ? 1 : 0.86;
+      T(Lr).translate(px, py).rotate(s * -sw).scale(k, k).translate(-px, -py);
+      St(Lr, px + (near ? -18 : -6), 10, 24, 30, Mb, { c: 4 });
       Lr.save().translate(px + s * 2, 38).rotate(s * el).translate(-(px + s * 2), -38);
-      St(Lr, px + (s < 0 ? -20 : -8), 38, 28, 24, M, { c: 6 });
-      Lr.line(px + (s < 0 ? -13 : -1), 48, px + (s < 0 ? -13 : -1), 56, M, 0); Lr.line(px + (s < 0 ? -6 : 6), 48, px + (s < 0 ? -6 : 6), 56, M, 0);
-      if (q.frost > 0 && s < 0) for (let k = 0; k < 4; k++) Lr.poly([[px - 16 + k * 6, 62], [px - 13 + k * 6, 62 + 6 + (k % 2) * 4 * q.frost], [px - 10 + k * 6, 62]], K.mat('#e8f6ff', { n: 3, at: 2, step: 0.1 }), 2);
+      St(Lr, px + (near ? -20 : -8), 38, 28, 24, Ma, { c: 6 });
+      Lr.line(px + (near ? -13 : -1), 48, px + (near ? -13 : -1), 56, Ma, 0); Lr.line(px + (near ? -6 : 6), 48, px + (near ? -6 : 6), 56, Ma, 0);
+      if (q.frost > 0 && near) for (let kk = 0; kk < 4; kk++) Lr.poly([[px - 16 + kk * 6, 62], [px - 13 + kk * 6, 62 + 6 + (kk % 2) * 4 * q.frost], [px - 10 + kk * 6, 62]], G.frost, (xx) => (xx < px - 13 + kk * 6 ? 3.5 : 2.5) / 4);
       Lr.restore();
-      St(Lr, px + (s < 0 ? -22 : -6), -20, 28, 34, M, { c: 8 });
+      St(Lr, px + (near ? -22 : -6), -20, 28, 34, Ma, { c: 8 });
       Lr.restore();
-      void i;
     }
-    // torso and head
+    // torso and head (the head turned with the body: its slit and eyes off-centre toward the party)
     T(mid);
     St(mid, -26, 22, 52, 32, Md, { c: 7 });
-    St(mid, -38, -22, 76, 50, M, { c: 10, bevel: 5 });
+    St(mid, -38, -22, 76, 50, M, { c: 10, bevel: 5, d: 9 });
     mid.save().translate(0, -40).rotate(-q.tilt).translate(0, 40);
-    St(mid, -21, -60, 42, 38, M, { c: 11, bevel: 5 });
-    mid.rect(-18, -40, 36, 9, Md, 0); // eye slit
-    mid.rect(-18, -41, 36, 1, M, 1);
-    mid.rect(-17, -31, 34, 1, M, 3);
-    for (const s of [-1, 1]) { mid.rect(s * 8 - 4, -37, 8, 3, Mc, 1 + Math.round(q.eye * 2)); mid.rect(s * 8 - 3, -37, 4, 1, Mc, Math.min(3, 2 + Math.round(q.eye))); }
+    St(mid, -21, -60, 42, 38, M, { c: 11, bevel: 5, d: 8 });
+    mid.rect(-20, -40, 34, 9, Md, 0); // eye slit
+    mid.rect(-20, -41, 34, 1, M, 1);
+    mid.rect(-19, -31, 32, 1, M, 5);
+    for (const [ex, ew] of [[-13, 8], [2, 7]]) { mid.rect(ex, -37, ew, 3, G.core, 1 + Math.round(q.eye * 2)); mid.rect(ex + 1, -37, ew - 4, 1, G.core, Math.min(4, 2 + Math.round(q.eye * 2))); }
     mid.restore();
     for (const c2 of [[[-30, -6], [-22, 0], [-25, 10]], [[26, 2], [31, 10], [28, 18]], [[8, -58], [4, -50], [7, -46]]]) {
-      for (let k = 1; k < c2.length; k++) { mid.line(c2[k - 1][0], c2[k - 1][1], c2[k][0], c2[k][1], M, 0); mid.line(c2[k - 1][0] + 1, c2[k - 1][1] + 1, c2[k][0] + 1, c2[k][1] + 1, M, 3); }
+      for (let kk = 1; kk < c2.length; kk++) { mid.line(c2[kk - 1][0], c2[kk - 1][1], c2[kk][0], c2[kk][1], M, 0); mid.line(c2[kk - 1][0] + 1, c2[kk - 1][1] + 1, c2[kk][0] + 1, c2[kk][1] + 1, M, 5); }
     }
-    for (const [x, y, sz] of [[-26, -20, 9], [-12, -21, 5], [22, -20, 6], [-12, -58, 8], [10, -59, 5], [-20, 24, 6]]) K.cluster(mid, x, y, sz, moss, 1, K.hh(x + 99, y + 99, 3));
-    mid.ell(0, 2, 12, 12, Md, 0);
-    mid.ell(0, 2, 9, 9, Mc, (x, y) => K.clamp(0.25 + q.core * 0.35 + (-(x + y - 2) / 28), 0, 0.99));
-    mid.rect(-3, -3, 3, 3, K.solid(mixh(coreC, '#ffffff', 0.7), { line: false }), 0);
+    if (!G.glass) for (const [x, y, sz] of [[-26, -20, 9], [-12, -21, 5], [22, -20, 6], [-12, -58, 8], [10, -59, 5], [-20, 24, 6]]) K.cluster(mid, x, y, sz, G.moss, 2, K.hh(x + 99, y + 99, 3));
+    // the core: a socket, a ringed glowing stone, its hot point
+    mid.ell(-2, 2, 12, 12, Md, 0);
+    mid.ell(-2, 2, 9, 9, G.core, (x, y) => K.clamp(0.25 + q.core * 0.35 + (-(x + 2 + y - 2) / 28), 0, 0.99));
+    mid.rect(-6, -3, 3, 3, G.coreHot, 0); mid.dot(-2, -4, G.coreHot, 0);
     // water running from its cracks (the Ledger Heap's Flood)
-    if (q.wet > 0) {
-      const W = K.mat('#6aa8d8', { n: 4, at: 2, step: 0.1, alpha: 220 });
-      for (const [x, y] of [[-25, 10], [28, 18], [7, -46]]) mid.path([[x, y], [x + (x < 0 ? -3 : 3), y + 10 * q.wet], [x + (x < 0 ? -4 : 4), y + 22 * q.wet]], 3, W, 2);
-    }
+    if (q.wet > 0) for (const [x, y] of [[-25, 10], [28, 18], [7, -46]]) mid.path([[x, y], [x + (x < 0 ? -3 : 3), y + 10 * q.wet], [x + (x < 0 ? -4 : 4), y + 22 * q.wet]], 3, G.water, (px) => (px < x ? 3.5 : 1.5) / 4);
     mid.restore();
+    A.rim(back, [G.far.id, Md.id]); A.rim(mid, [M.id, Md.id], { w: 2 }); A.rim(front, [M.id, Md.id]);
+    A.cast(back, mid, 3, 3, 1); A.cast(mid, front, 3, 3, 1);
     A.outline(back); A.outline(mid); A.outline(front);
     const gr = 20 + q.core * 6;
-    H.glow(glow, Math.round(-q.lean * 40), 2 + cr, gr, gr, coreC, Math.min(0.5, 0.18 + q.core * 0.16), 3);
-    if (q.eye > 0.6) H.glow(glow, Math.round(-q.lean * 80), -36 + cr, 24, 6, coreC, 0.12 + q.eye * 0.08, 2);
+    H.glow(glow, Math.round(-q.lean * 40) - 2, 2 + cr, gr, gr, coreC, Math.min(0.42, 0.14 + q.core * 0.14), 2);
+    if (q.eye > 0.6) H.glow(glow, Math.round(-q.lean * 80) - 4, -36 + cr, 22, 6, coreC, 0.1 + q.eye * 0.08, 2);
     return back.over(mid).over(front).over(glow);
   }
   const gBase = { lean: 0, crouch: 0, step: 0, aN: 0, aF: 0, eN: 0, eF: 0, core: 0.5, eye: 0.5, tilt: 0, wet: 0, frost: 0, kneel: 0 };
