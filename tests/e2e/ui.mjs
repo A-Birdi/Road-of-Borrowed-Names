@@ -355,7 +355,8 @@ await test('real combat UI: telegraph, card, choice answer, knot untied, no pena
     if (st.cards) {
       if (!shotTaken) {
         await shot(p, 'ui_combat'); shotTaken = true;
-        const intent = await p.textContent('.intent');
+        // (Adaptive: a routine move is its creature's badge; the telegraph panel holds only passages to read)
+        const intent = await p.evaluate(() => RB.battleIntents.state().badges.map((x) => x.label).join(' | ') + ' ' + document.querySelector('.intent').textContent);
         assert(/Strike|Waiting|Sweep/i.test(intent), 'intent shown: ' + intent);
       }
       await p.click('.resp[data-i="0"]');
