@@ -185,6 +185,20 @@ const frameNow = (p) => p.evaluate(() => {
   return { key: ctx.bg, w: Math.round(vs.w * A), h: Math.round(vs.h * A), hz: lay.hz, F: { ex: lay.ex, ey: lay.ey, ext: lay.ext, px: lay.px, py: lay.py, ps: lay.ps, scale: lay.scale, art: e.art, party: lay.party } };
 });
 
+// the backdrop alone (its static layer and its machinery at rest, no actors, no overlay) as a PNG file
+async function backdropOnly(p, file) {
+  const b64 = await p.evaluate(() => {
+    const lay = RB.battleStage.lay(), ctx = RB.combat.context(), e = RB.content.enemies[ctx.id];
+    const vs = RB.render.viewSize(), A = RB.render.ART, w = Math.round(vs.w * A), h = Math.round(vs.h * A);
+    const F = { ex: lay.ex, ey: lay.ey, ext: lay.ext, px: lay.px, py: lay.py, ps: lay.ps, scale: lay.scale, art: e.art, party: lay.party, particles: false };
+    const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+    const c = cv.getContext('2d'); c.imageSmoothingEnabled = false;
+    RB.battlePlaces.draw(c, ctx.bg, w, h, lay.hz, 0, true, F);
+    return cv.toDataURL('image/png').split(',')[1];
+  });
+  fs.writeFileSync(file, Buffer.from(b64, 'base64'));
+}
+
 if (!CAPTURE) {
   // (v) one encounter at five viewport sizes -------------------------------------------------------
   const VIEWS = [[320, 640], [390, 844], [844, 390], [1280, 800], [1920, 1080]];
@@ -266,11 +280,13 @@ if (!CAPTURE) {
     for (const [label, A, B] of STATE) {
       const ra = await battle(p, A);
       const sa = await p.evaluate(() => RB.battlePlaces.checksum());
+      await backdropOnly(p, path.join(outDir, 'state-' + label + (A.diag ? '-diag' : '') + '-1-before__backdrop.png'));
       await shoot(p, 'state-' + label + (A.diag ? '-diag' : '') + '-1-before', ra);
       await bare(p, true); await p.screenshot({ path: path.join(outDir, 'state-' + label + (A.diag ? '-diag' : '') + '-1-before__scene.png') }); await bare(p, false);
       await leave(p);
       const rb = await battle(p, B);
       const sb = await p.evaluate(() => RB.battlePlaces.checksum());
+      await backdropOnly(p, path.join(outDir, 'state-' + label + (B.diag ? '-diag' : '') + '-2-after__backdrop.png'));
       await shoot(p, 'state-' + label + (B.diag ? '-diag' : '') + '-2-after', rb);
       await bare(p, true); await p.screenshot({ path: path.join(outDir, 'state-' + label + (B.diag ? '-diag' : '') + '-2-after__scene.png') }); await bare(p, false);
       await leave(p);
@@ -400,19 +416,24 @@ if (!CAPTURE) {
       await composite([path.join(B4, o.tag + '__desk.png'), path.join(AF, o.tag + '__desk.png'), path.join(AF, o.tag + '__desk__scene.png')], 'family-' + o.tag + '.webp', 0.5, ['before (base build)', 'after', 'after: the whole scene (panels hidden)']);
     }
     for (const t of ['mill-ground-floor', 'mill-wheel-pit', 'reedwake-mill-front', 'saltglass-shore', 'archive-reading-room', 'kiln-hall', 'still-road', 'observatory-hall']) await composite([path.join(B4, t + '__phone.png'), path.join(AF, t + '__phone.png')], 'phone-' + t + '.webp', 0.5, ['before, 390×844', 'after, 390×844']);
-    for (const [label, A] of STATE) { const d = A.diag ? '-diag' : ''; await composite([path.join(outDir, 'state-' + label + d + '-1-before__scene.png'), path.join(outDir, 'state-' + label + d + '-2-after__scene.png')], 'state-' + label + d + '.webp', 0.5, ['before (' + Object.entries(A.flags).filter(([k]) => k !== 'rw_mill_open').map(([k, v]) => k + '=' + v).join(' ') + ')', 'after']); }
+    for (const [label, A] of STATE) {
+      const d = A.diag ? '-diag' : '', what = Object.entries(A.flags).filter(([k]) => k !== 'rw_mill_open').map(([k, v]) => k + '=' + v).join(' ');
+      await composite([path.join(outDir, 'state-' + label + d + '-1-before__scene.png'), path.join(outDir, 'state-' + label + d + '-2-after__scene.png')], 'state-' + label + d + '.webp', 0.5, ['before (' + what + ')', 'after']);
+      // the backdrop alone (no actors in the way), at its art resolution ×1
+      await composite([path.join(outDir, 'state-' + label + d + '-1-before__backdrop.png'), path.join(outDir, 'state-' + label + d + '-2-after__backdrop.png')], 'state-' + label + d + '-backdrop.webp', 1, ['backdrop alone, before (' + what + ')', 'after']);
+    }
     for (const enc of ['mill-ground-floor', 'reedwake-mill-front', 'saltglass-shore']) await composite(VIEWS.map(([w, h]) => path.join(outDir, 'v-' + enc + '__' + w + 'x' + h + '__scene.png')), 'viewports-' + enc + '.webp', 0.34, VIEWS.map(([w, h]) => w + '×' + h));
     await composite([path.join(outDir, 'warehouse-entrance-2_9.png')], 'warehouse-2_9.webp', 0.6, ['rw.warehouse from its door: no gap in the boards is drawn (§2.9)']);
     console.log('docs evidence written to', path.relative(root, dir));
     // a short recording of the ambient motion (mended gears and dust; the freed wheel), real time
-    const rec = await b.newContext({ viewport: { width: 1280, height: 800 }, recordVideo: { dir: path.join(outDir, 'video'), size: { width: 960, height: 600 } } });
+    const rec = await b.newContext({ viewport: { width: 1280, height: 800 }, recordVideo: { dir: path.join(outDir, 'video'), size: { width: 640, height: 400 } } });
     const vp = await rec.newPage();
     await vp.goto(url); await vp.waitForFunction(() => window.__RB_READY__ === true);
     await battle(vp, { map: 'rw.mill1', foe: 'm1a', flags: { rw_mill_open: true, rw_gears: true }, reduce: false });
-    await bare(vp, true); await vp.waitForTimeout(4200);
+    await bare(vp, true); await vp.waitForTimeout(3200);
     await leave(vp);
     await battle(vp, { map: 'rw.millroad', foe: 'f3', flags: { rw_mill_open: true, rw_echo_done: true }, reduce: false });
-    await bare(vp, true); await vp.waitForTimeout(3600);
+    await bare(vp, true); await vp.waitForTimeout(2800);
     const vpath = await vp.video().path();
     await rec.close();
     fs.copyFileSync(vpath, path.join(dir, 'motion-mill-gears-and-wheel.webm'));

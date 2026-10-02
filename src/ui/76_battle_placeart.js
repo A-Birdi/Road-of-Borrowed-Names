@@ -8,12 +8,22 @@
  *    the upper left, hue-shifted ramps, a selective outline in the object's
  *    own darker colour (never the ink line interactable things carry), a
  *    soft contact shadow;
- *  - elements seen from the battle's eye level: building fronts, a water
- *    wheel, tree lines, rock ridges, water, a path, a back wall with its
- *    posts and beam, doorways, the mill's gear train, light from windows;
- *  - the shells: a room (wall + floor in perspective, lit from the party's
- *    lantern) or open land (sky, far ridges, ground) per region.
- * Nothing here chooses anything: RB.battlePlaces decides what goes where. */
+ *  - elements seen from the battle's eye level: building fronts, tree lines,
+ *    rock ridges, water, a path, a back wall with its posts and beam,
+ *    doorways, stairs going up into an opening or down through the floor, a
+ *    ladder with its hatch open or shut (or a rope ladder), light from
+ *    windows, the haze or darkness past the local window;
+ *  - machinery in its state: the mill's gear train (jammed: wedge, lashed
+ *    prop, cocked shaft; mended: true and turning) and the water wheel (still,
+ *    or turning with white water at its race), the turning parts drawn per
+ *    frame from eight cached phases;
+ *  - the shells: a room (back wall, side walls receding with their openings,
+ *    the floor laid on the map's rows, lit from the party's lantern) or open
+ *    land (sky, far ridges, ground) per region.
+ * Every texture sits on a lattice anchored to the scene (the `ox` the
+ * composer passes), never on the canvas size, so a larger canvas repeats a
+ * smaller one where they overlap. Nothing here chooses anything:
+ * RB.battlePlaces decides what goes where. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.battlePlaceArt = (function () {
@@ -803,7 +813,12 @@ RB.battlePlaceArt = (function () {
   function mix(a, b, t) { return K().mix(a, b, t); }
   function land(g, W, H, HZ, sp) {
     const L = LAND[sp.sky] || LAND.reedwake, pal = palOf(sp.region), ox = sp.ox | 0;
-    skyBands(g, W, 0, HZ, L.sky);
+    // the sky in twice as many steps (each palette colour and the mix between it and the next), lighter toward the horizon
+    const sk = [];
+    L.sky.forEach((c, i) => { sk.push(c); if (i + 1 < L.sky.length) sk.push(mix(c, L.sky[i + 1], 0.5)); });
+    skyBands(g, W, 0, HZ, sk);
+    // high thin strata, anchored to the scene (calm, few)
+    if (L.cloud) for (const [dx, f, w] of [[-420, 0.12, 150], [120, 0.08, 210], [520, 0.15, 120], [-60, 0.22, 90]]) { const y = Math.round(HZ * f); R(g, ox + dx, y, w, 1, mix(L.cloud[1], sk[Math.min(sk.length - 1, Math.floor(f * sk.length))], 0.55)); R(g, ox + dx + 12, y + 1, w - 30, 1, mix(L.cloud[0], sk[Math.min(sk.length - 1, Math.floor(f * sk.length))], 0.6)); }
     if (L.grid) { for (let x = lattice(ox, 32, 0); x < W; x += 32) R(g, x, 0, 1, HZ, 'rgba(160,140,100,0.18)'); for (let y = 0; y < HZ; y += 32) R(g, 0, y, W, 1, 'rgba(160,140,100,0.18)'); }
     if (L.dotted) {
       for (let i = 0; i < 40; i++) { const x = ox - 800 + (hh(i, 91) % 1600), y = 8 + (hh(i, 92) % Math.max(1, HZ - 60)); if (x > -10 && x < W) { R(g, x, y, 8, 6, '#3a3a4c'); R(g, x, y, 8, 1, '#4c4c60'); } }
@@ -928,7 +943,15 @@ RB.battlePlaceArt = (function () {
     } else if (sp.wall === 'timber') {
       // above the head beam, the floor above in section: joist ends under its boards, and the loft's dark beyond
       R(g, 0, 0, W, Math.max(0, beamY), mix(wd[0], DUSK, 0.6));
-      for (let x = lattice(ox, 96, 0) + 40; x < W; x += 96) if (beamY - 12 > 0) { R(g, x, 0, 5, beamY - 12, mix(wd[1], DUSK, 0.55)); R(g, x, 0, 1, beamY - 12, mix(wd[2], DUSK, 0.5)); }
+      // the loft above in section: its posts, braces and its own head beam, all in the dark
+      const up = beamY - 12, top2 = up - 104, lo = mix(wd[1], DUSK, 0.58), lo2 = mix(wd[2], DUSK, 0.52);
+      if (up > 0) {
+        for (let x = lattice(ox, 96, 0) + 40; x < W; x += 96) {
+          R(g, x, Math.max(0, top2), 5, up - Math.max(0, top2), lo); R(g, x, Math.max(0, top2), 1, up - Math.max(0, top2), lo2);
+          for (let i = 0; i < 40; i++) { const y = up - 6 - i, xx = x + 5 + i; if (y > top2 + 4 && y >= 0) R(g, xx, y, 2, 1, lo); }
+        }
+        if (top2 > 0) { R(g, 0, top2, W, 6, lo); R(g, 0, top2, W, 1, lo2); R(g, 0, top2 + 6, W, 2, 'rgba(10,6,12,0.4)'); }
+      }
       if (beamY - 12 > 0) { R(g, 0, beamY - 12, W, 4, wd[1]); R(g, 0, beamY - 12, W, 1, wd[3]); for (let x = lattice(ox, 23, 0); x < W; x += 23) R(g, x, beamY - 12, 1, 4, wd[0]); }
       for (let x = lattice(ox, 30, 0); x < W; x += 30) { R(g, x, Math.max(0, beamY - 8), 8, 8, wd[1]); R(g, x, Math.max(0, beamY - 8), 8, 1, wd[2]); R(g, x + 7, Math.max(0, beamY - 8), 1, 8, wd[0]); }
       // plaster panels: grouped light/mid/shadow patches on a lattice (no single-pixel noise)
@@ -988,7 +1011,8 @@ RB.battlePlaceArt = (function () {
       const cols = ['#d6ceb8', '#e4ddc8', '#dcd4be', '#c8c0a8'];
       R(g, 0, HZ, W, H - HZ, cols[1]);
       for (let i = 0; i < rows.length; i++) { R(g, 0, rows[i], W, Math.max(0, bandEnd(i) - rows[i]), cols[i % 4 === 3 ? 2 : i % 2]); R(g, 0, rows[i], W, 1, '#c8c0aa'); }
-      R(g, Math.round(X(sp.cols ? sp.cols[0] + 1 : 0, HZ)), HZ, 1, H - HZ, '#d4a8a0');
+      // the margin rule of the paper, receding with the floor
+      if (sp.cols) for (let y = HZ; y < H; y++) R(g, Math.round(X(sp.cols[0] + 1, y)), y, 1, 1, '#d4a8a0');
     } else {
       // flagstones: a course per map row, joints on the map's half columns that converge on the room's middle
       const S5 = brick ? ['#3a2c28', '#443630', '#4a3a34', '#56443c', '#62504a'] : sp.cool ? ['#262a3e', '#2e3248', '#343852', '#3e4460', '#4a5270'] : [mix(pal.stone[2], '#1c1636', 0.45), mix(pal.stone[2], '#1c1636', 0.2), pal.stone[2], pal.stone[0], pal.stone[1]];
@@ -1079,7 +1103,7 @@ RB.battlePlaceArt = (function () {
   }
   // Stairs going up, away from the viewer, into an opening in the back wall
   // (or cut into a cliff): treads lit on their lip, rising into the dark.
-  function stairsUp(g, cx, base, w, h, region, stone, dir) {
+  function stairsUp(g, cx, base, w, h, region, stone, dir, dimmed) {
     const M = K().mat(palOf(region)), s5 = stone ? M.stone : dimR(M.wood, 0.25);
     const x = Math.round(cx - w / 2), n = Math.max(3, Math.min(6, Math.round(h / 7)));
     R(g, x - 3, base - h - 3, w + 6, h + 3, s5[0]);
@@ -1091,6 +1115,7 @@ RB.battlePlaceArt = (function () {
     }
     R(g, x - 3, base - h - 3, w + 6, 2, s5[3]);
     R(g, x - 3, base - h - 1, 2, h + 1, s5[2]); R(g, x + w + 1, base - h - 1, 2, h + 1, s5[1]);
+    if (dimmed) R(g, x - 3, base - h - 3, w + 6, h + 3, 'rgba(16,10,24,0.35)'); // in shadow behind the creature
     void dir;
   }
   // The ladder against its wall, from the floor to the hatch in the ceiling.

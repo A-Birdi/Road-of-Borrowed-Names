@@ -1078,7 +1078,7 @@ RB.battlePlaces = (function () {
       // openings in the back wall
       for (const d of get('doorway')) A.doorway(g, d.cx, HZ - 5, d.dw, d.dh, region, wall !== 'timber', d.dimmed);
       // stairs up into the back wall
-      for (const q of get('stairs')) if (q.dir !== 'down' && !q.inSide) A.stairsUp(g, q.cx, q.base, q.sw, q.sh, region, wall !== 'timber' || q.far, q.dir);
+      for (const q of get('stairs')) if (q.dir !== 'down' && !q.inSide) A.stairsUp(g, q.cx, q.base, q.sw, q.sh, region, wall !== 'timber' || q.far, q.dir, q.dimmed);
       // the floor's own patches, water across it (a channel, a flooded hall) and bridges
       groundCells(g, comp, geo, pal, PJ, lay.water);
       for (const q of get('stairs')) if (q.dir === 'down' || q.hole) A.stairsDown(g, q.sx, q.sy, q.sw, region, !!q.hole);
@@ -1100,7 +1100,7 @@ RB.battlePlaces = (function () {
       if (groups.fence) spans(groups.fence, 20).forEach(([a, b]) => fenceLine(g, a - 8, b + 8, HZ, pal));
       groundCells(g, comp, geo, pal, PJ, lay.water);
       // stairs cut into a cliff or a bank (up, away from the viewer)
-      for (const q of get('stairs')) if (q.dir !== 'down' && !q.inSide) A.stairsUp(g, q.cx, q.base, q.sw, q.sh, region, true, q.dir);
+      for (const q of get('stairs')) if (q.dir !== 'down' && !q.inSide) A.stairsUp(g, q.cx, q.base, q.sw, q.sh, region, true, q.dir, q.dimmed);
       for (const q of get('stairs')) if (q.dir === 'down') A.stairsDown(g, q.sx, q.sy, q.sw, region, false);
       // buildings and the wheel, far first; the wheel's turning part is drawn per frame
       const bl = lay.placed.filter((p) => p.shown && (p.paint === 'facade' || p.paint === 'wheel')).sort((a, b) => (b.haze || 0) - (a.haze || 0));
