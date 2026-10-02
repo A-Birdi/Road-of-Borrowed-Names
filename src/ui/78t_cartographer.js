@@ -250,5 +250,5 @@ var RB = (globalThis.RB = globalThis.RB || {});
     parts: [{ at: 0, act: 'cast:plea', d: 760 }, { at: 760, act: 'recover:plea', d: 540 }],
   }));
 
-  CB.family('atlas_cartographer', { anatomy: 'paper / cloth boss: flat creased facets that lean from the hem, panels that swing out and settle, a hood that bows, a chart that bends along its length from the right hand, a brush in the left', palette: 'paper #e8dcc0 (6 steps; pale #f0e8d4 with o.pale), grid #b4a684, route #8a5a3a, hood #2a2a3a, eyes #9ec4f0, chart #f8f2e2, brush wood #6a4a3a and ink #2a2030, blank sheets #fbf8f0' });
+  CB.family('atlas_cartographer', { anatomy: 'paper / cloth boss, turned toward the party: the hood peaked forward with its opening to the near side, three cloak panels as facets (the near one wide and lit, the far one foreshortened in shade) with creases and a lit hem, a chart on wooden rollers bending by facets from the right hand, a lacquered brush in the left', palette: 'parchment #2c1c2c-#fbefcc (6; pale #3a2c3a-#fff8e4), map inks (sepia grid #8a6a48, teal contours #3a6a6a, vermilion route #b0301e), hood #06060e-#36365a with pale eyes, chart paper #4a3a44-#fffbee, rollers and brush wood #1c0e14-#e0b070, blank sheets #5a5464-#ffffff; coloured outlines; cool rim #9ac0f0' });
 })();

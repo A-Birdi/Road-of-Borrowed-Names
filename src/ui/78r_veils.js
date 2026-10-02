@@ -261,6 +261,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
     fx: [{ at: 200, name: 'cbGather', d: 600, p: { dy: -22, col: CB.colOf(a, '#e8e4ff') } }],
   }));
 
-  CB.family('hush', { anatomy: 'cloth / spirit veil: the crown leads, the folds bend and the hem lags; coherent gathering, spreading and return; a sleeve fold that reaches; one hem strip that lengthens', palette: 'veil #e8e6f0 (6 steps, translucent hem ramps at alpha 170 / 90), ring #1a1830, void #0e0c1a, blank scraps #f0eee6 with a grey line' });
-  CB.family('spirit', { anatomy: 'spirit (generic veil; unused by the current bestiary): a round head that swells and stretches, a streaming tail', palette: 'veil from artOpts.col (default #e8e4ff), translucent tail' });
+  CB.family('hush', { anatomy: 'cloth / spirit veil, turned toward the party: the hood peaked forward with the ring face set to the near side, the near side full and the far side foreshortened; folds with lit ridges and hard shadows that open below the hood; the hem lags (the far side trails longer); a sleeve fold that reaches; one hem strip that lengthens', palette: 'veil #262050-#fffcf0 (7, violet shadows, warm white ridges; translucent toward the hem at alpha 180 / 100), lacquer ring #08061a-#4a4678, void #05040e-#2a2050, blank scraps #5a5470-#fbf8f0; coloured outlines; cool rim #a8e4ff' });
+  CB.family('spirit', { anatomy: 'spirit (generic veil; unused by the current bestiary): a round head lit from the upper left, turned a little toward the party, that swells and stretches; a streaming tail', palette: 'veil ramp from artOpts.col (default #e8e4ff, 6 tones), translucent tail; coloured outline; cool rim' });
 })();

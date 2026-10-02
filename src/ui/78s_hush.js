@@ -301,5 +301,5 @@ var RB = (globalThis.RB = globalThis.RB || {});
     parts: [{ at: 0, act: 'cast:charge', d: 760 }, { at: 760, act: 'recover:charge', d: 440 }],
   }));
 
-  CB.family('sa_hush', { anatomy: 'abstract boss: a hollow that swells and contracts, a ring eye that narrows and shuts, eighteen pages on two orbits that leave to form a lance, a fan, a pane, a vortex, a knot-stitch, a scatter, and return', palette: 'core #0a0a14, indigo #282846, edge #44466a in three stepped opacities (no dither), eye #f0ecff, pages #eeeae0 / #cfcadf (blank, amber, frost and ink tints for the borrowed moves)' });
+  CB.family('sa_hush', { anatomy: 'abstract boss: a hollow whose thick rim is lit on its upper left (a funnel turned toward the party, its throat set to the near side), a luminous ring eye that narrows and shuts, eighteen pages on two orbits (the far ones fainter) that leave to form a lance, a fan, a pane, a vortex, a knot-stitch, a scatter, and return', palette: 'indigo #06050e-#7070a8 (6; ember #1a0806-#ffb860 when it smoulders), stepped edge rings at alpha 200 / 140 / 80, eye #6a66a8-#ffffff (warm when it burns), pages as lit sheets (pale #3a3660-#fffcf2; blank, amber, frost and ink ramps for the borrowed moves); coloured outlines; cool rim #9ab8ff' });
 })();

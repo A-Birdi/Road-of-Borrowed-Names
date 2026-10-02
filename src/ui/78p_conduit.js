@@ -217,5 +217,5 @@ var RB = (globalThis.RB = globalThis.RB || {});
     parts: [{ at: 0, act: 'prep:sweep', d: 420 }, { at: 420, act: 'recover:sweep', d: 780 }],
   }));
 
-  CB.family('lf_conduit', { anatomy: 'pipe (fluid): a fixed base plate, a body that bends from the base, collars at the joints, an aiming spout with a hinged valve lid; pressure climbs from the base; spray, drips and a puddle as residue', palette: 'iron #3a3850 (6 steps) with #5a5878 lights, rust #8a5a40, spirit light from artOpts.col #8a90c8, water mixed toward #cfe0ff' });
+  CB.family('lf_conduit', { anatomy: 'pipe (fluid): a bolted base slab seen from above, a body that bends from the base in banded runs, flanged collars with bolts at the joints, a flared spout seen from a little above with its dark mouth and lit eyes, a hinged valve lid; pressure climbs from the base; spray, drips and a puddle as residue', palette: 'blued iron #0c0a20-#e6e8f8 (7, hard metal bands with a specular streak), rust #3a1418-#e8904a in tapering streaks, spirit light from artOpts.col #8a90c8 (4), water mixed toward #9ad0ff (translucent); coloured outlines; cool rim #86b4f0' });
 })();
