@@ -14,7 +14,8 @@ RB.ui.practiceIndex = (function () {
     try { available = d.available ? !!d.available(s) : true; } catch (e) { available = false; }
     try { here = available && d.here ? !!d.here(s) : false; } catch (e) { here = false; }
     try { note = d.note ? d.note(s) || '' : ''; } catch (e) { note = ''; }
-    const safe = RB.activity ? RB.activity.safe() : { ok: false };
+    // an activity that does not need the companion beside you (fishing) may give its own world check
+    const safe = d.safe ? d.safe(s) : RB.activity ? RB.activity.safe() : { ok: false };
     return { available, here, canBegin: here && safe.ok && !!d.begin, why: here && !safe.ok ? (safe.why === 'danger' ? 'Not with a creature close by.' : 'Not just now.') : '', note };
   }
 

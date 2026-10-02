@@ -145,7 +145,7 @@ RB.challenge = (function () {
             guide: step.copy ? Array.from(plain(step.answer))[0] : null,
             composeHost: line,
             onChange: () => { if (step.copy && pad) pad.setGuide(Array.from(plain(step.answer))[pad.text().length] || null); },
-            onAssist: (why) => { if (why !== 'model' || !step.copy) active.helpUsed = true; },
+            onAssist: (why) => { if (why !== 'model' || !step.copy) active.helpUsed = true; if (why === 'correction') res.recogRepairs = (res.recogRepairs || 0) + 1; },
             modelFor: () => Array.from(plain(step.answer))[pad ? Math.min(pad.text().length, Array.from(plain(step.answer)).length - 1) : 0],
           });
         },
@@ -336,13 +336,32 @@ RB.challenge = (function () {
             '<p>This doesn\'t count against you. Your answer reads <span class="jp big" lang="ja">' + ownText(text) + '</span> — if you meant something else, tap it to rewrite it, or use the chart.</p>');
           return;
         }
+        // opts.wrongNote(text): real Japanese for another action this task doesn't support here (explained as such)
+        const note = opts.wrongNote ? opts.wrongNote(text, modeUsed) : null;
+        if (note && note.length) r.feedback = note;
+        const firstWas = res.firstTry;
         res.mistakes++;
         if (res.firstTry == null) res.firstTry = false;
         RB.audio && RB.audio.sfx('answer_wrong');
         const msgs = (r.feedback || []).map((f) => '<div class="fb-why">' + (f.jp && !/\{[^|}]+\|/.test(f.en || '') ? RB.ui.jhtml(f.jp) + ' ' : '') + enRuby(f.en) + '</div>').join('') || '<div class="fb-why">That isn\'t what this needs.</div>';
         fb('no', 'Not quite.', '<p>You gave <span class="jp big" lang="ja">' + ownText(plain(text)) + '</span>.</p>' + msgs + '<p class="muted small">Try again — take all the time you need.</p>');
+        // opts.misread: "That is not what I wrote" — the pad misread you; that is not a mistake in Japanese
+        // (the mistake is withdrawn, the strokes stay so a character can be rewritten)
+        if (opts.misread && modeUsed === 'hand') {
+          const w = wrap.querySelector('.fbwrap');
+          const mb = RB.ui.el('button', 'pbtn chal-misread', I('unsure') + '<span>That is not what I wrote</span>');
+          mb.setAttribute('data-a', 'misread');
+          mb.onclick = () => {
+            res.mistakes = Math.max(0, res.mistakes - 1);
+            res.firstTry = firstWas;
+            res.misreads = (res.misreads || 0) + 1;
+            fb('unsure', 'The pad misread it',
+              '<p>This doesn\'t count against you. Tap the character it got wrong in your answer to write it again (or use the chart), then submit.</p>');
+          };
+          w.appendChild(mb);
+        }
         if (opts.onMistake) opts.onMistake(r);
-        if (pad && modeUsed === 'hand') pad.reset();
+        if (pad && modeUsed === 'hand' && !opts.misread) pad.reset();
       }
       function evaluateChoice(o, btn) {
         if (o.ok) { btn.classList.add('on'); success('choice'); return; }
@@ -380,6 +399,7 @@ RB.challenge = (function () {
       function revealAnswer() {
         active.helpUsed = true;
         res.assisted = true;
+        res.revealed = true;
         let ans = '';
         if (step.kind === 'write') ans = plain(step.answer);
         if (step.kind === 'choose') ans = (step.options.find((o) => o.ok) || {}).en || (step.options.find((o) => o.ok) || {}).jp || '';
