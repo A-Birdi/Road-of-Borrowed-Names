@@ -64,7 +64,9 @@ export async function companionTurn(p, o) {
       // (the menu ignores presses in its first moments: a deliberate choice comes after that)
       await p.waitForTimeout(o.delay != null ? o.delay : 320);
       // the first time, a short note explains the companion's turn: read it, then "Got it"
-      if (await p.evaluate(() => !!document.querySelector('[data-coach-ok]'))) { await p.click('[data-coach-ok]'); await p.waitForTimeout(80); }
+      // (the pointer is moved off first: left where Continue was, it can rest on a keyword — on a phone the
+      // Harmony band — whose hover note then covers "Got it"; the note closes 250 ms after the pointer leaves)
+      if (await p.evaluate(() => !!document.querySelector('[data-coach-ok]'))) { await p.mouse.move(2, 2); await p.waitForTimeout(300); await p.click('[data-coach-ok]'); await p.waitForTimeout(80); }
       const sel = await p.evaluate((o) => {
         const cs = [...document.querySelectorAll('.ccard:not([disabled])')];
         const c = o.pick != null ? cs.find((x) => x.getAttribute('data-a') === String(o.pick)) : o.match ? cs.find((x) => new RegExp(o.match, 'i').test(x.textContent.replace(/\s+/g, ' '))) : cs[0];
