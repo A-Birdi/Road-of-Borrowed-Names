@@ -195,6 +195,131 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }
   };
 
+  // the creature's own colour (its palette), for effects that carry its material
+  function colOf(i, fallback) { const e = enemyAt(i); return (e && e.artOpts && e.artOpts.col) || fallback || '#c8d4e0'; }
+  // a wisp's dart: sparks of its light left hanging along the path, fading
+  fx.wispTrail = function (c, e, k, Ah, t, still) {
+    if (still) return;
+    const u = Ah.u, o = Ah.pt('foe', 'core'), col = colOf(e.p.foe, '#cfe8ff');
+    for (let i = 0; i < 9; i++) {
+      const s = seg(k, i * 0.06, i * 0.06 + 0.5);
+      if (s <= 0 || s >= 1) continue;
+      const x = o.x + (14 + i * 4) * u + Math.sin(i * 2.1) * 4 * u, y = o.y - (6 - i) * u + Math.cos(i * 1.7) * 3 * u;
+      R(c, x - u, y - u, 2 * u, 2 * u, i % 3 ? col : '#ffffff', 0.85 * (1 - s));
+    }
+  };
+  // an echo's volley: its shards fly out on slightly different arcs and arrive together at contact
+  // (at the seal in front of the target when a ward meets them)
+  fx.shardVolley = function (c, e, k, Ah, t, still) {
+    if (still) return;
+    const u = Ah.u, a = Ah.pt('foe', 'core'), ch = Ah.pt(e.p.to || 'pc', 'chest'), col = e.p.col || colOf(e.p.foe, '#a8c8d8');
+    let bx = ch.x, by = ch.y;
+    if (e.p.seal) { const r = Ah.wardR; bx += Math.cos(-Math.PI * 0.25) * r; by += Math.sin(-Math.PI * 0.25) * r * 0.9; }
+    const fly = seg(k, 0, 0.85);
+    for (let i = 0; i < 6; i++) {
+      const s = ease(clamp01(fly * 1.05 - i * 0.03)), bend = (i - 2.5) * 10 * u;
+      const mx = (a.x + bx) / 2 - bend * 0.6, my = (a.y + by) / 2 - 20 * u + bend;
+      const x = (1 - s) * (1 - s) * a.x + 2 * s * (1 - s) * mx + s * s * bx, y = (1 - s) * (1 - s) * a.y + 2 * s * (1 - s) * my + s * s * by;
+      const al = k < 0.85 ? 1 : 1 - seg(k, 0.85, 1);
+      R(c, x - 2 * u, y - u, 4 * u, 2 * u, '#1c2a34', al * 0.8);
+      R(c, x - 2 * u + u, y - u, 2 * u, u, col, al);
+    }
+  };
+  // rings travelling out from an echo (its Heat: warm and quick; its Plea: soft)
+  fx.echoRings = function (c, e, k, Ah, t, still) {
+    const u = Ah.u, o = Ah.pt('foe', 'core'), col = e.p.warm ? '#f0a060' : colOf(e.p.foe, '#a8c8d8');
+    if (still) { c.globalAlpha = 0.5 * (1 - seg(k, 0.5, 1)); c.fillStyle = col; K().ring(c, o.x, o.y, Math.round(Ah.foeR * 1.1), u); c.globalAlpha = 1; return; }
+    for (let i = 0; i < 3; i++) {
+      const s = seg(k, i * 0.18, 0.6 + i * 0.13);
+      if (s <= 0 || s >= 1) continue;
+      c.globalAlpha = 0.7 * (1 - s); c.fillStyle = col;
+      K().ring(c, o.x, o.y, Math.round(Ah.foeR * (0.8 + 1.3 * ease(s))), u);
+    }
+    c.globalAlpha = 1;
+  };
+
+  // where a blow lands: the target's chest, or the seal raised in front of it
+  function landAt(Ah, e) {
+    const ch = Ah.pt(e.p.to || 'pc', 'chest');
+    if (!e.p.seal) return { x: ch.x, y: ch.y };
+    const r = Ah.wardR;
+    return { x: ch.x + Math.cos(-Math.PI * 0.25) * r, y: ch.y + Math.sin(-Math.PI * 0.25) * r * 0.9 };
+  }
+  // a blot's lash: ink flicked off its tendril, bursting where it lands
+  fx.inkLash = function (c, e, k, Ah, t, still) {
+    const u = Ah.u, b = landAt(Ah, e), col = colOf(e.p.foe, '#2a2a44');
+    if (still) { disc(c, b.x, b.y, 6 * u, 4 * u, col, 0.8 * (1 - seg(k, 0.5, 1))); return; }
+    const a = Ah.pt('foe', 'core'), fly = seg(k, 0, 0.45), hit = seg(k, 0.45, 1);
+    if (fly < 1) for (let i = 0; i < 5; i++) {
+      const s = clamp01(fly - i * 0.05);
+      if (s <= 0) continue;
+      const x = a.x + (b.x - a.x) * ease(s), y = a.y + (b.y - a.y) * ease(s) - bell(s) * 16 * u;
+      R(c, x - u, y - u, 3 * u - i * 0.3 * u, 2 * u, i ? col : '#c8ccf0', 1);
+    }
+    if (hit > 0) for (let i = 0; i < 9; i++) {
+      const ang = -Math.PI * 0.1 - (i / 8) * Math.PI * 1.1, r = ease(hit) * (8 + hs(i, 4) * 12) * u;
+      disc(c, b.x + Math.cos(ang) * r, b.y + Math.sin(ang) * r * 0.8 + easeIn(hit) * 10 * u, (2 - hit) * u + u * 0.5, (1.5 - hit) * u + u * 0.5, i % 3 ? col : '#c8ccf0', 1 - hit);
+    }
+  };
+  // a blot's surge: a low wave of ink running along the ground under the party (or a hush ring)
+  fx.inkWave = function (c, e, k, Ah, t, still) {
+    if (still) return;
+    const u = Ah.u, f = Ah.pt('foe', 'base'), col = colOf(e.p.foe, '#2a2a44');
+    const who = e.p.who && e.p.who.length ? e.p.who : ['pc'];
+    const end = Ah.pt(who[who.length - 1], 'feet'), s = ease(k), fade = 1 - seg(k, 0.75, 1);
+    const x = f.x + (end.x - 30 * u - f.x) * s, y = f.y + (end.y - f.y) * s;
+    for (let i = 0; i < 7; i++) {
+      const xx = x + (i - 3) * 9 * u, h = (4 + 3 * Math.sin(i + k * 9)) * u * (e.p.hush ? 0.6 : 1);
+      disc(c, xx, y - h * 0.4, 8 * u, h, e.p.hush ? '#4a4870' : col, (e.p.hush ? 0.35 : 0.7) * fade);
+    }
+    if (!e.p.hush) for (let i = 0; i < 6; i++) R(c, x + (i - 3) * 11 * u, y - (8 + (i % 3) * 3) * u - bell(seg(k, i * 0.05, 0.8)) * 6 * u, 2 * u, u, '#c8ccf0', 0.8 * fade);
+  };
+  // a crab's claw snapping shut at its target: two closing arcs and chips of shell-grit
+  fx.clawSnap = function (c, e, k, Ah, t, still) {
+    const u = Ah.u, b = landAt(Ah, e);
+    if (still) { R(c, b.x - 5 * u, b.y - u, 10 * u, 2 * u, '#f0e0c8', 0.8 * (1 - seg(k, 0.5, 1))); return; }
+    const sh = 1 - ease(seg(k, 0, 0.3)), fade = 1 - seg(k, 0.4, 1);
+    for (const sgn of [-1, 1]) for (let i = 0; i < 5; i++) {
+      const a = sgn * (0.5 + sh * 0.9) + (i - 2) * 0.12;
+      R(c, b.x + 10 * u - Math.cos(a) * 12 * u, b.y + Math.sin(a) * 10 * u, 2 * u, 2 * u, '#f0e0c8', fade);
+    }
+    for (let i = 0; i < 6; i++) { const r = ease(seg(k, 0.25, 1)) * (8 + hs(i, 3) * 10) * u, a = -Math.PI * 0.2 - i * 0.5; R(c, b.x + Math.cos(a) * r, b.y + Math.sin(a) * r + easeIn(seg(k, 0.25, 1)) * 8 * u, u, u, '#d8c0a0', 1 - seg(k, 0.3, 1)); }
+  };
+  // water (or the Ledger Heap's ink-wash) rolling across the party from the creature's side
+  fx.tideWash = function (c, e, k, Ah, t, still) {
+    const u = Ah.u, who = e.p.who && e.p.who.length ? e.p.who : ['pc'];
+    const cols = e.p.ink ? ['#3a4a6a', '#8aa0c0', '#e8e0cc'] : ['#4a88c0', '#8cc8f0', '#e8f6ff'];
+    if (still) { for (const w of who) { const o = Ah.pt(w, 'feet'); disc(c, o.x, o.y - 4 * u, 16 * u, 4 * u, cols[1], 0.6 * (1 - seg(k, 0.6, 1))); } return; }
+    const f = Ah.pt('foe', 'base'), last = Ah.pt(who[who.length - 1], 'feet'), s = ease(seg(k, 0, 0.8)), fade = 1 - seg(k, 0.75, 1);
+    const front = f.x + (last.x - 40 * u - f.x) * s, y0 = f.y + (last.y - f.y) * s;
+    for (let i = 0; i < 9; i++) {
+      const x = front + i * 12 * u, crest = (10 + 6 * Math.sin(i * 1.3 + k * 10)) * u * (1 - i / 12);
+      disc(c, x, y0 - crest * 0.5, 9 * u, crest, cols[0], 0.75 * fade);
+      disc(c, x - 2 * u, y0 - crest * 0.9, 6 * u, crest * 0.45, cols[1], 0.85 * fade);
+      R(c, x - 3 * u, y0 - crest * 1.3, 4 * u, u, cols[2], fade);
+    }
+    for (let i = 0; i < 8; i++) { const x = front + (hs(i, 2) - 0.2) * 30 * u, y = y0 - (16 + hs(i, 3) * 20) * u * bell(seg(k, 0.1 + i * 0.04, 0.9)); R(c, x, y, 2 * u, 2 * u, cols[2], 0.9 * fade); }
+  };
+  // a golem's blow: stone dust and grit thrown up where it lands
+  fx.stoneDust = function (c, e, k, Ah, t, still) {
+    const u = Ah.u, b = landAt(Ah, e), col = colOf(e.p.foe, '#9a9a7a');
+    if (still) { disc(c, b.x, b.y, 10 * u, 5 * u, '#b8b0a0', 0.6 * (1 - seg(k, 0.5, 1))); return; }
+    for (let i = 0; i < 5; i++) disc(c, b.x + (i - 2) * 7 * u, b.y + 4 * u - ease(k) * (6 + i % 3 * 4) * u, (4 + 6 * ease(k)) * u, (3 + 3 * ease(k)) * u, '#c8c0b0', 0.45 * (1 - k));
+    for (let i = 0; i < 8; i++) { const a = -Math.PI * 0.15 - i * 0.36, r = ease(k) * (10 + hs(i, 5) * 14) * u; R(c, b.x + Math.cos(a) * r, b.y + Math.sin(a) * r * 0.7 + easeIn(k) * 14 * u, 2 * u, 2 * u, i % 2 ? col : '#5a564a', 1 - k); }
+  };
+  // ice: shards of frost flying from the creature to one target
+  fx.iceShard = function (c, e, k, Ah, t, still) {
+    if (still) return;
+    const u = Ah.u, a = Ah.pt('foe', 'core'), b = Ah.pt(e.p.to || 'pc', 'chest');
+    for (let i = 0; i < 4; i++) {
+      const s = ease(clamp01(seg(k, i * 0.06, 0.85 + i * 0.03)));
+      if (s <= 0 || s >= 1) continue;
+      const x = a.x + (b.x - a.x) * s + (i - 1.5) * 4 * u, y = a.y + (b.y - a.y) * s - bell(s) * (6 + i * 3) * u;
+      R(c, x - 3 * u, y - u, 6 * u, 2 * u, '#c8e4f8', 1);
+      R(c, x - 2 * u, y - u, 3 * u, u, '#ffffff', 1);
+    }
+  };
+
   // ---- prewarm --------------------------------------------------------------------------------
   // The acts a creature will need (its moves' frame sets, then the reactions), built in idle slices
   // after its first frame appears in a battle. Bounded: at most PREWARM_CAP frames per creature,

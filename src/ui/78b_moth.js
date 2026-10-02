@@ -215,7 +215,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       T(lg).scale(s, 1); legs(lg, M, q.legs, q.grip, [aim[0] * s, aim[1]], s); lg.restore();
     }
     T(bod); body(bod, M, q); eyes(bod, M, q.eye, q.look); bod.restore();
-    hind.outline(); fore.outline(); lg.outline(); bod.outline();
+    A.outline(hind); A.outline(fore); A.outline(lg); A.outline(bod);
     const out = hind.over(fore).over(lg).over(bod);
     if (q.dust > 0) { const dl = L.like(); dust(dl, M, margin, q.dust, q.dk || 'flour', (fi | 0) * 5 + (act ? act.length : 0)); out.over(dl); }
     return out;

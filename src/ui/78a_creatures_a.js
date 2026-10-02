@@ -111,6 +111,77 @@ RB.creaturesA = (function () {
     return { pts, inside, fill: (L, M, sh) => L.fill(x0, y0, x1, y1, inside, M, sh) };
   }
 
+  // stone(L, pts, M, o): the same dressed-stone shading as L.stone (pxkit), on the precompiled
+  // polygon test — used for the many stones a posed golem, crab or clerk frame redraws.
+  function stone(L, pts, M, o) {
+    o = o || {};
+    const face = o.face == null ? 2 : o.face, bev = o.bevel == null ? 3 : o.bevel, n = M.n;
+    const m = pts.length, ax = new Float64Array(m), ay = new Float64Array(m), dxs = new Float64Array(m), dys = new Float64Array(m), l2 = new Float64Array(m), lit = new Float64Array(m);
+    let cx = 0, cy = 0;
+    for (const p of pts) { cx += p[0] / m; cy += p[1] / m; }
+    const T = L.T;
+    for (let i = 0; i < m; i++) {
+      const a = pts[i], b = pts[(i + 1) % m];
+      ax[i] = a[0]; ay[i] = a[1]; dxs[i] = b[0] - a[0]; dys[i] = b[1] - a[1]; l2[i] = dxs[i] * dxs[i] + dys[i] * dys[i] || 1;
+      let nx = b[1] - a[1], ny = a[0] - b[0];
+      const len = Math.hypot(nx, ny) || 1;
+      nx /= len; ny /= len;
+      if ((a[0] - cx) * nx + (a[1] - cy) * ny < 0) { nx = -nx; ny = -ny; }
+      let wx = T[0] * nx + T[2] * ny, wy = T[1] * nx + T[3] * ny;
+      const wl = Math.hypot(wx, wy) || 1;
+      wx /= wl; wy /= wl;
+      lit[i] = -(wx * 0.62 + wy * 0.78);
+    }
+    const P = poly(pts);
+    return P.fill(L, M, (x, y) => {
+      let best = 1e9, e = -1;
+      for (let i = 0; i < m; i++) {
+        let t = ((x - ax[i]) * dxs[i] + (y - ay[i]) * dys[i]) / l2[i];
+        t = t < 0 ? 0 : t > 1 ? 1 : t;
+        const ex = ax[i] + dxs[i] * t - x, ey = ay[i] + dys[i] * t - y, d = ex * ex + ey * ey;
+        if (d < best) { best = d; e = i; }
+      }
+      best = Math.sqrt(best);
+      let k = face;
+      if (best < bev && e >= 0) k = face + (lit[e] > 0.35 ? 2 : lit[e] > -0.2 ? 1 : lit[e] > -0.7 ? -1 : -2);
+      if (o.seam !== false && best < 1.1 && e >= 0 && lit[e] < -0.2) k = 0;
+      return ((k < 0 ? 0 : k > n - 1 ? n - 1 : k) + 0.5) / n;
+    });
+  }
+
+  // outline(L): the same selective outline as L.outline() (pxkit), scanning only the rows and
+  // columns that hold pixels (a posed frame's canvas is mostly empty)
+  function outline(L) {
+    const { w, h, px, mt } = L, MATS = K.MATS;
+    let x0 = w, x1 = -1, y0 = h, y1 = -1;
+    for (let y = 0; y < h; y++) {
+      const r = y * w;
+      for (let x = 0; x < w; x++) if (px[r + x] >>> 24) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; y1 = y; }
+    }
+    if (x1 < 0) return L;
+    x0 = Math.max(0, x0 - 1); x1 = Math.min(w - 1, x1 + 1); y0 = Math.max(0, y0 - 1); y1 = Math.min(h - 1, y1 + 1);
+    const out = px.slice(), omt = mt.slice();
+    for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) {
+      const i = y * w + x;
+      if (px[i] >>> 24) continue;
+      let dark = 0, lit = 0, m = 0;
+      const chk = (j, isLit) => {
+        if (!(px[j] >>> 24)) return;
+        const M = MATS[mt[j]];
+        if (!M || !M.line) return;
+        if (isLit) { if (!lit) { lit = M.lineLit; m = m || M.id; } } else if (!dark) { dark = M.line; m = M.id; }
+      };
+      if (x + 1 < w) chk(i + 1, true);
+      if (y + 1 < h) chk(i + w, true);
+      if (x > 0) chk(i - 1, false);
+      if (y > 0) chk(i - w, false);
+      const col = dark || lit;
+      if (col) { out[i] = col; omt[i] = m; }
+    }
+    L.px = out; L.mt = omt;
+    return L;
+  }
+
   // ---- 3. choreography helpers ---------------------------------------------------------------
   const queue = [];
   function deliver(art, kinds, fn) { for (const k of [].concat(kinds)) queue.push([art, k, fn]); }
@@ -150,6 +221,6 @@ RB.creaturesA = (function () {
 
   // (onBuilt: set by 84a — the first idle frame of a creature built in a battle schedules the
   // prewarm of its action frames)
-  const api = { FAMILIES, resolve, style, q, side, lerp, family, poly, deliver, queue, outcome, kit, audit, auditFamily, auditEnemy, K, onBuilt: null };
+  const api = { FAMILIES, resolve, style, q, side, lerp, family, poly, stone, outline, deliver, queue, outcome, kit, audit, auditFamily, auditEnemy, K, onBuilt: null };
   return api;
 })();
