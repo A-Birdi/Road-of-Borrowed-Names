@@ -1160,10 +1160,13 @@ checked on the merged build before the next (VALIDATION entries in each area's r
 Every run below was in headless Chromium on Linux (Playwright) with synthetic campaigns in fresh
 profiles; no player save was used. The machine was shared with other runs (load average 3–8 on 4 cores).
 - **Build identities.** `ba3f4cb` (all five merges): `index.html` 8,850,097 bytes, sha256
-  `e039152a7510f798…`. **Final** (this entry's commit: ba3f4cb + the fixes below): `index.html` 8,852,108 bytes, sha256 `a6a8f20d729d976b…` (built in a scratch copy of this source; the committed `index.html` is rebuilt after the default suite, which runs against ba3f4cb's, has finished).
+  `e039152a7510f798…`. **Final** (ba3f4cb + the fixes below; committed with this entry's last update): `index.html`
+  8,852,108 bytes, 2,700,153 gzip -9, sha256 `a6a8f20d729d976b…` — byte-identical to the build the
+  final-build runs below used (built from the same source in a scratch copy). Growth over Phase B's
+  b5202fc6: +650,656 bytes raw (the five art areas).
 - **Validator:** no errors (final source).
 - **U Unit** (`node tests/run-unit.mjs`): **15,334 passed, 0 failed** on ba3f4cb's source with
-  `cacheStats()`; on the final source: running at this commit (recorded in the next).
+  `cacheStats()`; on the final source **15,334 passed, 0 failed**.
 - **Merges, each on its merged build:** pets / overworld — battle_pets_overworld 3/3, pets 20/20;
   backdrops — battle_backdrops 38/38, backdrops 61/61, encounters ok; creatures B — battle_creatures_b
   25/25; party — battle_party 14/14, battle_anim 16/16, characters 23/23; creatures A — its browser test
@@ -1204,13 +1207,18 @@ profiles; no player save was used. The machine was shared with other runs (load 
 - **B Long session** (`battle_cycle.mjs`): 20 battle entries and exits — on ba3f4cb's build listeners
   101 → 101, DOM nodes 247 → 245 from battle 5 to 20; on the final build listeners 101 → 101, nodes
   247 → 245 (the banner's scroll listener and the resize hold are removed with the battle).
-- **B Memory budget** (`battle_budget.mjs`, §21.5; ba3f4cb + `cacheStats()`): one page, 30 encounters
+- **B Memory budget** (`battle_budget.mjs`, §21.5; first on ba3f4cb + `cacheStats()`): one page, 30 encounters
   (each of the 15 creature families alone and in threes, every companion and pet in turn, one exchange
   each, Step back): largest estimated residency **37.12 MiB** after three Snow Foxes with Nao and the
   cat (party 4.38 MiB in 138 frames, creatures 28.89 MiB in 140 frames — the shared cache's cap — pets
   3.85 MiB in 415 frames), under the 48 MiB budget; no encounter failed. Caps: party 22.85 MiB, creature
   cache 140 frames, pet cache 900 frames. These are pixel estimates (w × h × 4 per cached frame), not
-  measured process memory; backdrop layers are reported by battle_backdrops.
+  measured process memory; backdrop layers are reported by battle_backdrops. On the final build:
+  30/30 encounters, largest **37.05 MiB** (again after three Snow Foxes with Nao and the cat: party 4.38,
+  creatures 28.92, pets 3.75). A first final-build run measured 35.1 MiB but lost 17 encounters to the
+  test: the 14th drew a task whose right option it did not recognise, the option it pressed left the
+  step waiting, and each later encounter began with that task open; the test now ends such a step with
+  "I don't know" and leaves an open task after a failure.
 - **B Recordings** (`battle_presentation_video.mjs`, final build): five real-time clips (VP8, no sound) of one exchange in
   the Mill — Unravel answered right with real clicks at an unhurried pace, Mio's Warm draught, the Flour
   Moth's move — a diagnostic placement of the party in the Mill: `normal_1280.webm` 19.2 s,
@@ -1221,7 +1229,17 @@ profiles; no player save was used. The machine was shared with other runs (load 
   banner, the creature's red banner. In `docs/screenshots/battle/presentation/`; durations read in
   Chromium.
 - **B Default suite** (`node tests/e2e/run.mjs`, on ba3f4cb's build with the working tree's tests):
-  running at this commit; recorded in the next commit.
+  **63/65 scripts passed**, including the whole-game run (`pursue.mjs E mio`, Chapters 1–6 and the first
+  Atlas restoration, 1,002 s), every story chapter, the practice and wordplay scripts, the art areas'
+  battle scripts and the 20-battle cleanup. The two that failed, with their cause:
+  - battle_presentation: its new "large text on a phone" test ran against ba3f4cb's build, which does
+    not have the fix it checks (the other nine passed).
+  - companion_turn: a press measured while the menus slid back in missed the card (the test now
+    waits for the card to settle).
+  Both rerun on the final build in this checkout: battle_presentation **10/10**, companion_turn **4/4**.
+  Side effects of the run that were not kept: several scripts rewrite their captures in
+  `docs/screenshots/` (quest_guide, words, pages) or leave PNG working files (practice_a); those were
+  restored or removed, so the committed captures are unchanged.
 - **Not verified:** Firefox (Robin's browser), Safari, a real phone or the foldable; the art by a
   person (every rubric is a self-review); a native speaker's review; frame rate on named hardware
   (headless playback and video cadence are not frame-rate measurements).

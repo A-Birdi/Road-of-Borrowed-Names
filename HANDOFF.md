@@ -47,6 +47,12 @@
   whole-game run; layout audit 536/536 (English, 8 viewports) and 201/201
   (Japanese, 3); whole-game matrix 16/16. Earlier milestones and dates are in
   VALIDATION.md.
+- Since 2026-10-02 also the **Practice addendum** and the **Battle addendum**, both
+  complete on this branch (sections below). Latest checks (VALIDATION.md "Battle addendum —
+  Phase F"): validator no errors; unit 15,334/0; `node tests/e2e/run.mjs` 63/65 on the merged
+  build (the two explained and passing on the final build), including a whole-game run; battle
+  geometry, invariance, 20-battle cleanup and memory budget on the final build. The full-game
+  matrix with both addenda is the next step.
 - Test tooling: tests/e2e/drive.mjs (goal-directed driver: walks real maps,
   interacts through the world), pursue.mjs (whole game), matrix.mjs,
   run.mjs (suite runner), explore.mjs (random explorer, weaker).
