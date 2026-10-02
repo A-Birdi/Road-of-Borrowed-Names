@@ -332,6 +332,16 @@ Evidence kinds as in COVERAGE.md: U unit, B browser (headless Chromium), V looke
 - [v] D12 Integration of the six slices (one memory per meeting, the pets' rest option, the Pages panel on the Companion page, keepsake display once, case topics in Company). Evidence: B company_pets, addendum_integration, company, pages_ending; COVERAGE.md "Integration work".
 - [b] D13 Not verified: human play (fairness and fun of puzzles and cases, whether companions feel like people), native-speaker review of the new Japanese, Firefox, Safari, real phones, audible Japanese voice.
 
+## Roadside Practice, A Quiet Cast, Companion Shiritori (owner's addendum of 2026-10-02; docs/practice/COVERAGE.md; VALIDATION.md "Practice addendum — integrated validation")
+- [v] PA1 One foreground activity at a time through `RB.activity`; every way out returns the game to a valid state; a campaign change disposes the session. Evidence: U practice core; B practice_b, practice_a_lamps, wordplay (campaign change mid-session).
+- [v] PA2 Fishing at three sites with nine fish, untimed by default; the only clock in the game is fishing's optional response entry (off by default; Gentle keeps the fish on expiry). Evidence: U `pace_noclock`, `fishing`; B fishing, pace. docs/practice/fishing.md, pace.md.
+- [v] PA3 Shiritori house rules, three certified banks, searching opponents; audits and the 3,600-game benchmark unchanged on the integrated build. Evidence: U wordplay, shiritori_ai; benchmark rerun (be4c98c). docs/practice/shiritori_engine.md, shiritori_bench.md.
+- [v] PA4 The shiritori table, records, the Company card and the two Bond events (Bond values and cap unchanged). Evidence: U `wordplay_bond`; B wordplay, wordplay_layout; recording docs/screenshots/wordplay/wordplay_match.webm. docs/practice/wordplay.md.
+- [v] PA5 Lantern tending, the copying desk and Practice mementos. Evidence: B practice_a_lamps, practice_a_desk, practice_a_layout. docs/practice/suite_a.md.
+- [v] PA6 Villagers' letters, the Proofreader's Tray and comparisons, from the post box in Shino's Post House. Evidence: B practice_b. docs/practice/suite_b.md.
+- [v] PA7 Integration: default suite 57/58 on 25fab16; the whole-game run, stopped by a gap in the test player (a practice activity opened from a scene), passes with the fix in src/engine/99_test.js. Evidence: VALIDATION.md.
+- [b] PA8 Not verified: human play, native-speaker review, real handwriting, Firefox, Safari, real phones and the foldable, fish captions' sources.
+
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
 - R1.3/R14.x: tests/e2e/ui.mjs (IndexedDB probe, session-only banner under refusal, reload persistence, copy independence, delete, overwrite confirm, cross-tab read-only, pre-departure recovery, file:// mode).

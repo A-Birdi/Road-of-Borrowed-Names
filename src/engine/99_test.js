@@ -112,6 +112,14 @@ RB.test = (function () {
         T.log.push({ t: 'weave', targets: RB.weave.state().targets });
         RB.weave.close();
       }
+      // a practice activity chosen in a scene (the post box's proofreader's tray, say) starts once
+      // the scene ends: the automated player looks at it and leaves with Back, as a person would
+      // (the practice itself is tests/e2e/practice_*.mjs, fishing.mjs and wordplay.mjs's work)
+      if (!RB.script.isRunning() && RB.game.mode() === 'activity' && RB.activity && RB.activity.active()) {
+        const a = RB.activity.active();
+        if (T._act !== a.id) { T._act = a.id; T.log.push({ t: 'activity', kind: a.kind }); }
+        if ((a.state === 'active' || a.state === 'result') && Date.now() - (T._actAt || 0) > 400) { T._actAt = Date.now(); RB.ui.onAction('cancel'); }
+      }
       await wait(25);
     }
     throw new Error('timeout waiting for idle (mode ' + RB.game.mode() + ')');

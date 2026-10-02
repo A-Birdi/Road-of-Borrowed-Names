@@ -216,21 +216,40 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
   rebuilt from verified flags only); nothing is deleted and no New Game is
   needed. No export/import was added.
 
-## Practice, Fishing and Shiritori addendum (owner's brief of 2026-10-02) — IN PROGRESS
-- Phase A foundation done and pushed (c86d615): `s.practice`, the one-session activity
-  controller, the learning adapter and cooldowns, Words › Ways to practise, the Company
-  section hook, Practice mementos registry, device settings, the shiritori rules core,
-  provisional seams for the pace clock and the opponents. Contract: docs/PRACTICE_CONTRACTS.md.
-- Phases B–F are being built by six workers in separate worktrees, each writing
-  docs/practice/<area>.md:
-  - fishing (untimed presentation, sites, fish, 72 task variants, catalogue, mementos);
-  - pace (the optional fishing clock and calibration);
-  - shiritori engine (banks, audits, opponents, 3,600-game benchmark);
-  - wordplay (table, records, Company card, the two bond events, reflection, dialogue);
-  - suite A (lantern tending, writing desk, Practice mementos page);
-  - suite B (letters, proofreading, comparisons).
-- Phase G (merge, wire fishing to the real pace module, integrated validation, evidence,
-  REQUIREMENTS/VALIDATION) follows. Nothing beyond the foundation is merged yet.
+## Practice, Fishing and Shiritori addendum (owner's brief of 2026-10-02) — complete on this branch; REQUIREMENTS.md PA1–PA8, VALIDATION.md "Practice addendum — integrated validation", docs/practice/COVERAGE.md
+- Foundation (c86d615): `s.practice`, the one-session activity controller (`RB.activity`,
+  src/engine/09_activity.js), the learning adapter and cooldowns, Words › Ways to practise, the
+  Company hook, Practice mementos, device settings, the shiritori rules core. Contract:
+  docs/PRACTICE_CONTRACTS.md.
+- Merged (Phase G): shiritori engine (banks, audits, opponents, benchmark), the fishing pace clock
+  (the only clock in the game, off by default), suite B (letters, proofreading, comparisons; the
+  post box in Shino's Post House), the shiritori table and wordplay (records, Company card, the two
+  Bond events), suite A (lantern tending, the copying desk, Practice mementos), fishing (three sites,
+  nine fish, the stage, notes). Each area's record: docs/practice/<area>.md.
+- Checked on the integrated build: unit 7987/0; default suite 57/58, the one failure a gap in the test
+  player (a practice activity opened from a scene), fixed in src/engine/99_test.js, after which the
+  whole-game run passed. Audits and the 3,600-game benchmark unchanged.
+- Not verified: human play, native review, real handwriting, Firefox/Safari/devices, fish captions.
+
+## Battle art, adaptive combat UI and playtest repairs addendum (owner's brief of 2026-10-02) — IN PROGRESS; REQUIREMENTS.md BA1–BA12, docs/BATTLE_ART_CONTRACTS.md, docs/battle/
+- Phase A (32edf8c, 982c8df): playtest repairs RBN-01 (target-aware tap-to-interact, 50_world.js),
+  RBN-02 (prompts name the script they accept; validator check), RBN-04 (truthful heal lines),
+  RBN-05 (neutral letter lead), RBN-07 (guided gears example); the art seams (authored creature
+  poses, creature travel, `RB.battleSeq.addDelivery`, the effect registry), the shared contracts and
+  the battle-content inventory (docs/battle/INVENTORY.md).
+- Phase B (integrator, docs/battle/PRESENTATION.md): Battle animations Normal / Fast / Instant
+  independent of Text speed; the current-action banner (src/ui/82b_battle_banner.js); per-creature
+  intent badges and the inspector, Adaptive / Expanded intent display, reading-critical moves named
+  neutrally with their wording kept in view (src/ui/82c_battle_intents.js, 80_combat.js); menus that
+  withdraw on commitment, inert while away, Keep visible; Skip; fresh-press ownership and focus
+  return; Resolve and Harmony visible in every state (status inset on the language sheet; help sheets
+  rise above the party slip); portrait phones put the dock above the party slip. Measured: geometry at
+  the eight §22.2 viewports (docs/battle/GEOMETRY.md), rules invariance across presentation settings
+  (tests/e2e/battle_invariance.mjs), 20-battle cleanup (tests/e2e/battle_cycle.mjs).
+- Phases C–E run in five worker worktrees (party art; creatures A with the Flour Moth proof; creatures
+  B; contextual backdrops; pets in battle and overworld parity), each with docs/battle/<area>.md, to be
+  merged and wired by the integrator. Phase F (integrated validation, recordings, handoff) follows.
+- The owner's instruction: the full-game matrix waits until both addenda are complete.
 
 ## Commands
 - Build: `node tools/build.mjs`

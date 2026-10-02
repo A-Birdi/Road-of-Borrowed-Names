@@ -1054,3 +1054,37 @@ matrix is `docs/addendum/COVERAGE.md`, and each area's own record is in `docs/ad
     - Snowbell's tone-1 morning lines never play.
     - An arrival label or a toast can sit over the first choice for a few seconds while
       the dialogue box is at the top.
+
+## Practice addendum — integrated validation (Roadside Practice, A Quiet Cast, Companion Shiritori; owner's brief of 2026-10-02)
+All six areas are merged on the task branch: shiritori engine (da04afb), fishing pace (4e67a21), suite B
+(60d3c58), the shiritori table and wordplay (f388ffa), suite A (4913b5d) and fishing (25fab16). The
+section-by-section checklist with evidence classes, build identity and bundle growth is
+`docs/practice/COVERAGE.md`; each area keeps its record in `docs/practice/`. Every run below was in
+headless Chromium on Linux (Playwright), with synthetic campaigns in fresh browser profiles. No player
+save was used.
+- **Build identity:** `25fab16`, `index.html` 8,134,843 bytes (sha256 `406e8634a865d321…`); growth over
+  the practice base c86d615: +1.16 MiB raw, +327 KiB gzip (under the §23.7 review trigger of 1.5 MiB).
+- **U Unit** (`node tests/run-unit.mjs`, 25fab16): **7987 passed, 0 failed**.
+- **Shiritori audits and the 3,600-game benchmark** rerun at 25fab16: certification unchanged, the
+  benchmark summary identical, the live driver 0 fallbacks in 3,010 searched moves (be4c98c).
+- **B Default suite** (`node tests/e2e/run.mjs`, the 25fab16 build, 2026-10-02): **57/58 scripts passed**,
+  including every practice script (pace, practice_b, wordplay, wordplay_layout, practice_a_lamps,
+  practice_a_desk, practice_a_layout, fishing) and every earlier one.
+  - The failure was the whole-game run (`pursue.mjs E mio`): it stopped in Chapter 3 at Shino's Post
+    House, in mode `activity`. The automated player chose "Look at the proofreader's tray" at the new
+    post box (practice suite B), and the proofreading practice opened after the scene; the test player
+    had no rule for a practice activity and waited until its timeout.
+  - Cause: a gap in the test player (src/engine/99_test.js, inert unless a test enables it), not the
+    game. Back leaves the activity at once (checked for proofreading and comparisons; the other
+    practice kinds are not offered at that point).
+  - Fix: the test player now looks at an activity opened from a scene and leaves it with Back, as it
+    already does for the folio and the Weave sheet. With the fix the whole-game run finished Chapters
+    1–6 and the first Atlas restoration with no problems and no page errors (on the integrated build
+    plus the battle addendum's Phase B, in a separate worktree).
+  - For one minute during this suite a work-in-progress `index.html` replaced the 25fab16 build by
+    mistake (restored from git). Only `practice_a_layout.mjs` was running then; it passed, and it is
+    rerun on the final build (see the battle addendum's Phase B entry).
+- **Not verified:** human play of any activity (including the §7.6 pace pilot and the §23.8 questions),
+  a native speaker's review of the new Japanese, real handwriting, Firefox, Safari, real phones, the
+  foldable, a stylus, real software keyboards, and the fish captions' source check
+  (`docs/practice/COVERAGE.md`, "What is not verified").
