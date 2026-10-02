@@ -193,6 +193,8 @@ async function turn(p, how, o) {
     if (log.failed) { await typeWord(p, w.reading); how = 'ime(after a handwriting miss)'; }
   } else if (how === 'select') await chooseWord(p, w.id);
   else await typeWord(p, w.form);
+  // a form with two approved readings (工場) asks which reading: choose the one meant
+  if (await p.locator('.wp-dpick [data-wp-reading]').count()) { await p.locator('.wp-dpick [data-wp-reading="' + w.reading + '"]').click(); await p.waitForTimeout(60); }
   if (how === 'ime') await p.locator('#wp-ime').press('Enter');
   else await playWord(p);
   await until(p, (n) => { const a = window.__wp().active; return !a || a.n > n; }, before, 4000);
@@ -614,21 +616,43 @@ if (want('keyboard')) {
   await p.keyboard.press('Enter');
   await p.waitForSelector('.wp-table');
   await waitTurn(p);
-  // Tab to the Choose tab and a word, Enter on each, then Play word
-  const w = await p.evaluate(() => window.__pick({}));
   const tabTo = async (sel) => { for (let i = 0; i < 80; i++) { if (await p.evaluate((q) => document.activeElement && document.activeElement.matches(q), sel)) return true; await p.keyboard.press('Tab'); } return false; };
+  // reading disambiguation by keyboard alone: type 工場 (two approved readings), Enter asks which
+  // reading with focus on the choice; choosing one moves focus to Play word. No move is made.
+  assert(await tabTo('[data-wp-tab="ime"]'), 'keyboard: the Type tab is reachable');
+  await p.keyboard.press('Enter');
+  await until(p, () => document.activeElement && document.activeElement.id === 'wp-ime', null, 3000);
+  const n0 = (await st(p)).active.n;
+  await p.keyboard.insertText('工場');
+  await p.keyboard.press('Enter');
+  await until(p, () => document.activeElement && !!document.activeElement.dataset.wpReading, null, 3000);
+  const kr = await p.evaluate(() => ({ focus: document.activeElement.dataset.wpReading, all: Array.from(document.querySelectorAll('.wp-dpick [data-wp-reading]')).map((b) => b.dataset.wpReading).join(','), msg: document.querySelector('.wp-dmsg').textContent }));
+  assert(kr.focus === 'こうじょう' && kr.all === 'こうじょう,こうば' && /Which reading/.test(kr.msg), 'keyboard: a word with two approved readings asks which, focus on the choice (' + JSON.stringify(kr) + ')');
+  assert(await tabTo('[data-wp-reading="こうば"]'), 'keyboard: the second reading is reachable');
+  await p.keyboard.press('Enter');
+  await until(p, () => document.activeElement && document.activeElement.dataset.wp === 'play', null, 3000);
+  const kr2 = await p.evaluate(() => ({ focus: document.activeElement.dataset.wp, pressed: (document.querySelector('.wp-dpick [data-wp-reading="こうば"]') || {}).getAttribute && document.querySelector('.wp-dpick [data-wp-reading="こうば"]').getAttribute('aria-pressed'), line: document.querySelector('.wp-dmsg').textContent }));
+  assert(kr2.focus === 'play' && kr2.pressed === 'true' && /こうば/.test(kr2.line) && (await st(p)).active.n === n0, 'keyboard: choosing a reading moves focus to Play word and makes no move (' + JSON.stringify(kr2) + ')');
+  // Tab to the Choose tab and a word, Enter on each (and on its reading if it has two), then Play word
+  const w = await p.evaluate(() => window.__pick({}));
   assert(await tabTo('[data-wp-tab="select"]'), 'keyboard: the Choose tab is reachable');
   await p.keyboard.press('Enter');
   await p.waitForTimeout(80);
   assert(await tabTo('[data-wp-pick="' + w.id + '"]'), 'keyboard: a word in the bank is reachable');
   await p.keyboard.press('Enter');
   await p.waitForTimeout(80);
+  if (await p.evaluate((id) => RB.shiritori.readingsOf(RB.wordplay.live(RB.game.s).bank.entryById[id]).length > 1, w.id)) {
+    await until(p, () => document.activeElement && !!document.activeElement.dataset.wpReading, null, 3000);
+    assert(await tabTo('[data-wp-reading="' + w.reading + '"]'), 'keyboard: the chosen word asks for its reading first');
+    await p.keyboard.press('Enter');
+  }
   await until(p, () => document.activeElement && document.activeElement.dataset.wp === 'play', null, 3000);
   const focusPlay = await p.evaluate(() => document.activeElement && document.activeElement.dataset.wp);
   await p.keyboard.press('Enter');
   await until(p, () => window.__wp().active && window.__wp().active.n > 1, null, 6000);
   const kst = await st(p);
-  assert(focusPlay === 'play' && (!kst.active || kst.active.n > 1) && kst.recent.length + (kst.active ? 1 : 0) >= 1, 'keyboard: choosing a word moves focus to Play word; Enter plays it (' + focusPlay + ', ' + (kst.active ? kst.active.n : 'game over') + ')');
+  const kdiag = await p.evaluate(() => ({ ae: document.activeElement && (document.activeElement.dataset.wp || document.activeElement.tagName), top: RB.ui.topLayer() && RB.ui.topLayer().name, mode: RB.game.mode(), msg: (document.querySelector('.wp-dmsg') || {}).textContent, play: (document.querySelector('[data-wp=play]') || {}).disabled }));
+  assert(focusPlay === 'play' && (!kst.active || kst.active.n > 1) && kst.recent.length + (kst.active ? 1 : 0) >= 1, 'keyboard: choosing a word moves focus to Play word; Enter plays it (' + focusPlay + ', ' + (kst.active ? kst.active.n : 'game over') + ', ' + JSON.stringify(kdiag) + ')');
   // Escape opens Leave (keep / end / keep playing), safe choice focused
   await waitTurn(p);
   await p.keyboard.press('Escape');
@@ -655,7 +679,9 @@ if (want('touch')) {
   await p.locator('[data-wp-tab="select"]').tap();
   await p.locator('[data-wp-pick="' + w.id + '"]').scrollIntoViewIfNeeded();
   await p.locator('[data-wp-pick="' + w.id + '"]').tap();
-  await until(p, (r) => document.querySelector('.wp-dline').textContent.indexOf(r) >= 0, w.reading, 4000);
+  // a word with two approved readings (工場) asks which first: tap the one meant
+  if (await p.locator('.wp-dpick [data-wp-reading]').count()) await p.locator('.wp-dpick [data-wp-reading="' + w.reading + '"]').tap();
+  await until(p, (r) => (document.querySelector('.wp-dline').textContent + document.querySelector('.wp-dmsg').textContent).indexOf(r) >= 0, w.reading, 4000);
   await p.locator('.wp-leaf [data-wp="play"]').tap();
   await until(p, () => !window.__wp().active || window.__wp().active.n > 1, null, 6000);
   const ts = await p.evaluate(() => ({ n: window.__wp().active ? window.__wp().active.n : 'over', line: document.querySelector('.wp-dline') ? document.querySelector('.wp-dline').textContent : '', msg: document.querySelector('.wp-dmsg') ? document.querySelector('.wp-dmsg').textContent : '' }));

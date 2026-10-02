@@ -21,10 +21,10 @@ author), and **human** (none — no human play, no real handwriting, no native-s
 | `src/ui/87_wordplay.js` | The activity (`RB.activity.register('shiritori', …)`): preparation sheet, first-time demonstration offer, the table (Write / Type / Choose, draft panel, ん warning, Stuck?, Leave), the companion's skippable thinking gesture, the result screen with save status. |
 | `src/ui/87_wordplay_views.js` | Rules (Roadside House Rules summary), Browse the word bank, the demonstration, the "Learn a few more words together" primer, Look back at the chain (non-mutating, opt-in analysis, pins, optional practice of the chain's words). |
 | `src/ui/87_wordplay_links.js` | Company › Companion › Wordplay card (`RB.ui.companyPages.addSection`), Review a saved chain (a sheet over the folio), launch helpers (`U.launch`, `U.launchAfterScene`), the `wp_reflect` / `wp_reflect_defer` scene hooks, the memory → record link (`addRef('wordplay', …)`). |
-| `src/content/wordplay/00_lex.js` | 17 lexicon entries for the new text. |
-| `src/content/wordplay/05_labels.js` | Every interface label with its Japanese (validated: the registry is walked by `tools/validate.mjs`). |
-| `src/content/wordplay/10_lines.js` | The companions' table lines: 13 categories × 4 companions (+ the reflection scene = 14), 132 lines; table-presence gestures. |
-| `src/content/wordplay/20_reflect.js` | How we played: 4 scenes (3 statements + Not now, cooperative wording, the real winner named only as a fact); 16 recent-game thoughts; memory texts. |
+| `src/content/wordplay/00_lex.js` | 16 lexicon entries for the new text. |
+| `src/content/wordplay/05_labels.js` | 56 interface labels with their Japanese (validated: the registry is walked by `tools/validate.mjs`). |
+| `src/content/wordplay/10_lines.js` | The companions' table lines: 13 categories × 4 companions (+ the reflection scene = 14), 124 lines (31 each); table-presence gestures. |
+| `src/content/wordplay/20_reflect.js` | How we played: 4 scenes, 37 spoken lines (3 statements + Not now, cooperative wording, the real winner named only as a fact); 16 recent-game thoughts; memory texts. |
 | `src/content/wordplay/90_hooks.js` | The rest-menu choices (Talk: How we played, Play shiritori) after the existing ones; the Words › Ways to practise entry. |
 | `src/styles/76_wordplay.css` | Table, sheet, card and review styles; phone/landscape layouts; finite gestures, none with reduced motion. |
 | `tests/unit/wordplay.test.mjs` | Rules of record (see §6). |
@@ -280,11 +280,61 @@ Evidence: U = unit test, B = browser test, I = author's inspection of captures, 
 
 ## 6. Commands and results
 
-RESULTS_PLACEHOLDER
+Environment: this worktree (branch `worktree-agent-a2b4665ba0214bd49`, from c86d615), node v22.22.2,
+headless Chromium 141.0.7390.37 (Playwright), Linux, a machine shared with five other workers (load
+average 16–22 during the runs). Build `node tools/build.mjs` → `index.html` 7,140,109 bytes
+(c86d615: 6,923,624; +216,485 raw, +58,388 gzip -9; the wordplay sources are 215,550 bytes).
+
+Final verification on **0446a1e** (`wp_final` run; source unchanged since except test diagnostics and this document):
+
+| Command | Result |
+|---|---|
+| `node tools/validate.mjs --unknown` | **no errors**; `registryTexts` 848 (634 at c86d615), `unknownTokens` 20 (= c86d615: none from this slice) |
+| `node tests/run-unit.mjs` | 6701 passed, 1 failed — the failure is `recog-accuracy` "p95 recognize() time < 60 ms" (61.6 ms at load ≈ 22; the recognizer is untouched here). Rerun alone: `node tests/run-unit.mjs recog-accuracy` **64/0** (p95 23.8 ms). |
+| `node tests/run-unit.mjs wordplay` | **315/0** (`wordplay` 147, `wordplay_bond` 168) |
+| `node tests/run-unit.mjs recog-coverage` | **15/0** after `node tools/kanjiread.mjs` (see merge notes) |
+| `node tests/e2e/wordplay.mjs` | 77 passed, 1 failed in the full run: "keyboard: … Enter plays it" (focus was on Play word; the move did not register within 6 s under load). The keyboard section rerun alone (`--only=keyboard`) **7/0 three times out of three**. See §8. |
+| `node tests/e2e/wordplay_layout.mjs --docs` | **63/0** (5 viewports incl. 200 % text, 4 companions, Japanese, reduced motion) |
+| `node tests/e2e/company.mjs` | **61/0** (the Company page with the Wordplay card added; an earlier run caught a visually-hidden table caption counted as sideways overflow — fixed by labelling the table instead) |
+| `node tests/e2e/company_pets.mjs` | all ok (13), exit 0 (on 1a77db8) |
+| `node tests/e2e/pets_greet.mjs` | 17/0 (on 1a77db8) |
+| `node tests/e2e/side_ch3.mjs` | 3/3 configurations (banter at the Cinder inn still first) (on 1a77db8) |
+| `node tests/e2e/addendum_integration.mjs` | all ok (12), exit 0 (on 1a77db8) |
+
+Not run here: the whole default browser suite (`node tests/e2e/run.mjs`, an hour-plus on this shared
+machine), Firefox/Safari/real devices, `visual.mjs --check` over every page.
+
+What the browser test covers (each line an assertion; see `tests/e2e/wordplay.mjs`): Just chat first and
+Play shiritori after the existing rest choices; the activity owns the screen; defaults; Nao's
+invitation; the provisional-opponent note; the demonstration from the real bank; required kana, turn
+and chain with furigana; outside-the-bank and wrong-kana drafts keep the turn; IME composition Enter;
+a recognised character is not a move; That is not what I wrote (no turn, input assistance); a full
+game by handwriting (pointer strokes), choosing and typing to a real result; mixed input on the
+transcript; result options and save status; the together event said truthfully; Look back (turn
+selection, non-mutating); Rematch (other responder, different starter); Stuck? (no timer, Keep
+thinking, Concede with the unused words named); the ん warning (focus on Edit, Edit by keyboard, Play
+anyway → terminal ん loss); How we played once from the rest menu; a restrictive-ending stage clear
+(Extended · Casual) with the bank-only reason; a cooperative chain without a stage; Company: nine Not
+played cells and No matches recorded, Play closes the folio, the waiting story topic and
+`talk._pending` untouched, return to the same page and scroll with focus on the card, How we played
+offered on the card, the story topic still first when talking; Keep it for later with the draft kept,
+Resume with the draft handed back; a campaign change with the table open; Play disabled away from a
+rest stop and with a creature close by, launching anyway refused; Ways to practise (no remote launch;
+Begin here at the rest stop); a provisional companion refused; keyboard-only play (including choosing
+between two approved readings of 工場, with focus moving to the choice and then to Play word); touch play; no page
+errors, no external requests.
 
 ## 7. Captures
 
-CAPTURES_PLACEHOLDER
+`docs/screenshots/wordplay/` (15 WebP, 696 KiB, index in its README) from `wordplay_layout.mjs --docs`;
+every capture of every viewport is in `tests/e2e/out/wordplay/` (not committed). Inspected by the
+author (not by anyone else): all four companions at the table in their own portraits (Nao's scarf and
+pencil, Mio's apron and bottles, Ren's glasses and lamp, Suzu's ribbon and earrings), with the slips on
+the board and their gesture lines; Mio's with a cat resting beside the table; the phone, landscape and
+200 % text layouts with the required kana first; the Japanese interface; the Company card as a 3×3
+table on wide pages and a list of lines on phones. Observed and fixed by inspection: the pet first
+overlapped the player's name; the chain's auto-scroll scrolled the whole leaf away from the kana at
+200 % text; readings were repeated beside kana-only words.
 
 ## 8. Limitations (honest)
 
@@ -295,7 +345,7 @@ CAPTURES_PLACEHOLDER
   play Casual; the sheet and every receipt say so (`ai: provisional-1`, transcript `prov`).
 - **Handwriting** was exercised with pointer strokes along KanjiVG references (synthetic), not real
   hands; kana with small marks were typed or chosen instead.
-- **No human play, no native-speaker review** of the 132 table lines, 4 reflections and 16 thoughts
+- **No human play, no native-speaker review** of the 124 table lines, 4 reflections (37 lines) and 16 thoughts
   (my judgement only), no real phone, Firefox or Safari (headless Chromium only).
 - Strategy-strength, timing (§12.3 elapsed safeguards) and the 3,600-game benchmark are the engine's.
 - The 24-word rest prompt and the deeper "More analysis" path are exercised only by code review and

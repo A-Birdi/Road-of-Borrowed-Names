@@ -54530,7 +54530,7 @@ RB.ui.wordplay = RB.ui.wordplay || {};
         if (T.tab === 'hand' && pad && pad.hasPending()) { $('.wp-dmsg').textContent = 'Confirm or clear the character you are writing first: a recognised character is not yet part of your word.'; flash($('.wp-dmsg')); return; }
         if (!T.dtext) { $('.wp-dmsg').textContent = 'Write, type or choose a word beginning with ' + a.st.required + ' first.'; flash($('.wp-dmsg')); return; }
         const d = T.analysis || WP().draft(s, T.dtext, T.pick);
-        if (d.status !== 'ok') { renderDraft(); flash($('.wp-dmsg')); return; } // an invalid draft is explained; the turn is kept
+        if (d.status !== 'ok') { renderDraft(); flash($('.wp-dmsg')); if (d.status === 'needs-reading') focusReading(); return; } // an invalid draft is explained; the turn is kept
         if (d.terminal && !T.warn) { openWarn(d); return; }
         commitPlayer(d);
       }
@@ -54613,6 +54613,12 @@ RB.ui.wordplay = RB.ui.wordplay || {};
         return e.forms.concat(SH().readingsOf(e)).some((f) => intro['v:' + f] || items['v:' + f]);
       };
       function renderBankIfOpen() { if (T.tab === 'select') { T.filter = null; renderBank(); } }
+      function focusPlay() {
+        setTimeout(() => { const b = $('[data-wp=play]'); if (b && !b.disabled && !V.dead) b.focus({ preventScroll: true }); }, 0);
+      }
+      function focusReading() {
+        setTimeout(() => { const b = !V.dead && $('.wp-dpick [data-wp-reading]'); if (b) b.focus({ preventScroll: true }); }, 0);
+      }
       function focusEntry() {
         if (V.dead) return;
         const el = T.tab === 'ime' ? $('#wp-ime') : T.tab === 'select' ? $('#wp-filter') || $('[data-wp=find]') : $('.wp-turn');
@@ -54677,13 +54683,19 @@ RB.ui.wordplay = RB.ui.wordplay || {};
           const rs = SH().readingsOf(en);
           if (rs.length === 1) T.pick.reading = rs[0];
           setDraft(rs.length === 1 ? rs[0] : en.forms[0], 'select', { keepPick: true });
-          setTimeout(() => { const b = $('[data-wp=play]'); if (b && !b.disabled && !V.dead) b.focus({ preventScroll: true }); }, 0);
+          // keyboard flow: one reading → Play word; several approved readings → the reading choice first
+          if (rs.length > 1) focusReading(); else focusPlay();
           return;
         }
+        // the reading/sense buttons are redrawn, so focus moves on instead of falling to the page
         const rd = e.target.closest('[data-wp-reading]');
-        if (rd) { T.pick.reading = rd.dataset.wpReading; renderDraft(); return; }
+        if (rd) { T.pick.reading = rd.dataset.wpReading; renderDraft(); focusPlay(); return; }
         const sn = e.target.closest('[data-wp-sense]');
-        if (sn) { T.pick.entry = sn.dataset.wpSense; renderDraft(); return; }
+        if (sn) {
+          T.pick.entry = sn.dataset.wpSense; renderDraft();
+          setTimeout(() => { const b = !V.dead && $('[data-wp-sense="' + CSS.escape(T.pick.entry) + '"]'); if (b) b.focus({ preventScroll: true }); }, 0);
+          return;
+        }
         const b = e.target.closest('[data-wp]');
         if (!b || b.disabled) return;
         const act = b.dataset.wp;
