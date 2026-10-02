@@ -131,7 +131,18 @@ RB.petArt = (function () {
       const l = add(o, mul(d, s));
       if (pr.keep && !pr.keep(l)) continue;
       const n = norm(mv(M, [l[0] / rad[0], l[1] / rad[1], l[2] / rad[2]]));
-      const [R, v] = stepOf(cam, n, mat, { l, n, part: pr.part, u: pr.u });
+      // light on a mass: the normal is bent toward the normal of the larger form the part belongs to
+      // (the trunk, the head), so neighbouring volumes share one light, mid and shadow plane instead
+      // of each small sphere carrying its own bands (patterns still see the part's own normal)
+      let nl = n;
+      const ms = pr.mass;
+      if (ms) {
+        const wp = add(rayO(cam, px, py), mul(cam.DIR, s));
+        const q = mtv(ms.M, sub(wp, ms.c));
+        const nb = norm(mv(ms.M, [q[0] / (ms.r[0] * ms.r[0]), q[1] / (ms.r[1] * ms.r[1]), q[2] / (ms.r[2] * ms.r[2])]));
+        nl = norm(lerp(n, nb, ms.k));
+      }
+      const [R, v] = stepOf(cam, nl, mat, { l, n, part: pr.part, u: pr.u });
       write(r, i, z, grp, R, v, pr.flag || mat.flag);
     }
   }
@@ -155,10 +166,14 @@ RB.petArt = (function () {
     const groups = {};
     const gOf = (name) => (name == null ? gid++ : groups[name] != null ? groups[name] : (groups[name] = gid++));
     const decals = [];
+    // the current light mass (K.mass): parts drawn while it is set share its planes
+    let mass = null;
     const K = {
+      // K.mass(c, r, k) in the animal's frame: centre, radii, how far normals bend toward it (0..1); null ends it
+      mass(c, rr, k) { mass = c ? { c: toW(c), M: toM(M_ID), r: rr, k: k == null ? 0.45 : k } : null; },
       ell(part, c, rad, mat, o) {
         o = o || {};
-        ellipsoid(r, { c: toW(c), M: toM(o.M || M_ID), rad, mat, grp: gOf(o.grp || part), part, keep: o.keep, bias: o.bias, flag: o.flag, u: o.u });
+        ellipsoid(r, { c: toW(c), M: toM(o.M || M_ID), rad, mat, grp: gOf(o.grp || part), part, keep: o.keep, bias: o.bias, flag: o.flag, u: o.u, mass: o.mass === false ? null : mass });
       },
       chain(part, pts, radii, mat, o) {
         o = o || {};
@@ -176,12 +191,13 @@ RB.petArt = (function () {
             const t = j / n, c = lerp(a, b, t), rr = radii[k] + (radii[k + 1] - radii[k]) * t;
             const u = L ? (acc + sl * t) / L : 0;
             const fl = o.flat || [1, 1];
-            ellipsoid(r, { c: toW(c), M: toM(F), rad: [Math.max(0.3, rr * fl[0]), Math.max(0.3, rr * fl[1]), Math.max(0.3, rr)], mat, grp, part, u, keep: o.keep, flag: o.flag });
+            ellipsoid(r, { c: toW(c), M: toM(F), rad: [Math.max(0.3, rr * fl[0]), Math.max(0.3, rr * fl[1]), Math.max(0.3, rr)], mat, grp, part, u, keep: o.keep, flag: o.flag, mass: o.mass === false ? null : mass });
           }
           acc += sl;
         }
       },
-      decal(p, fn, o) { decals.push({ w: toW(p), fn, o: o || {} }); },
+      // o.grp: the decal belongs to that part's group (an eye or a nose is never stamped on the chest)
+      decal(p, fn, o) { o = o || {}; decals.push({ w: toW(p), fn, o, grp: o.grp != null ? gOf(o.grp) : null }); },
       at(p) { const s = proj(cam, toW(p)); return { x: s[0], y: s[1], z: s[2] }; },
       // a direction in the animal's frame, in the world (the frame patterns see their normals in)
       dir(v) { return toW(v); },
@@ -192,6 +208,7 @@ RB.petArt = (function () {
     // contour: a pixel beside a nearer part of another group is drawn darker
     const NB = [[1, 0], [-1, 0], [0, 1], [0, -1]];
     const cgap = opts.contour == null ? 1.6 : opts.contour;
+    const cont = new Uint8Array(n);
     for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
       const i = y * W + x;
       if (r.g[i] < 0 || r.flag[i] & 2) continue;
@@ -200,7 +217,21 @@ RB.petArt = (function () {
         if (X < 0 || Y < 0 || X >= W || Y >= H) continue;
         const j = Y * W + X;
         if (r.g[j] < 0 || r.g[j] === r.g[i] || (r.flag[j] & 2)) continue;
-        if (r.z[j] > r.z[i] + cgap) { lv[i] = Math.max(0, Math.min(r.lv[i] - 2, 1)); break; }
+        if (r.z[j] > r.z[i] + cgap) { lv[i] = Math.max(0, Math.min(r.lv[i] - 2, 1)); cont[i] = 1; break; }
+      }
+    }
+    // Cast shadow (the larger views): just below a nearer part of another group — under the chin, the
+    // haunch over a hind paw, the head over the shoulders — the surface is a step darker for two rows,
+    // so overlapping forms read as forms, not as one silhouette.
+    if (opts.cast) {
+      for (let y = 1; y < H; y++) for (let x = 0; x < W; x++) {
+        const i = y * W + x;
+        if (r.g[i] < 0 || cont[i] || r.flag[i] & 2) continue;
+        for (let k = 1; k <= 2 && y - k >= 0; k++) {
+          const j = i - k * W;
+          if (r.g[j] < 0 || r.g[j] === r.g[i] || (r.flag[j] & 2)) continue;
+          if (r.z[j] > r.z[i] + cgap) { lv[i] = Math.max(0, Math.min(lv[i], r.lv[i] - 1)); break; }
+        }
       }
     }
     // a lone pixel whose four neighbours agree on another step of the same ramp takes that step
@@ -216,8 +247,36 @@ RB.petArt = (function () {
       }
       if (same && v !== lv[i]) lv2[i] = v;
     }
+    // Clusters, not speckle (opts.cluster passes): a pixel that shares its colour (ramp and step) with at
+    // most one of its eight neighbours, where five or more of them agree on another colour of the same
+    // group, takes that colour. Patterns and planes become grouped shapes; contour lines and decals stay.
+    let R2 = r.R;
+    for (let pass = 0; pass < (opts.cluster || 0); pass++) {
+      const nl = lv2.slice(), nR = R2.slice();
+      for (let y = 1; y < H - 1; y++) for (let x = 1; x < W - 1; x++) {
+        const i = y * W + x;
+        if (r.g[i] < 0 || r.flag[i] & 1 || cont[i]) continue;
+        let same = 0;
+        const tally = [];
+        for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+          if (!dx && !dy) continue;
+          const j = i + dy * W + dx;
+          if (r.g[j] !== r.g[i] || cont[j]) continue;
+          if (R2[j] === R2[i] && lv2[j] === lv2[i]) { same++; continue; }
+          let t = tally.find((q) => q.R === R2[j] && q.v === lv2[j]);
+          if (!t) tally.push((t = { R: R2[j], v: lv2[j], n: 0 }));
+          t.n++;
+        }
+        if (same > 1) continue;
+        let best = null;
+        for (const q of tally) if (q.n >= 5 && (!best || q.n > best.n)) best = q;
+        if (best) { nl[i] = best.v; nR[i] = best.R; }
+      }
+      for (let i = 0; i < n; i++) { lv2[i] = nl[i]; }
+      R2 = nR;
+    }
     const b = new P.Buf(W, H);
-    for (let i = 0; i < n; i++) if (r.g[i] >= 0) b.put(i % W, (i / W) | 0, P.rgba(r.R[i][lv2[i]]));
+    for (let i = 0; i < n; i++) if (r.g[i] >= 0) b.put(i % W, (i / W) | 0, P.rgba(R2[i][lv2[i]]));
     // decals: drawn where their point is not hidden behind a nearer part
     for (const d of decals) {
       const s = proj(cam, d.w);
@@ -225,6 +284,7 @@ RB.petArt = (function () {
       if (px < 0 || py < 0 || px >= W || py >= H) continue;
       const i = py * W + px;
       if (!d.o.always && r.g[i] >= 0 && r.z[i] > s[2] + (d.o.tol == null ? 0.9 : d.o.tol)) continue;
+      if (d.grp != null && r.g[i] !== d.grp) continue;
       d.fn({ b, x: px, y: py, sx: s[0], sy: s[1], zs: cam.zs, mirror: !!cam.mirror });
     }
     if (opts.outline !== false) b.outline(opts.outlineCol || '#241c20', { minA: 100 });
@@ -247,7 +307,10 @@ RB.petArt = (function () {
     const [h, s, l] = P.toHsl(P.rgba(c));
     if (k < 0) {
       const n = -k, grey = s < 0.1 ? 0.05 : 0;
-      out = hex6(P.fromHsl(toward(h, 250, 10 * n), s + (0.05 + grey) * n, l - (l < 0.25 ? 0.055 : l < 0.5 ? 0.09 : 0.11) * n));
+      // fur in shadow: warm coats (ginger, cream, tan) lean only a little toward violet, and do not
+      // gain saturation — the shortest way to violet from orange runs through red, which reads as raw skin
+      const warm = h < 70 || h > 330;
+      out = hex6(P.fromHsl(toward(h, 250, (warm ? 4 : 10) * n), Math.min(warm ? s : 1, s + (warm ? -0.02 : 0.05 + grey) * n), l - (l < 0.25 ? 0.055 : l < 0.5 ? 0.09 : 0.11) * n));
     } else {
       const n = k;
       out = hex6(P.fromHsl(toward(h, 48, 7 * n), s * (l > 0.7 ? 0.9 : 1) + (l < 0.6 ? 0.03 : 0) * n, l + (l < 0.25 ? 0.075 : l > 0.8 ? 0.05 : 0.085) * n));

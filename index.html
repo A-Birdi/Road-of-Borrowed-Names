@@ -8047,7 +8047,7 @@ RB.answers = (function () {
         const r = kanjiReading(c);
         return r ? 'the kanji {' + c + '|' + r + '}' : 'a kanji';
       };
-      return { code: 'wrong_char', en: 'The answer has ' + desc(want) + ' where you wrote ' + desc(got) + '.' };
+      return { code: 'wrong_char', en: 'The answer has ' + desc(want) + ' where you ' + vb() + ' ' + desc(got) + '.' };
     }
     // particles は/わ, を/お, へ/え
     const pairs = { 'はわ': 'particle_wa', 'わは': 'particle_wa', 'をお': 'particle_o', 'おを': 'particle_o', 'へえ': 'particle_e', 'えへ': 'particle_e' };
@@ -8056,7 +8056,7 @@ RB.answers = (function () {
       const isPrt = particleAt(acc, j, vars);
       if (pk === 'particle_wa') {
         return want === 'は'
-          ? { code: 'particle_wa', en: isPrt ? 'The topic particle is written は, even though it is pronounced wa. You wrote わ.' : 'This word is spelled with は here; you wrote わ.' }
+          ? { code: 'particle_wa', en: isPrt ? 'The topic particle is written は, even though it is pronounced wa. You ' + vb() + ' わ.' : 'This word is spelled with は here; you ' + vb() + ' わ.' }
           : { code: 'particle_wa', en: 'This word is spelled with わ. は is read wa only when it is the topic particle.' };
       }
       if (pk === 'particle_o') {
@@ -8069,17 +8069,17 @@ RB.answers = (function () {
         : { code: 'particle_e', en: 'This word is spelled with え. へ is read e only as the direction particle.' };
     }
     if (K.toHira(got) === K.toHira(want) && got !== want) {
-      return { code: 'script', en: want + ' is ' + (K.isKata(want) ? 'katakana' : 'hiragana') + '; you wrote the ' + (K.isKata(got) ? 'katakana' : 'hiragana') + ' ' + got + '.' };
+      return { code: 'script', en: want + ' is ' + (K.isKata(want) ? 'katakana' : 'hiragana') + '; you ' + vb() + ' the ' + (K.isKata(got) ? 'katakana' : 'hiragana') + ' ' + got + '.' };
     }
     if (K.base(got) === K.base(want)) {
       const wd = K.hasDakuten(want), wh = K.hasHandakuten(want), gd = K.hasDakuten(got), gh = K.hasHandakuten(got);
       if ((wh && gd) || (wd && gh)) {
         return { code: 'handakuten_mixup', en: 'The answer has ' + want + ' (' + roma(want) + '), not ' + got + ' (' + roma(got) + '): ゜ (handakuten) gives a p- sound, ゛ (dakuten) a b- sound.' };
       }
-      if (wh && !gh) return { code: 'handakuten_mixup', en: want + ' (' + roma(want) + ') has the small circle ゜ (handakuten); you wrote ' + got + ' (' + roma(got) + ').' };
-      if (gh && !wh) return { code: 'handakuten_mixup', en: 'The answer has ' + want + ' (' + roma(want) + ') without ゜; you wrote ' + got + ' (' + roma(got) + ').' };
-      if (wd && !gd) return { code: 'missing_dakuten', en: want + ' (' + roma(want) + ') has dakuten ゛; you wrote ' + got + ' (' + roma(got) + ') without it.' };
-      if (gd && !wd) return { code: 'extra_dakuten', en: 'The answer has ' + want + ' (' + roma(want) + ') without dakuten; you wrote ' + got + ' (' + roma(got) + ').' };
+      if (wh && !gh) return { code: 'handakuten_mixup', en: want + ' (' + roma(want) + ') has the small circle ゜ (handakuten); you ' + vb() + ' ' + got + ' (' + roma(got) + ').' };
+      if (gh && !wh) return { code: 'handakuten_mixup', en: 'The answer has ' + want + ' (' + roma(want) + ') without ゜; you ' + vb() + ' ' + got + ' (' + roma(got) + ').' };
+      if (wd && !gd) return { code: 'missing_dakuten', en: want + ' (' + roma(want) + ') has dakuten ゛; you ' + vb() + ' ' + got + ' (' + roma(got) + ') without it.' };
+      if (gd && !wd) return { code: 'extra_dakuten', en: 'The answer has ' + want + ' (' + roma(want) + ') without dakuten; you ' + vb() + ' ' + got + ' (' + roma(got) + ').' };
     }
     if (K.toLarge(got) === K.toLarge(want) && got !== want) {
       const wantSmall = K.isSmall(want);
@@ -8090,13 +8090,13 @@ RB.answers = (function () {
       return { code: 'small_large', en: 'Here it should be ' + (wantSmall ? 'small ' : 'full-size ') + want + ', not ' + (wantSmall ? 'full-size ' : 'small ') + got + '.' + why };
     }
     if ((want === 'ー' || got === 'ー' || VOWEL_KANA[want] || VOWEL_KANA[got]) && ctx.prev && (extendsVowel(ctx.prev, want) || extendsVowel(ctx.prev, got))) {
-      if (want === 'ー') return { code: 'long_vowel', en: 'In katakana a long vowel is written with ー; you wrote ' + got + '.' };
+      if (want === 'ー') return { code: 'long_vowel', en: 'In katakana a long vowel is written with ー; you ' + vb() + ' ' + got + '.' };
       if (got === 'ー') return { code: 'long_vowel', en: 'In hiragana a long vowel is written with a vowel kana (here ' + want + '), not ー.' };
       return { code: 'long_vowel', en: 'The long vowel here is spelled ' + ctx.prev + want + ', not ' + ctx.prev + got + '.' };
     }
     const note = SHAPE_MAP.has(got) && SHAPE_MAP.get(got).get(want);
     if (note) return { code: 'confusable', en: got + ' and ' + want + ' look alike. ' + note + ' The answer has ' + want + '.' };
-    return { code: 'wrong_char', en: 'The answer has ' + want + ' (' + roma(want) + ') where you wrote ' + got + ' (' + roma(got) + ').' };
+    return { code: 'wrong_char', en: 'The answer has ' + want + ' (' + roma(want) + ') where you ' + vb() + ' ' + got + ' (' + roma(got) + ').' };
   }
 
   function charFeedback(input, target, ctx) {
@@ -8106,7 +8106,7 @@ RB.answers = (function () {
       if (o.op === 'eq') return;
       const prevT = o.j > 0 ? b[o.j - 1] : null;
       if (o.op === 'swap') {
-        out.push({ code: 'swapped', en: 'Two characters are swapped: the answer has ' + o.want + ', you wrote ' + o.got + '.', at: o.j });
+        out.push({ code: 'swapped', en: 'Two characters are swapped: the answer has ' + o.want + ', you ' + vb() + ' ' + o.got + '.', at: o.j });
       } else if (o.op === 'sub') {
         const f = explainSub(o.got, o.want, Object.assign({}, ctx, { j: o.j, prev: prevT }));
         f.at = o.j;
@@ -8197,8 +8197,15 @@ RB.answers = (function () {
    * handwritten: the input came from the handwriting pad, so characters written
    * with one shape (ロ/口, へ/ヘ…) count as one form. On success, `form` is the
    * accepted spelling that matched and `notes` (mixed text) say how it was written. */
+  // how the player gave the answer, for feedback wording only (set for the duration of one check)
+  let VERB = 'wrote';
+  const vb = () => VERB;
   function check(input, task) {
     task = task || {};
+    VERB = task.input === 'choice' ? 'chose' : task.input === 'ime' ? 'typed' : 'wrote';
+    try { return check1(input, task); } finally { VERB = 'wrote'; }
+  }
+  function check1(input, task) {
     const mode = task.mode || 'reading';
     const accept = (task.accept || []).filter((x) => x != null && x !== '');
     const res = { ok: false, matched: null, normalized: '', feedback: [], assisted: false, closest: null };
@@ -26959,7 +26966,18 @@ RB.petArt = (function () {
       const l = add(o, mul(d, s));
       if (pr.keep && !pr.keep(l)) continue;
       const n = norm(mv(M, [l[0] / rad[0], l[1] / rad[1], l[2] / rad[2]]));
-      const [R, v] = stepOf(cam, n, mat, { l, n, part: pr.part, u: pr.u });
+      // light on a mass: the normal is bent toward the normal of the larger form the part belongs to
+      // (the trunk, the head), so neighbouring volumes share one light, mid and shadow plane instead
+      // of each small sphere carrying its own bands (patterns still see the part's own normal)
+      let nl = n;
+      const ms = pr.mass;
+      if (ms) {
+        const wp = add(rayO(cam, px, py), mul(cam.DIR, s));
+        const q = mtv(ms.M, sub(wp, ms.c));
+        const nb = norm(mv(ms.M, [q[0] / (ms.r[0] * ms.r[0]), q[1] / (ms.r[1] * ms.r[1]), q[2] / (ms.r[2] * ms.r[2])]));
+        nl = norm(lerp(n, nb, ms.k));
+      }
+      const [R, v] = stepOf(cam, nl, mat, { l, n, part: pr.part, u: pr.u });
       write(r, i, z, grp, R, v, pr.flag || mat.flag);
     }
   }
@@ -26983,10 +27001,14 @@ RB.petArt = (function () {
     const groups = {};
     const gOf = (name) => (name == null ? gid++ : groups[name] != null ? groups[name] : (groups[name] = gid++));
     const decals = [];
+    // the current light mass (K.mass): parts drawn while it is set share its planes
+    let mass = null;
     const K = {
+      // K.mass(c, r, k) in the animal's frame: centre, radii, how far normals bend toward it (0..1); null ends it
+      mass(c, rr, k) { mass = c ? { c: toW(c), M: toM(M_ID), r: rr, k: k == null ? 0.45 : k } : null; },
       ell(part, c, rad, mat, o) {
         o = o || {};
-        ellipsoid(r, { c: toW(c), M: toM(o.M || M_ID), rad, mat, grp: gOf(o.grp || part), part, keep: o.keep, bias: o.bias, flag: o.flag, u: o.u });
+        ellipsoid(r, { c: toW(c), M: toM(o.M || M_ID), rad, mat, grp: gOf(o.grp || part), part, keep: o.keep, bias: o.bias, flag: o.flag, u: o.u, mass: o.mass === false ? null : mass });
       },
       chain(part, pts, radii, mat, o) {
         o = o || {};
@@ -27004,12 +27026,13 @@ RB.petArt = (function () {
             const t = j / n, c = lerp(a, b, t), rr = radii[k] + (radii[k + 1] - radii[k]) * t;
             const u = L ? (acc + sl * t) / L : 0;
             const fl = o.flat || [1, 1];
-            ellipsoid(r, { c: toW(c), M: toM(F), rad: [Math.max(0.3, rr * fl[0]), Math.max(0.3, rr * fl[1]), Math.max(0.3, rr)], mat, grp, part, u, keep: o.keep, flag: o.flag });
+            ellipsoid(r, { c: toW(c), M: toM(F), rad: [Math.max(0.3, rr * fl[0]), Math.max(0.3, rr * fl[1]), Math.max(0.3, rr)], mat, grp, part, u, keep: o.keep, flag: o.flag, mass: o.mass === false ? null : mass });
           }
           acc += sl;
         }
       },
-      decal(p, fn, o) { decals.push({ w: toW(p), fn, o: o || {} }); },
+      // o.grp: the decal belongs to that part's group (an eye or a nose is never stamped on the chest)
+      decal(p, fn, o) { o = o || {}; decals.push({ w: toW(p), fn, o, grp: o.grp != null ? gOf(o.grp) : null }); },
       at(p) { const s = proj(cam, toW(p)); return { x: s[0], y: s[1], z: s[2] }; },
       // a direction in the animal's frame, in the world (the frame patterns see their normals in)
       dir(v) { return toW(v); },
@@ -27020,6 +27043,7 @@ RB.petArt = (function () {
     // contour: a pixel beside a nearer part of another group is drawn darker
     const NB = [[1, 0], [-1, 0], [0, 1], [0, -1]];
     const cgap = opts.contour == null ? 1.6 : opts.contour;
+    const cont = new Uint8Array(n);
     for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
       const i = y * W + x;
       if (r.g[i] < 0 || r.flag[i] & 2) continue;
@@ -27028,7 +27052,21 @@ RB.petArt = (function () {
         if (X < 0 || Y < 0 || X >= W || Y >= H) continue;
         const j = Y * W + X;
         if (r.g[j] < 0 || r.g[j] === r.g[i] || (r.flag[j] & 2)) continue;
-        if (r.z[j] > r.z[i] + cgap) { lv[i] = Math.max(0, Math.min(r.lv[i] - 2, 1)); break; }
+        if (r.z[j] > r.z[i] + cgap) { lv[i] = Math.max(0, Math.min(r.lv[i] - 2, 1)); cont[i] = 1; break; }
+      }
+    }
+    // Cast shadow (the larger views): just below a nearer part of another group — under the chin, the
+    // haunch over a hind paw, the head over the shoulders — the surface is a step darker for two rows,
+    // so overlapping forms read as forms, not as one silhouette.
+    if (opts.cast) {
+      for (let y = 1; y < H; y++) for (let x = 0; x < W; x++) {
+        const i = y * W + x;
+        if (r.g[i] < 0 || cont[i] || r.flag[i] & 2) continue;
+        for (let k = 1; k <= 2 && y - k >= 0; k++) {
+          const j = i - k * W;
+          if (r.g[j] < 0 || r.g[j] === r.g[i] || (r.flag[j] & 2)) continue;
+          if (r.z[j] > r.z[i] + cgap) { lv[i] = Math.max(0, Math.min(lv[i], r.lv[i] - 1)); break; }
+        }
       }
     }
     // a lone pixel whose four neighbours agree on another step of the same ramp takes that step
@@ -27044,8 +27082,36 @@ RB.petArt = (function () {
       }
       if (same && v !== lv[i]) lv2[i] = v;
     }
+    // Clusters, not speckle (opts.cluster passes): a pixel that shares its colour (ramp and step) with at
+    // most one of its eight neighbours, where five or more of them agree on another colour of the same
+    // group, takes that colour. Patterns and planes become grouped shapes; contour lines and decals stay.
+    let R2 = r.R;
+    for (let pass = 0; pass < (opts.cluster || 0); pass++) {
+      const nl = lv2.slice(), nR = R2.slice();
+      for (let y = 1; y < H - 1; y++) for (let x = 1; x < W - 1; x++) {
+        const i = y * W + x;
+        if (r.g[i] < 0 || r.flag[i] & 1 || cont[i]) continue;
+        let same = 0;
+        const tally = [];
+        for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+          if (!dx && !dy) continue;
+          const j = i + dy * W + dx;
+          if (r.g[j] !== r.g[i] || cont[j]) continue;
+          if (R2[j] === R2[i] && lv2[j] === lv2[i]) { same++; continue; }
+          let t = tally.find((q) => q.R === R2[j] && q.v === lv2[j]);
+          if (!t) tally.push((t = { R: R2[j], v: lv2[j], n: 0 }));
+          t.n++;
+        }
+        if (same > 1) continue;
+        let best = null;
+        for (const q of tally) if (q.n >= 5 && (!best || q.n > best.n)) best = q;
+        if (best) { nl[i] = best.v; nR[i] = best.R; }
+      }
+      for (let i = 0; i < n; i++) { lv2[i] = nl[i]; }
+      R2 = nR;
+    }
     const b = new P.Buf(W, H);
-    for (let i = 0; i < n; i++) if (r.g[i] >= 0) b.put(i % W, (i / W) | 0, P.rgba(r.R[i][lv2[i]]));
+    for (let i = 0; i < n; i++) if (r.g[i] >= 0) b.put(i % W, (i / W) | 0, P.rgba(R2[i][lv2[i]]));
     // decals: drawn where their point is not hidden behind a nearer part
     for (const d of decals) {
       const s = proj(cam, d.w);
@@ -27053,6 +27119,7 @@ RB.petArt = (function () {
       if (px < 0 || py < 0 || px >= W || py >= H) continue;
       const i = py * W + px;
       if (!d.o.always && r.g[i] >= 0 && r.z[i] > s[2] + (d.o.tol == null ? 0.9 : d.o.tol)) continue;
+      if (d.grp != null && r.g[i] !== d.grp) continue;
       d.fn({ b, x: px, y: py, sx: s[0], sy: s[1], zs: cam.zs, mirror: !!cam.mirror });
     }
     if (opts.outline !== false) b.outline(opts.outlineCol || '#241c20', { minA: 100 });
@@ -27075,7 +27142,10 @@ RB.petArt = (function () {
     const [h, s, l] = P.toHsl(P.rgba(c));
     if (k < 0) {
       const n = -k, grey = s < 0.1 ? 0.05 : 0;
-      out = hex6(P.fromHsl(toward(h, 250, 10 * n), s + (0.05 + grey) * n, l - (l < 0.25 ? 0.055 : l < 0.5 ? 0.09 : 0.11) * n));
+      // fur in shadow: warm coats (ginger, cream, tan) lean only a little toward violet, and do not
+      // gain saturation — the shortest way to violet from orange runs through red, which reads as raw skin
+      const warm = h < 70 || h > 330;
+      out = hex6(P.fromHsl(toward(h, 250, (warm ? 4 : 10) * n), Math.min(warm ? s : 1, s + (warm ? -0.02 : 0.05 + grey) * n), l - (l < 0.25 ? 0.055 : l < 0.5 ? 0.09 : 0.11) * n));
     } else {
       const n = k;
       out = hex6(P.fromHsl(toward(h, 48, 7 * n), s * (l > 0.7 ? 0.9 : 1) + (l < 0.6 ? 0.03 : 0) * n, l + (l < 0.25 ? 0.075 : l > 0.8 ? 0.05 : 0.085) * n));
@@ -27183,8 +27253,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const under = (info) => {
         const l = info.l, p = info.part;
         if (p === 'belly' && l[1] < -0.45) return true;
-        if (p === 'chest' && l[1] < -0.2 && l[2] > -0.2) return true;
-        if (p === 'chest' && L.bib && l[2] > 0.35 && l[1] < 0.3) return true;
+        // the pale chest is on the front only (never a line round the neck seen from behind)
+        if (p === 'chest' && l[1] < -0.5 && l[2] > 0.2) return true;
+        if (p === 'chest' && L.bib && l[2] > 0.45 && l[1] < 0.3) return true;
+        // (the throat stays the coat colour: seen from the side it read as a collar line)
         if (p === 'muzzle' && (l[1] < 0.1 || calico)) return true;
         if (p === 'head' && l[2] > 0.55 && l[1] < -0.25) return true;
         if ((p === 'paw' || p === 'hpaw')) return true;
@@ -27203,26 +27275,30 @@ var RB = (globalThis.RB = globalThis.RB || {});
             if (p === 'hips' && blob(l, [-0.1, 0.85, -0.2], 0.5)) return { R: PB };
             if (p === 'belly' && (blob(l, [-0.5, 0.75, 0.3], 0.55) || blob(l, [0.6, 0.6, -0.6], 0.5))) return { R: l[0] > 0 ? PA : PB };
             if (p === 'chest' && blob(l, [0.6, 0.7, -0.3], 0.5)) return { R: PB };
+            if (p === 'neck') return l[1] > 0.45 ? { R: PA } : { R };
             if (p === 'tail') return { R: info.u > 0.62 ? PB : PA };
             if (p === 'haunch' && blob(l, [0.2, 0.75, -0.55], 0.55)) return { R: PA };
             return { R };
           }
           if (under(info)) return { R: U, d: v < 2 ? 0 : 0 };
           if (!tabby) return 0;
-          // tabby: dark stripes over the back and flanks, rings on legs and tail, lines on the brow
+          // tabby: a dark line down the spine, broad bands curving down the upper flanks (fading toward
+          // the belly), rings on the legs and tail, and lines on the brow and down the nape — few and
+          // wide enough to stay bands at battle size, never a speckle
           if (p === 'belly' || p === 'hips' || p === 'chest') {
-            if (l[1] < -0.35) return 0;
-            const s = frac(l[2] * 2.1 + Math.abs(l[0]) * 0.35 + (p === 'hips' ? 0.45 : p === 'chest' ? 0.2 : 0));
-            if (s < 0.3) return { R: S, d: 0 };
-            if (l[1] > 0.82) return { R: S };
-            return 0;
+            if (l[1] > 0.8 && Math.abs(l[0]) < 0.42) return { R: S };
+            if (l[1] < -0.15 + Math.abs(l[0]) * 0.1) return 0;
+            const s = frac(l[2] * 1.45 - l[1] * 0.35 + (p === 'hips' ? 0.42 : p === 'chest' ? 0.12 : 0));
+            return s < 0.36 ? { R: S } : 0;
           }
-          if (p === 'haunch') return frac(l[1] * 1.6 + 0.2) < 0.3 ? { R: S } : 0;
-          if (p === 'leg' || p === 'hleg') return info.u != null && info.u < 0.7 && frac(info.u * 2.6) < 0.35 ? { R: S } : 0;
-          if (p === 'tail') return frac((info.u || 0) * 5.2) < 0.34 || info.u > 0.9 ? { R: S } : 0;
+          if (p === 'haunch') return l[1] > -0.2 && frac(l[1] * 1.2 - l[2] * 0.4 + 0.25) < 0.34 ? { R: S } : 0;
+          if (p === 'leg' || p === 'hleg') return info.u != null && info.u < 0.7 && frac(info.u * 2.2) < 0.4 ? { R: S } : 0;
+          if (p === 'tail') return frac((info.u || 0) * 4.2) < 0.4 || info.u > 0.9 ? { R: S } : 0;
           if (p === 'head') {
             if (l[1] > 0.35 && l[2] > 0.05 && frac(l[0] * 2.4 + 0.5) < 0.34) return { R: S };
             if (l[1] > 0.1 && l[1] < 0.35 && Math.abs(l[0]) > 0.7 && l[2] > -0.2) return { R: S };
+            // the nape: two bands running back from the crown
+            if (l[2] < -0.25 && l[1] > -0.1 && frac(Math.abs(l[0]) * 1.8 + 0.1) < 0.4) return { R: S };
           }
           return 0;
         },
@@ -27238,6 +27314,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         if (p === 'muzzle') return l[1] < 0.35 || l[2] > 0.5;
         if (p === 'head') return (l[2] > 0.4 && l[1] < -0.1) || (l[1] < -0.45);
         if (p === 'chest') return l[2] > 0.1 && l[1] < 0.25 || l[1] < -0.3;
+        if (p === 'neck') return l[1] < -0.6; // the throat's front edge only (never a pale ring round the neck)
         if (p === 'belly') return l[1] < -0.35;
         if (p === 'paw' || p === 'hpaw') return true;
         if (p === 'leg') return (info.u || 0) > 0.55;
@@ -27254,6 +27331,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
             if (p === 'muzzle') return { R: l[1] > 0.4 && l[2] < 0.2 ? R : l[1] < -0.1 ? U : T };
             if (p === 'head' && l[1] < -0.3 && l[2] > 0.2) return { R: U };
             if (p === 'chest' && l[2] > 0.3 && l[1] < 0.3) return { R: l[1] < -0.1 ? U : T };
+            if (p === 'neck' && l[1] < -0.35) return { R: T };
             if (p === 'leg' || p === 'hleg') return (info.u || 0) > 0.35 ? { R: T } : 0;
             if (p === 'paw' || p === 'hpaw') return { R: T };
             if (p === 'belly' && l[1] < -0.4) return { R: T };
@@ -27266,7 +27344,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       M.ear = { R: E, th, pat(info) { return info.inner ? { R: ramp(L.inner) } : 0; } };
       M.nose = { R: A.flat(L.nose, 0.5), flag: 3 };
     } else if (sp === 'tanuki') {
-      const D = ramp(L.dark), SD = ramp(L.saddle);
+      const D = ramp(L.dark), SD = ramp(L.saddle), FR = ramp(A.mix(L.base, L.under, 0.24));
       M.fur = {
         R, th, pat(info) {
           const l = info.l, p = info.part;
@@ -27281,12 +27359,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
             return 0;
           }
           if (p === 'muzzle') return l[2] > 0.55 ? { R: D } : l[1] < 0 ? { R: U } : { R: U, d: -1 };
+          // the cheek ruff: pale tufts with a dark root where they leave the face
+          if (p === 'ruff') return (info.u || 0) < 0.25 ? { R: D } : { R: U };
           if (p === 'leg' || p === 'hleg' || p === 'paw' || p === 'hpaw') return { R: D };
-          if (p === 'haunch') return l[1] < -0.2 ? { R: D } : 0;
-          // a dark chest and a dark band across the shoulders (seen from behind), a darker line down the back
-          if (p === 'chest') return l[1] < -0.1 || l[2] > 0.55 ? { R: D } : l[1] > 0.3 ? { R: SD, d: l[1] > 0.6 && Math.abs(l[0]) < 0.4 ? -1 : 0 } : 0;
-          if (p === 'belly') return l[1] < -0.5 ? { R: D } : l[1] > 0.55 && Math.abs(l[0]) < 0.45 ? { R: SD } : 0;
-          if (p === 'hips') return l[1] > 0.6 && Math.abs(l[0]) < 0.45 ? { R: SD } : 0;
+          if (p === 'haunch') return l[1] < -0.2 ? { R: D } : l[1] > 0.55 ? { R: FR } : 0;
+          if (p === 'neck') return l[1] < -0.2 ? { R: D } : l[1] > 0.4 ? { R: SD } : 0;
+          // a dark chest and a dark band across the shoulders running down to the forelegs, a darker
+          // line down the back, and the grizzled, frost-tipped coat over the back and hips
+          if (p === 'chest') return l[1] < -0.1 || l[2] > 0.55 ? { R: D } : l[1] > 0.3 ? { R: SD, d: l[1] > 0.6 && Math.abs(l[0]) < 0.4 ? -1 : 0 } : Math.abs(l[0]) > 0.6 && l[2] > 0 ? { R: SD } : 0;
+          if (p === 'belly') return l[1] < -0.5 ? { R: D } : l[1] > 0.55 && Math.abs(l[0]) < 0.4 ? { R: SD } : l[1] > 0.62 ? { R: FR } : 0;
+          if (p === 'hips') return l[1] > 0.6 && Math.abs(l[0]) < 0.4 ? { R: SD } : l[1] > 0.45 && Math.abs(l[0]) < 0.7 ? { R: FR } : 0;
           if (p === 'tail') return (info.u || 0) > 0.66 ? { R: D } : l[1] > 0.1 ? { R: SD } : 0; // darker above, a dark tip, no rings
           return 0;
         },
@@ -27459,13 +27541,19 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const SM = along(spine, [0, 1, 0]);
     const mid = L3(hips, chest, 0.5);
     const blen = len(spine);
+    // the trunk as one light mass (the larger views): body, haunches and legs share its planes
+    if (sc >= 1.4) {
+      const top = Math.max(chest[1] + k.chestR[1], hips[1] + k.hipsR[1]);
+      const rz = Math.abs(chest[2] - hips[2]) / 2 + Math.max(k.chestR[2], k.hipsR[2]);
+      K.mass([0, top * 0.5, (chest[2] + hips[2]) / 2], [Math.max(k.chestR[0], k.hipsR[0]) * 1.3, top * 0.5 + 1, rz], 0.5);
+    }
     // belly and body
     K.ell('belly', mid, [S.bellyR[0], S.bellyR[1] - (po.tuck || 0) * 0.4, blen * 0.62], M.fur, { M: SM, grp: 'body' });
     K.ell('hips', hips, k.hipsR, M.fur, { M: SM, grp: 'body' });
     K.ell('chest', chest, add(k.chestR, [0, breath * 0.5, 0]), M.fur, { M: SM, grp: 'body' });
     // neck to the head
     const neckA = add(chest, mul(SM[2], k.chestR[2] * 0.55)), neckB = add(head, [0, -1.4, -1.0]);
-    K.chain('chest', [add(neckA, [0, 0.8, 0]), neckB], [S.neckR, S.neckR * 0.9], M.fur, { grp: 'body' });
+    K.chain('neck', [add(neckA, [0, 0.8, 0]), neckB], [S.neckR, S.neckR * 0.9], M.fur, { grp: 'body' });
 
     // legs: the four paws, planted or lifted by the gait, the hind legs with a haunch and a hock
     const fr = (side) => {
@@ -27513,10 +27601,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
     // draw order does not matter (depth buffer); groups separate the contour
     fr(1); fr(-1); hi(1); hi(-1);
 
-    // tail
+    // tail (its own form) and head (its own mass: brow, cheeks and muzzle share the head's planes)
+    K.mass(null);
     tail(K, sp, M, po, k, dy, st, sit, lie, ph, walking);
-    // head
+    if (sc >= 1.4) K.mass(head, S.headR.map((v) => v * 1.3), 0.35);
     headOf(K, sp, M, po, head, sc);
+    K.mass(null);
     return { head, chest };
   }
   function tail(K, sp, M, po, k, dy, st, sit, lie, ph, walking) {
@@ -27551,7 +27641,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
     // the muzzle (cats: small, dogs: long, tanuki: pointed)
     K.ell('muzzle', at(S.muzzle.off), S.muzzle.r, M.fur, { M: Mh, grp: 'head' });
     if (sp === 'dog') K.ell('muzzle', at([0, -0.4, 4.6]), [1.25, 1.1, 1.3], M.fur, { M: Mh, grp: 'head' });
-    if (sp === 'tanuki') K.ell('head', at([0, -0.6, -0.4]), [3.9, 2.6, 2.8], M.fur, { M: Mh, grp: 'head' }); // cheek ruff
+    if (sp === 'tanuki') {
+      K.ell('head', at([0, -0.6, -0.4]), [3.9, 2.6, 2.8], M.fur, { M: Mh, grp: 'head' }); // cheek ruff
+      // the ruff's tufts: pale fur swept out and down from each cheek (the tanuki's silhouette)
+      for (const x of [1, -1]) K.chain('ruff', [at([x * 2.8, -1.0, 0.7]), at([x * 4.2, -1.9, 0.1]), at([x * 4.9, -2.8, -0.3])], [1.25, 0.85, 0.3], M.fur, { grp: 'head' });
+    }
     // ears: flattened tapering cones; the inner ear shows on the side facing forward
     const E = S.ears;
     for (const x of [1, -1]) {
@@ -27585,19 +27679,21 @@ var RB = (globalThis.RB = globalThis.RB || {});
         const b = d.b;
         if (blink > 0.6) { b.rect(d.x - (big ? 1 : 0), d.y, big ? 3 : 2, 1, '#241c20'); return; }
         if (big) {
-          // a 2×3 eye: dark rim, iris, a glint toward the light
-          b.rect(d.x - 1, d.y - 1, 3, 3, '#241c20');
-          b.rect(d.x, d.y - 1, 1, 2, eye);
-          if (blink > 0.25) b.rect(d.x - 1, d.y - 1, 3, 1, '#241c20');
+          // an upper lid, a 2×2 iris with its pupil (a cat's is a slit), a glint toward the light
+          b.rect(d.x - 1, d.y - 2, 3, 1, '#241c20');
+          b.rect(d.x - 1, d.y - 1, 2, 2, eye);
+          b.px(d.x, d.y - 1, '#241c20');
+          if (sp === 'cat') b.px(d.x, d.y, '#241c20');
+          if (blink > 0.25) b.rect(d.x - 1, d.y - 1, 2, 1, '#241c20');
           else b.px(d.x - 1, d.y - 1, '#fff8ee');
         } else {
           b.px(d.x, d.y, '#241c20');
           if (blink < 0.25) b.px(d.x, d.y - 1, sp === 'cat' ? eye : '#241c20');
         }
-      }, { tol: 1.2 });
+      }, { tol: 1.2, grp: 'head' });
     }
-    K.decal(at(S.nose), (d) => { d.b.px(d.x, d.y, M.nose.R[1]); if (big) d.b.px(d.x + (d.mirror ? 1 : -1), d.y, M.nose.R[2]); }, { tol: 1.4 });
-    if ((po.nose || 0) > 0.5 && sp === 'tanuki') K.decal(at(add(S.nose, [0, 0.4, -0.1])), (d) => d.b.px(d.x, d.y - 1, '#241c20'), { tol: 1.4 });
+    K.decal(at(S.nose), (d) => { d.b.px(d.x, d.y, M.nose.R[1]); if (big) d.b.px(d.x + (d.mirror ? 1 : -1), d.y, M.nose.R[2]); }, { tol: 1.4, grp: 'head' });
+    if ((po.nose || 0) > 0.5 && sp === 'tanuki') K.decal(at(add(S.nose, [0, 0.4, -0.1])), (d) => d.b.px(d.x, d.y - 1, '#241c20'), { tol: 1.4, grp: 'head' });
   }
 
   // ---- the bird --------------------------------------------------------------------------------------------
@@ -27661,7 +27757,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         if (blink > 0.6) { b.rect(d.x, d.y, big ? 2 : 1, 1, '#3a2c2c'); return; }
         b.px(d.x, d.y, M.eye);
         if (big) { b.px(d.x, d.y - 1, M.eye); b.px(d.x + (d.mirror ? 1 : -1), d.y - 1, '#fff8ee'); }
-      }, { tol: 1.1 });
+      }, { tol: 1.1, grp: 'head' });
     }
     return { head, chest: body };
   }
@@ -27687,7 +27783,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     po = po || {};
     if (!LOOKS[sp]) return null;
     if (!LOOKS[sp][lk]) lk = LOOK_ORDER[sp][0];
-    const vk = view.kind === 'world' ? 'w' + view.dir + (view.turn != null ? '~' + view.turn : '') : view.kind === 'portrait' ? 'p' + view.size + (view.yaw != null ? '~' + view.yaw : '') : view.kind === 'preview' ? 'v' : 'b';
+    // battle density: the party's drawn height over the 86 px these sizes were tuned for (0.75..2.5, in 0.05 steps)
+    const dens = view.kind === 'battle' && view.density ? Math.max(0.75, Math.min(2.5, Math.round(view.density * 20) / 20)) : 1;
+    const vk = view.kind === 'world' ? 'w' + view.dir + (view.turn != null ? '~' + view.turn : '') : view.kind === 'portrait' ? 'p' + view.size + (view.yaw != null ? '~' + view.yaw : '') : view.kind === 'preview' ? 'v' : 'b' + (dens !== 1 ? dens : '');
     const key = sp + '|' + lk + '|' + vk + '|' + poseKey(po);
     let f = cache.get(key);
     if (f) { hits++; cache.delete(key); cache.set(key, f); return f; }
@@ -27709,13 +27807,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
       box = { w: s, h: s, ax: Math.round(s * 0.5), ay: Math.round(s * (kind === 'bird' ? 1.3 : 1.18)), zs: s / (kind === 'bird' ? 11 : 16) };
       cam = A.camera(Object.assign({}, box, { pitch: 12, yaw: 152 }));
     } else {
-      box = SIZES.battle[kind];
-      // (the bird stands more side-on, so its head and beak read against the ground)
-      cam = A.camera(Object.assign({}, box, { pitch: 20, yaw: sp === 'bird' ? 58 : 36, zs: BZS[sp] || box.zs }));
+      const b0 = SIZES.battle[kind];
+      box = dens === 1 ? b0 : { w: Math.ceil(b0.w * dens), h: Math.ceil(b0.h * dens), ax: Math.round(b0.ax * dens), ay: Math.round(b0.ay * dens) };
+      // seen from a little further round than the adventurers (54° rather than their 36°), still facing the
+      // creature: the head's profile — eye, muzzle, ears — reads at this size (the bird stands more side-on still)
+      cam = A.camera(Object.assign({}, box, { pitch: 20, yaw: sp === 'bird' ? 58 : 54, zs: (BZS[sp] || b0.zs) * dens }));
     }
     const M = mats(sp, lk);
     let J = null;
-    const cv = A.render(cam, (K) => { J = kind === 'bird' ? bird(K, M, po, cam.zs) : quadruped(K, sp, M, po, cam.zs); J = { head: K.at(J.head), chest: K.at(J.chest) }; }, { contour: kind === 'bird' ? 1.2 : 1.6 }).toCanvas();
+    // the larger views (battle, preview, portrait) group their planes and cast shadows under overlaps
+    const big = cam.zs >= 1.4;
+    const cv = A.render(cam, (K) => { J = kind === 'bird' ? bird(K, M, po, cam.zs) : quadruped(K, sp, M, po, cam.zs); J = { head: K.at(J.head), chest: K.at(J.chest) }; }, { contour: kind === 'bird' ? 1.2 : 1.6, cast: big, cluster: big ? 2 : 0 }).toCanvas();
     built++;
     f = { cv, ax: box.ax, ay: box.ay, w: box.w, h: box.h, head: J.head, chest: J.chest };
     cache.set(key, f);
@@ -27772,7 +27874,7 @@ RB.pets.dev = (function () {
   function rows(sp) {
     const out = [];
     for (const f of RB.families.LIST) out.push({ kind: 'react', name: f, label: f });
-    for (const k of ['hit', 'soft', 'status']) out.push({ kind: 'impact', name: k, label: 'creature: ' + k });
+    for (const k of ['prep', 'hit', 'soft', 'status', 'settle']) out.push({ kind: 'impact', name: k, label: k === 'prep' ? 'creature prepares: brace' : k === 'settle' ? 'after its move: settle' : 'creature: ' + k });
     out.push({ kind: 'victory', name: null, label: 'settled victory' });
     (BP().CALM[sp] || []).forEach((_, i) => out.push({ kind: 'calm', name: i, label: 'calm idle ' + (i + 1) }));
     out.push({ kind: 'ready', name: 0, label: 'ready idle' });
@@ -27899,7 +28001,7 @@ RB.pets.dev = (function () {
       return true;
     }
     if (o.actor === 'foe' || kind === 'impact') {
-      RB.bus.emit('present:enemy', { scope: 'battle', actor: 'foe:0', kind: 'strike', id: 'dev', targets, outcome: o.result || 'hit', at: 200, t0 });
+      RB.bus.emit('present:enemy', { scope: 'battle', actor: 'foe:0', kind: 'strike', id: 'dev', targets, outcome: o.result || 'hit', at: 640, end: 1250, t0 });
       return true;
     }
     RB.bus.emit('present:action', { scope: 'battle', actor: o.actor || 'pc', action: 'dev', family: o.family || 'unravel', targets, result: o.result || 'hit', exchange: o.exchange || ++EX, t0, beat: 300 });
@@ -28217,6 +28319,7 @@ RB.world = (function () {
     if (m.def.travel) st.travel[m.def.travel] = true;
     W.player = makeActor(x, y, st.dir, playerLook());
     W.path = null;
+    W.pathTarget = null;
     W.leavers = [];
     W.extras = [];
     W.enteredAt = W.time;
@@ -28727,13 +28830,10 @@ RB.world = (function () {
       }
     }
     if (W.path && W.path.length === 0) {
+      const pt = W.pathTarget && W.pathTarget.path === W.path ? W.pathTarget : null;
       W.path = null;
-      if (W.pathTarget) {
-        const t = W.pathTarget;
-        W.pathTarget = null;
-        faceTo(p, t[0], t[1]);
-        interact();
-      }
+      W.pathTarget = null;
+      if (pt) arriveAt(pt);
     }
   }
   function faceTo(a, x, y) {
@@ -28940,6 +29040,9 @@ RB.world = (function () {
 
   // ---- tap to move -------------------------------------------------------------
   function bfs(tx, ty, allowAdjacent) {
+    return bfsGoal((x, y) => (x === tx && y === ty) || (allowAdjacent && Math.abs(x - tx) + Math.abs(y - ty) === 1), tx, ty);
+  }
+  function bfsGoal(goal, tx, ty) {
     const p = W.player;
     const m = W.map;
     const start = p.x + ',' + p.y;
@@ -28948,8 +29051,7 @@ RB.world = (function () {
     let found = null;
     while (q.length) {
       const [x, y] = q.shift();
-      if (x === tx && y === ty) { found = [x, y]; break; }
-      if (allowAdjacent && Math.abs(x - tx) + Math.abs(y - ty) === 1) { found = [x, y]; break; }
+      if (goal(x, y)) { found = [x, y]; break; }
       for (const d in DIRS) {
         const nx = x + DIRS[d][0], ny = y + DIRS[d][1];
         const k = nx + ',' + ny;
@@ -28972,21 +29074,84 @@ RB.world = (function () {
     }
     return path;
   }
+  // A tap on something you can interact with (a person, an interactive prop, your companion)
+  // walks to a free tile beside it (any tile of a larger prop), faces it and does what the
+  // action key would do there, exactly once. The target is remembered by identity and checked
+  // again on arrival: gone, moved away or no longer shown means nothing happens. A tap on an
+  // interactive prop you are standing on steps off it first. A new tap, a direction key, a
+  // scene, a battle or a map change drops the queued interaction (the path it belonged to ends).
+  function tapTargetAt(tx, ty) {
+    const n = actorAt(tx, ty);
+    if (n) return { kind: 'actor', ref: n };
+    const pr = propAt(tx, ty);
+    const cpr = pr || propAt(tx, ty, true);
+    if (pr || (cpr && (cpr.p === 'counter' || cpr.across))) return { kind: 'prop', ref: pr || cpr };
+    if (W.comp && W.comp.x === tx && W.comp.y === ty) return { kind: 'comp', ref: W.comp };
+    return null;
+  }
+  function tilesOf(t) {
+    if (t.kind !== 'prop') return [[t.ref.x, t.ref.y]];
+    const pd = RB.props.P[t.ref.p];
+    const w = t.ref.w || (pd && pd.w) || 1, h = t.ref.h || (pd && pd.h) || 1;
+    const out = [];
+    for (let x = t.ref.x; x < t.ref.x + w; x++) for (let y = t.ref.y; y < t.ref.y + h; y++) out.push([x, y]);
+    return out;
+  }
+  function stillThere(t) {
+    if (!W.map) return false;
+    if (t.kind === 'actor') return W.npcs.includes(t.ref) || W.extras.includes(t.ref) || W.foes.includes(t.ref);
+    if (t.kind === 'prop') return W.map.props.includes(t.ref) && (!t.ref.if || RB.state.test(s(), t.ref.if));
+    return W.comp === t.ref;
+  }
+  const beside = (tiles, x, y) => tiles.find(([a, b]) => Math.abs(a - x) + Math.abs(b - y) === 1);
+  function arriveAt(pt) {
+    const p = W.player;
+    if (pt.tile) { faceTo(p, pt.tile[0], pt.tile[1]); interact(); return; }
+    if (!stillThere(pt.target)) return;
+    const t = beside(tilesOf(pt.target), p.x, p.y);
+    if (!t) return; // it moved away while you walked
+    faceTo(p, t[0], t[1]);
+    interact();
+  }
   function tapTile(tx, ty) {
     if (!W.map || RB.game.mode() !== 'world') return;
     const p = W.player;
-    if (tx === p.x && ty === p.y) return;
+    W.pathTarget = null;
+    const target = tapTargetAt(tx, ty);
     const solid = blocked(tx, ty, { except: p, ignorePlayer: true });
-    const target = actorAt(tx, ty) || propAt(tx, ty) || (W.comp && W.comp.x === tx && W.comp.y === ty);
-    if (Math.abs(tx - p.x) + Math.abs(ty - p.y) === 1 && (solid || target)) {
-      faceTo(p, tx, ty);
-      interact();
+    if (!target) {
+      if (tx === p.x && ty === p.y) return;
+      // a solid tile next to you (a shut door, a wall): the action key's answer
+      if (solid && Math.abs(tx - p.x) + Math.abs(ty - p.y) === 1) { faceTo(p, tx, ty); interact(); return; }
+      const path = bfs(tx, ty, solid);
+      if (!path) return;
+      W.path = path;
+      W.pathTarget = solid ? { tile: [tx, ty], path } : null;
       return;
     }
-    const path = bfs(tx, ty, solid);
+    const tiles = tilesOf(target);
+    const on = tiles.some(([x, y]) => x === p.x && y === p.y);
+    const near = !on && beside(tiles, p.x, p.y);
+    if (near) { faceTo(p, near[0], near[1]); interact(); return; }
+    const path = on ? stepOff(tiles) : bfsGoal((x, y) => !tiles.some(([a, b]) => a === x && b === y) && !!beside(tiles, x, y));
     if (!path) return;
     W.path = path;
-    W.pathTarget = solid || target ? [tx, ty] : null;
+    W.pathTarget = { target, path };
+  }
+  // standing on a nonblocking interactive prop: the nearest free tile beside you that is not
+  // part of it (the one behind you first, so you turn round to face it)
+  function stepOff(tiles) {
+    const p = W.player;
+    const order = [OPP[p.dir], p.dir, 'left', 'right', 'up', 'down'];
+    for (const d of order) {
+      if (!d || !DIRS[d]) continue;
+      const nx = p.x + DIRS[d][0], ny = p.y + DIRS[d][1];
+      if (tiles.some(([a, b]) => a === nx && b === ny)) continue;
+      if (nx < 0 || ny < 0 || nx >= W.map.w || ny >= W.map.h) continue;
+      if (blocked(nx, ny, { except: p, ignorePlayer: true }) || RB.maps.exitAt(W.map, nx, ny)) continue;
+      return [[nx, ny]];
+    }
+    return null;
   }
 
   function emote(who, kind, ms) {
@@ -39167,7 +39332,14 @@ RB.combatLogic = (function () {
         if (blocker != null) { answered[blocker] = true; fx.push({ t: 'ward', target: card.target, block: true, foe: blocker }); }
         else { st.ward[card.target] += 2; fx.push({ t: 'ward', target: card.target, n: 2 }); }
       }
-      if (tags.indexOf('heal') >= 0) { st.pc = Math.min(st.max, st.pc + 3); if (st.compId) st.comp = Math.min(st.max, st.comp + 3); fx.push({ t: 'heal', n: 3 }); }
+      if (tags.indexOf('heal') >= 0) {
+        const was = { pc: st.pc, comp: st.comp };
+        st.pc = Math.min(st.max, st.pc + 3); if (st.compId) st.comp = Math.min(st.max, st.comp + 3);
+        // who it reaches and what each actually recovered (for truthful feedback; battle addendum RBN-04)
+        const aim = st.compId ? ['pc', 'comp'] : ['pc'];
+        const d = { pc: st.pc - was.pc, comp: st.compId ? st.comp - was.comp : 0 };
+        fx.push({ t: 'heal', n: 3, aim, who: aim.filter((w) => d[w] > 0), d, gain: d.pc + d.comp });
+      }
       // what it does to each creature it reaches, one creature at a time (in order across the stage)
       const reached = reach.foes.slice().sort((a, b) => a - b);
       const reachTag = (tg, i) => (TAG_REACH[tg] === 'all' ? reached.indexOf(i) >= 0 : TAG_REACH[tg] === 'target' ? i === T : false);
@@ -39332,13 +39504,17 @@ RB.combatLogic = (function () {
         say(def.say || 'A ward rises.', { allies: R.allies.slice(), n });
         break;
       case 'heal': {
-        const before = st.pc + st.comp;
+        const was = { pc: st.pc, comp: st.comp };
         for (const a of R.allies) {
           if (a === 'pc' && st.pc > 0) st.pc = Math.min(st.max, st.pc + n);
           if (a === 'comp' && st.comp > 0) st.comp = Math.min(st.max, st.comp + n);
         }
-        say(def.say || 'You breathe easier.', { allies: R.allies.slice(), n });
-        fx.push({ t: 'heal', n, who: R.allies.slice(), by: who, gain: st.pc + st.comp - before });
+        const d = { pc: st.pc - was.pc, comp: st.comp - was.comp };
+        // the authored line names an amount; it is said only when that is what happened
+        // (otherwise the display words the actual result: RB.ui.combat, battle addendum RBN-04)
+        const full = R.allies.every((a) => d[a] === n);
+        say(full ? def.say || 'You breathe easier.' : null, { allies: R.allies.slice(), n, d, heal: true });
+        fx.push({ t: 'heal', n, aim: R.allies.slice(), who: R.allies.filter((a) => d[a] > 0), by: who, d, gain: d.pc + d.comp });
         break;
       }
       case 'clear':
@@ -40081,7 +40257,7 @@ RB.tasks = (function () {
       const i = word.indexOf(ch);
       return {
         kind: 'write', item: 'k:' + ch, answer: ch, accept: [ch], mode: 'kana', script: kata ? 'kata' : 'hira',
-        prompt: { en: 'Complete the word “' + e.m + '”: write the missing kana (' + rom + ').', jp: '' },
+        prompt: { en: 'Complete the word “' + e.m + '”: write the missing ' + (kata ? 'katakana' : 'hiragana') + ' (' + rom + ').', jp: '' },
         template: { before: word.slice(0, i), after: word.slice(i + 1) },
         word: { w: e.w, r: word, m: e.m },
         explain: { en: word + ' (' + RB.kana.romaji(word) + ') — ' + e.m + '.' },
@@ -40094,6 +40270,11 @@ RB.tasks = (function () {
       explain: { en: ch + ' is read ' + rom + '.' }, single: true,
     };
   }
+  // "in hiragana", "in katakana", "in hiragana or in kanji" … for a lexicon entry's recall task
+  function scriptAsk(e) {
+    const sc = RB.kana.isKata(e.r[0]) ? 'katakana' : 'hiragana';
+    return e.w !== e.r ? 'in ' + sc + ', or in kanji' : 'in ' + sc;
+  }
   function vocabStep(key, opts) {
     opts = opts || {};
     const e = findWord(key);
@@ -40105,7 +40286,9 @@ RB.tasks = (function () {
       return {
         kind: 'write', item: 'v:' + e.w, answer: e.r, accept: e.w !== e.r ? [e.r, e.w] : [e.r], mode: 'reading',
         script: RB.kana.isKata(e.r[0]) ? 'kata' : 'hira',
-        prompt: { en: 'Write the word for “' + e.m + '”.' + (e.w !== e.r ? ' Kana is fine.' : '') },
+        // the prompt states exactly what the check accepts: the word's own kana script (and
+        // its kanji spelling, when it has one); the other kana script is not this word
+        prompt: { en: 'Write the word for “' + e.m + '” ' + scriptAsk(e) + '.' },
         explain: { en: wordLabel(e) + (e.w !== e.r ? '（' + e.r + '）' : '') + ' — ' + e.m + (e.n ? '. ' + e.n : '.') },
       };
     }
@@ -47922,7 +48105,7 @@ RB.challenge = (function () {
     // { ok, feedback, limit?, head?, html? } — `limit` means "outside what this can read", not wrong
     if (typeof step.judge === 'function') { try { return step.judge(input, opts || {}) || { ok: false }; } catch (e) { console.error('judge', e); return { ok: false, feedback: [] }; } }
     const accept = (step.accept && step.accept.length ? step.accept : [step.answer]).map(String);
-    if (RB.answers && RB.answers.check) return RB.answers.check(input, { accept, mode: step.mode || 'kana', scriptFree: !!step.scriptFree, handwritten: !!(opts && opts.handwritten) });
+    if (RB.answers && RB.answers.check) return RB.answers.check(input, { accept, mode: step.mode || 'kana', scriptFree: !!step.scriptFree, handwritten: !!(opts && opts.handwritten), input: opts && opts.input });
     const norm = (s) => plain(s).replace(/\s/g, '');
     const ok = accept.some((a) => norm(a) === norm(input));
     return { ok, feedback: ok ? [] : [{ code: 'generic', en: 'That is not what this needs.' }] };
@@ -48017,6 +48200,9 @@ RB.challenge = (function () {
           if (step.ctx.en && showEn) h += '<div class="chal-en">' + esc(RB.script.enVars(step.ctx.en)) + '</div>';
         }
         if (step.prompt) h += '<div class="chal-prompt">' + esc(RB.script.enVars(step.prompt.en || '')) + (step.prompt.jp ? ' ' + RB.ui.jhtml(step.prompt.jp) : '') + '</div>';
+        // a guided example shows its model on the task (battle addendum RBN-07): said so, and
+        // recorded as assisted — never as independent recall or deduction
+        if (step.guided) h += '<div class="chal-guided muted small">' + I('help') + '<span>' + esc(step.guided.en || 'A guided example: the model is shown above.') + '</span></div>';
         if (step.kind === 'write' && step.template && (step.template.before || step.template.after)) {
           h += '<div class="chal-tpl">' + RB.ui.jhtml(step.template.before || '') + '<span class="blank jp" role="img" aria-label="the missing part">？</span>' + RB.ui.jhtml(step.template.after || '') + '</div>';
         }
@@ -48207,11 +48393,12 @@ RB.challenge = (function () {
         res.ok = true;
         res.mode = modeUsed;
         if (res.firstTry == null) res.firstTry = true;
-        if (active.helpUsed) res.assisted = true;
+        if (active.helpUsed || step.guided) res.assisted = true;
+        if (step.guided) res.guided = true;
         RB.audio && RB.audio.sfx('answer_right');
         // how it was written: "水 (みず) — written in kanji", one-shape characters
         const how = (notes || []).map((n) => '<div class="fb-how" data-note="' + esc(n.code) + '">' + enRuby(n.en) + '</div>').join('');
-        fb('ok', 'Yes.', how + (res.assisted ? '<span class="muted small">Assisted — that\'s fine.</span>' : '') + explainHtml());
+        fb('ok', 'Yes.', how + (res.assisted ? '<span class="muted small">' + (res.guided ? 'Guided practice' : 'Assisted') + ' — that\'s fine.</span>' : '') + explainHtml());
         const w = wrap.querySelector('.fbwrap');
         const btn = continueBtn();
         btn.onclick = () => finish(false);
@@ -48221,7 +48408,7 @@ RB.challenge = (function () {
       }
       function evaluate(text, modeUsed, meta) {
         if (PH) PH.submit(modeUsed); // stamped before evaluation: on time stays on time
-        const r = check(text, step, { handwritten: modeUsed === 'hand' });
+        const r = check(text, step, { handwritten: modeUsed === 'hand', input: modeUsed });
         if (r.ok) {
           if (meta.assisted) active.helpUsed = true;
           res.given = { text: plain(text), mode: modeUsed, matched: r.matched != null ? r.matched : null, family: r.family != null ? r.family : null };
@@ -50449,7 +50636,10 @@ RB.activities = (function () {
         const L = list[i];
         const t = tier(L.text);
         P.fr.setTitle(RB.ui.jhtml(a.title.jp) + ' ' + esc(a.title.en), 'Letter ' + (i + 1) + ' of ' + list.length);
-        P.body.innerHTML = '<p class="muted small act-lead">The address has run in the rain. Read the letter: who is it for?</p>' +
+        // a neutral lead unless the activity supplies its own truthful one (`lead`, tiered): the
+        // scene before it may question why the addresses are gone (battle addendum RBN-05)
+        const lead = a.lead ? tier(a.lead) : null;
+        P.body.innerHTML = '<p class="muted small act-lead">' + (lead ? (lead.jp ? RB.ui.jhtml(lead.jp) + ' ' : '') + esc(lead.en) : 'The address is missing. Read the letter: who is it for?') + '</p>' +
           '<article class="letter" aria-label="The letter">' + RB.learnUi.icon('letter') + '<div class="letter-jp">' + RB.ui.jhtml(t.jp) + '</div>' + (showEn ? '<div class="act-en">' + esc(RB.script.enVars(t.en)) + '</div>' : '') + '</article>' +
           (showEn ? '' : '<div class="act-tr">' + trButton() + '</div>') +
           '<h3>' + RB.learnUi.icon('companion') + '<span>Deliver to…</span></h3><ul class="entries recips">' + a.recipients.map((r) => '<li><button class="entry recip" data-to="' + r.id + '"><span class="mark">' + RB.learnUi.icon('here') + '</span><span class="body"><span class="t">' + esc(r.name.en) + ' ' + RB.ui.jhtml(r.name.jp) + '</span><span class="d">' + RB.ui.jhtml(tier(r.desc).jp) + (showEn ? '<span class="en">' + esc(tier(r.desc).en) + '</span>' : '') + '</span></span></button></li>').join('') + '</ul>' +
@@ -53300,17 +53490,51 @@ RB.enemyArt = (function () {
     for (const f of seq) if (f > hi) hi = f;
     return hi;
   }
+  // ---- authored action poses (battle addendum §9) -----------------------------------------
+  // A definition may draw its own frames for an action instead of bending its idle frame:
+  //   poses: { prep: n, exec: n, cast: n, recoil: n, recover: n, balk: n, release: n, settle: n, rest: n }
+  //          (frames per act; acts not listed keep the motion style)
+  //   pose(L, act, i, n, o, H, side) draws frame i of n of that act into layer L (side: -1 when
+  //          the creature faces left towards the party, +1 right)
+  //   poseMotion: 'travel' (default) keeps only the motion's travel (dx, dy) on top of the
+  //          authored frame; 'full' keeps its lean/squash too; 'none' keeps nothing
+  // Posed frames are cached like idle frames (id|options|act|i|side) and share the cap.
+  function posedFrame(id, act, i, n, o, side) {
+    const spec = P[id];
+    const key = id + '|' + okey(o) + '|' + act + ':' + i + '/' + n + '|' + side;
+    let cv = cache.get(key);
+    if (cv) { cache.delete(key); cache.set(key, cv); return cv; }
+    const L = K.layer(spec.w, spec.h, spec.ox, spec.oy);
+    const out = spec.pose(L, act, i, n, o || {}, H, side) || L;
+    cv = out.canvas();
+    cache.set(key, cv);
+    while (cache.size > CAP) cache.delete(cache.keys().next().value);
+    return cv;
+  }
+  function posedOf(spec, pose) {
+    if (!pose || !pose.act || !spec.pose || !spec.poses) return 0;
+    return spec.poses[pose.act] | 0;
+  }
   // Draw a creature in a pose (see motion): moved, leaned, squashed or rippled in
   // whole creature pixels (4-row bands drawn with integer offsets, no smoothing).
   // Without a pose it is exactly drawArt. Returns the offset applied (art px).
+  // pose.travel { dx, dy } (art px, from the stage) moves it bodily, e.g. towards its target.
   function drawPosed(c, id, t, o, x, y, s, still, pose) {
     const spec = P[id] || (!A[id] && P.wisp);
     if (!spec) return null;
     const pid = P[id] ? id : 'wisp';
     s = s || 1;
     const m = pose ? motion(pid, pose, t, still) : null;
+    const np = posedOf(P[pid], pose);
+    if (m && np) {
+      const pm = P[pid].poseMotion || 'travel';
+      if (pm !== 'full') { m.lean = 0; m.ripple = 0; m.sy = 1; }
+      if (pm === 'none') { m.dx = 0; m.dy = 0; }
+    }
+    if (m && pose && pose.travel) { m.dx += pose.travel.dx || 0; m.dy += pose.travel.dy || 0; }
     const f = m && m.frame != null ? pickFrame(spec, m.frame) : frameAt(spec, t * (m ? m.rate || 1 : 1), still);
-    const cv = frame(pid, f, o);
+    const side = pose && pose.dir && pose.dir.x > 0 ? 1 : -1;
+    const cv = np ? posedFrame(pid, pose.act, Math.min(np - 1, Math.floor(cl(pose.k || 0) * np)), np, o, side) : frame(pid, f, o);
     const b = (spec.bob && !still ? Math.round(spec.bob(t)) : 0) + (spec.dy || 0);
     const X = Math.round(x + Math.round(m ? m.dx : 0) * s), Y = Math.round(y + Math.round(m ? m.dy : 0) * s);
     c.imageSmoothingEnabled = false;
@@ -55454,6 +55678,18 @@ RB.combat = (function () {
   // One authoritative fx event reaches the screen: the displayed state steps
   // forward by exactly this result, its line is logged and its sound plays.
   // Called once per event by the sequencer (RB.battleSeq), at its beat.
+  // What a recovery did, from the actual change: solo is singular, one of two names who it was,
+  // and at full resolve nobody "breathes easier" (battle addendum RBN-04).
+  function healLine(d, pair, by) {
+    const s = RB.game.s, cn = pair ? compName() : '';
+    const pc = d.pc > 0, cp = pair && d.comp > 0;
+    const lead = by && pair ? cn + ' tends to you. ' : '';
+    if (pc && cp) return lead + 'You both breathe easier (+' + d.pc + ' for you, +' + d.comp + ' for ' + cn + ').';
+    if (pc) return lead + 'You breathe easier (+' + d.pc + ')' + (pair ? '; ' + cn + ' was already steady.' : '.');
+    if (cp) return lead + cn + ' breathes easier (+' + d.comp + '); you were already steady.';
+    void s;
+    return lead + (pair ? 'No recovery was needed: you are both already steady.' : 'No recovery was needed: you are already steady.');
+  }
   function applyBeat(f, cue) {
     const s = RB.game.s;
     if (!view) view = snapshot(st);
@@ -55478,7 +55714,11 @@ RB.combat = (function () {
         const n = f.n || 3, ws = f.who || ['pc', 'comp'];
         if (ws.indexOf('pc') >= 0 && v.pc > 0 || (!f.by && ws.indexOf('pc') >= 0)) v.pc = Math.min(v.max, v.pc + n);
         if (v.compId && ws.indexOf('comp') >= 0 && (v.comp > 0 || !f.by)) v.comp = Math.min(v.max, v.comp + n);
-        sfx('heal'); msg = f.by ? '' : 'You both breathe easier.'; break;
+        sfx(f.gain === 0 ? 'enemy_intent' : 'heal');
+        // the line says who actually recovered, from the real change (the companion's own action
+        // carries its line on the 'cact' event before this one)
+        msg = f.by ? '' : healLine(f.d || { pc: v.pc - was.pc, comp: v.comp - was.comp }, !!v.compId);
+        break;
       }
       case 'warm': sfx('light'); msg = 'Warmth spreads through your fingers.'; break;
       case 'bell': v.silenced = 0; sfx('bell'); msg = f.by ? '' : 'A clear note breaks the hush.'; break;
@@ -55515,7 +55755,7 @@ RB.combat = (function () {
         if (f.who === 'mio' && cue && cue.side === 'enemy') { v.pc = st.pc; v.comp = st.comp; }
         sfx('reveal'); msg = f.en; break;
       // your companion's support action
-      case 'cact': sfx(f.none ? 'enemy_intent' : 'reveal'); msg = f.en; break;
+      case 'cact': sfx(f.none ? 'enemy_intent' : 'reveal'); msg = f.en || (f.heal && f.d ? healLine(f.d, !!v.compId, f.who) : ''); break;
       case 'soften': fo.soften = (fo.soften || 0) + (f.n || 1); break;
       case 'stun': fo.stunned = fo.stunned || s.comp || 'comp'; break;
       case 'draw': fo.drawn = true; break;
@@ -55602,7 +55842,7 @@ RB.combat = (function () {
   function playEnemy(i, it, fx, wardBlock) {
     const m = members[i] || enemy;
     const aimHit = fx.find((f) => f.t === 'hit' || f.t === 'block');
-    const ctx = seqCtx({ view: snapshot(V()), foe: i, wardBlock, foeCol: (m.artOpts && m.artOpts.col) || null, aim: aimHit ? aimHit.who : (V().foes[i] && V().foes[i].drawn && st.compId ? 'comp' : null) });
+    const ctx = seqCtx({ view: snapshot(V()), foe: i, wardBlock, art: m.art || null, foeCol: (m.artOpts && m.artOpts.col) || null, aim: aimHit ? aimHit.who : (V().foes[i] && V().foes[i].drawn && st.compId ? 'comp' : null) });
     const E = RB.battleSeq.choreo.enemy(it, fx, ctx);
     phase = 'enemy';
     {
@@ -56585,6 +56825,27 @@ RB.battleSeq = (function () {
     return last < 0 ? 0 : last + 940;
   }
 
+  // ---- creature-specific delivery (battle addendum §9.3, §18) ---------------------------------
+  // addDelivery(art, kind, fn): how one creature performs a move — its own preparation, approach,
+  // contact and recovery. kind: an intent kind ('strike', 'shroud' …), a family ('strike',
+  // 'sweep', 'cast') or '*'. fn(a) → { cues, contact, end } with times in ms from the move's start:
+  //   a = { kind, fam, me, aimed, dir, fv, comp, countered, wardBlock, ctx, T, foeCue(o) }
+  //   cues: 'foe' (act, d, dir, family, travel, hold), 'fx', 'pose', 'sfx' only — never 'beat':
+  //         the rules' results are placed here, at `contact`, in their order (dropped otherwise)
+  //   contact: when the move arrives (the first result shows then); end: when its own
+  //         performance (recovery included) is over — the action's interval for the banner
+  // Without a delivery the generic choreography below plays.
+  const DELIVERY = {};
+  function addDelivery(art, kind, fn) { (DELIVERY[art] = DELIVERY[art] || {})[kind] = fn; }
+  function deliveryOf(art, kind, fam) { const d = art && DELIVERY[art]; return d ? d[kind] || d[fam] || d['*'] || null : null; }
+  const VISUAL = { foe: 1, fx: 1, pose: 1, sfx: 1 };
+  function delivered(fn, a) {
+    let r = null;
+    try { r = fn(a); } catch (e) { console.error('battle delivery', e); r = null; }
+    if (!r || !Array.isArray(r.cues) || !(r.contact >= 0)) return null;
+    return { cues: r.cues.filter((c) => c && VISUAL[c.type] && c.at >= 0), contact: r.contact, end: Math.max(r.end || 0, r.contact + 200) };
+  }
+
   const choreo = {
     // Your response (or your coordinated technique), once accepted and applied by the rules.
     player(card, fx, ctx) {
@@ -56701,17 +56962,49 @@ RB.battleSeq = (function () {
         Q.push({ at: t + 200, type: 'beat', f: { t: 'rest', foe: me } });
         t += 700;
       } else if (countered) {
-        foeCue({ at: t, act: 'prep', d: T.foePrep, dir, family: fam });
-        if (ctx.wardBlock && single) {
-          // the blow is thrown and meets the seal raised in front of its target
-          foeCue({ at: t + T.foePrep, act: 'exec', d: 320, dir, family: fam });
-          Q.push({ at: t + T.foePrep + 10, type: 'fx', name: 'dart', d: 200, p: { to: aimed, foe: me } });
-          Q.push({ at: t + T.foePrep + 200, type: 'fx', name: 'sealBlock', d: 420, p: { to: aimed, n: 0 } });
-          Q.push({ at: t + T.foePrep + 200, type: 'pose', who: aimed, pose: 'brace', d: 320 });
-        } else foeCue({ at: t + T.foePrep, act: 'balk', d: 380 });
-        for (const f of fx.filter((x) => x.t === 'countered')) { reactions(Q, f, t + T.foePrep + 200, ctx, 'enemy'); Q.push({ at: t + T.foePrep + 200, type: 'beat', f }); }
-        spent(Q, t + T.foePrep + 260);
-        t += T.foePrep + 520;
+        if (!(ctx.wardBlock && single && deliveryOf(ctx.art, kind, fam))) foeCue({ at: t, act: 'prep', d: T.foePrep, dir, family: fam });
+        const D = ctx.wardBlock && single ? deliveryOf(ctx.art, kind, fam) : null;
+        const dv = D ? delivered(D, { kind, fam, me, aimed, dir, fv, comp, countered: true, wardBlock: true, ctx, T, foeCue: (o) => Object.assign({ type: 'foe', foe: me }, o) }) : null;
+        if (dv) {
+          // its own approach, stopped by the seal raised in front of its target
+          for (const c of dv.cues) Q.push(Object.assign({}, c, { at: t + c.at }));
+          const at = t + dv.contact;
+          Q.push({ at, type: 'fx', name: 'sealBlock', d: 420, p: { to: aimed, n: 0 } });
+          Q.push({ at, type: 'pose', who: aimed, pose: 'brace', d: 320 });
+          for (const f of fx.filter((x) => x.t === 'countered')) { reactions(Q, f, at, ctx, 'enemy'); Q.push({ at, type: 'beat', f }); }
+          spent(Q, at + 60);
+          t += dv.end;
+        } else {
+          if (D) foeCue({ at: t, act: 'prep', d: T.foePrep, dir, family: fam }); // (its delivery failed: the generic one)
+          if (ctx.wardBlock && single) {
+            // the blow is thrown and meets the seal raised in front of its target
+            foeCue({ at: t + T.foePrep, act: 'exec', d: 320, dir, family: fam });
+            Q.push({ at: t + T.foePrep + 10, type: 'fx', name: 'dart', d: 200, p: { to: aimed, foe: me } });
+            Q.push({ at: t + T.foePrep + 200, type: 'fx', name: 'sealBlock', d: 420, p: { to: aimed, n: 0 } });
+            Q.push({ at: t + T.foePrep + 200, type: 'pose', who: aimed, pose: 'brace', d: 320 });
+          } else foeCue({ at: t + T.foePrep, act: 'balk', d: 380 });
+          for (const f of fx.filter((x) => x.t === 'countered')) { reactions(Q, f, t + T.foePrep + 200, ctx, 'enemy'); Q.push({ at: t + T.foePrep + 200, type: 'beat', f }); }
+          spent(Q, t + T.foePrep + 260);
+          t += T.foePrep + 520;
+        }
+      } else if (deliveryOf(ctx.art, kind, fam)) {
+        // this creature's own performance of the move; the results arrive at its contact
+        const dv = delivered(deliveryOf(ctx.art, kind, fam), { kind, fam, me, aimed, dir, fv, comp, countered: false, wardBlock: false, ctx, T, foeCue: (o) => Object.assign({ type: 'foe', foe: me }, o) });
+        if (!dv) return choreo.enemy(it, fx, Object.assign({}, ctx, { art: null }));
+        for (const c of dv.cues) Q.push(Object.assign({}, c, { at: t + c.at }));
+        let at = t + dv.contact;
+        const lastWho = {};
+        for (const f of fx) {
+          if (pre.indexOf(f) >= 0 || post.indexOf(f) >= 0) continue;
+          if (f.t === 'hit' && lastWho[f.who] === 'block') at += 110;
+          else if ((f.t === 'hit' || f.t === 'block') && Object.keys(lastWho).length && !lastWho[f.who]) at += T.secondTarget;
+          reactions(Q, f, at, ctx, 'enemy');
+          Q.push({ at, type: 'beat', f });
+          if (f.t === 'hit' || f.t === 'block') lastWho[f.who] = f.t;
+          if (f.t === 'stripWard') at += 90;
+        }
+        spent(Q, at + 60);
+        t = Math.max(at + 200, t + dv.end);
       } else {
         foeCue({ at: t, act: 'prep', d: T.foePrep, dir, family: fam });
         foeCue({ at: t + T.foePrep, act: fam === 'cast' ? 'cast' : 'exec', d: fam === 'sweep' ? 460 : T.foeExec, dir, family: fam });
@@ -56792,7 +57085,7 @@ RB.battleSeq = (function () {
     return { running: !!cur, kind: cur && cur.kind, pt: Math.round(pt), timers: timers.size, layer: !!layer, pointer: !!onDown, attached: !!port, counters: Object.assign({}, counters) };
   }
   // setTimeScale(k): slow the presentation clock (k < 1) for frame captures; tests and tools only
-  return { T, attach, detach, tick, now, run, settle, hurry, busy: () => !!cur, choreo, planOf, stats, trace: () => trace.slice(), setTimeScale: (k) => { timeScale = Math.max(0.05, Math.min(4, +k || 1)); } };
+  return { T, attach, detach, tick, now, run, settle, hurry, busy: () => !!cur, choreo, planOf, addDelivery, deliveryOf, stats, trace: () => trace.slice(), setTimeScale: (k) => { timeScale = Math.max(0.05, Math.min(4, +k || 1)); } };
 })();
 
 
@@ -57207,12 +57500,12 @@ RB.battleStage = (function () {
       else if (act) {
         const k = cl((fr.pt - act.t0) / act.d);
         if (k >= 1 && !act.hold) S.foes[i] = null;
-        else fp = { act: act.act, k, family: act.family, dir: dirTo(act.dir, i) };
+        else fp = { act: act.act, k, family: act.family, dir: dirTo(act.dir, i), travel: travelOf(act, k, i, f) };
       }
       const art = d.art || 'wisp', opts = d.artOpts || {};
       // its ground shadow stays on the ground (it follows a lunge sideways only)
       const mo = fp ? RB.enemyArt.motion(art, fp, fr.amb, reduce) : null;
-      Sc.shadow(c, f.ex + Math.round((mo ? mo.dx : 0)) * L.scale, f.shadowY, f.shadowR, 11 * L.scale, 0.5 * (mo ? mo.alpha : 1));
+      Sc.shadow(c, f.ex + Math.round((mo ? mo.dx : 0) + (fp && fp.travel ? fp.travel.dx : 0)) * L.scale, f.shadowY, f.shadowR, 11 * L.scale, 0.5 * (mo ? mo.alpha : 1));
       const off = RB.enemyArt.drawPosed(c, art, fr.amb + i * 977, opts, f.ex, f.ey, L.scale, reduce, fp) || { dx: 0, dy: 0 };
       S.foeOffs[i] = off;
       if (i === 0) { info.foe = fp ? fp.act : null; info.foeOff = { dx: off.dx, dy: off.dy }; }
@@ -57304,6 +57597,21 @@ RB.battleStage = (function () {
     });
     S.drawn++;
     S.frame = info;
+  }
+  // A creature's bodily travel during an action (battle addendum §9, §18.2): a foe cue may carry
+  //   travel: { to: 'pc'|'comp'|'party', peak: 0..1 (share of the way to the target's chest),
+  //             arc: art px lifted at mid-path, shape: 'out'|'back'|'outback'|'hold' }
+  // → an offset in creature (art) px for drawPosed, from the actual anchors (so a resize or a
+  // withdrawn panel never leaves it aiming at old coordinates).
+  function travelOf(act, k, i, f) {
+    const tv = act.travel;
+    if (!tv || !tv.to) return null;
+    const b = anchor(tv.to, 'chest');
+    const e = (x) => 1 - Math.pow(1 - cl(x), 3);
+    const pr = tv.shape === 'back' ? 1 - e(k) : tv.shape === 'hold' ? 1 : tv.shape === 'outback' ? (k < 0.5 ? e(k / 0.5) : 1 - e((k - 0.5) / 0.5)) : e(k);
+    const peak = tv.peak == null ? 0.6 : tv.peak, sc = S.lay.scale || 1;
+    const lift = (tv.arc || 0) * Math.sin(Math.PI * cl(k)) * (tv.shape === 'hold' ? 0 : 1);
+    return { dx: Math.round(((b.x - f.ex) * peak * pr) / sc), dy: Math.round(((b.y - f.ey) * peak * pr) / sc - lift) };
   }
   function dirTo(id, i) {
     if (!id) return { x: -0.8, y: 0.6 };
@@ -58137,7 +58445,7 @@ RB.battlePets = (function () {
     cat: { calm: { sit: 1 }, ready: { sit: 1, earF: 0.5, hp: -4 }, defeat: { sit: 1, crouch: 0.5, earF: -0.6, hy: 40 }, victory: { sit: 1, tall: 1, tUp: 38, blink: 0.5, earF: 0.4 } },
     dog: { calm: { sit: 1 }, ready: { sit: 0, lean: 0.35, earF: 0.7, hp: -4 }, defeat: { lie: 1, earF: -0.7, hy: 45 }, victory: { sit: 1, earF: 0.5, hp: -8 } },
     bird: { calm: {}, ready: { earF: 0, hp: -6, lean: 0.2 }, defeat: { crouch: 0.6, fluff: 0.8, hy: 50 }, victory: { hp: -10 } },
-    tanuki: { calm: { sit: 1 }, ready: { sit: 0.5, rise: 0.25, paws: 0.6, earF: 0.3 }, defeat: { sit: 1, crouch: 0.5, paws: 1, earF: -0.6, hy: 40 }, victory: { sit: 1, paws: 1, blink: 0.5 } },
+    tanuki: { calm: { sit: 1 }, ready: { sit: 1, rise: 0.15, paws: 0.5, earF: 0.3, hp: -4 }, defeat: { sit: 1, crouch: 0.5, paws: 1, earF: -0.6, hy: 40 }, victory: { sit: 1, paws: 1, blink: 0.5 } },
   };
   // Where it looks: at you (on its right), at your companion (over its left shoulder), at the creature.
   const LOOK = { pc: 52, comp: -70, foe: 6 };
@@ -58223,6 +58531,28 @@ RB.battlePets = (function () {
     bird: { hit: K(700, [[0, {}], [100, { wing: 0.45, flap: 0.3, fluff: 0.5 }], [260, { wing: 0.3, flap: 0.8 }], [440, { fluff: 0.3 }], [700, {}]], 3, hop(80, 2, 260)), soft: K(600, [[0, {}], [140, { fluff: 0.6, tuck: 0.5 }], [600, {}]], 1), status: K(650, [[0, {}], [200, { hr: 18, hp: -8 }], [650, {}]], 1) },
     tanuki: { hit: K(850, [[0, {}], [120, { lean: -0.6, crouch: 0.35 }], [440, { lean: -0.2, crouch: 0.2, paws: 0.6 }], [850, {}]], 1), soft: K(700, [[0, {}], [160, { lean: -0.3, spread: 0.4 }], [700, {}]], 1), status: K(700, [[0, {}], [220, { hp: -8, nose: 1 }], [700, {}]], 1) },
   };
+  // Around a creature's move (battle addendum §11): while it prepares, a glance at it and a small brace
+  // (ears back, weight down, feathers sleeked) that holds until contact; after the move, a settle (the cat
+  // re-curls its tail, the dog shakes out its ruff, the bird fluffs and smooths, the tanuki folds its paws).
+  // Neither is an injury cue, and neither is ever a target, a number or a mark.
+  const PREP = {
+    cat: K(520, [[0, {}], [180, { hy: LOOK.foe, earF: -0.45, crouch: 0.2, tSide: 14 }], [520, { hy: LOOK.foe, earF: -0.5, crouch: 0.25, tSide: 18 }]], 2),
+    dog: K(520, [[0, {}], [180, { hy: LOOK.foe, earF: 0.9, lean: -0.25, spread: 0.4 }], [520, { hy: LOOK.foe, earF: 0.9, lean: -0.3, spread: 0.5, crouch: 0.15 }]], 2),
+    bird: K(480, [[0, {}], [160, { hr: 12, fluff: -0.2, tuck: 0.3 }], [480, { hr: 12, tuck: 0.45, crouch: 0.3 }]], 2),
+    tanuki: K(560, [[0, {}], [200, { hy: LOOK.foe, earF: -0.4, paws: 0.8, crouch: 0.15 }], [560, { hy: LOOK.foe, earF: -0.45, paws: 1, crouch: 0.2 }]], 2),
+  };
+  const SETTLE = {
+    cat: K(620, [[0, {}], [180, { tCurl: 20, tFlick: 24, earR: 0.4 }], [400, { tFlick: -10 }], [620, {}]], 1),
+    dog: K(640, [[0, {}], [120, { hr: 12, earF: -0.3 }], [240, { hr: -12, earF: -0.3 }], [360, { hr: 8 }], [480, { hr: -4 }], [640, {}]], 2),
+    bird: K(600, [[0, {}], [180, { fluff: 0.9 }], [340, { fluff: 0.2, wing: 0.18 }], [600, {}]], 1),
+    tanuki: K(640, [[0, {}], [220, { paws: 1, breath: 1 }], [460, { paws: 0.8, breath: 0, blink: 1 }], [640, {}]], 1),
+  };
+  // the flinch itself is quick (0.7 of its first timing); the settle carries the recovery
+  const quick = (R, f) => K(Math.round(R.ms * f), R.keys.map(([ms, po]) => [Math.round(ms * f), po]), R.key, R.lift ? ((g) => (tt) => g(tt / f))(R.lift) : undefined);
+  for (const sp in IMPACT) {
+    for (const k of ['hit', 'soft', 'status']) IMPACT[sp][k] = quick(IMPACT[sp][k], 0.7);
+    IMPACT[sp].prep = PREP[sp]; IMPACT[sp].settle = SETTLE[sp];
+  }
   // The settled-victory gesture (with your cheer).
   const VICTORY = {
     cat: K(1300, [[0, {}], [300, { tall: 1, tUp: 40, earF: 0.4 }], [700, { tall: 1, tUp: 40, blink: 1 }], [1000, { tall: 1, tUp: 36 }], [1300, { tall: 1, tUp: 38, blink: 0.5 }]], 2),
@@ -58337,19 +58667,41 @@ RB.battlePets = (function () {
     // the look is taken once, here: nothing changes the animal halfway through an exchange
     B = {
       on: true, sp, look: RB.pets.lookOf(s, sp), base: 'calm', q: [], idle: null, idleAt: 0, enterT: null, ex: -1, dom: 0,
-      stats: { reactions: 0, secondary: 0, impacts: 0, families: {}, calmIdles: 0, victory: 0, drawn: 0, maxParticles: 0 }, trace: [],
-      comp: e && e.comp,
+      stats: { reactions: 0, secondary: 0, impacts: 0, preps: 0, settles: 0, skipped: 0, fitted: 0, families: {}, calmIdles: 0, victory: 0, drawn: 0, maxParticles: 0 }, trace: [],
+      comp: e && e.comp, gen: (B0 = (B0 + 1) | 0),
     };
   }
+  let B0 = 0;
   function end() { B = null; }
-  function schedule(r) {
-    if (!B) return;
+  // Fit a reaction into the action it answers (battle addendum §11: reactions overlap the action and never
+  // outlast it into the next decision). `from`..`until` is the window on the presentation clock; a reaction
+  // longer than its window plays faster (never more than 1.6×) and is eased out at the next calm. A window
+  // shorter than 120 ms (instant playback) plays nothing: the recap carries the result, not the pet.
+  const MIN_WIN = 120, MAX_RATE = 1.6, SETTLE_GRACE = 450;
+  function fit(r, R, from, until, optional) {
+    const dur = r.secondary ? R.ms * 0.62 : R.ms;
+    if (until != null && until - from < MIN_WIN) return null;
+    // a brace or a settle that cannot fit even at the fastest rate is left out (it is optional)
+    if (optional && until != null && until - from < dur / MAX_RATE) return null;
+    let rate = 1;
+    if (until != null && until - from < dur) { rate = Math.min(MAX_RATE, dur / Math.max(1, until - from)); B.stats.fitted++; }
+    r.at = from; r.rate = rate; r.dur = dur / rate;
+    return r;
+  }
+  function schedule(r, R, until) {
+    if (!B) return false;
+    const traced = { kind: r.kind, family: r.family || r.impact || null, actor: r.actor || null, secondary: !!r.secondary, outcome: r.outcome || null };
+    const optional = r.impact === 'prep' || r.impact === 'settle';
+    if (!fit(r, R, r.at, until, optional)) { if (!optional) { B.stats.skipped++; traced.skipped = 'instant'; B.trace.push(traced); while (B.trace.length > 60) B.trace.shift(); } return false; }
+    traced.rate = Math.round(r.rate * 100) / 100;
     B.q.push(r);
     B.q.sort((a, b) => a.at - b.at);
     while (B.q.length > 8) B.q.shift();
-    B.trace.push({ kind: r.kind, family: r.family || null, actor: r.actor || null, secondary: !!r.secondary, outcome: r.outcome || null });
+    B.trace.push(traced);
     while (B.trace.length > 60) B.trace.shift();
+    return true;
   }
+  const reactOf = (sp, family) => REACT[sp][family] || REACT[sp].support;
   function onAction(e) {
     if (!B || !B.on || e.scope !== 'battle') return;
     const family = RB.families.LIST.indexOf(e.family) >= 0 ? e.family : 'support';
@@ -58357,19 +58709,29 @@ RB.battlePets = (function () {
     const secondary = B.ex === e.exchange && B.dom > 0;
     if (B.ex !== e.exchange) { B.ex = e.exchange; B.dom = 0; }
     B.dom++;
-    const at = (e.t0 || pt()) + Math.max(0, (e.beat || 400) - 180);
+    const t0 = e.t0 != null ? e.t0 : pt();
+    const at = t0 + Math.max(0, (e.beat || 400) - 180);
+    const until = e.end != null ? t0 + e.end : null;
     // a technique: its own combined culmination (the base family is how it began)
-    schedule({ kind: 'react', family, base: family === 'technique' ? RB.families.base('technique', e.tech || B.comp) : null, actor: e.actor, secondary, at, targets: e.targets || [] });
-    B.stats.reactions++; if (secondary) B.stats.secondary++;
-    B.stats.families[family] = (B.stats.families[family] || 0) + 1;
+    const ok = schedule({ kind: 'react', family, base: family === 'technique' ? RB.families.base('technique', e.tech || B.comp) : null, actor: e.actor, secondary, at, targets: e.targets || [] }, reactOf(B.sp, family), until);
+    if (ok) { B.stats.reactions++; if (secondary) B.stats.secondary++; B.stats.families[family] = (B.stats.families[family] || 0) + 1; }
     B.base = 'ready';
-    if (e.won && e.victory != null) schedule({ kind: 'victory', at: (e.t0 || pt()) + e.victory });
+    if (e.won && e.victory != null) schedule({ kind: 'victory', at: t0 + e.victory }, VICTORY[B.sp], null);
   }
   function onEnemy(e) {
     if (!B || !B.on || e.scope !== 'battle') return;
     const kind = e.outcome === 'hit' ? 'hit' : e.outcome === 'status' ? 'status' : 'soft';
-    schedule({ kind: 'impact', impact: kind, outcome: e.outcome, at: (e.t0 || pt()) + Math.max(0, (e.at || 500) - 60), targets: e.targets || [] });
-    B.stats.impacts++;
+    const t0 = e.t0 != null ? e.t0 : pt();
+    const contact = t0 + Math.max(0, (e.at || 500) - 60);
+    const until = e.end != null ? t0 + e.end : null;
+    const I = IMPACT[B.sp];
+    // while it prepares: a glance at it and a brace, held until contact
+    if (contact - t0 >= 200 && schedule({ kind: 'impact', impact: 'prep', at: t0, targets: e.targets || [] }, I.prep, contact)) B.stats.preps++;
+    if (schedule({ kind: 'impact', impact: kind, outcome: e.outcome, at: contact, targets: e.targets || [] }, I[kind], until)) B.stats.impacts++;
+    // after it: a settle — the pet's own recovery, alongside the creature's; it may run up to SETTLE_GRACE
+    // past the creature's recovery (the next decision eases it out; nothing waits for it)
+    const last = B.q.length ? B.q[B.q.length - 1] : null;
+    if (last && last.impact === kind && until != null && schedule({ kind: 'impact', impact: 'settle', at: last.at + last.dur, targets: [] }, I.settle, until + SETTLE_GRACE)) B.stats.settles++;
     B.base = 'ready';
   }
   function onScene(e) {
@@ -58379,15 +58741,23 @@ RB.battlePets = (function () {
     if (e.phase === 'exit') { end(); return; }
     if (e.phase === 'calm') {
       B.base = 'calm';
-      // anything still pending from a settled (skipped) sequence is dropped: nothing replays later
-      const now = pt();
-      B.q = B.q.filter((r) => r.at <= now && now - r.at < 400);
+      // the next decision: anything pending from a settled (skipped) sequence is dropped (nothing replays
+      // later), and a reaction still playing eases out to the stance
+      B.q = [];
     }
     if (e.phase === 'ready') B.base = 'ready';
     if (e.phase === 'victory') { B.base = 'victory'; B.stats.victory++; }
     if (e.phase === 'defeat') B.base = 'defeat';
   }
   // ---- the pose now -----------------------------------------------------------------------------------------------
+  const TAIL = ['tUp', 'tSide', 'tFlick', 'tCurl', 'wag'], EARS = ['earF', 'earL', 'earR'];
+  const lerpPose = (a, b, k) => { const o = {}; const ks = new Set(Object.keys(a).concat(Object.keys(b))); for (const n of ks) { const va = typeof a[n] === 'number' ? a[n] : 0, vb = typeof b[n] === 'number' ? b[n] : 0; o[n] = va + (vb - va) * k; } return o; };
+  function timelineOf(sp, cur) { return cur.kind === 'victory' ? VICTORY[sp] : cur.kind === 'impact' ? IMPACT[sp][cur.impact] : reactOf(sp, cur.family); }
+  // one timeline's override at its own time tt (ms of its authored timing)
+  function overAt(sp, cur, R, tt, reduce) {
+    if (cur.kind === 'react') return sample(sp, cur.family, tt, { reduce, secondary: cur.secondary, actor: cur.actor });
+    return reduce ? Object.assign({}, R.keys[Math.min(R.keys.length - 1, R.key)][1]) : sampleK(R, tt);
+  }
   function poseAt(now, t, reduce) {
     const sp = B.sp;
     const base = BASE[sp][B.base] || BASE[sp].calm;
@@ -58404,25 +58774,39 @@ RB.battlePets = (function () {
         return { po, lift, dx };
       }
     }
-    // the reaction playing now (the latest one started)
+    // the reaction playing now (the latest one started), on its fitted clock
     let cur = null;
     for (const r of B.q) if (r.at <= now) cur = r;
-    if (cur) {
-      const R = cur.kind === 'victory' ? VICTORY[sp] : cur.kind === 'impact' ? IMPACT[sp][cur.impact] : (REACT[sp][cur.family] || REACT[sp].support);
-      const dur = cur.secondary ? R.ms * 0.62 : R.ms;
-      const tt = now - cur.at;
-      if (tt < dur) {
-        let over;
-        if (cur.kind === 'react') over = sample(sp, cur.family, tt, { reduce, secondary: cur.secondary, actor: cur.actor });
-        else over = reduce ? R.keys[Math.min(R.keys.length - 1, R.key)][1] : sampleK(R, tt);
-        if (cur.kind === 'impact' && cur.targets.length && !reduce && over.hy == null && sp !== 'bird') over.hy = (cur.targets[0] === 'comp' ? LOOK.comp : LOOK.pc) * 0.5 * sm(tt / 300);
-        po = merge(po, over);
-        if (R.lift && !reduce && !cur.secondary) lift = R.lift(tt);
-        if (cur.kind === 'victory' && tt > dur - 1) B.base = 'victory';
-        return { po, lift, dx };
+    if (cur && now - cur.at < cur.dur) {
+      const R = timelineOf(sp, cur);
+      const tt = (now - cur.at) * cur.rate;
+      let over = overAt(sp, cur, R, tt, reduce);
+      if (!reduce) {
+        // follow-through: the tail answers about 90 ms after the body and the ears about 50 ms after it
+        const tl = overAt(sp, cur, R, Math.max(0, tt - 90), false), er = overAt(sp, cur, R, Math.max(0, tt - 50), false);
+        for (const n of TAIL) { if (tl[n] != null) over[n] = tl[n]; else delete over[n]; }
+        for (const n of EARS) { if (er[n] != null) over[n] = er[n]; else delete over[n]; }
+        // a new timeline takes over from the last pose shown (no pop between a brace and the flinch)
+        if (B.lastOver && B.lastR !== cur) B.blend = { r: cur, at: now, from: B.lastOver };
+        if (B.blend && B.blend.r === cur && now - B.blend.at < 110) over = lerpPose(B.blend.from, over, sm((now - B.blend.at) / 110));
       }
-      if (cur.kind === 'victory') B.base = 'victory';
+      B.release = null;
+      if (cur.kind === 'impact' && cur.impact !== 'settle' && cur.targets.length && !reduce && over.hy == null && sp !== 'bird') over.hy = (cur.targets[0] === 'comp' ? LOOK.comp : LOOK.pc) * 0.5 * sm(tt / 300);
+      B.lastOver = over; B.lastR = cur;
+      po = merge(po, over);
+      if (R.lift && !reduce && !cur.secondary) lift = R.lift(tt);
+      if (cur.kind === 'victory' && now - cur.at > cur.dur - 1) B.base = 'victory';
+      return { po, lift, dx };
     }
+    // the victory gesture ends in the victory stance itself (nothing to ease back from)
+    if (cur && cur.kind === 'victory') { B.base = 'victory'; B.lastOver = null; }
+    // eased back to the stance after a reaction (or after one cut short by the next decision)
+    if (B.lastOver && !reduce) {
+      if (!B.release) B.release = { at: now, from: B.lastOver };
+      const k = (now - B.release.at) / 160;
+      if (k < 1) return { po: merge(po, lerpPose(B.release.from, {}, sm(k))), lift, dx };
+    }
+    B.lastOver = null; B.lastR = null; B.release = null; B.blend = null;
     // idle: calm variants on their own irregular clock; ready's small movements; nothing with reduced motion
     if (reduce) return { po, lift, dx };
     if (B.base === 'calm' || B.base === 'ready') {
@@ -58437,7 +58821,9 @@ RB.battlePets = (function () {
       }
       if (B.idle) {
         const it = t - B.idle.t0;
-        po = merge(po, sampleK(B.idle.R, it));
+        const iv = sampleK(B.idle.R, it), tl = sampleK(B.idle.R, Math.max(0, it - 90));
+        for (const n of TAIL) { if (tl[n] != null) iv[n] = tl[n]; else delete iv[n]; }
+        po = merge(po, iv);
         if (B.idle.R.lift) lift = B.idle.R.lift(it);
       }
       // a slow breath while sitting (quantized: a pixel, not a shimmer)
@@ -58445,24 +58831,103 @@ RB.battlePets = (function () {
     }
     return { po, lift, dx };
   }
+  // ---- where it sits (from the live party anchors, every frame) ----------------------------------------------------
+  // Between your companion and you, a little in front of your companion and behind you; alone, at your left.
+  // Its ground footprint never covers an adventurer's foot anchor (the anchor ± 15 % of the battle frame's
+  // width: the planted feet and a margin), nor a creature or an intent badge; when the gap between the two of you is too narrow it moves to
+  // the far side of your companion, and when there is no room there either it lies down in the gap (a resting
+  // pose is narrower). Positions are canvas px, recomputed from L every frame, so a withdrawn panel or a
+  // growing stage never leaves it on old coordinates. Nothing here writes to the layout.
+  function badgeRects(L) {
+    const out = [];
+    for (const f of L.foes || []) {
+      const e = f.ext, sc = L.scale || 1;
+      if (e) out.push({ x0: f.ex + e.left * sc, y0: f.ey + e.top * sc, x1: f.ex + e.right * sc, y1: f.ey + e.bottom * sc, foe: true });
+    }
+    for (const b of L.badges || []) out.push(b);
+    return out;
+  }
+  function footSpans(L) {
+    const ps = L.ps || 1, half = Math.round((L.F ? L.F.w : 80) * ps * 0.15);
+    return [L.pc].concat(L.comp ? [L.comp] : []).filter(Boolean).map((a) => ({ x0: a.x - half, x1: a.x + half, y: a.y, ax: a.x }));
+  }
+  function place(L, w, h) {
+    const ps = L.ps || 1, pc = L.pc, comp = L.comp, Sr = L.Sr || { x: 0, y: 0, w: 1e9, h: 1e9 };
+    const spans = footSpans(L), half = Math.ceil(w / 2) + ps;
+    const hit = (x, y, hh) => {
+      for (const s of spans) if (x + half > s.x0 && x - half < s.x1 && y > s.y - h * 0.9 && y - hh < s.y + 2 * ps) return true;
+      for (const b of badgeRects(L)) if (x + half > b.x0 && x - half < b.x1 && y > b.y0 && y - hh < b.y1) return true;
+      return false;
+    };
+    const inside = (x) => x - half >= Sr.x && x + half <= Sr.x + Sr.w;
+    let x, y;
+    if (comp) { x = Math.round((comp.x + pc.x) / 2 + (L.pw || 80) * 0.03); y = Math.round((comp.y + pc.y) / 2 + ps); }
+    else { x = Math.round(pc.x - (L.pw || 80) * 0.52); y = Math.round(pc.y - Math.max(2, (L.ph || 104) * 0.04)); }
+    if (!hit(x, y, h) && inside(x)) return { x, y, mode: comp ? 'between' : 'beside' };
+    // between them but crowded: the middle of the actual gap, if the animal fits there
+    if (comp) {
+      const a = spans[1], b = spans[0], mid = Math.round((a.x1 + b.x0) / 2);
+      if (!hit(mid, y, h) && inside(mid)) return { x: mid, y, mode: 'gap' };
+      // the far side of your companion
+      const lx = a.x0 - half - ps, ly = comp.y + ps;
+      if (!hit(lx, ly, h) && inside(lx)) return { x: lx, y: ly, mode: 'outside' };
+    } else {
+      const lx = spans[0].x0 - half - ps;
+      if (!hit(lx, y, h) && inside(lx)) return { x: lx, y, mode: 'beside' };
+    }
+    // no room anywhere clear: lying down (a lower, narrower outline) just behind the line of your feet
+    return { x: comp ? Math.round((spans[1].x1 + spans[0].x0) / 2) : Math.round(spans[0].x0 - half), y: Math.round(Math.min(pc.y, comp ? comp.y : pc.y) - (L.ph || 104) * 0.06), mode: 'rest' };
+  }
+  // The party's drawn height (art px) sets the animal's own art density, so a larger party frame gives the
+  // pet more drawn detail at the same proportion (never a stretched sprite: the pet stays on the party's grid).
+  // Measured once per battle frame size from the four companions' ready stances (their mean: 81.75 px at the
+  // base commit's 80×104 frame) — a reference that does not change with the player's hat or hair.
+  const TUNED_H = 82;
+  let figMemo = null;
+  function heightOf(cv) {
+    const d = cv.getContext('2d').getImageData(0, 0, cv.width, cv.height).data;
+    let y0 = -1, y1 = -1;
+    for (let y = 0; y < cv.height && y0 < 0; y++) for (let x = 0; x < cv.width; x++) if (d[(y * cv.width + x) * 4 + 3] > 100) { y0 = y; break; }
+    for (let y = cv.height - 1; y >= 0 && y1 < 0; y--) for (let x = 0; x < cv.width; x++) if (d[(y * cv.width + x) * 4 + 3] > 100) { y1 = y; break; }
+    return y0 >= 0 && y1 > y0 ? y1 - y0 + 1 : 0;
+  }
+  function figureH(L) {
+    const F = L.F || { w: 80, h: 104 };
+    const key = F.w + 'x' + F.h;
+    if (figMemo && figMemo.key === key) return figMemo.h;
+    let hgt = F.h * (TUNED_H / 104);
+    try {
+      const hs = ['nao', 'mio', 'ren', 'suzu'].map((id) => RB.content.chars[id] && RB.battlers.preview ? heightOf(RB.battlers.preview(RB.content.chars[id].look, 'ready', null, 0)) : 0).filter((v) => v > 0);
+      if (hs.length) hgt = hs.reduce((a, v) => a + v, 0) / hs.length;
+    } catch (err) { /* keep the estimate from the frame */ }
+    figMemo = { key, h: hgt };
+    return hgt;
+  }
+  const densityOf = (L) => Math.max(0.75, Math.min(2.5, Math.round((figureH(L) / TUNED_H) * 20) / 20));
   // ---- drawing (called by the stage, between your companion and you) ------------------------------------------------
   function draw(c, L, fr) {
-    if (!B || !B.on || !L.pet) return;
+    if (!B || !B.on || !L.pc) return;
     const reduce = !!fr.reduce;
     const now = fr.pt, t = fr.t;
-    const { po, lift, dx } = poseAt(now, t, reduce);
-    const f = RB.petArt.frame(B.sp, B.look, { kind: 'battle' }, quant(po));
-    if (!f) return;
+    let { po, lift, dx } = poseAt(now, t, reduce);
+    const dens = densityOf(L);
+    const view = { kind: 'battle', density: dens };
     const s = L.ps || 1;
-    // centred on its place by how it looks sitting (its drawing leans back toward you in this view)
-    if (B.offX == null) B.offX = centreOf(RB.petArt.frame(B.sp, B.look, { kind: 'battle' }, quant(BASE[B.sp].calm)));
-    const x = L.pet.x + (dx - B.offX) * s, y = L.pet.y;
-    RB.battleScene.shadow(c, x + Math.round(B.offX * s), y - s, Math.round((B.sp === 'bird' ? 7 : B.sp === 'dog' ? 15 : 13) * s), Math.max(2, Math.round(3 * s)), 0.5);
+    // where it can be: measured from its sitting outline at this density
+    const sitF = RB.petArt.frame(B.sp, B.look, view, quant(BASE[B.sp].calm));
+    if (!sitF) return;
+    if (B.offX == null || B.dens !== dens) { B.offX = centreOf(sitF); B.dens = dens; B.ext = extentOf(sitF); }
+    const P = place(L, B.ext.w * s, B.ext.h * s);
+    if (P.mode === 'rest') { po = Object.assign({}, po, B.sp === 'bird' ? { crouch: 0.8, fluff: 0.6, tuck: 1 } : { sit: 0, lie: 1 }); lift = 0; }
+    const f = RB.petArt.frame(B.sp, B.look, view, quant(po));
+    if (!f) return;
+    const x = P.x + (dx * dens - B.offX) * s, y = P.y;
+    RB.battleScene.shadow(c, x + Math.round(B.offX * s), y - s, Math.round((B.sp === 'bird' ? 7 : B.sp === 'dog' ? 15 : 13) * dens * s), Math.max(2, Math.round(3 * dens * s)), 0.5);
     c.imageSmoothingEnabled = false;
-    const px = Math.round(x - f.ax * s), py = Math.round(y - f.ay * s - lift * s);
+    const px = Math.round(x - f.ax * s), py = Math.round(y - f.ay * s - lift * dens * s);
     c.drawImage(f.cv, px, py, f.w * s, f.h * s);
     B.stats.drawn++;
-    B.last = { x: px, y: py, w: f.w * s, h: f.h * s, pose: po, base: B.base };
+    B.last = { x: px, y: py, w: f.w * s, h: f.h * s, pose: po, base: B.base, place: P, density: dens, foot: { x: Math.round(x + B.offX * s), y }, ground: { x0: Math.round(P.x - B.ext.w * s / 2), x1: Math.round(P.x + B.ext.w * s / 2), y } };
   }
   // the horizontal middle of a frame's drawing, from its anchor (art px)
   function centreOf(f) {
@@ -58473,11 +58938,25 @@ RB.battlePets = (function () {
       return x1 < 0 ? 0 : Math.round((x0 + x1) / 2 - f.ax);
     } catch (e) { return 0; }
   }
+  // the drawn width and height of a frame (art px)
+  function extentOf(f) {
+    try {
+      const d = f.cv.getContext('2d').getImageData(0, 0, f.w, f.h).data;
+      let x0 = f.w, x1 = -1, y0 = f.h;
+      for (let i = 3; i < d.length; i += 4) if (d[i]) { const p = (i - 3) / 4, x = p % f.w, yy = (p / f.w) | 0; if (x < x0) x0 = x; if (x > x1) x1 = x; if (yy < y0) y0 = yy; }
+      return x1 < 0 ? { w: f.w, h: f.h } : { w: x1 - x0 + 1, h: f.ay - y0 + 1 };
+    } catch (e) { return { w: f.w, h: f.h }; }
+  }
   function stats() {
     if (!B) return { on: false };
     const cp = RB.battleStage.cssPerArt ? RB.battleStage.cssPerArt() : 1;
     const box = B.last ? { x: Math.round(B.last.x * cp), y: Math.round(B.last.y * cp), w: Math.round(B.last.w * cp), h: Math.round(B.last.h * cp) } : null;
-    return { on: B.on, sp: B.sp, look: B.look, base: B.base, queued: B.q.length, stats: JSON.parse(JSON.stringify(B.stats)), trace: B.trace.slice(), box, art: B.last ? { x: B.last.x, y: B.last.y, w: B.last.w, h: B.last.h } : null, pose: B.last ? B.last.pose : null };
+    const L = B.last;
+    return {
+      on: B.on, sp: B.sp, look: B.look, base: B.base, queued: B.q.length, stats: JSON.parse(JSON.stringify(B.stats)), trace: B.trace.slice(), box,
+      art: L ? { x: L.x, y: L.y, w: L.w, h: L.h } : null, pose: L ? L.pose : null, place: L ? L.place.mode : null, density: L ? L.density : null,
+      ground: L ? L.ground : null, foot: L ? L.foot : null, cssPerArt: cp,
+    };
   }
 
   if (RB.bus) {
@@ -58495,7 +58974,7 @@ RB.battlePets = (function () {
     RB.ui.settings.addRows('audio', ({ sw }) => sw('petSounds', 'Quiet pet sounds', 'An occasional soft sound from your pet (never needed: everything it does is also seen).'));
   }
 
-  return { wants, draw, stats, sample, sampleAny, centreOf, poseAt: (now, t, reduce) => (B ? poseAt(now, t, reduce) : null), REACT, IMPACT, VICTORY, CALM, READY, BASE, LOOK, _begin: begin, _end: end, get _B() { return B; } };
+  return { wants, draw, stats, sample, sampleAny, centreOf, extentOf, place, footSpans, densityOf, poseAt: (now, t, reduce) => (B ? poseAt(now, t, reduce) : null), REACT, IMPACT, PREP, SETTLE, VICTORY, CALM, READY, BASE, LOOK, MIN_WIN, MAX_RATE, SETTLE_GRACE, _begin: begin, _end: end, get _B() { return B; } };
 })();
 
 
@@ -65971,13 +66450,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
         { kind: 'choose', item: 'c:rw_lantern1', ctx: { jp: '{灯|ひ} の {消|き}えた {道|みち} は 、 {行|ゆ}き{先|さき} を {忘|わす}れる 。', en: 'A road whose lantern has gone out forgets where it leads.' }, prompt: { en: 'An older line is carved into the post. What does it say happens?' },
           options: [{ en: 'The road forgets where it leads.', ok: true }, { en: 'Travellers forget their names.', ok: false, why: { en: '忘れる here has 道 (the road) as its subject, and 行き先 (destination) as what is forgotten.' } }, { en: 'The lantern will light itself again.', ok: false, why: { en: 'Nothing here says it relights; 消えた is "went out".' } }],
           explain: { en: '行き先 (ゆきさき/いきさき) means "destination". 灯の消えた道 = "a road whose light has gone out" — here の marks the subject inside a noun-modifying clause.' } },
-        { kind: 'write', item: 'v:葦ノ瀬', prompt: { en: 'Restore the destination on the shade: the village of Ashinose (kana or kanji).' }, answer: 'あしのせ', accept: ['あしのせ', '葦ノ瀬'], mode: 'reading', explain: { jp: '{葦|あし}ノ{瀬|せ}', en: 'Ashinose.' } },
+        { kind: 'write', item: 'v:葦ノ瀬', prompt: { en: 'Restore the destination on the shade: the village of Ashinose (hiragana or kanji).' }, answer: 'あしのせ', accept: ['あしのせ', '葦ノ瀬'], mode: 'reading', explain: { jp: '{葦|あし}ノ{瀬|せ}', en: 'Ashinose.' } },
       ],
       A: [
         { kind: 'choose', item: 'c:rw_lantern1a', ctx: { jp: '{名|な} を {失|うしな}いし {道|みち} 、 {往|ゆ}く{先|さき} を {知|し}らず 。', en: '' }, prompt: { en: 'The oldest line on the post is in a literary style. Which modern sentence says the same thing?' },
           options: [{ jp: '{名前|なまえ} を なくした {道|みち} は 、 どこ へ {行|い}く の か わからない 。', ok: true }, { jp: '{名前|なまえ} の ない {道|みち} を {行|い}って は いけない 。', ok: false, why: { en: 'There is no prohibition in the original; 知らず is simply "does not know".' } }, { jp: '{道|みち} の {名前|なまえ} を {知|し}らない {人|ひと} は {先|さき} へ {進|すす}めない 。', ok: false, why: { en: 'The subject that "does not know" is the road itself, not a traveller.' } }],
           explain: { en: 'Literary 〜し is a past form (≈ 〜た) used before a noun: 失いし道 = 失った道. 〜ず is the literary negative (≈ 〜ない). 往く is an old way of writing 行く.' } },
-        { kind: 'write', item: 'v:葦ノ瀬', prompt: { en: 'Write the destination\'s name on the shade (kana or kanji).' }, answer: 'あしのせ', accept: ['あしのせ', '葦ノ瀬'], mode: 'reading', explain: { jp: '{葦|あし}ノ{瀬|せ}', en: 'Ashinose.' } },
+        { kind: 'write', item: 'v:葦ノ瀬', prompt: { en: 'Write the destination\'s name on the shade (hiragana or kanji).' }, answer: 'あしのせ', accept: ['あしのせ', '葦ノ瀬'], mode: 'reading', explain: { jp: '{葦|あし}ノ{瀬|せ}', en: 'Ashinose.' } },
       ],
     } };
 
@@ -66024,13 +66503,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
         { kind: 'choose', item: 'c:rw_rec2', ctx: { jp: '{嵐|あらし} の {前|まえ} は 「 しおがらす まで {二日|ふつか} 」 と {書|か}いて あった はず だ が 、 {記録|きろく} に よって は {三日|みっか} と ある 。 {橋|はし} が {流|なが}された {年|とし} の もの だ 。', en: '' }, prompt: { en: 'Ren frowns at two records. Why do some say three days?' },
           options: [{ en: 'They were written the year the bridge was washed away, when the way was longer.', ok: true }, { en: 'Ren copied them wrongly before the storm.', ok: false, why: { en: 'はずだ expresses Ren\'s expectation about the old writing, not a mistake.' } }, { en: 'Saltglass moved further away after the storm.', ok: false, why: { en: 'The records point to the bridge (橋が流された年), not to the town moving.' } }],
           explain: { en: '〜によっては = "depending on (which)…"; 〜はずだ = "should have been, as far as I know".' } },
-        { kind: 'write', item: 'v:潮硝子', prompt: { en: 'Write the destination\'s name on the shade (kana or kanji).' }, answer: 'しおがらす', accept: ['しおがらす', '潮硝子'], mode: 'reading', explain: { jp: '{潮硝子|しおがらす}', en: 'Saltglass.' } },
+        { kind: 'write', item: 'v:潮硝子', prompt: { en: 'Write the destination\'s name on the shade (hiragana or kanji).' }, answer: 'しおがらす', accept: ['しおがらす', '潮硝子'], mode: 'reading', explain: { jp: '{潮硝子|しおがらす}', en: 'Saltglass.' } },
       ],
       A: [
         { kind: 'choose', item: 'c:rw_rec3', ctx: { jp: '{道|みち} の {名|な} は 、 {書|か}き{手|て} が それ を {信|しん}じて いなければ 、 {根|ね} を {張|は}らない 。', en: '' }, prompt: { en: 'A line in Ren\'s teacher\'s handwriting. What does it suggest about why Ren\'s names keep sliding off?' },
           options: [{ en: 'The writer must believe the promise the name makes — and Ren is not sure anymore.', ok: true }, { en: 'Names only take hold if the ink is fresh.', ok: false, why: { en: 'Nothing about ink; the condition is 信じていなければ — "unless (the writer) believes it".' } }, { en: 'Only the original writer can rewrite a name.', ok: false, why: { en: '書き手 means whoever writes, not the first writer.' } }],
           explain: { en: '根を張る (to put down roots) is used figuratively here: the name "takes hold". 〜なければ〜ない is a double negative: "won\'t… unless…".' } },
-        { kind: 'write', item: 'v:潮硝子', prompt: { en: 'Write the destination\'s name on the shade (kana or kanji).' }, answer: 'しおがらす', accept: ['しおがらす', '潮硝子'], mode: 'reading', explain: { jp: '{潮硝子|しおがらす}', en: 'Saltglass.' } },
+        { kind: 'write', item: 'v:潮硝子', prompt: { en: 'Write the destination\'s name on the shade (hiragana or kanji).' }, answer: 'しおがらす', accept: ['しおがらす', '潮硝子'], mode: 'reading', explain: { jp: '{潮硝子|しおがらす}', en: 'Saltglass.' } },
       ],
     } };
 
@@ -66044,13 +66523,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
           explain: { en: '渡し守 (わたしもり) is an old word for a ferryman.' } },
       ],
       I: [
-        { kind: 'write', item: 'v:向こう岸', prompt: { en: 'Write the name on the bridge lantern: the far bank (kana or kanji).' }, answer: 'むこうぎし', accept: ['むこうぎし', '向こう岸'], mode: 'reading', explain: { jp: '{向|む}こう{岸|ぎし}', en: 'The far bank.' } },
+        { kind: 'write', item: 'v:向こう岸', prompt: { en: 'Write the name on the bridge lantern: the far bank (hiragana or kanji).' }, answer: 'むこうぎし', accept: ['むこうぎし', '向こう岸'], mode: 'reading', explain: { jp: '{向|む}こう{岸|ぎし}', en: 'The far bank.' } },
         { kind: 'choose', item: 'c:rw_rec5', ctx: { jp: '{向|む}こう{岸|ぎし} の {灯|あか}り に は 、 {渡|わた}し{守|もり} の {名|な} も {添|そ}えて ある 。 {片方|かたほう} だけ で は 、 {橋|はし} は {届|とど}かない 。', en: '' }, prompt: { en: 'Why won\'t the bridge reach even with the far bank\'s name restored?' },
           options: [{ en: 'The lantern also needs the ferryman\'s name; one name alone isn\'t enough.', ok: true }, { en: 'The bridge was never finished.', ok: false, why: { en: 'The record says the bridge reaches when both names are there.' } }, { en: 'Only a ferryman may light it.', ok: false, why: { en: '添えてある = "is added alongside"; it is about the name, not who lights it.' } }],
           explain: { en: '〜も添えてある = "is also written alongside"; 片方だけでは = "with only one of them".' } },
       ],
       A: [
-        { kind: 'write', item: 'v:向こう岸', prompt: { en: 'Write the name on the bridge lantern: the far bank (kana or kanji).' }, answer: 'むこうぎし', accept: ['むこうぎし', '向こう岸'], mode: 'reading', explain: { jp: '{向|む}こう{岸|ぎし}', en: 'The far bank.' } },
+        { kind: 'write', item: 'v:向こう岸', prompt: { en: 'Write the name on the bridge lantern: the far bank (hiragana or kanji).' }, answer: 'むこうぎし', accept: ['むこうぎし', '向こう岸'], mode: 'reading', explain: { jp: '{向|む}こう{岸|ぎし}', en: 'The far bank.' } },
         { kind: 'choose', item: 'c:rw_rec6', ctx: { jp: '{渡|わた}し{守|もり} の {名|な} を {欠|か}いた まま で は 、 {橋|はし} と いえど も {向|む}こう{岸|ぎし} に {届|とど}く べく も ない 。', en: '' }, prompt: { en: 'A formal note under the lantern\'s frame. What is its point?' },
           options: [{ en: 'Without the ferryman\'s name, even a bridge cannot possibly reach the far bank.', ok: true }, { en: 'A bridge should never be named after a ferryman.', ok: false, why: { en: '欠いたままでは = "while (it) lacks…"; nothing forbids anything.' } }, { en: 'The ferryman is supposed to repair the bridge.', ok: false, why: { en: 'べくもない means "there is no way that…", not a duty.' } }],
           explain: { en: '〜といえども = "even though it is…"; 〜べくもない = "there is no possibility of…" (formal).' } },
@@ -66060,7 +66539,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   X['rw.c_mill_gears'] = { title: { jp: '{止|と}まった {歯車|はぐるま}', en: 'The jammed gears' },
     tiers: {
       F: [{ kind: 'order', item: 'c:rw_gears_f', prompt: { en: 'The gear plates are numbered in kana. Set them in counting order: ichi, ni, san, yon.' }, tiles: ['いち=(one)', 'に=(two)', 'さん=(three)', 'よん=(four)'], answer: ['いち=(one)', 'に=(two)', 'さん=(three)', 'よん=(four)'], orderHint: { en: 'いち (1), に (2), さん (3), よん (4).' } }],
-      E: [{ kind: 'order', item: 'c:rw_gears_e', ctx: { jp: 'まず 、 つぎ に 、 それから 、 さいご に', en: '' }, prompt: { en: 'Each plate starts with a sequence word. Put them in order.' }, tiles: ['まず', 'つぎ に', 'それから', 'さいご に'], answer: ['まず', 'つぎ に', 'それから', 'さいご に'], orderHint: { en: 'まず "first", つぎに "next", それから "after that", さいごに "finally".' } }],
+      E: [{ kind: 'order', item: 'c:rw_gears_e', ctx: { jp: 'まず 、 つぎ に 、 それから 、 さいご に', en: '' }, prompt: { en: 'Each plate starts with a sequence word. Put them in order.' }, guided: { en: 'A guided first look: the order is shown above. It counts as practice with help.' }, tiles: ['まず', 'つぎ に', 'それから', 'さいご に'], answer: ['まず', 'つぎ に', 'それから', 'さいご に'], orderHint: { en: 'まず "first", つぎに "next", それから "after that", さいごに "finally".' } }],
       I: [{ kind: 'order', item: 'g:v_te_kara', ctx: { jp: '「 {軸|じく} を {入|い}れて から 、 {歯車|はぐるま} を {回|まわ}す 。 {回|まわ}す {前|まえ} に 、 {水門|すいもん} を {少|すこ}し {開|あ}けて おく 。 {石臼|いしうす} は {最後|さいご} に {下|お}ろす 。 」', en: '' }, prompt: { en: 'Sae\'s father\'s instructions. Put the steps in the order you must do them.' },
         tiles: ['{水門|すいもん} を {少|すこ}し {開|あ}ける', '{軸|じく} を {入|い}れる', '{歯車|はぐるま} を {回|まわ}す', '{石臼|いしうす} を {下|お}ろす'],
         answer: ['{水門|すいもん} を {少|すこ}し {開|あ}ける', '{軸|じく} を {入|い}れる', '{歯車|はぐるま} を {回|まわ}す', '{石臼|いしうす} を {下|お}ろす'],
@@ -66075,14 +66554,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
     tiers: {
       F: [{ kind: 'write', item: 'v:葦ノ瀬', prompt: { en: 'Relight the mill lantern with the village\'s name: Ashinose.' }, answer: 'あしのせ', accept: ['あしのせ', '葦ノ瀬'], mode: 'kana', explain: { jp: '{葦|あし}ノ{瀬|せ}', en: 'Ashinose.' } }],
       E: [{ kind: 'write', item: 'v:葦ノ瀬', prompt: { en: 'Relight the mill lantern with the village\'s name (Ashinose).' }, answer: 'あしのせ', accept: ['あしのせ', '葦ノ瀬'], mode: 'reading', explain: { jp: '{葦|あし}ノ{瀬|せ}', en: 'Ashinose.' } }],
-      I: [{ kind: 'write', item: 'v:葦ノ瀬', prompt: { en: 'Relight the mill lantern with the village\'s name (kana or kanji).' }, answer: 'あしのせ', accept: ['あしのせ', '葦ノ瀬'], mode: 'reading', explain: { jp: '{葦|あし}ノ{瀬|せ}', en: 'Ashinose.' } }],
-      A: [{ kind: 'write', item: 'v:葦ノ瀬', prompt: { en: 'Relight the mill lantern with the village\'s name (kana or kanji).' }, answer: 'あしのせ', accept: ['あしのせ', '葦ノ瀬'], mode: 'reading', explain: { jp: '{葦|あし}ノ{瀬|せ}', en: 'Ashinose.' } }],
+      I: [{ kind: 'write', item: 'v:葦ノ瀬', prompt: { en: 'Relight the mill lantern with the village\'s name (hiragana or kanji).' }, answer: 'あしのせ', accept: ['あしのせ', '葦ノ瀬'], mode: 'reading', explain: { jp: '{葦|あし}ノ{瀬|せ}', en: 'Ashinose.' } }],
+      A: [{ kind: 'write', item: 'v:葦ノ瀬', prompt: { en: 'Relight the mill lantern with the village\'s name (hiragana or kanji).' }, answer: 'あしのせ', accept: ['あしのせ', '葦ノ瀬'], mode: 'reading', explain: { jp: '{葦|あし}ノ{瀬|せ}', en: 'Ashinose.' } }],
     } };
 
   X['rw.c_boots_sign'] = { title: { jp: 'オト の {看板|かんばん}', en: 'Oto\'s sign' },
     tiers: {
       F: [{ kind: 'write', item: 'v:靴', prompt: { en: 'The sign should say what Oto mends: kutsu (shoes).' }, answer: 'くつ', accept: ['くつ', '靴'], mode: 'kana', explain: { jp: 'くつ', en: 'くつ — shoes.' } }],
-      E: [{ kind: 'write', item: 'v:靴屋', prompt: { en: 'A shoe shop is a kutsuya. Write the sign (kana or kanji).' }, answer: 'くつや', accept: ['くつや', '靴屋'], mode: 'reading', explain: { jp: '{靴屋|くつや}', en: '〜屋 (や) makes a shop or trade: 本屋 bookshop, 花屋 florist.' } }],
+      E: [{ kind: 'write', item: 'v:靴屋', prompt: { en: 'A shoe shop is a kutsuya. Write the sign (hiragana or kanji).' }, answer: 'くつや', accept: ['くつや', '靴屋'], mode: 'reading', explain: { jp: '{靴屋|くつや}', en: '〜屋 (や) makes a shop or trade: 本屋 bookshop, 花屋 florist.' } }],
       I: [{ kind: 'choose', item: 'c:rw_sign_i', ctx: { jp: '「 {修理|しゅうり} {承|うけたまわ}ります 」', en: '' }, prompt: { en: 'Oto found the old sign\'s second line. What does it tell customers?' },
         options: [{ en: 'Repairs taken on (we accept repair work).', ok: true }, { en: 'Closed for repairs.', ok: false, why: { en: 'That would be 修理中 or 休業.' } }, { en: 'Repairs cost extra.', ok: false, why: { en: '承ります is a humble "we accept / will undertake".' } }],
         explain: { en: '承る (うけたまわる) is humble: "to receive, accept (an order)". It\'s common on shop signs.' } }],
@@ -66119,13 +66598,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
         { kind: 'choose', item: 'c:rw_mr_i', ctx: { jp: '{迷|まよ}ったら 、 {一番|いちばん} {古|ふる}い {名前|なまえ} に {戻|もど}れ 。', en: '' }, prompt: { en: 'Ren\'s teacher\'s advice. Which paraphrase keeps its meaning?' },
           options: [{ jp: 'わから なく なったら 、 {最初|さいしょ} の {名前|なまえ} を {使|つか}いなさい 。', ok: true }, { jp: '{古|ふる}い {名前|なまえ} は {捨|す}てて 、 {新|あたら}しく {付|つ}けなさい 。', ok: false, why: { en: 'The advice is to go back TO the oldest name, not discard it.' } }, { jp: '{道|みち} に {迷|まよ}う の は 、 {名前|なまえ} が {古|ふる}い から だ 。', ok: false, why: { en: 'It gives an instruction (戻れ), not a cause.' } }],
           explain: { en: '戻れ is the plain imperative of 戻る — a teacher\'s blunt instruction.' } },
-        { kind: 'write', item: 'v:水車小屋', prompt: { en: 'Write the lantern\'s name (kana or kanji).' }, answer: 'すいしゃごや', accept: ['すいしゃごや', '水車小屋'], mode: 'reading', explain: { jp: '{水車|すいしゃ}{小屋|ごや}', en: 'Water mill.' } },
+        { kind: 'write', item: 'v:水車小屋', prompt: { en: 'Write the lantern\'s name (hiragana or kanji).' }, answer: 'すいしゃごや', accept: ['すいしゃごや', '水車小屋'], mode: 'reading', explain: { jp: '{水車|すいしゃ}{小屋|ごや}', en: 'Water mill.' } },
       ],
       A: [
         { kind: 'choose', item: 'c:rw_mr_a', ctx: { jp: '{名|な} は {呼|よ}ばれて こそ {名|な} で ある 。 {誰|だれ} に も {呼|よ}ばれなく なった {名|な} は 、 {灯|あか}り に {書|か}いて も {長|なが}く は {持|も}たない 。', en: '' }, prompt: { en: 'A note tied to the lantern post. What does it imply about why names are fading?' },
           options: [{ en: 'A name lives by being used; one nobody calls anymore won\'t hold, even if written.', ok: true }, { en: 'Names must be shouted to be written.', ok: false, why: { en: '〜てこそ = "only when… (is it truly…)", not a rule about shouting.' } }, { en: 'Lantern names last longer than spoken ones.', ok: false, why: { en: 'It says written names do NOT last long if no one calls them.' } }],
           explain: { en: '〜てこそ emphasises a necessary condition: "a name is a name precisely because it is called".' } },
-        { kind: 'write', item: 'v:水車小屋', prompt: { en: 'Write the lantern\'s name (kana or kanji).' }, answer: 'すいしゃごや', accept: ['すいしゃごや', '水車小屋'], mode: 'reading', explain: { jp: '{水車|すいしゃ}{小屋|ごや}', en: 'Water mill.' } },
+        { kind: 'write', item: 'v:水車小屋', prompt: { en: 'Write the lantern\'s name (hiragana or kanji).' }, answer: 'すいしゃごや', accept: ['すいしゃごや', '水車小屋'], mode: 'reading', explain: { jp: '{水車|すいしゃ}{小屋|ごや}', en: 'Water mill.' } },
       ],
     } };
 
@@ -71341,7 +71820,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     tiers: {
       F: [
         { kind: 'write', item: 'v:三時', ctx: { jp: 'ひきしお ： ごご 3:00', en: 'Low tide: 3:00 p.m.' },
-          prompt: { en: 'Shiori: "When is low tide?" Write the hour in kana: three o\'clock is さんじ (sanji).' },
+          prompt: { en: 'Shiori: "When is low tide?" Write the hour in hiragana: three o\'clock is さんじ (sanji).' },
           template: { before: 'ごご ', after: '' }, answer: 'さんじ', accept: ['さんじ', '3じ', '{三時|さんじ}'], mode: 'reading',
           explain: { jp: 'ごご {三時|さんじ}', en: 'ごご さんじ — 3 p.m. (ごご = afternoon, p.m.)' } },
         { kind: 'choose', item: 'g:mae_ato', prompt: { en: 'The causeway is dry from an hour BEFORE low tide. When can you start walking?' },
@@ -71425,7 +71904,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
             { jp: '{風|かぜ} が {止|や}めば {動|うご}く 。', en: 'It moves when the wind stops.', ok: false, why: no('When the wind stops, the fog SETTLES (すわる).') },
             { jp: '{座|すわ}れば {消|き}える 。', en: 'It disappears once it settles.', ok: false, why: no('Settled fog stays until the wind moves it.') },
           ], explain: { jp: '〜で しか 〜ない ＝ only by …', en: 'しか + negative: かぜ で しか うごかん = moves only with the wind. (うごかん is a casual form of うごかない.)' } },
-        { kind: 'write', item: 'v:風', prompt: { en: 'Write "wind" into the vane\'s grooves (kana or kanji).' },
+        { kind: 'write', item: 'v:風', prompt: { en: 'Write "wind" into the vane\'s grooves (hiragana or kanji).' },
           answer: 'かぜ', accept: ['かぜ', '{風|かぜ}'], mode: 'reading', explain: { jp: '{風|かぜ}', en: 'かぜ — wind.' } },
       ],
       A: [
@@ -71547,7 +72026,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
             { jp: '{馬鹿|ばか} は {縄|なわ} を {持|も}って いない 。', en: 'Fools don\'t own rope.', ok: false, why: no('The subject is "going near water without rope" (の is a nominaliser).') },
             { jp: '{縄|なわ} は {馬鹿|ばか} の ため の もの だ 。', en: 'Rope is for fools.', ok: false, why: no('Other way round.') },
           ], explain: { jp: '〜の は …… だけ だ', en: 'X のは Y だけだ — "the only ones who X are Y".' } },
-        { kind: 'write', item: 'v:縄', prompt: { en: 'Write "rope" (kana or kanji).' },
+        { kind: 'write', item: 'v:縄', prompt: { en: 'Write "rope" (hiragana or kanji).' },
           answer: 'なわ', accept: ['なわ', '{縄|なわ}'], mode: 'reading', explain: { jp: '{縄|なわ}', en: 'なわ — rope.' } },
       ],
       A: [
@@ -74053,7 +74532,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     tiers: {
       F: [{ kind: 'write', item: 'v:石', prompt: { en: 'The stones keep sliding. Write the word for stone — ishi — on the wall so it holds.' }, answer: 'いし', accept: ['いし', '石'], mode: 'reading', explain: { jp: '{石|いし}', en: 'いし (石) — stone. As an inscription it stands firm against gusts and floods.' },
         teach: { title: 'New inscription: いし', jp: '{石|いし}', en: 'いし (ishi) means stone — an ordinary word. Woven with clear intent, it stands firm: it answers gusts and rising water in battle.' } }],
-      E: [{ kind: 'write', item: 'v:石', ctx: { jp: '{段|だん} の {壁|かべ} は 、 {石|いし} を {積|つ}んで {作|つく}って ある 。', en: 'The terrace walls are built of stacked stone.' }, prompt: { en: 'Weave the word for "stone" into the loose wall. (Kana or kanji.)' }, answer: 'いし', accept: ['いし', '石'], mode: 'reading', explain: { jp: '{石|いし}', en: 'いし — stone. 石を積む = to stack stones.' },
+      E: [{ kind: 'write', item: 'v:石', ctx: { jp: '{段|だん} の {壁|かべ} は 、 {石|いし} を {積|つ}んで {作|つく}って ある 。', en: 'The terrace walls are built of stacked stone.' }, prompt: { en: 'Weave the word for "stone" into the loose wall. (Hiragana or kanji.)' }, answer: 'いし', accept: ['いし', '石'], mode: 'reading', explain: { jp: '{石|いし}', en: 'いし — stone. 石を積む = to stack stones.' },
         teach: { title: 'New inscription: いし', jp: '{石|いし}', en: 'いし (ishi) means stone. Woven with clear intent, it stands firm: it answers gusts and rising water in battle.' } }],
       I: [
         { kind: 'choose', item: 'c:co_ishi_i', ctx: { jp: '{火|ひ} が {来|き}て も 、 {石|いし} は {燃|も}えない 。 だから 、 {上|うえ} の {段|だん} で は {石垣|いしがき} だけ が {残|のこ}った 。', en: '' },
@@ -74211,7 +74690,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
           options: [{ jp: '{小皿|こざら} {三十枚|さんじゅうまい} ・ {湯呑|ゆの}み {二十個|にじゅっこ} ・ とっくり {十本|じゅっぽん}', ok: true },
             noJ('{小皿|こざら} {三十本|さんじゅっぽん} ・ {湯呑|ゆの}み {二十枚|にじゅうまい} ・ とっくり {十個|じゅっこ}', 'That is how thirty flasks happened.'),
             noJ('{小皿|こざら} {三十個|さんじゅっこ} ・ {湯呑|ゆの}み {二十本|にじゅっぽん} ・ とっくり {十枚|じゅうまい}', 'Flasks aren\'t flat; cups aren\'t long.')], explain: { en: '枚 flat · 個 small objects · 本 long objects.' } },
-        { kind: 'write', item: 'g:counters', prompt: { en: 'How do you say "thirty (long objects)" — 30 + 本 — in kana? Watch the sound change.' }, answer: 'さんじゅっぽん', accept: ['さんじゅっぽん', 'さんじっぽん', '三十本', '30本'], mode: 'reading', explain: { jp: '{三十本|さんじゅっぽん}', en: 'After じゅう, 本 becomes っぽん: さんじゅっぽん (also さんじっぽん).' } },
+        { kind: 'write', item: 'g:counters', prompt: { en: 'How do you say "thirty (long objects)" — 30 + 本 — in hiragana? Watch the sound change.' }, answer: 'さんじゅっぽん', accept: ['さんじゅっぽん', 'さんじっぽん', '三十本', '30本'], mode: 'reading', explain: { jp: '{三十本|さんじゅっぽん}', en: 'After じゅう, 本 becomes っぽん: さんじゅっぽん (also さんじっぽん).' } },
       ],
       A: [
         { kind: 'choose', item: 'c:co_count_a', ctx: { jp: 'サヨ が ノブ に {詫|わ}び{状|じょう} を {書|か}く 。', en: 'Sayo is writing Nobu a note of apology.' }, prompt: { en: 'Which draft is the most fitting — polite, owning the mistake, making the new request clear?' },
@@ -80394,13 +80873,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
         { kind: 'choose', item: 'c:sb_hearth_i', ctx: { jp: '{火|ひ} は {消|き}えて いない のに 、 {炎|ほのお} が {上|あ}がらない 。 {寒|さむ}さ に {押|お}さえつけられて いる みたい 。', en: '' }, prompt: { en: 'What is Yae describing?' },
           options: [o('The fire is still alive, but the cold is holding the flames down.', true), o('The fire has gone out completely.', false, '消えていない = has NOT gone out.'), o('The flames are too high to control.', false, '上がらない = do not rise.')],
           explain: { en: '〜のに = "even though"; 押さえつけられている = "is being pressed down" (passive); みたい = "it seems".' } },
-        honooWrite('Write the word that will lift the flames: honoo (kana or kanji).'),
+        honooWrite('Write the word that will lift the flames: honoo (hiragana or kanji).'),
       ],
       A: [
         { kind: 'choose', item: 'c:sb_hearth_a', ctx: { jp: '{炭|すみ} は {火|ひ} を {抱|いだ}いて も 、 {炎|ほのお} は {見|み}せない 。 {人|ひと} も また {然|しか}り 、 だ 。', en: '' }, prompt: { en: 'Denji mutters a saying of his own while the fire sinks. What does he mean?' },
           options: [o('Like embers, a person can hold warmth inside without ever showing it.', true), o('Charcoal is useless unless it flames.', false, 'He says the embers do hold fire (火を抱く).'), o('People should always show what they feel.', false, 'He describes, rather than prescribes — and the point is the hidden warmth.')],
           explain: { en: '〜ても = even if; 然り (しかり, literary) = "it is so"; 〜もまた然り = "the same is true of…".' } },
-        honooWrite('Write the inscription on the ash: honoo (kana or kanji).'),
+        honooWrite('Write the inscription on the ash: honoo (hiragana or kanji).'),
       ],
     } };
 
@@ -80408,8 +80887,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     tiers: {
       F: [Object.assign(honooWrite('Melt the ice with the flame word: honoo.'), { mode: 'kana' })],
       E: [Object.assign(honooWrite('The stair is sealed in ice. Write the word for flame (honoo).'), { ctx: { jp: '{氷|こおり} を とかす {言葉|ことば} は ？', en: 'Which word will melt the ice?' } })],
-      I: [Object.assign(honooWrite('Write the word that answers ice (kana or kanji).'), { ctx: { jp: '{昨夜|ゆうべ} {囲炉裏|いろり} に {書|か}いた {字|じ} なら 、 {氷|こおり} も とける はず だ 。', en: 'The word you wrote on the hearth last night should melt ice too.' } })],
-      A: [Object.assign(honooWrite('Write the inscription (kana or kanji).'), { ctx: { jp: '{凍|い}て{付|つ}いた {石段|いしだん} を {解|と}く に は 、 {冷|つめ}たさ に {抗|あらが}う {言葉|ことば} を {以|もっ}て する ほか ない 。', en: '' } })],
+      I: [Object.assign(honooWrite('Write the word that answers ice (hiragana or kanji).'), { ctx: { jp: '{昨夜|ゆうべ} {囲炉裏|いろり} に {書|か}いた {字|じ} なら 、 {氷|こおり} も とける はず だ 。', en: 'The word you wrote on the hearth last night should melt ice too.' } })],
+      A: [Object.assign(honooWrite('Write the inscription (hiragana or kanji).'), { ctx: { jp: '{凍|い}て{付|つ}いた {石段|いしだん} を {解|と}く に は 、 {冷|つめ}たさ に {抗|あらが}う {言葉|ことば} を {以|もっ}て する ほか ない 。', en: '' } })],
     } };
 
   // ---- the dial door: directions and times --------------------------------------------------
@@ -84529,7 +85008,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       ],
       E: [
         { kind: 'choose', item: 'v:日', ctx: { jp: FORM, en: FORM_EN }, prompt: { en: 'Which box asks for the date you want to read the records?' }, options: [ok('{閲覧|えつらん}{希望|きぼう}{日|び}', 'Date you wish to read', '希望 = wish, 日 = day: "the day you wish to read".'), no('{氏名|しめい}', 'Full name', '氏名 is your full name.'), no('{目的|もくてき}', 'Purpose', '目的 is the purpose.')], explain: { en: 'Forms stack nouns: 閲覧 (reading) + 希望 (wish) + 日 (day).' } },
-        { kind: 'write', item: 'v:六月', ctx: { jp: '{洪水|こうずい} は {三十年前|さんじゅうねんまえ} の ＿＿ でした 。', en: 'The flood was in June, thirty years ago.' }, prompt: { en: 'Write "June" (the sixth month) — kana is fine.' }, answer: 'ろくがつ', accept: ['ろくがつ', '六月', '6月'], mode: 'reading', choices: ['ろくがつ', 'ろくげつ', 'むつき'], explain: { jp: '{六月|ろくがつ}', en: 'Months are number + がつ: ろくがつ, June. (Not げつ: that reading is for counting months, as in ろっかげつ.)' } },
+        { kind: 'write', item: 'v:六月', ctx: { jp: '{洪水|こうずい} は {三十年前|さんじゅうねんまえ} の ＿＿ でした 。', en: 'The flood was in June, thirty years ago.' }, prompt: { en: 'Write "June" (the sixth month) — hiragana or kanji is fine.' }, answer: 'ろくがつ', accept: ['ろくがつ', '六月', '6月'], mode: 'reading', choices: ['ろくがつ', 'ろくげつ', 'むつき'], explain: { jp: '{六月|ろくがつ}', en: 'Months are number + がつ: ろくがつ, June. (Not げつ: that reading is for counting months, as in ろっかげつ.)' } },
         { kind: 'order', item: 'g:v_tai', prompt: { en: 'Tell the Registrar: "I want to see the flood records."' }, tiles: ['{洪水|こうずい} の', '{記録|きろく} を', '{見|み}たい', 'です'], answer: ['{洪水|こうずい} の', '{記録|きろく} を', '{見|み}たい', 'です'], orderHint: { en: 'Noun の noun を, then the verb (たい form) and です.' } },
       ],
       I: [
@@ -84538,7 +85017,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       ],
       A: [
         { kind: 'choose', item: 'g:lf_kaneru', ctx: { jp: 'タダシ ： 「{許可|きょか}{証|しょう} は {再|さい}{発行|はっこう} いたしかねます ので 、{紛失|ふんしつ} なさいません よう 、お{願|ねが}い {申|もう}し{上|あ}げます 。」', en: '' }, prompt: { en: 'What is the Registrar telling you?' }, options: [ok('', 'The permit cannot be reissued, so please do not lose it.', '〜かねます is a formal, polite "cannot" — a refusal wrapped in humility.'), no('', 'He will gladly reissue the permit if you lose it.', 'かねます looks positive but is a refusal: "I am unable to".'), no('', 'He cannot issue a permit at all.', 'He has issued it; it is re-issuing (再発行) he cannot do.'), no('', 'Losing the permit is forbidden by law.', 'He is asking politely (お願い申し上げます), not citing a law.')], explain: { en: 'いたしかねます: humble いたす + かねる "be unable to". Service staff use it to refuse without ever saying できません.' } },
-        { kind: 'write', item: 'v:調査', ctx: { jp: '{目的|もくてき} ： {三十年前|さんじゅうねんまえ} の {洪水|こうずい} に {関|かん}する ＿＿ の ため', en: 'Purpose: for ___ concerning the flood thirty years ago.' }, prompt: { en: 'Fill in the formal word for "research / investigation". Kana or kanji.' }, answer: 'ちょうさ', accept: ['ちょうさ', '調査'], mode: 'reading', choices: ['ちょうさ', 'ちょうし', 'じょうさ', 'ちゅうさ'], explain: { jp: '{調査|ちょうさ}', en: '調査 (ちょうさ): investigation, survey — the standard word in reports and forms. 調べる is its everyday verb.' } },
+        { kind: 'write', item: 'v:調査', ctx: { jp: '{目的|もくてき} ： {三十年前|さんじゅうねんまえ} の {洪水|こうずい} に {関|かん}する ＿＿ の ため', en: 'Purpose: for ___ concerning the flood thirty years ago.' }, prompt: { en: 'Fill in the formal word for "research / investigation". Hiragana or kanji.' }, answer: 'ちょうさ', accept: ['ちょうさ', '調査'], mode: 'reading', choices: ['ちょうさ', 'ちょうし', 'じょうさ', 'ちゅうさ'], explain: { jp: '{調査|ちょうさ}', en: '調査 (ちょうさ): investigation, survey — the standard word in reports and forms. 調べる is its everyday verb.' } },
       ],
     },
   });
@@ -84946,11 +85425,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Elementary: polite forms, time, everyday politeness
   c('11', 'E', 'v:結構', '「お{茶|ちゃ} は いかが です か 。」 「いえ 、けっこう です 。」', '"Would you like some tea?" "No, thank you."', 'What does けっこうです mean here?', [ok('', 'No, thank you', 'Offered something, けっこうです declines it.'), no('', 'Yes, that\'s fine, pour it', 'It looks like "fine", but here it declines.'), no('', 'It\'s delicious', 'No.')], { explain: { en: 'けっこうです: "that is enough / no need" — a polite refusal of an offer.' } });
   c('12', 'E', 'g:v_masu_forms', '{十五時|じゅうごじ} の {便|びん} は {出|で}ません 。', '', 'What does this mean?', [ok('', 'The 3 o\'clock boat doesn\'t run.', 'ません: polite negative.'), no('', 'The 3 o\'clock boat runs.', 'That would be 出ます.'), no('', 'The 3 o\'clock boat ran.', 'Past would be 出ました.')]);
-  w('13', 'E', 'v:十二時', '{昼|ひる} の {舟|ふね} は ＿＿ に {出|で}ます 。', 'The noon boat leaves at twelve.', 'Write "twelve o\'clock". Kana is fine.', 'じゅうにじ', ['じゅうにじ', '十二時', '12時'], { choices: ['じゅうにじ', 'じゅうにし', 'じゅうじ'] });
+  w('13', 'E', 'v:十二時', '{昼|ひる} の {舟|ふね} は ＿＿ に {出|で}ます 。', 'The noon boat leaves at twelve.', 'Write "twelve o\'clock". Hiragana or kanji is fine.', 'じゅうにじ', ['じゅうにじ', '十二時', '12時'], { choices: ['じゅうにじ', 'じゅうにし', 'じゅうじ'] });
   c('14', 'E', 'g:keigo_kenjo', '「{少々|しょうしょう} お{待|ま}ち ください 。」', '', 'Who would most naturally say this?', [ok('', 'A clerk to a visitor at the counter', 'Polite service language.'), no('', 'A child to a friend', 'Children would say ちょっと待って.'), no('', 'Nobody; it is rude', 'It is very polite.')]);
   o('15', 'E', 'g:v_te_kudasai', 'Ask politely: "Please ring the bell."', ['{鐘|かね} を', '{鳴|な}らして', 'ください']);
   c('16', 'E', 'v:議会', '{議会|ぎかい} は {全員|ぜんいん} {賛成|さんせい} でした 。', 'The council was unanimous.', '全員賛成 means…', [ok('', 'everyone in favour', '全員 everyone, 賛成 in favour.'), no('', 'everyone against', 'Against is 反対.'), no('', 'nobody came', 'No.')]);
-  w('17', 'E', 'v:反対', '{賛成|さんせい} ？ それ とも ＿＿ ？', 'In favour? Or against?', 'Write "against / opposed". Kana is fine.', 'はんたい', ['はんたい', '反対'], { choices: ['はんたい', 'はんだい', 'ほんたい'] });
+  w('17', 'E', 'v:反対', '{賛成|さんせい} ？ それ とも ＿＿ ？', 'In favour? Or against?', 'Write "against / opposed". Hiragana or kanji is fine.', 'はんたい', ['はんたい', '反対'], { choices: ['はんたい', 'はんだい', 'ほんたい'] });
   c('18', 'E', 'g:prt_kara_made', '{九時|くじ} から {十二時|じゅうにじ} まで', '', 'What does this phrase mean?', [ok('', 'from nine to twelve', 'から from, まで until.'), no('', 'nine or twelve', 'That would be か.'), no('', 'after twelve', 'No.')]);
   o('19', 'E', 'g:v_mashou', 'Suggest: "Let\'s go down to the basement."', ['{地下|ちか} へ', '{行|い}きましょう']);
   c('20', 'E', 'g:register_polite_plain', '「{行|い}く ？」 「{行|い}きます か 。」', '', 'What is the difference?', [ok('', 'Plain (friends) vs polite (strangers, work)', 'Same question, different register.'), no('', 'Present vs past', 'Both are present.'), no('', 'Question vs order', 'Both are questions.')]);
@@ -87082,8 +87561,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
 
   // ---- drills (region: the Still Archive) ------------------------------------------------------------------------
-  const kanaDrill = (id, word, en, before, ans, after, item) => ({ id, lv: 'F', tags: ['still'], kind: 'write', item: item || ('k:' + ans), prompt: { en: 'Complete the word "' + en + '": write the missing kana.' }, template: { before, after }, answer: ans, accept: [ans], mode: 'kana', single: true, explain: { en: word + ' — ' + en + '.' } });
-  const read = (id, lv, w, r, en, extra) => Object.assign({ id, lv, tags: ['still'], kind: 'write', item: 'v:' + w, prompt: { en: 'Write the word for "' + en + '" (kana is fine).' }, answer: r, accept: [r, w], mode: 'reading', explain: { jp: '{' + w + '|' + r + '}', en: en + '.' } }, extra || {});
+  const kanaDrill = (id, word, en, before, ans, after, item) => ({ id, lv: 'F', tags: ['still'], kind: 'write', item: item || ('k:' + ans), prompt: { en: 'Complete the word "' + en + '": write the missing ' + (RB.kana.isKata(ans) ? 'katakana' : 'hiragana') + '.' }, template: { before, after }, answer: ans, accept: [ans], mode: 'kana', single: true, explain: { en: word + ' — ' + en + '.' } });
+  const read = (id, lv, w, r, en, extra) => Object.assign({ id, lv, tags: ['still'], kind: 'write', item: 'v:' + w, prompt: { en: 'Write the word for "' + en + '" (in hiragana, or in kanji).' }, answer: r, accept: [r, w], mode: 'reading', explain: { jp: '{' + w + '|' + r + '}', en: en + '.' } }, extra || {});
   const mc = (id, lv, item, prompt, ctx, options, explain) => ({ id, lv, tags: ['still'], kind: 'choose', item, prompt: { en: prompt }, ctx, options, explain });
   C.addDrills([
     // Foundations: kana inside the chapter's everyday words
@@ -93803,7 +94282,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Reedwake (read in chapter 1 or later): the fare book and the pledge seal.
   X['lq.c_seal'] = { title: T('The fare book', '{渡|わた}し{帳|ちょう}'),
     tiers: {
-      F: [{ kind: 'write', item: 'v:かもめ', prompt: { en: 'The seal is carved back to front, so you press it on a scrap of paper. It prints three kana: ka-mo-me — "kamome", a gull. Write the word in hiragana.' }, answer: 'かもめ', accept: ['かもめ'], mode: 'kana', explain: { jp: 'かもめ', en: 'かもめ (kamome) — a gull, a seagull.' } }],
+      F: [{ kind: 'write', item: 'v:かもめ', prompt: { en: 'The seal is carved back to front, so you press it on a scrap of paper. It prints three hiragana: ka-mo-me — "kamome", a gull. Write the word in hiragana.' }, answer: 'かもめ', accept: ['かもめ'], mode: 'kana', explain: { jp: 'かもめ', en: 'かもめ (kamome) — a gull, a seagull.' } }],
       E: [
         { kind: 'choose', item: 'c:lq_fare_e', ctx: { jp: 'わたしちん 、 かならず はらい に きます 。', en: '' }, prompt: { en: 'The last entry in the book, in a young person\'s shaky hand. What does it promise?' },
           options: [{ en: 'I will come back to pay the fare, without fail.', ok: true }, { en: 'I have paid the fare in full.', ok: false, why: { en: 'はらいに きます = "will come to pay": nothing has been paid yet.' } }, { en: 'Please pay the fare when you come.', ok: false, why: { en: 'There is no ください; the writer is the one who will come.' } }],
@@ -93850,13 +94329,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
         { kind: 'choose', item: 'v:小春', ctx: { jp: '{小春|こはる} の {頃|ころ} 、 {柿|かき} が {甘|あま}く なる 。', en: '' }, prompt: { en: 'Carved on the lantern post, below the blank shade. When do the persimmons turn sweet?' },
           options: [{ en: 'In the mild days of late autumn and early winter.', ok: true }, { en: 'In early spring.', ok: false, why: { en: '小春 contains 春 ("spring"), but it is an old name for the tenth lunar month, around November.' } }, { en: 'In the rainy season.', ok: false, why: { en: 'The rainy season is 梅雨 (つゆ).' } }],
           explain: { en: '小春 is an old name for the tenth month of the lunar calendar (roughly November). 小春日和 is a mild, sunny day in late autumn or early winter.' } },
-        { kind: 'write', item: 'v:小春野', prompt: { en: 'Write the hamlet\'s name on the shade: Koharuno (kana or kanji).' }, answer: 'こはるの', accept: ['こはるの', '小春野'], mode: 'reading', explain: { jp: '{小春野|こはるの}', en: 'Koharuno.' } },
+        { kind: 'write', item: 'v:小春野', prompt: { en: 'Write the hamlet\'s name on the shade: Koharuno (hiragana or kanji).' }, answer: 'こはるの', accept: ['こはるの', '小春野'], mode: 'reading', explain: { jp: '{小春野|こはるの}', en: 'Koharuno.' } },
       ],
       A: [
         { kind: 'choose', item: 'c:lq_koharu_a', ctx: { jp: '{名|な} は {呼|よ}ばれて こそ {名|な} 。 {呼|よ}ぶ {者|もの} なき {里|さと} は 、 {地図|ちず} より {先|さき} に {人|ひと} の {口|くち} から {消|き}える 。', en: '' }, prompt: { en: 'A line cut into the lantern frame, older than the paper. What does it claim?' },
           options: [{ en: 'A place with no one left to say its name vanishes from people\'s mouths before it vanishes from maps.', ok: true }, { en: 'Maps outlast spoken names, so a place name should be written down.', ok: false, why: { en: '地図より先に = "sooner than from maps": speech is lost first, and the line is about calling, not writing.' } }, { en: 'Only the people who live in a place may call its name.', ok: false, why: { en: '呼ぶ者なき = "with no one who calls (it)"; nothing restricts who may.' } }],
           explain: { en: '〜てこそ = only when… (is it truly…); なき is the literary form of ない before a noun (呼ぶ者なき里 = a hamlet with no one to call it); 〜より先に = before….' } },
-        { kind: 'write', item: 'v:小春野', prompt: { en: 'Write the hamlet\'s name on the shade: Koharuno (kana or kanji).' }, answer: 'こはるの', accept: ['こはるの', '小春野'], mode: 'reading', explain: { jp: '{小春野|こはるの}', en: 'Koharuno.' } },
+        { kind: 'write', item: 'v:小春野', prompt: { en: 'Write the hamlet\'s name on the shade: Koharuno (hiragana or kanji).' }, answer: 'こはるの', accept: ['こはるの', '小春野'], mode: 'reading', explain: { jp: '{小春野|こはるの}', en: 'Koharuno.' } },
       ],
     } };
 })(RB.content);
