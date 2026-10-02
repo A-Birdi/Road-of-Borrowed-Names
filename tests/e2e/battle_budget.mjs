@@ -74,7 +74,11 @@ for (let k = 0; k < plan.length; k++) {
         const k2 = bs.findIndex((x) => right.some((rr) => txt(x) === rr.replace(/\s+/g, '') || (x.querySelector('.enline') && right.includes(x.querySelector('.enline').textContent.trim()))));
         (bs[k2] || bs[0]).click();
       });
-      await waitSel('.fbwrap .fb-go', { timeout: 10000 });
+      // a step whose right option was not recognised can wait for another try: "I don't know" ends it
+      if (!(await p.waitForSelector('.fbwrap .fb-go', { timeout: 4000 }).then((h) => { h.dispose(); return true; }, () => false))) {
+        await p.evaluate(() => { const r = document.querySelector('.chal [data-a=reveal]'); if (r) r.click(); });
+        await waitSel('.fbwrap .fb-go', { timeout: 10000 });
+      }
       await p.evaluate(() => document.querySelector('.fbwrap .fb-go').click());
       await p.waitForTimeout(150);
       if (await p.$('.ccard[data-a]').then((h) => { if (h) h.dispose(); return !!h; })) { await p.waitForTimeout(300); await p.evaluate(() => { const x = [...document.querySelectorAll('.ccard[data-a]')].find((y) => !y.disabled); if (x) x.click(); }); }
@@ -88,7 +92,9 @@ for (let k = 0; k < plan.length; k++) {
   m.total = +(m.party + m.creatures + m.pets).toFixed(2);
   rows.push({ k: k + 1, enemy: c.id, foes: c.foes, comp, pet, error, ...m });
   console.log(`${String(k + 1).padStart(2)} ${c.id} ×${c.foes} (${comp}, ${pet}): party ${m.party} MiB (${m.partyFrames}), creatures ${m.creatures} MiB (${m.creatureFrames}), pets ${m.pets} MiB (${m.petFrames}) → ${m.total} MiB${error ? '  ERROR ' + error : ''}`);
-  // leave the encounter (Step back) if it is still on
+  // leave the encounter (Step back) if it is still on; after a failure, out of an open task first,
+  // so one encounter's trouble does not carry into the next
+  if (error) await p.evaluate(() => { for (const q of ['.fbwrap .fb-go', '.chal [data-a=leave]']) { const x = document.querySelector(q); if (x) { x.click(); return; } } }).then(() => p.waitForTimeout(400));
   if (!(await p.evaluate(() => window.__result))) {
     await p.evaluate(() => { const f = document.querySelector('.cb-dock [data-flee]'); if (f) f.click(); });
     await p.waitForTimeout(300);
