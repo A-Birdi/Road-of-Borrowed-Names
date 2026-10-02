@@ -138,6 +138,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     for (const X of [base, B, head, lid]) S.outline(X);
     S.cast(head, B, 2, 3, 1); S.cast(lid, head, 2, 2, 1); S.cast(B, base, 2, 2, 1);
     const out = glow.over(base).over(B).over(head).over(lid);
+    S.inner(out);
     S.rim(out, { w: 2 });
     // the residue: drips from the spout lip, a puddle spreading at the base
     if (q.drips > 0.05) for (let i = 0; i < 3; i++) {

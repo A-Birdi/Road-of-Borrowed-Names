@@ -201,6 +201,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     let out = tailL.over(farL).over(body);
     if (!stretched) out = out.over(haunch).over(chest);
     out = out.over(nearL).over(tailF).over(headB).over(head);
+    S.inner(out);
     S.rim(out, { w: 2 });
     // the snow fox's breath smoking in the cold (idle) or a draw of frost (q.breath)
     if (snow || q.breath > 0) {
@@ -276,6 +277,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     } else { Hd.line(-26, 6, -10, 7, inkM, 1); Hd.line(-10, 7, -7, 6, inkM, 1); }
     // nose
     Hd.rect(-31, 0, 4, 4, inkM, 1); Hd.dot(-30, 0, inkM, 2); Hd.dot(-31, 1, whiteM, 0);
+    // whisker pores along the muzzle's side, and the lip's dark corner
+    for (const [x, y] of [[-22, 5], [-19, 4], [-16, 5], [-20, 7]]) Hd.dot(x, y, inkM, 2);
     // eyes: the near one large and slanted, the far one foreshortened beside the bridge
     const eye = (ex, ey, w, far) => {
       if (eyes === 'shut') { Hd.line(ex - w, ey, ex + w - 1, ey - 1, inkM, 0); Hd.line(ex - w + 1, ey + 1, ex + w - 2, ey, furM, 2); return; }
@@ -290,7 +293,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     // the marks above the eyes (brush strokes)
     Hd.poly([[-6, -10], [2, -13], [8, -11], [1, -9]], markM, (x) => S.step(x < 0 ? 2 : 1, 3));
     Hd.poly([[-16, -9], [-12, -11], [-10, -9]], markM, 1);
-    if (m.P.frost) { const fr = S.mat(m.P.frost, { at: 1, line: false }); Hd.dot(13 + ear * 20, -37 + ear * 18, fr, 2); Hd.dot(12 + ear * 20, -35 + ear * 18, fr, 1); Hd.dot(21, 14, fr, 2); }
+    if (m.P.frost) { const fr = S.mat(m.P.frost, { at: 1, line: false }); Hd.dot(13 + ear * 20, -37 + ear * 18, fr, 2); Hd.dot(12 + ear * 20, -35 + ear * 18, fr, 1); for (const [x, y] of [[21, 14], [16, 17]]) { Hd.dot(x, y, fr, 2); Hd.dot(x - 1, y, fr, 0); Hd.dot(x, y - 1, fr, 0); } }
     Hd.restore();
   }
   // the paper scarf with the borrowed name: a band round the neck, its two ends trailing behind

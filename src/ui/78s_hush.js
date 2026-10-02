@@ -142,6 +142,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }
     fx.fade(0.9);
     const out = aura.over(backP).over(hollow).over(inkL);
+    S.inner(out);
     S.rim(out, { w: 2 });
     return out.over(frontP).over(fx);
   }

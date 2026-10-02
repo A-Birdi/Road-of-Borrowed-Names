@@ -174,6 +174,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       fx.fade(Math.min(1, q.ring));
     }
     const out = aura.over(strands).over(B);
+    S.inner(out);
     S.rim(out, { w: 2 });
     return out.over(fx);
   }
@@ -466,10 +467,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
       B.dot(x, yy, brass, 1); B.dot(x, yy + 1, brass, t < KROT ? 5 : 4);
     }
     for (const a of [pa0 + 0.08, pa1 - 0.09]) for (const yy of [py + 3, py + 32]) { const x = Math.round(KHW(yy) * Math.sin(a)); B.rect(x, yy, 2, 2, brass, 5); B.dot(x + 1, yy + 1, brass, 1); }
+    // the bronze stays wet below the plate: lighter streaks running down from its lower edge
+    for (let k = 0; k < 6; k++) {
+      const a = pa0 + 0.12 + k * ((pa1 - pa0 - 0.24) / 5), y0 = py + 37, len = 6 + (K.hh(k, 9, 4) % 12);
+      for (let y = y0; y < Math.min(14, y0 + len); y++) { const x = Math.round(KHW(y) * Math.sin(a)); B.dot(x, y, bronze, a < KROT ? 5 : 4); }
+    }
     // eyes above the plate: the near one full, the far one narrowed by the curve
     const eyes = q.eyes || 'open';
     // (sockets cast into the bronze: a dark hollow under a lit brow, a pale light inside)
-    for (const [a, wv] of [[KROT - 0.42, 12], [KROT + 0.3, 14]]) {
+    for (const [a, wv] of [[KROT - 0.44, 13], [KROT + 0.3, 16]]) {
       const ey = -55, ex = Math.round(KHW(ey) * Math.sin(a)), w = Math.max(5, Math.round(wv * Math.cos(a))), x0 = ex - (w >> 1);
       B.rect(x0 - 1, ey - 3, w + 2, 2, bronze, a < KROT ? 6 : 5);                      // the lit brow
       B.poly([[x0 - 1, ey - 1], [x0 + w + 1, ey - 1], [x0 + w, ey + 6], [x0, ey + 6]], cav, 1); // the socket
@@ -477,7 +483,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       else if (eyes === 'down') { B.rect(x0 + 1, ey + 3, w - 2, 2, eyeM, 1); B.dot(x0 + 1, ey + 3, eyeM, 2); }
       else if (eyes === 'smile') { B.line(x0 + 1, ey + 3, ex, ey + 1, eyeM, 2); B.line(ex, ey + 1, x0 + w - 2, ey + 3, eyeM, 2); }
       else if (eyes === 'wide') { B.rect(x0, ey - 1, w, 7, cav, 0); B.rect(x0 + 1, ey, w - 2, 4, eyeM, 1); B.rect(ex - 1, ey + 1, 2, 2, cav, 2); B.dot(x0 + 1, ey, eyeM, 2); }
-      else { B.rect(x0 + 1, ey + 1, w - 2, 3, eyeM, 1); B.rect(ex - 1 + (a < KROT ? 0 : -1), ey + 1, 2, 3, cav, 2); B.dot(x0 + 1, ey + 1, eyeM, 2); }
+      else { B.poly([[x0, ey + 3], [ex - 1, ey], [x0 + w, ey + 2], [ex + 1, ey + 5]], eyeM, (x, y) => S.step(y < ey + 2 ? 2 : 1, 3)); B.rect(ex - 1 + (a < KROT ? 0 : -1), ey + 1, 3, 3, cav, 2); B.dot(ex - 2 + (a < KROT ? 0 : -1), ey + 1, eyeM, 2); }
     }
     // glowing seams (the pressure inside, Gathering): along the flutes, rising with the glow
     if (q.glow > 0.05) for (let f = -3; f <= 3; f += 2) {
@@ -516,6 +522,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     S.cast(wheelL, B, 2, 3, 1);
     S.cast(lash, B, 3, 4, 1);
     const out = aura.over(farT).over(sideT).over(B).over(wheelL).over(nearT).over(lash);
+    S.inner(out);
     S.rim(out, { w: 2 });
     // drips (they stop while it gathers, and run as residue after the flood)
     const drips = q.drips == null ? 1 : q.drips;

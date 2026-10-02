@@ -175,6 +175,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     for (const X of [back, B, hoodL, front, fx]) S.outline(X);
     S.cast(hoodL, B, 2, 4, 2); S.cast(front, B, 2, 3, 1); S.cast(fx, B, 2, 3, 1); S.cast(B, back, 2, 2, 1);
     const out = back.over(B).over(hoodL).over(front);
+    S.inner(out);
     S.rim(out, { w: 2 });
     out.over(fx);
     if (pale) out.fade(0.85);

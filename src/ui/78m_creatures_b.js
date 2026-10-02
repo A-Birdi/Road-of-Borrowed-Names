@@ -498,6 +498,24 @@ RB.creaturesB = (function () {
       L.px = out; L.mt = omt;
       return L;
     }
+    // interior form lines lighter than the silhouette: on the composite, an outline pixel with all
+    // four neighbours filled (a line between two overlapping parts, not against the background)
+    // takes its material's second-darkest tone (o.k: another step)
+    function inner(L, o) {
+      o = o || {};
+      const bb = bbox(L);
+      if (!bb) return L;
+      const { w, h, px, mt } = L, out = px.slice();
+      for (let y = Math.max(1, bb[1]); y <= Math.min(h - 2, bb[3]); y++) for (let x = Math.max(1, bb[0]); x <= Math.min(w - 2, bb[2]); x++) {
+        const i = y * w + x, c = px[i];
+        if (!(c >>> 24) || !isLine(c, mt[i])) continue;
+        if (!(px[i - 1] >>> 24) || !(px[i + 1] >>> 24) || !(px[i - w] >>> 24) || !(px[i + w] >>> 24)) continue;
+        const M = MATS[mt[i]];
+        out[i] = M.c[Math.min(M.n - 1, o.k == null ? 1 : o.k)];
+      }
+      L.px = out;
+      return L;
+    }
     // the four-neighbour edge test used by detail passes: is (x, y) (buffer px) filled?
     const filled = (L, x, y) => x >= 0 && y >= 0 && x < L.w && y < L.h && (L.px[y * L.w + x] >>> 24) > 0;
     // metal bands across a cylinder (n tones): a lit edge, the near-white specular streak, the light
@@ -521,7 +539,7 @@ RB.creaturesB = (function () {
       }
       return L;
     }
-    return { LK, ramp, deep, mat, T, band, step, lam, sph, cyl, facet, strands, rim, cast, lit, clean, tuft, filled, mixh, toward, hslOf, fromHsl, METAL, pipe, bbox, outline };
+    return { LK, ramp, deep, mat, T, band, step, lam, sph, cyl, facet, strands, rim, cast, lit, clean, tuft, filled, mixh, toward, hslOf, fromHsl, METAL, pipe, bbox, outline, inner };
   })();
 
   return { rig, RIGS, play, deliver, flush, PENDING, warmFor, warmStats, stopWarm, targets, colOf, blocked, tween, keys, mixQ, E, damp, cl, lerp, FAMILIES, AUDIT, FAMILY, family, audit, budget, S };

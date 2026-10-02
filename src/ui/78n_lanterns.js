@@ -201,6 +201,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     S.lit(B, wood, 4, { left: false, test: (x, y) => y < -50 });
     S.cast(B, tail, 2, 3, 1);
     const out = aura.over(mothB).over(tail).over(B);
+    S.inner(out);
     S.rim(out, { w: 1, y0: 0 });
     return out.over(fx).over(front);
   }
@@ -443,6 +444,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     S.cast(B, ground, 2, 3, 1);
     S.cast(door, B, 2, 3, 1);
     const out = aura.over(ground).over(B).over(roof).over(door);
+    S.inner(out);
     S.rim(out, { w: 2 });
     // snow shaken off the roof, falling (sprite-local clumps)
     if (q.fall > 0.02) {

@@ -126,6 +126,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     S.outline(bits);
     if (Math.round(q.sph || 0) % 3 !== 1) bits.fade(0.85);
     const out = B.over(arm);
+    S.inner(out);
     S.rim(out, { w: 2 });
     return out.over(bits);
   }
@@ -213,6 +214,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     S.outline(B);
     for (const [ex, w] of [[lx - 13, 2], [lx + 1, 3]]) { if (q.blink) B.rect(ex - w, -18, w * 2, 1, ink, 0); else { B.ell(ex, -18, w, 5, ink, 0); B.rect(ex - 1, -21, 2, 2, white, 0); } }
     const out = glow.over(B);
+    S.inner(out);
     S.rim(out, { w: 2 });
     return out;
   }
