@@ -20,7 +20,7 @@
  * typeset: { task, lv, lines }, label, bytes, saved, created, updated }.
  *
  *   RB.proof.list(s) · RB.proof.tier(def, prof) · RB.proof.complete(s, id, info)
- *   RB.proof.eligible(s) · RB.proof.pageFor(def, tier, label) · RB.proof.kept(s) */
+ *   RB.proof.eligible(s) · RB.proof.pageFor(def, tier, label, lines?) · RB.proof.kept(s) */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.proof = (function () {
@@ -72,11 +72,11 @@ RB.proof = (function () {
     return [segs.map((g) => (g.bad && g.fix ? g.fix : g.jp)).join(' ')];
   }
   // a kept page: typeset (the game's own lettering), labelled, never presented as handwriting
-  function pageFor(d, t, label) {
+  function pageFor(d, t, label, lines) {
     const now = Date.now();
     return {
       id: 'proof:' + d.id + ':' + t.lv, kind: 'proof', mode: 'proof',
-      typeset: { task: d.id, lv: t.lv, lines: repairedLines(t), title: d.title },
+      typeset: { task: d.id, lv: t.lv, lines: (lines && lines.length ? lines : repairedLines(t)).map(String), title: d.title },
       label: RB.practiceB.cleanLabel(label || (d.title && d.title.en) || d.id),
       saved: false, created: now, updated: now,
     };

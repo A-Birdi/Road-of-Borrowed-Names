@@ -3165,6 +3165,138 @@ body.reduced-motion .wv-w, body.reduced-motion .wv-t { transition: none; }
 .pages-shared { margin-top: 0.8em; }
 .pages-shared canvas { margin: 0.3em 0; }
 .pages-shared .row-acts { margin-top: 0.4em; }
+
+/* ==== src/styles/78_practice_b.css ==== */
+/* Practice suite B: villagers' letters, the Proofreader's Tray, One word two moments
+   (src/ui/90_letters.js, 91_proof.js, 92_compare.js). Paper and ink of the folio; every
+   state carries words or a shape as well as any tint; controls keep the 44 px target. */
+
+.folio.lsheet.pb .leaf { overflow-wrap: anywhere; }
+.pb-hidden { display: none !important; }
+.lsheet.pb h3 { display: flex; align-items: center; gap: 0.4em; font-size: 1em; margin: 0.9em 0 0.35em; }
+.lsheet.pb h3 svg { width: 1.15em; height: 1.15em; flex: none; color: var(--ink-2); }
+.lsheet.pb .slip-lab { font-size: 0.76em; letter-spacing: 0.07em; text-transform: uppercase; font-weight: 700; color: var(--ink-3); margin-bottom: 2px; }
+.pb-bi .en { font-size: 0.82em; color: var(--ink-2); font-family: var(--ui-font, inherit); }
+.lsheet.pb .note-slip svg, .pb-hdr svg { width: 1.1em; height: 1.1em; vertical-align: -0.2em; }
+
+/* the trays: cards are ruled entries; disabled ones say why in words */
+.pb-cards .pb-card { min-height: var(--tap); }
+.pb-cards .pb-card .d { display: block; color: var(--ink-2); font-size: 0.92em; }
+.pb-cards .pb-card .kind { display: block; margin-top: 0.15em; }
+.pb-cards .pb-card[data-state="open"] { box-shadow: inset 4px 0 0 var(--ribbon); }
+.pb-cards .pb-card[disabled] { cursor: not-allowed; opacity: 0.72; }
+
+/* a letter */
+.pb-from { align-items: flex-start; }
+.pb-from .letter { margin-top: 0.3em; }
+.pb-task, .pb-scope, .pb-sent, .pb-purpose { margin: 0.6em 0; padding: 0.5em 0.75em; background: var(--paper-2); border: 1px solid var(--paper-edge); border-radius: 2px; }
+.pb-task p, .pb-scope p, .pb-purpose p { margin: 0.2em 0; }
+.pb-task-en { font-weight: 600; }
+.pb-line { list-style: none; margin: 0; padding: 4px; display: flex; flex-wrap: wrap; gap: 6px; min-height: calc(var(--tap) + 8px); background: var(--pad-paper, #fffcf3); border: 1px solid var(--paper-edge); border-radius: 3px; }
+.pb-line li.empty { padding: 0.6em; }
+.pb-pieces { margin-bottom: 0.4em; }
+.lsheet.pb .tile { min-height: var(--tap); min-width: var(--tap); }
+.pb-other { margin-top: 0.4em; }
+.pb-shapes { margin: 0.3em 0 0.5em; padding-left: 1.2em; }
+.pb-shapes li { margin: 0.25em 0; }
+.pb-shapes li svg { width: 1em; height: 1em; vertical-align: -0.15em; }
+.pb-shapes li.no { color: var(--ink-2); }
+.pb-known { border-top: 1px solid var(--rule); margin-top: 0.6em; }
+.pb-ack { margin: 0.6em 0; }
+.pb-explain { margin: 0.7em 0; padding: 0.5em 0.75em; border-left: 4px solid var(--ok-ink); background: rgba(45, 95, 40, 0.06); }
+.pb-explain p { margin: 0.2em 0; }
+.pb-replay, .pb-open { margin-top: 0; }
+
+/* the challenge runner's task slip, carrying the letter / the notice and its evidence / the pair */
+.chal-situ .pb-hdr { font-size: 0.95em; }
+.pb-hdr .kind { font-size: 0.76em; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 700; color: var(--ink-3); }
+.pb-hdr-task { margin-top: 0.3em; font-weight: 600; }
+.pb-hdr .act-en { color: var(--ink-2); }
+.pb-hdr details { margin-top: 0.4em; }
+.pb-hdr summary, .pb-f-known summary, .pb-trq summary { cursor: pointer; min-height: var(--tap); display: flex; align-items: center; color: var(--river); }
+.pb-hdr summary:focus-visible, .pb-f-known summary:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.pb-hdr .pb-ev { margin: 0.35em 0; }
+
+/* evidence */
+.pb-sheet { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.6em; }
+@media (min-width: 860px) { .pb-sheet { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+.pb-notice-wrap, .pb-evidence { padding: 0.5em 0.75em; border: 1px solid var(--paper-edge); background: var(--pad-paper, #fffcf3); border-radius: 2px; min-width: 0; }
+.pb-ev { margin: 0.3em 0 0.6em; }
+.pb-ev-t { font-weight: 600; margin-bottom: 0.2em; }
+.pb-ico { width: 2.6em; height: 2.6em; color: var(--ink); flex: none; }
+.pb-plan { display: flex; flex-wrap: wrap; gap: 8px; }
+.pb-cell { flex: 1 1 8em; min-width: 0; display: grid; justify-items: center; text-align: center; gap: 2px; padding: 0.4em; border: 1px solid var(--rule); border-radius: 2px; }
+.pb-cell[data-state="closed"] { background: repeating-linear-gradient(135deg, transparent 0 6px, rgba(38, 31, 21, 0.06) 6px 9px); }
+.pb-cell-s { font-weight: 700; display: flex; align-items: center; gap: 0.25em; }
+.pb-cell-s svg { width: 1.1em; height: 1.1em; }
+.pb-cell[data-state="closed"] .pb-cell-s { color: var(--danger-ink); }
+.pb-cell[data-state="open"] .pb-cell-s { color: var(--ok-ink); }
+.pb-count { display: flex; flex-wrap: wrap; gap: 4px; }
+.pb-count .pb-ico { width: 2em; height: 2em; }
+.pb-count.per .pb-unit { display: inline-flex; flex-direction: column; align-items: center; padding: 2px 4px; border: 1px solid var(--rule); border-radius: 2px; }
+.pb-count.per .pb-sub { display: flex; }
+.pb-count.per .pb-sub .pb-ico { width: 1.2em; height: 1.2em; }
+.pb-ev-cap { margin-top: 0.2em; font-weight: 600; }
+.pb-slip, .pb-rule { padding: 0.4em 0.6em; border: 1px dashed var(--paper-edge); background: var(--paper); }
+.pb-rule .en, .pb-slip .en { color: var(--ink-2); font-size: 0.9em; }
+.pb-steps { margin: 0.2em 0 0.4em; padding-left: 1.4em; }
+.pb-seq { list-style: none; margin: 0.2em 0; padding: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+.pb-seq li { display: flex; align-items: center; gap: 4px; }
+.pb-arrow svg { width: 1.2em; height: 1.2em; color: var(--ink-2); }
+.pb-box { display: inline-flex; align-items: center; gap: 0.35em; padding: 0.3em 0.5em; border: 1px solid var(--ink-3); border-radius: 2px; background: var(--paper); }
+.pb-n { font-weight: 700; font-variant-numeric: tabular-nums; color: var(--ink-2); }
+.pb-objs { display: flex; flex-wrap: wrap; gap: 8px; }
+.pb-obj { flex: 1 1 9em; min-width: 0; display: grid; justify-items: center; text-align: center; gap: 2px; padding: 0.4em; border: 1px solid var(--rule); border-radius: 2px; }
+.pb-obj-n { font-weight: 700; }
+.pb-table { border-collapse: collapse; width: 100%; font-size: 0.95em; }
+.pb-table th, .pb-table td { border: 1px solid var(--rule); padding: 0.3em 0.45em; text-align: left; vertical-align: top; }
+.pb-table thead th { background: var(--paper-2); }
+.pb-measure { display: grid; gap: 6px; }
+.pb-bar { display: grid; grid-template-columns: minmax(0, 8em) minmax(0, 1fr) auto; gap: 6px; align-items: center; }
+.pb-bar-track { height: 0.9em; border: 1px solid var(--ink-3); background: var(--paper); }
+.pb-bar-fill { display: block; height: 100%; background: repeating-linear-gradient(90deg, var(--ink-2) 0 4px, transparent 4px 6px); }
+.pb-bar-v { font-variant-numeric: tabular-nums; font-weight: 600; }
+@media (max-width: 420px) { .pb-bar { grid-template-columns: minmax(0, 1fr) auto; } .pb-bar-track { grid-column: 1 / -1; grid-row: 2; } }
+
+/* the notice, in selectable portions */
+.pb-notice { font-size: 1.15em; margin: 0.3em 0; line-height: 2.1; }
+.pb-notice.list { padding-left: 1.6em; line-height: 1.9; }
+.pb-notice.pick .pb-seg {
+  font: inherit; color: var(--ink); background: var(--paper); border: 1px dashed var(--ink-3); border-radius: 3px;
+  min-height: var(--tap); min-width: var(--tap); padding: 0 0.35em; margin: 2px 0; cursor: pointer; touch-action: manipulation; line-height: 2;
+}
+.pb-notice.pick.list li { margin: 4px 0; }
+.pb-notice.pick .pb-seg[aria-pressed="true"] { border: 2px solid var(--ink); background: rgba(193, 138, 42, 0.16); box-shadow: inset 0 -3px 0 var(--ribbon); }
+.pb-notice.pick .pb-seg:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.pb-seg.sel { text-decoration: underline 2px; text-underline-offset: 0.25em; }
+mark.pb-fixed { background: rgba(45, 95, 40, 0.14); color: inherit; border-bottom: 3px double var(--ok-ink); padding: 0 0.15em; }
+.pb-find { margin: 0.7em 0; }
+.pb-find .mc { display: grid; gap: 8px; }
+.pb-consequence { display: flex; gap: 0.6em; align-items: flex-start; margin: 0.7em 0; padding: 0.6em 0.8em; border: 2px solid var(--ok-ink); border-radius: 3px; background: rgba(45, 95, 40, 0.06); }
+.pb-consequence > svg { width: 1.4em; height: 1.4em; flex: none; color: var(--ok-ink); }
+.pb-consequence p { margin: 0.15em 0; }
+.pb-repaired { margin: 0.4em 0; padding: 0.5em 0.75em; border: 1px solid var(--paper-edge); background: var(--pad-paper, #fffcf3); }
+.pb-asked { font-size: 1.1em; }
+.pb-kept p { margin: 0.2em 0; }
+.pb-pages .pb-prev { margin: 0.3em 0; padding: 0.3em 0.5em; background: var(--paper-2); }
+.pb-label label { display: block; font-weight: 600; margin: 0.4em 0 0.2em; }
+.pb-label input { width: 100%; min-height: var(--tap); font: inherit; padding: 0 0.5em; border: 1px solid var(--ink-3); border-radius: var(--r-1); background: var(--paper); color: var(--ink); }
+
+/* a pair of quotations */
+.pb-quote { margin: 0.45em 0; padding: 0.45em 0.7em; border-left: 4px double var(--paper-edge); background: var(--paper-2); }
+.pb-quote.teach { border-left-style: dashed; border-left-color: var(--ink-3); }
+.pb-quote figcaption { display: flex; flex-wrap: wrap; gap: 0.2em 0.8em; font-size: 0.88em; color: var(--ink-2); }
+.pb-q-who { font-weight: 700; color: var(--ink); display: inline-flex; align-items: center; gap: 0.3em; flex-wrap: wrap; }
+.pb-q-who svg { width: 1em; height: 1em; }
+.pb-q-jp { margin: 0.2em 0 0; font-size: 1.1em; }
+.pb-q-en { color: var(--ink-2); font-size: 0.92em; margin-top: 0.15em; }
+.pb-trq p { margin: 0.2em 0; }
+.pb-pair-small .pb-quote { font-size: 0.95em; }
+.pb-empty p { display: inline; }
+.pb-folder .pb-f-msg, .pb-folder .pb-f-reply, .pb-folder .pb-f-ack { margin: 0.35em 0; }
+.pb-folder .pb-f-msg { padding: 0.3em 0.6em; background: var(--pad-paper, #fffcf3); border-left: 4px double var(--paper-edge); }
+.pb-folder .act-en { font-size: 0.9em; }
+.pb-marks .pb-quote { margin: 0.3em 0; }
 </style>
 </head>
 <body>
@@ -33644,7 +33776,7 @@ RB.letters = (function () {
  * typeset: { task, lv, lines }, label, bytes, saved, created, updated }.
  *
  *   RB.proof.list(s) · RB.proof.tier(def, prof) · RB.proof.complete(s, id, info)
- *   RB.proof.eligible(s) · RB.proof.pageFor(def, tier, label) · RB.proof.kept(s) */
+ *   RB.proof.eligible(s) · RB.proof.pageFor(def, tier, label, lines?) · RB.proof.kept(s) */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.proof = (function () {
@@ -33696,11 +33828,11 @@ RB.proof = (function () {
     return [segs.map((g) => (g.bad && g.fix ? g.fix : g.jp)).join(' ')];
   }
   // a kept page: typeset (the game's own lettering), labelled, never presented as handwriting
-  function pageFor(d, t, label) {
+  function pageFor(d, t, label, lines) {
     const now = Date.now();
     return {
       id: 'proof:' + d.id + ':' + t.lv, kind: 'proof', mode: 'proof',
-      typeset: { task: d.id, lv: t.lv, lines: repairedLines(t), title: d.title },
+      typeset: { task: d.id, lv: t.lv, lines: (lines && lines.length ? lines : repairedLines(t)).map(String), title: d.title },
       label: RB.practiceB.cleanLabel(label || (d.title && d.title.en) || d.id),
       saved: false, created: now, updated: now,
     };
@@ -39015,7 +39147,8 @@ RB.ui.menu = (function () {
     notebook: ['words'], words: ['words'], guide: ['words', 'guide'], items: ['satchel'], satchel: ['satchel'], map: ['map'],
     company: ['company'], companion: ['company', 'companion'], pet: ['company', 'pet'], pets: ['company', 'pet'], memories: ['company', 'memories'],
     cases: ['journey', 'cases'], keepsakes: ['journey', 'keepsakes'], bookmarks: ['words', 'bookmarks'], creatures: ['words', 'creatures'], known: ['map', 'known'],
-    practice: ['words', 'practice'],
+    practice: ['words', 'practice'], letters: ['words', 'letters'], compare: ['words', 'compare'], // practice suite B pages
+
     settings: '@settings', save: '@save',
   };
   // pages added by later systems: journey views, words pages, map views
@@ -53121,6 +53254,1054 @@ RB.battlePets = (function () {
   }
 
   return { wants, draw, stats, sample, sampleAny, centreOf, poseAt: (now, t, reduce) => (B ? poseAt(now, t, reduce) : null), REACT, IMPACT, VICTORY, CALM, READY, BASE, LOOK, _begin: begin, _end: end, get _B() { return B; } };
+})();
+
+
+/* ==== src/ui/90_letters.js ==== */
+/* Practice suite B, interface part 1: shared pieces (RB.ui.pb) and the villagers'
+ * correspondence (Practice addendum §17). docs/practice/suite_b.md.
+ *
+ * The post box in Shino's Post House (RB.practiceB.PLACE) carries the scene
+ * pb.postbox (src/content/practice_b/40_place.js): it offers the letters after the
+ * journey's end and the proofreader's tray after Chapter 2; the chosen activity
+ * starts through RB.activity once that scene has ended.
+ *
+ * A letter is answered in one of these supported ways, all against the same authored
+ * answer space (RB.practiceB.space): building the reply from approved pieces (tap to
+ * place, tap to take back; no dragging), choosing a reply (Foundations), or typing /
+ * handwriting it through the ordinary challenge runner (RB.challenge.runStep with a
+ * `judge`, nothing recorded there). The scope is shown before entry. A reply outside the
+ * space gets a coverage note and the shapes the letter can read; a reply of another
+ * intention gets what it would actually say. Different valid tones close the letter
+ * equally. Learning evidence goes through RB.practice.objectives (once per letter per
+ * campaign; replays are practice tallies). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+// The Japanese labels of this interface, kept where tools/validate.mjs walks them
+// (RB.content.practiceB; the content files add letters, proof and compare beside it).
+RB.content.practiceB = RB.content.practiceB || {};
+RB.content.practiceB.ui = {
+  place: RB.practiceB.PLACE.name,
+  letters: { en: 'Villagers\' letters', jp: '{村|むら} の {人|ひと} から の {手紙|てがみ}' },
+  lettersBox: { en: 'Villagers\' letters', jp: '{手紙|てがみ} の {箱|はこ}' },
+  folder: { en: 'Letters folder', jp: '{手紙|てがみ} の {控|ひか}え' },
+  writeReply: { en: 'Write or type your reply.', jp: '{返事|へんじ} を {書|か}きましょう 。' },
+  tray: { en: 'The Proofreader\'s Tray', jp: '{校正|こうせい} の {盆|ぼん}' },
+  compare: { en: 'One word, two moments', jp: '{一|ひと}つ の {言葉|ことば} 、 {二|ふた}つ の {場面|ばめん}' },
+  compareWhere: { en: 'Words › One word, two moments', jp: '{言葉|ことば}' },
+  open: { en: 'open', jp: '{開|あ}いて いる' },
+  closed: { en: 'closed', jp: '{閉|し}まって いる' },
+};
+const PBT = RB.content.practiceB.ui;
+
+RB.ui.pb = (function () {
+  'use strict';
+  const esc = RB.util.esc;
+  const I = (n) => RB.learnUi.icon(n);
+  const J = (t, vars) => (t ? RB.ui.jhtml(t, vars ? { vars } : undefined) : '');
+  const MX = (t) => RB.learnUi.mixed(t || '');
+  // English with {漢字|かな} groups for places that escape their text (the challenge
+  // runner's prompts and options): the groups become their kana, so no kanji is shown
+  // without its reading
+  const kana = (t) => String(t || '').replace(/\{([^{}|]+)\|([^{}|]+)\}/g, '$2');
+  const reading = (m) => (RB.jp.reading(m) || '').replace(/\s+/g, '');
+  // the player's own text (a reply as written), with readings on any kanji, as the challenge runner shows it
+  const own = (t) => RB.learnUi.mixed(RB.answers && RB.answers.rubyText ? RB.answers.rubyText(String(t || '')) : String(t || ''));
+  const LAYERS = new Set();
+  function push(lay) { LAYERS.add(lay); RB.ui.pushLayer(lay); }
+  function pop(lay) { LAYERS.delete(lay); RB.ui.popLayer(lay); }
+  // tear down whatever this suite has on screen (a campaign change mid-session)
+  function closeAll() { for (const l of Array.from(LAYERS)) { try { pop(l); } catch (e) { /* gone */ } } }
+
+  // A paper sheet on the cloth, like the game's other activities.
+  function sheet(title, meta, o) {
+    o = o || {};
+    const fr = RB.learnUi.sheet({ cls: 'activity pb ' + (o.cls || ''), title, meta: meta || '', headBtn: o.close === false ? null : { html: I('back') + '<span>' + esc(o.closeLabel || 'Stop for now') + '</span>', attrs: { 'data-pb-x': '' } } });
+    const lay = { el: fr.scrim, name: 'pb-' + (o.cls || 'sheet') };
+    RB.learnUi.guardTaps(fr.leaf);
+    return { fr, lay, leaf: fr.leaf, foot: fr.foot, el: fr.el };
+  }
+  function fb(el, kind, head, html) {
+    el.className = 'fbwrap fb ' + kind;
+    el.setAttribute('data-fb', kind);
+    el.innerHTML = RB.learnUi.fbHead(kind, head) + '<div class="fb-b">' + html + '</div>';
+    requestAnimationFrame(() => {
+      if (!el.isConnected) return;
+      const leaf = el.closest('.leaf');
+      if (!leaf) return;
+      const lr = leaf.getBoundingClientRect(), r = el.getBoundingClientRect();
+      if (r.bottom > lr.bottom) leaf.scrollTop += r.bottom - lr.bottom + 12;
+      else if (r.top < lr.top) leaf.scrollTop -= lr.top - r.top + 12;
+    });
+  }
+  const showEnDefault = () => !!(RB.game.s && RB.game.s.learn.profile === 'F');
+  const prof = () => (RB.game.s && RB.game.s.learn.profile) || 'E';
+  function face(id) {
+    return RB.content.chars[id] ? '<canvas width="48" height="48" class="act-face" data-pb-face="' + esc(id) + '" aria-hidden="true"></canvas>' : '';
+  }
+  function drawFaces(root) { for (const cv of root.querySelectorAll('canvas[data-pb-face]')) { try { RB.portraits.draw(cv, cv.getAttribute('data-pb-face'), 'neutral'); } catch (e) { /* no portrait */ } } }
+  const who = (id) => (RB.content.chars[id] ? RB.content.chars[id].name : { en: id, jp: '' });
+  const toneWord = (t) => ({ polite: 'polite', friendly: 'friendly', warm: 'warm', brief: 'brief', formal: 'formal', humble: 'humble', plain: 'plain', gracious: 'gracious', thanks: 'thankful', request: 'request-shaped', open: 'open', which: 'precise', where: 'precise', glad: 'glad', direct: 'direct', gentle: 'gentle', both: 'thorough', name: 'practical', 'place-first': 'practical', 'own-share': 'gracious', answer: '' })[t] || t || '';
+
+  // ---- the bounded answer space as a challenge step --------------------------------------------
+  // families: authored replies; o: { title, header, prompt:{en,jp}, ctx, what: 'letter'|'repair'|… }
+  function limitHtml(families, what) {
+    const oks = families.filter((f) => f.ok);
+    return '<p>This ' + esc(what || 'letter') + ' can only read the replies it was written with — ' + families.length + ' of them, built from its pieces. Yours may be perfectly good Japanese; it is simply outside what this practice can check, so it is not marked wrong.</p>' +
+      '<p class="muted small">Replies it can read say:</p><ul class="pb-shapes">' + oks.map((f) => '<li>' + esc(f.en) + (f.tone && toneWord(f.tone) ? ' <span class="muted small">(' + esc(toneWord(f.tone)) + ')</span>' : '') + '</li>').join('') + '</ul>' +
+      '<p class="muted small">Try one of those shapes, or build it from the pieces.</p>';
+  }
+  function writeStep(families, o) {
+    o = o || {};
+    const sp = RB.practiceB.space(families);
+    const oks = families.filter((f) => f.ok);
+    const okReadings = [];
+    let longest = '';
+    families.forEach((f) => RB.practiceB.sequences(f).forEach((q) => {
+      const r = reading(q.join(' '));
+      if (f.ok) okReadings.push(r);
+      if (r.length > longest.length) longest = r;
+    }));
+    return {
+      kind: 'write', title: o.title, titleJp: o.titleJp, item: null,
+      ctx: o.ctx || null,
+      prompt: { en: kana(o.prompt && o.prompt.en), jp: o.prompt && o.prompt.jp },
+      answer: reading(RB.practiceB.replyOf(oks[0])), fullAnswer: longest, accept: okReadings, mode: 'reading',
+      // the Choose tab: every authored reply, in kana (its kanji would otherwise lose their readings)
+      choices: families.map((f) => reading(RB.practiceB.replyOf(f))),
+      judge(text, jo) {
+        const m = RB.practiceB.match(sp, text, { handwritten: !!(jo && jo.handwritten) });
+        if (!m) return { ok: false, limit: true, head: 'Outside what this ' + (o.what || 'letter') + ' can read', html: limitHtml(families, o.what), feedback: [] };
+        if (m.family.ok) return { ok: true, matched: m.family, family: m.i };
+        return { ok: false, family: m.i, feedback: [{ code: 'intent', en: m.family.why ? m.family.why.en : 'That says something else.' }] };
+      },
+    };
+  }
+  // a choose step for runStep: options [{ jp?, en, ok, why? }] (English may carry ruby groups)
+  function chooseStep(options, o) {
+    o = o || {};
+    return {
+      kind: 'choose', title: o.title, titleJp: o.titleJp, item: null, ctx: o.ctx || null, showEn: !!o.showEn,
+      prompt: { en: kana(o.prompt && o.prompt.en), jp: o.prompt && o.prompt.jp },
+      options: options.map((x) => ({ jp: x.jp || undefined, en: kana(x.en), ok: !!x.ok, why: x.why ? { en: kana(x.why.en) } : undefined, _src: x })),
+    };
+  }
+  // the learning record for one authored objective: once per campaign (first assessment),
+  // a replay or a supplied/exposed answer is a practice tally only
+  function assess(session, rec, objId, item, r, o) {
+    o = o || {};
+    const s = RB.game.s;
+    const via = r.mode === 'hand' ? 'hand' : r.mode === 'ime' ? 'ime' : 'choice';
+    const res = { firstTry: r.firstTry !== false, mode: via, assisted: !!r.assisted };
+    if (!o.sample && RB.practiceB.firstAssessment(rec, objId)) {
+      const ob = session.objectives || (session.objectives = RB.practice.objectives(session));
+      const recorded = ob.assess(objId, item, res, { exposed: !!o.exposed, kind: session.kind });
+      if (recorded || o.exposed) RB.practiceB.markAssessed(rec, objId);
+      return recorded;
+    }
+    RB.practice.tally(s, session.kind, { n: 1, replay: 1, ok: res.firstTry ? 1 : 0 });
+    if (item) [].concat(item).forEach((i) => RB.learn.markIntroduced(i));
+    return false;
+  }
+
+  // ---- a kept practice page: label, then the shared six-page budget ----------------------------------
+  function askLabel(def) {
+    return new Promise((resolve) => {
+      const S = sheet(esc('Keep this page'), '', { cls: 'pb-keep', closeLabel: 'Cancel' });
+      S.leaf.innerHTML = '<p>The page is kept as typeset text in the game\'s lettering — it is not handwriting. Kept pages share the writing desk\'s six places.</p>' +
+        '<form class="pb-label"><label for="pb-lab">Label <span class="muted small">(up to 40 characters)</span></label>' +
+        '<input id="pb-lab" type="text" maxlength="40" autocomplete="off" spellcheck="false" value="' + esc(def || '') + '"></form>';
+      S.foot.innerHTML = '<span class="spacer"></span><button class="cbtn go" data-pb-keepok>' + I('done') + '<span>Keep it</span></button>';
+      const inp = S.leaf.querySelector('input');
+      inp.addEventListener('keydown', (e) => { if (e.key !== 'Tab') e.stopPropagation(); });
+      const done = (v) => { pop(S.lay); resolve(v); };
+      S.leaf.querySelector('form').onsubmit = (e) => { e.preventDefault(); done(inp.value); };
+      S.foot.querySelector('[data-pb-keepok]').onclick = () => done(inp.value);
+      S.el.querySelector('[data-pb-x]').onclick = () => done(null);
+      S.lay.onCancel = () => done(null);
+      push(S.lay);
+      setTimeout(() => inp.focus(), 30);
+    });
+  }
+  // the six places are full: replace one explicitly, or cancel (never a silent deletion)
+  function askReplace(pages) {
+    return new Promise((resolve) => {
+      const S = sheet(esc('All six places are full'), '', { cls: 'pb-replace', closeLabel: 'Cancel' });
+      S.leaf.innerHTML = '<p>To keep this page, choose a kept page to replace. Nothing is removed unless you choose it here.</p><ul class="entries pb-pages">' +
+        pages.map((p, i) => '<li class="entry"><span class="mark">' + I(p.kind === 'proof' ? 'scroll' : 'practice') + '</span><div><div class="t">' + esc(p.label || '(no label)') + '</div>' +
+          '<div class="small muted">' + esc(p.kind === 'proof' ? 'Proofreader\'s page (typeset)' : (p.mode === 'typeset' ? 'Writing desk (typeset)' : 'Writing desk' + (p.mode ? ' (' + p.mode + ')' : ''))) + '</div>' +
+          (p.typeset && p.typeset.lines ? '<div class="pb-prev">' + p.typeset.lines.slice(0, 2).map((l) => J(l)).join('<br>') + '</div>' : '') +
+          '<div class="row-acts"><button class="pbtn danger" data-pb-rep="' + i + '">' + I('trash') + '<span>Replace this page</span></button></div></div></li>').join('') + '</ul>';
+      S.foot.innerHTML = '<span class="spacer"></span><button class="cbtn go" data-pb-cancel>' + I('back') + '<span>Cancel — keep them all</span></button>';
+      const done = (v) => { pop(S.lay); resolve(v); };
+      S.el.addEventListener('click', (e) => {
+        const r = e.target.closest('[data-pb-rep]');
+        if (r) { done(+r.getAttribute('data-pb-rep')); return; }
+        if (e.target.closest('[data-pb-cancel], [data-pb-x]')) done(-1);
+      });
+      S.lay.onCancel = () => done(-1);
+      push(S.lay);
+    });
+  }
+  async function keepFlow(s, page) {
+    const label = await askLabel(page.label);
+    if (label == null) return { ok: false, why: 'cancelled' };
+    page.label = RB.practiceB.cleanLabel(label) || page.label;
+    page.updated = Date.now();
+    let r;
+    try { r = await RB.practiceB.keepPage(s, page, askReplace); } catch (e) { console.error('keep page', e); r = { ok: false, why: 'error' }; }
+    return r || { ok: false, why: 'error' };
+  }
+
+  // ---- a quotation card (comparisons; also the letters folder) ---------------------------------------
+  function speakerOf(src) {
+    if (src.teach) return { en: 'Teaching example', jp: '', teach: true };
+    if (src.who === 'narr') return { en: 'Narration', jp: '' };
+    if (src.who === 'pc') { const s = RB.game.s; return { en: 'You' + (s ? ' (' + s.player.name + ')' : ''), jp: '' }; }
+    const c = RB.content.chars[src.who];
+    return c ? { en: c.name.en, jp: c.name.jp } : { en: src.who, jp: '' };
+  }
+
+  return { esc, I, J, MX, kana, reading, own, sheet, fb, push, pop, closeAll, showEnDefault, prof, face, drawFaces, who, toneWord, limitHtml, writeStep, chooseStep, assess, keepFlow, askReplace, askLabel, speakerOf };
+})();
+
+RB.ui.letters = (function () {
+  'use strict';
+  const U = RB.ui.pb;
+  const { esc, I, J, MX } = U;
+  const L = () => RB.letters;
+
+  // ---- the tray of letters ----------------------------------------------------------------------
+  function tray(session) {
+    return new Promise((resolve) => {
+      const s = RB.game.s;
+      const S = U.sheet(J(PBT.lettersBox.jp) + ' ' + esc(PBT.lettersBox.en), '', { cls: 'pb-tray', closeLabel: 'Leave the post box' });
+      function render() {
+        const list = L().list(s), r = L().rec(s);
+        const open = r.active ? L().byId(r.active.id) : null;
+        const n = L().answered(s);
+        S.fr.setTitle(J(PBT.lettersBox.jp) + ' ' + esc(PBT.lettersBox.en), n + ' of ' + list.length + ' answered');
+        let h = '<p class="muted small act-lead">Short practice letters from people you have met. Answer one at a time; the others wait at the post box for as long as you like — nothing expires.</p>';
+        if (open) h += '<p class="note-slip pb-open" role="note">' + I('letter') + ' <b>Open:</b> ' + esc(open.title.en) + ' — finish it, or put it back on the pile, before opening another.</p>';
+        h += '<ul class="entries pb-cards">' + list.map((x) => {
+          const d = x.def, nm = U.who(d.from);
+          const blocked = open && x.state !== 'open';
+          const st = x.state === 'open' ? 'Open — continue' : x.state === 'answered' ? 'Answered · practise again (not sent)' : !x.met ? 'From someone you haven\'t met on this journey' : 'Waiting';
+          return '<li><button class="entry pb-card" data-pb-letter="' + esc(d.id) + '"' + (blocked || !x.met ? ' disabled aria-disabled="true"' : '') + ' data-state="' + x.state + '">' +
+            '<span class="mark">' + I(x.state === 'answered' ? 'done' : 'letter') + '</span><span class="body">' +
+            '<span class="t">' + J(d.title.jp) + ' <span class="en">' + esc(d.title.en) + '</span></span>' +
+            '<span class="d">' + esc(nm.en) + ' ' + J(nm.jp) + ' · ' + esc(d.gist) + '</span>' +
+            '<span class="kind">' + esc(st) + '</span></span></button></li>';
+        }).join('') + '</ul>';
+        S.leaf.innerHTML = h;
+        S.foot.innerHTML = '<span class="spacer"></span><button class="cbtn" data-pb-folder>' + I('book') + '<span>Letters folder (in Words)</span></button>';
+      }
+      const done = (v) => { U.pop(S.lay); resolve(v); };
+      S.el.addEventListener('click', (e) => {
+        if (e.target.closest('[data-pb-x]')) { done({ leave: true }); return; }
+        if (e.target.closest('[data-pb-folder]')) { done({ leave: true, folder: true }); return; }
+        const b = e.target.closest('[data-pb-letter]');
+        if (b && !b.disabled) done({ open: b.getAttribute('data-pb-letter') });
+      });
+      S.lay.onCancel = () => done({ leave: true });
+      render();
+      U.push(S.lay);
+    });
+  }
+
+  // ---- one letter -----------------------------------------------------------------------------------
+  function letterSheet(session, d, t, replay) {
+    return new Promise((resolve) => {
+      const s = RB.game.s;
+      const nm = U.who(d.from);
+      const families = t.replies;
+      const pieces = RB.practiceB.pieces(families, t.extra);
+      // a stable shuffle of the pieces (never the order of an accepted reply)
+      const rng = RB.util.rng(RB.util.hashStr(d.id + t.lv + 'pieces'));
+      const pool = rng.shuffle(pieces.map((p, i) => ({ p, i })));
+      const placed = [];
+      let showEn = U.showEnDefault(), assisted = false, exposed = false, mistakes = 0, limits = 0, revealed = false, locked = false;
+      const S = U.sheet(J(d.title.jp) + ' ' + esc(d.title.en), 'From ' + esc(nm.en), { cls: 'pb-letter', closeLabel: 'Stop for now' });
+      const modes = t.modes || (t.lv === 'F' ? ['choose', 'parts'] : ['parts', 'write']);
+      function scope() {
+        return '<section class="pb-scope slip" aria-label="How you can reply"><div class="slip-lab">How you can reply</div>' +
+          '<p>' + (modes.includes('parts') ? 'Build a reply from the pieces' : '') + (modes.includes('choose') ? (modes.includes('parts') ? ', or ' : '') + 'choose one of the replies' : '') + (modes.includes('write') ? ', or write or type a short reply in Japanese (kana or kanji)' : '') + '.</p>' +
+          '<p class="muted small">This letter can read ' + families.length + ' replies — the ways its pieces go together — and different tones count the same. Anything else is outside what it can check and is never marked wrong.</p></section>';
+      }
+      function render() {
+        const ok = families.some((f) => f.ok);
+        let h = '';
+        if (replay) {
+          const rr = L().rec(s).done[d.id];
+          h += '<p class="note-slip pb-replay" role="note">' + I('copy') + ' <b>Practice copy — not sent.</b> ' + esc(nm.en) + ' already has your reply' + (rr && rr.reply ? ': <span class="jp" lang="ja">' + U.own(rr.reply) + '</span>' : '') + '. This one is just for practice.</p>';
+        }
+        h += '<section class="act-say pb-from">' + U.face(d.from) + '<div class="act-line"><div class="act-who">' + esc(nm.en) + ' ' + J(nm.jp) + '</div>' +
+          '<article class="letter" aria-label="The letter">' + I('letter') + '<div class="letter-jp">' + J(t.msg.jp) + '</div>' + (showEn ? '<div class="act-en">' + esc(RB.script.enVars(t.msg.en)) + '</div>' : '') + '</article>' +
+          (showEn ? '' : '<div class="act-tr"><button class="pbtn quiet tr" data-pb-tr title="Show the English (counts as assisted)">' + I('note') + '<span>Translate <span class="aside">(assisted)</span></span></button></div>') + '</div></section>';
+        h += '<section class="pb-task"><div class="slip-lab">Your reply should</div><p class="pb-task-en">' + MX(t.task.en) + '</p><p class="pb-task-jp">' + J(t.task.jp) + '</p></section>';
+        h += scope();
+        if (modes.includes('parts')) {
+          h += '<section class="pb-build" aria-label="Build your reply"><h3>' + I('pieces') + '<span>Your reply</span></h3>' +
+            '<ol class="pb-line" aria-label="Your reply so far">' + (placed.length ? placed.map((x, j) => '<li><button class="tile placed" data-pb-rm="' + j + '" aria-label="Take back: ' + esc(RB.ui.plainJp(x.p)) + '">' + J(x.p) + '</button></li>').join('') : '<li class="empty muted small">Nothing placed yet. Tap the pieces below in order; tap a placed piece to take it back.</li>') + '</ol>' +
+            '<h3>' + I('tray') + '<span>The pieces</span></h3><div class="tiles pb-pieces">' +
+            pool.map((x, j) => (placed.indexOf(x) >= 0 ? '' : '<button class="tile" data-pb-add="' + j + '">' + J(x.p) + '</button>')).join('') + '</div>' +
+            '<div class="row-acts"><button class="pbtn" data-pb-clear' + (placed.length ? '' : ' disabled') + '>' + I('erase') + '<span>Clear</span></button>' +
+            '<button class="pbtn primary" data-pb-send' + (placed.length && !locked ? '' : ' disabled') + '>' + I('seal') + '<span>Send this reply</span></button></div></section>';
+        }
+        h += '<div class="row-acts pb-other">' +
+          (modes.includes('choose') ? '<button class="pbtn" data-pb-choose>' + I('list') + '<span>Choose a reply</span></button>' : '') +
+          (modes.includes('write') ? '<button class="pbtn" data-pb-write>' + I('keyboard') + '<span>Write or type a reply</span></button>' : '') +
+          (revealed ? '' : '<button class="pbtn quiet" data-pb-reveal>' + I('eye') + '<span>Show the replies it can read <span class="aside">(shows the answers)</span></span></button>') + '</div>';
+        if (revealed) h += '<section class="pb-known"><h3>' + I('eye') + '<span>Replies this letter can read</span></h3><ul class="pb-shapes">' + families.map((f) => '<li class="' + (f.ok ? 'ok' : 'no') + '">' + I(f.ok ? 'right' : 'wrong') + ' <span class="jp">' + J(RB.practiceB.replyOf(f)) + '</span> <span class="muted small">' + esc(f.en) + (f.ok ? ' — completes it' + (U.toneWord(f.tone) ? ' (' + esc(U.toneWord(f.tone)) + ')' : '') : ' — says something else') + '</span></li>').join('') + '</ul><p class="muted small">You have seen the answers now, so this letter counts as practice, not as recall.</p></section>';
+        h += '<div class="fbwrap" aria-live="polite"></div>';
+        S.leaf.innerHTML = h;
+        U.drawFaces(S.leaf);
+        S.foot.innerHTML = '<button class="cbtn" data-pb-aside>' + I('back') + '<span>Put it back on the pile</span></button><span class="spacer"></span>';
+        void ok;
+      }
+      function finish(v) { U.pop(S.lay); resolve(v); }
+      function plainOf(f) { return RB.ui.plainJp(RB.practiceB.replyOf(f)); }
+      function succeed(f, via, given, markup) {
+        locked = true;
+        RB.audio && RB.audio.sfx('answer_right');
+        finish({ done: true, family: f, via, reply: given || plainOf(f), markup: markup || (given ? null : RB.practiceB.replyOf(f)), firstTry: mistakes === 0, assisted, exposed, limits });
+      }
+      function wrong(f) {
+        mistakes++;
+        RB.audio && RB.audio.sfx('answer_wrong');
+        U.fb(S.leaf.querySelector('.fbwrap'), 'no', 'That reply says something else', '<p><span class="jp">' + J(RB.practiceB.replyOf(f)) + '</span> — ' + esc(f.en) + '</p><div class="fb-why">' + MX(f.why ? f.why.en : '') + '</div><p class="muted small">Take back a piece or two and try again — nothing is timed.</p>');
+      }
+      async function viaStep(kind) {
+        const header = '<div class="pb-hdr"><div class="kind">' + esc(nm.en) + '\'s letter</div>' + J(t.msg.jp) + (showEn ? '<div class="act-en">' + esc(RB.script.enVars(t.msg.en)) + '</div>' : '') + '<div class="pb-hdr-task">' + MX(t.task.en) + '</div></div>';
+        const step = kind === 'choose'
+          ? U.chooseStep(families.map((f) => ({ jp: RB.practiceB.replyOf(f), en: f.en, ok: f.ok, why: f.why })), { title: d.title.en, titleJp: d.title.jp, prompt: { en: 'Choose a reply that does what the letter needs.' }, showEn: U.showEnDefault() })
+          : U.writeStep(families, { title: d.title.en, titleJp: d.title.jp, prompt: PBT.writeReply, what: 'letter' });
+        S.lay.el.classList.add('pb-hidden');
+        let r;
+        try { r = await RB.challenge.runStep(step, { header, noRecord: true, ctxTag: 'letters', cancelLabel: 'Back to the letter' }); }
+        finally { S.lay.el.classList.remove('pb-hidden'); }
+        if (!session.alive()) return;
+        if (r.cancelled) { if (r.mistakes) mistakes += r.mistakes; return; }
+        mistakes += r.mistakes || 0;
+        if (r.assisted) assisted = true;
+        let f = null, given = null;
+        if (r.given && r.given.option) f = r.given.option._src ? families.find((x) => RB.practiceB.replyOf(x) === r.given.option._src.jp) : null;
+        if (r.given && r.given.family != null) { f = families[r.given.family]; given = r.given.text; }
+        if (!f) { f = families.find((x) => x.ok); exposed = true; } // the runner showed the answer and they continued
+        succeed(f, r.mode === 'hand' ? 'hand' : r.mode === 'ime' ? 'ime' : 'choice', given);
+      }
+      S.el.addEventListener('click', async (e) => {
+        const tg = e.target;
+        if (tg.closest('[data-pb-x]')) { finish({ stop: true }); return; }
+        if (tg.closest('[data-pb-aside]')) { finish({ aside: true }); return; }
+        if (tg.closest('[data-pb-tr]')) { showEn = true; assisted = true; render(); return; }
+        if (tg.closest('[data-pb-reveal]')) { revealed = true; exposed = true; assisted = true; render(); return; }
+        const add = tg.closest('[data-pb-add]'), rm = tg.closest('[data-pb-rm]');
+        if (add && !locked) { placed.push(pool[+add.getAttribute('data-pb-add')]); RB.audio && RB.audio.sfx('cursor'); render(); const nx = S.leaf.querySelector('[data-pb-add]'); (nx || S.leaf.querySelector('[data-pb-send]')).focus({ preventScroll: true }); return; }
+        if (rm && !locked) { placed.splice(+rm.getAttribute('data-pb-rm'), 1); render(); return; }
+        if (tg.closest('[data-pb-clear]')) { placed.length = 0; render(); return; }
+        if (tg.closest('[data-pb-send]') && placed.length && !locked) {
+          const m = RB.practiceB.partsMatch(families, placed.map((x) => x.p));
+          if (!m) { limits++; U.fb(S.leaf.querySelector('.fbwrap'), 'unsure', 'Outside what this letter can read', U.limitHtml(families, 'letter')); return; }
+          if (!m.family.ok) { wrong(m.family); return; }
+          succeed(m.family, 'parts', RB.ui.plainJp(placed.map((x) => x.p).join(' ')), placed.map((x) => x.p).join(' '));
+          return;
+        }
+        if (tg.closest('[data-pb-choose]')) { await viaStep('choose'); return; }
+        if (tg.closest('[data-pb-write]')) { await viaStep('write'); return; }
+      });
+      S.lay.onCancel = () => finish({ stop: true });
+      render();
+      U.push(S.lay);
+    });
+  }
+
+  // ---- the closing: the villager's short, truthful acknowledgement ---------------------------------
+  function closing(d, t, out, sent, recorded) {
+    return new Promise((resolve) => {
+      const nm = U.who(d.from);
+      const S = U.sheet(J(d.title.jp) + ' ' + esc(d.title.en), sent ? 'Answered' : 'Practice copy', { cls: 'pb-close', close: false });
+      const f = out.family;
+      const tone = U.toneWord(f.tone);
+      let h = '<section class="pb-sent"><div class="slip-lab">' + (sent ? 'Your reply' : 'Your practice reply (not sent)') + '</div><p class="jp big" lang="ja">' + (out.markup ? J(out.markup) : U.own(out.reply)) + '</p>' +
+        '<p class="muted small">' + esc(f.en) + (tone ? ' — a ' + esc(tone) + ' reply. Any of this letter\'s accepted tones closes it in exactly the same way.' : '') + '</p></section>';
+      if (sent) {
+        h += '<section class="act-say pb-ack">' + U.face(d.from) + '<div class="act-line"><div class="act-who">' + esc(nm.en) + ' ' + J(nm.jp) + '</div><div class="act-jp">' + J(t.ack.jp) + '</div><div class="act-en">' + esc(RB.script.enVars(t.ack.en)) + '</div></div></section>';
+      } else {
+        h += '<p class="note-slip" role="note">' + I('copy') + ' Nothing is sent: ' + esc(nm.en) + ' answered your first reply already, and gets no second copy.</p>';
+      }
+      h += '<section class="fb-ex pb-explain"><h3>' + I('bulb') + '<span>Why it works</span></h3><p>' + MX(t.explain.en) + '</p></section>';
+      h += '<p class="muted small">' + (recorded ? 'Recorded once in your learning progress.' : out.exposed ? 'You saw the answers, so this is kept as practice, not as recall.' : sent ? 'Kept as practice.' : 'A practice copy: kept as practice, not counted again.') + ' Letters give no rewards; the twelve answered letters are kept in Words › Letters folder.</p>';
+      S.leaf.innerHTML = h;
+      U.drawFaces(S.leaf);
+      S.foot.innerHTML = '<span class="spacer"></span><button class="cbtn go" data-pb-ok data-ok>' + I('next') + '<span>Back to the post box</span></button>';
+      const done = () => { U.pop(S.lay); resolve(); };
+      S.foot.querySelector('[data-pb-ok]').onclick = done;
+      S.lay.onCancel = done;
+      U.push(S.lay);
+      setTimeout(() => { const b = S.foot.querySelector('[data-pb-ok]'); if (b) b.focus({ preventScroll: true }); }, 30);
+    });
+  }
+
+  // ---- the activity ------------------------------------------------------------------------------------
+  async function run(session) {
+    session.set('active');
+    const s = RB.game.s;
+    let answered = 0;
+    for (;;) {
+      if (!session.alive()) return { abandoned: true };
+      const r0 = L().rec(s);
+      let pick = await tray(session);
+      if (!session.alive()) return { abandoned: true };
+      if (pick.leave) { if (pick.folder) setTimeout(() => { if (RB.game.mode() === 'world') RB.ui.menu.open('letters'); }, 260); return { answered }; }
+      const op = L().open(s, pick.open);
+      if (!op.ok) { RB.ui.notice(op.why === 'other-open' ? 'Finish the open letter, or put it back, first.' : 'Not this letter yet.', 'info'); continue; }
+      const d = L().byId(pick.open), t = L().tier(d, U.prof());
+      session.set('active');
+      const out = await letterSheet(session, d, t, op.replay);
+      if (!session.alive()) return { abandoned: true };
+      if (out.aside) { L().setAside(s); continue; }
+      if (out.stop) continue; // the letter stays open; the others keep waiting
+      session.set('resolving');
+      const recorded = U.assess(session, r0, 'letter:' + d.id, t.item, { firstTry: out.firstTry, mode: out.via === 'hand' ? 'hand' : out.via === 'ime' ? 'ime' : 'choice', assisted: out.assisted }, { exposed: out.exposed || op.replay });
+      RB.practiceB.note(r0, 'letter:' + d.id, !out.firstTry);
+      const c = L().complete(s, d.id, { tone: out.family.tone, via: out.via, reply: out.reply, prof: t.lv });
+      if (c.sent) answered++;
+      RB.bus.emit('practice:letter', { id: d.id, sent: c.sent, tone: out.family.tone });
+      session.set('result');
+      await closing(d, t, out, c.sent, recorded);
+      if (!session.alive()) return { abandoned: true };
+    }
+  }
+  if (RB.activity) RB.activity.register('letters', {
+    title: PBT.letters,
+    eligible: (s) => RB.letters.eligible(s),
+    run,
+    dispose: () => U.closeAll(),
+  });
+
+  // ---- Words › Letters folder (the twelve, for reference; completion is informational) --------------
+  function folderHtml(s) {
+    const list = L().list(s);
+    const n = L().answered(s);
+    let h = '<p class="muted small">The practice letters from the post box in Shino\'s Post House and how you answered them. This folder is for reference: answering letters unlocks nothing and gives no reward.</p>';
+    if (!L().available(s)) h += '<p class="note-slip" role="note">' + I('letter') + ' The practice letters wait for the journey\'s end.</p>';
+    h += '<p class="small">' + n + ' of ' + list.length + ' answered.</p><ol class="entries pb-folder">' + list.map((x) => {
+      const d = x.def, nm = U.who(d.from), rr = x.rec, t = L().tier(d, (rr && rr.prof) || U.prof());
+      if (!rr) return '<li class="entry"><span class="mark">' + I('letter') + '</span><div><div class="t">' + J(d.title.jp) + ' <span class="en">' + esc(d.title.en) + '</span></div><div class="small muted">' + esc(nm.en) + ' · ' + esc(x.state === 'open' ? 'open at the post box' : 'waiting at the post box') + '</div></div></li>';
+      return '<li class="entry filed"><span class="mark">' + I('done') + '</span><div><div class="t">' + J(d.title.jp) + ' <span class="en">' + esc(d.title.en) + '</span></div>' +
+        '<div class="small muted">' + esc(nm.en) + ' ' + J(nm.jp) + (rr.replays ? ' · practised again ' + rr.replays + '×' : '') + '</div>' +
+        '<div class="pb-f-msg">' + J(t.msg.jp) + '<div class="act-en">' + esc(RB.script.enVars(t.msg.en)) + '</div></div>' +
+        '<div class="pb-f-reply"><span class="kind">Your reply</span> <span class="jp" lang="ja">' + U.own(rr.reply || '') + '</span>' + (rr.tone ? ' <span class="muted small">(' + esc(U.toneWord(rr.tone)) + ')</span>' : '') + '</div>' +
+        '<div class="pb-f-ack"><span class="kind">' + esc(nm.en) + '</span> ' + J(t.ack.jp) + '<div class="act-en">' + esc(RB.script.enVars(t.ack.en)) + '</div></div>' +
+        '<details class="pb-f-known"><summary>Replies this letter could read</summary><ul class="pb-shapes">' + t.replies.filter((f) => f.ok).map((f) => '<li>' + J(RB.practiceB.replyOf(f)) + ' <span class="muted small">' + esc(f.en) + '</span></li>').join('') + '</ul></details>' +
+        '</div></li>';
+    }).join('') + '</ol>';
+    return h;
+  }
+  if (RB.ui.menu && RB.ui.menu.addPage) {
+    RB.ui.menu.addPage('words', {
+      id: 'letters', en: PBT.folder.en, jp: PBT.folder.jp,
+      count: (s) => L().answered(s),
+      available: (s) => L().available(s) || L().answered(s) > 0,
+      html: folderHtml,
+    });
+  }
+  // ---- Words › Ways to practise ------------------------------------------------------------------------
+  const PL = () => RB.practiceB.PLACE;
+  if (RB.practice && RB.practice.addActivity) {
+    RB.practice.addActivity({
+      id: 'letters', en: PBT.letters.en, jp: PBT.letters.jp, icon: 'letter', order: 60,
+      where: { en: PL().name.en, jp: PL().name.jp },
+      available: (s) => L().available(s),
+      here: (s) => RB.practiceB.atPlace(s),
+      note: (s) => (!L().available(s) ? 'After the journey\'s end: twelve short letters to answer at the post box.' : L().answered(s) + ' of 12 answered. Offered at the post box.'),
+      begin: (ctx) => RB.activity.launch('letters', ctx),
+    });
+  }
+
+  // the post box's scene asks for an activity (!hook pb_open letters|proofreading)
+  RB.hooks = RB.hooks || {};
+  RB.hooks.pb_open = async (a) => { RB.practiceB.launchAfterScene(a[0], { source: 'world-prop' }); };
+
+  return { run, tray, letterSheet, folderHtml };
+})();
+
+
+/* ==== src/ui/91_proof.js ==== */
+/* The Proofreader's Tray (Practice addendum §18): the interface. docs/practice/suite_b.md.
+ *
+ * One sheet holds the notice and all the evidence it must agree with, untimed. The
+ * player first finds the portion that disagrees (tap a portion, then "This part
+ * disagrees"), answers what a vague or shortened notice is missing, or — for P12 —
+ * concludes that the evidence cannot settle anything. The repair then runs through the
+ * ordinary challenge runner, with the evidence and the notice repeated in its task slip
+ * so they stay in view: approved pieces to choose (Foundations), a short supported
+ * replacement to write or type (its authored answer space, stylistic alternatives
+ * included), pieces to rearrange, a better version to choose, or (P12) a question to ask.
+ * The repaired notice is shown with the change marked and its consequence spelled out.
+ * A finished sheet can be kept as a typeset practice page in the shared six places. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.ui.proof = (function () {
+  'use strict';
+  const U = RB.ui.pb;
+  const { esc, I, J, MX } = U;
+  const P = () => RB.proof;
+  const bi = (x, cls) => (x ? '<span class="pb-bi' + (cls ? ' ' + cls : '') + '">' + J(x.jp) + ' <span class="en">' + esc(x.en) + '</span></span>' : '');
+
+  // ---- evidence, drawn with words beside every picture (never colour alone) ------------------------
+  const SVG = (inner, label) => '<svg viewBox="0 0 48 48" class="pb-ico" ' + (label ? 'role="img" aria-label="' + esc(label) + '"' : 'aria-hidden="true" focusable="false"') + ' fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">' + inner + '</svg>';
+  const SHAPES = {
+    open: '<path d="M10 42V8h28v34"/><path d="M16 42V14l14-3v31" fill="currentColor" fill-opacity=".12"/><path d="M4 42h40"/>',
+    closed: '<path d="M10 42V8h28v34z" fill="currentColor" fill-opacity=".18"/><path d="M12 12l24 26M36 12L12 38"/><path d="M4 42h40"/>',
+    fruit: '<circle cx="24" cy="27" r="13"/><path d="M24 14c0-4 3-6 6-6M18 14c3-2 9-2 12 0"/>',
+    bottle: '<path d="M19 6h10v6l4 6v24H15V18l4-6z"/><path d="M15 26h18"/>',
+    can: '<rect x="12" y="10" width="24" height="32" rx="2"/><path d="M12 16h24M12 36h24M30 6h5v4"/>',
+    house: '<path d="M6 24L24 8l18 16"/><path d="M11 21v21h26V21"/><path d="M21 42V30h6v12"/>',
+    lantern: '<path d="M18 8h12M24 4v4M16 12h16l2 10-2 12H16l-2-12z"/><path d="M19 40h10M24 34v6"/>',
+    round: '<ellipse cx="24" cy="28" rx="15" ry="14"/><path d="M17 12h14v4H17z"/>',
+    square: '<rect x="9" y="14" width="30" height="28" rx="1"/><path d="M15 8h18v6H15z"/>',
+    long: '<circle cx="11" cy="24" r="6"/><path d="M17 24h28M38 24v6M43 24v4"/>',
+    short: '<circle cx="15" cy="24" r="7"/><path d="M22 24h14M31 24v5"/>',
+    cap: '<path d="M18 4h12v8H18z" fill="currentColor" fill-opacity=".3"/><path d="M17 12h14l3 6v24H14V18z"/>',
+    cork: '<path d="M20 4h8l-1 8h-6z" fill="currentColor" fill-opacity=".15"/><path d="M19 12h10l4 6v24H15V18z"/><path d="M20 6h8M20 9h8"/>',
+    path: '<path d="M4 34c8-6 16-6 24-2s12 2 16-2" stroke-dasharray="1 0"/><path d="M6 22h36" stroke-dasharray="4 3"/><path d="M4 40h40"/>',
+    nopath: '<path d="M4 18c6 3 10 3 14 0s10-3 14 0 8 3 12 0M4 28c6 3 10 3 14 0s10-3 14 0 8 3 12 0M4 38c6 3 10 3 14 0s10-3 14 0 8 3 12 0"/>',
+  };
+  const STATE = { open: RB.content.practiceB.ui.open, closed: RB.content.practiceB.ui.closed };
+  function evidenceHtml(ev) {
+    const title = ev.title ? '<div class="pb-ev-t">' + bi(ev.title) + '</div>' : '';
+    let body = '';
+    switch (ev.k) {
+      case 'plan':
+        body = '<div class="pb-plan" role="group" aria-label="' + esc(ev.alt || '') + '">' + ev.cells.map((c) =>
+          '<div class="pb-cell" data-state="' + esc(c.state) + '">' + SVG(SHAPES[c.state] || SHAPES.open) +
+          '<div class="pb-cell-l">' + bi(c.label, 'pos') + '</div><div class="pb-cell-n">' + bi(c.name) + '</div>' +
+          '<div class="pb-cell-s">' + (c.state === 'closed' ? I('wrong') : I('right')) + bi(STATE[c.state]) + '</div></div>').join('') + '</div>';
+        break;
+      case 'count': {
+        const n = ev.n | 0, icon = SHAPES[ev.icon] || SHAPES.fruit;
+        if (ev.per) {
+          body = '<div class="pb-count per" role="img" aria-label="' + esc(ev.alt || '') + '">' + Array.from({ length: n }, () => '<span class="pb-unit">' + SVG(SHAPES[ev.icon] || SHAPES.house) + '<span class="pb-sub">' + Array.from({ length: ev.per }, () => SVG(SHAPES[ev.perIcon] || SHAPES.lantern)).join('') + '</span></span>').join('') + '</div>';
+        } else body = '<div class="pb-count" role="img" aria-label="' + esc(ev.alt || '') + '">' + Array.from({ length: n }, () => SVG(icon)).join('') + '</div>';
+        body += '<div class="pb-ev-cap">' + bi(ev.label) + '</div>';
+        break;
+      }
+      case 'slip': body = '<div class="pb-slip">' + ev.lines.map((l) => '<div>' + bi(l) + '</div>').join('') + '</div>'; break;
+      case 'rule': case 'note': body = '<div class="pb-rule"><div class="jp">' + J(ev.text.jp) + '</div><div class="en">' + esc(ev.text.en) + '</div></div>'; break;
+      case 'steps': body = '<ol class="pb-steps">' + ev.steps.map((x) => '<li>' + bi(x) + '</li>').join('') + '</ol>' + (ev.note ? '<div class="pb-rule small"><div class="jp">' + J(ev.note.jp) + '</div><div class="en">' + esc(ev.note.en) + '</div></div>' : ''); break;
+      case 'seq': body = '<ol class="pb-seq" aria-label="' + esc(ev.alt || '') + '">' + ev.steps.map((x, i) => '<li>' + (i ? '<span class="pb-arrow" aria-hidden="true">' + I('next') + '</span>' : '') + '<span class="pb-box"><span class="pb-n">' + (i + 1) + '</span>' + bi(x) + '</span></li>').join('') + '</ol>'; break;
+      case 'objects': body = '<div class="pb-objs">' + ev.items.map((o) => '<div class="pb-obj">' + SVG(SHAPES[o.shape] || SHAPES.round) + '<div class="pb-obj-n">' + bi(o.name) + '</div><div class="pb-obj-d">' + bi(o.desc) + '</div></div>').join('') + '</div>'; break;
+      case 'table': body = '<table class="pb-table"><thead><tr>' + ev.head.map((h) => '<th scope="col">' + bi(h) + '</th>').join('') + '</tr></thead><tbody>' + ev.rows.map((r) => '<tr>' + r.map((c, i) => (i ? '<td>' : '<th scope="row">') + bi(c) + (i ? '</td>' : '</th>')).join('') + '</tr>').join('') + '</tbody></table>'; break;
+      case 'measure': {
+        const max = Math.max.apply(null, ev.items.map((x) => x.value));
+        body = '<div class="pb-measure" role="group" aria-label="' + esc(ev.alt || '') + '">' + ev.items.map((x) => '<div class="pb-bar"><div class="pb-bar-n">' + bi(x.name) + '</div><div class="pb-bar-track"><span class="pb-bar-fill" style="width:' + Math.round((x.value / max) * 100) + '%"></span></div><div class="pb-bar-v">' + x.value + ' ' + bi(ev.unit) + '</div></div>').join('') + '</div>';
+        break;
+      }
+      default: body = '';
+    }
+    return '<div class="pb-ev" data-k="' + esc(ev.k) + '">' + title + body + (ev.alt ? '<p class="sr">' + esc(ev.alt) + '</p>' : '') + '</div>';
+  }
+  function noticeHtml(t, sel, o) {
+    o = o || {};
+    const segs = t.notice.segs;
+    const inner = (g, i) => (o.fixed && o.fixed[i] != null ? '<mark class="pb-fixed">' + J(o.fixed[i]) + '<span class="sr"> (changed)</span></mark>' : J(g.jp));
+    if (o.static) {
+      if (t.notice.list) return '<ol class="pb-notice list">' + (o.order || segs.map((g) => g.jp)).map((x) => '<li>' + J(x) + '</li>').join('') + '</ol>';
+      return '<p class="pb-notice">' + segs.map((g, i) => '<span class="pb-seg' + (sel === i ? ' sel' : '') + '">' + inner(g, i) + '</span>').join(' ') + '</p>';
+    }
+    if (t.find || t.notice.segs.length === 1) return '<p class="pb-notice">' + segs.map((g) => J(g.jp)).join(' ') + '</p>';
+    const tag = t.notice.list ? 'ol' : 'p';
+    return '<' + tag + ' class="pb-notice pick' + (t.notice.list ? ' list' : '') + '" role="group" aria-label="The notice, in parts: choose the part that disagrees">' + segs.map((g, i) =>
+      (t.notice.list ? '<li>' : '') + '<button type="button" class="pb-seg" data-pb-seg="' + i + '" aria-pressed="' + (sel === i) + '">' + J(g.jp) + '</button>' + (t.notice.list ? '</li>' : '')).join(t.notice.list ? '' : ' ') + '</' + tag + '>';
+  }
+
+  // ---- the tray ---------------------------------------------------------------------------------------
+  function tray() {
+    return new Promise((resolve) => {
+      const s = RB.game.s;
+      const S = U.sheet(J(RB.content.practiceB.ui.tray.jp) + ' ' + esc(RB.content.practiceB.ui.tray.en), '', { cls: 'pb-tray', closeLabel: 'Leave the tray' });
+      const list = P().list(s);
+      const n = list.filter((x) => x.rec).length;
+      S.fr.setTitle(J(RB.content.practiceB.ui.tray.jp) + ' ' + esc(RB.content.practiceB.ui.tray.en), n + ' of ' + list.length + ' checked');
+      S.leaf.innerHTML = '<p class="muted small act-lead">Short notices to check against the evidence beside them. Usually one detail is wrong for its purpose — but not always. Nothing is timed; the evidence stays on the sheet.</p>' +
+        '<ul class="entries pb-cards">' + list.map((x) => '<li><button class="entry pb-card" data-pb-task="' + esc(x.id) + '"><span class="mark">' + I(x.rec ? 'done' : 'scroll') + '</span><span class="body">' +
+          '<span class="t">' + J(x.def.title.jp) + ' <span class="en">' + esc(x.def.title.en) + '</span></span><span class="d">' + esc(x.def.gist) + '</span>' +
+          '<span class="kind">' + (x.rec ? 'Checked · try again (practice)' : 'Not checked yet') + '</span></span></button></li>').join('') + '</ul>' +
+        (P().kept(s).length ? '<p class="muted small">' + P().kept(s).length + ' kept proofreading page(s): Journey › Practice mementos.</p>' : '');
+      const done = (v) => { U.pop(S.lay); resolve(v); };
+      S.el.addEventListener('click', (e) => {
+        if (e.target.closest('[data-pb-x]')) { done({ leave: true }); return; }
+        const b = e.target.closest('[data-pb-task]');
+        if (b) done({ open: b.getAttribute('data-pb-task') });
+      });
+      S.lay.onCancel = () => done({ leave: true });
+      U.push(S.lay);
+    });
+  }
+
+  // ---- one sheet: find, then repair ---------------------------------------------------------------------
+  function header(t, sel, showEn) {
+    return '<div class="pb-hdr proof"><div class="kind">The notice</div>' + noticeHtml(t, sel, { static: true }) + (showEn ? '<div class="act-en">' + esc(t.notice.en) + '</div>' : '') +
+      '<details class="pb-hdr-ev" open><summary>The evidence</summary>' + t.evidence.map(evidenceHtml).join('') + '</details></div>';
+  }
+  function task(session, d, t, replay) {
+    return new Promise((resolve) => {
+      const s = RB.game.s;
+      let sel = -1, showEn = U.showEnDefault(), mistakes = 0, assisted = false, found = false, busy = false;
+      const S = U.sheet(J(d.title.jp) + ' ' + esc(d.title.en), replay ? 'Practice (checked before)' : '', { cls: 'pb-proof', closeLabel: 'Back to the tray' });
+      function render() {
+        let h = '<section class="pb-purpose"><div class="slip-lab">What this notice is for</div><p>' + esc(t.purpose.en) + '</p><p class="jp">' + J(t.purpose.jp) + '</p></section>';
+        h += '<div class="pb-sheet"><section class="pb-notice-wrap" aria-label="The notice"><div class="slip-lab">' + bi(t.notice.title) + '</div>' + noticeHtml(t, sel) +
+          (showEn ? '<div class="act-en">' + esc(t.notice.en) + '</div>' : '<div class="act-tr"><button class="pbtn quiet tr" data-pb-tr title="Show the English (counts as assisted)">' + I('note') + '<span>Translate <span class="aside">(assisted)</span></span></button></div>') + '</section>' +
+          '<section class="pb-evidence" aria-label="The evidence"><div class="slip-lab">The evidence</div>' + t.evidence.map(evidenceHtml).join('') + '</section></div>';
+        if (t.find) {
+          h += '<section class="pb-find"><div class="slip-lab">Your finding</div><p>' + esc(t.find.prompt.en) + ' <span class="jp">' + J(t.find.prompt.jp) + '</span></p><div class="mc pb-find-opts" role="group" aria-label="Choices">' +
+            t.find.options.map((o, i) => '<button class="btn choice" data-pb-find="' + i + '">' + (o.jp ? J(o.jp) : '') + '<span class="enline">' + esc(o.en) + '</span></button>').join('') + '</div></section>';
+        } else {
+          h += '<section class="pb-find"><div class="slip-lab">Your finding</div><p class="small">' + (t.notice.segs.length > 1 ? 'Tap the part of the notice that disagrees with the evidence, then confirm. ' : '') + 'If the evidence cannot settle it, say so instead.</p><div class="row-acts">' +
+            (t.notice.segs.length > 1 ? '<button class="pbtn primary" data-pb-mark' + (sel < 0 ? ' disabled' : '') + '>' + I('look') + '<span>This part disagrees</span></button>' : '') +
+            '<button class="pbtn" data-pb-unsettled>' + I('help') + '<span>The evidence can\'t settle this</span></button></div></section>';
+        }
+        h += '<div class="fbwrap" aria-live="polite"></div>';
+        S.leaf.innerHTML = h;
+      }
+      const fbEl = () => S.leaf.querySelector('.fbwrap');
+      const done = (v) => { U.pop(S.lay); resolve(v); };
+      function miss(head, html) { mistakes++; RB.audio && RB.audio.sfx('answer_wrong'); U.fb(fbEl(), 'no', head, html); }
+      async function repair() {
+        if (busy) return;
+        busy = true;
+        found = true;
+        const rp = t.repair;
+        const hdr = header(t, t.insufficient ? -1 : sel, showEn);
+        let step;
+        if (rp.kind === 'replace') {
+          const seg = t.notice.segs[sel];
+          const fams = seg.options.map((o) => ({ ok: !!o.ok, parts: [o.jp], en: o.en, why: o.why, note: o.note }));
+          step = t.lv === 'F'
+            ? U.chooseStep(seg.options.map((o) => ({ jp: o.jp, en: o.en, ok: o.ok, why: o.why })), { title: d.title.en, titleJp: d.title.jp, prompt: rp.prompt, showEn: true })
+            : U.writeStep(fams, { title: d.title.en, titleJp: d.title.jp, prompt: rp.prompt, what: 'repair' });
+        } else if (rp.kind === 'order') {
+          step = { kind: 'order', title: d.title.en, titleJp: d.title.jp, prompt: { en: U.kana(rp.prompt.en), jp: rp.prompt.jp }, tiles: rp.tiles.slice(), answer: rp.answer.slice(), alts: rp.alts || [], orderHint: { en: 'Check the evidence for what has to come first.' } };
+        } else if (rp.kind === 'choose') {
+          step = U.chooseStep(rp.options, { title: d.title.en, titleJp: d.title.jp, prompt: rp.prompt, showEn: t.lv === 'F' });
+        } else if (rp.kind === 'ask') {
+          step = U.writeStep(rp.replies, { title: d.title.en, titleJp: d.title.jp, prompt: rp.prompt, what: 'question' });
+        }
+        S.lay.el.classList.add('pb-hidden');
+        let r;
+        try { r = await RB.challenge.runStep(step, { header: hdr, noRecord: true, ctxTag: 'proofreading', cancelLabel: 'Back to the sheet' }); }
+        finally { S.lay.el.classList.remove('pb-hidden'); busy = false; }
+        if (!session.alive()) return;
+        if (r.cancelled) { mistakes += r.mistakes || 0; return; }
+        mistakes += r.mistakes || 0;
+        if (r.assisted) assisted = true;
+        const exposed = !!(r.assisted && !r.given);
+        // what the notice now says
+        let fixedText = null, order = null, asked = null;
+        if (rp.kind === 'replace') {
+          const seg = t.notice.segs[sel];
+          let opt = null;
+          if (r.given && r.given.option && r.given.option._src) opt = r.given.option._src;
+          if (r.given && r.given.family != null) opt = seg.options[r.given.family];
+          if (!opt || !opt.ok) opt = seg.options.find((o) => o.ok);
+          fixedText = opt.jp;
+        } else if (rp.kind === 'order') order = (r.given && r.given.order) || rp.answer;
+        else if (rp.kind === 'choose') { const o = (r.given && r.given.option && r.given.option._src) || rp.options.find((x) => x.ok); fixedText = o.jp; }
+        else if (rp.kind === 'ask') { const f = r.given && r.given.family != null ? rp.replies[r.given.family] : rp.replies.find((x) => x.ok); asked = (r.given && r.given.text) || RB.ui.plainJp(RB.practiceB.replyOf(f)); }
+        done({ done: true, firstTry: mistakes === 0, assisted, exposed, mode: r.mode, fixedText, order, asked });
+      }
+      S.el.addEventListener('click', async (e) => {
+        const tg = e.target;
+        if (tg.closest('[data-pb-x]')) { done({ stop: true }); return; }
+        if (busy) return;
+        if (tg.closest('[data-pb-tr]')) { showEn = true; assisted = true; render(); return; }
+        const sg = tg.closest('[data-pb-seg]');
+        if (sg) { sel = +sg.getAttribute('data-pb-seg'); render(); const b = S.leaf.querySelector('[data-pb-seg="' + sel + '"]'); if (b) b.focus({ preventScroll: true }); return; }
+        if (tg.closest('[data-pb-unsettled]')) {
+          if (t.insufficient) { RB.audio && RB.audio.sfx('answer_right'); U.fb(fbEl(), 'ok', 'Right: the tray can\'t settle it', '<p>Nothing here contradicts the slip — and nothing confirms it either. The honest repair is a question.</p>'); setTimeout(() => repair(), 600); return; }
+          miss('The evidence does settle this', '<p>Look again: something in the notice disagrees with what the tray shows.</p>');
+          return;
+        }
+        if (tg.closest('[data-pb-mark]') && sel >= 0) {
+          const g = t.notice.segs[sel];
+          if (t.insufficient) { miss('That would be a guess', '<p>Nothing on the tray contradicts this part — but nothing confirms it either. Changing it would be a guess.</p>'); return; }
+          if (g.bad) {
+            RB.audio && RB.audio.sfx('answer_right');
+            if (t.repair.kind === 'replace' && !g.options) { const k = t.notice.segs.findIndex((x) => x.bad && x.options); if (k >= 0) sel = k; }
+            U.fb(fbEl(), 'ok', 'Found it', '<p>' + (g.group ? 'These parts have swapped.' : 'This part disagrees with the evidence.') + ' Now repair it.</p>');
+            setTimeout(() => repair(), 500);
+            return;
+          }
+          if (g.style) { miss('That wording is fine', '<p>' + MX(g.style) + '</p><p class="muted small">Style is not what this tray checks: look for information that disagrees with the evidence.</p>'); return; }
+          miss('That part agrees with the evidence', '<p>' + MX(g.ok || 'Compare it with the evidence: it matches.') + '</p>');
+          return;
+        }
+        const fo = tg.closest('[data-pb-find]');
+        if (fo) {
+          const o = t.find.options[+fo.getAttribute('data-pb-find')];
+          if (o.ok) { fo.classList.add('on'); RB.audio && RB.audio.sfx('answer_right'); U.fb(fbEl(), 'ok', 'Yes', '<p>' + esc(o.en) + '.</p>'); setTimeout(() => repair(), 500); return; }
+          fo.disabled = true; fo.classList.add('tried');
+          miss('Not that', '<p>' + MX(o.why ? o.why.en : '') + '</p>');
+        }
+      });
+      S.lay.onCancel = () => done({ stop: true });
+      render();
+      U.push(S.lay);
+    });
+  }
+
+  // ---- the result: the repaired notice and what it now does --------------------------------------------
+  function result(session, d, t, out, recorded) {
+    return new Promise((resolve) => {
+      const s = RB.game.s;
+      const S = U.sheet(J(d.title.jp) + ' ' + esc(d.title.en), 'Checked', { cls: 'pb-result', close: false });
+      let lines;
+      let h = '';
+      if (out.asked) {
+        h += '<section class="pb-repaired"><div class="slip-lab">Unchanged — your question goes back to the sender</div>' + noticeHtml(t, -1, { static: true }) +
+          '<p class="pb-asked">' + I('help') + ' <span class="jp" lang="ja">' + U.own(out.asked) + '</span></p></section>';
+        lines = [t.notice.segs.map((g) => g.jp).join(' '), out.asked];
+      } else if (out.order) {
+        h += '<section class="pb-repaired"><div class="slip-lab">The repaired notice</div>' + noticeHtml(t, -1, { static: true, order: out.order }) + '</section>';
+        lines = out.order.map((x, i) => (i + 1) + '. ' + x);
+      } else if (t.repair.kind === 'choose') {
+        h += '<section class="pb-repaired"><div class="slip-lab">The repaired notice</div><p class="pb-notice"><mark class="pb-fixed">' + J(out.fixedText) + '<span class="sr"> (revised)</span></mark></p></section>';
+        lines = [out.fixedText];
+      } else {
+        const sel = t.notice.segs.findIndex((g) => g.bad && g.options && g.options.some((o) => o.jp === out.fixedText));
+        const fixed = {}; fixed[sel] = out.fixedText;
+        h += '<section class="pb-repaired"><div class="slip-lab">The repaired notice</div>' + noticeHtml(t, -1, { static: true, fixed }) + '</section>';
+        lines = [t.notice.segs.map((g, i) => (i === sel ? out.fixedText : g.jp)).join(' ')];
+      }
+      h += '<section class="pb-consequence" role="note">' + I('right') + '<div><p class="en"><b>' + esc(t.consequence.en) + '</b></p><p class="jp">' + J(t.consequence.jp) + '</p></div></section>';
+      h += '<section class="fb-ex pb-explain"><h3>' + I('bulb') + '<span>Why</span></h3><p>' + MX(t.explain.en) + '</p></section>';
+      h += '<p class="muted small">' + (recorded ? 'Recorded once in your learning progress.' : out.exposed ? 'The answer was shown, so this is kept as practice, not as recall.' : 'Kept as practice.') + ' The tray gives no rewards.</p>';
+      h += '<div class="fbwrap" aria-live="polite"></div>';
+      S.leaf.innerHTML = h;
+      S.foot.innerHTML = '<button class="cbtn" data-pb-keep>' + I('save') + '<span>Keep this page</span></button><span class="spacer"></span><button class="cbtn go" data-pb-ok data-ok>' + I('next') + '<span>Back to the tray</span></button>';
+      const done = () => { U.pop(S.lay); resolve(); };
+      S.foot.querySelector('[data-pb-ok]').onclick = done;
+      S.foot.querySelector('[data-pb-keep]').onclick = async (e) => {
+        const b = e.currentTarget;
+        b.disabled = true;
+        const page = P().pageFor(d, t, d.title.en, lines);
+        S.lay.el.classList.add('pb-hidden');
+        let r;
+        try { r = await U.keepFlow(s, page); } finally { S.lay.el.classList.remove('pb-hidden'); }
+        if (!session.alive()) return;
+        const fbel = S.leaf.querySelector('.fbwrap');
+        if (r.ok) { U.fb(fbel, 'ok', r.replaced ? 'Kept (a page was replaced, as you chose)' : 'Kept', '<p>Find it in Journey › Practice mementos. It is typeset, not handwriting.</p>'); b.querySelector('span').textContent = 'Kept'; }
+        else { b.disabled = false; U.fb(fbel, 'info', r.why === 'cancelled' ? 'Not kept' : 'Could not keep it', '<p>' + (r.why === 'cancelled' ? 'Nothing was changed.' : 'Your other pages are untouched; this sheet stays on screen but is not saved.') + '</p>'); }
+      };
+      S.lay.onCancel = done;
+      U.push(S.lay);
+      setTimeout(() => { const b = S.foot.querySelector('[data-pb-ok]'); if (b) b.focus({ preventScroll: true }); }, 30);
+    });
+  }
+
+  async function run(session) {
+    session.set('active');
+    const s = RB.game.s;
+    const rec = P().rec(s);
+    const cd = RB.practiceB.cooldown(rec);
+    let checked = 0;
+    for (;;) {
+      if (!session.alive()) return { abandoned: true };
+      const pick = await tray();
+      if (!session.alive()) return { abandoned: true };
+      if (pick.leave) return { checked };
+      const d = P().byId(pick.open), t = P().tier(d, U.prof());
+      const replay = !!rec.done[d.id];
+      if (!cd.allow('proof:' + d.id)) RB.ui.notice('You have just done this one: it counts as practice this time.', 'info');
+      session.set('active');
+      const out = await task(session, d, t, replay);
+      if (!session.alive()) return { abandoned: true };
+      if (out.stop) continue;
+      session.set('resolving');
+      const recorded = cd.allow('proof:' + d.id) ? U.assess(session, rec, 'proof:' + d.id, t.item, { firstTry: out.firstTry, mode: out.mode, assisted: out.assisted }, { exposed: out.exposed || replay }) : (RB.practice.tally(s, 'proofreading', { n: 1, replay: 1 }), false);
+      RB.practiceB.note(rec, 'proof:' + d.id, !out.firstTry, cd);
+      const c = P().complete(s, d.id, { prof: t.lv });
+      if (c.first) checked++;
+      session.set('result');
+      await result(session, d, Object.assign({ lv: t.lv }, t), out, recorded);
+      if (!session.alive()) return { abandoned: true };
+    }
+  }
+  if (RB.activity) RB.activity.register('proofreading', {
+    title: RB.content.practiceB.ui.tray,
+    eligible: (s) => RB.proof.eligible(s),
+    run,
+    dispose: () => U.closeAll(),
+  });
+
+  // ---- Journey › Practice mementos: the kept proofreading pages -----------------------------------------
+  if (RB.practice && RB.practice.addMementoSource) {
+    RB.practice.addMementoSource({
+      id: 'proof', order: 60,
+      list: (s) => P().kept(s).map((p) => {
+        const d = p.typeset && P().byId(p.typeset.task);
+        return {
+          id: p.id, kind: 'proof',
+          title: { jp: d ? d.title.jp : RB.content.practiceB.ui.tray.jp, en: p.label || (d ? d.title.en : 'Proofreading page') },
+          note: 'A proofreading page, typeset in the game\'s lettering (not handwriting).' + (d ? '' : ' Its task is no longer in this version of the game; the page is kept as it was.'),
+          html: () => '<div class="pb-kept">' + ((p.typeset && p.typeset.lines) || []).map((l) => '<p>' + J(l) + '</p>').join('') + '</div>',
+        };
+      }),
+    });
+  }
+
+  // ---- Words › Ways to practise ---------------------------------------------------------------------------
+  const PL = () => RB.practiceB.PLACE;
+  if (RB.practice && RB.practice.addActivity) {
+    RB.practice.addActivity({
+      id: 'proofreading', en: RB.content.practiceB.ui.tray.en, jp: RB.content.practiceB.ui.tray.jp, icon: 'scroll', order: 61,
+      where: { en: PL().name.en, jp: PL().name.jp },
+      available: (s) => P().available(s),
+      here: (s) => RB.practiceB.atPlace(s),
+      note: (s) => (!P().available(s) ? 'Once Saltglass\'s trouble is settled: twelve notices to check against their evidence.' : Object.keys(P().rec(s).done).length + ' of 12 checked. Offered at the post box.'),
+      begin: (ctx) => RB.activity.launch('proofreading', ctx),
+    });
+  }
+
+  return { run, tray, task, result, evidenceHtml, noticeHtml };
+})();
+
+
+/* ==== src/ui/92_compare.js ==== */
+/* One Word, Two Moments (Practice addendum §19): Words › One word, two moments, and the
+ * comparison session. docs/practice/suite_b.md.
+ *
+ * The page lists only comparisons whose two lines the player has actually seen
+ * (RB.compare.unlocked); locked ones are counted, never shown. With none unlocked it says
+ * why and offers a clearly labelled sample pair of teaching examples and the other ways
+ * to practise. A comparison shows both quotations exactly as frozen (speaker, where it
+ * was heard), asks one short interpretation question adapted to the learning profile
+ * (Foundations: translations supplied, a simpler relation question), then gives one
+ * explanation, an optional bookmark of the comparison (its quotations kept as they were
+ * read; shown as a historical quotation if the story text later changes) and a link to
+ * the grammar point or word. Three comparisons is a suggested sitting; one is complete.
+ * No score, bond or collectible. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.ui.compare = (function () {
+  'use strict';
+  const U = RB.ui.pb;
+  const { esc, I, J, MX } = U;
+  const CM = () => RB.compare;
+
+  // opening the translations is help: the runner records the answer as assisted
+  if (typeof document !== 'undefined') {
+    document.addEventListener('toggle', (e) => {
+      const t = e.target;
+      if (t && t.matches && t.matches('details.pb-trq') && t.open && RB.challenge && RB.challenge.active()) RB.challenge.noteHelp();
+    }, true);
+  }
+
+  function quote(src, showEn, side) {
+    const sp = U.speakerOf(src);
+    return '<figure class="pb-quote' + (src.teach ? ' teach' : '') + '" data-side="' + side + '">' +
+      '<figcaption><span class="pb-q-who">' + (src.teach ? I('book') + '<b>Teaching example</b> — nobody in the story says this' : I('companion') + esc(sp.en) + (sp.jp ? ' ' + J(sp.jp) : '')) + '</span>' +
+      (src.ctx ? '<span class="pb-q-ctx">' + esc(src.ctx.en) + '</span>' : '') + '</figcaption>' +
+      '<blockquote class="pb-q-jp" lang="ja">' + J(src.jp) + '</blockquote>' + (showEn ? '<div class="pb-q-en">' + esc(src.en) + '</div>' : '') + '</figure>';
+  }
+  function pairHtml(d, showEn) {
+    return '<div class="pb-hdr pair"><div class="kind">' + esc(d.catLabel.en) + ' · ' + J(d.word.jp) + '</div>' + quote(d.a, showEn, 'A') + quote(d.b, showEn, 'B') +
+      (showEn ? '' : '<details class="pb-trq"><summary>Translations <span class="aside">(counts as help)</span></summary><p><b>A</b> ' + esc(d.a.en) + '</p><p><b>B</b> ' + esc(d.b.en) + '</p></details>') + '</div>';
+  }
+  function stepFor(d, t) {
+    const title = RB.content.practiceB.ui.compare.en, titleJp = RB.content.practiceB.ui.compare.jp;
+    if (t.kind === 'write') return U.writeStep(t.replies, { title, titleJp, prompt: t.prompt, what: 'answer' });
+    return U.chooseStep(t.options.map((o) => ({ jp: o.jp, en: o.en, ok: o.ok, why: o.why })), { title, titleJp, prompt: t.prompt, showEn: t.lv === 'F' || !!t.showEn });
+  }
+
+  // ---- links back to the grammar point or the word ----------------------------------------------------
+  function refSheet(ref) {
+    return new Promise((resolve) => {
+      let title = '', body = '';
+      if (ref.grammar && RB.grammar) {
+        const g = RB.grammar.get(ref.grammar);
+        if (g) {
+          title = esc('Grammar: ') + MX(g.title);
+          body = '<p>' + MX(g.en) + '</p>' + (g.pat ? '<p class="pb-pat">' + J(g.pat) + '</p>' : '') + ((g.ex || []).length ? '<h3>Examples</h3><ul class="teach-ex">' + g.ex.slice(0, 3).map((e) => '<li>' + J(e.jp) + '<span class="en">' + esc(e.en) + '</span></li>').join('') + '</ul>' : '') + (g.notes ? '<p class="muted small">' + MX(g.notes) + '</p>' : '');
+        }
+      } else if (ref.word && RB.lex) {
+        const e = (RB.lex.bySurface(ref.word) || [])[0];
+        if (e) {
+          title = esc('Word: ') + J(e.w !== e.r ? '{' + e.w + '|' + e.r + '}' : e.w);
+          body = '<p class="jp big">' + J(e.w !== e.r ? '{' + e.w + '|' + e.r + '}' : e.w) + '</p><p>' + esc(e.r || '') + (RB.kana ? ' · <i>' + esc(RB.kana.romaji(e.r || e.w)) + '</i>' : '') + '</p><p>' + esc(e.m || '') + '</p>' + (e.n ? '<p class="muted small">' + MX(e.n) + '</p>' : '');
+        }
+      }
+      if (!title) { resolve(); return; }
+      const S = U.sheet(title, '', { cls: 'pb-ref', closeLabel: 'Back' });
+      S.leaf.innerHTML = body + '<p class="muted small">Reading this is reference only; it records nothing.</p>';
+      S.foot.innerHTML = '<span class="spacer"></span><button class="cbtn go" data-pb-ok data-ok>' + I('back') + '<span>Back</span></button>';
+      const done = () => { U.pop(S.lay); resolve(); };
+      S.el.addEventListener('click', (ev) => { if (ev.target.closest('[data-pb-ok], [data-pb-x]')) done(); });
+      S.lay.onCancel = done;
+      U.push(S.lay);
+    });
+  }
+  const refLabel = (ref) => {
+    if (ref.grammar && RB.grammar && RB.grammar.get(ref.grammar)) return 'Grammar: ' + U.kana(RB.grammar.get(ref.grammar).title);
+    if (ref.word) { const e = RB.lex && (RB.lex.bySurface(ref.word) || [])[0]; return 'Word: ' + (e ? e.r || e.w : ref.word); }
+    return '';
+  };
+
+  // ---- after the answer: one explanation, an optional bookmark, the link -----------------------------
+  function explain(session, d, t, more, recorded, r) {
+    return new Promise((resolve) => {
+      const s = RB.game.s;
+      const S = U.sheet(J(d.word.jp) + ' ' + esc(d.catLabel.en), d.sample ? 'Sample pair (teaching examples)' : '', { cls: 'pb-explain-sheet', close: false });
+      function render() {
+        const marked = !!CM().rec(s).marks[d.id];
+        let h = (d.sample ? '<p class="note-slip" role="note">' + I('book') + ' <b>Teaching examples</b> — not lines from the story.</p>' : '') +
+          '<div class="pb-pair-small">' + quote(d.a, true, 'A') + quote(d.b, true, 'B') + '</div>' +
+          '<section class="fb-ex pb-explain"><h3>' + I('bulb') + '<span>The difference</span></h3><p>' + MX(d.explain.en) + '</p></section>' +
+          '<p class="muted small">' + (recorded ? 'Recorded once in your learning progress.' : r.assisted ? 'Help was used, so this is kept as practice.' : 'Kept as practice.') + ' There is no score here.</p>' +
+          '<div class="row-acts"><button class="pbtn" data-pb-mark aria-pressed="' + marked + '">' + I('bookmark') + '<span>' + (marked ? 'Bookmarked' : 'Bookmark this comparison') + '</span></button>' +
+          (refLabel(d.ref) ? '<button class="pbtn" data-pb-ref>' + I('book') + '<span>' + esc(refLabel(d.ref)) + '</span></button>' : '') + '</div>' +
+          '<p class="pb-live sr" aria-live="polite"></p>';
+        S.leaf.innerHTML = h;
+        S.foot.innerHTML = '<span class="spacer"></span><button class="cbtn go" data-pb-next data-ok>' + I('next') + '<span>' + (more ? 'Next comparison' : 'Done') + '</span></button>';
+      }
+      const done = (v) => { U.pop(S.lay); resolve(v); };
+      S.el.addEventListener('click', async (e) => {
+        if (e.target.closest('[data-pb-next]')) { done(true); return; }
+        if (e.target.closest('[data-pb-mark]')) {
+          const had = !!CM().rec(s).marks[d.id];
+          if (had) CM().unmark(s, d.id); else if (!CM().mark(s, d.id)) RB.ui.notice('Bookmarks are full (' + CM().MAX_MARKS + '). Remove one in Words › One word, two moments.', 'info');
+          render();
+          const live = S.leaf.querySelector('.pb-live'); if (live) live.textContent = had ? 'Bookmark removed.' : 'Bookmarked.';
+          const b = S.leaf.querySelector('[data-pb-mark]'); if (b) b.focus({ preventScroll: true });
+          return;
+        }
+        if (e.target.closest('[data-pb-ref]')) { S.lay.el.classList.add('pb-hidden'); try { await refSheet(d.ref); } finally { S.lay.el.classList.remove('pb-hidden'); } }
+      });
+      S.lay.onCancel = () => done(false);
+      render();
+      U.push(S.lay);
+      setTimeout(() => { const b = S.foot.querySelector('[data-pb-next]'); if (b) b.focus({ preventScroll: true }); }, 30);
+    });
+  }
+
+  const available = (s, d) => !!d && (d.sample || (CM().valid(d) && CM().seen(s, d.a) && CM().seen(s, d.b)));
+  function suggest(s, n) {
+    const rec = CM().rec(s), cd = RB.practiceB.cooldown(rec);
+    const un = CM().unlocked(s).filter((d) => cd.allow('compare:' + d.id));
+    un.sort((a, b) => (rec.done[a.id] ? 1 : 0) - (rec.done[b.id] ? 1 : 0));
+    return un.slice(0, n || 3).map((d) => d.id);
+  }
+  async function run(session) {
+    session.set('active');
+    const s = RB.game.s;
+    const ctx = session.ctx || {};
+    const rec = CM().rec(s);
+    const cd = RB.practiceB.cooldown(rec);
+    let queue = ctx.pairs || (ctx.pair ? [ctx.pair] : suggest(s, 3));
+    if (!queue.length) queue = ['S01'];
+    let done = 0;
+    for (let i = 0; i < queue.length; i++) {
+      const d = CM().byId(queue[i]);
+      if (!available(s, d)) continue; // checked again now: never a pair whose lines have not been seen
+      const t = CM().tier(d, U.prof());
+      const showEn = t.lv === 'F' || !!t.showEn;
+      const step = stepFor(d, t);
+      session.set('active');
+      const r = await RB.challenge.runStep(step, { header: pairHtml(d, showEn), noRecord: true, ctxTag: 'comparisons', cancelLabel: 'Stop comparing' });
+      if (!session.alive()) return { abandoned: true };
+      if (r.cancelled) break;
+      session.set('resolving');
+      const objId = 'compare:' + d.id;
+      const fresh = cd.allow(objId);
+      const recorded = fresh ? U.assess(session, rec, objId, d.item, r, { exposed: !!(r.assisted && !r.given), sample: !!d.sample }) : (RB.practice.tally(s, 'comparisons', { n: 1, replay: 1 }), false);
+      RB.practiceB.note(rec, objId, r.firstTry === false, cd);
+      CM().complete(s, d.id, { prof: t.lv });
+      done++;
+      session.set('result');
+      const next = await explain(session, d, t, i < queue.length - 1, recorded, r);
+      if (!session.alive()) return { abandoned: true };
+      if (!next) break;
+    }
+    return { compared: done };
+  }
+  if (RB.activity) RB.activity.register('comparisons', {
+    title: RB.content.practiceB.ui.compare,
+    eligible: () => RB.compare.eligible(),
+    run,
+    dispose: () => U.closeAll(),
+  });
+
+  // ---- Words › One word, two moments ---------------------------------------------------------------------
+  function html(s) {
+    try { CM().scan(s); } catch (e) { console.error('compare scan', e); }
+    const rec = CM().rec(s);
+    const un = CM().unlocked(s), locked = CM().locked(s);
+    let h = '<p class="wd-live sr" aria-live="polite"></p><p class="muted small">Two lines you have heard on the road that turn on the same word or form — and mean different things. Only lines you have actually seen appear here; one comparison is a complete sitting, three is a good one. There is no score.</p>';
+    if (!un.length) {
+      h += '<div class="note-slip pb-empty" role="note">' + I('look') + ' <p><b>No comparisons yet.</b> Each one needs two particular lines from the story, and you have not yet heard both lines of any pair. ' + locked + ' comparisons are waiting for their lines.</p></div>' +
+        '<div class="row-acts"><button class="pbtn" data-cmp-sample>' + I('book') + '<span>Try a sample pair (teaching examples)</span></button>' +
+        '<button class="pbtn" data-cmp-ways>' + I('practice') + '<span>Other ways to practise (the writing desk and more)</span></button></div>';
+    } else {
+      h += '<div class="row-acts"><button class="pbtn primary" data-cmp-three>' + I('practice') + '<span>Compare (up to three)</span></button></div>';
+      h += '<ul class="entries pb-cmp-list">' + un.map((d) => {
+        const st = rec.done[d.id] ? 'Compared' + (rec.done[d.id].replays ? ' · again ' + rec.done[d.id].replays + '×' : '') : 'New';
+        return '<li class="entry"><span class="mark">' + I(rec.done[d.id] ? 'done' : 'look') + '</span><div><div class="t">' + J(d.word.jp) + ' <span class="en">' + esc(d.catLabel.en) + '</span></div>' +
+          '<div class="small muted">' + esc(U.speakerOf(d.a).en) + ' and ' + esc(U.speakerOf(d.b).en) + ' · ' + esc(st) + (rec.marks[d.id] ? ' · bookmarked' : '') + '</div>' +
+          '<div class="row-acts"><button class="pbtn" data-cmp="' + esc(d.id) + '">' + I('look') + '<span>Compare</span></button></div></div></li>';
+      }).join('') + '</ul>';
+      if (locked) h += '<p class="muted small">' + locked + ' more will appear once you have heard both of their lines.</p>';
+    }
+    // bookmarked comparisons, with their quotations exactly as kept
+    const marks = Object.keys(rec.marks);
+    if (marks.length) {
+      h += '<h4 class="wd-h">' + I('bookmark') + '<span>Bookmarked comparisons</span></h4><ul class="entries pb-marks">' + marks.map((id) => {
+        const m = rec.marks[id], d = CM().byId(id), st = CM().markStatus(m);
+        return '<li class="entry filed"><span class="mark">' + I('bookmark') + '</span><div>' + (d ? '<div class="t">' + J(d.word.jp) + ' <span class="en">' + esc(d.catLabel.en) + '</span></div>' : '<div class="t">' + esc(id) + '</div>') +
+          (st === 'historical' || !d ? '<p class="note-slip warn" role="note">' + I('warn') + ' <b>Historical quotation.</b> The story text has changed since you kept this; these are the lines as you read them then.</p>' : '') +
+          m.quotes.map((q, i) => quote(q, true, i ? 'B' : 'A')).join('') +
+          '<div class="row-acts"><button class="pbtn danger" data-cmp-unmark="' + esc(id) + '">' + I('trash') + '<span>Remove bookmark</span></button></div></div></li>';
+      }).join('') + '</ul>';
+    }
+    return h;
+  }
+  function wire(el, s, api) {
+    el.onclick = async (e) => {
+      const t = e.target;
+      const live = (m) => { const a = el.querySelector('.wd-live'); if (a) { a.textContent = ''; setTimeout(() => { a.textContent = m; }, 30); } };
+      if (t.closest('[data-cmp-ways]')) { api.go('words', 'practice'); return; }
+      const um = t.closest('[data-cmp-unmark]');
+      if (um) { CM().unmark(s, um.getAttribute('data-cmp-unmark')); api.render(); live('Bookmark removed.'); return; }
+      const b = t.closest('[data-cmp], [data-cmp-three], [data-cmp-sample]');
+      if (!b || b.disabled) return;
+      b.disabled = true;
+      const ctx = { source: 'words' };
+      if (b.hasAttribute('data-cmp')) ctx.pairs = [b.getAttribute('data-cmp')];
+      else if (b.hasAttribute('data-cmp-sample')) ctx.pairs = ['S01'];
+      const r = await RB.activity.launch('comparisons', ctx);
+      if (!r.ok) { b.disabled = false; RB.ui.notice(r.why || 'Not just now.', 'info'); }
+    };
+  }
+  if (RB.ui.menu && RB.ui.menu.addPage) {
+    RB.ui.menu.addPage('words', {
+      id: 'compare', en: RB.content.practiceB.ui.compare.en, jp: RB.content.practiceB.ui.compare.jp,
+      count: (s) => { try { return CM().unlocked(s).length; } catch (e) { return 0; } },
+      html, wire,
+    });
+  }
+  if (RB.practice && RB.practice.addActivity) {
+    RB.practice.addActivity({
+      id: 'comparisons', en: RB.content.practiceB.ui.compare.en, jp: RB.content.practiceB.ui.compare.jp, icon: 'look', order: 62,
+      where: RB.content.practiceB.ui.compareWhere,
+      available: () => true,
+      here: () => true,
+      note: (s) => { const n = CM().unlocked(s).length; return n ? n + ' comparison' + (n > 1 ? 's' : '') + ' of lines you have heard.' : 'None yet: they appear as you hear their lines. A labelled sample pair is in Words.'; },
+      begin: (ctx) => RB.activity.launch('comparisons', ctx),
+    });
+  }
+  return { run, html, wire, pairHtml, quote, suggest, refSheet };
 })();
 
 
@@ -86257,6 +87438,7 @@ if (RB.lex && RB.lex.add) {
 ふまえる||v1|A|to take into account
 二通り|ふたとおり|n|I|two ways
 学習|がくしゅう|vs|I|learning, study
+校正|こうせい|vs|A|proofreading, correcting a text
 `), 'practice_b');
 }
 
@@ -87095,7 +88277,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
           evidence: [{ k: 'plan', title: T('The doors, seen from the street', '{道|みち} から {見|み}た {戸|と}'),
             cells: [{ label: T('left', '{左|ひだり}'), state: 'closed', name: T('door', '{戸|と}') }, { label: T('right', '{右|みぎ}'), state: 'open', name: T('door', '{戸|と}') }],
             alt: 'Seen from the street: the left door is closed; the right door is open.' }],
-          notice: { title: T('The sign', '{案内|あんない}'), segs: [
+          notice: { en: 'The entrance is on the left.', title: T('The sign', '{案内|あんない}'), segs: [
             { jp: '{入|い}り{口|ぐち} は' },
             { jp: '{左|ひだり}', bad: true, options: [o('{右|みぎ}', 'right', true), o('{左|ひだり}', 'left', false, 'That is what it says now: the closed door.'), o('{上|うえ}', 'up', false, 'There is no door upstairs on the plan.')] },
             { jp: 'です 。' },
@@ -87110,7 +88292,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
           evidence: [{ k: 'plan', title: T('The warehouse front, seen from the street', '{道|みち} から {見|み}た {倉庫|そうこ} の {正面|しょうめん}'),
             cells: [{ label: T('left', '{左|ひだり}'), state: 'closed', name: T('door — under repair', '{扉|とびら} ・ {修理中|しゅうりちゅう}') }, { label: T('right', '{右|みぎ}'), state: 'open', name: T('door', '{扉|とびら}') }],
             alt: 'Seen from the street: the left door is under repair and closed; the right door is open.' }],
-          notice: { title: T('The notice', '{張|は}り{紙|がみ}'), segs: [
+          notice: { en: 'Because of repairs, please use the left door.', title: T('The notice', '{張|は}り{紙|がみ}'), segs: [
             { jp: '{修理|しゅうり} の ため 、', ok: 'The left door really is under repair.' },
             { jp: '{左|ひだり}', bad: true, options: [o('{右|みぎ}', 'right', true), o('{右側|みぎがわ}', 'right side', true, 'Also right: "the right side".'), o('{左|ひだり}', 'left', false, 'That is the door under repair.'), o('{正面|しょうめん}', 'front', false, 'The plan shows two doors, not one front door.')] },
             { jp: 'の {扉|とびら} を {使|つか}って ください 。' },
@@ -87125,7 +88307,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
           evidence: [{ k: 'plan', title: T('No. 2 warehouse, facing the front', '{正面|しょうめん} から {見|み}た {二番|にばん} {倉庫|そうこ}'),
             cells: [{ label: T('left', '{左|ひだり}'), state: 'closed', name: T('door — bolted', '{扉|とびら} ・ {閂|かんぬき}') }, { label: T('right', '{右|みぎ}'), state: 'open', name: T('door', '{扉|とびら}') }],
             alt: 'Facing the front of No. 2 warehouse: the left door is bolted shut; the right door is open.' }],
-          notice: { title: T('Delivery notice', '{荷|に} の {入|い}れ{方|かた}'), segs: [
+          notice: { en: 'Facing the front, the left door is shut. Please bring goods in through the left door.', title: T('Delivery notice', '{荷|に} の {入|い}れ{方|かた}'), segs: [
             { jp: '{正面|しょうめん} から {見|み}て 、' },
             { jp: '{左|ひだり} の {扉|とびら} は {閉|し}めて あります 。', ok: 'Right: the bolted door is on the left.' },
             { jp: '{荷物|にもつ} は' },
@@ -87142,7 +88324,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
           evidence: [{ k: 'plan', title: T('The hall front, as you face it', '{向|む}かって {見|み}た {記録館|きろくかん}'),
             cells: [{ label: T('left (as you face it)', '{向|む}かって {左|ひだり}'), state: 'closed', name: T('entrance — works', '{入口|いりぐち} ・ {工事中|こうじちゅう}') }, { label: T('right (as you face it)', '{向|む}かって {右|みぎ}'), state: 'open', name: T('entrance', '{入口|いりぐち}') }],
             alt: 'As you face the Records Hall: the left entrance is closed for works; the right entrance is open. (Seen from inside the building, the open entrance is on its left.)' }],
-          notice: { title: T('Notice', '{掲示|けいじ}'), segs: [
+          notice: { en: 'Owing to renovation works, for the time being please enter by the entrance on the left as you face the building.', title: T('Notice', '{掲示|けいじ}'), segs: [
             { jp: '{改修|かいしゅう} {工事|こうじ} の ため 、' },
             { jp: '{当面|とうめん} の {間|あいだ} 、', style: 'A formal "for the time being" — a matter of register, not of fact.' },
             { jp: '{向|む}かって {左|ひだり}', bad: true, options: [o('{向|む}かって {右|みぎ}', 'on the right as you face it', true), o('{正面|しょうめん} から {見|み}て {右|みぎ}', 'on the right seen from the front', true), o('{建物|たてもの} から {見|み}て {左|ひだり}', 'on the left seen from the building', true, 'Accurate — seen from inside, the open entrance is on the left — though visitors read {向|む}かって more easily.'), o('{建物|たてもの} から {見|み}て {右|みぎ}', 'on the right seen from the building', false, 'Seen from the building, the right-hand entrance is the closed one.'), o('{向|む}かって {左|ひだり}', 'on the left as you face it', false, 'That is the entrance closed for works.')] },
@@ -87164,7 +88346,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         F: {
           purpose: T('A label on a basket going to the inn.', '{宿|やど} へ {送|おく}る かご の {札|ふだ} 。'),
           evidence: [{ k: 'count', title: T('In the basket', 'かご の {中|なか}'), icon: 'fruit', n: 3, label: T('three persimmons', '{柿|かき} {三|みっ}つ'), alt: 'Three persimmons in the basket.' }],
-          notice: { title: T('The label', '{札|ふだ}'), segs: [
+          notice: { en: 'There are two persimmons.', title: T('The label', '{札|ふだ}'), segs: [
             { jp: '{柿|かき} が' },
             { jp: '{二|ふた}つ', bad: true, options: [o('{三|みっ}つ', 'three', true), o('{二|ふた}つ', 'two', false, 'The basket holds three.'), o('{四|よっ}つ', 'four', false, 'Count again: there are three.')] },
             { jp: 'あります 。' },
@@ -87177,7 +88359,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         E: {
           purpose: T('A note packed with Mio\'s medicine order.', 'ミオ の {薬|くすり} の {荷|に} に {入|い}れる {書|か}き{付|つ}け 。'),
           evidence: [{ k: 'count', title: T('Packed in the box', '{箱|はこ} に {入|い}って いる もの'), icon: 'bottle', n: 5, label: T('five bottles of medicine', '{薬|くすり} の {瓶|びん} {五本|ごほん}'), alt: 'Five bottles of medicine are packed in the box.' }],
-          notice: { title: T('The note', '{書|か}き{付|つ}け'), segs: [
+          notice: { en: 'We are sending six bottles of medicine.', title: T('The note', '{書|か}き{付|つ}け'), segs: [
             { jp: '{薬|くすり} の {瓶|びん} を' },
             { jp: '{六本|ろっぽん}', bad: true, options: [o('{五本|ごほん}', 'five (long things)', true), o('{五|いつ}つ', 'five', true, 'Also right, with the general counter.'), o('{六本|ろっぽん}', 'six', false, 'Only five are packed.'), o('{四本|よんほん}', 'four', false, 'Count again: five.')] },
             { jp: '{送|おく}ります 。' },
@@ -87190,7 +88372,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         I: {
           purpose: T('The storeroom record at the harbour office.', '{港|みなと} の {事務所|じむしょ} の {倉庫|そうこ} の {記録|きろく} 。'),
           evidence: [{ k: 'count', title: T('The storeroom shelf today', '{今日|きょう} の {倉庫|そうこ} の {棚|たな}'), icon: 'can', n: 8, label: T('eight cans of lamp oil', '{灯油|とうゆ} {八缶|はちかん}'), alt: 'Eight cans of lamp oil stand on the storeroom shelf, in two rows of four.' }],
-          notice: { title: T('Storeroom record', '{倉庫|そうこ} の {記録|きろく}'), segs: [
+          notice: { en: 'Lamp oil in the storeroom: four cans left.', title: T('Storeroom record', '{倉庫|そうこ} の {記録|きろく}'), segs: [
             { jp: '{倉庫|そうこ} の {灯油|とうゆ} は 、' },
             { jp: '{残|のこ}り' },
             { jp: '{四缶|よんかん}', bad: true, options: [o('{八缶|はちかん}', 'eight cans', true), o('{八缶|はっかん}', 'eight cans', true, 'Also right: はっかん is a common reading.'), o('{四缶|よんかん}', 'four cans', false, 'The shelf holds eight.'), o('{十二缶|じゅうにかん}', 'twelve cans', false, 'Two rows of four make eight.')] },
@@ -87204,7 +88386,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         A: {
           purpose: T('A notice for the festival committee: lanterns for each household.', '{祭|まつ}り の {係|かかり} へ の {通知|つうち} ： {各戸|かっこ} の {提灯|ちょうちん} 。'),
           evidence: [{ k: 'count', title: T('Households on the list', '{名簿|めいぼ} の {家|いえ}'), icon: 'house', n: 6, per: 2, perIcon: 'lantern', label: T('six households, two lanterns each', '{六軒|ろっけん} 、 {各|かく} {二|ふた}つ'), alt: 'Six households are on the list, and each gets two lanterns: twelve in all.' }],
-          notice: { title: T('Committee notice', '{係|かかり} へ の {通知|つうち}'), segs: [
+          notice: { en: 'Two for each household: ten lanterns will be handed out in all.', title: T('Committee notice', '{係|かかり} へ の {通知|つうち}'), segs: [
             { jp: '{各戸|かっこ} に {二|ふた}つ ずつ 、', ok: 'Right: two for each household.' },
             { jp: '{計|けい}' },
             { jp: '{十個|じゅっこ}', bad: true, options: [o('{十二個|じゅうにこ}', 'twelve', true), o('{十二|じゅうに}', 'twelve', true, 'Also right without the counter.'), o('{十個|じゅっこ}', 'ten', false, 'Ten would leave one household without its pair.'), o('{八個|はっこ}', 'eight', false, 'Six times two is twelve.')] },
@@ -87226,7 +88408,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         F: {
           purpose: T('A label for a parcel.', '{小包|こづつみ} の {札|ふだ} 。'),
           evidence: [{ k: 'slip', title: T('The address slip', '{宛名|あてな} の {紙|かみ}'), lines: [T('To: Shino, at the post house', 'あて{先|さき} ： {郵便所|ゆうびんじょ} の シノ さん')] }],
-          notice: { title: T('The label', '{札|ふだ}'), segs: [
+          notice: { en: 'To Shino at the inn.', title: T('The label', '{札|ふだ}'), segs: [
             { jp: '{宿|やど} の', bad: true, options: [o('{郵便所|ゆうびんじょ} の', 'at the post house', true), o('{宿|やど} の', 'at the inn', false, 'Shino is at the post house, not the inn.'), o('{茶屋|ちゃや} の', 'at the teahouse', false, 'The slip says the post house.')] },
             { jp: 'シノ さん へ' },
           ] },
@@ -87238,7 +88420,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         E: {
           purpose: T('An envelope going up to the terraces.', '{段々畑|だんだんばたけ} へ {行|い}く {封筒|ふうとう} 。'),
           evidence: [{ k: 'slip', title: T('The slip from the glass workshop', 'ガラス {工房|こうぼう} から の {紙|かみ}'), lines: [T('From: Isao (glass workshop)', '{差出人|さしだしにん} ： イサオ （ ガラス {工房|こうぼう} ）'), T('To: Ume (the terraces)', '{宛先|あてさき} ： ウメ （ {段々畑|だんだんばたけ} ）')] }],
-          notice: { title: T('The envelope', '{封筒|ふうとう}'), segs: [
+          notice: { en: 'From Ume, to Isao.', title: T('The envelope', '{封筒|ふうとう}'), segs: [
             { jp: 'ウメ より 、', bad: true, group: 'swap' },
             { jp: 'イサオ へ', bad: true, group: 'swap' },
           ] },
@@ -87251,11 +88433,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
         I: {
           purpose: T('Directions written on a parcel for the Chronicle Hall.', '{記録堂|きろくどう} へ の {小包|こづつみ} に {書|か}いた {道案内|みちあんない} 。'),
           evidence: [{ k: 'slip', title: T('The address slip', '{宛名|あてな} の {紙|かみ}'), lines: [T('To: Tokiwa, the Chronicle Hall', '{宛先|あてさき} ： {記録堂|きろくどう} の トキワ さん'), T('North-east of the square, across the channel.', '{広場|ひろば} の {北東|ほくとう} 、 {水路|すいろ} を {渡|わた}った ところ 。')] }],
-          notice: { title: T('Written on the parcel', '{小包|こづつみ} の {書|か}き{込|こ}み'), segs: [
+          notice: { en: 'For Tokiwa at the Chronicle Hall. The building on the west, this side of the channel.', title: T('Written on the parcel', '{小包|こづつみ} の {書|か}き{込|こ}み'), segs: [
             { jp: '{記録堂|きろくどう} の トキワ さん {宛|あて} 。', ok: 'The name and the hall are right.' },
             { jp: '{水路|すいろ} の {手前|てまえ} 、 {西|にし} の', bad: true, options: [
               o('{水路|すいろ} を {渡|わた}った {北東|ほくとう} の', 'the north-eastern one, across the channel', true),
-              o('{水路|すいろ} の {向|む}こう 、 {北東|ほくとう} の', 'beyond the channel, to the north-east', true),
+              o('{水路|すいろ} の {向|む}こう 、 {北東|ほくとう} の', 'beyond the channel, to the north-east', true, 'Also right: {向|む}こう is "the far side".'),
               o('{水路|すいろ} の {手前|てまえ} 、 {北東|ほくとう} の', 'this side of the channel, to the north-east', false, 'The hall is across the channel, not on this side.'),
               o('{水路|すいろ} を {渡|わた}った {西|にし} の', 'across the channel, to the west', false, 'The slip says north-east.')] },
             { jp: '{建物|たてもの} です 。' },
@@ -87268,7 +88450,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         A: {
           purpose: T('The address on a letter that must reach Councillor Tami in person.', 'タミ {議員|ぎいん} {本人|ほんにん} に {届|とど}けたい {手紙|てがみ} の {宛名|あてな} 。'),
           evidence: [{ k: 'slip', title: T('The sender\'s instruction', '{差出人|さしだしにん} の {指示|しじ}'), lines: [T('For Councillor Tami herself.', 'タミ {議員|ぎいん} {本人|ほんにん} へ 。'), T('Not to be opened at the front counter.', '{受付|うけつけ} で {開|ひら}かない こと 。')] }],
-          notice: { title: T('The envelope', '{封筒|ふうとう}'), segs: [
+          notice: { en: 'Council Chamber — attn. the front counter.', title: T('The envelope', '{封筒|ふうとう}'), segs: [
             { jp: '{議会堂|ぎかいどう}', ok: 'Right: she is found at the Council Chamber.' },
             { jp: '{受付|うけつけ} {御中|おんちゅう}', bad: true, options: [
               o('タミ {議員|ぎいん} {様|さま}', 'Councillor Tami (personally)', true),
@@ -87292,7 +88474,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         F: {
           purpose: T('A notice by the kiln, repeating the workshop rule.', '{窯|かま} の {横|よこ} の {張|は}り{紙|がみ} 。 {工房|こうぼう} の きまり を {書|か}いた もの 。'),
           evidence: [{ k: 'rule', title: T('The workshop rule', '{工房|こうぼう} の きまり'), text: T('Don\'t use fire here.', 'ここ で は {火|ひ} を {使|つか}わないで ください 。') }],
-          notice: { title: T('The notice', '{張|は}り{紙|がみ}'), segs: [
+          notice: { en: 'Please use fire here.', title: T('The notice', '{張|は}り{紙|がみ}'), segs: [
             { jp: 'ここ で' },
             { jp: '{火|ひ} を' },
             { jp: '{使|つか}って ください 。', bad: true, options: [o('{使|つか}わないで ください 。', 'please don\'t use', true), o('{使|つか}って ください 。', 'please use', false, 'That invites fire — the rule forbids it.'), o('{使|つか}って も いい です 。', 'you may use', false, 'That permits fire. The rule forbids it.')] },
@@ -87305,7 +88487,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         E: {
           purpose: T('The sign on the new kiln\'s vent.', '{新|あたら}しい {窯|かま} の {窓|まど} の {札|ふだ} 。'),
           evidence: [{ k: 'rule', title: T('Master Isao\'s rule', 'イサオ の きまり'), text: T('On windy nights, the vent must not be opened.', '{風|かぜ} の {強|つよ}い {夜|よる} は 、 {窓|まど} を {開|あ}けて は いけません 。') }],
-          notice: { title: T('The sign', '{札|ふだ}'), segs: [
+          notice: { en: 'On windy nights, you may open the vent.', title: T('The sign', '{札|ふだ}'), segs: [
             { jp: '{風|かぜ} の {強|つよ}い {夜|よる} は 、', ok: 'Right: the rule is about windy nights.' },
             { jp: '{窓|まど} を' },
             { jp: '{開|あ}けて も いい です 。', bad: true, options: [o('{開|あ}けて は いけません 。', 'must not be opened', true), o('{開|あ}けないで ください 。', 'please don\'t open', true, 'Also right: a request not to open it.'), o('{開|あ}けて も いい です 。', 'may be opened', false, 'That permits what the rule forbids.'), o('{開|あ}けて ください 。', 'please open', false, 'That asks for the very thing the rule forbids.')] },
@@ -87318,7 +88500,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         I: {
           purpose: T('A notice at the top of the back path.', '{裏|うら} の {道|みち} の {入|い}り{口|ぐち} の {張|は}り{紙|がみ} 。'),
           evidence: [{ k: 'rule', title: T('The village rule', '{里|さと} の きまり'), text: T('The back path is slippery on rainy days: don\'t use it then. On other days it is open.', '{雨|あめ} の {日|ひ} は {裏|うら} の {道|みち} が {滑|すべ}る ので 、 {通|とお}らない こと 。 それ {以外|いがい} の {日|ひ} は {通|とお}って よい 。') }],
-          notice: { title: T('The notice', '{張|は}り{紙|がみ}'), segs: [
+          notice: { en: 'On days other than rainy days, please do not use the back path.', title: T('The notice', '{張|は}り{紙|がみ}'), segs: [
             { jp: '{雨|あめ} の {日|ひ} {以外|いがい} は 、', bad: true, options: [o('{雨|あめ} の {日|ひ} は 、', 'on rainy days', true), o('{雨|あめ} が {降|ふ}って いる {日|ひ} は 、', 'on days when it is raining', true, 'Also right, just longer.'), o('{晴|は}れ の {日|ひ} は 、', 'on fine days', false, 'Fine days are when the path is open.'), o('{雨|あめ} の {日|ひ} {以外|いがい} は 、', 'on days other than rainy days', false, 'That closes the path on every day except the dangerous one.')] },
             { jp: '{裏|うら} の {道|みち} を' },
             { jp: '{通|とお}らないで ください 。', ok: 'Right: this is the "don\'t". The trouble is which days it covers.' },
@@ -87331,7 +88513,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         A: {
           purpose: T('The notice on the door of the archive\'s stacks.', '{書庫|しょこ} の {扉|とびら} の {掲示|けいじ} 。'),
           evidence: [{ k: 'rule', title: T('The archive\'s rule', '{書庫|しょこ} の {規則|きそく}'), text: T('Only the archive staff may enter the stacks.', '{書庫|しょこ} に {入|はい}れる の は 、 {係|かかり} の {者|もの} だけ と する 。') }],
-          notice: { title: T('Notice', '{掲示|けいじ}'), segs: [
+          notice: { en: 'Staff: please do not enter the stacks.', title: T('Notice', '{掲示|けいじ}'), segs: [
             { jp: '{係|かかり} の {者|もの} は 、', bad: true, options: [o('{係|かかり} の {者|もの} {以外|いがい} は 、', 'anyone other than the staff', true), o('{関係者|かんけいしゃ} {以外|いがい} は 、', 'anyone not authorised', true, 'Also right: the usual wording on such doors.'), o('{係|かかり} の {者|もの} も 、', 'the staff too', false, 'That shuts out the staff as well as everyone else.'), o('{係|かかり} の {者|もの} は 、', 'the staff', false, 'That forbids exactly the people the rule lets in.')] },
             { jp: '{書庫|しょこ} に' },
             { jp: '{立|た}ち{入|い}らないで ください 。', style: 'A formal "please do not enter". The wording is fine; who it is addressed to is not.' },
@@ -87352,7 +88534,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         F: {
           purpose: T('A card by the well.', '{井戸|いど} の {横|よこ} の {札|ふだ} 。'),
           evidence: [{ k: 'steps', title: T('Why', 'わけ'), steps: [T('Boil the water first.', 'まず {水|みず} を わかす 。'), T('Then drink it.', 'それ から {飲|の}む 。')], note: T('The well water is not safe unless it is boiled.', 'わかさない と 、 {井戸|いど} の {水|みず} は あぶない 。') }],
-          notice: { title: T('The card', '{札|ふだ}'), list: true, segs: [
+          notice: { en: '1. Drink the water. 2. Boil the water.', title: T('The card', '{札|ふだ}'), list: true, segs: [
             { jp: '{水|みず} を {飲|の}む 。', bad: true },
             { jp: '{水|みず} を わかす 。', bad: true },
           ] },
@@ -87364,7 +88546,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         E: {
           purpose: T('The steps for closing up the kiln at night.', '{夜|よる} 、 {窯|かま} を {閉|し}める {時|とき} の {手順|てじゅん} 。'),
           evidence: [{ k: 'note', title: T('Master Isao\'s warning', 'イサオ の {注意|ちゅうい}'), text: T('Hot ash can start a fire. Throw it out only once it is cold.', '{熱|あつ}い {灰|はい} は {火事|かじ} の もと 。 {冷|さ}めて から {捨|す}てる こと 。') }],
-          notice: { title: T('Closing steps', '{閉|し}める {手順|てじゅん}'), list: true, segs: [
+          notice: { en: '1. Put out the fire. 2. Throw out the ash. 3. Wait until the ash has cooled.', title: T('Closing steps', '{閉|し}める {手順|てじゅん}'), list: true, segs: [
             { jp: '{火|ひ} を {消|け}す 。', ok: 'Right: the fire goes out first.' },
             { jp: '{灰|はい} を {捨|す}てる 。', bad: true },
             { jp: '{灰|はい} が {冷|さ}める まで {待|ま}つ 。', bad: true },
@@ -87377,7 +88559,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         I: {
           purpose: T('Boarding steps posted at the ferry landing.', '{渡|わた}し{場|ば} に {貼|は}られた {乗|の}り{方|かた} の {手順|てじゅん} 。'),
           evidence: [{ k: 'note', title: T('The ferryman\'s note', '{船頭|せんどう} の {書|か}き{付|つ}け'), text: T('Tickets are sold only on the landing. None are sold on board.', '{切符|きっぷ} は {桟橋|さんばし} で だけ {売|う}る 。 {船|ふね} の {中|なか} で は {売|う}って いない 。') }],
-          notice: { title: T('How to board', '{乗|の}り{方|かた}'), list: true, segs: [
+          notice: { en: '1. Queue on the landing. 2. Board the boat. 3. Buy a ticket. 4. Sit down.', title: T('How to board', '{乗|の}り{方|かた}'), list: true, segs: [
             { jp: '{桟橋|さんばし} に {並|なら}ぶ 。' },
             { jp: '{船|ふね} に {乗|の}る 。', bad: true },
             { jp: '{切符|きっぷ} を {買|か}う 。', bad: true },
@@ -87391,7 +88573,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         A: {
           purpose: T('Firing steps copied from the kiln\'s log.', '{窯|かま} の {日誌|にっし} から {写|うつ}した {窯焚|かまだ}き の {手順|てじゅん} 。'),
           evidence: [{ k: 'note', title: T('From the margin of the log', '{日誌|にっし} の {余白|よはく} より'), text: T('Close the vent only once the fire has spread through. Close it early and the fire dies.', '{通風口|つうふうこう} を {閉|と}じる の は 、 {火|ひ} が {回|まわ}って から 。 {先|さき} に {閉|と}じれば 、 {火|ひ} は {消|き}える 。') }],
-          notice: { title: T('Firing steps', '{窯焚|かまだ}き の {手順|てじゅん}'), list: true, segs: [
+          notice: { en: '1. Stack the firewood. 2. Light the fire. 3. Close the vent halfway. 4. Wait for the fire to spread right through.', title: T('Firing steps', '{窯焚|かまだ}き の {手順|てじゅん}'), list: true, segs: [
             { jp: '{薪|まき} を {組|く}む 。' },
             { jp: '{火|ひ} を {入|い}れる 。' },
             { jp: '{通風口|つうふうこう} を {半分|はんぶん} {閉|と}じる 。', bad: true },
@@ -87413,7 +88595,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         F: {
           purpose: T('A note on Mio\'s medicine packet.', 'ミオ の {薬|くすり} の ふくろ の メモ 。'),
           evidence: [{ k: 'seq', title: T('When to take it', 'のむ とき'), steps: [T('meal', 'ごはん'), T('medicine', '{薬|くすり}')], alt: 'First the meal, then the medicine.' }],
-          notice: { title: T('The note', 'メモ'), segs: [
+          notice: { en: 'Take the medicine before the meal.', title: T('The note', 'メモ'), segs: [
             { jp: 'ごはん の' },
             { jp: '{前|まえ}', bad: true, options: [o('{後|あと}', 'after', true), o('{前|まえ}', 'before', false, 'The diagram puts the meal first.'), o('{中|なか}', 'during', false, 'The diagram shows one after the other.')] },
             { jp: 'に 、 {薬|くすり} を {飲|の}みます 。' },
@@ -87426,7 +88608,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         E: {
           purpose: T('The timetable board at the ferry landing.', '{渡|わた}し{場|ば} の {時刻|じこく} の {板|いた} 。'),
           evidence: [{ k: 'seq', title: T('Noon at the landing', '{渡|わた}し{場|ば} の お{昼|ひる}'), steps: [T('the noon bell', 'お{昼|ひる} の {鐘|かね}'), T('the ferry leaves', '{渡|わた}し{船|ぶね} が {出|で}る')], alt: 'First the noon bell rings, then the ferry leaves.' }],
-          notice: { title: T('The board', '{板|いた}'), segs: [
+          notice: { en: 'The ferry leaves before the noon bell.', title: T('The board', '{板|いた}'), segs: [
             { jp: '{渡|わた}し{船|ぶね} は 、' },
             { jp: 'お{昼|ひる} の {鐘|かね} の', ok: 'Right: the bell is the moment that matters.' },
             { jp: '{前|まえ} に', bad: true, options: [o('{後|あと} に', 'after', true), o('{後|あと} で', 'after', true, 'Also right.'), o('{前|まえ} に', 'before', false, 'The diagram has the bell first.'), o('{間|あいだ} に', 'during', false, 'The ferry leaves once the bell has rung.')] },
@@ -87440,7 +88622,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         I: {
           purpose: T('A notice at the foot of the old bridge.', '{古|ふる}い {橋|はし} の たもと の {張|は}り{紙|がみ} 。'),
           evidence: [{ k: 'seq', title: T('An evening at the bridge', '{橋|はし} の {夕方|ゆうがた}'), steps: [T('cross the bridge', '{橋|はし} を {渡|わた}る'), T('sunset', '{日暮|ひぐ}れ'), T('the bridge lanterns go out', '{橋|はし} の {灯|あか}り が {消|き}える')], alt: 'Cross the bridge; then the sun sets; then the bridge lanterns go out.' }],
-          notice: { title: T('The notice', '{張|は}り{紙|がみ}'), segs: [
+          notice: { en: 'Please cross the bridge after sunset.', title: T('The notice', '{張|は}り{紙|がみ}'), segs: [
             { jp: '{日暮|ひぐ}れ の' },
             { jp: '{後|あと} に', bad: true, options: [o('{前|まえ} に', 'before', true), o('まで に', 'by', true, 'Also right: "by sunset".'), o('{後|あと} に', 'after', false, 'After sunset the lanterns are out.'), o('{間|あいだ} に', 'during', false, 'Sunset is a moment, and the crossing must come before it.')] },
             { jp: '{橋|はし} を {渡|わた}って ください 。' },
@@ -87453,10 +88635,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
         A: {
           purpose: T('A notice inviting comments on the council\'s decision.', '{議会|ぎかい} の {決定|けってい} に {意見|いけん} を {求|もと}める {掲示|けいじ} 。'),
           evidence: [{ k: 'seq', title: T('The council\'s calendar', '{議会|ぎかい} の {予定|よてい}'), steps: [T('day 1: the meeting', '{一日目|いちにちめ} ： {会議|かいぎ}'), T('days 2–4: comments accepted', '{二日目|ふつかめ} 〜 {四日目|よっかめ} ： {意見|いけん} を {受|う}け{付|つ}ける'), T('day 5: decision', '{五日目|いつかめ} ： {決定|けってい}')], alt: 'Day 1 the meeting; days 2 to 4 comments are accepted; day 5 the decision.' }],
-          notice: { title: T('Notice', '{掲示|けいじ}'), segs: [
+          notice: { en: 'Please send your comments by three days before the meeting.', title: T('Notice', '{掲示|けいじ}'), segs: [
             { jp: 'ご{意見|いけん} は 、' },
             { jp: '{会議|かいぎ} の' },
-            { jp: '{三日前|みっかまえ}', bad: true, options: [o('{三日後|みっかご}', 'three days after', true), o('{三日|みっか} {後|ご}', 'three days after', true), o('{三日前|みっかまえ}', 'three days before', false, 'Before the meeting no one has heard what was discussed; the calendar takes comments after it.'), o('{当日|とうじつ}', 'the same day', false, 'Comments run for three days after the meeting.')] },
+            { jp: '{三日前|みっかまえ}', bad: true, options: [o('{三日後|みっかご}', 'three days after', true), o('{三日|みっか} {後|ご}', 'three days after', true, 'Also right, written as two words.'), o('{三日前|みっかまえ}', 'three days before', false, 'Before the meeting no one has heard what was discussed; the calendar takes comments after it.'), o('{当日|とうじつ}', 'the same day', false, 'Comments run for three days after the meeting.')] },
             { jp: 'まで に お{寄|よ}せ ください 。', style: 'A formal "please send by". The wording suits a notice.' },
           ] },
           repair: { kind: 'replace', prompt: T('Repair the deadline.', '{締|し}め{切|き}り を {直|なお}しましょう 。') },
@@ -87475,7 +88657,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         F: {
           purpose: T('Labels on two jars in Fusa\'s kitchen.', 'フサ の {台所|だいどころ} の びん {二|ふた}つ の {札|ふだ} 。'),
           evidence: [{ k: 'objects', title: T('The two jars', 'びん {二|ふた}つ'), items: [{ shape: 'round', name: T('round jar', 'まるい びん'), desc: T('white, salty', 'しろくて 、 しょっぱい') }, { shape: 'square', name: T('square jar', 'しかくい びん'), desc: T('brown, sweet', 'ちゃいろくて 、 あまい') }] }],
-          notice: { title: T('Label on the round jar', 'まるい びん の {札|ふだ}'), segs: [
+          notice: { en: 'Sugar.', title: T('Label on the round jar', 'まるい びん の {札|ふだ}'), segs: [
             { jp: 'さとう', bad: true, options: [o('しお', 'salt', true), o('さとう', 'sugar', false, 'The round jar is the salty one.'), o('こめ', 'rice', false, 'Neither jar holds rice.')] },
           ] },
           repair: { kind: 'replace', prompt: T('What is in the round jar?', 'まるい びん の {中|なか} は ？') },
@@ -87486,7 +88668,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         E: {
           purpose: T('Tags on the two keys Tamotsu keeps.', 'タモツ の {持|も}って いる {鍵|かぎ} {二本|にほん} の {札|ふだ} 。'),
           evidence: [{ k: 'objects', title: T('The two keys', '{鍵|かぎ} {二本|にほん}'), items: [{ shape: 'long', name: T('long key', '{長|なが}い {鍵|かぎ}'), desc: T('opens the storehouse', '{倉|くら} の {鍵|かぎ}') }, { shape: 'short', name: T('short key', '{短|みじか}い {鍵|かぎ}'), desc: T('opens the water gate', '{水門|すいもん} の {鍵|かぎ}') }] }],
-          notice: { title: T('Tag on the short key', '{短|みじか}い {鍵|かぎ} の {札|ふだ}'), segs: [
+          notice: { en: 'Storehouse key.', title: T('Tag on the short key', '{短|みじか}い {鍵|かぎ} の {札|ふだ}'), segs: [
             { jp: '{倉|くら}', bad: true, options: [o('{水門|すいもん}', 'water gate', true), o('{倉|くら}', 'storehouse', false, 'The storehouse key is the long one.'), o('{家|いえ}', 'house', false, 'Neither key is for a house.')] },
             { jp: 'の {鍵|かぎ}' },
           ] },
@@ -87498,7 +88680,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         I: {
           purpose: T('Labels on two of Mio\'s medicine bottles.', 'ミオ の {薬|くすり} の {瓶|びん} {二本|にほん} の ラベル 。'),
           evidence: [{ k: 'objects', title: T('The two bottles', '{瓶|びん} {二本|にほん}'), items: [{ shape: 'cap', name: T('bottle with a cap', '{蓋|ふた} の {瓶|びん}'), desc: T('for coughs; with warm water', '{咳|せき} の {薬|くすり} 。 {白湯|さゆ} で {飲|の}む') }, { shape: 'cork', name: T('bottle with a cork', 'コルク の {瓶|びん}'), desc: T('for the stomach; after meals', 'お{腹|なか} の {薬|くすり} 。 {食後|しょくご} に {飲|の}む') }] }],
-          notice: { title: T('Label on the corked bottle', 'コルク の {瓶|びん} の ラベル'), segs: [
+          notice: { en: 'Cough medicine. Take after meals.', title: T('Label on the corked bottle', 'コルク の {瓶|びん} の ラベル'), segs: [
             { jp: '{咳|せき}', bad: true, options: [o('お{腹|なか}', 'stomach', true), o('おなか', 'stomach', true, 'Also right, in kana.'), o('{咳|せき}', 'cough', false, 'The cough medicine is the one with the cap.'), o('{頭|あたま}', 'head', false, 'Neither bottle is for headaches.')] },
             { jp: 'の {薬|くすり} 。' },
             { jp: '{食後|しょくご} に {飲|の}む 。', ok: 'Right: the corked bottle is taken after meals.' },
@@ -87511,7 +88693,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         A: {
           purpose: T('Captions on two charts of the causeway at Shiori\'s hut.', 'シオリ の {小屋|こや} に ある 、 {岬|みさき} の {道|みち} の {図|ず} {二枚|にまい} の {説明|せつめい} 。'),
           evidence: [{ k: 'objects', title: T('The two charts', '{図|ず} {二枚|にまい}'), items: [{ shape: 'path', name: T('chart A', '{図|ず} A'), desc: T('the causeway drawn as a path across the sand', '{砂|すな} の {上|うえ} に {道|みち} が {描|か}いて ある') }, { shape: 'nopath', name: T('chart B', '{図|ず} B'), desc: T('only water where the causeway runs', '{道|みち} の ところ が {全部|ぜんぶ} {水|みず}') }] }],
-          notice: { title: T('Caption under chart A', '{図|ず} A の {説明|せつめい}'), segs: [
+          notice: { en: 'Chart at high tide. It shows a path you can cross.', title: T('Caption under chart A', '{図|ず} A の {説明|せつめい}'), segs: [
             { jp: '{満潮時|まんちょうじ}', bad: true, options: [o('{干潮時|かんちょうじ}', 'at low tide', true), o('{引|ひ}き{潮|しお} の {時|とき}', 'when the tide is out', true, 'Also right, in plainer words.'), o('{満潮時|まんちょうじ}', 'at high tide', false, 'At high tide the causeway is under water, as chart B shows.'), o('{満|み}ち{潮|しお} の {時|とき}', 'when the tide comes in', false, 'That describes chart B, not A.')] },
             { jp: 'の {図|ず} 。' },
             { jp: '{渡|わた}れる {道|みち} が {描|か}いて ある 。', ok: 'Right: chart A shows the path.' },
@@ -87532,7 +88714,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         F: {
           purpose: T('A note for the inn\'s door: market day.', '{宿|やど} の {戸|と} の メモ ： {市|いち} の {日|ひ} 。'),
           evidence: [{ k: 'table', title: T('Market schedule', '{市|いち} の {予定|よてい}'), head: [T('what', 'なに'), T('day', '{日|ひ}')], rows: [[T('market', '{市|いち}'), T('Thursday', '{木曜日|もくようび}')]] }],
-          notice: { title: T('The note', 'メモ'), segs: [
+          notice: { en: 'The market is on Wednesday.', title: T('The note', 'メモ'), segs: [
             { jp: '{市|いち} は' },
             { jp: '{水曜日|すいようび}', bad: true, options: [o('{木曜日|もくようび}', 'Thursday', true), o('{水曜日|すいようび}', 'Wednesday', false, 'The schedule says Thursday.'), o('{金曜日|きんようび}', 'Friday', false, 'The schedule says Thursday.')] },
             { jp: 'です 。' },
@@ -87545,7 +88727,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         E: {
           purpose: T('A board at the landing listing the ferry days.', '{渡|わた}し{船|ぶね} の {日|ひ} を {書|か}いた {渡|わた}し{場|ば} の {板|いた} 。'),
           evidence: [{ k: 'table', title: T('Ferry schedule', '{渡|わた}し{船|ぶね} の {予定|よてい}'), head: [T('day', '{曜日|ようび}'), T('ferry', '{船|ふね}')], rows: [[T('Mon', '{月|げつ}'), T('runs', '{出|で}る')], [T('Wed', '{水|すい}'), T('runs', '{出|で}る')], [T('Fri', '{金|きん}'), T('runs', '{出|で}る')], [T('other days', 'ほか の {日|ひ}'), T('no ferry', '{出|で}ない')]] }],
-          notice: { title: T('The board', '{板|いた}'), segs: [
+          notice: { en: 'The ferry runs on Monday, Wednesday and Saturday.', title: T('The board', '{板|いた}'), segs: [
             { jp: '{渡|わた}し{船|ぶね} は' },
             { jp: '{月曜日|げつようび} 、 {水曜日|すいようび} 、', ok: 'Right: Monday and Wednesday both run.' },
             { jp: '{土曜日|どようび}', bad: true, options: [o('{金曜日|きんようび}', 'Friday', true), o('{土曜日|どようび}', 'Saturday', false, 'No ferry runs on Saturday.'), o('{日曜日|にちようび}', 'Sunday', false, 'The schedule\'s third day is Friday.')] },
@@ -87559,7 +88741,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         I: {
           purpose: T('This month\'s market notice in the square.', '{広場|ひろば} の {今月|こんげつ} の {市|いち} の お{知|し}らせ 。'),
           evidence: [{ k: 'table', title: T('Market days this month', '{今月|こんげつ} の {市|いち} の {日|ひ}'), head: [T('market', '{市|いち}'), T('date', '{日付|ひづけ}')], rows: [[T('first', '{一回目|いっかいめ}'), T('the 5th', '{五日|いつか}')], [T('second', '{二回目|にかいめ}'), T('the 25th', '{二十五日|にじゅうごにち}')]] }],
-          notice: { title: T('Notice', 'お{知|し}らせ'), segs: [
+          notice: { en: 'This month\'s markets are on the 5th and the 15th.', title: T('Notice', 'お{知|し}らせ'), segs: [
             { jp: '{今月|こんげつ} の {市|いち} は 、' },
             { jp: '{五日|いつか} と', ok: 'Right: the first market is on the 5th.' },
             { jp: '{十五日|じゅうごにち}', bad: true, options: [o('{二十五日|にじゅうごにち}', 'the 25th', true), o('{十五日|じゅうごにち}', 'the 15th', false, 'The second market is on the 25th.'), o('{二十日|はつか}', 'the 20th', false, 'The schedule says the 25th.')] },
@@ -87573,7 +88755,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         A: {
           purpose: T('The notice for the monthly reading of the new chronicle.', '{新|あたら}しい {年代記|ねんだいき} を {読|よ}む {月例|げつれい} の {会|かい} の {告知|こくち} 。'),
           evidence: [{ k: 'table', title: T('The Chronicle Hall\'s calendar', '{記録堂|きろくどう} の {予定表|よていひょう}'), head: [T('event', '{行事|ぎょうじ}'), T('when', '{日時|にちじ}')], rows: [[T('chronicle reading', '{読|よ}む {会|かい}'), T('every month, 2nd Saturday', '{毎月|まいつき} {第二|だいに} {土曜日|どようび}')], [T('hall closed', '{休館|きゅうかん}'), T('every month, 3rd Saturday', '{毎月|まいつき} {第三|だいさん} {土曜日|どようび}')]] }],
-          notice: { title: T('Notice', '{告知|こくち}'), segs: [
+          notice: { en: 'The chronicle reading is held on the third Saturday of every month.', title: T('Notice', '{告知|こくち}'), segs: [
             { jp: '{年代記|ねんだいき} を {読|よ}む {会|かい} は 、' },
             { jp: '{毎月|まいつき}' },
             { jp: '{第三|だいさん}', bad: true, options: [o('{第二|だいに}', 'second', true), o('{第三|だいさん}', 'third', false, 'The third Saturday is when the hall is closed.'), o('{第一|だいいち}', 'first', false, 'The calendar says the second Saturday.')] },
@@ -87596,7 +88778,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         F: {
           purpose: T('For ferry passengers: wait on the pier until your name is called.', '{船|ふね} の お{客|きゃく} へ ： {名前|なまえ} を よばれる まで 、 {桟橋|さんばし} で まつ 。'),
           evidence: [{ k: 'note', title: T('What the ferryman needs', '{船頭|せんどう} の {頼|たの}み'), text: T('Passengers must wait on the pier until called.', 'お{客|きゃく} は 、 よばれる まで {桟橋|さんばし} で まって ほしい 。') }],
-          notice: { title: T('The sign', '{案内|あんない}'), segs: [{ jp: 'まって ください 。' }] },
+          notice: { en: 'Please wait.', title: T('The sign', '{案内|あんない}'), segs: [{ jp: 'まって ください 。' }] },
           find: { prompt: T('What does the sign leave out?', 'この {案内|あんない} に は 、 {何|なに} が {足|た}りない ？'), options: [
             { en: 'Where to wait, and until when', jp: 'どこ で 、 いつ まで', ok: true },
             { en: 'Nothing: it is clear', jp: '{何|なに} も {足|た}りない もの は ない', ok: false, why: { en: 'Passengers could wait anywhere, for ever. The ferryman needs the pier and "until called".' } },
@@ -87615,7 +88797,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         E: {
           purpose: T('For visitors to the Records Hall with a request.', '{記録館|きろくかん} に {頼|たの}み が ある {人|ひと} へ 。'),
           evidence: [{ k: 'note', title: T('How requests work', '{頼|たの}み の {流|なが}れ'), text: T('Take a number at the counter, then wait in the corridor until it is called.', '{受付|うけつけ} で {番号|ばんごう} を {取|と}り 、 {呼|よ}ばれる まで {廊下|ろうか} で {待|ま}つ 。') }],
-          notice: { title: T('The sign', '{案内|あんない}'), segs: [{ jp: '{番号|ばんごう} を {取|と}って 、 お{待|ま}ち ください 。' }] },
+          notice: { en: 'Please take a number and wait.', title: T('The sign', '{案内|あんない}'), segs: [{ jp: '{番号|ばんごう} を {取|と}って 、 お{待|ま}ち ください 。' }] },
           find: { prompt: T('What is missing for a visitor?', '{来|き}た {人|ひと} に は 、 {何|なに} が {足|た}りない ？'), options: [
             { en: 'Where to take the number, and where to wait', jp: 'どこ で {取|と}って 、 どこ で {待|ま}つ か', ok: true },
             { en: 'The opening hours', jp: '{開|あ}いて いる {時間|じかん}', ok: false, why: { en: 'Useful elsewhere, but the sign\'s job is the request procedure: the counter and the corridor.' } },
@@ -87634,7 +88816,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         I: {
           purpose: T('For ferry passengers carrying luggage.', '{荷物|にもつ} を {持|も}った {船|ふね} の {客|きゃく} へ 。'),
           evidence: [{ k: 'note', title: T('The ferryman\'s rule', '{船頭|せんどう} の きまり'), text: T('Leave large luggage at the shed before boarding; collect it at the shed on the other side.', '{大|おお}きな {荷物|にもつ} は {乗|の}る {前|まえ} に {小屋|こや} に {預|あず}け 、 {向|む}こう {岸|ぎし} の {小屋|こや} で {受|う}け{取|と}る 。') }],
-          notice: { title: T('Notice', 'お{知|し}らせ'), segs: [{ jp: 'お{荷物|にもつ} に ご{注意|ちゅうい} ください 。' }] },
+          notice: { en: 'Please mind your luggage.', title: T('Notice', 'お{知|し}らせ'), segs: [{ jp: 'お{荷物|にもつ} に ご{注意|ちゅうい} ください 。' }] },
           find: { prompt: T('Why doesn\'t this notice do its job?', 'この お{知|し}らせ は 、 なぜ {役|やく} に {立|た}たない ？'), options: [
             { en: 'It warns, but never says what to do with the luggage', jp: '{注意|ちゅうい} する だけ で 、 {荷物|にもつ} を どう する か {書|か}いて いない', ok: true },
             { en: 'It is too polite', jp: '{丁寧|ていねい} すぎる', ok: false, why: { en: 'The politeness is fine for a public notice. What it lacks is the action.' } },
@@ -87653,7 +88835,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         A: {
           purpose: T('For villagers who lent things to the festival.', '{祭|まつ}り に {品物|しなもの} を {貸|か}した {里|さと} の {人|ひと} へ 。'),
           evidence: [{ k: 'note', title: T('What the committee decided', '{係|かかり} の {決|き}めた こと'), text: T('Collect lent items at the meeting house by the 10th. After that, they are kept at the post house.', '{貸|か}して もらった {品|しな} は 、 {十日|とおか} まで に {集会所|しゅうかいじょ} で {返|かえ}す 。 {以後|いご} は {郵便所|ゆうびんじょ} で {預|あず}かる 。') }],
-          notice: { title: T('Notice', 'お{知|し}らせ'), segs: [{ jp: 'お{貸|か}し いただいた {品|しな} に つきまして は 、 {後日|ごじつ} ご{連絡|れんらく} {申|もう}し{上|あ}げます 。' }] },
+          notice: { en: 'Regarding the items you kindly lent us, we will contact you at a later date.', title: T('Notice', 'お{知|し}らせ'), segs: [{ jp: 'お{貸|か}し いただいた {品|しな} に つきまして は 、 {後日|ごじつ} ご{連絡|れんらく} {申|もう}し{上|あ}げます 。' }] },
           find: { prompt: T('What does the notice fail to tell its readers?', 'この お{知|し}らせ に {欠|か}けて いる の は ？'), options: [
             { en: 'Where and by when to collect their things — and what happens after', jp: 'いつ まで に どこ で {受|う}け{取|と}る か 、 その {後|あと} どう なる か', ok: true },
             { en: 'An apology for the delay', jp: '{遅|おく}れ の お{詫|わ}び', ok: false, why: { en: 'There is no delay to apologise for. The readers need a place and a deadline.' } },
@@ -87680,7 +88862,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         F: {
           purpose: T('A tag for Tokuji\'s two ropes.', 'トクジ の {縄|なわ} {二本|にほん} の {札|ふだ} 。'),
           evidence: [{ k: 'measure', title: T('The two ropes', '{縄|なわ} {二本|にほん}'), unit: T('m', 'メートル'), items: [{ name: T('red rope', 'あかい {縄|なわ}'), value: 5 }, { name: T('white rope', 'しろい {縄|なわ}'), value: 3 }], alt: 'The red rope is 5 metres; the white rope is 3 metres.' }],
-          notice: { title: T('The tag', '{札|ふだ}'), segs: [
+          notice: { en: 'The white rope is longer.', title: T('The tag', '{札|ふだ}'), segs: [
             { jp: 'しろい {縄|なわ} の {方|ほう} が', bad: true, options: [o('あかい {縄|なわ} の {方|ほう} が', 'the red rope', true), o('しろい {縄|なわ} の {方|ほう} が', 'the white rope', false, 'The white rope is the shorter one.')] },
             { jp: 'ながい です 。', bad: true, options: [o('みじかい です 。', 'is shorter', true), o('ながい です 。', 'is longer', false, 'Then the white rope would be longer — it isn\'t.')] },
           ] },
@@ -87692,7 +88874,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         E: {
           purpose: T('A sign at the crossroads: the nearer well.', '{分|わ}かれ{道|みち} の {案内|あんない} ： {近|ちか}い {方|ほう} の {井戸|いど} 。'),
           evidence: [{ k: 'measure', title: T('Distance from the crossroads', '{分|わ}かれ{道|みち} から の {距離|きょり}'), unit: T('m', 'メートル'), items: [{ name: T('east well', '{東|ひがし} の {井戸|いど}'), value: 200 }, { name: T('west well', '{西|にし} の {井戸|いど}'), value: 500 }], alt: 'The east well is 200 metres away; the west well is 500 metres away.' }],
-          notice: { title: T('The sign', '{案内|あんない}'), segs: [
+          notice: { en: 'The west well is nearer.', title: T('The sign', '{案内|あんない}'), segs: [
             { jp: '{西|にし} の {井戸|いど} の {方|ほう} が', bad: true, options: [o('{東|ひがし} の {井戸|いど} の {方|ほう} が', 'the east well', true), o('{西|にし} の {井戸|いど} の {方|ほう} が', 'the west well', false, 'The west well is the farther one.')] },
             { jp: '{近|ちか}い です 。', bad: true, options: [o('{遠|とお}い です 。', 'is farther', true), o('{近|ちか}い です 。', 'is nearer', false, 'Then the west well would be nearer — it isn\'t.')] },
           ] },
@@ -87704,7 +88886,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         I: {
           purpose: T('A note in the harbour register about two boats.', '{港|みなと} の {帳面|ちょうめん} の 、 {船|ふね} {二|に}{艘|そう} に ついて の {書|か}き{込|こ}み 。'),
           evidence: [{ k: 'measure', title: T('Length of the boats', '{船|ふね} の {長|なが}さ'), unit: T('m', 'メートル'), items: [{ name: T('the ferry', '{渡|わた}し{船|ぶね}'), value: 12 }, { name: T('Tokuji\'s boat', 'トクジ の {舟|ふね}'), value: 6 }], alt: 'The ferry is 12 metres long; Tokuji\'s boat is 6 metres.' }],
-          notice: { title: T('Register note', '{帳面|ちょうめん} の {書|か}き{込|こ}み'), segs: [
+          notice: { en: 'The ferry is smaller than Tokuji\'s boat. It is about twice the size.', title: T('Register note', '{帳面|ちょうめん} の {書|か}き{込|こ}み'), segs: [
             { jp: '{渡|わた}し{船|ぶね} は' },
             { jp: 'トクジ さん の {舟|ふね} より' },
             { jp: '{小|ちい}さい 。', bad: true, options: [o('{大|おお}きい 。', 'bigger', true), o('{長|なが}い 。', 'longer', true, 'Also right: the measure given is length.'), o('{小|ちい}さい 。', 'smaller', false, 'The ferry is twice as long.'), o('{同|おな}じ くらい だ 。', 'about the same', false, '12 metres and 6 metres are not the same.')] },
@@ -87718,7 +88900,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         A: {
           purpose: T('Advice posted at the Lanternfall gate for travellers to the Archive.', '{灯落|ひおち} の {門|もん} に {貼|は}られた 、 {書庫|しょこ} へ {行|い}く {旅人|たびびと} へ の {助言|じょげん} 。'),
           evidence: [{ k: 'measure', title: T('Walking time to the Archive', '{書庫|しょこ} まで の {時間|じかん}'), unit: T('hours', '{時間|じかん}'), items: [{ name: T('the lantern road', '{灯|ひ} の {道|みち}'), value: 2 }, { name: T('the mountain path', '{山道|やまみち}'), value: 3 }], alt: 'The lantern road takes 2 hours; the mountain path takes 3 hours.' }],
-          notice: { title: T('Advice', '{助言|じょげん}'), segs: [
+          notice: { en: 'The mountain path doesn\'t take as long as the lantern road.', title: T('Advice', '{助言|じょげん}'), segs: [
             { jp: '{山道|やまみち} は' },
             { jp: '{灯|ひ} の {道|みち} ほど' },
             { jp: '{時間|じかん} が かからない 。' },
@@ -87749,7 +88931,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         F: {
           purpose: T('A short version of the path rule for the inn\'s board.', '{宿|やど} の {板|いた} に {書|か}く 、 {道|みち} の きまり を みじかく した もの 。'),
           evidence: [{ k: 'note', title: T('The original rule', 'もと の きまり'), text: T('On rainy days, please use the back path.', 'あめ の {日|ひ} は 、 {裏|うら} の {道|みち} を つかって ください 。') }],
-          notice: { title: T('The short version', 'みじかく した もの'), segs: [{ jp: '{裏|うら} の {道|みち} を' }, { jp: 'つかって ください 。' }] },
+          notice: { en: 'Please use the back path.', title: T('The short version', 'みじかく した もの'), segs: [{ jp: '{裏|うら} の {道|みち} を' }, { jp: 'つかって ください 。' }] },
           find: { prompt: T('What did the short version leave out?', 'みじかく した もの は 、 {何|なに} を {落|お}とした ？'), options: [
             { en: 'When: only on rainy days', jp: 'いつ か ： あめ の {日|ひ} だけ', ok: true },
             { en: 'Which path', jp: 'どの {道|みち} か', ok: false, why: { en: 'It still says the back path.' } },
@@ -87763,7 +88945,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         E: {
           purpose: T('A summary of Tamotsu\'s rule for the water gate.', 'タモツ の {水門|すいもん} の きまり の まとめ 。'),
           evidence: [{ k: 'note', title: T('Tamotsu\'s rule', 'タモツ の きまり'), text: T('If it rains three days running, open the water gate halfway.', '{雨|あめ} が {三日|みっか} {続|つづ}いたら 、 {水門|すいもん} を {半分|はんぶん} {開|あ}けて ください 。') }],
-          notice: { title: T('The summary', 'まとめ'), segs: [{ jp: '{水門|すいもん} を' }, { jp: '{半分|はんぶん} {開|あ}けて ください 。' }] },
+          notice: { en: 'Please open the water gate halfway.', title: T('The summary', 'まとめ'), segs: [{ jp: '{水門|すいもん} を' }, { jp: '{半分|はんぶん} {開|あ}けて ください 。' }] },
           find: { prompt: T('What did the summary lose?', 'まとめ で {何|なに} が {消|き}えた ？'), options: [
             { en: 'The condition: after three days of rain', jp: '{条件|じょうけん} ： {雨|あめ} が {三日|みっか} {続|つづ}いたら', ok: true },
             { en: 'How far to open it', jp: 'どの くらい {開|あ}ける か', ok: false, why: { en: '"Halfway" is still there.' } },
@@ -87777,7 +88959,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         I: {
           purpose: T('The short label Mio stuck on a fever remedy.', 'ミオ が {熱|ねつ} の {薬|くすり} に {貼|は}った {短|みじか}い ラベル 。'),
           evidence: [{ k: 'note', title: T('Mio\'s instructions', 'ミオ の {説明|せつめい}'), text: T('Only when there is a fever: take this twice a day.', '{熱|ねつ} が ある {時|とき} だけ 、 この {薬|くすり} を {一日|いちにち} {二回|にかい} {飲|の}んで ください 。') }],
-          notice: { title: T('The label', 'ラベル'), segs: [{ jp: 'この {薬|くすり} を' }, { jp: '{一日|いちにち} {二回|にかい}' }, { jp: '{飲|の}んで ください 。' }] },
+          notice: { en: 'Take this medicine twice a day.', title: T('The label', 'ラベル'), segs: [{ jp: 'この {薬|くすり} を' }, { jp: '{一日|いちにち} {二回|にかい}' }, { jp: '{飲|の}んで ください 。' }] },
           find: { prompt: T('What has the label dropped?', 'ラベル から {何|なに} が {抜|ぬ}けた ？'), options: [
             { en: 'Only when there is a fever', jp: '{熱|ねつ} が ある {時|とき} だけ', ok: true },
             { en: 'How many times a day', jp: '{一日|いちにち} {何回|なんかい} か', ok: false, why: { en: '"Twice a day" is still on the label.' } },
@@ -87791,7 +88973,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         A: {
           purpose: T('The harbour office\'s summary of Ōmi\'s ruling for the board.', '{港|みなと} の {掲示板|けいじばん} に {載|の}せる 、 オウミ の {決定|けってい} の {要約|ようやく} 。'),
           evidence: [{ k: 'note', title: T('Ōmi\'s ruling', 'オウミ の {決定|けってい}'), text: T('Night sailings are permitted, provided there is no fog.', '{霧|きり} が {出|で}て いない {限|かぎ}り 、 {夜|よる} の {出航|しゅっこう} を {認|みと}める 。') }],
-          notice: { title: T('Summary for the board', '{掲示|けいじ} {用|よう} の {要約|ようやく}'), segs: [{ jp: '{夜|よる} の {出航|しゅっこう} を' }, { jp: '{認|みと}める 。' }] },
+          notice: { en: 'Night sailings are permitted.', title: T('Summary for the board', '{掲示|けいじ} {用|よう} の {要約|ようやく}'), segs: [{ jp: '{夜|よる} の {出航|しゅっこう} を' }, { jp: '{認|みと}める 。' }] },
           find: { prompt: T('What has the summary lost?', '{要約|ようやく} で {失|うしな}われた の は ？'), options: [
             { en: 'The proviso: only while there is no fog', jp: '{但|ただ}し{書|が}き ： {霧|きり} が {出|で}て いない {限|かぎ}り', ok: true },
             { en: 'Who decided it', jp: '{誰|だれ} が {決|き}めた か', ok: false, why: { en: 'Useful, but the board\'s readers act on the rule. The missing proviso changes what the rule allows.' } },
@@ -87819,7 +89001,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
           purpose: T('A delivery slip written from Hana\'s request.', 'ハナ の {頼|たの}み から {書|か}いた {配達|はいたつ} の {紙|かみ} 。'),
           evidence: [{ k: 'note', title: T('Hana\'s request', 'ハナ の {頼|たの}み'), text: T('Please deliver the box tomorrow.', 'あした 、 はこ を とどけて ください 。') }],
           insufficient: true,
-          notice: { title: T('The delivery slip', '{配達|はいたつ} の {紙|かみ}'), segs: [{ jp: 'あした 、' }, { jp: 'あおい はこ を' }, { jp: '{宿|やど} へ 。' }] },
+          notice: { en: 'Tomorrow: the blue box, to the inn.', title: T('The delivery slip', '{配達|はいたつ} の {紙|かみ}'), segs: [{ jp: 'あした 、' }, { jp: 'あおい はこ を' }, { jp: '{宿|やど} へ 。' }] },
           repair: { kind: 'ask', prompt: T('Write a question for Hana.', 'ハナ さん に {聞|き}きましょう 。'), replies: [
             ask('which', ['どの はこ です か 。'], 'Which box is it?'),
             ask('where', ['どこ に', 'とどけます か 。'], 'Where should I deliver it?'),
@@ -87833,7 +89015,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
           purpose: T('An order slip filled in from Ume\'s note.', 'ウメ の メモ から {書|か}いた {注文|ちゅうもん} の {紙|かみ} 。'),
           evidence: [{ k: 'note', title: T('Ume\'s note', 'ウメ の メモ'), text: T('Send the usual amount of rope up to the terraces.', 'いつも の {分|ぶん} の {縄|なわ} を 、 {段々畑|だんだんばたけ} へ {送|おく}って おくれ 。') }],
           insufficient: true,
-          notice: { title: T('The order slip', '{注文|ちゅうもん} の {紙|かみ}'), segs: [{ jp: '{縄|なわ}' }, { jp: '{十本|じゅっぽん}' }, { jp: '{段々畑|だんだんばたけ} へ' }] },
+          notice: { en: 'Rope: ten, to the terraces.', title: T('The order slip', '{注文|ちゅうもん} の {紙|かみ}'), segs: [{ jp: '{縄|なわ}' }, { jp: '{十本|じゅっぽん}' }, { jp: '{段々畑|だんだんばたけ} へ' }] },
           repair: { kind: 'ask', prompt: T('Ask Ume what you need to know.', '{知|し}りたい こと を ウメ さん に {聞|き}きましょう 。'), replies: [
             ask('polite', ['「 いつも の {分|ぶん} 」 は', '{何本|なんぼん} です か 。'], 'How many is "the usual amount"?'),
             ask('request', ['いつも の {本数|ほんすう} を', '{教|おし}えて ください 。'], 'Please tell me the usual number.'),
@@ -87849,7 +89031,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
           purpose: T('A ferry booking written from a message left with Shiori.', 'シオリ に {預|あず}けられた {伝言|でんごん} から {書|か}いた {渡|わた}し{船|ぶね} の {予約|よやく} 。'),
           evidence: [{ k: 'note', title: T('The message', '{伝言|でんごん}'), text: T('Two of us want to cross next week. Whichever day is fine.', '{来週|らいしゅう} 、 {二人|ふたり} で {渡|わた}りたい 。 {日|ひ} は いつ でも いい 。') }, { k: 'table', title: T('Ferry days next week', '{来週|らいしゅう} の {渡|わた}し{船|ぶね}'), head: [T('day', '{曜日|ようび}'), T('seats left', '{空|あ}き')], rows: [[T('Mon', '{月|げつ}'), T('2', '{二|ふた}つ')], [T('Wed', '{水|すい}'), T('2', '{二|ふた}つ')], [T('Fri', '{金|きん}'), T('5', '{五|いつ}つ')]] }],
           insufficient: true,
-          notice: { title: T('The booking', '{予約|よやく}'), segs: [{ jp: '{月曜日|げつようび} の {船|ふね} 、' }, { jp: '{二人|ふたり} 。' }, { jp: '{名前|なまえ} ： ── 。' }] },
+          notice: { en: 'Monday\'s ferry, two people. Name: —.', title: T('The booking', '{予約|よやく}'), segs: [{ jp: '{月曜日|げつようび} の {船|ふね} 、' }, { jp: '{二人|ふたり} 。' }, { jp: '{名前|なまえ} ： ── 。' }] },
           repair: { kind: 'ask', prompt: T('Write a question back to the sender.', '{伝言|でんごん} の {主|ぬし} に {聞|き}きましょう 。'), replies: [
             ask('polite', ['どの {日|ひ} が', 'よろしい です か 。'], 'Which day would you like?'),
             ask('name', ['お{名前|なまえ} と {日|ひ} を', '{教|おし}えて ください 。'], 'Please tell me your name and the day.'),
@@ -87865,7 +89047,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
           purpose: T('A notice drafted from a councillor\'s brief instruction.', '{議員|ぎいん} の {短|みじか}い {指示|しじ} から {作|つく}った {掲示|けいじ} の {案|あん} 。'),
           evidence: [{ k: 'note', title: T('The instruction, as written', '{指示|しじ} の {原文|げんぶん}'), text: T('Put up a notice about the meeting. The usual place; the time as discussed.', '{会合|かいごう} の {掲示|けいじ} を {出|だ}す こと 。 {場所|ばしょ} は {例|れい} の ところ 、 {時刻|じこく} は {先日|せんじつ} {話|はな}した とおり 。') }],
           insufficient: true,
-          notice: { title: T('The draft notice', '{掲示|けいじ} の {案|あん}'), segs: [{ jp: '{会合|かいごう} は' }, { jp: '{議会堂|ぎかいどう} にて 、' }, { jp: '{午後|ごご} {三時|さんじ} より {行|おこな}います 。' }] },
+          notice: { en: 'The meeting will be held at the Council Chamber from three in the afternoon.', title: T('The draft notice', '{掲示|けいじ} の {案|あん}'), segs: [{ jp: '{会合|かいごう} は' }, { jp: '{議会堂|ぎかいどう} にて 、' }, { jp: '{午後|ごご} {三時|さんじ} より {行|おこな}います 。' }] },
           repair: { kind: 'ask', prompt: T('Write the question that would let you finish the notice.', '{掲示|けいじ} を {仕上|しあ}げる ため の {質問|しつもん} を {書|か}きましょう 。'), replies: [
             ask('formal', ['「 {例|れい} の ところ 」 と {時刻|じこく} に つき 、', 'ご{確認|かくにん} いただけます でしょう か 。'], 'Could you confirm "the usual place" and the time?'),
             ask('polite', ['{場所|ばしょ} と {時刻|じこく} を', '{具体的|ぐたいてき} に {教|おし}えて ください 。'], 'Please tell me the place and time specifically.'),
@@ -88228,6 +89410,42 @@ var RB = (globalThis.RB = globalThis.RB || {});
       explain: { en: 'Teaching examples, not lines from the story. いいです means "it is fine": fine to borrow (a yes), or fine as things are (a polite no). The question and words like ええ, いえ and もう decide which.' },
     },
   ];
+})(RB.content);
+
+
+/* ==== src/content/practice_b/40_place.js ==== */
+/* The correspondence furniture for practice suite B (Practice addendum §17.1, §18.1):
+ * the post box in Shino's Post House, Cinder Orchard (map co.post, prop 'mailbox' at
+ * tile 7,5). It had no interaction of its own and carries no quest. A visitor reaches it
+ * from the floor tiles around it (6,5 facing right; 7,4 facing down; 7,6 facing up).
+ * Haimi has fast travel ('cinder'), so it stays reachable after the journey's end.
+ *
+ * The scene offers the practice letters after the journey's end (post) and the
+ * proofreader's tray from the resolution of Chapter 2 (ch2_done); the activity starts
+ * once the scene has ended (RB.practiceB.launchAfterScene via !hook pb_open). */
+var RB = (globalThis.RB = globalThis.RB || {});
+(function (C) {
+  'use strict';
+  const m = C.maps && C.maps['co.post'];
+  if (m) {
+    const box = (m.props || []).find((p) => p.p === 'mailbox' && p.x === 7 && p.y === 5);
+    if (box && !box.scene && !box.text) box.scene = 'pb.postbox';
+  }
+  RB.script.add(`
+@scene pb.postbox
+narr: {郵便|ゆうびん} の {箱|はこ} 。 {横|よこ} の {棚|たな} に 、 {練習|れんしゅう} {用|よう} の {便箋|びんせん} と 、 {校正|こうせい} の {盆|ぼん} が {置|お}いて ある 。 || The post box. On the shelf beside it: practice letter paper, and a proofreader's tray.
+?(!post&!ch2_done) narr: {今|いま} は 、 {使|つか}う {用事|ようじ} が ない 。 || There is nothing for you to use here yet.
+!choice
+* [post] {手紙|てがみ} の {返事|へんじ} を {書|か}く || Answer the villagers' letters -> letters
+* [ch2_done] {校正|こうせい} の {盆|ぼん} を {見|み}る || Look at the proofreader's tray -> proof
+* {今|いま} は いい || Not now -> end
+:letters
+!hook pb_open letters
+!end
+:proof
+!hook pb_open proofreading
+!end
+`, 'practice_b/40_place');
 })(RB.content);
 
 

@@ -28,7 +28,8 @@ RB.ui.menu = (function () {
     notebook: ['words'], words: ['words'], guide: ['words', 'guide'], items: ['satchel'], satchel: ['satchel'], map: ['map'],
     company: ['company'], companion: ['company', 'companion'], pet: ['company', 'pet'], pets: ['company', 'pet'], memories: ['company', 'memories'],
     cases: ['journey', 'cases'], keepsakes: ['journey', 'keepsakes'], bookmarks: ['words', 'bookmarks'], creatures: ['words', 'creatures'], known: ['map', 'known'],
-    practice: ['words', 'practice'],
+    practice: ['words', 'practice'], letters: ['words', 'letters'], compare: ['words', 'compare'], // practice suite B pages
+
     settings: '@settings', save: '@save',
   };
   // pages added by later systems: journey views, words pages, map views

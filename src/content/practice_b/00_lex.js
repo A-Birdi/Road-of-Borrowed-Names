@@ -71,5 +71,6 @@ if (RB.lex && RB.lex.add) {
 ふまえる||v1|A|to take into account
 二通り|ふたとおり|n|I|two ways
 学習|がくしゅう|vs|I|learning, study
+校正|こうせい|vs|A|proofreading, correcting a text
 `), 'practice_b');
 }
