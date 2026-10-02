@@ -293,6 +293,8 @@ await test('three different fish complete Yasu\'s survey (Discover the waters): 
   // Words › Ways to practise: Begin here at the station (fishing does not need the companion beside you)
   await p.evaluate(() => RB.ui.menu.open('practice'));
   await p.waitForSelector('[data-pr-begin=fishing]');
+  const icons = await p.evaluate(() => [...document.querySelectorAll('.pr-index svg')].map((x) => Math.round(x.getBoundingClientRect().width)));
+  assert(icons.length && icons.every((w) => w > 0 && w < 40), 'the entry\'s icons are text-sized: ' + icons.join(','));
   await shot(p, 'words_ways_to_practise');
   await click(p, '[data-pr-begin=fishing]');
   await p.waitForSelector('.fish-panel [data-k=cast]', { timeout: 8000 });
@@ -307,8 +309,8 @@ await test('three different fish complete Yasu\'s survey (Discover the waters): 
     if (i < 2) await click(p, '.fish-panel [data-k=again]');
   }
   assert(new Set(got).size === 3, 'three different fish from three discovery catches: ' + got.join(','));
-  const st = await p.evaluate(() => ({ ribbon: RB.fishing.ribbon(RB.game.s), remarks: RB.ui.fishing.current().remarks, log: RB.ui.fishing.current().remarkLog }));
-  assert(st.ribbon, 'the rod ribbon is tied on');
+  const st = await p.evaluate(() => ({ ribbon: RB.fishing.ribbon(RB.game.s), onStage: RB.ui.fishing.current().ui.stage.state().ribbon, remarks: RB.ui.fishing.current().remarks, log: RB.ui.fishing.current().remarkLog }));
+  assert(st.ribbon && st.onStage, 'the rod ribbon is tied on, and drawn on the rod in this same outing: ' + JSON.stringify(st));
   assert(st.log.filter((k) => k === 'wait').length <= 2, 'at most two ambient remarks in a three-cast session: ' + JSON.stringify(st.log));
   await click(p, '.fish-panel [data-k=again]');
   await p.waitForSelector('.fish-panel [data-k=cast]');

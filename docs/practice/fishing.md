@@ -244,8 +244,8 @@ a paced attempt never touch mastery.
 
 Idempotency: `commitCatch(s, seq)` refuses any `seq <= lastCommittedCatchSeq` (reloads,
 repeated callbacks); finite milestones also use `RB.state.once('fish:first|survey|frame|spread')`.
-A saved cast in the water is offered on the next visit to its station ("Pick it up again —
-the same fish"); one at another station is let go safely. Old saves start empty with pace
+A saved cast in the water is offered on the next visit to its station ("Pick it up again" —
+the same fish is on the line — or "Let it go"); one at another station is let go safely. Old saves start empty with pace
 Off; unknown future fish ids are kept and shown as unavailable; a new campaign (New Game+
 included) carries nothing.
 

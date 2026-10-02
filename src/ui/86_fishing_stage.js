@@ -344,7 +344,13 @@ RB.fishStage = (function () {
         const L = Math.round(Math.min(AW, AH) * 0.42);
         tip = { x: hand.x + Math.cos(ang) * L, y: hand.y - Math.sin(ang) * L };
         rodLine(hand.x - Math.cos(ang) * 6, hand.y + Math.sin(ang) * 6, tip.x, tip.y);
-        if (ST.ribbon) { const rx = lerp(hand.x, tip.x, 0.22), ry = lerp(hand.y, tip.y, 0.22); R(rx, ry, 2, 2, '#c8344a'); R(rx + 2, ry + 1 + ((t / 500 | 0) & 1 && !reduce() ? 1 : 0), 2, 1, '#e05a6a'); R(rx - 1, ry + 2, 1, 2, '#a82a3c'); }
+        // the survey's ribbon: a red knot on the rod a little above the hand, two short tails (one stirs in the air)
+        if (ST.ribbon) {
+          const rx = Math.round(lerp(hand.x, tip.x, 0.24)), ry = Math.round(lerp(hand.y, tip.y, 0.24)), stir = ((t / 500 | 0) & 1) && !reduce() ? 1 : 0;
+          R(rx - 1, ry - 1, 3, 3, '#c8344a'); R(rx, ry - 1, 1, 1, '#e86a7a');
+          R(rx + 2, ry + 1 + stir, 3, 1, '#e05a6a'); R(rx + 4, ry + 2 + stir, 1, 1, '#c8344a');
+          R(rx - 1, ry + 2, 1, 3, '#a82a3c');
+        }
       } else {
         // the rod laid on the bank beside you, behind your feet
         rodLine(o.x - 34, o.y - 9, o.x + 30, o.y - 12);
@@ -717,7 +723,7 @@ RB.fishStage = (function () {
     return {
       el: wrap, go, set, event, say, text, layout,
       stats: () => JSON.parse(JSON.stringify(stats)),
-      state: () => ({ phase: ST.phase, comp, compBeh: ST.compBeh, pet: pet ? pet.species : null, patch: ST.patch, fish: ST.fish, situation: ST.situation, intent: ST.intent, q, AW, AH }),
+      state: () => ({ phase: ST.phase, ribbon: !!ST.ribbon, comp, compBeh: ST.compBeh, pet: pet ? pet.species : null, patch: ST.patch, fish: ST.fish, situation: ST.situation, intent: ST.intent, q, AW, AH }),
       destroy() { dead = true; if (raf) cancelAnimationFrame(raf); clearTimeout(sayT); if (ro) ro.disconnect(); figCache.clear(); wrap.remove(); capEl.remove(); },
     };
   }

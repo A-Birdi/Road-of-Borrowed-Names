@@ -134,3 +134,8 @@ body.reduced-motion .fs-say { transition: opacity 0.2s; transform: none; }
   .fs-caption { display: none; }
   .fish-panel { flex: 1 1 50%; padding: 6px 8px; }
 }
+
+/* Words › Ways to practise (the foundation's page, src/ui/68_practice_index.js, has no stylesheet of its
+ * own): its "where" line carries an inline icon that would otherwise grow to the page's width. Kept here,
+ * small and scoped to that page, until the page gets its own stylesheet (merge note). */
+.pr-index .entry .small svg { width: 1.05em; height: 1.05em; vertical-align: -0.15em; flex: none; }

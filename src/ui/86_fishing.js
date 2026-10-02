@@ -226,6 +226,8 @@ RB.ui.fishing = (function () {
     ui.panel('<p class="fp-status">' + L('release') + '</p>');
     await stage.go('release');
     if (!session.alive()) return 'leave';
+    // the survey's ribbon is tied on as the rod is picked up again (§8.1)
+    if (out.milestones.indexOf('survey') >= 0) stage.set({ ribbon: F.ribbon(s) });
     stage.go('after');
     for (;;) {
       const k3 = await ui.ask(afterHtml(C, out), ['again', 'review', 'reflect', 'leave']);
