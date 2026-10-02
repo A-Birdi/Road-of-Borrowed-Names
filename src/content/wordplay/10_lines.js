@@ -56,6 +56,7 @@ RB.content.wordplay = RB.content.wordplay || { lines: [], gestures: {}, reflecti
   ]);
   L('nao', 'loss', [
     { jp: '{俺|おれ} の {勝|か}ち だ な 。 でも 、 {最後|さいご} まで {道|みち} を {探|さが}して た の は {分|わ}かった 。', en: 'My win. But I could see you were looking for a way right to the end.' },
+    { expr: 'smile', jp: '{今回|こんかい} は {俺|おれ} が {逃|に}げ{切|き}った 。 {次|つぎ} は {分|わ}からない ぞ 。', en: 'This time I got away. Next time, who knows.' },
     { facts: { reason: 'terminal-n' }, jp: 'ん で {終|お}わった な 。 {次|つぎ} は その {前|まえ} に {出口|でぐち} を {探|さが}そう 。', en: 'It ended on ん. Next time we\'ll look for an exit before that.' },
     { facts: { reason: 'human-concession' }, jp: '{降参|こうさん} か 。 {了解|りょうかい} 。 {残|のこ}って た {言葉|ことば} 、 {後|あと} で {見|み}る か ？', en: 'Conceding? Understood. Want to look at the words that were left, after?' },
     { facts: { reason: 'terminal-n' }, jp: 'ん が {付|つ}いた な 。 {惜|お}しい 。 そこ まで の {手|て} は {悪|わる}く なかった 。', en: 'It ended in ん. A shame — the moves up to there weren\'t bad.' },
@@ -114,6 +115,7 @@ RB.content.wordplay = RB.content.wordplay || { lines: [], gestures: {}, reflecti
   ]);
   L('mio', 'loss', [
     { expr: 'smile', jp: '{私|わたし} の {勝|か}ち です 。 …… もう {一局|いっきょく} 、 {付|つ}き{合|あ}って くれます か 。', en: 'My win. …Will you keep me company for another?' },
+    { jp: '{今回|こんかい} は {私|わたし} が {勝|か}ちました 。 {楽|たの}しかった です 。 {本当|ほんとう} に 。', en: 'I won this time. It was fun. Truly.' },
     { facts: { reason: 'terminal-n' }, jp: 'ん で {終|お}わって しまいました ね 。 {次|つぎ} は 、 その {札|ふだ} を {最後|さいご} まで {取|と}って おきましょう 。', en: 'It ended on ん. Next time, let\'s hold that slip back to the very end.' },
     { facts: { reason: 'human-concession' }, jp: '{降参|こうさん} です ね 。 {分|わ}かりました 。 {残|のこ}って いた {札|ふだ} 、 {後|あと} で {一緒|いっしょ} に {見|み}ましょう か 。', en: 'You concede? All right. Shall we look at the slips that were left, afterwards?' },
     { facts: { reason: 'terminal-n' }, jp: 'ん の {札|ふだ} でした ね 。 {決|き}まり です から 、 {私|わたし} の {勝|か}ち です 。', en: 'That was an ん slip. Rules are rules, so it\'s my win.' },
@@ -172,6 +174,7 @@ RB.content.wordplay = RB.content.wordplay || { lines: [], gestures: {}, reflecti
   ]);
   L('ren', 'loss', [
     { jp: '{私|わたし} の {勝|か}ち です 。 {途中|とちゅう} まで は 、 {本当|ほんとう} に {分|わ}かりません でした 。', en: 'My win. Up to the middle, I genuinely couldn\'t tell.' },
+    { expr: 'smile', jp: '{今回|こんかい} は {私|わたし} の {記録|きろく} に {勝|か}ち が {一|ひと}つ 。 {次|つぎ} は どう なる か 。', en: 'One win in my record this time. As for next time, we\'ll see.' },
     { facts: { reason: 'terminal-n' }, expr: 'think', jp: 'ん で {終|お}わりました ね 。 {決|き}まり は {決|き}まり です が 、 {惜|お}しい 。', en: 'It ended on ん. Rules are rules, but that was close.' },
     { facts: { reason: 'human-concession' }, jp: '{降参|こうさん} 、 {承知|しょうち} しました 。 {残|のこ}って いた {言葉|ことば} は 、 {振|ふ}り{返|かえ}り で {見|み}られます 。', en: 'Concession noted. You can see the words that were left when we look back.' },
     { facts: { reason: 'terminal-n' }, jp: 'ん で {終|お}わる {言葉|ことば} でした 。 {私|わたし} の {勝|か}ち に {数|かぞ}えます が 、 {気|き} に しない で ください 。', en: 'That word ends in ん. It counts as my win, but don\'t let it trouble you.' },
@@ -230,6 +233,7 @@ RB.content.wordplay = RB.content.wordplay || { lines: [], gestures: {}, reflecti
   ]);
   L('suzu', 'loss', [
     { expr: 'smile', jp: '{私|わたし} の {勝|か}ち 。 でも 、 {途中|とちゅう} は {本当|ほんとう} に いい {勝負|しょうぶ} だった わ 。', en: 'My win. But it was a really good contest along the way.' },
+    { expr: 'laugh', jp: '{今日|きょう} の {拍手|はくしゅ} は {私|わたし} が もらう わ 。 {次|つぎ} は あなた の {番|ばん} かも ね 。', en: 'Today\'s applause goes to me. Next time it might be yours.' },
     { facts: { reason: 'terminal-n' }, jp: 'ん で {幕|まく} ね 。 {惜|お}しい ！ {次|つぎ} の {舞台|ぶたい} で {取|と}り{返|かえ}しましょう 。', en: 'It ended on ん. So close! Win it back at the next show.' },
     { facts: { reason: 'human-concession' }, jp: '{降参|こうさん} ね 。 {了解|りょうかい} 。 {楽屋|がくや} で {振|ふ}り{返|かえ}り しましょう か 。', en: 'Conceding? Understood. Shall we go over it backstage?' },
     { facts: { reason: 'terminal-n' }, jp: 'ん が {来|き}ちゃった わ ね 。 でも 、 {舞台|ぶたい} は {何度|なんど} でも {開|ひら}ける わ 。', en: 'Along came ん. But the stage can open as many times as we like.' },

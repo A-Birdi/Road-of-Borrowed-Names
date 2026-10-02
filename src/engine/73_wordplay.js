@@ -248,7 +248,8 @@ RB.wordplay = (function () {
     if (!bf.ok) return bf;
     const bank = bf.bank;
     const session = 'wp' + RB.practice.seq(s);
-    const st0 = pickStarter(s, bank, session);
+    // o.starter (tests, a demonstration): any entry; it is "certified" only if the bank certifies it
+    const st0 = o.starter && bank.entryById[o.starter] ? { id: o.starter, certified: (bank.starters || []).indexOf(o.starter) >= 0 } : pickStarter(s, bank, session);
     if (!st0) return { ok: false, why: 'This bank has no opening that leaves a reply.', code: 'nostarter' };
     const r = rec(s);
     const first = o.first === 'pc' || o.first === 'cpu' ? o.first : r.lastFirst ? (r.lastFirst === 'pc' ? 'cpu' : 'pc') : 'pc';
