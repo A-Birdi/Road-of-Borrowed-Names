@@ -150,7 +150,7 @@ RB.ui.wordplay = RB.ui.wordplay || {};
       '<p class="muted small">' + esc(WP().supportLabel(t.support)) + ' · Rules ' + esc(t.rules) + ' · Bank ' + esc(t.bank.id + ' v' + t.bank.version) + (t.moves.some((x) => x.prov) ? ' · opponent provisional (' + esc(t.ai) + ')' : '') + '</p>' +
       '<p class="muted small">A record of what was played. Reading it changes nothing.</p>' +
       '<ol class="wp-chain wp-review-chain">' + t.moves.map((x, k) => '<li class="wp-slip' + (k === i ? ' sel' : '') + (k < i ? ' before' : '') + '" data-actor="' + x.a + '"><button class="wp-turnbtn" data-wp-turn="' + k + '" aria-pressed="' + (k === i) + '">' +
-        '<span class="by">' + esc(ACTOR(t, x.a)) + '</span><span class="w">' + J(x.j || x.r) + '</span><span class="r" lang="ja">' + esc(x.r) + '</span><span class="m">' + esc(x.en || '') + '</span>' +
+        '<span class="by">' + esc(ACTOR(t, x.a)) + '</span><span class="w">' + J(x.j || x.r) + '</span><span class="r" lang="ja">' + (x.j && SH().norm(RB.ui.plainJp(x.j)) === x.r ? '' : esc(x.r)) + '</span><span class="m">' + esc(x.en || '') + '</span>' +
         (x.t && x.t !== 'ん' ? '<span class="t">→ ' + KANA(x.t) + '</span>' : '<span class="t">' + KANA('ん') + '</span>') + '</button></li>').join('') + '</ol>';
     // the selected turn: the required kana then, the words already used, and plain counts
     const req = i > 0 ? t.moves[i - 1].t : null;

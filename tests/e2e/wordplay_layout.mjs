@@ -35,7 +35,11 @@ async function toWebp(src, dst) {
   }, data);
   fs.writeFileSync(dst, Buffer.from(b64, 'base64'));
 }
-const shot = async (p, name) => { const f = path.join(OUT, name + '.png'); await p.evaluate(() => document.querySelectorAll('#overlay .notices > *').forEach((n) => n.remove())); await p.screenshot({ path: f }); if (DOCS) await toWebp(f, path.join(DOC, name + '.webp')); return f; };
+// the curated set kept in docs/screenshots/wordplay/ (everything is in tests/e2e/out/wordplay/)
+const DOC_SET = new Set(['at_table_nao_1280x800', 'at_table_mio_1280x800', 'at_table_ren_1280x800', 'at_table_suzu_1280x800',
+  'prep_mio_1280x800', 'table_suzu_390x844', 'table_nao_844x390', 'table_ren_320x640_text200', 'table_mio_320x640', 'choose_suzu_390x844',
+  'result_mio_1280x800', 'review_suzu_390x844', 'company_mio_1280x800', 'company_ren_320x640_text200', 'table_ren_ja_390x844']);
+const shot = async (p, name) => { const f = path.join(OUT, name + '.png'); await p.evaluate(() => document.querySelectorAll('#overlay .notices > *').forEach((n) => n.remove())); await p.screenshot({ path: f }); if (DOCS && DOC_SET.has(name)) await toWebp(f, path.join(DOC, name + '.webp')); return f; };
 
 async function begin(p, comp, o) {
   o = o || {};

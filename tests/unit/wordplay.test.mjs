@@ -193,6 +193,7 @@ export default async (t) => {
     RB.game.s = s3; const m3 = await WP.cpuChoose(s3);
     RB.game.s = s4; const m4 = await WP.cpuChoose(s4);
     t.ok(m3.edge === m4.edge, 'a pet or a decorative draw never changes the companion\'s choice');
+    t.ok(WP.ns(s3).active.starter === WP.ns(s4).active.starter && WP.ns(s3).active.bank.hash === WP.ns(s4).active.bank.hash, 'nor the bank or the starter (§26.3: a pet hidden or recoloured before a rematch)');
     // an opponent that returns nothing while safe replies exist never fakes a concession
     const s5 = fresh(); WP.start(s5, { band: 'pocket' }, { first: 'cpu' });
     SH.chooseMove = async () => ({ edge: null });

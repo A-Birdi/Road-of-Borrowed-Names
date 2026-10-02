@@ -3201,7 +3201,7 @@ body.reduced-motion .wv-w, body.reduced-motion .wv-t { transition: none; }
 
 /* ---- the table ----------------------------------------------------------------- */
 .wp-table { display: grid; gap: 10px; grid-template-columns: minmax(0, 1fr); grid-template-areas: 'scene' 'status' 'entry' 'chain' 'help'; }
-.wp-scene { grid-area: scene; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: 'cpu board pc' 'say say say' 'gest gest gest'; gap: 4px 10px; align-items: center; position: relative; }
+.wp-scene { grid-area: scene; display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; grid-template-areas: 'cpu board pc pet' 'say say say say' 'gest gest gest gest'; gap: 4px 10px; align-items: center; position: relative; }
 .wp-seat { margin: 0; text-align: center; font-size: 0.8em; color: var(--ink-3); }
 .wp-cpu { grid-area: cpu; }
 .wp-pc { grid-area: pc; }
@@ -3211,7 +3211,7 @@ body.reduced-motion .wv-w, body.reduced-motion .wv-t { transition: none; }
 .wp-slips .slip[data-actor="cpu"] { transform: rotate(-2deg); }
 .wp-slips .slip[data-actor="pc"] { transform: rotate(2deg); }
 .wp-slips .slip:last-child { border-color: var(--ribbon-deep); }
-.wp-pet { position: absolute; right: 2px; top: 60px; width: 40px; height: 40px; image-rendering: pixelated; }
+.wp-pet { grid-area: pet; align-self: end; width: 40px; height: 40px; image-rendering: pixelated; margin-bottom: 1.4em; }
 .wp-scene .wp-say { grid-area: say; min-height: 2.6em; }
 .wp-scene .wp-say:empty { display: none; }
 .wp-gesture { grid-area: gest; margin: 0; font-style: italic; }
@@ -3286,14 +3286,19 @@ button.wp-word[aria-disabled="true"] { color: var(--ink-3); text-decoration: lin
   .wp-gesture { display: none; }
   .wp-chain { max-height: 9em; }
 }
-@media (max-width: 420px) {
+/* phones: the required kana first; compact slips (who and the word on one line, reading and
+   meaning under it); the stage grid becomes a list of lines */
+@media (max-width: 600px) {
+  .wp-table { grid-template-areas: 'status' 'scene' 'entry' 'chain' 'help'; }
   .wp-face, .wp-face-pc { width: 56px; height: 56px; }
-  .wp-slip { grid-template-columns: 3.8em minmax(0, 1fr) auto; }
-  .wp-slip .r { grid-column: 2; }
-  .wp-slip .m { grid-column: 2 / -1; }
-  .wp-slip .t { grid-column: 3; }
-  .wp-word { grid-template-columns: minmax(0, auto) minmax(0, 1fr) auto; }
-  .wp-word .m { grid-column: 1 / -1; }
+  .wp-board { min-height: 40px; }
+  .wp-slip, .wp-review-chain .wp-turnbtn { grid-template-columns: minmax(0, 1fr) auto; }
+  .wp-slip .by, .wp-review-chain .wp-turnbtn .by { grid-column: 1 / -1; grid-row: auto; }
+  .wp-slip .w { grid-column: 1; }
+  .wp-slip .t { grid-column: 2; grid-row: 2; }
+  .wp-slip .r, .wp-slip .m, .wp-slip .also { grid-column: 1 / -1; }
+  .wp-word { grid-template-columns: minmax(0, 1fr) auto; }
+  .wp-word .r, .wp-word .m { grid-column: 1 / -1; }
 }
 
 /* gestures: short, finite, none with reduced motion */
@@ -3334,6 +3339,7 @@ body.reduced-motion .wp-seat.mv .wp-face, body.reduced-motion .wp-pet, body.redu
 .wp-cell[data-state="none"] { color: var(--ink-3); }
 .wp-cell[data-state="won"] { font-weight: 700; color: var(--ink); background: rgba(168, 62, 39, 0.07); }
 .wp-ink { display: block; font-size: 1.2em; line-height: 1; color: var(--ink-3); }
+.wp-grid td .lv { display: none; }
 .wp-ink.won { color: var(--vermilion); }
 .wp-mark { display: block; font-size: 0.75em; color: var(--ink-2); border-top: 1px dotted var(--rule); margin-top: 0.15em; }
 .wp-latest p { margin: 0.1em 0; }
@@ -3342,6 +3348,22 @@ body.reduced-motion .wp-seat.mv .wp-face, body.reduced-motion .wp-pet, body.redu
 .wp-receipts ul { padding-left: 1.1em; }
 .wp-receipts li { margin: 0.4em 0; }
 .wp-reflect .pbtn { margin-left: auto; }
+/* phones: the stage grid as a list of lines (band, then each level with its state) */
+@media (max-width: 600px) {
+  .wp-grid thead { display: none; }
+  .wp-grid, .wp-grid tbody, .wp-grid tr { display: block; width: 100%; }
+  .wp-grid tr { margin: 0 0 0.4em; border: 1px solid var(--rule); }
+  .wp-grid th[scope="row"] { display: block; border: 0; border-bottom: 1px solid var(--rule); }
+  .wp-grid td { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0 0.5em; border: 0; text-align: left; }
+  .wp-grid td .lv { display: inline; color: var(--ink-2); font-weight: 400; }
+  .wp-grid td .wp-ink { display: none; }
+  .wp-grid td .wp-mark { flex-basis: 100%; border: 0; margin: 0; }
+  .wp-review-chain .wp-turnbtn { grid-template-columns: minmax(0, 1fr) auto; }
+  .wp-review-chain .wp-turnbtn .by { grid-column: 1 / -1; }
+  .wp-review-chain .wp-turnbtn .w { grid-column: 1; }
+  .wp-review-chain .wp-turnbtn .t { grid-column: 2; grid-row: 2; }
+  .wp-review-chain .wp-turnbtn .r, .wp-review-chain .wp-turnbtn .m { grid-column: 1 / -1; }
+}
 </style>
 </head>
 <body>
@@ -53629,10 +53651,10 @@ RB.ui.wordplay = RB.ui.wordplay || {};
     // the nine stages (only this companion's; separate journeys keep their own)
     const cells = WP().cells(s, comp);
     h += '<table class="wp-grid"><caption class="sr">' + esc('Stage records with ' + (c ? c.name.en : comp)) + '</caption><thead><tr><th scope="col"><span class="sr">Words</span></th>' +
-      WP().LEVELS.map((l) => '<th scope="col">' + esc(WP().LEVEL[l].en) + '</th>').join('') + '</tr></thead><tbody>' +
-      WP().BANDS.map((b) => '<tr><th scope="row">' + esc(WP().BAND[b].en) + '</th>' + WP().LEVELS.map((l) => {
+      WP().LEVELS.map((l) => '<th scope="col">' + RB.ui.label(WP().LEVEL[l].jp, WP().LEVEL[l].en) + '</th>').join('') + '</tr></thead><tbody>' +
+      WP().BANDS.map((b) => '<tr><th scope="row">' + RB.ui.label(WP().BAND[b].jp, WP().BAND[b].en) + '</th>' + WP().LEVELS.map((l) => {
         const x = cells.find((y) => y.band === b && y.level === l);
-        return '<td class="wp-cell" data-state="' + x.state + '" data-code="' + x.code + '">' + STAMP[x.state] + '<span>' + lab(STATE_LABEL[x.state]) + '</span>' +
+        return '<td class="wp-cell" data-state="' + x.state + '" data-code="' + x.code + '"><span class="lv">' + RB.ui.label(WP().LEVEL[l].jp, WP().LEVEL[l].en) + '</span>' + STAMP[x.state] + '<span class="st">' + lab(STATE_LABEL[x.state]) + '</span>' +
           (x.cell && x.cell.noSuggest ? '<span class="wp-mark small" title="Also won without in-game word suggestions">no suggestions</span>' : '') + '</td>';
       }).join('') + '</tr>').join('') + '</tbody></table>';
     if (!any) h += '<p class="muted">No matches recorded.</p>';
@@ -53889,7 +53911,7 @@ RB.ui.wordplay = RB.ui.wordplay || {};
       '<p class="muted small">' + esc(WP().supportLabel(t.support)) + ' · Rules ' + esc(t.rules) + ' · Bank ' + esc(t.bank.id + ' v' + t.bank.version) + (t.moves.some((x) => x.prov) ? ' · opponent provisional (' + esc(t.ai) + ')' : '') + '</p>' +
       '<p class="muted small">A record of what was played. Reading it changes nothing.</p>' +
       '<ol class="wp-chain wp-review-chain">' + t.moves.map((x, k) => '<li class="wp-slip' + (k === i ? ' sel' : '') + (k < i ? ' before' : '') + '" data-actor="' + x.a + '"><button class="wp-turnbtn" data-wp-turn="' + k + '" aria-pressed="' + (k === i) + '">' +
-        '<span class="by">' + esc(ACTOR(t, x.a)) + '</span><span class="w">' + J(x.j || x.r) + '</span><span class="r" lang="ja">' + esc(x.r) + '</span><span class="m">' + esc(x.en || '') + '</span>' +
+        '<span class="by">' + esc(ACTOR(t, x.a)) + '</span><span class="w">' + J(x.j || x.r) + '</span><span class="r" lang="ja">' + (x.j && SH().norm(RB.ui.plainJp(x.j)) === x.r ? '' : esc(x.r)) + '</span><span class="m">' + esc(x.en || '') + '</span>' +
         (x.t && x.t !== 'ん' ? '<span class="t">→ ' + KANA(x.t) + '</span>' : '<span class="t">' + KANA('ん') + '</span>') + '</button></li>').join('') + '</ol>';
     // the selected turn: the required kana then, the words already used, and plain counts
     const req = i > 0 ? t.moves[i - 1].t : null;
@@ -54380,12 +54402,12 @@ RB.ui.wordplay = RB.ui.wordplay || {};
           const others = grp ? grp.entries.filter((x) => x !== h.entry).map((x) => wordOf(x)) : [];
           const by = h.actor === 'start' ? lab('starter') : h.actor === 'pc' ? lab('you') : esc(who(s));
           return '<li class="wp-slip' + (i === a.st.history.length - 1 ? ' last' : '') + '" data-actor="' + h.actor + '"><span class="by">' + by + '</span>' +
-            '<span class="w">' + J(w.jp) + '</span><span class="r" lang="ja">' + esc(h.reading) + '</span><span class="m">' + esc(w.en) + '</span>' +
+            '<span class="w">' + J(w.jp) + '</span><span class="r" lang="ja">' + (SH().norm(RB.ui.plainJp(w.jp)) === h.reading ? '' : esc(h.reading)) + '</span><span class="m">' + esc(w.en) + '</span>' +
             (h.tail && h.tail !== 'ん' ? '<span class="t">→ ' + KANA(h.tail) + '</span>' : '<span class="t">' + KANA('ん') + '</span>') +
             (others.length ? '<span class="also small">also uses ' + others.map((o) => J(o.jp)).join(', ') + ' (the same reading)</span>' : '') + '</li>';
         }).join('');
-        const last = ol.lastElementChild;
-        if (last && last.scrollIntoView && !ff()) last.scrollIntoView({ block: 'nearest' });
+        // the newest slip in view inside the chain's own box (never scrolling the page away from the kana)
+        ol.scrollTop = ol.scrollHeight;
         // the three latest slips on the little table
         $('.wp-slips').innerHTML = a.st.history.slice(-3).map((h) => '<span class="slip" data-actor="' + h.actor + '" lang="ja">' + esc(h.reading) + '</span>').join('');
       }
@@ -54475,7 +54497,7 @@ RB.ui.wordplay = RB.ui.wordplay || {};
           pick.innerHTML = '<div class="wp-readings" role="group" aria-label="Approved readings">' + d.readings.map((r) => '<button class="pbtn" data-wp-reading="' + esc(r) + '" lang="ja">' + esc(r) + '</button>').join('') + '</div>';
         } else {
           const w = wordOf(d.entry);
-          const desc = J(w.jp) + ' <span lang="ja">' + esc(d.reading) + '</span> · ' + esc(w.en);
+          const desc = J(w.jp) + (SH().norm(RB.ui.plainJp(w.jp)) === d.reading ? '' : ' <span lang="ja">' + esc(d.reading) + '</span>') + ' · ' + esc(w.en);
           if (d.readings && d.readings.length > 1) pick.innerHTML += '<div class="wp-readings" role="group" aria-label="Approved readings">' + d.readings.map((r) => '<button class="pbtn" data-wp-reading="' + esc(r) + '" aria-pressed="' + (r === d.reading) + '" lang="ja">' + esc(r) + '</button>').join('') + '</div>';
           if (d.senses) pick.innerHTML += '<div class="wp-senses" role="group" aria-label="Which meaning (optional; one play either way)">' + d.senses.map((x) => '<button class="pbtn quiet" data-wp-sense="' + esc(x.entry) + '" aria-pressed="' + (d.sense === x.entry) + '">' + J(x.jp) + ' ' + esc(x.en) + '</button>').join('') + '<span class="muted small">Same reading, one play: choosing a meaning is optional.</span></div>';
           if (d.status === 'ok') m = desc + (d.terminal ? ' — ends in ん.' : ' — begins with ' + esc(req) + '. Play word when you are ready.');
@@ -54537,6 +54559,9 @@ RB.ui.wordplay = RB.ui.wordplay || {};
       // the companion's turn: the move is chosen and stored first, then shown (§12.3)
       async function cpuTurn() {
         T.busy = true;
+        // keyboard focus stays on the table while Play word is disabled for the companion's turn
+        const ae = document.activeElement;
+        if (!ae || ae === document.body || ae.matches('[data-wp=play]') || !root.contains(ae)) { const tu = $('.wp-turn'); tu.setAttribute('tabindex', '-1'); tu.focus({ preventScroll: true }); }
         syncPlay();
         renderStatus('thinking');
         const think = WP().line(s, 'thinking', a.session + ':' + a.st.history.length);
@@ -54572,7 +54597,8 @@ RB.ui.wordplay = RB.ui.wordplay || {};
         T.playerEscape = false;
         const l = WP().line(s, cat, salt, facts);
         if (l && WP().mayComment(s, cat)) setLine(l, cat);
-        else { face(faceCv, s.comp, 'neutral'); gesture(g.write || ''); }
+        else face(faceCv, s.comp, 'neutral');
+        gesture(g.write || ''); // then quiet while you read and write (§14.4)
         T.busy = false;
         renderStatus();
         renderBankIfOpen();

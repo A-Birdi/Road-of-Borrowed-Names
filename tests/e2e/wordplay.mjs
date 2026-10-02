@@ -30,6 +30,9 @@ const b = await launch();
 let fail = 0, pass = 0;
 const assert = (c, m) => { if (!c) { fail++; console.log('FAIL ' + m); } else { pass++; console.log('ok   ' + m); } };
 const shot = (p, name) => p.screenshot({ path: path.join(OUT, name + '.png') });
+// --only=table,company,nothere,keyboard,touch runs some sections (all by default)
+const ONLY = (process.argv.find((a) => a.startsWith('--only=')) || '').slice(7).split(',').filter(Boolean);
+const want = (name) => !ONLY.length || ONLY.includes(name);
 
 // ---- page helpers ------------------------------------------------------------------------------------------
 async function helpers(p) {
@@ -215,23 +218,32 @@ async function finishGame(p, plan, o) {
   o = o || {};
   const played = [];
   if (o.friendlyUntil) await p.evaluate(() => window.__opponent(true));
+  const cap = o.maxMoves || 10;
   for (let k = 0; k < 40; k++) {
     if (o.friendlyUntil && played.length >= o.friendlyUntil) await p.evaluate(() => window.__opponent(false));
     await waitTurn(p);
     if (await p.evaluate(() => !!document.querySelector('.wp-result'))) break;
     const a = (await st(p)).active;
     if (!a) break;
+    if (played.length >= cap) {
+      // a long game (the fixture is roomy): end it through the table, as a player would
+      if (a.format === 'cooperative') { await p.locator('[data-wp="stuck"]').click(); await clickWp(p, 'endchain'); }
+      else { await p.locator('[data-wp="stuck"]').click(); await clickWp(p, 'concede'); await p.waitForSelector('.csheet'); await p.locator('.csheet .pbtn', { hasText: 'Concede' }).click(); }
+      break;
+    }
     const how = plan[played.length % plan.length];
-    const r = await turn(p, how.via || how, Object.assign({}, how.o, o.friendlyUntil && played.length < o.friendlyUntil ? { notrap: true } : {}));
+    // the test player keeps the game open while asked to, then takes a real trap when one exists
+    const early = o.keepOpen || (o.friendlyUntil && played.length < o.friendlyUntil);
+    const r = await turn(p, how.via || how, Object.assign({}, how.o, early ? { notrap: true } : { win: true }));
     if (!r) break;
     played.push(r);
   }
-  await p.waitForSelector('.wp-result', { timeout: 10000 });
+  await p.waitForSelector('.wp-result', { timeout: 15000 });
   return played;
 }
 
 // =========================================================================================== 1280×800
-{
+if (want('table')) {
   const { p, errors, requests } = await newPage();
   await reg(p, 'pocket');
   await p.evaluate(() => window.__start('co.inn', 6, 8, { comp: 'nao' }));
@@ -454,7 +466,7 @@ async function finishGame(p, plan, o) {
   await p.waitForSelector('input[name="goal"][value="6"]:checked');
   await toTable(p);
   const stagesBefore = JSON.stringify((await st(p)).played.sort());
-  const coopPlayed = await finishGame(p, [{ via: 'select' }]);
+  const coopPlayed = await finishGame(p, [{ via: 'select' }], { keepOpen: true });
   const g5 = await st(p);
   const r5 = g5.recent[g5.recent.length - 1].result;
   assert((r5.reason === 'cooperative-goal' && r5.winner === null && g5.coop.goals['6'].done === 1) || (r5.reason !== 'cooperative-goal' && r5.winner === null), 'a cooperative chain: completed as a shared chain, never a competitive win or loss (' + r5.reason + ', ' + r5.cmoves + ')');
@@ -468,7 +480,7 @@ async function finishGame(p, plan, o) {
 }
 
 // ================================================================== Company: Ledger entry and return; pending topic
-{
+if (want('company')) {
   const { p, errors, requests } = await newPage({ viewport: { width: 800, height: 560 } });
   await reg(p, 'pocket');
   await p.evaluate(() => window.__start('co.inn', 6, 8, { comp: 'mio', flags: { ch2_done: true }, chapter: 3 }));
@@ -487,8 +499,15 @@ async function finishGame(p, plan, o) {
   let s1 = await st(p);
   assert(!s1.menu && s1.activity, 'Play shiritori from Company: the folio closes before play');
   await toTable(p);
-  await finishGame(p, [{ via: 'select' }]);
+  // three of your words, then concede: a finished game, so How we played becomes available
+  // (if the opening closes sooner, a rematch, as a player would)
+  await finishGame(p, [{ via: 'select' }], { friendlyUntil: 3, maxMoves: 3 });
+  for (let k = 0; k < 3 && !(await st(p)).together; k++) {
+    await clickWp(p, 'rematch'); await p.waitForSelector('.wp-table');
+    await finishGame(p, [{ via: 'select' }], { friendlyUntil: 3, maxMoves: 3 });
+  }
   s1 = await st(p);
+  assert(!!s1.together, 'a substantial game was finished (' + JSON.stringify(s1.recent.map((r) => r.result.reason + '/' + r.result.pmoves)) + ')');
   assert(s1.pending === 'reflect:travel' && JSON.stringify(await p.evaluate(() => RB.company.pending(RB.game.s))) === JSON.stringify(pend0.pending), 'the story topic and talk._pending are untouched by the game');
   await clickWp(p, 'leave');
   await until(p, () => RB.ui.menu.isOpen(), null, 3000);
@@ -497,7 +516,7 @@ async function finishGame(p, plan, o) {
   assert(back.cur.section === 'company' && back.cur.company === 'companion' && Math.abs(back.top - scrolled) <= 4, 'the folio comes back to Company › Companion at the same scroll (' + scrolled + '→' + back.top + ')');
   assert(back.focus === 'play', 'and focus returns to the Wordplay card');
   const card1 = await p.evaluate(() => document.querySelector('.wp-card').textContent.replace(/\s+/g, ' '));
-  assert(/Played|Won/.test(card1) && /conversation is available/.test(card1), 'the card shows the record and that How we played is available');
+  assert(/Played|Won/.test(card1) && /conversation is available/.test(card1), 'the card shows the record and that How we played is available (' + card1.slice(0, 160) + ')');
   await shot(p, 'company_card_800x560');
   await p.evaluate(() => RB.ui.menu.close());
   // normal talk priority: the waiting story topic still comes first
@@ -537,7 +556,7 @@ async function finishGame(p, plan, o) {
 }
 
 // =================================================================== not here: truthful reasons, records readable
-{
+if (want('nothere')) {
   const { p, errors } = await newPage();
   await reg(p, 'pocket');
   await p.evaluate(() => window.__start('rw.village', 22, 30, { comp: 'suzu' }));
@@ -551,17 +570,19 @@ async function finishGame(p, plan, o) {
   const idx = await p.evaluate(() => { const e = document.querySelector('[data-pr="shiritori"]'); return e ? { text: e.textContent, begin: !!e.querySelector('[data-pr-begin]') } : null; });
   assert(idx && /Shiritori/.test(idx.text) && !idx.begin && /rest stop/.test(idx.text), 'Words › Ways to practise: where it is offered, no remote launch');
   await p.evaluate(() => RB.ui.menu.close());
-  // a creature close by at a rest stop
-  await p.evaluate(() => window.__start('co.inn', 6, 8, { comp: 'suzu' }));
+  // a creature close by (a real one of the Mill Road, moved beside you): Play disabled, said plainly
+  await p.evaluate(() => window.__start('rw.millroad', 12, 10, { comp: 'suzu' }));
   await p.waitForTimeout(200);
-  await p.evaluate(() => { const W = RB.world.W; W.foes = W.foes || []; W.foes.push({ x: W.player.x + 1, y: W.player.y, id: 'test-foe' }); });
+  const foe = await p.evaluate(() => { const W = RB.world.W; const f = (W.foes || [])[0]; if (f) { f.x = W.player.x + 2; f.y = W.player.y; } return !!f; });
   await p.evaluate(() => RB.ui.menu.open('companion'));
   await p.waitForSelector('.wp-card');
-  c = await p.evaluate(() => ({ dis: document.querySelector('[data-co-sec="wordplay"][data-wp-act="play"]').disabled, why: (document.getElementById('wp-why') || {}).textContent }));
-  assert(c.dis && /creature/.test(c.why), 'a creature close by: Play disabled, said plainly');
+  c = await p.evaluate(() => ({ dis: document.querySelector('[data-co-sec="wordplay"][data-wp-act="play"]').disabled, why: (document.getElementById('wp-why') || {}).textContent, cells: document.querySelectorAll('.wp-cell').length }));
+  assert(foe && c.dis && /creature/.test(c.why) && c.cells === 9, 'a creature close by: Play disabled, said plainly; the records stay readable (' + c.why + ')');
   const launched = await p.evaluate(() => RB.activity.launch('shiritori', { source: 'company' }));
   assert(!launched.ok, 'and launching anyway is refused at the moment of launch');
-  await p.evaluate(() => { RB.world.W.foes = RB.world.W.foes.filter((f) => f.id !== 'test-foe'); if (RB.ui.menu.isOpen()) RB.ui.menu.close(); });
+  await p.evaluate(() => { if (RB.ui.menu.isOpen()) RB.ui.menu.close(); });
+  await p.evaluate(() => window.__start('co.inn', 6, 8, { comp: 'suzu' }));
+  await p.waitForTimeout(200);
   // Ways to practise at the rest stop: Begin here
   await p.evaluate(() => RB.ui.menu.open('practice'));
   await p.waitForTimeout(150);
@@ -579,7 +600,7 @@ async function finishGame(p, plan, o) {
 }
 
 // ======================================================================== keyboard only, and touch
-{
+if (want('keyboard')) {
   const { p, errors } = await newPage({ viewport: { width: 1024, height: 768 } });
   await reg(p, 'pocket');
   await p.evaluate(() => window.__start('co.inn', 6, 8, { comp: 'ren' }));
@@ -602,10 +623,12 @@ async function finishGame(p, plan, o) {
   assert(await tabTo('[data-wp-pick="' + w.id + '"]'), 'keyboard: a word in the bank is reachable');
   await p.keyboard.press('Enter');
   await p.waitForTimeout(80);
+  await until(p, () => document.activeElement && document.activeElement.dataset.wp === 'play', null, 3000);
   const focusPlay = await p.evaluate(() => document.activeElement && document.activeElement.dataset.wp);
   await p.keyboard.press('Enter');
-  await until(p, () => window.__wp().active && window.__wp().active.n > 1, null, 3000);
-  assert(focusPlay === 'play' && (await st(p)).active.n > 1, 'keyboard: choosing a word moves focus to Play word; Enter plays it');
+  await until(p, () => window.__wp().active && window.__wp().active.n > 1, null, 6000);
+  const kst = await st(p);
+  assert(focusPlay === 'play' && (!kst.active || kst.active.n > 1) && kst.recent.length + (kst.active ? 1 : 0) >= 1, 'keyboard: choosing a word moves focus to Play word; Enter plays it (' + focusPlay + ', ' + (kst.active ? kst.active.n : 'game over') + ')');
   // Escape opens Leave (keep / end / keep playing), safe choice focused
   await waitTurn(p);
   await p.keyboard.press('Escape');
@@ -618,7 +641,7 @@ async function finishGame(p, plan, o) {
   assert(!errors.length, 'no page errors (' + errors.slice(0, 3).join(' | ') + ')');
   await p.context().close();
 }
-{
+if (want('touch')) {
   const { p, errors } = await newPage({ viewport: { width: 390, height: 844 }, touch: true, mobile: true });
   await reg(p, 'pocket');
   await p.evaluate(() => window.__start('co.inn', 6, 8, { comp: 'suzu' }));

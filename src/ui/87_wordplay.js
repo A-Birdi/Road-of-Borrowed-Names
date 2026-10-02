@@ -388,12 +388,12 @@ RB.ui.wordplay = RB.ui.wordplay || {};
           const others = grp ? grp.entries.filter((x) => x !== h.entry).map((x) => wordOf(x)) : [];
           const by = h.actor === 'start' ? lab('starter') : h.actor === 'pc' ? lab('you') : esc(who(s));
           return '<li class="wp-slip' + (i === a.st.history.length - 1 ? ' last' : '') + '" data-actor="' + h.actor + '"><span class="by">' + by + '</span>' +
-            '<span class="w">' + J(w.jp) + '</span><span class="r" lang="ja">' + esc(h.reading) + '</span><span class="m">' + esc(w.en) + '</span>' +
+            '<span class="w">' + J(w.jp) + '</span><span class="r" lang="ja">' + (SH().norm(RB.ui.plainJp(w.jp)) === h.reading ? '' : esc(h.reading)) + '</span><span class="m">' + esc(w.en) + '</span>' +
             (h.tail && h.tail !== 'ん' ? '<span class="t">→ ' + KANA(h.tail) + '</span>' : '<span class="t">' + KANA('ん') + '</span>') +
             (others.length ? '<span class="also small">also uses ' + others.map((o) => J(o.jp)).join(', ') + ' (the same reading)</span>' : '') + '</li>';
         }).join('');
-        const last = ol.lastElementChild;
-        if (last && last.scrollIntoView && !ff()) last.scrollIntoView({ block: 'nearest' });
+        // the newest slip in view inside the chain's own box (never scrolling the page away from the kana)
+        ol.scrollTop = ol.scrollHeight;
         // the three latest slips on the little table
         $('.wp-slips').innerHTML = a.st.history.slice(-3).map((h) => '<span class="slip" data-actor="' + h.actor + '" lang="ja">' + esc(h.reading) + '</span>').join('');
       }
@@ -483,7 +483,7 @@ RB.ui.wordplay = RB.ui.wordplay || {};
           pick.innerHTML = '<div class="wp-readings" role="group" aria-label="Approved readings">' + d.readings.map((r) => '<button class="pbtn" data-wp-reading="' + esc(r) + '" lang="ja">' + esc(r) + '</button>').join('') + '</div>';
         } else {
           const w = wordOf(d.entry);
-          const desc = J(w.jp) + ' <span lang="ja">' + esc(d.reading) + '</span> · ' + esc(w.en);
+          const desc = J(w.jp) + (SH().norm(RB.ui.plainJp(w.jp)) === d.reading ? '' : ' <span lang="ja">' + esc(d.reading) + '</span>') + ' · ' + esc(w.en);
           if (d.readings && d.readings.length > 1) pick.innerHTML += '<div class="wp-readings" role="group" aria-label="Approved readings">' + d.readings.map((r) => '<button class="pbtn" data-wp-reading="' + esc(r) + '" aria-pressed="' + (r === d.reading) + '" lang="ja">' + esc(r) + '</button>').join('') + '</div>';
           if (d.senses) pick.innerHTML += '<div class="wp-senses" role="group" aria-label="Which meaning (optional; one play either way)">' + d.senses.map((x) => '<button class="pbtn quiet" data-wp-sense="' + esc(x.entry) + '" aria-pressed="' + (d.sense === x.entry) + '">' + J(x.jp) + ' ' + esc(x.en) + '</button>').join('') + '<span class="muted small">Same reading, one play: choosing a meaning is optional.</span></div>';
           if (d.status === 'ok') m = desc + (d.terminal ? ' — ends in ん.' : ' — begins with ' + esc(req) + '. Play word when you are ready.');
@@ -545,6 +545,9 @@ RB.ui.wordplay = RB.ui.wordplay || {};
       // the companion's turn: the move is chosen and stored first, then shown (§12.3)
       async function cpuTurn() {
         T.busy = true;
+        // keyboard focus stays on the table while Play word is disabled for the companion's turn
+        const ae = document.activeElement;
+        if (!ae || ae === document.body || ae.matches('[data-wp=play]') || !root.contains(ae)) { const tu = $('.wp-turn'); tu.setAttribute('tabindex', '-1'); tu.focus({ preventScroll: true }); }
         syncPlay();
         renderStatus('thinking');
         const think = WP().line(s, 'thinking', a.session + ':' + a.st.history.length);
@@ -580,7 +583,8 @@ RB.ui.wordplay = RB.ui.wordplay || {};
         T.playerEscape = false;
         const l = WP().line(s, cat, salt, facts);
         if (l && WP().mayComment(s, cat)) setLine(l, cat);
-        else { face(faceCv, s.comp, 'neutral'); gesture(g.write || ''); }
+        else face(faceCv, s.comp, 'neutral');
+        gesture(g.write || ''); // then quiet while you read and write (§14.4)
         T.busy = false;
         renderStatus();
         renderBankIfOpen();
