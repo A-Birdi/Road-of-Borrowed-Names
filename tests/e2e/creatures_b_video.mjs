@@ -3,7 +3,8 @@
 // Lamp That Waited's Chill. DIAGNOSTIC FIXTURE: a synthetic campaign starts each battle directly
 // with Mio as the companion, and the guardian's next move is set as its intent so the recording
 // shows it; nothing here is a natural encounter. Writes WebM (Playwright's recorder).
-// Usage: node tests/e2e/creatures_b_video.mjs [out.webm] [enemy:move,move …]
+// Usage: node tests/e2e/creatures_b_video.mjs [out.webm] [enemy:move,move …] [map:x:y]
+//   (map: where the battle happens — its backdrop is composed from that place; default rw.millroad:10:22)
 import fs from 'node:fs';
 import path from 'node:path';
 import { serve, launch, root } from './lib.mjs';
@@ -11,6 +12,7 @@ import { serve, launch, root } from './lib.mjs';
 const out = path.resolve(process.argv[2] || path.join(root, 'tests/e2e/out/battle_creatures_b/boss_exchange.webm'));
 const plan = (process.argv[3] || 'lf.keeper:flood,strike').split(':');
 const enemy = plan[0], moves = plan[1].split(',');
+const [mapId, mx, my] = (process.argv[4] || 'rw.millroad:10:22').split(':');
 const { srv, url } = await serve();
 const b = await launch();
 const dir = path.join(path.dirname(out), 'raw_' + path.basename(out, '.webm'));
@@ -22,15 +24,15 @@ p.on('pageerror', (e) => errors.push(e.message));
 await p.goto(url);
 await p.waitForFunction(() => window.__RB_READY__ === true);
 const pause = (ms) => p.waitForTimeout(ms);
-await p.evaluate((enemy) => {
-  const s = RB.game.debugStart('rw.millroad', 10, 22, { comp: 'mio' });
+await p.evaluate(([enemy, mapId, mx, my]) => {
+  const s = RB.game.debugStart(mapId, +mx, +my, { comp: 'mio' });
   s.learn.kanaKnown = 'both'; s.learn.profile = 'E'; s.words = ['mamoru', 'mizu', 'hikari'];
   s.tips = Object.assign({ harmony: 1, harmonyFull: 1, cturn: 1, group: 1 }, ...['strike', 'sweep', 'rest', 'heat', 'shroud', 'charge', 'gust', 'mend', 'lie', 'plea', 'flood', 'chill', 'silence', 'mirror'].map((k) => ({ ['intent:' + k]: 1 })), ...s.words.map((w) => ({ ['word:' + w]: 1 })));
   RB.game.settings.input = 'choice'; RB.game.settings.textSpeed = 'normal';
   const run = RB.challenge.runStep; RB.challenge.runStep = (step, o) => { window.__step = step; return run(step, o); };
   window.__result = null;
   RB.game.startBattle(enemy, {}).then((r) => { window.__result = r || 'done'; });
-}, enemy);
+}, [enemy, mapId, mx, my]);
 const center = (sel) => p.evaluate((sel) => { const e = document.querySelector(sel); if (!e) return null; e.scrollIntoView({ block: 'nearest' }); const q = e.getBoundingClientRect(); return { x: q.left + q.width / 2, y: q.top + q.height / 2 }; }, sel);
 async function clickAt(pt) { await p.mouse.move(pt.x, pt.y, { steps: 10 }); await pause(120); await p.mouse.click(pt.x, pt.y); }
 async function settle() {

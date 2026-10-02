@@ -13,42 +13,73 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 (function () {
   'use strict';
-  const CB = RB.creaturesB, K = RB.pxkit, E = CB.E;
+  const CB = RB.creaturesB, K = RB.pxkit, E = CB.E, S = CB.S;
   const mixh = (a, b, k) => K.hex(K.mix(a, b, k));
 
   // ======================================================================================
   // HUSH WRAITH
   // ======================================================================================
+  // the veil: pale lavender cloth (violet in its folds' shadows, warm white on its lit ridges),
+  // translucent toward the hem; the ring face of dark lacquer; blank paper scraps
+  const VPAL = { veil: ['#262050', '#433d7c', '#6e68a8', '#a6a2d4', '#d8d8f0', '#f6f6ff', '#fffcf0'], ring: ['#08061a', '#1a1636', '#2e2a52', '#4a4678'] };
   function drawHush(L, o, q, H) {
     const col = o.col || '#e8e6f0';
-    const M = K.mat(K.tone(col, -(q.dim || 0) * 2), { n: 6, at: 4, step: 0.075, shift: 1.4 });
-    const Mf = K.mat(col, { n: 4, at: 2, step: 0.08, alpha: 170, line: false });
-    const Mf2 = K.mat(col, { n: 3, at: 1, step: 0.08, alpha: 90, line: false });
-    const ring = K.mat('#1a1830', { n: 3, at: 1, step: 0.05 });
-    const voidM = K.mat('#0e0c1a', { n: 2, at: 0, line: false });
-    const scrap = K.mat('#f0eee6', { n: 4, at: 2, step: 0.07 });
-    const ink = K.solid('#8a8698', { line: false });
+    const VC = col.toLowerCase() === '#e8e6f0' ? VPAL.veil : S.ramp(col, { n: 7, at: 4, lo: 0.14 });
+    const dimK = Math.round((q.dim || 0) * 4);
+    const M = S.mat(VC, { at: 4, rim: '#a8e4ff', litk: 0.16 });
+    const Mf = S.mat(VC, { at: 4, alpha: 180, rim: '#a8e4ff', line: S.deep(VC[0], 0.22) });
+    const Mf2 = S.mat(VC, { at: 4, alpha: 100, line: false });
+    const ring = S.mat(VPAL.ring, { at: 2, litk: 0.3 });
+    const voidM = S.mat(['#05040e', '#0e0c1e', '#2a2050'], { at: 0, line: false });
+    const scrap = S.mat(['#5a5470', '#a8a4b4', '#e4e0d8', '#fbf8f0'], { at: 2 });
+    const ink = S.mat(['#3a3448'], { at: 0, line: false });
     const ph = q.hph || 0;
     const B = L.like(), bits = L.like(), arm = L.like();
     const sp = q.spread || 1, ht = q.height || 1, lean = q.lean || 0;
     const top = -72 * ht;
-    // the body outline: a hooded crown, shoulders, and the falling cloth (widening with spread)
+    // the profile: a hooded crown peaked toward the party, shoulders, falling cloth — the near (left)
+    // side full, the far (right) side foreshortened
     const hw0 = (y) => (y < -40 ? 20 * Math.sqrt(Math.max(0, 1 - ((y + 40) / 32) ** 2)) : y < -8 ? 20 + (y + 40) * 0.65 : 41 + (y + 8) * 0.1);
-    const yU = (y) => y / ht;                                  // back to the unstretched profile
+    const yU = (y) => y / ht;
     const hw = (y) => hw0(yU(y)) * (1 + (sp - 1) * K.clamp((yU(y) + 20) / 70, 0, 1));
-    const cx = (y) => lean * K.clamp(1 - (y - top) / 150, 0, 1) + Math.sin(ph + y / 26) * (q.wave || 1.2) * K.clamp((y + 10) / 60, 0, 1);
+    const hood = (y) => (yU(y) < -40 ? -6 * K.clamp((-40 - yU(y)) / 30, 0, 1) : 0); // the hood's peak leans forward
+    const cx = (y) => hood(y) + lean * K.clamp(1 - (y - top) / 150, 0, 1) + Math.sin(ph + y / 26) * (q.wave || 1.2) * K.clamp((y + 10) / 60, 0, 1);
+    const wl = (y) => hw(y) * 1.06, wr = (y) => hw(y) * (yU(y) < -40 ? 0.94 : 0.8);       // near and far half-widths
     const lift = q.lift || 0;
     const hem = (x) => {
       const k = Math.floor((x + 80) / 8), u = ((x + 80) % 8) / 8;
-      const len = (60 + (K.hh(k, 3, 11) % 16)) * ht - lift;
-      return len + Math.round(Math.sin(ph + k * 0.9) * (3 + (q.flare || 0) * 0.4)) - Math.round(Math.abs(u - 0.5) * 8);
+      const len = (60 + (K.hh(k, 3, 11) % 16) + (x > 10 ? 6 : 0)) * ht - lift;          // the far side trails longer behind
+      return len + Math.round(Math.sin(ph + k * 0.9) * (3 + (q.flare || 0) * 0.4)) - Math.round(Math.abs(u - 0.5) * 9);
     };
-    const fold = (x, y) => K.clamp(0.58 - (x - cx(y)) / (120 * sp) + 0.18 * Math.cos(((x - cx(y)) + Math.sin(ph + y / 30) * 2) / (5.5 * sp)) * Math.min(1, (y + 30) / 50) - (y > 40 ? (y - 40) / 160 : 0), 0, 0.99);
-    const inside = (x, y) => y >= top && Math.abs(x - cx(y)) <= hw(y);
+    const inside = (x, y) => { const d = x - cx(y); return y >= top && (d < 0 ? -d <= wl(y) : d <= wr(y)); };
+    const tAt = (x, y) => { const d = x - cx(y); return d < 0 ? d / wl(y) : d / wr(y); };     // −1 near edge … 1 far edge
+    // folds falling from the crown: each a ridge lit on its left with a hard shadow on its right;
+    // the whole veil darker toward the far side and the hem; strand clusters break the edges
+    const CREST = [-0.7, -0.22, 0.26, 0.7];
+    const jit = S.strands(Math.PI / 2, { w: 4, len: 12, amp: 0.2, seed: 13 });
+    const fold = (x, y) => {
+      const t = tAt(x, y) + Math.sin(ph + y / 30) * 0.05 * Math.min(1, (y + 30) / 50);
+      const near = y < -46 * ht ? 0 : Math.min(1, (y + 46 * ht) / 40);                      // folds open below the hood
+      let k = 4.6 - (t + 1) * 1.15 - (y > 40 ? (y - 40) / 40 : 0);
+      if (near > 0) {
+        let best = 9, bd = 0;
+        for (const c of CREST) { const d = t - c * (0.6 + 0.4 * near) * sp ** 0.2; if (Math.abs(d) < Math.abs(best)) { best = d; bd = d; } }
+        if (bd > 0.03 && bd < 0.26) k -= (bd < 0.12 ? 1.8 : 1.1) * near;  // the shadow side of the fold (deepest by the ridge)
+        else if (bd <= 0.03 && bd > -0.08) k += 1.1 * near;             // the lit ridge
+      }
+      k += jit(x, y) - dimK;
+      return S.step(Math.round(k), 7);
+    };
     const W = 90;
     B.fill(-W, top - 2, W, 100, (x, y) => inside(x, y) && y < hem(x) - 14, M, fold);
-    B.fill(-W, 20, W, 110, (x, y) => inside(x, y) && y >= hem(x) - 14 && y < hem(x) - 6, Mf, fold);
-    B.fill(-W, 20, W, 110, (x, y) => inside(x, y) && y >= hem(x) - 6 && y < hem(x), Mf2, fold);
+    B.fill(-W, top, W, 110, (x, y) => inside(x, y) && y >= hem(x) - 14 && y < hem(x) - 6, Mf, fold);
+    B.fill(-W, top, W, 110, (x, y) => inside(x, y) && y >= hem(x) - 6 && y < hem(x), Mf2, fold);
+    // tears near the hem (ragged holes the light shows through) and a stitched border round the hood
+    for (const [tx, ty, s] of [[-18, 44, 3], [10, 52, 2], [26, 36, 2]]) {
+      const x = tx + cx(ty * ht), y = Math.round(ty * ht) - lift * 0.5;
+      if (y < hem(x) - 18 && inside(x, y)) B.erasePoly([[x - s, y - s * 1.6], [x + s * 0.6, y - s], [x + s, y + s * 1.8], [x - s * 0.4, y + s * 0.8]]);
+    }
+    for (let y = Math.round(top + 6); y < -24 * ht; y += 3) { const x = Math.round(cx(y) - wl(y) + 3); if (inside(x, y)) B.dot(x, y, M, 6); }
     // one strip of the hem lengthens toward a loose knot (re-tying): cloth, wavering as it goes
     if (q.strip > 0.05) {
       const st = q.strip, x0 = -24 + cx(50), y0 = 50 * ht, len = 50 * st;
@@ -57,30 +88,41 @@ var RB = (globalThis.RB = globalThis.RB || {});
         if (k < 0 || k > 1) return false;
         const c0 = x0 - k * len * 0.7 + Math.sin(k * 7 + ph) * 2;
         return Math.abs(x - c0) <= 3.5 - k * 1.5 && !(k > 0.9 && (Math.floor(x) % 3 === 0));
-      }, M, (x, y) => K.clamp(0.7 - (y - y0) / 160, 0, 0.99));
+      }, M, (x, y) => { const k = (y - y0) / Math.max(1, len), c0 = x0 - k * len * 0.7 + Math.sin(k * 7 + ph) * 2; return S.step(x < c0 ? 5 : 3, 7); });
     }
-    // the ring face in the hood: a hollow with a shadow crescent; it opens into a void (Hush)
-    const fy = -44 * ht + (q.bow || 0) * 6, fx0 = cx(fy) - 2;
+    // the ring face in the hood (turned toward the party): a lacquer-dark ring, a shadow crescent
+    // under its upper rim; it opens into a void (Hush)
+    const fy = -44 * ht + (q.bow || 0) * 6, fx0 = cx(fy) - 6;
     const rr = 11.5 * (q.ring || 1), op = q.open || 0;
-    B.fill(fx0 - rr - 3, fy - rr - 3, fx0 + rr + 3, fy + rr + 3, (x, y) => { const d = Math.hypot(x - fx0, (y - fy) / (1 + op * 0.25)); return d <= rr && d >= rr - 3.5; }, ring, (x, y) => K.clamp(0.4 + (x - fx0 + y - fy) / 40, 0, 0.99));
-    if (op > 0.1) B.fill(fx0 - rr, fy - rr * 1.3, fx0 + rr, fy + rr * 1.3, (x, y) => Math.hypot(x - fx0, (y - fy) / (1 + op * 0.25)) < rr - 3.5, voidM, 0);
-    else B.fill(fx0 - 9, fy - 9, fx0 + 9, fy + 9, (x, y) => { const d = Math.hypot(x - fx0, y - fy); return d < rr - 3.5 && Math.hypot(x - fx0 + 2, y - fy + 2) > rr - 4.5; }, M, 1);
-    // the sleeve: a fold of cloth that whips out toward the party (strike) — the same veil,
-    // its folds running along it, tapering to a tattered end
+    // the hood's opening casts a shadow round the ring
+    B.fill(fx0 - rr - 6, fy - rr - 6, fx0 + rr + 6, fy + rr + 6, (x, y) => { const d = Math.hypot((x - fx0) / 0.86, (y - fy) / (1 + op * 0.25)); return d <= rr + 4 && d > rr - 1 && inside(x, y); }, M, (x, y) => S.step((y > fy && x > fx0 - 4) ? 2 : 3, 7));
+    B.fill(fx0 - rr - 3, fy - rr - 3, fx0 + rr + 3, fy + rr + 3, (x, y) => { const d = Math.hypot((x - fx0) / 0.86, (y - fy) / (1 + op * 0.25)); return d <= rr && d >= rr - 3.5; }, ring, (x, y) => S.step(x - fx0 + y - fy < -8 ? 3 : x - fx0 + y - fy < 4 ? 2 : 1, 4));
+    if (op > 0.1) {
+      B.fill(fx0 - rr, fy - rr * 1.3, fx0 + rr, fy + rr * 1.3, (x, y) => Math.hypot((x - fx0) / 0.86, (y - fy) / (1 + op * 0.25)) < rr - 3.5, voidM, (x, y) => S.step(Math.hypot((x - fx0) / 0.86, (y - fy) / (1 + op * 0.25)) > rr - 5.5 ? 2 : 0, 3));
+    } else {
+      B.fill(fx0 - 9, fy - 9, fx0 + 9, fy + 9, (x, y) => { const d = Math.hypot((x - fx0) / 0.86, y - fy); return d < rr - 3.5; }, M, (x, y) => S.step(Math.hypot((x - fx0 + 2) / 0.86, y - fy + 2) > rr - 5 ? 2 : 4, 7));
+    }
+    // the sleeve: a fold of cloth that whips out toward the party (strike) — the same veil, its
+    // folds running along it, tapering to a tattered end
     if (q.reach > 0.05) {
-      const rk = q.reach, sx = cx(-14) - hw(-14) + 8, sy = -14 * ht;
+      const rk = q.reach, sx = cx(-14) - wl(-14) + 8, sy = -14 * ht;
       const len = 20 + 50 * rk, droop = 10 - 14 * rk;
       const cyAt = (k) => sy + Math.sin(k * Math.PI) * droop + k * 6 + Math.sin(ph * 2 + k * 6) * 2 * (1 - rk);
       const wAt = (k) => 11 * (1 - k * 0.62) + Math.sin(k * 9 + ph) * 1.2;
-      arm.fill(sx - len - 4, sy - 24, sx + 6, sy + 30, (x, y) => {
+      // the fold leaves the veil at the shoulder (k < 0: its root fans out over the body's near side
+      // and stays inside the veil's outline, so the sleeve grows out of the cloth, not out of a seam)
+      const wRoot = (k) => (k < 0 ? 11 + (-k) * 26 : wAt(k));
+      arm.fill(sx - len - 4, sy - 30, sx + 22, sy + 34, (x, y) => {
         const k = (sx - x) / len;
-        if (k < 0 || k > 1) return false;
+        if (k < -0.22 || k > 1) return false;
+        if (k < 0 && !inside(x, y)) return false;
         if (k > 0.86 && (Math.floor(y) % 4) >= 2) return false;
-        return Math.abs(y - cyAt(k)) <= wAt(k);
-      }, M, (x, y) => { const k = (sx - x) / len, d = (y - cyAt(k)) / Math.max(1, wAt(k)); return K.clamp(0.66 - d * 0.28 + 0.14 * Math.cos(k * 13 + d * 2), 0, 0.99); });
-      arm.outline();
+        return Math.abs(y - cyAt(Math.max(0, k)) + (k < 0 ? k * 10 : 0)) <= wRoot(k);
+      }, M, (x, y) => { const k = (sx - x) / len, kk = Math.max(0, k), d = (y - cyAt(kk)) / Math.max(1, wRoot(k)); const crease = Math.cos(k * 13 + d * 2) > 0.55; return S.step(d < -0.45 ? 5 : d > 0.5 ? 2 : crease ? 3 : 4, 7); });
     }
-    B.outline();
+    S.clean(B, M, { sliver: true });
+    S.outline(B); S.outline(arm);
+    S.cast(arm, B, 2, 3, 1);
     // blank scraps drifting near it (flung out when it spreads or loosens)
     const sc = q.scatter || 0;
     for (let i = 0; i < 4; i++) {
@@ -88,13 +130,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const r0 = 1 + sc * 0.6;
       const x = ([-50, 46, -38, 54][i]) * r0 + Math.sin(k * 6 + i) * 4, y = [10, -20, 44, 26][i] - k * 30 - sc * 10;
       bits.save().translate(Math.round(x), Math.round(y)).rotate(k * 3 + i);
-      bits.rect(-3, -2, 7, 5, scrap, (px, py) => K.clamp(0.65 - (px + py) / 12, 0, 0.99));
+      bits.rect(-3, -2, 7, 5, scrap, (px, py) => S.step(px + py < -1 ? 3 : px + py < 3 ? 2 : 1, 4));
       bits.line(-2, 0, 2, 0, ink, 0);
       bits.restore();
     }
-    bits.outline();
+    S.outline(bits);
     if (Math.round(q.sph || 0) % 3 !== 1) bits.fade(0.85);
-    return B.over(arm).over(bits);
+    const out = B.over(arm);
+    S.inner(out);
+    S.rim(out, { w: 2 });
+    return out.over(bits);
   }
   const HB = { spread: 1, height: 1, lean: 0, wave: 1.2, lift: 0, flare: 0, hph: 0, sph: 0, ring: 1, open: 0, bow: 0, reach: 0, strip: 0, scatter: 0, dim: 0 };
   const hushIdle = [];
@@ -166,16 +211,23 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ======================================================================================
   function drawSpirit(L, o, q, H) {
     const col = o.col || '#e8e4ff';
-    const M = K.mat(col, { n: 5, at: 3, step: 0.09, alpha: 225 });
-    const Mt = K.mat(col, { n: 4, at: 2, step: 0.09, alpha: 120, line: false });
+    const SC = S.ramp(col, { n: 6, at: 4, lo: 0.16, hi: 0.97 });
+    const M = S.mat(SC, { at: 4, alpha: 230, rim: '#a8e4ff', litk: 0.16 });
+    const Mt = S.mat(SC, { at: 4, alpha: 120, line: false });
+    const ink = S.mat(['#0e0a1c', '#241c3a'], { at: 0, line: false });
+    const white = K.solid('#fffdf6', { line: false });
     const glow = L.like(), B = L.like();
     if (q.glow > 0.05) H.glow(glow, 0, -22, 30 + q.glow * 10, 32 + q.glow * 10, col, 0.3 * q.glow, 3);
-    const sx = q.sx || 1, sy = q.sy || 1;
-    B.ell(q.lean || 0, -22, 24 * sx, 26 * sy, M, K.sphere(-2 + (q.lean || 0), -26, 26 * sx, 28 * sy, { amb: 0.25 }));
-    H.tail(B, (q.lean || 0) * 0.6, -10, 76 * (q.tl || 1), 24 * sx, q.tph || 0, [[0, 50, M], [50, 120, Mt]], { amp: q.tamp == null ? 6 : q.tamp, curl: 12, lean: q.tlean || 0 });
-    B.outline();
-    H.eyes(B, q.lean || 0, -18, 8, { rx: 3, ry: q.blink ? 1 : 5 });
-    return glow.over(B);
+    const sx = q.sx || 1, sy = q.sy || 1, lx = q.lean || 0;
+    // a round head lit from the upper left (hard bands), turned a little toward the party
+    H.tail(B, lx * 0.6 + 2, -16, 76 * (q.tl || 1), 22 * sx, q.tph || 0, [[0, 50, M], [50, 120, Mt]], { amp: q.tamp == null ? 6 : q.tamp, curl: 12, lean: q.tlean || 0 });
+    B.ell(lx, -22, 24 * sx, 26 * sy, M, S.sph(lx - 4, -28, 26 * sx, 28 * sy, 6, { bias: 0.15 }));
+    S.outline(B);
+    for (const [ex, w] of [[lx - 13, 2], [lx + 1, 3]]) { if (q.blink) B.rect(ex - w, -18, w * 2, 1, ink, 0); else { B.ell(ex, -18, w, 5, ink, 0); B.rect(ex - 1, -21, 2, 2, white, 0); } }
+    const out = glow.over(B);
+    S.inner(out);
+    S.rim(out, { w: 2 });
+    return out;
   }
   const SB = { sx: 1, sy: 1, lean: 0, tph: 0, tamp: 6, tlean: 0, tl: 1, glow: 0, blink: false };
   const spIdle = [];
@@ -219,6 +271,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
     fx: [{ at: 200, name: 'cbGather', d: 600, p: { dy: -22, col: CB.colOf(a, '#e8e4ff') } }],
   }));
 
-  CB.family('hush', { anatomy: 'cloth / spirit veil: the crown leads, the folds bend and the hem lags; coherent gathering, spreading and return; a sleeve fold that reaches; one hem strip that lengthens', palette: 'veil #e8e6f0 (6 steps, translucent hem ramps at alpha 170 / 90), ring #1a1830, void #0e0c1a, blank scraps #f0eee6 with a grey line' });
-  CB.family('spirit', { anatomy: 'spirit (generic veil; unused by the current bestiary): a round head that swells and stretches, a streaming tail', palette: 'veil from artOpts.col (default #e8e4ff), translucent tail' });
+  CB.family('hush', { anatomy: 'cloth / spirit veil, turned toward the party: the hood peaked forward with the ring face set to the near side, the near side full and the far side foreshortened; folds with lit ridges and hard shadows that open below the hood; the hem lags (the far side trails longer); a sleeve fold that reaches; one hem strip that lengthens', palette: 'veil #262050-#fffcf0 (7, violet shadows, warm white ridges; translucent toward the hem at alpha 180 / 100), lacquer ring #08061a-#4a4678, void #05040e-#2a2050, blank scraps #5a5470-#fbf8f0; coloured outlines; cool rim #a8e4ff' });
+  CB.family('spirit', { anatomy: 'spirit (generic veil; unused by the current bestiary): a round head lit from the upper left, turned a little toward the party, that swells and stretches; a streaming tail', palette: 'veil ramp from artOpts.col (default #e8e4ff, 6 tones), translucent tail; coloured outline; cool rim' });
 })();
