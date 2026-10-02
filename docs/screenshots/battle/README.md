@@ -46,5 +46,6 @@ through the campaign.
 | `party/` | The player and companions: pose sheets, key poses, exchanges. | the party art area | `docs/battle/party.md` |
 | `creatures_a/` | Chapter 1–3 families and the Flour Moth proof (indoor and outdoor; Strike, ward, softened hit, Shroud persisting and released; a timing trace). | the creatures A area | `docs/battle/creatures_a.md` |
 | `creatures_b/` | Chapter 4–6 and Atlas families: before/after, key poses at native size and 3×, sheets, the Atlas trio, a Keeper exchange. | the creatures B area | `docs/battle/creatures_b.md` |
+| `creatures_b_restyle/` | The restyle round toward the owner's style reference: before/after sheets of every family at native size and 3×, the Snow Fox and the Keeper (proof) and the Atlas trio in battle at 1920×1080, 1280×800 and 390×844, every other enemy at 1280×800, move strips, two Normal-speed clips. | the creatures B area (`tests/e2e/creatures_b_restyle.mjs`, `battle_creatures_b.mjs --restyle`, `creatures_b_video.mjs`) | `docs/battle/creatures_b.md` ("Restyle round") |
 | `backdrops/` | Location-aware backdrops by family, phone views, state-dependent props, a motion clip. | the backdrops area | `docs/battle/backdrops.md` |
 | `pets_overworld/` | Pets in battle and the road, an overworld walk. | the pets / overworld area | `docs/battle/pets_overworld.md` |

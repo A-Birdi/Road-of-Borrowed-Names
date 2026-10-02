@@ -74,6 +74,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
     B.fill(-W, top - 2, W, 100, (x, y) => inside(x, y) && y < hem(x) - 14, M, fold);
     B.fill(-W, top, W, 110, (x, y) => inside(x, y) && y >= hem(x) - 14 && y < hem(x) - 6, Mf, fold);
     B.fill(-W, top, W, 110, (x, y) => inside(x, y) && y >= hem(x) - 6 && y < hem(x), Mf2, fold);
+    // tears near the hem (ragged holes the light shows through) and a stitched border round the hood
+    for (const [tx, ty, s] of [[-18, 44, 3], [10, 52, 2], [26, 36, 2]]) {
+      const x = tx + cx(ty * ht), y = Math.round(ty * ht) - lift * 0.5;
+      if (y < hem(x) - 18 && inside(x, y)) B.erasePoly([[x - s, y - s * 1.6], [x + s * 0.6, y - s], [x + s, y + s * 1.8], [x - s * 0.4, y + s * 0.8]]);
+    }
+    for (let y = Math.round(top + 6); y < -24 * ht; y += 3) { const x = Math.round(cx(y) - wl(y) + 3); if (inside(x, y)) B.dot(x, y, M, 6); }
     // one strip of the hem lengthens toward a loose knot (re-tying): cloth, wavering as it goes
     if (q.strip > 0.05) {
       const st = q.strip, x0 = -24 + cx(50), y0 = 50 * ht, len = 50 * st;
@@ -103,12 +109,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const len = 20 + 50 * rk, droop = 10 - 14 * rk;
       const cyAt = (k) => sy + Math.sin(k * Math.PI) * droop + k * 6 + Math.sin(ph * 2 + k * 6) * 2 * (1 - rk);
       const wAt = (k) => 11 * (1 - k * 0.62) + Math.sin(k * 9 + ph) * 1.2;
-      arm.fill(sx - len - 4, sy - 24, sx + 6, sy + 30, (x, y) => {
+      // the fold leaves the veil at the shoulder (k < 0: its root fans out over the body's near side
+      // and stays inside the veil's outline, so the sleeve grows out of the cloth, not out of a seam)
+      const wRoot = (k) => (k < 0 ? 11 + (-k) * 26 : wAt(k));
+      arm.fill(sx - len - 4, sy - 30, sx + 22, sy + 34, (x, y) => {
         const k = (sx - x) / len;
-        if (k < 0 || k > 1) return false;
+        if (k < -0.22 || k > 1) return false;
+        if (k < 0 && !inside(x, y)) return false;
         if (k > 0.86 && (Math.floor(y) % 4) >= 2) return false;
-        return Math.abs(y - cyAt(k)) <= wAt(k);
-      }, M, (x, y) => { const k = (sx - x) / len, d = (y - cyAt(k)) / Math.max(1, wAt(k)); const crease = Math.cos(k * 13 + d * 2) > 0.55; return S.step(d < -0.45 ? 5 : d > 0.5 ? 2 : crease ? 3 : 4, 7); });
+        return Math.abs(y - cyAt(Math.max(0, k)) + (k < 0 ? k * 10 : 0)) <= wRoot(k);
+      }, M, (x, y) => { const k = (sx - x) / len, kk = Math.max(0, k), d = (y - cyAt(kk)) / Math.max(1, wRoot(k)); const crease = Math.cos(k * 13 + d * 2) > 0.55; return S.step(d < -0.45 ? 5 : d > 0.5 ? 2 : crease ? 3 : 4, 7); });
     }
     S.clean(B, M, { sliver: true });
     S.outline(B); S.outline(arm);

@@ -151,7 +151,7 @@ async function battle(p, enemy, o) {
     s.tips = Object.assign({ harmony: 1, harmonyFull: 1, cturn: 1, group: 1 }, ...['strike', 'sweep', 'rest', 'heat', 'shroud', 'charge', 'gust', 'mend', 'lie', 'plea', 'flood', 'chill', 'silence', 'mirror'].map((k) => ({ ['intent:' + k]: 1 })), ...s.words.map((w) => ({ ['word:' + w]: 1 })));
     RB.game.settings.input = 'choice';
     RB.game.settings.textSpeed = 'normal';
-    RB.game.settings.reducedMotion = !!o.reduce; RB.game.applySettings();
+    RB.game.settings.reducedMotion = !!o.reduce; if ('battleAnim' in RB.game.settings) RB.game.settings.battleAnim = o.anim || 'normal'; RB.game.applySettings();
     RB.battleSeq.setTimeScale(o.timeScale || 3);
     window.__result = null;
     RB.game.startBattle(enemy, o.group ? { group: o.group } : {}).then((r) => { window.__result = r || 'done'; });
@@ -394,6 +394,36 @@ await test('an Atlas group (Demanding, three creatures: Moth and Lantern with a 
   if (shots) await p.screenshot({ path: path.join(outDir, 'atlas_group.png') });
   assert(!errors.length, errors.join('; '));
   await ctx.close();
+});
+
+// ---------------------------------------------------------------------------------------------------
+// Playback speeds (Settings → Battles → Battle animations): the same delivery at Normal, Fast and
+// Instant — the same results each time, Fast shorter, Instant with no creature movement.
+await test('playback speeds: the Snow Fox\'s Strike and the Keeper\'s Flood at Normal, Fast and Instant — the same results; Fast shorter; no creature movement at Instant', async () => {
+  const one = async (enemy, kind, anim) => {
+    const { p, errors, ctx } = await page(b, url, DESK);
+    await helpers(p);
+    await battle(p, enemy, { solo: kind === 'strike', anim, timeScale: 1 });
+    const r = await round(p, kind, { target: kind === 'strike' ? 'pc' : null });
+    assert(!errors.length, errors.join('; '));
+    await ctx.close();
+    const seqR = r.enemySeq[r.enemySeq.length - 1];
+    const fx = (r.ex[r.ex.length - 1] || { fx: [] }).fx.map((f) => f.t + (f.who ? ':' + f.who : '')).join();
+    const moved = r.E.some((s) => s.off && (s.off.dx || s.off.dy));
+    return { fx, dur: seqR ? seqR.dur : 0, moved, same: JSON.stringify(r.end.shown) === JSON.stringify(r.end.real), acts: seqOf(r.E.map((s) => s.foes && s.foes[0])) };
+  };
+  const out = {};
+  for (const [enemy, kind] of [['sb.fox', 'strike'], ['lf.keeper', 'flood']]) {
+    const N = await one(enemy, kind, 'normal'), F = await one(enemy, kind, 'fast'), I = await one(enemy, kind, 'instant');
+    out[enemy] = { normal: N.dur, fast: F.dur, instant: I.dur };
+    assert(N.fx && N.fx === F.fx && N.fx === I.fx, enemy + ' ' + kind + ': the same results at every speed: ' + [N.fx, F.fx, I.fx].join(' / '));
+    assert(N.same && F.same && I.same, enemy + ' ' + kind + ': the display ends equal to the rules at every speed');
+    assert(N.acts.some((a) => /^(prep|exec|cast):/.test(a)) && F.acts.some((a) => /^(prep|exec|cast):/.test(a)), enemy + ' ' + kind + ': its own acts at Normal and Fast: ' + N.acts.join('→') + ' / ' + F.acts.join('→'));
+    assert(F.dur < N.dur * 0.85, enemy + ' ' + kind + ': Fast plays shorter: ' + JSON.stringify(out[enemy]));
+    assert(!I.moved, enemy + ' ' + kind + ': no creature movement at Instant');
+    if (kind === 'strike') assert(N.moved, enemy + ' ' + kind + ': it travels at Normal');
+  }
+  console.log('  playback (trace dur ms): ' + JSON.stringify(out));
 });
 
 // ---------------------------------------------------------------------------------------------------

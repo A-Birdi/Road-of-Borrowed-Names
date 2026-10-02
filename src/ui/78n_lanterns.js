@@ -54,7 +54,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   function drawLantern(L, o, q, H) {
     const fl0 = o.col || '#8aa8e8';
     const moths = !!o.moths || String(fl0).toLowerCase() === MOTHLAMP;
-    const fl = q.false > 0.5 ? mixh(fl0, '#f0a050', 0.7) : q.hot > 0 ? mixh(fl0, '#fff0b0', 0.55 * q.hot) : fl0;
+    // (Heat runs it hot: toward orange-white, whatever its own flame's colour)
+    const fl = q.false > 0.5 ? mixh(fl0, '#f0a050', 0.7) : q.hot > 0 ? mixh(fl0, '#ffa850', 0.6 * q.hot) : fl0;
     const dim = q.dim || 0, glowK = (q.glow == null ? 1 : q.glow) * (1 - dim * 0.6);
     const P = lanPal(fl, q.hot);
     const paper = S.mat(P.paper, { at: 3, rim: mixh(fl, '#c8e8ff', 0.6), litk: 0.15 });
@@ -82,8 +83,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     // ---- the lantern (swung about its loop)
     B.save().translate(0, q.lift || 0).translate(0, LPIV).rotate(q.tilt || 0).translate(0, -LPIV);
     // bamboo loop with bindings where it meets the cap (the near arm lit, the far arm in shade)
-    S.pipe(B, [[-12, -52], [-11, -61], [-5, -67], [5, -67], [11, -61], [12, -52]], 3, bamboo, { collars: false, bands: [[-1, 3], [-0.3, 2], [0.4, 1]] });
-    B.rect(-14, -56, 5, 4, wood, 3); B.rect(9, -56, 5, 4, wood, 1); B.line(-14, -54, -10, -54, wood, 1);
+    // (the loop turned with the barrel: seen three-quarter it narrows, its far arm in shade)
+    S.pipe(B, [[-12, -52], [-11, -61], [-5, -67], [5, -67], [11, -61], [12, -52]].map(([x, y]) => [x * 0.66 + 2, y]), 3, bamboo, { collars: false, bands: [[-1, 3], [-0.3, 2], [0.4, 1]] });
+    B.rect(-9, -56, 5, 4, wood, 3); B.rect(8, -56, 4, 4, wood, 1); B.line(-9, -54, -5, -54, wood, 1);
     const br = q.breathe || 0;
     const hwAt = (y) => 22 + br + (9 + br * 0.6) * Math.cos(((y + 3) / 46) * (Math.PI / 2));
     const th = (x, y) => Math.asin(Math.max(-1, Math.min(1, x / hwAt(y))));

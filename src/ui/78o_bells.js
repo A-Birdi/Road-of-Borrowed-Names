@@ -80,7 +80,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const wrapX = (a, y) => Math.round(hwBell(y) * Math.sin(a));
     const bowY = (a, y) => Math.round(y - 3 * Math.cos(a));
     // the loop: a heavy cast ring with a collar
-    S.pipe(B, [[-9, -56], [-11, -64], [-5, -71], [5, -71], [11, -64], [9, -56]], 6, M, { collars: false });
+    // (the loop turned with the bell: seen three-quarter it narrows)
+    S.pipe(B, [[-9, -56], [-11, -64], [-5, -71], [5, -71], [11, -64], [9, -56]].map(([x, y]) => [x * 0.66 + 2, y]), 6, M, { collars: false });
     B.rect(-13, -60, 26, 5, M, (x) => S.step(x < -9 ? 5 : x < 0 ? 4 : x < 8 ? 2 : 1, 7));
     // body: dome shoulder, straight waist, flared lip, in hard metal bands — a lit plane with the
     // near-white specular streak, mid planes, a dark reflected band, the cool rim
