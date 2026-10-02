@@ -214,9 +214,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const b = seg(k, 0, 0.22), fall = 1 - seg(k, 0.25, 0.5);
       if (b > 0 && fall > 0) {
         const y1 = M.y + (floor - M.y) * ease(b);
-        for (let y = M.y; y < y1; y += 2 * u) {
+        for (let y = M.y; y < y1; y += u) {
           const w = (16 + (y - M.y) / u * 0.18) * u, x = M.x - w / 2 - (y - M.y) * 0.25;
-          R(c, x, y, w, 2 * u, (Math.round(y / u) % 6) < 2 ? F : W, 0.85 * fall);
+          R(c, x, y, w, u, W, 0.85 * fall);
+          R(c, x, y, u, u, D, 0.85 * fall);
+          // foam running down the fall in streaks (it flows one way: down)
+          for (let j = 0; j < 4; j++) if ((((y - M.y) / u - t / 25 + j * 5) % 9 + 9) % 9 < 3) R(c, x + w * (0.15 + 0.22 * j), y, u, u, F, 0.9 * fall);
         }
       }
       // the wave: its front from below the creature to beyond the party (crest reaches recipient i at ks[i])
@@ -346,8 +349,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (still) { K().halo(c, T.x, T.y, 10 * u, '255,210,140', 0.5 * (1 - seg(k, 0.7, 1)), 3); return; }
       const s = ease(seg(k, 0, 0.71)), q = qpt(M, T, -26 * u, s), br = seg(k, 0.71, 1);
       if (br <= 0) {
-        K().halo(c, q.x, q.y + Math.sin(t / 120) * u, Math.round((7 + Math.sin(t / 90) * 1.5) * u), '255,200,120', 0.6, 3);
-        blk(c, q.x - 2 * u, q.y - 2 * u, 4 * u, 4 * u, '#ffe0a0', 1, '#6a3a20');
+        K().halo(c, q.x, q.y + Math.sin(t / 120) * u, Math.round((11 + Math.sin(t / 90) * 2) * u), '255,200,120', 0.6, 3);
+        blk(c, q.x - 3 * u, q.y - 4 * u, 6 * u, 7 * u, '#ffd890', 1, '#6a3a20');
+        R(c, q.x - u, q.y - 2 * u, 2 * u, 3 * u, '#fff8e0', 1);
       } else {
         for (let i = 0; i < 7; i++) { const a = (i / 7) * Math.PI * 2 + 0.3, r = ease(br) * 14 * u; R(c, T.x + Math.cos(a) * r, T.y + Math.sin(a) * r + easeIn(br) * 8 * u, 2 * u, 2 * u, i % 2 ? '#bcd0ee' : '#e8eef8', 1 - br); }
         ring(c, T.x, T.y, (4 + br * 10) * u, u, '#bcd0ee', 0.8 * (1 - br));
@@ -578,7 +582,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const n = Math.max(10, Math.round(head * 60));
       for (let i = 0; i <= n; i++) {
         const kk = (i / n) * head, q = at(kk), w = (10 + Math.sin(kk * 20) * 2) * u;
-        R(c, q.x - 2 * u, q.y - w / 2, 4 * u, w, '#fbf8f0', 0.55 * fade * (0.6 + 0.4 * (i / n)));
+        // a pale wash with a faint ink edge, so it reads on light ground too
+        R(c, q.x - 2 * u, q.y - w / 2 - u, 4 * u, w + 2 * u, '#6a5a48', 0.3 * fade * (0.6 + 0.4 * (i / n)));
+        R(c, q.x - 2 * u, q.y - w / 2, 4 * u, w, '#fbf8f0', 0.6 * fade * (0.6 + 0.4 * (i / n)));
       }
       const hq = at(head);
       if (k < 0.62) R(c, hq.x - 3 * u, hq.y - 6 * u, 6 * u, 12 * u, '#2a2030', 0.8);

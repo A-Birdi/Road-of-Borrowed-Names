@@ -77,6 +77,18 @@ RB.creaturesB = (function () {
 
   // ---- rigs ------------------------------------------------------------------------------------
   const RIGS = {};
+  // The sequencer's reactions (recoil, release, balk, prep, rest, settle) step through a family's
+  // authored frames by progress; with reduced motion each holds one frame (index; −1 = the last).
+  // The frame cache does not know the setting, so the families' caches are cleared when it changes
+  // (checked as each battle enters and each round becomes calm; see onScene).
+  const HOLD = { recoil: 0, release: 1, balk: 1, prep: -1, rest: 1, settle: -1 };
+  const reduced = () => !!(RB.game && RB.game.reducedMotion && RB.game.reducedMotion());
+  let seenReduced = null;
+  function syncReduced() {
+    const r = reduced();
+    if (seenReduced !== null && r !== seenReduced) for (const id of Object.keys(RIGS)) EA.def(id, EA.P[id]);
+    seenReduced = r;
+  }
   function rig(id, spec) {
     const base = spec.base || {};
     const mk = (ov) => Object.assign({}, base, ov || {});
@@ -106,6 +118,9 @@ RB.creaturesB = (function () {
       poses,
       pose: (L, act, i, n, o, H, side) => {
         const fr = acts[act] || [idle[0]];
+        // reduced motion: the sequencer's own reactions hold one drawing (their meaning — knocked,
+        // loosening, balked, waiting, settled — without stepping through poses)
+        if (HOLD[act] != null && reduced()) i = HOLD[act] < 0 ? fr.length - 1 : Math.min(fr.length - 1, HOLD[act]);
         return spec.draw(L, o || {}, fr[Math.max(0, Math.min(fr.length - 1, i))], H, { act, i, n: fr.length, side });
       },
       rig: R,
@@ -191,6 +206,7 @@ RB.creaturesB = (function () {
     if (!e || e.scope !== 'battle') return;
     if (e.phase === 'exit') { stopWarm(); return; }
     if (e.phase !== 'enter' && e.phase !== 'calm') return;
+    syncReduced();
     const C = RB.combat, st = C && C.state && C.state();
     if (!st || !C.members) return;
     const still = !!(RB.game && RB.game.reducedMotion && RB.game.reducedMotion());

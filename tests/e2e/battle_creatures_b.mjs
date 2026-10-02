@@ -83,12 +83,18 @@ async function helpers(p) {
       const loop = () => {
         if (!BA.sampling) return;
         const d = RB.combat.debug(), f = d.stage.frame;
-        BA.samples.push({ busy: d.seq.running, kind: d.seq.kind, foes: f && f.foes.map((x) => x.act), effects: f && f.effects, poses: f && f.poses, off: f && f.foeOff, errors: d.seq.counters.errors || 0 });
+        BA.samples.push({ t: performance.now(), busy: d.seq.running, kind: d.seq.kind, foes: f && f.foes.reduce((a, x) => { a[x.i] = x.act; return a; }, []), effects: f && f.effects, poses: f && f.poses, off: f && f.foeOff, errors: d.seq.counters.errors || 0 });
         requestAnimationFrame(loop);
       };
       requestAnimationFrame(loop);
     };
     BA.sampleOff = () => { BA.sampling = false; return BA.samples; };
+    // frame builds (cache misses) of these families' authored poses, with the sequence playing then
+    BA.builds = [];
+    for (const fam of RB.creaturesB.FAMILIES) {
+      const spec = RB.enemyArt.P[fam], f = spec.pose;
+      spec.pose = function (L, act, ...r) { const t0 = performance.now(); const out = f.call(this, L, act, ...r); BA.builds.push({ fam, act, ms: +(performance.now() - t0).toFixed(1), kind: RB.battleSeq.stats().kind }); return out; };
+    }
     // captures: the next creature sequence plays on a slowed clock (set before it starts, so the
     // sequencer's watchdog allows for it); the clock is restored when it ends
     const run = RB.battleSeq.run;
@@ -385,6 +391,55 @@ await test('an Atlas group (Demanding, three creatures: Moth and Lantern with a 
   assert(!errors.length, errors.join('; '));
   await ctx.close();
 });
+
+// ---------------------------------------------------------------------------------------------------
+// Resources (§21.4, §23.6): the frames a guardian needs are prewarmed while you choose; frame cost
+// during its moves; repeated battle entries and exits leave no timers, layers or sequence owners.
+const perf = {};
+await test('resources: prewarm while choosing, frame cost during guardians\' moves, 8 battle entries/exits return to baseline', async () => {
+  const { p, errors, ctx } = await page(b, url, DESK);
+  await helpers(p);
+  const base = await p.evaluate(() => ({ seq: RB.battleSeq.stats(), layers: document.querySelectorAll('.cb-fx').length, strips: document.querySelectorAll('.cb-strip').length }));
+  const runs = [['lf.keeper', 'flood'], ['sa.hush', 'gust'], ['atlas.cartographer', 'sweep'], ['sb.boss', 'chill'], ['atlas.bell', 'sweep'], ['lf.keeper', 'strike'], ['atlas.mothlamp', 'heat'], ['sb.fox', 'strike']];
+  perf.runs = [];
+  for (const [enemy, kind] of runs) {
+    await battle(p, enemy, { timeScale: 1 });
+    // (the move is set before the choice, as a telegraph; its frames are prewarmed while you choose)
+    await p.evaluate((k) => { BA.prime(); BA.setIntent(k, 'pc'); const id = RB.combat.members()[0]; RB.creaturesB.warmFor(RB.content.enemies[id].art, RB.content.enemies[id].artOpts || {}, k, false); }, kind);
+    const tw = Date.now();
+    for (let i = 0; i < 400 && (await p.evaluate(() => RB.creaturesB.warmStats().queued)) > 0; i++) await wait(p, 50);
+    const warmWait = Date.now() - tw;
+    await p.evaluate(() => { BA.builds = []; BA.sampleOn(); });
+    await respond(p, 'Unravel|ほどく');
+    await idle(p);
+    const S = await p.evaluate(() => BA.sampleOff());
+    const E = S.filter((s) => s.busy && s.kind === 'enemy');
+    let gap = 0;
+    for (let i = 1; i < E.length; i++) gap = Math.max(gap, E[i].t - E[i - 1].t);
+    const d = await p.evaluate(() => ({ frames: RB.combat.debug().frames, warm: RB.creaturesB.warmStats(), builds: BA.builds.filter((x) => x.kind === 'enemy') }));
+    const moveBuilds = d.builds.filter((x) => x.act.endsWith(':' + kind));
+    perf.runs.push({ enemy, kind, enemyFrames: E.length, enemyMaxFrameGapMs: Math.round(gap), seqAvgMs: d.frames.seqAvg, seqMaxMs: d.frames.seqMax, warmedTotal: d.warm.built, warmMsTotal: d.warm.ms, warmWaitMs: warmWait, buildsDuringMove: d.builds.length, moveFrameBuildsDuringMove: moveBuilds.length, buildMsDuringMove: +d.builds.reduce((m, x) => m + x.ms, 0).toFixed(1) });
+    // finish it (diagnostic: one knot left, then the finishing Unravel), settle, and the last line
+    await p.evaluate(() => { const st = RB.combat.state(); for (const f of st.foes) if (f.knots > 0) f.knots = 1; st.silenced = 0; for (const f of st.foes) f.shroud = false; RB.combat.refresh(); });
+    await respond(p, 'Unravel|ほどく|water|水');
+    for (let i = 0; i < 800 && !(await p.evaluate(() => window.__result != null && RB.game.mode() !== 'combat')); i++) {
+      await p.evaluate(() => { if (!RB.battleSeq.busy() && RB.ui.dialogue.isOpen()) RB.ui.dialogue.advance(true); });
+      await wait(p, 50);
+    }
+    await wait(p, 400);
+  }
+  const after = await p.evaluate(() => ({ seq: RB.battleSeq.stats(), layers: document.querySelectorAll('.cb-fx').length, strips: document.querySelectorAll('.cb-strip').length, warm: RB.creaturesB.warmStats(), mode: RB.game.mode() }));
+  perf.after = after; perf.base = base;
+  assert(after.mode !== 'combat', 'back from the last battle: ' + after.mode);
+  assert(after.seq.timers === 0 && !after.seq.running && !after.seq.layer && !after.seq.pointer && after.layers === 0 && after.strips === 0, 'nothing left behind: ' + JSON.stringify(after));
+  assert(after.warm.queued === 0 && !after.warm.active, 'the prewarm queue is cleared at the scene\'s exit');
+  // (frame gaps are reported, not asserted: on a shared machine they measure the machine's load;
+  // what this area controls is that no frame of the move has to be built while it plays)
+  assert(perf.runs.every((r) => r.moveFrameBuildsDuringMove === 0), 'every frame of the telegraphed move was prewarmed (none built while it plays): ' + JSON.stringify(perf.runs));
+  assert(!errors.length, errors.join('; '));
+  await ctx.close();
+});
+fs.writeFileSync(path.join(outDir, 'perf.json'), JSON.stringify(perf, null, 1));
 
 fs.writeFileSync(path.join(outDir, 'timings.json'), JSON.stringify(timings, null, 1));
 console.log('\n' + results.join('\n'));

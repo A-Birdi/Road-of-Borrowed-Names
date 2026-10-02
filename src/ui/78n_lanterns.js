@@ -347,6 +347,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
       door.rect(x1 - 2, -67 - sk, 3, 124 + 2 * sk, wood, 2);
       door.rect(x0, -67, 2, 124, wood, 1);
       for (const y of [-40, -8, 24]) door.line(x0, y, x1, y + Math.round(sk * (y - -5) / 61), wood, 1);
+      // the left eye is painted on this leaf: it turns away with it
+      if (w > 14 && (q.eyes || 'mourn') !== 'shut') {
+        const sx = (x) => x0 + ((x + 36) / 33) * w;
+        door.poly([[sx(-7), -30], [sx(-19), -34], [sx(-19), -26], [sx(-8), -24]], H.ink, 1);
+      }
       // a letter tucked in the door (its plea)
       if (q.letter > 0.05 && w > 10) door.stone([[x0 + 3, 4], [x1 - 3, 3], [x1 - 3, 17], [x0 + 3, 16]], letter, { bevel: 1, face: 2 });
       door.restore();

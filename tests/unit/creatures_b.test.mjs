@@ -46,6 +46,22 @@ export default async (t) => {
     t.ok(!bad.length, id + ': its frames draw inside the canvas and are not empty' + (bad.length ? ' — ' + bad.join(', ') : ''));
   }
 
+  // ---- reduced motion: the sequencer's reactions hold one drawing ----------------------------------
+  {
+    const G = RB.game, saved = G.reducedMotion;
+    const same = (a, b) => a.px.length === b.px.length && a.px.every((v, i) => v === b.px[i]);
+    for (const id of ['bell', 'fox', 'sa_hush']) {
+      const spec = EA.P[id], R = CB.RIGS[id];
+      const fr = (act, i) => spec.pose(K.layer(spec.w, spec.h, spec.ox, spec.oy), act, i, R.poses[act], {}, EA.H, -1);
+      G.reducedMotion = () => true;
+      const held = ['recoil', 'release', 'balk', 'settle'].every((a) => same(fr(a, 0), fr(a, R.poses[a] - 1)));
+      G.reducedMotion = () => false;
+      const moving = ['recoil', 'balk'].every((a) => !same(fr(a, 0), fr(a, R.poses[a] - 1)));
+      t.ok(held && moving, id + ': with reduced motion a reaction holds one drawing (and steps through its poses otherwise)');
+    }
+    G.reducedMotion = saved;
+  }
+
   // ---- deliveries for every move each enemy uses --------------------------------------------------
   const view = (o) => Object.assign({ pc: 10, comp: 10, max: 10, ward: { pc: 0, comp: 0 }, foes: [{ knots: 2, maxKnots: 4 }], cur: 0, knots: 2, maxKnots: 4 }, o || {});
   const ctx = (art, o) => Object.assign({ comp: 'mio', reduce: false, view: view(), group: false, foe: 0, art, foeCol: '#8aa8e8' }, o || {});
