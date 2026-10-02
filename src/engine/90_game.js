@@ -19,6 +19,9 @@ RB.game = (function () {
     return {
       lead: 'en', secondary: 'always', uiLang: 'en', spacing: true,
       textSpeed: 'normal', skipSeen: true, reducedMotion: reduce, textScale: 1, contrast: 'normal',
+      // battle presentation (battle addendum §14.2): its own speed, never derived from Text speed
+      // (an older record lacks them: Normal / Adaptive / Adaptive)
+      battleAnim: 'normal', battleControls: 'adaptive', intentDisplay: 'adaptive',
       vol: { master: 0.8, music: 0.55, sfx: 0.75, voice: 1 }, muted: false,
       voice: { auto: false, uri: null, rate: 0.95 }, lightbulb: true, input: 'hand',
       binds: null, touch: 'auto', strokePractice: false, romaji: true,
@@ -131,6 +134,7 @@ RB.game = (function () {
   function applySettings() {
     const st = G.settings;
     document.documentElement.style.setProperty('--text-scale', String(st.textScale));
+    document.documentElement.classList.toggle('text-large', +st.textScale >= 1.4);
     document.body.classList.toggle('high-contrast', st.contrast === 'high');
     document.body.classList.toggle('reduced-motion', !!st.reducedMotion);
     document.body.classList.toggle('lead-ja', st.lead === 'ja');

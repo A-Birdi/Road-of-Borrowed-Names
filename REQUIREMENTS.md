@@ -342,6 +342,22 @@ Evidence kinds as in COVERAGE.md: U unit, B browser (headless Chromium), V looke
 - [v] PA7 Integration: default suite 57/58 on 25fab16; the whole-game run, stopped by a gap in the test player (a practice activity opened from a scene), passes with the fix in src/engine/99_test.js. Evidence: VALIDATION.md.
 - [b] PA8 Not verified: human play, native-speaker review, real handwriting, Firefox, Safari, real phones and the foldable, fish captions' sources.
 
+## Battle art, adaptive combat UI and playtest repairs (owner's addendum of 2026-10-02; docs/BATTLE_ART_CONTRACTS.md; docs/battle/; VALIDATION.md "Battle addendum")
+- [v] BA1 Playtest repairs RBN-01, -02, -04, -05, -07 and the reconciliation ledger for RBN-01 to RBN-08 (docs/battle/LEDGER.md); 6 of the 7 repair tests fail on the build before the repairs as the review describes. Evidence: B playtest_repairs 7/7; U script_prompts; validator.
+- [v] BA2 Battle animations Normal / Fast / Instant, independent of Text speed; Instant plays nothing and leaves a recap; Skip settles the exchange once. Evidence: B battle_presentation.
+- [v] BA3 The action banner: only during the performed action's own interval, blue for the party and red for a creature, actor and name; never while choosing, writing, choosing support, between actions, after, in Instant or with the tab hidden; token-owned. Evidence: B battle_presentation (truth-table tests).
+- [v] BA4 Per-creature intent badges and the inspector (hover, focus, press, switch, Close, Escape; never targets; 44 px; instance marks; quiet while acting). Evidence: B battle_presentation at 1280×800, 390×844, 320×640.
+- [v] BA5 Intent display Adaptive / Expanded; reading-critical moves (lie, mirror, plea) named neutrally with their wording kept in view. Evidence: B battle_presentation.
+- [v] BA6 Menus withdraw on commitment and return once; inert while away (Tab and pointer cannot reach them); Keep visible leaves them disabled; fresh-press ownership (a held or repeating key, a press begun before the menu or a double click's second click chooses nothing); focus returns to the last response. Evidence: B battle_presentation.
+- [v] BA7 Resolve and Harmony visible in every battle state: the party slip uncovered in every recorded frame, the status inset on the language sheet, help sheets above the party slip on phones. Evidence: B battle_presentation, combat_ui.
+- [v] BA8 Geometry at the eight §22.2 viewports, with 200 % text, a Japanese-led long-name case, a simulated keyboard and Keep visible: action-safe height 488 at 390×844 (target 300) and 308 at 320×640 (target 240). Evidence: B battle_geometry → docs/battle/GEOMETRY.md.
+- [v] BA9 Rules unchanged by presentation: 540 configurations (companions × creatures × playback × motion × controls × text speed) plus 4 pet variations, every fixture identical. Evidence: B battle_invariance.
+- [v] BA10 Twenty battle entries and exits: no battle-only element left, listeners and DOM nodes stable. Evidence: B battle_cycle.
+- [v] BA11 Seams for the art work (authored poses, creature travel, deliveries, effect registry), contracts and inventory. Evidence: U battle_seams; docs/BATTLE_ART_CONTRACTS.md, docs/battle/INVENTORY.md.
+- [~] BA12 Party art, creatures (the Flour Moth proof first), contextual backdrops, pets in battle and overworld parity: built by five workers; pets/overworld finished on its branch, the others in progress; merge and wiring by the integrator.
+- [ ] BA13 Phase F: integrated validation, recordings (Normal / Fast / Instant, reduced motion, narrow), handoff; then the full-game matrix (both addenda).
+- [b] BA14 Not verified: Firefox, Safari, real phones and the foldable, human judgement of the art, a native speaker's review.
+
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
 - R1.3/R14.x: tests/e2e/ui.mjs (IndexedDB probe, session-only banner under refusal, reload persistence, copy independence, delete, overwrite confirm, cross-tab read-only, pre-departure recovery, file:// mode).

@@ -248,7 +248,14 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
   (tests/e2e/battle_invariance.mjs), 20-battle cleanup (tests/e2e/battle_cycle.mjs).
 - Phases C–E run in five worker worktrees (party art; creatures A with the Flour Moth proof; creatures
   B; contextual backdrops; pets in battle and overworld parity), each with docs/battle/<area>.md, to be
-  merged and wired by the integrator. Phase F (integrated validation, recordings, handoff) follows.
+  merged and wired by the integrator. Pets/overworld (efc9ba0), creatures B (be02d0e) and backdrops
+  (4d987b2) have finished on their branches; party art and creatures A are still working. Both creature
+  branches fix the same line in `82_battle_seq.js` `fire1` (a foe cue's `travel` was not passed to the
+  stage). Phase F (integrated validation, recordings, handoff) follows.
+- Found by workers, left for the owner: Nao's "missing third floorboard" in rw.warehouse is not drawn
+  (§2.9; the line is also quoted by the comparisons item C07, so softening it means editing C07 too);
+  learning task picks use the page's shared `Math.random`, which world blink timers also draw from, so
+  which item a battle task asks about varies with frame timing (no rule uses it).
 - The owner's instruction: the full-game matrix waits until both addenda are complete.
 
 ## Commands

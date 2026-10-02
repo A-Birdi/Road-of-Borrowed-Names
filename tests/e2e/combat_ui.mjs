@@ -220,7 +220,9 @@ await test('keyword help by tap: a sheet on phones, a tap outside only closes it
     const t = await cardText(p);
     assert(/Heat 2 of 2/.test(t) && /\+2 harder/.test(t), 'Heat 2 card: ' + t);
     const sh = await rect(p, '.kwcard');
-    assert(sh.b >= 843 && sh.x <= 1 && sh.r >= 389, 'a bottom sheet on a phone: ' + JSON.stringify(sh));
+    // a sheet across the phone, rising from the top of the party slip so Resolve and Harmony stay in view (battle addendum §16.1)
+    const ps = await rect(p, '.cb-party');
+    assert(sh.x <= 1 && sh.r >= 389 && Math.abs(sh.b - ps.y) <= 8 && sh.b <= ps.y + 1, 'a sheet on a phone, above the party slip: ' + JSON.stringify({ sh, ps }));
     const x = await rect(p, '.kwcard .kw-x');
     assert(x.w >= 44 && x.h >= 44, 'Close is at least 44px');
     // a tap outside (on the telegraph) only closes the card

@@ -15,8 +15,11 @@
  *
  * Time: a presentation clock advanced from the frame loop (dt clamped to
  * 100 ms, so a stalled or background tab never bursts through stale beats),
- * faster with the Text speed setting, ×4 while hurried (Z / Enter / a click
- * on the battle). Only one sequence runs at a time; starting another first
+ * at the Battle animations setting's pace (Normal / Fast; Instant plays
+ * nothing and applies the results at once — Text speed has no say), ×4 while
+ * hurried (Z / Enter / a click on the battle). Skip settles the rest of the
+ * exchange. A sequence may carry meta.action: the action banner shows for that
+ * action only, inside its own interval (src/ui/82b_battle_banner.js). Only one sequence runs at a time; starting another first
  * settles the old one. settle() applies every remaining beat in order at
  * once and drops the transient visuals — used when the tab is hidden, by a
  * watchdog if frames stop arriving, and at scene exit — so skipping,
@@ -33,7 +36,8 @@ RB.battleSeq = (function () {
     stripStill: { travel: 0, unfurl: 0, inkAt: 0, inkEnd: 0, fadeAt: 880, end: 980 },
     beat: 560, beatGap: 150, recoverAt: 900, recover: 240, end: 1140,
     foePrep: 320, foeExec: 380, contact: 560, foeRecover: 300, secondTarget: 120, react: 420,
-    finishHold: 1000, speed: { normal: 1, fast: 1.4, instant: 2 }, hurry: 4,
+    finishHold: 1000, speed: { normal: 1, fast: 1.43 }, hurry: 4,
+    bannerOut: { normal: 120, fast: 80 }, // the banner leaves inside the action's last ms (§14.3)
   };
   let pt = 0, lastT = null, cur = null, port = null, timeScale = 1; // timeScale: tests and captures only
   const trace = [];
@@ -44,10 +48,12 @@ RB.battleSeq = (function () {
 
   function later(fn, ms) { const id = setTimeout(() => { timers.delete(id); fn(); }, ms); timers.add(id); return id; }
   function clearTimers() { for (const id of timers) clearTimeout(id); timers.clear(); }
-  function speed() {
-    const ts = RB.game.settings && RB.game.settings.textSpeed;
-    return T.speed[ts] || 1;
-  }
+  // Battle animations (battle addendum §14.2): Normal / Fast / Instant, its own setting — Text
+  // speed has no say here. Fast plays every action in about 70 % of its Normal time.
+  const mode = () => { const m = RB.game.settings && RB.game.settings.battleAnim; return m === 'fast' || m === 'instant' ? m : 'normal'; };
+  function speed() { return T.speed[mode()] || 1; }
+  // Skip (§14.5): the rest of this exchange settles at once; cleared when the next decision is due
+  let skipping = false;
 
   // ---- lifecycle (one attach per encounter) ----------------------------------------------------
   // p: { beat(f, cue) → info, log(html), reconcile() }
@@ -60,6 +66,8 @@ RB.battleSeq = (function () {
   }
   function detach() {
     if (cur) settle('exit');
+    skipping = false;
+    if (RB.battleBanner) RB.battleBanner.clear();
     if (onVis) document.removeEventListener('visibilitychange', onVis);
     onVis = null;
     unhook();
@@ -83,8 +91,19 @@ RB.battleSeq = (function () {
     const endAt = Math.max(meta && meta.minEnd || 0, cues.reduce((m, c) => Math.max(m, c.type === 'beat' || c.type === 'log' || c.type === 'final' ? c.at : 0), 0) + 1, meta && meta.end != null ? meta.end : end);
     counters.runs++;
     return new Promise((resolve) => {
-      cur = { kind, cues, i: 0, t0: pt, end: endAt, resolve, hurried: false, started: performance.now(), rec: { kind, meta: meta || {}, fired: [], beats: [], hurried: false, settled: null, dur: 0 } };
+      const act = meta && meta.action ? meta.action : null;
+      cur = { kind, cues, i: 0, t0: pt, end: endAt, resolve, hurried: false, started: performance.now(), rec: { kind, meta: meta || {}, fired: [], beats: [], hurried: false, settled: null, dur: 0, banner: null } };
+      // Instant playback and an exchange being skipped: every result at once, in order; no
+      // movement, no banner, no flash (§14.4)
+      if (mode() === 'instant' || skipping) { counters.instant = (counters.instant || 0) + 1; settle(skipping ? 'skip' : 'instant'); return; }
       hook();
+      // the action banner: this action only, inside its own interval (§15)
+      if (act && RB.battleBanner) {
+        const aEnd = Math.max(1, Math.min(endAt, act.end != null ? act.end : endAt));
+        cur.banner = RB.battleBanner.show(act);
+        cur.bannerOff = Math.max(0, aEnd - (T.bannerOut[mode()] || 120));
+        cur.rec.banner = { id: act.id, side: act.side, start: 0, end: aEnd };
+      }
       // if frames stop arriving (a throttled tab, a stalled canvas), finish anyway
       const wall = (endAt / (speed() * Math.min(1, timeScale))) * 2 + 2500;
       cur.watch = later(() => { if (cur && cur.started + wall - 50 <= performance.now()) { counters.watchdogs++; settle('watchdog'); } }, wall);
@@ -95,6 +114,7 @@ RB.battleSeq = (function () {
   function step() {
     const el = pt - cur.t0;
     while (cur && cur.i < cur.cues.length && cur.cues[cur.i].at <= el) fire(cur.cues[cur.i++], false);
+    if (cur && cur.banner && el >= cur.bannerOff) { RB.battleBanner.hide(cur.banner); cur.banner = null; }
     if (cur && el >= cur.end) finish(null);
   }
   // A failing cue never stops the frame loop or the battle: it is reported and skipped
@@ -134,6 +154,14 @@ RB.battleSeq = (function () {
     counters.settled++;
     finish(why || 'skip');
   }
+  // Skip the rest of the exchange: the playing sequence settles now, the ones after it settle as
+  // they start (results once, in order); endExchange() — the next decision — clears it.
+  function skip() {
+    skipping = true;
+    counters.skipped = (counters.skipped || 0) + 1;
+    if (cur) settle('skip');
+  }
+  function endExchange() { skipping = false; }
   function hurry() {
     if (!cur || cur.hurried) return;
     cur.hurried = true;
@@ -144,6 +172,8 @@ RB.battleSeq = (function () {
     const c = cur;
     if (!c) return;
     cur = null;
+    // the banner belongs to this action's interval: gone by its end, on every path
+    if (c.banner && RB.battleBanner) { RB.battleBanner.hide(c.banner, true); c.banner = null; }
     if (c.watch) { clearTimeout(c.watch); timers.delete(c.watch); }
     unhook();
     c.rec.settled = settled;
@@ -596,5 +626,5 @@ RB.battleSeq = (function () {
     return { running: !!cur, kind: cur && cur.kind, pt: Math.round(pt), timers: timers.size, layer: !!layer, pointer: !!onDown, attached: !!port, counters: Object.assign({}, counters) };
   }
   // setTimeScale(k): slow the presentation clock (k < 1) for frame captures; tests and tools only
-  return { T, attach, detach, tick, now, run, settle, hurry, busy: () => !!cur, choreo, planOf, addDelivery, deliveryOf, stats, trace: () => trace.slice(), setTimeScale: (k) => { timeScale = Math.max(0.05, Math.min(4, +k || 1)); } };
+  return { T, attach, detach, tick, now, run, settle, hurry, skip, endExchange, skipping: () => skipping, mode, busy: () => !!cur, current: () => (cur ? { kind: cur.kind, banner: !!cur.banner, t: Math.round(pt - cur.t0), end: cur.end } : null), choreo, planOf, addDelivery, deliveryOf, stats, trace: () => trace.slice(), setTimeScale: (k) => { timeScale = Math.max(0.05, Math.min(4, +k || 1)); } };
 })();

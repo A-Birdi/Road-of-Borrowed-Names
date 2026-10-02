@@ -81,9 +81,12 @@ RB.tasks = (function () {
     };
   }
   // "in hiragana", "in katakana", "in hiragana or in kanji" … for a lexicon entry's recall task
-  function scriptAsk(e) {
-    const sc = RB.kana.isKata(e.r[0]) ? 'katakana' : 'hiragana';
-    return e.w !== e.r ? 'in ' + sc + ', or in kanji' : 'in ' + sc;
+  function scriptAsk(e) { return askScript(e.r, e.w); }
+  // the script a written answer is accepted in, named (RBN-02): "in hiragana", "in katakana", or
+  // "in hiragana, or in kanji" when the written form `w` is also accepted
+  function askScript(r, w) {
+    const sc = RB.kana.isKata(String(r || '')[0]) ? 'katakana' : 'hiragana';
+    return w && w !== r ? 'in ' + sc + ', or in kanji' : 'in ' + sc;
   }
   function vocabStep(key, opts) {
     opts = opts || {};
@@ -245,5 +248,5 @@ RB.tasks = (function () {
     return (ch.steps || []).map(prepare);
   }
 
-  return { fromItem, kanaStep, vocabStep, prepare, stepsOf, next, drillPool, itemPool, stepFor, findWord, plain, readingOf, kanaWordIndex, LV };
+  return { fromItem, kanaStep, vocabStep, prepare, stepsOf, next, drillPool, itemPool, stepFor, findWord, plain, readingOf, kanaWordIndex, askScript, LV };
 })();

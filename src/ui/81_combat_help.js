@@ -255,7 +255,18 @@ RB.combatHelp = (function () {
     const narrow = window.innerWidth < 600;
     const sheet = narrow && via !== 'hover';
     card.classList.toggle('sheet', sheet);
-    if (sheet) { card.style.left = ''; card.style.top = ''; return; }
+    if (sheet) {
+      card.style.left = ''; card.style.top = ''; card.style.bottom = ''; card.style.maxHeight = '';
+      // Resolve and Harmony stay in view (battle addendum §16.1): the sheet rises from the top of
+      // the party slip, not from the bottom of the screen (the language sheet carries its own inset)
+      const party = !document.querySelector('.chal') && document.querySelector('.combat-ui .cb-party');
+      const pr = party ? party.getBoundingClientRect() : null;
+      if (pr && pr.height > 0 && pr.top > window.innerHeight * 0.3 && pr.top < window.innerHeight) {
+        card.style.bottom = Math.round(window.innerHeight - pr.top + 4) + 'px';
+        card.style.maxHeight = Math.max(140, Math.min(Math.round(window.innerHeight * 0.62), Math.round(pr.top - 12))) + 'px';
+      }
+      return;
+    }
     const r = a.getBoundingClientRect();
     const w = Math.min(380, window.innerWidth - 16);
     card.style.width = w + 'px';

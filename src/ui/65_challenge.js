@@ -99,6 +99,9 @@ RB.challenge = (function () {
       wrap.innerHTML =
         '<div class="chal-frame" role="dialog" aria-modal="true" aria-labelledby="' + tid + '">' +
           '<div class="chal-head"><h2 class="chal-title" id="' + tid + '"></h2>' +
+            // a battle's permanent status (battle addendum §16): Resolve and Harmony stay visible
+            // while you read and write — a reserved inset, never seen dimly through a scrim
+            (opts.status ? '<div class="chal-status" role="group" aria-label="Your party">' + (typeof opts.status === 'function' ? opts.status() : opts.status) + '</div>' : '') +
             (canLeave ? '<button class="cbtn" data-a="leave">' + I('back') + '<span>' + esc(opts.cancelLabel || 'Step away') + '</span></button>' : '') + '</div>' +
           '<div class="chal-body">' +
             '<section class="chal-task slip" aria-label="The task"><div class="slip-lab">The task</div><div class="task-ctx"></div>' +

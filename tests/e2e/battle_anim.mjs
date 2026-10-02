@@ -724,6 +724,8 @@ await test('learning stays central: calm stances while choosing and writing, not
     assert(S.every((s) => s.phase === 'challenge' && s.poses.pc === 'calm' && !(s.effects || []).length && !s.strip), 'calm while the task is open; nothing drawn');
     assert(focus === 'chal' || focus === 'BODY', 'focus stays with the task: ' + focus);
     const r = await p.evaluate(() => BA.right()); await p.mouse.click(r.x, r.y);
+    // (the pointer is moved off the option first: resting on its word, the word's hover help can open over Continue)
+    await p.mouse.move(2, 2);
     await p.waitForSelector('.fbwrap[data-fb=ok] .fb-go'); await p.click('.fbwrap[data-fb=ok] .fb-go');
     // your companion's turn: still calm, nothing drawn over the menu, no focus taken from it
     await p.waitForSelector('.ccard');

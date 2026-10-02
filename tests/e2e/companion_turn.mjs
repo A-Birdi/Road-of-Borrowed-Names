@@ -100,6 +100,10 @@ const step = async (p, sel, what) => {
   catch (e) { throw new Error(what + ': ' + sel + ' did not appear; ' + JSON.stringify(await p.evaluate(() => ({ phase: RB.combat.phase(), busy: RB.battleSeq.busy(), chal: !!document.querySelector('.chal'), fb: (document.querySelector('.fbwrap') || {}).outerHTML ? document.querySelector('.fbwrap').getAttribute('data-fb') : null, coach: (document.querySelector('.cb-coach') || {}).textContent || '', top: (() => { const e = document.elementFromPoint(innerWidth / 2, innerHeight / 2); return e ? e.className : null; })() })))); }
 };
 async function queue(p, re) {
+  // the pointer is moved off first: left resting on a word where the menu re-rendered (Back, a new
+  // battle), that word's hover help can open over the card about to be pressed
+  await p.mouse.move(2, 2);
+  await wait(p, 150);
   const c = await center(p, await cardSel(p, re || 'Unravel'));
   await p.mouse.click(c.x, c.y);
   // the step is a choice or, sometimes, putting pieces in order: answer either right, with the mouse

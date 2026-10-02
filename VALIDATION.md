@@ -1088,3 +1088,66 @@ save was used.
   a native speaker's review of the new Japanese, real handwriting, Firefox, Safari, real phones, the
   foldable, a stylus, real software keyboards, and the fish captions' source check
   (`docs/practice/COVERAGE.md`, "What is not verified").
+
+## Battle addendum — Phases A and B (Expressive Battle Art, Adaptive Combat UI, and Verified Playtest Repairs; owner's brief of 2026-10-02)
+Phase A (repairs, seams, contracts, inventory) and Phase B (the integrator's presentation contract)
+on the task branch. The art areas (Phases C–E) are built by five workers and merged next; Phase F and
+then the full-game matrix follow. What each part does: `docs/battle/PRESENTATION.md`; the RBN ledger:
+`docs/battle/LEDGER.md`; contracts: `docs/BATTLE_ART_CONTRACTS.md`. Every run below was in headless
+Chromium on Linux (Playwright) with synthetic campaigns in fresh profiles; no player save was used.
+The machine was shared with five art workers running their own tests (load average 12–36 on 4 cores);
+timing assertions that failed under that load are listed with their rerun.
+- **Build identity:** `index.html` 8,201,452 bytes, 2,519,872 gzip -9, sha256 `b5202fc6166f52c1…`
+  (the Phase B commit). Growth over 25fab16: +66,609 bytes raw.
+- **Validator** (`node tools/validate.mjs`): no errors.
+- **U Unit** (`node tests/run-unit.mjs`, the build before the last frame-cost change): **8008 passed,
+  1 failed** — kanji_chart's "a search takes well under 25 ms" at load ~30; rerun alone on the final
+  build: 53/0. New: `script_prompts` 10/0 (RBN-02 beyond the recall step), `battle_seams` 12/0.
+- **B Repairs** (`playtest_repairs.mjs`): **7/7** (RBN-01 ×3, -02, -04, -05, -07). On the build before
+  the repairs (25fab16's `index.html`), 6 of the 7 fail as the review describes; the seventh (a target
+  gone before arrival) passes on both. The new RBN-07 test checks the guided note, the "Guided practice"
+  feedback and the record (assisted 1, ok 0).
+- **B Presentation** (`battle_presentation.mjs`, final build): **9/9** — banner truth table (decision,
+  language task, support choice, gaps, after; blue/red with actor and name; companion support; one
+  banner for a shared technique; the finishing response's banner gone while the settling plays; no
+  banner for a creature's move that never ran; a hidden tab; tokens: a late hide cannot clear a newer
+  title), Normal / Fast / Instant with Text speed independence, Skip, intent badges (three viewports),
+  reading-critical intents and Expanded, the held-Enter guard and focus return, withdrawn and Keep-visible
+  controls unreachable by Tab and pointer with Resolve and Harmony visible in every recorded frame
+  (Adaptive and Keep visible, 1280×800 and 390×844).
+- **B Battle suites** (final build unless noted): combat_ui 7/7, companion_turn 4/4, kanji_chart 8/8,
+  battle_group 6/6, combat_small all ok (the build before the last frame-cost change), learning_ui 15/15,
+  fieldweave 89/89, practice_a_desk 45/45, practice_a_layout 350/350 (the script that had run during the
+  one-minute build mix-up of the practice suite: passes on the final build).
+  - battle_anim: **16/16** on the final build at load ~4 (frame cost during sequences avg 1.7 ms, limit
+    8). In the batch at load ~25 it was 14/16: "a complete exchange" (the frame-cost limit) and "rapid
+    input" (a key press timed against the companion menu's 250 ms guard); "rapid input" also failed on
+    the pre-Phase-B build at that load and passed there alone.
+  - Fixed in tests on the way: a pointer left on a word opened hover word help over the next card or
+    Continue (companion_turn, battle_anim, battle_presentation, battle_geometry), and clicks inside the
+    companion menu's first 250 ms (a designed guard) were ignored (battle_presentation, battle_geometry).
+- **B Geometry** (`battle_geometry.mjs --doc`, final build): 21 scenes at the eight §22.2 viewports plus
+  200 % text, a Japanese-led long-name case, a simulated keyboard and Keep visible; **all targets met**:
+  action-safe height 488 at 390×844 alone and 448 with three creatures (target 300), 308 and 260 at
+  320×640 (target 240). Report: `docs/battle/GEOMETRY.md`.
+- **B Invariance** (`battle_invariance.mjs`, the Phase B build before the last two UI-only edits):
+  **544 configurations** — no companion and each of the four × one, two and three creatures × Normal /
+  Fast / Instant × full / reduced motion × Adaptive / Keep visible × Text speed Normal / Fast / Instant,
+  plus no pet / cat shown / cat hidden / dog — **every fixture identical** in resolve, knots, intents,
+  states, Harmony, support uses, round, target, outcome, rewards, the learning record's counts, and the
+  next decision. No combination was excluded.
+- **B Long session** (`battle_cycle.mjs`, final build): 20 battle entries and exits (every companion,
+  1–3 creatures, every playback, reduced motion, pets, Skip, a hidden tab, a finish, Step back): no
+  battle-only element left after any exit; JS listeners 101 → 101 and DOM nodes 247 → 245 from battle 5
+  to 20. (A first run showed growth: it was the test's own undisposed element handles, retained by the
+  DevTools session — found with a heap snapshot; the test disposes them now.)
+- **B Whole game** (`pursue.mjs E mio`, the integrated build with Phase B, before its last edits):
+  Chapters 1–6 and the first Atlas restoration, no problems, no page errors.
+- **Found and fixed in Phase B testing:** at 200 % text on a portrait phone the companion's support
+  cards had an 8 px scroll box (the dock now takes the height it needs there); keyword help and word
+  help on phones opened over the party slip (they now rise from its top); Japanese words in the banner
+  and the word strip could take keyboard focus (both inert now); badges kept stale positions when the
+  stage collapsed (they stand down then); the battle weave, field weave and copying desk prompts said
+  "(kana or kanji)" while accepting only the hiragana reading or the kanji (RBN-02).
+- **Not verified:** Firefox, Safari, a real phone or the foldable; the art and the badges by a person;
+  a native speaker's review; real handwriting.

@@ -367,6 +367,7 @@ RB.battleStage = (function () {
     dropStrip();
     const el = document.createElement('div');
     el.className = 'cb-strip';
+    el.inert = true; // a moment of the performance: no focus, no word help (the log keeps the word)
     el.innerHTML = '<span class="cs-w">' + word.html + '</span>' + (word.en ? '<span class="cs-en">' + RB.util.esc(word.en) + '</span>' : '');
     S.fxLayer.appendChild(el);
     S.strip = { el, from, to, t0: now, tm, w: el.offsetWidth, h: el.offsetHeight };

@@ -278,7 +278,7 @@ RB.weave = (function () {
     const hi = RB.pad && RB.pad.kanjiPreferred ? RB.pad.kanjiPreferred() : ['I', 'A'].indexOf(s.learn.profile) >= 0;
     return RB.tasks.prepare({
       kind: 'write', item: 'v:' + (w.lex || w.r), answer: w.r, accept: [w.r, RB.tasks.plain(w.jpK || w.jp)], mode: 'reading',
-      title: 'Weave the inscription', prompt: { en: 'Write the word for “' + w.en + '”' + (hi ? ' (kana or kanji).' : '.') },
+      title: 'Weave the inscription', prompt: { en: 'Write the word for “' + w.en + '” ' + RB.tasks.askScript(w.r, hi ? RB.tasks.plain(w.jpK || w.jp) : null) + '.' },
       explain: { jp: w.jpK || w.jp, en: w.en },
     });
     void T;

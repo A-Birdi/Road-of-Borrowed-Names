@@ -446,10 +446,10 @@ RB.ui.desk = (function () {
     if (card.full && card.mark && card.full.jp.indexOf(card.mark) >= 0) {
       const i = card.full.jp.indexOf(card.mark);
       step.template = { before: card.full.jp.slice(0, i), after: card.full.jp.slice(i + card.mark.length) };
-      step.prompt = { en: 'Write the word for “' + card.en + '” (kana or kanji): ' + card.gap };
+      step.prompt = { en: 'Write the word for “' + card.en + '” ' + RB.tasks.askScript(card.r, (card.accept || []).indexOf(card.w) >= 0 ? card.w : null) + ': ' + card.gap };
       step.explain = { jp: card.full.jp, en: card.w + (card.w !== card.r ? ' (' + card.r + ')' : '') + ' — ' + m + '. ' + card.full.en };
     } else {
-      step.prompt = { en: 'Write the word for “' + m + '” (kana or kanji).' };
+      step.prompt = { en: 'Write the word for “' + m + '” ' + RB.tasks.askScript(card.r, (card.accept || []).indexOf(card.w) >= 0 ? card.w : null) + '.' };
       step.explain = { jp: card.mark, en: card.w + (card.w !== card.r ? ' (' + card.r + ')' : '') + ' — ' + m + '.' };
     }
     return RB.tasks.prepare(step);

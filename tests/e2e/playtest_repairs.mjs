@@ -7,6 +7,7 @@
 //           of a hiragana word is explained as a script mismatch in words that match the input
 //   RBN-04  Heal at full resolve, solo: no "you both", no healing number; a truthful line
 //   RBN-05  the soaked-letters activity no longer asserts rain
+//   RBN-07  the gears' Elementary step says it is a guided first look and is recorded as assisted
 // Usage: node tests/e2e/playtest_repairs.mjs [filter]
 import { serve, launch, page } from './lib.mjs';
 
@@ -192,6 +193,30 @@ await test('RBN-05 the soaked letters: a neutral lead, not "run in the rain"', a
   await p.waitForSelector('.act-lead');
   const lead = await p.evaluate(() => document.querySelector('.act-lead').textContent);
   assert(/The address is missing\. Read the letter: who is it for\?/.test(lead) && !/rain/i.test(lead), 'neutral lead: ' + lead);
+  assert(!errors.length, errors.join('; '));
+  await ctx.close();
+});
+
+await test('RBN-07 the gears (Elementary): the guided first look says so on the task and is recorded as practice with help', async () => {
+  const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  await p.evaluate(() => { const s = RB.game.debugStart('rw.mill1', 7, 9, { comp: null }); s.learn.kanaKnown = 'both'; s.learn.profile = 'E'; window.__act = null; RB.challenge.run('rw.c_mill_gears', { scene: 'test' }).then((r) => { window.__act = r || 'done'; }); });
+  await p.waitForSelector('.chal [data-add]', { timeout: 10000 }).then((h) => h.dispose());
+  const note = await p.evaluate(() => (document.querySelector('.chal .chal-guided') || {}).textContent || '');
+  assert(/guided first look/i.test(note) && /practice with help/i.test(note), 'the task says it is guided: ' + note);
+  // put the plates in the order shown, with real clicks, and check
+  for (const w of ['まず', 'つぎに', 'それから', 'さいごに']) {
+    const i = await p.evaluate((w) => { const t = [...document.querySelectorAll('.chal [data-add]')].find((x) => !x.disabled && x.textContent.replace(/\s+/g, '') === w); return t ? t.getAttribute('data-add') : null; }, w);
+    assert(i != null, 'plate ' + w + ' on screen');
+    await p.click('.chal [data-add="' + i + '"]');
+  }
+  await p.click('.chal [data-a=submit]');
+  await p.waitForSelector('.fbwrap', { timeout: 8000 }).then((h) => h.dispose());
+  const fb = await p.evaluate(() => document.querySelector('.fbwrap').textContent.replace(/\s+/g, ' '));
+  assert(/Guided practice — that's fine/.test(fb), 'the result is said to be guided practice: ' + fb);
+  await p.click('.fbwrap .fb-go'); // the record is written when the task closes
+  await p.waitForFunction(() => window.__act, null, { timeout: 8000 });
+  const rec = await p.evaluate(() => { const r = RB.game.s.learn.items['c:rw_gears_e']; return r && { ok: r.ok, assisted: r.modes.assisted, seen: r.seen }; });
+  assert(rec && rec.assisted === 1 && rec.ok === 0 && rec.seen === 1, 'recorded as assisted, not as an independent success: ' + JSON.stringify(rec));
   assert(!errors.length, errors.join('; '));
   await ctx.close();
 });

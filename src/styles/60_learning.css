@@ -1033,3 +1033,131 @@ body.high-contrast .kc-pp { --pad-paper: #ffffff; --pad-ink: #000000; --pad-guid
 .kjc .kc-res .en, .kjc .kc-words .en { font-family: var(--ui-font); }
 .folio.lsheet.kjc > .folio-head { flex: none; }
 @media (max-width: 599px) { .folio.lsheet.kjc > .folio-head .meta { display: none; } .kjc .kc-res { gap: 0.5em; padding: 0.3em 0.45em; } .kjc .kc-rg { font-size: 1.45em; } }
+
+/* ---- battle addendum §12–§16: the action banner, Skip, menus that withdraw, the status inset ---- */
+/* the overlay is its own stacking context: nothing in it (the sticky party slip, the banner)
+   can rise above the layers opened over the battle (the language task, dialogue) */
+.combat-ui { isolation: isolate; }
+/* The banner names the action being performed now (blue: the party; red: a creature). It overlays
+   the scene (no reserved row), takes no input, and is gone by the action's end. */
+.combat-ui > .cb-banner {
+  position: absolute; z-index: 6; pointer-events: none;
+  top: max(10px, env(safe-area-inset-top)); left: 50%; transform: translate(-50%, -6px);
+  max-width: min(680px, calc(100% - 150px)); min-height: 34px;
+  display: flex; align-items: center; flex-wrap: wrap; justify-content: center; gap: 2px 8px;
+  padding: 5px 16px 6px; border-radius: 3px; border: 1px solid transparent;
+  font: 600 1.02em/1.25 var(--serif); color: #fdf8ee; text-align: center;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25), 0 8px 18px rgba(0, 0, 0, 0.35);
+  opacity: 0; visibility: hidden; transition: opacity 110ms var(--ease), transform 110ms var(--ease);
+}
+.combat-ui > .cb-banner.on { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
+.combat-ui > .cb-banner.off { opacity: 0; visibility: visible; transform: translate(-50%, -4px); }
+.combat-ui > .cb-banner.side-party { background: linear-gradient(#35598a, #2a4670); border-color: #a9c6ec; }
+.combat-ui > .cb-banner.side-enemy { background: linear-gradient(#8a3a32, #6e2a25); border-color: #efb0a8; }
+.cb-banner .bn-mark { display: inline-flex; opacity: 0.9; }
+.cb-banner .bn-mark svg { width: 1.1em; height: 1.1em; }
+.cb-banner .bn-actor { font-weight: 700; }
+.cb-banner .bn-sep { opacity: 0.7; }
+.cb-banner .bn-jp { font-family: var(--jp-font); font-weight: 400; }
+.cb-banner rt { color: rgba(253, 248, 238, 0.86); }
+body.high-contrast .combat-ui > .cb-banner.side-party { background: #12305a; border-color: #ffffff; }
+body.high-contrast .combat-ui > .cb-banner.side-enemy { background: #5a1210; border-color: #ffffff; }
+body.reduced-motion .combat-ui > .cb-banner { transition: none; transform: translate(-50%, 0); }
+@media (prefers-reduced-motion: reduce) { .combat-ui > .cb-banner { transition: none; transform: translate(-50%, 0); } }
+@media (max-width: 599px) { .combat-ui > .cb-banner { max-width: calc(100% - 24px); font-size: 0.95em; } }
+
+/* Skip: in the scene's corner while an exchange plays (Normal and Fast) */
+.combat-ui > .cb-skip { grid-area: stage; justify-self: end; align-self: start; margin: 6px; z-index: 5; min-height: 44px; min-width: 44px; pointer-events: auto; }
+.combat-ui > .cb-skip[hidden] { display: none; }
+
+/* Committed: the telegraph and the response dock withdraw through their edge (Adaptive) and the
+   scene drawn under them shows; nothing is re-laid out. Keep visible leaves them, dimmed and inert. */
+.combat-ui .intent, .combat-ui .cb-dock, .combat-ui .cb-side { transition: transform 200ms var(--ease), opacity 200ms var(--ease), visibility 0s linear 0s; }
+.combat-ui.cb-acting:not(.cb-keep) .intent { transform: translateY(-28px); opacity: 0; visibility: hidden; transition: transform 180ms var(--ease), opacity 180ms var(--ease), visibility 0s linear 180ms; }
+.combat-ui.cb-acting:not(.cb-keep) .cb-dock { transform: translateY(calc(100% + 24px)); opacity: 0; visibility: hidden; transition: transform 200ms var(--ease), opacity 200ms var(--ease), visibility 0s linear 200ms; }
+.combat-ui.cb-acting.cb-keep .intent, .combat-ui.cb-acting.cb-keep .cb-dock { opacity: 0.6; filter: saturate(0.55); }
+@media (min-width: 900px) and (min-height: 560px) {
+  .combat-ui.cb-acting:not(.cb-keep) .cb-dock { transform: translateX(calc(100% + 24px)); }
+  .combat-ui.cb-group.cb-acting:not(.cb-keep) .cb-side > .intent { transform: translateX(calc(100% + 24px)); }
+}
+@media (max-height: 559px) and (min-width: 600px) {
+  .combat-ui.cb-acting:not(.cb-keep) .cb-dock, .combat-ui.cb-acting:not(.cb-keep) .intent { transform: translateX(calc(100% + 24px)); }
+}
+body.reduced-motion .combat-ui :is(.intent, .cb-dock, .cb-side) { transition: none !important; }
+@media (prefers-reduced-motion: reduce) { .combat-ui :is(.intent, .cb-dock, .cb-side) { transition: none !important; } }
+
+/* a portrait phone: the response dock sits above the party slip, so withdrawing it opens one
+   continuous scene from the creature down to the party; the party slip stays on screen even
+   when large text makes the overlay scroll */
+@media (max-width: 599px) and (min-height: 560px) {
+  .combat-ui { grid-template-areas: "foe" "intent" "stage" "dock" "party"; grid-template-rows: max-content max-content minmax(60px, 1fr) minmax(240px, min(calc(44 * var(--vh)), 440px)) max-content; }
+  .combat-ui.cb-group { grid-template-rows: max-content max-content minmax(60px, 1fr) minmax(210px, min(calc(36 * var(--vh)), 400px)) max-content; }
+  .combat-ui .cb-party { position: sticky; bottom: 0; z-index: 3; }
+  /* large text: the dock takes the height its content needs and the overlay scrolls (the party
+     slip stays pinned at the bottom), so the companion's queued note never squeezes its cards */
+  html.text-large .combat-ui, html.text-large .combat-ui.cb-group { grid-template-rows: max-content max-content minmax(120px, 1fr) max-content max-content; }
+}
+
+/* the status inset on the language task opened from a battle */
+.chal-status { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; font-size: 0.86em; color: var(--on-cloth); margin: 0 8px; }
+.chal-status .cs-m { display: inline-flex; align-items: center; gap: 6px; }
+.chal-status .cs-n { font-weight: 700; }
+.chal-status .bar { width: 64px; height: 8px; background: var(--cloth-950); border: 1px solid var(--paper-edge); border-radius: 2px; overflow: hidden; display: inline-block; }
+.chal-status .bar > i { display: block; height: 100%; background: var(--paper); }
+.chal-status .cs-h { display: inline-flex; align-items: center; gap: 4px; }
+.chal-status .hm-pips { display: inline-flex; gap: 2px; }
+.chal-status .hm-pips .hp { width: 8px; height: 8px; border-radius: 50%; border: 1px solid var(--paper-edge); }
+.chal-status .hm-pips .hp.on { background: var(--paper); }
+
+/* Intent badges (battle addendum §13): one per standing creature at its place in the formation,
+   44 px to press however small the symbol; the instance mark where names repeat; quiet (no input,
+   no pulse) while an exchange plays, the creature acting marked. */
+.combat-ui > .cb-badges { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
+.cb-badges .cb-ib {
+  position: absolute; left: 0; top: 0; pointer-events: auto; cursor: pointer;
+  min-width: 44px; min-height: 44px; padding: 4px 9px; display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+  color: var(--ink); background: var(--paper); border: 1px solid var(--paper-edge); border-radius: 22px;
+  box-shadow: 0 2px 0 var(--paper-3), 0 4px 10px rgba(0, 0, 0, 0.3); font: 700 0.95em/1 var(--serif);
+  transition: opacity 160ms var(--ease);
+}
+.cb-ib .ib-ic { display: inline-flex; color: var(--vermilion); }
+.cb-ib .ib-ic svg { width: 20px; height: 20px; }
+.cb-ib .ib-s { font-variant-numeric: tabular-nums; }
+.ib-m { display: inline-grid; place-items: center; min-width: 1.35em; height: 1.35em; padding: 0 3px; border-radius: 4px; background: var(--cloth-800); color: var(--on-cloth); font: 700 0.78em/1 var(--serif); vertical-align: 0.1em; }
+.cb-ib.open { background: var(--paper-2); box-shadow: 0 0 0 2px var(--ink), 0 4px 10px rgba(0, 0, 0, 0.3); }
+.cb-ib.answered .ib-ic { color: var(--ok-ink); }
+.cb-ib:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.cb-badges.quiet .cb-ib { opacity: 0.7; box-shadow: none; cursor: default; }
+.cb-badges.quiet .cb-ib.acting { opacity: 1; box-shadow: 0 0 0 2px var(--vermilion); }
+.cb-badges.rail .cb-ib { border-radius: 8px; }
+body.high-contrast .cb-badges .cb-ib { border: 2px solid var(--ink); }
+body.reduced-motion .cb-badges .cb-ib { transition: none; }
+/* the card a badge opens: inside the scene's column, above the party slip; it scrolls inside
+   itself when the room is short */
+.combat-ui > .cb-icard { position: absolute; z-index: 7; left: 0; top: 0; pointer-events: auto; overflow-y: auto; overscroll-behavior: contain; padding: 6px 10px 10px; color: var(--ink); font-size: 0.95em; }
+.combat-ui > .cb-icard[hidden] { display: none; }
+.cb-icard .ic-h { display: flex; align-items: center; gap: 6px; }
+.cb-icard .ic-h b { flex: 1; font-family: var(--serif); }
+.cb-icard .ic-ic { display: inline-flex; color: var(--vermilion); }
+.cb-icard .ic-ic svg { width: 20px; height: 20px; }
+.cb-icard .ic-x { min-width: 44px; min-height: 44px; padding: 0; justify-content: center; }
+.cb-icard .ic-k { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; font-weight: 700; }
+.cb-icard .ic-k svg { width: 18px; height: 18px; }
+.cb-icard .ic-k .gist { font-weight: 400; color: var(--ink-2); }
+.cb-icard .ic-jp { margin-top: 4px; font-family: var(--jp-font); font-size: 1.05em; line-height: 1.9; }
+.cb-icard .ic-en { color: var(--ink-2); font-style: italic; }
+.cb-icard .ic-what { margin: 6px 0 0; }
+.cb-icard .ic-f { margin-top: 6px; }
+.cb-icard .ic-more { min-height: 44px; }
+/* several telegraphs at once (reading-critical ones, or Expanded): each named; the panel scrolls */
+.cb-group .intent.it-multi .it-who { display: flex; }
+.combat-ui .intent.it-multi { max-height: min(42vh, 380px); overflow-y: auto; overscroll-behavior: contain; }
+.cb-group .intent .it-tag { font: italic 400 0.85em var(--serif); color: var(--ink-2); }
+.cb-badges.nostage { display: none; }
+.cb-badges:not(.placed) { visibility: hidden; }
+/* on a dark (unselected) slip the mark is paper on cloth */
+.cb-foe .fs:not(.on) .ib-m { background: var(--paper); color: var(--ink); }
+/* a portrait phone: several telegraphs share a shorter scrolling panel, so the scene keeps room */
+@media (max-width: 599px) and (min-height: 560px) {
+  .combat-ui .intent.it-multi { max-height: min(calc(26 * var(--vh)), 300px); }
+}

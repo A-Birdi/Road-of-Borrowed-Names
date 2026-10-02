@@ -437,7 +437,19 @@ RB.ui.help = (function () {
     const sheet = window.innerWidth < 600 && via !== 'hover';
     panel.classList.toggle('docked', !!padOpen && !sheet);
     panel.classList.toggle('sheet', sheet);
-    if (sheet || padOpen) { panel.style.left = ''; panel.style.top = ''; panel.style.maxHeight = ''; return; }
+    panel.style.bottom = '';
+    if (sheet || padOpen) {
+      panel.style.left = ''; panel.style.top = ''; panel.style.maxHeight = '';
+      // in a battle the sheet rises from the top of the party slip: Resolve and Harmony stay in view
+      // (battle addendum §16.1; the language sheet carries its own status inset)
+      const party = sheet && !document.querySelector('.chal') && document.querySelector('.combat-ui .cb-party');
+      const pr = party ? party.getBoundingClientRect() : null;
+      if (pr && pr.height > 0 && pr.top > window.innerHeight * 0.3 && pr.top < window.innerHeight) {
+        panel.style.bottom = Math.round(window.innerHeight - pr.top + 4) + 'px';
+        panel.style.maxHeight = Math.max(140, Math.min(Math.round(window.innerHeight * 0.62), Math.round(pr.top - 12))) + 'px';
+      }
+      return;
+    }
     const r = anchor.getBoundingClientRect();
     const pw = Math.min(400, window.innerWidth - 16);
     const left = Math.min(window.innerWidth - pw - 8, Math.max(8, r.left + r.width / 2 - pw / 2));

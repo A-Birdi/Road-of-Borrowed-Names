@@ -32,7 +32,7 @@ const assert = (c, m) => { if (!c) throw new Error(m); };
 const phone = (w, h) => ({ viewport: { width: w, height: h }, touch: true, mobile: true, dpr: 2 });
 
 // Battle word task for 守る, exactly as the combat UI builds it for the "mamoru" response.
-const MAMORU = { kind: 'write', item: 'v:守る', answer: 'まもる', accept: ['まもる', '守る'], mode: 'reading', title: 'Weave the inscription', prompt: { en: 'Write the word for “protect” (kana or kanji).' }, explain: { jp: '{守|まも}る', en: 'protect — Raises a ward.' } };
+const MAMORU = { kind: 'write', item: 'v:守る', answer: 'まもる', accept: ['まもる', '守る'], mode: 'reading', title: 'Weave the inscription', prompt: { en: 'Write the word for “protect” in hiragana, or in kanji.' }, explain: { jp: '{守|まも}る', en: 'protect — Raises a ward.' } };
 
 async function helpers(p) {
   await p.evaluate(() => {

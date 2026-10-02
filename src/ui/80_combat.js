@@ -98,7 +98,13 @@ RB.combat = (function () {
       // the frame loop must survive anything the presentation does wrong
       try { RB.battleStage.draw(c, w, h, { t, pt, amb: tt, view: V(), reduce, calm: calmNow(), Sr: S, lay, stageCss, sealHeld }); }
       catch (err) { if (!draw.failed) console.error('battle stage', err); draw.failed = true; }
-      placeHits();
+      // the creatures' rest boxes (page px): every frame while a target can be pressed; for the
+      // badges only when the layout may have changed (a new layout, a resize, a scroll), at most
+      // every 300 ms otherwise — never a per-frame cost during a sequence
+      const wantHits = canTarget(), wantBadges = badgesDue(t);
+      const hs = stageCss && RB.battleStage.active() && (wantHits || wantBadges) ? RB.battleStage.stats().hits || [] : [];
+      placeHits(hs);
+      if (wantBadges) placeBadges(hs);
     }
     const dt = performance.now() - t0;
     cost.n++; cost.sum += dt; cost.max = Math.max(cost.max, dt);
@@ -109,8 +115,23 @@ RB.combat = (function () {
     return RB.activities.tier(obj);
   }
   const nameOf = (i) => (members[i] || enemy).name || { en: '?', jp: '?' };
+  // An instance mark where names repeat (battle addendum §13.1): two Ink Wisps are "A" and "B" in
+  // formation order, left to right (the stage's slots, fixed for the encounter); the slip, the
+  // badge, the telegraph, the response cards and the banner all carry it.
+  function markOf(i) {
+    if (!st || st.foes.length < 2) return '';
+    const en = nameOf(i).en;
+    const same = st.foes.map((_, k) => k).filter((k) => nameOf(k).en === en);
+    if (same.length < 2) return '';
+    const lay = RB.battleStage.lay();
+    const slot = (k) => (lay && lay.foes && lay.foes[k] && lay.foes[k].slot != null ? lay.foes[k].slot : [1, 0, 2][k]);
+    same.sort((a, b) => slot(a) - slot(b));
+    return 'ABCD'[same.indexOf(i)] || '';
+  }
+  const nameEn = (i) => nameOf(i).en + (markOf(i) ? ' ' + markOf(i) : '');
+  const markHtml = (i) => (markOf(i) ? ' <span class="ib-m">' + markOf(i) + '</span>' : '');
   // the creature's name as a short English label ("the Moth"), for card targets and lines
-  const shortEn = (i) => { const n = nameOf(i).en || ''; const w = n.split(' '); return w[w.length - 1]; };
+  const shortEn = (i) => { const n = nameOf(i).en || ''; const w = n.split(' '); return w[w.length - 1] + (markOf(i) ? ' ' + markOf(i) : ''); };
   function linePool(it) {
     const s = RB.game.s, prof = s.learn.profile;
     let pool;
@@ -128,7 +149,7 @@ RB.combat = (function () {
     const s = RB.game.s;
     const solo = !s.comp;
     const pool = linePool(it);
-    if (!pool.length) return { jp: '', en: it.label };
+    if (!pool.length) return { jp: '', en: moveLabel(it) };
     let cands = pool;
     if (solo || it.target === 'both') cands = pool.filter((x) => !x.neg);
     if (!cands.length) cands = pool;
@@ -151,6 +172,13 @@ RB.combat = (function () {
   const TAG_ICON = [['ward', 'shield'], ['water', 'drop'], ['light', 'sun'], ['heal', 'leaf'], ['wind', 'wind'], ['bind', 'rope'], ['anchor', 'stone'], ['stone', 'stone'], ['fire', 'flame'], ['warm', 'flame'], ['bell', 'bell'], ['voice', 'sound']];
   // plain attacks whose target the translated telegraph names outright
   const AIMED = { strike: 1, sweep: 1, gust: 1, flood: 1, chill: 1 };
+  // Reading-critical moves (battle addendum §13.3), an authored rule by kind: reading what the
+  // creature says is the task itself, so its wording stays on screen (never only behind a badge)
+  // and the move is named and marked neutrally — "False promise" or a mask would answer the
+  // question it asks. The explicitly opened help note still explains the mechanic.
+  const READING = { lie: { en: 'A promise', icon: 'note' }, mirror: { en: 'Your words, echoed', icon: 'note' }, plea: {} };
+  const moveLabel = (it) => (it && READING[it.kind] && READING[it.kind].en) || (it && it.label) || '';
+  const moveIcon = (it) => (it && READING[it.kind] && READING[it.kind].icon) || INTENT_ICON[it && it.kind] || 'strike';
   function cardIcon(c) {
     if (c.kind === 'unravel') return 'knot';
     if (c.kind === 'answer') return 'history';
@@ -177,13 +205,28 @@ RB.combat = (function () {
       '</div>' +
       '<div class="cb-stage" aria-hidden="true"></div>' +
 
-      '<section class="bars cb-party" aria-label="Your party"></section>';
+      '<section class="bars cb-party" aria-label="Your party"></section>' +
+      // Skip (battle addendum §14.5): settles the rest of this exchange; shown only while one plays
+      '<button type="button" class="cbtn cb-skip" hidden>' + I('next') + '<span>Skip</span></button>';
     // Beneath every other layer: the dialogue sheet usually exists before the
     // battle, and an overlay appended after it would sit on top of its buttons.
     RB.ui.root.insertBefore(root, RB.ui.root.firstChild);
     const q = (x) => root.querySelector(x);
-    const o = { root, foe: q('.cb-foe'), intent: q('.intent'), stage: q('.cb-stage'), hits: q('.cb-stage'), bars: q('.bars'), dock: q('.cb-dock'), dockH: q('.cb-dock-h'), resp: q('.responses'), log: q('.clog'), coach: q('.cb-coachbox') };
+    const o = { root, foe: q('.cb-foe'), intent: q('.intent'), stage: q('.cb-stage'), hits: q('.cb-stage'), bars: q('.bars'), dock: q('.cb-dock'), dockH: q('.cb-dock-h'), resp: q('.responses'), log: q('.clog'), coach: q('.cb-coachbox'), skip: q('.cb-skip'), party: q('.cb-party') };
+    // a fresh press only (the one that committed the answer cannot also skip): it is shown a moment
+    // after the exchange starts, and pressing it settles the exchange, nothing else
+    o.skip.addEventListener('click', (e) => { e.stopPropagation(); if (!o.skip.hidden && performance.now() - (o.skipAt || 0) > 150) RB.battleSeq.skip(); });
     RB.learnUi.guardTaps(o.resp);
+    // which presses are fresh (battle addendum §14.5–§14.6): when the pointer last went down, and
+    // whether an activating key is held (since when, and repeating)
+    o.press = { ptr: -1, key: null };
+    o.onPress = (e) => {
+      if (e.type === 'pointerdown') { o.press.ptr = performance.now(); return; }
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      if (e.type === 'keydown') o.press.key = { at: e.repeat && o.press.key ? o.press.key.at : performance.now(), repeat: e.repeat, up: null };
+      else if (o.press.key) o.press.key.up = performance.now();
+    };
+    for (const t of ['pointerdown', 'keydown', 'keyup']) document.addEventListener(t, o.onPress, true);
     o.onResize = () => requestAnimationFrame(measure);
     window.addEventListener('resize', o.onResize);
     root.addEventListener('scroll', o.onResize, { passive: true });
@@ -240,7 +283,7 @@ RB.combat = (function () {
     const it = st.foes[i].intent;
     const line = intentLine(it, i);
     const g = gistOf(i, it);
-    const face = I(INTENT_ICON[it.kind] || 'strike') + '<span class="k">' + esc(it.label) + '</span>' + (g ? '<span class="gist">' + esc(g) + '</span>' : '');
+    const face = I(moveIcon(it)) + '<span class="k">' + esc(moveLabel(it)) + '</span>' + (g ? '<span class="gist">' + esc(g) + '</span>' : '');
     // (the task slip carries the states as plain text; on screen they are on the foe's slip)
     const states = compact ? statusList(i) : [];
     let h = '<div class="it-label">' + (compact ? '<span class="it-kind">' + face + '</span>' : kw(kkey('intent', i), 'it-kind', face + Q())) +
@@ -248,7 +291,7 @@ RB.combat = (function () {
     if (line.jp) h += '<div class="it-jp">' + RB.ui.jhtml(line.jp, { vars: line.vars }) + '</div>';
     if (line.en) h += enShown() ? '<div class="it-en">' + esc(line.en) + '</div>' : (compact ? '' : '<button class="pbtn quiet tr" data-tr title="Show the English (counts as assisted)">' + I('note') + '<span>Translate <span class="aside">(assisted)</span></span></button>');
     const nx = st.foes[i].nextIntents || [];
-    if (!compact && RB.game.s.comp === 'nao' && nx.length) h += '<div class="it-next">' + I('companion') + '<span>Nao: “After that — ' + esc(nx.map((x) => x.label).join(', then ')) + '.”</span></div>';
+    if (!compact && RB.game.s.comp === 'nao' && nx.length) h += '<div class="it-next">' + I('companion') + '<span>Nao: “After that — ' + esc(nx.map(moveLabel).join(', then ')) + '.”</span></div>';
     return h;
   }
   // The text of a keyword's note card, for the encounter on screen.
@@ -301,13 +344,13 @@ RB.combat = (function () {
       const g = !down && it ? gistOf(i, it) : '';
       const pv = previewFoes().indexOf(i) >= 0 && !down;
       const states = down ? [] : statusList(i).filter((x) => x.key !== 'silence');
-      const label = esc(nameOf(i).en) + (down ? ', settled' : ', ' + f.knots + ' of ' + f.maxKnots + ' knots' + (it ? ', about to ' + it.label + (g ? ': ' + g : '') : '') + (states.length ? ', ' + states.map((x) => x.label).join(', ') : ''));
+      const label = esc(nameEn(i)) + (down ? ', settled' : ', ' + f.knots + ' of ' + f.maxKnots + ' knots' + (it ? ', about to ' + moveLabel(it) + (g ? ': ' + g : '') : '') + (states.length ? ', ' + states.map((x) => x.label).join(', ') : ''));
       h += '<button type="button" class="fs' + (on ? ' on' : '') + (pv ? ' cb-pv' : '') + (down ? ' down' : '') + '" role="radio" data-foe="' + i + '" aria-checked="' + on + '"' +
         (down ? ' aria-disabled="true"' : '') + ' tabindex="' + (on ? 0 : -1) + '" aria-label="' + label + '"' + (can ? '' : ' data-locked="1"') + '>' +
         '<span class="fs-mark" aria-hidden="true"></span>' +
-        '<span class="fs-n" aria-hidden="true">' + RB.ui.jhtml(nameOf(i).jp) + ' <span class="en">' + esc(nameOf(i).en) + '</span></span>' +
+        '<span class="fs-n" aria-hidden="true">' + RB.ui.jhtml(nameOf(i).jp) + ' <span class="en">' + esc(nameOf(i).en) + '</span>' + markHtml(i) + '</span>' +
         '<span class="fs-l2" aria-hidden="true"><span class="fs-k">' + (down ? '<span class="fs-done">' + I('done') + 'Settled</span>' : knotsHtml(i)) + '</span>' +
-        (down || !it ? '' : '<span class="fs-it">' + I(INTENT_ICON[it.kind] || 'strike') + '<span class="k">' + esc(it.label) + '</span>' + (g ? '<span class="gist">' + esc(g) + '</span>' : '') + '</span>') + '</span>' +
+        (down || !it ? '' : '<span class="fs-it">' + I(moveIcon(it)) + '<span class="k">' + esc(moveLabel(it)) + '</span>' + (g ? '<span class="gist">' + esc(g) + '</span>' : '') + '</span>') + '</span>' +
         (states.length ? '<span class="fs-st" aria-hidden="true">' + states.map((x) => '<span class="pill">' + I(STATUS_ICON[x.key]) + esc(x.label) + '</span>').join('') + '</span>' : '') +
         '</button>';
     }
@@ -330,18 +373,33 @@ RB.combat = (function () {
         '<span class="foe-k' + (states.length ? ' has-st' : '') + '">' + knotsHtml(T) + (states.length ? '<span class="it-states" role="group" aria-label="Its state">' +
           states.map((x) => kw(x.key, 'st', '<span class="pill">' + I(STATUS_ICON[x.key]) + esc(x.label) + '</span>')).join('') + '</span>' : '') + '</span>';
     }
-    // the telegraph: the target's in full (every creature's move and what it
-    // does are on its slip; pressing a creature shows its telegraph here)
-    let ih = '';
+    // the telegraph: the target's in full (every creature's move and what it does are on its slip
+    // and its badge; pressing a creature shows its telegraph here). Intent display (§13.6):
+    // Adaptive adds every other creature whose words are the task (READING), each named, so no
+    // passage hides behind a badge; Expanded shows every creature's telegraph while you decide.
+    let ih = '', blocks = 1;
     if (group) {
-      const tstates = statusList(T).filter((x) => x.key !== 'silence');
-      ih += '<div class="it-block it-target" data-foe="' + T + '"><div class="it-who">' + I('aim') + '<span>' + RB.ui.jhtml(nameOf(T).jp) + ' <span class="en">' + esc(nameOf(T).en) + '</span></span>' +
-        (tstates.length ? '<span class="it-states" role="group" aria-label="Its state">' + tstates.map((x) => kw(kkey(x.key, T), 'st', '<span class="pill">' + I(STATUS_ICON[x.key]) + esc(x.label) + '</span>')).join('') + '</span>' : '') + '</div>' + intentHtml(false, T) + '</div>';
+      const block = (i, tag) => {
+        const sts = statusList(i).filter((x) => x.key !== 'silence');
+        return '<div class="it-block' + (i === T ? ' it-target' : ' it-other') + '" data-foe="' + i + '"><div class="it-who">' + (i === T ? I('aim') : '') + '<span>' + RB.ui.jhtml(nameOf(i).jp) + ' <span class="en">' + esc(nameOf(i).en) + '</span>' + markHtml(i) + '</span>' +
+          (tag ? '<span class="it-tag">' + tag + '</span>' : '') +
+          (sts.length ? '<span class="it-states" role="group" aria-label="Its state">' + sts.map((x) => kw(kkey(x.key, i), 'st', '<span class="pill">' + I(STATUS_ICON[x.key]) + esc(x.label) + '</span>')).join('') + '</span>' : '') + '</div>' + intentHtml(false, i) + '</div>';
+      };
+      ih += block(T, '');
+      const expanded = RB.game.settings.intentDisplay === 'expanded';
+      const lay = RB.battleStage.lay();
+      const order = lay && lay.visual && lay.visual.length === st.foes.length ? lay.visual : st.foes.map((_, k) => k);
+      for (const i of order) {
+        if (i === T || L().standing(st).indexOf(i) < 0 || !st.foes[i].intent) continue;
+        const reading = !!READING[st.foes[i].intent.kind];
+        if (expanded || reading) { ih += block(i, reading ? 'Also to read' : ''); blocks++; }
+      }
     } else ih = intentHtml(false, T);
     ui.intent.innerHTML = ih;
+    ui.intent.classList.toggle('it-multi', blocks > 1);
     ui.intent.setAttribute('aria-label', group ? 'What they are about to do' : 'What it is about to do');
-    const tr = ui.intent.querySelector('[data-tr]');
-    if (tr) tr.onclick = () => { showIntentEn = true; st.assistedRound = true; renderUi(); };
+    for (const tr of ui.intent.querySelectorAll('[data-tr]')) tr.onclick = () => { showIntentEn = true; st.assistedRound = true; renderUi(); };
+    syncBadges();
     // the party: resolve (numbers and bar) and wards; Harmony is its own band
     // above them (not a third resolve bar). The telegraph's target is marked
     // once its meaning is on screen (never before).
@@ -361,6 +419,15 @@ RB.combat = (function () {
       '<div class="pm-note">' + (st.assist ? 'Assisted: mistakes cost nothing' : 'Mistakes cost at most 1') + '</div></div>';
     RB.combatHelp.refresh(ui.root);
     requestAnimationFrame(measure);
+  }
+  // The party's permanent status, compact, for surfaces that cover the battle (the language task):
+  // names, Resolve as numbers and bars, Harmony as pips — the values the rules hold now.
+  function statusInset() {
+    const s = RB.game.s, v = V();
+    const one = (name, val, max) => '<span class="cs-m"><span class="cs-n">' + esc(name) + '</span><span class="bar" role="meter" aria-label="' + esc(name) + ' resolve" aria-valuemin="0" aria-valuemax="' + max + '" aria-valuenow="' + val + '"><i style="width:' + Math.round((100 * val) / max) + '%"></i></span><span class="cs-v"><span class="sr">Resolve </span>' + val + '/' + max + '</span></span>';
+    let h = one(s.player.name, v.pc, v.max) + (s.comp && st.compId ? one(compName(), v.comp, v.max) : '');
+    if (s.comp && st.compId) { let pips = ''; for (let i = 0; i < v.harmonyMax; i++) pips += '<i class="hp' + (i < v.harmony ? ' on' : '') + '"></i>'; h += '<span class="cs-h" aria-label="Harmony ' + v.harmony + ' of ' + v.harmonyMax + '">' + I('join') + '<span class="hm-pips" aria-hidden="true">' + pips + '</span></span>'; }
+    return h;
   }
   // Harmony: a paper band tied to the top of the party slip, with pips (not a
   // bar), what it is building towards (this companion's technique), and its
@@ -453,13 +520,13 @@ RB.combat = (function () {
   // accessible control): invisible boxes inside the stage cell, clipped to it,
   // so they never lie over the telegraph, the party or the responses
   let hitKey = '';
-  function placeHits() {
+  function placeHits(hits) {
     if (!ui || !ui.hits) return;
     const on = canTarget() && !!stageCss;
     ui.hits.classList.toggle('hits-on', on);
     if (!on) { if (hitKey) { ui.hits.innerHTML = ''; hitKey = ''; } return; }
     const r = stageCss;
-    const hs = (RB.battleStage.stats().hits || []).filter((q) => !q.settled).map((q) => {
+    const hs = (hits || []).filter((q) => !q.settled).map((q) => {
       const x0 = Math.max(q.x, r.x), y0 = Math.max(q.y, r.y), x1 = Math.min(q.x + q.w, r.x + r.w), y1 = Math.min(q.y + q.h, r.y + r.h);
       return { i: q.i, x: Math.round(x0 - r.x), y: Math.round(y0 - r.y), w: Math.round(x1 - x0), h: Math.round(y1 - y0) };
     }).filter((q) => q.w > 8 && q.h > 8);
@@ -469,6 +536,66 @@ RB.combat = (function () {
     ui.hits.innerHTML = hs.map((q) => '<button type="button" tabindex="-1" class="cb-hit" data-foe="' + q.i + '" style="left:' + q.x + 'px;top:' + q.y + 'px;width:' + q.w + 'px;height:' + q.h + 'px"></button>').join('');
   }
 
+  // ---- intent badges (battle addendum §13; src/ui/82c_battle_intents.js) ----------------------
+  // One per standing creature at its formation slot, from what the telegraph reveals. While an
+  // exchange plays they stay quiet (no input, no open card) and show the moves as they were
+  // committed: the creature acting is marked, a move your response answered shows as answered once
+  // that response has played, and a creature that settles takes its badge with it.
+  let badgeSnap = null, actFoe = null, shownAnswered = null, badgeGeo = '', badgeLay = null, badgeAt = -1e9, badgeCss = '';
+  function badgesDue(t) {
+    const L0 = RB.battleStage.lay();
+    // (the stage lays the formation out every frame: its positions, not its object, say whether it moved)
+    const lay = L0 ? L0.scale + ':' + L0.foes.map((f) => f.ex + ',' + f.ey).join(';') : '';
+    const css = stageCss ? stageCss.x + ',' + stageCss.y + ',' + stageCss.w + ',' + stageCss.h + ',' + (ui ? ui.root.scrollTop : 0) : '';
+    if (lay === badgeLay && css === badgeCss && t - badgeAt < 300) return false;
+    badgeLay = lay; badgeCss = css; badgeAt = t;
+    return true;
+  }
+  function syncBadges() {
+    if (!ui || !st || !RB.battleIntents) return;
+    const v = V(), items = [];
+    for (let i = 0; i < st.foes.length; i++) {
+      const f = v.foes ? v.foes[i] : v;
+      const it = badgeSnap ? badgeSnap[i] : st.foes[i].intent;
+      if (!it || !f || f.knots <= 0 || st.foes[i].settled) continue;
+      const b = L().withFoe(st, i, () => L().blowOf(st, it));
+      items.push({ i, mark: markOf(i), name: nameOf(i).en, icon: moveIcon(it), label: moveLabel(it), short: b && b.per ? String(b.per) : '', reading: !!READING[it.kind], answered: !!(shownAnswered && shownAnswered[i] && it.kind !== 'rest'), actor: actFoe === i });
+    }
+    RB.battleIntents.render(items, { quiet: acting || phase === 'challenge' || phase === 'intro' || phase === 'outro' });
+  }
+  // the card a badge opens: the move as telegraphed (symbol, name, the strength it states), the
+  // creature's words, and what the move does; how to answer it is a note you open yourself
+  function intentCardHtml(i) {
+    const it = badgeSnap ? badgeSnap[i] : st.foes[i] && st.foes[i].intent;
+    if (!it) return '';
+    const line = intentLine(it, i);
+    const g = gistOf(i, it);
+    let what = '';
+    if (READING[it.kind]) what = it.kind === 'plea' ? 'It is asking you something. Read what it asks.' : 'It is telling you something. Read what it says.';
+    else what = L().withFoe(st, i, () => RB.combatHelp.intentInfo(st, it, words())).what;
+    return '<div class="ic-k">' + I(moveIcon(it)) + '<span class="k">' + esc(moveLabel(it)) + '</span>' + (g ? '<span class="gist">' + esc(g) + '</span>' : '') + '</div>' +
+      (line.jp ? '<div class="ic-jp">' + RB.ui.jhtml(line.jp, { vars: line.vars }) + '</div>' : '') +
+      (line.en && enShown() ? '<div class="ic-en">' + esc(line.en) + '</div>' : '') +
+      (what ? '<p class="ic-what">' + what + '</p>' : '') +
+      '<div class="ic-f">' + kw(kkey('intent', i), 'pbtn quiet ic-more', '<span>How to answer it</span>', ' — opens a note') + '</div>';
+  }
+  // where each creature rests (page px) and the safe areas: the badges stay in the scene; the
+  // card may use the scene's column from the top of the overlay down to the party slip
+  function placeBadges(hits) {
+    if (!ui || !RB.battleIntents) return;
+    if (!stageCss) { if (badgeGeo !== 'none') { badgeGeo = 'none'; RB.battleIntents.place([], null, null); } return; }
+    const rr = ui.root.getBoundingClientRect(), pr = ui.party ? ui.party.getBoundingClientRect() : null;
+    const r = stageCss;
+    const rects = (hits || []).filter((q) => !q.settled).map((q) => ({ i: q.i, x: Math.round(q.x), y: Math.round(q.y), w: Math.round(q.w) }));
+    const bottom = pr && pr.height && pr.top > r.y ? Math.min(pr.top, rr.bottom) : Math.min(r.y + r.h, rr.bottom);
+    const top = Math.max(rr.top, 0) + 6;
+    const bounds = { x: r.x, y: r.y, w: r.w, h: Math.max(44, Math.min(r.h, bottom - r.y)) };
+    const cardBounds = { x: r.x, y: top, w: r.w, h: Math.max(120, bottom - 6 - top) };
+    const k = JSON.stringify([rects, bounds, cardBounds]);
+    if (k === badgeGeo) return;
+    badgeGeo = k;
+    RB.battleIntents.place(rects, bounds, cardBounds);
+  }
   // Words used in battle for the first time are marked "New" for that whole
   // encounter, with what they answer; recorded (s.tips) when it ends.
   let newWords = new Set(), shownWords = new Set();
@@ -479,7 +606,7 @@ RB.combat = (function () {
     const fresh = c.kind === 'word' && newWords.has(c.word.id);
     const ans = fresh ? L().answers(c.word).map((k) => L().INTENTS[k].label) : [];
     const ready = c.kind === 'tech';
-    return '<button class="resp rcard' + (fresh ? ' fresh' : '') + (ready ? ' tech' : '') + '" data-i="' + i + '" data-foes="' + r.foes.join(',') + '" data-allies="' + r.allies.join(',') + '"' + (c.disabled ? ' disabled' : '') + '>' +
+    return '<button class="resp rcard' + (fresh ? ' fresh' : '') + (ready ? ' tech' : '') + '" data-i="' + i + '"' + (c.id != null ? ' data-cid="' + esc(String(c.id)) + '"' : '') + ' data-foes="' + r.foes.join(',') + '" data-allies="' + r.allies.join(',') + '"' + (c.disabled ? ' disabled' : '') + '>' +
       '<span class="ic">' + I(cardIcon(c)) + '</span>' +
       '<span class="rc-w"><span class="rc-jp">' + RB.ui.jhtml(hi && c.word && c.word.jpK ? c.word.jpK : c.jp) + '</span><span class="rc-en">' + esc(c.en) + '</span>' +
       (fresh ? '<span class="rc-new">New</span>' : '') + (ready ? '<span class="rc-new">With ' + esc(compName()) + '</span>' : '') + '</span>' +
@@ -504,7 +631,7 @@ RB.combat = (function () {
       if (x && !H.seen(s, 'intent:' + x.kind)) {
         H.mark(s, 'intent:' + x.kind);
         const inf = L().withFoe(st, i, () => H.intentInfo(st, x, words()));
-        return { icon: INTENT_ICON[x.kind] || 'strike', title: 'New move: ' + esc(x.label), body: inf.what + (inf.answer ? ' ' + inf.answer : ''), more: kkey('intent', i) };
+        return { icon: moveIcon(x), title: 'New move: ' + esc(moveLabel(x)), body: inf.what + (inf.answer ? ' ' + inf.answer : ''), more: kkey('intent', i) };
       }
     }
     void it;
@@ -549,6 +676,19 @@ RB.combat = (function () {
   }
   function unwireFocus(container) { const w = container.__pv; if (w) { container.removeEventListener('focusin', w.fi); container.removeEventListener('focusout', w.fo); container.__pv = null; } }
   function unwirePreview(container) { container.onpointerover = container.onpointerout = null; unwireFocus(container); kbEl = null; }
+  // A press that began before a menu opened (the click or the held Enter / Space that submitted the
+  // answer, a key repeating across the exchange) never chooses anything in it, nor does the second
+  // click of a double click that opened it (Instant playback brings the menu back at once); a fresh
+  // press does.
+  function stalePress(e, openAt) {
+    const P = ui && ui.press;
+    if (!P) return false;
+    let stale;
+    if (e && e.detail > 0) stale = (P.ptr >= 0 && P.ptr < openAt) || (e.detail > 1 && performance.now() - openAt < 500);
+    else { const k = P.key; const held = !!k && (!k.up || performance.now() - k.up < 60); stale = !!k && held && (k.repeat || k.at < openAt); }
+    if (stale) P.ignored = (P.ignored || 0) + 1;
+    return stale;
+  }
   function pickCard() {
     return new Promise((resolve) => {
       const s = RB.game.s;
@@ -575,6 +715,18 @@ RB.combat = (function () {
       };
       const reachFor = (b) => { const c = cards[+b.getAttribute('data-i')]; return c ? reachOf(c) : null; };
       deal();
+      const openAt = performance.now();
+      // Back from an exchange: focus left in the withdrawn menus (or on Skip) returns to the response
+      // chosen last time if it is still offered, otherwise to the first one that can be chosen (§14.6)
+      if (exchangeN > 1) {
+        const a = document.activeElement;
+        const lost = !a || a === document.body || !a.isConnected || a === ui.skip || a === ui.root || (ui.root.contains(a) && !!a.closest('[inert]'));
+        if (lost) {
+          const want = lastCardId != null ? [...ui.resp.querySelectorAll('.rcard[data-cid]:not([disabled])')].find((x) => x.getAttribute('data-cid') === lastCardId) : null;
+          const f = want || ui.resp.querySelector('.rcard:not([disabled])');
+          if (f) f.focus({ preventScroll: true });
+        }
+      }
       onTarget = () => deal();
       // the last exchange stays readable under the responses (what was woven, what it did)
       recap();
@@ -587,14 +739,16 @@ RB.combat = (function () {
       let chosen = false;
       const done = (v) => { if (chosen) return; chosen = true; onTarget = null; unwirePreview(ui.resp); RB.combatHelp.hide(); showCoach(null); RB.ui.popLayer(layer); ui.dock.insertBefore(ui.resp, ui.log); resolve(v); };
       ui.resp.onclick = (e) => {
+        if (stalePress(e, openAt)) return;
         const b = e.target.closest('[data-i]');
-        if (b && !b.disabled) { const c = cards[+b.getAttribute('data-i')]; tg.lock = reachOf(c); tg.hover = null; done(c); return; }
+        if (b && !b.disabled) { const c = cards[+b.getAttribute('data-i')]; lastCardId = c.id != null ? String(c.id) : null; tg.lock = reachOf(c); tg.hover = null; done(c); return; }
         if (e.target.closest('[data-flee]')) done({ kind: 'flee' });
       };
       // Back closes an open keyword note first; it never leaves the encounter.
       // On a target slip the arrow keys choose the target.
       layer.onAction = (a) => {
         if (a === 'cancel' && RB.combatHelp.isOpen()) { RB.combatHelp.hide(); return true; }
+        if (a === 'cancel' && RB.battleIntents.isOpen()) { RB.battleIntents.close(true); return true; }
         const onSlip = document.activeElement && document.activeElement.closest && document.activeElement.closest('.cb-foe .fs');
         if (onSlip && (a === 'left' || a === 'right' || a === 'up' || a === 'down')) { stepTarget(a === 'left' || a === 'up' ? -1 : 1, true); return true; }
         if (onSlip && a === 'ok') { selectTarget(+onSlip.getAttribute('data-foe'), true); return true; }
@@ -687,6 +841,7 @@ RB.combat = (function () {
       layer.onAction = (a) => {
         if (early() && (a === 'ok' || a === 'cancel')) return true;
         if (a === 'cancel' && RB.combatHelp.isOpen()) { RB.combatHelp.hide(); return true; }
+        if (a === 'cancel' && RB.battleIntents.isOpen()) { RB.battleIntents.close(true); return true; }
         const onSlip = document.activeElement && document.activeElement.closest && document.activeElement.closest('.cb-foe .fs');
         if (onSlip && (a === 'left' || a === 'right' || a === 'up' || a === 'down')) { stepTarget(a === 'left' || a === 'up' ? -1 : 1, true); return true; }
         if (onSlip && a === 'ok') { selectTarget(+onSlip.getAttribute('data-foe'), true); return true; }
@@ -717,11 +872,11 @@ RB.combat = (function () {
       return RB.tasks.next(pool);
     }
     const w = card.word;
-    // say "kana or kanji" whenever the writing pad will read kanji for this player
+    // name the script it accepts; "or in kanji" whenever the writing pad will read kanji for this player (RBN-02)
     const hi = RB.pad && RB.pad.kanjiPreferred ? RB.pad.kanjiPreferred() : s.learn.profile === 'I' || s.learn.profile === 'A';
     return RB.tasks.prepare({
       kind: 'write', item: 'v:' + (w.lex || w.r), answer: w.r, accept: [w.r, RB.tasks.plain(w.jpK || w.jp)], mode: 'reading',
-      title: 'Weave the inscription', prompt: { en: 'Write the word for “' + w.en + '”' + (hi ? ' (kana or kanji).' : '.') },
+      title: 'Weave the inscription', prompt: { en: 'Write the word for “' + w.en + '” ' + RB.tasks.askScript(w.r, hi ? RB.tasks.plain(w.jpK || w.jp) : null) + '.' },
       explain: { jp: w.jpK || w.jp, en: w.en + ' — ' + w.effect },
     });
   }
@@ -890,6 +1045,45 @@ RB.combat = (function () {
       beat: firstAt(cues, (c) => c.type === 'beat' && c.f.t !== 'cost' && c.f.t !== 'harmony') || 0, end,
       victory: firstAt(cues, (c) => c.type === 'pose' && c.pose === 'cheer') }, extra || {}));
   }
+  // ---- the menus during an exchange (battle addendum §12, §14.1, §14.6) ---------------------
+  // Committed: the telegraph and the response dock withdraw (Adaptive) or stay, disabled (Keep
+  // visible), until the next real decision; they are inert either way (no pointer, no keyboard,
+  // no focus inside them). The scene is already drawn under them, so withdrawing them reveals it:
+  // nothing is re-laid out or rescaled. Resolve and Harmony (the party slip) never move.
+  let acting = false, lastCardId = null;
+  function setActing(on) {
+    if (!ui || acting === on) return;
+    acting = on;
+    const keep = RB.game.settings.battleControls === 'keep';
+    ui.root.classList.toggle('cb-acting', on);
+    ui.root.classList.toggle('cb-keep', on && keep);
+    for (const el of [ui.intent, ui.dock]) { el.inert = on; if (on) el.setAttribute('aria-hidden', keep ? 'false' : 'true'); else el.removeAttribute('aria-hidden'); }
+    // the badges keep the moves as committed; an open card closes (§13.5)
+    badgeSnap = on && st ? st.foes.map((f) => f.intent) : null;
+    shownAnswered = null; actFoe = null;
+    RB.battleIntents.close(false);
+    syncBadges();
+    const fast = RB.battleSeq.mode() !== 'instant';
+    if (on) {
+      const a = document.activeElement;
+      ui.skipAt = performance.now();
+      ui.skip.hidden = !fast;
+      // focus never stays in hidden controls: the playback control holds it
+      if (a && (ui.intent.contains(a) || ui.dock.contains(a))) { if (fast) ui.skip.focus({ preventScroll: true }); else ui.root.focus && ui.root.focus({ preventScroll: true }); }
+    } else {
+      ui.skip.hidden = true;
+      if (document.activeElement === ui.skip) ui.skip.blur();
+    }
+  }
+  // What the banner names (battle addendum §15): the actor and the action's own name. A reading
+  // task's move is named neutrally (§13.3, READING): "False promise" would answer the question it asks.
+  function cardLabel(card) {
+    if (card.kind === 'word') return { jp: card.word.jpK || card.word.jp, en: card.word.en };
+    return { jp: card.jp || null, en: card.en || '' };
+  }
+  function actionOf(side, actorEn, label, id, end) {
+    return { id: 'battle:' + ((enemy && enemy.id) || '?') + ':' + exchangeN + ':' + id, side, actor: { en: actorEn }, label, end };
+  }
   // Your response, once accepted and applied by the rules: anticipation → the
   // gesture → the word on paper → its effect on the actual target → recovery.
   // The finishing response also lets the creature settle before the last line.
@@ -901,7 +1095,10 @@ RB.combat = (function () {
     if (won) { const F = RB.battleSeq.choreo.finish(P.end, Object.assign(ctx, { last: lastStanding(before) })); cues = cues.concat(F.cues); end = F.end; }
     phase = won ? 'finish' : 'player';
     presentAct('pc', card.id, RB.families.ofCard(card), P.plan.target === 'foes' ? (reach.foes || []).map((i) => 'foe:' + i) : [P.plan.target], fx, cues, end, { kind: card.kind, tech: card.tech || null, actors: P.plan.actors, won: !!won });
-    return RB.battleSeq.run(phase, cues, { end, card: card.id, word: P.word.jp, target: P.plan.target, gesture: P.plan.gesture, actors: P.plan.actors, fx: fx.map((f) => f.t + (f.foe != null && isGroup() ? '@' + f.foe : '')) });
+    // the banner: this response only (not the settling that may follow it: P.end, §15.3)
+    const who = card.kind === 'tech' && st.compId ? RB.game.s.player.name + ' & ' + compName() : RB.game.s.player.name;
+    const action = actionOf('party', who, cardLabel(card), 'pc:' + card.id, P.end);
+    return RB.battleSeq.run(phase, cues, { end, action, card: card.id, word: P.word.jp, target: P.plan.target, gesture: P.plan.gesture, actors: P.plan.actors, fx: fx.map((f) => f.t + (f.foe != null && isGroup() ? '@' + f.foe : '')) });
   }
   // the creatures that were standing before the exchange's last knot came loose
   function lastStanding(before) {
@@ -918,7 +1115,8 @@ RB.combat = (function () {
     phase = won ? 'finish' : 'companion-act';
     const aim = act.aim || (act.def && act.def.aim);
     presentAct('comp', act.id, RB.families.ofAction(act.id), aim === 'allies' ? ['pc', 'comp'] : aim === 'pc' ? ['pc'] : aim === 'foes' ? ['foes'] : aim === 'none' ? [] : aim === 'aimed' || aim === 'lower' ? ['party'] : ['foe:' + (target != null ? target : 0)], fx, cues, end, { won: !!won });
-    return RB.battleSeq.run(won ? 'finish' : 'companion', cues, { end, act: act.id, target, fx: fx.map((f) => f.t + (f.foe != null && isGroup() ? '@' + f.foe : '')) });
+    const action = actionOf('party', compName(), { jp: act.name && act.name.jp, en: (act.name && act.name.en) || act.id }, 'comp:' + act.id, C.end);
+    return RB.battleSeq.run(won ? 'finish' : 'companion', cues, { end, action, act: act.id, target, fx: fx.map((f) => f.t + (f.foe != null && isGroup() ? '@' + f.foe : '')) });
   }
   // A creature of a group whose knots are all free settles (the others stand).
   function playSettle(i) {
@@ -933,6 +1131,7 @@ RB.combat = (function () {
     const ctx = seqCtx({ view: snapshot(V()), foe: i, wardBlock, art: m.art || null, foeCol: (m.artOpts && m.artOpts.col) || null, aim: aimHit ? aimHit.who : (V().foes[i] && V().foes[i].drawn && st.compId ? 'comp' : null) });
     const E = RB.battleSeq.choreo.enemy(it, fx, ctx);
     phase = 'enemy';
+    actFoe = i; syncBadges();
     {
       const hit = fx.filter((f) => f.t === 'hit'), blk = fx.filter((f) => f.t === 'block'), ctr = fx.some((f) => f.t === 'countered');
       present('enemy', { actor: 'foe:' + i, kind: it.kind, id: 'battle:' + (enemy && enemy.id) + ':' + presentN + ':foe' + i,
@@ -940,7 +1139,10 @@ RB.combat = (function () {
         outcome: ctr ? 'blocked' : hit.length ? 'hit' : blk.length ? 'absorbed' : 'status',
         at: firstAt(E.cues, (c) => c.type === 'beat' && ['hit', 'block', 'countered', 'heat', 'shroud', 'charge', 'silence', 'mend', 'stripWard', 'rest', 'plea'].indexOf(c.f.t) >= 0) || 0, end: E.end });
     }
-    return RB.battleSeq.run('enemy', tagSide(E.cues, 'enemy'), { end: E.end, kind: it.kind, target: it.target, foe: i, fx: fx.map((f) => f.t + (f.who ? ':' + f.who : '')) });
+    // a move that never really starts (the creature rests, or nothing is performed) has no banner
+    const performed = it.kind !== 'rest' || fx.some((f) => f.t !== 'rest' && f.t !== 'settle');
+    const action = performed ? actionOf('enemy', nameEn(i), { en: moveLabel(it) }, 'foe' + i + ':' + it.kind, E.end) : null;
+    return RB.battleSeq.run('enemy', tagSide(E.cues, 'enemy'), { end: E.end, action, kind: it.kind, target: it.target, foe: i, fx: fx.map((f) => f.t + (f.who ? ':' + f.who : '')) });
   }
   function playRevive() {
     view = snapshot(st);
@@ -1011,6 +1213,9 @@ RB.combat = (function () {
     H.attach(helpFor);
     tg.hover = null; tg.lock = null; tg.compTarget = null;
     ui = buildUi();
+    RB.battleBanner.attach(ui.root);
+    RB.battleIntents.attach(ui.root, { cardHtml: intentCardHtml });
+    badgeSnap = null; actFoe = null; shownAnswered = null; badgeGeo = ''; badgeLay = null; badgeAt = -1e9; badgeCss = '';
     view = null; sealHeld = null; curCard = null; phase = 'intro'; logFresh = true; chain = false; hitKey = '';
     amb.v = null; Object.assign(cost, { n: 0, sum: 0, max: 0, seqN: 0, seqSum: 0, seqMax: 0 });
     RB.battleStage.begin({
@@ -1043,6 +1248,8 @@ RB.combat = (function () {
         }
         phase = 'choose';
         exchangeN++;
+        RB.battleSeq.endExchange();
+        setActing(false);
         present('scene', { phase: 'calm' });
         tg.hover = null; tg.lock = null;
         renderUi();
@@ -1063,7 +1270,7 @@ RB.combat = (function () {
         const step = stepFor(card);
         const T = st.cur;
         const res = await RB.challenge.runStep(step, {
-          header: situationHtml(card),
+          header: situationHtml(card), status: statusInset,
           allowCancel: true, cancelLabel: 'Choose a different response', ctxTag: 'battle:' + (st.enemyId || enemyId),
         });
         // backed out: the preview drops back to normal, nothing else changed
@@ -1081,6 +1288,7 @@ RB.combat = (function () {
         }
         L().target(st, T);
         tg.lock = null; tg.hover = null;
+        setActing(true);
         // The rules resolve the exchange (once); the screen then shows it beat by beat:
         // your response, your companion's action, then each creature in turn.
         const hb = st.harmony;
@@ -1112,6 +1320,8 @@ RB.combat = (function () {
             if (!wonByComp) for (let i = 0; i < st.foes.length; i++) if (kb.foes[i].knots > 0 && V().foes[i].knots <= 0) await playSettle(i);
           }
         }
+        // the moves your response and your companion's answered: shown on their badges now
+        shownAnswered = Object.assign({}, P.answered || {});
         endChain();
         if (RB.creatures) RB.creatures.saw(s, st, members, { fx: fx.concat(cfx || []), card, answered: P.answered }); // what your response and your companion's did
         if (won || wonByComp) { outcome = 'win'; break; }
@@ -1129,6 +1339,7 @@ RB.combat = (function () {
           const blockedByWard = fx.some((f) => f.t === 'ward' && f.block && (f.foe == null || f.foe === i));
           await playEnemy(i, intents[i], mine, blockedByWard);
         }
+        actFoe = null;
         endChain();
         if (RB.creatures) RB.creatures.saw(s, st, members, { fx: efx, enemy: true }); // their moves as they landed
         sealHeld = null;
@@ -1164,6 +1375,10 @@ RB.combat = (function () {
       s.resolve.comp = s.resolve.max;
       for (const w of shownWords) RB.combatHelp.mark(s, 'word:' + w);
       RB.combatHelp.detach();
+      RB.battleBanner.detach();
+      RB.battleIntents.detach();
+      if (ui) { for (const t of ['pointerdown', 'keydown', 'keyup']) document.removeEventListener(t, ui.onPress, true); }
+      lastCardId = null;
       if (ui) { window.removeEventListener('resize', ui.onResize); document.removeEventListener('keydown', ui.onKey); if (ui.ro) ui.ro.disconnect(); ui.root.remove(); }
       ui = null; stageCss = null;
       await RB.ui.fade(true, 200);
@@ -1187,7 +1402,7 @@ RB.combat = (function () {
   // debug(): sequencer and stage counters, the sequence trace and frame cost (tests, tuning)
   function debug() {
     return {
-      phase, seq: RB.battleSeq.stats(), stage: RB.battleStage.stats(), trace: RB.battleSeq.trace(),
+      phase, seq: RB.battleSeq.stats(), stage: RB.battleStage.stats(), trace: RB.battleSeq.trace(), pressesIgnored: ui && ui.press ? ui.press.ignored || 0 : 0,
       frames: { n: cost.n, avg: cost.n ? +(cost.sum / cost.n).toFixed(3) : 0, max: +cost.max.toFixed(3), seqN: cost.seqN, seqAvg: cost.seqN ? +(cost.seqSum / cost.seqN).toFixed(3) : 0, seqMax: +cost.seqMax.toFixed(3) },
     };
   }

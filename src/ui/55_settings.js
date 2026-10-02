@@ -123,6 +123,10 @@ RB.ui.settings = (function () {
         radios('input', 'Default way to answer', [['hand', 'Handwriting'], ['choice', 'Choices'], ['ime', 'Keyboard / IME']], null, 'You can switch during any question without losing your place.') +
         radios('padKanji', 'Handwriting reads', [['auto', 'By Japanese level'], ['on', 'Kanji or kana'], ['off', 'Kana only']], null, 'By level: kana only in Foundations, kanji or kana from Elementary on. The pad knows every kanji in the game (the chart lists them all); writing in kana is always fine. Kana practice reads kana only. You can also change this with Read as on the writing pad.') +
         sw('strokePractice', 'Show stroke-order notes after handwriting', 'Off keeps handwriting lenient: only the shape is checked.') +
+        '<h3 class="set-sub">' + I('aim') + ' Battles</h3>' +
+        radios('battleAnim', 'Battle animations', [['normal', 'Normal'], ['fast', 'Fast'], ['instant', 'Instant']], null, 'How long each action takes to play. Separate from Text speed. Instant shows the results at once, with a summary of the last exchange.') +
+        radios('battleControls', 'Battle controls during actions', [['adaptive', 'Adaptive'], ['keep', 'Keep visible']], null, 'Adaptive moves the menus out of the way while actions play, so the scene has room. Keep visible leaves them in place, disabled until your next choice.') +
+        radios('intentDisplay', 'What creatures are about to do', [['adaptive', 'Adaptive'], ['expanded', 'Expanded']], null, 'Adaptive shows a compact badge on each creature that opens when you point at it, focus it or tap it; wording you need to read stays visible. Expanded keeps the full descriptions open while you decide.') +
         radios('questGuide', 'Quest guidance', [['full', 'Markers and hints'], ['hints', 'Hints only (no markers)'], ['off', 'Off (objectives only)']], null,
           'Markers point to where the followed quest’s next step happens. Hints are nudges you open in the Journey page. Asking for them is free and never counts as a mistake.');
     } else if (g === 'controls') {
