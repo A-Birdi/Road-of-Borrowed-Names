@@ -7,12 +7,17 @@
  * hand goes"), body parts as simple volumes on those joints — ellipsoids for
  * head, hips and hands, tapered capsules for limbs and tails, lofted sections
  * for the torso and skirts, boxes for books and bags — rasterized at art
- * resolution with a depth buffer. Each pixel takes one step of its material's
- * hue-shifted ramp from the light (upper left, toward the viewer), plus the
- * material's own pattern (locks in hair, folds and trims in cloth); a darker
- * contour is drawn where a nearer part crosses a farther one, and the usual
- * selective outline goes round the figure. Nothing is smoothed: every edge is
- * a hard pixel edge on the same grid as the world.
+ * resolution with a depth buffer. Each pixel takes one tone of its material's
+ * six-tone hue-shifted ramp from the key light (upper left, toward the viewer),
+ * through the material's own recipe (clustered locks and a highlight arc in hair,
+ * folds with lit ridges in cloth, hard bands in metal, a glint in glass); then the
+ * craft passes of the owner's reference (round 2 of the battle art): cast shadows
+ * under overlapping forms, a form line on the farther of two overlapping parts,
+ * seams where colours meet, a cool rim down the right-hand edges, lone pixels
+ * folded into their cluster, and an outline in each material's own deep colour
+ * that breaks lighter on lit upper-left edges. Nothing is smoothed: every edge is
+ * a hard pixel edge on the same grid as the world. docs/battle/party.md records
+ * the standard (ramps, outline rule, light, per-material recipes).
  *
  * Hands are articulated (palm, the fingers as one or more pieces and a thumb, by shape: fist, relaxed,
  * open, flat, point, pinch, cup, spread), and what a hand holds is drawn by it: the folio, a paper
@@ -117,7 +122,7 @@ RB.battlers = (function () {
   // shading step from a normal and a material. Tones: 0 deep shadow, 1 shadow, 2 half-light, 3 the lit
   // plane (the material's own colour), 4 highlight; 5 (sheen, specular) only where a material's own
   // pattern or band puts it. A material may shade itself (lev: clustered locks, folds, hard metal bands).
-  const TH = [0.86, 0.3, 0.1, -0.5];
+  const TH = [0.74, 0.3, 0.1, -0.5];
   let lastN = TOWARD, lastL = 0;
   const levelOf = (l, f, th) => {
     let v = l > th[0] ? 4 : l > th[1] ? 3 : l > th[2] ? 2 : l > th[3] ? 1 : 0;
@@ -271,7 +276,9 @@ RB.battlers = (function () {
     // white materials keep their shadows lighter; dark ones lift less toward their highlight
     const lo = o.lo || (l > 0.78 ? 0.62 : l > 0.62 ? 0.8 : 1), hi = (o.hi || 1) * (l < 0.3 ? 0.7 : 1);
     const S = (x) => Math.max(0, Math.min(1, x));
-    const T = (lv, dh, ds) => P.hex(P.fromHsl(towardH(h, dh < 0 ? cool : warm, Math.abs(dh) * hs), S(s * sat * (dh < 0 ? ssh : 1) + ds * (ds > 0 ? dsk : 1)), S(lv)));
+    // (blues brighten toward cyan, not round through violet to the warm side)
+    const warmT = !o.warm && h >= 170 && h <= 255 ? h - 120 : warm;
+    const T = (lv, dh, ds) => P.hex(P.fromHsl(towardH(h, dh < 0 ? cool : warmT, Math.abs(dh) * hs), S(s * sat * (dh < 0 ? ssh : 1) + ds * (ds > 0 ? dsk : 1)), S(lv)));
     const R = [
       T(l * (1 - 0.6 * lo), -30, grey ? 0.07 : 0.16),
       T(l * (1 - 0.41 * lo), -19, grey ? 0.06 : 0.11),
@@ -336,7 +343,7 @@ RB.battlers = (function () {
   }
   // cloth hanging from the waist: folds round it (deeper toward the hem, gathered under the belt), each
   // with a lit ridge on its left flank and a shadow valley; a crisp valley line low on the skirt; a hem band
-  const CLOTH_TH = [0.86, 0.3, 0.1, -0.5];
+  const CLOTH_TH = [0.72, 0.3, 0.1, -0.5];
   function foldLev(N, o) {
     o = o || {};
     return (info) => {
@@ -571,6 +578,8 @@ RB.battlers = (function () {
       // the cuff: a band turned back at the wrist, a lighter edge on its lip
       S(lerp(wr, elb, 0.12), 2.5 * g, Mt.cuff, grp);
       C(lerp(wr, elb, 0.2), lerp(wr, elb, 0.05), 2.65 * g, 2.55 * g, Mt.cuff, grp);
+      // a button on the cuff, on the side turned to us: a deliberate glint
+      { const ax = norm(sub(wr, elb)), tv = mtv(BODY, TOWARD), o = norm(sub(tv, mul(ax, dot(tv, ax)))); S(add(lerp(wr, elb, 0.13), mul(o, 2.6 * g)), 0.6, Mt.gold, GRP.acc); }
       // (a palm opened against what comes: the old prop.palm is the 'flat' shape)
       const shape = (side > 0 ? ps.handShapeR : ps.handShapeL) || (side > 0 && ps.prop && ps.prop.palm > 0.5 ? 'flat' : 'fist');
       const pn = (side > 0 ? ps.palmR : ps.palmL) || [-side, -0.2, 0.15];
@@ -673,6 +682,12 @@ RB.battlers = (function () {
     // belt / sash / obi
     const bh = sh === 'robe' ? 2.6 : 1.5;
     K.Lf(add(waist, mv(Ms, [0, -bh, 0])), add(waist, mv(Ms, [0, bh * 0.6, 0])), Ms, [[0, 8.0 * g, 6.3 * g], [1, 7.7 * g, 6.0 * g]], Mt.accent, GRP.skirt);
+    // the belt's buckle at the near hip (a tunic's or coat's belt; a robe's or dress's sash is tied behind)
+    if (sh !== 'robe' && sh !== 'dress') {
+      K.Bx(add(waist, mv(Ms, [7.7 * g, -0.4, -1.6 * g])), mm(Ms, rotY(80 * DEG)), [1.2, 1.05, 0.5], Mt.gold, GRP.acc);
+      // the belt's free end, tucked through and hanging over the hip (it follows the cloth's sway)
+      K.C(add(waist, mv(Ms, [7.9 * g, -0.9, -2.8 * g])), add(waist, mv(Ms, [8.3 * g + sway * 0.4, -4.6, -3.4 * g])), 0.75, 0.65, Mt.accent, GRP.acc);
+    }
     const back = (dx, dy, dz) => add(waist, mv(Ms, [dx, dy, -6.3 * g + dz]));
     // a bow: each loop folds into the knot (its inner end in shadow, its outer end lit), the knot a step
     // darker, the tails hanging from it
