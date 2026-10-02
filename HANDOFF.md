@@ -51,8 +51,9 @@
   complete on this branch (sections below). Latest checks (VALIDATION.md "Battle addendum —
   Phase F"): validator no errors; unit 15,334/0; `node tests/e2e/run.mjs` 63/65 on the merged
   build (the two explained and passing on the final build), including a whole-game run; battle
-  geometry, invariance, 20-battle cleanup and memory budget on the final build. The full-game
-  matrix with both addenda is the next step.
+  geometry, invariance, 20-battle cleanup and memory budget on the final build; then the
+  full-game matrix with both addenda (VALIDATION.md "Full-game matrix — both addenda"):
+  whole-game matrix 16/16, layout audit 536/536 (English, 8 viewports) and 201/201 (Japanese, 3).
 - Test tooling: tests/e2e/drive.mjs (goal-directed driver: walks real maps,
   interacts through the world), pursue.mjs (whole game), matrix.mjs,
   run.mjs (suite runner), explore.mjs (random explorer, weaker).
@@ -273,8 +274,9 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
   party, so at contact a moth's near wing passes behind the adventurer it strikes (creatures_a.md).
 - Not verified: Firefox (the owner's browser), Safari, a real phone or the foldable, the art judged by a
   person (every rubric is a self-review), a native speaker's review, frame rate on named hardware.
-- Next: the full-game matrix with both addenda in (`node tests/e2e/run.mjs --full`; the owner's
-  instruction: it waits until both addenda are complete — they now are).
+- The full-game matrix with both addenda in ran after both were complete, as the owner asked:
+  16/16 whole-game runs, layout audit clean (VALIDATION.md "Full-game matrix — both addenda").
+  What remains is by hand (Next concrete actions, item 10).
 
 ## Commands
 - Build: `node tools/build.mjs`

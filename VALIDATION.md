@@ -1243,3 +1243,23 @@ profiles; no player save was used. The machine was shared with other runs (load 
 - **Not verified:** Firefox (Robin's browser), Safari, a real phone or the foldable; the art by a
   person (every rubric is a self-review); a native speaker's review; frame rate on named hardware
   (headless playback and video cadence are not frame-rate measurements).
+
+## Full-game matrix — both addenda of 2026-10-02 (Practice; Battle art, UI and repairs)
+Run after both addenda were complete, as the owner asked, on the final build (`index.html` 8,852,108
+bytes, sha256 `a6a8f20d729d976b…`, a1eee28), in a scratch copy of the same source and build so the
+scripts' captures stayed out of the repository. Headless Chromium on Linux (Playwright), synthetic
+campaigns in fresh profiles; no player save was used.
+- **B Whole-game matrix** (`node tests/e2e/matrix.mjs FE …` then `IA …`, `nao,mio,ren,suzu`, three at
+  a time): **16/16**. Every learning profile (F, E, I, A) × companion played a new campaign through
+  Chapters 1–6 and one Atlas restoration, in 14.8–17.2 min each. The battles on the way used the new
+  presentation (Normal playback, Adaptive menus, the badges and the banner) and the merged art; the
+  practice activities met on the way were left by the test player. The solver answers the language
+  steps, so these runs show that the game can be finished with both addenda in, not how it plays.
+- **B Layout audit** (`visual.mjs --check`): English labels at 8 viewports (320×640 … 1920×1080)
+  **536/536 clean**; Japanese labels at 320×640, 390×844 and 1280×800 **201/201 clean** (overflow,
+  clipped text, touch targets, furigana contrast, page and state errors).
+- With the default suite (63/65 on the merged build, the two explained and passing on the final
+  build; VALIDATION "Battle addendum — Phase F") this completes the matrix stage for both addenda.
+- **Not verified:** Firefox, Safari, a real phone or the foldable; play by a person; a native speaker's
+  review.
+
