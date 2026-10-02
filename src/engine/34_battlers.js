@@ -90,15 +90,19 @@ RB.battlers = (function () {
   const proj = (w) => [w[0] * ZS, -(w[1] * cp - w[2] * spn) * ZS, w[1] * spn + w[2] * cp];
 
   // ---- primitives ------------------------------------------------------------------------------------
-  // A primitive: { kind, mat, grp, ... } in world coordinates. mat: { R: [5 colours], kind, pat(info) }.
-  // The raster keeps, per pixel, the nearest hit: its depth, group, material ramp and step.
+  // A primitive: { kind, mat, grp, ... } in world coordinates. mat: { R: [6 tones], OL, RIM, LIT, kind,
+  // th, pat(info, v, l), lev(info, l) }. The raster keeps, per pixel, the nearest hit: its depth, group,
+  // material, tone step and the surface normal's screen-x and light terms (for the rim and the passes).
   function Raster() {
     const n = FW * FH;
     this.z = new Float32Array(n).fill(-1e9);
     this.g = new Int16Array(n).fill(-1);
     this.lv = new Int8Array(n);
     this.R = new Array(n);
-    this.flag = new Uint8Array(n); // 1: keep (decals), 2: no contour
+    this.m = new Array(n);
+    this.nx = new Float32Array(n);
+    this.nl = new Float32Array(n);
+    this.flag = new Uint8Array(n); // 1: keep (decals), 2: no contour, 4: no rim, 8: no cast shadow
   }
   // pixel centre -> ray origin on the depth-0 plane
   function rayO(px, py) {
@@ -110,20 +114,30 @@ RB.battlers = (function () {
     for (const w of pts) { const s = proj(w); x0 = Math.min(x0, s[0]); x1 = Math.max(x1, s[0]); y0 = Math.min(y0, s[1]); y1 = Math.max(y1, s[1]); }
     return [Math.max(0, Math.floor(AX + x0 - pad)), Math.max(0, Math.floor(AY + y0 - pad)), Math.min(FW - 1, Math.ceil(AX + x1 + pad)), Math.min(FH - 1, Math.ceil(AY + y1 + pad))];
   }
-  // shading step from a normal and a material
+  // shading step from a normal and a material. Tones: 0 deep shadow, 1 shadow, 2 half-light, 3 the lit
+  // plane (the material's own colour), 4 highlight; 5 (sheen, specular) only where a material's own
+  // pattern or band puts it. A material may shade itself (lev: clustered locks, folds, hard metal bands).
+  const TH = [0.86, 0.3, 0.1, -0.5];
+  let lastN = TOWARD, lastL = 0;
+  const levelOf = (l, f, th) => {
+    let v = l > th[0] ? 4 : l > th[1] ? 3 : l > th[2] ? 2 : l > th[3] ? 1 : 0;
+    if (f < 0.16 && l < 0.3) v = Math.min(v, 1); // the turned-away rim darkens
+    return v;
+  };
   function stepOf(n, mat, info) {
     const l = dot(n, LIGHT), f = dot(n, TOWARD);
-    const th = mat.th || [0.74, 0.44, 0.08, -0.3];
-    let v = l > th[0] ? 4 : l > th[1] ? 3 : l > th[2] ? 2 : l > th[3] ? 1 : 0;
-    if (f < 0.22 && l < 0.35) v = Math.min(v, 1); // the turned-away rim darkens
+    lastN = n; lastL = l;
+    let v = mat.lev ? mat.lev(info, l, f) : levelOf(l, f, mat.th || TH);
     if (mat.pat) v += mat.pat(info, v, l);
     if (mat.min != null) v = Math.max(v, mat.min);
     if (mat.max != null) v = Math.min(v, mat.max);
-    return v < 0 ? 0 : v > 4 ? 4 : v;
+    const top = mat.top || 4;
+    return v < 0 ? 0 : v > top ? top : v;
   }
   function write(r, i, z, grp, mat, lv, flag) {
     if (z <= r.z[i]) return;
-    r.z[i] = z; r.g[i] = grp; r.R[i] = mat.R; r.lv[i] = lv; r.flag[i] = flag || mat.flag || 0;
+    r.z[i] = z; r.g[i] = grp; r.R[i] = mat.R; r.m[i] = mat; r.lv[i] = lv; r.flag[i] = flag || mat.flag || 0;
+    r.nx[i] = lastN[0]; r.nl[i] = lastL;
   }
   // Ellipsoid: centre c, axes M (columns: unit axes), radii rad. info.l = local hit / radii.
   function ellipsoid(r, pr) {
@@ -142,7 +156,7 @@ RB.battlers = (function () {
       const i = py * FW + px, z = -s;
       if (z <= r.z[i]) continue;
       const n = norm(mv(M, [l[0] / rad[0], l[1] / rad[1], l[2] / rad[2]]));
-      write(r, i, z, grp, mat, stepOf(n, mat, { l, n, px, py, a: Math.atan2(l[0], l[2]) }));
+      write(r, i, z, grp, mat, stepOf(n, mat, { l, n, px, py, a: Math.atan2(l[0], l[2]), M }));
     }
   }
   const sphere = (r, c, rad, mat, grp, keep, M) => ellipsoid(r, { c, M: M || M_ID, rad: [rad, rad, rad], mat, grp, keep });
@@ -167,7 +181,7 @@ RB.battlers = (function () {
         const hit = add(O, mul(DIR, s));
         const nn = norm(hit);
         if (o.keep && !o.keep(nn, t)) continue;
-        write(r, i, z, grp, mat, stepOf(nn, mat, { u: t, a: Math.atan2(dot(nn, side), dot(nn, up2)), n: nn, px, py, len: L }));
+        write(r, i, z, grp, mat, stepOf(nn, mat, { u: t, a: Math.atan2(dot(nn, side), dot(nn, up2)), n: nn, px, py, len: L, ax }));
       }
     }
   }
@@ -205,7 +219,7 @@ RB.battlers = (function () {
       let n = [f(add(w, [e, 0, 0])) - f(add(w, [-e, 0, 0])), f(add(w, [0, e, 0])) - f(add(w, [0, -e, 0])), f(add(w, [0, 0, e])) - f(add(w, [0, 0, -e]))];
       n = norm(n);
       if (!isFinite(n[0])) n = TOWARD;
-      write(r, i, z, grp, mat, stepOf(n, mat, { h, a: Math.atan2(lx, lz), lx, lz, n, px, py }));
+      write(r, i, z, grp, mat, stepOf(n, mat, { h, a: Math.atan2(lx, lz), lx, lz, n, px, py, ey, ex, ez }));
     }
   }
   // Box: centre c, axes M, half sizes hs; info.face is the axis of the face hit (0,1,2) and its sign.
@@ -234,13 +248,122 @@ RB.battlers = (function () {
     }
   }
 
+  // ---- colour: hue-shifted ramps, coloured outlines -------------------------------------------------------
+  // Every material is a ramp of six tones whose hue moves as it brightens: the shadows cooler and more
+  // saturated (toward blue-violet; flesh toward crimson), the lights warmer (toward yellow-cream), with a
+  // wide value range. Its outline (OL) is its own darkest tone pushed further toward deep blue/violet —
+  // a colour, never black; LIT is the lighter line a lit edge breaks into (selective outline); RIM is the
+  // cool back light that runs down the right-hand edges.
+  const towardH = (h, target, amt) => { const d = ((target - h + 540) % 360) - 180; return h + Math.sign(d) * Math.min(Math.abs(d), amt); };
+  const RC = new Map();
+  function hramp(base, o) {
+    o = o || {};
+    const key = base + '|' + (o.sat || 1) + '|' + (o.cool || 250) + '|' + (o.warm || 52) + '|' + (o.lo || 0) + '|' + (o.hs || 1) + '|' + (o.hi || 1) + '|' + (o.rim || '') + '|' + (o.ds == null ? 1 : o.ds) + '|' + (o.ssh || 1);
+    let out = RC.get(key);
+    if (out) return out;
+    let [h, s, l] = P.toHsl(P.rgba(base));
+    // (a true grey takes a cool steel hue; a warm or cool near-black keeps its own)
+    const grey = s < 0.1;
+    if (s < 0.035) h = o.greyHue == null ? 222 : o.greyHue;
+    const sat = o.sat || 1, hs = o.hs || 1, cool = o.cool || 250, warm = o.warm || 52, dsk = o.ds == null ? 1 : o.ds, ssh = o.ssh || 1;
+    // white materials keep their shadows lighter; dark ones lift less toward their highlight
+    const lo = o.lo || (l > 0.78 ? 0.62 : l > 0.62 ? 0.8 : 1), hi = (o.hi || 1) * (l < 0.3 ? 0.7 : 1);
+    const S = (x) => Math.max(0, Math.min(1, x));
+    const T = (lv, dh, ds) => P.hex(P.fromHsl(towardH(h, dh < 0 ? cool : warm, Math.abs(dh) * hs), S(s * sat * (dh < 0 ? ssh : 1) + ds * (ds > 0 ? dsk : 1)), S(lv)));
+    const R = [
+      T(l * (1 - 0.6 * lo), -30, grey ? 0.07 : 0.16),
+      T(l * (1 - 0.41 * lo), -19, grey ? 0.06 : 0.11),
+      T(l * (1 - 0.2 * lo), -8, grey ? 0.03 : 0.05),
+      T(l, 0, 0),
+      T(l + (1 - l) * 0.36 * hi, 13, grey ? 0.02 : -0.02),
+      T(l + (1 - l) * 0.66 * hi, 24, grey ? 0.01 : -0.1),
+    ];
+    const OL = T(Math.max(0.07, Math.min(0.19, l * 0.26)), -42, grey ? 0.14 : 0.22);
+    out = { R, OL, LIT: P.mix(OL, R[1], 0.55), RIM: P.mix(R[3], o.rim || '#8ec0ff', 0.5) };
+    RC.set(key, out);
+    if (RC.size > 600) RC.delete(RC.keys().next().value);
+    return out;
+  }
+  // a material from a ramp (and its recipe)
+  const mk = (rp, o) => Object.assign({ R: rp.R, OL: rp.OL, LIT: rp.LIT, RIM: rp.RIM }, o || {});
+  // a material from fixed tones (glow, ink): six tones and an outline
+  const fixed = (R, OL, o) => Object.assign({ R: R.length === 6 ? R : R.concat([R[R.length - 1]]), OL, LIT: OL, RIM: R[Math.min(4, R.length - 1)] }, o || {});
+
+  // ---- lighting recipes per material ------------------------------------------------------------------------
+  // A surface's normal bent toward a tangent (a lock of hair, a fold, a crease) lights one flank of each
+  // form and shades the other: clusters with a lit ridge and a shadow valley, following the form.
+  const bent = (n, t, a) => { const q = norm(add(n, mul(t, a))); return [dot(q, LIGHT), dot(q, TOWARD)]; };
+  const frac = (x) => x - Math.floor(x);
+  // hair on the head: locks hang from the crown (angle bands round the head's vertical axis), each lit on
+  // its left flank; a dark parting between locks below the crown; a broken highlight band (one dash per
+  // lock) where the head turns to the light
+  const HAIR_TH = [0.9, 0.32, 0.12, -0.45];
+  function hairCapLev(N, band) {
+    return (info, l0, f0) => {
+      if (!info.l) return levelOf(l0, f0, HAIR_TH); // (a capsule or loft drawn in the cap's material)
+      const L = info.l, M = info.M;
+      const a = Math.atan2(L[0], L[2]), u = frac((a / (2 * Math.PI)) * N + 0.37);
+      const crown = clamp01((0.86 - L[1]) / 0.34);
+      const t = norm(mv(M, [Math.cos(a), 0, -Math.sin(a)]));
+      const face = clamp01((f0 - 0.12) / 0.3);                         // (no lock detail at the grazing silhouette)
+      const [l, f] = bent(info.n, t, (u - 0.5) * 1.0 * crown * face);
+      let v = levelOf(l, f, HAIR_TH);
+      if (v === 4 && (u < 0.3 || u > 0.72)) v = 3;                   // a lock's light is in its middle
+      if (u < 0.1 && crown > 0.6 && L[1] < 0.3 && L[1] > -0.5 && face > 0.6) v -= 1;
+      const k = Math.floor((a / (2 * Math.PI)) * N + 0.37);
+      const b0 = band[0] + 0.03 * Math.sin(k * 2.3), b1 = band[1] + 0.03 * Math.cos(k * 1.7);
+      if (L[1] > b0 && L[1] < b1 && u > 0.36 && u < 0.6 && l0 > 0.45) v = l > 0.7 && L[1] > (b0 + b1) / 2 ? 5 : Math.max(v, 4);
+      return v;
+    };
+  }
+  // hair falling in a tail, braid or long fall: strands along it, lit on the left flank, a highlight dash
+  // high on each strand
+  function strandLev(N, hiAt, axisOf) {
+    return (info) => {
+      const ax = axisOf(info);
+      const a = info.a, u = frac((a / (2 * Math.PI)) * N + 0.2);
+      const t = norm(cross(ax, info.n));
+      const face = clamp01((dot(info.n, TOWARD) - 0.1) / 0.3);
+      const [l, f] = bent(info.n, t, (u - 0.5) * 0.9 * face);
+      let v = levelOf(l, f, HAIR_TH);
+      if (u < 0.14 && face > 0.6) v -= 1;
+      const along = info.u != null ? info.u : 1 - info.h;
+      if (along > hiAt[0] && along < hiAt[1] && u > 0.25 && u < 0.8 && l > 0.25) v = l > 0.62 ? 5 : Math.max(v, 4);
+      return v;
+    };
+  }
+  // cloth hanging from the waist: folds round it (deeper toward the hem, gathered under the belt), each
+  // with a lit ridge on its left flank and a shadow valley; a crisp valley line low on the skirt; a hem band
+  const CLOTH_TH = [0.86, 0.3, 0.1, -0.5];
+  function foldLev(N, o) {
+    o = o || {};
+    return (info) => {
+      const h = info.h, a = info.a;
+      const u = frac((a / (2 * Math.PI)) * N + (o.off || 0.31));
+      const amp = 0.18 + 0.95 * Math.pow(1 - clamp01(h), 0.7);
+      const t = norm(sub(mul(info.ex, Math.cos(a)), mul(info.ez, Math.sin(a))));
+      const [l, f] = bent(info.n, t, Math.sin(u * 2 * Math.PI) * amp);
+      let v = levelOf(l, f, CLOTH_TH);
+      if (h < 0.55 && u > 0.7 && u < 0.79) v -= 1;                 // the valley's crease
+      if (h > 0.86) { const g = frac((a / (2 * Math.PI)) * N * 2 + 0.1); if (g < 0.22) v -= 1; } // gathered under the belt
+      if (h < 0.05) v -= 1;                                        // the hem turned up
+      if (o.vent && Math.abs(a) > Math.PI - 0.1 && h < 0.5) v = 0;  // a coat's back vent
+      return v;
+    };
+  }
+  // a sleeve: creases ringing it round the elbow, lit on top
+  function sleeveLev(info) {
+    if (!info.ax) return levelOf(dot(info.n, LIGHT), dot(info.n, TOWARD), CLOTH_TH);
+    const [l, f] = bent(info.n, info.ax, Math.sin(info.u * Math.PI * 5) * 0.42);
+    return levelOf(l, f, CLOTH_TH);
+  }
+  // metal: hard bands of value and a near-white streak (no soft gradient)
+  const metalLev = (info, l, f) => (l > 0.62 ? 5 : l > 0.3 ? 4 : l > -0.1 ? 2 : f < 0.3 ? 0 : 1);
+  // glass: a dark rim, the body, one bright glint
+  const glassLev = (info, l, f) => (f < 0.3 ? 1 : l > 0.72 ? 5 : l > 0.3 ? 3 : 2);
+
   // ---- palette ---------------------------------------------------------------------------------------
-  const GOLD5 = ['#7a5e1e', '#a8842c', '#e8c860', '#fff0a8', '#fffbe0'];
-  const LEATHER5 = ['#3e2a16', '#5a3e22', '#8a6a3a', '#b08e58', '#cfae78'];
-  const IVORY5 = ['#968a74', '#b8ab94', '#d8ccb4', '#ece4d4', '#f8f2e6'];
-  const PAPER5 = ['#a89a7c', '#cfc2a2', '#ece2c8', '#f8f2e0', '#fffcf0'];
   const INK = '#2a1e26';
-  const r5 = (c) => [shade(c, -2), shade(c, -1), c, shade(c, 1), shade(c, 2)];
   const pcache = new Map();
   function palette(look) {
     const k = JSON.stringify([SP.colorsOf(look), look.wrapCol, look.hoodCol, look.outlineCol]);
@@ -248,16 +371,20 @@ RB.battlers = (function () {
     if (p) return p;
     const base = SP._art.palette(look);
     const col = SP.colorsOf(look);
-    const sk = base.sk; // [z, s, S, L]
+    const hc = col.hair;
+    const [cm, cs, ca] = col.cloth;
     p = Object.assign({}, base, {
-      skin5: [shade(sk[0], -1), sk[0], mix(sk[1], sk[2], 0.35), sk[2], sk[3]],
-      hair5: base.hair,
-      cl5: base.cl,
-      ac5: r5(col.cloth[2]),
-      pa5: r5(col.pants),
-      bo5: r5(col.boots),
-      wrap5: base.wrap,
-      stub5: base.stubble,
+      // skin: shadows toward crimson, outline a dark red-brown
+      skin6: hramp(col.skin[0], { cool: 352, warm: 42, hs: 0.72, ds: 0, ssh: 0.6, lo: 0.55, rim: '#b8d0ff' }),
+      // hair: the lock colour between its mid and light, saturated; shadows cool, the band warm
+      // (very dark hair takes a cool sheen)
+      hair6: P.lum(hc[1]) < 0.2 ? hramp(P.mix(hc[1], hc[2] || hc[1], 0.3), { sat: 1.1, warm: 225, hi: 0.85 }) : hramp(P.mix(hc[1], hc[2] || hc[1], 0.2), { sat: 1.12, hs: 1.15 }),
+      cloth6: hramp(cm, { sat: 1.22 }),
+      acc6: hramp(ca, { sat: 1.15 }),
+      pants6: hramp(col.pants, { sat: 1.2 }),
+      boots6: hramp(P.lum(col.boots) < 0.2 ? P.mix(col.boots, '#6a4a32', 0.35) : col.boots, { sat: 1.1, warm: 40 }),
+      wrap6: hramp(look.wrapCol || ca, { sat: 1.15 }),
+      stub6: hramp(P.mix(hc[1], col.skin[0], 0.4), { hs: 0.8 }),
     });
     pcache.set(k, p);
     if (pcache.size > 100) pcache.delete(pcache.keys().next().value);
@@ -266,77 +393,75 @@ RB.battlers = (function () {
 
   // ---- materials ---------------------------------------------------------------------------------------
   function mats(look, p) {
-    const hairLocks = (n) => (info, v, l) => {
-      // locks round the part's axis: a dark seam on each lock's shadow edge, a lit edge towards the light
-      const u = ((info.a / (2 * Math.PI)) * n + 10) % 1;
-      if (u < 0.13) return -1;
-      if (u > 0.78 && l > 0.1) return 1;
-      return 0;
-    };
     const tieC = look.tieCol || p.ac[1];
+    const skinTH = [0.8, 0.28, 0.06, -0.6];
     const M = {
-      skin: { R: p.skin5, th: [0.7, 0.26, -0.2, -0.6] },
-      hand: { R: p.skin5, th: [0.62, 0.2, -0.3, -0.7], min: 2 },
-      ear: { R: p.skin5, th: [0.8, 0.4, -0.1, -0.5], min: 1, max: 3 },
-      lash: { R: [p.eye, p.eye, p.eye, p.iris, p.iris], max: 1, flag: 1 },
-      blush: { R: [mix(p.skin5[1], '#d86a6a', 0.35), mix(p.skin5[2], '#e8807a', 0.35), mix(p.skin5[3], '#e8807a', 0.3), mix(p.skin5[3], '#e8807a', 0.3), mix(p.skin5[4], '#e8807a', 0.25)], flag: 1 },
-      cloth: { R: p.cl5 },
-      // the back of the garment: a centre seam
-      torso: {
-        R: p.cl5, pat: (info, v) => {
+      skin: mk(p.skin6, { th: skinTH, kind: 'skin' }),
+      // the face (in rear view the cheek and jaw): a shadow under the jaw line, a lit cheekbone
+      face: mk(p.skin6, {
+        kind: 'skin', lev: (info, l, f) => {
+          let v = levelOf(l, f, skinTH);
+          const L = info.l;
+          if (L[2] > 0.15 && L[1] < -0.38) v -= 1;
+          if (L[2] > 0.25 && L[1] > -0.25 && L[1] < 0.05 && L[0] > 0.3 && l > -0.1) v += 1;
+          return v;
+        },
+      }),
+      hand: mk(p.skin6, { th: [0.62, 0.2, -0.3, -0.7], min: 2, kind: 'skin' }),
+      ear: mk(p.skin6, { th: [0.8, 0.4, -0.1, -0.5], min: 1, max: 3, kind: 'skin' }),
+      lash: fixed([p.eye, p.eye, p.eye, p.iris, p.iris], p.eye, { max: 1, flag: 1 | 4 }),
+      blush: fixed([P.mix(p.skin6.R[1], '#d05a6a', 0.4), P.mix(p.skin6.R[2], '#e06a72', 0.4), P.mix(p.skin6.R[3], '#e8707a', 0.38), P.mix(p.skin6.R[3], '#e8807a', 0.34), P.mix(p.skin6.R[4], '#e8807a', 0.3)], p.skin6.OL, { flag: 1 | 4, kind: 'skin' }),
+      cloth: mk(p.cloth6, { lev: sleeveLev, kind: 'cloth' }),
+      // the back of the garment: a centre seam, the side seams, the yoke across the shoulders
+      torso: mk(p.cloth6, {
+        kind: 'cloth', th: CLOTH_TH, pat: (info, v) => {
           const a = Math.abs(info.a);
-          if (a > Math.PI - 0.12) return -1;                         // centre back seam
-          if (Math.abs(a - 1.9) < 0.07 && info.h > 0.2) return -1;   // side seams
-          if (info.h > 0.62 && info.h < 0.7 && a > 2.1) return -1;   // the yoke across the shoulders
+          if (a > Math.PI - 0.09 && info.h < 0.62) return -1;              // the centre-back seam
           return 0;
         },
-      },
-      // the skirt: folds all round, a darker hem band, a back vent on coats
-      skirt: {
-        R: p.cl5, pat: (info, v) => {
-          const u = ((info.a / (2 * Math.PI)) * 8 + 10.3) % 1;
-          if (info.h < 0.06) return -1;
-          if (look.shape === 'coat' && Math.abs(info.a) > Math.PI - 0.12 && info.h < 0.55) return -2;
-          if (info.h > 0.9) return (u < 0.35 ? -1 : 0); // gathered under the belt
-          return u < 0.1 ? -1 : u > 0.8 && v >= 2 ? 1 : 0;
+      }),
+      skirt: mk(p.cloth6, { kind: 'cloth', lev: foldLev(look.shape === 'robe' ? 9 : 7, { vent: look.shape === 'coat' }) }),
+      trim: mk(p.acc6, { th: [0.6, 0.2, -0.2, -0.6], min: 1, kind: 'cloth' }),
+      cuff: mk(p.acc6, { th: [0.6, 0.2, -0.2, -0.6], min: 1, max: 4, kind: 'cloth' }),
+      collar: mk(p.acc6, { th: [0.6, 0.2, -0.2, -0.6], min: 1, kind: 'cloth' }),
+      // the belt / sash: a band with a lit upper edge and a dark lower edge
+      accent: mk(p.acc6, { th: [0.6, 0.2, -0.2, -0.6], min: 1, kind: 'cloth', pat: (info) => (info.h != null ? (info.h > 0.78 ? 1 : info.h < 0.2 ? -1 : 0) : 0) }),
+      accentDk: mk(p.acc6, { max: 2, kind: 'cloth' }),
+      tie: mk(hramp(tieC, { sat: 1.15 }), { min: 1 }),
+      pants: mk(p.pants6, { kind: 'cloth', lev: sleeveLev }),
+      // boots: leather; a dark sole, a lit toe cap, a turned-down top
+      boots: mk(p.boots6, {
+        kind: 'leather', th: [0.7, 0.35, -0.1, -0.5], top: 5, pat: (info, v, l) => {
+          if (info.l) { if (info.l[1] < -0.5) return -3; if (info.l[2] > 0.45 && info.l[1] > -0.2 && l > 0.3) return 1; return 0; }
+          if (info.u != null) return info.u < 0.12 ? 1 : info.u < 0.22 ? -1 : 0;
+          return 0;
         },
-      },
-      trim: { R: p.ac5, th: [0.6, 0.2, -0.2, -0.6], min: 1 },
-      cuff: { R: p.ac5, th: [0.6, 0.2, -0.2, -0.6], min: 1, max: 3 },
-      collar: { R: p.ac5, th: [0.6, 0.2, -0.2, -0.6], min: 1 },
-      accent: { R: p.ac5, th: [0.6, 0.2, -0.2, -0.6], min: 1 },
-      accentDk: { R: p.ac5, max: 2 },
-      tie: { R: r5(tieC), min: 1 },
-      pants: { R: p.pa5 },
-      boots: { R: p.bo5, th: [0.7, 0.35, -0.1, -0.5] },
-      // hair on the head: locks fall from the crown; a band of sheen crosses them on the lit side
-      hair: {
-        R: p.hair5, pat: (info, v, l) => {
-          const d = hairLocks(11)(info, v, l);
-          if (info.l && info.l[1] > 0.28 && info.l[1] < 0.5 && l > 0.15 && d >= 0) return 1;
-          return d;
-        },
-      },
-      hairTail: { R: p.hair5, pat: hairLocks(5) },
-      hairV: { R: p.hair5, pat: hairLocks(13) },
-      hairCurl: { R: p.hair5, th: [0.55, 0.2, -0.15, -0.5] },
-      hairBun: { R: p.hair5, pat: hairLocks(7) },
-      hairBraid: { R: p.hair5, th: [0.5, 0.15, -0.2, -0.5] },
-      wrap: { R: p.wrap5, pat: (info) => { const u = ((info.h != null ? info.h * 5 : (info.l ? info.l[1] * 3 : 0)) + 10) % 1; return u < 0.2 ? -1 : 0; } },
-      stubble: { R: p.stub5, max: 3 },
-      ivory: { R: IVORY5 },
-      leather: { R: LEATHER5 },
-      gold: { R: GOLD5, min: 1 },
-      paper: { R: PAPER5, min: 1 },
-      ink: { R: [INK, INK, '#3a2e36', '#4a3e46', '#5a4e56'], max: 2 },
-      glow: { R: ['#c87830', '#e8a040', '#ffd27a', '#fff0b8', '#fffae0'], min: 2 },
+      }),
+      hair: mk(p.hair6, { kind: 'hair', top: 5, lev: hairCapLev(7, [0.14, 0.42]) }),
+      hairTail: mk(p.hair6, { kind: 'hair', top: 5, lev: strandLev(4, [0.08, 0.3], (i) => i.ax) }),
+      hairTuft: mk(p.hair6, { kind: 'hair', top: 5, lev: strandLev(2, [-1, -1], (i) => i.ax) }),
+      hairStrand: mk(p.hair6, { kind: 'hair', top: 5, lev: strandLev(4, [-1, -1], (i) => i.ax) }),
+      hairV: mk(p.hair6, { kind: 'hair', top: 5, lev: strandLev(13, [0.1, 0.24], (i) => i.ey) }),
+      hairCurl: mk(p.hair6, { kind: 'hair', top: 5, th: [0.58, 0.22, -0.15, -0.5], pat: (info, v, l) => (l > 0.78 ? 1 : 0) }),
+      hairBun: mk(p.hair6, { kind: 'hair', top: 5, lev: hairCapLev(5, [0.2, 0.46]) }),
+      hairBraid: mk(p.hair6, { kind: 'hair', top: 5, th: [0.55, 0.15, -0.2, -0.5], pat: (info, v, l) => (info.l && info.l[1] < -0.4 ? -1 : l > 0.72 ? 1 : 0) }),
+      wrap: mk(p.wrap6, { kind: 'cloth', pat: (info) => { const u = ((info.h != null ? info.h * 5 : (info.l ? info.l[1] * 3 : 0)) + 10) % 1; return u < 0.2 ? -1 : 0; } }),
+      stubble: mk(p.stub6, { max: 3 }),
+      // (whites shade toward a cool grey, not through red)
+      ivory: mk(hramp('#ece4d4', { hs: 0.4, ssh: 0.35, ds: 0 }), { kind: 'cloth' }),
+      leather: mk(hramp('#8a6a3a', { sat: 1.1, warm: 40 }), { kind: 'leather' }),
+      gold: mk(hramp('#e0b850', { sat: 1.1, warm: 58 }), { min: 1, top: 5, lev: metalLev, kind: 'metal' }),
+      paper: mk(hramp('#f0e6cc', { hs: 0.4, ssh: 0.4, ds: 0 }), { min: 2, kind: 'paper' }),
+      ink: fixed([INK, INK, '#3a2e36', '#4a3e46', '#5a4e56'], '#140e18', { max: 2 }),
+      glow: fixed(['#c87830', '#e8a040', '#ffd27a', '#fff0b8', '#fffae0', '#ffffff'], '#6a3a1a', { min: 2, top: 5, flag: 4 }),
       // the lamp flared: the glass runs lighter, its darkest step the old mid
-      glowHi: { R: ['#e8a040', '#ffd27a', '#fff0b8', '#fffae0', '#ffffff'], min: 2 },
-      // Mio's vial: green glass (as the bottles at her hip), a lighter draught inside the shoulder
-      glass: { R: ['#2e6a60', '#4a8c80', '#6ab0a0', '#9ad0c0', '#d8f4ec'], th: [0.55, 0.15, -0.2, -0.6], min: 1 },
-      iron: { R: ['#1e1a22', '#2a2630', '#3a3440', '#5a5460', '#7a7480'], max: 3 },
-      wood: { R: ['#3e2a18', '#5a3e22', '#7a5530', '#9a7040', '#b88c58'] },
+      glowHi: fixed(['#e8a040', '#ffd27a', '#fff0b8', '#fffae0', '#ffffff', '#ffffff'], '#8a4a1a', { min: 2, top: 5, flag: 4 }),
+      // Mio's vial: green glass (as the bottles at her hip), a dark rim and one glint
+      glass: mk(hramp('#5aa898', { sat: 1.1 }), { lev: glassLev, top: 5, kind: 'glass' }),
+      iron: mk(hramp('#4a4450', { sat: 0.8 }), { max: 4, top: 5, lev: metalLev, kind: 'metal' }),
+      wood: mk(hramp('#7a5530', { sat: 1.1, warm: 40 }), { kind: 'wood' }),
     };
+    if (look.outlineCol) for (const q in M) { M[q] = Object.assign({}, M[q], { OL: look.outlineCol }); }
     return M;
   }
 
@@ -362,9 +487,9 @@ RB.battlers = (function () {
       child, old, k,
       hipW: 4.4 * (child ? 0.85 : 1), thigh: 13 * k, shin: 12.6 * k, ankle: 3.4 * k,
       pelvisY: 29.4 * k, waist: 4.4 * k, chest: 15 * k, neck: 3.2,
-      shW: 8.6 * (child ? 0.82 : 1), upper: 10.8 * k, fore: 9.8 * k,
+      shW: 9.1 * (child ? 0.82 : 1), upper: 10.8 * k, fore: 9.8 * k,
       // a little less head than on the road: the arms and what they hold must read past it
-      headR: [10.6, 11.6, 10.8].map((v) => v * (child ? 1.02 : 1)),
+      headR: [10.6, 11.6, 10.8].map((v) => v * (child ? 0.94 : 0.9)),
       girth: child ? 0.86 : 1,
     };
   }
@@ -451,14 +576,14 @@ RB.battlers = (function () {
     // collar, neck and head: skin, the ears, the tip of the nose in profile
     Lf(add(neckB, mv(Ms, [0, -1.2, -0.2])), add(neckB, mv(Ms, [0, 1.3, 0.1])), Ms, [[0, 5.2 * g, 4.4 * g], [1, 3.9 * g, 3.4 * g]], look.shape === 'coat' ? Mt.cloth : Mt.collar, GRP.body);
     C(neckB, neckT, 2.7 * g, 2.5 * g, Mt.skin, GRP.head);
-    E(headC, Mh, B.headR, Mt.skin, GRP.head);
+    E(headC, Mh, B.headR, Mt.face, GRP.head);
     const hr = B.headR;
     E(add(headC, mv(Mh, [hr[0] * 0.98, -hr[1] * 0.14, -hr[2] * 0.1])), Mh, [1.8, 3.1, 2.2], Mt.ear, GRP.ear);
     E(add(headC, mv(Mh, [-hr[0] * 0.98, -hr[1] * 0.14, -hr[2] * 0.1])), Mh, [1.8, 3.1, 2.2], Mt.ear, GRP.ear);
     E(add(headC, mv(Mh, [0.4, -hr[1] * 0.22, hr[2] * 0.97])), Mh, [1.3, 1.6, 1.6], Mt.skin, GRP.head);
     // the lashes of the near eye, showing at the cheek's edge when the head turns toward the foe,
     // and a touch of colour on the cheek
-    E(add(headC, mv(Mh, [hr[0] * 0.56, -hr[1] * 0.02, hr[2] * 0.86])), Mh, [1.5, 0.9, 1.1], Mt.lash, GRP.ear);
+    E(add(headC, mv(Mh, [hr[0] * 0.56, -hr[1] * 0.02, hr[2] * 0.84])), Mh, [1.2, 0.7, 0.9], Mt.lash, GRP.ear);
     E(add(headC, mv(Mh, [hr[0] * 0.72, -hr[1] * 0.3, hr[2] * 0.62])), Mh, [1.4, 0.8, 1.2], Mt.blush, GRP.head, (l) => true);
     hair(K);
     return { calls, J, K };
@@ -544,13 +669,17 @@ RB.battlers = (function () {
     const bh = sh === 'robe' ? 2.6 : 1.5;
     K.Lf(add(waist, mv(Ms, [0, -bh, 0])), add(waist, mv(Ms, [0, bh * 0.6, 0])), Ms, [[0, 8.0 * g, 6.3 * g], [1, 7.7 * g, 6.0 * g]], Mt.accent, GRP.skirt);
     const back = (dx, dy, dz) => add(waist, mv(Ms, [dx, dy, -6.3 * g + dz]));
+    // a bow: each loop folds into the knot (its inner end in shadow, its outer end lit), the knot a step
+    // darker, the tails hanging from it
     const bow = (mat, tails) => {
-      K.E(back(-2.4, 0.4, -0.6), Ms, [2.6, 2.0, 1.3], mat, GRP.acc);
-      K.E(back(2.4, 0.4, -0.6), Ms, [2.6, 2.0, 1.3], mat, GRP.acc);
-      K.S(back(0, 0.2, -1.1), 1.3, mat, GRP.acc);
+      const loop = (sd) => Object.assign({}, mat, { pat: (info, v) => (info.l ? (info.l[0] * -sd > 0.35 ? -1 : info.l[0] * -sd < -0.55 && v >= 3 ? 1 : 0) : 0) });
+      // the loops flattened and tipped up and outward from the knot
+      for (const sd of [-1, 1]) K.E(back(sd * 2.5, 0.7, -0.6), mm(Ms, rotZ(-sd * 22 * DEG)), [2.7, 1.55, 1.0], loop(sd), GRP.acc);
+      K.E(back(0, 0.3, -1.1), Ms, [1.1, 1.3, 0.9], Object.assign({}, mat, { pat: () => -1 }), GRP.acc);
       if (tails) {
-        K.C(back(-0.6, -0.6, -0.9), back(-1.7 + sway * 0.3, -6, -1.3), 0.9, 0.8, mat, GRP.acc);
-        K.C(back(0.6, -0.6, -0.9), back(1.5 + sway * 0.3, -5, -1.3), 0.9, 0.8, mat, GRP.acc);
+        // two short tails, an inverted V
+        K.C(back(-0.5, -0.6, -0.9), back(-2.3 + sway * 0.3, -4.4, -1.2), 0.8, 0.55, mat, GRP.acc);
+        K.C(back(0.5, -0.6, -0.9), back(2.0 + sway * 0.3, -3.8, -1.2), 0.8, 0.55, mat, GRP.acc);
       }
     };
     if (sh === 'robe') bow(Mt.accent, false);
@@ -582,7 +711,8 @@ RB.battlers = (function () {
     // a tail: a chain of capsules through points given in the head frame (the lower points follow late)
     const tail = (pts, r0, r1, mat) => {
       const w = pts.map((q, i) => { const f = i / (pts.length - 1); return add(H(q), [sw * f * 1.2, -lag * f * 1.4, 0]); });
-      for (let i = 0; i + 1 < w.length; i++) K.C(w[i], w[i + 1], hs * lerpN(r0, r1, i / (w.length - 1)), hs * lerpN(r0, r1, (i + 1) / (w.length - 1)), mat || Mt.hairTail, GRP.tail);
+      // (one highlight dash, high on the tail where it turns to the light; the strands run on below it)
+      for (let i = 0; i + 1 < w.length; i++) K.C(w[i], w[i + 1], hs * lerpN(r0, r1, i / (w.length - 1)), hs * lerpN(r0, r1, (i + 1) / (w.length - 1)), mat || (i === 1 ? Mt.hairTail : Mt.hairStrand), GRP.tail);
     };
     const tie = (q, rad) => K.S(H(q), rad || 1.6, Mt.tie, GRP.acc);
     // under a hat or cap, what would stand above the head is tucked under it (no spikes or bun through
@@ -604,10 +734,23 @@ RB.battlers = (function () {
     const nape = { short: -0.46, spiky: -0.46, ponytail: -0.46, bun: -0.4, braid: -0.46, twintails: -0.46, bob: -0.75, long: -0.8, wavy: -0.8 }[st] || -0.46;
     const tight = st === 'bun' ? [1.05, 1.04, 1.07] : [1.1, 1.08, 1.12];
     const earsShow = st !== 'bob' && st !== 'long' && st !== 'wavy';
-    cap(tight, (l) => face(l) && (!earsShow || ears(l)) && l[1] > nape);
+    // the nape's edge is the locks' tips: each lock hangs a little lower at its middle than at its parting
+    const tipAt = (l) => { const u = frac((Math.atan2(l[0], l[2]) / (2 * Math.PI)) * 7 + 0.37); return 0.11 * (1 - Math.abs(u - 0.5) * 2); };
+    cap(tight, (l) => face(l) && (!earsShow || ears(l)) && l[1] > nape - tipAt(l));
+    // clumps of hair that stand out at the back and sides and end in points: the head's outline is
+    // locks, not a ball (short and tied-back styles; under a hat they stay below its brim)
+    if (['short', 'ponytail', 'braid', 'twintails', 'spiky'].includes(st)) {
+      const R0 = hr[0] * tight[0] / hs, Rz = hr[2] * tight[2] / hs;
+      const tufts = [[132, -0.4, 1.1], [160, -0.3, 1], [-170, -0.46, 1.15], [-136, -0.4, 1.05]];
+      for (const [deg, y0, sc] of tufts) {
+        const a = deg * DEG, sa = Math.sin(a), ca = Math.cos(a), yy = y0 * hr[1] / hs;
+        const p0 = [sa * R0 * 0.86, yy + 2.2, ca * Rz * 0.86 - 0.5], p1 = [sa * (R0 + 0.9) + sw * 0.3, yy - 3.4 * sc - lag * 0.25, ca * (Rz + 0.9) - 0.5];
+        K.C(H(p0), H(p1), 2.7 * hs, 0.55 * hs, Mt.hairTuft, GRP.hair);
+      }
+    }
     if (st === 'spiky') {
       const sp = [[-6, 12, -6], [0, 14, -3], [6, 12, -5], [-10, 6, -8], [9, 7, -9], [-3, 9, -12], [4, 5, -13]];
-      for (const q of sp) { if (covered && q[1] > 6) continue; const d = norm(q); K.C(H(mul(d, 11)), H(mul(d, 17)), 3.4, 0.7, Mt.hair, GRP.hair); }
+      for (const q of sp) { if (covered && q[1] > 6) continue; const d = norm(q); K.C(H(mul(d, 11)), H(mul(d, 17)), 3.4, 0.7, Mt.hairTuft, GRP.hair); }
     }
     if (st === 'bob') {
       // a blunt, chin-length bob: the sides and back fall straight to the jaw
@@ -653,6 +796,7 @@ RB.battlers = (function () {
     }
   }
 
+  const COVER = mk(hramp('#9a4a3c', { sat: 1.1, warm: 40 }), { min: 1, kind: 'leather' });
   // ---- props held in battle ---------------------------------------------------------------------------------
   // A small bound book (the traveller's folio), a strip of paper, a brush. Held by the hand joints.
   function props(K) {
@@ -665,10 +809,14 @@ RB.battlers = (function () {
       const open = clamp01(pr.bookOpen || 0), tilt = pr.bookTilt == null ? -50 : pr.bookTilt;
       const c = pr.bookR ? add(J.handR, mv(Ms, [-2.4, 1.2, 1])) : add(J.handL, mv(Ms, pr.bookAt || [-1.4, 1.2, 0.8]));
       const Mb = mm(Ms, mm(rotY((pr.bookYaw || 10) * DEG), rotX(tilt * DEG)));
-      const cover = { R: ['#3a1e1e', '#5a2e2c', '#7a3e38', '#9a5448', '#b86e5a'], min: 1 };
+      // (the folio: a red-brown leather cover, its page block cream)
+      const cover = COVER;
       if (open < 0.08) {
         K.Bx(c, Mb, [3.4, 4.4, 1.2], cover, GRP.prop);
         K.Bx(add(c, mv(Mb, [0.3, 0, 0])), Mb, [3.1, 4.1, 0.8], Mt.paper, GRP.prop);
+        // brass corners on the fore-edge and the clasp across it
+        for (const sy of [-1, 1]) for (const sz of [-1, 1]) K.S(add(c, mv(Mb, [3.1, sy * 4.1, sz * 1.15])), 0.75, Mt.gold, GRP.prop);
+        K.Bx(add(c, mv(Mb, [3.5, 0, 0])), Mb, [0.5, 0.9, 1.35], Mt.gold, GRP.prop);
       } else {
         const a = open * 70 * DEG; // each half turns out from the spine
         for (const sx of [-1, 1]) {
@@ -710,7 +858,8 @@ RB.battlers = (function () {
   // Attached to the joints they belong to. One-sided things keep their side: the flower, ribbon, leaf
   // and quill on the left of the head (shown where they stand out past it), a lantern or cane in the
   // left hand, a basket in the right, the satchel's strap over the right shoulder to its bag on the left.
-  const flat = (c, o) => Object.assign({ R: r5(c) }, o || {});
+  // an accessory's own colour as a material (its ramp, outline and rim)
+  const flat = (c, o) => mk(hramp(c, { sat: 1.12 }), o || {});
   function accessories(K) {
     const { J, Mt, look, ps } = K;
     const acc = look.acc || [];
@@ -889,7 +1038,23 @@ RB.battlers = (function () {
   }
 
   // ---- render one frame -------------------------------------------------------------------------------------
+  // After the volumes are rasterized (each pixel one tone of its material's ramp), the craft passes:
+  //  1. cast shadows: a pixel whose path toward the light runs under a nearer part of another form (the
+  //     head over the collar, an arm over the side, the hair over the nape, a hat's brim, a strap) is
+  //     shaded: a clear shadow shape under what overlaps it, not pillow shading round every edge;
+  //  2. edges between forms: the farther of two overlapping forms gets a dark line (its own deepest tone:
+  //     lighter than the silhouette's outline); where two materials meet at nearly the same depth (a belt
+  //     on a coat, a cuff on a sleeve, a boot's top), the one underneath takes a shadow seam and the raised
+  //     one a lit edge;
+  //  3. the rim: a cool back light down the right-hand edges of the silhouette, on the side turned away
+  //     from the key light (upper left);
+  //  4. clusters: a lone pixel whose four neighbours agree on another tone takes theirs;
+  //  5. the outline: every pixel round the silhouette takes the outline colour of the material it borders
+  //     (a dark, cool version of that material, never black); on the upper-left edges of lit forms it
+  //     breaks into a lighter line (selective outline).
   const NB = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+  const SHADOW_S = [1.2, 2.2, 3.3, 4.6];
+  const DBG = {}; // (development switches for the passes: noCast, noEdge, noRim, noClean)
   function render(look, ps, grid) {
     useGrid(grid);
     try { return render1(look, ps); } finally { useGrid(GRIDS.std); }
@@ -900,35 +1065,85 @@ RB.battlers = (function () {
     accessories(as.K);
     const r = new Raster();
     for (const f of as.calls) f(r);
-    const n = FW * FH, lv = r.lv.slice();
-    // contour: a pixel beside a nearer part of another group is drawn two steps darker
-    for (let y = 0; y < FH; y++) for (let x = 0; x < FW; x++) {
-      const i = y * FW + x;
-      if (r.g[i] < 0 || r.flag[i] & 2) continue;
-      for (const [dx, dy] of NB) {
-        const X = x + dx, Y = y + dy;
-        if (X < 0 || Y < 0 || X >= FW || Y >= FH) continue;
+    const n = FW * FH, lv = r.lv.slice(), mark = new Uint8Array(n); // mark: 1 a form line, 2 the rim
+    const op = (x, y) => x >= 0 && y >= 0 && x < FW && y < FH && r.g[y * FW + x] >= 0;
+    // 1. cast shadows (marched toward the light through the depth buffer)
+    for (let py = 0; py < FH; py++) for (let px = 0; px < FW; px++) {
+      const i = py * FW + px;
+      if (r.g[i] < 0 || r.flag[i] & 8 || DBG.noCast) continue;
+      const P0 = add(rayO(px, py), mul(TOWARD, r.z[i]));
+      for (const s of SHADOW_S) {
+        const pr = proj(add(P0, mul(LIGHT, s)));
+        const X = Math.floor(AX + pr[0]), Y = Math.floor(AY + pr[1]);
+        if (X < 0 || Y < 0 || X >= FW || Y >= FH) break;
         const j = Y * FW + X;
         if (r.g[j] < 0 || r.g[j] === r.g[i]) continue;
-        if (r.z[j] > r.z[i] + 2.4) { lv[i] = Math.max(0, r.lv[i] - 2); break; }
+        const dz = r.z[j] - pr[2];
+        if (dz > 0.5 && dz < 7) { lv[i] = lv[i] >= 3 ? 1 : Math.max(0, lv[i] - 1); break; }
       }
     }
-    // a lone pixel whose four neighbours agree on another step of the same ramp takes that step
+    // 2. edges between forms
+    for (let y = 0; y < FH; y++) for (let x = 0; x < FW; x++) {
+      const i = y * FW + x;
+      if (r.g[i] < 0 || r.flag[i] & 2 || DBG.noEdge) continue;
+      let line = false;
+      for (const [dx, dy] of NB) {
+        if (!op(x + dx, y + dy)) continue;
+        const j = (y + dy) * FW + x + dx;
+        if (r.g[j] !== r.g[i] && r.z[j] > r.z[i] + 2.4) { line = true; break; }
+      }
+      if (line) { mark[i] = 1; continue; }
+      // a seam with the material above or to the left (toward the light)
+      for (const [dx, dy] of [[0, -1], [-1, 0]]) {
+        if (!op(x + dx, y + dy)) continue;
+        const j = (y + dy) * FW + x + dx;
+        if (r.R[j] === r.R[i]) continue; // (only where colours meet: a band on a garment, a cuff, a boot top)
+        const dz = r.z[j] - r.z[i];
+        if (dz > 0.15 && dz <= 2.4) { lv[i] = Math.max(0, lv[i] - 1); break; }
+        if (dz < -0.15 && dz >= -2.4 && lv[i] >= 2 && dy) { lv[i] = Math.min(r.m[i].top || 4, lv[i] + 1); break; }
+      }
+    }
+    // 3. the rim down the right-hand edges
+    for (let y = 0; y < FH; y++) for (let x = 0; x < FW; x++) {
+      const i = y * FW + x;
+      if (r.g[i] < 0 || mark[i] || r.flag[i] & 4 || DBG.noRim) continue;
+      // (the outer silhouette only: not the inside edge of a gap between an arm and the body)
+      if (!op(x + 1, y) && !op(x + 2, y) && !op(x + 3, y) && r.nx[i] > 0.28 && r.nl[i] < 0.42) mark[i] = 2;
+    }
+    // 4. clusters: a lone pixel whose four neighbours agree on another step of the same ramp takes that step
     const lv2 = lv.slice();
     for (let y = 1; y < FH - 1; y++) for (let x = 1; x < FW - 1; x++) {
       const i = y * FW + x;
-      if (r.g[i] < 0 || r.flag[i] & 1) continue;
+      if (r.g[i] < 0 || r.flag[i] & 1 || mark[i] || DBG.noClean) continue;
       let same = true, v = -1;
       for (const [dx, dy] of NB) {
         const j = (y + dy) * FW + x + dx;
-        if (r.g[j] < 0 || r.R[j] !== r.R[i]) { same = false; break; }
+        if (r.g[j] < 0 || r.R[j] !== r.R[i] || mark[j]) { same = false; break; }
         if (v < 0) v = lv[j]; else if (lv[j] !== v) { same = false; break; }
       }
       if (same && v !== lv[i]) lv2[i] = v;
     }
-    const b = new P.Buf(FW, FH);
-    for (let i = 0; i < n; i++) if (r.g[i] >= 0) b.put(i % FW, (i / FW) | 0, P.rgba(r.R[i][lv2[i]]));
-    b.outline(look.outlineCol || '#241c20');
+    // 5. colour, then the coloured selective outline
+    const b = new P.Buf(FW, FH), d = b.d;
+    const put = (i, c) => { const v = P.rgba(c), o = i * 4; d[o] = v[0]; d[o + 1] = v[1]; d[o + 2] = v[2]; d[o + 3] = 255; };
+    for (let i = 0; i < n; i++) {
+      if (r.g[i] < 0) continue;
+      const m = r.m[i], R = m.R;
+      put(i, mark[i] === 1 ? (lv2[i] <= 0 ? P.mix(R[0], m.OL, 0.5) : R[0]) : mark[i] === 2 ? m.RIM : R[lv2[i]]);
+    }
+    for (let y = 0; y < FH; y++) for (let x = 0; x < FW; x++) {
+      if (op(x, y)) continue;
+      // the bordering pixel: below first (the outline under a form carries its colour), then the sides
+      let j = -1, litSide = true;
+      for (const [dx, dy] of [[0, 1], [1, 0], [-1, 0], [0, -1]]) {
+        if (!op(x + dx, y + dy)) continue;
+        if (dx < 0 || dy < 0) litSide = false;
+        if (j < 0) j = (y + dy) * FW + x + dx;
+      }
+      if (j < 0) continue;
+      const m = r.m[j];
+      put(y * FW + x, litSide && lv2[j] >= 3 && !mark[j] ? m.LIT : m.OL);
+    }
     return { b, J: as.J };
   }
 
@@ -1127,7 +1342,7 @@ RB.battlers = (function () {
       // (an outside caller — the fishing stage — gets the plain companion stance unless it names the
       // actor, so its own authored poses are laid over the stance they were written for)
       poseAt: (look, pose, g, k, t, who, reduce, id, ik) => M().poseAt(look, pose, g, k, t, who, reduce, id || (who === 'comp' ? 'comp' : 'pc'), ik), render, frameFor, handModel, cacheSize: () => cache.size, clear: () => cache.clear(), YAW, PITCH,
-      get ZS() { return ZS; }, keys: () => [...cache.keys()], measure, resolve,
+      DBG, get ZS() { return ZS; }, keys: () => [...cache.keys()], measure, resolve,
     },
   };
 })();

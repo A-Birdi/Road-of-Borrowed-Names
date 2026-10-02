@@ -269,6 +269,22 @@ RB.battlerMoves = (function () {
   };
   const SECONDARY = ['hairLag', 'hairSway', 'clothSway'];
   const SETTLE_MS = 120;
+  // The battle-ready pulse (ready only, never calm or reduced motion): while a key is held, the body keeps
+  // a small rhythm — a dip at the knees with the hair settling, back through the key, a breath in with the
+  // chest lifting, back — one drawing per step, so the stance stays alive at about 6–9 pose changes a
+  // second instead of standing still between keys. Each person's own: Nao quick and springy, Mio a composed
+  // breath, Ren grounded and slow, Suzu on her rhythm with a sway of the hip. The keys, their holds and
+  // their transitions are unchanged; the pulse only fills the holds.
+  const PULSE = {
+    pc: { ms: 130, dip: { pelvis: [0, -0.9, 0.1], spinePitch: 1.2, headPitch: 0.8, handR: [0, -0.5, 0], handL: [0, -0.4, 0], hairLag: 0.7, clothSway: 0.2 }, lift: { pelvis: [0, 0.3, 0], spinePitch: -1.6, headPitch: -1, handR: [0, 0.3, 0], hairLag: -0.4 } },
+    nao: { ms: 112, dip: { pelvis: [0.2, -1.1, 0.2], spinePitch: 1.6, headPitch: 1, handR: [0, -0.6, 0.2], hairLag: 0.8 }, lift: { pelvis: [0, 0.3, 0], spinePitch: -1.4, headPitch: -1.2, hairLag: -0.5 } },
+    mio: { ms: 150, dip: { pelvis: [0, -0.7, 0], spinePitch: 0.8, headPitch: 1, handR: [0, -0.4, 0], handL: [0, -0.4, 0], hairLag: 0.5 }, lift: { pelvis: [0, 0.3, 0], spinePitch: -1.6, headPitch: -1.2, headRoll: 1.2, hairLag: -0.4 } },
+    ren: { ms: 160, dip: { pelvis: [0, -0.8, 0], spinePitch: 0.8, headPitch: 0.6, handR: [0, -0.4, 0], hairLag: 0.5 }, lift: { pelvis: [0, 0.2, 0], spinePitch: -1.5, headPitch: -0.8, handR: [0, 0.4, 0], hairLag: -0.3 } },
+    suzu: { ms: 124, dip: { pelvis: [-0.5, -0.9, 0], pelvisRoll: 1.2, spineRoll: -1, headRoll: 1, hairSway: 0.6, hairLag: 0.6, clothSway: 0.5 }, lift: { pelvis: [0.4, 0.3, 0], pelvisRoll: -0.6, spinePitch: -1.4, headRoll: -0.6, hairSway: -0.4, hairLag: -0.4, clothSway: -0.3 } },
+    comp: { ms: 140, dip: { pelvis: [0, -0.8, 0], spinePitch: 1, headPitch: 0.6, hairLag: 0.5 }, lift: { pelvis: [0, 0.3, 0], spinePitch: -1.4, headPitch: -0.8, hairLag: -0.3 } },
+  };
+  const PULSE_SEQ = [4, 0, 5, 0]; // dip, the key, the breath in, the key
+  const pulseOf = (id) => PULSE[id] || PULSE.comp;
   function loopOf(id, pose) { const seq = (IDLE[id] || IDLE.comp)[pose === 'calm' ? 'calm' : 'ready']; return seq.reduce((m, k) => m + k.hold + k.tr, 0); }
   const LOOP = {};
   for (const id of ACTORS) LOOP[id] = loopOf(id, 'ready');
@@ -283,7 +299,15 @@ RB.battlerMoves = (function () {
       const k = seq[i];
       if (u < k.tr) return i + '.' + (u < k.tr / 2 ? 1 : 2);
       u -= k.tr;
-      if (u < k.hold) return i + '.' + (u < SETTLE_MS && k.hold > SETTLE_MS * 2 ? 3 : 0);
+      if (u < k.hold) {
+        if (u < SETTLE_MS && k.hold > SETTLE_MS * 2) return i + '.3';
+        // the pulse fills the rest of a ready hold that has room for it
+        if (pose !== 'calm') {
+          const Pu = pulseOf(id), u0 = k.hold > SETTLE_MS * 2 ? SETTLE_MS : 0;
+          if (k.hold - u0 >= Pu.ms * 2) return i + '.' + PULSE_SEQ[Math.floor((u - u0) / Pu.ms) % PULSE_SEQ.length];
+        }
+        return i + '.0';
+      }
       u -= k.hold;
     }
     return '0.0';
@@ -293,7 +317,14 @@ RB.battlerMoves = (function () {
     const I = IDLE[id] || IDLE.comp, seq = pose === 'calm' ? I.calm : I.ready, L = loopOf(id, pose);
     const out = [];
     let t = 0;
-    for (const k of seq) { out.push(t + k.tr * 0.25, t + k.tr * 0.75, t + k.tr + 40, t + k.tr + Math.min(k.hold - 1, SETTLE_MS + 40)); t += k.tr + k.hold; }
+    const Pu = pulseOf(id);
+    for (const k of seq) {
+      out.push(t + k.tr * 0.25, t + k.tr * 0.75, t + k.tr + 40, t + k.tr + Math.min(k.hold - 1, SETTLE_MS + 40));
+      // (the pulse's dip and breath, where the hold has them)
+      const u0 = k.hold > SETTLE_MS * 2 ? SETTLE_MS : 0;
+      if (pose !== 'calm' && k.hold - u0 >= Pu.ms * 2) out.push(t + k.tr + u0 + Pu.ms * 0.5, t + k.tr + u0 + Pu.ms * 2.5);
+      t += k.tr + k.hold;
+    }
     return out.map((x) => (((x - I.off) % L) + L) % L);
   }
   function idlePose(look, id, pose, ik, reduce) {
@@ -304,6 +335,7 @@ RB.battlerMoves = (function () {
     const at = (j) => plus(R, seq[((j % seq.length) + seq.length) % seq.length].d, amp);
     const B = at(i);
     if (!s) return B;
+    if (s === 4 || s === 5) return plus(B, pulseOf(id)[s === 4 ? 'dip' : 'lift'], amp);
     const A = at(i - 1);
     if (s === 1 || s === 2) {
       const w = s === 1 ? 0.3 : 0.72;
@@ -722,6 +754,6 @@ RB.battlerMoves = (function () {
     poseAt, idleKey, idleTimes, hasGesture, hasVariant, gestureOf, coverage, readyOf,
     release: (id, g) => { const G = gestureOf(id, g); return G ? G.release : 0.3; },
     actHand: (id, g) => { const G = gestureOf(id, g); return G && G.a && G.a.act === 'L' ? 'L' : 'R'; },
-    _: { over, plus, blend, restPose, idlePose, loopOf },
+    PULSE, _: { over, plus, blend, restPose, idlePose, loopOf },
   };
 })();
