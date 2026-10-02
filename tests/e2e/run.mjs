@@ -30,6 +30,8 @@ const suites = [
   full ? ['long_quests.mjs', '--all-companions'] : ['long_quests.mjs', '--fixtures-only'],
   // the two deduction cases, the refined sequences and their keepsakes, Known Details (addendum §14.8–§18)
   ['cases.mjs'], ['cases_shots.mjs'], ['known.mjs'],
+  ['wordplay.mjs'], // companion shiritori: the table, records, bond and talk priority (docs/practice/wordplay.md)
+  ['wordplay_layout.mjs'], // companion shiritori: layouts, four companions at the table, Japanese labels
   full ? ['matrix.mjs'] : ['pursue.mjs', 'E', 'mio'],
 ];
 const results = [];

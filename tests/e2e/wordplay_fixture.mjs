@@ -59,6 +59,23 @@ export const FIXTURE_ENTRIES = [
   E('kimono', 'きもの', ['着物', 'きもの'], '{着物|きもの}', 'kimono'),
   E('monosashi', 'ものさし', ['物差し', 'ものさし'], '{物差|ものさ}し', 'ruler'),
   E('kaki', 'かき', ['柿', 'かき'], '{柿|かき}', 'persimmon'),
+  // a little more room around み, ず, し, う so test games stay open
+  E('michi', 'みち', ['道', 'みち'], '{道|みち}', 'road'),
+  E('mise', 'みせ', ['店', 'みせ'], '{店|みせ}', 'shop'),
+  E('chizu', 'ちず', ['地図', 'ちず'], '{地図|ちず}', 'map'),
+  E('zutsuu', 'ずつう', ['頭痛', 'ずつう'], '{頭痛|ずつう}', 'headache'),
+  E('zukei', 'ずけい', ['図形', 'ずけい'], '{図形|ずけい}', 'figure, shape'),
+  E('suzume', 'すずめ', ['すずめ'], 'すずめ', 'sparrow'),
+  E('medaka', 'めだか', ['めだか'], 'めだか', 'killifish'),
+  E('shio', 'しお', ['塩', 'しお'], '{塩|しお}', 'salt'),
+  E('shima', 'しま', ['島', 'しま'], '{島|しま}', 'island'),
+  E('oni', 'おに', ['鬼', 'おに'], '{鬼|おに}', 'ogre'),
+  E('niwa', 'にわ', ['庭', 'にわ'], '{庭|にわ}', 'garden'),
+  E('wani', 'わに', ['わに'], 'わに', 'crocodile'),
+  E('senaka', 'せなか', ['背中', 'せなか'], '{背中|せなか}', 'back (of the body)'),
+  E('usagi', 'うさぎ', ['うさぎ'], 'うさぎ', 'rabbit'),
+  E('ginkou', 'ぎんこう', ['銀行', 'ぎんこう'], '{銀行|ぎんこう}', 'bank'),
+  E('okashi', 'おかし', ['お菓子', 'おかし'], 'おかし', 'sweets'),
 ];
 // openings with at least four safe replies in this fixture: ねこ (こ: こま, こども, 工場, コーヒー)
 // and しか / すいか (か: かさ, かがみ, かめ, かき)

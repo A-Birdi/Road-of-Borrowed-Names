@@ -179,6 +179,33 @@ RB.ui.wordplay = RB.ui.wordplay || {};
     if (!notes.length) { box.textContent = r && r.provisional ? 'No further analysis is available in this build (the analysis is provisional).' : 'No further notes for this chain.'; return; }
     box.innerHTML = '<ul>' + notes.map((n) => '<li>' + esc(n.en || n.text || '') + ' <i>' + esc(n.exact ? '(proven by an exhaustive search of that position)' : '(looked stronger within the checked moves)') + '</i></li>').join('') + '</ul>';
   }
+  // Optional ordinary practice from the look back (§4.3): words of this chain that have a word
+  // card, asked through the shared challenge runner and the practice adapter, so each gives at
+  // most one ordinary assessment event of its own. Playing them in the game never did.
+  function practiseKeys(t) {
+    const out = [];
+    for (const m of t.moves.slice(1)) {
+      if (!m.j || out.length >= 3 || m.t === 'ん') continue;
+      const w = RB.jp && RB.jp.plain ? RB.jp.plain(m.j).replace(/\s/g, '') : m.r;
+      const key = w + '|' + m.r;
+      if (RB.tasks && RB.tasks.findWord && RB.tasks.findWord(key) && !out.includes(key)) out.push(key);
+    }
+    return out;
+  }
+  async function practise(t) {
+    const keys = practiseKeys(t);
+    const ob = RB.practice.objectives({ kind: 'wordplay-review' });
+    for (const key of keys) {
+      const step = RB.tasks.vocabStep(key);
+      if (!step) continue;
+      RB.game.pushMode('challenge');
+      let res = null;
+      try { res = await RB.challenge.runStep(RB.tasks.prepare ? RB.tasks.prepare(step) : step, { noRecord: true, cancelLabel: 'Stop practising' }); } finally { RB.game.popMode('challenge'); }
+      if (!res || res.cancelled) break;
+      ob.assess('wordplay:' + t.id + ':' + key, step.item, res, { kind: 'wordplay-review' });
+    }
+  }
+  U.practiseKeys = practiseKeys;
   U.reviewView = async function (V, t, o) {
     o = o || {};
     const s = V.s;
@@ -186,8 +213,10 @@ RB.ui.wordplay = RB.ui.wordplay || {};
     for (;;) {
       const r0 = WP().peek(s, t.comp) || { pinned: [] };
       const pinned = r0.pinned.some((x) => x.id === t.id);
+      const canPractise = practiseKeys(t).length > 0;
       const h = U.reviewHtml(s, t, sel) + '<div class="row-acts">' +
         '<button class="pbtn" data-wp="analyse">' + I('lens') + 'More analysis</button>' +
+        (canPractise ? '<button class="pbtn" data-wp="practise">' + I('practice') + 'Practise words from this chain</button>' : '') +
         (t.comp === s.comp ? '<button class="pbtn quiet" data-wp="' + (pinned ? 'unpin' : 'pin') + '">' + I('keepsake') + lab(pinned ? 'unpin' : 'pin', pinned ? 'Unpin this chain' : 'Pin this chain') + '</button>' : '') +
         '<button class="pbtn primary" data-wp="back" data-autofocus>' + I('back') + esc(o.back || 'Back') + '</button></div>';
       const r = await U.show(V, h, (el, done) => {
@@ -201,6 +230,7 @@ RB.ui.wordplay = RB.ui.wordplay || {};
         });
       }, { closeAct: 'back' });
       if (r.act === 'turn') { sel = r.k; continue; }
+      if (r.act === 'practise') { await practise(t); continue; }
       if (r.act === 'unpin') { WP().unpin(s, t.id); continue; }
       if (r.act === 'pin') { await pinFlow(s, t); continue; }
       return;

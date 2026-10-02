@@ -498,7 +498,8 @@ RB.ui.wordplay = RB.ui.wordplay || {};
         syncPlay();
       }
       function syncPlay() {
-        const ok = !T.busy && a.st.next === 'pc' && !a.st.over && !!T.dtext;
+        // Play word stays pressable on your turn: with nothing confirmed it explains instead of moving
+        const ok = !T.busy && a.st.next === 'pc' && !a.st.over;
         $('[data-wp=play]').disabled = !ok;
         $('[data-wp=clear]').disabled = !T.dtext && !(pad && pad.hasPending());
         $('[data-wp=stuck]').disabled = T.busy;
@@ -512,7 +513,8 @@ RB.ui.wordplay = RB.ui.wordplay || {};
       // ---- moves
       async function onPlay() {
         if (T.busy || finished || a.st.next !== 'pc' || a.st.over) return;
-        if (T.tab === 'hand' && pad && pad.hasPending()) { $('.wp-dmsg').textContent = 'Confirm or clear the character you are writing first: a recognised character is not yet part of your word.'; return; }
+        if (T.tab === 'hand' && pad && pad.hasPending()) { $('.wp-dmsg').textContent = 'Confirm or clear the character you are writing first: a recognised character is not yet part of your word.'; flash($('.wp-dmsg')); return; }
+        if (!T.dtext) { $('.wp-dmsg').textContent = 'Write, type or choose a word beginning with ' + a.st.required + ' first.'; flash($('.wp-dmsg')); return; }
         const d = T.analysis || WP().draft(s, T.dtext, T.pick);
         if (d.status !== 'ok') { renderDraft(); flash($('.wp-dmsg')); return; } // an invalid draft is explained; the turn is kept
         if (d.terminal && !T.warn) { openWarn(d); return; }
@@ -529,7 +531,7 @@ RB.ui.wordplay = RB.ui.wordplay || {};
       }
       function commitPlayer(d) {
         $('.wp-warn').hidden = true;
-        const r = WP().playWord(s, d.edge, { mode: T.dmode || 'ime', repaired: T.repaired, sense: d.sense });
+        const r = WP().playWord(s, d.edge, { mode: T.dmode || 'ime', repaired: T.repaired, sense: d.sense, form: T.dtext });
         if (!r.ok) { renderDraft(); return; }
         const h = a.st.history[a.st.history.length - 1];
         clearDraft();

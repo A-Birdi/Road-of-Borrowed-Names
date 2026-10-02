@@ -349,9 +349,13 @@ RB.wordplay = (function () {
     const sr = SH().safeGroups(a.st, bank).length;
     a.flags.inputs[mode] = (a.flags.inputs[mode] || 0) + 1;
     if (meta.repaired) a.flags.inputAssist = true;
-    const extra = { m: mode, sr, rep: meta.repaired ? 1 : 0, sense: meta.sense || null, sug: a.flags.suggested ? 1 : 0, t: now() };
+    // the move as it was actually submitted (form as typed, written or chosen; bounded)
+    const form = meta.form ? String(meta.form).slice(0, 24) : null;
+    const extra = { m: mode, sr, rep: meta.repaired ? 1 : 0, sense: meta.sense || null, sug: a.flags.suggested ? 1 : 0, f: form, t: now() };
     const r = SH().play(a.st, bank, e, 'pc', extra);
     afterMove(s, a, bank);
+    // wordplay use is its own tally (§4.3): never a mastery event
+    RB.practice.tally(s, 'shiritori', Object.assign({ moves: 1, repaired: meta.repaired ? 1 : 0 }, { [mode]: 1 }));
     return Object.assign({ ok: true }, endIfOver(s, a, bank));
   }
   function afterMove(s, a, bank) {
@@ -499,6 +503,7 @@ RB.wordplay = (function () {
         const w = words(h.entry);
         const m = { a: h.actor, e: h.entry, r: h.reading, t: h.tail, j: w[0], en: w[1] };
         if (h.m) m.m = h.m;
+        if (h.f && h.f !== h.reading) m.f = h.f;
         if (h.sr != null) m.sr = h.sr;
         if (h.left != null) m.left = h.left;
         if (h.rep) m.rep = 1;
@@ -597,6 +602,7 @@ RB.wordplay = (function () {
       c.best = Math.max(c.best, cmoves);
       c.last = { t: result.t, format: a.format, level: a.level, winner, reason, size: a.bank.size, session: a.session };
     }
+    if (ok) RB.practice.tally(s, 'shiritori', { games: 1 });
     // ---- the transcript (rolling 20; first clears kept apart)
     const tr = transcriptOf(s, a, result);
     r.recent.push(tr);
@@ -625,8 +631,8 @@ RB.wordplay = (function () {
     const before = RB.company.score(s);
     const got = RB.company.award(s, EV_TOGETHER, 1);
     const after = RB.company.score(s);
-    r.together = { session: a.session, t: result.t, event: EV_TOGETHER, committed: got || !!(s.company && s.company.bond && s.company.bond[EV_TOGETHER] != null), raised: after > before, format: a.format, winner: result.winner, reason: result.reason, band: a.band, level: a.level };
-    if (!r.reflection) r.reflection = { st: 'available', source: a.session, format: a.format, winner: result.winner, reason: result.reason, band: a.band, level: a.level, t: result.t };
+    r.together = { session: a.session, t: result.t, event: EV_TOGETHER, memory: 'wordplay:together', committed: got || !!(s.company && s.company.bond && s.company.bond[EV_TOGETHER] != null), raised: after > before, format: a.format, winner: result.winner, reason: result.reason, band: a.band, level: a.level };
+    if (!r.reflection) r.reflection = { st: 'available', source: a.session, event: EV_REFLECT, memory: 'wordplay:reflection', format: a.format, winner: result.winner, reason: result.reason, band: a.band, level: a.level, t: result.t };
     out.together = r.together.raised ? 'raised' : 'recorded';
     out.reflection = true;
     return out;
