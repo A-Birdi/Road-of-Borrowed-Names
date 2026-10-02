@@ -260,7 +260,8 @@ These were run in this worktree. The machine was shared with other workers.
 - `node tools/kanjiread.mjs --check`: `src/lang/75_kanjiread.js is up to date`.
 
 The browser tests write captures to `tests/e2e/out/practice_b/`. `--docs` copies a selection
-to `docs/screenshots/practice_b/`, and those were looked at.
+to `docs/screenshots/practice_b/`, and those were looked at. At merge the committed copies
+were converted to WebP (quality 0.9, same size; 6.8 MB of PNG became 3.8 MB).
 
 ## Limitations and findings
 
