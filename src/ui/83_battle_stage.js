@@ -367,6 +367,7 @@ RB.battleStage = (function () {
     dropStrip();
     const el = document.createElement('div');
     el.className = 'cb-strip';
+    if (tm && tm.motif) { el.setAttribute('data-motif', tm.motif); if (tm.family) el.setAttribute('data-family', tm.family); }
     el.innerHTML = '<span class="cs-w">' + word.html + '</span>' + (word.en ? '<span class="cs-en">' + RB.util.esc(word.en) + '</span>' : '');
     S.fxLayer.appendChild(el);
     S.strip = { el, from, to, t0: now, tm, w: el.offsetWidth, h: el.offsetHeight };
@@ -458,10 +459,18 @@ RB.battleStage = (function () {
         if (k >= 1 && !a.hold) S.actors[who] = null; else { p = a.pose; g = a.gesture; }
       }
       const down = (who === 'pc' ? v.pc : v.comp) <= 0;
+      // party art (battle addendum §7.3): an adventurer a creature is winding up at braces a little
+      // (presentation only: it follows the creature's own preparation cue, never a rule)
+      if (!p && !down && !fr.calm && waryOf(who, fr.pt)) { p = 'guard'; g = 'wary'; k = 0.5; }
       if (!p) p = down ? 'down' : fr.calm ? 'calm' : 'ready';
-      const anc = B.draw(c, look, { x: f.x, y: f.y, scale: L.ps, t: fr.t, who, pose: p, gesture: g, k, reduce, facing: 'upright' });
+      // the actor's id chooses their stance and movement language (src/engine/34m_battler_moves.js)
+      const id = who === 'comp' ? v.compId || undefined : 'pc';
+      const anc = B.draw(c, look, { x: f.x, y: f.y, scale: L.ps, t: fr.t, who, id, pose: p, gesture: g, k, reduce, facing: 'upright' });
       S.anchors[who] = anc || null;
-      info.poses[who] = p + (g ? ':' + g : '');
+      // (a gesture names itself after its pose — act:flow; a reaction's variant — hit soft — is kept apart)
+      const gp = p === 'anticipate' || p === 'act' || p === 'recover';
+      info.poses[who] = p + (g && gp ? ':' + g : '');
+      if (g && !gp) (info.variants = info.variants || {})[who] = g;
       const wn = ((v.ward && v.ward[who]) || 0) + (fr.sealHeld === who ? 1 : 0);
       if (wn) info.marks.push('ward:' + who + ':' + wn);
       // its ward points as seal tags (a seal raised to block the telegraphed blow shows as one until it lands)
@@ -505,6 +514,15 @@ RB.battleStage = (function () {
     });
     S.drawn++;
     S.frame = info;
+  }
+  // Is a creature preparing a move aimed at this adventurer right now (its 'prep' act, aimed at them or
+  // at the whole party)? Party presentation only.
+  function waryOf(who, pt) {
+    for (const a of S.foes) {
+      if (!a || a.act !== 'prep' || pt - a.t0 >= a.d) continue;
+      if (a.dir === who || a.dir === 'party') return true;
+    }
+    return false;
   }
   // A creature's bodily travel during an action (battle addendum §9, §18.2): a foe cue may carry
   //   travel: { to: 'pc'|'comp'|'party', peak: 0..1 (share of the way to the target's chest),
@@ -555,7 +573,10 @@ RB.battleStage = (function () {
     } else if (sp.to === 'foes') { const q = anchor('foes', 'top'); b = { x: q.x, y: q.y + 6 * S.lay.u }; }
     else b = anchor(sp.to, 'head');
     const lift = onFoe || sp.to === 'foes' ? 0 : 14;
-    const x = (a.x + (b.x - a.x) * tr) * cp, y = (a.y + (b.y - a.y) * tr - lift * S.lay.u) * cp - (reduce ? 0 : fade * 10);
+    let x = (a.x + (b.x - a.x) * tr) * cp, y = (a.y + (b.y - a.y) * tr - lift * S.lay.u) * cp - (reduce ? 0 : fade * 10);
+    // the response's own motion of its word (a seal closing, a thread drawn out, radiance rising …)
+    const mo = tm.motif && RB.partyWord ? RB.partyWord.place({ k, tm, a, b: { x: b.x, y: b.y - lift * S.lay.u }, tr, unf, ink, fade, reduce, u: S.lay.u, to: sp.to, from: sp.from, onFoe, anchor, el: sp.el }) : null;
+    if (mo) { x = mo.x * cp; y = mo.y * cp; }
     const r = fr.stageCss;
     let left = x - sp.w / 2, top = y - sp.h;
     if (r) {
@@ -563,10 +584,11 @@ RB.battleStage = (function () {
       top = clamp(top, r.y + 2, Math.max(r.y + 2, r.y + r.h - sp.h - 2));
     }
     const el = sp.el;
-    el.style.transform = 'translate(' + Math.round(left) + 'px,' + Math.round(top) + 'px)';
+    el.style.transform = 'translate(' + Math.round(left) + 'px,' + Math.round(top) + 'px)' + (mo && mo.xf ? ' ' + mo.xf : '');
+    if (mo && mo.vars) for (const v in mo.vars) el.style.setProperty(v, mo.vars[v]);
     el.style.setProperty('--u', unf.toFixed(3));
     el.style.setProperty('--w', ink.toFixed(3));
-    el.style.opacity = (reduce ? (k < tm.fadeAt ? 1 : 1 - fade) : Math.min(1, unf * 3) * (1 - fade)).toFixed(3);
+    el.style.opacity = (mo && mo.op != null ? mo.op : reduce ? (k < tm.fadeAt ? 1 : 1 - fade) : Math.min(1, unf * 3) * (1 - fade)).toFixed(3);
   }
   // which creature is under a page point (the front row wins where they overlap); -1 for none
   function foeAt(x, y) {

@@ -14,19 +14,41 @@
  * selective outline goes round the figure. Nothing is smoothed: every edge is
  * a hard pixel edge on the same grid as the world.
  *
+ * Hands are articulated (palm, the fingers as one or more pieces and a thumb, by shape: fist, relaxed,
+ * open, flat, point, pinch, cup, spread), and what a hand holds is drawn by it: the folio, a paper
+ * strip, a brush, Mio's vial (from the bottles at her hip), Ren's lamp (raised when a gesture frees his
+ * left hand). The pose library — every actor's stance, idle key poses, gestures and reactions — is
+ * src/engine/34m_battler_moves.js (RB.battlerMoves); this file draws whatever pose it is given.
+ *
+ * Battle addendum §6.2 (native frame standard): the frame stays 80×104 art px, anchor (36, 100),
+ * 1.14 art px per body unit. The 96×128 working frame was rendered from the same rig for comparison
+ * (grid 'w96', previews only); docs/battle/party.md records the measurements and why 80×104 ships.
+ *
  * API (the contract with the battle presentation):
- *   RB.battlers.FRAME, ANCHOR, POSES, GESTURES
- *   RB.battlers.draw(ctx, look, o) -> { hand, head, chest, feet } (canvas px)
- *   RB.battlers.preview(look, pose, gesture, k) -> canvas (one frame, scale 1)
- * Frames are cached per look, pose, gesture and quantized progress/idle phase. */
+ *   RB.battlers.FRAME, ANCHOR, POSES, GESTURES, VARIANTS
+ *   RB.battlers.draw(ctx, look, o) -> anchors in canvas px:
+ *     { hand (the acting release point, as before), head, chest, feet,
+ *       torso, handR, handL, held (what the acting hand holds), release (where an effect leaves) }
+ *     o: { x, y, scale, t, who: 'pc'|'comp', id: 'pc'|'nao'|'mio'|'ren'|'suzu', pose, gesture
+ *          (a gesture for anticipate/act/recover; a variant for a reaction pose), k, reduce, facing }
+ *   RB.battlers.preview(look, pose, gesture, k[, o]) -> canvas (one frame, scale 1)
+ *   RB.battlers.prewarm(look, who[, id]); retain(list of looks); budget() -> resident pixel estimate
+ * Frames are cached per look, actor, pose, gesture/variant and quantized progress or idle key: a
+ * bounded set (least-recently-used, CAP frames). */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.battlers = (function () {
   'use strict';
   const P = RB.pix, SP = RB.sprites;
-  const FW = 80, FH = 104, AX = 36, AY = 100;
-  const POSES = ['ready', 'calm', 'anticipate', 'act', 'recover', 'hit', 'brace', 'down', 'cheer'];
-  const GESTURES = ['direct', 'trace', 'book', 'ward', 'restore', 'flow', 'raise'];
+  // The native grid: frame, foot anchor and art px per body unit. GRIDS.w96 is the §6.2 comparison.
+  const GRIDS = {
+    std: { id: 'std', FW: 80, FH: 104, AX: 36, AY: 100, ZS: 1.14 },
+    w96: { id: 'w96', FW: 96, FH: 128, AX: 43, AY: 123, ZS: 1.368 },
+  };
+  let FW = 80, FH = 104, AX = 36, AY = 100, ZS = 1.14;
+  function useGrid(g) { g = g || GRIDS.std; FW = g.FW; FH = g.FH; AX = g.AX; AY = g.AY; ZS = g.ZS; return g; }
+  const M = () => RB.battlerMoves;
+  const POSES = ['ready', 'calm', 'anticipate', 'act', 'recover', 'hit', 'brace', 'down', 'cheer', 'guard', 'soothed', 'afflict'];
   const shade = P.shade, mix = P.mix;
   const DEG = Math.PI / 180;
 
@@ -63,8 +85,7 @@ RB.battlers = (function () {
   const LIGHT = norm([-0.72, 0.64, 0.36]);      // toward the light: upper left, a little in front
   // body local -> world: right -> (cos, 0, sin) (right and toward the viewer), forward -> (sin, 0, -cos)
   const BODY = [[Math.cos(YAW), 0, Math.sin(YAW)], [0, 1, 0], [Math.sin(YAW), 0, -Math.cos(YAW)]];
-  // ZS art px per body unit: the figure is authored in body units and drawn a little larger.
-  const ZS = 1.14;
+  // ZS (above, per grid): art px per body unit: the figure is authored in body units and drawn a little larger.
   // world point -> [screen x from the anchor, screen y from the anchor (down +), depth toward viewer]
   const proj = (w) => [w[0] * ZS, -(w[1] * cp - w[2] * spn) * ZS, w[1] * spn + w[2] * cp];
 
@@ -309,6 +330,10 @@ RB.battlers = (function () {
       paper: { R: PAPER5, min: 1 },
       ink: { R: [INK, INK, '#3a2e36', '#4a3e46', '#5a4e56'], max: 2 },
       glow: { R: ['#c87830', '#e8a040', '#ffd27a', '#fff0b8', '#fffae0'], min: 2 },
+      // the lamp flared: the glass runs lighter, its darkest step the old mid
+      glowHi: { R: ['#e8a040', '#ffd27a', '#fff0b8', '#fffae0', '#ffffff'], min: 2 },
+      // Mio's vial: green glass (as the bottles at her hip), a lighter draught inside the shoulder
+      glass: { R: ['#2e6a60', '#4a8c80', '#6ab0a0', '#9ad0c0', '#d8f4ec'], th: [0.55, 0.15, -0.2, -0.6], min: 1 },
       iron: { R: ['#1e1a22', '#2a2630', '#3a3440', '#5a5460', '#7a7480'], max: 3 },
       wood: { R: ['#3e2a18', '#5a3e22', '#7a5530', '#9a7040', '#b88c58'] },
     };
@@ -408,16 +433,21 @@ RB.battlers = (function () {
     // the skirt of the garment (tunic, coat, robe, dress, apron), hanging from the waist
     garment(K, look, B, p, Mt, pel, waist, Mp, Ms);
     // arms: a round shoulder, sleeve, cuff and hand
-    const arm = (sh, elb, wr, hand, grp) => {
+    const arm = (sh, elb, wr, side, grp) => {
       S(sh, 3.4 * g, Mt.cloth, grp);
       C(sh, elb, 3.2 * g, 2.8 * g, Mt.cloth, grp);
       C(elb, wr, 2.8 * g, 2.4 * g, Mt.cloth, grp);
       if (look.shape === 'robe') C(lerp(elb, wr, 0.45), wr, 3.1, 3.6, Mt.cloth, grp);
+      // the cuff: a band turned back at the wrist, a lighter edge on its lip
       S(lerp(wr, elb, 0.12), 2.5 * g, Mt.cuff, grp);
-      S(hand, 2.7, Mt.hand, GRP.hand);
+      C(lerp(wr, elb, 0.2), lerp(wr, elb, 0.05), 2.65 * g, 2.55 * g, Mt.cuff, grp);
+      // (a palm opened against what comes: the old prop.palm is the 'flat' shape)
+      const shape = (side > 0 ? ps.handShapeR : ps.handShapeL) || (side > 0 && ps.prop && ps.prop.palm > 0.5 ? 'flat' : 'fist');
+      const pn = (side > 0 ? ps.palmR : ps.palmL) || [-side, -0.2, 0.15];
+      handModel(K, wr, elb, shape, pn, side, GRP.hand);
     };
-    arm(shL, elbL, wrL, handL, GRP.armL);
-    arm(shR, elbR, wrR, handR, GRP.armR);
+    arm(shL, elbL, wrL, -1, GRP.armL);
+    arm(shR, elbR, wrR, 1, GRP.armR);
     // collar, neck and head: skin, the ears, the tip of the nose in profile
     Lf(add(neckB, mv(Ms, [0, -1.2, -0.2])), add(neckB, mv(Ms, [0, 1.3, 0.1])), Ms, [[0, 5.2 * g, 4.4 * g], [1, 3.9 * g, 3.4 * g]], look.shape === 'coat' ? Mt.cloth : Mt.collar, GRP.body);
     C(neckB, neckT, 2.7 * g, 2.5 * g, Mt.skin, GRP.head);
@@ -432,6 +462,66 @@ RB.battlers = (function () {
     E(add(headC, mv(Mh, [hr[0] * 0.72, -hr[1] * 0.3, hr[2] * 0.62])), Mh, [1.4, 0.8, 1.2], Mt.blush, GRP.head, (l) => true);
     hair(K);
     return { calls, J, K };
+  }
+
+  // ---- hands ----------------------------------------------------------------------------------------------
+  // A hand at the wrist wr, the forearm coming from elb: a palm, the fingers (one mass, or separate where
+  // they read: a pointing index, spread fingers) and a thumb. pn: which way the palm faces (body-local);
+  // side +1 right, -1 left (the thumb is on the side it belongs). Units: a palm about 3.8 wide, the
+  // fingers reaching 4–5.6 past the wrist — at 1.14 px/unit a hand of 5–7 px, enough for a fist, an
+  // open palm, a pointing finger or a pinch to read apart.
+  const HAND = 1.38;
+  function handModel(K, wr, elb, shape, pn, side, grp) {
+    const { Mt } = K;
+    const d = norm(sub(wr, elb));
+    let z = sub(pn, mul(d, dot(pn, d)));
+    z = len(z) < 1e-3 ? norm(cross(d, [0, 1, 0])) : norm(z);
+    const x = mul(cross(z, d), side); // toward the thumb
+    const Mh = [x, d, cross(x, d)];
+    // u: toward the thumb, v: along the fingers, w: out of the palm. Hands are drawn a little larger
+    // than life (HAND), as the head is: at this size a gesture is read from the hand's shape.
+    const at = (u, v, w) => add(wr, add(add(mul(x, u * HAND), mul(d, v * HAND)), mul(z, w * HAND)));
+    const hm = Mt.hand;
+    const E = (c, M0, r, m, g) => K.E(c, M0, r.map((q) => q * HAND), m, g);
+    const C = (a, b, ra, rb, m, g) => K.C(a, b, ra * HAND, rb * HAND, m, g);
+    switch (shape) {
+      case 'open': case 'flat':
+        E(at(0, 1.6, 0), Mh, [1.85, 1.7, 1.05], hm, grp);
+        E(at(-0.2, 3.7, 0.1), Mh, [1.7, 1.55, 0.72], hm, grp);
+        C(at(1.2, 1.0, 0.3), at(2.5, 2.6, 0.6), 0.75, 0.6, hm, grp);
+        break;
+      case 'spread':
+        E(at(0, 1.6, 0), Mh, [1.85, 1.7, 1.05], hm, grp);
+        for (const [u, a] of [[-1.3, -0.4], [-0.4, -0.12], [0.5, 0.16]]) C(at(u, 2.8, 0), at(u + Math.sin(a) * 2.7, 2.8 + Math.cos(a) * 2.7, 0.15), 0.64, 0.56, hm, grp);
+        C(at(1.3, 1.0, 0.3), at(2.9, 2.2, 0.6), 0.7, 0.6, hm, grp);
+        break;
+      case 'point':
+        E(at(0, 1.5, -0.1), Mh, [1.85, 1.8, 1.3], hm, grp);
+        E(at(-0.4, 2.6, 0.5), Mh, [1.5, 0.95, 1.0], hm, grp);
+        C(at(0.8, 2.6, 0.1), at(0.9, 5.8, 0.15), 0.68, 0.56, hm, grp);
+        C(at(1.4, 1.3, 0.4), at(1.5, 2.7, 0.9), 0.66, 0.6, hm, grp);
+        break;
+      case 'pinch':
+        E(at(0, 1.5, -0.1), Mh, [1.85, 1.8, 1.35], hm, grp);
+        C(at(0.7, 2.4, 0.2), at(0.6, 3.7, 0.9), 0.64, 0.55, hm, grp);
+        C(at(1.4, 1.4, 0.6), at(0.8, 3.4, 1.1), 0.64, 0.55, hm, grp);
+        break;
+      case 'cup':
+        E(at(0, 1.5, 0), Mh, [1.9, 1.8, 1.3], hm, grp);
+        C(at(-0.6, 2.8, 0.2), at(-0.2, 3.4, 1.6), 0.95, 0.75, hm, grp);
+        C(at(1.4, 1.3, 0.5), at(1.3, 2.6, 1.4), 0.66, 0.6, hm, grp);
+        break;
+      case 'relaxed':
+        E(at(0, 1.5, 0), Mh, [1.85, 1.75, 1.2], hm, grp);
+        C(at(-0.2, 2.6, 0), at(-0.1, 3.9, 0.9), 1.15, 0.8, hm, grp);
+        C(at(1.3, 1.2, 0.4), at(1.6, 2.5, 0.9), 0.66, 0.56, hm, grp);
+        break;
+      default: // a fist
+        E(at(0, 1.5, 0), Mh, [1.95, 1.9, 1.5], hm, grp);
+        E(at(-0.2, 2.5, 0.5), Mh, [1.7, 0.95, 1.1], hm, grp);
+        C(at(1.5, 1.3, 0.6), at(0.5, 2.4, 1.3), 0.66, 0.6, hm, grp);
+    }
+    return { at, x, d, z };
   }
 
   // ---- garments -------------------------------------------------------------------------------------------
@@ -588,10 +678,19 @@ RB.battlers = (function () {
       K.C(add(J.handR, mul(d, 1)), add(J.handR, mul(d, Ls)), 1.2, 1.2, Mt.paper, GRP.prop);
       K.S(add(J.handR, mul(d, Ls * 0.6)), 0.8, Mt.ink, GRP.prop);
     }
-    if (pr.palm > 0.5) {
-      // the hand opened flat against what comes: a palm facing along the forearm, fingers up
-      const z = norm(sub(J.handR, J.elbR)), x = norm(cross([0, 1, 0], z)), y = cross(z, x);
-      K.E(add(J.handR, mul(z, 0.6)), [x, y, z], [2.3, 3.4, 1.1], Mt.hand, GRP.hand);
+    if (pr.vial > 0.5) {
+      // Mio's vial, taken from the bottles at her hip (that one is then not at the hip): held in the
+      // right hand, upright, tipping toward the one it is for as it pours (vialTilt, degrees); the cork
+      // out once it is opened (cork 1)
+      const tilt = (pr.vialTilt || 0) * DEG, hd = pr.vialL ? J.handL : J.handR;
+      const ax = norm([Math.sin(tilt) * 0.5, Math.cos(tilt), Math.sin(tilt) * 0.85]);
+      // (drawn a little larger than life, as the hands are)
+      const q = (s) => add(hd, add(mul(ax, s * 1.3), [0.9, 0, 1.4]));
+      K.C(q(-1.4), q(0.7), 1.95, 2, Mt.glass, GRP.prop);
+      K.C(q(0.7), q(2.2), 1.9, 0.95, Mt.glass, GRP.prop);
+      K.C(q(2.2), q(3.2), 0.82, 0.82, Mt.glass, GRP.prop);
+      if (!(pr.cork > 0.5)) K.C(q(3.1), q(3.9), 0.95, 0.95, Mt.wood, GRP.prop);
+      K.J.vial = { lip: q(3.4), mid: q(0.4), ax };
     }
     if (pr.brush) {
       const d = norm(sub(J.handR, J.elbR)), up = norm(add(d, [0, 0.9, 0]));
@@ -620,11 +719,16 @@ RB.battlers = (function () {
       for (let i = 0; i < 5; i++) { const a = (i / 5) * Math.PI * 2; K.S(add(c0, mv(Mh, [Math.sin(a) * 2.2, Math.cos(a) * 2.2, -0.6])), 1.8, R, GRP.acc); }
       K.S(add(c0, mv(Mh, [0, 0, -1])), 1.3, heart, GRP.acc);
     };
-    const lantern = (top) => {
-      K.C(top, add(top, [0, -2.2, 0]), 0.35, 0.35, Mt.iron, GRP.prop);
-      K.Bx(add(top, [0, -2.6, 0]), Ms, [2.2, 0.6, 2.2], Mt.iron, GRP.prop);
-      K.E(add(top, [0, -5.4, 0]), Ms, [2.3, 2.6, 2.3], Mt.glow, GRP.prop);
-      K.Bx(add(top, [0, -8.2, 0]), Ms, [2, 0.5, 2], Mt.iron, GRP.prop);
+    const lantern = (top, own) => {
+      // (the lamp a gesture raises flares: its glass runs lighter — ps.prop.flare; Ren's own lamp, the
+      // object of his every action, is drawn a size up, as hands are)
+      const lit = own && ps.prop && ps.prop.flare > 0.5 ? Mt.glowHi : Mt.glow, q = own ? 1.3 : 1;
+      const at = (y) => add(top, [0, y * q, 0]);
+      K.C(top, at(-2.2), 0.35 * q, 0.35 * q, Mt.iron, GRP.prop);
+      K.Bx(at(-2.6), Ms, [2.2 * q, 0.6 * q, 2.2 * q], Mt.iron, GRP.prop);
+      K.E(at(-5.4), Ms, [2.3 * q, 2.6 * q, 2.3 * q], lit, GRP.prop);
+      K.Bx(at(-8.2), Ms, [2 * q, 0.5 * q, 2 * q], Mt.iron, GRP.prop);
+      if (own) K.J.lamp = at(-5.4);
     };
     for (const a of acc) {
       switch (a) {
@@ -685,7 +789,7 @@ RB.battlers = (function () {
           K.S(Sp([0, ch + 0.4, 5]), 1, Mt.gold, GRP.acc);
           break;
         }
-        case 'lamp': lantern(add(J.handL, [0, -1.4, 0])); break;
+        case 'lamp': lantern(add(J.handL, [0, -1.4, 0]), true); break;
         case 'ribbon': {
           const R = flat(look.ribbonCol || '#c85a6a', { min: 1 });
           const c = H(out([-hr[0] * 0.6, hr[1] * 0.72, -hr[2] * 0.5]));
@@ -723,8 +827,11 @@ RB.battlers = (function () {
           break;
         }
         case 'bottles': {
-          K.C(Pl([7.6, 2, 2.4]), Pl([7.8, -2.2, 2.4]), 1.3, 1.5, flat('#6ab0a0', { min: 2 }), GRP.acc);
-          K.S(Pl([7.6, 2.6, 2.4]), 0.8, flat('#a88860'), GRP.acc);
+          // the green one is the vial she takes out (not at the hip while it is in her hand)
+          if (!(ps.prop && ps.prop.vial > 0.5)) {
+            K.C(Pl([7.6, 2, 2.4]), Pl([7.8, -2.2, 2.4]), 1.3, 1.5, flat('#6ab0a0', { min: 2 }), GRP.acc);
+            K.S(Pl([7.6, 2.6, 2.4]), 0.8, flat('#a88860'), GRP.acc);
+          }
           K.C(Pl([6.4, 2.2, -3.8]), Pl([6.6, -1.2, -4]), 1.1, 1.3, flat('#c8a0d0', { min: 2 }), GRP.acc);
           break;
         }
@@ -772,7 +879,11 @@ RB.battlers = (function () {
 
   // ---- render one frame -------------------------------------------------------------------------------------
   const NB = [[1, 0], [-1, 0], [0, 1], [0, -1]];
-  function render(look, ps) {
+  function render(look, ps, grid) {
+    useGrid(grid);
+    try { return render1(look, ps); } finally { useGrid(GRIDS.std); }
+  }
+  function render1(look, ps) {
     const as = assemble(look, ps);
     props(as.K);
     accessories(as.K);
@@ -810,244 +921,100 @@ RB.battlers = (function () {
     return { b, J: as.J };
   }
 
-  // local joint -> offset from the anchor on screen (art px at scale 1)
+  // local joint -> offset from the anchor on screen (art px at scale 1, on the current grid)
   const scr = (v) => { const s = proj(mv(BODY, v)); return { x: s[0], y: s[1] }; };
 
-  // ---- the pose library ------------------------------------------------------------------------------------
-  const clone = (o) => JSON.parse(JSON.stringify(o));
-  function over(base, o) {
-    const r = clone(base);
-    for (const k in o) r[k] = k === 'prop' ? Object.assign({}, r.prop, o.prop) : clone(o[k]);
-    return r;
-  }
-  function blend(A, B, t) {
-    const r = {};
-    for (const k in A) {
-      const a = A[k], b = B[k] == null ? a : B[k];
-      if (Array.isArray(a)) r[k] = a.map((v, i) => v + (b[i] - v) * t);
-      else if (typeof a === 'number') r[k] = a + (b - a) * t;
-      else if (k === 'prop') {
-        r.prop = {};
-        for (const q of new Set([...Object.keys(a || {}), ...Object.keys(b || {})])) {
-          const va = (a || {})[q], vb = (b || {})[q];
-          if (Array.isArray(va) || Array.isArray(vb)) r.prop[q] = !Array.isArray(vb) ? va.slice() : !Array.isArray(va) ? vb.slice() : va.map((v, i) => v + (vb[i] - v) * t);
-          else r.prop[q] = va == null ? vb * t : vb == null ? va * (1 - t) : va + (vb - va) * t;
-        }
-      } else r[k] = t < 0.5 ? a : b;
-    }
-    return r;
-  }
-  const bump = (x, a, b) => (x < a || x > b ? 0 : Math.sin(((x - a) / (b - a)) * Math.PI));
-  const holdsBook = (look, who) => who !== 'comp' || (look.acc || []).includes('book');
-  // The ready stance: slightly staggered feet (the near, right foot forward), knees soft, leaning into
-  // it, turned a little further toward the foe than the body. The player holds the folio in the left
-  // hand and keeps the right free for the brush; the companion stands wider and lower, hands loose.
-  function readyOf(look, who) {
-    const pc = who !== 'comp';
-    const base = over(restPose(), {
-      pelvis: [0, -1.9, 0], spinePitch: 10, spineYaw: 5, headYaw: 12, headPitch: -5,
-      footR: [6.2, 0, 4.8], footRYaw: 24, footL: [-6, 0, -3.8], footLYaw: 8,
-      handR: [11.4, 31.5, 5.6], elbowR: [1, -0.6, -1],
-      handL: [-10.4, 29.4, -1.2], elbowL: [-1, -0.2, -0.6],
-    });
-    if (!pc) Object.assign(base, { pelvis: [0.5, -2.4, 0.3], spinePitch: 12, spineYaw: 3, headYaw: 8, headPitch: -3, footR: [7.8, 0, 3.4], footRYaw: 26, footL: [-7, 0, -4.8], footLYaw: 14, handR: [12, 30, 4.6], handL: [-12.8, 29.6, -2.4], elbowL: [-1, -0.4, -1] });
-    // the folio: held at the left hip, upright, its cover outward
-    if (holdsBook(look, who)) { base.prop.book = 1; base.prop.bookTilt = -8; base.prop.bookYaw = -40; base.prop.bookAt = [-1.6, 1.4, -1.4]; base.handL = [-10.6, 29.6, -4.2]; base.elbowL = [-1, 0, -0.2]; }
-    return base;
-  }
-  // Idle life in the ready and calm stances: breathing (chest and shoulders), a spring in the knees,
-  // a slow shift of weight between the feet, the head searching the foe; hair and cloth follow a beat
-  // later. The feet stay planted. On every second loop a characteristic gesture: the player settles
-  // the grip on the folio and glances at it; the companion shifts footing.
-  const LOOP = { pc: 5200, comp: 6000 };
-  function idle(ps, who, t, amp) {
-    const pc = who !== 'comp', Lp = LOOP[pc ? 'pc' : 'comp'];
-    const u = ((((t % (2 * Lp)) + 2 * Lp) % (2 * Lp)) / Lp); // 0..2
-    const TAU = Math.PI * 2, off = pc ? 0 : 1.7;
-    const br = Math.sin(u * TAU * 2), spring = Math.sin(u * TAU * 2 + 0.6), ws = Math.sin(u * TAU + off), hd = Math.sin(u * TAU + 0.9 + off);
-    ps.pelvis[1] += amp * (-0.75 + 0.75 * spring);
-    ps.pelvis[0] += amp * ws * 1.3;
-    ps.pelvisRoll += amp * ws * -3;
-    ps.spineRoll += amp * ws * 2.2;
-    ps.spinePitch += amp * br * 1.8;
-    ps.headYaw += amp * hd * 5;
-    ps.headPitch += amp * -br * 1.5;
-    for (const h of [ps.handR, ps.handL]) { h[1] += amp * br * 0.9; h[0] += amp * ws * 0.7; }
-    ps.handR[2] += amp * Math.sin(u * TAU * 2 + 1.4) * 0.8; // the free hand stays busy
-    ps.hairLag = amp * 1.5 * Math.sin(u * TAU * 2 + 0.6 - 0.9);
-    ps.hairSway = amp * 1.8 * Math.sin(u * TAU + off - 0.9);
-    ps.clothSway = amp * 1.1 * Math.sin(u * TAU + off - 0.6);
-    if (u >= 1) {
-      const gph = u - 1;
-      if (pc) {
-        const e = bump(gph, 0.12, 0.46) * amp;
-        ps.handR = lerp(ps.handR, add(ps.handL, [4.8, 2, 1.6]), e * 0.9);
-        ps.headPitch += e * 8; ps.headYaw -= e * 5;
-        ps.prop.bookTilt = (ps.prop.bookTilt == null ? -50 : ps.prop.bookTilt) - e * 14;
-      } else {
-        const e = bump(gph, 0.18, 0.42) * amp;
-        ps.footLLift += e * 2.4;
-        ps.footL[2] += e * 1.8; ps.footL[0] -= e * 0.8;
-        ps.pelvis[0] += e * 1.3; ps.pelvisRoll -= e * 2.4;
-        ps.headYaw += e * 6;
-      }
-    }
-    return ps;
-  }
-  function calmOf(look, who) {
-    const r = readyOf(look, who);
-    // the player reads: the folio raised open at the left, the head bowed to it
-    if (r.prop.book) Object.assign(r, { handL: [-11.2, 37.6, 2.4], handR: [8.6, 33, 6.4], headPitch: 14, headYaw: -14, headRoll: -4, spinePitch: 8, spineYaw: -4, prop: Object.assign(r.prop, { bookOpen: 0.75, bookTilt: -38, bookYaw: -60 }) });
-    else Object.assign(r, { handR: [10.8, 27.6, 3.6], handL: [-10, 28, 3.4], spinePitch: 5, headPitch: 2 });
-    r.pelvis[1] += 0.5;
-    return r;
-  }
-  // Gestures: an anticipation key (a), and the action as a function of its progress (x(k)); recovery
-  // returns from x(1) to the ready stance. Hand targets are in the body's ground frame.
-  const GEST = {
-    // a strip of paper drawn back to the shoulder, then sent up-right at the foe with the whole arm
-    direct: {
-      a: { spineYaw: -7, spinePitch: 5, handR: [7.8, 40, -1.6], elbowR: [1, -1, -0.4], headYaw: 16, pelvis: [-0.5, -1.4, -0.8], prop: { strip: 0.45 } },
-      x: (k) => ({ spineYaw: 17, spinePitch: 12, handR: [12.6, 44.5, 17.5], elbowR: [1, -0.4, -0.3], headYaw: 12, headPitch: -7, pelvis: [0.7, -1.8, 1.4], prop: { strip: 1 }, hairSway: -1.4, clothSway: -1 }),
-      snap: 0.3,
-    },
-    // a brush raised and a mark traced in the air: down-stroke, hook and flick
-    trace: {
-      a: { spineYaw: 4, spinePitch: 8, handR: [8.6, 41, 9], elbowR: [1, -0.8, -0.6], headYaw: 14, headPitch: -6, prop: { brush: 1 } },
-      x: (k) => {
-        const pts = [[8.6, 41, 9], [10.4, 44, 13], [12.2, 37, 13.4], [9.4, 34, 12.6], [13.6, 39.5, 14]];
-        const f = clamp01(k / 0.85) * (pts.length - 1), i = Math.min(pts.length - 2, Math.floor(f));
-        return { spineYaw: 9, spinePitch: 9, handR: lerp(pts[i], pts[i + 1], f - i), elbowR: [1, -0.7, -0.5], headYaw: 14, headPitch: -6, prop: { brush: 1 } };
-      },
-      snap: 0,
-    },
-    // the folio lifted in both hands and opened toward the foe
-    book: {
-      a: { handL: [-8.6, 40, 5], handR: [4.4, 40, 9], elbowR: [1, -0.8, -0.6], elbowL: [-1, -0.8, -0.3], spinePitch: 6, spineYaw: -6, headPitch: 4, headYaw: -6, prop: { book: 1, bookOpen: 0.3, bookTilt: -20, bookYaw: -40, bookAt: [2, 1.4, 1.2] } },
-      x: (k) => ({ handL: [9.6, 50.5, 15.6], handR: [16.4, 49, 10.4], elbowR: [1, -0.5, -0.6], elbowL: [-1, -0.8, 0], spinePitch: 7, spineYaw: 18, headPitch: -8, headYaw: 8, pelvis: [0.6, -1.6, 0.8], prop: { book: 1, bookOpen: 1, bookTilt: 24 + 7 * Math.sin(k * Math.PI * 3), bookYaw: 40, bookAt: [3.4, 1.2, 0.2] } }),
-      snap: 0.35,
-    },
-    // a forearm raised across the body, then the palm set against what comes, feet braced
-    ward: {
-      a: { handR: [2.4, 42, 7], elbowR: [1, -1.2, 0.2], spinePitch: 10, pelvis: [-0.3, -2.4, -0.4], headPitch: 2, footR: [7, 0, 5] },
-      x: (k) => ({ handR: [15.8, 47.5, 11], elbowR: [1, -1.2, -0.4], handL: [-3.8, 38.5, 9.6], spinePitch: 12, spineYaw: 14, pelvis: [0.5, -2.8, 0.6], footR: [7.6, 0, 6], headPitch: -4, hairSway: -1, clothSway: -0.8, prop: { palm: 1 } }),
-      snap: 0.28,
-    },
-    // both hands low and open at the sides, rising gently and opening outward to shoulder height
-    restore: {
-      a: { handR: [9.6, 25.5, 5], handL: [-9.6, 25.8, 3.6], elbowR: [1, -0.6, -0.8], elbowL: [-1, -0.6, -0.8], spinePitch: 13, headPitch: 12, pelvis: [0, -2.2, 0] },
-      x: (k) => ({ handR: [12.8 + 1.4 * ease(k), 36 + 8 * ease(k), 5.4], handL: [-12.6 - 1.4 * ease(k), 36 + 8 * ease(k), 3.6], elbowR: [1, -0.8, -0.6], elbowL: [-1, -0.8, -0.6], spinePitch: 2, headPitch: -10, pelvis: [0, -0.4, 0], hairLag: -0.8 }),
-      snap: 0,
-    },
-    // the arm swept back low, then round in a flowing arc up toward the foe
-    flow: {
-      a: { handR: [3.4, 26.4, -5.6], elbowR: [1, -0.3, -0.6], spineYaw: -13, spinePitch: 8, pelvis: [-0.6, -1.8, -0.5], headYaw: 18 },
-      x: (k) => {
-        const pts = [[3.4, 26.4, -5.6], [11.6, 28, 2], [14, 34, 10], [12.8, 41, 15.6]];
-        const f = clamp01(k / 0.6) * (pts.length - 1), i = Math.min(pts.length - 2, Math.floor(f));
-        return { handR: lerp(pts[i], pts[i + 1], f - i), elbowR: [1, -0.5, -0.4], spineYaw: -13 + 30 * clamp01(k / 0.6), spinePitch: 10, pelvis: [0.6, -1.8, 0.6], headYaw: 12, hairSway: -1.6 * clamp01(k / 0.6), clothSway: -1.2 * clamp01(k / 0.6) };
-      },
-      snap: 0,
-    },
-    // the arm lowered, then raised high toward the foe: a light, a bell, a voice
-    raise: {
-      a: { handR: [8.4, 33, 4.2], elbowR: [1, -0.9, -0.8], spinePitch: 9, pelvis: [0, -2.2, 0], headPitch: 6 },
-      x: (k) => ({ handR: [12.4, 66, 7.4], elbowR: [1, 0.3, -0.3], spinePitch: -4, spineYaw: 6, spineRoll: -4, pelvis: [0, -0.3, 0.2], headPitch: -14, headYaw: 8, hairLag: 0.8 }),
-      snap: 0.3,
-    },
-  };
-  function gesturePose(look, who, gesture, stage, k) {
-    const R = readyOf(look, who), G = GEST[gesture] || GEST.direct;
-    const A = over(R, G.a);
-    const X = (q) => over(A, G.x(q));
-    if (stage === 'anticipate') return blend(R, A, ease(k));
-    if (stage === 'act') {
-      if (G.snap) { const t = clamp01(k / G.snap); return k < G.snap ? blend(A, X(k), ease(t)) : X(k); }
-      return blend(A, X(k), clamp01(k / 0.12));
-    }
-    return blend(X(1), R, ease(k)); // recover
-  }
-  function reactPose(look, who, pose, k) {
-    const R = readyOf(look, who);
-    if (pose === 'hit') {
-      // knocked back a step's worth at the waist, then back to the stance (feet planted)
-      const H = over(R, { pelvis: [-0.8, -2.2, -2.6], spinePitch: -12, spineYaw: -6, headPitch: -12, headYaw: 4, headRoll: -5, handR: [12.6, 33, -1.6], handL: [-10.6, 35, 0.4], footRLift: 1.2, hairLag: 2.4, hairSway: 1.4, clothSway: 1.2 });
-      const e = k < 0.16 ? ease(k / 0.16) : 1 - ease((k - 0.16) / 0.84);
-      return blend(R, H, e);
-    }
-    if (pose === 'brace') {
-      // the ward took it: a small flinch behind a raised forearm, and settle
-      const Bp = over(R, { pelvis: [-0.3, -2, -0.8], spinePitch: 13, headPitch: 9, handR: [4.4, 41, 6.4], elbowR: [1, -1.2, 0.2], hairLag: 1 });
-      const e = k < 0.22 ? ease(k / 0.22) : 1 - ease((k - 0.22) / 0.78);
-      return blend(R, Bp, e);
-    }
-    if (pose === 'down') {
-      // resolve spent: down on the left knee, a hand on the ground, head bowed
-      const D = over(R, { pelvis: [0.2, -11.6, -1.2], spinePitch: 28, spineYaw: 2, spineRoll: -4, headPitch: 22, headYaw: 4, footR: [6.4, 0, 6.6], footRYaw: 16, footL: [-4.6, -1.8, -9.4], footLYaw: 4, handR: [7.4, 14.6, 8.2], handL: [-9.6, 2.4, 3.4], elbowL: [-1, -0.2, -1], hairLag: 1.5 });
-      return blend(R, D, ease(k));
-    }
-    // cheer: a fist raised, chest up, a small rise onto the toes and settle — restrained
-    const Cp = over(R, { handR: [12.4, 62.5, 5.4], elbowR: [1, 0.1, -0.6], spinePitch: -3, spineYaw: 4, headPitch: -9, pelvis: [0, 0.2, 0] });
-    const e = k < 0.3 ? ease(k / 0.3) : 1;
-    const p2 = blend(R, Cp, e);
-    const b = k > 0.3 ? bump(k, 0.3, 0.7) : 0;
-    p2.pelvis[1] -= b * 0.8; p2.hairLag = b * 1.2;
-    return p2;
-  }
-  function poseAt(look, pose, gesture, k, t, who, reduce) {
-    let ps;
-    if (pose === 'ready') ps = idle(readyOf(look, who), who, t, reduce ? 0 : 1);
-    else if (pose === 'calm') ps = idle(calmOf(look, who), who, t, reduce ? 0 : 0.45);
-    else if (pose === 'anticipate' || pose === 'act' || pose === 'recover') ps = gesturePose(look, who, gesture, pose, k);
-    else ps = reactPose(look, who, pose, k);
-    // a lantern or a cane stays out at the side in the left hand, where it can be seen, whatever the
-    // right hand does (and the free hand of a lantern keeper does the gestures alone)
-    if (holdsLeft(look)) {
-      const R = readyOf(look, who);
-      ps.handL = add(R.handL, [(ps.pelvis[0] - R.pelvis[0]) * 0.4, (ps.pelvis[1] - R.pelvis[1]) * 0.7, (ps.pelvis[2] - R.pelvis[2]) * 0.4]);
-      ps.elbowL = R.elbowL;
-      if (ps.prop.book) ps.prop.bookR = 1; // a book, when one is wanted, goes in the right hand
-    }
-    return ps;
-  }
-  const holdsLeft = (look) => (look.acc || []).some((a) => a === 'lamp' || a === 'cane');
+  // ---- anchors (battle addendum §7.2) ---------------------------------------------------------------
+  // feet: the ground point (the anchor; it never moves); torso: the chest; head: the crown; handR/handL:
+  // the hands; held: what the acting hand holds (folio, strip, brush, vial, lamp), or that hand;
+  // release: where an effect leaves the actor (a brush tip, a strip's end, the open folio, the vial's
+  // lip, the lamp's glass, a pointing fingertip, an open palm). `hand` keeps its old meaning — the
+  // acting release point — so every effect that starts "from the hand" starts where it should.
   function pointsOf(J, ps, pose, gesture) {
     const Mh = J.Mh, top = add(J.headC, mv(Mh, [0, J.B.headR[1] + 2, 0]));
-    let hand = J.handR;
-    if ((pose === 'anticipate' || pose === 'act' || pose === 'recover') && gesture === 'book') hand = add(J.handL, mv(J.Ms, [3.5, 1.5, 2]));
-    else if (ps.prop && ps.prop.brush) { const d = norm(add(norm(sub(J.handR, J.elbR)), [0, 0.9, 0])); hand = add(J.handR, mul(d, 9)); }
-    else if (ps.prop && ps.prop.strip > 0.5) hand = add(J.handR, mul(norm(sub(J.handR, J.elbR)), 3 + 6 * ps.prop.strip));
-    return { hand: scr(hand), head: scr(top), chest: scr(add(J.neckB, mv(J.Ms, [0, -4.5, 0]))), feet: { x: 0, y: 0 } };
+    const pr = ps.prop || {};
+    const left = ps.act === 'L';
+    const hd = left ? J.handL : J.handR, el = left ? J.elbL : J.elbR;
+    const fwd = norm(sub(hd, el));
+    const gest = pose === 'anticipate' || pose === 'act' || pose === 'recover';
+    let held = hd, release = hd;
+    if (gest && gesture === 'book' && pr.book > 0.25) { held = add(J.handL, mv(J.Ms, [3.5, 1.5, 2])); release = held; }
+    else if (pr.vial > 0.5 && J.vial) { held = J.vial.mid; release = add(J.vial.lip, mul(J.vial.ax, 1)); }
+    else if (left && J.lamp) { held = J.lamp; release = J.lamp; }
+    else if (pr.brush) { const d = norm(add(fwd, [0, 0.9, 0])); held = add(hd, mul(d, 3)); release = add(hd, mul(d, 9)); }
+    else if (pr.strip > 0.5) { held = add(hd, mul(fwd, 2 + 3 * pr.strip)); release = add(hd, mul(fwd, 3 + 6 * pr.strip)); }
+    else {
+      const sh = left ? ps.handShapeL : ps.handShapeR;
+      if (sh === 'point') release = add(hd, mul(fwd, 5.8 * HAND - 1.5));
+      else if (sh === 'open' || sh === 'flat' || sh === 'spread') release = add(hd, mul(fwd, 3.6 * HAND - 1.5));
+    }
+    const chest = scr(add(J.neckB, mv(J.Ms, [0, -4.5, 0])));
+    return {
+      hand: scr(release), release: scr(release), held: scr(held),
+      head: scr(top), chest, torso: chest, waist: scr(J.waist), handR: scr(J.handR), handL: scr(J.handL),
+      lamp: J.lamp ? scr(J.lamp) : null, feet: { x: 0, y: 0 },
+    };
+  }
+  const PT_KEYS = ['hand', 'release', 'held', 'head', 'chest', 'torso', 'waist', 'handR', 'handL', 'feet'];
+
+  // ---- who is drawn ------------------------------------------------------------------------------------
+  // An actor id chooses the stance and movement language (src/engine/34m_battler_moves.js): 'pc', a
+  // companion's id, or 'comp' (any other figure: an NPC drawn in the battle style). Without o.id the
+  // companion is recognised by their look (the content's own look object, or an equal one).
+  const lookIds = new WeakMap();
+  function actorOf(look, who, id) {
+    if (id) return id;
+    if (who !== 'comp') return 'pc';
+    let a = lookIds.get(look);
+    if (a) return a;
+    a = 'comp';
+    const C = (RB.content && RB.content.chars) || {};
+    for (const c of ['nao', 'mio', 'ren', 'suzu']) if (C[c] && (C[c].look === look || JSON.stringify(C[c].look) === lookKey(look))) { a = c; break; }
+    lookIds.set(look, a);
+    return a;
   }
 
   // ---- cache and API ---------------------------------------------------------------------------------------
-  const QK = 12, IDLE_MS = 100, CAP = 720;
+  // Keys: look, actor, pose, gesture (or a reaction's variant), progress (QK steps; ½ steps with reduced
+  // motion), the idle key frame (a small fixed set per actor), facing, grid — never elapsed time.
+  const QK = 12, CAP = 720;
   const cache = new Map();
   const lookKeys = new WeakMap();
   function lookKey(look) { let k = lookKeys.get(look); if (!k) { k = JSON.stringify(look); lookKeys.set(look, k); } return k; }
+  const stats = { built: 0, buildMs: 0, maxMs: 0, hits: 0, evicted: 0, retained: 0 };
   function frameFor(look, o) {
     look = look || {};
+    o = o || {};
+    const Mv = M();
     const pose = POSES.includes(o.pose) ? o.pose : 'ready';
-    const gesture = GESTURES.includes(o.gesture) ? o.gesture : 'direct';
     const who = o.who === 'comp' ? 'comp' : 'pc';
+    const id = actorOf(look, who, o.id);
+    const usesG = pose === 'anticipate' || pose === 'act' || pose === 'recover';
+    const gesture = usesG ? (Mv.hasGesture(o.gesture, id) ? o.gesture : 'direct') : '';
+    const variant = !usesG && o.gesture && Mv.hasVariant(pose, o.gesture) ? o.gesture : '';
     const reduce = !!o.reduce;
     const idleP = pose === 'ready' || pose === 'calm';
-    let k = clamp01(o.k == null ? 0 : +o.k || 0);
+    let k = Math.max(0, Math.min(1, o.k == null ? 0 : +o.k || 0));
     k = reduce ? Math.round(k * 2) / 2 : Math.round(k * QK) / QK;
-    let tq = 0;
-    if (idleP && !reduce) { const Lp = 2 * LOOP[who]; tq = Math.floor(((((o.t || 0) % Lp) + Lp) % Lp) / IDLE_MS); }
-    const usesG = pose === 'anticipate' || pose === 'act' || pose === 'recover';
+    const ik = idleP ? Mv.idleKey(id, pose, o.t || 0, reduce) : '';
     const left = o.facing === 'upleft';
-    const key = lookKey(look) + '|' + pose + '|' + (usesG ? gesture : '') + '|' + (idleP ? '' : k) + '|' + tq + '|' + who + '|' + (reduce ? 1 : 0) + (left ? 'L' : 'R');
+    const grid = o.grid && GRIDS[o.grid] ? GRIDS[o.grid] : GRIDS.std;
+    const lk = lookKey(look);
+    const key = lk + '|' + id + '|' + pose + '|' + gesture + variant + '|' + (idleP ? ik : k) + '|' + (reduce ? 1 : 0) + (left ? 'L' : 'R') + (grid.id === 'std' ? '' : '|' + grid.id);
     let f = cache.get(key);
-    if (f) { cache.delete(key); cache.set(key, f); return f; }
-    const ps = poseAt(look, pose, gesture, k, tq * IDLE_MS, who, reduce);
-    const { b, J } = render(look, ps);
-    let pts = pointsOf(J, ps, pose, gesture), buf = b, ax = AX;
-    if (left) { buf = b.mirror(); ax = FW - 1 - AX; const fl = (q) => ({ x: -q.x, y: q.y }); pts = { hand: fl(pts.hand), head: fl(pts.head), chest: fl(pts.chest), feet: fl(pts.feet) }; }
-    f = { cv: buf.toCanvas(), pts, ax };
+    if (f) { cache.delete(key); cache.set(key, f); stats.hits++; return f; }
+    const t0 = performance.now();
+    const ps = Mv.poseAt(look, pose, gesture || variant, k, o.t || 0, who, reduce, id, ik);
+    useGrid(grid);
+    let b, J, pts;
+    try { ({ b, J } = render1(look, ps)); pts = pointsOf(J, ps, pose, gesture); } finally { useGrid(GRIDS.std); }
+    let buf = b, ax = grid.AX;
+    if (left) { buf = b.mirror(); ax = grid.FW - 1 - grid.AX; const fl = (q) => (q ? { x: -q.x, y: q.y } : q); const m = {}; for (const kk in pts) m[kk] = fl(pts[kk]); pts = m; }
+    f = { cv: buf.toCanvas(), pts, ax, ay: grid.AY, w: grid.FW, h: grid.FH, lk, id };
+    const ms = performance.now() - t0;
+    stats.built++; stats.buildMs += ms; stats.maxMs = Math.max(stats.maxMs, ms);
     cache.set(key, f);
-    while (cache.size > CAP) cache.delete(cache.keys().next().value);
+    while (cache.size > CAP) { cache.delete(cache.keys().next().value); stats.evicted++; }
     return f;
   }
   // Draw one figure: its foot anchor at (o.x, o.y) on ctx, scaled by a whole number. Returns where
@@ -1058,31 +1025,75 @@ RB.battlers = (function () {
     const f = frameFor(look, o);
     const x = Math.round(o.x || 0), y = Math.round(o.y || 0);
     ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(f.cv, x - f.ax * s, y - AY * s, FW * s, FH * s);
-    const m = (q) => ({ x: x + q.x * s, y: y + q.y * s });
-    return { hand: m(f.pts.hand), head: m(f.pts.head), chest: m(f.pts.chest), feet: m(f.pts.feet) };
+    ctx.drawImage(f.cv, x - f.ax * s, y - f.ay * s, f.w * s, f.h * s);
+    const out = {};
+    for (const k of PT_KEYS) { const q = f.pts[k]; out[k] = { x: x + q.x * s, y: y + q.y * s }; }
+    out.lamp = f.pts.lamp ? { x: x + f.pts.lamp.x * s, y: y + f.pts.lamp.y * s } : null;
+    out.feet = { x, y };
+    return out;
   }
-  // One frame at scale 1 (for menus and tests); the anchor is at ANCHOR.
+  // One frame at scale 1 (for menus and tests); the anchor is at ANCHOR (or the grid's).
   function preview(look, pose, gesture, k, o) {
     return frameFor(look, Object.assign({ pose, gesture, k, t: 0 }, o || {})).cv;
   }
-  // Build the frames a battle will start with ahead of time (in idle moments).
-  function prewarm(look, who) {
-    const L = LOOP[who === 'comp' ? 'comp' : 'pc'] * 2;
+  // The anchors of one frame, relative to its foot anchor (art px at scale 1).
+  function anchors(look, o) { return Object.assign({}, frameFor(look, o || {}).pts); }
+  // Build the frames a battle starts with ahead of time (in idle moments): this actor's idle and calm key
+  // frames only (battle addendum §21.4: prewarm the encounter's actors, nothing else).
+  function prewarm(look, who, id) {
+    who = who === 'comp' ? 'comp' : 'pc';
+    const list = [];
+    for (const pose of ['ready', 'calm']) for (const t of M().idleTimes(actorOf(look, who, id), pose)) list.push({ pose, t, who, id });
     let i = 0;
     const step = () => {
       const t0 = performance.now();
-      while (i < L / IDLE_MS && performance.now() - t0 < 6) { frameFor(look, { pose: 'ready', who, t: i * IDLE_MS }); i++; }
-      if (i < L / IDLE_MS) (typeof requestIdleCallback === 'function' ? requestIdleCallback : setTimeout)(step);
+      while (i < list.length && performance.now() - t0 < 6) frameFor(look, list[i++]);
+      if (i < list.length) (typeof requestIdleCallback === 'function' ? requestIdleCallback : setTimeout)(step);
     };
     step();
+    return list.length;
   }
+  // Keep only the frames of these looks (an encounter's actors); every other look's frames are released.
+  function retain(looks) {
+    const keep = new Set((looks || []).filter(Boolean).map(lookKey));
+    for (const [k, f] of cache) if (!keep.has(f.lk)) { cache.delete(k); stats.retained++; }
+    return cache.size;
+  }
+  // Estimated resident pixels of the cached frames (battle addendum §21.5): w × h × 4 bytes per frame.
+  function budget() {
+    let bytes = 0;
+    const per = {};
+    for (const f of cache.values()) { const b = f.w * f.h * 4; bytes += b; per[f.id] = (per[f.id] || 0) + 1; }
+    const frameBytes = GRIDS.std.FW * GRIDS.std.FH * 4;
+    return {
+      frames: cache.size, bytes, mib: +(bytes / 1048576).toFixed(3), perActor: per,
+      cap: CAP, capMib: +((CAP * frameBytes) / 1048576).toFixed(2), budgetMib: 48,
+      built: stats.built, meanBuildMs: stats.built ? +(stats.buildMs / stats.built).toFixed(2) : 0, maxBuildMs: +stats.maxMs.toFixed(1), hits: stats.hits, evicted: stats.evicted, released: stats.retained,
+    };
+  }
+  // A new encounter: release the frames of looks that are not in it (the player's look and the committed
+  // companion's), so the cache never accumulates every appearance met in a session.
+  if (RB.bus && RB.bus.on) RB.bus.on('present:scene', (e) => {
+    try {
+      if (!e || e.phase !== 'enter' || !RB.game || !RB.game.s) return;
+      const s = RB.game.s, looks = [RB.equip.look(s)];
+      if (e.comp && RB.content.chars[e.comp]) looks.push(RB.content.chars[e.comp].look);
+      retain(looks);
+    } catch (err) { /* presentation only */ }
+  });
 
   return {
-    FRAME: { w: FW, h: FH }, ANCHOR: { x: AX, y: AY }, POSES, GESTURES,
-    draw, preview, prewarm,
-    LOOP, IDLE_MS, QK,
-    _: { poseAt, render, frameFor, cacheSize: () => cache.size, clear: () => cache.clear(), YAW, PITCH },
+    FRAME: { w: FW, h: FH }, ANCHOR: { x: AX, y: AY }, POSES,
+    get GESTURES() { return M() ? M().GESTURES : []; },
+    get VARIANTS() { return M() ? M().VARIANTS : {}; },
+    get LOOP() { return M() ? M().LOOP : {}; },
+    GRIDS, QK,
+    draw, preview, anchors, prewarm, retain, budget, actorOf,
+    _: {
+      // (an outside caller — the fishing stage — gets the plain companion stance unless it names the
+      // actor, so its own authored poses are laid over the stance they were written for)
+      poseAt: (look, pose, g, k, t, who, reduce, id, ik) => M().poseAt(look, pose, g, k, t, who, reduce, id || (who === 'comp' ? 'comp' : 'pc'), ik), render, frameFor, handModel, cacheSize: () => cache.size, clear: () => cache.clear(), YAW, PITCH,
+      get ZS() { return ZS; }, keys: () => [...cache.keys()],
+    },
   };
 })();
-
