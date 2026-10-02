@@ -3297,6 +3297,13 @@ mark.pb-fixed { background: rgba(45, 95, 40, 0.14); color: inherit; border-botto
 .pb-folder .pb-f-msg { padding: 0.3em 0.6em; background: var(--pad-paper, #fffcf3); border-left: 4px double var(--paper-edge); }
 .pb-folder .act-en { font-size: 0.9em; }
 .pb-marks .pb-quote { margin: 0.3em 0; }
+/* a primary action that cannot be used yet must not look ready (e.g. Send with nothing placed) */
+.lsheet.pb .pbtn.primary[disabled] { background: var(--paper); color: var(--ink-3); border-color: var(--ink-3); }
+/* long labels wrap inside their button at large text sizes instead of running off a phone screen */
+.lsheet.pb .folio-foot .cbtn { max-width: 100%; flex-shrink: 1; }
+.lsheet.pb .folio-foot .cbtn > span { min-width: 0; overflow-wrap: anywhere; text-align: center; }
+.lsheet.pb .folio-head > .cbtn { flex: 0 1 auto; max-width: 100%; }
+.lsheet.pb .folio-head > .cbtn > span { min-width: 0; overflow-wrap: anywhere; text-align: center; }
 </style>
 </head>
 <body>

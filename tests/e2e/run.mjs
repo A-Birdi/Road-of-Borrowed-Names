@@ -30,6 +30,7 @@ const suites = [
   full ? ['long_quests.mjs', '--all-companions'] : ['long_quests.mjs', '--fixtures-only'],
   // the two deduction cases, the refined sequences and their keepsakes, Known Details (addendum §14.8–§18)
   ['cases.mjs'], ['cases_shots.mjs'], ['known.mjs'],
+  ['practice_b.mjs'], // practice suite B: letters, the Proofreader's Tray, One word two moments (docs/practice/suite_b.md)
   full ? ['matrix.mjs'] : ['pursue.mjs', 'E', 'mio'],
 ];
 const results = [];
