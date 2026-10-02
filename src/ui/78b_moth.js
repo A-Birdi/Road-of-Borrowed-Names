@@ -52,10 +52,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // the direction of the party (lower left), on screen
   const AIM = [-0.74, 0.67];
   // the three-quarter stance: the body's lean (head toward the party) and the far wings' span
-  const LEAN = 0.16, FAR = 0.66, WY = 0.82, HS = 0.92;
+  const LEAN = 0.16, FAR = 0.66, WY = 0.78, HS = 0.92;
   // wing roots on the thorax (body frame) and their resting angles [far, near]
-  const ROOT = { fore: [[-4, -10], [5, -9]], hind: [[-3, -4], [4, -3]] };
-  const REST = { fore: [-0.1, 0.2], hind: [-0.04, 0.1] };
+  const ROOT = { fore: [[-4, -8], [5, -7]], hind: [[-3, -3], [4, -2]] };
+  const REST = { fore: [-0.04, 0.26], hind: [-0.04, 0.1] };
 
   // ---- wing outlines (the near wing in its own frame: root at 0,0, the costa running up-right;
   // the far wing is the same, mirrored and foreshortened) -------------------------------------
@@ -352,7 +352,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const fH = L.like(), fF = L.like(), lgF = L.like(), ab = L.like(), nH = L.like(), nF = L.like(), bod = L.like(), lgN = L.like(), an = L.like();
     const lean = q.roll + LEAN;
     // the body frame: the stance's lean plus the pose's roll, about the thorax
-    const T = (Lr) => Lr.save().translate(q.x, q.y).translate(0, -6).rotate(-lean).translate(0, 6);
+    const T = (Lr) => Lr.save().translate(q.x, q.y + 4).translate(0, -6).rotate(-lean).translate(0, 6);
     const ca = Math.cos(lean), sa = Math.sin(lean);
     const aim = [AIM[0] * ca - AIM[1] * sa, AIM[0] * sa + AIM[1] * ca]; // the party's direction, in the leaning body
     const margin = [];

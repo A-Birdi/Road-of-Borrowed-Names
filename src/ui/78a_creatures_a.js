@@ -363,6 +363,22 @@ RB.creaturesA = (function () {
       L.px[i] = M.c[clamp(kk | 0, 0, M.n - 1)];
     });
   }
+  // ball(cx, cy, rx, ry, o) → a shading function (0 … 1) for a rounded form under the key light, in
+  // crisp bands when quantised: a lit cap up-left, the mid tone, a core shadow, and a narrow band
+  // of reflected light along the shadowed rim (o.refl) — volume without pillow shading.
+  // o.lift raises it all (a pale or glowing material), o.k sharpens the light/shadow split.
+  function ball(cx, cy, rx, ry, o) {
+    o = o || {};
+    const lift = o.lift || 0, refl = o.refl == null ? 0.1 : o.refl, k = o.k || 1;
+    return (x, y) => {
+      const nx = (x - cx) / rx, ny = (y - cy) / (ry || rx), d = nx * nx + ny * ny;
+      const nz = Math.sqrt(Math.max(0, 1 - d));
+      const f = -(nx * 0.56 + ny * 0.68) * k + nz * 0.42;
+      let v = 0.46 + f * 0.5 + lift;
+      if (d > 0.74 && f < 0.02) v += refl;
+      return clamp(v, 0, 0.999);
+    };
+  }
   // the standard finish for a set of overlapping layers (back → front): outline each in its own
   // colours, then each nearer layer casts its shadow (dx, dy, one step) on the ones behind it
   function finish(layers, o) {
@@ -378,6 +394,6 @@ RB.creaturesA = (function () {
   // (onBuilt: set by 84a — the first idle frame of a creature built in a battle schedules the
   // prewarm of its action frames)
   const api = { FAMILIES, resolve, style, q, side, lerp, family, poly, stone, outline, deliver, queue, outcome, kit, audit, auditFamily, auditEnemy, K, onBuilt: null,
-    hramp, hmat, toward, stepOf, nudge, cast, flank, rim, despeckle, band, finish };
+    hramp, hmat, toward, stepOf, nudge, cast, flank, rim, despeckle, band, finish, ball };
   return api;
 })();

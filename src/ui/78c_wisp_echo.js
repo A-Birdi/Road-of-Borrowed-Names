@@ -27,52 +27,113 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // =============================================================================================
   // WISP
   // =============================================================================================
+  // The wisp (the restyle): a lantern-spirit seen three-quarter — the head an egg of its own light
+  // with a flame tuft curling back from its crown (a tapered extremity that sways), the face turned
+  // toward the party (the far eye narrow at the left edge, the near eye full), lit from inside (a
+  // warm core cluster up left) and by the key light in crisp bands, a cool rim on its right edge,
+  // a coloured outline; its tail a flat ribbon lit along one edge that splits into two strands at
+  // its end and thins into translucent tones; sparks of its light hang round it.
+  const wispMatCache = new Map();
+  function wispMats(col) {
+    if (wispMatCache.has(col)) return wispMatCache.get(col);
+    const o = { n: 6, at: 3, lo: 0.15, hi: 0.95, sat: 1.18, hd: 36, hl: 26 };
+    const M = {
+      body: A.hmat(col, Object.assign({ rim: mixh(col, '#f4fbff', 0.7) }, o)),
+      tail: A.hmat(col, Object.assign({ alpha: 215 }, o)),
+      fade: A.hmat(col, Object.assign({ alpha: 135, line: false }, o)),
+      hot: K.mat(null, { cols: [mixh(col, '#fff6dc', 0.55), mixh(col, '#fffbee', 0.85)], at: 1, line: false }),
+      spark: [K.solid(mixh(col, '#fffbee', 0.7), { line: false }), K.solid(mixh(col, '#ffffff', 0.35), { line: false })],
+      eye: K.mat(null, { cols: ['#0c0a18', '#1c1830', '#302a48'], at: 0, line: false }),
+      shine: K.solid('#ffffff', { line: false }),
+      fire: A.hmat(mixh(col, '#ff9a3a', 0.6), { n: 5, at: 2, lo: 0.3, hi: 0.95, sat: 1.4, hd: 30, hl: 30 }),
+      fireHot: K.mat(null, { cols: ['#ffd27a', '#fff3c4'], at: 1, line: false }),
+    };
+    wispMatCache.set(col, M);
+    if (wispMatCache.size > 12) wispMatCache.delete(wispMatCache.keys().next().value);
+    return M;
+  }
+  // a streaming ribbon from (x, y0) down `len`, w0 wide at the top, swaying with phase ph; flat,
+  // lit along its left edge; splits into two strands over its last third
+  function streamer(Lb, M, x, y0, len, w0, ph, q) {
+    const amp = q.tamp, curl = q.tcurl, lean = q.tlean;
+    const cx = (y, k) => x + lean * y + Math.sin(ph + y / curl + (k || 0)) * amp * Math.min(1, y / (len * 0.45));
+    const hw = (y) => w0 * Math.pow(Math.max(0, 1 - y / len), 0.8) + 1;
+    const split = len * 0.66;
+    const band = (n) => (n < -0.45 ? 4.5 : n < 0.25 ? 3.5 : n < 0.7 ? 2.5 : 1.5);
+    const mat = (y) => (y < len * 0.55 ? M.tail : M.fade);
+    for (const Mx of [M.tail, M.fade]) {
+      const lx = Math.abs(lean) * len + w0 + amp + 3;
+      Lb.fill(x - lx, y0, x + lx, y0 + len + 2, (px, py) => {
+        const y = py - y0;
+        if (y < 0 || y > len || mat(y) !== Mx) return false;
+        if (y < split) return Math.abs(px - cx(y)) <= hw(y);
+        // two strands: the near one longer, the far one turning away
+        const t = (y - split) / (len - split), sw = hw(y) * 0.55;
+        const a = cx(y) - hw(split) * 0.45 * t * 1.6, b = cx(y, 0.6) + hw(split) * 0.5 * t * 1.8;
+        return (Math.abs(px - a) <= sw && t < 1) || (Math.abs(px - b) <= sw * 0.9 && t < 0.82);
+      }, Mx, (px, py) => { const y = py - y0, n = (px - cx(y)) / hw(y); return band(n) / 6; });
+    }
+  }
   function wispRig(L, q, o, H) {
     const col = o.col || '#9fb8e8';
-    const M = K.mat(col, { n: 5, at: 3, step: 0.1 });
-    const Mt = K.mat(col, { n: 4, at: 2, step: 0.1, alpha: 205, line: false });
-    const Mf = K.mat(col, { n: 3, at: 1, step: 0.1, alpha: 130, line: false });
-    const hot = K.solid(K.mix(K.parse(col), [255, 252, 236, 255], 0.75), { line: false });
-    const aura = L.like(), body = L.like();
+    const M = wispMats(col);
+    const aura = L.like(), tail = L.like(), body = L.like();
     const hx = q.hx, hy = q.hy, rx = q.rx, ry = q.ry;
-    H.glow(aura, hx, hy + 4, 46 * q.glow, 44 * q.glow, col, Math.min(0.5, 0.32 * q.glow), 3);
-    // the tail: one tapering ribbon from under the head, streaming, coiling or hanging
-    H.tail(body, hx + q.tlean * 4, hy + 12, q.tlen, q.tw, q.ph, [[0, q.tlen * 0.57, M], [q.tlen * 0.57, q.tlen * 0.8, Mt], [q.tlen * 0.8, 400, Mf]], { amp: q.tamp, curl: q.tcurl, lean: q.tlean });
-    // the head: a sphere, or (point) an egg drawn out along its flight toward the party — the
-    // round front leading, the back tapering into the streaming tail
+    // its light: a faint two-step glow and sparks hanging in it
+    H.glow(aura, hx, hy + 4, 40 * q.glow, 38 * q.glow, col, Math.min(0.32, 0.2 * q.glow), 2);
+    for (let k = 0; k < 6; k++) {
+      const a = k * 1.05 + q.ph * 0.5, r = (34 + (k % 3) * 7) * Math.min(1.3, q.glow);
+      aura.rect(Math.round(hx + Math.cos(a) * r), Math.round(hy + 2 + Math.sin(a) * r * 0.9), k % 2 ? 1 : 2, k % 2 ? 2 : 1, M.spark[k % 2], 0);
+    }
+    streamer(tail, M, hx + q.tlean * 4, hy + 12, q.tlen, q.tw, q.ph, q);
+    // the head: an egg of light (drawn out along its flight when it darts), and a flame tuft from
+    // its crown curling back up-right
     const p = q.point, ax = AIM[0], ay = AIM[1];
     const fr = Math.max(rx, ry) * (1 + 0.12 * p), br = Math.max(rx, ry) * (1 + 0.55 * p), side = Math.min(rx, ry) * (1 - 0.1 * p);
+    const shade = A.ball(hx - 3 + ax * 3 * p, hy - 3 + ay * 3 * p, rx + 3, ry + 3, { lift: -0.06, refl: 0.14 });
     body.fill(hx - rx - 30, hy - ry - 30, hx + rx + 30, hy + ry + 30, (x, y) => {
       if (p <= 0) { const a = (x - hx) / rx, b = (y - hy) / ry; return a * a + b * b <= 1; }
-      const u = (x - hx) * ax + (y - hy) * ay, v = -(x - hx) * ay + (y - hy) * ax; // along / across the flight
+      const u = (x - hx) * ax + (y - hy) * ay, v = -(x - hx) * ay + (y - hy) * ax;
       const a = u / (u >= 0 ? fr : br), b = v / side;
       return a * a + b * b <= 1;
-    }, M, K.sphere(hx - 2 + ax * 3 * p, hy - 2 + ay * 3 * p, rx + 2, ry + 2, { amb: 0.2, rim: 0.12 }));
+    }, M.body, shade);
+    const sway = Math.sin(q.ph) * 3, tl = (1 - p * 0.6);
+    const tx = hx + 12 + sway + 6 * (1 - tl), ty = hy - ry - 13 * tl;
+    body.poly([[hx - 4, hy - ry + 6], [hx + 6, hy - ry - 4 * tl], [tx, ty], [hx + rx * 0.7 + sway * 0.3, hy - ry * 0.45]], M.body, (x, y) => (y < hy - ry + 1 ? (x < hx + 8 ? 4.5 : 3.5) : 3.5) / 6);
+    body.poly([[hx + 4, hy - ry - 1], [tx - 1, ty + 2], [hx + rx * 0.55, hy - ry * 0.55]], M.body, 4);
     if (q.crown > 0) {
       // the Ember Wisp's flare: flame tongues standing up from the head
-      const fl = K.mat(mixh(col, '#ffd27a', 0.5), { n: 4, at: 2, step: 0.12 });
-      const fy = K.mat('#fff0b8', { n: 3, at: 1, step: 0.1, line: false });
       for (let i = 0; i < 5; i++) {
         const x = hx - 18 + i * 9, h = (10 + ((i * 7) % 5) * 3 + (i === 2 ? 6 : 0)) * q.crown, sw = Math.sin(q.ph + i * 1.3) * 3 * q.crown;
-        body.poly([[x - 6, hy - ry + 6], [x + sw, hy - ry - h], [x + 6, hy - ry + 6]], fl, 2);
-        body.poly([[x - 3, hy - ry + 6], [x + sw * 1.2, hy - ry - h * 0.6], [x + 3, hy - ry + 6]], fy, 1);
+        body.poly([[x - 6, hy - ry + 7], [x + sw, hy - ry - h], [x + 6, hy - ry + 7]], M.fire, (xx) => (xx < x + sw * 0.5 ? 3.5 : 2.5) / 5);
+        body.poly([[x - 3, hy - ry + 7], [x + sw * 1.2, hy - ry - h * 0.6], [x + 3, hy - ry + 7]], M.fireHot, 1);
       }
     }
-    A.outline(body);
-    // inner light: a warm core cluster up-left of centre
+    A.despeckle(body);
+    // inner light: a warm core cluster up-left of centre, its hottest point inside it
     body.onto((b) => {
-      b.ell(hx - 8, hy - 9, 9 * (0.8 + 0.3 * q.core), 7 * (0.8 + 0.3 * q.core), M, 4);
-      b.ell(hx - 11, hy - 12, 4 + q.core * 2, 3 + q.core, hot, 0);
+      const k = 0.8 + 0.3 * q.core;
+      b.ell(hx - 9, hy - 9, 8 * k, 6 * k, M.body, 4);
+      b.ell(hx - 10, hy - 10, 5 * k, 3.6 * k, M.body, 5);
+      b.ell(hx - 11, hy - 11, 2.5 + q.core * 1.5, 1.8 + q.core, M.hot, 1);
+      b.rect(Math.round(hx - 13), Math.round(hy - 13), 2, 1, M.shine, 0);
     });
-    // eyes (narrowed, shut, or pleading), and a mouth when it breathes out
+    A.rim(body, [M.body.id]);
+    // the three-quarter face: the far eye narrow at the left, the near eye full; a mouth to breathe
     const lx = q.look > 0.5 ? -2 : 0, ly = q.look > 0.5 ? 1 : 0;
-    if (q.eye < 0.25) for (const s of [-1, 1]) { body.line(hx + s * 10 - 3, hy + 3, hx + s * 10 + 3, hy + 3, H.ink, 1); body.dot(hx + s * 10 + (s < 0 ? -3 : 3), hy + 2, H.ink, 1); }
-    else {
-      H.eyes(body, hx + 1 + lx, hy + 2 + ly, 10, { rx: 3.5, ry: 6 * Math.max(0.35, q.eye) });
-      if (q.droop > 0) for (const s of [-1, 1]) body.line(hx + s * 10 - 4 + lx, hy - 5 + (s < 0 ? 2 : -0) * q.droop + ly, hx + s * 10 + 4 + lx, hy - 5 + (s < 0 ? 0 : 2) * q.droop + ly, M, 1);
+    const EY = [[-12, 2.8], [2, 3.8]];
+    if (q.eye < 0.25) for (const [ex, er] of EY) { body.line(hx + ex - er, hy + 3, hx + ex + er, hy + 3, M.eye, 1); body.dot(hx + ex + er, hy + 2, M.eye, 1); }
+    else for (const [ex, er] of EY) {
+      const ery = 6 * Math.max(0.35, q.eye), x = hx + ex + lx, y = hy + 2 + ly;
+      body.ell(x, y, er, ery, M.eye, (px, py) => (py > y + ery * 0.3 ? 1.5 : 0.5) / 3);
+      if (er > 3) body.rect(Math.round(x - er * 0.5), Math.round(y - ery * 0.6), 2, 2, M.shine, 0);
+      else body.dot(x - 1, y - ery * 0.5, M.shine, 0);
+      if (q.droop > 0) body.line(x - er - 1, y - ery - 1 + (ex < 0 ? 2 : 0) * q.droop, x + er + 1, y - ery - 1 + (ex < 0 ? 0 : 2) * q.droop, M.body, 1);
     }
-    if (q.mouth > 0) body.ell(hx + lx, hy + 13 + ly, 2 + q.mouth * 3, 1.5 + q.mouth * 3, H.ink, 0);
-    return body.under(aura);
+    if (q.mouth > 0) body.ell(hx - 5 + lx, hy + 13 + ly, 2 + q.mouth * 3, 1.5 + q.mouth * 3, M.eye, 0);
+    A.cast(tail, body, 2, 3, 1);
+    A.outline(tail); A.outline(body);
+    return tail.over(body).under(aura);
   }
   const wBase = { hx: 0, hy: 0, rx: 30, ry: 29, point: 0, tlen: 70, tw: 25, tamp: 11, tcurl: 11, tlean: 0, ph: 0, glow: 1, core: 0.5, eye: 1, look: 0, mouth: 0, crown: 0, droop: 0 };
   const PH = (f, n) => (f / n) * Math.PI * 2;
