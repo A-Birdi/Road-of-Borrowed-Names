@@ -246,8 +246,13 @@ await test('choosing the target: a click on the creature and on its slip, arrow 
   const label = await p.evaluate((i) => { const c = [...document.querySelectorAll('.rcard')].find((x) => /Unravel/.test(x.textContent)); return c.querySelector('.rc-tgt').textContent; }, other);
   const short = s.foes[other].id === 'sa.moth' ? 'Moth' : s.foes[other].id === 'sa.crane' ? 'Crane' : 'Wraith';
   assert(new RegExp('on the ' + short, 'i').test(label), 'Unravel now says whom it acts on: ' + label);
+  // Adaptive: the target is its plate (paper, the bracket); Expanded: the telegraph leads with the target's
+  const plateOn = await p.evaluate(() => { const e = document.querySelector('.cb-foe .fs.on'); return e ? +e.dataset.foe : null; });
+  assert(plateOn === other, 'the new target\'s plate is marked ' + plateOn);
+  await p.evaluate(() => { RB.game.settings.intentDisplay = 'expanded'; RB.combat.refresh(); });
   const telegraph = await p.evaluate(() => document.querySelector('.intent .it-block').getAttribute('data-foe'));
-  assert(+telegraph === other, 'the telegraph shown is the new target\'s');
+  assert(+telegraph === other, 'Expanded: the telegraph leads with the new target\'s');
+  await p.evaluate(() => { RB.game.settings.intentDisplay = 'adaptive'; RB.combat.refresh(); });
   // its slip, with the mouse
   const third = [0, 1, 2].find((i) => i !== other && i !== s0.cur);
   await p.click('.cb-foe .fs[data-foe="' + third + '"]');

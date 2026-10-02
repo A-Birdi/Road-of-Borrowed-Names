@@ -32,6 +32,8 @@ async function battle(p, enemy, o) {
     if (o.tips) s.tips = o.tips;
     if (o.won) s.vars.battlesWon = o.won;
     RB.game.settings.input = 'choice';
+    // (the telegraph panel's own keywords are tested with Expanded: in Adaptive a routine move is its badge only)
+    RB.game.settings.intentDisplay = o.intents || 'adaptive';
     RB.game.settings.reducedMotion = !!o.reduce; RB.game.applySettings();
     window.__result = null;
     RB.game.startBattle(enemy, {}).then((r) => { window.__result = r; });
@@ -148,9 +150,9 @@ await test('Harmony is explained once, fills from a real clean answer, and its t
 });
 
 // ---------------------------------------------------------------------------
-await test('keyword help: hover and keyboard focus explain the move and the states, with the real numbers', async () => {
+await test('keyword help: hover and keyboard focus explain the move and the states, with the real numbers (the telegraph with Expanded; the badge card with Adaptive)', async () => {
   const { p, errors, ctx } = await page(b, url, DESK);
-  await battle(p, 'rw.mill_echo', { map: 'rw.mill1', x: 6, y: 6, comp: 'mio', tips: { harmony: 1, 'intent:strike': 1 } });
+  await battle(p, 'rw.mill_echo', { map: 'rw.mill1', x: 6, y: 6, comp: 'mio', tips: { harmony: 1, 'intent:strike': 1 }, intents: 'expanded' });
   await p.evaluate(() => { const st = RB.combat.state(); st.heat = 1; st.ward.comp = 2; RB.combat.refresh(); });
   // the telegraph: a single blow, 2 + 1 from Heat, never covering the line being read
   await p.hover('.intent .kw.it-kind');
@@ -205,6 +207,21 @@ await test('keyword help: hover and keyboard focus explain the move and the stat
   // every keyword is a 44 px target
   const small = await p.evaluate(() => [...document.querySelectorAll('.combat-ui .kw')].map((e) => { const r = e.getBoundingClientRect(); return [e.getAttribute('data-kw'), Math.round(r.width), Math.round(r.height)]; }).filter(([, w, h]) => w < 44 || h < 44));
   assert(!small.length, 'keywords under 44px: ' + JSON.stringify(small));
+  // Adaptive: no telegraph panel for a routine Strike; its badge's card says the same, and its note has the real numbers
+  await p.evaluate(() => { RB.game.settings.intentDisplay = 'adaptive'; RB.combat.refresh(); });
+  await p.mouse.move(2, 2);
+  await p.waitForTimeout(300);
+  const panel = await p.evaluate(() => getComputedStyle(document.querySelector('.combat-ui .intent')).display);
+  assert(panel === 'none', 'Adaptive: no telegraph panel for a routine Strike (' + panel + ')');
+  const bd = await p.evaluate(() => { const b = RB.battleIntents.state().badges[0]; return { x: b.x + b.w / 2, y: b.y + b.h / 2 }; });
+  await p.mouse.click(bd.x, bd.y);
+  await p.waitForSelector('#cb-icard .ic-more');
+  const ct = await p.evaluate(() => document.querySelector('#cb-icard').textContent.replace(/\s+/g, ' '));
+  assert(/Strike/.test(ct) && /3 to one of you/.test(ct), 'the badge card: ' + ct);
+  await p.click('#cb-icard .ic-more');
+  await p.waitForSelector('.kwcard');
+  t = await cardText(p);
+  assert(/for 3 \(\+1 from Heat\)/.test(t), 'its note has the real numbers: ' + t);
   assert(!errors.length, errors.join('; '));
   await ctx.close();
 });
@@ -213,7 +230,7 @@ await test('keyword help: hover and keyboard focus explain the move and the stat
 await test('keyword help by tap: a sheet on phones, a tap outside only closes it; fits 320px at 200% text', async () => {
   {
     const { p, errors, ctx } = await page(b, url, phone(390, 844));
-    await battle(p, 'rw.mill_echo', { map: 'rw.mill1', x: 6, y: 6, comp: 'mio', tips: { harmony: 1, 'intent:strike': 1 } });
+    await battle(p, 'rw.mill_echo', { map: 'rw.mill1', x: 6, y: 6, comp: 'mio', tips: { harmony: 1, 'intent:strike': 1 }, intents: 'expanded' });
     await p.evaluate(() => { const st = RB.combat.state(); st.heat = 2; RB.combat.refresh(); });
     await p.tap('.cb-foe .kw[data-kw=heat]');
     await p.waitForSelector('.kwcard.sheet');
@@ -308,12 +325,12 @@ await test('a response used for the first time is marked New with what it answer
 // ---------------------------------------------------------------------------
 await test('Heat is shown as a state and a real みず exchange clears it; the first Heat move is introduced', async () => {
   const { p, errors, ctx } = await page(b, url, DESK);
-  await battle(p, 'rw.mill_echo', { map: 'rw.mill1', x: 6, y: 6, comp: 'mio', reduce: true });
+  await battle(p, 'rw.mill_echo', { map: 'rw.mill1', x: 6, y: 6, comp: 'mio', reduce: true, intents: 'expanded' });
   // the first move of a new campaign is introduced by a one-time note (no animation with Reduce motion)
   const note = await p.evaluate(() => { const c = document.querySelector('.cb-coach'); return c ? { t: c.textContent, anim: getComputedStyle(c).animationName } : null; });
   assert(note && /New move: Strike/.test(note.t) && note.anim === 'none', 'first Strike introduced, no animation: ' + JSON.stringify(note));
   await p.evaluate(() => { RB.combat.state().heat = 1; RB.combat.refresh(); });
-  assert(/Heat 1/.test(await p.textContent('.cb-foe')), 'Heat shows on the foe\'s slip');
+  assert(/Heat 1/.test(await p.textContent('.cb-foe')), 'Heat shows on the creature\'s plate');
   await respond(p, 'water', 'みず');
   await p.waitForFunction(() => /Heat cleared/.test((document.querySelector('.clog') || {}).textContent || ''), null, { timeout: 15000 });
   await cards(p);
