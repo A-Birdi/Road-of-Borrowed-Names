@@ -306,8 +306,8 @@ w.houchou|ほうちょう|ほう|包丁|{包丁|ほうちょう}|kitchen knife|h
 w.houki|ほうき|ほき|ほうき|ほうき|broom|household|extended|c|rg.houki|jm=1566500/ichi1/uk;ip=+;lx=new
 w.ido|いど|いど|井戸|{井戸|いど}|well|place household|extended|c|rg.ido|jm=1160330/ichi1.news1.nf09;ip=+;lx=I
 w.imo|いも|いも|芋|{芋|いも}|potato, yam|food|extended|c|rg.imo|jm=1167960/ichi1.news2.nf32;ip=+;lx=new
-w.inaka|いなか|いか|田舎|{田舎|いなか}|the countryside|place|extended|c|rg.inaka|jm=1442750/ichi1.news1.nf09;ip=+;lx=new
 w.inku|いんく|いく|インク|インク|ink|writing|extended|c|rg.inku|jm=1022210/gai1.ichi1;ip=+;lx=E
+w.inoshishi|いのしし|いし|いのしし|いのしし|wild boar|animal|extended|c|rg.inoshishi|jm=1427010/news1.nf11/uk;ip=+;lx=new
 w.iruka|いるか|いか|いるか|いるか|dolphin|animal sea|extended|c|rg.iruka|jm=1201670/-/uk;ip=+;lx=new
 w.ishou|いしょう|いう|衣装|{衣装|いしょう}|costume|performing clothing|extended|c|rg.ishou|jm=1158760/ichi1.news1.nf07;ip=+;lx=I
 w.izumi|いずみ|いみ|泉|{泉|いずみ}|spring (of water)|nature|extended|c|rg.izumi|jm=1390780/ichi1.news1.nf06;ip=+;lx=I

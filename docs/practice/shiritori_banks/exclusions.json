@@ -11,11 +11,13 @@
    "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
   },
   {
-   "id": "w.inoshishi",
-   "reading": "いのしし",
-   "forms": [],
-   "en": "wild boar",
-   "why": "verified but not selected: each band holds exactly its target number of repeat-groups, chosen for basicness, closure and certified openings"
+   "id": "w.inaka",
+   "reading": "いなか",
+   "forms": [
+    "田舎"
+   ],
+   "en": "the countryside",
+   "why": "the usual spelling 田舎 is a whole-word reading, so 舎 has no reading of its own for the handwriting pad; replaced by いのしし"
   },
   {
    "id": "w.imomushi",
@@ -63,7 +65,7 @@
     "エプロン"
    ],
    "en": "apron",
-   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 13, Extended 24 losing words)"
+   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 10, Extended 24 losing words)"
   },
   {
    "id": "w.eri",
@@ -175,7 +177,7 @@
    "reading": "きりん",
    "forms": [],
    "en": "giraffe",
-   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 13, Extended 24 losing words)"
+   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 10, Extended 24 losing words)"
   },
   {
    "id": "w.kushi",
@@ -214,7 +216,7 @@
     "クレヨン"
    ],
    "en": "crayon",
-   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 13, Extended 24 losing words)"
+   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 10, Extended 24 losing words)"
   },
   {
    "id": "w.kuwa",
@@ -328,7 +330,7 @@
     "水仙"
    ],
    "en": "daffodil, narcissus",
-   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 13, Extended 24 losing words)"
+   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 10, Extended 24 losing words)"
   },
   {
    "id": "w.zukei",
@@ -364,7 +366,7 @@
     "スプーン"
    ],
    "en": "spoon",
-   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 13, Extended 24 losing words)"
+   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 10, Extended 24 losing words)"
   },
   {
    "id": "w.suberidai",
@@ -398,7 +400,7 @@
     "雑巾"
    ],
    "en": "floor cloth",
-   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 13, Extended 24 losing words)"
+   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 10, Extended 24 losing words)"
   },
   {
    "id": "w.zouri",
@@ -485,7 +487,7 @@
     "提灯"
    ],
    "en": "paper lantern",
-   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 13, Extended 24 losing words)"
+   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 10, Extended 24 losing words)"
   },
   {
    "id": "w.chiritori",
@@ -722,7 +724,7 @@
     "ピーマン"
    ],
    "en": "green pepper",
-   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 13, Extended 24 losing words)"
+   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 10, Extended 24 losing words)"
   },
   {
    "id": "w.piero",
@@ -822,7 +824,7 @@
     "プリン"
    ],
    "en": "custard pudding",
-   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 13, Extended 24 losing words)"
+   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 10, Extended 24 losing words)"
   },
   {
    "id": "w.furoshiki",
@@ -865,7 +867,7 @@
     "ペンギン"
    ],
    "en": "penguin",
-   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 13, Extended 24 losing words)"
+   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 10, Extended 24 losing words)"
   },
   {
    "id": "w.houtai",
@@ -1013,7 +1015,7 @@
     "ラーメン"
    ],
    "en": "ramen",
-   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 13, Extended 24 losing words)"
+   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 10, Extended 24 losing words)"
   },
   {
    "id": "w.raion",
@@ -1022,7 +1024,7 @@
     "ライオン"
    ],
    "en": "lion",
-   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 13, Extended 24 losing words)"
+   "why": "ends in ん: beyond the ん-word quota (Pocket 4, Everyday 10, Extended 24 losing words)"
   },
   {
    "id": "w.rakuda",

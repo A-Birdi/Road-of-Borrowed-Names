@@ -37,6 +37,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 蜘蛛|くも|n|F|spider
 いるか||n|I|dolphin
 鯨|くじら|n|I|whale
+いのしし||n|I|wild boar
 ゴリラ||n|F|gorilla
 パンダ||n|I|panda
 ざりがに||n|I|crayfish
@@ -82,7 +83,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
 道路|どうろ|n|I|road
 病院|びょういん|n|I|hospital
 銀行|ぎんこう|n|E|bank
-田舎|いなか|n|I|the countryside
 ビル||n|E|building
 プール||n|E|swimming pool
 かばん||n|E|bag
