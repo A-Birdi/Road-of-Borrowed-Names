@@ -124,7 +124,8 @@ export async function respond(p, match, o) {
 export async function idle(p) {
   for (let i = 0; i < 600; i++) {
     const s = await p.evaluate(() => ({ busy: RB.battleSeq.busy(), cards: !!document.querySelector('.rcard[data-i]') && !document.querySelector('.chal'), dlg: RB.ui.dialogue.isOpen(), res: window.__result, ph: RB.combat.phase && RB.combat.phase() }));
-    if (!s.busy && (s.cards || s.dlg || s.res) && s.ph !== 'player' && s.ph !== 'enemy' && s.ph !== 'companion') return s;
+    // (a line in the middle of an exchange — a boss's new phase — waits for the reader: that counts too)
+    if (!s.busy && (s.dlg || s.res || (s.cards && s.ph !== 'player' && s.ph !== 'enemy' && s.ph !== 'companion'))) return s;
     await wait(p, 40);
   }
   throw new Error('the exchange never finished');
