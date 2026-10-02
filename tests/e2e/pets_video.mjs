@@ -4,7 +4,7 @@
 // companion's action (a short acknowledgement), the creature's move (its safe nearby reaction) — the
 // finishing response (its settled-victory gesture with your cheer) and the last line clicked away.
 // Writes a WebM (Playwright's recorder).
-// Usage: node tests/e2e/pets_video.mjs [cat|dog|bird|tanuki] [out.webm] [--reduce] [--short]
+// Usage: node tests/e2e/pets_video.mjs [cat|dog|bird|tanuki] [out.webm] [--reduce] [--short] [--size=960x540]
 import fs from 'node:fs';
 import path from 'node:path';
 import { serve, launch, root } from './lib.mjs';
@@ -17,7 +17,8 @@ const { srv, url } = await serve();
 const b = await launch();
 const dir = path.join(path.dirname(out), 'raw-' + sp);
 fs.mkdirSync(dir, { recursive: true });
-const ctx = await b.newContext({ viewport: { width: 1280, height: 720 }, recordVideo: { dir, size: { width: 960, height: 540 } } });
+const SZ = (process.argv.find((a) => a.startsWith('--size=')) || '--size=960x540').slice(7).split('x').map(Number);
+const ctx = await b.newContext({ viewport: { width: 1280, height: 720 }, recordVideo: { dir, size: { width: SZ[0], height: SZ[1] } } });
 const p = await ctx.newPage();
 const errors = [];
 p.on('pageerror', (e) => errors.push(e.message));
