@@ -22,7 +22,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 (function () {
   'use strict';
-  const CB = RB.creaturesB, K = RB.pxkit, E = CB.E;
+  const CB = RB.creaturesB, K = RB.pxkit, E = CB.E, S = CB.S;
   const mixh = (a, b, k) => K.hex(K.mix(a, b, k));
   const PIV = -66; // the bell's hinge (the top of its loop), art px above the origin
 
@@ -272,140 +272,251 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // THE KEEPER
   // ======================================================================================
   const KP = -80; // the keeper's body hinge (the crown), art px above the origin
+  const KLEAN = -0.05; // it leans toward the party (a line of action from its back foot to its crown)
   function keeperPt(q, x, y) {
-    const a = q.tilt || 0, c = Math.cos(a), s = Math.sin(a), dy = y - KP;
+    const a = (q.tilt || 0) + KLEAN, c = Math.cos(a), s = Math.sin(a), dy = y - KP;
     return [Math.round(x * c - dy * s), Math.round(KP + x * s + dy * c + (q.crouch || 0))];
   }
-  // tendril i: from its root on the lower back to a foot on the floor (the lash lifts tendril 0)
+  // the body: a cast cone seen three-quarter from a little above; hw(y) its half width, the
+  // face (plate and eyes) turned toward the party (θ < 0 is the near-left side)
+  const KHW = (y) => (y < -70 ? 22 : 22 + (y + 70) * 0.4);
+  const KROT = -0.32; // where the face is centred round the cone (radians)
+  // tendril i: from its root under the lip to a foot on the floor. 0 the near-left (it lashes),
+  // 1 and 2 the far pair behind (higher feet, in shade), 3 the near-right (it winds the rope)
+  // (four legs round a circle, the stand turned toward the party and seen from a little above:
+  // left, front, back, right — the front foot lowest and nearest, the back one highest, half hidden)
+  const TROOT = [[-30, 38], [-6, 44], [8, 32], [30, 38]];
+  const TFOOT = [[-70, 86], [-16, 97], [16, 76], [70, 91]];
   function tendrilPts(q, i) {
-    const x0 = -30 + i * 20;
     const ph = (q.tph || 0) + i;
     const w0 = Math.sin(ph) * 5 * (q.tamp == null ? 1 : q.tamp);
-    const [rx, ry] = keeperPt(q, x0, 18);
+    const [rx, ry] = keeperPt(q, TROOT[i][0], TROOT[i][1]);
     const curl = q.curl || 0;              // plea: the tendrils draw in under it
-    let ex = -70 + i * 46, ey = 92;
+    let [ex, ey] = TFOOT[i];
     ex = ex * (1 - curl * 0.45);
-    const out = [[rx, ry, 10], [rx + (ex - rx) * 0.5 + w0, ry + (ey - ry) * 0.45 - curl * 6, 10], [ex + w0 * 0.6, 78 - curl * 10, 9], [ex + (i < 2 ? -10 : 10) * (1 - curl), ey - curl * 14, 8]];
+    const far = i === 2, wd = i === 1 ? 12 : far ? 8 : 10;
+    const kneeOut = i === 0 ? -10 : i === 3 ? 10 : i === 1 ? -6 : 4;
+    const out = [[rx, ry, wd], [rx + (ex - rx) * 0.45 + kneeOut + w0, ry + (ey - ry) * 0.35 - curl * 6, wd], [ex + w0 * 0.6 + kneeOut * 0.4, ey - 14 - curl * 10, wd - 1], [ex + (i === 0 ? -8 : i === 3 ? 8 : i === 1 ? -5 : 4) * (1 - curl), ey - curl * 14, wd - 2]];
     if (i === 0 && q.lash) {
-      // the lash: the front tendril rears up and reaches toward the party
+      // the lash: the near tendril rears up and reaches toward the party
       const k = q.lash;
-      out[1] = [rx - 24 * k, ry - 10 * k + 10 * (1 - k), 10];
-      out[2] = [rx - 40 * k + (ex + w0) * (1 - k) * 0.5, 30 - 26 * k + 48 * (1 - k), 9];
-      out[3] = [rx - 62 * k + (ex - 10) * (1 - k) * 0.5, 14 - 10 * k + 78 * (1 - k), 8];
+      out[1] = [rx - 24 * k + (out[1][0] - rx) * (1 - k), ry - 10 * k + (out[1][1] - ry) * (1 - k), 11];
+      out[2] = [rx - 42 * k + out[2][0] * (1 - k) * 0.9, 30 - 26 * k + 50 * (1 - k), 10];
+      out[3] = [rx - 64 * k + (ex - 9) * (1 - k) * 0.8, 14 - 10 * k + 80 * (1 - k), 9];
     }
     if (i === 3 && q.rope) {
-      // the false yes: the back tendril curls up to wind the bell rope away
+      // the false yes: the near-right tendril curls up to wind the bell rope away
       const k = q.rope;
-      out[2] = [ex + 8 * k, 78 - 40 * k, 9];
-      out[3] = [ex - 6 * k, 92 - 66 * k, 8];
+      out[2] = [ex + 8 * k, ey - 14 - 40 * k, 10];
+      out[3] = [ex - 6 * k, ey - 66 * k, 9];
     }
     return out;
   }
+  // palettes: weathered bell bronze (green-grey, verdigris in the hollows), brass, blued iron pipe
+  const KPAL = {
+    bronze: ['#0e1024', '#18223a', '#22384a', '#2f5450', '#4a7a5e', '#86ae70', '#e4f2bc'],
+    patina: ['#14484e', '#22766e', '#3ea88c', '#86dcb4'],
+    brass: ['#2a1210', '#5a2e14', '#93591e', '#c78e2c', '#ecc35c', '#fff2b4'],
+    iron: ['#100e26', '#1f1e40', '#33335e', '#4e5084', '#7e84b4', '#c6cceb'],
+    water: ['#2a5aa4', '#4f8ad2', '#8cc2f0', '#d4f0ff'],
+  };
   function drawKeeper(L, o, q, H) {
     const col = o.col || '#4a5a52';
-    const bronze = K.mat(col, { n: 6, at: 3, step: 0.085, shift: 1.2 });
-    const patina = K.mat('#7fae9a', { n: 3, at: 1, step: 0.08, line: false });
-    const brass = K.mat('#b8984a', { n: 6, at: 3, step: 0.09 });
-    const band = K.mat('#6a7a62', { n: 5, at: 2, step: 0.08 });
-    const pipeM = K.mat('#3a3850', { n: 5, at: 2, step: 0.08 });
-    const water = K.mat('#a0bee6', { n: 3, at: 1, step: 0.1, alpha: 210, line: false });
-    const foam = K.solid('#eef6ff', { line: false });
-    const eyeM = K.mat(q.eyeGlow ? '#fff0c0' : '#e8ecff', { n: 3, at: 1, line: false });
-    const dark = K.mat('#141820', { n: 2, at: 0, line: false });
-    const seamM = K.solid('#9fd8e8', { line: false });
-    const ropeM = K.mat('#b89060', { n: 4, at: 2, step: 0.1 });
-    const tend = L.like(), front = L.like(), B = L.like(), fx = L.like(), aura = L.like();
-    const tilt = q.tilt || 0, cr = q.crouch || 0;
-    // tendrils: the three behind, the front one (a lash) drawn over the body
-    for (let i = 0; i < 4; i++) H.pipe(i === 0 && q.lash > 0.3 ? front : tend, tendrilPts(q, i), 10, pipeM);
+    const bronzeCols = col.toLowerCase() === '#4a5a52' ? KPAL.bronze : S.ramp(col, { n: 7, at: 3 });
+    const bronze = S.mat(bronzeCols, { at: 3, rim: '#7ab8e8', litk: 0.12 });
+    const patina = S.mat(KPAL.patina, { at: 1, line: false });
+    const brass = S.mat(KPAL.brass, { at: 3, rim: '#8ab0e0', litk: 0.12 });
+    const iron = S.mat(KPAL.iron, { at: 3, rim: '#86b8ee', litk: 0.12 });
+    const ironFar = S.mat(KPAL.iron.slice(0, 5), { at: 2, litk: 0.1 });
+    const water = S.mat(KPAL.water, { at: 1, alpha: 215, line: '#1a3a74' });
+    const foam = K.solid('#f2fbff', { line: false });
+    const eyeM = S.mat(q.eyeGlow ? ['#e8a040', '#ffd880', '#fff6d0'] : ['#7a9ad0', '#cfe0ff', '#ffffff'], { at: 1, line: false });
+    const cav = S.mat(['#06060e', '#100e1c', '#1c1a2e'], { at: 0, line: false });
+    const seamM = S.mat(['#4ab8d8', '#a4f0ff', '#ffffff'], { at: 1, line: false });
+    const ropeM = S.mat(['#3a1e1a', '#7a4a2a', '#b8864a', '#e8c080'], { at: 2 });
+    const farT = L.like(), sideT = L.like(), nearT = L.like(), lash = L.like(), B = L.like(), wheelL = L.like(), fx = L.like(), aura = L.like();
+    const tilt = (q.tilt || 0) + KLEAN, cr = q.crouch || 0;
+    // ---- tendrils: the far pair behind the body, the near pair in front of its lip
+    // the back leg in shade behind everything; the side legs behind the lip; the front leg (and a
+    // lashing or rope-winding leg) in front of it
+    S.pipe(farT, tendrilPts(q, 2), 8, ironFar, { bands: [[-1, 3], [-0.7, 4], [-0.45, 3], [-0.1, 2], [0.4, 1], [0.75, 0]] });
+    for (const i of [0, 3]) S.pipe((i === 0 && q.lash > 0.3) ? lash : (i === 3 && q.rope > 0.3) ? nearT : sideT, tendrilPts(q, i), 10, iron);
+    S.pipe(nearT, tendrilPts(q, 1), 12, iron);
     // feet: a flat cap where each tendril meets the floor (planted)
     for (let i = 0; i < 4; i++) {
       if (i === 0 && q.lash > 0.3) continue;
       if (i === 3 && q.rope > 0.3) continue;
-      const p = tendrilPts(q, i)[3];
-      tend.ell(p[0], Math.min(94, p[1] + 2), 7, 3, pipeM, 1);
+      const p = tendrilPts(q, i)[3], far = i === 2, Lr = far ? farT : i === 1 ? nearT : sideT, M = far ? ironFar : iron;
+      Lr.ell(p[0], p[1] + 1, far ? 7 : 9, far ? 3 : 4, M, (x, y) => S.step(y < p[1] ? M.n - 2 : x > p[0] + 2 ? 1 : M.n - 3, M.n));
+      Lr.line(p[0] - (far ? 5 : 7), p[1] + 1, p[0] + (far ? 5 : 7), p[1] + 1, M, 0);
     }
-    // the bell rope wound up by the back tendril (the false yes)
+    // the bell rope wound up by the near-right tendril (the false yes)
     if (q.rope > 0.05) {
       const p = tendrilPts(q, 3)[3];
       const [cx, cy] = keeperPt(q, 0, 46);
-      tend.path([[cx + 2, cy], [Math.round((cx + p[0]) / 2) + 4, Math.round((cy + p[1]) / 2) + 10], [p[0], p[1]]], 2, ropeM, 2);
-      for (let k = 0; k < 3; k++) tend.ell(p[0] + (k - 1) * 2, p[1] + k * 2 - 2, 4, 2, ropeM, 2 - (k % 2));
+      nearT.path([[cx + 2, cy], [Math.round((cx + p[0]) / 2) + 4, Math.round((cy + p[1]) / 2) + 10], [p[0], p[1]]], 3, ropeM, 2);
+      for (let k = 0; k < 3; k++) nearT.ell(p[0] + (k - 1) * 2, p[1] + k * 2 - 2, 4, 2, ropeM, 3 - (k % 2));
     }
     // seams glowing with the pressure (Gathering)
     if (q.glow > 0.05) H.glow(aura, ...keeperPt(q, 0, -20), 58, 62, '#9fd8e8', 0.18 * q.glow, 3);
+    // ---- the body, in its own frame (crouch, then the lean about the crown)
     B.save().translate(0, cr).translate(0, KP).rotate(tilt).translate(0, -KP);
-    // the gate wheel on its spindle (it turns: spokes at q.wheel)
-    B.path([[0, -72], [0, -94]], 4, brass, 3);
-    B.fill(-17, -105, 17, -85, (x, y) => { const d = Math.hypot(x, (y + 95) * 1.8); return d <= 15 && d >= 12; }, brass, (x, y) => K.clamp(0.62 - (x + y + 95) / 30, 0, 0.99));
-    for (let k = 0; k < 4; k++) {
-      const a = (q.wheel || 0) + (k * Math.PI) / 4;
-      B.line(0, -95, Math.round(Math.cos(a) * 13), Math.round(-95 + Math.sin(a) * 13 / 1.8), brass, 2);
-      B.line(0, -95, Math.round(-Math.cos(a) * 13), Math.round(-95 - Math.sin(a) * 13 / 1.8), brass, 2);
-    }
-    B.ell(0, -95, 3, 2, brass, 5);
-    // knob on the rim (shows the wheel's turning)
-    { const a = q.wheel || 0; B.ell(Math.round(Math.cos(a) * 14), Math.round(-95 + Math.sin(a) * 14 / 1.8), 2, 2, brass, 5); }
-    // body: a crowned bell-trapezoid with fluting, a heavy base band
-    B.ell(0, -70, 22, 8, bronze, K.sphere(-6, -74, 24, 10));
-    B.poly([[-22, -70], [22, -70], [62, 30], [-62, 30]], bronze, (x, y) => {
-      const w = 22 + (y + 70) * 0.4, nx = x / w;
-      return K.clamp(0.56 - nx * 0.36 + (y < -40 ? 0.12 : 0) + (nx > -0.62 && nx < -0.48 ? 0.14 : 0) - (q.dark || 0) * 0.2, 0, 0.99);
-    });
-    for (const x of [-30, 0, 30]) { B.line(x * 0.4, -68, x, 28, bronze, 1); B.line(x * 0.4 + 1, -68, x + 1, 28, bronze, 4); }
-    B.stone([[-64, 28], [64, 28], [66, 40], [-66, 40]], band, { bevel: 2, face: 2 });
-    for (let i = 0; i < 7; i++) { B.rect(-54 + i * 18, 32, 2, 2, band, 4); B.dot(-54 + i * 18 + 1, 33, band, 0); }
-    // verdigris where the water runs; streaks down from the plate
-    for (const [x, y, s] of [[-40, 10, 8], [-30, 22, 6], [34, 14, 7], [18, -40, 5], [-14, -58, 6], [48, 24, 5], [-48, 26, 4]]) K.cluster(B, x, y, s, patina, 1, K.hh(x + 7, y + 7, 9));
-    for (const x of [-22, -9, 11, 23]) B.line(x, -6, x + (x > 0 ? 1 : -1), 4 + (K.hh(x, 2, 2) % 10), patina, 0);
-    // the sluice: a drop gate — the plate sinks in its grooves and opens a dark mouth under the
-    // eyes (water fills it when it pours)
-    const pl = q.plate || 0, open = Math.round(pl * 22);
-    B.rect(-29, -46, 3, 40 + open, band, 1); B.rect(26, -46, 3, 40 + open, band, 1);
-    B.dot(-28, -46, band, 4); B.dot(27, -46, band, 4);
-    if (open > 0) {
-      B.rect(-25, -44, 50, open, dark, (x, y) => K.clamp(0.1 + (y + 44) / 60, 0, 0.99));
-      if (q.pour > 0.05) {
-        B.rect(-23, -42 + Math.round((1 - q.pour) * open * 0.5), 46, Math.max(2, open - 3 - Math.round((1 - q.pour) * open * 0.5)), water, (x, y) => K.clamp(0.45 + (((y * 3 + x) % 7) === 0 ? 0.4 : 0) - (y + 44) / 80, 0, 0.99));
-        for (let k = 0; k < 5; k++) B.rect(-21 + k * 9, -42 + ((k * 3 + Math.round((q.tph || 0) * 4)) % 4), 4, 1, foam, 0);
+    // the angle round the cone at a point (−π/2 the left limb, 0 facing us, π/2 the right limb)
+    const th = (x, y) => Math.asin(Math.max(-1, Math.min(1, x / KHW(y))));
+    // the lip's lower edge curves toward us (seen from a little above)
+    const lipY = (x) => 32 + 7 * Math.sqrt(Math.max(0, 1 - (x / 62) ** 2));
+    // cast bronze in hard bands: lit left plane with a specular streak, a dark reflected band and
+    // the cool rim on the right; the crown lighter (it faces the sky)
+    const bodySh = (x, y) => {
+      const u = x / KHW(y);
+      let k = u < -0.9 ? 4 : u < -0.74 ? 6 : u < -0.58 ? 5 : u < -0.2 ? 4 : u < 0.3 ? 3 : u < 0.62 ? 2 : u < 0.84 ? 1 : 2;
+      if (y < -54 && k < 5) k++;
+      if (y > 20 && k > 1) k--;
+      k -= Math.round((q.dark || 0) * 3);
+      return S.step(k, 7);
+    };
+    B.fill(-64, -72, 64, 42, (x, y) => y >= -70 && y < lipY(x) && Math.abs(x) <= KHW(y), bronze, bodySh);
+    // the crown: the top face (an ellipse we look down on) and the cast dome on it
+    B.ell(0, -70, 22, 7, bronze, (x, y) => S.step(x < -8 ? 6 : x < 8 ? 5 : 4, 7));
+    B.ell(-1, -73, 12, 5, bronze, (x, y) => S.step(y < -75 && x < 0 ? 6 : x > 5 ? 3 : 4, 7));
+    // the lip band: a heavier rolled edge, curving toward us
+    B.fill(-64, 20, 64, 42, (x, y) => Math.abs(x) <= KHW(y) && y >= lipY(x) - 10 && y < lipY(x), bronze, (x, y) => { const u = x / KHW(y); return S.step(y < lipY(x) - 8 ? (u < -0.5 ? 6 : 5) : u < -0.7 ? 4 : u < -0.1 ? 3 : u < 0.6 ? 2 : 1, 7); });
+    // flutes round the cone: a shadowed groove with a lit lip on its left, spaced as they wrap
+    for (let f = -3; f <= 3; f++) {
+      const a = KROT + f * 0.5;
+      if (Math.abs(a) > 1.3) continue;
+      for (let y = -66; y < 24; y++) {
+        const x = Math.round(KHW(y) * Math.sin(a));
+        B.dot(x, y, bronze, a < -0.2 ? 3 : 1);
+        if (Math.cos(a) > 0.4) B.dot(x - 1, y, bronze, a < -0.2 ? 6 : a < 0.4 ? 4 : 3);
       }
     }
-    // the brass sluice plate (riding in its grooves): grooves, rivets
-    const py = -44 + open;
-    B.stone([[-26, py], [26, py], [26, py + 36], [-26, py + 36]], brass, { bevel: 3, face: 3 });
-    for (let y = py + 6; y <= py + 28; y += 6) { B.line(-20, y, 20, y, brass, 0); B.line(-20, y + 1, 20, y + 1, brass, 4); }
-    for (const [x, y] of [[-23, py + 3], [21, py + 3], [-23, py + 32], [21, py + 32]]) { B.rect(x, y, 2, 2, brass, 5); B.dot(x + 1, y + 1, brass, 1); }
-    // eyes above the plate (pale; lit while it gathers; shut in its plea; bowing for the "yes")
-    const eyes = q.eyes || 'open';
-    for (const s of [-1, 1]) {
-      const ex = s * 12, ey = -56;
-      if (eyes === 'shut') { B.rect(ex - 4, ey + 2, 8, 1, dark, 0); }
-      else if (eyes === 'down') { B.rect(ex - 4, ey, 8, 5, dark, 0); B.rect(ex - 3, ey + 3, 5, 2, eyeM, 1); }
-      else if (eyes === 'smile') { B.rect(ex - 4, ey, 8, 5, dark, 0); B.line(ex - 3, ey + 3, ex, ey + 1, eyeM, 2); B.line(ex, ey + 1, ex + 3, ey + 3, eyeM, 2); }
-      else if (eyes === 'wide') { B.rect(ex - 5, ey - 1, 10, 7, dark, 0); B.rect(ex - 3, ey + 1, 5, 3, eyeM, 2); }
-      else { B.rect(ex - 4, ey, 8, 5, dark, 0); B.rect(ex - 3, ey + 1, 5, 3, eyeM, 1); }
+    // raised bands with rivets, following the curve
+    for (const yb of [-64, 16]) {
+      for (let x = -KHW(yb) + 1; x <= KHW(yb) - 1; x++) {
+        const t = th(x, yb), yy = Math.round(yb + 3 * Math.cos(t));
+        B.dot(x, yy - 1, bronze, x / KHW(yb) < -0.4 ? 6 : 5); B.dot(x, yy, bronze, 3); B.dot(x, yy + 1, bronze, 1);
+      }
+      for (let r = -6; r <= 6; r++) {
+        const a = KROT + r * 0.22;
+        if (Math.abs(a) > 1.3) continue;
+        const x = Math.round(KHW(yb) * Math.sin(a)), yy = Math.round(yb + 3 * Math.cos(a)) + 3;
+        B.dot(x, yy, bronze, 5); B.dot(x + 1, yy + 1, bronze, 0);
+      }
     }
-    // glowing seams (the pressure inside, Gathering)
-    if (q.glow > 0.05) for (const x of [-30, 0, 30]) { const n = Math.round(10 + q.glow * 80); for (let k = 0; k < n; k += 3) { const t = k / 98; B.dot(Math.round(x * 0.4 + (x - x * 0.4) * t), Math.round(-68 + 96 * t), seamM, 0); } }
-    // the clapper on its chain below (it swings)
-    const ca = q.clap || 0;
-    const cx = Math.round(Math.sin(-ca) * 12), cy = 40 + Math.round(Math.cos(ca) * 12);
-    B.path([[0, 40], [cx, cy - 2]], 3, pipeM, 1);
-    B.ell(cx, cy + 3, 8, 7, pipeM, K.sphere(cx - 2, cy, 9, 8));
+    // verdigris: clustered green where water runs from the bands, with streaks down
+    // (it gathers under the raised bands and runs down in tapering streaks)
+    for (const [x0, y0, n] of [[-44, 20, 3], [-20, 21, 2], [24, 21, 3], [44, 22, 2], [-14, -60, 2], [10, -60, 3], [2, 21, 2]]) {
+      for (let k = 0; k < n; k++) {
+        const x = x0 + k * 4 + (K.hh(x0, k, 5) % 3), len = 5 + (K.hh(x0, y0 + k, 2) % 10);
+        S.tuft(B, x, y0, Math.PI / 2, len, 3, patina, x < -10 ? 2 : 1, 0);
+        B.dot(x - 1, y0, patina, 3);
+      }
+    }
+    // ---- the sluice: a drop gate whose brass plate slides down its grooves to open a mouth
+    const pl = q.plate || 0, open = Math.round(pl * 22);
+    const pa0 = KROT - 0.62, pa1 = KROT + 0.5; // the plate's span round the cone
+    const onFace = (x, y, a0, a1) => { const t = th(x, y); return t >= a0 && t <= a1; };
+    // grooves either side of the plate
+    for (const a of [pa0 - 0.05, pa1 + 0.05]) for (let y = -46; y < -6 + open; y++) { const x = Math.round(KHW(y) * Math.sin(a)); B.dot(x, y, bronze, 0); B.dot(x + (a < 0 ? 1 : -1), y, bronze, 2); }
+    if (open > 0) {
+      B.fill(-64, -46, 64, -44 + open, (x, y) => y >= -44 && y < -44 + open && onFace(x, y, pa0, pa1), cav, (x, y) => S.step(y > -44 + open - 3 ? 2 : y > -40 ? 1 : 0, 3));
+      if (q.pour > 0.05) {
+        const top = -42 + Math.round((1 - q.pour) * open * 0.5);
+        const ph = (q.tph || 0) * 3;
+        B.fill(-64, top, 64, -44 + open, (x, y) => y >= top + Math.round(Math.sin(x / 4 + ph)) && y < -45 + open && onFace(x, y, pa0 + 0.06, pa1 - 0.06), water, (x, y) => {
+          const d = y - top - Math.sin(x / 4 + ph);
+          const wave = Math.sin(x / 6 - y / 3 + ph) > 0.55;
+          return S.step(d < 1.5 ? 3 : y > -47 + open ? 0 : wave ? 2 : 1, 4);
+        });
+        for (let k = 0; k < 5; k++) { const a = pa0 + 0.12 + k * 0.2, x = Math.round(KHW(top) * Math.sin(a)); B.rect(x, top + ((k * 3 + Math.round((q.tph || 0) * 4)) % 4), 3, 1, foam, 0); }
+      }
+    }
+    // the brass plate itself (riding in its grooves), banded as it wraps the cone, with rivets
+    const py = -44 + open;
+    const plateSh = (x, y) => {
+      const t = th(x, y), u = (t - pa0) / (pa1 - pa0);
+      let k = u < 0.06 ? 4 : u < 0.16 ? 5 : u < 0.4 ? 4 : u < 0.78 ? 3 : 2;
+      if (y < py + 2) k = Math.min(5, k + 1);
+      if (y > py + 33) k = Math.max(1, k - 2);
+      return S.step(k, 6);
+    };
+    B.fill(-64, py, 64, py + 37, (x, y) => y >= py && y < py + 37 && onFace(x, y, pa0, pa1 + 0.04), brass, () => S.step(0, 6)); // its thickness, seen on the shadow side
+    B.fill(-64, py, 64, py + 36, (x, y) => y >= py && y < py + 36 && onFace(x, y, pa0, pa1), brass, plateSh);
+    for (let x = -64; x < 64; x++) if (onFace(x, py, pa0, pa1)) B.dot(x, py, brass, 5); // the lit top edge
+    for (let gy = py + 7; gy <= py + 29; gy += 6) for (let x = -64; x < 64; x++) {
+      if (!onFace(x, gy, pa0 + 0.08, pa1 - 0.08)) continue;
+      const t = th(x, gy), yy = Math.round(gy + 2 * Math.cos(t - KROT) - 2);
+      B.dot(x, yy, brass, 1); B.dot(x, yy + 1, brass, t < KROT ? 5 : 4);
+    }
+    for (const a of [pa0 + 0.08, pa1 - 0.09]) for (const yy of [py + 3, py + 32]) { const x = Math.round(KHW(yy) * Math.sin(a)); B.rect(x, yy, 2, 2, brass, 5); B.dot(x + 1, yy + 1, brass, 1); }
+    // eyes above the plate: the near one full, the far one narrowed by the curve
+    const eyes = q.eyes || 'open';
+    // (sockets cast into the bronze: a dark hollow under a lit brow, a pale light inside)
+    for (const [a, wv] of [[KROT - 0.42, 12], [KROT + 0.3, 14]]) {
+      const ey = -55, ex = Math.round(KHW(ey) * Math.sin(a)), w = Math.max(5, Math.round(wv * Math.cos(a))), x0 = ex - (w >> 1);
+      B.rect(x0 - 1, ey - 3, w + 2, 2, bronze, a < KROT ? 6 : 5);                      // the lit brow
+      B.poly([[x0 - 1, ey - 1], [x0 + w + 1, ey - 1], [x0 + w, ey + 6], [x0, ey + 6]], cav, 1); // the socket
+      if (eyes === 'shut') { B.rect(x0, ey + 2, w, 1, eyeM, 0); }
+      else if (eyes === 'down') { B.rect(x0 + 1, ey + 3, w - 2, 2, eyeM, 1); B.dot(x0 + 1, ey + 3, eyeM, 2); }
+      else if (eyes === 'smile') { B.line(x0 + 1, ey + 3, ex, ey + 1, eyeM, 2); B.line(ex, ey + 1, x0 + w - 2, ey + 3, eyeM, 2); }
+      else if (eyes === 'wide') { B.rect(x0, ey - 1, w, 7, cav, 0); B.rect(x0 + 1, ey, w - 2, 4, eyeM, 1); B.rect(ex - 1, ey + 1, 2, 2, cav, 2); B.dot(x0 + 1, ey, eyeM, 2); }
+      else { B.rect(x0 + 1, ey + 1, w - 2, 3, eyeM, 1); B.rect(ex - 1 + (a < KROT ? 0 : -1), ey + 1, 2, 3, cav, 2); B.dot(x0 + 1, ey + 1, eyeM, 2); }
+    }
+    // glowing seams (the pressure inside, Gathering): along the flutes, rising with the glow
+    if (q.glow > 0.05) for (let f = -3; f <= 3; f += 2) {
+      const a = KROT + f * 0.36, n = Math.round(10 + q.glow * 80);
+      for (let k = 0; k < n; k += 3) { const y = Math.round(22 - k); if (y < -66) break; B.dot(Math.round(KHW(y) * Math.sin(a)), y, seamM, k % 6 ? 1 : 2); }
+    }
     B.restore();
-    B.outline(); tend.outline(); front.outline();
+    // ---- the gate wheel on its spindle: a brass handwheel lying flat, seen from above (it turns:
+    // spokes at q.wheel), its rim lit along the near-left
+    {
+      const [sx, sy] = keeperPt(q, 0, -72), [wx, wy] = keeperPt(q, 0, -94);
+      S.pipe(wheelL, [[sx, sy, 4], [wx, wy + 2, 4]], 4, brass, { collars: false });
+      const rx = 16, ry = 6;
+      wheelL.fill(wx - rx - 2, wy - ry - 3, wx + rx + 2, wy + ry + 3, (x, y) => { const d = Math.hypot((x - wx) / rx, (y - wy) / ry); return d <= 1.05 && d >= 0.72; }, brass, (x, y) => S.step(y < wy && x < wx ? 5 : y < wy ? 4 : x < wx - 4 ? 3 : x < wx + 6 ? 2 : 1, 6));
+      for (let k = 0; k < 4; k++) {
+        const a = (q.wheel || 0) + (k * Math.PI) / 4;
+        wheelL.line(wx, wy, Math.round(wx + Math.cos(a) * 13), Math.round(wy + Math.sin(a) * 5), brass, Math.sin(a) < 0 ? 4 : 2);
+        wheelL.line(wx, wy, Math.round(wx - Math.cos(a) * 13), Math.round(wy - Math.sin(a) * 5), brass, Math.sin(a) > 0 ? 4 : 2);
+      }
+      wheelL.ell(wx, wy, 3, 2, brass, 5);
+      const a = q.wheel || 0; wheelL.ell(Math.round(wx + Math.cos(a) * 15), Math.round(wy + Math.sin(a) * 6) - 1, 2, 2, brass, (x, y) => S.step(y < wy + Math.sin(a) * 6 - 1 ? 5 : 3, 6));
+    }
+    // ---- the clapper on its chain below (it swings), seen under the lip
+    {
+      const ca = q.clap || 0, [hx, hy] = keeperPt(q, 0, 38);
+      const cx = hx + Math.round(Math.sin(-ca) * 12), cy = hy + Math.round(Math.cos(ca) * 12);
+      for (let k = 0; k < 4; k++) { const t = k / 4; farT.rect(Math.round(hx + (cx - hx) * t) - 1, Math.round(hy + (cy - hy) * t), 2, 2, ironFar, k % 2 ? 2 : 3); }
+      farT.ell(cx, cy + 4, 8, 7, ironFar, S.sph(cx - 2, cy + 1, 9, 8, 5, { bias: 0.1 }));
+      farT.dot(cx - 3, cy + 1, ironFar, 4);
+    }
+    // ---- passes: clusters, coloured outlines, cast shadows, the lit edges of the metal, rim light
+    for (const X of [farT, sideT, nearT, lash, B, wheelL]) X.outline();
+    S.lit(B, bronze, 6, { left: false, test: (x, y) => y < -66 });
+    S.cast(B, farT, 2, 3, 1); S.cast(B, sideT, 2, 3, 2);
+    S.cast(nearT, B, 2, 3, 1);
+    S.cast(wheelL, B, 2, 3, 1);
+    S.cast(lash, B, 3, 4, 1);
+    const out = aura.over(farT).over(sideT).over(B).over(wheelL).over(nearT).over(lash);
+    S.rim(out, { w: 2 });
     // drips (they stop while it gathers, and run as residue after the flood)
     const drips = q.drips == null ? 1 : q.drips;
     for (let i = 0; i < 4; i++) {
       if (i / 4 >= drips) continue;
       const k = (((q.dph || 0) + i / 4) % 1);
-      const [x, y0] = keeperPt(q, [-50, -18, 22, 52][i], 42);
-      fx.rect(x, y0 + k * (92 - y0), 2, 4, water, 1);
-      if (k > 0.82) fx.rect(x - 2, 92, 6, 1, water, 2);
+      const [x, y0] = keeperPt(q, [-50, -18, 22, 52][i], 40);
+      fx.rect(x, Math.round(y0 + k * (94 - y0)), 2, 3, water, 2); fx.dot(x, Math.round(y0 + k * (94 - y0)), water, 3);
+      if (k > 0.82) fx.rect(x - 2, 95, 6, 1, water, 1);
     }
     // the residue: a spreading puddle under the lip after the flood
-    if (q.puddle > 0.05) fx.ell(0, 95, Math.round(30 + 50 * q.puddle), 3, water, 1);
-    return aura.over(tend).over(B).over(front).over(fx);
+    if (q.puddle > 0.05) {
+      const r = Math.round(30 + 50 * q.puddle);
+      fx.ell(0, 96, r, 3, water, (x, y) => S.step(y < 95 ? 2 : Math.abs(x) > r * 0.7 ? 0 : 1, 4));
+      fx.line(-r + 6, 95, -r + 16, 95, water, 3);
+    }
+    return out.over(fx);
   }
   const KB = { tilt: 0, crouch: 0, wheel: 0, plate: 0, pour: 0, lash: 0, rope: 0, curl: 0, clap: 0, glow: 0, dark: 0, eyes: 'open', tph: 0, tamp: 1, dph: 0, drips: 1, puddle: 0, eyeGlow: false };
   const keeperIdle = [];

@@ -452,7 +452,28 @@ RB.creaturesB = (function () {
     }
     // the four-neighbour edge test used by detail passes: is (x, y) (buffer px) filled?
     const filled = (L, x, y) => x >= 0 && y >= 0 && x < L.w && y < L.h && (L.px[y * L.w + x] >>> 24) > 0;
-    return { LK, ramp, deep, mat, T, band, step, lam, sph, cyl, facet, strands, rim, cast, lit, clean, tuft, filled, mixh, toward, hslOf, fromHsl };
+    // metal bands across a cylinder (n tones): a lit edge, the near-white specular streak, the light
+    // and mid planes, the shadow, the dark reflected band and the reflected light at the far edge
+    const METAL = (n) => [[-1, n - 2], [-0.84, n - 1], [-0.66, n - 2], [-0.32, n - 3], [0.18, Math.max(1, n - 4)], [0.52, 0], [0.8, 1]];
+    // a metal pipe along a polyline [[x, y, w?], …]: each run banded across its width, a collar (a
+    // wider ring) at every joint
+    function pipe(L, pts, w, M, o) {
+      o = o || {};
+      const n = M.n, bands = o.bands || METAL(n);
+      for (let i = 1; i < pts.length; i++) {
+        const [xa, ya] = pts[i - 1], [xb, yb, wb] = pts[i];
+        const ww = wb || w, ang = Math.atan2(yb - ya, xb - xa);
+        L.seg(xa, ya, xb, yb, ww, M, cyl((xa + xb) / 2, (ya + yb) / 2, ang, ww / 2, n, bands));
+      }
+      if (o.collars !== false) for (let i = 1; i < pts.length - 1; i++) {
+        const [x, y, w0] = pts[i], [x2, y2] = pts[i + 1], ww = (w0 || w) + 4;
+        const ang = Math.atan2(y2 - y, x2 - x), ux = Math.cos(ang), uy = Math.sin(ang);
+        L.seg(x - ux * 1.5, y - uy * 1.5, x + ux * 1.5, y + uy * 1.5, ww, M, cyl(x, y, ang, ww / 2, n, bands));
+        L.line(x + ux * 2 - uy * (ww / 2 - 1), y + uy * 2 + ux * (ww / 2 - 1), x + ux * 2 + uy * (ww / 2 - 1), y + uy * 2 - ux * (ww / 2 - 1), M, 0);
+      }
+      return L;
+    }
+    return { LK, ramp, deep, mat, T, band, step, lam, sph, cyl, facet, strands, rim, cast, lit, clean, tuft, filled, mixh, toward, hslOf, fromHsl, METAL, pipe };
   })();
 
   return { rig, RIGS, play, deliver, flush, PENDING, warmFor, warmStats, stopWarm, targets, colOf, blocked, tween, keys, mixQ, E, damp, cl, lerp, FAMILIES, AUDIT, FAMILY, family, audit, budget, S };
