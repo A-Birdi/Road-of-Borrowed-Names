@@ -40,17 +40,18 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const [hh] = K.rgb2hsl(...K.parse(col));
     const patinaAmt = q.patina != null ? q.patina : hh > 70 && hh < 200 ? 1 : 0.45; // bronze gone green carries more verdigris
     const dim = q.dark || 0;
-    const M = K.mat(K.tone(col, -dim * 2), { n: 6, at: 3, step: 0.085, shift: 1.2 });
-    const Mlip = K.mat(K.tone(col, -0.6 - dim * 2), { n: 5, at: 2, step: 0.08, shift: 1.2 });
-    const spec = K.solid(mixh(col, '#fff4d8', 0.72 - dim * 0.4), { line: false });
-    const ringM = K.solid(mixh(col, '#fffaf0', 0.85), { line: false });
-    const cav = K.mat('#140e14', { n: 3, at: 0, step: 0.05, line: false });
-    const patina = K.mat(mixh('#7fb0a0', col, 0.25), { n: 3, at: 1, step: 0.07, line: false });
-    const wisp = K.mat(mixh('#c8a0a8', col, 0.25), { n: 3, at: 1, step: 0.1, alpha: 170, line: false });
-    const wisp2 = K.mat(mixh('#c8a0a8', col, 0.25), { n: 3, at: 1, step: 0.1, alpha: 95, line: false });
-    const eyeM = K.mat(mixh('#f0d0d8', col, 0.2), { n: 3, at: 1, line: false });
-    const glowM = K.mat(mixh('#ffd88a', col, 0.15), { n: 3, at: 1, line: false });
-    const strands = L.like(), back = L.like(), B = L.like(), clap = L.like(), fx = L.like(), aura = L.like();
+    // cast metal: a 7-tone ramp from the bell's colour (deep violet-navy shadow → warm specular)
+    const MC = S.ramp(col, { n: 7, at: 3, lo: 0.09, hi: 0.92, cs: 34, ws: 26 });
+    const M = S.mat(MC, { at: 3, rim: '#9ccaf4', litk: 0.14 });
+    const ringM = K.solid(mixh(col, '#fffaf0', 0.88), { line: false });
+    const cav = S.mat(['#06040e', '#120e1e', '#221c32'], { at: 0, line: false });
+    const patina = S.mat(['#1a5458', '#2c8478', '#4cb092', '#96dcbc'], { at: 1, line: false });
+    const WR = S.ramp(mixh('#d898b0', col, 0.2), { n: 4, at: 2, lo: 0.3, hi: 0.86, cs: 30 });
+    const wisp = S.mat(WR, { at: 2, alpha: 185, line: S.deep(WR[0], 0.2) });
+    const wisp2 = S.mat(WR, { at: 2, alpha: 110, line: false });
+    const eyeM = S.mat(['#a87a9a', '#f0d0dc', '#fffaff'], { at: 1, line: false });
+    const glowM = S.mat(['#e8a040', '#ffd88a', '#fff6d0'], { at: 1, line: false });
+    const strands = L.like(), B = L.like(), clap = L.like(), fx = L.like(), aura = L.like();
     const sw = q.sw, lift = q.lift || 0, sh = q.shake || 0;
     // ---- glow behind (gathering / a toll)
     if (q.glow > 0.05) H.glow(aura, ...bellPt(q, 0, -8), 48 + q.glow * 10, 58 + q.glow * 10, '#ffd88a', 0.22 * q.glow, 3);
@@ -60,91 +61,107 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const lx = -18 + i * 18;
       const [sx, sy] = bellPt(q, lx * (1 - mute * 0.5), 38);
       const len = (q.slen || 46) - (i % 2) * 8 - mute * 22;
-      H.tail(strands, sx, sy, Math.max(10, len), 5, (q.sph || 0) + i * 1.7, [[0, 20, wisp], [20, 90, wisp2]], { amp: (q.samp == null ? 6 : q.samp) * (1 - mute * 0.7), curl: 8, dark: 0.1, lean: (q.slean || 0) + (i - 1) * 0.04 * (q.spread || 0) });
+      H.tail(strands, sx, sy, Math.max(10, len), 5, (q.sph || 0) + i * 1.7, [[0, 22, wisp], [22, 90, wisp2]], { amp: (q.samp == null ? 6 : q.samp) * (1 - mute * 0.7), curl: 8, dark: 0.1, lean: (q.slean || 0) + (i - 1) * 0.04 * (q.spread || 0) });
     }
     // ---- the clapper (behind the lip, seen below it), on its own hinge inside the bell
     {
       const ca = sw + (q.cl || 0), Lr = 46;
       const hx = bellPt(q, 0, -8);
       const tip = [Math.round(hx[0] - Lr * Math.sin(ca)), Math.round(hx[1] + Lr * Math.cos(ca))];
-      clap.path([[hx[0], hx[1]], [tip[0], tip[1] - 4]], 3, M, 1);
-      clap.ell(tip[0], tip[1], 5, 5, M, K.sphere(tip[0] - 1, tip[1] - 1, 5, 5));
-      clap.rect(tip[0] - 2, tip[1] - 3, 2, 1, spec, 0);
+      clap.path([[hx[0], hx[1]], [tip[0], tip[1] - 4]], 3, M, () => S.step(2, 7));
+      clap.ell(tip[0], tip[1], 5, 5, M, S.sph(tip[0] - 1, tip[1] - 1, 5, 5, 7, { bias: 0.1 }));
+      clap.dot(tip[0] - 2, tip[1] - 3, M, 6);
     }
-    // ---- the bell itself (swung about its hinge)
+    // ---- the bell itself (swung about its hinge), seen a little from below and turned toward the
+    // party: its features wrap the barrel (centred at BROT), its bands bow upward toward us
     B.save().translate(sh, lift).translate(0, PIV).rotate(sw).translate(0, -PIV);
-    // the loop (dragon-head handle reduced to a heavy cast loop with a collar)
-    B.path([[-9, -56], [-11, -64], [-5, -71], [5, -71], [11, -64], [9, -56]], 5, M, (x, y) => K.clamp(0.75 - (x + 10) / 40 - (y + 70) / 60, 0, 0.99));
-    B.rect(-12, -60, 24, 4, Mlip, (x) => K.clamp(0.7 - (x + 12) / 36, 0, 0.99));
-    // body: dome shoulder, straight waist, flared lip; a lit stripe on the left, a cool rim
+    const BROT = -0.34;
+    const th = (x, y) => Math.asin(Math.max(-1, Math.min(1, x / Math.max(1, hwBell(y)))));
+    const wrapX = (a, y) => Math.round(hwBell(y) * Math.sin(a));
+    const bowY = (a, y) => Math.round(y - 3 * Math.cos(a));
+    // the loop: a heavy cast ring with a collar
+    S.pipe(B, [[-9, -56], [-11, -64], [-5, -71], [5, -71], [11, -64], [9, -56]], 6, M, { collars: false });
+    B.rect(-13, -60, 26, 5, M, (x) => S.step(x < -9 ? 5 : x < 0 ? 4 : x < 8 ? 2 : 1, 7));
+    // body: dome shoulder, straight waist, flared lip, in hard metal bands — a lit plane with the
+    // near-white specular streak, mid planes, a dark reflected band, the cool rim
     const ycut = 36;
-    B.fill(-46, -62, 46, ycut, (x, y) => y >= -60 && y < ycut && Math.abs(x) <= hwBell(y), M, (x, y) => {
-      const w = hwBell(y) || 1, nx = x / w;
-      let v = 0.5 - nx * 0.34 + (y < -42 ? (-42 - y) / 70 : 0) - (y > 24 ? 0.12 : 0);
-      if (nx > -0.7 && nx < -0.5) v += 0.2;          // the specular stripe
-      if (nx > 0.82) v += 0.12;                       // reflected light on the shadowed rim
-      v -= (q.dark || 0) * 0.15;
-      return K.clamp(v, 0, 0.99);
-    });
-    // the lip band: a heavier rolled edge
-    B.fill(-46, 24, 46, ycut, (x, y) => y >= 26 && y < ycut && Math.abs(x) <= hwBell(y), Mlip, (x, y) => K.clamp(0.6 - x / 90 - (y - 26) / 30, 0, 0.99));
-    // raised bands: a lit top edge, a shadowed underside
-    for (const y of [-34, 14]) {
-      const w2 = hwBell(y);
-      B.line(-w2 + 1, y, w2 - 1, y, M, 1); B.line(-w2 + 2, y - 1, w2 - 2, y - 1, M, 5); B.line(-w2 + 2, y + 1, w2 - 2, y + 1, M, 2);
+    const bodySh = (x, y) => {
+      const u = x / (hwBell(y) || 1);
+      let k = u < -0.93 ? 4 : u < -0.8 ? 6 : u < -0.64 ? 5 : u < -0.26 ? 4 : u < 0.22 ? 3 : u < 0.58 ? 2 : u < 0.84 ? 1 : 2;
+      if (y < -46 && k < 6) k++;                    // the shoulder faces the sky
+      if (y > 24 && k > 1) k--;                     // the flare turns down
+      k -= Math.round(dim * 3);
+      return S.step(k, 7);
+    };
+    B.fill(-48, -62, 48, ycut, (x, y) => y >= -60 && y < ycut && Math.abs(x) <= hwBell(y), M, bodySh);
+    // the lip band: a heavier rolled edge, bowed toward us
+    B.fill(-48, 18, 48, ycut, (x, y) => { const a = th(x, y); return y >= bowY(a, 27) && y < ycut && Math.abs(x) <= hwBell(y); }, M, (x, y) => { const u = x / hwBell(y), a = th(x, y); return S.step(y < bowY(a, 27) + 2 ? (u < -0.5 ? 6 : u < 0.4 ? 5 : 3) : u < -0.7 ? 4 : u < 0.1 ? 3 : u < 0.6 ? 1 : 0, 7); });
+    // raised bands: a lit top edge, the band, a shadowed underside — bowing as they wrap
+    for (const yb of [-34, 14]) for (let x = -Math.floor(hwBell(yb)) + 1; x < hwBell(yb) - 1; x++) {
+      const a = th(x, yb), y = bowY(a, yb), u = x / hwBell(yb);
+      B.dot(x, y - 1, M, u < -0.4 ? 6 : u < 0.4 ? 5 : 3); B.dot(x, y, M, u < 0.2 ? 4 : 2); B.dot(x, y + 1, M, 1);
     }
-    B.line(0, -34, 0, 14, M, 1); B.line(-1, -34, -1, 14, M, 4);
-    // bosses in the upper field: lit top-left, shadow below
-    for (let r = 0; r < 3; r++) for (const cx of [-25, -18, -11, 7, 14, 21]) {
-      const cy = -53 + r * 6;
-      B.rect(cx, cy, 3, 3, M, cx < 0 ? 4 : 3); B.dot(cx, cy, M, 5); B.rect(cx + 1, cy + 3, 3, 1, M, 1);
+    // the vertical rib between the panels
+    for (let y = -33; y < 13; y++) { const x = wrapX(BROT + 0.02, y); B.dot(x, y, M, 1); B.dot(x - 1, y, M, 5); }
+    // bosses in the upper field (nipples cast in rows), wrapped round the shoulder: a lit cap, a
+    // shadow below; the far ones foreshortened
+    for (let r = 0; r < 3; r++) for (let k = -4; k <= 4; k++) {
+      const a = BROT + k * 0.26;
+      if (Math.abs(a) > 1.25 || Math.abs(k) === 0) continue;
+      const cy = -53 + r * 6, cx = wrapX(a, cy), w = Math.cos(a) > 0.6 ? 3 : 2;
+      B.rect(cx, cy, w, 3, M, a < -0.3 ? 5 : 4); B.dot(cx, cy, M, 6); B.rect(cx + 1, cy + 3, w, 1, M, 1);
     }
-    // the inscription panels: worn cast strokes (not glyphs), lit on their upper edge
-    for (const [px, s] of [[-24, 1], [6, 2]]) for (let r = 0; r < 4; r++) {
-      const y = -28 + r * 9, l = 6 + (K.hh(px, r, s) % 9);
-      B.line(px + (r % 2) * 3, y, px + (r % 2) * 3 + l, y, M, 2); B.line(px + (r % 2) * 3, y - 1, px + (r % 2) * 3 + l, y - 1, M, 4);
+    // the inscription panels: worn cast strokes (not glyphs), lit on their upper edge, wrapping
+    for (const [a0, s] of [[BROT - 0.62, 1], [BROT + 0.22, 2]]) for (let r = 0; r < 4; r++) {
+      const y = -28 + r * 9, l = 5 + (K.hh(s, r, 3) % 7);
+      const x0 = wrapX(a0 + (r % 2) * 0.06, y), x1 = Math.min(wrapX(a0 + 0.5, y), x0 + l);
+      B.line(x0, y, x1, y, M, 1); B.line(x0, y - 1, x1, y - 1, M, a0 < BROT ? 6 : 5);
     }
-    // the striking seat
-    B.ell(-18, 22, 5, 4, M, 2); B.ell(-18, 22, 3, 2, M, 4); B.dot(-19, 21, M, 5);
-    // verdigris where rain ran down from the bosses and in the bands
+    // the striking seat (a lotus boss) on the near side
+    { const sx = wrapX(BROT - 0.5, 22); B.ell(sx, 22, 5, 4, M, 2); B.ell(sx, 22, 3, 2, M, 5); B.dot(sx - 1, 21, M, 6); }
+    // verdigris where rain ran down from the bosses and in the bands: clustered patches and streaks
     const pt = [[-28, -36, 6], [-14, -33, 4], [18, -35, 7], [26, 12, 6], [-30, 16, 5], [8, 30, 6], [-6, 15, 4], [22, -12, 4]];
     for (let i = 0; i < pt.length; i++) if (K.hh(i, 4, 9) % 100 < 45 + patinaAmt * 55) {
       const [x, y, s] = pt[i];
       K.cluster(B, x, y, s, patina, 1, K.hh(x + 40, y + 40, 3));
-      if (patinaAmt > 0.7) B.line(x, y + 2, x + 1, y + 7 + (i % 3) * 3, patina, 0);
+      K.cluster(B, x - 1, y - 1, Math.max(2, s - 3), patina, 2, K.hh(x + 41, y + 4, 3));
+      if (patinaAmt > 0.7) S.tuft(B, x + 1, y + 2, Math.PI / 2, 5 + (i % 3) * 3, 2, patina, 0, 0);
     }
-    // eyes under the upper band
+    // eyes under the upper band: hollow sockets, the far one narrowed by the curve
     const eyes = q.eyes || 'hollow';
-    for (const s of [-1, 1]) {
-      const ex = s * 11 + 1, ey = -24;
-      if (eyes === 'shut') { B.line(ex - 4, ey, ex + 4, ey + 1, cav, 0); B.line(ex - 3, ey + 1, ex + 3, ey + 1, M, 1); }
-      else if (eyes === 'half') { B.ell(ex, ey + 1, 5, 2, cav, 0); B.rect(ex - 2, ey + 1, 3, 1, eyeM, 1); }
-      else if (eyes === 'false') { B.line(ex - 4, ey + 1, ex, ey - 2, cav, 0); B.line(ex, ey - 2, ex + 4, ey + 1, cav, 0); B.line(ex - 3, ey + 1, ex, ey - 1, eyeM, 2); }
-      else if (eyes === 'wide') { B.ell(ex, ey, 6, 4, cav, 0); B.rect(ex - 1, ey - 1, 2, 2, eyeM, 2); }
-      else if (eyes === 'glow') { B.ell(ex, ey, 5, 3, cav, 0); B.rect(ex - 3, ey - 1, 6, 2, glowM, 2); B.rect(ex - 1, ey - 1, 2, 1, ringM, 0); }
-      else { B.ell(ex, ey, 5, 3, cav, 0); B.rect(ex - 2, ey, 3, 1, eyeM, 1); }
+    for (const [a, wv] of [[BROT - 0.4, 0.8], [BROT + 0.32, 1]]) {
+      const ey = -24, ex = wrapX(a, ey), rx = Math.max(3, Math.round(5 * wv * Math.cos(a)));
+      if (eyes === 'shut') { B.line(ex - rx, ey, ex + rx, ey + 1, cav, 0); B.line(ex - rx + 1, ey + 1, ex + rx - 1, ey + 1, M, 5); }
+      else if (eyes === 'half') { B.ell(ex, ey + 1, rx, 2, cav, 0); B.rect(ex - 2, ey + 1, 3, 1, eyeM, 1); }
+      else if (eyes === 'false') { B.line(ex - rx, ey + 1, ex, ey - 2, cav, 0); B.line(ex, ey - 2, ex + rx, ey + 1, cav, 0); B.line(ex - rx + 1, ey + 1, ex, ey - 1, eyeM, 2); }
+      else if (eyes === 'wide') { B.ell(ex, ey, rx + 1, 4, cav, 0); B.rect(ex - 1, ey - 1, 2, 2, eyeM, 2); B.dot(ex + 1, ey + 1, eyeM, 0); }
+      else if (eyes === 'glow') { B.ell(ex, ey, rx, 3, cav, 0); B.rect(ex - rx + 2, ey - 1, rx * 2 - 3, 2, glowM, 2); B.rect(ex - 1, ey - 1, 2, 1, ringM, 0); }
+      else { B.ell(ex, ey, rx, 3, cav, 0); B.rect(ex - 2, ey, 3, 1, eyeM, 1); B.dot(ex - 2, ey, eyeM, 2); }
+      B.line(ex - rx, ey - 4, ex + rx, ey - 4, M, a < BROT ? 6 : 5); // the lit brow over each
     }
-    // the specular streak and catch-lights
-    B.rect(-25, -44, 2, 54, spec, 0); B.rect(-22, -40, 1, 18, spec, 0); B.dot(-20, -58, spec, 0); B.dot(-8, -66, spec, 0);
     // the band glow while gathering
-    if (q.glow > 0.05) for (const y of [-34, 14]) { const w2 = hwBell(y); B.line(-w2 + 3, y, w2 - 3, y, glowM, q.glow > 0.5 ? 2 : 1); }
-    // the mouth: more of the dark inside shows as the bell tips
-    const ry = 3 + Math.min(7, Math.abs(sw) * 14);
-    B.ell(0, ycut - 1, hwBell(ycut - 1) - 3, ry, cav, (x, y) => K.clamp(0.2 + (y - ycut) / 20, 0, 0.99));
-    B.line(-hwBell(ycut - 1) + 4, ycut - 1 - ry, hwBell(ycut - 1) - 4, ycut - 1 - ry, Mlip, 1);
+    if (q.glow > 0.05) for (const yb of [-34, 14]) for (let x = -Math.floor(hwBell(yb)) + 3; x < hwBell(yb) - 3; x++) B.dot(x, bowY(th(x, yb), yb), glowM, q.glow > 0.5 ? 2 : 1);
+    // the mouth seen from below: the dark inside, lit along its far inner rim; more shows as it tips
+    const ry = 4 + Math.min(7, Math.abs(sw) * 14);
+    B.ell(0, ycut - 1, hwBell(ycut - 1) - 3, ry, cav, (x, y) => S.step(y < ycut - 1 - ry * 0.5 ? 2 : y < ycut ? 1 : 0, 3));
+    for (let x = -Math.floor(hwBell(ycut - 1)) + 5; x < hwBell(ycut - 1) - 5; x++) B.dot(x, Math.round(ycut - 1 - ry * Math.sqrt(Math.max(0, 1 - (x / (hwBell(ycut - 1) - 3)) ** 2))), M, x < 0 ? 3 : 2);
     // the Hush: strands bound round its own mouth
     if (mute > 0.05) {
-      const th = mute > 0.6 ? 3 : 2;
+      const th2 = mute > 0.6 ? 3 : 2;
       for (let k = 0; k < 3; k++) {
         const y = 22 + k * 5;
         if (k / 3 > mute + 0.1) break;
-        B.fill(-46, y - th, 46, y + th, (x, yy) => Math.abs(x) <= hwBell(yy) + 1 && Math.abs(yy - y - Math.sin(x / 7 + k) * 1.2) < th / 2 + 0.2, wisp, (x) => K.clamp(0.7 - x / 120, 0, 0.99));
+        B.fill(-48, y - th2 - 2, 48, y + th2 + 2, (x, yy) => Math.abs(x) <= hwBell(yy) + 1 && Math.abs(yy - y + 2 * Math.cos(th(x, yy)) - Math.sin(x / 7 + k) * 1.2) < th2 / 2 + 0.2, wisp, (x) => S.step(x < -10 ? 3 : x < 15 ? 2 : 1, 4));
       }
     }
     B.restore();
-    B.outline();
-    // the toll: the struck lip flashes along its leading edge and the air round the mouth
-    // shivers (rings in the plane of the mouth, swung with the bell)
+    // ---- outlines, the toll, compositing, rim
+    strands.outline(); B.outline(); clap.outline();
+    S.cast(B, strands, 2, 3, 1);
+    // the clapper shows inside the dark mouth and below the lip, never through the metal
+    for (let i = 0; i < clap.px.length; i++) if (clap.px[i] >>> 24 && (!(B.px[i] >>> 24) || B.mt[i] === cav.id)) { B.px[i] = clap.px[i]; B.mt[i] = clap.mt[i]; }
+    // the toll: the struck lip flashes along its leading edge and the air round the mouth shivers
+    // (rings in the plane of the mouth, swung with the bell)
     if (q.ring > 0.05) {
       fx.save().translate(sh, lift).translate(0, PIV).rotate(sw).translate(0, -PIV);
       const my = ycut - 1, w0 = hwBell(my) - 3;
@@ -156,10 +173,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       fx.restore();
       fx.fade(Math.min(1, q.ring));
     }
-    clap.outline();
-    // the clapper shows inside the dark mouth and below the lip, never through the metal
-    for (let i = 0; i < clap.px.length; i++) if (clap.px[i] >>> 24 && (!(B.px[i] >>> 24) || B.mt[i] === cav.id)) { B.px[i] = clap.px[i]; B.mt[i] = clap.mt[i]; }
-    return aura.over(strands).over(back).over(B).over(fx);
+    const out = aura.over(strands).over(B);
+    S.rim(out, { w: 2 });
+    return out.over(fx);
   }
 
   // ---- bell poses --------------------------------------------------------------------------------
