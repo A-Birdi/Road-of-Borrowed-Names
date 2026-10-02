@@ -30,3 +30,21 @@ composer (`RB.battlePlaces`). Both were merged from
 | `group_trio_target_390x844.webp` | 390×844 phone, the Conduits on Demanding with Suzu: a crane, a lantern and a moth in one compact row of slips, the target's telegraph below it, the formation right of the party (the crane partly behind you on this narrow stage). |
 | `group_pair_companion_turn_1280x800.webp` | 1280×800, the Conduits on Standard with Ren after chapter 2: Unravel is queued ("Back to Wayfarer"), Ren's turn with his two actions (every action is New the first time), his newly learned Flare the lamp announced once; the pointer rests on Lamp ward. |
 | `play_moth_outside.webm` | A short recording (33 s, 960×540, VP8, no sound) of real play made by `tests/e2e/battle_video.mjs`, at normal speed. It uses only the mouse after walking up to the Flour Moth on the mill road. The intro line, advanced with Next, is followed by Unravel, a meaning question, ほどく on paper, and a knot loosened. Its Shroud clouds the knots, 光 answers it (written "light" → ひかり), and its Strike on you lands (−2, Mio's draught +1). After a pause, the last Unravel sends the moth away over the mill roof, and that line is advanced with Next. It was re-encoded at 500 kb/s to keep it small. It was recorded before the companion's turn existed (Mio's draught then came by itself); `battle_video.mjs` now takes her turn with the mouse, but the recording has not been remade. |
+
+## Battle addendum (2026-10-02): newer captures by folder
+
+The captures above predate the battle addendum. The party art, the creatures and the backdrops have
+been redrawn since. The folders below were made from the addendum's builds, with synthetic campaigns
+in fresh profiles. Where a scene is a diagnostic placement (for example, a party placed in the Mill
+with three Flour Moths), the folder's record says so. None of these scenes was reached by playing
+through the campaign.
+
+| Folder | What it holds | Made by | Record |
+|---|---|---|---|
+| `presentation/` | Real-time recordings of one exchange (Unravel answered, Mio's Warm draught, the Flour Moth's move) at Normal, Fast, Instant, Normal with reduced motion, and on a 390×844 phone driven by taps with three moths (a badge card opened and closed). Stills: the badge card, your response's blue banner, the creature's red banner. | `tests/e2e/battle_presentation_video.mjs` | `docs/battle/PRESENTATION.md` |
+| `layout/` | The decision, language and action views at 320×640, 390×844 and 844×390 with three creatures, at 200 % text (390×844, 1366×768), and with a Japanese-led profile and a long name. These are the same scenes `docs/battle/GEOMETRY.md` measures. | `tests/e2e/battle_geometry.mjs --shots` | `docs/battle/GEOMETRY.md` |
+| `party/` | The player and companions: pose sheets, key poses, exchanges. | the party art area | `docs/battle/party.md` |
+| `creatures_a/` | Chapter 1–3 families and the Flour Moth proof (indoor and outdoor; Strike, ward, softened hit, Shroud persisting and released; a timing trace). | the creatures A area | `docs/battle/creatures_a.md` |
+| `creatures_b/` | Chapter 4–6 and Atlas families: before/after, key poses at native size and 3×, sheets, the Atlas trio, a Keeper exchange. | the creatures B area | `docs/battle/creatures_b.md` |
+| `backdrops/` | Location-aware backdrops by family, phone views, state-dependent props, a motion clip. | the backdrops area | `docs/battle/backdrops.md` |
+| `pets_overworld/` | Pets in battle and the road, an overworld walk. | the pets / overworld area | `docs/battle/pets_overworld.md` |

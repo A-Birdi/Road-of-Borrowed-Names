@@ -48,6 +48,21 @@ Each area keeps its own record in `docs/battle/<area>.md`. The coverage list for
   - Use your own new names and files. Do not rewrite another area's effects.
 - **Party art:** `RB.battlers` (`src/engine/34_battlers.js`) draws the player and the companion from the shared appearance source (`RB.equip.look(s)`, `RB.content.chars[id].look`). The stage cues are `pose(who, pose, gesture, d, at)`.
 
+## What the merges changed in the seams (Phase F)
+
+- The sequencer passes a foe cue's `travel` to the stage (`82_battle_seq.js` `fire1`); before the creature
+  workers found it, the cue's travel was dropped and no creature could reach its target.
+- A delivery also receives the rules' results for its move, read-only (`a.fx`), to choose a contact variant
+  (hit, ward stop, softened, met air). It still never places a result.
+- `choreo.player`, `companion`, `finish`, `revive` and `planOf` delegate to `RB.partyChoreo`
+  (`src/ui/84p_party_choreo.js`); `run`, `T`, `speed`, the banner and `choreo.enemy` stay in the sequencer.
+- `src/ui/84a_creatures_a_fx.js` replaces `status.shroud`, `mistRoll` and `mistPart` with each creature's own
+  material under the same names and signatures (the party's light still calls `mistPart`).
+- `RB.enemyArt.cacheStats()` reports the shared creature frame cache (140 frames) for the §21.5 budget;
+  `tests/e2e/battle_budget.mjs` adds it to the party's and the pets' caches.
+- Content loads after `ui/`: a family re-defined in a chapter art file overrides its `78*` file, so the old
+  battle definitions of the rebuilt families were removed from the chapter files.
+
 ## Rules every area keeps (§0, §6, §10, §17, §21)
 
 - **No rule changes:**

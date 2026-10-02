@@ -22,7 +22,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 RB.battleBanner = (function () {
   'use strict';
   const esc = (t) => RB.util.esc(t == null ? '' : String(t));
-  let el = null, sr = null, cur = null, gen = 0, outT = null;
+  let el = null, sr = null, cur = null, gen = 0, outT = null, host = null;
   const counters = { shown: 0, hidden: 0, refused: 0 };
 
   function attach(root) {
@@ -38,13 +38,18 @@ RB.battleBanner = (function () {
     sr.setAttribute('aria-live', 'polite');
     root.appendChild(el);
     root.appendChild(sr);
+    // the overlay scrolls with large text: the banner keeps to the top of what is in view
+    host = root;
+    host.addEventListener('scroll', follow, { passive: true });
   }
   function detach() {
     clear();
+    if (host) host.removeEventListener('scroll', follow);
     if (el) el.remove();
     if (sr) sr.remove();
-    el = sr = null;
+    el = sr = host = null;
   }
+  function follow() { if (el && host) el.style.setProperty('--bn-scroll', host.scrollTop + 'px'); }
   function blank() {
     if (outT) { clearTimeout(outT); outT = null; }
     if (!el) return;
@@ -67,6 +72,7 @@ RB.battleBanner = (function () {
     el.dataset.action = token.id;
     el.dataset.side = token.side;
     el.className = 'cb-banner on side-' + token.side;
+    follow();
     if (sr) sr.textContent = (actor.en ? actor.en + ': ' : '') + (label.en || '');
     counters.shown++;
     return token;

@@ -228,6 +228,8 @@ RB.combat = (function () {
     };
     for (const t of ['pointerdown', 'keydown', 'keyup']) document.addEventListener(t, o.onPress, true);
     o.onResize = () => requestAnimationFrame(measure);
+    o.onHold = () => { if (acting) hold(true); };
+    window.addEventListener('resize', o.onHold);
     window.addEventListener('resize', o.onResize);
     root.addEventListener('scroll', o.onResize, { passive: true });
     o.ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(o.onResize) : null;
@@ -1058,6 +1060,7 @@ RB.combat = (function () {
     ui.root.classList.toggle('cb-acting', on);
     ui.root.classList.toggle('cb-keep', on && keep);
     for (const el of [ui.intent, ui.dock]) { el.inert = on; if (on) el.setAttribute('aria-hidden', keep ? 'false' : 'true'); else el.removeAttribute('aria-hidden'); }
+    hold(on);
     // the badges keep the moves as committed; an open card closes (§13.5)
     badgeSnap = on && st ? st.foes.map((f) => f.intent) : null;
     shownAnswered = null; actFoe = null;
@@ -1074,6 +1077,21 @@ RB.combat = (function () {
       ui.skip.hidden = true;
       if (document.activeElement === ui.skip) ui.skip.blur();
     }
+  }
+  // While an exchange plays the layout holds still, so the actors keep their place and size (§12.3):
+  // the overlay's rows keep their committed sizes and the menus away their committed heights, so
+  // neither a condition appearing on a creature's slip nor the next decision prepared behind the
+  // menus (large text lets those rows follow their content) moves the stage. A resize (a phone
+  // turned, a foldable opened) measures them again.
+  function hold(on) {
+    if (!ui) return;
+    const els = [ui.intent, ui.dock];
+    ui.root.style.gridTemplateRows = '';
+    for (const el of els) { el.style.height = ''; el.style.overflow = ''; }
+    if (!on) return;
+    const hs = els.map((el) => el.offsetHeight);
+    els.forEach((el, k) => { el.style.height = hs[k] + 'px'; el.style.overflow = 'hidden'; });
+    ui.root.style.gridTemplateRows = getComputedStyle(ui.root).gridTemplateRows;
   }
   // What the banner names (battle addendum §15): the actor and the action's own name. A reading
   // task's move is named neutrally (§13.3, READING): "False promise" would answer the question it asks.
@@ -1380,7 +1398,7 @@ RB.combat = (function () {
       RB.battleIntents.detach();
       if (ui) { for (const t of ['pointerdown', 'keydown', 'keyup']) document.removeEventListener(t, ui.onPress, true); }
       lastCardId = null;
-      if (ui) { window.removeEventListener('resize', ui.onResize); document.removeEventListener('keydown', ui.onKey); if (ui.ro) ui.ro.disconnect(); ui.root.remove(); }
+      if (ui) { window.removeEventListener('resize', ui.onHold); window.removeEventListener('resize', ui.onResize); document.removeEventListener('keydown', ui.onKey); if (ui.ro) ui.ro.disconnect(); ui.root.remove(); }
       ui = null; stageCss = null;
       await RB.ui.fade(true, 200);
       RB.render.setOverride(null);

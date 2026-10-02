@@ -27,6 +27,9 @@ in `VALIDATION.md`; this file says what the behaviour is and which test proves e
 - Overlays the scene (no reserved row), takes no input (it is `inert`: its Japanese words are not
   focus or word-help targets), announced once per action (`role=status`). The word strip of a
   response is inert too.
+- As wide as its words need, up to the screen less 24 px on a phone (centred; it is not squeezed into
+  the half right of centre, which wrapped "Wayfarer — ほどく Unravel" onto two lines at 390 px and four
+  at 200 % text). When large text makes the overlay scroll, it stays at the top of what is in view.
 - Reading-critical moves are named neutrally: a lie is "A promise", a mirror is "Your words,
   echoed" (§13.3).
 
@@ -59,6 +62,13 @@ in `VALIDATION.md`; this file says what the behaviour is and which test proves e
 - The menus withdraw on commitment (after the language task and the companion's choice), stay
   away through every action of the exchange, and return once. They are `inert` while away (no
   pointer, no keyboard, no focus); focus inside them moves to Skip (Normal/Fast) or the overlay.
+- While an exchange plays the layout holds still: the overlay's rows keep their committed sizes and
+  the menus away their committed heights, so the actors keep their place and size (§12.3) even when a
+  condition appears on a creature's slip or the next decision is prepared behind the menus (with
+  large text the dock's row follows its content). A resize measures them again. A slip that grows
+  mid-exchange extends into the withdrawn telegraph's space (portrait) or, in the wide and landscape
+  group layouts, into the row gap and at most a few pixels of the scene's top edge, until the menus
+  return.
 - Skip (in the scene's corner while an exchange plays) settles the rest of the exchange: every
   committed result once, in order; the banner cleared; transient effects dropped. It accepts only a
   fresh press (≥ 150 ms after it appears).
@@ -90,6 +100,10 @@ in `VALIDATION.md`; this file says what the behaviour is and which test proves e
 | Reading-critical wording visible and neutrally named; Expanded; settled creature loses its badge; one creature | `tests/e2e/battle_presentation.mjs` |
 | Held Enter cannot choose in the next menu; focus return; fresh press chooses | `tests/e2e/battle_presentation.mjs` |
 | Withdrawn / Keep-visible controls unreachable by Tab and pointer; Resolve and Harmony visible in every frame (party slip uncovered, or the inset on the language sheet) | `tests/e2e/battle_presentation.mjs` |
+| Large text on a phone (100, 140, 200 %): the banner in view on a scrolled overlay and one line at 100 %; the stage's place and size constant in every frame of an exchange in which a condition lands on a slip | `tests/e2e/battle_presentation.mjs` |
+| Recordings: Normal / Fast / Instant, reduced motion, a 390×844 phone (taps) with three creatures and a badge card | `tests/e2e/battle_presentation_video.mjs` → `docs/screenshots/battle/presentation/` |
+| Stills of the decision, language and action views at 320×640, 390×844, 844×390 (three creatures), 200 % text (390×844, 1366×768) and a Japanese-led long name | `tests/e2e/battle_geometry.mjs --shots docs/screenshots/battle/layout` |
+| The battle art's memory budget (party, creature and pet caches against 48 MiB) over every creature family alone and in threes | `tests/e2e/battle_budget.mjs` → `tests/e2e/out/battle_budget.json` |
 | Geometry at the eight §22.2 viewports (canvas, stage, occluders, union of covered area, decision-safe and action-safe rectangles, status, banner, actor coverage) | `tests/e2e/battle_geometry.mjs` → `tests/e2e/out/battle_geometry.json` |
 | Rules unchanged by any presentation setting (540 configurations + pet variations) | `tests/e2e/battle_invariance.mjs` → `tests/e2e/out/battle_invariance.json` |
 | Delivery seam, posed frames | `tests/unit/battle_seams.test.mjs` |

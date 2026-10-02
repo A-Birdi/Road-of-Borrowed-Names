@@ -7,13 +7,17 @@
 //   reduced_1280.webm   Normal with reduced motion
 //   narrow_390.webm     a 390×844 phone, three Flour Moths: a badge pressed open and closed, then an exchange
 // and WebP stills of the Normal and phone clips: the badge card, your response's banner, the creature's.
+// The phone clip is driven by taps (a phone has no hover); the others by the mouse.
 // Synthetic campaigns in fresh profiles (a diagnostic placement: the party in the Mill); no save touched.
-// Usage: node tests/e2e/battle_presentation_video.mjs [outDir]   (default docs/screenshots/battle/presentation)
+// Usage: node tests/e2e/battle_presentation_video.mjs [outDir] [--only name]   (default docs/screenshots/battle/presentation)
 import fs from 'node:fs';
 import path from 'node:path';
 import { serve, launch, root } from './lib.mjs';
 
-const outDir = path.resolve(process.argv[2] || path.join(root, 'docs/screenshots/battle/presentation'));
+const argv = process.argv.slice(2);
+const onlyAt = argv.indexOf('--only');
+const only = onlyAt >= 0 ? argv.splice(onlyAt, 2)[1] : null;
+const outDir = path.resolve(argv[0] || path.join(root, 'docs/screenshots/battle/presentation'));
 fs.mkdirSync(outDir, { recursive: true });
 const { srv, url } = await serve();
 const b = await launch();
@@ -22,6 +26,7 @@ fs.mkdirSync(raw, { recursive: true });
 const problems = [];
 
 async function clip(name, o) {
+  if (only && only !== name) return;
   const vp = o.vp || { width: 1280, height: 720 };
   const size = vp.width > 600 ? { width: 960, height: 540 } : { width: vp.width, height: vp.height };
   const ctx = await b.newContext({ viewport: vp, recordVideo: { dir: raw, size }, ...(o.mobile ? { isMobile: true, hasTouch: true, deviceScaleFactor: 2 } : {}) });
@@ -62,7 +67,12 @@ async function clip(name, o) {
     const b64 = await p.evaluate(async (d) => { const img = new Image(); img.src = 'data:image/png;base64,' + d; await img.decode(); const cv = document.createElement('canvas'); cv.width = img.width; cv.height = img.height; cv.getContext('2d').drawImage(img, 0, 0); return cv.toDataURL('image/webp', 0.86).split(',')[1]; }, png.toString('base64'));
     fs.writeFileSync(path.join(outDir, nm + '.webp'), Buffer.from(b64, 'base64'));
   };
-  const press = async (sel) => { const pt = await at(sel); if (!pt) throw new Error(name + ': nothing at ' + sel); await p.mouse.move(pt.x, pt.y, { steps: 8 }); await pause(250); await p.mouse.click(pt.x, pt.y); };
+  const press = async (sel) => {
+    const pt = await at(sel);
+    if (!pt) throw new Error(name + ': nothing at ' + sel);
+    if (o.mobile) { await pause(250); await p.touchscreen.tap(pt.x, pt.y); return; }
+    await p.mouse.move(pt.x, pt.y, { steps: 8 }); await pause(250); await p.mouse.click(pt.x, pt.y);
+  };
   await decision();
   await pause(1200);
   if (o.badge) {
@@ -90,12 +100,12 @@ async function clip(name, o) {
   await p.waitForFunction(() => document.querySelector('.fbwrap .fb-go'));
   await pause(1300);
   await press('.fbwrap .fb-go');
-  await p.mouse.move(2, 2);
+  if (!o.mobile) await p.mouse.move(2, 2);
   await p.waitForFunction(() => document.querySelector('.ccard[data-a]'));
   await pause(1300);
   await p.evaluate(() => { const c = [...document.querySelectorAll('.ccard[data-a]')].find((x) => !x.disabled && /Warm draught/.test(x.textContent)) || document.querySelector('.ccard[data-a]:not([disabled])'); c.setAttribute('data-video', 'support'); });
   await press('.ccard[data-video="support"]');
-  await p.mouse.move(2, 2);
+  if (!o.mobile) await p.mouse.move(2, 2);
   if (o.stills) {
     // mid-action: your response's banner (blue), then the creature's (red)
     if (await p.waitForFunction(() => RB.battleBanner.state().side === 'party', null, { timeout: 8000 }).then(() => true, () => false)) { await pause(250); await still(name + '_party_action'); }

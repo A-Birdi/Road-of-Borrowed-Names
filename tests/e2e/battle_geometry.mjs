@@ -12,7 +12,9 @@
 // Targets (§22.2, at 100 % text, no keyboard): action-safe height ≥ 300 at 390×844, ≥ 240 at
 // 320×640. Simulated conditions are labelled: a reduced viewport stands in for an on-screen
 // keyboard; safe-area insets cannot be simulated in headless Chromium and are not claimed.
-// Usage: node tests/e2e/battle_geometry.mjs [--out tests/e2e/out/battle_geometry.json] [--doc docs/battle/GEOMETRY.md] [filter]
+// With --shots <dir> it runs only the narrow, landscape-phone, large-text and Japanese-led scenes and
+// saves a WebP still of each view (decision, language, action) there; the measurements are the same.
+// Usage: node tests/e2e/battle_geometry.mjs [--out tests/e2e/out/battle_geometry.json] [--doc docs/battle/GEOMETRY.md] [--shots dir] [filter]
 import fs from 'node:fs';
 import path from 'node:path';
 import { serve, launch, page } from './lib.mjs';
@@ -22,7 +24,9 @@ const outAt = args.indexOf('--out');
 const OUT = outAt >= 0 ? args[outAt + 1] : 'tests/e2e/out/battle_geometry.json';
 const docAt = args.indexOf('--doc');
 const DOC = docAt >= 0 ? args[docAt + 1] : null;
-const only = args.filter((a, i) => !a.startsWith('--') && (outAt < 0 || i !== outAt + 1) && (docAt < 0 || i !== docAt + 1))[0];
+const shotAt = args.indexOf('--shots');
+const SHOTS = shotAt >= 0 ? args[shotAt + 1] : null;
+const only = args.filter((a, i) => !a.startsWith('--') && ![outAt, docAt, shotAt].some((k) => k >= 0 && i === k + 1))[0];
 const { srv, url } = await serve();
 const b = await launch();
 const VIEWS = [[320, 640], [390, 844], [412, 915], [844, 390], [768, 1024], [1366, 768], [1440, 900], [1920, 1080]];
@@ -31,9 +35,10 @@ for (const [w, h] of VIEWS) {
   scenes.push({ name: `${w}x${h} one creature, alone`, w, h, comp: null, foes: 1 });
   scenes.push({ name: `${w}x${h} three creatures, with Mio`, w, h, comp: 'mio', foes: 3 });
 }
-scenes.push({ name: '390x844 three creatures, with Mio, 200% text', w: 390, h: 844, comp: 'mio', foes: 3, text: 2 });
-scenes.push({ name: '1366x768 three creatures, with Mio, 200% text', w: 1366, h: 768, comp: 'mio', foes: 3, text: 2 });
-scenes.push({ name: '390x844 two creatures, with Nao, Japanese-led (profile A), long name', w: 390, h: 844, comp: 'nao', foes: 2, profile: 'A', longName: true });
+for (const sc of scenes) if (/^(320x640|390x844|844x390) three/.test(sc.name)) sc.shot = sc.name.split(' ')[0] + '_three_creatures';
+scenes.push({ name: '390x844 three creatures, with Mio, 200% text', w: 390, h: 844, comp: 'mio', foes: 3, text: 2, shot: '390x844_text200' });
+scenes.push({ name: '1366x768 three creatures, with Mio, 200% text', w: 1366, h: 768, comp: 'mio', foes: 3, text: 2, shot: '1366x768_text200' });
+scenes.push({ name: '390x844 two creatures, with Nao, Japanese-led (profile A), long name', w: 390, h: 844, comp: 'nao', foes: 2, profile: 'A', longName: true, shot: '390x844_profileA_longname' });
 scenes.push({ name: '390x500 one creature, with Suzu (SIMULATED on-screen keyboard: viewport reduced from 390x844)', w: 390, h: 500, comp: 'suzu', foes: 1, simulated: 'keyboard' });
 scenes.push({ name: '390x844 one creature, with Ren, Keep visible controls', w: 390, h: 844, comp: 'ren', foes: 1, controls: 'keep' });
 
@@ -120,6 +125,14 @@ function measure() {
 
 async function scene(sc) {
   const { p, errors, ctx } = await page(b, url, { viewport: { width: sc.w, height: sc.h } });
+  // a still of the view just measured, as WebP (only with --shots)
+  const still = async (view) => {
+    if (!SHOTS || !sc.shot) return;
+    const png = await p.screenshot();
+    const b64 = await p.evaluate(async (d) => { const img = new Image(); img.src = 'data:image/png;base64,' + d; await img.decode(); const cv = document.createElement('canvas'); cv.width = img.width; cv.height = img.height; cv.getContext('2d').drawImage(img, 0, 0); return cv.toDataURL('image/webp', 0.86).split(',')[1]; }, png.toString('base64'));
+    fs.mkdirSync(SHOTS, { recursive: true });
+    fs.writeFileSync(path.join(SHOTS, sc.shot + '_' + view + '.webp'), Buffer.from(b64, 'base64'));
+  };
   await p.evaluate((o) => {
     const s = RB.game.debugStart('rw.mill1', 7, 9, { comp: o.comp, flags: { rw_gears: true } });
     s.learn.kanaKnown = 'both'; s.learn.profile = o.profile || 'E'; s.learn.difficulty = o.foes > 2 ? 'hard' : 'normal';
@@ -146,14 +159,17 @@ async function scene(sc) {
   await p.waitForTimeout(500);
   const out = { ...sc };
   out.decision = await p.evaluate(measure);
+  await still('decision');
   // the language view (the status inset on the sheet)
   await p.evaluate(() => { const run = RB.challenge.runStep; RB.challenge.runStep = (step, o) => { window.__lastStep = step; return run(step, o); }; });
   const card = await p.evaluate(() => { const c = [...document.querySelectorAll('.rcard[data-i]')].find((x) => !x.disabled && /unravel/i.test(x.textContent)); return c && c.getAttribute('data-i'); });
   await p.evaluate((i) => document.querySelector('.rcard[data-i="' + i + '"]').scrollIntoView({ block: 'center' }), card);
   await p.click('.rcard[data-i="' + card + '"]');
   await p.waitForSelector('.chal .mc .btn', { timeout: 10000 });
+  await p.mouse.move(1, 1); // (off the word the click left the pointer on, whose hover help would cover the sheet)
   await p.waitForTimeout(400);
   out.language = await p.evaluate(measure);
+  await still('language');
   // answer right, take the companion's turn, and measure the action view mid-exchange
   await p.evaluate(() => {
     const st = window.__lastStep;
@@ -179,6 +195,7 @@ async function scene(sc) {
   await p.waitForFunction(() => document.querySelector('.combat-ui').classList.contains('cb-acting') && RB.battleSeq.busy(), null, { timeout: 8000 });
   await p.waitForTimeout(320); // the withdrawal has finished
   out.action = await p.evaluate(measure);
+  await still('action');
   out.errors = errors.slice();
   await ctx.close();
   return out;
@@ -186,7 +203,7 @@ async function scene(sc) {
 
 const results = [];
 for (const sc of scenes) {
-  if (only && !sc.name.includes(only)) continue;
+  if ((only && !sc.name.includes(only)) || (SHOTS && !sc.shot)) continue;
   try { const r = await scene(sc); results.push(r); console.log('measured ' + sc.name + ': action-safe band ' + (r.action.band ? r.action.band.w + '×' + r.action.band.h : '—') + ', decision band ' + (r.decision.band ? r.decision.band.w + '×' + r.decision.band.h : '—')); }
   catch (e) { results.push({ ...sc, error: String(e && e.message || e).replace(/\x1b\[[0-9;]*m/g, '').slice(0, 1500) }); console.log('FAILED ' + sc.name + ': ' + String(e && e.message || e).slice(0, 300)); }
 }

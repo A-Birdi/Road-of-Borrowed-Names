@@ -1112,5 +1112,11 @@ RB.enemyArt = (function () {
     },
   });
 
-  return { def, P, A, draw, drawArt, drawPosed, motion, styleOf, STYLE, MOVES, frame, has, frameAt, extent, H };
+  // estimated resident pixels of the cached creature frames (battle addendum §21.5): w × h × 4 bytes each
+  function cacheStats() {
+    let bytes = 0;
+    for (const cv of cache.values()) if (cv && cv.width) bytes += cv.width * cv.height * 4;
+    return { frames: cache.size, cap: CAP, bytes, mib: +(bytes / 1048576).toFixed(3) };
+  }
+  return { def, P, A, draw, drawArt, drawPosed, motion, styleOf, STYLE, MOVES, frame, has, frameAt, extent, H, cacheStats };
 })();

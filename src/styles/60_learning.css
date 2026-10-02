@@ -1039,11 +1039,13 @@ body.high-contrast .kc-pp { --pad-paper: #ffffff; --pad-ink: #000000; --pad-guid
    can rise above the layers opened over the battle (the language task, dialogue) */
 .combat-ui { isolation: isolate; }
 /* The banner names the action being performed now (blue: the party; red: a creature). It overlays
-   the scene (no reserved row), takes no input, and is gone by the action's end. */
+   the scene (no reserved row), takes no input, and is gone by the action's end. It is as wide as
+   its words need (centred, not squeezed into the half right of centre) and stays at the top of
+   what is in view when large text makes the overlay scroll (--bn-scroll). */
 .combat-ui > .cb-banner {
   position: absolute; z-index: 6; pointer-events: none;
-  top: max(10px, env(safe-area-inset-top)); left: 50%; transform: translate(-50%, -6px);
-  max-width: min(680px, calc(100% - 150px)); min-height: 34px;
+  top: calc(var(--bn-scroll, 0px) + max(10px, env(safe-area-inset-top))); left: 50%; transform: translate(-50%, -6px);
+  width: max-content; max-width: min(680px, calc(100% - 150px)); min-height: 34px;
   display: flex; align-items: center; flex-wrap: wrap; justify-content: center; gap: 2px 8px;
   padding: 5px 16px 6px; border-radius: 3px; border: 1px solid transparent;
   font: 600 1.02em/1.25 var(--serif); color: #fdf8ee; text-align: center;

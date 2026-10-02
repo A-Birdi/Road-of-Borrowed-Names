@@ -484,6 +484,49 @@ await test('menus: withdrawn (Adaptive) or disabled (Keep visible) controls cann
   }
 });
 
+await test('large text on a phone: the banner stays in view when the overlay has scrolled and uses the screen\'s width; the actors\' stage keeps its place through the exchange', async () => {
+  for (const ts of [1, 1.4, 2]) {
+    const { p, errors, ctx } = await page(b, url, { viewport: { width: 390, height: 844 } });
+    await p.evaluate((v) => { RB.game.settings.textScale = v; }, ts);
+    await battle(p, { comp: 'mio', dupes: 2, diff: 'hard' });
+    await hookSteps(p);
+    await pick(p, 'unravel');
+    await answerRight(p);
+    await p.waitForSelector('.ccard', { timeout: 8000 });
+    await p.mouse.move(2, 2);
+    // read down to the companion's last card first (with large text the overlay scrolls)
+    await p.evaluate(() => { const u = document.querySelector('.combat-ui'); u.scrollTop = u.scrollHeight; });
+    await wait(p, 300);
+    await p.evaluate(() => {
+      window.__geo = [];
+      const tick = () => {
+        const ui = document.querySelector('.combat-ui');
+        if (!ui) return;
+        const R = (e) => { const r = e.getBoundingClientRect(); return [Math.round(r.left), Math.round(r.top), Math.round(r.width), Math.round(r.height)]; };
+        const bn = document.querySelector('.cb-banner.on');
+        if (ui.classList.contains('cb-acting')) window.__geo.push({ scroll: ui.scrollTop, stage: R(ui.querySelector('.cb-stage')), banner: bn ? R(bn) : null });
+        if (RB.combat.phase() !== 'choose' || ui.classList.contains('cb-acting') || window.__geo.length < 3) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
+    const i = await p.evaluate(() => { const c = [...document.querySelectorAll('.ccard[data-a]')].find((x) => !x.disabled && /Warm draught/.test(x.textContent)); return c.getAttribute('data-a'); });
+    await p.click('.ccard[data-a="' + i + '"]');
+    for (let k = 0; k < 600 && !(await p.evaluate(() => RB.combat.phase() === 'choose' && !RB.battleSeq.busy() && !!document.querySelector('.rcard[data-i]'))); k++) { if (await p.evaluate(() => RB.ui.dialogue.isOpen())) await p.evaluate(() => RB.ui.dialogue.advance(true)); await wait(p, 30); }
+    const G = await p.evaluate(() => window.__geo.slice());
+    const tag = 'text ' + Math.round(ts * 100) + ' %: ';
+    const withBn = G.filter((g) => g.banner);
+    assert(G.length > 30 && withBn.length > 10, tag + 'an exchange with banners was sampled (' + G.length + ' frames, ' + withBn.length + ' with a banner)');
+    const out = withBn.filter((g) => g.banner[1] < 0 || g.banner[1] + g.banner[3] > 844);
+    assert(!out.length, tag + 'the banner is in view in every frame (scrolled ' + G[0].scroll + ' px): ' + JSON.stringify(out.slice(0, 2)));
+    const tops = G.map((g) => g.stage[1]), hs = G.map((g) => g.stage[3]);
+    assert(Math.max(...tops) - Math.min(...tops) <= 1 && Math.max(...hs) - Math.min(...hs) <= 1, tag + 'the stage keeps its place and size: top ' + Math.min(...tops) + '–' + Math.max(...tops) + ', height ' + Math.min(...hs) + '–' + Math.max(...hs));
+    if (ts === 1) assert(withBn.every((g) => g.banner[3] <= 48), tag + 'at 100 % text "Wayfarer — ほどく Unravel" fits one line: ' + JSON.stringify(withBn[0].banner));
+    assert(!errors.length, errors.join('; '));
+    console.log('   ' + tag + G.length + ' frames, scrolled ' + G[0].scroll + ' px, stage ' + JSON.stringify(G[0].stage) + ', banner ' + JSON.stringify(withBn[0].banner));
+    await ctx.close();
+  }
+});
+
 console.log('\n' + results.join('\n'));
 console.log(`\n${pass} passed, ${fail} failed`);
 await b.close();
