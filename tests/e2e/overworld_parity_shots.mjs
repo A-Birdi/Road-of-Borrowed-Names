@@ -24,15 +24,24 @@ export const REGIONS = [
   ['reedwake', 'rw.village', null], ['reedwake-mill', 'rw.mill1', null], ['saltglass', 'sg.harbor', [27, 8]], ['drowned-archive', 'sg.da_sluice', null],
   ['cinder', 'co.village', [8, 18]], ['kiln', 'co.kiln', null], ['snowbell', 'sb.hamlet', null], ['observatory', 'sb.obs_hall', null],
   ['lanternfall', 'lf.town', [6, 17]], ['bell-tower', 'lf.tower_mid', null], ['still-mount', 'sa.camp', null], ['still-archive', 'sa.reading', null],
-  ['interior', 'rw.tea', null],
+  ['interior', 'rw.tea', null], ['atlas', 'atlas', null],
 ];
 export const KINDS = ['ladder', 'stairs', 'door', 'exitmat', 'gears', 'millstone', 'lf_lever', 'sb_crank', 'lf_wheel', 'co_wheel', 'sa_door', 'sa_gate', 'lf_sluicegate', 'lf_grate', 'hole', 'well', 'chest', 'mailbox', 'noticeboard', 'sign', 'millwheel', 'sb_dial', 'co_sluice', 'fw_winch', 'fw_pulleypost', 'fw_clamppost', 'fw_slipscreen', 'lf_padlock', 'cs_bellpost'];
 
 async function start(p, map, at, o) {
   return p.evaluate(async ([map, at, o, LATE]) => {
+    if (map === 'atlas') {
+      // an Atlas room: a run from a fixed seed, its threshold room (the generator's own maps)
+      const s0 = RB.game.debugStart('rw.hall', 5, 7, { dir: 'up', comp: o.comp || 'mio', flags: LATE });
+      const run = RB.atlas.newRun(s0, [], { seed: 4242 }); s0.atlas.run = run; RB.atlas.register(run);
+      map = RB.atlas.mapId(run, 't');
+      const sp0 = RB.content.maps[map].spawn.default;
+      RB.world.enter(map, sp0[0], sp0[1], 'up');
+    } else {
     const m = RB.content.maps[map];
     const sp = at || (m.spawn && (m.spawn.default || Object.values(m.spawn)[0])) || [5, 5, 'down'];
     RB.game.debugStart(map, sp[0], sp[1], { dir: sp[2] || 'down', comp: o.comp || 'mio', flags: LATE });
+    }
     RB.game.settings.textSpeed = 'instant';
     await new Promise((r) => setTimeout(r, 200));
     for (let i = 0; i < 80 && RB.ui.dialogue.isOpen(); i++) { RB.ui.dialogue.advance(true); await new Promise((r) => setTimeout(r, 30)); }
@@ -116,6 +125,9 @@ if (!only || only === 'props') {
   if (errors.length) console.log('page errors', errors.slice(0, 3));
   await ctx.close();
 }
-fs.writeFileSync(path.join(outDir, 'index.json'), JSON.stringify(made, null, 1));
+// keep what an earlier run with --only made
+const idx = path.join(outDir, 'index.json');
+if (only && fs.existsSync(idx)) { const old = JSON.parse(fs.readFileSync(idx, 'utf8')); for (const k of ['regions', 'props']) if (!made[k].length && old[k]) made[k] = old[k]; }
+fs.writeFileSync(idx, JSON.stringify(made, null, 1));
 console.log('regions', made.regions.length, 'props', made.props.length, '->', outDir);
 await b.close(); srv.close();

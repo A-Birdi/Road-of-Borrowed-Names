@@ -161,15 +161,24 @@ if (only !== '--world-only') {
 }
 
 // ---- overworld --------------------------------------------------------------------------------------------------
-const REGIONS = [['rw.village', null], ['rw.mill1', null], ['sg.harbor', [27, 8]], ['sg.da_sluice', null], ['co.village', [8, 18]], ['co.kiln', null], ['sb.hamlet', null], ['sb.obs_hall', null], ['lf.town', [6, 17]], ['lf.tower_mid', null], ['sa.camp', null], ['sa.reading', null], ['rw.tea', null]];
+const REGIONS = [['rw.village', null], ['rw.mill1', null], ['sg.harbor', [27, 8]], ['sg.da_sluice', null], ['co.village', [8, 18]], ['co.kiln', null], ['sb.hamlet', null], ['sb.obs_hall', null], ['lf.town', [6, 17]], ['lf.tower_mid', null], ['sa.camp', null], ['sa.reading', null], ['rw.tea', null], ['atlas', null]];
 const LATE = { rw_arrived: true, rw_road_lit: true, rw_echo_done: true, rw_mill_open: true, departed: true, ch1_done: true };
 async function worldRun(pg, map, at, opts) {
   opts = opts || {};
   const { p, errors, ctx } = await open({ page: pg });
   const start = await p.evaluate(async ([map, at, LATE, reduce]) => {
+    if (map === 'atlas') {
+      // an Atlas room: a run from a fixed seed, its threshold room (the generator's own maps)
+      const s0 = RB.game.debugStart('rw.hall', 5, 7, { dir: 'up', comp: 'mio', flags: LATE });
+      const run = RB.atlas.newRun(s0, [], { seed: 4242 }); s0.atlas.run = run; RB.atlas.register(run);
+      map = RB.atlas.mapId(run, 't');
+      const sp0 = RB.content.maps[map].spawn.default;
+      RB.world.enter(map, sp0[0], sp0[1], 'up');
+    } else {
     const m = RB.content.maps[map];
     const sp = at || (m.spawn && (m.spawn.default || Object.values(m.spawn)[0])) || [5, 5, 'down'];
     RB.game.debugStart(map, sp[0], sp[1], { dir: sp[2] || 'down', comp: 'mio', flags: LATE });
+    }
     RB.game.settings.textSpeed = 'instant'; RB.game.settings.reducedMotion = !!reduce; RB.game.applySettings();
     await new Promise((r) => setTimeout(r, 250));
     for (let i = 0; i < 80 && RB.ui.dialogue.isOpen(); i++) { RB.ui.dialogue.advance(true); await new Promise((r) => setTimeout(r, 30)); }
@@ -243,9 +252,9 @@ async function worldRun(pg, map, at, opts) {
   return r;
 }
 if (only !== '--battles-only') {
-  await test('overworld in every regional style: walking, turning and a click on an interactable — the same tiles, facing and outcome as the base build; footprint, anchors, figure heights, door fit and collision unchanged', async () => {
-    const report = [];
-    for (const [map, at] of REGIONS) {
+  const report = [];
+  for (const [map, at] of REGIONS) {
+    await test('overworld ' + map + ': walking, turning and a click on an interactable — the same tiles, facing and outcome as the base build; footprint, anchors, figure heights, door fit and collision unchanged', async () => {
       const a = await worldRun(BASE, map, at), n = await worldRun('', map, at, { shot: 'world_' + map + '.png' });
       assert(!a.errors.length && !n.errors.length, map + ': no page errors: ' + a.errors.concat(n.errors).join(' | '));
       assert(JSON.stringify(a.trace) === JSON.stringify(n.trace), map + ': the same walk ' + JSON.stringify(a.trace) + ' vs ' + JSON.stringify(n.trace));
@@ -257,9 +266,9 @@ if (only !== '--battles-only') {
       assert(JSON.stringify(a.geom) === JSON.stringify(n.geom), map + ': frame, anchor, figure boxes and collision unchanged ' + JSON.stringify(a.geom) + ' vs ' + JSON.stringify(n.geom));
       assert(n.geom.maxH <= a.geom.maxH && n.geom.maxH <= 56 && n.geom.same, map + ': no figure taller than before (' + n.geom.maxH + ' vs ' + a.geom.maxH + ' art px incl. the outline: an adult 50 + a hat or bun 4 + 2 outline rows; a house door frame is 38) and the shared appearance source');
       report.push(map + ' ' + n.trace.length + ' moves, ' + (n.inter ? n.inter.prop + (n.inter.opened ? ' opened' : ' -') : 'no target'));
-    }
-    console.log('   ' + report.join('; '));
-  });
+      console.log('   ' + report[report.length - 1] + '; figure max ' + n.geom.maxH + ' art px');
+    });
+  }
   await test('a half-turn is drawn through a pivot while the facing changes at once; a quarter turn settles; reduced motion snaps', async () => {
     const n = await worldRun('', 'rw.village', null);
     const half = n.turns.filter((q) => q[0] && q[1] && ({ up: 'down', down: 'up', left: 'right', right: 'left' })[q[0]] === q[1]);

@@ -157,7 +157,8 @@ for (const vp of [{ width: 1280, height: 800 }, { width: 390, height: 844 }, { w
       if (vp.width === 1280 && i === 0) await p.screenshot({ path: path.join(outDir, 'dev_play_wide.png') });
       if (vp.width < 500 && i === 5) await p.screenshot({ path: path.join(outDir, 'dev_play_phone.png') });
       await wait(p, 900);
-      seen.push(await p.evaluate(() => { const st = RB.battlePets.stats(); return { t: st.trace[st.trace.length - 1], reduce: RB.game.reducedMotion(), q: st.queued }; }));
+      // (a creature's move is now traced as a brace, the move's own reaction and a settle: the move's own is the one compared)
+      seen.push(await p.evaluate(() => { const st = RB.battlePets.stats(); const tr = st.trace.filter((x) => x.impact !== 'prep' && x.impact !== 'settle'); return { t: tr[tr.length - 1], reduce: RB.game.reducedMotion(), q: st.queued }; }));
     }
     const fam = seen.map((x) => x.t && (x.t.family || x.t.outcome));
     assert(fam.join() === 'fire,heal,hit,blocked,status,wind,technique,bell', 'the observer saw each played event: ' + JSON.stringify(seen));

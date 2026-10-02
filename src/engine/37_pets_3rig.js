@@ -598,7 +598,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // World: 32×32 (the bird 24×24), feet at the anchor; Battle: 48×48 (the bird 40×40).
   const SIZES = {
     world: { quad: { w: 32, h: 32, ax: 16, ay: 29, zs: 1 }, bird: { w: 24, h: 24, ax: 12, ay: 21, zs: 1.2 } },
-    battle: { quad: { w: 48, h: 52, ax: 22, ay: 45, zs: 1.72 }, bird: { w: 40, h: 40, ax: 20, ay: 35, zs: 1.9 } },
+    battle: { quad: { w: 48, h: 56, ax: 22, ay: 45, zs: 1.72 }, bird: { w: 40, h: 40, ax: 20, ay: 35, zs: 1.9 } }, // (quad h 56: the tanuki's tail lying on the ground was cut at 52)
   };
   const YAW = { up: 0, right: 90, down: 180, left: -90 };
   // battle scale per species: sitting, each is about 40–45 % of an adventurer's 86 px (the bird less)

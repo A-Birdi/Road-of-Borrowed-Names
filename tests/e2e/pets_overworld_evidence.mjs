@@ -127,6 +127,27 @@ fs.copyFileSync(path.join(ev, 'timing_trace.json'), path.join(docs, 'pets_timing
 const shotDir = path.join(root, 'tests/e2e/out/battle_pets_overworld');
 const shots = ['none', 'cat', 'dog', 'bird', 'tanuki', 'solo_cat', 'phone_tanuki', 'reduced_bird'].map((k) => ({ k, f: path.join(shotDir, 'battle_' + k + '.png') })).filter((q) => fs.existsSync(q.f));
 if (shots.length) await sheet(path.join(docs, 'battle_pets_stage.webp'), shots.map((q) => ({ label: 'battle: ' + q.k.replace('_', ' '), f: q.f })), { cols: 3, scale: 0.5, browser: b });
+// overworld before/after (from tests/e2e/overworld_parity_shots.mjs run on the base build into base_shots/ and on
+// this build into new_shots/), the road figures gallery, and the exit mat
+const bs = path.join(shotDir, 'base_shots'), ns = path.join(shotDir, 'new_shots');
+if (fs.existsSync(path.join(bs, 'index.json')) && fs.existsSync(path.join(ns, 'index.json'))) {
+  const B0 = JSON.parse(fs.readFileSync(path.join(bs, 'index.json'), 'utf8')), N0 = JSON.parse(fs.readFileSync(path.join(ns, 'index.json'), 'utf8'));
+  const pairs = (B0.regions || []).map((q) => [q, (N0.regions || []).find((r) => r.name === q.name)]).filter((x) => x[1]);
+  for (let i = 0; i < pairs.length; i += 4) {
+    const items = [];
+    for (const [a, n] of pairs.slice(i, i + 4)) items.push({ label: a.name + ' (' + a.map + ') — before', f: a.f }, { label: a.name + ' — after', f: n.f });
+    if (items.length) await sheet(path.join(docs, 'overworld_regions_' + (i / 4 + 1) + '.webp'), items, { cols: 2, scale: 0.5, browser: b });
+  }
+  const props = (B0.props || []).map((q) => [q, (N0.props || []).find((r) => r.kind === q.kind)]).filter((x) => x[1]);
+  for (let i = 0; i < props.length; i += 10) {
+    const items = [];
+    for (const [a, n] of props.slice(i, i + 10)) items.push({ label: a.kind + ' ' + a.map + ' before', f: a.f1 }, { label: 'after', f: n.f1 });
+    await sheet(path.join(docs, 'overworld_interactables_' + (i / 10 + 1) + '.webp'), items, { cols: 4, scale: 1, browser: b });
+  }
+  const em = props.find(([a]) => a.kind === 'exitmat');
+  if (em) await sheet(path.join(docs, 'overworld_exitmat.webp'), [{ label: 'exit mat, co.glass — before (base 982c8df)', f: em[0].f0 }, { label: 'after', f: em[1].f0 }], { cols: 2, scale: 2, browser: b });
+}
+if (fs.existsSync(path.join(shotDir, 'figures_gallery.png'))) await sheet(path.join(docs, 'overworld_figures_gallery.webp'), [{ label: 'Eight player looks on the road (down, left, up, right, walking, idle) beside the same look in battle (3×)', f: path.join(shotDir, 'figures_gallery.png') }], { cols: 1, scale: 1, browser: b });
 console.log('evidence written:', fs.readdirSync(docs).join(', '));
 console.log(JSON.stringify(Object.fromEntries(Object.entries(trace).map(([k, v]) => [k, { poseChanges: v.poseChanges, distinct: v.distinctPoses, perSecond: v.changesPerSecond }]))));
 await b.close(); srv.close();

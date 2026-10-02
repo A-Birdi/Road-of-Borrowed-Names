@@ -20,11 +20,23 @@
  *   whoever acts. One dominant reaction per exchange; a second action in the
  *   same exchange gets a short acknowledgement of its family instead of a
  *   second flourish. A technique is one combined culmination, not three.
- * - A creature's move nearby: the species' safe nearby-impact reaction (never
- *   an injury cue, whether the blow landed or a ward took it).
+ * - A creature's move nearby: while it prepares, a glance at it and a small
+ *   brace; at contact the species' safe nearby-impact reaction (never an injury
+ *   cue, whether the blow landed or a ward took it); after it, a settle.
  * - The final knot: the settled-victory gesture with your cheer; defeat: it
  *   keeps low and close (not hurt). Arrival: it trots in beside you; exit: gone.
  * - Reduced motion: every reaction is its key pose held (no hops, no travel).
+ *
+ * Battle art addendum (§11; docs/battle/pets_overworld.md):
+ * - Every reaction is fitted into the action it answers (from its beat to the
+ *   action's own end, at most 1.6× faster); an instant-length action gets none
+ *   (the recap carries the result); the next decision eases any reaction out.
+ * - Poses change at most every 80 ms while it reacts and every 100 ms while
+ *   idle (held drawings, not a tween); a new timeline cross-fades from the last
+ *   pose shown; the tail and ears follow the body by 90 and 50 ms.
+ * - Its place is computed every frame from the live party anchors (place()):
+ *   never on an adventurer's foot anchor, a creature or a reported badge; aside
+ *   or resting when crowded. Its art density follows the party's drawn height.
  *
  *   RB.battlePets.wants() (the stage reserves its place), draw(c, lay, fr), stats(),
  *   RB.battlePets.sample(species, look, family, t, o) -> pose (the coverage gallery, tests),
@@ -287,7 +299,7 @@ RB.battlePets = (function () {
   }
   function schedule(r, R, until) {
     if (!B) return false;
-    const traced = { kind: r.kind, family: r.family || r.impact || null, actor: r.actor || null, secondary: !!r.secondary, outcome: r.outcome || null };
+    const traced = { kind: r.kind, family: r.family || null, impact: r.impact || null, actor: r.actor || null, secondary: !!r.secondary, outcome: r.outcome || null };
     const optional = r.impact === 'prep' || r.impact === 'settle';
     if (!fit(r, R, r.at, until, optional)) { if (!optional) { B.stats.skipped++; traced.skipped = 'instant'; B.trace.push(traced); while (B.trace.length > 60) B.trace.shift(); } return false; }
     traced.rate = Math.round(r.rate * 100) / 100;
@@ -333,7 +345,15 @@ RB.battlePets = (function () {
   }
   function onScene(e) {
     if (e.scope !== 'battle') return;
-    if (e.phase === 'enter') { begin(e); if (B) B.enterT = pt(); return; }
+    if (e.phase === 'enter') {
+      begin(e);
+      if (B) {
+        B.enterT = pt();
+        // measure the party's figure height now (once per frame size), not on the first drawn frame
+        try { figureH({ F: RB.battlers && RB.battlers.FRAME }); } catch (err) { /* measured on the first draw instead */ }
+      }
+      return;
+    }
     if (!B) return;
     if (e.phase === 'exit') { end(); return; }
     if (e.phase === 'calm') {
