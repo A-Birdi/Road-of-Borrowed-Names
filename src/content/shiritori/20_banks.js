@@ -14,11 +14,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
   if (!SH || !SH.words) return;
   const BANDS = [
     { id: 'pocket', version: 1, levels: ['pocket'], target: 72, title: { en: 'Pocket words' },
-      starters: ["w.ashi", "w.boushi", "w.fuku", "w.ha.leaf", "w.hashi.bridge", "w.hoshi", "w.ika", "w.ishi", "w.kasa", "w.kusa", "w.mushi", "w.nashi", "w.niku", "w.saka", "w.shika", "w.sushi", "w.tokei", "w.ushi"] },
+      starters: ["w.atama", "w.chou", "w.eki", "w.fuku", "w.ika", "w.kasa", "w.kuma", "w.kuruma", "w.kusa", "w.niku", "w.nooto", "w.shika", "w.shima", "w.tanuki", "w.tokei", "w.tsuki", "w.uma", "w.yama"] },
     { id: 'everyday', version: 1, levels: ['pocket', 'everyday'], target: 180, title: { en: 'Everyday words' },
-      starters: ["w.ashi", "w.atama", "w.banana", "w.bentou", "w.boushi", "w.buta", "w.butai", "w.eki", "w.fooku", "w.fue", "w.gakkou", "w.gomi", "w.ha.leaf", "w.hasami", "w.ika", "w.ito", "w.kao", "w.kasa", "w.keeki", "w.moufu"] },
+      starters: ["w.ashi", "w.atama", "w.basu", "w.bentou", "w.boushi", "w.buta", "w.eki", "w.fooku", "w.fue", "w.gomi", "w.ha.leaf", "w.hasami", "w.ika", "w.ito", "w.kani", "w.kao", "w.kasa", "w.kitte", "w.saifu", "w.tokei"] },
     { id: 'extended', version: 1, levels: ['pocket', 'everyday', 'extended'], target: 360, title: { en: 'Extended words' },
-      starters: ["w.ami", "w.ashi", "w.atama", "w.baketsu", "w.banana", "w.basu", "w.bentou", "w.buta", "w.butai", "w.denki", "w.fooku", "w.fue", "w.fune", "w.gake", "w.hako", "w.hato", "w.himo", "w.hitsuji", "w.honoo", "w.ika"] },
+      starters: ["w.ami", "w.ashi", "w.atama", "w.baketsu", "w.banana", "w.basu", "w.bentou", "w.buranko", "w.buta", "w.butai", "w.denki", "w.fooku", "w.fue", "w.fune", "w.hatake", "w.hato", "w.himo", "w.ika", "w.kagi", "w.moufu"] },
   ];
   SH.BANDS = {};
   SH.bankProblems = [];
