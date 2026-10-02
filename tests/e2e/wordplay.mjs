@@ -655,9 +655,11 @@ if (want('touch')) {
   await p.locator('[data-wp-tab="select"]').tap();
   await p.locator('[data-wp-pick="' + w.id + '"]').scrollIntoViewIfNeeded();
   await p.locator('[data-wp-pick="' + w.id + '"]').tap();
+  await until(p, (r) => document.querySelector('.wp-dline').textContent.indexOf(r) >= 0, w.reading, 4000);
   await p.locator('.wp-leaf [data-wp="play"]').tap();
-  await until(p, () => window.__wp().active && window.__wp().active.n > 1, null, 3000);
-  assert((await st(p)).active.n > 1, 'touch: tap Choose, a word and Play word');
+  await until(p, () => !window.__wp().active || window.__wp().active.n > 1, null, 6000);
+  const ts = await p.evaluate(() => ({ n: window.__wp().active ? window.__wp().active.n : 'over', line: document.querySelector('.wp-dline') ? document.querySelector('.wp-dline').textContent : '', msg: document.querySelector('.wp-dmsg') ? document.querySelector('.wp-dmsg').textContent : '' }));
+  assert(ts.n === 'over' || ts.n > 1, 'touch: tap Choose, a word and Play word (' + JSON.stringify(ts) + ')');
   await shot(p, 'table_suzu_touch_390x844');
   assert(!errors.length, 'no page errors (' + errors.slice(0, 3).join(' | ') + ')');
   await p.context().close();

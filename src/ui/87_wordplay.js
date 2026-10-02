@@ -377,7 +377,7 @@ RB.ui.wordplay = RB.ui.wordplay || {};
         $('.wp-turn').innerHTML = mode === 'thinking' ? esc(who(s) + ' is thinking…') : a.st.next === 'pc' ? '<b>' + lab('yourTurn') + '</b>' : esc(who(s) + '\'s turn');
         $('.wp-req').innerHTML = '<span class="lbl">Next word begins with</span> ' + KANA(a.st.required);
         $('.wp-count').textContent = (coop ? 'Chain: ' + n + ' of ' + a.goal : n + ' word' + (n === 1 ? '' : 's') + ' played') + ' · ' + WP().BAND[a.band].en + ' · ' + WP().LEVEL[a.level].en + ' · ' + (a.support === 'open' ? 'Open-book' : 'Recall' + (a.flags.suggested ? ' (suggestions used)' : ''));
-        $('.wp-used').textContent = '(' + a.st.history.length + ' word' + (a.st.history.length === 1 ? '' : 's') + ' used, the starter included)';
+        $('.wp-used').textContent = '(' + a.st.history.length + ' used, with the starter)';
         root.querySelector('.wp-table').setAttribute('data-turn', mode === 'thinking' ? 'cpu' : a.st.next);
       }
       function renderChain() {

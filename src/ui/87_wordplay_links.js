@@ -104,7 +104,7 @@ RB.ui.wordplay = RB.ui.wordplay || {};
     }
     // the nine stages (only this companion's; separate journeys keep their own)
     const cells = WP().cells(s, comp);
-    h += '<table class="wp-grid"><caption class="sr">' + esc('Stage records with ' + (c ? c.name.en : comp)) + '</caption><thead><tr><th scope="col"><span class="sr">Words</span></th>' +
+    h += '<table class="wp-grid" aria-label="' + esc('Stage records with ' + (c ? c.name.en : comp)) + '"><thead><tr><th scope="col" aria-label="Words"></th>' +
       WP().LEVELS.map((l) => '<th scope="col">' + RB.ui.label(WP().LEVEL[l].jp, WP().LEVEL[l].en) + '</th>').join('') + '</tr></thead><tbody>' +
       WP().BANDS.map((b) => '<tr><th scope="row">' + RB.ui.label(WP().BAND[b].jp, WP().BAND[b].en) + '</th>' + WP().LEVELS.map((l) => {
         const x = cells.find((y) => y.band === b && y.level === l);

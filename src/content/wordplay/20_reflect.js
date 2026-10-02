@@ -162,7 +162,7 @@ comp[smile]: また {幕|まく} を {開|あ}けましょう 。 {次|つぎ} �
   T('ren', 'win', '{私|わたし} の {計画|けいかく} の どこ が {外|はず}れた か 、 {記録|きろく} を {見直|みなお}して います 。', 'I\'m going back over the record to see where my plan went wrong.');
   T('ren', 'loss', '{勝|か}った {試合|しあい} の {記録|きろく} ほど 、 {読|よ}み{返|かえ}す と {粗|あら} が {見|み}えます 。', 'The record of a game you won shows its flaws most when you reread it.');
   T('ren', 'coop', '{二人|ふたり} の {言葉|ことば} が 、 {一本|いっぽん} の {線|せん} に なりました 。', 'Our words made a single line.');
-  T('ren', 'stop', 'きり の {良|よ}い ところ で {止|と}める の も 、 {記録|きろく} の {技術|ぎじゅつ} です 。', 'Stopping at a good place is part of record-keeping too.');
+  T('ren', 'stop', 'きり の {良|よ}い ところ で {止|と}める の も 、 {記録|きろく} の うち です 。', 'Stopping at a good place is part of record-keeping too.');
   T('suzu', 'win', '{負|ま}けた {舞台|ぶたい} ほど 、 {次|つぎ} が {楽|たの}しみ に なる の よ 。', 'The shows I lose make me look forward to the next one most.');
   T('suzu', 'loss', '{勝|か}った けど 、 {一番|いちばん} {覚|おぼ}えて いる の は あなた の {返|かえ}し よ 。', 'I won, but what I remember most is how you answered.');
   T('suzu', 'coop', '{二人|ふたり} の {舞台|ぶたい} 、 また やりたい わ 。', 'I\'d like to do our two-person show again.');

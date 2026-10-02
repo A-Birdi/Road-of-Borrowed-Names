@@ -25,6 +25,5 @@ var RB = (globalThis.RB = globalThis.RB || {});
 必死|ひっし|adj-na|I|desperate, frantic, doing one's utmost
 多分|たぶん|adv|E|probably, perhaps
 粗|あら|n|A|flaw, fault (粗が見える: flaws show)
-技術|ぎじゅつ|n|E|skill, technique
 `), 'wordplay');
 })();
