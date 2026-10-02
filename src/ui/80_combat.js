@@ -257,6 +257,8 @@ RB.combat = (function () {
   }
   let showIntentEn = false;
   function enShown() { return RB.game.s.learn.profile === 'F' || showIntentEn; }
+  // Translate: the creatures' lines in English from now on in this encounter (counts as assisted)
+  function translate() { showIntentEn = true; if (st) st.assistedRound = true; renderUi(); }
   // A keyword: a button that explains itself (RB.combatHelp) on hover, focus or tap.
   const kw = (key, cls, inner, sr) => '<button type="button" class="kw ' + cls + '" data-kw="' + key + '" aria-expanded="false" aria-controls="kwcard">' + inner +
     '<span class="sr">' + esc(sr || ' — what this means') + '</span></button>';
@@ -371,15 +373,21 @@ RB.combat = (function () {
       if (keep) { const on = ui.foe.querySelector('.fs.on') || ui.foe.querySelector('.fs:not(.down)'); if (on) on.focus({ preventScroll: true }); }
     } else {
       const states = statusList(T);
-      ui.foe.innerHTML = '<span class="foe-n">' + RB.ui.jhtml(enemy.name.jp) + ' <span class="en">' + esc(enemy.name.en) + '</span></span>' +
+      ui.foe.classList.remove('group');
+      ui.foe.innerHTML = '<div class="fplate solo" data-foe="' + T + '"><span class="foe-n">' + RB.ui.jhtml(enemy.name.jp) + ' <span class="en">' + esc(enemy.name.en) + '</span></span>' +
         '<span class="foe-k' + (states.length ? ' has-st' : '') + '">' + knotsHtml(T) + (states.length ? '<span class="it-states" role="group" aria-label="Its state">' +
-          states.map((x) => kw(x.key, 'st', '<span class="pill">' + I(STATUS_ICON[x.key]) + esc(x.label) + '</span>')).join('') + '</span>' : '') + '</span>';
+          states.map((x) => kw(x.key, 'st', '<span class="pill">' + I(STATUS_ICON[x.key]) + esc(x.label) + '</span>')).join('') + '</span>' : '') + '</span></div>';
     }
-    // the telegraph: the target's in full (every creature's move and what it does are on its slip
-    // and its badge; pressing a creature shows its telegraph here). Intent display (§13.6):
-    // Adaptive adds every other creature whose words are the task (READING), each named, so no
-    // passage hides behind a badge; Expanded shows every creature's telegraph while you decide.
-    let ih = '', blocks = 1;
+    // the telegraph panel, by intent display (battle addendum §13.3, §13.6). Adaptive: a routine move
+    // is its creature's badge (symbol and strength; its words, what it does and the translation in the
+    // badge's card), so the panel holds only the passages whose reading is the task (READING: a
+    // promise, a mirror, a plea), each named — no such passage hides behind a badge; with none, the
+    // panel is not there at all. A move met for the first time also gets the coach's note. Expanded:
+    // the target's telegraph in full and every other creature's, while you decide.
+    const expanded = RB.game.settings.intentDisplay === 'expanded';
+    const standingNow = L().standing(st);
+    const readsOf = (order) => order.filter((i) => standingNow.indexOf(i) >= 0 && st.foes[i].intent && READING[st.foes[i].intent.kind]);
+    let ih = '', blocks = 0;
     if (group) {
       const block = (i, tag) => {
         const sts = statusList(i).filter((x) => x.key !== 'silence');
@@ -387,21 +395,24 @@ RB.combat = (function () {
           (tag ? '<span class="it-tag">' + tag + '</span>' : '') +
           (sts.length ? '<span class="it-states" role="group" aria-label="Its state">' + sts.map((x) => kw(kkey(x.key, i), 'st', '<span class="pill">' + I(STATUS_ICON[x.key]) + esc(x.label) + '</span>')).join('') + '</span>' : '') + '</div>' + intentHtml(false, i) + '</div>';
       };
-      ih += block(T, '');
-      const expanded = RB.game.settings.intentDisplay === 'expanded';
       const lay = RB.battleStage.lay();
       const order = lay && lay.visual && lay.visual.length === st.foes.length ? lay.visual : st.foes.map((_, k) => k);
-      for (const i of order) {
-        if (i === T || L().standing(st).indexOf(i) < 0 || !st.foes[i].intent) continue;
-        const reading = !!READING[st.foes[i].intent.kind];
-        if (expanded || reading) { ih += block(i, reading ? 'Also to read' : ''); blocks++; }
-      }
-    } else ih = intentHtml(false, T);
+      if (expanded) {
+        ih += block(T, ''); blocks++;
+        for (const i of order) {
+          if (i === T || standingNow.indexOf(i) < 0 || !st.foes[i].intent) continue;
+          ih += block(i, READING[st.foes[i].intent.kind] ? 'Also to read' : ''); blocks++;
+        }
+      } else for (const i of readsOf(order)) { ih += block(i, 'To read'); blocks++; }
+    } else if (expanded || readsOf([T]).length) { ih = intentHtml(false, T); blocks = 1; }
     ui.intent.innerHTML = ih;
+    ui.intent.classList.toggle('it-none', !blocks);
     ui.intent.classList.toggle('it-multi', blocks > 1);
     ui.intent.setAttribute('aria-label', group ? 'What they are about to do' : 'What it is about to do');
-    for (const tr of ui.intent.querySelectorAll('[data-tr]')) tr.onclick = () => { showIntentEn = true; st.assistedRound = true; renderUi(); };
+    for (const tr of ui.intent.querySelectorAll('[data-tr]')) tr.onclick = translate;
     syncBadges();
+    // (the plates were just rebuilt: put them back over their creatures)
+    RB.battleIntents.relayout();
     // the party: resolve (numbers and bar) and wards; Harmony is its own band
     // above them (not a third resolve bar). The telegraph's target is marked
     // once its meaning is on screen (never before).
@@ -578,17 +589,22 @@ RB.combat = (function () {
     return '<div class="ic-k">' + I(moveIcon(it)) + '<span class="k">' + esc(moveLabel(it)) + '</span>' + (g ? '<span class="gist">' + esc(g) + '</span>' : '') + '</div>' +
       (line.jp ? '<div class="ic-jp">' + RB.ui.jhtml(line.jp, { vars: line.vars }) + '</div>' : '') +
       (line.en && enShown() ? '<div class="ic-en">' + esc(line.en) + '</div>' : '') +
+      (line.en && !enShown() ? '<button type="button" class="pbtn quiet tr ic-tr" data-tr title="Show the English (counts as assisted)">' + I('note') + '<span>Translate <span class="aside">(assisted)</span></span></button>' : '') +
       (what ? '<p class="ic-what">' + what + '</p>' : '') +
+      (!badgeSnap && RB.game.s.comp === 'nao' && (st.foes[i].nextIntents || []).length ? '<div class="it-next">' + I('companion') + '<span>Nao: “After that — ' + esc(st.foes[i].nextIntents.map(moveLabel).join(', then ')) + '.”</span></div>' : '') +
       '<div class="ic-f">' + kw(kkey('intent', i), 'pbtn quiet ic-more', '<span>How to answer it</span>', ' — opens a note') + '</div>';
   }
   // where each creature rests (page px) and the safe areas: the badges stay in the scene; the
   // card may use the scene's column from the top of the overlay down to the party slip
   function placeBadges(hits) {
     if (!ui || !RB.battleIntents) return;
+    // no scene to sit in (a stage squeezed under 60 px): the plates go back to a row of slips that
+    // carry the moves too, and the badges stand down
+    ui.foe.classList.toggle('onstage', !!stageCss);
     if (!stageCss) { if (badgeGeo !== 'none') { badgeGeo = 'none'; RB.battleIntents.place([], null, null); } return; }
     const rr = ui.root.getBoundingClientRect(), pr = ui.party ? ui.party.getBoundingClientRect() : null;
     const r = stageCss;
-    const rects = (hits || []).filter((q) => !q.settled).map((q) => ({ i: q.i, x: Math.round(q.x), y: Math.round(q.y), w: Math.round(q.w) }));
+    const rects = (hits || []).map((q) => ({ i: q.i, x: Math.round(q.x), y: Math.round(q.y), w: Math.round(q.w), settled: !!q.settled }));
     const bottom = pr && pr.height && pr.top > r.y ? Math.min(pr.top, rr.bottom) : Math.min(r.y + r.h, rr.bottom);
     const top = Math.max(rr.top, 0) + 6;
     const bounds = { x: r.x, y: r.y, w: r.w, h: Math.max(44, Math.min(r.h, bottom - r.y)) };
@@ -1233,7 +1249,12 @@ RB.combat = (function () {
     tg.hover = null; tg.lock = null; tg.compTarget = null;
     ui = buildUi();
     RB.battleBanner.attach(ui.root);
-    RB.battleIntents.attach(ui.root, { cardHtml: intentCardHtml });
+    RB.battleIntents.attach(ui.root, {
+      cardHtml: intentCardHtml, translate,
+      // the creatures' plates (their names, knots and conditions), placed with their badges above each one
+      plates: () => { const m = {}; if (ui && ui.foe.classList.contains('onstage')) for (const e of ui.foe.querySelectorAll('[data-foe]')) m[+e.getAttribute('data-foe')] = e; return m; },
+      compact: (on) => { if (ui) ui.foe.classList.toggle('compact', !!on); },
+    });
     badgeSnap = null; actFoe = null; shownAnswered = null; badgeGeo = ''; badgeLay = null; badgeAt = -1e9; badgeCss = '';
     view = null; sealHeld = null; curCard = null; phase = 'intro'; logFresh = true; chain = false; hitKey = '';
     amb.v = null; Object.assign(cost, { n: 0, sum: 0, max: 0, seqN: 0, seqSum: 0, seqMax: 0 });
@@ -1247,6 +1268,12 @@ RB.combat = (function () {
     measure();
     exchangeN = 0;
     present('scene', { phase: 'enter', comp: st.compId || null, foes: members.length });
+    // While the opening lines are spoken the decision surfaces (plates, badges, telegraph, responses)
+    // stay away — never empty boxes on screen — and come in once the first decision is ready; the
+    // party's slip is filled now.
+    ui.root.classList.add('cb-intro');
+    for (const el of [ui.intent, ui.dock]) el.inert = true;
+    try { renderUi(); } catch (e) { console.error('battle intro', e); }
     await RB.ui.fade(false, 200);
     let outcome = null;
     try {
@@ -1272,6 +1299,8 @@ RB.combat = (function () {
         present('scene', { phase: 'calm' });
         tg.hover = null; tg.lock = null;
         renderUi();
+        // (the first decision: the surfaces come in, filled)
+        if (ui.root.classList.contains('cb-intro')) { ui.root.classList.remove('cb-intro'); for (const el of [ui.intent, ui.dock]) el.inert = false; }
         if (RB.creatures) RB.creatures.saw(s, st, members); // the telegraphs now on screen
         RB.audio && RB.audio.sfx('enemy_intent', { vol: 0.5 });
         st.assistedRound = false;

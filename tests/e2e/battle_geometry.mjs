@@ -48,7 +48,8 @@ function measure() {
   const vis = (e) => { if (!e) return false; const cs = getComputedStyle(e); if (cs.visibility !== 'visible' || cs.display === 'none' || +cs.opacity < 0.05) return false; const r = e.getBoundingClientRect(); return r.width > 2 && r.height > 2 && r.right > 0 && r.bottom > 0 && r.left < vw && r.top < vh; };
   const R = (e) => { const r = e.getBoundingClientRect(); return { x: Math.round(r.left), y: Math.round(r.top), w: Math.round(r.width), h: Math.round(r.height) }; };
   const ui = document.querySelector('.combat-ui');
-  const sel = ['.cb-foe', '.intent', '.cb-dock', '.cb-party', '.cb-coachbox .cb-coach', '.cb-banner.on', '.cb-skip:not([hidden])', '.cb-badges .cb-ib', '#cb-icard:not([hidden])', '.chal', '.dlg:not(.hidden)', '#hud'];
+  // (the creatures' plates sit on the scene: each counts, like a badge; off the scene the slip row counts whole)
+  const sel = ['.cb-foe:not(.onstage)', '.cb-foe.onstage [data-foe]', '.intent', '.cb-dock', '.cb-party', '.cb-coachbox .cb-coach', '.cb-banner.on', '.cb-skip:not([hidden])', '.cb-badges .cb-ib', '#cb-icard:not([hidden])', '.chal', '.dlg:not(.hidden)', '#hud'];
   const occ = [];
   for (const s of sel) for (const e of document.querySelectorAll(s)) {
     if (s !== '.chal' && s !== '#hud' && s !== '.dlg:not(.hidden)' && ui && !ui.contains(e)) continue;

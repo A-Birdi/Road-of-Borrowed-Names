@@ -512,6 +512,7 @@ body.in-dialogue .combat-ui, body.in-dialogue .combat-ui * { pointer-events: non
 .combat-ui > .cb-stage { grid-area: stage; pointer-events: none; }
 .combat-ui .cb-foe { grid-area: foe; }
 .combat-ui .intent { grid-area: intent; }
+.combat-ui .intent.it-none { display: none; }
 .combat-ui .cb-party { grid-area: party; }
 .combat-ui .cb-dock { grid-area: dock; }
 .combat-ui .paper { background: var(--paper); border: 1px solid var(--paper-edge); border-radius: 3px; box-shadow: 0 2px 0 var(--paper-3), 0 3px 0 var(--paper-edge), 0 8px 20px rgba(0, 0, 0, 0.3); }
@@ -805,6 +806,41 @@ body.high-contrast .combat-ui .paper, body.high-contrast .combat-ui .rcard { bor
 .cb-foe .fs.on .kn.tied { box-shadow: inset 0 0 0 2px var(--paper); }
 .cb-foe .fs .fs-mark { position: absolute; left: 4px; top: 5px; bottom: 5px; width: 6px; border: 3px solid transparent; border-right: 0; border-radius: 1px; }
 .cb-foe .fs.on .fs-mark { border-color: var(--ink); }
+/* The creatures' plates on the scene (the owner's playtest of 2026-10-02): each creature's name, its
+   knots and its conditions sit above where it rests, beside its badge, on a translucent plate. A
+   group's plates are its target choice (the target's is paper, with the ink bracket). Placed by
+   82c_battle_intents.js; with no scene to sit in they fall back to the slip row above. (grid-area:
+   auto, so the plates are placed against the overlay itself, like the badges.) */
+.combat-ui > .cb-foe.onstage {
+  grid-area: auto; position: absolute; left: 0; top: 0; width: 0; height: 0; min-height: 0; max-width: none; padding: 0; margin: 0;
+  border: 0; background: none; box-shadow: none; overflow: visible; z-index: 4; pointer-events: none; display: block;
+  transition: opacity 200ms var(--ease), visibility 0s linear 0s;
+}
+.cb-foe.onstage .fs-h { display: none; }
+.cb-foe.onstage .fs-row { display: contents; }
+.cb-foe.onstage .fs, .cb-foe.onstage .fplate {
+  position: absolute; left: 0; top: 0; width: max-content; max-width: min(320px, 46vw); min-height: 0; pointer-events: auto;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 0; padding: 1px 9px 3px;
+  color: #fdf8ee; text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75);
+  background: rgba(13, 18, 32, 0.5); border: 1px solid rgba(253, 248, 238, 0.22); border-radius: 4px; box-shadow: none;
+}
+.cb-foe.onstage .fs { padding-left: 15px; }
+.cb-foe.onstage .fs .fs-it { display: none; }
+.cb-foe.onstage .fs:hover:not(.on):not(.down):not([data-locked]) { background: rgba(13, 18, 32, 0.66); }
+.cb-foe.onstage .fs.on { background: rgba(250, 244, 230, 0.86); color: var(--ink); text-shadow: none; border-color: var(--paper-edge); }
+.cb-foe.onstage .fs.down { opacity: 0.72; }
+.cb-foe.onstage rt, .cb-foe.onstage .kn-t { color: #e8dfca; }
+.cb-foe.onstage .fs.on rt { color: var(--rt-ink); }
+.cb-foe.onstage .fs.on .kn-t { color: var(--ink-2); }
+.cb-foe.onstage .fplate .foe-n { font-size: 1em; }
+.cb-foe.onstage .fplate .foe-k { gap: 0 10px; }
+.cb-foe.onstage .kn.tied { box-shadow: inset 0 0 0 2px rgba(13, 18, 32, 0.9); }
+.cb-foe.onstage .fs.on .kn.tied { box-shadow: inset 0 0 0 2px var(--paper); }
+/* compact (a row too narrow for every name): the Japanese name with its reading and the mark; the knots as dots */
+.cb-foe.onstage.compact .en, .cb-foe.onstage.compact .kn-t { display: none; }
+body.high-contrast .cb-foe.onstage .fs, body.high-contrast .cb-foe.onstage .fplate { background: rgba(0, 0, 0, 0.85); border-color: #fff; }
+body.high-contrast .cb-foe.onstage .fs.on { background: #fff; }
+
 /* whom a response (or your companion's move) under the pointer would reach */
 /* (absolutely placed: a preview never moves anything) */
 .cb-foe .fs.cb-pv::after, .cb-party .pm.cb-pv::before {
@@ -1075,15 +1111,16 @@ body.reduced-motion .combat-ui > .cb-banner { transition: none; transform: trans
 /* Committed: the telegraph and the response dock withdraw through their edge (Adaptive) and the
    scene drawn under them shows; nothing is re-laid out. Keep visible leaves them, dimmed and inert. */
 .combat-ui .intent, .combat-ui .cb-dock, .combat-ui .cb-side { transition: transform 200ms var(--ease), opacity 200ms var(--ease), visibility 0s linear 0s; }
-.combat-ui.cb-acting:not(.cb-keep) .intent { transform: translateY(-28px); opacity: 0; visibility: hidden; transition: transform 180ms var(--ease), opacity 180ms var(--ease), visibility 0s linear 180ms; }
-.combat-ui.cb-acting:not(.cb-keep) .cb-dock { transform: translateY(calc(100% + 24px)); opacity: 0; visibility: hidden; transition: transform 200ms var(--ease), opacity 200ms var(--ease), visibility 0s linear 200ms; }
+.combat-ui.cb-intro .cb-foe, .combat-ui.cb-intro > .cb-badges, .combat-ui.cb-intro .cb-coachbox { opacity: 0; visibility: hidden; }
+.combat-ui.cb-intro .intent, .combat-ui.cb-acting:not(.cb-keep) .intent { transform: translateY(-28px); opacity: 0; visibility: hidden; transition: transform 180ms var(--ease), opacity 180ms var(--ease), visibility 0s linear 180ms; }
+.combat-ui.cb-intro .cb-dock, .combat-ui.cb-acting:not(.cb-keep) .cb-dock { transform: translateY(calc(100% + 24px)); opacity: 0; visibility: hidden; transition: transform 200ms var(--ease), opacity 200ms var(--ease), visibility 0s linear 200ms; }
 .combat-ui.cb-acting.cb-keep .intent, .combat-ui.cb-acting.cb-keep .cb-dock { opacity: 0.6; filter: saturate(0.55); }
 @media (min-width: 900px) and (min-height: 560px) {
-  .combat-ui.cb-acting:not(.cb-keep) .cb-dock { transform: translateX(calc(100% + 24px)); }
-  .combat-ui.cb-group.cb-acting:not(.cb-keep) .cb-side > .intent { transform: translateX(calc(100% + 24px)); }
+  .combat-ui.cb-intro .cb-dock, .combat-ui.cb-acting:not(.cb-keep) .cb-dock { transform: translateX(calc(100% + 24px)); }
+  .combat-ui.cb-group.cb-intro .cb-side > .intent, .combat-ui.cb-group.cb-acting:not(.cb-keep) .cb-side > .intent { transform: translateX(calc(100% + 24px)); }
 }
 @media (max-height: 559px) and (min-width: 600px) {
-  .combat-ui.cb-acting:not(.cb-keep) .cb-dock, .combat-ui.cb-acting:not(.cb-keep) .intent { transform: translateX(calc(100% + 24px)); }
+  .combat-ui.cb-intro .cb-dock, .combat-ui.cb-intro .intent, .combat-ui.cb-acting:not(.cb-keep) .cb-dock, .combat-ui.cb-acting:not(.cb-keep) .intent { transform: translateX(calc(100% + 24px)); }
 }
 body.reduced-motion .combat-ui :is(.intent, .cb-dock, .cb-side) { transition: none !important; }
 @media (prefers-reduced-motion: reduce) { .combat-ui :is(.intent, .cb-dock, .cb-side) { transition: none !important; } }

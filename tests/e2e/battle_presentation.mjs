@@ -299,20 +299,21 @@ await test('intent badges: one per creature at its slot, marked where names repe
   }
 });
 
-await test('reading-critical intents: a promise keeps its wording in view under a neutral name; Expanded shows every telegraph; a settled creature takes its badge', async () => {
+await test('Adaptive: a routine move is its badge only (no telegraph panel); a promise keeps its wording in view under a neutral name; Expanded shows every telegraph; a settled creature takes its badge and keeps its plate', async () => {
   const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 800 } });
   await battle(p, { diff: 'normal', dupes: 1 });
   await p.waitForFunction(() => RB.battleIntents.state().badges.length === 2, null, { timeout: 8000 });
   const blocks = () => p.evaluate(() => [...document.querySelectorAll('.intent .it-block')].map((x) => ({ i: +x.dataset.foe, tag: (x.querySelector('.it-tag') || {}).textContent || '', jp: (x.querySelector('.it-jp') || {}).textContent || '' })));
-  // a strike on the other: Adaptive shows the target's telegraph only
+  // routine moves: Adaptive shows no telegraph panel at all (each move is its creature's badge)
   await p.evaluate(() => { const st = RB.combat.state(); st.foes[1].intent = RB.combatLogic.intentDef(RB.content.enemies[st.foes[1].enemyId], 'strike'); RB.combat.target(0); RB.combat.refresh(); });
   let B = await blocks();
-  assert(B.length === 1 && B[0].i === 0, 'Adaptive: the target\'s telegraph: ' + JSON.stringify(B));
+  const panel = await p.evaluate(() => { const e = document.querySelector('.combat-ui .intent'); return { cls: e.className, shown: getComputedStyle(e).display !== 'none' }; });
+  assert(B.length === 0 && !panel.shown, 'Adaptive, routine moves: no telegraph panel ' + JSON.stringify({ B, panel }));
   // a promise on the other: its words stay on screen, named; nothing says it is false
   await p.evaluate(() => { const st = RB.combat.state(); st.foes[1].intent = RB.combatLogic.intentDef(RB.content.enemies['sb.ghost'], 'lie:1'); RB.combat.refresh(); });
   B = await blocks();
   const other = B.find((x) => x.i === 1);
-  assert(B.length === 2 && other && /Also to read/.test(other.tag) && other.jp.length > 4, 'its passage is in view with whose it is: ' + JSON.stringify(B));
+  assert(B.length === 1 && other && /To read/.test(other.tag) && other.jp.length > 4, 'its passage is in view with whose it is (and only it): ' + JSON.stringify(B));
   const txt = await p.evaluate(() => document.querySelector('.combat-ui').textContent);
   assert(!/False promise/i.test(txt), 'nothing on screen names it a false promise');
   const S = await IB(p);
@@ -324,15 +325,21 @@ await test('reading-critical intents: a promise keeps its wording in view under 
   assert(B.length === 2 && !B.some((x) => x.tag), 'Expanded: both telegraphs: ' + JSON.stringify(B));
   // a creature that has settled: no badge left above it
   await p.evaluate(() => { const st = RB.combat.state(); st.foes[1].knots = 0; RB.combat.refresh(); });
+  await wait(p, 400);
   const S2 = await IB(p);
   assert(S2.badges.length === 1 && S2.badges[0].i === 0, 'a settled creature has no badge: ' + JSON.stringify(S2.badges));
+  const pl2 = await p.evaluate(() => [...document.querySelectorAll('.cb-foe.onstage [data-foe]')].map((e) => ({ i: +e.dataset.foe, txt: e.textContent })));
+  assert(pl2.length === 2 && /Settled/.test(pl2.find((x) => x.i === 1).txt), 'its plate stays, settled: ' + JSON.stringify(pl2));
   assert(!errors.length, errors.join('; '));
   await ctx.close();
-  // one creature: one badge, and its telegraph as before
+  // one creature: one badge, no mark, its plate beside it
   const one = await page(b, url, { viewport: { width: 390, height: 844 } });
   await battle(one.p, {});
+  await wait(one.p, 400);
   const S3 = await IB(one.p);
   assert(S3.badges.length === 1 && S3.badges[0].w >= 44 && !/ [A-C]:/.test(S3.badges[0].label), 'one creature: one badge, no mark: ' + JSON.stringify(S3.badges));
+  const pl3 = await one.p.evaluate(() => [...document.querySelectorAll('.cb-foe.onstage .fplate')].length);
+  assert(pl3 === 1, 'one creature: one plate on the scene');
   assert(!one.errors.length, one.errors.join('; '));
   await one.ctx.close();
 });
@@ -488,6 +495,77 @@ await test('menus: withdrawn (Adaptive) or disabled (Keep visible) controls cann
       await ctx.close();
     }
   }
+});
+
+await test('plates: each creature\'s name, knots and conditions sit above where it rests on a translucent plate beside its badge; no two overlap; a group\'s plates choose the target; three viewports', async () => {
+  for (const vp of [{ width: 1920, height: 1080 }, { width: 1280, height: 800 }, { width: 390, height: 844 }]) {
+    for (const o of [{}, { comp: 'mio', diff: 'hard', dupes: 2 }]) {
+      const { p, errors, ctx } = await page(b, url, { viewport: vp });
+      await battle(p, o);
+      await p.mouse.move(2, 2);
+      await wait(p, 500);
+      const G = await p.evaluate(() => {
+        const R = (e) => { const r = e.getBoundingClientRect(); return { x: Math.round(r.left), y: Math.round(r.top), w: Math.round(r.width), h: Math.round(r.height) }; };
+        const plates = [...document.querySelectorAll('.cb-foe.onstage [data-foe]')].map((e) => ({ i: +e.dataset.foe, ...R(e), bg: getComputedStyle(e).backgroundColor, on: e.classList.contains('on'), name: (e.querySelector('.foe-n, .fs-n') || {}).textContent || '' }));
+        const badges = RB.battleIntents.state().badges;
+        const hits = RB.battleStage.stats().hits || [];
+        const party = R(document.querySelector('.cb-party'));
+        return { plates, badges, hits, party, rail: RB.battleIntents.state().rail, foeRow: R(document.querySelector('.cb-foe')) };
+      });
+      const tag = vp.width + 'x' + vp.height + (o.dupes ? ' three' : ' one') + ': ';
+      const n = o.dupes ? 3 : 1;
+      assert(G.plates.length === n && G.badges.length === n, tag + 'a plate and a badge per creature ' + JSON.stringify(G));
+      const alpha = (c) => { const m = /rgba?\(([^)]+)\)/.exec(c); const a = m ? m[1].split(',').map(Number) : []; return a.length > 3 ? a[3] : 1; };
+      assert(G.plates.every((q) => q.on || alpha(q.bg) <= 0.7), tag + 'translucent plates ' + JSON.stringify(G.plates.map((q) => q.bg)));
+      const boxes = G.plates.map((q) => ({ k: 'p' + q.i, ...q })).concat(G.badges.map((q) => ({ k: 'b' + q.i, ...q })));
+      for (let a = 0; a < boxes.length; a++) for (let c = a + 1; c < boxes.length; c++) assert(!overlap(boxes[a], boxes[c]), tag + boxes[a].k + ' overlaps ' + boxes[c].k);
+      for (const q of boxes) assert(!overlap(q, G.party), tag + q.k + ' over the party slip');
+      if (!G.rail) for (const q of G.plates) {
+        const h = G.hits.find((x) => x.i === q.i);
+        assert(h && q.y + q.h <= h.y + 8 && q.x + q.w > h.x && q.x < h.x + h.w, tag + 'plate ' + q.i + ' sits above its creature ' + JSON.stringify({ q, h }));
+      }
+      assert(G.plates.every((q) => /粉蛾|Flour Moth/.test(q.name)), tag + 'named ' + JSON.stringify(G.plates.map((q) => q.name)));
+      if (o.dupes) {
+        assert(G.plates.filter((q) => q.on).length === 1, tag + 'one target plate');
+        const other = G.plates.find((q) => !q.on);
+        await p.evaluate((i) => document.querySelector('.cb-foe [data-foe="' + i + '"]').click(), other.i);
+        await wait(p, 150);
+        const on = await p.evaluate(() => +document.querySelector('.cb-foe .fs.on').dataset.foe);
+        assert(on === other.i, tag + 'pressing a plate makes it the target');
+      }
+      assert(!errors.length, errors.join('; '));
+      await ctx.close();
+    }
+  }
+});
+
+await test('the opening lines: no empty surface on screen (plates, badges, telegraph, responses away and inert; the party slip filled); they come in for the first decision; the badge card translates', async () => {
+  const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  await battleOpen(p, { comp: 'mio' });
+  await p.waitForFunction(() => RB.ui.dialogue.isOpen() && RB.game.mode() === 'combat', null, { timeout: 10000 });
+  await wait(p, 400);
+  const vis = () => p.evaluate(() => {
+    const V = (q) => { const e = document.querySelector(q); if (!e) return null; const cs = getComputedStyle(e); return cs.display !== 'none' && cs.visibility === 'visible' && +cs.opacity > 0.05; };
+    const dock = document.querySelector('.cb-dock');
+    return { plates: V('.cb-foe'), badges: V('.cb-badges'), intent: V('.combat-ui .intent'), dock: V('.cb-dock'), dockInert: !!dock.inert, party: V('.cb-party'), partyText: document.querySelector('.cb-party').textContent.replace(/\s+/g, ' ').trim() };
+  });
+  const a = await vis();
+  assert(!a.plates && !a.badges && !a.intent && !a.dock && a.dockInert, 'during the opening lines the decision surfaces are away ' + JSON.stringify(a));
+  assert(a.party && /\d+ \/ \d+/.test(a.partyText), 'the party slip is there, filled ' + JSON.stringify(a));
+  await toCards(p);
+  await wait(p, 400);
+  const c = await vis();
+  assert(c.plates && c.badges && c.dock && !c.dockInert, 'they come in for the first decision ' + JSON.stringify(c));
+  // the badge card: the creature's words, and Translate (assisted)
+  const pt = await ibCenter(p, (await IB(p)).badges[0].i);
+  await p.mouse.click(pt.x, pt.y);
+  await p.waitForSelector('#cb-icard [data-tr]', { timeout: 3000 });
+  await p.click('#cb-icard [data-tr]');
+  await wait(p, 200);
+  const card = await p.evaluate(() => ({ en: !!document.querySelector('#cb-icard .ic-en'), tr: !!document.querySelector('#cb-icard [data-tr]'), open: RB.battleIntents.isOpen() }));
+  assert(card.open && card.en && !card.tr, 'Translate shows the English in the card, which stays open ' + JSON.stringify(card));
+  assert(!errors.length, errors.join('; '));
+  await ctx.close();
 });
 
 await test('one cadence: the scene\'s clock runs at the same rate during the opening lines, while choosing and while choosing support; the party stands ready while choosing', async () => {

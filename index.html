@@ -2379,6 +2379,7 @@ body.in-dialogue .combat-ui, body.in-dialogue .combat-ui * { pointer-events: non
 .combat-ui > .cb-stage { grid-area: stage; pointer-events: none; }
 .combat-ui .cb-foe { grid-area: foe; }
 .combat-ui .intent { grid-area: intent; }
+.combat-ui .intent.it-none { display: none; }
 .combat-ui .cb-party { grid-area: party; }
 .combat-ui .cb-dock { grid-area: dock; }
 .combat-ui .paper { background: var(--paper); border: 1px solid var(--paper-edge); border-radius: 3px; box-shadow: 0 2px 0 var(--paper-3), 0 3px 0 var(--paper-edge), 0 8px 20px rgba(0, 0, 0, 0.3); }
@@ -2672,6 +2673,41 @@ body.high-contrast .combat-ui .paper, body.high-contrast .combat-ui .rcard { bor
 .cb-foe .fs.on .kn.tied { box-shadow: inset 0 0 0 2px var(--paper); }
 .cb-foe .fs .fs-mark { position: absolute; left: 4px; top: 5px; bottom: 5px; width: 6px; border: 3px solid transparent; border-right: 0; border-radius: 1px; }
 .cb-foe .fs.on .fs-mark { border-color: var(--ink); }
+/* The creatures' plates on the scene (the owner's playtest of 2026-10-02): each creature's name, its
+   knots and its conditions sit above where it rests, beside its badge, on a translucent plate. A
+   group's plates are its target choice (the target's is paper, with the ink bracket). Placed by
+   82c_battle_intents.js; with no scene to sit in they fall back to the slip row above. (grid-area:
+   auto, so the plates are placed against the overlay itself, like the badges.) */
+.combat-ui > .cb-foe.onstage {
+  grid-area: auto; position: absolute; left: 0; top: 0; width: 0; height: 0; min-height: 0; max-width: none; padding: 0; margin: 0;
+  border: 0; background: none; box-shadow: none; overflow: visible; z-index: 4; pointer-events: none; display: block;
+  transition: opacity 200ms var(--ease), visibility 0s linear 0s;
+}
+.cb-foe.onstage .fs-h { display: none; }
+.cb-foe.onstage .fs-row { display: contents; }
+.cb-foe.onstage .fs, .cb-foe.onstage .fplate {
+  position: absolute; left: 0; top: 0; width: max-content; max-width: min(320px, 46vw); min-height: 0; pointer-events: auto;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 0; padding: 1px 9px 3px;
+  color: #fdf8ee; text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75);
+  background: rgba(13, 18, 32, 0.5); border: 1px solid rgba(253, 248, 238, 0.22); border-radius: 4px; box-shadow: none;
+}
+.cb-foe.onstage .fs { padding-left: 15px; }
+.cb-foe.onstage .fs .fs-it { display: none; }
+.cb-foe.onstage .fs:hover:not(.on):not(.down):not([data-locked]) { background: rgba(13, 18, 32, 0.66); }
+.cb-foe.onstage .fs.on { background: rgba(250, 244, 230, 0.86); color: var(--ink); text-shadow: none; border-color: var(--paper-edge); }
+.cb-foe.onstage .fs.down { opacity: 0.72; }
+.cb-foe.onstage rt, .cb-foe.onstage .kn-t { color: #e8dfca; }
+.cb-foe.onstage .fs.on rt { color: var(--rt-ink); }
+.cb-foe.onstage .fs.on .kn-t { color: var(--ink-2); }
+.cb-foe.onstage .fplate .foe-n { font-size: 1em; }
+.cb-foe.onstage .fplate .foe-k { gap: 0 10px; }
+.cb-foe.onstage .kn.tied { box-shadow: inset 0 0 0 2px rgba(13, 18, 32, 0.9); }
+.cb-foe.onstage .fs.on .kn.tied { box-shadow: inset 0 0 0 2px var(--paper); }
+/* compact (a row too narrow for every name): the Japanese name with its reading and the mark; the knots as dots */
+.cb-foe.onstage.compact .en, .cb-foe.onstage.compact .kn-t { display: none; }
+body.high-contrast .cb-foe.onstage .fs, body.high-contrast .cb-foe.onstage .fplate { background: rgba(0, 0, 0, 0.85); border-color: #fff; }
+body.high-contrast .cb-foe.onstage .fs.on { background: #fff; }
+
 /* whom a response (or your companion's move) under the pointer would reach */
 /* (absolutely placed: a preview never moves anything) */
 .cb-foe .fs.cb-pv::after, .cb-party .pm.cb-pv::before {
@@ -2942,15 +2978,16 @@ body.reduced-motion .combat-ui > .cb-banner { transition: none; transform: trans
 /* Committed: the telegraph and the response dock withdraw through their edge (Adaptive) and the
    scene drawn under them shows; nothing is re-laid out. Keep visible leaves them, dimmed and inert. */
 .combat-ui .intent, .combat-ui .cb-dock, .combat-ui .cb-side { transition: transform 200ms var(--ease), opacity 200ms var(--ease), visibility 0s linear 0s; }
-.combat-ui.cb-acting:not(.cb-keep) .intent { transform: translateY(-28px); opacity: 0; visibility: hidden; transition: transform 180ms var(--ease), opacity 180ms var(--ease), visibility 0s linear 180ms; }
-.combat-ui.cb-acting:not(.cb-keep) .cb-dock { transform: translateY(calc(100% + 24px)); opacity: 0; visibility: hidden; transition: transform 200ms var(--ease), opacity 200ms var(--ease), visibility 0s linear 200ms; }
+.combat-ui.cb-intro .cb-foe, .combat-ui.cb-intro > .cb-badges, .combat-ui.cb-intro .cb-coachbox { opacity: 0; visibility: hidden; }
+.combat-ui.cb-intro .intent, .combat-ui.cb-acting:not(.cb-keep) .intent { transform: translateY(-28px); opacity: 0; visibility: hidden; transition: transform 180ms var(--ease), opacity 180ms var(--ease), visibility 0s linear 180ms; }
+.combat-ui.cb-intro .cb-dock, .combat-ui.cb-acting:not(.cb-keep) .cb-dock { transform: translateY(calc(100% + 24px)); opacity: 0; visibility: hidden; transition: transform 200ms var(--ease), opacity 200ms var(--ease), visibility 0s linear 200ms; }
 .combat-ui.cb-acting.cb-keep .intent, .combat-ui.cb-acting.cb-keep .cb-dock { opacity: 0.6; filter: saturate(0.55); }
 @media (min-width: 900px) and (min-height: 560px) {
-  .combat-ui.cb-acting:not(.cb-keep) .cb-dock { transform: translateX(calc(100% + 24px)); }
-  .combat-ui.cb-group.cb-acting:not(.cb-keep) .cb-side > .intent { transform: translateX(calc(100% + 24px)); }
+  .combat-ui.cb-intro .cb-dock, .combat-ui.cb-acting:not(.cb-keep) .cb-dock { transform: translateX(calc(100% + 24px)); }
+  .combat-ui.cb-group.cb-intro .cb-side > .intent, .combat-ui.cb-group.cb-acting:not(.cb-keep) .cb-side > .intent { transform: translateX(calc(100% + 24px)); }
 }
 @media (max-height: 559px) and (min-width: 600px) {
-  .combat-ui.cb-acting:not(.cb-keep) .cb-dock, .combat-ui.cb-acting:not(.cb-keep) .intent { transform: translateX(calc(100% + 24px)); }
+  .combat-ui.cb-intro .cb-dock, .combat-ui.cb-intro .intent, .combat-ui.cb-acting:not(.cb-keep) .cb-dock, .combat-ui.cb-acting:not(.cb-keep) .intent { transform: translateX(calc(100% + 24px)); }
 }
 body.reduced-motion .combat-ui :is(.intent, .cb-dock, .cb-side) { transition: none !important; }
 @media (prefers-reduced-motion: reduce) { .combat-ui :is(.intent, .cb-dock, .cb-side) { transition: none !important; } }
@@ -62562,6 +62599,8 @@ RB.combat = (function () {
   }
   let showIntentEn = false;
   function enShown() { return RB.game.s.learn.profile === 'F' || showIntentEn; }
+  // Translate: the creatures' lines in English from now on in this encounter (counts as assisted)
+  function translate() { showIntentEn = true; if (st) st.assistedRound = true; renderUi(); }
   // A keyword: a button that explains itself (RB.combatHelp) on hover, focus or tap.
   const kw = (key, cls, inner, sr) => '<button type="button" class="kw ' + cls + '" data-kw="' + key + '" aria-expanded="false" aria-controls="kwcard">' + inner +
     '<span class="sr">' + esc(sr || ' — what this means') + '</span></button>';
@@ -62676,15 +62715,21 @@ RB.combat = (function () {
       if (keep) { const on = ui.foe.querySelector('.fs.on') || ui.foe.querySelector('.fs:not(.down)'); if (on) on.focus({ preventScroll: true }); }
     } else {
       const states = statusList(T);
-      ui.foe.innerHTML = '<span class="foe-n">' + RB.ui.jhtml(enemy.name.jp) + ' <span class="en">' + esc(enemy.name.en) + '</span></span>' +
+      ui.foe.classList.remove('group');
+      ui.foe.innerHTML = '<div class="fplate solo" data-foe="' + T + '"><span class="foe-n">' + RB.ui.jhtml(enemy.name.jp) + ' <span class="en">' + esc(enemy.name.en) + '</span></span>' +
         '<span class="foe-k' + (states.length ? ' has-st' : '') + '">' + knotsHtml(T) + (states.length ? '<span class="it-states" role="group" aria-label="Its state">' +
-          states.map((x) => kw(x.key, 'st', '<span class="pill">' + I(STATUS_ICON[x.key]) + esc(x.label) + '</span>')).join('') + '</span>' : '') + '</span>';
+          states.map((x) => kw(x.key, 'st', '<span class="pill">' + I(STATUS_ICON[x.key]) + esc(x.label) + '</span>')).join('') + '</span>' : '') + '</span></div>';
     }
-    // the telegraph: the target's in full (every creature's move and what it does are on its slip
-    // and its badge; pressing a creature shows its telegraph here). Intent display (§13.6):
-    // Adaptive adds every other creature whose words are the task (READING), each named, so no
-    // passage hides behind a badge; Expanded shows every creature's telegraph while you decide.
-    let ih = '', blocks = 1;
+    // the telegraph panel, by intent display (battle addendum §13.3, §13.6). Adaptive: a routine move
+    // is its creature's badge (symbol and strength; its words, what it does and the translation in the
+    // badge's card), so the panel holds only the passages whose reading is the task (READING: a
+    // promise, a mirror, a plea), each named — no such passage hides behind a badge; with none, the
+    // panel is not there at all. A move met for the first time also gets the coach's note. Expanded:
+    // the target's telegraph in full and every other creature's, while you decide.
+    const expanded = RB.game.settings.intentDisplay === 'expanded';
+    const standingNow = L().standing(st);
+    const readsOf = (order) => order.filter((i) => standingNow.indexOf(i) >= 0 && st.foes[i].intent && READING[st.foes[i].intent.kind]);
+    let ih = '', blocks = 0;
     if (group) {
       const block = (i, tag) => {
         const sts = statusList(i).filter((x) => x.key !== 'silence');
@@ -62692,21 +62737,24 @@ RB.combat = (function () {
           (tag ? '<span class="it-tag">' + tag + '</span>' : '') +
           (sts.length ? '<span class="it-states" role="group" aria-label="Its state">' + sts.map((x) => kw(kkey(x.key, i), 'st', '<span class="pill">' + I(STATUS_ICON[x.key]) + esc(x.label) + '</span>')).join('') + '</span>' : '') + '</div>' + intentHtml(false, i) + '</div>';
       };
-      ih += block(T, '');
-      const expanded = RB.game.settings.intentDisplay === 'expanded';
       const lay = RB.battleStage.lay();
       const order = lay && lay.visual && lay.visual.length === st.foes.length ? lay.visual : st.foes.map((_, k) => k);
-      for (const i of order) {
-        if (i === T || L().standing(st).indexOf(i) < 0 || !st.foes[i].intent) continue;
-        const reading = !!READING[st.foes[i].intent.kind];
-        if (expanded || reading) { ih += block(i, reading ? 'Also to read' : ''); blocks++; }
-      }
-    } else ih = intentHtml(false, T);
+      if (expanded) {
+        ih += block(T, ''); blocks++;
+        for (const i of order) {
+          if (i === T || standingNow.indexOf(i) < 0 || !st.foes[i].intent) continue;
+          ih += block(i, READING[st.foes[i].intent.kind] ? 'Also to read' : ''); blocks++;
+        }
+      } else for (const i of readsOf(order)) { ih += block(i, 'To read'); blocks++; }
+    } else if (expanded || readsOf([T]).length) { ih = intentHtml(false, T); blocks = 1; }
     ui.intent.innerHTML = ih;
+    ui.intent.classList.toggle('it-none', !blocks);
     ui.intent.classList.toggle('it-multi', blocks > 1);
     ui.intent.setAttribute('aria-label', group ? 'What they are about to do' : 'What it is about to do');
-    for (const tr of ui.intent.querySelectorAll('[data-tr]')) tr.onclick = () => { showIntentEn = true; st.assistedRound = true; renderUi(); };
+    for (const tr of ui.intent.querySelectorAll('[data-tr]')) tr.onclick = translate;
     syncBadges();
+    // (the plates were just rebuilt: put them back over their creatures)
+    RB.battleIntents.relayout();
     // the party: resolve (numbers and bar) and wards; Harmony is its own band
     // above them (not a third resolve bar). The telegraph's target is marked
     // once its meaning is on screen (never before).
@@ -62883,17 +62931,22 @@ RB.combat = (function () {
     return '<div class="ic-k">' + I(moveIcon(it)) + '<span class="k">' + esc(moveLabel(it)) + '</span>' + (g ? '<span class="gist">' + esc(g) + '</span>' : '') + '</div>' +
       (line.jp ? '<div class="ic-jp">' + RB.ui.jhtml(line.jp, { vars: line.vars }) + '</div>' : '') +
       (line.en && enShown() ? '<div class="ic-en">' + esc(line.en) + '</div>' : '') +
+      (line.en && !enShown() ? '<button type="button" class="pbtn quiet tr ic-tr" data-tr title="Show the English (counts as assisted)">' + I('note') + '<span>Translate <span class="aside">(assisted)</span></span></button>' : '') +
       (what ? '<p class="ic-what">' + what + '</p>' : '') +
+      (!badgeSnap && RB.game.s.comp === 'nao' && (st.foes[i].nextIntents || []).length ? '<div class="it-next">' + I('companion') + '<span>Nao: “After that — ' + esc(st.foes[i].nextIntents.map(moveLabel).join(', then ')) + '.”</span></div>' : '') +
       '<div class="ic-f">' + kw(kkey('intent', i), 'pbtn quiet ic-more', '<span>How to answer it</span>', ' — opens a note') + '</div>';
   }
   // where each creature rests (page px) and the safe areas: the badges stay in the scene; the
   // card may use the scene's column from the top of the overlay down to the party slip
   function placeBadges(hits) {
     if (!ui || !RB.battleIntents) return;
+    // no scene to sit in (a stage squeezed under 60 px): the plates go back to a row of slips that
+    // carry the moves too, and the badges stand down
+    ui.foe.classList.toggle('onstage', !!stageCss);
     if (!stageCss) { if (badgeGeo !== 'none') { badgeGeo = 'none'; RB.battleIntents.place([], null, null); } return; }
     const rr = ui.root.getBoundingClientRect(), pr = ui.party ? ui.party.getBoundingClientRect() : null;
     const r = stageCss;
-    const rects = (hits || []).filter((q) => !q.settled).map((q) => ({ i: q.i, x: Math.round(q.x), y: Math.round(q.y), w: Math.round(q.w) }));
+    const rects = (hits || []).map((q) => ({ i: q.i, x: Math.round(q.x), y: Math.round(q.y), w: Math.round(q.w), settled: !!q.settled }));
     const bottom = pr && pr.height && pr.top > r.y ? Math.min(pr.top, rr.bottom) : Math.min(r.y + r.h, rr.bottom);
     const top = Math.max(rr.top, 0) + 6;
     const bounds = { x: r.x, y: r.y, w: r.w, h: Math.max(44, Math.min(r.h, bottom - r.y)) };
@@ -63538,7 +63591,12 @@ RB.combat = (function () {
     tg.hover = null; tg.lock = null; tg.compTarget = null;
     ui = buildUi();
     RB.battleBanner.attach(ui.root);
-    RB.battleIntents.attach(ui.root, { cardHtml: intentCardHtml });
+    RB.battleIntents.attach(ui.root, {
+      cardHtml: intentCardHtml, translate,
+      // the creatures' plates (their names, knots and conditions), placed with their badges above each one
+      plates: () => { const m = {}; if (ui && ui.foe.classList.contains('onstage')) for (const e of ui.foe.querySelectorAll('[data-foe]')) m[+e.getAttribute('data-foe')] = e; return m; },
+      compact: (on) => { if (ui) ui.foe.classList.toggle('compact', !!on); },
+    });
     badgeSnap = null; actFoe = null; shownAnswered = null; badgeGeo = ''; badgeLay = null; badgeAt = -1e9; badgeCss = '';
     view = null; sealHeld = null; curCard = null; phase = 'intro'; logFresh = true; chain = false; hitKey = '';
     amb.v = null; Object.assign(cost, { n: 0, sum: 0, max: 0, seqN: 0, seqSum: 0, seqMax: 0 });
@@ -63552,6 +63610,12 @@ RB.combat = (function () {
     measure();
     exchangeN = 0;
     present('scene', { phase: 'enter', comp: st.compId || null, foes: members.length });
+    // While the opening lines are spoken the decision surfaces (plates, badges, telegraph, responses)
+    // stay away — never empty boxes on screen — and come in once the first decision is ready; the
+    // party's slip is filled now.
+    ui.root.classList.add('cb-intro');
+    for (const el of [ui.intent, ui.dock]) el.inert = true;
+    try { renderUi(); } catch (e) { console.error('battle intro', e); }
     await RB.ui.fade(false, 200);
     let outcome = null;
     try {
@@ -63577,6 +63641,8 @@ RB.combat = (function () {
         present('scene', { phase: 'calm' });
         tg.hover = null; tg.lock = null;
         renderUi();
+        // (the first decision: the surfaces come in, filled)
+        if (ui.root.classList.contains('cb-intro')) { ui.root.classList.remove('cb-intro'); for (const el of [ui.intent, ui.dock]) el.inert = false; }
         if (RB.creatures) RB.creatures.saw(s, st, members); // the telegraphs now on screen
         RB.audio && RB.audio.sfx('enemy_intent', { vol: 0.5 });
         st.assistedRound = false;
@@ -64693,6 +64759,10 @@ RB.battleBanner = (function () {
  *   RB.battleIntents.place(rects, bounds, cardBounds) rects: [{ i, x, y, w }] where each creature
  *     rests; bounds: { x, y, w, h } where badges may sit (the scene); cardBounds: where the card
  *     may open (never over the party slip or the writing pad); all in page px
+ *   RB.battleIntents.relayout()                      the plates were rebuilt: place them again
+ *     env.plates() → { i: element } the creatures' plates when they sit on the scene; each is placed
+ *     with its badge as one header above its creature; env.compact(on) narrows them when a row
+ *     cannot fit; env.translate(i) the card's Translate (assisted)
  *   RB.battleIntents.close(back) / isOpen() / state()
  *
  * Badges and the card are scoped to the overlay; nothing here reads or changes the rules. */
@@ -64700,7 +64770,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.battleIntents = (function () {
   'use strict';
-  const HOVER_MS = 200, LEAVE_MS = 280, GAP = 4, EDGE = 4;
+  const HOVER_MS = 200, LEAVE_MS = 280, GAP = 4, EDGE = 4, LIFT = 6;
   const esc = (t) => RB.util.esc(t == null ? '' : String(t));
   const I = (n) => (RB.learnUi ? RB.learnUi.icon(n) : '');
   let root = null, layer = null, card = null, env = null, onKey = null;
@@ -64732,7 +64802,12 @@ RB.battleIntents = (function () {
     card.addEventListener('pointerover', (ev) => { if (ev.pointerType === 'mouse') stopLeave(); });
     card.addEventListener('pointerout', out);
     card.addEventListener('focusout', focusOut);
-    card.addEventListener('click', (ev) => { if (ev.target.closest && ev.target.closest('[data-ic-close]')) close(true); });
+    card.addEventListener('click', (ev) => {
+      if (!ev.target.closest) return;
+      if (ev.target.closest('[data-ic-close]')) { close(true); return; }
+      // Translate (assisted): the creature's line in English, here and on every telegraph from now on
+      if (ev.target.closest('[data-tr]') && open && env && env.translate) { env.translate(open.i); if (open) { fill(open.i); position(); } }
+    });
     // Escape closes the card (after an open keyword note or word help has taken its own Escape)
     onKey = (ev) => {
       if (ev.key !== 'Escape' || !open || ev.defaultPrevented) return;
@@ -64800,46 +64875,69 @@ RB.battleIntents = (function () {
     const r = root.getBoundingClientRect();
     return { x: r.left - root.scrollLeft, y: r.top - root.scrollTop };
   }
-  // Each badge centred above its creature's resting place, inside the safe area; neighbours that
-  // would overlap are pushed apart in formation order, and when the row cannot fit they line up
-  // as a rail along the top of the scene (still in formation order, each with its mark).
+  // Each creature's header — its plate (name, knots, conditions; from env.plates(), when the plates
+  // are on the scene) and, while it stands, its badge beside it — centred above where it rests,
+  // inside the safe area. Neighbours that would overlap are pushed apart in formation order; when the
+  // row cannot fit, the plates go compact (env.compact: the Japanese name with its reading and the
+  // mark, the knots as dots) and, if it still cannot, the headers line up as a rail along the top of
+  // the scene (wrapping to a second row if they must), still in formation order, each with its mark.
   function layout() {
     if (!layer || !geo.bounds) return;
     const o = rel(), B = geo.bounds;
+    const plates = (env && env.plates && env.plates()) || {};
     const bs = [...layer.querySelectorAll('.cb-ib')];
-    if (!bs.length) return;
-    const ws = bs.map((b) => b.offsetWidth || 44), hs = bs.map((b) => b.offsetHeight || 44);
-    const at = bs.map((b, k) => {
-      const q = geo.rects.find((r) => r.i === idx(b));
-      const cx = q ? q.x + q.w / 2 : B.x + B.w * (0.5 + k * 0.15);
-      const top = q ? q.y - hs[k] - GAP : B.y + EDGE;
-      return { k, x: cx - ws[k] / 2, y: Math.max(B.y + EDGE, Math.min(top, B.y + B.h - hs[k] - EDGE)) };
-    }).sort((a, b) => a.x - b.x || a.k - b.k);
+    const ids = [];
+    for (const r of geo.rects) if (ids.indexOf(r.i) < 0 && (plates[r.i] || bs.some((b) => idx(b) === r.i))) ids.push(r.i);
+    for (const b of bs) if (ids.indexOf(idx(b)) < 0) ids.push(idx(b));
+    for (const k of Object.keys(plates)) if (ids.indexOf(+k) < 0) ids.push(+k);
+    if (!ids.length) { layer.classList.add('placed'); return; }
     const lo = B.x + EDGE, hi = B.x + B.w - EDGE;
-    let total = 0;
-    for (const a of at) total += ws[a.k] + GAP;
-    const rail = total - GAP > hi - lo;
+    const measure = () => ids.map((i, k) => {
+      const b = bs.find((x) => idx(x) === i) || null, p = plates[i] || null;
+      const bw = b ? b.offsetWidth || 44 : 0, bh = b ? b.offsetHeight || 44 : 0;
+      const pw = p ? p.offsetWidth : 0, ph = p ? p.offsetHeight : 0;
+      const w = pw + (pw && bw ? GAP : 0) + bw, h = Math.max(ph, bh);
+      const q = geo.rects.find((r) => r.i === i);
+      const cx = q ? q.x + q.w / 2 : B.x + B.w * (0.5 + k * 0.15);
+      // (a little clear of the creature's top: antennae, ears and flames reach up to it)
+      const top = q ? q.y - h - GAP - LIFT : B.y + EDGE;
+      return { k, i, b, p, bw, bh, pw, ph, w, h, x: cx - w / 2, y: Math.max(B.y + EDGE, Math.min(top, B.y + B.h - h - EDGE)) };
+    });
+    const span = (U) => U.reduce((sum, u) => sum + u.w + GAP, -GAP);
+    if (env && env.compact) env.compact(false);
+    let U = measure();
+    if (span(U) > hi - lo && env && env.compact && Object.keys(plates).length) { env.compact(true); U = measure(); }
+    const at = U.slice().sort((a, b) => a.x - b.x || a.k - b.k);
+    const rail = span(U) > hi - lo;
     if (rail) {
-      let x = lo;
-      for (const a of at) { a.x = x; a.y = B.y + EDGE; x += ws[a.k] + GAP; }
+      let x = lo, y = B.y + EDGE, rowH = 0;
+      for (const a of at) {
+        if (x > lo && x + a.w > hi) { x = lo; y += rowH + GAP; rowH = 0; }
+        a.x = x; a.y = y; x += a.w + GAP; rowH = Math.max(rowH, a.h);
+      }
     } else {
       for (let n = 0; n < at.length; n++) {
         const a = at[n];
         a.x = Math.max(lo, a.x);
-        if (n) { const p = at[n - 1]; if (Math.abs(p.y - a.y) < hs[a.k] && a.x < p.x + ws[p.k] + GAP) a.x = p.x + ws[p.k] + GAP; }
+        if (n) { const p = at[n - 1]; if (Math.abs(p.y - a.y) < Math.max(p.h, a.h) && a.x < p.x + p.w + GAP) a.x = p.x + p.w + GAP; }
       }
       // overflow at the right edge: shift the row back left
       for (let n = at.length - 1; n >= 0; n--) {
         const a = at[n], lim = n === at.length - 1 ? hi : at[n + 1].x - GAP;
-        if (a.x + ws[a.k] > lim) a.x = Math.max(lo, lim - ws[a.k]);
+        if (a.x + a.w > lim) a.x = Math.max(lo, lim - a.w);
       }
     }
     layer.classList.toggle('rail', rail);
     layer.classList.add('placed');
     for (const a of at) {
-      const b = bs[a.k];
-      b.style.left = Math.round(a.x - o.x) + 'px';
-      b.style.top = Math.round(a.y - o.y) + 'px';
+      if (a.p) {
+        a.p.style.left = Math.round(a.x - o.x) + 'px';
+        a.p.style.top = Math.round(a.y + (a.h - a.ph) / 2 - o.y) + 'px';
+      }
+      if (a.b) {
+        a.b.style.left = Math.round(a.x + (a.pw ? a.pw + GAP : 0) - o.x) + 'px';
+        a.b.style.top = Math.round(a.y + (a.h - a.bh) / 2 - o.y) + 'px';
+      }
     }
     if (open) position();
   }
@@ -64955,7 +65053,9 @@ RB.battleIntents = (function () {
       counters: Object.assign({}, counters),
     };
   }
-  return { attach, detach, render, place, close, isOpen: () => !!open, state, HOVER_MS };
+  // the plates were rebuilt (their creature's knots or conditions changed): place them again
+  function relayout() { if (layer && geo.bounds) layout(); }
+  return { attach, detach, render, place, relayout, close, isOpen: () => !!open, state, HOVER_MS };
 })();
 
 

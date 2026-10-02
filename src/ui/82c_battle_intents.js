@@ -21,6 +21,10 @@
  *   RB.battleIntents.place(rects, bounds, cardBounds) rects: [{ i, x, y, w }] where each creature
  *     rests; bounds: { x, y, w, h } where badges may sit (the scene); cardBounds: where the card
  *     may open (never over the party slip or the writing pad); all in page px
+ *   RB.battleIntents.relayout()                      the plates were rebuilt: place them again
+ *     env.plates() → { i: element } the creatures' plates when they sit on the scene; each is placed
+ *     with its badge as one header above its creature; env.compact(on) narrows them when a row
+ *     cannot fit; env.translate(i) the card's Translate (assisted)
  *   RB.battleIntents.close(back) / isOpen() / state()
  *
  * Badges and the card are scoped to the overlay; nothing here reads or changes the rules. */
@@ -28,7 +32,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.battleIntents = (function () {
   'use strict';
-  const HOVER_MS = 200, LEAVE_MS = 280, GAP = 4, EDGE = 4;
+  const HOVER_MS = 200, LEAVE_MS = 280, GAP = 4, EDGE = 4, LIFT = 6;
   const esc = (t) => RB.util.esc(t == null ? '' : String(t));
   const I = (n) => (RB.learnUi ? RB.learnUi.icon(n) : '');
   let root = null, layer = null, card = null, env = null, onKey = null;
@@ -60,7 +64,12 @@ RB.battleIntents = (function () {
     card.addEventListener('pointerover', (ev) => { if (ev.pointerType === 'mouse') stopLeave(); });
     card.addEventListener('pointerout', out);
     card.addEventListener('focusout', focusOut);
-    card.addEventListener('click', (ev) => { if (ev.target.closest && ev.target.closest('[data-ic-close]')) close(true); });
+    card.addEventListener('click', (ev) => {
+      if (!ev.target.closest) return;
+      if (ev.target.closest('[data-ic-close]')) { close(true); return; }
+      // Translate (assisted): the creature's line in English, here and on every telegraph from now on
+      if (ev.target.closest('[data-tr]') && open && env && env.translate) { env.translate(open.i); if (open) { fill(open.i); position(); } }
+    });
     // Escape closes the card (after an open keyword note or word help has taken its own Escape)
     onKey = (ev) => {
       if (ev.key !== 'Escape' || !open || ev.defaultPrevented) return;
@@ -128,46 +137,69 @@ RB.battleIntents = (function () {
     const r = root.getBoundingClientRect();
     return { x: r.left - root.scrollLeft, y: r.top - root.scrollTop };
   }
-  // Each badge centred above its creature's resting place, inside the safe area; neighbours that
-  // would overlap are pushed apart in formation order, and when the row cannot fit they line up
-  // as a rail along the top of the scene (still in formation order, each with its mark).
+  // Each creature's header — its plate (name, knots, conditions; from env.plates(), when the plates
+  // are on the scene) and, while it stands, its badge beside it — centred above where it rests,
+  // inside the safe area. Neighbours that would overlap are pushed apart in formation order; when the
+  // row cannot fit, the plates go compact (env.compact: the Japanese name with its reading and the
+  // mark, the knots as dots) and, if it still cannot, the headers line up as a rail along the top of
+  // the scene (wrapping to a second row if they must), still in formation order, each with its mark.
   function layout() {
     if (!layer || !geo.bounds) return;
     const o = rel(), B = geo.bounds;
+    const plates = (env && env.plates && env.plates()) || {};
     const bs = [...layer.querySelectorAll('.cb-ib')];
-    if (!bs.length) return;
-    const ws = bs.map((b) => b.offsetWidth || 44), hs = bs.map((b) => b.offsetHeight || 44);
-    const at = bs.map((b, k) => {
-      const q = geo.rects.find((r) => r.i === idx(b));
-      const cx = q ? q.x + q.w / 2 : B.x + B.w * (0.5 + k * 0.15);
-      const top = q ? q.y - hs[k] - GAP : B.y + EDGE;
-      return { k, x: cx - ws[k] / 2, y: Math.max(B.y + EDGE, Math.min(top, B.y + B.h - hs[k] - EDGE)) };
-    }).sort((a, b) => a.x - b.x || a.k - b.k);
+    const ids = [];
+    for (const r of geo.rects) if (ids.indexOf(r.i) < 0 && (plates[r.i] || bs.some((b) => idx(b) === r.i))) ids.push(r.i);
+    for (const b of bs) if (ids.indexOf(idx(b)) < 0) ids.push(idx(b));
+    for (const k of Object.keys(plates)) if (ids.indexOf(+k) < 0) ids.push(+k);
+    if (!ids.length) { layer.classList.add('placed'); return; }
     const lo = B.x + EDGE, hi = B.x + B.w - EDGE;
-    let total = 0;
-    for (const a of at) total += ws[a.k] + GAP;
-    const rail = total - GAP > hi - lo;
+    const measure = () => ids.map((i, k) => {
+      const b = bs.find((x) => idx(x) === i) || null, p = plates[i] || null;
+      const bw = b ? b.offsetWidth || 44 : 0, bh = b ? b.offsetHeight || 44 : 0;
+      const pw = p ? p.offsetWidth : 0, ph = p ? p.offsetHeight : 0;
+      const w = pw + (pw && bw ? GAP : 0) + bw, h = Math.max(ph, bh);
+      const q = geo.rects.find((r) => r.i === i);
+      const cx = q ? q.x + q.w / 2 : B.x + B.w * (0.5 + k * 0.15);
+      // (a little clear of the creature's top: antennae, ears and flames reach up to it)
+      const top = q ? q.y - h - GAP - LIFT : B.y + EDGE;
+      return { k, i, b, p, bw, bh, pw, ph, w, h, x: cx - w / 2, y: Math.max(B.y + EDGE, Math.min(top, B.y + B.h - h - EDGE)) };
+    });
+    const span = (U) => U.reduce((sum, u) => sum + u.w + GAP, -GAP);
+    if (env && env.compact) env.compact(false);
+    let U = measure();
+    if (span(U) > hi - lo && env && env.compact && Object.keys(plates).length) { env.compact(true); U = measure(); }
+    const at = U.slice().sort((a, b) => a.x - b.x || a.k - b.k);
+    const rail = span(U) > hi - lo;
     if (rail) {
-      let x = lo;
-      for (const a of at) { a.x = x; a.y = B.y + EDGE; x += ws[a.k] + GAP; }
+      let x = lo, y = B.y + EDGE, rowH = 0;
+      for (const a of at) {
+        if (x > lo && x + a.w > hi) { x = lo; y += rowH + GAP; rowH = 0; }
+        a.x = x; a.y = y; x += a.w + GAP; rowH = Math.max(rowH, a.h);
+      }
     } else {
       for (let n = 0; n < at.length; n++) {
         const a = at[n];
         a.x = Math.max(lo, a.x);
-        if (n) { const p = at[n - 1]; if (Math.abs(p.y - a.y) < hs[a.k] && a.x < p.x + ws[p.k] + GAP) a.x = p.x + ws[p.k] + GAP; }
+        if (n) { const p = at[n - 1]; if (Math.abs(p.y - a.y) < Math.max(p.h, a.h) && a.x < p.x + p.w + GAP) a.x = p.x + p.w + GAP; }
       }
       // overflow at the right edge: shift the row back left
       for (let n = at.length - 1; n >= 0; n--) {
         const a = at[n], lim = n === at.length - 1 ? hi : at[n + 1].x - GAP;
-        if (a.x + ws[a.k] > lim) a.x = Math.max(lo, lim - ws[a.k]);
+        if (a.x + a.w > lim) a.x = Math.max(lo, lim - a.w);
       }
     }
     layer.classList.toggle('rail', rail);
     layer.classList.add('placed');
     for (const a of at) {
-      const b = bs[a.k];
-      b.style.left = Math.round(a.x - o.x) + 'px';
-      b.style.top = Math.round(a.y - o.y) + 'px';
+      if (a.p) {
+        a.p.style.left = Math.round(a.x - o.x) + 'px';
+        a.p.style.top = Math.round(a.y + (a.h - a.ph) / 2 - o.y) + 'px';
+      }
+      if (a.b) {
+        a.b.style.left = Math.round(a.x + (a.pw ? a.pw + GAP : 0) - o.x) + 'px';
+        a.b.style.top = Math.round(a.y + (a.h - a.bh) / 2 - o.y) + 'px';
+      }
     }
     if (open) position();
   }
@@ -283,5 +315,7 @@ RB.battleIntents = (function () {
       counters: Object.assign({}, counters),
     };
   }
-  return { attach, detach, render, place, close, isOpen: () => !!open, state, HOVER_MS };
+  // the plates were rebuilt (their creature's knots or conditions changed): place them again
+  function relayout() { if (layer && geo.bounds) layout(); }
+  return { attach, detach, render, place, relayout, close, isOpen: () => !!open, state, HOVER_MS };
 })();

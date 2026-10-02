@@ -10,7 +10,7 @@ in `VALIDATION.md`; this file says what the behaviour is and which test proves e
 |---|---|---|
 | Battle animations | Normal, Fast, Instant | Normal plays every action at its authored timing; Fast at about 70 % (×1.43); Instant plays no movement, no menu slide and no banner, applies the committed results once in order and leaves the recap (**Last exchange**) in the log. Text speed has no say in battle (RBN-03). A save without the setting reads as Normal. |
 | Battle controls during actions | Adaptive, Keep visible | Adaptive withdraws the telegraph and the response dock through their own edge once the exchange is committed (desktop and landscape: right; portrait: down; the telegraph up), and brings them back once, for the next decision. Keep visible leaves them in place, dimmed and inert. |
-| What creatures are about to do | Adaptive, Expanded | Adaptive: a compact badge per creature; the target's telegraph in the panel, plus every other creature whose words are the task. Expanded: every creature's telegraph in the panel while you decide. Neither changes the creatures, what is revealed, or the help on offer. |
+| What creatures are about to do | Adaptive, Expanded | Adaptive (§13.3): a routine move is its creature's badge only — its words, what it does, Translate (assisted) and Nao's foresight are in the badge's card — and the telegraph panel holds just the passages whose reading is the task (a promise, a mirror, a plea), each named ("To read"); with none, there is no panel. A move met for the first time also gets the coach's untimed "New move" note. Expanded: the target's telegraph and every other creature's in the panel while you decide. Neither changes the creatures, what is revealed, or the help on offer. |
 
 ## The action banner (`src/ui/82b_battle_banner.js`, §15)
 
@@ -33,6 +33,34 @@ in `VALIDATION.md`; this file says what the behaviour is and which test proves e
 - Reading-critical moves are named neutrally: a lie is "A promise", a mirror is "Your words,
   echoed" (§13.3).
 
+## The scene's cadence (§9.4)
+
+One ambient clock runs at its authored rate in every phase: the creatures' idle, the backdrop's motes
+and lingering effects play at the same speed during the opening lines, while choosing, while writing
+and while an exchange plays (an earlier half-speed "calm" clock while choosing read as the scene
+slowing down once the lines closed — the owner's playtest of 2026-10-02). You and your companion stand
+ready (bracing when a creature winds up) while choosing a response or support; the quieter calm stance
+is kept for the language task.
+
+## The opening lines (§12.2, "Encounter introduction")
+
+While the encounter's opening lines are spoken, the decision surfaces — the creatures' plates and
+badges, the telegraph, the response dock, the coach — are away and inert (never empty boxes on
+screen); the party's slip is filled. When the first decision is ready they come in: the dock and the
+telegraph slide in through their own edges, the plates and badges fade in.
+
+## Creature plates (the owner's playtest of 2026-10-02)
+
+Each creature's name (Japanese with its reading, the English, the instance mark), its knots and its
+conditions sit on a translucent plate above where it rests, with its badge beside it — one header per
+creature, at its formation slot (it never chases a lunge). A group's plates are its target choice
+(radio buttons; the target's plate is paper with the ink bracket; pressing a plate or the creature
+chooses it). A settled creature keeps its plate ("Settled") and loses its badge. Headers that would
+overlap are pushed apart; when a row cannot fit, the plates go compact (the Japanese name with its
+reading and the mark, the knots as dots) and then line up as a rail along the top of the scene,
+wrapping to a second row if they must. With no scene to sit in (a stage squeezed under 60 px), the
+plates return to a row of slips that also carry the moves.
+
 ## Intent badges and the inspector (`src/ui/82c_battle_intents.js`, §13)
 
 - One badge per standing creature, at its resting place in the formation (it never chases a
@@ -47,7 +75,8 @@ in `VALIDATION.md`; this file says what the behaviour is and which test proves e
   pointer may move into a preview; a keyword note or word help opened from inside it does not
   close it. A press on a badge never targets, chooses or hurries anything.
 - The card shows what the telegraph reveals: symbol, name, stated strength, the creature's
-  Japanese line (with readings), the English only when it is already shown, and what the move does.
+  Japanese line (with readings), the English when it is already shown or a Translate (assisted) button
+  when it is not, what the move does, and — with Nao — his foresight of what comes after.
   How to answer it is a note the player opens. Reading-critical moves (lie, mirror, plea; an authored
   table, `READING` in `80_combat.js`) say only "It is telling you something. Read what it says." /
   "It is asking you something."
@@ -101,6 +130,9 @@ in `VALIDATION.md`; this file says what the behaviour is and which test proves e
 | Held Enter cannot choose in the next menu; focus return; fresh press chooses | `tests/e2e/battle_presentation.mjs` |
 | Withdrawn / Keep-visible controls unreachable by Tab and pointer; Resolve and Harmony visible in every frame (party slip uncovered, or the inset on the language sheet) | `tests/e2e/battle_presentation.mjs` |
 | Large text on a phone (100, 140, 200 %): the banner in view on a scrolled overlay and one line at 100 %; the stage's place and size constant in every frame of an exchange in which a condition lands on a slip | `tests/e2e/battle_presentation.mjs` |
+| One cadence: the ambient clock's rate in the opening lines, while choosing and while choosing support; ready stances while choosing | `tests/e2e/battle_presentation.mjs` |
+| Plates: one per creature above where it rests, translucent, beside its badge, no overlaps, clear of the party slip, the target chosen by pressing a plate (1920 × 1080, 1280 × 800, 390 × 844; one and three creatures); a settled creature keeps its plate | `tests/e2e/battle_presentation.mjs` |
+| The opening lines: plates, badges, telegraph and dock away and inert, the party slip filled; in for the first decision; the card's Translate | `tests/e2e/battle_presentation.mjs` |
 | Recordings: Normal / Fast / Instant, reduced motion, a 390×844 phone (taps) with three creatures and a badge card | `tests/e2e/battle_presentation_video.mjs` → `docs/screenshots/battle/presentation/` |
 | Stills of the decision, language and action views at 320×640, 390×844, 844×390 (three creatures), 200 % text (390×844, 1366×768) and a Japanese-led long name | `tests/e2e/battle_geometry.mjs --shots docs/screenshots/battle/layout` |
 | The battle art's memory budget (party, creature and pet caches against 48 MiB) over every creature family alone and in threes | `tests/e2e/battle_budget.mjs` → `tests/e2e/out/battle_budget.json` |
