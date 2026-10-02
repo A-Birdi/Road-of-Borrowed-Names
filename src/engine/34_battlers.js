@@ -982,9 +982,8 @@ RB.battlers = (function () {
   const lookKeys = new WeakMap();
   function lookKey(look) { let k = lookKeys.get(look); if (!k) { k = JSON.stringify(look); lookKeys.set(look, k); } return k; }
   const stats = { built: 0, buildMs: 0, maxMs: 0, hits: 0, evicted: 0, retained: 0 };
-  function frameFor(look, o) {
-    look = look || {};
-    o = o || {};
+  // the frame a request names: every input normalised, and its bounded cache key
+  function resolve(look, o) {
     const Mv = M();
     const pose = POSES.includes(o.pose) ? o.pose : 'ready';
     const who = o.who === 'comp' ? 'comp' : 'pc';
@@ -1001,21 +1000,41 @@ RB.battlers = (function () {
     const grid = o.grid && GRIDS[o.grid] ? GRIDS[o.grid] : GRIDS.std;
     const lk = lookKey(look);
     const key = lk + '|' + id + '|' + pose + '|' + gesture + variant + '|' + (idleP ? ik : k) + '|' + (reduce ? 1 : 0) + (left ? 'L' : 'R') + (grid.id === 'std' ? '' : '|' + grid.id);
-    let f = cache.get(key);
-    if (f) { cache.delete(key); cache.set(key, f); stats.hits++; return f; }
+    return { pose, who, id, gesture, variant, reduce, k, ik, left, grid, lk, key, t: o.t || 0 };
+  }
+  function build(look, r) {
+    const ps = M().poseAt(look, r.pose, r.gesture || r.variant, r.k, r.t, r.who, r.reduce, r.id, r.ik);
+    useGrid(r.grid);
+    try { const { b, J } = render1(look, ps); return { b, J, ps, pts: pointsOf(J, ps, r.pose, r.gesture) }; } finally { useGrid(GRIDS.std); }
+  }
+  function frameFor(look, o) {
+    look = look || {};
+    o = o || {};
+    const r = resolve(look, o);
+    let f = cache.get(r.key);
+    if (f) { cache.delete(r.key); cache.set(r.key, f); stats.hits++; return f; }
     const t0 = performance.now();
-    const ps = Mv.poseAt(look, pose, gesture || variant, k, o.t || 0, who, reduce, id, ik);
-    useGrid(grid);
-    let b, J, pts;
-    try { ({ b, J } = render1(look, ps)); pts = pointsOf(J, ps, pose, gesture); } finally { useGrid(GRIDS.std); }
-    let buf = b, ax = grid.AX;
-    if (left) { buf = b.mirror(); ax = grid.FW - 1 - grid.AX; const fl = (q) => (q ? { x: -q.x, y: q.y } : q); const m = {}; for (const kk in pts) m[kk] = fl(pts[kk]); pts = m; }
-    f = { cv: buf.toCanvas(), pts, ax, ay: grid.AY, w: grid.FW, h: grid.FH, lk, id };
+    let { b, pts } = build(look, r);
+    let buf = b, ax = r.grid.AX;
+    if (r.left) { buf = b.mirror(); ax = r.grid.FW - 1 - r.grid.AX; const fl = (q) => (q ? { x: -q.x, y: q.y } : q); const m = {}; for (const kk in pts) m[kk] = fl(pts[kk]); pts = m; }
+    f = { cv: buf.toCanvas(), pts, ax, ay: r.grid.AY, w: r.grid.FW, h: r.grid.FH, lk: r.lk, id: r.id };
     const ms = performance.now() - t0;
     stats.built++; stats.buildMs += ms; stats.maxMs = Math.max(stats.maxMs, ms);
-    cache.set(key, f);
+    cache.set(r.key, f);
     while (cache.size > CAP) { cache.delete(cache.keys().next().value); stats.evicted++; }
     return f;
+  }
+  // One frame measured without a canvas (node tests): its anchors (art px from the foot anchor), the
+  // drawn box (frame px), the number of drawn pixels, the pose numbers and the cache key it would use.
+  function measure(look, o) {
+    look = look || {};
+    const r = resolve(look, o || {});
+    const { b, ps, pts } = build(look, r);
+    let x0 = 1e9, y0 = 1e9, x1 = -1, y1 = -1, n = 0;
+    for (let y = 0; y < b.h; y++) for (let x = 0; x < b.w; x++) if (b.d[(y * b.w + x) * 4 + 3]) { n++; if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+    let feet = [];
+    for (let x = 0; x < b.w; x++) if (b.d[(y1 * b.w + x) * 4 + 3]) feet.push(x);
+    return { pts, box: { x0, y0, x1, y1 }, n, feetMid: feet.length ? (feet[0] + feet[feet.length - 1]) / 2 : null, ps, key: r.key, id: r.id, grid: r.grid, data: b.d };
   }
   // Draw one figure: its foot anchor at (o.x, o.y) on ctx, scaled by a whole number. Returns where
   // effects attach, in canvas px.
@@ -1093,7 +1112,7 @@ RB.battlers = (function () {
       // (an outside caller — the fishing stage — gets the plain companion stance unless it names the
       // actor, so its own authored poses are laid over the stance they were written for)
       poseAt: (look, pose, g, k, t, who, reduce, id, ik) => M().poseAt(look, pose, g, k, t, who, reduce, id || (who === 'comp' ? 'comp' : 'pc'), ik), render, frameFor, handModel, cacheSize: () => cache.size, clear: () => cache.clear(), YAW, PITCH,
-      get ZS() { return ZS; }, keys: () => [...cache.keys()],
+      get ZS() { return ZS; }, keys: () => [...cache.keys()], measure, resolve,
     },
   };
 })();

@@ -119,6 +119,29 @@ RB.partyChoreo = (function () {
     }
     return { shown: cmd, log: cmd, cmd };
   }
+  // What an answered task restored, for the strip (Unravel, a technique, an answer, a seeing-through): the
+  // task's own target — the word (with its reading) or phrase it accepted — never the player's attempt.
+  // A word card shows its own word (null here). Null when the task names nothing to show.
+  function resolvedOf(card, step) {
+    if (!card || !step || card.kind === 'word' || card.kind === 'flee') return null;
+    const ex = step.explain || {};
+    const markup = (w, r) => (w && r && w !== r && /[一-鿿]/.test(w) ? '{' + w + '|' + r + '}' : r || w);
+    if (ex.jp) return { jp: ex.jp, en: '' };
+    if (step.kind === 'write') {
+      if (step.word && step.word.r) return { jp: step.script === 'kata' ? step.word.r : markup(step.word.w, step.word.r), en: step.word.m || '' };
+      const item = [].concat(step.item || []).find((x) => typeof x === 'string' && x.startsWith('v:'));
+      const e = item && RB.tasks && RB.tasks.findWord ? RB.tasks.findWord(item.slice(2)) : null;
+      if (e) return { jp: markup(e.w, e.r), en: e.m || '' };
+      if (step.template) return { jp: (step.template.before || '') + step.answer + (step.template.after || ''), en: '' };
+      return typeof step.answer === 'string' && step.answer ? { jp: step.answer, en: '' } : null;
+    }
+    if (step.kind === 'choose') {
+      const ok = (step.options || []).find((o) => o.ok);
+      if (step.ctx && step.ctx.big && step.ctx.jp) return { jp: step.ctx.jp, en: (ok && ok.en) || '' };
+      if (ok && ok.jp) return { jp: ok.jp, en: ok.en || '' };
+    }
+    return null;
+  }
   const stillWord = (w) => ({ motif: w.motif, travel: 0, unfurl: 0, inkAt: 0, inkEnd: 0, fadeAt: Math.max(880, w.fadeAt - w.inkEnd), end: Math.max(980, w.end - w.inkEnd), still: 1 });
 
   // The plan: who acts, the gesture, where the word goes, which family (stable ids for the pet and the record).
@@ -490,5 +513,5 @@ RB.partyChoreo = (function () {
     };
   }
 
-  return { FAM, TECH, SUPPORT, PASSIVE, REVIVE, WORD_FAMILY, familyOf, planOf, wordOf, player, companion, react, finish, revive, coverage };
+  return { FAM, TECH, SUPPORT, PASSIVE, REVIVE, WORD_FAMILY, familyOf, planOf, wordOf, resolvedOf, player, companion, react, finish, revive, coverage };
 })();

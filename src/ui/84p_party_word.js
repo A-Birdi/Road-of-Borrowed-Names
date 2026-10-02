@@ -46,11 +46,12 @@ RB.partyWord = (function () {
       case 'seal': {
         // it unfolds over the one it protects, is read, then folds shut into a seal tag and drops a
         // little toward them as the ward closes (the canvas draws the ward itself)
-        const fold = ease(seg(k, fadeAt - 180, fadeAt + 60));
+        // (it stays open and fully readable until fadeAt — §18.3: about 700 ms — then folds and goes)
+        const fold = ease(seg(k, fadeAt, fadeAt + 140));
         p = { x: b.x, y: b.y + fold * 10 * u };
         xf = 'scale(' + fmt(1 - 0.74 * fold) + ',' + fmt(1 + 0.12 * fold) + ')';
         vars['--fold'] = fmt(fold);
-        op = Math.min(1, unf * 3) * (1 - seg(k, fadeAt + 40, tm.end));
+        op = Math.min(1, unf * 3) * (1 - seg(k, fadeAt + 70, tm.end));
         break;
       }
       case 'thread': {

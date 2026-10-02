@@ -77,6 +77,9 @@ RB.battlerMoves = (function () {
     return r;
   }
   function blend(A, B, t) {
+    // (exactly the end key at either end: no rounding residue that could flip a pixel)
+    if (t <= 0) return clone(A);
+    if (t >= 1) return clone(B);
     const r = {};
     for (const k of new Set([...Object.keys(A), ...Object.keys(B)])) {
       const a = A[k] == null ? B[k] : A[k], b = B[k] == null ? a : B[k];
@@ -94,11 +97,13 @@ RB.battlerMoves = (function () {
     return r;
   }
   // a foot that moves between two poses is lifted on the way (a step, not a slide)
+  // (one foot at a time: the one that moves is lifted while the other stays planted)
   function stepFeet(r, A, B, t) {
-    for (const [f, l] of [['footR', 'footRLift'], ['footL', 'footLLift']]) {
-      const d = Math.hypot(B[f][0] - A[f][0], B[f][2] - A[f][2]);
-      if (d > 1) r[l] = (r[l] || 0) + Math.sin(Math.PI * clamp01(t)) * Math.min(3, 0.9 + d * 0.3);
-    }
+    if (t <= 0 || t >= 1) return r;
+    const dR = Math.hypot(B.footR[0] - A.footR[0], B.footR[2] - A.footR[2]), dL = Math.hypot(B.footL[0] - A.footL[0], B.footL[2] - A.footL[2]);
+    const [f, l, d, o] = dR >= dL ? ['footR', 'footRLift', dR, dL] : ['footL', 'footLLift', dL, dR];
+    if (d > 1 && o < 1) r[l] = (r[l] || 0) + Math.sin(Math.PI * t) * Math.min(3, 0.9 + d * 0.3);
+    void f;
     return r;
   }
   const blendStep = (A, B, t) => stepFeet(blend(A, B, t), A, B, t);
@@ -606,7 +611,7 @@ RB.battlerMoves = (function () {
     if (gesture === 'rise') {
       // helped up: from the knee (where 'down' left them) back to the stance
       const D = over(R, DOWN_POSE);
-      return stage === 'recover' ? blendStep(D, R, ease(k)) : stage === 'anticipate' ? blendStep(R, D, ease(k)) : D;
+      return stage === 'recover' ? blend(D, R, ease(k)) : stage === 'anticipate' ? blend(R, D, ease(k)) : D;
     }
     const A = over(R, G.a || {});
     const X = (q) => over(A, G.x(q, R));
@@ -668,7 +673,7 @@ RB.battlerMoves = (function () {
       else Ap = over(R, { handR: [9.6, 36.6, 7.4], handShapeR: 'open', palmR: [0, 1, 0.3], headPitch: R.headPitch + 10, headYaw: R.headYaw - 8, spinePitch: R.spinePitch + 3, pelvis: [R.pelvis[0], R.pelvis[1] - 0.6, R.pelvis[2]] }); // slip: a look at the hand
       return blend(R, Ap, env(k, 0.2, 0.75));
     }
-    if (pose === 'down') return blendStep(R, over(R, DOWN_POSE), ease(k));
+    if (pose === 'down') return blend(R, over(R, DOWN_POSE), ease(k)); // (the knee goes down; no step)
     // cheer: settle into this person's own relief, with a small rise and an exhale
     const Cp = over(R, CHEER[id] || CHEER.comp);
     const p2 = blendStep(R, Cp, k < 0.3 ? ease(k / 0.3) : 1);

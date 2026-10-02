@@ -893,9 +893,10 @@ RB.combat = (function () {
   // Your response, once accepted and applied by the rules: anticipation → the
   // gesture → the word on paper → its effect on the actual target → recovery.
   // The finishing response also lets the creature settle before the last line.
-  function playPlayer(card, fx, before, won, reach, target) {
+  function playPlayer(card, fx, before, won, reach, target, step) {
     view = before;
-    const ctx = seqCtx({ view: before, reach, foe: target });
+    // (the word on the strip: what the answered task restored, where the response is about it — RB.partyChoreo)
+    const ctx = seqCtx({ view: before, reach, foe: target, resolved: step && RB.partyChoreo ? RB.partyChoreo.resolvedOf(card, step) : null });
     const P = RB.battleSeq.choreo.player(card, fx, ctx);
     let cues = tagSide(P.cues, 'player'), end = P.end;
     if (won) { const F = RB.battleSeq.choreo.finish(P.end, Object.assign(ctx, { last: lastStanding(before) })); cues = cues.concat(F.cues); end = F.end; }
@@ -1102,7 +1103,7 @@ RB.combat = (function () {
         // (the displayed state starts as `before` and steps forward: keep its knots apart)
         const knots0 = before.foes.map((f) => f.knots);
         chain = true;
-        await playPlayer(card, fx, before, won, reach, T);
+        await playPlayer(card, fx, before, won, reach, T, step);
         if (!won) {
           // a creature of the group whose last knot your response freed settles now
           for (let i = 0; i < st.foes.length; i++) if (knots0[i] > 0 && V().foes[i].knots <= 0 && !wonByComp) await playSettle(i);
