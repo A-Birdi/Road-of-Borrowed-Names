@@ -93,14 +93,15 @@ RB.activity.launch(kind, { source: 'company'|'companion-talk'|'world-prop'|'word
 - **Practice mementos.** Call `RB.practice.addMementoSource({ id, list(s) })`. Suite worker
   A renders them in Journey. They never become Roadside Keepsakes.
 
-## Provisional seams (to be replaced by their owners, same names)
+## Seams (provisional at the foundation, real since the merges)
 
-- `RB.pace.attempt(step, o)` in `src/ui/69_pace.js` is untimed only for now. Fishing calls it
-  for **every** response entry, Off included, so the real module can time it, calibrate it
-  and record it.
-- `RB.shiritori.chooseMove(state, bank, level, rng)` and `RB.shiritori.analyse` in
-  `src/engine/72_shiritori_ai.js` play Casual for every level for now, marked
-  `provisional`.
+- `RB.pace.attempt(step, o)` in `src/ui/69_pace.js` is the real pace module (`provisional: false`).
+  Fishing calls it for **every** response entry, Off included (docs/practice/pace.md §1).
+- `RB.shiritori.chooseMove` and `RB.shiritori.analyse` in `src/engine/72_shiritori_ai.js` are the real
+  opponents (strategy `roadside-ai-1`, `provisional: false`). `RB.shiritori.removeBank(id)` exists for
+  tests that build their own banks.
+- `RB.practiceDesk.keepPage(s, page)` (suite A) owns the shared six-page budget. Suite B's pages go
+  through it, and a page is marked saved only after a save-slot write succeeds.
 
 ## Shiritori rules core (src/engine/71_shiritori.js, §10)
 

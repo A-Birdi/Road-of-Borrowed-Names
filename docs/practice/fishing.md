@@ -1,5 +1,19 @@
 # A Quiet Cast — fishing (Practice addendum §5–§8; fishing parts of §3, §4, §20–§23)
 
+> **Integrated build (Phase G, task branch at `25fab16` and later).** This record describes the fishing
+> branch. On integration:
+> - The real pace module is merged, and the seam runs against it. `tests/e2e/fishing.mjs` now has the
+>   Gentle half: a calibrated 7 s offer accepted at Ready, a real clock, a soft expiry that keeps the
+>   fish, landed untimed, and no mastery event. The `taskId` convention `fishing:<situation>:<profile>`
+>   stays (pace.md §1 allows any string).
+> - The two "That is not what I wrote" buttons (fishing's `opts.misread` and the pace attempt's) are
+>   one button in `65_challenge.js`, counting both `misreads` and `recogMisses`.
+> - The word-help card no longer covers the hovered word (§14 (a) below is fixed in `10_ui.js`).
+> - Captures were retaken on the merged build and committed as WebP. The test writes to
+>   `tests/e2e/out/fishing/` unless `--docs` is given.
+> - Results on the integrated build: fishing.mjs 11/0. The rows in §11 and §14 that say the pace
+>   module is not merged are superseded. See `COVERAGE.md`.
+
 Worker record for the fishing slice of *Roadside Practice, A Quiet Cast, and Companion
 Shiritori* (version 1.0, 2 October 2026). It builds on the foundation in
 `docs/PRACTICE_CONTRACTS.md`. Untimed presentation and full content; the optional pace

@@ -1,5 +1,11 @@
 # Practice suite A — lantern tending, the copying desk, Practice mementos
 
+> **Integrated build (Phase G).** Suite B is merged. Its kept proofreading pages go through
+> `RB.practiceDesk.keepPage`, and the Tray now shows the desk's `statusText` when a page is kept but
+> not saved (no slot, a read-only tab, or session-only storage). The limitation below about *Begin here*
+> needing the companion is fixed: `RB.activity.safe()` needs the companion only for activities that
+> declare `companion: true`. Results on the integrated build: lamps 51/51, desk 45/45, layout 350/350.
+
 Owner's brief: *Roadside Practice, A Quiet Cast, and Companion Shiritori* (Practice addendum,
 v1.0, 2 October 2026), §15, §16, the Practice mementos page (§8.1, §16.3, §20.1) and the matching
 parts of §3, §4, §20–§23.6. Built on the foundation in `docs/PRACTICE_CONTRACTS.md` (base commit

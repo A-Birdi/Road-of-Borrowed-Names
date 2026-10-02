@@ -1,5 +1,15 @@
 # Companion shiritori: the table, records and the relationship (wordplay worker)
 
+> **Integrated build (Phase G).** This record was written against the provisional opponents and a
+> test-only bank. On integration the real engine, banks and opponents are merged:
+> - `wordplay.mjs` 83/0, `wordplay_layout.mjs` 63/0, unit `wordplay` 316/0 and `company.mjs` pass on
+>   the merged build.
+> - `wordplay.test.mjs` now clears the installed banks first, using the new `RB.shiritori.removeBank`,
+>   because its banks are test-only.
+> - The Ways to practise entry declares `companion: true`, so *Begin here* still needs the companion
+>   beside you.
+> - Statements below about the stub and `provisional-1` describe the branch, not the game as built.
+
 Practice addendum (*Roadside Practice, A Quiet Cast, and Companion Shiritori*, v1.0, 2 October 2026):
 §9, §13, §14, the shiritori parts of §3.2–§3.5, §4.2–§4.3, §20, §21 (records, limits,
 migration), §23.4 (table and records), §23.5, §26.3–§26.6. Built on the foundation at

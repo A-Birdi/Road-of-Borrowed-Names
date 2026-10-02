@@ -1,5 +1,15 @@
 # Practice suite B — Villagers' letters, the Proofreader's Tray, One word, two moments
 
+> **Integrated build (Phase G).** Both shared findings below are fixed:
+> - The hover word-help card is placed off the word, with its height capped to the space available.
+>   `learning_ui.mjs` checks this at 200 % text; the old placement covered 3 words.
+> - Solitary activities no longer need the companion beside you for *Begin here*.
+>
+> Suite A's desk owns kept pages, and a page is marked saved only after a save-slot write succeeds.
+> `practice_b.mjs` therefore expects `saved: false` with the "no save slot" message in its slot-less
+> campaign. `practice_b.test.mjs` tests both the fallback (desk hidden) and the desk path. Results on
+> the integrated build: practice_b.mjs 6/0, unit practice_b 94/0.
+
 Practice addendum §17 (correspondence), §18 (proofreading), §19 (comparisons), and the
 matching parts of §3 (one session at a time), §4 (learning evidence), §20 (navigation),
 §21 (records), §22 (presentation) and §23.6 (tests). The shared contracts are in

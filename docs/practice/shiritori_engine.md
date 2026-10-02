@@ -1,5 +1,10 @@
 # Companion shiritori — rules engine, word banks, opponents (engine worker record)
 
+> **Integrated build (Phase G).** Merged first. The audits and the 3,600-game benchmark were rerun on
+> the integrated tree at `25fab16`: certification is unchanged and the benchmark summary is identical;
+> the live driver made 0 fallbacks in 3,010 searched moves. `RB.shiritori.removeBank(id)` was added
+> for tests that build their own banks.
+
 Owner's brief: *Roadside Practice, A Quiet Cast, and Companion Shiritori* (Practice addendum 1.0,
 2 October 2026), §10–§12, §21.5, §22.1, §23.4, §26.2–§26.3, §27. This record covers the engine
 slice only: rules, banks, audits, opponents, the strength benchmark and their tests. The table UI,

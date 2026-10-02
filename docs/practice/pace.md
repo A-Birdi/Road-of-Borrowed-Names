@@ -1,5 +1,12 @@
 # Fishing pace — the optional response-entry clock
 
+> **Integrated build (Phase G).** Merged together with fishing. `fishing.mjs` now runs a real cast with
+> Gentle against this module (offer, Ready, soft expiry, untimed landing). The fishing and pace
+> "That is not what I wrote" buttons are one button (class `fb-misread chal-misread`,
+> `data-a="misread"`). `pace_noclock.test.mjs` now excludes fishing's own `pace:` keys from its broad
+> scan, and checks separately that fishing never puts a pace option in `runOpts`.
+> Results on the integrated build: pace.mjs 13/0.
+
 Practice addendum (*Roadside Practice, A Quiet Cast, and Companion Shiritori*, v1.0) §7
 in full, with §1.3 (the fishing timing exception), §4.1/§4.3 (pace facts kept apart),
 §20.3 (fishing pace settings), §21 (pace records and limits), §23.2 (first two

@@ -27,3 +27,19 @@ play has happened) and the opponent is the foundation's provisional Casual polic
 | `company_mio_1280x800.webp` | Company › Companion › Wordplay (3×3 grid, records) |
 | `company_ren_320x640_text200.webp` | The same card at 320×640, 200 % text |
 | `table_ren_ja_390x844.webp` | Interface language Japanese (labels with furigana), reduced motion |
+
+## Recording
+
+`wordplay_match.webm` (46 s, 960×540) is from `node tests/e2e/wordplay_video.mjs`, run on the
+integrated build at the Cinder Orchard inn with Nao and the cat, using the shipped Pocket bank and
+the real Casual opponent (no fixture, no scripted opponent). It shows:
+- Play shiritori in the rest menu after Just chat, and the preparation sheet with its defaults;
+- the demonstration skipped;
+- words chosen from the open book (かさ, どんぐり), typed (ラジオ, ゴリラ) and handwritten (やま);
+- the pad first reading や as small ゃ and the written one chosen from its other readings;
+- a real win: Nao had no ら word left after ゴリラ, "Stage won for the first time: Pocket words ·
+  Casual", the first-game memory, and "Recorded in this journey; it has no save slot, so nothing was
+  written to storage".
+
+Each run picks its own starter, so a rerun records a different game. The strokes follow KanjiVG and
+are synthetic, not a person's handwriting.
