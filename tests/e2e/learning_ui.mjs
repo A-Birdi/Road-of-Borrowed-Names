@@ -489,10 +489,11 @@ await test('lesson and activity sheets keep their cloth cover: title and its fur
 });
 
 // ---------------------------------------------------------------------------
-await test('combat at phone and landscape sizes shows the telegraph, its target and the responses', async () => {
+await test('combat at phone and landscape sizes shows the telegraph (Expanded), its target and the responses; with Adaptive the move is the creature\'s badge beside its plate, both in view and uncovered', async () => {
   for (const [w, h] of [[390, 844], [360, 800], [844, 390], [1280, 800]]) {
     const { p, errors, ctx } = await page(b, url, w < 900 ? phone(w, h) : { viewport: { width: w, height: h } });
-    await p.evaluate(() => { const s = RB.game.debugStart('rw.millroad', 10, 22, { comp: 'mio', profile: 'F' }); s.learn.profile = 'F'; s.learn.kanaKnown = 'both'; s.words.push('mamoru', 'mizu', 'hikari'); RB.game.startBattle('rw.reedling', {}); });
+    // (the telegraph panel's own layout is checked with Expanded; in Adaptive a routine move has no panel)
+    await p.evaluate(() => { const s = RB.game.debugStart('rw.millroad', 10, 22, { comp: 'mio', profile: 'F' }); s.learn.profile = 'F'; s.learn.kanaKnown = 'both'; s.words.push('mamoru', 'mizu', 'hikari'); RB.game.settings.intentDisplay = 'expanded'; RB.game.startBattle('rw.reedling', {}); });
     for (let i = 0; i < 80; i++) { const st = await p.evaluate(() => ({ dlg: RB.ui.dialogue.isOpen(), cards: !!document.querySelector('.resp') })); if (st.cards) break; if (st.dlg) await p.evaluate(() => RB.ui.dialogue.advance(true)); await p.waitForTimeout(80); }
     await p.waitForSelector('.resp[data-i]');
     await p.waitForTimeout(200);
@@ -506,8 +507,8 @@ await test('combat at phone and landscape sizes shows the telegraph, its target 
       const ov = (a, c) => a && c && a.x < c.r - 1 && c.x < a.r - 1 && a.y < c.b - 1 && c.y < a.b - 1;
       return {
         intent: R('.combat-ui .intent'), label: document.querySelector('.it-label').textContent, jp: !!document.querySelector('.it-jp .jline'), en: (document.querySelector('.it-en') || {}).textContent || '',
-        party: R('.cb-party'), dock: R('.cb-dock'), stage: R('.cb-stage'), foe: R('.cb-foe'),
-        intentInView: inView(R('.combat-ui .intent')), partyInView: inView(R('.cb-party')), foeInView: inView(R('.cb-foe')), firstCardInView: inView(R('.resp[data-i="0"]')),
+        party: R('.cb-party'), dock: R('.cb-dock'), stage: R('.cb-stage'), foe: R('.cb-foe [data-foe]'),
+        intentInView: inView(R('.combat-ui .intent')), partyInView: inView(R('.cb-party')), foeInView: inView(R('.cb-foe [data-foe]')), firstCardInView: inView(R('.resp[data-i="0"]')),
         intentOnTop: hit('.combat-ui .intent'), partyOnTop: hit('.cb-party'), cardOnTop: hit('.resp[data-i="0"]'),
         overlap: ov(R('.combat-ui .intent'), R('.cb-dock')) || ov(R('.combat-ui .intent'), R('.cb-party')) || ov(R('.cb-party'), R('.cb-dock')),
         target: it.target, kind: it.kind, aimed, wardCards,
@@ -525,6 +526,16 @@ await test('combat at phone and landscape sizes shows the telegraph, its target 
       assert(r.aimed.length === want, tag + 'the telegraphed target is marked: ' + JSON.stringify(r));
     }
     assert(r.wardCards.some((x) => /you/i.test(x)) && r.wardCards.some((x) => /mio/i.test(x)), tag + 'ward cards name their target: ' + r.wardCards.join(', '));
+    // Adaptive: no panel for a routine move; the creature's badge and plate are in view and uncovered
+    await p.evaluate(() => { RB.game.settings.intentDisplay = 'adaptive'; RB.combat.refresh(); });
+    await p.waitForTimeout(400);
+    const a = await p.evaluate(() => {
+      const inView = (r) => r && r.top >= 0 && r.bottom <= innerHeight + 1 && r.left >= 0 && r.right <= innerWidth + 1;
+      const top = (e) => { if (!e) return false; const r = e.getBoundingClientRect(); const x = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); return !!(x && (x === e || e.contains(x))); };
+      const badge = document.querySelector('.cb-badges .cb-ib'), plate = document.querySelector('.cb-foe [data-foe]');
+      return { panel: getComputedStyle(document.querySelector('.combat-ui .intent')).display, badge: !!badge && inView(badge.getBoundingClientRect()) && top(badge), plate: !!plate && inView(plate.getBoundingClientRect()) && top(plate), label: badge ? badge.getAttribute('aria-label') : '' };
+    });
+    assert(a.panel === 'none' && a.badge && a.plate && /strike|sweep|waiting|rest/i.test(a.label), tag + 'Adaptive: the badge and the plate carry it ' + JSON.stringify(a));
     assert(!errors.length, errors.join('; '));
     await ctx.close();
   }

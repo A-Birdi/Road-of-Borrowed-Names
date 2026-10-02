@@ -238,8 +238,9 @@ if (want('d')) {
   await wrapSteps();
   await capture(r0, 'd-before');
   await p.evaluate(() => {
-    // pin the overlay's slips (foe, telegraph, party) at their first heights
-    const css = ['.cb-foe', '.intent', '.cb-party'].map((q) => { const h = document.querySelector('.combat-ui ' + q).getBoundingClientRect().height; return '.combat-ui ' + q + ' { height: ' + h + 'px !important; min-height: 0 !important; overflow: hidden !important; }'; }).join('\n');
+    // pin the overlay's slips (foe, telegraph, party) at their first heights — and a surface that is not
+    // there at all (Adaptive's telegraph panel with no passage to read) stays not there
+    const css = ['.cb-foe', '.intent', '.cb-party'].map((q) => { const e = document.querySelector('.combat-ui ' + q); const h = e.getBoundingClientRect().height; return '.combat-ui ' + q + ' { height: ' + h + 'px !important; min-height: 0 !important; overflow: hidden !important;' + (getComputedStyle(e).display === 'none' ? ' display: none !important;' : '') + ' }'; }).join('\n');
     const st = document.createElement('style'); st.id = 'pin'; st.textContent = css; document.head.appendChild(st);
   });
   await p.waitForTimeout(600);
