@@ -89,6 +89,8 @@ export async function battle(p, o) {
     RB.game.settings.input = 'choice';
     RB.game.settings.textSpeed = o.speed || 'normal';
     if ('battleSpeed' in RB.game.settings || o.speed) RB.game.settings.battleSpeed = o.speed || 'normal';
+    // (Battle animations Normal / Fast / Instant, where the build has the setting)
+    if ('battleAnim' in RB.game.settings) RB.game.settings.battleAnim = o.anim || 'normal';
     RB.game.settings.reducedMotion = !!o.reduce; RB.game.applySettings();
     RB.battleSeq.setTimeScale(o.timeScale || 1);
     window.__result = null;

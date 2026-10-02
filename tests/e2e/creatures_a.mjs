@@ -196,6 +196,36 @@ await test('DIAGNOSTIC FIXTURE (Mio beside you on the mill road; not reachable t
   await ctx.close();
 });
 
+// Battle animations Normal / Fast / Instant (the integrator's setting; only where the build has it)
+{
+  const { p, ctx } = await page(b, url, DESK);
+  const has = await p.evaluate(() => 'battleAnim' in RB.game.settings);
+  await ctx.close();
+  if (!has) { console.log('SKIP playback speeds: this build has no Battle animations setting (runs after the presentation contract is merged)'); notes.push('playback speeds skipped (no battleAnim setting in this build)'); }
+  else await test('playback speeds: the moth\'s swoop at Fast is shorter with the same results; at Instant the results show with no creature movement', async () => {
+    const run = async (anim, pre) => {
+      const { p, errors, ctx } = await page(b, url, DESK);
+      await helpers(p);
+      await battle(p, { map: 'rw.millroad', x: 11, y: 10, foe: 'f3', words: WORDS, anim });
+      await p.evaluate(() => { const st = RB.combat.state(); st.knots = st.maxKnots = 6; RB.combat.refresh(); });
+      const t0 = Date.now();
+      const M = await move(p, 'strike', 'pc', /protect/.test(pre || '') ? 'protect.*on you' : 'unravel');
+      const wall = Date.now() - t0;
+      await onceEach(p, anim + ' strike');
+      assert(!errors.length, errors.join('; '));
+      await ctx.close();
+      return { M, wall, end: M.tr.meta && M.tr.meta.end, dur: M.tr.dur, beats: M.tr.beats.map((x) => x.t).join() };
+    };
+    const N = await run('normal'), F = await run('fast'), I = await run('instant'), W = await run('fast', 'protect');
+    assert(N.beats === 'hit' && F.beats === 'hit' && I.beats === 'hit', 'the same result at every speed: ' + [N.beats, F.beats, I.beats]);
+    assert(W.beats === 'countered', 'a warded swoop at Fast is still countered: ' + W.beats);
+    assert(N.M.moved && F.M.moved, 'the swoop travels at Normal and Fast');
+    assert(F.dur < N.dur * 0.85, 'Fast plays shorter: ' + JSON.stringify({ normal: N.dur, fast: F.dur }));
+    assert(!I.M.moved && I.M.E.every((s) => !s.foeOff || (s.foeOff.dx === 0 && s.foeOff.dy === 0)), 'no creature movement at Instant');
+    notes.push('playback: moth strike sequence wall ms normal ' + N.dur + ', fast ' + F.dur + ', instant ' + I.dur + ' (trace dur)');
+  });
+}
+
 // ---------------------------------------------------------------------------------------------------
 // one battle per family: [family, map, enemy, [move, target, card, expectations]…]
 const FAMS = [

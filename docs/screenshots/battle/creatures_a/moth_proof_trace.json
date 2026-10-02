@@ -1,0 +1,135 @@
+{
+ "build": "index.html built from this commit",
+ "speed": "Normal (presentation clock ×1)",
+ "viewport": "1280×720 (recorded at 960×540)",
+ "moves": [
+  {
+   "label": "unblocked swoop Strike",
+   "kind": "strike",
+   "end": 1310,
+   "beats": [
+    {
+     "t": "hit",
+     "at": 650,
+     "who": "pc"
+    }
+   ],
+   "fired": [
+    "foe:prep",
+    "foe:exec",
+    "fx:wingWake",
+    "foe:exec",
+    "fx:scaleShed",
+    "fx:impact",
+    "pose:pc=hit",
+    "num",
+    "beat",
+    "foe:recover",
+    "foe:recover"
+   ],
+   "wallMs": 1308,
+   "settled": null
+  },
+  {
+   "label": "fully warded Strike (protect: the seal at the contact)",
+   "kind": "strike",
+   "end": 1310,
+   "beats": [
+    {
+     "t": "countered",
+     "at": 650,
+     "who": null
+    }
+   ],
+   "fired": [
+    "foe:prep",
+    "foe:exec",
+    "fx:wingWake",
+    "foe:recover",
+    "fx:scaleShed",
+    "fx:sealBlock",
+    "pose:pc=brace",
+    "beat",
+    "foe:recover"
+   ],
+   "wallMs": 1310,
+   "settled": null
+  },
+  {
+   "label": "softened hit (one ward point absorbs part)",
+   "kind": "strike",
+   "end": 1310,
+   "beats": [
+    {
+     "t": "block",
+     "at": 650,
+     "who": "pc"
+    },
+    {
+     "t": "hit",
+     "at": 767,
+     "who": "pc"
+    }
+   ],
+   "fired": [
+    "foe:prep",
+    "foe:exec",
+    "fx:wingWake",
+    "foe:exec",
+    "fx:scaleShed",
+    "fx:sealBlock",
+    "pose:pc=brace",
+    "beat",
+    "num",
+    "fx:impact",
+    "pose:pc=hit",
+    "num",
+    "beat",
+    "foe:recover",
+    "foe:recover"
+   ],
+   "wallMs": 1313,
+   "settled": null
+  },
+  {
+   "label": "Shroud applied (its powder settles over its knots)",
+   "kind": "shroud",
+   "end": 1510,
+   "beats": [
+    {
+     "t": "shroud",
+     "at": 767,
+     "who": null
+    }
+   ],
+   "fired": [
+    "foe:prep",
+    "foe:cast",
+    "fx:veilRelease",
+    "fx:mistRoll",
+    "foe:recover",
+    "beat"
+   ],
+   "wallMs": 1504,
+   "settled": null
+  },
+  {
+   "label": "light clears the Shroud (the same powder disperses); the creature rests",
+   "kind": "rest",
+   "end": 760,
+   "beats": [
+    {
+     "t": "rest",
+     "at": 200,
+     "who": null
+    }
+   ],
+   "fired": [
+    "foe:rest",
+    "beat"
+   ],
+   "wallMs": 748,
+   "settled": null
+  }
+ ]
+}
