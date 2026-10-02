@@ -12,6 +12,239 @@ Status: every family upgraded and validated by unit tests and in real battles; e
 The §22.4 rubric scores in this file are the implementing agent's **self-review**, not a human
 review.
 
+**Restyle round** (after the owner's playtest): every family reshaped and re-rendered to the
+reference's craft — three-quarter stances, coloured outlines, hue-shifted ramps, key light with a
+cool rim and cast shadows, per-material rendering — with every pose, delivery and timing kept.
+Branch `worktree-agent-afce2d27ef4225b51`, from the task branch at `6855ba1`. See
+"The restyle round" below; the sections after it are the first round's record, updated where the
+restyle changed a fact (frame sizes, the cache, tests).
+
+## The restyle round (the owner's playtest)
+
+After playing the battle addendum's build the owner asked for the creatures to be "reshaped to fit
+more in line with the supplied style" while keeping the moth's and the Mill Echo's motion. This
+round changed **form and rendering only**: every pose table, delivery, contact beat, idle cadence,
+effect lifecycle and timing is unchanged (the timing table below still holds; the moth's recorded
+trace matches the first round's to the millisecond, the echo's beats land on the first frame at or
+after their contact — see Tests). Proof items first (the Flour Moth and every moth palette,
+then The Mill Echo), then every other family in this area. All art judgements here are the
+implementing agent's **self-review**.
+
+### The rendering standard (all ten families)
+
+- **Ramps** (`A.hramp` / `A.hmat`, 78a). Each material is a 4–6 tone ramp built from its base colour:
+  shadows travel up to 20–70° toward violet / navy / red-brown and gain saturation, highlights
+  travel 10–30° toward warm yellow and lose some; the lightness runs from ≈ 0.05–0.25 to
+  ≈ 0.6–0.98 (a value range of at least 0.6, unit-tested on five representative bases). Mid tones are saturated where the
+  material is (wing membrane, ink, chitin, wisp light, fire) and greyed where it is not (paper,
+  stone, ash, steel-like glass).
+- **Outlines** are a colour: the material's darkest tone pushed further toward the cool side and
+  darker (wing → deep red-brown, ink → near-black violet, glass → navy, clay → deep brown); the
+  lit-edge outline (top and left edges) is a lighter tone of the same family (selective outline).
+  Each overlapping form is its own layer with its own outline, so a nearer form is separated from
+  the one behind it by a dark line. Interior lines (veins, creases, mortar, folds) are ramp tones,
+  lighter than the silhouette outline.
+- **Light.** One key light from the upper left. Volumes use `A.ball` — crisp bands (lit cap, mid,
+  core shadow, a narrow reflected band at the shadowed rim) — instead of pillow shading. A cool
+  **rim light** (`A.rim`) runs down the right-hand edges of the main forms (body, fur, shell,
+  robe, kiln, glass core, near wings). Nearer forms **cast** a one-step shadow (`A.cast`, offset
+  down-right) on the forms behind them: wing over wing, fur collar over the wing roots and the
+  abdomen, a dome over its puddle, a flap over the envelope's face, the torso over the far arm.
+- **Clusters, not noise.** Shading is quantised from smooth terms into clean shapes; isolated
+  single pixels inside a material are removed (`A.despeckle`) before deliberate accents (glints,
+  catch-lights) are drawn. No dither on the creatures.
+- **Three-quarter stances.** The flat, mirrored front-on poses are gone: each creature is turned
+  toward the party (lower left) — near limbs/wings larger and in front, far ones foreshortened, a
+  step darker and behind, faces turned (the far eye narrower at the edge, the near eye full).
+- **Per-material recipes.**
+  - *Wing membrane (moth):* the moth's own pattern in clean zones (basal area, antemedial line with
+    a pale edge, medial field, a dentate postmedial line, a pale band, a dark subterminal band),
+    lit along the costa, each cell lighter along its upper vein; veins pass under the cross lines;
+    two-tone blotches; an eye-spot (dark ring, pale halo on the lit side, saturated iris, pupil,
+    catch-light); a scalloped margin with a chequered scale fringe and a torn notch; hind wings
+    with a tapered tail.
+  - *Fur (moth):* a mass in three crisp bands with pointed tufts along its edge (the lower ones
+    first, upper tufts lying over them) and short darker partings inside.
+  - *Chitin (moth abdomen, crab):* banded plates / a glossy carapace with a lit lip, bumps (lit top,
+    shadow under), a near-white glint, toothed chelae with dark tips.
+  - *Ink (blot):* a near-black violet ramp, a hard near-white specular streak on the lit shoulder
+    (the reference's metal manner), window glints, a cool rim.
+  - *Glass (echo shards, the core, glass golems):* hard facets, a white specular edge, a dark
+    reflected band, navy outline.
+  - *Stone (golems):* dressed blocks with lit top planes and dark side planes (boxes turned
+    three-quarter), cracks, chips and moss as clusters.
+  - *Paper (crane, letter, clerk's sheets):* hard planes, each one flat tone by its facing; every
+    crease a lit ridge beside a dark valley; sparse fibre clusters; folded corners.
+  - *Cloth (clerk):* a cone lit on its near side; folds as tapered shadow valleys widening toward
+    the hem, each with a lit ridge.
+  - *Wood, brass, wax (clerk's stamp, the letter's seal):* grain lines, a specular point, a glossy
+    wax ramp with a pressed ring.
+  - *Brick and fire (warden):* curved courses, per-brick tints, lit top edges, dark mortar; the
+    fire lighting the bricks round its mouth from inside; a glossy glaze band; flames in hard bands
+    with embers; smoke in lit clusters.
+  - *Spirit light (wisp):* an egg of light lit from inside (a warm core cluster) and by the key
+    light, a flame tuft, a flat tail ribbon lit along one edge that splits into two strands, sparks.
+
+### Native frames after the restyle
+
+Canvases grew only where a pose was clipped (checked for every idle and posed drawing by
+`tests/unit/creatures_a_restyle.test.mjs`). The idle extent — what the stage lays out — was kept
+within 8 art px of its earlier height so the formation and the party's scale are unchanged.
+
+| Family | Frame (w × h, origin) | Was | Idle extent w × h (was) | Why |
+|---|---|---|---|---|
+| moth | 224 × 216, (112, 124) | 224 × 192, (112, 100) | 179 × 124 (179 × 128) | raised wings of the three-quarter stance (strike aim, braking flare, Shroud clap) |
+| wisp | 176 × 200, (88, 70) | same | 83 × 135 (95 × 135) | — |
+| echo | 208 × 208, (104, 104) | same | 135 × 134 (129 × 141) | — |
+| blot | 248 × 168, (128, 78) | 220 × 152, (128, 62) | 136 × 113 (136 × 109) | the drop's crown when it rears; the surge (it was clipped before) |
+| crab | 244 × 180, (140, 90) | 228 × 156, (124, 66) | 164 × 130 (169 × 125) | raised and thrust claws (they were clipped before) |
+| golem | 256 × 216, (136, 112) | same | 133 × 162 (137 × 160) | — |
+| crane | 244 × 196, (136, 104) | 236 × 196, (128, 104) | 162 × 136 (158 × 136) | the overshoot (clipped before) |
+| sg_letter | 196 × 220, (100, 96) | 196 × 200, (100, 76) | 113 × 137 (118 × 130) | the flap fully open when it settles (clipped before) |
+| clerk | 252 × 212, (116, 102) | 224 × 212 | 127 × 149 (same) | the sheets spread wide for Flood and Shroud (clipped before) |
+| warden | 220 × 278, (110, 166) | 220 × 262, (110, 150) | 122 × 206 (121 × 206) | the smoke when it stokes (clipped before) |
+
+### The proof items: before → after
+
+**The Flour Moth** (and the Margin, Ash, Catalogue, Chart and Postmark Moths, which share its rig;
+the Chart Moth keeps dark wings with pale marks, the Ash Moth's greys stay grey).
+
+| Point | Before | After |
+|---|---|---|
+| 1 Silhouette and pose | flat, mirrored, front-on; smooth oval wings | three-quarter: body leaning toward the party, near wings large and in front, far wings at two-thirds span behind the head; hooked apex, torn notch, scalloped fringe, tapered hind-wing tails that lag the beat |
+| 2 Outlines | thin, light brown on pale beige (barely darker than the fill) | deep red-brown on the wings, near-black violet on the body, lighter on lit edges; every overlapping form separated |
+| 3 Ramps | 4–5 near-identical pale beiges | 6 tones flour-white → cream → tan → warm brown → red-violet brown; hind wings saturated apricot-to-umber |
+| 4 Light | soft concentric gradient (pillow) | lit costa, darker root under the body, cast shadows (forewing on hindwing, fur on wing roots and abdomen), cool rim on the body, fur, abdomen and near wings |
+| 5 Materials | wings and body read alike | membrane pattern, clustered fur, banded chitin, glossy eyes, feathered antennae, jointed legs with pale claws |
+| 6 Clusters | radial banding following the outline | clean pattern zones, despeckled, two-tone blotches |
+| 7 Detail | sparse | pattern lines, veins, eye-spots, blotches, chequered fringe, tufts, hair bands, palps |
+
+Motion kept: the idle (10 drawings, 20-entry loop × 105 ms + the float bob), the swoop (aim,
+arcing approach with travel, hit / ward / softened / met air contact variants, arrest and return,
+hover), the Shroud clap and the flour veil, Gust, Sweep, Gathering, Chill, Re-tying, the reactions.
+
+**The Mill Echo** (and the Shelved and Road Echoes).
+
+| Point | Before | After |
+|---|---|---|
+| 1 Silhouette | a disc of concentric circles round a small sphere; symmetric | rings on a plane tilted and seen three-quarter (far half behind the core, near half in front, broken into arcs that taper at their gaps); a ribbon of voice and mill dust rising behind it to the upper right and a shorter one in front, both ending in ragged motes; a diagonal line of action |
+| 2 Outlines | thin, low contrast | navy outlines on glass and rings, lighter on lit edges |
+| 3 Ramps | flat light blue | hue-shifted ramps (navy → teal → near-white); Heat warms the whole ramp toward ember |
+| 4 Light | none to speak of | dark-glass core in hard bands with a crisp highlight, a reflected band and a cool rim; the far half of each ring in shadow |
+| 5 Materials | rings, shards and core alike | sound (rings, bright wavefront), glass (shards: facets, specular edge, reflected band), dark glass (core), dust (ribbons and motes) |
+| 6 Clusters | — | clean bands; motes as 1–2 px clusters |
+| 7 Detail | sparse | wavefronts, facets, highlight, motes, a three-quarter face with a calling mouth |
+
+Motion kept: the pulse waves at the same phase per drawing (8 × 125 ms + bob), the shards orbiting,
+gathering toward the target and flung (the volley), locking into a pane (Mirror and Lie), the rings
+warming and quickening (Heat), the soft rings and drawn-in shards (Plea), the shards relocking
+(Re-tying), the reactions. The effect rings (`echoRings`) now lie on the same tilted plane.
+
+Iterations (moth): 1) first three-quarter rig — too orange and noisy; 2) cream-dominant pattern
+values, greyer fur ramp; 3) bigger fur mass and head, simpler blotches; 4) radial table
+interpolated (the cross lines were jagged), eye-spot moved off the postmedial line; 5) the stance
+flattened and the body lowered so the idle extent matches the layout (it had grown to 159 px tall);
+6) a cool rim on the near wings, slimmer legs. (Echo): 1) tilted rings + glass shards + a front
+and a back ribbon — busy, read as an eye; 2) the front ribbon shortened, the far ring halves two
+tones darker, a larger core; 3) the ring plane lowered to restore its layout height.
+
+### The other families: before → after (points 1–7)
+
+| Family (enemies) | Before | After |
+|---|---|---|
+| wisp (Reedling, Ember Wisp, Hush Mote, Harbour Fog, Frost Wisp, Stray Name) | a pillow-shaded sphere with a symmetric face, a soft concentric halo, a staircase-banded tail | a three-quarter face, a flame tuft curling back from the crown (sways), banded light with a warm inner core and a cool rim, a flat tail ribbon lit on one edge that splits into two strands, a faint two-step glow with sparks |
+| blot (Runoff, Smoke, Silence, Runaway Ink, Blotted Line) | a dark dome, low value range, outline-following bands | an ink drop drawn up into a point that leans with the pose (toward the party when it lashes, back when it rears); glossy ink with a hard specular streak and glints, a reflected band, a cool rim; the puddle a separate form in the dome's cast shadow; a three-quarter face |
+| crab (Label Crab, Rock-pool Crab) | front-on, symmetric, flat bands | three-quarter: the near half of the shell fuller and lower, the near claw larger and in front, the far claw and legs smaller and darker behind; glossy chitin with a lit carapace lip, bumps, a glint; toothed chelae with dark tips; segmented legs lit along their tops |
+| golem (Glass Golem, Icicle Warden, Ledger Heap, Mossy Milestone, The Half-road Gatekeeper) | flat front-on blocks, pale | blocks with lit top planes and dark side planes (turned three-quarter), the far arm smaller and behind; glass golems with crisp specular streaks and reflected bands, stone ones with cracks, chips and moss |
+| crane (Paper, Soggy Paper, Unfolded) | pale, low-contrast planes, thin outline | hard paper planes (white lit, warm grey shade), lit ridge / dark valley on every crease, fibre clusters, a two-tone red beak, cast shadows between wing and body |
+| sg_letter (Undelivered Letter) | a flat envelope front-on | turned three-quarter (sheared, its thickness showing), flaps by facing, folds as ridge and valley, the flap's shadow on the face, a glossy wax seal, a perforated stamp, twisting paper strips with split ends, three-quarter eyes |
+| clerk (The Tide Clerk, False / Echoing Gatekeeper, Consent Stamp) | a robe in sine-banded stripes, flat props | a cloth cone lit on its near side, tapered fold valleys with lit ridges, a cool rim, the collar's shadow; the stamp in wood, brass and vermilion; sheets with folded corners |
+| warden (The Kiln Warden) | a front-on brick kiln, flat light | curved courses (three-quarter, seen a little from above), mouth and eyes turned toward the party, the key light on its left, a cool rim on the right, the fire lighting the bricks round its mouth, a glossy glaze band, soot, banded flames and embers, lit smoke |
+
+Effects (84a): particles are now two-tone clusters from the creature's own ramp (a dark lower-right
+edge, like the sprites' outlines) — wing scales, ash, frost, wisp sparks, shell grit, stone grit,
+paper scraps; the volley's shards are glass (outline, face, glint); the echo's rings lie on its
+tilted plane in two tones; the kiln's mouth anchor follows its turned firebox. Lifecycles, timings,
+reduced-motion behaviour and the Shroud veil are unchanged.
+
+### Self-review against the reference's craft (points 1–7)
+
+Self-review by the implementing agent, from the 1×/3× sheets, in-battle captures at 1920 × 1080,
+1280 × 800 and 390 × 844, and the Normal-speed clips. ✓ met, ~ partly.
+
+| Family | 1 silhouette | 2 outlines | 3 ramps | 4 light | 5 materials | 6 clusters | 7 detail |
+|---|---|---|---|---|---|---|---|
+| moth | ✓ | ✓ | ✓ | ✓ | ✓ | ~ (fur edge and legs still busy at 1×) | ✓ |
+| echo | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ~ (the face is small inside the vortex) |
+| wisp | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ~ |
+| blot | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ~ |
+| crab | ✓ | ✓ | ✓ | ✓ | ✓ | ~ (shell banding steps) | ✓ |
+| golem | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| crane | ~ (still a thin, symmetric fold) | ✓ | ~ (shadows lean pink) | ✓ | ✓ | ✓ | ~ |
+| sg_letter | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ~ |
+| clerk | ~ (the robe is still mostly frontal) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| warden | ✓ | ✓ | ✓ | ✓ | ✓ | ~ (brick tints busy on the lit side) | ✓ |
+
+### Cache policy, budget and build times
+
+- **Policy** (`src/ui/78_enemy_art.js`, owned by this area this round): the shared creature frame
+  cache is an LRU bounded by **140 frames and 30 MiB** of pixels (w × h × 4), whichever comes first,
+  so larger native frames cannot grow it past its share of the 48 MiB budget. `cacheStats()`
+  reports `frames`, `cap`, `capBytes`, `capMib`, `bytes`, `mib`, counted afresh from the cache.
+  The creatures B worker shares this cache unchanged.
+- **Prewarm** (84a): after a creature's first idle drawing is built in a battle, the rest of its
+  idle loop is built first (idle slices), then its moves' frames (≤ 44 per creature, a share of 96
+  when different creatures meet).
+- **Measured** (`node tests/e2e/battle_budget.mjs`, one long session: every creature family alone
+  and in threes, with a companion and a pet; the shared cache carries frames from one encounter to
+  the next): largest estimated residency **37.53 MiB** of 48 (party 4.82, creatures 28.92, pets
+  3.80) after `sb.fox` × 3 — a Creatures B family; the largest after a Creatures A encounter was
+  36.73 MiB after `sg.letter` × 3 (creatures 27.81). The creature cache reached its 140-frame
+  bound; its 30 MiB bound was not reached (it guarantees the creature share can never exceed
+  30 MiB, whatever the frame sizes). Before the restyle the same test measured ≈ 37 MiB.
+- **Per family, every frame cached** (sheet tool): moth 96 frames 17.72 MiB; wisp 85 / 11.41;
+  echo 66 / 10.89; blot 65 / 10.33; crab 55 / 9.21; golem 76 / 16.03; crane 67 / 12.22; letter 36 /
+  5.92; clerk 85 / 17.32; warden 79 / 18.43.
+- **First-use build time per frame** (headless Chromium, software canvas, one family at a time,
+  machine load ≈ 3.5–7; idle / posed mean): moth 10.7 / 11.9 ms (was ≈ 8.7); echo 8.4 / 8.5;
+  golem 8.5 / 7.7; crab 6.7 / 6.3; letter 6.6 / 6.8; crane 6.4 / 4.3; clerk 6.3 / 5.6; warden 5.4 /
+  5.4; blot 4.7 / 3.8; wisp 4.6 / 4.0. The moth's wing pattern is sampled once into grids at load;
+  the helpers work inside each layer's box.
+- **Draw cost** (`battle_anim`'s frame-cost scenario, final run, load ≈ 1–2.5): during sequences
+  avg 1.46 ms, max 27.1 ms over 1,220 frames; all frames avg 1.45 ms (threshold 8 ms).
+
+### Restyle evidence (`docs/screenshots/battle/creatures_a_restyle/`)
+
+- `sheet_<enemy>.webp` — before / after at 1× (idle, a second idle drawing, each move's key pose,
+  the recoil) and 3× (idle, strike aim, strike) for the Flour Moth and every moth palette, The Mill
+  Echo and the other echoes, and one enemy per other family. The reference is **not** in these
+  sheets (it is the owner's and is not committed); `node tests/e2e/creatures_a_restyle.mjs <ids>
+  --ref <image>` writes the same sheets with the reference beside them to `tests/e2e/out/` only.
+- `sheet_<family>_1x.webp` — every idle drawing and every authored action frame at native size.
+- `roster_all_enemies.webp` — all 36 enemies, idle and each move's key pose, in their palettes.
+- `battle_<enemy>_<viewport>_decide.webp` / `_contact.webp` — in battle at 1920 × 1080,
+  1280 × 800 and 390 × 844 (proof items also `before_…`, from the build before the restyle).
+- `moth_proof_normal.webm`, `echo_proof_normal.webm` — real-time Normal recordings at 1280 × 720
+  (moth inside the mill: idle, swoop Strike, warded, softened, Shroud, light; echo: idle, volley,
+  Mirror, Heat, Plea), with `*_trace.json` (results with presentation ms).
+
+### Restyle tests
+
+See "Tests — commands and results" (the restyle round's runs are listed first there).
+
+### Restyle limitations
+
+- The **idle extents** were held close to the old ones so that the stage layout (which reads them)
+  does not change; this caps how much larger the creatures could become.
+- Points marked ~ in the self-review: the crane and the clerk are still close to frontal; the moth's
+  fur edge and legs and the warden's lit bricks are busier than the reference at 1×; the crane's
+  paper shadows lean pink.
+- The moth's frames take ≈ 11–13 ms to build on first use (≈ 8.7 before); the idle loop is now
+  prewarmed, but a first action before prewarm finishes can still build on demand.
+- The recordings start with the title screen for ≈ 2 s (the page loads inside the recording).
+- Intent badges and name plates sit over the creatures' heads in some captures; that layout is the
+  integrator's (unchanged here).
+
 ## Files and APIs
 
 | File | What it holds |
@@ -23,11 +256,16 @@ review.
 | `src/ui/78e_paper.js` | the crane, the letter (`sg_letter`, moved here from `src/content/ch2/01_art.js`) and the clerk |
 | `src/ui/78f_warden.js` | the Kiln Warden |
 | `src/ui/84a_creatures_a_fx.js` | delivery registration, creature effects, the Shroud veil lifecycle, the per-enemy audit, idle-time prewarm |
+| `src/ui/78_enemy_art.js` | the shared creature frame cache (owned by this area in the restyle round: bounded by bytes as well as frames) |
 | `tests/unit/creatures_a.test.mjs` | every delivery × move × variant; poses; audit; budget |
 | `tests/unit/creatures_a_timing.mjs` | generates the timing tables below from the deliveries (`--md`) |
 | `tests/e2e/creatures_a.mjs`, `creatures_a_lib.mjs` | real battles (browser) |
 | `tests/e2e/creatures_a_sheets.mjs` | native frame sheets (1×, 3×), `--roster` (every enemy), `--variants` |
 | `tests/e2e/creatures_a_video.mjs` | the real-time Normal recording of the moth proof and its timing trace |
+| `tests/unit/creatures_a_restyle.test.mjs` | the restyle: ramps and outlines, every drawing fits its canvas, idle extents near the layout's, the cache's byte bound and truthful stats |
+| `tests/e2e/creatures_a_restyle.mjs` | before / after sheets per enemy (`--ref` adds the reference, written outside docs only); `--bounds` reports every family's drawn bounds and clipping |
+| `tests/e2e/creatures_a_restyle_battle.mjs` | in-battle captures at 1920 × 1080, 1280 × 800, 390 × 844, at the decision and at the Strike's contact (before / after) |
+| `tests/e2e/creatures_a_restyle_video.mjs` | Normal-speed recordings of the moth's and the Mill Echo's key actions with their traces |
 
 ### The framework (`RB.creaturesA`, 78a)
 
@@ -54,6 +292,11 @@ review.
   `block`, `soft` (block then hit), `miss` (a companion's flourish), `none`.
 - **Audit.** `A.auditFamily(id, rec)`, `A.auditEnemy(id, art, disposition, note)`;
   `A.audit` is read by the unit test and the roster sheet.
+- **Restyle helpers** (the rendering standard): `A.hramp(base, o)` / `A.hmat(base, o)` (hue-shifted
+  ramps, coloured outlines, a rim tone), `A.ball(cx, cy, rx, ry, o)` (banded volume shading),
+  `A.rim(L, mats, o)` (cool back light on right-hand edges), `A.cast(back, front, dx, dy, k)` (a
+  nearer form's shadow), `A.flank`, `A.despeckle`, `A.band`, `A.fpoly` (precompiled big facets),
+  `A.bbox` / `A.over` (work inside a layer's box), `A.finish`.
 - **Performance helpers.** `A.poly(pts)` (precompiled point-in-polygon), `A.stone(L, pts, M, o)`
   (pxkit's dressed-stone shading on it) and `A.outline(L)` (pxkit's selective outline limited to
   the drawn bounding box) give the same pixels several times faster: the moth's frame generation
@@ -79,6 +322,9 @@ keep their names and signatures; the creature is found from the mark's live anch
 in its own colour; wisp: fog in its light; crane: damp pulp; clerk: fog with paper scraps.
 
 ## Native frames (§6.2) — the standard per family
+
+(First round. The restyle's frame sizes and idle extents are in "Native frames after the
+restyle" above; the canvases of the moth, blot, crab, crane, letter, clerk and warden grew.)
 
 The §6.2 comparison for the proof: the reviewed moth was **188 × 160**; the working frame
 **224 × 192** was adopted. The idle wingspan grew only from 165 to 179 art px (a hooked forewing
@@ -336,10 +582,11 @@ speed setting was not in the base); phone layouts with the larger frames (battle
 
 ## Resources (§21.4–21.5)
 
-- **Cache:** frames are cached by the enemy-art module (id | options | act:i/n | side), an LRU of
-  140 frames shared by every creature on screen. Keys hold appearance, variant, pose and step
-  only. Worst case if the cache filled with the largest frame of these families (the Kiln
-  Warden, 220 × 262): 140 × 230,560 B = **30.8 MiB** (< 48 MiB).
+- **Cache:** frames are cached by the enemy-art module (id | options | act:i/n | side), an LRU
+  shared by every creature on screen, bounded (since the restyle) by **140 frames and 30 MiB** of
+  pixels, whichever comes first. Keys hold appearance, variant, pose and step only. (First round:
+  140 frames only; worst case 140 × the Kiln Warden's 220 × 262 = 30.8 MiB. With the restyle's
+  220 × 278 warden it would have been 32.7 MiB; the byte bound caps it at 30 MiB.)
 - **Measured (raw RGBA, w × h × 4 per distinct frame drawn, from `tests/e2e/creatures_a.mjs`):**
   the exterior moth battle with every Strike variant, Shroud and prewarm: **56 frames, 9.19 MiB**;
   the diagnostic trio (moth, reedling, blot) with prewarm: **125 frames, 17.86 MiB** (inside the
@@ -362,6 +609,31 @@ speed setting was not in the base); phone layouts with the larger frames (battle
   8.08 and 12.6 ms and failed; the base was not re-measured under that load.
 
 ## Tests — commands and results
+
+**Restyle round** — final runs on this branch's final source, built with `node tools/build.mjs`
+(298 source files, 8,703.9 KiB), one script at a time in headless Chromium on a shared machine
+(load average ≈ 1–7):
+
+| Command | Kind | Result |
+|---|---|---|
+| `node tools/validate.mjs` | validator | **no errors** |
+| `node tests/run-unit.mjs` | unit (node) | **15,383 passed, 0 failed** |
+| `node tests/run-unit.mjs creatures_a` | unit (node) | **110 passed, 0 failed** (61 first-round checks + 49 restyle checks: ramps and outlines for five materials, every idle and posed drawing of every family inside its canvas, idle extents within 8 px of the layout's, the cache's byte bound and its stats) |
+| `node tests/e2e/creatures_a.mjs` | browser | **15 passed, 0 failed** (moth exterior: unblocked / warded / softened / Shroud applied, persisting, cleared; interior; reduced motion; diagnostic Mio; **playback speeds** Normal 1,307 ms / Fast 908 ms / Instant 1 ms with the same results; one battle per family; diagnostic trio) |
+| `node tests/e2e/encounters.mjs` | browser | **all ok** |
+| `node tests/e2e/battle_anim.mjs` | browser | **16 passed, 0 failed** (frame cost above). Earlier in the round, under load, "learning stays central" failed once in a full run and once in four runs alone; the build from before the restyle failed it once in three runs alone (a pointer intercepted by the companion overlay) — a pre-existing timing flake, not this change |
+| `node tests/e2e/battle_group.mjs` | browser | **6 passed, 0 failed** |
+| `node tests/e2e/combat_ui.mjs` | browser | **7 passed, 0 failed** |
+| `node tests/e2e/battle_presentation.mjs` | browser | **11 passed, 0 failed** |
+| `node tests/e2e/battle_cycle.mjs` | browser | **stable** (20 battles: listeners 101 → 101, nodes 247 → 245, nothing left behind) |
+| `node tests/e2e/battle_budget.mjs` | browser | **37.53 MiB** largest (budget 48) |
+| `node tests/e2e/creatures_a_restyle_video.mjs --docs` | browser recording (Normal) | moth: hit@650, countered@650, block@650 + hit@767, shroud@767, rest@200 — the first round's timings exactly; echo: hit@633 (contact 600, the first frame after it), mirror hit@633, heat@683, plea@650 |
+
+No test was changed to accommodate the restyle (the first-round unit and browser tests pass
+unchanged); `creatures_a_sheets.mjs` gained `--restyle` (its output folder) and the restyle tools and
+unit test are new.
+
+**First round:**
 
 Build: `node tools/build.mjs`. All on this branch's HEAD; browser tests run one at a time in
 headless Chromium (Playwright) on a shared machine.
@@ -451,6 +723,19 @@ at a time:
 - `index.html` is generated and not committed on this branch; rebuild after merging.
 
 ## Merge notes (shared files touched)
+
+**Restyle round:**
+- `src/ui/78_enemy_art.js` (owned by this area for the round; the creatures B worker shares the
+  cache and did not edit it): the frame cache is bounded by bytes (30 MiB) as well as by count
+  (140); `cacheStats()` adds `capBytes` and `capMib` (existing fields unchanged). No other change to
+  the file; Creatures B's definitions draw exactly as before.
+- No edits to the integrator's, party, pets or backdrop files, to `src/ui/77_pxkit.js` or to
+  `src/engine/31_pixel.js`. `index.html` is generated: rebuild after merging (it is left uncommitted
+  on this branch so the merges of several workers do not conflict on it).
+- The reference images are not in the repository; reference side-by-sides are written to
+  `tests/e2e/out/` only.
+
+**First round:**
 
 1. **`src/ui/82_battle_seq.js`** (integrator) — two small changes:
    - `fire1` passes the foe cue's `travel` to the stage

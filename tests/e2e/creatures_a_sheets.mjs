@@ -4,7 +4,7 @@
 // a mock-up. Also reports per-frame generation time and the estimated resident pixels.
 // Writes PNG sheets to tests/e2e/out/battle_creatures_a/ and, with --docs, WebP copies to
 // docs/screenshots/battle/creatures_a/.
-// Usage: node tests/e2e/creatures_a_sheets.mjs [family] [--docs] [--variants]
+// Usage: node tests/e2e/creatures_a_sheets.mjs [family] [--docs] [--variants] [--roster] [--restyle]
 import fs from 'node:fs';
 import path from 'node:path';
 import { serve, launch, page, root } from './lib.mjs';
@@ -14,7 +14,8 @@ const only = args.find((a) => !a.startsWith('--'));
 const toDocs = args.includes('--docs');
 const variants = args.includes('--variants');
 const outDir = path.join(root, 'tests', 'e2e', 'out', 'battle_creatures_a');
-const docDir = path.join(root, 'docs', 'screenshots', 'battle', 'creatures_a');
+// (--restyle: the restyle round's evidence folder)
+const docDir = path.join(root, 'docs', 'screenshots', 'battle', args.includes('--restyle') ? 'creatures_a_restyle' : 'creatures_a');
 fs.mkdirSync(outDir, { recursive: true });
 if (toDocs) fs.mkdirSync(docDir, { recursive: true });
 const { srv, url } = await serve();

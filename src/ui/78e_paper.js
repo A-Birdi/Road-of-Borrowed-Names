@@ -29,11 +29,30 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // =============================================================================================
   // CRANE (drawn in its own right-facing coordinates, mirrored so it faces the party)
   // =============================================================================================
+  // The crane (the restyle): folded paper in hard planes — a 6-tone paper ramp (white with warm
+  // highlights, shadows going warm grey to violet), each facet one flat tone chosen by how it faces
+  // the key light, every crease a lit ridge beside a dark valley line, paper fibre as sparse
+  // clusters on the big planes, ink strokes along the near wing (marks, not letters), a red beak
+  // tip with its own ramp, a coloured outline; the near wing casts its shadow on the body, the body
+  // on the far wing.
+  const craneMatCache = new Map();
+  function craneMats(col) {
+    if (craneMatCache.has(col)) return craneMatCache.get(col);
+    const M = {
+      P: A.hmat(col, { n: 6, at: 4, lo: 0.2, hi: 0.985, sat: 0.55, hd: 90, hl: 12, sd: 0.1, rim: mixh(col, '#cfe0ff', 0.6) }),
+      red: A.hmat('#c85a4a', { n: 4, at: 2, lo: 0.2, hi: 0.72, sat: 1.2, hd: 26 }),
+      writing: K.solid(mixh(col, '#2e2a48', 0.7), { line: false }),
+    };
+    craneMatCache.set(col, M);
+    if (craneMatCache.size > 12) craneMatCache.delete(craneMatCache.keys().next().value);
+    return M;
+  }
+  // a crease from a to b: a lit ridge on one side, the dark valley on the other
+  const crease = (Lr, M, a, b, lit) => { Lr.line(a[0], a[1], b[0], b[1], M, lit ? 5 : 1); Lr.line(a[0] + 1, a[1], b[0] + 1, b[1], M, lit ? 2 : 4); };
+  const fibre = (Lr, M, pts, k, seed) => Lr.onto((b) => { const [p0, p1, p2] = pts; for (let i = 0; i < 4; i++) { const u = hs(seed, i), v = hs(i, seed) * (1 - u); const x = p0[0] + (p1[0] - p0[0]) * u + (p2[0] - p0[0]) * v, y = p0[1] + (p1[1] - p0[1]) * u + (p2[1] - p0[1]) * v; b.rect(Math.round(x), Math.round(y), 2 + (i % 2), 1, M, k); } });
   function craneRig(L, q, o, H) {
     const col = o.col || '#f4efe0';
-    const M = K.mat(col, { n: 5, at: 3, step: 0.085, shift: 1.3 });
-    const red = K.mat('#c85a4a', { n: 4, at: 2, step: 0.1 });
-    const writing = K.solid(mixh(col, '#3a3450', 0.6), { line: false });
+    const C = craneMats(col), M = C.P;
     const back = L.like(), mid = L.like(), front = L.like();
     const T = (Lr) => Lr.save().scale(-1, 1).translate(0, 20).rotate(-q.pitch).translate(0, -20);
     // wing tips from the beat (0 high → 1 low), measured round each wing's root
@@ -43,54 +62,63 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const downN = q.wn > 0.7, downF = q.wf > 0.7;
     // far wing (behind the body, in shade)
     T(back);
-    back.poly([[4, 2], [18, 6], tipF], M, downF ? 1 : 2);
-    back.poly([[4, 2], [-4, 10], tipF], M, downF ? 0 : 1);
-    back.line(4, 2, tipF[0], tipF[1], M, 0);
+    A.fpoly(back, [[4, 2], [18, 6], tipF], M, downF ? 1 : 3);
+    A.fpoly(back, [[4, 2], [-4, 10], tipF], M, downF ? 1 : 2);
+    crease(back, M, [4, 2], tipF, false);
     back.restore();
     // tail, neck and head, body
     T(mid);
     mid.save().translate(-6, 18).rotate(q.tail).translate(6, -18);
-    mid.poly([[-10, 14], [-4, 22], [-80, -12]], M, 3);
-    mid.poly([[-4, 22], [-12, 26], [-80, -12]], M, 1);
+    A.fpoly(mid, [[-10, 14], [-4, 22], [-80, -12]], M, 4);
+    A.fpoly(mid, [[-4, 22], [-12, 26], [-80, -12]], M, 2);
+    crease(mid, M, [-4, 22], [-80, -12], true);
     mid.restore();
     const nb = [12, 18], na = -0.825 + q.neckA, nl = 71 * q.neckL;
     const tip = [nb[0] + Math.cos(na) * nl, nb[1] + Math.sin(na) * nl];
     // the neck: two facets; drawn back it kinks into an S (a fold at its middle)
     const kink = q.neckL < 0.95 ? (0.95 - q.neckL) * 40 : 0;
     const mpt = [(nb[0] + tip[0]) / 2 - kink, (nb[1] + tip[1]) / 2 + kink * 0.4];
-    mid.poly([[8, 14], [16, 22], mpt], M, 2); mid.poly([[16, 22], [22, 18], mpt], M, 1);
-    mid.poly([[mpt[0] - 3, mpt[1] + 2], [mpt[0] + 3, mpt[1] - 2], tip], M, 2);
-    mid.poly([[mpt[0] + 3, mpt[1] - 2], [mpt[0] + 6, mpt[1] + 3], tip], M, 1);
+    A.fpoly(mid, [[8, 14], [16, 22], mpt], M, 3); A.fpoly(mid, [[16, 22], [22, 18], mpt], M, 2);
+    A.fpoly(mid, [[mpt[0] - 3, mpt[1] + 2], [mpt[0] + 3, mpt[1] - 2], tip], M, 4);
+    A.fpoly(mid, [[mpt[0] + 3, mpt[1] - 2], [mpt[0] + 6, mpt[1] + 3], tip], M, 2);
+    crease(mid, M, [16, 22], mpt, true); crease(mid, M, [mpt[0] + 3, mpt[1] - 2], tip, true);
     // head and beak along the head angle
     const ha = 0.72 + q.headA, ca = Math.cos(ha - 0.72), sa = Math.sin(ha - 0.72);
     const R = (dx, dy) => [tip[0] + dx * ca - dy * sa, tip[1] + dx * sa + dy * ca];
-    mid.poly([R(-4, 4), R(0, -2), R(16, 12), R(12, 16)], M, 3);
-    mid.poly([R(10, 13), R(16, 12), R(20, 20)], red, 2);
+    A.fpoly(mid, [R(-4, 4), R(0, -2), R(16, 12), R(12, 16)], M, 5);
+    A.fpoly(mid, [R(-4, 4), R(12, 16), R(6, 14)], M, 3);
+    A.fpoly(mid, [R(10, 13), R(16, 12), R(20, 20)], C.red, 2);
+    A.fpoly(mid, [R(13, 15), R(20, 20), R(12, 16)], C.red, 1);
     // body: a diamond split by its centre crease (lit on the side toward the light once mirrored)
-    mid.poly([[0, -6], [-26, 20], [0, 44]], M, 1);
-    mid.poly([[0, -6], [26, 20], [0, 44]], M, 3);
-    mid.poly([[26, 20], [0, 44], [10, 22]], M, 2);
-    mid.line(0, -6, 0, 44, M, 0);
+    A.fpoly(mid, [[0, -6], [-26, 20], [0, 44]], M, 2);
+    A.fpoly(mid, [[0, -6], [26, 20], [0, 44]], M, 5);
+    A.fpoly(mid, [[26, 20], [0, 44], [10, 22]], M, 3);
+    crease(mid, M, [0, -6], [0, 44], false);
+    crease(mid, M, [10, 22], [26, 20], true);
+    fibre(mid, M, [[2, 0], [24, 20], [2, 40]], 4, 3);
     mid.restore();
-    // near wing (in front, lit from above unless lowered), writing along it
+    // near wing (in front, lit from above unless lowered), ink strokes along it
     T(front);
-    front.poly([[-2, 0], [-16, 8], tipN], M, downN ? 2 : 4);
-    front.poly([[-2, 0], [8, 6], tipN], M, downN ? 1 : 3);
-    front.line(-2, 0, tipN[0], tipN[1], M, downN ? 0 : 1);
+    A.fpoly(front, [[-2, 0], [-16, 8], tipN], M, downN ? 3 : 5);
+    A.fpoly(front, [[-2, 0], [8, 6], tipN], M, downN ? 2 : 4);
+    crease(front, M, [-2, 0], tipN, !downN);
+    fibre(front, M, [[-2, 0], [-16, 8], tipN], downN ? 2 : 4, 7);
     front.onto((b) => {
       const ux = tipN[0] + 2, uy = tipN[1], len = Math.hypot(ux, uy) || 1, dx = ux / len, dy = uy / len;
       for (let r = 0; r < 4; r++) for (let s = 0; s < 3; s++) {
         const at = 16 + r * 13 + s * 4, off = -4 - s * 5;
         const x0 = dx * at - dy * off, y0 = dy * at + dx * off, l2 = 3 + ((r * 3 + s * 5) % 4);
-        b.line(x0, y0, x0 + dx * l2, y0 + dy * l2, writing, 0);
+        b.line(x0, y0, x0 + dx * l2, y0 + dy * l2, C.writing, 0);
       }
     });
     front.restore();
+    A.rim(mid, [M.id]);
+    A.cast(back, mid, 2, 3, 1); A.cast(mid, front, 2, 3, 1);
     A.outline(back); A.outline(mid); A.outline(front);
     const out = back.over(mid).over(front);
     if (q.damp > 0) {
       // wet pulp shaken from the wing edges (cached with the frame; the veil itself is 84a's)
-      const dl = L.like(), P = K.solid([...K.mix(col, '#8a94a0', 0.35).slice(0, 3), 200], { line: false }), P2 = K.solid([...K.mix(col, '#ffffff', 0.2).slice(0, 3), 160], { line: false });
+      const dl = L.like(), P = K.solid([...K.mix(col, '#8a94a0', 0.4).slice(0, 3), 210], { line: false }), P2 = K.solid([...K.mix(col, '#ffffff', 0.2).slice(0, 3), 170], { line: false });
       const pts = [[-tipN[0], tipN[1]], [-tipF[0], tipF[1]], [10, 30], [-20, 26]];
       pts.forEach(([x, y], k) => { for (let i = 0; i < Math.round(q.damp * 7); i++) dl.ell(x + (hs(k, i) - 0.5) * 16, y + 4 + hs(i, k + 3) * 24 * q.damp, 1.6, 2.2, i % 2 ? P : P2, 0); });
       out.over(dl);
@@ -212,7 +240,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
   };
   A.family('crane', {
-    spec: { w: 236, h: 196, ox: 128, oy: 104, ms: 130, bob: (t) => Math.sin(t / 300) * 3 },
+    spec: { w: 244, h: 196, ox: 136, oy: 104, ms: 130, bob: (t) => Math.sin(t / 300) * 3 },
     base: crBase, idle: crIdle, poseTable: crTable, rig: craneRig, recoil: { push: 5 },
     veil: (o) => ({ kind: 'pulp', cols: [mixh(o.col || '#f4efe0', '#c8ccd0', 0.35), mixh(o.col || '#f4efe0', '#ffffff', 0.2), mixh(o.col || '#f4efe0', '#7a8490', 0.4)] }),
   });
@@ -268,67 +296,114 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // =============================================================================================
   // LETTER (the Undelivered Letter; its definition moved here from content/ch2/01_art.js)
   // =============================================================================================
+  // The letter (the restyle): an envelope turned three-quarter toward the party — sheared so its
+  // far (right) edge recedes, its thickness showing as a darker edge behind it; paper in a 6-tone
+  // ramp with each flap one flat tone by its facing, every fold a lit ridge beside a dark valley,
+  // the top flap casting its shadow on the face; a glossy wax seal (a hard highlight, a pressed
+  // ring), a stamp with a perforated edge; two paper strips that twist (their faces alternating
+  // lit and shaded along their length) and fray into split ends; three-quarter eyes.
+  const letterMatCache = new Map();
+  function letterMats(pcol) {
+    if (letterMatCache.has(pcol)) return letterMatCache.get(pcol);
+    const po = { n: 6, at: 4, lo: 0.2, hi: 0.985, sat: 0.75, hd: 70, hl: 12, sd: 0.12 };
+    const M = {
+      paper: A.hmat(pcol, Object.assign({ rim: mixh(pcol, '#cfe0ff', 0.6) }, po)),
+      edge: A.hmat(mixh(pcol, '#8a7a7a', 0.35), Object.assign({}, po, { hi: 0.8 })),
+      strip: A.hmat(pcol, po),
+      stripF: A.hmat(pcol, Object.assign({ alpha: 140, line: false }, po)),
+      seal: A.hmat('#b84a3a', { n: 5, at: 2, lo: 0.14, hi: 0.86, sat: 1.25, hd: 24, hl: 30 }),
+      stamp: A.hmat('#7a9ab8', { n: 5, at: 2, lo: 0.2, hi: 0.9, sat: 1.2 }),
+      note: A.hmat('#fbf6e8', po),
+      ink: K.solid('#4a4058', { line: false }),
+      eye: K.mat(null, { cols: ['#0c0a18', '#1c1830', '#302a48'], at: 0, line: false }),
+      shine: K.solid('#ffffff', { line: false }),
+    };
+    letterMatCache.set(pcol, M);
+    if (letterMatCache.size > 8) letterMatCache.delete(letterMatCache.keys().next().value);
+    return M;
+  }
+  // a paper strip hanging from (x, y0): a flat ribbon whose face turns as it twists, fraying into
+  // two ends
+  function strip(Lr, M, x, y0, len, w0, ph, amp, lean) {
+    const cx = (y, k) => x + lean * y + Math.sin(ph + y / 7 + (k || 0)) * amp * Math.min(1, y / (len * 0.45));
+    const hw = (y) => w0 * Math.pow(Math.max(0, 1 - y / len), 0.6) + 1;
+    const split = len * 0.72;
+    for (const Mx of [M.strip, M.stripF]) {
+      const ext = Math.abs(lean) * len + w0 + amp + 3;
+      Lr.fill(x - ext, y0, x + ext, y0 + len + 2, (px, py) => {
+        const y = py - y0;
+        if (y < 0 || y > len || (y < len * 0.5 ? M.strip : M.stripF) !== Mx) return false;
+        if (y < split) return Math.abs(px - cx(y)) <= hw(y);
+        const t = (y - split) / (len - split), sw = Math.max(0.8, hw(y) * 0.5);
+        return Math.abs(px - (cx(y) - t * 3)) <= sw || (Math.abs(px - (cx(y, 0.7) + t * 3)) <= sw && t < 0.8);
+      }, Mx, (px, py) => { const y = py - y0, face = Math.cos(ph * 0.7 + y / 6) > 0; return ((face ? 4 : 2) + ((px - cx(y)) < -hw(y) * 0.4 ? 1 : 0) + 0.5) / 6; });
+    }
+  }
   function letterRig(L, q, o, H) {
     const pcol = o.col || '#f4ecd8';
-    const paper = K.mat(pcol, { n: 5, at: 3, step: 0.08, shift: 1.2 });
-    const seal = K.mat('#b84a3a', { n: 5, at: 2, step: 0.1 });
-    const ink = K.solid('#6a6070', { line: false });
-    const stampM = K.mat('#7a9ab8', { n: 3, at: 1, step: 0.1 });
-    const strip = K.mat(pcol, { n: 4, at: 2, step: 0.08 });
-    const stripF = K.mat(pcol, { n: 3, at: 1, step: 0.08, alpha: 130, line: false });
-    const noteM = K.mat('#fbf6e8', { n: 4, at: 2, step: 0.07 });
-    const tails = L.like(), N = L.like(), E = L.like(), F = L.like();
-    for (let i = 0; i < 2; i++) H.tail(tails, -26 + i * 30, 30, (50 - i * 10) * q.slen, 6, q.ph + i * 1.9, [[0, 24, strip], [24, 70, stripF]], { amp: q.samp, curl: 7, dark: 0.3, lean: q.slean });
-    const T = (Lr) => Lr.save().rotate(q.rot).scale(q.sx, 1);
+    const M = letterMats(pcol), paper = M.paper;
+    const tails = L.like(), N = L.like(), D = L.like(), E = L.like(), F = L.like();
+    for (let i = 0; i < 2; i++) strip(tails, M, -26 + i * 30, 30, (50 - i * 10) * q.slen, 6, q.ph + i * 1.9, q.samp, q.slean);
+    // the three-quarter turn: the far (right) edge recedes — a shear on top of the pose's own turn
+    const T = (Lr) => Lr.save().rotate(q.rot).scale(q.sx, 1).mul(0.94, 0.07, 0, 1, 0, 0);
     // a folded note sliding out of its side toward you (behind the front of the envelope)
     if (q.note > 0) {
       T(N);
       const nx = -40 - q.note * 46, ny = -24;
-      N.rect(nx, ny, 60, 40, noteM, (x, y) => K.clamp(0.75 - (x - nx) / 160 - (y - ny) / 140, 0, 0.99));
-      N.line(nx + 20, ny, nx + 20, ny + 40, noteM, 1);
-      for (let r = 0; r < 3; r++) N.line(nx + 4, ny + 8 + r * 5, nx + 14 - (r % 2) * 4, ny + 8 + r * 5, ink, 0);
+      N.rect(nx, ny, 60, 40, M.note, (x) => (x < nx + 20 ? 5.5 : 4.5) / 6);
+      N.line(nx + 20, ny, nx + 20, ny + 40, M.note, 2); N.line(nx + 21, ny, nx + 21, ny + 40, M.note, 5);
+      for (let r = 0; r < 3; r++) N.line(nx + 4, ny + 8 + r * 5, nx + 14 - (r % 2) * 4, ny + 8 + r * 5, M.ink, 0);
       N.restore();
     }
+    // its thickness: the envelope's edge seen behind it, up and to the right
+    T(D); D.rect(-55, -41, 116, 76, M.edge, 2); D.rect(-55, -41, 116, 2, M.edge, 4); D.restore();
     T(E);
     E.rect(-58, -38, 116, 76, paper, 3);
-    E.poly([[-58, -38], [-58, 38], [-4, 4]], paper, 4);
-    E.poly([[58, -38], [58, 38], [4, 4]], paper, 2);
-    E.poly([[-58, 38], [58, 38], [0, 0]], paper, 3);
-    E.line(-58, 38, -2, 2, paper, 1); E.line(58, 38, 2, 2, paper, 1);
+    A.fpoly(E, [[-58, -38], [-58, 38], [-4, 4]], paper, 5);
+    A.fpoly(E, [[58, -38], [58, 38], [4, 4]], paper, 3);
+    A.fpoly(E, [[-58, 38], [58, 38], [0, 0]], paper, 4);
+    // the folds: lit ridge, dark valley
+    E.line(-58, 38, -2, 2, paper, 1); E.line(-57, 37, -1, 2, paper, 5);
+    E.line(58, 38, 2, 2, paper, 1); E.line(57, 38, 1, 3, paper, 3);
     E.onto((b) => {
-      for (let r = 0; r < 3; r++) for (let s = 0; s < 3; s++) { const x = -40 + s * 9 + (r % 2) * 3, y = 20 + r * 5; b.line(x, y, x + 3 + ((r + s * 2) % 4), y, ink, 0); }
-      A.stone(b, [[32, 16], [48, 16], [48, 30], [32, 30]], stampM, { bevel: 2, face: 1 });
-      for (let x = 30; x < 50; x += 2) b.dot(x, 23 + (x % 4 === 0 ? -1 : 1), paper, 4);
+      for (let r = 0; r < 3; r++) for (let s = 0; s < 3; s++) { const x = -40 + s * 9 + (r % 2) * 3, y = 20 + r * 5; b.line(x, y, x + 3 + ((r + s * 2) % 4), y, M.ink, 0); }
+      A.stone(b, [[32, 16], [48, 16], [48, 30], [32, 30]], M.stamp, { bevel: 2, face: 2 });
+      b.rect(36, 20, 8, 6, M.stamp, 4); b.rect(37, 21, 3, 2, M.stamp, 1);
+      for (let x = 31; x < 50; x += 2) { b.dot(x, 15, paper, 5); b.dot(x, 30, paper, 5); }
+      for (let y = 17; y < 30; y += 2) { b.dot(31, y, paper, 5); b.dot(48, y, paper, 5); }
     });
     E.restore();
     // the top flap: shut it lies down over the face (apex at 12); it lifts and opens upward
     T(F);
     const apex = A.lerp(12, -86, q.flap), inner = q.flap > 0.5;
-    F.poly([[-58, -38], [58, -38], [0, apex]], paper, inner ? 2 : 3);
-    if (!inner) { F.line(-57, -37, 0, apex + 1, paper, 0); F.line(57, -37, 0, apex + 1, paper, 0); F.line(-55, -35, -1, apex + 2, paper, 1); }
-    F.rect(-58, -38, 116, 2, paper, 4);
-    // the wax seal rides the flap's tip (it lifts with it)
+    A.fpoly(F, [[-58, -38], [58, -38], [0, apex]], paper, inner ? 2 : 4);
+    if (!inner) { F.line(-57, -37, 0, apex + 1, paper, 1); F.line(57, -37, 0, apex + 1, paper, 1); F.line(-55, -35, -1, apex + 2, paper, 5); }
+    F.rect(-58, -38, 116, 2, paper, 5);
+    // the wax seal rides the flap's tip (it lifts with it): glossy, a pressed ring, a hard highlight
     const sy = A.lerp(12, -60, q.flap);
-    F.ell(0, sy, 11, 10, seal, K.sphere(-3, sy - 4, 12, 11, { amb: 0.2 }));
-    if (q.flap < 0.3) { F.ell(-8, sy + 8, 3, 3, seal, 1); F.ell(7, sy + 9, 2.5, 3, seal, 1); }
-    F.fill(-8, sy - 8, 8, sy + 8, (x, y) => { const d = Math.hypot(x, y - sy); return d <= 6 && d >= 4.5; }, seal, (x, y) => K.clamp(0.5 - (x + y - sy) / 16, 0, 0.99));
-    F.rect(-1, sy - 1, 2, 2, seal, 4);
+    F.ell(0, sy, 11, 10, M.seal, A.ball(-3, sy - 3, 12, 11, { k: 1.2 }));
+    if (q.flap < 0.3) { F.ell(-8, sy + 8, 3, 3, M.seal, 1); F.ell(7, sy + 9, 2.5, 3, M.seal, 1); }
+    F.fill(-8, sy - 8, 8, sy + 8, (x, y) => { const d = Math.hypot(x, y - sy); return d <= 6 && d >= 4.5; }, M.seal, (x, y) => (x + y - sy < 0 ? 0.5 : 3.5) / 5);
+    F.rect(-6, sy - 7, 3, 2, M.shine, 0);
     F.restore();
-    A.outline(N); A.outline(E); A.outline(F);
-    // the eyes sit on the envelope's face, over the flap as they always have (pleading: inner ends raised)
+    A.rim(E, [paper.id]);
+    A.cast(E, F, 1, 3, 1); A.cast(D, E, 1, 2, 1); A.cast(tails, E, 2, 3, 1);
+    A.outline(D); A.outline(N); A.outline(E); A.outline(F); A.outline(tails);
+    // the eyes sit on the envelope's face, over the flap as they always have (pleading: inner ends
+    // raised); turned three-quarter: the far eye narrower
     const EY = L.like();
-    ((b) => {
-      b.save().rotate(q.rot).scale(q.sx, 1);
-      const lx = q.look > 0.5 ? -3 : 0;
-      if (q.eye < 0.25) for (const s of [-1, 1]) b.line(s * 15 - 4 + lx, -9, s * 15 + 4 + lx, -9, H.ink, 1);
-      else {
-        H.eyes(b, lx, -10, 15, { rx: 3.5, ry: 5 * Math.max(0.4, q.eye) });
-        if (q.droop > 0) for (const s of [-1, 1]) b.line(s * 15 - 5 + lx, -18 + (s < 0 ? 2 : -1) * q.droop, s * 15 + 5 + lx, -18 + (s < 0 ? -1 : 2) * q.droop, paper, 0);
-      }
-      b.restore();
-    })(EY);
-    A.outline(tails);
-    return tails.over(N).over(E).over(F).over(EY);
+    EY.save().rotate(q.rot).scale(q.sx, 1).mul(0.94, 0.07, 0, 1, 0, 0);
+    const lx = q.look > 0.5 ? -3 : 0;
+    for (const [ex, er] of [[-19, 3], [9, 4]]) {
+      const x = ex + lx;
+      if (q.eye < 0.25) { EY.line(x - 4, -9, x + 4, -9, M.eye, 1); continue; }
+      const ery = 5 * Math.max(0.4, q.eye);
+      EY.ell(x, -10, er, ery, M.eye, (px, py) => (py > -10 + ery * 0.3 ? 1.5 : 0.5) / 3);
+      EY.rect(Math.round(x - er * 0.5), Math.round(-10 - ery * 0.6), er > 3.5 ? 2 : 1, 2, M.shine, 0);
+      if (q.droop > 0) EY.line(x - 5, -18 + (ex < 0 ? 2 : -1) * q.droop, x + 5, -18 + (ex < 0 ? -1 : 2) * q.droop, paper, 1);
+    }
+    EY.restore();
+    return tails.over(D).over(N).over(E).over(F).over(EY);
   }
   const lBase = { rot: 0, sx: 1, flap: 0, note: 0, samp: 6, slean: -0.55, slen: 1, ph: 0, eye: 1, look: 0, droop: 0 };
   const lIdle = [0, 1, 2, 3, 4, 5].map((f) => ({ ph: (f / 6) * Math.PI * 2, rot: Math.sin((f / 6) * Math.PI * 2) * 0.07, flap: [0, 0.02, 0.04, 0.02, 0, 0][f], droop: 0.6 }));
@@ -391,7 +466,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
   };
   A.family('sg_letter', {
-    spec: { w: 196, h: 200, ox: 100, oy: 76, ms: 150, bob: (t) => Math.sin(t / 420) * 6 },
+    spec: { w: 196, h: 220, ox: 100, oy: 96, ms: 150, bob: (t) => Math.sin(t / 420) * 6 },
     base: lBase, idle: lIdle, poseTable: lTable, rig: letterRig, recoil: { push: 5 },
   });
   A.deliver('sg_letter', 'plea', (a) => {
@@ -423,15 +498,46 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // =============================================================================================
   // CLERK (drawn in its own right-facing coordinates, mirrored so it faces the party)
   // =============================================================================================
+  // The clerk (the restyle): cloth in the reference's manner — a hue-shifted robe ramp, folds as
+  // clean vertical shadow shapes with a lit ridge on each (not sine banding), the far side and the
+  // hem in shadow, a cool rim down its right edge, the collar casting its shadow on the chest; the
+  // cap a felt form in crisp bands with a paper band; the face a void with two pale eye-glints; the
+  // stamp a turned wooden handle (grain, a lit edge), a brass ferrule with a specular point and a
+  // vermilion seal; loose sheets with a folded corner and a lit edge.
+  const clerkMatCache = new Map();
+  function clerkMats(col, glow) {
+    const gk = Math.round(cl(glow) * 4) / 4, key = col + '|' + gk;
+    if (clerkMatCache.has(key)) return clerkMatCache.get(key);
+    const M = {
+      robe: A.hmat(col, { n: 6, at: 2, lo: 0.08, hi: 0.78, sat: 1.25, hd: 26, hl: 34, rim: mixh(col, '#cfe4ff', 0.55) }),
+      paper: A.hmat('#e8e0cc', { n: 5, at: 3, lo: 0.3, hi: 0.98, sat: 1.1, hd: 60, hl: 12, sd: 0.14 }),
+      wood: A.hmat('#6a4a3a', { n: 5, at: 2, lo: 0.1, hi: 0.72, sat: 1.25, hd: 24, hl: 24 }),
+      brass: A.hmat('#c09a4a', { n: 5, at: 2, lo: 0.16, hi: 0.92, sat: 1.2, hd: 30, hl: 24 }),
+      seal: A.hmat(gk > 0 ? mixh('#c85a4a', '#ffb070', gk * 0.5) : '#c85a4a', { n: 5, at: 2, lo: 0.16, hi: 0.86, sat: 1.25, hd: 24, hl: 30 }),
+      shade: K.mat(null, { cols: [K.hex(K.mix(K.parse(col), [6, 6, 14, 255], 0.86)), K.hex(K.mix(K.parse(col), [10, 10, 22, 255], 0.74))], at: 0, line: false }),
+      skin: A.hmat('#d8c8b8', { n: 4, at: 2, lo: 0.36, hi: 0.94, sat: 0.8, hd: 16 }),
+      lines: K.solid('#4a4458', { line: false }),
+      eye: K.solid('#eef0ff', { line: false }), eye2: K.solid('#9aa8e0', { line: false }),
+      shine: K.solid('#ffffff', { line: false }), gloss: K.solid('#dfe8f4', { line: false }),
+    };
+    clerkMatCache.set(key, M);
+    if (clerkMatCache.size > 16) clerkMatCache.delete(clerkMatCache.keys().next().value);
+    return M;
+  }
+  // a cloth tone: the key light across the form plus clean folds (a lit ridge, a shadow valley)
+  const foldTone = (x, y, base, period, ph) => {
+    const f = Math.cos((x + ph) / period);
+    let k = base + (f > 0.72 ? 1 : f < -0.45 ? -1 : 0);
+    return k;
+  };
+  function sheet(Lr, M, w, h) {
+    A.stone(Lr, [[-w, -h], [w, -h], [w, h], [-w, h]], M.paper, { bevel: 2, face: 3 });
+    Lr.poly([[w - 5, h], [w, h - 5], [w, h]], M.paper, 1);
+    Lr.poly([[w - 5, h], [w, h - 5], [w - 4, h - 4]], M.paper, 4);
+    for (let r = 0; r < 3; r++) Lr.line(-w + 4, -h + 5 + r * 3, w - 6 - (r % 2) * 5, -h + 5 + r * 3, M.lines, 0);
+  }
   function clerkRig(L, q, o, H) {
-    const col = o.col || '#4a6a8a';
-    const robe = K.mat(col, { n: 5, at: 2, step: 0.09 });
-    const paperM = K.mat('#e8e0cc', { n: 4, at: 2, step: 0.08 });
-    const woodM = K.mat('#6a4a3a', { n: 4, at: 2, step: 0.1 });
-    const seal = K.mat(q.glow > 0 ? mixh('#c85a4a', '#ffb070', q.glow * 0.5) : '#c85a4a', { n: 4, at: 2, step: 0.1 });
-    const shade = K.mat(K.tone(col, -3.5), { n: 3, at: 1, step: 0.05 });
-    const skin = K.mat('#d8c8b8', { n: 3, at: 1, step: 0.08 });
-    const lines = K.solid('#5a5468', { line: false });
+    const M = clerkMats(o.col || '#4a6a8a', q.glow), robe = M.robe;
     const back = L.like(), mid = L.like(), front = L.like(), glow = L.like();
     const T = (Lr) => Lr.save().scale(-1, 1).translate(0, 60).rotate(q.lean).translate(0, -60);
     // loose sheets drifting at its side (spread out wide when it calls up a tide or a fog)
@@ -441,55 +547,77 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const ph = q.sph + i * 1.7, dy = Math.sin(ph) * 2;
       const sx = -54 - i * 5 - q.sheets * (10 + i * 5), sy = 22 - i * 18 + dy - q.sheets * (i % 2 ? 12 : -6);
       back.save().translate(sx, sy).rotate(-0.28 + i * 0.2 + Math.sin(ph) * 0.06 + q.sheets * (i - 2) * 0.25);
-      A.stone(back, [[-11, -8], [11, -8], [11, 8], [-11, 8]], paperM, { bevel: 2, face: 2 });
-      for (let r = 0; r < 3; r++) back.line(-7, -3 + r * 3, 5 - (r % 2) * 5, -3 + r * 3, lines, 0);
+      sheet(back, M, 11, 8);
       back.restore();
     }
     back.restore();
-    // robe with folds (light from the left once mirrored), the hem swaying
+    // robe with folds (light from the left once mirrored: + x is screen left), the hem swaying
     T(mid);
     const hm = (k) => Math.round(Math.sin(q.hem + k) * 2);
     const robeP = [[-20, -26], [20, -26], [30, 16], [35, 66 + hm(0)], [26, 64 + hm(1)], [18, 68 + hm(2)], [8, 64 + hm(3)], [-2, 68 + hm(4)], [-12, 64 + hm(5)], [-22, 68 + hm(6)], [-35, 66 + hm(7)], [-30, 16]];
-    A.poly(robeP).fill(mid, robe, (x, y) => K.clamp(0.4 + x / 110 + 0.16 * Math.cos((x + 3 + q.hem) / 5.2) * Math.min(1, (y + 20) / 40), 0, 0.99));
+    // (+ x is screen left, toward the light) — the cone lit on its near side, folds falling from
+    // the waist as tapered valleys that widen toward the hem, each with a lit ridge beside it
+    const halfW = (y) => (y < 16 ? 20 + (y + 26) * 0.24 : 30 + (y - 16) * 0.1);
+    A.poly(robeP).fill(mid, robe, (x, y) => {
+      const u = x / halfW(y), t = cl((y - 4) / 62);
+      let k = u > 0.38 ? 4 : u > -0.2 ? 3 : u > -0.66 ? 2 : 1;
+      if (y < -14 && u > 0.1) k += 1;
+      if (y > 4) for (const uk of [-0.62, -0.18, 0.26, 0.66]) {
+        const c = uk + Math.sin(q.hem + uk * 3) * 0.04 * t, w = 0.03 + 0.09 * t;
+        if (Math.abs(u - c) < w) { k -= t > 0.55 ? 2 : 1; break; }
+        if (u > c + w && u < c + w + 0.06 + 0.04 * t) { k += 1; break; }
+      }
+      if (y > 60) k -= 1;
+      return (Math.max(0, Math.min(5, k)) + 0.5) / 6;
+    });
     // far sleeve: hanging, or holding up a document (for a false promise, a mirror, a plea)
     const dU = q.doc;
-    mid.poly([[-19, -24], [-34, -8 - dU * 12], [-44 + dU * 4, 30 - dU * 44], [-28, 36 - dU * 40], [-22, 2]], robe, (x, y) => K.clamp(0.36 + 0.14 * Math.cos(x / 4) - (y + 24) / 200, 0, 0.99));
-    mid.ell(-35 + dU * 2, 34 - dU * 42, 5, 4, skin, 1);
+    mid.poly([[-19, -24], [-34, -8 - dU * 12], [-44 + dU * 4, 30 - dU * 44], [-28, 36 - dU * 40], [-22, 2]], robe, (x, y) => ((Math.cos(x / 4) > 0.5 ? 2 : 1) + 0.5) / 6);
+    mid.ell(-35 + dU * 2, 34 - dU * 42, 5, 4, M.skin, 1);
     if (dU > 0.2) {
       const dx = -36 + dU * 2, dy = 4 - dU * 46;
       mid.save().translate(dx, dy).rotate(-0.12);
-      mid.rect(-14, -20, 26, 32, paperM, (x, y) => K.clamp(0.75 - (x + 14) / 80 - (y + 20) / 120, 0, 0.99));
-      for (let r = 0; r < 4; r++) mid.line(-10, -14 + r * 6, 6 - (r % 2) * 6, -14 + r * 6, lines, 0);
-      if (q.gloss > 0) { mid.line(-12, 8, 8, -16, K.solid('#ffffff', { line: false }), 0); mid.line(-9, 10, 10, -12, K.solid('#dfe8f4', { line: false }), 0); }
-      mid.ell(4, 6, 4, 4, seal, 2);
+      mid.rect(-14, -20, 26, 32, M.paper, (x, y) => (x < -6 ? 4.5 : 3.5) / 5);
+      mid.line(-14, -20, 12, -20, M.paper, 4); mid.poly([[7, 12], [12, 7], [12, 12]], M.paper, 1);
+      for (let r = 0; r < 4; r++) mid.line(-10, -14 + r * 6, 6 - (r % 2) * 6, -14 + r * 6, M.lines, 0);
+      if (q.gloss > 0) { mid.line(-12, 8, 8, -16, M.shine, 0); mid.line(-9, 10, 10, -12, M.gloss, 0); }
+      mid.ell(4, 6, 4, 4, M.seal, 2); mid.dot(3, 4, M.seal, 4);
       mid.restore();
     }
-    // collar, cap, face in shadow with pale eyes
-    mid.poly([[-13, -26], [13, -26], [0, -6]], paperM, 3);
-    mid.poly([[-6, -26], [6, -26], [0, -14]], robe, 1);
-    mid.ell(0, -30, 13, 10, shade, 0);
+    // collar (its shadow on the chest), cap, face in shadow with pale eyes
+    mid.poly([[-13, -26], [13, -26], [0, -6]], M.paper, 3);
+    mid.poly([[2, -26], [13, -26], [0, -6]], M.paper, 4);
+    mid.line(-12, -25, 0, -7, M.paper, 1);
+    mid.poly([[-6, -26], [6, -26], [0, -14]], robe, 0);
+    mid.ell(0, -30, 13, 10, M.shade, 0);
     mid.save().translate(0, -40).rotate(q.cap).translate(0, 40);
-    mid.poly([[-15, -40], [-14, -58], [-8, -66], [8, -66], [14, -58], [15, -40]], robe, K.sphere(2, -56, 18, 16, { amb: 0.2 }));
-    mid.rect(-16, -44, 32, 5, paperM, (x) => K.clamp(0.4 + (x + 16) / 60, 0, 0.99));
+    mid.poly([[-15, -40], [-14, -58], [-8, -66], [8, -66], [14, -58], [15, -40]], robe, A.ball(6, -60, 20, 18, { k: 1.2, lift: 0.04, mirror: true }));
+    mid.rect(-16, -44, 32, 5, M.paper, (x) => (x > 6 ? 4.5 : x > -6 ? 3.5 : 2.5) / 5);
+    mid.line(-16, -40, 16, -40, M.paper, 1);
     mid.restore();
     const eo = q.eye;
     for (const s of [-1, 1]) {
-      if (eo < 0.3) { mid.rect(s * 5 - 2, -32, 4, 1, K.solid('#b8c0e0', { line: false }), 0); continue; }
-      mid.rect(s * 5 - 2, -33, 4, 2, K.solid('#eef0ff', { line: false }), 0); mid.dot(s * 5 + 1, -34, K.solid('#b8c0e0', { line: false }), 0);
+      if (eo < 0.3) { mid.rect(s * 5 - 2, -32, 4, 1, M.eye2, 0); continue; }
+      mid.rect(s * 5 - 2, -33, s > 0 ? 4 : 3, 2, M.eye, 0); mid.dot(s * 5 + 1, -34, M.eye2, 0);
     }
     mid.restore();
-    // the stamping arm (near the party): sleeve, gripping hand, handle and the vermilion seal
+    // the stamping arm (near the party): sleeve, gripping hand, handle, ferrule and the seal
     T(front);
     const sy = q.sy, rx = q.reach * 18;
-    front.poly([[18, -24], [32, -16], [44 + rx, sy + 4], [34 + rx, sy + 12], [24, -2]], robe, (x, y) => K.clamp(0.55 + (x - 18) / 120, 0, 0.99));
-    front.rect(36 + rx, sy - 22, 7, 22, woodM, K.cyl(39.5 + rx, 3.5));
-    front.ell(39.5 + rx, sy - 24, 6, 4, woodM, K.sphere(39.5 + rx, sy - 25, 6, 4));
-    front.ell(38 + rx, sy - 8, 6, 5, skin, K.sphere(37 + rx, sy - 9, 6, 5));
-    A.stone(front, [[29 + rx, sy], [50 + rx, sy], [50 + rx, sy + 9], [29 + rx, sy + 9]], seal, { bevel: 2, face: 2 });
-    if (sy > 0) for (const [x1, y1, x2, y2] of [[26, sy + 12, 21, sy + 14], [53, sy + 12, 58, sy + 14], [30, sy + 15, 26, sy + 19], [49, sy + 15, 53, sy + 19]]) front.line(x1 + rx, y1, x2 + rx, y2, paperM, 3);
+    front.poly([[18, -24], [32, -16], [44 + rx, sy + 4], [34 + rx, sy + 12], [24, -2]], robe, (x, y) => ((x > 30 + rx * 0.5 && y < sy + 6 ? 4 : 3) + (Math.cos((x + y) / 4) > 0.7 ? 1 : 0) + 0.5) / 6);
+    front.rect(36 + rx, sy - 22, 7, 20, M.wood, (x, y) => ((x > 40.5 + rx ? 3 : x > 38 + rx ? 2 : 1) + 0.5) / 5);
+    for (let k = 0; k < 3; k++) front.line(37 + rx + k * 2, sy - 20 + k * 5, 37 + rx + k * 2, sy - 17 + k * 5, M.wood, k === 2 ? 4 : 0);
+    front.ell(39.5 + rx, sy - 24, 6, 4, M.wood, A.ball(41 + rx, sy - 26, 6, 4, { k: 1.2, mirror: true }));
+    front.rect(35 + rx, sy - 4, 9, 4, M.brass, (x) => ((x > 41 + rx ? 4 : x > 38 + rx ? 2 : 1) + 0.5) / 5);
+    front.dot(42 + rx, sy - 4, M.shine, 0);
+    front.ell(38 + rx, sy - 9, 6, 5, M.skin, A.ball(40 + rx, sy - 11, 6, 5, { k: 1.2, mirror: true }));
+    A.stone(front, [[29 + rx, sy], [50 + rx, sy], [50 + rx, sy + 9], [29 + rx, sy + 9]], M.seal, { bevel: 2, face: 2 });
+    if (sy > 0) for (const [x1, y1, x2, y2] of [[26, sy + 12, 21, sy + 14], [53, sy + 12, 58, sy + 14], [30, sy + 15, 26, sy + 19], [49, sy + 15, 53, sy + 19]]) front.line(x1 + rx, y1, x2 + rx, y2, M.paper, 4);
     front.restore();
+    A.rim(mid, [robe.id], { w: 2 }); A.rim(front, [robe.id]);
+    A.cast(back, mid, 2, 3, 1); A.cast(mid, front, 2, 3, 1);
     A.outline(back); A.outline(mid); A.outline(front);
-    if (q.glow > 0) { T(glow); H.glow(glow, 40 + rx, sy + 4, 18 + q.glow * 8, 14 + q.glow * 6, '#ffb070', 0.18 + q.glow * 0.14, 3); glow.restore(); }
+    if (q.glow > 0) { T(glow); H.glow(glow, 40 + rx, sy + 4, 18 + q.glow * 8, 14 + q.glow * 6, '#ffb070', 0.18 + q.glow * 0.14, 2); glow.restore(); }
     return back.over(mid).over(front).over(glow);
   }
   const kBase = { sy: -8, reach: 0, lean: 0, hem: 0, sheets: 0, sph: 0, doc: 0, gloss: 0, glow: 0, eye: 1, cap: 0 };
@@ -643,7 +771,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
   };
   A.family('clerk', {
-    spec: { w: 224, h: 212, ox: 116, oy: 102, dy: 14, ms: 150 },
+    spec: { w: 252, h: 212, ox: 116, oy: 102, dy: 14, ms: 150 },
     base: kBase, idle: kIdle, poseTable: kTable, rig: clerkRig, recoil: { push: 3 },
     alias: { 'recover.mirror': 'recover.lie', 'prep.mend': 'prep.charge', 'recover.mend': 'recover.hover' },
     veil: () => ({ kind: 'scrap', cols: ['#dfe5ee', '#eef2f6', '#e8e0cc'] }),
