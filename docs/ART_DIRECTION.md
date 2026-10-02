@@ -305,6 +305,17 @@ characters are used as ornament.
 
 ### Battle backdrops: the place of the encounter (2026-09-28)
 
+> **Superseded in part (2026-10-02, battle-art addendum §19):** see
+> `docs/battle/backdrops.md`. Each backdrop now has an origin record that
+> rebuilds it (map, tile, room or zone, anchors, state keys, seed); the
+> geometry follows the actors, never the overlay's free rectangle (a map
+> column is a fixed width, a larger canvas reveals more of the same picture);
+> small rooms have side walls with their openings; stairs keep their
+> direction; ladders show their hatch; the mill's gears and wheel are drawn
+> jammed or mended, still or turning; accessories have homes on the map. The
+> description below remains true for the layers' intent, the props' roles and
+> the accessory pools.
+
 A battle's backdrop is a glimpse of where the encounter happens, composed
 once at encounter entry by `RB.battlePlaces` (`src/ui/76_battle_places.js`)
 and drawn by `RB.battlePlaceArt` (`src/ui/76_battle_placeart.js`). The
