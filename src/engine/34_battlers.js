@@ -585,6 +585,9 @@ RB.battlers = (function () {
       for (let i = 0; i + 1 < w.length; i++) K.C(w[i], w[i + 1], hs * lerpN(r0, r1, i / (w.length - 1)), hs * lerpN(r0, r1, (i + 1) / (w.length - 1)), mat || Mt.hairTail, GRP.tail);
     };
     const tie = (q, rad) => K.S(H(q), rad || 1.6, Mt.tie, GRP.acc);
+    // under a hat or cap, what would stand above the head is tucked under it (no spikes or bun through
+    // the crown; curls round the sides only)
+    const covered = (look.acc || []).some((a) => a === 'hat' || a === 'cap');
     if (st === 'bald') return;
     if (st === 'shaved') { cap([1.03, 1.02, 1.03], (l) => face(l) && ears(l) && l[1] > -0.5, Mt.stubble); return; }
     if (st === 'wrap') {
@@ -594,8 +597,8 @@ RB.battlers = (function () {
       return;
     }
     if (st === 'curly') {
-      cap([1.16, 1.12, 1.16], (l) => face(l) && l[1] > -0.55);
-      for (let i = 0; i < 16; i++) { const a = (i / 16) * Math.PI * 2, yy = (i % 3) * 3 - 3; K.S(H([Math.sin(a) * 13.4, 3 + yy, Math.cos(a) * 13.4 - 0.5]), 3.4, Mt.hairCurl, GRP.hair, (l) => true); }
+      cap(covered ? [1.08, 1.04, 1.1] : [1.16, 1.12, 1.16], (l) => face(l) && l[1] > -0.55);
+      for (let i = 0; i < 16; i++) { const a = (i / 16) * Math.PI * 2, yy = (i % 3) * 3 - 3; if (covered && yy > 0) continue; K.S(H([Math.sin(a) * 13.4, 3 + yy - (covered ? 2 : 0), Math.cos(a) * 13.4 - 0.5]), 3.4, Mt.hairCurl, GRP.hair, (l) => true); }
       return;
     }
     const nape = { short: -0.46, spiky: -0.46, ponytail: -0.46, bun: -0.4, braid: -0.46, twintails: -0.46, bob: -0.75, long: -0.8, wavy: -0.8 }[st] || -0.46;
@@ -604,7 +607,7 @@ RB.battlers = (function () {
     cap(tight, (l) => face(l) && (!earsShow || ears(l)) && l[1] > nape);
     if (st === 'spiky') {
       const sp = [[-6, 12, -6], [0, 14, -3], [6, 12, -5], [-10, 6, -8], [9, 7, -9], [-3, 9, -12], [4, 5, -13]];
-      for (const q of sp) { const d = norm(q); K.C(H(mul(d, 11)), H(mul(d, 17)), 3.4, 0.7, Mt.hair, GRP.hair); }
+      for (const q of sp) { if (covered && q[1] > 6) continue; const d = norm(q); K.C(H(mul(d, 11)), H(mul(d, 17)), 3.4, 0.7, Mt.hair, GRP.hair); }
     }
     if (st === 'bob') {
       // a blunt, chin-length bob: the sides and back fall straight to the jaw
@@ -633,7 +636,11 @@ RB.battlers = (function () {
         tail([[sx * 11.6, 3.2, -5.6], [sx * 13.8, -2, -6], [sx * 14.2, -9, -5.4], [sx * 13.4, -16, -4.6], [sx * 12.4, -20.5, -4]], 3.4, 1.3);
       }
     }
-    if (st === 'bun') {
+    if (st === 'bun' && covered) {
+      // a low bun at the nape, under the hat's brim
+      K.S(H([0, -1.5, -12.4]), 5.2, Mt.hairBun, GRP.tail);
+      K.E(H([0, 2.2, -11.4]), rotX(-20 * DEG), [3.6, 1.2, 2.4], Mt.tie, GRP.acc);
+    } else if (st === 'bun') {
       K.S(H([0, 11, -9.6]), 6.2, Mt.hairBun, GRP.tail);
       K.E(H([0, 6.9, -7.4]), rotX(-50 * DEG), [4.4, 1.3, 3.2], Mt.tie, GRP.acc);
     }
@@ -715,6 +722,8 @@ RB.battlers = (function () {
     const chain = (pts, r0, r1, mat, grp) => { for (let i = 0; i + 1 < pts.length; i++) K.C(pts[i], pts[i + 1], lerpN(r0, r1, i / (pts.length - 1)), lerpN(r0, r1, (i + 1) / (pts.length - 1)), mat, grp || GRP.acc); };
     const ring = (cen, rx, rz, y, n, rad, mat, M) => { for (let i = 0; i < n; i++) { const a = (i / n) * Math.PI * 2; K.S(add(cen, mv(M, [Math.sin(a) * rx, y, Math.cos(a) * rz])), rad, mat, GRP.acc); } };
     const out = (l) => mul(l, 1.08); // just proud of the hair's surface
+    // how far the hair stands out from the head (curls), for what sits round or over it
+    const puff = look.hair === 'curly' ? 1.22 : 1;
     const blossom = (c0, R, heart) => {
       for (let i = 0; i < 5; i++) { const a = (i / 5) * Math.PI * 2; K.S(add(c0, mv(Mh, [Math.sin(a) * 2.2, Math.cos(a) * 2.2, -0.6])), 1.8, R, GRP.acc); }
       K.S(add(c0, mv(Mh, [0, 0, -1])), 1.3, heart, GRP.acc);
@@ -760,18 +769,19 @@ RB.battlers = (function () {
         }
         case 'headband': {
           const R = flat(look.bandCol || K.p.ac[1], { min: 1 });
-          for (let i = 0; i < 24; i++) { const t = (i / 24) * Math.PI * 2; K.S(H([Math.sin(t) * (hr[0] + 1.3), 4.6 - Math.cos(t) * 1.6, Math.cos(t) * (hr[2] + 1.4)]), 1.25, R, GRP.acc); }
-          K.S(H([0, 6.4, -(hr[2] + 2.2)]), 1.6, R, GRP.acc);
-          chain([H([0, 5.8, -(hr[2] + 2.4)]), H([-1.4 + hsw, 1, -(hr[2] + 3.4)]), H([-2 + hsw * 1.6, -3.4 - lag, -(hr[2] + 3.2)])], 0.9, 0.8, R);
-          chain([H([0.6, 5.8, -(hr[2] + 2.4)]), H([1.6 + hsw, 1.6, -(hr[2] + 3)]), H([2.4 + hsw * 1.6, -2 - lag, -(hr[2] + 2.8)])], 0.9, 0.8, R);
+          const pu = puff, ex = (pu - 1) * 12; // (round the curls, not under them)
+          for (let i = 0; i < 24; i++) { const t = (i / 24) * Math.PI * 2; K.S(H([Math.sin(t) * (hr[0] + 1.3 + ex), 4.6 + ex * 0.3 - Math.cos(t) * 1.6, Math.cos(t) * (hr[2] + 1.4 + ex)]), 1.25, R, GRP.acc); }
+          K.S(H([0, 6.4, -(hr[2] + 2.2 + ex)]), 1.6, R, GRP.acc);
+          chain([H([0, 5.8, -(hr[2] + 2.4 + ex)]), H([-1.4 + hsw, 1, -(hr[2] + 3.4 + ex)]), H([-2 + hsw * 1.6, -3.4 - lag, -(hr[2] + 3.2 + ex)])], 0.9, 0.8, R);
+          chain([H([0.6, 5.8, -(hr[2] + 2.4 + ex)]), H([1.6 + hsw, 1.6, -(hr[2] + 3 + ex)]), H([2.4 + hsw * 1.6, -2 - lag, -(hr[2] + 2.8 + ex)])], 0.9, 0.8, R);
           break;
         }
         case 'flower': blossom(H(out([-hr[0] * 0.7, hr[1] * 0.62, -hr[2] * 0.5])), flat(look.flowerCol || '#f4a6a0', { min: 2 }), flat('#f4d060', { min: 2 })); break;
         case 'hat': {
           const R = flat(look.hatCol || '#8a6a44');
           const band = flat(shade(look.hatCol || '#8a6a44', -2), { max: 2 });
-          const base = H([0, hr[1] * 0.42, -0.4]);
-          const q = hr[0] / 12.2;
+          const base = H([0, hr[1] * 0.42 + (puff - 1) * 6, -0.4]);
+          const q = (hr[0] / 12.2) * puff;
           K.Lf(add(base, mv(Mh, [0, -0.6, 0])), add(base, mv(Mh, [0, 0.8, 0])), Mh, [[0, 17.5 * q, 17.5 * q], [1, 16.5 * q, 16.5 * q]], R, GRP.acc);
           K.Lf(add(base, mv(Mh, [0, 0.6, 0])), add(base, mv(Mh, [0, 8.4 * q, -0.3])), Mh, [[0, 9.8 * q, 9.8 * q], [0.25, 9.4 * q, 9.4 * q], [0.85, 8.4 * q, 8.4 * q], [1, 6.2 * q, 6.2 * q]], R, GRP.acc);
           K.Lf(add(base, mv(Mh, [0, 0.8, 0])), add(base, mv(Mh, [0, 2.6 * q, 0])), Mh, [[0, 10 * q, 10 * q], [1, 9.7 * q, 9.7 * q]], band, GRP.acc);
@@ -814,9 +824,10 @@ RB.battlers = (function () {
         }
         case 'cap': {
           const R = flat(look.capCol || '#2c4468');
-          K.E(H([0, 3.4, -0.6]), Mh, [hr[0] * 1.12, hr[1] * 0.78, hr[2] * 1.14], R, GRP.acc, (l) => l[1] > -0.02);
-          for (let i = 0; i < 22; i++) { const t = (i / 22) * Math.PI * 2; K.S(H([Math.sin(t) * hr[0] * 1.12, 3.4, Math.cos(t) * hr[2] * 1.14]), 1.3, flat(shade(look.capCol || '#2c4468', -2), { max: 2 }), GRP.acc); }
-          K.E(H([0, 3.2, hr[2] * 1.2]), Mh, [8, 0.8, 5], flat(shade(look.capCol || '#2c4468', -2)), GRP.acc);
+          const cq = puff;
+          K.E(H([0, 3.4, -0.6]), Mh, [hr[0] * 1.12 * cq, hr[1] * 0.78 * cq, hr[2] * 1.14 * cq], R, GRP.acc, (l) => l[1] > -0.02);
+          for (let i = 0; i < 22; i++) { const t = (i / 22) * Math.PI * 2; K.S(H([Math.sin(t) * hr[0] * 1.12 * cq, 3.4, Math.cos(t) * hr[2] * 1.14 * cq]), 1.3, flat(shade(look.capCol || '#2c4468', -2), { max: 2 }), GRP.acc); }
+          K.E(H([0, 3.2, hr[2] * 1.2 * cq]), Mh, [8, 0.8, 5], flat(shade(look.capCol || '#2c4468', -2)), GRP.acc);
           break;
         }
         case 'leaf': {

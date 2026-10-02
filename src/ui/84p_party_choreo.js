@@ -126,11 +126,11 @@ RB.partyChoreo = (function () {
     if (!card || !step || card.kind === 'word' || card.kind === 'flee') return null;
     const ex = step.explain || {};
     const markup = (w, r) => (w && r && w !== r && /[一-鿿]/.test(w) ? '{' + w + '|' + r + '}' : r || w);
-    if (ex.jp) return { jp: ex.jp, en: '' };
+    const lexOf = () => { const it = [].concat(step.item || []).find((x) => typeof x === 'string' && x.startsWith('v:')); return it && RB.tasks && RB.tasks.findWord ? RB.tasks.findWord(it.slice(2)) : null; };
+    if (ex.jp) { const e = lexOf(); return { jp: ex.jp, en: (e && e.m) || '' }; }
     if (step.kind === 'write') {
       if (step.word && step.word.r) return { jp: step.script === 'kata' ? step.word.r : markup(step.word.w, step.word.r), en: step.word.m || '' };
-      const item = [].concat(step.item || []).find((x) => typeof x === 'string' && x.startsWith('v:'));
-      const e = item && RB.tasks && RB.tasks.findWord ? RB.tasks.findWord(item.slice(2)) : null;
+      const e = lexOf();
       if (e) return { jp: markup(e.w, e.r), en: e.m || '' };
       if (step.template) return { jp: (step.template.before || '') + step.answer + (step.template.after || ''), en: '' };
       return typeof step.answer === 'string' && step.answer ? { jp: step.answer, en: '' } : null;

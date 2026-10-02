@@ -540,13 +540,13 @@ RB.battlerMoves = (function () {
       // Keep watch: the lamp held up high at his side, over the two of you
       vigil: {
         a: { leftFree: 1, handL: [-10, 38, 3], elbowL: [-1, -0.8, -0.4], spinePitch: 8, act: 'L' },
-        x: () => ({ leftFree: 1, handL: [-17, 52, -1.6], elbowL: [-1, 0.2, -0.6], handR: [8.4, 40, 8.4], handShapeR: 'flat', palmR: [-0.6, 0, 0.8], spinePitch: 2, spineRoll: 3, headPitch: -12, headYaw: -4, pelvis: [-0.4, -1.4, 0], act: 'L', prop: { flare: 1 } }),
+        x: () => ({ leftFree: 1, handL: [-18.4, 50, -6.2], elbowL: [-1, 0.2, -0.8], handR: [8.4, 40, 8.4], handShapeR: 'flat', palmR: [-0.6, 0, 0.8], spinePitch: 2, spineRoll: 3, headPitch: -12, headYaw: -4, pelvis: [-0.4, -1.4, 0], act: 'L', prop: { flare: 1 } }),
         snap: 0.35, release: 0.4,
       },
       // Raise the lamps: the lamp raised high at his side and swung across, over every one of them
       lanterns: {
         a: { leftFree: 1, handL: [-12, 44, 2], elbowL: [-1, -0.4, -0.6], spinePitch: 6, spineYaw: -10, headYaw: -4, act: 'L' },
-        x: (k) => ({ leftFree: 1, handL: path([[-14.6, 57, 2.6], [-6, 58, 11], [4.6, 51, 15]], ease(k / 0.75)), elbowL: [-1, 0.3, -0.4], spinePitch: 3, spineYaw: -10 + 26 * ease(k / 0.75), headPitch: -12, headYaw: 6, handR: [10.4, 38, 6], handShapeR: 'flat', act: 'L', prop: { flare: 1 }, clothSway: -1 * ease(k), hairSway: -0.8 * ease(k) }),
+        x: (k) => ({ leftFree: 1, handL: path([[-18, 51, -4.6], [-6, 58, 11], [4.6, 51, 15]], ease(k / 0.75)), elbowL: [-1, 0.3, -0.4], spinePitch: 3, spineYaw: -10 + 26 * ease(k / 0.75), headPitch: -12, headYaw: 6, handR: [10.4, 38, 6], handShapeR: 'flat', act: 'L', prop: { flare: 1 }, clothSway: -1 * ease(k), hairSway: -0.8 * ease(k) }),
         snap: 0.2, release: 0.45,
       },
       // Stand in front: a step forward, the lamp held out before you, the free arm out across you

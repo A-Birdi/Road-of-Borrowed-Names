@@ -300,8 +300,9 @@ await test('every response family: its own gesture and word motif on the real ta
     await p.mouse.click(g.x, g.y);
     await companionTurn(p, { match: 'Warm draught' });
     // the word fully inked: capture the scene
-    await p.waitForFunction(() => { const s = document.querySelector('.cb-strip'); const f = RB.combat.debug().stage.frame; return s && +s.style.opacity > 0.9 && f && /^act/.test(f.poses.pc || ''); }, null, { timeout: 20000, polling: 'raf' }).catch(() => {});
-    await wait(p, 260);
+    // the word fully inked and readable (its motif at work): capture the scene
+    await p.waitForFunction(() => { const s = document.querySelector('.cb-strip'); return s && +s.style.opacity > 0.9 && +s.style.getPropertyValue('--w') >= 0.99; }, null, { timeout: 20000, polling: 'raf' }).catch(() => {});
+    await wait(p, 120);
     const clip = await p.evaluate(() => { const d = document.querySelector('.cb-dock').getBoundingClientRect(); return { x: 0, y: 0, width: Math.round(Math.min(innerWidth, d.left > innerWidth * 0.4 ? d.left - 4 : innerWidth)), height: innerHeight }; });
     shots.push({ label: f.fam + ' — ' + (f.w === 'unravel' ? 'ほどく' : f.w), png: await p.screenshot({ clip }) });
     await idle(p);
@@ -501,6 +502,36 @@ await test('resources: six encounters with changing looks — the frame cache ho
   report.resources = rec;
   assert(rec.every((r) => r.timeKeys === 0), 'no cache key carries elapsed time');
   notes.push('resources: ' + rec.map((r) => (r.comp || 'solo') + ' ' + r.frames + 'f/' + r.mib + 'MiB').join(', '));
+  assert(!errors.length, errors.join('; '));
+  await ctx.close();
+});
+
+// ---------------------------------------------------------------------------------------------------------
+await test('the Mio exchange frame by frame (presentation clock slowed for the capture): your Protect, then her warm draught on the one it restores, then the creature\'s Strike caught by the seal', async () => {
+  const { p, errors, ctx } = await page(b, url, DESK);
+  await helpers(p);
+  await battle(p, { comp: 'mio', knots: 4, timeScale: 0.22 });
+  await p.evaluate(() => { const st = RB.combat.state(); st.pc = 7; st.comp = 12; BP.setIntent('strike', 'pc'); RB.combat.refresh(); });
+  const clip = await p.evaluate(() => { const d = document.querySelector('.cb-dock').getBoundingClientRect(); return { x: 0, y: 0, width: Math.round(d.left > innerWidth * 0.4 ? d.left - 4 : innerWidth), height: innerHeight }; });
+  const shots = [];
+  const snap = async (label) => shots.push({ label, png: await p.screenshot({ clip }) });
+  const when = async (label, fn) => { await p.waitForFunction(fn, null, { timeout: 30000, polling: 'raf' }); await snap(label); };
+  await snap('1 · calm, choosing');
+  await respond(p, 'protect.*on you', { match: 'Warm draught' });
+  await when('2 · you anticipate (brace)', () => { const f = RB.combat.debug().stage.frame; return f && /^anticipate/.test(f.poses.pc || ''); });
+  await when('3 · the word unfolds over you', () => { const s = document.querySelector('.cb-strip'); return s && +s.style.getPropertyValue('--w') > 0.5; });
+  await when('4 · the seal closes; 守る readable', () => { const f = RB.combat.debug().stage.frame; return f && (f.effects || []).some((e) => /^pSealClose/.test(e)) && RB.combat.debug().seq.counters.beats > 0 && (f.marks || []).some((m) => /^ward:pc/.test(m)); });
+  await when('5 · the word folds shut; you recover', () => { const f = RB.combat.debug().stage.frame; return f && /^recover/.test(f.poses.pc || ''); });
+  await when('6 · Mio takes the vial from her hip', () => { const f = RB.combat.debug().stage.frame; return f && f.poses.comp === 'anticipate:pour'; });
+  await when('7 · uncorked, poured toward you', () => { const f = RB.combat.debug().stage.frame; return f && (f.effects || []).some((e) => /^pPour/.test(e)); });
+  await when('8 · it reaches you: you ease (+1)', () => { const f = RB.combat.debug().stage.frame; return f && f.poses.pc === 'soothed' && (f.nums || []).length; });
+  await when('9 · its Strike: you brace as it winds up', () => { const d = RB.combat.debug(), f = d.stage.frame; return d.phase === 'enemy' && f && f.poses.pc === 'guard'; });
+  await when('10 · the seal catches it', () => { const f = RB.combat.debug().stage.frame; return f && f.poses.pc === 'brace'; });
+  await idle(p);
+  await snap('11 · calm again');
+  const sheet = await compose(shots, 4);
+  await saveImg(p, 'mio_exchange_frames', sheet.png, sheet.webp);
+  await p.evaluate(() => RB.battleSeq.setTimeScale(1));
   assert(!errors.length, errors.join('; '));
   await ctx.close();
 });
