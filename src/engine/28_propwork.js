@@ -1189,14 +1189,22 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
   // Exit mat (interactable): a straw mat with a dark border and a woven
   // diamond, lying just inside a doorway.
+  // Exit mat (a way out of a room or a map). Overworld parity pass (battle addendum §20): the old mat was
+  // brown on brown and nearly vanished on wooden floors at the ordinary zoom; it is now an indigo-dyed mat
+  // with a parchment binding and a pale diamond — the game's indigo-cloth-and-parchment motif — which reads
+  // on wood, stone, grass and snow alike. Same place on the tile, same size; it stays flat (no height that
+  // could suggest something solid).
   art('exitmat', {
     box: [0, 0, 32, 32], ink: true,
     draw(g) {
-      const b = ramp('#7a5236', 0.45, 0.35), m = ramp('#9a6a44', 0.45, 0.4);
-      R(g, 3, 19, 26, 12, b[2]); R(g, 3, 19, 26, 1, b[3]); R(g, 3, 30, 26, 1, b[1]);
+      const b = K.FIX.paper, m = ramp('#3d4c78', 0.4, 0.4);
+      R(g, 3, 19, 26, 12, b[2]); R(g, 3, 19, 26, 1, b[3]); R(g, 3, 30, 26, 1, b[1]); R(g, 28, 20, 1, 10, b[1]);
       R(g, 5, 21, 22, 8, m[2]);
-      for (let y = 21; y < 29; y++) for (let x = 5 + (y % 2); x < 27; x += 2) R(g, x, y, 1, 1, m[3]);
-      for (let k = 0; k < 4; k++) { R(g, 16 - k, 22 + k, 1, 1, m[4]); R(g, 15 + k, 22 + k, 1, 1, m[4]); R(g, 16 - k, 28 - k, 1, 1, m[1]); R(g, 15 + k, 28 - k, 1, 1, m[1]); }
+      // the weave: a lighter thread every other pick, the darker row under the binding
+      for (let y = 21; y < 29; y++) for (let x = 5 + (y % 2); x < 27; x += 2) if (y % 3 !== 0) R(g, x, y, 1, 1, m[3]);
+      R(g, 5, 28, 22, 1, m[1]);
+      // the diamond (hishi), an open outline pale on the indigo, lit on its upper edges
+      for (let k = 0; k < 3; k++) { R(g, 15 - k, 22 + k, 1, 1, b[4]); R(g, 16 + k, 22 + k, 1, 1, b[4]); R(g, 15 - k, 27 - k, 1, 1, b[3]); R(g, 16 + k, 27 - k, 1, 1, b[3]); }
       for (let x = 4; x < 28; x += 3) { R(g, x, 18, 1, 1, b[3]); R(g, x, 31, 1, 1, b[1]); }
     },
   });

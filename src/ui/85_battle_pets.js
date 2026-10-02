@@ -355,7 +355,13 @@ RB.battlePets = (function () {
     if (cur.kind === 'react') return sample(sp, cur.family, tt, { reduce, secondary: cur.secondary, actor: cur.actor });
     return reduce ? Object.assign({}, R.keys[Math.min(R.keys.length - 1, R.key)][1]) : sampleK(R, tt);
   }
+  // Pose cadence (battle addendum §5.2, §9.4): the animal changes drawing at most every CADENCE ms of the
+  // presentation clock (12.5 a second) while it reacts, and every IDLE_STEP ms of real time while idle (10 a
+  // second, the battle figures' idle step) — held poses, not a tween redrawn every display frame.
+  const CADENCE = 80, IDLE_STEP = 100;
   function poseAt(now, t, reduce) {
+    now = Math.floor(now / CADENCE) * CADENCE;
+    t = Math.floor(t / IDLE_STEP) * IDLE_STEP;
     const sp = B.sp;
     const base = BASE[sp][B.base] || BASE[sp].calm;
     let po = Object.assign({}, base);
@@ -571,5 +577,5 @@ RB.battlePets = (function () {
     RB.ui.settings.addRows('audio', ({ sw }) => sw('petSounds', 'Quiet pet sounds', 'An occasional soft sound from your pet (never needed: everything it does is also seen).'));
   }
 
-  return { wants, draw, stats, sample, sampleAny, centreOf, extentOf, place, footSpans, densityOf, poseAt: (now, t, reduce) => (B ? poseAt(now, t, reduce) : null), REACT, IMPACT, PREP, SETTLE, VICTORY, CALM, READY, BASE, LOOK, MIN_WIN, MAX_RATE, SETTLE_GRACE, _begin: begin, _end: end, get _B() { return B; } };
+  return { wants, draw, stats, sample, sampleAny, centreOf, extentOf, place, footSpans, densityOf, poseAt: (now, t, reduce) => (B ? poseAt(now, t, reduce) : null), REACT, IMPACT, PREP, SETTLE, VICTORY, CALM, READY, BASE, LOOK, MIN_WIN, MAX_RATE, SETTLE_GRACE, CADENCE, IDLE_STEP, _begin: begin, _end: end, get _B() { return B; } };
 })();

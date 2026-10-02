@@ -323,7 +323,9 @@ RB.render = (function () {
     c.fill();
     const still = RB.game.reducedMotion();
     const bob = isFoe && !still ? Math.round(Math.sin(t / 300 + a.x) * 3) : 0;
-    const art = RB.sprites.getArt && RB.sprites.getArt(a.look, a.dir, actorFrame(a, t, isFoe, still));
+    // (a turn on the spot is drawn through a pivot: RB.sprites.view, src/engine/32_spriteart.js — drawing only)
+    const fr0 = actorFrame(a, t, isFoe, still), vw = RB.sprites.view ? RB.sprites.view(a, t, still || isFoe, fr0) : null;
+    const art = RB.sprites.getArt && RB.sprites.getArt(a.look, vw ? vw.dir : a.dir, vw ? vw.frame : fr0);
     const dy = a.dy || 0; // a knee dip during a field action (src/ui/57_weave.js)
     if (art) c.drawImage(art, fx - RB.sprites.ANCHOR.x, fy - RB.sprites.ANCHOR.y + bob + dy);
     else c.drawImage(RB.sprites.get(a.look, a.dir, a.frame || 0), fx - 16, fy - 46 + bob + dy, 32, 48);
