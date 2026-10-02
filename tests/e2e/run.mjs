@@ -32,6 +32,8 @@ const suites = [
   ['cases.mjs'], ['cases_shots.mjs'], ['known.mjs'],
   ['pace.mjs'], // fishing pace: the optional response-entry clock, calibration, records (Practice addendum §7, §23.3)
   ['practice_b.mjs'], // practice suite B: letters, the Proofreader's Tray, One word two moments (docs/practice/suite_b.md)
+  ['wordplay.mjs'], // companion shiritori: the table, records, bond and talk priority (docs/practice/wordplay.md)
+  ['wordplay_layout.mjs'], // companion shiritori: layouts, four companions at the table, Japanese labels
   full ? ['matrix.mjs'] : ['pursue.mjs', 'E', 'mio'],
 ];
 const results = [];

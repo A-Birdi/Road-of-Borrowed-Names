@@ -213,6 +213,8 @@ RB.shiritori = (function () {
   function addBank(def) { const b = buildBank(def); BANKS[b.id] = b; return b; }
   const bank = (id) => BANKS[id] || null;
   const banks = () => Object.keys(BANKS);
+  // (tests that build their own test-only banks clear the installed ones first)
+  function removeBank(id) { delete BANKS[id]; }
 
   // ---- the shipped word registry (src/content/shiritori/) -------------------------------------
   // Words are defined once; a fixed bank lists the entry ids it uses. texts()
@@ -351,7 +353,7 @@ RB.shiritori = (function () {
   }
 
   return {
-    RULES, SMALL, VOW, LEVELS, WHY, toHira, norm, inspect, safeText, boundary, validateEntry, readingsOf, buildBank, addBank, bank, banks,
+    RULES, SMALL, VOW, LEVELS, WHY, toHira, norm, inspect, safeText, boundary, validateEntry, readingsOf, buildBank, addBank, removeBank, bank, banks,
     defineWords, word, words, texts, snapshot, thaw, resolve, newGame, pickStarter, legalEdges, safeReplies, safeGroups, check, play, concede,
     moves, status, casualMove, other,
   };
