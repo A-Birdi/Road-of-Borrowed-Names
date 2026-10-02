@@ -92,7 +92,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     // the paper lit from inside: rings of light round the flame (hard steps), darker toward the
     // grazing edges, the key light adding a little on the left, the cool rim on the right
     // the paper's long fibres break each band edge into short vertical clusters
-    const fibre = S.strands(Math.PI / 2, { w: 3, len: 7, amp: 0.09, seed: 31 });
+    const fibre = S.strands(Math.PI / 2, { w: 3, len: 7, amp: 0.07, seed: 31 });
     const paperFn = (x, y) => {
       // a cylinder lit from inside: bright through the middle, falling off toward the grazing
       // limbs (the right one more: it also faces away from the key light) and away from the flame
@@ -102,6 +102,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     };
     const paperStep = (x, y) => paperFn(x, y);
     B.fill(-36 - br, -46, 36 + br, 40, (x, y) => y >= -46 && y < 40 && Math.abs(x) <= hwAt(y), paper, (x, y) => S.step(paperFn(x, y), 6));
+    S.clean(B, paper, { sliver: true }); // (fibre clusters at least two px across)
     // the bamboo ribs round the barrel: each a dark line curving toward us, a lit lip above it on
     // the near side, the paper just under it in the rib's shadow
     for (let yr = -37; yr < 36; yr += 9) {
@@ -345,9 +346,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
     // seen at an angle (darker, the cool rim at its far edge)
     const fl = q.fl || 0, dr = q.door || 0;
     const glowAt = (x, y) => (1 - Math.hypot((x - fl + 10) / 46, (y + 4) / 66)) * (0.95 + fs * 0.07) * (1 - dim * 0.55);
-    const fibre = S.strands(Math.PI / 2, { w: 3, len: 7, amp: 0.07, seed: 41 });
+    const fibre = S.strands(Math.PI / 2, { w: 3, len: 7, amp: 0.06, seed: 41 });
     const frontStep = (x, y) => { const v = glowAt(x, y) + (x < -30 ? 0.05 : 0) + fibre(x, y); return v > 0.62 ? 5 : v > 0.42 ? 4 : v > 0.22 ? 3 : v > 0.02 ? 2 : 1; };
     B.rect(FX0, -72, FX1 - FX0, 136, paper, (x, y) => S.step(frontStep(x, y), 6));
+    S.clean(B, paper, { sliver: true }); // (fibre clusters at least two px across)
     B.poly([side(0, -72), side(1, -72), side(1, 64), side(0, 64)], paper, (x, y) => { const u = (x - FX1) / SDX, v = glowAt(FX1, y) * 0.55 - u * 0.25; return S.step(v > 0.3 ? 3 : v > 0.12 ? 2 : 1, 6); });
     // the door leaf's opening (front left): the dark inside and the flame itself
     if (dr > 0.02) {

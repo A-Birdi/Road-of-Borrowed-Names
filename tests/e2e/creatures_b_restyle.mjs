@@ -140,6 +140,7 @@ if (mode === 'battle') {
       await p.evaluate(([ids, mapId, mx, my]) => {
         const s = RB.game.debugStart(mapId, +mx, +my, { comp: 'mio' });
         s.learn.kanaKnown = 'both'; s.learn.profile = 'E';
+        if (ids.length > 2) s.learn.difficulty = 'hard'; // three creatures stand together on Demanding
         s.tips = Object.assign({ harmony: 1, harmonyFull: 1, cturn: 1, group: 1 }, ...['strike', 'sweep', 'rest', 'heat', 'shroud', 'charge', 'gust', 'mend', 'lie', 'plea', 'flood', 'chill', 'silence', 'mirror'].map((k) => ({ ['intent:' + k]: 1 })));
         RB.game.settings.input = 'choice';
         RB.game.applySettings();
