@@ -77,6 +77,7 @@ RB.ui.lanterns = (function () {
   const TX = () => RB.content.practiceA.lanterns;
   const L = () => RB.lanterns;
   let open = null; // the sheet while a session runs (disposed on a campaign change)
+  let curStep = null; // the lamp's step on screen (browser tests read its answer)
 
   // ---- the sheet -----------------------------------------------------------------------------
   function sheet() {
@@ -212,7 +213,9 @@ RB.ui.lanterns = (function () {
       step.title = 'Tend a lamp (' + (i + 1) + ' of ' + lamps.length + ')';
       step.titleJp = '{灯|あか}り';
       const header = '<span class="pa-hdr">' + I('lantern') + esc('Lamp ' + (i + 1) + ' of ' + lamps.length) + '</span>';
-      const res = await RB.challenge.runStep(step, { noRecord: true, ctxTag: 'lanterns', cancelLabel: 'Leave the lamps', header });
+      curStep = step;
+      const res = await RB.challenge.runStep(step, { noRecord: true, ctxTag: 'lanterns', cancelLabel: 'Leave', header });
+      curStep = null;
       if (!session.alive()) return reviewed;
       if (!res || res.cancelled) { for (let k = i; k < lamps.length; k++) lamps[k].left = true; break; }
       const r = L().tend(s, ob, 'lamp:' + session.id + ':' + i, l.id, step, res, { exposed: sel.mode === 'new' });
@@ -324,5 +327,5 @@ RB.ui.lanterns = (function () {
     begin: (ctx) => RB.practiceA.launch('lanterns', Object.assign({ source: 'words' }, ctx || {})),
   });
 
-  return { run, prep, row, eligible, _open: () => open };
+  return { run, prep, row, eligible, _open: () => open, _step: () => curStep };
 })();

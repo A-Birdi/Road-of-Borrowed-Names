@@ -46,7 +46,7 @@ RB.ui.practiceMementos = (function () {
     const box = RB.ui.el('span', 'pm-art' + (cls ? ' ' + cls : ''));
     try {
       if (m.html) box.innerHTML = m.html();
-      else if (m.draw) { const cv = document.createElement('canvas'); m.draw(cv); cv.classList.add('pm-cv'); box.appendChild(cv); }
+      else if (m.draw) { const cv = document.createElement('canvas'); m.draw(cv, { cell: cls === 'big' ? 150 : 40 }); cv.classList.add('pm-cv'); box.appendChild(cv); }
       else box.innerHTML = I('keepsake');
     } catch (e) { box.innerHTML = I('keepsake'); }
     return box;

@@ -37,9 +37,14 @@ RB.ui.deskPage = (function () {
     if (!chars || !chars.length) return drawType(cv, page, o);
     const cell = o.cell || 96, pad = Math.round(cell * 0.18);
     const n = chars.length;
-    cv.width = n * cell + pad * 2; cv.height = cell + pad * 2;
-    g.fillStyle = PAPER; g.fillRect(0, 0, cv.width, cv.height);
-    g.strokeStyle = 'rgba(120,90,50,0.45)'; g.lineWidth = 1; g.strokeRect(0.5, 0.5, cv.width - 1, cv.height - 1);
+    // drawn at the screen's pixel density, shown at its CSS size (never stretched)
+    const k = Math.max(1, Math.min(3, (typeof devicePixelRatio !== 'undefined' && devicePixelRatio) || 1));
+    const W = n * cell + pad * 2, H = cell + pad * 2;
+    cv.width = Math.round(W * k); cv.height = Math.round(H * k);
+    if (cv.style) cv.style.width = W + 'px';
+    g.setTransform(k, 0, 0, k, 0, 0);
+    g.fillStyle = PAPER; g.fillRect(0, 0, W, H);
+    g.strokeStyle = 'rgba(120,90,50,0.45)'; g.lineWidth = 1; g.strokeRect(0.5, 0.5, W - 1, H - 1);
     chars.forEach((c, i) => {
       const x0 = pad + i * cell, y0 = pad;
       g.strokeStyle = GRID; g.lineWidth = 1; g.setLineDash([3, 4]);
@@ -70,10 +75,14 @@ RB.ui.deskPage = (function () {
     const font = (px) => px + 'px "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif CJK JP", "Noto Sans CJK JP", serif';
     g.font = font(size);
     const w = groups.reduce((a, x) => a + Math.max(g.measureText(x.t).width, x.r ? (g.font = font(size * 0.38), g.measureText(x.r).width) : 0, (g.font = font(size), 0)), 0);
-    cv.width = Math.max(size * 2, Math.ceil(w + size * 0.8)); cv.height = Math.ceil(size * 1.9);
-    g.fillStyle = PAPER; g.fillRect(0, 0, cv.width, cv.height);
-    g.strokeStyle = 'rgba(120,90,50,0.45)'; g.strokeRect(0.5, 0.5, cv.width - 1, cv.height - 1);
-    let x = (cv.width - w) / 2;
+    const k = Math.max(1, Math.min(3, (typeof devicePixelRatio !== 'undefined' && devicePixelRatio) || 1));
+    const W = Math.max(size * 2, Math.ceil(w + size * 0.8)), H = Math.ceil(size * 1.9);
+    cv.width = Math.round(W * k); cv.height = Math.round(H * k);
+    if (cv.style) cv.style.width = W + 'px';
+    g.setTransform(k, 0, 0, k, 0, 0);
+    g.fillStyle = PAPER; g.fillRect(0, 0, W, H);
+    g.strokeStyle = 'rgba(120,90,50,0.45)'; g.strokeRect(0.5, 0.5, W - 1, H - 1);
+    let x = (W - w) / 2;
     g.fillStyle = INK; g.textBaseline = 'alphabetic';
     for (const p of groups) {
       g.font = font(size);
@@ -103,9 +112,9 @@ RB.ui.deskPage = (function () {
   function preview(page, o) {
     const fig = RB.ui.el('figure', 'dk-prev');
     if (page.typeset && (!page.strokes || page.mode === 'typeset')) fig.innerHTML = typesetHtml(page);
-    else { const cv = document.createElement('canvas'); cv.className = 'dk-pagecv'; draw(cv, page, o); fig.appendChild(cv); }
+    else { const cv = document.createElement('canvas'); cv.className = 'dk-pagecv'; draw(cv, page, o || {}); fig.appendChild(cv); }
     const hand = RB.practiceDesk.handwritten(page);
-    fig.appendChild(RB.ui.el('figcaption', null, '<span class="t">' + esc(page.label || 'Practice page') + '</span><span class="k">' + esc(page.kind === 'proof' ? 'Proofreading page' : hand ? 'Your handwriting' : 'Typeset — not handwriting') + '</span>' + (page.saved === false ? '<span class="uns">Not saved</span>' : '')));
+    fig.appendChild(RB.ui.el('figcaption', null, '<span class="t">' + esc(page.label || 'Practice page') + '</span>' + (o && o.noKind ? '' : '<span class="k">' + esc(page.kind === 'proof' ? 'Proofreading page' : hand ? 'Your handwriting' : 'Typeset — not handwriting') + '</span>') + (page.saved === false ? '<span class="uns">Not saved</span>' : '')));
     return fig;
   }
   return { draw, drawType, typesetHtml, preview };
@@ -121,7 +130,9 @@ RB.ui.desk = (function () {
   const BOX = 300;
   const isKanji = (c) => !!c && RB.kana.isKanji(c);
   let open = null;
+  let curStep = null; // the prompt's step on screen (browser tests)
   const MODE_ICON = { trace: 'practice', copy: 'copy', prompt: 'note', typeset: 'book' };
+  const TAB = { trace: 'Trace', copy: 'Copy', prompt: 'From a prompt', typeset: 'Typeset' };
   const MODE_HELP = {
     trace: 'Numbered reference strokes sit under your pen, one square per character. This is guided practice of the movements; it never counts as remembering the word.',
     copy: 'The model stays in its own square beside yours. This is copying practice; it never counts as remembering the word.',
@@ -164,18 +175,21 @@ RB.ui.desk = (function () {
         const cardBtn = (c) => {
           const fresh = !c.introduced;
           const face = mode === 'prompt' ? '<span class="dk-c-en big">' + esc(c.en) + '</span>' : '<span class="dk-c-jp">' + J(c.mark) + '</span><span class="dk-c-en">' + esc(c.en) + '</span>';
-          return '<button type="button" class="dk-card' + (fresh ? ' fresh' : '') + '" data-card="' + esc(c.id) + '">' + face + (fresh ? '<span class="dk-tag">new: its card comes first</span>' : '') + '</button>';
+          return '<button type="button" class="dk-card' + (fresh ? ' fresh' : '') + '" data-card="' + esc(c.id) + '">' + face + (fresh ? '<span class="dk-tag">' + (mode === 'prompt' ? 'new: its card comes first' : 'new to you') + '</span>' : '') + '</button>';
         };
-        ui.leaf.innerHTML = '<div class="dk-tabs"></div>' +
-          '<div class="dk-modehelp" id="dk-modehelp"><p class="dk-mh-t">' + J(tx.modes[mode].jp) + ' <span class="en">' + esc(tx.modes[mode].en) + '</span></p><p>' + esc(MODE_HELP[mode]) + '</p>' +
+        ui.leaf.innerHTML = '<div class="dk-modehelp" id="dk-modehelp"><p class="dk-mh-t">' + J(tx.modes[mode].jp) + ' <span class="en">' + esc(tx.modes[mode].en) + '</span></p><p>' + esc(MODE_HELP[mode]) + '</p>' +
             (mode === 'trace' || mode === 'copy' ? '<p class="muted small">' + esc(DRAW_NOTE) + '</p>' : '') + '</div>' +
           '<h3 class="dk-h">' + (mode === 'prompt' ? 'Choose a meaning' : 'Choose a word') + '</h3>' +
           '<div class="dk-cards" role="group" aria-label="Words">' + cards.map(cardBtn).join('') + '</div>' +
           (notes.length ? '<h3 class="dk-h">' + J(tx.notebook.jp) + ' <span class="en">' + esc(tx.notebook.en) + '</span></h3><div class="dk-cards" role="group" aria-label="Words from your notebook">' + notes.map(cardBtn).join('') + '</div>' : '') +
           '<p class="muted small dk-keptline">' + esc('Kept pages: ' + kept + ' of ' + D().MAX_PAGES + '.') + (kept ? ' See Journey › Practice mementos.' : '') + '</p>';
-        const tabs = RB.ui.folio.tabs(ui.leaf.querySelector('.dk-tabs'), D().MODES.map((m) => ({ id: m, en: tx.modes[m].en, jp: tx.modes[m].jp, icon: MODE_ICON[m] })), mode, (id) => { st.mode = id; D().remember(s, { mode: id }); render(); ui.focus('.dk-tabs .ptab[data-id="' + id + '"]'); }, { label: 'How to practise', panelId: 'dk-modehelp' });
+        // the modes are the sheet's own paper tabs (on the cloth above the page, outside the
+        // page's scroll guard), with short names; the full name heads the page below
+        const slot = ui.fr.tabslot;
+        slot.classList.add('dk-tabs');
+        const tabs = RB.ui.folio.tabs(slot, D().MODES.map((m) => ({ id: m, en: TAB[m], jp: tx.modes[m].jp, icon: MODE_ICON[m] })), mode, (id) => { st.mode = id; D().remember(s, { mode: id }); render(); ui.focus('.dk-tabs .ptab[data-id="' + id + '"]'); }, { label: 'How to practise', panelId: 'dk-modehelp' });
         tabs.el.classList.add('dk-tabrail');
-        ui.teardown(() => tabs.destroy());
+        ui.teardown(() => { tabs.destroy(); slot.innerHTML = ''; slot.classList.remove('dk-tabs'); });
         ui.foot.innerHTML = '<button class="cbtn" data-dk="leave">' + I('back') + '<span>Leave the desk</span></button>';
       }
       ui.leaf.onclick = (e) => {
@@ -196,8 +210,8 @@ RB.ui.desk = (function () {
   function surface(host, o) {
     const el = RB.ui.el('div', 'dk-work' + (o.mode === 'copy' ? ' copy' : ''));
     el.innerHTML =
-      '<div class="dk-sqcol"><div class="dk-sq"><canvas class="dk-bg" aria-hidden="true"></canvas><canvas class="dk-ink" role="img" aria-label="' + esc('Writing square: ' + (o.mode === 'trace' ? 'trace ' : 'write ') + o.ch + ' with the mouse, a finger or a pen') + '"></canvas></div></div>' +
-      (o.mode === 'copy' ? '<figure class="dk-model"><canvas width="300" height="300" role="img" aria-label="' + esc('The model for ' + o.ch + ', ' + RB.recog.strokeCount(o.ch) + ' numbered strokes') + '"></canvas><figcaption><span class="muted small">The model (numbered strokes, KanjiVG)</span><button type="button" class="pbtn quiet" data-dk="order">' + I('look') + '<span>Show the order</span></button></figcaption></figure>' : '');
+      (o.mode === 'copy' ? '<figure class="dk-model"><canvas width="300" height="300" role="img" aria-label="' + esc('The model for ' + o.ch + ', ' + RB.recog.strokeCount(o.ch) + ' numbered strokes') + '"></canvas><figcaption><span class="muted small">The model</span><button type="button" class="pbtn quiet" data-dk="order">' + I('look') + '<span>Show the order</span></button></figcaption></figure>' : '') +
+      '<div class="dk-sqcol"><div class="dk-sq"><canvas class="dk-bg" aria-hidden="true"></canvas><canvas class="dk-ink" role="img" aria-label="' + esc('Writing square: ' + (o.mode === 'trace' ? 'trace ' : 'write ') + o.ch + ' with the mouse, a finger or a pen') + '"></canvas></div></div>';
     host.appendChild(el);
     const bg = el.querySelector('.dk-bg'), ink = el.querySelector('.dk-ink'), box = el.querySelector('.dk-sq');
     const P = { strokes: [], cur: null, pid: null, dead: false };
@@ -215,8 +229,16 @@ RB.ui.desk = (function () {
       c.lineCap = 'round'; c.lineJoin = 'round'; c.strokeStyle = col; c.lineWidth = Math.max(3, w / 24);
       ref.strokes.forEach((st) => { c.beginPath(); st.forEach((p, j) => (j ? c.lineTo(p.x * sc, p.y * sc) : c.moveTo(p.x * sc, p.y * sc))); c.stroke(); });
       if (nums) {
-        c.fillStyle = C.num; c.font = '600 ' + Math.round(w / 14) + 'px sans-serif';
-        ref.strokes.forEach((st, i) => c.fillText(String(i + 1), st[0].x * sc + 4, st[0].y * sc - 4));
+        const fs = Math.round(w / 14);
+        c.fillStyle = C.num; c.font = '600 ' + fs + 'px sans-serif';
+        const placed = [];
+        ref.strokes.forEach((st, i) => {
+          let x = st[0].x * sc + 4, y = st[0].y * sc - 4;
+          // numbers that would sit on top of each other (strokes starting at one point) move apart
+          while (placed.some((q) => Math.abs(q[0] - x) < fs * 0.9 && Math.abs(q[1] - y) < fs * 0.9)) x += fs * 0.8;
+          placed.push([x, y]);
+          c.fillText(String(i + 1), x, y);
+        });
       }
     }
     function layout() {
@@ -341,6 +363,15 @@ RB.ui.desk = (function () {
     return { kind, read, notes, status: r.status, top: cands[0] || null, orderConfident: !!(so && so.confident), issues: so && so.confident ? so.issues.map((x) => x.kind) : [] };
   }
 
+  // {漢字|かんじ} markup as plain <ruby> (no spans: for places styled per span, like radio labels)
+  function rubyPlain(t) {
+    return String(t || '').split(/(\{[^|}]+\|[^}]+\})/).map((part, i) => {
+      if (!(i % 2)) return esc(part.replace(/ /g, ''));
+      const m = /^\{([^|}]+)\|([^}]+)\}$/.exec(part);
+      return '<ruby lang="ja">' + esc(m[1]) + '<rt>' + esc(m[2]) + '</rt></ruby>';
+    }).join('');
+  }
+
   // ---- 2a · Trace / Copy -------------------------------------------------------------------
   function writeByHand(ui, s, card, mode, st) {
     return new Promise((resolve) => {
@@ -352,23 +383,24 @@ RB.ui.desk = (function () {
       function header() {
         return '<div class="dk-word"><span class="dk-w-jp">' + J(card.mark) + '</span><span class="dk-w-en">' + esc(card.m || card.en) + '</span>' +
           '<span class="dk-mode">' + J(tx.modes[mode].jp) + ' <span class="en">' + esc(tx.modes[mode].en) + '</span></span></div>' +
-          (forms.length > 1 ? '<fieldset class="field dk-forms"><legend>Write it</legend><div class="opts">' + forms.map((f) => '<label class="opt"><input type="radio" name="dk-form" value="' + f.id + '"' + (f.id === form.id ? ' checked' : '') + '><span><span lang="ja" class="jt-plain">' + esc(f.text) + '</span>&nbsp;' + esc(f.id === 'kanji' ? '(as usually written)' : '(in kana)') + '</span></label>').join('') + '</div></fieldset>' : '');
+          (forms.length > 1 ? '<fieldset class="field dk-forms"><legend>Write it</legend><div class="opts">' + forms.map((f) => '<label class="opt"><input type="radio" name="dk-form" value="' + f.id + '"' + (f.id === form.id ? ' checked' : '') + '><span>' + rubyPlain(f.id === 'kanji' ? card.mark : f.text) + '&nbsp;' + esc(f.id === 'kanji' ? '(as usually written)' : '(in kana)') + '</span></label>').join('') + '</div></fieldset>' : '');
       }
       function render() {
         ui.teardown(null);
-        ui.meta(tx.modes[mode].en + ' · character ' + (idx + 1) + ' of ' + chars.length);
+        ui.meta(TAB[mode] + ' · ' + (idx + 1) + ' of ' + chars.length);
         const strip = '<ol class="dk-strip" aria-label="Characters">' + chars.map((c, i) => '<li class="' + (i === idx ? 'cur' : done[i] ? 'done' : '') + '"' + (i === idx ? ' aria-current="true"' : '') + '><span lang="ja">' + RB.kanjiChart.glyph(c) + '</span>' + (done[i] ? '<span class="sr"> (written)</span>' : '') + '</li>').join('') + '</ol>';
-        ui.leaf.innerHTML = header() + strip + '<div class="dk-surf"></div>' +
-          '<div class="dk-tools" role="group" aria-label="Writing tools">' +
+        ui.leaf.innerHTML = header() + strip + '<div class="dk-writerow"><div class="dk-surf"></div>' +
+          '<div class="dk-side"><div class="dk-tools" role="group" aria-label="Writing tools">' +
             '<button type="button" class="pbtn" data-dk="undo">' + I('undo') + '<span>Undo stroke</span></button>' +
             '<button type="button" class="pbtn" data-dk="clear">' + I('erase') + '<span>Clear</span></button>' +
             (idx > 0 ? '<button type="button" class="pbtn" data-dk="prev">' + I('back') + '<span>Previous character</span></button>' : '') +
             '<button type="button" class="pbtn primary" data-dk="donech" disabled>' + I('done') + '<span>' + (idx < chars.length - 1 ? 'Done with this character' : 'Done — see the page') + '</span></button>' +
           '</div>' +
-          '<div class="dk-obs" aria-live="polite">' + (obs[idx - 1] && idx > 0 ? obsHtml(chars[idx - 1], obs[idx - 1]) : '<p class="muted small">' + esc(mode === 'trace' ? 'Follow the numbered strokes, in order, then press Done.' : 'Write it in your square, looking at the model beside it, then press Done.') + '</p>') + '</div>';
+          '<div class="dk-obs" aria-live="polite">' + (obs[idx - 1] && idx > 0 ? obsHtml(chars[idx - 1], obs[idx - 1]) : '<p class="muted small">' + esc(mode === 'trace' ? 'Follow the numbered strokes, in order, then press Done.' : 'Write it in your square, looking at the model beside it, then press Done.') + '</p>') + '</div></div></div>';
         surf = surface(ui.leaf.querySelector('.dk-surf'), { ch: chars[idx], mode, onChange: (n) => { const b = ui.leaf.querySelector('[data-dk=donech]'); if (b) b.disabled = !n; } });
         if (done[idx]) surf.set(done[idx]);
         ui.teardown(() => surf && surf.destroy());
+        if (!ui.fr.el.contains(document.activeElement) || document.activeElement === document.body) ui.focus(forms.length > 1 ? 'input[name=dk-form]:checked' : '[data-dk=undo]');
         ui.foot.innerHTML = '<button class="cbtn" data-dk="back">' + I('back') + '<span>Back to the words</span></button>';
       }
       function obsHtml(ch, o) {
@@ -480,12 +512,14 @@ RB.ui.desk = (function () {
           '<div class="dk-pagebox"></div>' +
           '<p class="dk-pagekind">' + (hand ? J(TX().yours.jp) + ' <span class="en">' + esc(TX().yours.en + ' · ' + ({ trace: 'traced over the numbered strokes', copy: 'copied beside the model', prompt: 'written from a prompt' }[mode])) + '</span>' : J(TX().typeset.jp) + ' <span class="en">Typeset — not handwriting</span>') + '</p>' +
           (kept && kept.ok ? '' : '<div class="field"><label class="lab" for="dk-label">Label for this page</label><input id="dk-label" type="text" maxlength="' + D().MAX_LABEL + '" autocomplete="off" value="' + esc(label) + '"><div class="hint">Up to ' + D().MAX_LABEL + ' characters. ' + esc(D().pages(s).length + ' of ' + D().MAX_PAGES + ' pages kept.') + '</div></div>') +
-          '<p class="dk-status" aria-live="polite">' + status + '</p>';
+          '<p class="dk-status" aria-live="polite">' + status + '</p>' +
+          // the secondary ways on, on the page (the cloth foot keeps only the main action)
+          '<div class="row-acts dk-next"><button type="button" class="pbtn" data-dk="words">' + I('back') + '<span>Another word</span></button>' +
+          '<button type="button" class="pbtn" data-dk="again">' + I('undo') + '<span>' + (mode === 'typeset' ? 'Change the layout' : 'Write it again') + '</span></button></div>';
         const box = ui.leaf.querySelector('.dk-pagebox');
-        if (page) box.appendChild(RB.ui.deskPage.preview(Object.assign({}, page, { saved: kept ? !!(kept.ok && kept.saved) : undefined })));
+        if (page) box.appendChild(RB.ui.deskPage.preview(Object.assign({}, page, { saved: kept ? !!(kept.ok && kept.saved) : undefined }), { noKind: true, cell: 120 }));
         const canKeep = page && !(kept && kept.ok);
-        ui.foot.innerHTML = '<button class="cbtn" data-dk="words">' + I('back') + '<span>Another word</span></button>' +
-          '<button class="cbtn" data-dk="again">' + I('undo') + '<span>' + (mode === 'typeset' ? 'Change the layout' : 'Write it again') + '</span></button><span class="spacer"></span>' +
+        ui.foot.innerHTML = '<span class="spacer"></span>' +
           (canKeep ? '<button class="cbtn go" data-dk="keep">' + I('save') + '<span>' + (kept && !kept.ok && kept.error === 'storage' ? 'Try keeping it again' : 'Keep this page') + '</span></button>' : '<button class="cbtn go" data-dk="leave">' + I('done') + '<span>Leave the desk</span></button>');
         const inp = ui.leaf.querySelector('#dk-label');
         if (inp) {
@@ -507,8 +541,7 @@ RB.ui.desk = (function () {
         ui.focus(kept && kept.ok ? '[data-dk=leave]' : '[data-dk=keep]');
       }
       ui.leaf.onchange = null;
-      ui.leaf.onclick = null;
-      ui.foot.onclick = (e) => {
+      ui.leaf.onclick = ui.foot.onclick = (e) => {
         const b = e.target.closest('[data-dk]');
         if (!b || b.disabled) return;
         const a = b.dataset.dk;
@@ -546,7 +579,7 @@ RB.ui.desk = (function () {
       pages.forEach((p) => {
         const li = RB.ui.el('li', 'dk-repitem');
         li.appendChild(RB.ui.deskPage.preview(p, { cell: 56 }));
-        const b = RB.ui.el('button', 'pbtn', I('trash') + '<span>Replace this page</span>');
+        const b = RB.ui.el('button', 'pbtn', I('trash') + '<span>Replace it</span>');
         b.type = 'button';
         b.dataset.rep = p.id;
         b.setAttribute('aria-label', 'Replace “' + (p.label || 'Practice page') + '” with the new page');
@@ -596,7 +629,7 @@ RB.ui.desk = (function () {
           D().record(s, ob, objId, card, mode, null);
           shown.add(card.id);
           tasks++;
-          info = '<p class="dk-done">' + esc('Written: ' + made.word + '. ' + (mode === 'trace' ? 'Traced over the model: practice of the movements.' : 'Copied beside the model: copying practice.')) + '</p>';
+          info = '<p class="dk-done">' + esc('Written: ' + made.word + '. ' + (mode === 'trace' ? 'Traced over the model: practice of the movements.' : 'Copied beside the model: copying practice.')) + '</p>' + obsList(made);
         } else if (mode === 'typeset') {
           made = await typeset(ui, s, card, st);
           if (!session.alive()) break;
@@ -615,8 +648,12 @@ RB.ui.desk = (function () {
             taught = true;
           }
           const step = promptStep(card);
+          curStep = step;
+          ui.teardown(null);
+          ui.foot.innerHTML = '';
           ui.leaf.innerHTML = '<p class="muted">Writing from a prompt…</p>';
-          const res = await RB.challenge.runStep(step, { noRecord: true, keepInk: true, mode: 'hand', ctxTag: 'copying', cancelLabel: 'Back to the desk' });
+          const res = await RB.challenge.runStep(step, { noRecord: true, keepInk: true, mode: 'hand', ctxTag: 'copying', cancelLabel: 'Back' });
+          curStep = null;
           if (!session.alive()) break;
           if (!res || res.cancelled) { pick = null; continue; }
           const rec = D().record(s, ob, objId, card, 'prompt', res, { exposed: taught || shown.has(card.id), step });
@@ -645,14 +682,22 @@ RB.ui.desk = (function () {
     }
     return { tasks };
   }
+  // what the pad read for each character, and the stroke-order notes that were certain
+  function obsList(made) {
+    if (!made || !made.obs || !made.obs.length) return '';
+    return '<details class="dk-obslist" open><summary>What the pad noticed</summary><ul class="dk-obsul">' + made.obs.map((o, i) => {
+      const ch = made.ink[i] ? made.ink[i].ch : '';
+      return '<li><span class="dk-obch" lang="ja">' + RB.kanjiChart.glyph(ch) + '</span><div class="dk-ob ' + o.kind + '">' + o.read + (o.notes.length ? '<ul class="dk-notes">' + o.notes.map((x) => '<li>' + x + '</li>').join('') + '</ul>' : '') + '</div></li>';
+    }).join('') + '</ul><p class="muted small">Reading and stroke order are noticed, never graded; nothing here judges how the writing looks.</p></details>';
+  }
   function notice(ui, html) {
     return new Promise((resolve) => {
       ui.teardown(null);
       ui.meta('Write from a prompt');
-      ui.leaf.innerHTML = html;
-      ui.foot.innerHTML = '<button class="cbtn" data-dk="words">' + I('back') + '<span>Another word</span></button><button class="cbtn" data-dk="again">' + I('undo') + '<span>Write it again</span></button><span class="spacer"></span><button class="cbtn go" data-dk="leave">' + I('done') + '<span>Leave the desk</span></button>';
-      ui.foot.onclick = (e) => { const b = e.target.closest('[data-dk]'); if (b) resolve(b.dataset.dk); };
-      ui.leaf.onclick = null; ui.leaf.onchange = null;
+      ui.leaf.innerHTML = html + '<div class="row-acts dk-next"><button type="button" class="pbtn" data-dk="words">' + I('back') + '<span>Another word</span></button><button type="button" class="pbtn" data-dk="again">' + I('undo') + '<span>Write it again</span></button></div>';
+      ui.foot.innerHTML = '<span class="spacer"></span><button class="cbtn go" data-dk="leave">' + I('done') + '<span>Leave the desk</span></button>';
+      ui.leaf.onclick = ui.foot.onclick = (e) => { const b = e.target.closest('[data-dk]'); if (b) resolve(b.dataset.dk); };
+      ui.leaf.onchange = null;
       ui.cancel(() => resolve('words'));
       ui.focus('[data-dk=words]');
     });
@@ -694,5 +739,5 @@ RB.ui.desk = (function () {
     begin: (ctx) => RB.practiceA.launch('copying', Object.assign({ source: 'words' }, ctx || {})),
   });
 
-  return { run, choose, surface, observe, promptStep, chooser, eligible, _open: () => open };
+  return { run, choose, surface, observe, promptStep, chooser, eligible, _open: () => open, _step: () => curStep };
 })();

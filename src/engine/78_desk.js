@@ -324,7 +324,7 @@ RB.practiceDesk = (function () {
         title: { jp: p.word ? ruby(p.word, p.reading) : '', en: p.label },
         kind: handwritten(p) ? 'Your handwriting · ' + ({ trace: 'traced', copy: 'copied beside the model', prompt: 'written from a prompt' }[p.mode] || p.mode) : 'Typeset practice page — not handwriting',
         note: p.saved ? '' : 'Not saved yet',
-        draw: (cv) => RB.ui && RB.ui.deskPage ? RB.ui.deskPage.draw(cv, p) : null,
+        draw: (cv, o) => (RB.ui && RB.ui.deskPage ? RB.ui.deskPage.draw(cv, p, o) : null),
         html: p.mode === 'typeset' && RB.ui && RB.ui.deskPage ? () => RB.ui.deskPage.typesetHtml(p) : null,
       }));
     },

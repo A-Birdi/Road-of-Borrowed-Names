@@ -3217,9 +3217,7 @@ body.reduced-motion .pa-lamp.glow-in::before, body.reduced-motion .pa-lamp.glow-
 .chal-situ .pa-hdr svg { width: 1.1em; height: 1.1em; }
 
 /* ---- the writing desk ------------------------------------------------------------------- */
-.dk-tabs { margin: -4px -4px 4px; }
-.dk-tabs .tabrail-wrap { margin: 0; }
-.dk-modehelp { padding: 8px 10px; margin: 0 0 6px; background: #fffcf3; border: 1px solid var(--rule); border-top: 0; border-radius: 0 0 var(--r-1) var(--r-1); }
+.dk-modehelp { padding: 8px 10px; margin: 0 0 6px; background: #fffcf3; border: 1px solid var(--rule); border-radius: var(--r-1); }
 .dk-modehelp p { margin: 0.25em 0; }
 .dk-mh-t { font-weight: 600; }
 .dk-mh-t .en { font-weight: 400; color: var(--ink-2); margin-left: 0.3em; }
@@ -3246,21 +3244,34 @@ body.reduced-motion .pa-lamp.glow-in::before, body.reduced-motion .pa-lamp.glow-
 .dk-mode { margin-left: auto; font-size: 0.88em; color: var(--ink-2); }
 .dk-mode .en { margin-left: 0.25em; }
 .dk-forms { margin: 0.2em 0 0.5em; }
+.dk-forms .opt { max-width: 100%; }
+.dk-forms .opt span { flex-wrap: wrap; row-gap: 0; padding-top: 2px; padding-bottom: 2px; }
 .dk-forms legend { font-size: 0.9em; }
 .dk-strip { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; padding: 0; }
 .dk-strip li { min-width: 2.2em; min-height: 2.2em; display: flex; align-items: center; justify-content: center; font-size: 1.15em; border: 1px solid var(--rule); border-radius: var(--r-1); background: var(--paper); color: var(--ink-3); }
 .dk-strip li.cur { border-color: var(--ink); color: var(--ink); box-shadow: inset 0 -3px 0 var(--ribbon); font-weight: 700; }
 .dk-strip li.done { color: var(--ok-ink); border-color: var(--ok-ink); }
+.dk-writerow { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: flex-start; }
+.dk-surf { flex: 0 1 auto; max-width: 100%; }
+.dk-side { flex: 1 1 14em; min-width: 0; }
 .dk-work { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: flex-start; }
-.dk-sqcol { flex: 0 1 auto; width: min(100%, 300px, 46 * var(--vh)); }
-.dk-work.copy .dk-sqcol { width: min(100%, 260px, 40 * var(--vh)); }
+/* short landscape screens: a square that fits, with the tools beside it */
+@media (max-height: 500px) and (orientation: landscape) {
+  .dk-sqcol, .dk-work.copy .dk-sqcol { width: min(260px, 52 * var(--vh)); }
+  .dk-model { width: min(200px, 40 * var(--vh)); }
+  .dk-side .dk-tools { margin-top: 0; }
+}
+.dk-sqcol { flex: 0 1 auto; width: min(300px, 46 * var(--vh), calc(100vw - 48px)); max-width: 100%; }
+.dk-work.copy .dk-sqcol { width: min(260px, 40 * var(--vh), calc(100vw - 48px)); }
 .dk-sq { position: relative; width: 100%; aspect-ratio: 1; }
 .dk-sq canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; border-radius: 4px; }
 .dk-sq .dk-bg { box-shadow: 0 0 0 1px var(--paper-edge), 0 2px 0 var(--paper-3); pointer-events: none; }
 .dk-sq .dk-ink { touch-action: none; cursor: crosshair; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
-.dk-model { margin: 0; flex: 0 1 auto; width: min(100%, 200px, 32 * var(--vh)); }
+.dk-model { margin: 0; flex: 0 1 auto; width: min(200px, 32 * var(--vh)); max-width: 100%; }
+@media (max-width: 559px) { .dk-model { width: min(150px, 42vw); } .dk-model figcaption { font-size: 0.9em; } }
 .dk-model canvas { display: block; width: 100%; aspect-ratio: 1; border-radius: 4px; box-shadow: 0 0 0 1px var(--paper-edge), 0 2px 0 var(--paper-3); }
-.dk-model figcaption { display: flex; flex-wrap: wrap; align-items: center; gap: 0 8px; margin-top: 4px; }
+.dk-model figcaption { display: flex; flex-direction: column; align-items: flex-start; gap: 0; margin-top: 4px; }
+.dk-model figcaption .pbtn { white-space: nowrap; padding-left: 0; min-height: var(--tap); }
 .dk-tools { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 6px; }
 .dk-tools .pbtn { min-height: var(--tap); }
 .dk-obs { min-height: 2.6em; }
@@ -3271,14 +3282,22 @@ body.reduced-motion .pa-lamp.glow-in::before, body.reduced-motion .pa-lamp.glow-
 .dk-notes { margin: 4px 0 0; padding-left: 1.3em; font-size: 0.93em; }
 .dk-done { padding: 6px 10px; background: var(--paper-2); border-left: 3px solid var(--ribbon); }
 .dk-pagebox { margin: 8px 0; }
-.dk-prev { margin: 0; display: inline-flex; flex-direction: column; gap: 4px; max-width: 100%; }
+.dk-prev { margin: 0; display: inline-flex; flex-direction: column; align-items: flex-start; gap: 4px; max-width: 100%; }
 .dk-prev canvas { display: block; max-width: 100%; height: auto; image-rendering: auto; border-radius: 3px; }
+.dk-obslist { margin: 6px 0; }
+.dk-obslist summary { cursor: pointer; min-height: var(--tap); display: flex; align-items: center; color: var(--river); text-decoration: underline; text-underline-offset: 0.2em; }
+.dk-obslist summary:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.dk-obsul { list-style: none; margin: 4px 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.dk-obsul > li { display: flex; gap: 10px; align-items: flex-start; }
+.dk-obch { flex: none; font-size: 1.4em; min-width: 1.4em; text-align: center; }
+.dk-obsul .dk-ob { flex: 1 1 auto; min-width: 0; }
 .dk-prev figcaption { display: flex; flex-wrap: wrap; gap: 2px 10px; font-size: 0.88em; }
 .dk-prev figcaption .t { font-weight: 600; color: var(--ink); overflow-wrap: anywhere; }
 .dk-prev figcaption .k { color: var(--ink-2); }
 .dk-prev figcaption .uns, .pm-unsaved { color: var(--warn-ink); font-weight: 600; }
 .dk-pagekind .en { color: var(--ink-2); margin-left: 0.3em; }
 .dk-status:empty { display: none; }
+.dk-next .pbtn { min-height: var(--tap); }
 .dk-status { padding: 6px 10px; background: var(--paper-2); border-left: 3px solid var(--ribbon); }
 .pa-desk input[type="text"], .pm-rename input[type="text"] { min-height: var(--tap); width: 100%; max-width: 26em; box-sizing: border-box; font: inherit; color: var(--ink); background: #fffcf3; border: 1px solid var(--ink-3); border-radius: var(--r-1); padding: 0 8px; }
 .pa-desk input[type="text"]:focus-visible, .pm-rename input[type="text"]:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
@@ -3297,6 +3316,8 @@ body.reduced-motion .pa-lamp.glow-in::before, body.reduced-motion .pa-lamp.glow-
 .dk-type.paper-grid { background-image: linear-gradient(rgba(150, 120, 70, 0.22) 1px, transparent 1px), linear-gradient(90deg, rgba(150, 120, 70, 0.22) 1px, transparent 1px); background-size: 22px 22px; }
 .dk-type.paper-lined { background-image: repeating-linear-gradient(transparent 0 27px, rgba(150, 120, 70, 0.3) 27px 28px); }
 .dk-typeprev { margin: 8px 0; }
+.dk-typeprev .dk-type { font-size: 1.5em; }
+.dk-prev .dk-type { font-size: 1.2em; }
 .dk-typeprev .dk-type { max-width: 100%; }
 
 /* the replace / cancel sheet */
@@ -3322,9 +3343,9 @@ body.reduced-motion .pa-lamp.glow-in::before, body.reduced-motion .pa-lamp.glow-
 .pm-cell .k { font-size: 0.78em; color: var(--ink-3); }
 .pm-art { display: inline-flex; align-items: center; justify-content: center; max-width: 100%; overflow: hidden; }
 .pm-art .pm-cv { display: block; max-width: 100%; height: auto; }
-.pm-art.small .pm-cv { max-height: 56px; width: auto; }
+.pm-art.small .pm-cv:not([style*="width"]) { max-height: 56px; width: auto; }
 .pm-art.small .dk-type { font-size: 0.42em; min-width: 0; padding: 6px 8px; }
-.pm-art.big .pm-cv { max-height: 46vh; }
+.pm-art.big .pm-cv:not([style*="width"]) { max-height: 46vh; width: auto; }
 .pm-detail { margin-top: 10px; }
 .pm-big { margin-bottom: 6px; max-width: 100%; overflow: auto; }
 .pm-name .en { font-weight: 400; color: var(--ink-2); font-size: 0.85em; margin-left: 0.4em; }
@@ -33815,7 +33836,7 @@ RB.practiceDesk = (function () {
         title: { jp: p.word ? ruby(p.word, p.reading) : '', en: p.label },
         kind: handwritten(p) ? 'Your handwriting · ' + ({ trace: 'traced', copy: 'copied beside the model', prompt: 'written from a prompt' }[p.mode] || p.mode) : 'Typeset practice page — not handwriting',
         note: p.saved ? '' : 'Not saved yet',
-        draw: (cv) => RB.ui && RB.ui.deskPage ? RB.ui.deskPage.draw(cv, p) : null,
+        draw: (cv, o) => (RB.ui && RB.ui.deskPage ? RB.ui.deskPage.draw(cv, p, o) : null),
         html: p.mode === 'typeset' && RB.ui && RB.ui.deskPage ? () => RB.ui.deskPage.typesetHtml(p) : null,
       }));
     },
@@ -44859,7 +44880,7 @@ RB.ui.practiceMementos = (function () {
     const box = RB.ui.el('span', 'pm-art' + (cls ? ' ' + cls : ''));
     try {
       if (m.html) box.innerHTML = m.html();
-      else if (m.draw) { const cv = document.createElement('canvas'); m.draw(cv); cv.classList.add('pm-cv'); box.appendChild(cv); }
+      else if (m.draw) { const cv = document.createElement('canvas'); m.draw(cv, { cell: cls === 'big' ? 150 : 40 }); cv.classList.add('pm-cv'); box.appendChild(cv); }
       else box.innerHTML = I('keepsake');
     } catch (e) { box.innerHTML = I('keepsake'); }
     return box;
@@ -53490,6 +53511,7 @@ RB.ui.lanterns = (function () {
   const TX = () => RB.content.practiceA.lanterns;
   const L = () => RB.lanterns;
   let open = null; // the sheet while a session runs (disposed on a campaign change)
+  let curStep = null; // the lamp's step on screen (browser tests read its answer)
 
   // ---- the sheet -----------------------------------------------------------------------------
   function sheet() {
@@ -53625,7 +53647,9 @@ RB.ui.lanterns = (function () {
       step.title = 'Tend a lamp (' + (i + 1) + ' of ' + lamps.length + ')';
       step.titleJp = '{灯|あか}り';
       const header = '<span class="pa-hdr">' + I('lantern') + esc('Lamp ' + (i + 1) + ' of ' + lamps.length) + '</span>';
-      const res = await RB.challenge.runStep(step, { noRecord: true, ctxTag: 'lanterns', cancelLabel: 'Leave the lamps', header });
+      curStep = step;
+      const res = await RB.challenge.runStep(step, { noRecord: true, ctxTag: 'lanterns', cancelLabel: 'Leave', header });
+      curStep = null;
       if (!session.alive()) return reviewed;
       if (!res || res.cancelled) { for (let k = i; k < lamps.length; k++) lamps[k].left = true; break; }
       const r = L().tend(s, ob, 'lamp:' + session.id + ':' + i, l.id, step, res, { exposed: sel.mode === 'new' });
@@ -53737,7 +53761,7 @@ RB.ui.lanterns = (function () {
     begin: (ctx) => RB.practiceA.launch('lanterns', Object.assign({ source: 'words' }, ctx || {})),
   });
 
-  return { run, prep, row, eligible, _open: () => open };
+  return { run, prep, row, eligible, _open: () => open, _step: () => curStep };
 })();
 
 
@@ -53781,9 +53805,14 @@ RB.ui.deskPage = (function () {
     if (!chars || !chars.length) return drawType(cv, page, o);
     const cell = o.cell || 96, pad = Math.round(cell * 0.18);
     const n = chars.length;
-    cv.width = n * cell + pad * 2; cv.height = cell + pad * 2;
-    g.fillStyle = PAPER; g.fillRect(0, 0, cv.width, cv.height);
-    g.strokeStyle = 'rgba(120,90,50,0.45)'; g.lineWidth = 1; g.strokeRect(0.5, 0.5, cv.width - 1, cv.height - 1);
+    // drawn at the screen's pixel density, shown at its CSS size (never stretched)
+    const k = Math.max(1, Math.min(3, (typeof devicePixelRatio !== 'undefined' && devicePixelRatio) || 1));
+    const W = n * cell + pad * 2, H = cell + pad * 2;
+    cv.width = Math.round(W * k); cv.height = Math.round(H * k);
+    if (cv.style) cv.style.width = W + 'px';
+    g.setTransform(k, 0, 0, k, 0, 0);
+    g.fillStyle = PAPER; g.fillRect(0, 0, W, H);
+    g.strokeStyle = 'rgba(120,90,50,0.45)'; g.lineWidth = 1; g.strokeRect(0.5, 0.5, W - 1, H - 1);
     chars.forEach((c, i) => {
       const x0 = pad + i * cell, y0 = pad;
       g.strokeStyle = GRID; g.lineWidth = 1; g.setLineDash([3, 4]);
@@ -53814,10 +53843,14 @@ RB.ui.deskPage = (function () {
     const font = (px) => px + 'px "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif CJK JP", "Noto Sans CJK JP", serif';
     g.font = font(size);
     const w = groups.reduce((a, x) => a + Math.max(g.measureText(x.t).width, x.r ? (g.font = font(size * 0.38), g.measureText(x.r).width) : 0, (g.font = font(size), 0)), 0);
-    cv.width = Math.max(size * 2, Math.ceil(w + size * 0.8)); cv.height = Math.ceil(size * 1.9);
-    g.fillStyle = PAPER; g.fillRect(0, 0, cv.width, cv.height);
-    g.strokeStyle = 'rgba(120,90,50,0.45)'; g.strokeRect(0.5, 0.5, cv.width - 1, cv.height - 1);
-    let x = (cv.width - w) / 2;
+    const k = Math.max(1, Math.min(3, (typeof devicePixelRatio !== 'undefined' && devicePixelRatio) || 1));
+    const W = Math.max(size * 2, Math.ceil(w + size * 0.8)), H = Math.ceil(size * 1.9);
+    cv.width = Math.round(W * k); cv.height = Math.round(H * k);
+    if (cv.style) cv.style.width = W + 'px';
+    g.setTransform(k, 0, 0, k, 0, 0);
+    g.fillStyle = PAPER; g.fillRect(0, 0, W, H);
+    g.strokeStyle = 'rgba(120,90,50,0.45)'; g.strokeRect(0.5, 0.5, W - 1, H - 1);
+    let x = (W - w) / 2;
     g.fillStyle = INK; g.textBaseline = 'alphabetic';
     for (const p of groups) {
       g.font = font(size);
@@ -53847,9 +53880,9 @@ RB.ui.deskPage = (function () {
   function preview(page, o) {
     const fig = RB.ui.el('figure', 'dk-prev');
     if (page.typeset && (!page.strokes || page.mode === 'typeset')) fig.innerHTML = typesetHtml(page);
-    else { const cv = document.createElement('canvas'); cv.className = 'dk-pagecv'; draw(cv, page, o); fig.appendChild(cv); }
+    else { const cv = document.createElement('canvas'); cv.className = 'dk-pagecv'; draw(cv, page, o || {}); fig.appendChild(cv); }
     const hand = RB.practiceDesk.handwritten(page);
-    fig.appendChild(RB.ui.el('figcaption', null, '<span class="t">' + esc(page.label || 'Practice page') + '</span><span class="k">' + esc(page.kind === 'proof' ? 'Proofreading page' : hand ? 'Your handwriting' : 'Typeset — not handwriting') + '</span>' + (page.saved === false ? '<span class="uns">Not saved</span>' : '')));
+    fig.appendChild(RB.ui.el('figcaption', null, '<span class="t">' + esc(page.label || 'Practice page') + '</span>' + (o && o.noKind ? '' : '<span class="k">' + esc(page.kind === 'proof' ? 'Proofreading page' : hand ? 'Your handwriting' : 'Typeset — not handwriting') + '</span>') + (page.saved === false ? '<span class="uns">Not saved</span>' : '')));
     return fig;
   }
   return { draw, drawType, typesetHtml, preview };
@@ -53865,7 +53898,9 @@ RB.ui.desk = (function () {
   const BOX = 300;
   const isKanji = (c) => !!c && RB.kana.isKanji(c);
   let open = null;
+  let curStep = null; // the prompt's step on screen (browser tests)
   const MODE_ICON = { trace: 'practice', copy: 'copy', prompt: 'note', typeset: 'book' };
+  const TAB = { trace: 'Trace', copy: 'Copy', prompt: 'From a prompt', typeset: 'Typeset' };
   const MODE_HELP = {
     trace: 'Numbered reference strokes sit under your pen, one square per character. This is guided practice of the movements; it never counts as remembering the word.',
     copy: 'The model stays in its own square beside yours. This is copying practice; it never counts as remembering the word.',
@@ -53908,18 +53943,21 @@ RB.ui.desk = (function () {
         const cardBtn = (c) => {
           const fresh = !c.introduced;
           const face = mode === 'prompt' ? '<span class="dk-c-en big">' + esc(c.en) + '</span>' : '<span class="dk-c-jp">' + J(c.mark) + '</span><span class="dk-c-en">' + esc(c.en) + '</span>';
-          return '<button type="button" class="dk-card' + (fresh ? ' fresh' : '') + '" data-card="' + esc(c.id) + '">' + face + (fresh ? '<span class="dk-tag">new: its card comes first</span>' : '') + '</button>';
+          return '<button type="button" class="dk-card' + (fresh ? ' fresh' : '') + '" data-card="' + esc(c.id) + '">' + face + (fresh ? '<span class="dk-tag">' + (mode === 'prompt' ? 'new: its card comes first' : 'new to you') + '</span>' : '') + '</button>';
         };
-        ui.leaf.innerHTML = '<div class="dk-tabs"></div>' +
-          '<div class="dk-modehelp" id="dk-modehelp"><p class="dk-mh-t">' + J(tx.modes[mode].jp) + ' <span class="en">' + esc(tx.modes[mode].en) + '</span></p><p>' + esc(MODE_HELP[mode]) + '</p>' +
+        ui.leaf.innerHTML = '<div class="dk-modehelp" id="dk-modehelp"><p class="dk-mh-t">' + J(tx.modes[mode].jp) + ' <span class="en">' + esc(tx.modes[mode].en) + '</span></p><p>' + esc(MODE_HELP[mode]) + '</p>' +
             (mode === 'trace' || mode === 'copy' ? '<p class="muted small">' + esc(DRAW_NOTE) + '</p>' : '') + '</div>' +
           '<h3 class="dk-h">' + (mode === 'prompt' ? 'Choose a meaning' : 'Choose a word') + '</h3>' +
           '<div class="dk-cards" role="group" aria-label="Words">' + cards.map(cardBtn).join('') + '</div>' +
           (notes.length ? '<h3 class="dk-h">' + J(tx.notebook.jp) + ' <span class="en">' + esc(tx.notebook.en) + '</span></h3><div class="dk-cards" role="group" aria-label="Words from your notebook">' + notes.map(cardBtn).join('') + '</div>' : '') +
           '<p class="muted small dk-keptline">' + esc('Kept pages: ' + kept + ' of ' + D().MAX_PAGES + '.') + (kept ? ' See Journey › Practice mementos.' : '') + '</p>';
-        const tabs = RB.ui.folio.tabs(ui.leaf.querySelector('.dk-tabs'), D().MODES.map((m) => ({ id: m, en: tx.modes[m].en, jp: tx.modes[m].jp, icon: MODE_ICON[m] })), mode, (id) => { st.mode = id; D().remember(s, { mode: id }); render(); ui.focus('.dk-tabs .ptab[data-id="' + id + '"]'); }, { label: 'How to practise', panelId: 'dk-modehelp' });
+        // the modes are the sheet's own paper tabs (on the cloth above the page, outside the
+        // page's scroll guard), with short names; the full name heads the page below
+        const slot = ui.fr.tabslot;
+        slot.classList.add('dk-tabs');
+        const tabs = RB.ui.folio.tabs(slot, D().MODES.map((m) => ({ id: m, en: TAB[m], jp: tx.modes[m].jp, icon: MODE_ICON[m] })), mode, (id) => { st.mode = id; D().remember(s, { mode: id }); render(); ui.focus('.dk-tabs .ptab[data-id="' + id + '"]'); }, { label: 'How to practise', panelId: 'dk-modehelp' });
         tabs.el.classList.add('dk-tabrail');
-        ui.teardown(() => tabs.destroy());
+        ui.teardown(() => { tabs.destroy(); slot.innerHTML = ''; slot.classList.remove('dk-tabs'); });
         ui.foot.innerHTML = '<button class="cbtn" data-dk="leave">' + I('back') + '<span>Leave the desk</span></button>';
       }
       ui.leaf.onclick = (e) => {
@@ -53940,8 +53978,8 @@ RB.ui.desk = (function () {
   function surface(host, o) {
     const el = RB.ui.el('div', 'dk-work' + (o.mode === 'copy' ? ' copy' : ''));
     el.innerHTML =
-      '<div class="dk-sqcol"><div class="dk-sq"><canvas class="dk-bg" aria-hidden="true"></canvas><canvas class="dk-ink" role="img" aria-label="' + esc('Writing square: ' + (o.mode === 'trace' ? 'trace ' : 'write ') + o.ch + ' with the mouse, a finger or a pen') + '"></canvas></div></div>' +
-      (o.mode === 'copy' ? '<figure class="dk-model"><canvas width="300" height="300" role="img" aria-label="' + esc('The model for ' + o.ch + ', ' + RB.recog.strokeCount(o.ch) + ' numbered strokes') + '"></canvas><figcaption><span class="muted small">The model (numbered strokes, KanjiVG)</span><button type="button" class="pbtn quiet" data-dk="order">' + I('look') + '<span>Show the order</span></button></figcaption></figure>' : '');
+      (o.mode === 'copy' ? '<figure class="dk-model"><canvas width="300" height="300" role="img" aria-label="' + esc('The model for ' + o.ch + ', ' + RB.recog.strokeCount(o.ch) + ' numbered strokes') + '"></canvas><figcaption><span class="muted small">The model</span><button type="button" class="pbtn quiet" data-dk="order">' + I('look') + '<span>Show the order</span></button></figcaption></figure>' : '') +
+      '<div class="dk-sqcol"><div class="dk-sq"><canvas class="dk-bg" aria-hidden="true"></canvas><canvas class="dk-ink" role="img" aria-label="' + esc('Writing square: ' + (o.mode === 'trace' ? 'trace ' : 'write ') + o.ch + ' with the mouse, a finger or a pen') + '"></canvas></div></div>';
     host.appendChild(el);
     const bg = el.querySelector('.dk-bg'), ink = el.querySelector('.dk-ink'), box = el.querySelector('.dk-sq');
     const P = { strokes: [], cur: null, pid: null, dead: false };
@@ -53959,8 +53997,16 @@ RB.ui.desk = (function () {
       c.lineCap = 'round'; c.lineJoin = 'round'; c.strokeStyle = col; c.lineWidth = Math.max(3, w / 24);
       ref.strokes.forEach((st) => { c.beginPath(); st.forEach((p, j) => (j ? c.lineTo(p.x * sc, p.y * sc) : c.moveTo(p.x * sc, p.y * sc))); c.stroke(); });
       if (nums) {
-        c.fillStyle = C.num; c.font = '600 ' + Math.round(w / 14) + 'px sans-serif';
-        ref.strokes.forEach((st, i) => c.fillText(String(i + 1), st[0].x * sc + 4, st[0].y * sc - 4));
+        const fs = Math.round(w / 14);
+        c.fillStyle = C.num; c.font = '600 ' + fs + 'px sans-serif';
+        const placed = [];
+        ref.strokes.forEach((st, i) => {
+          let x = st[0].x * sc + 4, y = st[0].y * sc - 4;
+          // numbers that would sit on top of each other (strokes starting at one point) move apart
+          while (placed.some((q) => Math.abs(q[0] - x) < fs * 0.9 && Math.abs(q[1] - y) < fs * 0.9)) x += fs * 0.8;
+          placed.push([x, y]);
+          c.fillText(String(i + 1), x, y);
+        });
       }
     }
     function layout() {
@@ -54085,6 +54131,15 @@ RB.ui.desk = (function () {
     return { kind, read, notes, status: r.status, top: cands[0] || null, orderConfident: !!(so && so.confident), issues: so && so.confident ? so.issues.map((x) => x.kind) : [] };
   }
 
+  // {漢字|かんじ} markup as plain <ruby> (no spans: for places styled per span, like radio labels)
+  function rubyPlain(t) {
+    return String(t || '').split(/(\{[^|}]+\|[^}]+\})/).map((part, i) => {
+      if (!(i % 2)) return esc(part.replace(/ /g, ''));
+      const m = /^\{([^|}]+)\|([^}]+)\}$/.exec(part);
+      return '<ruby lang="ja">' + esc(m[1]) + '<rt>' + esc(m[2]) + '</rt></ruby>';
+    }).join('');
+  }
+
   // ---- 2a · Trace / Copy -------------------------------------------------------------------
   function writeByHand(ui, s, card, mode, st) {
     return new Promise((resolve) => {
@@ -54096,23 +54151,24 @@ RB.ui.desk = (function () {
       function header() {
         return '<div class="dk-word"><span class="dk-w-jp">' + J(card.mark) + '</span><span class="dk-w-en">' + esc(card.m || card.en) + '</span>' +
           '<span class="dk-mode">' + J(tx.modes[mode].jp) + ' <span class="en">' + esc(tx.modes[mode].en) + '</span></span></div>' +
-          (forms.length > 1 ? '<fieldset class="field dk-forms"><legend>Write it</legend><div class="opts">' + forms.map((f) => '<label class="opt"><input type="radio" name="dk-form" value="' + f.id + '"' + (f.id === form.id ? ' checked' : '') + '><span><span lang="ja" class="jt-plain">' + esc(f.text) + '</span>&nbsp;' + esc(f.id === 'kanji' ? '(as usually written)' : '(in kana)') + '</span></label>').join('') + '</div></fieldset>' : '');
+          (forms.length > 1 ? '<fieldset class="field dk-forms"><legend>Write it</legend><div class="opts">' + forms.map((f) => '<label class="opt"><input type="radio" name="dk-form" value="' + f.id + '"' + (f.id === form.id ? ' checked' : '') + '><span>' + rubyPlain(f.id === 'kanji' ? card.mark : f.text) + '&nbsp;' + esc(f.id === 'kanji' ? '(as usually written)' : '(in kana)') + '</span></label>').join('') + '</div></fieldset>' : '');
       }
       function render() {
         ui.teardown(null);
-        ui.meta(tx.modes[mode].en + ' · character ' + (idx + 1) + ' of ' + chars.length);
+        ui.meta(TAB[mode] + ' · ' + (idx + 1) + ' of ' + chars.length);
         const strip = '<ol class="dk-strip" aria-label="Characters">' + chars.map((c, i) => '<li class="' + (i === idx ? 'cur' : done[i] ? 'done' : '') + '"' + (i === idx ? ' aria-current="true"' : '') + '><span lang="ja">' + RB.kanjiChart.glyph(c) + '</span>' + (done[i] ? '<span class="sr"> (written)</span>' : '') + '</li>').join('') + '</ol>';
-        ui.leaf.innerHTML = header() + strip + '<div class="dk-surf"></div>' +
-          '<div class="dk-tools" role="group" aria-label="Writing tools">' +
+        ui.leaf.innerHTML = header() + strip + '<div class="dk-writerow"><div class="dk-surf"></div>' +
+          '<div class="dk-side"><div class="dk-tools" role="group" aria-label="Writing tools">' +
             '<button type="button" class="pbtn" data-dk="undo">' + I('undo') + '<span>Undo stroke</span></button>' +
             '<button type="button" class="pbtn" data-dk="clear">' + I('erase') + '<span>Clear</span></button>' +
             (idx > 0 ? '<button type="button" class="pbtn" data-dk="prev">' + I('back') + '<span>Previous character</span></button>' : '') +
             '<button type="button" class="pbtn primary" data-dk="donech" disabled>' + I('done') + '<span>' + (idx < chars.length - 1 ? 'Done with this character' : 'Done — see the page') + '</span></button>' +
           '</div>' +
-          '<div class="dk-obs" aria-live="polite">' + (obs[idx - 1] && idx > 0 ? obsHtml(chars[idx - 1], obs[idx - 1]) : '<p class="muted small">' + esc(mode === 'trace' ? 'Follow the numbered strokes, in order, then press Done.' : 'Write it in your square, looking at the model beside it, then press Done.') + '</p>') + '</div>';
+          '<div class="dk-obs" aria-live="polite">' + (obs[idx - 1] && idx > 0 ? obsHtml(chars[idx - 1], obs[idx - 1]) : '<p class="muted small">' + esc(mode === 'trace' ? 'Follow the numbered strokes, in order, then press Done.' : 'Write it in your square, looking at the model beside it, then press Done.') + '</p>') + '</div></div></div>';
         surf = surface(ui.leaf.querySelector('.dk-surf'), { ch: chars[idx], mode, onChange: (n) => { const b = ui.leaf.querySelector('[data-dk=donech]'); if (b) b.disabled = !n; } });
         if (done[idx]) surf.set(done[idx]);
         ui.teardown(() => surf && surf.destroy());
+        if (!ui.fr.el.contains(document.activeElement) || document.activeElement === document.body) ui.focus(forms.length > 1 ? 'input[name=dk-form]:checked' : '[data-dk=undo]');
         ui.foot.innerHTML = '<button class="cbtn" data-dk="back">' + I('back') + '<span>Back to the words</span></button>';
       }
       function obsHtml(ch, o) {
@@ -54224,12 +54280,14 @@ RB.ui.desk = (function () {
           '<div class="dk-pagebox"></div>' +
           '<p class="dk-pagekind">' + (hand ? J(TX().yours.jp) + ' <span class="en">' + esc(TX().yours.en + ' · ' + ({ trace: 'traced over the numbered strokes', copy: 'copied beside the model', prompt: 'written from a prompt' }[mode])) + '</span>' : J(TX().typeset.jp) + ' <span class="en">Typeset — not handwriting</span>') + '</p>' +
           (kept && kept.ok ? '' : '<div class="field"><label class="lab" for="dk-label">Label for this page</label><input id="dk-label" type="text" maxlength="' + D().MAX_LABEL + '" autocomplete="off" value="' + esc(label) + '"><div class="hint">Up to ' + D().MAX_LABEL + ' characters. ' + esc(D().pages(s).length + ' of ' + D().MAX_PAGES + ' pages kept.') + '</div></div>') +
-          '<p class="dk-status" aria-live="polite">' + status + '</p>';
+          '<p class="dk-status" aria-live="polite">' + status + '</p>' +
+          // the secondary ways on, on the page (the cloth foot keeps only the main action)
+          '<div class="row-acts dk-next"><button type="button" class="pbtn" data-dk="words">' + I('back') + '<span>Another word</span></button>' +
+          '<button type="button" class="pbtn" data-dk="again">' + I('undo') + '<span>' + (mode === 'typeset' ? 'Change the layout' : 'Write it again') + '</span></button></div>';
         const box = ui.leaf.querySelector('.dk-pagebox');
-        if (page) box.appendChild(RB.ui.deskPage.preview(Object.assign({}, page, { saved: kept ? !!(kept.ok && kept.saved) : undefined })));
+        if (page) box.appendChild(RB.ui.deskPage.preview(Object.assign({}, page, { saved: kept ? !!(kept.ok && kept.saved) : undefined }), { noKind: true, cell: 120 }));
         const canKeep = page && !(kept && kept.ok);
-        ui.foot.innerHTML = '<button class="cbtn" data-dk="words">' + I('back') + '<span>Another word</span></button>' +
-          '<button class="cbtn" data-dk="again">' + I('undo') + '<span>' + (mode === 'typeset' ? 'Change the layout' : 'Write it again') + '</span></button><span class="spacer"></span>' +
+        ui.foot.innerHTML = '<span class="spacer"></span>' +
           (canKeep ? '<button class="cbtn go" data-dk="keep">' + I('save') + '<span>' + (kept && !kept.ok && kept.error === 'storage' ? 'Try keeping it again' : 'Keep this page') + '</span></button>' : '<button class="cbtn go" data-dk="leave">' + I('done') + '<span>Leave the desk</span></button>');
         const inp = ui.leaf.querySelector('#dk-label');
         if (inp) {
@@ -54251,8 +54309,7 @@ RB.ui.desk = (function () {
         ui.focus(kept && kept.ok ? '[data-dk=leave]' : '[data-dk=keep]');
       }
       ui.leaf.onchange = null;
-      ui.leaf.onclick = null;
-      ui.foot.onclick = (e) => {
+      ui.leaf.onclick = ui.foot.onclick = (e) => {
         const b = e.target.closest('[data-dk]');
         if (!b || b.disabled) return;
         const a = b.dataset.dk;
@@ -54290,7 +54347,7 @@ RB.ui.desk = (function () {
       pages.forEach((p) => {
         const li = RB.ui.el('li', 'dk-repitem');
         li.appendChild(RB.ui.deskPage.preview(p, { cell: 56 }));
-        const b = RB.ui.el('button', 'pbtn', I('trash') + '<span>Replace this page</span>');
+        const b = RB.ui.el('button', 'pbtn', I('trash') + '<span>Replace it</span>');
         b.type = 'button';
         b.dataset.rep = p.id;
         b.setAttribute('aria-label', 'Replace “' + (p.label || 'Practice page') + '” with the new page');
@@ -54340,7 +54397,7 @@ RB.ui.desk = (function () {
           D().record(s, ob, objId, card, mode, null);
           shown.add(card.id);
           tasks++;
-          info = '<p class="dk-done">' + esc('Written: ' + made.word + '. ' + (mode === 'trace' ? 'Traced over the model: practice of the movements.' : 'Copied beside the model: copying practice.')) + '</p>';
+          info = '<p class="dk-done">' + esc('Written: ' + made.word + '. ' + (mode === 'trace' ? 'Traced over the model: practice of the movements.' : 'Copied beside the model: copying practice.')) + '</p>' + obsList(made);
         } else if (mode === 'typeset') {
           made = await typeset(ui, s, card, st);
           if (!session.alive()) break;
@@ -54359,8 +54416,12 @@ RB.ui.desk = (function () {
             taught = true;
           }
           const step = promptStep(card);
+          curStep = step;
+          ui.teardown(null);
+          ui.foot.innerHTML = '';
           ui.leaf.innerHTML = '<p class="muted">Writing from a prompt…</p>';
-          const res = await RB.challenge.runStep(step, { noRecord: true, keepInk: true, mode: 'hand', ctxTag: 'copying', cancelLabel: 'Back to the desk' });
+          const res = await RB.challenge.runStep(step, { noRecord: true, keepInk: true, mode: 'hand', ctxTag: 'copying', cancelLabel: 'Back' });
+          curStep = null;
           if (!session.alive()) break;
           if (!res || res.cancelled) { pick = null; continue; }
           const rec = D().record(s, ob, objId, card, 'prompt', res, { exposed: taught || shown.has(card.id), step });
@@ -54389,14 +54450,22 @@ RB.ui.desk = (function () {
     }
     return { tasks };
   }
+  // what the pad read for each character, and the stroke-order notes that were certain
+  function obsList(made) {
+    if (!made || !made.obs || !made.obs.length) return '';
+    return '<details class="dk-obslist" open><summary>What the pad noticed</summary><ul class="dk-obsul">' + made.obs.map((o, i) => {
+      const ch = made.ink[i] ? made.ink[i].ch : '';
+      return '<li><span class="dk-obch" lang="ja">' + RB.kanjiChart.glyph(ch) + '</span><div class="dk-ob ' + o.kind + '">' + o.read + (o.notes.length ? '<ul class="dk-notes">' + o.notes.map((x) => '<li>' + x + '</li>').join('') + '</ul>' : '') + '</div></li>';
+    }).join('') + '</ul><p class="muted small">Reading and stroke order are noticed, never graded; nothing here judges how the writing looks.</p></details>';
+  }
   function notice(ui, html) {
     return new Promise((resolve) => {
       ui.teardown(null);
       ui.meta('Write from a prompt');
-      ui.leaf.innerHTML = html;
-      ui.foot.innerHTML = '<button class="cbtn" data-dk="words">' + I('back') + '<span>Another word</span></button><button class="cbtn" data-dk="again">' + I('undo') + '<span>Write it again</span></button><span class="spacer"></span><button class="cbtn go" data-dk="leave">' + I('done') + '<span>Leave the desk</span></button>';
-      ui.foot.onclick = (e) => { const b = e.target.closest('[data-dk]'); if (b) resolve(b.dataset.dk); };
-      ui.leaf.onclick = null; ui.leaf.onchange = null;
+      ui.leaf.innerHTML = html + '<div class="row-acts dk-next"><button type="button" class="pbtn" data-dk="words">' + I('back') + '<span>Another word</span></button><button type="button" class="pbtn" data-dk="again">' + I('undo') + '<span>Write it again</span></button></div>';
+      ui.foot.innerHTML = '<span class="spacer"></span><button class="cbtn go" data-dk="leave">' + I('done') + '<span>Leave the desk</span></button>';
+      ui.leaf.onclick = ui.foot.onclick = (e) => { const b = e.target.closest('[data-dk]'); if (b) resolve(b.dataset.dk); };
+      ui.leaf.onchange = null;
       ui.cancel(() => resolve('words'));
       ui.focus('[data-dk=words]');
     });
@@ -54438,7 +54507,7 @@ RB.ui.desk = (function () {
     begin: (ctx) => RB.practiceA.launch('copying', Object.assign({ source: 'words' }, ctx || {})),
   });
 
-  return { run, choose, surface, observe, promptStep, chooser, eligible, _open: () => open };
+  return { run, choose, surface, observe, promptStep, chooser, eligible, _open: () => open, _step: () => curStep };
 })();
 
 

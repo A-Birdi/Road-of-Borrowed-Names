@@ -30,6 +30,7 @@ const suites = [
   full ? ['long_quests.mjs', '--all-companions'] : ['long_quests.mjs', '--fixtures-only'],
   // the two deduction cases, the refined sequences and their keepsakes, Known Details (addendum §14.8–§18)
   ['cases.mjs'], ['cases_shots.mjs'], ['known.mjs'],
+  ['practice_a_lamps.mjs'], ['practice_a_desk.mjs'], ['practice_a_layout.mjs'], // Practice suite A: lamps, writing desk, mementos (addendum §15, §16)
   full ? ['matrix.mjs'] : ['pursue.mjs', 'E', 'mio'],
 ];
 const results = [];
