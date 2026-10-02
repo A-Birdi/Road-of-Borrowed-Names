@@ -708,7 +708,7 @@ await test('three consecutive encounters leave no timers, input hooks, strips, l
 });
 
 // ---------------------------------------------------------------------------------------------------
-await test('learning stays central: calm stances while choosing and writing, nothing drawn over the cards or the task, no focus taken', async () => {
+await test('learning stays central: ready while choosing (and choosing support), calm while writing; nothing drawn over the cards or the task, no focus taken', async () => {
   for (const vp of [DESK, { viewport: { width: 390, height: 844 }, touch: true, mobile: true, dpr: 2 }]) {
     const { p, errors, ctx } = await page(b, url, vp);
     await helpers(p);
@@ -716,7 +716,8 @@ await test('learning stays central: calm stances while choosing and writing, not
     await p.evaluate(() => BA.sampleOn());
     await wait(p, 500);
     let S = await samples(p);
-    assert(S.every((s) => s.phase === 'choose' && s.poses.pc === 'calm' && s.poses.comp === 'calm' && !(s.effects || []).length && !s.strip && !s.fxLayerKids), vp.viewport.width + ': calm stances, no effects and no strip while choosing');
+    const ready = (x) => x === 'ready' || /^guard/.test(x || '');
+    assert(S.every((s) => s.phase === 'choose' && ready(s.poses.pc) && ready(s.poses.comp) && !(s.effects || []).length && !s.strip && !s.fxLayerKids), vp.viewport.width + ': ready stances, no effects and no strip while choosing ' + JSON.stringify(S[0] && S[0].poses));
     const hit = await p.evaluate(() => { const c = document.querySelector('.rcard[data-i="0"]').getBoundingClientRect(); const e = document.elementFromPoint(c.left + c.width / 2, c.top + c.height / 2); return !!(e && e.closest('.rcard')); });
     assert(hit, 'the first card is on top at its centre');
     const c = await cardAt(p, 'unravel');
@@ -732,12 +733,12 @@ await test('learning stays central: calm stances while choosing and writing, not
     // (the pointer is moved off the option first: resting on its word, the word's hover help can open over Continue)
     await p.mouse.move(2, 2);
     await p.waitForSelector('.fbwrap[data-fb=ok] .fb-go'); await p.click('.fbwrap[data-fb=ok] .fb-go');
-    // your companion's turn: still calm, nothing drawn over the menu, no focus taken from it
+    // your companion's turn: ready again, nothing drawn over the menu, no focus taken from it
     await p.waitForSelector('.ccard');
     await p.evaluate(() => BA.sampleOn());
     await wait(p, 300);
     S = await samples(p);
-    assert(S.every((s) => s.phase === 'companion' && s.poses.pc === 'calm' && s.poses.comp === 'calm' && !(s.effects || []).length && !s.strip), 'calm while your companion chooses; nothing drawn');
+    assert(S.every((s) => s.phase === 'companion' && ready(s.poses.pc) && ready(s.poses.comp) && !(s.effects || []).length && !s.strip), 'ready while your companion chooses; nothing drawn');
     const cf = await p.evaluate(() => { const a = document.activeElement; return a && a.closest('.cb-dock') ? 'dock' : a && a.tagName; });
     assert(cf === 'dock' || cf === 'BODY', 'focus stays with the companion\'s menu: ' + cf);
     await companionTurn(p);

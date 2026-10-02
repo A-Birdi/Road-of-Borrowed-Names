@@ -67,6 +67,12 @@ async function battle(p, o) {
   }, o);
   await toCards(p);
 }
+// the battle as walking into it starts it, its opening lines left open (battle() then toCards() advances them)
+async function battleOpen(p, o) {
+  const save = toCards;
+  toCards = async () => {};
+  try { await battle(p, o); } finally { toCards = save; }
+}
 async function toCards(p) {
   for (let i = 0; i < 600; i++) {
     const s = await p.evaluate(() => ({ r: window.__result, dlg: RB.ui.dialogue.isOpen(), cards: !!document.querySelector('.rcard[data-i]') && !document.querySelector('.chal') && !RB.battleSeq.busy() }));
@@ -482,6 +488,35 @@ await test('menus: withdrawn (Adaptive) or disabled (Keep visible) controls cann
       await ctx.close();
     }
   }
+});
+
+await test('one cadence: the scene\'s clock runs at the same rate during the opening lines, while choosing and while choosing support; the party stands ready while choosing', async () => {
+  const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  await battleOpen(p, { comp: 'mio' });
+  await p.waitForFunction(() => RB.ui.dialogue.isOpen() && RB.game.mode() === 'combat', null, { timeout: 10000 });
+  // the scene's ambient clock against the page's clock, over a second
+  const rate = () => p.evaluate(async () => {
+    const a0 = RB.combat.debug().ambient, t0 = performance.now();
+    await new Promise((r) => setTimeout(r, 1000));
+    return (RB.combat.debug().ambient - a0) / (performance.now() - t0);
+  });
+  const intro = await rate();
+  await toCards(p);
+  const choose = await rate();
+  const poses = await p.evaluate(() => { const f = RB.battleStage.stats().frame; return f ? f.poses : null; });
+  await hookSteps(p);
+  await pick(p, 'unravel');
+  await answerRight(p);
+  await p.waitForSelector('.ccard', { timeout: 8000 });
+  await p.mouse.move(2, 2);
+  const support = await rate();
+  const r = { intro: +intro.toFixed(3), choose: +choose.toFixed(3), support: +support.toFixed(3), poses };
+  assert(r.intro > 0.85 && r.choose > 0.85 && r.support > 0.85, 'the clock runs at full rate in every phase ' + JSON.stringify(r));
+  assert(Math.abs(r.choose - r.intro) < 0.12 && Math.abs(r.support - r.intro) < 0.12, 'the same rate as during the opening lines ' + JSON.stringify(r));
+  assert(poses && /^(ready|guard)/.test(poses.pc || '') && /^(ready|guard)/.test(poses.comp || ''), 'you and Mio stand ready while choosing ' + JSON.stringify(poses));
+  console.log('   ' + JSON.stringify(r));
+  assert(!errors.length, errors.join('; '));
+  await ctx.close();
 });
 
 await test('large text on a phone: the banner stays in view when the overlay has scrolled and uses the screen\'s width; the actors\' stage keeps its place through the exchange', async () => {

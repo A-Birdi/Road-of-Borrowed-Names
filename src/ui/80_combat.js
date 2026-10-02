@@ -62,18 +62,18 @@ RB.combat = (function () {
     const x = Math.max(0, stageCss.x / k), y = Math.max(0, stageCss.y / k);
     return { x, y, w: Math.min(w - x, stageCss.w / k), h: Math.min(h - y, stageCss.h / k) };
   }
-  // While you read, choose and write, the scene stays alive but calm: the
-  // adventurers take their calm stance and the ambient clock (the backdrop's
-  // drifting motes, the creature's idle) runs at half speed. Strong motion
-  // belongs to the committed beats.
-  const calmNow = () => phase === 'choose' || phase === 'challenge' || phase === 'companion';
-  const amb = { v: null, last: null, rate: 1 };
+  // The scene keeps one cadence (battle addendum §9.4): the ambient clock (the backdrop's drifting
+  // motes, the creatures' idle, their lingering effects) runs at its authored rate in every phase,
+  // so nothing slows when the opening lines close and the decision begins. While you choose a
+  // response or your companion's support the party stands ready; only while the language task is
+  // open (reading, writing) do the adventurers take their quieter calm stance.
+  const calmNow = () => phase === 'challenge';
+  const amb = { v: null, last: null };
   function ambient(t) {
     if (amb.v == null) { amb.v = t; amb.last = t; }
-    const dt = Math.max(0, Math.min(100, t - amb.last));
+    // a continuous clock: a long gap (a hidden tab) does not jump the idle forward
+    amb.v += Math.max(0, Math.min(100, t - amb.last));
     amb.last = t;
-    amb.rate += ((calmNow() ? 0.5 : 1) - amb.rate) * Math.min(1, dt / 400);
-    amb.v += dt * amb.rate;
     return amb.v;
   }
   // frame cost (ms spent drawing the battle), for tests and tuning
@@ -1421,7 +1421,7 @@ RB.combat = (function () {
   // debug(): sequencer and stage counters, the sequence trace and frame cost (tests, tuning)
   function debug() {
     return {
-      phase, seq: RB.battleSeq.stats(), stage: RB.battleStage.stats(), trace: RB.battleSeq.trace(), pressesIgnored: ui && ui.press ? ui.press.ignored || 0 : 0,
+      phase, seq: RB.battleSeq.stats(), stage: RB.battleStage.stats(), trace: RB.battleSeq.trace(), pressesIgnored: ui && ui.press ? ui.press.ignored || 0 : 0, ambient: amb.v,
       frames: { n: cost.n, avg: cost.n ? +(cost.sum / cost.n).toFixed(3) : 0, max: +cost.max.toFixed(3), seqN: cost.seqN, seqAvg: cost.seqN ? +(cost.seqSum / cost.seqN).toFixed(3) : 0, seqMax: +cost.seqMax.toFixed(3) },
     };
   }
