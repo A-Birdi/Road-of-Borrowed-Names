@@ -141,6 +141,10 @@ async function cardAt(p, match) {
 // with the mouse, then confirm and submit). Continue is clicked with the mouse.
 async function respond(p, match, how, o) {
   how = how || 'choice'; o = o || {};
+  // the pointer is moved off first: resting on a word where the last exchange left it, that word's
+  // hover help can open over the card about to be pressed
+  await p.mouse.move(2, 2);
+  await p.waitForTimeout(350);
   const c = await cardAt(p, match);
   await p.mouse.click(c.x, c.y);
   await p.waitForSelector('.chal');

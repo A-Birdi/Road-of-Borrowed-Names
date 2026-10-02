@@ -241,7 +241,8 @@ const helpers = (p) => p.evaluate(() => {
     const mirrorOk = mism < 40 && Math.abs((pR.hand.x - 100) + (pL.hand.x - 100)) < 1.5 && pL.feet.x === 100;
     return { FRAME: B.FRAME, ANCHOR: B.ANCHOR, POSES: B.POSES, GESTURES: B.GESTURES, pts, ptsOk: ['hand', 'head', 'chest', 'feet'].every((k) => num(pts[k])), pv: [pv.width, pv.height], feet: pts.feet, mirrorOk, mism };
   });
-  ok(api.POSES.join() === 'ready,calm,anticipate,act,recover,hit,brace,down,cheer' && api.GESTURES.join() === 'direct,trace,book,ward,restore,flow,raise', 'RB.battlers.POSES and GESTURES are the agreed lists');
+  // (the party art addendum extends both lists: guard, soothed, afflict; each actor's own gestures)
+  ok(['ready', 'calm', 'anticipate', 'act', 'recover', 'hit', 'brace', 'down', 'cheer'].every((x) => api.POSES.includes(x)) && ['direct', 'trace', 'book', 'ward', 'restore', 'flow', 'raise'].every((x) => api.GESTURES.includes(x)), 'RB.battlers.POSES and GESTURES include the agreed lists (' + api.POSES.length + ' poses, ' + api.GESTURES.length + ' gestures)');
   ok(api.ptsOk && api.feet.x === 100 && api.feet.y === 180 && api.pts.head.y < api.pts.chest.y && api.pts.chest.y < api.pts.feet.y, 'draw() returns hand, head, chest and feet in canvas px (feet at the anchor, head above chest above feet) ' + JSON.stringify(api.pts));
   ok(api.pv[0] === api.FRAME.w && api.pv[1] === api.FRAME.h, `preview() gives one ${api.FRAME.w}×${api.FRAME.h} frame; anchor (${api.ANCHOR.x}, ${api.ANCHOR.y})`);
   ok(api.mirrorOk, `facing 'upleft' draws the mirror image on the same anchor, the hand point mirrored (${api.mism} px differ from an exact mirror)`);

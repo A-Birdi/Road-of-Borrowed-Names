@@ -1,0 +1,88 @@
+/* Party responses in battle: the written word's own look for each response family (battle addendum
+   §8.4). The motion is RB.partyWord (src/ui/84p_party_word.js), which sets the custom properties used
+   here each frame: --fold (a ward's seal closing), --pull (a thread drawn out), --glow (light, warmth),
+   --dissolve (a recovery given), --crisp (ice), --wrap (a binding), --ground (stone settling), --ring (a
+   bell or a voice), --open (an answer's note), --crack (a falsehood splitting). The base strip is the
+   battle section of 60_learning.css; its high-contrast override still wins. */
+.cb-strip[data-motif] { transform-origin: 50% 100%; }
+
+/* Protect: a vermilion seal band at both ends; the English goes as it folds shut */
+.cb-strip[data-motif="seal"] { border-left-color: #b8432e; border-right: 4px solid #b8432e; padding-right: 14px; }
+.cb-strip[data-motif="seal"] .cs-en { opacity: calc(1 - var(--fold, 0)); }
+
+/* Unravel: a loose cord edge; the strip pays out from its left end as the thread is drawn */
+.cb-strip[data-motif="thread"] {
+  border-bottom: 2px dashed var(--paper-edge);
+  clip-path: inset(-12px calc((1 - var(--u, 1)) * 100% - 12px) -24px calc(var(--pull, 0) * 70% - 12px));
+}
+
+/* Light: the ink becomes radiance */
+.cb-strip[data-motif="radiance"] {
+  border-left-color: #e8b850; background: linear-gradient(#fffbe8, var(--paper));
+  box-shadow: 0 0 calc(var(--glow, 0) * 16px) rgba(255, 236, 170, calc(var(--glow, 0) * 0.9)), 0 2px 0 var(--paper-3), 0 3px 0 var(--paper-edge), 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+.cb-strip[data-motif="radiance"] .cs-w { text-shadow: 0 0 calc(var(--glow, 0) * 6px) rgba(255, 214, 110, calc(var(--glow, 0) * 0.85)); }
+
+/* Heal: a soft, rounded slip that dissolves into what it gives */
+.cb-strip[data-motif="gather"] { border-left-color: #6a9a5a; border-radius: 10px; }
+.cb-strip[data-motif="gather"] .cs-en { opacity: calc(1 - var(--dissolve, 0)); }
+
+/* Water: a slip with a rounded, flowing end */
+.cb-strip[data-motif="flow"] { border-left-color: #4a88b8; border-radius: 2px 16px 16px 2px; }
+
+/* Ice: square, crisp, a cold edge */
+.cb-strip[data-motif="crystal"] {
+  border-left-color: #8ab8e0; border-radius: 0; background: linear-gradient(135deg, #f4faff, var(--paper) 62%);
+  box-shadow: inset 0 0 0 1px rgba(110, 160, 210, calc(var(--crisp, 0) * 0.9)), 0 2px 0 var(--paper-3), 0 3px 0 var(--paper-edge), 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* Wind: a slip cut on the bias, carried */
+.cb-strip[data-motif="drift"] { border-left-color: #8aa898; border-radius: 2px 14px 2px 14px; }
+
+/* Bind: cords close over its edges as it wraps */
+.cb-strip[data-motif="wrap"] {
+  border-left-color: #a8844a;
+  box-shadow: inset 0 calc(var(--wrap, 0) * 3px) 0 #a8844a, inset 0 calc(var(--wrap, 0) * -3px) 0 #a8844a, 0 2px 0 var(--paper-3), 0 3px 0 var(--paper-edge), 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* Stone: a heavy slip that sets on the ground */
+.cb-strip[data-motif="settle"] {
+  border-left-color: #7a6e5c; background: linear-gradient(var(--paper), #ddd2b6);
+  box-shadow: 0 calc(1px + var(--ground, 0) * 3px) 0 #6e6454, 0 3px 0 var(--paper-edge), 0 6px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Warmth: warm, glowing edges */
+.cb-strip[data-motif="ember"] {
+  border-left-color: #d8703a;
+  box-shadow: 0 0 calc(var(--glow, 0) * 12px) rgba(240, 140, 70, calc(var(--glow, 0) * 0.6)), 0 2px 0 var(--paper-3), 0 3px 0 #c87a40, 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* Bell and voice: a ring swells round it with each note */
+.cb-strip[data-motif="pulse"] {
+  border-left-color: #c8a040;
+  box-shadow: 0 0 0 calc(var(--ring, 0) * 6px) rgba(255, 244, 200, calc(var(--ring, 0) * 0.55)), 0 2px 0 var(--paper-3), 0 3px 0 var(--paper-edge), 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+.cb-strip[data-motif="voice"] {
+  border-left-color: #c87a5a; border-radius: 2px 12px 12px 2px;
+  box-shadow: 0 0 0 calc(var(--ring, 0) * 5px) rgba(240, 206, 180, calc(var(--ring, 0) * 0.5)), 0 2px 0 var(--paper-3), 0 3px 0 var(--paper-edge), 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* Answer: a folded note (a turned corner) that opens at the creature */
+.cb-strip[data-motif="note"] { border-left-color: #8a7a5a; border-radius: 2px 2px 12px 2px; }
+.cb-strip[data-motif="note"]::before {
+  content: ''; position: absolute; right: -1px; top: -1px; width: 10px; height: 10px;
+  background: linear-gradient(225deg, transparent 50%, var(--paper-3) 50%); opacity: calc(1 - var(--open, 0));
+}
+
+/* See through: a crack runs across it when the falsehood gives way */
+.cb-strip[data-motif="split"] { border-left-color: #6a6a8a; }
+.cb-strip[data-motif="split"]::after {
+  content: ''; position: absolute; left: 47%; top: -3px; bottom: -3px; width: 2px;
+  background: var(--ink); transform: skewX(-18deg); opacity: var(--crack, 0);
+}
+
+/* A coordinated technique: both ribbons, yours and your companion's */
+.cb-strip[data-motif="join"] {
+  border-left-color: var(--ribbon); border-right: 4px solid #c8a040; padding-right: 14px;
+  box-shadow: 0 0 calc(var(--glow, 0) * 10px) rgba(255, 216, 138, calc(var(--glow, 0) * 0.6)), 0 2px 0 var(--paper-3), 0 3px 0 var(--paper-edge), 0 8px 16px rgba(0, 0, 0, 0.3);
+}
