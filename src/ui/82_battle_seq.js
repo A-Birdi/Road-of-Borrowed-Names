@@ -336,6 +336,27 @@ RB.battleSeq = (function () {
     return last < 0 ? 0 : last + 940;
   }
 
+  // ---- creature-specific delivery (battle addendum §9.3, §18) ---------------------------------
+  // addDelivery(art, kind, fn): how one creature performs a move — its own preparation, approach,
+  // contact and recovery. kind: an intent kind ('strike', 'shroud' …), a family ('strike',
+  // 'sweep', 'cast') or '*'. fn(a) → { cues, contact, end } with times in ms from the move's start:
+  //   a = { kind, fam, me, aimed, dir, fv, comp, countered, wardBlock, ctx, T, foeCue(o) }
+  //   cues: 'foe' (act, d, dir, family, travel, hold), 'fx', 'pose', 'sfx' only — never 'beat':
+  //         the rules' results are placed here, at `contact`, in their order (dropped otherwise)
+  //   contact: when the move arrives (the first result shows then); end: when its own
+  //         performance (recovery included) is over — the action's interval for the banner
+  // Without a delivery the generic choreography below plays.
+  const DELIVERY = {};
+  function addDelivery(art, kind, fn) { (DELIVERY[art] = DELIVERY[art] || {})[kind] = fn; }
+  function deliveryOf(art, kind, fam) { const d = art && DELIVERY[art]; return d ? d[kind] || d[fam] || d['*'] || null : null; }
+  const VISUAL = { foe: 1, fx: 1, pose: 1, sfx: 1 };
+  function delivered(fn, a) {
+    let r = null;
+    try { r = fn(a); } catch (e) { console.error('battle delivery', e); r = null; }
+    if (!r || !Array.isArray(r.cues) || !(r.contact >= 0)) return null;
+    return { cues: r.cues.filter((c) => c && VISUAL[c.type] && c.at >= 0), contact: r.contact, end: Math.max(r.end || 0, r.contact + 200) };
+  }
+
   const choreo = {
     // Your response (or your coordinated technique), once accepted and applied by the rules.
     player(card, fx, ctx) {
@@ -452,17 +473,49 @@ RB.battleSeq = (function () {
         Q.push({ at: t + 200, type: 'beat', f: { t: 'rest', foe: me } });
         t += 700;
       } else if (countered) {
-        foeCue({ at: t, act: 'prep', d: T.foePrep, dir, family: fam });
-        if (ctx.wardBlock && single) {
-          // the blow is thrown and meets the seal raised in front of its target
-          foeCue({ at: t + T.foePrep, act: 'exec', d: 320, dir, family: fam });
-          Q.push({ at: t + T.foePrep + 10, type: 'fx', name: 'dart', d: 200, p: { to: aimed, foe: me } });
-          Q.push({ at: t + T.foePrep + 200, type: 'fx', name: 'sealBlock', d: 420, p: { to: aimed, n: 0 } });
-          Q.push({ at: t + T.foePrep + 200, type: 'pose', who: aimed, pose: 'brace', d: 320 });
-        } else foeCue({ at: t + T.foePrep, act: 'balk', d: 380 });
-        for (const f of fx.filter((x) => x.t === 'countered')) { reactions(Q, f, t + T.foePrep + 200, ctx, 'enemy'); Q.push({ at: t + T.foePrep + 200, type: 'beat', f }); }
-        spent(Q, t + T.foePrep + 260);
-        t += T.foePrep + 520;
+        if (!(ctx.wardBlock && single && deliveryOf(ctx.art, kind, fam))) foeCue({ at: t, act: 'prep', d: T.foePrep, dir, family: fam });
+        const D = ctx.wardBlock && single ? deliveryOf(ctx.art, kind, fam) : null;
+        const dv = D ? delivered(D, { kind, fam, me, aimed, dir, fv, comp, countered: true, wardBlock: true, ctx, T, foeCue: (o) => Object.assign({ type: 'foe', foe: me }, o) }) : null;
+        if (dv) {
+          // its own approach, stopped by the seal raised in front of its target
+          for (const c of dv.cues) Q.push(Object.assign({}, c, { at: t + c.at }));
+          const at = t + dv.contact;
+          Q.push({ at, type: 'fx', name: 'sealBlock', d: 420, p: { to: aimed, n: 0 } });
+          Q.push({ at, type: 'pose', who: aimed, pose: 'brace', d: 320 });
+          for (const f of fx.filter((x) => x.t === 'countered')) { reactions(Q, f, at, ctx, 'enemy'); Q.push({ at, type: 'beat', f }); }
+          spent(Q, at + 60);
+          t += dv.end;
+        } else {
+          if (D) foeCue({ at: t, act: 'prep', d: T.foePrep, dir, family: fam }); // (its delivery failed: the generic one)
+          if (ctx.wardBlock && single) {
+            // the blow is thrown and meets the seal raised in front of its target
+            foeCue({ at: t + T.foePrep, act: 'exec', d: 320, dir, family: fam });
+            Q.push({ at: t + T.foePrep + 10, type: 'fx', name: 'dart', d: 200, p: { to: aimed, foe: me } });
+            Q.push({ at: t + T.foePrep + 200, type: 'fx', name: 'sealBlock', d: 420, p: { to: aimed, n: 0 } });
+            Q.push({ at: t + T.foePrep + 200, type: 'pose', who: aimed, pose: 'brace', d: 320 });
+          } else foeCue({ at: t + T.foePrep, act: 'balk', d: 380 });
+          for (const f of fx.filter((x) => x.t === 'countered')) { reactions(Q, f, t + T.foePrep + 200, ctx, 'enemy'); Q.push({ at: t + T.foePrep + 200, type: 'beat', f }); }
+          spent(Q, t + T.foePrep + 260);
+          t += T.foePrep + 520;
+        }
+      } else if (deliveryOf(ctx.art, kind, fam)) {
+        // this creature's own performance of the move; the results arrive at its contact
+        const dv = delivered(deliveryOf(ctx.art, kind, fam), { kind, fam, me, aimed, dir, fv, comp, countered: false, wardBlock: false, ctx, T, foeCue: (o) => Object.assign({ type: 'foe', foe: me }, o) });
+        if (!dv) return choreo.enemy(it, fx, Object.assign({}, ctx, { art: null }));
+        for (const c of dv.cues) Q.push(Object.assign({}, c, { at: t + c.at }));
+        let at = t + dv.contact;
+        const lastWho = {};
+        for (const f of fx) {
+          if (pre.indexOf(f) >= 0 || post.indexOf(f) >= 0) continue;
+          if (f.t === 'hit' && lastWho[f.who] === 'block') at += 110;
+          else if ((f.t === 'hit' || f.t === 'block') && Object.keys(lastWho).length && !lastWho[f.who]) at += T.secondTarget;
+          reactions(Q, f, at, ctx, 'enemy');
+          Q.push({ at, type: 'beat', f });
+          if (f.t === 'hit' || f.t === 'block') lastWho[f.who] = f.t;
+          if (f.t === 'stripWard') at += 90;
+        }
+        spent(Q, at + 60);
+        t = Math.max(at + 200, t + dv.end);
       } else {
         foeCue({ at: t, act: 'prep', d: T.foePrep, dir, family: fam });
         foeCue({ at: t + T.foePrep, act: fam === 'cast' ? 'cast' : 'exec', d: fam === 'sweep' ? 460 : T.foeExec, dir, family: fam });
@@ -543,5 +596,5 @@ RB.battleSeq = (function () {
     return { running: !!cur, kind: cur && cur.kind, pt: Math.round(pt), timers: timers.size, layer: !!layer, pointer: !!onDown, attached: !!port, counters: Object.assign({}, counters) };
   }
   // setTimeScale(k): slow the presentation clock (k < 1) for frame captures; tests and tools only
-  return { T, attach, detach, tick, now, run, settle, hurry, busy: () => !!cur, choreo, planOf, stats, trace: () => trace.slice(), setTimeScale: (k) => { timeScale = Math.max(0.05, Math.min(4, +k || 1)); } };
+  return { T, attach, detach, tick, now, run, settle, hurry, busy: () => !!cur, choreo, planOf, addDelivery, deliveryOf, stats, trace: () => trace.slice(), setTimeScale: (k) => { timeScale = Math.max(0.05, Math.min(4, +k || 1)); } };
 })();

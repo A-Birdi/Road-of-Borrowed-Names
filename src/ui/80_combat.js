@@ -930,7 +930,7 @@ RB.combat = (function () {
   function playEnemy(i, it, fx, wardBlock) {
     const m = members[i] || enemy;
     const aimHit = fx.find((f) => f.t === 'hit' || f.t === 'block');
-    const ctx = seqCtx({ view: snapshot(V()), foe: i, wardBlock, foeCol: (m.artOpts && m.artOpts.col) || null, aim: aimHit ? aimHit.who : (V().foes[i] && V().foes[i].drawn && st.compId ? 'comp' : null) });
+    const ctx = seqCtx({ view: snapshot(V()), foe: i, wardBlock, art: m.art || null, foeCol: (m.artOpts && m.artOpts.col) || null, aim: aimHit ? aimHit.who : (V().foes[i] && V().foes[i].drawn && st.compId ? 'comp' : null) });
     const E = RB.battleSeq.choreo.enemy(it, fx, ctx);
     phase = 'enemy';
     {

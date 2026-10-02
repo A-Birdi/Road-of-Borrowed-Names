@@ -408,12 +408,12 @@ RB.battleStage = (function () {
       else if (act) {
         const k = cl((fr.pt - act.t0) / act.d);
         if (k >= 1 && !act.hold) S.foes[i] = null;
-        else fp = { act: act.act, k, family: act.family, dir: dirTo(act.dir, i) };
+        else fp = { act: act.act, k, family: act.family, dir: dirTo(act.dir, i), travel: travelOf(act, k, i, f) };
       }
       const art = d.art || 'wisp', opts = d.artOpts || {};
       // its ground shadow stays on the ground (it follows a lunge sideways only)
       const mo = fp ? RB.enemyArt.motion(art, fp, fr.amb, reduce) : null;
-      Sc.shadow(c, f.ex + Math.round((mo ? mo.dx : 0)) * L.scale, f.shadowY, f.shadowR, 11 * L.scale, 0.5 * (mo ? mo.alpha : 1));
+      Sc.shadow(c, f.ex + Math.round((mo ? mo.dx : 0) + (fp && fp.travel ? fp.travel.dx : 0)) * L.scale, f.shadowY, f.shadowR, 11 * L.scale, 0.5 * (mo ? mo.alpha : 1));
       const off = RB.enemyArt.drawPosed(c, art, fr.amb + i * 977, opts, f.ex, f.ey, L.scale, reduce, fp) || { dx: 0, dy: 0 };
       S.foeOffs[i] = off;
       if (i === 0) { info.foe = fp ? fp.act : null; info.foeOff = { dx: off.dx, dy: off.dy }; }
@@ -505,6 +505,21 @@ RB.battleStage = (function () {
     });
     S.drawn++;
     S.frame = info;
+  }
+  // A creature's bodily travel during an action (battle addendum §9, §18.2): a foe cue may carry
+  //   travel: { to: 'pc'|'comp'|'party', peak: 0..1 (share of the way to the target's chest),
+  //             arc: art px lifted at mid-path, shape: 'out'|'back'|'outback'|'hold' }
+  // → an offset in creature (art) px for drawPosed, from the actual anchors (so a resize or a
+  // withdrawn panel never leaves it aiming at old coordinates).
+  function travelOf(act, k, i, f) {
+    const tv = act.travel;
+    if (!tv || !tv.to) return null;
+    const b = anchor(tv.to, 'chest');
+    const e = (x) => 1 - Math.pow(1 - cl(x), 3);
+    const pr = tv.shape === 'back' ? 1 - e(k) : tv.shape === 'hold' ? 1 : tv.shape === 'outback' ? (k < 0.5 ? e(k / 0.5) : 1 - e((k - 0.5) / 0.5)) : e(k);
+    const peak = tv.peak == null ? 0.6 : tv.peak, sc = S.lay.scale || 1;
+    const lift = (tv.arc || 0) * Math.sin(Math.PI * cl(k)) * (tv.shape === 'hold' ? 0 : 1);
+    return { dx: Math.round(((b.x - f.ex) * peak * pr) / sc), dy: Math.round(((b.y - f.ey) * peak * pr) / sc - lift) };
   }
   function dirTo(id, i) {
     if (!id) return { x: -0.8, y: 0.6 };

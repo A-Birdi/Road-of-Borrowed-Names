@@ -190,17 +190,51 @@ RB.enemyArt = (function () {
     for (const f of seq) if (f > hi) hi = f;
     return hi;
   }
+  // ---- authored action poses (battle addendum §9) -----------------------------------------
+  // A definition may draw its own frames for an action instead of bending its idle frame:
+  //   poses: { prep: n, exec: n, cast: n, recoil: n, recover: n, balk: n, release: n, settle: n, rest: n }
+  //          (frames per act; acts not listed keep the motion style)
+  //   pose(L, act, i, n, o, H, side) draws frame i of n of that act into layer L (side: -1 when
+  //          the creature faces left towards the party, +1 right)
+  //   poseMotion: 'travel' (default) keeps only the motion's travel (dx, dy) on top of the
+  //          authored frame; 'full' keeps its lean/squash too; 'none' keeps nothing
+  // Posed frames are cached like idle frames (id|options|act|i|side) and share the cap.
+  function posedFrame(id, act, i, n, o, side) {
+    const spec = P[id];
+    const key = id + '|' + okey(o) + '|' + act + ':' + i + '/' + n + '|' + side;
+    let cv = cache.get(key);
+    if (cv) { cache.delete(key); cache.set(key, cv); return cv; }
+    const L = K.layer(spec.w, spec.h, spec.ox, spec.oy);
+    const out = spec.pose(L, act, i, n, o || {}, H, side) || L;
+    cv = out.canvas();
+    cache.set(key, cv);
+    while (cache.size > CAP) cache.delete(cache.keys().next().value);
+    return cv;
+  }
+  function posedOf(spec, pose) {
+    if (!pose || !pose.act || !spec.pose || !spec.poses) return 0;
+    return spec.poses[pose.act] | 0;
+  }
   // Draw a creature in a pose (see motion): moved, leaned, squashed or rippled in
   // whole creature pixels (4-row bands drawn with integer offsets, no smoothing).
   // Without a pose it is exactly drawArt. Returns the offset applied (art px).
+  // pose.travel { dx, dy } (art px, from the stage) moves it bodily, e.g. towards its target.
   function drawPosed(c, id, t, o, x, y, s, still, pose) {
     const spec = P[id] || (!A[id] && P.wisp);
     if (!spec) return null;
     const pid = P[id] ? id : 'wisp';
     s = s || 1;
     const m = pose ? motion(pid, pose, t, still) : null;
+    const np = posedOf(P[pid], pose);
+    if (m && np) {
+      const pm = P[pid].poseMotion || 'travel';
+      if (pm !== 'full') { m.lean = 0; m.ripple = 0; m.sy = 1; }
+      if (pm === 'none') { m.dx = 0; m.dy = 0; }
+    }
+    if (m && pose && pose.travel) { m.dx += pose.travel.dx || 0; m.dy += pose.travel.dy || 0; }
     const f = m && m.frame != null ? pickFrame(spec, m.frame) : frameAt(spec, t * (m ? m.rate || 1 : 1), still);
-    const cv = frame(pid, f, o);
+    const side = pose && pose.dir && pose.dir.x > 0 ? 1 : -1;
+    const cv = np ? posedFrame(pid, pose.act, Math.min(np - 1, Math.floor(cl(pose.k || 0) * np)), np, o, side) : frame(pid, f, o);
     const b = (spec.bob && !still ? Math.round(spec.bob(t)) : 0) + (spec.dy || 0);
     const X = Math.round(x + Math.round(m ? m.dx : 0) * s), Y = Math.round(y + Math.round(m ? m.dy : 0) * s);
     c.imageSmoothingEnabled = false;
