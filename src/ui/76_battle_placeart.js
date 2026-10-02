@@ -740,7 +740,7 @@ RB.battlePlaceArt = (function () {
     const cv = mk(g.canvas.width, g.canvas.height), c2 = cv.getContext('2d');
     for (let y = Math.floor(y0); y < y1; y++) { const d = y - (HZ | 0); c2.fillStyle = d < 6 ? w[0] : w[1]; c2.fillRect(0, y, cv.width, 1); }
     // ripples: per cell of 20×5 px from the anchor; longer and further apart toward the viewer
-    for (let y = Math.floor(y0); y < y1; y += 5) {
+    for (let y = Math.floor(y0) + ((((HZ | 0) - Math.floor(y0)) % 5) + 5) % 5; y < y1; y += 5) {
       const d = Math.max(0, y - (HZ | 0)), cw = 20 + Math.round(d * 0.15);
       for (let x = lattice(ox | 0, cw, 0); x < cv.width; x += cw) {
         const k = hh(Math.round((x - (ox | 0)) / cw), Math.round((y - (HZ | 0)) / 5), 7);
@@ -970,7 +970,8 @@ RB.battlePlaceArt = (function () {
       R(g, 0, HZ, W, H - HZ, F[1]);
       // two boards per map row, their ends staggered along the row and running toward the viewer
       for (let i = 0; i < rows.length; i++) {
-        const ya = rows[i], yb = Math.min(H, bandEnd(i));
+        const ya = rows[i], yb = bandEnd(i);
+        if (ya >= H) break;
         for (let b = 0; b < 2; b++) {
           const y0 = Math.round(ya + ((yb - ya) * b) / 2), y1 = Math.round(ya + ((yb - ya) * (b + 1)) / 2), hgt = y1 - y0;
           if (hgt < 1 || y0 >= H) continue;
@@ -986,17 +987,17 @@ RB.battlePlaceArt = (function () {
     } else if (fl === 'paper') {
       const cols = ['#d6ceb8', '#e4ddc8', '#dcd4be', '#c8c0a8'];
       R(g, 0, HZ, W, H - HZ, cols[1]);
-      for (let i = 0; i < rows.length; i++) { R(g, 0, rows[i], W, Math.max(0, Math.min(H, bandEnd(i)) - rows[i]), cols[i % 4 === 3 ? 2 : i % 2]); R(g, 0, rows[i], W, 1, '#c8c0aa'); }
+      for (let i = 0; i < rows.length; i++) { R(g, 0, rows[i], W, Math.max(0, bandEnd(i) - rows[i]), cols[i % 4 === 3 ? 2 : i % 2]); R(g, 0, rows[i], W, 1, '#c8c0aa'); }
       R(g, Math.round(X(sp.cols ? sp.cols[0] + 1 : 0, HZ)), HZ, 1, H - HZ, '#d4a8a0');
     } else {
       // flagstones: a course per map row, joints on the map's half columns that converge on the room's middle
       const S5 = brick ? ['#3a2c28', '#443630', '#4a3a34', '#56443c', '#62504a'] : sp.cool ? ['#262a3e', '#2e3248', '#343852', '#3e4460', '#4a5270'] : [mix(pal.stone[2], '#1c1636', 0.45), mix(pal.stone[2], '#1c1636', 0.2), pal.stone[2], pal.stone[0], pal.stone[1]];
       R(g, 0, HZ, W, H - HZ, S5[1]);
       for (let i = 0; i < rows.length; i++) {
-        const ya = rows[i], yb = Math.min(H, bandEnd(i));
+        const ya = rows[i], yb = bandEnd(i);
         if (ya >= H) break;
         R(g, 0, ya, W, yb - ya, S5[1 + (i % 2)]); R(g, 0, ya, W, 1, S5[0]); if (yb - ya > 3) R(g, 0, ya + 1, W, 1, S5[3]);
-        for (let c = c0 + (i % 2) * 0.75; c < c1; c += 1.5) for (let y = ya; y < yb; y++) { const x = Math.round(X(c, y)); if (x >= 0 && x < W) R(g, x, y, 1, 1, S5[0]); }
+        for (let c = c0 + (i % 2) * 0.75; c < c1; c += 1.5) for (let y = ya; y < Math.min(yb, H); y++) { const x = Math.round(X(c, y)); if (x >= 0 && x < W) R(g, x, y, 1, 1, S5[0]); }
         // a worn, lighter flag here and there
         for (let c = c0; c < c1; c += 1.5) { const k = hh(Math.round(c * 2), i, 13); if (k % 7) continue; const x0 = Math.round(X(c + 0.15, ya + 2)), x1 = Math.round(X(c + 1.2, ya + 2)); if (x1 > x0 + 2 && yb - ya > 4) R(g, x0, ya + 2, x1 - x0, 1, S5[4]); }
       }
@@ -1157,7 +1158,8 @@ RB.battlePlaceArt = (function () {
           const y0 = Math.max(0, Math.round(lineY(ya, xc))), y1 = Math.min(ye, Math.round(lineY(yb, xc)));
           if (y1 > y0) R(g, x, y0, 1, y1 - y0, col);
         }
-        for (const yk of courses) { const y = Math.round(lineY(yk, xc)); if (y >= 0 && y < ye - 5) R(g, x, y, 1, 1, timber ? courseCol : courseCol); }
+        const yeT = Math.round(lineY(HZ, xc));
+        for (const yk of courses) { const y = Math.round(lineY(yk, xc)); if (y >= 0 && y < yeT - 5) R(g, x, y, 1, 1, courseCol); }
         R(g, x, ye, 1, 1, 'rgba(16,10,24,0.55)');
       }
       // vertical work at depths along the wall: dado boards and posts (timber), block joints (stone, brick)
@@ -1221,7 +1223,7 @@ RB.battlePlaceArt = (function () {
     }
     // the pool of light where the encounter stands
     const pcx = (o.P.x + o.P.w * 0.5 + o.C.x + o.C.w * 0.5) / 2;
-    pool(g, pcx, f - 6, Math.max(120, (o.C.x + o.C.w - o.P.x) * 0.5), (H - HZ) * 0.35, '255,214,150', 0.16);
+    pool(g, pcx, f - 6, Math.max(120, (o.C.x + o.C.w - o.P.x) * 0.5), Math.max(30, (f - HZ) * 0.8), '255,214,150', 0.16);
   }
   // Pale light from a window behind the viewer: a slanted band falling to the
   // floor and a lit patch where it lands (translucent, stepped, never blurred).

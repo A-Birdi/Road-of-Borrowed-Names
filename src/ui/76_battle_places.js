@@ -111,20 +111,17 @@ RB.battlePlaces = (function () {
   // ---- reading the map ---------------------------------------------------------------------------
   // the condition test: the live campaign by default; recompose() answers from a record
   const liveTest = (cond) => { const s = RB.game && RB.game.s; return !cond || !s || RB.state.test(s, cond); };
+  // The room inside its walls: the rows and columns that are mostly floor (a
+  // door or a passage through the outer wall is not part of the room).
   function interiorBounds(m) {
-    let xl = m.w, xr = -1, yt = m.h, yb = -1;
-    for (let y = 0; y < m.h; y++) for (let x = 0; x < m.w; x++) {
-      const t = m.tiles[y * m.w + x];
-      if (!t || t.id === 'wall' || t.id === 'void' || t.id === 'atlas_blank') continue;
-      if (x < xl) xl = x; if (x > xr) xr = x; if (y < yt) yt = y; if (y > yb) yb = y;
-    }
-    if (xr < 0) return { xl: 0, xr: m.w - 1, yt: 0, yb: m.h - 1 };
-    // a door gap in the outer wall is not part of the room
-    if (yb === m.h - 1) yb--;
-    if (yt === 0) yt++;
-    if (xl === 0) xl++;
-    if (xr === m.w - 1) xr--;
-    return { xl, xr, yt, yb };
+    const open = (x, y) => { const t = m.tiles[y * m.w + x]; return !!t && t.id !== 'wall' && t.id !== 'void' && t.id !== 'atlas_blank'; };
+    const rowN = [], colN = [];
+    for (let y = 0; y < m.h; y++) { let k = 0; for (let x = 0; x < m.w; x++) if (open(x, y)) k++; rowN.push(k); }
+    for (let x = 0; x < m.w; x++) { let k = 0; for (let y = 0; y < m.h; y++) if (open(x, y)) k++; colN.push(k); }
+    const rmax = Math.max(...rowN), cmax = Math.max(...colN);
+    if (!rmax) return { xl: 0, xr: m.w - 1, yt: 0, yb: m.h - 1 };
+    const rows = rowN.map((k, i) => (k >= rmax * 0.4 ? i : -1)).filter((i) => i >= 0), cols = colN.map((k, i) => (k >= cmax * 0.4 ? i : -1)).filter((i) => i >= 0);
+    return { xl: cols[0], xr: cols[cols.length - 1], yt: rows[0], yb: rows[rows.length - 1] };
   }
   // The view: which map cells the composition reads, and how. Generous on
   // purpose (a full-viewport canvas may show 13 columns either side); what a
@@ -400,7 +397,7 @@ RB.battlePlaces = (function () {
     for (const it of sv.items) if (it.kind === 'landmark' && it.src !== 'tiles') for (let y = it.my; y < it.my + it.h; y++) for (let x = it.mx; x < it.mx + it.w; x++) lmCell[x + ',' + y] = 1;
     const wet = (x, y) => { const id = tileId(m, x, y); return !!WATER[id] || id === 'bridgeH' || id === 'bridgeV' || !!sv.wetAt[x + ',' + y]; };
     const wallLm = sv.items.filter((it) => it.tier === 'wall' && it.kind === 'landmark');
-    const candsOn = (sd) => {
+    const candsOn = (sd, spaced) => {
       const sideOK = (c) => (sd === 'L' ? c + 0.5 < ref : c + 0.5 > ref);
       const out = [];
       if (ON_WALL[cl.zone]) {
@@ -411,7 +408,7 @@ RB.battlePlaces = (function () {
           if (!solid(tileId(m, x, yw))) continue; // an opening, not a wall
           if (cl.zone !== 'corner' && !sideOK(x)) continue;
           if (wallLm.some((it) => x >= it.mx - 1 && x <= it.mx + it.w)) continue;
-          if (used.some((u) => u.wall && Math.abs(u.x - x) < 3)) continue;
+          if (spaced && used.some((u) => u.wall && Math.abs(u.x - x) < 3)) continue;
           out.push({ x, y: yw, wall: true, pref: Math.abs(x + 0.5 - ref) });
         }
         out.sort((a, b) => (cl.zone === 'beam' ? a.pref - b.pref : b.pref - a.pref) || a.x - b.x);
@@ -425,7 +422,7 @@ RB.battlePlaces = (function () {
       for (const y of rows) for (let x = x0; x <= x1; x++) cells.push([x, y, 0]);
       // in a small room, also the floor along its side walls (after the main rows)
       if (v.mode === 'room') {
-        const ya = cl.zone === 'fore' ? Math.round((v.yBack + v.yNear) / 2) : v.yBack + 1, yb = cl.zone === 'base' ? Math.round((v.yBack + v.yNear) / 2) : v.yNear;
+        const ya = cl.zone === 'fore' ? Math.round((v.yBack + v.yNear) / 2) : v.yBack + 1, yb = v.yNear - 1;
         for (let y = ya; y <= yb; y++) for (const x of [v.x0, v.x1]) if (!rows.includes(y)) cells.push([x, y, 40 + Math.abs(y - ya)]);
       }
       for (const [x, y, extra] of cells) {
@@ -437,7 +434,7 @@ RB.battlePlaces = (function () {
         if (cl.needs === 'sand' && id !== 'sand') continue;
         if (cl.needs === 'green' && GROUNDOF[id] !== 'meadow') continue;
         if (cl.needs === 'trees' && !near(x, y, 3, (xx, yy) => m.props.some((q) => q.x === xx && q.y === yy && ROLE[q.p] && ROLE[q.p].group === 'trees'))) continue;
-        if (used.some((u) => !u.wall && Math.abs(u.y - y) <= 1 && Math.abs(u.x - x) < 3)) continue;
+        if (spaced && used.some((u) => !u.wall && Math.abs(u.y - y) <= 1 && Math.abs(u.x - x) < 3)) continue;
         // a sweet spot: off to the side of the actors, not at the far edge of the view
         const off = Math.abs(x + 0.5 - ref), pref = room ? Math.abs(off - (v.x1 - v.x0) * 0.32) : Math.abs(off - 6);
         out.push({ x, y, pref: pref + Math.max(0, y - rows[0]) * 0.5 + extra });
@@ -445,12 +442,13 @@ RB.battlePlaces = (function () {
       out.sort((a, b) => a.pref - b.pref || a.y - b.y || a.x - b.x);
       return out;
     };
-    const mine = candsOn(side);
+    // the pick keeps apart from the other clusters' picks; its alternatives need not (a frame never lets two overlap)
+    const mine = candsOn(side, true);
     if (!mine.length) return null;
     const pick = mine[Math.floor(draw * Math.min(4, mine.length))];
     used.push(pick);
-    const others = cl.zone === 'corner' ? [] : candsOn(side === 'L' ? 'R' : 'L');
-    const alts = mine.filter((c) => c !== pick).concat(others).slice(0, 16);
+    const own = candsOn(side, false), others = cl.zone === 'corner' ? [] : candsOn(side === 'L' ? 'R' : 'L', false);
+    const alts = own.filter((c) => c.x !== pick.x || c.y !== pick.y).concat(others).slice(0, 24);
     return { at: (pick.wall ? 'wall:' : '') + pick.x + ',' + pick.y, x: pick.x, y: pick.y, wall: !!pick.wall, alts: alts.map((c) => ({ x: c.x, y: c.y })) };
   }
 
@@ -529,8 +527,8 @@ RB.battlePlaces = (function () {
     const roomish = out.view.mode !== 'land';
     const wallPool = rng.shuffle(pool.filter((k) => onWall(k) && !CL[k].extra)), floorPool = rng.shuffle(pool.filter((k) => !onWall(k)));
     const extras = pool.filter((k) => CL[k].extra && rng() < 0.5);
-    // indoors one or two on the wall and two or three on the floor; out of doors three or four on the ground
-    const chosen = roomish ? wallPool.slice(0, 1 + rng.int(2)).concat(floorPool.slice(0, 2 + rng.int(2)), extras) : floorPool.slice(0, 3 + rng.int(2));
+    // indoors two on the wall and two or three on the floor (a frame shows those its actors leave room for); out of doors three or four on the ground
+    const chosen = roomish ? wallPool.slice(0, 2).concat(floorPool.slice(0, 2 + rng.int(2)), extras) : floorPool.slice(0, 3 + rng.int(2));
     let lights = 0;
     const used = [];
     out.accessories = [];
@@ -738,14 +736,14 @@ RB.battlePlaces = (function () {
         const tp = dy >= -3 ? 22 : dy >= -6 ? 16 : 12;
         const by = dy >= -3 ? Math.round(Math.min(PJ.Y(it.my + it.h), HZ + 12)) : HZ;
         const wpx = it.w * tp, x0 = Math.round(PJ.X(it.mx + it.w / 2, by) - wpx / 2);
-        Object.assign(rec, { shown: x0 + wpx > -10 && x0 < W + 10, x: x0, y: by - tp * 2.5, w: wpx, h: tp * 2.5, by, tp, haze: dy >= -3 ? 0.12 : dy >= -6 ? 0.25 : 0.4 });
+        Object.assign(rec, { shown: x0 + wpx > -10, x: x0, y: by - tp * 2.5, w: wpx, h: tp * 2.5, by, tp, haze: dy >= -3 ? 0.12 : dy >= -6 ? 0.25 : 0.4 });
         continue;
       }
       if (p === 'wheel') {
         const dy = it.my + it.h - 1 - (comp.y || 0);
         const r = dy >= -3 ? 26 : dy >= -6 ? 18 : 13;
         const cx = Math.round(PJ.X(it.mx + it.w / 2, HZ)), cy = HZ - r + 4;
-        Object.assign(rec, { shown: cx + r > -8 && cx - r < W + 8, x: cx - r - 4, y: cy - r - 4, w: r * 2 + 8, h: r * 2 + 8, cx, cy, r, haze: dy >= -3 ? 0.1 : dy >= -6 ? 0.22 : 0.36, turning: !(it.o && it.o.still) });
+        Object.assign(rec, { shown: cx + r > -8, x: cx - r - 4, y: cy - r - 4, w: r * 2 + 8, h: r * 2 + 8, cx, cy, r, haze: dy >= -3 ? 0.1 : dy >= -6 ? 0.22 : 0.36, turning: !(it.o && it.o.still) });
         // its turning part is drawn per frame over the static layer: nothing else may stand in front of it
         if (rec.shown) { out.mach.push({ kind: 'wheel', rec }); occ.push(rect(rec.x, rec.y, rec.w, rec.h)); }
         continue;
@@ -796,7 +794,7 @@ RB.battlePlaces = (function () {
         const cx = Math.round(PJ.X(it.mx + 0.5 * it.w));
         const base = it.tier === 'wall' || it.tier === 'far' || it.my <= v.yBack ? HZ + 2 : Math.round(PJ.Y(it.my + 1));
         const hgt = it.tier === 'far' ? 14 : Math.round(Math.min(46, (HZ - (beamY == null ? HZ - 60 : beamY)) * 0.4));
-        Object.assign(rec, { shown: cx + w > -4 && cx - w < W + 4, x: cx - w / 2 - 2, y: base - hgt - 4, w: w + 4, h: hgt + 6, cx, base, sw: w, sh: hgt, dir: it.dir, far: it.tier === 'far', dimmed: inter(rect(cx - w / 2, base - hgt, w, hgt), C) });
+        Object.assign(rec, { shown: cx + w > -4, x: cx - w / 2 - 2, y: base - hgt - 4, w: w + 4, h: hgt + 6, cx, base, sw: w, sh: hgt, dir: it.dir, far: it.tier === 'far', dimmed: inter(rect(cx - w / 2, base - hgt, w, hgt), C) });
         continue;
       }
       if (p === 'ladder') {
@@ -821,7 +819,8 @@ RB.battlePlaces = (function () {
         if (!inter(r2, P)) { x = nx; r = r2; }
       }
       const behindParty = inter(r, P), behindC = inter(r, C) || (geo.Cs || []).some((q) => inter(r, q));
-      const onStage = r.x + r.w > -16 && r.x < W + 16;
+      // (the canvas's left edge is the same at every size; its right edge is not, so it decides nothing here)
+      const onStage = r.x + r.w > -16;
       const ok = onStage && (!behindC || dimOK) && (!behindParty || it.role.tall || (it.role.wall && r.y < P.y - 12) || it.tier === 'wall');
       Object.assign(rec, { shown: ok, x: r.x, y: r.y, w: r.w, h: r.h, spr, dimmed: behindC || (behindParty && it.tier !== 'wall') });
       if (rec.shown && !behindC) occ.push(r);
@@ -842,7 +841,7 @@ RB.battlePlaces = (function () {
       let r = null;
       for (let k = 0; k <= 10 && !r; k++) {
         const q = rect(x - spr.ax + out1 * k * 3, y - spr.ay, spr.w, spr.h);
-        if (q.x + q.w < -24 || q.x > W + 24) break;
+        if (q.x + q.w < -24) break;
         if (free(q) && (it.role.wet || !wet(q.x + q.w * 0.2, q.x + q.w * 0.8, y - 1))) r = q;
       }
       if (!r) continue;
@@ -884,7 +883,7 @@ RB.battlePlaces = (function () {
         const bb0 = box(mem), sh = Math.round(ax - (bb0.x + bb0.w / 2));
         for (const q of mem) q.x += sh;
         const bb = box(mem);
-        if (bb.x + bb.w < -8 || bb.x > W + 8) continue;
+        if (bb.x + bb.w < 0) continue;
         if (!free(rect(bb.x - 3, bb.y - 1, bb.w + 6, bb.h + 2))) continue;
         if (!a.home.wall && wet(bb.x + bb.w * 0.15, bb.x + bb.w * 0.85, ay - 1)) continue;
         Object.assign(rec, { shown: true, x: bb.x, y: bb.y, w: bb.w, h: bb.h, spot: (a.home.wall ? 'wall:' : '') + h.x + ',' + h.y, members: mem, rail: cl.rail ? rect(bb.x - 3, ay - 1, bb.w + 6, 3) : null });
@@ -916,14 +915,14 @@ RB.battlePlaces = (function () {
     const G = comp.grid;
     const at = (mx, my) => { const r = G.rows[my - G.y0]; return r ? r[mx - G.x0] || '#' : '#'; };
     const quadPts = (mx, my, w) => {
-      const y0 = Math.round(P.Y(my)), y1 = Math.min(geo.Hb + 4, Math.round(P.Y(my + 1)));
+      const y0 = Math.round(P.Y(my)), y1 = Math.round(P.Y(my + 1));
       return y1 - y0 < 1 || y0 > geo.Hb ? null : [P.X(mx, y0), y0, P.X(mx + (w || 1), y0), y0, P.X(mx + (w || 1), y1), y1, P.X(mx, y1), y1];
     };
     const near = (my) => (P.land ? my - comp.y > P.dH - 1 : my >= comp.view.yBack);
     const fillCell = (ctx, q, col, jl, jr, seed) => {
       ctx.fillStyle = col;
-      const top = q[1], bot = q[5];
-      for (let y = top; y < bot; y++) {
+      const top = q[1], bot = q[5], lim = Math.min(bot, ctx.canvas.height + 1);
+      for (let y = Math.max(top, -1); y < lim; y++) {
         const t = (y + 0.5 - top) / Math.max(1, bot - top);
         let l = q[0] + (q[6] - q[0]) * t, r = q[2] + (q[4] - q[2]) * t;
         const k = Math.floor(y / 3);
@@ -940,7 +939,8 @@ RB.battlePlaces = (function () {
   function waterMask(comp, geo, P) {
     if (!comp.grid) return null;
     const { at, quadPts, near, fillCell, rowsN, colsN, G } = cellsOf(comp, geo, P), HZ = geo.HZ;
-    const Wd = geo.Wb, Hd = geo.Hb;
+    // a margin past the layer, so that a water edge at the canvas's edge is judged by its true neighbour
+    const Wd = geo.Wb + 16, Hd = geo.Hb + 16;
     const mask = RB.sprites.makeCanvas(Wd, Hd), mg = mask.getContext('2d', { willReadFrequently: true });
     let any = false, y0 = 1e9, y1 = -1e9;
     for (let j = 0; j < rowsN; j++) {
@@ -1068,7 +1068,8 @@ RB.battlePlaces = (function () {
       comp.floorCode = floor === 'flags' ? 'o' : floor === 'wood' ? 'd' : null;
       // floor rows: the map's rows projected (boards and flag courses follow them)
       const rows = [];
-      for (let r = v.yBack; r <= v.yNear + 8; r++) { const y = Math.round(PJ.Y(r)); if (y > H + 40) break; rows.push(y); }
+      // (all of them, whatever the canvas: the side walls' posts stand at these rows and rise into view)
+      for (let r = v.yBack, k = 0; k < 200; r++, k++) { const y = Math.round(PJ.Y(r)); rows.push(Math.min(1e5, y)); if (y > 4000) break; }
       const sp = { region, wall, floor, cool: R0.cool, beamY: lay.beamY, ox, rows, X: PJ.X, sp: PJ.sp, cols: [v.x0, v.x1 + 1], room: v.mode === 'room' };
       A.room(g, W, H, HZ, sp);
       if (wall === 'timber') A.posts(g, postsFor(PJ, v, W), HZ, lay.beamY, region);
@@ -1187,7 +1188,7 @@ RB.battlePlaces = (function () {
   function postsFor(PJ, v, W) {
     const out = [];
     const c0 = v.mode === 'room' ? v.x0 : v.x0 - 8, c1 = v.mode === 'room' ? v.x1 + 1 : v.x1 + 8;
-    for (let c = c0; c <= c1; c += 4) { const x = Math.round(PJ.X(c)) - 3; if (x > -8 && x < W + 8) out.push(x); }
+    for (let c = c0; c <= c1; c += 4) { const x = Math.round(PJ.X(c)) - 3; if (x > -8) out.push(x); }
     return out;
   }
   function reedClump(g, x, base, hgt, pal, seed) {
@@ -1235,7 +1236,7 @@ RB.battlePlaces = (function () {
     if (now - hushSt.at < 450) h = 1;
     return h;
   }
-  function ambient(c, comp, lay, geo, t, still, hush) {
+  function ambient(c, comp, lay, geo, t, still, hush, particles) {
     const u = geo.u, K = RB.propKit, A = Art();
     const hh = (a, b, d) => RB.tiles.hh(a, b, d);
     const ox = Math.round(lay.P.ax);
@@ -1245,16 +1246,18 @@ RB.battlePlaces = (function () {
       if (m.kind === 'gear') A.gearWheels(c, r.cx, r.cy, r.r, comp.palRegion, still || r.jammed ? 0 : t, r.jammed, u, r.dimmed);
       else if (m.kind === 'wheel') A.wheelSpin(c, r.cx, r.cy, r.r, comp.palRegion, still || !r.turning ? 0 : t, u, r.haze, r.hazeCol);
     }
-    if (still) return;
+    if (still || particles === false) return; // (F.particles === false: machinery only, for tests)
     const k = 1 - hush * 0.7;
     const a = AMB[comp.key] || AMB[comp.palRegion];
     if (a && a.n) {
       c.fillStyle = a.col;
-      const n = Math.round(a.n * k), span = Math.max(320, geo.W + 64);
+      // a fixed field (1400 × 900 px round the scene anchor), so the motes do not change with the canvas size
+      const n = Math.round(a.n * k * 2.2), span = 1400, vspan = 900, top = geo.HZ - 520;
       for (let i = 0; i < n; i++) {
         const sx = hh(i, 5, 1) % 1000 / 1000, sy = hh(i, 5, 2) % 1000 / 1000, ph = (hh(i, 5, 3) % 628) / 100;
-        const x = ((ox - span / 2 + sx * span + t * a.vx * (0.6 + sx)) % span + span) % span + Math.sin(t / 1600 + ph) * a.wob * k;
-        const y = ((sy * geo.H + t * a.vy * (0.6 + sy)) % geo.H + geo.H) % geo.H;
+        const x = ox - span / 2 + (((sx * span + t * a.vx * (0.6 + sx)) % span) + span) % span + Math.sin(t / 1600 + ph) * a.wob * k;
+        const y = top + (((sy * vspan + t * a.vy * (0.6 + sy)) % vspan) + vspan) % vspan;
+        if (x < -4 || x > geo.W + 4 || y < -4 || y > geo.H + 4) continue;
         if (inter(rect(x - 2, y - 2, 4, 4), lay.occ[0]) && hush > 0) continue;
         c.fillRect(Math.round(x * u), Math.round(y * u), a.size * u, a.size * u);
       }
@@ -1328,7 +1331,8 @@ RB.battlePlaces = (function () {
     // the layer is the bucket's size: only the canvas's part of it is drawn
     const sw = Math.min(Lr.cv.width, Math.ceil(w / u)), sh = Math.min(Lr.cv.height, Math.ceil(h / u));
     c.drawImage(Lr.cv, 0, 0, sw, sh, 0, 0, sw * u, sh * u);
-    ambient(c, cur, Lr.lay, Lr.geo, t, still, still ? 1 : hushNow(F));
+    cur.hush = still ? 1 : hushNow(F);
+    ambient(c, cur, Lr.lay, Lr.geo, t, still, cur.hush, F.particles);
     return true;
   }
   // A JSON-safe record of the current (or last) composition and its frame, for tests and captures.
@@ -1353,7 +1357,7 @@ RB.battlePlaces = (function () {
       frame: geo ? { W: geo.W, H: geo.H, Wb: geo.Wb, Hb: geo.Hb, HZ: geo.HZ, u: geo.u, creature: r(geo.C), creatures: geo.Cs ? geo.Cs.map(r) : null, party: r(geo.P), lane: r(geo.R), feetP: geo.feetP, feetC: geo.feetC, beamY: lay ? lay.beamY : null, key: geo.key, colPx: PJ ? PJ.colPx : null, ax: PJ ? Math.round(PJ.ax) : null,
         // the map columns this canvas shows at the horizon (wider canvas → more of them)
         cols: PJ ? [+(cur.view.mode === 'room' ? PJ.cMid + (0 - PJ.ax) / PJ.colPx : cur.x + 0.5 + (0 - PJ.ax) / PJ.colPx).toFixed(2), +(cur.view.mode === 'room' ? PJ.cMid + (geo.W - PJ.ax) / PJ.colPx : cur.x + 0.5 + (geo.W - PJ.ax) / PJ.colPx).toFixed(2)] : null } : null,
-      buildMs: cur.buildMs != null ? +cur.buildMs.toFixed(2) : null, builds: cur.builds || 0, layerKey: cur.lkey || null,
+      buildMs: cur.buildMs != null ? +cur.buildMs.toFixed(2) : null, builds: cur.builds || 0, layerKey: cur.lkey || null, hush: cur.hush != null ? cur.hush : null,
     };
   }
   // The origin record of the current composition (or of a composition passed in).
@@ -1394,7 +1398,7 @@ RB.battlePlaces = (function () {
   // and actors), off screen, returning its record and its pixels' checksum over
   // a region — to show that the overlay's rectangle is ignored and that a
   // larger canvas only reveals more.
-  function probe(F, w, h, hz, region) {
+  function probe(F, w, h, hz, region, keep) {
     if (!cur || cur.fallback) return null;
     const box = cur.artBox === undefined ? (cur.artBox = artBox(F.art || 'wisp', cur.artOpts) || null) : cur.artBox;
     const geo = geometry(F, w, h, hz, box);
@@ -1404,7 +1408,7 @@ RB.battlePlaces = (function () {
     const d = cv.getContext('2d').getImageData(rg.x, rg.y, Math.min(rg.w, cv.width - rg.x), Math.min(rg.h, cv.height - rg.y)).data;
     let hs = 2166136261 >>> 0;
     for (let i = 0; i < d.length; i += 4) { hs ^= d[i] | (d[i + 1] << 8) | (d[i + 2] << 16); hs = Math.imul(hs, 16777619) >>> 0; }
-    return { key: cur.sig + '|' + geo.key, sum: hs >>> 0, W: geo.W, H: geo.H, Wb: geo.Wb, Hb: geo.Hb, shown: lay.placed.filter((p) => p.shown).map((p) => p.kind + ':' + (p.from || p.id) + (p.x != null ? '@' + Math.round(p.x) + ',' + Math.round(p.y) : '')) };
+    return { cv: keep ? cv : undefined, key: cur.sig + '|' + geo.key, sum: hs >>> 0, W: geo.W, H: geo.H, Wb: geo.Wb, Hb: geo.Hb, shown: lay.placed.filter((p) => p.shown).map((p) => p.kind + ':' + (p.from || p.id) + (p.x != null ? '@' + Math.round(p.x) + ',' + Math.round(p.y) : '')) };
   }
   return { begin, draw, last, origin, recompose, resources, forceSeed, debug, checksum, layerPixels, probe, compose, survey, geometry, projector, ROLE, CL, POOLS, _count: () => counter };
 })();
