@@ -65,12 +65,17 @@ async function move(p, kind, target, card, o) {
     window.__b0 = RB.battleSeq.stats().counters.beats;
     CA.sampleOn();
   }, [kind, target || null, o.pre || null]);
-  const shots = [];
+  // (a still is taken on a slowed presentation clock, so the screenshot lands at the contact; the
+  // trace's times are presentation ms either way)
+  if (o.shoot) await p.evaluate(() => RB.battleSeq.setTimeScale(0.15));
   await respond(p, card, { comp: o.comp ? {} : false });
   if (o.shoot) {
     // a still at the move's contact (the first result shown in the enemy phase)
-    await p.waitForFunction(() => RB.combat.phase() === 'enemy' && RB.battleSeq.stats().counters.beats > window.__b0, null, { timeout: 30000, polling: 'raf' }).catch(() => {});
+    await p.waitForFunction(() => RB.combat.phase() === 'enemy', null, { timeout: 30000, polling: 'raf' }).catch(() => {});
+    await p.evaluate(() => { window.__b1 = RB.battleSeq.stats().counters.beats; });
+    await p.waitForFunction(() => RB.combat.phase() === 'enemy' && RB.battleSeq.stats().counters.beats > window.__b1, null, { timeout: 30000, polling: 'raf' }).catch(() => {});
     await still(p, o.shoot);
+    await p.evaluate(() => RB.battleSeq.setTimeScale(1));
   }
   await idle(p);
   const S = await samples(p);

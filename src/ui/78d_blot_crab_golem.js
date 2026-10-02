@@ -688,7 +688,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   A.deliver('golem', 'strike', (a) => {
     const c = A.kit(a), oc = A.outcome(a), to = a.aimed;
     if (c.rd) { c.F(0, 'prep', 340, 'strike@2').F(340, 'exec', 300, 'strike@2').F(640, 'recover', 560, oc === 'ward' || oc === 'block' ? 'deflect@0' : 'strike@0'); c.X(640, 'stoneDust', 400, { to }); return c.done(640, 1250); }
-    const peak = 0.12;
+    const peak = oc === 'ward' || oc === 'block' ? 0.18 : 0.24; // a heavy planted step, not a slide
     c.F(0, 'prep', 360, 'strike');
     c.F(360, 'exec', 280, 'strike', { to, peak, shape: 'out' });
     c.X(640, 'stoneDust', 460, { to, seal: oc === 'ward' || oc === 'block' || oc === 'soft' });

@@ -33,7 +33,8 @@ RB.creaturesA = (function () {
   const STILL_AT = { settle: 1 };
   function resolve(spec, pose, still) {
     const P = spec.poses;
-    if (!P || !spec.pose || !pose || !pose.act) return null;
+    // (only definitions built with this rig: another area's poses keep the seam's own behaviour)
+    if (!spec._qa || !P || !spec.pose || !pose || !pose.act) return null;
     let fam = pose.family ? String(pose.family) : '', hold = -1;
     const at = fam.lastIndexOf('@');
     if (at >= 0) { hold = +fam.slice(at + 1) || 0; fam = fam.slice(0, at); }
