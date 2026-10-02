@@ -120,7 +120,7 @@ RB.battleSeq = (function () {
       default:
         if (instant) break;
         if (c.type === 'pose') S.pose(c.who, c.pose, c.gesture, c.d, at);
-        else if (c.type === 'foe') S.foe(c.act, c.d, at, { family: c.family, dir: c.dir, hold: c.hold, foe: c.foe || 0 });
+        else if (c.type === 'foe') S.foe(c.act, c.d, at, { family: c.family, dir: c.dir, hold: c.hold, foe: c.foe || 0, travel: c.travel || null });
         else if (c.type === 'fx') S.effect(c.name, c.d, at, c.p);
         else if (c.type === 'strip') S.strip(c.word, c.from, c.to, at, c.tm);
         else if (c.type === 'num') S.number(c.to, c.text, c.kind, at);
@@ -340,7 +340,8 @@ RB.battleSeq = (function () {
   // addDelivery(art, kind, fn): how one creature performs a move — its own preparation, approach,
   // contact and recovery. kind: an intent kind ('strike', 'shroud' …), a family ('strike',
   // 'sweep', 'cast') or '*'. fn(a) → { cues, contact, end } with times in ms from the move's start:
-  //   a = { kind, fam, me, aimed, dir, fv, comp, countered, wardBlock, ctx, T, foeCue(o) }
+  //   a = { kind, fam, me, aimed, dir, fv, comp, countered, wardBlock, ctx, T, foeCue(o), fx }
+  //       (fx: the rules' results for this move, read-only — to choose a contact variant)
   //   cues: 'foe' (act, d, dir, family, travel, hold), 'fx', 'pose', 'sfx' only — never 'beat':
   //         the rules' results are placed here, at `contact`, in their order (dropped otherwise)
   //   contact: when the move arrives (the first result shows then); end: when its own
@@ -475,7 +476,7 @@ RB.battleSeq = (function () {
       } else if (countered) {
         if (!(ctx.wardBlock && single && deliveryOf(ctx.art, kind, fam))) foeCue({ at: t, act: 'prep', d: T.foePrep, dir, family: fam });
         const D = ctx.wardBlock && single ? deliveryOf(ctx.art, kind, fam) : null;
-        const dv = D ? delivered(D, { kind, fam, me, aimed, dir, fv, comp, countered: true, wardBlock: true, ctx, T, foeCue: (o) => Object.assign({ type: 'foe', foe: me }, o) }) : null;
+        const dv = D ? delivered(D, { kind, fam, me, aimed, dir, fv, comp, countered: true, wardBlock: true, ctx, T, foeCue: (o) => Object.assign({ type: 'foe', foe: me }, o), fx }) : null;
         if (dv) {
           // its own approach, stopped by the seal raised in front of its target
           for (const c of dv.cues) Q.push(Object.assign({}, c, { at: t + c.at }));
@@ -500,7 +501,7 @@ RB.battleSeq = (function () {
         }
       } else if (deliveryOf(ctx.art, kind, fam)) {
         // this creature's own performance of the move; the results arrive at its contact
-        const dv = delivered(deliveryOf(ctx.art, kind, fam), { kind, fam, me, aimed, dir, fv, comp, countered: false, wardBlock: false, ctx, T, foeCue: (o) => Object.assign({ type: 'foe', foe: me }, o) });
+        const dv = delivered(deliveryOf(ctx.art, kind, fam), { kind, fam, me, aimed, dir, fv, comp, countered: false, wardBlock: false, ctx, T, foeCue: (o) => Object.assign({ type: 'foe', foe: me }, o), fx });
         if (!dv) return choreo.enemy(it, fx, Object.assign({}, ctx, { art: null }));
         for (const c of dv.cues) Q.push(Object.assign({}, c, { at: t + c.at }));
         let at = t + dv.contact;
