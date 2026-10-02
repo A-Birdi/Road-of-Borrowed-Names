@@ -135,3 +135,6 @@ mark.pb-fixed { background: rgba(45, 95, 40, 0.14); color: inherit; border-botto
 .lsheet.pb .folio-foot .cbtn > span { min-width: 0; overflow-wrap: anywhere; text-align: center; }
 .lsheet.pb .folio-head > .cbtn { flex: 0 1 auto; max-width: 100%; }
 .lsheet.pb .folio-head > .cbtn > span { min-width: 0; overflow-wrap: anywhere; text-align: center; }
+/* a safety net: an icon nothing else sizes stays text-sized (zero specificity, so any rule wins) */
+:where(.lsheet.pb svg[viewBox="0 0 24 24"]) { width: 1.2em; height: 1.2em; flex: none; }
+.pb-asked svg { width: 1.2em; height: 1.2em; vertical-align: -0.25em; color: var(--ink-2); }

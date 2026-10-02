@@ -43,6 +43,9 @@ const DESK = { viewport: { width: 1280, height: 800 } };
 const PHONE = (w, h) => ({ viewport: { width: w, height: h }, touch: true, mobile: true, dpr: 2 });
 async function shot(p, name, doc) {
   const f = path.join(OUT, name + '.png');
+  // rest the pointer off the sheet first, so a hover word-help card does not hide the page
+  // (and let a place-name card from walking in fade, so it does not sit over the sheet)
+  if (doc) { await p.mouse.move(2, 2); await wait(p, 400); await p.waitForFunction(() => !document.querySelector('#overlay .place'), null, { timeout: 5000 }).catch(() => {}); }
   await p.screenshot({ path: f });
   if (DOCS && doc) fs.copyFileSync(f, path.join(DOCDIR, name + '.png'));
 }

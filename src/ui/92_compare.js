@@ -170,7 +170,7 @@ RB.ui.compare = (function () {
     if (!un.length) {
       h += '<div class="note-slip pb-empty" role="note">' + I('look') + ' <p><b>No comparisons yet.</b> Each one needs two particular lines from the story, and you have not yet heard both lines of any pair. ' + locked + ' comparisons are waiting for their lines.</p></div>' +
         '<div class="row-acts"><button class="pbtn" data-cmp-sample>' + I('book') + '<span>Try a sample pair (teaching examples)</span></button>' +
-        '<button class="pbtn" data-cmp-ways>' + I('practice') + '<span>Other ways to practise (the writing desk and more)</span></button></div>';
+        '<button class="pbtn" data-cmp-ways>' + I('practice') + '<span>Other ways to practise</span></button></div>';
     } else {
       h += '<div class="row-acts"><button class="pbtn primary" data-cmp-three>' + I('practice') + '<span>Compare (up to three)</span></button></div>';
       h += '<ul class="entries pb-cmp-list">' + un.map((d) => {

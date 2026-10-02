@@ -148,7 +148,7 @@ RB.ui.pb = (function () {
   function askLabel(def) {
     return new Promise((resolve) => {
       const S = sheet(esc('Keep this page'), '', { cls: 'pb-keep', closeLabel: 'Cancel' });
-      S.leaf.innerHTML = '<p>The page is kept as typeset text in the game\'s lettering — it is not handwriting. Kept pages share the writing desk\'s six places.</p>' +
+      S.leaf.innerHTML = '<p>The page is kept as typeset text in the game\'s lettering — it is not handwriting. ' + (RB.practiceDesk && RB.practiceDesk.keepPage ? 'Kept pages share the writing desk\'s six places.' : 'Up to six pages are kept.') + '</p>' +
         '<form class="pb-label"><label for="pb-lab">Label <span class="muted small">(up to 40 characters)</span></label>' +
         '<input id="pb-lab" type="text" maxlength="40" autocomplete="off" spellcheck="false" value="' + esc(def || '') + '"></form>';
       S.foot.innerHTML = '<span class="spacer"></span><button class="cbtn go" data-pb-keepok>' + I('done') + '<span>Keep it</span></button>';

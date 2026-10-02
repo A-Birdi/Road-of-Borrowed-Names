@@ -3304,6 +3304,9 @@ mark.pb-fixed { background: rgba(45, 95, 40, 0.14); color: inherit; border-botto
 .lsheet.pb .folio-foot .cbtn > span { min-width: 0; overflow-wrap: anywhere; text-align: center; }
 .lsheet.pb .folio-head > .cbtn { flex: 0 1 auto; max-width: 100%; }
 .lsheet.pb .folio-head > .cbtn > span { min-width: 0; overflow-wrap: anywhere; text-align: center; }
+/* a safety net: an icon nothing else sizes stays text-sized (zero specificity, so any rule wins) */
+:where(.lsheet.pb svg[viewBox="0 0 24 24"]) { width: 1.2em; height: 1.2em; flex: none; }
+.pb-asked svg { width: 1.2em; height: 1.2em; vertical-align: -0.25em; color: var(--ink-2); }
 </style>
 </head>
 <body>
@@ -39155,7 +39158,6 @@ RB.ui.menu = (function () {
     company: ['company'], companion: ['company', 'companion'], pet: ['company', 'pet'], pets: ['company', 'pet'], memories: ['company', 'memories'],
     cases: ['journey', 'cases'], keepsakes: ['journey', 'keepsakes'], bookmarks: ['words', 'bookmarks'], creatures: ['words', 'creatures'], known: ['map', 'known'],
     practice: ['words', 'practice'], letters: ['words', 'letters'], compare: ['words', 'compare'], // practice suite B pages
-
     settings: '@settings', save: '@save',
   };
   // pages added by later systems: journey views, words pages, map views
@@ -53415,7 +53417,7 @@ RB.ui.pb = (function () {
   function askLabel(def) {
     return new Promise((resolve) => {
       const S = sheet(esc('Keep this page'), '', { cls: 'pb-keep', closeLabel: 'Cancel' });
-      S.leaf.innerHTML = '<p>The page is kept as typeset text in the game\'s lettering — it is not handwriting. Kept pages share the writing desk\'s six places.</p>' +
+      S.leaf.innerHTML = '<p>The page is kept as typeset text in the game\'s lettering — it is not handwriting. ' + (RB.practiceDesk && RB.practiceDesk.keepPage ? 'Kept pages share the writing desk\'s six places.' : 'Up to six pages are kept.') + '</p>' +
         '<form class="pb-label"><label for="pb-lab">Label <span class="muted small">(up to 40 characters)</span></label>' +
         '<input id="pb-lab" type="text" maxlength="40" autocomplete="off" spellcheck="false" value="' + esc(def || '') + '"></form>';
       S.foot.innerHTML = '<span class="spacer"></span><button class="cbtn go" data-pb-keepok>' + I('done') + '<span>Keep it</span></button>';
@@ -54250,7 +54252,7 @@ RB.ui.compare = (function () {
     if (!un.length) {
       h += '<div class="note-slip pb-empty" role="note">' + I('look') + ' <p><b>No comparisons yet.</b> Each one needs two particular lines from the story, and you have not yet heard both lines of any pair. ' + locked + ' comparisons are waiting for their lines.</p></div>' +
         '<div class="row-acts"><button class="pbtn" data-cmp-sample>' + I('book') + '<span>Try a sample pair (teaching examples)</span></button>' +
-        '<button class="pbtn" data-cmp-ways>' + I('practice') + '<span>Other ways to practise (the writing desk and more)</span></button></div>';
+        '<button class="pbtn" data-cmp-ways>' + I('practice') + '<span>Other ways to practise</span></button></div>';
     } else {
       h += '<div class="row-acts"><button class="pbtn primary" data-cmp-three>' + I('practice') + '<span>Compare (up to three)</span></button></div>';
       h += '<ul class="entries pb-cmp-list">' + un.map((d) => {
