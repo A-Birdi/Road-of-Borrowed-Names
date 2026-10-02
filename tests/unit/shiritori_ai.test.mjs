@@ -170,8 +170,8 @@ export default async (t) => {
   // budgets and labels on a big position
   const th = await SH.chooseMove(xs, X, 'thoughtful', RB.util.rng(1), S);
   const sh = await SH.chooseMove(xs, X, 'sharp', RB.util.rng(1), S);
-  t.ok(th.nodes <= 4000 + 1 && th.depth === 2 && th.label === 'estimated', 'Thoughtful: ≤4,000 nodes, 2 plies, estimated (' + th.nodes + ' nodes)');
-  t.ok(sh.nodes <= 30000 + 1 && sh.depth >= 4 && sh.label === 'estimated', 'Sharp: ≤30,000 nodes, ≥4 plies, estimated (' + sh.nodes + ' nodes, depth ' + sh.depth + ')');
+  t.ok(th.nodes - (th.exactNodes || 0) <= 4000 && th.depth === 2 && th.label === 'estimated', 'Thoughtful: ≤4,000 nodes, 2 plies, estimated (' + th.nodes + ' nodes)');
+  t.ok(sh.nodes - (sh.exactNodes || 0) <= 30000 && sh.depth >= 4 && sh.label === 'estimated', 'Sharp: ≤30,000 nodes, ≥4 plies, estimated (' + sh.nodes + ' nodes, depth ' + sh.depth + ')');
   t.ok(sh.iterations.every((it, i) => it.depth === i + 1), 'Sharp deepens one ply at a time');
   // time safeguards with a fake clock (1 ms per reading): fall back to the last completed depth
   let now = 0;

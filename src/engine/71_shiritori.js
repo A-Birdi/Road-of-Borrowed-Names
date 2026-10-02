@@ -54,7 +54,8 @@ RB.shiritori = (function () {
     return toHira(t.trim());
   }
   const isKana = (ch) => /^[ぁ-ゖー]$/.test(ch);
-  const isKanjiCh = (ch) => /^[㐀-䶿一-鿿豈-﫿々]$/u.test(ch);
+  // explicit escapes: a literal compatibility ideograph (U+F900) is easily normalized to U+8C48 by editors
+  const isKanjiCh = (ch) => /^[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\u3005]$/.test(ch);
 
   // What kind of input this is, before looking anything up (§10.3, §23.4):
   // markup and unsupported scripts are never words; internal spaces and

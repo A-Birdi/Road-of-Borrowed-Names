@@ -71,7 +71,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     c = {
       bank: b, gids, gi, kana, ki, moves, G: gids.length, K: kana.length,
       MG: Int32Array.from(moves.map((m) => m.g)), MT: Int32Array.from(moves.map((m) => m.t)),
-      headMoves: headMoves.map((l) => Int32Array.from(l)),
+      headMoves: headMoves.map((l) => Int32Array.from(l)), maxDeg: Math.max(1, ...headMoves.map((l) => l.length)),
       // scratch stamps for distinct counting (outer and inner loops)
       gS1: new Int32Array(gids.length), gS2: new Int32Array(gids.length), tS: new Int32Array(kana.length), st1: 0, st2: 0,
     };
@@ -132,75 +132,91 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
 
   // ---- alpha–beta negamax as a resumable task ------------------------------------------------------
-  // One node = one position whose moves were generated (interior or leaf).
-  function Search(c, used, budget) {
-    this.c = c; this.used = used; this.budget = budget; this.nodes = 0; this.heur = 0;
-    this.stack = []; this.result = undefined; this.aborted = null; this.tick = 0;
-  }
-  // a node: either a value (leaf/terminal) or a frame to expand
-  Search.prototype.open = function (k, depth, alpha, beta, ply) {
-    const c = this.c, used = this.used;
-    if (this.nodes >= this.budget) { this.aborted = 'nodes'; return null; }
-    this.nodes++;
-    if (depth <= 0) { const r = leaf(c, used, k, ply); if (r.heuristic) this.heur++; return { v: r.v }; }
+  // One node = one position whose moves were generated (interior or leaf). The search
+  // allocates nothing per node: frames are pooled by stack depth, move lists are typed
+  // arrays ordered in place, and a node is returned as a number (its value), true (a
+  // frame was pushed) or null (the node budget is spent). Few allocations keep garbage
+  // collection pauses out of the 8 ms slices.
+  function framePool(c) { return { k: 0, depth: 0, alpha: 0, beta: 0, ply: 0, mask: 0, key: 0, list: new Int32Array(c.maxDeg), rk: new Int32Array(c.maxDeg), n: 0, i: 0, best: 0, g: -1, cv: 0, has: false }; }
+  // the unused safe moves from k, most restrictive first (fewest replies, then move order);
+  // returns -1 if one of them leaves no safe reply (an immediate win), else the count
+  function orderMoves(c, used, k, f) {
     const list = c.headMoves[k];
-    const ms = [], rs = [];
-    if (list) for (let j = 0; j < list.length; j++) {
+    let n = 0;
+    for (let j = 0; j < list.length; j++) {
       const mi = list[j], g = c.MG[mi];
       if (used[g]) continue;
       used[g] = 1;
       const r = replyGroups(c, used, c.MT[mi]);
       used[g] = 0;
-      if (r === 0) return { v: WIN - (ply + 1) }; // a move that leaves no safe reply: proven win
-      ms.push(mi); rs.push(r);
+      if (r === 0) return -1;
+      let p = n++;
+      while (p > 0 && (f.rk[p - 1] > r || (f.rk[p - 1] === r && f.list[p - 1] > mi))) { f.rk[p] = f.rk[p - 1]; f.list[p] = f.list[p - 1]; p--; }
+      f.rk[p] = r; f.list[p] = mi;
     }
-    if (!ms.length) return { v: -(WIN - ply) };
-    // restrictive replies first (better pruning), stable for determinism
-    const order = ms.map((m, i) => i).sort((a, b) => rs[a] - rs[b] || ms[a] - ms[b]).map((i) => ms[i]);
-    return { f: { k, depth, alpha, beta, ply, list: order, i: 0, best: -Infinity, g: -1, cv: undefined } };
+    return n;
+  }
+  function Search(c, used, budget) {
+    this.c = c; this.used = used; this.budget = budget; this.nodes = 0; this.heur = 0;
+    this.F = []; this.top = -1; this.result = undefined; this.aborted = null; this.tick = 0;
+  }
+  Search.prototype.frame = function (i) { return this.F[i] || (this.F[i] = framePool(this.c)); };
+  Search.prototype.open = function (k, depth, alpha, beta, ply) {
+    const c = this.c, used = this.used;
+    if (this.nodes >= this.budget) { this.aborted = 'nodes'; return null; }
+    this.nodes++;
+    if (depth <= 0) { const r = leaf(c, used, k, ply); if (r.heuristic) this.heur++; return r.v; }
+    const f = this.frame(this.top + 1);
+    const n = orderMoves(c, used, k, f);
+    if (n < 0) return WIN - (ply + 1); // a move that leaves no safe reply: proven win
+    if (n === 0) return -(WIN - ply);
+    f.k = k; f.depth = depth; f.alpha = alpha; f.beta = beta; f.ply = ply; f.n = n; f.i = 0; f.best = -Infinity; f.g = -1; f.has = false;
+    this.top++;
+    return true;
   };
   // run until done (true) or the clock passes the deadline (false); aborted on the node budget
   Search.prototype.step = function (clock, deadline) {
-    const st = this.stack, c = this.c, used = this.used;
-    while (st.length) {
-      if ((++this.tick & 31) === 0 && deadline !== Infinity && clock() >= deadline) return false;
-      const f = st[st.length - 1];
-      if (f.cv !== undefined) {
-        const v = -f.cv;
-        f.cv = undefined;
+    const c = this.c, used = this.used, F = this.F;
+    while (this.top >= 0) {
+      if ((++this.tick & 7) === 0 && deadline !== Infinity && clock() >= deadline) return false;
+      const f = F[this.top];
+      if (f.has) {
+        f.has = false;
         used[f.g] = 0;
+        const v = -f.cv;
         if (v > f.best) f.best = v;
         if (v > f.alpha) f.alpha = v;
-        if (f.alpha >= f.beta) f.i = f.list.length;
+        if (f.alpha >= f.beta) f.i = f.n;
         continue;
       }
-      if (f.i >= f.list.length) {
-        st.pop();
-        if (st.length) st[st.length - 1].cv = f.best; else this.result = f.best;
+      if (f.i >= f.n) {
+        this.top--;
+        if (this.top >= 0) { const q = F[this.top]; q.cv = f.best; q.has = true; } else this.result = f.best;
         continue;
       }
       const mi = f.list[f.i++];
       f.g = c.MG[mi];
       used[f.g] = 1;
       const n = this.open(c.MT[mi], f.depth - 1, -f.beta, -f.alpha, f.ply + 1);
-      if (!n) { unwindStack(st, used); return true; }
-      if (n.f) st.push(n.f); else f.cv = n.v;
+      if (n === null) { this.unwind(); return true; }
+      if (n !== true) { f.cv = n; f.has = true; }
     }
     return true;
   };
   // Restore `used` after an abort. Every frame below the top has its current move
   // applied; the top frame's last group is either applied or already released, and
-  // never one an ancestor holds, so releasing each frame's last group is exact.
-  function unwindStack(st, used) {
-    for (const f of st) if (f.g >= 0) used[f.g] = 0;
-    st.length = 0;
+  // never one an ancestor holds, so releasing each open frame's last group is exact.
+  function unwindFrames(task) {
+    for (let i = 0; i <= task.top; i++) if (task.F[i].g >= 0) task.used[task.F[i].g] = 0;
+    task.top = -1;
   }
-  Search.prototype.unwind = function () { unwindStack(this.stack, this.used); };
+  Search.prototype.unwind = function () { unwindFrames(this); };
   Search.prototype.start = function (k, depth, alpha, beta, ply) {
     this.result = undefined;
+    this.top = -1;
     const n = this.open(k, depth, alpha, beta, ply);
-    if (!n) return false;
-    if (n.f) this.stack.push(n.f); else this.result = n.v;
+    if (n === null) return false;
+    if (n !== true) this.result = n;
     return true;
   };
 
@@ -228,83 +244,86 @@ var RB = (globalThis.RB = globalThis.RB || {});
     return k === undefined ? 0 : reachable(c, usedArray(c, state), k).length;
   }
   // Values for the side to move: a win in d plies is EXV − d, a loss in d plies −(EXV − d).
+  // A position is settled at its first winning move, so a win's distance is the one
+  // found (an upper bound), used only to prefer quicker wins among proven ones.
   const EXV = 1000;
   function Exact(c, used, k0, budget, maxLive) {
     this.c = c; this.used = used; this.budget = budget; this.nodes = 0; this.aborted = null;
     const live = reachable(c, used, k0);
-    this.live = live; this.ok = live.length <= maxLive;
+    this.live = live; this.ok = live.length <= maxLive && live.length <= 30;
     this.bit = new Int32Array(c.G).fill(-1);
     live.forEach((g, i) => (this.bit[g] = i));
     this.memo = new Map();
-    this.stack = []; this.result = undefined; this.tick = 0;
+    this.F = []; this.top = -1; this.result = undefined; this.tick = 0;
   }
+  Exact.prototype.frame = Search.prototype.frame;
   Exact.prototype.mask = function () { let m = 0; for (let i = 0; i < this.live.length; i++) if (this.used[this.live[i]]) m |= 1 << i; return m; };
   Exact.prototype.open = function (k, mask) {
     const key = mask * this.c.K + k;
     const hit = this.memo.get(key);
-    if (hit !== undefined) return { v: hit };
+    if (hit !== undefined) return hit;
     if (this.nodes >= this.budget) { this.aborted = 'nodes'; return null; }
     this.nodes++;
-    const c = this.c, used = this.used, list = c.headMoves[k], ms = [], rs = [];
-    for (let j = 0; j < list.length; j++) {
-      const mi = list[j], g = c.MG[mi];
-      if (used[g]) continue;
-      used[g] = 1;
-      const r = replyGroups(c, used, c.MT[mi]);
-      used[g] = 0;
-      if (r === 0) { this.memo.set(key, EXV - 1); return { v: EXV - 1 }; }
-      ms.push(mi); rs.push(r);
-    }
-    if (!ms.length) { this.memo.set(key, -EXV); return { v: -EXV }; }
-    const order = ms.map((m, i) => i).sort((a, b) => rs[a] - rs[b] || ms[a] - ms[b]).map((i) => ms[i]);
-    return { f: { k, mask, key, list: order, i: 0, best: -Infinity, g: -1, cv: undefined } };
+    const f = this.frame(this.top + 1);
+    const n = orderMoves(this.c, this.used, k, f);
+    if (n < 0) { this.memo.set(key, EXV - 1); return EXV - 1; }
+    if (n === 0) { this.memo.set(key, -EXV); return -EXV; }
+    f.k = k; f.mask = mask; f.key = key; f.n = n; f.i = 0; f.best = -Infinity; f.g = -1; f.has = false;
+    this.top++;
+    return true;
   };
   Exact.prototype.step = function (clock, deadline) {
-    const st = this.stack, c = this.c, used = this.used;
-    while (st.length) {
-      if ((++this.tick & 31) === 0 && deadline !== Infinity && clock() >= deadline) return false;
-      const f = st[st.length - 1];
-      if (f.cv !== undefined) {
-        const vc = f.cv;
-        f.cv = undefined;
+    const c = this.c, used = this.used, F = this.F;
+    while (this.top >= 0) {
+      if ((++this.tick & 7) === 0 && deadline !== Infinity && clock() >= deadline) return false;
+      const f = F[this.top];
+      if (f.has) {
+        f.has = false;
         used[f.g] = 0;
+        const vc = f.cv;
         const v = vc < 0 ? -vc - 1 : -vc + 1;
         if (v > f.best) f.best = v;
-        if (v > 0) f.i = f.list.length; // a proven win: the result of this position is settled
+        if (v > 0) f.i = f.n; // a proven win: the result of this position is settled
         continue;
       }
-      if (f.i >= f.list.length) {
-        st.pop();
+      if (f.i >= f.n) {
+        this.top--;
         this.memo.set(f.key, f.best);
-        if (st.length) st[st.length - 1].cv = f.best; else this.result = f.best;
+        if (this.top >= 0) { const q = F[this.top]; q.cv = f.best; q.has = true; } else this.result = f.best;
         continue;
       }
       const mi = f.list[f.i++];
       f.g = c.MG[mi];
       used[f.g] = 1;
       const n = this.open(c.MT[mi], f.mask | (1 << this.bit[f.g]));
-      if (!n) { unwindStack(st, used); return true; }
-      if (n.f) st.push(n.f); else f.cv = n.v;
+      if (n === null) { this.unwind(); return true; }
+      if (n !== true) { f.cv = n; f.has = true; }
     }
     return true;
   };
-  Exact.prototype.unwind = function () { unwindStack(this.stack, this.used); };
+  Exact.prototype.unwind = function () { unwindFrames(this); };
   Exact.prototype.start = function (k) {
     this.result = undefined;
+    this.top = -1;
     const n = this.open(k, this.mask());
-    if (!n) return false;
-    if (n.f) this.stack.push(n.f); else this.result = n.v;
+    if (n === null) return false;
+    if (n !== true) this.result = n;
     return true;
   };
 
   // ---- the cooperative driver -------------------------------------------------------------------
+  // A macrotask yield (MessageChannel: no 4 ms timer clamping), one channel for the module.
+  let CHANNEL = null;
   function yielder(o) {
     if (o.yield) return o.yield;
     if (typeof MessageChannel === 'function') {
-      const ch = new MessageChannel(), q = [];
-      ch.port1.onmessage = () => { const r = q.shift(); if (r) r(); };
-      if (ch.port1.unref) ch.port1.unref();
-      return () => new Promise((r) => { q.push(r); ch.port2.postMessage(0); });
+      if (!CHANNEL) {
+        const ch = new MessageChannel(), q = [];
+        ch.port1.onmessage = () => { const r = q.shift(); if (r) r(); };
+        if (ch.port1.unref) ch.port1.unref();
+        CHANNEL = () => new Promise((r) => { q.push(r); ch.port2.postMessage(0); });
+      }
+      return CHANNEL;
     }
     return () => new Promise((r) => setTimeout(r, 0));
   }
@@ -367,7 +386,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
 
   async function searchMove(state, b, pol, rng, o, run) {
+    const fresh = !CACHE.has(b);
     const c = compile(b);
+    // the first decision on a bank compiles its graph: give the page a turn before searching
+    if (fresh && !run.sync) { endSlice(run, run.clock()); await run.yieldFn(); run.sliceStart = run.clock(); }
     const k = c.ki[state.required];
     const used = usedArray(c, state);
     const root = k === undefined ? [] : safeMoveList(c, used, k);
@@ -413,7 +435,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       out.exactAborted = stop; // the bounded search below decides; this attempt is reported separately
     }
     // iterative deepening negamax under the node budget
-    const S = new Search(c, used, pol.nodes);
+    const S = new Search(c, used, pol.nodes - 1); // the root terminal check above was node 1
     let order = root.slice(), done = null;
     for (let depth = 1; depth <= pol.maxDepth; depth++) {
       const vals = new Map();
@@ -559,9 +581,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const alts = safe.filter((x) => x.group !== h.group).map((x) => { const u3 = Object.assign({}, p.used); u3[x.group] = true; return { x, left: groupsAfter(u3, x.tail) }; });
       const winAlt = alts.filter((a) => a.left === 0);
       if (left > 0 && winAlt.length) notes.push({ kind: 'missed-win', turn: p.i, actor: p.actor, label: 'proven', proven: true, examples: winAlt.slice(0, 3).map((a) => a.x.entry), en: 'Turn ' + p.i + ': ' + winAlt.slice(0, 2).map((a) => a.x.reading).join(' or ') + ' would have left no safe reply.' });
-      if (left > 0 && left <= 2) notes.push({ kind: 'restricting', turn: p.i, actor: p.actor, label: 'fact', proven: true, left, en: 'Turn ' + p.i + ': ' + h.reading + ' left only ' + left + ' safe repl' + (left === 1 ? 'y' : 'ies') + '.' });
-      const fewer = alts.filter((a) => a.left > 0 && a.left < left);
-      if (fewer.length && left > 2) { const m = fewer.reduce((a, b) => (b.left < a.left ? b : a)); notes.push({ kind: 'fewer-replies', turn: p.i, actor: p.actor, label: 'fact', proven: true, left, alt: m.x.entry, altLeft: m.left, en: 'Turn ' + p.i + ': ' + h.reading + ' left ' + left + ' safe replies; ' + m.x.reading + ' would have left ' + m.left + '.' }); }
+      if (left === 1) notes.push({ kind: 'restricting', turn: p.i, actor: p.actor, label: 'fact', proven: true, left, en: 'Turn ' + p.i + ': ' + h.reading + ' left only one safe reply.' });
+      const fewer = alts.filter((a) => a.left === 1);
+      if (fewer.length && left >= 3) { const m = fewer.reduce((a, b) => (b.left < a.left ? b : a)); notes.push({ kind: 'fewer-replies', turn: p.i, actor: p.actor, label: 'fact', proven: true, left, alt: m.x.entry, altLeft: m.left, en: 'Turn ' + p.i + ': ' + h.reading + ' left ' + left + ' safe replies; ' + m.x.reading + ' would have left ' + m.left + '.' }); }
     }
     if (state.over && /concession/.test(state.over.reason)) {
       const loser = state.over.reason === 'human-concession' ? 'pc' : 'cpu';
@@ -581,7 +603,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         if ((p.actor === W && moverWins) || (p.actor !== W && !moverWins)) from = { turn: p.i, plies: r.plies, mover: p.actor };
         else break;
       }
-      if (from) notes.push({ kind: 'forced-finish', turn: from.turn, actor: W, label: 'proven', proven: true, plies: from.plies, en: 'From turn ' + from.turn + ' the finish was forced (proven by an exhaustive search of that position).' });
+      if (from) notes.push({ kind: 'forced-finish', turn: from.turn, actor: W, label: 'proven', proven: true, plies: from.plies, en: 'From turn ' + from.turn + ' the eventual winner had a forced win (proven by an exhaustive search of that position).' });
     }
     // bounded-search preferences (opt-in): never stated as proof unless exact
     if (o.deep) {
@@ -636,5 +658,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     return b.edges.filter((e) => !e.terminal).map((e) => starterCheck(b, e));
   }
 
-  SH.ai = { STRATEGY, POLICY, EXACT, THEMES, WIN, compile, liveGroups, solve, heuristic, reachable, starterCheck, certifyStarters };
+  // compile a bank's search graph ahead of play (e.g. while the table is prepared)
+  const prepare = (b) => { compile(b); return true; };
+  SH.ai = { STRATEGY, POLICY, EXACT, THEMES, WIN, compile, prepare, liveGroups, solve, heuristic, reachable, starterCheck, certifyStarters };
 })(RB.shiritori);
