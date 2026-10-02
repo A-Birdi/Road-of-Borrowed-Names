@@ -120,7 +120,7 @@ RB.battleSeq = (function () {
       default:
         if (instant) break;
         if (c.type === 'pose') S.pose(c.who, c.pose, c.gesture, c.d, at);
-        else if (c.type === 'foe') S.foe(c.act, c.d, at, { family: c.family, dir: c.dir, hold: c.hold, foe: c.foe || 0, travel: c.travel || null });
+        else if (c.type === 'foe') S.foe(c.act, c.d, at, { family: c.family, dir: c.dir, hold: c.hold, foe: c.foe || 0, travel: c.travel });
         else if (c.type === 'fx') S.effect(c.name, c.d, at, c.p);
         else if (c.type === 'strip') S.strip(c.word, c.from, c.to, at, c.tm);
         else if (c.type === 'num') S.number(c.to, c.text, c.kind, at);
