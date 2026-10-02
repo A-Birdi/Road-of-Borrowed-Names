@@ -544,13 +544,19 @@ RB.battlePets = (function () {
     if (P.mode === 'rest') { po = Object.assign({}, po, B.sp === 'bird' ? { crouch: 0.8, fluff: 0.6, tuck: 1 } : { sit: 0, lie: 1 }); lift = 0; }
     const f = RB.petArt.frame(B.sp, B.look, view, quant(po));
     if (!f) return;
-    const x = P.x + (dx * dens - B.offX) * s, y = P.y;
+    // the arrival walks in from the left, but never through your companion's feet: it starts beside them
+    let dxs = dx * dens * s;
+    if (dxs && L.comp && L.comp.x < P.x) {
+      const minX = footSpans(L)[1].x1 + (B.ext.w * s) / 2 + s;
+      if (P.x + dxs < minX) dxs = Math.min(0, minX - P.x);
+    }
+    const x = P.x + dxs - B.offX * s, y = P.y;
     RB.battleScene.shadow(c, x + Math.round(B.offX * s), y - s, Math.round((B.sp === 'bird' ? 7 : B.sp === 'dog' ? 15 : 13) * dens * s), Math.max(2, Math.round(3 * dens * s)), 0.5);
     c.imageSmoothingEnabled = false;
     const px = Math.round(x - f.ax * s), py = Math.round(y - f.ay * s - lift * dens * s);
     c.drawImage(f.cv, px, py, f.w * s, f.h * s);
     B.stats.drawn++;
-    B.last = { x: px, y: py, w: f.w * s, h: f.h * s, pose: po, base: B.base, place: P, density: dens, foot: { x: Math.round(x + B.offX * s), y }, ground: { x0: Math.round(P.x - B.ext.w * s / 2), x1: Math.round(P.x + B.ext.w * s / 2), y } };
+    B.last = { x: px, y: py, w: f.w * s, h: f.h * s, s, f, pose: po, base: B.base, place: P, density: dens, foot: { x: Math.round(x + B.offX * s), y }, ground: { x0: Math.round(P.x - B.ext.w * s / 2), x1: Math.round(P.x + B.ext.w * s / 2), y } };
   }
   // the horizontal middle of a frame's drawing, from its anchor (art px)
   function centreOf(f) {
@@ -570,6 +576,14 @@ RB.battlePets = (function () {
       return x1 < 0 ? { w: f.w, h: f.h } : { w: x1 - x0 + 1, h: f.ay - y0 + 1 };
     } catch (e) { return { w: f.w, h: f.h }; }
   }
+  function bodyOf(L) {
+    try {
+      const f = L.f, d = f.cv.getContext('2d').getImageData(0, 0, f.w, f.h).data;
+      let x0 = f.w, y0 = f.h, x1 = -1, y1 = -1;
+      for (let i = 3; i < d.length; i += 4) if (d[i] > 100) { const q = (i - 3) / 4, x = q % f.w, yy = (q / f.w) | 0; if (x < x0) x0 = x; if (x > x1) x1 = x; if (yy < y0) y0 = yy; if (yy > y1) y1 = yy; }
+      return x1 < 0 ? null : { x: L.x + x0 * L.s, y: L.y + y0 * L.s, w: (x1 - x0 + 1) * L.s, h: (y1 - y0 + 1) * L.s };
+    } catch (e) { return null; }
+  }
   function stats() {
     if (!B) return { on: false };
     const cp = RB.battleStage.cssPerArt ? RB.battleStage.cssPerArt() : 1;
@@ -579,6 +593,8 @@ RB.battlePets = (function () {
       on: B.on, sp: B.sp, look: B.look, base: B.base, queued: B.q.length, stats: JSON.parse(JSON.stringify(B.stats)), trace: B.trace.slice(), box,
       art: L ? { x: L.x, y: L.y, w: L.w, h: L.h } : null, pose: L ? L.pose : null, place: L ? L.place.mode : null, density: L ? L.density : null,
       ground: L ? L.ground : null, foot: L ? L.foot : null, cssPerArt: cp,
+      // the animal's drawn pixels (opaque bounding box, canvas art px) — what it actually covers
+      body: L ? bodyOf(L) : null,
     };
   }
 

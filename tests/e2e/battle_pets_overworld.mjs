@@ -67,10 +67,11 @@ async function battle(o) {
       const L = RB.battleStage.lay && RB.battleStage.lay(); const st = RB.battlePets.stats();
       if (!L || !st.on || !st.art) return;
       const cv = document.querySelector('canvas'); const cr = cv.getBoundingClientRect(); const cp = st.cssPerArt;
-      const box = st.art; const inBox = (a) => a && a.x >= box.x && a.x <= box.x + box.w && a.y >= box.y && a.y <= box.y + box.h;
+      // what the animal covers: its drawn pixels (st.body), not the transparent frame around them
+      const box = st.body || st.art; const inBox = (a) => a && a.x >= box.x && a.x <= box.x + box.w && a.y >= box.y && a.y <= box.y + box.h;
       const css = { x0: cr.left + box.x * cp, y0: cr.top + box.y * cp, x1: cr.left + (box.x + box.w) * cp, y1: cr.top + (box.y + box.h) * cp };
       const over = [...document.querySelectorAll('.intent, [class*="badge"], [data-badge]')].filter((el) => el.offsetParent).map((el) => el.getBoundingClientRect()).filter((r) => r.width && r.left < css.x1 && r.right > css.x0 && r.top < css.y1 && r.bottom > css.y0).length;
-      window.__samples.push({ pc: inBox(L.pc), comp: inBox(L.comp), over, place: st.place, base: st.base });
+      window.__samples.push({ pc: inBox(L.pc), comp: inBox(L.comp), over, place: st.place, base: st.base, t: Math.round(RB.battleSeq.now()), box: [box.x, box.y, box.w, box.h], a: [L.pc.x, L.pc.y, L.comp ? L.comp.x : null, L.comp ? L.comp.y : null] });
     }, 120);
   }, [o]);
   const pause = (ms) => p.waitForTimeout(ms);
@@ -78,11 +79,19 @@ async function battle(o) {
   const clickAt = async (pt) => { await p.mouse.move(pt.x, pt.y, { steps: 4 }); await p.mouse.click(pt.x, pt.y); };
   await p.evaluate(() => { window.__reseed(777); RB.game.startBattle('rw.dustmoth', {}); });
   async function lines() { for (let i = 0; i < 20 && (await p.evaluate(() => RB.ui.dialogue.isOpen())); i++) { await pause(300); const pt = await center('.dlg:not(.hidden) .b-next'); if (pt) await clickAt(pt); else await p.evaluate(() => RB.ui.dialogue.advance(true)); await pause(150); } }
-  await pause(500); await lines();
+  // the encounter's opening lines, then its first decision
+  for (let i = 0; i < 80; i++) {
+    const st = await p.evaluate(() => ({ dlg: RB.ui.dialogue.isOpen(), cards: !!document.querySelector('.rcard[data-i]') && RB.combat.phase && RB.combat.phase() === 'choose', mode: RB.game.mode() }));
+    if (st.cards) break;
+    if (st.dlg) await lines(); else await pause(150);
+  }
   await p.evaluate(() => { const st = RB.combat.state(); if (st) { st.knots = st.maxKnots = 3; st.foes[0].knots = st.foes[0].maxKnots = 3; RB.combat.refresh(); } });
   const notes = async () => { const g = await p.evaluate(() => { const x = [...document.querySelectorAll('.cb-coach button, [data-coach-ok]')].find((y) => /got it/i.test(y.textContent)); if (!x) return null; const q = x.getBoundingClientRect(); return { x: q.left + q.width / 2, y: q.top + q.height / 2 }; }); if (g) { await clickAt(g); await pause(200); } };
-  for (let r = 0; r < 6 && (await p.evaluate(() => RB.game.mode())) === 'combat' && !(await p.evaluate(() => RB.ui.dialogue.isOpen())); r++) {
-    await p.waitForFunction(() => !!document.querySelector('.rcard[data-i]') && RB.combat.phase && RB.combat.phase() === 'choose', null, { timeout: 30000 });
+  let exchanges = 0;
+  for (let r = 0; r < 6 && (await p.evaluate(() => RB.game.mode())) === 'combat'; r++) {
+    const ready = await p.waitForFunction(() => (!!document.querySelector('.rcard[data-i]') && RB.combat.phase && RB.combat.phase() === 'choose') || RB.combat.phase() === 'outro' || RB.game.mode() !== 'combat', null, { timeout: 30000 }).then(() => p.evaluate(() => !!document.querySelector('.rcard[data-i]') && RB.combat.phase() === 'choose')).catch(() => false);
+    if (!ready) break;
+    exchanges++;
     await pause(500); await notes();
     const want = r === 1 ? '守る|protect' : 'unravel';
     const c = await p.evaluate((src) => { const re = new RegExp(src, 'i'); const cards = [...document.querySelectorAll('.rcard')].filter((e) => !e.disabled); const x = cards.find((e) => re.test(e.textContent)) || cards.find((e) => /unravel/i.test(e.textContent)) || cards[0]; x.scrollIntoView({ block: 'nearest' }); const q = x.getBoundingClientRect(); return { x: q.left + q.width / 2, y: q.top + q.height / 2 }; }, want);
@@ -110,8 +119,9 @@ async function battle(o) {
   const res = await p.evaluate(() => {
     clearInterval(window.__sampler);
     const st = RB.combat.state && RB.combat.state();
-    return { steps: window.__steps, seq: window.__seq, samples: window.__samples, pet: RB.battlePets.stats(), cache: RB.petArt.cacheStats(), end: st ? { pc: st.pc, comp: st.comp, harmony: st.harmony, knots: st.foes.map((f) => f.knots), round: st.round } : null };
+    return { exchanges: 0, steps: window.__steps, seq: window.__seq, samples: window.__samples, pet: RB.battlePets.stats(), cache: RB.petArt.cacheStats(), end: st ? { pc: st.pc, comp: st.comp, harmony: st.harmony, knots: st.foes.map((f) => f.knots), round: st.round } : null };
   });
+  res.exchanges = exchanges;
   if (o.shot) await p.screenshot({ path: path.join(outDir, o.shot) });
   await lines();
   await p.waitForFunction(() => RB.game.mode() === 'world', null, { timeout: 20000 }).catch(() => {});
@@ -126,7 +136,8 @@ if (only !== '--world-only') {
   const runs = {};
   await test('battles with no pet, each species and a hidden pet: no page errors; identical tasks, schedule and end state', async () => {
     const SET = { none: {}, cat: { pet: 'cat' }, dog: { pet: 'dog', look: 'blacktan' }, bird: { pet: 'bird' }, tanuki: { pet: 'tanuki', look: 'graybrown' }, hidden: { pet: 'cat', hide: true } };
-    for (const k in SET) runs[k] = await battle(Object.assign({ comp: 'mio', shot: 'battle_' + k + '.png' }, SET[k]));
+    for (const k in SET) if (!process.env.BP_ONLY || process.env.BP_ONLY === k) runs[k] = await battle(Object.assign({ comp: 'mio', shot: 'battle_' + k + '.png' }, SET[k]));
+    if (process.env.BP_DEBUG) console.log(JSON.stringify(Object.fromEntries(Object.entries(runs).map(([k, r]) => [k, { ex: r.exchanges, mode: r.mode, seq: r.seq.length, steps: r.steps.length, pet: r.pet.stats }]))));
     const bad = Object.entries(runs).filter(([, r]) => r.errors.length || r.mode !== 'world').map(([k, r]) => k + ': ' + r.mode + ' ' + r.errors.join(' | '));
     assert(!bad.length, 'every battle completed without page errors: ' + bad.join('; '));
     const base = runs.none;
@@ -142,7 +153,7 @@ if (only !== '--world-only') {
       assert(r && r.pet.on && r.pet.stats.reactions >= 2 && r.pet.stats.impacts >= 1 && r.pet.stats.preps >= 1, k + ' reacted: ' + JSON.stringify(r && r.pet.stats));
       assert(r.samples.length > 30, k + ' sampled ' + r.samples.length + ' frames');
       const onFoot = r.samples.filter((s) => s.pc || s.comp).length, over = r.samples.filter((s) => s.over).length;
-      assert(!onFoot && !over, k + ': never on a foot anchor (' + onFoot + ') nor over the intent box or a badge (' + over + ')');
+      assert(!onFoot && !over, k + ': never on a foot anchor (' + onFoot + ') nor over the intent box or a badge (' + over + '): ' + JSON.stringify(r.samples.filter((s) => s.pc || s.comp || s.over).slice(0, 3)));
       assert(r.pet.trace.every((x) => !('target' in x) && !('hp' in x)), k + ': its record carries no target or health');
       console.log('   ' + k + ': reactions ' + r.pet.stats.reactions + ' (secondary ' + r.pet.stats.secondary + ', fitted ' + r.pet.stats.fitted + ', skipped ' + r.pet.stats.skipped + '), braces ' + r.pet.stats.preps + ', flinches ' + r.pet.stats.impacts + ', settles ' + r.pet.stats.settles + '; place ' + [...new Set(r.samples.map((q) => q.place))].join('/') + '; density ' + r.pet.density + '; pet frame cache ' + r.cache.size + ' frames, ' + Math.round(r.cache.bytes / 1024) + ' KiB of pixels (built ' + r.cache.built + ')');
     }
@@ -154,7 +165,8 @@ if (only !== '--world-only') {
     const red = await battle({ comp: 'ren', pet: 'bird', reduce: true, shot: 'battle_reduced_bird.png' });
     for (const [k, r] of [['solo', solo], ['phone', phone], ['reduced', red]]) {
       assert(!r.errors.length && r.mode === 'world', k + ': completed without page errors: ' + r.errors.join(' | '));
-      assert(r.pet.on && r.samples.length > 10 && !r.samples.some((s) => s.pc || s.comp || s.over), k + ': in its place, clear of feet and badges (' + r.samples.length + ' samples; places ' + [...new Set(r.samples.map((s) => s.place))].join(',') + ')');
+      assert(r.pet.on && r.samples.length > 10 && !r.samples.some((s) => s.pc || s.comp || s.over), k + ': in its place, clear of feet and badges (' + r.samples.length + ' samples; places ' + [...new Set(r.samples.map((s) => s.place))].join(',') + '): ' + JSON.stringify(r.samples.filter((s) => s.pc || s.comp || s.over).slice(0, 3)));
+      console.log('   ' + k + ': ' + r.exchanges + ' exchanges; reactions ' + r.pet.stats.reactions + ', braces ' + r.pet.stats.preps + ', settles ' + r.pet.stats.settles + '; place ' + [...new Set(r.samples.map((q) => q.place))].join('/') + '; density ' + r.pet.density);
     }
     assert(red.pet.stats.reactions >= 1, 'reduced motion still reacts (held key poses)');
   });
