@@ -43,11 +43,13 @@ body.reduced-motion .pace-line .ln { transition: none; }
 
 /* ---- the pause / expiry sheet over the task (the bar stays visible above it) ---------- */
 .pace-veil {
-  position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; display: flex; align-items: center; justify-content: center;
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; display: flex; align-items: flex-start; justify-content: center;
   padding: 12px; background: rgba(12, 15, 32, 0.88); border-radius: 0 0 10px 10px; overflow-y: auto;
 }
+/* centred by auto margins, which fall back to the top when the card is taller than the
+ * sheet (so it scrolls instead of being cut off above) */
 .pace-card {
-  max-width: min(32em, 100%); background: var(--paper); color: var(--ink); border: 1px solid var(--paper-edge); border-radius: var(--r-1);
+  margin: auto 0; max-width: min(32em, 100%); background: var(--paper); color: var(--ink); border: 1px solid var(--paper-edge); border-radius: var(--r-1);
   box-shadow: 0 2px 0 var(--paper-3), 0 10px 30px rgba(0, 0, 0, 0.45); padding: 14px 16px; display: flex; flex-direction: column; gap: 10px;
 }
 .pace-card p { margin: 0; }
@@ -95,7 +97,8 @@ body.reduced-motion .pace-line .ln { transition: none; }
   .chal.pace-gated[data-mode="hand"] .chal-work { position: static; height: auto; min-height: 0; }
 }
 @media (max-width: 599px), (max-height: 559px) {
-  .pace-bar { margin: 0 0 4px; padding: 2px 6px; gap: 2px 8px; }
-  .pace-line { width: 6em; }
+  .pace-bar { margin: 0 0 4px; padding: 2px 6px; gap: 2px 8px; font-size: 0.86em; }
+  .pace-line { width: 5em; }
   .pace-st { flex-basis: 8em; }
+  .pace-b { padding: 0 0.6em; }
 }

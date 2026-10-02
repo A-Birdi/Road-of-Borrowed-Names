@@ -256,6 +256,26 @@ await test('a misread reported after a wrong answer is not a Japanese error: the
   const res = await done(p);
   assert(res.ok && res.mistakes === 0 && res.firstTry === true && res.recogMisses >= 1, 'not a mistake: ' + JSON.stringify({ m: res.mistakes, f: res.firstTry, r: res.recogMisses }));
   assert(res.paced.onTime === true && res.paced.convertedToUntimed === null && res.paced.recognitionRepair && res.paced.submittedResult === 'correct', 'on time, no cost: ' + JSON.stringify(res.paced));
+  // a genuine wrong answer first, then a misread reported on a second one: the genuine
+  // correction stands (still untimed), only the reported one is uncounted
+  await p.evaluate((st) => __attempt(st, { pace: 'custom', budgetSec: 60, taskId: 'T/misread2', representation: 'kana' }), RIGHT);
+  await ready(p);
+  const writeAll = async (chars) => { for (const ch of chars) { await p.evaluate((ch) => RB.pad.__last._inject(__ink(ch)), ch); await p.waitForFunction(() => document.querySelector('.readas').getAttribute('data-state') === 'sure'); await p.click('[data-a=confirm]'); } };
+  await writeAll(['ひ', 'だ', 'り']);
+  await p.click('[data-a=submit]');
+  await p.waitForSelector('.fbwrap[data-fb=no]');
+  await p.evaluate(() => RB.pad.__last.reset());
+  await writeAll(['み', 'き']);
+  await p.click('[data-a=submit]');
+  await p.waitForSelector('.fbwrap[data-fb=no] .fb-misread');
+  await p.click('.fb-misread');
+  await p.waitForSelector('.fbwrap[data-fb=unsure]');
+  const g2 = await clk(p);
+  assert(!g2.timed && g2.converted === 'content-correction', 'with a genuine content error earlier, the attempt stays untimed: ' + JSON.stringify(g2));
+  await p.click('[data-a=leave]');
+  await p.waitForFunction(() => window.__res);
+  const r2 = await p.evaluate(() => window.__res);
+  assert(r2.mistakes === 1 && r2.recogMisses === 1, 'one genuine mistake, one uncounted misread: ' + JSON.stringify({ m: r2.mistakes, r: r2.recogMisses }));
   assert(!errors.length, errors.join('; '));
   await ctx.close();
 });

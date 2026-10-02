@@ -51,7 +51,7 @@ RB.pace = (function () {
   const S = () => (RB.game && RB.game.s) || null;
   const reduced = () => !!(RB.game && RB.game.reducedMotion && RB.game.reducedMotion());
   const showSecs = () => !!(RB.game && RB.game.settings && RB.game.settings.fishSeconds);
-  const clampSec = (v) => { v = Math.round(+v); return isFinite(v) ? Math.min(C.LIMITS.customMax, Math.max(C.LIMITS.customMin, v)) : null; };
+  const clampSec = (v) => { if (v == null || v === '') return null; v = Math.round(+v); return isFinite(v) ? Math.min(C.LIMITS.customMax, Math.max(C.LIMITS.customMin, v)) : null; };
   const guessPtr = () => (typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches ? 'touch' : 'mouse');
   // the pad's size class follows the challenge's own layout breakpoints (60_learning.css)
   function layoutClass() {
@@ -248,7 +248,7 @@ RB.pace = (function () {
       timers.deadline = null;
       if (disposed || !clk) return;
       if (clk.timed() && clk.running()) timers.deadline = setTimeout(() => { if (clk) clk.tick(); }, Math.max(0, clk.remaining()) + 2);
-      const want = visibleClock() && clk.started && !clk.finished;
+      const want = visibleClock() && clk.started && !clk.finished && clk.timed();
       if (want && !timers.meter) timers.meter = setInterval(() => { if (clk) { clk.tick(); syncEnv(); meter(); } }, reduced() ? 1000 : 200);
       else if (!want && timers.meter) { clearInterval(timers.meter); timers.meter = null; }
     }
@@ -308,7 +308,7 @@ RB.pace = (function () {
       // the explanation follows the buttons, so Ready stays in view on short screens
       h += '<p class="pace-gx small">' + (p.clock === 'timed'
         ? 'Read the task first. The clock starts when you press Ready and runs only while you answer. Word help, checking what the pad read, Pause and leaving the game stop it. If it runs out, the line loosens and you can still finish untimed. Pace never changes the fish.'
-        : 'Nothing is timed. Help, Pause and leaving the game are left out of the measurement. Pace never changes the fish.') + '</p>';
+        : 'Nothing is timed. Time with word help open or away from the game is left out of the measurement. Pace never changes the fish.') + '</p>';
       return h;
     }
     function renderGate() {
@@ -327,7 +327,11 @@ RB.pace = (function () {
           if (back) back.focus({ preventScroll: true });
         });
       }
-      if (el.cover.parentNode !== api.sheet) api.sheet.insertBefore(el.cover, api.sheet.firstChild);
+      if (el.cover.parentNode !== api.sheet) {
+        // after the sheet's own label ("Choose", "Arrange the pieces"), before the input panes
+        const lab = api.sheet.querySelector(':scope > .sheet-lab');
+        api.sheet.insertBefore(el.cover, lab ? lab.nextSibling : api.sheet.firstChild);
+      }
       // rebuilt only when it says something new, so keyboard focus stays put
       const h = gateHtml();
       if (el.cover.__h !== h) { el.cover.innerHTML = h; el.cover.__h = h; }
@@ -390,8 +394,10 @@ RB.pace = (function () {
         secs.classList.toggle('sr', !showSecs());
         secs.hidden = plan.clock !== 'timed';
         const live = visibleClock() && clk && clk.started && !clk.finished && clk.timed() && !clk.frozen;
+        const rs = live ? clk.reasons() : [];
+        const envHeld = rs.some((r) => r === 'help' || r === 'modal' || r === 'hidden' || r === 'blur');
         b.querySelector('[data-pace=pause]').hidden = !(live && clk.running());
-        b.querySelector('[data-pace=continue]').hidden = !(live && !clk.running() && clk.hold || (live && clk.reasons().some((r) => r === 'candidate-review' || r === 'recognition-repair')));
+        b.querySelector('[data-pace=continue]').hidden = !(live && !envHeld && ((!clk.running() && clk.hold) || rs.some((r) => r === 'candidate-review' || r === 'recognition-repair')));
         b.querySelector('[data-pace=untimed]').hidden = !(live || (phase === 'settling' && plan.clock === 'timed'));
         b.classList.toggle('dashed', !!(clk && !clk.running()));
         if (plan.clock === 'timed') { if (clk) meter(); else b.querySelector('.ln').setAttribute('d', slack(0)); }
@@ -543,7 +549,8 @@ RB.pace = (function () {
           flags.contentErrors = Math.max(0, flags.contentErrors - 1);
           flags.repair++;
           lastCause = 'recognition-repair';
-          if (!clk.unconvert('content-correction')) clk.pause('recognition-repair');
+          // the timed window returns only if no genuine content error remains
+          if (flags.contentErrors || !clk.unconvert('content-correction')) clk.pause('recognition-repair');
         }
         render();
       },
@@ -802,7 +809,7 @@ RB.pace = (function () {
     s = s || S();
     return new Promise((resolve) => {
       const layer = { name: 'pace-setup' };
-      const fr = RB.learnUi.sheet({ cls: 'small pace-sheet', title: 'Pace', onClose: () => done() });
+      const fr = RB.learnUi.sheet({ cls: 'small pace-sheet', title: 'Fishing pace' });
       fr.leaf.innerHTML = setupHtml(s);
       fr.foot.innerHTML = '<span class="spacer"></span><button class="cbtn go" data-pace-done>Done</button>';
       wireSetup(fr.leaf, s, {});

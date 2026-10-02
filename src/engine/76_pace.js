@@ -510,7 +510,7 @@ RB.paceCore = (function () {
     }
     for (const k in byKind) byKind[k].expiryRate = byKind[k].completed ? Math.round((byKind[k].expired / byKind[k].completed) * 1000) / 1000 : null;
     const excluded = f.recentAttempts.filter((r) => r.clock === 'measure' && !r.sample).map((r) => ({ n: r.n, taskId: r.taskId, bucket: r.bucket || null, excluded: r.excluded || [] }));
-    return { buckets, byKind, excluded, attempts: f.recentAttempts.length, note: 'Local records only. No human pilot data exists unless a facilitator collected it with consent on this device.' };
+    return { buckets, byKind, excluded, attempts: f.recentAttempts.length, note: 'No human pilot data exists unless a facilitator collected it with consent on this device.' };
   }
   // At most a small optional summary; a timeout never becomes an error tally.
   const NUM = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve'];
