@@ -17,7 +17,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 (function () {
   'use strict';
-  const CB = RB.creaturesB, K = RB.pxkit, E = CB.E;
+  const CB = RB.creaturesB, K = RB.pxkit, E = CB.E, S = CB.S;
   const mixh = (a, b, k) => K.hex(K.mix(a, b, k));
   // a point of the figure after its lean about the hem (0, 78)
   function cartPt(q, x, y) {
@@ -37,109 +37,124 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }
     return out;
   }
+  // parchment (violet-brown shadows, warm cream lights), map inks (sepia grid, teal contours, a
+  // vermilion route), a hood of indigo shadow with pale eyes, a chart of fresh paper on wooden
+  // rollers, a brush with a lacquered handle
+  const MPAL = {
+    paper: ['#2c1c2c', '#58383c', '#8e6a52', '#c2a074', '#e6d0a0', '#fbefcc'],
+    paperPale: ['#3a2c3a', '#6e5450', '#a88e72', '#d6c09a', '#f0e4c4', '#fff8e4'],
+    chart: ['#4a3a44', '#9a8676', '#d6c8a8', '#f4ecd6', '#fffbee'],
+    hood: ['#06060e', '#121224', '#22223a', '#36365a'],
+    wood: ['#1c0e14', '#46241e', '#7a4a2e', '#b07a46', '#e0b070'],
+    blank: ['#5a5464', '#aaa6ae', '#e8e6e2', '#fdfcf8', '#ffffff'],
+  };
   function drawCart(L, o, q, H) {
     const pale = !!o.pale;
-    const paper = K.mat(pale ? '#f0e8d4' : '#e8dcc0', { n: 6, at: 3, step: 0.07, shift: 1.2 });
-    const paperD = K.mat(pale ? '#d8ccb0' : '#cbbd98', { n: 5, at: 2, step: 0.07 });
-    const grid = K.solid(mixh(pale ? '#d2c6a8' : '#b4a684', '#e8dcc0', q.erase || 0), { line: false });
-    const route = K.solid(mixh('#8a5a3a', '#e8dcc0', q.erase || 0), { line: false });
-    const hood = K.mat('#2a2a3a', { n: 3, at: 1, step: 0.06 });
-    const eyeM = K.mat(q.eyeWarm ? '#f0d8a0' : '#9ec4f0', { n: 3, at: 1, line: false });
-    const chart = K.mat('#f8f2e2', { n: 5, at: 3, step: 0.06 });
-    const wood = K.mat('#6a4a3a', { n: 4, at: 2, step: 0.1 });
-    const inkM = K.mat('#2a2030', { n: 3, at: 1, step: 0.08 });
-    const blankM = K.mat('#fbf8f0', { n: 4, at: 2, step: 0.05 });
-    const back = L.like(), B = L.like(), front = L.like(), fx = L.like();
-    const lean = q.lean || 0;
+    const er = q.erase || 0;
+    const paper = S.mat(pale ? MPAL.paperPale : MPAL.paper, { at: 3, rim: '#9ac0f0', litk: 0.15 });
+    const grid = K.solid(mixh('#8a6a48', '#e6d0a0', er), { line: false });
+    const contour = K.solid(mixh('#3a6a6a', '#e6d0a0', er), { line: false });
+    const route = K.solid(mixh('#b0301e', '#e6d0a0', er), { line: false });
+    const hood = S.mat(MPAL.hood, { at: 1, line: false });
+    const eyeM = S.mat(q.eyeWarm ? ['#c88a40', '#f0d8a0', '#fff6dc'] : ['#4a7ac0', '#9ec8f4', '#e8f6ff'], { at: 1, line: false });
+    const chart = S.mat(MPAL.chart, { at: 3, rim: '#a8c8f0', litk: 0.15 });
+    const wood = S.mat(MPAL.wood, { at: 2, litk: 0.15 });
+    const inkM = S.mat(['#06040c', '#1a1428', '#3a3050'], { at: 1, litk: 0.2 });
+    const blankM = S.mat(MPAL.blank, { at: 3, litk: 0.15 });
+    const back = L.like(), B = L.like(), hoodL = L.like(), front = L.like(), fx = L.like();
+    const lean = (q.lean || 0) - 0.04; // (it leans toward the party, from its hem)
     const T = (Lr) => Lr.save().translate(0, 78).rotate(lean).translate(0, -78);
-    // ---- the cloak: three panels, each its own flat facet; the side panels swing out
+    // ---- the cloak: three panels, each a flat facet — the near (left) one wide and lit, the middle
+    // one turned toward us, the far one foreshortened in shade; the side panels swing out
     T(B);
     const fl = q.flareL || 0, fr = q.flareR || 0, flut = q.flut || 0;
     const panels = [
-      [[[-4, -42], [-40 - fl, 76 + flut], [-18, 78], [-2, 20]], 3],
-      [[[-4, -42], [-2, 20], [-18, 78], [18, 78 - flut], [4, 20]], 2],
-      [[[4, 20], [18, 78 - flut], [42 + fr, 74], [6, -40]], 1],
+      [[[-6, -42], [-44 - fl, 76 + flut], [-16, 79], [-2, 20]], 4],
+      [[[-6, -42], [-2, 20], [-16, 79], [14, 78 - flut], [2, 20]], 3],
+      [[[2, 20], [14, 78 - flut], [32 + fr, 74], [2, -40]], 1],
     ];
     for (const [pts, k] of panels) B.poly(pts, paper, k);
-    // the hood's shoulders (the hood itself bows on its own below)
-    B.poly([[-22, -34], [22, -34], [24, -24], [-24, -24]], paper, 3);
+    // the shoulders (the hood itself bows on its own)
+    B.poly([[-24, -34], [16, -34], [18, -24], [-26, -24]], paper, (x) => S.step(x < -14 ? 4 : x < 4 ? 3 : 2, 6));
     B.onto((b) => {
-      if ((q.erase || 0) < 0.95) {
-        for (let x = -36; x <= 40; x += 9) b.line(x, -30, x + (x < 0 ? -2 : 2), 78, grid, 0);
-        for (let y = -20; y <= 70; y += 10) b.line(-40 - fl, y, 42 + fr, y, grid, 0);
-        // contour lines of an unfinished hill
+      if (er < 0.95) {
+        // the survey grid (sepia), its lines converging a little toward the far side
+        for (let x = -38; x <= 30; x += 8) b.line(x, -30, x + (x < 0 ? -3 : 1), 78, grid, 0);
+        for (let y = -20; y <= 70; y += 9) b.line(-44 - fl, y, 32 + fr, y + 1, grid, 0);
+        // the contour lines of an unfinished hill (teal), left open
         for (let r = 0; r < 3; r++) for (let a = 0; a < 20; a++) {
           if (a % 5 === 4) continue;
           const t0 = (a / 20) * Math.PI * 2, t1 = ((a + 1) / 20) * Math.PI * 2;
-          b.line(12 + Math.cos(t0) * (6 + r * 5), 50 + Math.sin(t0) * (4 + r * 3), 12 + Math.cos(t1) * (6 + r * 5), 50 + Math.sin(t1) * (4 + r * 3), grid, 0);
+          b.line(8 + Math.cos(t0) * (5 + r * 4), 50 + Math.sin(t0) * (4 + r * 3), 8 + Math.cos(t1) * (5 + r * 4), 50 + Math.sin(t1) * (4 + r * 3), contour, 0);
         }
-        // a dotted route that stops short
-        const rt = [[-28, 60], [-20, 44], [-8, 38], [-6, 24], [6, 14]];
+        // a dotted route (vermilion) that stops short, and its starting ring
+        const rt = [[-30, 60], [-22, 44], [-10, 38], [-8, 24], [4, 14]];
         for (let i = 1; i < rt.length; i++) for (let k = 0; k < 4; k += 2) {
           const u = k / 4, x = rt[i - 1][0] + (rt[i][0] - rt[i - 1][0]) * u, y = rt[i - 1][1] + (rt[i][1] - rt[i - 1][1]) * u;
           b.rect(Math.round(x), Math.round(y), 2, 2, route, 0);
         }
-        b.fill(-33, 55, -23, 65, (x, y) => { const d = Math.hypot(x + 28, y - 60); return d <= 4.5 && d >= 2.5; }, route, 0);
+        b.fill(-35, 55, -25, 65, (x, y) => { const d = Math.hypot(x + 30, y - 60); return d <= 4.5 && d >= 2.5; }, route, 0);
       }
     });
-    // fold creases between panels (a dark crease with a lit lip)
-    B.line(-2, 20, -18, 78, paperD, 0); B.line(-1, 20, -17, 78, paper, 5);
-    B.line(4, 20, 18, 78 - flut, paperD, 1); B.line(-4, -42, -2, 20, paperD, 1);
+    // fold creases between the panels: a dark crease with a lit lip on the near side
+    B.line(-2, 20, -16, 79, paper, 0); B.line(-3, 20, -17, 79, paper, 5);
+    B.line(2, 20, 14, 78 - flut, paper, 0); B.line(-6, -42, -2, 20, paper, 1);
+    // the hem's turned edge, lit along the near panel
+    for (let x = -42 - fl; x < -17; x++) B.dot(x, Math.round(76 + flut + (x + 44 + fl) * (3 - flut) / (27 + fl)), paper, 5);
     B.restore();
-    // ---- the hood: it bows and tips about the neck
-    T(B);
-    B.save().translate(0, -30).rotate(q.ht || 0).translate(0, (q.bow || 0) * 4); // about the neck
-    B.poly([[-20, -16], [0, -40], [20, -16], [22, 4], [-22, 4]], paper, (x, y) => K.clamp(0.74 - (x + 20) / 70, 0, 0.99));
-    B.line(0, -40, -3, -18, paperD, 1);
-    B.ell(0, -10, 13, 11, hood, K.sphere(3, -6, 14, 12, { amb: 0.1 }));
+    // ---- the hood: peaked forward (toward the party), its opening turned to the near side; it bows
+    // and tips about the neck
+    T(hoodL);
+    hoodL.save().translate(0, -30).rotate(q.ht || 0).translate(0, (q.bow || 0) * 4);
+    hoodL.poly([[-22, -14], [-6, -42], [18, -18], [18, 4], [-22, 4]], paper, (x, y) => S.step(x < -8 + (y + 42) * -0.3 ? 5 : x < 4 ? 4 : x < 12 ? 3 : 2, 6));
+    hoodL.line(-6, -42, -6, -18, paper, 1); hoodL.line(-7, -40, -7, -20, paper, 5);
+    hoodL.ell(-5, -10, 12, 11, hood, (x, y) => S.step(Math.hypot(x + 2, y + 13) < 7 ? 0 : x < -10 ? 2 : 1, 4));
     const eyes = q.eyes || 'open';
-    for (const s of [-1, 1]) {
-      if (eyes === 'shut') { B.rect(s * 5 - 2, -11, 4, 1, eyeM, 0); continue; }
-      if (eyes === 'soft') { B.line(s * 5 - 2, -10, s * 5, -12, eyeM, 2); B.line(s * 5, -12, s * 5 + 2, -10, eyeM, 2); continue; }
+    for (const [ex, w] of [[-11, 3], [-1, 4]]) {
+      if (eyes === 'shut') { hoodL.rect(ex - 1, -11, w, 1, eyeM, 0); continue; }
+      if (eyes === 'soft') { hoodL.line(ex - 1, -10, ex + 1, -12, eyeM, 1); hoodL.line(ex + 1, -12, ex + w - 1, -10, eyeM, 1); continue; }
       const h = eyes === 'narrow' ? 1 : 3;
-      B.rect(s * 5 - 2, -12 + (3 - h), 4, h, eyeM, 1); B.dot(s * 5 - 2, -12 + (3 - h), eyeM, 2);
+      hoodL.rect(ex - 1, -12 + (3 - h), w, h, eyeM, 1); hoodL.dot(ex - 1, -12 + (3 - h), eyeM, 2);
     }
-    B.restore();
-    B.restore();
-    B.outline();
-    // ---- the left arm and the brush (held toward the party)
+    hoodL.restore();
+    hoodL.restore();
+    // ---- the left arm and the brush (held toward the party, behind the cloak)
     T(back);
-    const sh1 = [-16, -26], bh = [q.bx, q.by];
-    back.path([[sh1[0], sh1[1], 9], [(sh1[0] + bh[0]) / 2 - 3, (sh1[1] + bh[1]) / 2 + 2, 8], [bh[0], bh[1], 6]], 8, paperD, (x, y) => K.clamp(0.6 - (y - sh1[1]) / 80, 0, 0.99));
-    back.ell(bh[0], bh[1], 4, 4, paper, 2);
+    const sh1 = [-18, -26], bh = [q.bx, q.by];
+    back.path([[sh1[0], sh1[1], 9], [(sh1[0] + bh[0]) / 2 - 3, (sh1[1] + bh[1]) / 2 + 2, 8], [bh[0], bh[1], 6]], 8, paper, (x, y) => S.step(y < (sh1[1] + bh[1]) / 2 ? 3 : 2, 6));
+    back.ell(bh[0], bh[1], 4, 4, paper, 3);
     if (q.brush !== false) {
       const ba = q.ba || 0, bl = 34;
       const tip = [bh[0] - Math.sin(ba) * bl, bh[1] + Math.cos(ba) * bl];
       const butt = [bh[0] + Math.sin(ba) * 8, bh[1] - Math.cos(ba) * 8];
-      back.path([[butt[0], butt[1]], [tip[0], tip[1]]], 3, wood, 2);
-      back.ell(tip[0] - Math.sin(ba) * 3, tip[1] + Math.cos(ba) * 3, 3, 4, inkM, 1);
-      back.dot(Math.round(tip[0] - Math.sin(ba) * 6), Math.round(tip[1] + Math.cos(ba) * 6), inkM, 0);
+      S.pipe(back, [[butt[0], butt[1]], [tip[0], tip[1]]], 4, wood, { collars: false, bands: [[-1, 3], [-0.4, 4], [-0.1, 2], [0.5, 1]] });
+      back.ell(tip[0] - Math.sin(ba) * 3, tip[1] + Math.cos(ba) * 3, 3, 5, inkM, (x, y) => S.step(x < tip[0] - Math.sin(ba) * 3 - 1 ? 2 : 1, 3));
+      back.dot(Math.round(tip[0] - Math.sin(ba) * 7), Math.round(tip[1] + Math.cos(ba) * 7), inkM, 0);
     }
     back.restore();
-    back.outline();
     // ---- the right arm and the chart (it unrolls, snaps out, is held flat)
     T(front);
-    const sh2 = [16, -26], hd = [q.hx, q.hy];
-    front.path([[sh2[0], sh2[1], 9], [(sh2[0] + hd[0]) / 2 + 3, (sh2[1] + hd[1]) / 2 + 2, 8], [hd[0], hd[1], 6]], 8, paper, (x, y) => K.clamp(0.55 - (x - sh2[0]) / 80, 0, 0.99));
+    const sh2 = [14, -26], hd = [q.hx, q.hy];
+    front.path([[sh2[0], sh2[1], 9], [(sh2[0] + hd[0]) / 2 + 3, (sh2[1] + hd[1]) / 2 + 2, 8], [hd[0], hd[1], 6]], 8, paper, (x, y) => S.step(x < (sh2[0] + hd[0]) / 2 ? 3 : 2, 6));
     const sp = chartSpine(q);
     const cw = q.flat ? 26 : 22;
     for (let i = 1; i < sp.length; i++) {
       const [x0, y0] = sp[i - 1], [x1, y1] = sp[i];
-      front.seg(x0, y0, x1, y1, cw, chart, (x, y) => K.clamp(0.72 - i * 0.03 - ((x - x0) * (y1 - y0) - (y - y0) * (x1 - x0)) / (cw * 30), 0, 0.99));
+      const ang = Math.atan2(y1 - y0, x1 - x0);
+      // each length of the chart a flat facet, lit or shaded by the way it bends
+      const facing = Math.cos(ang + Math.PI / 2) * S.LK[0] + Math.sin(ang + Math.PI / 2) * S.LK[1];
+      front.seg(x0, y0, x1, y1, cw, chart, () => S.step(facing > 0.4 ? 4 : facing > -0.2 ? 3 : 2, 5));
     }
-    // the rollers at its ends, and lines of (unreadable) survey notes along it
     const [ex, ey] = sp[sp.length - 1];
     const a0 = Math.atan2(sp[1][1] - sp[0][1], sp[1][0] - sp[0][0]) + Math.PI / 2;
-    for (const [px, py] of [[hd[0], hd[1]], [ex, ey]]) front.seg(px - Math.cos(a0) * 13, py - Math.sin(a0) * 13, px + Math.cos(a0) * 13, py + Math.sin(a0) * 13, 5, chart, 1);
-    front.ell(hd[0], hd[1], 5, 4, paper, 2);
-    front.outline();
+    for (const [px, py] of [[hd[0], hd[1]], [ex, ey]]) S.pipe(front, [[px - Math.cos(a0) * 14, py - Math.sin(a0) * 14], [px + Math.cos(a0) * 14, py + Math.sin(a0) * 14]], 6, wood, { collars: false });
+    front.ell(hd[0], hd[1], 5, 4, paper, 3);
     front.onto((b) => {
       for (let i = 2; i < sp.length - 1; i++) {
         const [x0, y0] = sp[i];
         const l = 5 + ((i * 7) % 9);
         b.line(Math.round(x0 - Math.cos(a0) * 7), Math.round(y0 - Math.sin(a0) * 7), Math.round(x0 - Math.cos(a0) * 7 + Math.cos(a0) * l), Math.round(y0 - Math.sin(a0) * 7 + Math.sin(a0) * l), grid, 0);
       }
-      // held out flat (its plea): the one thin road it left
       if (q.flat) for (let i = 1; i < sp.length - 1; i++) { const [x, y] = sp[i]; b.rect(Math.round(x + Math.cos(a0) * 4), Math.round(y + Math.sin(a0) * 4), 2, 2, route, 0); }
     });
     front.restore();
@@ -150,14 +165,18 @@ var RB = (globalThis.RB = globalThis.RB || {});
       for (let i = 0; i < n; i++) {
         const x = [-18, 14, -30, 26, 0, -8][i], y = [10, 24, 44, 50, -10, 64][i];
         fx.save().translate(x, y).rotate([-0.3, 0.25, -0.1, 0.4, 0.05, -0.35][i] * (0.6 + q.blank * 0.4));
-        fx.stone([[-14, -10], [14, -10], [14, 10], [-14, 10]], blankM, { bevel: 2, face: 2 });
-        fx.line(-10, -6, 10, -6, blankM, 3);
+        fx.poly([[-14, -10], [14, -10], [14, 10], [-14, 10]], blankM, (px, py) => S.step(py < -8 || px < -12 ? 4 : px > 6 && py > 2 ? 2 : 3, 5));
+        fx.line(-11, -7, 11, -7, blankM, 4); fx.line(14, -9, 14, 10, blankM, 1);
         fx.restore();
       }
       fx.restore();
-      fx.outline();
     }
-    const out = back.over(B).over(front).over(fx);
+    // ---- outlines, cast shadows (the hood on the shoulders, the chart on the cloak), the rim
+    for (const X of [back, B, hoodL, front, fx]) X.outline();
+    S.cast(hoodL, B, 2, 4, 2); S.cast(front, B, 2, 3, 1); S.cast(fx, B, 2, 3, 1); S.cast(B, back, 2, 2, 1);
+    const out = back.over(B).over(hoodL).over(front);
+    S.rim(out, { w: 2 });
+    out.over(fx);
     if (pale) out.fade(0.85);
     return out;
   }
