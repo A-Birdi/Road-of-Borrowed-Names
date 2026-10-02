@@ -84,10 +84,11 @@ for (const id of fams) {
     // key poses at 3× for every variant: idle 0, then each move's held key
     const keys = R ? Object.keys(R.poses).filter((a) => a.startsWith('key:')) : [];
     const kfr = [{ f: idleF[0], name: 'idle' }].concat(keys.map((a) => ({ act: a, i: 0, n: 1, name: a.slice(4) })));
-    const ks = 3, kc = document.createElement('canvas');
-    kc.width = kfr.length * spec.w * ks; kc.height = opts.length * spec.h * ks;
+    // (wrapped at five a row, each variant's rows one under another)
+    const ks = 3, kc = document.createElement('canvas'), cols = Math.min(5, kfr.length), rowsPer = Math.ceil(kfr.length / cols);
+    kc.width = cols * spec.w * ks; kc.height = opts.length * rowsPer * spec.h * ks;
     const g = kc.getContext('2d'); g.imageSmoothingEnabled = false; g.fillStyle = '#5a5048'; g.fillRect(0, 0, kc.width, kc.height);
-    opts.forEach((oo, y) => kfr.forEach((fr, x) => { const B = build(fr, oo); g.drawImage(B.cv, x * spec.w * ks, y * spec.h * ks, spec.w * ks, spec.h * ks); g.fillStyle = '#efe4c8'; g.font = '22px monospace'; g.fillText(fr.name, x * spec.w * ks + 8, y * spec.h * ks + 26); }));
+    opts.forEach((oo, v) => kfr.forEach((fr, n) => { const x = n % cols, y = v * rowsPer + Math.floor(n / cols); const B = build(fr, oo); g.drawImage(B.cv, x * spec.w * ks, y * spec.h * ks, spec.w * ks, spec.h * ks); g.fillStyle = '#efe4c8'; g.font = '22px monospace'; g.fillText(fr.name, x * spec.w * ks + 8, y * spec.h * ks + 26); }));
     times.sort((a, b) => a - b);
     return { url: cv.toDataURL('image/png'), keys: kc.toDataURL('image/png'), keysW: kc.width, w: spec.w, h: spec.h, rows: rows.map((r) => r.name + ':' + r.frames.length), median: times[times.length >> 1], max: times[times.length - 1], clipped };
   }, [id, FAM[id], scale]);

@@ -59,6 +59,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
   function spark(c, x, y, r, u, col, alpha) { R(c, x - u / 2, y - r, u, r * 2, col, alpha); R(c, x - r, y - u / 2, r * 2, u, col, alpha); }
   const tint = (hex, k) => { const a = K().parse(hex); return K().hex(K().mix(a, [255, 250, 236, 255], k)); };
+  // one blank page in flight (whole pixels): its turn (0–3: flat, tilted, edge-on, tilted back)
+  // decides its shape; an ink edge, a lit face and a faint line
+  function page(c, x, y, turn, u, col, alpha) {
+    if (alpha <= 0.01) return;
+    const t4 = ((turn % 4) + 4) % 4, w = [6, 5, 2, 5][t4] * u, h = [4, 5, 5, 4][t4] * u;
+    R(c, x - w / 2 - u, y - h / 2 - u, w + 2 * u, h + 2 * u, '#2a2840', alpha * 0.8);
+    R(c, x - w / 2, y - h / 2, w, h, col, alpha);
+    if (t4 !== 2) R(c, x - w / 2 + u, y, Math.max(u, w - 2 * u), u, '#8a86a0', alpha * 0.8);
+  }
 
   const fx = {
     // ---- a bell's voice -------------------------------------------------------------------------
@@ -403,6 +412,25 @@ var RB = (globalThis.RB = globalThis.RB || {});
       }
     },
 
+    // ---- veils ----------------------------------------------------------------------------------------
+    // the veil's sleeve wraps its one target (≈ 0.1) and pulls tight, then slips away;
+    // p.short: it wraps only the seal raised in front of them
+    cbWrap(c, e, k, A, t, still) {
+      const u = A.u, p = e.p, T0 = A.pt(p.to, 'chest'), F = A.pt('foe', 'core'), T = p.short ? lerpP(T0, F, 0.3) : T0;
+      const col = p.col || '#e8e6f0', shade = '#a8a4b8';
+      const al = still ? 0.8 * (1 - seg(k, 0.6, 1)) : 1 - seg(k, 0.65, 1);
+      const wrap = still ? 1 : ease(seg(k, 0, 0.2)), tight = seg(k, 0.2, 0.45);
+      const rx = (16 - 4 * ease(tight)) * u, ry = (7 - 2 * ease(tight)) * u;
+      for (let b = 0; b < 2; b++) {
+        const y = T.y + (b * 8 - 4) * u;
+        const a0 = -Math.PI * 0.1 + b * 0.6, a1 = a0 + Math.PI * 2 * wrap;
+        arc(c, T.x, y, rx, ry, a0, a1, u, b ? shade : col, al, 3 * u);
+        arc(c, T.x, y - u, rx, ry, a0, a1, u, '#ffffff', al * 0.5, u);
+      }
+      // the loose end trailing back toward the veil
+      if (!still && k < 0.5) { const end = lerpP(T, F, 0.18); for (let i = 0; i < 6; i++) { const q = lerpP({ x: T.x + rx, y: T.y }, end, i / 6); R(c, q.x, q.y + Math.sin(i + t / 70) * u, 3 * u, 3 * u, col, al * (1 - i / 7)); } }
+    },
+
     // ---- the conduit ---------------------------------------------------------------------------------
     // a jet under pressure from the spout: its landing point sweeps across the party, reaching
     // each recipient in turn (0.34, then 0.49), the stream flowing from the mouth (never back);
@@ -435,6 +463,126 @@ var RB = (globalThis.RB = globalThis.RB || {});
       who.forEach((q, i) => { const s = seg(k, ks[i], ks[i] + 0.25); if (s > 0 && s < 1) for (let j = 0; j < 7; j++) { const a = -Math.PI / 2 + (j - 3) * 0.45, r = ease(s) * (8 + hs(j, i) * 10) * u; R(c, q.x + Math.cos(a) * r, q.y + Math.sin(a) * r + easeIn(s) * 12 * u, 2 * u, 2 * u, j % 2 ? foam : col, 1 - s); } });
       // drops left behind on the floor
       if (k > 0.55) { const s = seg(k, 0.55, 1); for (const q of who) { const f = A.pt('pc', 'feet'); R(c, q.x - 10 * u, f.y - u, 20 * u, u, col, 0.6 * (1 - s)); } }
+    },
+
+    // ---- the Hush: its pages ---------------------------------------------------------------------
+    // a lance of its pages thrown at the one target (the head arrives ≈ 0.43), bursting there;
+    // p.short: it shatters on the seal in front of them
+    cbPageLance(c, e, k, A, t, still) {
+      const u = A.u, p = e.p, M = on(A, p), T0 = A.pt(p.to, 'chest'), T = p.short ? lerpP(T0, M, 0.3) : T0;
+      if (still) { for (let i = 0; i < 5; i++) page(c, T.x + (i - 2) * 6 * u, T.y + ((i % 2) * 6 - 3) * u, i, u, '#eeeae0', 0.85 * (1 - seg(k, 0.7, 1))); return; }
+      const fly = seg(k, 0, 0.43), dir = Math.atan2(T.y - M.y, T.x - M.x);
+      if (fly < 1) {
+        const head = lerpP(M, T, easeIn(fly) * 0.6 + fly * 0.4);
+        for (let i = 0; i < 10; i++) { const back = i * 5 * u; page(c, head.x - Math.cos(dir) * back, head.y - Math.sin(dir) * back, 0, u, i % 2 ? '#cfcadf' : '#eeeae0', 1 - i * 0.05); }
+      } else {
+        const b = seg(k, 0.43, 1);
+        for (let i = 0; i < 10; i++) { const a = (i / 10) * Math.PI * 2 + hs(i, 4), r = ease(b) * (10 + hs(i, 2) * 22) * u; page(c, T.x + Math.cos(a) * r, T.y + Math.sin(a) * r * 0.8 + easeIn(b) * 20 * u, i + Math.round(b * 4), u, i % 2 ? '#cfcadf' : '#eeeae0', 1 - b); }
+        ring(c, T.x, T.y, (6 + ease(b) * 16) * u, u, '#f0ecff', 0.7 * (1 - b));
+      }
+    },
+    // its pages fanned and flung across the party: the arc reaches each recipient in turn (0.29,
+    // then 0.44), then the pages scatter and fall
+    cbPageFling(c, e, k, A, t, still) {
+      const u = A.u, p = e.p, M = on(A, p), who = (p.who || ['pc']).map((w) => A.pt(w, 'chest'));
+      if (still) { for (const q of who) for (let i = 0; i < 3; i++) page(c, q.x + (i - 1) * 7 * u, q.y - 4 * u, i, u, '#eeeae0', 0.8 * (1 - seg(k, 0.7, 1))); return; }
+      const mid = { x: who.reduce((m, q) => m + q.x, 0) / who.length, y: who.reduce((m, q) => m + q.y, 0) / who.length };
+      const dir = Math.atan2(mid.y - M.y, mid.x - M.x), d = who.map((q) => Math.hypot(q.x - M.x, q.y - M.y));
+      const ks = [0.29, 0.44];
+      const rAt = (kk) => kk <= ks[0] ? d[0] * (kk / ks[0]) : who.length > 1 && kk <= ks[1] ? d[0] + (Math.max(d[1], d[0] + 10 * u) - d[0]) * ((kk - ks[0]) / (ks[1] - ks[0])) : (who.length > 1 ? Math.max(d[1], d[0] + 10 * u) : d[0]) + (kk - (who.length > 1 ? ks[1] : ks[0])) * 220 * u;
+      const r = rAt(k), al = 1 - seg(k, 0.55, 0.85);
+      for (let i = 0; i < 14; i++) {
+        const a = dir - 0.6 + (i / 13) * 1.2, rr = r - (i % 3) * 4 * u;
+        page(c, M.x + Math.cos(a) * rr, M.y + Math.sin(a) * rr * 0.62 + easeIn(seg(k, 0.5, 1)) * 20 * u, i + Math.round(k * 6), u, i % 2 ? '#cfcadf' : '#eeeae0', al);
+      }
+      who.forEach((q, i) => { const s = seg(k, ks[i], ks[i] + 0.25); if (s > 0 && s < 1) ring(c, q.x, q.y, (6 + ease(s) * 14) * u, u, '#f0ecff', 1 - s); });
+    },
+    // Shroud from its pages: blank pages drift down from round the hollow and settle over its
+    // knots (covering them ≈ 0.49)
+    cbPageFog(c, e, k, A, t, still) {
+      const u = A.u, p = e.p, o = on(A, p), b = A.pt('foe', 'base'), w = A.knotSpan || A.foeR;
+      const al = 1 - seg(k, 0.8, 1);
+      if (still) { for (let i = 0; i < 6; i++) page(c, b.x + (i - 2.5) * w * 0.3, b.y + ((i % 2) * 4 - 2) * u, i, u, '#fbf9f4', 0.8 * al); return; }
+      for (let i = 0; i < 14; i++) {
+        const s = ease(seg(k, i * 0.02, 0.49 + i * 0.02)), a = i * 2.39;
+        const x0 = o.x + Math.cos(a) * A.foeR * 0.9, y0 = o.y + Math.sin(a) * A.foeR * 0.5;
+        const x1 = b.x + ((i % 7) - 3) * w * 0.22, y1 = b.y + ((i % 3) - 1) * 3 * u;
+        page(c, x0 + (x1 - x0) * s + Math.sin(t / 200 + i) * 2 * u * (1 - s), y0 + (y1 - y0) * s, i + Math.round(s * 3), u, i % 2 ? '#f0eee8' : '#fbf9f4', al);
+      }
+    },
+    // its vortex of pages blown across the party (reaches you ≈ 0.4; it tears the wards away)
+    cbPageGust(c, e, k, A, t, still) {
+      const u = A.u, p = e.p, M = on(A, p), who = (p.who || ['pc']).map((w) => A.pt(w, 'chest'));
+      const end = { x: Math.min(...who.map((q) => q.x)) - 40 * u, y: who[0].y };
+      if (still) { for (const q of who) arc(c, q.x, q.y, 18 * u, 8 * u, Math.PI * 0.2, Math.PI * 1.6, u, '#eef2f6', 0.7 * (1 - seg(k, 0.7, 1)), 2 * u); return; }
+      const s = seg(k, 0, 0.75), cx = lerpP(M, end, ease(s) * 0.55 + s * 0.45), al = 1 - seg(k, 0.7, 0.95);
+      for (let i = 0; i < 4; i++) {
+        const y = cx.y + (i - 1.5) * 10 * u, len = (30 + i * 8) * u;
+        for (let j = 0; j < 10; j++) R(c, cx.x + j * len / 10, y + Math.sin(j * 0.8 + t / 50 + i) * 2 * u, u, u, i % 2 ? '#eef2f6' : '#dfe6ee', al * (1 - j / 12));
+      }
+      for (let i = 0; i < 12; i++) {
+        const a = i * 0.52 + k * 14, r = (8 + i * 2.2) * u;
+        page(c, cx.x + Math.cos(a) * r, cx.y + Math.sin(a) * r * 0.55, i + Math.round(k * 9), u, i % 2 ? '#cfcadf' : '#eeeae0', al);
+      }
+    },
+    // a mirror of pages flashes and its reflection strikes the one target (≈ 0.62); p.short: the
+    // reflection breaks on the seal
+    cbMirror(c, e, k, A, t, still) {
+      const u = A.u, p = e.p, M = on(A, p), T0 = A.pt(p.to, 'chest'), T = p.short ? lerpP(T0, M, 0.3) : T0;
+      if (still) { R(c, T.x - 6 * u, T.y - 8 * u, 12 * u, 16 * u, '#e4f2ff', 0.45 * (1 - seg(k, 0.7, 1))); return; }
+      const fl = seg(k, 0, 0.3);
+      if (fl > 0 && fl < 1) { K().halo(c, M.x, M.y, Math.round((10 + fl * 14) * u), '240,248,255', 0.6 * bell(fl), 3); spark(c, M.x - 6 * u, M.y - 8 * u, (6 * bell(fl)) * u, u, '#ffffff', bell(fl)); }
+      const bm = seg(k, 0.25, 0.62);
+      if (bm > 0) {
+        const head = lerpP(M, T, ease(bm)), tail = lerpP(M, T, Math.max(0, ease(bm) - 0.35));
+        const n = Math.max(6, Math.round(Math.hypot(head.x - tail.x, head.y - tail.y) / (2 * u)));
+        for (let i = 0; i <= n; i++) { const q = lerpP(tail, head, i / n); R(c, q.x - u, q.y - u, 3 * u, 3 * u, i % 3 ? '#e4f2ff' : '#ffffff', 0.9 * (1 - seg(k, 0.7, 0.85))); }
+      }
+      const hit = seg(k, 0.62, 1);
+      if (hit > 0) {
+        // the reflection: a pale outline of whoever it was sent at, flashing and fading
+        c.globalAlpha = 0.55 * (1 - hit); c.fillStyle = '#e4f2ff';
+        c.fillRect(Math.round(T.x - 6 * u), Math.round(T.y - 14 * u), Math.round(12 * u), Math.round(26 * u));
+        c.fillRect(Math.round(T.x - 4 * u), Math.round(T.y - 22 * u), Math.round(8 * u), Math.round(8 * u));
+        c.globalAlpha = 1;
+        ring(c, T.x, T.y, (6 + ease(hit) * 14) * u, u, '#ffffff', 0.8 * (1 - hit));
+      }
+    },
+
+    // ---- the Cartographer ------------------------------------------------------------------------
+    // its chart snapped out like a lash: the paper strip runs on from the chart's end to the one
+    // target (≈ 0.34), then rolls back; p.short: it stops at the seal
+    cbChartLash(c, e, k, A, t, still) {
+      const u = A.u, p = e.p, M = on(A, p), T0 = A.pt(p.to, 'chest'), T = p.short ? lerpP(T0, M, 0.3) : T0;
+      const reach = still ? 0.9 : k < 0.34 ? ease(k / 0.34) : k < 0.5 ? 1 : 1 - ease((k - 0.5) / 0.4);
+      if (reach <= 0.02) return;
+      const al = still ? 0.8 * (1 - seg(k, 0.7, 1)) : 1;
+      const len = Math.hypot(T.x - M.x, T.y - M.y), n = Math.max(6, Math.round((len * reach) / (3 * u)));
+      for (let i = 0; i <= n; i++) {
+        const s = (i / n) * reach, q = qpt(M, T, (still ? 0 : Math.sin(k * 12) * 0.12) * len - 0.1 * len, s), w = 8 * u;
+        R(c, q.x - w / 2 - u, q.y - w / 2 - u, w + 2 * u, w + 2 * u, '#6a5a48', al);
+        R(c, q.x - w / 2, q.y - w / 2, w, w, i % 2 ? '#f8f2e2' : '#efe6d0', al);
+        if (i % 3 === 1) R(c, q.x - w / 2 + u, q.y, w - 2 * u, u, '#b4a684', al);
+      }
+      if (!still && k > 0.32 && k < 0.6) { const s = seg(k, 0.32, 0.6); spark(c, T.x, T.y, (6 - 4 * s) * u, u, '#ffffff', 1 - s); for (let i = 0; i < 5; i++) { const a = (i / 5) * Math.PI * 2; R(c, T.x + Math.cos(a) * s * 14 * u, T.y + Math.sin(a) * s * 10 * u, 2 * u, u, '#efe6d0', 1 - s); } }
+    },
+    // its brush dragged in one long erasing stroke across the party: the stroke's head reaches
+    // each recipient in turn (0.28, then 0.42), leaving a pale wash that fades
+    cbErase(c, e, k, A, t, still) {
+      const u = A.u, p = e.p, M = on(A, p), who = (p.who || ['pc']).map((w) => A.pt(w, 'chest'));
+      if (still) { for (const q of who) R(c, q.x - 14 * u, q.y - 4 * u, 28 * u, 8 * u, '#fbf8f0', 0.6 * (1 - seg(k, 0.7, 1))); return; }
+      const far = { x: who[who.length - 1].x - 30 * u, y: who[who.length - 1].y + 6 * u };
+      const pts = [M].concat(who).concat([far]), ks = [0, 0.28].concat(who.length > 1 ? [0.42] : []).concat([0.6]);
+      const at = (kk) => { for (let i = 1; i < ks.length; i++) if (kk <= ks[i]) return lerpP(pts[i - 1], pts[i], (kk - ks[i - 1]) / (ks[i] - ks[i - 1])); return pts[pts.length - 1]; };
+      const head = Math.min(k, 0.6), fade = 1 - seg(k, 0.6, 1);
+      const n = Math.max(10, Math.round(head * 60));
+      for (let i = 0; i <= n; i++) {
+        const kk = (i / n) * head, q = at(kk), w = (10 + Math.sin(kk * 20) * 2) * u;
+        R(c, q.x - 2 * u, q.y - w / 2, 4 * u, w, '#fbf8f0', 0.55 * fade * (0.6 + 0.4 * (i / n)));
+      }
+      const hq = at(head);
+      if (k < 0.62) R(c, hq.x - 3 * u, hq.y - 6 * u, 6 * u, 12 * u, '#2a2030', 0.8);
+      who.forEach((q, i) => { const s = seg(k, ks[i + 1], ks[i + 1] + 0.3); if (s > 0 && s < 1) for (let j = 0; j < 4; j++) R(c, q.x + (j - 1.5) * 7 * u, q.y + ((j % 2) * 6 - 6) * u - s * 6 * u, 5 * u, 4 * u, '#fbf8f0', 1 - s); });
     },
 
     // ---- foxes ---------------------------------------------------------------------------------------
