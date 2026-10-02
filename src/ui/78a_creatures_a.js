@@ -37,8 +37,9 @@ RB.creaturesA = (function () {
     let fam = pose.family ? String(pose.family) : '', hold = -1;
     const at = fam.lastIndexOf('@');
     if (at >= 0) { hold = +fam.slice(at + 1) || 0; fam = fam.slice(0, at); }
-    let key = fam && P[pose.act + '.' + fam] ? pose.act + '.' + fam : pose.act;
-    if (spec.alias && spec.alias[key]) key = spec.alias[key];
+    const al = spec.alias || {}, cand = fam ? pose.act + '.' + fam : '';
+    let key = cand && (P[cand] || al[cand]) ? cand : pose.act;
+    if (al[key]) key = al[key];
     const n = P[key] | 0;
     if (!n) return null;
     let k = pose.k;

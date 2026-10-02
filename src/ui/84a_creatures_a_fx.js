@@ -299,6 +299,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       R(c, x - 3 * u, y0 - crest * 1.3, 4 * u, u, cols[2], fade);
     }
     for (let i = 0; i < 8; i++) { const x = front + (hs(i, 2) - 0.2) * 30 * u, y = y0 - (16 + hs(i, 3) * 20) * u * bell(seg(k, 0.1 + i * 0.04, 0.9)); R(c, x, y, 2 * u, 2 * u, cols[2], 0.9 * fade); }
+    if (e.p.scraps) for (let i = 0; i < 6; i++) { const x = front + (hs(i, 7) - 0.3) * 40 * u, y = y0 - (10 + hs(i, 8) * 26) * u * bell(seg(k, 0.15 + i * 0.05, 0.95)); R(c, x, y, 4 * u, 3 * u, '#e8e0cc', 0.9 * fade); R(c, x + u, y + u, 2 * u, u, '#5a5468', 0.7 * fade); }
   };
   // a golem's blow: stone dust and grit thrown up where it lands
   fx.stoneDust = function (c, e, k, Ah, t, still) {
@@ -319,6 +320,127 @@ var RB = (globalThis.RB = globalThis.RB || {});
       R(c, x - 2 * u, y - u, 3 * u, u, '#ffffff', 1);
     }
   };
+
+  // paper's edge: two quick slashes across the target (a crane's beak, a letter's strips)
+  fx.paperCut = function (c, e, k, Ah, t, still) {
+    const u = Ah.u, b = landAt(Ah, e);
+    if (still) { for (let i = 0; i < 6; i++) R(c, b.x - 8 * u + i * 3 * u, b.y - 6 * u + i * 2 * u, 2 * u, u, '#f4ecd8', 0.8 * (1 - seg(k, 0.5, 1))); return; }
+    for (let s = 0; s < 2; s++) {
+      const kk = seg(k, s * 0.18, 0.55 + s * 0.18), fade = 1 - seg(k, 0.55 + s * 0.18, 1);
+      if (kk <= 0) continue;
+      const x0 = b.x - 14 * u, y0 = b.y - 12 * u + s * 8 * u, len = 28 * u;
+      for (let i = 0; i <= 10 * kk; i++) R(c, x0 + i * len / 10, y0 + i * len / 16, 2 * u, u, i % 4 ? '#fffaf0' : '#3a3450', fade);
+    }
+    for (let i = 0; i < 5; i++) { const s = seg(k, 0.2, 1); R(c, b.x + (hs(i, 1) - 0.5) * 24 * u, b.y + (hs(i, 2) - 0.5) * 10 * u + easeIn(s) * 16 * u, 3 * u, 2 * u, '#f4ecd8', 1 - s); }
+  };
+  // the crane's gust carries scraps of paper over the party
+  fx.paperFlurry = function (c, e, k, Ah, t, still) {
+    if (still) return;
+    const u = Ah.u, o = Ah.pt('party', 'chest'), f = Ah.pt('foe', 'core');
+    for (let i = 0; i < 10; i++) {
+      const s = seg(k, hs(i, 1) * 0.3, hs(i, 1) * 0.3 + 0.7);
+      if (s <= 0 || s >= 1) continue;
+      const x = f.x + (o.x - 60 * u - f.x) * ease(s), y = f.y - 20 * u + (o.y + (hs(i, 3) - 0.5) * 50 * u - f.y + 20 * u) * s + Math.sin(t / 80 + i) * 3 * u;
+      const tw = Math.sin(t / 60 + i * 2) > 0;
+      R(c, x, y, (tw ? 3 : 1) * u, 2 * u, i % 3 ? '#f2eee2' : '#c8c0a8', 0.9 * (1 - s * 0.6));
+    }
+  };
+  // a clerk's seal: a vermilion square stamped on its target (or on the seal before it, or on a knot)
+  fx.stampSeal = function (c, e, k, Ah, t, still) {
+    const u = Ah.u, b = e.p.knot != null ? Ah.pt('knot:' + e.p.knot, 'core') : landAt(Ah, e);
+    const sz = Math.round((e.p.knot != null ? 6 : 9) * u);
+    const pop = still ? 1 : 1 + 0.4 * (1 - ease(seg(k, 0, 0.25)));
+    const al = still ? 0.9 * (1 - seg(k, 0.6, 1)) : 1 - seg(k, 0.55, 1);
+    const w = Math.round(sz * pop);
+    R(c, b.x - w / 2 - u, b.y - w / 2 - u, w + 2 * u, w + 2 * u, '#5a2018', al * 0.8);
+    R(c, b.x - w / 2, b.y - w / 2, w, w, '#c8503a', al);
+    R(c, b.x - w / 2 + u, b.y - w / 2 + u, w - 2 * u, u, '#e88a6a', al);
+    R(c, b.x - u, b.y - w / 2 + 2 * u, 2 * u, w - 4 * u, '#f4ecd8', al * 0.8);
+    if (!still && k < 0.3) c.globalAlpha = 1;
+  };
+
+  // the Kiln Warden's mouth (its firebox, low on the dome, on the party's side)
+  function mouthOf(Ah) { const o = Ah.pt('foe', 'core'); return { x: o.x - 14 * Ah.u, y: o.y + Ah.foeR * 0.35 }; }
+  // a ball of fire from its mouth to one of you (or the seal before you), trailing sparks
+  fx.kilnBolt = function (c, e, k, Ah, t, still) {
+    const u = Ah.u, a = mouthOf(Ah), b = landAt(Ah, e);
+    if (still) { disc(c, b.x, b.y, 7 * u, 6 * u, '#f0902e', 0.8 * (1 - seg(k, 0.6, 1))); return; }
+    const s = ease(seg(k, 0, 0.95)), x = a.x + (b.x - a.x) * s, y = a.y + (b.y - a.y) * s - bell(s) * 22 * u;
+    for (let i = 1; i < 6; i++) { const s2 = Math.max(0, s - i * 0.06), x2 = a.x + (b.x - a.x) * s2, y2 = a.y + (b.y - a.y) * s2 - bell(s2) * 22 * u; R(c, x2 - u, y2 - u, 2 * u, 2 * u, i % 2 ? '#f08a48' : '#ffd070', 0.9 - i * 0.14); }
+    disc(c, x, y, 7 * u, 6 * u, '#d8502a', 0.95);
+    disc(c, x - u, y - u, 5 * u, 4 * u, '#f0902e', 1);
+    disc(c, x - 2 * u, y - 2 * u, 2 * u, 2 * u, '#fff0b8', 1);
+  };
+  // a sweep of flame from its mouth across both of you
+  fx.kilnBreath = function (c, e, k, Ah, t, still) {
+    const u = Ah.u, a = mouthOf(Ah), who = e.p.who && e.p.who.length ? e.p.who : ['pc'];
+    const pts = who.map((w) => Ah.pt(w, 'chest'));
+    if (still) { for (const p of pts) disc(c, p.x, p.y, 10 * u, 6 * u, '#f0902e', 0.6 * (1 - seg(k, 0.6, 1))); return; }
+    const sw = ease(seg(k, 0, 0.75)), fade = 1 - seg(k, 0.75, 1);
+    const p0 = pts[0], p1 = pts[pts.length - 1];
+    const tx = p0.x + (p1.x - p0.x) * sw - 10 * u * sw, ty = p0.y + (p1.y - p0.y) * sw;
+    for (let i = 0; i < 12; i++) {
+      const s = i / 11, x = a.x + (tx - a.x) * s, y = a.y + (ty - a.y) * s - Math.sin(s * Math.PI) * 10 * u + Math.sin(t / 60 + i) * 2 * u;
+      const r = (3 + s * 9) * u;
+      disc(c, x, y, r, r * 0.7, i % 3 === 0 ? '#ffd070' : i % 3 === 1 ? '#f0902e' : '#d8502a', 0.8 * fade);
+    }
+  };
+  // stoking: heat shimmer and sparks rising from the dome and chimney
+  fx.kilnStoke = function (c, e, k, Ah, t, still) {
+    if (still) return;
+    const u = Ah.u, o = Ah.pt('foe', 'top');
+    for (let i = 0; i < 12; i++) {
+      const s = seg(k, hs(i, 1) * 0.4, hs(i, 1) * 0.4 + 0.6);
+      if (s <= 0 || s >= 1) continue;
+      const x = o.x + (hs(i, 2) - 0.5) * Ah.foeR * 1.3 + Math.sin(t / 100 + i) * 2 * u, y = o.y + Ah.foeR * 0.4 - ease(s) * (24 + hs(i, 3) * 30) * u;
+      R(c, x, y, u, 2 * u, i % 2 ? '#ffd070' : '#f08a48', 1 - s);
+    }
+    K().halo(c, o.x, o.y + Ah.foeR * 0.6, Math.round(Ah.foeR * 0.9), '255,150,80', 0.25 * bell(k), 3);
+  };
+
+  // ---- the audit (§9.1, §4 Phase D): every enemy id of these families ---------------------------
+  // disposition: 'upgraded' (the family's revised rig, its own palette, every move it uses
+  // delivered by the creature, authored rest and reactions), 'meets' (already at the standard,
+  // re-verified) or 'incomplete' (said plainly). Evidence: docs/battle/creatures_a.md.
+  const AUD = [
+    ['rw.dustmoth', 'moth', 'upgraded', 'Flour Moth (the proof): swoop Strike (hit / ward / softened / met air), Shroud in flour; interior (mill) and exterior (mill road) placements keep their own lines and backdrops'],
+    ['atlas.moth', 'moth', 'upgraded', 'Margin Moth (Atlas palette): swoop Strike, Shroud in its paper-dust'],
+    ['co.moth', 'moth', 'upgraded', 'Ash Moth: swoop Strike; Gust as a rearing, fanning downstroke shaking ash'],
+    ['sa.moth', 'moth', 'upgraded', 'Catalogue Moth: swoop Strike; Gathering (wings folded, trembling); Chill (a fanning beat of frost dust)'],
+    ['sb.moth', 'moth', 'upgraded', 'Chart Moth (dark wings, pale marks): swoop Strike; Sweep (low wide pass); Re-tying with its forelegs'],
+    ['sg.moth', 'moth', 'upgraded', 'Postmark Moth: swoop Strike; Gathering'],
+    ['rw.reedling', 'wisp', 'upgraded', 'Reedling: comet-dart Strike; Sweep (coil and whirl over both)'],
+    ['co.ember', 'wisp', 'upgraded', 'Ember Wisp: comet-dart Strike; Heat (a crown of flame, the aura swelling)'],
+    ['lf.mote', 'wisp', 'upgraded', 'Hush Mote: comet-dart Strike; Shroud (breathes its fog out, in its lilac light)'],
+    ['sg.fogwisp', 'wisp', 'upgraded', 'Harbour Fog: comet-dart Strike; Shroud (harbour fog)'],
+    ['sb.wisp', 'wisp', 'upgraded', 'Frost Wisp: Chill (frost breath at one); Re-tying with its tail-tip'],
+    ['atlas.stray', 'wisp', 'upgraded', 'Stray Name (Atlas): comet-dart Strike; Plea (dims, drifts nearer, a note)'],
+    ['rw.mill_echo', 'echo', 'upgraded', 'The Mill Echo (Chapter 1 boss): shard-volley Strike, Mirror pane, Heat (rings warm and quicken), Plea; drawn at the family\'s scale (no phase-specific art)'],
+    ['sa.echo', 'echo', 'upgraded', 'Shelved Echo: shard-volley Strike, Mirror, Re-tying (shards relock)'],
+    ['atlas.echo', 'echo', 'upgraded', 'Road Echo (Atlas): shard-volley Strike, Mirror'],
+    ['rw.inkblot', 'blot', 'upgraded', 'Runoff Blot: tendril-lash Strike, ground-surge Sweep, Re-tying strand'],
+    ['co.soot', 'blot', 'upgraded', 'Smoke Blot: Strike, Sweep, Re-tying'],
+    ['lf.blot', 'blot', 'upgraded', 'Silence Blot: Strike; Silence (presses shut and flattens; a hush spreads)'],
+    ['sg.blot', 'blot', 'upgraded', 'Runaway Ink: Sweep, Re-tying'],
+    ['atlas.blot', 'blot', 'upgraded', 'Blotted Line (Atlas): Strike, Re-tying'],
+    ['sg.crab', 'crab', 'upgraded', 'Label Crab: sidle, thrust-and-snap Strike; snip-and-tuck Re-tying'],
+    ['atlas.crab', 'crab', 'upgraded', 'Rock-pool Crab (Atlas): Strike; Flood (claws raised and slammed down; a wash over both)'],
+    ['sa.crane', 'crane', 'upgraded', 'Paper Crane: beak-dart Strike, Gust (three strokes, a paper flurry); now faces the party'],
+    ['sg.crane', 'crane', 'upgraded', 'Soggy Paper Crane: Strike; Shroud (damp pulp shaken into a mist)'],
+    ['atlas.crane', 'crane', 'upgraded', 'Unfolded Crane (Atlas): Gust; Sweep (a low slicing pass)'],
+    ['co.golem', 'golem', 'upgraded', 'Glass Golem: overhead hammer Strike, Gathering, Re-tying (a stone set back)'],
+    ['sb.golem', 'golem', 'upgraded', 'Icicle Warden: Strike, Gathering, Chill (rimed fist, ice shards)'],
+    ['sg.golem', 'golem', 'upgraded', 'Ledger Heap: Strike, Gathering, Flood (cracks open, arms wide)'],
+    ['atlas.milestone', 'golem', 'upgraded', 'Mossy Milestone (Atlas): Strike, Gathering'],
+    ['atlas.gate', 'golem', 'upgraded', 'The Half-road Gatekeeper (Atlas boss): Strike, Gathering, Re-tying, Plea (kneels, holds out its hand); family scale'],
+    ['sg.letter', 'sg_letter', 'upgraded', 'Undelivered Letter: Plea (a note slides out to you), Sweep (edge-on spin, strips lashing); definition moved from content/ch2/01_art.js'],
+    ['sg.tideclerk', 'clerk', 'upgraded', 'The Tide Clerk (Chapter 2 boss): stamp Strike, Lie, Mirror, Gathering, Flood (tide of water and paper), Shroud (paper-strewn fog), Plea; now faces the party'],
+    ['atlas.toll', 'clerk', 'upgraded', 'False Gatekeeper (Atlas): stamp Strike, Lie, Gathering'],
+    ['atlas.echotoll', 'clerk', 'upgraded', 'Echoing Gatekeeper (Atlas): stamp Strike, Lie, Mirror'],
+    ['lf.stamp', 'clerk', 'upgraded', 'Consent Stamp: stamp Strike, Lie, Re-tying (a small exact stamp)'],
+    ['co.warden', 'warden', 'upgraded', 'The Kiln Warden (Chapter 3 boss): fire-belch Strike, flame-breath Sweep, Heat (stoking), Gathering (mortar glow), Mirror (glaze shimmer), Plea'],
+  ];
+  for (const [id, art, d, note] of AUD) A.auditEnemy(id, art, d, note);
 
   // ---- prewarm --------------------------------------------------------------------------------
   // The acts a creature will need (its moves' frame sets, then the reactions), built in idle slices
