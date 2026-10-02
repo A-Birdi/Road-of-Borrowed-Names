@@ -216,6 +216,22 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
   rebuilt from verified flags only); nothing is deleted and no New Game is
   needed. No export/import was added.
 
+## Practice, Fishing and Shiritori addendum (owner's brief of 2026-10-02) — IN PROGRESS
+- Phase A foundation done and pushed (c86d615): `s.practice`, the one-session activity
+  controller, the learning adapter and cooldowns, Words › Ways to practise, the Company
+  section hook, Practice mementos registry, device settings, the shiritori rules core,
+  provisional seams for the pace clock and the opponents. Contract: docs/PRACTICE_CONTRACTS.md.
+- Phases B–F are being built by six workers in separate worktrees, each writing
+  docs/practice/<area>.md:
+  - fishing (untimed presentation, sites, fish, 72 task variants, catalogue, mementos);
+  - pace (the optional fishing clock and calibration);
+  - shiritori engine (banks, audits, opponents, 3,600-game benchmark);
+  - wordplay (table, records, Company card, the two bond events, reflection, dialogue);
+  - suite A (lantern tending, writing desk, Practice mementos page);
+  - suite B (letters, proofreading, comparisons).
+- Phase G (merge, wire fishing to the real pace module, integrated validation, evidence,
+  REQUIREMENTS/VALIDATION) follows. Nothing beyond the foundation is merged yet.
+
 ## Commands
 - Build: `node tools/build.mjs`
 - Content validation: `node tools/validate.mjs [--filter sg] [--unknown]`
