@@ -155,14 +155,16 @@ RB.ui.practiceMementos = (function () {
     RB.ui.company.render = function (A, B, two, api) {
       orig(A, B, two, api);
       if (!api || !api.view || api.view.page !== 'memories' || !api.s || A.querySelector('.co-pinned, .pm-company')) return;
+      if (!two && api.view.detail === 'recall') return; // a memory open on a phone: the list (and the display) is not shown
       const m = pinnedHtml(api.s);
       if (!m) return;
       const box = RB.ui.el('div', 'co-pinned pm-company');
       box.innerHTML = '<div class="ks-display"><span class="lab">On display</span><span class="pm-slot"></span>' + title(m) + '</div><button type="button" class="pbtn quiet" data-pm-go>See it</button>';
       box.querySelector('.pm-slot').appendChild(art(m, 'small'));
       box.querySelector('[data-pm-go]').onclick = () => { sel = key(m); if (api.go) api.go('journey', 'mementos'); };
-      const head = A.querySelector('h3');
-      if (head && head.parentNode) head.parentNode.insertBefore(box, head.nextSibling); else A.insertBefore(box, A.firstChild);
+      const scope = A.querySelector('.co-page') || A;
+      const head = scope.querySelector('h3');
+      if (head && head.parentNode) head.parentNode.insertBefore(box, head.nextSibling); else scope.insertBefore(box, scope.firstChild);
     };
   }
 

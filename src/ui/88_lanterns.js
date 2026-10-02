@@ -100,8 +100,8 @@ RB.ui.lanterns = (function () {
   }
 
   // the lamps in a row, each with a text equivalent (never colour alone)
-  function row(lamps, now, glowing) {
-    const ul = RB.ui.el('ol', 'pa-lamprow');
+  function row(lamps, now, glowing, big) {
+    const ul = RB.ui.el('ol', 'pa-lamprow' + (big ? ' big' : ''));
     ul.setAttribute('aria-label', 'Lamps');
     lamps.forEach((l, i) => {
       const li = RB.ui.el('li', 'pa-lamp' + (l.lit ? ' lit' : '') + (i === now ? ' now' : '') + (i === glowing ? ' glow-in' : ''));
@@ -184,7 +184,7 @@ RB.ui.lanterns = (function () {
     return new Promise((resolve) => {
       ui.meta('Lamp ' + (i + 1) + ' of ' + lamps.length + ' lit');
       ui.leaf.innerHTML = '';
-      ui.leaf.appendChild(row(lamps, i + 1, i));
+      ui.leaf.appendChild(row(lamps, i + 1, i, true));
       const p = RB.ui.el('p', 'pa-litline', esc('Lamp ' + (i + 1) + ' is lit.') + (lastRes && lastRes.firstTry === false ? ' <span class="muted small">A slip along the way is part of tending; the light is the same.</span>' : ''));
       p.setAttribute('aria-live', 'polite');
       ui.leaf.appendChild(p);
@@ -239,7 +239,7 @@ RB.ui.lanterns = (function () {
       ui.leaf.innerHTML = '';
       ui.leaf.appendChild(RB.ui.el('h3', 'pa-endh', J(tx.end.jp) + ' <span class="en">' + esc(lit ? tx.end.en : 'The lamps wait') + '</span>'));
       const lastLit = lamps.map((l) => l.lit).lastIndexOf(true);
-      ui.leaf.appendChild(row(lamps, -1, lastLit));
+      ui.leaf.appendChild(row(lamps, -1, lastLit, true));
       const left = lamps.length - lit;
       let h = '<p aria-live="polite">' + esc(lit ? 'You tended ' + lit + ' lamp' + (lit > 1 ? 's' : '') + '.' : 'You left before tending a lamp. That is fine.') +
         (left && lit ? ' ' + esc('The other ' + (left > 1 ? left + ' wait' : 'one waits') + ' as they are; they keep no schedule.') : '') + '</p>';
@@ -299,9 +299,13 @@ RB.ui.lanterns = (function () {
     return { lamps: total };
   }
   function dispose() {
-    // a campaign change while the lamps are open: close a running step, then the sheet
-    const leave = typeof document !== 'undefined' && document.querySelector('.chal [data-a=leave]');
-    if (leave) leave.click();
+    // a campaign change while the lamps are open: close a running step or card, then the sheet
+    if (typeof document !== 'undefined') {
+      const leave = document.querySelector('.chal [data-a=leave]');
+      if (leave) leave.click();
+      const card = document.querySelector('.lsheet.teach [data-ok]');
+      if (card) card.click();
+    }
     if (open) open.close();
   }
 

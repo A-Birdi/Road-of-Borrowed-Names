@@ -3185,6 +3185,10 @@ body.reduced-motion .wv-w, body.reduced-motion .wv-t { transition: none; }
   pointer-events: none; z-index: 0;
 }
 .pa-lamp.now .pa-lampart { outline: 2px dashed var(--ribbon-deep); outline-offset: 3px; }
+.pa-lamprow.big { gap: 12px 22px; margin: 0.6em 0 0.8em; }
+.pa-lamprow.big .pa-lamp { min-width: 68px; }
+.pa-lamprow.big .pa-lampart { width: 64px; height: 96px; }
+.pa-lamprow.big .pa-lamp.lit::before { top: 46px; width: 100px; height: 100px; }
 .pa-lamp.glow-in::before { animation: pa-glow 0.9s var(--ease) both; }
 .pa-lamp.glow-in .pa-lampart { animation: pa-lift 0.9s var(--ease) both; }
 @keyframes pa-glow { from { opacity: 0; transform: translate(-50%, -50%) scale(0.4); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
@@ -44989,14 +44993,16 @@ RB.ui.practiceMementos = (function () {
     RB.ui.company.render = function (A, B, two, api) {
       orig(A, B, two, api);
       if (!api || !api.view || api.view.page !== 'memories' || !api.s || A.querySelector('.co-pinned, .pm-company')) return;
+      if (!two && api.view.detail === 'recall') return; // a memory open on a phone: the list (and the display) is not shown
       const m = pinnedHtml(api.s);
       if (!m) return;
       const box = RB.ui.el('div', 'co-pinned pm-company');
       box.innerHTML = '<div class="ks-display"><span class="lab">On display</span><span class="pm-slot"></span>' + title(m) + '</div><button type="button" class="pbtn quiet" data-pm-go>See it</button>';
       box.querySelector('.pm-slot').appendChild(art(m, 'small'));
       box.querySelector('[data-pm-go]').onclick = () => { sel = key(m); if (api.go) api.go('journey', 'mementos'); };
-      const head = A.querySelector('h3');
-      if (head && head.parentNode) head.parentNode.insertBefore(box, head.nextSibling); else A.insertBefore(box, A.firstChild);
+      const scope = A.querySelector('.co-page') || A;
+      const head = scope.querySelector('h3');
+      if (head && head.parentNode) head.parentNode.insertBefore(box, head.nextSibling); else scope.insertBefore(box, scope.firstChild);
     };
   }
 
@@ -53534,8 +53540,8 @@ RB.ui.lanterns = (function () {
   }
 
   // the lamps in a row, each with a text equivalent (never colour alone)
-  function row(lamps, now, glowing) {
-    const ul = RB.ui.el('ol', 'pa-lamprow');
+  function row(lamps, now, glowing, big) {
+    const ul = RB.ui.el('ol', 'pa-lamprow' + (big ? ' big' : ''));
     ul.setAttribute('aria-label', 'Lamps');
     lamps.forEach((l, i) => {
       const li = RB.ui.el('li', 'pa-lamp' + (l.lit ? ' lit' : '') + (i === now ? ' now' : '') + (i === glowing ? ' glow-in' : ''));
@@ -53618,7 +53624,7 @@ RB.ui.lanterns = (function () {
     return new Promise((resolve) => {
       ui.meta('Lamp ' + (i + 1) + ' of ' + lamps.length + ' lit');
       ui.leaf.innerHTML = '';
-      ui.leaf.appendChild(row(lamps, i + 1, i));
+      ui.leaf.appendChild(row(lamps, i + 1, i, true));
       const p = RB.ui.el('p', 'pa-litline', esc('Lamp ' + (i + 1) + ' is lit.') + (lastRes && lastRes.firstTry === false ? ' <span class="muted small">A slip along the way is part of tending; the light is the same.</span>' : ''));
       p.setAttribute('aria-live', 'polite');
       ui.leaf.appendChild(p);
@@ -53673,7 +53679,7 @@ RB.ui.lanterns = (function () {
       ui.leaf.innerHTML = '';
       ui.leaf.appendChild(RB.ui.el('h3', 'pa-endh', J(tx.end.jp) + ' <span class="en">' + esc(lit ? tx.end.en : 'The lamps wait') + '</span>'));
       const lastLit = lamps.map((l) => l.lit).lastIndexOf(true);
-      ui.leaf.appendChild(row(lamps, -1, lastLit));
+      ui.leaf.appendChild(row(lamps, -1, lastLit, true));
       const left = lamps.length - lit;
       let h = '<p aria-live="polite">' + esc(lit ? 'You tended ' + lit + ' lamp' + (lit > 1 ? 's' : '') + '.' : 'You left before tending a lamp. That is fine.') +
         (left && lit ? ' ' + esc('The other ' + (left > 1 ? left + ' wait' : 'one waits') + ' as they are; they keep no schedule.') : '') + '</p>';
@@ -53733,9 +53739,13 @@ RB.ui.lanterns = (function () {
     return { lamps: total };
   }
   function dispose() {
-    // a campaign change while the lamps are open: close a running step, then the sheet
-    const leave = typeof document !== 'undefined' && document.querySelector('.chal [data-a=leave]');
-    if (leave) leave.click();
+    // a campaign change while the lamps are open: close a running step or card, then the sheet
+    if (typeof document !== 'undefined') {
+      const leave = document.querySelector('.chal [data-a=leave]');
+      if (leave) leave.click();
+      const card = document.querySelector('.lsheet.teach [data-ok]');
+      if (card) card.click();
+    }
     if (open) open.close();
   }
 
@@ -54471,10 +54481,18 @@ RB.ui.desk = (function () {
     });
   }
   function dispose() {
-    const leave = typeof document !== 'undefined' && document.querySelector('.chal [data-a=leave]');
-    if (leave) leave.click();
-    const rep = typeof document !== 'undefined' && document.querySelector('.pa-replace [data-x]');
-    if (rep) rep.click();
+    // a campaign change while the desk is open: close a running step, card, question or the
+    // replace sheet (as cancelled: nothing is replaced), then the desk
+    if (typeof document !== 'undefined') {
+      const leave = document.querySelector('.chal [data-a=leave]');
+      if (leave) leave.click();
+      const card = document.querySelector('.lsheet.teach [data-ok]');
+      if (card) card.click();
+      const q = document.querySelector('.csheet .pbtn:last-child');
+      if (q && document.querySelector('.pa-replace')) q.click();
+      const rep = document.querySelector('.pa-replace [data-x]');
+      if (rep) rep.click();
+    }
     if (open) open.close();
   }
 

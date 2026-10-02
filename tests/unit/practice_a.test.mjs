@@ -186,6 +186,18 @@ export default async (t) => {
   t.ok(RB.challenge.check('いえ', { kind: 'write', answer: 'うち', accept: cards.find((c) => c.id === 'home').accept, mode: 'reading' }).ok, 'home: うち in context, いえ also accepted');
   t.ok(!RB.lex.problems().some((p) => p.src === 'practice_a') && !RB.lex.conflicts().some((c) => c.incoming && c.incoming.src === 'practice_a'), 'the suite\'s own lexicon entries conflict with nothing');
 
+  // ---- the desk's offer reads no clock (page timestamps are records only) --------------------------------
+  {
+    const s = fresh({ map: 'sg.inn', chapter: 2 });
+    RB.game.setBase('world');
+    const realNow = Date.now;
+    let reads = 0;
+    Date.now = () => { reads++; return realNow(); };
+    D.cards(s); D.notebookCards(s); D.unlocked(s); D.here(s); RB.activity.eligible('copying'); L.unlocked(s);
+    Date.now = realNow;
+    t.eq(reads, 0, 'whether and where the desk is offered reads no wall clock');
+  }
+
   // ---- notebook words ---------------------------------------------------------------------------------
   {
     const s = fresh();
@@ -349,6 +361,42 @@ export default async (t) => {
     t.ok(RB.activity.eligible('copying').ok, 'the desk is eligible at the Gull');
     s.map = 'sg.harbor';
     t.ok(!RB.activity.eligible('copying').ok, 'and nowhere else');
+  }
+
+  // ---- all four language profiles: lamps and the desk's prompt adapt; answers are accepted ---------------------
+  for (const prof of ['F', 'E', 'I', 'A']) {
+    const s = fresh({ flags: { ch1_done: true } });
+    s.learn.profile = prof; s.learn.kanaKnown = 'both';
+    s.visited = { 'sg.harbor': true, 'co.village': true, 'sb.hamlet': true, 'lf.town': true, 'sa.gate': true };
+    // what a player of this level has met: words, kana, and items of drills at this level
+    const ids = ['v:水', 'v:海', 'k:か'].concat(RB.content.drills.filter((d) => d.lv === prof && typeof d.item === 'string').slice(0, 6).map((d) => d.item));
+    meet(s, ids);
+    const plan = L.plan(s, { count: 6 });
+    const steps = plan.items.map((id, i) => L.stepFor(s, id, i));
+    t.ok(plan.items.length === 6 && steps.every((st) => st && ['write', 'choose', 'order'].indexOf(st.kind) >= 0 && st.item), prof + ': six lamps, each an authored step (' + steps.map((st) => st.kind).join(',') + ')');
+    const LVN = { F: 0, E: 1, I: 2, A: 3 };
+    t.ok(steps.every((st) => !st.lv || LVN[st.lv] <= LVN[prof]), prof + ': no drill above the player\'s level');
+    const solvable = steps.every((st) => st.kind !== 'write' || RB.challenge.check(RB.tasks.plain(st.answer), st).ok);
+    t.ok(solvable, prof + ': each written answer is accepted by the ordinary checker');
+    const pst = RB.ui.desk.promptStep(D.cards(s).find((c) => c.id === 'water'));
+    t.ok(pst.kind === 'write' && RB.challenge.check(RB.tasks.plain(pst.answer), pst).ok, prof + ': the desk prompt is answerable (' + pst.answer + ')');
+  }
+  {
+    // Foundations with only some kana taught: the prompt blanks one taught kana (help before testing)
+    const s = fresh(); s.learn.profile = 'F'; s.learn.kanaKnown = 'none'; s.learn.taught = { 'み': true };
+    const pst = RB.ui.desk.promptStep(D.cards(s).find((c) => c.id === 'water'));
+    t.ok(pst.single && pst.answer === 'み' && pst.template && /ず/.test(pst.template.after), 'Foundations: the desk prompt asks only for a taught kana (み), the rest shown');
+  }
+
+  // ---- New Game+: practice records and kept art are not carried ------------------------------------------------
+  {
+    const s = fresh({ flags: { ch1_done: true } });
+    RB.practice.of(s).deskPages.push(D.makePage(s, { word: '月', mode: 'copy', ink: [{ ch: '月', strokes: [[{ x: 0.2, y: 0.2 }, { x: 0.2, y: 0.8 }]] }], label: 'Moon' }));
+    L.finish(s, 3);
+    s.practice.mementoDisplay.shelf = 'desk:x';
+    const n = RB.ui.create.carry(s);
+    t.ok(n.practice && n.practice.deskPages.length === 0 && n.practice.lanterns.sessions === 0 && n.practice.mementoDisplay.shelf === null, 'New Game+ starts the practice records empty: no pages, no lamp history, no display');
+    t.ok(n.notebook.filter((x) => x.id === 'pa_lamps').length <= 1 && !L.finish(n, 3).firstNote, 'the carried notebook keeps its one note; no second one is added');
   }
 
   // ---- Practice mementos: sources, the shelf, the pinned display ---------------------------------------------

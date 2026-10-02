@@ -300,6 +300,38 @@ async function continueStep(p) { await press(p, '.fbwrap [data-a=continue]'); aw
   await ctx.close();
 }
 
+// ---- Foundations and Advanced: a lamp each, answered by choosing; a campaign change mid-session -------------------
+for (const prof of ['F', 'A']) {
+  const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  const items = await p.evaluate((prof) => ['v:水', 'v:海'].concat(RB.content.drills.filter((d) => d.lv === prof && typeof d.item === 'string' && d.kind !== 'order').slice(0, 3).map((d) => d.item)), prof);
+  await start(p, { items, profile: prof, input: 'choice' });
+  await p.evaluate(() => { window.__records.length = 0; RB.practiceA.launch('lanterns', { source: 'world-prop' }); });
+  await p.waitForSelector('[data-pa=begin]');
+  await press(p, '[data-pa=begin]');
+  const st = await waitStep(p);
+  if (st.kind === 'write' || st.kind === 'choose') await answerChoice(p, st, false);
+  else { await press(p, '.chal [data-a=reveal]'); await p.waitForSelector('.fbwrap[data-fb=reveal]'); }
+  await continueStep(p);
+  await p.waitForSelector('[data-pa=next]');
+  const r = await p.evaluate(() => window.__records.filter((x) => x.ctx === 'practice:lanterns'));
+  assert(r.length === 1 && (await lampsLit(p))[0], prof + ': a lamp tended (' + st.kind + ' ' + JSON.stringify(st.item) + '), one event');
+  if (prof === 'A') {
+    // the campaign changes while the lamps are open: the sheet goes, nothing is left behind
+    await p.evaluate(() => RB.game.debugStart('rw.village', 22, 30, { comp: 'mio' }));
+    await wait(p, 400);
+    const left = await p.evaluate(() => ({ sheet: !!document.querySelector('.pa-lamps'), active: !!RB.activity.active(), mode: RB.game.mode() }));
+    assert(!left.sheet && !left.active && left.mode === 'world', 'a campaign change disposes the session and its sheet (' + JSON.stringify(left) + ')');
+  } else {
+    await press(p, '[data-pa=stop]');
+    await p.waitForSelector('.pa-end');
+    await shot(p, 'lamps_end_foundations_1280');
+    await press(p, '[data-pa=leave]');
+    await wait(p, 400);
+  }
+  assert(!errors.length, prof + ': no errors: ' + errors.join('; '));
+  await ctx.close();
+}
+
 await b.close(); srv.close();
 console.log('\n' + (n - fail) + '/' + n + ' checks passed (' + Math.round((Date.now() - t0) / 1000) + ' s)');
 process.exit(fail ? 1 : 0);

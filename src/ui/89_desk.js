@@ -703,10 +703,18 @@ RB.ui.desk = (function () {
     });
   }
   function dispose() {
-    const leave = typeof document !== 'undefined' && document.querySelector('.chal [data-a=leave]');
-    if (leave) leave.click();
-    const rep = typeof document !== 'undefined' && document.querySelector('.pa-replace [data-x]');
-    if (rep) rep.click();
+    // a campaign change while the desk is open: close a running step, card, question or the
+    // replace sheet (as cancelled: nothing is replaced), then the desk
+    if (typeof document !== 'undefined') {
+      const leave = document.querySelector('.chal [data-a=leave]');
+      if (leave) leave.click();
+      const card = document.querySelector('.lsheet.teach [data-ok]');
+      if (card) card.click();
+      const q = document.querySelector('.csheet .pbtn:last-child');
+      if (q && document.querySelector('.pa-replace')) q.click();
+      const rep = document.querySelector('.pa-replace [data-x]');
+      if (rep) rep.click();
+    }
     if (open) open.close();
   }
 
