@@ -152,27 +152,27 @@ key, so a later encounter never shows an old broken version.
 
 | Encounter, viewport | Layers kept | Layer bytes | Art cache (sprites, bytes) | Last build | Max build in that page |
 |---|---|---|---|---|---|
-| mill-ground-floor 320×640 | 2 | 1.56 MiB | 25, 0.10 MiB | 47.8 ms | 47.8 ms |
-| mill-ground-floor 390×844 | 2 | 3.06 MiB | 26, 0.10 MiB | 19.2 ms | 170.3 ms |
-| mill-ground-floor 844×390 | 2 | 3.06 MiB | 23, 0.09 MiB | 13.5 ms | 103 ms |
-| mill-ground-floor 1280×800 | 2 | 2.19 MiB | 24, 0.10 MiB | 12.9 ms | 95 ms |
-| mill-ground-floor 1920×1080 | 2 | 1.88 MiB | 24, 0.09 MiB | 12.6 ms | 163.3 ms |
-| reedwake-mill-front 320×640 | 2 | 1.98 MiB | 25, 0.10 MiB | 36.1 ms | 41.7 ms |
-| reedwake-mill-front 390×844 | 2 | 3.87 MiB | 27, 0.12 MiB | 114.5 ms | 114.5 ms |
-| reedwake-mill-front 844×390 | 2 | 3.87 MiB | 23, 0.10 MiB | 32.4 ms | 72.3 ms |
-| reedwake-mill-front 1280×800 | 2 | 2.77 MiB | 23, 0.10 MiB | 31.8 ms | 44.7 ms |
-| reedwake-mill-front 1920×1080 | 2 | 2.38 MiB | 26, 0.12 MiB | 34.5 ms | 95 ms |
-| saltglass-shore 320×640 | 2 | 1.98 MiB | 18, 0.06 MiB | 24.7 ms | 96.2 ms |
-| saltglass-shore 390×844 | 2 | 3.87 MiB | 18, 0.06 MiB | 771.1 ms | 771.1 ms |
-| saltglass-shore 844×390 | 2 | 3.87 MiB | 16, 0.03 MiB | 52.7 ms | 463.7 ms |
-| saltglass-shore 1280×800 | 2 | 2.77 MiB | 17, 0.06 MiB | 58.5 ms | 58.5 ms |
-| saltglass-shore 1920×1080 | 2 | 2.38 MiB | 16, 0.03 MiB | 25.5 ms | 108 ms |
+| mill-ground-floor 320×640 | 2 | 1.56 MiB | 25, 0.10 MiB | 4.2 ms | 27.6 ms |
+| mill-ground-floor 390×844 | 2 | 3.06 MiB | 26, 0.10 MiB | 10.9 ms | 36.9 ms |
+| mill-ground-floor 844×390 | 2 | 3.06 MiB | 23, 0.09 MiB | 17.5 ms | 39.1 ms |
+| mill-ground-floor 1280×800 | 2 | 2.19 MiB | 24, 0.10 MiB | 17.1 ms | 49.7 ms |
+| mill-ground-floor 1920×1080 | 2 | 1.88 MiB | 24, 0.09 MiB | 7.6 ms | 38.8 ms |
+| reedwake-mill-front 320×640 | 2 | 1.98 MiB | 25, 0.10 MiB | 32.2 ms | 53.4 ms |
+| reedwake-mill-front 390×844 | 2 | 3.87 MiB | 27, 0.12 MiB | 54.6 ms | 152.4 ms |
+| reedwake-mill-front 844×390 | 2 | 3.87 MiB | 23, 0.10 MiB | 95.6 ms | 95.6 ms |
+| reedwake-mill-front 1280×800 | 2 | 2.77 MiB | 23, 0.10 MiB | 33.1 ms | 81.7 ms |
+| reedwake-mill-front 1920×1080 | 2 | 2.38 MiB | 26, 0.12 MiB | 33.2 ms | 53.7 ms |
+| saltglass-shore 320×640 | 2 | 1.98 MiB | 18, 0.06 MiB | 16.6 ms | 70.6 ms |
+| saltglass-shore 390×844 | 2 | 3.87 MiB | 18, 0.06 MiB | 41.4 ms | 157.6 ms |
+| saltglass-shore 844×390 | 2 | 3.87 MiB | 16, 0.03 MiB | 58.1 ms | 59 ms |
+| saltglass-shore 1280×800 | 2 | 2.77 MiB | 17, 0.06 MiB | 21.1 ms | 146 ms |
+| saltglass-shore 1920×1080 | 2 | 2.38 MiB | 16, 0.03 MiB | 16 ms | 46 ms |
 
 Reading the figures:
 
 - **Worst case:** 3 kept layers of the largest bucket measured (448 × 896 at 390 × 844) ≈ 5.8 MiB. The 1280 × 800 and 1920 × 1080 desktops paint 640 × 448 buckets (the art buffer is 640 art px wide there).
 - **Two layers per battle:** the stage settles its arrangement once after the overlay's first measurement, so the first frame's geometry is replaced once; the first layer stays cached until evicted.
-- **Build times** are the composition's first layout and paint, including the first use of each prop's art (cropped with `getImageData`). They were measured on a shared 4-core machine running five workers (load average 25–35), so they are indicative only: most builds were 13–60 ms; the outliers (up to 771 ms) coincide with that load. The older test `tests/e2e/backdrops.mjs` logs every encounter setting's build over 60 ms. A build happens once per encounter (twice on entry, see above) and on a resize; never per frame.
+- **Build times** are the composition's first layout and paint, including the first use of each prop's art (cropped with `getImageData`). They were measured on a shared 4-core machine running five workers (load average roughly 17–35), so they are indicative only: in the run above most builds took 4–60 ms and the slowest 158 ms; an earlier run under heavier load had outliers up to 771 ms. The older test `tests/e2e/backdrops.mjs` logs every encounter setting's build over 60 ms. A build happens once per encounter (twice on entry, see above) and on a resize; never per frame.
 - **Per frame:** one blit of the layer, at most two machinery sprites, ≤ 44 motes, a few glints.
 
 ## Every encounter setting (§19, Chapters 1–6 and the Atlas)
@@ -281,11 +281,11 @@ player's save.
 | Command | Result |
 |---|---|
 | `node tools/build.mjs` | built index.html — 275 source files |
-| `node tests/run-unit.mjs battle_places` | RESULT_BP |
-| `node tests/run-unit.mjs` (full suite) | RESULT_FULL |
+| `node tests/run-unit.mjs battle_places` | 6722 passed, 0 failed |
+| `node tests/run-unit.mjs` (full suite) | 14165 passed, 1 failed (run twice, same result). The failure is `recog-accuracy.test.mjs`: "p95 recognize() time < 60 ms", a wall-clock threshold on the handwriting recogniser, which this branch does not touch (no change under `src/recog`, `src/learn`, `src/lang`); it fails under the shared machine's load. Every other file passes, `battle_places` included. |
 | `node tests/e2e/battle_backdrops.mjs --docs` | 38 passed, 0 failed (viewports, menu movement and reveal, state pairs, motion and reduced motion, records for 70 settings, no page errors); evidence written |
 | `node tests/e2e/backdrops.mjs` | 61 passed, 0 failed (the Moth inside and out, a fixed room structure with varying accessories, outdoor locality, stability through turns, seed isolation of battle state, keep-outs, the Atlas, a phone, every placed foe and the scripted bosses) |
-| `node tests/e2e/encounters.mjs` | all ok |
+| `node tests/e2e/encounters.mjs` | all ok (19 checks) |
 | `node tests/e2e/battle_group.mjs` | 6 passed, 0 failed |
 
 What the tests establish (and what they do not):
