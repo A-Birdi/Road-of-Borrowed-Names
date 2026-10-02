@@ -44,6 +44,32 @@ var RB = (globalThis.RB = globalThis.RB || {});
     c.globalAlpha = 1;
   }
 
+  // The restyle's particles: a small cluster with a darker edge on its lower right (form under the
+  // key light, like the sprites' outlines) rather than a flat dot; colours from the creature's own
+  // hue-shifted ramp (A.hramp, cached by colour).
+  const ramps = new Map();
+  function rampOf(col) {
+    let r = ramps.get(col);
+    if (!r) { r = A.hramp(col, { n: 6 }); ramps.set(col, r); if (ramps.size > 32) ramps.delete(ramps.keys().next().value); }
+    return r;
+  }
+  function chip(c, x, y, w, h, u, light, dark, a) {
+    if (a <= 0.01) return;
+    R(c, x, y, w, h, dark, a);
+    R(c, x, y, Math.max(u, w - u), Math.max(u, h - u), light, a);
+  }
+  // a ring on the echo's tilted plane (its sprite's rings lie on it): points along a rotated ellipse
+  function ering(c, cx, cy, rx, ry, tilt, u, col, a) {
+    if (a <= 0.01) return;
+    c.globalAlpha = Math.min(1, a); c.fillStyle = col;
+    const n = Math.max(24, Math.round((rx + ry) * 3.2 / u)), ct = Math.cos(tilt), st = Math.sin(tilt);
+    for (let i = 0; i < n; i++) {
+      const th = (i / n) * Math.PI * 2, X = Math.cos(th) * rx, Y = Math.sin(th) * ry;
+      c.fillRect(Math.round(cx + X * ct - Y * st), Math.round(cy + X * st + Y * ct), u, u);
+    }
+    c.globalAlpha = 1;
+  }
+
   // ---- deliveries ----------------------------------------------------------------------------
   if (RB.battleSeq && RB.battleSeq.addDelivery) for (const [art, kind, fn] of A.queue) RB.battleSeq.addDelivery(art, kind, fn);
 
@@ -154,7 +180,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const s = seg(k, i * 0.07, i * 0.07 + 0.55);
       if (s <= 0 || s >= 1) continue;
       const x = o.x + (12 + i * 5) * u + (hs(i, 9) - 0.5) * 10 * u, y = o.y - (4 - i * 2) * u + easeIn(s) * 14 * u;
-      R(c, x, y, u, u, V.cols[i % 2], 0.8 * (1 - s));
+      chip(c, x, y, 2 * u, (i % 3 ? 2 : 3) * u, u, V.cols[i % 2], rampOf(colOf(e.p.foe, '#c8c0e0'))[1], 0.85 * (1 - s));
     }
   };
   // contact: a small burst of wing scales where the moth meets its target (or the seal before it)
@@ -166,7 +192,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     if (still) { disc(c, x, y, 6 * u, 4 * u, V.cols[0], 0.6 * (1 - seg(k, 0.5, 1))); return; }
     for (let i = 0; i < 10; i++) {
       const ang = -Math.PI * 0.15 - (i / 9) * Math.PI * 0.9 + (hs(i, 5) - 0.5) * 0.4, r = ease(k) * (8 + hs(i, 6) * 14) * u;
-      R(c, x + Math.cos(ang) * r, y + Math.sin(ang) * r * 0.8 + easeIn(k) * 10 * u, u * (i % 3 ? 1 : 2), u, V.cols[i % 3], 1 - k);
+      chip(c, x + Math.cos(ang) * r, y + Math.sin(ang) * r * 0.8 + easeIn(k) * 10 * u, u * (i % 3 ? 2 : 3), 2 * u, u, V.cols[i % 3 === 2 ? 1 : 0], rampOf(colOf(e.p.foe, '#c8c0e0'))[1], 1 - k);
     }
     disc(c, x, y, (3 + 5 * ease(k)) * u, (2 + 3 * ease(k)) * u, V.cols[1], 0.35 * (1 - k));
   };
@@ -179,7 +205,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (s <= 0 || s >= 1) continue;
       const y0 = f.y - 10 * u + (hs(i, 2) - 0.5) * 50 * u, y1 = o.y + (hs(i, 3) - 0.5) * 60 * u;
       const x = f.x + (o.x - 50 * u - f.x) * ease(s), y = y0 + (y1 - y0) * s + Math.sin(t / 90 + i) * 2 * u;
-      R(c, x, y, i % 3 ? u : 2 * u, u, i % 2 ? '#8a8480' : '#c8c0b8', 0.85 * (1 - s));
+      chip(c, x, y, (i % 3 ? 2 : 3) * u, 2 * u, u, i % 2 ? '#a8a098' : '#d8d0c8', '#4a4248', 0.85 * (1 - s));
     }
   };
   // cold dust fanned from the wings to one target
@@ -191,7 +217,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (s <= 0 || s >= 1) continue;
       const sp = (hs(i, 2) - 0.5) * 30 * u * (1 - s);
       const x = a.x + (b.x - a.x) * ease(s), y = a.y + (b.y - a.y) * ease(s) + sp - bell(s) * 14 * u;
-      R(c, x, y, u * (i % 4 ? 1 : 2), u, i % 3 ? '#e4f2ff' : '#ffffff', 0.9 * (1 - s * s));
+      chip(c, x, y, u * (i % 4 ? 2 : 3), 2 * u, u, i % 3 ? '#e4f2ff' : '#ffffff', '#5a8ac8', 0.9 * (1 - s * s));
     }
   };
 
@@ -205,7 +231,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const s = seg(k, i * 0.06, i * 0.06 + 0.5);
       if (s <= 0 || s >= 1) continue;
       const x = o.x + (14 + i * 4) * u + Math.sin(i * 2.1) * 4 * u, y = o.y - (6 - i) * u + Math.cos(i * 1.7) * 3 * u;
-      R(c, x - u, y - u, 2 * u, 2 * u, i % 3 ? col : '#ffffff', 0.85 * (1 - s));
+      const rp = rampOf(col);
+      R(c, x - u, y - u, 2 * u, 2 * u, i % 3 ? rp[3] : rp[4], 0.85 * (1 - s));
+      R(c, x - u, y - u, u, u, rp[5], 0.85 * (1 - s));
     }
   };
   // an echo's volley: its shards fly out on slightly different arcs and arrive together at contact
@@ -221,21 +249,24 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const mx = (a.x + bx) / 2 - bend * 0.6, my = (a.y + by) / 2 - 20 * u + bend;
       const x = (1 - s) * (1 - s) * a.x + 2 * s * (1 - s) * mx + s * s * bx, y = (1 - s) * (1 - s) * a.y + 2 * s * (1 - s) * my + s * s * by;
       const al = k < 0.85 ? 1 : 1 - seg(k, 0.85, 1);
-      R(c, x - 2 * u, y - u, 4 * u, 2 * u, '#1c2a34', al * 0.8);
-      R(c, x - 2 * u + u, y - u, 2 * u, u, col, al);
+      const rp = rampOf(col);
+      R(c, x - 3 * u, y - u, 6 * u, 3 * u, '#101a28', al * 0.9);
+      R(c, x - 2 * u, y - u, 4 * u, 2 * u, rp[3], al);
+      R(c, x - 2 * u, y - u, 3 * u, u, rp[5], al);
     }
   };
   // rings travelling out from an echo (its Heat: warm and quick; its Plea: soft)
   fx.echoRings = function (c, e, k, Ah, t, still) {
     const u = Ah.u, o = Ah.pt('foe', 'core'), col = e.p.warm ? '#f0a060' : colOf(e.p.foe, '#a8c8d8');
-    if (still) { c.globalAlpha = 0.5 * (1 - seg(k, 0.5, 1)); c.fillStyle = col; K().ring(c, o.x, o.y, Math.round(Ah.foeR * 1.1), u); c.globalAlpha = 1; return; }
+    const rp = rampOf(col), cy = o.y + 14 * u, TL = -0.24, RYK = 0.58;
+    if (still) { const r = Math.round(Ah.foeR * 1.1); ering(c, o.x, cy, r, r * RYK, TL, u, rp[4], 0.5 * (1 - seg(k, 0.5, 1))); return; }
     for (let i = 0; i < 3; i++) {
       const s = seg(k, i * 0.18, 0.6 + i * 0.13);
       if (s <= 0 || s >= 1) continue;
-      c.globalAlpha = 0.7 * (1 - s); c.fillStyle = col;
-      K().ring(c, o.x, o.y, Math.round(Ah.foeR * (0.8 + 1.3 * ease(s))), u);
+      const r = Math.round(Ah.foeR * (0.8 + 1.3 * ease(s)));
+      ering(c, o.x, cy, r - u, (r - u) * RYK, TL, u, rp[1], 0.6 * (1 - s));
+      ering(c, o.x, cy, r, r * RYK, TL, u, rp[5], 0.75 * (1 - s));
     }
-    c.globalAlpha = 1;
   };
 
   // where a blow lands: the target's chest, or the seal raised in front of it
@@ -281,9 +312,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const sh = 1 - ease(seg(k, 0, 0.3)), fade = 1 - seg(k, 0.4, 1);
     for (const sgn of [-1, 1]) for (let i = 0; i < 5; i++) {
       const a = sgn * (0.5 + sh * 0.9) + (i - 2) * 0.12;
-      R(c, b.x + 10 * u - Math.cos(a) * 12 * u, b.y + Math.sin(a) * 10 * u, 2 * u, 2 * u, '#f0e0c8', fade);
+      chip(c, b.x + 10 * u - Math.cos(a) * 12 * u, b.y + Math.sin(a) * 10 * u, 2 * u, 2 * u, u, '#f6e8d4', '#8a4a3a', fade);
     }
-    for (let i = 0; i < 6; i++) { const r = ease(seg(k, 0.25, 1)) * (8 + hs(i, 3) * 10) * u, a = -Math.PI * 0.2 - i * 0.5; R(c, b.x + Math.cos(a) * r, b.y + Math.sin(a) * r + easeIn(seg(k, 0.25, 1)) * 8 * u, u, u, '#d8c0a0', 1 - seg(k, 0.3, 1)); }
+    for (let i = 0; i < 6; i++) { const r = ease(seg(k, 0.25, 1)) * (8 + hs(i, 3) * 10) * u, a = -Math.PI * 0.2 - i * 0.5; chip(c, b.x + Math.cos(a) * r, b.y + Math.sin(a) * r + easeIn(seg(k, 0.25, 1)) * 8 * u, 2 * u, 2 * u, u, rampOf(colOf(e.p.foe, '#c86a4a'))[4], rampOf(colOf(e.p.foe, '#c86a4a'))[1], 1 - seg(k, 0.3, 1)); }
   };
   // water (or the Ledger Heap's ink-wash) rolling across the party from the creature's side
   fx.tideWash = function (c, e, k, Ah, t, still) {
@@ -306,7 +337,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const u = Ah.u, b = landAt(Ah, e), col = colOf(e.p.foe, '#9a9a7a');
     if (still) { disc(c, b.x, b.y, 10 * u, 5 * u, '#b8b0a0', 0.6 * (1 - seg(k, 0.5, 1))); return; }
     for (let i = 0; i < 5; i++) disc(c, b.x + (i - 2) * 7 * u, b.y + 4 * u - ease(k) * (6 + i % 3 * 4) * u, (4 + 6 * ease(k)) * u, (3 + 3 * ease(k)) * u, '#c8c0b0', 0.45 * (1 - k));
-    for (let i = 0; i < 8; i++) { const a = -Math.PI * 0.15 - i * 0.36, r = ease(k) * (10 + hs(i, 5) * 14) * u; R(c, b.x + Math.cos(a) * r, b.y + Math.sin(a) * r * 0.7 + easeIn(k) * 14 * u, 2 * u, 2 * u, i % 2 ? col : '#5a564a', 1 - k); }
+    for (let i = 0; i < 8; i++) { const a = -Math.PI * 0.15 - i * 0.36, r = ease(k) * (10 + hs(i, 5) * 14) * u; chip(c, b.x + Math.cos(a) * r, b.y + Math.sin(a) * r * 0.7 + easeIn(k) * 14 * u, (i % 2 ? 3 : 2) * u, 2 * u, u, rampOf(col)[i % 2 ? 4 : 3], rampOf(col)[0], 1 - k); }
   };
   // ice: shards of frost flying from the creature to one target
   fx.iceShard = function (c, e, k, Ah, t, still) {
@@ -331,7 +362,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const x0 = b.x - 14 * u, y0 = b.y - 12 * u + s * 8 * u, len = 28 * u;
       for (let i = 0; i <= 10 * kk; i++) R(c, x0 + i * len / 10, y0 + i * len / 16, 2 * u, u, i % 4 ? '#fffaf0' : '#3a3450', fade);
     }
-    for (let i = 0; i < 5; i++) { const s = seg(k, 0.2, 1); R(c, b.x + (hs(i, 1) - 0.5) * 24 * u, b.y + (hs(i, 2) - 0.5) * 10 * u + easeIn(s) * 16 * u, 3 * u, 2 * u, '#f4ecd8', 1 - s); }
+    for (let i = 0; i < 5; i++) { const s = seg(k, 0.2, 1); chip(c, b.x + (hs(i, 1) - 0.5) * 24 * u, b.y + (hs(i, 2) - 0.5) * 10 * u + easeIn(s) * 16 * u, 3 * u, 3 * u, u, '#fbf6ea', '#7a6a72', 1 - s); }
   };
   // the crane's gust carries scraps of paper over the party
   fx.paperFlurry = function (c, e, k, Ah, t, still) {
@@ -342,7 +373,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (s <= 0 || s >= 1) continue;
       const x = f.x + (o.x - 60 * u - f.x) * ease(s), y = f.y - 20 * u + (o.y + (hs(i, 3) - 0.5) * 50 * u - f.y + 20 * u) * s + Math.sin(t / 80 + i) * 3 * u;
       const tw = Math.sin(t / 60 + i * 2) > 0;
-      R(c, x, y, (tw ? 3 : 1) * u, 2 * u, i % 3 ? '#f2eee2' : '#c8c0a8', 0.9 * (1 - s * 0.6));
+      chip(c, x, y, (tw ? 4 : 2) * u, (tw ? 3 : 2) * u, u, i % 3 ? '#fbf6ea' : '#d8d0b8', '#7a6a72', 0.9 * (1 - s * 0.6));
     }
   };
   // a clerk's seal: a vermilion square stamped on its target (or on the seal before it, or on a knot)
@@ -360,7 +391,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
 
   // the Kiln Warden's mouth (its firebox, low on the dome, on the party's side)
-  function mouthOf(Ah) { const o = Ah.pt('foe', 'core'); return { x: o.x - 14 * Ah.u, y: o.y + Ah.foeR * 0.35 }; }
+  function mouthOf(Ah) { const o = Ah.pt('foe', 'core'); return { x: o.x - 20 * Ah.u, y: o.y + Ah.foeR * 0.35 }; }
   // a ball of fire from its mouth to one of you (or the seal before you), trailing sparks
   fx.kilnBolt = function (c, e, k, Ah, t, still) {
     const u = Ah.u, a = mouthOf(Ah), b = landAt(Ah, e);
