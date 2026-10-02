@@ -1070,12 +1070,15 @@ RB.battlers = (function () {
   function anchors(look, o) { return Object.assign({}, frameFor(look, o || {}).pts); }
   // Build the frames a battle starts with ahead of time (in idle moments): this actor's idle and calm key
   // frames only (battle addendum §21.4: prewarm the encounter's actors, nothing else).
+  // (it stops if a later encounter's retain() leaves this look out: no stale frames built afterwards)
+  let keepSet = null;
   function prewarm(look, who, id) {
     who = who === 'comp' ? 'comp' : 'pc';
-    const list = [];
+    const list = [], lk = lookKey(look);
     for (const pose of ['ready', 'calm']) for (const t of M().idleTimes(actorOf(look, who, id), pose)) list.push({ pose, t, who, id });
     let i = 0;
     const step = () => {
+      if (keepSet && !keepSet.has(lk)) return;
       const t0 = performance.now();
       while (i < list.length && performance.now() - t0 < 6) frameFor(look, list[i++]);
       if (i < list.length) (typeof requestIdleCallback === 'function' ? requestIdleCallback : setTimeout)(step);
@@ -1086,6 +1089,7 @@ RB.battlers = (function () {
   // Keep only the frames of these looks (an encounter's actors); every other look's frames are released.
   function retain(looks) {
     const keep = new Set((looks || []).filter(Boolean).map(lookKey));
+    keepSet = keep;
     for (const [k, f] of cache) if (!keep.has(f.lk)) { cache.delete(k); stats.retained++; }
     return cache.size;
   }

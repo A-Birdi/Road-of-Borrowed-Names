@@ -31,7 +31,9 @@ if (toDocs) fs.mkdirSync(docsDir, { recursive: true });
 const { srv, url } = await serve();
 const b = await launch();
 let pass = 0, fail = 0;
-const notes = [], report = {};
+// (the report keeps the results of earlier runs of other tests; a test's own keys are replaced)
+const reportPath = path.join(outDir, 'report.json');
+const notes = [], report = (() => { try { return JSON.parse(fs.readFileSync(reportPath, 'utf8')); } catch (e) { return {}; } })();
 async function test(name, fn) {
   if (only && !name.includes(only)) return;
   try { await Promise.race([fn(), new Promise((_, rej) => setTimeout(() => rej(new Error('test timed out after 400s')), 400000))]); pass++; console.log('PASS ' + name); }
@@ -620,7 +622,8 @@ async function compose(shots, perRow) {
   return out;
 }
 
-fs.writeFileSync(path.join(outDir, 'report.json'), JSON.stringify(report, null, 1));
+report.when = new Date().toISOString();
+fs.writeFileSync(reportPath, JSON.stringify(report, null, 1));
 for (const n of notes) console.log('note: ' + n);
 console.log(`\n${pass} passed, ${fail} failed`);
 await b.close(); srv.close();
