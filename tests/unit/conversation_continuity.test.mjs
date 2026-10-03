@@ -60,6 +60,8 @@ const KNOWN = {
   'sb.yae|yae|aside': ['finding', 'on "Ah… that." [worry]: her own worry tell is countidle; aside (6) is not in her vocabulary'],
   'sb.yae|yae|halfraise': ['finding', 'on "Anyway, she never missed a single night…"; halfraise (8) is not in her vocabulary'],
   'sg.omi_wataru|wataru|size': ['finding', 'his then=size,palm chain: the two-handed size gesture (11) is Omi\'s (her stronger reaction in this scene), not his'],
+  // the long quests, cases, pages and pets (docs/expressive/reports/staging_lq_misc.md)
+  'lq.fare_gull|tamae|stamp': ['escalation', 'narrated: "Tamae presses it onto a slip of paper." (her mother\'s seal pressed, as the line says; not a habit of hers)'],
 };
 
 export default async (t) => {
