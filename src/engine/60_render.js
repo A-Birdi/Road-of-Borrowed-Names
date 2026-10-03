@@ -104,8 +104,16 @@ RB.render = (function () {
   function marginFor(m) {
     if (framed(m)) return { x: 0, y: 0 };
     const vwT = bw / ATS, vhT = bh / ATS, rT = reserveLogical() / TS;
-    return { x: Math.max(1, Math.ceil((vwT - m.w) / 2) + 1), y: Math.max(1, Math.ceil((vhT - m.h) / 2) + 1) + Math.ceil(rT) };
+    const y = Math.max(1, Math.ceil((vhT - m.h) / 2) + 1) + Math.ceil(rT);
+    return { x: Math.max(1, Math.ceil((vwT - m.w) / 2) + 1), y: Math.max(y, Math.ceil(headroom(m)) + 1) };
   }
+  // Headroom (map.headroom, in tiles): how far the view may look above the
+  // map's top row, for a map with something tall standing against it (the
+  // observatory's dome above the Star Stair path). The camera eases up into
+  // it as the player nears the top, so those rows show only up there; what
+  // fills them is the map's own edge continued (the apron). Coordinates,
+  // collision and exits are unchanged. Maps without it are unaffected.
+  const headroom = (m) => (m.def && m.def.headroom) || 0;
   // Scenery continued past the edge: for each outside cell, the edge cell it
   // continues from sets the ground; the scenery found within two cells of that
   // edge cell sets how likely a piece is here and which kind (by hash, stable).
@@ -202,7 +210,17 @@ RB.render = (function () {
     // centred on the player in the view above the reserve; the view may run
     // past the bottom edge by the reserve (that ground is drawn: the apron)
     const hi = mh - vh + rb;
-    const cy = mh + rb <= vh ? Math.max((mh - vh) / 2, hi) : Math.max(0, Math.min(hi, (p.fy + 0.5) * TS - (vh - rb) / 2 - 4));
+    const H = headroom(m) * TS;
+    let cy;
+    if (mh + rb <= vh) cy = Math.max((mh - vh) / 2, hi);
+    else if (!H) cy = Math.max(0, Math.min(hi, (p.fy + 0.5) * TS - (vh - rb) / 2 - 4));
+    else {
+      // within five rows of the top the view rises (smoothly) by up to the headroom
+      let c = (p.fy + 0.5) * TS - (vh - rb) / 2 - 4;
+      const L = 5 * TS;
+      if (c < L) c -= H * (1 - Math.max(0, c) / L);
+      cy = Math.max(-H, Math.min(hi, c));
+    }
     // follow the walking player exactly; ease only larger jumps (a resize, or
     // the reserve appearing); snap on a new map or with reduced motion
     if (camMap !== m || RB.game.reducedMotion()) { camMap = m; camX = cx; camY = cy; }

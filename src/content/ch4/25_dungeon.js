@@ -14,6 +14,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   C.maps['sb.obs_path'] = {
     name: T('The Star Stair', '{星|ほし} の {石段|いしだん}'), region: 'snowbell', music: 'observatory',
     ambient: { weather: 'snow', get dark() { return lampLit() ? 0.2 : 0.1; }, tint: 'rgba(170,190,230,0.08)' },
+    // the observatory's dome rises above row 0: near the top the view may look two rows past it
+    // (src/engine/60_render.js, headroom); every coordinate stays as it is
+    headroom: 2,
     terrain: K.build(28, 40, '*', (k) => {
       k.ragged('left', 'P', 3, 61).ragged('right', 'P', 3, 62);
       k.rect(0, 0, 28, 1, 'P');

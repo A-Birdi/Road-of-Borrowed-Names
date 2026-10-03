@@ -9,3 +9,5 @@ tests/e2e/out/
 tmp/
 tools/kanjivg/.cache/
 .claude/worktrees/
+# painted Harmony art as delivered: not committed unless the lead says so (docs/harmony/contract/CONTRACT.md)
+art/harmony/incoming/

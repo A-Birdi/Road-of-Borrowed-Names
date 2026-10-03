@@ -267,14 +267,27 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
   budget (37.12 MiB of 48; tests/e2e/battle_budget.mjs). Evidence: recordings in
   docs/screenshots/battle/presentation/ (Normal, Fast, Instant, reduced motion, a 390×844 phone), layout
   stills in docs/screenshots/battle/layout/, each area's folder (index: docs/screenshots/battle/README.md).
-- Found, left for the owner: Nao's "missing third floorboard" in rw.warehouse is not drawn (§2.9; the
-  line is also quoted by the comparisons item C07, so softening it means editing C07 too); learning task
+- Found, left for the owner: Nao's "missing third floorboard" in rw.warehouse was not drawn (§2.9; the
+  line is also quoted by the comparisons item C07) — now drawn (resolved in art, no text changed: see
+  "World review" below); learning task
   picks use the page's shared `Math.random`, which world blink timers also draw from, so which item a
   battle task asks about varies with frame timing (no rule uses it); Moth and Lantern is recognised by its
   flame colour because its `artOpts` carry no variant flag (creatures_b.md); creatures are drawn before the
   party, so at contact a moth's near wing passes behind the adventurer it strikes (creatures_a.md).
 - Not verified: Firefox (the owner's browser), Safari, a real phone or the foldable, the art judged by a
   person (every rubric is a self-review), a native speaker's review, frame rate on named hardware.
+- World review (owner's external review, 2026-10-03; WR-04, WR-05 and two listed checks), art only:
+  the four long-quest landmarks redrawn at art resolution (`src/content/lq/15_art.js`: the great
+  persimmon of Koharuno, Kayo's young tree, the stone of names, Chigusa's tea stall) with footprints,
+  blocking, placements, scenes and use tiles unchanged (recorded before, `tests/fixtures/
+  landmarks_before.json`); Masaru's bakery fitted out as a bakery (`src/content/ch5/11_bakery.js`:
+  oven, bread rack, kneading bench, flour sacks; Masaru's working place is in front of the bench's
+  right end at 3,4, facing up); Nao's missing floorboard drawn and blocking at rw.warehouse 5,5
+  (`src/content/ch1/12_floorgap.js`) — resolved in art; the Star Stair path's observatory dome no
+  longer cut off at the top (a per-map `headroom`, `src/engine/60_render.js`, set to 2 rows on
+  sb.obs_path). Test: tests/e2e/landmarks.mjs (in run.mjs); captures: docs/screenshots/landmarks/,
+  docs/screenshots/bakery/ (landmarks_shots.mjs); notes: docs/ART_DIRECTION.md §8. The look is a
+  self-review; the owner reviews the art.
 - The owner's playtest of 2026-10-02 (Firefox, about 2000 × 1090), answered on this branch
   (VALIDATION.md "Battle playtest round", REQUIREMENTS BA17–BA21): one cadence in every phase (the scene
   had run at half speed once the opening lines closed); Adaptive shows a routine move as its badge only
@@ -385,12 +398,23 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
 - **What exists:** the brief (docs/harmony/ASSET_BRIEF.md) and the reference sheets and templates in
   docs/harmony/asset_brief/ (`node tests/e2e/harmony_asset_refs.mjs`). The owner also has a published page with
   a prompt builder.
-- **Plan:**
-  - Batch 1 (Suzu plus one preset player) becomes a playable proof first.
-  - Then the other companions, the layered player kit in key ramps, and wear.
-  - Native bust 192×160, pair 352×160; frames enter, flourish, hold, blink.
-- **The overlay worker** was told to read sizes from `NATIVE`/`fitScale()` only, and to treat the phase list as
-  data.
+- **Contract v2, machine side (built 2026-10-03; REQUIREMENTS.md HB3–HB8; VALIDATION.md "Harmony painted art — contract v2"):**
+  - The authority on formats is docs/harmony/contract/CONTRACT.md; its data is `RB.harmonyContract`
+    (src/ui/88_harmony_contract.js), which the importer also loads. Bust 192 × 160 (companion turned right, player
+    turned left), pair 352 × 160 (compact 248 × 128), states prep_a, prep_b, cue, peak, settle_a, settle_b with
+    `timeline(comp)`, layered player kit with masks, key ramps (skin key now orange; hair and trim s0 darker).
+  - `node tools/harmony_registry.mjs` → docs/harmony/contract/registry.json (86 required + 33 optional asset keys).
+  - `node tools/harmony_import.mjs <inDir> [--check]` (+ `--verify assets/harmony`): incoming batches go in
+    art/harmony/incoming/<batch>/ (ignored, not committed), normalised files in assets/harmony/, which the build embeds.
+  - Runtime: src/ui/88_harmony_raster.js behind `RB.harmonyArt`; with nothing installed the code busts are
+    pixel-identical and `PHASES` is ['enter', 'hold'] with no `timeline`.
+  - SYNTHETIC sample (not art): tests/fixtures/harmony_sample/ (`node tools/harmony_sample.mjs`), evidence in
+    docs/screenshots/harmony/raster_sample/, budgets in CONTRACT.md §10.
+  - docs/harmony/ASSET_BRIEF.md (the lead's) still describes v1 (enter/flourish/hold/blink, player facing right,
+    old skin key): it must be rewritten to the contract before the artist starts. The templates and palette sheet
+    in docs/harmony/asset_brief/ are already regenerated from the contract.
+- **The overlay worker** was told to read sizes from `NATIVE`/`fitScale()` only, to treat the phase list as
+  data and to use `timeline()` when it exists (its src/ui/82d_harmony_cutin.js is not on this branch yet).
 - **Never commit** the owner's mockup images.
 
 ## Commands
@@ -482,8 +506,10 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
 15. Settings in battle (2026-10-03), in Firefox: open the sheet mid-exchange (C or the button), change text speed and
    motion, close it, and check that the exchange continues. Try Load and Return to title from a boss. The other-tab Cancel path is
    untested.
-16. Harmony busts: when the owner's Batch 1 arrives, build `tools/harmony_import.mjs` and the raster path in
-   `RB.harmonyArt` (docs/harmony/ASSET_BRIEF.md §10). Then send the proof's evidence before asking for the rest.
+16. Harmony busts: rewrite docs/harmony/ASSET_BRIEF.md to contract v2 (CONTRACT.md). When Batch 1 arrives, put it
+   in art/harmony/incoming/batch1/, run `node tools/harmony_import.mjs art/harmony/incoming/batch1 --suggest`, fix
+   what the report lists (masks, offsets in import.json), import, build, then show the proof in a real battle with
+   the overlay before asking for the rest. Re-measure the budgets on real art (CONTRACT.md §10).
 
 ## Known issues / limits
 - No human handwriting samples tested (synthetic + font-derived only).

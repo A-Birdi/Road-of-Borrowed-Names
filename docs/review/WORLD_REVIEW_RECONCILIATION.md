@@ -16,6 +16,7 @@ below so the evidence can be matched.
 | Historical repository reconciliation in the review | `claude/stoic-sagan-n3jvgk` at `9aa71a8` |
 | Current pushed build for this ledger | `claude/stoic-sagan-n3jvgk` at `243069a`; root index.html SHA-256 begins `7bb6322662bf3d3d` |
 | Merged since | Animated dialogue portraits (`1be42bd`, pushed with `fe75862`) |
+| Also merged | Harmony art contract v2 (`996d195`); landmarks, bakery, floorboard and headroom (`089ade7`, plus `7b4ae3c`) |
 | Unmerged worker branches this ledger refers to | Overworld actor system at `77a3eee` plus uncommitted work; Harmony cut-in at `18cf5ea`; landmarks and bakery props, and the Harmony art contract (both just started) |
 
 **Status words** follow the packet:
@@ -90,29 +91,49 @@ The review classed this as a specific staging mismatch.
 
 The review classed this as an observed asset gap.
 
-- **Owner:** the landmarks and bakery worker, just started.
-- **On 243069a: still observed.** All four are still drawn with the old flat path in
-  `src/content/lq/10_data.js`: tile-resolution circles and rectangles, no `draw2`.
+- **Owner:** the landmarks and bakery worker. Merged in `089ade7`.
+- **Status:** fixed; retested on the merged build. The lead's runs on this build are recorded in VALIDATION.md.
+- **Before the merge, on 243069a:** still observed. All four were drawn with the old flat path in
+  `src/content/lq/10_data.js`: tile-resolution circles and rectangles.
+- **After:** art-resolution drawings in `src/content/lq/15_art.js`. The old drawings stay as the fallback.
 
-| Prop | Current (243069a) | Must keep | Status |
-|---|---|---|---|
-| `lq_kaki` | flat blob canopy, regular trunk | scale, fruit, height marks, position, footprint | still observed, redraw in progress |
-| `lq_kaki_young` | three blobs | younger identity, garden placement; not a scaled copy of the big tree | still observed, redraw in progress |
-| `lq_namestone` | flat slab, regular lines | significance, inscription interaction, footprint; no legible marks, no new clue | still observed, redraw in progress |
-| `lq_teastall` | flat posts, awning, counter | proportions, working surface, kettle, the upside-down cup | still observed, redraw in progress |
+| Prop | After | Kept |
+|---|---|---|
+| `lq_kaki` | a gnarled, buttressed trunk, a low red-russet crown built like the world's other trees, about 24 fruit | size, blocking, placement, scene, the four height marks on a clear lit strip |
+| `lq_kaki_young` | a slender staked young trunk, an open crown of large glossy leaves, three fruit; a different drawing, not a scaled copy | placement in `lf.gardens`, scene |
+| `lq_namestone` | a thick slab on a plinth, with lichen, moss, a chip and a crack; carving as columns of cut dashes, with no letter shapes and nothing that reads as a clue | footprint, scene |
+| `lq_teastall` | a planked counter, a striped awning with a snowy top, braced posts, a brazier, an iron kettle with steam, a tea caddy, celadon cups | proportions, working surface, **the first cup upside down** |
 
-- **Required evidence:** before and after at normal game scale, and an unchanged footprint and interaction
-  (a new `tests/e2e/landmarks.mjs`).
-- **`cs_tidechalk`:** left alone, as the review advises.
+- **Continuity added by the lead (`7b4ae3c`):**
+  - After `lq_fare` is done, every cup faces up: the scene says "They all face up now."
+  - After `lq_road` is done, the tree shows its new, pale fifth mark, as `lq.kh_tree` describes.
+  - Both come from the same placement, as an art variant read from the campaign state.
+- **Evidence:**
+  - `docs/screenshots/landmarks/`: before and after at 1280×800 and 390×844, and a close-up sheet at 3×.
+  - `tests/e2e/landmarks.mjs` (54/54) checks size, blocking, placements, map blocking and the use tiles against
+    a record made on 243069a.
+- **Limitation:** the art has been judged by the worker and the lead only.
+  - The tree still shows four marks before the quest, while the scene speaks of twelve. This predates the
+    redraw.
 
 ## WR-05: Masaru's bakery reads as a generic workroom
 
 The review classed this as a design judgment.
 
-- **Owner:** the props side goes to the landmarks and bakery worker: a preparation surface, a bread display,
-  a few purposeful forms, no crowding. Masaru's working action belongs to the actor worker, after both merge.
-- **On 243069a:** still observed. The room has stoves, a table, storage and furniture, and no bakery-specific
-  forms.
+- **Owner:** the props side was done by the landmarks and bakery worker, merged in `089ade7`. Masaru's working
+  action belongs to the actor-system worker, after its merge.
+- **Before:** still observed on 243069a: generic stoves, a table, storage.
+- **After:** partly addressed.
+  - A domed bread oven with loaves, embers and a peel replaces the two stoves.
+  - A bread rack replaces the bookcase.
+  - Flour sacks stand where a crate was.
+  - A floured kneading bench holds a tray of dough rolls, a bowl and a rolling pin.
+  - The order table, its scene, the door, the spawn point and Masaru are unchanged.
+  - Masaru's tile (3,4) faces the dough end of the bench, ready for a working action. He can no longer be
+    spoken to from (3,3); (3,5), (2,4) and (4,4) still work.
+- **Evidence:** `docs/screenshots/bakery/` (before and after at 1280×800 and 390×844, with Masaru); landmarks
+  test (door-to-table path, scene, Masaru reachable).
+- **Remaining:** Masaru's working action (WR-01), after the actor-system merge.
 
 ## WR-06: intentional restraint must survive the animation work
 
@@ -131,16 +152,16 @@ This is a safeguard, not a defect.
 | Lighthouse top | fixed and retested: lighthouse_top 106/106 on 34ec977 | VALIDATION.md "The top of the lighthouse…" |
 | Overlapping battles and frozen canvas | fixed and retested: battle_overlap all ok on 34ec977 and on b4a598e | VALIDATION.md "Battles one at a time" |
 | Open-air quick travel | fixed and retested: travel_rules 10/10 on 34ec977 | VALIDATION.md "Quick travel rules" |
-| Nao's missing third floorboard in `rw.warehouse` | **still observed** on 243069a: the line exists and the room draws no gap. The fix in progress is to draw it, keeping both the line and comparison item C07 | src/content/ch1/30_scenes_arrival.js:176, practice_b/30_compare.js:182 |
-| Observatory dome headroom, `sb.obs_path` | **still observed** on 243069a. 2000×1090: the dome apex is cut by the map's top edge. 1440×900: it just touches. 390×844: the apex sits under the Word help and Menu buttons. A fix without moving any map coordinate has been requested | captures of `debugStart('sb.obs_path', 13, 6)`; to be committed with the fix |
+| Nao's missing third floorboard in `rw.warehouse` | **fixed and retested** (`089ade7`). The gap is drawn as a blocking prop `rw_floorgap` at (5,5); no text changed (the line and comparison item C07 stay). Nao is spoken to from (4,4), (6,4) or (5,3) | landmarks test; docs/screenshots/landmarks/*_warehouse_floorboard_* |
+| Observatory dome headroom, `sb.obs_path` | **fixed and retested** (`089ade7`). A per-map camera `headroom` (2 rows) shows the dome, and the tree line continues above row 0. The HUD buttons clear the tip by 74, 82, 15 and 8 CSS px at 2000×1090, 1440×900, 390×844 and 844×390. Maps without the option take the old code path. Near the top, the camera scrolls about 1.4× walking speed | landmarks test; docs/screenshots/landmarks/*_observatory_* |
 | Full idle-life and animated-portrait coverage | in progress on worker branches; not complete | WR-01, WR-02 above |
 
 ## Harmony cut-in: two separate gates
 
 | Gate | Status |
 |---|---|
-| **Technical integration** | The cut-in overlay is in progress at `18cf5ea`: lifecycle, Normal/Fast/Instant, reduced motion, placement, and an optional art timeline of states. The art contract v2 is in progress: registry export, importer, material masks, raster path, a synthetic sample. |
-| **Robin's visual approval** | **Not approved.** The code-drawn busts are provisional, and only a fallback. The painted art follows `docs/harmony/ASSET_BRIEF.md`, which is being rewritten to contract v2. Batch 1 is the proof: Suzu plus the configured player, plus a materially different player look. |
+| **Technical integration** | **Contract v2 merged in `996d195`:** `RB.harmonyContract`, a registry export (`docs/harmony/contract/registry.json`: 86 required and 33 optional asset keys), a dependency-free importer with explicit material masks, the raster path with whole-bust fallback to the code busts, build embedding, and a synthetic sample that assembles two materially different player looks with Suzu across six states (`docs/screenshots/harmony/raster_sample/`, labelled SYNTHETIC SAMPLE — not art). The cut-in overlay, with its art-timeline support, is still on its worker branch. |
+| **Robin's visual approval** | **Not approved.** The code busts are a provisional fallback. The artist brief is rewritten to contract v2 (`docs/harmony/ASSET_BRIEF.md`; the published page is updated). Batch 1 (26 files) is the proof: Suzu and two player looks. |
 
 ## How this ledger is updated
 

@@ -9,6 +9,27 @@ const src = path.join(root, 'src');
 const args = process.argv.slice(2);
 const outIdx = args.indexOf('--out');
 const out = outIdx >= 0 ? path.resolve(args[outIdx + 1]) : path.join(root, 'index.html');
+// painted Harmony art to embed (docs/harmony/contract/CONTRACT.md §7): assets/harmony/ unless --harmony <dir>
+const haIdx = args.indexOf('--harmony');
+const harmonyDir = haIdx >= 0 ? path.resolve(args[haIdx + 1]) : path.join(root, 'assets', 'harmony');
+
+// The manifest and every PNG it lists, base64, as RB.harmonyAssets (installed by src/ui/88_harmony_raster.js).
+// Nothing at all is added when there is no manifest.
+export function harmonyAssets(dir = harmonyDir) {
+  const mf = path.join(dir, 'manifest.json');
+  if (!fs.existsSync(mf)) return null;
+  const manifest = JSON.parse(fs.readFileSync(mf, 'utf8'));
+  const files = {};
+  let bytes = 0;
+  for (const f of Object.values(manifest.files || {})) for (const n of [f.png, f.mask]) {
+    if (!n) continue;
+    const b = fs.readFileSync(path.join(dir, n));
+    files[n] = b.toString('base64');
+    bytes += b.length;
+  }
+  const js = 'RB.harmonyAssets = ' + JSON.stringify({ manifest, files }).replace(/</g, '\\u003c') + ';\n';
+  return { js, files: Object.keys(files).length, png: bytes, embedded: Buffer.byteLength(js) };
+}
 
 export function listSources() {
   const manifest = JSON.parse(fs.readFileSync(path.join(src, 'manifest.json'), 'utf8'));
@@ -42,6 +63,8 @@ function build() {
   const files = listSources();
   const licences0 = fs.readFileSync(path.join(root, 'data', 'NOTICE.txt'), 'utf8');
   let js = `var RB = (globalThis.RB = globalThis.RB || {});\nRB.NOTICE = ${JSON.stringify(licences0).replace(/</g, '\\u003c')};\n`;
+  const ha = harmonyAssets();
+  if (ha) js += ha.js;
   for (const f of files) {
     const rel = path.relative(root, f).split(path.sep).join('/');
     const code = fs.readFileSync(f, 'utf8');
@@ -57,6 +80,7 @@ function build() {
   fs.writeFileSync(out, html);
   const kb = (Buffer.byteLength(html) / 1024).toFixed(1);
   console.log(`built ${path.relative(root, out)} — ${files.length} source files, ${kb} KiB`);
+  if (ha) console.log(`  painted Harmony art: ${ha.files} PNGs, ${(ha.png / 1024).toFixed(1)} KiB encoded, ${(ha.embedded / 1024).toFixed(1)} KiB embedded (base64) from ${path.relative(root, harmonyDir)}`);
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) build();

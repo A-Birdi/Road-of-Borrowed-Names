@@ -144,6 +144,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'exitmat', x: 5, y: 7 },
       { p: 'crate', x: 1, y: 2 }, { p: 'crate', x: 2, y: 2 }, { p: 'crate', x: 1, y: 3 }, { p: 'barrel', x: 8, y: 2 }, { p: 'barrel', x: 9, y: 2 },
       { p: 'crate', x: 8, y: 5, scene: 'rw.crates' }, { p: 'crate', x: 9, y: 5, scene: 'rw.crates' }, { p: 'net', x: 3, y: 2 },
+      // "watch your step: the third floorboard is gone" (Nao, rw.nao_first) — drawn in 12_floorgap.js
+      { p: 'rw_floorgap', x: 5, y: 5 },
     ],
   });
   interior('rw.carpenter', T("Bunta's Workshop", 'ブンタ の {工房|こうぼう}'), 9, 8, 4, 'rw.village', [11, 25], {

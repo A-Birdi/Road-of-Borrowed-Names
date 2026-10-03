@@ -1,0 +1,1645 @@
+{
+ "set": "sample",
+ "synthetic": true,
+ "contractVersion": 2,
+ "inDir": "tests/fixtures/harmony_sample/incoming",
+ "out": "(a temporary folder)",
+ "files": {
+  "acc_flower": {
+   "source": "acc_flower.png",
+   "errors": [],
+   "warnings": [],
+   "kind": "acc",
+   "sourceSha256": "17a9feba2c175f26cc9765c201dbd785cfe0a38b283013e6246fcf18f67e79c7",
+   "srcW": 192,
+   "srcH": 160,
+   "png": {
+    "colorType": 6,
+    "bitDepth": 8
+   },
+   "grid": {
+    "cell": [
+     1,
+     1
+    ],
+    "origin": [
+     0,
+     0
+    ],
+    "score": [
+     1,
+     1
+    ],
+    "native": [
+     192,
+     160
+    ],
+    "forced": false
+   },
+   "offset": [
+    0,
+    0
+   ],
+   "unresolved": [],
+   "unresolvedCount": 0,
+   "bbox": [
+    77,
+    60,
+    93,
+    78
+   ],
+   "materials": {
+    "fixed": 76,
+    "accessory": 63
+   },
+   "maskSource": "derived"
+  },
+  "acc_glasses": {
+   "source": "acc_glasses.png",
+   "errors": [],
+   "warnings": [
+    "56 pixels snapped to the outline ink #140c18"
+   ],
+   "kind": "acc",
+   "sourceSha256": "36df702836cb60217b109743cdf367516ae34c75b69336d6125e72b057c05dc1",
+   "srcW": 192,
+   "srcH": 160,
+   "png": {
+    "colorType": 6,
+    "bitDepth": 8
+   },
+   "grid": {
+    "cell": [
+     1,
+     1
+    ],
+    "origin": [
+     0,
+     0
+    ],
+    "score": [
+     1,
+     1
+    ],
+    "native": [
+     192,
+     160
+    ],
+    "forced": false
+   },
+   "offset": [
+    0,
+    0
+   ],
+   "unresolved": [],
+   "unresolvedCount": 0,
+   "bbox": [
+    83,
+    81,
+    116,
+    92
+   ],
+   "materials": {
+    "fixed": 91
+   },
+   "maskSource": "derived"
+  },
+  "acc_satchel": {
+   "source": "acc_satchel.png",
+   "errors": [],
+   "warnings": [],
+   "kind": "acc",
+   "sourceSha256": "e06e2a6aaf80026d3dec09759944ebef53ff61b263529605fa2f049a1e3ad8c3",
+   "srcW": 192,
+   "srcH": 160,
+   "png": {
+    "colorType": 6,
+    "bitDepth": 8
+   },
+   "grid": {
+    "cell": [
+     1,
+     1
+    ],
+    "origin": [
+     0,
+     0
+    ],
+    "score": [
+     1,
+     1
+    ],
+    "native": [
+     192,
+     160
+    ],
+    "forced": false
+   },
+   "offset": [
+    0,
+    0
+   ],
+   "unresolved": [],
+   "unresolvedCount": 0,
+   "bbox": [
+    76,
+    110,
+    123,
+    146
+   ],
+   "materials": {
+    "fixed": 320
+   },
+   "maskSource": "derived"
+  },
+  "acc_scarf": {
+   "source": "acc_scarf.png",
+   "errors": [],
+   "warnings": [],
+   "kind": "acc",
+   "sourceSha256": "b259b29a3a9d6d51c5cd28c33a818adc9c91022beb0463cd04f1f1ef6cf41385",
+   "srcW": 192,
+   "srcH": 160,
+   "png": {
+    "colorType": 6,
+    "bitDepth": 8
+   },
+   "grid": {
+    "cell": [
+     1,
+     1
+    ],
+    "origin": [
+     0,
+     0
+    ],
+    "score": [
+     1,
+     1
+    ],
+    "native": [
+     192,
+     160
+    ],
+    "forced": false
+   },
+   "offset": [
+    0,
+    0
+   ],
+   "unresolved": [],
+   "unresolvedCount": 0,
+   "bbox": [
+    84,
+    105,
+    115,
+    146
+   ],
+   "materials": {
+    "fixed": 122,
+    "accessory": 450
+   },
+   "maskSource": "derived"
+  },
+  "pc_arm_cue_fitted": {
+   "source": "pc_arm_cue_fitted.png",
+   "errors": [],
+   "warnings": [
+    "1 pixels snapped to the outline ink #140c18"
+   ],
+   "kind": "arm",
+   "sourceSha256": "68189a7383a54dd330d226ed74919994dc4fac59998e28a5c621adee65f862b9",
+   "srcW": 192,
+   "srcH": 160,
+   "png": {
+    "colorType": 6,
+    "bitDepth": 8
+   },
+   "grid": {
+    "cell": [
+     1,
+     1
+    ],
+    "origin": [
+     0,
+     0
+    ],
+    "score": [
+     1,
+     1
+    ],
+    "native": [
+     192,
+     160
+    ],
+    "forced": false
+   },
+   "offset": [
+    0,
+    0
+   ],
+   "unresolved": [],
+   "unresolvedCount": 0,
+   "bbox": [
+    52,
+    94,
+    85,
+    141
+   ],
+   "materials": {
+    "fixed": 184,
+    "skin": 100,
+    "clothMain": 292,
+    "clothTrim": 51
+   },
+   "maskSource": "derived"
+  },
+  "pc_arm_cue_wide": {
+   "source": "pc_arm_cue_wide.png",
+   "errors": [],
+   "warnings": [
+    "1 pixels snapped to the outline ink #140c18"
+   ],
+   "kind": "arm",
+   "sourceSha256": "cd9f4308fd1ced4eaf021e5c665ab82d44d36bc2c3abb3ebc9b5a4db82ba8350",
+   "srcW": 192,
+   "srcH": 160,
+   "png": {
+    "colorType": 6,
+    "bitDepth": 8
+   },
+   "grid": {
+    "cell": [
+     1,
+     1
+    ],
+    "origin": [
+     0,
+     0
+    ],
+    "score": [
+     1,
+     1
+    ],
+    "native": [
+     192,
+     160
+    ],
+    "forced": false
+   },
+   "offset": [
+    0,
+    0
+   ],
+   "unresolved": [],
+   "unresolvedCount": 0,
+   "bbox": [
+    52,
+    94,
+    87,
+    143
+   ],
+   "materials": {
+    "fixed": 241,
+    "skin": 100,
+    "clothMain": 362,
+    "clothTrim": 51
+   },
+   "maskSource": "derived"
+  },
+  "pc_arm_peak_suzu_fitted": {
+   "source": "pc_arm_peak_suzu_fitted.png",
+   "errors": [],
+   "warnings": [
+    "1 pixels snapped to the outline ink #140c18"
+   ],
+   "kind": "arm",
+   "sourceSha256": "c93c75e13bab114a1f0bc7eca2b2794cbcb80bfe9ca0e080eca3651739192e56",
+   "srcW": 192,
+   "srcH": 160,
+   "png": {
+    "colorType": 6,
+    "bitDepth": 8
+   },
+   "grid": {
+    "cell": [
+     1,
+     1
+    ],
+    "origin": [
+     0,
+     0
+    ],
+    "score": [
+     1,
+     1
+    ],
+    "native": [
+     192,
+     160
+    ],
+    "forced": false
+   },
+   "offset": [
+    0,
+    0
+   ],
+   "unresolved": [],
+   "unresolvedCount": 0,
+   "bbox": [
+    42,
+    84,
+    85,
+    141
+   ],
+   "materials": {
+    "fixed": 211,
+    "skin": 100,
+    "clothMain": 292,
+    "clothTrim": 51
+   },
+   "maskSource": "derived"
+  },
+  "pc_arm_peak_suzu_wide": {
+   "source": "pc_arm_peak_suzu_wide.png",
+   "errors": [],
+   "warnings": [
+    "1 pixels snapped to the outline ink #140c18"
+   ],
+   "kind": "arm",
+   "sourceSha256": "df17495ac9fe689f0568727d153844f46da075ac6f5710429cf51dbbaf61babf",
+   "srcW": 192,
+   "srcH": 160,
+   "png": {
+    "colorType": 6,
+    "bitDepth": 8
+   },
+   "grid": {
+    "cell": [
+     1,
+     1
+    ],
+    "origin": [
+     0,
+     0
+    ],
+    "score": [
+     1,
+     1
+    ],
+    "native": [
+     192,
+     160
+    ],
+    "forced": false
+   },
+   "offset": [
+    0,
+    0
+   ],
+   "unresolved": [],
+   "unresolvedCount": 0,
+   "bbox": [
+    42,
+    84,
+    87,
+    143
+   ],
+   "materials": {
+    "fixed": 268,
+    "skin": 100,
+    "clothMain": 362,
+    "clothTrim": 51
+   },
+   "maskSource": "derived"
+  },
+  "pc_arm_prep_a_fitted": {
+   "source": "pc_arm_prep_a_fitted.png",
+   "errors": [],
+   "warnings": [
+    "1 pixels snapped to the outline ink #140c18"
+   ],
+   "kind": "arm",
+   "sourceSha256": "406ea7c65bd0c99b146a752bc910fd139b665d2816cc9cf66ca2fc7a5ff26a65",
+   "srcW": 192,
+   "srcH": 160,
+   "png": {
+    "colorType": 6,
+    "bitDepth": 8
+   },
+   "grid": {
+    "cell": [
+     1,
+     1
+    ],
+    "origin": [
+     0,
+     0
+    ],
+    "score": [
+     1,
+     1
+    ],
+    "native": [
+     192,
+     160
+    ],
+    "forced": false
+   },
+   "offset": [
+    0,
+    0
+   ],
+   "unresolved": [],
+   "unresolvedCount": 0,
+   "bbox": [
+    73,
+    101,
+    118,
+    140
+   ],
+   "materials": {
+    "fixed": 202,
+    "skin": 100,
+    "clothMain": 301,
+    "clothTrim": 53
+   },
+   "maskSource": "derived"
+  },
+  "pc_arm_prep_a_wide": {
+   "source": "pc_arm_prep_a_wide.png",
+   "errors": [],
+   "warnings": [
+    "1 pixels snapped to the outline ink #140c18"
+   ],
+   "kind": "arm",
+   "sourceSha256": "2f396b8b108ce922e9e4a0db8dfa38cc411ed87f8730e9e5ff2913c594538638",
+   "srcW": 192,
+   "srcH": 160,
+   "png": {
+    "colorType": 6,
+    "bitDepth": 8
+   },
+   "grid": {
+    "cell": [
+     1,
+     1
+    ],
+    "origin": [
+     0,
+     0
+    ],
+    "score": [
+     1,
+     1
+    ],
+    "native": [
+     192,
+     160
+    ],
+    "forced": false
+   },
+   "offset": [
+    0,
+    0
+   ],
+   "unresolved": [],
+   "unresolvedCount": 0,
+   "bbox": [
+    71,
+    101,
+    118,
+    142
+   ],
+   "materials": {
+    "fixed": 270,
+    "skin": 100,
+    "clothMain": 369,
+    "clothTrim": 53
+   },
+   "maskSource": "derived"
+  },
+  "pc_arm_prep_b_fitted": {
+   "source": "pc_arm_prep_b_fitted.png",
+   "errors": [],
+   "warnings": [
+    "1 pixels snapped to the outline ink #140c18"
+   ],
+   "kind": "arm",
+   "sourceSha256": "53cb77b094e75b4543b02c3d74162c935adfe4d53b21068a1df953940caf146b",
+   "srcW": 192,
+   "srcH": 160,
+   "png": {
+    "colorType": 6,
+    "bitDepth": 8
+   },
+   "grid": {
+    "cell": [
+     1,
+     1
+    ],
+    "origin": [
+     0,
+     0
+    ],
+    "score": [
+     1,
+     1
+    ],
+    "native": [
+     192,
+     160
+    ],
+    "forced": false
+   },
+   "offset": [
+    0,
+    0
+   ],
+   "unresolved": [],
+   "unresolvedCount": 0,
+   "bbox": [
+    74,
+    98,
+    119,
+    137
+   ],
+   "materials": {
+    "fixed": 202,
+    "skin": 100,
+    "clothMain": 301,
+    "clothTrim": 53
+   },
+   "maskSource": "derived"
+  },
+  "pc_arm_settle_suzu_fitted": {
+   "source": "pc_arm_settle_suzu_fitted.png",
+   "errors": [],
+   "warnings": [
+    "1 pixels snapped to the outline ink #140c18"
+   ],
+   "kind": "arm",
+   "sourceSha256": "89762fb537fc22481fee65817d6d4efa81d38b20e39d82c848c939c43720db2a",
+   "srcW": 192,
+   "srcH": 160,
+   "png": {
+    "colorType": 6,
+    "bitDepth": 8
+   },
+   "grid": {
+    "cell": [
+     1,
+     1
+    ],
+    "origin": [
+     0,
+     0
+    ],
+    "score": [
+     1,
+     1
+    ],
+    "native": [
+     192,
+     160
+    ],
+    "forced": false
+   },
+   "offset": [
+    0,
+    0
+   ],
+   "unresolved": [],
+   "unresolvedCount": 0,
+   "bbox": [
+    51,
+    96,
+    84,
+    143
+   ],
+   "materials": {
+    "fixed": 184,
+    "skin": 100,
+    "clothMain": 292,
+    "clothTrim": 51
+   },
+   "maskSource": "derived"
+  },
+  "pc_arm_settle_suzu_wide": {
+   "source": "pc_arm_settle_suzu_wide.png",
+   "errors": [],
+   "warnings": [],
+   "kind": "arm",
+   "sourceSha256": "b0fe7007a12e0a50ebb7a6f8a92e3d82cb9c966ef2ce6a0634d8fb7f24f864c9",
+   "srcW": 192,
+   "srcH": 160,
+   "png": {
+    "colorType": 6,
+    "bitDepth": 8
+   },
+   "grid": {
+    "cell": [
+     1,
+     1
+    ],
+    "origin": [
+     0,
+     0
+    ],
+    "score": [
+     1,
+     1
+    ],
+    "native": [
+     192,
+     160
+    ],
+    "forced": false
+   },
+   "offset": [
+    0,
+    0
+   ],
+   "bbox": [
+    51,
+    96,
+    86,
+    145
+   ],
+   "materials": {
+    "fixed": 241,
+    "skin": 100,
+    "clothMain": 362,
+    "clothTrim": 51
+   },
+   "maskSource": "supplied"
+  },
+  "pc_hair_curly_back": {
+   "source": "pc_hair_curly_back.png",
+   "errors": [],
+   "warnings": [],
+   "kind": "hair",
+   "sourceSha256": "3a99559d56595bad7fc4dff3981f33026c8e0e16617e9ce3e1abfa0430020cc7",
+   "srcW": 192,
+   "srcH": 160,
+   "png": {
+    "colorType": 6,
+    "bitDepth": 8
+   },
+   "grid": {
+    "cell": [
+     1,
+     1
+    ],
+    "origin": [
+     0,
+     0
+    ],
+    "score": [
+     1,
+     1
+    ],
+    "native": [
+     192,
+     160
+    ],
+    "forced": false
+   },
+   "offset": [
+    0,
+    0
+   ],
+   "unresolved": [],
+   "unresolvedCount": 0,
+   "bbox": [
+    72,
+    63,
+    130,
+    103
+   ],
+   "materials": {
+    "fixed": 159,
+    "hair": 1905
+   },
+   "maskSource": "derived"
+  },
+  "pc_hair_curly_front": {
+   "source": "pc_hair_curly_front.png",
+   "errors": [],
+   "warnings": [],
+   "kind": "hair",
+   "sourceSha256": "836034261bead036220f5278a8103b67270e2ada7bd22523bc2d1c6031bdbc56",
+   "srcW": 768,
+   "srcH": 640,
+   "png": {
+    "colorType": 6,
+    "bitDepth": 8
+   },
+   "grid": {
+    "cell": [
+     4,
+     4
+    ],
+    "origin": [
+     0,
+     0
+    ],
+    "score": [
+     1,
+     1
+    ],
+    "native": [
+     192,
+     160
+    ],
+    "forced": false
+   },
+   "offset": [
+    0,
+    0
+   ],
+   "unresolved": [],
+   "unresolvedCount": 0,
+   "bbox": [
+    72,
+    46,
+    130,
+    92
+   ],
+   "materials": {
+    "fixed": 263,
+    "hair": 1307
+   },
+   "maskSource": "derived"
+  },
+  "pc_hair_ponytail_back": {
+   "source": "pc_hair_ponytail_back.png",
+   "errors": [],
+   "warnings": [],
+   "kind": "hair",
+   "sourceSha256": "fc887b592d414673b90d6127b7fb6dcad2f4c7367cb3f4aaf31242347d5e3534",
+   "srcW": 192,
+   "srcH": 160,
+   "png": {
+    "colorType": 6,
+    "bitDepth": 8
+   },
+   "grid": {
+    "cell": [
+     1,
+     1
+    ],
+    "origin": [
+     0,
+     0
+    ],
+    "score": [
+     1,
+     1
+    ],
+    "native": [
+     192,
+     160
+    ],
+    "forced": false
+   },
+   "offset": [
+    0,
+    0
+   ],
+   "unresolved": [],
+   "unresolvedCount": 0,
+   "bbox": [
+    112,
+    64,
+    133,
+    115
+   ],
+   "materials": {
+    "fixed": 119,
+    "hair": 498
+   },
+   "maskSource": "derived"
+  },
+  "pc_hair_ponytail_back_swing": {
+   "source": "pc_hair_ponytail_back_swing.png",
+   "errors": [],
+   "warnings": [],
+   "kind": "hair",
+   "sourceSha256": "0d072d427b189a403af9e6f3d8a3235069f2f79b47a4ced5fa63096aae93287e",
+   "srcW": 192,
+   "srcH": 160,
+   "png": {
+    "colorType": 6,
+    "bitDepth": 8
+   },
+   "grid": {
+    "cell": [
+     1,
+     1
+    ],
+    "origin": [
+     0,
+     0
+    ],
+    "score": [
+     1,
+     1
+    ],
+    "native": [
+     192,
+     160
+    ],
+    "forced": false
+   },
+   "offset": [
+    0,
+    0
+   ],
+   "unresolved": [],
+   "unresolvedCount": 0,
+   "bbox": [
+    112,
+    65,
+    132,
+    116
+   ],
+   "materials": {
+    "fixed": 120,
+    "hair": 498
+   },
+   "maskSource": "derived"
+  },
+  "pc_hair_ponytail_front": {
+   "source": "pc_hair_ponytail_front.png",
+   "errors": [],
+   "warnings": [],
+   "kind": "hair",
+   "sourceSha256": "ff783945d1eec1f194ade45de577dc15c7f423f49242f75f381888017b0be10d",
+   "srcW": 192,
+   "srcH": 160,
+   "png": {
+    "colorType": 6,
+    "bitDepth": 8
+   },
+   "grid": {
+    "cell": [
+     1,
+     1
+    ],
+    "origin": [
+     0,
+     0
+    ],
+    "score": [
+     1,
+     1
+    ],
+    "native": [
+     192,
+     160
+    ],
+    "forced": false
+   },
+   "offset": [
+    0,
+    0
+   ],
+   "unresolved": [],
+   "unresolvedCount": 0,
+   "bbox": [
+    78,
+    54,
+    122,
+    89
+   ],
+   "materials": {
+    "fixed": 244,
+    "hair": 720,
+    "clothTrim": 37
+   },
+   "maskSource": "derived"
+  },
+  "pc_head_cue": {
+   "source": "pc_head_cue.png",
+   "errors": [],
+   "warnings": [],
+   "kind": "head",
+   "sourceSha256": "e50fc0858c6fbb53bc2da694eece1ba2fcbc787cef52647b3fd046089b77d317",
+   "srcW": 192,
+   "srcH": 160,
+   "png": {
+    "colorType": 6,
+    "bitDepth": 8
+   },
+   "grid": {
+    "cell": [
+     1,
+     1
+    ],
+    "origin": [
+     0,
+     0
+    ],
+    "score": [
+     1,
+     1
+    ],
+    "native": [
+     192,
+     160
+    ],
+    "forced": false
+   },
+   "offset": [
+    0,
+    0
+   ],
+   "unresolved": [],
+   "unresolvedCount": 0,
+   "bbox": [
+    81,
+    59,
+    120,
+    122
+   ],
+   "materials": {
+    "hair": 392,
+    "skin": 967,
+    "fixed": 243
+   },
+   "maskSource": "derived"
+  },
+  "pc_head_focus": {
+   "source": "pc_head_focus.png",
+   "errors": [],
+   "warnings": [],
+   "kind": "head",
+   "sourceSha256": "2566ed9a3c2a4e8e83070070e44b4c507059c14c6ac795036aae6b20bb09f042",
+   "srcW": 192,
+   "srcH": 160,
+   "png": {
+    "colorType": 6,
+    "bitDepth": 8
+   },
+   "grid": {
+    "cell": [
+     1,
+     1
+    ],
+    "origin": [
+     0,
+     0
+    ],
+    "score": [
+     1,
+     1
+    ],
+    "native": [
+     192,
+     160
+    ],
+    "forced": false
+   },
+   "offset": [
+    0,
+    0
+   ],
+   "unresolved": [],
+   "unresolvedCount": 0,
+   "bbox": [
+    81,
+    59,
+    120,
+    122
+   ],
+   "materials": {
+    "hair": 392,
+    "skin": 995,
+    "fixed": 215
+   },
+   "maskSource": "derived"
+  },
+  "pc_head_peak": {
+   "source": "pc_head_peak.png",
+   "errors": [],
+   "warnings": [
+    "262062 #ff00ff background pixels keyed out"
+   ],
+   "kind": "head",
+   "sourceSha256": "8dd9fed95a09bf0048ed06711f7dd49d19cc762e44050da877aa3901788f3814",
+   "srcW": 576,
+   "srcH": 480,
+   "png": {
+    "colorType": 6,
+    "bitDepth": 8
+   },
+   "grid": {
+    "cell": [
+     3,
+     3
+    ],
+    "origin": [
+     0,
+     0
+    ],
+    "score": [
+     1,
+     1
+    ],
+    "native": [
+     192,
+     160
+    ],
+    "forced": false
+   },
+   "offset": [
+    0,
+    0
+   ],
+   "bbox": [
+    81,
+    59,
+    120,
+    122
+   ],
+   "materials": {
+    "hair": 392,
+    "skin": 1000,
+    "fixed": 210
+   },
+   "maskSource": "supplied"
+  },
+  "pc_head_settle": {
+   "source": "pc_head_settle.png",
+   "errors": [],
+   "warnings": [],
+   "kind": "head",
+   "sourceSha256": "255e9dcd3e607abe2f17c1c1bb0c0af177345444921e5605ca9bbd9485870d59",
+   "srcW": 192,
+   "srcH": 160,
+   "png": {
+    "colorType": 6,
+    "bitDepth": 8
+   },
+   "grid": {
+    "cell": [
+     1,
+     1
+    ],
+    "origin": [
+     0,
+     0
+    ],
+    "score": [
+     1,
+     1
+    ],
+    "native": [
+     192,
+     160
+    ],
+    "forced": false
+   },
+   "offset": [
+    0,
+    0
+   ],
+   "unresolved": [],
+   "unresolvedCount": 0,
+   "bbox": [
+    81,
+    59,
+    120,
+    122
+   ],
+   "materials": {
+    "hair": 392,
+    "skin": 983,
+    "fixed": 227
+   },
+   "maskSource": "derived"
+  },
+  "pc_torso_coat": {
+   "source": "pc_torso_coat.png",
+   "errors": [],
+   "warnings": [],
+   "kind": "torso",
+   "sourceSha256": "c3f42b98b51a6e94f0a28e3dff25a84b14dd74d935ac87d91470d6881bae318e",
+   "srcW": 192,
+   "srcH": 160,
+   "png": {
+    "colorType": 6,
+    "bitDepth": 8
+   },
+   "grid": {
+    "cell": [
+     1,
+     1
+    ],
+    "origin": [
+     0,
+     0
+    ],
+    "score": [
+     1,
+     1
+    ],
+    "native": [
+     192,
+     160
+    ],
+    "forced": false
+   },
+   "offset": [
+    0,
+    0
+   ],
+   "unresolved": [],
+   "unresolvedCount": 0,
+   "bbox": [
+    76,
+    107,
+    136,
+    146
+   ],
+   "materials": {
+    "fixed": 105,
+    "clothTrim": 112,
+    "clothMain": 1662,
+    "skin": 46
+   },
+   "maskSource": "derived"
+  },
+  "pc_torso_robe": {
+   "source": "pc_torso_robe.png",
+   "errors": [],
+   "warnings": [],
+   "kind": "torso",
+   "sourceSha256": "227ba003e726b757409b5838e41d0623a9955c5420ce6cf1d5e71cb5cd5402f7",
+   "srcW": 768,
+   "srcH": 640,
+   "png": {
+    "colorType": 6,
+    "bitDepth": 8
+   },
+   "grid": {
+    "cell": [
+     4,
+     4
+    ],
+    "origin": [
+     0,
+     0
+    ],
+    "score": [
+     1,
+     1
+    ],
+    "native": [
+     192,
+     160
+    ],
+    "forced": false
+   },
+   "offset": [
+    0,
+    0
+   ],
+   "bbox": [
+    76,
+    108,
+    136,
+    146
+   ],
+   "materials": {
+    "fixed": 137,
+    "clothTrim": 137,
+    "skin": 78,
+    "clothMain": 1568
+   },
+   "maskSource": "supplied"
+  },
+  "suzu_cue": {
+   "source": "suzu_cue.png",
+   "errors": [],
+   "warnings": [
+    "native 192 × 192, not 192 × 160: centred at 0, -16 (set files.suzu_cue.offset)"
+   ],
+   "kind": "comp",
+   "sourceSha256": "6efae9443b39eb78bccab473984b737a4070ed3280521ae0d95880359a2e6206",
+   "srcW": 1024,
+   "srcH": 1024,
+   "png": {
+    "colorType": 6,
+    "bitDepth": 8
+   },
+   "grid": {
+    "cell": [
+     5.3334,
+     5.3336
+    ],
+    "origin": [
+     5.3314,
+     5.3079
+    ],
+    "score": [
+     1,
+     1
+    ],
+    "native": [
+     192,
+     192
+    ],
+    "forced": false
+   },
+   "offset": [
+    0,
+    -16
+   ],
+   "bbox": [
+    43,
+    51,
+    122,
+    146
+   ],
+   "materials": {
+    "fixed": 5253
+   },
+   "maskSource": "none"
+  },
+  "suzu_peak": {
+   "source": "suzu_peak.png",
+   "errors": [],
+   "warnings": [],
+   "kind": "comp",
+   "sourceSha256": "d1885163ad2fd1fa259b3821c797c6678ccee6c64f16cb0b2fc273ad4e2b1732",
+   "srcW": 768,
+   "srcH": 640,
+   "png": {
+    "colorType": 6,
+    "bitDepth": 8
+   },
+   "grid": {
+    "cell": [
+     4,
+     4
+    ],
+    "origin": [
+     0,
+     0
+    ],
+    "score": [
+     1,
+     1
+    ],
+    "native": [
+     192,
+     160
+    ],
+    "forced": false
+   },
+   "offset": [
+    0,
+    0
+   ],
+   "bbox": [
+    43,
+    51,
+    122,
+    146
+   ],
+   "materials": {
+    "fixed": 5253
+   },
+   "maskSource": "none"
+  },
+  "suzu_peak_fx": {
+   "source": "suzu_peak_fx.png",
+   "errors": [],
+   "warnings": [],
+   "kind": "comp",
+   "sourceSha256": "d2db3fa778e5a83b172a45bcdf6bc74219aed94297bf3bc13efab50ff117cb2c",
+   "srcW": 768,
+   "srcH": 640,
+   "png": {
+    "colorType": 6,
+    "bitDepth": 8
+   },
+   "grid": {
+    "cell": [
+     4,
+     4
+    ],
+    "origin": [
+     0,
+     0
+    ],
+    "score": [
+     1,
+     1
+    ],
+    "native": [
+     192,
+     160
+    ],
+    "forced": false
+   },
+   "offset": [
+    0,
+    0
+   ],
+   "bbox": [
+    73,
+    76,
+    80,
+    83
+   ],
+   "materials": {
+    "fixed": 17
+   },
+   "maskSource": "none"
+  },
+  "suzu_prep_a": {
+   "source": "suzu_prep_a.png",
+   "errors": [],
+   "warnings": [],
+   "kind": "comp",
+   "sourceSha256": "21122de2331f9fb7dc68ba58da3b42bcefad41a7eed4ea745d23e7e50127a587",
+   "srcW": 768,
+   "srcH": 640,
+   "png": {
+    "colorType": 6,
+    "bitDepth": 8
+   },
+   "grid": {
+    "cell": [
+     4,
+     4
+    ],
+    "origin": [
+     0,
+     0
+    ],
+    "score": [
+     1,
+     1
+    ],
+    "native": [
+     192,
+     160
+    ],
+    "forced": false
+   },
+   "offset": [
+    0,
+    0
+   ],
+   "bbox": [
+    46,
+    51,
+    123,
+    146
+   ],
+   "materials": {
+    "fixed": 5204
+   },
+   "maskSource": "none"
+  },
+  "suzu_prep_b": {
+   "source": "suzu_prep_b.png",
+   "errors": [],
+   "warnings": [],
+   "kind": "comp",
+   "sourceSha256": "dabf822da1cf1da256a8b6ceab91631759960435ba7cb1739c5e48b2428b0f72",
+   "srcW": 192,
+   "srcH": 160,
+   "png": {
+    "colorType": 6,
+    "bitDepth": 8
+   },
+   "grid": {
+    "cell": [
+     1,
+     1
+    ],
+    "origin": [
+     0,
+     0
+    ],
+    "score": [
+     1,
+     1
+    ],
+    "native": [
+     192,
+     160
+    ],
+    "forced": false
+   },
+   "offset": [
+    0,
+    0
+   ],
+   "bbox": [
+    45,
+    51,
+    123,
+    146
+   ],
+   "materials": {
+    "fixed": 5235
+   },
+   "maskSource": "none"
+  },
+  "suzu_settle_b": {
+   "source": "suzu_settle_b.png",
+   "errors": [],
+   "warnings": [],
+   "kind": "comp",
+   "sourceSha256": "9dcdf793d3268e2889f677b2e0d90d6c258bb2dc6e5cffd9563b9a7f2859525c",
+   "srcW": 192,
+   "srcH": 160,
+   "png": {
+    "colorType": 6,
+    "bitDepth": 8
+   },
+   "grid": {
+    "cell": [
+     1,
+     1
+    ],
+    "origin": [
+     0,
+     0
+    ],
+    "score": [
+     1,
+     1
+    ],
+    "native": [
+     192,
+     160
+    ],
+    "forced": false
+   },
+   "offset": [
+    0,
+    0
+   ],
+   "bbox": [
+    43,
+    51,
+    122,
+    146
+   ],
+   "materials": {
+    "fixed": 5258
+   },
+   "maskSource": "none"
+  }
+ },
+ "errors": [],
+ "warnings": [],
+ "companions": {
+  "suzu": {
+   "mode": "flat",
+   "states": [
+    "prep_a",
+    "prep_b",
+    "cue",
+    "peak",
+    "settle_b"
+   ],
+   "layers": null,
+   "fx": [
+    "peak"
+   ],
+   "face": {
+    "prep_a": [
+     76,
+     72,
+     112,
+     105
+    ],
+    "prep_b": [
+     76,
+     72,
+     112,
+     105
+    ],
+    "cue": [
+     75,
+     72,
+     111,
+     105
+    ],
+    "peak": [
+     75,
+     72,
+     111,
+     105
+    ],
+    "settle_b": [
+     76,
+     72,
+     112,
+     105
+    ]
+   },
+   "timeline": null,
+   "offset": {
+    "standard": [
+     0,
+     0
+    ],
+    "compact": [
+     0,
+     0
+    ]
+   },
+   "complete": true,
+   "missingRequired": []
+  }
+ },
+ "coverage": {
+  "required": 86,
+  "present": 26,
+  "missingRequired": [
+   "acc_atlas_pin",
+   "acc_atlas_quill",
+   "acc_atlas_sash",
+   "acc_bell",
+   "acc_cap",
+   "acc_cape_back",
+   "acc_cape_front",
+   "acc_earrings_far",
+   "acc_earrings_near",
+   "acc_hat",
+   "acc_headband",
+   "acc_leaf",
+   "acc_ribbon",
+   "acc_scarf_knit",
+   "mio_cue",
+   "mio_peak",
+   "mio_prep_a",
+   "mio_settle_b",
+   "nao_cue",
+   "nao_peak",
+   "nao_prep_a",
+   "nao_settle_b",
+   "pc_arm_peak_mio_fitted",
+   "pc_arm_peak_mio_wide",
+   "pc_arm_peak_nao_fitted",
+   "pc_arm_peak_nao_wide",
+   "pc_arm_peak_ren_fitted",
+   "pc_arm_peak_ren_wide",
+   "pc_arm_settle_mio_fitted",
+   "pc_arm_settle_mio_wide",
+   "pc_arm_settle_nao_fitted",
+   "pc_arm_settle_nao_wide",
+   "pc_arm_settle_ren_fitted",
+   "pc_arm_settle_ren_wide",
+   "pc_hair_bob_back",
+   "pc_hair_bob_front",
+   "pc_hair_braid_back",
+   "pc_hair_braid_front",
+   "pc_hair_bun_back",
+   "pc_hair_bun_front",
+   "pc_hair_long_back",
+   "pc_hair_long_front",
+   "pc_hair_shaved_front",
+   "pc_hair_short_back",
+   "pc_hair_short_front",
+   "pc_hair_spiky_back",
+   "pc_hair_spiky_front",
+   "pc_hair_twintails_back",
+   "pc_hair_twintails_front",
+   "pc_hair_wavy_back",
+   "pc_hair_wavy_front",
+   "pc_hair_wrap_back",
+   "pc_hair_wrap_front",
+   "pc_torso_apron",
+   "pc_torso_dress",
+   "pc_torso_tunic",
+   "ren_cue",
+   "ren_peak",
+   "ren_prep_a",
+   "ren_settle_b"
+  ],
+  "optionalPresent": [
+   "pc_arm_prep_b_fitted",
+   "pc_hair_ponytail_back_swing",
+   "suzu_prep_b"
+  ]
+ },
+ "unknownNames": [],
+ "ok": true,
+ "summary": {
+  "files": 30,
+  "imported": 30,
+  "fileErrors": 0,
+  "setErrors": 0,
+  "warnings": 11
+ }
+}

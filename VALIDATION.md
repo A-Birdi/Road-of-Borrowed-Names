@@ -1765,3 +1765,62 @@ musical judgement is analysis.
 - A person's judgment of the expressions and the eye fixes on all 85 human faces; the worker looked at about 20 by eye, and the rest only through automated invariants.
 - Phones at ratio 1, 2 and 2.625 still downscale the 64-px portrait unevenly.
 - NPC cues outside the bespoke set share the generic variants.
+
+## Harmony painted art — contract v2, machine side (the lead's brief of 2026-10-03; REQUIREMENTS.md HB3–HB8)
+- **What:** the exact contract the painted busts are checked against, and an importer and runtime path that work
+  with no art yet delivered. docs/harmony/contract/CONTRACT.md; `RB.harmonyContract` (src/ui/88_harmony_contract.js);
+  the registry export (tools/harmony_registry.mjs → docs/harmony/contract/registry.json); the importer
+  (tools/harmony_import.mjs, tools/harmony/*.mjs, no dependencies); the raster path (src/ui/88_harmony_raster.js and
+  hooks in 88_harmony_art.js); build embedding (tools/build.mjs); a SYNTHETIC sample (tests/fixtures/harmony_sample/).
+- **The worker's runs** (headless Chromium 141, a shared 4-core machine; on d8f44b3, this worktree):
+  - Validator: no errors. Unit, whole suite: 23,996/0. Of these, new: harmony_png 26/26, harmony_import 51/51,
+    harmony_raster 63/63; harmony_art 52/52 (unchanged test).
+  - Browser: `tests/e2e/harmony_raster.mjs` 21/21 (three runs, one with `--sheets`); `tests/e2e/harmony_art.mjs`
+    39/39 (unchanged test; its art_test_results.json was restored, not committed).
+  - The importer on the sample: 30/30 files, 0 errors, 11 warnings (outline snaps, the magenta key, the 1024 square's
+    centring); `--verify` ok. Grid detection exact at 1×, 2.5×, 3×, 4×, 5.333× (1024 / 192), 6.4×, and within the
+    noise at 4× and 5.333× with ±8 noise per channel (unit).
+  - Code path unchanged: a node hash over 144 code compositions, both backings, keys, sizes and scales was equal
+    before and after (unit and browser tests compare too); the asset-free build differs from 243069a's only in the
+    sections of 88_harmony_art.js and 88_harmony_cast.js (an opt-in `keepLayers` hook) plus the two new modules;
+    `--harmony` pointing at nothing gives a byte-identical build.
+  - The reference sheets were regenerated (`node tests/e2e/harmony_asset_refs.mjs`): the identity sheets came out
+    byte-identical; the templates and palette sheet changed to contract v2.
+- **Measured budgets:** CONTRACT.md §10 and docs/harmony/contract/budgets.json.
+- **Evidence:** docs/screenshots/harmony/raster_sample/ (every image labelled SYNTHETIC SAMPLE — not art).
+- **Not verified:** any real painted art (none delivered); the cut-in overlay (src/ui/82d_harmony_cutin.js, not on
+  this branch) playing `timeline()` in a legal battle — the API was matched to that worker's source, not run with
+  it; Firefox and Safari (`createImageBitmap` options, decoding); a real phone (compact scales are arithmetic);
+  the default browser suite as a whole on this build; the sample's look (it is code art, mirrored, with reversed
+  worn sides, and not a style reference).
+
+## World review — landmarks, Masaru's bakery, Nao's floorboard, the observatory's headroom (2026-10-03)
+From the owner's external world review (WR-04, WR-05, and two listed checks: Nao's missing floorboard and the
+observatory's headroom). Art and one camera option; no text, scene, item or system changed. Every run below was in
+headless Chromium on Linux (Playwright) with synthetic campaigns in fresh profiles; no player save was used.
+- **What:** the four long-quest landmarks drawn at art resolution (`src/content/lq/15_art.js`); the bakery fitted
+  out (`src/content/ch5/11_bakery.js`: `lf_oven`, `lf_breadrack`, `lf_kneadbench`, `lf_floursacks` in place of the two
+  stoves, the bookcase and one crate, plus the bench at 2,3); `rw_floorgap` at rw.warehouse 5,5
+  (`src/content/ch1/12_floorgap.js`); a per-map `headroom` in `src/engine/60_render.js`, 2 rows on sb.obs_path.
+  Notes: docs/ART_DIRECTION.md §8 "Landmarks, the bakery, a floorboard and the observatory's headroom".
+- **Recorded before the change** (the build at 243069a): `tests/fixtures/landmarks_before.json` — each landmark's
+  w/h/block/light, placement and conditions, the static and current blocking of lq.koharu, sb.road and lf.gardens, and
+  every tile each landmark is used from (and the scene that starts there), through the real `interact()`.
+- **New `tests/e2e/landmarks.mjs`** (in run.mjs): 54/54 on this build. Its first version (40 checks) on the build
+  before: 29/40 — the geometry, placements and use tiles matched the record; the draw2, bakery-fitting, floorboard and
+  headroom checks failed, as expected. It also presses the action key at the great tree from below and above, checks the bakery's order table and
+  Masaru are reachable from the door, Nao (rw.nao_first) and the crates (rw.crates) from the warehouse door, and the
+  dome's top pixel on screen at 2000×1090, 1440×900, 390×844 and 844×390 with the HUD buttons clear of it (by 74, 82,
+  15 and 8 css px; at 1.5 rows of headroom the phone's Word help button touched it, so it is 2).
+- **Geometry record:** `tests/unit/overworld_geometry.test.mjs` failed on lf.bakery and rw.warehouse only (deliberate:
+  new props); their two records and the five new prop kinds were updated in the fixture, nothing else.
+- **Runs:** validator no errors (the same 15 warnings as before); unit 23,856/0; landmarks 54/54; and, on the same
+  source before a comment-only edit: long_quests --fixtures-only all passed, world_view all ok, world_fixes all ok,
+  story_ch1 F mio 31 checks, story_ch4 I ren go 53/53, story_ch5 A suzu 44 steps, cases all passed, quest_guide all
+  passed, encounters all ok, backdrops 61/61, battle_backdrops 38/38 (12/12 scripts).
+- **Evidence:** docs/screenshots/landmarks/ and docs/screenshots/bakery/, `before_*` (the build at 243069a) and
+  `after_*`, at 1280×800 and 390×844 (the observatory at its four sizes), and a 3× close-up sheet of the four props
+  (`*_closeup_3x.webp`), all from the real renderer and camera (`tests/e2e/landmarks_shots.mjs`). One file is over the
+  80 KB aim: after_observatory_2000x1090.webp (99 KB).
+- **Not verified:** Firefox; a real phone; a person's judgement of the art (self-review only); the default suite as a
+  whole; NPC behaviour at the new bench (left to the worker on NPC actions).
