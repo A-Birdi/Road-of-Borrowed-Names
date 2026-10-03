@@ -356,6 +356,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }
     C.maps['sg.lighthouse_top'] = {
       name: T('Top of the Lighthouse', '{灯台|とうだい} の {上|うえ}'), region: 'saltglass', music: null, noTravel: true,
+      travelKind: 'dungeon', travelPlace: { en: 'the lighthouse' }, // up a tower: travel from the ground (src/engine/52_travel.js)
       surround: 'sea',
       ambient: { weather: null, sea: 'calm' },
       alt: [{ if: 'sg_fog_cleared', ambient: { weather: null, sea: 'wind' } }],
