@@ -466,7 +466,11 @@ RB.sequence = (function () {
   }
   const skipping = () => !!(D && D.skip);
   function stopSkip(why) {
-    if (D && D.skip) { D.skip = false; D.stopped = why || 'stop'; syncControls(D); }
+    const inst = D;
+    if (!inst) return;
+    if (inst.skip) { inst.skip = false; inst.stopped = why || 'stop'; }
+    // (a choice's replies are put up just after this: the controls are brought up to date once they are)
+    Promise.resolve().then(() => { if (D === inst) syncControls(inst); });
   }
   // the dialogue's Next (not the auto-advance of a skip or a test): true when the press is used up here
   function intercept() {
@@ -520,7 +524,7 @@ RB.sequence = (function () {
     if (!on && inst.ctrl) { const b = inst.ctrl.querySelector('.b-hide'); if (b && document.activeElement === b) b.focus(); }
   }
   async function askSkip(inst, viaKey) {
-    if (inst.asking || D !== inst) return;
+    if (inst.asking || D !== inst || choiceUp()) return; // (a choice on screen is answered first; nothing is chosen for you)
     let unseen = true;
     try {
       const at = inst.at, sc = at && RB.content.scenes[at.sceneId];
@@ -599,7 +603,7 @@ RB.sequence = (function () {
     prev.disabled = !(rv ? p.rv > 0 : p.beats.length > 1) || inst.skip;
     hide.setAttribute('aria-pressed', inst.hidden ? 'true' : 'false');
     hide.innerHTML = I(inst.hidden ? 'sq-show' : 'sq-hide') + '<span>' + (inst.hidden ? 'Show text' : 'Hide text') + '</span>';
-    skip.disabled = !!inst.skip;
+    skip.disabled = !!inst.skip || choiceUp();
     const box = el.closest('.dlg');
     if (box) box.classList.toggle('seq-review', rv);
   }
@@ -754,10 +758,15 @@ RB.sequence = (function () {
     if (!CP || !CP.addRef) return;
     CP.addRef('seq', {
       html: (m) => (m.ref && DEFS[m.ref.seq] ? '<button class="pbtn quiet" data-co-ref="seq">' + I('sq-replay') + 'Watch it again</button>' : ''),
-      click: (b, s) => {
+      // the folio closes for the replay (the picture is the whole screen) and opens again on the memories after it
+      click: async (b, s, api) => {
         const li = b.closest('[data-kind]'), rb = li && li.querySelector('[data-co-recall]');
         const m = rb && ((s.company || {}).memories || []).find((x) => x.id === rb.getAttribute('data-co-recall'));
-        if (m && m.ref) replay(m.ref);
+        if (!m || !m.ref) return;
+        if (api && api.remember) api.remember();
+        if (RB.ui.menu && RB.ui.menu.close) RB.ui.menu.close();
+        await replay(m.ref);
+        if (RB.ui.menu && RB.ui.menu.open && RB.game.s === s) RB.ui.menu.open('memories');
       },
     });
   }, 0);
@@ -872,6 +881,7 @@ RB.sequence = (function () {
         if (RB.seqKit) RB.seqKit.release();
         if (o.release) o.release();
         RB.ui.popLayer(layer);
+        if (v.pushed) RB.game.popMode('sequence');
         cap.removeEventListener('click', onClick); S.listeners--;
         if (o.onExit) { try { o.onExit(v.how); } catch (e) { /* (caller) */ } }
         resolve({ how: v.how || 'end' });
@@ -938,6 +948,8 @@ RB.sequence = (function () {
       };
       frame.art = true;
       if (o.music && RB.audio) RB.audio.playSong(o.music);
+      // opened over the world (a replay from the Company page): the world takes no input while it shows
+      if (RB.game && RB.game.mode && RB.game.mode() === 'world') { RB.game.pushMode('sequence'); v.pushed = true; }
       RB.render.setOverride(frame);
       go(0);
       RB.ui.pushLayer(layer);

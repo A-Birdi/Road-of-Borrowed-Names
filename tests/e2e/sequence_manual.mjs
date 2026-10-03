@@ -359,6 +359,32 @@ for (const [tag, vp, dpr] of [['1280x720', { width: 1280, height: 720 }, 1], ['3
   await ctx.close();
 }
 
+// ---- 5b. a kept memory and its read-only replay (Company › Shared memories) ----------------------------------------------
+{
+  const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 720 } });
+  await start(p, 'sg.asahi_name');
+  for (let i = 0; i < 30 && !(await p.evaluate(() => window.__done)); i++) { await settled(p).catch(() => {}); await p.evaluate(() => RB.ui.dialogue.isOpen() && RB.ui.dialogue.advance()); await wait(p, 150); }
+  const mem = await p.evaluate(() => (RB.game.s.company.memories || []).find((m) => m.id === 'seq:ch2.plate') || null);
+  ok(mem && mem.kind === 'together' && mem.ref && mem.ref.kind === 'seq' && mem.ref.beats.length === 5 && mem.comp === 'suzu' && JSON.stringify(mem).length < 2500, 'the moment is kept as a Shared memory (the beats seen and the look of the moment, ' + (mem ? JSON.stringify(mem).length : 0) + ' bytes; no picture)');
+  const before = await campaign(p);
+  await p.evaluate(() => RB.ui.menu.open('memories'));
+  await waitSel(p, '[data-co-ref="seq"]', { timeout: 5000 });
+  await p.click('[data-co-ref="seq"]');
+  await waitSel(p, '.seq-view .slip', { timeout: 5000 });
+  const r0 = await p.evaluate(() => ({ v: RB.sequence.viewState(), cap: document.querySelector('.seq-view .txt').textContent, menu: !!document.querySelector('.folio-scrim, .folio') && !!document.querySelector('.co-page') }));
+  ok(r0.v && r0.v.seq === 'ch2.plate' && r0.v.n === 5 && /registry card/.test(r0.cap) && !r0.menu, 'Watch it again: the folio steps aside and the same beats play again from the first');
+  for (let i = 0; i < 4; i++) { await p.waitForFunction(() => RB.sequence.viewState() && RB.sequence.viewState().state !== 'entering'); await p.click('.seq-view [data-a=next]'); }
+  const r1 = await p.evaluate(() => ({ v: RB.sequence.viewState(), cap: document.querySelector('.seq-view .txt').textContent }));
+  ok(r1.v.i === 4 && r1.v.shot === 'done' && /Take it to Fuku/.test(r1.cap), 'the replay walks the kept beats, shot by shot, to the end');
+  await p.keyboard.press('Escape');
+  await waitSel(p, '.co-page', { timeout: 5000 });
+  const vs1 = await p.evaluate(() => ({ v: RB.sequence.viewState(), top: RB.ui.topLayer() && RB.ui.topLayer().name, view: !!document.querySelector('.seq-view') }));
+  ok(!vs1.v && !vs1.view, 'Escape closes the replay and the memories page comes back ' + JSON.stringify(vs1));
+  ok((await campaign(p)) === before, 'the replay changed nothing in the campaign (flags, items, quests, Company, learning, seen record)');
+  ok(!errors.length, 'no page errors ' + errors.slice(0, 2).join(' | '));
+  await ctx.close();
+}
+
 // ---- 6. cycles: listeners, timers, layers and caches stay bounded ------------------------------------------------------
 {
   const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 720 } });
@@ -386,6 +412,13 @@ for (const [tag, vp, dpr] of [['1280x720', { width: 1280, height: 720 }, 1], ['3
     await wait(p, 200);
   }
   const vst = await p.evaluate(() => { const S = RB.sequence.stats(); return { view: S.view, listeners: S.listeners, timers: S.timers, nodes: document.querySelectorAll('.seq-view').length }; });
+  // a campaign change in the middle of a sequence (Return to title): it is disposed with everything it owns
+  await start(p, 'test.seq_cycle');
+  await settled(p);
+  await p.evaluate(async () => { await RB.game.toTitle(); });
+  await wait(p, 400);
+  const tt = await p.evaluate(() => { const S = RB.sequence.stats(); return { active: RB.sequence.active(), listeners: S.listeners, timers: S.timers, ctrl: document.querySelectorAll('.seq-ctrl').length, title: !!document.querySelector('.title, .ttl, [class*="title"]'), mode: RB.game.mode() }; });
+  ok(!tt.active && tt.listeners === 0 && tt.timers === 0 && tt.ctrl === 0 && tt.mode === 'title', 'Return to title mid-sequence: the sequence is gone with its controls and listeners; the title is back ' + JSON.stringify(tt));
   const a = rows[Math.min(4, rows.length - 1)], z = rows[rows.length - 1];
   console.log('     cycles ' + rows.length + ': JS listeners ' + a.jsl + ' → ' + z.jsl + ', nodes ' + a.nodes + ' → ' + z.nodes + ', sprite cache ' + z.sprites + ', begun ' + z.begun + ' ended ' + z.ended);
   ok(rows.every((r) => r.live === 0 && r.listeners === 0 && r.timers === 0 && r.overlays === 0 && r.ctrl === 0 && r.out === 0 && r.layers === 0), 'after every cycle: no sequence, listener, timer, dissolve overlay, control row or cached layer of the player is left ' + JSON.stringify(rows.find((r) => r.live || r.listeners || r.timers || r.overlays || r.ctrl || r.out || r.layers) || {}));
