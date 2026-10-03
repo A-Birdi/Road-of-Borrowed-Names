@@ -151,6 +151,10 @@ RB.ui.dialogue = (function () {
     box.querySelector('.b-tr').classList.toggle('hidden', RB.game.settings.secondary === 'always' || !hasJp);
     syncCtrl();
     box.querySelector('.txt').scrollTop = 0;
+    // an illustrated sequence (src/ui/43_sequence.js) records the beat, adds its controls, and stops a skip
+    // of seen lines at a line of it this campaign has not seen
+    if (live) { live = null; box.classList.remove('reviewing'); }
+    if (RB.sequence) RB.sequence.onLine(line);
     dock(fresh);
     requestAnimationFrame(syncMore);
     if (RB.game.settings.voice.auto && hasJp && !RB.game.fastForward()) speak(false);
@@ -160,6 +164,7 @@ RB.ui.dialogue = (function () {
     return new Promise((res) => {
       pending = res;
       if (RB.game.fastForward() && seenScene) setTimeout(() => advance(true), 40);
+      else if (RB.sequence && RB.sequence.skipping()) setTimeout(() => { if (pending === res) advance(true); }, 30);
       else if (RB.test && RB.test.auto) setTimeout(() => advance(true), 5);
     });
   }
@@ -264,12 +269,16 @@ RB.ui.dialogue = (function () {
 
   function advance(auto) {
     if (!pending) return;
+    // in an illustrated sequence a press can be used up first: showing hidden text, walking back from a
+    // look at an earlier line, or finishing a shot's dissolve (it never also moves the scene on)
+    if (!auto && RB.sequence && RB.sequence.intercept()) return;
     if (revealing && !auto) { revealing.finish(); requestAnimationFrame(syncMore); return; }
     if (!auto && unread()) {
       const t = box.querySelector('.txt');
       t.scrollBy({ top: Math.max(40, t.clientHeight * 0.8), behavior: RB.game.reducedMotion() ? 'auto' : 'smooth' });
       return;
     }
+    if (RB.sequence) RB.sequence.advancing();
     if (revealing) revealing.finish();
     RB.voice && RB.voice.cancel();
     const r = pending;
@@ -308,6 +317,7 @@ RB.ui.dialogue = (function () {
   function choose(opts, o) {
     ensure();
     RB.game.setFastForward(false);
+    if (RB.sequence) RB.sequence.stopSkip('choice'); // a skipped scene stops at a choice; nothing is chosen for you
     if (RB.test && RB.test.auto) return Promise.resolve(RB.test.choose(opts));
     return new Promise((res) => {
       choicesEl.innerHTML = '';
@@ -339,9 +349,45 @@ RB.ui.dialogue = (function () {
     });
   }
 
+  // A read-only look back (Previous in an illustrated sequence, src/ui/43_sequence.js): an earlier line shown
+  // in the sheet while the live line's promise stays pending, so nothing of the scene runs; review(null) puts
+  // the live line back, whole (never re-revealed, never moved on).
+  let live = null;
+  function review(line) {
+    if (!box || box.classList.contains('hidden') || !current) return false;
+    if (line) {
+      if (!live) { if (revealing) revealing.finish(); live = current; }
+      paint(line, true);
+      box.classList.add('reviewing');
+    } else if (live) {
+      const l = live;
+      live = null;
+      paint(l.src || l, false);
+      box.classList.remove('reviewing');
+    }
+    return true;
+  }
+  function paint(line, still) {
+    const s = RB.game.s;
+    current = Object.assign({}, RB.dialect ? RB.dialect.line(line.who, line) : line, { src: line });
+    const ch = charInfo(line.who);
+    box.classList.toggle('noportrait', !ch || !!line.noPortrait);
+    box.classList.toggle('narration', !ch);
+    const cv = box.querySelector('.portrait');
+    cv.classList.toggle('hidden', !ch);
+    if (ch) RB.portraitAnim.play(cv, { who: ch.pc ? 'pc' : line.who, look: ch.pc ? RB.equip.look(s) : null, expr: line.expr, scene: line.sceneId, still });
+    else RB.portraitAnim.stop();
+    box.querySelector('.who').innerHTML = ch ? '<span class="nm">' + esc(ch.name.en) + '</span>' + (ch.name.jp ? '<span class="jp">' + RB.ui.jhtml(ch.name.jp) + '</span>' : '') : '<span class="nm narr"></span>';
+    renderMain();
+    renderSub();
+    box.querySelector('.txt').scrollTop = 0;
+    requestAnimationFrame(syncMore);
+  }
+
   function hide() {
     if (!box) return;
     RB.portraitAnim.stop(); // the portrait stops animating with the sheet
+    if (live) { live = null; box.classList.remove('reviewing'); }
     box.classList.add('hidden');
     setTop(false);
     document.body.classList.remove('in-dialogue');
@@ -351,6 +397,8 @@ RB.ui.dialogue = (function () {
   }
   function onAction(a) {
     if (!box || box.classList.contains('hidden') || !pending) return false;
+    // an illustrated sequence's keys: Escape opens its skip control, ← / P look back, R replays the shot, I hides the text
+    if (RB.sequence && RB.sequence.onAction(a)) return true;
     if (a === 'ok') { advance(); return true; }
     if (a === 'tr' && !box.querySelector('.b-tr').classList.contains('hidden')) { showSub = !showSub; renderSub(); syncCtrl(); return true; }
     if (a === 'log') { RB.ui.menu.open('log'); return true; }
@@ -358,5 +406,5 @@ RB.ui.dialogue = (function () {
     return false;
   }
   function isOpen() { return !!(box && !box.classList.contains('hidden')); }
-  return { say, choose, hide, onAction, advance, isOpen, refresh, shown: () => (current ? { who: current.who, jp: current.jp, en: current.en, dia: current.dia || null } : null) };
+  return { say, choose, hide, onAction, advance, isOpen, refresh, review, shown:() => (current ? { who: current.who, jp: current.jp, en: current.en, dia: current.dia || null } : null) };
 })();

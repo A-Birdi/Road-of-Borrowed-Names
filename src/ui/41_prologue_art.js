@@ -12,8 +12,10 @@
  * Reduced motion holds one drawing per shot.
  *
  *   RB.prologueArt.draw(kind, c, w, h, t, k, o)  kind: road | tea | cup | lantern | bridge | walker
- *     c: the art-resolution buffer (w × h); t: ms; k: 0..1 through the shot;
- *     o: { vb: the lowest buffer row not under the caption slip, still: reduced motion }
+ *     c: the art-resolution buffer (w × h); t: ms; k: 0..1 through the shot's one-time action (then 1:
+ *     the shot holds — the prologue moves on only when the reader asks, src/ui/43_sequence.js);
+ *     o: { vb: the lowest buffer row not under the caption slip, still: reduced motion,
+ *          hold: the action is over (the traveller stands), ms: the action's length }
  *   RB.prologueArt.release()                     drop the cached layers (the prologue is over)
  *   RB.prologueArt.walkerAt(w, h, k, vb, still)  where the traveller is (tests, evidence)
  *   RB.prologueArt.stats()                       cached layers and traveller frames */
@@ -151,7 +153,8 @@ RB.prologueArt = (function () {
 
   function walker(c, w, h, t, k, o) {
     const W = walkerAt(w, h, k, o.vb, o.still);
-    const f = o.still ? -1 : Math.floor(t / 105) % 8;
+    // at the end of the walk they stop and stand, lantern in hand, for as long as the shot holds
+    const f = o.still || o.hold ? -1 : Math.floor(t / 105) % 8;
     const s = figure(W.H, f);
     if (!s) return W;
     const fl = o.still ? 0.85 : 0.8 + 0.1 * Math.sin(t / 290) + 0.05 * Math.sin(t / 83);
@@ -220,7 +223,7 @@ RB.prologueArt = (function () {
   function draw(kind, c, w, h, t, k, o) {
     o = o || {};
     const vb = clamp(o.vb == null ? h : o.vb, h * 0.3, h);
-    const oo = { vb, still: !!o.still };
+    const oo = { vb, still: !!o.still, hold: !!o.hold, ms: o.ms || 0 };
     c.imageSmoothingEnabled = false;
     if (kind === 'road' || kind === 'walker') {
       RB.ui.title.drawBackdrop(c, w, h, t);

@@ -53,7 +53,9 @@ const ref = (id, where) => { if (id && !sceneRefs.has(id)) sceneRefs.set(id, whe
 const speakers = new Set(['narr', 'pc', 'comp', 'npc']);
 const OPS = new Set(['say', 'set', 'unset', 'var', 'give', 'take', 'word', 'technique', 'note', 'quest', 'if', 'goto', 'choice', 'call', 'end', 'challenge', 'activity', 'battle', 'lesson', 'teach', 'warp', 'music', 'sfx', 'emote', 'move', 'face', 'faceplayer', 'wait', 'fade', 'interlude', 'shake', 'autosave', 'checkpoint', 'chapter', 'card', 'journal', 'toast', 'travel', 'refresh', 'recruit', 'depart', 'heal', 'inn', 'shop', 'menu', 'postgame', 'credits', 'speakerless', 'hook',
   // scene direction (src/engine/52_staging.js; docs/expressive/CONTRACT.md §3.4): presentation only
-  'gesture', 'look', 'pose', 'walkto', 'prop', 'beat', 'ambience']);
+  'gesture', 'look', 'pose', 'walkto', 'prop', 'beat', 'ambience',
+  // illustrated sequences (src/ui/43_sequence.js; docs/expressive/SHOTS.md §0): presentation only
+  'sequence', 'shot']);
 // staging ops: the actor a cue names must be someone a scene can stage
 const STAGE_ACTOR = (who) => who === 'pc' || who === 'comp' || who === 'npc' || !!C.chars[who];
 const STAGE_TARGET = (t) => t == null || t === '-' || /^(up|down|left|right)$/.test(t) || /^-?\d+,-?\d+$/.test(t) || /^prop:[a-z_0-9]+$/.test(t) || STAGE_ACTOR(t);
@@ -107,6 +109,28 @@ for (const id in C.scenes) {
     if (c.op === 'walkto' && a[3] && !/^(up|down|left|right|now|stay)$/.test(a[3])) E(where(c) + ' !walkto: unknown facing ' + a[3]);
     if (c.op === 'beat' && !/^[a-z0-9_.-]+$/.test(a[0] || '')) E(where(c) + ' !beat: needs an id');
     if (c.op === 'ambience' && a[0] !== '-' && !(RB.staging && RB.staging.AMBIENCE[a[0]])) E(where(c) + ' !ambience: unknown preset ' + a[0]);
+  }
+  // illustrated sequences: a defined sequence opened and closed in the same scene, shots and phases it has,
+  // no `!shake` inside (it is never fired there) and every `!shot` inside an open sequence
+  {
+    const SQ = RB.sequence;
+    let open = null;
+    for (const c of sc.cmds) {
+      const a = c.args || [];
+      if (c.op === 'sequence') {
+        const verb = a[1] || 'begin';
+        if (!SQ || !SQ.get(a[0])) { E(where(c) + ' !sequence: unknown sequence ' + a[0]); continue; }
+        if (verb !== 'begin' && verb !== 'end') { E(where(c) + ' !sequence: begin or end, not ' + verb); continue; }
+        if (verb === 'begin') { if (open) E(where(c) + ' !sequence ' + a[0] + ' begins inside ' + open); open = a[0]; }
+        else { if (open !== a[0]) E(where(c) + ' !sequence ' + a[0] + ' end without its begin'); open = null; }
+      } else if (c.op === 'shot') {
+        if (!open) { E(where(c) + ' !shot ' + a[0] + ' outside a sequence'); continue; }
+        const sd = SQ.get(open).shots[a[0]];
+        if (!sd) E(where(c) + ' !shot: sequence ' + open + ' has no shot ' + a[0]);
+        else if (a[1] && !sd.phases.some((p) => p.id === a[1])) E(where(c) + ' !shot ' + a[0] + ': no phase ' + a[1]);
+      } else if (c.op === 'shake' && open) E(where(c) + ' !shake inside sequence ' + open + ' (never fired there: make it the shot\'s own action)');
+    }
+    if (open) E(sc.file + ' [' + id + '] !sequence ' + open + ' is never ended in its scene');
   }
   // the same person with the same generic gesture on two adjacent lines reads as a loop (§11.3)
   let prevG = new Set(), curG = new Set();

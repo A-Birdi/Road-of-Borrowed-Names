@@ -24,6 +24,7 @@ await test('new game through title, prologue skip, creation, setup', async () =>
   await p.waitForSelector('text=Skip prologue');
   await shot(p, 'ui_prologue');
   await p.click('text=Skip prologue');
+  await p.click('.csheet button:has-text("Skip the prologue")'); // (asked first: the prologue is unseen on this profile; src/ui/43_sequence.js)
   await p.waitForSelector('#nm');
   await p.fill('#nm', 'Aki');
   assert((await p.inputValue('#nj')) === 'アキ', 'katakana name suggestion');
@@ -466,6 +467,7 @@ await test('direct file:// mode boots, reports storage honestly, no network', as
   await p.click('text=New Game');
   await p.click('.slot[data-slot="1"] [data-a=start]');
   await p.click('text=Skip prologue');
+  await p.click('.csheet button:has-text("Skip the prologue")'); // (asked first: the prologue is unseen on this profile; src/ui/43_sequence.js)
   await p.fill('#nm', 'Filer');
   for (let i = 0; i < 3; i++) await p.click('[data-a=next]'); // Identity -> Appearance -> Background -> Learning setup
   await p.click('[data-a=go]');

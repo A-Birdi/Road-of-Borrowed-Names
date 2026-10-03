@@ -21,6 +21,7 @@ async function toCreation(p, slot) {
   await p.click('.slot[data-slot="' + (slot || 1) + '"] [data-a=start]');
   await p.waitForSelector('text=Skip prologue');
   await p.click('text=Skip prologue');
+  await p.click('.csheet button:has-text("Skip the prologue")'); // (asked first: the prologue is unseen on this profile; src/ui/43_sequence.js)
   await p.waitForSelector('.folio-create #nm');
 }
 const step = (p) => p.evaluate(() => { const f = document.querySelector('.folio-create'); return f ? f.getAttribute('data-step') : null; });
@@ -93,10 +94,13 @@ function judge(tag, L, opts) {
   await p.click('.slot[data-slot="1"] [data-a=start]');
   await p.waitForSelector('.cr-prologue .slip');
   const cap0 = await p.textContent('.cr-prologue .txt');
+  // (a press while a shot is still dissolving in only completes the dissolve: wait for it, as a reader would)
+  await p.waitForFunction(() => { const v = RB.sequence.viewState(); return v && v.state !== 'entering'; });
   await p.click('.cr-prologue [data-a=next]');
   const cap1 = await p.textContent('.cr-prologue .txt');
   ok(/lantern roads/.test(cap0) && /Hana/.test(cap1), 'prologue caption slip advances with Next');
   await p.click('text=Skip prologue');
+  await p.click('.csheet button:has-text("Skip the prologue")'); // (asked first: the prologue is unseen on this profile; src/ui/43_sequence.js)
   await p.waitForSelector('.folio-create #nm');
   await spy(p);
   ok(await step(p) === 'identity', 'creation opens on Identity');
