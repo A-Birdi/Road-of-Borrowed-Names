@@ -4,8 +4,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.script.add(`
 @scene co.fest_tokiwa
+# Staged: Tokiwa reads in the chronicle he has brought to the festival, his glasses pushed up over "this
+# year", and a nod to you for the line you chose.
+!gesture co_tokiwa read prop=book hold
 co_tokiwa: {年代記|ねんだいき} の {今年|ことし} の {頁|ページ} は 、 {長|なが}く なりそう です 。 {書|か}く こと が {多|おお}い 。 {泣|な}いた こと も 、 {笑|わら}った こと も 。 || This year's page in the chronicle will be a long one. There's a great deal to write — the crying and the laughing both.
+!gesture co_tokiwa glasses
 co_tokiwa: {本年|ほんねん} 、 と {書|か}きます 。 {同年|どうねん} で は なく 。 {今|いま} 、 ここ で {書|か}いて いる {記録|きろく} です から 。 || I'll write "this year". Not "that same year". Because this record is being written here, now.
+!gesture co_tokiwa nod pc
 ?(co_asm_names) co_tokiwa: {名前|なまえ} から {読|よ}んで 、 よかった 。 {五人|ごにん} が 、 {今夜|こんや} は {皆|みな} と {一緒|いっしょ} に いる {気|き} が します 。 || I'm glad we began with the names. Tonight it feels as though the five are here with us.
 ?(co_asm_living) co_tokiwa: {生|い}きて いる {人|ひと} の ため に 、 と {言|い}って くださった 。 {記録|きろく} は 、 {本来|ほんらい} そう いう もの でした 。 || You said "for the living". That is what records were meant to be for.
 ?(co_asm_ume) co_tokiwa: ウメ さん に {話|はな}して もらって よかった 。 {覚|おぼ}えて いた {人|ひと} の {言葉|ことば} は 、 {私|わたし} の {字|じ} より {重|おも}い 。 || I'm glad Ume spoke. The words of someone who kept remembering weigh more than anything in my hand.
@@ -31,9 +36,15 @@ co_isao: {火屋|ほや} {三十個|さんじゅっこ} 。 {今年|ことし} �
 co_isao: …… {右手|みぎて} が {痛|いた}む 。 {悪|わる}い {痛|いた}み じゃ ねえ 。 {何|なに} を {掴|つか}んだ か 、 {分|わ}かった から な 。 || …My right hand aches. It's not a bad ache. Now I know what I was holding on to.
 
 @scene co.fest_hiro
+# Staged: Hiro stretches out his shoulders (his line says they felt light); with Suzu, he looks from the seat
+# beside his mother's to her and she pats her account book; otherwise he points to the stage.
+!gesture hiro stretch
 hiro: {席|せき} に {名前|なまえ} を {書|か}いたら 、 {不思議|ふしぎ} と {肩|かた} が {軽|かる}く なった 。 {二十年|にじゅうねん} 、 {何|なに} か を {担|かつ}いで いた らしい 。 || When I wrote her name on the seat, my shoulders felt oddly light. I must have been carrying something for twenty years.
+?(comp=suzu) !gesture hiro lookbetween prop:co_seat and=comp
 ?(comp=suzu) hiro: …… {隣|となり} 、 {空|あ}いてる ぞ 。 {返済|へんさい} の {日|ひ} だ 。 || …The seat next to it is free. Payment's due.
+?(comp=suzu) !gesture comp check prop=accountbook
 ?(comp=suzu) comp[smile]: {分|わ}かってる わ よ 。 {帳簿|ちょうぼ} {通|どお}り に ね 。 || I know, I know. By the book.
+?(comp!=suzu) !gesture hiro point prop:co_stage
 ?(comp!=suzu) hiro: スズ の {芝居|しばい} 、 {見|み}る か 。 {次|つぎ} だ そう だ 。 …… {俺|おれ} は {一番|いちばん} {前|まえ} で {見|み}る 。 {待|ま}たされた {分|ぶん} な 。 || Watching Suzu's piece? She's on next. …I'm watching from the front row. I've waited long enough.
 
 @scene co.fest_nobu
