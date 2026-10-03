@@ -89,5 +89,5 @@ var RB = (globalThis.RB = globalThis.RB || {});
     Object.assign(K('なし', '', 'n', 'E', 'none; without (無し)', '無し'), { plain: true }),
   ], 'kansai');
   // うち before に is usually "while" (〜うちに), not "I"
-  for (const e of RB.dialect.lexAll()) if (e.w === 'うち') e.notNext = ['に'];
+  for (const e of RB.dialect.lexAll()) if (e.w === 'うち') { e.notNext = ['に']; e.notPrev = ['の']; }
 })();

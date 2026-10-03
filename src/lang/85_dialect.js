@@ -163,11 +163,17 @@ RB.dialect = (function () {
   }
   function lexHit(tk, tokens, i) {
     const list = (LEX.get(tk.surface) || []).concat(!/[一-鿿]/.test(tk.surface) ? LEXR.get(tk.surface) || [] : []);
-    const fin = isFinal(tokens, i), prev = hasPrev(tokens, i), nx = nextWord(tokens, i);
+    const fin = isFinal(tokens, i), prev = hasPrev(tokens, i), nx = nextWord(tokens, i), pv = prev ? prevWord(tokens, i) : null;
     // an entry fits its place: `final` ones end a sentence after a word; `initial` ones open it;
     // `notNext` lists words after which this is not the Kansai word (うち に = "while", not "I …")
-    // (notNext applies after a word: 観客 が いてる うち に = "while"; …… うち に は = "to me")
-    return list.find((e) => (!e.final || (fin && prev)) && (!e.initial || !prev) && !(e.notNext && prev && nx && e.notNext.indexOf(nx.surface) >= 0)) || null;
+    // (notNext applies after a word: 観客 が いてる うち に = "while"; …… うち に は = "to me");
+    // `notPrev` lists words before which it is not (旅 の うち = "part of the journey", not "I")
+    return list.find((e) => (!e.final || (fin && prev)) && (!e.initial || !prev) && !(e.notNext && prev && nx && e.notNext.indexOf(nx.surface) >= 0) &&
+      !(e.notPrev && pv && e.notPrev.indexOf(pv.surface) >= 0)) || null;
+  }
+  function prevWord(tokens, i) {
+    for (let j = i - 1; j >= 0; j--) if (tokens[j] && tokens[j].surface !== '') return tokens[j];
+    return null;
   }
   // a word before this one in the same sentence
   function hasPrev(tokens, i) {
