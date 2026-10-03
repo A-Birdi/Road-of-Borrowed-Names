@@ -149,13 +149,16 @@ RB.script = (function () {
     const g = gen;
     running++;
     RB.game.pushMode('dialogue');
+    // the staging token: the actors this scene cues are its own until it ends (src/engine/52_staging.js)
+    const stageTok = RB.staging ? RB.staging.begin(sceneId) : 0;
     try {
       await exec(sc, ctx || {});
       if (g === gen) RB.game.s.seen[sceneId] = true;
     } catch (err) {
       console.error('scene error', sceneId, err);
     } finally {
-      if (g !== gen) return; // (the campaign it belonged to is gone)
+      if (g !== gen) return; // (the campaign it belonged to is gone; staging was reset with it)
+      if (RB.staging) RB.staging.end(stageTok);
       running--;
       // every run pushed one dialogue mode; pop it even when nested (a hook
       // running a scene inside a scene) so no stray dialogue mode is left
@@ -213,8 +216,25 @@ RB.script = (function () {
             await RB.world.whenArrived(who, 3000);
           }
           await RB.ui.dialogue.say({ who, expr: c.expr, jp: c.jp, en: c.en, sceneId: sc.id, line: c.line });
+          // the reader moved on: every gesture cued for this line settles at its hold or its end
+          if (RB.staging) RB.staging.settle('advance');
           break;
         }
+        // scene direction (src/engine/52_staging.js): presentation only — never a state change. A cue
+        // binds to the line that follows it (it plays as that line appears); `wait` blocks to the peak.
+        case 'gesture': {
+          if (!RB.staging) break;
+          const o = stageArgs(a.slice(2));
+          const r = RB.staging.cue(a[0] === 'npc' ? ctx.npc : a[0], a[1], o, ctx);
+          if (o.wait && r && r.then) await r;
+          break;
+        }
+        case 'look': if (RB.staging) RB.staging.look(a[0] === 'npc' ? ctx.npc : a[0], a[1] || '-', ctx); break;
+        case 'pose': if (RB.staging) RB.staging.pose(a[0] === 'npc' ? ctx.npc : a[0], a[1] || '-', ctx); break;
+        case 'prop': if (RB.staging) RB.staging.prop(a[0] === 'npc' ? ctx.npc : a[0], a[1] || '-', { hand: a[2] || null }, ctx); break;
+        case 'walkto': if (RB.staging) await RB.staging.walkTo(a[0] === 'npc' ? ctx.npc : a[0], +a[1], +a[2], DIRW[a[3]] ? a[3] : null, { now: a.includes('now'), stay: a.includes('stay') }, ctx); break;
+        case 'beat': if (RB.staging) RB.staging.beat(a[0]); break;
+        case 'ambience': if (RB.staging) RB.staging.ambience(a[0] || '-'); break;
         case 'set': a.forEach((f) => (s.flags[f] = true)); break;
         case 'unset': a.forEach((f) => delete s.flags[f]); break;
         case 'var': {
@@ -346,6 +366,22 @@ RB.script = (function () {
       }
     }
   }
+  // !gesture <actor> <gesture> [target] [hold] [wait] [and=<second target>] [prop=<kind>] [hand=R|L] [then=<g>,<g>]
+  // (then=: gestures that follow this one on the same line, to the same target; the last may hold)
+  const DIRW = { up: 1, down: 1, left: 1, right: 1 };
+  function stageArgs(rest) {
+    const o = {};
+    for (const x of rest) {
+      if (x === 'hold') o.hold = true;
+      else if (x === 'wait') o.wait = true;
+      else if (x.startsWith('and=')) o.target2 = x.slice(4);
+      else if (x.startsWith('prop=')) o.prop = x.slice(5);
+      else if (x.startsWith('hand=')) o.hand = x.slice(5);
+      else if (x.startsWith('then=')) o.then = x.slice(5).split(',').filter(Boolean);
+      else if (o.target == null) o.target = x;
+    }
+    return o;
+  }
   function applyReward(r) {
     const s = RB.game.s;
     if (r.items) for (const k in r.items) RB.state.give(s, k, r.items[k]);
@@ -365,5 +401,5 @@ RB.script = (function () {
     return new Promise((r) => setTimeout(r, RB.game.fastForward() ? Math.min(ms, 60) : ms));
   }
 
-  return { parse, add, run, runInline, isRunning, enVars, jpVars, splitBilingual };
+  return { parse, add, run, runInline, isRunning, enVars, jpVars, splitBilingual, stageArgs };
 })();

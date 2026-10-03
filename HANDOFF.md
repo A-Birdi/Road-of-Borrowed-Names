@@ -417,6 +417,21 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
   data and to use `timeline()` when it exists (its src/ui/82d_harmony_cutin.js is not on this branch yet).
 - **Never commit** the owner's mockup images.
 
+## Overworld actor system: poses, gestures, mannerisms, idle life, scene direction (expressive addenda, work packages D and (a)) — CONTRACT.md ledger HX28–HX38, WI1–WI24; VALIDATION.md "Overworld actor system"
+- **Where:** pose layer `src/engine/32g_spritepose.js` (hooks in `32_spriteart.js`); gestures `51_gestures.js`;
+  profiles `51_mannerisms.js` + `src/content/mannerisms/10_cast.js`; scheduler and scene cues `52_staging.js`
+  (renderer hook in `60_render.js drawActor`, tick in `50_world.js update`); ops `!gesture !look !pose !walkto !prop
+  !beat !ambience` in `70_script.js` (validator, quest guide); dev viewer `src/ui/44_actor_dev.js` (`?dev=actors`).
+  Design and legibility per primitive: docs/expressive/GESTURES.md §9.
+- **Staged:** `sg.omi_wataru` (both routes; the beats `omi.pivot.begin`/`end` mark where the illustrated close-up
+  goes), `rw.hana_first`, `co.suzu_night` (the night line over the room), `sb.yae`, `lf.mio_refuse`, `sa.isamu_return`,
+  `co.hiro_first`. Practice B's reference into `sg.omi_wataru` moved to command 34 (same hash).
+- **Tests:** unit `tests/unit/actors.test.mjs`; browser `tests/e2e/actor_life.mjs`, `actor_workplaces.mjs`,
+  `staging_wataru.mjs`, `staging_chapters.mjs` (all but actor_workplaces in run.mjs; that one watches five
+  workplaces 45 s each and runs on its own). `--video` on actor_life / staging_wataru writes clips.
+- **Left for later:** game-wide per-scene staging of the manifest's other "Performed overworld" scenes; Masaru's
+  kneading waits on the bakery props (TODO in his profile); the portrait worker reads `RB.mannerisms.of(id).portrait`.
+
 ## Commands
 - Build: `node tools/build.mjs`
 - Content validation: `node tools/validate.mjs [--filter sg] [--unknown]`

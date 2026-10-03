@@ -112,20 +112,33 @@ narr: {氷|こおり} が {音|おと} を {立|た}てて {割|わ}れ 、 {湯
 // ---- residents -----------------------------------------------------------------------------
 RB.script.add(`
 @scene sb.yae
+# Staged (Chapter 4 performed interaction): Yae's welcome, her worry, counting the lost years on her
+# fingers and losing count, and the way north pointed out; the companion's aside with their own gesture.
 !if sb_lamp_lit -> after
 !if sb_storm -> morning
 !if quest.sb_lamp>=1 -> later
+!gesture yae palm pc
 yae[surprise]: まあ ！ この {季節|きせつ} に お{客|きゃく} さん だ なんて 。 さあ さあ 、 {入|はい}って 。 {雪|ゆき} は {払|はら}って から ね 。 || My! Guests, at this time of year. Come in, come in. Brush the snow off first, mind.
+!gesture yae nod pc
 yae[smile]: {雪見屋|ゆきみや} の ヤエ です 。 {部屋|へや} なら {空|あ}いてる よ 。 {冬|ふゆ} は いつも {空|あ}いてる けど ね 。 || I'm Yae; this is Yukimiya. There are rooms free. There always are, in winter.
 pc: {天文台|てんもんだい} の {灯|あか}り の こと を {聞|き}きたい んです が 。 || We wanted to ask about the observatory lamp.
+!gesture yae aside
 yae[worry]: ああ …… あれ ね 。 || Ah… that.
+!gesture yae palm pc
 yae: ホシノ さん って いう {天文|てんもん}{学者|がくしゃ} が いて ね 。 {娘|むすめ} さん が {灯落|ひおち} へ {働|はたら}き に {出|で}た とき 、 {約束|やくそく} した んだって 。 「 おまえ が {帰|かえ}る まで 、 {毎晩|まいばん} {灯|あか}り を ともして おく 」 って 。 || There's an astronomer called Hoshino. When his daughter went down to work in Lanternfall, he made her a promise: "I'll keep the lamp lit every night until you come home."
+!gesture yae count then=chin hold
 yae[think]: {二十年|にじゅうねん} …… いや 、 {十年|じゅうねん} ？ あれ 、 {何年|なんねん} だった っけ 。 {毎年|まいとし} {数|かぞ}えてた のに 。 || Twenty years… no, ten? Oh — how many years was it? I used to count them every year.
+!gesture yae halfraise
 yae: とにかく 、 {一晩|ひとばん} も {欠|か}かさなかった の 。 それ が 、 {急|きゅう} に ね 。 || Anyway, he never missed a single night. And then, all of a sudden.
+?(comp=nao) !gesture comp aside
+?(comp=mio) !gesture comp chin
+?(comp=ren) !gesture comp glasses
+?(comp=suzu) !gesture comp palm
 ?(comp=nao) comp: {数|かず} まで {抜|ぬ}けてる 。 {静寂|しじま} の {仕業|しわざ} だ な 。 || Even the number's gone. That's the Hush's work.
 ?(comp=mio) comp[think]: {毎年|まいとし} {数|かぞ}えて いた {数|かず} が 、 {出|で}て こない …… 。 || A number she counted every year, and it won't come…
 ?(comp=ren) comp[think]: {数|かず} が {抜|ぬ}け{落|お}ちて います 。 {静寂|しじま} の {手|て} の {跡|あと} です 。 || The number has dropped out. That's the Hush's fingerprint.
 ?(comp=suzu) comp: {台本|だいほん} の {数字|すうじ} だけ 、 {誰|だれ} か が {消|け}した みたい 。 || As if someone rubbed out just the numbers in the script.
+!gesture yae point up
 yae: ホシノ さん の {家|いえ} は 、 {北|きた} の {坂|さか} の {下|した} 。 {天文台|てんもんだい} へ {上|のぼ}る {石段|いしだん} の {手前|てまえ} だよ 。 {会|あ}って あげて 。 {近頃|ちかごろ} 、 {誰|だれ} とも {話|はな}さない の 。 || His house is at the foot of the north slope, just before the stone stair up to the observatory. Go and see him. He hardly talks to anyone lately.
 !quest sb_lamp 1
 !end

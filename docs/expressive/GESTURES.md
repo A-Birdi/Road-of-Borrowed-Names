@@ -582,3 +582,55 @@ below changes a line, a condition or a consequence.
 Test: both routes × four companions = eight runs (HX37, HX68); the acknowledgement (line 326) appears
 only on `sg_wataru_self`; `sg_wataru_resolved`, `sg_passive` (note) and the notice's removal happen once,
 exactly as now.
+
+## 9. Implementation (work packages D and (a), the overworld actor system)
+
+What §1–§8 planned now exists in the source. One actor model and one renderer path serve idle life,
+conversation and staged scenes; the dialogue portraits can read the same profiles (`RB.mannerisms.of(id).portrait`).
+
+| Part | Where | What it does |
+|---|---|---|
+| Pose layer | `src/engine/32g_spritepose.js` (hooks in `32_spriteart.js`: `poseOf`, `geom`, eyes and mouth, `handsFB`/`sideHand`, `humanoid`, `getArt`) | Named key poses (`POSES`, 118) drawn from the same parts as the walking figure: arm targets per view (`DN` front/back, `SD` side: chest, heart, chin, mouth, forehead, temple, hair, shade, raise, half, palm, palmout, point(up/down), out, in, forward, folded, hip, behind, up, fist, count1–3, sleeve, clasp, reach, stretch, rub, low, flatdown, strap, forearm); head offset (bow, tilt, shake), eyes (l/r/u/d/c, side view b), mouth (o/w/f); lean and bow (side views), weight shift (front views); kneel, sit and a seated variant of any gesture (`+sit`); held objects (`PROPS`, 25: paper, letter, notice, ledger, book, folio, account book, cup, teapot, tags, brush, stamp, broom, lantern, bottle, cloth, envelopes, blowpipe ×4, ribbon, flint, seeds). Frame key `p:<pose>[+<seat>][.<R\|L>][/<prop>][~<gaze>][:1][*]`. Frames cached per look × direction × key in an LRU (cap 900; `RB.sprites._pose.stats()`). |
+| Gesture library | `src/engine/51_gestures.js` (`RB.gestures`) | The 32 primitives as entry → peak → recovery (hold where meaningful), variants (`receive`, `bend`, `duck`, `flinch`, `resolve`), 44 idle habits and occupation loops (write, sort, stamp, pour, stir, polish, hang/fold, hammer, tend a lamp, tend a light, feed a fire, jiggle a line, knead, sip, glasswork, cool …), `can`/`fit` (a cane user bends and gestures one-handed, a child ducks, glasses only on glasses), `validate()`. |
+| Profiles | `src/engine/51_mannerisms.js` (`RB.mannerisms`), data `src/content/mannerisms/10_cast.js` | 12 class overlays (§5's 11 and `town`); 76 authored profiles (the player, the 4 companions, 21 bespoke recurring characters, 50 on overlays); everyone else derived from **station and tool**, never from glasses, age, dress, gender or skin tone (the world review, WR-01). `maps:` per-workplace stance and work (Hiro at his bench), `states:` by story flag, `restScene: false` (a flourish stance that gives way in conversation: Suzu). |
+| Staging | `src/engine/52_staging.js` (`RB.staging`) | Scene cues (`begin`/`end` token, `cue`, `look`, `pose`, `walkTo`, `prop`, `beat`, `ambience`, `settle`), the idle scheduler (`tick`), the renderer's hook (`frameOf`, asked by `60_render.js drawActor`). |
+| Script ops | `src/engine/70_script.js`; validator `tools/validate.mjs`; quest guide `56_questguide.js` | `!gesture <actor> <gesture\|-> [target] [hold] [wait] [then=g,g] [and=<target2>] [prop=<kind>] [hand=R\|L]` · `!look <actor> <target\|->` · `!pose <actor> <pose\|->` · `!walkto <actor> <x> <y> [dir] [now] [stay]` · `!prop <actor> <kind\|-> [R\|L]` · `!beat <id>` · `!ambience <night\|night_in\|dusk\|->`. Actors: `pc`, `comp`, `npc`, a character or npc id. Targets: an actor, `x,y`, `prop:<kind>`, a direction. A cue binds to the line that follows it; the reader's advance settles every cue (hold or end); nothing waits on elapsed reading time (`wait` blocks at most 1.2 s to a peak). The validator checks actors, gestures, poses, props, targets, coordinates, and warns on a person repeating the same gesture on adjacent lines. |
+| Dev viewer | `src/ui/44_actor_dev.js` (`?dev=actors`) | Contact sheets of the primitives (entry · peak · recovery), the habits, and per-person profiles, labelled as a synthetic fixture. |
+
+**Legibility at play scale (40 × 58, a hand is 3 art px; judged on the contact sheets in
+`docs/screenshots/actors/gestures_*` at 2 CSS px per art px and by the unit test's pixel-change floor).**
+Read on their own (`full`, 25): 1 turn-and-listen (carried by the drawn facing), 2 nod, 4 lean-in, 5 hand-to-chin,
+7 glasses, 8 hand half-raised, 9 open palm, 10 point, 11 two-handed size, 13 presentation, 14 handover (the object
+moves hand to hand), 15 kneel/bend, 16 read, 17 shrug, 18 half-step (carried by a sub-tile offset), 19 guarded
+hand, 21 recoil, 22 arms folded, 23 hand to forehead, 24 restrained downward hand, 25 lowered head, 28 bow,
+30 appreciative palms, 31 contained celebration, 32 hand to mouth. Read with their context (`aided`, 6): 3 look
+between two subjects and 6 glance aside (eyes-only: the iris moves a pixel, the head a pixel; a turn of the drawn
+facing carries the bigger change), 20 head shake (1-px alternation, eyes down), 26 fidget (hands busy at the
+waist), 27 avert-then-face (the second half is a turn), 29 exhale (shoulders drop a pixel, eyes close). Weak
+(`weak`, 1): 12 counting on fingers — 1–3 finger pixels read as "listing", never as a number; the line says it.
+Workarounds that make the rest legible: every arm that crosses the body or the face gets its own dark contour
+(skin on skin otherwise vanishes); elbows are pushed out for forehead, temple and shade; pointing arms are long
+and level and aim up or down by the target; held objects are a pixel larger than life; the back view hides what
+the hands do in front of the body (celebrate, folded, guard, half-raised, size), so staged beats face the person
+whose gesture matters down or sideways.
+
+**Idle scheduler rules** (`RB.staging.tick`, once per world update). Only people on screen; one habit at a time per
+person at their profile's pace; things happening at once (an event: a habit, a word between two people, a shared
+glance at an arrival) capped at ⌈people on screen ÷ 4⌉, never more than 4; a new habit no sooner than 650 ms after
+the last and not beside a neighbour who started one in the last 2.5 s; two idle neighbours within two tiles turn
+to each other at most every 30–60 s per pair (one talks with a gesture from their profile, the other nods a beat
+later); a wanderer pauses after a step or a turn one time in three; arrivals, people leaving and an examined object
+draw a glance from those near enough to see; snow adds rubbing hands. Moods (restraint, WR-06): Lanternfall before
+its bell (slower, fewer and politer exchanges), the Archive road (quiet), the Snowbell inn on the storm night
+(nobody bouncing). The companion idles by their profile after you stand still 1.2 s; at most once a minute,
+standing still facing something, the companion turns to look at it a beat later; your own idles (the strap, a
+look, a weight shift) start after 3 s and stop on any key. Everything yields at once to a scene, a battle, a menu,
+a map change; a tool in hand stays in hand through a conversation and the task resumes after it. Choices are seeded
+per person (`RB.staging.seed`); world blink timers and weather no longer draw from `Math.random`.
+
+**Staged so far.** The §14 showcase `sg.omi_wataru` (both routes × 4 companions), and one performed interaction per
+other chapter: Ch1 `rw.hana_first`, Ch3 `co.suzu_night` (the faded passage of SHOTS.md §7b: the night line is now
+said over the room), Ch4 `sb.yae`, Ch5 `lf.mio_refuse` (both branches), Ch6 `sa.isamu_return`; and from the world
+review WR-03, Hiro's working introduction `co.hiro_first`. Evidence: `tests/e2e/staging_wataru.mjs`,
+`staging_chapters.mjs`, `actor_workplaces.mjs`; `docs/screenshots/actors/`. The rest of the manifest's
+"Performed overworld" scenes are the later game-wide staging package.

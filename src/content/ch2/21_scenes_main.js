@@ -311,32 +311,86 @@ wataru[sad]: …… {分|わ}かりました 。 {僕|ぼく} も {行|い}き�
 wataru: …… {帳簿|ちょうぼ} の {整理|せいり} が あります ので 。 || …I have the ledger to sort out.
 
 @scene sg.omi_wataru
+# Staged (docs/expressive/GESTURES.md §8; the owner's addendum §14): Omi is at her desk, writing; on
+# Wataru's own route he takes the forward place at the desk's corner and the party stays behind his lead;
+# on the party's route you open, and he steps up into his own admission. The pivotal exchange (the two
+# faults, "not dismissing me?", the notice handed back and opened) is marked by the beats omi.pivot.* for
+# the illustrated close-up (SHOTS.md §2); the overworld staging under it stays complete on its own. Omi is
+# firm, not angry: her working hand stops, she listens, separates the two faults, and goes back to the desk.
+!beat omi.arrive
+!pose omi write1
+!prop omi brush
+?(sg_wataru_self) !walkto wataru 6 4 left
+?(sg_wataru_self) !gesture wataru resolve omi hold
+?(sg_wataru_self) !gesture pc listen wataru
 ?(sg_wataru_self) wataru: {港長|こうちょう} 。 {二番|にばん}{倉庫|そうこ} の {荷|に} を {売|う}った の は 、 {僕|ぼく} です 。 || Harbourmaster. I'm the one who sold the cargo from No. 2 warehouse.
+?(!sg_wataru_self) !walkto pc 5 5 up
+?(!sg_wataru_self) !gesture pc palm omi
 ?(!sg_wataru_self) pc: {港長|こうちょう} 。 {二番|にばん}{倉庫|そうこ} の {件|けん} です 。 || Harbourmaster. It's about No. 2 warehouse.
+?(!sg_wataru_self) !walkto wataru 6 4 left
+?(!sg_wataru_self) !gesture wataru resolve omi hold
+?(!sg_wataru_self) !gesture pc listen wataru hold
 ?(!sg_wataru_self) wataru[sad]: …… {僕|ぼく} です 。 {荷|に} を {売|う}った の は 。 || …It was me. I sold the cargo.
+!beat omi.pause
+!pose omi -
+!prop omi -
+!gesture omi listen wataru hold
+!gesture comp listen omi
 omi: …… 。 || ……
+!gesture omi exhale
 omi: {知|し}ってた よ 。 {半分|はんぶん} くらい は ね 。 {残|のこ}り の {半分|はんぶん} は 、 {知|し}りたく なかった 。 || I knew. About half of it. The other half I didn't want to know.
+!gesture wataru halfraise omi then=fidget
 wataru: {借金|しゃっきん} が あって …… 。 いえ 、 {言|い}い{訳|わけ} は しません 。 || I had debts… No. I won't make excuses.
+!gesture omi emphatic wataru then=palm
+!gesture wataru flinch omi
 omi[angry]: {言|い}い{訳|わけ} を しろ 。 {聞|き}く の も 、 {港長|こうちょう} の {仕事|しごと} だ 。 || Make them. Listening is part of the harbourmaster's job too.
+!gesture wataru palm omi then=size,palm
+!look omi wataru
 narr: ワタル は {全部|ぜんぶ} {話|はな}した 。 {船|ふね} の こと 、 {利子|りし} の こと 、 {遅|おく}れて いる {給料|きゅうりょう} の こと 。 || Wataru tells her everything: the boat, the interest, the late wages.
+!beat omi.pivot.begin
+!gesture omi palm prop:desk
 omi[think]: {給料|きゅうりょう} が {遅|おく}れて いる の は 、 {会社|かいしゃ} の {落|お}ち{度|ど} だ 。 {灯落|ひおち} の {本店|ほんてん} に は 、 わたし から {手紙|てがみ} を {書|か}く 。 {遅|おく}れた {分|ぶん} は 、 {利子|りし} を つけて {払|はら}って もらう 。 || The wages being late is the company's fault. I'll write to head office in Lanternfall myself. They'll pay what they owe — with interest.
+!gesture omi size wataru
 omi: だが 、 {荷|に} を {売|う}った の は お{前|まえ} の {落|お}ち{度|ど} だ 。 {売|う}った {分|ぶん} は 、 {給料|きゅうりょう} から {返|かえ}して もらう 。 {灯台|とうだい} と ソウタ に は 、 {自分|じぶん} で {頭|あたま} を {下|さ}げに {行|い}け 。 || But selling the cargo is your fault. You'll repay what you sold out of your wages. And you'll go to the lighthouse and to Sōta yourself, and apologise.
+!gesture omi point wataru
 omi: それ から 、 {港|みなと} じゅう の ラベル を {書|か}き{直|なお}せ 。 {一枚|いちまい} {残|のこ}らず 。 お{前|まえ} より {字|じ} の {綺麗|きれい} な {者|もの} は 、 この {港|みなと} に いない 。 || And then you'll rewrite every label in the harbour. Every last one. No one in this port writes a better hand than you.
+!gesture wataru flinch omi
 wataru[surprise]: …… {辞|や}めさせない ん です か 。 || …You're not dismissing me?
+!gesture wataru exhale
 omi: {辞|や}めさせたら 、 {誰|だれ} が {借金|しゃっきん} を {返|かえ}す ん だ 。 || If I dismiss you, who pays back the debt?
+?(sg_wataru_self) !gesture omi nod wataru
 ?(sg_wataru_self) omi[smile]: …… それ に 、 {自分|じぶん} の {口|くち} で {言|い}いに {来|き}た 。 それ は {覚|おぼ}えて おく よ 。 || …Besides, you came and said it yourself. I'll remember that.
+?(comp=mio) !gesture comp nod omi
 ?(comp=mio) comp[smile]: （{厳|きび}しい けど 、 {優|やさ}しい {人|ひと} だ ね 。） || (Strict, but kind.)
+?(comp=suzu) !gesture comp size
 ?(comp=suzu) comp[smile]: （{見事|みごと} な お{裁|さば}き 。 {貸|か}し と {借|か}り が 、 ちゃんと {合|あ}った わ 。） || (Well judged. The debits and credits actually balance.)
+?(comp=nao) !gesture comp lookbetween omi and=wataru
 ?(comp=nao) comp: （…… {逃|に}げ{道|みち} じゃ なくて 、 {帰|かえ}り{道|みち} を {作|つく}った な 。） || (…She didn't give him a way out. She gave him a way back.)
+?(comp=ren) !gesture comp listen omi then=nod
 ?(comp=ren) comp: （{正|ただ}す こと と {罰|ばっ}する こと を 、 {分|わ}けて いる 。 よい {港長|こうちょう} です 。） || (She keeps correcting separate from punishing. A good harbourmaster.)
+!gesture omi palm wataru
 omi: {灯落|ひおち} の {黒部|くろべ} に は 、 {正直|しょうじき} に 「{待|ま}って くれ 」 と {書|か}け 。 {開|あ}けて ない {手紙|てがみ} に は 、 {返事|へんじ} も {書|か}けない だろう 。 || And write to Kurobe in Lanternfall, honestly asking them to wait. You can't answer a letter you haven't opened.
 !take sg_notice
+!walkto pc 6 5 up
+!prop pc notice
+!gesture pc handover wataru
+!gesture wataru receive pc hold
 narr: {督促状|とくそくじょう} を ワタル に {返|かえ}した 。 || You give the final notice back to Wataru.
+!gesture wataru read prop=notice hold
 wataru: …… {開|あ}けます 。 {今|いま} 、 ここ で 。 || …I'll open it. Now. Here.
+!look omi wataru
 narr: {封|ふう} が {切|き}られた 。 {誰|だれ} も {何|なに} も {言|い}わなかった 。 {窓|まど} の {外|そと} で 、 カモメ が {一羽|いちわ} {鳴|な}いた 。 || The seal breaks. No one says anything. Outside the window, a single gull cries.
 !set sg_wataru_resolved
 !note sg_passive
+?(comp=suzu) !gesture comp lowered wataru then=listen
 ?(comp=suzu) comp: （…… {開|あ}けた わ ね 。 {一番|いちばん} {難|むずか}しい ところ よ 。） || (…He opened it. That's the hardest part.)
+!beat omi.pivot.end
+!look wataru omi
+!gesture wataru nod omi
+!look omi -
+!prop omi brush
+!pose omi write1
+!gesture pc listen wataru
 wataru: {倉庫|そうこ} に {戻|もど}ります 。 {返事|へんじ} を {書|か}かない と 。 …… よければ 、 {後|あと} で {寄|よ}って ください 。 || I'll go back to the warehouse. I have a reply to write. …Please stop by later, if you would.
 !autosave
 !music saltglass

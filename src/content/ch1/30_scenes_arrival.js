@@ -286,18 +286,30 @@ suzu: お{客|きゃく}さま 、 アンコール ？ {残念|ざんねん} 、
 ?(rw_mill_open) suzu: {水車|すいしゃ}{小屋|ごや} ？ {怖|こわ}い {話|はなし} の {舞台|ぶたい} に ぴったり 。 …… {私|わたし} も {行|い}く 。 {怖|こわ}い から こそ 。 || The mill? The perfect set for a ghost story. …I'm coming too. Precisely because it's scary.
 
 @scene rw.hana_first
+# Staged (Chapter 1 performed interaction, docs/expressive/GESTURES.md): Hana stops at the two cups on
+# the table, the player turns with her and back; a thought, a guarded hand, the cup held out.
 !faceplayer hana
+!gesture hana nod pc
 hana[smile]: いらっしゃい 。 {朝|あさ} の お{茶|ちゃ} 、 {入|い}れた ばかり よ 。 …… あら 。 || Welcome. I've just made the morning tea. …Oh.
+!gesture hana observe prop:teaset hold
+!gesture pc listen prop:teaset
 narr: {卓|たく} の {上|うえ} に 、 {湯気|ゆげ} の {立|た}つ {茶碗|ちゃわん} が ふたつ 。 || On the table, two cups of tea, steaming.
+!look pc hana
+!gesture hana chin hold
 hana[think]: また ふたつ いれて しまった 。 {毎朝|まいあさ} 、 {手|て} が {勝手|かって} に ふたつ いれる の 。 || I've poured two again. Every morning my hands pour two on their own.
+!gesture hana guard hold
 hana[worry]: {一|ひと}つ は わたし の 。 もう {一|ひと}つ は …… {誰|だれ} の だった かしら 。 {毎朝|まいあさ} {来|く}る {人|ひと} が いた はず なの 。 {声|こえ} も {笑|わら}い{方|かた} も {覚|おぼ}えて いる のに 、 {名前|なまえ} と {顔|かお} だけ が 、 ない の 。 || One is mine. The other… whose was it? Someone used to come every morning, I'm sure of it. I remember the voice, the laugh — only the name and face are gone.
+!gesture hana aside
 hana: {変|へん} よ ね 。 {冷|さ}めた お{茶|ちゃ} を {毎朝|まいあさ} {捨|す}てる の が 、 {少|すこ}し {寂|さび}しい だけ 。 …… {飲|の}んで いく ？ {冷|さ}めてない {方|ほう} を 。 || Silly, isn't it. It's just a little lonely, pouring the cold cup away every morning. …Will you have some? The one that isn't cold.
 !choice
 * いただきます || I'd love some. -> drink
 * {誰|だれ} か {心当|こころあ}たり は ？ || Any idea who it could be? -> who
 :who
+!gesture hana point down
 hana[think]: {橋|はし} の {方|ほう} から {来|き}た 、 と {思|おも}う 。 {朝|あさ} は いつも {川|かわ} の {匂|にお}い が した 。 それ しか わからない の 。 || From the direction of the bridge, I think. They always smelled of the river in the mornings. That's all I know.
 :drink
+!prop hana cup
+!gesture hana present pc prop=cup hold
 hana[smile]: どう ぞ 。 {旅|たび} の {人|ひと} に {飲|の}んで もらえる なら 、 {二|ふた}つ{目|め} も {無駄|むだ} じゃ ない わ 。 || Here you are. If a traveller drinks it, the second cup isn't wasted.
 !give rw_tea_leaves quiet
 !set rw_hana_cups

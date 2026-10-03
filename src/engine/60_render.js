@@ -370,9 +370,13 @@ RB.render = (function () {
     const bob = isFoe && !still ? Math.round(Math.sin(t / 300 + a.x) * 3) : 0;
     // (a turn on the spot is drawn through a pivot: RB.sprites.view, src/engine/32_spriteart.js — drawing only)
     const fr0 = actorFrame(a, t, isFoe, still), vw = RB.sprites.view ? RB.sprites.view(a, t, still || isFoe, fr0) : null;
-    const art = RB.sprites.getArt && RB.sprites.getArt(a.look, vw ? vw.dir : a.dir, vw ? vw.frame : fr0);
-    const dy = a.dy || 0; // a knee dip during a field action (src/ui/57_weave.js)
-    if (art) c.drawImage(art, fx - RB.sprites.ANCHOR.x, fy - RB.sprites.ANCHOR.y + bob + dy);
+    // staged or idle body language (src/engine/52_staging.js): a pose key, a drawn facing, a small offset
+    // (a half-step, a hop); not while a turn pivots, so the turn still shows
+    const sf = !isFoe && (!vw || !vw.turn) && RB.staging ? RB.staging.frameOf(a, t, still, vw ? vw.frame : fr0) : null;
+    const art = RB.sprites.getArt && RB.sprites.getArt(a.look, sf ? sf.dir : vw ? vw.dir : a.dir, sf && sf.key ? sf.key : vw ? vw.frame : fr0);
+    const dy = (a.dy || 0) + (sf ? sf.oy : 0); // a knee dip during a field action (src/ui/57_weave.js)
+    const ox = sf ? sf.ox : 0;
+    if (art) c.drawImage(art, fx - RB.sprites.ANCHOR.x + ox, fy - RB.sprites.ANCHOR.y + bob + dy);
     else c.drawImage(RB.sprites.get(a.look, a.dir, a.frame || 0), fx - 16, fy - 46 + bob + dy, 32, 48);
     if (a.overlay) a.overlay(c, fx, fy + dy, t); // the raised hand and brush of a field action
     if (alpha < 1) c.globalAlpha = 1;
@@ -548,6 +552,9 @@ RB.render = (function () {
   // Effective ambience: a map may define alt: [{if, ambient, night}] for story states.
   function ambientOf(m) {
     const s = RB.game.s;
+    // a scene's own ambience (night on the veranda), presentation only: RB.staging.ambience
+    const ov = RB.staging && RB.staging.ambienceNow();
+    if (ov) return ov;
     for (const a of m.def.alt || []) if (s && RB.state.test(s, a.if)) return a;
     return { ambient: m.def.ambient || {}, night: m.def.night };
   }
@@ -592,6 +599,10 @@ RB.render = (function () {
     c.drawImage(light, 0, 0);
   }
 
+  // Weather particles draw from their own stream (xorshift), never Math.random: the language tasks pick
+  // from Math.random, and rain or snow must not change which task comes next.
+  let pseed = 0x6c8e9cf5;
+  function prand() { pseed ^= pseed << 13; pseed >>>= 0; pseed ^= pseed >>> 17; pseed ^= pseed << 5; pseed >>>= 0; return pseed / 4294967296; }
   // Weather at art resolution: finer drops, flakes and motes than the tiles.
   function drawWeather(c, m, t) {
     const amb = ambientOf(m).ambient || {};
@@ -599,7 +610,7 @@ RB.render = (function () {
     if (!kind) return;
     const reduced = RB.game.reducedMotion();
     const target = reduced ? 16 : kind === 'rain' ? 110 : 60;
-    while (particles.length < target) particles.push({ x: Math.random() * bw, y: Math.random() * bh, v: 0.5 + Math.random(), p: Math.random() * 6 });
+    while (particles.length < target) particles.push({ x: prand() * bw, y: prand() * bh, v: 0.5 + prand(), p: prand() * 6 });
     for (const p of particles) {
       if (kind === 'rain') {
         p.y += (reduced ? 2 : 8) * p.v; p.x -= reduced ? 0.4 : 2;
@@ -631,8 +642,8 @@ RB.render = (function () {
         c.fillRect(p.x, p.y, 6, 4);
         c.fillStyle = 'rgba(90,80,70,0.35)'; c.fillRect(p.x + 1, p.y + 1, 4, 1);
       }
-      if (p.y > bh + 8) { p.y = -8; p.x = Math.random() * bw; }
-      if (p.y < -12) { p.y = bh + 4; p.x = Math.random() * bw; }
+      if (p.y > bh + 8) { p.y = -8; p.x = prand() * bw; }
+      if (p.y < -12) { p.y = bh + 4; p.x = prand() * bw; }
       if (p.x < -8) p.x = bw + 4;
       if (p.x > bw + 12) p.x = -4;
     }
