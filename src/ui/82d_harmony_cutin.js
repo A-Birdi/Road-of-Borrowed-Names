@@ -77,6 +77,29 @@ RB.harmonyCutin = (function () {
   }
   // the art's phases over an instance's life (data: a third 'flourish' drawing may appear between them)
   function phases() { const P = A() && A().PHASES; return Array.isArray(P) && P.length ? P.slice() : ['enter', 'hold']; }
+  // An authored performance of the portrait, where the art provides one: RB.harmonyArt.timeline(comp) →
+  // [{ phase, seg: 'in'|'hold'|'out', from, to }] (fractions of that segment's duration in RB.battleSeq.T.cutin
+  // for the playback mode) — e.g. prep_a, prep_b while it arrives; cue, peak, settle_a while it holds; settle_b
+  // through the hold's end and the fade. A state the art leaves out holds the one before. Without a timeline
+  // the two drawings above are used ('enter' arriving, then 'hold'). Each entry gets its place on one line:
+  // in 0–1, hold 1–2, out 2–3.
+  const SEG = { in: 0, hold: 1, out: 2 };
+  function timelineOf(comp) {
+    try {
+      const T = A() && typeof A().timeline === 'function' ? A().timeline(comp) : null;
+      if (!Array.isArray(T) || !T.length) return null;
+      const out = T.filter((e) => e && e.phase && SEG[e.seg] != null).map((e) => ({ phase: e.phase, at: SEG[e.seg] + Math.max(0, Math.min(1, +e.from || 0)) }));
+      out.sort((a, b) => a.at - b.at);
+      return out.length ? out : null;
+    } catch (e) { return null; }
+  }
+  // the drawings a composition can show over its life (the footprint is their union; prepare builds them all)
+  function phaseList(comp, still) {
+    const T = timelineOf(comp);
+    if (T) { const u = [...new Set(T.map((e) => e.phase))]; return still ? [T[T.length - 1].phase] : u; }
+    return still ? ['hold'] : phases();
+  }
+  const holdPhase = (comp) => { const T = timelineOf(comp); return T ? T[T.length - 1].phase : 'hold'; };
 
   // ---- measuring ------------------------------------------------------------------------------------
   function visRect(el) {
@@ -123,8 +146,9 @@ RB.harmonyCutin = (function () {
   // the union over the phases shown, so a hand that moves between drawings is footprint in both.
   const spanCache = new Map();
   function spansOf(spec) {
-    const ph = spec.still ? ['hold'] : phases();
-    const comps = ph.map((p) => A().compose(Object.assign({}, spec, { phase: p })));
+    const ph = phaseList(spec.comp, spec.still);
+    const tl = !!timelineOf(spec.comp);
+    const comps = ph.map((p) => A().compose(Object.assign({}, spec, { phase: p, still: spec.still && !tl })));
     const key = comps.map((c) => c.key).join('#');
     let sp = spanCache.get(key);
     if (sp) return { sp, comp: comps[comps.length - 1], all: comps };
@@ -173,7 +197,7 @@ RB.harmonyCutin = (function () {
     const top = stage ? stage.y : 0, bottom = party ? party.y : stage ? stage.y + stage.h : vh;
     const midY = (top + bottom) / 2;
     const N = A().NATIVE, still = !!o.still;
-    const faceOf = (spec, s) => { const c = A().compose(Object.assign({}, spec, { phase: 'hold' })); return Math.min(...c.faces.map((f) => f.h)) * s; };
+    const faceOf = (spec, s) => { const c = A().compose(Object.assign({}, spec, { phase: holdPhase(spec.comp) })); return Math.min(...c.faces.map((f) => f.h)) * s; };
     const base = { comp: o.comp, look: o.look, still };
     const sStd = A().fitScale(vw, vh, 'standard'), sCmp = A().fitScale(vw, vh, 'compact');
     const std = [], cmp = [];
@@ -250,7 +274,7 @@ RB.harmonyCutin = (function () {
     const root = document.querySelector('.combat-ui');
     root.insertBefore(el, root.querySelector('.cb-banner'));
     N++;
-    cur = { n: N, state: 'inactive', action, comp, tech: cue.tech || comp, look, reduce, mode, d: { in: T.in, hold: T.hold, out: T.out }, t0: at, wall0: now(), el, pl, phase: null, opacity: 0, dx: 0, marks: [], trace: [], dirty: false, cut: null };
+    cur = { n: N, tl: timelineOf(comp), state: 'inactive', action, comp, tech: cue.tech || comp, look, reduce, mode, d: { in: T.in, hold: T.hold, out: T.out }, t0: at, wall0: now(), el, pl, phase: null, opacity: 0, dx: 0, marks: [], trace: [], dirty: false, cut: null };
     mark(cur, 'inactive', at);
     S.started++; S.shown++;
     S.maxLive = Math.max(S.maxLive, document.querySelectorAll('.cb-cutin').length);
@@ -268,7 +292,7 @@ RB.harmonyCutin = (function () {
     el.style.height = p.h + 'px';
   }
   function draw(c, ph) {
-    const spec = { comp: c.comp, look: c.look, variant: c.pl.variant, phase: ph, still: c.reduce, backing: c.pl.backing, fx: c.pl.fx };
+    const spec = { comp: c.comp, look: c.look, variant: c.pl.variant, phase: ph, still: c.reduce && !c.tl, backing: c.pl.backing, fx: c.pl.fx };
     const comp = A().compose(spec);
     if (c.el.width !== comp.w || c.el.height !== comp.h) { c.el.width = comp.w; c.el.height = comp.h; }
     const g = c.el.getContext('2d');
@@ -282,6 +306,15 @@ RB.harmonyCutin = (function () {
   // which drawing shows at elapsed el (presentation ms): the arrival, then (shortly after it has arrived) the
   // one gesture resolved into the hold; a 'flourish' drawing, where the art has one, between them
   function phaseAt(c, el) {
+    const T = c.tl !== undefined ? c.tl : timelineOf(c.comp);
+    if (T) {
+      // reduced motion: the last state only; otherwise the latest state whose start has been reached
+      if (c.reduce) return T[T.length - 1].phase;
+      const pos = el < c.d.in ? Math.max(0, el) / c.d.in : el < c.d.in + c.d.hold ? 1 + (el - c.d.in) / c.d.hold : 2 + Math.min(1, (el - c.d.in - c.d.hold) / c.d.out);
+      let ph = T[0].phase;
+      for (const e of T) if (e.at <= pos + 1e-9) ph = e.phase;
+      return ph;
+    }
     if (c.reduce) return 'hold';
     const P = phases(), resolveAt = c.d.in + Math.min(60, c.d.hold / 4);
     if (el < resolveAt && P.indexOf('enter') >= 0) return 'enter';
@@ -368,7 +401,12 @@ RB.harmonyCutin = (function () {
     let look = null;
     try { look = RB.equip.look(RB.game.s); } catch (e) { return; }
     const still = !!(RB.game.reducedMotion && RB.game.reducedMotion());
-    try { A().prepare([{ comp, look, variant: 'standard', still }, { comp, look, variant: 'compact', still }], { async: true }); } catch (e) { /* presentation only */ }
+    try {
+      const list = [];
+      const tl = !!timelineOf(comp);
+      for (const variant of ['standard', 'compact']) for (const phase of phaseList(comp, still)) list.push({ comp, look, variant, phase, still: still && !tl });
+      A().prepare(list, { async: true });
+    } catch (e) { /* presentation only */ }
     // the battle figures' frames for this technique (the cache keeps only this encounter's actors)
     const B = RB.battlers, MV = RB.battlerMoves, TC = RB.partyChoreo && RB.partyChoreo.TECH[comp];
     if (!B || !MV || !TC || !B.preview) return;
@@ -395,5 +433,5 @@ RB.harmonyCutin = (function () {
     RB.bus.on('campaign:changing', () => { prepTok++; dispose('campaign'); spanCache.clear(); });
   }
 
-  return { start, frame, dispose, enabled, place, protectedRects, state, stats, last, reset, prepare, SEP, phases, _: { spansOf, hits, readingOpen } };
+  return { start, frame, dispose, enabled, place, protectedRects, state, stats, last, reset, prepare, SEP, phases, _: { spansOf, hits, readingOpen, phaseAt, phaseList, timelineOf } };
 })();

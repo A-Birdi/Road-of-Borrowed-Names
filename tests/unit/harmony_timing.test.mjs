@@ -169,6 +169,35 @@ export default async (t) => {
     for (let i = 0; i < 4; i++) for (let j = i + 1; j < 4; j++) pp.push(diff(mine[i], mine[j]));
     t.ok(new Set(COMPS.map((w) => PC.TECH[w].g)).size === 4 && Math.min(...pp) > 30, 'your part differs with each technique (' + COMPS.map((w) => PC.TECH[w].g).join(', ') + '; ≥ ' + Math.min(...pp) + ' px apart at the release)');
   }
+  // the portrait's own performance, where the art provides a timeline (a stub here: the proposed defaults):
+  // the state shown at each moment of Normal and Fast, missing optional states holding the one before, reduced
+  // motion the last state only; without a timeline the two drawings ('enter' arriving, then 'hold')
+  {
+    const HC = RB.harmonyCutin._, ART = RB.harmonyArt;
+    const seq = (mode, reduce) => {
+      const d = cut[mode], c = { comp: 'suzu', d, reduce }, out = [];
+      for (let el = 0; el < sum(d); el += 1) { const ph = HC.phaseAt(c, el); if (!out.length || out[out.length - 1][0] !== ph) out.push([ph, el]); }
+      return out;
+    };
+    const had = ART.timeline;
+    t.eq(seq('normal', false), [['enter', 0], ['hold', 240]], 'no timeline (today\'s art): the arrival drawing, then the hold resolved at 240 ms — unchanged');
+    const FULL = [
+      { phase: 'prep_a', seg: 'in', from: 0, to: 0.5 }, { phase: 'prep_b', seg: 'in', from: 0.5, to: 1 },
+      { phase: 'cue', seg: 'hold', from: 0, to: 0.21 }, { phase: 'peak', seg: 'hold', from: 0.21, to: 0.58 }, { phase: 'settle_a', seg: 'hold', from: 0.58, to: 0.79 },
+      { phase: 'settle_b', seg: 'hold', from: 0.79, to: 1 }, { phase: 'settle_b', seg: 'out', from: 0, to: 1 },
+    ];
+    try {
+      ART.timeline = () => FULL;
+      t.eq(seq('normal', false), [['prep_a', 0], ['prep_b', 90], ['cue', 180], ['peak', 260], ['settle_a', 401], ['settle_b', 481]], 'Normal: prep_a 0, prep_b 90, cue 180, peak 260, settle_a 401, settle_b 481 ms through the fade (the art\'s fractions of 180 / 380 / 220)');
+      t.eq(seq('fast', false), [['prep_a', 0], ['prep_b', 72], ['cue', 143], ['peak', 210], ['settle_a', 326], ['settle_b', 392]], 'Fast: the same states on its own 143 / 315 / 229 presentation ms (100 / 220 / 160 wall)');
+      t.eq(seq('normal', true), [['settle_b', 0]], 'reduced motion: the last state only');
+      t.eq(HC.phaseList('suzu', false), ['prep_a', 'prep_b', 'cue', 'peak', 'settle_a', 'settle_b'], 'every state of the timeline is footprint and is prepared ahead');
+      ART.timeline = () => FULL.filter((e) => e.phase !== 'prep_b' && e.phase !== 'settle_a');
+      t.eq(seq('normal', false), [['prep_a', 0], ['cue', 180], ['peak', 260], ['settle_b', 481]], 'optional states left out: the one before is held (prep_a through the arrival, peak until settle_b)');
+      ART.timeline = () => [];
+      t.eq(seq('normal', false), [['enter', 0], ['hold', 240]], 'an empty timeline: the two drawings, as without one');
+    } finally { if (had) ART.timeline = had; else delete ART.timeline; }
+  }
   // the overlay's overlap test (pure): a row span inside an inflated rect is a hit, a transparent corner is not
   {
     const hits = RB.harmonyCutin._.hits;
