@@ -130722,6 +130722,10 @@ narr: スズ は {帳簿|ちょうぼ} を {開|ひら}いて 、 {最後|さい
 # A Conversation We Still Owe Ourselves (§10.4): an older postgame save, told now
 # ======================================================================================
 @scene pages.enter_retro
+# Staged (positions only; the conversation is pages.retro): walking into the Hall, your companion steps off the
+# doorway to your side and you turn to them.
+?(comp) !walkto comp 6 8 left
+?(comp) !look pc comp
 ?(comp=nao) nao: $name 。 {少|すこ}し いい か 。 {言|い}いそびれてた こと が ある 。 || $name. Got a minute? There's something I never got round to saying.
 ?(comp=mio) mio: $name 、 {少|すこ}し {座|すわ}らない ？ {話|はな}して おきたい こと が ある の 。 || $name, sit down a moment? There's something I'd like to talk about.
 ?(comp=ren) ren: $name 。 {少|すこ}し {時間|じかん} を ください 。 {言|い}って おく べき こと が あります 。 || $name. Give me a little time. There's something I ought to say.
@@ -130739,49 +130743,78 @@ narr: スズ は {帳簿|ちょうぼ} を {開|ひら}いて 、 {最後|さい
 !call pages.retro
 
 @scene pages.retro
+# Staged (anywhere it is told: no position is assumed): you turn to your companion and the narration's action is
+# theirs. Nao sets the satchel down (a bend), turns back to you with an open hand, nods at choosing the roads
+# together, and shoulders the satchel, looking one way and the other. Mio sits down first, nods at the plan,
+# then gets up to straighten the ledgers. Ren bends to set the lamp down and cleans their glasses (the one
+# adjustment of the scene), explains with an open hand, then puts their own lamp in your hand. Suzu breathes
+# out like a costume coming off, her head goes down for the hard lines, an open hand for the next act, and she
+# writes the line in her ledger.
 !hook pages_retro_begin
+?(comp) !look pc comp
 !if comp=nao -> nao
 !if comp=mio -> mio
 !if comp=ren -> ren
 !if comp=suzu -> suzu
 !end
 :nao
+!gesture nao bend down
 narr: ナオ は {鞄|かばん} を {下|お}ろして 、 {灯|あか}り{堂|どう} の {壁|かべ} に もたれた 。 || Nao sets the satchel down and leans against the Lantern Hall wall.
+!look nao pc
+!gesture nao palm
 nao: {旅|たび} が {終|お}わって から 、 {配達|はいたつ} ばっかり で 、 ちゃんと {話|はな}して なかった な 。 {今|いま} {言|い}って おく 。 || Since the journey ended it's been nothing but deliveries. We never properly talked. I'll say it now.
 !call end.nao.core
 !call end.nao.reply
+!gesture nao nod pc
 nao: {地図|ちず} に ない {道|みち} も 、 {潮硝子|しおがらす} {回|まわ}り も 、 {次|つぎ} は {二人|ふたり} で {選|えら}ぼう 。 {断|ことわ}る {理由|りゆう} は 、 {今|いま} の ところ ない 。 || Roads that aren't on any map, the Saltglass round — next time, we choose them together. So far I haven't got a reason to say no.
+!gesture nao strap left then=lookbetween and=right
 narr: ナオ は {鞄|かばん} を {背負|せお}い{直|なお}して 、 {出口|でぐち} を {確|たし}かめ 、 それから {入口|いりぐち} も {確|たし}かめた 。 || Nao shoulders the satchel, checks the exit, and then checks the entrance too.
 !call end.pet.nao
 !hook pages_end_done retro
 !end
 :mio
+!pose mio sit
 narr: ミオ は {灯|あか}り{堂|どう} の {長椅子|ながいす} に {腰|こし} を {下|お}ろした 。 {珍|めずら}しく 、 {先|さき} に {座|すわ}った 。 || Mio sits down on a bench in the Lantern Hall. For once, she sits down first.
 mio: {旅|たび} が {終|お}わって から 、 {店|みせ} の こと ばかり で 、 ちゃんと {話|はな}して なかった 。 …… {少|すこ}し だけ {聞|き}いて 。 || Since the journey ended, it's been all about the shop. We never properly talked. …Just listen for a bit.
 !call end.mio.core
 !call end.mio.reply
+!gesture mio nod pc
 mio: {書|か}かれて いない {道|みち} に {出|で}る {日|ひ} は 、 {包帯|ほうたい} と お{茶|ちゃ} を {持|も}って 。 {出|で}ない {日|ひ} は 、 {茶屋|ちゃや} で {何|なに} も しない 。 どっち も 、 {一緒|いっしょ} に 。 || On days we go out on the unwritten roads, bandages and tea. On days we don't, doing nothing at the teahouse. Either way, together.
+!pose mio -
+!gesture mio tidy
 narr: ミオ は ツル の {机|つくえ} の {帳面|ちょうめん} を {揃|そろ}え かけて 、 {手|て} を {止|と}めた 。 {一冊|いっさつ} だけ 、 {曲|ま}がった まま に した 。 || Mio starts to straighten the ledgers on Tsuru's desk, then stops. She leaves one of them crooked.
 !call end.pet.mio
 !hook pages_end_done retro
 !end
 :ren
+!gesture ren bend down then=glasses
 narr: レン は {灯|ひ} を {床|ゆか} に {置|お}いて 、 {眼鏡|めがね} を {拭|ふ}いた 。 {拭|ふ}く {必要|ひつよう} は なかった 。 || Ren sets the lamp down on the floor and cleans their glasses. They didn't need cleaning.
+!look ren pc
+!gesture ren palm
 ren: {橋|はし} を {渡|わた}って {帰|かえ}って きた {日|ひ} 、 {言|い}う べき こと を {言|い}い{忘|わす}れて いました 。 {記録|きろく} の {漏|も}れ は 、 {直|なお}さない と 。 || The day we crossed the bridge home, I forgot to say something I should have. Gaps in the record have to be fixed.
 !call end.ren.pq
 !call end.ren.core
 !call end.ren.reply
+!gesture ren nod pc
 ren: ツル さん の {帳面|ちょうめん} の {道|みち} に は 、 まだ {歩|ある}いて いない もの が あります 。 あなた が {地図|ちず} を 、 わたし が {灯|ひ} を 。 || There are still roads in Tsuru's ledger we haven't walked. You take the map, I'll take the lamp.
+!prop ren lantern
+!gesture ren handover pc
+!gesture pc receive ren
 narr: レン は {灯|あか}り{堂|どう} の {灯籠|とうろう} の {芯|しん} を {切|き}り{揃|そろ}え 、 {少|すこ}し {迷|まよ}って から 、 {自分|じぶん} の {灯|ひ} を $name に {持|も}たせた 。 || Ren trims the wick of the Hall's lantern and, after a moment's hesitation, hands you their own lamp to hold.
 !call end.pet.ren
 !hook pages_end_done retro
 !end
 :suzu
+!gesture suzu exhale
 narr: スズ は {声|こえ} の {張|は}り を {落|お}とした 。 {衣装|いしょう} を {脱|ぬ}ぐ みたい に 。 || Suzu lets her voice drop, like taking off a costume.
+!look suzu pc
+!gesture suzu lowered
 suzu: {幕|まく} が {下|お}りた {後|あと} の {台詞|せりふ} って 、 {一番|いちばん} {難|むずか}しい の 。 だから {後回|あとまわ}し に して た 。 {今|いま} {言|い}う ね 。 || The lines after the curtain comes down are the hardest. So I kept putting them off. I'll say them now.
 !call end.suzu.core
 !call end.suzu.reply
+!gesture suzu palm
 suzu: {次|つぎ} の {幕|まく} は 、 {書|か}かれて いない {道|みち} で も 、 ハナ の {茶屋|ちゃや} で も いい 。 あなた は {見|み}てる だけ で いい から ね 。 || The next act can be on the unwritten roads or at Hana's teahouse. You only have to watch.
+!gesture suzu write
 narr: スズ は {帳簿|ちょうぼ} に {一行|いちぎょう} {書|か}き{足|た}した 。 「 {言|い}いそびれた {台詞|せりふ} 、 {一|ひと}つ 。 {支払|しはら}い {済|ず}み 。 」 || Suzu adds a line to her ledger: "One line left unsaid. Paid."
 !call end.pet.suzu
 !hook pages_end_done retro
@@ -130791,6 +130824,10 @@ narr: スズ は {帳簿|ちょうぼ} に {一行|いちぎょう} {書|か}き
 # An Unfinished Conversation (§10.4): a personal quest finished after the ending
 # ======================================================================================
 @scene pages.enter_unfinished
+# Staged (positions only; the conversation is pages.unfinished): your companion steps off the doorway to your
+# side and you turn to them.
+?(comp) !walkto comp 6 8 left
+?(comp) !look pc comp
 ?(comp=nao&memory.ending:nao) nao: $name 。 {橋|はし} の {上|うえ} の {話|はなし} の 、 {続|つづ}き が ある 。 || $name. There's more to what I said on the bridge.
 ?(comp=nao&!memory.ending:nao) nao: $name 。 この {前|まえ} の {話|はなし} の 、 {続|つづ}き が ある 。 || $name. There's more to what I said the other day.
 ?(comp=mio) mio: $name 、 {聞|き}いて ほしい こと が ある の 。 {前|まえ} の {話|はなし} の {続|つづ}き 。 || $name, there's something I want you to hear. The rest of what I said before.
@@ -130805,22 +130842,32 @@ narr: スズ は {帳簿|ちょうぼ} に {一行|いちぎょう} {書|か}き
 !call pages.unfinished
 
 @scene pages.unfinished
+# Staged (anywhere it is told): you turn to your companion. Nao pats the lighter satchel, nods at Umi's one line,
+# and pats it again; Mio laughs as she tells it, her hands fidget over how they shook, and she thanks you with
+# both hands for the hand on her back.
+?(comp) !look pc comp
 !if comp=nao -> nao
 !if comp=mio -> mio
 !end
 :nao
+!gesture nao strap
 narr: ナオ が 、 {鞄|かばん} の {底|そこ} を {軽|かる}く {叩|たた}いた 。 {手紙|てがみ} の {分|ぶん} だけ 、 {軽|かる}く なって いる 。 || Nao gives the bottom of the satchel a light pat. It's one letter lighter.
 ?(memory.ending:nao) nao: {橋|はし} の {上|うえ} で {言|い}った {手紙|てがみ} 、 {届|とど}けた 。 || That letter I mentioned on the bridge — I delivered it.
 ?(!memory.ending:nao) nao: {前|まえ} に {言|い}った {手紙|てがみ} 、 {届|とど}けた 。 || That letter I mentioned before — I delivered it.
 nao: ウミ は {一行|いちぎょう} だけ {書|か}いた 。 「 {読|よ}みました 」 って 。 {許|ゆる}す とも 、 {許|ゆる}さない とも {書|か}いて なかった 。 || Umi wrote one line. "I read it." Didn't say she forgives him, didn't say she doesn't.
+!gesture nao nod pc
 nao: それ で いい 。 {決|き}めた の は ウミ だ 。 {配達人|はいたつにん} の {仕事|しごと} は 、 そこ まで 。 || That's right. Umi decided. That's where a courier's job ends.
+!gesture nao strap
 nao[smile]: …… {途中|とちゅう} で {止|と}まってた {話|はなし} 、 これ で {最後|さいご} まで {言|い}えた な 。 {鞄|かばん} が {軽|かる}い 。 || …So I've finally finished what I started saying. The bag's lighter.
 !hook pages_unfinished_done
 !end
 :mio
+!gesture mio laugh
 mio[laugh]: {聞|き}いて 。 {言|い}えた の 。 タダシ さん に 、 {自分|じぶん} の {声|こえ} で 。 「 お{断|ことわ}り します 」 って 。 || Listen. I said it. To Tadashi, in my own voice. "I refuse."
 mio: {前|まえ} に 、 まだ {返事|へんじ} して いない {頼|たの}み{事|ごと} が ある って {言|い}った でしょ 。 あれ 、 {片付|かたづ}いた 。 || Remember I said there was still a request I hadn't answered? That's done now.
+!gesture mio fidget
 mio: {手|て} は 、 やっぱり {震|ふる}えた 。 でも 、 {声|こえ} は {震|ふる}えなかった 。 {少|すこ}し しか 。 || My hands shook, of course. But my voice didn't. Hardly at all.
+!gesture mio thanks pc
 mio[smile]: {背中|せなか} に {手|て} を {当|あ}てて くれて 、 ありがとう 。 {次|つぎ} は 、 わたし が {当|あ}てる {番|ばん} ね 。 || Thank you for the hand on my back. Next time, it's my turn.
 !hook pages_unfinished_done
 !end
@@ -130844,24 +130891,46 @@ var RB = (globalThis.RB = globalThis.RB || {});
 RB.script.add(`
 # ---- Page I: What Shall We Keep? ----------------------------------------------------------------
 @scene pages.enter_offer
+# Staged (positions only; the conversation is pages.offer): walking into the Hall, your companion steps off the
+# doorway to your side and you turn to them.
+?(comp) !walkto comp 6 8 left
+?(comp) !look pc comp
 !call pages.offer
 
 @scene pages.offer
+# Staged: the companion proposes the page in their own conversational gestures, one at a time. Nao points to
+# Tsuru's new ledger and turns back with an open hand, a head shake (knowing the way is not deciding for
+# someone), a glance aside at the trusted line, looks between you and the door for "which?", then a nod or a
+# hand to the satchel. Mio's hand at her chest over the loads she carried, an open hand, a touch to her hair at
+# resting, a laugh behind her hand at the trusted line, two hands for "this or that", then a nod or her flat
+# hand ("stop me"). Ren's open hand for the margins, the glasses for the teacher's hand, a glance aside about
+# directions, two hands for "certain or not", and a nod. Suzu's two showman's hands for the little scenes, an
+# open hand, a laugh, a shrug for "funny or quiet", then a small celebration or a nod,
+# and her account book for the fireside.
+?(comp) !look pc comp
 !if comp=nao -> nao
 !if comp=mio -> mio
 !if comp=ren -> ren
 !if comp=suzu -> suzu
 !end
 :nao
+!gesture nao point 7,7
 nao: ツル の {新|あたら}しい {帳面|ちょうめん} 、 {見|み}た か ？ {道|みち} が どこ へ {続|つづ}く か は {書|か}いて ある 。 でも 、 {帰|かえ}り{方|かた} は {誰|だれ} も {書|か}いて ない 。 || Seen Tsuru's new ledger? It says where the roads go. Nobody's written down how to get back.
+!look nao pc
+!gesture nao palm
 nao: だから 、 {二人|ふたり} で {一枚|いちまい} 、 {札|ふだ} を {作|つく}らない か 。 {本当|ほんとう} に {歩|ある}いた {道|みち} から 、 {一|ひと}つ だけ {選|えら}んで 。 || So how about the two of us make one card? From a road we actually walk. Just one thing from it.
+!gesture nao shake
 ?(quest.lf_nao=done) nao: ウミ の {時|とき} に {分|わ}かった 。 {道|みち} を {知|し}ってる の と 、 {人|ひと} の {代|か}わり に {決|き}める の は 、 {別|べつ} だ 。 そういう の を {書|か}いて おきたい 。 || Umi taught me something. Knowing a road and deciding for someone else are different things. That's the kind of thing I want written down.
 ?(!quest.lf_nao=done) nao: {道|みち} を {知|し}ってる の と 、 {人|ひと} の {代|か}わり に {決|き}める の は 、 {別|べつ} だ 。 {最近|さいきん} 、 よく そう {思|おも}う 。 そういう の を {書|か}いて おきたい 。 || Knowing a road and deciding for someone else are different things. I think about that a lot lately. That's the kind of thing I want written down.
+?(bond>=trusted) !gesture nao aside
 ?(bond>=trusted) nao[smirk]: {誰|だれ} に でも {頼|たの}む {話|はなし} じゃ ない けど な 。 || Not something I'd ask just anyone, mind.
+!gesture nao lookbetween pc and=5,9
 nao: {次|つぎ} に {歩|ある}く {誰|だれ}か の ため に する か 、 {自分|じぶん} たち の {帰|かえ}り{道|みち} の ため に する か 。 どっち が いい ？ || For whoever walks it next, or for finding our own way back. Which do you want?
 !hook pages_choose theme
 !if pages.pick=later -> nlater
+?(pages.pick=next) !gesture nao nod pc
 ?(pages.pick=next) nao[smile]: {道案内|みちあんない} か 。 {配達人|はいたつにん} の {得意|とくい} {分野|ぶんや} だ 。 {決|き}め{付|つ}けない {書|か}き{方|かた} を {考|かんが}えよう 。 || Directions, then. A courier's speciality. We'll work out how to write it without telling anyone what to do.
+?(pages.pick=back) !gesture nao strap
 ?(pages.pick=back) nao: {帰|かえ}り{道|みち} の {一言|ひとこと} 、 か 。 …… {鞄|かばん} に {入|い}れて おく の に ちょうど いい 。 || A line for the way back… Just the right size to keep in the bag.
 nao: {次|つぎ} に {書|か}かれて いない {道|みち} へ {出|で}たら 、 {本当|ほんとう} に あった こと を {一|ひと}つ {覚|おぼ}えて おこう 。 {焚|た}き{火|び} の {所|ところ} で {話|はな}そう 。 || Next time we're out on an unwritten road, let's remember one thing that really happens. We'll talk it over at the campfire.
 !end
@@ -130869,15 +130938,22 @@ nao: {次|つぎ} に {書|か}かれて いない {道|みち} へ {出|で}た
 nao: {急|いそ}ぐ {話|はなし} じゃ ない 。 {気|き} が {向|む}いたら 、 {声|こえ} を かけて くれ 。 || No rush. Say the word when you feel like it.
 !end
 :mio
+!gesture mio guard
 mio: ねえ 、 $name 。 {旅|たび} の {間|あいだ} 、 わたし は ずっと {誰|だれ}か の {荷物|にもつ} を {持|も}って いた {気|き} が する の 。 || You know, $name, all through the journey I felt like I was always carrying someone's load.
+!gesture mio palm
 mio: だから 、 {今度|こんど} は {荷|に} を {下|お}ろせた {場所|ばしょ} の こと を 、 {一枚|いちまい} {残|のこ}したい 。 {書|か}かれて いない {道|みち} で 、 {本当|ほんとう} に {休|やす}めた {所|ところ} を 。 || So this time I'd like to keep one page about a place where we could set things down. Somewhere on an unwritten road where we really rested.
+!gesture mio touchhair
 ?(quest.lf_mio=done) mio: {断|ことわ}る の を {覚|おぼ}えた から 、 {休|やす}む の も {覚|おぼ}えたい の 。 {順番|じゅんばん} と して は 、 {合|あ}ってる でしょ ？ || I've learned to say no, so I'd like to learn to rest too. That's the right order, isn't it?
 ?(!quest.lf_mio=done) mio: {休|やす}む の も 、 {断|ことわ}る の と {同|おな}じ で 、 {練習|れんしゅう} が いる みたい 。 || Resting seems to need practice too, same as saying no.
+?(bond>=trusted) !gesture mio laugh
 ?(bond>=trusted) mio[smile]: あなた と なら 、 {休|やす}む の が {上手|じょうず} に なれる {気|き} が する の 。 || With you, I think I could get good at resting.
+!gesture mio size
 mio: {休|やす}んで も {怖|こわ}くなかった {理由|りゆう} を {書|か}く か 、 {仕事|しごと} を {分|わ}け{合|あ}えた {理由|りゆう} を {書|か}く か 。 どっち に する ？ || Shall we write about why a pause felt safe, or about how we managed to share the work?
 !hook pages_choose theme
 !if pages.pick=later -> mlater
+?(pages.pick=pause) !gesture mio nod pc
 ?(pages.pick=pause) mio[smile]: うん 。 {休|やす}む {練習|れんしゅう} の {記録|きろく} ね 。 {処方|しょほう} より 、 ずっと {大事|だいじ} かも 。 || Mm. A record of practising rest. Maybe more important than any prescription.
+?(pages.pick=share) !gesture mio emphatic
 ?(pages.pick=share) mio: {分|わ}け{合|あ}う {方|ほう} ね 。 …… わたし が {全部|ぜんぶ} やろう と したら 、 {止|と}めて よ 。 || Sharing, then. …If I try to do everything myself, stop me.
 mio: {次|つぎ} の {道|みち} で 、 {一|ひと}つ だけ {覚|おぼ}えて おこう 。 {無理|むり} に じゃ なくて 、 {自然|しぜん} に 。 || On the next road, let's remember just one thing. Not forcing it — naturally.
 !end
@@ -130885,15 +130961,20 @@ mio: {次|つぎ} の {道|みち} で 、 {一|ひと}つ だけ {覚|おぼ}�
 mio: いい の 。 {急|いそ}がない の も 、 {練習|れんしゅう} の うち 。 || That's fine. Not hurrying is part of the practice too.
 !end
 :ren
+!gesture ren palm
 ren: {灯守|ひもり} の {帳面|ちょうめん} に は 、 {余白|よはく} が あります 。 {次|つぎ} の {灯守|ひもり} へ の {書|か}き{込|こ}み の ため の 。 || A lantern keeper's register has margins. For notes to the next keeper.
+!gesture ren glasses
 ?(sa_ren_took) ren: {師匠|ししょう} の {余白|よはく} は 、 {字|じ} が {右|みぎ} に {跳|は}ねて いて 、 {読|よ}む と {顔|かお} が {浮|う}かびます 。 || My teacher's margins kick to the right. When I read them, I can see the face.
 ?(!sa_ren_took) ren: {師匠|ししょう} の {余白|よはく} は 、 {顔|かお} を {知|し}らなくて も 、 {声|こえ} が {聞|き}こえる {字|じ} でした 。 || My teacher's margins were written so you could hear the voice, even without knowing the face.
 ren: わたし たち も 、 {一枚|いちまい} {書|か}きません か 。 {書|か}かれて いない {道|みち} で 、 {実際|じっさい} に {見|み}た こと から 。 || Shall we write one too? From something we actually see on an unwritten road.
+?(bond>=trusted) !gesture ren aside
 ?(bond>=trusted) ren[smirk]: {方角|ほうがく} の {記述|きじゅつ} は 、 あなた に お{願|ねが}い します 。 {念|ねん} の ため 。 || Directions I'll leave to you. Just to be safe.
+!gesture ren size
 ren: {確|たし}か な こと を {書|か}く か 。 それとも 、 {分|わ}からない こと を 、 {分|わ}からない と {正直|しょうじき} に {書|か}く か 。 || Do we write down something certain? Or write down something we don't know, and say honestly that we don't?
 !hook pages_choose theme
 !if pages.pick=later -> rlater
 ?(pages.pick=sure) ren: {確|たし}か な こと 。 …… {方角|ほうがく} {以外|いがい} で 、 {探|さが}しましょう 。 || Something certain. …We'll look for one that isn't about directions.
+?(pages.pick=unsure) !gesture ren nod pc
 ?(pages.pick=unsure) ren[smile]: {分|わ}からない こと を {分|わ}からない と {書|か}く 。 {灯守|ひもり} に は 、 {一番|いちばん} {難|むずか}しい {仕事|しごと} です 。 {好|す}き です 。 || Writing what we don't know as not known. The hardest job a lantern keeper has. I like it.
 ren: {次|つぎ} の {道|みち} で 、 {書|か}き{留|と}める もの を {一|ひと}つ {見|み}つけましょう 。 {野営|やえい} の {時|とき} に 、 {相談|そうだん} を 。 || On the next road, let's find one thing worth writing down. We can talk it over at camp.
 !end
@@ -130901,14 +130982,21 @@ ren: {次|つぎ} の {道|みち} で 、 {書|か}き{留|と}める もの �
 ren: {承知|しょうち} しました 。 {余白|よはく} は 、 {逃|に}げません 。 || Understood. The margins aren't going anywhere.
 !end
 :suzu
+!gesture suzu size
 suzu: ねえ 、 {芝居|しばい} に は {大|おお}きな {場面|ばめん} の {間|あいだ} に 、 {小|ちい}さな {場面|ばめん} が ある の 。 {誰|だれ} も {書|か}き{残|のこ}さない やつ 。 || You know, in a play there are small scenes between the big ones. The ones nobody ever writes down.
+!gesture suzu palm
 suzu: {書|か}かれて いない {道|みち} で 、 そういう {場面|ばめん} を {一|ひと}つ {拾|ひろ}って こない ？ {本当|ほんとう} に あった こと だけ 。 {嘘|うそ} は {一|ひと}つ も なし 。 || How about we bring one of those back from an unwritten road? Only something that really happens. Not a single lie.
+?(bond>=trusted) !gesture suzu laugh
 ?(bond>=trusted) suzu[smile]: {相方|あいかた} が あなた なら 、 {台本|だいほん} なし でも {怖|こわ}くない し 。 || With you as my partner, even no script isn't scary.
+!gesture suzu shrug
 suzu: {笑|わら}える {場面|ばめん} に する か 、 {静|しず}か な {場面|ばめん} に する か 。 あなた は {演|えん}じなくて いい から ね 。 || A funny scene, or a quiet one? And you don't have to act in it.
 !hook pages_choose theme
 !if pages.pick=later -> slater
+?(pages.pick=funny) !gesture suzu celebrate
 ?(pages.pick=funny) suzu[laugh]: {笑|わら}える {方|ほう} ！ {台本|だいほん} なし で {笑|わら}える の が 、 {一番|いちばん} {難|むずか}しい の よ 。 || Funny it is! Getting a laugh without a script is the hardest thing there is.
+?(pages.pick=quiet) !gesture suzu nod pc
 ?(pages.pick=quiet) suzu[smile]: {静|しず}か な {方|ほう} 。 …… {舞台|ぶたい} で は いつも {削|けず}られる ところ 。 {今度|こんど} は 、 {残|のこ}そう 。 || The quiet one. …The bit that always gets cut on stage. This time we keep it.
+!gesture suzu check prop=accountbook
 suzu: {次|つぎ} の {道|みち} で {何|なに}か {起|お}きたら 、 {焚|た}き{火|び} の {前|まえ} で {話|はな}そう 。 {帳簿|ちょうぼ} は わたし が つける 。 || If something happens on the next road, let's talk it over by the fire. I'll keep the books.
 !end
 :slater
@@ -131828,32 +131916,49 @@ var RB = (globalThis.RB = globalThis.RB || {});
 ?(party=suzu) suzu: ね 、 {大工|だいく} さん の {家|いえ} の {横|よこ} 。 {猫|ねこ} が {出|で}たり {入|はい}ったり してる 。 || Look, by the carpenter's house. A cat, in and out, in and out.
 
 @scene pets.cat.cat
+# Staged: you lean in to watch the cat creep in and back off; your companion's own answer (Nao points at the
+# knocking screen, Mio leans in to the cat, Ren points at the screen, Suzu laughs: in, out, in, out). Once it is
+# settled: you look at it; offering a hand, you get down low to it (a kneel held); waiting, you sit down a little
+# way off. Then Nao's nod, Mio's laugh behind her hand, Ren's glasses (envious of a cat's sense of direction),
+# Suzu's small celebration; not now, you get up and look at its corner.
 !if var.pet_cat>=2 -> settled
+!gesture pc observe 15,23 hold
 narr: {茶|ちゃ}トラ の {猫|ねこ} が 、 {大工|だいく} の {家|いえ} の {軒下|のきした} に {近|ちか}づいて は 、 また {離|はな}れる 。 || A ginger cat keeps creeping in under the carpenter's eaves, then backing out again.
 narr: {立|た}てかけた すだれ が {風|かぜ} で {揺|ゆ}れて 、 {壁|かべ} に コトン と {当|あ}たる 。 その たびに 、 {猫|ねこ} は {身|み} を {縮|ちぢ}める 。 || A reed screen leaning there swings in the draught and knocks against the wall. Each time, the cat flinches away.
+?(party=nao) !gesture nao point 14,23
 ?(party=nao) nao: あの すだれ だな 。 {鳴|な}る たびに {逃|に}げてる 。 || It's that screen. Every time it knocks, off it goes.
+?(party=mio) !gesture mio observe 15,23
 ?(party=mio) mio: {乾|かわ}いた {場所|ばしょ} が ほしい だけ なのに ね 。 || All it wants is somewhere dry.
+?(party=ren) !gesture ren point 14,23
 ?(party=ren) ren: {風|かぜ} の {通|とお}り{道|みち} に 、 {落|お}ち{着|つ}かない {物|もの} が {一|ひと}つ 。 あれ です ね 。 || One restless thing in the draught's path. That's it, isn't it.
+?(party=suzu) !gesture suzu laugh
 ?(party=suzu) suzu: {入|はい}って は {出|で}て 、 {入|はい}って は {出|で}て 。 {舞台|ぶたい} の {袖|そで} で {待|ま}ってる みたい 。 || In, out, in, out. Like waiting in the wings.
 !var pet_cat = 1
 !end
 :settled
+!gesture pc observe 15,23
 narr: {猫|ねこ} は {乾|かわ}いた {隅|すみ} で {丸|まる}く なって 、 {目|め} を {細|ほそ}めて こちら を {見|み}て いる 。 || The cat is curled up in the dry corner, watching you through half-closed eyes.
 !choice
 * そっと {手|て} を {低|ひく}く {出|だ}す || Offer a hand, slowly and low. -> hand
 * {近|ちか}く に {座|すわ}って {待|ま}つ || Sit down nearby and wait. -> sit
 * そっと して おく || Leave it be. -> end
 :hand
+!gesture pc kneel 15,23 hold
 narr: {急|いそ}がず に {手|て} を {出|だ}す 。 {猫|ねこ} は しばらく {匂|にお}い を かいで から 、 {頭|あたま} を {手|て} に {押|お}しつけた 。 || You hold out a hand and don't hurry. After a while the cat sniffs it, then pushes its head into your palm.
 !goto met
 :sit
+!pose pc sit
 narr: {少|すこ}し {離|はな}れて 、 {腰|こし} を {下|お}ろす 。 {風|かぜ} の {音|おと} だけ が する 。 || You sit down a little way off. There is only the sound of the wind.
 narr: やがて {猫|ねこ} は {起|お}き{上|あ}がって 、 あなた の {横|よこ} に {来|き}て {座|すわ}った 。 || In time the cat gets up, comes over, and sits down beside you.
 :met
 !hook pet_vig cat near
+?(party=nao) !gesture nao nod pc
 ?(party=nao) nao[smirk]: {気|き} に {入|い}られた な 。 || It likes you.
+?(party=mio) !gesture mio laugh
 ?(party=mio) mio[smile]: {怖|こわ}くない って 、 わかった みたい 。 || I think it knows you're not frightening.
+?(party=ren) !gesture ren glasses
 ?(party=ren) ren: {猫|ねこ} は {道|みち} に {迷|まよ}わない そう です 。 {少|すこ}し うらやましい 。 || They say cats never lose their way. I'm a little envious.
+?(party=suzu) !gesture suzu celebrate
 ?(party=suzu) suzu[laugh]: {客席|きゃくせき} が {一|ひと}つ 、 {埋|う}まった ! || One seat in the house, taken!
 narr: {猫|ねこ} は あなた を {見上|みあ}げて 、 {動|うご}かない 。 {一緒|いっしょ} に {来|く}る {気|き} が ある よう だ 。 || The cat looks up at you and doesn't move off. It seems willing to come along.
 !choice
@@ -131864,10 +131969,17 @@ narr: {猫|ねこ} は あなた を {見上|みあ}げて 、 {動|うご}か�
 !end
 :notnow
 !hook pet_vig cat back
+!pose pc -
+!gesture pc observe 15,23
 narr: {猫|ねこ} は {隅|すみ} に {戻|もど}って 、 また {丸|まる}く なった 。 ここ に {来|く}れば 、 また {会|あ}える 。 || The cat goes back to its corner and curls up again. It will be here whenever you come by.
 
 @scene pets.cat.screen
+# Staged: you lean in to the loose reed screen and stay looking at its foot and the cord; set back on its stone,
+# you bend to its foot (a kneel); tied to the nail, you reach up to it. Your companion's own answer (Nao's nod,
+# Mio points to the cat coming in, Ren's nod for the small jobs, Suzu's small celebration), and you turn to
+# watch the cat curl up in its corner. Steady already, you look at it.
 !if var.pet_cat>=2 -> fixed
+!gesture pc observe 14,23 hold
 narr: {古|ふる}い すだれ が 、 {大工|だいく} の {家|いえ} の {壁|かべ} に {立|た}てかけて ある 。 {下|した} の {端|はし} が {石|いし} から {外|はず}れて いて 、 {風|かぜ} が {吹|ふ}く と {揺|ゆ}れる 。 || An old reed screen leans against the carpenter's wall. Its foot has slipped off the stone it stood on, so it swings whenever the wind blows.
 narr: {軒|のき} に は {古|ふる}い {釘|くぎ} が あって 、 すだれ の {上|うえ} から {紐|ひも} が {垂|た}れて いる 。 || There's an old nail under the eaves, and a cord hangs loose from the top of the screen.
 !var pet_cat = 1
@@ -131876,22 +131988,30 @@ narr: {軒|のき} に は {古|ふる}い {釘|くぎ} が あって 、 すだ
 * {紐|ひも} を {釘|くぎ} に {結|むす}ぶ || Tie the cord to the nail. -> tie
 * そのまま に して おく || Leave it for now. -> end
 :stone
+!gesture pc kneel 14,23
 narr: すだれ の {下|した} を {平|たい}らな {石|いし} の {上|うえ} に {戻|もど}す 。 もう {揺|ゆ}れない 。 || You set the foot of the screen back on the flat stone. It stops swinging.
 !var pet_cat = 2
 !set pet_cat_by_stone
 !goto after
 :tie
+!gesture pc stretch
 narr: {紐|ひも} を {釘|くぎ} に しっかり {結|むす}ぶ 。 すだれ は {壁|かべ} に {沿|そ}って {静|しず}か に なった 。 || You tie the cord firmly to the nail. The screen lies quiet against the wall.
 !var pet_cat = 2
 !set pet_cat_by_cord
 :after
+?(party=nao) !gesture nao nod pc
 ?(party=nao) nao: よし 。 これで {音|おと} は しない 。 || There. No more knocking.
+?(party=mio) !gesture mio point 15,23
 ?(party=mio) mio: {静|しず}か に なった ね 。 {見|み}て 、 {来|く}る よ 。 || It's quiet now. Look — here it comes.
+?(party=ren) !gesture ren nod pc
 ?(party=ren) ren: {小|ちい}さな {仕事|しごと} ほど 、 {大事|だいじ} です 。 || The small jobs matter most.
+?(party=suzu) !gesture suzu celebrate
 ?(party=suzu) suzu: {舞台|ぶたい} {装置|そうち} 、 {固定|こてい} {完了|かんりょう} ! || Set piece secured!
+!look pc 15,23
 narr: {猫|ねこ} が {少|すこ}し ずつ {軒下|のきした} に {入|はい}って きて 、 {乾|かわ}いた {隅|すみ} で {丸|まる}く なる 。 || Bit by bit the cat comes in under the eaves and curls up in the dry corner.
 !end
 :fixed
+!gesture pc observe 14,23
 ?(pet_cat_by_cord) narr: すだれ は {釘|くぎ} に {結|むす}ばれて 、 {静|しず}か に {立|た}って いる 。 || The screen stands quietly, tied to the nail.
 ?(!pet_cat_by_cord) narr: すだれ は {石|いし} の {上|うえ} に {戻|もど}って 、 {静|しず}か に {立|た}って いる 。 || The screen stands quietly, back on its stone.
 `, 'pets/cat');
@@ -132057,32 +132177,49 @@ var RB = (globalThis.RB = globalThis.RB || {});
 ?(party=suzu) suzu: {岸壁|がんぺき} の {端|はし} 、 {小鳥|ことり} が {着地|ちゃくち} に {失敗|しっぱい} してる 。 {何回目|なんかいめ} かな 。 || End of the quay — a little bird fluffing its landing. How many tries is that?
 
 @scene pets.bird.bird
+# Staged: you lean in to watch the bird miss its landing; your companion's own answer (Nao points at its post,
+# Mio's hand to her chest, Ren's hand to the chin, Suzu laughs at the actor who trips on the same board). Once it
+# is settled: you look at it; standing still beside the post, you only listen to the waves; or you hold out an
+# open palm, low. Then Nao's open hand (one letter's weight), Mio's nod, Ren's glance aside (birds read the road
+# better), Suzu's small celebration; not now, you look at its post.
 !if var.pet_bird>=2 -> settled
+!gesture pc observe 43,26 hold
 narr: {茶色|ちゃいろ} の {小鳥|ことり} が 、 {古|ふる}い {杭|くい} の {上|うえ} に {止|と}まろう と する 。 {風|かぜ} が {吹|ふ}く と 、 {杭|くい} の リボン が {跳|は}ねて 、 {鳥|とり} は {砂|すな} の {上|うえ} に {逃|に}げる 。 || A small brown bird tries to land on top of the old post. When the wind gusts, the ribbon on the post jumps and the bird flees to the sand.
+?(party=nao) !gesture nao point 43,26
 ?(party=nao) nao: {好|す}きな {場所|ばしょ} が ある ん だな 。 {他|ほか} の {杭|くい} じゃ だめ らしい 。 || It's got a favourite spot. No other post will do, apparently.
+?(party=mio) !gesture mio guard
 ?(party=mio) mio: あの リボン が {怖|こわ}い の ね 。 || It's the ribbon it's afraid of.
+?(party=ren) !gesture ren chin
 ?(party=ren) ren: {帰|かえ}る {場所|ばしょ} が 、 {落|お}ち{着|つ}かない 。 {困|こま}り ます ね 。 || The place it comes back to won't keep still. That's hard.
+?(party=suzu) !gesture suzu laugh
 ?(party=suzu) suzu: {毎回|まいかい} {同|おな}じ {所|ところ} で {転|ころ}ぶ {役者|やくしゃ} みたい 。 || Like an actor who trips on the same board every night.
 !var pet_bird = 1
 !end
 :settled
+!gesture pc observe 43,26
 narr: {小鳥|ことり} は {杭|くい} の {上|うえ} で {羽|はね} を ふくらませて 、 こちら を {見|み}て いる 。 || The bird sits on top of the post with its feathers fluffed, watching you.
 !choice
 * {杭|くい} の {横|よこ} で じっと {待|ま}つ || Stand still beside the post and wait. -> still
 * {手|て}のひら を {上|うえ} に {向|む}けて {出|だ}す || Hold out an open palm. -> palm
 * そっと して おく || Leave it be. -> end
 :still
+!gesture pc -
 narr: {波|なみ} の {音|おと} を {聞|き}きながら 、 しばらく {動|うご}かず に いる 。 || You stay still a while, listening to the waves.
 narr: {小鳥|ことり} は {首|くび} を かしげて 、 ぴょん と {近|ちか}く に {降|お}りて きた 。 || The bird tilts its head, then hops down close to you.
 !goto met
 :palm
+!gesture pc palm 43,26
 narr: {手|て}のひら を {上|うえ} に {向|む}けて 、 {低|ひく}く {出|だ}す 。 {何|なに} も {持|も}って いない こと が 、 {鳥|とり} に も {見|み}える 。 || You hold out an open palm, low. The bird can see there is nothing in it.
 narr: {小鳥|ことり} は {少|すこ}し {迷|まよ}って から 、 {指|ゆび} の {先|さき} に {一度|いちど} だけ {止|と}まって 、 {横|よこ} に {降|お}りた 。 || After a moment's doubt it perches once on your fingertip, then drops down beside you.
 :met
 !hook pet_vig bird near
+?(party=nao) !gesture nao palm
 ?(party=nao) nao: {軽|かる}い な 。 {手紙|てがみ} {一通|いっつう} ぐらい だ 。 || Light thing. About one letter's worth.
+?(party=mio) !gesture mio nod pc
 ?(party=mio) mio[smile]: {落|お}ち{着|つ}いた {顔|かお} を してる 。 || It looks settled now.
+?(party=ren) !gesture ren aside
 ?(party=ren) ren: {鳥|とり} は {道|みち} を {空|そら} から {見|み}ます 。 {私|わたし} より ずっと {確|たし}か です 。 || Birds see the road from the sky. Far more reliably than I do.
+?(party=suzu) !gesture suzu celebrate
 ?(party=suzu) suzu[laugh]: {最前列|さいぜんれつ} の {席|せき} 、 {確保|かくほ} ! || Front-row seat, secured!
 narr: {小鳥|ことり} は {一|ひと}つ {鳴|な}いて 、 あなた の {肩|かた} の {高|たか}さ まで {飛|と}んで 、 また {降|お}りた 。 ついて {来|く}る つもり の よう だ 。 || The bird gives one chirp — you see its beak open — flies up to your shoulder's height and settles again. It seems to mean to come along.
 !choice
@@ -132093,11 +132230,17 @@ narr: {小鳥|ことり} は {一|ひと}つ {鳴|な}いて 、 あなた の {
 !end
 :notnow
 !hook pet_vig bird back
+!gesture pc observe 43,26
 narr: {小鳥|ことり} は {杭|くい} の {上|うえ} に {戻|もど}った 。 ここ に {来|く}れば 、 また {会|あ}える 。 || The bird goes back to its post. It will be here whenever you come by.
 
 @scene pets.bird.post
+# Staged: you lean in to the low mooring post and the flapping ribbon; working the knot loose, you crouch to it
+# (a kneel); winding the ribbon round, you stoop over the post to tuck it in. Your companion's own answer (Nao's nod, Mio points to
+# the post the bird can land on now, Ren's nod, Suzu's small celebration), and you look up as the bird lands.
+# Steady already, you look at the post.
 !if var.pet_bird>=2&!pet.bird -> bird
 !if var.pet_bird>=2 -> fixed
+!gesture pc observe 43,26 hold
 narr: {岸壁|がんぺき} の {端|はし} に 、 {古|ふる}い {杭|くい} が {立|た}って いる 。 {杭|くい} の {釘|くぎ} に 、 {色|いろ} の あせた リボン が {結|むす}ばれた まま に なって いる 。 || An old mooring post stands at the end of the quay. A faded ribbon is still knotted to a nail on it.
 narr: {風|かぜ} が {吹|ふ}く たびに 、 リボン の {端|はし} が {跳|は}ねて 、 {杭|くい} の {上|うえ} を {払|はら}う 。 {結|むす}び{目|め} は {潮|しお} で {固|かた}く なって いる 。 || Each gust flips the ribbon's end up across the top of the post. The knot has gone stiff with salt.
 !var pet_bird = 1
@@ -132106,25 +132249,33 @@ narr: {風|かぜ} が {吹|ふ}く たびに 、 リボン の {端|はし} が
 * リボン を {杭|くい} に {巻|ま}きつけて 、 {端|はし} を {挟|はさ}む || Wind the ribbon round the post and tuck the end in. -> tuck
 * そのまま に して おく || Leave it for now. -> end
 :untie
+!gesture pc kneel 43,26
 narr: {固|かた}い {結|むす}び{目|め} を 、 {少|すこ}し ずつ ゆるめる 。 やがて ほどけて 、 リボン は あなた の {手|て} の {中|なか} に {残|のこ}った 。 || Bit by bit you ease the stiff knot. At last it gives, and the ribbon is left in your hand.
 !var pet_bird = 2
 !set pet_bird_untied
 !goto after
 :tuck
+!gesture pc bend 43,26
 narr: リボン を {杭|くい} に {二回|にかい} {巻|ま}いて 、 {端|はし} を {巻|ま}いた {下|した} に {挟|はさ}む 。 もう {跳|は}ねない 。 || You wind the ribbon twice round the post and tuck the end under the turns. It can't flap now.
 !var pet_bird = 2
 !set pet_bird_tucked
 :after
+?(party=nao) !gesture nao nod pc
 ?(party=nao) nao: よし 。 {着陸|ちゃくりく} {許可|きょか} {出|で}た ぞ 。 || Right. Cleared to land.
+?(party=mio) !gesture mio point 43,26
 ?(party=mio) mio: これで {止|と}まれる ね 。 || Now it can land.
+?(party=ren) !gesture ren nod pc
 ?(party=ren) ren: {杭|くい} が 、 {杭|くい} に {戻|もど}りました 。 || The post is a post again.
+?(party=suzu) !gesture suzu celebrate
 ?(party=suzu) suzu: {舞台|ぶたい} の {片付|かたづ}け 、 {完了|かんりょう} ! || Stage cleared!
+!look pc 43,26
 narr: {小鳥|ことり} が {杭|くい} の {上|うえ} に {降|お}りて 、 {今度|こんど} は {逃|に}げない 。 {羽|はね} を ふくらませて 、 {落|お}ち{着|つ}いた 。 || The bird drops onto the post, and this time it stays. It fluffs its feathers and settles.
 !end
 :bird
 !call pets.bird.bird
 !end
 :fixed
+!gesture pc observe 43,26
 ?(pet_bird_tucked) narr: リボン は {杭|くい} に {巻|ま}きついて 、 もう {跳|は}ねない 。 || The ribbon is wound round the post and doesn't flap any more.
 ?(!pet_bird_tucked) narr: {杭|くい} の {釘|くぎ} に は 、 もう {何|なに} も {結|むす}ばれて いない 。 || Nothing is tied to the nail any more.
 `, 'pets/bird');

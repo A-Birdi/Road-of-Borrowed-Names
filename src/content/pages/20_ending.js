@@ -178,6 +178,10 @@ narr: スズ は {帳簿|ちょうぼ} を {開|ひら}いて 、 {最後|さい
 # A Conversation We Still Owe Ourselves (§10.4): an older postgame save, told now
 # ======================================================================================
 @scene pages.enter_retro
+# Staged (positions only; the conversation is pages.retro): walking into the Hall, your companion steps off the
+# doorway to your side and you turn to them.
+?(comp) !walkto comp 6 8 left
+?(comp) !look pc comp
 ?(comp=nao) nao: $name 。 {少|すこ}し いい か 。 {言|い}いそびれてた こと が ある 。 || $name. Got a minute? There's something I never got round to saying.
 ?(comp=mio) mio: $name 、 {少|すこ}し {座|すわ}らない ？ {話|はな}して おきたい こと が ある の 。 || $name, sit down a moment? There's something I'd like to talk about.
 ?(comp=ren) ren: $name 。 {少|すこ}し {時間|じかん} を ください 。 {言|い}って おく べき こと が あります 。 || $name. Give me a little time. There's something I ought to say.
@@ -195,49 +199,78 @@ narr: スズ は {帳簿|ちょうぼ} を {開|ひら}いて 、 {最後|さい
 !call pages.retro
 
 @scene pages.retro
+# Staged (anywhere it is told: no position is assumed): you turn to your companion and the narration's action is
+# theirs. Nao sets the satchel down (a bend), turns back to you with an open hand, nods at choosing the roads
+# together, and shoulders the satchel, looking one way and the other. Mio sits down first, nods at the plan,
+# then gets up to straighten the ledgers. Ren bends to set the lamp down and cleans their glasses (the one
+# adjustment of the scene), explains with an open hand, then puts their own lamp in your hand. Suzu breathes
+# out like a costume coming off, her head goes down for the hard lines, an open hand for the next act, and she
+# writes the line in her ledger.
 !hook pages_retro_begin
+?(comp) !look pc comp
 !if comp=nao -> nao
 !if comp=mio -> mio
 !if comp=ren -> ren
 !if comp=suzu -> suzu
 !end
 :nao
+!gesture nao bend down
 narr: ナオ は {鞄|かばん} を {下|お}ろして 、 {灯|あか}り{堂|どう} の {壁|かべ} に もたれた 。 || Nao sets the satchel down and leans against the Lantern Hall wall.
+!look nao pc
+!gesture nao palm
 nao: {旅|たび} が {終|お}わって から 、 {配達|はいたつ} ばっかり で 、 ちゃんと {話|はな}して なかった な 。 {今|いま} {言|い}って おく 。 || Since the journey ended it's been nothing but deliveries. We never properly talked. I'll say it now.
 !call end.nao.core
 !call end.nao.reply
+!gesture nao nod pc
 nao: {地図|ちず} に ない {道|みち} も 、 {潮硝子|しおがらす} {回|まわ}り も 、 {次|つぎ} は {二人|ふたり} で {選|えら}ぼう 。 {断|ことわ}る {理由|りゆう} は 、 {今|いま} の ところ ない 。 || Roads that aren't on any map, the Saltglass round — next time, we choose them together. So far I haven't got a reason to say no.
+!gesture nao strap left then=lookbetween and=right
 narr: ナオ は {鞄|かばん} を {背負|せお}い{直|なお}して 、 {出口|でぐち} を {確|たし}かめ 、 それから {入口|いりぐち} も {確|たし}かめた 。 || Nao shoulders the satchel, checks the exit, and then checks the entrance too.
 !call end.pet.nao
 !hook pages_end_done retro
 !end
 :mio
+!pose mio sit
 narr: ミオ は {灯|あか}り{堂|どう} の {長椅子|ながいす} に {腰|こし} を {下|お}ろした 。 {珍|めずら}しく 、 {先|さき} に {座|すわ}った 。 || Mio sits down on a bench in the Lantern Hall. For once, she sits down first.
 mio: {旅|たび} が {終|お}わって から 、 {店|みせ} の こと ばかり で 、 ちゃんと {話|はな}して なかった 。 …… {少|すこ}し だけ {聞|き}いて 。 || Since the journey ended, it's been all about the shop. We never properly talked. …Just listen for a bit.
 !call end.mio.core
 !call end.mio.reply
+!gesture mio nod pc
 mio: {書|か}かれて いない {道|みち} に {出|で}る {日|ひ} は 、 {包帯|ほうたい} と お{茶|ちゃ} を {持|も}って 。 {出|で}ない {日|ひ} は 、 {茶屋|ちゃや} で {何|なに} も しない 。 どっち も 、 {一緒|いっしょ} に 。 || On days we go out on the unwritten roads, bandages and tea. On days we don't, doing nothing at the teahouse. Either way, together.
+!pose mio -
+!gesture mio tidy
 narr: ミオ は ツル の {机|つくえ} の {帳面|ちょうめん} を {揃|そろ}え かけて 、 {手|て} を {止|と}めた 。 {一冊|いっさつ} だけ 、 {曲|ま}がった まま に した 。 || Mio starts to straighten the ledgers on Tsuru's desk, then stops. She leaves one of them crooked.
 !call end.pet.mio
 !hook pages_end_done retro
 !end
 :ren
+!gesture ren bend down then=glasses
 narr: レン は {灯|ひ} を {床|ゆか} に {置|お}いて 、 {眼鏡|めがね} を {拭|ふ}いた 。 {拭|ふ}く {必要|ひつよう} は なかった 。 || Ren sets the lamp down on the floor and cleans their glasses. They didn't need cleaning.
+!look ren pc
+!gesture ren palm
 ren: {橋|はし} を {渡|わた}って {帰|かえ}って きた {日|ひ} 、 {言|い}う べき こと を {言|い}い{忘|わす}れて いました 。 {記録|きろく} の {漏|も}れ は 、 {直|なお}さない と 。 || The day we crossed the bridge home, I forgot to say something I should have. Gaps in the record have to be fixed.
 !call end.ren.pq
 !call end.ren.core
 !call end.ren.reply
+!gesture ren nod pc
 ren: ツル さん の {帳面|ちょうめん} の {道|みち} に は 、 まだ {歩|ある}いて いない もの が あります 。 あなた が {地図|ちず} を 、 わたし が {灯|ひ} を 。 || There are still roads in Tsuru's ledger we haven't walked. You take the map, I'll take the lamp.
+!prop ren lantern
+!gesture ren handover pc
+!gesture pc receive ren
 narr: レン は {灯|あか}り{堂|どう} の {灯籠|とうろう} の {芯|しん} を {切|き}り{揃|そろ}え 、 {少|すこ}し {迷|まよ}って から 、 {自分|じぶん} の {灯|ひ} を $name に {持|も}たせた 。 || Ren trims the wick of the Hall's lantern and, after a moment's hesitation, hands you their own lamp to hold.
 !call end.pet.ren
 !hook pages_end_done retro
 !end
 :suzu
+!gesture suzu exhale
 narr: スズ は {声|こえ} の {張|は}り を {落|お}とした 。 {衣装|いしょう} を {脱|ぬ}ぐ みたい に 。 || Suzu lets her voice drop, like taking off a costume.
+!look suzu pc
+!gesture suzu lowered
 suzu: {幕|まく} が {下|お}りた {後|あと} の {台詞|せりふ} って 、 {一番|いちばん} {難|むずか}しい の 。 だから {後回|あとまわ}し に して た 。 {今|いま} {言|い}う ね 。 || The lines after the curtain comes down are the hardest. So I kept putting them off. I'll say them now.
 !call end.suzu.core
 !call end.suzu.reply
+!gesture suzu palm
 suzu: {次|つぎ} の {幕|まく} は 、 {書|か}かれて いない {道|みち} で も 、 ハナ の {茶屋|ちゃや} で も いい 。 あなた は {見|み}てる だけ で いい から ね 。 || The next act can be on the unwritten roads or at Hana's teahouse. You only have to watch.
+!gesture suzu write
 narr: スズ は {帳簿|ちょうぼ} に {一行|いちぎょう} {書|か}き{足|た}した 。 「 {言|い}いそびれた {台詞|せりふ} 、 {一|ひと}つ 。 {支払|しはら}い {済|ず}み 。 」 || Suzu adds a line to her ledger: "One line left unsaid. Paid."
 !call end.pet.suzu
 !hook pages_end_done retro
@@ -247,6 +280,10 @@ narr: スズ は {帳簿|ちょうぼ} に {一行|いちぎょう} {書|か}き
 # An Unfinished Conversation (§10.4): a personal quest finished after the ending
 # ======================================================================================
 @scene pages.enter_unfinished
+# Staged (positions only; the conversation is pages.unfinished): your companion steps off the doorway to your
+# side and you turn to them.
+?(comp) !walkto comp 6 8 left
+?(comp) !look pc comp
 ?(comp=nao&memory.ending:nao) nao: $name 。 {橋|はし} の {上|うえ} の {話|はなし} の 、 {続|つづ}き が ある 。 || $name. There's more to what I said on the bridge.
 ?(comp=nao&!memory.ending:nao) nao: $name 。 この {前|まえ} の {話|はなし} の 、 {続|つづ}き が ある 。 || $name. There's more to what I said the other day.
 ?(comp=mio) mio: $name 、 {聞|き}いて ほしい こと が ある の 。 {前|まえ} の {話|はなし} の {続|つづ}き 。 || $name, there's something I want you to hear. The rest of what I said before.
@@ -261,22 +298,32 @@ narr: スズ は {帳簿|ちょうぼ} に {一行|いちぎょう} {書|か}き
 !call pages.unfinished
 
 @scene pages.unfinished
+# Staged (anywhere it is told): you turn to your companion. Nao pats the lighter satchel, nods at Umi's one line,
+# and pats it again; Mio laughs as she tells it, her hands fidget over how they shook, and she thanks you with
+# both hands for the hand on her back.
+?(comp) !look pc comp
 !if comp=nao -> nao
 !if comp=mio -> mio
 !end
 :nao
+!gesture nao strap
 narr: ナオ が 、 {鞄|かばん} の {底|そこ} を {軽|かる}く {叩|たた}いた 。 {手紙|てがみ} の {分|ぶん} だけ 、 {軽|かる}く なって いる 。 || Nao gives the bottom of the satchel a light pat. It's one letter lighter.
 ?(memory.ending:nao) nao: {橋|はし} の {上|うえ} で {言|い}った {手紙|てがみ} 、 {届|とど}けた 。 || That letter I mentioned on the bridge — I delivered it.
 ?(!memory.ending:nao) nao: {前|まえ} に {言|い}った {手紙|てがみ} 、 {届|とど}けた 。 || That letter I mentioned before — I delivered it.
 nao: ウミ は {一行|いちぎょう} だけ {書|か}いた 。 「 {読|よ}みました 」 って 。 {許|ゆる}す とも 、 {許|ゆる}さない とも {書|か}いて なかった 。 || Umi wrote one line. "I read it." Didn't say she forgives him, didn't say she doesn't.
+!gesture nao nod pc
 nao: それ で いい 。 {決|き}めた の は ウミ だ 。 {配達人|はいたつにん} の {仕事|しごと} は 、 そこ まで 。 || That's right. Umi decided. That's where a courier's job ends.
+!gesture nao strap
 nao[smile]: …… {途中|とちゅう} で {止|と}まってた {話|はなし} 、 これ で {最後|さいご} まで {言|い}えた な 。 {鞄|かばん} が {軽|かる}い 。 || …So I've finally finished what I started saying. The bag's lighter.
 !hook pages_unfinished_done
 !end
 :mio
+!gesture mio laugh
 mio[laugh]: {聞|き}いて 。 {言|い}えた の 。 タダシ さん に 、 {自分|じぶん} の {声|こえ} で 。 「 お{断|ことわ}り します 」 って 。 || Listen. I said it. To Tadashi, in my own voice. "I refuse."
 mio: {前|まえ} に 、 まだ {返事|へんじ} して いない {頼|たの}み{事|ごと} が ある って {言|い}った でしょ 。 あれ 、 {片付|かたづ}いた 。 || Remember I said there was still a request I hadn't answered? That's done now.
+!gesture mio fidget
 mio: {手|て} は 、 やっぱり {震|ふる}えた 。 でも 、 {声|こえ} は {震|ふる}えなかった 。 {少|すこ}し しか 。 || My hands shook, of course. But my voice didn't. Hardly at all.
+!gesture mio thanks pc
 mio[smile]: {背中|せなか} に {手|て} を {当|あ}てて くれて 、 ありがとう 。 {次|つぎ} は 、 わたし が {当|あ}てる {番|ばん} ね 。 || Thank you for the hand on my back. Next time, it's my turn.
 !hook pages_unfinished_done
 !end

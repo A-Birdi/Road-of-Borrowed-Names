@@ -14,24 +14,46 @@ var RB = (globalThis.RB = globalThis.RB || {});
 RB.script.add(`
 # ---- Page I: What Shall We Keep? ----------------------------------------------------------------
 @scene pages.enter_offer
+# Staged (positions only; the conversation is pages.offer): walking into the Hall, your companion steps off the
+# doorway to your side and you turn to them.
+?(comp) !walkto comp 6 8 left
+?(comp) !look pc comp
 !call pages.offer
 
 @scene pages.offer
+# Staged: the companion proposes the page in their own conversational gestures, one at a time. Nao points to
+# Tsuru's new ledger and turns back with an open hand, a head shake (knowing the way is not deciding for
+# someone), a glance aside at the trusted line, looks between you and the door for "which?", then a nod or a
+# hand to the satchel. Mio's hand at her chest over the loads she carried, an open hand, a touch to her hair at
+# resting, a laugh behind her hand at the trusted line, two hands for "this or that", then a nod or her flat
+# hand ("stop me"). Ren's open hand for the margins, the glasses for the teacher's hand, a glance aside about
+# directions, two hands for "certain or not", and a nod. Suzu's two showman's hands for the little scenes, an
+# open hand, a laugh, a shrug for "funny or quiet", then a small celebration or a nod,
+# and her account book for the fireside.
+?(comp) !look pc comp
 !if comp=nao -> nao
 !if comp=mio -> mio
 !if comp=ren -> ren
 !if comp=suzu -> suzu
 !end
 :nao
+!gesture nao point 7,7
 nao: ツル の {新|あたら}しい {帳面|ちょうめん} 、 {見|み}た か ？ {道|みち} が どこ へ {続|つづ}く か は {書|か}いて ある 。 でも 、 {帰|かえ}り{方|かた} は {誰|だれ} も {書|か}いて ない 。 || Seen Tsuru's new ledger? It says where the roads go. Nobody's written down how to get back.
+!look nao pc
+!gesture nao palm
 nao: だから 、 {二人|ふたり} で {一枚|いちまい} 、 {札|ふだ} を {作|つく}らない か 。 {本当|ほんとう} に {歩|ある}いた {道|みち} から 、 {一|ひと}つ だけ {選|えら}んで 。 || So how about the two of us make one card? From a road we actually walk. Just one thing from it.
+!gesture nao shake
 ?(quest.lf_nao=done) nao: ウミ の {時|とき} に {分|わ}かった 。 {道|みち} を {知|し}ってる の と 、 {人|ひと} の {代|か}わり に {決|き}める の は 、 {別|べつ} だ 。 そういう の を {書|か}いて おきたい 。 || Umi taught me something. Knowing a road and deciding for someone else are different things. That's the kind of thing I want written down.
 ?(!quest.lf_nao=done) nao: {道|みち} を {知|し}ってる の と 、 {人|ひと} の {代|か}わり に {決|き}める の は 、 {別|べつ} だ 。 {最近|さいきん} 、 よく そう {思|おも}う 。 そういう の を {書|か}いて おきたい 。 || Knowing a road and deciding for someone else are different things. I think about that a lot lately. That's the kind of thing I want written down.
+?(bond>=trusted) !gesture nao aside
 ?(bond>=trusted) nao[smirk]: {誰|だれ} に でも {頼|たの}む {話|はなし} じゃ ない けど な 。 || Not something I'd ask just anyone, mind.
+!gesture nao lookbetween pc and=5,9
 nao: {次|つぎ} に {歩|ある}く {誰|だれ}か の ため に する か 、 {自分|じぶん} たち の {帰|かえ}り{道|みち} の ため に する か 。 どっち が いい ？ || For whoever walks it next, or for finding our own way back. Which do you want?
 !hook pages_choose theme
 !if pages.pick=later -> nlater
+?(pages.pick=next) !gesture nao nod pc
 ?(pages.pick=next) nao[smile]: {道案内|みちあんない} か 。 {配達人|はいたつにん} の {得意|とくい} {分野|ぶんや} だ 。 {決|き}め{付|つ}けない {書|か}き{方|かた} を {考|かんが}えよう 。 || Directions, then. A courier's speciality. We'll work out how to write it without telling anyone what to do.
+?(pages.pick=back) !gesture nao strap
 ?(pages.pick=back) nao: {帰|かえ}り{道|みち} の {一言|ひとこと} 、 か 。 …… {鞄|かばん} に {入|い}れて おく の に ちょうど いい 。 || A line for the way back… Just the right size to keep in the bag.
 nao: {次|つぎ} に {書|か}かれて いない {道|みち} へ {出|で}たら 、 {本当|ほんとう} に あった こと を {一|ひと}つ {覚|おぼ}えて おこう 。 {焚|た}き{火|び} の {所|ところ} で {話|はな}そう 。 || Next time we're out on an unwritten road, let's remember one thing that really happens. We'll talk it over at the campfire.
 !end
@@ -39,15 +61,22 @@ nao: {次|つぎ} に {書|か}かれて いない {道|みち} へ {出|で}た
 nao: {急|いそ}ぐ {話|はなし} じゃ ない 。 {気|き} が {向|む}いたら 、 {声|こえ} を かけて くれ 。 || No rush. Say the word when you feel like it.
 !end
 :mio
+!gesture mio guard
 mio: ねえ 、 $name 。 {旅|たび} の {間|あいだ} 、 わたし は ずっと {誰|だれ}か の {荷物|にもつ} を {持|も}って いた {気|き} が する の 。 || You know, $name, all through the journey I felt like I was always carrying someone's load.
+!gesture mio palm
 mio: だから 、 {今度|こんど} は {荷|に} を {下|お}ろせた {場所|ばしょ} の こと を 、 {一枚|いちまい} {残|のこ}したい 。 {書|か}かれて いない {道|みち} で 、 {本当|ほんとう} に {休|やす}めた {所|ところ} を 。 || So this time I'd like to keep one page about a place where we could set things down. Somewhere on an unwritten road where we really rested.
+!gesture mio touchhair
 ?(quest.lf_mio=done) mio: {断|ことわ}る の を {覚|おぼ}えた から 、 {休|やす}む の も {覚|おぼ}えたい の 。 {順番|じゅんばん} と して は 、 {合|あ}ってる でしょ ？ || I've learned to say no, so I'd like to learn to rest too. That's the right order, isn't it?
 ?(!quest.lf_mio=done) mio: {休|やす}む の も 、 {断|ことわ}る の と {同|おな}じ で 、 {練習|れんしゅう} が いる みたい 。 || Resting seems to need practice too, same as saying no.
+?(bond>=trusted) !gesture mio laugh
 ?(bond>=trusted) mio[smile]: あなた と なら 、 {休|やす}む の が {上手|じょうず} に なれる {気|き} が する の 。 || With you, I think I could get good at resting.
+!gesture mio size
 mio: {休|やす}んで も {怖|こわ}くなかった {理由|りゆう} を {書|か}く か 、 {仕事|しごと} を {分|わ}け{合|あ}えた {理由|りゆう} を {書|か}く か 。 どっち に する ？ || Shall we write about why a pause felt safe, or about how we managed to share the work?
 !hook pages_choose theme
 !if pages.pick=later -> mlater
+?(pages.pick=pause) !gesture mio nod pc
 ?(pages.pick=pause) mio[smile]: うん 。 {休|やす}む {練習|れんしゅう} の {記録|きろく} ね 。 {処方|しょほう} より 、 ずっと {大事|だいじ} かも 。 || Mm. A record of practising rest. Maybe more important than any prescription.
+?(pages.pick=share) !gesture mio emphatic
 ?(pages.pick=share) mio: {分|わ}け{合|あ}う {方|ほう} ね 。 …… わたし が {全部|ぜんぶ} やろう と したら 、 {止|と}めて よ 。 || Sharing, then. …If I try to do everything myself, stop me.
 mio: {次|つぎ} の {道|みち} で 、 {一|ひと}つ だけ {覚|おぼ}えて おこう 。 {無理|むり} に じゃ なくて 、 {自然|しぜん} に 。 || On the next road, let's remember just one thing. Not forcing it — naturally.
 !end
@@ -55,15 +84,20 @@ mio: {次|つぎ} の {道|みち} で 、 {一|ひと}つ だけ {覚|おぼ}�
 mio: いい の 。 {急|いそ}がない の も 、 {練習|れんしゅう} の うち 。 || That's fine. Not hurrying is part of the practice too.
 !end
 :ren
+!gesture ren palm
 ren: {灯守|ひもり} の {帳面|ちょうめん} に は 、 {余白|よはく} が あります 。 {次|つぎ} の {灯守|ひもり} へ の {書|か}き{込|こ}み の ため の 。 || A lantern keeper's register has margins. For notes to the next keeper.
+!gesture ren glasses
 ?(sa_ren_took) ren: {師匠|ししょう} の {余白|よはく} は 、 {字|じ} が {右|みぎ} に {跳|は}ねて いて 、 {読|よ}む と {顔|かお} が {浮|う}かびます 。 || My teacher's margins kick to the right. When I read them, I can see the face.
 ?(!sa_ren_took) ren: {師匠|ししょう} の {余白|よはく} は 、 {顔|かお} を {知|し}らなくて も 、 {声|こえ} が {聞|き}こえる {字|じ} でした 。 || My teacher's margins were written so you could hear the voice, even without knowing the face.
 ren: わたし たち も 、 {一枚|いちまい} {書|か}きません か 。 {書|か}かれて いない {道|みち} で 、 {実際|じっさい} に {見|み}た こと から 。 || Shall we write one too? From something we actually see on an unwritten road.
+?(bond>=trusted) !gesture ren aside
 ?(bond>=trusted) ren[smirk]: {方角|ほうがく} の {記述|きじゅつ} は 、 あなた に お{願|ねが}い します 。 {念|ねん} の ため 。 || Directions I'll leave to you. Just to be safe.
+!gesture ren size
 ren: {確|たし}か な こと を {書|か}く か 。 それとも 、 {分|わ}からない こと を 、 {分|わ}からない と {正直|しょうじき} に {書|か}く か 。 || Do we write down something certain? Or write down something we don't know, and say honestly that we don't?
 !hook pages_choose theme
 !if pages.pick=later -> rlater
 ?(pages.pick=sure) ren: {確|たし}か な こと 。 …… {方角|ほうがく} {以外|いがい} で 、 {探|さが}しましょう 。 || Something certain. …We'll look for one that isn't about directions.
+?(pages.pick=unsure) !gesture ren nod pc
 ?(pages.pick=unsure) ren[smile]: {分|わ}からない こと を {分|わ}からない と {書|か}く 。 {灯守|ひもり} に は 、 {一番|いちばん} {難|むずか}しい {仕事|しごと} です 。 {好|す}き です 。 || Writing what we don't know as not known. The hardest job a lantern keeper has. I like it.
 ren: {次|つぎ} の {道|みち} で 、 {書|か}き{留|と}める もの を {一|ひと}つ {見|み}つけましょう 。 {野営|やえい} の {時|とき} に 、 {相談|そうだん} を 。 || On the next road, let's find one thing worth writing down. We can talk it over at camp.
 !end
@@ -71,14 +105,21 @@ ren: {次|つぎ} の {道|みち} で 、 {書|か}き{留|と}める もの �
 ren: {承知|しょうち} しました 。 {余白|よはく} は 、 {逃|に}げません 。 || Understood. The margins aren't going anywhere.
 !end
 :suzu
+!gesture suzu size
 suzu: ねえ 、 {芝居|しばい} に は {大|おお}きな {場面|ばめん} の {間|あいだ} に 、 {小|ちい}さな {場面|ばめん} が ある の 。 {誰|だれ} も {書|か}き{残|のこ}さない やつ 。 || You know, in a play there are small scenes between the big ones. The ones nobody ever writes down.
+!gesture suzu palm
 suzu: {書|か}かれて いない {道|みち} で 、 そういう {場面|ばめん} を {一|ひと}つ {拾|ひろ}って こない ？ {本当|ほんとう} に あった こと だけ 。 {嘘|うそ} は {一|ひと}つ も なし 。 || How about we bring one of those back from an unwritten road? Only something that really happens. Not a single lie.
+?(bond>=trusted) !gesture suzu laugh
 ?(bond>=trusted) suzu[smile]: {相方|あいかた} が あなた なら 、 {台本|だいほん} なし でも {怖|こわ}くない し 。 || With you as my partner, even no script isn't scary.
+!gesture suzu shrug
 suzu: {笑|わら}える {場面|ばめん} に する か 、 {静|しず}か な {場面|ばめん} に する か 。 あなた は {演|えん}じなくて いい から ね 。 || A funny scene, or a quiet one? And you don't have to act in it.
 !hook pages_choose theme
 !if pages.pick=later -> slater
+?(pages.pick=funny) !gesture suzu celebrate
 ?(pages.pick=funny) suzu[laugh]: {笑|わら}える {方|ほう} ！ {台本|だいほん} なし で {笑|わら}える の が 、 {一番|いちばん} {難|むずか}しい の よ 。 || Funny it is! Getting a laugh without a script is the hardest thing there is.
+?(pages.pick=quiet) !gesture suzu nod pc
 ?(pages.pick=quiet) suzu[smile]: {静|しず}か な {方|ほう} 。 …… {舞台|ぶたい} で は いつも {削|けず}られる ところ 。 {今度|こんど} は 、 {残|のこ}そう 。 || The quiet one. …The bit that always gets cut on stage. This time we keep it.
+!gesture suzu check prop=accountbook
 suzu: {次|つぎ} の {道|みち} で {何|なに}か {起|お}きたら 、 {焚|た}き{火|び} の {前|まえ} で {話|はな}そう 。 {帳簿|ちょうぼ} は わたし が つける 。 || If something happens on the next road, let's talk it over by the fire. I'll keep the books.
 !end
 :slater

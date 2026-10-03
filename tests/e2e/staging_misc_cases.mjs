@@ -117,4 +117,42 @@ const CASES = [
   M({ scene: 'cs.spool_tokuji', map: 'lf.sluice', at: [16, 11, 'right'], talk: 'lf_tokuji', flags: F(C5, { lf_gate_c: true, lf_bell_rung: true }), comps: ['nao', 'suzu'], expect: { lf_tokuji: ['nod', 'handover'], pc: ['receive', 'check'] } }),
 ];
 
-export const MISC = [...FARE, ...ROAD, ...CASES];
+// ---- Pet vignettes (src/content/pets) ---------------------------------------------------------------------------
+// (an invitation opens the naming and travel prompts of !hook pet_meet, which the runner does not answer: the branches
+// play "Not now", which carries every cue of the meeting; the invitation itself adds no line)
+const PETS = [
+  M({ scene: 'pets.cat.cat', map: 'rw.village', at: [15, 24, 'up'], flags: RD,
+    variants: [{ name: 'restless · alone', comp: null, flags: RE, expect: { pc: ['observe'] } }, { name: 'restless', comps: ALL4 },
+      { name: 'settled · a hand · not now', vars: { pet_cat: 2 }, picks: [0, 1], comps: ALL4, expect: { pc: ['kneel'] } },
+      { name: 'settled · sat down · not now', vars: { pet_cat: 2 }, picks: [1, 1], comp: 'suzu' }, { name: 'settled · left be', vars: { pet_cat: 2 }, picks: [2], comp: 'nao' }] }),
+  M({ scene: 'pets.cat.screen', map: 'rw.village', at: [14, 24, 'up'], flags: RD,
+    variants: [{ name: 'set on its stone', picks: [0], comps: ALL4, expect: { pc: ['observe', 'kneel'] } }, { name: 'tied to the nail', picks: [1], comp: 'mio', expect: { pc: ['stretch'] } },
+      { name: 'left', picks: [2], comp: 'ren' }, { name: 'steady · tied', vars: { pet_cat: 2 }, flags: F(RD, { pet_cat_by_cord: true }), comp: 'nao' }, { name: 'steady · on its stone', vars: { pet_cat: 2 }, comp: 'suzu' }] }),
+  M({ scene: 'pets.bird.bird', map: 'sg.harbor', at: [45, 27, 'left'], flags: S0, quests: { sg_main: 1 },
+    variants: [{ name: 'restless', comps: ALL4, expect: { pc: ['observe'] } }, { name: 'settled · still · not now', vars: { pet_bird: 2 }, picks: [0, 1], comps: ALL4 },
+      { name: 'settled · an open palm · not now', vars: { pet_bird: 2 }, picks: [1, 1], comp: 'mio', expect: { pc: ['palm'] } }, { name: 'settled · left be', vars: { pet_bird: 2 }, picks: [2], comp: 'nao' }] }),
+  M({ scene: 'pets.bird.post', map: 'sg.harbor', at: [43, 27, 'up'], flags: S0, quests: { sg_main: 1 },
+    variants: [{ name: 'untied', picks: [0], comps: ALL4, expect: { pc: ['observe', 'kneel'] } }, { name: 'tucked in', picks: [1], comp: 'ren', expect: { pc: ['bend'] } }, { name: 'left', picks: [2], comp: 'suzu' },
+      { name: 'steady · the bird not yet met', vars: { pet_bird: 2 }, picks: [2], comp: 'mio' }] }),
+];
+
+// ---- The Pages We Keep (src/content/pages): the retrospective, the unfinished conversation, the offer ------------
+// (in the Hall they begin on arrival, the companion on your own tile in the doorway; elsewhere, the retrospective and
+// the unfinished conversation are told wherever you ask for them: the village square stands for "anywhere")
+const RETRO = { nao: ['bend', 'palm', 'nod', 'strap'], mio: ['nod', 'tidy'], ren: ['bend', 'palm', 'nod', 'handover'], suzu: ['exhale', 'lowered', 'palm', 'write'] };
+const PAGES = [
+  M({ scene: 'pages.enter_retro', map: 'rw.hall', at: [5, 8, 'up'], flags: POST, minLines: 8,
+    variants: ALL4.map((c) => ({ name: 'now · ' + c, comp: c, picks: [0, 0], expect: { [c]: RETRO[c] } })).concat([{ name: 'later', comp: 'mio', picks: [1], minLines: 2 }]) }),
+  M({ scene: 'pages.retro', map: 'rw.village', at: [23, 16, 'up'], flags: POST, minLines: 6, variants: ALL4.map((c) => ({ name: 'in the square · ' + c, comp: c, picks: [1], expect: { [c]: RETRO[c] } })) }),
+  M({ scene: 'pages.enter_unfinished', map: 'rw.hall', at: [5, 8, 'up'], flags: POST,
+    variants: [{ name: 'now · Nao', comp: 'nao', picks: [0], expect: { nao: ['strap', 'nod'] } }, { name: 'now · Mio', comp: 'mio', picks: [0], expect: { mio: ['laugh', 'fidget', 'thanks'] } }, { name: 'later', comp: 'nao', picks: [1] }] }),
+  M({ scene: 'pages.unfinished', map: 'rw.village', at: [23, 16, 'up'], flags: POST, variants: [{ name: 'in the square · Nao', comp: 'nao' }, { name: 'in the square · Mio', comp: 'mio' }] }),
+  M({ scene: 'pages.enter_offer', map: 'rw.hall', at: [5, 8, 'up'], flags: F(POST, { atlas_open: true }), minLines: 5,
+    variants: [{ name: 'Nao · for whoever walks it next', comp: 'nao', picks: [0], expect: { nao: ['point', 'palm', 'shake', 'lookbetween', 'nod'] } }, { name: 'Nao · for the way back', comp: 'nao', picks: [1], expect: { nao: ['strap'] } },
+      { name: 'Mio · resting', comp: 'mio', picks: [0], expect: { mio: ['guard', 'palm', 'touchhair', 'size', 'nod'] } }, { name: 'Mio · sharing', comp: 'mio', picks: [1], expect: { mio: ['emphatic'] } },
+      { name: 'Ren · certain', comp: 'ren', picks: [0], expect: { ren: ['palm', 'glasses', 'size'] } }, { name: 'Ren · not certain', comp: 'ren', picks: [1], expect: { ren: ['nod'] } },
+      { name: 'Suzu · funny', comp: 'suzu', picks: [0], expect: { suzu: ['size', 'palm', 'shrug', 'celebrate', 'check'] } }, { name: 'Suzu · quiet', comp: 'suzu', picks: [1], expect: { suzu: ['nod'] } },
+      { name: 'later', comp: 'ren', picks: [2], minLines: 4 }] }),
+];
+
+export const MISC = [...FARE, ...ROAD, ...CASES, ...PETS, ...PAGES];
