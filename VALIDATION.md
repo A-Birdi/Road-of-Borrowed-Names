@@ -1623,3 +1623,92 @@ fresh profiles; no player save was used; nothing was checked in Firefox.
   151 ok, ui 14/14, world_fixes 15 ok, departures 20 ok, quest_guide 55 ok, known 22 ok, atlas.check 15 ok.
 - **The lead's runs on the merged build:** on 96b60fd: validator no errors; unit 22,067/0; travel_rules 10/10; systems 4/4; folio all ok; lighthouse_top 76/76; battle_overlap all ok.
 - **Not verified:** the Atlas message in a browser; Firefox, Safari or a real phone.
+
+## Zone music — the owner's requests of 2026-10-03 (a score per zone, Japanese instruments, rising intensity)
+The owner asked for thematic music for each zone (overworld, battle and boss), rising in intensity through the
+story without becoming epic, using Japanese instruments such as the shamisen, with Reedwake kept as it was and
+cues for important scenes. The route north of Saltglass still played Chapter 1's road theme. The work was done in
+a worker branch (02e86c7 … 25b6bed, on 340bf68) and merged (7deb98f). **Nobody has listened to it**: every
+musical judgement is analysis.
+- **Instruments, synthesised in code** (no samples, no libraries):
+  - Strings: shamisen and biwa (a sawari buzz, a plectrum click, a pitch drop at the strike), koto, koto_oshi.
+  - Winds: shakuhachi (meri scoop, breath, muraiki), shinobue, shō.
+  - Bell: rin.
+  - Percussion: ōdaiko, shime, taiko rim, kotsuzumi, ōtsuzumi, hyōshigi, atarigane, chappa.
+  - Measured by `tests/e2e/audio_instruments.mjs`. The shamisen starts 15 cents sharp and settles, with 32.5 % of
+    its late energy above the 6th harmonic (the buzz). koto_oshi starts −198 cents; the shakuhachi has more than
+    twice the flute's breath energy; the ōdaiko peaks at 86 Hz and rings 0.61 s.
+- **Per chapter:**
+  - Chapter 1 is unchanged: identical events, and renders that differ by at most 2e-5.
+  - Chapters 2–6 and the Atlas have route, town, dungeon, battle and boss themes, plus scene cues (docs/AUDIO.md).
+  - `RB.audio.battleSong` picks a fight's theme by zone. After a fight the map's own music returns.
+  - No map outside Chapter 1 plays Chapter 1's road theme.
+- **Intensity** (unit-tested, `tests/unit/audio_zones.test.mjs`): the battle themes' score, tempo, note density and
+  percussion weight rise strictly from chapter to chapter (score 4.50 → 9.72, 100 → 120 bpm), and dissonance and
+  layering never fall. Each chapter's battle theme sits below its boss theme (boss 8.62 → 9.93, 138 → 152 bpm).
+- **Loudness:** the zone songs open between −27.0 and −17.2 dBFS RMS (the originals −30.3 to −17.0). The highest
+  whole-song peak is 0.581, against 0.585 for Chapter 1's boss. Nothing clips.
+- **CPU** (offline 12 s windows on a busy shared machine): the heaviest is 31.3 % (`boss_hush`), against 29.8–34.3 %
+  for Chapter 1's boss in the same run. Phone CPU was not measured.
+- **The worker's runs** (on its branch):
+  - unit 17,068/0 (audio subset 2,662/0); validator no errors;
+  - audio_zones 69/0, audio_instruments all passed, audio.check all passed, combat_ui 7/0, battle_presentation
+    13/0;
+  - story_ch1 F mio, story_ch3 E nao, story_ch4 I ren go 53/53, story_ch5 A suzu, story_ch6 2 36/36;
+  - pursue E mio across every chapter and an Atlas expedition: 10 battles, 0 problems, 0 page errors.
+- **The merge:** the Chapter 3–6 map lines where the music changed `music` and the travel rules changed travel
+  fields; both changes kept.
+- **The lead's runs on the merged build (7deb98f):** unit 23,748/0; validator no errors; audio.check all passed, audio_zones 69/69, audio_instruments all passed, travel_rules 10/10, combat_ui 7/7, battle_overlap all ok, encounters all ok, interludes 76/76, lighthouse_top 76/76, playtest_repairs 7/7. On the next combined build (34ec977): unit 23,804/0, audio_zones 69/69.
+- **Not verified:** listening (the owner's ears in Firefox and on the foldable are the real test); CPU on a phone.
+  If the phone struggles, thin the Chapter 5–6 battle and boss themes first.
+
+## The top of the lighthouse, and the view from height — the owner's reports of 2026-10-03
+- **The reports:**
+  - After Genzō says "I'll show you the top", the screen faded and the scene stayed on the ground floor while its
+    lines described the top.
+  - On the first version of the new map, the owner wrote that it "looks more like an island surrounded by water":
+    the bottom edge should show the top of a tall stone structure, with Saltglass visible below and shrunk by the
+    height. The owner asked for the same thinking for other elevated outdoor places.
+- **Where the work came from:** a worker branch (28e415c, merged in 20277f1; then 2631046, 6b75609 and 45d24fb for
+  the view from height, merged in 34ec977, together with the zone music). Every run below was in headless Chromium on Linux (Playwright) with
+  synthetic campaigns in fresh profiles; no player save was used; nothing was checked in Firefox.
+- **The map:** `sg.lighthouse_top`, an 11×8 stone gallery with the lamp room (green dome, the lens), the weather
+  vane, the stairhead and a railing worn bare where Genzō holds it.
+  - **Genzō climbs with you and is never in two places:** the ground-floor and top figures share `char: 'genzo'`
+    and fade where they stand, and the flag that moves him is set while the screen is dark.
+  - **Up and down:** the ground-floor stairs lead up once the vane scene has been seen. `sg_fog_cleared` is set
+    two lines earlier in the same branch, so the vane and the sea change when the lines say so.
+  - **The carving:** the lead drew the vane's fin carving as three wind lines, not a legible 風; the dialogue gives
+    「{風|かぜ}」 with its reading.
+  - **Travel:** the map is classified with the lighthouse ("You're in the lighthouse…").
+- **The view from height (`src/engine/61_below.js`, `surround: { below, at, hide, scale, drop, shaft, … }`):**
+  - **The ground map below:** the real ground map, drawn small through the game's own tile and prop drawing with
+    the story state applied. The causeway fog shows until `sg_fog_cleared`; the lift redraws only the changed area,
+    in 7–10 ms, pixel-identical to a full rebuild.
+  - **How it is drawn:** a palette-preserving shrink, snapped to whole pixels per tile (0.3125 for the lighthouse,
+    0.40625 for the lookout); haze toward the edges; a slight drift with the camera (still with reduced motion);
+    the town's own sea, calm and then with whitecaps.
+  - **The structure:** a stone tower drops from the gallery's south edge to its foot. The same treatment is applied
+    to the Cinder Orchard lookout platform: timber legs over the village at night with its lanterns.
+  - **Caching:** at most 2 cached views, released on leaving. The first build takes 395–538 ms (during the darkened
+    map change); a rebuild takes 200–450 ms.
+- **B `tests/e2e/lighthouse_top.mjs` (in the default suite): 106/106**, also with `--slow` (the game clock forced to
+  a quarter of real time). It covers:
+  - The scene ends beside the vane with the companion and pet.
+  - Exactly one Genzō at every sampled frame, refresh and map entry; he never walks to a door.
+  - The vane is one picture stuck and moving once free.
+  - Landmark colours at their projected positions: 7 for the lighthouse, 8 for the lookout (with a night test).
+  - The stone tower, the timber legs and the lanterns.
+  - Calm sea, then whitecaps; the fog area; the drift; reduced motion; release on leaving.
+  - "Later", down and back up; the stairs closed before the vane scene; a save at the top loading there.
+  - The lookout's platform unchanged (0 exits, the way-down trigger, the bell, 22 walkable tiles).
+- **An earlier failure:** on 20277f1, under heavy load, the test passed 73 of 76. The worker traced this to the
+  test's own fixed 300 ms waits against a game clock that runs slower than real time on a loaded machine
+  (reproduced with the clock forced slow). It now waits for each step to finish.
+- **The worker's runs on 45d24fb:** validator no errors; unit 22,067/0; departures 20/20, characters 23/23,
+  world_view 20/20, interludes 76/76, travel_rules 10/10.
+- **The lead's runs on the merged build:** on 34ec977: unit 23,804/0; lighthouse_top 106/106; combat_ui 7/7; playtest_repairs 7/7; battle_overlap all ok; travel_rules 10/10; interludes 76/76; world_view all ok; audio_zones 69/69. (In a scratch merge before that: lighthouse_top 106/106, travel_rules 10/10, world_view and departures all ok.)
+- **Evidence:** docs/screenshots/lighthouse_top/ (the scene, before and after the wind) and docs/screenshots/lookout/
+  (the festival night and the village), at 1280×800 and 390×844.
+- **Not verified:** Firefox (the owner's browser); a real phone; a person's judgement of the art. The town below
+  is crisp in places, and more haze or a cooler tint may read as farther away.
