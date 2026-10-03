@@ -1,144 +1,269 @@
 # Look-and-feel review — people, places and props across the whole game
 
 For the owner's paired addendum of 2026-10-03 (World Idle Life, Character Mannerisms, and Animated
-Dialogue Portraits) §3, §9, §10 and §12.5. Done **from the source** at `20277f1` (maps, NPC placements,
-props and their art specs, ambience, the scene manifest and the character registrations), plus one cheap
-capture of the dialogue portraits (`docs/screenshots/expressive/portraits_*.png`). No play session and no
-map captures were run for this review (CPU budget), so anything about how a place *looks in motion* is an
-inference from the code and is marked as such; battles were skipped, as the addendum allows while battle
-presentation is revised elsewhere.
+Dialogue Portraits) §3, §9, §10 and §12.5. **Phase A** (the first version of this ledger) was done **from the
+source** at `20277f1`: maps, NPC placements, props and their art specs, ambience, the scene manifest and the
+character registrations, plus one cheap capture of the dialogue portraits. It ran no play session and no map
+captures.
+
+**Kept current** (CONTRACT.md WI19, WI28): this version is on the task branch after `c2a799d`, with the
+actor system, the animated portraits and the world-review fixes merged, plus the props and environment balance
+pass. That pass looked at a running build:
+- 29 representative places in headless Chromium at 1280×800, covering every chapter, Koharuno and an Atlas room
+  (`tests/e2e/props_balance.mjs`);
+- every placed prop kind measured over 12 s.
+
+Its record, with before/after numbers and captures, is `docs/expressive/reports/props_review.md`.
+
+The by-eye judgements below are a worker's reading of captures. No person has reviewed them on a real screen.
+Battles were skipped, as the addendum allows.
 
 **Classes of finding** (paired §10.1): **[IP]** already addressed in current in-progress work · **[AD]** likely
 addressed by another active addendum (the Harmony / Expressive Storytelling addendum) but not yet implemented ·
-**[ACT]** still unresolved, worth actioning now · **[KEEP]** a strength to preserve.
+**[ACT]** still unresolved, worth actioning now · **[KEEP]** a strength to preserve. A finding fixed since Phase
+A keeps its Phase A class and gets a **Now** status: *fixed* (by what, with evidence), *partly*, or *open*.
+
+## 0. The ledger now
+
+### Fixed since Phase A, and by what
+
+- **The overworld actor system** (merged `4a9c357`; Masaru's kneading `ec34081`; VALIDATION.md "Overworld actor
+  system"): 76 mannerism profiles (26 bespoke) and a profile derived from station and tool for every other NPC.
+  It brings:
+  - station and occupation idles, route pauses, neighbours turning to each other;
+  - glances at arrivals, departures, examined objects and snow;
+  - player and companion ambient life, and shared stillness;
+  - restraint moods (Lanternfall before its bell, the Archive road, the storm-night inn);
+  - reduced motion held.
+
+  It fixes R1–R3, R8, R9, R15–R18, R21–R23, R28, R29, R32, R33, R37 and R39, and the people half of R4 and R30.
+  Evidence: actor_life 39/39 and actor_workplaces 30/30 (lead's runs).
+- **Scene direction** (same merge): 7 staged scenes (`sg.omi_wataru`, `rw.hana_first`, `co.suzu_night`,
+  `co.hiro_first`, `sb.yae`, `lf.mio_refuse`, `sa.isamu_return`). This is part of R6; the rest is in progress
+  (another worker is staging Chapter 1–2 scenes).
+- **Animated dialogue portraits** (`1be42bd`, pushed with `fe75862`; world review WR-02): idle loops, lead-in
+  cues and the eye-area fixes. This fixes R5. This pass adds a check from the scripts' side
+  (`tests/unit/portrait_speakers.test.mjs`):
+  - all 88 speakers have a portrait;
+  - the 45 with 20 or more lines all have a living loop;
+  - every tag their lines use has a cue under 900 ms that settles.
+- **World review WR-04, WR-05 and the two listed checks** (`089ade7`, `7b4ae3c`; `docs/review/
+  WORLD_REVIEW_RECONCILIATION.md`):
+  - the four long-quest landmarks drawn at art resolution (Koharuno, `lf.gardens`, `sb.road`);
+  - Masaru's bakery fitted out;
+  - Nao's floorboard drawn in `rw.warehouse`;
+  - the Star Stair's observatory no longer cut off (`sb.obs_path` headroom).
+- **The props and environment balance pass** (this pass; `docs/expressive/reports/props_review.md`; findings
+  N1–N10 and N14 below):
+  - props that contradicted their own text now match it;
+  - scenery glints no longer read as pickups;
+  - lamps and light pools are calm;
+  - the campfire, Hiro's furnace and the lighthouse lens are slower;
+  - 27 usable tables and desks show what their scenes describe lying on them;
+  - the potter's wheel reads against its floor.
+
+  This completes R4, R10's balance note and R24, and the props half of R30.
+- **Conversation continuity** (this pass; `tests/unit/conversation_continuity.test.mjs`): every staged gesture is
+  checked against the person's profile. Three escalations are documented and seven findings are open (N12).
+
+### Open, honestly
+
+| # | Class | What is still open | Why / who |
+|---|---|---|---|
+| R6 | [AD] | Most "performed overworld" scenes of the manifest are not staged (7 are; Chapter 1–2 in progress) | the scene-staging worker |
+| R7, R20, R34 | [AD] | The chapter sequences (illustrated close-ups) are not built; the tide window and the prologue are the only pictures | the sequence/interlude worker |
+| R35 | [ACT] | Lanternfall after its turning point: the lines say the town gets noisy, the people do not change. Profiles support `states: [{ if, … }]`, but none is written | actor-system profiles (`src/content/mannerisms/`) |
+| R36 | [ACT] | The fence quarrel in `lf.gardens`: social turns come from proximity only, with no `pairs` map data. Whether the two neighbours turn to each other was not checked | actor-system data |
+| R41 | [AD] | The epilogue revisits: no profile switches on story flags yet (same `states` hook) | actor-system profiles, with the sequence worker |
+| N11 | [ACT] | Two pairs of characters read alike in portrait and sprite: **Tamae** (the Gull) and **Yae** (Yukimiya) share skin, a red head-wrap (`#c8503a`/`#b8483a`), round eyes and an apron; **Ōmi** and **Umi** share a dark hat, sharp eyes, skin tone and high collar. They never meet, but a player can take one for the other | character looks: an owner's call (not changed here) |
+| N12 | [ACT] | Seven gesture-vocabulary findings in the staged scenes (Suzu's head shake, Tadashi's surprise tell against his scene, Hana's point, Yae's aside and half-raise, Wataru's size gesture) | profiles or scenes (the documented cases in `conversation_continuity.test.mjs`) |
+| N16 | [ACT] | Asahi wipes her brow (a heat habit) while her furnace is now cold, before the ash arrives | a `states` switch in her profile (actor system) |
+| R5 (rest) | [ACT] | Phones at device-pixel ratio 1, 2 and 2.625 still show the 64-px portrait unevenly scaled | the portrait worker (CSS / a phone art size) |
+| — | — | Everything above is headless Chromium only: no Firefox, Safari or real phone, and no person's look | — |
+
+### Strengths (kept)
+
+- R10: the environment craft. It is now measured: 64 animated prop kinds × option sets, every one holding one
+  frame with reduced motion.
+- R11, R12, R19, R25–R27, R31, R38, R40.
+- The restored mill (the wheel at 9.5 changes a second is the place's subject).
+- The great lamp's lively flame (Chapter 4's subject, kept lively on purpose).
+- The puzzle props that change state, which stay quick so they read.
 
 ## Summary for the owner (no plot details)
 
-- **Assessed:** all 91 maps of Chapters 1–6 and Koharuno (towns, roads, interiors, dungeons; per-map table at
-  the end), the 199 NPC placements and 71 recurring characters (GESTURES.md §7), the 1,504 placed props and the
-  63 prop kinds whose art animates, the 1,292 scenes (SCENES.md) and the dialogue portraits (PORTRAITS.md).
-  Chapters 2–6 were assessed as fully as Chapter 1.
-- **The main gap is people, not places.** Every person in the world idles the same way (breathing, blinking, a
-  random sideways glance); 33 of 199 placements wander, without pauses; nobody works at their station, reacts
-  to weather or talks to a neighbour. Meanwhile the busiest places have lively props (the harbour has 36
-  animated props and 2 wandering people). Animals already idle with more life than people do.
-- **Strongest assets:** the prop and environment craft (water, lanterns, chimney smoke, snow, leaves, pages,
-  embers, fireflies, dark interiors lit by the player's lamp, puzzle props that change state), the restored mill,
-  the tide-window picture, the town animals, and the world's handling of who comes and goes.
-- **Worth doing now:** the shared mannerism system with occupation idles for station NPCs (cheap, high value
-  in shops, inns and workshops), route pauses, a few social pairs in crowded rooms, companion presence when you
-  stop, and animated portraits with the eye-area fixes.
-- **Counts:** 41 findings — 2 [IP], 5 [AD], 24 [ACT], 10 [KEEP] (tallied at the end).
+- **Assessed:** all 91 maps of Chapters 1–6 and Koharuno, the 199 NPC placements and 71 recurring characters,
+  the 1,504 placed props and the dialogue portraits. Phase A did this from the source; this pass measured
+  29 places and every placed prop kind in a running build, and added an Atlas room.
+- **People now carry the busy places.** Phase A found every person idling the same way while props did the
+  moving. With the actor system, people own most of the on-screen motion where they gather:
+  - the Saltglass quay (79 %);
+  - the Cinder Orchard square (75 %);
+  - the Snowbell square and inn (86 % and 76 %);
+  - the Reedwake square (62 %);
+  - the teahouse (89 %).
+
+  The numbers are in the props review.
+- **What this pass changed:**
+  - **Props that said one thing and showed another:** the glassworks furnace burned before its fire was
+    lit; the lighthouse lens shone full on rationed oil; a "faintly warm" kiln blazed; a disused kiln wore the
+    puzzle seal's mark.
+  - **Decorations that looked like things to pick up:** sparkles with pools of light at the lookout, the
+    conduits and the Drowned Archive's counter.
+  - **Lamps everywhere twinkling about seven times a second, and every pool of light pulsing together:** now
+    about twice a second, each on its own beat.
+  - **Bare tables whose scenes describe a letter, an order slip or two cups on them:** now drawn.
+- **Strongest assets:** unchanged — water, lanterns, smoke, weather, dark interiors lit by your lamp, the
+  restored mill, the tide window, the town animals, and the comings and goings.
+- **Still open:** most performed scenes and all chapter close-ups (other workers); Lanternfall's change after
+  its turning point; two pairs of look-alike characters; phone portrait scaling; and every by-eye judgement
+  still needs a person.
+- **Counts:** Phase A had 41 findings (2 [IP], 5 [AD], 24 [ACT], 10 [KEEP]). Of its 24 [ACT], 22 are fixed and
+  2 are open (R35 partly, R36). This pass adds 16 (N1–N16):
+  - 11 fixed: N1–N10 and N14;
+  - 3 open [ACT]: N11, N12, N16;
+  - 2 [KEEP]: N13, N15.
+
+  The tally is at the end.
 
 ## 1. Whole game
 
-| # | Class | Finding | Evidence | Action |
-|---|---|---|---|---|
-| R1 | [ACT] | Every person idles identically: four breathing keys on a 2.6 s cycle, blinking, and a random body turn to one side for ≈1 s every 5–12 s, whoever they are | `60_render.js actorFrame()`, `50_world.js` line 624; no per-character idle data exists | the mannerism system and profiles (GESTURES.md §3–§7; WI1–WI6) |
-| R2 | [ACT] | Wanderers step, stop and step again with no pause behaviour | 33 of 199 placements have `wander`; `50_world.js` update loop | route pauses from the profile (GESTURES.md §4) |
-| R3 | [ACT] | Groups never interact: crowded rooms and squares are rows of still people | `sb.inn` 17 placements / 0 wander, `co.eve` 14 / 0, `co.festival` 14 / 2, `sg.harbor` 13 / 2, `rw.village` 13 / 2 | social ambient pairs (GESTURES.md §4) |
-| R4 | [ACT] | Props outclass people where both are busiest | `sg.harbor` 36 animated props, 2 wanderers; `rw.village` 14 and 2; `sb.hamlet` 8 and 8 is the balanced case | occupation idles at the busy stations before adding prop motion |
-| R5 | [ACT] | Dialogue portraits are still images, repainted once per line; eye areas hard to read (dark irises, small whites, glasses, light brows, non-integer scaling) | PORTRAITS.md §1, §3; captures | animated portraits with the eye fixes (WI9–WI12) |
-| R6 | [AD] | Story emotion is carried by text: 10 `!move`, 5 `!emote` and 117 `!faceplayer` across 1,292 scenes (6,308 lines); no gestures exist | SCENES.md; `70_script.js` | the expressive actor system and staging (HX28–HX38) |
-| R7 | [AD] | The key moments of each chapter are seen at tile scale only (one picture exists: the tide window) | SHOTS.md | the chapter sequences (HX41–HX45) |
-| R8 | [ACT] | The travelling companion is a following token: when you stop it breathes like any NPC, never reacts to what you look at | `W.comp` follower; no presence behaviour | companion presence and shared stillness (GESTURES.md §4) |
-| R9 | [ACT] | The player has no idle beyond breathing (no looking at what is in front, no satchel settle) | `drawActor` frames | player ambient set (GESTURES.md §4) |
-| R10 | [KEEP] | Environment craft: 63 animated prop kinds (frames or sway: lanterns, water, reeds, trees, stoves, mill wheel and stones, gears, ink, crystals, campfires, the great lamp, the drowned bell…), animated water tiles, chimney smoke, weather (snow, leaves, pages, motes, embers, fireflies), dark interiors lit by the player's lamp | `27_propart.js`, `28_propwork.js`, chapter `*_art.js`, `29_structart.js smoke`, `21_tileart.js anim2`, `60_render.js` weather | preserve; balance against people rather than add more |
-| R11 | [KEEP] | Town animals and the pets idle with personality (breath, tail, sit, curl up) | REQUIREMENTS TA1–TA5; `57_petworld.js life` | the bar people should reach |
-| R12 | [KEEP] | People leave for where the story puts them and arrive on foot; the dialogue never moves the camera | HANDOFF "Sprite and battle polish"; `50_world.js wayFor`; `20_dialogue.js dock()` | preserve when staging scenes |
-| R13 | [IP] | Area feel through sound (zone music, cutscene music cues) is being revised by another worker | lead's note; `src/audio/**`, 48 `!music` cues | not reassessed here |
-| R14 | [IP] | Battle presentation (skipped here) is under separate revision | the battle addendum's rounds | — |
-| R15 | [ACT] | Reduced motion keeps people still (correct) but must also cover every new idle, social and portrait motion | `RB.game.reducedMotion()`; WI15 | build into the scheduler |
+| # | Class | Finding (Phase A) | Now |
+|---|---|---|---|
+| R1 | [ACT] | Every person idles identically (breathing, blinking, a random body turn every 5–12 s) | **fixed**: mannerism profiles and the idle scheduler (`4a9c357`); actor_life (2–12 people change pose per area, never more than the cap at once) |
+| R2 | [ACT] | Wanderers step, stop and step again with no pause | **fixed**: route pauses (actor_life: "a wanderer pauses on their round") |
+| R3 | [ACT] | Groups never interact | **fixed** in general (neighbours turn to each other for a word); no `pairs` data yet (R36) |
+| R4 | [ACT] | Props outclass people where both are busiest | **fixed**: occupation idles, plus this pass. People's share of on-screen motion, before → after this pass (props review, place balance): the Saltglass quay 74 → 79 %, the Cinder Orchard square 68 → 75 %, the Snowbell square 70 → 86 % and inn 68 → 76 %, the Reedwake square 57 → 62 %; lamps calmer everywhere |
+| R5 | [ACT] | Portraits still; eye areas hard to read | **fixed** (`1be42bd`, WR-02); phones at ratios 1, 2 and 2.625 still scale unevenly (open) |
+| R6 | [AD] | Story emotion carried by text; no gestures | **partly**: 7 staged scenes; Chapter 1–2 staging in progress |
+| R7 | [AD] | Key moments seen at tile scale only | **open** [AD]: sequences not built |
+| R8 | [ACT] | The companion is a following token | **fixed**: companion presence and shared stillness (WI16, WI17) |
+| R9 | [ACT] | The player has no idle beyond breathing | **fixed**: the strap, a look, a weight shift after 3 s still (WI15) |
+| R10 | [KEEP] | Environment craft | **kept and balanced** this pass (N6–N8) |
+| R11 | [KEEP] | Town animals and pets | kept |
+| R12 | [KEEP] | People come and go; dialogue never moves the camera | kept (world_view) |
+| R13 | [IP] | Area feel through sound | **landed**: zone music (REQUIREMENTS ZM1–ZM3) |
+| R14 | [IP] | Battle presentation | **landed**: the battle addendum and the Harmony cut-in (`95f4708`) |
+| R15 | [ACT] | Reduced motion must cover every new motion | **fixed**: actor_life and portrait_anim; this pass: every placed prop kind holds one frame (props_balance) |
 
 ## 2. Chapter by chapter
 
 ### Chapter 1 — Reedwake
 
-| # | Class | Place | Finding |
-|---|---|---|---|
-| R16 | [ACT] | `rw.tea` Hana's Teahouse (14 scenes, 6 on the main road) | Hana stands still at the counter (2, 2) although the chapter's motif is her pouring two cups every morning; only the stove animates. Occupation idle: pouring, wiping, a look at the door. |
-| R17 | [ACT] | `rw.hall` Lantern Hall (17 scenes) | the four candidates stand still side by side in the room where you choose one of them — their first impression is identical. Bespoke companion rests and habits here (GESTURES.md §6). Shrine, lanterns and the lamp rack animate [KEEP]. |
-| R18 | [ACT] | `rw.apoth`, `rw.carpenter`, `rw.house1`, `rw.house2` | one person each, no animated props: Mio among her bottles, Bunta at the anvil, Oto with boots, Kiku at the thread — four cheap occupation idles. |
-| R19 | [KEEP] | `rw.village`, `rw.millroad`, `rw.mill1–2` | lanterns, reeds, water, the mill wheel and stones, the echo and the motes; Mochi and the pets. |
-| R20 | [AD] | `rw.bridge_scene` | the chapter's emotional close is staged at tile scale; Chapter 1 sequence (SHOTS.md §1). |
+| # | Class | Place | Finding (Phase A) | Now |
+|---|---|---|---|---|
+| R16 | [ACT] | `rw.tea` | Hana still although her motif is pouring | **fixed**: she pours and tidies (profile); staged `rw.hana_first`; people make 89 % of the teahouse's motion (props review) |
+| R17 | [ACT] | `rw.hall` | The four candidates stand identically | **fixed**: bespoke companion rests and habits |
+| R18 | [ACT] | `rw.apoth`, `rw.carpenter`, `rw.house1`, `rw.house2` | Mio, Bunta, Oto and Kiku without occupation | **fixed** by profiles (unit: every placement has a habit it can do); this pass: Mio's apothecary notebook drawn open on her table (N9) |
+| R19 | [KEEP] | `rw.village`, `rw.millroad`, `rw.mill1–2` | Lanterns, reeds, water, the mill | kept; the square's lanterns calmer (N6) |
+| R20 | [AD] | `rw.bridge_scene` | The emotional close at tile scale | **open** [AD] |
 
 ### Chapter 2 — Saltglass
 
-| # | Class | Place | Finding |
-|---|---|---|---|
-| R21 | [ACT] | `sg.harbor` (89 scenes start here) | a working harbour whose workers are still: Daigo (cargo), Kiyo (salting), Tetsu (the tide board), Sōta (nets), Fuku (washing). Occupation idles and one social pair at the quay. The ferry, fog, sparkle and water are strong [KEEP]. |
-| R22 | [ACT] | `sg.office` Harbour Office (13 scenes, 6 on the main road) | the room of the chapter's turning point has no animated prop and a still harbourmaster; Ōmi's writing idle at the desk (also her §14 baseline). Staging itself: [AD] (HX37). |
-| R23 | [ACT] | `sg.inn` The Gull | Tamae's lines describe the lunch rush, but nobody moves; trays and calls as her occupation loop. |
-| R24 | [ACT] | `sg.glass` Asahi's Glassworks | the kiln prop has no animated glow (the generic `kiln` art has no frames) and Asahi is still; compare Chapter 3's furnace, which animates. |
-| R25 | [KEEP] | `sg.tide_wait` picture; `sg.lighthouse_top` | the tide window (an existing picture) and the top of the lighthouse with the vane's frames (the latter landed with the most recent merge, `20277f1`). |
-| R26 | [KEEP] | the Drowned Archive maps | pages, ink, lanterns and sluice water; empty of people by design. |
+| # | Class | Place | Finding (Phase A) | Now |
+|---|---|---|---|---|
+| R21 | [ACT] | `sg.harbor` | A working harbour whose workers are still | **fixed**: Daigo, Kiyo, Tetsu, Sōta, Fuku have profiles; the quay's motion is 79 % people (74 % before this pass's lamp change) |
+| R22 | [ACT] | `sg.office` | The turning point's room is still | **fixed**: Ōmi writes (actor_workplaces); staged `sg.omi_wataru`; this pass: her desk shows the mountain of papers and three cold cups (N9) |
+| R23 | [ACT] | `sg.inn` | Tamae still through her lunch rush | **fixed** by her profile; this pass: the writing desk shows paper and ink (N9) |
+| R24 | [ACT] | `sg.glass` | The kiln has no glow; Asahi still | **fixed** this pass: cold and ashen until the ash arrives (its scene: "The fire is out"), then lit with the gather turning slowly (N1); Asahi has her profile; her brow-wiping while the furnace is cold is N16 |
+| R25 | [KEEP] | `sg.tide_wait`, `sg.lighthouse_top` | The tide window; the lighthouse top | kept; this pass: the lens below is small and dim until the oil arrives (N2) |
+| R26 | [KEEP] | the Drowned Archive | Pages, ink, lanterns, water | kept; the counter's post-battle glint made faint (N5) |
 
 ### Chapter 3 — Cinder Orchard
 
-| # | Class | Place | Finding |
-|---|---|---|---|
-| R27 | [KEEP] | `co.village` | the most mobile town (8 of 11 wander), leaves, glass lanterns, the kept seat; add route pauses only. |
-| R28 | [ACT] | `co.eve` at dusk (14 people, 0 wander) | the square before the assembly is a still crowd; a murmuring social idle until the scene. The assembly itself: [AD] (Chapter 3 sequence). |
-| R29 | [ACT] | `co.festival` (14 people, fireflies, lanterns) | a lantern-lit festival where people stand still; festive social pairs, children running between seats. |
-| R30 | [ACT] | `co.glass`, `co.pottery` | Hiro "keeps working" in his story but idles still; Nobu's wheel does not turn. The furnace animates [KEEP]. |
-| R31 | [KEEP] | `co.terraces`, `co.upper`, `co.oldworks`, `co.kiln`, `co.kiln_core` | leaves, motes, embers, darkness. |
+| # | Class | Place | Finding (Phase A) | Now |
+|---|---|---|---|---|
+| R27 | [KEEP] | `co.village` | The most mobile town | kept; Nobu's kiln shows embers, not an open fire (N3); Sayo's seating chart drawn (N9) |
+| R28 | [ACT] | `co.eve` | A still crowd at dusk | **fixed**: social idles (actor_life's Chapter 3 area) |
+| R29 | [ACT] | `co.festival` | People stand still at the festival | **fixed**: social idles (the actor system; actor_life's Chapter 3 area is the same square at dusk) |
+| R30 | [ACT] | `co.glass`, `co.pottery` | Hiro still; Nobu's wheel does not turn | **fixed** for Hiro (WR-03); the furnace's throb slower (N8). The wheel **stays still** on purpose: its text says the clay is still damp and nobody is at it. It now reads against the floor (N10) |
+| R31 | [KEEP] | terraces, upper, old works, kiln | Leaves, motes, embers, darkness | kept; the old workshop row's bisque kiln no longer wears the Great Kiln's seal mark (N4) |
 
 ### Chapter 4 — Snowbell
 
-| # | Class | Place | Finding |
-|---|---|---|---|
-| R32 | [ACT] | `sb.inn` Yukimiya (17 placements, the snowed-in stretch) | the fullest room in the game is entirely still; people round the irori (warming hands, Yae counting the days, children fidgeting). |
-| R33 | [ACT] | `sb.hamlet` (19 placements, snow) | nobody reacts to the snow or the cold; Fuki's bell post could mark the hours. The snow sculptures and children wandering [KEEP]. |
-| R34 | [AD] | `sb.obs_dome` and the lamp | the chapter's moment; Chapter 4 sequence. The great lamp's frames [KEEP]. |
+| # | Class | Place | Finding (Phase A) | Now |
+|---|---|---|---|---|
+| R32 | [ACT] | `sb.inn` | The fullest room is entirely still | **fixed**: Yae stirs and counts; guests look to the road (actor_workplaces); the shogi game left mid-play drawn on its table (N9) |
+| R33 | [ACT] | `sb.hamlet` | Nobody reacts to the snow | **fixed**: snow reactions (WI10); people make 86 % of the square's motion (70 % before this pass) |
+| R34 | [AD] | `sb.obs_dome` | The chapter's moment | **open** [AD]; the great lamp keeps its lively flame [KEEP]; the Star Stair's observatory headroom fixed (`089ade7`) |
 
 ### Chapter 5 — Lanternfall
 
-| # | Class | Place | Finding |
-|---|---|---|---|
-| R35 | [ACT] | `lf.town` (52 × 40, 6 placements, 3 animated props) | the largest town is the emptiest and stillest. Its early orderliness is thematic and may stay calm, but after the chapter's turning point the town is described as getting noisy and nothing visible changes — a post-turn idle set and social pairs. |
-| R36 | [ACT] | `lf.gardens` | the fence quarrel is a ready-made social pair (two neighbours on either side of the persimmon) and plays still. |
-| R37 | [ACT] | `lf.records`, `lf.clerks`, `lf.cafe`, `lf.bakery`, `lf.inn` | clerks and hosts at their stations (stamping, sorting, kneading, polishing cups) are still; the stoves animate. |
-| R38 | [KEEP] | the tower and the bell chamber | gears, conduits, the sunken tower and the bell. |
+| # | Class | Place | Finding (Phase A) | Now |
+|---|---|---|---|---|
+| R35 | [ACT] | `lf.town` | The largest town is the stillest; nothing changes after the turning point | **partly**: calm before the bell is now deliberate (restraint mood), and its lampposts no longer twinkle (N6). The after-bell idle set is **open** (no profile `states`) |
+| R36 | [ACT] | `lf.gardens` | The fence quarrel plays still | **open**: no `pairs` data; not checked by eye |
+| R37 | [ACT] | records, clerks, café, bakery, inn | Clerks and hosts still | **fixed** by profiles; Masaru kneads (WR-05); this pass: the bakery's order slips, the café's plate, the council's open book, Akari's card, the clerk's piled ledgers drawn (N9) |
+| R38 | [KEEP] | the tower, the bell chamber | Gears, conduits, the bell | kept (gears turning are machinery; no people there) |
 
 ### Chapter 6 — the Archive road and the Archive
 
-| # | Class | Place | Finding |
-|---|---|---|---|
-| R39 | [ACT] | `sa.camp` (5 people, campfire, snow) | people around a campfire in the snow stand still: warming hands, the ledger, a look up the road. |
-| R40 | [KEEP] | `sa.reading`, `sa.stacks`, `sa.conduits`, `sa.memories`, `sa.heart` | cabinets, doors, crystals, pages, the core; the Archive's clerks are rightly stiff (non-human). |
-| R41 | [AD] | the walk back through the towns | the epilogue revisits are staged in the world (SHOTS.md §8.7): people's idles there should show what changed (some lines describe it, e.g. a clerk writing labels all day) — a profile state switch on story flags. |
+| # | Class | Place | Finding (Phase A) | Now |
+|---|---|---|---|---|
+| R39 | [ACT] | `sa.camp` | People round a campfire stand still | **fixed**: Isamu sits by the fire (actor_workplaces); the fire calmer (N8) |
+| R40 | [KEEP] | reading room, stacks, conduits, memories, heart | Cabinets, crystals, the core | kept; the conduits' basin glints made faint (N5) |
+| R41 | [AD] | the walk back | Epilogue idles should show what changed | **open** (no profile `states`) |
 
 ### Koharuno and the Atlas
 
-- `lq.koharu` and the persimmon tree: leaves, lantern [KEEP]; the hut is empty by design.
-- The Unwritten Atlas rooms are generated; their decor props animate (`atlas_*`); routine rooms need no new
-  life (first addendum §17.2) [KEEP — not counted separately].
+- `lq.koharu`: the great persimmon and the stone of names redrawn (WR-04, `089ade7`); the tree-keeper's ledger
+  drawn open on the hut's table (N9). [KEEP]
+- The Unwritten Atlas: its lamps and waystones calmer like every lamp (N6: 2.1 and 1.75 changes a second, were
+  5.8 and 5). An Atlas room (seed 4242) was among the measured places. [KEEP]
 
-## 3. Props: over- and under-animation
+### New findings of this pass (N1–N16)
 
-From the art specs (static scan: a `f:` frame function, `live:` per-frame extra or `sway:` crown in the
-spec; some frame functions are states rather than time — not distinguished here):
+From the running build. Before/after for each is in the props review.
 
-- **Under-animated relative to the person who works there:** the generic `kiln` (Saltglass glassworks), the
-  potter's wheel (`co_wheel`), counters, desks and shelves (by design static; the person should do the work).
-- **Possibly busy (to check by eye, not verified):** water sparkle at `co.lookout` (8 sparkle props) and on the
-  harbour; the 138 props of `lf.tower_mid`. No prop was judged to over-animate from the source alone.
-- **Quest props that change state read well:** field-puzzle props (`fw_*`), the bell post, the ferry and fog,
-  the restored mill wheel [KEEP].
+| # | Class | Finding | Now |
+|---|---|---|---|
+| N1 | [ACT] | `sg.glass`: the furnace glowed before its fire was lit (scene: "The fire is out"), and was static after ("Orange glass turns slowly") | **fixed**: cold until `sg_boss_done`, then the gather turns (2.8 changes/s) |
+| N2 | [ACT] | `sg.lighthouse`: the lens shone full while "the flame is small; oil is being rationed" | **fixed**: dim until `sg_boss_done` (76 bright px against 273 after); a slower pulse (6.2 → 4 changes/s) |
+| N3 | [ACT] | `co.village`: Nobu's "faintly warm" kiln showed an open fire | **fixed**: a low bed of embers (3 warm px, was 188) |
+| N4 | [ACT] | `co.oldworks`: a disused kiln wore the Great Kiln's glass-seal mark nine tiles from the real seal (a false lead); its text says "choked with ash" | **fixed**: choked with ash, no seal mark |
+| N5 | [ACT] | The sparkle that means "something to find" was decoration at the lookout (8, each with a pool of light over the dark), the conduits (3) and the Drowned Archive's counter (1) | **fixed**: a faint glint (1.4 changes/s, 4 bright px against a pickup's 88) with no pool of light; the sea-glass pickups unchanged |
+| N6 | [ACT] | Every lamp (lanterns, lampposts, shrines, the lamp rack, glass lanterns, the Archive's and the Atlas's lamps) dipped every 150–200 ms: 4–6.7 changes a second, a street of them twinkling like a sign | **fixed**: steady with two dips per turn, 1.3–3 changes/s |
+| N7 | [ACT] | Every pool of light on a dark map pulsed together (one `sin(t/180)`) | **fixed**: each on its own phase, slower (`60_render.js drawLighting`) |
+| N8 | [ACT] | The campfire redrew its whole flame 11 times a second, more motion than the three people at the Archive-road camp; Hiro's furnace mouth throbbed 6.6 times a second | **fixed**: 7.9 and 4.3 changes/s |
+| N9 | [ACT] | 27 usable tables and desks whose scenes describe what lies on them (an order slip, a letter, two cups with one upside down, a shogi game, a tray, envelopes, a register) were drawn bare | **fixed**: drawn (dashes, never letters); e.g. the pottery's order-slip table 30 % → 39 % of its pixels apart from the floor, Ōmi's desk 35 % → 42 % |
+| N10 | [ACT] | `co.pottery`: the potter's wheel (the room's key prop) melted into the wood floor | **fixed**: slip-grey head and darker damp clay with a sheen, 40 % → 49 % apart; still, as its text implies |
+| N11 | [ACT] | Look-alike pairs: Tamae and Yae; Ōmi and Umi | **open** (owner's call) |
+| N12 | [ACT] | Seven gesture-vocabulary findings in staged scenes | **open** (WI25 test lists them) |
+| N13 | [KEEP] | The mill wheel and gears, the great lamp, the harbour fog and ferry: subjects whose motion is the point | kept |
+| N14 | [ACT] | Lanternfall before its bell: its lampposts were the town's main motion | **fixed** with N6 (the calm stays deliberate); the after-bell set is R35 |
+| N15 | [KEEP] | Trees and bushes lean a pixel in a wave with calm spells: quiet wind, never in step | kept |
+| N16 | [ACT] | Asahi's heat habit (wiping her brow) plays while her furnace is cold | **open** (a `states` switch in her profile) |
+
+## 3. Props: over- and under-animation (measured)
+
+Phase A could only scan the art specs. This pass drew every placed prop kind and option set alone over 12 s,
+at 40 ms steps (`tests/e2e/props_balance.mjs` part 1). That is 269 kind × option sets from the authored maps and
+three Atlas seeds; 64 animate.
+
+- **Over-animated, now calmer:** lamps (N6), the campfire and Hiro's furnace (N8), the lighthouse lens (N2), and
+  the light pools (N7).
+- **Over-bright or misleading, now quiet:** the decor sparkles (N5) and the disused kiln's seal mark (N4).
+- **Dead where the story is alive, now alive:** the glassworks furnace once lit (N1).
+- **Still where the story is still:** the potter's wheel (damp clay, nobody at it), counters, desks and shelves.
+  People do the work there (the actor system), and the props show what the scenes describe (N9).
+- **Busy by design:** the mill wheel and gears; the great lamp; the fog over the causeway; the puzzle props while
+  they work, such as the clamp post's wind (25 changes/s while that puzzle is live). All [KEEP].
+- **Place balance** (part 4, `--places`): props review §3.
 
 ## 4. Tally
 
-| Class | Findings | Count |
-|---|---|---:|
-| [IP] already addressed in current in-progress work | R13 (sound and music), R14 (battle presentation) | 2 |
-| [AD] likely addressed by the Harmony / Expressive Storytelling addendum, not yet implemented | R6, R7, R20, R34, R41 | 5 |
-| [ACT] unresolved, worth actioning now | R1–R5, R8, R9, R15, R16–R18, R21–R24, R28–R30, R32, R33, R35–R37, R39 | 24 |
-| [KEEP] strengths to preserve | R10–R12, R19, R25–R27, R31, R38, R40 | 10 |
-| **All** | | **41** |
+| | Phase A | Now |
+|---|---:|---|
+| [IP] | 2 (R13, R14) | both landed |
+| [AD] | 5 (R6, R7, R20, R34, R41) | R6 partly; R7, R20, R34, R41 open |
+| [ACT] | 24 | 22 fixed; R35 partly; R36 open |
+| [KEEP] | 10 | all kept |
+| New this pass | — | 16: 11 fixed (N1–N10, N14), 3 open [ACT] (N11, N12, N16), 2 [KEEP] (N13, N15) |
 
-## 5. What was assessed — every map
+## 5. What was assessed — every map (Phase A data)
 
-Generated from the content at `20277f1`: size, interior/exterior (by region and size; heuristic), NPC
+Generated in Phase A from the content at `20277f1` (the counts are not re-generated; this pass added props to no
+map and changed no placement, only options): size, interior/exterior (by region and size; heuristic), NPC
 placements (wanderers), props (animated by the static art-spec scan, and chimneys), ambience, and how many
 scenes start on the map (of which on the main road, personal quests, long questlines or endings).
 
