@@ -259,15 +259,46 @@ whether it shows: setting Off, Instant (never fired), a reading layer open (dial
 language task, a confirmation, any `aria-modal` sheet), a hidden tab, or no safe placement — each counted in
 `stats().suppressed`, a placement failure recorded in `stats().fallbacks` with every fit step tried.
 
-MEASURED_TIMING_TABLE
+Measured (headless Chromium, 2026-10-03; presentation ms from the cue, frame resolution; Fast runs the presentation clock ×1.43, so 143 / 315 / 229 presentation ms are 100 / 220 / 160 ms of wall time):
+
+| Pairing | Speed | entering | holding | fading | disposed | first result | sequence end | wall time |
+|---|---|---|---|---|---|---|---|---|
+| Nao | normal | 0 | 183.3 | 566.7 | 783.3 | 1250 | 2300 | 2302 ms |
+| Nao | normal (reduced motion) | 0 | 183.3 | 566.6 | 783.2 | 1250 | 2300 | 2306 ms |
+| Nao | fast | 0 | 143 | 476.6 | 691.1 | 1263 | 2300 | 1607 ms |
+| Nao | fast (reduced motion) | 0 | 166.7 | 476.6 | 691.1 | 1263 | 2300 | 1608 ms |
+| Nao | instant | — | — | — | — (no portrait) | 0 | 2300 | 4 ms |
+| Nao | instant (reduced motion) | — | — | — | — (no portrait) | 0 | 2300 | 5 ms |
+| Mio | normal | 0 | 183.3 | 566.6 | 783.3 | 1217 | 2350 | 2357 ms |
+| Mio | normal (reduced motion) | 0 | 183.4 | 566.6 | 783.3 | 1217 | 2350 | 2356 ms |
+| Mio | fast | 0 | 143 | 476.6 | 691.1 | 1216 | 2350 | 1640 ms |
+| Mio | fast (reduced motion) | 0 | 143.1 | 476.8 | 691.3 | 1216 | 2350 | 1641 ms |
+| Mio | instant | — | — | — | — (no portrait) | 0 | 2350 | 5 ms |
+| Mio | instant (reduced motion) | — | — | — | — (no portrait) | 0 | 2350 | 4 ms |
+| Ren | normal | 0 | 183.3 | 566.7 | 783.3 | 1217 | 2300 | 2294 ms |
+| Ren | normal (reduced motion) | 0 | 183.3 | 566.6 | 783.3 | 1217 | 2300 | 2306 ms |
+| Ren | fast | 0 | 143.1 | 476.6 | 691.3 | 1216 | 2300 | 1607 ms |
+| Ren | fast (reduced motion) | 0 | 166.9 | 476.6 | 691.3 | 1215 | 2300 | 1606 ms |
+| Ren | instant | — | — | — | — (no portrait) | 0 | 2300 | 6 ms |
+| Ren | instant (reduced motion) | — | — | — | — (no portrait) | 0 | 2300 | 4 ms |
+| Suzu | normal | 0 | 183.3 | 566.6 | 783.3 | 1283 | 2450 | 2443 ms |
+| Suzu | normal (reduced motion) | 0 | 183.4 | 566.7 | 783.4 | 1283 | 2450 | 2454 ms |
+| Suzu | fast | 0 | 143 | 476.6 | 691.1 | 1287 | 2450 | 1706 ms |
+| Suzu | fast (reduced motion) | 0 | 166.7 | 476.6 | 691.1 | 1287 | 2450 | 1707 ms |
+| Suzu | instant | — | — | — | — (no portrait) | 0 | 2450 | 4 ms |
+| Suzu | instant (reduced motion) | — | — | — | — (no portrait) | 0 | 2450 | 4 ms |
+
+Also run per pairing: pet hidden, pet shown, portrait off — no portrait layer at any frame with the setting Off; the stage performance and every result unchanged (the rules' state compared across all 30 configurations).
 
 An art timeline (`RB.harmonyArt.timeline(comp)`, if the art provides one) is played instead of the two
 drawings: states on the in / hold / out segments by fraction, a missing state holds the one before, reduced
-motion shows the last; every state is footprint and is prepared ahead (unit-tested with a stub; today's
-code-drawn busts have no timeline).
+motion shows the last; every state is footprint and is prepared ahead (unit-tested with a stub, and
+browser-tested with the painted path's SYNTHETIC sample — see 7.4; the build ships no painted set, so today's
+code-drawn busts, which have no timeline, are what players see).
 
 Interruptions (browser-tested): Skip disposes it at once and settles every result once; a hidden tab, a
-campaign change (caches cleared too), word help opening (removed, never animated over it), the scene's exit and
+campaign change (the battle is abandoned whole, its scene exit disposing the portrait; the overlay's caches are
+cleared too), word help opening (removed, never animated over it), the scene's exit and
 defeat dispose it; the press that committed the technique neither skips nor hurries it; a resize places the same
 instance again (no replay, one start, Harmony spent once); the battle's settings sheet pauses it with the
 encounter, and turning the setting Off there removes it on resuming. With large text (or an overlay that
@@ -277,12 +308,50 @@ if no place is left then, is not shown at all (never a flash over content that m
 ### 7.2 Placement and fit modes per viewport
 
 Protected, measured each time: the status dock, the action banner (as it appears, +8 px for its drop), the
-telegraph and responses unless Adaptive has withdrawn them, Skip, plates and badges, an open intent card, each
+telegraph and responses unless Adaptive has withdrawn them, Skip, the battle's Settings button (it stays
+shown through an action; its appearing is part of the layout signature), plates and badges, an open intent card, each
 creature's box with its knots, the on-field party's box, any visible HUD or touch control — 12 px clear, tested
 against the composition's drawn rows. The browser test checks the drawn pixels independently in every frame of
 the hold and fade.
 
-MEASURED_PLACEMENT_TABLE
+Measured by `tests/e2e/harmony_cutin.mjs` (geometry and plan): the fit chosen, the scale, the drawn face height, the footprint as a share of the viewport, frames checked against the protected rectangles (hold and fade), overlaps found.
+
+| Viewport | Text | Pairing | Fit | Variant × scale | Faces | Footprint (w / h / area %) | Frames checked | Overlaps | Placed again | Same layouts as with the portrait Off |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 1648×840 | 100% | Nao | standard | standard ×2 | 66 px | 26.8 / 23.3 / 6.3 | 35 | 0 | 0 | yes |
+| 1648×840 | 200% | Mio | standard | standard ×2 | 66 px | 26.8 / 23.3 / 6.3 | 36 | 0 | 1 | — |
+| 1440×900 | 100% | Ren | standard-moved | standard ×2 | 66 px | 30.7 / 20 / 6.1 | 35 | 0 | 0 | — |
+| 1440×900 | 200% | Suzu | compact | compact ×2 | 66 px | 21.8 / 17.3 / 3.8 | 35 | 0 | 1 | — |
+| 1280×720 | 100% | Nao | compact | compact ×2 | 66 px | 24.5 / 23.1 / 5.7 | 35 | 0 | 0 | yes |
+| 1280×720 | 200% | Mio | compact-small | compact ×1 | 33 px | 12.3 / 11.5 / 1.4 | 34 | 0 | 1 | yes |
+| 768×1024 | 100% | Ren | compact | compact ×3 | 99 px | 61.3 / 22 / 13.5 | 36 | 0 | 0 | — |
+| 768×1024 | 200% | Suzu | compact | compact ×3 | 99 px | 61.3 / 22.9 / 14 | 34 | 0 | 1 | — |
+| 390×844 | 100% | Nao | compact | compact ×2 | 66 px | 80.5 / 19.7 / 15.8 | 36 | 0 | 0 | yes |
+| 390×844 | 200% | Mio | omitted (placed again: overlaps banner) | — | — | — | 0 | 0 | 1 | yes |
+| 320×640 | 100% | Ren | compact | compact ×2 | 66 px | 98.1 / 23.4 / 23 | 36 | 0 | 0 | — |
+| 320×640 | 200% | Suzu | omitted (overlaps banner) | — | — | — | 0 | 0 | 0 | — |
+| 844×390 | 100% | Nao | compact-bare | compact ×1 | 33 px | 16.1 / 21 / 3.4 | 36 | 0 | 0 | — |
+| 844×390 | 200% | Mio | omitted (overlaps status) | — | — | — | 0 | 0 | 0 | — |
+
+The combination plan (one technique each):
+
+| Scene | Text | Pairing | Fit | Variant × scale | Faces | Footprint (w / h / area %) | Frames checked | Overlaps | Placed again |
+|---|---|---|---|---|---|---|---|---|---|
+| Keep visible + Expanded, 1280×720, Ren | 100% | Ren | compact-small | compact ×1 | 33 px | 12.3 / 10.4 / 1.3 | 35 | 0 | 0 |
+| Keep visible + Expanded, 1648×840, Suzu | 100% | Suzu | standard | standard ×2 | 66 px | 26.8 / 22.1 / 5.9 | 32 | 0 | 0 |
+| group of three, 1280×720, Suzu | 100% | Suzu | omitted (overlaps creature) | — | — | — | 0 | 0 | 0 |
+| group of three, 1648×840, Mio | 100% | Mio | compact-small | compact ×1 | 33 px | 9.5 / 9.9 / 0.9 | 35 | 0 | 0 |
+| group of two, 1920×1080, Nao | 100% | Nao | compact-small | compact ×1 | 33 px | 8.2 / 7.7 / 0.6 | 34 | 0 | 0 |
+| finishing technique, 1280×720, Nao | 100% | Nao | compact | compact ×2 | 66 px | 24.5 / 23.1 / 5.7 | 36 | 0 | 0 |
+| Adaptive + Expanded, 390×844, Mio | 100% | Mio | compact | compact ×2 | 66 px | 80.5 / 19.7 / 15.8 | 35 | 0 | 0 |
+| Keep visible, 390×844, Mio | 100% | Mio | omitted (overlaps banner) | — | — | — | 0 | 0 | 0 |
+
+Why the desktop fits differ (the fit order's own record, one creature, during the hold): at 1648 × 840 the
+standard pair fits at mid height; at 1440 × 900 it meets the creature's box at mid height and is moved up; at
+1280 × 720 the standard pair at ×2 (456 px wide) reaches the creature's name plate (x 443, inside 12 px) at
+every height, so the compact pair at ×2 is used — same 66 px faces, a smaller band. Groups fill the left side
+with a creature's box (not its silhouette), hence compact ×1 or the recorded omission there. At 200 % text
+(`textScale` 2) on phones the banner and the status dock take the room: omitted, recorded, never shown over them.
 
 ### 7.3 The four stage performances as built (Normal, presentation ms from the technique's start)
 
@@ -302,12 +371,21 @@ the pour, Ren `lantern` as the lamp rises, Suzu `wind` with the twirl; the exist
 
 ### 7.4 Evidence and measurements
 
-`tests/e2e/harmony_cutin.mjs` (sections core, never, geometry, plan, frozen, life, cycles, setting, dev; `--docs`
-writes the evidence); `tests/unit/harmony_timing.test.mjs`; `tests/e2e/battle_invariance.mjs --tech` (96 technique
+`tests/e2e/harmony_cutin.mjs` (sections core, never, geometry, plan, frozen, life, cycles, setting, dev, painted;
+`--docs` writes the evidence); `tests/unit/harmony_timing.test.mjs`; `tests/e2e/battle_invariance.mjs --tech` (96 technique
 configurations, the portrait On / Off). Evidence in `docs/screenshots/harmony/cutin/`: a real-time WebM of each
 pairing at Normal (1280 × 720), the four stage performances with the portrait Off as frame sheets, the compact
 cut-in at 390 × 844, and `cutin_results.json` (every measurement above, the timelines at frame resolution, costs).
 All figures are from headless Chromium on a shared, loaded 4-core machine — not a physical device, not a phone.
+
+The painted path with its SYNTHETIC sample (Suzu only; `painted` in the browser test, recorded in cutin_results.json):
+
+| View | Fit | Variant × scale | Faces | Canvas (art px) → shown (CSS px) | States shown, in order | Overlaps | Gone at / first result |
+|---|---|---|---|---|---|---|---|
+| 1280×720 normal | standard-moved | standard ×1 | 33 px | 352×160 → 352×160 | prep_a → prep_b → cue → peak → settle_b | 0 of 30 frames | 783.4 / 1283 ms |
+| 1280×720 fast | standard-moved | standard ×1 | 33 px | 352×160 → 352×160 | prep_a → prep_b → cue → peak → settle_b | 0 of 22 frames | 691 / 1287 ms |
+| 1280×720 normal reduced | standard-moved | standard ×1 | 33 px | 352×160 → 352×160 | settle_b | 0 of 36 frames | 783.3 / 1283 ms |
+| 390×844 @3x normal | compact | compact ×1.333 | 44 px | 248×128 → 330.66×170.66 | prep_a → prep_b → cue → peak → settle_b | 0 of 34 frames | 800 / 1283 ms |
 
 ### 7.5 Limits, stated plainly
 
@@ -321,6 +399,9 @@ All figures are from headless Chromium on a shared, loaded 4-core machine — no
 - The stage uses the rig's existing faces: Suzu's front view in the twirl has small features (the far eye is
   added only when she is turned toward us); the spin is its 3-D rig turned through about ten drawings at Normal,
   not a hand-drawn turn.
-- The overlay was built against today's code-drawn busts; painted art (planned) can replace them behind the same
-  API: sizes come from `NATIVE` / `fitScale` / the canvas, fractional scales are accepted, and the art's phases or
-  timeline are data.
+- The overlay was built against today's code-drawn busts; painted art can replace them behind the same API: sizes
+  come from `NATIVE` / `fitScale` / the canvas, fractional scales are accepted, and the art's phases or timeline
+  are data. With the contract-v2 pair sizes (tried only with the synthetic sample) the standard pair fits
+  1280 × 720 only at ×1 (faces 33 px) and the compact pair at 390 × 844 (ratio 3) at ×4/3 (faces 44 px) — below
+  the 64 px the code-drawn compact pair reaches on that phone. Those sizes are the art contract's; the overlay
+  follows them.

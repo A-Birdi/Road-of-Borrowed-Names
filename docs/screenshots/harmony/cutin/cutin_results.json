@@ -1,0 +1,4407 @@
+{
+ "when": "2026-10-03T10:52:34.194Z",
+ "browser": "Chromium (Playwright, headless), software canvas, device pixel ratio 1, shared 4-core Linux machine — not a physical device",
+ "cost": {
+  "nao": {
+   "cutin": {
+    "startMs": [
+     11.4,
+     5.4,
+     2.6,
+     2.5
+    ],
+    "frameMaxMs": 1.9,
+    "frameMeanMs": 0.158,
+    "frames": 155
+   },
+   "artBuild": {
+    "last": 19.5,
+    "mean": 24.8,
+    "max": 48.7
+   },
+   "artCache": {
+    "busts": 8,
+    "compositions": 4,
+    "MiB": 1.18
+   },
+   "figures": {
+    "frames": 248,
+    "bytes": 8253440,
+    "mib": 7.871,
+    "perActor": {
+     "pc": 124,
+     "nao": 124
+    },
+    "cap": 720,
+    "capMib": 22.85,
+    "budgetMib": 48,
+    "built": 248,
+    "meanBuildMs": 7.22,
+    "maxBuildMs": 54.1,
+    "hits": 4308,
+    "evicted": 0,
+    "released": 0
+   }
+  },
+  "mio": {
+   "cutin": {
+    "startMs": [
+     8.5,
+     4.3,
+     3.6,
+     2.4,
+     2.5,
+     3.1
+    ],
+    "frameMaxMs": 1.7,
+    "frameMeanMs": 0.167,
+    "frames": 251
+   },
+   "artBuild": {
+    "last": 17.8,
+    "mean": 22.2,
+    "max": 63.7
+   },
+   "artCache": {
+    "busts": 8,
+    "compositions": 4,
+    "MiB": 1.18
+   },
+   "figures": {
+    "frames": 257,
+    "bytes": 8552960,
+    "mib": 8.157,
+    "perActor": {
+     "pc": 137,
+     "mio": 120
+    },
+    "cap": 720,
+    "capMib": 22.85,
+    "budgetMib": 48,
+    "built": 260,
+    "meanBuildMs": 6.5,
+    "maxBuildMs": 52.4,
+    "hits": 5876,
+    "evicted": 0,
+    "released": 3
+   }
+  },
+  "ren": {
+   "cutin": {
+    "startMs": [
+     7.9,
+     4.6,
+     4.6,
+     3.9
+    ],
+    "frameMaxMs": 2.4,
+    "frameMeanMs": 0.166,
+    "frames": 154
+   },
+   "artBuild": {
+    "last": 19.1,
+    "mean": 21.5,
+    "max": 45.5
+   },
+   "artCache": {
+    "busts": 8,
+    "compositions": 4,
+    "MiB": 1.18
+   },
+   "figures": {
+    "frames": 244,
+    "bytes": 8120320,
+    "mib": 7.744,
+    "perActor": {
+     "ren": 120,
+     "pc": 124
+    },
+    "cap": 720,
+    "capMib": 22.85,
+    "budgetMib": 48,
+    "built": 244,
+    "meanBuildMs": 8.11,
+    "maxBuildMs": 64.7,
+    "hits": 4290,
+    "evicted": 0,
+    "released": 0
+   }
+  },
+  "suzu": {
+   "cutin": {
+    "startMs": [
+     9.5,
+     4.7,
+     4.7,
+     4
+    ],
+    "frameMaxMs": 1.3,
+    "frameMeanMs": 0.163,
+    "frames": 153
+   },
+   "artBuild": {
+    "last": 17.7,
+    "mean": 24.5,
+    "max": 71.5
+   },
+   "artCache": {
+    "busts": 8,
+    "compositions": 4,
+    "MiB": 1.18
+   },
+   "figures": {
+    "frames": 293,
+    "bytes": 9751040,
+    "mib": 9.299,
+    "perActor": {
+     "pc": 125,
+     "suzu": 168
+    },
+    "cap": 720,
+    "capMib": 22.85,
+    "budgetMib": 48,
+    "built": 293,
+    "meanBuildMs": 9.43,
+    "maxBuildMs": 64.5,
+    "hits": 4635,
+    "evicted": 0,
+    "released": 0
+   }
+  }
+ },
+ "setting": {
+  "default": true,
+  "olderRecord": true,
+  "row": "Harmony portrait flourishOnA short paired portrait of you and your companion as a coordinated technique begins. Off keeps the technique, its performance on the stage and its name at the top.",
+  "savedOff": true,
+  "battleSheet": {
+   "opened": true,
+   "inSheet": {
+    "paused": true,
+    "state": "holding",
+    "still": true,
+    "checked": true,
+    "after": {
+     "why": "off",
+     "layers": 0,
+     "tech": "unravel,tech"
+    }
+   }
+  }
+ },
+ "core": [
+  {
+   "comp": "nao",
+   "anim": "normal",
+   "reduce": false,
+   "label": null,
+   "started": 1,
+   "why": "done",
+   "fit": "compact",
+   "variant": "compact",
+   "scale": 2,
+   "marks": [
+    "inactive@0",
+    "entering@0",
+    "holding@183.3",
+    "fading@566.7",
+    "disposed@783.3"
+   ],
+   "firstResult": 1250,
+   "techMs": 2302,
+   "end": 2300,
+   "kind": "player"
+  },
+  {
+   "comp": "nao",
+   "anim": "normal",
+   "reduce": true,
+   "label": null,
+   "started": 1,
+   "why": "done",
+   "fit": "compact",
+   "variant": "compact",
+   "scale": 2,
+   "marks": [
+    "inactive@0",
+    "entering@0",
+    "holding@183.3",
+    "fading@566.6",
+    "disposed@783.2"
+   ],
+   "firstResult": 1250,
+   "techMs": 2306,
+   "end": 2300,
+   "kind": "player"
+  },
+  {
+   "comp": "nao",
+   "anim": "fast",
+   "reduce": false,
+   "label": null,
+   "started": 1,
+   "why": "done",
+   "fit": "compact",
+   "variant": "compact",
+   "scale": 2,
+   "marks": [
+    "inactive@0",
+    "entering@0",
+    "holding@143",
+    "fading@476.6",
+    "disposed@691.1"
+   ],
+   "firstResult": 1263,
+   "techMs": 1607,
+   "end": 2300,
+   "kind": "player"
+  },
+  {
+   "comp": "nao",
+   "anim": "fast",
+   "reduce": true,
+   "label": null,
+   "started": 1,
+   "why": "done",
+   "fit": "compact",
+   "variant": "compact",
+   "scale": 2,
+   "marks": [
+    "inactive@0",
+    "entering@0",
+    "holding@166.7",
+    "fading@476.6",
+    "disposed@691.1"
+   ],
+   "firstResult": 1263,
+   "techMs": 1608,
+   "end": 2300,
+   "kind": "player"
+  },
+  {
+   "comp": "nao",
+   "anim": "instant",
+   "reduce": false,
+   "label": null,
+   "started": 0,
+   "why": null,
+   "fit": null,
+   "variant": null,
+   "scale": null,
+   "marks": [],
+   "firstResult": 0,
+   "techMs": 4,
+   "end": 2300,
+   "kind": "player"
+  },
+  {
+   "comp": "nao",
+   "anim": "instant",
+   "reduce": true,
+   "label": null,
+   "started": 0,
+   "why": null,
+   "fit": null,
+   "variant": null,
+   "scale": null,
+   "marks": [],
+   "firstResult": 0,
+   "techMs": 5,
+   "end": 2300,
+   "kind": "player"
+  },
+  {
+   "comp": "nao",
+   "anim": "normal",
+   "reduce": false,
+   "label": "portrait off",
+   "started": 0,
+   "why": null,
+   "fit": null,
+   "variant": null,
+   "scale": null,
+   "marks": [],
+   "firstResult": 1250,
+   "techMs": 2306,
+   "end": 2300,
+   "kind": "player"
+  },
+  {
+   "comp": "mio",
+   "anim": "normal",
+   "reduce": false,
+   "label": null,
+   "started": 1,
+   "why": "done",
+   "fit": "compact",
+   "variant": "compact",
+   "scale": 2,
+   "marks": [
+    "inactive@0",
+    "entering@0",
+    "holding@183.3",
+    "fading@566.6",
+    "disposed@783.3"
+   ],
+   "firstResult": 1217,
+   "techMs": 2357,
+   "end": 2350,
+   "kind": "player"
+  },
+  {
+   "comp": "mio",
+   "anim": "normal",
+   "reduce": true,
+   "label": null,
+   "started": 1,
+   "why": "done",
+   "fit": "compact",
+   "variant": "compact",
+   "scale": 2,
+   "marks": [
+    "inactive@0",
+    "entering@0",
+    "holding@183.4",
+    "fading@566.6",
+    "disposed@783.3"
+   ],
+   "firstResult": 1217,
+   "techMs": 2356,
+   "end": 2350,
+   "kind": "player"
+  },
+  {
+   "comp": "mio",
+   "anim": "fast",
+   "reduce": false,
+   "label": null,
+   "started": 1,
+   "why": "done",
+   "fit": "compact",
+   "variant": "compact",
+   "scale": 2,
+   "marks": [
+    "inactive@0",
+    "entering@0",
+    "holding@143",
+    "fading@476.6",
+    "disposed@691.1"
+   ],
+   "firstResult": 1216,
+   "techMs": 1640,
+   "end": 2350,
+   "kind": "player"
+  },
+  {
+   "comp": "mio",
+   "anim": "fast",
+   "reduce": true,
+   "label": null,
+   "started": 1,
+   "why": "done",
+   "fit": "compact",
+   "variant": "compact",
+   "scale": 2,
+   "marks": [
+    "inactive@0",
+    "entering@0",
+    "holding@143.1",
+    "fading@476.8",
+    "disposed@691.3"
+   ],
+   "firstResult": 1216,
+   "techMs": 1641,
+   "end": 2350,
+   "kind": "player"
+  },
+  {
+   "comp": "mio",
+   "anim": "instant",
+   "reduce": false,
+   "label": null,
+   "started": 0,
+   "why": null,
+   "fit": null,
+   "variant": null,
+   "scale": null,
+   "marks": [],
+   "firstResult": 0,
+   "techMs": 5,
+   "end": 2350,
+   "kind": "player"
+  },
+  {
+   "comp": "mio",
+   "anim": "instant",
+   "reduce": true,
+   "label": null,
+   "started": 0,
+   "why": null,
+   "fit": null,
+   "variant": null,
+   "scale": null,
+   "marks": [],
+   "firstResult": 0,
+   "techMs": 4,
+   "end": 2350,
+   "kind": "player"
+  },
+  {
+   "comp": "mio",
+   "anim": "normal",
+   "reduce": false,
+   "label": "portrait off",
+   "started": 0,
+   "why": null,
+   "fit": null,
+   "variant": null,
+   "scale": null,
+   "marks": [],
+   "firstResult": 1217,
+   "techMs": 2357,
+   "end": 2350,
+   "kind": "player"
+  },
+  {
+   "comp": "mio",
+   "anim": "normal",
+   "reduce": false,
+   "label": "pet shown",
+   "started": 1,
+   "why": "done",
+   "fit": "compact",
+   "variant": "compact",
+   "scale": 2,
+   "marks": [
+    "inactive@0",
+    "entering@0",
+    "holding@183.3",
+    "fading@566.7",
+    "disposed@783.3"
+   ],
+   "firstResult": 1200,
+   "techMs": 2356,
+   "end": 2350,
+   "kind": "player"
+  },
+  {
+   "comp": "mio",
+   "anim": "normal",
+   "reduce": false,
+   "label": "pet hidden",
+   "started": 1,
+   "why": "done",
+   "fit": "compact",
+   "variant": "compact",
+   "scale": 2,
+   "marks": [
+    "inactive@0",
+    "entering@0",
+    "holding@183.3",
+    "fading@566.7",
+    "disposed@783.3"
+   ],
+   "firstResult": 1217,
+   "techMs": 2356,
+   "end": 2350,
+   "kind": "player"
+  },
+  {
+   "comp": "ren",
+   "anim": "normal",
+   "reduce": false,
+   "label": null,
+   "started": 1,
+   "why": "done",
+   "fit": "compact",
+   "variant": "compact",
+   "scale": 2,
+   "marks": [
+    "inactive@0",
+    "entering@0",
+    "holding@183.3",
+    "fading@566.7",
+    "disposed@783.3"
+   ],
+   "firstResult": 1217,
+   "techMs": 2294,
+   "end": 2300,
+   "kind": "player"
+  },
+  {
+   "comp": "ren",
+   "anim": "normal",
+   "reduce": true,
+   "label": null,
+   "started": 1,
+   "why": "done",
+   "fit": "compact",
+   "variant": "compact",
+   "scale": 2,
+   "marks": [
+    "inactive@0",
+    "entering@0",
+    "holding@183.3",
+    "fading@566.6",
+    "disposed@783.3"
+   ],
+   "firstResult": 1217,
+   "techMs": 2306,
+   "end": 2300,
+   "kind": "player"
+  },
+  {
+   "comp": "ren",
+   "anim": "fast",
+   "reduce": false,
+   "label": null,
+   "started": 1,
+   "why": "done",
+   "fit": "compact",
+   "variant": "compact",
+   "scale": 2,
+   "marks": [
+    "inactive@0",
+    "entering@0",
+    "holding@143.1",
+    "fading@476.6",
+    "disposed@691.3"
+   ],
+   "firstResult": 1216,
+   "techMs": 1607,
+   "end": 2300,
+   "kind": "player"
+  },
+  {
+   "comp": "ren",
+   "anim": "fast",
+   "reduce": true,
+   "label": null,
+   "started": 1,
+   "why": "done",
+   "fit": "compact",
+   "variant": "compact",
+   "scale": 2,
+   "marks": [
+    "inactive@0",
+    "entering@0",
+    "holding@166.9",
+    "fading@476.6",
+    "disposed@691.3"
+   ],
+   "firstResult": 1215,
+   "techMs": 1606,
+   "end": 2300,
+   "kind": "player"
+  },
+  {
+   "comp": "ren",
+   "anim": "instant",
+   "reduce": false,
+   "label": null,
+   "started": 0,
+   "why": null,
+   "fit": null,
+   "variant": null,
+   "scale": null,
+   "marks": [],
+   "firstResult": 0,
+   "techMs": 6,
+   "end": 2300,
+   "kind": "player"
+  },
+  {
+   "comp": "ren",
+   "anim": "instant",
+   "reduce": true,
+   "label": null,
+   "started": 0,
+   "why": null,
+   "fit": null,
+   "variant": null,
+   "scale": null,
+   "marks": [],
+   "firstResult": 0,
+   "techMs": 4,
+   "end": 2300,
+   "kind": "player"
+  },
+  {
+   "comp": "ren",
+   "anim": "normal",
+   "reduce": false,
+   "label": "portrait off",
+   "started": 0,
+   "why": null,
+   "fit": null,
+   "variant": null,
+   "scale": null,
+   "marks": [],
+   "firstResult": 1200,
+   "techMs": 2300,
+   "end": 2300,
+   "kind": "player"
+  },
+  {
+   "comp": "suzu",
+   "anim": "normal",
+   "reduce": false,
+   "label": null,
+   "started": 1,
+   "why": "done",
+   "fit": "compact",
+   "variant": "compact",
+   "scale": 2,
+   "marks": [
+    "inactive@0",
+    "entering@0",
+    "holding@183.3",
+    "fading@566.6",
+    "disposed@783.3"
+   ],
+   "firstResult": 1283,
+   "techMs": 2443,
+   "end": 2450,
+   "kind": "player"
+  },
+  {
+   "comp": "suzu",
+   "anim": "normal",
+   "reduce": true,
+   "label": null,
+   "started": 1,
+   "why": "done",
+   "fit": "compact",
+   "variant": "compact",
+   "scale": 2,
+   "marks": [
+    "inactive@0",
+    "entering@0",
+    "holding@183.4",
+    "fading@566.7",
+    "disposed@783.4"
+   ],
+   "firstResult": 1283,
+   "techMs": 2454,
+   "end": 2450,
+   "kind": "player"
+  },
+  {
+   "comp": "suzu",
+   "anim": "fast",
+   "reduce": false,
+   "label": null,
+   "started": 1,
+   "why": "done",
+   "fit": "compact",
+   "variant": "compact",
+   "scale": 2,
+   "marks": [
+    "inactive@0",
+    "entering@0",
+    "holding@143",
+    "fading@476.6",
+    "disposed@691.1"
+   ],
+   "firstResult": 1287,
+   "techMs": 1706,
+   "end": 2450,
+   "kind": "player"
+  },
+  {
+   "comp": "suzu",
+   "anim": "fast",
+   "reduce": true,
+   "label": null,
+   "started": 1,
+   "why": "done",
+   "fit": "compact",
+   "variant": "compact",
+   "scale": 2,
+   "marks": [
+    "inactive@0",
+    "entering@0",
+    "holding@166.7",
+    "fading@476.6",
+    "disposed@691.1"
+   ],
+   "firstResult": 1287,
+   "techMs": 1707,
+   "end": 2450,
+   "kind": "player"
+  },
+  {
+   "comp": "suzu",
+   "anim": "instant",
+   "reduce": false,
+   "label": null,
+   "started": 0,
+   "why": null,
+   "fit": null,
+   "variant": null,
+   "scale": null,
+   "marks": [],
+   "firstResult": 0,
+   "techMs": 4,
+   "end": 2450,
+   "kind": "player"
+  },
+  {
+   "comp": "suzu",
+   "anim": "instant",
+   "reduce": true,
+   "label": null,
+   "started": 0,
+   "why": null,
+   "fit": null,
+   "variant": null,
+   "scale": null,
+   "marks": [],
+   "firstResult": 0,
+   "techMs": 4,
+   "end": 2450,
+   "kind": "player"
+  },
+  {
+   "comp": "suzu",
+   "anim": "normal",
+   "reduce": false,
+   "label": "portrait off",
+   "started": 0,
+   "why": null,
+   "fit": null,
+   "variant": null,
+   "scale": null,
+   "marks": [],
+   "firstResult": 1283,
+   "techMs": 2456,
+   "end": 2450,
+   "kind": "player"
+  }
+ ],
+ "geometry": [
+  {
+   "name": "1648x840",
+   "view": "1648×840",
+   "text": "100%",
+   "comp": "nao",
+   "controls": "adaptive",
+   "intents": "adaptive",
+   "foes": 1,
+   "shown": 1,
+   "displayed": true,
+   "why": "done",
+   "fit": "standard",
+   "variant": "standard",
+   "scale": 2,
+   "faceH": 66,
+   "footprint": {
+    "x": 0,
+    "y": 136,
+    "w": 442,
+    "h": 196
+   },
+   "footprintShare": {
+    "w": 26.8,
+    "h": 23.3,
+    "area": 6.3
+   },
+   "checkedFrames": 35,
+   "overlaps": 0,
+   "fallback": null,
+   "layouts": 1,
+   "relaid": 0,
+   "disposedAt": 783.3,
+   "firstResult": 1250,
+   "sameLayoutAsPortraitOff": true
+  },
+  {
+   "name": "1648x840 200%",
+   "view": "1648×840",
+   "text": "200%",
+   "comp": "mio",
+   "controls": "adaptive",
+   "intents": "adaptive",
+   "foes": 1,
+   "shown": 1,
+   "displayed": true,
+   "why": "done",
+   "fit": "standard",
+   "variant": "standard",
+   "scale": 2,
+   "faceH": 66,
+   "footprint": {
+    "x": 0,
+    "y": 72,
+    "w": 442,
+    "h": 196
+   },
+   "footprintShare": {
+    "w": 26.8,
+    "h": 23.3,
+    "area": 6.3
+   },
+   "checkedFrames": 36,
+   "overlaps": 0,
+   "fallback": null,
+   "layouts": 1,
+   "relaid": 1,
+   "disposedAt": 783.2,
+   "firstResult": 1216
+  },
+  {
+   "name": "1440x900",
+   "view": "1440×900",
+   "text": "100%",
+   "comp": "ren",
+   "controls": "adaptive",
+   "intents": "adaptive",
+   "foes": 1,
+   "shown": 1,
+   "displayed": true,
+   "why": "done",
+   "fit": "standard-moved",
+   "variant": "standard",
+   "scale": 2,
+   "faceH": 66,
+   "footprint": {
+    "x": 0,
+    "y": 110,
+    "w": 442,
+    "h": 180
+   },
+   "footprintShare": {
+    "w": 30.7,
+    "h": 20,
+    "area": 6.1
+   },
+   "checkedFrames": 35,
+   "overlaps": 0,
+   "fallback": null,
+   "layouts": 1,
+   "relaid": 0,
+   "disposedAt": 783.3,
+   "firstResult": 1217
+  },
+  {
+   "name": "1440x900 200%",
+   "view": "1440×900",
+   "text": "200%",
+   "comp": "suzu",
+   "controls": "adaptive",
+   "intents": "adaptive",
+   "foes": 1,
+   "shown": 1,
+   "displayed": true,
+   "why": "done",
+   "fit": "compact",
+   "variant": "compact",
+   "scale": 2,
+   "faceH": 66,
+   "footprint": {
+    "x": 0,
+    "y": 136,
+    "w": 314,
+    "h": 156
+   },
+   "footprintShare": {
+    "w": 21.8,
+    "h": 17.3,
+    "area": 3.8
+   },
+   "checkedFrames": 35,
+   "overlaps": 0,
+   "fallback": null,
+   "layouts": 1,
+   "relaid": 1,
+   "disposedAt": 783.4,
+   "firstResult": 1283
+  },
+  {
+   "name": "1280x720",
+   "view": "1280×720",
+   "text": "100%",
+   "comp": "nao",
+   "controls": "adaptive",
+   "intents": "adaptive",
+   "foes": 1,
+   "shown": 1,
+   "displayed": true,
+   "why": "done",
+   "fit": "compact",
+   "variant": "compact",
+   "scale": 2,
+   "faceH": 66,
+   "footprint": {
+    "x": 0,
+    "y": 90,
+    "w": 314,
+    "h": 166
+   },
+   "footprintShare": {
+    "w": 24.5,
+    "h": 23.1,
+    "area": 5.7
+   },
+   "checkedFrames": 35,
+   "overlaps": 0,
+   "fallback": null,
+   "layouts": 1,
+   "relaid": 0,
+   "disposedAt": 783.3,
+   "firstResult": 1250,
+   "sameLayoutAsPortraitOff": true
+  },
+  {
+   "name": "1280x720 200%",
+   "view": "1280×720",
+   "text": "200%",
+   "comp": "mio",
+   "controls": "adaptive",
+   "intents": "adaptive",
+   "foes": 1,
+   "shown": 1,
+   "displayed": true,
+   "why": "done",
+   "fit": "compact-small",
+   "variant": "compact",
+   "scale": 1,
+   "faceH": 33,
+   "footprint": {
+    "x": 0,
+    "y": 69,
+    "w": 157,
+    "h": 83
+   },
+   "footprintShare": {
+    "w": 12.3,
+    "h": 11.5,
+    "area": 1.4
+   },
+   "checkedFrames": 34,
+   "overlaps": 0,
+   "fallback": null,
+   "layouts": 1,
+   "relaid": 1,
+   "disposedAt": 783.3,
+   "firstResult": 1217,
+   "sameLayoutAsPortraitOff": true
+  },
+  {
+   "name": "768x1024",
+   "view": "768×1024",
+   "text": "100%",
+   "comp": "ren",
+   "controls": "adaptive",
+   "intents": "adaptive",
+   "foes": 1,
+   "shown": 1,
+   "displayed": true,
+   "why": "done",
+   "fit": "compact",
+   "variant": "compact",
+   "scale": 3,
+   "faceH": 99,
+   "footprint": {
+    "x": 0,
+    "y": 582,
+    "w": 471,
+    "h": 225
+   },
+   "footprintShare": {
+    "w": 61.3,
+    "h": 22,
+    "area": 13.5
+   },
+   "checkedFrames": 36,
+   "overlaps": 0,
+   "fallback": null,
+   "layouts": 1,
+   "relaid": 0,
+   "disposedAt": 783.3,
+   "firstResult": 1217
+  },
+  {
+   "name": "768x1024 200%",
+   "view": "768×1024",
+   "text": "200%",
+   "comp": "suzu",
+   "controls": "adaptive",
+   "intents": "adaptive",
+   "foes": 1,
+   "shown": 1,
+   "displayed": true,
+   "why": "done",
+   "fit": "compact",
+   "variant": "compact",
+   "scale": 3,
+   "faceH": 99,
+   "footprint": {
+    "x": 0,
+    "y": 582,
+    "w": 471,
+    "h": 234
+   },
+   "footprintShare": {
+    "w": 61.3,
+    "h": 22.9,
+    "area": 14
+   },
+   "checkedFrames": 34,
+   "overlaps": 0,
+   "fallback": null,
+   "layouts": 1,
+   "relaid": 1,
+   "disposedAt": 783.3,
+   "firstResult": 1283
+  },
+  {
+   "name": "390x844",
+   "view": "390×844",
+   "text": "100%",
+   "comp": "nao",
+   "controls": "adaptive",
+   "intents": "adaptive",
+   "foes": 1,
+   "shown": 1,
+   "displayed": true,
+   "why": "done",
+   "fit": "compact",
+   "variant": "compact",
+   "scale": 2,
+   "faceH": 66,
+   "footprint": {
+    "x": 0,
+    "y": 346,
+    "w": 314,
+    "h": 166
+   },
+   "footprintShare": {
+    "w": 80.5,
+    "h": 19.7,
+    "area": 15.8
+   },
+   "checkedFrames": 36,
+   "overlaps": 0,
+   "fallback": null,
+   "layouts": 1,
+   "relaid": 0,
+   "disposedAt": 783.3,
+   "firstResult": 1250,
+   "sameLayoutAsPortraitOff": true
+  },
+  {
+   "name": "390x844 200%",
+   "view": "390×844",
+   "text": "200%",
+   "comp": "mio",
+   "controls": "adaptive",
+   "intents": "adaptive",
+   "foes": 1,
+   "shown": 1,
+   "displayed": false,
+   "why": "relayout-overlap",
+   "fit": "compact",
+   "variant": "compact",
+   "scale": 2,
+   "faceH": 66,
+   "footprint": {
+    "x": 0,
+    "y": 178,
+    "w": 314,
+    "h": 166
+   },
+   "footprintShare": {
+    "w": 80.5,
+    "h": 19.7,
+    "area": 15.8
+   },
+   "checkedFrames": 0,
+   "overlaps": 0,
+   "fallback": {
+    "reason": "placed again: overlaps banner",
+    "tried": [
+     {
+      "fit": "compact",
+      "scale": 2,
+      "why": "overlaps banner"
+     },
+     {
+      "fit": "compact-bare",
+      "scale": 2,
+      "why": "overlaps banner"
+     },
+     {
+      "fit": "compact-small",
+      "scale": 1,
+      "why": "overlaps banner"
+     }
+    ]
+   },
+   "layouts": 2,
+   "relaid": 1,
+   "disposedAt": 183.4,
+   "firstResult": 1217,
+   "sameLayoutAsPortraitOff": true
+  },
+  {
+   "name": "320x640",
+   "view": "320×640",
+   "text": "100%",
+   "comp": "ren",
+   "controls": "adaptive",
+   "intents": "adaptive",
+   "foes": 1,
+   "shown": 1,
+   "displayed": true,
+   "why": "done",
+   "fit": "compact",
+   "variant": "compact",
+   "scale": 2,
+   "faceH": 66,
+   "footprint": {
+    "x": 0,
+    "y": 232,
+    "w": 314,
+    "h": 150
+   },
+   "footprintShare": {
+    "w": 98.1,
+    "h": 23.4,
+    "area": 23
+   },
+   "checkedFrames": 36,
+   "overlaps": 0,
+   "fallback": null,
+   "layouts": 1,
+   "relaid": 0,
+   "disposedAt": 783.3,
+   "firstResult": 1200
+  },
+  {
+   "name": "320x640 200%",
+   "view": "320×640",
+   "text": "200%",
+   "comp": "suzu",
+   "controls": "adaptive",
+   "intents": "adaptive",
+   "foes": 1,
+   "shown": 0,
+   "displayed": false,
+   "why": null,
+   "fit": "omitted",
+   "variant": null,
+   "scale": null,
+   "faceH": null,
+   "footprint": null,
+   "footprintShare": null,
+   "checkedFrames": 0,
+   "overlaps": 0,
+   "fallback": {
+    "reason": "overlaps banner",
+    "tried": [
+     {
+      "fit": "compact",
+      "scale": 2,
+      "why": "overlaps banner"
+     },
+     {
+      "fit": "compact-bare",
+      "scale": 2,
+      "why": "overlaps banner"
+     },
+     {
+      "fit": "compact-small",
+      "scale": 1,
+      "why": "overlaps banner"
+     }
+    ]
+   },
+   "layouts": 2,
+   "relaid": 0,
+   "disposedAt": null,
+   "firstResult": 1283
+  },
+  {
+   "name": "844x390",
+   "view": "844×390",
+   "text": "100%",
+   "comp": "nao",
+   "controls": "adaptive",
+   "intents": "adaptive",
+   "foes": 1,
+   "shown": 1,
+   "displayed": true,
+   "why": "done",
+   "fit": "compact-bare",
+   "variant": "compact",
+   "scale": 1,
+   "faceH": 33,
+   "footprint": {
+    "x": 10,
+    "y": 37,
+    "w": 136,
+    "h": 82
+   },
+   "footprintShare": {
+    "w": 16.1,
+    "h": 21,
+    "area": 3.4
+   },
+   "checkedFrames": 36,
+   "overlaps": 0,
+   "fallback": null,
+   "layouts": 1,
+   "relaid": 0,
+   "disposedAt": 783.4,
+   "firstResult": 1250
+  },
+  {
+   "name": "844x390 200%",
+   "view": "844×390",
+   "text": "200%",
+   "comp": "mio",
+   "controls": "adaptive",
+   "intents": "adaptive",
+   "foes": 1,
+   "shown": 0,
+   "displayed": false,
+   "why": null,
+   "fit": "omitted",
+   "variant": null,
+   "scale": null,
+   "faceH": null,
+   "footprint": null,
+   "footprintShare": null,
+   "checkedFrames": 0,
+   "overlaps": 0,
+   "fallback": {
+    "reason": "overlaps status",
+    "tried": [
+     {
+      "fit": "standard",
+      "scale": 1,
+      "why": "overlaps status"
+     },
+     {
+      "fit": "standard-moved",
+      "scale": 1,
+      "why": "overlaps status"
+     },
+     {
+      "fit": "compact",
+      "scale": 1,
+      "why": "overlaps status"
+     },
+     {
+      "fit": "compact-bare",
+      "scale": 1,
+      "why": "overlaps status"
+     }
+    ]
+   },
+   "layouts": 1,
+   "relaid": 0,
+   "disposedAt": null,
+   "firstResult": 1217
+  }
+ ],
+ "plan": [
+  {
+   "name": "Keep visible + Expanded, 1280×720, Ren",
+   "view": "1280×720",
+   "text": "100%",
+   "comp": "ren",
+   "controls": "keep",
+   "intents": "expanded",
+   "foes": 1,
+   "shown": 1,
+   "displayed": true,
+   "why": "done",
+   "fit": "compact-small",
+   "variant": "compact",
+   "scale": 1,
+   "faceH": 33,
+   "footprint": {
+    "x": 0,
+    "y": 211,
+    "w": 157,
+    "h": 75
+   },
+   "footprintShare": {
+    "w": 12.3,
+    "h": 10.4,
+    "area": 1.3
+   },
+   "checkedFrames": 35,
+   "overlaps": 0,
+   "fallback": null,
+   "layouts": 1,
+   "relaid": 0,
+   "disposedAt": 783.4,
+   "firstResult": 1200
+  },
+  {
+   "name": "Keep visible + Expanded, 1648×840, Suzu",
+   "view": "1648×840",
+   "text": "100%",
+   "comp": "suzu",
+   "controls": "keep",
+   "intents": "expanded",
+   "foes": 1,
+   "shown": 1,
+   "displayed": true,
+   "why": "done",
+   "fit": "standard",
+   "variant": "standard",
+   "scale": 2,
+   "faceH": 66,
+   "footprint": {
+    "x": 0,
+    "y": 215,
+    "w": 442,
+    "h": 186
+   },
+   "footprintShare": {
+    "w": 26.8,
+    "h": 22.1,
+    "area": 5.9
+   },
+   "checkedFrames": 32,
+   "overlaps": 0,
+   "fallback": null,
+   "layouts": 1,
+   "relaid": 0,
+   "disposedAt": 783.3,
+   "firstResult": 1283
+  },
+  {
+   "name": "group of three, 1280×720, Suzu",
+   "view": "1280×720",
+   "text": "100%",
+   "comp": "suzu",
+   "controls": "adaptive",
+   "intents": "adaptive",
+   "foes": 3,
+   "shown": 0,
+   "displayed": false,
+   "why": null,
+   "fit": "omitted",
+   "variant": null,
+   "scale": null,
+   "faceH": null,
+   "footprint": null,
+   "footprintShare": null,
+   "checkedFrames": 0,
+   "overlaps": 0,
+   "fallback": {
+    "reason": "overlaps creature",
+    "tried": [
+     {
+      "fit": "standard",
+      "scale": 2,
+      "why": "overlaps plate"
+     },
+     {
+      "fit": "standard-moved",
+      "scale": 2,
+      "why": "overlaps plate"
+     },
+     {
+      "fit": "compact",
+      "scale": 2,
+      "why": "overlaps plate"
+     },
+     {
+      "fit": "compact-bare",
+      "scale": 2,
+      "why": "overlaps plate"
+     },
+     {
+      "fit": "compact-small",
+      "scale": 1,
+      "why": "overlaps creature"
+     }
+    ]
+   },
+   "layouts": 1,
+   "relaid": 0,
+   "disposedAt": null,
+   "firstResult": 1283
+  },
+  {
+   "name": "group of three, 1648×840, Mio",
+   "view": "1648×840",
+   "text": "100%",
+   "comp": "mio",
+   "controls": "adaptive",
+   "intents": "adaptive",
+   "foes": 3,
+   "shown": 1,
+   "displayed": true,
+   "why": "done",
+   "fit": "compact-small",
+   "variant": "compact",
+   "scale": 1,
+   "faceH": 33,
+   "footprint": {
+    "x": 0,
+    "y": 187,
+    "w": 157,
+    "h": 83
+   },
+   "footprintShare": {
+    "w": 9.5,
+    "h": 9.9,
+    "area": 0.9
+   },
+   "checkedFrames": 35,
+   "overlaps": 0,
+   "fallback": null,
+   "layouts": 1,
+   "relaid": 0,
+   "disposedAt": 783.4,
+   "firstResult": 1200
+  },
+  {
+   "name": "group of two, 1920×1080, Nao",
+   "view": "1920×1080",
+   "text": "100%",
+   "comp": "nao",
+   "controls": "adaptive",
+   "intents": "adaptive",
+   "foes": 2,
+   "shown": 1,
+   "displayed": true,
+   "why": "done",
+   "fit": "compact-small",
+   "variant": "compact",
+   "scale": 1,
+   "faceH": 33,
+   "footprint": {
+    "x": 0,
+    "y": 243,
+    "w": 157,
+    "h": 83
+   },
+   "footprintShare": {
+    "w": 8.2,
+    "h": 7.7,
+    "area": 0.6
+   },
+   "checkedFrames": 34,
+   "overlaps": 0,
+   "fallback": null,
+   "layouts": 1,
+   "relaid": 0,
+   "disposedAt": 783.2,
+   "firstResult": 1250
+  },
+  {
+   "name": "finishing technique, 1280×720, Nao",
+   "view": "1280×720",
+   "text": "100%",
+   "comp": "nao",
+   "controls": "adaptive",
+   "intents": "adaptive",
+   "foes": 1,
+   "shown": 1,
+   "displayed": true,
+   "why": "done",
+   "fit": "compact",
+   "variant": "compact",
+   "scale": 2,
+   "faceH": 66,
+   "footprint": {
+    "x": 0,
+    "y": 90,
+    "w": 314,
+    "h": 166
+   },
+   "footprintShare": {
+    "w": 24.5,
+    "h": 23.1,
+    "area": 5.7
+   },
+   "checkedFrames": 36,
+   "overlaps": 0,
+   "fallback": null,
+   "layouts": 1,
+   "relaid": 0,
+   "disposedAt": 783.3,
+   "firstResult": 1250
+  },
+  {
+   "name": "Adaptive + Expanded, 390×844, Mio",
+   "view": "390×844",
+   "text": "100%",
+   "comp": "mio",
+   "controls": "adaptive",
+   "intents": "expanded",
+   "foes": 1,
+   "shown": 1,
+   "displayed": true,
+   "why": "done",
+   "fit": "compact",
+   "variant": "compact",
+   "scale": 2,
+   "faceH": 66,
+   "footprint": {
+    "x": 0,
+    "y": 346,
+    "w": 314,
+    "h": 166
+   },
+   "footprintShare": {
+    "w": 80.5,
+    "h": 19.7,
+    "area": 15.8
+   },
+   "checkedFrames": 35,
+   "overlaps": 0,
+   "fallback": null,
+   "layouts": 1,
+   "relaid": 0,
+   "disposedAt": 783.3,
+   "firstResult": 1217
+  },
+  {
+   "name": "Keep visible, 390×844, Mio",
+   "view": "390×844",
+   "text": "100%",
+   "comp": "mio",
+   "controls": "keep",
+   "intents": "adaptive",
+   "foes": 1,
+   "shown": 0,
+   "displayed": false,
+   "why": null,
+   "fit": "omitted",
+   "variant": null,
+   "scale": null,
+   "faceH": null,
+   "footprint": null,
+   "footprintShare": null,
+   "checkedFrames": 0,
+   "overlaps": 0,
+   "fallback": {
+    "reason": "overlaps banner",
+    "tried": [
+     {
+      "fit": "compact",
+      "scale": 2,
+      "why": "overlaps banner"
+     },
+     {
+      "fit": "compact-bare",
+      "scale": 2,
+      "why": "overlaps banner"
+     },
+     {
+      "fit": "compact-small",
+      "scale": 1,
+      "why": "overlaps banner"
+     }
+    ]
+   },
+   "layouts": 1,
+   "relaid": 0,
+   "disposedAt": null,
+   "firstResult": 1216
+  }
+ ],
+ "frozen": [
+  {
+   "view": "1280×720",
+   "comp": "suzu",
+   "overlay": {
+    "x": 0,
+    "y": 86,
+    "w": 320,
+    "h": 168
+   },
+   "changedOutside": 575,
+   "changedInside": 35056,
+   "outsideBox": [
+    719,
+    56,
+    806,
+    539
+   ],
+   "shownTwice": {
+    "n": 0,
+    "box": null
+   },
+   "withoutSkipAndBanner": {
+    "outside": 0,
+    "maxd": 0
+   }
+  },
+  {
+   "view": "390×844",
+   "comp": "ren",
+   "overlay": {
+    "x": 0,
+    "y": 330,
+    "w": 320,
+    "h": 168
+   },
+   "changedOutside": 0,
+   "changedInside": 34856,
+   "outsideBox": null,
+   "shownTwice": {
+    "n": 0,
+    "box": null
+   },
+   "withoutSkipAndBanner": {
+    "outside": 0,
+    "maxd": 0
+   }
+  },
+  {
+   "view": "1648×840",
+   "comp": "mio",
+   "overlay": {
+    "x": 0,
+    "y": 136,
+    "w": 456,
+    "h": 200
+   },
+   "changedOutside": 507,
+   "changedInside": 57080,
+   "outsideBox": [
+    1023,
+    10,
+    1136,
+    659
+   ],
+   "shownTwice": {
+    "n": 0,
+    "box": null
+   },
+   "withoutSkipAndBanner": {
+    "outside": 0,
+    "maxd": 0
+   }
+  }
+ ],
+ "life": {
+  "skip": {
+   "started": 1,
+   "why": "skip",
+   "layers": 0,
+   "harmony": 0,
+   "now": {
+    "st": "inactive",
+    "layers": 0
+   },
+   "settled": "skip",
+   "beats": "unravel,tech"
+  },
+  "hidden": {
+   "started": 1,
+   "why": "hidden",
+   "layers": 0,
+   "harmony": 0,
+   "now": {
+    "st": "inactive",
+    "layers": 0
+   }
+  },
+  "help": {
+   "started": 1,
+   "why": "layer:help",
+   "layers": 0,
+   "harmony": 0,
+   "opened": true,
+   "now": {
+    "st": "inactive",
+    "layers": 0
+   }
+  },
+  "resize": {
+   "started": 1,
+   "why": "done",
+   "layers": 0,
+   "harmony": 0,
+   "token": 4,
+   "now": {
+    "token": 4,
+    "state": "holding",
+    "fit": "standard",
+    "variant": "standard",
+    "relaid": 2
+   }
+  },
+  "campaign": {
+   "started": 1,
+   "why": "exit",
+   "layers": 0,
+   "harmony": null,
+   "now": {
+    "st": "inactive",
+    "layers": 0,
+    "spans": 0,
+    "mode": "world",
+    "seq": false
+   }
+  },
+  "press": {
+   "why": "done",
+   "hurried": false,
+   "settled": null
+  },
+  "gate": {
+   "tok": null,
+   "sheet": 1
+  }
+ },
+ "cycles": [
+  {
+   "k": 1,
+   "comp": "nao",
+   "shown": 1,
+   "listeners": 148,
+   "nodes": 463,
+   "heapMB": 23.7,
+   "left": {
+    "combat": 0,
+    "chal": 0,
+    "sheet": 0,
+    "strips": 0,
+    "fx": 0,
+    "all": 147
+   },
+   "mode": "world",
+   "layers": 0,
+   "live": 0,
+   "listening": false,
+   "spans": 2,
+   "busts": 8,
+   "comps": 4,
+   "artMiB": 1.18,
+   "timers": 0,
+   "frames": 210
+  },
+  {
+   "k": 2,
+   "comp": "mio",
+   "shown": 1,
+   "listeners": 160,
+   "nodes": 684,
+   "heapMB": 24.9,
+   "left": {
+    "combat": 0,
+    "chal": 0,
+    "sheet": 0,
+    "strips": 0,
+    "fx": 0,
+    "all": 148
+   },
+   "mode": "world",
+   "layers": 0,
+   "live": 0,
+   "listening": false,
+   "spans": 2,
+   "busts": 8,
+   "comps": 4,
+   "artMiB": 1.18,
+   "timers": 0,
+   "frames": 236
+  },
+  {
+   "k": 3,
+   "comp": "ren",
+   "shown": 1,
+   "listeners": 178,
+   "nodes": 902,
+   "heapMB": 25.5,
+   "left": {
+    "combat": 0,
+    "chal": 0,
+    "sheet": 0,
+    "strips": 0,
+    "fx": 0,
+    "all": 148
+   },
+   "mode": "world",
+   "layers": 0,
+   "live": 0,
+   "listening": false,
+   "spans": 2,
+   "busts": 8,
+   "comps": 4,
+   "artMiB": 1.18,
+   "timers": 0,
+   "frames": 285
+  },
+  {
+   "k": 4,
+   "comp": "suzu",
+   "shown": 1,
+   "listeners": 193,
+   "nodes": 1154,
+   "heapMB": 25.8,
+   "left": {
+    "combat": 0,
+    "chal": 0,
+    "sheet": 0,
+    "strips": 0,
+    "fx": 0,
+    "all": 148
+   },
+   "mode": "world",
+   "layers": 0,
+   "live": 0,
+   "listening": false,
+   "spans": 2,
+   "busts": 4,
+   "comps": 2,
+   "artMiB": 0.66,
+   "timers": 0,
+   "frames": 235
+  },
+  {
+   "k": 5,
+   "comp": "nao",
+   "shown": 1,
+   "listeners": 204,
+   "nodes": 1372,
+   "heapMB": 26.2,
+   "left": {
+    "combat": 0,
+    "chal": 0,
+    "sheet": 0,
+    "strips": 0,
+    "fx": 0,
+    "all": 148
+   },
+   "mode": "world",
+   "layers": 0,
+   "live": 0,
+   "listening": false,
+   "spans": 2,
+   "busts": 8,
+   "comps": 4,
+   "artMiB": 1.18,
+   "timers": 0,
+   "frames": 299
+  },
+  {
+   "k": 6,
+   "comp": "mio",
+   "shown": 1,
+   "listeners": 214,
+   "nodes": 1590,
+   "heapMB": 26.5,
+   "left": {
+    "combat": 0,
+    "chal": 0,
+    "sheet": 0,
+    "strips": 0,
+    "fx": 0,
+    "all": 148
+   },
+   "mode": "world",
+   "layers": 0,
+   "live": 0,
+   "listening": false,
+   "spans": 2,
+   "busts": 8,
+   "comps": 4,
+   "artMiB": 1.18,
+   "timers": 0,
+   "frames": 296
+  },
+  {
+   "k": 7,
+   "comp": "ren",
+   "shown": 1,
+   "listeners": 235,
+   "nodes": 1850,
+   "heapMB": 26.6,
+   "left": {
+    "combat": 0,
+    "chal": 0,
+    "sheet": 0,
+    "strips": 0,
+    "fx": 0,
+    "all": 148
+   },
+   "mode": "world",
+   "layers": 0,
+   "live": 0,
+   "listening": false,
+   "spans": 2,
+   "busts": 8,
+   "comps": 4,
+   "artMiB": 1.18,
+   "timers": 0,
+   "frames": 298
+  },
+  {
+   "k": 8,
+   "comp": "suzu",
+   "shown": 1,
+   "listeners": 248,
+   "nodes": 2069,
+   "heapMB": 26.9,
+   "left": {
+    "combat": 0,
+    "chal": 0,
+    "sheet": 0,
+    "strips": 0,
+    "fx": 0,
+    "all": 148
+   },
+   "mode": "world",
+   "layers": 0,
+   "live": 0,
+   "listening": false,
+   "spans": 2,
+   "busts": 8,
+   "comps": 4,
+   "artMiB": 1.18,
+   "timers": 0,
+   "frames": 395
+  },
+  {
+   "k": 9,
+   "comp": "nao",
+   "shown": 1,
+   "listeners": 268,
+   "nodes": 2348,
+   "heapMB": 27,
+   "left": {
+    "combat": 0,
+    "chal": 0,
+    "sheet": 0,
+    "strips": 0,
+    "fx": 0,
+    "all": 148
+   },
+   "mode": "world",
+   "layers": 0,
+   "live": 0,
+   "listening": false,
+   "spans": 2,
+   "busts": 8,
+   "comps": 4,
+   "artMiB": 1.18,
+   "timers": 0,
+   "frames": 353
+  },
+  {
+   "k": 10,
+   "comp": "mio",
+   "shown": 1,
+   "listeners": 281,
+   "nodes": 2567,
+   "heapMB": 26.9,
+   "left": {
+    "combat": 0,
+    "chal": 0,
+    "sheet": 0,
+    "strips": 0,
+    "fx": 0,
+    "all": 148
+   },
+   "mode": "world",
+   "layers": 0,
+   "live": 0,
+   "listening": false,
+   "spans": 2,
+   "busts": 8,
+   "comps": 4,
+   "artMiB": 1.18,
+   "timers": 0,
+   "frames": 346
+  },
+  {
+   "k": 11,
+   "comp": "ren",
+   "shown": 1,
+   "listeners": 295,
+   "nodes": 2819,
+   "heapMB": 26.9,
+   "left": {
+    "combat": 0,
+    "chal": 0,
+    "sheet": 0,
+    "strips": 0,
+    "fx": 0,
+    "all": 148
+   },
+   "mode": "world",
+   "layers": 0,
+   "live": 0,
+   "listening": false,
+   "spans": 2,
+   "busts": 4,
+   "comps": 2,
+   "artMiB": 0.66,
+   "timers": 0,
+   "frames": 299
+  },
+  {
+   "k": 12,
+   "comp": "suzu",
+   "shown": 1,
+   "listeners": 309,
+   "nodes": 3037,
+   "heapMB": 27,
+   "left": {
+    "combat": 0,
+    "chal": 0,
+    "sheet": 0,
+    "strips": 0,
+    "fx": 0,
+    "all": 148
+   },
+   "mode": "world",
+   "layers": 0,
+   "live": 0,
+   "listening": false,
+   "spans": 2,
+   "busts": 8,
+   "comps": 4,
+   "artMiB": 1.18,
+   "timers": 0,
+   "frames": 412
+  },
+  {
+   "k": 13,
+   "comp": "nao",
+   "shown": 1,
+   "listeners": 321,
+   "nodes": 3255,
+   "heapMB": 27.1,
+   "left": {
+    "combat": 0,
+    "chal": 0,
+    "sheet": 0,
+    "strips": 0,
+    "fx": 0,
+    "all": 148
+   },
+   "mode": "world",
+   "layers": 0,
+   "live": 0,
+   "listening": false,
+   "spans": 2,
+   "busts": 8,
+   "comps": 4,
+   "artMiB": 1.18,
+   "timers": 0,
+   "frames": 361
+  },
+  {
+   "k": 14,
+   "comp": "mio",
+   "shown": 1,
+   "listeners": 339,
+   "nodes": 3534,
+   "heapMB": 27.3,
+   "left": {
+    "combat": 0,
+    "chal": 0,
+    "sheet": 0,
+    "strips": 0,
+    "fx": 0,
+    "all": 148
+   },
+   "mode": "world",
+   "layers": 0,
+   "live": 0,
+   "listening": false,
+   "spans": 2,
+   "busts": 8,
+   "comps": 4,
+   "artMiB": 1.18,
+   "timers": 0,
+   "frames": 360
+  },
+  {
+   "k": 15,
+   "comp": "ren",
+   "shown": 1,
+   "listeners": 353,
+   "nodes": 3752,
+   "heapMB": 27.4,
+   "left": {
+    "combat": 0,
+    "chal": 0,
+    "sheet": 0,
+    "strips": 0,
+    "fx": 0,
+    "all": 148
+   },
+   "mode": "world",
+   "layers": 0,
+   "live": 0,
+   "listening": false,
+   "spans": 2,
+   "busts": 8,
+   "comps": 4,
+   "artMiB": 1.18,
+   "timers": 0,
+   "frames": 355
+  },
+  {
+   "k": 16,
+   "comp": "suzu",
+   "shown": 1,
+   "listeners": 366,
+   "nodes": 3971,
+   "heapMB": 27.4,
+   "left": {
+    "combat": 0,
+    "chal": 0,
+    "sheet": 0,
+    "strips": 0,
+    "fx": 0,
+    "all": 148
+   },
+   "mode": "world",
+   "layers": 0,
+   "live": 0,
+   "listening": false,
+   "spans": 2,
+   "busts": 8,
+   "comps": 4,
+   "artMiB": 1.18,
+   "timers": 0,
+   "frames": 411
+  },
+  {
+   "k": 17,
+   "comp": "nao",
+   "shown": 1,
+   "listeners": 378,
+   "nodes": 4190,
+   "heapMB": 27.5,
+   "left": {
+    "combat": 0,
+    "chal": 0,
+    "sheet": 0,
+    "strips": 0,
+    "fx": 0,
+    "all": 148
+   },
+   "mode": "world",
+   "layers": 0,
+   "live": 0,
+   "listening": false,
+   "spans": 2,
+   "busts": 8,
+   "comps": 4,
+   "artMiB": 1.18,
+   "timers": 0,
+   "frames": 365
+  },
+  {
+   "k": 18,
+   "comp": "mio",
+   "shown": 1,
+   "listeners": 390,
+   "nodes": 4408,
+   "heapMB": 27.4,
+   "left": {
+    "combat": 0,
+    "chal": 0,
+    "sheet": 0,
+    "strips": 0,
+    "fx": 0,
+    "all": 148
+   },
+   "mode": "world",
+   "layers": 0,
+   "live": 0,
+   "listening": false,
+   "spans": 2,
+   "busts": 4,
+   "comps": 2,
+   "artMiB": 0.66,
+   "timers": 0,
+   "frames": 308
+  },
+  {
+   "k": 19,
+   "comp": "ren",
+   "shown": 1,
+   "listeners": 405,
+   "nodes": 4626,
+   "heapMB": 27.4,
+   "left": {
+    "combat": 0,
+    "chal": 0,
+    "sheet": 0,
+    "strips": 0,
+    "fx": 0,
+    "all": 148
+   },
+   "mode": "world",
+   "layers": 0,
+   "live": 0,
+   "listening": false,
+   "spans": 2,
+   "busts": 8,
+   "comps": 4,
+   "artMiB": 1.18,
+   "timers": 0,
+   "frames": 366
+  },
+  {
+   "k": 20,
+   "comp": "suzu",
+   "shown": 1,
+   "listeners": 418,
+   "nodes": 4844,
+   "heapMB": 27.6,
+   "left": {
+    "combat": 0,
+    "chal": 0,
+    "sheet": 0,
+    "strips": 0,
+    "fx": 0,
+    "all": 148
+   },
+   "mode": "world",
+   "layers": 0,
+   "live": 0,
+   "listening": false,
+   "spans": 2,
+   "busts": 8,
+   "comps": 4,
+   "artMiB": 1.18,
+   "timers": 0,
+   "frames": 418
+  }
+ ],
+ "devViewer": [
+  {
+   "comp": "nao",
+   "foes": 1,
+   "kind": "dev",
+   "cutins": 1,
+   "fit": "compact",
+   "fallback": null,
+   "beats": 0,
+   "same": true
+  },
+  {
+   "comp": "mio",
+   "foes": 1,
+   "kind": "dev",
+   "cutins": 1,
+   "fit": "compact",
+   "fallback": null,
+   "beats": 0,
+   "same": true
+  },
+  {
+   "comp": "ren",
+   "foes": 1,
+   "kind": "dev",
+   "cutins": 1,
+   "fit": "compact",
+   "fallback": null,
+   "beats": 0,
+   "same": true
+  },
+  {
+   "comp": "suzu",
+   "foes": 2,
+   "kind": "dev",
+   "cutins": 0,
+   "fit": "omitted",
+   "fallback": "overlaps creature",
+   "beats": 0,
+   "same": true
+  }
+ ],
+ "painted": {
+  "note": "SYNTHETIC sample (tests/fixtures/harmony_sample), not the game's art",
+  "rows": [
+   {
+    "view": "1280×720 normal",
+    "started": 1,
+    "why": "done",
+    "fit": "standard-moved",
+    "variant": "standard",
+    "scale": 1,
+    "faceH": 33,
+    "held": {
+     "cw": 352,
+     "ch": 160,
+     "css": [
+      352,
+      160
+     ],
+     "top": 23,
+     "scale": 1,
+     "variant": "standard",
+     "fit": "standard-moved",
+     "phase": "cue",
+     "rect": {
+      "x": 0,
+      "y": 23,
+      "w": 352,
+      "h": 160
+     },
+     "footprint": {
+      "x": 0,
+      "y": 49,
+      "w": 343,
+      "h": 132
+     },
+     "relaid": 0,
+     "party": [
+      [
+       "status",
+       16,
+       572,
+       460,
+       132
+      ],
+      [
+       "party",
+       32,
+       308,
+       388,
+       250
+      ]
+     ]
+    },
+    "states": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b"
+    ],
+    "timeline": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b",
+     "settle_b"
+    ],
+    "painted": [
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     }
+    ],
+    "overlaps": 0,
+    "checkedFrames": 30,
+    "disposedAt": 783.4,
+    "firstResult": 1283
+   },
+   {
+    "view": "1280×720 fast",
+    "started": 1,
+    "why": "done",
+    "fit": "standard-moved",
+    "variant": "standard",
+    "scale": 1,
+    "faceH": 33,
+    "held": {
+     "cw": 352,
+     "ch": 160,
+     "css": [
+      352,
+      160
+     ],
+     "top": 23,
+     "scale": 1,
+     "variant": "standard",
+     "fit": "standard-moved",
+     "phase": "cue",
+     "rect": {
+      "x": 0,
+      "y": 23,
+      "w": 352,
+      "h": 160
+     },
+     "footprint": {
+      "x": 0,
+      "y": 49,
+      "w": 343,
+      "h": 132
+     },
+     "relaid": 0,
+     "party": [
+      [
+       "status",
+       16,
+       572,
+       460,
+       132
+      ],
+      [
+       "party",
+       32,
+       308,
+       388,
+       250
+      ]
+     ]
+    },
+    "states": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b"
+    ],
+    "timeline": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b",
+     "settle_b"
+    ],
+    "painted": [
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     }
+    ],
+    "overlaps": 0,
+    "checkedFrames": 22,
+    "disposedAt": 691,
+    "firstResult": 1287
+   },
+   {
+    "view": "1280×720 normal reduced",
+    "started": 1,
+    "why": "done",
+    "fit": "standard-moved",
+    "variant": "standard",
+    "scale": 1,
+    "faceH": 33,
+    "held": {
+     "cw": 352,
+     "ch": 160,
+     "css": [
+      352,
+      160
+     ],
+     "top": 23,
+     "scale": 1,
+     "variant": "standard",
+     "fit": "standard-moved",
+     "phase": "settle_b",
+     "rect": {
+      "x": 0,
+      "y": 23,
+      "w": 352,
+      "h": 160
+     },
+     "footprint": {
+      "x": 0,
+      "y": 49,
+      "w": 343,
+      "h": 132
+     },
+     "relaid": 0,
+     "party": [
+      [
+       "status",
+       16,
+       572,
+       460,
+       132
+      ],
+      [
+       "party",
+       32,
+       308,
+       388,
+       250
+      ]
+     ]
+    },
+    "states": [
+     "settle_b"
+    ],
+    "timeline": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b",
+     "settle_b"
+    ],
+    "painted": [
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     }
+    ],
+    "overlaps": 0,
+    "checkedFrames": 36,
+    "disposedAt": 783.3,
+    "firstResult": 1283
+   },
+   {
+    "view": "390×844 @3x normal",
+    "started": 1,
+    "why": "done",
+    "fit": "compact",
+    "variant": "compact",
+    "scale": 1.3333333333333333,
+    "faceH": 44,
+    "held": {
+     "cw": 248,
+     "ch": 128,
+     "css": [
+      330.66,
+      170.66
+     ],
+     "top": 309,
+     "scale": 1.3333333333333333,
+     "variant": "compact",
+     "fit": "compact",
+     "phase": "cue",
+     "rect": {
+      "x": 0,
+      "y": 309,
+      "w": 330.65625,
+      "h": 170.65625
+     },
+     "footprint": {
+      "x": 0,
+      "y": 342,
+      "w": 325,
+      "h": 137
+     },
+     "relaid": 0,
+     "party": [
+      [
+       "status",
+       8,
+       722,
+       374,
+       114
+      ],
+      [
+       "party",
+       14,
+       208,
+       194,
+       125
+      ]
+     ]
+    },
+    "states": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b"
+    ],
+    "timeline": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b",
+     "settle_b"
+    ],
+    "painted": [
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     }
+    ],
+    "overlaps": 0,
+    "checkedFrames": 34,
+    "disposedAt": 800,
+    "firstResult": 1283
+   }
+  ]
+ },
+ "never": {
+  "metersFill": true,
+  "support": "温あたたかい 薬くすりWarm draughtNewon you bothRestores 1 resolve to e",
+  "backedOutOfCompanionMenu": true,
+  "then": 1
+ },
+ "videos": {
+  "nao": {
+   "file": "docs/screenshots/harmony/cutin/technique_nao_normal_1280x720.webm",
+   "bytes": 1385144,
+   "shown": 1,
+   "fit": "compact"
+  },
+  "mio": {
+   "file": "docs/screenshots/harmony/cutin/technique_mio_normal_1280x720.webm",
+   "bytes": 1287734,
+   "shown": 1,
+   "fit": "compact"
+  },
+  "ren": {
+   "file": "docs/screenshots/harmony/cutin/technique_ren_normal_1280x720.webm",
+   "bytes": 1310067,
+   "shown": 1,
+   "fit": "compact"
+  },
+  "suzu": {
+   "file": "docs/screenshots/harmony/cutin/technique_suzu_normal_1280x720.webm",
+   "bytes": 1339232,
+   "shown": 1,
+   "fit": "compact"
+  }
+ },
+ "sheets": {
+  "nao": {
+   "file": "docs/screenshots/harmony/cutin/stage_nao_portrait_off.webp",
+   "bytes": 193784,
+   "times": [
+    0,
+    300,
+    628,
+    780,
+    884,
+    962,
+    1040,
+    1102,
+    1300,
+    1340,
+    2010,
+    2280
+   ]
+  },
+  "mio": {
+   "file": "docs/screenshots/harmony/cutin/stage_mio_portrait_off.webp",
+   "bytes": 187316,
+   "times": [
+    0,
+    300,
+    590,
+    750,
+    870,
+    960,
+    1050,
+    1122,
+    1350,
+    1300,
+    2060,
+    2330
+   ]
+  },
+  "ren": {
+   "file": "docs/screenshots/harmony/cutin/stage_ren_portrait_off.webp",
+   "bytes": 203948,
+   "times": [
+    0,
+    300,
+    620,
+    780,
+    890,
+    973,
+    1055,
+    1121,
+    1330,
+    1300,
+    2010,
+    2280
+   ]
+  },
+  "suzu": {
+   "file": "docs/screenshots/harmony/cutin/stage_suzu_portrait_off.webp",
+   "bytes": 193618,
+   "times": [
+    0,
+    300,
+    590,
+    750,
+    860,
+    943,
+    1025,
+    1091,
+    1300,
+    1380,
+    2160,
+    2430
+   ]
+  }
+ },
+ "timelines": {
+  "nao": {
+   "cue": "cutin @0",
+   "marks": [
+    {
+     "state": "inactive",
+     "at": 0,
+     "wall": 0
+    },
+    {
+     "state": "entering",
+     "at": 0,
+     "wall": 1
+    },
+    {
+     "state": "holding",
+     "at": 183.3,
+     "wall": 157
+    },
+    {
+     "state": "fading",
+     "at": 566.7,
+     "wall": 543
+    },
+    {
+     "state": "disposed",
+     "at": 783.3,
+     "wall": 757
+    }
+   ],
+   "frames": 46,
+   "trace": [
+    [
+     0,
+     "e",
+     1,
+     -318,
+     "enter"
+    ],
+    [
+     16.7,
+     "e",
+     1,
+     -238,
+     "enter"
+    ],
+    [
+     33.3,
+     "e",
+     1,
+     -172,
+     "enter"
+    ],
+    [
+     50,
+     "e",
+     1,
+     -120,
+     "enter"
+    ],
+    [
+     66.7,
+     "e",
+     1,
+     -80,
+     "enter"
+    ],
+    [
+     83.3,
+     "e",
+     1,
+     -50,
+     "enter"
+    ],
+    [
+     100,
+     "e",
+     1,
+     -28,
+     "enter"
+    ],
+    [
+     116.6,
+     "e",
+     1,
+     -14,
+     "enter"
+    ],
+    [
+     133.4,
+     "e",
+     1,
+     -6,
+     "enter"
+    ],
+    [
+     150,
+     "e",
+     1,
+     -2,
+     "enter"
+    ],
+    [
+     166.7,
+     "e",
+     1,
+     0,
+     "enter"
+    ],
+    [
+     183.3,
+     "h",
+     1,
+     0,
+     "enter"
+    ],
+    [
+     200,
+     "h",
+     1,
+     0,
+     "enter"
+    ],
+    [
+     216.6,
+     "h",
+     1,
+     0,
+     "enter"
+    ],
+    [
+     233.4,
+     "h",
+     1,
+     0,
+     "enter"
+    ],
+    [
+     250,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     266.7,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     283.4,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     300,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     316.6,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     333.3,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     350,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     366.7,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     383.3,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     400,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     433.3,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     450,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     466.6,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     483.3,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     500,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     516.6,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     533.3,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     549.9,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     566.7,
+     "f",
+     0.997,
+     0,
+     "hold"
+    ],
+    [
+     583.3,
+     "f",
+     0.969,
+     0,
+     "hold"
+    ],
+    [
+     600,
+     "f",
+     0.913,
+     0,
+     "hold"
+    ],
+    [
+     616.7,
+     "f",
+     0.835,
+     0,
+     "hold"
+    ],
+    [
+     633.3,
+     "f",
+     0.741,
+     0,
+     "hold"
+    ],
+    [
+     650,
+     "f",
+     0.635,
+     0,
+     "hold"
+    ],
+    [
+     666.6,
+     "f",
+     0.523,
+     0,
+     "hold"
+    ],
+    [
+     683.3,
+     "f",
+     0.41,
+     0,
+     "hold"
+    ],
+    [
+     700,
+     "f",
+     0.301,
+     0,
+     "hold"
+    ],
+    [
+     716.6,
+     "f",
+     0.201,
+     0,
+     "hold"
+    ],
+    [
+     733.3,
+     "f",
+     0.116,
+     0,
+     "hold"
+    ],
+    [
+     749.9,
+     "f",
+     0.051,
+     0,
+     "hold"
+    ],
+    [
+     766.6,
+     "f",
+     0.011,
+     0,
+     "hold"
+    ]
+   ],
+   "results": [
+    {
+     "t": "unravel",
+     "at": 1250,
+     "who": null
+    },
+    {
+     "t": "tech",
+     "at": 1400,
+     "who": "nao"
+    }
+   ],
+   "fired": [
+    "pose:pc=anticipate",
+    "cutin",
+    "sfx:pen_stroke",
+    "pose:comp=anticipate",
+    "pose:pc=anticipate",
+    "pose:comp=act",
+    "strip",
+    "pose:pc=act",
+    "fx:link",
+    "sfx:pen_up",
+    "fx:pSpot",
+    "fx:pThread",
+    "fx:pJoin",
+    "fx:knotRelease",
+    "fx:loosen",
+    "foe:release",
+    "beat",
+    "fx:pRoute",
+    "pose:comp=act",
+    "fx:knotRelease",
+    "fx:pSpot",
+    "beat",
+    "pose:pc=act",
+    "pose:pc=recover",
+    "pose:comp=recover"
+   ],
+   "sequenceEnd": 2300,
+   "wallMs": 2302,
+   "placement": {
+    "fit": "compact",
+    "variant": "compact",
+    "scale": 2,
+    "footprint": {
+     "x": 0,
+     "y": 90,
+     "w": 314,
+     "h": 166
+    },
+    "faceH": 66,
+    "view": {
+     "w": 1280,
+     "h": 720
+    }
+   }
+  },
+  "mio": {
+   "cue": "cutin @0",
+   "marks": [
+    {
+     "state": "inactive",
+     "at": 0,
+     "wall": 0
+    },
+    {
+     "state": "entering",
+     "at": 0,
+     "wall": 1
+    },
+    {
+     "state": "holding",
+     "at": 183.3,
+     "wall": 163
+    },
+    {
+     "state": "fading",
+     "at": 566.6,
+     "wall": 551
+    },
+    {
+     "state": "disposed",
+     "at": 783.3,
+     "wall": 762
+    }
+   ],
+   "frames": 46,
+   "trace": [
+    [
+     0,
+     "e",
+     1,
+     -318,
+     "enter"
+    ],
+    [
+     16.7,
+     "e",
+     1,
+     -238,
+     "enter"
+    ],
+    [
+     33.3,
+     "e",
+     1,
+     -172,
+     "enter"
+    ],
+    [
+     50,
+     "e",
+     1,
+     -120,
+     "enter"
+    ],
+    [
+     66.7,
+     "e",
+     1,
+     -80,
+     "enter"
+    ],
+    [
+     83.3,
+     "e",
+     1,
+     -50,
+     "enter"
+    ],
+    [
+     100,
+     "e",
+     1,
+     -28,
+     "enter"
+    ],
+    [
+     116.6,
+     "e",
+     1,
+     -14,
+     "enter"
+    ],
+    [
+     133.3,
+     "e",
+     1,
+     -6,
+     "enter"
+    ],
+    [
+     150,
+     "e",
+     1,
+     -2,
+     "enter"
+    ],
+    [
+     166.7,
+     "e",
+     1,
+     0,
+     "enter"
+    ],
+    [
+     183.3,
+     "h",
+     1,
+     0,
+     "enter"
+    ],
+    [
+     199.9,
+     "h",
+     1,
+     0,
+     "enter"
+    ],
+    [
+     216.7,
+     "h",
+     1,
+     0,
+     "enter"
+    ],
+    [
+     233.3,
+     "h",
+     1,
+     0,
+     "enter"
+    ],
+    [
+     250,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     266.7,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     283.3,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     300,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     316.6,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     333.3,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     349.9,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     366.6,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     383.3,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     400,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     416.6,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     433.3,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     450,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     483.3,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     500,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     516.7,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     533.3,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     549.9,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     566.6,
+     "f",
+     0.997,
+     0,
+     "hold"
+    ],
+    [
+     583.3,
+     "f",
+     0.969,
+     0,
+     "hold"
+    ],
+    [
+     600,
+     "f",
+     0.913,
+     0,
+     "hold"
+    ],
+    [
+     616.6,
+     "f",
+     0.835,
+     0,
+     "hold"
+    ],
+    [
+     633.3,
+     "f",
+     0.741,
+     0,
+     "hold"
+    ],
+    [
+     650,
+     "f",
+     0.635,
+     0,
+     "hold"
+    ],
+    [
+     666.6,
+     "f",
+     0.523,
+     0,
+     "hold"
+    ],
+    [
+     683.3,
+     "f",
+     0.41,
+     0,
+     "hold"
+    ],
+    [
+     700,
+     "f",
+     0.301,
+     0,
+     "hold"
+    ],
+    [
+     716.6,
+     "f",
+     0.201,
+     0,
+     "hold"
+    ],
+    [
+     733.3,
+     "f",
+     0.116,
+     0,
+     "hold"
+    ],
+    [
+     750,
+     "f",
+     0.051,
+     0,
+     "hold"
+    ],
+    [
+     766.6,
+     "f",
+     0.011,
+     0,
+     "hold"
+    ]
+   ],
+   "results": [
+    {
+     "t": "unravel",
+     "at": 1217,
+     "who": null
+    },
+    {
+     "t": "tech",
+     "at": 1367,
+     "who": "mio"
+    }
+   ],
+   "fired": [
+    "pose:pc=anticipate",
+    "cutin",
+    "sfx:pen_stroke",
+    "pose:comp=anticipate",
+    "pose:pc=anticipate",
+    "pose:comp=act",
+    "pose:pc=act",
+    "strip",
+    "fx:link",
+    "sfx:splash",
+    "fx:pPour",
+    "fx:pJoin",
+    "fx:knotRelease",
+    "fx:loosen",
+    "foe:release",
+    "beat",
+    "fx:motes",
+    "pose:comp=act",
+    "beat",
+    "pose:pc=act",
+    "pose:pc=soothed",
+    "pose:pc=recover",
+    "pose:comp=recover"
+   ],
+   "sequenceEnd": 2350,
+   "wallMs": 2357,
+   "placement": {
+    "fit": "compact",
+    "variant": "compact",
+    "scale": 2,
+    "footprint": {
+     "x": 0,
+     "y": 90,
+     "w": 314,
+     "h": 166
+    },
+    "faceH": 66,
+    "view": {
+     "w": 1280,
+     "h": 720
+    }
+   }
+  },
+  "ren": {
+   "cue": "cutin @0",
+   "marks": [
+    {
+     "state": "inactive",
+     "at": 0,
+     "wall": 0
+    },
+    {
+     "state": "entering",
+     "at": 0,
+     "wall": 1
+    },
+    {
+     "state": "holding",
+     "at": 183.3,
+     "wall": 154
+    },
+    {
+     "state": "fading",
+     "at": 566.7,
+     "wall": 537
+    },
+    {
+     "state": "disposed",
+     "at": 783.3,
+     "wall": 756
+    }
+   ],
+   "frames": 45,
+   "trace": [
+    [
+     0,
+     "e",
+     1,
+     -318,
+     "enter"
+    ],
+    [
+     16.7,
+     "e",
+     1,
+     -238,
+     "enter"
+    ],
+    [
+     33.3,
+     "e",
+     1,
+     -172,
+     "enter"
+    ],
+    [
+     50,
+     "e",
+     1,
+     -120,
+     "enter"
+    ],
+    [
+     66.7,
+     "e",
+     1,
+     -80,
+     "enter"
+    ],
+    [
+     83.3,
+     "e",
+     1,
+     -50,
+     "enter"
+    ],
+    [
+     100,
+     "e",
+     1,
+     -28,
+     "enter"
+    ],
+    [
+     116.7,
+     "e",
+     1,
+     -14,
+     "enter"
+    ],
+    [
+     133.3,
+     "e",
+     1,
+     -6,
+     "enter"
+    ],
+    [
+     150,
+     "e",
+     1,
+     -2,
+     "enter"
+    ],
+    [
+     166.7,
+     "e",
+     1,
+     0,
+     "enter"
+    ],
+    [
+     183.3,
+     "h",
+     1,
+     0,
+     "enter"
+    ],
+    [
+     200,
+     "h",
+     1,
+     0,
+     "enter"
+    ],
+    [
+     216.6,
+     "h",
+     1,
+     0,
+     "enter"
+    ],
+    [
+     233.3,
+     "h",
+     1,
+     0,
+     "enter"
+    ],
+    [
+     266.7,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     283.3,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     300,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     316.7,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     333.4,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     350,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     366.7,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     383.3,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     399.9,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     416.7,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     433.3,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     449.9,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     466.6,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     483.3,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     500,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     516.6,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     533.3,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     549.9,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     566.7,
+     "f",
+     0.997,
+     0,
+     "hold"
+    ],
+    [
+     583.3,
+     "f",
+     0.969,
+     0,
+     "hold"
+    ],
+    [
+     616.7,
+     "f",
+     0.835,
+     0,
+     "hold"
+    ],
+    [
+     633.3,
+     "f",
+     0.741,
+     0,
+     "hold"
+    ],
+    [
+     650,
+     "f",
+     0.635,
+     0,
+     "hold"
+    ],
+    [
+     666.7,
+     "f",
+     0.522,
+     0,
+     "hold"
+    ],
+    [
+     683.3,
+     "f",
+     0.41,
+     0,
+     "hold"
+    ],
+    [
+     700,
+     "f",
+     0.301,
+     0,
+     "hold"
+    ],
+    [
+     716.7,
+     "f",
+     0.201,
+     0,
+     "hold"
+    ],
+    [
+     733.3,
+     "f",
+     0.116,
+     0,
+     "hold"
+    ],
+    [
+     749.9,
+     "f",
+     0.051,
+     0,
+     "hold"
+    ],
+    [
+     766.6,
+     "f",
+     0.011,
+     0,
+     "hold"
+    ]
+   ],
+   "results": [
+    {
+     "t": "unravel",
+     "at": 1217,
+     "who": null
+    },
+    {
+     "t": "tech",
+     "at": 1350,
+     "who": "ren"
+    }
+   ],
+   "fired": [
+    "pose:pc=anticipate",
+    "cutin",
+    "sfx:pen_stroke",
+    "pose:comp=anticipate",
+    "pose:pc=anticipate",
+    "pose:pc=act",
+    "pose:comp=act",
+    "strip",
+    "sfx:lantern",
+    "fx:pLamp",
+    "fx:link",
+    "fx:pPlane",
+    "fx:pJoin",
+    "fx:knotRelease",
+    "fx:loosen",
+    "foe:release",
+    "beat",
+    "pose:pc=act",
+    "pose:comp=act",
+    "fx:sealForm",
+    "beat",
+    "fx:sealForm",
+    "pose:pc=recover",
+    "pose:comp=recover"
+   ],
+   "sequenceEnd": 2300,
+   "wallMs": 2294,
+   "placement": {
+    "fit": "compact",
+    "variant": "compact",
+    "scale": 2,
+    "footprint": {
+     "x": 0,
+     "y": 98,
+     "w": 314,
+     "h": 150
+    },
+    "faceH": 66,
+    "view": {
+     "w": 1280,
+     "h": 720
+    }
+   }
+  },
+  "suzu": {
+   "cue": "cutin @0",
+   "marks": [
+    {
+     "state": "inactive",
+     "at": 0,
+     "wall": 0
+    },
+    {
+     "state": "entering",
+     "at": 0,
+     "wall": 1
+    },
+    {
+     "state": "holding",
+     "at": 183.3,
+     "wall": 147
+    },
+    {
+     "state": "fading",
+     "at": 566.6,
+     "wall": 540
+    },
+    {
+     "state": "disposed",
+     "at": 783.3,
+     "wall": 773
+    }
+   ],
+   "frames": 44,
+   "trace": [
+    [
+     0,
+     "e",
+     1,
+     -318,
+     "enter"
+    ],
+    [
+     16.7,
+     "e",
+     1,
+     -238,
+     "enter"
+    ],
+    [
+     50.1,
+     "e",
+     1,
+     -120,
+     "enter"
+    ],
+    [
+     66.7,
+     "e",
+     1,
+     -80,
+     "enter"
+    ],
+    [
+     83.4,
+     "e",
+     1,
+     -50,
+     "enter"
+    ],
+    [
+     100,
+     "e",
+     1,
+     -28,
+     "enter"
+    ],
+    [
+     116.7,
+     "e",
+     1,
+     -14,
+     "enter"
+    ],
+    [
+     133.3,
+     "e",
+     1,
+     -6,
+     "enter"
+    ],
+    [
+     150,
+     "e",
+     1,
+     -2,
+     "enter"
+    ],
+    [
+     166.7,
+     "e",
+     1,
+     0,
+     "enter"
+    ],
+    [
+     183.3,
+     "h",
+     1,
+     0,
+     "enter"
+    ],
+    [
+     200,
+     "h",
+     1,
+     0,
+     "enter"
+    ],
+    [
+     216.7,
+     "h",
+     1,
+     0,
+     "enter"
+    ],
+    [
+     233.3,
+     "h",
+     1,
+     0,
+     "enter"
+    ],
+    [
+     250,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     266.7,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     283.4,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     300.1,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     316.7,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     333.3,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     350,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     366.7,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     383.3,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     400,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     416.7,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     433.4,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     450,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     466.7,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     483.3,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     516.7,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     533.3,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     550,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     566.6,
+     "f",
+     0.997,
+     0,
+     "hold"
+    ],
+    [
+     583.3,
+     "f",
+     0.969,
+     0,
+     "hold"
+    ],
+    [
+     600,
+     "f",
+     0.913,
+     0,
+     "hold"
+    ],
+    [
+     616.7,
+     "f",
+     0.835,
+     0,
+     "hold"
+    ],
+    [
+     650,
+     "f",
+     0.635,
+     0,
+     "hold"
+    ],
+    [
+     666.7,
+     "f",
+     0.522,
+     0,
+     "hold"
+    ],
+    [
+     683.3,
+     "f",
+     0.41,
+     0,
+     "hold"
+    ],
+    [
+     700,
+     "f",
+     0.301,
+     0,
+     "hold"
+    ],
+    [
+     716.6,
+     "f",
+     0.201,
+     0,
+     "hold"
+    ],
+    [
+     733.3,
+     "f",
+     0.116,
+     0,
+     "hold"
+    ],
+    [
+     750,
+     "f",
+     0.051,
+     0,
+     "hold"
+    ],
+    [
+     766.6,
+     "f",
+     0.011,
+     0,
+     "hold"
+    ]
+   ],
+   "results": [
+    {
+     "t": "unravel",
+     "at": 1283,
+     "who": null
+    },
+    {
+     "t": "tech",
+     "at": 1433,
+     "who": "suzu"
+    }
+   ],
+   "fired": [
+    "pose:pc=anticipate",
+    "cutin",
+    "sfx:pen_stroke",
+    "pose:comp=anticipate",
+    "pose:pc=anticipate",
+    "pose:comp=act",
+    "sfx:wind",
+    "strip",
+    "pose:pc=act",
+    "fx:link",
+    "fx:pAttention",
+    "fx:pJoin",
+    "fx:pCurtain",
+    "fx:knotRelease",
+    "fx:loosen",
+    "foe:release",
+    "beat",
+    "pose:comp=act",
+    "fx:knotRelease",
+    "pose:pc=act",
+    "fx:fizzle",
+    "beat",
+    "pose:pc=recover",
+    "pose:comp=recover"
+   ],
+   "sequenceEnd": 2450,
+   "wallMs": 2443,
+   "placement": {
+    "fit": "compact",
+    "variant": "compact",
+    "scale": 2,
+    "footprint": {
+     "x": 0,
+     "y": 96,
+     "w": 314,
+     "h": 156
+    },
+    "faceH": 66,
+    "view": {
+     "w": 1280,
+     "h": 720
+    }
+   }
+  }
+ }
+}

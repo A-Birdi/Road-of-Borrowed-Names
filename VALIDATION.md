@@ -1929,3 +1929,49 @@ contract and the landmarks; tested in a scratch worktree before fast-forwarding)
 - Results: overworld_geometry re-recorded for that one NPC place (3/3); landmarks 54/54 (Masaru talked to
   from (4,4)); actor_workplaces 30/30 (the bakery: "lf_masaru works at their station before anyone speaks
   (knead)").
+
+## Harmony cut-in and the four stage performances — the Harmony addendum §1–§10, §20–§21, §23.1–§23.4 (2026-10-03)
+
+**What:** one paired portrait per committed technique, and a new stage performance for each pairing.
+- **The overlay:** `RB.harmonyCutin` (src/ui/82d_harmony_cutin.js, src/styles/61h_harmony_cutin.css) runs on the battle's presentation clock. Its lifecycle is tokened: inactive → entering → holding → fading → disposed.
+  - Normal 180 / 380 / 220 ms; Fast 100 / 220 / 160 ms of wall time; Instant none.
+  - Reduced motion: a fade in where it stands.
+  - Non-interactive: `pointer-events: none`, `inert`, `aria-hidden`.
+- **Placement:** measured at each start and on every layout change. Every protected rectangle (now including the battle's Settings button) is kept 12 px clear of the drawn rows.
+  - Fit order: standard → moved → compact (bare, smaller) → omitted.
+  - Every omission is recorded in `stats().fallbacks`.
+- **Setting:** "Harmony portrait flourish", default On, in the folio's Battles rows and the battle's own sheet. Off removes only the portrait.
+- **Stage:** the technique's timeline is 2.30–2.45 s at Normal and 1.61–1.71 s at Fast.
+  - Nao `opening`, Mio `draught`, Ren `ward_plane`, Suzu `curtain` (a full turn of the rig), with the player's rally terminals.
+  - Mio's restoring, washing and knot are separate beats.
+- **Dev viewer:** `?dev=harmony`, labelled synthetic.
+- **Art timeline:** where painted art provides a timeline of states, the overlay plays it (docs/expressive/HARMONY.md §7).
+
+**The worker's runs** (headless Chromium on a shared, loaded 4-core machine; the merged build with the task branch at 6f4fbda):
+- Unit 24,315/0 (harmony_timing 82 checks); validator no errors.
+- `tests/e2e/harmony_cutin.mjs --docs` 11/11:
+  - core: 24 configurations, plus the portrait Off and a pet shown or hidden (30 in all).
+  - never; plan (8 scenes); frozen frame; life; 20 cycles; setting; dev viewer; the painted sample (synthetic, Suzu, including 390×844 at ratio 3); evidence.
+  - geometry: 7 viewports × 100 / 200 % text, 0 frames within 12 px of a protected rectangle.
+  - The same layouts with the portrait Off at 1648×840, 1280×720 and 390×844.
+- combat_ui 7/7, combat_small 9 ok, playtest_repairs 7/7, battle_presentation 13/13, battle_party 14/14, battle_cycle stable (listeners 104 → 104, nodes 247 → 245 over battles 5–20), battle_overlap 96 ok, companion_turn 4/4, harmony_art 39/39, harmony_raster 21/21, battle_settings 10/10.
+- `tests/e2e/battle_invariance.mjs --tech`: 96 configurations (4 pairings × 1 / 3 creatures × Normal / Fast / Instant × motion × the portrait On / Off), 8 fixtures, every fixture identical.
+- **After the merges:**
+  - The life test now changes campaign for real; since the battle-settings merge, a campaign change abandons the battle whole.
+  - The dev viewer's group of two at 1280×720 is the recorded omission.
+  - The unit stub fits the art's getter-only `timeline`.
+  - The new Settings button is protected.
+- **Not mine, seen in passing:**
+  - Listener and node growth per encounter. One page that starts encounters from fresh synthetic campaigns and leaves them grows by listeners 204 → 418 and nodes 1,372 → 4,844 over encounters 5–20. The base commit grew the same way. battle_cycle, a different flow, stays flat.
+  - At 390×844 the action banner overlaps the Skip button (compact_390x844_ren.webp).
+
+**Evidence:** docs/screenshots/harmony/cutin/ contains:
+- a real-time WebM of each pairing at Normal, 1280×720;
+- the four stage performances with the portrait Off, as frame sheets;
+- the compact cut-in at 390×844;
+- `cutin_results.json`.
+
+**Not verified:**
+- Firefox; a physical phone; a person's judgement of the performances and the portrait's timing.
+- 200 % text beyond the slider's 150 %: it was reached only by setting `textScale` to 2.
+- Painted art other than the synthetic sample.
