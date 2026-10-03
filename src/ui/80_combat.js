@@ -1223,6 +1223,12 @@ RB.combat = (function () {
     if (opts.group) return [enemyId].concat(opts.group).slice(0, (L().DIFF[s.learn.difficulty] || L().DIFF.normal).maxFoes);
     return L().groupFor(enemyId, opts.place, s.learn.difficulty);
   }
+  // Every await of start() goes through live(): once the battle has been left for another journey
+  // (abandon(), below) whatever it was waiting for never resumes it, so nothing of the abandoned
+  // battle (its outcome, flags, rewards, lines, fades, music) reaches the campaign that comes next.
+  let runN = 0;
+  const never = () => new Promise(() => {});
+  function live(p) { const n = runN; return Promise.resolve(p).then((v) => (n === runN ? v : never()), (e) => (n === runN ? Promise.reject(e) : never())); }
   async function start(enemyId, opts) {
     opts = opts || {};
     const s = RB.game.s;
@@ -1238,7 +1244,7 @@ RB.combat = (function () {
     // the zone's battle or boss theme (src/audio/39_zones.js); enemy.music still overrides
     const here = RB.world.W.map;
     RB.audio && RB.audio.playSong(RB.audio.battleSong ? RB.audio.battleSong(enemy, here && here.def, s.map) : (enemy.music || (enemy.boss ? 'boss' : 'battle')));
-    await RB.ui.fade(true, 200);
+    await live(RB.ui.fade(true, 200));
     if (RB.battlers && RB.battlers.prewarm) { RB.battlers.prewarm(RB.equip.look(s), 'pc'); if (s.comp) RB.battlers.prewarm(RB.content.chars[s.comp].look, 'comp'); }
     RB.render.setOverride(draw);
     st = L().init(enemy, s, Object.assign({}, opts, { group: members.slice(1) }));
@@ -1276,19 +1282,19 @@ RB.combat = (function () {
     ui.root.classList.add('cb-intro');
     for (const el of [ui.intent, ui.dock]) el.inert = true;
     try { renderUi(); } catch (e) { console.error('battle intro', e); }
-    await RB.ui.fade(false, 200);
+    await live(RB.ui.fade(false, 200));
     let outcome = null;
     try {
-      if (enemy.intro) await say(tierOf(enemy.intro) || enemy.intro, enemy.introWho);
+      if (enemy.intro) await live(say(tierOf(enemy.intro) || enemy.intro, enemy.introWho));
       RB.ui.dialogue.hide();
       while (!outcome) {
         // a creature's new phase (a guardian changing its ways) is told before you choose
         for (let i = 0; i < st.foes.length; i++) {
           const ph = st.foes[i].phaseChanged;
           if (!ph) continue;
-          if (ph.line) { await say(tierOf(ph.line) || ph.line, ph.who); RB.ui.dialogue.hide(); }
+          if (ph.line) { await live(say(tierOf(ph.line) || ph.line, ph.who)); RB.ui.dialogue.hide(); }
           if (ph.teach) {
-            await RB.challenge.teachCard({ title: 'Something has changed', en: ph.teach.en, jp: ph.teach.jp });
+            await live(RB.challenge.teachCard({ title: 'Something has changed', en: ph.teach.en, jp: ph.teach.jp }));
             // the authored note has just explained the move now telegraphed
             RB.combatHelp.mark(s, 'intent:' + st.foes[i].intent.kind);
           }
@@ -1306,10 +1312,10 @@ RB.combat = (function () {
         if (RB.creatures) RB.creatures.saw(s, st, members); // the telegraphs now on screen
         RB.audio && RB.audio.sfx('enemy_intent', { vol: 0.5 });
         st.assistedRound = false;
-        const card = await pickCard();
+        const card = await live(pickCard());
         if (card.kind === 'flee') {
           tg.lock = null;
-          const r = await RB.ui.confirm('Step back from this encounter? Nothing is lost; you can return whenever you like.', ['Step back', 'Stay']);
+          const r = await live(RB.ui.confirm('Step back from this encounter? Nothing is lost; you can return whenever you like.', ['Step back', 'Stay']));
           if (r === 0) { outcome = 'flee'; break; }
           continue;
         }
@@ -1319,10 +1325,10 @@ RB.combat = (function () {
         renderUi();
         const step = stepFor(card);
         const T = st.cur;
-        const res = await RB.challenge.runStep(step, {
+        const res = await live(RB.challenge.runStep(step, {
           header: situationHtml(card), status: statusInset,
           allowCancel: true, cancelLabel: 'Choose a different response', ctxTag: 'battle:' + (st.enemyId || enemyId),
-        });
+        }));
         // backed out: the preview drops back to normal, nothing else changed
         if (res.cancelled) { tg.lock = null; continue; }
         if (st.assistedRound) res.assisted = true;
@@ -1331,7 +1337,7 @@ RB.combat = (function () {
         if (st.compId && st.comp > 0 && L().compOptions(st, s, card).some((o) => !o.locked)) {
           phase = 'companion';
           renderUi();
-          const c = await pickCompanion(card);
+          const c = await live(pickCompanion(card));
           tg.compTarget = null;
           if (c === 'back') { tg.lock = null; L().target(st, T); continue; }
           cact = c;
@@ -1360,14 +1366,14 @@ RB.combat = (function () {
         // (the displayed state starts as `before` and steps forward: keep its knots apart)
         const knots0 = before.foes.map((f) => f.knots);
         chain = true;
-        await playPlayer(card, fx, before, won, reach, T, step);
+        await live(playPlayer(card, fx, before, won, reach, T, step));
         if (!won) {
           // a creature of the group whose last knot your response freed settles now
-          for (let i = 0; i < st.foes.length; i++) if (knots0[i] > 0 && V().foes[i].knots <= 0 && !wonByComp) await playSettle(i);
+          for (let i = 0; i < st.foes.length; i++) if (knots0[i] > 0 && V().foes[i].knots <= 0 && !wonByComp) await live(playSettle(i));
           if (cfx && cfx.length) {
             const kb = snapshot(V());
-            await playCompanion(cact.act, cfx, wonByComp, cact.target != null ? cact.target : T);
-            if (!wonByComp) for (let i = 0; i < st.foes.length; i++) if (kb.foes[i].knots > 0 && V().foes[i].knots <= 0) await playSettle(i);
+            await live(playCompanion(cact.act, cfx, wonByComp, cact.target != null ? cact.target : T));
+            if (!wonByComp) for (let i = 0; i < st.foes.length; i++) if (kb.foes[i].knots > 0 && V().foes[i].knots <= 0) await live(playSettle(i));
           }
         }
         // the moves your response and your companion's answered: shown on their badges now
@@ -1387,7 +1393,7 @@ RB.combat = (function () {
           let mine = efx.filter((f) => f.foe === i);
           if (k === standing.length - 1) mine = mine.concat(tail);
           const blockedByWard = fx.some((f) => f.t === 'ward' && f.block && (f.foe == null || f.foe === i));
-          await playEnemy(i, intents[i], mine, blockedByWard);
+          await live(playEnemy(i, intents[i], mine, blockedByWard));
         }
         actFoe = null;
         endChain();
@@ -1396,7 +1402,7 @@ RB.combat = (function () {
         L().endRound(st, enemy);
         if (st.log.length && st.log[st.log.length - 1].t === 'revive') {
           st.log.pop();
-          await playRevive();
+          await live(playRevive());
         }
         if (st.over) outcome = st.over;
       }
@@ -1405,11 +1411,11 @@ RB.combat = (function () {
         present('scene', { phase: 'victory' });
         phase = 'outro';
         RB.audio && RB.audio.playSong('victory');
-        if (enemy.settle) { await say(tierOf(enemy.settle) || enemy.settle, enemy.settleWho); RB.ui.dialogue.hide(); }
+        if (enemy.settle) { await live(say(tierOf(enemy.settle) || enemy.settle, enemy.settleWho)); RB.ui.dialogue.hide(); }
         if (RB.creatures) RB.creatures.settle(s, members, enemy); // a settled observation (no count)
         if (enemy.reward) {
-          for (const k in enemy.reward.items || {}) { RB.state.give(s, k, enemy.reward.items[k]); const it = RB.content.items[k]; if (it) await RB.ui.toast({ kind: 'item', jp: it.name.jp, en: it.name.en }); }
-          for (const wd of enemy.reward.words || []) if (s.words.indexOf(wd) < 0) { s.words.push(wd); const W = RB.content.words[wd]; if (W) await RB.ui.toast({ kind: 'word', jp: W.jp, en: W.en }); }
+          for (const k in enemy.reward.items || {}) { RB.state.give(s, k, enemy.reward.items[k]); const it = RB.content.items[k]; if (it) await live(RB.ui.toast({ kind: 'item', jp: it.name.jp, en: it.name.en })); }
+          for (const wd of enemy.reward.words || []) if (s.words.indexOf(wd) < 0) { s.words.push(wd); const W = RB.content.words[wd]; if (W) await live(RB.ui.toast({ kind: 'word', jp: W.jp, en: W.en })); }
         }
         s.vars.battlesWon = (s.vars.battlesWon || 0) + 1;
       }
@@ -1431,7 +1437,7 @@ RB.combat = (function () {
       lastCardId = null;
       if (ui) { window.removeEventListener('resize', ui.onHold); window.removeEventListener('resize', ui.onResize); document.removeEventListener('keydown', ui.onKey); if (ui.ro) ui.ro.disconnect(); ui.root.remove(); }
       ui = null; stageCss = null;
-      await RB.ui.fade(true, 200);
+      await live(RB.ui.fade(true, 200));
       // while the screen is dark, before the map comes back: the world settles its side of the
       // encounter (src/engine/90_game.js startBattle: a creature you settled is gone; one you
       // stepped back from backs off and stays calm)
@@ -1439,7 +1445,7 @@ RB.combat = (function () {
       RB.render.setOverride(null);
       RB.battleStage.end();
       RB.game.popMode('combat');
-      await RB.ui.fade(false, 200);
+      await live(RB.ui.fade(false, 200));
       const m = RB.world.W.map;
       const back = m && RB.world.musicFor(m.def, s);
       if (back) RB.audio && RB.audio.playSong(back);
@@ -1461,10 +1467,48 @@ RB.combat = (function () {
       frames: { n: cost.n, avg: cost.n ? +(cost.sum / cost.n).toFixed(3) : 0, max: +cost.max.toFixed(3), seqN: cost.seqN, seqAvg: cost.seqN ? +(cost.seqSum / cost.seqN).toFixed(3) : 0, seqMax: +cost.seqMax.toFixed(3) },
     };
   }
-  // A campaign changing (new, loaded, back to the title) leaves no battle screen behind: a battle
-  // overlay that no open battle owns is removed (two battles at once, now refused by
-  // RB.game.startBattle, could leave one over the map).
+  // ---- leaving the encounter for another journey ----------------------------------------------
+  // Load or Return to title from the battle's settings sheet (src/ui/55_settings.js), or any other
+  // campaign change while a battle is open: the battle is taken down at once — the playing sequence
+  // dropped unresolved, the overlay, its listeners and layers, the notes, the banner, the badges,
+  // the stage, the battle music — and its coroutine never resumes (live()). Nothing is written to
+  // either campaign: no outcome, no closing callback (so no win, flee or defeat flag), no Harmony,
+  // no rewards, no word marks. The mode stack keeps 'combat' on top until the campaign change
+  // replaces it (so the old map cannot start another encounter meanwhile), and the screen stays
+  // dark until the next campaign draws.
+  const VEIL = (c, w, h) => { c.fillStyle = '#0d1220'; c.fillRect(0, 0, w, h); };
+  VEIL.art = true;
+  function abandon() {
+    if (!st && !ui) return false;
+    runN++;
+    RB.battleSeq.drop();
+    present('scene', { phase: 'exit', outcome: 'abandoned' });
+    chain = false; view = null; sealHeld = null; curCard = null; phase = 'idle'; acting = false;
+    tg.hover = null; tg.lock = null; tg.compTarget = null; onTarget = null; lastCardId = null;
+    badgeSnap = null; actFoe = null; shownAnswered = null;
+    RB.combatHelp.detach();
+    RB.battleBanner.detach();
+    RB.battleIntents.detach();
+    if (RB.ui.dialogue) RB.ui.dialogue.hide();
+    if (ui) {
+      for (const t of ['pointerdown', 'keydown', 'keyup']) document.removeEventListener(t, ui.onPress, true);
+      window.removeEventListener('resize', ui.onHold); window.removeEventListener('resize', ui.onResize); document.removeEventListener('keydown', ui.onKey); if (ui.ro) ui.ro.disconnect();
+      RB.ui.popLayersIn(ui.root); // the responses' and the companion's menus
+      ui.root.remove();
+    }
+    ui = null; stageCss = null;
+    RB.render.setOverride(VEIL);
+    RB.battleStage.end();
+    if (RB.audio) RB.audio.stopSong({ fade: 300 });
+    RB.ui.fade(false, 120);
+    st = null; members = []; enemy = null;
+    return true;
+  }
+  // A campaign changing (new, loaded, back to the title) leaves no battle behind: an open one is
+  // abandoned, and a battle overlay that no open battle owns is removed (two battles at once, now
+  // refused by RB.game.startBattle, could leave one over the map).
   if (RB.bus) RB.bus.on('campaign:changing', () => {
+    abandon();
     if (typeof document === 'undefined') return;
     for (const el of document.querySelectorAll('.combat-ui')) if (!ui || el !== ui.root) el.remove();
   });

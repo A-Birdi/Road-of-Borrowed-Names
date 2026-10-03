@@ -12,6 +12,10 @@ in `VALIDATION.md`; this file says what the behaviour is and which test proves e
 | Battle controls during actions | Adaptive, Keep visible | Adaptive withdraws the telegraph and the response dock through their own edge once the exchange is committed (desktop and landscape: right; portrait: down; the telegraph up), and brings them back once, for the next decision. Keep visible leaves them in place, dimmed and inert. |
 | What creatures are about to do | Adaptive, Expanded | Adaptive (§13.3): a routine move is its creature's badge only — its words, what it does, Translate (assisted) and Nao's foresight are in the badge's card — and the telegraph panel holds just the passages whose reading is the task (a promise, a mirror, a plea), each named ("To read"); with none, there is no panel. A move met for the first time also gets the coach's untimed "New move" note. Expanded: the target's telegraph and every other creature's in the panel while you decide. Neither changes the creatures, what is revealed, or the help on offer. |
 
+During a battle these three, and the other presentation-only settings, are also in the battle's
+own Settings sheet (its button, or the menu key), which pauses the encounter while it is open:
+docs/COMBAT_NOTES.md, "Settings in battle".
+
 ## The action banner (`src/ui/82b_battle_banner.js`, §15)
 
 - Shown by the sequencer at the action's first frame and hidden inside the action's own

@@ -168,3 +168,18 @@ Captured from `index.html` at `20277f1` in headless Chromium (device-pixel-ratio
 |---|---|
 | 12 characters × 10 expressions at 128 CSS px | [image](expressive/portraits_grid.png) |
 | Ren, Suzu, Ōmi, Tsuru at the dialogue's 116 / 84 / 64 px | [image](expressive/portraits_sizes.png) |
+
+## Settings in battle (2026-10-03)
+
+The battle's Settings button (lower right of the scene), the sheet over a paused encounter
+(presentation only; the rest fixed until the encounter is over; no saving), and the question Load
+asks. Made by `tests/e2e/battle_settings_shots.mjs`; behaviour in docs/COMBAT_NOTES.md, "Settings
+in battle".
+
+| State | 1280×800 (¾ scale) | 390×844 |
+|---|---|---|
+| The battle, with its Settings button | [image](battle_settings/battle_1280x800.webp) | [image](battle_settings/battle_390x844.webp) |
+| The sheet (phone: its groups) | — | [image](battle_settings/sheet_390x844.webp) |
+| Speed & motion | [image](battle_settings/sheet_motion_1280x800.webp) | [image](battle_settings/sheet_motion_390x844.webp) |
+| Until the encounter is over (read-only) | [image](battle_settings/sheet_fixed_1280x800.webp) | [image](battle_settings/sheet_fixed_390x844.webp) |
+| Load a journey… asks first | [image](battle_settings/leave_1280x800.webp) | [image](battle_settings/leave_390x844.webp) |

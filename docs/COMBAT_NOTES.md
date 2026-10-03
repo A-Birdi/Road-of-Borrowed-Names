@@ -195,6 +195,155 @@ Every encounter in both tables is won at every setting (100 %). What it shows:
 - **Atlas run modifiers** that act on a creature's move apply to each
   creature's move; those that act on the exchange apply once.
 
+## Settings in battle (owner's request of 2026-10-03)
+
+The owner found no Settings in battle and asked for a battle-formatted sheet
+with only the safe options, no way out of a boss through the menu or a save,
+and Load allowed as long as nothing of the battle survives it. Code:
+`src/ui/55_settings.js` (the sheet: the folio's Settings in a battle mode),
+`src/ui/80_combat.js` (`abandon()`, `live()`), `src/ui/82_battle_seq.js`
+(`pause()`, `drop()`), `src/engine/80_save.js` (no saving in battle),
+`src/engine/90_game.js` (the menu key; a load that does not happen),
+`src/engine/70_script.js` (scenes of a campaign being left end there),
+`src/ui/10_ui.js` (`popLayersIn`). Test: `tests/e2e/battle_settings.mjs`.
+Screenshots: `docs/screenshots/battle_settings/`.
+
+### Opening it, and the pause
+
+- **Where:** a cloth **Settings** button in the scene's lower right corner
+  (clear of the creatures' plates and Skip at the top and of the party on
+  the left), and the menu key (C by default). The same key, Escape or
+  "Back to the encounter" closes it. The folio cannot open in battle (as
+  before), and Settings asked for by any route while a battle is open
+  (`RB.ui.settings.open()`) opens this sheet, never the full Settings.
+- **When:** while you choose a response, while your companion chooses, and
+  while an exchange plays. Not during the opening lines, a line or teaching
+  card when a creature changes its ways, the step-back question, the
+  closing lines and rewards, or **the language task**: the sheet cannot
+  open over the task (the button is gone, the key does nothing). Of the two
+  options (cannot open, or open and keep the draft) this is the safer one:
+  nothing of the task is touched (the draft, the pad, recognition, the
+  assisted flag, a pace timer), and the task's own "Choose a different
+  response" already returns, at no cost, to where the sheet opens.
+- **The pause:** opening calls `RB.battleSeq.pause(true)`. The presentation
+  clock stands still, no cue or result fires, no sequence ends, and the
+  watchdog waits (its time is extended by the pause, so it cannot settle the
+  action on resuming). The rules resolved the whole exchange before its
+  sequence started and use no randomness (each creature follows its
+  pattern), so there is nothing to re-roll. The
+  idle animation (breathing, drifting motes) goes on: it is decoration and
+  reads no state. A hidden tab still settles the playing action, as it
+  always has. Closing resumes exactly where it stood. Two exceptions, both
+  presentation: Instant chosen, or Reduce motion turned on, while an action
+  stood paused, shows the rest of that action at once (`settle`, the same
+  results in the same order, as a hidden tab does); later actions follow the
+  new setting.
+- **No leak back into the battle:** the sheet is a layer above the battle's
+  own, so every key goes to it while it is open (keys never reach the
+  responses; Escape never steps back). Closing leaves a transparent shield
+  for 0.4 s that takes the second click of a double click (on Back, or on
+  the dim area over a response card); a held Enter repeats nothing (the
+  input layer drops repeats) and the release of Space activates nothing.
+  "Load a journey…" and "Return to title…" ignore the second click of a
+  double click, so they ask once.
+
+### What it offers (the audit)
+
+Every setting the game has, by where it is stored. **Allowed**: changed in
+the sheet, applied at once, and it changes no rule, reward, learning
+difficulty or campaign state. **Locked**: listed read-only in "Until the
+encounter is over" with its current value and why (they change in the
+folio's Settings afterwards); shown rather than hidden because they are the
+ones a player looks for and should see are fixed. **Not shown**: has no
+meaning in an encounter. The sheet also refuses any change that is not
+allowed whatever sends it (a forged control is ignored), and offers no key
+capture, key reset or storage request.
+
+| Setting (key) | In battle | Why |
+|---|---|---|
+| Battle animations (`battleAnim`) | Allowed — Speed & motion | Presentation timing only; the exchange is resolved before it plays. From the next action (Instant while paused: the paused action settles). |
+| Text speed (`textSpeed`) | Allowed — Speed & motion | How lines are revealed; battle timing never reads it. |
+| Reduce motion (`reducedMotion`) | Allowed — Speed & motion | Presentation; a paused action settles on closing. |
+| Volumes (`vol.master`, `vol.music`, `vol.sfx`, `vol.voice`), Mute (`muted`) | Allowed — Audio | Sound only. |
+| Japanese voice (`voice.uri`), Speak automatically (`voice.auto`), Speech rate (`voice.rate`) | Allowed — Audio | The device's speech of lines; no rule. |
+| Quiet pet sounds (`petSounds`) | Allowed — Audio | Cosmetic. |
+| Dialogue leads with (`lead`), The second language (`secondary`) | Allowed — Reading | The lines' layout. Neither reveals a creature's translation: that stays behind Translate (counted as assisted), as before. |
+| Spaces between words (`spacing`), Word help (`lightbulb`), Romaji in word help (`romaji`) | Allowed — Reading | Reading aids on the same text. Word help inside a question counts as assisted, as always (and the sheet cannot open over a question). |
+| Suzu's speech (`suzuSpeech`) | Allowed — Reading | How Suzu's lines are worded; questions always use standard Japanese. |
+| Text size (`textScale`), High contrast (`contrast`) | Allowed — Display | Layout and colour. While an action plays the overlay keeps its committed sizes, so the stage does not move. |
+| Battle controls during actions (`battleControls`) | Allowed — Battle display | Where the menus go while actions play; from the next exchange. |
+| What creatures are about to do (`intentDisplay`) | Allowed — Battle display | More or less room for what is already telegraphed; reveals nothing new. |
+| Show pet in battle (`petBattle`) | Allowed — Battle display | Cosmetic; the pet never acts. |
+| Japanese level (`learn.profile`) | Locked | Which version of each question and telegraph you meet: learning difficulty. |
+| Mistakes in battle (`learn.assist`) | Locked | A rule: what a mistake costs (fixed when the encounter began). |
+| Tactical challenge (`learn.difficulty`) | Locked | A rule: how many creatures and how much resolve (fixed at the start). |
+| Default way to answer (`input`) | Locked | Could make the next answer easier. Inside each question you can still switch how you answer, as always. |
+| Handwriting reads (`padKanji`) | Locked | What the pad accepts. Read as on the pad still works inside a question. |
+| Stroke-order notes (`strokePractice`) | Locked | How strictly handwriting is checked. |
+| Keys (`binds`, Reset all keys) | Locked | A remap mid-fight could leave no key for Back or Confirm, and key capture takes the next press. |
+| Quest guidance (`questGuide`) | Locked (listed) | Belongs to the road (markers, hints); it reveals nothing about a creature, but has nothing to do in an encounter. |
+| Menu language (`uiLang`) | Not shown | The menus outside the encounter; the battle's own words do not use it. |
+| Offer to skip seen scenes (`skipSeen`) | Not shown | Scenes only. |
+| Touch controls (`touch`, `touchHand`, `touchSize`) | Not shown | The touch pad belongs to exploration. |
+| Show pet in exploration (`petWorld`), Keepsake counts (`keepsakeCounts`) | Not shown | Exploration and the folio. |
+| Activity options (`activityChatter`, `hideTotals`, `fishSeconds`, `fishWait`) and the campaign's fishing pace (`practice.settings`) | Not shown | Roadside activities, which cannot run in battle. |
+| Storage (ask the browser to keep saves) | Not shown | A storage request, not a preference. |
+
+### Saving, loading, the title
+
+- **No saving in battle, by any route:** while `RB.game.inBattle()` (from
+  the moment a battle is asked for until its screen has handed the map
+  back), `RB.save.manualSave` and a write of the playing campaign by
+  `writeSlot`/`writeRecovery` throw "Saving is available after the
+  encounter." and `RB.save.autosave` writes nothing (quietly; counted by
+  `RB.save.skippedInBattle()`). That covers the folio's Save & Load (which
+  cannot open in battle anyway), the ledger's Save, a scene's `!autosave`,
+  the activities' autosaves (they cannot start in battle) and any timer.
+  Copying or deleting slots writes no playing state and is unchanged. The
+  sheet's foot says "Saving is available after the encounter."
+- **Load and Return to title** are in the sheet's foot. Each asks first
+  ("Leave this encounter and load another journey? This battle won't count —
+  the creature will still be there."; the title adds that anything since the
+  last save or autosave is lost), then Load opens the ledger (it asks again
+  for the slot; closing it returns to the sheet with the encounter still
+  paused) and Return to title goes to the title.
+- **Teardown:** the campaign change (`campaign:changing`) takes the battle
+  down whole before the next campaign appears (`RB.combat.abandon()`): the
+  playing sequence is dropped unresolved (`RB.battleSeq.drop()`), the
+  overlay, its listeners and its layers (`RB.ui.popLayersIn`), the notes,
+  the banner, the badges, the stage, the battle music and any line on screen
+  go; the screen stays dark until the next campaign draws, and 'combat'
+  stays on the mode stack until the change replaces it, so the map being left
+  cannot start another encounter meanwhile. Every await of the battle goes
+  through `live()`, so the battle's coroutine never resumes: no outcome, no
+  closing callback (no win, flee or defeat flag, no "You stepped back"), no
+  Harmony, no rewards, no word marks, no fade over the next campaign, and
+  `startBattle` and the scene that asked for the battle never continue.
+  Scenes of the campaign being left stop counting as running and, should one
+  ever resume, stop at their next line without writing (`70_script.js`).
+  `inBattle()` is false from that moment. The loaded campaign is exactly
+  its save: the boss is still at its trigger, unbeaten and unseen.
+- **A load that does not happen** after the change has begun (the slot is
+  open in another tab and you cancel, or the save cannot be read): the
+  battle was already left, so the journey goes on from the map
+  (`keepJourney()`), where the creature still is (a creature that walked
+  into you engages again).
+
+### Shenanigans ruled out
+
+| Attempt | What happens | Test (`battle_settings.mjs`) |
+|---|---|---|
+| Escape a boss (or any fight without stepping back) through the menu | The sheet has no step back; Escape and X do nothing; Load and Return to title only leave by going to another journey or the title, and the boss is still there, unbeaten | boss |
+| Save in the middle of a battle | Every save route refuses; nothing written to any slot or autosave | saves |
+| Load the save made just before a boss | The map as saved: no win, no flag, the boss scene not seen, its trigger starts the boss again | boss |
+| Open and close the sheet to dodge or re-roll a move | The pause holds the presentation; the state, telegraphs, cards and Harmony are identical after ten openings, and the creature then does the move it telegraphed before | sheet |
+| Change assistance or difficulty mid-fight | Not offered (read-only); forged controls refused; the full Settings and the folio cannot open | saves |
+| Use the settings to skip a learning task | The sheet cannot open over the task; the draft is kept; nothing in the sheet answers, steps back or skips | task |
+| A held key or double click on Load or Close | Shield, dropped repeats, Space release inert; a double click on Load asks once | sheet, boss |
+| Resize or change the text size mid-animation | The stage holds; the pause holds through a resize; the exchange ends on the rules' state | exchange |
+| Return to title from a battle, then continue | No battle screen, rules, modes, layers or sequence left; `inBattle()` false; the frame loop running | boss |
+| A load cancelled after the battle was left | Back on the map with the creature there | saves (an unreadable slot) |
+
 ## Harmony: one opportunity versus stored charges (open)
 
 Unchanged: Harmony is per encounter, 0–3, +1 for a response right on the

@@ -1107,6 +1107,15 @@ body.reduced-motion .combat-ui > .cb-banner { transition: none; transform: trans
 /* Skip: in the scene's corner while an exchange plays (Normal and Fast) */
 .combat-ui > .cb-skip { grid-area: stage; justify-self: end; align-self: start; margin: 6px; z-index: 5; min-height: 44px; min-width: 44px; pointer-events: auto; }
 .combat-ui > .cb-skip[hidden] { display: none; }
+/* Settings for this encounter (src/ui/55_settings.js): the scene's lower right corner, clear of the
+   creatures' plates and Skip (top) and of the party (left); shown while the sheet may open */
+.combat-ui > .cb-set { grid-area: stage; justify-self: end; align-self: end; margin: 6px; z-index: 5; min-height: 44px; min-width: 44px; pointer-events: auto; padding: 0 0.75em; background-color: rgba(13, 18, 32, 0.78); }
+.combat-ui > .cb-set:hover { background-color: var(--cloth-700); }
+.combat-ui > .cb-set[hidden] { display: none; }
+body.high-contrast .combat-ui > .cb-set { background: #000; border-color: #fff; }
+/* the moment after the battle's settings close: the closing press (or the second click of a double
+   click) lands on this, never on the battle under it */
+.bset-shield { position: fixed; inset: 0; z-index: 2147483000; background: transparent; }
 
 /* Committed: the telegraph and the response dock withdraw through their edge (Adaptive) and the
    scene drawn under them shows; nothing is re-laid out. Keep visible leaves them, dimmed and inert. */

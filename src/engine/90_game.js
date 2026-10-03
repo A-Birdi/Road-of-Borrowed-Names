@@ -113,6 +113,8 @@ RB.game = (function () {
       else if (a === 'map') RB.ui.menu.open('map');
       return;
     }
+    // in battle the menu key opens the battle's settings sheet (presentation only; src/ui/55_settings.js)
+    if (a === 'menu' && m === 'combat' && RB.ui.settings && RB.ui.settings.openBattle && !RB.ui.settings.isOpen() && RB.ui.settings.openBattle()) return;
     RB.ui.onAction(a, e);
   }
 
@@ -214,14 +216,15 @@ RB.game = (function () {
 
   async function loadCampaign(slot, which) {
     RB.bus.emit('campaign:changing', { to: 'load', slot });
-    const r = await RB.save.read(slot, which);
+    let r;
+    try { r = await RB.save.read(slot, which); } catch (err) { keepJourney(); throw err; }
     const claim = await RB.save.claim(slot);
     if (claim === 'busy') {
       const c = await RB.ui.confirm(
         'This campaign is already open in another tab. Two tabs writing the same save could lose progress.',
         ['Take over here', 'Open read-only', 'Cancel']
       );
-      if (c === 2) { RB.save.releaseLock(); return false; }
+      if (c === 2) { RB.save.releaseLock(); keepJourney(); return false; }
       if (c === 0) await RB.save.takeOver(slot);
       else RB.save.setReadOnly(true);
     }
@@ -240,6 +243,18 @@ RB.game = (function () {
     RB.ui.hud.show();
     RB.ui.notice(which === 'auto' ? 'Continued from the latest autosave.' : which === 'predeparture' ? 'Restored the point before departure.' : 'Loaded.', 'info');
     return true;
+  }
+  // A load that did not happen (cancelled, or the save could not be read) after the campaign
+  // change had begun: a battle open then was already left (src/ui/80_combat.js abandon(), which
+  // keeps 'combat' on the mode stack and the screen dark) and the scene that asked for it has
+  // ended (src/engine/70_script.js), so the journey goes on from the map, where the creature
+  // still is. Nothing else was changed.
+  function keepJourney() {
+    if (!G.playing || G.modes.indexOf('combat') < 0 || (RB.combat && RB.combat.state())) return;
+    setBase('world');
+    RB.input.clearHeld();
+    RB.ui.dialogue.hide();
+    RB.render.setOverride(null);
   }
   async function toTitle() {
     RB.bus.emit('campaign:changing', { to: 'title' });

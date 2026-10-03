@@ -217,8 +217,15 @@ RB.save = (function () {
 
   class ConflictError extends Error {}
 
+  // No saving while a battle is open, by any route (the folio, a scene's !autosave, an activity, a
+  // timer): the playing campaign is written only once the encounter is over (src/engine/90_game.js
+  // inBattle(); the battle's settings sheet says "Saving is available after the encounter.").
+  // Copying or deleting slots in the ledger writes no playing state and is not affected.
+  const battling = () => !!(RB.game && RB.game.inBattle && RB.game.inBattle());
+  const IN_BATTLE = 'Saving is available after the encounter.';
   async function writeSlot(slot, st, opts) {
     opts = opts || {};
+    if (battling() && st === RB.game.s) throw new Error(IN_BATTLE);
     if (current.readOnly && slot === current.slot && !opts.force) throw new Error('This tab is read-only for this campaign.');
     const clean = trimForSave(RB.util.deepClone(st));
     const rec = { slot, rev: 0, meta: metaOf(clean), thumb: opts.thumb || null, state: clean };
@@ -248,6 +255,7 @@ RB.save = (function () {
   }
 
   async function writeRecovery(slot, st, kind, thumb) {
+    if (battling() && st === RB.game.s) throw new Error(IN_BATTLE);
     const clean = trimForSave(RB.util.deepClone(st));
     const now = Date.now();
     const key = kind === 'predeparture' ? slot + ':predeparture' : slot + ':auto:' + now;
@@ -408,7 +416,9 @@ RB.save = (function () {
   function setCurrent(slot, rev) { current.slot = slot; current.rev = rev || 0; }
 
   // ---- high-level helpers used by the game ------------------------------------------------
+  let skippedInBattle = 0; // autosaves asked for while a battle was open (none was written; tests)
   async function manualSave(slot) {
+    if (battling()) throw new Error(IN_BATTLE);
     const st = RB.game.s;
     const same = slot === current.slot;
     const rec = await writeSlot(slot, st, { thumb: RB.render.thumbnail(), expectRev: same ? current.rev : null });
@@ -418,6 +428,7 @@ RB.save = (function () {
   }
   async function autosave(kind) {
     if (current.slot == null || current.readOnly) return null;
+    if (battling()) { skippedInBattle++; return null; } // (quietly: the next safe place autosaves)
     try {
       return await writeRecovery(current.slot, RB.game.s, kind === 'predeparture' ? 'predeparture' : 'auto', RB.render.thumbnail());
     } catch (e) {
@@ -430,6 +441,6 @@ RB.save = (function () {
   return {
     detect, status, requestPersist, list, read, writeSlot, writeRecovery, del, copy, validate, migrate, addMigration,
     loadSettings, saveSettings, claim, takeOver, releaseLock, setReadOnly, setCurrent, manualSave, autosave,
-    ConflictError, SLOTS, current: () => current, _mode: () => mode,
+    ConflictError, SLOTS, current: () => current, _mode: () => mode, skippedInBattle: () => skippedInBattle,
   };
 })();

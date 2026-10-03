@@ -175,6 +175,12 @@ button.entry .kind.slotline { display: flex; flex-wrap: wrap; align-items: cente
 .keys .keycaps { margin-top: 0.2em; }
 kbd { display: inline-block; min-width: 1.6em; padding: 0 0.4em; border: 1px solid var(--ink-3); border-bottom-width: 2px; border-radius: 3px; background: #fffaf0; color: var(--ink); font: 0.9em var(--ui-font); text-align: center; }
 body.high-contrast .pv-box { background: #000; color: #fff; }
+/* Settings over a battle (presentation only): no saving here; leaving the encounter asks first */
+.folio-bset .folio-foot { align-items: center; }
+.folio-bset .bset-save { flex: 1 1 16em; margin: 0; display: flex; align-items: center; gap: 0.45em; color: var(--on-cloth-2); font-size: 0.9em; }
+.folio-bset .bset-save svg { width: 1.2em; height: 1.2em; flex: none; }
+.bset-fixed .t b { font-weight: 700; }
+@media (max-width: 599px) { .folio-bset .bset-save { flex-basis: 100%; } }
 
 /* ---- Company (src/ui/52_company.js): who is travelling, then the page ---------------------- */
 .co-pair { display: flex; flex-wrap: wrap; gap: 0.35em 1.4em; padding: 0.2em 0.1em 0.55em; margin-bottom: 0.5em; border-bottom: 1px dashed var(--paper-edge); }
