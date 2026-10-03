@@ -79098,6 +79098,2576 @@ RB.ui.wordplay = RB.ui.wordplay || {};
 })(RB.ui.wordplay);
 
 
+/* ==== src/ui/88_harmony_acc.js ==== */
+/* Harmony portrait busts — worn things. Every accessory a look can carry
+ * (the creation choices and every keepsake with a visible representation in
+ * the battle figures and dialogue portraits), each on its own side of the
+ * body and in its own layer of the layering contract:
+ *
+ *   capeBack  the cape behind the shoulders
+ *   earF      the far earring, peeking under the jaw (behind the head)
+ *   chest     satchel or sash strap, bell, pin, patches, the cape's front
+ *   scarf     the wrap round the neck and its tail
+ *   glasses   frames and lenses (under the fringe, over the face)
+ *   headAcc   hat, cap, headband, ribbon, flower, leaf, quill, pencil
+ *   earN      the near earring, under the near ear
+ *
+ * Sides follow the source: the ribbon, flower, leaf, quill and Nao's pencil
+ * are worn on the character's left (the far side here), the pin on the right
+ * chest (near), the satchel's strap from the right shoulder to the left hip,
+ * the scarf's tail on the left breast. Nothing is mirrored. The Atlas's
+ * little lantern hangs at the hip, below every bust's crop, so it is not
+ * drawn (docs/harmony/ART.md lists it). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.harmonyKit = RB.harmonyKit || {};
+(function (HK) {
+  'use strict';
+  const put = (...a) => HK.put(...a);
+  const GOLD = '#e0b850';
+  const mat = (key, c, o) => HK.M(key, c, Object.assign({ n: 5, at: 3, step: 0.1, cool: 250, warm: 52, lineCol: '#140c18' }, o));
+
+  // c: { S (stack), hx, hy, ax, ay, look, d (materials), arms, s (settle px), who }
+  const A = {};
+  // ---- chest -------------------------------------------------------------------------------------
+  A.satchel = function (c) {
+    const L = c.S.L('chest');
+    const Ml = HK.leatherMat('#7a5630');
+    const w = c.look.bigSatchel ? 2.6 : 2.1;
+    const pts = [[-21, -4.6, w], [-6, 6, w], [8, 17, w], [24, 30, w]].map((p) => [c.ax + p[0], c.ay + p[1], p[2]]);
+    HK.strand(L, pts, Ml, { base: 3, tipDark: 0, seam: false, only: (X, Y) => !!HK.get(c.S.L('torso'), X, Y) || Y < c.ay - 2 });
+    // stitching along the strap and a brass buckle on the chest
+    for (let t = 0.08; t < 0.96; t += 0.09) {
+      const x = -21 + 45 * t, y = -4.6 + 34.6 * t;
+      put(L, Math.round(c.ax + x - 0.8), Math.round(c.ay + y - 1.6), Ml, 4);
+    }
+    const Mb = HK.metalMat(GOLD);
+    const bx = Math.round(c.ax - 3), by = Math.round(c.ay + 8);
+    for (const [x, y, k] of [[0, 0, 4], [1, 0, 3], [2, 0, 3], [0, 1, 3], [2, 1, 1], [0, 2, 2], [1, 2, 1], [2, 2, 1]]) put(L, bx + x, by + y, Mb, k);
+  };
+  A.atlas_sash = function (c) {
+    const L = c.S.L('chest');
+    const Ms = mat('sash', c.look.sashCol || '#d8c89a', { step: 0.07, cool: 230 });
+    const pts = [[-22, -5, 3.4], [-4, 8, 3.6], [12, 20, 3.6], [26, 31, 3.4]].map((p) => [c.ax + p[0], c.ay + p[1], p[2]]);
+    HK.strand(L, pts, Ms, { base: 3, tipDark: 0, seam: true, only: (X, Y) => !!HK.get(c.S.L('torso'), X, Y) || Y < c.ay - 2 });
+    // map lines printed on the paper
+    const Mi = mat('sashInk', '#8a6a4a');
+    for (const [x0, y0, x1, y1] of [[-14, 0, -9, 4], [-2, 9, 3, 13], [9, 18, 13, 21]]) HK.line(L, c.ax, c.ay, x0, y0, x1, y1, Mi, 2, true);
+  };
+  A.bell = function (c) {
+    const L = c.S.L('chest');
+    const Mc = mat('cord', c.look.cordCol || '#b8342a', { step: 0.08 });
+    HK.line(L, c.ax, c.ay, -8.6, -8.6, -1, 1.4, Mc, 3); HK.line(L, c.ax, c.ay, -8, -9.4, -0.4, 0.6, Mc, 2);
+    HK.line(L, c.ax, c.ay, 7.2, -8, 0.6, 1.4, Mc, 2);
+    const Mb = HK.metalMat(c.look.bellCol || GOLD);
+    const bx = c.ax - 0.5, by = c.ay + 5.5;
+    for (let Y = Math.floor(by - 4); Y <= by + 4; Y++) for (let X = Math.floor(bx - 4); X <= bx + 4; X++) {
+      const x = X + 0.5 - bx, y = Y + 0.5 - by;
+      if (!HK.inEll(x, y, 0, 0, 3.6, 3.8)) continue;
+      let k = 3;
+      if (x + y < -2.4) k = 4;
+      if (x - y > 2.6 || y > 2.2) k = 1;
+      if (HK.inEll(x, y, -1.2, -1.4, 0.9, 0.9)) k = 4;
+      put(L, X, Y, Mb, k);
+    }
+    for (let x = -3; x <= 3; x++) put(L, Math.round(bx + x - 0.5), Math.round(by + 1.6), Mb, x < 0 ? 2 : 1);
+    put(L, Math.round(bx - 0.5), Math.round(by + 2.8), mat('bellslot', '#3a2410'), 1);
+  };
+  A.atlas_pin = function (c) {
+    const L = c.S.L('chest');
+    const Mg = HK.metalMat(GOLD), Mbl = mat('pinblue', '#3a5a8a');
+    const x = Math.round(c.ax - 15), y = Math.round(c.ay + 7);
+    const rows = ['...4...', '...3...', '..434..', '43bbb32', '..2b1..', '...2...', '...1...'];
+    HK.tpl(L, x - 3, y - 3, rows, { 4: [Mg, 4], 3: [Mg, 3], 2: [Mg, 2], 1: [Mg, 1], b: [Mbl, 3] });
+  };
+  A.patches = function (c) {
+    const L = c.S.L('chest');
+    const Mp = mat('patch', '#8a7a5a', { step: 0.08 });
+    const patch = (x0, y0, w, h) => {
+      for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+        const X = Math.round(c.ax + x0 + x), Y = Math.round(c.ay + y0 + y);
+        if (!HK.get(c.S.L('torso'), X, Y)) continue;
+        const edge = x === 0 || y === 0 || x === w - 1 || y === h - 1;
+        put(L, X, Y, Mp, edge ? ((x + y) % 2 ? 1 : 2) : y < 2 ? 4 : 3);
+      }
+    };
+    if (c.arms.near !== 'up') patch(-33, 12, 6, 6); else patch(-24, 12, 6, 6);
+    patch(12, 18, 7, 6);
+  };
+  // the cape's front: over both shoulders, falling straight, a gold clasp at the throat
+  A.cape = function (c, part) {
+    const R = mat('cape', c.look.capeCol || '#6a3a4a', { n: 6, at: 3, step: 0.075 });
+    if (part === 'back') {
+      const L = c.S.L('capeBack');
+      HK.polyFill(L, c.ax, c.ay, [[-10, -10], [-26, -5], [-36, 2], [-40, 14], [-41, 44], [31, 44], [31, 14], [27, 2], [18, -6], [8, -10]], R, (x, y) => (x < -30 ? 4 : x > 24 ? 1 : 2));
+      return;
+    }
+    const L = c.S.L('chest');
+    const fold = [[-9.6, -9.6], [-20, -5], [-29, 0], [-33, 6], [-29, 9], [-20, 7], [-12, 7], [-6, 0]];
+    HK.polyFill(L, c.ax, c.ay, fold, R, (x, y) => (y < -3 && x < -14 ? 5 : y < 2 ? 4 : 3));
+    HK.polyFill(L, c.ax, c.ay, [[6, -9], [15, -4], [23, 1], [26, 6], [22, 9], [14, 7], [6, 1]], R, (x, y) => (y < -2 ? 3 : 2));
+    HK.line(L, c.ax, c.ay, -29, 8.6, -14, 7, R, 1);
+    const Mg = HK.metalMat(GOLD);
+    for (const [x, y, k] of [[-1, -2, 4], [0, -2, 3], [-2, -1, 4], [-1, -1, 4], [0, -1, 3], [1, -1, 2], [-2, 0, 3], [-1, 0, 3], [0, 0, 2], [1, 0, 1], [-1, 1, 2], [0, 1, 1]]) put(L, c.ax + x, c.ay - 1 + y, Mg, k);
+  };
+  // ---- scarf --------------------------------------------------------------------------------------
+  A.scarf = function (c) {
+    const L = c.S.L('scarf');
+    const R = mat('scarf', c.look.scarfCol || '#c8962e', { n: 6, at: 3, step: 0.075 });
+    const St = c.look.scarfStripe ? mat('stripe', c.look.scarfStripe, { n: 6, at: 3, step: 0.075 }) : null;
+    const s = c.s || 0;
+    // the wrap: a thick roll round the neck's base, folds rising to the near side
+    const wrap = [[-12.6, -12], [-4, -10.6], [5, -11], [11.6, -10.2], [13, -5.4], [9, -1.6], [0, 0.4], [-9.6, -0.6], [-15.6, -4.6]];
+    HK.polyFill(L, c.ax, c.ay, wrap, R, (x, y) => {
+      let k = x < -6 ? 4 : x > 7 ? 2 : 3;
+      const u = (y + x * 0.22 + 20) % 4.2;
+      if (u < 1) k -= 1; else if (u > 3.2 && k < 5) k += 1;
+      if (y > -1.4) k = Math.min(k, 2);
+      return k;
+    });
+    // the tail over the far breast, splitting into two ends
+    const tail = [[5, -3, 3], [7 + s * 0.3, 6, 3.4], [8.6 + s * 0.6, 15, 3.2], [9 + s, 22, 2.6]].map((p) => [c.ax + p[0], c.ay + p[1], p[2]]);
+    HK.strand(L, tail, R, { base: 3, tipDark: 0.14 });
+    HK.strand(L, [[c.ax + 9 + s, c.ay + 20, 1.6], [c.ax + 7 + s, c.ay + 27, 1.4]], R, { base: 2, tipDark: 0 });
+    HK.strand(L, [[c.ax + 10 + s, c.ay + 20, 1.6], [c.ax + 12.4 + s, c.ay + 26.6, 1.3]], R, { base: 3, tipDark: 0 });
+    if (St) {
+      for (let Y = c.ay - 13; Y < c.ay + 30; Y++) for (let X = c.ax - 17; X < c.ax + 16; X++) {
+        if (!HK.get(L, X, Y)) continue;
+        const y = Y - c.ay, x = X - c.ax;
+        const band = y < 1 ? Math.floor((x + 20) / 5.2) % 2 === 0 && (x + 20) % 5.2 < 1.8 : Math.floor((y + 30) / 6) % 2 === 0 && (y + 30) % 6 < 2;
+        if (!band) continue;
+        const i = Y * L.w + X, k = R.c.indexOf(L.px[i]);
+        put(L, X, Y, St, k < 0 ? 3 : k);
+      }
+    }
+  };
+  // ---- glasses ------------------------------------------------------------------------------------
+  // Two lenses round the eyes (the far one foreshortened), a bridge over the nose, the near arm running
+  // back to the ear; a faint tint and a glare streak on each lens's upper left.
+  A.glasses = function (c) {
+    const L = c.S.L('glasses');
+    const H = HK.HEAD;
+    const F = HK.M('frame', c.look.glassCol || '#2a2630', { n: 4, at: 2, step: 0.1, line: false });
+    const tint = HK.flat('#e8f2ff22', { line: false });
+    const glare = HK.flat('#ffffffd0', { line: false });
+    const hx = c.hx, hy = c.hy;
+    const lens = (x0, y0, w, h) => {
+      for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+        const corner = (x === 0 || x === w - 1) && (y === 0 || y === h - 1);
+        if (corner) continue;
+        const edge = x === 0 || y === 0 || x === w - 1 || y === h - 1;
+        put(L, hx + x0 + x, hy + y0 + y, edge ? F : tint, edge ? (y === 0 ? 3 : 1) : 0);
+      }
+      put(L, hx + x0 + 2, hy + y0 + 1, glare, 0); put(L, hx + x0 + 1, hy + y0 + 2, glare, 0); put(L, hx + x0 + 3, hy + y0 + 1, glare, 0);
+    };
+    lens(H.eyeN.x - 7, H.eyeN.y - 5, 14, 11);
+    lens(H.eyeF.x - 4, H.eyeF.y - 5, 10, 11);
+    HK.line(L, hx, hy, H.eyeN.x + 7, H.eyeN.y - 2, H.eyeF.x - 4, H.eyeF.y - 2, F, 2);
+    HK.line(L, hx, hy, H.eyeN.x - 7, H.eyeN.y - 3, -15.4, H.eyeN.y - 1, F, 2);
+    HK.line(L, hx, hy, H.eyeF.x + 5, H.eyeF.y - 3, H.eyeF.x + 7, H.eyeF.y - 3, F, 1);
+  };
+  // ---- head ---------------------------------------------------------------------------------------
+  A.headband = function (c) {
+    const L = c.S.L('headAcc');
+    const R = mat('band', c.look.bandCol || c.d.cloth[2], { n: 6, at: 3, step: 0.08 });
+    for (let x = -19; x <= 19; x++) {
+      const t = (x + 19) / 38;
+      const y = -15 - Math.sin(t * Math.PI) * 4.2 + t * 2;
+      for (let k = 0; k < 3; k++) put(L, c.hx + x, Math.round(c.hy + y + k), R, k === 0 ? 4 : k === 2 ? 1 : x < 0 ? 3 : 2);
+    }
+    // the knot's tails at the back of the head
+    HK.strand(L, [[c.hx - 19, c.hy - 14, 1.8], [c.hx - 24 - c.s, c.hy - 9, 1.6], [c.hx - 25 - c.s, c.hy - 3, 0.6]], R, { base: 3 });
+    HK.strand(L, [[c.hx - 19, c.hy - 13, 1.6], [c.hx - 21 - c.s, c.hy - 5, 1.4], [c.hx - 20 - c.s, c.hy, 0.5]], R, { base: 2 });
+  };
+  // Hair under a hat or cap: everything above the band is the hat's (a spike or a bun does not poke through).
+  function hideHairUnder(c, yHead) {
+    const yb = c.hy + yHead;
+    for (const name of ['cap', 'front', 'hairBack']) {
+      const L = c.S.layers.get(name);
+      if (!L) continue;
+      for (let Y = 0; Y < Math.min(L.h, yb); Y++) for (let X = c.hx - 40; X <= c.hx + 40; X++) { if (X < 0 || X >= L.w) continue; const i = Y * L.w + X; L.px[i] = 0; L.mt[i] = 0; }
+    }
+  }
+  A.hat = function (c) {
+    const L = c.S.L('headAcc');
+    const R = mat('hat', c.look.hatCol || '#8a6a44', { n: 6, at: 3, step: 0.075 });
+    const hx = c.hx, hy = c.hy;
+    hideHairUnder(c, -14);
+    // the crown (woven rows), its band, then the brim seen a little from above
+    HK.polyFill(L, hx, hy, [[-17, -15], [-16, -25], [-9, -31], [4, -32], [13, -28], [17.6, -21], [18.4, -14]], R, (x, y) => {
+      let k = x < -7 ? 4 : x > 9 ? 2 : 3;
+      if (x < -11 && y < -22) k = 5;
+      if ((y + 40) % 4 < 1 && k > 1) k -= 1;
+      return k;
+    });
+    HK.polyFill(L, hx, hy, [[-17.4, -18], [18.4, -17], [18.6, -13.6], [-17.6, -14.4]], R, (x) => (x < -8 ? 2 : 1));
+    for (let Y = hy - 21; Y <= hy - 6; Y++) for (let X = hx - 33; X <= hx + 35; X++) {
+      const x = X + 0.5 - hx, y = Y + 0.5 - hy;
+      if (!HK.inEll(x, y, 1.6, -13.2, 32.6, 6)) continue;
+      if (HK.inEll(x, y, 0.6, -15.2, 18.4, 3) && y < -14) continue; // behind the crown
+      let k = y < -13.6 ? (x < -10 ? 5 : 4) : y < -11 ? 3 : 2;
+      if (x > 20) k -= 1;
+      if (y > -10.4) k = 1;
+      put(L, X, Y, R, Math.max(0, k));
+    }
+  };
+  A.cap = function (c) {
+    const L = c.S.L('headAcc');
+    const R = mat('cap', c.look.capCol || '#2c4468', { n: 6, at: 3, step: 0.075 });
+    const hx = c.hx, hy = c.hy;
+    hideHairUnder(c, -15);
+    HK.polyFill(L, hx, hy, [[-19, -14], [-19, -24], [-12, -31], [0, -33], [12, -30], [19, -22], [19.6, -14]], R, (x, y) => (x < -9 ? 4 : x > 10 ? 2 : 3));
+    HK.polyFill(L, hx, hy, [[-19.4, -17], [19.8, -16.6], [19.8, -12.6], [-19.4, -13]], R, (x, y) => (y < -15.6 ? 2 : 1));
+    // the peak, pointing forward (to the right)
+    HK.polyFill(L, hx, hy, [[-2, -13.4], [12, -14], [24, -11.6], [25, -9.4], [14, -9.6], [0, -11]], R, (x, y) => (y < -11.8 ? 1 : 0));
+    const Mb = HK.metalMat(GOLD);
+    for (const [x, y, k] of [[4, -24, 4], [5, -24, 3], [3, -23, 4], [4, -23, 3], [5, -23, 3], [6, -23, 2], [4, -22, 2], [5, -22, 1]]) put(L, hx + x, hy + y, Mb, k);
+  };
+  // a bow: two loops tipped up and out (the near one toward the light), folding into a knot, tails behind
+  const BOW = [
+    '...444...........33...',
+    '..45554.........3443..',
+    '.4555544.......344432.',
+    '.45544444.....3443332.',
+    '.454444443..23443332..',
+    '.44444444322234433321.',
+    '..4444443322333332221.',
+    '...443333223333222211.',
+    '.....3332..22222111...',
+  ];
+  A.ribbon = function (c) {
+    const L = c.S.L('headAcc');
+    const R = mat('ribbon', c.look.ribbonCol || '#c8687a', { n: 6, at: 3, step: 0.075 });
+    const s = c.s || 0;
+    const cx = c.hx + 6, cy = c.hy - 25;
+    // tails behind the knot, falling to the far side (they trail a pixel or two as the bust arrives)
+    HK.strand(L, [[cx + 1, cy + 2, 1.7], [cx + 4 + s * 0.4, cy + 8, 1.8], [cx + 5 + s, cy + 14, 1.2]], R, { base: 2 });
+    HK.strand(L, [[cx + 3, cy + 2, 1.5], [cx + 9 + s * 0.4, cy + 6, 1.7], [cx + 12 + s, cy + 10, 1]], R, { base: 2 });
+    HK.tpl(L, cx - 11, cy - 6, BOW, { 5: [R, 5], 4: [R, 4], 3: [R, 3], 2: [R, 2], 1: [R, 1] });
+  };
+  A.flower = function (c) {
+    const L = c.S.L('headAcc');
+    const R = mat('flower', c.look.flowerCol || '#f4a6a0', { n: 6, at: 3, step: 0.07 });
+    const Mc = mat('flowerC', '#f0c860');
+    const cx = c.hx + 15, cy = c.hy - 16;
+    for (const [dx, dy, k] of [[0, -4, 5], [3.8, -1.4, 4], [2.4, 3.2, 2], [-2.4, 3.2, 3], [-3.8, -1.4, 4]]) {
+      for (let Y = -2; Y <= 2; Y++) for (let X = -2; X <= 2; X++) if (X * X + Y * Y <= 4.4) put(L, Math.round(cx + dx + X), Math.round(cy + dy + Y), R, k - (X + Y > 1 ? 1 : 0));
+    }
+    for (const [x, y, k] of [[0, 0, 3], [-1, 0, 4], [0, -1, 4], [-1, -1, 4], [1, 0, 2], [0, 1, 2], [1, 1, 1]]) put(L, cx + x, cy + y, Mc, k);
+    HK.strand(L, [[cx - 3, cy + 5, 0.9], [cx - 6, cy + 9, 0.8]], mat('stem', '#5a8a4a'), { base: 2 });
+  };
+  A.leaf = function (c) {
+    const L = c.S.L('headAcc');
+    const R = mat('leaf', c.look.leafCol || '#c8452a', { n: 6, at: 3, step: 0.075 });
+    const cx = c.hx + 14, cy = c.hy - 19;
+    const pts = [[0, -7], [2, -3], [6, -5], [5, -1], [9, -1], [5, 3], [6, 6], [1, 4], [0, 8], [-1, 4], [-6, 6], [-5, 3], [-9, -1], [-5, -1], [-6, -5], [-2, -3]];
+    HK.polyFill(L, cx, cy, pts, R, (x, y) => (x + y < -3 ? 4 : x + y > 4 ? 2 : 3));
+    HK.line(L, cx, cy, 0, -5, 0, 7, R, 1); HK.line(L, cx, cy, 0, 1, -5, -3, R, 1); HK.line(L, cx, cy, 0, 1, 5, -3, R, 1);
+    HK.strand(L, [[cx, cy + 6, 0.8], [cx - 2, cy + 11, 0.7]], mat('pinstem', '#6a4a2a'), { base: 2 });
+  };
+  A.atlas_quill = function (c) {
+    const L = c.S.L('headAcc');
+    const R = mat('quill', '#f4f0e0', { n: 5, at: 3, step: 0.06, cool: 230 });
+    const pts = [[c.hx + 15, c.hy - 4, 0.6], [c.hx + 19, c.hy - 13, 2.4], [c.hx + 23, c.hy - 22, 2.6], [c.hx + 27 + c.s * 0.3, c.hy - 30, 0.8]];
+    HK.strand(L, pts, R, { base: 3, tipDark: 0.1 });
+    HK.line(L, 0, 0, c.hx + 16, c.hy - 6, c.hx + 26, c.hy - 29, mat('rachis', '#c8b896'), 2);
+  };
+  A.pencil = function (c) {
+    const L = c.S.L('headAcc');
+    const My = mat('pencil', '#e0b040', { step: 0.09 });
+    const pts = [[c.hx + 11, c.hy - 6, 1.6], [c.hx + 25, c.hy - 22, 1.6]];
+    HK.strand(L, pts, My, { base: 3, tipDark: 0, seam: false });
+    HK.strand(L, [[c.hx + 24, c.hy - 21, 1.7], [c.hx + 26.4, c.hy - 23.8, 1.7]], mat('eraser', '#e8a0a0'), { base: 3, tipDark: 0, seam: false });
+    HK.strand(L, [[c.hx + 11.4, c.hy - 6.4, 1.2], [c.hx + 9.4, c.hy - 4, 0.4]], mat('wood', '#e8c890'), { base: 3, tipDark: 0.5, seam: false });
+  };
+  // ---- earrings ------------------------------------------------------------------------------------
+  // a gold hoop at the lobe and a drop below it (the keepsake's glass in its own colour)
+  function earring(L, x, y, look, s, small) {
+    const Mg = HK.metalMat(GOLD);
+    const Md = look.earCol ? mat('ear', look.earCol, { step: 0.1 }) : Mg;
+    x = Math.round(x + (s || 0) * 0.5); y = Math.round(y);
+    put(L, x, y, Mg, 3); put(L, x, y + 1, Mg, 2);
+    const dy = 2;
+    const rows = small ? ['.4.', '434', '.2.'] : ['.4.', '434', '332', '.1.'];
+    HK.tpl(L, x - 1, y + dy, rows, { 4: [Md, 4], 3: [Md, 3], 2: [Md, 2], 1: [Md, 1] });
+  }
+  A.earrings = function (c, part) {
+    const H = HK.HEAD;
+    if (part === 'far') earring(c.S.L('earF'), c.hx + 13.5, c.hy + 13.6, c.look, c.s, true);
+    else earring(c.S.L('earN'), c.hx + H.ear.x + 0.4, c.hy + H.ear.y + 5, c.look, c.s);
+  };
+
+  // Draw every accessory of the look into the stack. Returns the list drawn and the list left out.
+  function drawAll(c) {
+    const acc = c.look.acc || [];
+    const drawn = [], skipped = [];
+    const has = (a) => acc.includes(a);
+    if (has('cape')) A.cape(c, 'back');
+    if (has('earrings')) A.earrings(c, 'far');
+    for (const a of ['satchel', 'atlas_sash', 'patches', 'bell', 'atlas_pin', 'cape']) if (has(a)) A[a](c);
+    if (has('scarf')) A.scarf(c);
+    if (has('glasses')) A.glasses(c);
+    for (const a of ['hat', 'cap', 'headband', 'ribbon', 'flower', 'leaf', 'atlas_quill', 'pencil']) if (has(a)) A[a](c);
+    if (has('earrings')) A.earrings(c, 'near');
+    for (const a of acc) {
+      if (A[a]) drawn.push(a);
+      else skipped.push(a);
+    }
+    return { drawn, skipped };
+  }
+  HK.acc = A; HK.drawAcc = drawAll;
+  // Accessories this module draws; the rest are deliberately not shown in a bust (with the reason).
+  HK.ACC_NOT_SHOWN = { atlas_lamplet: 'hangs at the hip, below the crop', bottles: 'carried at the hip, below the crop (Mio holds one in her pose)', lamp: 'held in the hand by the pose (Ren)', beard: 'not a player option', cane: 'not carried by any party member', basket: 'not carried', book: 'not carried', hood: 'not a player option', toolbelt: 'not carried', apronstrap: 'part of the apron' };
+})(RB.harmonyKit);
+
+
+/* ==== src/ui/88_harmony_art.js ==== */
+/* Harmony portrait art — the paired busts shown when a real Harmony technique
+ * reaches its animation interval (Harmony addendum §4–§6, §21). This module
+ * draws and caches the art; placement, timing and lifecycle belong to the
+ * cut-in overlay, which builds on this API.
+ *
+ * The composition: the companion on the left and the player on the right,
+ * both turned toward the shared action, the player a little in front so the
+ * companion's far shoulder sits behind the player's near one (never a face).
+ * Behind them a small indigo ink backing with sparse gold and paper edging
+ * and a ragged, tapering right end; its left edge bleeds off the canvas so
+ * the cluster reads as having entered from the left. No title, slogan or
+ * lettering is drawn into the art.
+ *
+ * Native sizes (art px, drawn nearest-neighbour at an integer CSS scale):
+ *   standard 228 × 100 — about 35 % × 26–28 % of a 1280 × 720 or 1920 × 1080
+ *            view at 2× / 3× (fitScale picks the largest scale inside §5.2's
+ *            upper limits: 42 % width, 30 % height, 12 % area)
+ *   compact  an authored head-and-shoulders pair for narrow screens
+ *            160 × 84, up to the view's width (≥ 64 CSS px of face height per
+ *            participant at 2×: a 390 × 844 or 320 × 640 phone)
+ * docs/harmony/ART.md records how these were chosen.
+ *
+ * API
+ *   RB.harmonyArt.compose({ comp, look, variant, phase, still, backing, fx, omit, view })
+ *     → { cv, w, h, faces: [{ who, x, y, w, h }], hands: [{ who, x, y, w, h }],
+ *         anchor: { x, y }, scale, bleed, bounds, key, phase, variant }
+ *     comp 'nao'|'mio'|'ren'|'suzu'; look: the player's effective look (default
+ *     RB.equip.look() of the running game); variant 'standard'|'compact';
+ *     phase 'enter'|'hold'; still (reduced motion) → the hold drawing;
+ *     backing/fx false leave out the backing / the glints and ink (art review);
+ *     omit 'pc'|'comp' leaves one bust out (tests); view { w, h } CSS px → scale.
+ *     faces/hands are rectangles in cv's art px; anchor is the point on the
+ *     backing's left edge, half way down it, where the cluster enters.
+ *   RB.harmonyArt.bust(who, look, pose, phase[, variant]) → { cv, w, h, face, hands, anchor }
+ *   RB.harmonyArt.prepare(spec | [spec], { async }) — build into the caches (in idle
+ *     slices with async: true → Promise)
+ *   RB.harmonyArt.fitScale(viewW, viewH, variant) → integer CSS px per art px (0: none fits)
+ *   RB.harmonyArt.stats(), clear(), keyOf(spec)
+ * Caches: busts and compositions, least-recently-used, bounded (CAP); keys carry
+ * ART_VERSION, the resolved appearance (every art-relevant field of the effective
+ * look), the companion, pose, phase and variant. An equipment change drops the
+ * player's stale entries; a campaign change clears everything. Nothing here
+ * animates or loops: 'enter' and 'hold' are two still drawings. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.harmonyArt = (function () {
+  'use strict';
+  const ART_VERSION = 1;
+  const HK = () => RB.harmonyKit;
+  const COMPANIONS = ['nao', 'mio', 'ren', 'suzu'];
+  const POSE_OF = { pc: 'rally', nao: 'route', mio: 'draught', ren: 'ward', suzu: 'curtain' };
+  const NATIVE = { standard: { w: 228, h: 100 }, compact: { w: 160, h: 84 } };
+  // where each bust's anchor (pit of the neck) sits in the composition
+  const PLACE = {
+    standard: { comp: [70, 72], pc: [136, 74], nao: [62, 72] },
+    compact: { comp: [45, 72], pc: [108, 73] },
+  };
+  const CAP = { busts: 24, comps: 16 };
+  const S = { hits: 0, misses: 0, builds: 0, evictions: 0, buildMs: [], invalidations: 0 };
+  const busts = new Map(), comps = new Map();
+  const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+  const now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
+
+  function lru(map, key) {
+    const v = map.get(key);
+    if (v) { map.delete(key); map.set(key, v); }
+    return v;
+  }
+  function store(map, key, v, cap) {
+    map.set(key, v);
+    while (map.size > cap) { map.delete(map.keys().next().value); S.evictions++; }
+  }
+
+  // ---- looks ---------------------------------------------------------------------------------------
+  function effectiveLook(look) {
+    if (look) return look;
+    try { return (RB.equip && RB.game && RB.game.s && RB.equip.look(RB.game.s)) || {}; } catch (e) { return {}; }
+  }
+  function norm(o) {
+    o = o || {};
+    const variant = o.variant === 'compact' ? 'compact' : 'standard';
+    const phase = o.still ? 'hold' : o.phase === 'enter' ? 'enter' : 'hold';
+    const comp = COMPANIONS.includes(o.comp) ? o.comp : null;
+    return { comp, variant, phase, look: effectiveLook(o.look), backing: o.backing !== false, fx: o.fx !== false, omit: o.omit || null, view: o.view || null };
+  }
+  function bustKey(who, look, pose, phase, variant, fx) {
+    return ['v' + ART_VERSION, who, pose, phase, variant, fx === false ? 'nofx' : 'fx', who === 'pc' ? HK().lookKey(look) : '-'].join('|');
+  }
+  function keyOf(o) {
+    const n = norm(o);
+    return ['v' + ART_VERSION, n.comp, n.variant, n.phase, n.backing ? 'b' : 'nb', n.fx ? 'fx' : 'nofx', n.omit || '-', HK().lookKey(n.look)].join('|');
+  }
+
+  // ---- busts ---------------------------------------------------------------------------------------
+  function bustLayer(who, look, pose, phase, variant, fx) {
+    const key = bustKey(who, look, pose, phase, variant, fx);
+    let b = lru(busts, key);
+    if (b) { S.hits++; return b; }
+    S.misses++;
+    const t0 = now();
+    b = HK().drawBust(who, look, pose, phase, variant, { fx: fx !== false });
+    b.key = key;
+    S.builds++;
+    S.buildMs.push(now() - t0);
+    if (S.buildMs.length > 64) S.buildMs.shift();
+    store(busts, key, b, CAP.busts);
+    return b;
+  }
+  function bust(who, look, pose, phase, variant) {
+    who = who || 'pc';
+    const b = bustLayer(who, effectiveLook(look), pose || POSE_OF[who] || 'rally', phase === 'enter' ? 'enter' : 'hold', variant === 'compact' ? 'compact' : 'standard', true);
+    if (!b.cv) b.cv = b.layer.canvas();
+    return { cv: b.cv, w: b.w, h: b.h, face: Object.assign({}, b.face), hands: b.hands.map((r) => Object.assign({}, r)), anchor: Object.assign({}, b.anchor), key: b.key };
+  }
+
+  // ---- the backing ---------------------------------------------------------------------------------
+  // Deterministic shape and strokes per variant (a hash of the column and row, never Math.random).
+  const hh = (x, y, k) => { let h = (x * 374761393 + y * 668265263 + (k || 0) * 2246822519) >>> 0; h = Math.imul(h ^ (h >>> 13), 1274126177) >>> 0; return (h ^ (h >>> 16)) >>> 0; };
+  // The band: its top edge a brush's edge (a slow wave with a few nicks), its lower edge a straight cut rising
+  // gently to the right, its right end a handful of brush tails of different lengths.
+  function edges(variant) {
+    const N = NATIVE[variant];
+    const cmp = variant === 'compact';
+    const top0 = cmp ? 24 : 26, rise = cmp ? 0.03 : 0.045;
+    const top = (x) => top0 - x * rise + Math.sin(x / 23) * 1.2 + Math.sin(x / 7.3 + 1) * 0.5 + ((hh(x >> 3, 1) % 7) === 0 ? 1 : 0);
+    const bot = (x) => N.h - (cmp ? 3 : 4) - x * (cmp ? 0.04 : 0.075);
+    return { top, bot, end: N.w - (cmp ? 4 : 6) };
+  }
+  function backing(variant) {
+    const K = RB.pxkit, N = NATIVE[variant], cmp = variant === 'compact';
+    const L = K.layer(N.w, N.h);
+    const ink = HK().M('backing', '#222a52', { cols: ['#11152e', '#191f42', '#212a52', '#2b3562', '#384476'], at: 2, line: false });
+    const E = edges(variant);
+    // brush tails at the right: [row from the band's top (0..1), length back from the end]
+    const tails = cmp ? [[0.1, 30], [0.32, 10], [0.55, 0], [0.78, 16], [0.95, 34]] : [[0.06, 40], [0.22, 18], [0.4, 4], [0.58, 0], [0.74, 12], [0.9, 28], [1, 44]];
+    const span = (x) => Math.max(1, E.bot(x) - E.top(x));
+    const endAt = (x, y) => {
+      const t = (y - E.top(x)) / span(x);
+      let best = -1e9;
+      for (const [ty, back] of tails) { const d = Math.abs(t - ty) * span(x); const reach = E.end - back - d * d * 0.9; best = Math.max(best, reach); }
+      return best;
+    };
+    // long horizontal strokes laid along the band, each a few rows deep, tapered at both ends
+    const strokes = [];
+    const nS = cmp ? 9 : 13;
+    for (let i = 0; i < nS; i++) {
+      const t = (i + 0.5) / nS;
+      const x0 = (hh(i, 51) % 60) - 30, len = 70 + (hh(i, 53) % 110);
+      strokes.push({ t, x0, x1: x0 + len, h: 2 + (hh(i, 55) % 3), k: hh(i, 57) % 4 === 0 ? 3 : 2 });
+    }
+    for (let y = 0; y < N.h; y++) for (let x = 0; x < N.w; x++) {
+      const yt = E.top(x), yb = E.bot(x);
+      if (y < yt || y > yb || x > endAt(x, y)) continue;
+      const t = (y - yt) / (yb - yt);
+      let k = 1;
+      for (const s of strokes) {
+        const c = yt + s.t * (yb - yt);
+        const taper = Math.min(1, Math.min(x - s.x0, s.x1 - x) / 14);
+        if (taper <= 0) continue;
+        if (Math.abs(y + 0.5 - c) < s.h * 0.5 * taper + 0.2) k = Math.max(k, s.k);
+      }
+      if (t < 0.1 || t > 0.93) k = Math.min(k, 1);
+      // dry brush at the tails: the stroke breaks up into its hairs near the end
+      const ex = endAt(x, y) - x;
+      if (ex < 6 && ((hh(x, y, 3) % 3) === 0 || (y & 1))) { if (ex < 3) continue; k = Math.min(k, 2); }
+      HK().put(L, x, y, ink, k);
+    }
+    // a lit hairline where the brush laid the ink thin, two thirds down
+    for (let x = 10; x < E.end - 40; x++) {
+      if (hh(x >> 4, 5) % 3 === 0) continue;
+      const y = Math.round(E.top(x) + span(x) * 0.66 + Math.sin(x / 17) * 1.5);
+      if (HK().get(L, x, y)) HK().put(L, x, y, ink, 4);
+    }
+    // sparse edging: gold along the top in a few long broken runs, paper flecks along the bottom
+    const gold = HK().M('edgeGold', '#d8b060', { cols: ['#8a6428', '#c89a48', '#e8c878'], at: 1, line: false });
+    const paper = HK().M('edgePaper', '#efe4c8', { cols: ['#a89a80', '#d8ccb0', '#efe4c8'], at: 1, line: false });
+    for (let x = 0; x < E.end - 30; x++) {
+      const seg = Math.floor((x + 7) / 26);
+      if (hh(seg, 21) % 3 === 0 || (x + 7) % 26 > 19) continue;
+      const y = Math.floor(E.top(x)) - 1;
+      HK().put(L, x, y, gold, (x + 7) % 26 < 2 ? 0 : (x + 7) % 26 > 16 ? 0 : 1);
+      if ((x + 7) % 26 === 6) HK().put(L, x, y, gold, 2);
+    }
+    for (let x = 3; x < E.end - 36; x++) {
+      const seg = Math.floor(x / 15);
+      if (hh(seg, 31) % 2 || x % 15 > 9) continue;
+      HK().put(L, x, Math.ceil(E.bot(x)) + 1, paper, x % 15 === 4 ? 2 : 1);
+    }
+    for (let i = 0; i < (cmp ? 4 : 6); i++) {
+      const tt = 0.15 + (hh(i, 41) % 70) / 100;
+      const x = Math.round(E.end - 6 - (hh(i, 43) % 26));
+      const y = Math.round(E.top(x) + span(x) * tt);
+      if (HK().get(L, x, y) || HK().get(L, x - 1, y)) continue;
+      HK().put(L, x, y, paper, 1);
+    }
+    return { L, E, endAt };
+  }
+  const backs = new Map();
+  function backingOf(variant) {
+    let b = backs.get(variant);
+    if (!b) { b = backing(variant); backs.set(variant, b); }
+    return b;
+  }
+
+  // ---- composition ---------------------------------------------------------------------------------
+  function blit(dst, src, dx, dy, clip) {
+    for (let y = 0; y < src.h; y++) {
+      const Y = y + dy;
+      if (Y < 0 || Y >= dst.h) continue;
+      for (let x = 0; x < src.w; x++) {
+        const X = x + dx;
+        if (X < 0 || X >= dst.w) continue;
+        const p = src.px[y * src.w + x];
+        if (!(p >>> 24)) continue;
+        if (clip && !clip(X, Y)) continue;
+        const i = Y * dst.w + X;
+        dst.px[i] = p; dst.mt[i] = src.mt[y * src.w + x];
+      }
+    }
+  }
+  function build(n) {
+    const K = RB.pxkit, N = NATIVE[n.variant], pl = PLACE[n.variant];
+    const out = K.layer(N.w, N.h);
+    const B = backingOf(n.variant);
+    if (n.backing) out.over(B.L);
+    const E = B.E;
+    // busts are cropped by the band's lower edge (a deliberate line across the chest, never a face)
+    const clip = (X, Y) => Y <= E.bot(X) + 0.5;
+    const res = { faces: [], hands: [] };
+    const place = (who, b, at) => {
+      const dx = at[0] - b.anchor.x, dy = at[1] - b.anchor.y;
+      blit(out, b.layer, dx, dy, clip);
+      res.faces.push({ who, x: b.face.x + dx, y: b.face.y + dy, w: b.face.w, h: b.face.h });
+      for (const h of b.hands) res.hands.push({ who, x: h.x + dx, y: h.y + dy, w: h.w, h: h.h });
+    };
+    const overlays = [];
+    const place2 = (who, b, at) => { place(who, b, at); if (b.overlay) overlays.push({ o: b.overlay, dx: at[0] - b.anchor.x, dy: at[1] - b.anchor.y }); };
+    if (n.comp && n.omit !== 'comp') place2(n.comp, bustLayer(n.comp, null, POSE_OF[n.comp], n.phase, n.variant, n.fx), pl[n.comp] || pl.comp);
+    if (n.omit !== 'pc') place2('pc', bustLayer('pc', n.look, 'rally', n.phase, n.variant, n.fx), pl.pc);
+    // effects that join the two (Nao's route stroke) go over both busts
+    for (const { o, dx, dy } of overlays) {
+      const t = K.layer(N.w, N.h);
+      if (o.kind === 'route') HK().route(t, o.pts.map((p) => [p[0] + dx, p[1] + dy]));
+      t.outline();
+      out.over(t);
+    }
+    // the edging's bottom line is redrawn over the crop so the cut reads as the band's edge
+    if (n.backing) {
+      for (let x = 0; x < N.w; x++) {
+        const y = Math.ceil(E.bot(x)) + 1, i = y * N.w + x;
+        if (y < N.h && B.L.px[i]) { out.px[i] = B.L.px[i]; out.mt[i] = B.L.mt[i]; }
+      }
+    }
+    // visible bounds
+    let x0 = N.w, y0 = N.h, x1 = -1, y1 = -1;
+    for (let y = 0; y < N.h; y++) for (let x = 0; x < N.w; x++) if (out.px[y * N.w + x] >>> 24) { x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y); }
+    res.bounds = x1 < 0 ? { x: 0, y: 0, w: 0, h: 0 } : { x: x0, y: y0, w: x1 - x0 + 1, h: y1 - y0 + 1 };
+    res.layer = out;
+    res.anchor = { x: 0, y: Math.round((E.top(0) + E.bot(0)) / 2) };
+    return res;
+  }
+  function compose(o) {
+    const n = norm(o);
+    if (!n.comp) throw new Error('harmonyArt.compose: comp must be one of ' + COMPANIONS.join(', '));
+    const key = keyOf(o);
+    let c = lru(comps, key);
+    if (c) S.hits++;
+    else {
+      S.misses++;
+      const t0 = now();
+      c = build(n);
+      c.cv = c.layer.canvas();
+      c.key = key;
+      c.ms = now() - t0;
+      store(comps, key, c, CAP.comps);
+    }
+    const N = NATIVE[n.variant];
+    const view = n.view || (typeof window !== 'undefined' && window.innerWidth ? { w: window.innerWidth, h: window.innerHeight } : null);
+    return {
+      cv: c.cv, w: N.w, h: N.h,
+      faces: c.faces.map((r) => Object.assign({}, r)), hands: c.hands.map((r) => Object.assign({}, r)),
+      anchor: Object.assign({}, c.anchor), bounds: Object.assign({}, c.bounds),
+      scale: view ? fitScale(view.w, view.h, n.variant) : null,
+      bleed: { left: true }, key, phase: n.phase, variant: n.variant,
+    };
+  }
+
+  // The largest integer CSS scale at which the variant's visible footprint stays inside §5.2's limits
+  // (standard: 42 % width, 30 % height, 12 % area; compact: up to the view's width, 27 % of its height).
+  function fitScale(vw, vh, variant) {
+    const N = NATIVE[variant === 'compact' ? 'compact' : 'standard'];
+    for (let s = 6; s >= 1; s--) {
+      const w = N.w * s, h = N.h * s;
+      if (variant === 'compact') { if (w <= vw && h <= vh * 0.27) return s; continue; }
+      if (w <= vw * 0.42 && h <= vh * 0.3 && w * h <= vw * vh * 0.12) return s;
+    }
+    return 0;
+  }
+
+  // ---- preparation and housekeeping ----------------------------------------------------------------
+  function specs(list) {
+    list = Array.isArray(list) ? list : [list || {}];
+    const out = [];
+    for (const o of list) {
+      const comps2 = o.comp === 'all' || !o.comp ? COMPANIONS : [o.comp];
+      const phases = o.phase ? [o.phase] : ['enter', 'hold'];
+      const variants = o.variant ? [o.variant] : ['standard'];
+      for (const c of comps2) for (const ph of phases) for (const v of variants) out.push(Object.assign({}, o, { comp: c, phase: ph, variant: v }));
+    }
+    return out;
+  }
+  function prepare(list, opt) {
+    const todo = specs(list);
+    if (opt && opt.async) {
+      return new Promise((resolve) => {
+        let i = 0;
+        const step = (dl) => {
+          const t0 = now();
+          while (i < todo.length && now() - t0 < 8) compose(todo[i++]);
+          if (i < todo.length) schedule(step); else resolve(todo.length);
+        };
+        schedule(step);
+      });
+    }
+    for (const o of todo) compose(o);
+    return todo.length;
+  }
+  function schedule(fn) {
+    if (typeof requestIdleCallback === 'function') requestIdleCallback(fn, { timeout: 200 });
+    else setTimeout(fn, 16);
+  }
+  function stats() {
+    let bytes = 0;
+    for (const b of busts.values()) bytes += b.w * b.h * 4 * (b.cv ? 2 : 1);
+    for (const c of comps.values()) bytes += c.layer.w * c.layer.h * 4 * 2;
+    for (const b of backs.values()) bytes += b.L.w * b.L.h * 4;
+    const ms = S.buildMs;
+    return {
+      artVersion: ART_VERSION, busts: busts.size, compositions: comps.size, backings: backs.size, cap: Object.assign({}, CAP),
+      bytes, hits: S.hits, misses: S.misses, builds: S.builds, evictions: S.evictions, invalidations: S.invalidations,
+      bustBuildMs: ms.length ? { last: +ms[ms.length - 1].toFixed(1), mean: +(ms.reduce((a, b) => a + b, 0) / ms.length).toFixed(1), max: +Math.max(...ms).toFixed(1) } : null,
+      keys: { busts: [...busts.keys()], compositions: [...comps.keys()] },
+    };
+  }
+  function clear() { busts.clear(); comps.clear(); backs.clear(); S.invalidations++; }
+  // drop the player's entries that do not belong to the look now worn
+  function invalidate(look) {
+    const k = HK().lookKey(effectiveLook(look));
+    for (const [key] of [...busts]) if (key.split('|')[1] === 'pc' && !key.endsWith(k)) busts.delete(key);
+    for (const [key] of [...comps]) if (!key.endsWith(k)) comps.delete(key);
+    S.invalidations++;
+  }
+  if (RB.bus) {
+    RB.bus.on('equip:change', () => { try { invalidate(); } catch (e) { clear(); } });
+    RB.bus.on('campaign:changing', clear);
+  }
+
+  return { ART_VERSION, NATIVE, COMPANIONS, POSE_OF, compose, bust, prepare, fitScale, stats, clear, invalidate, keyOf, _: { build, backingOf, norm, PLACE } };
+})();
+
+
+/* ==== src/ui/88_harmony_body.js ==== */
+/* Harmony portrait busts — the body kit: palettes and materials, the head in
+ * a three-quarter view turned toward the shared action (screen right), eyes,
+ * brows, mouths, the neck, garments, hands and the worn accessories.
+ *
+ * Everything is drawn at the bust's native art resolution with RB.pxkit
+ * (hue-shifted material ramps, light from the upper left, clustered steps,
+ * selective outlines in each material's own deep tone). Faces are never
+ * rotated or resampled: features are authored pixel templates placed on
+ * whole pixels, so an eye is the same drawing in every composition.
+ *
+ * Head space: the origin is the centre of the cranium, x to the right, y down,
+ * in art px. The near side of the face (the character's right) is on the
+ * left of the screen; the far side (the character's left) on the right. An
+ * accessory worn on one side of the body keeps that side here: nothing is
+ * mirrored. RB.harmonyArt (88_harmony_art.js) owns the API and the caches;
+ * the hair styles are in 88_harmony_hair.js and the cast's poses in
+ * 88_harmony_cast.js. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.harmonyKit = RB.harmonyKit || {};
+(function (HK) {
+  'use strict';
+  const K = () => RB.pxkit;
+  const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+
+  // ---- materials ---------------------------------------------------------------------------------
+  // n tones dark → light; `at` is the base colour's step. Outline tones come from the darkest step
+  // (lineCol pulls them toward a near-black of the material's own hue family).
+  const mats = new Map(), byName = new Map();
+  function M(key, base, o) {
+    const k = key + '|' + base + '|' + JSON.stringify(o || {});
+    let m = mats.get(k);
+    // (pxkit's material table resets after very many materials: a cached one must still be the table's)
+    if (m && K().MATS[m.id] !== m) { mats.clear(); byName.clear(); m = null; }
+    if (!m) {
+      m = K().mat(base, o); mats.set(k, m);
+      if (!byName.has(key)) byName.set(key, new Set());
+      byName.get(key).add(m.id);
+      if (mats.size > 4000) { mats.clear(); byName.clear(); }
+    }
+    return m;
+  }
+  // material ids made under a name (tests: which side of the bust a worn thing is drawn on)
+  HK._matIds = (key) => [...(byName.get(key) || [])];
+  const flat = (c, o) => K().solid(c, o);
+
+  // Skin: six tones, shadows toward crimson and a little desaturated; a dark red-brown outline.
+  // The ramp is built from the game's own authored pair for each skin (its light and its shadow tone, as the
+  // road sprites and portraits use them): highlight, light, a step between, the shadow, then two deeper rose-
+  // brown tones for creases and the outline — warm, never a saturated red.
+  function skinMat(sk) {
+    const P = K();
+    const lt = P.parse(sk[0]), dk = P.parse(sk[1]);
+    const mixh = (a, b, k) => P.hex(P.mix(a, P.parse(b), k));
+    const cols = [mixh(dk, '#2a1018', 0.5), mixh(dk, '#4a1c26', 0.26), P.hex(dk), mixh(lt, dk, 0.52), P.hex(lt), mixh(lt, '#fff4e6', 0.32)];
+    return M('skin', sk[0], { cols, at: 4, line: mixh(dk, '#24080e', 0.72), lineLit: mixh(dk, '#3a1418', 0.45) });
+  }
+  // Hair: six tones round the look's middle colour; dark hair keeps a cool sheen.
+  function hairMat(h) {
+    const P = K();
+    const mid = h[1];
+    const l = P.rgb2hsl(...P.parse(mid).slice(0, 3))[2];
+    const dark = l < 0.22;
+    return M('hair', mid, { n: 6, at: 3, step: dark ? 0.075 : 0.085, dk: 1.0, lt: dark ? 1.2 : 0.85, cool: 255, warm: dark ? 215 : 48, shift: 1.1, lineCol: dark ? '#0c0a14' : '#1c0c14' });
+  }
+  function clothMat(c, o) { return M('cloth', c, Object.assign({ n: 6, at: 3, step: 0.088, cool: 250, warm: 52, lineCol: '#120c1c' }, o)); }
+  function metalMat(c) { return M('metal', c || '#e0b850', { n: 5, at: 3, step: 0.13, cool: 20, warm: 56, lineCol: '#2a1408' }); }
+  function leatherMat(c) { return M('leather', c || '#8a6a3a', { n: 5, at: 3, step: 0.08, cool: 350, warm: 45, lineCol: '#1c0e08' }); }
+  HK.M = M; HK.flat = flat; HK.skinMat = skinMat; HK.hairMat = hairMat; HK.clothMat = clothMat; HK.metalMat = metalMat; HK.leatherMat = leatherMat;
+
+  // ---- raw pixel helpers (buffer space, no transform) --------------------------------------------
+  function put(L, X, Y, Mt, k) {
+    X |= 0; Y |= 0;
+    if (X < 0 || Y < 0 || X >= L.w || Y >= L.h) return;
+    const i = Y * L.w + X;
+    L.px[i] = Mt.c[clamp(k == null ? Mt.base : k, 0, Mt.n - 1)]; L.mt[i] = Mt.id;
+  }
+  function get(L, X, Y) { return X < 0 || Y < 0 || X >= L.w || Y >= L.h ? 0 : L.px[Y * L.w + X]; }
+  function matAt(L, X, Y) { return X < 0 || Y < 0 || X >= L.w || Y >= L.h ? 0 : L.mt[Y * L.w + X]; }
+  // A template: rows of characters; map: char → [material, step] (or a function(i, j) → that).
+  function tpl(L, X0, Y0, rows, map, flipX) {
+    const w = rows.reduce((a, r) => Math.max(a, r.length), 0);
+    for (let j = 0; j < rows.length; j++) for (let i = 0; i < rows[j].length; i++) {
+      const e = map[rows[j][i]];
+      if (!e) continue;
+      const v = typeof e === 'function' ? e(i, j) : e;
+      if (!v) continue;
+      put(L, X0 + (flipX ? w - 1 - i : i), Y0 + j, v[0], v[1]);
+    }
+  }
+  HK.put = put; HK.get = get; HK.matAt = matAt; HK.tpl = tpl;
+
+  // ---- geometry helpers -------------------------------------------------------------------------
+  function inEll(x, y, cx, cy, rx, ry) { const a = (x - cx) / rx, b = (y - cy) / (ry == null ? rx : ry); return a * a + b * b <= 1; }
+  function inPoly(pts, x, y) {
+    let c = false;
+    for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) {
+      const [xi, yi] = pts[i], [xj, yj] = pts[j];
+      if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) c = !c;
+    }
+    return c;
+  }
+  HK.inEll = inEll; HK.inPoly = inPoly;
+
+  // ---- the head ------------------------------------------------------------------------------------
+  // The three-quarter head (head space). The cranium is an ellipse; the face below it a polygon whose
+  // chin sits right of the centre line, since the face is turned to the right.
+  const HEAD = {
+    cr: { cx: 0, cy: -5, rx: 17.5, ry: 18.6 },
+    jaw: [[-17.2, -6], [-17, 2], [-15.8, 7.5], [-13.4, 11.8], [-9.6, 15.6], [-5, 18.4], [-0.4, 20.2], [3.2, 21], [5.8, 20.4], [8.6, 18.2], [11.8, 14.2], [14.6, 9.4], [16.6, 4.4], [17.6, -0.6], [17.6, -6]],
+    eyeN: { x: -6, y: 3 },   // near eye centre
+    eyeF: { x: 9, y: 3 },    // far eye centre
+    nose: { x: 4, y: 10 },
+    mouth: { x: 6, y: 15 },
+    ear: { x: -15.5, y: 4.5 },
+  };
+  HK.HEAD = HEAD;
+  const inHead = (x, y) => inEll(x, y, HEAD.cr.cx, HEAD.cr.cy, HEAD.cr.rx, HEAD.cr.ry) || inPoly(HEAD.jaw, x, y);
+  HK.inHead = inHead;
+
+  // The face's skin as flat cel planes lit from the upper left: one broad lit plane, a highlight
+  // cluster on the near cheekbone, a crisp shadow band down the far cheek that widens toward the chin.
+  function head(L, hx, hy, sk) {
+    for (let Y = hy - 26; Y <= hy + 23; Y++) for (let X = hx - 20; X <= hx + 20; X++) {
+      const x = X + 0.5 - hx, y = Y + 0.5 - hy;
+      if (!inHead(x, y)) continue;
+      let k = 4;
+      // the far cheek's shadow: two pixels in from the contour on the cheek, three at the jaw
+      const band = y < 8 ? 2.2 : y < 14 ? 2.8 : 3.4;
+      if (x > 3 && !inHead(x + band, y) && y > -10) k = 3;
+      if (x > 6 && !inHead(x + 1.1, y) && y > 9) k = 2;
+      // the chin's underside, toward the far side
+      if (y > 15 && x > -2 && !inHead(x - 1, y + 1.6)) k = Math.min(k, 3);
+      // a highlight cluster on the near cheekbone, and the lit side of the temple
+      if (inEll(x, y, -8.6, 9.2, 3.4, 1.6)) k = 5;
+      if (x < -12 && y < 4 && inHead(x - 1.4, y)) k = 5;
+      put(L, X, Y, sk, k);
+    }
+  }
+  // the near ear: rim, inner fold, the lobe
+  function ear(L, hx, hy, sk) {
+    const ex = hx + HEAD.ear.x, ey = hy + HEAD.ear.y;
+    for (let Y = Math.floor(ey - 6); Y <= ey + 6; Y++) for (let X = Math.floor(ex - 4); X <= ex + 3; X++) {
+      const x = X + 0.5 - ex, y = Y + 0.5 - ey;
+      if (!inEll(x, y, 0, 0, 3, 5.2)) continue;
+      let k = 4;
+      if (inEll(x, y, 0.7, -0.6, 1.5, 3.1)) k = 2;
+      if (inEll(x, y, 1.1, 0.4, 0.8, 1.8)) k = 3;
+      if (x < -1.4 && y < 1.5) k = 5;
+      if (y > 3.2) k = 3;
+      put(L, X, Y, sk, k);
+    }
+  }
+  // The neck under the jaw, in the head's shadow at the top. (Drawn on its own layer, behind the head.)
+  function neck(L, hx, hy, sk, o) {
+    o = o || {};
+    const w0 = o.w || 13, x0 = hx - 8, top = hy + 8, bot = hy + (o.len || 36);
+    for (let Y = top; Y <= bot; Y++) for (let X = x0 - 2; X <= x0 + w0 + 3; X++) {
+      const y = Y - top, t = y / (bot - top);
+      const l = x0 + 0.4 * y * 0.1 - t * 1.5, r = x0 + w0 + t * 1.8;
+      if (X < l || X > r) continue;
+      let k = 3;
+      if (y < 9 + Math.round((X - x0) * 0.25)) k = 2;      // the jaw's shadow, sloping down to the far side
+      if (X <= l + 1 && y > 6) k = 4;                       // the lit near edge
+      if (X >= r - 1) k = Math.min(k, 2);
+      put(L, X, Y, sk, k);
+    }
+  }
+  HK.headFill = head; HK.ear = ear; HK.neck = neck;
+
+  // ---- eyes ---------------------------------------------------------------------------------------
+  // Authored eyes, near (outer corner on the left, looking right toward the action) and far (narrower,
+  // outer corner on the right). k lash, K the lash's lighter end, w white, i iris (shaded by row:
+  // the lash's shadow at the top, a light crescent below; the pupil and two glints are placed on it),
+  // l the lower lid, c a crease line (skin shadow).
+  const EYES = {
+    round: {
+      near: [
+        '..kkkkkk..',
+        '.kkkkkkkkk',
+        'kkwiiiiikk',
+        'k.wiiiiiwK',
+        '..wiiiiiw.',
+        '..wiiiiiw.',
+        '...iiiiiw.',
+        '....iiii..',
+        '..lll.....',
+      ],
+      far: [
+        '.kkkkk..',
+        'kkkkkkkk',
+        'Kwiiiikk',
+        '.wiiiiwk',
+        '.wiiiiw.',
+        '.wiiiiw.',
+        '..iiii..',
+        '..iii...',
+        '....ll..',
+      ],
+    },
+    soft: {
+      near: [
+        '...kkkkk..',
+        '.kkkkkkkkk',
+        'kkkiiiiikK',
+        '.wwiiiiiw.',
+        '..wiiiiiw.',
+        '..wiiiiiw.',
+        '...iiiii..',
+        '...lllll..',
+      ],
+      far: [
+        '..kkkk..',
+        '.kkkkkkk',
+        'Kkiiiikk',
+        '.wiiiiw.',
+        '.wiiiiw.',
+        '.wiiiiw.',
+        '..iiii..',
+        '..llll..',
+      ],
+    },
+    narrow: {
+      near: [
+        '.kkkkkkkk.',
+        'kkkkkkkkkk',
+        'k.wiiiiiwK',
+        '..wiiiiiw.',
+        '..wiiiiiw.',
+        '...iiiii..',
+        '..lll.....',
+      ],
+      far: [
+        'kkkkkkk.',
+        'Kkkkkkkk',
+        '.wiiiiwk',
+        '.wiiiiw.',
+        '.wiiiiw.',
+        '..iiii..',
+        '....ll..',
+      ],
+    },
+    sharp: {
+      near: [
+        'k.........',
+        'kkkkkkk...',
+        '.kkkkkkkkk',
+        '..kiiiiikK',
+        '..wiiiiiw.',
+        '..wiiiiiw.',
+        '...iiiiw..',
+        '....iii...',
+        '...ll.....',
+      ],
+      far: [
+        '.......k',
+        '..kkkkkk',
+        '.kkkkkkk',
+        'Kwiiiik.',
+        '.wiiiiw.',
+        '.wiiiiw.',
+        '..iiii..',
+        '...ii...',
+        '....l...',
+      ],
+    },
+  };
+  // A closed eye: 'up' (a smile or a wink, ∩) or 'down' (calm, ∪).
+  const CLOSED = {
+    up: {
+      near: ['...kkkk...', '.kkkkkkkk.', 'kkk....kkK', 'k.........'],
+      far: ['..kkkk..', '.kkkkkkk', 'Kk....kk', '.......k'],
+    },
+    down: {
+      near: ['k.........', 'kkk....kkK', '.kkkkkkkk.', '...kkkk...'],
+      far: ['.......k', 'Kk....kk', '.kkkkkkk', '..kkkk..'],
+    },
+  };
+  HK.EYES = EYES; HK.CLOSED = CLOSED;
+
+  // Draw one eye centred near (cx, cy). side: 'near' | 'far'. e: { style, closed: 'up'|'down',
+  // smile (the cheek pushes the lower lid up two rows), lid (rows of the opening the upper lid covers) }.
+  // C: face colours (lash, lashLt, lid, white, glint, iris, skin).
+  function eye(L, cx, cy, side, e, C) {
+    const st = EYES[e.style] ? e.style : 'round';
+    if (e.closed) {
+      const rows = CLOSED[e.closed][side];
+      const w = rows[0].length;
+      tpl(L, Math.round(cx - w / 2), Math.round(cy - 1), rows, { k: [C.lash, 0], K: [C.lashLt, 0] });
+      return { closed: true };
+    }
+    const T = EYES[st][side];
+    const w = T[0].length, h = T.length;
+    const x0 = Math.round(cx - w / 2), y0 = Math.round(cy - h / 2);
+    const ch = (i, j) => (T[j] && T[j][i]) || '.';
+    const isOpen = (c) => c === 'w' || c === 'i';
+    let j0 = 99, j1 = -1;
+    for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) if (isOpen(ch(i, j))) { j0 = Math.min(j0, j); j1 = Math.max(j1, j); }
+    const lid = e.lid || 0, cut = e.smile ? 2 : 0;
+    const top = j0 + lid, bot = j1 - cut;
+    // the iris region and its rows
+    let ii0 = 99, ii1 = -1, ij0 = 99, ij1 = -1;
+    for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) if (ch(i, j) === 'i') { ii0 = Math.min(ii0, i); ii1 = Math.max(ii1, i); ij0 = Math.min(ij0, j); ij1 = Math.max(ij1, j); }
+    const pc = Math.round((ii0 + ii1) / 2); // the pupil's left column
+    const n = ij1 - ij0 + 1;
+    for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) {
+      const c = ch(i, j);
+      if (j < top || j > bot) continue;
+      if (c === 'w') put(L, x0 + i, y0 + j, C.white, j === top ? 1 : 0);
+      else if (c === 'i') {
+        const r = j - ij0;
+        let k = r <= 0 ? 0 : r >= n - 1 ? 3 : r >= n - 2 ? 2 : 1;
+        if (j === top && r > 0) k = 0; // a lowered lid shades the iris top
+        if ((i === pc || i === pc - 1 + (side === 'far' ? 1 : 0)) && r >= 1 && r <= Math.min(3, n - 3)) k = 0; // pupil
+        put(L, x0 + i, y0 + j, C.iris, k);
+      }
+    }
+    // glints: 2 × 2 at the iris's upper left (one row under a lowered lid), one pixel low right
+    const gi = ii0 + (side === 'near' ? 0 : 0), gj = Math.max(ij0, top);
+    for (const [i, j] of [[gi, gj], [gi + 1, gj], [gi, gj + 1], [gi + 1, gj + 1]]) if (j <= bot && ch(i, j) === 'i') put(L, x0 + i, y0 + j, C.glint, 0);
+    const si = ii1 - 1, sj = Math.min(bot, ij1 - 1);
+    if (sj > gj + 1 && ch(si, sj) === 'i') put(L, x0 + si, y0 + sj, C.glint, 0);
+    // lashes and lids over everything
+    for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) {
+      const c = ch(i, j);
+      if (c === 'k') put(L, x0 + i, y0 + j + (lid && j >= j0 - 1 ? 0 : 0), C.lash, 0);
+      else if (c === 'K') put(L, x0 + i, y0 + j, C.lashLt, 0);
+      else if (c === 'l' && !cut) put(L, x0 + i, y0 + j, C.lid, 0);
+    }
+    if (lid) { // a lowered upper lid: skin above the new lash line
+      for (let j = j0; j < top; j++) for (let i = 0; i < w; i++) if (isOpen(ch(i, j))) put(L, x0 + i, y0 + j, C.lash, 0);
+      for (let i = 0; i < w; i++) if (isOpen(ch(i, j0)) && j0 - 1 >= 0 && ch(i, j0 - 1) === 'k' && ch(i, j0 - 2) === 'k') put(L, x0 + i, y0 + j0 - 2, C.skin, 3);
+    }
+    if (cut) { // the cheek pushes the lower lid up
+      for (let j = bot + 1; j < h; j++) for (let i = 0; i < w; i++) if (ch(i, j) !== '.' && ch(i, j) !== 'k' && ch(i, j) !== 'K') put(L, x0 + i, y0 + j, C.skin, 4);
+      for (let i = 0; i < w; i++) if (isOpen(ch(i, bot + 1)) && isOpen(ch(i, bot))) put(L, x0 + i, y0 + bot + 1, C.lid, 0);
+    }
+    return { x0, y0, w, h };
+  }
+  HK.eye = eye;
+
+  // ---- brows ---------------------------------------------------------------------------------------
+  // Each brow: points (inner, middle, outer) relative to the eye centre. The near brow's inner end is
+  // on the right (toward the nose); the far brow's on the left.
+  const BROW = {
+    flat: { near: [[4, -8], [0, -9], [-5, -8]], far: [[-3, -8], [0, -9], [3, -8]] },
+    up: { near: [[4, -9], [0, -10], [-5, -9]], far: [[-3, -9], [0, -10], [3, -9]] },
+    high: { near: [[4, -10], [0, -11], [-5, -10]], far: [[-3, -10], [0, -11], [3, -10]] },
+    firm: { near: [[4, -7], [0, -9], [-5, -9]], far: [[-3, -7], [0, -9], [3, -9]] },
+    knit: { near: [[4, -7], [0, -8], [-5, -9]], far: [[-3, -7], [0, -8], [3, -9]] },
+    soft: { near: [[4, -9], [0, -9], [-5, -8]], far: [[-3, -9], [0, -9], [3, -8]] },
+    arch: { near: [[4, -8], [0, -10], [-5, -9]], far: [[-3, -8], [0, -10], [3, -9]] },
+    lift: { near: [[4, -8], [0, -10], [-5, -10]], far: [[-3, -9], [0, -11], [3, -10]] }, // one raised, knowing
+  };
+  function brow(L, ex, ey, side, kind, Mt, thick) {
+    const pts = (BROW[kind] || BROW.flat)[side];
+    const th = thick == null ? 2 : thick;
+    for (let s = 0; s < 2; s++) {
+      const [ax, ay] = pts[s], [bx, by] = pts[s + 1];
+      const n = Math.max(Math.abs(bx - ax), 1);
+      for (let t = 0; t <= n; t++) {
+        const x = Math.round(ex + ax + ((bx - ax) * t) / n), y = Math.round(ey + ay + ((by - ay) * t) / n);
+        put(L, x, y, Mt, 1);
+        // thicker toward the inner end
+        const fromInner = s === 0 ? t / n * 0.5 : 0.5 + (t / n) * 0.5;
+        if (th > 1 && fromInner < 0.6) put(L, x, y + 1, Mt, 0);
+      }
+    }
+  }
+  HK.brow = brow; HK.BROW = BROW;
+
+  // ---- nose and mouth (three-quarter, turned right) ---------------------------------------------
+  function nose(L, hx, hy, sk) {
+    const x = hx + HEAD.nose.x, y = hy + HEAD.nose.y;
+    put(L, x, y - 2, sk, 5);
+    put(L, x + 1, y, sk, 2);
+    put(L, x, y + 1, sk, 3);
+    put(L, x + 1, y + 1, sk, 2);
+  }
+  // Mouths as small templates on the mouth point. m lip line, d inside, t teeth, g tongue, s the lower
+  // lip's shadow, h a lit lip pixel, r the lip's colour.
+  const MOUTHS = {
+    firm: ['.mmmm', 'm....', '..ss.'],
+    calm: ['m...m', '.mmm.'],
+    smile: ['m....m', '.mmmm.', '..ss..'],
+    smirk: ['.....m', '.mmmm.', 'm..s..'],
+    soft: ['m...mm', '.mmm..', '..s...'],
+    open: ['mmmmmm', 'dttttd', 'ddgggd', '.dddd.', '..ss..'],
+    grin: ['mmmmmmm', 'dtttttd', '.dgggd.', '..ddd..', '...s...'],
+    breath: ['.mmmm', 'mddd.', '.ss..'],
+    o: ['.mm.', 'mddm', '.mm.'],
+  };
+  function mouth(L, hx, hy, kind, C, dx) {
+    const rows = MOUTHS[kind] || MOUTHS.firm;
+    const w = rows[0].length;
+    tpl(L, hx + HEAD.mouth.x - Math.floor(w / 2) + (dx || 0), hy + HEAD.mouth.y - 1, rows, {
+      m: [C.mouth, 0], d: [C.mouthIn, 0], t: [C.teeth, 0], g: [C.tongue, 0], s: [C.skin, 3], h: [C.skin, 5],
+    });
+  }
+  HK.nose = nose; HK.mouth = mouth; HK.MOUTHS = MOUTHS;
+
+  // ---- face colours ------------------------------------------------------------------------------
+  function faceColours(skinCols, irisBase) {
+    const sk = skinMat(skinCols);
+    const P = K();
+    const ib = irisBase || '#7a4630';
+    return {
+      skin: sk,
+      lash: flat(P.hex(P.mix(sk.rgba[0], [24, 12, 22], 0.82))),
+      lashLt: flat(P.hex(P.mix(sk.rgba[0], [40, 18, 30], 0.42))),
+      lid: flat(P.hex(P.mix(sk.rgba[2], [120, 40, 52], 0.45))),
+      white: M('white', '#f6f2ee', { cols: ['#f6f2ee', '#d4c6d2'], at: 0 }),
+      glint: flat('#ffffff'),
+      iris: M('iris', ib, { cols: [P.hex(P.mix(P.parse(ib), [22, 10, 20], 0.7)), ib, P.tone(ib, 2), P.tone(ib, 3.6)], at: 1 }),
+      mouth: flat(P.hex(P.mix(sk.rgba[1], [96, 24, 36], 0.5))),
+      mouthIn: flat('#4a1a24'),
+      teeth: flat('#f6eeea'),
+      tongue: flat('#cc6670'),
+      blush: flat(P.hex(P.mix(sk.rgba[4], [238, 112, 122], 0.3))),
+    };
+  }
+  HK.faceColours = faceColours;
+})(RB.harmonyKit);
+
+
+/* ==== src/ui/88_harmony_cast.js ==== */
+/* Harmony portrait busts — the cast: who is drawn how, in which pose.
+ *
+ * A bust is assembled from the kit (88_harmony_body.js, 88_harmony_figure.js,
+ * 88_harmony_hair.js, 88_harmony_acc.js) in a pose-aware layer order. The
+ * contract (§6.4 of the Harmony addendum), back to front:
+ *
+ *   cape (back) · back hair · far earring · neck · torso/clothing (a hanging
+ *   arm is part of it) · straps and chest pieces · scarf · head (face, near
+ *   ear) · hair cap · glasses · fringe and side locks · brows · head
+ *   accessories · near earring · far arm, what it holds, far hand · near
+ *   arm, what it holds, near hand · lamp glow · held in front · ink · effects
+ *
+ * A raised arm comes after the head, so a hand may cross the face (the far
+ * hand at Ren's glasses as he arrives): it covers part of a lens while the
+ * frame, drawn beneath, stays whole and attached. Held things sit between
+ * the sleeve and the fingers (a brush shaft, a vial) or hang in front (the
+ * lamp).
+ *
+ * Poses: 'rally' (the player: grounded, determined, the writing hand
+ * gathering ink on the brush toward the shared action), 'route' (Nao),
+ * 'draught' (Mio), 'ward' (Ren), 'curtain' (Suzu). Each has an 'enter'
+ * drawing (arriving) and a 'hold' drawing (the one characteristic gesture
+ * resolved); loose ends (hair, earrings, ribbon tails, a scarf's tail) sit a
+ * pixel or two behind in 'enter' and settle in 'hold'. Variants: 'standard'
+ * (head, shoulders, chest and the gesture) and 'compact' (an authored
+ * head-and-shoulders version with the gesture brought in close). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.harmonyKit = RB.harmonyKit || {};
+(function (HK) {
+  'use strict';
+  const BW = 160, BH = 100;           // a bust's canvas (art px)
+  const AX = 80, AY = 72;             // the anchor (pit of the neck) in it
+  const HEAD_AT = [-1, -35];          // the head's origin from the anchor
+  HK.BUST = { w: BW, h: BH, ax: AX, ay: AY, head: HEAD_AT };
+  const IVORY = '#ece4d4';
+
+  // ---- appearance ------------------------------------------------------------------------------------
+  // Everything the art needs from a look (the player's effective look, or a companion's canonical one
+  // with their portrait traits), as plain data; also the cache key's source.
+  const ART_FIELDS = ['skin', 'hair', 'hairColor', 'outfit', 'cloth', 'shape', 'acc', 'scarfCol', 'scarfStripe', 'ribbonCol', 'hatCol', 'wrapCol', 'bandCol', 'flowerCol', 'capeCol', 'sashCol', 'earCol', 'capCol', 'leafCol', 'bellCol', 'cordCol', 'glassCol', 'size', 'age', 'bigSatchel'];
+  function artLook(look) {
+    look = look || {};
+    const o = {};
+    for (const k of ART_FIELDS) if (look[k] != null) o[k] = Array.isArray(look[k]) ? look[k].slice() : look[k];
+    o.acc = (o.acc || []).slice();
+    return o;
+  }
+  function lookKey(look) {
+    const a = artLook(look);
+    return JSON.stringify(ART_FIELDS.map((k) => (a[k] == null ? null : a[k])));
+  }
+  HK.artLook = artLook; HK.lookKey = lookKey;
+
+  // Resolved colours and materials for a look.
+  function dress(look, extra) {
+    const SP = RB.sprites;
+    const col = SP.colorsOf(look);
+    const P = RB.pxkit;
+    const cloth = col.cloth;
+    const d = {
+      skinCols: col.skin, hairCols: col.hair, cloth,
+      F: HK.faceColours(col.skin, extra && extra.iris),
+      Mh: HK.hairMat(col.hair),
+      Mc: HK.clothMat(cloth[0]),
+      Ma: HK.clothMat(cloth[2], { step: 0.09 }),
+      Mi: HK.clothMat(IVORY, { step: 0.06, cool: 230 }),
+      shape: look.shape || 'tunic',
+      style: look.hair || 'short',
+      acc: (look.acc || []).slice(),
+      brow: null,
+    };
+    // brows: the hair's own dark tone
+    d.Mb = HK.M('brow', P.hex(P.mix(d.Mh.rgba[0], [24, 12, 16], 0.25)), { cols: [P.hex(P.mix(d.Mh.rgba[0], [16, 8, 12], 0.5)), P.hex(d.Mh.rgba[1])], at: 1 });
+    return d;
+  }
+  HK.dressOf = dress;
+
+  // ---- the companions' canonical looks (src/content/00_world.js) and portrait traits ----------------------
+  function compLook(id) {
+    const ch = RB.content && RB.content.chars && RB.content.chars[id];
+    if (!ch) return null;
+    const look = Object.assign({}, ch.look || {});
+    const pt = ch.portrait || {};
+    look.acc = (pt.acc || look.acc || []).slice();
+    for (const k of ['scarfCol', 'ribbonCol']) if (pt[k]) look[k] = pt[k];
+    return { look, traits: { eyes: pt.eyes || 'round', parted: !!pt.parted, pins: !!pt.pins, collar: pt.collar, mole: !!pt.mole } };
+  }
+  HK.compLook = compLook;
+
+  // ---- layers ---------------------------------------------------------------------------------------------
+  function Stack(w, h) {
+    this.w = w; this.h = h; this.layers = new Map(); this.order = [];
+  }
+  Stack.prototype.L = function (name) {
+    let l = this.layers.get(name);
+    if (!l) { l = RB.pxkit.layer(this.w, this.h); this.layers.set(name, l); }
+    return l;
+  };
+  // outline every layer except those that should not be (effects), then composite in `order`
+  Stack.prototype.flatten = function (order, noOutline) {
+    const out = RB.pxkit.layer(this.w, this.h);
+    for (const name of order) {
+      const l = this.layers.get(name);
+      if (!l) continue;
+      if (!(noOutline && noOutline.includes(name)) && !l._outlined) { l.outline(); l._outlined = true; }
+      out.over(l);
+    }
+    return out;
+  };
+  HK.Stack = Stack;
+
+  // ---- hand drawings ---------------------------------------------------------------------------------------
+  // Hands are authored pixel drawings (skin steps 1–5; 1 the dark line where fingers meet, '.' empty), one
+  // per gesture and phase, placed so their `wrist` meets the sleeve; the layer's outline closes them. hold:
+  // where a held thing is gripped. Light from the upper left: lit planes on the top and left of each finger.
+  const HANDS = {
+    // Suzu: the right hand opened toward us, fingers fanned up and to the left, the thumb out to the right
+    open: {
+      wrist: [8, 19],
+      rows: [
+        '......5..........',
+        '...4..54..4......',
+        '..45.454.454.....',
+        '..45.454.454.....',
+        '.454.45..454.....',
+        '.45.454..45......',
+        '.45.45..454......',
+        '.45.45.454.....44',
+        '.45445.45.....453',
+        '..45445454...453.',
+        '..4544445443.43..',
+        '..4544444444443..',
+        '..344444444443...',
+        '..33444444443....',
+        '...3344444433....',
+        '....3444444......',
+        '.....444443......',
+        '.....444443......',
+        '.....444443......',
+        '.....444443......',
+      ],
+    },
+    openSoft: {
+      wrist: [8, 18],
+      rows: [
+        '.....45.4.......',
+        '...4.45.454.....',
+        '..45.45.454.....',
+        '..45445.454.....',
+        '.454454.45......',
+        '.45.45.454......',
+        '.45445.45.....4.',
+        '..4545454....453',
+        '..4544454...453.',
+        '..454444443.43..',
+        '..4544444444443.',
+        '..344444444443..',
+        '..33444444443...',
+        '...3344444433...',
+        '....3444444.....',
+        '.....444443.....',
+        '.....444443.....',
+        '.....444443.....',
+        '.....444443.....',
+      ],
+    },
+    // a right hand closed round something upright, the palm toward us: the fingers wrap across the front,
+    // the thumb comes up on the right
+    gripR: {
+      wrist: [5, 13], hold: [5, 1],
+      rows: [
+        '..444444...',
+        '.45544443..',
+        '.32222223.4',
+        '.44444443.43',
+        '.32222223443',
+        '.3444443.443',
+        '..222222443.',
+        '..34444443..',
+        '..3344443...',
+        '...334433...',
+        '....4443....',
+        '....4443....',
+        '....4443....',
+        '....4443....',
+      ],
+    },
+    // the same grip in the left hand (the player's brush): the thumb comes up on the left
+    gripL: {
+      wrist: [6, 13], hold: [6, 1],
+      rows: [
+        '...444444..',
+        '..45544443.',
+        '45.3222223.',
+        '454.4444443',
+        '4543222223.',
+        '454.444443.',
+        '.4543222222',
+        '..34444443.',
+        '...3444433.',
+        '...3344433.',
+        '....4443...',
+        '....4443...',
+        '....4443...',
+        '....4443...',
+      ],
+    },
+    // Nao: the right hand's back toward us, pointing to the right with the index, the others folded under
+    point: {
+      wrist: [1, 6], tip: [16, 2],
+      rows: [
+        '...44444.........',
+        '..4554444444444..',
+        '.455445555544444.',
+        '.444444333333333.',
+        '.4444442222222...',
+        '.44444434443.....',
+        '.34444423443.....',
+        '.3444443333......',
+        '..33442333.......',
+        '...33333.........',
+      ],
+    },
+    pointSoft: {
+      wrist: [1, 7], tip: [11, 2],
+      rows: [
+        '...4444......',
+        '..455444444..',
+        '.45544444443.',
+        '.4444442222..',
+        '.44444434443.',
+        '.3444442344..',
+        '.344444333...',
+        '..3344333....',
+        '...3333......',
+      ],
+    },
+    // Ren: the left hand at the bridge of his glasses, its back toward us, the index straight up
+    pointUp: {
+      wrist: [5, 16], tip: [6, 0],
+      rows: [
+        '.....44..',
+        '.....453.',
+        '.....453.',
+        '.....453.',
+        '.....453.',
+        '..44.453.',
+        '.44544543',
+        '.45244543',
+        '.4434243.',
+        '.4444443.',
+        '.3444443.',
+        '..344443.',
+        '..334433.',
+        '...4443..',
+        '...4443..',
+        '...4443..',
+        '...4443..',
+      ],
+    },
+    // Ren: the right hand round the lamp's bail, knuckles up, its back toward us
+    bail: {
+      wrist: [2, 8], hold: [6, 8],
+      rows: [
+        '...444444...',
+        '..45544444..',
+        '.4554444443.',
+        '.4444444443.',
+        '.4424424423.',
+        '.4434434433.',
+        '.4434434433.',
+        '..333333333.',
+        '...3...3....',
+      ],
+    },
+  };
+  function drawHandTpl(L, X0, Y0, t, sk, owner) {
+    for (let j = 0; j < t.rows.length; j++) for (let i = 0; i < t.rows[j].length; i++) {
+      const ch = t.rows[j][i];
+      if (ch === '.') continue;
+      HK.put(L, X0 + i, Y0 + j, sk, +ch);
+    }
+  }
+  HK.HANDS = HANDS; HK.drawHandTpl = drawHandTpl;
+
+
+  // ---- props ---------------------------------------------------------------------------------------------------
+  const PROP = {
+    wood: () => HK.M('brushWood', '#b0814c', { n: 5, at: 3, step: 0.1, cool: 350, warm: 48, lineCol: '#1c0e06' }),
+    ink: () => HK.M('ink', '#24203a', { n: 4, at: 1, step: 0.08, cool: 250, warm: 230, lineCol: '#08060e' }),
+    inkfx: () => HK.M('inkfx', '#262248', { n: 5, at: 1, step: 0.13, cool: 250, warm: 210, lineCol: '#06040c' }),
+    route: () => HK.M('route', '#c8962e', { n: 5, at: 3, step: 0.1, cool: 20, warm: 56, lineCol: '#2a1404' }),
+    glass: () => HK.M('glass', '#5aa898', { n: 6, at: 3, step: 0.08, cool: 230, warm: 120, lineCol: '#0c2420' }),
+    cork: () => HK.M('cork', '#b08a5a', { n: 4, at: 2, step: 0.09, lineCol: '#2a1608' }),
+    iron: () => HK.M('iron', '#4a4450', { n: 5, at: 2, step: 0.1, lineCol: '#0c0a10' }),
+    glow: () => HK.M('glow', '#ffd27a', { cols: ['#c87830', '#e8a040', '#ffd27a', '#fff0b8', '#fffae0'], at: 2, lineCol: '#5a2a10' }),
+  };
+  // the writing brush: a wooden shaft, a brass ferrule, the inked tip (from → to, anchor space)
+  function brush(L, ax, ay, b) {
+    const Ms = PROP.wood(), Mk = PROP.ink(), Mf = HK.metalMat('#b89048');
+    const [x0, y0] = b.from, [x1, y1] = b.to;
+    const dx = x1 - x0, dy = y1 - y0;
+    const at = (t, w) => [ax + x0 + dx * t, ay + y0 + dy * t, w];
+    HK.strand(L, [at(0, 1.25), at(0.7, 1.25)], Ms, { raw: true, base: 3, tipDark: 0, seam: false });
+    HK.strand(L, [at(0.7, 1.55), at(0.78, 1.55)], Mf, { raw: true, base: 3, tipDark: 0, seam: false });
+    HK.strand(L, [at(0.78, 1.75), at(0.88, 1.6), at(1, 0.35)], Mk, { raw: true, base: 2, tipDark: 0.3, seam: false });
+    for (const t of [0.2, 0.46]) { const p = at(t); HK.put(L, Math.floor(p[0]), Math.floor(p[1]), Ms, 1); }
+  }
+  // ink gathering on the brush tip: a full bead hanging at the tip and four motes of the inscription's pale
+  // thread (the paper-white the party's written effects use) drawn in toward it, nearer and smaller in turn
+  function inkGather(L, ax, ay, tip, dir) {
+    const Mi = PROP.inkfx(), Th = HK.M('thread', '#efe2c4', { cols: ['#b8a888', '#e0d2b2', '#f6ecd4', '#fffaf0'], at: 2, line: false });
+    const x = ax + tip[0], y = ay + tip[1];
+    const ux = dir[0], uy = dir[1], nx = -uy, ny = ux;
+    const P = (a, b) => [x + ux * a + nx * b, y + uy * a + ny * b];
+    // motes on a curve sweeping in to the tip: [along, across, size]
+    for (const [a, b, sz] of [[9, 6.4, 2], [11.4, 0.6, 2], [8.4, -5.6, 1], [5, -8.4, 1]]) {
+      const q = P(a, b), X = Math.floor(q[0]), Y = Math.floor(q[1]);
+      if (sz > 1) { HK.put(L, X, Y, Th, 3); HK.put(L, X + 1, Y, Th, 2); HK.put(L, X, Y + 1, Th, 2); HK.put(L, X + 1, Y + 1, Th, 1); }
+      else HK.put(L, X, Y, Th, 2);
+    }
+    // the bead
+    const b = P(1.8, 0);
+    for (let Y = Math.floor(b[1] - 2); Y <= b[1] + 2; Y++) for (let X = Math.floor(b[0] - 2); X <= b[0] + 2; X++) {
+      const dx = X + 0.5 - b[0], dy = Y + 0.5 - b[1];
+      if (dx * dx + dy * dy > 3.3) continue;
+      HK.put(L, X, Y, Mi, dx + dy < -1 ? 3 : 1);
+    }
+  }
+  // Mio's vial: green glass round-bellied, a neck and a cork (base: the bottom's centre; up: its axis)
+  function vial(L, ax, ay, base, ang, o) {
+    o = o || {};
+    const a = (ang || 0) * Math.PI / 180, c = Math.cos(a), s = Math.sin(a);
+    const R = (x, y) => [ax + base[0] + x * c - y * s, ay + base[1] + x * s + y * c];
+    const G = PROP.glass(), Ck = PROP.cork();
+    const bx0 = Math.floor(ax + base[0] - 10), bx1 = Math.ceil(ax + base[0] + 10), by0 = Math.floor(ay + base[1] - 20), by1 = Math.ceil(ay + base[1] + 4);
+    for (let Y = by0; Y <= by1; Y++) for (let X = bx0; X <= bx1; X++) {
+      const dx = X + 0.5 - ax - base[0], dy = Y + 0.5 - ay - base[1];
+      const x = dx * c + dy * s, y = -dx * s + dy * c;   // into vial space
+      let inside = false, k = 3;
+      if (HK.inEll(x, y, 0, -4.6, 4.4, 4.8)) { inside = true; k = x < -1.6 && y < -5 ? 5 : x > 2 ? 2 : y > -2 ? 2 : 3; if (y > -5.6 && y < -4.6) k = Math.max(k - 1, 1); }
+      else if (Math.abs(x) <= 1.8 && y <= -8 && y >= -13.4) { inside = true; k = x < -0.4 ? 4 : 2; }
+      else if (Math.abs(x) <= 2.4 && y < -13.4 && y >= -14.6) { inside = true; k = 4; }
+      if (inside) HK.put(L, X, Y, G, k);
+      else if (Math.abs(x) <= 1.6 && y < -14.6 && y >= -17.4) HK.put(L, X, Y, Ck, x < 0 ? 3 : 1);
+    }
+    // the draught's surface line and a glint
+    const g = R(-2, -7); HK.put(L, Math.floor(g[0]), Math.floor(g[1]), HK.flat('#ffffff'), 0);
+    if (o.glint) { const q = R(-2.6, -8.6); HK.put(L, Math.floor(q[0]), Math.floor(q[1]), HK.flat('#fffbe8'), 0); }
+    return R(0, -15);
+  }
+  // Ren's lamp hanging from its bail (top: where the hand holds the bail, anchor space)
+  function lamp(L, ax, ay, top, o) {
+    o = o || {};
+    const Mi = PROP.iron(), Gl = PROP.glow();
+    const x = ax + top[0], y = ay + top[1];
+    HK.line(L, 0, 0, x - 3, y + 4, x, y, Mi, 2); HK.line(L, 0, 0, x + 3, y + 4, x, y, Mi, 1);
+    // cap, glass body, base
+    HK.polyFill(L, x, y, [[-4.6, 4], [4.6, 4], [3.6, 6.4], [-3.6, 6.4]], Mi, (px, py) => (px < -1 ? 3 : 2));
+    for (let Y = Math.floor(y + 6); Y <= y + 16; Y++) for (let X = Math.floor(x - 5); X <= x + 5; X++) {
+      const dx = X + 0.5 - x, dy = Y + 0.5 - (y + 11.2);
+      if (!HK.inEll(dx, dy, 0, 0, 4.8, 5.2)) continue;
+      let k = 2;
+      if (Math.abs(dx) < 2.4) k = 3;
+      if (dx < -1 && dy < 0) k = 4;
+      if (o.bright && Math.abs(dx) < 3) k = Math.min(4, k + 1);
+      if (Math.abs(dy) < 0.6 || Math.abs(dy + 3) < 0.5 || Math.abs(dy - 3) < 0.5) k = Math.max(0, k - 1); // the frame's ribs
+      HK.put(L, X, Y, Gl, k);
+    }
+    HK.polyFill(L, x, y, [[-3.6, 16], [3.6, 16], [4.4, 18.2], [-4.4, 18.2]], Mi, (px) => (px < -1 ? 3 : 1));
+    return [x, y + 11];
+  }
+  // a stepped glow round a point (flat rings of falling alpha: no blur)
+  function glow(L, x, y, r, col) {
+    const steps = [[r, 0.12], [r * 0.72, 0.16], [r * 0.46, 0.2]];
+    for (const [rr, a] of steps) {
+      const M = HK.flat(col + Math.round(a * 255).toString(16).padStart(2, '0'), { line: false });
+      for (let Y = Math.floor(y - rr); Y <= y + rr; Y++) for (let X = Math.floor(x - rr); X <= x + rr; X++) {
+        if ((X + 0.5 - x) ** 2 + (Y + 0.5 - y) ** 2 > rr * rr) continue;
+        const i = Y * L.w + X;
+        if (X < 0 || Y < 0 || X >= L.w || Y >= L.h) continue;
+        const p = L.px[i];
+        const add = M.c[0];
+        if (!p) { L.px[i] = add; L.mt[i] = M.id; continue; }
+        const pa = p >>> 24, aa = add >>> 24;
+        const na = Math.min(255, pa + aa);
+        L.px[i] = (((na & 255) << 24) | (add & 0xffffff)) >>> 0;
+      }
+    }
+  }
+  // a route-like ink stroke in Nao's gold: dashes along a gentle curve and a small waypoint at its end
+  function route(L, pts) {
+    const Mi = PROP.route();
+    const sm = HK.smooth(pts.map((p) => [p[0], p[1], 1.05]), 10);
+    let run = 0;
+    for (let i = 1; i < sm.length; i++) {
+      run++;
+      if (run % 6 >= 4) continue;
+      HK.strand(L, [sm[i - 1], sm[i]], Mi, { raw: true, base: 3, tipDark: 0, seam: false });
+    }
+    const e = pts[pts.length - 1];
+    const X = Math.floor(e[0]), Y = Math.floor(e[1]);
+    for (const [dx, dy, k] of [[0, -1, 4], [-1, 0, 4], [0, 0, 3], [1, 0, 2], [0, 1, 2]]) HK.put(L, X + dx, Y + dy, Mi, k);
+  }
+  function glint(L, x, y) {
+    const W = HK.flat('#fffbe8'), G = HK.flat('#ffd870');
+    x = Math.round(x); y = Math.round(y);
+    for (let i = 1; i <= 3; i++) for (const [dx, dy] of [[i, 0], [-i, 0], [0, i], [0, -i]]) HK.put(L, x + dx, y + dy, i === 3 ? G : W, 0);
+    HK.put(L, x, y, W, 0);
+    for (const [dx, dy] of [[1, 1], [-1, -1], [1, -1], [-1, 1]]) HK.put(L, x + dx, y + dy, G, 0);
+  }
+  HK.brush = brush; HK.inkGather = inkGather; HK.vial = vial; HK.lamp = lamp; HK.glowAt = glow; HK.route = route; HK.glint = glint;
+
+  // ---- poses ----------------------------------------------------------------------------------------------
+  // A pose (ph 'enter' | 'hold', v 'standard' | 'compact') returns: head [dx, dy]; expr { near, far (eye
+  // options), brow, mouth, blush }; arms { near, far } ('down' | 'up'); nearArm / farArm { sh, el, wr (anchor
+  // space: the sleeve's end), widths, tpl (a HANDS drawing whose wrist meets wr) }; props(S, ax, ay, opt, hx,
+  // hy) drawing what is held (into nearHeld / farHeld: between the sleeve and the fingers; or held: in front)
+  // and the effects; settle (px loose ends trail by; 0 at the hold).
+  const POSES = {};
+  HK.POSES = POSES;
+  // where a point of a hand drawing lands (anchor space), given the arm
+  const handAt = (a, pt) => { const t = HANDS[a.tpl]; return [Math.round(a.wr[0]) - t.wrist[0] + pt[0], Math.round(a.wr[1]) - t.wrist[1] + pt[1]]; };
+  HK.handAt = handAt;
+
+  // The player — the shared rally: a grounded, determined look. Arriving, the writing hand (the far hand) is
+  // gathered across the chest with the brush held up beside the near jaw — the wind-up, crossing the body;
+  // at the hold it has swept out toward the action, the brush raised and the ink gathering on its tip.
+  POSES.rally = function (ph, v) {
+    const hold = ph === 'hold', cmp = v === 'compact';
+    const p = {
+      head: [0, hold ? 0 : 1], settle: hold ? 0 : 2,
+      expr: hold ? { near: {}, far: {}, brow: 'firm', mouth: 'calm' } : { near: { lid: 1 }, far: { lid: 1 }, brow: 'knit', mouth: 'firm' },
+      arms: { near: 'down', far: 'up' },
+    };
+    let wr, el, ang;
+    if (hold) {
+      if (cmp) { wr = [29, -2]; el = [27, 14]; ang = 34; } else { wr = [35, 2]; el = [32, 17]; ang = 34; }
+    } else if (cmp) { wr = [-2, 6]; el = [16, 12]; ang = -50; }
+    else { wr = [-2, 8]; el = [17, 16]; ang = -50; }
+    p.farArm = { sh: [20, 2], el, wr, w0: 5.4, w1: 4.6, w2: 3.8, tpl: 'gripL' };
+    const g = handAt(p.farArm, HANDS.gripL.hold);
+    const a = ang * Math.PI / 180, ux = Math.sin(a), uy = -Math.cos(a);
+    const len = hold ? (cmp ? 21 : 26) : (cmp ? 24 : 27), back = hold ? 8 : 5;
+    const from = [g[0] + 0.5 - ux * back, g[1] + 2 - uy * back], to = [from[0] + ux * len, from[1] + uy * len];
+    p.props = (S, ax, ay, opt) => {
+      brush(S.L('farHeld'), ax, ay, { from, to });
+      if (hold && opt.fx) inkGather(S.L('ink'), ax, ay, to, [ux, uy]);
+    };
+    p.crossing = !hold;
+    return p;
+  };
+
+  // Suzu — Curtain Call: a welcoming rally, the near hand opened toward us; animated eyes; at the hold a single
+  // wink and one glint beside the winking eye.
+  POSES.curtain = function (ph, v) {
+    const hold = ph === 'hold', cmp = v === 'compact';
+    const p = {
+      head: [hold ? -1 : 0, 0], settle: hold ? 0 : 2,
+      expr: hold ? { near: { closed: 'up' }, far: {}, brow: 'lift', mouth: 'grin', blush: true } : { near: {}, far: {}, brow: 'up', mouth: 'open' },
+      arms: { near: 'up', far: 'down' },
+    };
+    let wr, el;
+    if (cmp) { wr = hold ? [-30, -2] : [-29, 2]; el = [-33, 10]; }
+    else { wr = hold ? [-43, 4] : [-40, 8]; el = hold ? [-38, 16] : [-36, 18]; }
+    p.nearArm = { sh: [-27, 2], el, wr, w0: 5.4, w1: 4.6, w2: 3.8, tpl: hold ? 'open' : 'openSoft' };
+    p.props = (S, ax, ay, opt, hx, hy) => { if (hold && opt.fx) glint(S.L('fx'), hx + HK.HEAD.eyeN.x - 10, hy + HK.HEAD.eyeN.y - 7); };
+    return p;
+  };
+
+  // Nao — Read the Opening: a focused three-quarter gaze and a slight, sure smile; his far hand comes up past
+  // his shoulder and points the way, precisely, toward the action; a short route-like ink stroke runs on from
+  // the fingertip at the hold.
+  POSES.route = function (ph, v) {
+    const hold = ph === 'hold', cmp = v === 'compact';
+    const p = {
+      head: [hold ? 1 : 0, 0], settle: hold ? 0 : 2,
+      expr: hold ? { near: {}, far: {}, brow: 'knit', mouth: 'smirk' } : { near: {}, far: {}, brow: 'firm', mouth: 'firm' },
+      arms: { near: 'down', far: 'up' },
+    };
+    let wr, el;
+    if (cmp) { wr = hold ? [21, -4] : [19, 2]; el = [25, 10]; }
+    else { wr = hold ? [23, -5] : [21, 3]; el = hold ? [29, 11] : [28, 15]; }
+    p.farArm = { sh: [20, 2], el, wr, w0: 5.4, w1: 4.8, w2: 4, tpl: hold ? 'point' : 'pointSoft' };
+    const tip = handAt(p.farArm, HANDS[p.farArm.tpl].tip);
+    p.props = (S, ax, ay, opt) => {
+      // (the compact pair has no room for it beside the player's face: particles go before faces, §5.4)
+      if (hold && opt.fx && !cmp) p.overlay = { kind: 'route', pts: [[ax + tip[0] + 3, ay + tip[1]], [ax + tip[0] + 9, ay + tip[1] - 2], [ax + tip[0] + 13, ay + tip[1] - 7], [ax + tip[0] + 14, ay + tip[1] - 12]] };
+    };
+    return p;
+  };
+
+  // Mio — Clearwater Draught: composed and reassuring; the near hand raises the draught (a vial from the
+  // bottles she carries) beside her face, steady; at the hold it catches the light.
+  POSES.draught = function (ph, v) {
+    const hold = ph === 'hold', cmp = v === 'compact';
+    const p = {
+      head: [0, hold ? 0 : 1], settle: hold ? 0 : 2,
+      expr: hold ? { near: { smile: true }, far: { smile: true }, brow: 'soft', mouth: 'soft', blush: true } : { near: {}, far: {}, brow: 'soft', mouth: 'calm' },
+      arms: { near: 'up', far: 'down' },
+    };
+    let wr, el, ang;
+    if (cmp) { wr = hold ? [-28, -6] : [-28, 0]; el = [-32, 8]; ang = hold ? 0 : 14; }
+    else { wr = hold ? [-32, -6] : [-32, 4]; el = hold ? [-39, 8] : [-38, 14]; ang = hold ? 0 : 16; }
+    p.nearArm = { sh: [-27, 2], el, wr, w0: 5.2, w1: 4.4, w2: 3.8, tpl: 'gripR' };
+    const g = handAt(p.nearArm, HANDS.gripR.hold);
+    p.props = (S, ax, ay, opt) => { vial(S.L('nearHeld'), ax, ay, [g[0] + 0.5, g[1] + 4], ang, { glint: hold && opt.fx }); };
+    return p;
+  };
+
+  // Ren — Lantern Ward: an intent gaze behind his glasses; as he arrives his far hand settles the glasses at
+  // the far rim (crossing the face; the frame stays on, drawn under the fingers); at the hold the lamp is
+  // raised beside his face, its light framed.
+  POSES.ward = function (ph, v) {
+    const hold = ph === 'hold', cmp = v === 'compact';
+    const p = {
+      head: [0, 0], settle: hold ? 0 : 2,
+      expr: hold ? { near: { lid: 1 }, far: { lid: 1 }, brow: 'knit', mouth: 'firm' } : { near: { lid: 1 }, far: {}, brow: 'flat', mouth: 'calm' },
+      arms: { near: 'up', far: hold ? 'down' : 'up' },
+    };
+    let wr, el;
+    if (cmp) { wr = hold ? [-29, -20] : [-30, -6]; el = [-35, 2]; }
+    else { wr = hold ? [-34, -24] : [-36, -4]; el = hold ? [-41, -2] : [-40, 12]; }
+    p.nearArm = { sh: [-27, 2], el, wr, w0: 5.4, w1: 4.6, w2: 3.8, tpl: 'bail' };
+    if (!hold) {
+      // the far hand at the far rim of the glasses: the index finger up along the frame's edge
+      const H = HK.HEAD, tipAt = [HEAD_AT[0] + H.eyeF.x + 5, HEAD_AT[1] + H.eyeF.y - 1];
+      const t = HANDS.pointUp;
+      const wr2 = [tipAt[0] - t.tip[0] + t.wrist[0], tipAt[1] - t.tip[1] + t.wrist[1]];
+      p.farArm = { sh: [20, 2], el: cmp ? [22, 8] : [25, 8], wr: wr2, w0: 5.2, w1: 4.4, w2: 3.8, tpl: 'pointUp' };
+    }
+    const top = handAt(p.nearArm, HANDS.bail.hold);
+    p.props = (S, ax, ay, opt) => {
+      const c = lamp(S.L('held'), ax, ay, top, { bright: hold });
+      if (opt.fx) glow(S.L('glow'), c[0], c[1], hold ? 13 : 9, '#ffd27a');
+    };
+    return p;
+  };
+
+  // The cool rim light of the battle figures (docs/battle/party.md): down the right-hand silhouette, the pixel
+  // just inside the outline takes a step toward a cool sky blue, so the bust turns in the same light.
+  function rim(L) {
+    const w = L.w, px = L.px, src = px.slice();
+    const A = (i) => src[i] >>> 24;
+    const lum = (c) => (c & 255) * 0.3 + ((c >> 8) & 255) * 0.59 + ((c >> 16) & 255) * 0.11;
+    for (let y = 1; y < L.h - 1; y++) for (let x = 1; x < w - 2; x++) {
+      const i = y * w + x;
+      if (A(i) < 255 || A(i + 1) < 255 || A(i + 2)) continue;          // two pixels in from an empty one, on the right
+      const c = src[i], o = src[i + 1];
+      if (lum(o) > 90 || lum(c) < 40) continue;                         // i + 1 must be the dark outline; skip near-blacks
+      const k = 0.36;
+      const r = (c & 255) * (1 - k) + 0x8e * k, g = ((c >> 8) & 255) * (1 - k) + 0xc0 * k, b = ((c >> 16) & 255) * (1 - k) + 0xff * k;
+      px[i] = ((255 << 24) | (Math.round(b) << 16) | (Math.round(g) << 8) | Math.round(r)) >>> 0;
+    }
+  }
+  HK.rim = rim;
+
+  // ---- assembling a bust -------------------------------------------------------------------------------
+  // who: 'pc' | 'nao' | 'mio' | 'ren' | 'suzu'; look: the player's effective look (ignored for companions);
+  // pose: a POSES key; ph: 'enter' | 'hold'; variant: 'standard' | 'compact'.
+  function drawBust(who, look, pose, ph, variant, opt) {
+    opt = opt || {};
+    let traits = { eyes: 'round' };
+    if (who !== 'pc') {
+      const c = compLook(who);
+      if (!c) throw new Error('harmony art: no companion "' + who + '" in RB.content.chars');
+      look = c.look; traits = c.traits;
+    }
+    const d = dress(look);
+    const S = new Stack(BW, BH);
+    const P = (POSES[pose] || POSES.rally)(ph, variant);
+    const ax = AX, ay = AY;
+    const hx = ax + HEAD_AT[0] + (P.head ? P.head[0] : 0), hy = ay + HEAD_AT[1] + (P.head ? P.head[1] : 0);
+    const H = HK.HEAD;
+    const style = d.style;
+    const hc = { hx, hy, M: d.Mh, look, s: P.settle || 0, traits, d, head: S.L('head') };
+    // hair behind
+    HK.hairPart('back', style, Object.assign({ L: S.L('hairBack') }, hc));
+    // neck, torso
+    HK.neck(S.L('neck'), hx, hy, d.F.skin, { len: ay - hy + 2 });
+    const shape = traits.collar === 'high' ? 'high' : d.shape;
+    HK.torso(S.L('torso'), ax, ay, { shape, M: d.Mc, A: d.Ma, Iv: d.Mi, sk: d.F.skin, arms: P.arms });
+    // head
+    const head = S.L('head');
+    HK.headFill(head, hx, hy, d.F.skin);
+    HK.ear(head, hx, hy, d.F.skin);
+    HK.hairPart('cap', style, Object.assign({ L: S.L('cap') }, hc));
+    HK.hairPart('front', style, Object.assign({ L: S.L('front') }, hc));
+    // the hair's shadow across the forehead and temples, then the head's outline; features go on after it
+    HK.hairShadow(head, S.L('cap'), d.F.skin, hx - 22, hy - 30, hx + 22, hy + 24);
+    HK.hairShadow(head, S.L('front'), d.F.skin, hx - 22, hy - 30, hx + 22, hy + 24);
+    S.L('head').outline(); S.L('head')._outlined = true;
+    const ex = P.expr || {};
+    HK.eye(head, hx + H.eyeN.x, hy + H.eyeN.y, 'near', Object.assign({ style: traits.eyes }, ex.near), d.F);
+    HK.eye(head, hx + H.eyeF.x, hy + H.eyeF.y, 'far', Object.assign({ style: traits.eyes }, ex.far), d.F);
+    if (ex.blush) { // a warm flush across both cheeks, under the eyes
+      for (const [x0, w] of [[H.eyeN.x - 3, 5], [H.eyeF.x - 1, 3]]) for (let i = 0; i < w; i++) { HK.put(head, hx + x0 + i, hy + H.eyeN.y + 6, d.F.blush, 0); if (i % 2 === 0) HK.put(head, hx + x0 + i + 1, hy + H.eyeN.y + 7, d.F.blush, 0); }
+    }
+    HK.nose(head, hx, hy, d.F.skin);
+    HK.mouth(head, hx, hy, ex.mouth || 'firm', d.F);
+    let mole = null;
+    if (traits.mole) { mole = { x: hx + 10, y: hy + 12 }; HK.put(head, mole.x, mole.y, d.F.lash, 0); }
+    // accessories
+    const ac = { S, hx, hy, ax, ay, look, d, arms: P.arms || {}, s: P.settle || 0, who };
+    const accRes = HK.drawAcc(ac);
+    // arms
+    const hands = [];
+    const arm = (key, side) => {
+      const a = P[key];
+      if (!a) return;
+      HK.arm(S.L(side + 'Arm'), ax, ay, a, d.Mc, d.Ma);
+      if (!a.tpl) return;
+      const t = HANDS[a.tpl];
+      const X0 = ax + Math.round(a.wr[0]) - t.wrist[0], Y0 = ay + Math.round(a.wr[1]) - t.wrist[1];
+      drawHandTpl(S.L(side + 'Hand'), X0, Y0, t, d.F.skin);
+      const w = t.rows.reduce((m, r) => Math.max(m, r.length), 0);
+      hands.push({ x: X0 - 1, y: Y0 - 1, w: w + 2, h: t.rows.length + 2, side, tpl: a.tpl });
+    };
+    arm('nearArm', 'near'); arm('farArm', 'far');
+    if (P.props) P.props(S, ax, ay, { fx: opt.fx !== false }, hx, hy);
+    // brows over the fringe
+    const brows = S.L('brows');
+    HK.brow(brows, hx + H.eyeN.x, hy + H.eyeN.y, 'near', ex.brow || 'flat', d.Mb);
+    HK.brow(brows, hx + H.eyeF.x, hy + H.eyeF.y, 'far', ex.brow || 'flat', d.Mb);
+    // the layering contract (a pose can move a hand in front of the face: P.order)
+    const order = P.order || ['capeBack', 'hairBack', 'earF', 'neck', 'torso', 'chest', 'scarf', 'head', 'cap', 'glasses', 'front', 'brows', 'headAcc', 'earN', 'farArm', 'farHeld', 'farHand', 'nearArm', 'nearHeld', 'nearHand', 'glow', 'held', 'ink', 'fx'];
+    const out = S.flatten(order, ['brows', 'fx', 'glasses', 'glow']);
+    rim(out);
+    const face = { x: hx - 17, y: hy - 11, w: 36, h: 33 };
+    const box = (L) => { let x0 = 1e9, y0 = 1e9, x1 = -1, y1 = -1; if (L) for (let i = 0; i < L.px.length; i++) if (L.px[i]) { const x = i % L.w, y = (i / L.w) | 0; if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; } return x1 < 0 ? null : { x0, y0, x1, y1 }; };
+    return { layer: out, w: BW, h: BH, anchor: { x: ax, y: ay }, face, hands, head: { x: hx, y: hy }, acc: accRes, overlay: P.overlay || null, order, mole, hairBox: { back: box(S.layers.get('hairBack')) } };
+  }
+  HK.drawBust = drawBust;
+
+})(RB.harmonyKit);
+
+
+/* ==== src/ui/88_harmony_figure.js ==== */
+/* Harmony portrait busts — the figure below the head: shoulders and chest in
+ * each garment's construction (tunic, robe, coat, apron, dress, and the high
+ * collar) and sleeves on posed arms.
+ *
+ * Anchor space: (0, 0) is the pit of the neck, x to the right, y down, art
+ * px. The body is turned a little less than the head (about 20° to the
+ * right): the near shoulder (the character's right) is broader, on the left.
+ * Cloth is shaded as planes round a turned cylinder, lit from the upper
+ * left: the near shoulder's top and the near chest take the light, the far
+ * side falls into shadow, and folds are drawn as a lit ridge beside a dark
+ * crease. The hands are authored drawings in 88_harmony_cast.js. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.harmonyKit = RB.harmonyKit || {};
+(function (HK) {
+  'use strict';
+  const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+  const put = (...a) => HK.put(...a);
+  const get = (...a) => HK.get(...a);
+
+  // Fill a polygon (points offset by ox, oy) calling fn(x, y) → step (or < 0 to skip) in local coords.
+  function polyFill(L, ox, oy, pts, Mt, fn) {
+    let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+    for (const [x, y] of pts) { x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y); }
+    for (let Y = Math.floor(oy + y0); Y <= Math.ceil(oy + y1); Y++) for (let X = Math.floor(ox + x0); X <= Math.ceil(ox + x1); X++) {
+      const x = X + 0.5 - ox, y = Y + 0.5 - oy;
+      if (!HK.inPoly(pts, x, y)) continue;
+      const k = fn ? fn(x, y) : Mt.base;
+      if (k == null || k < 0) continue;
+      put(L, X, Y, Mt, k);
+    }
+  }
+  // A 1-px line (local coords from ox, oy) in one step of a material, optionally only over painted pixels.
+  function line(L, ox, oy, xa, ya, xb, yb, Mt, k, onlyPainted) {
+    let x0 = Math.round(ox + xa - 0.5), y0 = Math.round(oy + ya - 0.5);
+    const x1 = Math.round(ox + xb - 0.5), y1 = Math.round(oy + yb - 0.5);
+    const dx = Math.abs(x1 - x0), sx = x0 < x1 ? 1 : -1, dy = -Math.abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
+    let err = dx + dy;
+    for (let n = 0; n < 500; n++) {
+      if (!onlyPainted || get(L, x0, y0)) put(L, x0, y0, Mt, k);
+      if (x0 === x1 && y0 === y1) break;
+      const e2 = 2 * err;
+      if (e2 >= dy) { err += dy; x0 += sx; }
+      if (e2 <= dx) { err += dx; y0 += sy; }
+    }
+  }
+  HK.polyFill = polyFill; HK.line = line;
+
+  // ---- the torso -------------------------------------------------------------------------------------
+  // The silhouette's sides (near side top → bottom, far side bottom → top) with the arm hanging ('down')
+  // or lifted away ('up': the torso ends at the armpit and the arm is drawn by itself).
+  const SIDES = {
+    near: {
+     down: [[-7.6, -9], [-14, -5.6], [-22, -2], [-28.6, 1.6], [-32.8, 6.6], [-34.8, 14], [-35.8, 26], [-36.4, 44]],
+      up: [[-7.6, -9], [-14, -5.6], [-22, -2], [-27.6, 2.4], [-27.2, 10], [-25.8, 20], [-25.2, 44]],
+    },
+    far: {
+      down: [[27.4, 44], [27.4, 26], [27, 14], [25.4, 6], [21.6, 0.8], [14.6, -3.4], [6.4, -8.4]],
+      up: [[21.4, 44], [21.6, 24], [22, 12], [22.2, 4.4], [19.2, 0], [14.2, -3.4], [6.4, -8.4]],
+    },
+  };
+  HK.SIDES = SIDES;
+  function torsoPts(arms) {
+    return SIDES.near[arms.near === 'up' ? 'up' : 'down'].concat(SIDES.far[arms.far === 'up' ? 'up' : 'down']);
+  }
+  // Cloth shading round the turned body. Returns a step for (x, y) in anchor space.
+  // Cloth as planes round the turned body: the near chest and shoulder in the light, a broad half-tone down
+  // the front, the far side in shadow with a deeper band at its edge; the shoulders' tops face the sky.
+  function clothStep(x, y, o) {
+    const nx = (x + 5) / 31;
+    let k = 3;
+    if (nx < -0.36) k = 4;
+    if (nx > 0.4) k = 2;
+    if (nx > 0.8) k = 1;
+    const sl = y - (Math.abs(x) * 0.42 - 10.4);
+    if (sl < 3.6 && x < -6) k = Math.max(k, 4);
+    if (sl < 2.2 && x < -13) k = 5;
+    if (sl < 3 && x > 8) k = Math.max(k, 3);
+    // the head's shadow on the chest under the chin, a shallow crescent
+    if (y < 3 + Math.max(0, 5 - Math.abs(x - 3) * 0.5) && y > -9 && Math.abs(x - 2) < 11) k = Math.min(k, 2);
+    // the near sleeve (arm down): its own cylinder, lit on the outside; the far sleeve in shadow
+    if (o && o.nearDown && x < -24.5 - (y > 12 ? 0.6 : 0) && y > 4) k = x < -32 ? 5 : x < -29 ? 4 : x < -26.6 ? 3 : 2;
+    if (o && o.farDown && x > 21.5 && y > 5) k = x > 25.4 ? 1 : 2;
+    return k;
+  }
+  // a fold: a dark crease with its lit ridge on the side toward the light (only over painted cloth)
+  function fold(L, ax, ay, xa, ya, xb, yb, Mt, deep) {
+    line(L, ax, ay, xa, ya, xb, yb, Mt, deep ? 1 : 2, true);
+    line(L, ax, ay, xa - 1, ya, xb - 1, yb, Mt, 4, true);
+  }
+  // The garment's torso. g: { shape, M (cloth), A (accent), Iv (ivory), arms: { near, far } }
+  function torso(L, ax, ay, g) {
+    const arms = g.arms || {};
+    const pts = torsoPts(arms);
+    const o = { nearDown: arms.near !== 'up', farDown: arms.far !== 'up' };
+    polyFill(L, ax, ay, pts, g.M, (x, y) => clothStep(x, y, o));
+    const Mt = g.M;
+    // armhole seams; folds from the armpits toward the chest, a crease at each elbow-side of the sleeves
+    if (o.nearDown) { line(L, ax, ay, -26.4, 3, -25, 17, Mt, 1, true); line(L, ax, ay, -25, 17, -25.4, 44, Mt, 2, true); line(L, ax, ay, -27.4, 4, -26.4, 17, Mt, 5, true); fold(L, ax, ay, -32, 18, -28, 22, Mt); fold(L, ax, ay, -33, 25, -29, 28, Mt); }
+    else { fold(L, ax, ay, -24, 8, -20, 14, Mt, true); }
+    if (o.farDown) { line(L, ax, ay, 21.6, 3, 21, 18, Mt, 0, true); line(L, ax, ay, 21, 18, 21.2, 44, Mt, 1, true); }
+    else { line(L, ax, ay, 20.4, 6, 19.6, 20, Mt, 1, true); }
+    fold(L, ax, ay, -21, 18, -14, 28, Mt); fold(L, ax, ay, -22, 25, -16, 34, Mt);
+    fold(L, ax, ay, 17, 14, 13, 26, Mt, true); fold(L, ax, ay, 19, 22, 16, 32, Mt, true);
+    const sh = g.shape;
+    if (sh === 'robe') robe(L, ax, ay, g);
+    else if (sh === 'coat') coat(L, ax, ay, g);
+    else if (sh === 'apron') apron(L, ax, ay, g);
+    else if (sh === 'dress') dress(L, ax, ay, g);
+    else if (sh === 'high') highCollar(L, ax, ay, g);
+    else tunic(L, ax, ay, g);
+  }
+  HK.torso = torso; HK.clothStep = clothStep; HK.torsoPts = torsoPts;
+
+  // the skin left open at a neckline (a V or a scoop), with the collarbone's shadow
+  function neckOpen(L, ax, ay, pts, sk) {
+    polyFill(L, ax, ay, pts, sk, (x, y) => (y < 1.4 ? 2 : x > 3 ? 2 : 3));
+  }
+  // Tunic: a V neck edged in the accent colour, shoulder seams, a short placket.
+  function tunic(L, ax, ay, g) {
+    const A = g.A;
+    neckOpen(L, ax, ay, [[-7.2, -9], [6.4, -8.4], [1.6, 8]], g.sk);
+    polyFill(L, ax, ay, [[-9.6, -9.6], [-7, -9.4], [1.6, 7.8], [2.4, 11]], A, (x, y) => (x < -4 ? 4 : 3));
+    polyFill(L, ax, ay, [[6.2, -8.8], [8.8, -8.2], [2.6, 11], [1.4, 8]], A, () => 2);
+    line(L, ax, ay, 2.4, 11.2, 2.6, 44, g.M, 1, true);
+    line(L, ax, ay, 1.4, 11.6, 1.6, 44, g.M, 4, true);
+    for (const y of [16, 24, 32]) { put(L, ax + 3, ay + y, A, 4); put(L, ax + 3, ay + y + 1, A, 1); }
+    line(L, ax, ay, -9, -8.6, -26, 0, g.M, 2, true);
+  }
+  // Robe: crossed panels (the wearer's left over the right), an ivory under-collar, a broad collar band.
+  function robe(L, ax, ay, g) {
+    const A = g.A, Iv = g.Iv;
+    neckOpen(L, ax, ay, [[-7, -9], [5.6, -8.4], [-1.6, 4.4]], g.sk);
+    polyFill(L, ax, ay, [[-8.8, -9.4], [-6.6, -9.4], [-1.2, 4.8], [-2.8, 7]], Iv, () => 3);
+    polyFill(L, ax, ay, [[5.4, -9], [9.6, -8.2], [-4.4, 16], [-11.6, 44], [-15.6, 44], [-6.4, 14]], A, (x, y) => (x + y * 0.6 < 0 ? 3 : 2));
+    line(L, ax, ay, 6.4, -8, -9.6, 20, A, 4);
+    line(L, ax, ay, -6.4, 14.4, -15.6, 44, A, 1, true);
+  }
+  // Coat: lapels faced in the accent, a shirt between them, buttons on the far panel.
+  function coat(L, ax, ay, g) {
+    const A = g.A, M = g.M;
+    polyFill(L, ax, ay, [[-6.6, -9], [5.6, -8.4], [3.6, 14], [-1, 14]], A, (x, y) => (y < 0 ? 1 : 2));
+    neckOpen(L, ax, ay, [[-4.6, -9], [4, -8.6], [0, 1.6]], g.sk);
+    polyFill(L, ax, ay, [[-9.4, -9.6], [-6, -9.4], [0.4, 12], [-2, 20], [-9, 10]], M, (x, y) => (x < -6 ? 5 : 4));
+    line(L, ax, ay, -6, -9.2, 0.4, 12, A, 4);
+    polyFill(L, ax, ay, [[5.4, -9], [9.6, -8.2], [12, 4], [6, 16], [3.2, 13]], M, () => 2);
+    line(L, ax, ay, 5.6, -8.6, 3.4, 13, M, 1);
+    for (const y of [19, 28, 37]) { put(L, ax + 4, ay + y, A, 4); put(L, ax + 5, ay + y, A, 3); put(L, ax + 4, ay + y + 1, A, 1); }
+    line(L, ax, ay, 3, 16, 3.4, 44, M, 1, true);
+  }
+  // Apron: a round-necked shirt, the ivory bib with its straps over the shoulders.
+  function apron(L, ax, ay, g) {
+    const A = g.A, Iv = g.Iv;
+    neckOpen(L, ax, ay, [[-7, -9], [6, -8.6], [3.4, 0], [-3.6, 0.4]], g.sk);
+    line(L, ax, ay, -7.6, -8.4, -3.8, 1, A, 3); line(L, ax, ay, -3.8, 1, 3.6, 0.4, A, 3); line(L, ax, ay, 3.6, 0.4, 6.6, -8, A, 2);
+    polyFill(L, ax, ay, [[-14, 12], [13, 11], [14.6, 44], [-15.6, 44]], Iv, (x, y) => (x > 9 ? 2 : x < -10 ? 4 : 3));
+    line(L, ax, ay, -14, 12, 13, 11, Iv, 4);
+    for (const [x0, x1] of [[-14, -22], [12.4, 15]]) polyFill(L, ax, ay, [[x0, 12], [x0 + (x0 < 0 ? 4 : -3.6), 12], [x1 + (x0 < 0 ? 3.6 : -2.6), -2.4], [x1, -3.6]], Iv, () => (x0 < 0 ? 4 : 2));
+    line(L, ax, ay, -6, 24, 6, 24, Iv, 2, true);
+    put(L, ax - 11, ay + 13, Iv, 1); put(L, ax + 10, ay + 13, Iv, 1);
+  }
+  // Dress: a scooped neckline trimmed in the accent, soft gathers below it.
+  function dress(L, ax, ay, g) {
+    const A = g.A;
+    const scoop = [];
+    for (let i = 0; i <= 12; i++) { const t = i / 12, a = Math.PI * t; scoop.push([-11 + 21 * t, -8.6 + Math.sin(a) * 9.6]); }
+    neckOpen(L, ax, ay, scoop.concat([[10, -9.4], [-11, -9.4]]), g.sk);
+    for (let i = 0; i < 24; i++) {
+      const t = i / 23, a = Math.PI * t;
+      const x = -11.6 + 22.2 * t, y = -8.2 + Math.sin(a) * 10.2;
+      put(L, Math.round(ax + x), Math.round(ay + y), A, x < 2 ? 4 : 3);
+      put(L, Math.round(ax + x), Math.round(ay + y + 1), A, x < 2 ? 2 : 1);
+    }
+    // gathers under the neckline: short pleats fanning down from the trim
+    for (const x of [-8, -4, 0, 4, 8]) { line(L, ax, ay, x, 3 + Math.abs(x) * 0.12, x - 0.6, 13, g.M, x > 3 ? 1 : 2, true); line(L, ax, ay, x - 1, 3 + Math.abs(x) * 0.12, x - 1.6, 11, g.M, x > 3 ? 3 : 4, true); }
+    // the sleeve heads gathered into the shoulder seam
+    line(L, ax, ay, -23, -1, -29, 6, A, 2, true);
+    for (const t of [0.2, 0.5, 0.8]) { const x = -23 - 6 * t, y = -1 + 7 * t; line(L, ax, ay, x, y, x - 1.6, y + 3.4, g.M, 2, true); }
+  }
+  // High collar: a standing band round the neck, closed at the front, trimmed at its top edge.
+  function highCollar(L, ax, ay, g) {
+    const A = g.A, M = g.M;
+    polyFill(L, ax, ay, [[-9.6, -15], [8.4, -13.6], [9.2, -5], [3, -1.6], [-4, -1.6], [-10.6, -6]], M, (x, y) => (x < -5 ? 4 : x > 5 ? 2 : 3));
+    line(L, ax, ay, -9.6, -15, 8.4, -13.8, A, 4); line(L, ax, ay, -9.6, -14, 8.4, -12.8, A, 2);
+    line(L, ax, ay, 2.4, -13, 2.8, 44, M, 1, true); line(L, ax, ay, 1.4, -13, 1.8, 44, A, 3, true);
+    for (const y of [-9, 1, 11, 21, 31]) { put(L, ax + 4, ay + y, A, 4); put(L, ax + 4, ay + y + 1, A, 1); }
+  }
+  HK.garments = { tunic, robe, coat, apron, dress, highCollar };
+
+  // ---- arms ---------------------------------------------------------------------------------------
+  // A sleeve on two segments (shoulder → elbow → wrist), each a tapered capsule lit on its upper-left
+  // flank; a cuff at the wrist. pts in anchor space.
+  function arm(L, ax, ay, a, M, cuff) {
+    const S = (p, w) => [ax + p[0], ay + p[1], w];
+    HK.strand(L, [S(a.sh, a.w0 || 6), S(a.el, a.w1 || 5)], M, { base: 3, tipDark: 0, seam: false });
+    HK.strand(L, [S(a.el, a.w1 || 5), S(a.wr, a.w2 || 4)], M, { base: 3, tipDark: 0, seam: false });
+    if (cuff) {
+      const dx = a.wr[0] - a.el[0], dy = a.wr[1] - a.el[1], l = Math.hypot(dx, dy) || 1;
+      const ux = dx / l, uy = dy / l;
+      const c0 = [a.wr[0] - ux * 3.2, a.wr[1] - uy * 3.2];
+      HK.strand(L, [S(c0, (a.w2 || 4) + 0.6), S(a.wr, (a.w2 || 4) + 0.6)], cuff, { base: 3, tipDark: 0, seam: false });
+    }
+  }
+  HK.arm = arm;
+
+})(RB.harmonyKit);
+
+
+/* ==== src/ui/88_harmony_fixtures.js ==== */
+/* Harmony portrait art — the appearance coverage set (Harmony addendum §20.4,
+ * §23.3). A QA fixture list built from the actual registries, never a
+ * hand-kept copy: every hairstyle (RB.sprites.HAIRSTYLES), garment shape (the
+ * creation cuts plus the dress the battle figures support), cloth palette,
+ * skin, hair colour and accessory category (RB.sprites.ACCESSORIES), every
+ * keepsake in the cosmetic slot (RB.content.items, worn through
+ * RB.equip.lookWith so same-place replacement is the real rule), and named
+ * stress combinations (glasses with a fringe, headwear over large hair, a
+ * scarf with a strap, the arriving drawing whose hand crosses the body and,
+ * for Ren, the face).
+ *
+ * Every fixture is SYNTHETIC: a look assembled for inspection, not a saved
+ * campaign or real play. The contact sheets (tests/e2e/harmony_art_sheets.mjs)
+ * and the browser test (tests/e2e/harmony_art.mjs) label it as such. Nothing
+ * here runs unless a test or a developer calls it. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function () {
+  'use strict';
+  const SHAPES = ['tunic', 'robe', 'coat', 'apron', 'dress'];
+  function fixtures() {
+    const SP = RB.sprites, out = [];
+    const nS = SP.SKIN.length, nH = SP.HAIR.length, nC = SP.CLOTH.length, A = SP.ACCESSORIES;
+    // one per hairstyle; skins, hair colours, cloth palettes, cuts and accessory categories cycle so that each
+    // value appears at least once across the twelve
+    SP.HAIRSTYLES.forEach((hair, i) => out.push({
+      id: 'style_' + hair, group: 'hairstyle',
+      look: { skin: i % nS, hair, hairColor: (i * 3) % nH, outfit: i % nC, shape: SHAPES[i % SHAPES.length], acc: [A[i % A.length]] },
+    }));
+    // named looks: the creation default, the owner's acceptance example (green coat, auburn ponytail)
+    out.push({ id: 'creation_default', group: 'reference', look: { skin: 2, hair: 'short', hairColor: 1, outfit: 0, shape: 'tunic', acc: ['scarf'] } });
+    out.push({ id: 'acceptance_green_auburn', group: 'reference', look: { skin: 1, hair: 'ponytail', hairColor: 3, outfit: 2, shape: 'coat', acc: ['flower', 'glasses'] } });
+    // stress combinations (two creation accessories at most, as character creation allows)
+    const stress = [
+      ['glasses_blunt_fringe', { skin: 0, hair: 'bob', hairColor: 0, outfit: 5, shape: 'coat', acc: ['glasses'] }],
+      ['glasses_long_fringe', { skin: 4, hair: 'long', hairColor: 6, outfit: 1, shape: 'robe', acc: ['glasses', 'earrings'] }],
+      ['glasses_wrap', { skin: 6, hair: 'wrap', hairColor: 2, outfit: 7, shape: 'tunic', acc: ['glasses', 'earrings'] }],
+      ['hat_curly', { skin: 5, hair: 'curly', hairColor: 4, outfit: 3, shape: 'apron', acc: ['hat', 'scarf'] }],
+      ['hat_wavy', { skin: 1, hair: 'wavy', hairColor: 9, outfit: 6, shape: 'dress', acc: ['hat', 'earrings'] }],
+      ['hat_spiky', { skin: 3, hair: 'spiky', hairColor: 5, outfit: 4, shape: 'tunic', acc: ['hat', 'satchel'] }],
+      ['scarf_strap', { skin: 2, hair: 'short', hairColor: 3, outfit: 2, shape: 'tunic', acc: ['scarf', 'satchel'] }],
+      ['cape_strap', { skin: 0, hair: 'ponytail', hairColor: 8, outfit: 5, shape: 'coat', acc: ['cape', 'satchel'] }],
+      ['headband_twintails', { skin: 4, hair: 'twintails', hairColor: 7, outfit: 0, shape: 'robe', acc: ['headband', 'flower'] }],
+      ['braid_scarf', { skin: 3, hair: 'braid', hairColor: 1, outfit: 6, shape: 'apron', acc: ['scarf', 'earrings'] }],
+      ['shaved_glasses_cape', { skin: 6, hair: 'shaved', hairColor: 0, outfit: 1, shape: 'coat', acc: ['glasses', 'cape'] }],
+      ['bun_headband', { skin: 1, hair: 'bun', hairColor: 4, outfit: 4, shape: 'dress', acc: ['headband', 'earrings'] }],
+    ];
+    for (const [id, look] of stress) out.push({ id, group: 'stress', look });
+    // every keepsake that can be worn, on a base look of its own, through the real resolver
+    const items = (RB.content && RB.content.items) || {};
+    const ids = Object.keys(items).filter((k) => items[k] && items[k].slot === 'cosmetic').sort();
+    ids.forEach((id, i) => {
+      const base = { skin: (i * 2) % nS, hair: SP.HAIRSTYLES[(i * 5) % SP.HAIRSTYLES.length], hairColor: (i * 7) % nH, outfit: (i * 3) % nC, shape: SHAPES[i % 4], acc: [i % 2 ? 'hat' : 'scarf'] };
+      const look = RB.equip && RB.equip.lookWith ? RB.equip.lookWith(base, id) : base;
+      out.push({ id: 'keepsake_' + id, group: 'keepsake', item: id, acc: items[id].acc, base, look });
+    });
+    return out.map((f) => Object.assign({ synthetic: true }, f));
+  }
+  // What the set covers, by category (for the docs' coverage table and the tests).
+  function coverage(list) {
+    list = list || fixtures();
+    const SP = RB.sprites, seen = { hair: new Set(), shape: new Set(), outfit: new Set(), skin: new Set(), hairColor: new Set(), acc: new Set(), item: new Set() };
+    for (const f of list) {
+      const L = f.look;
+      seen.hair.add(L.hair); seen.shape.add(L.shape); seen.outfit.add(L.outfit); seen.skin.add(L.skin); seen.hairColor.add(L.hairColor);
+      for (const a of L.acc || []) seen.acc.add(a);
+      if (f.item) seen.item.add(f.item);
+    }
+    const items = (RB.content && RB.content.items) || {};
+    const want = {
+      hair: SP.HAIRSTYLES, shape: SHAPES, outfit: SP.CLOTH.map((_, i) => i), skin: SP.SKIN.map((_, i) => i), hairColor: SP.HAIR.map((_, i) => i),
+      acc: SP.ACCESSORIES, item: Object.keys(items).filter((k) => items[k] && items[k].slot === 'cosmetic'),
+    };
+    const res = {};
+    for (const k in want) res[k] = { want: want[k].length, got: want[k].filter((v) => seen[k].has(v)).length, missing: want[k].filter((v) => !seen[k].has(v)) };
+    return res;
+  }
+  RB.harmonyArtFixtures = { fixtures, coverage, SHAPES };
+})();
+
+
+/* ==== src/ui/88_harmony_hair.js ==== */
+/* Harmony portrait busts — hair. Every supported hairstyle (and the wrap) in
+ * the busts' three-quarter view turned to the right, as coherent masses:
+ *
+ *   back   behind the head and neck (long falls, tails, the back of a bob)
+ *   cap    the crown over the cranium, clipped to the hairline so the face
+ *          and the near ear show (drawn over the head)
+ *   front  fringe clumps and side locks in front of the face and ear
+ *
+ * A mass is shaded as a lit sphere in a few flat steps, then carved by a few
+ * seams that run from the crown (a dark line with a lit edge beside it, so
+ * the cap reads as locks without striping). Clumps — fringe, side locks,
+ * tails — are tapered, curved strands with a lit flank on the light's side,
+ * a shaded flank and a dark parting where they overlap. One highlight band
+ * crosses the crown and the clumps' roots where the head turns to the light.
+ * Positions are head space (RB.harmonyKit.HEAD). `c.s` is a settle offset in
+ * px for loose ends (0 at the hold; tails trail a little as the bust
+ * arrives). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.harmonyKit = RB.harmonyKit || {};
+(function (HK) {
+  'use strict';
+  const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+  const put = (...a) => HK.put(...a);
+  const LIGHT = [-0.62, -0.78];
+
+  // ---- primitives --------------------------------------------------------------------------------
+  // Segments of a polyline, precomputed once: endpoints, direction, length, cumulative length, widths and a
+  // bounding box (padded by the wider end) for a quick reject.
+  function segsOf(pts) {
+    const segs = [];
+    let total = 0;
+    for (let i = 1; i < pts.length; i++) {
+      const a = pts[i - 1], b = pts[i], dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1e-6;
+      const wa = a[2] == null ? 2 : a[2], wb = b[2] == null ? 2 : b[2], m = Math.max(wa, wb) + 1;
+      segs.push({ ax: a[0], ay: a[1], dx, dy, L2: l * l, l, acc: total, wa, wb, nx: -dy / l, ny: dx / l, x0: Math.min(a[0], b[0]) - m, x1: Math.max(a[0], b[0]) + m, y0: Math.min(a[1], b[1]) - m, y1: Math.max(a[1], b[1]) + m });
+      total += l;
+    }
+    segs.total = total || 1;
+    return segs;
+  }
+  function nearestSeg(segs, x, y) {
+    let best = null, bd = 1e9;
+    for (let i = 0; i < segs.length; i++) {
+      const g = segs[i];
+      if (x < g.x0 || x > g.x1 || y < g.y0 || y > g.y1) continue;
+      const u = clamp(((x - g.ax) * g.dx + (y - g.ay) * g.dy) / g.L2, 0, 1);
+      const px = g.ax + g.dx * u, py = g.ay + g.dy * u;
+      const d = Math.hypot(x - px, y - py);
+      if (d < bd) { bd = d; best = { d, t: (g.acc + g.l * u) / segs.total, s: (x - px) * g.nx + (y - py) * g.ny, seg: i, u, nx: g.nx, ny: g.ny, dx: g.dx / g.l, dy: g.dy / g.l, w: g.wa + (g.wb - g.wa) * u }; }
+    }
+    return best;
+  }
+  function nearest(pts, x, y) { return nearestSeg(segsOf(pts), x, y); }
+  // Catmull-Rom through control points [[x, y, w], ...] → a denser polyline (so clumps curve smoothly).
+  function smooth(pts, n) {
+    if (pts.length < 3) return pts;
+    n = n || 4;
+    const out = [];
+    const P = (i) => pts[clamp(i, 0, pts.length - 1)];
+    for (let i = 0; i < pts.length - 1; i++) {
+      const p0 = P(i - 1), p1 = P(i), p2 = P(i + 1), p3 = P(i + 2);
+      for (let k = 0; k < n; k++) {
+        const t = k / n, t2 = t * t, t3 = t2 * t;
+        const f = (j) => 0.5 * (2 * p1[j] + (-p0[j] + p2[j]) * t + (2 * p0[j] - 5 * p1[j] + 4 * p2[j] - p3[j]) * t2 + (-p0[j] + 3 * p1[j] - 3 * p2[j] + p3[j]) * t3);
+        out.push([f(0), f(1), (p1[2] == null ? 2 : p1[2]) + ((p2[2] == null ? 2 : p2[2]) - (p1[2] == null ? 2 : p1[2])) * t]);
+      }
+    }
+    out.push(pts[pts.length - 1]);
+    return out;
+  }
+  // A tapered clump along control points [[X, Y, halfWidth], ...] (buffer px). o: { base, lit (steps added on
+  // the lit flank), tipDark (fraction of the length darkened at the tip), seam (a dark parting on the shaded
+  // edge), wave (+1 where the clump's surface turns up toward the light), band (X, Y) → bool for the
+  // highlight band, only (X, Y) → bool, shade (X, Y, q) → extra steps }.
+  function strand(L, ctrl, Mt, o) {
+    o = o || {};
+    const pts = o.raw ? ctrl : smooth(ctrl, 5);
+    const segs = segsOf(pts);
+    let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+    for (const p of pts) { const w = p[2] == null ? 2 : p[2]; x0 = Math.min(x0, p[0] - w); y0 = Math.min(y0, p[1] - w); x1 = Math.max(x1, p[0] + w); y1 = Math.max(y1, p[1] + w); }
+    const base = o.base == null ? 3 : o.base;
+    const out = [];
+    for (let Y = Math.floor(y0) - 1; Y <= Math.ceil(y1) + 1; Y++) for (let X = Math.floor(x0) - 1; X <= Math.ceil(x1) + 1; X++) {
+      const q = nearestSeg(segs, X + 0.5, Y + 0.5);
+      if (!q || q.d > q.w || q.w < 0.4) continue;
+      if (o.only && !o.only(X, Y)) continue;
+      const u = q.s / Math.max(0.6, q.w);
+      const litSide = Math.sign(q.nx * LIGHT[0] + q.ny * LIGHT[1]) || -1;
+      const ul = u * litSide;
+      let k = base;
+      if (ul > 0.2) k += o.lit == null ? 1 : o.lit;
+      else if (ul < -0.5) k -= 1;
+      if (o.seam !== false && ul < -0.8 && q.w > 1.5) k = base - 2;
+      if (q.t > 1 - (o.tipDark == null ? 0.2 : o.tipDark)) k -= 1;
+      if (o.wave && q.dx < -0.12 && ul > -0.5) k += 1;
+      if (o.wave && q.dx > 0.3 && ul < 0.2) k -= 1;
+      if (o.band && ul > -0.2 && o.band(X, Y)) k = Math.max(k, Mt.n - 1 - (ul > 0.35 ? 0 : 1));
+      if (o.shade) k += o.shade(X, Y, q) || 0;
+      put(L, X, Y, Mt, clamp(k, 0, Mt.n - 1));
+    }
+    return out;
+  }
+  // A mass (polygon, buffer px) shaded as a sphere lit from the upper left in flat steps.
+  function mass(L, pts, Mt, o) {
+    o = o || {};
+    let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+    for (const [x, y] of pts) { x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y); }
+    const cx = o.cx == null ? (x0 + x1) / 2 : o.cx, cy = o.cy == null ? (y0 + y1) / 2 : o.cy;
+    const rx = o.rx || (x1 - x0) / 2, ry = o.ry || (y1 - y0) / 2;
+    const base = o.base == null ? 3 : o.base;
+    for (let Y = Math.floor(y0); Y <= Math.ceil(y1); Y++) for (let X = Math.floor(x0); X <= Math.ceil(x1); X++) {
+      if (!HK.inPoly(pts, X + 0.5, Y + 0.5)) continue;
+      if (o.only && !o.only(X, Y)) continue;
+      const nx = (X + 0.5 - cx) / rx, ny = (Y + 0.5 - cy) / ry;
+      const v = -nx * 0.62 - ny * 0.78;
+      let k = base + (v > 0.5 ? 1 : v < -0.55 ? -1 : 0);
+      if (v < -1.05) k -= 1;
+      if (o.band && v > -0.2 && o.band(X, Y)) k = Mt.n - 1;
+      if (o.shade) k += o.shade(X, Y) || 0;
+      put(L, X, Y, Mt, clamp(k, 0, Mt.n - 1));
+    }
+  }
+  // A seam: a dark curve (quadratic through a, b, c in buffer px) over existing hair, with a lit line beside it.
+  function seam(L, Mt, a, b, c, o) {
+    o = o || {};
+    const n = 40;
+    let last = '';
+    for (let i = 0; i <= n; i++) {
+      const t = i / n, u = 1 - t;
+      const x = u * u * a[0] + 2 * u * t * b[0] + t * t * c[0], y = u * u * a[1] + 2 * u * t * b[1] + t * t * c[1];
+      const X = Math.floor(x), Y = Math.floor(y);
+      const key = X + ',' + Y;
+      if (key === last) continue;
+      last = key;
+      if (t < (o.from || 0.12)) continue;
+      const i0 = Y * L.w + X;
+      if (X < 0 || Y < 0 || X >= L.w || Y >= L.h || !L.px[i0] || L.mt[i0] !== Mt.id) continue;
+      const k0 = Mt.c.indexOf(L.px[i0]);
+      put(L, X, Y, Mt, Math.max(0, Math.min(k0, 3) - 2 + (t > 0.85 ? 0 : 0)));
+      const lx = X + (o.litDx == null ? -1 : o.litDx), ly = Y + (o.litDy == null ? 0 : o.litDy);
+      const i1 = ly * L.w + lx;
+      if (lx >= 0 && ly >= 0 && lx < L.w && ly < L.h && L.px[i1] && L.mt[i1] === Mt.id) { const k1 = Mt.c.indexOf(L.px[i1]); if (k1 >= 0 && k1 < Mt.n - 1 && t < 0.8) put(L, lx, ly, Mt, Math.min(Mt.n - 2, k1 + 1)); }
+    }
+  }
+  HK.strand = strand; HK.mass = mass; HK.seam = seam; HK.nearest = nearest; HK.smooth = smooth;
+
+  function cut(L, test, x0, y0, x1, y1) {
+    for (let Y = Math.max(0, y0); Y <= Math.min(L.h - 1, y1); Y++) for (let X = Math.max(0, x0); X <= Math.min(L.w - 1, x1); X++) {
+      if (test(X, Y)) { const i = Y * L.w + X; L.px[i] = 0; L.mt[i] = 0; }
+    }
+  }
+  HK.cut = cut;
+
+  // ---- the hairline ------------------------------------------------------------------------------
+  // The face opening the cap leaves (head space): from the far temple across the forehead to the near
+  // temple, down in front of the ear and round under the jaw. EAR_ZONE: the near ear, kept clear of the cap.
+  const OPENING = [[19, -8], [12, -12.5], [4, -14], [-5, -13.4], [-11.4, -10.6], [-13.4, -6], [-12.8, 0], [-12.2, 6], [-16, 13], [-8, 26], [12, 26], [20, 12], [20.4, 0]];
+  const EAR_ZONE = [[-20, -1.6], [-12.4, -2.4], [-12, 11], [-17, 12.4], [-20.6, 6]];
+  HK.OPENING = OPENING; HK.EAR_ZONE = EAR_ZONE;
+
+  // ---- shared pieces ------------------------------------------------------------------------------
+  const S = {};
+  const T = (c, pts) => pts.map((p) => [c.hx + p[0], c.hy + p[1], p[2]]);
+  const P2 = (c, pts) => pts.map((p) => [c.hx + p[0], c.hy + p[1]]);
+  // the highlight band: a ring round the crown on its lit side (head space centre (-2, -8))
+  function bandOf(c, r0, r1) {
+    r0 = r0 || 14.6; r1 = r1 || 17.2;
+    return (X, Y) => {
+      const x = X + 0.5 - c.hx + 2, y = (Y + 0.5 - c.hy + 8) * 1.12;
+      const r = Math.hypot(x, y), a = Math.atan2(y, x) * 180 / Math.PI;
+      return r >= r0 && r < r1 && a > -168 && a < -48;
+    };
+  }
+  // The standard cap: the cranium with hair's volume, shaded, carved by seams from the crown point.
+  const CAP = [[-20.6, 4], [-21.4, -6], [-20, -16], [-14, -24.4], [-5, -28.2], [5, -27.8], [13.6, -23.6], [19.4, -15.6], [21, -6], [20.6, 2], [16, 2], [12, -6], [3, -10], [-6, -10], [-12, -6], [-13, 0], [-15, 8], [-20, 8]];
+  function cap(c, o) {
+    o = o || {};
+    const L = c.L, Mt = c.M;
+    mass(L, P2(c, o.pts || CAP), Mt, { cx: c.hx - 3, cy: c.hy - 12, rx: 22, ry: 19, base: 3, band: o.band === false ? null : bandOf(c) });
+    const C = o.crown || [-3, -26];
+    const cx = c.hx + C[0], cy = c.hy + C[1];
+    for (const [ex, ey, bx, by, litDx] of o.seams || [[-19, 2, -19, -14, 1], [-12, -6, -12, -19, -1], [-4, -12, -6, -20, -1], [5, -12, 3, -21, -1], [13, -9, 11, -19, -1], [19, -2, 18, -15, -1]]) {
+      seam(L, Mt, [cx, cy], [c.hx + bx, c.hy + by], [c.hx + ex, c.hy + ey], { litDx });
+    }
+  }
+  // fringe clumps: [[x, y, w], ...] control points each (head space), root first
+  function clumps(c, list, o) {
+    o = o || {};
+    const band = o.band === false ? null : bandOf(c);
+    for (const pts of list) strand(c.L, T(c, pts), c.M, { base: o.base == null ? 3 : o.base, tipDark: o.tipDark == null ? 0.22 : o.tipDark, band, wave: o.wave });
+  }
+  HK.capHair = cap; HK.clumps = clumps; HK.bandOf = bandOf;
+
+  // Fringes (control points: root → tip, half-widths)
+  const FR = {
+    soft: [
+      [[16, -16, 2.2], [17.6, -9, 2.2], [18.6, -2, 0.4]],
+      [[11, -19, 3], [12.4, -11, 3.2], [14.6, -4.6, 0.5]],
+      [[-11, -16, 2.4], [-13, -9, 2.2], [-14.6, -3, 0.4]],
+      [[-5, -20, 3.4], [-7, -11, 3.6], [-8.6, -3.4, 0.5]],
+      [[4, -21, 3.4], [5, -12, 3.4], [6.6, -5.4, 0.5]],
+      [[-0.6, -21, 3.6], [-0.4, -11, 3.8], [0.8, -2, 0.5]],
+    ],
+    long: [
+      [[16, -16, 2.4], [18, -8, 2.4], [19, 0, 0.4]],
+      [[10.6, -19, 3.2], [12.6, -10, 3.4], [14.4, -2.4, 0.5]],
+      [[-11, -16, 2.6], [-13.4, -8, 2.6], [-14.8, 0, 0.4]],
+      [[-5, -20, 3.6], [-7.4, -10, 3.8], [-8, -0.6, 0.5]],
+      [[4.2, -21, 3.4], [5.6, -11, 3.4], [7.6, -3.6, 0.5]],
+      [[-0.4, -21, 3.6], [-0.8, -10, 3.8], [1, 1, 0.5]],
+    ],
+    blunt: [
+      [[16, -16, 2.6], [17.6, -10, 2.6], [18.4, -4, 1.2]],
+      [[-11, -16, 2.6], [-12.6, -10, 2.8], [-13.4, -4, 1.2]],
+      [[10.6, -19, 3.2], [11.6, -11, 3.4], [12.2, -4.4, 1.6]],
+      [[-5, -20, 3.4], [-6, -11, 3.6], [-6.2, -3.6, 1.6]],
+      [[4.4, -21, 3.4], [4.8, -11, 3.6], [5.2, -4, 1.6]],
+      [[-0.4, -21, 3.4], [-0.6, -11, 3.6], [-0.4, -3.4, 1.6]],
+    ],
+    // parted toward the far side: one broad sweep over the near brow, a short one to the far temple
+    parted: [
+      [[8, -21, 2], [12.6, -16, 2.8], [16.6, -8, 2.6], [18.4, -1, 0.4]],
+      [[6.6, -21, 2.4], [1, -17, 3.8], [-6, -11, 4.2], [-11.6, -6, 3], [-14.8, 0, 0.4]],
+      [[5, -21, 2], [-1, -15, 3], [-5.6, -8, 2.2], [-6.6, -4, 0.4]],
+    ],
+    spiky: [
+      [[15, -17, 2.6], [18, -10, 2.2], [20.4, -3, 0.3]],
+      [[9, -19, 3.4], [12, -12, 2.8], [15.6, -5, 0.3]],
+      [[2, -21, 3.6], [4, -13, 3], [7, -4.6, 0.3]],
+      [[-4, -21, 3.6], [-4, -13, 3], [-2, -3, 0.3]],
+      [[-9, -18, 3], [-11.6, -11, 2.6], [-12.6, -4, 0.3]],
+      [[-13, -14, 2.4], [-16, -8, 2], [-18.6, -3, 0.3]],
+    ],
+  };
+  HK.FRINGES = FR;
+  // a lock in front of the near ear (sideburn) and one along the far temple
+  const SIDEBURN = [[-13, -9, 2.2], [-13.8, -2, 2.2], [-13.4, 5, 0.5]];
+
+  // ---- styles -----------------------------------------------------------------------------------
+  // short: a cropped cap, the soft fringe, sideburns, two tufts at the nape
+  S.short = {
+    back(c) { clumps(c, [[[-18, -4, 3], [-20.4, 3, 2.6], [-19.6, 9, 0.4]], [[-13, -2, 3], [-15.6, 5, 2.6], [-14.6, 10.6, 0.4]]], { base: 2, band: false }); },
+    cap(c) { cap(c); },
+    front(c) { clumps(c, [SIDEBURN]); clumps(c, FR.soft); },
+  };
+  // bob: chin length all round, a blunt fringe, the ends turned in; covers the ears
+  S.bob = {
+    ear: false,
+    back(c) {
+      mass(c.L, P2(c, [[-21, -10], [-23.6, 2], [-23.6, 14], [-20, 20.6], [-10, 21], [-4, 18], [8, 18], [18, 20], [22.6, 14], [22.6, 0], [20, -10]]), c.M, { base: 2, cx: c.hx - 4, cy: c.hy, rx: 24, ry: 22 });
+      clumps(c, [[[-17, -6, 3.4], [-22, 6, 3.6], [-19, 19.6, 1.8]], [[-11, -4, 3.2], [-15, 8, 3.4], [-12, 20, 1.6]]], { base: 2, band: false, tipDark: 0.15 });
+    },
+    cap(c) { cap(c, { pts: CAP.map((p) => (p[1] > 0 ? [p[0], p[1] + 2] : p)) }); },
+    front(c) {
+      const s = c.s || 0;
+      clumps(c, [[[-12, -12, 3], [-15, -2, 3.4], [-15.6 + s * 0.5, 9, 3.2], [-12.4 + s * 0.5, 17.6, 1]], [[17, -12, 2.6], [19.4, -2, 2.8], [19.6, 8, 2.6], [16.6 + s * 0.3, 16.6, 0.8]]], { tipDark: 0.3 });
+      clumps(c, FR.blunt);
+    },
+  };
+  // long: straight, past the shoulders behind; a lock falls in front of the near shoulder
+  S.long = {
+    ear: false,
+    back(c) {
+      const s = c.s || 0;
+      mass(c.L, P2(c, [[-21, -12], [-24.4, 2], [-26, 20], [-27 + s, 44], [-12, 48], [8, 48], [24 + s * 0.5, 46], [24, 24], [22, 4], [20, -10]]), c.M, { base: 2, cx: c.hx - 6, cy: c.hy + 6, rx: 26, ry: 34 });
+      clumps(c, [
+        [[-20, -4, 3.6], [-24, 14, 3.8], [-25 + s, 32, 3.4], [-25 + s, 47, 0.6]],
+        [[-14, 0, 3.4], [-18, 16, 3.6], [-19 + s, 34, 3.2], [-18 + s, 48, 0.6]],
+        [[18, 0, 3.2], [21.4, 16, 3.4], [22.4 + s * 0.5, 32, 3], [21.6 + s * 0.5, 46, 0.6]],
+      ], { base: 2, band: false, tipDark: 0.18 });
+    },
+    cap(c) { cap(c); },
+    front(c) {
+      const s = c.s || 0;
+      clumps(c, [[[-12.6, -12, 3], [-15.6, 0, 3.4], [-16.6 + s, 16, 3.4], [-17.6 + s, 32, 2.6], [-17 + s, 40, 0.5]], [[17, -12, 2.6], [19.8, 0, 2.8], [20.4 + s * 0.4, 12, 2.4], [20.6 + s * 0.4, 20, 0.5]]], { tipDark: 0.16 });
+      clumps(c, FR.long);
+    },
+  };
+  // wavy: a long fall in loose S-curves, side locks framing the face in waves
+  S.wavy = {
+    ear: false,
+    back(c) {
+      const s = c.s || 0;
+      mass(c.L, P2(c, [[-21, -12], [-25.6, 2], [-28, 18], [-29 + s, 36], [-24 + s, 50], [-8, 50], [8, 50], [22 + s * 0.5, 50], [26, 34], [25, 16], [22, 2], [20, -12]]), c.M, { base: 2, cx: c.hx - 6, cy: c.hy + 8, rx: 28, ry: 36 });
+      clumps(c, [
+        [[-19, -6, 3.8], [-25, 8, 4.2], [-22.6, 20, 4.2], [-27 + s, 32, 4], [-24 + s, 43, 3], [-27 + s, 50, 0.6]],
+        [[-13, 0, 3.6], [-18.6, 12, 4], [-15.6, 24, 4], [-20 + s, 36, 3.6], [-16.6 + s, 46, 0.6]],
+        [[18, 0, 3.4], [23.6, 12, 3.8], [21, 24, 3.6], [25 + s * 0.5, 36, 3.2], [22.4 + s * 0.5, 47, 0.6]],
+      ], { base: 2, band: false, tipDark: 0.16, wave: true });
+    },
+    cap(c) { cap(c); },
+    front(c) {
+      const s = c.s || 0;
+      clumps(c, [
+        [[-12.6, -12, 3], [-16.4, 0, 3.6], [-13.6, 10, 3.6], [-17.6 + s, 21, 3.4], [-15 + s, 31, 2.6], [-17.6 + s, 39, 0.5]],
+        [[17, -12, 2.6], [20.6, -1, 3], [18.4, 9, 2.8], [21 + s * 0.4, 18, 2.2], [19.6 + s * 0.4, 25, 0.5]],
+      ], { tipDark: 0.16, wave: true });
+      clumps(c, FR.long, { wave: true });
+    },
+  };
+  // ponytail: pulled back to a tie at the back of the crown; the tail hangs behind the near shoulder
+  S.ponytail = {
+    back(c) {
+      const s = c.s || 0;
+      clumps(c, [[[-17, -14, 4], [-25, -8, 4.6], [-28 + s * 0.6, 4, 4.4], [-27 + s, 18, 3.6], [-23.6 + s, 30, 0.6]]], { base: 2, tipDark: 0.2, band: false });
+      clumps(c, [[[-18, -12, 2.6], [-22.4, -2, 3], [-21.6 + s, 12, 2.4], [-19 + s, 22, 0.5]]], { base: 3, tipDark: 0.25, band: false });
+    },
+    cap(c) { cap(c, { crown: [-16, -14], seams: [[-12, -6, -14, -12, -1], [-4, -12, -9, -18, -1], [5, -12, -4, -22, -1], [13, -9, 4, -24, -1], [19, -2, 12, -20, -1]] }); },
+    front(c, d) {
+      clumps(c, [SIDEBURN]);
+      clumps(c, c.traits && c.traits.parted ? FR.parted : FR.soft);
+      tie(c, -18, -14, 3.4);
+    },
+  };
+  // bun: gathered up into a bun at the back of the crown (Mio: with pins)
+  S.bun = {
+    back(c) { clumps(c, [[[-16, -2, 2.4], [-18.6, 5, 2], [-18, 10, 0.4]]], { base: 2, band: false }); },
+    cap(c) {
+      cap(c, { crown: [-8, -26], seams: [[-19, 2, -19, -14, 1], [-12, -6, -14, -19, -1], [-4, -12, -8, -20, -1], [5, -12, 0, -22, -1], [13, -9, 8, -22, -1], [19, -2, 16, -16, -1]] });
+    },
+    front(c) {
+      clumps(c, [SIDEBURN, [[16, -14, 1.8], [18.6, -6, 1.6], [19, 1, 0.4]]]);
+      clumps(c, FR.soft.slice(1));
+      bun(c, -9, -29, 7.6);
+      if (c.traits && c.traits.pins) pins(c, -9, -29);
+    },
+  };
+  // curly: a full mass of curls round the head, curls for a fringe; covers the ears
+  S.curly = {
+    ear: false,
+    back(c) {
+      mass(c.L, P2(c, [[-22, -16], [-27, -2], [-27, 12], [-21, 19], [-8, 18], [10, 18], [22, 19], [26, 8], [26, -6], [21, -16]]), c.M, { base: 2, cx: c.hx - 2, cy: c.hy - 2, rx: 27, ry: 22 });
+      curls(c, -27, -16, 27, 20, 1);
+    },
+    cap(c) {
+      mass(c.L, P2(c, [[-24, 6], [-26, -8], [-22, -22], [-12, -31], [2, -32.6], [15, -28], [23, -18], [25, -6], [24, 6], [17, 4], [12, -6], [3, -10], [-6, -10], [-12, -6], [-13, 0], [-16, 8]]), c.M, { cx: c.hx - 4, cy: c.hy - 14, rx: 25, ry: 20, base: 3 });
+      curls(c, -27, -34, 27, 8, 2);
+    },
+    front(c) {
+      for (const [x, y, r] of [[-11, -10, 3.6], [-5, -12, 3.8], [2, -13, 3.8], [9, -12, 3.6], [15, -9, 3.2], [-14.6, -3, 3], [19, -2, 2.8], [-15.4, 4, 2.8]]) curl(c, x, y, r, 3);
+    },
+  };
+  // spiky: spikes thrown up and back from the crown, a fringe of points
+  S.spiky = {
+    back(c) {
+      clumps(c, [[[-14, -12, 4], [-22, -12, 3], [-28, -14, 0.3]], [[-16, -4, 3.6], [-23, -1, 2.8], [-28.6, 1, 0.3]], [[-15, 3, 3], [-20, 8, 2.2], [-24, 12, 0.3]]], { base: 2, band: false, tipDark: 0.3 });
+    },
+    cap(c) {
+      cap(c, { seams: [[-12, -6, -12, -19, -1], [-4, -12, -6, -20, -1], [5, -12, 3, -21, -1], [13, -9, 11, -19, -1]] });
+      clumps(c, [
+        [[-10, -20, 4], [-16, -26, 3], [-22, -31, 0.3]],
+        [[-4, -23, 4.2], [-6, -31, 3], [-8.6, -37, 0.3]],
+        [[3, -24, 4.2], [5, -32, 3], [6, -38, 0.3]],
+        [[10, -21, 3.8], [15, -28, 2.6], [19, -32, 0.3]],
+        [[15, -16, 3.4], [21, -20, 2.4], [26, -22, 0.3]],
+        [[-15, -14, 3.6], [-22, -18, 2.6], [-27, -21, 0.3]],
+      ], { tipDark: 0.28 });
+    },
+    front(c) { clumps(c, [SIDEBURN]); clumps(c, FR.spiky, { tipDark: 0.3 }); },
+  };
+  // braid: the cap pulled back, one braid over the far (left) shoulder
+  S.braid = {
+    back(c) { clumps(c, [[[-17, -4, 3], [-20, 3, 2.6], [-19, 9, 0.4]]], { base: 2, band: false }); },
+    cap(c) { cap(c, { crown: [-3, -26] }); },
+    front(c) {
+      clumps(c, [SIDEBURN]);
+      clumps(c, FR.soft);
+      braid(c, [[15, 2], [16.6, 12], [17.6 + (c.s || 0) * 0.3, 22], [18 + (c.s || 0) * 0.6, 32], [17.6 + (c.s || 0), 41]]);
+    },
+  };
+  // twintails: two tails tied high at the sides; the near one falls behind the near shoulder
+  S.twintails = {
+    back(c) {
+      const s = c.s || 0;
+      clumps(c, [[[-17, -12, 4], [-24, -4, 4.4], [-26 + s * 0.6, 10, 4], [-25 + s, 24, 3], [-22 + s, 34, 0.5]]], { base: 2, tipDark: 0.2, band: false });
+      clumps(c, [[[17, -14, 3.6], [22, -6, 3.8], [24 + s * 0.4, 8, 3.4], [23.6 + s * 0.6, 22, 2.4], [21 + s * 0.6, 30, 0.5]]], { base: 2, tipDark: 0.2, band: false });
+    },
+    cap(c) { cap(c); },
+    front(c) { clumps(c, [SIDEBURN]); clumps(c, FR.soft); tie(c, -17.4, -12.6, 3); tie(c, 17, -14, 2.6); },
+  };
+  // shaved: close stubble over the cranium, a crisp hairline
+  // shaved: close stubble painted over the scalp itself (no outline of its own), a crisp hairline
+  S.shaved = {
+    cap(c) {
+      const L = c.head || c.L, sk = c.d.F.skin, Mt = c.Mstub;
+      const pts = P2(c, [[-18, 6], [-19, -8], [-15, -20], [-6, -24.6], [5, -24.6], [14, -20], [18.4, -10], [18.6, -5], [15, -5], [11, -9.6], [3, -12.6], [-6, -12.6], [-12, -8], [-13, 0], [-15, 7]]);
+      for (let Y = c.hy - 26; Y < c.hy + 9; Y++) for (let X = c.hx - 21; X < c.hx + 21; X++) {
+        if (!HK.inPoly(pts, X + 0.5, Y + 0.5)) continue;
+        const i = Y * L.w + X;
+        if (!L.px[i] || L.mt[i] !== sk.id) continue;
+        const x = X + 0.5 - c.hx + 3, y = Y + 0.5 - c.hy + 12;
+        const v = (-x * 0.62 - y * 0.78) / 16;
+        let k = v > 0.45 ? 3 : v > -0.3 ? 2 : 1;
+        // the hairline thins out into the skin in a sparse ordered pattern
+        const edge = !HK.inPoly(pts, X + 0.5, Y + 1.5) || !HK.inPoly(pts, X + 1.5, Y + 1.5);
+        if (edge && (X + Y) % 2) continue;
+        put(L, X, Y, Mt, k);
+      }
+    },
+  };
+  // wrap: a cloth wrap over the hair, the knot and its tail at the back; a little hair at the temples
+  S.wrap = {
+    back(c) {
+      const W = c.Mwrap;
+      const s = c.s || 0;
+      HK.strand(c.L, T(c, [[-18, -16, 3.4], [-25, -12, 3.6], [-28 + s, -4, 2.8], [-27 + s, 4, 0.6]]), W, { base: 3, tipDark: 0.2 });
+    },
+    cap(c) {
+      const W = c.Mwrap;
+      clumps(c, [SIDEBURN, [[16, -10, 2], [18.4, -3, 1.8], [18.6, 2, 0.4]]], { band: false });
+      mass(c.L, P2(c, [[-20.6, -2], [-21.6, -12], [-16, -24], [-5, -29], [6, -28.6], [15, -24], [20.6, -14], [21, -7], [12, -11], [3, -13], [-6, -12.6], [-12.6, -9], [-14, -2]]), W, { cx: c.hx - 3, cy: c.hy - 16, rx: 22, ry: 16, base: 3, shade: (X, Y) => ((Y - c.hy + (X - c.hx) * 0.3 + 60) % 5 < 1.2 ? -1 : 0) });
+      seam(c.L, W, [c.hx - 20, c.hy - 6], [c.hx - 2, c.hy - 16], [c.hx + 20, c.hy - 9], { from: 0, litDx: 0, litDy: -1 });
+      // the knot at the back
+      for (let Y = -24; Y <= -12; Y++) for (let X = -24; X <= -12; X++) if (HK.inEll(X + 0.5, Y + 0.5, -18.6, -17.6, 5, 4.6)) put(c.L, c.hx + X, c.hy + Y, W, X + Y < -38 ? 4 : X + Y > -32 ? 2 : 3);
+    },
+  };
+  HK.HAIR = S;
+
+  // ---- pieces ------------------------------------------------------------------------------------
+  function tie(c, x, y, r) {
+    const A = HK.clothMat(c.d ? c.d.cloth[2] : '#c85a6a', { step: 0.09 });
+    for (let Y = -r; Y <= r; Y++) for (let X = -r; X <= r; X++) if (X * X + Y * Y <= r * r + 0.5) put(c.L, Math.round(c.hx + x + X), Math.round(c.hy + y + Y), A, X + Y < -1 ? 4 : X + Y > 1 ? 2 : 3);
+  }
+  function bun(c, x, y, r) {
+    const L = c.L, Mt = c.M;
+    const cx = c.hx + x, cy = c.hy + y;
+    for (let Y = Math.floor(cy - r - 1); Y <= cy + r + 1; Y++) for (let X = Math.floor(cx - r - 1); X <= cx + r + 1; X++) {
+      const dx = X + 0.5 - cx, dy = (Y + 0.5 - cy) * 1.08, d = Math.hypot(dx, dy);
+      if (d > r) continue;
+      const v = (-dx * 0.62 - dy * 0.78) / r;
+      // hair wound round the bun: spiral partings
+      const a = Math.atan2(dy, dx) + d * 0.32;
+      const sp = ((a / (Math.PI * 2)) * 4 + 8) % 1;
+      let k = v > 0.4 ? 4 : v > -0.3 ? 3 : 2;
+      if (sp < 0.16 && d > 2) k -= 1;
+      if (sp > 0.84 && d > 2 && k < 5) k += 1;
+      if (d > r - 1.2 && v < -0.2) k = Math.min(k, 2);
+      put(L, X, Y, Mt, clamp(k, 0, 5));
+    }
+  }
+  function pins(c, x, y) {
+    const G = HK.metalMat('#e0c070');
+    const Mr = HK.M('pinbead', '#c85a6a', { n: 4, at: 2, step: 0.12 });
+    const cx = c.hx + x, cy = c.hy + y;
+    HK.line(c.L, cx, cy, -10, 3, 9, -3, G, 3); HK.line(c.L, cx, cy, -10, 4, 9, -2, G, 1);
+    HK.line(c.L, cx, cy, -6, -6, 6, 4, G, 3);
+    put(c.L, cx + 9, cy - 4, Mr, 3); put(c.L, cx + 10, cy - 4, Mr, 2); put(c.L, cx + 9, cy - 5, Mr, 3);
+    put(c.L, cx - 7, cy - 7, G, 4);
+  }
+  function braid(c, path) {
+    const L = c.L, Mt = c.M;
+    const pts = path.map((p) => [c.hx + p[0], c.hy + p[1]]);
+    // alternating plaits, each a short lit lobe tilted to its side, overlapping down the braid
+    const n = 9;
+    for (let i = 0; i < n; i++) {
+      const t = i / (n - 1);
+      const seg = Math.min(pts.length - 2, Math.floor(t * (pts.length - 1)));
+      const u = t * (pts.length - 1) - seg;
+      const x = pts[seg][0] + (pts[seg + 1][0] - pts[seg][0]) * u, y = pts[seg][1] + (pts[seg + 1][1] - pts[seg][1]) * u;
+      const side = i % 2 ? 1 : -1, w = 3.4 - t * 1.2;
+      HK.strand(L, [[x - side * w * 0.7, y - 2.4, w * 0.8], [x + side * w * 0.4, y + 2.6, w * 0.7]], Mt, { raw: true, base: 3, tipDark: 0.3, lit: 1 });
+    }
+    const end = pts[pts.length - 1];
+    tie({ L, hx: end[0], hy: end[1], d: c.d }, 0, 0, 2);
+    HK.strand(L, [[end[0], end[1] + 1, 2.2], [end[0] + 1, end[1] + 5, 2], [end[0] - 0.4, end[1] + 8, 0.4]], Mt, { raw: true, base: 3, tipDark: 0.3 });
+  }
+  // curls: overlapping shaded discs, laid bottom-up so upper curls overlap the lower ones
+  function curl(c, x, y, r, base) {
+    const L = c.L, Mt = c.M, cx = c.hx + x, cy = c.hy + y;
+    for (let Y = Math.floor(cy - r); Y <= cy + r; Y++) for (let X = Math.floor(cx - r); X <= cx + r; X++) {
+      const dx = X + 0.5 - cx, dy = Y + 0.5 - cy, d = Math.hypot(dx, dy);
+      if (d > r) continue;
+      const t = (dx * 0.62 + dy * 0.78) / r;
+      let k = base;
+      if (t < -0.4) k = base + 1;
+      if (t < -0.62 && d > r * 0.5) k = base + 2;          // the lit crescent of the ringlet
+      if (t > 0.3) k = base - 1;
+      if (d > r - 1.1 && t > 0.05) k = base - 2;          // its shadowed rim
+      if (d < r * 0.34 && t > -0.2) k = base - 1;         // the turn of the curl
+      put(L, X, Y, Mt, clamp(k, 0, 5));
+    }
+  }
+  function curls(c, x0, y0, x1, y1, base) {
+    const L = c.L;
+    const cells = [];
+    for (let y = y1, row = 0; y >= y0; y -= 5, row++) for (let x = x0 + (row % 2) * 3; x <= x1; x += 6) cells.push([x + ((x * 7 + y * 3) % 3) - 1, y]);
+    for (const [x, y] of cells) {
+      const X = Math.round(c.hx + x), Y = Math.round(c.hy + y);
+      if (!HK.get(L, X, Y)) continue;
+      curl(c, x, y, 4 + ((x * 3 + y * 5) & 1) * 0.6, base + 1);
+    }
+  }
+  HK.tie = tie; HK.bun = bun; HK.braid = braid; HK.curl = curl;
+
+  // The cast shadow of the hair on the face: skin under a fringe's edge drops a step.
+  function shadowOnFace(head, hair, sk, x0, y0, x1, y1) {
+    for (let Y = y0; Y <= y1; Y++) for (let X = x0; X <= x1; X++) {
+      const i = Y * head.w + X;
+      if (!head.px[i] || head.mt[i] !== sk.id || HK.get(hair, X, Y)) continue;
+      let under = false;
+      for (let k = 1; k <= 2 && !under; k++) if (HK.get(hair, X - 1, Y - k) || HK.get(hair, X, Y - k)) under = true;
+      if (!under) continue;
+      const kk = sk.c.indexOf(head.px[i]);
+      if (kk > 3) put(head, X, Y, sk, 3);
+    }
+  }
+  HK.hairShadow = shadowOnFace;
+
+  // Draw a hair part ('back' | 'cap' | 'front') of a style; the cap is clipped to the face and the ear.
+  function hairPart(part, style, c) {
+    const st = S[style] || S.short;
+    if (style === 'wrap') c.Mwrap = c.Mwrap || HK.clothMat(c.look && c.look.wrapCol ? c.look.wrapCol : c.d ? c.d.cloth[2] : '#c8962e');
+    if (style === 'shaved') { const P = RB.pxkit, sk = c.d.F.skin.rgba; c.Mstub = HK.M('stubble', P.hex(P.mix(c.M.rgba[2], sk[3], 0.4)), { cols: [P.hex(P.mix(c.M.rgba[1], sk[2], 0.4)), P.hex(P.mix(c.M.rgba[2], sk[3], 0.45)), P.hex(P.mix(c.M.rgba[3], sk[4], 0.5)), P.hex(P.mix(c.M.rgba[4], sk[5], 0.55))], at: 2, line: false }); }
+    if (!st[part]) return;
+    st[part](c);
+    if (part === 'cap') {
+      const open = (c.opening || OPENING).map((p) => [c.hx + p[0], c.hy + p[1]]);
+      const ear = EAR_ZONE.map((p) => [c.hx + p[0], c.hy + p[1]]);
+      const keepEar = st.ear !== false;
+      cut(c.L, (X, Y) => HK.inPoly(open, X + 0.5, Y + 0.5) || (keepEar && HK.inPoly(ear, X + 0.5, Y + 0.5)), c.hx - 34, c.hy - 44, c.hx + 34, c.hy + 34);
+    }
+  }
+  HK.hairPart = hairPart;
+  HK.hairCoversEar = (style) => (S[style] || S.short).ear === false;
+})(RB.harmonyKit);
+
+
 /* ==== src/ui/88_lanterns.js ==== */
 /* Lantern tending on screen (Practice addendum §15; rules in
  * src/engine/77_lanterns.js). One sheet carries the whole session:
