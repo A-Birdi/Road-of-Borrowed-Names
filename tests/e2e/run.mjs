@@ -30,6 +30,9 @@ const suites = [
   // the two quest lines across the chapters (fixtures; --full adds all four
   // companions and a whole-game run with both lines as goals)
   full ? ['long_quests.mjs', '--all-companions'] : ['long_quests.mjs', '--fixtures-only'],
+  // the long-quest landmarks redrawn, Masaru's bakery, the warehouse's missing floorboard, the
+  // observatory's headroom: geometry and use tiles as recorded before, draw2, paths (World review WR-04/05)
+  ['landmarks.mjs'],
   // the two deduction cases, the refined sequences and their keepsakes, Known Details (addendum §14.8–§18)
   ['cases.mjs'], ['cases_shots.mjs'], ['known.mjs'],
   ['pace.mjs'], // fishing pace: the optional response-entry clock, calibration, records (Practice addendum §7, §23.3)

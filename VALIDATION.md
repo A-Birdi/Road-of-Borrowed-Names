@@ -1729,3 +1729,34 @@ musical judgement is analysis.
 - **The lead's runs on the merged build b4a598e** (with interludes, travel, zone music, lighthouse and the Harmony art): unit 23,856/0; validator no errors; battle_settings 10/10; settings all ok; combat_ui 7/7; combat_small all ok; battle_overlap all ok; playtest_repairs 7/7; battle_presentation 13/13; shift_load_regression 18/18 (file://); harmony_art 39/39.
 - **The default suite** (run on b67d469, before this merge): 68/69 scripts passed. mill_road failed one check ("click the mill door: walked there and went in") while the whole suite was running. Run alone on 408c051 it passed 36/36. Treated as load-related; it has not recurred.
 - **Not verified:** Firefox; the "slot open in another tab, then Cancel" path (only the unreadable-slot path ran); the default suite as a whole on this build.
+
+## World review — landmarks, Masaru's bakery, Nao's floorboard, the observatory's headroom (2026-10-03)
+From the owner's external world review (WR-04, WR-05, and two listed checks: Nao's missing floorboard and the
+observatory's headroom). Art and one camera option; no text, scene, item or system changed. Every run below was in
+headless Chromium on Linux (Playwright) with synthetic campaigns in fresh profiles; no player save was used.
+- **What:** the four long-quest landmarks drawn at art resolution (`src/content/lq/15_art.js`); the bakery fitted
+  out (`src/content/ch5/11_bakery.js`: `lf_oven`, `lf_breadrack`, `lf_kneadbench`, `lf_floursacks` in place of the two
+  stoves, the bookcase and one crate, plus the bench at 2,3); `rw_floorgap` at rw.warehouse 5,5
+  (`src/content/ch1/12_floorgap.js`); a per-map `headroom` in `src/engine/60_render.js`, 2 rows on sb.obs_path.
+  Notes: docs/ART_DIRECTION.md §8 "Landmarks, the bakery, a floorboard and the observatory's headroom".
+- **Recorded before the change** (the build at 243069a): `tests/fixtures/landmarks_before.json` — each landmark's
+  w/h/block/light, placement and conditions, the static and current blocking of lq.koharu, sb.road and lf.gardens, and
+  every tile each landmark is used from (and the scene that starts there), through the real `interact()`.
+- **New `tests/e2e/landmarks.mjs`** (in run.mjs): 54/54 on this build. Its first version (40 checks) on the build
+  before: 29/40 — the geometry, placements and use tiles matched the record; the draw2, bakery-fitting, floorboard and
+  headroom checks failed, as expected. It also presses the action key at the great tree from below and above, checks the bakery's order table and
+  Masaru are reachable from the door, Nao (rw.nao_first) and the crates (rw.crates) from the warehouse door, and the
+  dome's top pixel on screen at 2000×1090, 1440×900, 390×844 and 844×390 with the HUD buttons clear of it (by 74, 82,
+  15 and 8 css px; at 1.5 rows of headroom the phone's Word help button touched it, so it is 2).
+- **Geometry record:** `tests/unit/overworld_geometry.test.mjs` failed on lf.bakery and rw.warehouse only (deliberate:
+  new props); their two records and the five new prop kinds were updated in the fixture, nothing else.
+- **Runs:** validator no errors (the same 15 warnings as before); unit 23,856/0; landmarks 54/54; and, on the same
+  source before a comment-only edit: long_quests --fixtures-only all passed, world_view all ok, world_fixes all ok,
+  story_ch1 F mio 31 checks, story_ch4 I ren go 53/53, story_ch5 A suzu 44 steps, cases all passed, quest_guide all
+  passed, encounters all ok, backdrops 61/61, battle_backdrops 38/38 (12/12 scripts).
+- **Evidence:** docs/screenshots/landmarks/ and docs/screenshots/bakery/, `before_*` (the build at 243069a) and
+  `after_*`, at 1280×800 and 390×844 (the observatory at its four sizes), and a 3× close-up sheet of the four props
+  (`*_closeup_3x.webp`), all from the real renderer and camera (`tests/e2e/landmarks_shots.mjs`). One file is over the
+  80 KB aim: after_observatory_2000x1090.webp (99 KB).
+- **Not verified:** Firefox; a real phone; a person's judgement of the art (self-review only); the default suite as a
+  whole; NPC behaviour at the new bench (left to the worker on NPC actions).

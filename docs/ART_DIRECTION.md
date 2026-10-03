@@ -303,6 +303,58 @@ captures of the real builds are in `docs/screenshots/`. Signs and papers
 suggest writing with brush dashes; no shapes that could pass for
 characters are used as ornament.
 
+### Landmarks, the bakery, a floorboard and the observatory's headroom (2026-10-03)
+
+From the owner's external world review (WR-04, WR-05). The four long-quest landmarks were still
+the first pass's flat 16-px drawings; they now have a `draw2` in the world's prop style
+(`src/content/lq/15_art.js`, after `src/content/cases/06_art2.js`), and keep what the story points
+at:
+- **The great persimmon of Koharuno** (`lq_kaki`, 2×2): a short, thick, gnarled bole with blocky
+  bark, buttress roots and a knot hole, forking low into a wide crown that leans away from the house
+  beside it, built from leaf clumps like the world's broadleaf trees but turned red; the fruit stays
+  bright orange with a dark calyx so it reads against the leaves; bare twigs under the crown hang
+  with fruit. The four height marks are cut into the trunk's lit face, which is kept clear of bark
+  texture so they read; no names are drawn beside them.
+- **Kayo's young tree** (`lq_kaki_young`): a slender, straight young trunk tied to a bamboo stake, a
+  few branches reaching up, an open crown of large glossy leaves (mostly green, one or two turning),
+  three fruit, a small bed of turned earth. Not the big tree scaled down.
+- **The stone of names** (`lq_namestone`, 2×1): a broad natural slab on a low plinth; its crown
+  (lit, mossy) and shaded right side show its thickness, the dressed face sits between them; lichen,
+  a chipped shoulder, a hairline crack. The names are columns of incised dashes (groove and lit
+  edge), a longer heading column on the right — carving, never letter shapes, and nothing that could
+  pass for a new clue.
+- **Chigusa's tea stall** (`lq_teastall`, 2×1): a planked counter (the working surface) under a
+  striped cloth awning with a scalloped valance and snow on top, squared posts with corner braces; a
+  clay brazier with live charcoal, an iron kettle with steam (still under reduced motion), a tin
+  caddy, a dark tray with the row of thick celadon cups — the first still kept upside down, its
+  unglazed foot on top and no dark tea showing; a charcoal bucket by the post.
+
+Masaru's bakery (`lf.bakery`) read as a workroom. A few fittings in the room's own Lanternfall wood,
+with brick, lime plaster, linen and bread as the warm accents (`src/content/ch5/11_bakery.js`): a
+domed bread oven where the two cooking stoves stood (loaves on the hearth, embers, logs in the ash
+pit, a peel leaning on it); a rack of the day's bread where a bookcase stood; flour sacks for one of
+the two crates; and a floured kneading bench (a tray of shaped rolls proving under a turned-back
+cloth, the dough mass, a bowl, a rolling pin). Masaru's working place is in front of the bench's
+right end (3,4, facing up). The order table, its scene and the way to it are unchanged; nothing new
+is interactable.
+
+Nao's line in the River Warehouse ("watch your step; the third floorboard is gone") now has its gap
+(`src/content/ch1/12_floorgap.js`, `rw_floorgap` at 5,5, blocking): the dark under the floor where
+one board row is missing, a joist across it, splintered stubs, a bent nail. No text changed.
+
+The Star Stair path's observatory dome is drawn above the map's top row, and the camera never looked
+above row 0, so the apex was cut off at tall screen shapes. A map may now set `headroom` (tiles;
+`src/engine/60_render.js`): within five rows of the top the view eases up by up to that much, and the
+rows shown there are the map's own edge continued (the pine line). `sb.obs_path` sets 2. No
+coordinate, warp, scene or blocker moved; maps without it are unchanged.
+
+Checks: `tests/e2e/landmarks.mjs` (footprints, blocking, placements and use tiles against the record
+made before, `tests/fixtures/landmarks_before.json`; the scenes from the real `interact()` and the
+action key; the bakery's and warehouse's paths; the dome's apex on screen at four screen shapes).
+Captures (real renderer and camera, synthetic campaigns): `docs/screenshots/landmarks/` and
+`docs/screenshots/bakery/`, `before_*` and `after_*`, and a 3× close-up sheet of the four props
+(`tests/e2e/landmarks_shots.mjs`). The look is a self-review.
+
 ### Battle backdrops: the place of the encounter (2026-09-28)
 
 > **Superseded in part (2026-10-02, battle-art addendum §19):** see
