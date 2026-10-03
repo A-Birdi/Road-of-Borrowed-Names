@@ -180,18 +180,21 @@ RB.dialect = (function () {
   // Kansai verb and copula forms, explained through the standard form they stand for:
   // [ending, standard ending, what the form is]
   const FORMS = [
+    ['へんかったら', 'なかったら', 'Kansai negative 〜へんかったら (= 〜なかったら: if not)'],
     ['へんかった', 'なかった', 'Kansai negative past 〜へんかった (= 〜なかった)'],
+    ['ひんかって', 'なくて', 'Kansai negative 〜ひん (= 〜ない), て-form'],
     ['ひんかった', 'なかった', 'Kansai negative past 〜ひんかった (= 〜なかった)'],
     ['へんかって', 'なくて', 'Kansai negative 〜へん (= 〜ない), て-form'],
     ['へんの', 'ないの', 'Kansai negative 〜へん (= 〜ない)'],
     ['いひん', 'ない', 'Kansai negative 〜ひん (= 〜ない)'],
     ['へん', 'ない', 'Kansai negative 〜へん (= 〜ない)'],
     ['ひん', 'ない', 'Kansai negative 〜ひん (= 〜ない)'],
-    ['てはった', 'ていらっしゃった', 'Kansai respectful 〜てはった (= 〜ていらっしゃった)'],
-    ['てはる', 'ていらっしゃる', 'Kansai respectful 〜てはる (= 〜ていらっしゃる; friendly respect)'],
-    ['ではる', 'でいらっしゃる', 'Kansai respectful 〜ではる (= 〜でいらっしゃる)'],
-    ['はった', 'ない', 'Kansai respectful 〜はった: past of 〜はる (friendly respect for the person spoken of)'],
-    ['はる', 'ない', 'Kansai respectful 〜はる (friendly respect for the person spoken of)'],
+    ['てはった', 'ていた', 'Kansai respectful 〜てはった (= 〜ていらっしゃった: friendly respect for the person spoken of)'],
+    ['てはる', 'ている', 'Kansai respectful 〜てはる (= 〜ていらっしゃる: friendly respect for the person spoken of)'],
+    ['ではる', 'でいる', 'Kansai respectful 〜ではる (= 〜でいらっしゃる)'],
+    ['はった', ['ない', 'ました'], 'Kansai respectful 〜はった: past of 〜はる (friendly respect for the person spoken of)'],
+    ['はって', ['て', 'なくて'], 'Kansai respectful 〜はって: て-form of 〜はる (friendly respect for the person spoken of)'],
+    ['はる', ['ない', 'ます'], 'Kansai respectful 〜はる (friendly respect for the person spoken of)'],
     ['はらへん', 'ない', 'Kansai respectful negative 〜はらへん'],
     ['うたる', 'ってやる', 'Kansai 〜たる (= 〜てやる: I\'ll do it for you)'],
     ['うたろ', 'ってやろう', 'Kansai 〜たろ (= 〜てやろう: let me do it for you)'],
@@ -224,10 +227,19 @@ RB.dialect = (function () {
     ['うて', 'って', 'Kansai 〜うて (= 〜って: the う-sound て-form of 〜う verbs)'],
     ['うた', 'った', 'Kansai 〜うた (= 〜った: the う-sound past of 〜う verbs)'],
     ['もろた', 'もらった', 'Kansai もろた (= もらった)'],
+    ['んかった', 'なかった', 'Kansai (and casual) negative past 〜んかった (= 〜なかった)'],
+    ['んと', 'ないで', 'Kansai 〜んと (= 〜ないで / 〜ずに: without)'],
+    ['たない', 'たくない', 'Kansai 〜たない (= 〜たくない: don\'t want to)'],
+    ['たって', 'てやって', 'Kansai 〜たって (= 〜てやって: do it for them)'],
+    ['ん', 'ない', 'Kansai (and casual) negative 〜ん (= 〜ない)'],
+    ['こ', 'こう', 'Kansai short volitional 〜こ (= 〜こう: let\'s)'],
+    ['ろ', 'ろう', 'Kansai short volitional 〜ろ (= 〜ろう: let\'s)'],
+    ['そ', 'そう', 'Kansai short volitional 〜そ (= 〜そう: let\'s)'],
+    ['よ', 'よう', 'Kansai short volitional 〜よ (= 〜よう: let\'s)'],
     ['もろて', 'もらって', 'Kansai もろて (= もらって)'],
   ];
   // whole words with an irregular Kansai form
-  const WHOLE = { 'せえへん': 'しない', 'せーへん': 'しない', 'せえへんかった': 'しなかった', 'けえへん': 'こない', 'けーへん': 'こない', 'こーへん': 'こない', 'けえへんかった': 'こなかった', 'おらへん': 'いない', 'あらへん': 'ない', 'あらへんかった': 'なかった', 'いてる': 'いる', 'いてへん': 'いない', 'いてた': 'いた' };
+  const WHOLE = { 'せえへん': 'しない', 'せーへん': 'しない', 'せえへんかった': 'しなかった', 'けえへん': 'こない', 'けーへん': 'こない', 'こーへん': 'こない', 'けえへんかった': 'こなかった', 'おらへん': 'いない', 'あらへん': 'ない', 'あらへんかった': 'なかった', 'いてる': 'いる', 'いてへん': 'いない', 'いてた': 'いた', 'もろた': 'もらった', 'もろて': 'もらって', 'おらん': 'いない' };
   function retail(tk, from, to) {
     const segs = (tk.segs || [{ t: tk.surface, r: null }]).map((s) => Object.assign({}, s));
     const last = segs[segs.length - 1];
@@ -269,18 +281,20 @@ RB.dialect = (function () {
     // token it cannot read whole is explained as a Kansai form
     let whole = null;
     try { whole = RB.jp.lookup(tk); } catch (e) { whole = null; }
+    // a standard word that means something else in Kansai (おる: plain "be", not humble)
+    const ov = whole && whole.entry && OVERRIDE[whole.entry.w];
+    if (ov && !whole.parts) { const k = lexAll.find((e) => e.w === ov); if (k) return Object.assign(fromEntry(tk, k), { forms: whole.forms || [] }); }
     if (whole && !whole.unknown && !whole.parts) return null;
     for (const [from, to, what] of FORMS) {
       if (!plainSurface.endsWith(from) || plainSurface === from) continue;
-      const r = viaStandard(tk, retail(tk, from, to), what);
-      if (r) return r;
-      if (from === 'はる' || from === 'はった') {
-        const r2 = viaStandard(tk, retail(tk, from, from === 'はる' ? 'ます' : 'ました'), what);
-        if (r2) return r2;
+      for (const t of [].concat(to)) {
+        const r = viaStandard(tk, retail(tk, from, t), what);
+        if (r) return r;
       }
     }
     return null;
   }
+  const OVERRIDE = { 'おる': 'おる' };
   // word help: a note under the meaning for a Kansai word or form
   function note(info) {
     if (!info || !info.dia) return '';

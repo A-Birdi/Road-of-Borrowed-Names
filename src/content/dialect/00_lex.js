@@ -26,6 +26,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     K('やし', '', 'conj', 'I', 'and besides; and what\'s more (= だし)', 'だし'),
     K('やのに', '', 'conj', 'I', 'even though (= なのに)', 'なのに'),
     K('やったら', '', 'conj', 'I', 'if it\'s…; in that case (= だったら)', 'だったら / なら'),
+    K('やと', '', 'conj', 'I', 'if it\'s…; when it\'s… (= だと)', 'だと'),
     K('やって', '', 'conj', 'I', 'because; even (= だって)', 'だって'),
     K('やねん', '', 'exp', 'E', 'it\'s that…; you see (や + ねん)', 'なんだ / なのよ'),
     // ---- endings ---------------------------------------------------------------------------------------
@@ -69,6 +70,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
     K('うちら', '', 'pn', 'I', 'we; us', 'わたしたち'),
     K('あんた', '', 'pn', 'E', 'you (warm and familiar in Kansai)', 'あなた', 'In Kansai あんた is friendly; elsewhere it can sound blunt.'),
     K('いっぺん', '', 'adv', 'I', 'once; one time', '一度'),
+    K('気ぃ', 'きぃ', 'n', 'E', 'feeling; attention (気, drawn out)', '気', '気ぃ つけて "take care". A one-kana word is often lengthened in Kansai speech: 気 → 気ぃ, 目 → 目ぇ.'),
+    K('おる', '', 'v5r', 'E', 'to be; to be there (people, animals)', 'いる', 'In Kansai おる is everyday "be"; in standard Japanese it is humble.'),
+    K('やて', '', 'exp', 'I', 'they say; it says (quoting: = だって)', 'だって'),
+    K('えらい', '', 'adj-i', 'I', 'terrible; awful; (before a word) very', '大変', 'In Kansai えらい often means "awful" or "very" (えらい こと = a disaster), not only "great".'),
     K('なんぼ', '', 'adv', 'I', 'how much; however much', 'いくら'),
     K('はよ', '', 'adv', 'I', 'quickly; hurry', '早く'),
     K('ぎょうさん', '', 'adv', 'A', 'lots; plenty', 'たくさん'),
