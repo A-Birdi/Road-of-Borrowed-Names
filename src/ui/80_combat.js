@@ -1430,6 +1430,10 @@ RB.combat = (function () {
       if (ui) { window.removeEventListener('resize', ui.onHold); window.removeEventListener('resize', ui.onResize); document.removeEventListener('keydown', ui.onKey); if (ui.ro) ui.ro.disconnect(); ui.root.remove(); }
       ui = null; stageCss = null;
       await RB.ui.fade(true, 200);
+      // while the screen is dark, before the map comes back: the world settles its side of the
+      // encounter (src/engine/90_game.js startBattle: a creature you settled is gone; one you
+      // stepped back from backs off and stays calm)
+      if (opts.closing) { try { opts.closing(outcome); } catch (err) { console.error('battle closing', err); } }
       RB.render.setOverride(null);
       RB.battleStage.end();
       RB.game.popMode('combat');
@@ -1454,6 +1458,13 @@ RB.combat = (function () {
       frames: { n: cost.n, avg: cost.n ? +(cost.sum / cost.n).toFixed(3) : 0, max: +cost.max.toFixed(3), seqN: cost.seqN, seqAvg: cost.seqN ? +(cost.seqSum / cost.seqN).toFixed(3) : 0, seqMax: +cost.seqMax.toFixed(3) },
     };
   }
+  // A campaign changing (new, loaded, back to the title) leaves no battle screen behind: a battle
+  // overlay that no open battle owns is removed (two battles at once, now refused by
+  // RB.game.startBattle, could leave one over the map).
+  if (RB.bus) RB.bus.on('campaign:changing', () => {
+    if (typeof document === 'undefined') return;
+    for (const el of document.querySelectorAll('.combat-ui')) if (!ui || el !== ui.root) el.remove();
+  });
   return {
     start, state: () => st, refresh: () => { if (st && ui) renderUi(); }, context: () => enemy && st ? { id: enemy.id, where: enemy.where, setting: enemy.setting, bg: enemy.bgKey, intro: enemy.intro, settle: enemy.settle, group: members.map((m) => m.id) } : null,
     phase: () => phase, shown: () => (st ? snapshot(V()) : null), debug, marks, target: (i) => selectTarget(i, false), members: () => members.map((m) => m.id),
