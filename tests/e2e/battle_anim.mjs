@@ -631,7 +631,7 @@ await test('a companion technique: both act together; a revive: your companion h
   await idle(p);
   let S = await samples(p), P = during(S, 'player');
   const tr = last(await trace(p), 'player');
-  assert(tr.meta.actors.join() === 'pc,comp' && P.some((s) => s.poses.pc && s.poses.pc.startsWith('act')) && P.some((s) => s.poses.comp === 'act:ward'), 'you and Ren act together: ' + JSON.stringify(tr.meta));
+  assert(tr.meta.actors.join() === 'pc,comp' && P.some((s) => s.poses.pc && s.poses.pc.startsWith('act')) && P.some((s) => s.poses.comp && s.poses.comp.startsWith('act:ward')), 'you and Ren act together (his Lantern Ward performance, act:ward_plane since the Harmony stage work): ' + JSON.stringify(tr.meta));
   assert(P.some((s) => (s.effects || []).indexOf('link') >= 0) && P.some((s) => (s.effects || []).indexOf('sealForm>comp') >= 0), 'a thread of light joins your hands; seals rise before both');
   const wm = P[P.length - 1].marks;
   assert(wm.indexOf('ward:pc:4') >= 0 && wm.indexOf('ward:comp:4') >= 0, 'both wards show 4 tags (1 + 3): ' + wm.join(','));
