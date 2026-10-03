@@ -1915,3 +1915,17 @@ Other workers' browser runs shared the machine, so the timings are noisy.
   grades are my reading of the contact sheets plus the unit test's pixel floor); Masaru's kneading (the bakery
   props are another worker's); the staged scenes approached from another side, with an absent actor, or on a
   revisit; the other "Performed overworld" scenes of the manifest (the game-wide staging package).
+
+**The lead's runs on the merged build** (actor system merged as `4a9c357` on top of the portraits, the Harmony
+contract and the landmarks; tested in a scratch worktree before fast-forwarding):
+- Unit 24,233/0; validator no errors.
+- Browser: actor_life 39/39, staging_wataru 112/112, staging_chapters 66/66, landmarks 54/54, portrait_anim
+  all passed, interludes 76/76, battle_settings 10/10, harmony_raster 21/21, quest_guide all passed,
+  world_view all ok.
+
+**Masaru's kneading, added by the lead after the merge:**
+- The kneading bench now counts as a work surface.
+- Masaru moved to (4,3), facing left, so the work reads side-on.
+- Results: overworld_geometry re-recorded for that one NPC place (3/3); landmarks 54/54 (Masaru talked to
+  from (4,4)); actor_workplaces 30/30 (the bakery: "lf_masaru works at their station before anyone speaks
+  (knead)").
