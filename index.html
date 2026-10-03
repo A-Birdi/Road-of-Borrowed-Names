@@ -26872,9 +26872,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
  *   strawhat  Asa's spare straw hat
  *   tin       Nao's flat tin of old address labels
  *   goatbell  Tetsuji's spare goat bell on its strap
- *   scarf     the scarf the Snowbell children chose the colours for
  *   cord      Fuki's cord braided from an old bell rope
- *   flask     a stoppered flask of hot amazake
  */
 var RB = (globalThis.RB = globalThis.RB || {});
 
@@ -26891,9 +26889,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   add('strawhat', (b, x, y) => { b.rect(x - 4, y - 1, 9, 1, '#d6b25e'); b.rect(x - 2, y - 3, 5, 2, '#d6b25e'); b.rect(x - 2, y - 2, 5, 1, '#a8402a'); b.px(x - 1, y - 3, '#f0d890'); b.rect(x - 4, y, 9, 1, '#a88a40'); });
   add('tin', (b, x, y) => { b.rect(x - 3, y - 3, 7, 3, '#8a9aa8'); b.rect(x - 3, y - 3, 7, 1, '#b8c8d4'); b.rect(x - 3, y, 7, 1, '#5a6a78'); b.px(x, y - 2, '#e8dcc0'); b.px(x + 1, y - 2, '#e8dcc0'); });
   add('goatbell', (b, x, y) => { b.rect(x - 1, y - 6, 3, 1, '#8a5a3a'); b.rect(x - 2, y - 5, 5, 3, '#c8a040'); b.rect(x - 3, y - 2, 7, 1, '#c8a040'); b.px(x - 1, y - 4, '#f0d070'); b.px(x, y - 1, '#5a4a2a'); });
-  add('scarf', (b, x, y) => { b.rect(x - 1, y - 2, 3, 7, '#c84a5a'); b.rect(x - 1, y, 3, 1, '#f0e0c0'); b.rect(x - 1, y + 3, 3, 1, '#4a7ac8'); b.px(x - 1, y + 5, '#a83a4a'); b.px(x + 1, y + 5, '#a83a4a'); });
   add('cord', (b, x, y) => { for (let i = 0; i < 7; i++) b.px(x + (i % 2 ? 1 : 0), y - 5 + i, i % 2 ? '#c84a3a' : '#e8d8b0'); b.px(x - 1, y + 1, '#a8885a'); });
-  add('flask', (b, x, y) => { b.px(x, y - 6, '#8a6a44'); b.rect(x - 1, y - 5, 3, 1, '#d8ccb4'); b.rect(x - 2, y - 4, 5, 4, '#e8e0d0'); b.rect(x - 2, y - 2, 5, 1, '#6a8aa0'); b.px(x - 1, y - 4, '#fffaf0'); });
 })();
 
 
@@ -109938,7 +109934,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'fuki', x: 24, y: 18, dir: 'up', if: 'sb_evening&!post', talk: 'sb.eve_fuki' },
       { id: 'yae', x: 18, y: 17, dir: 'up', if: 'sb_evening&!post', talk: 'sb.eve_yae' },
       { id: 'tetsuji', x: 26, y: 17, dir: 'up', if: 'sb_evening&!post', talk: 'sb.eve_tetsuji' },
-      { id: 'sousuke', x: 27, y: 19, dir: 'up', if: 'sb_evening&!post', talk: 'sb.eve_sousuke' },
+      // (Sōsuke stands beside the well, not behind it: at 27,19 its roof hid him and the envelopes he holds up in sb.eve_start.)
+      { id: 'sousuke', x: 26, y: 19, dir: 'up', if: 'sb_evening&!post', talk: 'sb.eve_sousuke' },
       // After the story: Hoshino on his bench if he stayed.
       { id: 'hoshino', x: 36, y: 9, dir: 'down', if: 'post&!sb_hoshino_goes', talk: 'sb.hoshino_post' },
       { id: 'fuki', x: 23, y: 16, dir: 'down', if: 'ch4_done&!sb_evening', talk: [{ if: 'post', scene: 'sb.fuki_post' }, { if: 'quest.sb_bell&!quest.sb_bell=done', scene: 'sb.fuki' }, { scene: 'sb.fuki_after' }] },
