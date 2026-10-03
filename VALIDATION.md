@@ -1319,8 +1319,24 @@ profiles; no player save was used; nothing was checked in Firefox.
   16.6 s, Instant 13.2 s, reduced motion 18.8 s, a 390×844 phone by taps 24.6 s (three Flour Moths, a
   badge card), with stills of the badge card and the blue and red banners; layout stills
   (`docs/screenshots/battle/layout/`) at 320×640, 390×844, 844×390, 200 % text and Japanese-led.
-- **Default suite** (`node tests/e2e/run.mjs`) and **layout audit** (`visual.mjs --check`): running at
-  this commit; recorded in the next.
+- **Default suite** (`node tests/e2e/run.mjs`, on 1b1a85e9 with the tests as of 6ee24ee): **61/65
+  scripts passed**, including the whole-game run (`pursue.mjs E mio`, 982 s). The four that failed were
+  tests written for the old screen or racing a timing, each fixed and then passing on the same build:
+  - ui.mjs read the move from the telegraph panel (Adaptive: a routine move is its badge) — reads the
+    badge's label (8202fcb); passes.
+  - backdrops.mjs pinned the slips' heights to hold the layout still; the Adaptive panel was not there
+    when pinned and appeared for the Mill Echo's passage to read — the pin keeps it not there
+    (64c329c); 61/61.
+  - learning_ui.mjs checked the telegraph panel at phone and landscape sizes — with Expanded now, plus
+    Adaptive checks that the badge and the plate are in view and uncovered (64c329c); 15/15.
+  - wordplay.mjs read the leave sheet's focus before the sheet moved it (practice addendum; not touched
+    this round) — waits for it (4c5fa84); 82/82.
+- **Layout audit** (`visual.mjs --check`, 1b1a85e9): English labels at 8 viewports **536/536 clean**;
+  Japanese labels at 320×640, 390×844 and 1280×800 **201/201 clean**. (A first run was lost to a
+  container restart and run again from the start.)
+- **Behaviour to know:** in Adaptive the telegraph panel appears only for a passage to read, so the
+  scene re-frames a little at the start of such a decision (never during an exchange); the backdrop keeps
+  its composition when it does.
 - **Not verified:** Firefox (the owner's browser), Safari, a real phone or the foldable; the art judged by
   a person; frame rate on named hardware.
 
