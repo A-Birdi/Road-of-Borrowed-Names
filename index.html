@@ -30062,6 +30062,8 @@ RB.world = (function () {
     departures: [],     // the last few comings and goings: who, from where, to which map, by which exit, and why
     extras: [],         // people who walked in to speak in a scene; they walk off when it ends
     enteredAt: 0,
+    calm: {},           // creature id → { until }: ones you stepped back from (they do not engage again yet)
+    quietUntil: 0,      // W.time before which no creature engages (just after a battle)
   };
 
   function makeActor(x, y, dir, look) {
@@ -30092,6 +30094,8 @@ RB.world = (function () {
     W.leavers = [];
     W.extras = [];
     W.enteredAt = W.time;
+    W.foes = []; // a map entered (or loaded) places its creatures afresh
+    W.calm = {};
     refreshActors();
     placeCompanion();
     unstick(W.player);
@@ -30172,13 +30176,18 @@ RB.world = (function () {
       }
     }
     for (const a of W.npcs) W.seenOn[personOf(a)] = m.id;
+    // Creatures still here stay where they are (a scene ending, a battle won nearby): they used
+    // to jump back to their places, onto or right beside you. A map entered places them afresh.
+    const keepFoes = new Map(W.foes.filter((f) => f.map === m.id).map((f) => [f.id, f]));
     W.foes = [];
     for (const e of m.def.foes || []) {
       if (e.if && !RB.state.test(st, e.if)) continue;
       if (st.flags['foe:' + m.id + ':' + e.id]) continue;
+      const old = keepFoes.get(e.id);
+      if (old && old.def === e) { W.foes.push(old); continue; }
       const en = RB.content.enemies[e.enemy] || {};
       const a = makeActor(e.x, e.y, 'down', en.look || { custom: 'wisp' });
-      a.id = e.id; a.def = e; a.home = [e.x, e.y]; a.foe = true;
+      a.id = e.id; a.def = e; a.home = [e.x, e.y]; a.foe = true; a.map = m.id;
       W.foes.push(a);
     }
   }
@@ -30687,6 +30696,7 @@ RB.world = (function () {
     }
     for (const f of W.foes) {
       stepActor(f, dt);
+      const calm = calmNow(f);
       const pat = f.def.patrol;
       if (!pat || f.mv || RB.game.mode() !== 'world') continue;
       f.wt = (f.wt || 900) - dt;
@@ -30698,6 +30708,7 @@ RB.world = (function () {
       if (Math.abs(nx - f.home[0]) > pat || Math.abs(ny - f.home[1]) > pat) continue;
       if (blocked(nx, ny, { except: f }) || RB.maps.exitAt(W.map, nx, ny)) continue;
       if (W.comp && W.comp.x === nx && W.comp.y === ny) continue;
+      if (calm && nearPlayer(nx, ny)) continue; // a calm creature keeps its distance
       startMove(f, d, 380);
     }
     W.emotes = W.emotes.filter((e) => e.until > W.time);
@@ -30800,22 +30811,71 @@ RB.world = (function () {
     if (W.comp && W.comp.x === fx && W.comp.y === fy) return { kind: 'companion', label: 'Chat' };
     return null;
   }
+  // ---- creatures and battles --------------------------------------------------------
+  // One battle at a time, and only from free exploration: a creature engages (you face it, or
+  // it walks into you) only while nothing else is up — no line, scene, menu, map change, or
+  // battle still open or closing — and not in the moment after a battle ends. (Contact used to
+  // be checked against the mode from before the frame's step, so a step that opened a scene, a
+  // map change or a battle could start a battle under it, or a second one.)
+  const HUSH_MS = 1000;       // after any battle, no creature engages for this long
+  const CALM_MS = 5000;       // one you stepped back from stays calm at least this long...
+  function hush(ms) { W.quietUntil = Math.max(W.quietUntil, W.time + (ms == null ? HUSH_MS : ms)); }
+  function canEngage() {
+    return !!W.map && RB.game.mode() === 'world' && !RB.game.inBattle() && W.time >= W.quietUntil;
+  }
+  // within one step of the player (either of you may be mid-step)
+  function nearPlayer(x, y) {
+    const p = W.player;
+    const d = (px, py) => Math.abs(x - px) + Math.abs(y - py) <= 1;
+    return d(p.x, p.y) || (p.mv ? d(p.mv.tx, p.mv.ty) : false);
+  }
+  function touching(f) { return nearPlayer(f.x, f.y) || (f.mv ? nearPlayer(f.mv.tx, f.mv.ty) : false); }
+  // ...and for as long as you are still touching it (or standing on it): you can always walk away.
+  function calmNow(f) {
+    const c = W.calm[f.id];
+    if (!c) return false;
+    if (W.time < c.until || touching(f)) return true;
+    delete W.calm[f.id];
+    return false;
+  }
+  // After you step back from a creature (or wake from a lost battle), while the screen is still
+  // dark: it backs off a step if it can, and stays calm — it does not walk into you again.
+  function calmFoe(f) {
+    if (!W.foes.includes(f)) return;
+    W.calm[f.id] = { until: W.time + CALM_MS };
+    if (f.mv) { f.x = f.mv.tx; f.y = f.mv.ty; f.mv = null; }
+    const p = W.player, far = (x, y) => Math.abs(x - p.x) + Math.abs(y - p.y);
+    let best = null, bd = far(f.x, f.y);
+    for (const d in DIRS) {
+      const nx = f.x + DIRS[d][0], ny = f.y + DIRS[d][1];
+      if (nx < 0 || ny < 0 || nx >= W.map.w || ny >= W.map.h) continue;
+      if (blocked(nx, ny, { except: f }) || RB.maps.exitAt(W.map, nx, ny) || triggerAt(nx, ny)) continue;
+      if (W.comp && W.comp.x === nx && W.comp.y === ny) continue;
+      if (far(nx, ny) > bd) { best = [nx, ny]; bd = far(nx, ny); }
+    }
+    if (best) { f.x = best[0]; f.y = best[1]; }
+    f.fx = f.x; f.fy = f.y; f.frame = 0;
+    f.wt = 1200 + Math.random() * 800;
+  }
   function startFoe(f) {
-    const st = s();
+    if (!canEngage()) return false;
     const e = f.def;
+    W.path = null; W.pathTarget = null;
     RB.game.startBattle(e.enemy, {
       foeKey: 'foe:' + W.map.id + ':' + e.id,
       onWin: e.onWin, scene: e.scene,
       where: { map: W.map.id, x: f.x, y: f.y }, place: e,
+      closing: (res) => { if (res === 'flee' || res === 'lose') calmFoe(f); },
     });
+    return true;
   }
   // Foes that walk into the player start a battle too (they are visible and avoidable).
   function checkFoeContact() {
     const p = W.player;
-    if (p.mv) return false;
+    if (!W.map || p.mv || !canEngage()) return false;
     for (const f of W.foes) {
-      if (f.mv) continue;
-      if (Math.abs(f.x - p.x) + Math.abs(f.y - p.y) === 1 && f.def.aggro) { startFoe(f); return true; }
+      if (f.mv || !f.def.aggro || calmNow(f)) continue;
+      if (Math.abs(f.x - p.x) + Math.abs(f.y - p.y) === 1) return startFoe(f);
     }
     return false;
   }
@@ -30965,7 +31025,7 @@ RB.world = (function () {
 
   return {
     W, DIRS, enter, update, interact, tapTile, refreshActors, placeCompanion, emote, actorById, scriptMove, ensureSpeaker, whenArrived, dismissExtras,
-    frontTile, frontAction, checkFoeContact, faceTo, unstick, blocked, _tryMove: tryMovePlayer,
+    frontTile, frontAction, checkFoeContact, hush, faceTo, unstick, blocked, _tryMove: tryMovePlayer,
     towards, linksOf, mapsWith, // map-link search (also used by quest guidance, 56_questguide.js)
   };
 })();
@@ -40543,23 +40603,38 @@ RB.game = (function () {
   }
 
   // ---- loop --------------------------------------------------------------------
+  // The frame loop never stops: an error in one part of a frame (the world, the
+  // interface, whatever the screen shows) is reported and the next frame still
+  // comes. (A drawing error used to end the loop for good: the screen froze on
+  // its last picture and only reloading the page brought it back.)
+  let loopErrAt = -1e9;
+  function loopErr(where, err) {
+    const now = typeof performance !== 'undefined' ? performance.now() : 0;
+    if (now - loopErrAt > 5000) { loopErrAt = now; console.error('frame (' + where + ')', err); }
+  }
   function loop(t) {
-    const dt = Math.min(50, t - (G.last || t));
-    G.last = t;
-    if (G.playing && RB.world.W.map) {
-      const m = mode();
-      RB.world.update(dt, m === 'world');
-      // play time: everything you do in a campaign — walking, talking,
-      // writing, battles, lessons, the folio — while the page is visible and
-      // you have touched a key, the pointer or the screen in the last five
-      // minutes (a game left open does not count). It used to count walking
-      // time only, so it read far less than the time actually played.
-      if (!document.hidden && t - (G.lastInput || 0) < 300000) G.s.playtime += dt / 1000;
-      if (m === 'world') RB.world.checkFoeContact();
+    try {
+      const dt = Math.min(50, t - (G.last || t));
+      G.last = t;
+      try {
+        if (G.playing && RB.world.W.map) {
+          RB.world.update(dt, mode() === 'world');
+          // play time: everything you do in a campaign — walking, talking,
+          // writing, battles, lessons, the folio — while the page is visible and
+          // you have touched a key, the pointer or the screen in the last five
+          // minutes (a game left open does not count). It used to count walking
+          // time only, so it read far less than the time actually played.
+          if (!document.hidden && t - (G.lastInput || 0) < 300000) G.s.playtime += dt / 1000;
+          // the mode as it is now: the step just taken may have opened a scene,
+          // a map change or a battle (a tap's walk ends by facing what was tapped)
+          if (mode() === 'world') RB.world.checkFoeContact();
+        }
+      } catch (err) { loopErr('world', err); }
+      try { RB.ui.tick && RB.ui.tick(dt, t); } catch (err) { loopErr('ui', err); }
+      try { RB.render.frame(t); } catch (err) { loopErr('render', err); }
+    } finally {
+      requestAnimationFrame(loop);
     }
-    RB.ui.tick && RB.ui.tick(dt, t);
-    RB.render.frame(t);
-    requestAnimationFrame(loop);
   }
 
   function onAction(a, e) {
@@ -40772,13 +40847,39 @@ RB.game = (function () {
   }
 
   // ---- battles ---------------------------------------------------------------------------
+  // One battle at a time. A battle is open from the moment it is asked for until
+  // its screen has handed the map back (its closing fade included); while it is,
+  // another is refused (null). Two battles at once shared the battle screen's
+  // state: the second one came up over the map with an empty creature list and
+  // the frame loop stopped (owner's report, Chapter 2, Saltglass cove).
+  let battleOpen = 0, battleN = 0;
+  function inBattle() { return battleOpen !== 0; }
+  // a campaign changing (new, loaded, back to the title) leaves no battle open behind it
+  if (RB.bus) RB.bus.on('campaign:changing', () => { battleOpen = 0; });
   async function startBattle(enemyId, opts) {
-    opts = opts || {};
+    if (battleOpen) { console.warn('a battle is already open; not starting', enemyId); return null; }
+    const me = (battleOpen = ++battleN);
+    opts = Object.assign({}, opts);
     // where the encounter happens: its backdrop and its lines follow the
     // place, not the species (a scripted battle happens where the player is)
     const W = RB.world.W;
     if (!opts.where && W && W.map && W.player) opts.where = { map: W.map.id, x: W.player.x, y: W.player.y };
-    const res = await RB.combat.start(enemyId, opts);
+    // While the screen is dark at the end (src/ui/80_combat.js), before the map
+    // comes back: a creature you settled is gone from it, and whoever asked for
+    // the battle (a creature on the map) settles its side of it.
+    const closing = opts.closing;
+    opts.closing = (res) => {
+      if (res === 'win' && opts.foeKey && G.s) { G.s.flags[opts.foeKey] = true; RB.world.refreshActors(); }
+      if (closing) closing(res);
+    };
+    let res = null;
+    try {
+      res = await RB.combat.start(enemyId, opts);
+    } finally {
+      if (battleOpen === me) battleOpen = 0;
+      // a moment after any battle in which no creature engages (src/engine/50_world.js)
+      RB.world.hush && RB.world.hush();
+    }
     if (res === 'win' && opts.foeKey) G.s.flags[opts.foeKey] = true;
     if (res === 'win') {
       RB.world.refreshActors();
@@ -40861,7 +40962,7 @@ RB.game = (function () {
     set s(v) { G.s = v; },
     get settings() { return G.settings; },
     G, mode, pushMode, popMode, setBase, boot, applySettings, saveSettings, reducedMotion, fastForward, setFastForward,
-    startNewCampaign, loadCampaign, toTitle, transition, afterScene, startBattle, recruit, depart, companionTalk, rest,
+    startNewCampaign, loadCampaign, toTitle, transition, afterScene, startBattle, inBattle, recruit, depart, companionTalk, rest,
     defaultSettings, runEnterEvents,
   };
 })();
@@ -68039,6 +68140,10 @@ RB.combat = (function () {
       if (ui) { window.removeEventListener('resize', ui.onHold); window.removeEventListener('resize', ui.onResize); document.removeEventListener('keydown', ui.onKey); if (ui.ro) ui.ro.disconnect(); ui.root.remove(); }
       ui = null; stageCss = null;
       await RB.ui.fade(true, 200);
+      // while the screen is dark, before the map comes back: the world settles its side of the
+      // encounter (src/engine/90_game.js startBattle: a creature you settled is gone; one you
+      // stepped back from backs off and stays calm)
+      if (opts.closing) { try { opts.closing(outcome); } catch (err) { console.error('battle closing', err); } }
       RB.render.setOverride(null);
       RB.battleStage.end();
       RB.game.popMode('combat');
@@ -68063,6 +68168,13 @@ RB.combat = (function () {
       frames: { n: cost.n, avg: cost.n ? +(cost.sum / cost.n).toFixed(3) : 0, max: +cost.max.toFixed(3), seqN: cost.seqN, seqAvg: cost.seqN ? +(cost.seqSum / cost.seqN).toFixed(3) : 0, seqMax: +cost.seqMax.toFixed(3) },
     };
   }
+  // A campaign changing (new, loaded, back to the title) leaves no battle screen behind: a battle
+  // overlay that no open battle owns is removed (two battles at once, now refused by
+  // RB.game.startBattle, could leave one over the map).
+  if (RB.bus) RB.bus.on('campaign:changing', () => {
+    if (typeof document === 'undefined') return;
+    for (const el of document.querySelectorAll('.combat-ui')) if (!ui || el !== ui.root) el.remove();
+  });
   return {
     start, state: () => st, refresh: () => { if (st && ui) renderUi(); }, context: () => enemy && st ? { id: enemy.id, where: enemy.where, setting: enemy.setting, bg: enemy.bgKey, intro: enemy.intro, settle: enemy.settle, group: members.map((m) => m.id) } : null,
     phase: () => phase, shown: () => (st ? snapshot(V()) : null), debug, marks, target: (i) => selectTarget(i, false), members: () => members.map((m) => m.id),
