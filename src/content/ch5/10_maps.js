@@ -358,9 +358,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
   interior('lf.bakery', T("Masaru's Bakery", 'マサル の パン{屋|や}'), 9, 8, 3, [25, 30], {
     props: [
       { p: 'exitmat', x: 3, y: 6 },
-      { p: 'stove', x: 1, y: 2 }, { p: 'stove', x: 2, y: 2 }, { p: 'table', x: 5, y: 3, scene: 'lf.bakery_orders' },
-      { p: 'crate', x: 7, y: 2 }, { p: 'crate', x: 7, y: 3 }, { p: 'barrel', x: 1, y: 5 },
-      { p: 'shelf', x: 4, y: 2 },
+      // a bakery at a glance (World review WR-05; art in 11_bakery.js): the bread oven where two
+      // stoves stood, the day's bread where a bookcase stood, flour where a crate stood, and the
+      // bench Masaru kneads at (his place is in front of its right end, at 3,4)
+      { p: 'lf_oven', x: 1, y: 2 }, { p: 'table', x: 5, y: 3, scene: 'lf.bakery_orders' },
+      { p: 'crate', x: 7, y: 2 }, { p: 'lf_floursacks', x: 7, y: 3 }, { p: 'barrel', x: 1, y: 5 },
+      { p: 'lf_breadrack', x: 4, y: 2 }, { p: 'lf_kneadbench', x: 2, y: 3 },
     ],
     npcs: [
       { id: 'lf_masaru', x: 3, y: 4, dir: 'down', talk: [{ if: 'post', scene: 'lf.masaru_post' }, { if: 'lf_bell_rung', scene: 'lf.masaru_after' }, { scene: 'lf.masaru' }] },

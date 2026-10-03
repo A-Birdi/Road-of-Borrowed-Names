@@ -267,14 +267,27 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
   budget (37.12 MiB of 48; tests/e2e/battle_budget.mjs). Evidence: recordings in
   docs/screenshots/battle/presentation/ (Normal, Fast, Instant, reduced motion, a 390×844 phone), layout
   stills in docs/screenshots/battle/layout/, each area's folder (index: docs/screenshots/battle/README.md).
-- Found, left for the owner: Nao's "missing third floorboard" in rw.warehouse is not drawn (§2.9; the
-  line is also quoted by the comparisons item C07, so softening it means editing C07 too); learning task
+- Found, left for the owner: Nao's "missing third floorboard" in rw.warehouse was not drawn (§2.9; the
+  line is also quoted by the comparisons item C07) — now drawn (resolved in art, no text changed: see
+  "World review" below); learning task
   picks use the page's shared `Math.random`, which world blink timers also draw from, so which item a
   battle task asks about varies with frame timing (no rule uses it); Moth and Lantern is recognised by its
   flame colour because its `artOpts` carry no variant flag (creatures_b.md); creatures are drawn before the
   party, so at contact a moth's near wing passes behind the adventurer it strikes (creatures_a.md).
 - Not verified: Firefox (the owner's browser), Safari, a real phone or the foldable, the art judged by a
   person (every rubric is a self-review), a native speaker's review, frame rate on named hardware.
+- World review (owner's external review, 2026-10-03; WR-04, WR-05 and two listed checks), art only:
+  the four long-quest landmarks redrawn at art resolution (`src/content/lq/15_art.js`: the great
+  persimmon of Koharuno, Kayo's young tree, the stone of names, Chigusa's tea stall) with footprints,
+  blocking, placements, scenes and use tiles unchanged (recorded before, `tests/fixtures/
+  landmarks_before.json`); Masaru's bakery fitted out as a bakery (`src/content/ch5/11_bakery.js`:
+  oven, bread rack, kneading bench, flour sacks; Masaru's working place is in front of the bench's
+  right end at 3,4, facing up); Nao's missing floorboard drawn and blocking at rw.warehouse 5,5
+  (`src/content/ch1/12_floorgap.js`) — resolved in art; the Star Stair path's observatory dome no
+  longer cut off at the top (a per-map `headroom`, `src/engine/60_render.js`, set to 2 rows on
+  sb.obs_path). Test: tests/e2e/landmarks.mjs (in run.mjs); captures: docs/screenshots/landmarks/,
+  docs/screenshots/bakery/ (landmarks_shots.mjs); notes: docs/ART_DIRECTION.md §8. The look is a
+  self-review; the owner reviews the art.
 - The owner's playtest of 2026-10-02 (Firefox, about 2000 × 1090), answered on this branch
   (VALIDATION.md "Battle playtest round", REQUIREMENTS BA17–BA21): one cadence in every phase (the scene
   had run at half speed once the opening lines closed); Adaptive shows a routine move as its badge only
