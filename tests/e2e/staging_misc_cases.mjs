@@ -177,4 +177,62 @@ const PAGES = [
       { name: 'later', comp: 'ren', picks: [2], minLines: 4 }] }),
 ];
 
-export const MISC = [...FARE, ...ROAD, ...CASES, ...PETS, ...PAGES];
+// ---- The Company (src/content/company): rest-place talks, reflections, rituals, invitations ----------------------
+// told wherever you rest or wherever the companion asks: a rest place stands for them (the Gull in Saltglass, facing
+// along the room so that you and your companion turn to each other side-on)
+const REST = { map: 'sg.inn', at: [6, 6, 'left'], flags: SE };
+// a talk with a question and three answers (and "not now"): each answer, one with the closing line of a closer bond
+const talk3 = (scene, comp, gs, o) => M(Object.assign({ scene }, REST, { comp, variants: [
+  { name: 'answer 1', picks: [0, 0], bond: 6, expect: { [comp]: gs } }, { name: 'answer 2', picks: [0, 1] }, { name: 'answer 3', picks: [0, 2] }, { name: 'not now', picks: [1] }] }, o || {}));
+const COMPANY = [
+  talk3('co.reflect_travel_nao', 'nao', ['strap', 'palm', 'aside', 'shake', 'nod']),
+  talk3('co.reflect_travel_mio', 'mio', ['guard', 'size', 'chin', 'palm', 'nod', 'thanks']),
+  talk3('co.reflect_travel_ren', 'ren', ['palm', 'count', 'chin', 'glasses', 'thanks', 'exhale']),
+  talk3('co.reflect_travel_suzu', 'suzu', ['size', 'check', 'palm', 'avert', 'celebrate', 'thanks']),
+  talk3('co.reflect_keep_nao', 'nao', ['lookbetween', 'check', 'strap', 'palm', 'nod', 'aside'], { flags: F(SE, C5) }),
+  talk3('co.reflect_keep_mio', 'mio', ['guard', 'check', 'chin', 'palm', 'laugh'], { flags: F(SE, C5) }),
+  talk3('co.reflect_keep_ren', 'ren', ['palm', 'size', 'chin', 'listen', 'thanks', 'tendlamp'], { flags: F(SE, C5) }),
+  talk3('co.reflect_keep_suzu', 'suzu', ['lowered', 'size', 'chin', 'palm', 'celebrate'], { flags: F(SE, C5) }),
+];
+// the rest-place topics: two or three answers each (no "not now": they are chosen from the rest menu)
+const topic = (scene, comp, n, gs, o) => M(Object.assign({ scene }, REST, { comp, variants: Array.from({ length: n }, (_, i) => Object.assign({ name: 'answer ' + (i + 1), picks: [i] }, i === 0 ? { expect: { [comp]: gs } } : {})) }, o || {}));
+const LATE = F(SE, C5, { ch5_done: true, lq_ally2: true });
+COMPANY.push(
+  topic('co.t_nao_pier', 'nao', 2, ['aside', 'stretch', 'shrug', 'shake', 'point']),
+  topic('co.t_nao_pencil', 'nao', 2, ['palm', 'cupear', 'nod', 'aside']),
+  topic('co.t_nao_half', 'nao', 2, ['strap', 'aside', 'palm', 'handover'], { flags: LATE }),
+  topic('co.t_nao_back', 'nao', 3, ['palm', 'aside', 'shrug'], { flags: LATE }),
+  topic('co.t_mio_sea', 'mio', 2, ['touchhair', 'laugh', 'aside', 'exhale'], { flags: F(SE, { ch3_done: true }) }),
+  topic('co.t_mio_tea', 'mio', 2, ['check', 'fidget', 'laugh']),
+  topic('co.t_mio_box', 'mio', 2, ['size', 'palm', 'fidget', 'emphatic', 'exhale'], { flags: LATE }),
+  topic('co.t_mio_after', 'mio', 3, ['palm', 'chin', 'nod'], { flags: LATE }),
+  topic('co.t_ren_stars', 'ren', 2, ['aside', 'count', 'glasses']),
+  topic('co.t_ren_polish', 'ren', 2, ['tendlamp', 'observe', 'palm']),
+  topic('co.t_ren_alone', 'ren', 2, ['palm', 'chin', 'exhale', 'point']),
+  topic('co.t_ren_after', 'ren', 3, ['size', 'chin', 'nod'], { flags: LATE }),
+  topic('co.t_suzu_house', 'suzu', 2, ['size', 'laugh', 'palm', 'nod']),
+  topic('co.t_suzu_amazake', 'suzu', 2, ['touchhair', 'check', 'celebrate']),
+  topic('co.t_suzu_books', 'suzu', 2, ['present', 'lowered', 'avert', 'thanks']),
+  topic('co.t_suzu_after', 'suzu', 3, ['size', 'avert', 'nod'], { flags: LATE }),
+);
+// the rituals at a rest place: the bond changes the closing line; at a camp the narration differs (sa.camp)
+const ritual = (scene, comp, gs) => M({ scene, comp, map: 'sg.inn', at: [6, 6, 'left'], flags: SE, expect: { [comp]: gs },
+  variants: [{ name: 'at an inn', bond: 0 }, { name: 'at an inn · in rhythm', bond: 3 }, { name: 'at an inn · trusted', bond: 6 }, { name: 'at the camp on the Archive road', map: 'sa.camp', at: [15, 11, 'right'], flags: F(SE, C5, { ch5_done: true }), bond: 6 }] });
+COMPANY.push(
+  ritual('co.ritual_nao', 'nao', ['lookbetween', 'nod']),
+  ritual('co.ritual_mio', 'mio', ['exhale']),
+  ritual('co.ritual_ren', 'ren', ['tendlamp', 'palm']),
+  ritual('co.ritual_suzu', 'suzu', ['check']),
+);
+// the invitations: each companion asks; three answers and "not now"; the follow-ups once it is settled
+const invite = (scene, extra) => M(Object.assign({ scene }, REST, { variants: [{ name: 'answer 1', picks: [0], comps: ALL4 }, { name: 'answer 2', picks: [1], comps: ALL4 }, { name: 'answer 3', picks: [2], comps: ALL4 }, { name: 'not now', picks: [3], comp: 'mio' }].concat(extra || []) }));
+COMPANY.push(
+  invite('co.inv_sg_hands'),
+  M(Object.assign({ scene: 'co.inv_sg_hands_after' }, REST, { variants: [{ name: 'he spoke for himself', comps: ALL4, flags: F(SE, { sg_wataru_self: true }) }, { name: 'we told her', comps: ALL4 }] })),
+  invite('co.inv_co_fire', [{ name: 'answer 2 · after Suzu\'s truth', picks: [1], comp: 'suzu', quests: { co_suzu: 1 } }]),
+  M(Object.assign({ scene: 'co.inv_co_fire_after' }, REST, { comps: ALL4, flags: F(SE, C3, { co_restored: true }) })),
+  invite('co.inv_lf_word'),
+  M(Object.assign({ scene: 'co.inv_lf_word_after' }, REST, { comps: ALL4, flags: F(SE, { lf_bell_rung: true }) })),
+);
+
+export const MISC = [...FARE, ...ROAD, ...CASES, ...PETS, ...PAGES, ...COMPANY];

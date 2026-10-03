@@ -35,6 +35,9 @@ export async function runBranch(p, c, v, o) {
     Object.assign(s.vars, c.vars || {}, v.vars || {});
     // deduction cases already open, or solved, at the moment the scene plays (src/engine/59_cases.js)
     for (const [id, st] of Object.entries(Object.assign({}, c.cases || {}, v.cases || {}))) { const r = RB.cases.open(s, id); if (r && st === 'done') r.stage = 'done'; }
+    // the companion's bond at that moment (src/engine/06_company.js: 3 rhythm, 6 trusted, 10 lasting)
+    const bond = v.bond != null ? v.bond : c.bond;
+    if (bond != null && s.company) s.company.bond = { fixture: bond };
     Object.assign(s.player, c.player || {}, v.player || {});
     for (const w of (c.words || []).concat(v.words || [])) if (!s.words.includes(w)) s.words.push(w);
     // the creatures on the maps stay out of it (a patrol reaching you would start a battle mid-scene)
