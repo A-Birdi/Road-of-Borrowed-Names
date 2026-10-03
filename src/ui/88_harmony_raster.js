@@ -298,5 +298,5 @@ RB.harmonyRaster = (function () {
   // the build's embedded set (assets/harmony/), when there is one
   if (RB.harmonyAssets && RB.harmonyAssets.manifest) { try { install(RB.harmonyAssets); } catch (e) { err = [String(e && e.message)]; } }
 
-  return { install, uninstall, active, manifest: () => man, artVersion, plan, ready, load, paint, timeline, stats, note, _: { codesOf, rampsOf, accRamp, decoded: dec } };
+  return { install, uninstall, active, manifest: () => man, artVersion, plan, ready, load, paint, timeline, stats, note, _: { codesOf, rampsOf, accRamp, draw, decoded: dec } };
 })();

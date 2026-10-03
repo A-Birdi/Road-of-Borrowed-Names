@@ -54,8 +54,11 @@ asset keys (86 required, 33 optional for the current registry) is `assetKeys` in
   reads RGB, greyscale, grey + alpha and palette PNGs (1/2/4/8-bit), and 16-bit (reduced to 8). Interlaced
   (Adam7) PNGs are refused with a clear error; re-save without interlacing.
 * No colour profile is applied (`iCCP`, `gAMA`, `cHRM` are ignored; pixels are taken as sRGB).
-* Transparency: alpha below 128 is transparent, at or above 128 opaque (the importer binarises it). A file
-  with no transparency is accepted only if its background is one flat `#ff00ff` (keyed out). A painted
+* Transparency: alpha below 128 is transparent, at or above 128 opaque (the importer binarises it). There is
+  no partial alpha anywhere: glasses' lenses are left transparent (the eyes show through), with any glint or
+  rim painted as opaque pixels; glows and soft shadows are drawn as opaque pixel clusters or left to the game.
+  A file with no transparency is accepted only if its background is one flat `#ff00ff` (keyed out
+  automatically when all four corners are that magenta, or always with `background: "magenta"`). A painted
   checkerboard "transparency" is rejected.
 * Any enlargement of the grid: whole (4× = 768 × 640) or not (a 1024 × 1024 square holding the 192 × 160
   canvas at 5.333×). The importer finds the grid (§9). Anti-aliased in-between colours at cell edges are
@@ -214,20 +217,27 @@ flourish, then one wink and one glint). Names from `RB.combat.TECHS`.
   | Material | s0 | s1 | s2 | s3 | s4 |
   |---|---|---|---|---|---|
   | skin (key) | #601c00 | #943c08 | #d06018 | #f48c40 | #ffc0a0 |
-  | hair | #2a0a3a | #5a1470 | #8a24a0 | #b848c8 | #e088ec |
+  | hair | #3c0a5c | #5a1470 | #8a24a0 | #b848c8 | #e088ec |
   | clothMain | #0c3a14 | #1a6428 | #2e8c3c | #52b45a | #8ad88a |
-  | clothTrim | #0a3a44 | #12687a | #22a0b4 | #5ccce0 | #a8f0f8 |
+  | clothTrim | #004e60 | #12687a | #22a0b4 | #5ccce0 | #a8f0f8 |
   | accessory | #10164a | #222e8a | #3a4cc8 | #6a80ec | #a8b8ff |
 
-  **Changed from the brief:** the skin key is an unnatural orange. The brief's natural one
-  (#6e3e2a … #f2d0a8, kept as `KEY_SKIN_V1`) is skin palette 2's own ramp — a recoloured skin-2 player would
-  contain key colours, so "no key colour survives" could not be checked — and it lies within 40 of 28 of the
-  code's own face colours (the default iris #7a4630 at 15.6, a mouth at 11.1, a blush at 10.3), which a mask
-  derived by colour cannot tell from skin. The orange key is within 40 of 5 (none within the snap radius),
-  ≥ 81 from every other key ramp and ≥ 19 from every real skin colour.
+  **Changed from the brief (all measured):**
+  * The skin key is an unnatural orange. The brief's natural one (#6e3e2a … #f2d0a8, kept as `KEY_SKIN_V1`)
+    is skin palette 2's own ramp — a recoloured skin-2 player would contain key colours, so "no key colour
+    survives" could not be checked — and it lies within 40 of 28 of the code's own face colours (the default
+    iris #7a4630 at 15.6, a mouth at 11.1, a blush at 10.3), which a mask derived by colour cannot tell from
+    skin. The orange key is within 40 of 5 of them (none within the snap radius), ≥ 91 from every other key
+    ramp and ≥ 19 from every real skin colour.
+  * The darkest hair and trim shades are more saturated (#3c0a5c, #004e60; brief: #2a0a3a, #0a3a44, kept as
+    `KEY_V1`). The brief's sat within 40 of the near-blacks every kit file holds: on the sample, lashes
+    (#2b1a20 at 30.5, #341c1c at 36.4) and the brush lacquer (#24203a at 38.1, #262248 at 37.1) were
+    unresolved; after the change the sample imports with none.
+  * Measured on the final ramps: every two key shades ≥ 37.4 apart (≥ 3 × the snap radius), every key shade
+    ≥ 46.9 from the outline ink, each ramp strictly rising in luminance (the shade index is luminance order).
 * **Derivation** (importer, per file; only the materials the file kind allows): heads skin + hair (brows,
-  stubble); torsos clothMain + clothTrim + skin; arms skin + clothMain + clothTrim; hair hair (the wrap also
-  clothTrim); accessories accessory. For each opaque pixel, in order: within 24 of #140c18 (outline ink) or
+  stubble); torsos clothMain + clothTrim + skin; arms skin + clothMain + clothTrim; hair hair + clothTrim (ties,
+  the wrap); accessories accessory. For each opaque pixel, in order: within 24 of #140c18 (outline ink) or
   of #ffffff / #f6f2ee (highlights, eye whites) → **fixed**; within **12** (Euclidean, sRGB 0–255) of an
   allowed key shade → that material and shade (the pixel is snapped to the exact key colour); farther than
   **40** from every allowed key shade → **fixed**; otherwise **unresolved** — the import fails and the report
@@ -360,11 +370,16 @@ node tools/harmony_import.mjs <inDir> [--set <name>] [--out assets/harmony] [--c
 node tools/harmony_import.mjs --verify assets/harmony
 ```
 
-1. **Grid:** edge positions along both axes; for each candidate cell size (1–24 px, 0.0005 steps around the
-   best) the phase that puts most edge weight within half a pixel of a grid line; the largest size with ≥ 90 %
-   of the best score wins (a grid's halves score as well as the grid itself). Non-integer sizes such as
-   1024 / 192 work. Override with `cell`/`origin`.
-2. **Downsample:** each cell's centre region (the middle half), majority colour.
+1. **Grid:** a file that is an exact whole multiple of 192 × 160 is tried at that multiple first (1: native).
+   Otherwise, along each axis: the edge weight at every pixel boundary (colours more than 40 apart, so a tool's
+   noise inside a cell is ignored); for each candidate cell size from 1.5 to 24 px, in steps that drift at most
+   0.2 px across the image, the phase that puts most edge weight within ±0.44 px of a grid line (±0.8 px from
+   3 px cells up, so both halves of a blended cell edge count), scored against chance; the **largest** size
+   scoring within 10 % of the best wins (a grid's halves and thirds fit the same edges), refined by least
+   squares. Pixels are square: when the axes disagree, the larger size that fits both is used. Non-integer
+   sizes work (1024 / 192 found as 5.3334). Override with `cell` and `origin`.
+2. **Downsample:** each cell's centre region (the middle half), majority colour; with no repeated colour (noise),
+   the per-channel median.
 3. **Alpha:** binarised at 128; a flat `#ff00ff` background keyed out; checkerboards rejected.
 4. **Palette:** outline ink within 24 snapped to #140c18; key shades within 12 snapped (kit files).
 5. **Masks and shades** (§5): derived or read; supplied masks are checked against the file.
@@ -383,4 +398,60 @@ fixed pixel in a key colour, an invalid manifest). Missing keys are reported, no
 
 ## 10. Budgets
 
-*Pending measurement (§10 is filled in from `tests/e2e/harmony_raster.mjs`).*
+Measured by `node tests/e2e/harmony_raster.mjs --sheets` (written to `docs/harmony/contract/budgets.json`):
+Playwright, headless Chromium 141 with a software canvas, 1920 × 1080, DPR 1, a shared 4-core Linux machine — not
+a physical device, not a phone. The painted figures use the SYNTHETIC sample (Suzu + look A or B, every state the
+timeline shows, standard and compact: what the overlay prepares for one cut-in).
+
+**Time**
+
+| | Code-drawn busts (today) | Painted path (sample) |
+|---|---|---|
+| Cold pairing (both busts + composition + ink backing) | 62–95 ms | 62–82 ms (almost all of it the backing, rebuilt after `clear()`) |
+| A further state, nothing cached but the backing | — (2 drawings only) | 2.7–3.5 ms |
+| One bust from decoded files (recolour + assemble) | — | mean 1.0–1.2 ms, max 7.6 ms |
+| Decoding a pairing's and look's files (19–21 PNGs, `createImageBitmap`, async) | — | mean 51 ms per batch, max 120 ms — off the learning task |
+| Everything for one cut-in (`prepare({ async: true })`: decode, then idle slices) | 230 ms for both phases × variants | 236–326 ms wall time, in idle slices |
+| Warm (cached) composition | ≤ 0.1 ms | ≤ 0.1 ms |
+
+**Decoded memory** (uncompressed surfaces: w × h × 4 bytes; the player kit adds 1 byte per pixel of material codes)
+
+| | Code-drawn busts | Painted path |
+|---|---|---|
+| One decoded file | — | 122,880 B (companion) / 153,600 B (kit file with codes) |
+| One bust / one composition (layer + canvas) | 64,000 / 182,400 B | 122,880 / 450,560 B standard, 253,952 B compact |
+| One pairing and look, every state and both variants | 8 busts + 4 compositions = 1.18 MiB | 3.04 MB decoded (21 files) + 10 busts + 10 compositions + 2 backings 5.10 MB = **7.77 MiB peak** (look B: 7.47 MiB) |
+| Bound at the caches' caps (busts 24, compositions 16, decoded files 48) | ≈ 5.8 MiB | 2.9 + 7.2 + 7.4 + 0.35 MB ≈ **17 MiB** |
+
+**Encoded size** (embedded as base64, +33 %; the game stays one offline file)
+
+| | Bytes |
+|---|---|
+| The sample: 30 files + 24 masks | 56,287 B (55 KiB) → 94 KiB embedded |
+| A full delivery at the sample's density (119 keys: 86 required + 33 optional, 95 masks) | 0.22 MiB |
+| A full delivery at the mockup's density (projected) | **0.70 MiB → ≈ 0.94 MiB embedded** (index.html is 9.6 MiB today) |
+
+The projection: the per-kind opaque area of the sample's files × 2.19 (the template's 50 × 52 face over the code
+busts' 36 × 33) × 1.452 B per opaque pixel — the owner's mockup crop measured at its own pixel grid (2 px cells,
+364 × 148, 1,343 colours) in a scratch folder (the image is never copied into the project) — plus the sample's mask
+sizes. An estimate, not a measurement of delivered art: re-measure on Batch 1.
+
+**Budget policy.** No new hard limit: the measured peak (≈ 8 MiB per pairing) and the cap bound (≈ 17 MiB) are
+reported; if phones need less, lower the composition cap first (each painted composition is 450 KiB with its
+canvas). Decoding never runs when a technique fires: the overlay prepares at the encounter's start.
+
+## 11. Tests and evidence
+
+| Command | What it checks |
+|---|---|
+| `node tests/run-unit.mjs harmony_png` | the codec: every colour type and filter, 16-bit, tRNS, iTXt, CRC, interlace refusal |
+| `node tests/run-unit.mjs harmony_import` | grid detection (1×–6.4×, 1024 / 192, padding, noise), downsampling, masks and their refusals, supplied masks, whole files, the sample's import and `--verify` |
+| `node tests/run-unit.mjs harmony_raster` | timeline fractions, painted compositions, recolouring discipline, no key colour in any output, shared colour logic, whole-bust fallback, invalidation, registry coverage, manifest schema, the code path after uninstall |
+| `node tests/e2e/harmony_raster.mjs [--sheets]` | the same in the built game through `compose()`/`prepare()`, the equip event, the embedded build, no network; `--sheets` writes the evidence and the budgets |
+| `node tests/run-unit.mjs harmony_art`, `node tests/e2e/harmony_art.mjs` | the code-drawn busts, unchanged |
+
+Evidence (`docs/screenshots/harmony/raster_sample/`, every image labelled SYNTHETIC SAMPLE — not art):
+`looks_states_1x.png` and `looks_states_2x.png` (both looks with Suzu across the six states, standard and compact),
+`recolour_2x.png` (one kit, eight skin / hair / cloth combinations), `masks_2x.png` (every kit file and its mask as
+the game reads it), `fallback_2x.png` (the whole-bust fallback), `import_contact.png` and `import_report.json` (the
+importer's own report on the sample).

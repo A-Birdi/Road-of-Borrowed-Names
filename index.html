@@ -81682,7 +81682,13 @@ RB.harmonyContract = (function () {
       need(Array.isArray(d.states) && d.states.every((s) => STATES.indexOf(s) >= 0), c + ': states must be state ids');
       if (d.mode === 'layered') need(Array.isArray(d.layers) && d.layers.length > 0, c + ': a layered set lists its layers back to front');
       for (const st of Object.keys(d.face || {})) need(STATES.indexOf(st) >= 0 && isBox(d.face[st]), c + ': face.' + st + ' must be a box');
-      if (d.timeline) { const T = timeline(d.states, d.timeline); const te = validTimeline(T); for (const e of te) E.push(c + ': timeline: ' + e); }
+      if (d.timeline) {
+        for (const st of Object.keys(d.timeline)) {
+          const o = d.timeline[st];
+          need(STATES.indexOf(st) >= 0 && o && SEG_ORDER[o.seg] != null && o.from >= 0 && o.to <= 1 && o.from < o.to, c + ': timeline.' + st + ' must be { seg, from, to } with 0 ≤ from < to ≤ 1');
+        }
+        const T = timeline(d.states, d.timeline); const te = validTimeline(T); for (const e of te) E.push(c + ': timeline: ' + e);
+      }
       for (const v of Object.keys(d.offset || {})) need(PAIR[v] && isPt(d.offset[v]), c + ': offset.' + v + ' must be [dx, dy]');
     }
     const P = m.pc || {};
@@ -82843,7 +82849,7 @@ RB.harmonyRaster = (function () {
   // the build's embedded set (assets/harmony/), when there is one
   if (RB.harmonyAssets && RB.harmonyAssets.manifest) { try { install(RB.harmonyAssets); } catch (e) { err = [String(e && e.message)]; } }
 
-  return { install, uninstall, active, manifest: () => man, artVersion, plan, ready, load, paint, timeline, stats, note, _: { codesOf, rampsOf, accRamp, decoded: dec } };
+  return { install, uninstall, active, manifest: () => man, artVersion, plan, ready, load, paint, timeline, stats, note, _: { codesOf, rampsOf, accRamp, draw, decoded: dec } };
 })();
 
 

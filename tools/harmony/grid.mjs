@@ -196,7 +196,8 @@ export function keyMagenta(img, mode) {
 // A painted "transparency" checkerboard: an opaque image whose corner blocks hold exactly two light greys.
 export function looksLikeCheckerboard(img) {
   if (hasTransparency(img)) return false;
-  const d = img.data, s = Math.max(8, Math.floor(Math.min(img.w, img.h) / 16));
+  // corner blocks large enough to span two squares of any usual checker size
+  const d = img.data, s = Math.min(Math.floor(Math.min(img.w, img.h) / 2), Math.max(24, Math.floor(Math.min(img.w, img.h) / 12)));
   for (const [cx, cy] of [[0, 0], [img.w - s, 0], [0, img.h - s], [img.w - s, img.h - s]]) {
     const cols = new Set();
     for (let y = cy; y < cy + s; y++) for (let x = cx; x < cx + s; x++) {
