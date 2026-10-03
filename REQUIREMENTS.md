@@ -274,6 +274,18 @@ commit (VALIDATION.md); screenshots inspected by eye are noted as such.
 - [v] PR4 The flow is unchanged: Next, Skip, Escape, the captions and their timing. The shots' caches are released when the prologue ends. Evidence: B prologue, create (382), ui, layout audit of create_prologue and title.
 - [b] PR5 Not verified: Firefox (the owner's browser), the foldable, a person's judgement of the art.
 
+## Town animals (owner's reports of 2026-10-03; VALIDATION.md "Town animals"; docs/addendum/pets.md "World")
+- [v] TA1 At rest, an animal keeps moving as the people do:
+  - It breathes on their settle-and-rise beat, and its tail keeps going (the cat's swish, the dog's wag, the tanuki's sway, the bird's flick).
+  - This applies to your pet in every species and posture, to the reed-screen cat before you meet it, and to Mochi.
+  - The frames repeat from the cache (4–9 new frames in a further 4 s of one posture).
+  - Nothing is added with reduced motion.
+  - Evidence: B town_animals.
+- [v] TA2 Mochi is drawn with the same cat rig as the other cats (white, a red collar) instead of her old hand-drawn sprite, curled up where the scenes find her. Evidence: B town_animals.
+- [v] TA3 Picking Mochi up, she is gone where she was. Before, she walked off to the nearest door, Kōji's house, because she had no destination while carried. Given back, she appears beside Tomo rather than out of a door. The mechanism is the npc options `leave: 'here'` and `arrive: 'here'`. Evidence: B town_animals (a real key press; on the previous build the departure went to 45,15 and the arrival came out of 11,24), departures.
+- [v] TA4 Her line at home follows the hour: stretched out in the sun by day, curled up at Tomo's feet at night (it said "in the sun" at night). Evidence: B town_animals.
+- [b] TA5 Not verified: Firefox, the foldable, a person's look at the animals.
+
 ## Quest guidance (owner's question of 2026-09-29: hints in the ledger, map markers; VALIDATION.md "Quest guidance")
 - [v] G1 Where each quest's next step happens is derived from the content (src/engine/56_questguide.js): the scenes that move the quest on, walked the way the runner would against the current state, and the people, props, triggers, arrivals and foes that run them; a person who appears only later is not targeted; places you cannot reach yet are not preferred; what a blocked step waits for is followed two levels deep; more than six places marks none. Optional per-stage `hint` and `at` (validated). Evidence: tests/unit/quest_guide.test.mjs lists every stage of every quest — 116 derived, 1 authored (`rw_depart` 1), 4 set and passed within one scene, 0 missing — and checks live analysis on real states in every chapter; quest_guide.mjs checks it in the browser.
 - [v] G2 Journey: the objective stays first; "Need a nudge?" reveals up to three nudges one at a time (where and who; the authored hint or what to do there and which way; "Show on the map"), bilingual with furigana, generated from names, using words in the lexicon (465 generated lines checked); asking records nothing. Follow one quest at a time (the main road by default); the followed quest is first and marked; the text equivalent of the markers ("Next: Suzu, in Reedwake — south-west of you"). Evidence: quest_guide.mjs, quest_guide.test.mjs.

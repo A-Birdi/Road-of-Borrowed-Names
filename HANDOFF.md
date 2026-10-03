@@ -297,6 +297,17 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
   - `tests/e2e/prologue.mjs` (in the default suite) checks the pixel under the traveller's feet at every moment, at four screen shapes.
   - `tests/e2e/prologue_shots.mjs` writes docs/screenshots/prologue/after/; before/ is the previous build.
 
+## Town animals (owner's reports of 2026-10-03) — complete on this branch; REQUIREMENTS.md TA1–TA5, VALIDATION.md "Town animals"
+- **Idle:** at rest, animals breathe and keep their tails moving — your pet, the not-yet-met animals, and
+  Mochi (`life` in `src/engine/57_petworld.js`; one short cycle per species, so the frames repeat).
+- **Mochi's look:** she is drawn with the pets' rig like every other cat (`RB.petWorld.actorFrame`; her look
+  `cat/mochi`).
+- **Mochi's path:** picked up, she no longer walks off to the nearest door (Kōji's house); given back, she
+  appears beside Tomo. This uses the npc options `leave: 'here'` and `arrive: 'here'` in
+  `src/engine/50_world.js`.
+- **Her line at home:** it follows the hour (`rw_night`).
+- **Test:** `tests/e2e/town_animals.mjs`, in the default suite.
+
 ## Commands
 - Build: `node tools/build.mjs`
 - Content validation: `node tools/validate.mjs [--filter sg] [--unknown]`
@@ -374,6 +385,9 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
    the riverbank lantern and the bridge sit with the title scene? Try reduced motion and a phone held
    sideways (the slip covers most of the road there, so that walk is short). Every judgement of this
    art so far is a self-review.
+12. The town animals (2026-10-03), by hand in Firefox: stand by your pet and by Mochi for a while (they
+   should breathe and move their tails, then sit and curl up); pick Mochi up (A Cat Called Mochi) and give
+   her back to Tomo by day and at night.
 
 ## Known issues / limits
 - No human handwriting samples tested (synthetic + font-derived only).

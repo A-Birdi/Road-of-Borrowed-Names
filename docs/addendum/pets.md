@@ -95,6 +95,23 @@ tile where it can be seen (not on you, not on your companion, not just above eit
 trigger, a way out or the tile you are facing). Hidden before you meet it, with "Show pet in exploration"
 off, and in a scene that asks (`!hook pet_hide` / `!hook pet_show`).
 
+**At rest it is never quite still (2026-10-03, the owner's report).** Your pet, the animals not yet met
+(between the moments their scenes author) and the animals among the people (Mochi) all keep moving at rest:
+- They breathe with the people's shape: settle, a beat, rise, a beat.
+- The tail keeps moving: the cat swishes (the tip a beat behind; sitting, it lifts as it sweeps), the dog
+  wags gently, the tanuki sways, and the bird flicks now and then.
+- Breath and tail step through one short cycle per species (`LIFE` in `57_petworld.js`: cat 2.8 s in 8
+  phases, tanuki 3 s in 6, dog 1.2 s in 6, bird 2.2 s in 8; lying, 1.4× slower). Each posture therefore has
+  only a handful of frames, and they repeat from the art's cache (a further 4 s of one posture builds 4–9
+  new frames).
+- It never covers a tail movement a scene authored (a flick, a wag), and adds nothing with reduced motion.
+
+**Animals among the people.** An npc whose look is `{ pet: species, look, rest: [sit ms, lie ms] }` is
+drawn by `RB.petWorld.actorFrame` with this rig rather than a creature sprite: walking when it moves, then
+standing, sitting and lying at rest (it is found lying when you arrive), with the life above. Mochi, Tomo's
+cat in Reedwake, is one: the look `cat/mochi` (white, a red collar), which is not one of the pet looks you
+can choose.
+
 ## Vignettes (src/content/pets/)
 
 Each has a visible cause you can inspect, one or two ordinary interactions, a meeting, an invitation with
