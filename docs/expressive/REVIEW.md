@@ -237,8 +237,8 @@ From the running build. Before/after for each is in the props review.
 ## 3. Props: over- and under-animation (measured)
 
 Phase A could only scan the art specs. This pass drew every placed prop kind and option set alone over 12 s,
-at 40 ms steps (`tests/e2e/props_balance.mjs` part 1). That is 269 kind × option sets from the authored maps and
-three Atlas seeds; 64 animate.
+at 40 ms steps (`tests/e2e/props_balance.mjs` part 1). That is about 270 kind × option sets (269–271: the Atlas
+rooms vary slightly between pages) from the authored maps and three Atlas seeds; 64 animate.
 
 - **Over-animated, now calmer:** lamps (N6), the campfire and Hiro's furnace (N8), the lighthouse lens (N2), and
   the light pools (N7).
