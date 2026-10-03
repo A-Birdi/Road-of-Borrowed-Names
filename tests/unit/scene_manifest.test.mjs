@@ -9,7 +9,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { load, root } from '../lib/load.mjs';
-import { buildManifest, CLASSES, CURATED, LOAD, OUT_JSON } from '../../tools/scene_manifest.mjs';
+import { buildManifest, CLASSES, CURATED, CURATED_INLINE, LOAD, OUT_JSON } from '../../tools/scene_manifest.mjs';
 
 export default async (t) => {
   globalThis.__RB_TEST__ = true;
@@ -51,6 +51,11 @@ export default async (t) => {
   for (const [id, v] of Object.entries(CURATED)) {
     const e = fresh.find((x) => x.id === id);
     t.ok(e && e.class === v[0] && e.heuristic === false, 'decided entry ' + id + ' keeps its class in a fresh build');
+  }
+  // decided entries outside the scene files (inline dialogue)
+  for (const [id, v] of Object.entries(CURATED_INLINE)) {
+    const e = M.entries.find((x) => x.id === id);
+    t.ok(e && e.kind !== 'scene' && CLASSES.indexOf(v[0]) >= 0 && v[1] && e.class === v[0] && e.heuristic === false, 'decided inline entry ' + id + ' exists and keeps its class in a fresh build');
   }
   const prologue = M.entries.find((e) => e.id === 'seq.prologue');
   t.ok(prologue && prologue.class === CLASSES[1], 'the prologue is listed as an illustrated sequence');
