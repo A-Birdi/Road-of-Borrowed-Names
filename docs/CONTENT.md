@@ -110,9 +110,14 @@ C.maps['sg.harbor'] = {
   travelKind: 'interior' | 'dungeon',   // or noTravelWhy: { en } for a story lock
   travelPlace: { en: 'the Drowned Archive' }, // optional: how the message names the place
   noCompanion: 'cond', // rare: hide companion
-  surround: 'sea',  // rare: what lies past the edge instead of the ground carrying on (the top of the
-                    // lighthouse, sg.lighthouse_top): framed like a room (no apron, the soft edge shadow);
-                    // ambient.sea 'calm' | 'wind' picks its state (switch it by story state with `alt`)
+  // an elevated outdoor deck (the top of the lighthouse, the fire lookout): the view from height.
+  // Past the deck is the real ground map drawn small (src/engine/61_below.js), `at` (ground tiles)
+  // at the foot of the structure seen dropping from the deck's south edge; void tiles of the deck's
+  // map are left open so the ground shows round a smaller platform. Framed like a room (no apron,
+  // the soft edge shadow round the deck); at night (ambient.dark >= 0.3) the ground's lights shine
+  // through; ambient.sea 'calm' | 'wind' adds glints or whitecaps where its sea shows.
+  surround: { below: 'sg.harbor' /* or [{ if, map }, …] */, at: [2.5, 31.7], hide: [1, 29, 3, 3],
+              scale: 0.3, drop: 1.9, shaft: 'stone' | 'timber', top: 2, foot: 1.5, beyond: { left: 'water' } },
 };
 ```
 Terrain chars: `.` grass `,` flowers `;` tall grass `:` dirt path `=` cobbles

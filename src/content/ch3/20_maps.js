@@ -591,10 +591,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
     spawn: { default: [7, 9, 'up'] },
   };
 
-  // The top of the fire lookout: a platform over the lanterns.
+  // The top of the fire lookout: a platform over the lanterns. Round the platform, the village
+  // far below at night (surround: the village map itself drawn small, the lookout's own place on
+  // it at the foot of its timber legs; src/engine/61_below.js): the festival with its lanterns
+  // while you are up there that night (until the evening's reflection is over), the village after.
   C.maps['co.lookout'] = {
     name: T('The Lookout', '{火|ひ}の{見|み}{櫓|やぐら}'), region: 'cinder', music: 'quiet_road',
     ambient: { weather: 'fireflies', dark: 0.5, darkCol: '14,8,26', playerLight: 44 },
+    surround: { below: [{ if: '!seen.co.reflection', map: 'co.festival' }, { map: 'co.village' }], at: [12, 12.9], hide: [11, 11, 2, 2], scale: 0.4, drop: 2.4, shaft: 'timber', top: 3, foot: 1.1 },
     terrain: K.build(16, 12, 'x', (k) => { k.rect(5, 4, 6, 4, '_'); }),
     props: [
       { p: 'fence', x: 5, y: 3, block: false }, { p: 'fence', x: 6, y: 3, block: false }, { p: 'fence', x: 9, y: 3, block: false }, { p: 'fence', x: 10, y: 3, block: false },
