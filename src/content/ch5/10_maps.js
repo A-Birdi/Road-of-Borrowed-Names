@@ -250,7 +250,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- interiors -----------------------------------------------------------------------------------
   function interior(id, name, w, h, doorX, backXY, extra) {
     C.maps[id] = Object.assign({
-      name, region: 'lanternfall', music: null, noTravel: true,
+      name, region: 'lanternfall', music: null, noTravel: true, travelKind: 'interior',
       terrain: K.room(w, h, '_', doorX),
       props: [{ p: 'exitmat', x: doorX, y: h - 2 }],
       npcs: [],
@@ -392,7 +392,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- the basement stacks (a short, dim search) -------------------------------------------------
   C.maps['lf.stacks'] = {
-    name: T('Basement Stacks', '{地下|ちか}{書庫|しょこ}'), region: 'lanternfall', music: 'mystery', noTravel: true,
+    name: T('Basement Stacks', '{地下|ちか}{書庫|しょこ}'), region: 'lanternfall', music: 'mystery', noTravel: true, travelKind: 'dungeon',
     ambient: { dark: 0.55, playerLight: 46, weather: 'pages' },
     terrain: K.build(24, 16, '#', (k) => {
       k.rect(1, 2, 22, 13, '+');

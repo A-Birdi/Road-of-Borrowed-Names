@@ -711,14 +711,16 @@ RB.ui.menu = (function () {
   function mapChart(A, B, two, nav, navClick) {
     const s = RB.game.s;
     const curMap = RB.content.maps[s.map] || {};
-    const canTravel = !curMap.noTravel && RB.game.mode() === 'menu';
+    // out in the open with nothing under way; otherwise why not, in the place's own terms (src/engine/52_travel.js)
+    const tr = RB.travel.status(s.map);
+    const canTravel = tr.ok && RB.game.mode() === 'menu';
     const places = Object.keys(RB.content.places).map((id) => Object.assign({ id }, RB.content.places[id])).filter((p) => s.travel[p.id]);
     const gm = guideMarks(s);
     const chart = '<div class="chartbox" tabindex="-1">' + chartSvg(s, curMap) + '</div><p class="muted small">Solid lines are roads you have walked; dashed lines are roads you have heard of. The red mark is where you are.' +
       (gm ? ' The amber diamond marks where the next step of the quest you follow is.' : '') + '</p>' +
       (gm ? '<p class="note-slip next-note">' + I('follow') + ' <span>Next step of <b>' + esc(gm.title.en) + '</b>: ' + esc(gm.places.map((id) => (s.travel[id] ? RB.content.places[id].name.en : 'a place you have not reached yet')).join(', ')) + '.</span></p>' : '');
     const list = '<h3>' + I('travel') + ' Travel <span class="count">' + places.length + ' known</span></h3>' +
-      (canTravel ? '' : '<p class="note-slip warn">You can’t travel quickly from here. Step outside first.</p>') +
+      (canTravel ? '' : '<p class="note-slip warn travel-why" data-kind="' + esc(tr.kind) + '">' + esc(tr.en || 'You can’t travel quickly from here just now.') + '</p>') +
       '<ul class="entries">' + places.map((p) => {
         const here = curMap.region && p.region === curMap.region && p.hub;
         const next = gm && gm.places.includes(p.id);
@@ -729,7 +731,7 @@ RB.ui.menu = (function () {
     const handler = async (e) => {
       if (navClick(e)) return;
       const b = e.target.closest('[data-go]');
-      if (!b) return;
+      if (!b || !RB.travel.status(RB.game.s.map).ok) return;
       const p = RB.content.places[b.dataset.go];
       close();
       await RB.game.transition(p.map, p.x, p.y, p.dir || 'down');

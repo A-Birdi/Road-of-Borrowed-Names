@@ -106,7 +106,9 @@ C.maps['sg.harbor'] = {
   triggers: [{ x, y, w, h, scene, if, once: true, id }],
   onEnter: [{ scene, if, once }],
   spawn: { default: [x, y, 'down'] },
-  noTravel: true,   // dungeons/interiors: no fast travel out
+  noTravel: true,   // no quick travel from here; say why (see "Quick travel" below):
+  travelKind: 'interior' | 'dungeon',   // or noTravelWhy: { en } for a story lock
+  travelPlace: { en: 'the Drowned Archive' }, // optional: how the message names the place
   noCompanion: 'cond', // rare: hide companion
   surround: 'sea',  // rare: what lies past the edge instead of the ground carrying on (the top of the
                     // lighthouse, sg.lighthouse_top): framed like a room (no apron, the soft edge shadow);
@@ -126,6 +128,46 @@ Interiors: door exits need a target `spawn` in the interior and the interior's
 exit returns to the tile *below* the door. Never land a player on an exit tile.
 Readable inscriptions: any decorative writing must have an interactable
 transcription (a prop with `text` or `scene`).
+
+### Quick travel: where it works
+The Map tab's Travel list (`src/ui/50_menu.js`, rules in `src/engine/52_travel.js`)
+works from **anywhere out in the open** — towns, roads, the wilderness, beaches — when
+nothing is under way (no scene, battle, transition or activity; the folio opened over a
+conversation with History does not count as free). It does not work on a map with
+`noTravel: true`, and such a map says what kind of place it is, so the list can say
+why in the place's own terms and where the way out is:
+
+| Kind | How a map says so | What the Travel list says |
+|---|---|---|
+| interior (a building) | `travelKind: 'interior'` (the chapters' `interior()` helpers set it); region `'interior'` or `indoor: true` count too | "You're inside the Tide-Watch Hut. Step out through the door to travel." — or, with more than one way out, "Step outside to travel — the nearest way out leads to Snowbell."; with none usable now, that there is no way out just now |
+| dungeon (a sealed place) | `travelKind: 'dungeon'`, `travelPlace: { en: 'the Drowned Archive' }` naming the whole place | "You're in the Drowned Archive. Travel works again once you're back out in the open — the way out leads to Saltglass." |
+| story lock | `noTravelWhy: { en }` — for a map where leaving mid-sequence would break the story | the authored reason, which says where to go |
+| expedition | `travelKind: 'expedition'` + `noTravelWhy` (the Unwritten Atlas's generated rooms) | the authored reason |
+
+The way out is found the way people find theirs (`RB.world.towards`: exits and doors
+usable now, `if` conditions and locks respected) and names the nearest map where travel
+works. `travelPlace` also renames a building whose own name reads badly in a sentence
+(`sb.inn_room`: "the upstairs room at Yukimiya"). Otherwise a building's name gets
+"the" unless it is a possessive ("Isamu's House") or numbered ("No. 2 Warehouse").
+A reason may carry `jp` too; every kanji then needs furigana. `tools/validate.mjs`
+rejects a `noTravel` map with no kind or reason, a reason without English, travel
+fields on an open map, an interior left open and any kanji outside furigana
+(`tests/unit/travel_rules.test.mjs`, `tests/e2e/travel_rules.mjs`).
+
+Every map that is not open (2026-10-03):
+
+| Kind | Maps |
+|---|---|
+| interior (39) | Reedwake: `rw.hall rw.tea rw.apoth rw.warehouse rw.carpenter rw.house1 rw.house2 rw.ferry`; Koharuno: `lq.koharu_hut`; Saltglass: `sg.office sg.inn sg.warehouse sg.glass sg.lighthouse sg.tidehut sg.isamu`; Cinder Orchard: `co.hall co.inn co.glass co.pottery co.post co.ume co.icehouse`; Snowbell: `sb.inn sb.inn_room sb.post sb.hoshino sb.goatshed sb.sachi sb.fuki`; Lanternfall: `lf.records lf.council lf.clerks lf.inn lf.cafe lf.bakery lf.ferry lf.tokuji`; `sa.hut` |
+| dungeon (26) | the Old Mill: `rw.mill1 rw.mill2 rw.mill0`; the Drowned Archive: `sg.da_entry sg.da_stacks sg.da_reading sg.da_sluice sg.da_vault`; the Great Kiln: `co.kiln co.kiln_core`; the Observatory: `sb.obs_hall sb.obs_charts sb.obs_gallery sb.obs_dome`; the Basement Stacks: `lf.stacks`; the bell tower: `lf.tower_top lf.tower_upper lf.tower_mid lf.tower_low lf.bellhall`; the Still Archive: `sa.reading sa.stacks sa.conduits sa.memories sa.study sa.heart` |
+| story lock (2) | `co.eve` (an evening the story plays through in one scene; you are never free there) and `co.festival` (a story night with no exits; its way on is in the story) |
+| expedition | `atlas.<run>.<room>`, generated per run |
+
+Open since 2026-10-03 (they were `noTravel` before, but are out in the open and nothing in
+their scenes, triggers or quests assumes you stay; walking back in works as before):
+`sg.cove` (the Fishers' Cove), `co.upper` (the Upper Terraces), `co.oldworks` (the Old
+Workshop Row), `co.lookout` (the Lookout, only free to walk once its chapter is done) and
+`sb.obs_path` (the Star Stair).
 
 ## 4. Characters, quests, items, notes
 ```js

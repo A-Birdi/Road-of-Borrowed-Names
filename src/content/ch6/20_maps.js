@@ -187,7 +187,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- the Reading Room ------------------------------------------------------------------------------------
   C.maps['sa.reading'] = {
-    name: T('The Reading Room', '{閲覧室|えつらんしつ}'), region: 'sa_still', noTravel: true,
+    name: T('The Reading Room', '{閲覧室|えつらんしつ}'), region: 'sa_still', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the Still Archive' },
     music: [{ if: 'sa_hush_down', id: 'wonder' }, { id: 'still_archive' }],
     ambient: stillAmbient({ weather: 'pages', tint: 'rgba(210,214,236,0.10)', dark: 0.15 }, { weather: 'motes', tint: 'rgba(255,232,196,0.06)' }),
     terrain: K.build(28, 20, '#', (k) => {
@@ -240,7 +240,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Aisle B (x13-15, below the passage) runs down to a barred niche with the
   // stair; the call slip on the entrance desk says which aisle to look for.
   C.maps['sa.stacks'] = {
-    name: T('The Stacks', '{書架|しょか}'), region: 'sa_still', noTravel: true,
+    name: T('The Stacks', '{書架|しょか}'), region: 'sa_still', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the Still Archive' },
     music: [{ if: 'sa_hush_down', id: 'wonder' }, { id: 'hush' }],
     ambient: stillAmbient({ weather: 'pages', tint: 'rgba(200,206,236,0.12)', dark: 0.3 }, { weather: 'motes', tint: 'rgba(255,232,196,0.06)', dark: 0.1 }),
     terrain: K.build(32, 24, '#', (k) => {
@@ -287,7 +287,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // is the plank at the charter gate, which stays flooded until the gate is
   // persuaded.
   C.maps['sa.conduits'] = {
-    name: T('The Quiet Conduits', '{静|しず}かな {水路|すいろ}'), region: 'sa_still', noTravel: true,
+    name: T('The Quiet Conduits', '{静|しず}かな {水路|すいろ}'), region: 'sa_still', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the Still Archive' },
     music: [{ if: 'sa_hush_down', id: 'wonder' }, { id: 'hush' }],
     ambient: stillAmbient({ weather: null, tint: 'rgba(160,180,230,0.10)', dark: 0.45 }, { weather: 'motes', tint: 'rgba(255,232,196,0.05)', dark: 0.2 }),
     terrain: K.build(30, 22, '#', (k) => {
@@ -325,7 +325,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- the Room of Set-Down Memories ----------------------------------------------------------------------------
   C.maps['sa.memories'] = {
-    name: T('The Room of Set-Down Memories', '{預|あず}けられた {記憶|きおく} の {部屋|へや}'), region: 'sa_still', noTravel: true,
+    name: T('The Room of Set-Down Memories', '{預|あず}けられた {記憶|きおく} の {部屋|へや}'), region: 'sa_still', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the Still Archive' },
     music: [{ if: 'sa_hush_down', id: 'sorrow' }, { id: 'sorrow' }],
     ambient: stillAmbient({ weather: 'motes', tint: 'rgba(230,220,200,0.06)', dark: 0.2 }, { weather: 'motes', tint: 'rgba(255,232,196,0.08)', dark: 0.1 }),
     terrain: K.build(24, 18, '#', (k) => {
@@ -369,7 +369,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- Kasane's study ---------------------------------------------------------------------------------------------
   C.maps['sa.study'] = {
-    name: T("The Keeper's Study", 'カサネ の {書斎|しょさい}'), region: 'sa_still', noTravel: true,
+    name: T("The Keeper's Study", 'カサネ の {書斎|しょさい}'), region: 'sa_still', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the Still Archive' },
     music: [{ if: 'sa_hush_down', id: 'wonder' }, { id: 'mystery' }],
     ambient: stillAmbient({ weather: null, tint: 'rgba(230,220,200,0.05)', dark: 0.35 }, { weather: null, tint: 'rgba(255,232,196,0.06)', dark: 0.2 }),
     terrain: K.build(15, 12, '#', (k) => {
@@ -401,7 +401,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- the Heart of the Hush -----------------------------------------------------------------------------------------
   C.maps['sa.heart'] = {
-    name: T('The Heart of the Hush', '{静寂|しじま} の {芯|しん}'), region: 'sa_still', noTravel: true,
+    name: T('The Heart of the Hush', '{静寂|しじま} の {芯|しん}'), region: 'sa_still', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the Still Archive' },
     music: [{ if: 'sa_hush_down', id: 'finale' }, { id: 'hush' }],
     ambient: stillAmbient({ weather: 'pages', tint: 'rgba(190,196,236,0.14)', dark: 0.4 }, { weather: 'motes', tint: 'rgba(255,226,186,0.10)', dark: 0.15 }),
     terrain: K.build(25, 20, 'x', (k) => {
