@@ -192,7 +192,7 @@ if (VIDEO) {
   const dir = path.join(out, 'video');
   fs.mkdirSync(dir, { recursive: true });
   for (const self of [true, false]) {
-    const ctx = await b.newContext({ viewport: { width: 960, height: 600 }, recordVideo: { dir, size: { width: 960, height: 600 } } });
+    const ctx = await b.newContext({ viewport: { width: 1280, height: 800 }, recordVideo: { dir, size: { width: 960, height: 600 } } });
     const { p } = await page(b, url, { context: ctx });
     await p.evaluate(async ([BASE, self]) => {
       RB.game.debugStart('sg.office', 5, 6, { comp: 'mio', flags: Object.assign({}, BASE, self ? { sg_wataru_self: true } : {}), dir: 'up' });

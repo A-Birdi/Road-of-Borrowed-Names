@@ -64,10 +64,10 @@ RB.staging = (function () {
   // and constrained (fewer, politer exchanges), the Archive road and the Still Archive are quiet. A mood
   // slows the pace of habits, lowers how readily people turn to each other and narrows what they say.
   const MOODS = [
-    { map: /^lf\./, if: '!lf_bell_rung', pace: 1.4, social: 0.4, talk: ['nod', 'palm'] },
-    { map: /^(sa|sv)\./, pace: 1.6, social: 0.3, talk: ['nod'] },
+    { map: /^lf\./, if: '!lf_bell_rung', slower: 1.4, social: 0.4, talk: ['nod', 'palm'] },
+    { map: /^(sa|sv)\./, slower: 1.6, social: 0.3, talk: ['nod'] },
     // the inn full of people sheltering from the storm: tending, listening, resting — nobody bouncing
-    { map: /^sb\.inn$/, if: 'sb_storm&!sb_morning', pace: 1.3, social: 0.6, talk: ['nod', 'palm'], avoid: ['bounce', 'heeltap', 'hum', 'stretch', 'peek'] },
+    { map: /^sb\.inn$/, if: 'sb_storm&!sb_morning', slower: 1.3, social: 0.6, talk: ['nod', 'palm'], avoid: ['bounce', 'heeltap', 'hum', 'stretch', 'peek'] },
   ];
   function moodOf(m) {
     const s = RB.game.s;
@@ -79,7 +79,7 @@ RB.staging = (function () {
     if (!s.prof || s.map !== (m && m.id)) {
       const r = RB.mannerisms ? RB.mannerisms.forActor(a) : { prof: { class: 'town', idle: [], every: [12, 24], talk: [] }, stations: new Set() };
       const md = m && moodOf(m);
-      if (md) r.prof = Object.assign({}, r.prof, { every: (r.prof.every || [12, 24]).map((v) => v * md.pace), social: (r.prof.social || 0) * md.social, moodTalk: md.talk, moodAvoid: md.avoid || null });
+      if (md) r.prof = Object.assign({}, r.prof, { every: (r.prof.every || [12, 24]).map((v) => v * md.slower), social: (r.prof.social || 0) * md.social, moodTalk: md.talk, moodAvoid: md.avoid || null });
       s.prof = r.prof; s.stations = r.stations; s.map = m && m.id;
       s.rest = restFor(a, r.prof);
       s.next = null; s.n = {};
@@ -847,7 +847,7 @@ RB.staging = (function () {
   }
   function examined(x, y) { st.examine = { x, y, t: T() }; }
   if (RB.bus) {
-    RB.bus.on('map:enter', () => { st.arrival = { t: T() }; st.lastMap = null; });
+    RB.bus.on('map:enter', () => { st.arrival = { t: T() }; st.lastMap = null; st.lastMove = T(); st.shared = null; });
     RB.bus.on('campaign:changing', () => { st.scene = null; st.trace = []; st.pairs.clear(); st.stats = fresh(); });
   }
 

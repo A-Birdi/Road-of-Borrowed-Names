@@ -8,6 +8,7 @@
 // - the idle life yields at once to a scene (the next frame has no habit running) and to the player moving;
 // - two neighbours turn to each other for a word (social ambience: they face each other while it lasts);
 // - a wanderer pauses on their round (a route habit);
+// - shared stillness: standing still facing something, your companion looks at it too, a beat after you;
 // - people off screen do nothing; with reduced motion nobody starts a habit and the picture holds still;
 // - the same seed gives the same choices per person in two fresh pages; another seed does not;
 // - frame time with the actor system on and off on the busiest square, the per-tick cost of the scheduler,
@@ -195,6 +196,24 @@ console.log('     profiles met: ' + JSON.stringify(tiers));
     return RB.staging.trace().filter((e) => e.why === 'route').map((e) => e.who + ':' + e.h);
   });
   ok(rp && rp.length >= 1, 'a wanderer pauses on their round (' + (rp || []).slice(0, 4).join(', ') + ')');
+  // shared stillness: you stand facing something you could look at; a beat later your companion looks too
+  const sh = await p.evaluate(async () => {
+    const W = RB.world.W, m = W.map;
+    const free = (x, y) => !RB.maps.blockedStatic(m, x, y) && !RB.maps.exitAt(m, x, y) && !W.npcs.some((n) => n.x === x && n.y === y) && !m.triggers.some((t) => x >= t.x && x < t.x + t.w && y >= t.y && y < t.y + t.h);
+    const pr = m.props.find((q) => (q.text || q.scene) && !q.if && free(q.x, q.y + 1) && free(q.x, q.y + 2));
+    if (!pr) return null;
+    RB.staging.seed(31);
+    RB.world.enter(m.id, pr.x, pr.y + 1, 'up');
+    const t0 = performance.now();
+    let seen = null;
+    while (performance.now() - t0 < 6000 && !seen) {
+      const r = W.comp && W.comp.stg && W.comp.stg.run;
+      if (r && r.tag === 'shared' && W.time >= r.t0) seen = { prop: pr.p, after: Math.round(performance.now() - t0), compDir: (RB.staging.frameOf(W.comp, performance.now(), false, 'i0') || {}).dir };
+      await new Promise((r) => setTimeout(r, 50));
+    }
+    return seen;
+  });
+  ok(sh && sh.after >= 2000, 'standing still facing something, your companion turns to look at it too, a beat after you (' + JSON.stringify(sh) + ')');
   ok(errors.length === 0, 'no page errors' + (errors.length ? ': ' + errors.slice(0, 3).join(' | ') : ''));
   await p.context().close();
 }

@@ -1623,3 +1623,94 @@ fresh profiles; no player save was used; nothing was checked in Firefox.
   151 ok, ui 14/14, world_fixes 15 ok, departures 20 ok, quest_guide 55 ok, known 22 ok, atlas.check 15 ok.
 - **The lead's runs on the merged build:** on 96b60fd: validator no errors; unit 22,067/0; travel_rules 10/10; systems 4/4; folio all ok; lighthouse_top 76/76; battle_overlap all ok.
 - **Not verified:** the Atlas message in a browser; Firefox, Safari or a real phone.
+
+## Overworld actor system — expressive addenda, work packages D and (a) (poses, gestures, mannerisms, idle life, scene direction; the world review's WR-01, WR-03, WR-06)
+Built in a worker branch on the task branch at 6306dfa. The design, the scheduler's rules and the legibility of each
+primitive at play scale are in docs/expressive/GESTURES.md §9; the ledger rows are HX28–HX38 and WI1–WI24 in
+docs/expressive/CONTRACT.md. Every browser run below was in headless Chromium on Linux (Playwright) with synthetic
+campaigns started in fresh profiles; no player save was used; nothing was checked in Firefox, Safari or on a phone.
+Other workers' browser runs shared the machine, so the timings are noisy.
+- **Change:**
+  - **Pose layer** (`src/engine/32g_spritepose.js`, hooks in `32_spriteart.js`): 118 named key poses and 25 held
+    objects drawn from the walking figure's own parts at 40 × 58, cached per look × direction × key (LRU, cap 900).
+  - **Gestures** (`51_gestures.js`): the 32 primitives of §11.2 (entry → peak → recovery, 250–700 ms to the peak,
+    handovers 600–1,200 ms, a held key pose for reduced motion) and 44 idle habits and occupation loops.
+  - **Profiles** (`51_mannerisms.js`, `src/content/mannerisms/10_cast.js`): 12 class overlays, 76 authored
+    profiles (26 bespoke); everyone else derived from station and tool, never from glasses, age, dress, gender or
+    skin tone.
+  - **Scheduler and scene cues** (`52_staging.js`, hooked into `50_world.js`, `60_render.js`, `70_script.js`):
+    idle life on screen only, capped, seeded per person; restraint moods (Lanternfall before its bell, the Archive
+    road, the Snowbell inn on the storm night); everything yields at once to a scene, a key, a battle, a menu or a
+    map change; a tool in hand stays in hand through a conversation.
+  - **Script ops** `!gesture !look !pose !walkto !prop !beat !ambience` (validator, quest guide's command list).
+  - **Staged:** `sg.omi_wataru` (both routes × 4 companions), Ch1 `rw.hana_first`, Ch3 `co.suzu_night` (the
+    faded passage of SHOTS.md §7b: the night line is said over the room), Ch4 `sb.yae`, Ch5 `lf.mio_refuse`, Ch6
+    `sa.isamu_return`, and Hiro's working introduction `co.hiro_first` (WR-03). No line, condition, reward or
+    `!music` cue changed. Practice B's reference into `sg.omi_wataru` moved to command 34 (same line).
+  - **Shared random state:** world blink and glance timers (`50_world.js`) and the weather (`60_render.js`) now
+    draw from their own xorshift streams, and the scheduler from per-person seeded hashes; nothing in the actor
+    system calls `Math.random`, which picks language tasks. Foes' patrol steps still use it (outside this package).
+- **U `tests/unit/actors.test.mjs` (new): 180/180.** The library is complete (32 primitives, one per number,
+  timings, a held pose each, legibility recorded); every primitive drawn for 7 looks × 3 views (no blank frame,
+  every standing pose on the foot anchor, nothing touching the frame edge, every `full` primitive's peak changes
+  at least 10 art px from the front and the side); a cane hand never leaves the cane; frame-key parsing; the
+  cache is bounded; 76 profiles, every habit, tell and stance real; every overworld NPC placement (190+) has a
+  profile it can live by; the ops parse and none is a state op in disguise; two simulated minutes in Reedwake are
+  deterministic per seed, never more than four people busy; a scene stops idle life at once; cues take people for
+  the scene, an early advance settles them, holds and chains settle to their peak, the scene's end releases them.
+- **U** full suite on the final build: **23,994/0**. The first full run failed 1 check in
+  `pace_noclock.test.mjs`: the restraint moods had a key named `pace:`, which that test's source scan reads as a
+  pace option for the challenge runner. Renamed `slower:`; 23,994/0 after.
+- **Validator** on the final build: no errors (15 warnings, none from the new ops). Scene manifest regenerated.
+- **B `tests/e2e/actor_life.mjs` (new, in run.mjs): 39/39.**
+  - One representative area per chapter (rw.village, sg.harbor, co.eve, sb.hamlet, lf.gardens, sa.camp), 16 s
+    each: 2–12 people change their drawn pose; at most 1–2 things at once against a cap of 1–4; nobody off screen
+    does anything; no page errors.
+  - The player idles after a few seconds still, and a key press clears the player's and the companion's idles at
+    once; a line opening stops every habit by the next frame; two neighbours turn to face each other for a word; a
+    wanderer pauses on their round; standing still facing a noticeboard, the companion turns to look at it about
+    2.7 s later (the shared stillness, at most once a minute).
+  - Reduced motion: nobody starts a habit, every drawn pose holds still, resting stances still show.
+  - The same seed gives the same choices per person in two fresh pages (13/13); another seed does not (2/9 alike).
+  - Contact sheets from the dev viewer (`?dev=actors`, labelled synthetic).
+- **B `tests/e2e/actor_workplaces.mjs` (new, runs on its own, about 5 min): 29/29.** Each workplace watched 45 s
+  from the door in a real story state (the world review's WR-01): the Harbourmaster's office before the
+  confession (Omi writes, the brush in her hand), the Cinder glass workshop before the festival (Hiro turns the
+  blowpipe and works the gather; Isao observes), the Snowbell inn on the storm night (Yae stirs and counts; the
+  sheltering guests look to the road, nobody bounces), the Lanternfall bakery before the bell (Masaru only checks
+  and counts: his kneading waits on the bakery props, TODO in his profile), the Archive camp (Isamu sits by the
+  fire). No routine moves anyone off their place or into a doorway; at most 1–3 things at once. Talking to Omi,
+  the brush stays in her hand, she faces you and no habit plays; she writes again about 2 s after (1.9 and 2.1 s in two runs). Hiro keeps
+  the pipe turning on "can't let go of this", holds the gather still to cool when he says he will listen, and
+  goes back to the pipe about 3.9 s after the scene. Observation log: `docs/screenshots/actors/workplaces.txt`.
+- **B `tests/e2e/staging_wataru.mjs` (new, in run.mjs): 112/112.** `sg.omi_wataru` on both routes with each of
+  the four companions: the scene plays to its end with the lines and the conditional line as written; Omi's
+  acknowledgement once, on his own route; Wataru takes the forward place before his first line; the notice
+  passes from your hand to his and he reads it; the companion reacts in their own way (Suzu's lowered head only
+  when she is there; her hand-on-hip stance never shows); nobody shares a tile or stands on furniture; no idle life
+  during the scene; the office plausible at the end; staged and unstaged runs end in the same flags, inventory,
+  quests, variables, notes and seen scenes. Also: the cue log per line, a fast reader (every cue settles on an
+  early advance, no waits), and reduced motion (held key poses).
+- **B `tests/e2e/staging_chapters.mjs` (new, in run.mjs): 66/66.** `rw.hana_first` (both replies),
+  `co.suzu_night` (both replies: "That night, Suzu is sitting alone…" is said over the room, not a black screen;
+  she sits on the raised floor's edge in the night ambience, which ends with the scene), `sb.yae`,
+  `lf.mio_refuse` (before and after the bell), `sa.isamu_return`: each plays to its end, the cued people perform,
+  nobody shares a tile or stands on furniture, no idle life during it, people back at their places and the
+  companion beside you after, the same end state staged and unstaged, no page errors.
+- **Other runs on the final build:** characters 23/23, departures 20 ok, world_view 20 ok, town_animals 41/41,
+  quest_guide 55 ok (its screenshots restored afterwards), story_ch1 F mio PASS (31 checks), interludes 76/76,
+  practice_b 6/6.
+- **Performance** (actor_life, the Cinder Orchard eve, 14 people, 1280 × 800, 300 frames of world update +
+  render each way, over several runs): with the actor system p50 1.9–2.3 ms, p95 3–6.7 ms; with it switched off p50
+  1.9–2.1 ms, p95 2.9–6.8 ms (the difference is inside the noise of a shared machine); the scheduler 0.09–0.12 ms a
+  tick on average (max 0.4–3.1 ms); 35 posed frames built on that square (cap 900), the slowest 5–12 ms, once,
+  the first time a pose appears.
+- **Evidence:** `docs/screenshots/actors/`: `gestures_*_down.png`/`_right.png` (the 32 primitives, entry · peak ·
+  recovery), `profiles_bespoke.png`, `profiles_overlay.png`, `life_ch1…6_*.png`, `workplace_*.png` and
+  `workplaces.txt`, `wataru_self_*.png`/`wataru_party_*.png`, `ch1_…ch6_*.png`; clips in `video/`:
+  `idle_life_co_eve.webm` (14 s of the eve's square), `wataru_omi_self_route.webm`, `wataru_omi_party_route.webm`
+  (the scene with Mio, about 37 s each, 1280 × 800 scaled to 960 × 600).
+- **Not verified:** Firefox, Safari, a phone; a person's judgement of the poses at play scale (the legibility
+  grades are my reading of the contact sheets plus the unit test's pixel floor); Masaru's kneading (the bakery
+  props are another worker's); the staged scenes approached from another side, with an absent actor, or on a
+  revisit; the other "Performed overworld" scenes of the manifest (the game-wide staging package).
