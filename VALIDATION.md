@@ -1975,3 +1975,12 @@ contract and the landmarks; tested in a scratch worktree before fast-forwarding)
 - Firefox; a physical phone; a person's judgement of the performances and the portrait's timing.
 - 200 % text beyond the slider's 150 %: it was reached only by setting `textScale` to 2.
 - Painted art other than the synthetic sample.
+
+**The lead's runs on the merged build with the Harmony cut-in** (fast-forward to `95f4708`, plus a ledger commit):
+- Validator: no errors. The rebuilt index.html is byte-identical to the committed one.
+- Unit: 24,315/0.
+- Browser:
+  - harmony_cutin 10/10 (without `--docs`, so the worker's eleventh section, the evidence writer, did not run);
+  - harmony_raster 21/21; harmony_art 39/39;
+  - battle_settings 10/10; battle_overlap all ok; combat_ui 7/7; playtest_repairs 7/7;
+  - portrait_anim all passed; actor_life 39/39; landmarks 54/54.
