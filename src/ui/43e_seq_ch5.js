@@ -159,15 +159,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- the chamber: stone, water, pipes ---------------------------------------------------------------------
   const STONE = '#3e4460', WATER = ['#16303e', '#132a37', '#112532', '#0f202c', '#0d1c27', '#0b1822'];
-  // a wall of great dressed blocks, courses running across, damp streaks; light(x, y) adds the lamp's warmth
+  // a wall of great dressed blocks, courses running across; light(x, y) adds the lamp's warmth
   function blocks(L, x0, y0, x1, y1, s, M, light, seed, big) {
     const bh = Math.max(5, s(big ? 26 : 18)), bw = Math.max(10, s(big ? 58 : 40));
     L.rect(x0, y0, x1 - x0, y1 - y0, M, (x, y) => {
       const row = Math.floor((y - y0) / bh), off = (row % 2) * bw * 0.5 + hashf(row, 0, seed) * bw * 0.3, u = (x - x0 + off) % bw, v = (y - y0) % bh;
       if (v < 1 || u < 1) return 0.04;
       const n = hashf(Math.floor((x - x0 + off) / bw), row, seed || 3);
-      const damp = vnoise(x / (bw * 0.1), y / (bh * 1.6), seed + 1) < 0.16 ? -0.07 : 0;
-      return clamp(0.24 + n * 0.12 + damp + (light ? light(x, y) : 0) + (v < 2 ? 0.06 : v > bh - 3 ? -0.06 : 0) + (u < 2 ? 0.04 : 0), 0, 0.999);
+      return clamp(0.24 + n * 0.12 + (light ? light(x, y) : 0) + (v < 2 ? 0.06 : v > bh - 3 ? -0.06 : 0) + (u < 2 ? 0.04 : 0), 0, 0.999);
     });
   }
   // a pipe standing in the water and climbing the wall: flanges, bolts

@@ -291,6 +291,18 @@ lines (368–372) are staged in the world (GESTURES.md: arms folded, looking at 
 
 ---
 
+**As built** (`src/ui/43e_seq_ch5.js`; the plan above holds except where said): line numbers are now 326 → the
+first `narr`. The `!shake` that stood after `!sfx bell` is gone from the scene (a `#` note marks its place): the
+validator rejects one inside a sequence and the runner never fires it there, so the gong shot's swing is the stone's
+shake (this is the one line of the scene that is not an added op). `!shot gong` stands at `:ring`, before `!music -`
+and the first bell, so the picture changes with the sound; `!shot town` before the second `!sfx bell`. The hall
+shot is three-quarter from across the water (not the bell shot's framing again) and has four phases: `voice` (a ring
+on the empty water — nobody), `turn` (you and your companion turn from the bell to the water), `aside` (the
+companion's own gesture: Nao a hand to the ear, Mio a hand to the heart, Ren the lamp lifted, Suzu the hands
+clasped) and `ebb` on line 364 (the water drawing back down the stones). The bell is green in shots 1–2, the green
+shaken off its lip by the stroke in shot 2, gold in shot 4 (as the world shows it once rung). "Not yet" ends the
+scene with the sequence open: it is disposed and the picture dissolves back into the chamber.
+
 ## 6. Chapter 6 — Tōya's four words read in context (`sa.toya_read`)
 
 `src/content/ch6/52_scenes_climax.js` line 113; called from `sa.after_battle` (`:have`) or `sa.after_return`
@@ -322,6 +334,17 @@ Set-Down Memories (performed in the world). Found in passing (not changed): line
 the item's description says so too) — a content question for the lead.
 
 ---
+
+**As built** (`src/ui/43f_seq_ch6.js`): line numbers now one later than above (the scene's `!music` comes first).
+Kasane kneels on the paper floor among the pages (their portrait over a pooled robe), since the papers are laid out
+on the floor; you and your companion are seen from behind. Shot 3 turns the slip over on the line about its front
+("The front says, in my own hand…", 121 now), not on the first line of the shot: the reveal waits for its line;
+its first phase is Kasane's surprise as they read it. Shot 4 starts on "You take out the little bell…" (your open
+hand with the bell), rings on "Kasane rings it once" and is held out to you again on "Please keep it" — all three
+`?(item.lf_toya_bell)`. Shot 5 has a third phase, `aside`, before the companion's answer (Nao's hand to the
+satchel's strap, Mio's hand held out, Ren's lamp raised, Suzu one finger up). The writing on the papers is marks
+only: Kasane's neat hand as columns of small dashes, Tōya's four hurried words as four slanted ink blots. Line 127
+now says Tokuji gave the bell (the content question above is settled in the source).
 
 ## 7. The prologue — manual advancement (§17.5)
 
@@ -363,7 +386,7 @@ or with performed overworld movement (the actor system). Decide each with the sa
 | `co.festival_begin` (ch3) | a whole morning of village labour (four lines) | **Gap**: an illustrated sequence (the terraces, the water gate, the cut firebreaks, the new rope on the tower). Candidate for joining Chapter 3's sequence. |
 | `sb.quiet_morning` (ch4) | the storm night ending ("at some point the wind stopped") | **Darkness intended** (sleep and the storm's end); keep the black, possibly a single quiet window shot as the light returns. |
 | `sb.next_day_inn` (ch4) | a night at the inn, lights on the mountain | Mostly time passing; a **single shot** of the window and the mountain lights would carry it better than black. |
-| `lf.boat_to_tower` (ch5) | rowing across the still lake to the bell tower | **Gap**: an illustrated crossing shot (the boat, the oar, the drowned town below the surface, the tower ahead). |
+| `lf.boat_to_tower` (ch5) | rowing across the still lake to the bell tower | **Filled**: the sequence `ch5.boat` (`src/ui/43e_seq_ch5.js`) — begun in the dark of the scene's own fade (the dark lifts over the picture and comes back before the warp, which brings the tower top in as written): a cut at the water's surface, Tokuji's boat in profile with you at the oars and your companion in the bow, the drowned lower town under it, the tower ahead with the green bell in its belfry; the stroke is the shot's one-time action. One composition: the passage has one line. "Not yet" starts nothing. |
 | *(and any later `!fade out` added with lines in the dark)* | — | The sequence worker re-runs this audit from source and keeps the table current. |
 
 ## 8. Audit: personal questlines, long questlines, endings, The Pages We Keep (§17.2 last paragraph)

@@ -15,15 +15,16 @@
 // shake fires; at 1280×720, 390×844 and 844×390 every shot's focal area stays above the dialogue sheet at every line.
 // Challenges (other than the one left for later) are answered by the game's own test solver (RB.test.solveStep
 // through the real answer checker), wrapped round RB.challenge.run for the run.
-// Usage: node tests/e2e/sequence_chapters_56.mjs [--only ch5.bell,ch6.toya] [--shots]
-//   --shots: also write the evidence stills (each shot at its hold, three sizes) to docs/screenshots/sequences/
+// Usage: node tests/e2e/sequence_chapters_56.mjs [--only ch5.bell,ch6.toya] [--shots | --shots-only]
+//   --shots: also write the evidence stills (each shot at its hold, three sizes) to docs/screenshots/sequences/;
+//   --shots-only: only the three-size runs (section 4) and their stills
 import fs from 'node:fs';
 import path from 'node:path';
 import { serve, launch, page, root } from './lib.mjs';
 
 const args = process.argv.slice(2);
 const oi = args.indexOf('--only'), ONLY = oi >= 0 ? args[oi + 1].split(',') : null;
-const SHOTS = args.includes('--shots');
+const SHOTS = args.includes('--shots') || args.includes('--shots-only'), SHOTS_ONLY = args.includes('--shots-only');
 const IDLE = 8000;
 const OUT = path.join(root, 'docs/screenshots/sequences');
 const { srv, url } = await serve();
@@ -175,7 +176,7 @@ async function play(p, R, o) {
 }
 
 // ---- 1. every branch, played through with real clicks ---------------------------------------------------------
-for (const R of RUNS) {
+for (const R of SHOTS_ONLY ? [] : RUNS) {
   const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 720 } });
   await start(p, R);
   const r = await play(p, R, { check: true });
@@ -202,7 +203,7 @@ const SEQS = [
   { seq: 'ch5.boat', R: RUNS.find((x) => x.seq === 'ch5.boat' && x.shots.length), idleAt: /row out/, stopAt: 'end' },
   { seq: 'ch6.toya', R: RUNS.find((x) => x.seq === 'ch6.toya' && x.bell), idleAt: /folio/, stopAt: 'challenge' },
 ].filter((x) => x.R);
-for (const X of SEQS) {
+for (const X of SHOTS_ONLY ? [] : SEQS) {
   const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 720 } });
   await start(p, X.R);
   // to the first line of the sequence (answering the reply that leads into it)
@@ -271,7 +272,7 @@ for (const X of SEQS) {
 }
 
 // ---- 3. reduced motion: each action's end state at once after the dissolve; no shake ------------------------------
-for (const X of SEQS) {
+for (const X of SHOTS_ONLY ? [] : SEQS) {
   const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 720 } });
   await start(p, X.R, { reduce: true });
   const notHeld = [];
