@@ -158,3 +158,13 @@ Captures made by `tests/e2e/kanji_chart.mjs` and `tests/e2e/pad_kanji.mjs`
 | Foundations, Words › Kanji chart, practising 守 (390×844) | [image](after/kanji_chart/foundations_practice_390x844.webp) |
 | 320×640, 200 % text: list, search, entry, practice | [list](after/kanji_chart/list_320x640_text200.webp) · [search](after/kanji_chart/search_320x640_text200.webp) · [entry](after/kanji_chart/entry_320x640_text200.webp) · [practice](after/kanji_chart/practice_320x640_text200.webp) |
 | A kanji outside the game (弦) with kanji reading on: the closest kanji to pick from | [image](after/kanji_chart/pad_outside_kanji_390x844.webp) |
+
+## Dialogue portraits as they are (2026-10-03, expressive addenda Phase A)
+
+Captured from `index.html` at `20277f1` in headless Chromium (device-pixel-ratio 1) by calling
+`RB.portraits.draw()`; evidence for docs/expressive/PORTRAITS.md §3 (eye-area readability).
+
+| What | Image |
+|---|---|
+| 12 characters × 10 expressions at 128 CSS px | [image](expressive/portraits_grid.png) |
+| Ren, Suzu, Ōmi, Tsuru at the dialogue's 116 / 84 / 64 px | [image](expressive/portraits_sizes.png) |
