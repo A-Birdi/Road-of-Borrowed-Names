@@ -579,7 +579,8 @@
    ],
    "comp": [],
    "hair": [
-    "hair"
+    "hair",
+    "clothTrim"
    ],
    "hair_wrap": [
     "hair",
@@ -788,14 +789,14 @@
     "#8ad88a"
    ],
    "clothTrim": [
-    "#0a3a44",
+    "#004e60",
     "#12687a",
     "#22a0b4",
     "#5ccce0",
     "#a8f0f8"
    ],
    "hair": [
-    "#2a0a3a",
+    "#3c0a5c",
     "#5a1470",
     "#8a24a0",
     "#b848c8",
@@ -816,6 +817,10 @@
    "#dcae84",
    "#f2d0a8"
   ],
+  "keyV1": {
+   "clothTrim0": "#0a3a44",
+   "hair0": "#2a0a3a"
+  },
   "mask": {
    "accessory": "#ff00ff",
    "clothMain": "#0000ff",
@@ -2675,12 +2680,12 @@
   "generator": "tools/harmony_registry.mjs",
   "git": {
    "branch": "worktree-agent-a4994cdf0f0b71e12",
-   "commit": "01682d2aef84dd0613db5fb09c45b76b718e4b91",
+   "commit": "d8f44b3c2a5f99dc2b3b6d796c9a75a662f68e92",
    "dirty": false
   },
   "indexHtml": {
-   "bytes": 9997551,
-   "sha256": "6822d9d0270bc33768a1c1520ad64d6e78ad655b6450d0721c36e98994cf9214"
+   "bytes": 10027202,
+   "sha256": "17b261e081f9ed12b6177ef9f4df1b366fa1482c94d4414d4c76ffeba216b13a"
   },
   "note": "git.commit is HEAD when exported; the export is committed with or after it. indexHtml is the build it was read from.",
   "renderer": [

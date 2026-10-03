@@ -385,12 +385,23 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
 - **What exists:** the brief (docs/harmony/ASSET_BRIEF.md) and the reference sheets and templates in
   docs/harmony/asset_brief/ (`node tests/e2e/harmony_asset_refs.mjs`). The owner also has a published page with
   a prompt builder.
-- **Plan:**
-  - Batch 1 (Suzu plus one preset player) becomes a playable proof first.
-  - Then the other companions, the layered player kit in key ramps, and wear.
-  - Native bust 192×160, pair 352×160; frames enter, flourish, hold, blink.
-- **The overlay worker** was told to read sizes from `NATIVE`/`fitScale()` only, and to treat the phase list as
-  data.
+- **Contract v2, machine side (built 2026-10-03; REQUIREMENTS.md HB3–HB8; VALIDATION.md "Harmony painted art — contract v2"):**
+  - The authority on formats is docs/harmony/contract/CONTRACT.md; its data is `RB.harmonyContract`
+    (src/ui/88_harmony_contract.js), which the importer also loads. Bust 192 × 160 (companion turned right, player
+    turned left), pair 352 × 160 (compact 248 × 128), states prep_a, prep_b, cue, peak, settle_a, settle_b with
+    `timeline(comp)`, layered player kit with masks, key ramps (skin key now orange; hair and trim s0 darker).
+  - `node tools/harmony_registry.mjs` → docs/harmony/contract/registry.json (86 required + 33 optional asset keys).
+  - `node tools/harmony_import.mjs <inDir> [--check]` (+ `--verify assets/harmony`): incoming batches go in
+    art/harmony/incoming/<batch>/ (ignored, not committed), normalised files in assets/harmony/, which the build embeds.
+  - Runtime: src/ui/88_harmony_raster.js behind `RB.harmonyArt`; with nothing installed the code busts are
+    pixel-identical and `PHASES` is ['enter', 'hold'] with no `timeline`.
+  - SYNTHETIC sample (not art): tests/fixtures/harmony_sample/ (`node tools/harmony_sample.mjs`), evidence in
+    docs/screenshots/harmony/raster_sample/, budgets in CONTRACT.md §10.
+  - docs/harmony/ASSET_BRIEF.md (the lead's) still describes v1 (enter/flourish/hold/blink, player facing right,
+    old skin key): it must be rewritten to the contract before the artist starts. The templates and palette sheet
+    in docs/harmony/asset_brief/ are already regenerated from the contract.
+- **The overlay worker** was told to read sizes from `NATIVE`/`fitScale()` only, to treat the phase list as
+  data and to use `timeline()` when it exists (its src/ui/82d_harmony_cutin.js is not on this branch yet).
 - **Never commit** the owner's mockup images.
 
 ## Commands
@@ -482,8 +493,10 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
 15. Settings in battle (2026-10-03), in Firefox: open the sheet mid-exchange (C or the button), change text speed and
    motion, close it, and check that the exchange continues. Try Load and Return to title from a boss. The other-tab Cancel path is
    untested.
-16. Harmony busts: when the owner's Batch 1 arrives, build `tools/harmony_import.mjs` and the raster path in
-   `RB.harmonyArt` (docs/harmony/ASSET_BRIEF.md §10). Then send the proof's evidence before asking for the rest.
+16. Harmony busts: rewrite docs/harmony/ASSET_BRIEF.md to contract v2 (CONTRACT.md). When Batch 1 arrives, put it
+   in art/harmony/incoming/batch1/, run `node tools/harmony_import.mjs art/harmony/incoming/batch1 --suggest`, fix
+   what the report lists (masks, offsets in import.json), import, build, then show the proof in a real battle with
+   the overlay before asking for the rest. Re-measure the budgets on real art (CONTRACT.md §10).
 
 ## Known issues / limits
 - No human handwriting samples tested (synthetic + font-derived only).

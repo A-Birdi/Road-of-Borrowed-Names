@@ -1729,3 +1729,31 @@ musical judgement is analysis.
 - **The lead's runs on the merged build b4a598e** (with interludes, travel, zone music, lighthouse and the Harmony art): unit 23,856/0; validator no errors; battle_settings 10/10; settings all ok; combat_ui 7/7; combat_small all ok; battle_overlap all ok; playtest_repairs 7/7; battle_presentation 13/13; shift_load_regression 18/18 (file://); harmony_art 39/39.
 - **The default suite** (run on b67d469, before this merge): 68/69 scripts passed. mill_road failed one check ("click the mill door: walked there and went in") while the whole suite was running. Run alone on 408c051 it passed 36/36. Treated as load-related; it has not recurred.
 - **Not verified:** Firefox; the "slot open in another tab, then Cancel" path (only the unreadable-slot path ran); the default suite as a whole on this build.
+
+## Harmony painted art — contract v2, machine side (the lead's brief of 2026-10-03; REQUIREMENTS.md HB3–HB8)
+- **What:** the exact contract the painted busts are checked against, and an importer and runtime path that work
+  with no art yet delivered. docs/harmony/contract/CONTRACT.md; `RB.harmonyContract` (src/ui/88_harmony_contract.js);
+  the registry export (tools/harmony_registry.mjs → docs/harmony/contract/registry.json); the importer
+  (tools/harmony_import.mjs, tools/harmony/*.mjs, no dependencies); the raster path (src/ui/88_harmony_raster.js and
+  hooks in 88_harmony_art.js); build embedding (tools/build.mjs); a SYNTHETIC sample (tests/fixtures/harmony_sample/).
+- **The worker's runs** (headless Chromium 141, a shared 4-core machine; on d8f44b3, this worktree):
+  - Validator: no errors. Unit, whole suite: 23,996/0. Of these, new: harmony_png 26/26, harmony_import 51/51,
+    harmony_raster 63/63; harmony_art 52/52 (unchanged test).
+  - Browser: `tests/e2e/harmony_raster.mjs` 21/21 (three runs, one with `--sheets`); `tests/e2e/harmony_art.mjs`
+    39/39 (unchanged test; its art_test_results.json was restored, not committed).
+  - The importer on the sample: 30/30 files, 0 errors, 11 warnings (outline snaps, the magenta key, the 1024 square's
+    centring); `--verify` ok. Grid detection exact at 1×, 2.5×, 3×, 4×, 5.333× (1024 / 192), 6.4×, and within the
+    noise at 4× and 5.333× with ±8 noise per channel (unit).
+  - Code path unchanged: a node hash over 144 code compositions, both backings, keys, sizes and scales was equal
+    before and after (unit and browser tests compare too); the asset-free build differs from 243069a's only in the
+    sections of 88_harmony_art.js and 88_harmony_cast.js (an opt-in `keepLayers` hook) plus the two new modules;
+    `--harmony` pointing at nothing gives a byte-identical build.
+  - The reference sheets were regenerated (`node tests/e2e/harmony_asset_refs.mjs`): the identity sheets came out
+    byte-identical; the templates and palette sheet changed to contract v2.
+- **Measured budgets:** CONTRACT.md §10 and docs/harmony/contract/budgets.json.
+- **Evidence:** docs/screenshots/harmony/raster_sample/ (every image labelled SYNTHETIC SAMPLE — not art).
+- **Not verified:** any real painted art (none delivered); the cut-in overlay (src/ui/82d_harmony_cutin.js, not on
+  this branch) playing `timeline()` in a legal battle — the API was matched to that worker's source, not run with
+  it; Firefox and Safari (`createImageBitmap` options, decoding); a real phone (compact scales are arithmetic);
+  the default browser suite as a whole on this build; the sample's look (it is code art, mirrored, with reversed
+  worn sides, and not a style reference).
