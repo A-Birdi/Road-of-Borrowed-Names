@@ -73873,7 +73873,7 @@ RB.harmonyCutin = (function () {
     if (op > 0 && !c.seen) { c.seen = true; S.displayed++; }
     c.el.style.opacity = String(Math.round(op * 1000) / 1000);
     c.el.style.transform = dx ? 'translate(' + dx + 'px,0)' : '';
-    if (c.trace.length < TRACE_CAP) c.trace.push([Math.round(el * 10) / 10, state[0], Math.round(op * 1000) / 1000, dx, ph[0]]);
+    if (c.trace.length < TRACE_CAP) c.trace.push([Math.round(el * 10) / 10, state[0], Math.round(op * 1000) / 1000, dx, ph]);
   }
   function dispose(why) {
     const c = cur;

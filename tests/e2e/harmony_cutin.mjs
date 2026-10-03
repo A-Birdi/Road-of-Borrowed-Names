@@ -16,6 +16,8 @@
 //   life      Skip, a hidden tab, a campaign change, word help opening, a resize mid-action
 //   cycles    20 techniques in one page: listeners, layers, timers and caches bounded
 //   dev       the ?dev=harmony viewer: refused on a normal page; labelled synthetic; plays each pairing
+//   painted   the painted path with its SYNTHETIC sample (Suzu): the art's timeline of states, sizes from the
+//             API, the compact pair at a fractional CSS scale on a 3× phone
 // With --docs: real-time WebM captures of each pairing at Normal (1280×720), frame sheets of each stage
 // performance with the portrait Off, and the 390×844 compact cut-in, in docs/screenshots/harmony/cutin/.
 // Usage: node tests/e2e/harmony_cutin.mjs [filter] [--docs]
@@ -86,8 +88,11 @@ async function install(p) {
       const hits = [];
       let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9, drawn = 0;
       for (let y = 0; y < c.height; y++) for (let x = 0; x < c.width; x++) if (d[(y * c.width + x) * 4 + 3] > 8) { drawn++; const X = r.left + x * sx, Y = r.top + y * sy; x0 = Math.min(x0, X); y0 = Math.min(y0, Y); x1 = Math.max(x1, X + sx); y1 = Math.max(y1, Y + sy); }
+      // (e: 1/50 of an art pixel — at a fractional scale the canvas's displayed size is rounded to the layout's
+      // 1/64 px, so a row that starts exactly 12 px away would otherwise count as inside by a few thousandths)
+      const e = 0.02;
       for (const R of HC.rects()) {
-        const ax = Math.floor((R.x - 12 - r.left) / sx), bx = Math.ceil((R.x + R.w + 12 - r.left) / sx), ay = Math.floor((R.y - 12 - r.top) / sy), by = Math.ceil((R.y + R.h + 12 - r.top) / sy);
+        const ax = Math.floor((R.x - 12 - r.left) / sx + e), bx = Math.ceil((R.x + R.w + 12 - r.left) / sx - e), ay = Math.floor((R.y - 12 - r.top) / sy + e), by = Math.ceil((R.y + R.h + 12 - r.top) / sy - e);
         let n = 0;
         for (let y = Math.max(0, ay); y < Math.min(c.height, by); y++) for (let x = Math.max(0, ax); x < Math.min(c.width, bx); x++) if (d[(y * c.width + x) * 4 + 3] > 8) n++;
         if (n) hits.push({ id: R.id, px: n, r: [Math.round(R.x), Math.round(R.y), Math.round(R.w), Math.round(R.h)] });
@@ -722,6 +727,66 @@ await test('dev viewer (?dev=harmony): refused on a normal page; on a dev page t
 });
 
 // ---------------------------------------------------------------------------------------------------------
+// The painted path (docs/harmony/contract/CONTRACT.md) with its SYNTHETIC sample (tests/fixtures/harmony_sample:
+// Suzu and the player only), installed into the page as a build with art embedded would: the overlay plays the
+// art's own timeline of states on the presentation clock, takes its sizes from NATIVE / fitScale / the canvas,
+// and on a phone at device pixel ratio 3 accepts the compact pair's fractional CSS scale.
+await test('painted sample (synthetic, Suzu): the art\'s timeline of states played in order (Normal, Fast; reduced motion: the last state alone); sizes from the API; 390×844 at device pixel ratio 3 — the compact pair at a fractional CSS scale; nothing covered', async () => {
+  const { importSet } = await import('../../tools/harmony/importer.mjs');
+  const dir = path.join(outDir, 'sample_assets');
+  const imp = importSet(path.join(root, 'tests/fixtures/harmony_sample/incoming'), { out: dir, replace: true });
+  assert(imp.report.ok, 'the synthetic sample imports ' + JSON.stringify(imp.report.summary));
+  const files = {};
+  for (const f of fs.readdirSync(dir).filter((f) => f.endsWith('.png'))) files[f] = fs.readFileSync(path.join(dir, f)).toString('base64');
+  const assets = { manifest: imp.manifest, files };
+  const rows = [], bad = [];
+  for (const v of [{ w: 1280, h: 720, anim: 'normal' }, { w: 1280, h: 720, anim: 'fast' }, { w: 1280, h: 720, anim: 'normal', reduce: true }, { w: 390, h: 844, dpr: 3, anim: 'normal' }]) {
+    const tag = v.w + '×' + v.h + (v.dpr ? ' @' + v.dpr + 'x' : '') + ' ' + v.anim + (v.reduce ? ' reduced' : '');
+    const { p, errors, ctx } = await page(b, url, { viewport: { width: v.w, height: v.h }, dpr: v.dpr || 1 });
+    // (a look the sample covers: its player files are a coat or a robe with ponytail or curly hair)
+    await setup(p, { comp: 'suzu', knots: 6, pc: 8, anim: v.anim, reduce: !!v.reduce, look: { skin: 1, hair: 'ponytail', hairColor: 3, outfit: 2, shape: 'coat', acc: ['glasses', 'flower'] } });
+    const inst = await p.evaluate(async (assets) => {
+      const r = RB.harmonyRaster.install(assets);
+      const look = RB.equip.look(RB.game.s);
+      await RB.harmonyArt.prepare([{ comp: 'suzu', look, variant: 'standard' }, { comp: 'suzu', look, variant: 'compact' }], { async: true });
+      return { ok: r.ok, errors: r.errors, active: RB.harmonyRaster.active(), timeline: RB.harmonyArt.timeline ? RB.harmonyArt.timeline('suzu') : null, native: RB.harmonyArt.NATIVE, dpr: devicePixelRatio };
+    }, assets);
+    if (!(inst.ok && inst.active && Array.isArray(inst.timeline) && inst.timeline.length >= 3)) { bad.push(tag + ': not installed ' + JSON.stringify(inst).slice(0, 300)); await ctx.close(); continue; }
+    let held = null;
+    const r = await technique(p, 'suzu', { every: 1, during: async () => {
+      await p.waitForFunction(() => RB.harmonyCutin.state().state === 'holding', null, { timeout: 8000, polling: 'raf' });
+      held = await p.evaluate(() => { const e = document.querySelector('.cb-cutin'), q = e.getBoundingClientRect(), s = RB.harmonyCutin.state(); return { cw: e.width, ch: e.height, css: [+q.width.toFixed(2), +q.height.toFixed(2)], top: +q.top.toFixed(2), scale: s.scale, variant: s.variant, fit: s.fit, phase: s.phase, rect: s.rect, footprint: s.footprint, relaid: RB.harmonyCutin.stats().relaid, party: RB.harmonyCutin.protectedRects().filter((r) => r.id === 'party' || r.id === 'status').map((r) => [r.id, Math.round(r.x), Math.round(r.y), Math.round(r.w), Math.round(r.h)]) }; });
+    } });
+    const L = r.last;
+    // the states shown, in order (consecutive frames merged), against the timeline's own order
+    const seq = [];
+    for (const x of L.trace) if (seq[seq.length - 1] !== x[4]) seq.push(x[4]);
+    const SEGN = { in: 0, hold: 1, out: 2 };
+    const order = inst.timeline.slice().sort((a, b) => (SEGN[a.seg] + a.from) - (SEGN[b.seg] + b.from)).map((e) => e.phase);
+    const pos = seq.map((ph) => order.indexOf(ph));
+    const src = await p.evaluate(([look, phs, variant]) => phs.map((ph) => RB.harmonyArt.compose({ comp: 'suzu', look: JSON.parse(look), phase: ph, variant }).painted), [r.look0, seq, L.variant]);
+    const row = { view: tag, started: r.started, why: L && L.why, fit: L && L.fit, variant: L && L.variant, scale: L && L.scale, faceH: L && L.faceH, held, states: seq, timeline: order, painted: src, overlaps: r.frames.filter((f) => f.ov && f.state !== 'entering' && f.ov.length).length, checkedFrames: r.frames.filter((f) => f.ov).length, disposedAt: L ? markAt(L, 'disposed') : null, firstResult: firstResult(r) };
+    rows.push(row);
+    console.log('  ' + tag + ': ' + (L ? L.fit + ' ' + L.variant + ' ×' + L.scale + ', faces ' + L.faceH + ' px; states ' + seq.join(' → ') : 'none'));
+    if (r.started !== 1 || !L || L.why !== 'done') { bad.push(tag + ': one cut-in, done ' + JSON.stringify({ started: r.started, why: L && L.why, fb: r.fallback && r.fallback.reason })); await ctx.close(); continue; }
+    if (src.some((x) => !x || x.suzu !== 'painted' || x.pc !== 'painted')) bad.push(tag + ': every state shown is painted ' + JSON.stringify(src));
+    if (v.reduce) { if (seq.length !== 1 || seq[0] !== order[order.length - 1]) bad.push(tag + ': reduced motion — the last state alone ' + JSON.stringify(seq)); }
+    else {
+      if (pos.some((k) => k < 0) || pos.some((k, i) => i && k < pos[i - 1])) bad.push(tag + ': the states in the timeline\'s order ' + JSON.stringify({ seq, order }));
+      if (seq[0] !== order[0] || seq[seq.length - 1] !== order[order.length - 1] || new Set(seq).size < Math.min(4, new Set(order).size)) bad.push(tag + ': from the first state to the last, most of them seen ' + JSON.stringify({ seq, order }));
+    }
+    if (!held || held.cw !== inst.native[held.variant].w || held.ch !== inst.native[held.variant].h || Math.abs(held.css[0] - held.cw * held.scale) > 0.51 || Math.abs(held.css[1] - held.ch * held.scale) > 0.51) bad.push(tag + ': the canvas at the art\'s native size, shown at the placement\'s scale ' + JSON.stringify({ held, native: inst.native }));
+    if (v.dpr && !(held && held.variant === 'compact' && Math.abs(held.scale * v.dpr - Math.round(held.scale * v.dpr)) < 1e-6)) bad.push(tag + ': the compact pair at whole device pixels per art pixel ' + JSON.stringify(held));
+    if (row.overlaps) { const f = r.frames.find((f) => f.ov && f.state !== 'entering' && f.ov.length); bad.push(tag + ': ' + row.overlaps + ' frames within 12 px of a protected rectangle, e.g. ' + JSON.stringify({ ov: f.ov, vis: f.vis, pl: L.footprint })); }
+    if (!(row.disposedAt < row.firstResult)) bad.push(tag + ': gone before the first result ' + JSON.stringify({ disposedAt: row.disposedAt, firstResult: row.firstResult }));
+    if (errors.length) bad.push(tag + ': ' + errors.join('; '));
+    await ctx.close();
+  }
+  report.painted = { note: 'SYNTHETIC sample (tests/fixtures/harmony_sample), not the game\'s art', rows };
+  assert(!bad.length, bad.join('\n'));
+});
+
+// ---------------------------------------------------------------------------------------------------------
 // Evidence (--docs): real-time captures of each pairing at Normal (1280×720), and frame sheets of each stage
 // performance with the portrait Off (the presentation clock slowed ×0.25 so each sampled moment is exact).
 if (toDocs) await test('evidence: a real-time WebM of each pairing at Normal (1280×720); frame sheets of each stage performance with the portrait Off', async () => {
@@ -788,7 +853,7 @@ const rp = path.join(outDir, 'report.json');
 fs.writeFileSync(rp, JSON.stringify(report, null, 1));
 if (toDocs) {
   // the measured record kept with the evidence (timelines, placements, geometry, cleanup)
-  const keep = { when: report.when, browser: report.browser, cost: Object.fromEntries(COMPS.map((c) => [c, report['cost_' + c]])), setting: report.setting, core: report.core, geometry: report.geometry, plan: report.plan, frozen: report.frozen, life: report.life, cycles: report.cycles, devViewer: report.devViewer, never: report.never, videos: report.videos, sheets: report.sheets, timelines: Object.fromEntries(COMPS.map((c) => [c, report['timeline_' + c]])) };
+  const keep = { when: report.when, browser: report.browser, cost: Object.fromEntries(COMPS.map((c) => [c, report['cost_' + c]])), setting: report.setting, core: report.core, geometry: report.geometry, plan: report.plan, frozen: report.frozen, life: report.life, cycles: report.cycles, devViewer: report.devViewer, painted: report.painted, never: report.never, videos: report.videos, sheets: report.sheets, timelines: Object.fromEntries(COMPS.map((c) => [c, report['timeline_' + c]])) };
   fs.writeFileSync(path.join(docsDir, 'cutin_results.json'), JSON.stringify(keep, null, 1));
 }
 console.log(`\n${pass} passed, ${fail} failed`);

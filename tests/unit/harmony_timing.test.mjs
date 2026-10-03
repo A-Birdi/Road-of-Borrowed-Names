@@ -173,13 +173,16 @@ export default async (t) => {
   // the state shown at each moment of Normal and Fast, missing optional states holding the one before, reduced
   // motion the last state only; without a timeline the two drawings ('enter' arriving, then 'hold')
   {
-    const HC = RB.harmonyCutin._, ART = RB.harmonyArt;
+    // (RB.harmonyArt's timeline is a getter of the painted path: the stub is an object over it, swapped in and back)
+    const HC = RB.harmonyCutin._, REAL = RB.harmonyArt;
+    let stub = null;
+    const ART = { set timeline(fn) { stub = stub || Object.create(REAL); Object.defineProperty(stub, 'timeline', { value: fn, configurable: true, writable: true }); RB.harmonyArt = stub; } };
     const seq = (mode, reduce) => {
       const d = cut[mode], c = { comp: 'suzu', d, reduce }, out = [];
       for (let el = 0; el < sum(d); el += 1) { const ph = HC.phaseAt(c, el); if (!out.length || out[out.length - 1][0] !== ph) out.push([ph, el]); }
       return out;
     };
-    const had = ART.timeline;
+    const had = REAL.timeline;
     t.eq(seq('normal', false), [['enter', 0], ['hold', 240]], 'no timeline (today\'s art): the arrival drawing, then the hold resolved at 240 ms — unchanged');
     const FULL = [
       { phase: 'prep_a', seg: 'in', from: 0, to: 0.5 }, { phase: 'prep_b', seg: 'in', from: 0.5, to: 1 },
@@ -196,7 +199,8 @@ export default async (t) => {
       t.eq(seq('normal', false), [['prep_a', 0], ['cue', 180], ['peak', 260], ['settle_b', 481]], 'optional states left out: the one before is held (prep_a through the arrival, peak until settle_b)');
       ART.timeline = () => [];
       t.eq(seq('normal', false), [['enter', 0], ['hold', 240]], 'an empty timeline: the two drawings, as without one');
-    } finally { if (had) ART.timeline = had; else delete ART.timeline; }
+    } finally { RB.harmonyArt = REAL; }
+    t.ok(RB.harmonyArt === REAL && REAL.timeline === had, 'the real art API is back, untouched');
   }
   // the overlay's overlap test (pure): a row span inside an inflated rect is a hit, a transparent corner is not
   {
