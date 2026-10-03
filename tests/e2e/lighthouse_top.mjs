@@ -17,12 +17,15 @@
 //   not fading in, not walking); the stairs lead up only once the vane scene has happened;
 // - a save made at the top loads at the top with Genzō there;
 // - no page errors, no requests off the test origin.
-// Usage: node tests/e2e/lighthouse_top.mjs [--shots]   (--shots also writes docs/screenshots/lighthouse_top/*.webp)
+// Usage: node tests/e2e/lighthouse_top.mjs [--shots] [--slow]
+//   --shots also writes docs/screenshots/lighthouse_top/*.webp; --slow runs the game's clock at a quarter
+//   of real time (a machine too busy for 20 frames a second), which the waits must survive.
 import fs from 'node:fs';
 import path from 'node:path';
 import { serve, launch, page, root } from './lib.mjs';
 
 const SHOTS = process.argv.includes('--shots');
+const SLOW = process.argv.includes('--slow');
 const OUT = path.join(root, 'docs/screenshots/lighthouse_top');
 const { srv, url } = await serve();
 const b = await launch();
@@ -39,6 +42,8 @@ const VIEWS = [
 // A synthetic Chapter 2 campaign at the vane step (sg_main 6), in this page's fresh profile.
 async function start(p, o) {
   await p.evaluate(async (o) => {
+    // --slow: the game's clock at a quarter of real time, as on a machine too busy to draw 20 frames a second
+    if (o.slow && !window.__slow) { window.__slow = true; const up = RB.world.update; RB.world.update = function (dt, c) { return up.call(this, dt / 4, c); }; }
     if (o.auto === false) RB.test.disable(); else RB.test.enable({ battle: 'unravel', choose: () => 0 });
     RB.test.departures = []; RB.test.twice = []; RB.test.extras = []; RB.test.absentSpeakers = [];
     const s = RB.game.debugStart(o.map || 'sg.lighthouse', o.x == null ? 4 : o.x, o.y == null ? 7 : o.y, { comp: o.comp === undefined ? 'mio' : o.comp, flags: Object.assign({}, o.base, o.flags || {}), dir: o.dir || 'up' });
@@ -51,7 +56,7 @@ async function start(p, o) {
     if (o.pet) { RB.pets.meet(s, o.pet); RB.pets.select(s, o.pet); }
     RB.world.refreshActors();
     await new Promise((r) => setTimeout(r, 1000)); // past the map's settling-in moment
-  }, Object.assign({ base: BASE }, o));
+  }, Object.assign({ base: BASE, slow: SLOW }, o));
 }
 
 // Watches Genzō on every frame, after every refresh of the people on a map and after every map entry;
@@ -124,6 +129,22 @@ const where = (p) => p.evaluate(() => {
   };
 });
 async function talkTo(p, id) { await p.evaluate(async (id) => { await RB.test.talk(id); await RB.test.idle(); }, id); }
+// One step by real movement from x,y, then wait for its outcome: on `map` (and, if given, at the tile
+// `at`), nothing moving, no transition, no scene. The game's clock is capped at 50 ms a frame, so on a
+// busy machine a step and the map change after it take longer than any fixed wait (that race failed
+// three checks on the merged build); the outcome is what is waited for, then it is read.
+async function walk(p, x, y, dir, map, at) {
+  await p.evaluate(async ([x, y, dir]) => { await RB.test.idle(); RB.test.place(x, y, dir); await RB.test.step(dir); }, [x, y, dir]);
+  const settled = () => p.waitForFunction(([m, at]) => {
+    const W = RB.world.W;
+    return W.map && W.map.id === m && (!at || (W.player.x === at[0] && W.player.y === at[1])) && !W.player.mv && RB.game.mode() === 'world' && !RB.script.isRunning();
+  }, [map, at || null], { timeout: 20000, polling: 50 }).then(() => true, () => false);
+  let ok = await settled();
+  // still so a moment later (a change of map would have begun on arrival)
+  await p.waitForTimeout(400);
+  if (ok) ok = await settled();
+  return ok;
+}
 
 // Pixels of the world canvas (device px = css px here): a hash and the share of pixels unlike the floor in
 // the vane's box, sampled over `ms`; the sea outside the map: its mean colour and its whitecaps.
@@ -213,11 +234,11 @@ for (const V of VIEWS) {
     if (SHOTS) { await p.waitForTimeout(4500); await shot(p, 'after_' + V.name); } // once the notes about the word and the journal have gone
 
     // ---- 4. down the stairhead and back up (real movement) -------------------------------------------------
-    await p.evaluate(async () => { RB.test.place(1, 2, 'up'); await RB.test.step('up'); await new Promise((r) => setTimeout(r, 300)); });
+    await walk(p, 1, 2, 'up', 'sg.lighthouse', [1, 3]);
     const down = await where(p);
     ok(down.map === 'sg.lighthouse' && down.x === 1 && down.y === 3 && !down.up, tag + 'down the stairhead: on the ground floor below the stairs, Genzō no longer up (' + [down.map, down.x, down.y, down.up].join(' ') + ')');
     ok(down.genzo && down.genzo.id === 'genzo' && down.genzo.x === 5 && down.genzo.y === 4 && down.genzo.alpha === 1 && !down.leavers.length, tag + 'he came down with you: in his place, not fading in, nobody leaving (' + JSON.stringify(down.genzo) + ')');
-    await p.evaluate(async () => { RB.test.place(1, 3, 'up'); await RB.test.step('up'); await new Promise((r) => setTimeout(r, 300)); });
+    await walk(p, 1, 3, 'up', 'sg.lighthouse_top', [1, 2]);
     const up = await where(p);
     ok(up.map === 'sg.lighthouse_top' && up.x === 1 && up.y === 2 && !up.genzo && !up.up, tag + 'up the stairs again: at the stairhead, alone this time (' + [up.map, up.x, up.y, JSON.stringify(up.genzo)].join(' ') + ')');
     const G2 = await gz(p), H2 = await harness(p);
@@ -304,7 +325,7 @@ for (const V of VIEWS) {
   {
     const { p, errors } = await page(b, url, V.opts);
     await start(p, { x: 1, y: 3, dir: 'up' });
-    await p.evaluate(async () => { await RB.test.step('up'); await new Promise((r) => setTimeout(r, 300)); });
+    await walk(p, 1, 3, 'up', 'sg.lighthouse', [1, 2]);
     const w = await where(p);
     ok(w.map === 'sg.lighthouse' && w.x === 1 && w.y === 2, tag + 'before Genzō has shown you the top, the stairs do not take you up (' + [w.map, w.x, w.y].join(' ') + ')');
     ok(!errors.length, tag + 'no page errors (stairs)');
