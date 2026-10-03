@@ -2114,3 +2114,52 @@ fresh build):
 **Not verified:** Firefox, Safari, phones; a person's eye on the art (the contrast measure stands in for it); Atlas rooms
 from the same seed differ by a few props between page loads (269–271 kind/option combinations), which was not
 investigated.
+
+## Harmony contract v3 — the owner's Art Direction Correction, machine side (merged 2026-10-03; REQUIREMENTS.md HB9)
+
+**What** (worker branch, final 152411f; CONTRACT.md v3 and docs/harmony/contract/V3_REPORT.md have the full record):
+- **Key families with free values.** The importer classifies by family, using a relative OKLab distance (inner 0.31,
+  outer 0.34, margin 0.1), and keeps the painted colours. The runtime recolours each pixel along its family's curve and
+  keeps its hue/chroma residual (factor 1).
+- **A value floor of 0.05 L per step.** It opens 15 of the 63 target ramps that collapse at an extreme: white hair,
+  skin 6, some accessory colours. On those, neighbouring values stay ≥ ΔE 0.022 apart. The other 48 ramps give v2's tones
+  bit for bit for exact key shades.
+- **Fit on the visible footprint**, taken as the union over the timeline:
+  - 2048 × 1046 and 1680 × 1050 go from 1× to 2×, and 2560 × 1440 from 2× to 3×;
+  - compact sizes: 1648 × 840 and 1440 × 900 at 2×, 768 × 1024 at 2.5×, 844 × 390 at 1× (there the portrait is omitted:
+    no clear place).
+- **Reduced motion:** `peak` held, a 100 ms cross-fade, then `settle_b` held.
+- **Approval states** in the manifest, `stats()` and the dev viewer.
+- **Approved source art** goes in art/harmony/source/ (with PROVENANCE.md) and regenerates byte for byte.
+- **Batches 1a and 1b** in the registry.
+- **The checkerboard detector** is hardened (a grid fitted to light near-neutral pixels; it now catches padding
+  checkerboards and noisy greys).
+- **New fixture** `tests/fixtures/harmony_rich/` (9–11 values per material, with jitter, rim lights and highlights):
+  calibration 0 misclassified and 0 unresolved over 38,154 material and 2,138 fixed pixels. The recolour proof sheets
+  are in docs/screenshots/harmony/recolour_v3/ (SYNTHETIC).
+
+**The worker's runs:**
+- Unit 24,365/0; validator no errors.
+- harmony_raster 26/26 (four runs); harmony_art 39/39.
+- battle_settings 10/10, combat_ui 7/7, playtest_repairs 7/7.
+- battle_invariance --tech: 96 configurations, all identical.
+- harmony_cutin: a first full run 7/4. The failures were timing (a frame within 12 px of the withdrawing response dock;
+  an element already gone; "holding" not reached under load). Each passed alone, and a second full run was 11/0.
+
+**The lead's runs on the merge** (task branch with the walk-round fix and the props merge; the merged index.html is
+byte-identical to a fresh build; registry.json regenerated for this branch):
+- unit 24,401/0;
+- browser: harmony_raster, harmony_art and harmony_cutin are still running at this commit; recorded below.
+
+**Not verified:**
+- Real art: every number is synthetic, and the calibration must be rerun on Batch 1a.
+- The unresolved band is narrow, so eyes or metal painted near a family will need masks.
+- Whether recoloured forms read well, and whether white hair still looks white with the value floor, needs the owner's
+  eye.
+- Firefox, the owner's actual 2048 × 1046 view, phones.
+
+**Open:**
+- At 1366–1600 px wide the standard pair is chosen at 1× (faces about 52 px) although the compact pair would fit at 2×.
+  The overlay's 48 px face threshold could move toward the mockup's size.
+- The response dock withdraws over 200 ms while the portrait finishes entering at 180 ms, so under load one frame can
+  touch the dock. This predates v3; aligning the two durations would fix it.

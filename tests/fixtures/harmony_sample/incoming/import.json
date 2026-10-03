@@ -2,6 +2,7 @@
  "set": "sample",
  "synthetic": true,
  "artVersion": 1,
+ "approval": "synthetic",
  "note": "SYNTHETIC SAMPLE — not art. Written by tools/harmony_sample.mjs from the code-drawn busts; see docs/harmony/contract/CONTRACT.md.",
  "files": {
   "pc_head_peak": {

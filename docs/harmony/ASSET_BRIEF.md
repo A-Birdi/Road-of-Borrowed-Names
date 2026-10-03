@@ -27,9 +27,10 @@ The busts are painted with an image tool. The game imports, assembles, recolours
 **This brief is for the person producing the art.** The authority on formats is the machine contract,
 `docs/harmony/contract/CONTRACT.md`, backed by `src/ui/88_harmony_contract.js`. Where the two differ, the
 contract wins, and this brief is a bug.
-- **Contract v3 is being built.** It adds free-valued key colours, fitting on the visible footprint,
-  held-pose reduced motion and committed source art. Painted checkerboards are already refused by the v2 importer.
-- Until it lands, v2 is what the importer enforces.
+- **Contract v3 is built:** free-valued key colours, fitting on the visible footprint, held-pose reduced motion,
+  committed source art, Batches 1a and 1b, and approval labels. Painted checkerboards are refused (detection hardened in
+  v3).
+- docs/harmony/contract/V3_REPORT.md has the evidence. It is all synthetic until Batch 1a arrives.
 
 **Status:**
 - Every bust in the game today is **provisional artwork**: code-drawn, and not visually approved.
@@ -269,7 +270,10 @@ that neither can be confused with a real skin tone, a painted mouth or a final-c
 - It projects each pixel onto its family and maps it to the chosen skin, hair or cloth palette, **keeping the
   number of values and the small hue shifts you painted**.
 - Changing the hair colour never touches the skin, glasses or clothing.
-- The game proves every supported colour, dark and light, keeps readable form.
+- Every supported colour, dark and light, keeps readable form. This is proved on a synthetic kit with 9–11 values per
+  material: neighbouring values stay at least ΔE 0.022 apart on all 63 target ramps.
+- On the few ramps that collapse at an extreme, the game spreads the target shades a little: white hair, skin 6, and some
+  very dark or very light accessory colours. Paint normally; this is the game's side.
 
 **Masks are the authority.**
 - The importer derives a mask per file from the families. Any pixel it cannot place is reported, never

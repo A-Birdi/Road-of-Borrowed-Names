@@ -1,0 +1,563 @@
+{
+ "when": "2026-10-03T19:05:29.475Z",
+ "browser": "Chromium (Playwright, headless), software canvas, device pixel ratio 1, shared 4-core Linux machine — not a physical device",
+ "note": "SYNTHETIC sample (tests/fixtures/harmony_sample) and rich fixture (tests/fixtures/harmony_rich), not the game's art. The sample's face boxes are the code busts' (36 × 33 art px); real art uses the template's 50 × 52.",
+ "rows": [
+  {
+   "view": "2048×1046 @1x normal",
+   "fit": "standard",
+   "fallback": null,
+   "variant": "standard",
+   "scale": 2,
+   "scaleV2": {
+    "standard": 1,
+    "compact": 2
+   },
+   "scaleV3": {
+    "standard": 2,
+    "compact": 2
+   },
+   "faceCss": [
+    72,
+    66
+   ],
+   "footprintArt": {
+    "standard": {
+     "x": 0,
+     "y": 26,
+     "w": 343,
+     "h": 132,
+     "phases": 5
+    },
+    "compact": {
+     "x": 0,
+     "y": 25,
+     "w": 244,
+     "h": 103,
+     "phases": 5
+    }
+   },
+   "footprintCss": {
+    "x": 0,
+    "y": 142,
+    "w": 686,
+    "h": 264
+   },
+   "footprintShare": {
+    "w": 33.5,
+    "h": 25.2
+   },
+   "overlaps": 0,
+   "checkedFrames": 13
+  },
+  {
+   "view": "1920×1080 @1x normal",
+   "fit": "standard-moved",
+   "fallback": null,
+   "variant": "standard",
+   "scale": 2,
+   "scaleV2": {
+    "standard": 2,
+    "compact": 2
+   },
+   "scaleV3": {
+    "standard": 2,
+    "compact": 2
+   },
+   "faceCss": [
+    72,
+    66
+   ],
+   "footprintArt": {
+    "standard": {
+     "x": 0,
+     "y": 26,
+     "w": 343,
+     "h": 132,
+     "phases": 5
+    },
+    "compact": {
+     "x": 0,
+     "y": 25,
+     "w": 244,
+     "h": 103,
+     "phases": 5
+    }
+   },
+   "footprintCss": {
+    "x": 0,
+    "y": 28,
+    "w": 686,
+    "h": 264
+   },
+   "footprintShare": {
+    "w": 35.7,
+    "h": 24.4
+   },
+   "overlaps": 0,
+   "checkedFrames": 15
+  },
+  {
+   "view": "1648×840 @1x normal",
+   "fit": "compact",
+   "fallback": null,
+   "variant": "compact",
+   "scale": 2,
+   "scaleV2": {
+    "standard": 1,
+    "compact": 1
+   },
+   "scaleV3": {
+    "standard": 1,
+    "compact": 2
+   },
+   "faceCss": [
+    72,
+    66
+   ],
+   "footprintArt": {
+    "standard": {
+     "x": 0,
+     "y": 26,
+     "w": 343,
+     "h": 132,
+     "phases": 5
+    },
+    "compact": {
+     "x": 0,
+     "y": 25,
+     "w": 244,
+     "h": 103,
+     "phases": 5
+    }
+   },
+   "footprintCss": {
+    "x": 0,
+    "y": 130,
+    "w": 488,
+    "h": 206
+   },
+   "footprintShare": {
+    "w": 29.6,
+    "h": 24.5
+   },
+   "overlaps": 0,
+   "checkedFrames": 27
+  },
+  {
+   "view": "1440×900 @1x normal",
+   "fit": "compact",
+   "fallback": null,
+   "variant": "compact",
+   "scale": 2,
+   "scaleV2": {
+    "standard": 1,
+    "compact": 1
+   },
+   "scaleV3": {
+    "standard": 1,
+    "compact": 2
+   },
+   "faceCss": [
+    72,
+    66
+   ],
+   "footprintArt": {
+    "standard": {
+     "x": 0,
+     "y": 26,
+     "w": 343,
+     "h": 132,
+     "phases": 5
+    },
+    "compact": {
+     "x": 0,
+     "y": 25,
+     "w": 244,
+     "h": 103,
+     "phases": 5
+    }
+   },
+   "footprintCss": {
+    "x": 0,
+    "y": 36,
+    "w": 488,
+    "h": 206
+   },
+   "footprintShare": {
+    "w": 33.9,
+    "h": 22.9
+   },
+   "overlaps": 0,
+   "checkedFrames": 15
+  },
+  {
+   "view": "1280×720 @1x normal",
+   "fit": "standard-moved",
+   "fallback": null,
+   "variant": "standard",
+   "scale": 1,
+   "scaleV2": {
+    "standard": 1,
+    "compact": 1
+   },
+   "scaleV3": {
+    "standard": 1,
+    "compact": 1
+   },
+   "faceCss": [
+    36,
+    33
+   ],
+   "footprintArt": {
+    "standard": {
+     "x": 0,
+     "y": 26,
+     "w": 343,
+     "h": 132,
+     "phases": 5
+    },
+    "compact": {
+     "x": 0,
+     "y": 25,
+     "w": 244,
+     "h": 103,
+     "phases": 5
+    }
+   },
+   "footprintCss": {
+    "x": 0,
+    "y": 49,
+    "w": 343,
+    "h": 132
+   },
+   "footprintShare": {
+    "w": 26.8,
+    "h": 18.3
+   },
+   "overlaps": 0,
+   "checkedFrames": 24
+  },
+  {
+   "view": "768×1024 @2x normal",
+   "fit": "compact",
+   "fallback": null,
+   "variant": "compact",
+   "scale": 2.5,
+   "scaleV2": {
+    "standard": 0,
+    "compact": 2
+   },
+   "scaleV3": {
+    "standard": 0,
+    "compact": 2.5
+   },
+   "faceCss": [
+    90,
+    82.5
+   ],
+   "footprintArt": {
+    "standard": {
+     "x": 0,
+     "y": 26,
+     "w": 343,
+     "h": 132,
+     "phases": 5
+    },
+    "compact": {
+     "x": 0,
+     "y": 25,
+     "w": 244,
+     "h": 103,
+     "phases": 5
+    }
+   },
+   "footprintCss": {
+    "x": 0,
+    "y": 583,
+    "w": 610,
+    "h": 258
+   },
+   "footprintShare": {
+    "w": 79.4,
+    "h": 25.2
+   },
+   "overlaps": 0,
+   "checkedFrames": 17
+  },
+  {
+   "view": "390×844 @3x normal",
+   "fit": "compact",
+   "fallback": null,
+   "variant": "compact",
+   "scale": 1.3333333333333333,
+   "scaleV2": {
+    "standard": 0,
+    "compact": 1.3333333333333333
+   },
+   "scaleV3": {
+    "standard": 0,
+    "compact": 1.3333333333333333
+   },
+   "faceCss": [
+    48,
+    44
+   ],
+   "footprintArt": {
+    "standard": {
+     "x": 0,
+     "y": 26,
+     "w": 343,
+     "h": 132,
+     "phases": 5
+    },
+    "compact": {
+     "x": 0,
+     "y": 25,
+     "w": 244,
+     "h": 103,
+     "phases": 5
+    }
+   },
+   "footprintCss": {
+    "x": 0,
+    "y": 342,
+    "w": 325,
+    "h": 137
+   },
+   "footprintShare": {
+    "w": 83.3,
+    "h": 16.2
+   },
+   "overlaps": 0,
+   "checkedFrames": 18
+  },
+  {
+   "view": "320×640 @2x normal",
+   "fit": "compact",
+   "fallback": null,
+   "variant": "compact",
+   "scale": 1,
+   "scaleV2": {
+    "standard": 0,
+    "compact": 1
+   },
+   "scaleV3": {
+    "standard": 0,
+    "compact": 1
+   },
+   "faceCss": [
+    36,
+    33
+   ],
+   "footprintArt": {
+    "standard": {
+     "x": 0,
+     "y": 26,
+     "w": 343,
+     "h": 132,
+     "phases": 5
+    },
+    "compact": {
+     "x": 0,
+     "y": 25,
+     "w": 244,
+     "h": 103,
+     "phases": 5
+    }
+   },
+   "footprintCss": {
+    "x": 0,
+    "y": 234,
+    "w": 244,
+    "h": 103
+   },
+   "footprintShare": {
+    "w": 76.3,
+    "h": 16.1
+   },
+   "overlaps": 0,
+   "checkedFrames": 27
+  },
+  {
+   "view": "844×390 @3x normal",
+   "fit": "omitted",
+   "fallback": {
+    "reason": "overlaps plate",
+    "tried": [
+     {
+      "fit": "compact",
+      "scale": 1,
+      "why": "overlaps banner"
+     },
+     {
+      "fit": "compact-bare",
+      "scale": 1,
+      "why": "overlaps plate"
+     }
+    ]
+   },
+   "variant": null,
+   "scale": null,
+   "scaleV2": {
+    "standard": 0,
+    "compact": 0.6666666666666666
+   },
+   "scaleV3": {
+    "standard": 0,
+    "compact": 1
+   },
+   "faceCss": null,
+   "footprintArt": {
+    "standard": {
+     "x": 0,
+     "y": 26,
+     "w": 343,
+     "h": 132,
+     "phases": 5
+    },
+    "compact": {
+     "x": 0,
+     "y": 25,
+     "w": 244,
+     "h": 103,
+     "phases": 5
+    }
+   },
+   "footprintCss": null,
+   "footprintShare": null,
+   "overlaps": 0,
+   "checkedFrames": 0
+  },
+  {
+   "view": "2048×1046 @1x normal (rich)",
+   "fit": "standard",
+   "fallback": null,
+   "variant": "standard",
+   "scale": 2,
+   "scaleV2": {
+    "standard": 1,
+    "compact": 2
+   },
+   "scaleV3": {
+    "standard": 2,
+    "compact": 2
+   },
+   "faceCss": [
+    72,
+    66
+   ],
+   "footprintArt": {
+    "standard": {
+     "x": 0,
+     "y": 26,
+     "w": 343,
+     "h": 132,
+     "phases": 5
+    },
+    "compact": {
+     "x": 0,
+     "y": 25,
+     "w": 244,
+     "h": 103,
+     "phases": 5
+    }
+   },
+   "footprintCss": {
+    "x": 0,
+    "y": 142,
+    "w": 686,
+    "h": 264
+   },
+   "footprintShare": {
+    "w": 33.5,
+    "h": 25.2
+   },
+   "overlaps": 0,
+   "checkedFrames": 22
+  },
+  {
+   "view": "1920×1080 @1x normal (rich)",
+   "fit": "standard-moved",
+   "fallback": null,
+   "variant": "standard",
+   "scale": 2,
+   "scaleV2": {
+    "standard": 2,
+    "compact": 2
+   },
+   "scaleV3": {
+    "standard": 2,
+    "compact": 2
+   },
+   "faceCss": [
+    72,
+    66
+   ],
+   "footprintArt": {
+    "standard": {
+     "x": 0,
+     "y": 26,
+     "w": 343,
+     "h": 132,
+     "phases": 5
+    },
+    "compact": {
+     "x": 0,
+     "y": 25,
+     "w": 244,
+     "h": 103,
+     "phases": 5
+    }
+   },
+   "footprintCss": {
+    "x": 0,
+    "y": 28,
+    "w": 686,
+    "h": 264
+   },
+   "footprintShare": {
+    "w": 35.7,
+    "h": 24.4
+   },
+   "overlaps": 0,
+   "checkedFrames": 21
+  }
+ ],
+ "reduced": [
+  {
+   "view": "1280×720 normal reduced",
+   "states": [
+    "peak",
+    "peak~",
+    "settle_b~",
+    "settle_b"
+   ],
+   "crossFadeMs": 83.4,
+   "travel": 0,
+   "plan": {
+    "a": "peak",
+    "b": "settle_b",
+    "at": 370,
+    "fade": 100
+   }
+  },
+  {
+   "view": "1280×720 fast reduced",
+   "states": [
+    "peak",
+    "peak~",
+    "settle_b~",
+    "settle_b"
+   ],
+   "crossFadeMs": 71.3,
+   "travel": 0,
+   "plan": {
+    "a": "peak",
+    "b": "settle_b",
+    "at": 300.5,
+    "fade": 100
+   }
+  }
+ ]
+}

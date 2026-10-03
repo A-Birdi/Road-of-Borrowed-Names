@@ -1,7 +1,7 @@
 // Exports the registry the painted Harmony busts are checked against (docs/harmony/contract/CONTRACT.md):
 // everything the game knows about appearance, read from the BUILT index.html in a browser (like
-// tests/e2e/harmony_asset_refs.mjs), plus the contract v2 (src/ui/88_harmony_contract.js) and the asset keys
-// it implies. Writes docs/harmony/contract/registry.json with sorted keys (deterministic for a given build).
+// tests/e2e/harmony_asset_refs.mjs), plus the contract (src/ui/88_harmony_contract.js), the asset keys
+// it implies and the delivery batches. Writes docs/harmony/contract/registry.json with sorted keys (deterministic for a given build).
 //   node tools/build.mjs && node tools/harmony_registry.mjs [--out path]
 // Anything that cannot be read from the game is written as { unresolved: true, reason } — never guessed.
 import fs from 'node:fs';
@@ -103,6 +103,7 @@ const reg = await p.evaluate(({ creationCuts, maxAcc }) => {
     clothMain: { lookFields: ['outfit', 'cloth'], resolve: 'colorsOf(look).cloth[0] (look.cloth, else CLOTH[outfit])', ramp: 'RB.harmonyKit.clothMat(cloth[0]) — 6 tones', pick: HC.PICK.n6 },
     clothTrim: { lookFields: ['outfit', 'cloth', 'wrapCol (pc_hair_wrap_* only)'], resolve: 'colorsOf(look).cloth[2]; the wrap hairstyle uses look.wrapCol || cloth[2]', ramp: 'clothMat(cloth[2], { step: 0.09 }); the wrap: clothMat(wrapCol || cloth[2])', pick: HC.PICK.n6 },
     accessory: { lookFields: Object.keys(HC.ACC).filter((a) => HC.ACC[a].channel).map((a) => HC.ACC[a].channel.field + ' (' + a + ')'), resolve: 'per accessory file: look[field], else the default (cloth.2 = the cloth trim; metal = the gold metal ramp)', ramp: 'RB.harmonyKit.M(name, colour, opts) with the opts below (as 88_harmony_acc.js draws it)', pick: 'n6 for 6-tone opts, n5 for 5-tone', perAccessory: Object.fromEntries(Object.keys(HC.ACC).map((a) => [a, HC.ACC[a].channel])) },
+    keyFamilies: { note: 'contract v3: each recolourable material is painted in its key family — the five anchor shades of KEY_RAMPS (contract.keyRamps) with any number of values between and a little beyond them; the game maps each painted value onto the ramp above (key shade s at the tone pick[s]) and keeps its hue and chroma deviation', anchors: HC.KEY_RAMPS, thresholds: HC.IMPORT, recolour: HC.RECOLOUR },
     fixed: { note: 'never recoloured: eye whites, irises, outlines (#140c18 family), glasses, highlights, metal, leather, glass, and every companion pixel' },
     playerIris: { value: '#7a4630', note: 'the code busts give every player this iris (RB.harmonyKit.faceColours default); it is not a look field' },
   };
@@ -136,6 +137,9 @@ const reg = await p.evaluate(({ creationCuts, maxAcc }) => {
     companions,
     contract: HC.describe(),
     assetKeys: keys,
+    // contract v3: the delivery batches (every file is an asset key, effects aside) and the approval states
+    batches: Object.fromEntries(Object.entries(HC.BATCHES).map(([id, b]) => [id, Object.assign({}, b, { notAssetKeys: b.required.concat(b.optional).filter((n) => keys.required.indexOf(n) < 0 && keys.optional.indexOf(n) < 0) })])),
+    approval: { states: HC.APPROVAL, labels: HC.APPROVAL_LABEL, codeBusts: 'provisional', synthetic: 'synthetic', where: 'manifest companions.<id>.approval and pc.approval, from the batch import.json; RB.harmonyArt.stats().approval; the ?dev=harmony viewer' },
     unresolved: {
       hairAttachOffsets: U('per-hairstyle offsets for hair-mounted accessories depend on the painted hair volumes: set at import (manifest pc.attach)'),
       hatBandLine: U('the y of the hat and cap band depends on the painted hats: set at import (manifest pc.hatBand)'),

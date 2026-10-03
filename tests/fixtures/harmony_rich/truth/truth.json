@@ -1,0 +1,100 @@
+{
+ "label": "SYNTHETIC SAMPLE — not art",
+ "made": "node tools/harmony_rich.mjs (from tests/fixtures/harmony_sample/incoming)",
+ "files": 25,
+ "enlarged": {
+  "pc_head_cue": 4,
+  "pc_torso_coat": 3
+ },
+ "values": {
+  "accessory": {
+   "painted": [
+    -0.5,
+    0,
+    0.5,
+    1,
+    1.5,
+    2,
+    2.5,
+    3,
+    3.5,
+    4,
+    4.5
+   ],
+   "count": 11,
+   "colours": 164
+  },
+  "skin": {
+   "painted": [
+    -0.5,
+    0.5,
+    1.5,
+    2,
+    2.5,
+    3,
+    3.5,
+    4,
+    4.5
+   ],
+   "count": 9,
+   "colours": 174
+  },
+  "clothMain": {
+   "painted": [
+    -0.5,
+    0,
+    0.5,
+    1,
+    1.5,
+    2,
+    2.5,
+    3,
+    3.5,
+    4,
+    4.5
+   ],
+   "count": 11,
+   "colours": 219
+  },
+  "clothTrim": {
+   "painted": [
+    -0.5,
+    0,
+    0.5,
+    1,
+    1.5,
+    2,
+    2.5,
+    3,
+    3.5,
+    4,
+    4.5
+   ],
+   "count": 11,
+   "colours": 121
+  },
+  "hair": {
+   "painted": [
+    -0.5,
+    0,
+    0.5,
+    1,
+    1.5,
+    2,
+    2.5,
+    3,
+    3.5,
+    4,
+    4.5
+   ],
+   "count": 11,
+   "colours": 294
+  }
+ },
+ "pixels": {
+  "band": 17212,
+  "rim": 1298,
+  "warm": 559,
+  "keptKey": 8
+ }
+}
