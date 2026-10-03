@@ -35,6 +35,8 @@ export async function runBranch(p, c, v, o) {
     Object.assign(s.vars, c.vars || {}, v.vars || {});
     Object.assign(s.player, c.player || {}, v.player || {});
     for (const w of (c.words || []).concat(v.words || [])) if (!s.words.includes(w)) s.words.push(w);
+    // scenes already seen (a scene's `seen.<id>` conditions: a second visit, a reply already heard)
+    for (const id of (c.seen || []).concat(v.seen || [])) s.seen[id] = true;
     // the creatures on the maps stay out of it (a patrol reaching you would start a battle mid-scene)
     for (const m in RB.content.maps) for (const f of RB.content.maps[m].foes || []) s.flags['foe:' + m + ':' + f.id] = true;
     // no map's arrival scene runs on its own around the scene under test

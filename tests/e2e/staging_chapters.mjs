@@ -28,8 +28,10 @@
 // world expects them afterwards, the expected gestures; and per scene, reduced motion keeps the cues, their
 // order and the outcome, and staged and unstaged end in the same state). About 8 minutes per chapter.
 // Evidence: docs/screenshots/staging/ch1_ch2/
-// Usage: node tests/e2e/staging_chapters.mjs [--ch=1|2|showcase] [--only=<scene prefix>,…] [--branches]
-//   --ch=1 / --ch=2: only that chapter's data-driven cases (no showcase); --ch=showcase: only the showcase above
+// Chapters 5 and 6 the same way (docs/expressive/reports/staging_ch5_ch6.md): tests/e2e/staging_ch56_cases.mjs.
+// Evidence: docs/screenshots/staging/ch5_ch6/
+// Usage: node tests/e2e/staging_chapters.mjs [--ch=1|2|5|6|showcase] [--only=<scene prefix>,…] [--branches]
+//   --ch=1 / 2 / 5 / 6: only that chapter's data-driven cases (no showcase); --ch=showcase: only the showcase above
 //   --only: only the cases whose scene id starts with one of the prefixes
 //   --branches: compare every branch (not only each scene's first) with reduced motion and unstaged
 import fs from 'node:fs';
@@ -37,6 +39,7 @@ import path from 'node:path';
 import { serve, launch, page, root } from './lib.mjs';
 import { runCases } from './staging_runner.mjs';
 import { CH12 } from './staging_ch12_cases.mjs';
+import { CH56 } from './staging_ch56_cases.mjs';
 
 const ARGS = process.argv.slice(2);
 const arg = (k) => { const a = ARGS.find((x) => x.startsWith('--' + k + '=')); return a ? a.slice(k.length + 3) : null; };
@@ -173,7 +176,7 @@ for (const c of (CH && CH !== 'showcase') || ONLY.length ? [] : CASES) {
 }
 // ---- Chapters 1 and 2, every staged overworld scene ----------------------------------------------------------
 if (CH !== 'showcase') {
-  const cases = CH12.filter((c) => (!CH || String(c.ch) === CH) && (!ONLY.length || ONLY.some((f) => c.scene.startsWith(f))));
+  const cases = CH12.concat(CH56).filter((c) => (!CH || String(c.ch) === CH) && (!ONLY.length || ONLY.some((f) => c.scene.startsWith(f))));
   const t0 = Date.now();
   let cur = null, runs = 0, from = '';
   // a fresh page every 20 branches (and its page errors checked when it is let go)
