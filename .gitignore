@@ -9,5 +9,7 @@ tests/e2e/out/
 tmp/
 tools/kanjivg/.cache/
 .claude/worktrees/
-# painted Harmony art as delivered: not committed unless the lead says so (docs/harmony/contract/CONTRACT.md)
+# painted Harmony art as delivered and not yet reviewed: never committed (docs/harmony/contract/CONTRACT.md §1).
+# Approved deliveries move to art/harmony/source/<batch>/ with their PROVENANCE.md: committed, and the importer
+# regenerates assets/harmony/ from them byte for byte.
 art/harmony/incoming/

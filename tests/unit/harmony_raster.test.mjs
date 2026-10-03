@@ -84,7 +84,7 @@ export default async (t) => {
   t.eq(bad, [], n + ' painted compositions (2 looks × 6 states × 2 variants): both busts painted, contract size, faces inside');
   t.eq(occl, [], 'no face is covered by the other bust (each compared with the other omitted)');
   const keyA = HA.keyOf({ comp: 'suzu', look: LA, phase: 'peak' });
-  t.ok(/^v1\|c2\|a1\|suzu\|standard\|peak\|b\|fx\|-\|PP\|/.test(keyA), 'keys carry ART_VERSION, the contract and art versions, companion, variant, state and painted/code flags: ' + keyA.slice(0, 40));
+  t.ok(new RegExp('^v1\\|c' + HC.VERSION + '\\|a1\\|suzu\\|standard\\|peak\\|b\\|fx\\|-\\|PP\\|').test(keyA), 'keys carry ART_VERSION, the contract and art versions, companion, variant, state and painted/code flags: ' + keyA.slice(0, 40));
   t.ok(HA.keyOf({ comp: 'suzu', look: LB, phase: 'peak' }) !== keyA && HA.keyOf({ comp: 'suzu', look: LA, phase: 'cue' }) !== keyA && HA.keyOf({ comp: 'suzu', look: LA, phase: 'peak', variant: 'compact' }) !== keyA, 'look, state and variant change the key');
   t.eq(HA.keyOf({ comp: 'suzu', look: LA, phase: 'cue', still: true }), HA.keyOf({ comp: 'suzu', look: LA, phase: 'settle_b' }), 'reduced motion (still) asks for settle_b');
   t.eq(HA.keyOf({ comp: 'suzu', look: LA, phase: 'enter' }), HA.keyOf({ comp: 'suzu', look: LA, phase: 'prep_a' }), "a caller's 'enter' is prep_a, 'hold' settle_b");

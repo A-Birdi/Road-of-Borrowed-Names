@@ -1,0 +1,1346 @@
+{
+ "label": "SYNTHETIC SAMPLE — not art",
+ "made": "node tools/harmony_recolour_proof.mjs (the rich fixture over the sample, painted by src/ui/88_harmony_raster.js in node)",
+ "thresholds": {
+  "inner": 0.31,
+  "outer": 0.34,
+  "margin": 0.1,
+  "foreign": 0.1,
+  "extend": 0.6,
+  "outline": 24,
+  "white": 24,
+  "alpha": 128,
+  "protect": [
+   "#140c18",
+   "#ffffff",
+   "#f6f2ee"
+  ],
+  "maxOffset": 24,
+  "v2": {
+   "snap": 12,
+   "ambiguous": 40
+  }
+ },
+ "recolour": {
+  "residual": 1,
+  "maxChroma": 1,
+  "maxHue": 0.6,
+  "minChroma": 0.02,
+  "valueFloor": 0.05
+ },
+ "valueFloor": {
+  "dE": 0.02,
+  "dL": 0.012
+ },
+ "sheets": {
+  "skin_2x.png": 50720,
+  "hair_2x.png": 64871,
+  "cloth_coat_2x.png": 61579,
+  "cloth_robe_2x.png": 72677,
+  "acc_flower_2x.png": 42257,
+  "acc_scarf_band_2x.png": 55371
+ },
+ "values": {
+  "targets": 63,
+  "fails": [],
+  "extremes": {
+   "skin": {
+    "darkest": {
+     "material": "skin",
+     "target": "skin 6",
+     "L2": 0.333,
+     "minDE": 0.0244,
+     "minDL": 0.0238,
+     "at": [
+      2.5,
+      3
+     ],
+     "values": 9
+    },
+    "lightest": {
+     "material": "skin",
+     "target": "skin 0",
+     "L2": 0.827,
+     "minDE": 0.0253,
+     "minDL": 0.0247,
+     "at": [
+      3,
+      3.5
+     ],
+     "values": 9
+    },
+    "worst": {
+     "material": "skin",
+     "target": "skin 4",
+     "L2": 0.482,
+     "minDE": 0.0243,
+     "minDL": 0.0235,
+     "at": [
+      1.5,
+      2
+     ],
+     "values": 9
+    }
+   },
+   "hair": {
+    "darkest": {
+     "material": "hair",
+     "target": "hair black",
+     "L2": 0.314,
+     "minDE": 0.0229,
+     "minDL": 0.0229,
+     "at": [
+      -0.5,
+      0
+     ],
+     "values": 11
+    },
+    "lightest": {
+     "material": "hair",
+     "target": "hair white",
+     "L2": 0.87,
+     "minDE": 0.0239,
+     "minDL": 0.0238,
+     "at": [
+      4,
+      4.5
+     ],
+     "values": 11
+    },
+    "worst": {
+     "material": "hair",
+     "target": "hair black",
+     "L2": 0.314,
+     "minDE": 0.0229,
+     "minDL": 0.0229,
+     "at": [
+      -0.5,
+      0
+     ],
+     "values": 11
+    }
+   },
+   "clothMain": {
+    "darkest": {
+     "material": "clothMain",
+     "target": "cloth 5 main",
+     "L2": 0.386,
+     "minDE": 0.0372,
+     "minDL": 0.0371,
+     "at": [
+      -0.5,
+      0
+     ],
+     "values": 11
+    },
+    "lightest": {
+     "material": "clothMain",
+     "target": "cloth 6 main",
+     "L2": 0.859,
+     "minDE": 0.0251,
+     "minDL": 0.0245,
+     "at": [
+      3,
+      3.5
+     ],
+     "values": 11
+    },
+    "worst": {
+     "material": "clothMain",
+     "target": "cloth 6 main",
+     "L2": 0.859,
+     "minDE": 0.0251,
+     "minDL": 0.0245,
+     "at": [
+      3,
+      3.5
+     ],
+     "values": 11
+    }
+   },
+   "clothTrim": {
+    "darkest": {
+     "material": "clothTrim",
+     "target": "cloth 4 trim",
+     "L2": 0.382,
+     "minDE": 0.0298,
+     "minDL": 0.029,
+     "at": [
+      -0.5,
+      0
+     ],
+     "values": 11
+    },
+    "lightest": {
+     "material": "clothTrim",
+     "target": "cloth 1 trim",
+     "L2": 0.87,
+     "minDE": 0.0269,
+     "minDL": 0.0245,
+     "at": [
+      3.5,
+      4
+     ],
+     "values": 11
+    },
+    "worst": {
+     "material": "clothTrim",
+     "target": "cloth 1 trim",
+     "L2": 0.87,
+     "minDE": 0.0269,
+     "minDL": 0.0245,
+     "at": [
+      3.5,
+      4
+     ],
+     "values": 11
+    }
+   },
+   "accessory": {
+    "darkest": {
+     "material": "accessory",
+     "target": "flower #2c2430",
+     "L2": 0.274,
+     "minDE": 0.0222,
+     "minDL": 0.0222,
+     "at": [
+      -0.5,
+      0
+     ],
+     "values": 11
+    },
+    "lightest": {
+     "material": "accessory",
+     "target": "headband #f4f0e8",
+     "L2": 0.87,
+     "minDE": 0.0239,
+     "minDL": 0.0236,
+     "at": [
+      4,
+      4.5
+     ],
+     "values": 11
+    },
+    "worst": {
+     "material": "accessory",
+     "target": "flower #2c2430",
+     "L2": 0.274,
+     "minDE": 0.0222,
+     "minDL": 0.0222,
+     "at": [
+      -0.5,
+      0
+     ],
+     "values": 11
+    }
+   }
+  },
+  "all": [
+   {
+    "material": "skin",
+    "target": "skin 0",
+    "L2": 0.827,
+    "minDE": 0.0253,
+    "minDL": 0.0247,
+    "at": [
+     3,
+     3.5
+    ],
+    "values": 9
+   },
+   {
+    "material": "skin",
+    "target": "skin 1",
+    "L2": 0.767,
+    "minDE": 0.0252,
+    "minDL": 0.0239,
+    "at": [
+     3.5,
+     4
+    ],
+    "values": 9
+   },
+   {
+    "material": "skin",
+    "target": "skin 2",
+    "L2": 0.688,
+    "minDE": 0.0306,
+    "minDL": 0.0292,
+    "at": [
+     3.5,
+     4
+    ],
+    "values": 9
+   },
+   {
+    "material": "skin",
+    "target": "skin 3",
+    "L2": 0.581,
+    "minDE": 0.0365,
+    "minDL": 0.0356,
+    "at": [
+     1.5,
+     2
+    ],
+    "values": 9
+   },
+   {
+    "material": "skin",
+    "target": "skin 4",
+    "L2": 0.482,
+    "minDE": 0.0243,
+    "minDL": 0.0235,
+    "at": [
+     1.5,
+     2
+    ],
+    "values": 9
+   },
+   {
+    "material": "skin",
+    "target": "skin 5",
+    "L2": 0.395,
+    "minDE": 0.0254,
+    "minDL": 0.0248,
+    "at": [
+     1.5,
+     2
+    ],
+    "values": 9
+   },
+   {
+    "material": "skin",
+    "target": "skin 6",
+    "L2": 0.333,
+    "minDE": 0.0244,
+    "minDL": 0.0238,
+    "at": [
+     2.5,
+     3
+    ],
+    "values": 9
+   },
+   {
+    "material": "hair",
+    "target": "hair black",
+    "L2": 0.314,
+    "minDE": 0.0229,
+    "minDL": 0.0229,
+    "at": [
+     -0.5,
+     0
+    ],
+    "values": 11
+   },
+   {
+    "material": "hair",
+    "target": "hair dark brown",
+    "L2": 0.383,
+    "minDE": 0.0318,
+    "minDL": 0.0314,
+    "at": [
+     -0.5,
+     0
+    ],
+    "values": 11
+   },
+   {
+    "material": "hair",
+    "target": "hair brown",
+    "L2": 0.506,
+    "minDE": 0.0404,
+    "minDL": 0.0394,
+    "at": [
+     4,
+     4.5
+    ],
+    "values": 11
+   },
+   {
+    "material": "hair",
+    "target": "hair auburn",
+    "L2": 0.542,
+    "minDE": 0.0396,
+    "minDL": 0.035,
+    "at": [
+     3.5,
+     4
+    ],
+    "values": 11
+   },
+   {
+    "material": "hair",
+    "target": "hair gold",
+    "L2": 0.778,
+    "minDE": 0.0273,
+    "minDL": 0.0236,
+    "at": [
+     2,
+     2.5
+    ],
+    "values": 11
+   },
+   {
+    "material": "hair",
+    "target": "hair grey",
+    "L2": 0.733,
+    "minDE": 0.028,
+    "minDL": 0.0279,
+    "at": [
+     4,
+     4.5
+    ],
+    "values": 11
+   },
+   {
+    "material": "hair",
+    "target": "hair white",
+    "L2": 0.87,
+    "minDE": 0.0239,
+    "minDL": 0.0238,
+    "at": [
+     4,
+     4.5
+    ],
+    "values": 11
+   },
+   {
+    "material": "hair",
+    "target": "hair blue-black",
+    "L2": 0.365,
+    "minDE": 0.0382,
+    "minDL": 0.0375,
+    "at": [
+     2,
+     2.5
+    ],
+    "values": 11
+   },
+   {
+    "material": "hair",
+    "target": "hair teal",
+    "L2": 0.567,
+    "minDE": 0.0278,
+    "minDL": 0.0273,
+    "at": [
+     4,
+     4.5
+    ],
+    "values": 11
+   },
+   {
+    "material": "hair",
+    "target": "hair plum",
+    "L2": 0.441,
+    "minDE": 0.0292,
+    "minDL": 0.0289,
+    "at": [
+     3,
+     3.5
+    ],
+    "values": 11
+   },
+   {
+    "material": "clothMain",
+    "target": "cloth 0 main",
+    "L2": 0.521,
+    "minDE": 0.043,
+    "minDL": 0.0425,
+    "at": [
+     -0.5,
+     0
+    ],
+    "values": 11
+   },
+   {
+    "material": "clothTrim",
+    "target": "cloth 0 trim",
+    "L2": 0.817,
+    "minDE": 0.0282,
+    "minDL": 0.0235,
+    "at": [
+     3.5,
+     4
+    ],
+    "values": 11
+   },
+   {
+    "material": "clothMain",
+    "target": "cloth 1 main",
+    "L2": 0.507,
+    "minDE": 0.0395,
+    "minDL": 0.0369,
+    "at": [
+     0,
+     0.5
+    ],
+    "values": 11
+   },
+   {
+    "material": "clothTrim",
+    "target": "cloth 1 trim",
+    "L2": 0.87,
+    "minDE": 0.0269,
+    "minDL": 0.0245,
+    "at": [
+     3.5,
+     4
+    ],
+    "values": 11
+   },
+   {
+    "material": "clothMain",
+    "target": "cloth 2 main",
+    "L2": 0.534,
+    "minDE": 0.0354,
+    "minDL": 0.0341,
+    "at": [
+     4,
+     4.5
+    ],
+    "values": 11
+   },
+   {
+    "material": "clothTrim",
+    "target": "cloth 2 trim",
+    "L2": 0.777,
+    "minDE": 0.03,
+    "minDL": 0.0272,
+    "at": [
+     3,
+     3.5
+    ],
+    "values": 11
+   },
+   {
+    "material": "clothMain",
+    "target": "cloth 3 main",
+    "L2": 0.519,
+    "minDE": 0.0389,
+    "minDL": 0.0378,
+    "at": [
+     0,
+     0.5
+    ],
+    "values": 11
+   },
+   {
+    "material": "clothTrim",
+    "target": "cloth 3 trim",
+    "L2": 0.843,
+    "minDE": 0.0299,
+    "minDL": 0.028,
+    "at": [
+     4,
+     4.5
+    ],
+    "values": 11
+   },
+   {
+    "material": "clothMain",
+    "target": "cloth 4 main",
+    "L2": 0.672,
+    "minDE": 0.0333,
+    "minDL": 0.0311,
+    "at": [
+     3.5,
+     4
+    ],
+    "values": 11
+   },
+   {
+    "material": "clothTrim",
+    "target": "cloth 4 trim",
+    "L2": 0.382,
+    "minDE": 0.0298,
+    "minDL": 0.029,
+    "at": [
+     -0.5,
+     0
+    ],
+    "values": 11
+   },
+   {
+    "material": "clothMain",
+    "target": "cloth 5 main",
+    "L2": 0.386,
+    "minDE": 0.0372,
+    "minDL": 0.0371,
+    "at": [
+     -0.5,
+     0
+    ],
+    "values": 11
+   },
+   {
+    "material": "clothTrim",
+    "target": "cloth 5 trim",
+    "L2": 0.715,
+    "minDE": 0.0327,
+    "minDL": 0.0319,
+    "at": [
+     3,
+     3.5
+    ],
+    "values": 11
+   },
+   {
+    "material": "clothMain",
+    "target": "cloth 6 main",
+    "L2": 0.859,
+    "minDE": 0.0251,
+    "minDL": 0.0245,
+    "at": [
+     3,
+     3.5
+    ],
+    "values": 11
+   },
+   {
+    "material": "clothTrim",
+    "target": "cloth 6 trim",
+    "L2": 0.62,
+    "minDE": 0.0398,
+    "minDL": 0.0392,
+    "at": [
+     3,
+     3.5
+    ],
+    "values": 11
+   },
+   {
+    "material": "clothMain",
+    "target": "cloth 7 main",
+    "L2": 0.487,
+    "minDE": 0.0399,
+    "minDL": 0.0393,
+    "at": [
+     3,
+     3.5
+    ],
+    "values": 11
+   },
+   {
+    "material": "clothTrim",
+    "target": "cloth 7 trim",
+    "L2": 0.795,
+    "minDE": 0.0322,
+    "minDL": 0.0287,
+    "at": [
+     3.5,
+     4
+    ],
+    "values": 11
+   },
+   {
+    "material": "accessory",
+    "target": "flower #2c2430",
+    "L2": 0.274,
+    "minDE": 0.0222,
+    "minDL": 0.0222,
+    "at": [
+     -0.5,
+     0
+    ],
+    "values": 11
+   },
+   {
+    "material": "accessory",
+    "target": "scarf #2c2430",
+    "L2": 0.274,
+    "minDE": 0.0222,
+    "minDL": 0.0222,
+    "at": [
+     -0.5,
+     0
+    ],
+    "values": 11
+   },
+   {
+    "material": "accessory",
+    "target": "headband #2c2430",
+    "L2": 0.274,
+    "minDE": 0.0222,
+    "minDL": 0.0222,
+    "at": [
+     -0.5,
+     0
+    ],
+    "values": 11
+   },
+   {
+    "material": "accessory",
+    "target": "flower #6a3a4a",
+    "L2": 0.413,
+    "minDE": 0.0279,
+    "minDL": 0.0275,
+    "at": [
+     3,
+     3.5
+    ],
+    "values": 11
+   },
+   {
+    "material": "accessory",
+    "target": "scarf #6a3a4a",
+    "L2": 0.413,
+    "minDE": 0.0303,
+    "minDL": 0.03,
+    "at": [
+     4,
+     4.5
+    ],
+    "values": 11
+   },
+   {
+    "material": "accessory",
+    "target": "headband #6a3a4a",
+    "L2": 0.413,
+    "minDE": 0.0326,
+    "minDL": 0.0321,
+    "at": [
+     3,
+     3.5
+    ],
+    "values": 11
+   },
+   {
+    "material": "accessory",
+    "target": "flower #c8452a",
+    "L2": 0.57,
+    "minDE": 0.0353,
+    "minDL": 0.0314,
+    "at": [
+     0,
+     0.5
+    ],
+    "values": 11
+   },
+   {
+    "material": "accessory",
+    "target": "scarf #c8452a",
+    "L2": 0.57,
+    "minDE": 0.0368,
+    "minDL": 0.0326,
+    "at": [
+     -0.5,
+     0
+    ],
+    "values": 11
+   },
+   {
+    "material": "accessory",
+    "target": "headband #c8452a",
+    "L2": 0.57,
+    "minDE": 0.039,
+    "minDL": 0.0349,
+    "at": [
+     -0.5,
+     0
+    ],
+    "values": 11
+   },
+   {
+    "material": "accessory",
+    "target": "flower #c8962e",
+    "L2": 0.703,
+    "minDE": 0.0264,
+    "minDL": 0.0243,
+    "at": [
+     3,
+     3.5
+    ],
+    "values": 11
+   },
+   {
+    "material": "accessory",
+    "target": "scarf #c8962e",
+    "L2": 0.703,
+    "minDE": 0.0267,
+    "minDL": 0.0244,
+    "at": [
+     3,
+     3.5
+    ],
+    "values": 11
+   },
+   {
+    "material": "accessory",
+    "target": "headband #c8962e",
+    "L2": 0.703,
+    "minDE": 0.0274,
+    "minDL": 0.0249,
+    "at": [
+     3.5,
+     4
+    ],
+    "values": 11
+   },
+   {
+    "material": "accessory",
+    "target": "flower #3a7a5a",
+    "L2": 0.528,
+    "minDE": 0.0306,
+    "minDL": 0.0297,
+    "at": [
+     4,
+     4.5
+    ],
+    "values": 11
+   },
+   {
+    "material": "accessory",
+    "target": "scarf #3a7a5a",
+    "L2": 0.528,
+    "minDE": 0.0331,
+    "minDL": 0.0325,
+    "at": [
+     4,
+     4.5
+    ],
+    "values": 11
+   },
+   {
+    "material": "accessory",
+    "target": "headband #3a7a5a",
+    "L2": 0.528,
+    "minDE": 0.0339,
+    "minDL": 0.0336,
+    "at": [
+     4,
+     4.5
+    ],
+    "values": 11
+   },
+   {
+    "material": "accessory",
+    "target": "flower #2c4468",
+    "L2": 0.385,
+    "minDE": 0.036,
+    "minDL": 0.0352,
+    "at": [
+     0.5,
+     1
+    ],
+    "values": 11
+   },
+   {
+    "material": "accessory",
+    "target": "scarf #2c4468",
+    "L2": 0.385,
+    "minDE": 0.0372,
+    "minDL": 0.0362,
+    "at": [
+     -0.5,
+     0
+    ],
+    "values": 11
+   },
+   {
+    "material": "accessory",
+    "target": "headband #2c4468",
+    "L2": 0.385,
+    "minDE": 0.0402,
+    "minDL": 0.039,
+    "at": [
+     0.5,
+     1
+    ],
+    "values": 11
+   },
+   {
+    "material": "accessory",
+    "target": "flower #8a7ab8",
+    "L2": 0.618,
+    "minDE": 0.0267,
+    "minDL": 0.0254,
+    "at": [
+     -0.5,
+     0
+    ],
+    "values": 11
+   },
+   {
+    "material": "accessory",
+    "target": "scarf #8a7ab8",
+    "L2": 0.618,
+    "minDE": 0.0293,
+    "minDL": 0.0281,
+    "at": [
+     -0.5,
+     0
+    ],
+    "values": 11
+   },
+   {
+    "material": "accessory",
+    "target": "headband #8a7ab8",
+    "L2": 0.618,
+    "minDE": 0.0309,
+    "minDL": 0.0298,
+    "at": [
+     0.5,
+     1
+    ],
+    "values": 11
+   },
+   {
+    "material": "accessory",
+    "target": "flower #d8c89a",
+    "L2": 0.83,
+    "minDE": 0.0256,
+    "minDL": 0.0244,
+    "at": [
+     2,
+     2.5
+    ],
+    "values": 11
+   },
+   {
+    "material": "accessory",
+    "target": "scarf #d8c89a",
+    "L2": 0.832,
+    "minDE": 0.0261,
+    "minDL": 0.0243,
+    "at": [
+     2.5,
+     3
+    ],
+    "values": 11
+   },
+   {
+    "material": "accessory",
+    "target": "headband #d8c89a",
+    "L2": 0.835,
+    "minDE": 0.0262,
+    "minDL": 0.0243,
+    "at": [
+     4,
+     4.5
+    ],
+    "values": 11
+   },
+   {
+    "material": "accessory",
+    "target": "flower #f4f0e8",
+    "L2": 0.87,
+    "minDE": 0.0239,
+    "minDL": 0.0236,
+    "at": [
+     4,
+     4.5
+    ],
+    "values": 11
+   },
+   {
+    "material": "accessory",
+    "target": "scarf #f4f0e8",
+    "L2": 0.87,
+    "minDE": 0.0239,
+    "minDL": 0.0236,
+    "at": [
+     4,
+     4.5
+    ],
+    "values": 11
+   },
+   {
+    "material": "accessory",
+    "target": "headband #f4f0e8",
+    "L2": 0.87,
+    "minDE": 0.0239,
+    "minDL": 0.0236,
+    "at": [
+     4,
+     4.5
+    ],
+    "values": 11
+   },
+   {
+    "material": "accessory",
+    "target": "flower default",
+    "L2": 0.799,
+    "minDE": 0.0306,
+    "minDL": 0.0256,
+    "at": [
+     -0.5,
+     0
+    ],
+    "values": 11
+   },
+   {
+    "material": "accessory",
+    "target": "scarf default",
+    "L2": 0.703,
+    "minDE": 0.0267,
+    "minDL": 0.0244,
+    "at": [
+     3,
+     3.5
+    ],
+    "values": 11
+   },
+   {
+    "material": "accessory",
+    "target": "headband default",
+    "L2": 0.62,
+    "minDE": 0.0353,
+    "minDL": 0.0348,
+    "at": [
+     4,
+     4.5
+    ],
+    "values": 11
+   }
+  ]
+ },
+ "exactKeyShades": {
+  "checked": 315,
+  "wrong": 0,
+  "note": "an exact key shade gives its v2 ramp tone, bit for bit, on every ramp the value floor leaves as it is; the opened ramps are listed",
+  "opened": [
+   {
+    "target": "skin 0",
+    "material": "skin",
+    "keyShadesChanged": [
+     3,
+     4
+    ],
+    "lightnessShiftAtKeys": [
+     0,
+     0,
+     0,
+     -0.0148,
+     0.0145
+    ],
+    "maxShift": 0.0148
+   },
+   {
+    "target": "skin 1",
+    "material": "skin",
+    "keyShadesChanged": [
+     3,
+     4
+    ],
+    "lightnessShiftAtKeys": [
+     0,
+     0,
+     0,
+     -0.007,
+     0.0068
+    ],
+    "maxShift": 0.007
+   },
+   {
+    "target": "skin 5",
+    "material": "skin",
+    "keyShadesChanged": [
+     0,
+     1,
+     2
+    ],
+    "lightnessShiftAtKeys": [
+     -0.0042,
+     -0.0123,
+     0.0164,
+     0,
+     0
+    ],
+    "maxShift": 0.0164
+   },
+   {
+    "target": "skin 6",
+    "material": "skin",
+    "keyShadesChanged": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "lightnessShiftAtKeys": [
+     -0.0279,
+     -0.0198,
+     0.0276,
+     0.0203,
+     0
+    ],
+    "maxShift": 0.0279
+   },
+   {
+    "target": "hair gold",
+    "material": "hair",
+    "keyShadesChanged": [
+     2,
+     3,
+     4
+    ],
+    "lightnessShiftAtKeys": [
+     0,
+     0,
+     -0.0041,
+     -0.009,
+     0.0129
+    ],
+    "maxShift": 0.0129
+   },
+   {
+    "target": "hair white",
+    "material": "hair",
+    "keyShadesChanged": [
+     0,
+     1,
+     2,
+     3,
+     4
+    ],
+    "lightnessShiftAtKeys": [
+     -0.0562,
+     -0.0778,
+     -0.0916,
+     -0.0593,
+     -0.0093
+    ],
+    "maxShift": 0.0916
+   },
+   {
+    "target": "cloth 0 trim",
+    "material": "clothTrim",
+    "keyShadesChanged": [
+     3,
+     4
+    ],
+    "lightnessShiftAtKeys": [
+     0,
+     0,
+     0,
+     -0.0046,
+     0.0045
+    ],
+    "maxShift": 0.0046
+   },
+   {
+    "target": "cloth 1 trim",
+    "material": "clothTrim",
+    "keyShadesChanged": [
+     2,
+     3,
+     4
+    ],
+    "lightnessShiftAtKeys": [
+     0,
+     0,
+     -0.0152,
+     -0.0209,
+     -0.0142
+    ],
+    "maxShift": 0.0209
+   },
+   {
+    "target": "cloth 6 main",
+    "material": "clothMain",
+    "keyShadesChanged": [
+     4
+    ],
+    "lightnessShiftAtKeys": [
+     0,
+     0,
+     0,
+     -0.001,
+     -0.0091
+    ],
+    "maxShift": 0.0091
+   },
+   {
+    "target": "flower #d8c89a",
+    "material": "accessory",
+    "keyShadesChanged": [
+     2,
+     3,
+     4
+    ],
+    "lightnessShiftAtKeys": [
+     0,
+     0,
+     -0.0045,
+     -0.0035,
+     0.0079
+    ],
+    "maxShift": 0.0079
+   },
+   {
+    "target": "scarf #d8c89a",
+    "material": "accessory",
+    "keyShadesChanged": [
+     2,
+     3,
+     4
+    ],
+    "lightnessShiftAtKeys": [
+     0,
+     0,
+     -0.0023,
+     -0.0025,
+     0.0047
+    ],
+    "maxShift": 0.0047
+   },
+   {
+    "target": "headband #d8c89a",
+    "material": "accessory",
+    "keyShadesChanged": [
+     3,
+     4
+    ],
+    "lightnessShiftAtKeys": [
+     0,
+     0,
+     0,
+     -0.002,
+     0.002
+    ],
+    "maxShift": 0.002
+   },
+   {
+    "target": "flower #f4f0e8",
+    "material": "accessory",
+    "keyShadesChanged": [
+     0,
+     1,
+     2,
+     3,
+     4
+    ],
+    "lightnessShiftAtKeys": [
+     -0.0725,
+     -0.0828,
+     -0.086,
+     -0.0618,
+     -0.0118
+    ],
+    "maxShift": 0.086
+   },
+   {
+    "target": "scarf #f4f0e8",
+    "material": "accessory",
+    "keyShadesChanged": [
+     0,
+     1,
+     2,
+     3,
+     4
+    ],
+    "lightnessShiftAtKeys": [
+     -0.0649,
+     -0.0797,
+     -0.086,
+     -0.0618,
+     -0.0118
+    ],
+    "maxShift": 0.086
+   },
+   {
+    "target": "headband #f4f0e8",
+    "material": "accessory",
+    "keyShadesChanged": [
+     0,
+     1,
+     2,
+     3,
+     4
+    ],
+    "lightnessShiftAtKeys": [
+     -0.0562,
+     -0.0744,
+     -0.086,
+     -0.0618,
+     -0.0118
+    ],
+    "maxShift": 0.086
+   }
+  ],
+  "unfloored": {
+   "keyNodesAtV2Tone": 315,
+   "other": 0
+  }
+ },
+ "residual": {
+  "chosen": 1,
+  "sweep": [
+   {
+    "residual": 0,
+    "identityRoundTrip": {
+     "meanDE": 0.0106,
+     "maxDE": 0.0521
+    },
+    "variationKept": {
+     "meanDE": 0
+    },
+    "fromTargetFamily": {
+     "mean": 0.011,
+     "max": 0.126
+    },
+    "gamutClipped": "0.03 %"
+   },
+   {
+    "residual": 0.25,
+    "identityRoundTrip": {
+     "meanDE": 0.008,
+     "maxDE": 0.0408
+    },
+    "variationKept": {
+     "meanDE": 0.0013
+    },
+    "fromTargetFamily": {
+     "mean": 0.022,
+     "max": 0.141
+    },
+    "gamutClipped": "0.03 %"
+   },
+   {
+    "residual": 0.5,
+    "identityRoundTrip": {
+     "meanDE": 0.0054,
+     "maxDE": 0.0265
+    },
+    "variationKept": {
+     "meanDE": 0.0025
+    },
+    "fromTargetFamily": {
+     "mean": 0.038,
+     "max": 0.19
+    },
+    "gamutClipped": "0.03 %"
+   },
+   {
+    "residual": 0.75,
+    "identityRoundTrip": {
+     "meanDE": 0.0027,
+     "maxDE": 0.0136
+    },
+    "variationKept": {
+     "meanDE": 0.0036
+    },
+    "fromTargetFamily": {
+     "mean": 0.053,
+     "max": 0.252
+    },
+    "gamutClipped": "0.03 %"
+   },
+   {
+    "residual": 1,
+    "identityRoundTrip": {
+     "meanDE": 0,
+     "maxDE": 0.0031
+    },
+    "variationKept": {
+     "meanDE": 0.0047
+    },
+    "fromTargetFamily": {
+     "mean": 0.07,
+     "max": 0.47
+    },
+    "gamutClipped": "0.08 %"
+   }
+  ]
+ }
+}
