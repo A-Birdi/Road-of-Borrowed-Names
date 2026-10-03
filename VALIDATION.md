@@ -2057,8 +2057,15 @@ walking in or off.
   - Suzu walking through the villager at (18,17).
 - Unit 24,315/0.
 - departures.mjs all ok, including its own "someone leaving steps round the player".
-- **Still running at this commit:** world_fixes, actor_life, staging_wataru, staging_chapters, story_ch1, town_animals.
-  Results are recorded below when they finish.
+- **Finished after the commit** (same build, one at a time):
+  - world_fixes all ok;
+  - actor_life 39/39;
+  - staging_wataru 112/112;
+  - staging_chapters 66/66;
+  - story_ch1: 4 companions × 30 checks, all PASS;
+  - town_animals 41/41.
+- Their re-captured evidence screenshots (docs/screenshots/actors/) differed only by capture timing, so the committed
+  ones were kept.
 
 **Not verified:** Firefox; a real phone; the staging worker's runner (on its branch, not merged yet). Its `world()`
 classification still lists these overlaps as non-failures; it is to be tightened after the merge.
