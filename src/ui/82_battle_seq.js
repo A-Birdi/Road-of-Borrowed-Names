@@ -11,7 +11,8 @@
  *
  * Cues: pose (an adventurer's pose and gesture), foe (the creature's action
  * pose), fx (a transient effect), strip (the paper-and-ink word), num (a
- * small number), beat (one authoritative fx event), log, sfx, final.
+ * small number), beat (one authoritative fx event), log, sfx, final, cutin (a technique's paired portrait:
+ * src/ui/82d_harmony_cutin.js, advanced on this clock and disposed whenever a sequence settles).
  *
  * Time: a presentation clock advanced from the frame loop (dt clamped to
  * 100 ms, so a stalled or background tab never bursts through stale beats),

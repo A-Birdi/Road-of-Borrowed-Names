@@ -238,3 +238,89 @@ proposals for `34m_battler_moves.js`.
   ≤ 687 presentation ms (Fast); first `beat` after the cut-in's end; `end` in 2,200–2,700 (group < 3,000);
   `RB.partyChoreo.coverage().techs` all mapped; with reduced motion, three held keys per performer.
 - Browser: the 24 core configurations, geometry and overlay on/off comparisons (CONTRACT.md HX64–HX65).
+
+## 7. As built (the cut-in and stage worker)
+
+Files: `src/ui/82d_harmony_cutin.js` (`RB.harmonyCutin`), `src/styles/61h_harmony_cutin.css`, the `cutin` cue
+in `src/ui/82_battle_seq.js` (fired in `fire1()`'s visual branch, advanced in `tick()`, disposed in `settle()`,
+`finish()` and `detach()`; `T.cutin`), fixed-progress pose cues in `src/ui/83_battle_stage.js`, the timeline
+and carriers in `src/ui/84p_party_choreo.js`, effects `pRoute`, `pCurtain`, `pPlane` in `src/ui/84p_party_fx.js`,
+gestures in `src/engine/34m_battler_moves.js`, the rig's `turn` / `clothFlare` and the lamp's shutter in
+`src/engine/34_battlers.js`, the setting (`harmonyFlourish`, default On) in `src/engine/90_game.js` and
+`src/ui/55_settings.js` (the folio's Battles rows and the battle's own settings sheet), the development viewer
+`src/ui/82e_harmony_dev.js` (`?dev=harmony`).
+
+### 7.1 Lifecycle and timing as built
+
+One instance at a time, token `n`; states `inactive → entering → holding → fading → disposed`, each transition
+stamped on the presentation clock (`RB.harmonyCutin.last().marks`, frame resolution). The choreography always
+places the cue (one per technique, groups included, only with a committed companion); the overlay decides
+whether it shows: setting Off, Instant (never fired), a reading layer open (dialogue, word help, the
+language task, a confirmation, any `aria-modal` sheet), a hidden tab, or no safe placement — each counted in
+`stats().suppressed`, a placement failure recorded in `stats().fallbacks` with every fit step tried.
+
+MEASURED_TIMING_TABLE
+
+An art timeline (`RB.harmonyArt.timeline(comp)`, if the art provides one) is played instead of the two
+drawings: states on the in / hold / out segments by fraction, a missing state holds the one before, reduced
+motion shows the last; every state is footprint and is prepared ahead (unit-tested with a stub; today's
+code-drawn busts have no timeline).
+
+Interruptions (browser-tested): Skip disposes it at once and settles every result once; a hidden tab, a
+campaign change (caches cleared too), word help opening (removed, never animated over it), the scene's exit and
+defeat dispose it; the press that committed the technique neither skips nor hurries it; a resize places the same
+instance again (no replay, one start, Harmony spent once); the battle's settings sheet pauses it with the
+encounter, and turning the setting Off there removes it on resuming. With large text (or an overlay that
+scrolls) it waits unseen until the layout has held still for six frames, then fades in where it stands — or,
+if no place is left then, is not shown at all (never a flash over content that moved under it).
+
+### 7.2 Placement and fit modes per viewport
+
+Protected, measured each time: the status dock, the action banner (as it appears, +8 px for its drop), the
+telegraph and responses unless Adaptive has withdrawn them, Skip, plates and badges, an open intent card, each
+creature's box with its knots, the on-field party's box, any visible HUD or touch control — 12 px clear, tested
+against the composition's drawn rows. The browser test checks the drawn pixels independently in every frame of
+the hold and fade.
+
+MEASURED_PLACEMENT_TABLE
+
+### 7.3 The four stage performances as built (Normal, presentation ms from the technique's start)
+
+Both performers start and end in the rear-three-quarter ready stance; pose segments overlap by 20 ms (no idle
+frame between them); a held segment carries a fixed progress. Reduced motion: three held poses each (the
+anticipation key, the signature, the recovery's own key) — cut, never travelled.
+
+| | Companion: anticipation → signature (cue) → held → recovery | You (rally) | Results |
+|---|---|---|---|
+| Nao — `opening` | 400–780 weight dropped (pelvis −2.8 → −5.6 units), head and shoulders on the creature, a hand on the satchel → 780–1,300 a short step in (the foot lifted), the flat hand cutting across, edge first, finishing in a point (cue 1,102) → held → 1,810–2,210 the hand lowers, he turns to you and nods | 0–500 a breath and the writing hand gathered; held to 900; `rally_thread` 900–1,420 (release 1,118: the thread sent along his line, then drawn back taut) | knots 1,240 and 1,330 joined by a short ochre route only when two really come loose; nothing on any other creature; end 2,300 |
+| Mio — `draught` | 350–750 the hand to the bottles at her hip, the vial raised to eye level, the other hand cupped under it → 750–1,350 steadied, uncorked, tipped into your ink (cue 1,020) → held → 1,860–2,260 a glance to you, the cork back, the vial to her hip | `rally_release` 800–1,360 (the folio open to receive the pour, the hand rising and opening over you both; release 1,052) | the knot 1,200; the restoring 1,230–1,350 only on one of you below full (numbers from the applied change); the washing from 1,500 only on creatures that had Heat (steam), mist (parting) or Gathering (scatter); end 2,350 |
+| Ren — `ward_plane` | 380–780 knees down, the lamp drawn in at his left → 780–1,330 the lamp raised high at his side and shaded (its shutter toward the creatures), the flat right hand drawing a level line at chest height (cue 1,110) → held → 1,810–2,210 the lamp lowered, a check to you and to the other side | `rally_seal` 760–1,320 (the brush along the plane from its other end, closed with a short vertical stroke; release 1,197) | the knot on the creature 1,200; the plane before each of you from 1,050, a ward at each 1,350 (+80); end 2,300 |
+| Suzu — `curtain` | 350–750 a step back onto the left foot, the arm drawn across → 750–1,014 one twirl on the spot (the rig's own side, front, other side and back; hem and hair flaring a beat late) → 1,014–1,113 planted, the arm opened toward the action (cue 1,091) → held → 1,910–2,410 a half-bow, a hand to her hip | `rally_catch` 850–1,410 (lifted high, swept out as a curtain's arc round the opening, hooked back; release 1,141) | knots 1,280 and 1,370; turned back 1,430 (+90 for each other creature); in a group each other creature's knot 1,580, 1,730, the curtain round each; end 2,450 |
+
+Short local accents (no voice): a brush stroke as the rally starts; Nao `pen_up` at his point, Mio `splash` at
+the pour, Ren `lantern` as the lamp rises, Suzu `wind` with the twirl; the existing `technique` chime at the result.
+
+### 7.4 Evidence and measurements
+
+`tests/e2e/harmony_cutin.mjs` (sections core, never, geometry, plan, frozen, life, cycles, setting, dev; `--docs`
+writes the evidence); `tests/unit/harmony_timing.test.mjs`; `tests/e2e/battle_invariance.mjs --tech` (96 technique
+configurations, the portrait On / Off). Evidence in `docs/screenshots/harmony/cutin/`: a real-time WebM of each
+pairing at Normal (1280 × 720), the four stage performances with the portrait Off as frame sheets, the compact
+cut-in at 390 × 844, and `cutin_results.json` (every measurement above, the timelines at frame resolution, costs).
+All figures are from headless Chromium on a shared, loaded 4-core machine — not a physical device, not a phone.
+
+### 7.5 Limits, stated plainly
+
+- A creature is protected by its box, not its silhouette: where a group puts one creature over the party on the
+  left, the portrait shrinks to compact ×1 or is omitted (recorded), even where its wings leave a gap.
+- 200 % text is reached only by setting `textScale` to 2 (the slider stops at 150 %); there the portrait is often
+  omitted on phones — by the fit order, with the fallback recorded.
+- In the frozen-frame comparison the scene and every surface are identical outside the overlay; Chromium
+  re-rasterises the Skip button's text and gradient (and once a banner edge) by a level or two when the overlay is
+  shown or hidden — measured and reported, not a layout change.
+- The stage uses the rig's existing faces: Suzu's front view in the twirl has small features (the far eye is
+  added only when she is turned toward us); the spin is its 3-D rig turned through about ten drawings at Normal,
+  not a hand-drawn turn.
+- The overlay was built against today's code-drawn busts; painted art (planned) can replace them behind the same
+  API: sizes come from `NATIVE` / `fitScale` / the canvas, fractional scales are accepted, and the art's phases or
+  timeline are data.

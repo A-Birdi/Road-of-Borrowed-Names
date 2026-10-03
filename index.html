@@ -3164,15 +3164,15 @@ body.reduced-motion .cb-badges .cb-ib { transition: none; }
 /* The Harmony portrait flourish (src/ui/82d_harmony_cutin.js; Harmony addendum §5, §7): a decorative layer
  * over the scene, above the effects (z 1) and below Skip (5), the action banner (6), the menus and every
  * reading layer (they live outside the battle overlay). Not focusable, takes no pointer input, dims nothing.
- * Placed by the script from viewport px (absolute in the overlay, compensating its scroll at large text; not
- * fixed, so it is not a composited layer that would re-rasterise the text drawn beside it), drawn
+ * Placed by the script in viewport px (position: fixed: a scrolled overlay at large text does not carry it, and
+ * it never adds to the overlay's scrollable area, so showing it can never cause a reflow), drawn
  * nearest-neighbour; its opacity and slide come from the battle's presentation clock — never a
  * CSS transition, so Skip, a hidden tab or the end of the action remove it at once. */
 .combat-ui > .cb-cutin {
-  position: absolute; left: 0; top: 0; z-index: 3; margin: 0; padding: 0; border: 0;
+  position: fixed; left: 0; top: 0; z-index: 3; margin: 0; padding: 0; border: 0;
   pointer-events: none !important; user-select: none; -webkit-user-select: none;
   image-rendering: pixelated; image-rendering: crisp-edges;
-  transform-origin: 0 0; transition: none; opacity: 0; /* (no will-change: a promoted layer would re-rasterise the text beside it) */
+  transform-origin: 0 0; transition: none; opacity: 0;
 }
 
 /* ==== src/styles/66_words.css ==== */
@@ -27137,6 +27137,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
  * a hard pixel edge on the same grid as the world. docs/battle/party.md records
  * the standard (ramps, outline rule, light, per-material recipes).
  *
+ * A pose may turn the whole body about its foot anchor (`turn`, degrees: Suzu's twirl in Curtain Call shows the
+ * rig's own side, front and back — the costume is never mirrored) and flare a skirt's hem (`clothFlare`).
+ *
  * Hands are articulated (palm, the fingers as one or more pieces and a thumb, by shape: fist, relaxed,
  * open, flat, point, pinch, cup, spread), and what a hand holds is drawn by it: the folio, a paper
  * strip, a brush, Mio's vial (from the bottles at her hip), Ren's lamp (raised when a gesture frees his
@@ -28534,7 +28537,11 @@ RB.battlers = (function () {
  *   comp any other figure drawn in the battle style (an NPC): the plain companion stance.
  *
  * Gestures: anticipate (k 0→1: the stance to the anticipation key), act (k 0→1: express, then the
- * release at G.release), recover (k 0→1: back to exactly the stance). A foot that moves between two keys
+ * release at G.release), recover (k 0→1: back to exactly the stance). A gesture may pass through authored
+ * keys on the way in (G.ant) and on the way back (G.rec), and draw its progress more finely (G.qk) — the four
+ * Harmony performances (Harmony addendum §9: Nao's opening, Mio's draught, Ren's ward_plane, Suzu's curtain
+ * with a full turn of the rig, `turn`) and the player's rally terminals (rally_thread / _release / _seal /
+ * _catch). A foot that moves between two keys
  * is lifted on the way (no sliding). Reactions: hit (variants soft, held), brace (a ward took it), guard
  * (bracing without a ward; variant wary: subtle, while a blow is prepared at you), soothed (receiving a
  * recovery), afflict (variants hush, gust, chill, slip), down, cheer (settle / victory: each person's
@@ -71371,7 +71378,8 @@ RB.combatHelp = (function () {
  *
  * Cues: pose (an adventurer's pose and gesture), foe (the creature's action
  * pose), fx (a transient effect), strip (the paper-and-ink word), num (a
- * small number), beat (one authoritative fx event), log, sfx, final.
+ * small number), beat (one authoritative fx event), log, sfx, final, cutin (a technique's paired portrait:
+ * src/ui/82d_harmony_cutin.js, advanced on this clock and disposed whenever a sequence settles).
  *
  * Time: a presentation clock advanced from the frame loop (dt clamped to
  * 100 ms, so a stalled or background tab never bursts through stale beats),
@@ -72294,7 +72302,8 @@ RB.harmonyCutin = (function () {
   const now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
   const A = () => RB.harmonyArt;
   let cur = null, N = 0, onResize = null;
-  const S = { started: 0, shown: 0, displayed: 0, disposed: 0, suppressed: {}, fallbacks: [], log: [], maxLive: 0, replaced: 0, relaid: 0 };
+  const S = { started: 0, shown: 0, displayed: 0, disposed: 0, suppressed: {}, fallbacks: [], log: [], maxLive: 0, replaced: 0, relaid: 0, cost: { start: [], frameMax: 0, frameSum: 0, frames: 0 } };
+  const keep = (a, v) => { a.push(Math.round(v * 100) / 100); if (a.length > 40) a.shift(); };
 
   // ---- the setting and the moments it must not start -------------------------------------------------
   // "Harmony portrait flourish" (default On): presentation only; older settings records lack it (= On).
@@ -72483,6 +72492,7 @@ RB.harmonyCutin = (function () {
   function note(why) { S.suppressed[why] = (S.suppressed[why] || 0) + 1; }
   function mark(c, state, pt) { c.marks.push({ state, at: Math.round((pt - c.t0) * 10) / 10, wall: Math.round(now() - c.wall0) }); }
   function start(cue, at, rec) {
+    const tStart = now();
     if (cur) { S.replaced++; dispose('replaced'); }
     const comp = cue && cue.comp;
     const why = !enabled() ? 'off' : COMPS.indexOf(comp) < 0 ? 'nocomp' : !A() ? 'noart' : RB.battleSeq && RB.battleSeq.mode() === 'instant' ? 'instant'
@@ -72525,14 +72535,14 @@ RB.harmonyCutin = (function () {
     window.addEventListener('resize', onResize);
     window.addEventListener('orientationchange', onResize);
     frame(RB.battleSeq.now());
+    keep(S.cost.start, now() - tStart); // (placement and the first drawing: what starting it costs the frame)
     return cur ? cur.n : null;
   }
   function layout(c) {
-    const p = c.pl, el = c.el, root = el.parentNode;
-    // placed in viewport px; inside the overlay, which scrolls with very large text (a scroll re-places it)
-    const rr = root && root.getBoundingClientRect ? root.getBoundingClientRect() : { left: 0, top: 0 };
-    el.style.left = (p.x - rr.left + (root ? root.scrollLeft : 0)) + 'px';
-    el.style.top = (p.y - rr.top + (root ? root.scrollTop : 0)) + 'px';
+    const p = c.pl, el = c.el;
+    // viewport px (position: fixed — it never adds to the overlay's scrollable area, so it cannot cause a reflow)
+    el.style.left = p.x + 'px';
+    el.style.top = p.y + 'px';
     el.style.width = p.w + 'px';
     el.style.height = p.h + 'px';
   }
@@ -72540,8 +72550,7 @@ RB.harmonyCutin = (function () {
     const spec = { comp: c.comp, look: c.look, variant: c.pl.variant, phase: ph, still: c.reduce && !c.tl, backing: c.pl.backing, fx: c.pl.fx };
     const comp = A().compose(spec);
     if (c.el.width !== comp.w || c.el.height !== comp.h) { c.el.width = comp.w; c.el.height = comp.h; }
-    // (a CPU-backed canvas: not a composited layer of its own, so the text drawn beside it — Skip, the banner —
-    // is rasterised exactly as without it)
+    // (a CPU-backed canvas: it is drawn only when the drawing changes, and the browser tests read it back)
     const g = c.el.getContext('2d', { willReadFrequently: true });
     g.imageSmoothingEnabled = false;
     g.clearRect(0, 0, comp.w, comp.h);
@@ -72582,6 +72591,12 @@ RB.harmonyCutin = (function () {
   function frame(pt) {
     const c = cur;
     if (!c) return;
+    const tf = now();
+    try { frame1(c, pt); } finally { const ms = now() - tf; S.cost.frameMax = Math.max(S.cost.frameMax, ms); S.cost.frameSum += ms; S.cost.frames++; }
+  }
+  function frame1(c, pt) {
+    // the setting turned Off in the battle's settings sheet while it stood paused: gone on resuming
+    if (!enabled()) { dispose('off'); return; }
     const lay = readingOpen();
     if (lay) { dispose('layer:' + lay); return; }
     if (c.settle) {
@@ -72668,10 +72683,11 @@ RB.harmonyCutin = (function () {
   function stats() {
     let cache = null;
     try { const s = A() && A().stats(); cache = s ? { busts: s.busts, compositions: s.compositions, bytes: s.bytes, builds: s.builds, hits: s.hits } : null; } catch (e) { cache = null; }
-    return { started: S.started, shown: S.shown, displayed: S.displayed, disposed: S.disposed, live: cur ? 1 : 0, layers: typeof document !== 'undefined' ? document.querySelectorAll('.cb-cutin').length : 0, maxLive: S.maxLive, replaced: S.replaced, relaid: S.relaid, suppressed: Object.assign({}, S.suppressed), fallbacks: S.fallbacks.slice(), spans: spanCache.size, listening: !!onResize, cache };
+    const cost = { startMs: S.cost.start.slice(), frameMaxMs: Math.round(S.cost.frameMax * 100) / 100, frameMeanMs: S.cost.frames ? Math.round((S.cost.frameSum / S.cost.frames) * 1000) / 1000 : 0, frames: S.cost.frames };
+    return { cost, started: S.started, shown: S.shown, displayed: S.displayed, disposed: S.disposed, live: cur ? 1 : 0, layers: typeof document !== 'undefined' ? document.querySelectorAll('.cb-cutin').length : 0, maxLive: S.maxLive, replaced: S.replaced, relaid: S.relaid, suppressed: Object.assign({}, S.suppressed), fallbacks: S.fallbacks.slice(), spans: spanCache.size, listening: !!onResize, cache };
   }
   const last = () => (S.log.length ? S.log[S.log.length - 1] : null);
-  function reset() { dispose('reset'); S.started = S.shown = S.displayed = S.disposed = S.maxLive = S.replaced = S.relaid = 0; S.suppressed = {}; S.fallbacks = []; S.log = []; }
+  function reset() { dispose('reset'); S.started = S.shown = S.displayed = S.disposed = S.maxLive = S.replaced = S.relaid = 0; S.suppressed = {}; S.fallbacks = []; S.log = []; S.cost = { start: [], frameMax: 0, frameSum: 0, frames: 0 }; }
 
   // ---- preparation at a safe moment (§21) and cleanup ------------------------------------------------
   // At an encounter's start the committed companion's pair is built in idle slices (both variants, every

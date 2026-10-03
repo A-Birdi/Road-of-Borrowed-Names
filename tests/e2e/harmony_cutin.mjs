@@ -15,6 +15,7 @@
 //   frozen    the frame with the overlay shown and hidden, everything frozen: identical outside the overlay
 //   life      Skip, a hidden tab, a campaign change, word help opening, a resize mid-action
 //   cycles    20 techniques in one page: listeners, layers, timers and caches bounded
+//   dev       the ?dev=harmony viewer: refused on a normal page; labelled synthetic; plays each pairing
 // With --docs: real-time WebM captures of each pairing at Normal (1280×720), frame sheets of each stage
 // performance with the portrait Off, and the 390×844 compact cut-in, in docs/screenshots/harmony/cutin/.
 // Usage: node tests/e2e/harmony_cutin.mjs [filter] [--docs]
@@ -293,6 +294,8 @@ await test('core: 4 pairings × Normal / Fast / Instant × reduced motion off / 
       }
       assert(!errors.length, tag + ': ' + errors.join('; '));
     }
+    // what it cost (this machine, headless): starting a portrait (placement + first drawing) and each frame
+    report['cost_' + comp] = await p.evaluate(() => ({ cutin: RB.harmonyCutin.stats().cost, artBuild: RB.harmonyArt.stats().bustBuildMs, artCache: { busts: RB.harmonyArt.stats().busts, compositions: RB.harmonyArt.stats().compositions, MiB: +(RB.harmonyArt.stats().bytes / 1048576).toFixed(2) }, figures: RB.battlers.budget() }));
     await ctx.close();
   }
   // identical rules' state across every presentation configuration of a pairing (and pets shown/hidden)
@@ -631,6 +634,57 @@ await test('cycles: 20 techniques (each pairing, Normal / Fast / reduced, a few 
 });
 
 // ---------------------------------------------------------------------------------------------------------
+await test('setting: "Harmony portrait flourish" is On by default (also for an older settings record), sits with the Battles settings, and a real click turns it Off and saves it', async () => {
+  const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  const def = await p.evaluate(() => ({ now: RB.game.settings.harmonyFlourish, enabled: RB.harmonyCutin.enabled() }));
+  assert(def.now === true && def.enabled, 'On by default ' + JSON.stringify(def));
+  // an older record without the key: still On (presentation only; nothing else changes)
+  const old = await p.evaluate(() => { delete RB.game.settings.harmonyFlourish; return RB.harmonyCutin.enabled(); });
+  assert(old === true, 'an older settings record (no key) counts as On');
+  await p.evaluate(() => { RB.game.settings.harmonyFlourish = true; RB.ui.settings.open(); });
+  await p.waitForSelector('.folio-settings [data-grp="learning"]', { timeout: 8000 });
+  await p.click('.folio-settings [data-grp="learning"]');
+  await p.waitForSelector('[data-sw="harmonyFlourish"]', { timeout: 8000 });
+  const row = await p.evaluate(() => { const i = document.querySelector('[data-sw="harmonyFlourish"]'); const f = i.closest('.field'); const prev = f.previousElementSibling; return { label: f.textContent.replace(/\s+/g, ' ').trim(), checked: i.checked, afterBattles: !!(prev && /What creatures are about to do/.test(prev.textContent)) }; });
+  assert(/Harmony portrait flourish/.test(row.label) && row.checked && row.afterBattles, 'the switch, On, beside the Battles settings ' + JSON.stringify(row));
+  await p.evaluate(() => document.querySelector('[data-sw="harmonyFlourish"]').scrollIntoView({ block: 'center' }));
+  await p.click('[data-sw="harmonyFlourish"]', { force: true });
+  await p.waitForFunction(() => RB.game.settings.harmonyFlourish === false, null, { timeout: 4000 });
+  const saved = await p.evaluate(async () => { const s = await RB.save.loadSettings(); return s && s.harmonyFlourish; });
+  assert(saved === false && !(await p.evaluate(() => RB.harmonyCutin.enabled())), 'Off, saved with the settings');
+  report.setting = { default: def.now, olderRecord: old, row: row.label, savedOff: saved === false };
+  assert(!errors.length, errors.join('; '));
+  await ctx.close();
+});
+
+// ---------------------------------------------------------------------------------------------------------
+await test('dev viewer (?dev=harmony): refused on a normal page; on a dev page the panel is labelled synthetic, and each pairing\'s cut-in and stage performance play on demand without touching the rules', async () => {
+  const plain = await page(b, url, { viewport: { width: 1280, height: 720 } });
+  const refused = await plain.p.evaluate(() => ({ allowed: RB.harmonyCutin.dev.allowed(), battle: RB.harmonyCutin.dev.battle({ comp: 'suzu' }), panel: RB.harmonyCutin.dev.panel(), el: !!document.getElementById('harmony-dev') }));
+  assert(!refused.allowed && refused.battle === false && refused.panel === null && !refused.el, 'not reachable in normal play ' + JSON.stringify(refused));
+  await plain.ctx.close();
+  const { p, errors, ctx } = await page(b, url + '?dev=harmony', { viewport: { width: 1280, height: 720 } });
+  await p.waitForSelector('#harmony-dev', { timeout: 10000 });
+  const label = await p.evaluate(() => document.getElementById('harmony-dev').textContent);
+  assert(/Synthetic fixture/.test(label) && /no rules applied/.test(label), 'the panel says it is a synthetic fixture: ' + label.slice(0, 120));
+  const out = [];
+  for (const comp of COMPS) {
+    await p.evaluate((c) => RB.harmonyCutin.dev.battle({ comp: c, foes: c === 'suzu' ? 2 : 1, anim: 'normal', reduce: false, flourish: true }), comp);
+    await toCards(p);
+    const before = await p.evaluate(() => JSON.stringify(RB.combat.state()));
+    const s0 = await p.evaluate(() => RB.harmonyCutin.stats().started);
+    await p.evaluate(() => { window.__devDone = null; RB.harmonyCutin.dev.play({}).then((r) => { window.__devDone = r ? r.kind : 'refused'; }); });
+    await p.waitForFunction(() => window.__devDone, null, { timeout: 15000 });
+    const r = await p.evaluate(() => ({ done: window.__devDone, started: RB.harmonyCutin.stats().started, last: RB.harmonyCutin.last(), after: JSON.stringify(RB.combat.state()), trace: RB.battleSeq.trace().slice(-1)[0] }));
+    out.push({ comp, kind: r.done, cutins: r.started - s0, fit: r.last && r.last.fit, beats: r.trace.beats.length, same: before === r.after });
+    assert(r.done === 'dev' && r.started - s0 === 1 && r.trace.beats.length === 0 && before === r.after, comp + ': the synthetic playback shows one cut-in and the performance, applies no result ' + JSON.stringify(out[out.length - 1]));
+  }
+  report.devViewer = out;
+  assert(!errors.length, errors.join('; '));
+  await ctx.close();
+});
+
+// ---------------------------------------------------------------------------------------------------------
 // Evidence (--docs): real-time captures of each pairing at Normal (1280×720), and frame sheets of each stage
 // performance with the portrait Off (the presentation clock slowed ×0.25 so each sampled moment is exact).
 if (toDocs) await test('evidence: a real-time WebM of each pairing at Normal (1280×720); frame sheets of each stage performance with the portrait Off', async () => {
@@ -697,7 +751,7 @@ const rp = path.join(outDir, 'report.json');
 fs.writeFileSync(rp, JSON.stringify(report, null, 1));
 if (toDocs) {
   // the measured record kept with the evidence (timelines, placements, geometry, cleanup)
-  const keep = { when: report.when, browser: report.browser, core: report.core, geometry: report.geometry, plan: report.plan, frozen: report.frozen, life: report.life, cycles: report.cycles, videos: report.videos, sheets: report.sheets, timelines: Object.fromEntries(COMPS.map((c) => [c, report['timeline_' + c]])) };
+  const keep = { when: report.when, browser: report.browser, cost: Object.fromEntries(COMPS.map((c) => [c, report['cost_' + c]])), setting: report.setting, core: report.core, geometry: report.geometry, plan: report.plan, frozen: report.frozen, life: report.life, cycles: report.cycles, devViewer: report.devViewer, never: report.never, videos: report.videos, sheets: report.sheets, timelines: Object.fromEntries(COMPS.map((c) => [c, report['timeline_' + c]])) };
   fs.writeFileSync(path.join(docsDir, 'cutin_results.json'), JSON.stringify(keep, null, 1));
 }
 console.log(`\n${pass} passed, ${fail} failed`);

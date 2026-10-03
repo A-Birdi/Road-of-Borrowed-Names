@@ -57,7 +57,8 @@ RB.harmonyCutin = (function () {
   const now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
   const A = () => RB.harmonyArt;
   let cur = null, N = 0, onResize = null;
-  const S = { started: 0, shown: 0, displayed: 0, disposed: 0, suppressed: {}, fallbacks: [], log: [], maxLive: 0, replaced: 0, relaid: 0 };
+  const S = { started: 0, shown: 0, displayed: 0, disposed: 0, suppressed: {}, fallbacks: [], log: [], maxLive: 0, replaced: 0, relaid: 0, cost: { start: [], frameMax: 0, frameSum: 0, frames: 0 } };
+  const keep = (a, v) => { a.push(Math.round(v * 100) / 100); if (a.length > 40) a.shift(); };
 
   // ---- the setting and the moments it must not start -------------------------------------------------
   // "Harmony portrait flourish" (default On): presentation only; older settings records lack it (= On).
@@ -246,6 +247,7 @@ RB.harmonyCutin = (function () {
   function note(why) { S.suppressed[why] = (S.suppressed[why] || 0) + 1; }
   function mark(c, state, pt) { c.marks.push({ state, at: Math.round((pt - c.t0) * 10) / 10, wall: Math.round(now() - c.wall0) }); }
   function start(cue, at, rec) {
+    const tStart = now();
     if (cur) { S.replaced++; dispose('replaced'); }
     const comp = cue && cue.comp;
     const why = !enabled() ? 'off' : COMPS.indexOf(comp) < 0 ? 'nocomp' : !A() ? 'noart' : RB.battleSeq && RB.battleSeq.mode() === 'instant' ? 'instant'
@@ -288,14 +290,14 @@ RB.harmonyCutin = (function () {
     window.addEventListener('resize', onResize);
     window.addEventListener('orientationchange', onResize);
     frame(RB.battleSeq.now());
+    keep(S.cost.start, now() - tStart); // (placement and the first drawing: what starting it costs the frame)
     return cur ? cur.n : null;
   }
   function layout(c) {
-    const p = c.pl, el = c.el, root = el.parentNode;
-    // placed in viewport px; inside the overlay, which scrolls with very large text (a scroll re-places it)
-    const rr = root && root.getBoundingClientRect ? root.getBoundingClientRect() : { left: 0, top: 0 };
-    el.style.left = (p.x - rr.left + (root ? root.scrollLeft : 0)) + 'px';
-    el.style.top = (p.y - rr.top + (root ? root.scrollTop : 0)) + 'px';
+    const p = c.pl, el = c.el;
+    // viewport px (position: fixed — it never adds to the overlay's scrollable area, so it cannot cause a reflow)
+    el.style.left = p.x + 'px';
+    el.style.top = p.y + 'px';
     el.style.width = p.w + 'px';
     el.style.height = p.h + 'px';
   }
@@ -303,8 +305,7 @@ RB.harmonyCutin = (function () {
     const spec = { comp: c.comp, look: c.look, variant: c.pl.variant, phase: ph, still: c.reduce && !c.tl, backing: c.pl.backing, fx: c.pl.fx };
     const comp = A().compose(spec);
     if (c.el.width !== comp.w || c.el.height !== comp.h) { c.el.width = comp.w; c.el.height = comp.h; }
-    // (a CPU-backed canvas: not a composited layer of its own, so the text drawn beside it — Skip, the banner —
-    // is rasterised exactly as without it)
+    // (a CPU-backed canvas: it is drawn only when the drawing changes, and the browser tests read it back)
     const g = c.el.getContext('2d', { willReadFrequently: true });
     g.imageSmoothingEnabled = false;
     g.clearRect(0, 0, comp.w, comp.h);
@@ -345,6 +346,12 @@ RB.harmonyCutin = (function () {
   function frame(pt) {
     const c = cur;
     if (!c) return;
+    const tf = now();
+    try { frame1(c, pt); } finally { const ms = now() - tf; S.cost.frameMax = Math.max(S.cost.frameMax, ms); S.cost.frameSum += ms; S.cost.frames++; }
+  }
+  function frame1(c, pt) {
+    // the setting turned Off in the battle's settings sheet while it stood paused: gone on resuming
+    if (!enabled()) { dispose('off'); return; }
     const lay = readingOpen();
     if (lay) { dispose('layer:' + lay); return; }
     if (c.settle) {
@@ -431,10 +438,11 @@ RB.harmonyCutin = (function () {
   function stats() {
     let cache = null;
     try { const s = A() && A().stats(); cache = s ? { busts: s.busts, compositions: s.compositions, bytes: s.bytes, builds: s.builds, hits: s.hits } : null; } catch (e) { cache = null; }
-    return { started: S.started, shown: S.shown, displayed: S.displayed, disposed: S.disposed, live: cur ? 1 : 0, layers: typeof document !== 'undefined' ? document.querySelectorAll('.cb-cutin').length : 0, maxLive: S.maxLive, replaced: S.replaced, relaid: S.relaid, suppressed: Object.assign({}, S.suppressed), fallbacks: S.fallbacks.slice(), spans: spanCache.size, listening: !!onResize, cache };
+    const cost = { startMs: S.cost.start.slice(), frameMaxMs: Math.round(S.cost.frameMax * 100) / 100, frameMeanMs: S.cost.frames ? Math.round((S.cost.frameSum / S.cost.frames) * 1000) / 1000 : 0, frames: S.cost.frames };
+    return { cost, started: S.started, shown: S.shown, displayed: S.displayed, disposed: S.disposed, live: cur ? 1 : 0, layers: typeof document !== 'undefined' ? document.querySelectorAll('.cb-cutin').length : 0, maxLive: S.maxLive, replaced: S.replaced, relaid: S.relaid, suppressed: Object.assign({}, S.suppressed), fallbacks: S.fallbacks.slice(), spans: spanCache.size, listening: !!onResize, cache };
   }
   const last = () => (S.log.length ? S.log[S.log.length - 1] : null);
-  function reset() { dispose('reset'); S.started = S.shown = S.displayed = S.disposed = S.maxLive = S.replaced = S.relaid = 0; S.suppressed = {}; S.fallbacks = []; S.log = []; }
+  function reset() { dispose('reset'); S.started = S.shown = S.displayed = S.disposed = S.maxLive = S.replaced = S.relaid = 0; S.suppressed = {}; S.fallbacks = []; S.log = []; S.cost = { start: [], frameMax: 0, frameSum: 0, frames: 0 }; }
 
   // ---- preparation at a safe moment (§21) and cleanup ------------------------------------------------
   // At an encounter's start the committed companion's pair is built in idle slices (both variants, every

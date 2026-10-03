@@ -22,7 +22,11 @@
  *   comp any other figure drawn in the battle style (an NPC): the plain companion stance.
  *
  * Gestures: anticipate (k 0→1: the stance to the anticipation key), act (k 0→1: express, then the
- * release at G.release), recover (k 0→1: back to exactly the stance). A foot that moves between two keys
+ * release at G.release), recover (k 0→1: back to exactly the stance). A gesture may pass through authored
+ * keys on the way in (G.ant) and on the way back (G.rec), and draw its progress more finely (G.qk) — the four
+ * Harmony performances (Harmony addendum §9: Nao's opening, Mio's draught, Ren's ward_plane, Suzu's curtain
+ * with a full turn of the rig, `turn`) and the player's rally terminals (rally_thread / _release / _seal /
+ * _catch). A foot that moves between two keys
  * is lifted on the way (no sliding). Reactions: hit (variants soft, held), brace (a ward took it), guard
  * (bracing without a ward; variant wary: subtle, while a blow is prepared at you), soothed (receiving a
  * recovery), afflict (variants hush, gust, chill, slip), down, cheer (settle / victory: each person's

@@ -19,6 +19,9 @@
  * a hard pixel edge on the same grid as the world. docs/battle/party.md records
  * the standard (ramps, outline rule, light, per-material recipes).
  *
+ * A pose may turn the whole body about its foot anchor (`turn`, degrees: Suzu's twirl in Curtain Call shows the
+ * rig's own side, front and back — the costume is never mirrored) and flare a skirt's hem (`clothFlare`).
+ *
  * Hands are articulated (palm, the fingers as one or more pieces and a thumb, by shape: fist, relaxed,
  * open, flat, point, pinch, cup, spread), and what a hand holds is drawn by it: the folio, a paper
  * strip, a brush, Mio's vial (from the bottles at her hip), Ren's lamp (raised when a gesture frees his

@@ -1,13 +1,13 @@
 /* The Harmony portrait flourish (src/ui/82d_harmony_cutin.js; Harmony addendum §5, §7): a decorative layer
  * over the scene, above the effects (z 1) and below Skip (5), the action banner (6), the menus and every
  * reading layer (they live outside the battle overlay). Not focusable, takes no pointer input, dims nothing.
- * Placed by the script from viewport px (absolute in the overlay, compensating its scroll at large text; not
- * fixed, so it is not a composited layer that would re-rasterise the text drawn beside it), drawn
+ * Placed by the script in viewport px (position: fixed: a scrolled overlay at large text does not carry it, and
+ * it never adds to the overlay's scrollable area, so showing it can never cause a reflow), drawn
  * nearest-neighbour; its opacity and slide come from the battle's presentation clock — never a
  * CSS transition, so Skip, a hidden tab or the end of the action remove it at once. */
 .combat-ui > .cb-cutin {
-  position: absolute; left: 0; top: 0; z-index: 3; margin: 0; padding: 0; border: 0;
+  position: fixed; left: 0; top: 0; z-index: 3; margin: 0; padding: 0; border: 0;
   pointer-events: none !important; user-select: none; -webkit-user-select: none;
   image-rendering: pixelated; image-rendering: crisp-edges;
-  transform-origin: 0 0; transition: none; opacity: 0; /* (no will-change: a promoted layer would re-rasterise the text beside it) */
+  transform-origin: 0 0; transition: none; opacity: 0;
 }
