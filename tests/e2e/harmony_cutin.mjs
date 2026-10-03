@@ -199,13 +199,15 @@ async function companionPick(p, re) {
 }
 // the exchange plays to the next decision (or the end of the encounter)
 async function settle(p) {
+  let s = null;
   for (let i = 0; i < 1600; i++) {
-    const s = await p.evaluate(() => ({ r: window.__result, busy: RB.battleSeq.busy(), cards: !!document.querySelector('.rcard[data-i]') && !document.querySelector('.chal'), dlg: RB.ui.dialogue.isOpen(), ph: RB.combat.phase() }));
+    s = await p.evaluate(() => ({ r: window.__result, busy: RB.battleSeq.busy(), cards: !!document.querySelector('.rcard[data-i]') && !document.querySelector('.chal'), dlg: RB.ui.dialogue.isOpen(), ph: RB.combat.phase() }));
     if (s.r || (!s.busy && s.cards && s.ph === 'choose')) return s;
     if (s.dlg) await p.evaluate(() => RB.ui.dialogue.advance(true));
     await wait(p, 25);
   }
-  throw new Error('the exchange did not finish');
+  const more = await p.evaluate(() => { const c = RB.battleSeq.current(); return { mode: RB.game.mode(), cur: c ? { kind: c.kind, t: c.t } : null, paused: RB.battleSeq.paused ? RB.battleSeq.paused() : null, hidden: document.hidden, sheets: [...document.querySelectorAll('[aria-modal="true"], .csheet, .chal')].map((e) => e.className).slice(0, 6) }; });
+  throw new Error('the exchange did not finish ' + JSON.stringify(Object.assign({}, s, more)));
 }
 // one committed technique with real clicks; returns what was recorded
 async function technique(p, comp, o) {
@@ -569,13 +571,16 @@ await test('life: Skip settles once and clears it; a hidden tab, a campaign chan
   });
   assert(out.resize.started === 1 && out.resize.now.relaid >= 1 && (out.resize.now.token === out.resize.token || out.resize.now.state === 'inactive') && (out.resize.why === 'done' || out.resize.why === 'resize-invalid'), 'resize: placed again from the same action (no replay, one start) ' + JSON.stringify(out.resize));
   // a campaign change (load / new / title) mid-action
+  // (a real change of campaign, as Load, New or Return to title make: the battle is abandoned whole —
+  // src/ui/80_combat.js — so the exchange does not continue; the next setup starts from the map)
   out.campaign = await midCut('suzu', async () => {
-    await p.evaluate(() => RB.bus.emit('campaign:changing'));
-    const s = await p.evaluate(() => ({ st: RB.harmonyCutin.state().state, layers: document.querySelectorAll('.cb-cutin').length, spans: RB.harmonyCutin.stats().spans }));
-    await settle(p);
-    return { now: s };
+    await p.evaluate(() => RB.game.debugStart('rw.mill1', 7, 9, { comp: 'suzu' }));
+    await wait(p, 60);
+    return { now: await p.evaluate(() => ({ st: RB.harmonyCutin.state().state, layers: document.querySelectorAll('.cb-cutin').length, spans: RB.harmonyCutin.stats().spans, mode: RB.game.mode(), seq: !!RB.battleSeq.current() })) };
   });
-  assert(out.campaign.why === 'campaign' && out.campaign.now.layers === 0 && out.campaign.now.spans === 0, 'a campaign change: cleared with its caches ' + JSON.stringify(out.campaign));
+  // (the battle's own abandon runs first — its scene exit disposes the portrait as 'exit'; the cut-in's
+  // campaign listener then clears its caches)
+  assert((out.campaign.why === 'campaign' || out.campaign.why === 'exit') && out.campaign.now.layers === 0 && out.campaign.now.spans === 0 && out.campaign.now.mode !== 'combat' && !out.campaign.now.seq, 'a campaign change: cleared with its caches, the battle gone with it ' + JSON.stringify(out.campaign));
   // the committing press: "Join" started the action; it neither skipped nor hurried the portrait
   await setup(p, { comp: 'nao', knots: 8 });
   const r = await technique(p, 'nao');
@@ -700,11 +705,16 @@ await test('dev viewer (?dev=harmony): refused on a normal page; on a dev page t
     await toCards(p);
     const before = await p.evaluate(() => JSON.stringify(RB.combat.state()));
     const s0 = await p.evaluate(() => RB.harmonyCutin.stats().started);
+    const f0 = await p.evaluate(() => RB.harmonyCutin.stats().fallbacks.length);
     await p.evaluate(() => { window.__devDone = null; RB.harmonyCutin.dev.play({}).then((r) => { window.__devDone = r ? r.kind : 'refused'; }); });
     await p.waitForFunction(() => window.__devDone, null, { timeout: 15000 });
-    const r = await p.evaluate(() => ({ done: window.__devDone, started: RB.harmonyCutin.stats().started, last: RB.harmonyCutin.last(), after: JSON.stringify(RB.combat.state()), trace: RB.battleSeq.trace().slice(-1)[0] }));
-    out.push({ comp, kind: r.done, cutins: r.started - s0, fit: r.last && r.last.fit, beats: r.trace.beats.length, same: before === r.after });
-    assert(r.done === 'dev' && r.started - s0 === 1 && r.trace.beats.length === 0 && before === r.after, comp + ': the synthetic playback shows one cut-in and the performance, applies no result ' + JSON.stringify(out[out.length - 1]));
+    const r = await p.evaluate((f0) => ({ done: window.__devDone, started: RB.harmonyCutin.stats().started, last: RB.harmonyCutin.last(), fb: RB.harmonyCutin.stats().fallbacks.slice(f0).map((x) => x.reason), after: JSON.stringify(RB.combat.state()), trace: RB.battleSeq.trace().slice(-1)[0] }), f0);
+    const cutins = r.started - s0;
+    out.push({ comp, foes: comp === 'suzu' ? 2 : 1, kind: r.done, cutins, fit: cutins ? r.last && r.last.fit : 'omitted', fallback: cutins ? null : r.fb[0] || null, beats: r.trace.beats.length, same: before === r.after });
+    // one cut-in — or, for the group (two creatures at 1280×720, the left one's box over the party's side), the
+    // fit order's recorded omission, exactly as in play; the performance plays either way, no result applied
+    const one = cutins === 1 || (comp === 'suzu' && cutins === 0 && r.fb.length === 1);
+    assert(r.done === 'dev' && one && r.trace.beats.length === 0 && before === r.after, comp + ': the synthetic playback shows one cut-in (or its recorded fallback) and the performance, applies no result ' + JSON.stringify(out[out.length - 1]));
   }
   report.devViewer = out;
   assert(!errors.length, errors.join('; '));
