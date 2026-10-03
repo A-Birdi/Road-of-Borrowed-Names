@@ -2204,7 +2204,12 @@ byte-identical to a fresh build; registry.json regenerated for this branch):
   - unit 24,966/0;
   - validator: no errors;
   - the merged index.html is byte-identical to a fresh build before the lead's edits;
-  - Chapter 1–2 staging in the browser is recorded below.
+  - Chapter 1–2 staging in the browser: see the next line.
+- **The lead's browser runs on the fully merged build** (3cf1e06: walk-round, props, contract v3, staging, Nao/Mio), one
+  at a time. The staging runner now fails on world walkers passing through people.
+  - staging_chapters: --ch=1 698/0, --ch=2 1623/0, --ch=showcase 66/0;
+  - walk_round all passed; departures all ok;
+  - practice_b 6/6; battle_anim 16/16.
 
 **The worker's runs:**
 - staging_chapters --ch=1 698/0; --ch=2 1623/0 (after a runner fix for the wait between steps); showcase 66/0.
