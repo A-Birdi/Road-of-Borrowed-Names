@@ -24,7 +24,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const clerkFace = {
     skin: ['#ece6d6', '#cfc6b0'], hair: ['#d8d0bc', '#c4bca8', '#f4f0e6'], cloth: ['#8a8474', '#6e695c', '#c85a4a'],
     style: 'shaved', acc: [], eyes: 'round', bg: '#2a2c40', age: 'adult',
-    extra2: (c, expr) => {
+    extra2: (c, expr, fr) => {
       // a face made of index cards: a ruled card for a forehead, ink-slit eyes
       const R = (x, y, w, h, col) => { c.fillStyle = col; c.fillRect(x, y, w, h); };
       R(24, 16, 48, 20, '#f4efe2'); R(24, 16, 48, 2, '#c85a4a'); R(24, 18, 48, 1, '#e8a090');
@@ -34,6 +34,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const ink = '#2a2436';
       if (expr === 'smile' || expr === 'laugh') { R(34, 46, 8, 2, ink); R(54, 46, 8, 2, ink); R(33, 47, 1, 1, ink); R(62, 47, 1, 1, ink); }
       else if (expr === 'surprise') { R(36, 42, 4, 9, ink); R(56, 42, 4, 9, ink); }
+      else if (fr && fr.lids === 'closed') { R(35, 48, 6, 1, ink); R(55, 48, 6, 1, ink); } // the animated portrait's blink
+      else if (fr && fr.lids === 'half') { R(36, 47, 4, 3, ink); R(56, 47, 4, 3, ink); }
       else { R(36, 44, 4, 6, ink); R(56, 44, 4, 6, ink); R(36, 44, 1, 2, '#6a6480'); R(56, 44, 1, 2, '#6a6480'); }
       R(40, 60, 16, 2, '#b8b0a0');
     },

@@ -1561,7 +1561,9 @@ body.bulb-on .place .jline .jt, body.bulb-on .card-slip .jline .jt, body.bulb-on
 body.veiled #ui > .dlg, body.veiled #ui > .choices, body.veiled #ui > .folio-scrim, body.veiled #ui > .scrim { z-index: 20; }
 .dlg.noportrait, .dlg.narration { grid-template-columns: minmax(0, 1fr); grid-template-areas: "tab" "sheet"; }
 .dlg .portrait {
-  grid-area: por; width: 116px; height: 116px; image-rendering: pixelated; align-self: end; margin-bottom: 10px;
+  /* --por-target: the layout's size; --por-size: the nearest size that is a whole number of device pixels per
+   * art pixel, set by src/ui/21_portrait_anim.js (96 CSS px at device-pixel-ratio 1, not 116 = 1.21×) */
+  grid-area: por; --por-target: 116px; width: var(--por-size, 116px); height: var(--por-size, 116px); image-rendering: pixelated; align-self: end; margin-bottom: 10px;
   background: var(--paper-3); border: 4px solid var(--paper); outline: 1px solid var(--paper-edge);
   box-shadow: 0 8px 20px rgba(0,0,0,0.45); border-radius: 2px;
 }
@@ -1626,7 +1628,7 @@ body.dlg-top .place { top: calc(var(--dlg-h, 0px) + max(12px, env(safe-area-inse
 .dlg.more .txt { -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 30px), rgba(0,0,0,0.25)); mask-image: linear-gradient(to bottom, #000 calc(100% - 30px), rgba(0,0,0,0.25)); }
 @media (max-height: 440px) { /* landscape phones: the sheet may use most of the height */
   .dlg-sheet { max-height: calc(100 * var(--vh) - 64px); }
-  .dlg .portrait { width: 84px; height: 84px; }
+  .dlg .portrait { --por-target: 84px; width: var(--por-size, 84px); height: var(--por-size, 84px); }
   .dlg .txt { padding-top: 10px; }
 }
 
@@ -1637,7 +1639,7 @@ body.dlg-top .place { top: calc(var(--dlg-h, 0px) + max(12px, env(safe-area-inse
     grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "por tab" "sheet sheet"; column-gap: 8px;
   }
   .dlg.noportrait, .dlg.narration { grid-template-columns: minmax(0, 1fr); grid-template-areas: "tab" "sheet"; }
-  .dlg .portrait { width: 64px; height: 64px; margin: 0 0 6px 8px; border-width: 3px; }
+  .dlg .portrait { --por-target: 64px; --por-grow: 0; width: var(--por-size, 64px); height: var(--por-size, 64px); margin: 0 0 6px 8px; border-width: 3px; }
   .dlg-tab { margin-left: 0; align-self: end; }
   .dlg-sheet { border-radius: 10px 10px 0 0; max-height: calc(60 * var(--vh)); border-left: 0; border-right: 0; }
   .dlg .txt { padding: 12px 16px 8px; }
@@ -29265,7 +29267,17 @@ RB.battlerMoves = (function () {
  * highlight band, a selective outline). Parameters come from the character
  * definition (portrait: {...}) layered over what the overworld look implies,
  * so each named character keeps a distinct face, hair, collar and
- * accessories. Hair shapes live in 36_portraithair.js. */
+ * accessories. Hair shapes live in 36_portraithair.js.
+ *
+ * A portrait is composed from layers (back accessories, back hair, bust,
+ * face, front accessories, front hair, glasses, brows, head accessories) so
+ * the dialogue's animated portraits (src/ui/21_portrait_anim.js) can move the
+ * body and the head a pixel apart, sway hair a beat later and change the eyes
+ * without redrawing everything: each layer and each finished frame is cached
+ * (one byte-capped LRU), and a frame is described by a small object `fr`
+ * (eyes, lids, gaze, brow, mouth, blush, head/body offsets, sway, glasses
+ * glint and slip). With no `fr` the result is the still portrait every other
+ * screen shows. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.portraits = (function () {
@@ -29273,7 +29285,6 @@ RB.portraits = (function () {
   const S = 96;
   const P = RB.pix;
   const shade = P.shade, mix = P.mix, A = P.alpha;
-  const cache = new Map();
 
   // ---- parameters ----------------------------------------------------------------------------
   function paramsFor(id) {
@@ -29312,6 +29323,9 @@ RB.portraits = (function () {
       white: '#f8f4f2', whiteS: '#d8cfd8',
       mouth: mix(sd, '#7a2e34', 0.55), mouthIn: '#5a2026', tongue: '#c86a6a',
       blush: A('#f08080', 0.38), blushLine: A('#d85a64', 0.7),
+      // darker skin tones (the sprites' 3–6): the lash, iris and shadowed skin are close in value, so
+      // the eye gets a lit lower lid and a softer crease (PORTRAITS.md §3 item 3)
+      dark: P.lum(sk) < 0.62,
     };
   }
 
@@ -29324,6 +29338,14 @@ RB.portraits = (function () {
     m.poly(old ? JAW.map((v, i) => (i % 2 && v > 60 ? v + 1 : v)) : JAW, '#fff');
     return m;
   }
+  // the neck belongs to the body (it stays with the collar when the head moves a pixel)
+  function neck(b, p, C) {
+    const K = C.sk;
+    b.rect(40, 60, 16, 20, K[1]);
+    b.rect(40, 62, 3, 18, K[2]);
+    b.rect(53, 60, 3, 20, K[0]);
+    b.poly([40, 62, 56, 62, 56, 69, 48, 73, 40, 69], K[0]);
+  }
   function drawFace(b, p, C, m) {
     const K = C.sk;
     // ears: rim, inner fold, shadowed on the far side
@@ -29332,11 +29354,6 @@ RB.portraits = (function () {
       b.oval(x0 + 2, 43, x1 - 2, 51, lit ? K[1] : K[0]);
       b.rect(lit ? x0 + 1 : x1 - 2, 42, 1, 6, lit ? K[3] : K[1]);
     }
-    // neck, with the jaw's shadow falling across it
-    b.rect(40, 60, 16, 20, K[1]);
-    b.rect(40, 62, 3, 18, K[2]);
-    b.rect(53, 60, 3, 20, K[0]);
-    b.poly([40, 62, 56, 62, 56, 69, 48, 73, 40, 69], K[0]);
     // the face as a rounded solid lit from the upper left: mostly flat tone, a lit temple and
     // cheek, the terminator on the right, and shadow under the chin
     const L = [-0.36, -0.42, 0.83];
@@ -29376,11 +29393,14 @@ RB.portraits = (function () {
       '...wwwwwwwl..',
       '....lllll....',
     ],
+    // narrow eyes: one lash row over the same three-row opening (it was two lash rows: a dark bar that
+    // read the same whether open, smiling or closed; PORTRAITS.md §3 item 4). The opening keeps its
+    // height so the narrow-eyed elders and Ren keep their look.
     narrow: [
       '.............',
-      '.kkkkkkkkkk..',
-      'kkkkkkkkkkkkk',
-      '.wwwwwwwwwww.',
+      '.............',
+      '..kkkkkkkkkk.',
+      '.kwwwwwwwwwkk',
       '.wwwwwwwwwww.',
       '..wwwwwwwww..',
       '...lllllll...',
@@ -29398,6 +29418,9 @@ RB.portraits = (function () {
   };
   const CLOSED_DOWN = ['k...........k', '.kk.......kk.', '...kkkkkkk...', '....kkkkk....'];
   const CLOSED_UP = ['....kkkkk....', '..kkkkkkkkk..', '.kk.......kk.', 'k...........k'];
+  const EYE_CX = [37, 59], EYE_CY = 45;
+  // the rows an eye occupies (with its crease), for clipping the fringe out of it
+  const EYE_TOP = EYE_CY - 4;
   function eye(b, p, C, cx, cy, side, e) {
     const K = C.sk, st = EYE_T[p.eyes] ? p.eyes : 'round';
     const X = (i) => (side > 0 ? cx - 6 + i : cx + 5 - i);
@@ -29406,6 +29429,7 @@ RB.portraits = (function () {
       const rows = e.closed === 'up' ? CLOSED_UP : CLOSED_DOWN;
       put(rows, cy - 1, { k: C.lash });
       if (e.closed === 'down') { b.px(X(12), cy - 2, C.lash); b.px(X(12), cy - 3, C.lash); }
+      if (C.dark) for (let i = 4; i <= 8; i++) b.px(X(i), cy + (e.closed === 'up' ? -2 : 3), K[3]); // the lid catches the light
       return;
     }
     const T = EYE_T[st].slice();
@@ -29418,29 +29442,38 @@ RB.portraits = (function () {
     for (const [i, j] of open) { i0 = Math.min(i0, i); i1 = Math.max(i1, i); j0 = Math.min(j0, j); j1 = Math.max(j1, j); }
     const isOpen = (i, j) => T[j] && T[j][i] === 'w';
     for (const [i, j] of open) b.px(X(i), y0 + j, j <= j0 ? C.whiteS : C.white);
-    // iris: a tall oval with a dark upper rim, a lighter lower half, pupil and glints
+    // iris: a tall oval, 7 px wide and centred in the opening so white shows on both sides (gaze and
+    // surprise read from the white); its upper rim a step lighter than the lash line so the two do not
+    // merge into one dark band, a dark pupil, a lighter lower half, glints (PORTRAITS.md §3 items 1–2)
     const lk = e.look || [0, 0];
-    const iw = e.wide ? 5 : st === 'sharp' ? 7 : 8, ih = e.wide ? 6 : j1 - j0 + 2;
-    const ic = (i0 + i1) / 2 - 0.5 + lk[0], jc = e.wide ? (j0 + j1) / 2 + 0.5 : j0 + ih / 2 - 1 + lk[1];
+    const iw = e.wide ? 5 : 7, ih = e.wide ? 6 : j1 - j0 + 2;
+    const ic = (i0 + i1) / 2 + lk[0], jc = e.wide ? (j0 + j1) / 2 + 0.5 : j0 + ih / 2 - 1 + lk[1];
     const I = C.iris;
     for (let j = j0 - 1; j <= j1; j++) for (let i = i0; i <= i1; i++) {
       if (!isOpen(i, j)) continue;
-      const a = (i + 0.5 - ic - 0.5) / (iw / 2), bb = (j + 0.5 - jc) / (ih / 2);
+      const a = (i - ic) / (iw / 2), bb = (j + 0.5 - jc) / (ih / 2);
       if (a * a + bb * bb > 1) continue;
       const t = (j - (jc - ih / 2)) / ih;
-      b.px(X(i), y0 + j, t < 0.3 ? I[0] : t > 0.7 ? I[3] : I[2]);
+      b.px(X(i), y0 + j, t < 0.3 ? I[1] : t > 0.68 ? I[3] : I[2]);
     }
+    // the iris's top edge under the lid: one row of the iris's mid tone where it meets the lash
     const pi = Math.round(ic), pj = Math.round(jc - (e.wide ? 0 : 0.5));
-    for (let j = pj - (e.wide ? 0 : 1); j <= pj + (e.wide ? 0 : 1); j++) for (let i = pi; i <= pi + (e.wide ? 0 : 1); i++) if (isOpen(i, j)) b.px(X(i), y0 + j, I[0]);
+    for (let j = pj - (e.wide ? 0 : 1); j <= pj + (e.wide ? 0 : 1); j++) for (let i = pi - (e.wide ? 0 : 1); i <= pi + (e.wide ? 0 : 1); i++) {
+      if (!isOpen(i, j) || j < j0 + 1) continue;
+      b.px(X(i), y0 + j, i === pi || e.wide ? I[0] : I[1]);
+    }
     // glints: a big one to the upper left of the pupil, a small one low right
-    const gi = Math.round(ic - iw / 2 + 1.5), gj = j0 + (e.wide ? 1 : 1);
+    const gi = Math.round(ic - iw / 2 + 1), gj = j0 + 1;
     for (const [i, j] of [[gi, gj], [gi + 1, gj], [gi, gj + 1], [gi + 1, gj + 1]]) if (isOpen(i, j)) b.px(X(i), y0 + j, '#ffffff');
-    if (isOpen(Math.round(ic + iw / 2 - 1.5), j1 - 1)) b.px(X(Math.round(ic + iw / 2 - 1.5)), y0 + j1 - 1, A('#ffffff', 0.75));
+    if (isOpen(Math.round(ic + iw / 2 - 1), j1 - 1)) b.px(X(Math.round(ic + iw / 2 - 1)), y0 + j1 - 1, A('#ffffff', 0.75));
     if (e.tear) { b.px(X(gi), y0 + j1, '#ffffff'); b.px(X(gi + 1), y0 + j1, A('#cfe8ff', 0.9)); }
     // lashes and lower lid over everything
     put(T, y0, { k: C.lash, l: mix(C.lash, K[1], 0.55) });
-    // crease above the lid
-    for (let i = 2; i <= 10; i++) b.px(X(i), y0 - 2 + (i < 4 || i > 9 ? 1 : 0), K[1]);
+    // a lit rim under the lower lid on darker skin, so the eye's shape holds against the cheek
+    if (C.dark && !e.cheek) T[T.length - 1].split('').forEach((ch, i) => { if (ch === 'l') b.px(X(i), y0 + T.length, K[3]); });
+    // crease above the lid (softer on darker skin, where it joined the lash into one shadow)
+    const crease = C.dark ? mix(K[1], K[2], 0.5) : K[1];
+    if (!p.acc.includes('glasses')) for (let i = 2; i <= 10; i++) b.px(X(i), y0 - 2 + (i < 4 || i > 9 ? 1 : 0), crease);
     // lid modifiers
     const lidLine = (fn) => { for (let i = 0; i <= 12; i++) { const j = fn(i); if (j == null) continue; b.px(X(i), y0 + j, C.lash); b.px(X(i), y0 + j + 1, C.lash); } };
     const cover = (fn) => { for (let j = 0; j < T.length; j++) for (let i = 0; i <= 12; i++) if (fn(i, j) && (T[j][i] === 'w' || T[j][i] === 'k')) b.px(X(i), y0 + j, K[2]); };
@@ -29467,15 +29500,45 @@ RB.portraits = (function () {
     closed: { eyes: { closed: 'down' }, brow: 'flat', mouth: 'calm' },
     tired: { eyes: { heavy: true }, brow: 'worry', mouth: 'tired' },
   };
+  const exprName = (expr) => { const e = EXPR_ALIAS[expr] || expr; return EXPR[e] ? e : 'neutral'; };
 
-  function brows(b, p, C, ex) {
-    const old = p.age === 'old';
-    const col = p.browCol || (old ? '#d8d4d0' : shade(C.hair[1], -1));
+  // The expression with a frame's overrides: fr.expr (another expression for a cue's first beat),
+  // fr.lids 'half' | 'closed' (a blink), fr.look (gaze), fr.wink (the viewer's right eye closed in a
+  // smile), fr.eyes / fr.eyesR (raw eye modifiers), fr.brow, fr.mouth, fr.blush (0 none … 1 full).
+  function resolve(expr, fr) {
+    const base = EXPR[exprName((fr && fr.expr) || expr)];
+    let eyL = Object.assign({}, base.eyes), eyR = Object.assign({}, base.eyes, base.eyesR || {});
+    const ex = { brow: base.brow, mouth: base.mouth, blush: base.blush ? 1 : 0, lines: !!base.lines };
+    if (fr) {
+      if (fr.eyes) { Object.assign(eyL, fr.eyes); Object.assign(eyR, fr.eyes); }
+      if (fr.eyesR) Object.assign(eyR, fr.eyesR);
+      if (fr.look) { eyL.look = fr.look; eyR.look = fr.look; }
+      if (fr.lids === 'half') {
+        const half = (e) => Object.assign({}, e, { closed: undefined, wide: false, angry: false, heavy: true });
+        eyL = e0(eyL) ? half(eyL) : eyL; eyR = e0(eyR) ? half(eyR) : eyR;
+      } else if (fr.lids === 'closed') {
+        const shut = (e) => ({ closed: e.closed === 'up' ? 'up' : 'down' });
+        eyL = shut(eyL); eyR = shut(eyR);
+      }
+      if (fr.wink) eyR = { closed: 'up' };
+      if (fr.brow) ex.brow = fr.brow;
+      if (fr.mouth) ex.mouth = fr.mouth;
+      if (fr.blush != null) ex.blush = fr.blush;
+      if (ex.blush < 1) ex.lines = false;
+    }
+    ex.eyL = eyL; ex.eyR = eyR;
+    return ex;
+  }
+  const e0 = (e) => !e.closed; // an open eye (a half blink only lowers an open lid)
+
+  // Brows: their pixels (for drawing, and for cutting the fringe away round them).
+  function browPixels(p, C, kind0) {
     const y0 = 34 + (p.browY || 0) * 2;
     const thick = p.brows === 'thick' ? 3 : 2;
+    const out = [];
     for (const side of [-1, 1]) {
       const cx = side < 0 ? 37 : 59;
-      let kind = ex.brow;
+      let kind = kind0;
       if (kind === 'raise') kind = side > 0 ? 'high' : 'flat';
       // points: inner, middle, outer (u grows outward)
       const pts = { flat: [[-4, 1], [1, 0], [6, 1]], up: [[-4, 0], [1, -1], [6, 0]], high: [[-4, -1], [1, -3], [6, -2]], worry: [[-4, -2], [1, 0], [6, 2]], angry: [[-4, 3], [1, 1], [6, -1]] }[kind] || [[-4, 1], [1, 0], [6, 1]];
@@ -29485,10 +29548,23 @@ RB.portraits = (function () {
         for (let u = u0; u <= u1; u++) {
           const v = Math.round(v0 + ((v1 - v0) * (u - u0)) / (u1 - u0));
           const t = u >= 5 ? thick - 1 : thick;
-          b.rect(X(u), y0 + v, 1, t, col);
+          for (let k = 0; k < t; k++) out.push([X(u), y0 + v + k, k === t - 1 ? 1 : 0]);
         }
       }
     }
+    return out;
+  }
+  function browColour(p, C) {
+    const old = p.age === 'old';
+    return p.browCol || (old ? '#d8d4d0' : shade(C.hair[1], -1));
+  }
+  function brows(b, p, C, ex) {
+    const col = browColour(p, C);
+    // a light brow on light skin (white-haired elders, grey or gold hair) vanished: keep its colour
+    // and give it a darker underside from the skin's shadow (PORTRAITS.md §3 item 6)
+    const low = Math.abs(P.lum(col) - P.lum(C.sk[2])) < 0.3;
+    const under = low ? mix(C.lash, col, 0.3) : col;
+    for (const [x, y, last] of browPixels(p, C, ex.brow)) b.px(x, y, last ? under : col);
   }
   function mouth(b, p, C, kind) {
     const m = C.mouth, y = 61;
@@ -29520,11 +29596,11 @@ RB.portraits = (function () {
       b.rect(34, 53, 5, 1, soft); b.rect(57, 53, 5, 1, soft);
       b.rect(40, 30, 16, 1, soft); b.rect(42, 33, 12, 1, soft);
     }
-    const eyL = Object.assign({}, ex.eyes), eyR = Object.assign({}, ex.eyes, ex.eyesR || {});
-    eye(b, p, C, 37, 45, -1, eyL);
-    eye(b, p, C, 59, 45, 1, eyR);
-    if (ex.blush || p.blush) {
-      b.oval(29, 53, 39, 57, C.blush); b.oval(57, 53, 67, 57, C.blush);
+    eye(b, p, C, EYE_CX[0], EYE_CY, -1, ex.eyL);
+    eye(b, p, C, EYE_CX[1], EYE_CY, 1, ex.eyR);
+    if (ex.blush > 0 || p.blush) {
+      const bl = ex.blush > 0 && ex.blush < 1 && !p.blush ? A('#f08080', 0.38 * ex.blush) : C.blush;
+      b.oval(29, 53, 39, 57, bl); b.oval(57, 53, 67, 57, bl);
       if (ex.lines) for (const x of [31, 34, 37, 59, 62, 65]) { b.px(x + 1, 54, C.blushLine); b.px(x, 55, C.blushLine); }
     }
     mouth(b, p, C, ex.mouth);
@@ -29624,7 +29700,7 @@ RB.portraits = (function () {
   function accBack(b, p, C) {
     if (p.acc.includes('cape')) { const R = R4(p.capeCol || '#6a3a4a'); b.poly([0, 96, 2, 80, 14, 72, 24, 74, 16, 96], R[1]); b.poly([96, 96, 94, 80, 82, 72, 72, 74, 80, 96], R[0]); }
   }
-  function accFront(b, p, C, ex) {
+  function accFront(b, p, C) {
     const a = p.acc;
     if (a.includes('scarf')) {
       const R = R4(p.scarfCol || '#c8962e');
@@ -29666,19 +29742,31 @@ RB.portraits = (function () {
       b.oval(29, 78, 37, 86, GOLD[1]); b.oval(31, 80, 35, 84, '#3a5a8a'); b.px(32, 81, '#8ab0e0');
     }
     if (a.includes('cape')) { const R = R4(p.capeCol || '#6a3a4a'); b.poly([10, 80, 24, 72, 34, 76, 22, 84], R[2]); b.poly([86, 80, 72, 72, 62, 76, 74, 84], R[1]); b.oval(44, 70, 51, 77, GOLD[1]); b.px(46, 72, GOLD[2]); }
+    if (a.includes('atlas_lamplet')) lantern(b, 80, 80); // held, so it stays with the body
   }
-  function accHead(b, p, C) {
-    const a = p.acc;
-    if (a.includes('glasses')) {
-      const fc = p.glassCol || '#2e2a30';
-      for (const cx of [37, 59]) {
-        b.rect(cx - 6, 38, 12, 1, fc); b.rect(cx - 6, 52, 12, 1, fc); b.rect(cx - 8, 40, 1, 11, fc); b.rect(cx + 6, 40, 1, 11, fc);
-        b.px(cx - 7, 39, fc); b.px(cx + 5, 39, fc); b.px(cx - 7, 51, fc); b.px(cx + 5, 51, fc);
-        b.rect(cx - 7, 39, 13, 13, A('#e8f4ff', 0.1));
-        b.px(cx + 3, 40, A('#ffffff', 0.7)); b.px(cx + 4, 41, A('#ffffff', 0.5)); b.px(cx + 2, 41, A('#ffffff', 0.4));
-      }
-      b.rect(44, 43, 8, 1, fc); b.rect(21, 42, 8, 1, fc); b.rect(67, 42, 8, 1, fc);
+  // Glasses, drawn before the brows (the brows stay readable above the frame) with a lighter top
+  // rim one row lower than before (PORTRAITS.md §3 item 5). g: { dy: slipped (+1) or pushed up (−1),
+  // glint: 0…3 a light crossing the lenses, or null for the resting highlight }.
+  function glasses(b, p, C, g) {
+    const fc = p.glassCol || '#2e2a30', dy = (g && g.dy) || 0;
+    const top = mix(fc, C.sk[1], 0.45);
+    for (const cx of [37, 59]) {
+      const y = 39 + dy;
+      b.rect(cx - 6, y, 12, 1, top); b.rect(cx - 6, 52 + dy, 12, 1, fc); b.rect(cx - 8, y + 2, 1, 11 - (y + 2 - 40), fc); b.rect(cx + 6, y + 2, 1, 11 - (y + 2 - 40), fc);
+      b.px(cx - 7, y + 1, fc); b.px(cx + 5, y + 1, fc); b.px(cx - 7, 51 + dy, fc); b.px(cx + 5, 51 + dy, fc);
+      b.rect(cx - 7, y + 1, 13, 52 + dy - (y + 1), A('#e8f4ff', 0.1));
+      if (g && g.glint != null) { // a diagonal band of light sweeping across the lens, left to right
+        const x0 = cx - 7 + g.glint * 4;
+        for (let k = 0; k < 9; k++) { const x = x0 + Math.floor(k / 2), yy = y + 2 + 8 - k; if (x >= cx - 7 && x <= cx + 5) { b.px(x, yy, A('#ffffff', 0.75)); b.px(x + 1, yy, A('#ffffff', 0.4)); } }
+      } else { b.px(cx + 3, 41 + dy, A('#ffffff', 0.7)); b.px(cx + 4, 42 + dy, A('#ffffff', 0.5)); b.px(cx + 2, 42 + dy, A('#ffffff', 0.4)); }
     }
+    b.rect(44, 43 + dy, 8, 1, fc); b.rect(21, 42 + dy, 8, 1, fc); b.rect(67, 42 + dy, 8, 1, fc);
+  }
+  // Head accessories over the hair and the brows. sw: the secondary-motion offset (−1, 0, 1) of the
+  // parts that hang (ribbon tails, earring drops), a beat behind the head.
+  function accHead(b, p, C, sw) {
+    const a = p.acc;
+    sw = sw || 0;
     if (a.includes('goggles') || a.includes('atlas_goggles')) {
       b.rect(22, 21, 52, 5, '#5a4a3a'); b.rect(22, 21, 52, 1, '#7a6a5a');
       for (const cx of [38, 58]) { b.oval(cx - 8, 16, cx + 7, 30, '#3a3a3a'); b.oval(cx - 6, 18, cx + 5, 28, '#8fb8b0'); b.oval(cx - 5, 19, cx - 1, 23, '#d8f0e8'); }
@@ -29686,7 +29774,7 @@ RB.portraits = (function () {
     if (a.includes('headband')) {
       const R = R4(p.bandCol || C.ac[1]);
       for (let x = 20; x <= 76; x++) { const y = 25 + Math.round(((x - 48) / 28) ** 2 * 5); b.rect(x, y, 1, 5, R[2]); b.px(x, y, R[3]); b.px(x, y + 4, R[1]); }
-      b.poly([74, 28, 82, 26, 84, 34, 76, 34], R[1]); b.poly([76, 33, 82, 40, 78, 42, 74, 34], R[0]);
+      b.poly([74, 28, 82, 26, 84, 34, 76, 34], R[1]); b.poly([76 + sw, 33, 82 + sw, 40, 78 + sw, 42, 74, 34], R[0]);
     }
     if (a.includes('hood')) {
       const R = R4(p.hoodCol || C.cl[1]);
@@ -29695,6 +29783,7 @@ RB.portraits = (function () {
       m.each((x, y) => { let v = 2; if (x < 26 && y < 60) v = 3; if (x > 70) v = 1; if (y < 18 && x < 44) v = 3; b.px(x, y, R[v]); });
       b.line(28, 30, 48, 16, R[3]); b.line(48, 16, 68, 30, R[1]); b.line(24, 50, 28, 30, R[3]); b.line(72, 50, 68, 30, R[0]);
       b.line(34, 10, 30, 20, R[1]); b.line(62, 10, 66, 20, R[0]);
+      if (sw) { b.line(24 + sw, 52, 24 + sw, 70, R[sw < 0 ? 3 : 1]); b.line(72 + sw, 52, 72 + sw, 70, R[sw < 0 ? 1 : 0]); } // the hood's edge stirs
     }
     if (a.includes('hat')) {
       const R = R4(p.hatCol || '#8a6a44');
@@ -29714,7 +29803,7 @@ RB.portraits = (function () {
     }
     if (a.includes('ribbon')) {
       const R = R4(p.ribbonCol || '#c8687a');
-      b.poly([68, 22, 74, 30, 73, 38, 67, 29], R[1]); b.poly([72, 22, 82, 31, 84, 40, 76, 30], R[0]);  // tails
+      b.poly([68, 22, 74 + sw, 30, 73 + sw, 38, 67, 29], R[1]); b.poly([72, 22, 82 + sw, 31, 84 + sw, 40, 76 + sw, 30], R[0]);  // tails
       b.poly([66, 18, 52, 8, 50, 14, 54, 24], R[2]); b.poly([66, 18, 54, 10, 53, 14], R[3]);         // left loop
       b.poly([66, 18, 80, 6, 84, 14, 78, 24], R[1]); b.poly([66, 18, 80, 8, 81, 12], R[2]);          // right loop
       b.line(52, 9, 54, 23, R[0]); b.line(83, 8, 78, 23, R[0]);
@@ -29746,11 +29835,10 @@ RB.portraits = (function () {
     }
     if (a.includes('earrings')) {
       const G = p.earCol ? R4(p.earCol).slice(1, 4) : GOLD;
-      for (const x of [24, 71]) { b.oval(x, 54, x + 2, 56, GOLD[1]); b.rect(x + 1, 57, 1, 3, GOLD[0]); b.oval(x - 1, 59, x + 3, 64, G[1]); b.px(x, 60, G[2]); b.px(x + 2, 63, G[0]); }
+      for (const x of [24, 71]) { b.oval(x, 54, x + 2, 56, GOLD[1]); b.rect(x + 1, 57, 1, 3, GOLD[0]); b.oval(x - 1 + sw, 59, x + 3 + sw, 64, G[1]); b.px(x + sw, 60, G[2]); b.px(x + 2 + sw, 63, G[0]); }
     }
     if (a.includes('pencil')) { b.line(66, 30, 82, 12, '#e0b040', 3); b.line(67, 31, 83, 13, '#b88a20'); b.rect(81, 9, 4, 4, '#e8a0a0'); b.rect(64, 30, 3, 3, '#3a3040'); }
     if (a.includes('atlas_quill')) { b.line(68, 32, 80, 4, '#f4f0e0', 3); b.line(70, 32, 82, 6, '#d8d0bc'); b.px(68, 32, '#6a5a3a'); }
-    if (a.includes('atlas_lamplet')) lantern(b, 80, 80);
   }
 
   // Animal speakers (portrait kind: 'cat'): a cat's head and chest in the same light and palette rules.
@@ -29779,22 +29867,23 @@ RB.portraits = (function () {
     for (const x of [42, 47, 52]) b.line(x, 24, x + Math.round((x - 47) / 5), 33, R[1]); // forehead markings
     b.oval(36, 56, 60, 72, R[3]);
     // eyes: almond openings, green-gold irises, slit pupils that round out in surprise
-    const e = ex.eyes || {};
-    for (const [cx, side] of [[36, -1], [60, 1]]) {
+    for (const [cx, e] of [[36, ex.eyL || {}], [60, ex.eyR || {}]]) {
+      const side = cx < 48 ? -1 : 1;
       if (e.closed) {
         const up = e.closed === 'up';
         for (let u = -6; u <= 6; u++) { const v = Math.round(((u * u) / 36) * 3) * (up ? 1 : -1); b.rect(cx + u, 48 + v, 1, 2, C.lash); }
         continue;
       }
       const oy = e.heavy ? 3 : 0;
+      const lx = (e.look && e.look[0]) || 0;
       for (let y = 42 + oy; y <= 54; y++) for (let x = cx - 7; x <= cx + 7; x++) {
         const nx = (x + 0.5 - cx) / 7.5, ny = (y + 0.5 - 48) / 6.5;
         if (nx * nx + ny * ny > 1) continue;
         b.px(x, y, ny < -0.4 ? '#8a9a30' : ny > 0.4 ? '#d8e070' : '#b8c850');
       }
       const pw = e.wide ? 4 : 2;
-      b.rect(cx - (pw >> 1), 43 + oy, pw, 11 - oy, '#1a1614');
-      b.rect(cx - 4, 44 + oy, 2, 2, '#ffffff'); b.px(cx + 3, 51, A('#ffffff', 0.8));
+      b.rect(cx - (pw >> 1) + lx, 43 + oy, pw, 11 - oy, '#1a1614');
+      b.rect(cx - 4 + lx, 44 + oy, 2, 2, '#ffffff'); b.px(cx + 3 + lx, 51, A('#ffffff', 0.8));
       for (let x = cx - 7; x <= cx + 7; x++) { const nx = (x + 0.5 - cx) / 7.5; const y = Math.round(48 - 6.5 * Math.sqrt(Math.max(0, 1 - nx * nx))) + oy; b.px(x, y, C.lash); b.px(x, y - 1, C.lash); }
       if (e.angry) b.line(cx - 7 * side, 43, cx + 7 * side, 40, C.lash, 2);
       if (e.droop) b.line(cx - 7 * side, 40, cx + 7 * side, 44, C.lash, 2);
@@ -29805,51 +29894,208 @@ RB.portraits = (function () {
     if (open) { b.oval(44, 63, 52, 70, C.mouthIn); b.rect(46, 67, 4, 2, C.tongue); }
     b.rect(48, 62, 1, 2, R[0]); b.line(48, 64, 45, 66, R[0]); b.line(48, 64, 51, 66, R[0]);
     for (const k of [-1, 1]) for (let i = 0; i < 3; i++) b.line(48 + k * 12, 62 + i * 3, 48 + k * 30, 58 + i * 5, A('#f8f4ec', 0.85));
-    if (ex.blush) { b.oval(24, 58, 32, 62, C.blush); b.oval(64, 58, 72, 62, C.blush); }
+    if (ex.blush > 0) { b.oval(24, 58, 32, 62, C.blush); b.oval(64, 58, 72, 62, C.blush); }
   }
 
-  // ---- composition ----------------------------------------------------------------------------------
-  function drawAll(b, p, expr) {
-    const C = palette(p);
-    const ex = EXPR[EXPR_ALIAS[expr] || expr] || EXPR.neutral;
+  // ---- cache: one LRU of layers and finished frames, capped by bytes ------------------------------------
+  // A finished frame is a 96×96 canvas (36 KiB); a layer is kept cropped to its own pixels (a pair of brows is
+  // ≈1 KiB, a bust ≈11 KiB). The cap replaces the old 300-entry FIFO of finished portraits (which could reach
+  // ≈10.5 MiB): layers are shared by all of a portrait's frames, so the same bytes hold far more frames.
+  const ENTRY = S * S * 4;
+  const sizeOf = (v) => (!v ? 0 : v.crop ? v.w * v.h * 4 : ENTRY);
+  const lru = new Map();
+  const stat = { cap: 8 * 1024 * 1024, bytes: 0, hits: 0, misses: 0, layers: 0, frames: 0, evicted: 0, ms: 0, maxMs: 0, layerMs: {} };
+  function cget(k) {
+    if (!lru.has(k)) { stat.misses++; return undefined; }
+    const v = lru.get(k);
+    lru.delete(k); lru.set(k, v); // most recent last
+    stat.hits++;
+    return v.v;
+  }
+  function cset(k, v) {
+    const bytes = sizeOf(v);
+    if (lru.has(k)) { stat.bytes -= lru.get(k).b; lru.delete(k); }
+    lru.set(k, { v, b: bytes });
+    stat.bytes += bytes;
+    while (stat.bytes > stat.cap && lru.size > 1) {
+      const [ok, ov] = lru.entries().next().value;
+      lru.delete(ok); stat.bytes -= ov.b; stat.evicted++;
+    }
+  }
+  function clearCache(prefix) {
+    for (const [k, v] of Array.from(lru)) if (!prefix || k.startsWith(prefix)) { lru.delete(k); stat.bytes -= v.b; }
+  }
+
+  // ---- layers and composition ------------------------------------------------------------------------------
+  // [id, group]: group 'body' moves with the shoulders (breath, weight shift), 'head' with the head (a
+  // pixel later), 'hairB' with the head plus the sway (long hair and tails lag behind).
+  const NO_HALO = { wrap: 1, bald: 1, shaved: 1 };
+  function layerList(p) {
+    if (p.kind === 'cat') return [['cat', 'head']];
+    const L = [];
+    if (p.acc.includes('cape')) L.push(['cape', 'body']);
+    L.push(['hairB', 'hairB'], ['bust', 'body'], ['skin', 'head'], ['feat', 'head']);
+    if (p.beard) L.push(['beard', 'head']);
+    L.push(['front', 'body'], ['hairF', 'head']);
+    if (p.acc.includes('glasses')) L.push(['glasses', 'head']);
+    L.push(['brows', 'head'], ['headAcc', 'head']);
+    return L;
+  }
+  // the parts of a layer's key that the frame changes
+  function layerKey(id, p, ex, fr) {
+    switch (id) {
+      case 'feat': return JSON.stringify([ex.eyL, ex.eyR, ex.mouth, ex.blush, ex.lines]);
+      case 'cat': return JSON.stringify([ex.eyL, ex.eyR, ex.mouth, ex.blush]);
+      case 'hairF': case 'brows': return ex.brow;
+      case 'glasses': return ((fr && fr.glassDy) || 0) + ',' + (fr && fr.glint != null ? fr.glint : '');
+      case 'headAcc': return String((fr && fr.sway) || 0);
+      default: return '';
+    }
+  }
+  function drawLayer(id, p, C, ex, fr, hairF0) {
+    const b = new P.Buf(S, S);
     const H = RB.portraits.hairStyles || {};
     const hs = H[p.style] || H.short;
-    const ctx = { p, C, S, P };
-    if (p.kind === 'cat') { drawCat(b, p, C, ex); return C; }
-    accBack(b, p, C);
-    if (hs && hs.back) hs.back(b, ctx);
-    bust(b, p, C);
-    const fm = faceMask(p.age === 'old');
-    drawFace(b, p, C, fm);
-    features(b, p, C, ex);
-    if (p.beard) beard(b, p, C);
-    accFront(b, p, C, ex);
-    if (hs && hs.front) hs.front(b, ctx, fm);
-    brows(b, p, C, ex);
-    accHead(b, p, C);
-    return C;
+    const ctx = { p, C, S, P, hairF0 };
+    switch (id) {
+      case 'cat': drawCat(b, p, C, ex); break;
+      case 'cape': accBack(b, p, C); break;
+      case 'hairB': if (hs && hs.back) hs.back(b, ctx); break;
+      case 'bust': bust(b, p, C); neck(b, p, C); break;
+      case 'skin': drawFace(b, p, C, faceMask(p.age === 'old')); break;
+      case 'feat': features(b, p, C, ex); break;
+      case 'beard': beard(b, p, C); break;
+      case 'front': accFront(b, p, C); break;
+      case 'hairF0': if (hs && hs.front) hs.front(b, ctx, faceMask(p.age === 'old')); break;
+      case 'hairF': { // the front hair (drawn once per person) with the eyes and this brow cut out of it
+        if (ctx.hairF0) b.d.set(uncrop(ctx.hairF0).d);
+        clipFringe(b, p, C, ex);
+        break;
+      }
+      case 'glasses': glasses(b, p, C, { dy: (fr && fr.glassDy) || 0, glint: fr && fr.glint != null ? fr.glint : null }); break;
+      case 'brows': brows(b, p, C, ex); break;
+      case 'headAcc': accHead(b, p, C, (fr && fr.sway) || 0); break;
+    }
+    return b;
   }
-
-  function build(p, expr, keyStr) {
-    if (cache.has(keyStr)) return cache.get(keyStr);
+  // The fringe never covers the eyes (it stops two rows above the opening: tips used to reach into
+  // the upper lid), and a one-pixel margin of skin is cut round the brows, so a dark brow on a dark
+  // fringe (Nao, Mio, Ren, Wataru …) and a light one on a light fringe (Tsuru) still read
+  // (PORTRAITS.md §3 item 7).
+  function clipFringe(b, p, C, ex) {
+    // the eye's inner columns only: side locks keep their edge at the outer corners
+    for (const [x0, x1] of [[EYE_CX[0] - 4, EYE_CX[0] + 5], [EYE_CX[1] - 6, EYE_CX[1] + 3]]) {
+      for (let y = EYE_TOP; y <= EYE_CY + 5; y++) for (let x = x0; x <= x1; x++) b.clear(x, y);
+    }
+    if (NO_HALO[p.style]) return;
+    // under each brow column, the fringe is cut from the brow down to the eye (a strand of hair left
+    // between brow and eye read as a second, thicker brow)
+    for (const [x, y] of browPixels(p, C, ex.brow)) for (let yy = y - 1; yy < EYE_TOP; yy++) b.clear(x, yy);
+  }
+  // A layer cropped to the box of its opaque pixels: { crop, x0, y0, w, h, d } (null when empty).
+  function crop(b) {
+    let x0 = S, y0 = S, x1 = -1, y1 = -1;
+    const d = b.d;
+    for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) if (d[(y * S + x) * 4 + 3]) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+    if (x1 < 0) return null;
+    const w = x1 - x0 + 1, h = y1 - y0 + 1, out = new Uint8ClampedArray(w * h * 4);
+    for (let y = 0; y < h; y++) out.set(d.subarray(((y0 + y) * S + x0) * 4, ((y0 + y) * S + x0 + w) * 4), y * w * 4);
+    return { crop: true, x0, y0, w, h, d: out };
+  }
+  function uncrop(L) {
     const b = new P.Buf(S, S);
-    drawAll(b, p, expr || 'neutral');
-    let cv = b.toCanvas();
+    if (L) for (let y = 0; y < L.h; y++) b.d.set(L.d.subarray(y * L.w * 4, (y + 1) * L.w * 4), ((L.y0 + y) * S + L.x0) * 4);
+    return b;
+  }
+  // dst ← layer L shifted by (dx, dy): rows and columns brought in from the frame's bottom and side edges
+  // repeat the edge (the bust and long hair reach the bottom edge, the shoulders the sides)
+  function blit(dst, L, dx, dy) {
+    const s = L.d, d = dst.d, w = L.w, h = L.h;
+    const bottom = L.y0 + h === S, left = L.x0 === 0, right = L.x0 + w === S;
+    const ya = Math.max(0, L.y0 + dy), yb = Math.min(S - 1, bottom && dy < 0 ? S - 1 : L.y0 + h - 1 + dy);
+    const xa = Math.max(0, left && dx > 0 ? 0 : L.x0 + dx), xb = Math.min(S - 1, right && dx < 0 ? S - 1 : L.x0 + w - 1 + dx);
+    for (let y = ya; y <= yb; y++) {
+      let sy = y - dy - L.y0;
+      if (sy < 0) continue;
+      if (sy > h - 1) sy = h - 1;
+      for (let x = xa; x <= xb; x++) {
+        let sx = x - dx - L.x0;
+        if (sx < 0) sx = 0; else if (sx > w - 1) sx = w - 1;
+        const o = (sy * w + sx) * 4, a = s[o + 3];
+        if (!a) continue;
+        const q = (y * S + x) * 4, da = d[q + 3];
+        if (a === 255 || !da) { d[q] = s[o]; d[q + 1] = s[o + 1]; d[q + 2] = s[o + 2]; d[q + 3] = a; continue; }
+        // source over destination (the same blend as RB.pix's put)
+        const sa = a / 255, dA = da / 255, oa = sa + dA * (1 - sa);
+        d[q] = (s[o] * sa + d[q] * dA * (1 - sa)) / oa;
+        d[q + 1] = (s[o + 1] * sa + d[q + 1] * dA * (1 - sa)) / oa;
+        d[q + 2] = (s[o + 2] * sa + d[q + 2] * dA * (1 - sa)) / oa;
+        d[q + 3] = oa * 255;
+      }
+    }
+  }
+  const off = (v) => (v ? [v[0] || 0, v[1] || 0] : [0, 0]);
+
+  // A finished frame as a buffer (no canvas: node tests use this). subj: a stable key for the caches.
+  function renderBuf(p, expr, fr, subj) {
+    const t0 = typeof performance !== 'undefined' ? performance.now() : 0;
+    const C = palette(p);
+    const ex = resolve(expr || 'neutral', fr);
+    const head = off(fr && fr.head), body = off(fr && fr.body), sway = (fr && fr.sway) || 0;
+    const out = new P.Buf(S, S);
+    const layer = (id) => {
+      const k = subj != null ? subj + '|L|' + id + '|' + layerKey(id, p, ex, fr) : null;
+      let lb = k ? cget(k) : undefined;
+      if (lb === undefined) {
+        const t1 = typeof performance !== 'undefined' ? performance.now() : 0;
+        lb = crop(drawLayer(id, p, C, ex, fr, id === 'hairF' ? layer('hairF0') : null));
+        stat.layers++;
+        if (t1) stat.layerMs[id] = (stat.layerMs[id] || 0) + (performance.now() - t1);
+        if (k) cset(k, lb);
+      }
+      return lb;
+    };
+    for (const [id, group] of layerList(p)) {
+      const lb = layer(id);
+      if (!lb) continue;
+      const o = group === 'body' ? body : group === 'hairB' ? [head[0] + sway, head[1]] : head;
+      blit(out, lb, o[0], o[1]);
+    }
+    if (typeof performance !== 'undefined') { const ms = performance.now() - t0; stat.ms += ms; stat.maxMs = Math.max(stat.maxMs, ms); }
+    return out;
+  }
+  function finish(b, p, expr, fr) {
     if (p.extra2 || p.extra) {
-      // character-specific marks drawn by the content: extra2 at 96 px, older extra at 48 px (doubled)
+      // character-specific marks drawn by the content: extra2 at 96 px, older extra at 48 px (doubled);
+      // they follow the head, and are told the frame (a construct can blink too)
+      const cv = b.toCanvas();
       const c = cv.getContext('2d');
       c.save();
+      const h = off(fr && fr.head);
+      c.translate(h[0], h[1]);
       if (!p.extra2) c.scale(2, 2);
-      (p.extra2 || p.extra)(c, EXPR_ALIAS[expr] || expr || 'neutral');
+      (p.extra2 || p.extra)(c, exprName((fr && fr.expr) || expr || 'neutral'), fr || null);
       c.restore();
-      const img = c.getImageData(0, 0, S, S);
-      b.d.set(img.data);
+      b.d.set(c.getImageData(0, 0, S, S).data);
     }
     b.threshold(110);
     b.outline('#1a141c', { minA: 1 });
-    cv = b.toCanvas();
-    cache.set(keyStr, cv);
-    if (cache.size > 300) cache.delete(cache.keys().next().value);
+    return b;
+  }
+  // A stable string for a frame descriptor (the cache key and what the animation compares).
+  function frameKey(fr) {
+    if (!fr) return '';
+    const j = (v) => (v == null ? '' : Array.isArray(v) ? v.join(',') : typeof v === 'object' ? JSON.stringify(v) : String(v));
+    return [fr.expr, fr.lids, fr.look, fr.wink ? 1 : '', fr.eyes, fr.eyesR, fr.brow, fr.mouth, fr.blush, fr.head && (fr.head[0] || fr.head[1]) ? fr.head : '', fr.body && (fr.body[0] || fr.body[1]) ? fr.body : '', fr.sway || '', fr.glint, fr.glassDy || ''].map(j).join('|').replace(/\|+$/, '');
+  }
+  function build(p, expr, subj, fr) {
+    const key = subj + '|F|' + exprName(expr || 'neutral') + '|' + frameKey(fr);
+    const hit = cget(key);
+    if (hit) return hit;
+    const b = finish(renderBuf(p, expr, fr, subj), p, expr, fr);
+    const cv = b.toCanvas();
+    stat.frames++;
+    cset(key, cv);
     return cv;
   }
   // Background: flat bands stepping from the character's colour down to night, with a lighter disc
@@ -29869,37 +30115,59 @@ RB.portraits = (function () {
     }
     b.oval(8, 4, 87, 83, A(mix(key, '#fff4dc', 0.5), 0.07));
     cv = b.toCanvas();
+    if (bgCache.size > 64) bgCache.clear();
     bgCache.set(key, cv);
     return cv;
   }
   function paint(target, img, bg) {
     const c = target.getContext('2d');
-    target.width = S; target.height = S;
+    if (target.width !== S) target.width = S;
+    if (target.height !== S) target.height = S;
     c.imageSmoothingEnabled = false;
     c.drawImage(background(bg), 0, 0);
     c.drawImage(img, 0, 0);
   }
-  function draw(target, id, expr) {
-    const p = paramsFor(id);
-    if (!p) return;
-    paint(target, build(p, expr, id + '|' + expr), p.bg);
+
+  // ---- subjects: a character, or the player's portrait from the look they wear ----------------------------
+  const PC_BG = '#2e3a34';
+  function subject(who, look) {
+    if (who === 'pc' || look) {
+      const lk = look || (RB.equip ? RB.equip.look() : {});
+      const p = fromLook(lk);
+      p.bg = PC_BG;
+      return { key: 'pc|' + JSON.stringify(lk), p, who: 'pc' };
+    }
+    const p = paramsFor(who);
+    return p ? { key: who, p, who } : null;
   }
-  function drawPlayer(target, look, expr) {
-    const p = fromLook(look);
-    p.bg = '#2e3a34';
-    paint(target, build(p, expr, 'pc|' + JSON.stringify(look) + '|' + expr), p.bg);
+  // the frame of a subject (a canvas without background) and painted with its background
+  function frame(sj, expr, fr) { return sj ? build(sj.p, expr, sj.key, fr) : null; }
+  function paintFrame(target, sj, expr, fr) {
+    if (!sj) return false;
+    paint(target, frame(sj, expr, fr), sj.p.bg);
+    return true;
   }
-  function image(id, expr) {
-    const p = paramsFor(id);
-    return p ? build(p, expr, id + '|' + expr) : null;
-  }
+
+  // ---- the still portraits every screen uses --------------------------------------------------------------
+  function draw(target, id, expr) { paintFrame(target, subject(id), expr, null); }
+  function drawPlayer(target, look, expr) { paintFrame(target, subject('pc', look || {}), expr, null); }
+  function image(id, expr) { const sj = subject(id); return sj ? frame(sj, expr, null) : null; }
   // The player's portrait without its background (transparent), S×S — for
   // previews that sit on paper (character creation).
-  function playerImage(look, expr) {
-    return build(fromLook(look), expr, 'pc|' + JSON.stringify(look) + '|' + expr);
+  function playerImage(look, expr) { return frame(subject('pc', look || {}), expr, null); }
+  // facts the animation needs: which expressions hold their eyes closed, which look aside or open wide
+  function exprInfo(expr) {
+    const e = EXPR[exprName(expr)];
+    return { name: exprName(expr), closed: !!e.eyes.closed, wide: !!e.eyes.wide, look: e.eyes.look || null, heavy: !!e.eyes.heavy };
   }
   const EXPRESSIONS = Object.keys(EXPR);
-  return { draw, drawPlayer, image, playerImage, fromLook, S, EXPRESSIONS, background };
+  return {
+    draw, drawPlayer, image, playerImage, fromLook, S, EXPRESSIONS, background,
+    // animation (src/ui/21_portrait_anim.js) and tests
+    subject, frame, paintFrame, frameKey, exprInfo, exprName, paramsFor, renderBuf: (p, expr, fr, subj) => finish(renderBuf(p, expr, fr, subj), p, expr, fr),
+    cacheStats: () => Object.assign({ entries: lru.size }, stat), setCacheCap: (bytes) => { stat.cap = bytes; }, clearCache,
+    debug: { EYE_T, EYE_CX, EYE_CY, EYE_TOP, browPixels: (p, kind) => browPixels(p, palette(p), kind), layerList },
+  };
 })();
 
 
@@ -46003,10 +46271,11 @@ RB.ui.dialogue = (function () {
     box.classList.toggle('noportrait', !ch || !!line.noPortrait);
     const cv = box.querySelector('.portrait');
     cv.classList.toggle('hidden', !ch);
-    if (ch) {
-      if (ch.pc) RB.portraits.drawPlayer(cv, RB.equip.look(s), line.expr);
-      else RB.portraits.draw(cv, line.who, line.expr);
-    }
+    // Animated portrait (src/ui/21_portrait_anim.js): the speaker's idle loop and this line's one-off lead-in
+    // cue from its expression tag; the still image under Reduce motion and fast-forward. It owns the canvas
+    // until the next line or hide().
+    if (ch) RB.portraitAnim.play(cv, { who: ch.pc ? 'pc' : line.who, look: ch.pc ? RB.equip.look(s) : null, expr: line.expr, scene: line.sceneId });
+    else RB.portraitAnim.stop();
     const whoEl = box.querySelector('.who');
     whoEl.innerHTML = ch ? '<span class="nm">' + esc(ch.name.en) + '</span>' + (ch.name.jp ? '<span class="jp">' + RB.ui.jhtml(ch.name.jp) + '</span>' : '') : '<span class="nm narr">' + (line.jp || line.en ? '' : '') + '</span>';
     box.classList.toggle('narration', !ch);
@@ -46209,6 +46478,7 @@ RB.ui.dialogue = (function () {
 
   function hide() {
     if (!box) return;
+    RB.portraitAnim.stop(); // the portrait stops animating with the sheet
     box.classList.add('hidden');
     setTop(false);
     document.body.classList.remove('in-dialogue');
@@ -46226,6 +46496,578 @@ RB.ui.dialogue = (function () {
   }
   function isOpen() { return !!(box && !box.classList.contains('hidden')); }
   return { say, choose, hide, onAction, advance, isOpen, refresh, shown: () => (current ? { who: current.who, jp: current.jp, en: current.en, dia: current.dia || null } : null) };
+})();
+
+
+/* ==== src/ui/21_portrait_anim.js ==== */
+/* Animated dialogue portraits (owner's World Idle Life / Animated Portraits addendum §7; plan in
+ * docs/expressive/PORTRAITS.md). While a line is shown, the speaker's portrait keeps a quiet idle
+ * loop — a blink on an irregular seeded cadence, a one-pixel breath (shoulders first, the head a beat
+ * later), hair and hanging accessories a beat behind the head, glasses catching the light, and the
+ * person's own small habit (Ren's glasses, Suzu's poise, Mio's careful look, Nao's eye on the
+ * exits; the NPCs' habits from their mannerism profiles, docs/expressive/GESTURES.md §5–§7). A line
+ * tagged with an expression (`speaker[surprise]: …`) opens with a one-off lead-in cue (a shock's
+ * widen-and-hold, a laugh's two shoulder bobs, a sad slow blink …) and then settles into that
+ * expression's stable loop.
+ *
+ * The loop is a pure function of time (frameAt), so the canvas is repainted only when the frame
+ * changes (a few times a second at most, never per browser frame), and each frame comes from the
+ * portrait renderer's cache (src/engine/35_portraits.js: layers + frames, one byte-capped LRU).
+ * Nothing runs when the dialogue is hidden, the tab is hidden or the portrait is off-screen; with
+ * Reduce motion, fast-forward or the test harness's auto-advance the portrait is the still image.
+ *
+ * Other screens that show portraits (the history, kept sentences, Company pages, letters, the word
+ * games) keep the still image: they are reference views where a moving face would compete with the
+ * text being studied. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.portraitAnim = (function () {
+  'use strict';
+  const between = (r, ab) => ab[0] + r() * (ab[1] - ab[0]);
+  const pick = (r, arr) => arr[Math.floor(r() * arr.length) % arr.length];
+
+  // ---- profiles: class overlays, then each person's own habits ------------------------------------
+  // blink [min, max] ms between blinks; shut: ms the lids stay closed; dbl: chance of a double blink;
+  // breath: ms per breath (0: none); glance: { every, hold, dirs }; tilt: { every, hold, dx } (the head
+  // a pixel to one side, held); sway: { every } (hair and hanging things, by themselves);
+  // glint: { every } (glasses); habit: { kind, every, hold }; big: cues a frame larger (children).
+  const CLASS = {
+    base: { blink: [3600, 6000], shut: 100, dbl: 0.12, breath: 3600, glance: { every: [9000, 16000], hold: [700, 1200], dirs: [[-1, 0], [1, 0]] } },
+    official: { blink: [4800, 7600], dbl: 0.05, breath: 4400, glance: { every: [14000, 24000], hold: [900, 1400], dirs: [[-1, 0], [1, 0]] } },
+    scholar: { blink: [4000, 6600], breath: 4000, glance: { every: [11000, 18000], hold: [900, 1500], dirs: [[1, -1], [-1, -1]] } },
+    clerk: { blink: [3400, 5400], breath: 3600, glance: { every: [8000, 14000], hold: [800, 1300], dirs: [[0, 1], [-1, 1]] } },
+    host: { blink: [3400, 5400], breath: 3600, tilt: { every: [10000, 16000], hold: [2000, 3400], dx: [1, -1] }, glance: { every: [10000, 16000], hold: [700, 1100], dirs: [[-1, 0], [1, 0]] } },
+    craft: { blink: [3600, 6000], breath: 3400, glance: { every: [9000, 15000], hold: [800, 1300], dirs: [[-1, 1], [1, 1]] } },
+    elder: { blink: [5200, 8200], shut: 150, dbl: 0.04, breath: 4600, glance: { every: [16000, 26000], hold: [1000, 1600], dirs: [[-1, 0], [1, 0]] } },
+    child: { blink: [2600, 4200], dbl: 0.2, breath: 2600, glance: { every: [6000, 10000], hold: [400, 700], dirs: [[-1, 0], [1, 0], [0, -1]] }, big: true },
+    keeper: { blink: [4600, 7200], shut: 120, breath: 4200, glance: { every: [15000, 24000], hold: [1100, 1700], dirs: [[0, -1], [1, 0]] } },
+    traveller: { blink: [3600, 5600], breath: 3600, glance: { every: [8000, 12000], hold: [900, 1300], dirs: [[-1, 0], [1, 0]] } },
+    performer: { blink: [3200, 5200], breath: 3400, tilt: { every: [9000, 14000], hold: [2000, 3200], dx: [1, -1] }, sway: { every: [4000, 7000] }, glance: { every: [9000, 14000], hold: [600, 1000], dirs: [[1, 0], [-1, 0]] } },
+    nonhuman: { blink: [4200, 7000], shut: 120, breath: 4200, glance: null },
+  };
+  // Every character with a portrait. Class from GESTURES.md §7 (the recurring NPCs), §6 (the
+  // companions and the player); bespoke habits for the people PORTRAITS.md §4 and GESTURES.md §5 name.
+  const glassesPush = (every) => ({ kind: 'glassesPush', every, hold: [0, 0] });
+  const PEOPLE = {
+    pc: ['base', { glance: { every: [12000, 20000], hold: [700, 1100], dirs: [[1, 0], [0, 1]] } }],
+    // the companions
+    nao: ['traveller', { blink: [4400, 7400], dbl: 0.05, glance: { every: [6000, 10000], hold: [900, 1400], dirs: [[-1, 0], [1, 0]] }, hold: { smirk: { head: [-1, 0] } } }],
+    mio: ['host', { blink: [3400, 5000], dbl: 0.04, tilt: { every: [9000, 15000], hold: [2200, 3600], dx: [1] }, glance: { every: [10000, 16000], hold: [600, 900], dirs: [[0, 1], [-1, 1]] }, nod: true, laugh: 'hidden' }],
+    ren: ['scholar', { blink: [3800, 6000], glint: { every: [8000, 14000] }, sway: { every: [6000, 10000] }, adjust: true, slowClose: 1.4, glance: { every: [12000, 18000], hold: [900, 1300], dirs: [[1, 0], [-1, 0]] } }],
+    suzu: ['performer', { sway: { every: [4000, 7000] }, tilt: null, habit: { kind: 'weight', every: [10000, 16000], hold: [3000, 5000] }, wink: true, serious: { sad: 1, worry: 1, closed: 1, sad2: 1 } }],
+    // bespoke recurring characters
+    omi: ['official', { blink: [5200, 8000], dbl: 0, glance: { every: [16000, 26000], hold: [1000, 1500], dirs: [[1, 0]] } }],
+    wataru: ['clerk', { habit: { kind: 'glassesSlip', every: [9000, 15000], hold: [2600, 4000] }, sadLook: [-1, 1] }],
+    tsuru: ['elder', { blink: [6000, 9000], habit: { kind: 'chinUp', every: [12000, 20000], hold: [2000, 3000] }, thinkLids: true }],
+    kasane: ['keeper', { blink: [5000, 8000], glance: { every: [18000, 28000], hold: [1200, 1800], dirs: [[1, 0], [0, 1]] }, sway: { every: [7000, 12000] }, slowClose: 1.6 }],
+    hoshino: ['scholar', { glint: { every: [7000, 12000] }, habit: { kind: 'lookUp', every: [14000, 22000], hold: [1200, 1800] } }],
+    hana: ['host', { tilt: { every: [8000, 14000], hold: [2400, 3600], dx: [1] }, sadLook: [1, 1] }],
+    co_tokiwa: ['scholar', { habit: glassesPush([14000, 22000]), adjust: true, glance: { every: [10000, 16000], hold: [700, 1100], dirs: [[-1, 0], [-1, 1]] } }],
+    hiro: ['craft', { glance: { every: [9000, 14000], hold: [900, 1300], dirs: [[0, 1], [1, 1]] } }],
+    genzo: ['elder', { habit: { kind: 'squint', every: [10000, 16000], hold: [900, 1300] } }],
+    akari: ['clerk', { glance: { every: [9000, 15000], hold: [900, 1400], dirs: [[-1, -1], [0, 1]] } }],
+    lf_yae: ['official', { habit: { kind: 'nod', every: [9000, 15000], hold: [180, 220] } }],
+    lq_chigusa: ['host', { glance: { every: [8000, 13000], hold: [900, 1300], dirs: [[-1, 0]] } }],
+    umi: ['clerk', {}],
+    tamae: ['host', { big: true }],
+    yae: ['host', {}],
+    lf_tadashi: ['official', { glint: { every: [9000, 15000] }, habit: glassesPush([16000, 26000]) }],
+    shiori: ['scholar', { glance: { every: [9000, 14000], hold: [1000, 1500], dirs: [[1, 0], [1, -1]] } }],
+    lf_tokuji: ['elder', {}],
+    yasu: ['elder', { habit: { kind: 'nod', every: [12000, 20000], hold: [180, 220] } }],
+    koji: ['craft', {}],
+    lq_kayo: ['traveller', {}],
+    // class overlays (GESTURES.md §7)
+    co_ume: 'elder', co_goro: 'elder', sa_oyone: 'keeper', asahi: 'craft', tetsu: 'elder', co_sayo: 'host', lf_hayato: 'official',
+    fuki: 'elder', co_tamotsu: 'craft', kanta: 'child', co_fusa: 'host', sousuke: 'traveller', co_nobu: 'craft', co_isao: 'craft',
+    lf_kinu: 'host', sa_clerk: 'nonhuman', fuku: 'elder', lf_kohei: 'craft', sa_isamu: 'traveller', tetsuji: 'craft', denji: 'elder',
+    co_kotaro: 'child', co_asa: 'craft', sota: 'craft', lf_tsuya: 'elder', co_shino: 'traveller', tomo: 'host', lf_masaru: 'host',
+    co_heita: 'craft', lf_ritsu: 'host', daigo: 'craft', kiyo: 'host', cs_hama: 'craft', lf_nagi: 'keeper', sa_tsuzuri: 'nonhuman',
+    lf_setsu: 'host', mame: 'child', oto: 'craft', hayate: 'craft', natsume: 'craft', tobi: 'child', lf_kei: 'child', bunta: 'craft',
+    kiku: 'elder', sachi: 'host', lf_shu: 'craft', nagisa: 'traveller', chiyo: 'child', rokuta: 'child', sae: 'craft',
+    // people with fewer than three scenes, voices and creatures (no GESTURES.md profile: the nearest class)
+    cs_seto: 'elder', co_tomoe: 'craft', lf_toya: 'child', sa_ushio: 'elder', sa_tae: 'elder', fw_fumi: 'elder',
+    echo: ['nonhuman', { sway: { every: [5000, 9000] } }], sg_clerk: 'nonhuman', sb_lampvoice: ['nonhuman', { sway: { every: [5000, 9000] } }],
+    co_goat: 'nonhuman', co_warden: 'nonhuman', mochi: ['nonhuman', { blink: [3000, 6500], dbl: 0.25 }],
+    sa_reader: 'scholar', // the Archive's reader (by role)
+  };
+  const SWAY_STYLES = { long: 1, wavy: 1, ponytail: 1, twintails: 1 };
+  function profileOf(who, p) {
+    // an unlisted speaker gets the plain loop: no personality is inferred from glasses, age or dress (world review WR-01)
+    const row = PEOPLE[who] || 'base';
+    const [cls, own] = typeof row === 'string' ? [row, {}] : row;
+    const pr = Object.assign({ id: who, cls }, CLASS.base, CLASS[cls] || {}, own);
+    // the mannerism profiles of the actor system, when present (src/content/mannerisms), may add a portrait block
+    const ext = RB.mannerisms && RB.mannerisms.of && RB.mannerisms.of(who);
+    if (ext && ext.portrait && typeof ext.portrait === 'object') Object.assign(pr, ext.portrait);
+    const acc = (p && p.acc) || [];
+    pr.glasses = acc.includes('glasses');
+    if (pr.glasses && !pr.glint) pr.glint = { every: [10000, 16000] };
+    if (!pr.glasses) { pr.glint = null; pr.adjust = false; if (pr.habit && /^glasses/.test(pr.habit.kind)) pr.habit = null; }
+    // only hair or things that hang can sway (a short crop has nothing to lag behind)
+    const swings = !!p && (SWAY_STYLES[p.style] || acc.includes('ribbon') || acc.includes('earrings') || acc.includes('hood'));
+    if (!swings) pr.sway = null; else if (!pr.sway) pr.sway = { every: [7000, 12000] };
+    pr.swings = swings;
+    if (p && p.kind === 'cat') { pr.glance = null; pr.tilt = null; pr.sway = null; }
+    return pr;
+  }
+
+  // ---- each expression's stable loop --------------------------------------------------------------------
+  // blink: false (the eyes are already closed); glance: false or the gaze a glance returns to;
+  // tilt: false (no head tilts or weight shifts); breath: false (held still: anger is firm) or a factor.
+  const LOOP = {
+    surprise: { blinkMul: 1.6, glance: false },
+    laugh: { blink: false, glance: false, breath: 1.35 },
+    smile2: { blink: false, glance: false },
+    sad2: { blink: false, glance: false, tilt: false },
+    closed: { blink: false, glance: false, tilt: false },
+    angry: { breath: false, blinkMul: 1.3, tilt: false },
+    tired: { shut: 170, blinkMul: 1.25, breath: 1.2 },
+    think: { glance: [[0, 0]] },
+    shy: { glance: [[1, 1], [0, 1]], tilt: false },
+    sad: { tilt: false },
+  };
+
+  // ---- lead-in cues per tag: [duration ms, frame] played once, then the loop -----------------------------
+  // Frames describe the portrait over the line's own expression (RB.portraits frame descriptors):
+  // expr (another expression for a beat), lids, look, brow, mouth, blush, wink, head/body offsets,
+  // glint, glassDy. The last beat leads straight into the loop's resting frame.
+  const sweep = () => [[70, { glint: 0 }], [70, { glint: 1 }], [70, { glint: 2 }], [70, { glint: 3 }]];
+  const CUES = {
+    // shock: eyes widen over two beats, brows up, a pixel's pull back, held; then a steadier surprised loop
+    surprise: (pr) => [[70, { expr: 'neutral' }], [70, { eyes: { wide: false } }], [110, { head: [0, -1], body: [0, -1] }], ...(pr.big ? [[120, { head: [0, -2], body: [0, -1] }]] : []), [330, { head: [0, -1] }]],
+    // a laugh: a smile, then the shoulders bob twice (Suzu: with a wink; Mio laughs quietly, once)
+    laugh: (pr) => {
+      const bob = [[130, { body: [0, -1], head: [0, -1] }], [110, {}]];
+      if (pr.laugh === 'hidden') return [[120, { expr: 'smile2' }], [150, { body: [0, -1] }], [120, {}]];
+      return [[pr.wink ? 170 : 90, pr.wink ? { expr: 'smile', wink: true } : { expr: 'smile' }], ...bob, ...bob, ...(pr.big ? bob : [])];
+    },
+    // a smile: the cheeks lift a beat after the mouth
+    smile: () => [[110, { eyes: { cheek: false } }], [130, { head: [0, -1] }]],
+    // teasing: one lid lowers and the corner of the mouth lifts (Nao turns his head a little away; Suzu
+    // winks on her first smirk of a scene)
+    smirk: (pr, c) => {
+      const turn = (pr.hold && pr.hold.smirk) || {};
+      const k = [[90, { expr: 'neutral' }], [110, Object.assign({ eyesR: { heavy: false } }, turn)]];
+      if (pr.wink && c.first('wink')) k.push([260, Object.assign({ wink: true }, turn)]);
+      k.push([200, Object.assign({}, turn)]);
+      return k;
+    },
+    // realization: a glance aside, then up, one brow lifting; glasses catch the light (Ren and Tokiwa
+    // adjust theirs, at most once a scene); Tsuru's eyes narrow further
+    think: (pr, c) => {
+      const k = [[100, { expr: 'neutral' }], [130, { look: [1, 0] }]];
+      if (pr.glasses && pr.adjust && c.first('adjust')) k.push([170, { glassDy: -1 }], ...sweep());
+      else if (pr.glasses) k.push([90, {}], ...sweep());
+      else k.push([240, {}]);
+      if (pr.thinkLids) k.push([400, { lids: 'half' }]);
+      return k;
+    },
+    // worry: the brows draw up a beat late, the gaze drops a pixel (Mio: a small nod)
+    worry: (pr) => [[100, { brow: 'flat' }], [150, { look: [0, 1] }], ...(pr.nod ? [[160, { look: [0, 1], head: [0, 1] }]] : []), [220, { look: [0, 1] }]],
+    // sadness: a slow blink, the gaze goes down (or aside), the shoulders settle
+    sad: (pr) => [[120, { lids: 'half' }], [190, { lids: 'closed' }], [120, { lids: 'half' }], [340, { look: pr.sadLook || [0, 1], body: [0, 1], head: [0, 1] }]],
+    // eyes closing slowly over two beats (Kasane, Ren: slower, before a hard truth)
+    closed: (pr) => { const m = pr.slowClose || 1; return [[Math.round(150 * m), { eyes: { closed: null } }], [Math.round(180 * m), { eyes: { closed: null, heavy: true } }]]; },
+    // irritation: a short exhale (the shoulders drop, the lids half close), then the narrowed look
+    angry: () => [[170, { lids: 'half', body: [0, 1], head: [0, 1] }], [150, { body: [0, 1] }]],
+    // embarrassment: the gaze averts with a small recoil, the blush comes up
+    shy: () => [[130, { blush: 0, head: [-1, 0] }], [130, { blush: 0.5, head: [-1, 0] }], [240, { head: [-1, 0] }]],
+    // tiredness: a heavy blink
+    tired: () => [[80, {}], [250, { lids: 'closed' }], [130, { lids: 'half' }]],
+  };
+
+  // ---- the timeline: idle events (seeded) + breath + the cue, as a function of time -------------------------
+  // One small motion at a time: an event is placed so that its moments of change (a blink's start and end,
+  // a glance's turn and return …) keep GAP ms from every other event's, postponing it a little if needed;
+  // only the breath runs underneath. Long holds (a tilt, a weight shift) may contain a blink.
+  const GAP = 700;
+  function Timeline(pr0, seed) {
+    const r = RB.util.rng(seed);
+    const ref = { pr: pr0 };
+    const P_ = () => ref.pr; // the rates follow the current expression's loop; which motions exist is fixed
+    const pr = pr0;
+    const ev = [], marks = [];
+    let horizon = 0;
+    const gens = [];
+    const add = (a, b, fr, k, pri) => { ev.push({ a, b, fr, k, pri }); };
+    const free = (ts) => ts.every((x) => marks.every((m) => Math.abs(m - x) >= GAP));
+    // the first start at or after t whose moments are free (postponed in 350 ms steps)
+    const place = (t, moments) => { for (let i = 0; i < 16 && !free(moments(t)); i++) t += 350; marks.push(...moments(t)); return t; };
+    if (pr.blink) gens.push({ next: 700 + r() * pr.blink[0] * 0.6, gen(t) {
+      // half-closed, closed, half-open; a double blink closes again from half-open (no full open between)
+      const shut = P_().shut || 100, dbl = r() < (P_().dbl || 0), len = 100 + shut, all = dbl ? len + 70 + shut : len;
+      t = place(t, (t) => [t, t + all]);
+      add(t, t + 50, { lids: 'half' }, 'blink', 4); add(t + 50, t + 50 + shut, { lids: 'closed' }, 'blink', 4);
+      if (dbl) { add(t + 50 + shut, t + 120 + shut, { lids: 'half' }, 'blink', 4); add(t + 120 + shut, t + 120 + 2 * shut - 20, { lids: 'closed' }, 'blink', 4); add(t + 100 + 2 * shut, t + all, { lids: 'half' }, 'blink', 4); }
+      else add(t + 50 + shut, t + len, { lids: 'half' }, 'blink', 4);
+      return t + all + between(r, P_().blink || pr.blink);
+    } });
+    if (pr.glance) gens.push({ next: 2500 + r() * pr.glance.every[0], gen(t) {
+      const hold = between(r, pr.glance.hold), dir = pick(r, pr.glance.dirs);
+      t = place(t, (t) => [t, t + hold]);
+      add(t, t + hold, { look: dir }, 'glance', 3);
+      return t + hold + between(r, pr.glance.every);
+    } });
+    if (pr.tilt) gens.push({ next: 4000 + r() * pr.tilt.every[0], gen(t) {
+      const hold = between(r, pr.tilt.hold), dx = pick(r, pr.tilt.dx);
+      t = place(t, (t) => [t, t + 330, t + hold, t + hold + 330]);
+      add(t, t + hold, { head: [dx, 0] }, 'tilt', 2);
+      if (pr.swings) { add(t + 110, t + 330, { sway: -dx }, 'lag', 1); add(t + hold + 110, t + hold + 330, { sway: dx }, 'lag', 1); }
+      return t + hold + between(r, pr.tilt.every);
+    } });
+    if (pr.sway) gens.push({ next: 1500 + r() * pr.sway.every[0], gen(t) {
+      const d = r() < 0.5 ? -1 : 1;
+      t = place(t, (t) => [t, t + 240]);
+      add(t, t + 240, { sway: d }, 'sway', 1);
+      return t + 240 + between(r, pr.sway.every);
+    } });
+    if (pr.glint) gens.push({ next: 3000 + r() * pr.glint.every[0], gen(t) {
+      t = place(t, (t) => [t, t + 280]);
+      for (let i = 0; i < 4; i++) add(t + i * 70, t + (i + 1) * 70, { glint: i }, 'glint', 1);
+      return t + 280 + between(r, pr.glint.every);
+    } });
+    if (pr.habit) gens.push({ next: 5000 + r() * pr.habit.every[0], gen(t) {
+      const h = pr.habit, hold = between(r, h.hold || [0, 0]), dx = r() < 0.5 ? -1 : 1;
+      let end = t;
+      switch (h.kind) {
+        case 'glassesPush':
+          t = place(t, (t) => [t, t + 460]);
+          add(t, t + 180, { glassDy: -1 }, 'habit', 1); for (let i = 0; i < 4; i++) add(t + 180 + i * 70, t + 250 + i * 70, { glint: i }, 'habit', 1);
+          end = t + 460; break;
+        case 'glassesSlip': // the glasses slip a pixel, and after a while are pushed back up (a glint)
+          t = place(t, (t) => [t, t + hold, t + hold + 440]);
+          add(t, t + hold, { glassDy: 1 }, 'habit', 1); add(t + hold, t + hold + 160, { glassDy: -1 }, 'habit', 1);
+          for (let i = 0; i < 4; i++) add(t + hold + 160 + i * 70, t + hold + 230 + i * 70, { glint: i }, 'habit', 1);
+          end = t + hold + 440; break;
+        case 'nod': t = place(t, (t) => [t, t + hold]); add(t, t + hold, { head: [0, 1] }, 'habit', 2); end = t + hold; break;
+        case 'squint': t = place(t, (t) => [t, t + hold]); add(t, t + hold, { lids: 'half' }, 'squint', 3); end = t + hold; break;
+        case 'chinUp': t = place(t, (t) => [t, t + hold]); add(t, t + hold, { head: [0, -1] }, 'habit', 2); end = t + hold; break;
+        case 'lookUp': t = place(t, (t) => [t, t + hold]); add(t, t + hold, { look: [0, -1] }, 'glance', 3); end = t + hold; break;
+        case 'weight': // a weight shift: the shoulders first, the head after, the hair a beat behind
+          t = place(t, (t) => [t, t + 460, t + hold, t + hold + 460]);
+          add(t, t + hold, { body: [dx, 0] }, 'tilt', 2); add(t + 120, t + hold + 120, { head: [dx, 0] }, 'tilt', 2);
+          if (pr.swings) { add(t + 240, t + 460, { sway: -dx }, 'lag', 1); add(t + hold + 240, t + hold + 460, { sway: dx }, 'lag', 1); }
+          end = t + hold + 460; break;
+      }
+      return end + between(r, h.every);
+    } });
+    function extend(to) {
+      while (horizon < to) {
+        horizon += 5000;
+        for (const g of gens) while (g.next < horizon) g.next = g.gen(g.next);
+      }
+      // drop what is long past (a very long line must not grow the lists without bound)
+      if (ev.length > 400) { const cut = to - 60000; for (let i = ev.length - 1; i >= 0; i--) if (ev[i].b < cut) ev.splice(i, 1); }
+      if (marks.length > 400) { const cut = to - 60000; for (let i = marks.length - 1; i >= 0; i--) if (marks[i] < cut) marks.splice(i, 1); }
+    }
+    return { ev, extend, seed, ref };
+  }
+
+  // breath: the shoulders up a pixel for 1.2 s of each breath, the head a beat later
+  const LAG = 120;
+  function breathWindow(pr, loop) {
+    if (!pr.breath || loop.breath === false) return null;
+    const P = Math.round(pr.breath * (typeof loop.breath === 'number' ? loop.breath : 1));
+    const up = Math.max(1000, Math.min(1200, Math.round(P * 0.34))); // ≥ 1 s: at most two breath changes in any second
+    return { P, u0: Math.round(P * 0.3), u1: Math.round(P * 0.3) + up };
+  }
+  function addOff(fr, k, v) { const o = fr[k] || [0, 0]; fr[k] = [Math.max(-2, Math.min(2, o[0] + v[0])), Math.max(-2, Math.min(2, o[1] + v[1]))]; }
+  function merge(fr, add) {
+    for (const k in add) {
+      if (k === 'head' || k === 'body') addOff(fr, k, add[k]);
+      else if (k === 'sway') fr.sway = Math.max(-1, Math.min(1, (fr.sway || 0) + add.sway));
+      else fr[k] = add[k];
+    }
+    return fr;
+  }
+
+  // The frame at time t (ms on this speaker's idle clock) for state st:
+  // { pr, tl, expr, info (RB.portraits.exprInfo), loop, cue: { t0, beats: [[a, b, fr]], end } | null, quiet }
+  function frameAt(st, t) {
+    const pr = st.pr, loop = st.loop;
+    if (st.cue && t >= st.cue.t0 && t < st.cue.end) {
+      for (const [a, b, fr] of st.cue.beats) if (t >= a && t < b) return Object.assign({}, fr);
+    }
+    const fr = {};
+    const hold = pr.hold && pr.hold[st.info.name];
+    if (hold) merge(fr, hold);
+    const bw = breathWindow(pr, loop);
+    if (bw) {
+      const ph = (t + st.phase) % bw.P;
+      // after a cue the face holds still while it settles, then the breath resumes with the next whole
+      // breath (never a jump from the cue's last pose)
+      if (t - ph + bw.u0 >= st.quiet) {
+        if (ph >= bw.u0 && ph < bw.u1) addOff(fr, 'body', [0, -1]);
+        if (ph >= bw.u0 + LAG && ph < bw.u1 + LAG) addOff(fr, 'head', [0, -1]);
+      }
+    }
+    st.tl.extend(t + 6000);
+    const act = [];
+    for (const iv of st.tl.ev) {
+      if (iv.a > t || iv.b <= t || iv.a < st.quiet) continue;
+      if (iv.k === 'blink' && (loop.blink === false || st.info.closed)) continue;
+      if ((iv.k === 'glance' || iv.k === 'squint') && (loop.glance === false || st.info.closed)) continue;
+      if (iv.k === 'tilt' && (loop.tilt === false || (pr.serious && pr.serious[st.info.name]))) continue;
+      act.push(iv);
+    }
+    act.sort((x, y) => x.pri - y.pri);
+    for (const iv of act) {
+      if (iv.k === 'glance' && Array.isArray(loop.glance)) { merge(fr, { look: pick(() => (iv.a % 997) / 997, loop.glance) }); continue; }
+      merge(fr, iv.fr);
+    }
+    return fr;
+  }
+  // the next time after t at which the frame can change
+  function nextAt(st, t) {
+    let n = t + 60000;
+    if (st.cue && t < st.cue.end) for (const [a, b] of st.cue.beats) { if (a > t) n = Math.min(n, a); if (b > t) n = Math.min(n, b); }
+    const bw = breathWindow(st.pr, st.loop);
+    if (bw) {
+      const ph = (t + st.phase) % bw.P;
+      for (const x of [bw.u0, bw.u1, bw.u0 + LAG, bw.u1 + LAG]) { let d = (x - ph + bw.P) % bw.P; if (d <= 0) d += bw.P; n = Math.min(n, t + d); }
+    }
+    st.tl.extend(t + 6000);
+    for (const iv of st.tl.ev) { if (iv.a > t) n = Math.min(n, iv.a); else if (iv.b > t) n = Math.min(n, iv.b); }
+    if (st.quiet > t) n = Math.min(n, st.quiet);
+    return n;
+  }
+  // Scene memory: some cues happen at most once a scene (Ren's glasses adjustment, Suzu's wink).
+  function cueFor(st, tag, prevTag, memo, who) {
+    const mk = CUES[tag];
+    if (!mk) return null;
+    const ctx = { prev: prevTag, first: (k) => { const key = who + ':' + k; if (memo.has(key)) return false; memo.add(key); return true; } };
+    const beats = mk(st.pr, ctx);
+    return beats.length ? beats : null;
+  }
+
+  // ---- the player: one dialogue canvas at a time -----------------------------------------------------------
+  const now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
+  let cur = null;         // { cv, sj, who, expr, st, t0 (idle clock origin), timer, key }
+  let last = null;        // { subj, tag } of the previous line with a portrait (consecutive lines)
+  let memo = { scene: null, used: new Set() };
+  const stats = { plays: 0, cues: 0, paints: 0, ticks: 0, paintMs: 0, maxPaintMs: 0, log: [] };
+  const observed = typeof WeakSet !== 'undefined' ? new WeakSet() : null;
+  let io = null;
+  const vis = typeof WeakMap !== 'undefined' ? new WeakMap() : null; // canvas → on screen (IntersectionObserver)
+  const onScreenOf = (cv) => !vis || vis.get(cv) !== false;
+
+  function still(o) {
+    return !!((RB.game && RB.game.reducedMotion && RB.game.reducedMotion()) || (RB.game && RB.game.fastForward && RB.game.fastForward()) || o.still);
+  }
+  function paint(fr) {
+    const c = cur;
+    const key = RB.portraits.frameKey(fr);
+    if (key === c.key) return;
+    const t0 = now();
+    RB.portraits.paintFrame(c.cv, c.sj, c.expr, fr);
+    const ms = now() - t0;
+    c.key = key; c.fr = fr;
+    stats.paints++; stats.paintMs += ms; stats.maxPaintMs = Math.max(stats.maxPaintMs, ms);
+    stats.log.push({ t: Math.round(t0), k: key, who: c.who, expr: c.expr });
+    if (stats.log.length > 400) stats.log.splice(0, stats.log.length - 300);
+  }
+  function running() {
+    if (!cur || !cur.st) return false;
+    if (typeof document !== 'undefined' && document.hidden) return false;
+    if (!onScreenOf(cur.cv)) return false;
+    return !!(cur.cv && cur.cv.isConnected);
+  }
+  function schedule() {
+    if (!cur) return;
+    clearTimeout(cur.timer); cur.timer = null;
+    if (!running()) return;
+    const t = now() - cur.t0;
+    const n = nextAt(cur.st, t);
+    cur.timer = setTimeout(tick, Math.max(16, Math.ceil(n - t)));
+  }
+  function tick() {
+    if (!cur) return;
+    cur.timer = null;
+    stats.ticks++;
+    if (!running()) return;
+    if (still({})) { paint(null); cur.st = null; return; } // Reduce motion turned on while a line is shown
+    paint(frameAt(cur.st, now() - cur.t0));
+    schedule();
+  }
+
+  // Show `who`'s portrait for a line: o = { who ('pc' for the player), look (the player's), expr (the line's
+  // tag), scene (scene id), still (no animation) }.
+  function play(cv, o) {
+    o = o || {};
+    watch(cv);
+    const sj = RB.portraits.subject(o.who, o.who === 'pc' ? o.look || null : null);
+    if (!sj) { stop(); return; }
+    const tag = o.expr ? RB.portraits.exprName(o.expr) : null;
+    const expr = tag || 'neutral';
+    const scene = o.scene || null;
+    if (scene !== memo.scene) memo = { scene, used: new Set() };
+    const same = !!(last && last.subj === sj.key && cur && cur.cv === cv && cur.st);
+    const prevTag = same ? last.tag : null;
+    last = { subj: sj.key, tag };
+    stats.plays++;
+    if (cur && cur.cv !== cv) stop(true);
+    if (still(o)) {
+      if (cur) clearTimeout(cur.timer);
+      cur = { cv, sj, who: sj.who, expr, st: null, t0: now(), timer: null, key: null };
+      paint(null);
+      return;
+    }
+    const pr = profileOf(sj.who, sj.p);
+    const info = RB.portraits.exprInfo(expr);
+    const loop = Object.assign({}, LOOP[info.name] || {});
+    if (loop.blinkMul || loop.shut) pr.blink = pr.blink && pr.blink.map((v) => v * (loop.blinkMul || 1));
+    if (loop.shut) pr.shut = loop.shut;
+    // the same speaker goes on: keep the idle clock (the breath and blinks do not restart every line)
+    let t0 = now(), tl = null, phase = 0;
+    if (same && cur.st && cur.st.pr.id === pr.id) { t0 = cur.t0; tl = cur.st.tl; phase = cur.st.phase; tl.ref.pr = pr; }
+    if (!tl) {
+      const seed = RB.util.hashStr(sj.key + '|' + (scene || ''));
+      tl = Timeline(pr, seed);
+      phase = seed % 4000;
+    }
+    const t = now() - t0;
+    const st = { pr, tl, expr, info, loop, cue: null, quiet: 0, phase };
+    // the lead-in cue: once when the line appears; a repeated tag from the same speaker keeps the loop going
+    if (tag && !(same && prevTag === tag)) {
+      const beats = cueFor(st, info.name, prevTag, memo.used, sj.who);
+      if (beats) {
+        let a = t;
+        const out = [];
+        for (const [d, fr] of beats) { out.push([a, a + d, fr]); a += d; }
+        st.cue = { t0: t, beats: out, end: a, tag: info.name };
+        st.quiet = a + 400; // idle events wait until the face has settled
+        stats.cues++;
+      }
+    } else if (same && cur.st && cur.st.cue && t < cur.st.cue.end && cur.st.cue.tag === info.name) {
+      st.cue = cur.st.cue; st.quiet = cur.st.quiet; // the same cue goes on (it is never restarted)
+    }
+    if (same && cur.st) st.quiet = Math.max(st.quiet, cur.st.quiet);
+    const keep = cur && cur.cv === cv && cur.sj.key === sj.key && cur.expr === expr ? cur.key : null; // nothing to repaint
+    if (cur) clearTimeout(cur.timer);
+    cur = { cv, sj, who: sj.who, expr, st, t0, timer: null, key: keep, fr: cur && keep != null ? cur.fr : null };
+    paint(frameAt(st, t));
+    schedule();
+    prewarm();
+  }
+  // Prepare the people most likely to speak next (the companion, the player) in idle time, so their first
+  // line does not pay for drawing their hair and bust (≈10–30 ms, once per person while cached).
+  const warmed = new Set();
+  function prewarm() {
+    const s = RB.game && RB.game.s;
+    if (!s) return;
+    const ric = typeof requestIdleCallback !== 'undefined' ? requestIdleCallback : (fn) => setTimeout(fn, 250);
+    const todo = [];
+    if (s.comp) todo.push([s.comp, null]);
+    if (RB.equip && s.player) todo.push(['pc', RB.equip.look(s)]);
+    if (warmed.size > 40) warmed.clear();
+    for (const [who, look] of todo) {
+      const sj = RB.portraits.subject(who, look);
+      if (!sj || warmed.has(sj.key)) continue;
+      warmed.add(sj.key);
+      ric(() => { try { RB.portraits.frame(sj, 'neutral', null); } catch (e) { /* drawn when needed */ } }, { timeout: 2000 });
+    }
+  }
+  // Nothing more to show: the dialogue closed, or a line without a portrait.
+  function stop(keepLast) {
+    if (cur) clearTimeout(cur.timer);
+    cur = null;
+    if (!keepLast) last = null;
+  }
+  // The player's look changed while their portrait is up (equipment): repaint with the new look.
+  function refresh() {
+    if (!cur || cur.who !== 'pc') return;
+    const sj = RB.portraits.subject('pc', RB.equip ? RB.equip.look() : null);
+    if (!sj || sj.key === cur.sj.key) return;
+    cur.sj = sj; cur.key = null;
+    last = last && Object.assign({}, last, { subj: sj.key });
+    paint(cur.st ? frameAt(cur.st, now() - cur.t0) : null);
+  }
+  function watch(cv) {
+    if (!cv || !observed || observed.has(cv)) return;
+    observed.add(cv);
+    if (typeof IntersectionObserver !== 'undefined') {
+      if (!io) io = new IntersectionObserver((es) => {
+        for (const e of es) {
+          vis.set(e.target, e.isIntersecting);
+          if (!cur || e.target !== cur.cv) continue;
+          if (e.isIntersecting) schedule(); else { clearTimeout(cur.timer); cur.timer = null; }
+        }
+      });
+      io.observe(cv);
+    }
+    fit(cv);
+  }
+
+  // ---- integer display scale (PORTRAITS.md §3 item 8) ------------------------------------------------------
+  // The 96-px art at a size that maps to a whole number of device pixels per art pixel where that stays near
+  // the layout's size (--por-target in 50_play.css): 96 CSS px on desktop at device-pixel-ratio 1 and 2 (it was
+  // 116, a 1.21× scale that doubled some rows and not others), 128 at ratio 1.5 and 3; 96 on short landscape
+  // (84); 64 on phones at ratio 3 (2×) and 1.5 (1×). Where no whole multiple is within reach (ratio 1.25
+  // desktops, ratio-2 phones) the layout's size is kept. In the phone layout the portrait has a row of its own
+  // above the sheet, so it never grows there (--por-grow: 0): a larger portrait would make the sheet taller
+  // and cover more of the scene (a 390×844 window at ratio 1 keeps 64, uneven, as before).
+  function fitSize(target, dpr, grow) {
+    let k = Math.max(1, Math.round((target * dpr) / 96));
+    let css = (k * 96) / dpr;
+    if (css < target * 0.8) { k++; css = (k * 96) / dpr; }
+    if (css > target * 1.3) css = Math.max(target, 96 / dpr);
+    if (grow === false && css > target) css = target;
+    return Math.round(css * 100) / 100;
+  }
+  function fit(cv) {
+    if (!cv || typeof getComputedStyle === 'undefined') return;
+    const cs = getComputedStyle(cv);
+    const v = parseFloat(cs.getPropertyValue('--por-target'));
+    if (!v) return;
+    const grow = String(cs.getPropertyValue('--por-grow')).trim() !== '0';
+    const s = fitSize(v, (typeof devicePixelRatio !== 'undefined' && devicePixelRatio) || 1, grow);
+    cv.style.setProperty('--por-size', s + 'px');
+  }
+  if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+    let pend = false;
+    const refit = () => { if (pend) return; pend = true; requestAnimationFrame(() => { pend = false; document.querySelectorAll('canvas.portrait').forEach(fit); }); };
+    window.addEventListener('resize', refit);
+    document.addEventListener('visibilitychange', () => { if (cur) { if (document.hidden) { clearTimeout(cur.timer); cur.timer = null; } else schedule(); } });
+    // a change of device-pixel-ratio (a window moved between screens, zoom) fires resize in most browsers
+  }
+  if (RB.bus) {
+    RB.bus.on('equip:change', () => refresh());
+    RB.bus.on('campaign:changing', () => { stop(); warmed.clear(); RB.portraits.clearCache('pc|'); });
+  }
+
+  // Tests and the evidence pages: the frames of a line over time without painting.
+  function timeline(who, expr, o) {
+    o = o || {};
+    const sj = RB.portraits.subject(who, o.look || null);
+    const pr = profileOf(sj.who, sj.p);
+    const info = RB.portraits.exprInfo(expr || 'neutral');
+    const loop = Object.assign({}, LOOP[info.name] || {});
+    if (loop.blinkMul) pr.blink = pr.blink && pr.blink.map((v) => v * loop.blinkMul);
+    if (loop.shut) pr.shut = loop.shut;
+    const seed = o.seed != null ? o.seed : RB.util.hashStr(sj.key + '|' + (o.scene || ''));
+    const st = { pr, tl: Timeline(pr, seed), expr: info.name, info, loop, cue: null, quiet: 0, phase: seed % 4000 };
+    if (expr && o.cue !== false) {
+      const beats = cueFor(st, info.name, o.prevTag || null, new Set(o.used || []), sj.who);
+      if (beats) { let a = 0; const out = []; for (const [d, fr] of beats) { out.push([a, a + d, fr]); a += d; } st.cue = { t0: 0, beats: out, end: a, tag: info.name }; st.quiet = a + 400; }
+    }
+    const out = [];
+    let t = 0, prev = null;
+    const end = o.ms || 10000;
+    while (t < end) {
+      const fr = frameAt(st, t), k = RB.portraits.frameKey(fr);
+      if (k !== prev) { out.push({ t: Math.round(t), k, fr }); prev = k; }
+      t = nextAt(st, t);
+    }
+    return { frames: out, cueEnd: st.cue ? st.cue.end : 0, profile: pr };
+  }
+
+  return {
+    play, stop, refresh, timeline, profileOf, fitSize, CUES, LOOP, PEOPLE, CLASS,
+    state: () => (cur ? { who: cur.who, subj: cur.sj.key, expr: cur.expr, key: cur.key, fr: cur.fr || null, animating: !!cur.st, scheduled: !!cur.timer, cue: cur.st && cur.st.cue ? { tag: cur.st.cue.tag, end: cur.st.cue.end, t: now() - cur.t0 } : null, onScreen: onScreenOf(cur.cv) } : null),
+    stats: () => Object.assign({}, stats, { log: stats.log.slice(), cache: RB.portraits.cacheStats() }),
+    resetStats: () => { stats.plays = stats.cues = stats.paints = stats.ticks = 0; stats.paintMs = stats.maxPaintMs = 0; stats.log.length = 0; },
+  };
 })();
 
 
@@ -106486,7 +107328,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const clerkFace = {
     skin: ['#ece6d6', '#cfc6b0'], hair: ['#d8d0bc', '#c4bca8', '#f4f0e6'], cloth: ['#8a8474', '#6e695c', '#c85a4a'],
     style: 'shaved', acc: [], eyes: 'round', bg: '#2a2c40', age: 'adult',
-    extra2: (c, expr) => {
+    extra2: (c, expr, fr) => {
       // a face made of index cards: a ruled card for a forehead, ink-slit eyes
       const R = (x, y, w, h, col) => { c.fillStyle = col; c.fillRect(x, y, w, h); };
       R(24, 16, 48, 20, '#f4efe2'); R(24, 16, 48, 2, '#c85a4a'); R(24, 18, 48, 1, '#e8a090');
@@ -106496,6 +107338,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const ink = '#2a2436';
       if (expr === 'smile' || expr === 'laugh') { R(34, 46, 8, 2, ink); R(54, 46, 8, 2, ink); R(33, 47, 1, 1, ink); R(62, 47, 1, 1, ink); }
       else if (expr === 'surprise') { R(36, 42, 4, 9, ink); R(56, 42, 4, 9, ink); }
+      else if (fr && fr.lids === 'closed') { R(35, 48, 6, 1, ink); R(55, 48, 6, 1, ink); } // the animated portrait's blink
+      else if (fr && fr.lids === 'half') { R(36, 47, 4, 3, ink); R(56, 47, 4, 3, ink); }
       else { R(36, 44, 4, 6, ink); R(56, 44, 4, 6, ink); R(36, 44, 1, 2, '#6a6480'); R(56, 44, 1, 2, '#6a6480'); }
       R(40, 60, 16, 2, '#b8b0a0');
     },

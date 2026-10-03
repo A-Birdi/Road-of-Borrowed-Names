@@ -134,10 +134,11 @@ RB.ui.dialogue = (function () {
     box.classList.toggle('noportrait', !ch || !!line.noPortrait);
     const cv = box.querySelector('.portrait');
     cv.classList.toggle('hidden', !ch);
-    if (ch) {
-      if (ch.pc) RB.portraits.drawPlayer(cv, RB.equip.look(s), line.expr);
-      else RB.portraits.draw(cv, line.who, line.expr);
-    }
+    // Animated portrait (src/ui/21_portrait_anim.js): the speaker's idle loop and this line's one-off lead-in
+    // cue from its expression tag; the still image under Reduce motion and fast-forward. It owns the canvas
+    // until the next line or hide().
+    if (ch) RB.portraitAnim.play(cv, { who: ch.pc ? 'pc' : line.who, look: ch.pc ? RB.equip.look(s) : null, expr: line.expr, scene: line.sceneId });
+    else RB.portraitAnim.stop();
     const whoEl = box.querySelector('.who');
     whoEl.innerHTML = ch ? '<span class="nm">' + esc(ch.name.en) + '</span>' + (ch.name.jp ? '<span class="jp">' + RB.ui.jhtml(ch.name.jp) + '</span>' : '') : '<span class="nm narr">' + (line.jp || line.en ? '' : '') + '</span>';
     box.classList.toggle('narration', !ch);
@@ -340,6 +341,7 @@ RB.ui.dialogue = (function () {
 
   function hide() {
     if (!box) return;
+    RB.portraitAnim.stop(); // the portrait stops animating with the sheet
     box.classList.add('hidden');
     setTop(false);
     document.body.classList.remove('in-dialogue');
