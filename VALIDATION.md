@@ -1727,4 +1727,5 @@ musical judgement is analysis.
   - settings 13 ok, combat_small 9 ok.
   - On 240d3d0: combat_ui 7/7, playtest_repairs 7/7, battle_overlap 96 ok, battle_presentation 13/13, ui 14/14, shift_load_regression 18/18 (file://), and 18/18 (http origin, on 34ba9eb).
 - **The lead's runs on the merged build b4a598e** (with interludes, travel, zone music, lighthouse and the Harmony art): unit 23,856/0; validator no errors; battle_settings 10/10; settings all ok; combat_ui 7/7; combat_small all ok; battle_overlap all ok; playtest_repairs 7/7; battle_presentation 13/13; shift_load_regression 18/18 (file://); harmony_art 39/39.
+- **The default suite** (run on b67d469, before this merge): 68/69 scripts passed. mill_road failed one check ("click the mill door: walked there and went in") while the whole suite was running. Run alone on 408c051 it passed 36/36. Treated as load-related; it has not recurred.
 - **Not verified:** Firefox; the "slot open in another tab, then Cancel" path (only the unreadable-slot path ran); the default suite as a whole on this build.
