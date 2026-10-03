@@ -27,6 +27,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const FRUIT = ['#7c2a12', '#c24c16', '#ee7a24', '#ffac4a', '#ffe2a0'];
   const CALYX = '#3e4424';
   const CUT = '#d6c6a2';                            // wood exposed by a blade, greyed with age
+  // the campaign's state for the two landmarks that change once their quest is over (same placement, a variant)
+  const done = (q) => { const s = RB.game && RB.game.s; return !!(s && RB.state && RB.state.test(s, 'quest.' + q + '=done')); };
 
   // ---- shared helpers ------------------------------------------------------------------------
   // A limb: a thick line shaded round (lit on its upper-left side).
@@ -97,7 +99,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   art('lq_kaki', {
     sway: 0.5,
     box: [-24, -76, 120, 146],
-    draw(g, M) {
+    v: () => (done('lq_road') ? 1 : 0),              // after the long road home: one fresh cut above the old ones (lq.kh_tree says so)
+    draw(g, M, v) {
       const r5 = BARK;
       // the bole: rows between two edges, shaded as a cylinder; blocky bark plates, except on
       // the lit face where the height marks are (that stays smooth, so the marks read)
@@ -126,6 +129,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         const a = Math.round(kakiL(y)) + 2;
         R(g, a, y, n, 1, CUT); R(g, a + 1, y + 1, n - 1, 1, r5[0]); R(g, a - 1, y, 1, 2, r5[1]);
       }
+      if (v) { const y = 27, a = Math.round(kakiL(y)) + 2; R(g, a, y, 8, 1, '#f2e2b8'); R(g, a + 1, y + 1, 7, 1, r5[0]); R(g, a - 1, y, 1, 2, r5[1]); } // the new cut: still pale
       // the main limbs: forking low and spreading wide (mostly hidden in the crown)
       limb(g, 27, 12, 21, 3, 7, r5); limb(g, 21, 3, 12, -8, 5, r5);
       limb(g, 31, 10, 34, 0, 6, r5); limb(g, 34, 0, 32, -16, 4, r5);
@@ -282,6 +286,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   art('lq_teastall', {
     ink: true,
     box: [-12, -62, 88, 98],
+    v: () => (done('lq_fare') ? 1 : 0),              // once the old fare is paid, every cup faces up ("They all face up now.")
     f: (t, o) => K.frame(t, 420, 4, o.still),
     draw(g, M, v, f, info) {
       const w5 = M.wood;
@@ -323,7 +328,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       cyl(g, 22, -6, 5, 10, ramp('#8a8c90', 0.45, 0.45)); R(g, 22, -7, 5, 1, '#c8ccd0');
       // the dark tray and the row of thick cups: the first kept upside down
       R(g, 29, 3, 32, 3, LQ[1]); R(g, 29, 3, 32, 1, LQ[3]); R(g, 29, 5, 32, 1, LQ[0]);
-      cupDown(g, 31, -4);
+      if (v) cupUp(g, 32, -4); else cupDown(g, 31, -4);
       for (const x of [39, 46, 53]) cupUp(g, x, -4);
       // a charcoal bucket at the left post's foot
       for (let i = 0; i < 9; i++) R(g, -9 + i, 20, 1, 9, cylCol(i, 9, w5));
