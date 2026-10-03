@@ -108,6 +108,44 @@ var RB = (globalThis.RB = globalThis.RB || {});
     px(c, x + 5, y + 7, 6, 2, '#c8b890');
   });
 
+  // ---- the top of the lighthouse (sg.lighthouse_top) ----------------------------------------
+  // The lamp room (3×2): a stone base, glass panes in an iron frame with the
+  // great lens inside, a verdigris dome, a small iron door onto the gallery.
+  def('sg_lamproom', { w: 3, h: 2 }, (c, x, y, p) => {
+    px(c, x + 2, y + 18, 44, 13, p.stone[2]); px(c, x + 2, y + 18, 44, 2, p.stone[1]);
+    px(c, x + 6, y - 4, 36, 23, '#4f8a92');
+    px(c, x + 17, y - 1, 14, 18, '#e0c070'); px(c, x + 17, y + 6, 14, 3, '#fff4c8');
+    for (let i = 0; i < 5; i++) px(c, x + 6 + i * 9, y - 4, 1, 23, '#2c2a36');
+    px(c, x + 4, y - 6, 40, 3, '#2c2a36');
+    c.fillStyle = '#468670'; c.beginPath(); c.moveTo(x + 4, y - 6); c.quadraticCurveTo(x + 24, y - 26, x + 44, y - 6); c.closePath(); c.fill();
+    px(c, x + 22, y - 24, 4, 4, '#2c5a4f'); px(c, x + 23, y - 29, 1, 5, '#2c2a36');
+    px(c, x + 20, y + 10, 8, 20, '#2c2a36'); px(c, x + 26, y + 20, 1, 1, '#d6b056');
+  });
+  // The weather vane on its mast (o.free: turning in the wind; still with o.still).
+  def('sg_vane', {}, (c, x, y, p, t, o) => {
+    px(c, x + 4, y + 12, 8, 3, p.stone[2]);
+    px(c, x + 7, y - 17, 2, 29, '#2c2a36');
+    px(c, x + 2, y - 8, 12, 1, '#46444f');
+    const a = o.free ? (o.still ? 0.26 : 0.26 + Math.sin(t / 1100) * 0.4) : 0.36, k = Math.cos(a);
+    px(c, Math.round(x + 8 - 12 * k), y - 18, Math.round(12 * k), 1, '#2c2a36');
+    px(c, x + 8, y - 22, Math.round(12 * k), 9, o.free ? '#57545f' : '#7a5036');
+  });
+  // The gallery railing, just outside the walkable gallery (o.side: n s w e nw ne sw se;
+  // o.worn: the paint rubbed away where a hand has held it for fifty years).
+  def('sg_rail', {}, (c, x, y, p, t, o) => {
+    const s = o.side || 'n', col = '#33463f', top = o.worn ? '#b4b2bc' : '#4f665a';
+    if (s[0] === 'n') { px(c, x, y + 3, 16, 2, top); for (const k of [4, 12]) px(c, x + k, y + 3, 1, 13, col); }
+    else if (s[0] === 's') { px(c, x, y - 13, 16, 2, top); for (const k of [4, 12]) px(c, x + k, y - 13, 1, 13, col); px(c, x, y, 16, 4, p.stone[2]); }
+    if (s.indexOf('w') >= 0) px(c, x + 14, y - 12, 2, 16, top);
+    if (s.indexOf('e') >= 0) px(c, x, y - 12, 2, 16, top);
+  });
+  // The stairhead: the round well in the gallery floor where the spiral stair comes up.
+  def('sg_hatch', { block: false }, (c, x, y, p) => {
+    c.fillStyle = p.stone[2]; c.beginPath(); c.ellipse(x + 8, y + 8.5, 7, 5, 0, 0, 7); c.fill();
+    c.fillStyle = '#141018'; c.beginPath(); c.ellipse(x + 8, y + 8.5, 6, 4, 0, 0, 7); c.fill();
+    px(c, x + 3, y + 9, 5, 2, p.stone[0]); px(c, x + 7, y + 6, 1, 5, '#46444f');
+  });
+
   // ---- art-resolution versions (draw2; rules and helpers: src/engine/26–28_*.js) ----
   (function () {
     const A = RB.propArt && RB.propArt.art, K = RB.propKit;
@@ -286,6 +324,252 @@ var RB = (globalThis.RB = globalThis.RB || {});
         line(g, 22, 18, 30, 26, ROPE[2], 2);
       },
       shadow: () => [16, 29, 9, 2.5, 0.32],
+    });
+
+    // ---- the top of the lighthouse -------------------------------------------------------------
+    // Painted iron (white, weathered to grey on the shaded side); where a hand
+    // has held the rail for fifty years the paint is gone and the bare iron shines.
+    const PAINT = ['#5d6570', '#9aa2aa', '#c8cdd0', '#e4e7e6', '#f7f8f4'];
+    const BARE = ['#2a2830', '#4a4852', '#7a7884', '#aeacb6', '#dcdae2'];
+    const VERD = ['#1f3d38', '#2c5a4f', '#468670', '#6eaf90', '#a2d8bc'];
+    const VANE = ['#26242e', '#3a3843', '#55525d', '#75717c', '#a29ea8'];
+    const RUST = ramp('#7a5036', 0.45, 0.35);
+    const HT = 24; // the railing's height (art px)
+    // The railing stands just outside the walkable gallery (its tiles are off
+    // the map, so the map's edge is the line you cannot pass). North: its foot
+    // on the map's top edge, a stone lip beyond. South: in front of whoever
+    // stands at the edge, over the slab's face and its corbels (the drop below).
+    // West and east: the top rail seen from above, a bar along the edge raised
+    // by the rail's height, with post caps and the posts' feet on the floor.
+    function railTop(g, x, y, w, r5) { R(g, x, y, w, 3, r5[2]); R(g, x, y, w, 1, r5[4]); R(g, x, y + 2, w, 1, r5[0]); }
+    function railPost(g, x, y0, y1, r5) { cyl(g, x, y0, 3, y1 - y0, r5); R(g, x - 1, y1 - 2, 5, 2, r5[1]); R(g, x - 1, y1 - 2, 5, 1, r5[2]); }
+    function railSide(g, x, r5) {
+      // the bar (lit on its left face) and two post caps
+      R(g, x, -HT, 3, 32, r5[2]); R(g, x, -HT, 1, 32, r5[4]); R(g, x + 2, -HT, 1, 32, r5[0]);
+      for (const y of [8 - HT, 24 - HT]) { R(g, x - 1, y - 1, 5, 3, r5[3]); R(g, x - 1, y - 1, 5, 1, r5[4]); R(g, x - 1, y + 1, 5, 1, r5[1]); }
+    }
+    A('sg_rail', {
+      box: [-6, -30, 44, 66], outline: false,
+      v: (o) => (o.side || 'n') + (o.worn ? '*' : ''),
+      draw(g, M, v) {
+        const side = v.replace('*', ''), worn = v.indexOf('*') >= 0, s5 = M.stone, top = worn ? BARE : PAINT;
+        if (side[0] === 'n') {
+          // tile above the map: the gallery's edge is this tile's bottom (y 32)
+          const x0 = side === 'nw' ? 29 : 0, x1 = side === 'ne' ? 3 : 32;
+          R(g, x0, 28, x1 - x0, 1, s5[4]); R(g, x0, 29, x1 - x0, 3, s5[2]);
+          const posts = side === 'n' ? [7, 23] : side === 'nw' ? [29] : [0];
+          for (const px0 of posts) railPost(g, px0, 32 - HT, 32, PAINT);
+          if (side === 'n') { R(g, 0, 19, 32, 2, PAINT[2]); R(g, 0, 19, 32, 1, PAINT[3]); R(g, 0, 20, 32, 1, PAINT[0]); }
+          railTop(g, x0, 30 - HT, x1 - x0, top);
+          if (worn && side === 'n') { R(g, 3, 30 - HT, 10, 1, '#ffffff'); R(g, 18, 31 - HT, 6, 1, BARE[3]); }
+        } else if (side[0] === 's') {
+          // tile below the map: the gallery's edge is this tile's top (y 0)
+          const x0 = side === 'sw' ? 29 : 0, x1 = side === 'se' ? 3 : 32;
+          R(g, x0, 0, x1 - x0, 1, s5[4]); R(g, x0, 1, x1 - x0, 5, s5[2]); R(g, x0, 5, x1 - x0, 1, s5[1]); R(g, x0, 6, x1 - x0, 1, s5[0]);
+          if (side === 's') for (const cx of [6, 22]) { R(g, cx, 7, 5, 2, s5[1]); R(g, cx + 1, 9, 3, 2, s5[1]); R(g, cx + 2, 11, 1, 1, s5[0]); R(g, cx, 7, 1, 2, s5[2]); }
+          const posts = side === 's' ? [7, 23] : side === 'sw' ? [29] : [0];
+          for (const px0 of posts) railPost(g, px0, -HT, 0, PAINT);
+          if (side === 's') { R(g, 0, -12, 32, 2, PAINT[2]); R(g, 0, -12, 32, 1, PAINT[3]); R(g, 0, -11, 32, 1, PAINT[0]); }
+          railTop(g, x0, -2 - HT, x1 - x0, top);
+        } else if (side === 'w') {
+          // tile left of the map: the edge is this tile's right side (x 32)
+          railSide(g, 29, top);
+          if (worn) { R(g, 29, 2 - HT, 1, 14, '#ffffff'); }
+          for (const y of [8, 24]) { R(g, 32, y - 1, 3, 2, PAINT[1]); R(g, 32, y + 1, 3, 1, 'rgba(22,16,40,0.3)'); }
+        } else {
+          // tile right of the map: the edge is this tile's left side (x 0)
+          railSide(g, 0, top);
+          for (const y of [8, 24]) { R(g, -3, y - 1, 3, 2, PAINT[1]); R(g, -3, y + 1, 3, 1, 'rgba(22,16,40,0.3)'); }
+        }
+      },
+    });
+    // The stairhead: the round well of the spiral stair cut into the gallery
+    // floor — a rim of darker stones, the far inner wall catching the light,
+    // the top treads turning down round the newel (each a step lower and
+    // darker), a brass handrail along the wall (interactable way on: inked).
+    A('sg_hatch', {
+      box: [-2, -2, 36, 36], ink: true,
+      draw(g, M) {
+        const s5 = M.stone, cx = 16, cy = 17, rad = Math.PI / 180;
+        ell(g, cx, cy, 15.5, 11, s5[1]); ell(g, cx - 0.5, cy - 0.5, 14.5, 10, s5[2]);
+        ell(g, cx, cy, 13, 9, '#100c14');
+        // the far inner wall: a band under the far rim, lit on the left
+        for (let x = 3; x <= 29; x++) {
+          const k = (x + 0.5 - cx) / 13;
+          if (k * k >= 1) continue;
+          const y0 = Math.round(cy - 9 * Math.sqrt(1 - k * k));
+          R(g, x, y0, 1, 3, x < 13 ? s5[2] : s5[1]); R(g, x, y0 + 3, 1, 1, s5[0]);
+        }
+        // treads: the top one at the near side, each next one a step lower and darker,
+        // its lit nosing over a shadowed riser
+        const pt = (a, r, ry, d) => [cx + r * Math.cos(a * rad), cy + d + ry * Math.sin(a * rad)];
+        [[92, 140, s5[4], s5[3]], [140, 188, s5[3], s5[2]], [188, 236, s5[2], s5[1]], [236, 284, s5[1], s5[0]]].forEach(([a0, a1, lit, col], i) => {
+          const d = i * 1.5, P = [];
+          for (let a = a0; a <= a1; a += 8) P.push(...pt(a, 11.5, 7.8, d));
+          for (let a = a1; a >= a0; a -= 24) P.push(...pt(a, 2.5, 1.8, d));
+          poly(g, P, col);
+          line(g, ...pt(a0, 2.5, 1.8, d), ...pt(a0, 11.5, 7.8, d), '#100c14', 1);
+          line(g, ...pt(a1, 2.5, 1.8, d), ...pt(a1, 11.5, 7.8, d), lit, 1);
+        });
+        cyl(g, cx - 1, cy - 5, 3, 10, IR);
+        for (let a = 125; a <= 245; a += 3) R(g, Math.round(cx + 12.5 * Math.cos(a * rad)), Math.round(cy - 3 + 8.5 * Math.sin(a * rad)), 1, 1, BR[3]);
+      },
+    });
+    // The weather vane: an iron arrow and fin on a mast with a compass cross,
+    // the fin cut with the groove of 風 (かぜ, wind; looked at, the dialogue
+    // gives its reading). Stuck (v 0): rust over the plate and in the groove,
+    // the shape lost. Free (v 1, o.free): the groove clean-cut, the vane
+    // swinging gently through nine angles (o.still: held at rest).
+    const KAZE = [
+      '.#########..',
+      '.#.......#..',
+      '.#..###..#..',
+      '.#.......#..',
+      '.#.#####.#..',
+      '.#.#.#.#.#..',
+      '.#.#####.#..',
+      '.#...#...#..',
+      '.#.#####.#..',
+      '.#.....#.#..',
+      '#........#.#',
+      '#.........#.',
+    ];
+    const kz = (u, w) => { const gx = Math.round(u - 11.5), gy = Math.round(5.5 - w); return gy >= 0 && gy < 12 && gx >= 0 && gx < 12 && KAZE[gy][gx] === '#'; };
+    // half-height of the vane at u (pointer < 0 < fin), or -1 outside it
+    function vaneHalf(u) {
+      if (u < -24 || u > 29) return -1;
+      if (u < -15) return (u + 24) * 0.6; // the pointer
+      if (u < 6) return 1;                // the shaft
+      return 6 + (u - 6) * 0.2;           // the fin (its swallowtail is cut in draw)
+    }
+    A('sg_vane', {
+      box: [-16, -62, 64, 98], ink: true,
+      v: (o) => (o.free ? 1 : 0),
+      f: (t, o) => (!o.free ? 0 : o.still ? 4 : Math.max(0, Math.min(8, Math.round(4 + 4 * (0.72 * Math.sin(t / 1100) + 0.28 * Math.sin(t / 430 + 1)))))),
+      draw(g, M, v, f) {
+        const s5 = M.stone, mx = 16, py = -36;
+        // plinth and base plate
+        ell(g, 16, 27, 10, 4.5, s5[1]); ell(g, 16, 26, 10, 4, s5[2]); ell(g, 15, 25, 8, 3, s5[3]);
+        ell(g, 16, 25, 6, 2.5, IR[1]); ell(g, 16, 24.5, 5, 2, IR[2]); R(g, 12, 24, 1, 1, IR[4]); R(g, 19, 25, 1, 1, IR[3]);
+        // mast
+        cyl(g, 15, py + 2, 3, 25 - py - 2, IR);
+        // compass cross (fixed, a little turned) with ball ends — no letters
+        line(g, 3, -19, 29, -15, IR[2], 1); line(g, 3, -20, 29, -16, IR[3], 1);
+        line(g, 21, -24, 11, -10, IR[2], 1);
+        for (const [bx, by] of [[3, -19], [29, -15], [21, -24], [11, -10]]) { ell(g, bx, by, 2, 2, IR[2]); R(g, bx - 1, by - 1, 1, 1, IR[4]); }
+        // pivot cap
+        R(g, 14, py + 1, 5, 2, IR[3]); R(g, 15, py - 1, 3, 2, IR[2]);
+        // the vane, projected: u along it, w up its height; θ turns it about the mast
+        const th = v ? 0.26 + ((f - 4) / 4) * 0.42 : 0.36, cs = Math.cos(th), sn = Math.sin(th);
+        const base = th > 0.45 ? 3 : 2, plate = v ? VANE : VANE.map((c, i) => mix(c, RUST[i], 0.45));
+        const g0 = Math.floor(mx - 26 * cs) - 1, g1 = Math.ceil(mx + 30 * cs) + 1;
+        const groove = (u, w) => kz(u, w) && vaneHalf(u) - 1 > Math.abs(w);
+        for (let X = g0; X <= g1; X++) {
+          const u = (X + 0.5 - mx) / cs;
+          const half = vaneHalf(u);
+          if (half < 0) continue;
+          const yc = py - u * sn * 0.5; // centre line of the vane at this column
+          for (let Y = Math.floor(yc - half - 1); Y <= Math.ceil(yc + half + 1); Y++) {
+            const w = yc - (Y + 0.5);
+            if (Math.abs(w) > half) continue;
+            if (u > 26 && Math.abs(w) < (u - 26) * 2) continue; // swallowtail notch
+            let col = plate[Math.abs(w) > half - 1 ? 1 : w > half - 3 && u > 6 ? base + 1 : base];
+            if (u < 6 && u > -15) col = plate[w > 0 ? 3 : 1]; // the shaft
+            const r = hh(Math.floor(u / 2) + 40, Math.floor(w / 2) + 40, 31);
+            if (!v && (r & 7) < 3) col = RUST[1 + (r >>> 4) % 3];
+            if (groove(u, w)) {
+              if (v) col = '#15131b';
+              else col = (r >>> 7) % 5 < 2 ? RUST[0] : (r & 7) < 3 ? RUST[2] : plate[base];
+            } else if (v && u > 6 && (groove(u - 1 / cs, w) || groove(u, w + 1))) col = '#c9c5cd'; // the cut's lit far edge
+            R(g, X, Y, 1, 1, col);
+          }
+        }
+        // finial on the pivot
+        R(g, 15, py - 4, 3, 3, IR[3]); R(g, 15, py - 4, 1, 1, IR[4]);
+      },
+      shadow: () => [16, 28, 10, 3.5, 0.3],
+    });
+    // The lamp room: a stone base with a small iron door, glass panes in an
+    // iron frame with the great lens inside (it gathers the daylight; nothing
+    // burns by day), a ring cornice, a verdigris dome with ribs, a ventilator
+    // ball and a finial. Interactable (inked).
+    A('sg_lamproom', {
+      box: [-8, -62, 112, 132], ink: true,
+      draw(g, M) {
+        const s5 = M.stone, cx = 48;
+        const arc = (x, cy, r, ry) => { const k = (x + 0.5 - cx) / r; return k * k >= 1 ? null : cy + ry * Math.sqrt(1 - k * k); };
+        // base: the front face between the top and bottom arcs, then its top ring
+        for (let x = 2; x < 94; x++) {
+          const a = arc(x, 38, 46, 14), b = arc(x, 50, 46, 14);
+          if (a == null) continue;
+          R(g, x, Math.round(a), 1, Math.round(b) - Math.round(a), cylCol(x - 2, 92, s5));
+        }
+        ell(g, cx, 38, 46, 14, s5[3]);
+        ell(g, cx - 2, 37, 42, 12, s5[4]);
+        ell(g, cx, 38, 39, 11.5, s5[1]);
+        // the glass room: the dark interior, the lens on its pedestal
+        for (let x = 10; x < 86; x++) {
+          const top = arc(x, -8, 38, 11), bot = arc(x, 38, 38, 11);
+          if (top == null) continue;
+          R(g, x, Math.round(top) - 6, 1, Math.round(bot) - Math.round(top) + 6, x < 30 ? '#24434b' : '#1b3138');
+        }
+        cyl(g, 42, 30, 12, 12, IR);
+        const LENS = ['#6a5a3a', '#a88a4a', '#e0c070', '#ffe6a0', '#fff8dc'];
+        for (let y = 4; y < 32; y++) for (let x = 34; x < 62; x++) {
+          const band = Math.floor((y - 4) / 3), core = y >= 16 && y < 22;
+          let k = LENS.indexOf(cylCol(x - 34, 28, LENS));
+          if (band % 2) k = Math.max(0, k - 1);
+          if (core) k = Math.min(4, k + 1);
+          R(g, x, y, 1, 1, LENS[k]);
+        }
+        R(g, 33, 2, 30, 3, BR[3]); R(g, 33, 2, 30, 1, BR[4]); R(g, 33, 31, 30, 3, BR[2]); R(g, 33, 33, 30, 1, BR[1]);
+        R(g, 44, 17, 8, 4, '#ffffff');
+        // panes: a faint sky tint and slanted reflections on the lit side
+        for (let x = 10; x < 86; x++) {
+          const top = arc(x, -8, 38, 11), bot = arc(x, 38, 38, 11);
+          if (top == null) continue;
+          for (let y = Math.round(top); y < Math.round(bot); y++) {
+            const d = (x + y * 0.7) % 24;
+            if (x < 46 && d < 3) R(g, x, y, 1, 1, K.rgba('#e8f8fa', x < 28 ? 0.5 : 0.3));
+            else if (d < 1) R(g, x, y, 1, 1, K.rgba('#cdeef2', 0.16));
+          }
+        }
+        // the iron frame: six glazing bars round the drum and a transom
+        for (const phi of [-75, -45, -15, 15, 45, 75]) {
+          const x = Math.round(cx + 38 * Math.sin((phi * Math.PI) / 180)) - 1;
+          const top = arc(x, -8, 38, 11), bot = arc(x, 38, 38, 11);
+          R(g, x, Math.round(top), 2, Math.round(bot) - Math.round(top), IR[1]); R(g, x, Math.round(top), 1, Math.round(bot) - Math.round(top), IR[3]);
+        }
+        for (let x = 10; x < 86; x++) { const y = arc(x, 16, 38, 11); if (y != null) { R(g, x, Math.round(y), 1, 2, IR[1]); R(g, x, Math.round(y), 1, 1, IR[3]); } }
+        for (let x = 10; x < 86; x++) { const y = arc(x, 37, 38, 11); if (y != null) R(g, x, Math.round(y), 1, 2, IR[2]); }
+        // the door onto the gallery: iron, a step in front, a brass handle
+        R(g, 41, 26, 14, 36, IR[1]); R(g, 42, 27, 12, 34, IR[2]); R(g, 43, 28, 10, 15, IR[1]); R(g, 43, 45, 10, 14, IR[1]);
+        R(g, 42, 27, 1, 34, IR[3]); R(g, 41, 24, 14, 2, IR[0]); R(g, 51, 44, 2, 3, BR[3]); R(g, 51, 44, 1, 1, BR[4]);
+        R(g, 39, 61, 18, 3, s5[3]); R(g, 39, 61, 18, 1, s5[4]); R(g, 39, 63, 18, 1, s5[1]);
+        // cornice ring
+        ell(g, cx, -10, 43, 13, IR[1]); ell(g, cx, -11, 42, 12, VERD[1]);
+        for (let x = 6; x < 91; x++) { const y = arc(x, -9, 43, 13); if (y != null) { R(g, x, Math.round(y) - 1, 1, 2, x < 40 ? VERD[2] : VERD[1]); R(g, x, Math.round(y) + 1, 1, 1, IR[0]); } }
+        // the dome, lit from the upper left, with ribs down from the crown
+        K.shade(g, 4, -44, 90, 46, VERD, (fx, fy) => {
+          const nx = (fx - cx) / 42, ny = (fy + 11) / 31;
+          // the profile above the base ring, and the front half of the ring itself
+          if (nx * nx >= 1 || (fy > -11 && fy > -11 + 12 * Math.sqrt(1 - nx * nx)) || (fy <= -11 && nx * nx + ny * ny > 1)) return null;
+          const nz = Math.sqrt(Math.max(0, 1 - nx * nx - ny * ny));
+          return -0.55 * nx - 0.5 * ny + 0.55 * nz - 0.25;
+        }, 61, 0.18, 4, 3);
+        for (const phi of [-60, -30, 0, 30, 60]) {
+          const sp = Math.sin((phi * Math.PI) / 180), cp = Math.cos((phi * Math.PI) / 180);
+          for (let a = 0.08; a < 1.5; a += 0.04) {
+            const x = Math.round(cx + 42 * Math.sin(a) * sp), y = Math.round(-11 - 31 * Math.cos(a) + 12 * Math.sin(a) * cp);
+            R(g, x, y, 1, 1, VERD[0]); R(g, x - 1, y, 1, 1, VERD[3]);
+          }
+        }
+        // ventilator ball and finial
+        ell(g, cx, -45, 6, 5.5, VERD[1]); ell(g, cx - 1, -46, 4.5, 4, VERD[2]); R(g, cx - 3, -48, 2, 2, VERD[4]);
+        R(g, cx - 3, -41, 7, 2, IR[2]);
+        R(g, cx, -58, 1, 9, IR[2]); ell(g, cx + 0.5, -58, 1.6, 1.6, IR[3]);
+      },
+      shadow: () => [48, 56, 50, 12, 0.3],
     });
   })();
 

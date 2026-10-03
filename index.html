@@ -33616,11 +33616,15 @@ RB.render = (function () {
     }
     return (m.enclosed = e);
   }
+  // A map that brings its own surround (map.surround: 'sea' — the top of the
+  // lighthouse, with the sea far below) is framed like a room: no apron, no
+  // fade, the soft edge shadow (it reads as the drop). It is not indoors.
+  const framed = (m) => enclosed(m) || !!(m.def && m.def.surround);
   const clampI = (v, n) => (v < 0 ? 0 : v >= n ? n - 1 : v);
   // Margin (tiles) the current view can show past each edge: half the room a
   // small map leaves, plus the touch-controls reserve below.
   function marginFor(m) {
-    if (enclosed(m)) return { x: 0, y: 0 };
+    if (framed(m)) return { x: 0, y: 0 };
     const vwT = bw / ATS, vhT = bh / ATS, rT = reserveLogical() / TS;
     return { x: Math.max(1, Math.ceil((vwT - m.w) / 2) + 1), y: Math.max(1, Math.ceil((vhT - m.h) / 2) + 1) + Math.ceil(rT) };
   }
@@ -33674,7 +33678,7 @@ RB.render = (function () {
     const c = cv.getContext('2d');
     c.imageSmoothingEnabled = false;
     const pal = palOf(m);
-    const ext = !enclosed(m);
+    const ext = !framed(m);
     for (let y = -g.y; y < m.h + g.y; y++)
       for (let x = -g.x; x < m.w + g.x; x++) {
         const t = m.tiles[clampI(y, m.h) * m.w + clampI(x, m.w)];
@@ -33736,9 +33740,10 @@ RB.render = (function () {
   const ay = (ly) => Math.round((ly - cam.y) * ART);
 
   // Outside a small map: a quiet surround in the region's darkest colour —
-  // timber for interiors, a faint weave outdoors — and a soft edge shadow, so
-  // the map reads as a lit room or stage rather than an empty band. Nothing
-  // here looks walkable. Patterns are cached per palette.
+  // timber for interiors, a faint weave outdoors, or what the map names as
+  // its own surround (the sea far below) — and a soft edge shadow, so the map
+  // reads as a lit room or stage rather than an empty band. Nothing here
+  // looks walkable. Patterns are cached per palette (the sea per state/frame).
   const surroundCache = new Map();
   function mix(hex, to, a) {
     const n = parseInt(hex.slice(1), 16), m2 = parseInt(to.slice(1), 16);
@@ -33777,7 +33782,66 @@ RB.render = (function () {
     surroundCache.set(key, pat);
     return pat;
   }
-  function drawSurround(c, m, pal) {
+  // The sea far below (map.surround: 'sea'): deep water seen from high up, at
+  // a small scale. Calm (the map's ambient.sea 'calm'): glassy, with long faint
+  // swells, a soft sheen and the odd glint; windy ('wind'): broken ripples and
+  // small whitecaps. Four frames each so the glints and caps come and go (the
+  // first frame only, with reduced motion). 64×64 art px, cached like the rest.
+  function seaPattern(c, windy, f) {
+    const key = 'sea' + (windy ? 'w' : 'c') + f;
+    let pat = surroundCache.get(key);
+    if (pat) return pat;
+    const cv = RB.sprites.makeCanvas(64, 64);
+    const g = cv.getContext('2d');
+    const h = (i, k) => RB.tiles.hh(i, k, windy ? 71 : 37);
+    // a horizontal dash that wraps round the tile edges (so the pattern has no seams)
+    const dash = (x, y, w, col) => { g.fillStyle = col; for (let i = 0; i < w; i++) g.fillRect((x + i) & 63, y & 63, 1, 1); };
+    // positions are hashed over the whole tile (no rows), so the repeat does not read as a grid
+    const at = (i, k) => { const r = h(i, k); return [r & 63, (r >>> 6) & 63, r >>> 12]; };
+    if (!windy) {
+      g.fillStyle = '#1f5268';
+      g.fillRect(0, 0, 64, 64);
+      // broad, faint patches of sheen (the sky in the glassy water)
+      for (let i = 0; i < 3; i++) {
+        const [x, y, r] = at(i, 2), w = 10 + (r % 9);
+        dash(x + 2, y, w - 4, '#225870'); dash(x, y + 1, w, '#225870'); dash(x + 3, y + 2, w - 6, '#225870');
+      }
+      // long, low swells: a faintly lit crest over a darker trough, drifting a pixel to and fro
+      const drift = [0, 1, 2, 1][f];
+      for (let i = 0; i < 5; i++) {
+        const [x, y, r] = at(i, 1), w = 7 + (r % 9);
+        dash(x + drift, y, w, '#265f76');
+        dash(x + drift + 2, y + 1, w - 3, '#1b4a5f');
+      }
+      // glints: one or two at a time, each lit in two of the four frames
+      for (let i = 0; i < 3; i++) {
+        if ((i + f) % 4 > 1) continue;
+        const [x, y] = at(i, 3);
+        dash(x, y, 2, '#78b0c0'); dash(x, y, 1, '#d4eef2');
+      }
+    } else {
+      g.fillStyle = '#1d4d62';
+      g.fillRect(0, 0, 64, 64);
+      // short ripples scattered all over, lit and shadowed, shifting a pixel with the frames
+      for (let i = 0; i < 26; i++) {
+        const [x, y, r] = at(i, 4), w = 2 + (r % 3);
+        dash(x + ((i + f) & 1), y, w, i % 3 ? '#183f53' : '#2b687e');
+      }
+      // small whitecaps: a white dash with a pale tail, each breaking in three
+      // of the four frames (longest in the middle one)
+      for (let i = 0; i < 5; i++) {
+        const ph = (i + f) % 4;
+        if (ph === 3) continue;
+        const [x, y] = at(i, 5), w = ph === 1 ? 3 : 2;
+        dash(x + 1, y + 1, w, '#5f97a8');
+        dash(x, y, w, '#e8f6f6');
+      }
+    }
+    pat = c.createPattern(cv, 'repeat');
+    surroundCache.set(key, pat);
+    return pat;
+  }
+  function drawSurround(c, m, pal, t) {
     const g = m.margin || { x: 0, y: 0 };
     const mx = ax(-g.x * TS), my = ay(-g.y * TS), mw = (m.w + 2 * g.x) * ATS, mh = (m.h + 2 * g.y) * ATS;
     c.fillStyle = pal.dark;
@@ -33786,12 +33850,16 @@ RB.render = (function () {
     // strips around it (painting the whole buffer twice a frame cost about
     // a third of a small interior's frame time)
     c.fillRect(mx, my, mw, mh);
-    const indoor = enclosed(m);
+    const indoor = framed(m);
     // rooms get dark timber, larger walled places (archives, towers) the weave
     const timber = m.region === 'interior' || (m.def && m.def.indoor) || (m.w <= 17 && m.h <= 12);
+    const sea = m.def && m.def.surround === 'sea';
     c.save();
     c.translate(mx & 63, my & 63); // the pattern stays put relative to the map
-    c.fillStyle = surroundPattern(c, pal, timber);
+    if (sea) {
+      const windy = (ambientOf(m).ambient || {}).sea === 'wind';
+      c.fillStyle = seaPattern(c, windy, RB.game.reducedMotion() ? 0 : Math.floor((t || 0) / (windy ? 420 : 650)) % 4);
+    } else c.fillStyle = surroundPattern(c, pal, timber);
     const ox = mx & 63, oy = my & 63, top = Math.max(0, my), bot = Math.min(bh, my + mh);
     if (my > 0) c.fillRect(-ox, -oy, bw, my);
     if (my + mh < bh) c.fillRect(-ox, my + mh - oy, bw, bh - my - mh);
@@ -33926,7 +33994,7 @@ RB.render = (function () {
   // colour over three tiles, from nothing at the edge itself, so the boundary
   // reads without a line. Corners take both bands and so fall off further.
   function drawFade(c, m, pal) {
-    if (enclosed(m)) return;
+    if (framed(m)) return;
     const X0 = ax(0), Y0 = ay(0), X1 = ax(m.w * TS), Y1 = ay(m.h * TS);
     if (X0 <= 0 && Y0 <= 0 && X1 >= bw && Y1 >= bh) return;
     const n = parseInt(pal.dark.slice(1), 16), rgb = (n >> 16) + ',' + ((n >> 8) & 255) + ',' + (n & 255);
@@ -33954,7 +34022,7 @@ RB.render = (function () {
     const c = bctx;
     const pal = palOf(m);
     const g = m.margin;
-    drawSurround(c, m, pal);
+    drawSurround(c, m, pal, t);
     c.drawImage(m.staticLayer, ax(-g.x * TS), ay(-g.y * TS));
     // animated water (past the edge too: the river keeps flowing)
     const x0 = Math.max(-g.x, Math.floor(cam.x / TS)), y0 = Math.max(-g.y, Math.floor(cam.y / TS));
@@ -82241,6 +82309,7 @@ RB.lex.add(RB.lex.parseTable(`
 混じる|まじる|v5r|I|to be mixed in, mingle
 腐る|くさる|v5r|I|to rot
 彫る|ほる|v5r|I|to carve, engrave
+剥げる|はげる|v1|A|to come off, wear away (paint)
 苔むす|こけむす|v5s|A|to become covered in moss
 下る|くだる|v5r|I|to go down, descend
 下りる|おりる|v1|E|to go down, get down
@@ -82585,6 +82654,44 @@ var RB = (globalThis.RB = globalThis.RB || {});
     px(c, x + 5, y + 7, 6, 2, '#c8b890');
   });
 
+  // ---- the top of the lighthouse (sg.lighthouse_top) ----------------------------------------
+  // The lamp room (3×2): a stone base, glass panes in an iron frame with the
+  // great lens inside, a verdigris dome, a small iron door onto the gallery.
+  def('sg_lamproom', { w: 3, h: 2 }, (c, x, y, p) => {
+    px(c, x + 2, y + 18, 44, 13, p.stone[2]); px(c, x + 2, y + 18, 44, 2, p.stone[1]);
+    px(c, x + 6, y - 4, 36, 23, '#4f8a92');
+    px(c, x + 17, y - 1, 14, 18, '#e0c070'); px(c, x + 17, y + 6, 14, 3, '#fff4c8');
+    for (let i = 0; i < 5; i++) px(c, x + 6 + i * 9, y - 4, 1, 23, '#2c2a36');
+    px(c, x + 4, y - 6, 40, 3, '#2c2a36');
+    c.fillStyle = '#468670'; c.beginPath(); c.moveTo(x + 4, y - 6); c.quadraticCurveTo(x + 24, y - 26, x + 44, y - 6); c.closePath(); c.fill();
+    px(c, x + 22, y - 24, 4, 4, '#2c5a4f'); px(c, x + 23, y - 29, 1, 5, '#2c2a36');
+    px(c, x + 20, y + 10, 8, 20, '#2c2a36'); px(c, x + 26, y + 20, 1, 1, '#d6b056');
+  });
+  // The weather vane on its mast (o.free: turning in the wind; still with o.still).
+  def('sg_vane', {}, (c, x, y, p, t, o) => {
+    px(c, x + 4, y + 12, 8, 3, p.stone[2]);
+    px(c, x + 7, y - 17, 2, 29, '#2c2a36');
+    px(c, x + 2, y - 8, 12, 1, '#46444f');
+    const a = o.free ? (o.still ? 0.26 : 0.26 + Math.sin(t / 1100) * 0.4) : 0.36, k = Math.cos(a);
+    px(c, Math.round(x + 8 - 12 * k), y - 18, Math.round(12 * k), 1, '#2c2a36');
+    px(c, x + 8, y - 22, Math.round(12 * k), 9, o.free ? '#57545f' : '#7a5036');
+  });
+  // The gallery railing, just outside the walkable gallery (o.side: n s w e nw ne sw se;
+  // o.worn: the paint rubbed away where a hand has held it for fifty years).
+  def('sg_rail', {}, (c, x, y, p, t, o) => {
+    const s = o.side || 'n', col = '#33463f', top = o.worn ? '#b4b2bc' : '#4f665a';
+    if (s[0] === 'n') { px(c, x, y + 3, 16, 2, top); for (const k of [4, 12]) px(c, x + k, y + 3, 1, 13, col); }
+    else if (s[0] === 's') { px(c, x, y - 13, 16, 2, top); for (const k of [4, 12]) px(c, x + k, y - 13, 1, 13, col); px(c, x, y, 16, 4, p.stone[2]); }
+    if (s.indexOf('w') >= 0) px(c, x + 14, y - 12, 2, 16, top);
+    if (s.indexOf('e') >= 0) px(c, x, y - 12, 2, 16, top);
+  });
+  // The stairhead: the round well in the gallery floor where the spiral stair comes up.
+  def('sg_hatch', { block: false }, (c, x, y, p) => {
+    c.fillStyle = p.stone[2]; c.beginPath(); c.ellipse(x + 8, y + 8.5, 7, 5, 0, 0, 7); c.fill();
+    c.fillStyle = '#141018'; c.beginPath(); c.ellipse(x + 8, y + 8.5, 6, 4, 0, 0, 7); c.fill();
+    px(c, x + 3, y + 9, 5, 2, p.stone[0]); px(c, x + 7, y + 6, 1, 5, '#46444f');
+  });
+
   // ---- art-resolution versions (draw2; rules and helpers: src/engine/26–28_*.js) ----
   (function () {
     const A = RB.propArt && RB.propArt.art, K = RB.propKit;
@@ -82763,6 +82870,252 @@ var RB = (globalThis.RB = globalThis.RB || {});
         line(g, 22, 18, 30, 26, ROPE[2], 2);
       },
       shadow: () => [16, 29, 9, 2.5, 0.32],
+    });
+
+    // ---- the top of the lighthouse -------------------------------------------------------------
+    // Painted iron (white, weathered to grey on the shaded side); where a hand
+    // has held the rail for fifty years the paint is gone and the bare iron shines.
+    const PAINT = ['#5d6570', '#9aa2aa', '#c8cdd0', '#e4e7e6', '#f7f8f4'];
+    const BARE = ['#2a2830', '#4a4852', '#7a7884', '#aeacb6', '#dcdae2'];
+    const VERD = ['#1f3d38', '#2c5a4f', '#468670', '#6eaf90', '#a2d8bc'];
+    const VANE = ['#26242e', '#3a3843', '#55525d', '#75717c', '#a29ea8'];
+    const RUST = ramp('#7a5036', 0.45, 0.35);
+    const HT = 24; // the railing's height (art px)
+    // The railing stands just outside the walkable gallery (its tiles are off
+    // the map, so the map's edge is the line you cannot pass). North: its foot
+    // on the map's top edge, a stone lip beyond. South: in front of whoever
+    // stands at the edge, over the slab's face and its corbels (the drop below).
+    // West and east: the top rail seen from above, a bar along the edge raised
+    // by the rail's height, with post caps and the posts' feet on the floor.
+    function railTop(g, x, y, w, r5) { R(g, x, y, w, 3, r5[2]); R(g, x, y, w, 1, r5[4]); R(g, x, y + 2, w, 1, r5[0]); }
+    function railPost(g, x, y0, y1, r5) { cyl(g, x, y0, 3, y1 - y0, r5); R(g, x - 1, y1 - 2, 5, 2, r5[1]); R(g, x - 1, y1 - 2, 5, 1, r5[2]); }
+    function railSide(g, x, r5) {
+      // the bar (lit on its left face) and two post caps
+      R(g, x, -HT, 3, 32, r5[2]); R(g, x, -HT, 1, 32, r5[4]); R(g, x + 2, -HT, 1, 32, r5[0]);
+      for (const y of [8 - HT, 24 - HT]) { R(g, x - 1, y - 1, 5, 3, r5[3]); R(g, x - 1, y - 1, 5, 1, r5[4]); R(g, x - 1, y + 1, 5, 1, r5[1]); }
+    }
+    A('sg_rail', {
+      box: [-6, -30, 44, 66], outline: false,
+      v: (o) => (o.side || 'n') + (o.worn ? '*' : ''),
+      draw(g, M, v) {
+        const side = v.replace('*', ''), worn = v.indexOf('*') >= 0, s5 = M.stone, top = worn ? BARE : PAINT;
+        if (side[0] === 'n') {
+          // tile above the map: the gallery's edge is this tile's bottom (y 32)
+          const x0 = side === 'nw' ? 29 : 0, x1 = side === 'ne' ? 3 : 32;
+          R(g, x0, 28, x1 - x0, 1, s5[4]); R(g, x0, 29, x1 - x0, 3, s5[2]);
+          const posts = side === 'n' ? [7, 23] : side === 'nw' ? [29] : [0];
+          for (const px0 of posts) railPost(g, px0, 32 - HT, 32, PAINT);
+          if (side === 'n') { R(g, 0, 19, 32, 2, PAINT[2]); R(g, 0, 19, 32, 1, PAINT[3]); R(g, 0, 20, 32, 1, PAINT[0]); }
+          railTop(g, x0, 30 - HT, x1 - x0, top);
+          if (worn && side === 'n') { R(g, 3, 30 - HT, 10, 1, '#ffffff'); R(g, 18, 31 - HT, 6, 1, BARE[3]); }
+        } else if (side[0] === 's') {
+          // tile below the map: the gallery's edge is this tile's top (y 0)
+          const x0 = side === 'sw' ? 29 : 0, x1 = side === 'se' ? 3 : 32;
+          R(g, x0, 0, x1 - x0, 1, s5[4]); R(g, x0, 1, x1 - x0, 5, s5[2]); R(g, x0, 5, x1 - x0, 1, s5[1]); R(g, x0, 6, x1 - x0, 1, s5[0]);
+          if (side === 's') for (const cx of [6, 22]) { R(g, cx, 7, 5, 2, s5[1]); R(g, cx + 1, 9, 3, 2, s5[1]); R(g, cx + 2, 11, 1, 1, s5[0]); R(g, cx, 7, 1, 2, s5[2]); }
+          const posts = side === 's' ? [7, 23] : side === 'sw' ? [29] : [0];
+          for (const px0 of posts) railPost(g, px0, -HT, 0, PAINT);
+          if (side === 's') { R(g, 0, -12, 32, 2, PAINT[2]); R(g, 0, -12, 32, 1, PAINT[3]); R(g, 0, -11, 32, 1, PAINT[0]); }
+          railTop(g, x0, -2 - HT, x1 - x0, top);
+        } else if (side === 'w') {
+          // tile left of the map: the edge is this tile's right side (x 32)
+          railSide(g, 29, top);
+          if (worn) { R(g, 29, 2 - HT, 1, 14, '#ffffff'); }
+          for (const y of [8, 24]) { R(g, 32, y - 1, 3, 2, PAINT[1]); R(g, 32, y + 1, 3, 1, 'rgba(22,16,40,0.3)'); }
+        } else {
+          // tile right of the map: the edge is this tile's left side (x 0)
+          railSide(g, 0, top);
+          for (const y of [8, 24]) { R(g, -3, y - 1, 3, 2, PAINT[1]); R(g, -3, y + 1, 3, 1, 'rgba(22,16,40,0.3)'); }
+        }
+      },
+    });
+    // The stairhead: the round well of the spiral stair cut into the gallery
+    // floor — a rim of darker stones, the far inner wall catching the light,
+    // the top treads turning down round the newel (each a step lower and
+    // darker), a brass handrail along the wall (interactable way on: inked).
+    A('sg_hatch', {
+      box: [-2, -2, 36, 36], ink: true,
+      draw(g, M) {
+        const s5 = M.stone, cx = 16, cy = 17, rad = Math.PI / 180;
+        ell(g, cx, cy, 15.5, 11, s5[1]); ell(g, cx - 0.5, cy - 0.5, 14.5, 10, s5[2]);
+        ell(g, cx, cy, 13, 9, '#100c14');
+        // the far inner wall: a band under the far rim, lit on the left
+        for (let x = 3; x <= 29; x++) {
+          const k = (x + 0.5 - cx) / 13;
+          if (k * k >= 1) continue;
+          const y0 = Math.round(cy - 9 * Math.sqrt(1 - k * k));
+          R(g, x, y0, 1, 3, x < 13 ? s5[2] : s5[1]); R(g, x, y0 + 3, 1, 1, s5[0]);
+        }
+        // treads: the top one at the near side, each next one a step lower and darker,
+        // its lit nosing over a shadowed riser
+        const pt = (a, r, ry, d) => [cx + r * Math.cos(a * rad), cy + d + ry * Math.sin(a * rad)];
+        [[92, 140, s5[4], s5[3]], [140, 188, s5[3], s5[2]], [188, 236, s5[2], s5[1]], [236, 284, s5[1], s5[0]]].forEach(([a0, a1, lit, col], i) => {
+          const d = i * 1.5, P = [];
+          for (let a = a0; a <= a1; a += 8) P.push(...pt(a, 11.5, 7.8, d));
+          for (let a = a1; a >= a0; a -= 24) P.push(...pt(a, 2.5, 1.8, d));
+          poly(g, P, col);
+          line(g, ...pt(a0, 2.5, 1.8, d), ...pt(a0, 11.5, 7.8, d), '#100c14', 1);
+          line(g, ...pt(a1, 2.5, 1.8, d), ...pt(a1, 11.5, 7.8, d), lit, 1);
+        });
+        cyl(g, cx - 1, cy - 5, 3, 10, IR);
+        for (let a = 125; a <= 245; a += 3) R(g, Math.round(cx + 12.5 * Math.cos(a * rad)), Math.round(cy - 3 + 8.5 * Math.sin(a * rad)), 1, 1, BR[3]);
+      },
+    });
+    // The weather vane: an iron arrow and fin on a mast with a compass cross,
+    // the fin cut with the groove of 風 (かぜ, wind; looked at, the dialogue
+    // gives its reading). Stuck (v 0): rust over the plate and in the groove,
+    // the shape lost. Free (v 1, o.free): the groove clean-cut, the vane
+    // swinging gently through nine angles (o.still: held at rest).
+    const KAZE = [
+      '.#########..',
+      '.#.......#..',
+      '.#..###..#..',
+      '.#.......#..',
+      '.#.#####.#..',
+      '.#.#.#.#.#..',
+      '.#.#####.#..',
+      '.#...#...#..',
+      '.#.#####.#..',
+      '.#.....#.#..',
+      '#........#.#',
+      '#.........#.',
+    ];
+    const kz = (u, w) => { const gx = Math.round(u - 11.5), gy = Math.round(5.5 - w); return gy >= 0 && gy < 12 && gx >= 0 && gx < 12 && KAZE[gy][gx] === '#'; };
+    // half-height of the vane at u (pointer < 0 < fin), or -1 outside it
+    function vaneHalf(u) {
+      if (u < -24 || u > 29) return -1;
+      if (u < -15) return (u + 24) * 0.6; // the pointer
+      if (u < 6) return 1;                // the shaft
+      return 6 + (u - 6) * 0.2;           // the fin (its swallowtail is cut in draw)
+    }
+    A('sg_vane', {
+      box: [-16, -62, 64, 98], ink: true,
+      v: (o) => (o.free ? 1 : 0),
+      f: (t, o) => (!o.free ? 0 : o.still ? 4 : Math.max(0, Math.min(8, Math.round(4 + 4 * (0.72 * Math.sin(t / 1100) + 0.28 * Math.sin(t / 430 + 1)))))),
+      draw(g, M, v, f) {
+        const s5 = M.stone, mx = 16, py = -36;
+        // plinth and base plate
+        ell(g, 16, 27, 10, 4.5, s5[1]); ell(g, 16, 26, 10, 4, s5[2]); ell(g, 15, 25, 8, 3, s5[3]);
+        ell(g, 16, 25, 6, 2.5, IR[1]); ell(g, 16, 24.5, 5, 2, IR[2]); R(g, 12, 24, 1, 1, IR[4]); R(g, 19, 25, 1, 1, IR[3]);
+        // mast
+        cyl(g, 15, py + 2, 3, 25 - py - 2, IR);
+        // compass cross (fixed, a little turned) with ball ends — no letters
+        line(g, 3, -19, 29, -15, IR[2], 1); line(g, 3, -20, 29, -16, IR[3], 1);
+        line(g, 21, -24, 11, -10, IR[2], 1);
+        for (const [bx, by] of [[3, -19], [29, -15], [21, -24], [11, -10]]) { ell(g, bx, by, 2, 2, IR[2]); R(g, bx - 1, by - 1, 1, 1, IR[4]); }
+        // pivot cap
+        R(g, 14, py + 1, 5, 2, IR[3]); R(g, 15, py - 1, 3, 2, IR[2]);
+        // the vane, projected: u along it, w up its height; θ turns it about the mast
+        const th = v ? 0.26 + ((f - 4) / 4) * 0.42 : 0.36, cs = Math.cos(th), sn = Math.sin(th);
+        const base = th > 0.45 ? 3 : 2, plate = v ? VANE : VANE.map((c, i) => mix(c, RUST[i], 0.45));
+        const g0 = Math.floor(mx - 26 * cs) - 1, g1 = Math.ceil(mx + 30 * cs) + 1;
+        const groove = (u, w) => kz(u, w) && vaneHalf(u) - 1 > Math.abs(w);
+        for (let X = g0; X <= g1; X++) {
+          const u = (X + 0.5 - mx) / cs;
+          const half = vaneHalf(u);
+          if (half < 0) continue;
+          const yc = py - u * sn * 0.5; // centre line of the vane at this column
+          for (let Y = Math.floor(yc - half - 1); Y <= Math.ceil(yc + half + 1); Y++) {
+            const w = yc - (Y + 0.5);
+            if (Math.abs(w) > half) continue;
+            if (u > 26 && Math.abs(w) < (u - 26) * 2) continue; // swallowtail notch
+            let col = plate[Math.abs(w) > half - 1 ? 1 : w > half - 3 && u > 6 ? base + 1 : base];
+            if (u < 6 && u > -15) col = plate[w > 0 ? 3 : 1]; // the shaft
+            const r = hh(Math.floor(u / 2) + 40, Math.floor(w / 2) + 40, 31);
+            if (!v && (r & 7) < 3) col = RUST[1 + (r >>> 4) % 3];
+            if (groove(u, w)) {
+              if (v) col = '#15131b';
+              else col = (r >>> 7) % 5 < 2 ? RUST[0] : (r & 7) < 3 ? RUST[2] : plate[base];
+            } else if (v && u > 6 && (groove(u - 1 / cs, w) || groove(u, w + 1))) col = '#c9c5cd'; // the cut's lit far edge
+            R(g, X, Y, 1, 1, col);
+          }
+        }
+        // finial on the pivot
+        R(g, 15, py - 4, 3, 3, IR[3]); R(g, 15, py - 4, 1, 1, IR[4]);
+      },
+      shadow: () => [16, 28, 10, 3.5, 0.3],
+    });
+    // The lamp room: a stone base with a small iron door, glass panes in an
+    // iron frame with the great lens inside (it gathers the daylight; nothing
+    // burns by day), a ring cornice, a verdigris dome with ribs, a ventilator
+    // ball and a finial. Interactable (inked).
+    A('sg_lamproom', {
+      box: [-8, -62, 112, 132], ink: true,
+      draw(g, M) {
+        const s5 = M.stone, cx = 48;
+        const arc = (x, cy, r, ry) => { const k = (x + 0.5 - cx) / r; return k * k >= 1 ? null : cy + ry * Math.sqrt(1 - k * k); };
+        // base: the front face between the top and bottom arcs, then its top ring
+        for (let x = 2; x < 94; x++) {
+          const a = arc(x, 38, 46, 14), b = arc(x, 50, 46, 14);
+          if (a == null) continue;
+          R(g, x, Math.round(a), 1, Math.round(b) - Math.round(a), cylCol(x - 2, 92, s5));
+        }
+        ell(g, cx, 38, 46, 14, s5[3]);
+        ell(g, cx - 2, 37, 42, 12, s5[4]);
+        ell(g, cx, 38, 39, 11.5, s5[1]);
+        // the glass room: the dark interior, the lens on its pedestal
+        for (let x = 10; x < 86; x++) {
+          const top = arc(x, -8, 38, 11), bot = arc(x, 38, 38, 11);
+          if (top == null) continue;
+          R(g, x, Math.round(top) - 6, 1, Math.round(bot) - Math.round(top) + 6, x < 30 ? '#24434b' : '#1b3138');
+        }
+        cyl(g, 42, 30, 12, 12, IR);
+        const LENS = ['#6a5a3a', '#a88a4a', '#e0c070', '#ffe6a0', '#fff8dc'];
+        for (let y = 4; y < 32; y++) for (let x = 34; x < 62; x++) {
+          const band = Math.floor((y - 4) / 3), core = y >= 16 && y < 22;
+          let k = LENS.indexOf(cylCol(x - 34, 28, LENS));
+          if (band % 2) k = Math.max(0, k - 1);
+          if (core) k = Math.min(4, k + 1);
+          R(g, x, y, 1, 1, LENS[k]);
+        }
+        R(g, 33, 2, 30, 3, BR[3]); R(g, 33, 2, 30, 1, BR[4]); R(g, 33, 31, 30, 3, BR[2]); R(g, 33, 33, 30, 1, BR[1]);
+        R(g, 44, 17, 8, 4, '#ffffff');
+        // panes: a faint sky tint and slanted reflections on the lit side
+        for (let x = 10; x < 86; x++) {
+          const top = arc(x, -8, 38, 11), bot = arc(x, 38, 38, 11);
+          if (top == null) continue;
+          for (let y = Math.round(top); y < Math.round(bot); y++) {
+            const d = (x + y * 0.7) % 24;
+            if (x < 46 && d < 3) R(g, x, y, 1, 1, K.rgba('#e8f8fa', x < 28 ? 0.5 : 0.3));
+            else if (d < 1) R(g, x, y, 1, 1, K.rgba('#cdeef2', 0.16));
+          }
+        }
+        // the iron frame: six glazing bars round the drum and a transom
+        for (const phi of [-75, -45, -15, 15, 45, 75]) {
+          const x = Math.round(cx + 38 * Math.sin((phi * Math.PI) / 180)) - 1;
+          const top = arc(x, -8, 38, 11), bot = arc(x, 38, 38, 11);
+          R(g, x, Math.round(top), 2, Math.round(bot) - Math.round(top), IR[1]); R(g, x, Math.round(top), 1, Math.round(bot) - Math.round(top), IR[3]);
+        }
+        for (let x = 10; x < 86; x++) { const y = arc(x, 16, 38, 11); if (y != null) { R(g, x, Math.round(y), 1, 2, IR[1]); R(g, x, Math.round(y), 1, 1, IR[3]); } }
+        for (let x = 10; x < 86; x++) { const y = arc(x, 37, 38, 11); if (y != null) R(g, x, Math.round(y), 1, 2, IR[2]); }
+        // the door onto the gallery: iron, a step in front, a brass handle
+        R(g, 41, 26, 14, 36, IR[1]); R(g, 42, 27, 12, 34, IR[2]); R(g, 43, 28, 10, 15, IR[1]); R(g, 43, 45, 10, 14, IR[1]);
+        R(g, 42, 27, 1, 34, IR[3]); R(g, 41, 24, 14, 2, IR[0]); R(g, 51, 44, 2, 3, BR[3]); R(g, 51, 44, 1, 1, BR[4]);
+        R(g, 39, 61, 18, 3, s5[3]); R(g, 39, 61, 18, 1, s5[4]); R(g, 39, 63, 18, 1, s5[1]);
+        // cornice ring
+        ell(g, cx, -10, 43, 13, IR[1]); ell(g, cx, -11, 42, 12, VERD[1]);
+        for (let x = 6; x < 91; x++) { const y = arc(x, -9, 43, 13); if (y != null) { R(g, x, Math.round(y) - 1, 1, 2, x < 40 ? VERD[2] : VERD[1]); R(g, x, Math.round(y) + 1, 1, 1, IR[0]); } }
+        // the dome, lit from the upper left, with ribs down from the crown
+        K.shade(g, 4, -44, 90, 46, VERD, (fx, fy) => {
+          const nx = (fx - cx) / 42, ny = (fy + 11) / 31;
+          // the profile above the base ring, and the front half of the ring itself
+          if (nx * nx >= 1 || (fy > -11 && fy > -11 + 12 * Math.sqrt(1 - nx * nx)) || (fy <= -11 && nx * nx + ny * ny > 1)) return null;
+          const nz = Math.sqrt(Math.max(0, 1 - nx * nx - ny * ny));
+          return -0.55 * nx - 0.5 * ny + 0.55 * nz - 0.25;
+        }, 61, 0.18, 4, 3);
+        for (const phi of [-60, -30, 0, 30, 60]) {
+          const sp = Math.sin((phi * Math.PI) / 180), cp = Math.cos((phi * Math.PI) / 180);
+          for (let a = 0.08; a < 1.5; a += 0.04) {
+            const x = Math.round(cx + 42 * Math.sin(a) * sp), y = Math.round(-11 - 31 * Math.cos(a) + 12 * Math.sin(a) * cp);
+            R(g, x, y, 1, 1, VERD[0]); R(g, x - 1, y, 1, 1, VERD[3]);
+          }
+        }
+        // ventilator ball and finial
+        ell(g, cx, -45, 6, 5.5, VERD[1]); ell(g, cx - 1, -46, 4.5, 4, VERD[2]); R(g, cx - 3, -48, 2, 2, VERD[4]);
+        R(g, cx - 3, -41, 7, 2, IR[2]);
+        R(g, cx, -58, 1, 9, IR[2]); ell(g, cx + 0.5, -58, 1.6, 1.6, IR[3]);
+      },
+      shadow: () => [48, 56, 50, 12, 0.3],
     });
   })();
 
@@ -83330,8 +83683,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'smalltable', x: 1, y: 6, scene: 'sg.lh_letter' },
       { p: 'bed', x: 7, y: 5 }, { p: 'barrel', x: 7, y: 2, scene: 'sg.lh_oil' },
     ],
+    // the stairs go up to the top once Genzō has shown you the vane (before that they are only looked at)
+    exits: [
+      { x: 4, y: 9, to: 'sg.harbor', tx: 2, ty: 32, dir: 'down' },
+      { x: 1, y: 2, to: 'sg.lighthouse_top', tx: 1, ty: 2, dir: 'down', if: 'seen.sg.genzo_wind|sg_fog_cleared' },
+    ],
     npcs: [
-      { id: 'genzo', x: 5, y: 4, dir: 'down', talk: [
+      // here unless he has climbed to the top with you (sg_genzo_up: see sg.lighthouse_top below)
+      { id: 'genzo', x: 5, y: 4, dir: 'down', if: '!sg_genzo_up', leave: 'here', arrive: 'here', talk: [
         { if: 'post', scene: 'sg.genzo_post' },
         { if: 'quest.sg_main=3&!sg_clue_genzo', scene: 'sg.genzo_clue' },
         { if: 'quest.sg_main=6', scene: 'sg.genzo_wind' },
@@ -83342,6 +83701,61 @@ var RB = (globalThis.RB = globalThis.RB || {});
         { scene: 'sg.genzo_idle' }] },
       { id: 'nagisa', x: 3, y: 4, dir: 'down', if: 'sg_nagisa_met', talk: [{ if: 'post', scene: 'sg.nagisa_post' }, { scene: 'sg.nagisa_home' }] },
     ],
+  });
+
+  // ---- the top of the lighthouse -------------------------------------------------------------------
+  // The lantern gallery, seen from above like every map: the lamp room in the middle, the
+  // weather vane on its mast to the south-east, the stairhead in the north-west corner (over
+  // the stairs of the room below). The railing stands just outside the walkable gallery on
+  // every side (its tiles are off the map, so the map's edge is the line you cannot pass);
+  // beyond it, the sea far below (surround: 'sea' — glassy while the wind is dead, small
+  // whitecaps once it is back).
+  // Genzō is up here only while he has climbed with you (sg_genzo_up, set in sg.genzo_wind
+  // while the screen is dark); on the ground floor his figure is the other half of the same
+  // condition, so he is never in two places, and neither figure ever walks to a door.
+  {
+    const GW = 11, GH = 8;
+    const worn = (x, y) => (y === -1 && x >= -1 && x <= 2) || (x === -1 && y >= 0 && y <= 2);
+    const rail = (x, y, side, extra) => Object.assign({ p: 'sg_rail', x, y, block: false, o: { side, worn: worn(x, y) } }, extra || {});
+    const rails = [];
+    for (let x = -1; x <= GW; x++) {
+      const n = x === -1 ? 'nw' : x === GW ? 'ne' : 'n', s = x === -1 ? 'sw' : x === GW ? 'se' : 's';
+      rails.push(rail(x, -1, n, worn(x, -1) && n === 'n' ? { scene: 'sg.lt_rail' } : null));
+      rails.push(rail(x, GH, s, x >= 4 && x <= 8 ? { scene: 'sg.lt_view' } : null));
+    }
+    for (let y = 0; y < GH; y++) {
+      rails.push(rail(-1, y, 'w', worn(-1, y) ? { scene: 'sg.lt_rail' } : null));
+      rails.push(rail(GW, y, 'e'));
+    }
+    C.maps['sg.lighthouse_top'] = {
+      name: T('Top of the Lighthouse', '{灯台|とうだい} の {上|うえ}'), region: 'saltglass', music: null, noTravel: true,
+      surround: 'sea',
+      ambient: { weather: null, sea: 'calm' },
+      alt: [{ if: 'sg_fog_cleared', ambient: { weather: null, sea: 'wind' } }],
+      terrain: K.build(GW, GH, '+', () => {}),
+      props: [
+        { p: 'sg_hatch', x: 1, y: 1 },
+        { p: 'sg_lamproom', x: 4, y: 2, scene: 'sg.lt_lamp' },
+        { p: 'sg_vane', x: 8, y: 4, scene: 'sg.lt_vane', if: '!sg_fog_cleared' },
+        { p: 'sg_vane', x: 8, y: 4, scene: 'sg.lt_vane', o: { free: true }, if: 'sg_fog_cleared' },
+      ].concat(rails),
+      npcs: [
+        { id: 'genzo_top', char: 'genzo', x: 9, y: 5, dir: 'left', if: 'sg_genzo_up', leave: 'here', arrive: 'here', talk: [
+          { if: 'quest.sg_main=6', scene: 'sg.genzo_wind' },
+          { scene: 'sg.genzo_top' }] },
+      ],
+      exits: [{ x: 1, y: 1, to: 'sg.lighthouse', tx: 1, ty: 3, dir: 'down' }],
+      spawn: { default: [1, 2, 'down'] },
+    };
+  }
+  // Genzō comes down with you: arriving anywhere but the top while he is up there (by the
+  // stairhead, a load, any warp), he is back in his place on the ground floor before the new
+  // map is shown (the screen is still dark: nobody is seen to appear or vanish).
+  if (RB.bus) RB.bus.on('map:enter', (e) => {
+    const s = RB.game && RB.game.s;
+    if (!s || !s.flags || !s.flags.sg_genzo_up || (e && e.id) === 'sg.lighthouse_top') return;
+    delete s.flags.sg_genzo_up;
+    if (RB.world && RB.world.W.map) RB.world.refreshActors();
   });
   interior('sg.tidehut', T('Tide-Watch Hut', '{潮見|しおみ}{小屋|ごや}'), 9, 8, 4, [7, 27], {
     props: [
@@ -84196,11 +84610,14 @@ narr: {真|ま}っすぐ {歩|ある}いた 。 {確|たし}か に {真|ま}っ
 ?(quest.sg_main=6) narr: {灯台|とうだい} の ゲンゾウ に 、 {風|かぜ} の こと を {聞|き}こう 。 || Ask Genzō at the lighthouse about the wind.
 
 @scene sg.genzo_wind
+!if sg_genzo_up -> ask
 genzo: {風|かぜ} ？ …… {止|や}んでる な 。 {嵐|あらし} の {晩|ばん} から 、 ぴたり と だ 。 || The wind? …It's dropped. Dead since the night of the storm.
 genzo: {五十年|ごじゅうねん} 、 {岬|みさき} で {風|かぜ} が {止|や}んだ こと は ない 。 {凪|なぎ} の {日|ひ} でも 、 {上|うえ} の {風見|かざみ} は {回|まわ}ってた 。 || Fifty years, and the wind's never stopped on this point. Even on a calm day, the vane up top would turn.
 genzo[think]: {来|き}な 。 {上|うえ} を {見|み}せて やる 。 || Come on. I'll show you the top.
 !fade out
+!set sg_genzo_up
 narr: {螺旋|らせん} {階段|かいだん} を {上|のぼ}る 。 ゲンゾウ は {膝|ひざ} を {叩|たた}きながら 、 {一段|いちだん} ずつ {上|のぼ}った 。 || You climb the spiral stairs. Genzō goes up one step at a time, slapping his knee.
+!warp sg.lighthouse_top 8 5 up
 !fade in
 narr: {灯台|とうだい} の {上|うえ} 。 {鉄|てつ} の {風見|かざみ} が 、 {錆|さ}び{付|つ}いた よう に {止|と}まって いる 。 {風見|かざみ} の {羽|はね} に 、 {文字|もじ} が {彫|ほ}って ある 。 || The top of the lighthouse. The iron weather vane stands still, as if rusted solid. Letters are cut into its fin.
 narr: …… いや 、 {彫|ほ}って あった 。 {溝|みぞ} は ある のに 、 {字|じ} の {形|かたち} が {分|わ}からない 。 || …Or rather, were cut. The grooves are there, but you can't make out the shape of the letters.
@@ -84209,15 +84626,16 @@ genzo: {親父|おやじ} が {彫|ほ}った ん だ 。 「{風|かぜ}」 っ
 ?(comp=nao) comp: {宛名|あてな} と {同|おな}じ だ 。 {名前|なまえ} が {消|き}えたら 、 {届|とど}く もの も {届|とど}かない 。 || Same as an address. When the name goes, nothing arrives.
 ?(comp=mio) comp: {葦|あし}ノ{瀬|せ} の {灯籠|とうろう} と {同|おな}じ ね 。 {名前|なまえ} が {消|き}えたら 、 {繋|つな}がり も {消|き}える 。 || Like the lanterns in Reedwake. When the name fades, the connection fades too.
 ?(comp=suzu) comp: {役|やく} の {名前|なまえ} を {忘|わす}れた {役者|やくしゃ} は 、 {舞台|ぶたい} に {出|で}られない もの ね 。 || An actor who forgets the name of their part can't go on stage.
+:ask
 genzo: {書|か}ける の か 。 お{前|まえ} さん 。 || Can you write it? You?
 !challenge sg.c_kaze
 !if var._res=0 -> later
 narr: {溝|みぞ} を なぞる よう に 、 {筆|ふで} を {動|うご}かす 。 「{風|かぜ}」 。 || You move the brush as if tracing the grooves. Kaze — wind.
 !sfx wind
+!set sg_fog_cleared
 narr: {風見|かざみ} が 、 きい 、 と {鳴|な}った 。 || The vane creaks.
 narr: {沖|おき} から 、 {冷|つめ}たい {風|かぜ} が {吹|ふ}いて きた 。 {岬|みさき} の {霧|きり} が 、 {端|はし} から ほどけて いく 。 || A cold wind comes in off the sea. The fog on the causeway begins to unravel from its edges.
 !word kaze
-!set sg_fog_cleared
 genzo[surprise]: …… {回|まわ}った 。 || …It turned.
 genzo[smile]: ふん 。 {迷信|めいしん} も 、 {馬鹿|ばか} に できん な 。 || Hmph. Can't sneer at superstition, it seems.
 ?(comp=nao) comp[smile]: {字|じ} で {風|かぜ} が {吹|ふ}く の か 。 …… {今|いま} の 、 {手帳|てちょう} に {書|か}いとこ 。 || Writing that makes the wind blow. …I'm putting that in my notebook.
@@ -84230,6 +84648,35 @@ genzo[smile]: ふん 。 {迷信|めいしん} も 、 {馬鹿|ばか} に で�
 !end
 :later
 genzo: {気|き} が {向|む}いたら {言|い}え 。 {階段|かいだん} は {逃|に}げん 。 || Tell me when you're ready. The stairs aren't going anywhere.
+
+@scene sg.genzo_top
+genzo: {風見|かざみ} が {回|まわ}って いる と 、 {落|お}ち{着|つ}く 。 || It settles me, seeing the vane turn.
+genzo: {下|お}りる とき は 、 {一緒|いっしょ} に {行|い}く 。 {膝|ひざ} が {文句|もんく} を {言|い}う が な 。 || When you go down, I'll come with you. My knees will grumble, mind.
+
+@scene sg.lt_vane
+!if sg_fog_cleared -> free
+narr: {鉄|てつ} の {風見|かざみ} 。 {錆|さ}び{付|つ}いた よう に 、 {少|すこ}し も {動|うご}かない 。 || The iron weather vane. It doesn't move at all, as if rusted solid.
+narr: {羽|はね} に {溝|みぞ} が {彫|ほ}って ある 。 でも 、 {字|じ} の {形|かたち} が {分|わ}からない 。 || Grooves are cut into its fin, but you can't make out the shape of the letter.
+!end
+:free
+narr: {風見|かざみ} が 、 {海|うみ} から の {風|かぜ} に {揺|ゆ}れて いる 。 || The vane swings in the wind off the sea.
+narr: {羽|はね} の {溝|みぞ} は 、 はっきり 「{風|かぜ}」 と {読|よ}める 。 || The grooves in its fin read clearly: 「風」, kaze, wind.
+
+@scene sg.lt_view
+narr: {手摺|てす}り の {向|む}こう 、 ずっと {下|した} に 、 {岬|みさき} と {港|みなと} が {見|み}える 。 || Beyond the railing, far below, you can see the point and the harbour.
+?(!sg_fog_cleared) narr: {岬|みさき} から {島|しま} へ {続|つづ}く {砂|すな} の {道|みち} 。 その {上|うえ} に だけ 、 {白|しろ}い {霧|きり} が {座|すわ}って いる 。 || The sand road from the point to the island. Over it, and only there, sits a white fog.
+?(!sg_fog_cleared) narr: {風|かぜ} が ない 。 {海|うみ} も {霧|きり} も 、 {少|すこ}し も {動|うご}かない 。 || There is no wind. Neither the sea nor the fog moves at all.
+?(sg_fog_cleared) narr: {霧|きり} は もう ない 。 {砂|すな} の {道|みち} が 、 {島|しま} まで まっすぐ に {見|み}える 。 || The fog is gone. You can see the sand road running straight to the island.
+?(sg_fog_cleared) narr: {海|うみ} の {上|うえ} に 、 {白|しろ}い {波|なみ} が {小|ちい}さく {立|た}って いる 。 || Small white waves are breaking out on the sea.
+
+@scene sg.lt_rail
+narr: {手摺|てす}り の {塗|ぬ}り が 、 ここ だけ {剥|は}げて いる 。 {鉄|てつ} が {光|ひか}る ほど 、 {擦|す}り{減|へ}って いる 。 || The paint on the railing has worn away here, and only here. The iron is rubbed so smooth it shines.
+narr: {五十年|ごじゅうねん} 、 {毎晩|まいばん} 、 {同|おな}じ {所|ところ} を {握|にぎ}って {上|のぼ}って きた {手|て} の {跡|あと} だ 。 || The mark of a hand that has gripped this same spot, coming up every night for fifty years.
+?(sg_genzo_up) genzo: …… {手摺|てす}り なんか {見|み}る な 。 || …Don't go looking at the railing.
+
+@scene sg.lt_lamp
+narr: {灯室|とうしつ} 。 ガラス の {中|なか} に 、 {人|ひと} より {大|おお}きな レンズ が ある 。 || The lamp room. Inside the glass stands a lens taller than a person.
+narr: {昼間|ひるま} は {灯|ひ} を {消|け}して いる 。 レンズ は 、 {日|ひ} の {光|ひかり} だけ を {集|あつ}めて {光|ひか}って いた 。 || By day the lamp is out. The lens shines with nothing but the sunlight it gathers.
 
 @scene sg.causeway_walk
 narr: {濡|ぬ}れた {砂|すな} の {道|みち} が 、 {島|しま} へ {続|つづ}いて いる 。 {両側|りょうがわ} で 、 {引|ひ}いた {海|うみ} が {静|しず}か に {光|ひか}って いた 。 || The wet sand road runs on to the island. On either side, the drawn-back sea glints quietly.

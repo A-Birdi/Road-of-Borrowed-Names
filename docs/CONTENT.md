@@ -108,6 +108,9 @@ C.maps['sg.harbor'] = {
   spawn: { default: [x, y, 'down'] },
   noTravel: true,   // dungeons/interiors: no fast travel out
   noCompanion: 'cond', // rare: hide companion
+  surround: 'sea',  // rare: what lies past the edge instead of the ground carrying on (the top of the
+                    // lighthouse, sg.lighthouse_top): framed like a room (no apron, the soft edge shadow);
+                    // ambient.sea 'calm' | 'wind' picks its state (switch it by story state with `alt`)
 };
 ```
 Terrain chars: `.` grass `,` flowers `;` tall grass `:` dirt path `=` cobbles

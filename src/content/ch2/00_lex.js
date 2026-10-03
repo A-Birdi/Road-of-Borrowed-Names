@@ -576,6 +576,7 @@ RB.lex.add(RB.lex.parseTable(`
 混じる|まじる|v5r|I|to be mixed in, mingle
 腐る|くさる|v5r|I|to rot
 彫る|ほる|v5r|I|to carve, engrave
+剥げる|はげる|v1|A|to come off, wear away (paint)
 苔むす|こけむす|v5s|A|to become covered in moss
 下る|くだる|v5r|I|to go down, descend
 下りる|おりる|v1|E|to go down, get down

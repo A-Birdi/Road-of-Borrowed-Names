@@ -310,8 +310,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'smalltable', x: 1, y: 6, scene: 'sg.lh_letter' },
       { p: 'bed', x: 7, y: 5 }, { p: 'barrel', x: 7, y: 2, scene: 'sg.lh_oil' },
     ],
+    // the stairs go up to the top once Genzō has shown you the vane (before that they are only looked at)
+    exits: [
+      { x: 4, y: 9, to: 'sg.harbor', tx: 2, ty: 32, dir: 'down' },
+      { x: 1, y: 2, to: 'sg.lighthouse_top', tx: 1, ty: 2, dir: 'down', if: 'seen.sg.genzo_wind|sg_fog_cleared' },
+    ],
     npcs: [
-      { id: 'genzo', x: 5, y: 4, dir: 'down', talk: [
+      // here unless he has climbed to the top with you (sg_genzo_up: see sg.lighthouse_top below)
+      { id: 'genzo', x: 5, y: 4, dir: 'down', if: '!sg_genzo_up', leave: 'here', arrive: 'here', talk: [
         { if: 'post', scene: 'sg.genzo_post' },
         { if: 'quest.sg_main=3&!sg_clue_genzo', scene: 'sg.genzo_clue' },
         { if: 'quest.sg_main=6', scene: 'sg.genzo_wind' },
@@ -322,6 +328,61 @@ var RB = (globalThis.RB = globalThis.RB || {});
         { scene: 'sg.genzo_idle' }] },
       { id: 'nagisa', x: 3, y: 4, dir: 'down', if: 'sg_nagisa_met', talk: [{ if: 'post', scene: 'sg.nagisa_post' }, { scene: 'sg.nagisa_home' }] },
     ],
+  });
+
+  // ---- the top of the lighthouse -------------------------------------------------------------------
+  // The lantern gallery, seen from above like every map: the lamp room in the middle, the
+  // weather vane on its mast to the south-east, the stairhead in the north-west corner (over
+  // the stairs of the room below). The railing stands just outside the walkable gallery on
+  // every side (its tiles are off the map, so the map's edge is the line you cannot pass);
+  // beyond it, the sea far below (surround: 'sea' — glassy while the wind is dead, small
+  // whitecaps once it is back).
+  // Genzō is up here only while he has climbed with you (sg_genzo_up, set in sg.genzo_wind
+  // while the screen is dark); on the ground floor his figure is the other half of the same
+  // condition, so he is never in two places, and neither figure ever walks to a door.
+  {
+    const GW = 11, GH = 8;
+    const worn = (x, y) => (y === -1 && x >= -1 && x <= 2) || (x === -1 && y >= 0 && y <= 2);
+    const rail = (x, y, side, extra) => Object.assign({ p: 'sg_rail', x, y, block: false, o: { side, worn: worn(x, y) } }, extra || {});
+    const rails = [];
+    for (let x = -1; x <= GW; x++) {
+      const n = x === -1 ? 'nw' : x === GW ? 'ne' : 'n', s = x === -1 ? 'sw' : x === GW ? 'se' : 's';
+      rails.push(rail(x, -1, n, worn(x, -1) && n === 'n' ? { scene: 'sg.lt_rail' } : null));
+      rails.push(rail(x, GH, s, x >= 4 && x <= 8 ? { scene: 'sg.lt_view' } : null));
+    }
+    for (let y = 0; y < GH; y++) {
+      rails.push(rail(-1, y, 'w', worn(-1, y) ? { scene: 'sg.lt_rail' } : null));
+      rails.push(rail(GW, y, 'e'));
+    }
+    C.maps['sg.lighthouse_top'] = {
+      name: T('Top of the Lighthouse', '{灯台|とうだい} の {上|うえ}'), region: 'saltglass', music: null, noTravel: true,
+      surround: 'sea',
+      ambient: { weather: null, sea: 'calm' },
+      alt: [{ if: 'sg_fog_cleared', ambient: { weather: null, sea: 'wind' } }],
+      terrain: K.build(GW, GH, '+', () => {}),
+      props: [
+        { p: 'sg_hatch', x: 1, y: 1 },
+        { p: 'sg_lamproom', x: 4, y: 2, scene: 'sg.lt_lamp' },
+        { p: 'sg_vane', x: 8, y: 4, scene: 'sg.lt_vane', if: '!sg_fog_cleared' },
+        { p: 'sg_vane', x: 8, y: 4, scene: 'sg.lt_vane', o: { free: true }, if: 'sg_fog_cleared' },
+      ].concat(rails),
+      npcs: [
+        { id: 'genzo_top', char: 'genzo', x: 9, y: 5, dir: 'left', if: 'sg_genzo_up', leave: 'here', arrive: 'here', talk: [
+          { if: 'quest.sg_main=6', scene: 'sg.genzo_wind' },
+          { scene: 'sg.genzo_top' }] },
+      ],
+      exits: [{ x: 1, y: 1, to: 'sg.lighthouse', tx: 1, ty: 3, dir: 'down' }],
+      spawn: { default: [1, 2, 'down'] },
+    };
+  }
+  // Genzō comes down with you: arriving anywhere but the top while he is up there (by the
+  // stairhead, a load, any warp), he is back in his place on the ground floor before the new
+  // map is shown (the screen is still dark: nobody is seen to appear or vanish).
+  if (RB.bus) RB.bus.on('map:enter', (e) => {
+    const s = RB.game && RB.game.s;
+    if (!s || !s.flags || !s.flags.sg_genzo_up || (e && e.id) === 'sg.lighthouse_top') return;
+    delete s.flags.sg_genzo_up;
+    if (RB.world && RB.world.W.map) RB.world.refreshActors();
   });
   interior('sg.tidehut', T('Tide-Watch Hut', '{潮見|しおみ}{小屋|ごや}'), 9, 8, 4, [7, 27], {
     props: [
