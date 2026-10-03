@@ -217,9 +217,13 @@ const KIND = {
   green: (c) => c[1] > c[0] + 12 && c[1] >= c[2],
   stone: (c) => Math.abs(c[0] - c[1]) < 26 && Math.abs(c[1] - c[2]) < 26 && c[0] > 110,
   warm: (c) => c[0] > c[2] + 18 && c[0] > 45,
+  water: (c) => c[2] > c[0] + 15 && c[2] >= c[1] - 5,
 };
-const TOP_MARKS = [['sea past the point', 'sea', -20, 20], ['sea by the point', 'sea', -6, 36], ['sea in the harbour', 'sea', 24, 37], ['the quay', 'stone', 26, 26.5], ['forest to the north', 'green', 30, -4], ['the causeway', 'sand', 8.5, 38]];
-const LOOK_MARKS = [['the inn\'s roof', 'warm', 7, 11.6], ['the post house\'s roof', 'warm', 6, 21.6], ['the stage', 'warm', 23, 12.5], ['the terraces', 'warm', 10, 2], ['the orchard', 'warm', 6, 30]];
+// at night the deck's darkness lies over the ground below: on screen a landmark keeps its colour's
+// leaning (warm stays warm, water stays blue), however dim
+const NIGHT = { warm: (c) => c[0] > c[2] + 4 && c[0] > 25, water: (c) => c[2] > c[0] + 8 };
+const TOP_MARKS = [['open sea to the west', 'sea', -28, 16], ['sea past the point', 'sea', -20, 20], ['sea by the point', 'sea', -6, 36], ['sea in the harbour', 'sea', 24, 37], ['the quay', 'stone', 26, 26.5], ['forest to the north', 'green', 30, -4], ['the causeway', 'sand', 8.5, 38]];
+const LOOK_MARKS = [['the inn\'s roof', 'warm', 7, 11.6], ['the post house\'s roof', 'warm', 6, 21.6], ['the stage', 'warm', 23, 12.5], ['the terraces', 'warm', 10, 2], ['the orchard', 'warm', 6, 30], ['the terraces to the west', 'warm', 1, 1.5], ['the terraces to the east', 'warm', 30, 5], ['the channel', 'water', 34.5, 10]];
 const below = (p, marks) => p.evaluate((marks) => {
   const st = RB.below.state(), W = RB.world.W, D = RB.below.deckOf(W.map);
   const a = RB.render.tileToCss(D.x0 - 1.2, D.y0 - 1.5), z = RB.render.tileToCss(D.x1 + 1.2, D.y1 + 1);
@@ -413,7 +417,7 @@ for (const V of VIEWS) {
     console.log('     cold build of the backdrop: ' + B.st.lastMs + ' ms (tiles ' + ph.tiles + ', props and buildings ' + ph.things + ', shrink ' + ph.shrink + '; ' + (ph.size || []).join('×') + ' ground tiles)');
     ok(B.st.active && B.st.ground === 'co.festival', tag + 'lookout: below is the village on the festival night, drawn small (' + B.st.ground + ', ' + B.st.lastMs + ' ms)');
     const vis = B.rows.filter((r) => r.visible);
-    ok(vis.length >= 2 && vis.every((r) => KIND[r.kind](r.mini) && KIND[r.kind](r.scr)), tag + 'lookout: landmarks at their places below: ' + B.rows.map(fmt).join('; '));
+    ok(vis.length >= 2 && vis.every((r) => KIND[r.kind](r.mini) && NIGHT[r.kind](r.scr)), tag + 'lookout: landmarks at their places below: ' + B.rows.map(fmt).join('; '));
     // the lanterns shine through the night
     const lit = await p.evaluate(() => {
       const cv = document.getElementById('world'), g = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
