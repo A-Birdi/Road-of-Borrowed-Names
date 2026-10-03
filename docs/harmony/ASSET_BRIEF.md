@@ -1,276 +1,290 @@
-# Harmony busts: brief for painted art
+# Harmony busts: brief for painted art (contract v2)
 
-**Why this exists.** The owner reviewed `docs/screenshots/harmony/art/pairings_standard_3x.webp` and judged the
-code-drawn busts far below the fidelity of their own mockup of the Harmony pairing. They should be "very
-very close in detail and fidelity" and some of the best art in the project, with "a quick animated flourish
-from the party". Pixel art drawn by code cannot reach that level of hand-painted detail. So the busts will
-be painted with an image tool, and the game will assemble, recolour and animate them.
+**Why.** Robin judged the code-drawn busts far below the fidelity of his mockup. An external review then
+sharpened the requirement (`docs/review/WORLD_REVIEW_RECONCILIATION.md`; packet document 02):
 
-This file is the contract between the person producing the art and the integration.
+- The mockup is the **fidelity target as well as the composition target**.
+- **Both** participants must play a short, internally animated, one-off performance. Sliding and fading a still
+  picture is not enough.
+- The player keeps their **actual** customised appearance.
 
-**Status: waiting for art.** Until frames arrive, the code-drawn busts (docs/harmony/ART.md) stay in the
-game. They also remain the fallback for anything not yet delivered.
+The busts are therefore painted with an image tool. The game imports, assembles, recolours and animates them.
+
+**This brief is for the person producing the art.** The authority on formats is the machine contract,
+`docs/harmony/contract/CONTRACT.md`, backed by `src/ui/88_harmony_contract.js`. Where the two differ, the
+contract wins, and this brief is a bug.
+
+**Status:**
+- Waiting for Batch 1.
+- The code-drawn busts stay in the game as a **provisional fallback**. Their visual acceptance is reopened.
+- The importer, the raster path and a synthetic sample are built and tested
+  (`docs/screenshots/harmony/raster_sample/`, labelled SYNTHETIC SAMPLE — not art).
+
+**Changes from v1:**
+- Six performance states replace enter/flourish/hold/blink.
+- The player faces left, toward the companion.
+- New key ramps.
+- A pose-specific player kit, with brush arms per technique.
+- Explicit masks.
+- Batch 1 must prove a second, materially different player look.
 
 ---
 
 ## 1. What to attach to the image tool
 
-| Attach | Where | What it is for |
+| Attach | Where | Purpose |
 |---|---|---|
-| The owner's own Harmony mockup (the compact pairing) | the owner's copy; **never committed** | the style target |
-| `ref_companion_<name>.png` (nao, mio, ren, suzu) | `docs/harmony/asset_brief/` | who each companion is: portraits, battle figure, world sprite, colours |
+| Robin's Harmony mockup (the compact pairing) | Robin's copy; **never committed** | style, fidelity and composition target |
+| `ref_companion_<name>.png` (nao, mio, ren, suzu) | `docs/harmony/asset_brief/` | identity: portraits, battle figure, world sprite, colours |
 | `ref_player_hairstyles.png`, `ref_player_wear.png` | same | the player's options |
-| `ref_palettes.png` | same | the game's palettes, and the **key ramps** used to paint the player kit (§7) |
-| `template_bust_comp_4x.png`, `template_bust_pc_4x.png` | same | transparent 768 × 640 guides; use them as the base image when the tool accepts one |
-| `template_bust_labelled.png`, `template_pair_labelled.png` | same | the guides explained, for people |
+| `ref_palettes.png` | same | the game's palettes and the **key ramps** for the player kit (§6) |
+| `template_bust_comp_4x.png`, `template_bust_pc_4x.png` | same | transparent 768 × 640 guides; use as the base image when the tool accepts one |
+| `template_bust_labelled.png`, `template_pair_labelled.png` | same | the guides explained |
+| From Batch 2 on: the approved Batch 1 images | — | the style lock |
 
-The reference sheets come from `node tests/e2e/harmony_asset_refs.mjs`. They show identity only. Their
-low detail is what is being replaced, so it is not something to copy.
+The reference sheets show **who** each character is. Their low detail is exactly what is being replaced.
 
 ## 2. The look
 
-- **Painterly pixel art at mockup fidelity.** Each feature gets several shades:
-  - big expressive eyes with a coloured iris, a dark upper lash line and two highlights;
-  - hair as large shaded masses broken into locks, with a broken highlight band and a darker underside;
-  - cloth showing folds, seams and stitching;
-  - metal, glass and lamp light that actually shine.
-- **Light** comes from the upper left, warm. A cool rim light runs down the right-hand silhouette (the
-  battle figures' convention). Shadows lean toward violet or crimson, highlights toward warm yellow.
-- **Pixels:** crisp, every art pixel a clean square. No blur, no soft airbrush, no anti-aliased edge into
-  the background, no texture noise, no dithering beyond a few deliberate pixels.
-- **Outline:** selective. Dark (#140c18) where the shape meets the background; inside the shape the outline
-  goes lighter or disappears.
-- **View:** three-quarter, everyone turned toward **screen right** (toward the action). Heads, shoulders and
-  chest only, with the hand that makes each character's gesture.
-- **Background:** transparent (or one flat #ff00ff, if the tool cannot do transparency), no shadow under the
-  figure. The game draws the indigo ink band behind the pair, so **do not paint a backing**.
-- **Never in the art:** text, letters, numbers, kana or kanji (not even on a badge, a scroll or a sign),
-  signatures, watermarks, logos, frames or speech bubbles. The game's rules forbid writing in art.
-- **Originality:** everything original. No resemblance to an existing franchise's characters.
+**Fidelity like the mockup:**
+- Clearly shaped eyes with a coloured iris, a dark upper lash line and highlights.
+- Expressive brows and mouths, with plane and light separation on the face.
+- Hair in layered locks with contour variation and light moving across the masses.
+- Cloth with folds following the pose, overlapping fabric and warm highlights.
+- Ribbons, earrings, glasses and hands properly integrated.
+- Faces and hands come first. Detail goes where it reads, not as uniform strand noise.
 
-## 3. Canvas and geometry
+**Rendering:**
+- Painterly pixel art: crisp square pixels, no blur, airbrush or anti-aliased edges against the background,
+  no texture noise.
+- Warm light from the upper left, with a cool rim light down the right-hand silhouette.
+- A selective dark outline (#140c18) that lightens inside the shape.
 
-All sizes are in **art pixels** (the grid of the pixel art), before any enlargement.
+**Composition:**
+- A cooperative rally, not two profile cards: diagonal energy, overlapping depth, a hand directed outward,
+  two people engaged together.
+- No face-off, no "VS", no slogan.
 
-| Item | Size | Notes |
+**Never:**
+- Text, letters, numbers, kana or kanji, even on a badge or a sash.
+- Signatures, watermarks, logos, frames, UI or the battlefield.
+- A backing band: the game draws the indigo ink band.
+- Copying the mockup's player features (complexion, flower, grin, wink) onto every possible player.
+
+**Originality:** everything must be original, with no resemblance to existing franchise characters.
+
+## 3. Canvas and geometry (art px; see contract §3)
+
+| | Companion | Player |
 |---|---|---|
-| One bust (each file) | **192 × 160** | one character per file, aligned to the template |
-| The pair (built by the game) | 352 × 160 | companion canvas at x 0, the player's canvas at x 160, the player in front |
-| Face, brow to chin | about **52** px tall, ~50 px wide | the yellow box. About 1.6× the face in the dialogue portraits |
-| Head, crown to chin | inside the blue box (x 62–130, y 18–104) | hair, bows and spikes may spill past it, but stay on the canvas |
-| Neck pit | **(94, 118)** | the red cross; it keeps busts lined up between frames |
-| Ink band edge | from (0, 156) to (192, 150) | the game crops the chest along this line; paint past it to the bottom edge |
-| Compact-safe box | x 8–184, y 0–128 | phones show only this region: the face and the signature hand must be inside it |
-| Signature hand | companion: the near side (x 8–76) or forward up to x 190; player: forward on the right (x 124–188) | the pink box; Nao's pointing hand may reach forward |
+| Canvas (every file) | 192 × 160 | 192 × 160 |
+| Facing | three-quarter, turned to screen **right** (toward the player) | three-quarter, turned to screen **left** (toward the companion), looking out |
+| Neck pit (alignment point) | (94, 118) | (98, 118) |
+| Face, brow to chin | box 74–124 × 52–104 (≈ 52 px tall) | box 68–118 × 52–104 |
+| Head, crown to chin | 62–130 × 18–104; hair, bows and spikes may spill out but stay on the canvas | same |
+| Signature hand | near side x 8–76, or forward up to x 190 | near side (screen right) x 124–188 |
+| Ink band crop (paint past it to the bottom) | (0, 156) → (192, 150) | (0, 151) → (192, 145) |
+| Phone-safe region (face and hand) | x 8–184, y 0–128 | same |
 
-**Delivery size:** any whole-number enlargement of the grid. 4× is 768 × 640; 5× is 960 × 800. A
-1024-pixel square with the bust centred on the template is also fine. The import tool detects the grid. Do
-not spend effort on exact pixels: the import snaps the grid, reduces the palette and cleans stray pixels, and
-the integration aligns every frame by its neck pit. **Spend the effort on the drawing.**
+- **Seating.** The game seats the pair at 352 × 160: the companion at x 0, the player at x 160, with the
+  player in front.
+- **Display.**
+  - Wide desktops show the pair at 2×: 704 × 320 at 1920 × 1080.
+  - Smaller desktops show it at 1×.
+  - Phones use a tighter 248 × 128 crop at a device-pixel-exact scale.
+- **Format.** Deliver PNG with transparency. Any whole-number enlargement of the grid works (4× is 768 × 640),
+  or a 1024 square with the bust centred on the template. The importer finds the grid.
+- **Alpha is binary.** Nothing is semi-transparent: glasses lenses are left transparent, with glints painted
+  as opaque pixels.
+- **Spend the effort on the drawing.** The import snaps the grid and cleans strays, and every frame is
+  aligned by its neck pit.
 
-**How big it shows.** Native 352 × 160 is shown at:
-- **2×** on wide desktops: 704 × 320 at 1920 × 1080, or 35 % × 30 % of the view, within the addendum's
-  limits;
-- **1×** at 1280–1600 wide;
-- on phones, the compact crop is scaled so faces are at least 64 CSS pixels tall.
+## 4. The performance (contract §4)
 
-The code-drawn busts are 228 × 100, so this is about 1.6× the density.
+Each character has **one short, one-off performance**, played once per real technique. Nothing loops and
+nothing blinks on a timer.
 
-## 4. The animated flourish
-
-Every character has the same frames:
-
-| Frame | When | What it shows |
+| State | Normal timing | What it shows |
 |---|---|---|
-| `enter` | first ~160 ms, while the pair slides in with the ink band | mid-motion arrival: hair and cloth trailing to the left, the gesture starting |
-| `flourish` | next ~260 ms | the signature beat (below) at its peak |
-| `hold` | the rest of the cut-in | the settled gesture, held. The pose the player remembers |
-| `blink` | one ~90 ms blink during the hold | `hold` with the eyes closed; nothing else changes |
+| `prep_a` | 0–90 ms (sliding in) | anticipation: arriving, gathering, hair and cloth trailing |
+| `prep_b` *(optional in-between)* | 90–180 ms | anticipation continuing |
+| `cue` | 180–260 ms | the identifying gesture begins |
+| `peak` | 260–400 ms | the gesture or expression at its height: the hero moment |
+| `settle_a` *(optional in-between)* | 400–480 ms | follow-through |
+| `settle_b` | 480–780 ms, fading from 560 ms | the settled finish: attractive when paused |
 
-The game adds the motion between frames, so those effects are not painted:
-- the slide;
-- a one-pixel hair settle;
-- the blink timing;
-- small light effects: Suzu's sparkle, Ren's lamp bloom and lens glint, the shimmer on Mio's vial, Nao's
-  gold route stroke, and the player's ink arc and motes.
+**Other modes:**
+- Fast compresses the same sequence (100 / 220 / 160 ms segments).
+- Instant shows nothing.
+- Reduced motion shows `settle_b` alone.
 
-**Reduced motion** shows `hold` alone.
+**Required states:** `prep_a`, `cue`, `peak` and `settle_b`. The optional in-betweens make the motion read
+smoothly. A missing state holds the one before.
 
-**Keep the head in the same place in all four frames**, within 2 px. The game can tilt it a pixel or two
-itself.
+**Keep the head in place.** Keep the head in the same place across a character's states, within a pixel or
+two. The game may nudge the head group and the torso group by whole pixels per state.
 
-| Who | enter | flourish | hold |
-|---|---|---|---|
-| **Nao** (he; courier) | turning in mid-stride, big satchel swinging, scarf tail flying | grinning, points forward along the road, arm out toward the right | pointing hand settled, confident grin, pencil behind the ear |
-| **Mio** (she; apothecary) | drawing a small glass vial up from her apron | holds the vial up beside her face as it catches the light; soft smile, eyes half closed | vial held up, calm warm smile, hairpins catching light |
-| **Ren** (he; lantern keeper) | pushing his glasses up with one hand, lamp held low | lamp raised; the flame flares; lenses glint; a steady look | lamp held at chest height, glow on his face from below |
-| **Suzu** (she; travelling performer) | hand coming up to wave, wavy hair swinging, earrings swinging | a wink and a grin, open hand beside her face | an open-handed wave beside her face, playful smile |
-| **Player** (any gender) | drawing an ink brush up from the hip | the brush flicked in an arc to the right, determined look | brush raised, a bead of ink at the tip, quietly confident |
+**Per pairing (from the review):**
 
-Every companion's features, colours and clothes follow `ref_companion_<name>.png`:
-- **Nao:** spiky dark-brown hair, mustard scarf, olive tunic, satchel strap, a pencil.
-- **Mio:** black hair in a bun with pins, a cream apron over a sage-green dress.
-- **Ren:** blue-black ponytail, glasses, navy high-collared coat with brass buttons and patches, a small lamp.
-- **Suzu:** wavy auburn hair, a dusty-pink bow, gold drop earrings, a beauty mark, a plum dress with a gold
-  trim necklace line.
-
-## 5. Batch 1: the style key (do this first, then stop for review)
-
-1. **Suzu**: `suzu_enter`, `suzu_flourish`, `suzu_hold`, `suzu_blink`, in her real colours.
-2. **One complete player** in real colours (the owner's acceptance look): auburn ponytail, green coat,
-   glasses, a pink flower in the hair. Files `pcpreset_enter`, `pcpreset_flourish`, `pcpreset_hold`,
-   `pcpreset_blink`.
-
-The integration builds a playable proof from these (Suzu's pairing in a real battle, with the flourish) and
-sends evidence back before anything else is painted. That proof settles fidelity, size and timing early.
-The preset player is also the model for the kit in §7.
-
-## 6. Batch 2: Nao, Mio, Ren
-
-Four frames each (`<name>_enter`, `_flourish`, `_hold`, `_blink`), matching the approved Suzu in style,
-light, scale and head size.
-
-## 7. Batch 3: the player kit (layers in key colours)
-
-The player chooses:
-- skin (7);
-- hairstyle (12);
-- hair colour (10);
-- clothing colour (8);
-- cut (5);
-- accessories and keepsakes.
-
-That is far too many combinations to paint whole, so the player is painted as **separate layers on the same
-192 × 160 canvas**, using the preset from Batch 1 as the model.
-
-Recolourable parts are painted in **key ramps** (`ref_palettes.png`): five shades, darkest to lightest. The
-game replaces each key ramp with the chosen colour, shade for shade. Anything not in a key ramp keeps its
-painted colour (eyes, the brush, metal, glass, leather).
-
-| Key ramp | Shades (dark → light) | Used for |
+| Pairing | Companion's one-off | Ties to the stage technique |
 |---|---|---|
-| skin (reference) | #6e3e2a #9a5e40 #c28e64 #dcae84 #f2d0a8 | all skin: face, ears, neck, hands |
-| hair | #2a0a3a #5a1470 #8a24a0 #b848c8 #e088ec | hair, brows, stubble |
-| cloth main | #0c3a14 #1a6428 #2e8c3c #52b45a #8ad88a | the garment's body and sleeves |
-| cloth trim | #0a3a44 #12687a #22a0b4 #5ccce0 #a8f0f8 | collar, cuffs, sash, piping; the head wrap hairstyle |
-| accessory | #10164a #222e8a #3a4cc8 #6a80ec #a8b8ff | the recolourable accessories (§8) |
+| **Nao** (he; courier) | a focused glance and settle, then a precise directional hand cue and a small, assured acknowledgment | **Read the Opening**: he spots the opening. Practical, not theatrical |
+| **Mio** (she; apothecary) | readying and lifting the small vial at a controlled angle, a reassuring look, a purposeful release cue | **Clearwater Draught**: measured care. No staff, no prayer pose |
+| **Ren** (he; lantern keeper) | attention to the lamp, the lamp rising, its light framing his face, quiet certainty; a glasses push may be secondary | **Lantern Ward**: lamp and glasses stay attached and correctly occluded |
+| **Suzu** (she; travelling performer) | a theatrical head, shoulder and hand flourish with hair and ribbon follow-through, a knowing smile or a single wink, one quick glint by the face at the peak | **Curtain Call**: sharing the spotlight |
 
-Painting rules:
-- Paint strictly within these shades for those materials (blush and lip colour may stay a warm skin
-  shade).
-- Use #140c18 for outer outlines.
-- Lay every layer on the same template, with the head in exactly the same place in every file.
+**The player's performance:**
+- `prep_a` and `cue`: a shared base. A grounded breath, gathering the brush hand, beginning a coordinated arc.
+- `peak` and `settle`: the terminal gesture adapted per technique:
+  - Nao: following his cue with the brush.
+  - Mio: guiding the ink.
+  - Ren: a coordinated seal.
+  - Suzu: sharing the spotlight.
+- The player is a participant, never a spectator.
 
-| Files | Count | Layer contents |
+## 5. Companions: fixed identity, still animated
+
+Deliver each state as a flattened frame, `<comp>_<state>.png`: four required and two optional per companion.
+- **Layered frames** are also accepted, as `<comp>_<state>_<layer>.png` with the layer order in `import.json`.
+- An optional `<comp>_<state>_fx.png` holds a glint or glow the game can switch off.
+- Companions are never recoloured and need no masks.
+
+Identity follows `ref_companion_<name>.png`:
+- **Nao:** spiky dark-brown hair, a pencil behind his ear, a mustard scarf with a tail, an olive tunic, the
+  big satchel's strap.
+- **Mio:** black hair in a bun with pins, a cream apron over a sage-green dress, small glass vials.
+- **Ren:** blue-black ponytail with a side parting, round glasses, a navy high-collared coat with brass
+  buttons and patches, a small brass lamp.
+- **Suzu:** warm brown skin, long wavy auburn hair, a dusty-pink bow on her left, gold drop earrings, a beauty
+  mark below her left eye, a plum dress with a gold trim line.
+
+## 6. The player kit: layers in key colours (contract §1, §5, §6)
+
+The player has 7 skins, 12 hairstyles, 10 hair colours, 8 clothing colours, 5 cuts, accessories and keepsakes.
+Painting every combination whole is impossible, so the player is painted as **layers on the same canvas**:
+
+| Files | What | Notes |
 |---|---|---|
-| `pc_head_enter`, `pc_head_flourish`, `pc_head_hold`, `pc_head_blink` | 4 | head with ears, neck and face, **no hair**: a smooth scalp. The expression per frame from §4 |
-| `pc_torso_tunic`, `_robe`, `_coat`, `_apron`, `_dress` | 5 | shoulders and chest of each cut, down to the bottom edge, including the arm that is not gesturing (`ref_player_wear.png`, first row) |
-| `pc_arm_enter_fitted`, `pc_arm_flourish_fitted`, `pc_arm_hold_fitted`, and the same three with `_wide` | 6 | the brush arm per frame: sleeve, hand, brush. Fitted sleeves go with tunic, coat, apron and dress; wide sleeves with the robe |
-| `pc_hair_<style>_back` and `pc_hair_<style>_front` for short, bob, long, ponytail, bun, curly, spiky, braid, shaved, twintails, wavy, wrap | up to 24 | **back:** every bit of hair behind the head and shoulders. **front:** the fringe, side locks, crown, and locks falling in front of the shoulders. Shaved is front only (stubble on the scalp); wrap is a cloth head wrap in the cloth-trim ramp |
+| `pc_head_focus`, `_cue`, `_peak`, `_settle` | head with ears, neck and face, **bald smooth scalp**, an expression per state | the head never changes angle; one iris colour (dark brown, final colour), since the game has no eye-colour option |
+| `pc_torso_tunic`, `_robe`, `_coat`, `_apron`, `_dress` | shoulders and chest to the bottom edge, including the arm that isn't gesturing | the apron bib in its final cream |
+| `pc_arm_<pose>_<sleeve>` | the brush arm: sleeve, hand and brush in one file | poses `prep_a`, `prep_b` (optional), `cue`, `peak_<comp>`, `settle_<comp>` for nao, mio, ren and suzu. Sleeve `wide` for the robe only, `fitted` for every other cut. The brush is a slim black lacquer shaft, a brass ferrule, and cream bristles with an ink-dark tip, in final colours |
+| `pc_hair_<style>_back`, `pc_hair_<style>_front` | **back:** all hair behind the head and shoulders. **front:** crown, fringe, side locks and locks falling in front of the shoulders | every hairstyle (short, bob, long, ponytail, bun, curly, spiky, braid, shaved, twintails, wavy, wrap). `shaved` is front only (stubble). `wrap` is a cloth head wrap in the **cloth-trim** ramp. Optional `_swing` variants serve prep_b and settle_a. Each hairstyle must fit the bald head exactly; two styles differ in silhouette, not just colour |
+| `acc_<id>[_<part>]` | §7 | |
 
-The game stacks the layers in this order:
-1. hair back
-2. torso
-3. head
-4. glasses
-5. hair front
-6. head accessories
-7. chest accessories
-8. arm
+**Key ramps.** Paint recolourable parts **only** in these five shades, darkest to lightest. Use #140c18
+outlines. Everything else (eyes, brush, metal, glass, leather) is painted in its final colour and never
+recoloured.
 
-## 8. Batch 4: accessories and keepsakes
+| Material | s0 | s1 | s2 | s3 | s4 | Used for |
+|---|---|---|---|---|---|---|
+| skin | #601c00 | #943c08 | #d06018 | #f48c40 | #ffc0a0 | face, ears, neck, hands; blush and lips in these shades too |
+| hair | #3c0a5c | #5a1470 | #8a24a0 | #b848c8 | #e088ec | hair, brows, stubble |
+| cloth main | #0c3a14 | #1a6428 | #2e8c3c | #52b45a | #8ad88a | garment body and sleeves |
+| cloth trim | #004e60 | #12687a | #22a0b4 | #5ccce0 | #a8f0f8 | collar, cuffs, piping, ties, the head wrap |
+| accessory | #10164a | #222e8a | #3a4cc8 | #6a80ec | #a8b8ff | each recolourable accessory's own colour |
 
-Accessories are painted on the preset's head and body, each in its own file.
+- The skin key is deliberately an unnatural orange, so that it can never be confused with a real skin tone or
+  a painted mouth.
+- **Masks are the authority.** The importer derives a mask per file from these ramps. Any pixel that is
+  ambiguous is reported, never guessed.
+- Image tools drift off palette. So expect a short cleanup round, or supply your own `<name>.mask.png` using
+  flat material colours (contract §5).
 
-**Painted in the accessory ramp** (the game recolours them):
-- `acc_scarf`: the creation scarf; recoloured for the persimmon-dyed cloth.
+## 7. Accessories and keepsakes (registry ids; contract §3.4)
+
+Paint each accessory on the bald preset head and body, as its own file.
+
+**Hair-mounted pieces** sit on the bald scalp at a natural size. The game sets an offset per hairstyle, and
+hides the hair above a hat or cap band, so a hat must cover the scalp above its band.
+
+**Recolourable (accessory ramp):**
+- `acc_scarf`: also the persimmon-dyed cloth.
 - `acc_hat`: also the terrace straw hat.
-- `acc_headband`
+- `acc_headband`.
 - `acc_flower`: also the pressed road-flower.
-- `acc_ribbon`: a bow tied in the hair.
-- `acc_leaf`: the maple-leaf hairpin.
-- `acc_earrings_near` and `acc_earrings_far`: the glass drop in the ramp, the hoop in gold.
-- `acc_cape_back` and `acc_cape_front`: also the traveller's cape.
+- `acc_ribbon`, `acc_leaf`: on the character's **left**, which is the player's **near** side, screen right.
+- `acc_earrings_near` and `acc_earrings_far`: the drop in the ramp, the hoop in gold.
+- `acc_cape_back` and `acc_cape_front`: the clasp in brass.
+- `acc_bell`: the cord in the ramp, the bell in brass.
+- `acc_cap`: the ferry cap; a plain round brass badge, no lettering.
+- `acc_atlas_sash`: map paper; lines only, no writing.
 
-**Painted in final colours:**
+**Final colours:**
 - `acc_scarf_knit`: red with yellow stripes, hand-knitted.
-- `acc_satchel`: the leather strap across the chest, from the near shoulder.
-- `acc_glasses`: round wire frames.
-- `acc_cap`: a navy ferry cap with a plain brass badge. No lettering.
-- `acc_bell`: a tiny brass bell on a red cord at the throat.
-- `acc_pin_compass`: a small brass compass-rose pin on the chest.
-- `acc_quill`: a quill tucked in the hair.
-- `acc_sash`: a map-paper sash across the chest. Lines only, no writing.
+- `acc_satchel`: a leather strap from the near shoulder across the chest, with a brass buckle.
+- `acc_glasses`: round wire frames, transparent lenses.
+- `acc_atlas_pin`: a small brass compass-rose pin.
+- `acc_atlas_quill`: a white quill in the hair, on the left.
 
-The Atlas's little lantern hangs at the hip, below the crop, so it is not painted.
+**Not painted:** the Atlas lamplet, which hangs below the crop. Charms and tools are never drawn.
 
-The game positions head accessories for each hairstyle. It hides the hair above a hat or cap band, so paint
-hats and caps on the bare scalp at a natural size.
+## 8. Batch 1: the proof (do this first, then stop for review)
 
-## 9. Names, format, delivery
+**What it proves:**
+1. Fidelity against the mockup.
+2. Internal animation.
+3. That the layered kit can build **two materially different player looks**, not just a colour change.
 
-- **Format:** PNG with transparency. Name each file exactly as above (for example `suzu_flourish.png`,
-  `pc_hair_braid_front.png`). Use one folder per batch.
-- **Quality bar:** batches 2–4 must match the approved Batch 1 in head size, light and finish.
-- **Rights:** a short note with the delivery confirming that:
-  - the owner made the images with their tool and may use them in this project under that tool's terms;
-  - they are original.
+| Group | Files (26 required, plus optional) |
+|---|---|
+| Suzu | `suzu_prep_a`, `suzu_cue`, `suzu_peak`, `suzu_settle_b`; optional `suzu_prep_b`, `suzu_settle_a`, `suzu_peak_fx` |
+| Heads | `pc_head_focus`, `pc_head_cue`, `pc_head_peak`, `pc_head_settle` |
+| Torsos | `pc_torso_coat` (look A), `pc_torso_robe` (look B) |
+| Arms | `pc_arm_prep_a_fitted`, `pc_arm_cue_fitted`, `pc_arm_peak_suzu_fitted`, `pc_arm_settle_suzu_fitted`, and the same four `_wide`; optional `pc_arm_prep_b_fitted`, `pc_arm_prep_b_wide` |
+| Hair | `pc_hair_ponytail_back`, `pc_hair_ponytail_front` (look A); `pc_hair_curly_back`, `pc_hair_curly_front` (look B) |
+| Accessories | `acc_glasses`, `acc_flower` (look A); `acc_scarf`, `acc_satchel` (look B) |
 
-  The note is recorded in `assets/harmony/PROVENANCE.md`. The mockup and other reference images are never
-  committed.
+- **Look A** is Robin's acceptance look: auburn ponytail, green coat, glasses, a flower.
+- **Look B** is the contrast: curly hair, robe with wide sleeves, scarf, satchel. It will also be shown in a
+  dark skin and a contrasting palette.
+- **Style masters (optional, recommended).** First paint look A complete and in real colours at `peak` and
+  `settle_b`, as style masters. Then derive the layers from them. Keep style masters in a separate `refs/`
+  folder: the importer accepts only contract names.
 
-## 10. What the integration does with the files
+**What I return:**
+- The importer's report: each file over the template, its mask, and any unresolved pixels.
+- Both looks with Suzu, assembled in a real battle.
+- Stills of every state.
+- A real-time recording.
+- Captures at the actual display scales.
 
-1. **Import** (`tools/harmony_import.mjs`):
-   - detect the grid and reduce each file to its native size;
-   - snap the palette, so key-ramp pixels become exact key shades and stray in-between pixels go;
-   - align each frame by its neck pit;
-   - write native PNGs to `assets/harmony/`, with a manifest of anchors.
-   - It also writes a report sheet (each file over the template) and lists any key-ramp coverage gaps to
-     send back.
-2. **Build:** `tools/build.mjs` embeds the native PNGs in `index.html`. The game stays one offline file;
-   about 0.6 MB is expected for every file at native size.
-3. **Draw:** `RB.harmonyArt.compose()` keeps its API:
-   - the painted frames when present, and the code-drawn busts for anything missing;
-   - recolouring builds each look's ramps from the game palettes, the same way the code busts do, and caches
-     the result per look;
-   - the frames gain a `flourish` phase, which the cut-in overlay plays as in §4.
-4. **Tests:**
-   - unit: manifest completeness, no key colour left in any output, and both faces always visible in the
-     pair;
-   - browser: every appearance fixture composes, and timing and memory stay in budget;
-   - new evidence sheets at native and display scale.
+Robin approves the **direction**, or asks for changes, before anything else is painted.
 
-## 11. Copy-paste prompts
+## 9. Batches 2–4
 
-Attach the files from §1 to every request.
+| Batch | Files | Gate |
+|---|---|---|
+| 2: Nao, Mio, Ren | four required states each, plus optional in-betweens, matching approved Suzu in light, head size and finish | all four pairings distinct with backing and particles off |
+| 3: the full player kit | the remaining torsos, the arms for every technique in both sleeves, all 12 hairstyles back and front, any `_swing` | every supported geometry assembles without seams, detached hair or skin mismatches |
+| 4: accessories and keepsakes | the rest of §7 | visible equipment correct in every assembled look |
 
-**Batch 1, Suzu (one request per frame, or all four in one sheet if the tool keeps them consistent):**
+The complete list of keys (86 required, 33 optional) is `assetKeys` in `docs/harmony/contract/registry.json`.
+The published brief page has a checklist.
 
-> High-detail pixel-art character bust for a Japanese-inspired fantasy RPG, matching the attached mockup's
-> fidelity and finish: painterly pixel art with crisp square pixels, rich shading, detailed expressive eyes,
-> hair in shaded locks with a highlight band, cloth folds, warm light from the upper left and a cool rim light
-> on the right edge, selective dark outline. Character: Suzu, a cheerful young travelling performer (she),
-> warm brown skin, long wavy auburn hair, a dusty-pink bow, gold drop earrings, a small beauty mark, a plum
-> dress with a gold trim line (identity and colours from ref_companion_suzu.png). Three-quarter view turned to
-> screen right; head, shoulders and chest only. Place her exactly on the attached 768×640 template: face
-> inside the yellow box, neck at the red cross, signature hand inside the pink box. Frame: [ENTER: her hand
-> coming up to wave, hair and earrings swinging, arriving from the left | FLOURISH: a wink and a grin, open
-> hand beside her face | HOLD: an open-handed wave beside her face, playful smile | BLINK: the HOLD image with
-> both eyes closed, nothing else changed]. Transparent background, no backing, no shadow. No text, letters,
-> numbers, kana, kanji, logos, signatures or watermarks anywhere.
+## 10. Delivering
 
-**Batch 1, the preset player:** the same prompt, with this character description and the player's frames
-from §4:
+- **Format:** one folder per batch, files named exactly as above, PNG with transparency (or one flat #ff00ff).
+  An optional `import.json` holds per-file hints (contract §8).
+- **Rights note:** a line or two with each delivery confirming that Robin made the images with his image tool,
+  may use them in this project under that tool's terms, and that they are original. It is recorded in
+  `assets/harmony/PROVENANCE.md`.
+- **Never committed:** Robin's mockup and other reference images.
+- **Import:** I run `node tools/harmony_import.mjs <folder> --suggest`, fix alignment in `import.json`, and send
+  back a concrete list of anything that must be repainted.
 
-> a young traveller (any gender, androgynous build) with light skin, an auburn ponytail, round glasses, a pink
-> flower in the hair and a green coat; holding a slim black-lacquered ink brush with a brass ferrule
+## 11. Open points for Robin
 
-**Batches 2–4:** the same prompt, with the character and frame from §4 or the layer from §7–§8. Add the
-approved Batch 1 images as the style reference.
-
-For key-colour layers, add:
-
-> paint [the hair / the skin / the garment body / the trim / the accessory] using only these five shades from
-> darkest to lightest: …; paint only this layer on a transparent background, aligned to the template, with
-> nothing else visible.
+1. **Display size on your screen.**
+   - The addendum's limits cap the cut-in at 30 % of the view's height.
+   - Today, 2× needs a view at least 1677 × 1067 CSS px; below that the pair shows at 1× (faces about 52 CSS
+     px).
+   - Your mockup was taken on a view of about 2048 × 1046, which falls just under that height.
+   - Planned fix: measure the painted pair's **visible** height, as the code busts already do, rather than the
+     full canvas, so your screen gets 2× (faces about 104 px).
+   - This will be checked on Batch 1's real art.
+2. **Small phones.** At 375 × 667 and 320 × 640, faces are 52 CSS px, short of the addendum's ≥ 64. The
+   compact crop can't grow further without covering the battle.
+3. **Iris colour.** Painted heads give every player the same dark-brown iris; the game has no eye-colour
+   choice.
+4. **Memory.** About 8 MiB at peak per cut-in (bounded to about 17 MiB by the caches), measured on the
+   sample. Re-measured on Batch 1.
