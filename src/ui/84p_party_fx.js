@@ -60,6 +60,32 @@ var RB = (globalThis.RB = globalThis.RB || {});
     R(c, x - u, y - h / 2 + u, 2 * u, h - 2 * u, P.verm, a * 0.9);
   }
   function puff(c, x, y, r, u, col, a) { disc(c, x, y, Math.max(u, r), Math.max(u, r * 0.55), col, a); }
+  // Nao's courier route (pCourier, pThreadRoute): where it starts — the pencil's point when the sketch began,
+  // kept relative to his feet in art px so it stays put while the pencil moves on and follows the stage through
+  // a resize — and the shape of each leg: a high arc out over the party, a hump hopping from knot to knot, a
+  // rise up to the creature
+  function courierStart(e, A) {
+    const from = e.p.from || 'comp', f = A.pt(from, 'feet'), u = A.u;
+    if (!e._st) { const p = A.pt(from, 'release'); e._st = { dx: (p.x - f.x) / u, dy: (p.y - f.y) / u }; }
+    return { x: f.x + e._st.dx * u, y: f.y + e._st.dy * u };
+  }
+  function courierLeg(pts, i, A, thread) {
+    const a = pts[i], b = pts[i + 1], L = dist(a, b), last = !thread && i === pts.length - 2;
+    const bend = i === 0 ? -0.3 : last ? 0.3 : -0.5;
+    return (q) => qpt(a, b, bend * L, q);
+  }
+  // a courier's dashed line along fn up to `to`, at a fixed spacing (the dashes never crawl as it grows)
+  function courierDash(c, fn, L, to, u, a) {
+    if (a <= 0.01 || to <= 0) return;
+    const step = (1.2 * u) / (L || 1);
+    for (let j = 0, q = 0; q <= to; j++, q = j * step) {
+      if (j % 6 > 3) continue;
+      const p = fn(q);
+      R(c, p.x - 1.5 * u, p.y - u, 3 * u, 3 * u, '#3e2810', a * 0.85);
+      R(c, p.x - u, p.y - u, 2 * u, 2 * u, '#ffd860', a);
+      R(c, p.x - u, p.y - u, u, u, '#fff6d0', a);
+    }
+  }
   const sparkle = (c, x, y, r, u, col, a) => { R(c, x - u / 2, y - r, u, 2 * r, col, a); R(c, x - r, y - u / 2, 2 * r, u, col, a); };
 
   const fx = {
@@ -190,6 +216,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     pSteam(c, e, k, A, t, still) {
       const u = A.u, o = A.pt('foe', 'top');
       if (still) { puff(c, o.x, o.y - 6 * u, 6 * u, u, '#f4f6f8', 0.5 * (1 - k)); return; }
+      // (Clearwater Draught's washing: a fuller hiss of steam off the quenched Heat)
+      if (e.p.wash) for (let i = 0; i < 4; i++) { const s = seg(k, 0.05 + i * 0.06, 0.8 + i * 0.05); puff(c, o.x + (i - 1.5) * 12 * u + Math.sin(t / 140 + i) * 3 * u, o.y + 6 * u - ease(s) * (26 + i * 5) * u, (5 + 6 * s) * u, u, '#f4f8fc', 0.6 * bell(s)); }
       for (let i = 0; i < 5; i++) { const s = seg(k, i * 0.08, 0.7 + i * 0.06); puff(c, o.x + (i - 2) * 7 * u + Math.sin(t / 160 + i) * 2 * u, o.y - ease(s) * (14 + i * 4) * u, (3 + 4 * s) * u, u, e.p.wash ? '#e8f6ff' : '#f4f6f8', 0.55 * bell(s)); }
     },
     // Wind: curved paper trails swept from the hand past the creature, a few scraps carried with them
@@ -285,12 +313,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
     pJoin(c, e, k, A, t, still) {
       const u = A.u, a = A.pt('pc', 'release'), b2 = A.pt('comp', 'release'), d = e.p.to === 'foes' ? A.pt('foes', 'core') : A.pt('foe', 'core');
       const col2 = { nao: '#c8962e', mio: '#9ad0c0', ren: '#ffd27a', suzu: '#e8a0b8' }[e.p.who] || P.warm;
-      const fade = 1 - seg(k, 0.8, 1);
+      // (soft: a fine braid under a technique whose own carrier leads — Nao's route, Mio's pour)
+      const fade = (1 - seg(k, 0.8, 1)) * (e.p.soft ? 0.5 : 1), th = e.p.soft ? u : 2 * u;
       if (still) { path(c, (s) => qpt(a, d, -0.1 * dist(a, d), s), dist(a, d), 0, 1, u, P.warm, 0.7 * fade, 2); path(c, (s) => qpt(b2, d, -0.1 * dist(b2, d), s), dist(b2, d), 0, 1, u, col2, 0.7 * fade, 2); return; }
       const s = ease(seg(k, 0, 0.6));
       for (const [src, col, ph] of [[a, P.warm, 0], [b2, col2, Math.PI]]) {
         const L = dist(src, d);
-        path(c, (x) => { const q = qpt(src, d, -0.2 * L, x); return { x: q.x, y: q.y + Math.sin(x * Math.PI * 5 + ph + t / 90) * 2 * u * (1 - x) }; }, L, 0, s, u, col, fade, 1.2, 2 * u);
+        path(c, (x) => { const q = qpt(src, d, -0.2 * L, x); return { x: q.x, y: q.y + Math.sin(x * Math.PI * 5 + ph + t / 90) * 2 * u * (1 - x) }; }, L, 0, s, u, col, fade, 1.2, th);
       }
       const m = seg(k, 0.55, 0.85);
       if (m > 0) { halo(c, d.x, d.y, A.foeR * (0.4 + 0.4 * m), '255,226,160', 0.45 * bell(m)); sparkle(c, d.x, d.y, Math.round((3 + 4 * bell(m)) * u), u, '#ffffff', bell(m)); }
@@ -381,15 +410,215 @@ var RB = (globalThis.RB = globalThis.RB || {});
       }
     },
     // ---- the Harmony techniques (Harmony addendum §9) --------------------------------------------------
-    // Read the Opening: two knots freed together — a short ochre route links the two contacts (Nao's courier
-    // line), drawn from the first to the second; only on that creature
-    pRoute(c, e, k, A, t, still) {
-      const u = A.u, a = A.pt(e.p.from, 'core'), b = A.pt(e.p.to, 'core'), L = dist(a, b);
-      const fade = 1 - seg(k, 0.72, 1), s = still ? 1 : ease(seg(k, 0, 0.4));
-      const fn = (q) => qpt(a, b, -0.35 * L, q);
-      path(c, fn, L, 0, s, u, '#6a4a1c', 0.9 * fade, 1.1, 2 * u);
-      path(c, (q) => { const p = fn(q); return { x: p.x, y: p.y - u }; }, L, 0, s, u, '#e0b050', fade, 1.1, u);
-      if (!still) { const h = seg(k, 0.4, 0.75); if (h > 0) for (const p of [a, b]) sparkle(c, p.x, p.y, Math.round((2 + 2 * bell(h)) * u), u, '#fff0c0', bell(h) * fade); }
+    // Read the Opening: Nao's pencil sketches a courier's route in the air — dashed gold, out from where the
+    // pencil started, over the party and down to the knots that really come loose (a waypoint tick landing on
+    // each: two, or the one left), then up to the creature, where a ring closes round the opening. It is drawn
+    // at the pencil's pace (p.draw: the share of k the sketch takes; the legs take equal time, as the pencil's
+    // ticks do) and stays, lit, until the knots have gone (p.out). Only on that creature.
+    pCourier(c, e, k, A, t, still) {
+      const u = A.u, R0 = courierStart(e, A), pts = [R0].concat((e.p.way || []).map((id) => A.pt(id, 'core')), [A.pt('foe', 'core')]);
+      const n = pts.length - 1, draw = e.p.draw || 0.5, fade = 1 - seg(k, e.p.out || 0.8, 1);
+      const s = still ? 1 : cl(k / draw) * n; // legs done (fractional)
+      for (let i = 0; i < n; i++) {
+        const fn = courierLeg(pts, i, A), L = dist(pts[i], pts[i + 1]), to = cl(s - i);
+        if (to <= 0) break;
+        courierDash(c, fn, L, to, u, fade);
+      }
+      // the waypoint ticks: a pin drops onto each knot as the route reaches it, a ring round it
+      for (let i = 1; i < n; i++) {
+        const w = pts[i], land = still ? 1 : cl((s - i) * 2.5);
+        if (s < i) continue;
+        const y = w.y - 14 * u - (1 - ease(land)) * 10 * u;
+        ell(c, w.x, w.y + u, 9 * u, 4 * u, 2 * u, '#3e2810', 0.7 * fade * land);
+        ell(c, w.x, w.y, 9 * u, 4 * u, u, '#ffd860', fade * (0.4 + 0.6 * land));
+        R(c, w.x - u, y, 2 * u, 9 * u, '#3e2810', fade);
+        R(c, w.x - 2 * u, y - 2 * u, 4 * u, 4 * u, '#3e2810', fade);
+        R(c, w.x - u, y - u, 2 * u, 2 * u, '#ffd860', fade);
+        if (!still && land < 1) sparkle(c, w.x, y, Math.round((2 + 2 * bell(land)) * u), u, '#fff0c0', bell(land) * fade);
+      }
+      // the route's end: a dashed ring closes round the opening
+      if (s >= n || still) {
+        const o = pts[n], r = Math.max(8 * u, A.foeR * 0.32), cl2 = still ? 1 : ease(seg(k, draw, draw + 0.12));
+        ell(c, o.x, o.y + u, r, r * 0.75, 2 * u, '#3e2810', 0.8 * fade, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * cl2);
+        ell(c, o.x, o.y, r, r * 0.75, u, '#ffd860', fade, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * cl2);
+      }
+      // the head: the pencil's point running ahead of the dashes
+      if (!still && s < n) {
+        const i = Math.floor(s), q = courierLeg(pts, i, A)(s - i);
+        R(c, q.x - u, q.y - u, 2 * u, 2 * u, '#fff6d8', 1);
+        sparkle(c, q.x, q.y, 2 * u, u, '#ffffff', 0.8);
+      }
+    },
+    // …your thread follows the route: out from your strip to the first knot it marked, along the route's own
+    // hops to the next, then drawn taut
+    pThreadRoute(c, e, k, A, t, still) {
+      const u = A.u, a = A.pt(e.p.from || 'pc', 'release'), ws = (e.p.way || []).map((id) => A.pt(id, 'core'));
+      if (!ws.length) return;
+      const fade = 1 - seg(k, 0.82, 1), pts = [a].concat(ws);
+      const L0 = dist(a, ws[0]), legs = pts.length - 1;
+      const head = still ? legs : ease(seg(k, 0, 0.6)) * legs, pull = still ? 1 : ease(seg(k, 0.55, 0.8));
+      for (let i = 0; i < legs; i++) {
+        const to = cl(head - i);
+        if (to <= 0) break;
+        const L = i ? dist(pts[i], pts[i + 1]) : L0;
+        const base = i ? courierLeg(pts, i, A, true) : (q) => qpt(a, ws[0], (-0.22 + 0.14 * pull) * L0, q);
+        const wob = (1 - pull) * 1.6 * u;
+        const fn = (q) => { const p = base(q); return { x: p.x, y: p.y + Math.sin(q * Math.PI * 3 + t / 110) * wob * Math.sin(Math.PI * q) }; };
+        path(c, fn, L, 0, to, u, P.ink2, fade * 0.9, 1.2, 2 * u);
+        path(c, (q) => { const p = fn(q); return { x: p.x, y: p.y - u }; }, L, 0, to, u, P.cord, fade, 1.2);
+      }
+      if (!still && pull > 0) for (const w of ws) sparkle(c, w.x, w.y, Math.round((2 + 2 * bell(pull)) * u), u, '#ffffff', fade * bell(pull));
+    },
+    // Read the Opening: the two knots come loose together — one shared burst: a ring round both, the hop
+    // between them flaring, rays from between them, flecks off both at once (only when two really do)
+    pKnotPair(c, e, k, A, t, still) {
+      const u = A.u, a = A.pt(e.p.a, 'core'), b = A.pt(e.p.b, 'core'), L = dist(a, b), m = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+      const fade = 1 - seg(k, 0.55, 1);
+      if (still) { ell(c, m.x, m.y, L / 2 + 8 * u, 7 * u, u, '#ffd860', 0.85 * (1 - seg(k, 0.6, 1))); return; }
+      const s = ease(seg(k, 0, 0.55));
+      halo(c, m.x, m.y, L * 0.5 + (8 + 10 * s) * u, '255,230,150', 0.55 * bell(seg(k, 0, 0.6)));
+      ell(c, m.x, m.y + u, L / 2 + (6 + 18 * s) * u, (5 + 9 * s) * u, 2 * u, '#c8962e', 0.9 * fade);
+      ell(c, m.x, m.y, L / 2 + (6 + 18 * s) * u, (5 + 9 * s) * u, u, '#fff6d8', fade);
+      const hop = (q) => qpt(a, b, -0.5 * L, q), fl = bell(seg(k, 0, 0.45));
+      path(c, hop, L, 0, 1, u, '#ffffff', fl, 1, 2 * u);
+      for (let i = 0; i < 10; i++) {
+        const an = -Math.PI / 2 + (i - 4.5) * 0.33, r0 = 4 * u + s * (12 + hs(i, 6) * 10) * u;
+        R(c, m.x + Math.cos(an) * (L / 2 + r0), m.y + Math.sin(an) * r0 - u, 2 * u, u, i % 2 ? '#ffd860' : '#fff0c0', fade);
+      }
+      for (const p of [a, b]) {
+        sparkle(c, p.x, p.y - 2 * u, Math.round((3 + 3 * bell(seg(k, 0, 0.5))) * u), u, '#ffffff', bell(seg(k, 0, 0.5)));
+        for (let i = 0; i < 5; i++) { const an = -Math.PI / 2 + (i - 2) * 0.6, r = s * (10 + hs(i, p === a ? 2 : 3) * 8) * u; R(c, p.x + Math.cos(an) * r, p.y + Math.sin(an) * r + easeIn(k) * 8 * u, 2 * u, 2 * u, i % 2 ? P.paper : '#ffd860', fade); }
+      }
+    },
+    // Read the Opening, its move answered (the technique's result on the creature): the route's ring pulled
+    // tight round the opening, four pins closing in on it, a short gold flash
+    pRead(c, e, k, A, t, still) {
+      const u = A.u, o = A.pt('foe', 'core'), r0 = Math.max(8 * u, A.foeR * 0.32);
+      const fade = 1 - seg(k, 0.6, 1), s = still ? 0.6 : ease(seg(k, 0, 0.45)), r = r0 * (1 - 0.35 * s);
+      if (!still) halo(c, o.x, o.y, r0 * 1.4, '255,226,150', 0.45 * bell(seg(k, 0, 0.5)));
+      ell(c, o.x, o.y, r, r * 0.75, 2 * u, '#ffd860', fade);
+      for (let i = 0; i < 4; i++) {
+        const an = Math.PI / 4 + (i * Math.PI) / 2, ro = r + (10 - 6 * s) * u;
+        path(c, (q) => ({ x: o.x + Math.cos(an) * (ro - q * 6 * u), y: o.y + Math.sin(an) * (ro - q * 6 * u) * 0.75 }), 6 * u, 0, 1, u, '#3e2810', fade, 1, 2 * u);
+      }
+    },
+    // Clearwater Draught: the pour, to you both — a clear stream from the vial's lip arcs up over the party and
+    // breaks into a shimmering fall of drops over each of you, with small ripples at your feet (the pour is the
+    // act; the restoring is shown at the result, and only on one of you who was below full)
+    pCascade(c, e, k, A, t, still) {
+      const u = A.u, a = A.pt(e.p.from || 'comp', 'release'), who = e.p.who && e.p.who.length ? e.p.who : ['pc'];
+      const hd = who.map((w) => A.pt(w, 'head')), ft = who.map((w) => A.pt(w, 'feet'));
+      const x0 = Math.min(...hd.map((h) => h.x)) - 14 * u, x1 = Math.max(...hd.map((h) => h.x)) + 14 * u, top = Math.min(...hd.map((h) => h.y)) - 10 * u;
+      const floor = Math.max(...ft.map((f) => f.y)), fade = 1 - seg(k, 0.84, 1);
+      // a fountain's arc: from the lip high over the middle of the party, down to where it breaks over the far one
+      const B = { x: x1 - 2 * u, y: top }, C = { x: (a.x + B.x) / 2, y: Math.min(a.y, B.y) - 60 * u };
+      const arc = (q) => ({ x: (1 - q) * (1 - q) * a.x + 2 * q * (1 - q) * C.x + q * q * B.x, y: (1 - q) * (1 - q) * a.y + 2 * q * (1 - q) * C.y + q * q * B.y });
+      const L = dist(a, C) + dist(C, B);
+      const dropX = (i, n) => x0 + ((i + 0.5) / n) * (x1 - x0);
+      if (still) {
+        path(c, arc, L, 0, 1, u, '#4a98b8', 0.75 * fade, 1.6, 2 * u);
+        path(c, (q) => { const p = arc(q); return { x: p.x, y: p.y - u }; }, L, 0, 1, u, '#d8f4fc', 0.85 * fade, 1.6, u);
+        for (let i = 0; i < 10; i++) R(c, dropX(i, 10), top + (6 + (i % 3) * 12) * u, u, 2 * u, i % 2 ? '#ffffff' : '#9ad0c0', 0.85 * fade);
+        for (const f of ft) { ell(c, f.x, f.y, 14 * u, 4 * u, u, '#d8f4fc', 0.75 * fade); ell(c, f.x, f.y, 8 * u, 2 * u, u, '#9ad0c0', 0.6 * fade); }
+        return;
+      }
+      // the stream: its head runs out over the party, its tail leaves the lip as the pour ends — a clear ribbon
+      // with a dark edge under it and a bright line along its top
+      const hS = ease(seg(k, 0, 0.24)), tS = easeIn(seg(k, 0.34, 0.58));
+      if (hS > tS) {
+        path(c, (q) => { const p = arc(q); return { x: p.x, y: p.y + u }; }, L, tS, hS, u, '#3e88a8', 0.85, 0.8, 3 * u);
+        path(c, arc, L, tS, hS, u, '#bfe8f4', 1, 0.8, 2 * u);
+        path(c, (q) => { const p = arc(q); return { x: p.x, y: p.y - u }; }, L, tS, hS, u, '#ffffff', 0.95, 2.2, u);
+        const hp = arc(hS);
+        if (hS < 1) sparkle(c, hp.x, hp.y, 2 * u, u, '#ffffff', 0.9);
+      }
+      // where it breaks over you: a bright burst, then a shimmer hanging over the party while it falls
+      const br = seg(k, 0.2, 0.42);
+      if (br > 0 && br < 1) { halo(c, B.x, B.y, (8 + 10 * br) * u, '220,246,255', 0.55 * bell(br)); sparkle(c, B.x, B.y, Math.round((3 + 3 * bell(br)) * u), u, '#ffffff', bell(br)); }
+      const veil = bell(seg(k, 0.22, 0.8));
+      if (veil > 0.02) for (let i = 0; i < 11; i++) { const x = dropX(i, 11), ln = (floor - top) * (0.6 + 0.3 * hs(i, 5)); path(c, (q) => ({ x: x + Math.sin(q * 6 + i) * u, y: top + q * ln }), ln, 0, 1, u, '#d8f4fc', 0.3 * veil, 2.5); }
+      // the fall: streaks and drops over the whole width of the party, shimmering as they fall to the floor
+      for (let i = 0; i < 34; i++) {
+        const ph = hs(i, 11), st = 0.2 + ph * 0.42, s2 = seg(k, st, st + 0.18);
+        if (s2 <= 0 || s2 >= 1) continue;
+        const x = dropX(i, 34) + Math.sin(i * 2.3) * 2 * u, y = top + (hs(i, 3) - 0.5) * 8 * u + easeIn(s2) * (floor - top);
+        const tw = (Math.floor(t / 60) + i) % 3;
+        if (i % 2) { R(c, x, y - 7 * u, u, 5 * u, '#bfe8f4', 0.8 * (1 - s2 * 0.4)); R(c, x, y - 2 * u, u, 2 * u, '#ffffff', 1 - s2 * 0.3); }
+        else R(c, x, y, 2 * u, 2 * u + (i % 4 ? 0 : u), tw === 0 ? '#ffffff' : tw === 1 ? '#bfe8f4' : '#7cc8dc', 1 - s2 * 0.35);
+        if (tw === 0 && i % 3 === 0) sparkle(c, x, y, 2 * u, u, '#ffffff', 0.9);
+      }
+      // ripples at each of your feet as the drops land, a few splashes thrown up
+      ft.forEach((f, j) => {
+        for (let r = 0; r < 3; r++) {
+          const s3 = seg(k, 0.34 + j * 0.05 + r * 0.1, 0.78 + j * 0.05 + r * 0.1);
+          if (s3 <= 0 || s3 >= 1) continue;
+          ell(c, f.x, f.y, (4 + 18 * ease(s3)) * u, (1.5 + 5 * ease(s3)) * u, u, r === 1 ? '#bfe8f4' : '#ffffff', (1 - s3) * fade);
+          if (r === 0) for (let q = 0; q < 4; q++) { const an = -Math.PI / 2 + (q - 1.5) * 0.7; R(c, f.x + Math.cos(an) * ease(s3) * 10 * u, f.y - bell(s3) * (5 + q) * u, u, u, '#ffffff', 1 - s3); }
+        }
+      });
+    },
+    // …and your ink carries one drop of it to the knot: a clear drop riding a short ink trail, landing in a
+    // small splash on the knot (it lands at p.land)
+    pDrop(c, e, k, A, t, still) {
+      const u = A.u, a = A.pt(e.p.from || 'pc', 'release'), b = A.pt(e.p.to, 'core'), L = dist(a, b), land = e.p.land || 0.5;
+      const fade = 1 - seg(k, 0.85, 1);
+      if (still) { disc(c, b.x, b.y - 4 * u, 2 * u, 2 * u, '#bfe8f4', 0.85 * fade); ell(c, b.x, b.y, 7 * u, 2.5 * u, u, '#bfe8f4', 0.7 * fade); return; }
+      const s = ease(seg(k, 0, land)), fn = (q) => qpt(a, b, -0.28 * L, q);
+      if (s < 1) {
+        path(c, fn, L, Math.max(0, s - 0.35), s, u, P.ink2, 0.85, 1.6, u);
+        const q = fn(s);
+        disc(c, q.x, q.y, 2 * u, 2 * u, '#6ab8d0', 1);
+        disc(c, q.x, q.y - u, Math.max(u, 1.4 * u), Math.max(u, 1.4 * u), '#d8f4fc', 1);
+        R(c, q.x - u, q.y - 2 * u, u, u, '#ffffff', 1);
+      }
+      const h = seg(k, land, 1);
+      if (h > 0) {
+        ell(c, b.x, b.y, (3 + 10 * ease(h)) * u, (1.5 + 3 * ease(h)) * u, u, '#d8f4fc', (1 - h) * fade);
+        for (let i = 0; i < 5; i++) { const an = -Math.PI / 2 + (i - 2) * 0.5, r = ease(h) * (6 + hs(i, 9) * 6) * u; R(c, b.x + Math.cos(an) * r, b.y + Math.sin(an) * r + easeIn(h) * 8 * u, u, 2 * u, i % 2 ? '#ffffff' : '#9ad0c0', 1 - h); }
+      }
+    },
+    // the restoring of Clearwater Draught on one of you who was below full: clear water rising round you from
+    // the feet, a ring of it at the chest (with the motes; never on one already full)
+    pRefill(c, e, k, A, t, still) {
+      const u = A.u;
+      for (const w of e.p.who || []) {
+        const f = A.pt(w, 'feet'), o = A.pt(w, 'chest'), H = f.y - o.y;
+        if (still) { ell(c, o.x, o.y, 10 * u, 6 * u, u, '#bfe8f4', 0.8 * (1 - seg(k, 0.6, 1))); continue; }
+        const s = ease(seg(k, 0, 0.6)), fade = 1 - seg(k, 0.7, 1);
+        for (let j = 0; j < 4; j++) {
+          const y = f.y - s * H * (1 - j * 0.18);
+          if (y > f.y) continue;
+          path(c, (q) => ({ x: o.x - 9 * u + q * 18 * u, y: y + Math.sin(q * Math.PI * 2 + t / 120 + j) * u }), 18 * u, 0, 1, u, j ? '#9ad0c0' : '#ffffff', (j ? 0.45 : 0.8) * fade, 2);
+        }
+        const rg = seg(k, 0.5, 1);
+        if (rg > 0) ell(c, o.x, o.y, (6 + 8 * ease(rg)) * u, (4 + 5 * ease(rg)) * u, u, '#d8f4fc', 0.8 * (1 - rg));
+      }
+    },
+    // the washing of Clearwater Draught on a creature that really had Heat, mist or Gathering: clear water
+    // rinses down over it, its front shimmering, and what it carries off shows how each leaves — embers
+    // quenched (Heat), the gathered motes carried down (Gathering), the mist pressed down and out (mist)
+    pWash(c, e, k, A, t, still) {
+      const u = A.u, o = A.pt('foe', 'core'), top = A.pt('foe', 'top'), b = A.pt('foe', 'base'), w = Math.max(A.foeR, 16 * u);
+      const y0 = Math.min(top.y, o.y - A.foeR) - 6 * u, y1 = Math.max(b.y, o.y + A.foeR * 0.6), fade = 1 - seg(k, 0.75, 1);
+      if (still) { for (let i = 0; i < 7; i++) R(c, o.x - w + ((i + 0.5) / 7) * 2 * w, o.y - A.foeR * 0.2 + (i % 2) * 8 * u, u, 3 * u, '#bfe8f4', 0.75 * fade); return; }
+      const s = ease(seg(k, 0, 0.55)), fy = y0 + s * (y1 - y0), front = fade * (1 - seg(k, 0.5, 0.65));
+      // the falling front — a clear sheet with a bright edge — and the rain behind it
+      if (front > 0.02) {
+        for (let r = 1; r <= 4; r++) path(c, (q) => ({ x: o.x - w + q * 2 * w, y: fy - r * 3 * u + Math.sin(q * Math.PI * 4 + t / 90 + r) * 2 * u }), 2 * w, 0, 1, u, '#bfe8f4', 0.32 * front * (1 - r * 0.18), 1.5, 2 * u);
+        path(c, (q) => ({ x: o.x - w + q * 2 * w, y: fy + Math.sin(q * Math.PI * 4 + t / 90) * 2 * u }), 2 * w, 0, 1, u, '#ffffff', 0.95 * front, 1.2, 2 * u);
+      }
+      for (let i = 0; i < 18; i++) {
+        const x = o.x - w + ((i + 0.5) / 18) * 2 * w, ph = hs(i, 13), yy = y0 + ((ph + t / 420) % 1) * (fy - y0);
+        if (fy - y0 < 4 * u) break;
+        R(c, x, yy, u, 5 * u, i % 3 ? '#bfe8f4' : '#ffffff', 0.85 * fade);
+      }
+      const d = seg(k, 0.3, 1);
+      if (d > 0) {
+        if (e.p.heat) for (let i = 0; i < 6; i++) { const x = o.x + (hs(i, 4) - 0.5) * w * 1.4, y = o.y - A.foeR * 0.3 + easeIn(d) * 26 * u + i * 2 * u; R(c, x, y, 2 * u, 2 * u, d < 0.4 ? (i % 2 ? P.ember : P.ember2) : '#8a8490', 1 - d); }
+        if (e.p.gather) for (let i = 0; i < 6; i++) { const x = o.x + (hs(i, 7) - 0.5) * w * 1.6, y = o.y + easeIn(d) * 34 * u - (i % 3) * 3 * u; R(c, x, y, 2 * u, 2 * u, P.amber, 1 - d); }
+        if (e.p.mist) for (let i = 0; i < 3; i++) puff(c, o.x + (i - 1) * w * 0.7 + (i - 1) * ease(d) * 16 * u, b.y + 2 * u + ease(d) * 6 * u, (8 + 6 * d) * u, u, P.mist, 0.4 * (1 - d));
+        ell(c, b.x, b.y + 2 * u, (6 + 22 * ease(d)) * u, (2 + 5 * ease(d)) * u, u, '#d8f4fc', 0.7 * (1 - d));
+      }
     },
     // Curtain Call: the thread swung round the opening like a stage curtain — a band of cloth (vermilion,
     // its folds in stripes, a gold hem) leaving your hand, sweeping over and past the creature, then hooking

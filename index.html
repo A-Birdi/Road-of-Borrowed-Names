@@ -27809,8 +27809,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
  *
  * Hands are articulated (palm, the fingers as one or more pieces and a thumb, by shape: fist, relaxed,
  * open, flat, point, pinch, cup, spread), and what a hand holds is drawn by it: the folio, a paper
- * strip, a brush, Mio's vial (from the bottles at her hip), Ren's lamp (raised when a gesture frees his
- * left hand). The pose library — every actor's stance, idle key poses, gestures and reactions — is
+ * strip, a brush, Mio's vial (from the bottles at her hip; larger in her Harmony technique, `vialBig`), Nao's
+ * courier pencil (`pencil`, his Harmony technique), Ren's lamp (raised when a gesture frees his left hand). The pose library — every actor's stance, idle key poses, gestures and reactions — is
  * src/engine/34m_battler_moves.js (RB.battlerMoves); this file draws whatever pose it is given.
  *
  * Battle addendum §6.2 (native frame standard): the frame stays 80×104 art px, anchor (36, 100),
@@ -28614,6 +28614,11 @@ RB.battlers = (function () {
   }
 
   const COVER = mk(hramp('#9a4a3c', { sat: 1.1, warm: 40 }), { min: 1, kind: 'leather' });
+  // Nao's courier pencil (the one his portrait keeps behind his ear): a yellow body, a pink eraser, the
+  // sharpened wood and its lead
+  const PENCIL = mk(hramp('#e0b040', { sat: 1.1, warm: 50 }), { min: 2, kind: 'wood' });
+  const ERASER = mk(hramp('#e8a0a0', { sat: 1.05 }), { min: 2 });
+  const SHARP = mk(hramp('#e8c890', { sat: 1.05, warm: 40 }), { min: 2, kind: 'wood' });
   // ---- props held in battle ---------------------------------------------------------------------------------
   // A small bound book (the traveller's folio), a strip of paper, a brush. Held by the hand joints.
   function props(K) {
@@ -28656,13 +28661,26 @@ RB.battlers = (function () {
       // out once it is opened (cork 1)
       const tilt = (pr.vialTilt || 0) * DEG, hd = pr.vialL ? J.handL : J.handR;
       const ax = norm([Math.sin(tilt) * 0.5, Math.cos(tilt), Math.sin(tilt) * 0.85]);
-      // (drawn a little larger than life, as the hands are)
-      const q = (s) => add(hd, add(mul(ax, s * 1.3), [0.9, 0, 1.4]));
-      K.C(q(-1.4), q(0.7), 1.95, 2, Mt.glass, GRP.prop);
-      K.C(q(0.7), q(2.2), 1.9, 0.95, Mt.glass, GRP.prop);
-      K.C(q(2.2), q(3.2), 0.82, 0.82, Mt.glass, GRP.prop);
-      if (!(pr.cork > 0.5)) K.C(q(3.1), q(3.9), 0.95, 0.95, Mt.wood, GRP.prop);
+      // (drawn a little larger than life, as the hands are; in Clearwater Draught larger still — vialBig, one
+      // to two art px — so the technique's one object reads at play scale)
+      const g = 1 + 0.36 * clamp01(pr.vialBig || 0);
+      const q = (s) => add(hd, add(mul(ax, s * 1.3 * g), [0.9, 0, 1.4]));
+      K.C(q(-1.4), q(0.7), 1.95 * g, 2 * g, Mt.glass, GRP.prop);
+      K.C(q(0.7), q(2.2), 1.9 * g, 0.95 * g, Mt.glass, GRP.prop);
+      K.C(q(2.2), q(3.2), 0.82 * g, 0.82 * g, Mt.glass, GRP.prop);
+      if (!(pr.cork > 0.5)) K.C(q(3.1), q(3.9), 0.95 * g, 0.95 * g, Mt.wood, GRP.prop);
       K.J.vial = { lip: q(3.4), mid: q(0.4), ax };
+    }
+    if (pr.pencil > 0.5) {
+      // Nao's pencil, pinched in the right hand, its point leading along the hand (drawn larger than life, as
+      // the hands are): the eraser end behind the fingers, the sharpened wood and the lead in front
+      const d = norm(add(sub(J.handR, J.elbR), [0, 0.35, 0]));
+      const at = (s) => add(J.handR, mul(d, s));
+      K.S(at(-3.2), 0.95, ERASER, GRP.prop);
+      K.C(at(-2.6), at(4.6), 0.82, 0.82, PENCIL, GRP.prop);
+      K.C(at(4.6), at(6.4), 0.78, 0.3, SHARP, GRP.prop);
+      K.S(at(6.6), 0.42, Mt.ink, GRP.prop);
+      K.J.pencil = { tip: at(7), mid: at(1.2) };
     }
     if (pr.brush) {
       const d = norm(sub(J.handR, J.elbR)), up = norm(add(d, [0, 0.9, 0]));
@@ -28994,6 +29012,7 @@ RB.battlers = (function () {
     let held = hd, release = hd;
     if (gest && gesture === 'book' && pr.book > 0.25) { held = add(J.handL, mv(J.Ms, [3.5, 1.5, 2])); release = held; }
     else if (pr.vial > 0.5 && J.vial) { held = J.vial.mid; release = add(J.vial.lip, mul(J.vial.ax, 1)); }
+    else if (pr.pencil > 0.5 && J.pencil) { held = J.pencil.mid; release = J.pencil.tip; }
     else if (left && J.lamp) { held = J.lamp; release = J.lamp; }
     else if (pr.brush) { const d = norm(add(fwd, [0, 0.9, 0])); held = add(hd, mul(d, 3)); release = add(hd, mul(d, 9)); }
     else if (pr.strip > 0.5) { held = add(hd, mul(fwd, 2 + 3 * pr.strip)); release = add(hd, mul(fwd, 3 + 6 * pr.strip)); }
@@ -29734,21 +29753,37 @@ RB.battlerMoves = (function () {
   // Nao drops his weight, steps and cuts; Mio measures, uncorks and pours; Ren plants, raises the lamp and
   // draws a level plane; Suzu steps back and turns a full twirl on the spot (the rig's own side, front and
   // back views — `turn` — never a mirrored costume), plants and opens her arm.
-  // Nao — Read the Opening: the centre of balance lowered, head and shoulders on the creature, a hand on
-  // the satchel; a short step in (the foot lifted), the flat hand cutting across the opening, edge first,
-  // finishing in a precise point at the knot; then the hand lowers and he turns to you with a nod.
-  const NAO_A = { pelvis: [0.4, -5.6, 0.2], spinePitch: 22, spineYaw: 12, headYaw: 14, headPitch: -14, headRoll: -2, handR: [6.4, 36.4, 9.4], elbowR: [1, -0.8, -0.4], handShapeR: 'flat', palmR: [-0.4, -0.6, 0.6], handL: [-9.4, 27.4, -5.6], handShapeL: 'open', palmL: [0.3, -0.5, -1], hairLag: 0.6 };
+  // Nao — Read the Opening: a courier who reads routes. His pencil drawn from behind his ear (the elbow up, the
+  // weight dropped); turned sharply side-on to the creature (`turn`: the rig's own side view, read from behind),
+  // a step in, the pencil arm out high, the other back for balance — the pencil sketches the route out to it in
+  // the air, two small ticks where its two knots will come loose, and stays at its end; then the pencil goes
+  // back behind his ear with a glance to you, a short nod, and the stance.
+  const NAO_EAR = { turn: 8, pelvis: [0.2, -4.4, 0], spinePitch: 14, spineYaw: 2, spineRoll: 2, headYaw: 4, headPitch: -6, headRoll: -7, handR: [11.6, 60.4, -2.4], elbowR: [1, 0.2, -0.3], handShapeR: 'pinch', palmR: [-1, 0, 0.1], handL: [-9.2, 27.6, -5.4], handShapeL: 'open', palmL: [0.3, -0.5, -1] };
+  const NAO_A = { turn: 26, pelvis: [0.2, -5.8, 0], spinePitch: 20, spineYaw: 6, spineRoll: 0, headYaw: 6, headPitch: -12, headRoll: -2, handR: [9.8, 54.8, 12.6], elbowR: [1, -0.2, -0.6], handShapeR: 'pinch', palmR: [-0.6, 0, 0.8], handL: [-9.4, 27.4, -5.6], elbowL: [-1, 0.3, 0.3], handShapeL: 'open', palmL: [0.3, -0.5, -1], hairLag: 0.6, prop: { pencil: 1 } };
   const NAO_K = {
-    a: W2(NAO_A, { footR: [6.6, 0, 5.4], footRYaw: 20 }),
-    step: { footR: [8.8, 0, 9.8], footRYaw: 16, pelvis: [1.4, -5.0, 2.8], spinePitch: 24, spineYaw: 10, headYaw: 12, headPitch: -12, headRoll: -2, handR: [4.4, 47.2, 11.2], elbowR: [1, -0.6, -0.2], handShapeR: 'flat', palmR: [-0.2, -1, 0.3], handL: [-9.4, 27.4, -5.6], hairLag: 0.2 },
-    cut: { footR: [8.8, 0, 9.8], footRYaw: 16, pelvis: [1.8, -4.8, 3.2], spinePitch: 22, spineYaw: 22, headYaw: 10, headPitch: -9, headRoll: 0, handR: [15.4, 40.4, 19.2], elbowR: [1, -0.4, -0.2], handShapeR: 'flat', palmR: [-0.3, -0.8, 0.4], handL: [-9.4, 27.4, -5.6], hairLag: 0 },
+    // side-on, the right foot stepped in, leaning into it; the pencil arm raised to the route's start, the
+    // left arm swung back for balance
+    out: { turn: 54, footR: [1.2, 0, 9.6], footRYaw: 4, footL: [-0.3, 0, -6.5], footLYaw: -50, pelvis: [1.2, -4.8, 2.6], spinePitch: 18, spineYaw: 0, spineRoll: 0, headYaw: -6, headPitch: -14, headRoll: 0, handR: [6.8, 55.6, 13.4], elbowR: [1, -0.2, -0.6], handShapeR: 'pinch', palmR: [-0.6, 0, 0.8], handL: [-7.4, 33.6, -11.4], elbowL: [-1, -0.4, 0.2], handShapeL: 'open', palmL: [0, -0.6, -1], hairLag: 0.2, prop: { pencil: 1 } },
   };
-  NAO_K.point = W2(NAO_K.cut, { handR: [15.8, 41.8, 19.8], handShapeR: 'point', palmR: [-1, 0, 0], headPitch: -8 });
+  // the sketch: the pencil's way out along the route, dipping twice (the ticks on the knots), then the reach to
+  // its end — "there"
+  const NAO_SKETCH = [[6.8, 55.6, 13.4], [8.0, 57.4, 17.2], [8.6, 52.8, 19.4], [9.0, 56.2, 20.6], [9.6, 52.6, 22.0], [10.0, 56.0, 22.8], [10.6, 59.4, 24.2]];
+  NAO_K.end = W2(NAO_K.out, { handR: NAO_SKETCH[6], headPitch: -18, spinePitch: 22, pelvis: [1.6, -4.6, 3.2], handL: [-6.6, 31.6, -12.6] });
   // Mio — Clearwater Draught: the vial from the bottles at her hip raised to eye level, the other hand
-  // cupped under it (a check of the measure); steadied, uncorked with the thumb, tipped into your rising ink
-  // with the cupping hand guiding the stream; then a glance to you, the cork back, the vial to her hip.
-  const MIO_A = { handR: [6.2, 52, 10.4], elbowR: [1, -0.9, -0.4], handShapeR: 'cup', palmR: [-0.8, 0, 0.4], handL: [4.6, 47.4, 10.8], elbowL: [-1, -0.9, -0.3], handShapeL: 'cup', palmL: [0, 1, 0.2], headYaw: 6, headPitch: -8, spinePitch: 4, spineYaw: 6, pelvis: [0, -1.4, 0.2], prop: { vial: 1, cork: 0, vialTilt: 0 } };
-  const MIO_POUR = { handR: [13.6, 45.6, 12.8], elbowR: [1, -0.7, -0.4], palmR: [-0.6, 0, 0.6], handL: [11.0, 41.6, 13.8], elbowL: [-1, -0.8, -0.1], palmL: [0, 1, 0.2], headYaw: 24, headPitch: 2, spinePitch: 9, spineYaw: 20, pelvis: [0.6, -1.8, 0.8], prop: { vial: 1, cork: 1, vialTilt: 100 } };
+  // cupped under it (a check of the measure), turning so the action reads; uncorked with the thumb; then the
+  // vial lifted high over her head, side-on, up on her toes, and tipped in one controlled pour — the stream
+  // arcs up over the two of you — the free hand open and spread out over you both, guiding where it falls;
+  // then the cork back, the vial to her hip and a small satisfied nod. In this technique the vial is drawn
+  // larger (vialBig), so its one object reads at play scale.
+  const MIO_A = { turn: 26, handR: [8.6, 53.2, 14.2], elbowR: [1, -0.9, -0.4], handShapeR: 'cup', palmR: [-0.8, 0, 0.4], handL: [7.0, 48.6, 14.4], elbowL: [-1, -0.9, -0.3], handShapeL: 'cup', palmL: [0, 1, 0.2], headYaw: 6, headPitch: -8, spinePitch: 4, spineYaw: 6, pelvis: [0, -1.4, 0.2], prop: { vial: 1, vialBig: 1, cork: 0, vialTilt: 0 } };
+  const MIO_K = {
+    // uncorked: the thumb of the cupping hand at the vial's mouth, the cork drawn
+    open: W2(MIO_A, { handR: [8.8, 53.6, 14.0], handL: [8.4, 56.4, 14.4], handShapeL: 'pinch', palmL: [0.2, 1, 0.2], headPitch: -10, prop: { vial: 1, vialBig: 1, cork: 1, vialTilt: 0 } }),
+    // raised high: the arm up over her head, side-on, risen onto her toes, leaning back a little to look up
+    high: { turn: 40, handR: [8.8, 66.4, 7.6], elbowR: [1, 0.4, -0.4], handShapeR: 'cup', palmR: [-0.6, 0.2, 0.6], handL: [4.2, 48.4, 11.6], elbowL: [-1, -0.8, -0.1], handShapeL: 'open', palmL: [0.2, -0.6, 1], headYaw: 4, headPitch: -18, spinePitch: -2, spineYaw: 4, spineRoll: -2, pelvis: [0.2, 0.2, 0.4], footRLift: 0, prop: { vial: 1, vialBig: 1, cork: 1, vialTilt: 20 } },
+  };
+  // tipped: the pour — the vial over, the free hand spread out over you both
+  MIO_K.pour = W2(MIO_K.high, { handR: [11.2, 65.2, 10.4], elbowR: [1, 0.3, -0.5], handL: [9.4, 50.6, 15.6], elbowL: [-1, -0.6, -0.1], handShapeL: 'spread', palmL: [0.2, -0.8, 0.6], headYaw: 12, headPitch: -12, spineYaw: 10, prop: { vial: 1, vialBig: 1, cork: 1, vialTilt: 112 } });
   // Ren — Lantern Ward: feet planted, knees down, the lamp drawn in before his chest; raised high at his side
   // and shaded (its shutter turned to the creatures, the light thrown back over the pair); the flat right
   // hand drawing a level line at chest height — the plane; then the lamp lowered and a check to either side.
@@ -29815,14 +29850,27 @@ RB.battlerMoves = (function () {
         x: () => ({ footR: [9.8, 0, 4.4], footRYaw: 30, pelvis: [1.8, -3.6, 0.6], spinePitch: 12, spineYaw: 12, headYaw: 22, headPitch: -2, handR: [15.6, 44, 5.6], elbowR: [1, -0.6, -0.6], handShapeR: 'open', palmR: [1, 0, 0.2], hairSway: -0.6 }),
         snap: 0.3, release: 0.35,
       },
-      // Read the Opening (the technique; see NAO_K)
+      // Read the Opening (the technique; see NAO_EAR, NAO_A, NAO_K, NAO_SKETCH). Anticipation: the hand up to
+      // his ear, the pencil taken (0.42–0.56), brought out before his shoulder as he turns. Signature: 0–0.18
+      // side-on and stepped in, the pencil at the route's start; 0.18–0.9 the sketch out along the route (the
+      // ticks at 0.42 and 0.66 — the cue at the first); 0.9–1 at its end, held. Recovery: the pencil back behind
+      // his ear with a glance to you (0.4–0.5), a short nod (0.76), the stance.
       opening: {
         a: NAO_A,
-        x: (k) => W2(track(k, [[0, NAO_K.a], [0.3, NAO_K.step], [0.58, NAO_K.cut], [0.7, NAO_K.point], [1, NAO_K.point]]), {
-          footRLift: 2.6 * bump(k, 0, 0.3), hairSway: -1.2 * bump(k, 0.3, 0.75), clothSway: -0.8 * bump(k, 0.25, 0.7),
-        }),
-        rec: [{ at: 0.5, o: { footR: [7.6, 0, 7.4], footRYaw: 18, pelvis: [0.8, -3.4, 1.4], spinePitch: 16, spineYaw: 14, handR: [10.8, 33.4, 9.2], elbowR: [1, -0.8, -0.4], handShapeR: 'relaxed', palmR: [-0.8, -0.4, 0.3], headYaw: 44, headPitch: 4, headRoll: 3 } }],
-        qk: 16, snap: 0, release: 0.62,
+        ant: [{ at: 0.42, o: NAO_EAR }, { at: 0.56, o: W2(NAO_EAR, { prop: { pencil: 1 } }) }],
+        x: (k) => {
+          const P = track(k, [[0, NAO_A], [0.18, NAO_K.out], [0.86, NAO_K.out], [1, NAO_K.end]]);
+          if (k > 0.18) P.handR = path(NAO_SKETCH, seg(k, 0.18, 0.9));
+          return W2(P, {
+            footRLift: 1.8 * bump(k, 0.02, 0.2), hairSway: 1.4 * bump(k, 0, 0.3) - 0.6 * bump(k, 0.8, 1), clothSway: 1.0 * bump(k, 0, 0.32), hairLag: 0.5 * bump(k, 0.84, 1),
+          });
+        },
+        rec: [
+          { at: 0.4, o: W2(NAO_EAR, { turn: 16, footR: [6.6, 0, 5.4], footRYaw: 20, headYaw: 40, headPitch: -4, headRoll: -4, handL: [-9.2, 28.8, -5.2], elbowL: [-1, 0.3, 0.3], prop: { pencil: 1 } }) },
+          { at: 0.5, o: W2(NAO_EAR, { turn: 14, footR: [6.6, 0, 5.4], footRYaw: 20, headYaw: 42, headPitch: -2, headRoll: -3, handL: [-9.2, 28.8, -5.2], elbowL: [-1, 0.3, 0.3], prop: { pencil: 0 } }) },
+          { at: 0.76, o: { turn: 0, pelvis: [0.6, -3.4, 0.8], spinePitch: 17, spineYaw: 8, spineRoll: 0, headYaw: 36, headPitch: 10, headRoll: 3, handR: [10.6, 31.2, 8.4], elbowR: [1, -0.8, -0.6], handShapeR: 'relaxed', palmR: [-0.8, -0.4, 0.3], prop: { pencil: 0 } } },
+        ],
+        qk: 24, snap: 0, release: 0.42,
       },
     },
     mio: {
@@ -29858,18 +29906,23 @@ RB.battlerMoves = (function () {
         x: (k) => ({ footR: [9.8, 0, 4.6], footRYaw: 26, pelvis: [1.8, -1.6, 0.4], spineYaw: 14, spinePitch: 8, headYaw: 26, headPitch: 2, handR: [15.2, 40, 7.6], elbowR: [1, -0.6, -0.6], handShapeR: 'cup', handL: [6.4, 44.6, 6.2], handShapeL: 'open', palmL: [1, 0, 0.2], elbowL: [-1, -0.8, 0], prop: { vial: 1, cork: 1, vialTilt: 55 * ease(k) } }),
         snap: 0.3, release: 0.45,
       },
-      // Clearwater Draught (the technique; see MIO_A, MIO_POUR)
+      // Clearwater Draught (the technique; see MIO_A, MIO_K). Anticipation: a hand to the bottles at her hip, the
+      // vial raised to eye level and cupped as she turns. Signature: uncorked (0.14); lifted high over her head,
+      // side-on (0.38); tipped over — the cue at 0.45, as the stream leaves — and poured, the free hand spread
+      // over you both (0.6), held pouring. Recovery: the cork back before her chest (0.3); the vial at her hip
+      // and a small satisfied nod (0.5); her head up again (0.72); the stance.
       draught: {
         a: MIO_A,
-        ant: [{ at: 0.42, o: { handR: [8.6, 27.4, 3.6], elbowR: [1, -0.6, -0.4], handShapeR: 'cup', headPitch: 12, headYaw: 16, prop: { vial: 1 } } }],
-        x: (k) => W2(track(k, [[0, MIO_A], [0.16, W2(MIO_A, { handR: [6.2, 51.2, 10.8], prop: { vial: 1, cork: 1, vialTilt: 0 } })], [0.62, W2(MIO_A, MIO_POUR)], [1, W2(MIO_A, MIO_POUR)]]), {
-          handShapeR: 'cup', handShapeL: k < 0.4 ? 'cup' : 'flat', hairLag: 0.4 * bump(k, 0.2, 0.7),
+        ant: [{ at: 0.42, o: { turn: 8, handR: [8.6, 27.4, 3.6], elbowR: [1, -0.6, -0.4], handShapeR: 'cup', headPitch: 12, headYaw: 16, prop: { vial: 1, vialBig: 1 } } }],
+        x: (k) => W2(track(k, [[0, MIO_A], [0.14, MIO_K.open], [0.38, MIO_K.high], [0.6, MIO_K.pour], [1, W2(MIO_K.pour, { prop: { vial: 1, vialBig: 1, cork: 1, vialTilt: 122 } })]]), {
+          handShapeR: 'cup', handShapeL: k < 0.08 ? 'cup' : k < 0.3 ? 'pinch' : k < 0.5 ? 'open' : 'spread', hairLag: 0.8 * bump(k, 0.14, 0.5) - 0.4 * bump(k, 0.45, 0.8), clothSway: 0.6 * bump(k, 0.14, 0.6),
         }),
         rec: [
-          { at: 0.32, o: { handR: [9.4, 43, 10.2], handShapeR: 'cup', handL: [2.4, 38.6, 9.4], handShapeL: 'relaxed', headYaw: 38, headPitch: 4, spineYaw: 14, prop: { vial: 1, cork: 1, vialTilt: 0 } } },
-          { at: 0.64, o: { handR: [8.6, 27.4, 3.6], handShapeR: 'cup', headYaw: 6, headPitch: 6, spineYaw: 8, prop: { vial: 1, cork: 0, vialTilt: 0 } } },
+          { at: 0.3, o: { turn: 18, pelvis: [0, -1.4, 0.2], spinePitch: 6, spineYaw: 6, spineRoll: 0, handR: [6.6, 45.4, 9.8], elbowR: [1, -0.9, -0.4], handShapeR: 'cup', handL: [5.4, 49.2, 10.2], elbowL: [-1, -0.9, -0.3], handShapeL: 'pinch', palmL: [0.2, 1, 0.2], headYaw: 8, headPitch: 6, prop: { vial: 1, vialBig: 1, cork: 0, vialTilt: 0 } } },
+          { at: 0.5, o: { turn: 6, pelvis: [0, -1.6, 0], spinePitch: 9, spineYaw: 8, handR: [8.6, 27.4, 3.6], elbowR: [1, -0.6, -0.4], handShapeR: 'cup', handL: [-2.2, 30.6, 7.8], elbowL: [-1, -0.8, -0.4], handShapeL: 'relaxed', headYaw: 24, headPitch: 18, headRoll: 3, prop: { vial: 1, vialBig: 1, cork: 0, vialTilt: 0 } } },
+          { at: 0.72, o: { turn: 0, handR: [8.6, 27.4, 3.6], handShapeR: 'cup', headYaw: 26, headPitch: 0, headRoll: 2, prop: { vial: 1, vialBig: 1, cork: 0, vialTilt: 0 } } },
         ],
-        qk: 16, snap: 0, release: 0.45,
+        qk: 24, snap: 0, release: 0.45,
       },
       // (her own way of 'restore': the draught poured)
       restore: null,
@@ -78739,8 +78792,8 @@ RB.partyChoreo = (function () {
   // curtain); sfx: short accents from the existing sound set (a brush stroke as the rally starts, the
   // companion's object or garment) — nothing is said, and muted play loses nothing.
   const TECH = {
-    nao: { g: 'rally_thread', gAnt: 500, gAt: 900, gAct: 520, p: 'opening', pAt: 400, pAnt: 380, pAct: 520, motif: 'join', word: W(820, 300, 220, 120, 440, 1100, 1280), contact: 1240, rec: 1750, recD: 400, end: 2300, sfx: [[0, 'pen_stroke'], [1090, 'pen_up']], note: 'Nao drops his weight, steps in and cuts a hand across the opening; your thread follows his line: two knots, on that one creature only.' },
-    mio: { g: 'rally_release', gAnt: 500, gAt: 800, gAct: 560, p: 'draught', pAt: 350, pAnt: 400, pAct: 600, motif: 'join', word: W(820, 260, 220, 120, 440, 1100, 1280), contact: 1200, rec: 1800, recD: 400, end: 2350, sfx: [[0, 'pen_stroke'], [1010, 'splash']], note: 'Mio measures the draught at eye level, uncorks it and pours it into your rising ink; you release it over you both: the knot, then the restoring, then what it washes off — each where it really happens.' },
+    nao: { g: 'rally_thread', gAnt: 500, gAt: 900, gAct: 520, p: 'opening', pAt: 400, pAnt: 380, pAct: 600, motif: 'join', word: W(820, 300, 220, 120, 440, 1100, 1280), contact: 1300, rec: 1790, recD: 500, end: 2350, sfx: [[0, 'pen_stroke'], [600, 'pen_down'], [890, 'pen_stroke'], [1320, 'pen_up']], note: 'Nao takes the pencil from behind his ear, turns side-on, steps in and sketches a courier\'s route out to it in the air, a tick on each knot that will come loose; your thread follows the route and the two knots go together, on that one creature only.' },
+    mio: { g: 'rally_release', gAnt: 500, gAt: 800, gAct: 560, p: 'draught', pAt: 350, pAnt: 400, pAct: 600, motif: 'join', word: W(820, 260, 220, 120, 440, 1100, 1280), contact: 1250, rec: 1860, recD: 440, end: 2400, sfx: [[0, 'pen_stroke'], [1010, 'splash']], note: 'Mio raises the draught at eye level, uncorks it, lifts it high and pours: a clear stream arcs over you both and falls in drops, rippling at your feet; your ink carries one drop to the knot; then the restoring, only on one of you below full, and the washing, only on what had Heat, mist or Gathering.' },
     ren: { g: 'rally_seal', gAnt: 500, gAt: 760, gAct: 560, p: 'ward_plane', pAt: 380, pAnt: 400, pAct: 550, motif: 'join', word: W(820, 0, 240, 140, 420, 1100, 1280), contact: 1200, rec: 1750, recD: 400, end: 2300, sfx: [[0, 'pen_stroke'], [900, 'lantern']], note: 'Ren plants his feet, raises and shades the lamp and draws a level plane; your brush closes it: the knot on the creature, a ward before each of you.' },
     suzu: { g: 'rally_catch', gAnt: 500, gAt: 850, gAct: 560, p: 'curtain', pAt: 350, pAnt: 400, pAct: 550, motif: 'join', word: W(840, 300, 220, 120, 440, 1100, 1280), contact: 1280, rec: 1850, recD: 500, end: 2450, sfx: [[0, 'pen_stroke'], [760, 'wind']], note: 'Suzu steps back, twirls, plants and opens her arm — the cue; your thread swings round the opening like a curtain and turns its move back on it.' },
   };
@@ -79009,18 +79062,29 @@ RB.partyChoreo = (function () {
       case 'technique': {
         const who = plan.tech, rc = rel.comp != null ? rel.comp : rel.pc;
         // the two performances meet: a braided thread from both release points to the target
-        Q.push({ at: Math.min(rel.pc, rc) + 40, type: 'fx', name: 'pJoin', d: c - Math.min(rel.pc, rc) + 300, p: { to: plan.target === 'foes' ? 'foes' : H.foeId(ctx), foe: T, who } });
+        // (a fine braid under Nao's route and Mio's pour, which carry those two techniques themselves)
+        Q.push({ at: Math.min(rel.pc, rc) + 40, type: 'fx', name: 'pJoin', d: c - Math.min(rel.pc, rc) + 300, p: Object.assign({ to: plan.target === 'foes' ? 'foes' : H.foeId(ctx), foe: T, who }, who === 'nao' || who === 'mio' ? { soft: 1 } : {}) });
         const top = Math.max(0, H.fview(ctx, T).knots - 1);
-        // Nao: his cut marks the opening; your thread runs to that knot (and, when two really come loose,
-        // a short route links the two contacts — on that creature only, never a splash on the others)
+        // Nao: his pencil sketches a courier's route in the air, at the pencil's pace — out over the party, a
+        // waypoint tick on each knot that really comes loose (two; or the one, when one is left), then up to the
+        // creature; your thread follows the route to those knots, and when two really come loose they go
+        // together in one shared burst. On that creature only, never a splash on the others.
         if (who === 'nao') {
-          Q.push({ at: rc, type: 'fx', name: 'pSpot', d: c - rc + 200, p: { from: 'comp', foe: T } });
-          Q.push({ at: rel.pc, type: 'fx', name: 'pThread', d: c - rel.pc + 260, p: { from: 'pc', to: H.knotId(ctx, T, top), foe: T, pull: 1 } });
           const u = fx.find((f) => f.t === 'unravel' && H.fid(ctx, f.foe) === T);
-          if (u && Math.min(u.n || 1, H.fview(ctx, T).knots) >= 2) Q.push({ at: c + 40, type: 'fx', name: 'pRoute', d: 560, p: { from: H.knotId(ctx, T, top), to: H.knotId(ctx, T, top - 1), foe: T } });
+          const two = !!u && Math.min(u.n || 1, H.fview(ctx, T).knots) >= 2;
+          const way = (two ? [top - 1, top] : [top]).map((j) => H.knotId(ctx, T, j));
+          const sig = t + F.pAt + F.pAnt, s0 = sig + Math.round(F.pAct * 0.18), s1 = sig + Math.round(F.pAct * 0.9), d = c + 640 - s0;
+          Q.push({ at: s0, type: 'fx', name: 'pCourier', d, p: { from: 'comp', foe: T, way, draw: (s1 - s0) / d, out: (c + 360 - s0) / d } });
+          Q.push({ at: rel.pc, type: 'fx', name: 'pThreadRoute', d: c - rel.pc + 300, p: { from: 'pc', foe: T, way } });
+          if (two) Q.push({ at: c - 30, type: 'fx', name: 'pKnotPair', d: 720, p: { a: way[0], b: way[1], foe: T } });
         }
-        // Mio: the draught poured into your ink (the restoring and the washing are their own beats: react)
-        if (who === 'mio') Q.push({ at: rc, type: 'fx', name: 'pPour', d: Math.max(160, rel.pc - rc + 160), p: { from: 'comp', who: ['pc'], into: 'pc' } });
+        // Mio: the pour, to you both — the stream over the party, the fall of drops, ripples at your feet; your
+        // ink carries one drop of it to the knot (the restoring and the washing are their own beats: react)
+        if (who === 'mio') {
+          Q.push({ at: rc, type: 'fx', name: 'pCascade', d: 900, p: { from: 'comp', who: both } });
+          const d0 = rel.pc + 40, d = c - d0 + 300;
+          Q.push({ at: d0, type: 'fx', name: 'pDrop', d, p: { from: 'pc', to: H.knotId(ctx, T, top), foe: T, land: (c - d0) / d } });
+        }
         // Ren: the shaded lamp's light thrown back over the pair; the level plane his hand draws, set before
         // each of you (the wards form on it at the result); the knot is the creature's own, at contact
         if (who === 'ren') {
@@ -79114,7 +79178,9 @@ RB.partyChoreo = (function () {
         const n = f.n || 1;
         ctx.kb = ctx.kb || {};
         const top = ctx.kb[i] != null ? ctx.kb[i] : H.fview(ctx, i).knots;
-        for (let j = 0; j < n && top - 1 - j >= 0; j++) Q.push({ at: at + j * 90, type: 'fx', name: 'knotRelease', d: 560, p: { i: top - 1 - j, foe: i } });
+        // (Read the Opening frees its two at once: they go together, in one shared burst — pKnotPair)
+        const gap = plan && plan.tech === 'nao' ? 0 : 90;
+        for (let j = 0; j < n && top - 1 - j >= 0; j++) Q.push({ at: at + j * gap, type: 'fx', name: 'knotRelease', d: 560, p: { i: top - 1 - j, foe: i } });
         Q.push({ at, type: 'fx', name: 'loosen', d: 600, p: { foe: i } });
         foeCue('release', 420);
         ctx.kb[i] = Math.max(0, top - n);
@@ -79155,10 +79221,16 @@ RB.partyChoreo = (function () {
           // creatures that had Heat, mist or Gathering — each condition its own way of leaving
           const v = ctx.view || {}, max = v.max || 0;
           const low = both.filter((x) => max && v[x] != null && v[x] < max);
-          if (low.length) { Q.push({ at: at - 120, type: 'fx', name: 'motes', d: 820, p: { who: low } }); for (const x of low) pose(x, 'soothed', null, 700, 40); }
+          if (low.length) {
+            Q.push({ at: at - 120, type: 'fx', name: 'motes', d: 820, p: { who: low } });
+            Q.push({ at: at - 80, type: 'fx', name: 'pRefill', d: 760, p: { who: low } });
+            for (const x of low) pose(x, 'soothed', null, 700, 40);
+          }
           const fs = v.foes ? (f.all && ctx.reach ? ctx.reach.foes : [i]) : [i];
           fs.forEach((k, n) => {
             const fv = H.fview(ctx, k) || {}, d0 = at + 150 + n * 70;
+            // the rinse over it (its own beat), then each condition leaving its own way
+            if (fv.heat || fv.shroud || fv.charged) Q.push({ at: d0 - 60, type: 'fx', name: 'pWash', d: 860, p: { foe: k, heat: !!fv.heat, mist: !!fv.shroud, gather: !!fv.charged } });
             if (fv.heat) Q.push({ at: d0, type: 'fx', name: 'pSteam', d: 700, p: { foe: k, wash: 1 } });
             if (fv.shroud) { Q.push({ at: d0, type: 'fx', name: 'pShroudClear', d: 820, p: { foe: k, by: 'water' } }); Q.push({ at: d0 + 40, type: 'fx', name: 'mistPart', d: 620, p: { foe: k } }); }
             if (fv.charged) Q.push({ at: d0 + 30, type: 'fx', name: 'scatter', d: 520, p: { foe: k } });
@@ -79166,7 +79238,8 @@ RB.partyChoreo = (function () {
         }
         if (w === 'ren') for (const x of both) Q.push({ at: at + (x === 'comp' ? 80 : 0), type: 'fx', name: 'sealForm', d: 520, p: { to: x } });
         if (w === 'suzu') for (const k of f.all && ctx.reach ? ctx.reach.foes : [i]) Q.push({ at: at + (k === i ? 0 : 90), type: 'fx', name: 'fizzle', d: 520, p: { foe: k } });
-        if (w === 'nao') Q.push({ at, type: 'fx', name: 'pSpot', d: 400, p: { from: 'comp', foe: i, done: 1 } });
+        // Nao: the opening read — the route's ring pulled tight round it, its move answered
+        if (w === 'nao') Q.push({ at, type: 'fx', name: 'pRead', d: 560, p: { foe: i } });
         return true;
       }
       case 'comp': {
@@ -79322,6 +79395,32 @@ var RB = (globalThis.RB = globalThis.RB || {});
     R(c, x - u, y - h / 2 + u, 2 * u, h - 2 * u, P.verm, a * 0.9);
   }
   function puff(c, x, y, r, u, col, a) { disc(c, x, y, Math.max(u, r), Math.max(u, r * 0.55), col, a); }
+  // Nao's courier route (pCourier, pThreadRoute): where it starts — the pencil's point when the sketch began,
+  // kept relative to his feet in art px so it stays put while the pencil moves on and follows the stage through
+  // a resize — and the shape of each leg: a high arc out over the party, a hump hopping from knot to knot, a
+  // rise up to the creature
+  function courierStart(e, A) {
+    const from = e.p.from || 'comp', f = A.pt(from, 'feet'), u = A.u;
+    if (!e._st) { const p = A.pt(from, 'release'); e._st = { dx: (p.x - f.x) / u, dy: (p.y - f.y) / u }; }
+    return { x: f.x + e._st.dx * u, y: f.y + e._st.dy * u };
+  }
+  function courierLeg(pts, i, A, thread) {
+    const a = pts[i], b = pts[i + 1], L = dist(a, b), last = !thread && i === pts.length - 2;
+    const bend = i === 0 ? -0.3 : last ? 0.3 : -0.5;
+    return (q) => qpt(a, b, bend * L, q);
+  }
+  // a courier's dashed line along fn up to `to`, at a fixed spacing (the dashes never crawl as it grows)
+  function courierDash(c, fn, L, to, u, a) {
+    if (a <= 0.01 || to <= 0) return;
+    const step = (1.2 * u) / (L || 1);
+    for (let j = 0, q = 0; q <= to; j++, q = j * step) {
+      if (j % 6 > 3) continue;
+      const p = fn(q);
+      R(c, p.x - 1.5 * u, p.y - u, 3 * u, 3 * u, '#3e2810', a * 0.85);
+      R(c, p.x - u, p.y - u, 2 * u, 2 * u, '#ffd860', a);
+      R(c, p.x - u, p.y - u, u, u, '#fff6d0', a);
+    }
+  }
   const sparkle = (c, x, y, r, u, col, a) => { R(c, x - u / 2, y - r, u, 2 * r, col, a); R(c, x - r, y - u / 2, 2 * r, u, col, a); };
 
   const fx = {
@@ -79452,6 +79551,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     pSteam(c, e, k, A, t, still) {
       const u = A.u, o = A.pt('foe', 'top');
       if (still) { puff(c, o.x, o.y - 6 * u, 6 * u, u, '#f4f6f8', 0.5 * (1 - k)); return; }
+      // (Clearwater Draught's washing: a fuller hiss of steam off the quenched Heat)
+      if (e.p.wash) for (let i = 0; i < 4; i++) { const s = seg(k, 0.05 + i * 0.06, 0.8 + i * 0.05); puff(c, o.x + (i - 1.5) * 12 * u + Math.sin(t / 140 + i) * 3 * u, o.y + 6 * u - ease(s) * (26 + i * 5) * u, (5 + 6 * s) * u, u, '#f4f8fc', 0.6 * bell(s)); }
       for (let i = 0; i < 5; i++) { const s = seg(k, i * 0.08, 0.7 + i * 0.06); puff(c, o.x + (i - 2) * 7 * u + Math.sin(t / 160 + i) * 2 * u, o.y - ease(s) * (14 + i * 4) * u, (3 + 4 * s) * u, u, e.p.wash ? '#e8f6ff' : '#f4f6f8', 0.55 * bell(s)); }
     },
     // Wind: curved paper trails swept from the hand past the creature, a few scraps carried with them
@@ -79547,12 +79648,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
     pJoin(c, e, k, A, t, still) {
       const u = A.u, a = A.pt('pc', 'release'), b2 = A.pt('comp', 'release'), d = e.p.to === 'foes' ? A.pt('foes', 'core') : A.pt('foe', 'core');
       const col2 = { nao: '#c8962e', mio: '#9ad0c0', ren: '#ffd27a', suzu: '#e8a0b8' }[e.p.who] || P.warm;
-      const fade = 1 - seg(k, 0.8, 1);
+      // (soft: a fine braid under a technique whose own carrier leads — Nao's route, Mio's pour)
+      const fade = (1 - seg(k, 0.8, 1)) * (e.p.soft ? 0.5 : 1), th = e.p.soft ? u : 2 * u;
       if (still) { path(c, (s) => qpt(a, d, -0.1 * dist(a, d), s), dist(a, d), 0, 1, u, P.warm, 0.7 * fade, 2); path(c, (s) => qpt(b2, d, -0.1 * dist(b2, d), s), dist(b2, d), 0, 1, u, col2, 0.7 * fade, 2); return; }
       const s = ease(seg(k, 0, 0.6));
       for (const [src, col, ph] of [[a, P.warm, 0], [b2, col2, Math.PI]]) {
         const L = dist(src, d);
-        path(c, (x) => { const q = qpt(src, d, -0.2 * L, x); return { x: q.x, y: q.y + Math.sin(x * Math.PI * 5 + ph + t / 90) * 2 * u * (1 - x) }; }, L, 0, s, u, col, fade, 1.2, 2 * u);
+        path(c, (x) => { const q = qpt(src, d, -0.2 * L, x); return { x: q.x, y: q.y + Math.sin(x * Math.PI * 5 + ph + t / 90) * 2 * u * (1 - x) }; }, L, 0, s, u, col, fade, 1.2, th);
       }
       const m = seg(k, 0.55, 0.85);
       if (m > 0) { halo(c, d.x, d.y, A.foeR * (0.4 + 0.4 * m), '255,226,160', 0.45 * bell(m)); sparkle(c, d.x, d.y, Math.round((3 + 4 * bell(m)) * u), u, '#ffffff', bell(m)); }
@@ -79643,15 +79745,215 @@ var RB = (globalThis.RB = globalThis.RB || {});
       }
     },
     // ---- the Harmony techniques (Harmony addendum §9) --------------------------------------------------
-    // Read the Opening: two knots freed together — a short ochre route links the two contacts (Nao's courier
-    // line), drawn from the first to the second; only on that creature
-    pRoute(c, e, k, A, t, still) {
-      const u = A.u, a = A.pt(e.p.from, 'core'), b = A.pt(e.p.to, 'core'), L = dist(a, b);
-      const fade = 1 - seg(k, 0.72, 1), s = still ? 1 : ease(seg(k, 0, 0.4));
-      const fn = (q) => qpt(a, b, -0.35 * L, q);
-      path(c, fn, L, 0, s, u, '#6a4a1c', 0.9 * fade, 1.1, 2 * u);
-      path(c, (q) => { const p = fn(q); return { x: p.x, y: p.y - u }; }, L, 0, s, u, '#e0b050', fade, 1.1, u);
-      if (!still) { const h = seg(k, 0.4, 0.75); if (h > 0) for (const p of [a, b]) sparkle(c, p.x, p.y, Math.round((2 + 2 * bell(h)) * u), u, '#fff0c0', bell(h) * fade); }
+    // Read the Opening: Nao's pencil sketches a courier's route in the air — dashed gold, out from where the
+    // pencil started, over the party and down to the knots that really come loose (a waypoint tick landing on
+    // each: two, or the one left), then up to the creature, where a ring closes round the opening. It is drawn
+    // at the pencil's pace (p.draw: the share of k the sketch takes; the legs take equal time, as the pencil's
+    // ticks do) and stays, lit, until the knots have gone (p.out). Only on that creature.
+    pCourier(c, e, k, A, t, still) {
+      const u = A.u, R0 = courierStart(e, A), pts = [R0].concat((e.p.way || []).map((id) => A.pt(id, 'core')), [A.pt('foe', 'core')]);
+      const n = pts.length - 1, draw = e.p.draw || 0.5, fade = 1 - seg(k, e.p.out || 0.8, 1);
+      const s = still ? 1 : cl(k / draw) * n; // legs done (fractional)
+      for (let i = 0; i < n; i++) {
+        const fn = courierLeg(pts, i, A), L = dist(pts[i], pts[i + 1]), to = cl(s - i);
+        if (to <= 0) break;
+        courierDash(c, fn, L, to, u, fade);
+      }
+      // the waypoint ticks: a pin drops onto each knot as the route reaches it, a ring round it
+      for (let i = 1; i < n; i++) {
+        const w = pts[i], land = still ? 1 : cl((s - i) * 2.5);
+        if (s < i) continue;
+        const y = w.y - 14 * u - (1 - ease(land)) * 10 * u;
+        ell(c, w.x, w.y + u, 9 * u, 4 * u, 2 * u, '#3e2810', 0.7 * fade * land);
+        ell(c, w.x, w.y, 9 * u, 4 * u, u, '#ffd860', fade * (0.4 + 0.6 * land));
+        R(c, w.x - u, y, 2 * u, 9 * u, '#3e2810', fade);
+        R(c, w.x - 2 * u, y - 2 * u, 4 * u, 4 * u, '#3e2810', fade);
+        R(c, w.x - u, y - u, 2 * u, 2 * u, '#ffd860', fade);
+        if (!still && land < 1) sparkle(c, w.x, y, Math.round((2 + 2 * bell(land)) * u), u, '#fff0c0', bell(land) * fade);
+      }
+      // the route's end: a dashed ring closes round the opening
+      if (s >= n || still) {
+        const o = pts[n], r = Math.max(8 * u, A.foeR * 0.32), cl2 = still ? 1 : ease(seg(k, draw, draw + 0.12));
+        ell(c, o.x, o.y + u, r, r * 0.75, 2 * u, '#3e2810', 0.8 * fade, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * cl2);
+        ell(c, o.x, o.y, r, r * 0.75, u, '#ffd860', fade, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * cl2);
+      }
+      // the head: the pencil's point running ahead of the dashes
+      if (!still && s < n) {
+        const i = Math.floor(s), q = courierLeg(pts, i, A)(s - i);
+        R(c, q.x - u, q.y - u, 2 * u, 2 * u, '#fff6d8', 1);
+        sparkle(c, q.x, q.y, 2 * u, u, '#ffffff', 0.8);
+      }
+    },
+    // …your thread follows the route: out from your strip to the first knot it marked, along the route's own
+    // hops to the next, then drawn taut
+    pThreadRoute(c, e, k, A, t, still) {
+      const u = A.u, a = A.pt(e.p.from || 'pc', 'release'), ws = (e.p.way || []).map((id) => A.pt(id, 'core'));
+      if (!ws.length) return;
+      const fade = 1 - seg(k, 0.82, 1), pts = [a].concat(ws);
+      const L0 = dist(a, ws[0]), legs = pts.length - 1;
+      const head = still ? legs : ease(seg(k, 0, 0.6)) * legs, pull = still ? 1 : ease(seg(k, 0.55, 0.8));
+      for (let i = 0; i < legs; i++) {
+        const to = cl(head - i);
+        if (to <= 0) break;
+        const L = i ? dist(pts[i], pts[i + 1]) : L0;
+        const base = i ? courierLeg(pts, i, A, true) : (q) => qpt(a, ws[0], (-0.22 + 0.14 * pull) * L0, q);
+        const wob = (1 - pull) * 1.6 * u;
+        const fn = (q) => { const p = base(q); return { x: p.x, y: p.y + Math.sin(q * Math.PI * 3 + t / 110) * wob * Math.sin(Math.PI * q) }; };
+        path(c, fn, L, 0, to, u, P.ink2, fade * 0.9, 1.2, 2 * u);
+        path(c, (q) => { const p = fn(q); return { x: p.x, y: p.y - u }; }, L, 0, to, u, P.cord, fade, 1.2);
+      }
+      if (!still && pull > 0) for (const w of ws) sparkle(c, w.x, w.y, Math.round((2 + 2 * bell(pull)) * u), u, '#ffffff', fade * bell(pull));
+    },
+    // Read the Opening: the two knots come loose together — one shared burst: a ring round both, the hop
+    // between them flaring, rays from between them, flecks off both at once (only when two really do)
+    pKnotPair(c, e, k, A, t, still) {
+      const u = A.u, a = A.pt(e.p.a, 'core'), b = A.pt(e.p.b, 'core'), L = dist(a, b), m = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+      const fade = 1 - seg(k, 0.55, 1);
+      if (still) { ell(c, m.x, m.y, L / 2 + 8 * u, 7 * u, u, '#ffd860', 0.85 * (1 - seg(k, 0.6, 1))); return; }
+      const s = ease(seg(k, 0, 0.55));
+      halo(c, m.x, m.y, L * 0.5 + (8 + 10 * s) * u, '255,230,150', 0.55 * bell(seg(k, 0, 0.6)));
+      ell(c, m.x, m.y + u, L / 2 + (6 + 18 * s) * u, (5 + 9 * s) * u, 2 * u, '#c8962e', 0.9 * fade);
+      ell(c, m.x, m.y, L / 2 + (6 + 18 * s) * u, (5 + 9 * s) * u, u, '#fff6d8', fade);
+      const hop = (q) => qpt(a, b, -0.5 * L, q), fl = bell(seg(k, 0, 0.45));
+      path(c, hop, L, 0, 1, u, '#ffffff', fl, 1, 2 * u);
+      for (let i = 0; i < 10; i++) {
+        const an = -Math.PI / 2 + (i - 4.5) * 0.33, r0 = 4 * u + s * (12 + hs(i, 6) * 10) * u;
+        R(c, m.x + Math.cos(an) * (L / 2 + r0), m.y + Math.sin(an) * r0 - u, 2 * u, u, i % 2 ? '#ffd860' : '#fff0c0', fade);
+      }
+      for (const p of [a, b]) {
+        sparkle(c, p.x, p.y - 2 * u, Math.round((3 + 3 * bell(seg(k, 0, 0.5))) * u), u, '#ffffff', bell(seg(k, 0, 0.5)));
+        for (let i = 0; i < 5; i++) { const an = -Math.PI / 2 + (i - 2) * 0.6, r = s * (10 + hs(i, p === a ? 2 : 3) * 8) * u; R(c, p.x + Math.cos(an) * r, p.y + Math.sin(an) * r + easeIn(k) * 8 * u, 2 * u, 2 * u, i % 2 ? P.paper : '#ffd860', fade); }
+      }
+    },
+    // Read the Opening, its move answered (the technique's result on the creature): the route's ring pulled
+    // tight round the opening, four pins closing in on it, a short gold flash
+    pRead(c, e, k, A, t, still) {
+      const u = A.u, o = A.pt('foe', 'core'), r0 = Math.max(8 * u, A.foeR * 0.32);
+      const fade = 1 - seg(k, 0.6, 1), s = still ? 0.6 : ease(seg(k, 0, 0.45)), r = r0 * (1 - 0.35 * s);
+      if (!still) halo(c, o.x, o.y, r0 * 1.4, '255,226,150', 0.45 * bell(seg(k, 0, 0.5)));
+      ell(c, o.x, o.y, r, r * 0.75, 2 * u, '#ffd860', fade);
+      for (let i = 0; i < 4; i++) {
+        const an = Math.PI / 4 + (i * Math.PI) / 2, ro = r + (10 - 6 * s) * u;
+        path(c, (q) => ({ x: o.x + Math.cos(an) * (ro - q * 6 * u), y: o.y + Math.sin(an) * (ro - q * 6 * u) * 0.75 }), 6 * u, 0, 1, u, '#3e2810', fade, 1, 2 * u);
+      }
+    },
+    // Clearwater Draught: the pour, to you both — a clear stream from the vial's lip arcs up over the party and
+    // breaks into a shimmering fall of drops over each of you, with small ripples at your feet (the pour is the
+    // act; the restoring is shown at the result, and only on one of you who was below full)
+    pCascade(c, e, k, A, t, still) {
+      const u = A.u, a = A.pt(e.p.from || 'comp', 'release'), who = e.p.who && e.p.who.length ? e.p.who : ['pc'];
+      const hd = who.map((w) => A.pt(w, 'head')), ft = who.map((w) => A.pt(w, 'feet'));
+      const x0 = Math.min(...hd.map((h) => h.x)) - 14 * u, x1 = Math.max(...hd.map((h) => h.x)) + 14 * u, top = Math.min(...hd.map((h) => h.y)) - 10 * u;
+      const floor = Math.max(...ft.map((f) => f.y)), fade = 1 - seg(k, 0.84, 1);
+      // a fountain's arc: from the lip high over the middle of the party, down to where it breaks over the far one
+      const B = { x: x1 - 2 * u, y: top }, C = { x: (a.x + B.x) / 2, y: Math.min(a.y, B.y) - 60 * u };
+      const arc = (q) => ({ x: (1 - q) * (1 - q) * a.x + 2 * q * (1 - q) * C.x + q * q * B.x, y: (1 - q) * (1 - q) * a.y + 2 * q * (1 - q) * C.y + q * q * B.y });
+      const L = dist(a, C) + dist(C, B);
+      const dropX = (i, n) => x0 + ((i + 0.5) / n) * (x1 - x0);
+      if (still) {
+        path(c, arc, L, 0, 1, u, '#4a98b8', 0.75 * fade, 1.6, 2 * u);
+        path(c, (q) => { const p = arc(q); return { x: p.x, y: p.y - u }; }, L, 0, 1, u, '#d8f4fc', 0.85 * fade, 1.6, u);
+        for (let i = 0; i < 10; i++) R(c, dropX(i, 10), top + (6 + (i % 3) * 12) * u, u, 2 * u, i % 2 ? '#ffffff' : '#9ad0c0', 0.85 * fade);
+        for (const f of ft) { ell(c, f.x, f.y, 14 * u, 4 * u, u, '#d8f4fc', 0.75 * fade); ell(c, f.x, f.y, 8 * u, 2 * u, u, '#9ad0c0', 0.6 * fade); }
+        return;
+      }
+      // the stream: its head runs out over the party, its tail leaves the lip as the pour ends — a clear ribbon
+      // with a dark edge under it and a bright line along its top
+      const hS = ease(seg(k, 0, 0.24)), tS = easeIn(seg(k, 0.34, 0.58));
+      if (hS > tS) {
+        path(c, (q) => { const p = arc(q); return { x: p.x, y: p.y + u }; }, L, tS, hS, u, '#3e88a8', 0.85, 0.8, 3 * u);
+        path(c, arc, L, tS, hS, u, '#bfe8f4', 1, 0.8, 2 * u);
+        path(c, (q) => { const p = arc(q); return { x: p.x, y: p.y - u }; }, L, tS, hS, u, '#ffffff', 0.95, 2.2, u);
+        const hp = arc(hS);
+        if (hS < 1) sparkle(c, hp.x, hp.y, 2 * u, u, '#ffffff', 0.9);
+      }
+      // where it breaks over you: a bright burst, then a shimmer hanging over the party while it falls
+      const br = seg(k, 0.2, 0.42);
+      if (br > 0 && br < 1) { halo(c, B.x, B.y, (8 + 10 * br) * u, '220,246,255', 0.55 * bell(br)); sparkle(c, B.x, B.y, Math.round((3 + 3 * bell(br)) * u), u, '#ffffff', bell(br)); }
+      const veil = bell(seg(k, 0.22, 0.8));
+      if (veil > 0.02) for (let i = 0; i < 11; i++) { const x = dropX(i, 11), ln = (floor - top) * (0.6 + 0.3 * hs(i, 5)); path(c, (q) => ({ x: x + Math.sin(q * 6 + i) * u, y: top + q * ln }), ln, 0, 1, u, '#d8f4fc', 0.3 * veil, 2.5); }
+      // the fall: streaks and drops over the whole width of the party, shimmering as they fall to the floor
+      for (let i = 0; i < 34; i++) {
+        const ph = hs(i, 11), st = 0.2 + ph * 0.42, s2 = seg(k, st, st + 0.18);
+        if (s2 <= 0 || s2 >= 1) continue;
+        const x = dropX(i, 34) + Math.sin(i * 2.3) * 2 * u, y = top + (hs(i, 3) - 0.5) * 8 * u + easeIn(s2) * (floor - top);
+        const tw = (Math.floor(t / 60) + i) % 3;
+        if (i % 2) { R(c, x, y - 7 * u, u, 5 * u, '#bfe8f4', 0.8 * (1 - s2 * 0.4)); R(c, x, y - 2 * u, u, 2 * u, '#ffffff', 1 - s2 * 0.3); }
+        else R(c, x, y, 2 * u, 2 * u + (i % 4 ? 0 : u), tw === 0 ? '#ffffff' : tw === 1 ? '#bfe8f4' : '#7cc8dc', 1 - s2 * 0.35);
+        if (tw === 0 && i % 3 === 0) sparkle(c, x, y, 2 * u, u, '#ffffff', 0.9);
+      }
+      // ripples at each of your feet as the drops land, a few splashes thrown up
+      ft.forEach((f, j) => {
+        for (let r = 0; r < 3; r++) {
+          const s3 = seg(k, 0.34 + j * 0.05 + r * 0.1, 0.78 + j * 0.05 + r * 0.1);
+          if (s3 <= 0 || s3 >= 1) continue;
+          ell(c, f.x, f.y, (4 + 18 * ease(s3)) * u, (1.5 + 5 * ease(s3)) * u, u, r === 1 ? '#bfe8f4' : '#ffffff', (1 - s3) * fade);
+          if (r === 0) for (let q = 0; q < 4; q++) { const an = -Math.PI / 2 + (q - 1.5) * 0.7; R(c, f.x + Math.cos(an) * ease(s3) * 10 * u, f.y - bell(s3) * (5 + q) * u, u, u, '#ffffff', 1 - s3); }
+        }
+      });
+    },
+    // …and your ink carries one drop of it to the knot: a clear drop riding a short ink trail, landing in a
+    // small splash on the knot (it lands at p.land)
+    pDrop(c, e, k, A, t, still) {
+      const u = A.u, a = A.pt(e.p.from || 'pc', 'release'), b = A.pt(e.p.to, 'core'), L = dist(a, b), land = e.p.land || 0.5;
+      const fade = 1 - seg(k, 0.85, 1);
+      if (still) { disc(c, b.x, b.y - 4 * u, 2 * u, 2 * u, '#bfe8f4', 0.85 * fade); ell(c, b.x, b.y, 7 * u, 2.5 * u, u, '#bfe8f4', 0.7 * fade); return; }
+      const s = ease(seg(k, 0, land)), fn = (q) => qpt(a, b, -0.28 * L, q);
+      if (s < 1) {
+        path(c, fn, L, Math.max(0, s - 0.35), s, u, P.ink2, 0.85, 1.6, u);
+        const q = fn(s);
+        disc(c, q.x, q.y, 2 * u, 2 * u, '#6ab8d0', 1);
+        disc(c, q.x, q.y - u, Math.max(u, 1.4 * u), Math.max(u, 1.4 * u), '#d8f4fc', 1);
+        R(c, q.x - u, q.y - 2 * u, u, u, '#ffffff', 1);
+      }
+      const h = seg(k, land, 1);
+      if (h > 0) {
+        ell(c, b.x, b.y, (3 + 10 * ease(h)) * u, (1.5 + 3 * ease(h)) * u, u, '#d8f4fc', (1 - h) * fade);
+        for (let i = 0; i < 5; i++) { const an = -Math.PI / 2 + (i - 2) * 0.5, r = ease(h) * (6 + hs(i, 9) * 6) * u; R(c, b.x + Math.cos(an) * r, b.y + Math.sin(an) * r + easeIn(h) * 8 * u, u, 2 * u, i % 2 ? '#ffffff' : '#9ad0c0', 1 - h); }
+      }
+    },
+    // the restoring of Clearwater Draught on one of you who was below full: clear water rising round you from
+    // the feet, a ring of it at the chest (with the motes; never on one already full)
+    pRefill(c, e, k, A, t, still) {
+      const u = A.u;
+      for (const w of e.p.who || []) {
+        const f = A.pt(w, 'feet'), o = A.pt(w, 'chest'), H = f.y - o.y;
+        if (still) { ell(c, o.x, o.y, 10 * u, 6 * u, u, '#bfe8f4', 0.8 * (1 - seg(k, 0.6, 1))); continue; }
+        const s = ease(seg(k, 0, 0.6)), fade = 1 - seg(k, 0.7, 1);
+        for (let j = 0; j < 4; j++) {
+          const y = f.y - s * H * (1 - j * 0.18);
+          if (y > f.y) continue;
+          path(c, (q) => ({ x: o.x - 9 * u + q * 18 * u, y: y + Math.sin(q * Math.PI * 2 + t / 120 + j) * u }), 18 * u, 0, 1, u, j ? '#9ad0c0' : '#ffffff', (j ? 0.45 : 0.8) * fade, 2);
+        }
+        const rg = seg(k, 0.5, 1);
+        if (rg > 0) ell(c, o.x, o.y, (6 + 8 * ease(rg)) * u, (4 + 5 * ease(rg)) * u, u, '#d8f4fc', 0.8 * (1 - rg));
+      }
+    },
+    // the washing of Clearwater Draught on a creature that really had Heat, mist or Gathering: clear water
+    // rinses down over it, its front shimmering, and what it carries off shows how each leaves — embers
+    // quenched (Heat), the gathered motes carried down (Gathering), the mist pressed down and out (mist)
+    pWash(c, e, k, A, t, still) {
+      const u = A.u, o = A.pt('foe', 'core'), top = A.pt('foe', 'top'), b = A.pt('foe', 'base'), w = Math.max(A.foeR, 16 * u);
+      const y0 = Math.min(top.y, o.y - A.foeR) - 6 * u, y1 = Math.max(b.y, o.y + A.foeR * 0.6), fade = 1 - seg(k, 0.75, 1);
+      if (still) { for (let i = 0; i < 7; i++) R(c, o.x - w + ((i + 0.5) / 7) * 2 * w, o.y - A.foeR * 0.2 + (i % 2) * 8 * u, u, 3 * u, '#bfe8f4', 0.75 * fade); return; }
+      const s = ease(seg(k, 0, 0.55)), fy = y0 + s * (y1 - y0), front = fade * (1 - seg(k, 0.5, 0.65));
+      // the falling front — a clear sheet with a bright edge — and the rain behind it
+      if (front > 0.02) {
+        for (let r = 1; r <= 4; r++) path(c, (q) => ({ x: o.x - w + q * 2 * w, y: fy - r * 3 * u + Math.sin(q * Math.PI * 4 + t / 90 + r) * 2 * u }), 2 * w, 0, 1, u, '#bfe8f4', 0.32 * front * (1 - r * 0.18), 1.5, 2 * u);
+        path(c, (q) => ({ x: o.x - w + q * 2 * w, y: fy + Math.sin(q * Math.PI * 4 + t / 90) * 2 * u }), 2 * w, 0, 1, u, '#ffffff', 0.95 * front, 1.2, 2 * u);
+      }
+      for (let i = 0; i < 18; i++) {
+        const x = o.x - w + ((i + 0.5) / 18) * 2 * w, ph = hs(i, 13), yy = y0 + ((ph + t / 420) % 1) * (fy - y0);
+        if (fy - y0 < 4 * u) break;
+        R(c, x, yy, u, 5 * u, i % 3 ? '#bfe8f4' : '#ffffff', 0.85 * fade);
+      }
+      const d = seg(k, 0.3, 1);
+      if (d > 0) {
+        if (e.p.heat) for (let i = 0; i < 6; i++) { const x = o.x + (hs(i, 4) - 0.5) * w * 1.4, y = o.y - A.foeR * 0.3 + easeIn(d) * 26 * u + i * 2 * u; R(c, x, y, 2 * u, 2 * u, d < 0.4 ? (i % 2 ? P.ember : P.ember2) : '#8a8490', 1 - d); }
+        if (e.p.gather) for (let i = 0; i < 6; i++) { const x = o.x + (hs(i, 7) - 0.5) * w * 1.6, y = o.y + easeIn(d) * 34 * u - (i % 3) * 3 * u; R(c, x, y, 2 * u, 2 * u, P.amber, 1 - d); }
+        if (e.p.mist) for (let i = 0; i < 3; i++) puff(c, o.x + (i - 1) * w * 0.7 + (i - 1) * ease(d) * 16 * u, b.y + 2 * u + ease(d) * 6 * u, (8 + 6 * d) * u, u, P.mist, 0.4 * (1 - d));
+        ell(c, b.x, b.y + 2 * u, (6 + 22 * ease(d)) * u, (2 + 5 * ease(d)) * u, u, '#d8f4fc', 0.7 * (1 - d));
+      }
     },
     // Curtain Call: the thread swung round the opening like a stage curtain — a band of cloth (vermilion,
     // its folds in stripes, a gold hem) leaving your hand, sweeping over and past the creature, then hooking

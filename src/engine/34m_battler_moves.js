@@ -552,21 +552,37 @@ RB.battlerMoves = (function () {
   // Nao drops his weight, steps and cuts; Mio measures, uncorks and pours; Ren plants, raises the lamp and
   // draws a level plane; Suzu steps back and turns a full twirl on the spot (the rig's own side, front and
   // back views — `turn` — never a mirrored costume), plants and opens her arm.
-  // Nao — Read the Opening: the centre of balance lowered, head and shoulders on the creature, a hand on
-  // the satchel; a short step in (the foot lifted), the flat hand cutting across the opening, edge first,
-  // finishing in a precise point at the knot; then the hand lowers and he turns to you with a nod.
-  const NAO_A = { pelvis: [0.4, -5.6, 0.2], spinePitch: 22, spineYaw: 12, headYaw: 14, headPitch: -14, headRoll: -2, handR: [6.4, 36.4, 9.4], elbowR: [1, -0.8, -0.4], handShapeR: 'flat', palmR: [-0.4, -0.6, 0.6], handL: [-9.4, 27.4, -5.6], handShapeL: 'open', palmL: [0.3, -0.5, -1], hairLag: 0.6 };
+  // Nao — Read the Opening: a courier who reads routes. His pencil drawn from behind his ear (the elbow up, the
+  // weight dropped); turned sharply side-on to the creature (`turn`: the rig's own side view, read from behind),
+  // a step in, the pencil arm out high, the other back for balance — the pencil sketches the route out to it in
+  // the air, two small ticks where its two knots will come loose, and stays at its end; then the pencil goes
+  // back behind his ear with a glance to you, a short nod, and the stance.
+  const NAO_EAR = { turn: 8, pelvis: [0.2, -4.4, 0], spinePitch: 14, spineYaw: 2, spineRoll: 2, headYaw: 4, headPitch: -6, headRoll: -7, handR: [11.6, 60.4, -2.4], elbowR: [1, 0.2, -0.3], handShapeR: 'pinch', palmR: [-1, 0, 0.1], handL: [-9.2, 27.6, -5.4], handShapeL: 'open', palmL: [0.3, -0.5, -1] };
+  const NAO_A = { turn: 26, pelvis: [0.2, -5.8, 0], spinePitch: 20, spineYaw: 6, spineRoll: 0, headYaw: 6, headPitch: -12, headRoll: -2, handR: [9.8, 54.8, 12.6], elbowR: [1, -0.2, -0.6], handShapeR: 'pinch', palmR: [-0.6, 0, 0.8], handL: [-9.4, 27.4, -5.6], elbowL: [-1, 0.3, 0.3], handShapeL: 'open', palmL: [0.3, -0.5, -1], hairLag: 0.6, prop: { pencil: 1 } };
   const NAO_K = {
-    a: W2(NAO_A, { footR: [6.6, 0, 5.4], footRYaw: 20 }),
-    step: { footR: [8.8, 0, 9.8], footRYaw: 16, pelvis: [1.4, -5.0, 2.8], spinePitch: 24, spineYaw: 10, headYaw: 12, headPitch: -12, headRoll: -2, handR: [4.4, 47.2, 11.2], elbowR: [1, -0.6, -0.2], handShapeR: 'flat', palmR: [-0.2, -1, 0.3], handL: [-9.4, 27.4, -5.6], hairLag: 0.2 },
-    cut: { footR: [8.8, 0, 9.8], footRYaw: 16, pelvis: [1.8, -4.8, 3.2], spinePitch: 22, spineYaw: 22, headYaw: 10, headPitch: -9, headRoll: 0, handR: [15.4, 40.4, 19.2], elbowR: [1, -0.4, -0.2], handShapeR: 'flat', palmR: [-0.3, -0.8, 0.4], handL: [-9.4, 27.4, -5.6], hairLag: 0 },
+    // side-on, the right foot stepped in, leaning into it; the pencil arm raised to the route's start, the
+    // left arm swung back for balance
+    out: { turn: 54, footR: [1.2, 0, 9.6], footRYaw: 4, footL: [-0.3, 0, -6.5], footLYaw: -50, pelvis: [1.2, -4.8, 2.6], spinePitch: 18, spineYaw: 0, spineRoll: 0, headYaw: -6, headPitch: -14, headRoll: 0, handR: [6.8, 55.6, 13.4], elbowR: [1, -0.2, -0.6], handShapeR: 'pinch', palmR: [-0.6, 0, 0.8], handL: [-7.4, 33.6, -11.4], elbowL: [-1, -0.4, 0.2], handShapeL: 'open', palmL: [0, -0.6, -1], hairLag: 0.2, prop: { pencil: 1 } },
   };
-  NAO_K.point = W2(NAO_K.cut, { handR: [15.8, 41.8, 19.8], handShapeR: 'point', palmR: [-1, 0, 0], headPitch: -8 });
+  // the sketch: the pencil's way out along the route, dipping twice (the ticks on the knots), then the reach to
+  // its end — "there"
+  const NAO_SKETCH = [[6.8, 55.6, 13.4], [8.0, 57.4, 17.2], [8.6, 52.8, 19.4], [9.0, 56.2, 20.6], [9.6, 52.6, 22.0], [10.0, 56.0, 22.8], [10.6, 59.4, 24.2]];
+  NAO_K.end = W2(NAO_K.out, { handR: NAO_SKETCH[6], headPitch: -18, spinePitch: 22, pelvis: [1.6, -4.6, 3.2], handL: [-6.6, 31.6, -12.6] });
   // Mio — Clearwater Draught: the vial from the bottles at her hip raised to eye level, the other hand
-  // cupped under it (a check of the measure); steadied, uncorked with the thumb, tipped into your rising ink
-  // with the cupping hand guiding the stream; then a glance to you, the cork back, the vial to her hip.
-  const MIO_A = { handR: [6.2, 52, 10.4], elbowR: [1, -0.9, -0.4], handShapeR: 'cup', palmR: [-0.8, 0, 0.4], handL: [4.6, 47.4, 10.8], elbowL: [-1, -0.9, -0.3], handShapeL: 'cup', palmL: [0, 1, 0.2], headYaw: 6, headPitch: -8, spinePitch: 4, spineYaw: 6, pelvis: [0, -1.4, 0.2], prop: { vial: 1, cork: 0, vialTilt: 0 } };
-  const MIO_POUR = { handR: [13.6, 45.6, 12.8], elbowR: [1, -0.7, -0.4], palmR: [-0.6, 0, 0.6], handL: [11.0, 41.6, 13.8], elbowL: [-1, -0.8, -0.1], palmL: [0, 1, 0.2], headYaw: 24, headPitch: 2, spinePitch: 9, spineYaw: 20, pelvis: [0.6, -1.8, 0.8], prop: { vial: 1, cork: 1, vialTilt: 100 } };
+  // cupped under it (a check of the measure), turning so the action reads; uncorked with the thumb; then the
+  // vial lifted high over her head, side-on, up on her toes, and tipped in one controlled pour — the stream
+  // arcs up over the two of you — the free hand open and spread out over you both, guiding where it falls;
+  // then the cork back, the vial to her hip and a small satisfied nod. In this technique the vial is drawn
+  // larger (vialBig), so its one object reads at play scale.
+  const MIO_A = { turn: 26, handR: [8.6, 53.2, 14.2], elbowR: [1, -0.9, -0.4], handShapeR: 'cup', palmR: [-0.8, 0, 0.4], handL: [7.0, 48.6, 14.4], elbowL: [-1, -0.9, -0.3], handShapeL: 'cup', palmL: [0, 1, 0.2], headYaw: 6, headPitch: -8, spinePitch: 4, spineYaw: 6, pelvis: [0, -1.4, 0.2], prop: { vial: 1, vialBig: 1, cork: 0, vialTilt: 0 } };
+  const MIO_K = {
+    // uncorked: the thumb of the cupping hand at the vial's mouth, the cork drawn
+    open: W2(MIO_A, { handR: [8.8, 53.6, 14.0], handL: [8.4, 56.4, 14.4], handShapeL: 'pinch', palmL: [0.2, 1, 0.2], headPitch: -10, prop: { vial: 1, vialBig: 1, cork: 1, vialTilt: 0 } }),
+    // raised high: the arm up over her head, side-on, risen onto her toes, leaning back a little to look up
+    high: { turn: 40, handR: [8.8, 66.4, 7.6], elbowR: [1, 0.4, -0.4], handShapeR: 'cup', palmR: [-0.6, 0.2, 0.6], handL: [4.2, 48.4, 11.6], elbowL: [-1, -0.8, -0.1], handShapeL: 'open', palmL: [0.2, -0.6, 1], headYaw: 4, headPitch: -18, spinePitch: -2, spineYaw: 4, spineRoll: -2, pelvis: [0.2, 0.2, 0.4], footRLift: 0, prop: { vial: 1, vialBig: 1, cork: 1, vialTilt: 20 } },
+  };
+  // tipped: the pour — the vial over, the free hand spread out over you both
+  MIO_K.pour = W2(MIO_K.high, { handR: [11.2, 65.2, 10.4], elbowR: [1, 0.3, -0.5], handL: [9.4, 50.6, 15.6], elbowL: [-1, -0.6, -0.1], handShapeL: 'spread', palmL: [0.2, -0.8, 0.6], headYaw: 12, headPitch: -12, spineYaw: 10, prop: { vial: 1, vialBig: 1, cork: 1, vialTilt: 112 } });
   // Ren — Lantern Ward: feet planted, knees down, the lamp drawn in before his chest; raised high at his side
   // and shaded (its shutter turned to the creatures, the light thrown back over the pair); the flat right
   // hand drawing a level line at chest height — the plane; then the lamp lowered and a check to either side.
@@ -633,14 +649,27 @@ RB.battlerMoves = (function () {
         x: () => ({ footR: [9.8, 0, 4.4], footRYaw: 30, pelvis: [1.8, -3.6, 0.6], spinePitch: 12, spineYaw: 12, headYaw: 22, headPitch: -2, handR: [15.6, 44, 5.6], elbowR: [1, -0.6, -0.6], handShapeR: 'open', palmR: [1, 0, 0.2], hairSway: -0.6 }),
         snap: 0.3, release: 0.35,
       },
-      // Read the Opening (the technique; see NAO_K)
+      // Read the Opening (the technique; see NAO_EAR, NAO_A, NAO_K, NAO_SKETCH). Anticipation: the hand up to
+      // his ear, the pencil taken (0.42–0.56), brought out before his shoulder as he turns. Signature: 0–0.18
+      // side-on and stepped in, the pencil at the route's start; 0.18–0.9 the sketch out along the route (the
+      // ticks at 0.42 and 0.66 — the cue at the first); 0.9–1 at its end, held. Recovery: the pencil back behind
+      // his ear with a glance to you (0.4–0.5), a short nod (0.76), the stance.
       opening: {
         a: NAO_A,
-        x: (k) => W2(track(k, [[0, NAO_K.a], [0.3, NAO_K.step], [0.58, NAO_K.cut], [0.7, NAO_K.point], [1, NAO_K.point]]), {
-          footRLift: 2.6 * bump(k, 0, 0.3), hairSway: -1.2 * bump(k, 0.3, 0.75), clothSway: -0.8 * bump(k, 0.25, 0.7),
-        }),
-        rec: [{ at: 0.5, o: { footR: [7.6, 0, 7.4], footRYaw: 18, pelvis: [0.8, -3.4, 1.4], spinePitch: 16, spineYaw: 14, handR: [10.8, 33.4, 9.2], elbowR: [1, -0.8, -0.4], handShapeR: 'relaxed', palmR: [-0.8, -0.4, 0.3], headYaw: 44, headPitch: 4, headRoll: 3 } }],
-        qk: 16, snap: 0, release: 0.62,
+        ant: [{ at: 0.42, o: NAO_EAR }, { at: 0.56, o: W2(NAO_EAR, { prop: { pencil: 1 } }) }],
+        x: (k) => {
+          const P = track(k, [[0, NAO_A], [0.18, NAO_K.out], [0.86, NAO_K.out], [1, NAO_K.end]]);
+          if (k > 0.18) P.handR = path(NAO_SKETCH, seg(k, 0.18, 0.9));
+          return W2(P, {
+            footRLift: 1.8 * bump(k, 0.02, 0.2), hairSway: 1.4 * bump(k, 0, 0.3) - 0.6 * bump(k, 0.8, 1), clothSway: 1.0 * bump(k, 0, 0.32), hairLag: 0.5 * bump(k, 0.84, 1),
+          });
+        },
+        rec: [
+          { at: 0.4, o: W2(NAO_EAR, { turn: 16, footR: [6.6, 0, 5.4], footRYaw: 20, headYaw: 40, headPitch: -4, headRoll: -4, handL: [-9.2, 28.8, -5.2], elbowL: [-1, 0.3, 0.3], prop: { pencil: 1 } }) },
+          { at: 0.5, o: W2(NAO_EAR, { turn: 14, footR: [6.6, 0, 5.4], footRYaw: 20, headYaw: 42, headPitch: -2, headRoll: -3, handL: [-9.2, 28.8, -5.2], elbowL: [-1, 0.3, 0.3], prop: { pencil: 0 } }) },
+          { at: 0.76, o: { turn: 0, pelvis: [0.6, -3.4, 0.8], spinePitch: 17, spineYaw: 8, spineRoll: 0, headYaw: 36, headPitch: 10, headRoll: 3, handR: [10.6, 31.2, 8.4], elbowR: [1, -0.8, -0.6], handShapeR: 'relaxed', palmR: [-0.8, -0.4, 0.3], prop: { pencil: 0 } } },
+        ],
+        qk: 24, snap: 0, release: 0.42,
       },
     },
     mio: {
@@ -676,18 +705,23 @@ RB.battlerMoves = (function () {
         x: (k) => ({ footR: [9.8, 0, 4.6], footRYaw: 26, pelvis: [1.8, -1.6, 0.4], spineYaw: 14, spinePitch: 8, headYaw: 26, headPitch: 2, handR: [15.2, 40, 7.6], elbowR: [1, -0.6, -0.6], handShapeR: 'cup', handL: [6.4, 44.6, 6.2], handShapeL: 'open', palmL: [1, 0, 0.2], elbowL: [-1, -0.8, 0], prop: { vial: 1, cork: 1, vialTilt: 55 * ease(k) } }),
         snap: 0.3, release: 0.45,
       },
-      // Clearwater Draught (the technique; see MIO_A, MIO_POUR)
+      // Clearwater Draught (the technique; see MIO_A, MIO_K). Anticipation: a hand to the bottles at her hip, the
+      // vial raised to eye level and cupped as she turns. Signature: uncorked (0.14); lifted high over her head,
+      // side-on (0.38); tipped over — the cue at 0.45, as the stream leaves — and poured, the free hand spread
+      // over you both (0.6), held pouring. Recovery: the cork back before her chest (0.3); the vial at her hip
+      // and a small satisfied nod (0.5); her head up again (0.72); the stance.
       draught: {
         a: MIO_A,
-        ant: [{ at: 0.42, o: { handR: [8.6, 27.4, 3.6], elbowR: [1, -0.6, -0.4], handShapeR: 'cup', headPitch: 12, headYaw: 16, prop: { vial: 1 } } }],
-        x: (k) => W2(track(k, [[0, MIO_A], [0.16, W2(MIO_A, { handR: [6.2, 51.2, 10.8], prop: { vial: 1, cork: 1, vialTilt: 0 } })], [0.62, W2(MIO_A, MIO_POUR)], [1, W2(MIO_A, MIO_POUR)]]), {
-          handShapeR: 'cup', handShapeL: k < 0.4 ? 'cup' : 'flat', hairLag: 0.4 * bump(k, 0.2, 0.7),
+        ant: [{ at: 0.42, o: { turn: 8, handR: [8.6, 27.4, 3.6], elbowR: [1, -0.6, -0.4], handShapeR: 'cup', headPitch: 12, headYaw: 16, prop: { vial: 1, vialBig: 1 } } }],
+        x: (k) => W2(track(k, [[0, MIO_A], [0.14, MIO_K.open], [0.38, MIO_K.high], [0.6, MIO_K.pour], [1, W2(MIO_K.pour, { prop: { vial: 1, vialBig: 1, cork: 1, vialTilt: 122 } })]]), {
+          handShapeR: 'cup', handShapeL: k < 0.08 ? 'cup' : k < 0.3 ? 'pinch' : k < 0.5 ? 'open' : 'spread', hairLag: 0.8 * bump(k, 0.14, 0.5) - 0.4 * bump(k, 0.45, 0.8), clothSway: 0.6 * bump(k, 0.14, 0.6),
         }),
         rec: [
-          { at: 0.32, o: { handR: [9.4, 43, 10.2], handShapeR: 'cup', handL: [2.4, 38.6, 9.4], handShapeL: 'relaxed', headYaw: 38, headPitch: 4, spineYaw: 14, prop: { vial: 1, cork: 1, vialTilt: 0 } } },
-          { at: 0.64, o: { handR: [8.6, 27.4, 3.6], handShapeR: 'cup', headYaw: 6, headPitch: 6, spineYaw: 8, prop: { vial: 1, cork: 0, vialTilt: 0 } } },
+          { at: 0.3, o: { turn: 18, pelvis: [0, -1.4, 0.2], spinePitch: 6, spineYaw: 6, spineRoll: 0, handR: [6.6, 45.4, 9.8], elbowR: [1, -0.9, -0.4], handShapeR: 'cup', handL: [5.4, 49.2, 10.2], elbowL: [-1, -0.9, -0.3], handShapeL: 'pinch', palmL: [0.2, 1, 0.2], headYaw: 8, headPitch: 6, prop: { vial: 1, vialBig: 1, cork: 0, vialTilt: 0 } } },
+          { at: 0.5, o: { turn: 6, pelvis: [0, -1.6, 0], spinePitch: 9, spineYaw: 8, handR: [8.6, 27.4, 3.6], elbowR: [1, -0.6, -0.4], handShapeR: 'cup', handL: [-2.2, 30.6, 7.8], elbowL: [-1, -0.8, -0.4], handShapeL: 'relaxed', headYaw: 24, headPitch: 18, headRoll: 3, prop: { vial: 1, vialBig: 1, cork: 0, vialTilt: 0 } } },
+          { at: 0.72, o: { turn: 0, handR: [8.6, 27.4, 3.6], handShapeR: 'cup', headYaw: 26, headPitch: 0, headRoll: 2, prop: { vial: 1, vialBig: 1, cork: 0, vialTilt: 0 } } },
         ],
-        qk: 16, snap: 0, release: 0.45,
+        qk: 24, snap: 0, release: 0.45,
       },
       // (her own way of 'restore': the draught poured)
       restore: null,

@@ -24,8 +24,8 @@
  *
  * Hands are articulated (palm, the fingers as one or more pieces and a thumb, by shape: fist, relaxed,
  * open, flat, point, pinch, cup, spread), and what a hand holds is drawn by it: the folio, a paper
- * strip, a brush, Mio's vial (from the bottles at her hip), Ren's lamp (raised when a gesture frees his
- * left hand). The pose library — every actor's stance, idle key poses, gestures and reactions — is
+ * strip, a brush, Mio's vial (from the bottles at her hip; larger in her Harmony technique, `vialBig`), Nao's
+ * courier pencil (`pencil`, his Harmony technique), Ren's lamp (raised when a gesture frees his left hand). The pose library — every actor's stance, idle key poses, gestures and reactions — is
  * src/engine/34m_battler_moves.js (RB.battlerMoves); this file draws whatever pose it is given.
  *
  * Battle addendum §6.2 (native frame standard): the frame stays 80×104 art px, anchor (36, 100),
@@ -829,6 +829,11 @@ RB.battlers = (function () {
   }
 
   const COVER = mk(hramp('#9a4a3c', { sat: 1.1, warm: 40 }), { min: 1, kind: 'leather' });
+  // Nao's courier pencil (the one his portrait keeps behind his ear): a yellow body, a pink eraser, the
+  // sharpened wood and its lead
+  const PENCIL = mk(hramp('#e0b040', { sat: 1.1, warm: 50 }), { min: 2, kind: 'wood' });
+  const ERASER = mk(hramp('#e8a0a0', { sat: 1.05 }), { min: 2 });
+  const SHARP = mk(hramp('#e8c890', { sat: 1.05, warm: 40 }), { min: 2, kind: 'wood' });
   // ---- props held in battle ---------------------------------------------------------------------------------
   // A small bound book (the traveller's folio), a strip of paper, a brush. Held by the hand joints.
   function props(K) {
@@ -871,13 +876,26 @@ RB.battlers = (function () {
       // out once it is opened (cork 1)
       const tilt = (pr.vialTilt || 0) * DEG, hd = pr.vialL ? J.handL : J.handR;
       const ax = norm([Math.sin(tilt) * 0.5, Math.cos(tilt), Math.sin(tilt) * 0.85]);
-      // (drawn a little larger than life, as the hands are)
-      const q = (s) => add(hd, add(mul(ax, s * 1.3), [0.9, 0, 1.4]));
-      K.C(q(-1.4), q(0.7), 1.95, 2, Mt.glass, GRP.prop);
-      K.C(q(0.7), q(2.2), 1.9, 0.95, Mt.glass, GRP.prop);
-      K.C(q(2.2), q(3.2), 0.82, 0.82, Mt.glass, GRP.prop);
-      if (!(pr.cork > 0.5)) K.C(q(3.1), q(3.9), 0.95, 0.95, Mt.wood, GRP.prop);
+      // (drawn a little larger than life, as the hands are; in Clearwater Draught larger still — vialBig, one
+      // to two art px — so the technique's one object reads at play scale)
+      const g = 1 + 0.36 * clamp01(pr.vialBig || 0);
+      const q = (s) => add(hd, add(mul(ax, s * 1.3 * g), [0.9, 0, 1.4]));
+      K.C(q(-1.4), q(0.7), 1.95 * g, 2 * g, Mt.glass, GRP.prop);
+      K.C(q(0.7), q(2.2), 1.9 * g, 0.95 * g, Mt.glass, GRP.prop);
+      K.C(q(2.2), q(3.2), 0.82 * g, 0.82 * g, Mt.glass, GRP.prop);
+      if (!(pr.cork > 0.5)) K.C(q(3.1), q(3.9), 0.95 * g, 0.95 * g, Mt.wood, GRP.prop);
       K.J.vial = { lip: q(3.4), mid: q(0.4), ax };
+    }
+    if (pr.pencil > 0.5) {
+      // Nao's pencil, pinched in the right hand, its point leading along the hand (drawn larger than life, as
+      // the hands are): the eraser end behind the fingers, the sharpened wood and the lead in front
+      const d = norm(add(sub(J.handR, J.elbR), [0, 0.35, 0]));
+      const at = (s) => add(J.handR, mul(d, s));
+      K.S(at(-3.2), 0.95, ERASER, GRP.prop);
+      K.C(at(-2.6), at(4.6), 0.82, 0.82, PENCIL, GRP.prop);
+      K.C(at(4.6), at(6.4), 0.78, 0.3, SHARP, GRP.prop);
+      K.S(at(6.6), 0.42, Mt.ink, GRP.prop);
+      K.J.pencil = { tip: at(7), mid: at(1.2) };
     }
     if (pr.brush) {
       const d = norm(sub(J.handR, J.elbR)), up = norm(add(d, [0, 0.9, 0]));
@@ -1209,6 +1227,7 @@ RB.battlers = (function () {
     let held = hd, release = hd;
     if (gest && gesture === 'book' && pr.book > 0.25) { held = add(J.handL, mv(J.Ms, [3.5, 1.5, 2])); release = held; }
     else if (pr.vial > 0.5 && J.vial) { held = J.vial.mid; release = add(J.vial.lip, mul(J.vial.ax, 1)); }
+    else if (pr.pencil > 0.5 && J.pencil) { held = J.pencil.mid; release = J.pencil.tip; }
     else if (left && J.lamp) { held = J.lamp; release = J.lamp; }
     else if (pr.brush) { const d = norm(add(fwd, [0, 0.9, 0])); held = add(hd, mul(d, 3)); release = add(hd, mul(d, 9)); }
     else if (pr.strip > 0.5) { held = add(hd, mul(fwd, 2 + 3 * pr.strip)); release = add(hd, mul(fwd, 3 + 6 * pr.strip)); }

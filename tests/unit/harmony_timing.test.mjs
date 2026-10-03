@@ -8,9 +8,11 @@
 // - each performer: anticipation → signature → held signature → recovery, back to the ready stance; reduced
 //   motion: three held poses each (fixed progress), no travel; the companion's cue before your release;
 // - truthfulness: Mio's restoring only on one of you below full, her washing only on creatures that had
-//   Heat, mist or Gathering; Nao's linked second contact only when two knots really come loose, never on
+//   Heat, mist or Gathering (each rinse naming what was there); Mio's pour over you both; Nao's route ticking
+//   each knot that really comes loose, the two going together in one shared burst only when two do, never on
 //   another creature; Suzu's curtain round each creature whose move it turns; Ren's plane before each of you;
-// - distinct body mechanics (§9.7): Nao steps and drops his weight, Mio raises and tips the vial, Ren raises
+// - distinct body mechanics (§9.7): Nao takes his pencil from behind his ear, turns side-on, steps and sketches
+//   the route (two ticks), Mio raises the (larger) vial high over her head and tips it, Ren raises
 //   the lamp high and draws a level line, Suzu turns a full circle through side, front and back views (the
 //   rig's own, not a mirrored costume) and plants; the player's four terminal gestures differ.
 import { load } from '../lib/load.mjs';
@@ -84,22 +86,31 @@ export default async (t) => {
     const on = new Set(nao.cues.filter((c) => c.type === 'fx' && c.p && c.p.foe != null).map((c) => c.p.foe));
     t.ok(on.size === 1 && on.has(1) && nao.cues.filter((c) => c.type === 'cutin').length === 1, 'Nao in a group: every effect on the one creature targeted (no splash on the others)');
   }
-  // Nao: the linked second contact only when two knots really come loose
+  // Nao: the courier's route lands a waypoint tick on each knot that really comes loose; the two go together in one
+  // shared burst only when two really do; your thread follows the route to the same knots
   {
     const two = PC.player(card('nao'), fxOf('nao'), ctxOf('nao'), H);
     const one = PC.player(card('nao'), fxOf('nao'), ctxOf('nao', { view: view({ compId: 'nao', foes: [{ knots: 1, maxKnots: 3 }] }) }), H);
-    const rt = two.cues.find((c) => c.name === 'pRoute');
-    t.ok(rt && rt.p.from === 'knot:2' && rt.p.to === 'knot:1' && two.cues.filter((c) => c.name === 'knotRelease').length === 2 && !fxn(one).includes('pRoute') && one.cues.filter((c) => c.name === 'knotRelease').length === 1, 'Nao: two linked, distinct knot contacts when two come loose; one contact and no link when only one was left');
+    const cr2 = two.cues.find((c) => c.name === 'pCourier'), cr1 = one.cues.find((c) => c.name === 'pCourier'), kp = two.cues.find((c) => c.name === 'pKnotPair');
+    const kr2 = two.cues.filter((c) => c.name === 'knotRelease'), kr1 = one.cues.filter((c) => c.name === 'knotRelease');
+    const th2 = two.cues.find((c) => c.name === 'pThreadRoute'), th1 = one.cues.find((c) => c.name === 'pThreadRoute');
+    const F = PC.TECH.nao, ticksBy = (cr) => cr.at + cr.d * cr.p.draw * (cr.p.way.length / (cr.p.way.length + 1));
+    t.ok(cr2 && cr2.p.way.join() === 'knot:1,knot:2' && kp && kp.p.a === 'knot:1' && kp.p.b === 'knot:2' && kr2.length === 2 && kr2[0].at === kr2[1].at && Math.abs(kp.at - kr2[0].at) <= 60 && th2 && th2.p.way.join() === cr2.p.way.join(), 'Nao, two knots come loose: the route ticks both (' + cr2.p.way.join() + '), your thread follows it to them, and they go together (' + kr2.map((c) => c.at).join(' = ') + ') in one shared burst');
+    t.ok(cr1 && cr1.p.way.join() === 'knot:0' && th1 && th1.p.way.join() === 'knot:0' && !fxn(one).includes('pKnotPair') && kr1.length === 1, 'Nao, only one knot left: the route lands on that one, one contact, no shared burst');
+    t.ok(ticksBy(cr2) < F.contact && ticksBy(cr1) < F.contact && cr2.at > F.pAt + F.pAnt && !fxn(two).includes('pSpot'), 'Nao: the route is sketched during his signature and its ticks land before the knots go (' + Math.round(ticksBy(cr2)) + ' < ' + F.contact + '); it is his own route, not the plain Unravel\'s spot');
   }
   // Mio: three beats, truthful
   {
     const full = PC.player(card('mio'), fxOf('mio'), ctxOf('mio', { view: view({ compId: 'mio', foes: [{ knots: 3, maxKnots: 3 }] }) }), H);
-    t.ok(!full.cues.some((c) => c.name === 'motes' || c.pose === 'soothed') && !fxn(full).some((n) => n === 'pSteam' || n === 'pShroudClear' || n === 'scatter'), 'Mio, both full and nothing on the creature: no restoring shown, nothing washed off (the knot alone)');
+    t.ok(!full.cues.some((c) => c.name === 'motes' || c.name === 'pRefill' || c.pose === 'soothed') && !fxn(full).some((n) => n === 'pSteam' || n === 'pShroudClear' || n === 'scatter' || n === 'pWash'), 'Mio, both full and nothing on the creature: no restoring shown, nothing washed off (the knot alone)');
+    const cas = full.cues.find((c) => c.name === 'pCascade'), drop = full.cues.find((c) => c.name === 'pDrop');
+    t.ok(cas && cas.p.who.join() === 'pc,comp' && drop && drop.p.to === 'knot:2' && drop.p.from === 'pc' && Math.abs(drop.at + drop.d * drop.p.land - PC.TECH.mio.contact) < 2 && !fxn(full).includes('pPour'), 'Mio: the pour goes over you both (the act, also at full), and your ink carries one drop to the knot, landing at the contact');
     const low = PC.player(card('mio'), fxOf('mio', { all: true }), ctxOf('mio', { group: true, reach: { foes: [0, 1], allies: ['pc', 'comp'] }, view: view({ compId: 'mio', pc: 7, foes: [{ knots: 3, maxKnots: 3, heat: 1 }, { knots: 2, maxKnots: 2, shroud: true, charged: true }] }) }), H);
     const motes = low.cues.find((c) => c.name === 'motes'), sooth = low.cues.filter((c) => c.pose === 'soothed').map((c) => c.who);
     const steam = low.cues.filter((c) => c.name === 'pSteam').map((c) => c.p.foe), mist = low.cues.filter((c) => c.name === 'pShroudClear').map((c) => c.p.foe), sc = low.cues.filter((c) => c.name === 'scatter').map((c) => c.p.foe);
     const kn = low.cues.find((c) => c.name === 'knotRelease').at, rs = motes.at, ds = Math.min(...low.cues.filter((c) => c.name === 'pSteam' || c.name === 'pShroudClear').map((c) => c.at));
-    t.ok(motes.p.who.join() === 'pc' && sooth.join() === 'pc' && steam.join() === '0' && mist.join() === '1' && sc.join() === '1', 'Mio: the restoring reaches only you (below full); Heat steams off the first creature, mist and Gathering leave the second — only what was there');
+    const refill = low.cues.filter((c) => c.name === 'pRefill').map((c) => c.p.who.join()), wash = low.cues.filter((c) => c.name === 'pWash').map((c) => c.p.foe + ':' + ['heat', 'mist', 'gather'].filter((q) => c.p[q]).join('+'));
+    t.ok(motes.p.who.join() === 'pc' && refill.join() === 'pc' && sooth.join() === 'pc' && steam.join() === '0' && mist.join() === '1' && sc.join() === '1' && wash.join() === '0:heat,1:mist+gather', 'Mio: the restoring reaches only you (below full); the rinse on each creature names what it really had (' + wash.join(', ') + '): Heat steams off the first, mist and Gathering leave the second — only what was there');
     t.ok(kn < rs && rs < ds, 'Mio: the knot (' + kn + '), the restoring (' + rs + ') and the washing (' + ds + ') are three separate beats');
     t.ok(low.cues.find((c) => c.type === 'beat' && c.f.t === 'tech').then === H.healThen, 'Mio: the numbers come from the applied change (never a fabricated amount)');
   }
@@ -116,14 +127,21 @@ export default async (t) => {
   const R0 = (who) => MV.poseAt(look(who), 'ready', null, 0, 0, 'comp', true, who);
   const range = (who, f, n) => { const v = []; for (let i = 0; i <= (n || 32); i++) v.push(f(P(who, 'act', i / (n || 32)))); return [Math.min(...v), Math.max(...v)]; };
   {
-    const R = R0('nao'), st = P('nao', 'act', 0.3), a = P('nao', 'anticipate', 1);
-    t.ok(a.pelvis[1] < R.pelvis[1] - 2 && st.footR[2] > R.footR[2] + 3 && P('nao', 'act', 1).handShapeR === 'point', 'Nao: the weight dropped (' + a.pelvis[1].toFixed(1) + ' vs ' + R.pelvis[1] + '), a step in with the right foot, a precise point at the end');
-    const nod = P('nao', 'recover', 0.5);
-    t.ok(nod.headYaw > R.headYaw + 20, 'Nao: his recovery turns to you with a nod');
+    const R = R0('nao'), st = P('nao', 'act', 0.3), a = P('nao', 'anticipate', 1), ear = P('nao', 'anticipate', 0.5), end = P('nao', 'act', 1);
+    t.ok(ear.handR[1] > 55 && ear.prop.pencil > 0.5 && !(R.prop.pencil > 0.5) && a.prop.pencil > 0.5, 'Nao: his pencil taken from behind his ear (the hand up at ' + ear.handR[1] + ')');
+    t.ok(a.pelvis[1] < R.pelvis[1] - 2 && st.footR[2] > R.footR[2] + 3 && st.turn >= 45 && end.turn >= 45 && end.prop.pencil > 0.5 && end.handR[1] > R.handR[1] + 20 && end.handR[2] > R.handR[2] + 12, 'Nao: the weight dropped (' + a.pelvis[1].toFixed(1) + ' vs ' + R.pelvis[1] + '), turned side-on (' + end.turn + '°) with a step in, the pencil out high at the route\'s end');
+    const ys = []; for (let i = 0; i <= 48; i++) ys.push(P('nao', 'act', i / 48).handR[1]);
+    let dips = 0; for (let i = 1; i < ys.length - 1; i++) if (ys[i] < ys[i - 1] && ys[i] <= ys[i + 1] && ys[i] < Math.max(...ys.slice(0, i)) - 2) dips++;
+    t.ok(dips >= 2, 'Nao: the pencil ticks twice as it sketches the route (' + dips + ' dips)');
+    const nod = P('nao', 'recover', 0.5), back = P('nao', 'recover', 0.4);
+    t.ok(nod.headYaw > R.headYaw + 20 && back.prop.pencil > 0.5 && back.handR[1] > 55 && !(nod.prop.pencil > 0.5) && P('nao', 'recover', 0.76).headPitch > R.headPitch + 12, 'Nao: his recovery puts the pencil back behind his ear with a glance to you, then a short nod');
   }
   {
     const tilt = range('mio', (p) => p.prop.vialTilt || 0), A = P('mio', 'anticipate', 1);
     t.ok(A.prop.vial > 0.5 && A.handR[1] > 48 && tilt[1] >= 99 && (P('mio', 'act', 0.02).prop.cork || 0) < 0.5 && P('mio', 'act', 0.4).prop.cork > 0.5, 'Mio: the vial raised to eye level, uncorked, then tipped right over (to ' + tilt[1] + '°)');
+    const R = R0('mio'), hi = range('mio', (p) => p.handR[1]), big = range('mio', (p) => p.prop.vialBig || 0), pour = P('mio', 'act', 1);
+    t.ok(hi[1] > 62 && pour.turn >= 30 && pour.handShapeL === 'spread' && big[0] >= 1 && A.prop.vialBig >= 1 && !(R.prop.vialBig > 0), 'Mio: the vial (drawn larger in the technique) lifted high over her head (' + hi[1] + '), side-on (' + pour.turn + '°), her free hand spread over you both');
+    t.ok(P('mio', 'recover', 0.3).prop.cork < 0.5 && P('mio', 'recover', 0.5).headPitch > R.headPitch + 10 && P('mio', 'recover', 0.5).handR[1] < 32, 'Mio: the cork back, the vial to her hip, a small satisfied nod');
   }
   {
     const lamp = range('ren', (p) => p.handL[1]), sweep = range('ren', (p) => p.handR[0]), A = P('ren', 'anticipate', 1);
