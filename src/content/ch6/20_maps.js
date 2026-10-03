@@ -301,7 +301,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }),
     props: [
       { p: 'sa_pipe', x: 7, y: 2 }, { p: 'sa_pipe', x: 14, y: 2 }, { p: 'sa_pipe', x: 21, y: 2 },
-      { p: 'sparkle', x: 12, y: 13 }, { p: 'sparkle', x: 16, y: 12 }, { p: 'sparkle', x: 14, y: 14 },
+      // light on the basin's dark water: faint glints, no light pools (not something to find)
+      { p: 'sparkle', x: 12, y: 13, o: { faint: true, lit: false } }, { p: 'sparkle', x: 16, y: 12, o: { faint: true, lit: false } }, { p: 'sparkle', x: 14, y: 14, o: { faint: true, lit: false } },
       { p: 'desk', x: 2, y: 4, scene: 'sa.notice_desk' },
       { p: 'sign', x: 4, y: 13, scene: 'sa.charter_gate' },
       { p: 'water', x: 3, y: 14, if: '!sa_promise_done', scene: 'sa.charter_gate' },

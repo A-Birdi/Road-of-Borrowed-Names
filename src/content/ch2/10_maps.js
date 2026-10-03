@@ -284,7 +284,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   interior('sg.glass', T("Asahi's Glassworks", 'アサヒ の ガラス{工房|こうぼう}'), 10, 9, 5, [48, 20], {
     props: [
       { p: 'exitmat', x: 5, y: 7 },
-      { p: 'kiln', x: 1, y: 2, scene: 'sg.glass_kiln' },
+      { p: 'kiln', x: 1, y: 2, o: { glass: true, litIf: 'sg_boss_done' }, scene: 'sg.glass_kiln' }, // cold until the ash arrives (sg.glass_kiln)
       { p: 'glassware', x: 6, y: 2 }, { p: 'glassware', x: 7, y: 2 }, { p: 'shelf', x: 8, y: 2 },
       { p: 'table', x: 6, y: 5, scene: 'sg.glass_table' },
       { p: 'crate', x: 1, y: 6 }, { p: 'barrel', x: 8, y: 6 },
@@ -590,7 +590,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'counter', x: 5, y: 5, across: true, scene: 'sg.da_counter' }, { p: 'counter', x: 12, y: 5, across: true, scene: 'sg.da_counter' },
       { p: 'bookpile', x: 3, y: 3 }, { p: 'bookpile', x: 16, y: 3 }, { p: 'bookpile', x: 4, y: 7 }, { p: 'bookpile', x: 15, y: 7 },
       { p: 'lantern', x: 2, y: 2 }, { p: 'lantern', x: 17, y: 2 },
-      { p: 'sparkle', x: 9, y: 4, if: 'sg_boss_done' },
+      { p: 'sparkle', x: 9, y: 4, o: { faint: true, lit: false }, if: 'sg_boss_done' }, // where the clerk stood: a faint glint, not a pickup
     ],
     npcs: [{ id: 'sg_clerk', x: 9, y: 4, dir: 'down', if: '!sg_boss_done', talk: 'sg.da_boss', look: { custom: 'sg_clerk' } }],
     triggers: [{ x: 4, y: 9, w: 12, h: 1, scene: 'sg.da_boss', if: '!sg_boss_done' }],

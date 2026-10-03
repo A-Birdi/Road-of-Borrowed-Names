@@ -122,7 +122,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     { p: 'smalltable', x: 29, y: 21, scene: 'co.sayo_table' },
     { p: 'well', x: 15, y: 15 },
     { p: 'lantern', x: 13, y: 17 }, { p: 'lantern', x: 32, y: 17 }, { p: 'lantern', x: 36, y: 20 },
-    { p: 'kiln', x: 47, y: 21, o: {} , text: { jp: 'ノブ の {小|ちい}さな {窯|かま} 。 まだ {少|すこ}し {温|あたた}かい 。', en: 'Nobu\'s small pottery kiln. Still faintly warm from yesterday.' } },
+    { p: 'kiln', x: 47, y: 21, o: { embers: true }, text: { jp: 'ノブ の {小|ちい}さな {窯|かま} 。 まだ {少|すこ}し {温|あたた}かい 。', en: 'Nobu\'s small pottery kiln. Still faintly warm from yesterday.' } },
     { p: 'crate', x: 33, y: 24, scene: 'co.tamotsu_shed' }, { p: 'barrel', x: 32, y: 25 },
     { p: 'co_hoshigaki', x: 4, y: 16 }, { p: 'co_hoshigaki', x: 27, y: 31 },
     { p: 'flowerpot', x: 12, y: 16 }, { p: 'flowerpot', x: 36, y: 12 },
@@ -497,7 +497,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     props: [
       { p: 'co_seal', x: 20, y: 5, if: '!co_seal_broken', scene: 'co.kiln_seal' },
-      { p: 'kiln', x: 11, y: 3, o: { sealed: true }, text: { jp: '{小|ちい}さな {素焼|すや}き の {窯|かま} 。 {中|なか} は {灰|はい} で いっぱい だ 。', en: 'A small bisque kiln, its mouth choked with ash.' } },
+      { p: 'kiln', x: 11, y: 3, o: { ash: true }, text: { jp: '{小|ちい}さな {素焼|すや}き の {窯|かま} 。 {中|なか} は {灰|はい} で いっぱい だ 。', en: 'A small bisque kiln, its mouth choked with ash.' } },
       { p: 'sign', x: 5, y: 13, scene: 'co.works_sign' },
       { p: 'signblank', x: 29, y: 13, scene: 'co.works_sign2' },
       { p: 'co_beam', x: 11, y: 21 }, { p: 'co_beam', x: 27, y: 9 },
@@ -603,8 +603,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     props: [
       { p: 'fence', x: 5, y: 3, block: false }, { p: 'fence', x: 6, y: 3, block: false }, { p: 'fence', x: 9, y: 3, block: false }, { p: 'fence', x: 10, y: 3, block: false },
       { p: 'bell', x: 7, y: 3, scene: 'co.lookout_bell' },
-      { p: 'sparkle', x: 1, y: 9 }, { p: 'sparkle', x: 3, y: 10 }, { p: 'sparkle', x: 12, y: 9 }, { p: 'sparkle', x: 14, y: 10 },
-      { p: 'sparkle', x: 2, y: 1 }, { p: 'sparkle', x: 13, y: 2 }, { p: 'sparkle', x: 7, y: 10 }, { p: 'sparkle', x: 9, y: 11 },
+      // far lights glinting round the platform: faint, and no light pools (not something to find)
+      { p: 'sparkle', x: 1, y: 9, o: { faint: true, lit: false } }, { p: 'sparkle', x: 3, y: 10, o: { faint: true, lit: false } }, { p: 'sparkle', x: 12, y: 9, o: { faint: true, lit: false } }, { p: 'sparkle', x: 14, y: 10, o: { faint: true, lit: false } },
+      { p: 'sparkle', x: 2, y: 1, o: { faint: true, lit: false } }, { p: 'sparkle', x: 13, y: 2, o: { faint: true, lit: false } }, { p: 'sparkle', x: 7, y: 10, o: { faint: true, lit: false } }, { p: 'sparkle', x: 9, y: 11, o: { faint: true, lit: false } },
       { p: 'fence', x: 5, y: 8, block: false }, { p: 'fence', x: 6, y: 8, block: false }, { p: 'fence', x: 7, y: 8, block: false }, { p: 'fence', x: 8, y: 8, block: false }, { p: 'fence', x: 9, y: 8, block: false },
       { p: 'hole', x: 10, y: 7 },
     ],

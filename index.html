@@ -22745,8 +22745,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
     R(g, x + 1, y + 1, w - 2, h - 2, GL[4 - (k === 1 ? 1 : 0)]);
     R(g, x, y + h - 1, w, 1, GL[2]);
   }
-  const flick = (t, o, ms) => K.frame(t, ms || 150, 4, o.still, (o.cx | 0) * 0.37 + (o.cy | 0) * 0.21);
-  RB.propArt.kit = { plank, nail, post, top, board, signFace, lamp, flick, glyph };
+  // Lamp flicker. Every lamp maps the frame through [0, 1, 0, 2] (steady, inner dip, steady, outer dip).
+  // flick: a candle behind paper or glass, mostly steady: in each turn of eight slots (1.4 × ms each) the
+  // light dips once a little and once a little more, then holds — about two changes a second instead of
+  // the seven of a dip every 150 ms (the props balance pass: a street of lanterns twinkled like a sign).
+  // flickLively keeps the old quick cycle for a flame that is the subject (the great lamp of Snowbell).
+  const FLICK = [0, 0, 0, 1, 0, 0, 2, 3];
+  const flick = (t, o, ms) => FLICK[K.frame(t, (ms || 150) * 1.4, 8, o.still, (o.cx | 0) * 0.37 + (o.cy | 0) * 0.21)];
+  const flickLively = (t, o, ms) => K.frame(t, ms || 150, 4, o.still, (o.cx | 0) * 0.37 + (o.cy | 0) * 0.21);
+  RB.propArt.kit = { plank, nail, post, top, board, signFace, lamp, flick, flickLively, glyph };
 
   // ---- fences, shelves, lamps ------------------------------------------------------------------
   // Rail fence: squared posts with chamfered caps and two nailed rails that
@@ -23428,10 +23435,23 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
   // Pottery kiln: a domed brick kiln with a vent; the mouth glows unless
   // o.sealed, when it is plastered shut and marked with a glass seal.
+  // Each placement can match what its own text says (the props balance pass):
+  //   o.ash     the mouth choked with grey ash, cold, no seal mark (a disused kiln is not the Great
+  //             Kiln's glass seal, which is a puzzle);
+  //   o.embers  "still faintly warm": a low bed of embers, no open fire, no halo;
+  //   o.glass   a glassworks furnace: cold and ashen until o.litIf holds in the campaign (the scene says
+  //             "The fire is out"), then lit, with the orange gather turning slowly inside
+  //             ("Orange glass turns slowly inside the furnace").
   const KILN = ramp('#7a5a4a', 0.5, 0.4);
+  const kilnLit = (o) => { if (!o.litIf) return true; const s = RB.game && RB.game.s; return !!(s && RB.state && RB.state.test(s, o.litIf)); };
+  // 0 lit, 1 sealed, 2 ash (cold), 3 embers, 4 glass furnace lit
+  const kilnV = (o) => (o.sealed ? 1 : o.ash ? 2 : o.embers ? 3 : o.glass ? (kilnLit(o) ? 4 : 2) : 0);
+  // the furnace's gather on its slow turn: 8 places round a small ellipse in the mouth (art px)
+  const GATHER = [[0, 0], [2, -1], [4, -1], [5, 0], [4, 1], [2, 2], [0, 2], [-1, 1]];
   art('kiln', {
     box: [-6, -52, 108, 116],
-    v: (o) => (o.sealed ? 1 : 0),
+    v: kilnV,
+    f: (t, o) => (kilnV(o) === 4 ? K.frame(t, 340, 8, o.still, (o.cx | 0) * 0.3) : 0),
     draw(g, M, v, f, info) {
       const k5 = KILN;
       const inside = (fx, fy) => { if (fy > 60 || fy < -40) return false; const t = (fy + 40) / 100, hw = 44 * Math.sqrt(Math.min(1, t / 0.55)) + (t > 0.55 ? (t - 0.55) * 8 : 0); return Math.abs(fx - 48) <= hw; };
@@ -23450,9 +23470,34 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // mouth arch
       R(g, 34, 26, 28, 34, k5[0]);
       ell(g, 48, 28, 14, 6, k5[0]);
-      if (!v) {
+      if (v === 0) {
         R(g, 37, 30, 22, 30, '#2a1410'); ell(g, 48, 30, 11, 4, '#2a1410');
         R(g, 40, 42, 16, 16, '#f08a3a'); R(g, 42, 44, 12, 12, '#ffb45a'); R(g, 45, 47, 6, 6, '#ffe39c');
+        R(g, 38, 56, 20, 4, K.FIX.char[3]);
+      } else if (v === 2 || v === 3) {
+        // cold (choked with ash) or faintly warm (a low bed of embers under the ash)
+        const A = ['#2e2826', '#48403c', '#645a54', '#80766e', '#9c9288'];
+        R(g, 37, 30, 22, 30, v === 3 ? '#24140f' : '#221c1a'); ell(g, 48, 30, 11, 4, v === 3 ? '#24140f' : '#221c1a');
+        const top = v === 2 ? 40 : 50; // ash heaped to the arch, or a low bed
+        for (let y = top; y < 60; y++) {
+          const k = (y - top) / Math.max(1, 60 - top), hw = Math.round(5 + k * 6);
+          R(g, 48 - hw, y, hw * 2, 1, A[y < top + 2 ? 3 : y < top + 5 ? 2 : 1]);
+        }
+        R(g, 44, top, 7, 1, A[4]); R(g, 41, top + 3, 3, 1, A[3]); R(g, 52, top + 4, 3, 1, A[3]);
+        for (let i = 0; i < 5; i++) { const r = hh(i, 7, 41); R(g, 40 + (r % 16), top + 4 + ((r >>> 4) % Math.max(1, 56 - top)), 2, 1, K.FIX.char[1]); }
+        if (v === 3) {
+          const E = K.FIX.ember;
+          R(g, 42, 55, 3, 1, E[1]); R(g, 46, 54, 4, 1, E[1]); R(g, 51, 55, 3, 1, E[1]);
+          R(g, 47, 54, 2, 1, E[2]); R(g, 43, 56, 1, 1, E[2]); R(g, 48, 55, 1, 1, E[3]);
+        }
+        R(g, 38, 56, 20, 4, K.FIX.char[2]);
+      } else if (v === 4) {
+        // the glassworks furnace, lit: a fierce glow and the gather turning slowly in it
+        R(g, 37, 30, 22, 30, '#2a1410'); ell(g, 48, 30, 11, 4, '#2a1410');
+        R(g, 40, 42, 16, 16, '#f08a3a'); R(g, 42, 44, 12, 12, '#ffb45a');
+        const [gx, gy] = GATHER[f % 8];
+        R(g, 44 + gx, 48 + gy, 5, 4, '#ffd27a'); R(g, 45 + gx, 47 + gy, 3, 6, '#ffd27a');
+        R(g, 45 + gx, 48 + gy, 3, 3, '#ffe9b0'); R(g, 45 + gx, 48 + gy, 1, 1, '#fff8e4');
         R(g, 38, 56, 20, 4, K.FIX.char[3]);
       } else {
         R(g, 37, 30, 22, 30, '#5a4a42'); ell(g, 48, 30, 11, 4, '#5a4a42');
@@ -23461,7 +23506,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       }
       if (info.snow) K.snowTops(g, -6, -52, 108, 80, M.snow, 2, 3);
     },
-    over(g, M, v) { if (!v) K.halo(g, 48, 48, 18, '#ff9a40', 0.12); },
+    over(g, M, v, f) { if (v === 0) K.halo(g, 48, 48, 18, '#ff9a40', 0.12); else if (v === 4) K.halo(g, 48, 48, 19, '#ff9a40', 0.13 + (f % 4 === 1 ? 0.02 : 0)); },
     shadow: () => [48, 61, 46, 4, 0.34],
   });
 
@@ -23796,10 +23841,22 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- glints and marks (animated, not outlined) -----------------------------------------------------------
   // Sparkle: something to find — a four-point star that swells and fades.
+  // o.faint: not something to find but a glint in the scenery (light on dark water, a far light seen from a
+  // height): a small point that brightens now and then, slower, and (with o.lit === false on the placement)
+  // no pool of light of its own, so it never reads as a pickup (the props balance pass).
   art('sparkle', {
     box: [0, -8, 32, 40], outline: false,
-    f: (t, o) => K.frame(t, 120, 8, o.still, (o.cx | 0) * 0.5),
+    v: (o) => (o.faint ? 1 : 0),
+    f: (t, o) => (o.faint ? K.frame(t, 230, 12, o.still, (o.cx | 0) * 0.71 + (o.cy | 0) * 0.37) : K.frame(t, 120, 8, o.still, (o.cx | 0) * 0.5)),
     draw(g, M, v, f) {
+      if (v) {
+        // mostly a dim point; one brief brightening (with a short cross) in each 2.8 s turn
+        const a = [0.3, 0.3, 0.3, 0.3, 0.45, 0.75, 0.9, 0.6, 0.4, 0.3, 0.3, 0.3][f];
+        const c = (al) => 'rgba(255,240,190,' + al.toFixed(2) + ')';
+        R(g, 15, 10, 2, 2, c(a));
+        if (a > 0.5) { const L = a > 0.8 ? 3 : 2; R(g, 15, 10 - L, 2, L * 2 + 2, c(a * 0.55)); R(g, 15 - L, 10, L * 2 + 2, 2, c(a * 0.55)); R(g, 15, 10, 2, 2, c(a)); }
+        return;
+      }
       const a = [0.55, 0.75, 0.95, 1, 0.9, 0.7, 0.5, 0.4][f], L = Math.round(4 + a * 6);
       const c = (al) => 'rgba(255,240,180,' + al.toFixed(2) + ')';
       R(g, 15, 12 - L, 2, L * 2, c(a * 0.9));
@@ -39013,17 +39070,20 @@ RB.render = (function () {
       lctx.arc(x, y, R, 0, Math.PI * 2);
       lctx.fill();
     };
-    const flick = RB.game.reducedMotion() ? 0 : Math.sin(t / 180) * 1.5;
+    // each pool of light breathes on its own phase (by where it is), slowly: a map's lamps no longer pulse
+    // together like one heartbeat (the props balance pass)
+    const still = RB.game.reducedMotion();
+    const flick = (ph) => (still ? 0 : Math.sin(t / 300 + ph) * 1.2);
     const pr = amb.playerLight == null ? 44 : amb.playerLight;
-    if (pr) hole(W.player.fx * TS + 8, W.player.fy * TS + 4, pr + flick);
-    if (W.comp && W.comp.id === 'ren') hole(W.comp.fx * TS + 8, W.comp.fy * TS + 6, 34 + flick);
+    if (pr) hole(W.player.fx * TS + 8, W.player.fy * TS + 4, pr + flick(0));
+    if (W.comp && W.comp.id === 'ren') hole(W.comp.fx * TS + 8, W.comp.fy * TS + 6, 34 + flick(2.1));
     const s = RB.game.s;
     for (const p of m.props) {
       const pd = RB.props.P[p.p];
       if (!pd || !(pd.light || p.light)) continue;
       if (p.if && !RB.state.test(s, p.if)) continue;
       if (p.o && p.o.lit === false) continue;
-      hole(p.x * TS + 8, p.y * TS + 2, (p.light || pd.light) + flick);
+      hole(p.x * TS + 8, p.y * TS + 2, (p.light || pd.light) + flick(p.x * 1.7 + p.y * 2.3));
     }
     for (const st of m.structs) if (st.lit || ambientOf(m).night) (st.windows || []).forEach((wx) => hole((st.x + wx) * TS + 8, (st.y + st.h) * TS - 10, 18));
     lctx.globalCompositeOperation = 'source-over';
@@ -95116,7 +95176,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   interior('sg.glass', T("Asahi's Glassworks", 'アサヒ の ガラス{工房|こうぼう}'), 10, 9, 5, [48, 20], {
     props: [
       { p: 'exitmat', x: 5, y: 7 },
-      { p: 'kiln', x: 1, y: 2, scene: 'sg.glass_kiln' },
+      { p: 'kiln', x: 1, y: 2, o: { glass: true, litIf: 'sg_boss_done' }, scene: 'sg.glass_kiln' }, // cold until the ash arrives (sg.glass_kiln)
       { p: 'glassware', x: 6, y: 2 }, { p: 'glassware', x: 7, y: 2 }, { p: 'shelf', x: 8, y: 2 },
       { p: 'table', x: 6, y: 5, scene: 'sg.glass_table' },
       { p: 'crate', x: 1, y: 6 }, { p: 'barrel', x: 8, y: 6 },
@@ -95422,7 +95482,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'counter', x: 5, y: 5, across: true, scene: 'sg.da_counter' }, { p: 'counter', x: 12, y: 5, across: true, scene: 'sg.da_counter' },
       { p: 'bookpile', x: 3, y: 3 }, { p: 'bookpile', x: 16, y: 3 }, { p: 'bookpile', x: 4, y: 7 }, { p: 'bookpile', x: 15, y: 7 },
       { p: 'lantern', x: 2, y: 2 }, { p: 'lantern', x: 17, y: 2 },
-      { p: 'sparkle', x: 9, y: 4, if: 'sg_boss_done' },
+      { p: 'sparkle', x: 9, y: 4, o: { faint: true, lit: false }, if: 'sg_boss_done' }, // where the clerk stood: a faint glint, not a pickup
     ],
     npcs: [{ id: 'sg_clerk', x: 9, y: 4, dir: 'down', if: '!sg_boss_done', talk: 'sg.da_boss', look: { custom: 'sg_clerk' } }],
     triggers: [{ x: 4, y: 9, w: 12, h: 1, scene: 'sg.da_boss', if: '!sg_boss_done' }],
@@ -99024,15 +99084,23 @@ var RB = (globalThis.RB = globalThis.RB || {});
       over(g, M, v, f) { K.halo(g, 32, 32, 22, '#ff9a40', 0.12 + (f % 2) * 0.04); },
       shadow: () => [32, 60, 30, 4, 0.34],
     });
-    // Potter's wheel with a pot half thrown on it.
+    // Potter's wheel with a pot half thrown on it. Its text says the clay is still damp: the wheel head is
+    // smeared grey with wet slip and the pot is darker, cooler damp clay with a wet sheen, so the potter's
+    // one key prop reads against the warm wood floor instead of melting into it (the props balance pass).
+    // It stays still: nobody is at the wheel.
+    const SLIP = ['#3e3430', '#5e524c', '#7a6e66', '#958a80', '#b4aaa0'];
+    const DAMP = ['#3c2822', '#5a3c30', '#7a5442', '#9a6e58', '#cdb5a0'];
     A('co_wheel', {
       box: [0, -6, 32, 40],
       draw(g, M) {
         const w5 = M.wood;
-        cyl(g, 12, 16, 8, 14, w5); R(g, 8, 27, 16, 3, w5[2]);
-        ell(g, 16, 14, 14, 5, w5[1]); ell(g, 16, 13, 13, 4, w5[3]); R(g, 6, 11, 12, 1, w5[4]);
-        for (let y = 2; y < 13; y++) { const w = 8 + Math.round(Math.sin(((y - 2) / 11) * Math.PI) * 3); for (let i = 0; i < w; i++) R(g, 16 - w / 2 + i, y, 1, 1, cylCol(i, w, CL)); }
-        ell(g, 16, 2, 4, 1.5, CL[0]); R(g, 13, 1, 6, 1, CL[4]);
+        cyl(g, 12, 16, 8, 14, w5); R(g, 8, 27, 16, 3, w5[1]); R(g, 8, 27, 16, 1, w5[2]);
+        ell(g, 16, 14, 14, 5, w5[0]); ell(g, 16, 13, 13, 4, SLIP[1]); ell(g, 16, 12.5, 10, 2.6, SLIP[2]);
+        R(g, 5, 12, 6, 1, SLIP[3]); R(g, 22, 15, 6, 1, w5[1]);
+        for (let y = 2; y < 13; y++) { const w = 8 + Math.round(Math.sin(((y - 2) / 11) * Math.PI) * 3); for (let i = 0; i < w; i++) R(g, 16 - w / 2 + i, y, 1, 1, cylCol(i, w, DAMP)); }
+        ell(g, 16, 2, 4, 1.5, DAMP[0]); R(g, 13, 1, 6, 1, DAMP[3]);
+        R(g, 13, 4, 1, 6, DAMP[4]); R(g, 13, 5, 1, 2, '#efe4d4');
+        R(g, 11, 12, 10, 1, SLIP[3]);
       },
       shadow: () => [16, 29, 13, 3, 0.3],
     });
@@ -99503,7 +99571,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     { p: 'smalltable', x: 29, y: 21, scene: 'co.sayo_table' },
     { p: 'well', x: 15, y: 15 },
     { p: 'lantern', x: 13, y: 17 }, { p: 'lantern', x: 32, y: 17 }, { p: 'lantern', x: 36, y: 20 },
-    { p: 'kiln', x: 47, y: 21, o: {} , text: { jp: 'ノブ の {小|ちい}さな {窯|かま} 。 まだ {少|すこ}し {温|あたた}かい 。', en: 'Nobu\'s small pottery kiln. Still faintly warm from yesterday.' } },
+    { p: 'kiln', x: 47, y: 21, o: { embers: true }, text: { jp: 'ノブ の {小|ちい}さな {窯|かま} 。 まだ {少|すこ}し {温|あたた}かい 。', en: 'Nobu\'s small pottery kiln. Still faintly warm from yesterday.' } },
     { p: 'crate', x: 33, y: 24, scene: 'co.tamotsu_shed' }, { p: 'barrel', x: 32, y: 25 },
     { p: 'co_hoshigaki', x: 4, y: 16 }, { p: 'co_hoshigaki', x: 27, y: 31 },
     { p: 'flowerpot', x: 12, y: 16 }, { p: 'flowerpot', x: 36, y: 12 },
@@ -99878,7 +99946,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     props: [
       { p: 'co_seal', x: 20, y: 5, if: '!co_seal_broken', scene: 'co.kiln_seal' },
-      { p: 'kiln', x: 11, y: 3, o: { sealed: true }, text: { jp: '{小|ちい}さな {素焼|すや}き の {窯|かま} 。 {中|なか} は {灰|はい} で いっぱい だ 。', en: 'A small bisque kiln, its mouth choked with ash.' } },
+      { p: 'kiln', x: 11, y: 3, o: { ash: true }, text: { jp: '{小|ちい}さな {素焼|すや}き の {窯|かま} 。 {中|なか} は {灰|はい} で いっぱい だ 。', en: 'A small bisque kiln, its mouth choked with ash.' } },
       { p: 'sign', x: 5, y: 13, scene: 'co.works_sign' },
       { p: 'signblank', x: 29, y: 13, scene: 'co.works_sign2' },
       { p: 'co_beam', x: 11, y: 21 }, { p: 'co_beam', x: 27, y: 9 },
@@ -99984,8 +100052,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     props: [
       { p: 'fence', x: 5, y: 3, block: false }, { p: 'fence', x: 6, y: 3, block: false }, { p: 'fence', x: 9, y: 3, block: false }, { p: 'fence', x: 10, y: 3, block: false },
       { p: 'bell', x: 7, y: 3, scene: 'co.lookout_bell' },
-      { p: 'sparkle', x: 1, y: 9 }, { p: 'sparkle', x: 3, y: 10 }, { p: 'sparkle', x: 12, y: 9 }, { p: 'sparkle', x: 14, y: 10 },
-      { p: 'sparkle', x: 2, y: 1 }, { p: 'sparkle', x: 13, y: 2 }, { p: 'sparkle', x: 7, y: 10 }, { p: 'sparkle', x: 9, y: 11 },
+      // far lights glinting round the platform: faint, and no light pools (not something to find)
+      { p: 'sparkle', x: 1, y: 9, o: { faint: true, lit: false } }, { p: 'sparkle', x: 3, y: 10, o: { faint: true, lit: false } }, { p: 'sparkle', x: 12, y: 9, o: { faint: true, lit: false } }, { p: 'sparkle', x: 14, y: 10, o: { faint: true, lit: false } },
+      { p: 'sparkle', x: 2, y: 1, o: { faint: true, lit: false } }, { p: 'sparkle', x: 13, y: 2, o: { faint: true, lit: false } }, { p: 'sparkle', x: 7, y: 10, o: { faint: true, lit: false } }, { p: 'sparkle', x: 9, y: 11, o: { faint: true, lit: false } },
       { p: 'fence', x: 5, y: 8, block: false }, { p: 'fence', x: 6, y: 8, block: false }, { p: 'fence', x: 7, y: 8, block: false }, { p: 'fence', x: 8, y: 8, block: false }, { p: 'fence', x: 9, y: 8, block: false },
       { p: 'hole', x: 10, y: 7 },
     ],
@@ -103731,7 +103800,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     A('sb_greatlamp', {
       box: [-4, -56, 72, 124], ink: true,
       v: (o) => (o.lit ? 'l' : o.frozen ? 'z' : 'd'),
-      f: (t, o) => (o.lit ? kit.flick(t, o, 140) : 0),
+      f: (t, o) => (o.lit ? kit.flickLively(t, o, 140) : 0), // the chapter's flame: lively (props balance pass)
       draw(g, M, v, f) {
         const s5 = ramp('#3a3440', 0.4, 0.45);
         R(g, 10, 48, 44, 12, s5[2]); R(g, 10, 48, 44, 2, s5[4]);
@@ -112350,7 +112419,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }),
     props: [
       { p: 'sa_pipe', x: 7, y: 2 }, { p: 'sa_pipe', x: 14, y: 2 }, { p: 'sa_pipe', x: 21, y: 2 },
-      { p: 'sparkle', x: 12, y: 13 }, { p: 'sparkle', x: 16, y: 12 }, { p: 'sparkle', x: 14, y: 14 },
+      // light on the basin's dark water: faint glints, no light pools (not something to find)
+      { p: 'sparkle', x: 12, y: 13, o: { faint: true, lit: false } }, { p: 'sparkle', x: 16, y: 12, o: { faint: true, lit: false } }, { p: 'sparkle', x: 14, y: 14, o: { faint: true, lit: false } },
       { p: 'desk', x: 2, y: 4, scene: 'sa.notice_desk' },
       { p: 'sign', x: 4, y: 13, scene: 'sa.charter_gate' },
       { p: 'water', x: 3, y: 14, if: '!sa_promise_done', scene: 'sa.charter_gate' },
