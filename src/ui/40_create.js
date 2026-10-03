@@ -42,79 +42,30 @@ RB.ui.create = (function () {
   // the title's lantern road, Hana's teahouse twice, the riverbank lantern, the bridge,
   // and the traveller walking up the road into the distance.
   const SHOTS = [
-    { d: 7500, jp: '{灯|ひ} の {道|みち} は 、 {通|とお}った {場所|ばしょ} の {名前|なまえ} を {覚|おぼ}えている 。', en: 'The lantern roads remember the name of every place they pass through.', draw: 'road' },
-    { d: 7000, jp: '{夜明|よあ}け 、 {茶屋|ちゃや} の ハナ は お{茶|ちゃ} を ふたつ いれた 。', en: 'At dawn, Hana at the teahouse poured two cups of tea.', draw: 'tea' },
-    { d: 7500, jp: 'でも 、 ふたつ{目|め} が {誰|だれ} の ため なのか 、 {思|おも}い{出|だ}せなかった 。', en: 'But she could not remember who the second cup was for.', draw: 'cup' },
-    { d: 8000, jp: '{川|かわ}べり の {灯|あか}り から 、 {名前|なまえ} が ひと{文字|もじ} ずつ {消|き}えていった 。', en: 'On the riverbank, the name on a lantern faded, one letter at a time.', draw: 'lantern' },
-    { d: 8000, jp: '{朝|あさ} に なって も {橋|はし} は あった 。 ただ 、 {向|む}こう{岸|ぎし} に は もう {届|とど}かない 。', en: 'By morning the bridge was still there. It just no longer reached the other bank.', draw: 'bridge' },
-    { d: 8000, jp: 'そして 、 {古|ふる}い {文字|もじ} を {読|よ}める {旅人|たびびと} が ひとり 、 {葦|あし}ノ{瀬|せ} へ {歩|ある}いていた 。', en: 'And a traveller who could still read the old letters was walking toward Reedwake.', draw: 'walker' },
+    { jp: '{灯|ひ} の {道|みち} は 、 {通|とお}った {場所|ばしょ} の {名前|なまえ} を {覚|おぼ}えている 。', en: 'The lantern roads remember the name of every place they pass through.', draw: 'road' },
+    { jp: '{夜明|よあ}け 、 {茶屋|ちゃや} の ハナ は お{茶|ちゃ} を ふたつ いれた 。', en: 'At dawn, Hana at the teahouse poured two cups of tea.', draw: 'tea' },
+    { jp: 'でも 、 ふたつ{目|め} が {誰|だれ} の ため なのか 、 {思|おも}い{出|だ}せなかった 。', en: 'But she could not remember who the second cup was for.', draw: 'cup' },
+    { jp: '{川|かわ}べり の {灯|あか}り から 、 {名前|なまえ} が ひと{文字|もじ} ずつ {消|き}えていった 。', en: 'On the riverbank, the name on a lantern faded, one letter at a time.', draw: 'lantern' },
+    { jp: '{朝|あさ} に なって も {橋|はし} は あった 。 ただ 、 {向|む}こう{岸|ぎし} に は もう {届|とど}かない 。', en: 'By morning the bridge was still there. It just no longer reached the other bank.', draw: 'bridge' },
+    { jp: 'そして 、 {古|ふる}い {文字|もじ} を {読|よ}める {旅人|たびびと} が ひとり 、 {葦|あし}ノ{瀬|せ} へ {歩|ある}いていた 。', en: 'And a traveller who could still read the old letters was walking toward Reedwake.', draw: 'walker' },
   ];
-  // Captions are a paper slip over the scene; Next and Skip stay in one place.
+  // On manual advancement (docs/expressive/SHOTS.md §7; the shared player, src/ui/43_sequence.js): each
+  // shot dissolves in (from black for the first), plays its one-time action once (the lantern's name
+  // leaving it, the walk up the road), then holds for as long as the reader likes — nothing moves on by
+  // itself. Next is one shot per press; the last Next leaves for creation once. Previous looks back, Replay
+  // shot plays the action again, Hide text shows the whole picture. Escape or Skip prologue asks first,
+  // unless the prologue has been watched through on this device before. The caption slip is the paper
+  // slip it always was (furigana and word help as everywhere).
   function prologue() {
-    return new Promise((resolve) => {
-      let i = 0, t0 = performance.now(), done = false;
-      RB.audio && RB.audio.playSong('prologue');
-      const cap = RB.ui.el('div', 'cr-prologue');
-      cap.setAttribute('role', 'dialog');
-      cap.setAttribute('aria-label', 'Prologue');
-      cap.innerHTML = '<div class="slip"><div class="pg" aria-hidden="true"></div><div class="txt" aria-live="polite"></div></div>' +
-        '<div class="acts"><button class="cbtn" data-a="skip">Skip prologue</button>' +
-        '<button class="cbtn cr-primary autofocus" data-a="next"><span>Next</span>' + I('next') + '</button></div>';
-      const layer = { el: cap, name: 'prologue' };
-      const finish = () => {
-        if (done) return;
-        done = true;
-        RB.render.setOverride(null);
-        RB.prologueArt.release();
-        RB.ui.popLayer(layer);
-        resolve();
-      };
-      function caption() {
-        const s = SHOTS[i];
-        cap.querySelector('.txt').innerHTML = RB.ui.jhtml(s.jp) + '<div class="en">' + esc(s.en) + '</div>';
-        cap.querySelector('.pg').innerHTML = SHOTS.map((x, j) => '<i class="' + (j === i ? 'on' : j < i ? 'past' : '') + '"></i>').join('');
-      }
-      cap.onclick = (e) => {
-        const b = e.target.closest('[data-a]');
-        if (!b) return;
-        if (b.getAttribute('data-a') === 'skip') finish();
-        else next();
-      };
-      layer.onAction = (a, e) => {
-        if (a === 'cancel') { finish(); return true; }
-        if (a === 'ok') { next(); return true; }
-        if (a === 'menu') return tabKey(cap, e);
-        return false;
-      };
-      function next() {
-        i++;
-        t0 = performance.now();
-        if (i >= SHOTS.length) finish(); else caption();
-      }
-      // the lowest buffer row the caption slip leaves in view (the shots keep what matters above it)
-      function visBottom(h) {
-        const cv = document.getElementById('world'), sl = cap.querySelector('.slip');
-        if (!cv || !sl) return h;
-        const a = cv.getBoundingClientRect(), b = sl.getBoundingClientRect();
-        if (!a.height || !b.height) return h;
-        return ((b.top - a.top) * h) / a.height;
-      }
-      // drawn at art resolution (RB.prologueArt), like the title scene
-      const scene = (c, w, h, t) => {
-        if (done) return;
-        const s = SHOTS[i];
-        const k = Math.min(1, (performance.now() - t0) / s.d);
-        RB.prologueArt.draw(s.draw, c, w, h, t, k, { vb: visBottom(h), still: RB.game.reducedMotion() });
-        const fadeK = Math.min(k * 8, (1 - k) * 8, 1);
-        c.fillStyle = `rgba(0,0,0,${1 - Math.max(0, fadeK)})`;
-        c.fillRect(0, 0, w, h);
-        if (k >= 1) next();
-      };
-      scene.art = true;
-      RB.render.setOverride(scene);
-      caption();
-      RB.ui.pushLayer(layer);
-    });
+    return RB.sequence.view({
+      seq: 'prologue', label: 'Prologue', name: 'prologue', music: 'prologue',
+      beats: SHOTS.map((s) => ({ shot: s.draw, line: { jp: s.jp, en: s.en } })),
+      seen: () => !!(RB.game.settings && RB.game.settings.prologueSeen),
+      // a device setting, not campaign state (older settings records lack it: not yet seen)
+      onSeen: () => { const st = RB.game.settings; if (st && !st.prologueSeen) { st.prologueSeen = true; RB.game.saveSettings(); } },
+      skip: { label: 'Skip prologue', confirm: 'Skip the prologue? You have not seen it through yet. You will go straight to making your traveller.', yes: 'Skip the prologue', no: 'Keep watching' },
+      release: () => RB.prologueArt.release(),
+    }).then(() => {});
   }
 
   // ---- data ----------------------------------------------------------------------------

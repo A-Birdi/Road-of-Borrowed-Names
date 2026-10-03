@@ -203,7 +203,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       ref: { grammar: 'tsumori' }, item: 'g:tsumori',
       a: { scene: 'sg.wataru_confront', line: 17, who: 'wataru', ctx: T('Wataru, confronted at No. 2 warehouse', '{二番|にばん} {倉庫|そうこ} で {問|と}い{詰|つ}められた ワタル'),
         jp: '{荷|に} を {少|すこ}し ずつ {売|う}って 、 {払|はら}う つもり でした 。 {給料|きゅうりょう} が {出|で}たら 、 {全部|ぜんぶ} {戻|もど}す つもり で 。 ラベル が {勝手|かって} に {変|か}わり{始|はじ}めた とき …… {嵐|あらし} の せい に できる 、 と {思|おも}って しまった ん です 。', en: 'I meant to sell a little cargo at a time and pay it off. To put it all back once the wages came. When the labels started changing by themselves… I thought, I can blame the storm.', reading: 'にをすこしずつうって、はらうつもりでした。きゅうりょうがでたら、ぜんぶもどすつもりで。ラベルがかってにかわりはじめたとき……あらしのせいにできる、とおもってしまったんです。', h: 'nswt9r' },
-      b: { scene: 'sg.omi_wataru', line: 34, who: 'omi', ctx: T('Ōmi, deciding what Wataru must do', 'ワタル の {処分|しょぶん} を {決|き}める オウミ'),
+      b: { scene: 'sg.omi_wataru', line: 37, who: 'omi', ctx: T('Ōmi, deciding what Wataru must do', 'ワタル の {処分|しょぶん} を {決|き}める オウミ'),
         jp: 'だが 、 {荷|に} を {売|う}った の は お{前|まえ} の {落|お}ち{度|ど} だ 。 {売|う}った {分|ぶん} は 、 {給料|きゅうりょう} から {返|かえ}して もらう 。 {灯台|とうだい} と ソウタ に は 、 {自分|じぶん} で {頭|あたま} を {下|さ}げに {行|い}け 。', en: 'But selling the cargo is your fault. You\'ll repay what you sold out of your wages. And you\'ll go to the lighthouse and to Sōta yourself, and apologise.', reading: 'だが、にをうったのはおまえのおちどだ。うったぶんは、きゅうりょうからかえしてもらう。とうだいとソウタには、じぶんであたまをさげにいけ。', h: 'btsulm' },
       q: {
         F: choose(T('Did Wataru actually sell cargo?', 'ワタル は {本当|ほんとう} に {荷|に} を {売|う}った ？'), [
@@ -249,7 +249,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       ref: { grammar: 'mae_ato' }, item: 'g:mae_ato',
       a: { scene: 'sg.harbor_first', line: 8, who: 'daigo', ctx: T('Daigo, at the harbour when you arrive in Saltglass', '{潮硝子|しおがらす} に {着|つ}いた {時|とき} 、 {港|みなと} の ダイゴ'),
         jp: '{嵐|あらし} の {後|あと} から 、 ずっと こう だ 。 {荷札|にふだ} も {手紙|てがみ} も {道案内|みちあんない} も 、 みんな {言|い}う こと が {違|ちが}う 。', en: 'Ever since the storm it\'s been like this. Cargo tags, letters, directions — they all say something different.', reading: 'あらしのあとから、ずっとこうだ。にふだもてがみもみちあんないも、みんないうことがちがう。', h: '1c6yhf3' },
-      b: { scene: 'rw.bridge_scene', line: 11, who: 'narr', ctx: T('At the teahouse door, after the bridge reaches the far bank', '{橋|はし} が {届|とど}いた {後|あと} 、 {茶屋|ちゃや} の {戸口|とぐち}'),
+      b: { scene: 'rw.bridge_scene', line: 20, who: 'narr', ctx: T('At the teahouse door, after the bridge reaches the far bank', '{橋|はし} が {届|とど}いた {後|あと} 、 {茶屋|ちゃや} の {戸口|とぐち}'),
         jp: 'ふたり が {茶屋|ちゃや} に {入|はい}って いく 。 {戸|と} が {閉|し}まる {前|まえ} に 、 コウジ が {振|ふ}り{返|かえ}って {手|て} を {振|ふ}った 。', en: 'The two of them go into the teahouse. Before the door closes, Kōji turns and waves.', reading: 'ふたりがちゃやにはいっていく。とがしまるまえに、コウジがふりかえっててをふった。', h: '1wj9g1x' },
       q: {
         F: choose(T('Which line is about "before", and which about "after"?', '「 {前|まえ} 」 と 「 {後|あと} 」 は どちら の {台詞|せりふ} ？'), [

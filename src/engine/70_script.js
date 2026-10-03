@@ -165,6 +165,7 @@ RB.script = (function () {
       RB.game.popMode('dialogue');
       if (running === 0) {
         if (RB.interlude) RB.interlude.clear(); // a picture left showing ends with its scene
+        if (RB.sequence) RB.sequence.dispose('scene-end'); // and an illustrated sequence left open (src/ui/43_sequence.js)
         RB.ui.dialogue.hide();
         RB.world.dismissExtras();
         RB.world.refreshActors();
@@ -232,7 +233,8 @@ RB.script = (function () {
         case 'look': if (RB.staging) RB.staging.look(a[0] === 'npc' ? ctx.npc : a[0], a[1] || '-', ctx); break;
         case 'pose': if (RB.staging) RB.staging.pose(a[0] === 'npc' ? ctx.npc : a[0], a[1] || '-', ctx); break;
         case 'prop': if (RB.staging) RB.staging.prop(a[0] === 'npc' ? ctx.npc : a[0], a[1] || '-', { hand: a[2] || null }, ctx); break;
-        case 'walkto': if (RB.staging) await RB.staging.walkTo(a[0] === 'npc' ? ctx.npc : a[0], +a[1], +a[2], DIRW[a[3]] ? a[3] : null, { now: a.includes('now'), stay: a.includes('stay') }, ctx); break;
+        // (behind an illustrated sequence's picture the walk finishes at once: the shots show the movement)
+        case 'walkto': if (RB.staging) await RB.staging.walkTo(a[0] === 'npc' ? ctx.npc : a[0], +a[1], +a[2], DIRW[a[3]] ? a[3] : null, { now: a.includes('now') || hidden(), stay: a.includes('stay') }, ctx); break;
         case 'beat': if (RB.staging) RB.staging.beat(a[0]); break;
         case 'ambience': if (RB.staging) RB.staging.ambience(a[0] || '-'); break;
         case 'set': a.forEach((f) => (s.flags[f] = true)); break;
@@ -306,41 +308,48 @@ RB.script = (function () {
         }
         case 'end': pc = sc.cmds.length; break;
         case 'challenge': {
+          if (RB.sequence) RB.sequence.stopSkip('challenge'); // a skipped scene stops here
           RB.ui.dialogue.hide();
           const res = await RB.challenge.run(a[0], { scene: sc.id });
           s.vars._res = res && res.ok ? 1 : 0;
           break;
         }
         case 'activity': {
+          if (RB.sequence) RB.sequence.stopSkip('activity');
           RB.ui.dialogue.hide();
           const res = await RB.activities.run(a[0], ctx);
           s.vars._res = res && res.ok ? 1 : 0;
           break;
         }
         case 'battle': {
+          if (RB.sequence) RB.sequence.stopSkip('battle');
           RB.ui.dialogue.hide();
           const res = await RB.game.startBattle(a[0], { inScript: true, noFlee: a.includes('noflee') });
           s.vars._res = res === 'win' ? 1 : 0;
           if (res !== 'win') { pc = sc.cmds.length; }
           break;
         }
-        case 'lesson': RB.ui.dialogue.hide(); await RB.lessons.run(a[0]); break;
-        case 'teach': RB.ui.dialogue.hide(); await RB.lessons.grammarCard(a[0]); break;
+        case 'lesson': if (RB.sequence) RB.sequence.stopSkip('lesson'); RB.ui.dialogue.hide(); await RB.lessons.run(a[0]); break;
+        case 'teach': if (RB.sequence) RB.sequence.stopSkip('teach'); RB.ui.dialogue.hide(); await RB.lessons.grammarCard(a[0]); break;
         case 'warp': {
           await RB.game.transition(a[0], +a[1], +a[2], a[3] || null, { inScript: true });
           break;
         }
         case 'music': RB.audio && (a[0] === '-' ? RB.audio.stopSong({ fade: 800 }) : RB.audio.playSong(a[0])); break;
         case 'sfx': RB.audio && RB.audio.sfx(a[0]); break;
-        case 'emote': RB.world.emote(a[0] === 'npc' ? ctx.npc : resolveId(a[0]), a[1] || '!', a[2] ? +a[2] : 1400); RB.audio && RB.audio.sfx('cursor'); await wait(500); break;
-        case 'move': await RB.world.scriptMove(resolveId(a[0]), a[1], +(a[2] || 1), a[3] ? +a[3] : 220); break;
+        case 'emote': RB.world.emote(a[0] === 'npc' ? ctx.npc : resolveId(a[0]), a[1] || '!', a[2] ? +a[2] : 1400); RB.audio && RB.audio.sfx('cursor'); if (!hidden()) await wait(500); break;
+        case 'move': await RB.world.scriptMove(resolveId(a[0]), a[1], +(a[2] || 1), hidden() ? 1 : a[3] ? +a[3] : 220); break;
         case 'face': { const act = RB.world.actorById(resolveId(a[0])); if (act) act.dir = a[1]; break; }
         case 'faceplayer': { const act = RB.world.actorById(resolveId(a[0] || ctx.npc)); if (act) RB.world.faceTo(act, RB.world.W.player.x, RB.world.W.player.y); break; }
         case 'wait': await wait(+a[0] || 400); break;
-        case 'fade': await RB.ui.fade(a[0] === 'out', a[1] ? +a[1] : 400); break;
+        // inside an illustrated sequence the shots carry the transitions: no fade to black over the picture
+        case 'fade': if (!hidden()) await RB.ui.fade(a[0] === 'out', a[1] ? +a[1] : 400); break;
         // a picture in place of the map while the lines go on (src/ui/42_interlude.js)
         case 'interlude': if (RB.interlude) { if (a[0] === '-') RB.interlude.clear(); else RB.interlude.show(a[0], a[1] || null); } break;
-        case 'shake': RB.ui.shake(); break;
+        // an illustrated sequence (src/ui/43_sequence.js): `!sequence <id> begin|end`, `!shot <shot> [phase]`
+        case 'sequence': if (RB.sequence) await RB.sequence.cmd(a[0], a[1] || 'begin', sc); break;
+        case 'shot': if (RB.sequence) RB.sequence.toShot(a[0], a[1] || null); break;
+        case 'shake': if (!hidden()) RB.ui.shake(); break; // never a screen shake inside a sequence
         case 'autosave': s.checkpoint = { map: s.map, x: s.x, y: s.y, dir: s.dir }; await RB.save.autosave(a[0] || 'progress'); break;
         case 'checkpoint': s.checkpoint = { map: a[0] || s.map, x: a[1] ? +a[1] : s.x, y: a[2] ? +a[2] : s.y, dir: a[3] || s.dir }; break;
         case 'chapter': s.chapter = +a[0]; break;
@@ -400,6 +409,8 @@ RB.script = (function () {
   function wait(ms) {
     return new Promise((r) => setTimeout(r, RB.game.fastForward() ? Math.min(ms, 60) : ms));
   }
+  // the world is behind an illustrated sequence's picture (src/ui/43_sequence.js)
+  const hidden = () => !!(RB.sequence && RB.sequence.hidesWorld());
 
   return { parse, add, run, runInline, isRunning, enVars, jpVars, splitBilingual, stageArgs };
 })();

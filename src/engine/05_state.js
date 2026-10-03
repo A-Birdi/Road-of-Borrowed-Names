@@ -88,6 +88,7 @@ RB.state = (function () {
       creatures: {},     // enemy id -> { t, maps: {}, notes: {} } creatures met
       awarded: {},       // award-bearing event id -> time (RB.state.once: at most once)
       practice: RB.practice ? RB.practice.fresh() : undefined, // roadside activities (src/engine/08_practice.js)
+      seq: {},           // illustrated sequences shown: seqId -> { n: times ended, h: [line hashes] } (src/ui/43_sequence.js)
     };
   }
 

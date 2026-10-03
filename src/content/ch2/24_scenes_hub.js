@@ -479,15 +479,23 @@ asahi: {船|ふね} の {名前|なまえ} 、 {分|わ}かった ？ …… だ
 ?(sg_da_seen) asahi[think]: {沈|しず}んだ {書庫|しょこ} に 、 {名前|なまえ} が {集|あつ}められてる って {本当|ほんとう} ？ {船|ふね} の {名前|なまえ} も 、 そこ に ある の かな 。 || Is it true names are being collected in the drowned archive? Maybe the boat's name is there too.
 
 @scene sg.asahi_name
+# The faded passage filled (SHOTS.md §7b; src/ui/43b_seq_ch2.js): the hands at work, the plate taking shape. Inside the sequence the fade is left to the pictures.
+!sequence ch2.plate begin
+!shot card
 narr: {登録|とうろく} カード を {見|み}せた 。 「{船名|せんめい} ： {千鳥丸|ちどりまる}」 。 || You show her the registry card. "Vessel: Chidori-maru."
+!shot card know
 asahi[surprise]: ちどり {丸|まる} …… ！ そう だ 、 {千鳥丸|ちどりまる} だ ！ {子|こ}ども の {頃|ころ} 、 {船|ふね} の {横|よこ} に {鳥|とり} の {絵|え} が {描|か}いて あった ！ || Chidori-maru…! That's it — Chidori-maru! When I was little there was a bird painted on its side!
 !take sg_registry
+!shot card take
 asahi: {待|ま}って て 。 {今|いま} {作|つく}る 。 || Wait here. I'll make it now.
 !fade out
+!shot work
 narr: アサヒ は {黙|だま}って {手|て} を {動|うご}かした 。 {削|けず}る {音|おと} 、 {磨|みが}く {音|おと} 。 {窓|まど} の {外|そと} で 、 カモメ が {鳴|な}いた 。 || Asahi works in silence. The sound of cutting; of polishing. Outside the window, a gull cries.
 !fade in
+!shot done
 !give sg_plate
 asahi[smile]: できた 。 …… {自分|じぶん} で {渡|わた}したい けど 、 {泣|な}く かも しれない から 、 {頼|たの}む 。 フク さん に {届|とど}けて 。 || Done. …I'd hand it over myself, but I might cry, so — please. Take it to Fuku.
+!sequence ch2.plate end
 !quest sg_seaglass 3
 
 @scene sg.asahi_plate_wait

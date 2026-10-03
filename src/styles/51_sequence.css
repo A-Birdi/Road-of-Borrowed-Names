@@ -1,0 +1,63 @@
+/* Illustrated sequences (src/ui/43_sequence.js): the scene controls in the dialogue sheet, the text hidden to
+ * see the whole picture, a look back at an earlier line, the picture dissolving back into the map; and the
+ * standalone caption slip used by the prologue and replays (it is the prologue's paper slip, 45_create.css). */
+
+/* the picture's last frame, fading out over the map as the sequence ends (never takes input) */
+.seq-out { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; image-rendering: crisp-edges; pointer-events: none; }
+
+/* ---- in the dialogue sheet --------------------------------------------------------------------- */
+/* Skip seen gives way to Skip scene (which asks first when part of the scene is new) */
+.dlg.in-seq .b-skip { display: none !important; }
+.seq-ctrl { position: relative; display: flex; align-items: flex-end; flex: none; }
+.seq-ctrl .seq-g { display: flex; flex-wrap: wrap; gap: 2px; align-items: center; padding-right: 4px; margin-right: 2px; border-right: 1px dotted var(--paper-edge); }
+.seq-ctrl .seq-more { display: none; }
+.seq-ctrl .dbtn[disabled] { opacity: 0.42; cursor: default; }
+.seq-ctrl .dbtn[disabled]:hover { background: transparent; color: var(--ink-2); }
+/* Hide text: the line, the speaker's tab and portrait go; the controls stay (Show text, navigation) */
+.dlg.seq-hidden .txt, .dlg.seq-hidden .dlg-tab, .dlg.seq-hidden .portrait, .dlg.seq-hidden .dlg-keep { display: none !important; }
+.dlg.seq-hidden { grid-template-columns: minmax(0, 1fr); grid-template-areas: "sheet"; }
+.dlg.seq-hidden .dlg-sheet { background: transparent; border-color: transparent; box-shadow: none; }
+.dlg.seq-hidden .ctrl { border-top: 0; border-radius: 8px; box-shadow: 0 8px 22px rgba(0, 0, 0, 0.45); }
+/* looking back at an earlier line: a ribbon says so; Next comes back to where you were */
+.dlg.reviewing .txt::before {
+  content: "Looking back — Next returns to where you were"; display: block; margin: -4px 0 6px; font-size: 0.78em;
+  color: var(--river); font-style: italic;
+}
+.dlg.reviewing .dlg-sheet { box-shadow: inset 4px 0 0 var(--river), 0 14px 36px rgba(0, 0, 0, 0.5), 0 2px 0 var(--paper-3); }
+@media (max-width: 599px) {
+  /* phones: the secondary controls sit behind a labelled "Scene" button, opening above the row */
+  .seq-ctrl .seq-more { display: inline-flex; flex-direction: column; gap: 1px; padding: 3px 0.35em; font-size: 0.72em; min-width: 50px; }
+  .seq-ctrl .seq-more svg { width: 1.6em; height: 1.6em; }
+  .seq-ctrl .seq-g {
+    display: none; position: absolute; right: 0; bottom: calc(100% + 6px); z-index: 2; flex-direction: column; align-items: stretch;
+    min-width: 11em; padding: 4px; margin: 0; border: 1px solid var(--paper-edge); border-radius: 6px; background: var(--paper);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+  }
+  .seq-ctrl.open .seq-g { display: flex; }
+  .seq-ctrl .seq-g .dbtn { justify-content: flex-start; font-size: 0.86em; }
+  .dlg .aux { min-width: 0; }
+}
+
+/* ---- the standalone caption slip (prologue, replays) --------------------------------------------- */
+.seq-view .seq-rv { font-size: 0.8em; color: var(--river); font-style: italic; margin: -0.1em 0 0.25em; }
+.seq-view .seq-rv:empty { display: none; }
+.seq-view .seq-tag { font: 600 0.72em/1.3 var(--ui-font, sans-serif); letter-spacing: 0.02em; color: var(--ink-2); background: var(--paper-3); border-radius: 3px; padding: 0.15em 0.5em; margin: 0 0 0.35em; }
+.seq-view .txt .who { font-family: var(--serif); font-weight: 600; color: var(--ink-2); font-size: 0.92em; margin-bottom: 0.1em; }
+.seq-view.seq-hidden .slip { visibility: hidden; }
+.seq-view.seq-review .slip { box-shadow: inset 4px 0 0 var(--river), 0 2px 0 var(--paper-3), 0 12px 32px rgba(0, 0, 0, 0.5); }
+.seq-view .acts { align-items: center; }
+.seq-view .seq-g { display: inline-flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.seq-view .seq-more { display: none; }
+.seq-view .cbtn[disabled] { opacity: 0.45; cursor: default; }
+@media (max-width: 599px) {
+  .seq-view .seq-more { display: inline-flex; }
+  .seq-view .seq-g { display: none; width: 100%; }
+  .seq-view.seq-open .seq-g { display: flex; }
+  .seq-view .acts .cbtn { padding: 0 0.7em; }
+}
+@media (max-height: 440px) {
+  .seq-view .acts { gap: 6px; }
+  .seq-view .acts .cbtn { min-height: 40px; }
+}
+/* the dev viewer's synthetic preview (src/ui/43z_sequence_dev.js) hides the page it was opened over */
+body.seq-dev-play #ui > :not(.seq-view) { visibility: hidden; }

@@ -166,6 +166,7 @@ const STATES = {
     await p.click('text=New Game');
     await p.click('[data-slot="1"] [data-a=start]');
     await p.click('text=Skip prologue');
+    await p.click('.csheet button:has-text("Skip the prologue")'); // (asked first: the prologue is unseen on this profile; src/ui/43_sequence.js)
     await p.waitForSelector('#nm');
     await p.fill('#nm', 'Robin');
     await settle(p, 400);
@@ -174,6 +175,7 @@ const STATES = {
     await p.click('text=New Game');
     await p.click('[data-slot="1"] [data-a=start]');
     await p.click('text=Skip prologue');
+    await p.click('.csheet button:has-text("Skip the prologue")'); // (asked first: the prologue is unseen on this profile; src/ui/43_sequence.js)
     await p.waitForSelector('#nm');
     await p.click('[data-a=next]');
     await settle(p, 300);

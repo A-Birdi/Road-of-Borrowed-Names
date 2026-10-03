@@ -2264,3 +2264,59 @@ byte-identical to a fresh build; registry.json regenerated for this branch):
 
 **Open:** docs and code comments from this merge call Nao "he"; the specification and the story use they/them. To be
 tidied.
+
+## Illustrated sequences, wave 1: the player, the prologue on manual advancement, three sequences (merged 2026-10-03; HX41–HX53, HX44, HX69)
+
+**What** (worker branch, final 9ad725e; the record is docs/expressive/reports/sequences_wave1.md; the API is SHOTS.md §0.1):
+- **`RB.sequence`** (src/ui/43_sequence.js, the drawing kit 43_sequence_kit.js):
+  - a tokened player: entering → presenting → holding → advancing/reviewing → exiting → disposed;
+  - manual only. Next reveals, then advances. Previous is read-only. Replay this shot; Hide text; Skip asks first when
+    the scene is unseen. Escape never discards;
+  - while a picture shows: moves finish at once, `!shake` and `!fade` don't fire, skip stops at challenges and
+    battles;
+  - an optional per-line seen record (`seq: {}`, filled by migrate; no schema, key or slot change);
+  - a read-only replay under Company › Shared memories;
+  - a `?dev=sequences` viewer, labelled SYNTHETIC FIXTURE.
+- **Sequences:**
+  - `ch1.bridge` (5 shots);
+  - `ch2.notice` inside `sg.omi_wataru` (4 shots, both routes);
+  - `ch2.plate` (3 shots), filling the faded passage `sg.asahi_name`.
+- **The prologue is on manual advancement:** no duration `next()`. "Skip the prologue?" is asked once per device
+  until it has been watched.
+- **New default keys:** P/PageUp Previous, R Replay shot, I Hide text. They can be remapped and collide with nothing.
+- **New ops:** `!sequence <id> begin|end` and `!shot <shot> [phase]`, checked by the validator.
+
+**The worker's runs:**
+- On its merge with the staging build (5d012cc):
+  - unit 25,044/0; validator clean;
+  - sequence_manual (full) 64/0;
+  - staging_chapters 2,386/0; staging_wataru 112/0;
+  - story_ch1 F mio PASS; walk_round passed;
+  - prologue 100/0; create 382/0; interludes 76/0; sequence_dev 9/0;
+  - quest_guide and company passed.
+- Earlier, on 0746026: ui 14/0; departures, settings, play_ui, bookmarks and dialect_kansai passed.
+- sequence_manual covers:
+  - 60 s idle on the prologue and on the Chapter 1 and 2 shots, with word help open;
+  - reveal then advance; a held key; rapid clicks; touch; remapped keys;
+  - read-only Previous; confirmed Skip;
+  - reduced motion;
+  - focal areas at three sizes;
+  - memory replay;
+  - 20 cycles: listeners 97 → 97, nodes 244 → 244.
+
+**The lead's runs on the merge** (the task branch with everything above; the merged index.html is byte-identical to a
+fresh build; scenes.json and SCENES.md regenerated):
+- unit 25,051/0; validator clean;
+- the browser runs are recorded on the next line.
+
+**Not verified:**
+- A person's review of the art and pacing.
+- Firefox, Safari, real phones and touch.
+- Large text; text-to-speech during a sequence.
+- On a phone held sideways only a band of each picture shows above the dialogue sheet (faces kept in view).
+- HX70 cut-in cycles inside sequences.
+
+**Open:**
+- A press during a shot's 350 ms fade-in only finishes the fade, so a fast reader may feel one press "eaten" at each
+  shot change.
+- The noren in ch1.bridge repeats the approved prologue's ring-and-dot crest (a mark, not a letter).

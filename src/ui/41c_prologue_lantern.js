@@ -230,7 +230,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       }
       if (still || f <= 0) return;
       // a few motes rise from where the stroke was, for a second and a half after it starts to go
-      const el = (k - (FADE0 + ((FADE1 - FADE0) * j) / STROKES.length)) * 8000;
+      const el = (k - (FADE0 + ((FADE1 - FADE0) * j) / STROKES.length)) * (o.ms || 8000); // ms since it began to go
       if (el > 1500) return;
       for (let m = 0; m < 3; m++) {
         const ph = clamp(el / 1500 - m * 0.12, 0, 1);

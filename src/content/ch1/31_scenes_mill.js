@@ -332,17 +332,28 @@ narr: {外|そと} で 、 {水車|すいしゃ} が {大|おお}きく {一|ひ
 RB.script.add(`
 @scene rw.bridge_scene
 !music wonder
+# Illustrated (src/ui/43a_seq_ch1.js; docs/expressive/SHOTS.md §1): the pictures carry these lines; the state lines after the end run once, as before.
+!sequence ch1.bridge begin
+!shot reach
 narr: {橋|はし} の {先|さき} が 、 {向|む}こう{岸|ぎし} に {届|とど}いて いた 。 {最初|さいしょ} から そう だった か の よう に 。 || The end of the bridge reaches the far bank, as if it always had.
+!shot reach door
 narr: {向|む}こう{岸|ぎし} の {小屋|こや} から 、 {帽子|ぼうし} を かぶった {男|おとこ} が 、 {茶碗|ちゃわん} を {持|も}って {出|で}て きた 。 || From the hut on the far bank, a man in a hat comes out, carrying a teacup.
+!shot cup
 !move koji left 10 260
 narr: {茶屋|ちゃや} の {戸|と} が {開|あ}いた 。 {杖|つえ} を ついた ツル も 、 {広場|ひろば} から やって くる 。 || The teahouse door opens. Tsuru comes over from the square, leaning on her cane.
+!shot hana
 hana[surprise]: …… コウジ ？ || …Kōji?
 koji[smile]: よう 、 {姉|ねえ}さん 。 {橋|はし} が {届|とど}かなくて さ 。 {三日|みっか} も {茶|ちゃ} を {飲|の}み{損|そこ}ねた 。 || Hey, sis. The bridge wouldn't reach. I've missed three days of tea.
+!shot hana lift
 koji: {自分|じぶん} の {茶碗|ちゃわん} で {飲|の}む の が {決|き}まり だろ 。 {忘|わす}れた の か ？ || Drinking from my own cup is the rule, isn't it? Did you forget?
+!shot close
 hana[sad]: {忘|わす}れて …… いた の 。 ごめん ね 。 {本当|ほんとう} に 、 {忘|わす}れて いた 。 || I… had forgotten. I'm sorry. I really had.
 koji[think]: …… そう か 。 {俺|おれ} も {向|む}こう で 、 {誰|だれ} の {所|ところ} へ {渡|わた}る はず だった か 、 わからなく なってた 。 {茶碗|ちゃわん} だけ {持|も}って 、 {岸|きし} に {座|すわ}ってた 。 || …I see. Over there, I'd lost track of who I was meant to be crossing to. I just sat on the bank holding my cup.
+!shot close smile
 hana[smile]: {入|はい}って 。 お{茶|ちゃ} 、 いれる から 。 {今度|こんど} は ちゃんと 、 あんた の {分|ぶん} 。 || Come in. I'll pour the tea. Properly, this time — yours.
+!shot door
 narr: ふたり が {茶屋|ちゃや} に {入|はい}って いく 。 {戸|と} が {閉|し}まる {前|まえ} に 、 コウジ が {振|ふ}り{返|かえ}って {手|て} を {振|ふ}った 。 || The two of them go into the teahouse. Before the door closes, Kōji turns and waves.
+!sequence ch1.bridge end
 !set rw_koji_back
 !quest rw_mill done
 !refresh

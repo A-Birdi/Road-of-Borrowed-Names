@@ -38,6 +38,76 @@ event, a line or a consequence: each sequence wraps lines that already exist.
 - **Replay record:** at `end`, `RB.company.memory()` with `kind: 'together'`, the sequence id, the labels of
   the branch taken, the companion and the look selectors (CONTRACT.md §3.5).
 
+### 0.1 The player as built (`RB.sequence`, `src/ui/43_sequence.js`) — the API for later sequence files
+
+Sequences are added as new files that only register shots; nothing in the core or in another chapter's file
+changes. Chapter 1 is `src/ui/43a_seq_ch1.js`, Chapter 2 (and its faded passage) `43b_seq_ch2.js`; later chapters
+and passages go in `43c_…`, `43d_…` (loaded after the core and its kit by file name). A dev viewer
+(`src/ui/43z_sequence_dev.js`, `?dev=sequences`) shows every registered shot.
+
+**Scene script** (the validator checks all of it; the quest guide treats the ops as presentation):
+
+```
+!sequence <seqId> begin     right after the scene's entry transition; the map dissolves into the first shot
+!shot <shotId> [phase]      before the line the shot (or the phase's one-time action) opens with
+…the scene's own lines and state commands, unchanged…
+!sequence <seqId> end       before the return to the world; the picture dissolves back into the map
+```
+- A new shot dissolves in (≈350 ms); `!shot <same shot> <phase>` starts that phase's one-time action with no
+  dissolve. Phases only go forward; earlier ones stay at their end state. `?(cond)` works on these ops, so a
+  branch-only shot or phase is written like a branch-only line (e.g. `?(sg_wataru_self) !shot face soften`).
+- Inside a sequence the world is behind the picture: `!move` and `!walkto` finish at once (the shots show the
+  movement; positions still change, so the world matches on return), `!emote` does not wait, `!shake` never
+  fires (the validator rejects one inside), and `!fade` is left to the shots. A sequence begun in the dark
+  (after a `!fade out`) lifts the dark over its first shot and puts it back at `end`, so the scene's own
+  `!fade in` shows the world as written. Put `!sequence … end` before a fade that should go to black.
+- A sequence left open is disposed when its scene ends (also on an error, a defeat that ends the scene, a load
+  or any campaign change).
+
+**Shot definitions:**
+
+```js
+RB.sequence.define('ch3.assembly', {
+  title: { en: '…', jp: '…(furigana)…' }, chapter: 3, scene: 'co.assembly',
+  memory: true, memo: { jp: '', en: '…' },          // keep a Shared memory at the end (needs a companion)
+  shots: {
+    dusk: {
+      phases: [['murmur', 900]],                     // [[id, ms], …] one-time actions in order; 0 = none
+      draw(c, w, h, t, st) { … },                    // at art resolution into the buffer c (w × h)
+      focus(w, h, vb, st) { return { x, y, w, h }; }, // the faces / focal object (tests keep it above the sheet)
+    },
+  },
+});
+RB.sequence.shot('ch3.assembly', 'names', { … });  // or one shot at a time
+```
+`st = { shot, phase, pi, k, at(phase), since, vb, still, review, hold, cast: { pc, comp }, test(cond), t }`:
+`k` runs 0→1 through the current phase's action and then stays 1; `at(name)` gives any phase's progress
+(earlier phases 1); `vb` is the dialogue sheet's top (keep the focal area above it; a phone on its side leaves
+only a band, where a face stays in view and the rest goes under the sheet); `still` is reduced motion (k is 1
+at once; stop ambient motion); `cast.pc` is the player's look snapshotted at entry and `cast.comp` the
+companion actually on the map (else null; never draw an absent companion); `test(cond)` reads campaign state
+(e.g. the Saltglass furnace lit only once `sg_boss_done`). A shot reads state; it never writes it.
+The drawing kit `RB.seqKit` (`43_sequence_kit.js`) has the layout (`stage`), caches (`cached`, `small`; dropped
+when a sequence ends), people from the game's own drawings (`figure` — road sprites with poses and props,
+shrunk onto the grid; `bust` — portraits with expression and frame descriptors; `back` — a person from
+behind), `hand`, light grading, and small live things (`gull`, `dust`, `steam`, `shoji`).
+
+**What the reader can do** (the dialogue sheet's control row while a sequence is on): Next (Enter, Space, Z,
+a click or tap on the line or Next) reveals the line, then moves on one beat; a press while a shot is still
+dissolving in only completes the dissolve; key repeat is ignored. Previous (P, PageUp, ←) looks back at reached
+beats read-only, Next walks forward and rejoins the live line without moving it on. Replay shot (R) plays the
+shot's actions again. Hide text (I) leaves Show text and the navigation; a tap on the picture brings the text
+back. Skip scene asks first when any line ahead (to the sequence's end or the next choice) is new to the
+campaign, then runs the remaining lines quickly — the state commands run once — and stops at the end of the
+sequence, at a choice, a challenge or any decision. Escape opens that question (it never skips by itself) or
+closes word help. On phones Previous, Replay, Hide and Skip sit behind a labelled "Scene" button. P, R and I
+are remappable in Settings › Controls.
+
+**Seen state:** `s.seq[seqId] = { n: times ended, h: [hashes of the lines shown] }` (optional; older saves gain
+it through `migrate`). Skip-seen stops at the first line of a sequence this campaign has not shown.
+
+**The prologue** runs on the same player outside a scene (`RB.sequence.view`), with its own caption slip.
+
 ---
 
 ## 1. Chapter 1 — the bridge reaches the far bank (`rw.bridge_scene`)
@@ -288,7 +358,7 @@ or with performed overworld movement (the actor system). Decide each with the sa
 |---|---|---|
 | `sg.tide_wait` (ch2) | two hours' wait at Shiori's window | **Filled**: the tide interlude (`42b_interlude_tide.js`) |
 | `sg.genzo_wind` (ch2) | the climb up the spiral stairs | **Filled** by the real map (`sg.lighthouse_top`). The one climbing line over the dark could become a short stairwell shot: candidate. |
-| `sg.asahi_name` (ch2) | Asahi carving and polishing the nameplate, gulls outside | **Gap**: an illustrated close-up of the hands at work, the plate taking shape. |
+| `sg.asahi_name` (ch2) | Asahi carving and polishing the nameplate, gulls outside | **Filled**: the sequence `ch2.plate` (`src/ui/43b_seq_ch2.js`) — the registry card on the glassworks counter, the hands at work as the plate takes shape, Asahi holding it up; the scene's fades are inside the sequence and left to the pictures. |
 | `co.suzu_night` (ch3) | the cut to that night, Suzu alone on the inn veranda | Darkness as a scene change: **performed** on the veranda (her sitting, the night ambience) instead of a line over black. |
 | `co.festival_begin` (ch3) | a whole morning of village labour (four lines) | **Gap**: an illustrated sequence (the terraces, the water gate, the cut firebreaks, the new rope on the tower). Candidate for joining Chapter 3's sequence. |
 | `sb.quiet_morning` (ch4) | the storm night ending ("at some point the wind stopped") | **Darkness intended** (sleep and the storm's end); keep the black, possibly a single quiet window shot as the light returns. |

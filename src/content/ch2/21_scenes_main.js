@@ -528,18 +528,26 @@ omi[angry]: {言|い}い{訳|わけ} を しろ 。 {聞|き}く の も 、 {�
 !look omi wataru
 narr: ワタル は {全部|ぜんぶ} {話|はな}した 。 {船|ふね} の こと 、 {利子|りし} の こと 、 {遅|おく}れて いる {給料|きゅうりょう} の こと 。 || Wataru tells her everything: the boat, the interest, the late wages.
 !beat omi.pivot.begin
+# Illustrated close-up of the pivotal exchange (src/ui/43b_seq_ch2.js; SHOTS.md §2): the staging below goes on behind the pictures, so the office is as it should be when the world returns.
+!sequence ch2.notice begin
+!shot faults
 !gesture omi palm prop:desk
 omi[think]: {給料|きゅうりょう} が {遅|おく}れて いる の は 、 {会社|かいしゃ} の {落|お}ち{度|ど} だ 。 {灯落|ひおち} の {本店|ほんてん} に は 、 わたし から {手紙|てがみ} を {書|か}く 。 {遅|おく}れた {分|ぶん} は 、 {利子|りし} を つけて {払|はら}って もらう 。 || The wages being late is the company's fault. I'll write to head office in Lanternfall myself. They'll pay what they owe — with interest.
 !gesture omi size wataru
+!shot faults yours
 omi: だが 、 {荷|に} を {売|う}った の は お{前|まえ} の {落|お}ち{度|ど} だ 。 {売|う}った {分|ぶん} は 、 {給料|きゅうりょう} から {返|かえ}して もらう 。 {灯台|とうだい} と ソウタ に は 、 {自分|じぶん} で {頭|あたま} を {下|さ}げに {行|い}け 。 || But selling the cargo is your fault. You'll repay what you sold out of your wages. And you'll go to the lighthouse and to Sōta yourself, and apologise.
 !gesture omi point wataru
 omi: それ から 、 {港|みなと} じゅう の ラベル を {書|か}き{直|なお}せ 。 {一枚|いちまい} {残|のこ}らず 。 お{前|まえ} より {字|じ} の {綺麗|きれい} な {者|もの} は 、 この {港|みなと} に いない 。 || And then you'll rewrite every label in the harbour. Every last one. No one in this port writes a better hand than you.
 !gesture wataru flinch omi
+!shot face
 wataru[surprise]: …… {辞|や}めさせない ん です か 。 || …You're not dismissing me?
 !gesture wataru exhale
+!shot face exhale
 omi: {辞|や}めさせたら 、 {誰|だれ} が {借金|しゃっきん} を {返|かえ}す ん だ 。 || If I dismiss you, who pays back the debt?
 ?(sg_wataru_self) !gesture omi nod wataru
+?(sg_wataru_self) !shot face soften
 ?(sg_wataru_self) omi[smile]: …… それ に 、 {自分|じぶん} の {口|くち} で {言|い}いに {来|き}た 。 それ は {覚|おぼ}えて おく よ 。 || …Besides, you came and said it yourself. I'll remember that.
+!shot room
 ?(comp=mio) !gesture comp nod omi
 ?(comp=mio) comp[smile]: （{厳|きび}しい けど 、 {優|やさ}しい {人|ひと} だ ね 。） || (Strict, but kind.)
 ?(comp=suzu) !gesture comp size
@@ -549,17 +557,22 @@ omi: {辞|や}めさせたら 、 {誰|だれ} が {借金|しゃっきん} を 
 ?(comp=ren) !gesture comp listen omi then=nod
 ?(comp=ren) comp: （{正|ただ}す こと と {罰|ばっ}する こと を 、 {分|わ}けて いる 。 よい {港長|こうちょう} です 。） || (She keeps correcting separate from punishing. A good harbourmaster.)
 !gesture omi palm wataru
+!shot room point
 omi: {灯落|ひおち} の {黒部|くろべ} に は 、 {正直|しょうじき} に 「{待|ま}って くれ 」 と {書|か}け 。 {開|あ}けて ない {手紙|てがみ} に は 、 {返事|へんじ} も {書|か}けない だろう 。 || And write to Kurobe in Lanternfall, honestly asking them to wait. You can't answer a letter you haven't opened.
 !take sg_notice
 !walkto pc 6 5 up
 !prop pc notice
 !gesture pc handover wataru
 !gesture wataru receive pc hold
+!shot notice
 narr: {督促状|とくそくじょう} を ワタル に {返|かえ}した 。 || You give the final notice back to Wataru.
 !gesture wataru read prop=notice hold
+!shot notice steady
 wataru: …… {開|あ}けます 。 {今|いま} 、 ここ で 。 || …I'll open it. Now. Here.
 !look omi wataru
+!shot notice seal
 narr: {封|ふう} が {切|き}られた 。 {誰|だれ} も {何|なに} も {言|い}わなかった 。 {窓|まど} の {外|そと} で 、 カモメ が {一羽|いちわ} {鳴|な}いた 。 || The seal breaks. No one says anything. Outside the window, a single gull cries.
+!sequence ch2.notice end
 !set sg_wataru_resolved
 !note sg_passive
 ?(comp=suzu) !gesture comp lowered wataru then=listen
