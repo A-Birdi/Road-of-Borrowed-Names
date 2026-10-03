@@ -57110,10 +57110,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ==== ch4.lamp · akari: close on the shade ===================================================================
   function geomAkari(w, h, vb) {
     const S = stage(w, h, vb), { s, lay } = S;
-    const k = clamp(Math.min((vb - s(20)) / 64, w / 120), 0.7, 3.4);
-    const Lg = lampGeom(Math.round(w * (lay === 'narrow' ? 0.5 : 0.46)), Math.round(vb - s(4) - (lay === 'land' ? 0 : 0)), k);
-    Lg.y = Lg.y + 0; // (the pillar runs on under the sheet)
-    return Object.assign(S, { k, Lg: lampGeom(Lg.x, Math.round(Math.max(vb * 0.5 + 54 * k / 2, 54 * k + s(8))), k) });
+    // the whole lamp head (the flame over the cap, the cap, the shade: about 76 k tall) fits above the sheet
+    const k = clamp(Math.min((vb - s(12)) / 80, w / 130), 0.5, 3.2);
+    const y0 = Math.round(22 * k + s(4));
+    return Object.assign(S, { k, Lg: lampGeom(Math.round(w * (lay === 'narrow' ? 0.5 : 0.46)), y0 + Math.round(54 * k), k) });
   }
   const akari = {
     phases: [['ink', 900], ['voice', 700], ['warm', 1500]],
@@ -57277,8 +57277,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ==== ch4.lamp · flint: the insert ============================================================================
   function geomFlint(w, h, vb) {
     const S = stage(w, h, vb), { s } = S;
-    const k = clamp(Math.min((vb - s(10)) / 70, w / 150), 0.7, 3.2);
-    const wx = Math.round(w * 0.5), wy = Math.round(Math.max(30 * k, vb * 0.62));
+    // the hands, the spark and the wick (about 56 k tall round the wick's top) fit above the sheet
+    const k = clamp(Math.min((vb - s(10)) / 58, w / 150), 0.5, 3.2);
+    const wx = Math.round(w * 0.5), wy = Math.round(clamp(vb * 0.62, 49 * k, vb - 9 * k));
     return Object.assign(S, { k, wx, wy });
   }
   const flint = {
@@ -57409,8 +57410,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ==== ch4.reply · seal: the envelope sealed, the address left blank ===========================================
   function geomSeal(w, h, vb) {
     const S = stage(w, h, vb), { s } = S;
-    const k = clamp(Math.min((vb - s(10)) / 60, w / 130), 0.7, 3.2);
-    return Object.assign(S, { k, ex: Math.round(w * 0.5), ey: Math.round(Math.max(28 * k, vb * 0.52)) });
+    // the envelope (64 k tall) and the hand turning it fit above the sheet
+    const k = clamp(Math.min((vb - s(8)) / 70, w / 130), 0.5, 3.2);
+    return Object.assign(S, { k, ex: Math.round(w * 0.5), ey: Math.round(clamp(vb * 0.52, 35 * k, vb - 35 * k)) });
   }
   // the envelope: back (the flap, its seal) or front (the address panel: a ruled box, empty)
   function envelope(c, x, y, k, side, sealed) {
