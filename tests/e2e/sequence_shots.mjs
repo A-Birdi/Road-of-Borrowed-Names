@@ -22,15 +22,18 @@ const RUNS = [
 const { srv, url } = await serve();
 const b = await launch();
 let n = 0, bytes = 0;
+// Phone captures are taken at the device's pixel ratio (3) and written at CSS size, so the files stay small.
 async function save(p, file) {
   const png = await p.screenshot();
   const webp = await p.evaluate(async (b64) => {
     const img = new Image();
     img.src = 'data:image/png;base64,' + b64;
     await img.decode();
-    const c = document.createElement('canvas'); c.width = img.width; c.height = img.height;
-    c.getContext('2d').drawImage(img, 0, 0);
-    return c.toDataURL('image/webp', 0.82);
+    const d = window.devicePixelRatio || 1;
+    const c = document.createElement('canvas'); c.width = Math.round(img.width / d); c.height = Math.round(img.height / d);
+    const g = c.getContext('2d'); g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high';
+    g.drawImage(img, 0, 0, c.width, c.height);
+    return c.toDataURL('image/webp', 0.8);
   }, png.toString('base64'));
   const buf = Buffer.from(webp.split(',')[1], 'base64');
   fs.writeFileSync(path.join(OUT, file), buf);
