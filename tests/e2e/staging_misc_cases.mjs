@@ -153,6 +153,9 @@ const PETS = [
   M({ scene: 'pets.tanuki.papers', map: 'co.road', at: [5, 5, 'up'], flags: C3,
     variants: [{ name: 'under a flat stone', picks: [0], comps: ALL4, expect: { pc: ['observe', 'kneel'] } }, { name: 'in the rock\'s lee', picks: [1], comp: 'mio', expect: { pc: ['bend'] } }, { name: 'left', picks: [2], comp: 'ren' },
       { name: 'tidy · the tanuki not yet met', vars: { pet_tanuki: 2 }, picks: [1], comp: 'suzu' }] }),
+  // the greetings (Company › Pet › Greet together): wherever you are; the animal's own movements are the pet system's
+  // (no pet travels in these fixtures, so its hooks do nothing), the companion's part is staged
+  ...['nao', 'mio', 'ren', 'suzu'].flatMap((c) => ['cat', 'dog', 'bird', 'tanuki'].map((a) => M(Object.assign({ scene: 'pets.greet.' + c + '.' + a, comp: c }, { map: 'sg.harbor', at: [30, 26, 'left'], flags: SE })))),
   M({ scene: 'pets.bird.post', map: 'sg.harbor', at: [43, 27, 'up'], flags: S0, quests: { sg_main: 1 },
     variants: [{ name: 'untied', picks: [0], comps: ALL4, expect: { pc: ['observe', 'kneel'] } }, { name: 'tucked in', picks: [1], comp: 'ren', expect: { pc: ['bend'] } }, { name: 'left', picks: [2], comp: 'suzu' },
       { name: 'steady · the bird not yet met', vars: { pet_bird: 2 }, picks: [2], comp: 'mio' }] }),
