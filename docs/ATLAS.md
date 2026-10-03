@@ -46,7 +46,9 @@ threshold → path room → fork ─┬─ branch A (1–2 rooms) ─┐
   `started, completed, runs, camps, patternsSeen, relicsSeen, last, lastSummary`.
 - **Maps**: `RB.content.maps['atlas.<runId>.<room>']`, built deterministically from the run
   (`RB.atlas.register(run)`); rooms are `t p1 f1 a1 a2 b1 b2 c d1 e1 x z`. All atlas maps
-  are `noTravel` and `noCheckpoint`. They are dropped again after the run.
+  are `noTravel` and `noCheckpoint`; the Map tab's Travel list says why (`travelKind: 'expedition'`
+  with its `noTravelWhy`: the lantern at the end of the road, or home early from a camp; see
+  docs/CONTENT.md "Quick travel"). They are dropped again after the run.
 - **Saves**: `RB.atlas.prepare(state)` (called by `src/engine/80_save.js`) re-registers the
   maps from the stored seed, moves the player to the room entry if their tile is not
   walkable, and keeps the defeat checkpoint in the Lantern Hall. If a run cannot be

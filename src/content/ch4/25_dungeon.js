@@ -12,7 +12,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const lampLit = () => { const s = RB.game && RB.game.s; return !!(s && s.flags.sb_lamp_lit); };
 
   C.maps['sb.obs_path'] = {
-    name: T('The Star Stair', '{星|ほし} の {石段|いしだん}'), region: 'snowbell', music: 'observatory', noTravel: true,
+    name: T('The Star Stair', '{星|ほし} の {石段|いしだん}'), region: 'snowbell', music: 'observatory',
     ambient: { weather: 'snow', get dark() { return lampLit() ? 0.2 : 0.1; }, tint: 'rgba(170,190,230,0.08)' },
     terrain: K.build(28, 40, '*', (k) => {
       k.ragged('left', 'P', 3, 61).ragged('right', 'P', 3, 62);
@@ -74,7 +74,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
 
   C.maps['sb.obs_hall'] = {
-    name: T('Observatory — Ground Floor', '{天文台|てんもんだい} {一階|いっかい}'), region: 'snowbell', music: 'observatory', noTravel: true,
+    name: T('Observatory — Ground Floor', '{天文台|てんもんだい} {一階|いっかい}'), region: 'snowbell', music: 'observatory', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the Observatory' },
     ambient: { dark: 0.35, playerLight: 46, tint: 'rgba(150,190,240,0.08)' },
     terrain: K.build(20, 16, '#', (k) => {
       k.rect(1, 2, 18, 13, '+');
@@ -110,7 +110,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
 
   C.maps['sb.obs_charts'] = {
-    name: T('The Chart Room', '{星図|せいず} の {部屋|へや}'), region: 'snowbell', music: 'observatory', noTravel: true,
+    name: T('The Chart Room', '{星図|せいず} の {部屋|へや}'), region: 'snowbell', music: 'observatory', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the Observatory' },
     ambient: { get dark() { const s = RB.game && RB.game.s; return s && s.flags.sb_stove_lit ? 0.2 : 0.4; }, playerLight: 44 },
     terrain: K.build(16, 12, '#', (k) => {
       k.rect(1, 2, 14, 9, '+');
@@ -144,7 +144,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
 
   C.maps['sb.obs_gallery'] = {
-    name: T('The Upper Gallery', '{上|うえ} の {回廊|かいろう}'), region: 'snowbell', music: 'observatory', noTravel: true,
+    name: T('The Upper Gallery', '{上|うえ} の {回廊|かいろう}'), region: 'snowbell', music: 'observatory', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the Observatory' },
     ambient: { dark: 0.4, playerLight: 46, tint: 'rgba(150,190,240,0.06)' },
     terrain: K.build(20, 14, '#', (k) => {
       k.rect(1, 2, 18, 11, '+');
@@ -178,7 +178,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
 
   C.maps['sb.obs_dome'] = {
-    name: T('The Lamp Room', '{灯|ひ} の {間|ま}'), region: 'snowbell', noTravel: true,
+    name: T('The Lamp Room', '{灯|ひ} の {間|ま}'), region: 'snowbell', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the Observatory' },
     music: [{ if: 'sb_lamp_lit', id: 'wonder' }, { id: 'observatory' }],
     ambient: { get dark() { return lampLit() ? 0.15 : 0.5; }, playerLight: 40, get tint() { return lampLit() ? 'rgba(255,200,120,0.08)' : 'rgba(150,190,240,0.12)'; } },
     terrain: K.build(14, 12, '#', (k) => {

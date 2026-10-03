@@ -322,7 +322,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // authored action poses and their own deliveries.
 
   // ---- tower maps ---------------------------------------------------------------------------------------
-  const TOWER = { region: 'lanternfall', music: 'belltower', noTravel: true };
+  const TOWER = { region: 'lanternfall', music: 'belltower', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the bell tower' } };
   const flood = (cells, cond) => cells.map(([x, y]) => ({ p: 'lf_flood', x, y, if: cond }));
   const rect = (x0, y0, w, h) => { const out = []; for (let y = y0; y < y0 + h; y++) for (let x = x0; x < x0 + w; x++) out.push([x, y]); return out; };
 

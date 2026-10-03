@@ -315,6 +315,7 @@ RB.atlas = (function () {
     const sp = spawnOf(run, d);
     const def = {
       name: pat.name, region: 'atlas', music: pat.music || 'atlas', noTravel: true, noCheckpoint: true,
+      travelKind: 'expedition', noTravelWhy: { en: 'You\'re out on the Unwritten Atlas. Travel works again once you\'re home — the lantern at the end of the road takes you back, or you can head home early from a camp.' },
       ambient: ambientFor(run, d),
       legend: { X: { tile: 'atlas_blank' }, Y: { tile: 'atlas_sketch' } },
       terrain, props: deco.slice(), npcs: [], foes: [], exits: [], triggers: [],

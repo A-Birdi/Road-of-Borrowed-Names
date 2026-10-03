@@ -166,7 +166,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- interiors ---------------------------------------------------------------------------------
   function interior(id, name, w, h, doorX, backTo, backXY, extra) {
     C.maps[id] = Object.assign({
-      name, region: 'snowbell', music: null, noTravel: true,
+      name, region: 'snowbell', music: null, noTravel: true, travelKind: 'interior',
       terrain: K.room(w, h, '_', doorX),
       props: [{ p: 'exitmat', x: doorX, y: h - 2 }],
       npcs: [],
@@ -225,6 +225,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Upstairs: the travellers' room.
   C.maps['sb.inn_room'] = {
     name: T('Upstairs at Yukimiya', '{雪見屋|ゆきみや} の {二階|にかい}'), region: 'snowbell', music: 'quiet_road', noTravel: true,
+    travelKind: 'interior', travelPlace: { en: 'the upstairs room at Yukimiya' },
     ambient: { get dark() { return storm() ? 0.5 : 0.15; }, playerLight: 30 },
     terrain: K.build(9, 8, '#', (k) => { k.rect(1, 2, 7, 5, 'm'); k.set(7, 6, '_'); }),
     props: [

@@ -106,6 +106,9 @@ for (const id in C.maps) {
   const w0 = rows[0].length;
   if (rows.some((r) => r.length !== w0)) E('map ' + id + ': terrain rows have different widths');
   if (def.name) jcheck(def.name.jp, 'map ' + id + ' name');
+  // quick travel: a map without it says what kind of place it is, or why — and any Japanese
+  // in those reasons has furigana on every kanji (src/engine/52_travel.js)
+  for (const msg of RB.travel.problems(id, def)) E(msg);
   const walk = (x, y) => x >= 0 && y >= 0 && x < m.w && y < m.h && !m.block[y * m.w + x];
   const sp = (def.spawn && def.spawn.default) || null;
   if (!sp) E('map ' + id + ': no default spawn');
