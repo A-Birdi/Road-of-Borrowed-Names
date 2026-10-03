@@ -56,10 +56,18 @@ RB.harmonyArt = (function () {
     compact: { comp: [45, 72], pc: [108, 73] },
   };
   const CAP = { busts: 24, comps: 16 };
-  const S = { hits: 0, misses: 0, builds: 0, evictions: 0, buildMs: [], invalidations: 0 };
+  const S = { hits: 0, misses: 0, builds: 0, evictions: 0, buildMs: [], invalidations: 0, paintMs: [], decodeMs: [] };
   const busts = new Map(), comps = new Map();
   const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
   const now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
+  // Painted art (88_harmony_raster.js; docs/harmony/contract/CONTRACT.md): while a set is installed the pair has the
+  // contract's size, its phases are the performance states and each bust is painted when all its files are there
+  // and decoded (else that whole bust is drawn in code). With nothing installed, everything below is as before.
+  const R = () => RB.harmonyRaster, HC = () => RB.harmonyContract;
+  const painted = () => !!(R() && R().active());
+  let NATIVE_P = null;
+  const nativeP = () => NATIVE_P || (NATIVE_P = { standard: { w: HC().PAIR.standard.w, h: HC().PAIR.standard.h }, compact: { w: HC().PAIR.compact.w, h: HC().PAIR.compact.h } });
+  const keepMs = (a, v) => { a.push(v); if (a.length > 64) a.shift(); };
 
   function lru(map, key) {
     const v = map.get(key);
@@ -79,15 +87,26 @@ RB.harmonyArt = (function () {
   function norm(o) {
     o = o || {};
     const variant = o.variant === 'compact' ? 'compact' : 'standard';
-    const phase = o.still ? 'hold' : o.phase === 'enter' ? 'enter' : 'hold';
     const comp = COMPANIONS.includes(o.comp) ? o.comp : null;
+    if (painted()) {
+      // a state; still (reduced motion) → settle_b; the code phases map to the first and the settled state
+      const H = HC(), phase = o.still ? H.REDUCED : H.STATES.indexOf(o.phase) >= 0 ? o.phase : o.phase === 'enter' ? 'prep_a' : H.REDUCED;
+      return { comp, variant, phase, painted: true, look: effectiveLook(o.look), backing: o.backing !== false, fx: o.fx !== false, omit: o.omit || null, view: o.view || null };
+    }
+    const phase = o.still ? 'hold' : o.phase === 'enter' ? 'enter' : 'hold';
     return { comp, variant, phase, look: effectiveLook(o.look), backing: o.backing !== false, fx: o.fx !== false, omit: o.omit || null, view: o.view || null };
   }
   function bustKey(who, look, pose, phase, variant, fx) {
     return ['v' + ART_VERSION, who, pose, phase, variant, fx === false ? 'nofx' : 'fx', who === 'pc' ? HK().lookKey(look) : '-'].join('|');
   }
+  // which source a bust of a painted pair is drawn from now: P painted (all files decoded) or C code
+  const srcOf = (who, n) => (R().ready(R().plan(who, who === 'pc' ? n.look : null, n.phase, n.comp)) ? 'P' : 'C');
   function keyOf(o) {
     const n = norm(o);
+    if (n.painted) {
+      const fl = n.comp ? (n.omit === 'comp' ? '-' : srcOf(n.comp, n)) + (n.omit === 'pc' ? '-' : srcOf('pc', n)) : '--';
+      return ['v' + ART_VERSION, 'c' + HC().VERSION, 'a' + R().artVersion(), n.comp, n.variant, n.phase, n.backing ? 'b' : 'nb', n.fx ? 'fx' : 'nofx', n.omit || '-', fl, HK().lookKey(n.look)].join('|');
+    }
     return ['v' + ART_VERSION, n.comp, n.variant, n.phase, n.backing ? 'b' : 'nb', n.fx ? 'fx' : 'nofx', n.omit || '-', HK().lookKey(n.look)].join('|');
   }
 
@@ -106,8 +125,38 @@ RB.harmonyArt = (function () {
     store(busts, key, b, CAP.busts);
     return b;
   }
+  // A painted bust (cached with the code busts). Returns { pl (its plan), b (null: not paintable now) }.
+  function paintedBust(who, n) {
+    const pl = R().plan(who, who === 'pc' ? n.look : null, n.phase, n.comp);
+    if (!R().ready(pl)) return { pl, b: null };
+    const key = ['v' + ART_VERSION, who, 'c' + HC().VERSION, 'a' + R().artVersion(), who === 'pc' ? n.comp : '-', pl.state, n.fx ? 'fx' : 'nofx', who === 'pc' ? HK().lookKey(n.look) : '-'].join('|');
+    let b = lru(busts, key);
+    if (b) { S.hits++; return { pl, b }; }
+    S.misses++;
+    const t0 = now();
+    const r = R().paint(pl, n.look, n.fx);
+    if (!r) return { pl, b: null };
+    b = { layer: { w: r.w, h: r.h, px: r.px, mt: r.mt }, w: r.w, h: r.h, face: r.face, hands: r.hands, anchor: r.anchor, key, painted: true };
+    b.layer.canvas = function () { return RB.pxkit.Layer.prototype.canvas.call(this); };
+    S.builds++;
+    keepMs(S.paintMs, now() - t0);
+    store(busts, key, b, CAP.busts);
+    return { pl, b };
+  }
+  // bust(who, look, pose, phase[, variant]); while painted art is installed, phase may be a state and, for the
+  // player, `pose` names the companion of the pairing (the brush arm's terminal poses depend on it)
   function bust(who, look, pose, phase, variant) {
     who = who || 'pc';
+    if (painted() && HC().STATES.indexOf(phase) >= 0) {
+      const comp = who === 'pc' ? (COMPANIONS.includes(pose) ? pose : null) : who;
+      const { b } = paintedBust(who, { look: effectiveLook(look), phase, comp, fx: true });
+      if (b) {
+        if (!b.cv) b.cv = b.layer.canvas();
+        return { cv: b.cv, w: b.w, h: b.h, face: Object.assign({}, b.face), hands: b.hands.map((r) => Object.assign({}, r)), anchor: Object.assign({}, b.anchor), key: b.key, painted: true };
+      }
+      phase = HC().CODE_PHASE[phase];
+      if (COMPANIONS.includes(pose)) pose = null;
+    }
     const b = bustLayer(who, effectiveLook(look), pose || POSE_OF[who] || 'rally', phase === 'enter' ? 'enter' : 'hold', variant === 'compact' ? 'compact' : 'standard', true);
     if (!b.cv) b.cv = b.layer.canvas();
     return { cv: b.cv, w: b.w, h: b.h, face: Object.assign({}, b.face), hands: b.hands.map((r) => Object.assign({}, r)), anchor: Object.assign({}, b.anchor), key: b.key };
@@ -117,22 +166,30 @@ RB.harmonyArt = (function () {
   // Deterministic shape and strokes per variant (a hash of the column and row, never Math.random).
   const hh = (x, y, k) => { let h = (x * 374761393 + y * 668265263 + (k || 0) * 2246822519) >>> 0; h = Math.imul(h ^ (h >>> 13), 1274126177) >>> 0; return (h ^ (h >>> 16)) >>> 0; };
   // The band: its top edge a brush's edge (a slow wave with a few nicks), its lower edge a straight cut rising
-  // gently to the right, its right end a handful of brush tails of different lengths.
-  function edges(variant) {
+  // gently to the right, its right end a handful of brush tails of different lengths. The geometry per size:
+  // the code-drawn pairs' own, or the painted pair's from the contract (RB.harmonyContract.PAIR).
+  const TAILS = { compact: [[0.1, 30], [0.32, 10], [0.55, 0], [0.78, 16], [0.95, 34]], standard: [[0.06, 40], [0.22, 18], [0.4, 4], [0.58, 0], [0.74, 12], [0.9, 28], [1, 44]] };
+  function geoOf(variant) {
+    if (variant.indexOf('p:') === 0) {
+      const v = variant.slice(2), P = RB.harmonyContract.PAIR[v], b = P.band, a = b.bottom[0], z = b.bottom[1];
+      return { w: P.w, h: P.h, top0: b.top0, rise: b.rise, bot: (x) => a[1] + ((z[1] - a[1]) * (x - a[0])) / (z[0] - a[0]), end: b.end, tails: TAILS[v], nS: v === 'compact' ? 11 : 16, flecks: v === 'compact' ? 5 : 8 };
+    }
     const N = NATIVE[variant];
     const cmp = variant === 'compact';
-    const top0 = cmp ? 24 : 26, rise = cmp ? 0.03 : 0.045;
-    const top = (x) => top0 - x * rise + Math.sin(x / 23) * 1.2 + Math.sin(x / 7.3 + 1) * 0.5 + ((hh(x >> 3, 1) % 7) === 0 ? 1 : 0);
-    const bot = (x) => N.h - (cmp ? 3 : 4) - x * (cmp ? 0.04 : 0.075);
-    return { top, bot, end: N.w - (cmp ? 4 : 6) };
+    return { w: N.w, h: N.h, top0: cmp ? 24 : 26, rise: cmp ? 0.03 : 0.045, bot: (x) => N.h - (cmp ? 3 : 4) - x * (cmp ? 0.04 : 0.075), end: N.w - (cmp ? 4 : 6), tails: TAILS[variant], nS: cmp ? 9 : 13, flecks: cmp ? 4 : 6 };
+  }
+  function edges(variant) {
+    const G = geoOf(variant);
+    const top = (x) => G.top0 - x * G.rise + Math.sin(x / 23) * 1.2 + Math.sin(x / 7.3 + 1) * 0.5 + ((hh(x >> 3, 1) % 7) === 0 ? 1 : 0);
+    return { top, bot: G.bot, end: G.end };
   }
   function backing(variant) {
-    const K = RB.pxkit, N = NATIVE[variant], cmp = variant === 'compact';
+    const K = RB.pxkit, G = geoOf(variant), N = G;
     const L = K.layer(N.w, N.h);
     const ink = HK().M('backing', '#222a52', { cols: ['#11152e', '#191f42', '#212a52', '#2b3562', '#384476'], at: 2, line: false });
     const E = edges(variant);
     // brush tails at the right: [row from the band's top (0..1), length back from the end]
-    const tails = cmp ? [[0.1, 30], [0.32, 10], [0.55, 0], [0.78, 16], [0.95, 34]] : [[0.06, 40], [0.22, 18], [0.4, 4], [0.58, 0], [0.74, 12], [0.9, 28], [1, 44]];
+    const tails = G.tails;
     const span = (x) => Math.max(1, E.bot(x) - E.top(x));
     const endAt = (x, y) => {
       const t = (y - E.top(x)) / span(x);
@@ -142,7 +199,7 @@ RB.harmonyArt = (function () {
     };
     // long horizontal strokes laid along the band, each a few rows deep, tapered at both ends
     const strokes = [];
-    const nS = cmp ? 9 : 13;
+    const nS = G.nS;
     for (let i = 0; i < nS; i++) {
       const t = (i + 0.5) / nS;
       const x0 = (hh(i, 51) % 60) - 30, len = 70 + (hh(i, 53) % 110);
@@ -186,7 +243,7 @@ RB.harmonyArt = (function () {
       if (hh(seg, 31) % 2 || x % 15 > 9) continue;
       HK().put(L, x, Math.ceil(E.bot(x)) + 1, paper, x % 15 === 4 ? 2 : 1);
     }
-    for (let i = 0; i < (cmp ? 4 : 6); i++) {
+    for (let i = 0; i < G.flecks; i++) {
       const tt = 0.15 + (hh(i, 41) % 70) / 100;
       const x = Math.round(E.end - 6 - (hh(i, 43) % 26));
       const y = Math.round(E.top(x) + span(x) * tt);
@@ -259,6 +316,63 @@ RB.harmonyArt = (function () {
     res.anchor = { x: 0, y: Math.round((E.top(0) + E.bot(0)) / 2) };
     return res;
   }
+  // The painted pair (contract v2): each bust canvas at its place in the pair (plus the manifest's offset); a bust
+  // that cannot be painted now is drawn whole in code with its neck pit on the template's (and its files start
+  // decoding). Faces never overlap: the busts are placed so (tests compare each face with the other bust omitted).
+  function buildPainted(n) {
+    const K = RB.pxkit, H = HC(), PV = H.PAIR[n.variant], man = R().manifest();
+    const out = K.layer(PV.w, PV.h);
+    const B = backingOf('p:' + n.variant);
+    if (n.backing) out.over(B.L);
+    const E = B.E;
+    const clip = (X, Y) => Y <= E.bot(X) + 0.5;
+    const res = { faces: [], hands: [], src: {} };
+    const overlays = [];
+    const one = (who) => {
+      const at = who === 'pc' ? PV.pc : PV.comp;
+      const offs = (who === 'pc' ? man.pc && man.pc.offset : man.companions && man.companions[who] && man.companions[who].offset) || {};
+      const off = offs[n.variant] || [0, 0];
+      const ox = at[0] + off[0], oy = at[1] + off[1];
+      const { pl, b } = paintedBust(who, n);
+      if (b) {
+        blit(out, b.layer, ox, oy, clip);
+        res.faces.push({ who, x: b.face.x + ox, y: b.face.y + oy, w: b.face.w, h: b.face.h });
+        for (const h of b.hands) res.hands.push({ who, x: h.x + ox, y: h.y + oy, w: h.w, h: h.h });
+        res.src[who] = 'painted';
+        return;
+      }
+      if (pl.ok) R().load(pl.files);
+      R().note({ who, comp: n.comp, state: n.phase, variant: n.variant, reason: pl.ok ? 'decoding' : pl.reason || 'missing files', missing: pl.missing.slice(0, 12) });
+      const cb = bustLayer(who, who === 'pc' ? n.look : null, POSE_OF[who] || 'rally', H.CODE_PHASE[n.phase], n.variant, n.fx);
+      const nk = H.ANCHORS[who === 'pc' ? 'pc' : 'comp'].neck;
+      const dx = ox + nk[0] - cb.anchor.x, dy = oy + nk[1] - cb.anchor.y;
+      blit(out, cb.layer, dx, dy, clip);
+      res.faces.push({ who, x: cb.face.x + dx, y: cb.face.y + dy, w: cb.face.w, h: cb.face.h });
+      for (const h of cb.hands) res.hands.push({ who, x: h.x + dx, y: h.y + dy, w: h.w, h: h.h });
+      if (cb.overlay) overlays.push({ o: cb.overlay, dx, dy });
+      res.src[who] = pl.ok ? 'code (decoding)' : 'code (' + (pl.missing.length ? 'missing ' + pl.missing.slice(0, 3).join(', ') : pl.reason) + ')';
+    };
+    if (n.comp && n.omit !== 'comp') one(n.comp);
+    if (n.omit !== 'pc') one('pc');
+    for (const { o, dx, dy } of overlays) {
+      const t = K.layer(PV.w, PV.h);
+      if (o.kind === 'route') HK().route(t, o.pts.map((p) => [p[0] + dx, p[1] + dy]));
+      t.outline();
+      out.over(t);
+    }
+    if (n.backing) {
+      for (let x = 0; x < PV.w; x++) {
+        const y = Math.ceil(E.bot(x)) + 1, i = y * PV.w + x;
+        if (y < PV.h && B.L.px[i]) { out.px[i] = B.L.px[i]; out.mt[i] = B.L.mt[i]; }
+      }
+    }
+    let x0 = PV.w, y0 = PV.h, x1 = -1, y1 = -1;
+    for (let y = 0; y < PV.h; y++) for (let x = 0; x < PV.w; x++) if (out.px[y * PV.w + x] >>> 24) { x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y); }
+    res.bounds = x1 < 0 ? { x: 0, y: 0, w: 0, h: 0 } : { x: x0, y: y0, w: x1 - x0 + 1, h: y1 - y0 + 1 };
+    res.layer = out;
+    res.anchor = { x: 0, y: Math.round((E.top(0) + E.bot(0)) / 2) };
+    return res;
+  }
   function compose(o) {
     const n = norm(o);
     if (!n.comp) throw new Error('harmonyArt.compose: comp must be one of ' + COMPANIONS.join(', '));
@@ -268,11 +382,22 @@ RB.harmonyArt = (function () {
     else {
       S.misses++;
       const t0 = now();
-      c = build(n);
+      c = n.painted ? buildPainted(n) : build(n);
       c.cv = c.layer.canvas();
       c.key = key;
       c.ms = now() - t0;
       store(comps, key, c, CAP.comps);
+    }
+    if (n.painted) {
+      const N = nativeP()[n.variant];
+      const view = n.view || (typeof window !== 'undefined' && window.innerWidth ? { w: window.innerWidth, h: window.innerHeight } : null);
+      return {
+        cv: c.cv, w: N.w, h: N.h,
+        faces: c.faces.map((r) => Object.assign({}, r)), hands: c.hands.map((r) => Object.assign({}, r)),
+        anchor: Object.assign({}, c.anchor), bounds: Object.assign({}, c.bounds),
+        scale: view ? fitScale(view.w, view.h, n.variant) : null,
+        bleed: { left: true }, key, phase: n.phase, variant: n.variant, painted: Object.assign({}, c.src),
+      };
     }
     const N = NATIVE[n.variant];
     const view = n.view || (typeof window !== 'undefined' && window.innerWidth ? { w: window.innerWidth, h: window.innerHeight } : null);
@@ -287,7 +412,19 @@ RB.harmonyArt = (function () {
 
   // The largest integer CSS scale at which the variant's visible footprint stays inside §5.2's limits
   // (standard: 42 % width, 30 % height, 12 % area; compact: up to the view's width, 27 % of its height).
-  function fitScale(vw, vh, variant) {
+  // Painted art: standard at an integer scale inside the same limits; compact at a DPR-aware scale (CSS px per art
+  // px whose product with the device pixel ratio is whole, so every art pixel is whole device pixels).
+  function fitScale(vw, vh, variant, dpr) {
+    if (painted()) {
+      const H = HC(), v = variant === 'compact' ? 'compact' : 'standard', P = H.PAIR[v], D = H.DISPLAY;
+      if (v === 'compact') {
+        const r = dpr || (typeof devicePixelRatio === 'number' && devicePixelRatio > 0 ? devicePixelRatio : 1);
+        for (let k = Math.floor(D.maxScale * r); k >= 1; k--) { const s = k / r; if (P.w * s <= vw * D.compact.maxW && P.h * s <= vh * D.compact.maxH) return s; }
+        return 0;
+      }
+      for (let s = D.maxScale; s >= 1; s--) { const w = P.w * s, h = P.h * s; if (w <= vw * D.standard.maxW && h <= vh * D.standard.maxH && w * h <= vw * vh * D.standard.maxArea) return s; }
+      return 0;
+    }
     const N = NATIVE[variant === 'compact' ? 'compact' : 'standard'];
     for (let s = 6; s >= 1; s--) {
       const w = N.w * s, h = N.h * s;
@@ -303,16 +440,33 @@ RB.harmonyArt = (function () {
     const out = [];
     for (const o of list) {
       const comps2 = o.comp === 'all' || !o.comp ? COMPANIONS : [o.comp];
-      const phases = o.phase ? [o.phase] : ['enter', 'hold'];
       const variants = o.variant ? [o.variant] : ['standard'];
-      for (const c of comps2) for (const ph of phases) for (const v of variants) out.push(Object.assign({}, o, { comp: c, phase: ph, variant: v }));
+      for (const c of comps2) {
+        // painted: the states of the companion's timeline (reduced motion: the last alone)
+        const T = painted() && !o.phase ? timeline(c) : null;
+        const phases = o.phase ? [o.phase] : T ? (o.still ? [T[T.length - 1].phase] : [...new Set(T.map((e) => e.phase))]) : ['enter', 'hold'];
+        for (const ph of phases) for (const v of variants) out.push(Object.assign({}, o, { comp: c, phase: ph, variant: v }));
+      }
     }
     return out;
   }
+  // the painted files the specs need (only for busts whose whole set exists)
+  function filesFor(todo) {
+    const out = new Set();
+    for (const o of todo) {
+      const n = norm(o);
+      if (!n.painted || !n.comp) continue;
+      for (const who of [n.comp, 'pc']) { const pl = R().plan(who, who === 'pc' ? n.look : null, n.phase, n.comp); if (pl.ok) for (const f of pl.files) out.add(f); }
+    }
+    return [...out];
+  }
   function prepare(list, opt) {
     const todo = specs(list);
+    const files = painted() ? filesFor(todo) : [];
     if (opt && opt.async) {
-      return new Promise((resolve) => {
+      const t0 = now();
+      const pre = files.length ? R().load(files).then(() => keepMs(S.decodeMs, now() - t0)) : Promise.resolve();
+      return pre.then(() => new Promise((resolve) => {
         let i = 0;
         const step = (dl) => {
           const t0 = now();
@@ -320,11 +474,15 @@ RB.harmonyArt = (function () {
           if (i < todo.length) schedule(step); else resolve(todo.length);
         };
         schedule(step);
-      });
+      }));
     }
+    // (synchronous: decoding starts, and what is not decoded yet is drawn in code this time)
+    if (files.length) { const t0 = now(); R().load(files).then(() => keepMs(S.decodeMs, now() - t0)); }
     for (const o of todo) compose(o);
     return todo.length;
   }
+  // The painted performance's timeline for a pairing (only while painted art is installed: see the getter below).
+  function timeline(comp) { return painted() ? R().timeline(comp) : null; }
   function schedule(fn) {
     if (typeof requestIdleCallback === 'function') requestIdleCallback(fn, { timeout: 200 });
     else setTimeout(fn, 16);
@@ -335,12 +493,16 @@ RB.harmonyArt = (function () {
     for (const c of comps.values()) bytes += c.layer.w * c.layer.h * 4 * 2;
     for (const b of backs.values()) bytes += b.L.w * b.L.h * 4;
     const ms = S.buildMs;
-    return {
+    const sum = (a) => (a.length ? { last: +a[a.length - 1].toFixed(1), mean: +(a.reduce((p, q) => p + q, 0) / a.length).toFixed(1), max: +Math.max(...a).toFixed(1) } : null);
+    const out = {
       artVersion: ART_VERSION, busts: busts.size, compositions: comps.size, backings: backs.size, cap: Object.assign({}, CAP),
       bytes, hits: S.hits, misses: S.misses, builds: S.builds, evictions: S.evictions, invalidations: S.invalidations,
-      bustBuildMs: ms.length ? { last: +ms[ms.length - 1].toFixed(1), mean: +(ms.reduce((a, b) => a + b, 0) / ms.length).toFixed(1), max: +Math.max(...ms).toFixed(1) } : null,
+      bustBuildMs: sum(ms),
       keys: { busts: [...busts.keys()], compositions: [...comps.keys()] },
     };
+    // painted art: the set, decoded files and their bytes, fallbacks (whole busts drawn in code, with why)
+    if (R()) out.raster = Object.assign(R().stats(), { paintMs: sum(S.paintMs), decodeMs: sum(S.decodeMs) });
+    return out;
   }
   function clear() { busts.clear(); comps.clear(); backs.clear(); S.invalidations++; }
   // drop the player's entries that do not belong to the look now worn
@@ -355,5 +517,11 @@ RB.harmonyArt = (function () {
     RB.bus.on('campaign:changing', clear);
   }
 
-  return { ART_VERSION, NATIVE, COMPANIONS, POSE_OF, compose, bust, prepare, fitScale, stats, clear, invalidate, keyOf, _: { build, backingOf, norm, PLACE } };
+  const api = { ART_VERSION, COMPANIONS, POSE_OF, compose, bust, prepare, fitScale, stats, clear, invalidate, keyOf, _: { build, buildPainted, backingOf, norm, PLACE, painted } };
+  // While painted art is installed: NATIVE is the contract's pair, PHASES its states and timeline(comp) exists.
+  // Otherwise exactly as before: the code-drawn sizes, ['enter', 'hold'] and no timeline.
+  Object.defineProperty(api, 'NATIVE', { enumerable: true, get: () => (painted() ? nativeP() : NATIVE) });
+  Object.defineProperty(api, 'PHASES', { enumerable: true, get: () => (painted() ? HC().STATES.slice() : ['enter', 'hold']) });
+  Object.defineProperty(api, 'timeline', { enumerable: true, get: () => (painted() ? timeline : undefined) });
+  return api;
 })();

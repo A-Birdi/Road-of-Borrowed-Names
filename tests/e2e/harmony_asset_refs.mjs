@@ -144,25 +144,26 @@ const files = await p.evaluate(() => {
   }
 
   // ---- 5. templates ---------------------------------------------------------------------------
-  // geometry (art px) — kept in step with docs/harmony/ASSET_BRIEF.md §3
-  const T = {
-    bust: { w: 192, h: 160 }, pair: { w: 352, h: 160 }, pcAt: 160,
-    head: [62, 18, 130, 104], face: [74, 52, 124, 104], neck: [94, 118], crop: [[0, 156], [192, 150]],
-    compact: [8, 0, 184, 128], gestureComp: [8, 36, 76, 150], gesturePc: [124, 30, 188, 150],
-  };
+  // geometry (art px) from the contract itself (RB.harmonyContract, docs/harmony/contract/CONTRACT.md §3): the
+  // companion turned to screen right, the player to screen left, each with its own anchors
+  const HC = RB.harmonyContract;
+  const T = { bust: HC.BUST, pair: HC.PAIR.standard, pcAt: HC.PAIR.standard.pc[0], compact: HC.COMPACT_SAFE };
   const guides = (g, sc, ox, oy, who, labels) => {
+    const A = HC.ANCHORS[who === 'pc' ? 'pc' : 'comp'];
     const R = (b, col, dash, label) => { g.setLineDash(dash || []); g.strokeStyle = col; g.lineWidth = 2; g.strokeRect(ox + b[0] * sc + 1, oy + b[1] * sc + 1, (b[2] - b[0]) * sc - 2, (b[3] - b[1]) * sc - 2); g.setLineDash([]); if (labels && label) text(g, label, ox + b[0] * sc + 4, oy + b[1] * sc + 16, 12, col); };
     g.strokeStyle = '#888'; g.lineWidth = 2; g.strokeRect(ox + 1, oy + 1, T.bust.w * sc - 2, T.bust.h * sc - 2);
-    R(T.head, '#5ab0ff', [8, 6], 'head: crown to chin (hair may spill past)');
-    R(T.face, '#ffd84a', null, 'face: brow to chin');
+    R(A.head, '#5ab0ff', [8, 6], 'head: crown to chin (hair may spill past)');
+    R(A.face, '#ffd84a', null, 'face: brow to chin');
     R(T.compact, '#b0b0b0', [3, 5], labels ? 'compact-safe' : null);
-    R(who === 'pc' ? T.gesturePc : T.gestureComp, '#ff7ad0', [12, 4], 'signature hand');
-    const [nx, ny] = T.neck; g.strokeStyle = '#ff4a4a'; g.lineWidth = 3;
+    A.hands.forEach((h, i) => R(h, '#ff7ad0', [12, 4], i ? 'or forward' : 'signature hand'));
+    const [nx, ny] = A.neck; g.strokeStyle = '#ff4a4a'; g.lineWidth = 3;
     g.beginPath(); g.moveTo(ox + (nx - 4) * sc, oy + ny * sc); g.lineTo(ox + (nx + 4) * sc, oy + ny * sc); g.moveTo(ox + nx * sc, oy + (ny - 4) * sc); g.lineTo(ox + nx * sc, oy + (ny + 4) * sc); g.stroke();
     if (labels) text(g, 'neck pit', ox + (nx + 5) * sc, oy + ny * sc + 4, 12, '#ff4a4a');
-    g.strokeStyle = '#3ad0a0'; g.setLineDash([10, 6]); g.beginPath(); g.moveTo(ox + T.crop[0][0] * sc, oy + T.crop[0][1] * sc); g.lineTo(ox + T.crop[1][0] * sc, oy + T.crop[1][1] * sc); g.stroke(); g.setLineDash([]);
-    if (labels) text(g, 'ink band edge (paint past it to the bottom)', ox + 8, oy + T.crop[0][1] * sc - 6, 12, '#3ad0a0');
-    g.fillStyle = 'rgba(255,255,255,0.35)'; g.fillRect(ox + 8, oy + 8, 18, 6); g.fillRect(ox + 8, oy + 8, 6, 18); // facing marker: top-left corner
+    g.strokeStyle = '#3ad0a0'; g.setLineDash([10, 6]); g.beginPath(); g.moveTo(ox + A.crop[0][0] * sc, oy + A.crop[0][1] * sc); g.lineTo(ox + A.crop[1][0] * sc, oy + A.crop[1][1] * sc); g.stroke(); g.setLineDash([]);
+    if (labels) text(g, 'ink band edge (paint past it to the bottom)', ox + 8, oy + A.crop[0][1] * sc - 6, 12, '#3ad0a0');
+    // facing marker: an arrow at the top, pointing the way the figure turns (companion right, player left)
+    const ay = oy + 10, dir = who === 'pc' ? -1 : 1, mx = ox + T.bust.w * sc / 2;
+    g.strokeStyle = 'rgba(255,255,255,0.45)'; g.lineWidth = 3; g.beginPath(); g.moveTo(mx - dir * 14, ay); g.lineTo(mx + dir * 14, ay); g.moveTo(mx + dir * 14, ay); g.lineTo(mx + dir * 6, ay - 6); g.moveTo(mx + dir * 14, ay); g.lineTo(mx + dir * 6, ay + 6); g.stroke();
   };
   // the image tool's base: guides only, transparent, 4× (768 × 640), one per side
   for (const who of ['comp', 'pc']) {
@@ -173,16 +174,16 @@ const files = await p.evaluate(() => {
   // the labelled version for people
   {
     const sc = 3, [c, g] = mk(40 + 2 * (T.bust.w * sc + 40), 120 + T.bust.h * sc, BG);
-    text(g, 'Bust canvas 192 × 160 art px (shown 3×). Three-quarter view turned to screen RIGHT. Light from the upper left.', 20, 30, 15, INK, true);
-    text(g, 'Left: a companion (signature hand on the near side, or forward up to x 190). Right: the player (brush hand forward, on the right).', 20, 54, 13, DIM);
+    text(g, 'Bust canvas 192 × 160 art px (shown 3×), contract v' + HC.VERSION + '. Companion three-quarter to screen RIGHT; player three-quarter to screen LEFT. Light from the upper left.', 20, 30, 15, INK, true);
+    text(g, 'Left: a companion (neck pit 94, 118; signature hand on the near side, or forward up to x 190). Right: the player (neck pit 98, 118; brush hand on the near side, screen right).', 20, 54, 13, DIM);
     guides(g, sc, 20, 80, 'comp', true); text(g, 'companion', 20, 80 + T.bust.h * sc + 22, 13, INK);
     guides(g, sc, 60 + T.bust.w * sc, 80, 'pc', true); text(g, 'player', 60 + T.bust.w * sc, 80 + T.bust.h * sc + 22, 13, INK);
     save('template_bust_labelled.png', c);
   }
   {
     const sc = 2, [c, g] = mk(40 + T.pair.w * sc, 140 + T.pair.h * sc, BG);
-    text(g, 'The pair: 352 × 160 art px (shown 2×). Companion canvas at x 0, player canvas at x 160, player in front.', 20, 30, 15, INK, true);
-    text(g, 'In play the pair sits on the indigo ink band (drawn by the game) and is shown at 1× or 2×; phones crop to the compact-safe boxes.', 20, 54, 13, DIM);
+    text(g, 'The pair: 352 × 160 art px (2×). Companion at x 0, player at x 160 in front; facing each other.', 20, 30, 15, INK, true);
+    text(g, 'The game draws the ink band behind them. Phones show a compact crop with the player 24 px closer.', 20, 54, 13, DIM);
     guides(g, sc, 20, 80, 'comp', false); guides(g, sc, 20 + T.pcAt * sc, 80, 'pc', false);
     g.strokeStyle = '#fff'; g.lineWidth = 1; g.strokeRect(20.5, 80.5, T.pair.w * sc - 1, T.pair.h * sc - 1);
     save('template_pair_labelled.png', c);

@@ -7,6 +7,12 @@ lifecycle (`inactive → entering → holding → fading → disposed`), setting
 to the cut-in overlay and the battle choreography, which build on the API below. Nothing here changes a rule,
 a save or a setting.
 
+**Painted art (contract v2).** The owner's painted busts replace these drawings bust by bust through the same API:
+docs/harmony/contract/CONTRACT.md (formats, import, runtime) and src/ui/88_harmony_raster.js. While a painted set is
+installed, `NATIVE` is the painted pair (352 × 160 / 248 × 128), `PHASES` lists the six performance states and
+`timeline(comp)` exists; a bust whose painted files are incomplete is drawn here, whole. With nothing installed,
+everything below holds unchanged (`PHASES` is ['enter', 'hold'] and there is no `timeline`).
+
 **Files**
 
 | File | What |

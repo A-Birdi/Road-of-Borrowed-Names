@@ -39,6 +39,8 @@ const suites = [
   ['practice_a_lamps.mjs'], ['practice_a_desk.mjs'], ['practice_a_layout.mjs'], // Practice suite A: lamps, writing desk, mementos (addendum §15, §16)
   // A Quiet Cast: the three fishing sites, a complete catch, repair, survey, reload, captures, layouts (practice addendum §5–§8)
   ['fishing.mjs'],
+  // painted Harmony busts: the contract v2 raster path with the SYNTHETIC sample (docs/harmony/contract/CONTRACT.md)
+  ['harmony_raster.mjs'],
   full ? ['matrix.mjs'] : ['pursue.mjs', 'E', 'mio'],
 ];
 const results = [];

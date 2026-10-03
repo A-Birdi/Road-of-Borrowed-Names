@@ -629,7 +629,10 @@ RB.harmonyKit = RB.harmonyKit || {};
     rim(out);
     const face = { x: hx - 17, y: hy - 11, w: 36, h: 33 };
     const box = (L) => { let x0 = 1e9, y0 = 1e9, x1 = -1, y1 = -1; if (L) for (let i = 0; i < L.px.length; i++) if (L.px[i]) { const x = i % L.w, y = (i / L.w) | 0; if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; } return x1 < 0 ? null : { x0, y0, x1, y1 }; };
-    return { layer: out, w: BW, h: BH, anchor: { x: ax, y: ay }, face, hands, head: { x: hx, y: hy }, acc: accRes, overlay: P.overlay || null, order, mole, hairBox: { back: box(S.layers.get('hairBack')) } };
+    const res = { layer: out, w: BW, h: BH, anchor: { x: ax, y: ay }, face, hands, head: { x: hx, y: hy }, acc: accRes, overlay: P.overlay || null, order, mole, hairBox: { back: box(S.layers.get('hairBack')) } };
+    // (tools only: the registry export and the synthetic sample read the named, outlined layers)
+    if (opt.keepLayers) res.stack = S;
+    return res;
   }
   HK.drawBust = drawBust;
 

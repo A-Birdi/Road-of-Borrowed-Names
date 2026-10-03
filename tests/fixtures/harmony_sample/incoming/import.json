@@ -1,0 +1,105 @@
+{
+ "set": "sample",
+ "synthetic": true,
+ "artVersion": 1,
+ "note": "SYNTHETIC SAMPLE — not art. Written by tools/harmony_sample.mjs from the code-drawn busts; see docs/harmony/contract/CONTRACT.md.",
+ "files": {
+  "pc_head_peak": {
+   "background": "magenta"
+  }
+ },
+ "companions": {
+  "suzu": {
+   "face": {
+    "prep_a": [
+     76,
+     72,
+     112,
+     105
+    ],
+    "prep_b": [
+     76,
+     72,
+     112,
+     105
+    ],
+    "cue": [
+     75,
+     72,
+     111,
+     105
+    ],
+    "peak": [
+     75,
+     72,
+     111,
+     105
+    ],
+    "settle_b": [
+     76,
+     72,
+     112,
+     105
+    ]
+   }
+  }
+ },
+ "pc": {
+  "face": {
+   "focus": [
+    81,
+    72,
+    117,
+    105
+   ],
+   "cue": [
+    81,
+    72,
+    117,
+    105
+   ],
+   "peak": [
+    81,
+    72,
+    117,
+    105
+   ],
+   "settle": [
+    81,
+    72,
+    117,
+    105
+   ]
+  },
+  "groups": {
+   "prep_b": {
+    "head": [
+     0,
+     -1
+    ],
+    "torso": [
+     0,
+     0
+    ]
+   },
+   "peak": {
+    "head": [
+     0,
+     -1
+    ],
+    "torso": [
+     0,
+     -1
+    ]
+   }
+  },
+  "attach": {
+   "curly": {
+    "flower": [
+     0,
+     -2
+    ]
+   }
+  }
+ }
+}
