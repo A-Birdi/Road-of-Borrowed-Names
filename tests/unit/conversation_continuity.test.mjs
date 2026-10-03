@@ -62,6 +62,8 @@ const KNOWN = {
   'sg.omi_wataru|wataru|size': ['finding', 'his then=size,palm chain: the two-handed size gesture (11) is Omi\'s (her stronger reaction in this scene), not his'],
   // the long quests, cases, pages and pets (docs/expressive/reports/staging_lq_misc.md)
   'lq.fare_gull|tamae|stamp': ['escalation', 'narrated: "Tamae presses it onto a slip of paper." (her mother\'s seal pressed, as the line says; not a habit of hers)'],
+  'lq.road_yasu2|yasu|sip': ['escalation', 'narrated: "Without a word, he takes a bite." (the dried persimmon brought to his mouth: the sip\'s hand-to-mouth with the fruit in hand)'],
+  'lq.road_kayo_certainly|lq_kayo|fidget': ['escalation', 'narrated: "She\'s smiling, but the shears in her hand are trembling." (her hands give her away on Lanternfall\'s "certainly")'],
 };
 
 export default async (t) => {

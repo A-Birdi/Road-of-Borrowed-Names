@@ -51,4 +51,48 @@ const FARE = [
     expect: { tamae: ['celebrate', 'receive', 'stamp', 'lowered', 'point'], lq_chigusa: ['handover', 'celebrate'], pc: ['receive'] } }),
 ];
 
-export const MISC = [...FARE];
+// ---- Long quest B: The Name Nobody Calls (src/content/lq/40_road.js), in story order ------------------------
+const KO = F(RD, { lq_road_open: true, lq_ally2: true, lq_road_tetsu: true, lq_road_name: true }); // Koharuno open
+const ROAD = [
+  M({ scene: 'lq.road_lantern', map: 'rw.village', at: [48, 18, 'up'], flags: RD,
+    variants: [{ name: 'before setting out', comp: null, flags: RE, expect: { pc: ['observe', 'lookroad'] } }, { name: 'first look', comps: ALL4 }, { name: 'no name yet', comp: 'nao', quests: { lq_road: 1 } }] }),
+  M({ scene: 'lq.road_loops', map: 'rw.village', at: [49, 18, 'right'], flags: RD,
+    variants: [{ name: 'before setting out', comp: null, flags: RE }, { name: 'the upper step', comps: ALL4 }, { name: 'the lower step', at: [49, 19, 'right'], comp: 'mio' }], expect: { pc: ['lookroad'] } }),
+  M({ scene: 'lq.road_yasu1', map: 'rw.village', at: [33, 25, 'right'], talk: 'yasu', flags: RD, quests: { lq_road: 0 },
+    variants: [{ name: 'on the road', comps: ALL4 }, { name: 'before setting out', comp: null, flags: RE }], expect: { yasu: ['chin', 'point', 'lowered'], pc: ['point'] } }),
+  M({ scene: 'lq.road_tetsu', map: 'sg.harbor', at: [34, 30, 'up'], talk: 'tetsu', flags: SE,
+    variants: [{ name: 'asked', quests: { lq_road: 1 }, comps: ALL4, expect: { tetsu: ['chin', 'lookroad', 'shake'], pc: ['palm'] } }, { name: 'asked first', quests: { lq_road: 0 }, comp: 'nao' },
+      { name: 'told unasked', comp: 'suzu', expect: { tetsu: ['point', 'lookroad', 'shake'] } }] }),
+  M({ scene: 'lq.road_ume', map: 'co.terraces', at: [14, 24, 'up'], talk: 'co_ume', flags: C3, quests: { lq_road: 2 }, comps: ALL4,
+    expect: { co_ume: ['listen', 'lookroad', 'chin', 'handover'], pc: ['receive'] } }),
+  // settle (here and in the two cases after): the story moves Yasu between the pier and the lantern by the far bank
+  // (quest.lq_road=4, !refresh), and the world walks the same figure there after the scene (50_world.js shiftTo:
+  // about 35 tiles, round by the bridge, some 9 s at his pace), longer than the runner's default 5 s wait. He must
+  // still arrive and nobody may share a tile on the way.
+  M({ scene: 'lq.road_yasu2', settle: 15000, map: 'rw.village', at: [33, 25, 'right'], talk: 'yasu', flags: F(RD, C3, { ch3_done: true, lq_road_tetsu: true, lq_road_name: true }), quests: { lq_road: 3 }, items: { lq_koharu_fruit: 1 }, comps: ALL4,
+    expect: { pc: ['handover'], yasu: ['receive', 'lowered', 'point', 'nod'] } }),
+  M({ scene: 'lq.road_write', settle: 15000, map: 'rw.village', at: [48, 18, 'up'], flags: F(RD, C3, { ch3_done: true, lq_road_tetsu: true, lq_road_name: true }), quests: { lq_road: 4 }, minLines: 10,
+    variants: [{ name: 'written', comps: ALL4, expect: { pc: ['observe', 'write', 'lookroad'], yasu: ['nod', 'read', 'point', 'lowered', 'chin'], comp: ['write'] } }, { name: 'not yet', comp: 'ren', fail: true, minLines: 3, expect: { yasu: ['nod'] } }] }),
+  M({ scene: 'lq.road_yasu_bank', settle: 15000, map: 'rw.village', at: [46, 18, 'right'], talk: 'yasu_bank', flags: F(RD, C3, { ch3_done: true, lq_road_tetsu: true, lq_road_name: true }), quests: { lq_road: 4 }, minLines: 10,
+    variants: [{ name: 'from his side', comp: 'mio' }, { name: 'from below', at: [47, 19, 'up'], comp: 'suzu' }], expect: { yasu: ['read'], comp: ['write'] } }),
+  M({ scene: 'lq.kh_arrive', map: 'lq.koharu', at: [2, 11, 'right'], flags: KO, quests: { lq_road: 5 }, comps: ALL4, expect: { pc: ['lookroad'] } }),
+  M({ scene: 'lq.kh_tree', map: 'lq.koharu', at: [20, 9, 'up'], flags: KO, quests: { lq_road: 5 },
+    variants: [{ name: 'the marks', comps: ALL4, expect: { pc: ['observe'] } }, { name: 'the marks · after Snowbell', comp: 'nao', flags: F(KO, { sb_arrived: true }) },
+      { name: 'Kayo\'s new line', comp: 'mio', flags: F(KO, { lq_kayo_going: true }), quests: { lq_road: 'done' } }] }),
+  M({ scene: 'lq.kh_stone', map: 'lq.koharu', at: [21, 13, 'down'], flags: KO, quests: { lq_road: 5 },
+    variants: [{ name: 'the names', comps: ALL4, expect: { pc: ['bend'] } }, { name: 'Chigusa\'s name too', comp: 'ren', flags: F(KO, { lq_fare_found: true }), expect: { pc: ['chin'] } }] }),
+  M({ scene: 'lq.kh_chest', map: 'lq.koharu_hut', at: [6, 3, 'up'], flags: KO, quests: { lq_road: 6 }, comps: ['mio', 'suzu', 'nao'], expect: { pc: ['kneel', 'present'] } }),
+  M({ scene: 'lq.kayo_idle', map: 'lf.gardens', at: [29, 12, 'right'], talk: 'lq_kayo', flags: F(C5, { lq_road_open: true }), comps: ALL4, expect: { lq_kayo: ['point', 'chin', 'nod'] } }),
+  M({ scene: 'lq.kayo_idle_after', map: 'lf.gardens', at: [29, 12, 'right'], talk: 'lq_kayo', flags: F(C5, { lf_bell_rung: true }), variants: [{ name: 'Mio', comp: 'mio' }, { name: 'Ren', comp: 'ren' }], expect: { lq_kayo: ['lowered'] } }),
+  M({ scene: 'lq.road_kayo_certainly', map: 'lf.gardens', at: [29, 12, 'right'], talk: 'lq_kayo', flags: F(C5, KO), quests: { lq_road: 6 }, comps: ALL4,
+    expect: { lq_kayo: ['observe', 'nod', 'fidget'], pc: ['palm'] } }),
+  M({ scene: 'lq.road_kayo', map: 'lf.gardens', at: [29, 12, 'right'], talk: 'lq_kayo', flags: F(C5, KO, { lf_bell_rung: true }), quests: { lq_road: 6 },
+    variants: [{ name: 'the height marks', picks: [0], comps: ALL4, expect: { lq_kayo: ['lookroad', 'lowered', 'aside', 'nod'] } }, { name: 'Yasu · Mio after her no', picks: [1], comp: 'mio', quests: { lq_road: 6, lf_mio: 'done' }, expect: { lq_kayo: ['celebrate'], comp: ['emphatic'] } },
+      { name: 'Yasu · Mio still practising', picks: [1], comp: 'mio' }] }),
+  M({ scene: 'lq.road_home', map: 'lq.koharu', at: [21, 10, 'up'], talk: 'lq_kayo', flags: F(KO, { lq_kayo_going: true }), quests: { lq_road: 7 }, comps: ALL4, minLines: 8,
+    expect: { lq_kayo: ['shadeeyes', 'pointup', 'celebrate', 'write', 'handover'], pc: ['receive'] } }),
+  M({ scene: 'lq.letters_home', map: 'sg.harbor', at: [27, 2, 'down'], flags: F(RD, { sg_arrived: true }),
+    variants: [{ name: 'both letters', comps: ['nao', 'ren'] }, { name: 'Tsuru\'s only', comp: 'ren', quests: { lq_fare: 1 } }, { name: 'Kōji\'s only', comp: 'mio', quests: { lq_road: 1 } }], expect: { pc: ['read'] } }),
+];
+
+export const MISC = [...FARE, ...ROAD];

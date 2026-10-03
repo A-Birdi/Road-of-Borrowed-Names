@@ -138,7 +138,10 @@ export async function runBranch(p, c, v, o) {
     const busy = () => W.npcs.concat(W.extras || [], W.comp ? [W.comp] : []).some(walking);
     // (still for a moment: a walk of several steps is briefly between steps, neither moving nor routed)
     await sleep(120);
-    for (let calm = 0; calm < 5 && performance.now() - t1 < 5000; await sleep(60)) calm = busy() ? 0 : calm + 1;
+    // (bounded at 5 s; a case whose story moves someone across the map — the world walks them there, 50_world.js
+    // shiftTo — names a longer bound, `settle`, with the reason in its fixture; they must still arrive)
+    const bound = v.settle || c.settle || 5000;
+    for (let calm = 0; calm < 5 && performance.now() - t1 < bound; await sleep(60)) calm = busy() ? 0 : calm + 1;
     await sleep(150);
     watching = false;
     unwrap.forEach((u) => u());

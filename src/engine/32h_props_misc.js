@@ -12,6 +12,8 @@
  *   bellpart   the small metal clapper from the call bell (the parcel's contents)
  *   shell      a shell button (Shiori's thanks)
  *   tenugui    the persimmon-dyed cloth from the tree-keeper's chest
+ *   knife      a small folding knife (Kayo cuts her new height mark on the trunk)
+ *   shears     garden shears (Kayo's, trembling in her hand while she says "certainly")
  */
 var RB = (globalThis.RB = globalThis.RB || {});
 
@@ -27,5 +29,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   add('wax', (b, x, y) => { b.rect(x - 1, y - 3, 3, 3, '#c83a3a'); b.px(x - 1, y - 3, '#e86a5a'); b.px(x, y - 2, '#8a2020'); b.px(x + 1, y - 1, '#a02a2a'); });
   add('bellpart', (b, x, y) => { b.rect(x, y - 4, 1, 3, '#8a8a92'); b.rect(x - 1, y - 2, 3, 2, '#c8c8d0'); b.px(x - 1, y - 2, '#e8e8f0'); b.px(x + 1, y - 1, '#6a6a72'); });
   add('shell', (b, x, y) => { b.rect(x - 1, y - 3, 3, 3, '#f0e4d0'); b.px(x, y - 2, '#a89878'); b.px(x - 1, y - 3, '#fff8ec'); b.px(x + 1, y - 1, '#c8b898'); });
+  add('knife', (b, x, y) => { b.rect(x, y - 1, 1, 2, '#6a4a2a'); b.rect(x, y - 5, 1, 4, '#c8c8d0'); b.px(x, y - 6, '#e8e8f0'); b.px(x + 1, y - 4, '#8a8a92'); });
+  add('shears', (b, x, y) => { b.line(x - 2, y - 5, x + 1, y - 1, '#a8a8b0'); b.line(x + 2, y - 5, x - 1, y - 1, '#c8c8d0'); b.rect(x - 2, y, 2, 2, '#8a3a2a'); b.rect(x + 1, y, 2, 2, '#8a3a2a'); });
   add('tenugui', (b, x, y) => { b.rect(x - 1, y, 3, 6, '#9a5a32'); b.rect(x - 1, y + 5, 3, 1, '#7a4222'); b.px(x + 1, y + 1, '#b87448'); b.px(x - 1, y + 2, '#b87448'); });
 })();

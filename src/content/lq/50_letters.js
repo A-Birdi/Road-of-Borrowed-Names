@@ -5,9 +5,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.script.add(`
 @scene lq.letters_home
+# Staged: you open the letters from home and read them, one after the other, a letter in your hands. Nao's
+# shrug at being caught up by a courier; Ren leans in to Tsuru's hand.
 !set lq_letters
 narr: {道|みち} の {向|む}こう から {配達人|はいたつにん} が {走|はし}って きて 、 $name の {名前|なまえ} を {呼|よ}んだ 。 「 {葦|あし}ノ{瀬|せ} から 、 {手紙|てがみ} です よ ！ 」 || A courier comes running up the road, calling your name. "Letters from Reedwake!"
 !if quest.lq_fare -> road
+!prop pc letter
+!gesture pc read hold
 narr: {一通|いっつう} は コウジ から 。 {不器用|ぶきよう} な {字|じ} だ 。 || One is from Kōji, in a clumsy hand.
 narr: 「 おふくろ の {渡|わた}し{帳|ちょう} に 、 {払|はら}って もらってない {渡|わた}し{賃|ちん} が {一|ひと}つ ある 。 {三十年|さんじゅうねん} {前|まえ} の {嵐|あらし} の {夜|よる} の {客|きゃく} だ 。 {名前|なまえ} は {消|き}えた 。 {客|きゃく} が {置|お}いてった@置く {判子|はんこ} を {下|した} に {押|お}して おく 。 {旅|たび} の {途中|とちゅう} で {見覚|みおぼ}え が あったら 、 {教|おし}えて くれ 。 」 || "There's one fare in Mum's ferry book that was never paid — a passenger on a stormy night thirty years ago. The name's gone. I've pressed the seal they left, below. If you come across it on your travels, let me know."
 narr: {手紙|てがみ} の {下|した} に 、 {判子|はんこ} の {跡|あと} 。 「 かもめ 」 。 || At the bottom, the seal's stamp: "kamome".
@@ -16,10 +20,14 @@ narr: {手紙|てがみ} の {下|した} に 、 {判子|はんこ} の {跡|�
 !quest lq_fare 1
 :road
 !if quest.lq_road -> end
+!prop pc letter
+!gesture pc read hold
 narr: もう {一通|いっつう} は ツル から 。 {短|みじか}い {手紙|てがみ} だ 。 || The other is from Tsuru. It's short.
 narr: 「 コウジ の {渡|わた}し{小屋|ごや} の {先|さき} に 、 {名前|なまえ} の ない {灯|あか}り が ある 。 ヤス は {昔|むかし} 、 その {先|さき} の {村|むら} に {住|す}んで いた そう だ 。 {大|おお}きな {柿|かき} の {木|き} の ある {村|むら} で 、 {大水|おおみず} の {後|あと} 、 {村|むら} の {者|もの} は {舟|ふね} で {川|かわ} を {下|くだ}った 。 {潮硝子|しおがらす} の {船乗|ふなの}り に でも {聞|き}いて みて おくれ 。 ツル 」 || "Past Kōji's ferry house there's a lantern with no name. Yasu says he once lived in the hamlet beyond it — a place with a great persimmon tree. After the flood its people went downriver by boat. Ask the Saltglass boatmen, would you? — Tsuru"
 !quest lq_road 1
+?(comp=nao) !gesture comp shrug
 ?(comp=nao) comp: {配達人|はいたつにん} に {追|お}いつかれる の は 、 {変|へん} な {気分|きぶん} だ な 。 || Strange feeling, being caught up by a courier.
+?(comp=ren) !gesture comp observe pc
 ?(comp=ren) comp: ツル さん の {字|じ} です ね 。 {灯|あか}り の {名前|なまえ} と {同|おな}じ で 、 {少|すこ}し も {崩|くず}れて いない 。 || That's Tsuru's hand. Like her lantern names — not a stroke out of place.
 
 @scene lq.b_nao
