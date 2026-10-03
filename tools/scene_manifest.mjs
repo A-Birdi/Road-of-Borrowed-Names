@@ -25,6 +25,7 @@ import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { load, root } from '../tests/lib/load.mjs';
 import { CURATED_CH12, CURATED_INLINE_CH12 } from './scene_curated_ch12.mjs';
+import { CURATED_CH34, CURATED_INLINE_CH34 } from './scene_curated_ch34.mjs';
 
 export const CLASSES = ['Performed overworld', 'Illustrated sequence', 'Quiet by design', 'Interface/system text'];
 export const LOAD = ['core', 'lang', 'recog', 'engine', 'learn', 'ui', 'content', 'atlas'];
@@ -67,8 +68,10 @@ export const CURATED = {
 };
 // the Chapter 1 and 2 staging pass's decisions (tools/scene_curated_ch12.mjs; its own file to keep the passes apart)
 Object.assign(CURATED, CURATED_CH12);
+// the Chapter 3 and 4 staging pass's decisions (tools/scene_curated_ch34.mjs, the same way)
+Object.assign(CURATED, CURATED_CH34);
 // decided entries outside the scene files (the inline dialogue listed below: oral histories, inspections …), same shape
-export const CURATED_INLINE = Object.assign({}, CURATED_INLINE_CH12);
+export const CURATED_INLINE = Object.assign({}, CURATED_INLINE_CH12, CURATED_INLINE_CH34);
 // Dynamic scene ids (built in code); used to explain an entry point the static scan cannot see.
 const DYNAMIC = [
   [/^road\.(nao|mio|ren|suzu)\./, 'src/content/pages/40_topics.js and 10_pages.js (road.<comp>.<slot> topics and road.<comp>.quiet<n>, ids built at runtime: The Pages We Keep road talk)'],
