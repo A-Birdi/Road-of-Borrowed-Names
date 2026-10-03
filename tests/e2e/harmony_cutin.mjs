@@ -70,6 +70,7 @@ async function install(p) {
       add('intent', vis(root.querySelector('.intent')));
       add('responses', vis(root.querySelector('.cb-dock')));
       add('skip', vis(root.querySelector('.cb-skip')));
+      add('settings', vis(root.querySelector('.cb-set')));
       for (const e of root.querySelectorAll('.cb-foe, .cb-foe [data-foe], .cb-ib, .cb-icard')) add('plate', vis(e));
       const st = RB.battleStage.stats(), cp = st.cssPerArt, L = st.lay;
       if (L) {

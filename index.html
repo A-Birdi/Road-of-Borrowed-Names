@@ -73486,7 +73486,7 @@ RB.battleIntents = (function () {
  *   protected: the Resolve/Harmony dock (.cb-party), the action banner, the telegraph and the response dock
  *   unless Adaptive has withdrawn them (Keep visible: they count as occupied), the creatures' plates and
  *   badges, each creature's silhouette with its knots (the impact destination), the on-field party, Skip,
- *   an open intent card — each kept 12 px clear, tested against the composition's own visible rows (its
+ *   the battle's Settings button, an open intent card — each kept 12 px clear, tested against the composition's own visible rows (its
  *   transparent corners are not footprint; its hands, glow and backing are). A dialogue, the language task,
  *   word help or another reading layer means no cut-in starts (and an open one is removed at once).
  *   Fit order: 1. the standard pair in the left-middle space (at RB.harmonyArt.fitScale); 2. the same moved
@@ -73587,6 +73587,8 @@ RB.harmonyCutin = (function () {
     // the telegraph and the responses: occupied unless Adaptive has withdrawn them for the exchange
     if (!withdrawn) { add('intent', visRect(root.querySelector('.intent'))); add('responses', visRect(root.querySelector('.cb-dock'))); }
     add('skip', visRect(root.querySelector('.cb-skip')));
+    // the battle's Settings button (src/ui/55_settings.js: the stage's lower right, shown while it may open)
+    add('settings', visRect(root.querySelector('.cb-set')));
     for (const e of root.querySelectorAll('.cb-foe [data-foe], .cb-foe')) add('plate', visRect(e));
     for (const e of root.querySelectorAll('.cb-ib')) add('badge', visRect(e));
     add('intentCard', visRect(root.querySelector('.cb-icard')));
@@ -73803,7 +73805,7 @@ RB.harmonyCutin = (function () {
     const r = (e) => { if (!e) return ''; const q = e.getBoundingClientRect(); return Math.round(q.left) + ',' + Math.round(q.top) + ',' + Math.round(q.width) + ',' + Math.round(q.height); };
     const sz = (e) => { if (!e) return ''; const q = e.getBoundingClientRect(); return Math.round(q.width) + ',' + Math.round(q.height); }; // (the banner drops into place: its size only)
     return (L ? L.foes.map((f) => f.ex + ',' + f.ey).join(';') + '|' + L.scale + '|' + (L.party ? L.party.x + ',' + L.party.y + ',' + L.party.w + ',' + L.party.h : '') : '') + '|' + (St && St.cssPerArt ? St.cssPerArt() : 1) +
-      '|' + (root ? root.scrollTop + '|' + r(root.querySelector('.cb-party')) + '|' + sz(root.querySelector('.cb-banner.on')) + '|' + root.classList.contains('cb-acting') : '');
+      '|' + (root ? root.scrollTop + '|' + r(root.querySelector('.cb-party')) + '|' + sz(root.querySelector('.cb-banner.on')) + '|' + root.classList.contains('cb-acting') + '|' + r(root.querySelector('.cb-set:not([hidden])')) : '');
   }
   function frame(pt) {
     const c = cur;
