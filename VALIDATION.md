@@ -2163,3 +2163,56 @@ byte-identical to a fresh build; registry.json regenerated for this branch):
   The overlay's 48 px face threshold could move toward the mockup's size.
 - The response dock withdraws over 200 ms while the portrait finishes entering at 180 ms, so under load one frame can
   touch the dock. This predates v3; aligning the two durations would fix it.
+
+## Chapters 1–2 staged: every "Performed overworld" scene directed (merged 2026-10-03; HX33–HX36, HX39, HX40 for Ch1–Ch2)
+
+**What** (worker branch, final 6ae3611; record in docs/expressive/reports/staging_ch1_ch2.md):
+- 96 scenes staged: 36 in Chapter 1, 60 in Chapter 2. Each carries a `# Staged:` note.
+- 136 of the 138 drafts are decided in `tools/scene_curated_ch12.mjs`, and SCENES.md and scenes.json are regenerated.
+- 30 scenes are decided "performed" but not staged: lq 17, cases 6, pages 3, pets 4. They were outside the worker's files.
+- **New pieces:** the `wave` gesture, seven held props, and a one-line `rejoin()` fallback in 52_staging.js.
+- **Quoted lines kept working:**
+  - 13 quoted lines in practice_b were re-pointed after the cues moved them;
+  - `79_compare.js` keeps a sighting saved under a line's old position when the scene and the text match, so old
+    saves keep their comparisons;
+  - no save field or schema changed.
+
+**The lead's integration** (on top of the walk-round fix and the props/continuity merge):
+- **The conversation-continuity check** (from the props merge) failed 75 times on the newly staged gestures, across 56
+  person/gesture pairs. Resolved:
+  - Gestures that fit each person were added to their conversation list:
+    - the player;
+    - Nao (shrug, head shake, open palm, emphatic, looking away);
+    - Mio, Ren, Suzu;
+    - Genzō, Ōmi, Wataru, Tamae, Tomo, Tsuru, Shiori, Sae, Mame, Asahi, Fuku, Yasu, Nagisa, Kiyo.
+  - Anger tells: Nao's emphatic hand, Genzō's folded arms.
+  - Six everyday actions any person may do when a scene calls for it: wave, a hand to the ear, shading the eyes,
+    writing, a stretch, wiping the brow.
+  - Tsuru's stronger reaction moved to the real farewell, `rw.seeoff`: she lowers her head as you look back.
+  - Two openers documented as narrated or spoken escalations: Bunta, Sae.
+  - Two of the earlier open findings are resolved by the profile additions: Ren's bow, Suzu's head shake.
+- **Two false positives fixed in the check:**
+  - a companion's cue was compared with another companion's branch line;
+  - a tense opener that is the person's own tell was flagged when the gesture was also in their ordinary list.
+- **Pronoun slips fixed in four player-visible lines.** The specification and the story use they/them for Nao and Ren:
+  - the practice comparison about Ren;
+  - Nao's "take half" support line;
+  - two pet greetings.
+- **The staging runner now fails on world walkers passing through people.** Only a walker that found no way round and
+  waited before going on (`forced`, set in 50_world.js followRoute) is recorded apart.
+- **Runs:**
+  - unit 24,966/0;
+  - validator: no errors;
+  - the merged index.html is byte-identical to a fresh build before the lead's edits;
+  - Chapter 1–2 staging in the browser is recorded below.
+
+**The worker's runs:**
+- staging_chapters --ch=1 698/0; --ch=2 1623/0 (after a runner fix for the wait between steps); showcase 66/0.
+- actor_life 39/39, staging_wataru 112/112, departures and world_fixes all ok, story_ch1 8/8, practice_b 6/6.
+- pursue.mjs through Chapter 2 with staging on (Mio twice, Ren): no problems, no page errors.
+
+**Not verified:**
+- How the scenes feel at play speed to a person.
+- Real devices.
+- Whether the dialogue box covers a listener (checked only on the lighthouse roof).
+- Oral-history fragments carry no gestures.

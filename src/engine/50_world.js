@@ -407,7 +407,8 @@ RB.world = (function () {
         if (round && round.length) { a.route = round; a.routeT = 0; a.replanT = 0; return false; }
       }
       if (a.routeT < 2400) return false;
-    }
+      a.forced = true; // no way round in time: on through them (the staging runner records this apart)
+    } else a.forced = false;
     a.routeT = 0;
     a.replanT = 0;
     a.route.shift();

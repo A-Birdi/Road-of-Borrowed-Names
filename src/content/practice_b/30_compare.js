@@ -28,9 +28,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     {
       id: 'C01', cat: 'referent', catLabel: T('What it points to', '{指|さ}す もの'), word: T('これ (kore), "this"', 'これ'),
       ref: { grammar: 'kosoado' }, item: 'g:kosoado',
-      a: { scene: 'rw.mio_first', line: 5, who: 'mio', ctx: T('Mio, at the apothecary, with the blank labels in her hands', '{薬屋|くすりや} で 、 {白|しろ}い ラベル を {手|て} に した ミオ'),
+      a: { scene: 'rw.mio_first', line: 13, who: 'mio', ctx: T('Mio, at the apothecary, with the blank labels in her hands', '{薬屋|くすりや} で 、 {白|しろ}い ラベル を {手|て} に した ミオ'),
         jp: 'でも 、 {変|へん} なん です 。 {水|みず} に ぬれた なら 、 {紙|かみ} が ふやける はず でしょう 。 これ 、 ぜんぜん ぬれて いない ん です よ 。', en: 'But it\'s strange. If they\'d got wet, the paper would be warped, wouldn\'t it? These aren\'t wet at all.', reading: 'でも、へんなんです。みずにぬれたなら、かみがふやけるはずでしょう。これ、ぜんぜんぬれていないんですよ。', h: '1kwv91i' },
-      b: { scene: 'rw.ren_lanterns_done', line: 3, who: 'ren', ctx: T('Ren, by the bridge, once the lanterns are lit', '{灯|あか}り が ともった {後|あと} 、 {橋|はし} の そば の レン'),
+      b: { scene: 'rw.ren_lanterns_done', line: 8, who: 'ren', ctx: T('Ren, by the bridge, once the lanterns are lit', '{灯|あか}り が ともった {後|あと} 、 {橋|はし} の そば の レン'),
         jp: 'ありがとう ございます 。 これ を 。 {灯守|ひもり} の {言葉|ことば} です 。 {私|わたし} より 、 あなた の {手|て} で {書|か}く {方|ほう} が {明|あか}るい でしょう 。', en: 'Thank you. Take this — a keeper\'s word. It\'ll shine brighter written in your hand than in mine.', reading: 'ありがとうございます。これを。ひもりのことばです。わたしより、あなたのてでかくほうがあかるいでしょう。', h: '1ql4edx' },
       q: {
         F: choose(T('Both lines use これ ("this"). What does it point to in each?', '{二|ふた}つ の 「 これ 」 は 、 それぞれ {何|なに} を {指|さ}す ？'), [
@@ -81,9 +81,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     {
       id: 'C03', cat: 'request-statement', catLabel: T('Request or statement', '{頼|たの}み か 、 {報告|ほうこく} か'), word: T('{見|み}る (miru), "to look"', '{見|み}る'),
       ref: { grammar: 'v_te_kudasai' }, item: 'g:v_te_kudasai',
-      a: { scene: 'sg.wataru_first', line: 4, who: 'wataru', ctx: T('Wataru, at No. 2 warehouse', '{二番|にばん} {倉庫|そうこ} の ワタル'),
+      a: { scene: 'sg.wataru_first', line: 8, who: 'wataru', ctx: T('Wataru, at No. 2 warehouse', '{二番|にばん} {倉庫|そうこ} の ワタル'),
         jp: 'よかったら 、 {箱|はこ} を {見|み}て みて ください 。 {僕|ぼく} は …… {帳簿|ちょうぼ} を {確認|かくにん} します ので 。', en: 'Please, look at the crates if you like. I\'ll… check the ledger.', reading: 'よかったら、はこをみてみてください。ぼくは……ちょうぼをかくにんしますので。', h: '1307a5p' },
-      b: { scene: 'sg.omi_report', line: 1, who: 'pc', ctx: T('You, reporting back to Harbourmaster Ōmi', 'オウミ に {報告|ほうこく} する あなた'),
+      b: { scene: 'sg.omi_report', line: 6, who: 'pc', ctx: T('You, reporting back to Harbourmaster Ōmi', 'オウミ に {報告|ほうこく} する あなた'),
         jp: '{三|みっ}つ とも {見|み}ました 。 でも …… {全部|ぜんぶ} が {同|おな}じ {原因|げんいん} では ない と {思|おも}います 。', en: 'We\'ve seen all three. But… I don\'t think they all have the same cause.', reading: 'みっつともみました。でも……ぜんぶがおなじげんいんではないとおもいます。', h: 'cr3pdy' },
       q: {
         F: choose(T('Which line asks someone to do something?', '{誰|だれ} か に {何|なに} か を {頼|たの}んで いる の は どちら ？'), [
@@ -106,7 +106,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     {
       id: 'C04', cat: 'permission-prohibition', catLabel: T('Allowed or forbidden', '{許|ゆる}し か 、 {禁止|きんし} か'), word: T('～て いい / ～ちゃ いけない', '～て いい ・ ～ちゃ いけない'),
       ref: { grammar: 'v_temo_ii' }, item: 'g:v_temo_ii',
-      a: { scene: 'rw.hall_gather', line: 7, who: 'tsuru', ctx: T('Keeper Tsuru, in the Lantern Hall, before you choose a companion', '{旅|たび} の {連|つ}れ を {選|えら}ぶ {前|まえ} 、 {灯|あか}り{堂|どう} の ツル'),
+      a: { scene: 'rw.hall_gather', line: 12, who: 'tsuru', ctx: T('Keeper Tsuru, in the Lantern Hall, before you choose a companion', '{旅|たび} の {連|つ}れ を {選|えら}ぶ {前|まえ} 、 {灯|あか}り{堂|どう} の ツル'),
         jp: 'ここ で は {好|す}きな だけ {時間|じかん} を かけて いい 。 {話|はな}して 、 {迷|まよ}って 、 {決|き}め{直|なお}して いい 。 でも 、 あの {灯|あか}り が {敷居|しきい} を {越|こ}えたら 、 {旅|たび} の {終|お}わり まで 、 その {二|ふた}つ の {名前|なまえ} を {運|はこ}ぶ 。 {三|みっ}つ{目|め} は {取|と}らない 。', en: 'Take as long as you like in here. Talk, waver, change your mind. But once that lantern crosses the threshold, it carries those two names to the end of the journey. It won\'t take a third.', reading: 'ここではすきなだけじかんをかけていい。はなして、まよって、きめなおしていい。でも、あのあかりがしきいをこえたら、たびのおわりまで、そのふたつのなまえをはこぶ。みっつめはとらない。', h: '3plw8i' },
       b: { scene: 'co.sayo_seats', line: 3, who: 'co_sayo', ctx: T('Sayo, laying out the festival seats', '{祭|まつ}り の {席|せき} を {並|なら}べる サヨ'),
         jp: 'さあ …… {聞|き}いた こと が ない わ 。 {聞|き}いちゃ いけない よう な {気|き} が して 。 {変|へん} よ ね 。', en: 'Hmm… I\'ve never asked. It always felt like something I shouldn\'t. Strange, isn\'t it.', reading: 'さあ……きいたことがないわ。きいちゃいけないようなきがして。へんよね。', h: '1n1ng2e' },
@@ -129,7 +129,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     {
       id: 'C05', cat: 'direct-indirect', catLabel: T('Direct or indirect request', 'まっすぐ な {頼|たの}み 、 {遠回|とおまわ}し な {頼|たの}み'), word: T('～て いただけます か / ～て ください', '～て いただけます か ・ ～て ください'),
       ref: { grammar: 'te_giving' }, item: 'g:te_giving',
-      a: { scene: 'rw.ren_first', line: 6, who: 'ren', ctx: T('Ren, meeting you by the bridge', '{橋|はし} で {初|はじ}めて {会|あ}う レン'),
+      a: { scene: 'rw.ren_first', line: 17, who: 'ren', ctx: T('Ren, meeting you by the bridge', '{橋|はし} で {初|はじ}めて {会|あ}う レン'),
         jp: 'ツル さん が {言|い}って いた {方|かた} です ね 。 {字|じ} が {残|のこ}る と 。 {南|みなみ} の {灯|あか}り と 、 {橋|はし} の {灯|あか}り 。 {記録|きろく} を {読|よ}み{上|あ}げます から 、 {書|か}いて いただけます か 。', en: 'You\'re the one Tsuru mentioned — whose writing stays. The south lantern and the bridge lantern. I\'ll read from the records if you\'ll write.', reading: 'ツルさんがいっていたかたですね。じがのこると。みなみのあかりと、はしのあかり。きろくをよみあげますから、かいていただけますか。', h: '1m6k9nr' },
       b: { scene: 'co.bell_ring', line: 13, who: 'co_tokiwa', ctx: T('Tokiwa, when the old bell suddenly rings', '{古|ふる}い {鐘|かね} が {急|きゅう} に {鳴|な}った {時|とき} の トキワ'),
         jp: '{誰|だれ} が {鳴|な}らした の です か ！ {綱|つな} を {外|はず}して ください 。 {今|いま} すぐ に ！', en: 'Who rang that?! Take that rope down. At once!', reading: 'だれがならしたのですか！つなをはずしてください。いますぐに！', h: '8q057i' },
@@ -164,8 +164,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
         E: choose(T('かもしれない means…', '「 かもしれない 」 の {意味|いみ} は ？'), [
           opt('may, might', true), opt('certainly', false, 'That would be {間違|まちが}いない or きっと.'), opt('must not', false, 'That would be いけない.'),
         ]),
-        I: choose(T('Why is Ren sure? Choose the reason he gives.', 'レン が {確|たし}か だ と {言|い}える {理由|りゆう} は ？'), [
-          opt('He checks every night', true, null, '{毎晩|まいばん} {確|たし}かめて いる から'), opt('All the lanterns exist', false, 'He gives his checking as the reason (～ので).', '{灯|あか}り が {全部|ぜんぶ} ある から'), opt('His teacher said so', false, 'His teacher isn\'t mentioned here.', '{先生|せんせい} が {言|い}った から'),
+        I: choose(T('Why is Ren sure? Choose the reason they give.', 'レン が {確|たし}か だ と {言|い}える {理由|りゆう} は ？'), [
+          opt('They check every night', true, null, '{毎晩|まいばん} {確|たし}かめて いる から'), opt('All the lanterns exist', false, 'They give their checking as the reason (～ので).', '{灯|あか}り が {全部|ぜんぶ} ある から'), opt('Their teacher said so', false, 'Their teacher isn\'t mentioned here.', '{先生|せんせい} が {言|い}った から'),
         ]),
         A: choose(T('Tokiwa repeats かもしれない three times. What is she doing?', 'トキワ が 「 かもしれない 」 を {三度|さんど} {重|かさ}ねる の は ？'), [
           opt('Showing that each clue has another explanation, so nothing is proved yet', true), opt('Agreeing with the evidence', false, 'She offers other explanations for it.'), opt('Accusing someone', false, 'She names no one; she resists a conclusion.'),
@@ -176,9 +176,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     {
       id: 'C07', cat: 'cause-sequence', catLabel: T('Because, or after', '{理由|りゆう} か 、 {順番|じゅんばん} か'), word: T('から (kara)', 'から'),
       ref: { grammar: 'conj_kara' }, item: 'g:conj_kara',
-      a: { scene: 'sg.omi_intro', line: 15, who: 'omi', ctx: T('Harbourmaster Ōmi, when you mention the sunken archive', '{沈|しず}んだ {書庫|しょこ} の {話|はなし} を {聞|き}いた オウミ'),
+      a: { scene: 'sg.omi_intro', line: 31, who: 'omi', ctx: T('Harbourmaster Ōmi, when you mention the sunken archive', '{沈|しず}んだ {書庫|しょこ} の {話|はなし} を {聞|き}いた オウミ'),
         jp: '…… {沈|しず}んだ {書庫|しょこ} ？ ああ 、 {岬|みさき} の {沖|おき} の やつ か 。 {子|こ}ども の {怪談|かいだん} だ よ 。 まず は {港|みなと} を {片付|かたづ}けて から に しな 。', en: '…The sunken archive? Oh, the one off the point. That\'s a children\'s ghost story. Sort out the harbour first.', reading: '……しずんだしょこ？ああ、みさきのおきのやつか。こどものかいだんだよ。まずはみなとをかたづけてからにしな。', h: 'aidvpi' },
-      b: { scene: 'rw.nao_first', line: 1, who: 'nao', ctx: T('Nao, in the river warehouse', '{川|かわ} の {倉庫|そうこ} の ナオ'),
+      b: { scene: 'rw.nao_first', line: 2, who: 'nao', ctx: T('Nao, in the river warehouse', '{川|かわ} の {倉庫|そうこ} の ナオ'),
         jp: '…… {入口|いりぐち} から {来|き}た なら 、 {足元|あしもと} {気|き}を つけて 。 {三|みっ}つ{目|め} の {床板|ゆかいた} 、 {抜|ぬ}けてる から 。', en: '…If you came in the front, watch your step. The third floorboard is gone.', reading: '……いりぐちからきたなら、あしもときをつけて。みっつめのゆかいた、ぬけてるから。', h: '1ycxraj' },
       q: {
         F: choose(T('Which から means "because"?', '「 なぜ なら 」 の から は どちら ？'), [
@@ -201,7 +201,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     {
       id: 'C08', cat: 'completed-intended', catLabel: T('Done, or only meant', '{済|す}んだ こと か 、 つもり か'), word: T('{売|う}る (uru), "to sell"', '{売|う}る'),
       ref: { grammar: 'tsumori' }, item: 'g:tsumori',
-      a: { scene: 'sg.wataru_confront', line: 10, who: 'wataru', ctx: T('Wataru, confronted at No. 2 warehouse', '{二番|にばん} {倉庫|そうこ} で {問|と}い{詰|つ}められた ワタル'),
+      a: { scene: 'sg.wataru_confront', line: 17, who: 'wataru', ctx: T('Wataru, confronted at No. 2 warehouse', '{二番|にばん} {倉庫|そうこ} で {問|と}い{詰|つ}められた ワタル'),
         jp: '{荷|に} を {少|すこ}し ずつ {売|う}って 、 {払|はら}う つもり でした 。 {給料|きゅうりょう} が {出|で}たら 、 {全部|ぜんぶ} {戻|もど}す つもり で 。 ラベル が {勝手|かって} に {変|か}わり{始|はじ}めた とき …… {嵐|あらし} の せい に できる 、 と {思|おも}って しまった ん です 。', en: 'I meant to sell a little cargo at a time and pay it off. To put it all back once the wages came. When the labels started changing by themselves… I thought, I can blame the storm.', reading: 'にをすこしずつうって、はらうつもりでした。きゅうりょうがでたら、ぜんぶもどすつもりで。ラベルがかってにかわりはじめたとき……あらしのせいにできる、とおもってしまったんです。', h: 'nswt9r' },
       b: { scene: 'sg.omi_wataru', line: 34, who: 'omi', ctx: T('Ōmi, deciding what Wataru must do', 'ワタル の {処分|しょぶん} を {決|き}める オウミ'),
         jp: 'だが 、 {荷|に} を {売|う}った の は お{前|まえ} の {落|お}ち{度|ど} だ 。 {売|う}った {分|ぶん} は 、 {給料|きゅうりょう} から {返|かえ}して もらう 。 {灯台|とうだい} と ソウタ に は 、 {自分|じぶん} で {頭|あたま} を {下|さ}げに {行|い}け 。', en: 'But selling the cargo is your fault. You\'ll repay what you sold out of your wages. And you\'ll go to the lighthouse and to Sōta yourself, and apologise.', reading: 'だが、にをうったのはおまえのおちどだ。うったぶんは、きゅうりょうからかえしてもらう。とうだいとソウタには、じぶんであたまをさげにいけ。', h: 'btsulm' },
@@ -224,7 +224,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     {
       id: 'C09', cat: 'bounded-open', catLabel: T('An offer with a limit, or without', '{限|かぎ}り の ある {申|もう}し{出|で} 、 ない {申|もう}し{出|で}'), word: T('{宿|やど} (yado), lodging', '{宿|やど}'),
       ref: { grammar: 'prt_dake_shika' }, item: 'g:prt_dake_shika',
-      a: { scene: 'rw.tsuru_first', line: 10, who: 'tsuru', ctx: T('Keeper Tsuru, after seeing that your writing holds', 'あなた の {字|じ} が {残|のこ}る の を {見|み}た ツル'),
+      a: { scene: 'rw.tsuru_first', line: 24, who: 'tsuru', ctx: T('Keeper Tsuru, after seeing that your writing holds', 'あなた の {字|じ} が {残|のこ}る の を {見|み}た ツル'),
         jp: 'でも 、 あんた の {字|じ} は {残|のこ}った 。 {手|て} を {貸|か}して おくれ 。 {宿|やど} と {飯|めし} くらい は {出|だ}す よ 。', en: 'But your writing held. Lend me a hand. I can at least give you a bed and meals.', reading: 'でも、あんたのじはのこった。てをかしておくれ。やどとめしくらいはだすよ。', h: 'q303s4' },
       b: { scene: 'co.fusa_first', line: 2, who: 'co_fusa', ctx: T('Fusa, welcoming you to her inn', '{宿|やど} に {迎|むか}えて くれる フサ'),
         jp: '{休|やす}みたく なったら {声|こえ} を かけて 。 {布団|ふとん} は {干|ほ}した ばかり よ 。 {柿|かき} の {匂|にお}い が する かも しれない けど 。', en: 'Just ask when you want to rest. The futons were aired today. They might smell of persimmon.', reading: 'やすみたくなったらこえをかけて。ふとんはほしたばかりよ。かきのにおいがするかもしれないけど。', h: '1xt33ha' },
@@ -247,7 +247,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     {
       id: 'C10', cat: 'before-after', catLabel: T('Before or after', '{前|まえ} か {後|あと} か'), word: T('{前|まえ} / {後|あと}', '{前|まえ} ・ {後|あと}'),
       ref: { grammar: 'mae_ato' }, item: 'g:mae_ato',
-      a: { scene: 'sg.harbor_first', line: 4, who: 'daigo', ctx: T('Daigo, at the harbour when you arrive in Saltglass', '{潮硝子|しおがらす} に {着|つ}いた {時|とき} 、 {港|みなと} の ダイゴ'),
+      a: { scene: 'sg.harbor_first', line: 8, who: 'daigo', ctx: T('Daigo, at the harbour when you arrive in Saltglass', '{潮硝子|しおがらす} に {着|つ}いた {時|とき} 、 {港|みなと} の ダイゴ'),
         jp: '{嵐|あらし} の {後|あと} から 、 ずっと こう だ 。 {荷札|にふだ} も {手紙|てがみ} も {道案内|みちあんない} も 、 みんな {言|い}う こと が {違|ちが}う 。', en: 'Ever since the storm it\'s been like this. Cargo tags, letters, directions — they all say something different.', reading: 'あらしのあとから、ずっとこうだ。にふだもてがみもみちあんないも、みんないうことがちがう。', h: '1c6yhf3' },
       b: { scene: 'rw.bridge_scene', line: 11, who: 'narr', ctx: T('At the teahouse door, after the bridge reaches the far bank', '{橋|はし} が {届|とど}いた {後|あと} 、 {茶屋|ちゃや} の {戸口|とぐち}'),
         jp: 'ふたり が {茶屋|ちゃや} に {入|はい}って いく 。 {戸|と} が {閉|し}まる {前|まえ} に 、 コウジ が {振|ふ}り{返|かえ}って {手|て} を {振|ふ}った 。', en: 'The two of them go into the teahouse. Before the door closes, Kōji turns and waves.', reading: 'ふたりがちゃやにはいっていく。とがしまるまえに、コウジがふりかえっててをふった。', h: '1wj9g1x' },
@@ -296,9 +296,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     {
       id: 'C12', cat: 'ambiguity', catLabel: T('A deliberately ambiguous line', 'わざと {二通|ふたとお}り に {読|よ}める {言葉|ことば}'), word: T('{来|こ}なくて いい (konakute ii)', '{来|こ}なくて いい'),
       ref: { grammar: 'v_nakereba' }, item: 'g:v_nakereba',
-      a: { scene: 'sg.genzo_grump', line: 4, who: 'genzo', ctx: T('Genzō, at the lighthouse, in a mood', '{灯台|とうだい} で {機嫌|きげん} の {悪|わる}い ゲンゾウ'),
+      a: { scene: 'sg.genzo_grump', line: 10, who: 'genzo', ctx: T('Genzō, at the lighthouse, in a mood', '{灯台|とうだい} で {機嫌|きげん} の {悪|わる}い ゲンゾウ'),
         jp: '{機嫌|きげん} が {悪|わる}い の は 、 {娘|むすめ} の せい だ 。 {手紙|てがみ} を {寄越|よこ}した と {思|おも}ったら 、 「{迎|むか}え に {来|こ}なくて いい 」 だ と さ 。', en: 'If I\'m in a mood, blame my daughter. Finally sends a letter, and it says: "You don\'t have to come and meet me."', reading: 'きげんがわるいのは、むすめのせいだ。てがみをよこしたとおもったら、「むかえにこなくていい」だとさ。', h: '1hi8j6u' },
-      b: { scene: 'sg.genzo_truth', line: 4, who: 'pc', ctx: T('You, reading him the rest of the letter', '{手紙|てがみ} の {続|つづ}き を {読|よ}む あなた'),
+      b: { scene: 'sg.genzo_truth', line: 12, who: 'pc', ctx: T('You, reading him the rest of the letter', '{手紙|てがみ} の {続|つづ}き を {読|よ}む あなた'),
         jp: '「{来|こ}なくて いい 」 は 、 「{来|く}る な 」 では ありません 。 {膝|ひざ} が {悪|わる}い から 、 {坂|さか} を {下|お}りて {来|こ}なくて いい 、 と いう {意味|いみ} です 。', en: '"You don\'t have to come" isn\'t "don\'t come". It means: your knees are bad, so you needn\'t come down the hill.', reading: '「こなくていい」は、「くるな」ではありません。ひざがわるいから、さかをおりてこなくていい、といういみです。', h: '7f6dbr' },
       q: {
         F: choose(T('Genzō reads {来|こ}なくていい as "don\'t come". What did his daughter mean?', 'ゲンゾウ の {娘|むすめ} は {何|なに} を {言|い}いたかった ？'), [

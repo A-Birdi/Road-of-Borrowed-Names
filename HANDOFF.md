@@ -433,6 +433,7 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
 - **Tests:** unit `tests/unit/actors.test.mjs`; browser `tests/e2e/actor_life.mjs`, `actor_workplaces.mjs`,
   `staging_wataru.mjs`, `staging_chapters.mjs` (all but actor_workplaces in run.mjs; that one watches five
   workplaces 45 s each and runs on its own). `--video` on actor_life / staging_wataru writes clips.
+- **Chapters 1–2 staged (2026-10-03):** all 96 performed scenes in src/content/ch1, ch2 (tests/e2e/staging_chapters.mjs --ch=1|2|showcase; decisions in tools/scene_curated_ch12.mjs). Next: the 30 performed scenes in lq/cases/pages/pets (long quests first), then Chapters 3–6.
 - **Left for later:** game-wide per-scene staging of the manifest's other "Performed overworld" scenes; Masaru's
   kneading waits on the bakery props (TODO in his profile); the portrait worker reads `RB.mannerisms.of(id).portrait`.
 

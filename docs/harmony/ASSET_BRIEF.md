@@ -1,6 +1,6 @@
 # Harmony busts: brief for painted art (v3)
 
-**Why.** Robin judged the code-drawn busts far below the fidelity of his mockup. Two later directives make the
+**Why.** Robin judged the code-drawn busts far below the fidelity of their mockup. Two later directives make the
 target precise:
 - the world-review packet's documents 02 and 03 (`docs/review/WORLD_REVIEW_RECONCILIATION.md`);
 - Robin's **Art Direction Correction** (`docs/harmony/ART_DIRECTION_CORRECTION.md`), which wins wherever the
@@ -194,9 +194,9 @@ smoothly. A missing state holds the one before.
 
 | Pairing | Companion's one-off | Technique |
 |---|---|---|
-| **Nao** (he; courier) | practical, focused, assured: a focused glance, then a **precise indicating gesture** and a small confident shift; purposeful, never showy | **Read the Opening**: he reads the route to the opening |
+| **Nao** (they; courier) | practical, focused, assured: a focused glance, then a **precise indicating gesture** and a small confident shift; purposeful, never showy | **Read the Opening**: Nao reads the route to the opening |
 | **Mio** (she; apothecary) | composed care and competence: a **deliberate gesture with the small vial** at a controlled angle, a reassuring expression; **not a timid pose**, no staff, no prayer pose | **Clearwater Draught** |
-| **Ren** (he; lantern keeper) | thoughtful, exact, protective: a **measured lamp-and-hand gesture**, the lamp's light framing an intent face; a glasses push may be secondary, **never the whole performance** | **Lantern Ward**: lamp and glasses stay attached and correctly occluded |
+| **Ren** (they; lantern keeper) | thoughtful, exact, protective: a **measured lamp-and-hand gesture**, the lamp's light framing an intent face; a glasses push may be secondary, **never the whole performance** | **Lantern Ward**: lamp and glasses stay attached and correctly occluded |
 | **Suzu** (she; travelling performer) | theatrical, confident, welcoming to the shared spotlight: a lively head, shoulder and hand flourish, a knowing smile or a **single wink**, one quick glint by the face at the peak; hair, ribbon **and earrings** follow through | **Curtain Call**: sharing the spotlight |
 
 A recolour, a different prop or a different speed on the same poses is **not** a companion-specific performance.
@@ -204,7 +204,7 @@ A recolour, a different prop or a different speed on the same poses is **not** a
 **The player's performance:**
 - `prep_a` and `cue`: a shared base. A grounded breath, gathering the brush hand, beginning a coordinated arc.
 - `peak` and `settle`: the terminal gesture adapted per technique:
-  - Nao: following his cue with the brush.
+  - Nao: following Nao's cue with the brush.
   - Mio: guiding the ink.
   - Ren: a coordinated seal.
   - Suzu: sharing the spotlight.
@@ -220,7 +220,7 @@ Deliver each state as a flattened frame, `<comp>_<state>.png`: four required and
 - Companions are never recoloured and need no masks. Their colours are free.
 
 Identity follows `ref_companion_<name>.png`:
-- **Nao:** spiky dark-brown hair, a pencil behind his ear, a mustard scarf with a tail, an olive tunic, the
+- **Nao:** spiky dark-brown hair, a pencil behind one ear, a mustard scarf with a tail, an olive tunic, the
   big satchel's strap.
 - **Mio:** black hair in a bun with pins, a cream apron over a sage-green dress, small glass vials.
 - **Ren:** blue-black ponytail with a side parting, round glasses, a navy high-collared coat with brass buttons
@@ -376,7 +376,7 @@ The published brief page has a checklist.
   #ff00ff). An optional `import.json` holds per-file hints (contract §8).
 - **Editable sources welcome:** layered originals and the style masters, in a `refs/` folder beside the
   batch.
-- **Rights note:** a line or two with each delivery confirming that Robin made the images with his image tool,
+- **Rights note:** a line or two with each delivery confirming that Robin made the images with their image tool,
   may use them in this project under that tool's terms, and that they are original. It is recorded in
   `assets/harmony/PROVENANCE.md`.
 - **Never committed:** Robin's mockup and other reference images.

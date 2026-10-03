@@ -19,10 +19,28 @@
 //        line that says so, her refusal with a flat hand, Tadashi's stamp held up;
 //   Ch6 sa.isamu_return: the folio passes from your hand to Isamu's, seated at the fire, and he reads it.
 // Evidence: docs/screenshots/actors/ch<N>_<scene>_<line>.png
-// Usage: node tests/e2e/staging_chapters.mjs
+//
+// Then every staged overworld scene of Chapters 1 and 2 (docs/expressive/reports/staging_ch1_ch2.md), data-driven:
+// tests/e2e/staging_ch12_cases.mjs holds each scene's fixture and the branches that matter (choice picks, the
+// four companions, the flags that change what is said), tests/e2e/staging_runner.mjs plays them (what it checks
+// per branch is listed at its top: the scene ends, every cue names somebody there who can make it, every
+// authored position is reached, nobody shares a tile or stands on furniture, no idle life, everyone where the
+// world expects them afterwards, the expected gestures; and per scene, reduced motion keeps the cues, their
+// order and the outcome, and staged and unstaged end in the same state). About 8 minutes per chapter.
+// Evidence: docs/screenshots/staging/ch1_ch2/
+// Usage: node tests/e2e/staging_chapters.mjs [--ch=1|2|showcase] [--only=<scene prefix>,…] [--branches]
+//   --ch=1 / --ch=2: only that chapter's data-driven cases (no showcase); --ch=showcase: only the showcase above
+//   --only: only the cases whose scene id starts with one of the prefixes
+//   --branches: compare every branch (not only each scene's first) with reduced motion and unstaged
 import fs from 'node:fs';
 import path from 'node:path';
 import { serve, launch, page, root } from './lib.mjs';
+import { runCases } from './staging_runner.mjs';
+import { CH12 } from './staging_ch12_cases.mjs';
+
+const ARGS = process.argv.slice(2);
+const arg = (k) => { const a = ARGS.find((x) => x.startsWith('--' + k + '=')); return a ? a.slice(k.length + 3) : null; };
+const CH = arg('ch'), ONLY = (arg('only') || '').split(',').filter(Boolean);
 
 const out = path.join(root, 'docs/screenshots/actors');
 fs.mkdirSync(out, { recursive: true });
@@ -119,7 +137,7 @@ async function runScene(p, c, o) {
   }, [c, o]);
 }
 
-for (const c of CASES) {
+for (const c of (CH && CH !== 'showcase') || ONLY.length ? [] : CASES) {
   for (const pick of c.pick || [0]) {
     const tag = 'Ch' + c.ch + ' ' + c.scene + (c.branch ? ' (' + c.branch + ')' : '') + ((c.pick || [0]).length > 1 ? ' (reply ' + (pick + 1) + ')' : '');
     const { p, errors } = await page(b, url, { viewport: { width: 1280, height: 800 } });
@@ -152,6 +170,26 @@ for (const c of CASES) {
     ok(errors.length === 0, tag + ': no page errors' + (errors.length ? ': ' + errors.slice(0, 2).join(' | ') : ''));
     await p.context().close();
   }
+}
+// ---- Chapters 1 and 2, every staged overworld scene ----------------------------------------------------------
+if (CH !== 'showcase') {
+  const cases = CH12.filter((c) => (!CH || String(c.ch) === CH) && (!ONLY.length || ONLY.some((f) => c.scene.startsWith(f))));
+  const t0 = Date.now();
+  let cur = null, runs = 0, from = '';
+  // a fresh page every 20 branches (and its page errors checked when it is let go)
+  const release = async () => {
+    if (!cur) return;
+    ok(cur.errors.length === 0, 'Ch1/Ch2 cases from ' + from + ': no page errors' + (cur.errors.length ? ': ' + cur.errors.slice(0, 2).join(' | ') : ''));
+    await cur.p.context().close();
+    cur = null;
+  };
+  await runCases(cases, {
+    ok, dwell: 60, branches: ARGS.includes('--branches'),
+    page: async () => { if (cur && runs % 20 === 0) await release(); if (!cur) cur = await page(b, url, { viewport: { width: 960, height: 640 } }); return cur.p; },
+    after: async (p, c) => { runs++; if (runs % 20 === 1) from = c.scene; },
+  });
+  await release();
+  console.log('Ch1/Ch2 cases: ' + cases.length + ' scenes in ' + ((Date.now() - t0) / 1000).toFixed(0) + ' s');
 }
 await b.close();
 srv.close();

@@ -13,6 +13,8 @@
 //   strong     one of their written stronger reactions (`strong`);
 //   class      their class overlay's conversation gestures, tells or habits (the baseline every profile falls back to);
 //   common     attention everyone gives (turn and listen, nod, look between, lean in: primitives 1–4);
+//   action     an everyday action with no register of its own, which anyone may do when a scene calls for it
+//              (a wave, a hand to the ear, shading the eyes, writing with the brush, a stretch, wiping the brow);
 //   object     an object primitive (present, hand over or receive, kneel or bend, read: 13–16) with a prop or a target;
 //   outside    none of these.
 // Which companions reach a cue: every place that starts the scene (a map's talk entries, props, triggers and
@@ -39,6 +41,7 @@ import { load } from '../lib/load.mjs';
 const COMPS = ['nao', 'mio', 'ren', 'suzu'];
 const COMMON = new Set([1, 2, 3, 4]);
 const OBJECT = new Set([13, 14, 15, 16]);
+const ACTIONS = new Set(['wave', 'cupear', 'shadeeyes', 'write', 'stretch', 'brow']);
 const TENSE = new Set(['recoil', 'folded', 'forehead', 'emphatic']);
 const RELEASE = new Set(['celebrate', 'laugh']);
 const LOW = new Set(['lowered', 'bow', 'duck', 'recoil']);
@@ -47,10 +50,10 @@ const HAPPY_TAGS = new Set(['happy', 'laugh']);
 
 // scene · person · gesture (or rule) → kind and reason
 const KNOWN = {
-  'co.hiro_first|ren|bow': ['escalation', 'his own thanks (30) made formal: "As a lantern keeper, I\'m in your debt."'],
   'lf.mio_refuse|mio|halfraise': ['escalation', 'narrated: "Mio\'s mouth starts to shape a yes, and stops." (her fidget held at the point of answering)'],
   'lf.mio_refuse|pc|touchback': ['escalation', 'narrated: "You lay a hand gently on her back."'],
-  'co.suzu_night|suzu|shake': ['finding', 'a gentle refusal ("You\'re kind. But that\'s exactly the line I gave myself…"); shake (20) is in neither her talk nor her serious register (25, 27, 28): add it there, or cue a gesture she has'],
+  'rw.bunta_tally|bunta|open:forehead': ['escalation', 'narrated: "Bunta scratches his head in silence." (caught out over the plane)'],
+  'rw.mr_sae|sae|open:recoil': ['escalation', 'her line: "Don\'t come… oh, sorry. You\'re a person. Not a voice." (startled in the dark mill)'],
   'lf.mio_refuse|lf_tadashi|flinch': ['finding', 'his profile\'s surprise tell is halfraise (8) and halfraise is the stronger reaction it writes for this scene, but the scene gives him a startled look up (flinch, 21) and the halfraise to Mio'],
   'lf.mio_refuse|lf_tadashi|strong:halfraise': ['finding', 'the same disagreement seen from the profile: the stronger reaction written for him here is not in the scene'],
   'rw.hana_first|hana|point': ['finding', 'pointing the way the cup came from ("from the bridge, I think"); point (10) is in neither her talk (13, 9) nor the host overlay'],
@@ -90,6 +93,7 @@ export default async (t) => {
     if (same((pr.strong || []).map((s) => s.gesture))) return 'strong';
     if ((n && (base.talk || []).includes(n)) || same(Object.values(base.tells || {})) || habitsOf(base).has(gid)) return 'class';
     if (n && COMMON.has(n)) return 'common';
+    if (ACTIONS.has(gid)) return 'action';
     if (n && OBJECT.has(n) && (cue.prop || cue.target)) return 'object';
     return 'outside';
   }
@@ -141,9 +145,20 @@ export default async (t) => {
       if (c.args[1] === '-') continue; // a release, not a gesture
       const cue = RB.script.stageArgs(c.args.slice(2));
       const chain = [c.args[1]].concat(cue.then || []);
-      let next = null;
-      for (let j = i + 1; j < cmds.length; j++) { if (cmds[j].op === 'say') { next = cmds[j]; break; } if (['choice', 'goto', 'end'].includes(cmds[j].op)) break; }
+      // the next line this person's cue leads into: a companion's cue reaches only the companion lines of its own
+      // branch (?(comp=x)), not another companion's
+      const nextFor = (p) => {
+        for (let j = i + 1; j < cmds.length; j++) {
+          const d = cmds[j];
+          if (d.op === 'say') { if (who === 'comp' && d.who === 'comp' && !compOk(d.if, p)) continue; return d; }
+          if (['choice', 'goto', 'end'].includes(d.op)) return null;
+        }
+        return null;
+      };
       for (const p of people) {
+        const next = nextFor(p);
+        // one of their emotional tells (GESTURES.md §3), whichever list it is also in
+        const isTell = (gid) => { const n = num(gid); return Object.values(M.of(p).tells || {}).some((x) => x === gid || (n && num(x) === n)); };
         if (p !== 'pc' && !P[p] && !C.chars[p]) { noProfile.push(id + ':' + p); continue; }
         if (p !== 'pc' && !P[p]) derived.add(p);
         for (const gid of chain) {
@@ -152,7 +167,7 @@ export default async (t) => {
           rows.push([id, p, gid, cls]);
           (perPerson[p] = perPerson[p] || {})[id] = (perPerson[p][id] || []).concat(gid + ':' + cls);
           if (cls === 'outside') issue(id, p, gid, gid + ' is outside their vocabulary');
-          if (!seen[p] && TENSE.has(gid) && !['tell', 'strong'].includes(cls)) issue(id, p, 'open:' + gid, 'opens the scene on ' + gid + ' with no lead-in');
+          if (!seen[p] && TENSE.has(gid) && !['tell', 'strong'].includes(cls) && !isTell(gid)) issue(id, p, 'open:' + gid, 'opens the scene on ' + gid + ' with no lead-in');
           seen[p] = true;
           if (gid === 'glasses') glasses[p] = (glasses[p] || 0) + 1;
           const nextWho = next && (next.who === 'comp' ? (who === 'comp' ? p : null) : next.who);
