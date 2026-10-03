@@ -401,9 +401,13 @@ RB.render = (function () {
     const bob = isFoe && !still ? Math.round(Math.sin(t / 300 + a.x) * 3) : 0;
     // (a turn on the spot is drawn through a pivot: RB.sprites.view, src/engine/32_spriteart.js — drawing only)
     const fr0 = actorFrame(a, t, isFoe, still), vw = RB.sprites.view ? RB.sprites.view(a, t, still || isFoe, fr0) : null;
-    const art = RB.sprites.getArt && RB.sprites.getArt(a.look, vw ? vw.dir : a.dir, vw ? vw.frame : fr0);
-    const dy = a.dy || 0; // a knee dip during a field action (src/ui/57_weave.js)
-    if (art) c.drawImage(art, fx - RB.sprites.ANCHOR.x, fy - RB.sprites.ANCHOR.y + bob + dy);
+    // staged or idle body language (src/engine/52_staging.js): a pose key, a drawn facing, a small offset
+    // (a half-step, a hop); not while a turn pivots, so the turn still shows
+    const sf = !isFoe && (!vw || !vw.turn) && RB.staging ? RB.staging.frameOf(a, t, still, vw ? vw.frame : fr0) : null;
+    const art = RB.sprites.getArt && RB.sprites.getArt(a.look, sf ? sf.dir : vw ? vw.dir : a.dir, sf && sf.key ? sf.key : vw ? vw.frame : fr0);
+    const dy = (a.dy || 0) + (sf ? sf.oy : 0); // a knee dip during a field action (src/ui/57_weave.js)
+    const ox = sf ? sf.ox : 0;
+    if (art) c.drawImage(art, fx - RB.sprites.ANCHOR.x + ox, fy - RB.sprites.ANCHOR.y + bob + dy);
     else c.drawImage(RB.sprites.get(a.look, a.dir, a.frame || 0), fx - 16, fy - 46 + bob + dy, 32, 48);
     if (a.overlay) a.overlay(c, fx, fy + dy, t); // the raised hand and brush of a field action
     if (alpha < 1) c.globalAlpha = 1;
@@ -578,6 +582,9 @@ RB.render = (function () {
   // Effective ambience: a map may define alt: [{if, ambient, night}] for story states.
   function ambientOf(m) {
     const s = RB.game.s;
+    // a scene's own ambience (night on the veranda), presentation only: RB.staging.ambience
+    const ov = RB.staging && RB.staging.ambienceNow();
+    if (ov) return ov;
     for (const a of m.def.alt || []) if (s && RB.state.test(s, a.if)) return a;
     return { ambient: m.def.ambient || {}, night: m.def.night };
   }

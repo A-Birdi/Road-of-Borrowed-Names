@@ -25296,6 +25296,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
     let key = String(frame);
     let hit = pcacheK.get(key);
     if (hit) return hit;
+    // a posed frame ('p:<pose>…', src/engine/32g_spritepose.js): the pose layer parses it
+    if (typeof frame === 'string' && frame[0] === 'p' && frame[1] === ':' && SP._pose) {
+      hit = SP._pose.parse(frame);
+      pcacheK.set(key, hit);
+      if (pcacheK.size > 4000) pcacheK.delete(pcacheK.keys().next().value);
+      return hit;
+    }
     let blink = false, kind = 'stand', ph = 0;
     if (frame === 3) blink = true;
     else if (frame === 1) { kind = 'walk'; ph = 0; }
@@ -25340,6 +25347,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     };
     g.low = { tunic: g.hem, apron: g.hem, coat: g.hem + (child ? 3 : 6), robe: child ? 51 : 51, dress: child ? 47 : 46 }[g.shape];
     if (g.shape === 'robe' || g.shape === 'dress') g.low += 0;
+    // a posed frame (32g_spritepose.js): its spec; a dropped body (kneel, sit) keeps a dress to the ground
+    if (pose.P) { g.P = pose.P; g.eyes = pose.P.eyes || null; g.mouth = pose.P.mouth || null; if (g.shape === 'dress') g.low = Math.min(52, g.low + Math.max(0, pose.drop || 0)); }
     g.apronLow = g.hem + (child ? 3 : 5);
     return g;
   }
@@ -25532,6 +25541,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Both arms are drawn as the screen-left one and mirrored about the centre line for the other.
   const mxr = (s, x, w) => (s ? W - x - (w || 1) : x);
   function handsFB(g, view) {
+    if (g.P && SP._pose) return SP._pose.handsFB(g, view, handsFB0(g, view));
+    return handsFB0(g, view);
+  }
+  function handsFB0(g, view) {
     const out = [];
     for (let s = 0; s < 2; s++) {
       const sw = g.pose.arms[sideAt(view, s)];
@@ -25620,9 +25633,19 @@ var RB = (globalThis.RB = globalThis.RB || {});
   ];
   // A front-view eye, 3 wide: a dark lid with a lash tick at the outer corner, the iris with a
   // glint towards the light and a lighter lower rim.
-  function eyeD(b, p, x, y, blink, left) {
+  function eyeD(b, p, x, y, blink, left, gz) {
     const o = left ? x - 1 : x + 3;
-    if (blink) { b.rect(x, y + 2, 3, 1, p.eye); b.px(o, y + 1, p.eye); return; }
+    if (blink || gz === 'c') { b.rect(x, y + 2, 3, 1, p.eye); b.px(o, y + 1, p.eye); return; }
+    // posed gaze (32g_spritepose.js): 'd' downcast under a heavy lid, 'u' up, 'l'/'r' to that side of the screen
+    if (gz === 'd') { b.rect(x, y + 1, 3, 1, p.eye); b.px(o, y + 1, p.eye); b.rect(x, y + 2, 3, 2, p.iris); b.rect(x, y + 3, 3, 1, p.irisL); return; }
+    if (gz === 'u') { b.rect(x, y, 3, 1, p.eye); b.px(o, y, p.eye); b.rect(x, y + 1, 3, 2, p.iris); b.px(x + 1, y + 1, p.eye); b.rect(x, y + 3, 3, 1, p.white); return; }
+    if (gz === 'l' || gz === 'r') {
+      const ix = gz === 'l' ? x : x + 1;
+      b.rect(x, y, 3, 1, p.eye); b.px(o, y, p.eye);
+      b.rect(gz === 'l' ? x + 2 : x, y + 1, 1, 3, p.white);
+      b.rect(ix, y + 1, 2, 3, p.iris); b.px(gz === 'l' ? ix : ix + 1, y + 1, p.eye); b.rect(ix, y + 3, 2, 1, p.irisL);
+      return;
+    }
     b.rect(x, y, 3, 1, p.eye);
     b.px(o, y, p.eye);
     b.rect(x, y + 1, 3, 3, p.iris);
@@ -25640,12 +25663,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
     b.rect(29, y0 + 8, 1, 3, sk.s); b.px(29, y0 + 10, sk.z);
     const ey = y0 + 8;
     b.rect(13, ey - 2, 3, 1, p.brow); b.rect(24, ey - 2, 3, 1, p.brow);
-    eyeD(b, p, 13, ey, blink, true);
-    eyeD(b, p, 24, ey, blink, false);
+    eyeD(b, p, 13, ey, blink, true, g.eyes);
+    eyeD(b, p, 24, ey, blink, false, g.eyes);
     if (look.age === 'old') { b.px(13, ey + 5, sk.s); b.px(26, ey + 5, sk.s); b.px(12, ey + 4, sk.s); b.px(27, ey + 4, sk.s); }
     else { b.rect(12, ey + 5, 2, 1, p.blush); b.rect(26, ey + 5, 2, 1, p.blush); }
     b.px(20, ey + 4, mix(sk.S, sk.s, 0.6)); // nose
-    b.rect(19, ey + 6, 2, 1, mix(p.mouth, sk.s, 0.25));
+    // posed mouth (32g_spritepose.js): 'o' open (a laugh, a gasp), 'w' a smile, 'f' pressed tight
+    if (g.mouth === 'o') { b.rect(19, ey + 6, 2, 2, mix(p.mouth, '#2a1418', 0.45)); b.px(19, ey + 6, mix(p.mouth, '#2a1418', 0.7)); }
+    else if (g.mouth === 'w') { b.rect(19, ey + 6, 2, 1, mix(p.mouth, sk.s, 0.15)); b.px(18, ey + 5, mix(p.mouth, sk.s, 0.35)); b.px(21, ey + 5, mix(p.mouth, sk.s, 0.35)); }
+    else if (g.mouth === 'f') b.rect(18, ey + 6, 4, 1, mix(p.mouth, '#2a1418', 0.25));
+    else b.rect(19, ey + 6, 2, 1, mix(p.mouth, sk.s, 0.25));
   }
   function headUp(b, look, p, g) {
     const y0 = g.fy, sk = p.skin;
@@ -25662,14 +25689,20 @@ var RB = (globalThis.RB = globalThis.RB || {});
     b.rect(18, y0 + 8, 2, 3, sk.s); b.px(18, y0 + 9, sk.z); b.px(19, y0 + 8, sk.S); // ear
     const ey = y0 + 8;
     b.rect(25, ey - 2, 3, 1, p.brow);
-    if (blink) { b.rect(25, ey + 2, 2, 1, p.eye); }
+    const gz = g.eyes;
+    if (blink || gz === 'c') { b.rect(25, ey + 2, 2, 1, p.eye); }
+    else if (gz === 'd') { b.rect(25, ey + 1, 2, 1, p.eye); b.px(24, ey + 1, p.eye); b.rect(25, ey + 2, 2, 2, p.iris); b.px(25, ey + 3, p.irisL); }
+    else if (gz === 'u') { b.rect(25, ey, 2, 1, p.eye); b.px(24, ey, p.eye); b.rect(25, ey + 1, 2, 2, p.iris); b.px(26, ey + 1, p.eye); b.rect(25, ey + 3, 2, 1, p.white); }
+    else if (gz === 'b') { b.rect(25, ey, 2, 1, p.eye); b.px(24, ey, p.eye); b.rect(25, ey + 1, 1, 3, p.iris); b.rect(26, ey + 1, 1, 3, p.white); b.px(25, ey + 1, p.eye); } // a look back over the shoulder
     else { b.rect(25, ey, 2, 1, p.eye); b.rect(25, ey + 1, 2, 3, p.iris); b.px(26, ey + 1, p.white); b.px(25, ey + 3, p.irisL); b.px(24, ey, p.eye); }
     if (look.age !== 'old') b.rect(25, ey + 4, 2, 1, p.blush);
     else { b.px(24, ey + 4, sk.s); }
     // the profile: a nose tip standing one pixel proud of the face, its
     // underside joined to it, and the mouth a small notch on the face's own
     // front edge (FACE_S ends at x 27 on that row) — nothing floats outside
-    b.px(27, ey + 5, p.mouth); b.px(26, ey + 5, mix(p.mouth, sk.S, 0.5));
+    if (g.mouth === 'o') { b.px(27, ey + 5, mix(p.mouth, '#2a1418', 0.5)); b.px(27, ey + 6, mix(p.mouth, '#2a1418', 0.3)); b.px(26, ey + 5, mix(p.mouth, sk.S, 0.5)); }
+    else if (g.mouth === 'w') { b.px(27, ey + 5, p.mouth); b.px(26, ey + 4, mix(p.mouth, sk.S, 0.45)); }
+    else { b.px(27, ey + 5, p.mouth); b.px(26, ey + 5, mix(p.mouth, sk.S, 0.5)); }
     b.px(30, ey + 2, sk.S); b.px(29, ey + 3, sk.s); // nose tip
   }
 
@@ -25760,6 +25793,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
   // the hand of one arm in the side view: swings ahead (+x) or behind with the opposite foot
   function sideHand(g, side) {
+    if (g.P && SP._pose) { const h = SP._pose.sideHand(g, side); if (h) return h; }
     const sw = g.pose.arms[side];
     const t = g.t + 1, len = g.bt - g.t + 1;
     return { x: 19 + sw * 4, y: t + len - Math.abs(sw), sw, t };
@@ -25815,6 +25849,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }
   }
   function humanoid(b, look, dir, pose) {
+    if (pose.P && SP._pose) return SP._pose.humanoid(b, look, dir, pose);
     const p = palette(look);
     const g = geom(look, pose);
     const blink = pose.blink;
@@ -25925,6 +25960,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     if (look.pet) return petOnFrame(look, dir, frame);
     frame = frame == null ? 0 : frame;
     const small = SP.get(look, dir, frame === 3 ? 3 : typeof frame === 'number' ? frame : 0);
+    if (typeof frame === 'string' && frame[0] === 'p' && frame[1] === ':' && SP._pose) return SP._pose.art(small, look, dir, frame, build);
     let m = art.get(small);
     if (!m) { m = new Map(); art.set(small, m); }
     let cv = m.get(frame);
@@ -25973,7 +26009,605 @@ var RB = (globalThis.RB = globalThis.RB || {});
   SP.FRAME = { w: W, h: H };
   SP.ANCHOR = { x: AX, y: AY + TOP };
   SP.artW = W; SP.artH = H;
-  SP._art = { W, H, AX, AY, palette, geom, hairRamp, poseOf, handsFB, sideHand, sideAt, sp, mir, stamp, newMask, shadeMask, curlShade, foldShade, IVORY, set HAIR(v) { HAIR = v; }, get HAIR() { return HAIR; }, set drawHair(f) { drawHair = f; }, set ACC(v) { ACC = v; }, get ACC() { return ACC; } };
+  SP._art = { W, H, AX, AY, TOP, palette, geom, hairRamp, poseOf, handsFB, handsFB0, sideHand, sideAt, sp, mir, stamp, newMask, shadeMask, curlShade, foldShade, IVORY,
+    legsFB, garmentFB, armsFB, headDown, headUp, headSide, legsSide, garmentSide, armSide, accs: (...a) => accs(...a), hair: (...a) => drawHair(...a), set HAIR(v) { HAIR = v; }, get HAIR() { return HAIR; }, set drawHair(f) { drawHair = f; }, set ACC(v) { ACC = v; }, get ACC() { return ACC; } };
+})();
+
+
+/* ==== src/engine/32g_spritepose.js ==== */
+/* Pose layer for the overworld figures (the expressive actor system, docs/expressive/CONTRACT.md §3.4).
+ *
+ * The road sprites (32_spriteart.js, 40×58 art px) breathe, blink, walk and turn. This layer lets the
+ * same rig hold a pose: arms and hands at a target (chest, chin, mouth, forehead, temple, a pointing
+ * arm, an open palm, both hands presenting something, arms folded, a hand on the hip, hands behind the
+ * back …), the head lowered or turned a pixel, the eyes aside or downcast, the upper body leaning or
+ * bowing (side views), the body lowered to kneel or sit, and a held object (papers, a ledger, a cup, a
+ * notice, a lamp …) that follows the hand that holds it. It draws from the same parts (legs, garment,
+ * head, hair, accessories), so a posed figure is the same person with the same look, including the
+ * player's effective look (RB.equip.look).
+ *
+ * Legibility at play scale (a hand is 3 art px): every pose is a deliberate silhouette — an arm that
+ * crosses the body or the face gets its own dark contour, the elbow sticks out where the gesture says
+ * so, a pointing arm is long and level, a held object is bigger than life by a pixel. Poses are named
+ * key poses (POSES), not free parameters, so the frame keys stay few and the cache stays bounded.
+ *
+ * Frame keys: 'p:<pose>[.<R|L>][/<prop>][~<gaze>][:<breath 0|1>][b]'
+ *   pose   a name in POSES ('chin', 'point', 'folded', 'bow2' …)
+ *   R|L    the hand that gestures (the person's own right or left); default: the free hand
+ *          (a cane, lamp, book or basket is held in its own hand, which stays put)
+ *   prop   a held object (PROPS: paper, ledger, notice, cup, teapot, tags, brush, stamp, book …)
+ *   gaze   eyes-only glance: l / r (screen side), u, d (downcast), c (closed), b (side view: back)
+ *   breath 1 = the breathing key that settles a pixel (as i1/i2)
+ * RB.sprites.getArt(look, dir, key) draws it; frames are cached per look, direction and key in a
+ * bounded LRU (RB.sprites._pose.stats()). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function () {
+  'use strict';
+  const SP = RB.sprites, A = SP._art, P = RB.pix, shade = P.shade, mix = P.mix;
+  const W = A.W, H = 56 + A.TOP, TOP = A.TOP;
+  const now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
+
+  // ---- arm targets ------------------------------------------------------------------------------
+  // Geometry in art px from the body rows T (shoulders), B (belt), F (top of the face) of geom().
+  //   DN: the down (front) view's screen-left arm (the person's right); the screen-right arm mirrors.
+  //   SD: the side view's near arm, facing right (the shoulder at 20, T+2).
+  // E elbow, H hand centre, h hand shape, a anchor ('f' moves with the head, else with the body),
+  // k layering: 'front' crosses the body (contour), 'over' lies over the face (after the head),
+  // 'side' beside the body. up: in the back view a front/over arm is hidden behind the body.
+  const DN = {
+    chest: (T, B, F) => ({ E: [10, T + 7], H: [15, T + 5], h: 'open', k: 'front' }),
+    heart: (T, B, F) => ({ E: [10, T + 7], H: [16, T + 4], h: 'flat', k: 'front' }),
+    chin: (T, B, F) => ({ E: [11, T + 8], H: [17, F + 16], h: 'fist', k: 'over', a: 'f' }),
+    mouth: (T, B, F) => ({ E: [11, T + 7], H: [18, F + 14], h: 'open', k: 'over', a: 'f' }),
+    forehead: (T, B, F) => ({ E: [5, T + 1], H: [14, F + 4], h: 'flat', k: 'over', a: 'f' }),
+    temple: (T, B, F) => ({ E: [6, T + 2], H: [12, F + 8], h: 'pinch', k: 'over', a: 'f' }),
+    hair: (T, B, F) => ({ E: [6, T + 2], H: [10, F + 9], h: 'open', k: 'over', a: 'f' }),
+    shade: (T, B, F) => ({ E: [5, T], H: [14, F + 5], h: 'flat', k: 'over', a: 'f' }),
+    raise: (T, B, F) => ({ E: [7, T + 2], H: [8, F + 8], h: 'fist', k: 'side' }),
+    half: (T, B, F) => ({ E: [9, T + 7], H: [13, T + 3], h: 'open', k: 'front' }),
+    palm: (T, B, F) => ({ E: [8, T + 7], H: [5, B], h: 'palm', k: 'side' }),
+    palmout: (T, B, F) => ({ E: [7, T + 6], H: [3, B - 2], h: 'palm', k: 'side' }),
+    point: (T, B, F) => ({ E: [7, T + 3], H: [5, T + 3], h: 'point', k: 'side', d: [-1, 0] }),
+    pointup: (T, B, F) => ({ E: [6, T + 1], H: [6, F + 3], h: 'point', k: 'side', d: [0, -1] }),
+    pointdown: (T, B, F) => ({ E: [7, T + 6], H: [5, B + 3], h: 'point', k: 'side', d: [-1, 1] }),
+    out: (T, B, F) => ({ E: [7, T + 6], H: [3, B - 2], h: 'open', k: 'side' }),
+    in: (T, B, F) => ({ E: [10, T + 7], H: [15, B - 2], h: 'open', k: 'front' }),
+    forward: (T, B, F) => ({ E: [10, T + 7], H: [15, T + 7], h: 'open', k: 'front' }),
+    folded: (T, B, F) => ({ E: [10, T + 6], H: [24, T + 6], h: 'hidden', k: 'front' }),
+    hip: (T, B, F) => ({ E: [6, T + 6], H: [11, B], h: 'fist', k: 'side' }),
+    behind: (T, B, F) => ({ E: [10, T + 6], H: [14, B + 1], h: 'hidden', k: 'behind' }),
+    up: (T, B, F) => ({ E: [6, T + 1], H: [6, F + 4], h: 'open', k: 'side' }),
+    fist: (T, B, F) => ({ E: [9, T + 7], H: [11, T + 3], h: 'fist', k: 'side' }),
+    count1: (T, B, F) => ({ E: [10, T + 7], H: [14, T + 3], h: 'count1', k: 'front' }),
+    count2: (T, B, F) => ({ E: [10, T + 7], H: [14, T + 3], h: 'count2', k: 'front' }),
+    count3: (T, B, F) => ({ E: [10, T + 7], H: [14, T + 3], h: 'count3', k: 'front' }),
+    sleeve: (T, B, F) => ({ E: [10, T + 6], H: [18, B - 2], h: 'hidden', k: 'front' }),
+    clasp: (T, B, F) => ({ E: [10, T + 7], H: [17, B + 1], h: 'open', k: 'front' }),
+    reach: (T, B, F) => ({ E: [7, T + 5], H: [5, T + 7], h: 'open', k: 'side' }),
+    stretch: (T, B, F) => ({ E: [7, T - 1], H: [9, F - 3], h: 'fist', k: 'side' }),
+    rub: (T, B, F) => ({ E: [10, T + 7], H: [18, T + 6], h: 'open', k: 'front' }),
+    low: (T, B, F) => ({ E: [10, T + 7], H: [14, B + 1], h: 'open', k: 'front' }),
+    flatdown: (T, B, F) => ({ E: [9, T + 7], H: [14, B + 1], h: 'flat', k: 'front' }),
+    strap: (T, B, F) => ({ E: [10, T + 7], H: [15, T + 3], h: 'fist', k: 'front' }),
+    forearm: (T, B, F) => ({ E: [10, T + 7], H: [24, B - 1], h: 'open', k: 'front' }),
+  };
+  const SD = {
+    chest: (T, B, F) => ({ E: [19, T + 7], H: [25, T + 5], h: 'open', k: 'front' }),
+    heart: (T, B, F) => ({ E: [19, T + 7], H: [24, T + 4], h: 'flat', k: 'front' }),
+    chin: (T, B, F) => ({ E: [21, T + 8], H: [27, F + 16], h: 'fist', k: 'over', a: 'f' }),
+    mouth: (T, B, F) => ({ E: [22, T + 7], H: [28, F + 14], h: 'open', k: 'over', a: 'f' }),
+    forehead: (T, B, F) => ({ E: [25, T], H: [27, F + 4], h: 'flat', k: 'over', a: 'f' }),
+    temple: (T, B, F) => ({ E: [23, T + 2], H: [24, F + 8], h: 'pinch', k: 'over', a: 'f' }),
+    hair: (T, B, F) => ({ E: [16, T + 2], H: [17, F + 10], h: 'open', k: 'over', a: 'f' }),
+    shade: (T, B, F) => ({ E: [25, T], H: [29, F + 5], h: 'flat', k: 'over', a: 'f' }),
+    raise: (T, B, F) => ({ E: [22, T + 1], H: [25, F + 7], h: 'fist', k: 'front' }),
+    half: (T, B, F) => ({ E: [21, T + 7], H: [27, T + 6], h: 'open', k: 'front' }),
+    palm: (T, B, F) => ({ E: [21, T + 7], H: [28, B - 2], h: 'palm', k: 'front' }),
+    palmout: (T, B, F) => ({ E: [22, T + 6], H: [30, B - 3], h: 'palm', k: 'front' }),
+    point: (T, B, F) => ({ E: [26, T + 3], H: [32, T + 2], h: 'point', k: 'front', d: [1, 0] }),
+    pointup: (T, B, F) => ({ E: [24, T + 1], H: [28, F + 2], h: 'point', k: 'front', d: [1, -1] }),
+    pointdown: (T, B, F) => ({ E: [24, T + 6], H: [30, B + 3], h: 'point', k: 'front', d: [1, 1] }),
+    out: (T, B, F) => ({ E: [23, T + 6], H: [29, T + 5], h: 'open', k: 'front' }),
+    in: (T, B, F) => ({ E: [21, T + 7], H: [27, B - 2], h: 'open', k: 'front' }),
+    forward: (T, B, F) => ({ E: [21, T + 7], H: [28, T + 7], h: 'open', k: 'front' }),
+    folded: (T, B, F) => ({ E: [19, T + 7], H: [25, T + 6], h: 'hidden', k: 'front' }),
+    hip: (T, B, F) => ({ E: [15, T + 6], H: [19, B], h: 'fist', k: 'front' }),
+    behind: (T, B, F) => ({ E: [17, T + 6], H: [14, B + 1], h: 'hidden', k: 'front' }),
+    up: (T, B, F) => ({ E: [23, T], H: [25, F + 2], h: 'open', k: 'front' }),
+    fist: (T, B, F) => ({ E: [20, T + 7], H: [24, T + 3], h: 'fist', k: 'front' }),
+    count1: (T, B, F) => ({ E: [21, T + 7], H: [26, T + 3], h: 'count1', k: 'front' }),
+    count2: (T, B, F) => ({ E: [21, T + 7], H: [26, T + 3], h: 'count2', k: 'front' }),
+    count3: (T, B, F) => ({ E: [21, T + 7], H: [26, T + 3], h: 'count3', k: 'front' }),
+    sleeve: (T, B, F) => ({ E: [19, T + 6], H: [25, B - 2], h: 'hidden', k: 'front' }),
+    clasp: (T, B, F) => ({ E: [19, T + 7], H: [24, B + 1], h: 'open', k: 'front' }),
+    reach: (T, B, F) => ({ E: [25, T + 5], H: [31, T + 6], h: 'open', k: 'front' }),
+    stretch: (T, B, F) => ({ E: [21, T - 2], H: [23, F - 3], h: 'fist', k: 'front' }),
+    rub: (T, B, F) => ({ E: [21, T + 7], H: [26, T + 6], h: 'open', k: 'front' }),
+    low: (T, B, F) => ({ E: [21, T + 7], H: [27, B + 1], h: 'open', k: 'front' }),
+    flatdown: (T, B, F) => ({ E: [21, T + 7], H: [27, B + 1], h: 'flat', k: 'front' }),
+    strap: (T, B, F) => ({ E: [19, T + 7], H: [23, T + 4], h: 'fist', k: 'front' }),
+    forearm: (T, B, F) => ({ E: [19, T + 7], H: [24, B - 1], h: 'open', k: 'front' }),
+  };
+  // the far arm of a two-handed pose in a side view: the same target a little further on, darker
+  const FAR_OFF = { forward: [1, -1], in: [1, 0], out: [-2, 4], clasp: [1, 0], sleeve: [1, 0], rub: [1, 0], folded: [0, 1], stretch: [-1, 0], low: [1, -1], behind: [-1, 0], hip: [0, 0], flatdown: [0, 0], chest: [1, 1], forearm: [1, 0] };
+  // in the back view these arms are hidden behind the body (only an elbow can show)
+  const UP_BEHIND = new Set(['chest', 'heart', 'chin', 'mouth', 'half', 'in', 'forward', 'folded', 'count1', 'count2', 'count3', 'sleeve', 'clasp', 'rub', 'low', 'flatdown', 'strap', 'temple', 'forearm', 'fist']);
+
+  // ---- named key poses --------------------------------------------------------------------------
+  // G: the gesturing hand's target, O: the other hand's (null = at rest); hx, hy: head offset (side
+  // views: + forward); lean: upper body shear at the shoulders (side: + forward; front/back: screen x,
+  // signed by the gesturing side); drop: the body lowered (kneel, sit; −1 raises the shoulders);
+  // legs: 'kneel' | 'sit' | 'step'; eyes, mouth: see 32_spriteart.js headDown; prop: the default held
+  // object and its hand ('G' | 'O' | 'both').
+  const POSES = {
+    // resting stances
+    hip: { G: 'hip' }, hips: { G: 'hip', O: 'hip' }, behind: { G: 'behind', O: 'behind' }, folded: { G: 'folded', O: 'folded' },
+    clasp: { G: 'clasp', O: 'clasp' }, sleeves: { G: 'sleeve', O: 'sleeve' }, strap: { G: 'strap' }, heart: { G: 'heart' },
+    // attention
+    listen: { lean: 1 }, nod1: { hy: 1 }, nod2: { hy: 2, eyes: 'd' }, observe: { G: 'behind', O: 'behind', lean: 2, hx: 1, hy: 1, eyes: 'd' },
+    // thought
+    chin0: { G: 'half' }, chin: { G: 'chin', hx: -1, fhx: -1 }, temple: { G: 'temple' }, temple2: { G: 'temple', hy: -1 },
+    half: { G: 'half' }, aside: { hx: -1 },
+    // explanation
+    palm: { G: 'palm' }, palmout: { G: 'palmout' }, point: { G: 'point' }, pointup: { G: 'pointup', eyes: 'u' }, pointdown: { G: 'pointdown', eyes: 'd' },
+    size_out: { G: 'out', O: 'out' }, size_in: { G: 'in', O: 'in' }, count1: { G: 'count1' }, count2: { G: 'count2' }, count3: { G: 'count3' },
+    // objects
+    present: { G: 'forward', O: 'forward', hy: 1, eyes: 'd', prop: 'both' }, reach: { G: 'reach', prop: 'G' }, take: { G: 'chest', prop: 'G' },
+    hold: { G: 'chest', prop: 'G' }, holdboth: { G: 'forward', O: 'forward', prop: 'both' },
+    kneel: { G: 'low', legs: 'kneel', drop: 6, hy: 1, eyes: 'd' }, bend: { G: 'low', lean: 3, hx: 2, hy: 2, drop: 1, eyes: 'd' },
+    read: { G: 'forward', O: 'forward', hy: 1, eyes: 'd', prop: 'both' }, trace: { G: 'forward', O: 'low', hy: 1, eyes: 'd', prop: 'O' },
+    // uncertainty
+    shrug: { G: 'palm', O: 'palm', drop: -1, hy: 1, hx: 1, fhx: 1, mouth: 'f' }, step: { legs: 'step', lean: 1 }, guard: { G: 'heart', lean: -1 },
+    shakeL: { hx: -1, eyes: 'd' }, shakeR: { hx: 1, eyes: 'd' },
+    // tension
+    recoil: { G: 'half', lean: -2, hy: -1, eyes: 'u', mouth: 'o' }, forehead: { G: 'forehead', hy: 1, eyes: 'c' },
+    emph0: { G: 'chest', mouth: 'f' }, emph1: { G: 'flatdown', hy: 1, mouth: 'f' },
+    // vulnerability
+    low: { hy: 2, drop: 1, eyes: 'd' }, fidget1: { G: 'rub', O: 'rub', eyes: 'd' }, fidget2: { G: 'forearm', eyes: 'd' },
+    avert: { hx: -1, eyes: 'd' }, bow1: { G: 'clasp', O: 'clasp', lean: 1, hx: 1, hy: 1, eyes: 'd' }, bow2: { G: 'clasp', O: 'clasp', lean: 3, hx: 3, hy: 3, drop: 1, eyes: 'c' },
+    duck: { hy: 2, eyes: 'c' }, lowface: { hy: 1, drop: 1 }, flinch: { lean: -1, hy: -1, mouth: 'o' },
+    // release
+    exhale: { drop: 1, eyes: 'c', mouth: 'o' }, thanks: { G: 'palm', O: 'palm', hy: 1, mouth: 'w' }, fist: { G: 'fist' }, pump: { G: 'fist', mouth: 'w' },
+    laugh: { G: 'mouth', eyes: 'c' }, laugh2: { G: 'mouth', drop: 1, eyes: 'c' }, smile: { mouth: 'w' },
+    // idle habits
+    shiftL: { sway: -1 }, shiftR: { sway: 1 }, touchhair: { G: 'hair', eyes: 'd' }, stretch: { G: 'stretch', O: 'stretch', eyes: 'c', mouth: 'o' },
+    rub: { G: 'rub', O: 'rub', drop: -1 }, shadeeyes: { G: 'shade', eyes: 'u' }, yawn: { G: 'mouth', eyes: 'c', mouth: 'o' },
+    check: { G: 'chest', hy: 1, eyes: 'd' }, brow: { G: 'forehead', eyes: 'c' }, wave: { G: 'up', mouth: 'w' },
+    // occupations
+    tidy1: { G: 'low', O: 'low', hy: 1, eyes: 'd' }, tidy2: { G: 'in', O: 'low', hy: 1, eyes: 'd' },
+    write1: { G: 'low', O: 'in', hy: 1, eyes: 'd', prop: 'G' }, write2: { G: 'in', O: 'in', hy: 1, eyes: 'd', prop: 'G' },
+    sort1: { G: 'low', O: 'in', hy: 1, eyes: 'd', prop: 'G' }, sort2: { G: 'palm', O: 'in', hy: 1, eyes: 'd', prop: 'G' },
+    stampup: { G: 'raise', O: 'low', hy: 1, eyes: 'd', prop: 'G' }, stampdown: { G: 'flatdown', O: 'low', hy: 1, eyes: 'd', prop: 'G' },
+    sweep1: { G: 'chest', O: 'low', hy: 1, eyes: 'd', prop: 'G' }, sweep2: { G: 'rub', O: 'in', hy: 1, eyes: 'd', prop: 'G' },
+    pour: { G: 'forward', O: 'low', hy: 1, eyes: 'd', prop: 'G' }, stir1: { G: 'low', hy: 1, eyes: 'd' }, stir2: { G: 'in', hy: 1, eyes: 'd' },
+    polish1: { G: 'rub', O: 'chest', hy: 1, eyes: 'd', prop: 'O' }, polish2: { G: 'chest', O: 'chest', hy: 1, eyes: 'd', prop: 'O' },
+    hang: { G: 'up', O: 'up', eyes: 'u' }, fold: { G: 'forward', O: 'forward', hy: 1, eyes: 'd' },
+    hammer1: { G: 'raise', O: 'low', hy: 1, eyes: 'd' }, hammer2: { G: 'low', O: 'low', hy: 1, eyes: 'd' },
+    tend1: { G: 'up', eyes: 'u' }, tend2: { G: 'up', O: 'chest', eyes: 'u' },
+    lampup: { G: 'chest', hy: 1, eyes: 'd' }, trim: { G: 'chest', O: 'rub', hy: 1, eyes: 'd' },
+    feed: { G: 'low', legs: 'kneel', drop: 6, hy: 1, eyes: 'd' }, jiggle1: { G: 'low', O: 'low', hy: 1, eyes: 'd' }, jiggle2: { G: 'in', O: 'low', hy: 1, eyes: 'd' },
+    knead1: { G: 'low', O: 'low', drop: 1, eyes: 'd' }, knead2: { G: 'in', O: 'in', eyes: 'd' },
+    sip: { G: 'mouth', eyes: 'c', prop: 'G' }, cuphold: { G: 'chest', prop: 'G' },
+    sit: { legs: 'sit', drop: 7 }, sitlap: { G: 'low', O: 'low', legs: 'sit', drop: 7 }, sitlow: { G: 'low', O: 'low', legs: 'sit', drop: 7, hy: 2, eyes: 'd' },
+    sitlook: { G: 'low', O: 'low', legs: 'sit', drop: 7, eyes: 'u' }, sitbook: { G: 'forward', O: 'forward', legs: 'sit', drop: 7, hy: 1, eyes: 'd', prop: 'both' },
+    crouch: { G: 'low', O: 'low', legs: 'kneel', drop: 6, eyes: 'd' }, peek: { lean: 2, hx: 2, eyes: 'u' }, bounce: { drop: -1 },
+    stiff: {}, tilt: { hx: 1 },
+  };
+
+  // ---- held objects (drawn at the hand; 'both' between the hands) ------------------------------
+  const PAPER = ['#b8ab94', '#d8ccb4', '#f2ead8', '#fffaf0'], INK = '#3a3040';
+  const PROPS = {
+    paper(b, x, y) { b.rect(x - 2, y - 5, 5, 6, PAPER[2]); b.rect(x - 2, y - 5, 5, 1, PAPER[3]); b.rect(x + 2, y - 4, 1, 5, PAPER[1]); b.px(x - 1, y - 3, INK); b.px(x, y - 3, INK); b.px(x - 1, y - 1, INK); b.px(x + 1, y - 1, INK); },
+    letter(b, x, y) { b.rect(x - 3, y - 4, 6, 4, PAPER[2]); b.rect(x - 3, y - 4, 6, 1, PAPER[3]); b.line(x - 3, y - 4, x, y - 2, PAPER[0]); b.line(x + 2, y - 4, x, y - 2, PAPER[0]); b.px(x, y - 2, '#b83a3a'); },
+    notice(b, x, y) { b.rect(x - 3, y - 4, 6, 4, '#e8dcc0'); b.rect(x - 3, y - 4, 6, 1, '#f8f0dc'); b.rect(x - 3, y - 2, 6, 1, '#8a3a3a'); b.px(x + 1, y - 3, '#c84a3a'); b.rect(x + 2, y - 3, 1, 3, '#b8a888'); },
+    ledger(b, x, y) { b.rect(x - 3, y - 5, 7, 6, '#4a3a5a'); b.rect(x - 3, y - 5, 7, 1, '#6a5a7a'); b.rect(x + 3, y - 4, 1, 5, PAPER[1]); b.rect(x - 3, y, 7, 1, '#2e2438'); b.px(x, y - 3, '#d8b060'); },
+    book(b, x, y) { b.rect(x - 4, y - 4, 8, 4, PAPER[2]); b.rect(x - 4, y - 4, 8, 1, PAPER[3]); b.rect(x, y - 4, 1, 4, PAPER[0]); b.rect(x - 4, y, 8, 1, '#6a3a3a'); b.px(x - 3, y - 2, INK); b.px(x - 2, y - 2, INK); b.px(x + 2, y - 2, INK); },
+    folio(b, x, y) { b.rect(x - 3, y - 5, 7, 6, '#e8dcbc'); b.rect(x - 3, y - 5, 7, 1, '#f8f0dc'); b.rect(x - 3, y - 3, 7, 1, '#6a4a3a'); b.rect(x + 3, y - 4, 1, 5, '#b8a888'); },
+    accountbook(b, x, y) { b.rect(x - 2, y - 4, 5, 4, '#a83a4a'); b.rect(x - 2, y - 4, 5, 1, '#c85a6a'); b.rect(x + 2, y - 3, 1, 3, PAPER[1]); b.px(x, y - 2, '#e8c070'); },
+    cup(b, x, y) { b.rect(x - 1, y - 3, 3, 3, '#e8e0d0'); b.rect(x - 1, y - 3, 3, 1, '#6a8aa0'); b.px(x + 1, y - 1, '#b8b0a0'); },
+    teapot(b, x, y) { b.rect(x - 2, y - 3, 5, 3, '#4a5a4a'); b.rect(x - 1, y - 4, 3, 1, '#5a6a5a'); b.px(x + 3, y - 3, '#4a5a4a'); b.px(x + 4, y - 4, '#4a5a4a'); b.px(x - 1, y - 3, '#7a8a7a'); },
+    tags(b, x, y) { b.rect(x - 2, y - 4, 3, 4, '#e8d8b0'); b.rect(x, y - 5, 3, 4, '#f4e8c8'); b.px(x + 1, y - 4, '#8a3a3a'); b.px(x - 1, y - 3, INK); b.line(x - 1, y - 6, x + 1, y - 5, '#8a6a44'); },
+    brush(b, x, y) { b.rect(x, y - 6, 1, 6, '#8a6a44'); b.px(x, y - 7, '#a88a5a'); b.rect(x, y, 1, 2, '#2a2024'); },
+    stamp(b, x, y) { b.rect(x - 1, y - 4, 3, 3, '#8a6a44'); b.px(x - 1, y - 4, '#b08e58'); b.rect(x - 1, y - 1, 3, 1, '#c83a3a'); },
+    broom(b, x, y) { b.line(x, y - 6, x - 2, y + 10, '#8a6a44'); b.rect(x - 5, y + 10, 6, 3, '#c8a860'); b.rect(x - 5, y + 12, 6, 1, '#a88a40'); },
+    lantern(b, x, y) { b.rect(x, y, 1, 2, '#3a3440'); b.rect(x - 2, y + 2, 5, 1, '#3a3440'); b.rect(x - 2, y + 3, 5, 5, '#ffd27a'); b.rect(x - 2, y + 3, 1, 5, '#fff0b8'); b.rect(x + 2, y + 3, 1, 5, '#e8a040'); b.rect(x - 2, y + 8, 5, 1, '#3a3440'); },
+    bottle(b, x, y) { b.px(x, y - 5, '#a88860'); b.rect(x - 1, y - 4, 2, 4, '#6ab0a0'); b.px(x - 1, y - 4, '#9ad8c8'); },
+    cloth(b, x, y) { b.rect(x - 1, y, 3, 5, '#f0ece0'); b.rect(x - 1, y + 4, 3, 1, '#c8c4b8'); b.px(x + 1, y + 1, '#d8d4c8'); },
+    envelopes(b, x, y) { b.rect(x - 3, y - 5, 6, 3, '#e8dcc0'); b.rect(x - 2, y - 3, 6, 3, '#f4ead4'); b.px(x + 1, y - 2, '#b83a3a'); b.rect(x - 3, y - 5, 6, 1, '#f8f0dc'); },
+    pipe(b, x, y) { b.line(x, y, x + 9, y - 3, '#6a6a72'); b.rect(x + 9, y - 4, 2, 2, '#ffb050'); b.px(x + 10, y - 4, '#fff0a0'); },
+    ribbon(b, x, y) { b.rect(x - 1, y, 2, 6, '#c8a0a8'); b.px(x, y + 6, '#a88088'); b.px(x - 1, y, '#e8c0c8'); },
+    flint(b, x, y) { b.rect(x - 1, y - 2, 2, 2, '#8a8a92'); b.px(x - 1, y - 2, '#b8b8c0'); },
+    seeds(b, x, y) { b.rect(x - 2, y - 3, 4, 3, '#b89a6a'); b.rect(x - 2, y - 3, 4, 1, '#d8ba8a'); b.px(x, y - 4, '#8a6a44'); },
+  };
+  const PROP_NAMES = Object.keys(PROPS);
+
+  // ---- parsing frame keys -------------------------------------------------------------------------
+  // 'p:<pose>[+<seat>]…': a gesture made sitting or kneeling takes the legs and the lowered body of
+  // the seat pose (+sit, +kneel) and the arms, head and eyes of the gesture
+  const RE = /^p:([a-z_0-9]+)(?:\+([a-z_0-9]+))?(?:\.([RL]))?(?:\/([a-z_]+))?(?:~([lrudcb]))?(?::([01]))?(b)?$/;
+  const combos = new Map();
+  function combine(name, seat) {
+    const k = name + '+' + seat;
+    let c = combos.get(k);
+    if (!c) {
+      const A0 = POSES[name], S0 = POSES[seat];
+      c = Object.assign({}, A0, { legs: S0.legs, drop: (S0.drop || 0) + Math.max(0, A0.drop || 0) });
+      if (S0.legs === 'sit' || S0.legs === 'kneel') delete c.lean; // no bow from the waist while seated
+      combos.set(k, c);
+    }
+    return c;
+  }
+  function parse(key) {
+    const m0 = RE.exec(key);
+    // (positions in the match: 1 pose, 2 seat, 3 hand, 4 prop, 5 gaze, 6 breath, 7 blink)
+    const m = m0 ? [m0[0], m0[1], m0[3], m0[4], m0[5], m0[6], m0[7]] : null;
+    const name = m && POSES[m[1]] ? m[1] : 'stiff';
+    const seat = m0 && m0[2] && POSES[m0[2]] && POSES[m0[2]].legs ? m0[2] : null;
+    const S = seat && seat !== name ? combine(name, seat) : POSES[name];
+    const breath = m && m[5] ? +m[5] : 0;
+    const drop = S.drop || 0;
+    const spec = { name, hand: (m && m[2]) || null, prop: (m && m[3]) || null, eyes: (m && m[4]) || S.eyes || null, mouth: S.mouth || null, S };
+    const legs = S.legs === 'step' ? { R: { fwd: 1, lift: 0 }, L: { fwd: -1, lift: 0 } } : { R: { fwd: 0, lift: 0 }, L: { fwd: 0, lift: 0 } };
+    return { kind: 'pose', ph: 0, blink: !!(m && m[6]), bob: drop + breath, lag: breath, drop, sway: 0, step: false, feet: legs, arms: { R: 0, L: 0 }, P: spec };
+  }
+
+  // ---- which hand gestures -------------------------------------------------------------------------
+  // A held thing stays in its own hand: a cane, a lamp (left) or a book, a basket (right). The free hand
+  // gestures; a cane hand never leaves the cane (a two-handed pose becomes one-handed).
+  function holds(look) {
+    const acc = look.acc || [];
+    return { L: acc.includes('cane') ? 'cane' : acc.includes('lamp') ? 'lamp' : null, R: acc.includes('book') ? 'book' : acc.includes('basket') ? 'basket' : null };
+  }
+  function freeHand(look) {
+    const h = holds(look);
+    if (!h.R) return 'R';
+    if (!h.L) return 'L';
+    return h.L === 'cane' ? 'R' : 'L';
+  }
+  function resolve(look, spec) {
+    const S = spec.S, h = holds(look);
+    const G = spec.hand || freeHand(look), O = G === 'R' ? 'L' : 'R';
+    const arms = { R: null, L: null };
+    if (S.G) arms[G] = S.G;
+    if (S.O) arms[O] = S.O;
+    if (h.L === 'cane') arms.L = null; // the cane stays planted
+    let prop = spec.prop || null, propAt = S.prop || (prop ? 'G' : null);
+    if (prop && !PROPS[prop]) prop = null;
+    const ph = propAt === 'both' ? (arms[O] ? 'both' : G) : propAt === 'O' ? (arms[O] ? O : G) : G;
+    return { arms, G, O, prop, propHand: ph };
+  }
+
+  // ---- drawing helpers ------------------------------------------------------------------------------
+  const buf = () => { const x = new P.Buf(W, H); x.oy = TOP; return x; };
+  const put = (dst, src, dx, dy) => dst.draw(src, dx || 0, (dy || 0) - TOP);
+  function shiftRow(bb, row, k) {
+    const w = bb.w, d = bb.d, o = row * w * 4;
+    const copy = d.slice(o, o + w * 4);
+    d.fill(0, o, o + w * 4);
+    for (let x = 0; x < w; x++) { const nx = x + k; if (nx < 0 || nx >= w) continue; for (let c = 0; c < 4; c++) d[o + nx * 4 + c] = copy[x * 4 + c]; }
+  }
+  // the upper body leans: rows above the shoulders by dx, the chest by part of it, nothing at the belt
+  const leanAt = (dx, T, B, y) => (!dx ? 0 : y <= T + 1 ? dx : y >= B ? 0 : Math.round((dx * (B - y)) / (B - T - 1)));
+  function shear(bb, dx, T, B) {
+    if (!dx) return;
+    for (let y = -TOP; y < B; y++) { const k = leanAt(dx, T, B, y); if (k) shiftRow(bb, y + TOP, k); }
+  }
+  // a limb segment of radius r, lit on its upper-left side
+  function seg(ab, x0, y0, x1, y1, r, C, cuffAt) {
+    const vx = x1 - x0, vy = y1 - y0, L2 = vx * vx + vy * vy || 1, L = Math.sqrt(L2);
+    let nx = -vy / L, ny = vx / L;
+    if (nx + ny > 0) { nx = -nx; ny = -ny; }
+    const bx0 = Math.floor(Math.min(x0, x1) - r - 1), bx1 = Math.ceil(Math.max(x0, x1) + r + 1);
+    const by0 = Math.floor(Math.min(y0, y1) - r - 1), by1 = Math.ceil(Math.max(y0, y1) + r + 1);
+    for (let y = by0; y <= by1; y++) for (let x = bx0; x <= bx1; x++) {
+      const px = x + 0.5 - (x0 + 0.5), py = y + 0.5 - (y0 + 0.5);
+      let t = (px * vx + py * vy) / L2; t = t < 0 ? 0 : t > 1 ? 1 : t;
+      const qx = px - t * vx, qy = py - t * vy, d2 = qx * qx + qy * qy;
+      if (d2 > r * r + 0.01) continue;
+      const s = qx * nx + qy * ny;
+      let c = s > r - 0.95 ? C[3] : s < -(r - 0.95) ? C[1] : C[2];
+      if (cuffAt != null && t * L > L - cuffAt) c = C[1];
+      ab.px(x, y, c);
+    }
+  }
+  function hand(ab, sk, x, y, kind, dir) {
+    const [z, s, S, L] = sk;
+    switch (kind) {
+      case 'hidden': return;
+      case 'fist': ab.rect(x - 1, y - 1, 3, 3, S); ab.px(x - 1, y - 1, L); ab.px(x, y - 1, L); ab.rect(x - 1, y + 1, 3, 1, s); ab.px(x + 1, y + 1, z); return;
+      case 'palm': ab.rect(x - 1, y - 1, 4, 2, S); ab.rect(x - 1, y - 1, 4, 1, L); ab.px(x + 2, y, s); return;
+      case 'flat': ab.rect(x - 2, y - 1, 4, 2, S); ab.rect(x - 2, y - 1, 4, 1, L); ab.px(x + 1, y, s); return;
+      case 'pinch': ab.rect(x - 1, y - 1, 2, 2, S); ab.px(x - 1, y - 1, L); return;
+      case 'point': {
+        ab.rect(x - 1, y - 1, 3, 2, S); ab.px(x - 1, y - 1, L); ab.rect(x - 1, y + 1, 2, 1, s);
+        const [dx, dy] = dir || [1, 0];
+        for (let i = 2; i <= 3; i++) ab.px(Math.round(x + dx * i), Math.round(y + dy * i), i === 3 ? S : L);
+        return;
+      }
+      default:
+        if (kind && kind.startsWith('count')) {
+          const n = +kind.slice(5) || 1;
+          ab.rect(x - 1, y, 3, 2, S); ab.rect(x - 1, y + 1, 3, 1, s);
+          for (let i = 0; i < n; i++) { ab.px(x - 1 + i, y - 1, L); ab.px(x - 1 + i, y - 2, S); }
+          return;
+        }
+        ab.rect(x - 1, y - 1, 3, 2, S); ab.px(x - 1, y - 1, L); ab.px(x + 1, y - 1, s); ab.rect(x, y + 1, 2, 1, s); ab.px(x - 1, y, s);
+    }
+  }
+  // composite an arm layer with its own contour where it lies over the figure
+  function withContour(dst, ab, ol) {
+    const w = ab.w, h = ab.h, d = ab.d, D = dst.d;
+    const op = (x, y) => x >= 0 && y >= 0 && x < w && y < h && d[(y * w + x) * 4 + 3] >= 128;
+    const base = P.rgba(ol || '#241c20');
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      if (op(x, y)) continue;
+      if (!(op(x + 1, y) || op(x - 1, y) || op(x, y + 1) || op(x, y - 1))) continue;
+      const o = (y * w + x) * 4;
+      if (D[o + 3] < 128) continue; // outside the figure the silhouette outline does it
+      D[o] = base[0] + (D[o] - base[0]) * 0.28; D[o + 1] = base[1] + (D[o + 1] - base[1]) * 0.28; D[o + 2] = base[2] + (D[o + 2] - base[2]) * 0.28; D[o + 3] = 255;
+    }
+    dst.draw(ab, 0, -TOP);
+  }
+
+  // ---- the geometry of one posed arm ----------------------------------------------------------------
+  // view 'down' | 'up' (screen arm s 0/1) or 'side' (near/far); returns null for an arm at rest
+  function armGeom(g, view, target, s, far, hd, lean) {
+    const T = g.t, B = g.bt, F = g.fy;
+    const tab = view === 'side' ? SD : DN;
+    const fn = tab[target];
+    if (!fn) return null;
+    const o = fn(T, B, F);
+    let E = o.E.slice(), Hh = o.H.slice(), d = o.d ? o.d.slice() : null;
+    if (view === 'side' && far) { const f = FAR_OFF[target] || [1, -1]; E[0] += f[0]; Hh[0] += f[0]; E[1] += f[1]; Hh[1] += f[1]; }
+    // mirror the screen-right arm of the front/back views
+    if (view !== 'side' && s === 1) { E[0] = W - 1 - E[0]; Hh[0] = W - 1 - Hh[0]; if (d) d[0] = -d[0]; }
+    // an arm follows the body it hangs from: the elbow with the lean at its row, a face target with the head
+    E[0] += leanAt(lean, T, B, E[1]);
+    if (o.a === 'f') { Hh[0] += hd.dx; Hh[1] += hd.dy; } else Hh[0] += leanAt(lean, T, B, Hh[1]);
+    const S0 = view === 'side' ? [far ? 21 : 20, T + 2] : [s ? W - 1 - 10 : 10, T + 2];
+    S0[0] += leanAt(lean, T, B, S0[1]);
+    return { S: S0, E, H: Hh, h: o.h, k: o.k, d, target };
+  }
+
+  // draw one arm (sleeve and hand) and, between them, a held object
+  function drawArm(ab, look, p, g, a, far, propFn) {
+    const robe = g.shape === 'robe';
+    let C = p.cl, sk = p.sk;
+    if (far) { C = C.map((c) => shade(c, -1)); sk = sk.map((c) => shade(c, -1)); }
+    const [sx, sy] = a.S, [ex, ey] = a.E, [hx, hy] = a.H;
+    seg(ab, sx, sy, ex, ey, 1.5, C);
+    seg(ab, ex, ey, hx, hy, robe ? 1.9 : 1.5, C, a.h === 'hidden' ? null : 1.1);
+    if (robe && hy <= ey + 1) {
+      // a wide sleeve hangs from a raised forearm
+      const n = 6;
+      for (let i = 2; i <= n - 1; i++) {
+        const t = i / n, cx = Math.round(ex + (hx - ex) * t), cy = Math.round(ey + (hy - ey) * t);
+        ab.rect(cx, cy + 2, 1, 2 + (i > 2 ? 1 : 0), C[1]); ab.px(cx, cy + 4 + (i > 2 ? 0 : -1), C[0]);
+      }
+    }
+    if (propFn) propFn();
+    hand(ab, sk, hx, hy, a.h, a.d);
+  }
+
+  // ---- legs: kneeling, sitting -------------------------------------------------------------------------
+  function legsKneelFB(b, p, g) {
+    const pa = p.pa, lt = Math.max(g.hem, g.low) + 1, sole = g.sole;
+    for (let s = 0; s < 2; s++) {
+      const x = s ? 21 : 13;
+      if (lt <= sole) { b.rect(x, lt, 6, sole - lt + 1, pa[1]); b.rect(s ? x + 5 : x, lt, 1, sole - lt + 1, s ? pa[0] : pa[2]); b.rect(x, sole, 6, 1, pa[0]); b.px(x + 2, Math.max(lt, sole - 2), pa[2]); }
+    }
+  }
+  function legsSitFB(b, p, g) {
+    const pa = p.pa, bo = p.bo, lt = g.hem + 1, sole = g.sole;
+    if (g.shape !== 'robe' && g.shape !== 'dress') { b.rect(13, lt - 1, 14, 3, pa[1]); b.rect(13, lt - 1, 14, 1, pa[2]); }
+    for (let s = 0; s < 2; s++) {
+      const x = s ? 21 : 15;
+      b.rect(x, Math.min(sole - 2, lt + 2), 4, Math.max(1, sole - lt - 3), pa[1]);
+      b.rect(x - (s ? 0 : 1), sole - 1, 5, 2, bo[1]); b.rect(x - (s ? 0 : 1), sole - 1, 5, 1, bo[2]); b.rect(x - (s ? 0 : 1), sole, 5, 1, bo[0]);
+    }
+  }
+  function legsSide2(b, p, g, kind) {
+    const pa = p.pa, bo = p.bo, sole = g.sole, lt = g.shape === 'dress' ? g.low + 1 : g.hem + 1;
+    const leg = (near) => {
+      const c = near ? pa : [shade(pa[0], -1), pa[0], pa[1]], cb = near ? bo : [shade(bo[0], -1), bo[0], bo[1]];
+      if (kind === 'sit') {
+        const kx = near ? 25 : 24;
+        for (let y = lt - 1; y <= lt + 1; y++) { b.rect(15, y, kx - 15, 1, c[1]); b.px(15, y, c[2]); }
+        b.rect(15, lt - 1, kx - 15, 1, c[2]);
+        b.rect(kx - 3, lt + 1, 4, Math.max(1, sole - lt - 2), c[1]); b.px(kx, lt + 1, c[0]);
+        b.rect(kx - 3, sole - 1, 6, 2, cb[1]); b.rect(kx - 3, sole - 1, 6, 1, cb[2]); b.rect(kx - 3, sole, 7, 1, cb[0]);
+      } else {
+        // kneeling: the near knee on the ground ahead, the shin along the ground behind
+        const kx = near ? 24 : 22;
+        for (let y = lt; y <= sole - 2; y++) { const k = (y - lt) / Math.max(1, sole - 2 - lt); const x = Math.round(16 + (kx - 16) * k); b.rect(x - 2, y, 5, 1, c[1]); b.px(x - 2, y, c[2]); }
+        b.rect(13, sole - 2, kx - 11, 3, c[1]); b.rect(13, sole - 2, kx - 11, 1, c[2]); b.rect(13, sole, kx - 11, 1, c[0]);
+        b.rect(10, sole - 2, 4, 3, cb[1]); b.px(10, sole - 2, cb[2]); b.rect(10, sole, 4, 1, cb[0]);
+      }
+    };
+    if (g.shape === 'robe' || g.shape === 'dress') {
+      if (kind === 'sit') { const kx = 26; b.rect(kx - 3, sole - 1, 6, 2, bo[1]); b.rect(kx - 3, sole, 7, 1, bo[0]); }
+      return;
+    }
+    leg(false); leg(true);
+  }
+  // a robe or dress lowered to sit pools forward over the knees in the side view
+  function lapSide(b, p, g) {
+    if (g.shape !== 'robe' && g.shape !== 'dress' && g.shape !== 'coat') return;
+    const C = p.cl, y0 = g.bt + 2, sole = g.sole;
+    for (let y = y0; y <= Math.min(sole - 2, y0 + 4); y++) { b.rect(14, y, 13 + (y - y0), 1, C[2]); b.px(26 + (y - y0), y, C[0]); }
+    b.rect(14, Math.min(sole - 2, y0 + 4), 17, 1, C[1]);
+  }
+
+  // ---- composition ---------------------------------------------------------------------------------------
+  // The parts are drawn in their usual order, into layers that a pose can move: the head (with the hair
+  // and everything worn on it) by the head offset, the upper body by the lean, each posed arm into its own
+  // layer with a contour; arms that lie over the face are drawn after the head.
+  function humanoid(b, look, dir, pose) {
+    const p = A.palette(look), g = A.geom(look, pose), spec = pose.P, S = spec.S;
+    const R = resolve(look, spec);
+    g.arms = R.arms; g.posed = {};
+    const side = dir === 'left' || dir === 'right', view = side ? 'side' : dir;
+    const near = dir === 'right' ? 'R' : 'L', far = near === 'R' ? 'L' : 'R';
+    // the lean: forward in a side view (lean); in the front and back views only a weight shift (sway, screen x)
+    const hand = A.sideAt(view === 'side' ? 'down' : view, 0) === R.G ? -1 : 1; // screen sense of 'away from the gesturing hand'
+    const lean = side ? S.lean || 0 : S.sway || 0;
+    // the head: forward/back in a side view; in the front and back views a tilt only where the pose asks
+    // for one (fhx, away from the gesturing hand), or the screen offset of a pose without arms (a shake)
+    const hx = side ? S.hx || 0 : S.fhx != null ? S.fhx * hand : !S.G && !S.O ? S.hx || 0 : 0;
+    const hd = { dx: hx + leanAt(lean, g.t, g.bt, g.fy), dy: S.hy || 0 };
+    const blink = pose.blink;
+    // geometry of each posed arm
+    const plan = [];
+    if (side) {
+      for (const sd of [far, near]) if (R.arms[sd]) { const a = armGeom(g, 'side', R.arms[sd], 0, sd === far, hd, lean); if (a) { a.side = sd; a.far = sd === far; plan.push(a); } }
+    } else {
+      for (let s = 0; s < 2; s++) { const sd = A.sideAt(view, s); if (R.arms[sd]) { const a = armGeom(g, view, R.arms[sd], s, false, hd, lean); if (a) { a.side = sd; a.s = s; plan.push(a); } } }
+    }
+    for (const a of plan) g.posed[a.side] = a;
+    // the held object of the pose: at one hand, or between both
+    const propFn = (a) => {
+      if (!R.prop) return null;
+      const fn = PROPS[R.prop];
+      if (R.propHand === 'both') {
+        const others = plan.filter((q) => q !== a);
+        if (others.length && plan.indexOf(a) !== plan.length - 1) return null; // drawn once, with the last hand
+        const pts = plan.map((q) => q.H);
+        const cx = Math.round(pts.reduce((v, q) => v + q[0], 0) / pts.length), cy = Math.round(pts.reduce((v, q) => v + q[1], 0) / pts.length);
+        return () => fn(curAb, cx, cy);
+      }
+      if (a.side !== R.propHand) return null;
+      return () => fn(curAb, a.H[0], a.H[1]);
+    };
+    let curAb = null;
+    const drawPlan = (dst, filter) => {
+      const list = plan.filter(filter);
+      if (!list.length) return;
+      // one layer per arm so that the nearer arm keeps its contour over the other
+      for (const a of list) {
+        const ab = buf(); curAb = ab;
+        drawArm(ab, look, p, g, a, !!a.far, propFn(a));
+        withContour(dst, ab, p.ol);
+      }
+    };
+    // the arms that stay at rest, drawn as they are drawn standing (the posed spec hidden meanwhile)
+    const restArms = (dst, dx) => {
+      const P0 = g.P; g.P = null;
+      const rb = buf();
+      if (side) { /* drawn per side below */ }
+      else A.armsFB(rb, look, p, g, view);
+      g.P = P0;
+      // keep only the halves whose arm is at rest
+      for (let s = 0; s < 2; s++) {
+        const sd = A.sideAt(view, s);
+        if (R.arms[sd]) for (let y = 0; y < rb.h; y++) for (let x = s ? 20 : 0; x < (s ? W : 20); x++) rb.d[(y * W + x) * 4 + 3] = 0;
+      }
+      put(dst, rb, dx, 0);
+    };
+    const headLayer = (fn) => { const hb = buf(); fn(hb); put(b, hb, hd.dx, hd.dy); };
+    const legs = (dst) => {
+      if (S.legs === 'kneel') { if (side) legsSide2(dst, p, g, 'kneel'); else legsKneelFB(dst, p, g); }
+      else if (S.legs === 'sit') { if (side) legsSide2(dst, p, g, 'sit'); else legsSitFB(dst, p, g); }
+      else if (side) A.legsSide(dst, look, p, g, near);
+      else A.legsFB(dst, look, p, g, view);
+    };
+
+    if (view === 'down') {
+      A.accs(b, look, p, g, 'down', 'back');
+      headLayer((hb) => A.hair(hb, look, p, g, 'down', 'back'));
+      const bb = buf();
+      legs(bb);
+      A.garmentFB(bb, look, p, g, 'down');
+      shear(bb, lean, g.t, g.bt);
+      put(b, bb, 0, 0);
+      restArms(b, leanAt(lean, g.t, g.bt, g.t + 4));
+      drawPlan(b, (a) => a.k === 'side' || a.k === 'behind');
+      A.accs(b, look, p, g, 'down', 'body');
+      drawPlan(b, (a) => a.k === 'front');
+      headLayer((hb) => { A.headDown(hb, look, p, g, blink); A.accs(hb, look, p, g, 'down', 'face'); A.hair(hb, look, p, g, 'down', 'front'); A.accs(hb, look, p, g, 'down', 'head'); });
+      drawPlan(b, (a) => a.k === 'over');
+    } else if (view === 'up') {
+      A.accs(b, look, p, g, 'up', 'back');
+      drawPlan(b, (a) => UP_BEHIND.has(a.target) || a.k === 'over');
+      const bb = buf();
+      legs(bb);
+      A.garmentFB(bb, look, p, g, 'up');
+      shear(bb, lean, g.t, g.bt);
+      put(b, bb, 0, 0);
+      restArms(b, leanAt(lean, g.t, g.bt, g.t + 4));
+      drawPlan(b, (a) => !UP_BEHIND.has(a.target) && a.k !== 'over');
+      A.accs(b, look, p, g, 'up', 'body');
+      headLayer((hb) => { A.headUp(hb, look, p, g); A.hair(hb, look, p, g, 'up', 'back'); A.hair(hb, look, p, g, 'up', 'front'); A.accs(hb, look, p, g, 'up', 'head'); });
+    } else {
+      A.accs(b, look, p, g, 'side', 'far', near);
+      if (!R.arms[far]) { const P0 = g.P; g.P = null; const fb = buf(); A.armSide(fb, look, p, g, far, false); g.P = P0; put(b, fb, leanAt(lean, g.t, g.bt, g.t + 4), 0); }
+      A.accs(b, look, p, g, 'side', 'back', near);
+      headLayer((hb) => A.hair(hb, look, p, g, 'side', 'back', near));
+      const bb = buf();
+      legs(bb);
+      A.garmentSide(bb, look, p, g);
+      if (S.legs === 'sit' || S.legs === 'kneel') lapSide(bb, p, g);
+      A.accs(bb, look, p, g, 'side', 'body', near);
+      shear(bb, lean, g.t, g.bt);
+      put(b, bb, 0, 0);
+      drawPlan(b, (a) => a.far && a.k !== 'over');
+      if (!R.arms[near]) { const P0 = g.P; g.P = null; const nb = buf(); A.armSide(nb, look, p, g, near, true); g.P = P0; put(b, nb, leanAt(lean, g.t, g.bt, g.t + 4), 0); }
+      drawPlan(b, (a) => !a.far && a.k !== 'over');
+      A.accs(b, look, p, g, 'side', 'hand', near);
+      headLayer((hb) => { A.headSide(hb, look, p, g, blink); A.accs(hb, look, p, g, 'side', 'face', near); A.hair(hb, look, p, g, 'side', 'front', near); A.accs(hb, look, p, g, 'side', 'head', near); });
+      drawPlan(b, (a) => a.k === 'over');
+    }
+    return p;
+  }
+
+  // posed hands for the held accessories (a lamp hangs from the hand that holds it, wherever it is)
+  function handsFB(g, view, base) {
+    const out = base.slice();
+    for (let s = 0; s < 2; s++) {
+      const sd = A.sideAt(view, s), a = g.posed && g.posed[sd];
+      if (a && a.h !== 'hidden') out[s] = { x: a.H[0] - 1, y: a.H[1] - 1, sw: 0 };
+    }
+    return out;
+  }
+  function sideHand(g, side) {
+    const a = g.posed && g.posed[side];
+    if (!a || a.h === 'hidden') return null;
+    return { x: a.H[0] - 1, y: a.H[1] - 1, sw: 0, t: g.t + 1 };
+  }
+
+  // ---- the bounded frame cache ------------------------------------------------------------------------
+  const LRU = new Map(), ids = new WeakMap();
+  let nid = 0, CAP = 900;
+  const stats = { built: 0, hits: 0, evicted: 0, buildMs: 0, buildMsMax: 0 };
+  function art(small, look, dir, frame, build) {
+    let id = ids.get(small);
+    if (!id) { id = ++nid; ids.set(small, id); }
+    const k = id + '|' + dir + '|' + frame;
+    let cv = LRU.get(k);
+    if (cv !== undefined) { LRU.delete(k); LRU.set(k, cv); stats.hits++; return cv; }
+    const t0 = now();
+    cv = build(look, dir, frame);
+    const ms = now() - t0;
+    stats.built++; stats.buildMs += ms; if (ms > stats.buildMsMax) stats.buildMsMax = ms;
+    LRU.set(k, cv);
+    while (LRU.size > CAP) { LRU.delete(LRU.keys().next().value); stats.evicted++; }
+    return cv;
+  }
+  function release() { LRU.clear(); }
+  if (RB.bus) { RB.bus.on('campaign:changing', release); RB.bus.on('equip:change', () => { /* the player's new look has its own key */ }); }
+
+  SP._pose = {
+    parse, humanoid, handsFB, sideHand, art, release, resolve, freeHand, holds,
+    POSES, PROPS, PROP_NAMES, DN, SD,
+    has: (name) => !!POSES[name],
+    hasProp: (name) => !!PROPS[name],
+    key(name, o) {
+      o = o || {};
+      return 'p:' + name + (o.seat && o.seat !== name ? '+' + o.seat : '') + (o.hand ? '.' + o.hand : '') + (o.prop ? '/' + o.prop : '') + (o.gaze ? '~' + o.gaze : '') + (o.breath ? ':1' : '') + (o.blink ? 'b' : '');
+    },
+    stats: () => Object.assign({ entries: LRU.size, cap: CAP }, stats),
+    setCap(n) { CAP = Math.max(50, n | 0); while (LRU.size > CAP) { LRU.delete(LRU.keys().next().value); stats.evicted++; } },
+  };
 })();
 
 
@@ -32661,23 +33295,20 @@ RB.world = (function () {
       n.blinkT -= dt;
       if (n.blinkT < -140) n.blinkT = 2500 + Math.random() * 3000;
       if (n.route) continue;
-      // standing still, people now and then glance to one side and back
-      if (!n.def.wander && !n.mv && RB.game.mode() === 'world' && !RB.game.reducedMotion()) {
-        n.glanceT = (n.glanceT == null ? 4000 + Math.random() * 6000 : n.glanceT) - dt;
-        if (n.glanceT <= 0 && !n.glanceFrom) {
-          const home = n.dir, side = { down: ['left', 'right'], up: ['left', 'right'], left: ['down', 'up'], right: ['down', 'up'] }[home];
-          n.glanceFrom = home; n.dir = side[Math.random() < 0.5 ? 0 : 1]; n.glanceT = 900 + Math.random() * 500;
-        } else if (n.glanceT <= 0 && n.glanceFrom) {
-          n.dir = n.glanceFrom; n.glanceFrom = null; n.glanceT = 5000 + Math.random() * 7000;
-        }
-      } else if (n.glanceFrom) { n.dir = n.glanceFrom; n.glanceFrom = null; }
+      // standing still, people live by their mannerism profile (resting stance, habits, occupation
+      // idles, a word with a neighbour, glances at what they witness): RB.staging.tick below, which
+      // replaced the random glance to one side; an old glance in progress is put back
+      if (n.glanceFrom) { n.dir = n.glanceFrom; n.glanceFrom = null; }
       const wander = n.def.wander;
       if (!wander || n.mv || RB.game.mode() !== 'world') continue;
-      n.wt = (n.wt || 1500 + Math.random() * 2500) - dt;
+      // a wanderer pauses on their round (a route habit playing, or a scene that owns them)
+      if (RB.staging && RB.staging.wanderPause(n)) continue;
+      const rnd = (k) => (RB.staging ? RB.staging.rand(n, k) : Math.random());
+      n.wt = (n.wt || 1500 + rnd('wt0') * 2500) - dt;
       if (n.wt > 0) continue;
-      n.wt = 1800 + Math.random() * 3500;
+      n.wt = 1800 + rnd('wt') * 3500;
       const dirs = Object.keys(DIRS);
-      const d = dirs[Math.floor(Math.random() * 4)];
+      const d = dirs[Math.floor(rnd('wd') * 4)];
       const [dx, dy] = DIRS[d];
       const nx = n.x + dx, ny = n.y + dy;
       if (Math.abs(nx - n.home[0]) > wander || Math.abs(ny - n.home[1]) > wander) { n.dir = d; continue; }
@@ -32685,7 +33316,9 @@ RB.world = (function () {
       if (W.comp && ((W.comp.x === nx && W.comp.y === ny) || (W.comp.mv && W.comp.mv.tx === nx && W.comp.mv.ty === ny))) continue;
       if (Math.abs(nx - p.x) + Math.abs(ny - p.y) < 2) continue; // don't crowd the player
       startMove(n, d, 320);
+      if (RB.staging) RB.staging.stepped(n); // now and then a pause after the step (a look round, a stretch)
     }
+    if (RB.staging) RB.staging.tick(dt); // idle life, social ambience, reactions, the companion's presence
     for (const f of W.foes) {
       stepActor(f, dt);
       const calm = calmNow(f);
@@ -32759,6 +33392,7 @@ RB.world = (function () {
       if (n2 && talkTo(n2)) return;
     }
     if (pr) {
+      if (RB.staging) RB.staging.examined(fx, fy); // those who saw it may look at it afterwards
       if (pr.scene) RB.script.run(pr.scene, { prop: pr });
       else if (pr.text) RB.script.runInline([{ who: pr.who || 'narr', jp: pr.text.jp, en: pr.text.en }]);
       return;
@@ -33020,6 +33654,1115 @@ RB.world = (function () {
     frontTile, frontAction, checkFoeContact, hush, faceTo, unstick, blocked, _tryMove: tryMovePlayer,
     towards, linksOf, mapsWith, // map-link search (also used by quest guidance, 56_questguide.js)
     musicFor, // the map's song now (also used to restore it after a battle, 80_combat.js)
+  };
+})();
+
+
+/* ==== src/engine/51_gestures.js ==== */
+/* The gesture library of the expressive actor system (docs/expressive/GESTURES.md §2, CONTRACT.md §3.4).
+ *
+ * One vocabulary for idle life, conversation and staged scenes: the 32 primitives of the owner's addendum
+ * (§11.2) and the idle habits and occupation loops of the paired addendum (§6), each a short sequence of
+ * the pose layer's key poses (src/engine/32g_spritepose.js):
+ *
+ *   entry → readable peak → recovery (or a hold at the peak)
+ *
+ * A key is [pose | null, ms, extra]: pose a POSES name (null = the person's rest), ms its time, extra
+ * { gaze: 'target' | 'away' | 'l' | 'r' | 'u' | 'd' | 'c', dx (art px toward the facing: a half-step),
+ * dy (a hop), turn: 1 (face the target), look: 'a' | 'b' (the first or second subject), prop: 1 }.
+ * Durations follow §12.3: a short gesture reaches its peak in 250–700 ms, a handover in 600–1,200 ms;
+ * none of them is a reading deadline (an early advance settles them, RB.staging.settle()).
+ *
+ *   still   the key pose held with reduced motion (no in-betweens)
+ *   hold    the peak may be held while a line is read (a held emotion breathes; it never loops)
+ *   needs   'glasses' | 'free' (a free hand) | 'two' (two free hands) | 'prop' (something to hold)
+ *   alt     the gesture used instead when a person cannot do this one (a cane user bends, never kneels)
+ *   legible 'full' reads at play scale on the 40×58 figure; 'aided' reads with its context (a target,
+ *           a prop, a facing) or its alternative; 'weak' does not carry meaning alone (GESTURES.md §2)
+ * RB.gestures.get(id), .list(), .PRIM (the 32 by number), .HABITS, .duration(id), .validate() */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.gestures = (function () {
+  'use strict';
+  const G = {};
+  const def = (id, o) => { G[id] = Object.assign({ id, kind: o.n ? 'primitive' : 'habit' }, o); };
+  const K = (p, ms, x) => [p, ms, x || null];
+
+  // ---- the 32 primitives (§11.2) ---------------------------------------------------------------------
+  // Attention
+  def('listen', { n: 1, group: 'Attention', label: 'turn-and-listen', entry: [K('listen', 180, { turn: 1, gaze: 'target' })], peak: K('listen', 320, { gaze: 'target' }), recover: [K(null, 160)], hold: true, still: 'listen', legible: 'full', carry: 'facing' });
+  def('nod', { n: 2, group: 'Attention', label: 'small acknowledgement nod', entry: [K('nod1', 110)], peak: K('nod2', 170), recover: [K('nod1', 120), K(null, 80)], still: 'nod1', legible: 'full' });
+  def('lookbetween', { n: 3, group: 'Attention', label: 'look-between-two-subjects', entry: [K('listen', 300, { look: 'a' })], peak: K('listen', 340, { look: 'b' }), recover: [K('listen', 260, { look: 'a' }), K(null, 120)], still: 'listen', legible: 'aided' });
+  def('observe', { n: 4, group: 'Attention', label: 'lean-in-to-observe', entry: [K('listen', 180, { turn: 1, gaze: 'target' })], peak: K('observe', 360, { gaze: 'd' }), recover: [K('listen', 180), K(null, 120)], hold: true, still: 'observe', legible: 'full' });
+  // Thought
+  def('chin', { n: 5, group: 'Thought', label: 'hand-to-chin', entry: [K('chin0', 150)], peak: K('chin', 330, { gaze: 'u' }), recover: [K('chin0', 150), K(null, 90)], hold: true, still: 'chin', needs: 'free', legible: 'full' });
+  def('aside', { n: 6, group: 'Thought', label: 'glance-aside-and-return', entry: [K('aside', 130, { gaze: 'away' })], peak: K('aside', 360, { gaze: 'away' }), recover: [K(null, 140)], still: 'aside', legible: 'aided' });
+  def('glasses', { n: 7, group: 'Thought', label: 'glasses/temple adjustment', entry: [K('chin0', 120)], peak: K('temple', 220), recover: [K('temple2', 150), K('chin0', 110), K(null, 80)], still: 'temple', needs: 'glasses', alt: 'aside', legible: 'full' });
+  def('halfraise', { n: 8, group: 'Thought', label: 'pause-with-hand-half-raised', entry: [K('chin0', 160)], peak: K('half', 520), recover: [K(null, 180)], hold: true, still: 'half', needs: 'free', legible: 'full' });
+  // Explanation
+  def('palm', { n: 9, group: 'Explanation', label: 'open-palm explanation', entry: [K('palm', 160)], peak: K('palmout', 280), recover: [K('palm', 160), K(null, 90)], still: 'palmout', needs: 'free', legible: 'full' });
+  def('point', { n: 10, group: 'Explanation', label: 'precise directional point', entry: [K('half', 120, { turn: 1, gaze: 'target' })], peak: K('point', 480, { gaze: 'target' }), recover: [K('half', 130), K(null, 90)], hold: true, still: 'point', needs: 'free', legible: 'full', aim: true });
+  def('size', { n: 11, group: 'Explanation', label: 'two-handed size/relationship', entry: [K('size_out', 190)], peak: K('size_in', 280), recover: [K('size_out', 150), K(null, 100)], still: 'size_out', needs: 'two', alt: 'palm', legible: 'full' });
+  def('count', { n: 12, group: 'Explanation', label: 'count or sequence on fingers', entry: [K('count1', 220)], peak: K('count2', 230), recover: [K('count3', 260), K(null, 100)], still: 'count3', needs: 'free', legible: 'weak' });
+  // Object interaction
+  def('present', { n: 13, group: 'Object', label: 'two-handed presentation', entry: [K('hold', 200, { prop: 1 })], peak: K('present', 420, { prop: 1, gaze: 'd' }), recover: [K('hold', 200, { prop: 1 })], hold: true, still: 'present', needs: 'prop', legible: 'full' });
+  def('handover', { n: 14, group: 'Object', label: 'one-handed handover/receive', entry: [K('hold', 260, { prop: 1, turn: 1 })], peak: K('reach', 380, { prop: 1, gaze: 'target' }), recover: [K('half', 220), K(null, 160)], still: 'reach', needs: 'free', legible: 'full', handoff: true });
+  def('receive', { n: 14, group: 'Object', label: 'one-handed handover/receive (receiving)', entry: [K('half', 240, { turn: 1, gaze: 'target' })], peak: K('reach', 360, { gaze: 'target' }), recover: [K('take', 320, { prop: 1 })], hold: true, still: 'take', needs: 'free', legible: 'full', handoff: true, variant: true });
+  def('kneel', { n: 15, group: 'Object', label: 'kneel or bend to inspect', entry: [K('bend', 220, { turn: 1 })], peak: K('kneel', 420, { gaze: 'd' }), recover: [K('bend', 200), K(null, 120)], hold: true, still: 'kneel', alt: 'bend', legible: 'full' });
+  def('bend', { n: 15, group: 'Object', label: 'kneel or bend to inspect (bend)', entry: [K('listen', 160, { turn: 1 })], peak: K('bend', 400, { gaze: 'd' }), recover: [K('listen', 160), K(null, 100)], hold: true, still: 'bend', legible: 'full', variant: true });
+  def('read', { n: 16, group: 'Object', label: 'read/trace a document or inscription', entry: [K('hold', 220, { prop: 1 })], peak: K('read', 460, { prop: 1, gaze: 'd' }), recover: [K('trace', 400, { prop: 1 }), K('read', 300, { prop: 1 })], hold: true, still: 'read', needs: 'prop', alt: 'observe', legible: 'full' });
+  // Uncertainty
+  def('shrug', { n: 17, group: 'Uncertainty', label: 'small shrug', entry: [K('palm', 130)], peak: K('shrug', 360), recover: [K('palm', 120), K(null, 90)], still: 'shrug', needs: 'two', alt: 'aside', legible: 'full' });
+  def('halfstep', { n: 18, group: 'Uncertainty', label: 'hesitant half-step', entry: [K('step', 190, { dx: 3 })], peak: K('step', 320, { dx: 5 }), recover: [K('listen', 180, { dx: 3 }), K(null, 140, { dx: 0 })], still: 'listen', legible: 'full', carry: 'offset' });
+  def('guard', { n: 19, group: 'Uncertainty', label: 'guarded hand near chest', entry: [K('heart', 200)], peak: K('guard', 320), recover: [K('heart', 160), K(null, 100)], hold: true, still: 'guard', needs: 'free', legible: 'full' });
+  def('shake', { n: 20, group: 'Uncertainty', label: 'quiet head shake/refusal', entry: [K('shakeL', 130)], peak: K('shakeR', 130), recover: [K('shakeL', 120), K('shakeR', 110), K(null, 90)], still: 'shakeL', legible: 'aided' });
+  // Tension
+  def('recoil', { n: 21, group: 'Tension', label: 'interrupted/startled recoil', entry: [K('recoil', 90, { dx: -2 })], peak: K('recoil', 300, { dx: -3 }), recover: [K('listen', 200, { dx: -1 }), K(null, 150, { dx: 0 })], still: 'recoil', legible: 'full' });
+  def('flinch', { n: 21, group: 'Tension', label: 'interrupted/startled recoil (very small: a startled look up)', entry: [K('listen', 90, { dx: -1, gaze: 'u' })], peak: K('flinch', 260, { dx: -1, gaze: 'u' }), recover: [K('listen', 200, { dx: 0 })], still: 'flinch', legible: 'aided', variant: true });
+  def('folded', { n: 22, group: 'Tension', label: 'tense arms-folded stance', entry: [K('half', 160)], peak: K('folded', 320), recover: [K('half', 140), K(null, 90)], hold: true, still: 'folded', needs: 'two', alt: 'guard', legible: 'full' });
+  def('forehead', { n: 23, group: 'Tension', label: 'hand-to-forehead frustration', entry: [K('half', 150)], peak: K('forehead', 460), recover: [K('half', 150), K(null, 90)], still: 'forehead', needs: 'free', legible: 'full' });
+  def('emphatic', { n: 24, group: 'Tension', label: 'restrained emphatic downward gesture', entry: [K('emph0', 190)], peak: K('emph1', 300), recover: [K('emph0', 120), K(null, 120)], still: 'emph1', needs: 'free', legible: 'full' });
+  // Vulnerability
+  def('lowered', { n: 25, group: 'Vulnerability', label: 'lowered head/shoulders', entry: [K('nod1', 180)], peak: K('low', 420), recover: [K('nod1', 220), K(null, 160)], hold: true, still: 'low', legible: 'full' });
+  def('fidget', { n: 26, group: 'Vulnerability', label: 'self-conscious hand/arm fidget', entry: [K('fidget1', 190)], peak: K('fidget2', 200), recover: [K('fidget1', 190), K(null, 140)], still: 'fidget1', needs: 'two', alt: 'guard', legible: 'aided' });
+  def('avert', { n: 27, group: 'Vulnerability', label: 'avert gaze then face someone', entry: [K('avert', 360, { gaze: 'away' })], peak: K('listen', 320, { turn: 1, gaze: 'target' }), recover: [K(null, 160)], hold: true, still: 'listen', legible: 'aided' });
+  def('resolve', { n: 27, group: 'Vulnerability', label: 'avert gaze then face someone (a fidget resolving into a lowered but direct posture)', entry: [K('fidget1', 200), K('low', 260)], peak: K('lowface', 320, { turn: 1, gaze: 'target' }), recover: [K(null, 160)], hold: true, still: 'lowface', needs: 'two', alt: 'avert', legible: 'full', variant: true });
+  def('bow', { n: 28, group: 'Vulnerability', label: 'careful apologetic bow', entry: [K('bow1', 200)], peak: K('bow2', 420), recover: [K('bow1', 300), K(null, 120)], still: 'bow2', alt: 'duck', legible: 'full' });
+  def('duck', { n: 28, group: 'Vulnerability', label: 'careful apologetic bow (a child\'s quick duck of the head)', entry: [K('nod1', 120)], peak: K('duck', 260), recover: [K(null, 140)], still: 'duck', legible: 'full', variant: true });
+  // Release
+  def('exhale', { n: 29, group: 'Release', label: 'exhale/shoulder release', entry: [K('nod1', 220)], peak: K('exhale', 480), recover: [K(null, 320)], still: 'exhale', legible: 'aided' });
+  def('thanks', { n: 30, group: 'Release', label: 'open appreciative acknowledgement', entry: [K('palm', 160)], peak: K('thanks', 340), recover: [K('nod1', 160), K(null, 100)], still: 'thanks', needs: 'two', alt: 'nod', legible: 'full' });
+  def('celebrate', { n: 31, group: 'Release', label: 'small contained celebration', entry: [K('fist', 150)], peak: K('pump', 200, { dy: -2 }), recover: [K('pump', 180, { dy: 0 }), K(null, 140)], still: 'pump', needs: 'free', legible: 'full' });
+  def('laugh', { n: 32, group: 'Release', label: 'gentle laugh/hand-near-mouth', entry: [K('laugh', 150)], peak: K('laugh2', 180), recover: [K('laugh', 180), K('laugh2', 160), K(null, 120)], still: 'laugh', needs: 'free', legible: 'full' });
+
+  // ---- idle habits (paired addendum §6.1, GESTURES.md §5 core library) -------------------------------
+  // a habit's keys play once (or `loop` times) then the person is at rest again; `at` names the station
+  // prop it needs nearby (an occupation idle), `prop` the object in hand while it plays
+  def('shift', { label: 'weight shift', entry: [K('shiftL', 1400)], peak: K('shiftL', 600), recover: [K(null, 200)], still: null });
+  def('shiftR', { label: 'weight shift (other foot)', entry: [K('shiftR', 1400)], peak: K('shiftR', 600), recover: [K(null, 200)] });
+  def('lookroad', { label: 'look along the road', entry: [K('listen', 200, { turn: 1, gaze: 'target' })], peak: K(null, 1300, { gaze: 'target' }), recover: [K(null, 200)] });
+  def('glance', { label: 'glance at a neighbour', entry: [K(null, 120, { gaze: 'target' })], peak: K(null, 900, { gaze: 'target' }), recover: [K(null, 100)] });
+  def('touchhair', { label: 'sleeve or hair touch', entry: [K('half', 150)], peak: K('touchhair', 600), recover: [K('half', 140), K(null, 80)], needs: 'free' });
+  def('strap', { label: 'settle the strap', entry: [K('strap', 260)], peak: K('strap', 900, { gaze: 'd' }), recover: [K(null, 160)], needs: 'free' });
+  def('stretch', { label: 'stretch', entry: [K('half', 200)], peak: K('stretch', 800), recover: [K('half', 200), K(null, 120)], needs: 'two' });
+  def('rubhands', { label: 'rub hands (cold)', entry: [K('rub', 260)], peak: K('fidget1', 260), recover: [K('rub', 260), K('fidget1', 260), K(null, 140)], needs: 'two' });
+  def('shadeeyes', { label: 'shade the eyes', entry: [K('half', 160, { turn: 1 })], peak: K('shadeeyes', 1300), recover: [K('half', 140), K(null, 90)], needs: 'free' });
+  def('yawn', { label: 'yawn', entry: [K('half', 160)], peak: K('yawn', 900), recover: [K(null, 200)], needs: 'free' });
+  def('check', { label: 'check a held object', entry: [K('hold', 220, { prop: 1 })], peak: K('check', 900, { prop: 1 }), recover: [K(null, 160)], needs: 'free' });
+  def('tidy', { label: 'tidy a surface', entry: [K('tidy1', 420)], peak: K('tidy2', 420), recover: [K('tidy1', 420), K('tidy2', 420), K(null, 140)], needs: 'two', at: 'surface' });
+  def('readidle', { label: 'read', prop: 'book', entry: [K('hold', 240, { prop: 1 })], peak: K('read', 2400, { prop: 1 }), recover: [K('trace', 600, { prop: 1 }), K('read', 900, { prop: 1 }), K(null, 200)], needs: 'two' });
+  def('write', { label: 'write', prop: 'brush', entry: [K('write1', 380, { prop: 1 })], peak: K('write2', 380, { prop: 1 }), recover: [K('write1', 380, { prop: 1 }), K('write2', 380, { prop: 1 }), K('write1', 380, { prop: 1 }), K(null, 700, { gaze: 'u' }), K(null, 120)], at: 'desk' });
+  def('brow', { label: 'wipe the brow', entry: [K('half', 140)], peak: K('brow', 520), recover: [K(null, 140)], needs: 'free' });
+  // occupations (§6.2)
+  def('sweep', { label: 'sweeping', prop: 'broom', entry: [K('sweep1', 420, { prop: 1 })], peak: K('sweep2', 420, { prop: 1 }), recover: [K('sweep1', 420, { prop: 1 }), K('sweep2', 420, { prop: 1 }), K('sweep1', 420, { prop: 1 }), K(null, 160)], loop: 1 });
+  def('sort', { label: 'sorting', prop: 'tags', entry: [K('sort1', 380, { prop: 1 })], peak: K('sort2', 380, { prop: 1 }), recover: [K('sort1', 380, { prop: 1 }), K('sort2', 380, { prop: 1 }), K(null, 160)], at: 'surface' });
+  def('stamp', { label: 'stamping forms', prop: 'stamp', entry: [K('stampup', 300, { prop: 1 })], peak: K('stampdown', 240, { prop: 1 }), recover: [K('stampup', 300, { prop: 1 }), K('stampdown', 240, { prop: 1 }), K(null, 160)], at: 'surface' });
+  def('pour', { label: 'pouring', prop: 'teapot', entry: [K('hold', 260, { prop: 1 })], peak: K('pour', 1100, { prop: 1 }), recover: [K('hold', 240, { prop: 1 }), K(null, 140)], at: 'tea' });
+  def('stir', { label: 'stirring the pot', entry: [K('stir1', 340)], peak: K('stir2', 340), recover: [K('stir1', 340), K('stir2', 340), K('stir1', 340), K(null, 140)], at: 'hearth' });
+  def('polish', { label: 'polishing', prop: 'cup', entry: [K('polish1', 300, { prop: 1 })], peak: K('polish2', 300, { prop: 1 }), recover: [K('polish1', 300, { prop: 1 }), K('polish2', 300, { prop: 1 }), K(null, 140)], needs: 'two' });
+  def('hangwash', { label: 'hanging and folding', entry: [K('hang', 700)], peak: K('fold', 600), recover: [K('hang', 700), K('fold', 600), K(null, 160)], needs: 'two', at: 'laundry' });
+  def('hammer', { label: 'repairing', entry: [K('hammer1', 260)], peak: K('hammer2', 200), recover: [K('hammer1', 260), K('hammer2', 200), K('hammer1', 260), K('hammer2', 200), K(null, 160)], at: 'bench' });
+  def('tendlamp', { label: 'tending a lamp', entry: [K('lampup', 300)], peak: K('trim', 1400), recover: [K('lampup', 240), K(null, 140)], needs: 'lamp' });
+  def('tendlight', { label: 'tending a light', entry: [K('tend1', 300, { gaze: 'u' })], peak: K('tend2', 1000, { gaze: 'u' }), recover: [K(null, 160)], at: 'light' });
+  def('feedfire', { label: 'tending a fire', entry: [K('bend', 300)], peak: K('feed', 1400), recover: [K('bend', 260), K(null, 140)], at: 'fire' });
+  def('jiggle', { label: 'jiggling a line or net', entry: [K('jiggle1', 300)], peak: K('jiggle2', 300), recover: [K('jiggle1', 300), K('jiggle2', 300), K(null, 140)], needs: 'two' });
+  def('knead', { label: 'kneading', entry: [K('knead1', 340)], peak: K('knead2', 340), recover: [K('knead1', 340), K('knead2', 340), K(null, 140)], needs: 'two', at: 'surface' });
+  def('sip', { label: 'a sip from a cup', prop: 'cup', entry: [K('cuphold', 400, { prop: 1 })], peak: K('sip', 700, { prop: 1 }), recover: [K('cuphold', 500, { prop: 1 }), K(null, 140)], needs: 'free' });
+  def('countidle', { label: 'counting on the fingers', entry: [K('count1', 420)], peak: K('count2', 420), recover: [K('count3', 500), K(null, 160)], needs: 'free' });
+  def('hum', { label: 'weight on one leg, humming (no sound)', entry: [K('tilt', 700)], peak: K('hip', 900), recover: [K('tilt', 500), K(null, 160)] });
+  def('heeltap', { label: 'a heel tap', entry: [K(null, 120, { dy: -1 })], peak: K(null, 160, { dy: 0 }), recover: [K(null, 120, { dy: -1 }), K(null, 160, { dy: 0 })] });
+  def('bounce', { label: 'bouncing on the toes', entry: [K('bounce', 150, { dy: -1 })], peak: K(null, 150, { dy: 0 }), recover: [K('bounce', 150, { dy: -1 }), K(null, 150, { dy: 0 }), K('bounce', 150, { dy: -1 }), K(null, 150, { dy: 0 })] });
+  def('peek', { label: 'peeking at visitors', entry: [K('listen', 200, { turn: 1, gaze: 'target' })], peak: K('peek', 800, { gaze: 'target' }), recover: [K(null, 160)] });
+  def('crouch', { label: 'crouching to the snow', entry: [K('bend', 260)], peak: K('crouch', 1600), recover: [K('bend', 220), K(null, 140)] });
+  def('doze', { label: 'dozing', entry: [K('nod1', 600)], peak: K('nod2', 1400, { gaze: 'c' }), recover: [K('nod1', 300), K(null, 200)] });
+  def('stiff', { label: 'a fixed-angle tilt (a non-human figure)', entry: [K(null, 300, { turn: 1 })], peak: K(null, 700, { gaze: 'target' }), recover: [K(null, 200)] });
+  def('fold', { label: 'arms folded a while', entry: [K('half', 160)], peak: K('folded', 2400), recover: [K('half', 140), K(null, 90)], needs: 'two' });
+  def('handsbehind', { label: 'hands behind the back a while', entry: [K('behind', 2600)], peak: K('behind', 600), recover: [K(null, 160)], needs: 'two' });
+  // a supporting hand: a half-step to someone beside you and a hand laid on their back (held)
+  def('touchback', { label: 'a hand laid on someone\'s back', entry: [K('half', 220, { turn: 1, dx: 4 })], peak: K('reach', 420, { dx: 10 }), recover: [K('half', 220, { dx: 5 }), K(null, 180, { dx: 0 })], hold: true, still: 'reach', needs: 'free' });
+  def('sitidle', { label: 'sitting a while', entry: [K('sit', 400)], peak: K('sitlook', 1800, { gaze: 'u' }), recover: [K('sit', 300)] });
+
+  // ---- queries ------------------------------------------------------------------------------------------
+  function get(id) { return G[id] || null; }
+  function list() { return Object.values(G); }
+  function keys(g) { return g.entry.concat([g.peak], g.recover); }
+  function duration(id) { const g = typeof id === 'string' ? G[id] : id; return g ? keys(g).reduce((t, k) => t + k[1], 0) : 0; }
+  function toPeak(id) { const g = typeof id === 'string' ? G[id] : id; return g ? g.entry.reduce((t, k) => t + k[1], 0) + g.peak[1] : 0; }
+  // the primitives in the addendum's order, one per number (the main form; variants listed separately)
+  const PRIM = {};
+  for (const g of list()) if (g.n && !g.variant) PRIM[g.n] = g;
+  // whether a person (their look) can do it: glasses for the glasses adjustment, two free hands for a
+  // two-handed gesture (a cane hand never leaves the cane), something to hold for a presentation
+  function can(id, look, o) {
+    const g = G[id];
+    if (!g) return false;
+    const acc = (look && look.acc) || [];
+    const pose = RB.sprites && RB.sprites._pose;
+    const h = pose ? pose.holds(look || {}) : { L: null, R: null };
+    if (look && look.pet) return false;
+    // a non-human figure drawn whole (a goat, a spirit, the Catalogue Clerk) only turns and looks
+    if (look && look.custom) return id === 'stiff' || id === 'glance' || id === 'lookroad' || id === 'listen';
+    if (g.needs === 'glasses') return acc.includes('glasses');
+    if (g.needs === 'two') return h.L !== 'cane' && !(h.L && h.R);
+    if (g.needs === 'lamp') return acc.includes('lamp');
+    if (g.needs === 'prop') return !!(o && o.prop) || !!g.prop;
+    if (id === 'kneel' && (look.age === 'old' || h.L === 'cane')) return false;
+    if (id === 'bow' && look.size === 'child') return false;
+    return true;
+  }
+  // the gesture a person actually performs for a requested one (its alternative when they cannot)
+  function fit(id, look, o) {
+    let cur = id, guard = 0;
+    while (cur && !can(cur, look, o) && guard++ < 4) cur = (G[cur] || {}).alt || null;
+    return cur && can(cur, look, o) ? cur : null;
+  }
+  // structural check (used by the unit test and the dev viewer)
+  function validate() {
+    const out = [];
+    const poses = RB.sprites && RB.sprites._pose ? RB.sprites._pose.POSES : null;
+    for (const g of list()) {
+      if (!g.entry || !g.entry.length) out.push(g.id + ': no entry');
+      if (!g.peak) out.push(g.id + ': no peak');
+      if (!g.recover) out.push(g.id + ': no recovery');
+      for (const k of keys(g)) {
+        if (k[0] && poses && !poses[k[0]]) out.push(g.id + ': unknown pose ' + k[0]);
+        if (!(k[1] > 0)) out.push(g.id + ': a key without a time');
+      }
+      if (g.alt && !G[g.alt]) out.push(g.id + ': unknown alternative ' + g.alt);
+    }
+    for (let n = 1; n <= 32; n++) if (!PRIM[n]) out.push('primitive ' + n + ' missing');
+    return out;
+  }
+  return { get, list, keys, duration, toPeak, can, fit, validate, PRIM, G };
+})();
+
+
+/* ==== src/engine/51_mannerisms.js ==== */
+/* Mannerism profiles: who a person is, in body language (docs/expressive/GESTURES.md §3–§7; the paired
+ * addendum's §4–§5 and §11 reuse policy).
+ *
+ * One profile per person is the single source that the overworld idle scheduler (RB.staging), the
+ * scene cues and, later, the dialogue portraits read, so a person moves like the same person idle in
+ * town, in conversation and in a staged scene. Three tiers:
+ *   core library   the gestures and habits of RB.gestures, shared by everyone;
+ *   class overlay  rates, resting stance, preferred habits and conversation gestures for a kind of
+ *                  person (CLASSES: official, scholar, clerk, host, craft, elder, child, keeper,
+ *                  traveller, performer, non-human, and 'town' for anyone without a closer fit);
+ *   bespoke        authored habits, tells and stronger reactions for the player, the four companions
+ *                  and the important recurring characters (src/content/mannerisms/*.js).
+ * A person without a profile of their own gets one derived from their look and the station props
+ * around where they stand (a desk, a counter, a stove, a lamp …), so every overworld NPC has one.
+ *
+ * Profile (all fields optional except class):
+ *   { class, tier, rest: pose, every: [minS, maxS], idle: [[habit, weight, { at, prop, gaze }]],
+ *     route: [[habit, weight]], tells: { surprise, worry, sad, angry, shy, happy, think }: gesture ids,
+ *     props: [...], talk: [primitive numbers], strong: [{ beat, gesture }], avoid: [...],
+ *     portrait: { idle: [...], cues: { tag: cue } }, states: [{ if, rest, idle, every }], social: 0..1 }
+ * API: RB.mannerisms.add(id, profile), .of(id), .forActor(actor), .classOf(look, stations), .CLASSES,
+ *      .profiles(), .BESPOKE (the ids authored as bespoke), .stationsAt(map, x, y) */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.mannerisms = (function () {
+  'use strict';
+  const P = {};
+  // ---- class overlays (GESTURES.md §5) ---------------------------------------------------------------
+  // every: seconds between habits (one habit at a time); idle: preferred habits and weights; talk: the
+  // conversation primitives by preference; social: how readily they turn to a neighbour (0–1)
+  const CLASSES = {
+    official: { every: [16, 28], rest: 'behind', idle: [['shift', 2], ['glance', 2], ['lookroad', 1], ['write', 3, { at: 'desk' }], ['tidy', 1, { at: 'surface' }]], route: [['lookroad', 2], ['handsbehind', 1]], talk: [1, 24, 9, 11], social: 0.4, tells: { surprise: 'listen', worry: 'aside', sad: 'lowered', angry: 'emphatic', think: 'chin' } },
+    scholar: { every: [12, 22], idle: [['readidle', 3], ['glasses', 2], ['chin', 2], ['glance', 1], ['write', 2, { at: 'desk' }]], route: [['lookroad', 1], ['readidle', 1]], talk: [5, 7, 16, 3], social: 0.4, tells: { surprise: 'listen', worry: 'aside', sad: 'lowered', think: 'chin' } },
+    clerk: { every: [10, 20], idle: [['sort', 3, { at: 'surface' }], ['stamp', 2, { at: 'surface' }], ['write', 2, { at: 'desk' }], ['glance', 1], ['check', 1, { prop: 'tags' }]], route: [['check', 1, { prop: 'letter' }], ['lookroad', 1]], talk: [13, 19, 9], social: 0.5, tells: { surprise: 'recoil', worry: 'fidget', sad: 'lowered', think: 'chin' } },
+    host: { every: [9, 18], idle: [['tidy', 3, { at: 'surface' }], ['polish', 2], ['pour', 1, { at: 'tea' }], ['stir', 2, { at: 'hearth' }], ['glance', 2]], route: [['lookroad', 1], ['glance', 1]], talk: [9, 13, 31, 32], social: 0.8, tells: { surprise: 'recoil', worry: 'guard', sad: 'lowered', happy: 'laugh', think: 'chin' } },
+    craft: { every: [9, 18], idle: [['hammer', 3, { at: 'bench' }], ['brow', 2], ['stretch', 1], ['jiggle', 1, { at: 'nets' }], ['fold', 1], ['shift', 1]], route: [['stretch', 1], ['lookroad', 1], ['brow', 1]], talk: [11, 22, 10], social: 0.6, tells: { surprise: 'listen', worry: 'aside', sad: 'lowered', angry: 'folded', think: 'chin' } },
+    elder: { every: [16, 30], idle: [['glance', 2], ['lookroad', 2], ['shift', 1], ['doze', 1], ['rubhands', 1]], route: [['lookroad', 2], ['glance', 1]], talk: [2, 20, 3], social: 0.5, tells: { surprise: 'listen', worry: 'shake', sad: 'lowered', think: 'chin' } },
+    child: { every: [5, 11], idle: [['bounce', 3], ['peek', 2], ['crouch', 1], ['glance', 2], ['heeltap', 1]], route: [['bounce', 2], ['peek', 1], ['glance', 1]], talk: [10, 31, 18], social: 0.7, tells: { surprise: 'recoil', worry: 'fidget', sad: 'duck', happy: 'celebrate', think: 'aside' } },
+    keeper: { every: [12, 22], idle: [['tendlamp', 3], ['tendlight', 2, { at: 'light' }], ['lookroad', 2], ['glance', 1]], route: [['lookroad', 2], ['tendlamp', 1]], talk: [4, 10, 2], social: 0.4, tells: { surprise: 'listen', worry: 'aside', sad: 'lowered', think: 'chin' } },
+    traveller: { every: [10, 20], idle: [['strap', 2], ['lookroad', 3], ['shift', 1], ['check', 1, { prop: 'letter' }]], route: [['lookroad', 2], ['strap', 1]], talk: [3, 10, 14], social: 0.6, tells: { surprise: 'listen', worry: 'aside', sad: 'lowered', think: 'chin' } },
+    performer: { every: [8, 16], rest: 'hip', idle: [['hum', 2], ['touchhair', 2], ['shift', 2], ['heeltap', 1]], route: [['hum', 1], ['lookroad', 1]], talk: [9, 11, 31, 32], social: 0.9, tells: { surprise: 'recoil', worry: 'aside', sad: 'lowered', happy: 'laugh', think: 'chin' } },
+    nonhuman: { every: [18, 30], idle: [['stiff', 1]], route: [['stiff', 1]], talk: [2], social: 0, tells: {} },
+    town: { every: [12, 24], idle: [['shift', 2], ['glance', 2], ['lookroad', 2], ['stretch', 1], ['touchhair', 1]], route: [['lookroad', 2], ['stretch', 1], ['glance', 1]], talk: [9, 2, 10], social: 0.6, tells: { surprise: 'listen', worry: 'aside', sad: 'lowered', think: 'chin' } },
+  };
+  const BESPOKE = [];
+  function add(id, prof) {
+    P[id] = Object.assign({ id }, prof);
+    if (prof.tier === 'bespoke' && !BESPOKE.includes(id)) BESPOKE.push(id);
+    return P[id];
+  }
+
+  // ---- stations: what a person stands at (props within a tile and a half) -------------------------
+  const STATION = [
+    [/desk/, ['desk', 'surface']], [/counter|stall|register/, ['surface']], [/teaset|table/, ['surface', 'tea']],
+    [/stove|pot|irori|kettle|hearth|furnace|kiln|oven/, ['hearth']], [/campfire|brazier|fire/, ['fire']],
+    [/anvil|workbench|wheel|loom|sawhorse/, ['bench']], [/laundry|wash/, ['laundry']], [/net/, ['nets']],
+    [/lantern|lamppost|lamp|bellpost/, ['light']], [/shelf|bookpile|crate|barrel/, ['store']], [/sign|board|notice/, ['sign']],
+  ];
+  function stationsAt(m, x, y) {
+    const out = new Set();
+    if (!m || !m.props) return out;
+    for (const p of m.props) {
+      if (p.apron) continue;
+      const pd = RB.props && RB.props.P[p.p];
+      const w = p.w || (pd && pd.w) || 1, h = p.h || (pd && pd.h) || 1;
+      const dx = Math.max(p.x - x, 0, x - (p.x + w - 1)), dy = Math.max(p.y - y, 0, y - (p.y + h - 1));
+      if (dx > 1 || dy > 1) continue;
+      for (const [re, kinds] of STATION) if (re.test(p.p)) kinds.forEach((k) => out.add(k));
+    }
+    return out;
+  }
+  // ---- deriving a class from a look and a station ------------------------------------------------------
+  function classOf(look, st) {
+    look = look || {};
+    st = st || new Set();
+    const acc = look.acc || [];
+    if (look.custom || look.pet) return 'nonhuman';
+    if (look.size === 'child') return 'child';
+    if (acc.includes('lamp')) return 'keeper';
+    if (look.age === 'old') return 'elder';
+    if (st.has('desk') || acc.includes('book') || acc.includes('glasses')) return st.has('desk') && !acc.includes('glasses') ? 'clerk' : 'scholar';
+    if (st.has('hearth') || st.has('tea') || (look.shape === 'apron' && st.has('surface'))) return 'host';
+    if (acc.includes('toolbelt') || acc.includes('headband') || st.has('bench') || st.has('nets')) return 'craft';
+    if (acc.includes('satchel')) return 'traveller';
+    if (look.shape === 'apron') return 'host';
+    return 'town';
+  }
+  function merge(base, prof) {
+    const out = Object.assign({}, base, prof);
+    out.tells = Object.assign({}, base.tells || {}, (prof && prof.tells) || {});
+    out.idle = (prof && prof.idle) || base.idle || [];
+    out.route = (prof && prof.route) || base.route || [];
+    out.talk = (prof && prof.talk) || base.talk || [];
+    out.every = (prof && prof.every) || base.every || [12, 24];
+    return out;
+  }
+  // the profile of a character id ('pc', a companion id, an npc or char id), resolved through its class
+  function of(id, look, st) {
+    const prof = P[id];
+    if (prof) return merge(CLASSES[prof.class] || CLASSES.town, prof);
+    const cls = classOf(look || (RB.content && RB.content.chars[id] && RB.content.chars[id].look), st);
+    return merge(CLASSES[cls], { id, class: cls, tier: 'derived' });
+  }
+  // the profile of an actor on the map (its state-dependent variant applied)
+  function forActor(a) {
+    const W = RB.world && RB.world.W;
+    const id = a === (W && W.player) ? 'pc' : (a.def && (a.def.char || a.def.id)) || a.id;
+    const st = W && W.map ? stationsAt(W.map, a.home ? a.home[0] : a.x, a.home ? a.home[1] : a.y) : new Set();
+    let prof = of(id, a.look, st);
+    const s = RB.game && RB.game.s;
+    for (const v of prof.states || []) if (s && RB.state.test(s, v.if)) prof = Object.assign({}, prof, v);
+    return { prof, stations: st };
+  }
+  return { add, of, forActor, classOf, stationsAt, CLASSES, BESPOKE, profiles: () => P };
+})();
+
+
+/* ==== src/engine/52_staging.js ==== */
+/* Staging: one owner for how people move between their steps (docs/expressive/CONTRACT.md §3.4, §3.8).
+ *
+ * Two clients share one actor model (a.stg on each world actor) and one renderer path
+ * (RB.staging.frameOf, asked by 60_render.js drawActor):
+ *
+ *  1. Scenes. The script ops (!gesture, !look, !pose, !walkto, !prop, !beat, !ambience; 70_script.js)
+ *     cue the gesture library (RB.gestures) on the line that follows them. A scene owns the actors it
+ *     names from its first cue to its end (a scene token): their idle life stops, a cue's entry → peak →
+ *     recovery plays on the world clock, an early advance settles every cue at once (its hold, or its
+ *     end), and the scene's end releases them (poses, looks and props cleared; a person moved for the
+ *     scene walks back to their place, the companion back to your side). Nothing here touches the
+ *     story's state: inventory, flags and quests stay with !give/!take/!set.
+ *  2. Idle life (the paired addendum). Outside dialogue every person on screen lives by their mannerism
+ *     profile (RB.mannerisms): a resting stance, small habits at their own pace, occupation idles at a
+ *     station, pauses on a wanderer's round, a word between neighbours, a glance at someone arriving or
+ *     leaving, the companion's presence when you stop, and your own small idles. It yields at once —
+ *     to a scene, a battle, a menu, a map change, a puzzle or the player moving — and costs nothing
+ *     off screen. Choices are seeded per person (RB.staging.seed), never Math.random, so a test can
+ *     repeat them. Reduced motion holds the resting stance, plays no habits, and shows a cue's key
+ *     pose without in-betweens.
+ *
+ * API (scene side): begin(sceneId) → token, end(token), cue(ref, gesture, o), look(ref, target),
+ *   pose(ref, name), walkTo(ref, x, y, dir, o), prop(ref, kind, o), beat(id), ambience(preset),
+ *   settle(why), owned(actor), actor(ref, ctx)
+ * API (world side): tick(dt), frameOf(actor, t, still, frame), wanderPause(n), stepped(n), rand(a, k),
+ *   examined(x, y), ambienceNow()
+ * Tests and tools: state(), stats(), trace(), seed(n), enabled(v), release() */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.staging = (function () {
+  'use strict';
+  const DIRS = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
+  const now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
+  const st = {
+    seed: 20261003, on: true, token: 0, scene: null, gate: -1e9, pairs: new Map(), lastLeavers: new Set(),
+    arrival: null, examine: null, shared: null, sharedNext: 0, lastMove: 0, lastMap: null, socialNext: 0,
+    trace: [], stats: null,
+  };
+  const fresh = () => ({ habits: 0, social: 0, route: 0, react: 0, shared: 0, playerIdle: 0, compIdle: 0, cues: 0, settled: 0, walks: 0, walkFallbacks: 0, maxActive: 0, cap: 0, tickN: 0, tickMs: 0, tickMax: 0, beats: [], released: 0, yields: 0 });
+  st.stats = fresh();
+  const W = () => RB.world.W;
+  const T = () => W().time;
+
+  // ---- seeded choices ---------------------------------------------------------------------------------
+  function h32(str) {
+    let h = (st.seed ^ 0x811c9dc5) >>> 0;
+    for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+    h ^= h >>> 15; h = Math.imul(h, 0x2c1b3c6d) >>> 0; h ^= h >>> 12; h = Math.imul(h, 0x297a2d39) >>> 0; h ^= h >>> 15;
+    return (h >>> 0) / 4294967296;
+  }
+  const keyOf = (a) => (a === W().player ? 'pc' : a === W().comp ? 'comp:' + a.id : a.id || '?') + '@' + (W().map ? W().map.id : '');
+  // the k-th draw of a stream for one person on this map (the same sequence however frames fall)
+  function rand(a, stream) {
+    const s = S(a);
+    const n = (s.n[stream] = (s.n[stream] || 0) + 1);
+    return h32(keyOf(a) + '|' + stream + '|' + n);
+  }
+  function S(a) {
+    return a.stg || (a.stg = { run: null, pose: null, look: null, gaze: null, held: null, owner: 0, next: null, n: {}, map: null, prof: null, stations: null, hist: [], rest: null });
+  }
+
+  // ---- profiles ------------------------------------------------------------------------------------------
+  function profileOf(a) {
+    const s = S(a), m = W().map;
+    if (!s.prof || s.map !== (m && m.id)) {
+      const r = RB.mannerisms ? RB.mannerisms.forActor(a) : { prof: { class: 'town', idle: [], every: [12, 24], talk: [] }, stations: new Set() };
+      s.prof = r.prof; s.stations = r.stations; s.map = m && m.id;
+      s.rest = restFor(a, r.prof);
+      s.next = null; s.n = {};
+    }
+    return s.prof;
+  }
+  // the resting stance as a pose key part: 'pose' or 'pose.R' (the hand), with a held object (restProp)
+  function restFor(a, prof) {
+    if (!a.look || a.look.custom || a.look.pet || !prof.rest) return null;
+    const [name] = prof.rest.split('.');
+    if (!RB.sprites._pose || !RB.sprites._pose.has(name)) return null;
+    // a two-handed stance is not for someone with something in hand (a cane, a lamp, a book, a basket)
+    const h = RB.sprites._pose.holds(a.look);
+    const two = { hips: 1, behind: 1, folded: 1, clasp: 1, sleeves: 1 }[name];
+    if (two && (h.L || h.R)) return null;
+    return prof.rest;
+  }
+
+  // ---- whom a ref names --------------------------------------------------------------------------------
+  const personOf = (n) => (n.def && (n.def.char || n.def.id)) || n.id;
+  function actor(ref, ctx) {
+    const w = W();
+    if (!w.map || ref == null) return null;
+    if (typeof ref === 'object') return ref;
+    if (ref === 'pc' || ref === 'player') return w.player;
+    if (ref === 'npc' && ctx && ctx.npc) ref = ctx.npc;
+    if (ref === 'comp') return w.comp || null;
+    if (w.comp && w.comp.id === ref) return w.comp;
+    const all = w.npcs.concat(w.extras || []);
+    return all.find((n) => n.id === ref) || all.find((n) => personOf(n) === ref) || null;
+  }
+  const idOf = (a) => (a === W().player ? 'pc' : a === W().comp ? 'comp' : a.id);
+
+  // ---- targets ---------------------------------------------------------------------------------------------
+  // a target: an actor, a tile 'x,y', 'prop:<kind>' (the nearest such prop), a direction word, or null
+  function target(ref, from, ctx) {
+    if (ref == null || ref === '-' || ref === '') return null;
+    if (typeof ref === 'object' && ref.x != null) return ref;
+    if (DIRS[ref]) return { x: from.x + DIRS[ref][0] * 6, y: from.y + DIRS[ref][1] * 6, dirOnly: ref };
+    const m = /^(-?\d+),(-?\d+)$/.exec(ref);
+    if (m) return { x: +m[1], y: +m[2] };
+    if (ref.startsWith('prop:')) {
+      const kind = ref.slice(5), mp = W().map;
+      let best = null, bd = 1e9;
+      for (const p of mp.props) {
+        if (p.p !== kind && !(p.p || '').includes(kind)) continue;
+        if (p.if && !RB.state.test(RB.game.s, p.if)) continue;
+        const pd = RB.props.P[p.p] || {};
+        const w = p.w || pd.w || 1, h = p.h || pd.h || 1;
+        const cx = Math.max(p.x, Math.min(from.x, p.x + w - 1)), cy = Math.max(p.y, Math.min(from.y, p.y + h - 1));
+        const d = Math.abs(cx - from.x) + Math.abs(cy - from.y);
+        if (d < bd) { bd = d; best = { x: cx, y: cy }; }
+      }
+      return best;
+    }
+    return actor(ref, ctx);
+  }
+  const posOf = (t) => (t ? { x: t.fx != null ? t.fx : t.x, y: t.fy != null ? t.fy : t.y } : null);
+  function dirTo(a, t) {
+    const p = posOf(t);
+    if (!p) return a.dir;
+    if (t.dirOnly) return t.dirOnly;
+    const dx = p.x - a.x, dy = p.y - a.y;
+    if (!dx && !dy) return a.dir;
+    if (Math.abs(dx) > Math.abs(dy)) return dx > 0 ? 'right' : 'left';
+    if (Math.abs(dx) === Math.abs(dy) && dy < 0) return dx > 0 ? 'right' : 'left'; // a diagonal above: turn sideways (the face stays seen)
+    return dy > 0 ? 'down' : 'up';
+  }
+  // eyes-only: where on the screen the target lies for a person drawn facing `dir`
+  function gazeTo(a, t, dir) {
+    const p = posOf(t);
+    if (!p) return null;
+    const dx = p.x - a.x, dy = p.y - a.y;
+    if (dir === 'down' || dir === 'up') {
+      if (Math.abs(dx) < 0.5) return dir === 'down' && dy < 0 ? 'u' : null;
+      return dx < 0 ? 'l' : 'r';
+    }
+    const ahead = dir === 'right' ? dx : -dx;
+    if (ahead < -0.5) return 'b';
+    if (dy < -0.5 && Math.abs(dy) >= Math.abs(dx) * 0.6) return 'u';
+    if (dy > 0.5 && Math.abs(dy) >= Math.abs(dx) * 0.6) return 'd';
+    return null;
+  }
+
+  // ---- runs (a gesture or a habit playing) ------------------------------------------------------------
+  function mkRun(a, g, o) {
+    const keys = RB.gestures.keys(g);
+    const peakI = g.entry.length;
+    let t0 = T() + (o.delay || 0);
+    const run = { id: g.id, g, keys, peakI, t0, owner: o.owner, token: o.token || 0, hold: !!o.hold, holding: false, done: false, target: o.target || null, target2: o.target2 || null, prop: o.prop || null, hand: o.hand || null, dir: null, transfer: o.transfer || null, transferred: false, tag: o.tag || null };
+    run.total = keys.reduce((v, k) => v + k[1], 0);
+    run.toPeak = keys.slice(0, peakI + 1).reduce((v, k) => v + k[1], 0);
+    // reduced motion: the key pose, no in-betweens (a cue holds at its peak until the line moves on)
+    if (RB.game.reducedMotion()) { run.still = true; if (o.owner === 'scene') run.holding = true; }
+    // a gesture that turns to its target turns at once (the facing is drawn; collision facing stays)
+    if (keys.some((k) => k[2] && k[2].turn) && run.target) run.dir = dirTo(a, run.target);
+    return run;
+  }
+  function keyAt(run, t) {
+    if (run.still) {
+      const k = run.keys[run.peakI];
+      const still = run.g.still !== undefined ? run.g.still : k[0];
+      return [still, 0, k[2]];
+    }
+    let e = t - run.t0;
+    if (e < 0) return null;
+    if (run.holding) return run.keys[run.peakI];
+    for (let i = 0; i < run.keys.length; i++) {
+      const k = run.keys[i];
+      if (e < k[1]) return k;
+      e -= k[1];
+      if (i === run.peakI && run.hold) { run.holding = true; return k; }
+    }
+    run.done = true;
+    return null;
+  }
+  // pick the hand that points or reaches toward a target in the front and back views
+  function handFor(a, run, dir) {
+    if (!run.target || !run.g.aim) return run.hand;
+    const p = posOf(run.target);
+    if (!p || dir === 'left' || dir === 'right') return run.hand;
+    const pose = RB.sprites._pose;
+    const h = pose.holds(a.look || {});
+    const want = (dir === 'down') === (p.x < a.x) ? 'R' : 'L'; // the screen-left arm is the right hand from the front
+    if (h[want] === 'cane') return run.hand;
+    return want;
+  }
+
+  // ---- the renderer's question --------------------------------------------------------------------------
+  // { dir, key, ox, oy } for a standing person whose drawing staging changes, else null
+  function frameOf(a, t, still, base) {
+    const s = a.stg;
+    if (!s || !st.on || a.mv || a.route || !a.look || a.look.pet) return null;
+    const time = T();
+    let pose = null, gaze = s.gaze, prop = s.held ? s.held.kind : null, dir = s.look ? s.look.dir : null, ox = 0, oy = 0, hand = null, transient = false;
+    const run = s.run;
+    let x = null;
+    if (run && !run.done) {
+      const k = keyAt(run, time);
+      if (run.done) { finish(a, run); }
+      else if (k) {
+        pose = k[0]; x = k[2]; hand = run.hand; transient = !run.holding && !run.still;
+        if (run.dir) dir = run.dir;
+        if (x) {
+          if (x.gaze === 'target' && run.target) gaze = gazeTo(a, run.target, dir || a.dir);
+          else if (x.gaze === 'away') gaze = awayGaze(a, run, dir || a.dir);
+          else if (x.gaze) gaze = x.gaze;
+          if (x.look && (run.target || run.target2)) { const tg = x.look === 'b' ? run.target2 || run.target : run.target; dir = dirTo(a, tg); gaze = gazeTo(a, tg, dir); }
+          if (x.prop && run.prop) prop = run.prop;
+          if (x.dx) { const d = DIRS[dir || a.dir]; ox = d[0] * x.dx; oy = d[1] * x.dx * 0.5; }
+          if (x.dy) oy += x.dy;
+        }
+        if (run.transfer && !run.transferred && time - run.t0 >= run.toPeak) doTransfer(a, run);
+        hand = handFor(a, run, dir || a.dir) || hand;
+      }
+    }
+    // a person seated or kneeling (a held pose or their resting stance) gestures from there
+    const base0 = (s.pose || s.rest || '').split('.')[0];
+    const seat = base0 && RB.sprites._pose.POSES[base0] && RB.sprites._pose.POSES[base0].legs ? base0 : null;
+    // a pointing arm follows its target: up or down in the front and back views
+    if (pose === 'point' && run && run.target) {
+      const tp = posOf(run.target), dv = dir || a.dir;
+      if (tp && (dv === 'down' || dv === 'up') && Math.abs(tp.y - a.y) > 2 * Math.abs(tp.x - a.x)) pose = (tp.y < a.y) === (dv === 'down') ? 'pointup' : 'pointdown';
+    }
+    if (!pose) {
+      pose = s.pose || s.rest;
+      if (pose && pose === s.rest && pose.indexOf('.') > 0) { hand = pose.slice(-1); pose = pose.slice(0, -2); }
+      if (pose && pose === (s.rest || '').split('.')[0] && !prop && s.prof && s.prof.restProp) prop = s.prof.restProp;
+    }
+    if (s.look && s.look.target && !gaze && !run) gaze = gazeTo(a, s.look.target, dir || a.dir);
+    if (!pose && !gaze && !prop && !dir && !ox && !oy) return null;
+    if (a.look.custom) return dir || ox || oy ? { dir: dir || a.dir, key: null, ox, oy } : null;
+    const fr = typeof base === 'string' ? base : '';
+    const breath = still ? 0 : fr[0] === 'i' && (fr[1] === '1' || fr[1] === '2') ? 1 : 0;
+    const blink = !transient && (fr.endsWith('b') || base === 3);
+    const P = RB.sprites._pose;
+    const key = P.key(pose || 'stiff', { seat: seat && !(P.POSES[pose] && P.POSES[pose].legs) ? seat : null, hand, prop, gaze, breath: transient ? 0 : breath, blink });
+    return { dir: dir || a.dir, key, ox: Math.round(ox), oy: Math.round(oy) };
+  }
+  function awayGaze(a, run, dir) {
+    if (dir === 'left' || dir === 'right') return 'd';
+    const p = run.target ? posOf(run.target) : null;
+    if (p) return p.x < a.x ? 'r' : 'l';
+    return (S(a).n.away || 0) % 2 ? 'l' : 'r';
+  }
+  function doTransfer(a, run) {
+    run.transferred = true;
+    const to = run.transfer;
+    if (!to) return;
+    const kind = (a.stg.held && a.stg.held.kind) || run.prop;
+    if (!kind) return;
+    a.stg.held = null; run.prop = null;
+    S(to).held = { kind };
+    if (to.stg.run && to.stg.run.id === 'receive') to.stg.run.prop = kind;
+  }
+  function finish(a, run) {
+    const s = S(a);
+    if (s.run === run) s.run = null;
+    run.done = true;
+    if (run.finished) return;
+    run.finished = true;
+    if (run.chain && run.owner === 'scene' && st.scene && st.scene.token === run.token) { chainNext(a, run, false); return; }
+    if (run.owner === 'idle') {
+      const prof = profileOf(a);
+      const [lo, hi] = prof.every || [12, 24];
+      s.next = T() + (lo + (hi - lo) * rand(a, 'next')) * 1000;
+    }
+  }
+
+  // ---- scenes ------------------------------------------------------------------------------------------
+  function begin(id) {
+    if (st.scene) { st.scene.depth++; return st.scene.token; }
+    st.scene = { token: ++st.token, id, depth: 1, owned: new Set(), beats: [], ambience: null, moved: new Map(), reserved: new Map() };
+    yieldIdle('scene');
+    return st.scene.token;
+  }
+  function own(a) {
+    const sc = st.scene;
+    if (!sc || !a) return;
+    const s = S(a);
+    if (s.run && s.run.owner === 'idle') s.run = null;
+    s.owner = sc.token;
+    sc.owned.add(a);
+  }
+  function owned(a) { return !!(a && a.stg && a.stg.owner && st.scene && a.stg.owner === st.scene.token); }
+  function end(token) {
+    const sc = st.scene;
+    if (!sc || sc.token !== token) return;
+    if (--sc.depth > 0) return;
+    st.scene = null;
+    releaseScene(sc);
+  }
+  function releaseScene(sc) {
+    const w = W();
+    for (const a of sc.owned) {
+      const s = S(a);
+      s.run = null; s.pose = null; s.look = null; s.gaze = null; s.held = null; s.owner = 0;
+      s.next = T() + 4000; // a moment before the old habits come back
+      st.stats.released++;
+    }
+    // people moved for the scene go back where they belong (unless the scene left them where it put them)
+    for (const [a, m] of sc.moved) {
+      if (m.stay) continue;
+      if (a === w.player) continue;
+      if (a === w.comp) { rejoin(a); continue; }
+      if (!w.npcs.includes(a) || !a.home) continue;
+      if (a.x === a.home[0] && a.y === a.home[1]) { if (a.def && a.def.dir) a.dir = a.def.dir; continue; }
+      const path = bfs(a, a.home[0], a.home[1], { goal: true });
+      if (path && path.length) { a.route = path; a.routeT = 0; }
+    }
+    sc.ambience = null;
+  }
+  // the companion walks back to your side after a scene moved them
+  function rejoin(c) {
+    const w = W(), p = w.player;
+    if (Math.abs(c.x - p.x) + Math.abs(c.y - p.y) <= 1) return;
+    const back = DIRS[{ up: 'down', down: 'up', left: 'right', right: 'left' }[p.dir]];
+    const goal = [p.x + back[0], p.y + back[1]];
+    const path = free(goal[0], goal[1], c) ? bfs(c, goal[0], goal[1]) : bfs(c, p.x, p.y, { adjacent: true });
+    if (path && path.length) walkPath(c, path, null, 4000);
+  }
+  // an early advance (the reader moved on): every cue of this scene settles at its hold or its end
+  function settle(why) {
+    const sc = st.scene;
+    if (!sc) return;
+    for (const a of sc.owned) {
+      const s = S(a), run = s.run;
+      if (!run || run.owner !== 'scene') continue;
+      if (run.transfer && !run.transferred) doTransfer(a, run);
+      if (run.chain) { run.finished = true; s.run = null; run.done = true; chainNext(a, run, true); }
+      else if (run.hold) { run.holding = true; run.t0 = Math.min(run.t0, T()); }
+      else { s.run = null; run.done = true; }
+      st.stats.settled++;
+    }
+    void why;
+  }
+  // the next gesture of a chain (settled: jump to the chain's last gesture, at its hold or done)
+  function chainNext(a, run, settled) {
+    const list = run.chain.list.slice();
+    let id = list.shift();
+    if (settled) { id = list.length ? list[list.length - 1] : id; list.length = 0; }
+    const o = Object.assign({}, run.chain.o, { then: list.length ? list : null, wait: false });
+    const r = cue(a, id, Object.assign(o, { target: run.target || o.target }));
+    if (r && settled && r.chain == null) { if (r.hold) r.holding = true; else { S(a).run = null; r.done = true; } }
+    return r;
+  }
+  function cue(ref, gid, o, ctx) {
+    o = o || {};
+    if (!st.on) return null;
+    const a = actor(ref, ctx);
+    if (!a || !RB.gestures) return null;
+    own(a);
+    if (gid === '-') { S(a).run = null; return null; } // let go of a held gesture
+    const want = RB.gestures.get(gid) ? gid : null;
+    const id = want && RB.gestures.fit(want, a.look, { prop: o.prop || (a.stg && a.stg.held && a.stg.held.kind) });
+    if (!id) return null;
+    const g = RB.gestures.get(id);
+    const tg = target(o.target, a, ctx);
+    const run = mkRun(a, g, { owner: 'scene', token: st.scene ? st.scene.token : 0, hold: !!o.hold && !!g.hold, target: tg, target2: target(o.target2, a, ctx),
+      prop: o.prop || (S(a).held && S(a).held.kind) || g.prop || null, hand: o.hand || null,
+      // a handover moves the held thing from this hand to the receiver's at the peak (drawing only)
+      transfer: g.id === 'handover' && tg && tg.look ? tg : null });
+    // gestures chained on the same line (then=): the hold belongs to the last one
+    if (o.then && o.then.length) { run.chain = { list: o.then.slice(), o: Object.assign({}, o, { then: null }) }; run.hold = false; }
+    S(a).run = run;
+    // a turn stays for the rest of the scene (the person keeps facing who or what they turned to)
+    if (run.dir && st.scene) S(a).look = { dir: run.dir, target: tg };
+    st.stats.cues++;
+    if (o.wait) return waitPeak(run, 1200);
+    return run;
+  }
+  function waitPeak(run, max) {
+    if (run.still || RB.game.fastForward()) return Promise.resolve(run);
+    const t0 = now();
+    return new Promise((res) => {
+      const tick = () => (run.done || run.holding || T() - run.t0 >= run.toPeak || now() - t0 > max ? res(run) : setTimeout(tick, 30));
+      tick();
+    });
+  }
+  function look(ref, tgt, ctx) {
+    if (!st.on) return;
+    const a = actor(ref, ctx);
+    if (!a) return;
+    own(a);
+    const s = S(a);
+    if (tgt == null || tgt === '-') { s.look = null; s.gaze = null; return; }
+    const t = target(tgt, a, ctx);
+    if (!t) return;
+    s.look = { dir: dirTo(a, t), target: t };
+  }
+  function pose(ref, name, ctx) {
+    if (!st.on) return;
+    const a = actor(ref, ctx);
+    if (!a) return;
+    own(a);
+    const s = S(a);
+    s.pose = name && name !== '-' && RB.sprites._pose.has(name) ? name : null;
+    if (s.run && s.run.owner === 'scene' && !s.run.hold) s.run = null;
+  }
+  function prop(ref, kind, o, ctx) {
+    if (!st.on) return;
+    const a = actor(ref, ctx);
+    if (!a) return;
+    own(a);
+    S(a).held = kind && kind !== '-' && RB.sprites._pose.hasProp(kind) ? { kind, hand: (o && o.hand) || null } : null;
+  }
+  function beat(id) {
+    const sc = st.scene;
+    st.stats.beats.push((sc ? sc.id : '?') + ':' + id);
+    if (st.stats.beats.length > 200) st.stats.beats.shift();
+    if (RB.bus) RB.bus.emit('stage:beat', { scene: sc ? sc.id : null, id });
+  }
+  // presentation-only ambience for a scene (the map's own ambience is untouched and returns at its end)
+  const AMBIENCE = {
+    night: { ambient: { dark: 0.55, darkCol: '12,16,44', playerLight: 52 }, night: true },
+    night_in: { ambient: { dark: 0.42, darkCol: '18,16,40', playerLight: 58, tint: 'rgba(40,30,80,0.10)' }, night: true },
+    dusk: { ambient: { dark: 0.25, darkCol: '40,24,40', tint: 'rgba(120,60,40,0.10)', playerLight: 48 }, night: false },
+  };
+  function ambience(preset) {
+    const sc = st.scene;
+    if (!sc) return;
+    sc.ambience = preset && preset !== '-' ? AMBIENCE[preset] || null : null;
+  }
+  function ambienceNow() { return st.on && st.scene && st.scene.ambience ? st.scene.ambience : null; }
+
+  // ---- walking to a place ---------------------------------------------------------------------------------
+  const occupied = (x, y, self) => {
+    const w = W();
+    if (w.player !== self && w.player.x === x && w.player.y === y) return true;
+    if (w.comp && w.comp !== self && w.comp.x === x && w.comp.y === y) return true;
+    for (const n of w.npcs.concat(w.extras || [])) if (n !== self && ((n.x === x && n.y === y) || (n.mv && n.mv.tx === x && n.mv.ty === y))) return true;
+    return false;
+  };
+  function free(x, y, self) {
+    const w = W(), m = w.map;
+    if (x < 0 || y < 0 || x >= m.w || y >= m.h) return false;
+    if (RB.maps.blockedStatic(m, x, y)) return false;
+    if (RB.maps.exitAt(m, x, y)) return false;
+    if (m.triggers.some((t) => x >= t.x && x < t.x + t.w && y >= t.y && y < t.y + t.h)) return false;
+    if (occupied(x, y, self)) return false;
+    const sc = st.scene;
+    if (sc) for (const [o, k] of sc.reserved) if (o !== self && k === x + ',' + y) return false;
+    return true;
+  }
+  // a path of free tiles (no furniture, nobody standing there, no exit or trigger), or null
+  function bfs(a, tx, ty, o) {
+    o = o || {};
+    const w = W(), m = w.map;
+    const start = a.x + ',' + a.y, prev = new Map([[start, null]]), q = [[a.x, a.y]];
+    let found = null;
+    const goal = (x, y) => (o.adjacent ? Math.abs(x - tx) + Math.abs(y - ty) === 1 : x === tx && y === ty);
+    if (goal(a.x, a.y)) return [];
+    while (q.length) {
+      const [x, y] = q.shift();
+      if (goal(x, y)) { found = [x, y]; break; }
+      for (const d in DIRS) {
+        const nx = x + DIRS[d][0], ny = y + DIRS[d][1], k = nx + ',' + ny;
+        if (prev.has(k)) continue;
+        if (!free(nx, ny, a) && !(o.goal && nx === tx && ny === ty && !RB.maps.blockedStatic(m, nx, ny) && !occupied(nx, ny, a))) continue;
+        prev.set(k, [x, y]);
+        q.push([nx, ny]);
+      }
+      if (prev.size > 3000) break;
+    }
+    if (!found) return null;
+    const path = [];
+    let cur = found;
+    while (cur && !(cur[0] === a.x && cur[1] === a.y)) { path.unshift(cur); cur = prev.get(cur[0] + ',' + cur[1]); }
+    return path;
+  }
+  function walkPath(a, path, token, max) {
+    const id = idOf(a), t0 = now();
+    const step = (i) => {
+      if (i >= path.length) return Promise.resolve(true);
+      if (token && (!st.scene || st.scene.token !== token)) return Promise.resolve(false); // another scene began
+      if (now() - t0 > max) return Promise.resolve(false); // bounded: stop where they are
+      const [nx, ny] = path[i];
+      const dx = nx - a.x, dy = ny - a.y;
+      if (Math.abs(dx) + Math.abs(dy) !== 1) return Promise.resolve(false);
+      if (occupied(nx, ny, a)) return Promise.resolve(false); // someone stepped in: an authored stance where they are
+      const dir = dx > 0 ? 'right' : dx < 0 ? 'left' : dy > 0 ? 'down' : 'up';
+      return RB.world.scriptMove(id, dir, 1, a === W().player ? 200 : 240).then(() => step(i + 1));
+    };
+    return step(0);
+  }
+  async function walkTo(ref, x, y, dir, o, ctx) {
+    o = o || {};
+    if (!st.on) return false;
+    const a = actor(ref, ctx);
+    if (!a) return false;
+    own(a);
+    const sc = st.scene;
+    if (sc && !sc.moved.has(a)) sc.moved.set(a, { from: [a.x, a.y, a.dir], stay: !!o.stay });
+    else if (sc && o.stay) sc.moved.get(a).stay = true;
+    S(a).look = null;
+    if (a.route) { const e = a.route[a.route.length - 1] || [a.x, a.y]; a.x = e[0]; a.y = e[1]; a.fx = a.x; a.fy = a.y; a.route = null; a.alpha = 1; a.fadeIn = false; }
+    if (sc) sc.reserved.set(a, x + ',' + y);
+    st.stats.walks++;
+    let ok = false;
+    if (a.x === x && a.y === y) ok = true;
+    else if (o.now || RB.game.fastForward()) {
+      // in the dark of a fade (or skipping a seen scene): set them there, if the place is free
+      if (free(x, y, a)) { a.x = x; a.y = y; a.fx = x; a.fy = y; a.mv = null; if (a === W().player) syncPlayer(); ok = true; }
+    } else {
+      const path = bfs(a, x, y);
+      if (path) ok = await walkPath(a, path, sc ? sc.token : 0, o.max || 4000);
+    }
+    if (!ok) st.stats.walkFallbacks++;
+    if (sc && sc.reserved.get(a) === x + ',' + y && !ok) sc.reserved.delete(a);
+    if (dir && DIRS[dir] && (!sc || st.scene === sc)) a.dir = dir;
+    if (a === W().player) syncPlayer();
+    return ok;
+  }
+  function syncPlayer() { const s = RB.game.s, p = W().player; if (s) { s.x = p.x; s.y = p.y; s.dir = p.dir; } }
+
+  // ---- idle life ----------------------------------------------------------------------------------------------
+  function onScreen(a) {
+    const v = RB.render.viewSize(), c = RB.render.cam;
+    const x = a.fx * 16 - c.x, y = a.fy * 16 - c.y;
+    return x > -24 && y > -24 && x < v.w + 8 && y < v.h + 40;
+  }
+  function yieldIdle(why) {
+    const w = W();
+    if (!w.map) return;
+    let n = 0;
+    for (const a of w.npcs.concat(w.extras || [], w.comp ? [w.comp] : [], [w.player])) {
+      const s = a && a.stg;
+      if (s && s.run && s.run.owner === 'idle') { s.run = null; n++; }
+      if (s && s.social) s.social = null;
+    }
+    if (st.shared) st.shared = null;
+    if (n) st.stats.yields++;
+    void why;
+  }
+  function eligible(a, prof, h) {
+    const id = h[0], opts = h[2] || {};
+    const g = RB.gestures.get(id);
+    if (!g) return false;
+    if (!RB.gestures.can(id, a.look, { prop: opts.prop || g.prop })) return false;
+    const at = opts.at || g.at;
+    if (at && !S(a).stations.has(at)) return false;
+    if (g.needs === 'lamp' && !((a.look.acc || []).includes('lamp'))) return false;
+    return true;
+  }
+  function pickHabit(a, prof, list) {
+    let pool = (list || []).filter((h) => eligible(a, prof, h));
+    // the weather a person stands in (snow: hands rubbed against the cold)
+    const amb = (W().map.def.ambient || {}).weather;
+    if (amb === 'snow' && RB.gestures.can('rubhands', a.look)) pool = pool.concat([['rubhands', 1]]);
+    if (!pool.length) return null;
+    const tot = pool.reduce((v, h) => v + (h[1] || 1), 0);
+    let r = rand(a, 'habit') * tot;
+    for (const h of pool) { r -= h[1] || 1; if (r < 0) return h; }
+    return pool[pool.length - 1];
+  }
+  // where a habit looks: along the road, at a neighbour, at the player
+  function habitTarget(a, id) {
+    const w = W();
+    if (id === 'glance' || id === 'peek') {
+      let best = null, bd = 1e9;
+      for (const n of w.npcs) { if (n === a || !onScreen(n)) continue; const d = Math.abs(n.x - a.x) + Math.abs(n.y - a.y); if (d <= 4 && d < bd) { bd = d; best = n; } }
+      const pd = Math.abs(w.player.x - a.x) + Math.abs(w.player.y - a.y);
+      if (id === 'peek' || (pd <= 4 && (!best || rand(a, 'tg') < 0.5))) return w.player;
+      if (best) return best;
+    }
+    if (id === 'lookroad' || id === 'glance' || id === 'stiff' || id === 'shadeeyes') {
+      const side = { down: ['left', 'right'], up: ['left', 'right'], left: ['up', 'down'], right: ['up', 'down'] }[a.dir] || ['left', 'right'];
+      const d = rand(a, 'tg') < 0.5 ? side[0] : side[1];
+      return { x: a.x + DIRS[d][0] * 6, y: a.y + DIRS[d][1] * 6 + (d === 'up' ? 0 : 0) };
+    }
+    return null;
+  }
+  function startIdle(a, h, why) {
+    const g = RB.gestures.get(h[0]);
+    const opts = h[2] || {};
+    const tg = habitTarget(a, g.id);
+    const run = mkRun(a, g, { owner: 'idle', target: tg, prop: opts.prop || g.prop || null, tag: why });
+    if (run.still) return null;
+    S(a).run = run;
+    const s = S(a);
+    s.hist.push(g.id); if (s.hist.length > 16) s.hist.shift();
+    st.trace.push({ who: keyOf(a), h: g.id, why, t: Math.round(T()) });
+    if (st.trace.length > 600) st.trace.shift();
+    st.stats.habits++;
+    st.gate = T();
+    return run;
+  }
+  const near = (a, b, r) => Math.max(Math.abs(a.x - b.x), Math.abs(a.y - b.y)) <= r;
+  function tick(dt) {
+    if (!st.on) return;
+    const t0 = now();
+    const w = W();
+    if (!w.map) return;
+    const time = T();
+    if (st.lastMap !== w.map.id) { st.lastMap = w.map.id; st.lastLeavers = new Set(w.leavers || []); st.pairs.clear(); st.gate = time; st.socialNext = time + 4000; }
+    const mode = RB.game.mode(), world = mode === 'world';
+    const still = RB.game.reducedMotion();
+    // scene-owned runs that ended clear themselves; idle yields to everything that is not the open world
+    // everyone's resting stance shows whatever is going on (it is who they are), held with reduced motion
+    for (const a of w.npcs) if (!a.foe && (!a.stg || a.stg.map !== w.map.id)) profileOf(a);
+    if (w.comp && (!w.comp.stg || w.comp.stg.map !== w.map.id)) profileOf(w.comp);
+    if (!world || still || RB.game.inBattle()) {
+      yieldIdle(mode);
+      record(t0);
+      return;
+    }
+    const people = [];
+    for (const a of w.npcs) {
+      if (a.foe || a.alpha === 0 || (a.look && a.look.pet) || !onScreen(a)) continue;
+      profileOf(a);
+      people.push(a);
+    }
+    let active = 0;
+    for (const a of people) {
+      const s = a.stg;
+      if (s.run && (s.run.done || (s.run.owner === 'idle' && T() - s.run.t0 > s.run.total + 50))) finish(a, s.run);
+      if (s.run && s.run.owner === 'idle' && (a.mv || a.route || owned(a))) s.run = null;
+      if (s.run && s.run.owner === 'idle') active++;
+      if (s.next == null) s.next = time + (1500 + rand(a, 'first') * (((s.prof.every || [12, 24])[0]) * 1000));
+    }
+    const cap = Math.max(1, Math.min(4, Math.ceil(people.length / 4)));
+    st.stats.cap = cap;
+    // at most one new habit per tick, none sooner than 650 ms after the last, and never two neighbours in step
+    if (active < cap && time - st.gate > 650) {
+      for (const a of people) {
+        const s = a.stg;
+        if (s.run || a.mv || a.route || owned(a) || time < s.next) continue;
+        if (a.def && a.def.wander && s.wanderHold && time < s.wanderHold) continue;
+        const crowd = people.some((b) => b !== a && b.stg.run && b.stg.run.owner === 'idle' && near(a, b, 3) && time - b.stg.run.t0 < 2500);
+        if (crowd) { s.next = time + 1200 + rand(a, 'defer') * 1200; continue; }
+        const h = pickHabit(a, s.prof, s.prof.idle);
+        if (!h) { s.next = time + 8000; continue; }
+        if (startIdle(a, h, 'idle')) { active++; break; }
+      }
+    }
+    st.stats.maxActive = Math.max(st.stats.maxActive, active);
+    social(people, time);
+    reactions(people, time);
+    companion(time);
+    record(t0);
+  }
+  function record(t0) {
+    const ms = now() - t0;
+    st.stats.tickN++; st.stats.tickMs += ms; if (ms > st.stats.tickMax) st.stats.tickMax = ms;
+  }
+  // two people standing near each other turn to each other now and then: one says something with a
+  // small gesture, the other nods a beat later, and both go back to what they were doing
+  function social(people, time) {
+    if (time < st.socialNext) return;
+    st.socialNext = time + 1500;
+    const idle = people.filter((a) => !a.stg.run && !a.mv && !a.route && !owned(a) && !(a.look && a.look.custom) && (a.stg.prof.social || 0) > 0);
+    for (let i = 0; i < idle.length; i++) for (let j = i + 1; j < idle.length; j++) {
+      const A = idle[i], B = idle[j];
+      if (!near(A, B, 2) || (A.x === B.x && A.y === B.y)) continue;
+      const k = [A.id, B.id].sort().join('+');
+      const nx = st.pairs.get(k);
+      if (nx == null) { st.pairs.set(k, time + 6000 + h32(k + '|first') * 12000); continue; }
+      if (time < nx) continue;
+      const p = Math.min(A.stg.prof.social, B.stg.prof.social);
+      const r = h32(k + '|' + Math.floor(nx));
+      st.pairs.set(k, time + 30000 + r * 30000);
+      if (r > p) continue;
+      const [sp, li] = (A.stg.prof.social >= B.stg.prof.social) ? [A, B] : [B, A];
+      const talk = (sp.stg.prof.talk || [9]).map((n) => RB.gestures.PRIM[n]).filter((g) => g && RB.gestures.can(g.id, sp.look) && ['palm', 'point', 'size', 'nod', 'laugh', 'shrug', 'count', 'chin'].includes(g.id));
+      const g = talk.length ? talk[Math.floor(h32(k + '|g') * talk.length)] : RB.gestures.get('nod');
+      const r1 = mkRun(sp, g, { owner: 'idle', target: g.id === 'point' ? { x: sp.x + (li.x >= sp.x ? -3 : 3), y: sp.y - 2 } : li, tag: 'social' });
+      r1.dir = dirTo(sp, li);
+      r1.keys = [[null, 450, null]].concat(r1.keys, [[null, 900, null]]); r1.peakI += 1; r1.total += 1350; r1.toPeak += 450;
+      const r2 = mkRun(li, RB.gestures.get('nod'), { owner: 'idle', target: sp, tag: 'social' });
+      r2.dir = dirTo(li, sp);
+      r2.keys = [[null, 450 + r1.toPeak - 450, { gaze: 'target' }]].concat(r2.keys, [[null, 700, { gaze: 'target' }]]); r2.peakI += 1; r2.total = r2.keys.reduce((v, x) => v + x[1], 0);
+      sp.stg.run = r1; li.stg.run = r2;
+      st.stats.social++;
+      st.trace.push({ who: keyOf(sp) + '+' + keyOf(li), h: 'social:' + g.id, why: 'social', t: Math.round(time) });
+      return;
+    }
+  }
+  // what people witness: someone arriving, someone leaving, something examined
+  function reactions(people, time) {
+    const w = W();
+    const glanceAt = (who, tgt, max, why) => {
+      const cand = people.filter((a) => a !== tgt && !a.stg.run && !a.mv && !owned(a) && near(a, tgt, 6) && !(a.look && a.look.custom))
+        .sort((a, b) => (Math.abs(a.x - tgt.x) + Math.abs(a.y - tgt.y)) - (Math.abs(b.x - tgt.x) + Math.abs(b.y - tgt.y)) || (a.id < b.id ? -1 : 1));
+      cand.slice(0, max).forEach((a, i) => {
+        const run = mkRun(a, RB.gestures.get('glance'), { owner: 'idle', target: tgt, delay: 200 + i * 380 + rand(a, 'react') * 300, tag: why });
+        if (Math.abs(tgt.x - a.x) + Math.abs(tgt.y - a.y) >= 2) run.dir = dirTo(a, tgt);
+        a.stg.run = run;
+        st.stats.react++;
+        st.trace.push({ who: keyOf(a), h: 'glance', why, t: Math.round(time) });
+      });
+    };
+    if (st.arrival && time - st.arrival.t > 350) { const tg = { x: w.player.x, y: w.player.y }; st.arrival = null; glanceAt(null, tg, 2, 'arrival'); }
+    for (const l of w.leavers || []) {
+      if (st.lastLeavers.has(l)) continue;
+      st.lastLeavers.add(l);
+      glanceAt(null, l, 2, 'leaving');
+    }
+    if (st.lastLeavers.size > 40) st.lastLeavers = new Set(w.leavers || []);
+    if (st.examine && time - st.examine.t < 4000) {
+      const tg = { x: st.examine.x, y: st.examine.y };
+      st.examine = null;
+      const c = w.comp;
+      if (c && !owned(c) && near(c, tg, 5)) { const r = mkRun(c, RB.gestures.get('glance'), { owner: 'idle', target: tg, delay: 300, tag: 'examined' }); r.dir = dirTo(c, tg); S(c).run = r; st.stats.react++; }
+      glanceAt(null, tg, 1, 'examined');
+    } else if (st.examine && time - st.examine.t >= 4000) st.examine = null;
+  }
+  // the companion when you stop, your own small idles, and now and then a shared moment
+  function companion(time) {
+    const w = W(), p = w.player, c = w.comp;
+    const moving = !!p.mv || !!(w.path && w.path.length) || !!(RB.input && RB.input.dir && RB.input.dir());
+    if (moving) {
+      st.lastMove = time;
+      if (p.stg && p.stg.run && p.stg.run.owner === 'idle') p.stg.run = null;
+      if (c && c.stg && c.stg.run && c.stg.run.owner === 'idle') c.stg.run = null;
+      st.shared = null;
+      return;
+    }
+    const stillFor = time - st.lastMove;
+    if (c && !c.mv && !owned(c) && stillFor >= 1200) {
+      const prof = profileOf(c), s = c.stg;
+      if (s.run && (s.run.done || T() - s.run.t0 > s.run.total + 50)) finish(c, s.run);
+      if (s.next == null || s.next < time - 60000) s.next = time + 400 + rand(c, 'first') * 1200;
+      if (!s.run && time >= s.next) {
+        const h = pickHabit(c, prof, prof.idle);
+        if (h && startIdle(c, h, 'companion')) { st.stats.compIdle++; }
+        else s.next = time + 6000;
+      }
+    }
+    // shared stillness: you stand facing something; a beat later your companion looks at it too
+    if (c && !owned(c) && stillFor >= 2000 && !st.shared && time >= st.sharedNext && near(c, p, 2)) {
+      const fa = RB.world.frontAction && RB.world.frontAction();
+      if (fa && fa.kind !== 'companion') {
+        const [fx, fy] = RB.world.frontTile();
+        const tg = { x: fx, y: fy };
+        st.shared = { t: time };
+        st.sharedNext = time + 60000;
+        const r = mkRun(c, RB.gestures.get('observe'), { owner: 'idle', target: tg, delay: 600, tag: 'shared' });
+        r.dir = dirTo(c, tg); S(c).run = r;
+        const rp = mkRun(p, RB.gestures.get('glance'), { owner: 'idle', target: c, delay: 1500 + r.total, tag: 'shared' });
+        S(p).run = rp;
+        st.stats.shared++;
+        st.trace.push({ who: 'shared', h: 'observe', why: 'shared', t: Math.round(time) });
+      }
+    }
+    if (st.shared && time - st.shared.t > 6000) st.shared = null;
+    // your own small idles (only things that imply no feeling: the strap, a look at what is in front, a shift)
+    if (stillFor >= 3000 && !owned(p)) {
+      const s = S(p);
+      if (s.map !== w.map.id || !s.prof) profileOf(p);
+      if (s.run && (s.run.done || T() - s.run.t0 > s.run.total + 50)) finish(p, s.run);
+      if (s.next == null || s.next < time - 60000) s.next = time + 800 + rand(p, 'first') * 2000;
+      if (!s.run && time >= s.next) {
+        const h = pickHabit(p, s.prof, s.prof.idle);
+        if (h && startIdle(p, h, 'player')) st.stats.playerIdle++;
+        else s.next = time + 8000;
+      }
+    }
+  }
+  // a wanderer's round: after a step, now and then a pause with a habit of their route
+  function wanderPause(n) {
+    const s = n.stg;
+    if (!st.on) return false;
+    if (owned(n)) return true;
+    if (s && s.run && !s.run.done) return true;
+    return false;
+  }
+  function stepped(n) {
+    if (!st.on || RB.game.reducedMotion()) return;
+    const prof = profileOf(n);
+    if (rand(n, 'pause') >= 1 / 3) return;
+    const h = pickHabit(n, prof, prof.route && prof.route.length ? prof.route : prof.idle);
+    if (!h) return;
+    const g = RB.gestures.get(h[0]);
+    const run = mkRun(n, g, { owner: 'idle', target: habitTarget(n, g.id), delay: 380, tag: 'route' });
+    if (run.still) return;
+    S(n).run = run;
+    st.stats.route++;
+    st.trace.push({ who: keyOf(n), h: g.id, why: 'route', t: Math.round(T()) });
+  }
+  function examined(x, y) { st.examine = { x, y, t: T() }; }
+  if (RB.bus) {
+    RB.bus.on('map:enter', () => { st.arrival = { t: T() }; st.lastMap = null; });
+    RB.bus.on('campaign:changing', () => { st.scene = null; st.trace = []; st.pairs.clear(); st.stats = fresh(); });
+  }
+
+  return {
+    begin, end, cue, look, pose, prop, beat, walkTo, settle, ambience, ambienceNow, owned, actor, own,
+    tick, frameOf, wanderPause, stepped, rand, examined, profileOf,
+    get AMBIENCE() { return AMBIENCE; },
+    enabled(v) { if (v != null) { st.on = !!v; if (!st.on) yieldIdle('off'); } return st.on; },
+    seed(n) { if (n != null) { st.seed = n >>> 0; const w = W(); for (const a of (w.npcs || []).concat(w.comp ? [w.comp] : [], w.player ? [w.player] : [])) if (a && a.stg) { a.stg.n = {}; a.stg.next = null; a.stg.run = null; a.stg.hist = []; } st.trace = []; st.pairs.clear(); st.gate = -1e9; st.socialNext = 0; st.lastMap = null; st.arrival = null; st.examine = null; st.shared = null; st.sharedNext = 0; st.lastMove = 0; st.lastLeavers = new Set(); } return st.seed; },
+    trace: () => st.trace.slice(),
+    stats: () => Object.assign({}, st.stats, { pose: RB.sprites._pose ? RB.sprites._pose.stats() : null }),
+    resetStats() { st.stats = fresh(); if (RB.sprites._pose) { /* the frame cache keeps its own counts */ } },
+    state() {
+      const w = W(), sc = st.scene;
+      const one = (a) => { const s = a.stg || {}; const r = s.run; return { id: idOf(a), x: a.x, y: a.y, dir: a.dir, run: r ? { id: r.id, owner: r.owner, holding: r.holding, tag: r.tag } : null, pose: s.pose || null, rest: s.rest || null, look: s.look ? s.look.dir : null, held: s.held ? s.held.kind : null, owned: owned(a), cls: s.prof ? s.prof.class : null, tier: s.prof ? s.prof.tier : null, hist: (s.hist || []).slice() }; };
+      return { scene: sc ? { id: sc.id, token: sc.token, owned: [...sc.owned].map(idOf), beats: sc.beats.slice(), ambience: !!sc.ambience } : null,
+        actors: w.map ? w.npcs.concat(w.extras || []).map(one).concat(w.comp ? [one(w.comp)] : [], [one(w.player)]) : [] };
+    },
+    release() { const sc = st.scene; if (sc) { st.scene = null; releaseScene(sc); } yieldIdle('release'); },
   };
 })();
 
@@ -33820,7 +35563,9 @@ RB.questGuide = (function () {
         const c = f.sc.cmds[f.pc++];
         const op = c.op, a = c.args || [];
         if (op === 'say' || op === 'emote' || op === 'move' || op === 'face' || op === 'faceplayer' || op === 'wait' || op === 'fade' ||
-          op === 'shake' || op === 'music' || op === 'sfx' || op === 'card' || op === 'toast' || op === 'journal' || op === 'speakerless' || op === 'interlude') continue;
+          op === 'shake' || op === 'music' || op === 'sfx' || op === 'card' || op === 'toast' || op === 'journal' || op === 'speakerless' || op === 'interlude' ||
+          // scene direction (52_staging.js): presentation only
+          op === 'gesture' || op === 'look' || op === 'pose' || op === 'walkto' || op === 'prop' || op === 'beat' || op === 'ambience') continue;
         if (c.if && !p.forceNext) {
           const v = tv(ctx, st, c.if);
           const control = op === 'end' || op === 'goto';
@@ -36478,9 +38223,13 @@ RB.render = (function () {
     const bob = isFoe && !still ? Math.round(Math.sin(t / 300 + a.x) * 3) : 0;
     // (a turn on the spot is drawn through a pivot: RB.sprites.view, src/engine/32_spriteart.js — drawing only)
     const fr0 = actorFrame(a, t, isFoe, still), vw = RB.sprites.view ? RB.sprites.view(a, t, still || isFoe, fr0) : null;
-    const art = RB.sprites.getArt && RB.sprites.getArt(a.look, vw ? vw.dir : a.dir, vw ? vw.frame : fr0);
-    const dy = a.dy || 0; // a knee dip during a field action (src/ui/57_weave.js)
-    if (art) c.drawImage(art, fx - RB.sprites.ANCHOR.x, fy - RB.sprites.ANCHOR.y + bob + dy);
+    // staged or idle body language (src/engine/52_staging.js): a pose key, a drawn facing, a small offset
+    // (a half-step, a hop); not while a turn pivots, so the turn still shows
+    const sf = !isFoe && (!vw || !vw.turn) && RB.staging ? RB.staging.frameOf(a, t, still, vw ? vw.frame : fr0) : null;
+    const art = RB.sprites.getArt && RB.sprites.getArt(a.look, sf ? sf.dir : vw ? vw.dir : a.dir, sf && sf.key ? sf.key : vw ? vw.frame : fr0);
+    const dy = (a.dy || 0) + (sf ? sf.oy : 0); // a knee dip during a field action (src/ui/57_weave.js)
+    const ox = sf ? sf.ox : 0;
+    if (art) c.drawImage(art, fx - RB.sprites.ANCHOR.x + ox, fy - RB.sprites.ANCHOR.y + bob + dy);
     else c.drawImage(RB.sprites.get(a.look, a.dir, a.frame || 0), fx - 16, fy - 46 + bob + dy, 32, 48);
     if (a.overlay) a.overlay(c, fx, fy + dy, t); // the raised hand and brush of a field action
     if (alpha < 1) c.globalAlpha = 1;
@@ -36655,6 +38404,9 @@ RB.render = (function () {
   // Effective ambience: a map may define alt: [{if, ambient, night}] for story states.
   function ambientOf(m) {
     const s = RB.game.s;
+    // a scene's own ambience (night on the veranda), presentation only: RB.staging.ambience
+    const ov = RB.staging && RB.staging.ambienceNow();
+    if (ov) return ov;
     for (const a of m.def.alt || []) if (s && RB.state.test(s, a.if)) return a;
     return { ambient: m.def.ambient || {}, night: m.def.night };
   }
@@ -37714,12 +39466,15 @@ RB.script = (function () {
     }
     running++;
     RB.game.pushMode('dialogue');
+    // the staging token: the actors this scene cues are its own until it ends (src/engine/52_staging.js)
+    const stageTok = RB.staging ? RB.staging.begin(sceneId) : 0;
     try {
       await exec(sc, ctx || {});
       RB.game.s.seen[sceneId] = true;
     } catch (err) {
       console.error('scene error', sceneId, err);
     } finally {
+      if (RB.staging) RB.staging.end(stageTok);
       running--;
       // every run pushed one dialogue mode; pop it even when nested (a hook
       // running a scene inside a scene) so no stray dialogue mode is left
@@ -37774,8 +39529,25 @@ RB.script = (function () {
             await RB.world.whenArrived(who, 3000);
           }
           await RB.ui.dialogue.say({ who, expr: c.expr, jp: c.jp, en: c.en, sceneId: sc.id, line: c.line });
+          // the reader moved on: every gesture cued for this line settles at its hold or its end
+          if (RB.staging) RB.staging.settle('advance');
           break;
         }
+        // scene direction (src/engine/52_staging.js): presentation only — never a state change. A cue
+        // binds to the line that follows it (it plays as that line appears); `wait` blocks to the peak.
+        case 'gesture': {
+          if (!RB.staging) break;
+          const o = stageArgs(a.slice(2));
+          const r = RB.staging.cue(a[0] === 'npc' ? ctx.npc : a[0], a[1], o, ctx);
+          if (o.wait && r && r.then) await r;
+          break;
+        }
+        case 'look': if (RB.staging) RB.staging.look(a[0] === 'npc' ? ctx.npc : a[0], a[1] || '-', ctx); break;
+        case 'pose': if (RB.staging) RB.staging.pose(a[0] === 'npc' ? ctx.npc : a[0], a[1] || '-', ctx); break;
+        case 'prop': if (RB.staging) RB.staging.prop(a[0] === 'npc' ? ctx.npc : a[0], a[1] || '-', { hand: a[2] || null }, ctx); break;
+        case 'walkto': if (RB.staging) await RB.staging.walkTo(a[0] === 'npc' ? ctx.npc : a[0], +a[1], +a[2], DIRW[a[3]] ? a[3] : null, { now: a.includes('now'), stay: a.includes('stay') }, ctx); break;
+        case 'beat': if (RB.staging) RB.staging.beat(a[0]); break;
+        case 'ambience': if (RB.staging) RB.staging.ambience(a[0] || '-'); break;
         case 'set': a.forEach((f) => (s.flags[f] = true)); break;
         case 'unset': a.forEach((f) => delete s.flags[f]); break;
         case 'var': {
@@ -37907,6 +39679,22 @@ RB.script = (function () {
       }
     }
   }
+  // !gesture <actor> <gesture> [target] [hold] [wait] [and=<second target>] [prop=<kind>] [hand=R|L] [then=<g>,<g>]
+  // (then=: gestures that follow this one on the same line, to the same target; the last may hold)
+  const DIRW = { up: 1, down: 1, left: 1, right: 1 };
+  function stageArgs(rest) {
+    const o = {};
+    for (const x of rest) {
+      if (x === 'hold') o.hold = true;
+      else if (x === 'wait') o.wait = true;
+      else if (x.startsWith('and=')) o.target2 = x.slice(4);
+      else if (x.startsWith('prop=')) o.prop = x.slice(5);
+      else if (x.startsWith('hand=')) o.hand = x.slice(5);
+      else if (x.startsWith('then=')) o.then = x.slice(5).split(',').filter(Boolean);
+      else if (o.target == null) o.target = x;
+    }
+    return o;
+  }
   function applyReward(r) {
     const s = RB.game.s;
     if (r.items) for (const k in r.items) RB.state.give(s, k, r.items[k]);
@@ -37926,7 +39714,7 @@ RB.script = (function () {
     return new Promise((r) => setTimeout(r, RB.game.fastForward() ? Math.min(ms, 60) : ms));
   }
 
-  return { parse, add, run, runInline, isRunning, enVars, jpVars, splitBilingual };
+  return { parse, add, run, runInline, isRunning, enVars, jpVars, splitBilingual, stageArgs };
 })();
 
 
@@ -43424,8 +45212,12 @@ RB.combatLogic = (function () {
     }
     if (st.harmony >= st.harmonyMax && st.compId) {
       const T = TECHS[st.compId];
+      // a coordinated technique needs you both: like the companion's own turn (supportActions), it waits while
+      // they are out of resolve (Harmony is kept, not spent)
+      const nm = (RB.content.chars[st.compId] && RB.content.chars[st.compId].name.en) || 'Your companion';
       out.push({ id: 'tech', kind: 'tech', icon: '✧', jp: 'あわせ', en: T ? T.name : 'Coordinated technique', tech: st.compId,
-        desc: (T ? T.effect + ' ' : '') + 'Also cancels its move. Uses up Harmony.' + (T && isGroup(st) && standing(st).length > 1 ? ' ' + T.group : '') });
+        desc: (T ? T.effect + ' ' : '') + 'Also cancels its move. Uses up Harmony.' + (T && isGroup(st) && standing(st).length > 1 ? ' ' + T.group : ''),
+        disabled: st.comp > 0 ? null : nm + ' is out of resolve. A coordinated technique needs you both; your Harmony is kept.' });
     }
     return out;
   }
@@ -49160,6 +50952,133 @@ var RB = (globalThis.RB = globalThis.RB || {});
       return { L: live.L, q: live.q, roadDry: road ? dry / road : 0, tip: G.tip, end: G.end, yH: G.yH, yS: G.yS, x0: G.x0, glassX: G.glassX };
     },
   };
+})();
+
+
+/* ==== src/ui/44_actor_dev.js ==== */
+/* Development-only gesture viewer and contact sheets for the overworld actor system (the owner's addendum
+ * §20.4; docs/expressive/CONTRACT.md §3.6). Not reachable in normal play: every entry point refuses unless
+ * the page was opened with ?dev=actors (or a test set window.__RB_DEV_ACTORS__ before calling). Nothing is
+ * saved. Every view says what it is: a SYNTHETIC fixture (the sprite rig posed directly from the gesture
+ * library and the mannerism profiles), never a recording of gameplay or a saved branch.
+ *
+ *   RB.actorDev.allowed()
+ *   RB.actorDev.open({ sheet: 'primitives' | 'habits' | 'profiles', who: [ids], dir, scale, phases })
+ *        a page over the game: rows of characters, columns of gestures (entry · peak · recovery keys), the
+ *        labels as page text (nothing is written into the art); returns the page element
+ *   RB.actorDev.close()
+ *   RB.actorDev.frame(who, gesture, phase, dir) -> canvas of one key (for tests)
+ */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.actorDev = (function () {
+  'use strict';
+  function allowed() {
+    try {
+      if (typeof window === 'undefined') return false;
+      if (window.__RB_DEV_ACTORS__ === true) return true;
+      return /[?&]dev=actors\b/.test(window.location.search || '');
+    } catch (e) { return false; }
+  }
+  // the synthetic player fixture: a creation look with a satchel and glasses (so the strap and glasses
+  // habits show), plus the companions and the bespoke cast
+  const PC = { skin: 2, hair: 'ponytail', hairColor: 3, cloth: ['#4a6a8a', '#3a5470', '#c8a050'], pants: '#3a3440', shape: 'tunic', acc: ['satchel', 'glasses'] };
+  const lookOf = (who) => (who === 'pc' ? PC : (RB.content.chars[who] || {}).look);
+  const nameOf = (who) => (who === 'pc' ? 'Player (synthetic look)' : ((RB.content.chars[who] || {}).name || {}).en || who);
+  const PROP_FOR = { present: 'ledger', read: 'book', handover: 'letter', receive: 'letter', check: 'letter' };
+  // the pose key of one phase of a gesture: 'entry' (its first key), 'peak', 'recover' (its first recovery key)
+  function keyFor(who, gid, phase, look) {
+    const g = RB.gestures.get(gid);
+    if (!g) return null;
+    const k = phase === 'entry' ? g.entry[0] : phase === 'recover' ? g.recover[0] || g.peak : g.peak;
+    const pose = k[0] || (RB.mannerisms.of(who, look).rest || 'stiff').split('.')[0];
+    const x = k[2] || {};
+    const prop = x.prop ? g.prop || PROP_FOR[g.id] || null : null;
+    const gaze = x.gaze && /^[lrudc]$/.test(x.gaze) ? x.gaze : x.gaze === 'target' ? 'r' : x.gaze === 'away' ? 'l' : null;
+    return RB.sprites._pose.key(pose, { prop, gaze });
+  }
+  function frame(who, gid, phase, dir) {
+    const look = lookOf(who);
+    if (!look) return null;
+    const fit = RB.gestures.fit(gid, look, { prop: PROP_FOR[gid] });
+    if (!fit) return null;
+    return RB.sprites.getArt(look, dir || 'down', keyFor(who, fit, phase || 'peak', look));
+  }
+  let root = null;
+  function close() { if (root) { root.remove(); root = null; } }
+  function open(o) {
+    if (!allowed()) return null;
+    o = o || {};
+    close();
+    const sheet = o.sheet || 'primitives';
+    const scale = o.scale || 2, dir = o.dir || 'down';
+    const who = o.who || ['pc', 'nao', 'mio', 'ren', 'suzu'];
+    const phases = o.phases || (sheet === 'primitives' ? ['entry', 'peak', 'recover'] : ['peak']);
+    let cols;
+    if (sheet === 'primitives') cols = Object.keys(RB.gestures.PRIM).map((n) => RB.gestures.PRIM[n].id);
+    else if (sheet === 'habits') cols = RB.gestures.list().filter((g) => g.kind === 'habit').map((g) => g.id);
+    else cols = null; // profiles: per person their rest and their own habits
+    root = document.createElement('div');
+    root.className = 'actor-dev';
+    root.setAttribute('style', 'position:fixed;inset:0;z-index:9999;overflow:auto;background:#d8c8a4;color:#2a2024;font:12px/1.3 sans-serif;padding:10px');
+    const head = document.createElement('div');
+    head.setAttribute('style', 'font-weight:bold;margin-bottom:6px');
+    head.textContent = 'SYNTHETIC FIXTURE — the overworld sprite rig posed directly from RB.gestures and RB.mannerisms (not gameplay, not a saved branch). Sheet: ' + sheet + ', facing ' + dir + ', ' + scale + '× art px.';
+    root.appendChild(head);
+    const tbl = document.createElement('table');
+    tbl.setAttribute('style', 'border-collapse:collapse');
+    const cell = (cv, txt) => {
+      const td = document.createElement('td');
+      td.setAttribute('style', 'border:1px solid rgba(0,0,0,0.15);text-align:center;vertical-align:bottom;padding:2px');
+      if (cv) { const c = document.createElement('canvas'); c.width = cv.width * scale; c.height = cv.height * scale; const g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.drawImage(cv, 0, 0, c.width, c.height); td.appendChild(c); }
+      if (txt) { const d = document.createElement('div'); d.textContent = txt; d.setAttribute('style', 'max-width:' + (40 * scale * (phases.length || 1)) + 'px'); td.appendChild(d); }
+      return td;
+    };
+    if (cols) {
+      const hr = document.createElement('tr');
+      hr.appendChild(cell(null, ''));
+      for (const id of cols) { const g = RB.gestures.get(id); hr.appendChild(cell(null, (g.n ? g.n + ' ' : '') + g.label + (g.legible ? ' [' + g.legible + ']' : ''))); }
+      tbl.appendChild(hr);
+      for (const w of who) {
+        const tr = document.createElement('tr');
+        tr.appendChild(cell(null, nameOf(w)));
+        for (const id of cols) {
+          const td = cell(null, null);
+          const fit = RB.gestures.fit(id, lookOf(w), { prop: PROP_FOR[id] });
+          for (const ph of phases) { const cv = frame(w, id, ph, dir); if (cv) { const c = document.createElement('canvas'); c.width = cv.width * scale; c.height = cv.height * scale; const g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.drawImage(cv, 0, 0, c.width, c.height); td.appendChild(c); } }
+          if (fit !== id) { const d = document.createElement('div'); d.textContent = fit ? '→ ' + fit : '—'; td.appendChild(d); }
+          tr.appendChild(td);
+        }
+        tbl.appendChild(tr);
+      }
+    } else {
+      for (const w of who) {
+        const look = lookOf(w);
+        if (!look) continue;
+        const prof = RB.mannerisms.of(w, look);
+        const tr = document.createElement('tr');
+        tr.appendChild(cell(null, nameOf(w) + ' — ' + prof.class + (prof.tier ? ' (' + prof.tier + ')' : '')));
+        const rest = (prof.rest || '').split('.')[0];
+        tr.appendChild(cell(RB.sprites.getArt(look, dir, rest ? RB.sprites._pose.key(rest, { hand: (prof.rest || '').split('.')[1] || null, prop: prof.restProp || null }) : 'i0'), 'rest: ' + (prof.rest || 'standing')));
+        for (const h of prof.idle || []) {
+          const id = h[0], fit = RB.gestures.fit(id, look, { prop: (h[2] || {}).prop });
+          tr.appendChild(cell(fit ? frame(w, fit, 'peak', dir) : null, id + (h[2] && h[2].at ? ' @' + h[2].at : '') + (fit ? '' : ' (not for this look)')));
+        }
+        const talk = (prof.talk || []).map((n) => (RB.gestures.PRIM[n] || {}).id).filter(Boolean);
+        tr.appendChild(cell(null, 'talk: ' + talk.join(', ')));
+        tbl.appendChild(tr);
+      }
+    }
+    root.appendChild(tbl);
+    const x = document.createElement('button');
+    x.textContent = 'Close';
+    x.setAttribute('style', 'position:fixed;top:6px;right:10px');
+    x.onclick = close;
+    root.appendChild(x);
+    document.body.appendChild(root);
+    return root;
+  }
+  return { allowed, open, close, frame, keyFor, PC };
 })();
 
 
@@ -69452,7 +71371,7 @@ RB.combat = (function () {
     const desc = c.disabled || RB.script.enVars(c.target ? String(c.desc).replace(/\s*\([^)]*\)\s*$/, '') : c.desc);
     const fresh = c.kind === 'word' && newWords.has(c.word.id);
     const ans = fresh ? L().answers(c.word).map((k) => L().INTENTS[k].label) : [];
-    const ready = c.kind === 'tech';
+    const ready = c.kind === 'tech' && !c.disabled; // a technique waiting for the companion doesn't glow
     return '<button class="resp rcard' + (fresh ? ' fresh' : '') + (ready ? ' tech' : '') + '" data-i="' + i + '"' + (c.id != null ? ' data-cid="' + esc(String(c.id)) + '"' : '') + ' data-foes="' + r.foes.join(',') + '" data-allies="' + r.allies.join(',') + '"' + (c.disabled ? ' disabled' : '') + '>' +
       '<span class="ic">' + I(cardIcon(c)) + '</span>' +
       '<span class="rc-w"><span class="rc-jp">' + RB.ui.jhtml(hi && c.word && c.word.jpK ? c.word.jpK : c.jp) + '</span><span class="rc-en">' + esc(c.en) + '</span>' +
@@ -84062,18 +85981,30 @@ suzu: お{客|きゃく}さま 、 アンコール ？ {残念|ざんねん} 、
 ?(rw_mill_open) suzu: {水車|すいしゃ}{小屋|ごや} ？ {怖|こわ}い {話|はなし} の {舞台|ぶたい} に ぴったり 。 …… {私|わたし} も {行|い}く 。 {怖|こわ}い から こそ 。 || The mill? The perfect set for a ghost story. …I'm coming too. Precisely because it's scary.
 
 @scene rw.hana_first
+# Staged (Chapter 1 performed interaction, docs/expressive/GESTURES.md): Hana stops at the two cups on
+# the table, the player turns with her and back; a thought, a guarded hand, the cup held out.
 !faceplayer hana
+!gesture hana nod pc
 hana[smile]: いらっしゃい 。 {朝|あさ} の お{茶|ちゃ} 、 {入|い}れた ばかり よ 。 …… あら 。 || Welcome. I've just made the morning tea. …Oh.
+!gesture hana observe prop:teaset hold
+!gesture pc listen prop:teaset
 narr: {卓|たく} の {上|うえ} に 、 {湯気|ゆげ} の {立|た}つ {茶碗|ちゃわん} が ふたつ 。 || On the table, two cups of tea, steaming.
+!look pc hana
+!gesture hana chin hold
 hana[think]: また ふたつ いれて しまった 。 {毎朝|まいあさ} 、 {手|て} が {勝手|かって} に ふたつ いれる の 。 || I've poured two again. Every morning my hands pour two on their own.
+!gesture hana guard hold
 hana[worry]: {一|ひと}つ は わたし の 。 もう {一|ひと}つ は …… {誰|だれ} の だった かしら 。 {毎朝|まいあさ} {来|く}る {人|ひと} が いた はず なの 。 {声|こえ} も {笑|わら}い{方|かた} も {覚|おぼ}えて いる のに 、 {名前|なまえ} と {顔|かお} だけ が 、 ない の 。 || One is mine. The other… whose was it? Someone used to come every morning, I'm sure of it. I remember the voice, the laugh — only the name and face are gone.
+!gesture hana aside
 hana: {変|へん} よ ね 。 {冷|さ}めた お{茶|ちゃ} を {毎朝|まいあさ} {捨|す}てる の が 、 {少|すこ}し {寂|さび}しい だけ 。 …… {飲|の}んで いく ？ {冷|さ}めてない {方|ほう} を 。 || Silly, isn't it. It's just a little lonely, pouring the cold cup away every morning. …Will you have some? The one that isn't cold.
 !choice
 * いただきます || I'd love some. -> drink
 * {誰|だれ} か {心当|こころあ}たり は ？ || Any idea who it could be? -> who
 :who
+!gesture hana point down
 hana[think]: {橋|はし} の {方|ほう} から {来|き}た 、 と {思|おも}う 。 {朝|あさ} は いつも {川|かわ} の {匂|にお}い が した 。 それ しか わからない の 。 || From the direction of the bridge, I think. They always smelled of the river in the mornings. That's all I know.
 :drink
+!prop hana cup
+!gesture hana present pc prop=cup hold
 hana[smile]: どう ぞ 。 {旅|たび} の {人|ひと} に {飲|の}んで もらえる なら 、 {二|ふた}つ{目|め} も {無駄|むだ} じゃ ない わ 。 || Here you are. If a traveller drinks it, the second cup isn't wasted.
 !give rw_tea_leaves quiet
 !set rw_hana_cups
@@ -87768,32 +89699,83 @@ wataru[sad]: …… {分|わ}かりました 。 {僕|ぼく} も {行|い}き�
 wataru: …… {帳簿|ちょうぼ} の {整理|せいり} が あります ので 。 || …I have the ledger to sort out.
 
 @scene sg.omi_wataru
+# Staged (docs/expressive/GESTURES.md §8; the owner's addendum §14): Omi is at her desk, writing; on
+# Wataru's own route he takes the forward place at the desk's corner and the party stays behind his lead;
+# on the party's route you open, and he steps up into his own admission. The pivotal exchange (the two
+# faults, "not dismissing me?", the notice handed back and opened) is marked by the beats omi.pivot.* for
+# the illustrated close-up (SHOTS.md §2); the overworld staging under it stays complete on its own.
+!beat omi.arrive
+!pose omi write1
+!prop omi brush
+?(sg_wataru_self) !walkto wataru 6 4 left
+?(sg_wataru_self) !gesture wataru resolve omi hold
+?(sg_wataru_self) !gesture pc listen wataru
 ?(sg_wataru_self) wataru: {港長|こうちょう} 。 {二番|にばん}{倉庫|そうこ} の {荷|に} を {売|う}った の は 、 {僕|ぼく} です 。 || Harbourmaster. I'm the one who sold the cargo from No. 2 warehouse.
+?(!sg_wataru_self) !walkto pc 5 5 up
+?(!sg_wataru_self) !gesture pc palm omi
 ?(!sg_wataru_self) pc: {港長|こうちょう} 。 {二番|にばん}{倉庫|そうこ} の {件|けん} です 。 || Harbourmaster. It's about No. 2 warehouse.
+?(!sg_wataru_self) !walkto wataru 6 4 left
+?(!sg_wataru_self) !gesture wataru resolve omi hold
+?(!sg_wataru_self) !gesture pc listen wataru hold
 ?(!sg_wataru_self) wataru[sad]: …… {僕|ぼく} です 。 {荷|に} を {売|う}った の は 。 || …It was me. I sold the cargo.
+!beat omi.pause
+!pose omi -
+!prop omi -
+!gesture omi listen wataru hold
+!gesture comp listen omi
 omi: …… 。 || ……
+!gesture omi exhale
 omi: {知|し}ってた よ 。 {半分|はんぶん} くらい は ね 。 {残|のこ}り の {半分|はんぶん} は 、 {知|し}りたく なかった 。 || I knew. About half of it. The other half I didn't want to know.
+!gesture wataru halfraise omi then=fidget
 wataru: {借金|しゃっきん} が あって …… 。 いえ 、 {言|い}い{訳|わけ} は しません 。 || I had debts… No. I won't make excuses.
+!gesture omi emphatic wataru then=palm
+!gesture wataru flinch omi
 omi[angry]: {言|い}い{訳|わけ} を しろ 。 {聞|き}く の も 、 {港長|こうちょう} の {仕事|しごと} だ 。 || Make them. Listening is part of the harbourmaster's job too.
+!gesture wataru palm omi then=size,palm
+!look omi wataru
 narr: ワタル は {全部|ぜんぶ} {話|はな}した 。 {船|ふね} の こと 、 {利子|りし} の こと 、 {遅|おく}れて いる {給料|きゅうりょう} の こと 。 || Wataru tells her everything: the boat, the interest, the late wages.
+!beat omi.pivot.begin
+!gesture omi palm prop:desk
 omi[think]: {給料|きゅうりょう} が {遅|おく}れて いる の は 、 {会社|かいしゃ} の {落|お}ち{度|ど} だ 。 {灯落|ひおち} の {本店|ほんてん} に は 、 わたし から {手紙|てがみ} を {書|か}く 。 {遅|おく}れた {分|ぶん} は 、 {利子|りし} を つけて {払|はら}って もらう 。 || The wages being late is the company's fault. I'll write to head office in Lanternfall myself. They'll pay what they owe — with interest.
+!gesture omi size wataru
 omi: だが 、 {荷|に} を {売|う}った の は お{前|まえ} の {落|お}ち{度|ど} だ 。 {売|う}った {分|ぶん} は 、 {給料|きゅうりょう} から {返|かえ}して もらう 。 {灯台|とうだい} と ソウタ に は 、 {自分|じぶん} で {頭|あたま} を {下|さ}げに {行|い}け 。 || But selling the cargo is your fault. You'll repay what you sold out of your wages. And you'll go to the lighthouse and to Sōta yourself, and apologise.
+!gesture omi nod wataru
 omi: それ から 、 {港|みなと} じゅう の ラベル を {書|か}き{直|なお}せ 。 {一枚|いちまい} {残|のこ}らず 。 お{前|まえ} より {字|じ} の {綺麗|きれい} な {者|もの} は 、 この {港|みなと} に いない 。 || And then you'll rewrite every label in the harbour. Every last one. No one in this port writes a better hand than you.
+!gesture wataru flinch omi
 wataru[surprise]: …… {辞|や}めさせない ん です か 。 || …You're not dismissing me?
+!gesture wataru exhale
 omi: {辞|や}めさせたら 、 {誰|だれ} が {借金|しゃっきん} を {返|かえ}す ん だ 。 || If I dismiss you, who pays back the debt?
+?(sg_wataru_self) !gesture omi nod wataru
 ?(sg_wataru_self) omi[smile]: …… それ に 、 {自分|じぶん} の {口|くち} で {言|い}いに {来|き}た 。 それ は {覚|おぼ}えて おく よ 。 || …Besides, you came and said it yourself. I'll remember that.
+?(comp=mio) !gesture comp nod omi
 ?(comp=mio) comp[smile]: （{厳|きび}しい けど 、 {優|やさ}しい {人|ひと} だ ね 。） || (Strict, but kind.)
+?(comp=suzu) !gesture comp size
 ?(comp=suzu) comp[smile]: （{見事|みごと} な お{裁|さば}き 。 {貸|か}し と {借|か}り が 、 ちゃんと {合|あ}った わ 。） || (Well judged. The debits and credits actually balance.)
+?(comp=nao) !gesture comp lookbetween omi and=wataru
 ?(comp=nao) comp: （…… {逃|に}げ{道|みち} じゃ なくて 、 {帰|かえ}り{道|みち} を {作|つく}った な 。） || (…She didn't give him a way out. She gave him a way back.)
+?(comp=ren) !gesture comp listen omi then=nod
 ?(comp=ren) comp: （{正|ただ}す こと と {罰|ばっ}する こと を 、 {分|わ}けて いる 。 よい {港長|こうちょう} です 。） || (She keeps correcting separate from punishing. A good harbourmaster.)
+!gesture omi palm wataru
 omi: {灯落|ひおち} の {黒部|くろべ} に は 、 {正直|しょうじき} に 「{待|ま}って くれ 」 と {書|か}け 。 {開|あ}けて ない {手紙|てがみ} に は 、 {返事|へんじ} も {書|か}けない だろう 。 || And write to Kurobe in Lanternfall, honestly asking them to wait. You can't answer a letter you haven't opened.
 !take sg_notice
+!walkto pc 6 5 up
+!prop pc notice
+!gesture pc handover wataru
+!gesture wataru receive pc hold
 narr: {督促状|とくそくじょう} を ワタル に {返|かえ}した 。 || You give the final notice back to Wataru.
+!gesture wataru read prop=notice hold
 wataru: …… {開|あ}けます 。 {今|いま} 、 ここ で 。 || …I'll open it. Now. Here.
+!look omi wataru
 narr: {封|ふう} が {切|き}られた 。 {誰|だれ} も {何|なに} も {言|い}わなかった 。 {窓|まど} の {外|そと} で 、 カモメ が {一羽|いちわ} {鳴|な}いた 。 || The seal breaks. No one says anything. Outside the window, a single gull cries.
 !set sg_wataru_resolved
 !note sg_passive
+?(comp=suzu) !gesture comp lowered wataru then=listen
 ?(comp=suzu) comp: （…… {開|あ}けた わ ね 。 {一番|いちばん} {難|むずか}しい ところ よ 。） || (…He opened it. That's the hardest part.)
+!beat omi.pivot.end
+!look wataru omi
+!gesture wataru nod omi
+!gesture omi nod wataru
+!gesture pc listen wataru
 wataru: {倉庫|そうこ} に {戻|もど}ります 。 {返事|へんじ} を {書|か}かない と 。 …… よければ 、 {後|あと} で {寄|よ}って ください 。 || I'll go back to the warehouse. I have a reply to write. …Please stop by later, if you would.
 !autosave
 !music saltglass
@@ -93995,43 +95977,69 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.script.add(`
 @scene co.suzu_night
+# Staged (Chapter 3 performed interaction): the fade covers only the time changing; Suzu is found
+# sitting on the edge of the inn's raised floor at night, and tells it from there (her account book
+# in her hands); she stands when she decides to help. Ambience is presentation only (!ambience).
 !if comp!=suzu -> end
 !if seen.co.suzu_night_done -> end
 !fade out
 !music companion_suzu
-narr: その {夜|よる} 。 {宿|やど} の {縁側|えんがわ} に 、 スズ が {一人|ひとり} で {座|すわ}って いた 。 || That night, Suzu is sitting alone on the inn's veranda.
+!ambience night_in
+!walkto comp 8 4 down now
+!pose comp sitlook
 !fade in
+narr: その {夜|よる} 。 {宿|やど} の {縁側|えんがわ} に 、 スズ が {一人|ひとり} で {座|すわ}って いた 。 || That night, Suzu is sitting alone on the inn's veranda.
+!walkto pc 7 4 right
+!pose comp sit
+!look comp pc
 comp[smile]: あら 、 {眠|ねむ}れない の ？ {私|わたし} も 。 {枕|まくら} が {変|か}わる と ダメ な の よ 。 {旅芸人|たびげいにん} の くせ に 。 || Oh, can't sleep? Me neither. A new pillow always gets me. And me a travelling performer.
 pc: スズ 。 この {里|さと} に 、 {来|き}た こと が ある ん だろう 。 || Suzu. You've been to this village before, haven't you.
+!gesture comp laugh
 comp[laugh]: {来|き}た こと ？ ある ある 。 {百回|ひゃっかい} くらい 。 {柿|かき} を {食|た}べ に 。 || Been here? Oh, loads. A hundred times. For the persimmons.
+!gesture comp lowered hold
 comp[closed]: …… || …
 comp: …… {一回|いっかい} だけ 。 {二十年前|にじゅうねんまえ} 。 {一座|いちざ} で 、 {秋祭|あきまつ}り の {舞台|ぶたい} に {立|た}つ はず だった 。 {私|わたし} は {十六|じゅうろく} で 、 {初|はじ}めて {台詞|せりふ} を もらった {年|とし} 。 || …Once. Twenty years ago. With the troupe — we were booked for the autumn festival. I was sixteen. The first year I had lines of my own.
 comp: {前|まえ} の {晩|ばん} に 、 {火事|かじ} が あった 。 {上|うえ} の {段|だん} が {燃|も}えた 。 {私|わたし} たち の {天幕|てんまく} は {水路|すいろ} の {下|した} に あって 、 {下|お}りて くる {子|こ}ども たち を {数|かぞ}えて いた 。 || The night before, there was a fire. The upper terraces burned. Our tents were at the bottom of the channel, and we counted the children as they came down.
+!gesture pc listen comp
 pc: {覚|おぼ}えて いる の か 。 {里|さと} の {人|ひと} は {誰|だれ} も …… || You remember it. Nobody in the village…
 comp: {私|わたし} たち は {次|つぎ} の {朝|あさ} に {発|た}った から 。 {静寂|しじま} が {来|き}た の は 、 たぶん {冬|ふゆ} 。 {私|わたし} だけ 、 {取|と}られ {損|そこ}ねた の ね 。 || We left the next morning. I think the Hush came that winter. I'm the one it missed.
+!gesture comp touchhair then=lowered hold
 comp[sad]: その {朝|あさ} 、 {小|ちい}さな {男|おとこ} の {子|こ} が {私|わたし} の リボン を {引|ひ}っ{張|ぱ}って 、 「 お{母|かあ}さん は どこ ？ 」 って {聞|き}いた の 。 || That morning a little boy tugged at my ribbon and asked me, "Where's my mum?"
 comp: {私|わたし} は {知|し}ってた 。 {窯|かま} の {人|ひと} で 、 {上|うえ} へ {行|い}った まま {戻|もど}らなかった 。 || I knew. She worked the kiln. She went up the hill and didn't come back.
 comp: {私|わたし} は {言|い}った 。 「 お{母|かあ}さん は {一座|いちざ} と {一緒|いっしょ} に {先|さき} へ {行|い}った の 。 {春|はる} に なったら {帰|かえ}って くる よ 」 って 。 || I told him: "Your mum's gone on ahead with the troupe. She'll be back when spring comes."
+!gesture comp avert pc hold
 comp[closed]: …… {台詞|せりふ} の {稽古|けいこ} より 、 ずっと {上手|じょうず} に {言|い}えた 。 || …I delivered it far better than any line I'd rehearsed.
 pc: その {子|こ} が …… || That boy…
+!gesture comp nod pc
 comp: ヒロ 。 {広場|ひろば} の {空|あ}いた {席|せき} 。 {毎年|まいとし} {誰|だれ} か の ため に {空|あ}けて ある って 、 サヨ さん が {言|い}ってた でしょ 。 || Hiro. The empty seat in the square. Sayo said someone keeps it free every year, didn't she.
+!prop comp accountbook
+!gesture comp read prop=accountbook hold
 narr: スズ は {小|ちい}さな {帳簿|ちょうぼ} を {取|と}り{出|だ}して 、 {最後|さいご} の {頁|ページ} を {開|ひら}いた 。 {丁寧|ていねい} な {字|じ} が {並|なら}んで いる 。 || Suzu takes out a little account book and opens it at the last page. Neat lines of names and figures.
 comp: {私|わたし} ね 、 {借|か}り は {全部|ぜんぶ} {書|か}いて おく の 。 {宿代|やどだい} 、 {傘|かさ} 、 {貸|か}して もらった {針|はり} {一本|いっぽん} まで 。 {返|かえ}したら {線|せん} を {引|ひ}く 。 || I write down every debt, you know. Lodgings, umbrellas, a single needle someone lent me. When I pay, I cross it out.
+!gesture comp present pc prop=accountbook hold
 comp: {線|せん} が {引|ひ}けて ない の は 、 これ だけ 。 || This is the only one I've never crossed out.
 narr: 「 ヒロ ── {本当|ほんとう} の こと {一|ひと}つ 。 {未払|みはら}い 。 」 || "Hiro — one truth. Unpaid."
+!gesture comp read prop=accountbook hold
 comp: {何年|なんねん} か して 、 {手紙|てがみ} を {書|か}いた こと が ある 。 {本当|ほんとう} の こと を 。 でも {封|ふう} を する {前|まえ} に 、 {字|じ} が {全部|ぜんぶ} {白|しろ}く {消|き}えた 。 || A few years later I wrote him a letter. The truth. But before I could seal it, every word faded to white.
+!prop comp -
+!gesture comp laugh
 comp[laugh]: {嘘|うそ} は {残|のこ}って 、 {本当|ほんとう} は {消|き}える 。 {皮肉|ひにく} でしょ ？ あの {夜|よる} の こと で 、 {静寂|しじま} が {取|と}らなかった の は 、 {私|わたし} の {嘘|うそ} だけ 。 {痛|いた}い ところ が {一|ひと}つ も ない から 。 || The lie stays; the truth fades. Ironic, isn't it? Of everything about that night, the only thing the Hush didn't take was my lie. There's nothing in it that hurts.
 !choice
 * {今|いま} なら 、 {届|とど}く かも しれない 。 || Maybe now it could reach him. -> reach
 * {無理|むり} に {話|はな}さなくて いい 。 || You don't have to tell him. -> push
 :reach
+!gesture comp chin hold
 comp[think]: …… {里|さと} が {火事|かじ} を {思|おも}い{出|だ}せば 、 {本当|ほんとう} の こと も {字|じ} に {残|のこ}る 。 そう いう こと ね 。 || …If the village remembers the fire, the truth will stay on the page too. That's what you mean.
 !goto both
 :push
+!gesture comp shake
 comp[smile]: {優|やさ}しい の ね 。 でも それ 、 {二十年前|にじゅうねんまえ} の {私|わたし} と {同|おな}じ {台詞|せりふ} よ 。 || You're kind. But that's exactly the line I gave myself twenty years ago.
 !goto both
 :both
+!pose comp -
+!gesture comp nod pc
 comp: {火事|かじ} を {取|と}り{戻|もど}す の を 、 {手伝|てつだ}う わ 。 {全部|ぜんぶ} {終|お}わったら 、 {言|い}う 。 {今度|こんど} は {字|じ} が {消|き}えない よう に 。 || I'll help you bring the fire back. And when it's done, I'll tell him. So that this time the words don't fade.
+!gesture comp palm pc
 comp[smirk]: …… その {前|まえ} に 、 ヒロ が {今|いま} {何|なに} を {信|しん}じてる か 、 {確|たし}かめたい 。 {付|つ}いて {来|き}て くれる ？ {観客|かんきゃく} が いる と 、 {私|わたし} 、 {強|つよ}い の 。 || …Before that, I want to know what Hiro believes now. Will you come? I'm braver with an audience.
 !note co_suzu_ledger
 !quest co_suzu 1
@@ -96414,20 +98422,33 @@ narr: {氷|こおり} が {音|おと} を {立|た}てて {割|わ}れ 、 {湯
 // ---- residents -----------------------------------------------------------------------------
 RB.script.add(`
 @scene sb.yae
+# Staged (Chapter 4 performed interaction): Yae's welcome, her worry, counting the lost years on her
+# fingers and losing count, and the way north pointed out; the companion's aside with their own gesture.
 !if sb_lamp_lit -> after
 !if sb_storm -> morning
 !if quest.sb_lamp>=1 -> later
+!gesture yae palm pc
 yae[surprise]: まあ ！ この {季節|きせつ} に お{客|きゃく} さん だ なんて 。 さあ さあ 、 {入|はい}って 。 {雪|ゆき} は {払|はら}って から ね 。 || My! Guests, at this time of year. Come in, come in. Brush the snow off first, mind.
+!gesture yae nod pc
 yae[smile]: {雪見屋|ゆきみや} の ヤエ です 。 {部屋|へや} なら {空|あ}いてる よ 。 {冬|ふゆ} は いつも {空|あ}いてる けど ね 。 || I'm Yae; this is Yukimiya. There are rooms free. There always are, in winter.
 pc: {天文台|てんもんだい} の {灯|あか}り の こと を {聞|き}きたい んです が 。 || We wanted to ask about the observatory lamp.
+!gesture yae aside
 yae[worry]: ああ …… あれ ね 。 || Ah… that.
+!gesture yae palm pc
 yae: ホシノ さん って いう {天文|てんもん}{学者|がくしゃ} が いて ね 。 {娘|むすめ} さん が {灯落|ひおち} へ {働|はたら}き に {出|で}た とき 、 {約束|やくそく} した んだって 。 「 おまえ が {帰|かえ}る まで 、 {毎晩|まいばん} {灯|あか}り を ともして おく 」 って 。 || There's an astronomer called Hoshino. When his daughter went down to work in Lanternfall, he made her a promise: "I'll keep the lamp lit every night until you come home."
+!gesture yae count then=chin hold
 yae[think]: {二十年|にじゅうねん} …… いや 、 {十年|じゅうねん} ？ あれ 、 {何年|なんねん} だった っけ 。 {毎年|まいとし} {数|かぞ}えてた のに 。 || Twenty years… no, ten? Oh — how many years was it? I used to count them every year.
+!gesture yae halfraise
 yae: とにかく 、 {一晩|ひとばん} も {欠|か}かさなかった の 。 それ が 、 {急|きゅう} に ね 。 || Anyway, he never missed a single night. And then, all of a sudden.
+?(comp=nao) !gesture comp aside
+?(comp=mio) !gesture comp chin
+?(comp=ren) !gesture comp glasses
+?(comp=suzu) !gesture comp palm
 ?(comp=nao) comp: {数|かず} まで {抜|ぬ}けてる 。 {静寂|しじま} の {仕業|しわざ} だ な 。 || Even the number's gone. That's the Hush's work.
 ?(comp=mio) comp[think]: {毎年|まいとし} {数|かぞ}えて いた {数|かず} が 、 {出|で}て こない …… 。 || A number she counted every year, and it won't come…
 ?(comp=ren) comp[think]: {数|かず} が {抜|ぬ}け{落|お}ちて います 。 {静寂|しじま} の {手|て} の {跡|あと} です 。 || The number has dropped out. That's the Hush's fingerprint.
 ?(comp=suzu) comp: {台本|だいほん} の {数字|すうじ} だけ 、 {誰|だれ} か が {消|け}した みたい 。 || As if someone rubbed out just the numbers in the script.
+!gesture yae point up
 yae: ホシノ さん の {家|いえ} は 、 {北|きた} の {坂|さか} の {下|した} 。 {天文台|てんもんだい} へ {上|のぼ}る {石段|いしだん} の {手前|てまえ} だよ 。 {会|あ}って あげて 。 {近頃|ちかごろ} 、 {誰|だれ} とも {話|はな}さない の 。 || His house is at the foot of the north slope, just before the stone stair up to the observatory. Go and see him. He hardly talks to anyone lately.
 !quest sb_lamp 1
 !end
@@ -102054,32 +104075,63 @@ comp[shy]: {一緒|いっしょ} に {来|き}て くれる ？ {声|こえ} が
 !autosave
 
 @scene lf.mio_refuse
+# Staged (Chapter 5 performed interaction; Mio's personal quest): Mio steps up to the counter herself;
+# your hand on her back; her refusal made with a flat hand and a shake of the head; the stamp held up
+# and stopped; then she turns to you, hands shaking.
 !if lf_bell_rung -> after
+!prop lf_tadashi stamp
+!pose lf_tadashi hold
+!walkto comp 8 5 up
+!look pc lf_tadashi
 lf_tadashi: ミオ {様|さま} 。お{薬|くすり} の {件|けん} 、{明日|あした} まで に お{願|ねが}い できます でしょう か 。|| Ms Mio. Regarding the medicine — might I ask for it by tomorrow?
+!gesture comp fidget
 comp: …… あの 。|| …Um.
+!gesture comp halfraise hold
 narr: ミオ の {口|くち} が 、「はい」 の {形|かたち} に {動|うご}き かけて 、{止|と}まる 。|| Mio's mouth starts to shape a "yes", and stops.
 !challenge lf.ch_mio_refuse
+!gesture pc touchback comp hold
 narr: {背中|せなか} に 、そっと {手|て} を {当|あ}てる 。|| You lay a hand gently on her back.
+!gesture comp emphatic lf_tadashi then=shake
 comp[angry]: …… お{断|ことわ}り します 。|| …I refuse.
 narr: {記録館|きろくかん} が 、しん と した 。{何年|なんねん} も {誰|だれ} も {口|くち} に して いない {言葉|ことば} だった 。|| The Records Hall falls utterly silent. No one has said those words aloud in years.
+!gesture pc -
+!pose lf_tadashi stampup
 lf_tadashi: かしこ@かしこまる …… 。|| Cert—
+!gesture lf_tadashi flinch comp
 lf_tadashi[surprise]: …… {今|いま} 、{何|なん} と ？|| …What did you say?
+!gesture comp palm lf_tadashi
 comp: {作|つく}りません 。{皆|みな}さん が {困|こま}って いる の は 、{気持|きも}ち が {騒|さわ}ぐ から じゃ ありません 。{言|い}いたい こと が 、{言|い}えない から です 。|| I won't make it. What's troubling everyone isn't that their feelings are too stirred up. It's that they can't say what they want to say.
+!gesture comp guard hold
 comp: {本人|ほんにん} に {黙|だま}って {飲|の}ませて 、{反対|はんたい} する {気持|きも}ち を {消|け}す の は 、{治療|ちりょう} じゃ ない 。{私|わたし} は {薬師|くすし} です 。だから 、{作|つく}りません 。|| Slipping something into people without telling them, to erase their objections — that isn't treatment. I'm an apothecary. So I won't make it.
+!look lf_tadashi comp
 narr: タダシ の 「{承認|しょうにん}」 の {判子|はんこ} が 、{宙|ちゅう} で {止|と}まった 。|| Tadashi's "approved" stamp stops in mid-air.
+!pose lf_tadashi hold
 lf_tadashi: …… {承認|しょうにん} …… できません 。「お{断|ことわ}り」 を {承認|しょうにん} する {様式|ようしき} は 、ございません ので 。|| …I cannot… approve this. There is no form for approving a refusal.
+!gesture lf_tadashi exhale
 lf_tadashi[think]: …… {不思議|ふしぎ} です 。{今|いま} 、{少|すこ}し だけ …… ほっと いたしました 。|| …How strange. Just now, I felt… a little relieved.
+!gesture lf_tadashi nod comp
 lf_tadashi: ご{依頼|いらい} は 、{取|と}り{下|さ}げます 。…… {取|と}り{下|さ}げる {様式|ようしき} なら 、ございます ので 。|| I withdraw the commission. …There is, at least, a form for withdrawing.
 !goto end_scene
 :after
+!prop lf_tadashi stamp
+!walkto comp 8 5 up
+!look pc lf_tadashi
 lf_tadashi: ミオ {様|さま} 。…… あの お{薬|くすり} の {件|けん} です が 。|| Ms Mio. …About that medicine.
+!gesture comp emphatic lf_tadashi then=shake
 comp: {作|つく}りません 。|| I won't make it.
+!gesture lf_tadashi nod comp
 lf_tadashi[think]: …… {鐘|かね} の {後|あと} ですから 、{私|わたし} も {申|もう}せます 。{作|つく}って いただかなくて {結構|けっこう} です 。{最初|さいしょ} から 、{出|だ}す べき で は ない {依頼|いらい} でした 。|| …Since the bell, I can say it too. You need not make it. It was a commission that should never have been sent.
+!gesture comp guard hold
 comp: それ でも 、{私|わたし} の {口|くち} で {言|い}いたかった んです 。お{断|ことわ}り します 。|| Even so, I wanted to say it with my own mouth. I refuse.
 :end_scene
+!look comp pc
+!gesture comp fidget
 comp[shy]: …… {言|い}えた 。{手|て} 、{震|ふる}えてる 。|| …I said it. My hands are shaking.
+!gesture comp lowered hold
 comp: ずっと 、{頼|たの}まれたら {全部|ぜんぶ} {引|ひ}き{受|う}けて きた 。{断|ことわ}ったら 、{役|やく} に {立|た}たない {人|ひと} に なる {気|き} が して 。|| All my life I've taken on everything anyone asked. It felt like if I refused, I'd become someone useless.
+!gesture comp nod pc
 comp: でも 、{断|ことわ}る の も 、{薬師|くすし} の {仕事|しごと} なんだ ね 。{効|き}かない {薬|くすり} を {出|だ}さない の と 、{同|おな}じ 。|| But refusing is part of an apothecary's work too. Same as not handing out medicine that doesn't work.
+!gesture comp laugh
 comp[laugh]: …… ふふ 。{町|まち} の {頼|たの}まれ{事|ごと} も 、{半分|はんぶん} くらい {断|ことわ}って こよう かな 。{十人分|じゅうにんぶん} の やけど {薬|ぐすり} は 、{三人分|さんにんぶん} で {足|た}りる し 。|| …Heh. Maybe I'll go and turn down about half the town's requests too. Ten people's worth of burn ointment? Three will do.
 !quest lf_mio done
 !set lf_mio_done
@@ -105761,7 +107813,7 @@ kasane[closed]: わたし は 、 {自分|じぶん} の {言葉|ことば} を 
 ?(comp=ren) ren[shy]: {失礼|しつれい} しました 。 {今|いま} の は 、 {解説|かいせつ} の {要|い}らない ほう の {駄洒落|だじゃれ} です 。 || Forgive me. That one doesn't need explaining.
 kasane: {言葉|ことば} を {一|ひと}つ の {意味|いみ} に {縛|しば}れば 、 {誰|だれ} も {読|よ}み{違|ちが}えない と {思|おも}った 。 でも {間違|まちが}えた の は 、 {言葉|ことば} じゃ ない 。 {前後|ぜんご} を {切|き}り{落|お}とした 、 わたし です 。 || I thought if I tied every word to a single meaning, no one could misread. But it wasn't the words that went wrong. It was me, cutting away everything around them.
 kasane: そして {世界|せかい} じゅう の {言葉|ことば} に 、 {同|おな}じ こと を した 。 || And then I did the same to every word in the world.
-?(item.lf_toya_bell) narr: $name は 、 テツ から {預|あず}かった {小|ちい}さな {鈴|すず} を {出|だ}した 。 || You take out the little bell Tetsu gave you.
+?(item.lf_toya_bell) narr: $name は 、 トクジ から {預|あず}かった {小|ちい}さな {鈴|すず} を {出|だ}した 。 || You take out the little bell Tokuji gave you.
 ?(item.lf_toya_bell) kasane[surprise]: {使|つか}い の {鈴|すず} 。 …… トウヤ の 。 || A messenger's bell. …Tōya's.
 ?(item.lf_toya_bell) narr: カサネ は {鈴|すず} を {一度|いちど} だけ {振|ふ}った 。 ちりん 。 {三十年|さんじゅうねん} {遅|おく}れ の {音|おと} が 、 {芯|しん} の {中|なか} に {広|ひろ}がった 。 || Kasane rings it once. Ting. A sound thirty years late spreads through the Heart.
 ?(item.lf_toya_bell) kasane: …… {持|も}って いて ください 。 あの {子|こ} は 、 {走|はし}る の が {仕事|しごと} でした から 。 {旅|たび} を {続|つづ}けさせて あげて 。 || …Please keep it. Running was his work. Let it go on travelling.
@@ -106186,16 +108238,34 @@ sa_isamu: {沸|わ}く {前|まえ} の やかん だ 。 {覚|おぼ}えて お
 ?(!sa_catalogue_done) sa_isamu: {中|なか} の {目録|もくろく} は 、 {字|じ} が {全部|ぜんぶ} {消|き}えて た 。 {分|わ}かる {人|ひと} に {頼|たの}む しか ない 。 || The catalogue inside had all its writing gone. Needs someone who can make sense of it.
 
 @scene sa.isamu_return
+# Staged (Chapter 6 performed interaction): the folio handed over at the fire (the !take stays where it
+# is), held, opened; the laugh that comes back; the companion's own small response.
+!prop pc folio
+!gesture pc handover sa_isamu
+!gesture sa_isamu receive pc hold
 narr: $name は 、 {綴|つづ}り を イサム に {渡|わた}した 。 || You hand the folio to Isamu.
+!gesture sa_isamu present prop=folio hold
 sa_isamu: …… これ か 。 {薄|うす}い な 。 {五年|ごねん} {分|ぶん} 、 {重|おも}かった のに 。 || …This is it? It's so thin. It felt five years heavy.
+!gesture sa_isamu read prop=folio hold
 narr: イサム は 、 ゆっくり {表紙|ひょうし} を {開|ひら}いた 。 || Slowly, Isamu opens the cover.
+!gesture comp listen sa_isamu
 narr: {焚|た}き{火|び} の {音|おと} に {混|ま}じって 、 {誰|だれ}か が {笑|わら}った 。 {低|ひく}く {始|はじ}まって 、 {止|と}まらなく なる {笑|わら}い{声|ごえ} 。 || Mixed with the crackle of the fire, someone laughs. A laugh that starts low and can't stop.
+!gesture sa_isamu lowered hold
 sa_isamu[sad]: …… ああ 。 これ だ 。 これ だ よ 。 || …Ah. That's it. That's it.
+!gesture sa_isamu exhale
 sa_isamu: {痛|いた}い な 。 {痛|いた}い 。 …… {良|よ}かった 。 || It hurts. It hurts. …Good.
+?(comp=nao) !gesture comp nod sa_isamu
+?(comp=mio) !prop comp cloth
+?(comp=mio) !gesture comp present sa_isamu prop=cloth hold
+?(comp=ren) !gesture comp nod sa_isamu
+?(comp=suzu) !gesture comp size
 ?(comp=nao) nao: {配達|はいたつ} {完了|かんりょう} 。 …… {受取|うけとり}{印|いん} は {要|い}らない な 。 {顔|かお} に {書|か}いて ある 。 || Delivered. …Don't need a signature. It's written on his face.
 ?(comp=mio) mio: {手拭|てぬぐ}い 、 どうぞ 。 {二枚|にまい} あります 。 {一枚|いちまい} は わたし の {分|ぶん} です けど 。 || Here, a cloth. I have two. One's for me, mind.
 ?(comp=ren) ren: {頼|たの}まれた もの を 、 {返|かえ}した 。 …… {定|さだ}め より 、 {少|すこ}し {遅|おそ}く なりました が 。 || Asked for, and returned. …A little later than the charter intended.
 ?(comp=suzu) suzu: {貸|か}し {借|か}り 、 {一件|いっけん} {清算|せいさん} 。 …… こういう {帳簿|ちょうぼ} の {付|つ}け{方|かた} なら 、 {毎日|まいにち} したい な 。 || One account settled. …I'd keep books like this every day if I could.
+?(comp=mio) !prop comp -
+?(comp=mio) !gesture comp -
+!gesture sa_isamu nod pc
 sa_isamu[smile]: {礼|れい} を {言|い}う よ 。 {言葉|ことば} が {足|た}りない が 。 …… {今夜|こんや} は 、 これ を {聞|き}き ながら {寝|ね}る 。 || Thank you. I haven't got the words. …Tonight I'll fall asleep listening to this.
 !take sa_folio_isamu
 !quest sa_isamu done
@@ -115164,6 +117234,128 @@ comp: {柿|かき} って ね 、 {渋|しぶ}い うち に {採|と}って {�
 `, 'lq/50_letters');
 
 
+/* ==== src/content/mannerisms/10_cast.js ==== */
+/* Mannerism profiles: the player, the four companions and the recurring cast (docs/expressive/GESTURES.md
+ * §6–§7, written from each person's look, role, station and own lines). Read by the idle scheduler
+ * (RB.staging), the scene cues and the dialogue portraits (`portrait`: the portrait animation's idle and
+ * signature cue, PORTRAITS.md §4). Everyone else on a map gets a profile derived from their look and the
+ * station they stand at (RB.mannerisms.classOf). Habits name RB.gestures ids; talk lists primitive numbers.
+ * `tier: 'bespoke'` marks the 26 characters with authored treatment beyond their class overlay. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function () {
+  'use strict';
+  const M = (id, cls, tier, o) => RB.mannerisms.add(id, Object.assign({ class: cls, tier }, o));
+  const B = 'bespoke', O = 'overlay';
+
+  // ---- the player and the companions (§6) ----------------------------------------------------------------
+  // the player: only what implies no feeling (the strap, a look at what is in front, a shift of weight);
+  // tells and conversation come only from the line the player chose
+  M('pc', 'traveller', B, { every: [9, 16], idle: [['strap', 2], ['glance', 2], ['shift', 2], ['shiftR', 1]], talk: [9, 1, 2], avoid: ['any gesture that implies a feeling the chosen line does not'],
+    portrait: { idle: 'neutral loop', cues: {} } });
+  M('nao', 'traveller', B, { rest: 'strap', every: [7, 14], idle: [['lookroad', 4], ['check', 2, { prop: 'letter' }], ['strap', 1], ['glance', 2]], route: [['lookroad', 2]],
+    tells: { surprise: 'listen', worry: 'aside', sad: 'aside', happy: 'nod', think: 'lookbetween', shy: 'aside' }, props: ['satchel', 'letter', 'tags'], talk: [10, 3, 2, 14, 4],
+    strong: [{ beat: 'lf.nao_deliver', gesture: 'handover' }], avoid: ['impatience on every line', 'sprinting'],
+    portrait: { idle: 'glances toward the frame edge (the exits), sparse blinks', cues: { smirk: 'smirk with the head turned a little away' } } });
+  M('mio', 'host', B, { rest: 'clasp', every: [8, 15], idle: [['check', 3, { prop: 'bottle' }], ['glance', 3], ['touchhair', 1], ['shift', 1]], route: [['glance', 1]],
+    tells: { surprise: 'recoil', worry: 'guard', sad: 'lowered', happy: 'laugh', think: 'chin', angry: 'emphatic', shy: 'fidget' }, props: ['bottles', 'bottle'], talk: [4, 15, 13, 30, 24, 20, 32],
+    strong: [{ beat: 'lf.mio_refuse', gesture: 'emphatic' }, { beat: 'lf.mio_refuse', gesture: 'shake' }, { beat: 'lf.mio_refuse', gesture: 'fidget' }], avoid: ['perpetual shyness', 'bowing on every line'],
+    portrait: { idle: 'soft tilt, steady blinks; a pin in the bun catches the light', cues: { worry: 'brows up and a small nod', laugh: 'laugh hidden: shoulders, closed eyes' } } });
+  M('ren', 'keeper', B, { every: [9, 16], idle: [['tendlamp', 4], ['glasses', 1], ['lookroad', 2], ['glance', 1]], route: [['lookroad', 1]],
+    tells: { surprise: 'listen', worry: 'aside', sad: 'lowered', think: 'chin', happy: 'nod' }, props: ['lamp', 'glasses'], talk: [1, 9, 11, 7, 30], glassesPerScene: 1,
+    strong: [{ beat: 'sa.shelf_ren', gesture: 'glasses' }], avoid: ['the glasses as the answer to every feeling'],
+    portrait: { idle: 'ponytail sway; a glint over the lenses', cues: { think: 'one glasses adjustment (at most once per scene)', closed: 'a held close before hard truths' } } });
+  M('suzu', 'performer', B, { rest: 'hip', every: [7, 13], idle: [['hum', 3], ['heeltap', 2], ['touchhair', 2], ['check', 1, { prop: 'accountbook' }]], route: [['hum', 1]],
+    tells: { surprise: 'recoil', worry: 'aside', sad: 'lowered', happy: 'laugh', think: 'chin', shy: 'avert' }, props: ['ribbon', 'accountbook'], talk: [9, 11, 31, 32], serious: [25, 27, 28],
+    strong: [{ beat: 'co.suzu_truth', gesture: 'present' }, { beat: 'sa.end_comp', gesture: 'handover' }], avoid: ['a twirl or a wink in any apology, loss or confession'],
+    portrait: { idle: 'ribbon and earring sway; a light weight shift', cues: { laugh: 'shoulders bob and a wink', serious: 'no flourish, a straighter head' } } });
+
+  // ---- bespoke recurring characters (§7) ---------------------------------------------------------------------
+  M('kasane', 'keeper', B, { rest: 'sleeves', every: [20, 34], idle: [['glance', 2], ['lookroad', 1], ['check', 1, { prop: 'folio' }]], tells: { worry: 'aside', sad: 'lowered', surprise: 'recoil', think: 'chin' }, props: ['folio'], talk: [9, 16, 27], strong: [{ beat: 'sa.toya_read', gesture: 'bow' }, { beat: 'sa.choose_kasane', gesture: 'lowered' }], social: 0.1,
+    portrait: { idle: 'long still holds, the hood edge stirs', cues: { closed: 'eyes close slowly before an admission' } } });
+  M('hoshino', 'scholar', B, { rest: 'heart', every: [14, 26], idle: [['lookroad', 3], ['glasses', 2], ['rubhands', 1]], tells: { surprise: 'listen', sad: 'lowered', happy: 'exhale', think: 'chin' }, props: ['letter', 'flint'], talk: [3, 5, 7, 13], strong: [{ beat: 'sb.lamp_name', gesture: 'exhale' }],
+    portrait: { idle: 'a glint on the glasses, the beard still', cues: { surprise: 'brows high over the frames' } } });
+  M('tsuru', 'elder', B, { every: [16, 28], idle: [['lookroad', 3], ['glance', 2], ['tendlight', 1, { at: 'light' }]], tells: { think: 'chin', worry: 'shake', sad: 'lowered', surprise: 'listen' }, props: ['cane'], talk: [2, 4, 10], strong: [{ beat: 'rw.bridge_scene', gesture: 'thanks' }, { beat: 'rw.depart', gesture: 'lowered' }],
+    portrait: { idle: 'very slow blinks, chin up', cues: { think: 'eyes narrow further' } } });
+  M('co_tokiwa', 'scholar', B, { every: [14, 24], idle: [['readidle', 3], ['glasses', 2], ['tidy', 1, { at: 'surface' }]], tells: { worry: 'aside', sad: 'lowered', think: 'glasses' }, props: ['book', 'brush'], talk: [7, 16, 24], strong: [{ beat: 'co.tokiwa_confront', gesture: 'lowered' }, { beat: 'co.assembly', gesture: 'read' }],
+    portrait: { idle: 'a glint on the glasses', cues: { sad: 'gaze down and held' } } });
+  M('omi', 'official', B, { every: [12, 22], idle: [['write', 4, { at: 'desk' }], ['sort', 2, { at: 'surface' }], ['lookroad', 1], ['shift', 1]], tells: { think: 'listen', angry: 'emphatic', surprise: 'listen', sad: 'exhale' }, props: ['ledger', 'tags', 'brush'], talk: [1, 11, 24, 14],
+    strong: [{ beat: 'sg.omi_wataru', gesture: 'emphatic' }, { beat: 'sg.omi_wataru', gesture: 'size' }, { beat: 'sg.omi_wataru', gesture: 'point' }], avoid: ['shouting', 'a desk slam'], social: 0.3,
+    portrait: { idle: 'slow blinks under the brim, almost no tilt', cues: { angry: 'a narrowing and one exhale; no shake' } } });
+  M('hiro', 'craft', B, { every: [9, 16], idle: [['hammer', 2, { at: 'bench' }], ['brow', 3], ['stretch', 1], ['glance', 1]], tells: { sad: 'forehead', think: 'aside', worry: 'aside' }, props: ['pipe'], talk: [1, 20, 2], strong: [{ beat: 'co.suzu_truth', gesture: 'forehead' }] });
+  M('wataru', 'clerk', B, { rest: 'heart.R', every: [8, 15], idle: [['countidle', 3], ['glasses', 2], ['glance', 2], ['sort', 1, { at: 'surface' }]], tells: { sad: 'lowered', worry: 'fidget', surprise: 'recoil', happy: 'exhale', shy: 'avert' }, props: ['book', 'tags', 'notice'], talk: [8, 26, 27, 9],
+    strong: [{ beat: 'sg.omi_wataru', gesture: 'halfraise' }, { beat: 'sg.omi_wataru', gesture: 'recoil' }, { beat: 'sg.omi_wataru', gesture: 'exhale' }],
+    portrait: { idle: 'glasses slip a pixel and are pushed back', cues: { sad: 'gaze down, then (on a later line) up' } } });
+  M('genzo', 'elder', B, { rest: 'behind', every: [14, 24], idle: [['lookroad', 3], ['shadeeyes', 2], ['shift', 1]], tells: { sad: 'aside', happy: 'celebrate', surprise: 'listen' }, talk: [4, 10, 2], strong: [{ beat: 'sg.genzo_wind', gesture: 'celebrate' }, { beat: 'sg.ferry_arrives', gesture: 'lowered' }] });
+  M('akari', 'clerk', B, { rest: 'clasp', every: [10, 18], idle: [['stamp', 3, { at: 'surface' }], ['tidy', 2, { at: 'surface' }], ['lookroad', 1]], tells: { worry: 'guard', happy: 'thanks', sad: 'avert' }, props: ['letter', 'stamp'], talk: [19, 13, 27], strong: [{ beat: 'lf.akari_letter', gesture: 'avert' }, { beat: 'lf.akari_letter', gesture: 'thanks' }] });
+  M('lf_yae', 'official', B, { every: [14, 26], idle: [['glance', 2], ['nod', 2], ['readidle', 1]], tells: { think: 'chin', sad: 'lowered', happy: 'celebrate' }, props: ['cane', 'book'], talk: [2, 9, 32], strong: [{ beat: 'lf.yae_after', gesture: 'celebrate' }] });
+  M('lq_chigusa', 'host', B, { every: [9, 16], idle: [['pour', 3, { at: 'tea' }], ['feedfire', 2, { at: 'fire' }], ['lookroad', 2], ['stir', 1, { at: 'hearth' }]], tells: { happy: 'laugh', sad: 'bow', surprise: 'recoil' }, props: ['teapot', 'cup'], talk: [13, 14, 28], strong: [{ beat: 'lq.fare_chigusa', gesture: 'bow' }, { beat: 'lq.fare_gull', gesture: 'celebrate' }] });
+  M('umi', 'clerk', B, { every: [9, 16], idle: [['write', 2, { at: 'desk' }], ['tidy', 2, { at: 'surface' }], ['glance', 1]], tells: { angry: 'emphatic', happy: 'laugh', sad: 'lowered' }, props: ['brush', 'letter'], talk: [24, 3, 16], strong: [{ beat: 'lf.nao_deliver', gesture: 'read' }] });
+  M('tamae', 'host', B, { every: [7, 13], idle: [['tidy', 3, { at: 'surface' }], ['stir', 2, { at: 'hearth' }], ['glance', 2], ['polish', 1]], tells: { happy: 'laugh', surprise: 'recoil', sad: 'lowered' }, props: ['teapot', 'cup'], talk: [9, 31, 32], strong: [{ beat: 'lq.fare_gull', gesture: 'celebrate' }] });
+  M('yae', 'host', B, { every: [8, 14], idle: [['stir', 3, { at: 'hearth' }], ['countidle', 2], ['tidy', 2, { at: 'surface' }], ['glance', 1]], tells: { happy: 'laugh', worry: 'countidle', surprise: 'recoil', think: 'chin' }, props: ['cup', 'teapot'], talk: [12, 9, 31, 10], strong: [{ beat: 'sb.yae', gesture: 'count' }, { beat: 'sb.eve_start', gesture: 'celebrate' }] });
+  M('lf_tadashi', 'official', B, { every: [12, 20], idle: [['stamp', 4, { at: 'surface' }], ['tidy', 1, { at: 'surface' }], ['glasses', 2]], tells: { think: 'chin', surprise: 'halfraise', happy: 'exhale' }, props: ['stamp'], talk: [13, 7, 8], strong: [{ beat: 'lf.mio_refuse', gesture: 'halfraise' }, { beat: 'lf.mio_refuse', gesture: 'exhale' }] });
+  M('shiori', 'scholar', B, { every: [10, 18], idle: [['readidle', 3], ['lookroad', 2], ['write', 2, { at: 'desk' }]], tells: { think: 'chin', surprise: 'listen', worry: 'lowered' }, props: ['book', 'brush'], talk: [10, 16, 3], strong: [{ beat: 'sg.shiori_tide', gesture: 'point' }] });
+  M('yasu', 'elder', B, { every: [16, 28], idle: [['lookroad', 3], ['glance', 2], ['doze', 1]], tells: { happy: 'laugh', sad: 'lowered', think: 'chin' }, props: ['cane'], talk: [12, 3, 32], strong: [{ beat: 'lq.road_write', gesture: 'read' }] });
+  M('lf_tokuji', 'elder', B, { rest: 'folded', every: [16, 30], idle: [['lookroad', 3], ['glance', 1]], tells: { angry: 'folded', sad: 'lowered' }, talk: [22, 14], strong: [{ beat: 'lf.tokuji_story', gesture: 'lowered' }], social: 0.2 });
+  M('lq_kayo', 'traveller', B, { every: [9, 16], idle: [['lookroad', 3], ['observe', 2], ['check', 1, { prop: 'seeds' }]], tells: { happy: 'laugh', surprise: 'recoil', think: 'chin' }, props: ['basket', 'seeds'], talk: [13, 4, 31], strong: [{ beat: 'lq.road_home', gesture: 'pointup' }] });
+  M('koji', 'craft', B, { rest: 'cuphold', restProp: 'cup', every: [10, 18], idle: [['sip', 3], ['lookroad', 2], ['shift', 1]], tells: { happy: 'nod', think: 'aside' }, props: ['cup'], talk: [14, 1], strong: [{ beat: 'rw.bridge_scene', gesture: 'thanks' }] });
+  M('hana', 'host', B, { every: [8, 15], idle: [['pour', 3, { at: 'tea' }], ['tidy', 2, { at: 'surface' }], ['lookroad', 2]], tells: { sad: 'aside', worry: 'guard', happy: 'nod', think: 'chin' }, props: ['teapot', 'cup'], talk: [13, 9], strong: [{ beat: 'rw.bridge_scene', gesture: 'bow' }],
+    portrait: { idle: 'warm tilt', cues: { sad: 'gaze to the side (the cups)' } } });
+
+  // ---- recurring cast on their class overlays, with their own habits (§7) ----------------------------------
+  M('co_ume', 'elder', O, { every: [16, 28], idle: [['glance', 2], ['lookroad', 1], ['doze', 1]], talk: [5, 20, 25] });
+  M('co_goro', 'elder', O, { rest: 'behind', every: [18, 30], idle: [['lookroad', 2], ['rubhands', 1]], talk: [2, 25] });
+  M('sa_oyone', 'keeper', O, { rest: 'sleeves', every: [14, 24], idle: [['write', 2, { at: 'surface' }], ['tendlight', 2, { at: 'light' }], ['glance', 1]], talk: [16, 2] });
+  M('asahi', 'craft', O, { rest: 'folded', every: [10, 18], idle: [['brow', 2], ['check', 2, { prop: 'cup' }], ['glance', 1]], talk: [11, 5] });
+  M('tetsu', 'elder', O, { rest: 'folded', every: [16, 28], idle: [['lookroad', 3], ['glance', 1]], talk: [10, 22] });
+  M('co_sayo', 'host', O, { every: [8, 14], idle: [['check', 3, { prop: 'paper' }], ['lookroad', 1], ['touchhair', 1]], talk: [9, 10, 31] });
+  M('lf_hayato', 'official', O, { every: [10, 18], idle: [['tidy', 2, { at: 'surface' }], ['sort', 2, { at: 'surface' }], ['glance', 2]], talk: [9, 13], social: 0.7 });
+  M('fuki', 'elder', O, { every: [14, 24], idle: [['rubhands', 2], ['lookroad', 1], ['tendlight', 1, { at: 'light' }]], talk: [2, 32] });
+  M('co_tamotsu', 'craft', O, { rest: 'folded', every: [12, 22], idle: [['lookroad', 2], ['shadeeyes', 1]], talk: [22, 24] });
+  M('kanta', 'child', O, { every: [5, 10], idle: [['bounce', 3], ['peek', 2], ['crouch', 1]], talk: [10, 31] });
+  M('co_fusa', 'host', O, { every: [9, 16], idle: [['polish', 3], ['stir', 2, { at: 'hearth' }], ['glance', 1]], talk: [19, 9] });
+  M('sousuke', 'traveller', O, { every: [9, 16], idle: [['sort', 3, { prop: 'envelopes' }], ['check', 2, { prop: 'letter' }], ['glasses', 1]], talk: [13, 12, 16] });
+  M('co_nobu', 'craft', O, { rest: 'folded', every: [10, 18], idle: [['brow', 2], ['knead', 2, { at: 'bench' }]], talk: [22, 24], social: 0.3 });
+  M('co_isao', 'craft', O, { every: [14, 24], idle: [['observe', 2], ['brow', 1], ['doze', 1]], talk: [4, 20] });
+  M('lf_kinu', 'host', O, { rest: 'hips', every: [9, 16], idle: [['glance', 2], ['tidy', 1, { at: 'surface' }]], talk: [24, 10] });
+  M('sa_clerk', 'nonhuman', O, { every: [16, 28], idle: [['stiff', 1]], talk: [2, 13] });
+  M('fuku', 'elder', O, { every: [16, 28], idle: [['lookroad', 2], ['shadeeyes', 1]], talk: [2, 3] });
+  M('lf_kohei', 'craft', O, { every: [9, 16], idle: [['hammer', 2, { at: 'bench' }], ['brow', 2], ['stretch', 1]], talk: [11, 17] });
+  M('sa_isamu', 'traveller', O, { rest: 'sit', every: [14, 24], idle: [['sitidle', 2], ['glance', 1]], talk: [1, 29] });
+  M('tetsuji', 'craft', O, { rest: 'folded', every: [10, 18], idle: [['countidle', 2], ['lookroad', 1]], talk: [12, 23] });
+  M('denji', 'elder', O, { rest: 'sitlap', every: [14, 24], idle: [['sitidle', 2], ['glance', 1]], talk: [11, 2] });
+  M('co_kotaro', 'child', O, { every: [5, 10], idle: [['bounce', 2], ['peek', 2], ['glance', 1]], talk: [10, 18] });
+  M('co_asa', 'craft', O, { every: [10, 18], idle: [['lookroad', 2], ['brow', 1]], talk: [10, 17] });
+  M('sota', 'craft', O, { every: [9, 16], idle: [['jiggle', 3], ['brow', 1], ['glance', 1]], talk: [10, 23] });
+  M('lf_tsuya', 'elder', O, { every: [14, 24], idle: [['lookroad', 3], ['glance', 1]], talk: [1, 32] });
+  M('co_shino', 'traveller', O, { every: [9, 16], idle: [['sort', 2, { prop: 'letter' }], ['lookroad', 2], ['strap', 1]], talk: [14, 2] });
+  M('tomo', 'host', O, { every: [9, 16], idle: [['hangwash', 2, { at: 'laundry' }], ['lookroad', 2], ['glance', 1]], talk: [13, 32] });
+  M('lf_masaru', 'host', O, { every: [8, 14], idle: [['knead', 3, { at: 'surface' }], ['countidle', 1], ['brow', 1]], talk: [12, 31] });
+  M('co_heita', 'craft', O, { every: [12, 22], idle: [['doze', 3], ['stretch', 2], ['yawn', 1]], talk: [17] });
+  M('lf_ritsu', 'host', O, { rest: 'clasp', every: [9, 16], idle: [['polish', 3], ['tidy', 1, { at: 'surface' }]], talk: [19, 26] });
+  M('daigo', 'craft', O, { every: [9, 16], idle: [['stretch', 2], ['brow', 1], ['check', 1, { prop: 'tags' }]], talk: [13, 24] });
+  M('kiyo', 'host', O, { every: [9, 16], idle: [['tidy', 2, { at: 'surface' }], ['glance', 1]], talk: [19, 25] });
+  M('cs_hama', 'craft', O, { every: [9, 16], idle: [['hammer', 2, { at: 'bench' }], ['jiggle', 1]], talk: [16, 14] });
+  M('lf_nagi', 'keeper', O, { every: [10, 18], idle: [['tendlamp', 3], ['lookroad', 1]], talk: [10, 4] });
+  M('sa_tsuzuri', 'nonhuman', O, { every: [16, 28], idle: [['stiff', 1]], talk: [2, 13] });
+  M('lf_setsu', 'host', O, { rest: 'clasp', every: [9, 16], idle: [['tidy', 2, { at: 'surface' }], ['glance', 1]], talk: [19, 9] });
+  M('mame', 'child', O, { every: [5, 10], idle: [['bounce', 2], ['peek', 1], ['glance', 1]], talk: [10, 31] });
+  M('oto', 'craft', O, { every: [9, 16], idle: [['hammer', 3, { at: 'bench' }], ['observe', 1], ['brow', 1]], talk: [14] });
+  M('hayate', 'craft', O, { every: [10, 18], idle: [['lookroad', 3], ['brow', 1]], talk: [10, 22], social: 0.3 });
+  M('natsume', 'craft', O, { every: [8, 14], idle: [['yawn', 3], ['doze', 2]], talk: [32, 2] });
+  M('tobi', 'child', O, { every: [5, 10], idle: [['bounce', 2], ['peek', 2]], talk: [10, 31] });
+  M('lf_kei', 'child', O, { rest: 'behind', every: [6, 12], idle: [['peek', 2], ['heeltap', 2]], talk: [17, 10] });
+  M('bunta', 'craft', O, { rest: 'folded', every: [10, 18], idle: [['hammer', 2, { at: 'bench' }], ['lookroad', 1]], talk: [22, 23] });
+  M('kiku', 'elder', O, { every: [12, 20], idle: [['knead', 2, { at: 'bench' }], ['glance', 1]], talk: [20, 9] });
+  M('sachi', 'host', O, { every: [9, 16], idle: [['hangwash', 3, { at: 'laundry' }], ['glance', 1]], talk: [13, 32] });
+  M('lf_shu', 'craft', O, { every: [9, 16], idle: [['observe', 2], ['brow', 1]], talk: [11, 17] });
+  M('nagisa', 'traveller', O, { every: [10, 18], idle: [['check', 3, { prop: 'letter' }], ['lookroad', 2]], talk: [16, 27] });
+  M('chiyo', 'child', O, { every: [5, 10], idle: [['crouch', 3], ['bounce', 1], ['glance', 1]], talk: [10, 31] });
+  M('rokuta', 'child', O, { rest: 'folded', every: [6, 12], idle: [['crouch', 2], ['peek', 1]], talk: [11, 23] });
+  M('sae', 'craft', O, { rest: 'sleeves', every: [10, 18], idle: [['lookroad', 3], ['glance', 1]], talk: [19, 21] });
+})();
+
+
 /* ==== src/content/pages/00_lex.js ==== */
 /* Lexicon for the ending extensions, The Pages We Keep and the road topics
  * (src/content/pages/). Only words no earlier file defines.
@@ -120472,7 +122664,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       ref: { grammar: 'tsumori' }, item: 'g:tsumori',
       a: { scene: 'sg.wataru_confront', line: 10, who: 'wataru', ctx: T('Wataru, confronted at No. 2 warehouse', '{二番|にばん} {倉庫|そうこ} で {問|と}い{詰|つ}められた ワタル'),
         jp: '{荷|に} を {少|すこ}し ずつ {売|う}って 、 {払|はら}う つもり でした 。 {給料|きゅうりょう} が {出|で}たら 、 {全部|ぜんぶ} {戻|もど}す つもり で 。 ラベル が {勝手|かって} に {変|か}わり{始|はじ}めた とき …… {嵐|あらし} の せい に できる 、 と {思|おも}って しまった ん です 。', en: 'I meant to sell a little cargo at a time and pay it off. To put it all back once the wages came. When the labels started changing by themselves… I thought, I can blame the storm.', reading: 'にをすこしずつうって、はらうつもりでした。きゅうりょうがでたら、ぜんぶもどすつもりで。ラベルがかってにかわりはじめたとき……あらしのせいにできる、とおもってしまったんです。', h: 'nswt9r' },
-      b: { scene: 'sg.omi_wataru', line: 9, who: 'omi', ctx: T('Ōmi, deciding what Wataru must do', 'ワタル の {処分|しょぶん} を {決|き}める オウミ'),
+      b: { scene: 'sg.omi_wataru', line: 34, who: 'omi', ctx: T('Ōmi, deciding what Wataru must do', 'ワタル の {処分|しょぶん} を {決|き}める オウミ'),
         jp: 'だが 、 {荷|に} を {売|う}った の は お{前|まえ} の {落|お}ち{度|ど} だ 。 {売|う}った {分|ぶん} は 、 {給料|きゅうりょう} から {返|かえ}して もらう 。 {灯台|とうだい} と ソウタ に は 、 {自分|じぶん} で {頭|あたま} を {下|さ}げに {行|い}け 。', en: 'But selling the cargo is your fault. You\'ll repay what you sold out of your wages. And you\'ll go to the lighthouse and to Sōta yourself, and apologise.', reading: 'だが、にをうったのはおまえのおちどだ。うったぶんは、きゅうりょうからかえしてもらう。とうだいとソウタには、じぶんであたまをさげにいけ。', h: 'btsulm' },
       q: {
         F: choose(T('Did Wataru actually sell cargo?', 'ワタル は {本当|ほんとう} に {荷|に} を {売|う}った ？'), [
