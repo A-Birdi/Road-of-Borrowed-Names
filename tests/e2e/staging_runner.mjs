@@ -136,8 +136,9 @@ export async function runBranch(p, c, v, o) {
     // (a wanderer's own steps on their round are their life, not a walk the scene left unfinished)
     const walking = (a) => a.route || (a.mv && !(a.def && a.def.wander));
     const busy = () => W.npcs.concat(W.extras || [], W.comp ? [W.comp] : []).some(walking);
+    // (still for a moment: a walk of several steps is briefly between steps, neither moving nor routed)
     await sleep(120);
-    while (busy() && performance.now() - t1 < 5000) await sleep(60);
+    for (let calm = 0; calm < 5 && performance.now() - t1 < 5000; await sleep(60)) calm = busy() ? 0 : calm + 1;
     await sleep(150);
     watching = false;
     unwrap.forEach((u) => u());
