@@ -684,6 +684,12 @@ button.entry .kind.slotline { display: flex; flex-wrap: wrap; align-items: cente
 .keys .keycaps { margin-top: 0.2em; }
 kbd { display: inline-block; min-width: 1.6em; padding: 0 0.4em; border: 1px solid var(--ink-3); border-bottom-width: 2px; border-radius: 3px; background: #fffaf0; color: var(--ink); font: 0.9em var(--ui-font); text-align: center; }
 body.high-contrast .pv-box { background: #000; color: #fff; }
+/* Settings over a battle (presentation only): no saving here; leaving the encounter asks first */
+.folio-bset .folio-foot { align-items: center; }
+.folio-bset .bset-save { flex: 1 1 16em; margin: 0; display: flex; align-items: center; gap: 0.45em; color: var(--on-cloth-2); font-size: 0.9em; }
+.folio-bset .bset-save svg { width: 1.2em; height: 1.2em; flex: none; }
+.bset-fixed .t b { font-weight: 700; }
+@media (max-width: 599px) { .folio-bset .bset-save { flex-basis: 100%; } }
 
 /* ---- Company (src/ui/52_company.js): who is travelling, then the page ---------------------- */
 .co-pair { display: flex; flex-wrap: wrap; gap: 0.35em 1.4em; padding: 0.2em 0.1em 0.55em; margin-bottom: 0.5em; border-bottom: 1px dashed var(--paper-edge); }
@@ -2976,6 +2982,15 @@ body.reduced-motion .combat-ui > .cb-banner { transition: none; transform: trans
 /* Skip: in the scene's corner while an exchange plays (Normal and Fast) */
 .combat-ui > .cb-skip { grid-area: stage; justify-self: end; align-self: start; margin: 6px; z-index: 5; min-height: 44px; min-width: 44px; pointer-events: auto; }
 .combat-ui > .cb-skip[hidden] { display: none; }
+/* Settings for this encounter (src/ui/55_settings.js): the scene's lower right corner, clear of the
+   creatures' plates and Skip (top) and of the party (left); shown while the sheet may open */
+.combat-ui > .cb-set { grid-area: stage; justify-self: end; align-self: end; margin: 6px; z-index: 5; min-height: 44px; min-width: 44px; pointer-events: auto; padding: 0 0.75em; background-color: rgba(13, 18, 32, 0.78); }
+.combat-ui > .cb-set:hover { background-color: var(--cloth-700); }
+.combat-ui > .cb-set[hidden] { display: none; }
+body.high-contrast .combat-ui > .cb-set { background: #000; border-color: #fff; }
+/* the moment after the battle's settings close: the closing press (or the second click of a double
+   click) lands on this, never on the battle under it */
+.bset-shield { position: fixed; inset: 0; z-index: 2147483000; background: transparent; }
 
 /* Committed: the telegraph and the response dock withdraw through their edge (Adaptive) and the
    scene drawn under them shows; nothing is re-laid out. Keep visible leaves them, dimmed and inert. */
@@ -35712,6 +35727,12 @@ RB.script = (function () {
   function isRunning() {
     return running > 0;
   }
+  // A campaign change (load, new game, title) ends every scene of the campaign being left: a scene
+  // waiting on something (a battle left from its settings sheet never answers) no longer counts as
+  // running, and if it ever resumed it would stop at its next line (exec) without writing to the
+  // campaign that came next (`gen`).
+  let gen = 0;
+  if (RB.bus) RB.bus.on('campaign:changing', () => { gen++; running = 0; });
 
   async function run(sceneId, ctx) {
     const sc = RB.content.scenes[sceneId];
@@ -35719,14 +35740,16 @@ RB.script = (function () {
       console.warn('missing scene', sceneId);
       return;
     }
+    const g = gen;
     running++;
     RB.game.pushMode('dialogue');
     try {
       await exec(sc, ctx || {});
-      RB.game.s.seen[sceneId] = true;
+      if (g === gen) RB.game.s.seen[sceneId] = true;
     } catch (err) {
       console.error('scene error', sceneId, err);
     } finally {
+      if (g !== gen) return; // (the campaign it belonged to is gone)
       running--;
       // every run pushed one dialogue mode; pop it even when nested (a hook
       // running a scene inside a scene) so no stray dialogue mode is left
@@ -35741,11 +35764,13 @@ RB.script = (function () {
     }
   }
   async function runInline(lines) {
+    const g = gen;
     running++;
     RB.game.pushMode('dialogue');
     try {
-      for (const l of lines) await RB.ui.dialogue.say(l);
+      for (const l of lines) { if (g !== gen) break; await RB.ui.dialogue.say(l); }
     } finally {
+      if (g !== gen) return; // (the campaign it belonged to is gone)
       running--;
       RB.game.popMode('dialogue');
       if (running === 0) {
@@ -35767,6 +35792,7 @@ RB.script = (function () {
     let guard = 0;
     while (pc < sc.cmds.length) {
       if (++guard > 20000) throw new Error('script loop in ' + sc.id);
+      if (RB.game.s !== s) return; // the campaign changed under this scene: it ends here
       const c = sc.cmds[pc++];
       if (c.if && !RB.state.test(s, c.if)) continue;
       const a = c.args || [];
@@ -40437,8 +40463,15 @@ RB.save = (function () {
 
   class ConflictError extends Error {}
 
+  // No saving while a battle is open, by any route (the folio, a scene's !autosave, an activity, a
+  // timer): the playing campaign is written only once the encounter is over (src/engine/90_game.js
+  // inBattle(); the battle's settings sheet says "Saving is available after the encounter.").
+  // Copying or deleting slots in the ledger writes no playing state and is not affected.
+  const battling = () => !!(RB.game && RB.game.inBattle && RB.game.inBattle());
+  const IN_BATTLE = 'Saving is available after the encounter.';
   async function writeSlot(slot, st, opts) {
     opts = opts || {};
+    if (battling() && st === RB.game.s) throw new Error(IN_BATTLE);
     if (current.readOnly && slot === current.slot && !opts.force) throw new Error('This tab is read-only for this campaign.');
     const clean = trimForSave(RB.util.deepClone(st));
     const rec = { slot, rev: 0, meta: metaOf(clean), thumb: opts.thumb || null, state: clean };
@@ -40468,6 +40501,7 @@ RB.save = (function () {
   }
 
   async function writeRecovery(slot, st, kind, thumb) {
+    if (battling() && st === RB.game.s) throw new Error(IN_BATTLE);
     const clean = trimForSave(RB.util.deepClone(st));
     const now = Date.now();
     const key = kind === 'predeparture' ? slot + ':predeparture' : slot + ':auto:' + now;
@@ -40628,7 +40662,9 @@ RB.save = (function () {
   function setCurrent(slot, rev) { current.slot = slot; current.rev = rev || 0; }
 
   // ---- high-level helpers used by the game ------------------------------------------------
+  let skippedInBattle = 0; // autosaves asked for while a battle was open (none was written; tests)
   async function manualSave(slot) {
+    if (battling()) throw new Error(IN_BATTLE);
     const st = RB.game.s;
     const same = slot === current.slot;
     const rec = await writeSlot(slot, st, { thumb: RB.render.thumbnail(), expectRev: same ? current.rev : null });
@@ -40638,6 +40674,7 @@ RB.save = (function () {
   }
   async function autosave(kind) {
     if (current.slot == null || current.readOnly) return null;
+    if (battling()) { skippedInBattle++; return null; } // (quietly: the next safe place autosaves)
     try {
       return await writeRecovery(current.slot, RB.game.s, kind === 'predeparture' ? 'predeparture' : 'auto', RB.render.thumbnail());
     } catch (e) {
@@ -40650,7 +40687,7 @@ RB.save = (function () {
   return {
     detect, status, requestPersist, list, read, writeSlot, writeRecovery, del, copy, validate, migrate, addMigration,
     loadSettings, saveSettings, claim, takeOver, releaseLock, setReadOnly, setCurrent, manualSave, autosave,
-    ConflictError, SLOTS, current: () => current, _mode: () => mode,
+    ConflictError, SLOTS, current: () => current, _mode: () => mode, skippedInBattle: () => skippedInBattle,
   };
 })();
 
@@ -40771,6 +40808,8 @@ RB.game = (function () {
       else if (a === 'map') RB.ui.menu.open('map');
       return;
     }
+    // in battle the menu key opens the battle's settings sheet (presentation only; src/ui/55_settings.js)
+    if (a === 'menu' && m === 'combat' && RB.ui.settings && RB.ui.settings.openBattle && !RB.ui.settings.isOpen() && RB.ui.settings.openBattle()) return;
     RB.ui.onAction(a, e);
   }
 
@@ -40872,14 +40911,15 @@ RB.game = (function () {
 
   async function loadCampaign(slot, which) {
     RB.bus.emit('campaign:changing', { to: 'load', slot });
-    const r = await RB.save.read(slot, which);
+    let r;
+    try { r = await RB.save.read(slot, which); } catch (err) { keepJourney(); throw err; }
     const claim = await RB.save.claim(slot);
     if (claim === 'busy') {
       const c = await RB.ui.confirm(
         'This campaign is already open in another tab. Two tabs writing the same save could lose progress.',
         ['Take over here', 'Open read-only', 'Cancel']
       );
-      if (c === 2) { RB.save.releaseLock(); return false; }
+      if (c === 2) { RB.save.releaseLock(); keepJourney(); return false; }
       if (c === 0) await RB.save.takeOver(slot);
       else RB.save.setReadOnly(true);
     }
@@ -40898,6 +40938,18 @@ RB.game = (function () {
     RB.ui.hud.show();
     RB.ui.notice(which === 'auto' ? 'Continued from the latest autosave.' : which === 'predeparture' ? 'Restored the point before departure.' : 'Loaded.', 'info');
     return true;
+  }
+  // A load that did not happen (cancelled, or the save could not be read) after the campaign
+  // change had begun: a battle open then was already left (src/ui/80_combat.js abandon(), which
+  // keeps 'combat' on the mode stack and the screen dark) and the scene that asked for it has
+  // ended (src/engine/70_script.js), so the journey goes on from the map, where the creature
+  // still is. Nothing else was changed.
+  function keepJourney() {
+    if (!G.playing || G.modes.indexOf('combat') < 0 || (RB.combat && RB.combat.state())) return;
+    setBase('world');
+    RB.input.clearHeld();
+    RB.ui.dialogue.hide();
+    RB.render.setOverride(null);
   }
   async function toTitle() {
     RB.bus.emit('campaign:changing', { to: 'title' });
@@ -42681,6 +42733,10 @@ RB.ui = (function () {
   function topLayer() {
     return layers[layers.length - 1] || null;
   }
+  // every layer opened inside `box` (a screen taken down at once: a battle left for another journey)
+  function popLayersIn(box) {
+    for (const l of layers.slice().reverse()) if (box.contains(l.el) || (l.parent && box.contains(l.parent))) popLayer(l);
+  }
   // Where keyboard focus may move while a layer is on top: the layer itself,
   // or a larger `scope` element that contains it.
   function scopeOf(layer) {
@@ -42882,7 +42938,7 @@ RB.ui = (function () {
   }
 
   return {
-    init, el, pushLayer, popLayer, topLayer, focusables, moveFocus, onAction, jhtml, ehtml, plainJp, label,
+    init, el, pushLayer, popLayer, popLayersIn, topLayer, focusables, moveFocus, onAction, jhtml, ehtml, plainJp, label,
     notice, toast, fade, card, placeName, confirm, shake, get root() { return root; }, get overlay() { return overlay; },
   };
 })();
@@ -48762,7 +48818,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
  * for few exclusive options, switches for on/off, sliders with values,
  * a select for voices, key capture for remapping. Campaign-specific learning
  * choices are shown apart from preferences that apply to every campaign.
- * Changes apply and persist at once, as before (sliders debounce saving). */
+ * Changes apply and persist at once, as before (sliders debounce saving).
+ *
+ * In battle (openBattle(); the battle's Settings button or the menu key) the same
+ * settings and the same controls, presentation only: options that change no rule,
+ * reward or learning difficulty (IN_BATTLE); the others are listed read-only until
+ * the encounter is over. The encounter is paused while the sheet is open
+ * (RB.battleSeq.pause). No saving; Load and Return to title leave the encounter
+ * after asking (src/ui/80_combat.js abandon()). The audit of every setting is in
+ * docs/COMBAT_NOTES.md, "Settings in battle". */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.ui.settings = (function () {
@@ -48777,25 +48841,47 @@ RB.ui.settings = (function () {
     ['display', 'Display & Accessibility', '{表示|ひょうじ}', 'bulb'],
     ['storage', 'Storage', '{保存|ほぞん}', 'ledger'],
   ];
+  // in battle: presentation only (see the end of this file)
+  const BATTLE_GROUPS = [
+    ['motion', 'Speed & motion', '{速|はや}さと{動|うご}き', 'stride'],
+    ['audio', 'Audio', '{音|おと}', 'sound'],
+    ['reading', 'Reading & Language', '{読|よ}み{方|かた}と{言語|げんご}', 'words'],
+    ['display', 'Display & Accessibility', '{表示|ひょうじ}', 'bulb'],
+    ['battle', 'Battle display', '{戦|たたか}いの{表示|ひょうじ}', 'knot'],
+    ['fixed', 'Until the encounter is over', '{戦|たたか}いの{後|あと}で', 'ward'],
+  ];
   let lay = null, fr = null, group = null, mq = null, sampleCache = null;
+  let battle = false, lastBattle = false; // open over a battle (presentation only)
+  const groups = () => (battle ? BATTLE_GROUPS : GROUPS);
+  const firstGroup = () => (battle ? 'motion' : 'reading');
 
   function open() {
     if (lay) return;
-    fr = RB.ui.folio.frame({ onClose: close, closeLabel: 'Back', closeIcon: 'back', cls: 'folio-settings' });
-    fr.setTitle(RB.ui.label('{設定|せってい}', 'Settings'), RB.game.s ? 'Some choices belong to this campaign' : 'Preferences for every campaign');
-    lay = { el: fr.scrim, name: 'settings' };
-    lay.onCancel = back;
-    RB.ui.pushLayer(lay);
-    if (!group && RB.ui.folio.wide()) group = 'reading';
-    render();
-    if (typeof matchMedia !== 'undefined') { mq = matchMedia(RB.ui.folio.WIDE); mq.onchange = () => { if (lay) { if (!group && RB.ui.folio.wide()) group = 'reading'; render(); } }; }
+    // no route to the full Settings while a battle is open: it opens as the battle's sheet
+    if (RB.game.inBattle && RB.game.inBattle()) { openBattle(); return; }
+    show(false);
   }
-  function close() {
+  function show(inBattle) {
+    battle = inBattle;
+    if (battle !== lastBattle) { group = null; lastBattle = battle; }
+    fr = RB.ui.folio.frame({ onClose: close, closeLabel: battle ? 'Back to the encounter' : 'Back', closeIcon: 'back', cls: 'folio-settings' + (battle ? ' folio-bset' : '') });
+    fr.setTitle(RB.ui.label('{設定|せってい}', 'Settings'), battle ? 'During this encounter: how it looks, reads and sounds' : RB.game.s ? 'Some choices belong to this campaign' : 'Preferences for every campaign');
+    lay = { el: fr.scrim, name: battle ? 'battle-settings' : 'settings' };
+    lay.onCancel = back;
+    // (in battle the menu key that opened the sheet closes it again)
+    if (battle) { battleFoot(); lay.onAction = (a) => { if (a === 'menu') { close(); return true; } return false; }; }
+    RB.ui.pushLayer(lay);
+    if (!group && RB.ui.folio.wide()) group = firstGroup();
+    render();
+    if (typeof matchMedia !== 'undefined') { mq = matchMedia(RB.ui.folio.WIDE); mq.onchange = () => { if (lay) { if (!group && RB.ui.folio.wide()) group = firstGroup(); render(); } }; }
+  }
+  function close(o) {
     if (!lay) return;
     if (mq) mq.onchange = null;
     RB.ui.popLayer(lay);
     lay = null; fr = null;
     if (!RB.ui.folio.wide()) group = null;
+    if (battle) { battle = false; if (!(o && o.leaving)) resumeBattle(); }
   }
   function back() {
     if (group && !RB.ui.folio.wide()) { group = null; render(); return; }
@@ -48810,9 +48896,10 @@ RB.ui.settings = (function () {
     const keep = leaves.length ? [leaves[0].scrollTop, leaves[1] ? leaves[1].scrollTop : 0] : [0, 0];
     fr.box.innerHTML = '<div class="spread' + (two ? ' two' : '') + '"><div class="leaf" tabindex="0" aria-label="Settings groups"></div><div class="leaf leaf-b" tabindex="0" aria-label="Settings"></div></div>';
     const [A, B] = fr.box.querySelectorAll('.leaf');
-    const index = '<h3>Groups</h3><ul class="index">' + GROUPS.map(([id, en, jp, ic]) => '<li><button data-grp="' + id + '" aria-current="' + (group === id) + '">' + I(ic) + '<span class="lbl">' + RB.ui.label(jp, en) + '</span><span class="fill"></span></button></li>').join('') + '</ul>' +
-      '<p class="muted small">Changes take effect straight away and are remembered in this browser.</p>';
-    if (two) { A.innerHTML = index; B.innerHTML = groupHtml(group || 'reading'); }
+    const index = '<h3>Groups</h3><ul class="index">' + groups().map(([id, en, jp, ic]) => '<li><button data-grp="' + id + '" aria-current="' + (group === id) + '">' + I(ic) + '<span class="lbl">' + RB.ui.label(jp, en) + '</span><span class="fill"></span></button></li>').join('') + '</ul>' +
+      (battle ? '<p class="muted small">Only how the encounter looks, reads and sounds can change now; it stays paused while this is open. Changes take effect straight away and are remembered in this browser.</p>'
+        : '<p class="muted small">Changes take effect straight away and are remembered in this browser.</p>');
+    if (two) { A.innerHTML = index; B.innerHTML = groupHtml(group || firstGroup()); }
     else if (!group) { A.innerHTML = index; }
     else { A.innerHTML = '<div class="backline"><button class="pbtn quiet" data-grp="">' + I('back') + 'All groups</button></div>' + groupHtml(group); }
     A.scrollTop = keep[0]; B.scrollTop = keep[1];
@@ -48855,6 +48942,7 @@ RB.ui.settings = (function () {
   }
 
   function groupHtml(g) {
+    if (battle) return battleGroupHtml(g);
     const st = RB.game.settings;
     const s = RB.game.s;
     const title = GROUPS.find((x) => x[0] === g);
@@ -48898,15 +48986,7 @@ RB.ui.settings = (function () {
         radios('touchHand', 'Action and Run buttons on the', [['right', 'Right (move on the left)'], ['left', 'Left (move on the right)']]) +
         radios('touchSize', 'Touch control size', [['normal', 'Standard'], ['large', 'Large']]);
     } else if (g === 'audio') {
-      const vs = RB.voice ? RB.voice.status() : { supported: false, localJaCount: 0, note: 'Speech synthesis is not available.' };
-      const voices = RB.voice && RB.voice.japaneseVoices ? RB.voice.japaneseVoices() : [];
-      h += slider('vol.master', 'Overall volume', st.vol.master, 0, 1, 0.05, pct) + slider('vol.music', 'Music', st.vol.music, 0, 1, 0.05, pct) +
-        slider('vol.sfx', 'Effects', st.vol.sfx, 0, 1, 0.05, pct) + slider('vol.voice', 'Voice', st.vol.voice, 0, 1, 0.05, pct) + sw('muted', 'Mute all sound') +
-        '<h3>' + I('sound') + ' Japanese voice (optional)</h3><p class="small">' + esc(vs.note || '') + '</p>' +
-        (voices.length ? '<div class="field"><label class="lab" for="vsel">Voice</label><select id="vsel" data-voice>' + voices.map((v) => '<option value="' + esc(v.voiceURI) + '"' + (st.voice.uri === v.voiceURI ? ' selected' : '') + '>' + esc(v.name) + '</option>').join('') + '</select></div>' +
-          '<div class="field"><label class="switch"><input type="checkbox" role="switch" data-voiceauto' + (st.voice.auto ? ' checked' : '') + '><span>Speak dialogue automatically</span><span class="state">' + (st.voice.auto ? 'On' : 'Off') + '</span></label></div>' +
-          slider('voice.rate', 'Speech rate', st.voice.rate, 0.6, 1.3, 0.05, (v) => v.toFixed(2) + '×') : '<p class="note-slip">No Japanese voice is installed on this device, so nothing will be spoken. Everything works without it.</p>') +
-        '<p class="muted small">Voices are your device\'s own speech synthesis, labelled as such. They are not recorded actors and not a pronunciation authority.</p>';
+      h += audioRows();
     } else if (g === 'display') {
       h += preview() + slider('textScale', 'Text size', st.textScale, 0.85, 1.5, 0.05, pct) + sw('contrast', 'High contrast', null) + sw('reducedMotion', 'Reduce motion', 'Removes sliding and bouncing; changes still show immediately.');
     } else if (g === 'storage') {
@@ -48921,6 +49001,19 @@ RB.ui.settings = (function () {
   }
   const EXTRA = {};
   function addRows(g, f) { (EXTRA[g] = EXTRA[g] || []).push(f); }
+  // the volumes and the optional Japanese voice (the folio's Audio, and the battle's)
+  function audioRows() {
+    const st = RB.game.settings;
+    const vs = RB.voice ? RB.voice.status() : { supported: false, localJaCount: 0, note: 'Speech synthesis is not available.' };
+    const voices = RB.voice && RB.voice.japaneseVoices ? RB.voice.japaneseVoices() : [];
+    return slider('vol.master', 'Overall volume', st.vol.master, 0, 1, 0.05, pct) + slider('vol.music', 'Music', st.vol.music, 0, 1, 0.05, pct) +
+      slider('vol.sfx', 'Effects', st.vol.sfx, 0, 1, 0.05, pct) + slider('vol.voice', 'Voice', st.vol.voice, 0, 1, 0.05, pct) + sw('muted', 'Mute all sound') +
+      '<h3>' + I('sound') + ' Japanese voice (optional)</h3><p class="small">' + esc(vs.note || '') + '</p>' +
+      (voices.length ? '<div class="field"><label class="lab" for="vsel">Voice</label><select id="vsel" data-voice>' + voices.map((v) => '<option value="' + esc(v.voiceURI) + '"' + (st.voice.uri === v.voiceURI ? ' selected' : '') + '>' + esc(v.name) + '</option>').join('') + '</select></div>' +
+        '<div class="field"><label class="switch"><input type="checkbox" role="switch" data-voiceauto' + (st.voice.auto ? ' checked' : '') + '><span>Speak dialogue automatically</span><span class="state">' + (st.voice.auto ? 'On' : 'Off') + '</span></label></div>' +
+        slider('voice.rate', 'Speech rate', st.voice.rate, 0.6, 1.3, 0.05, (v) => v.toFixed(2) + '×') : '<p class="note-slip">No Japanese voice is installed on this device, so nothing will be spoken. Everything works without it.</p>') +
+      '<p class="muted small">Voices are your device\'s own speech synthesis, labelled as such. They are not recorded actors and not a pronunciation authority.</p>';
+  }
 
   // ---- behaviour (unchanged persistence: apply now, save now; sliders debounce) --------------
   function wire(L) {
@@ -48929,6 +49022,7 @@ RB.ui.settings = (function () {
       if (gb) { group = gb.dataset.grp || null; render(); return; }
       const b = e.target.closest('[data-bind],[data-a]');
       if (!b) return;
+      if (battle) return; // (in battle: no keys, no storage requests — nothing of the kind is offered)
       const st = RB.game.settings;
       if (b.hasAttribute('data-bind')) {
         const a = b.dataset.bind;
@@ -48953,6 +49047,8 @@ RB.ui.settings = (function () {
     L.onchange = async (e) => {
       const t = e.target;
       const st = RB.game.settings;
+      // in battle only what changes no rule: anything else is refused, whatever sent it
+      if (battle && !allowedNow(t)) { render(); return; }
       if (t.matches('input[type=radio][data-set]')) {
         let v = t.value;
         if (v === 'true') v = true; else if (v === 'false') v = false;
@@ -48979,6 +49075,7 @@ RB.ui.settings = (function () {
     L.oninput = (e) => {
       const r = e.target.closest('[data-range]');
       if (!r) return;
+      if (battle && !IN_BATTLE[r.dataset.range]) return;
       const st = RB.game.settings;
       const path = r.dataset.range.split('.');
       if (path.length === 2) st[path[0]][path[1]] = +r.value; else st[path[0]] = +r.value;
@@ -48996,7 +49093,190 @@ RB.ui.settings = (function () {
     if (n) n.focus({ preventScroll: true });
   }
 
-  return { open, close, addRows, isOpen: () => !!lay };
+  // ---- in battle: the same settings, presentation only ------------------------------------------
+  // What may change while a battle is open: how it looks, reads and sounds and how fast it plays —
+  // nothing that changes a rule, a reward, the learning difficulty or the campaign (the audit:
+  // docs/COMBAT_NOTES.md, "Settings in battle"). Keys of RB.game.settings, and the slider paths.
+  const IN_BATTLE = {
+    battleAnim: 1, textSpeed: 1, reducedMotion: 1,
+    'vol.master': 1, 'vol.music': 1, 'vol.sfx': 1, 'vol.voice': 1, muted: 1, petSounds: 1, 'voice.rate': 1,
+    lead: 1, secondary: 1, spacing: 1, lightbulb: 1, romaji: 1,
+    textScale: 1, contrast: 1,
+    battleControls: 1, intentDisplay: 1, petBattle: 1,
+  };
+  // (the voice and its automatic speaking, and Suzu's speech, which src/ui/56_suzu_speech.js applies, are allowed too)
+  function allowedNow(t) {
+    if (t.matches('input[type=radio][data-set]')) return t.dataset.obj !== 'learn' && !!IN_BATTLE[t.dataset.set];
+    if (t.matches('[data-sw]')) return !!IN_BATTLE[t.dataset.sw];
+    if (t.matches('[data-range]')) return !!IN_BATTLE[t.dataset.range]; // (sliders apply on input, below)
+    return t.matches('[data-voiceauto], [data-voice], [data-suzu-speech]');
+  }
+  // Fixed for the encounter, shown read-only with what they are (they change in the folio's
+  // Settings once it is over): the learning and challenge choices, how answers are read, the
+  // keys (so that none stops working mid-fight) and quest guidance (it belongs to the road).
+  const PROFILE = { F: 'Foundations', E: 'Elementary', I: 'Intermediate', A: 'Advanced' };
+  function fixedRows() {
+    const st = RB.game.settings, L = (RB.game.s && RB.game.s.learn) || {};
+    const v = (m, k) => m[k] || k || '—';
+    const rows = [
+      ['Japanese level', v(PROFILE, L.profile), 'Which version of each question you meet.'],
+      ['Mistakes in battle', v({ assist: 'Assisted — no cost', normal: 'Standard — small and capped' }, L.assist), 'What a mistake costs in this encounter.'],
+      ['Tactical challenge', v({ relaxed: 'Relaxed', normal: 'Standard', hard: 'Demanding' }, L.difficulty), 'How many creatures come, and how hard they press.'],
+      ['Default way to answer', v({ hand: 'Handwriting', choice: 'Choices', ime: 'Keyboard / IME' }, st.input), 'Inside each question you can still switch how you answer, as always.'],
+      ['Handwriting reads', v({ auto: 'By Japanese level', on: 'Kanji or kana', off: 'Kana only' }, st.padKanji || 'auto'), 'What the writing pad accepts. Read as on the pad still works inside a question.'],
+      ['Stroke-order notes', st.strokePractice ? 'On' : 'Off', 'How strictly handwriting is checked.'],
+      ['Keys', st.binds ? 'Your own' : 'The usual keys', 'So that no key stops working mid-fight.'],
+      ['Quest guidance', v({ full: 'Markers and hints', hints: 'Hints only', off: 'Off' }, st.questGuide || 'full'), 'Markers and hints belong to the road.'],
+    ];
+    return '<p class="note-slip">' + I('ward') + ' These stay as they are until this encounter is over; change them in the folio’s Settings afterwards.</p>' +
+      '<ul class="entries bset-fixed">' + rows.map(([l, val, why]) => '<li class="entry"><span class="mark">' + I('key') + '</span><div><div class="t">' + esc(l) + ': <b>' + esc(val) + '</b></div><div class="muted small">' + esc(why) + '</div></div></li>').join('') + '</ul>';
+  }
+  // Suzu's speech, the same control as in Reading & Language (src/ui/56_suzu_speech.js applies it)
+  function suzuRow() {
+    const v = RB.ui.suzuSpeech ? RB.ui.suzuSpeech.value() : 'standard';
+    const r = (val, label) => '<label class="opt"><input type="radio" name="suzuSpeech" data-suzu-speech value="' + val + '"' + (v === val ? ' checked' : '') + '><span>' + label + '</span></label>';
+    return '<fieldset class="field" data-speech-field><legend>Suzu’s speech</legend><div class="opts">' + r('standard', 'Standard') + r('kansai', 'Kansai (Kansai-ben)') + '</div>' +
+      '<div class="hint">How Suzu talks, wherever she speaks. Questions always use standard Japanese.</div></fieldset>';
+  }
+  function battleGroupHtml(g) {
+    const st = RB.game.settings;
+    const title = BATTLE_GROUPS.find((x) => x[0] === g) || BATTLE_GROUPS[0];
+    let h = '<h3>' + I(title[3]) + ' ' + RB.ui.label(title[2], title[1]) + '</h3>';
+    if (title[0] === 'motion') {
+      h += radios('battleAnim', 'Battle animations', [['normal', 'Normal'], ['fast', 'Fast'], ['instant', 'Instant']], null, 'How long each action takes to play. Instant shows the results at once, with a summary of the last exchange. An action already under way goes on at the new pace (with Instant, its results show at once).') +
+        radios('textSpeed', 'Text speed', [['normal', 'Normal'], ['fast', 'Fast'], ['instant', 'Instant']], null, 'The lines spoken in this encounter. Separate from Battle animations.') +
+        sw('reducedMotion', 'Reduce motion', 'Removes sliding and bouncing; changes still show immediately. An action under way settles at once.');
+    } else if (title[0] === 'audio') {
+      h += audioRows() + sw('petSounds', 'Quiet pet sounds', 'An occasional soft sound from your pet (never needed: everything it does is also seen).');
+    } else if (title[0] === 'reading') {
+      h += preview() +
+        radios('lead', 'Dialogue leads with', [['en', 'English'], ['ja', 'Japanese']]) +
+        radios('secondary', 'The second language', [['always', 'Always shown'], ['tap', 'Shown when tapped'], ['off', 'Hidden']]) +
+        sw('spacing', 'Spaces between Japanese words', 'Beginner-friendly. Standard Japanese is written without spaces.') +
+        sw('lightbulb', 'Word help (lightbulb)', 'Hover, focus or tap Japanese text for reading, meaning and notes. Inside a question it counts as assisted, as always.') +
+        sw('romaji', 'Romaji in word help') + suzuRow() +
+        '<p class="muted small">Furigana (readings over kanji) is always shown. It is an accessibility feature, not a difficulty setting.</p>';
+    } else if (title[0] === 'display') {
+      h += slider('textScale', 'Text size', st.textScale, 0.85, 1.5, 0.05, pct) + sw('contrast', 'High contrast', null) +
+        '<p class="muted small">While an action plays, the scene keeps its place and size; the menus take a new text size at once.</p>';
+    } else if (title[0] === 'battle') {
+      h += radios('battleControls', 'Battle controls during actions', [['adaptive', 'Adaptive'], ['keep', 'Keep visible']], null, 'Adaptive moves the menus out of the way while actions play, so the scene has room. Keep visible leaves them in place, disabled until your next choice. From the next exchange.') +
+        radios('intentDisplay', 'What creatures are about to do', [['adaptive', 'Adaptive'], ['expanded', 'Expanded']], null, 'Adaptive shows a compact badge on each creature that opens when you point at it, focus it or tap it; wording you need to read stays visible. Expanded keeps the full descriptions open while you decide.') +
+        sw('petBattle', 'Show pet in battle', 'It sits beside the two of you and watches. It never acts, and hiding it changes nothing.');
+    } else {
+      h += fixedRows();
+    }
+    return h;
+  }
+  // the foot: no saving here; leaving the encounter (Load, Return to title) asks first
+  function battleFoot() {
+    fr.foot.innerHTML = '<p class="bset-save">' + I('save') + '<span>Saving is available after the encounter.</span></p>' +
+      '<button type="button" class="cbtn" data-leave="load">' + I('load') + '<span>Load a journey…</span></button>' +
+      '<button type="button" class="cbtn" data-leave="title">' + I('title') + '<span>Return to title…</span></button>';
+    fr.foot.onclick = (e) => {
+      const b = e.target.closest('[data-leave]');
+      // (the second click of a double click opens nothing more)
+      if (!b || e.detail > 1) return;
+      leave(b.dataset.leave);
+    };
+  }
+  let leaving = false;
+  async function leave(kind) {
+    if (leaving || !lay || !battle) return;
+    leaving = true;
+    try {
+      const r = await RB.ui.confirm(kind === 'load'
+        ? 'Leave this encounter and load another journey? This battle won’t count — the creature will still be there.'
+        : 'Leave this encounter and return to the title? This battle won’t count — the creature will still be there. Anything since your last save or autosave will be lost.',
+      [kind === 'load' ? 'Choose a journey…' : 'Return to title', 'Stay in the encounter']);
+      if (r !== 0 || !lay || !battle || !RB.combat.state()) return;
+      // the campaign change takes the encounter down whole (src/ui/80_combat.js abandon()) and closes this sheet
+      if (kind === 'load') RB.ui.title.slots('load', true);
+      else RB.game.toTitle();
+    } finally { leaving = false; }
+  }
+  // When the battle's sheet may open: a battle on screen waiting for a choice (yours or your
+  // companion's) or playing an exchange — never over the language task, a question, a teaching
+  // card, a line being spoken, or the opening or the end of the encounter.
+  const OPEN_PHASES = { choose: 1, companion: 1, player: 1, 'companion-act': 1, enemy: 1, revive: 1, finish: 1 };
+  const BATTLE_LAYERS = { cards: 1, companion: 1, 'battle-sequence': 1 };
+  function battleReady() {
+    if (!(RB.game.inBattle && RB.game.inBattle()) || !RB.combat || !RB.combat.state() || !OPEN_PHASES[RB.combat.phase()]) return false;
+    if ((RB.challenge && RB.challenge.active && RB.challenge.active()) || (RB.ui.dialogue && RB.ui.dialogue.isOpen())) return false;
+    const top = RB.ui.topLayer();
+    return !top || !!BATTLE_LAYERS[top.name];
+  }
+  let was = null;
+  function openBattle() {
+    if (lay || !battleReady()) return false;
+    // the encounter waits: the playing action (if any) is paused where it stands; open notes close
+    RB.battleSeq.pause(true);
+    if (RB.combatHelp) RB.combatHelp.hide();
+    if (RB.battleIntents) RB.battleIntents.close(false);
+    const st = RB.game.settings;
+    was = { anim: st.battleAnim, reduce: !!st.reducedMotion };
+    if (RB.audio) RB.audio.sfx('menu_open');
+    show(true);
+    sync();
+    return true;
+  }
+  function resumeBattle() {
+    // the click that closed the sheet (or the second of a double click) lands on this, not on the battle
+    shield();
+    const st = RB.game.settings;
+    // Instant chosen, or Reduce motion turned on, while an action stood paused: the rest of it shows at once
+    if (was && RB.battleSeq.busy() && ((st.battleAnim === 'instant' && was.anim !== 'instant') || (st.reducedMotion && !was.reduce))) RB.battleSeq.settle('settings');
+    was = null;
+    RB.battleSeq.pause(false);
+    if (RB.combat.state()) RB.combat.refresh();
+    sync();
+  }
+  function shield() {
+    if (typeof document === 'undefined') return;
+    const sh = document.createElement('div');
+    sh.className = 'bset-shield';
+    sh.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(sh);
+    setTimeout(() => sh.remove(), 400);
+  }
+  // the battle's Settings button: in the scene's lower right corner while the sheet may open
+  let btn = null, poll = null;
+  function sync() {
+    if (btn && !btn.isConnected) unmount();
+    if (btn) btn.hidden = !(battleReady() || (lay && battle));
+  }
+  function mount() {
+    const root = typeof document !== 'undefined' && document.querySelector('.combat-ui');
+    if (!root) return;
+    unmount();
+    btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'cbtn cb-set';
+    btn.title = 'Settings for this encounter (C)';
+    btn.innerHTML = I('settings') + '<span>Settings</span>';
+    btn.hidden = true;
+    btn.addEventListener('click', (e) => { e.stopPropagation(); openBattle(); });
+    root.appendChild(btn);
+    poll = setInterval(sync, 150);
+    sync();
+  }
+  function unmount() {
+    if (poll) clearInterval(poll);
+    poll = null;
+    if (btn) btn.remove();
+    btn = null;
+  }
+  if (RB.bus) {
+    RB.bus.on('present:scene', (e) => {
+      if (!e || e.scope !== 'battle') return;
+      if (e.phase === 'enter') mount();
+      else if (e.phase === 'exit') { if (lay && battle) close({ leaving: true }); unmount(); }
+    });
+    // a campaign change closes the sheet without resuming anything: the battle is being left
+    RB.bus.on('campaign:changing', () => { if (lay && battle) close({ leaving: true }); unmount(); });
+  }
+
+  return { open, close, addRows, isOpen: () => !!lay, openBattle, battleReady, inBattle: () => !!(lay && battle) };
 })();
 
 
@@ -68059,6 +68339,12 @@ RB.combat = (function () {
     if (opts.group) return [enemyId].concat(opts.group).slice(0, (L().DIFF[s.learn.difficulty] || L().DIFF.normal).maxFoes);
     return L().groupFor(enemyId, opts.place, s.learn.difficulty);
   }
+  // Every await of start() goes through live(): once the battle has been left for another journey
+  // (abandon(), below) whatever it was waiting for never resumes it, so nothing of the abandoned
+  // battle (its outcome, flags, rewards, lines, fades, music) reaches the campaign that comes next.
+  let runN = 0;
+  const never = () => new Promise(() => {});
+  function live(p) { const n = runN; return Promise.resolve(p).then((v) => (n === runN ? v : never()), (e) => (n === runN ? Promise.reject(e) : never())); }
   async function start(enemyId, opts) {
     opts = opts || {};
     const s = RB.game.s;
@@ -68072,7 +68358,7 @@ RB.combat = (function () {
     RB.game.pushMode('combat');
     const prevSong = RB.audio && RB.audio.currentSong();
     RB.audio && RB.audio.playSong(enemy.music || (enemy.boss ? 'boss' : 'battle'));
-    await RB.ui.fade(true, 200);
+    await live(RB.ui.fade(true, 200));
     if (RB.battlers && RB.battlers.prewarm) { RB.battlers.prewarm(RB.equip.look(s), 'pc'); if (s.comp) RB.battlers.prewarm(RB.content.chars[s.comp].look, 'comp'); }
     RB.render.setOverride(draw);
     st = L().init(enemy, s, Object.assign({}, opts, { group: members.slice(1) }));
@@ -68110,19 +68396,19 @@ RB.combat = (function () {
     ui.root.classList.add('cb-intro');
     for (const el of [ui.intent, ui.dock]) el.inert = true;
     try { renderUi(); } catch (e) { console.error('battle intro', e); }
-    await RB.ui.fade(false, 200);
+    await live(RB.ui.fade(false, 200));
     let outcome = null;
     try {
-      if (enemy.intro) await say(tierOf(enemy.intro) || enemy.intro, enemy.introWho);
+      if (enemy.intro) await live(say(tierOf(enemy.intro) || enemy.intro, enemy.introWho));
       RB.ui.dialogue.hide();
       while (!outcome) {
         // a creature's new phase (a guardian changing its ways) is told before you choose
         for (let i = 0; i < st.foes.length; i++) {
           const ph = st.foes[i].phaseChanged;
           if (!ph) continue;
-          if (ph.line) { await say(tierOf(ph.line) || ph.line, ph.who); RB.ui.dialogue.hide(); }
+          if (ph.line) { await live(say(tierOf(ph.line) || ph.line, ph.who)); RB.ui.dialogue.hide(); }
           if (ph.teach) {
-            await RB.challenge.teachCard({ title: 'Something has changed', en: ph.teach.en, jp: ph.teach.jp });
+            await live(RB.challenge.teachCard({ title: 'Something has changed', en: ph.teach.en, jp: ph.teach.jp }));
             // the authored note has just explained the move now telegraphed
             RB.combatHelp.mark(s, 'intent:' + st.foes[i].intent.kind);
           }
@@ -68140,10 +68426,10 @@ RB.combat = (function () {
         if (RB.creatures) RB.creatures.saw(s, st, members); // the telegraphs now on screen
         RB.audio && RB.audio.sfx('enemy_intent', { vol: 0.5 });
         st.assistedRound = false;
-        const card = await pickCard();
+        const card = await live(pickCard());
         if (card.kind === 'flee') {
           tg.lock = null;
-          const r = await RB.ui.confirm('Step back from this encounter? Nothing is lost; you can return whenever you like.', ['Step back', 'Stay']);
+          const r = await live(RB.ui.confirm('Step back from this encounter? Nothing is lost; you can return whenever you like.', ['Step back', 'Stay']));
           if (r === 0) { outcome = 'flee'; break; }
           continue;
         }
@@ -68153,10 +68439,10 @@ RB.combat = (function () {
         renderUi();
         const step = stepFor(card);
         const T = st.cur;
-        const res = await RB.challenge.runStep(step, {
+        const res = await live(RB.challenge.runStep(step, {
           header: situationHtml(card), status: statusInset,
           allowCancel: true, cancelLabel: 'Choose a different response', ctxTag: 'battle:' + (st.enemyId || enemyId),
-        });
+        }));
         // backed out: the preview drops back to normal, nothing else changed
         if (res.cancelled) { tg.lock = null; continue; }
         if (st.assistedRound) res.assisted = true;
@@ -68165,7 +68451,7 @@ RB.combat = (function () {
         if (st.compId && st.comp > 0 && L().compOptions(st, s, card).some((o) => !o.locked)) {
           phase = 'companion';
           renderUi();
-          const c = await pickCompanion(card);
+          const c = await live(pickCompanion(card));
           tg.compTarget = null;
           if (c === 'back') { tg.lock = null; L().target(st, T); continue; }
           cact = c;
@@ -68194,14 +68480,14 @@ RB.combat = (function () {
         // (the displayed state starts as `before` and steps forward: keep its knots apart)
         const knots0 = before.foes.map((f) => f.knots);
         chain = true;
-        await playPlayer(card, fx, before, won, reach, T, step);
+        await live(playPlayer(card, fx, before, won, reach, T, step));
         if (!won) {
           // a creature of the group whose last knot your response freed settles now
-          for (let i = 0; i < st.foes.length; i++) if (knots0[i] > 0 && V().foes[i].knots <= 0 && !wonByComp) await playSettle(i);
+          for (let i = 0; i < st.foes.length; i++) if (knots0[i] > 0 && V().foes[i].knots <= 0 && !wonByComp) await live(playSettle(i));
           if (cfx && cfx.length) {
             const kb = snapshot(V());
-            await playCompanion(cact.act, cfx, wonByComp, cact.target != null ? cact.target : T);
-            if (!wonByComp) for (let i = 0; i < st.foes.length; i++) if (kb.foes[i].knots > 0 && V().foes[i].knots <= 0) await playSettle(i);
+            await live(playCompanion(cact.act, cfx, wonByComp, cact.target != null ? cact.target : T));
+            if (!wonByComp) for (let i = 0; i < st.foes.length; i++) if (kb.foes[i].knots > 0 && V().foes[i].knots <= 0) await live(playSettle(i));
           }
         }
         // the moves your response and your companion's answered: shown on their badges now
@@ -68221,7 +68507,7 @@ RB.combat = (function () {
           let mine = efx.filter((f) => f.foe === i);
           if (k === standing.length - 1) mine = mine.concat(tail);
           const blockedByWard = fx.some((f) => f.t === 'ward' && f.block && (f.foe == null || f.foe === i));
-          await playEnemy(i, intents[i], mine, blockedByWard);
+          await live(playEnemy(i, intents[i], mine, blockedByWard));
         }
         actFoe = null;
         endChain();
@@ -68230,7 +68516,7 @@ RB.combat = (function () {
         L().endRound(st, enemy);
         if (st.log.length && st.log[st.log.length - 1].t === 'revive') {
           st.log.pop();
-          await playRevive();
+          await live(playRevive());
         }
         if (st.over) outcome = st.over;
       }
@@ -68239,11 +68525,11 @@ RB.combat = (function () {
         present('scene', { phase: 'victory' });
         phase = 'outro';
         RB.audio && RB.audio.playSong('victory');
-        if (enemy.settle) { await say(tierOf(enemy.settle) || enemy.settle, enemy.settleWho); RB.ui.dialogue.hide(); }
+        if (enemy.settle) { await live(say(tierOf(enemy.settle) || enemy.settle, enemy.settleWho)); RB.ui.dialogue.hide(); }
         if (RB.creatures) RB.creatures.settle(s, members, enemy); // a settled observation (no count)
         if (enemy.reward) {
-          for (const k in enemy.reward.items || {}) { RB.state.give(s, k, enemy.reward.items[k]); const it = RB.content.items[k]; if (it) await RB.ui.toast({ kind: 'item', jp: it.name.jp, en: it.name.en }); }
-          for (const wd of enemy.reward.words || []) if (s.words.indexOf(wd) < 0) { s.words.push(wd); const W = RB.content.words[wd]; if (W) await RB.ui.toast({ kind: 'word', jp: W.jp, en: W.en }); }
+          for (const k in enemy.reward.items || {}) { RB.state.give(s, k, enemy.reward.items[k]); const it = RB.content.items[k]; if (it) await live(RB.ui.toast({ kind: 'item', jp: it.name.jp, en: it.name.en })); }
+          for (const wd of enemy.reward.words || []) if (s.words.indexOf(wd) < 0) { s.words.push(wd); const W = RB.content.words[wd]; if (W) await live(RB.ui.toast({ kind: 'word', jp: W.jp, en: W.en })); }
         }
         s.vars.battlesWon = (s.vars.battlesWon || 0) + 1;
       }
@@ -68265,7 +68551,7 @@ RB.combat = (function () {
       lastCardId = null;
       if (ui) { window.removeEventListener('resize', ui.onHold); window.removeEventListener('resize', ui.onResize); document.removeEventListener('keydown', ui.onKey); if (ui.ro) ui.ro.disconnect(); ui.root.remove(); }
       ui = null; stageCss = null;
-      await RB.ui.fade(true, 200);
+      await live(RB.ui.fade(true, 200));
       // while the screen is dark, before the map comes back: the world settles its side of the
       // encounter (src/engine/90_game.js startBattle: a creature you settled is gone; one you
       // stepped back from backs off and stays calm)
@@ -68273,7 +68559,7 @@ RB.combat = (function () {
       RB.render.setOverride(null);
       RB.battleStage.end();
       RB.game.popMode('combat');
-      await RB.ui.fade(false, 200);
+      await live(RB.ui.fade(false, 200));
       const m = RB.world.W.map;
       if (m && m.def.music) RB.audio && RB.audio.playSong(typeof m.def.music === 'string' ? m.def.music : (m.def.music.find((x) => !x.if || RB.state.test(s, x.if)) || {}).id);
       else if (prevSong) RB.audio && RB.audio.playSong(prevSong);
@@ -68294,10 +68580,48 @@ RB.combat = (function () {
       frames: { n: cost.n, avg: cost.n ? +(cost.sum / cost.n).toFixed(3) : 0, max: +cost.max.toFixed(3), seqN: cost.seqN, seqAvg: cost.seqN ? +(cost.seqSum / cost.seqN).toFixed(3) : 0, seqMax: +cost.seqMax.toFixed(3) },
     };
   }
-  // A campaign changing (new, loaded, back to the title) leaves no battle screen behind: a battle
-  // overlay that no open battle owns is removed (two battles at once, now refused by
-  // RB.game.startBattle, could leave one over the map).
+  // ---- leaving the encounter for another journey ----------------------------------------------
+  // Load or Return to title from the battle's settings sheet (src/ui/55_settings.js), or any other
+  // campaign change while a battle is open: the battle is taken down at once — the playing sequence
+  // dropped unresolved, the overlay, its listeners and layers, the notes, the banner, the badges,
+  // the stage, the battle music — and its coroutine never resumes (live()). Nothing is written to
+  // either campaign: no outcome, no closing callback (so no win, flee or defeat flag), no Harmony,
+  // no rewards, no word marks. The mode stack keeps 'combat' on top until the campaign change
+  // replaces it (so the old map cannot start another encounter meanwhile), and the screen stays
+  // dark until the next campaign draws.
+  const VEIL = (c, w, h) => { c.fillStyle = '#0d1220'; c.fillRect(0, 0, w, h); };
+  VEIL.art = true;
+  function abandon() {
+    if (!st && !ui) return false;
+    runN++;
+    RB.battleSeq.drop();
+    present('scene', { phase: 'exit', outcome: 'abandoned' });
+    chain = false; view = null; sealHeld = null; curCard = null; phase = 'idle'; acting = false;
+    tg.hover = null; tg.lock = null; tg.compTarget = null; onTarget = null; lastCardId = null;
+    badgeSnap = null; actFoe = null; shownAnswered = null;
+    RB.combatHelp.detach();
+    RB.battleBanner.detach();
+    RB.battleIntents.detach();
+    if (RB.ui.dialogue) RB.ui.dialogue.hide();
+    if (ui) {
+      for (const t of ['pointerdown', 'keydown', 'keyup']) document.removeEventListener(t, ui.onPress, true);
+      window.removeEventListener('resize', ui.onHold); window.removeEventListener('resize', ui.onResize); document.removeEventListener('keydown', ui.onKey); if (ui.ro) ui.ro.disconnect();
+      RB.ui.popLayersIn(ui.root); // the responses' and the companion's menus
+      ui.root.remove();
+    }
+    ui = null; stageCss = null;
+    RB.render.setOverride(VEIL);
+    RB.battleStage.end();
+    if (RB.audio) RB.audio.stopSong({ fade: 300 });
+    RB.ui.fade(false, 120);
+    st = null; members = []; enemy = null;
+    return true;
+  }
+  // A campaign changing (new, loaded, back to the title) leaves no battle behind: an open one is
+  // abandoned, and a battle overlay that no open battle owns is removed (two battles at once, now
+  // refused by RB.game.startBattle, could leave one over the map).
   if (RB.bus) RB.bus.on('campaign:changing', () => {
+    abandon();
     if (typeof document === 'undefined') return;
     for (const el of document.querySelectorAll('.combat-ui')) if (!ui || el !== ui.root) el.remove();
   });
@@ -68743,6 +69067,7 @@ RB.battleSeq = (function () {
   const counters = { runs: 0, done: 0, settled: 0, hurried: 0, beats: 0, watchdogs: 0 };
   const timers = new Set();
   let onVis = null, onDown = null, layer = null;
+  let paused = false, pausedAt = 0; // the battle's settings sheet is open (pause(), below)
   const stage = () => RB.battleStage;
 
   function later(fn, ms) { const id = setTimeout(() => { timers.delete(id); fn(); }, ms); timers.add(id); return id; }
@@ -68766,6 +69091,7 @@ RB.battleSeq = (function () {
   function detach() {
     if (cur) settle('exit');
     skipping = false;
+    paused = false;
     if (RB.battleBanner) RB.battleBanner.clear();
     if (onVis) document.removeEventListener('visibilitychange', onVis);
     onVis = null;
@@ -68773,9 +69099,31 @@ RB.battleSeq = (function () {
     clearTimers();
     port = null;
   }
+  // ---- the battle's settings sheet (src/ui/55_settings.js, battle mode) ------------------------
+  // pause(true) while the sheet is open: the presentation clock stands still, no cue fires, no
+  // sequence ends and the watchdog waits; pause(false) resumes exactly where it stood. A hidden
+  // tab still settles, as always. Nothing here touches a rule: the exchange was resolved before
+  // its sequence started.
+  function pause(on) {
+    on = !!on;
+    if (on === paused) return;
+    paused = on;
+    if (on) { pausedAt = performance.now(); return; }
+    lastT = null; // (no catch-up for the time it stood still)
+    if (cur) {
+      cur.started += performance.now() - pausedAt;
+      if (cur.watch) { clearTimeout(cur.watch); timers.delete(cur.watch); }
+      cur.watch = later(watchdog, cur.wall);
+    }
+  }
+  // A battle left for another journey (src/ui/80_combat.js abandon()): the playing sequence is
+  // dropped unresolved (no remaining beat, no reconcile, its promise never settles) and the
+  // sequencer lets go of the screen.
+  function drop() { cur = null; detach(); }
   function tick(t) {
     const dt = lastT == null ? 16 : Math.max(0, Math.min(100, t - lastT));
     lastT = t;
+    if (paused) return pt;
     pt += dt * timeScale * (cur ? speed() * (cur.hurried ? T.hurry : 1) : 1);
     if (cur) step();
     return pt;
@@ -68805,11 +69153,13 @@ RB.battleSeq = (function () {
       }
       // if frames stop arriving (a throttled tab, a stalled canvas), finish anyway
       const wall = (endAt / (speed() * Math.min(1, timeScale))) * 2 + 2500;
-      cur.watch = later(() => { if (cur && cur.started + wall - 50 <= performance.now()) { counters.watchdogs++; settle('watchdog'); } }, wall);
+      cur.wall = wall;
+      cur.watch = later(watchdog, wall);
       if (document.hidden) { settle('hidden'); return; }
-      step();
+      if (!paused) step();
     });
   }
+  function watchdog() { if (cur && !paused && cur.started + cur.wall - 50 <= performance.now()) { counters.watchdogs++; settle('watchdog'); } }
   function step() {
     const el = pt - cur.t0;
     while (cur && cur.i < cur.cues.length && cur.cues[cur.i].at <= el) fire(cur.cues[cur.i++], false);
@@ -69133,10 +69483,10 @@ RB.battleSeq = (function () {
   };
 
   function stats() {
-    return { running: !!cur, kind: cur && cur.kind, pt: Math.round(pt), timers: timers.size, layer: !!layer, pointer: !!onDown, attached: !!port, counters: Object.assign({}, counters) };
+    return { running: !!cur, kind: cur && cur.kind, paused, pt: Math.round(pt), timers: timers.size, layer: !!layer, pointer: !!onDown, attached: !!port, counters: Object.assign({}, counters) };
   }
   // setTimeScale(k): slow the presentation clock (k < 1) for frame captures; tests and tools only
-  return { T, attach, detach, tick, now, run, settle, hurry, skip, endExchange, skipping: () => skipping, mode, busy: () => !!cur, current: () => (cur ? { kind: cur.kind, banner: !!cur.banner, t: Math.round(pt - cur.t0), end: cur.end } : null), choreo, planOf: (card, fx, ctx) => RB.partyChoreo.planOf(card, fx, ctx, H), addDelivery, deliveryOf, stats, trace: () => trace.slice(), setTimeScale: (k) => { timeScale = Math.max(0.05, Math.min(4, +k || 1)); } };
+  return { T, attach, detach, pause, paused: () => paused, drop, tick, now, run, settle, hurry, skip, endExchange, skipping: () => skipping, mode, busy: () => !!cur, current: () => (cur ? { kind: cur.kind, banner: !!cur.banner, t: Math.round(pt - cur.t0), end: cur.end } : null), choreo, planOf: (card, fx, ctx) => RB.partyChoreo.planOf(card, fx, ctx, H), addDelivery, deliveryOf, stats, trace: () => trace.slice(), setTimeScale: (k) => { timeScale = Math.max(0.05, Math.min(4, +k || 1)); } };
 })();
 
 

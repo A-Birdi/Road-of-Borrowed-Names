@@ -44,6 +44,7 @@ RB.battleSeq = (function () {
   const counters = { runs: 0, done: 0, settled: 0, hurried: 0, beats: 0, watchdogs: 0 };
   const timers = new Set();
   let onVis = null, onDown = null, layer = null;
+  let paused = false, pausedAt = 0; // the battle's settings sheet is open (pause(), below)
   const stage = () => RB.battleStage;
 
   function later(fn, ms) { const id = setTimeout(() => { timers.delete(id); fn(); }, ms); timers.add(id); return id; }
@@ -67,6 +68,7 @@ RB.battleSeq = (function () {
   function detach() {
     if (cur) settle('exit');
     skipping = false;
+    paused = false;
     if (RB.battleBanner) RB.battleBanner.clear();
     if (onVis) document.removeEventListener('visibilitychange', onVis);
     onVis = null;
@@ -74,9 +76,31 @@ RB.battleSeq = (function () {
     clearTimers();
     port = null;
   }
+  // ---- the battle's settings sheet (src/ui/55_settings.js, battle mode) ------------------------
+  // pause(true) while the sheet is open: the presentation clock stands still, no cue fires, no
+  // sequence ends and the watchdog waits; pause(false) resumes exactly where it stood. A hidden
+  // tab still settles, as always. Nothing here touches a rule: the exchange was resolved before
+  // its sequence started.
+  function pause(on) {
+    on = !!on;
+    if (on === paused) return;
+    paused = on;
+    if (on) { pausedAt = performance.now(); return; }
+    lastT = null; // (no catch-up for the time it stood still)
+    if (cur) {
+      cur.started += performance.now() - pausedAt;
+      if (cur.watch) { clearTimeout(cur.watch); timers.delete(cur.watch); }
+      cur.watch = later(watchdog, cur.wall);
+    }
+  }
+  // A battle left for another journey (src/ui/80_combat.js abandon()): the playing sequence is
+  // dropped unresolved (no remaining beat, no reconcile, its promise never settles) and the
+  // sequencer lets go of the screen.
+  function drop() { cur = null; detach(); }
   function tick(t) {
     const dt = lastT == null ? 16 : Math.max(0, Math.min(100, t - lastT));
     lastT = t;
+    if (paused) return pt;
     pt += dt * timeScale * (cur ? speed() * (cur.hurried ? T.hurry : 1) : 1);
     if (cur) step();
     return pt;
@@ -106,11 +130,13 @@ RB.battleSeq = (function () {
       }
       // if frames stop arriving (a throttled tab, a stalled canvas), finish anyway
       const wall = (endAt / (speed() * Math.min(1, timeScale))) * 2 + 2500;
-      cur.watch = later(() => { if (cur && cur.started + wall - 50 <= performance.now()) { counters.watchdogs++; settle('watchdog'); } }, wall);
+      cur.wall = wall;
+      cur.watch = later(watchdog, wall);
       if (document.hidden) { settle('hidden'); return; }
-      step();
+      if (!paused) step();
     });
   }
+  function watchdog() { if (cur && !paused && cur.started + cur.wall - 50 <= performance.now()) { counters.watchdogs++; settle('watchdog'); } }
   function step() {
     const el = pt - cur.t0;
     while (cur && cur.i < cur.cues.length && cur.cues[cur.i].at <= el) fire(cur.cues[cur.i++], false);
@@ -434,8 +460,8 @@ RB.battleSeq = (function () {
   };
 
   function stats() {
-    return { running: !!cur, kind: cur && cur.kind, pt: Math.round(pt), timers: timers.size, layer: !!layer, pointer: !!onDown, attached: !!port, counters: Object.assign({}, counters) };
+    return { running: !!cur, kind: cur && cur.kind, paused, pt: Math.round(pt), timers: timers.size, layer: !!layer, pointer: !!onDown, attached: !!port, counters: Object.assign({}, counters) };
   }
   // setTimeScale(k): slow the presentation clock (k < 1) for frame captures; tests and tools only
-  return { T, attach, detach, tick, now, run, settle, hurry, skip, endExchange, skipping: () => skipping, mode, busy: () => !!cur, current: () => (cur ? { kind: cur.kind, banner: !!cur.banner, t: Math.round(pt - cur.t0), end: cur.end } : null), choreo, planOf: (card, fx, ctx) => RB.partyChoreo.planOf(card, fx, ctx, H), addDelivery, deliveryOf, stats, trace: () => trace.slice(), setTimeScale: (k) => { timeScale = Math.max(0.05, Math.min(4, +k || 1)); } };
+  return { T, attach, detach, pause, paused: () => paused, drop, tick, now, run, settle, hurry, skip, endExchange, skipping: () => skipping, mode, busy: () => !!cur, current: () => (cur ? { kind: cur.kind, banner: !!cur.banner, t: Math.round(pt - cur.t0), end: cur.end } : null), choreo, planOf: (card, fx, ctx) => RB.partyChoreo.planOf(card, fx, ctx, H), addDelivery, deliveryOf, stats, trace: () => trace.slice(), setTimeScale: (k) => { timeScale = Math.max(0.05, Math.min(4, +k || 1)); } };
 })();
