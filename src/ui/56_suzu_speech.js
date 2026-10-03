@@ -2,8 +2,9 @@
  * One setting, settings.suzuSpeech ('standard' | 'kansai'; an older settings
  * record has none = standard), shown and changed in three places:
  *   - once when she joins you (the Lantern Hall: rw.suzu_speech, `!hook suzu_speech`),
- *     or, in a campaign where she already travels with you, once after the next
- *     scene in which she speaks (never in the middle of a scene);
+ *     or, in a saved campaign where she already travels with you (loaded from its
+ *     slot), once after the next scene in which she speaks (never in the middle of
+ *     a scene);
  *   - Settings › Reading & Language: "Suzu's speech";
  *   - Company › Suzu, in "Talk with Suzu": the same choice, plus an in-world way
  *     to ask her (co.suzu_speech_kansai / co.suzu_speech_standard).
@@ -17,8 +18,10 @@ RB.ui.suzuSpeech = (function () {
   const esc = RB.util.esc;
   const I = (n) => (RB.ui.folio ? RB.ui.folio.icon(n) : '');
   const value = () => (RB.dialect ? RB.dialect.choice() : 'standard');
+  // escaped text whose {漢字|かな} pieces show as ruby (every kanji with its reading)
+  const ruby = (t) => esc(t).replace(/\{([^|}]+)\|([^}]+)\}/g, '<ruby lang="ja">$1<rt>$2</rt></ruby>');
   const decided = () => !!(RB.game.settings && RB.game.settings.suzuSpeech);
-  const EXPLAIN = 'Kansai-ben (関西弁) is the regional dialect of Osaka and Kyoto: the same Japanese, with its own endings and words — や for だ, 〜へん for 〜ない, ほんま for "really". Word help explains every Kansai word and form; your exercises and answers always stay in standard Japanese.';
+  const EXPLAIN = 'Kansai-ben ({関西弁|かんさいべん}) is the regional dialect of Osaka and Kyoto: the same Japanese, with its own endings and words — や for だ, 〜へん for 〜ない, ほんま for "really". Word help explains every Kansai word and form; your exercises and answers always stay in standard Japanese.';
   const BACK = 'You can switch back any time if it is hard to follow: Settings › Reading & Language, or Company › Suzu.';
   // one of her lines, both ways (the sample in the choice)
   const SAMPLE = { jp: '{開幕|かいまく} ！ …… ふふ 、 {一度|いちど} {言|い}って みたかった の 。', en: 'Curtain up! …Heh. I always wanted to say that.' };
@@ -54,13 +57,15 @@ RB.ui.suzuSpeech = (function () {
       };
       panel.innerHTML = '<h3 id="sp-q">' + I('words') + ' How should Suzu speak?</h3>' +
         (o.reason === 'existing' ? '<p>New: Suzu can now speak Kansai-ben. Nothing else in your journey changes.</p>' : '') +
-        '<p class="small">' + esc(EXPLAIN) + '</p>' +
+        '<p class="small">' + ruby(EXPLAIN) + '</p>' +
         '<div class="speech-opts" role="group" aria-label="How Suzu speaks">' +
         opt('standard', 'Standard Japanese', 'As she speaks across the game') +
         opt('kansai', 'Kansai-ben', 'Osaka-style regional dialect') + '</div>' +
         '<p class="muted small">' + esc(BACK) + '</p>';
       const layer = { el: scrim, name: 'speech' };
-      const done = (v) => { RB.ui.popLayer(layer); res(v); };
+      // a mode of its own while it is open: the world stands still and Escape reaches the sheet
+      RB.game.pushMode('speech');
+      const done = (v) => { RB.ui.popLayer(layer); RB.game.popMode('speech'); res(v); };
       panel.addEventListener('click', (e) => {
         const b = e.target.closest('[data-sp]');
         if (b) done(b.dataset.sp);
@@ -89,11 +94,13 @@ RB.ui.suzuSpeech = (function () {
     await choose('join');
   };
 
-  // ---- a campaign where she already travels with you: once, after a scene in which she spoke ------------
-  let askedNow = false;
+  // ---- a saved campaign where she already travels with you: once, after a scene in which she spoke -----
+  // (only a campaign loaded from a save: a new one asks when she joins)
+  let askedNow = false, fromSave = false;
+  if (RB.bus) RB.bus.on('campaign:changing', (e) => { fromSave = !!e && e.to === 'load'; });
   function maybeAskExisting() {
     const g = RB.game, s = g && g.s;
-    if (askedNow || decided() || !s || s.comp !== 'suzu' || (RB.test && RB.test.auto)) return;
+    if (askedNow || !fromSave || decided() || !s || s.comp !== 'suzu' || (RB.test && RB.test.auto)) return;
     const heard = (s.backlog || []).slice(-12).some((l) => l && l.who === 'suzu');
     if (!heard) return;
     setTimeout(async () => {
@@ -123,9 +130,9 @@ RB.ui.suzuSpeech = (function () {
   // ---- Company › Suzu: in "Talk with Suzu" -----------------------------------------------------------------
   function companyHtml() {
     const v = value();
-    const b = (val, label, jp) => '<button type="button" class="pbtn speech-btn" role="radio" aria-checked="' + (v === val) + '" data-suzu-speech-set="' + val + '">' + (v === val ? I('done') : '') + '<span>' + label + '</span> <span class="jp" lang="ja">' + jp + '</span></button>';
+    const b = (val, label, jp) => '<button type="button" class="pbtn speech-btn" role="radio" aria-checked="' + (v === val) + '" data-suzu-speech-set="' + val + '">' + (v === val ? I('done') : '') + '<span>' + label + '</span> <span class="jp" lang="ja">' + ruby(jp) + '</span></button>';
     return '<section class="co-speech" aria-labelledby="co-speech-h"><h5 id="co-speech-h">How Suzu speaks</h5>' +
-      '<div class="row-acts" role="radiogroup" aria-labelledby="co-speech-h">' + b('standard', 'Standard Japanese', '標準語') + b('kansai', 'Kansai-ben', '関西弁') + '</div>' +
+      '<div class="row-acts" role="radiogroup" aria-labelledby="co-speech-h">' + b('standard', 'Standard Japanese', '{標準語|ひょうじゅんご}') + b('kansai', 'Kansai-ben', '{関西弁|かんさいべん}') + '</div>' +
       '<p class="muted small">Kansai-ben is a regional dialect (Osaka, Kyoto). Word help explains it; if it is hard to follow, switch back any time.</p></section>';
   }
   // the in-world way: ask her (a row in the Talk list)

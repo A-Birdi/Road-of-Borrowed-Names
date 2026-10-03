@@ -169,7 +169,7 @@ RB.wordplay = (function () {
   }
   function journeyPool(s) {
     const words = new Set();
-    for (const n of s.notebook || []) if (n && n.kind === 'word') { if (n.surface) words.add(SH().norm(n.surface)); if (n.reading) words.add(SH().norm(n.reading)); }
+    for (const n of s.notebook || []) if (n && n.kind === 'word' && !n.dia) { if (n.surface) words.add(SH().norm(n.surface)); if (n.reading) words.add(SH().norm(n.reading)); }
     const all = allEntries();
     return Object.keys(all).sort().map((id) => all[id]).filter((e) => encounteredEntry(s, e, words));
   }

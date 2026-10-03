@@ -267,10 +267,27 @@ RB.dialect = (function () {
     let info;
     try { info = RB.jp.lookup(std); } catch (e) { return null; }
     if (!info || info.unknown || !info.entry) return null;
-    return Object.assign({}, info, { surface: tk.surface, reading: tk.reading, mora: RB.kana && RB.kana.mora ? RB.kana.mora(tk.reading) : info.mora, romaji: RB.kana ? RB.kana.romaji(tk.reading) : info.romaji, forms: [what + ' — standard ' + std.surface].concat(info.forms || []), dia: { std: std.surface, m: what }, parts: null });
+    const mk = (std.segs || []).map((s) => (s.r != null ? '{' + s.t + '|' + s.r + '}' : s.t)).join('') || std.surface;
+    return Object.assign({}, info, { surface: tk.surface, reading: tk.reading, mora: RB.kana && RB.kana.mora ? RB.kana.mora(tk.reading) : info.mora, romaji: RB.kana ? RB.kana.romaji(tk.reading) : info.romaji, forms: [what + ' — standard ' + std.surface].concat(info.forms || []), dia: { std: std.surface, mk, m: what }, parts: null });
   }
   function fromEntry(tk, e) {
-    return { surface: tk.surface, reading: tk.reading, entry: e, lemma: e.w, forms: [], romaji: e.ro || (RB.kana ? RB.kana.romaji(tk.reading || e.r) : ''), mora: RB.kana && RB.kana.mora ? RB.kana.mora(tk.reading || e.r) : [], gloss: tk.gloss || null, meaning: tk.gloss || e.m, parts: null, others: [], unknown: false, dia: { std: e.std, m: e.m } };
+    return { surface: tk.surface, reading: tk.reading, entry: e, lemma: e.w, forms: [], romaji: e.ro || (RB.kana ? RB.kana.romaji(tk.reading || e.r) : ''), mora: RB.kana && RB.kana.mora ? RB.kana.mora(tk.reading || e.r) : [], gloss: tk.gloss || null, meaning: tk.gloss || e.m, parts: null, others: [], unknown: false, dia: { std: e.std, mk: stdMarkup(e.std), m: e.m } };
+  }
+  // the standard equivalent with furigana (word help shows it as ruby): each kanji run takes its
+  // reading from the standard lexicon entry the form belongs to ('分からない' → '{分|わ}からない')
+  function stdMarkup(std) {
+    return String(std || '').split(' / ').map((part) => {
+      if (!/[一-鿿々]/.test(part) || !RB.jp) return part;
+      let e = null;
+      try { const i = RB.jp.lookup(part); e = i && !i.unknown ? i.entry : null; } catch (err) { e = null; }
+      if (!e && RB.lex) e = (RB.lex.bySurface(part) || [])[0] || null;
+      if (!e || !e.r || !RB.jp.rubyize) return part;
+      const groups = [];
+      String(RB.jp.rubyize(e.w, e.r)).replace(/\{([^|}]+)\|([^}]+)\}/g, (m0, k, r) => { groups.push([k, r]); return m0; });
+      let out = part;
+      for (const [k, r] of groups) out = out.replace(k, '\u0001' + k + '|' + r + '\u0002');
+      return out.replace(/\u0001/g, '{').replace(/\u0002/g, '}');
+    }).join(' / ');
   }
   // tokens: RB.jp.parse of a Kansai line; i: the token's index. Returns a lookup result or null.
   function lookupIn(tokens, i) {
@@ -310,16 +327,19 @@ RB.dialect = (function () {
     return null;
   }
   const OVERRIDE = { 'おる': 'おる' };
-  // word help: a note under the meaning for a Kansai word or form
-  function note(info) {
+  // word help: a note under the meaning for a Kansai word or form. J(plain, markup) shows a piece of
+  // Japanese (word help passes one that renders the markup's furigana; the default gives the plain text)
+  function note(info, J) {
     if (!info || !info.dia || (info.entry && info.entry.plain)) return '';
-    if (info.entry && info.entry.casual) return 'Casual speech (not only Kansai). The fuller form: ' + info.dia.std + '.';
-    return 'Kansai dialect (関西弁). In standard Japanese: ' + info.dia.std + '. Suzu speaks Kansai-ben because you chose it; the game\'s exercises and answers always use standard Japanese.';
+    J = J || ((plain) => plain);
+    const std = J(info.dia.std, info.dia.mk || stdMarkup(info.dia.std));
+    if (info.entry && info.entry.casual) return 'Casual speech (not only Kansai). The fuller form: ' + std + '.';
+    return 'Kansai dialect (' + J('関西弁', '{関西弁|かんさいべん}') + '). In standard Japanese: ' + std + '. Suzu speaks Kansai-ben because you chose it; the game\'s exercises and answers always use standard Japanese.';
   }
 
   return {
     norm, add, parse, find, line, joined, std, isKansai, choice, active, SPEAKERS,
-    addLex, lookupIn, note, lexAll: () => lexAll.slice(), lexProblems: () => lexProblems.slice(),
+    addLex, lookupIn, note, stdMarkup, lexAll: () => lexAll.slice(), lexProblems: () => lexProblems.slice(),
     table: (d) => T[d || 'kansai'], templates: (d) => (TPL[d || 'kansai'] || []).slice(), errors: () => errors.slice(), files: () => files.slice(),
   };
 })();

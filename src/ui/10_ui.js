@@ -406,7 +406,11 @@ RB.ui.help = (function () {
     if (e) html += '<div class="mean">' + (info.gloss ? '<span class="lab">Dictionary</span>' : '') + esc(e.m) + (info.lemma && info.lemma !== surface ? ' <span class="small" lang="ja">(' + esc(info.lemma) + ')</span>' : '') + '</div>';
     if (info.forms && info.forms.length) html += '<div class="note">Form: ' + esc(info.forms.join(' → ')) + '</div>';
     if (info.parts && info.parts.length) html += '<div class="note">Parts: ' + info.parts.map((p) => esc(p.surface || p.w || '') + (p.m ? ' (' + esc(p.m) + ')' : '')).join(' + ') + '</div>';
-    if (info.dia && RB.dialect && RB.dialect.note(info)) html += '<div class="note dia" lang="en"><b>' + (e && e.casual ? 'Casual speech' : 'Kansai-ben') + '</b> ' + esc(RB.dialect.note(info)) + '</div>';
+    if (info.dia && RB.dialect && RB.dialect.note(info)) {
+      // (its Japanese with furigana: the standard form and 関西弁)
+      const J = (plain, mk) => '<span lang="ja">' + esc(mk || plain).replace(/\{([^|}]+)\|([^}]+)\}/g, '<ruby>$1<rt>$2</rt></ruby>') + '</span>';
+      html += '<div class="note dia" lang="en"><b>' + (e && e.casual ? 'Casual speech' : 'Kansai-ben') + '</b> ' + RB.dialect.note(info, J) + '</div>';
+    }
     if (e && e.n) html += '<div class="note">' + esc(e.n) + '</div>';
     if (!e && !info.gloss) html += '<div class="note">No dictionary note is recorded for this piece of text. The reading above is still accurate.</div>';
     if (mora && mora.length > 1) html += '<div class="note">Beats (morae): <span class="mora" lang="ja">' + mora.map((m) => '<span>' + esc(m) + '</span>').join('') + '</span></div>';
