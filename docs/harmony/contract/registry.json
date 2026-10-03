@@ -2679,13 +2679,13 @@
   "contractModule": "src/ui/88_harmony_contract.js",
   "generator": "tools/harmony_registry.mjs",
   "git": {
-   "branch": "worktree-agent-a4994cdf0f0b71e12",
-   "commit": "d8f44b3c2a5f99dc2b3b6d796c9a75a662f68e92",
+   "branch": "claude/stoic-sagan-n3jvgk",
+   "commit": "996d1952a21c03a1ffac3fd0ba350161ea1b510a",
    "dirty": false
   },
   "indexHtml": {
-   "bytes": 10027202,
-   "sha256": "17b261e081f9ed12b6177ef9f4df1b366fa1482c94d4414d4c76ffeba216b13a"
+   "bytes": 10080125,
+   "sha256": "3bd7a1bc77171ce139231b91fc9e5e7ccfb299f1c5bf7e61d5e5996a3da22218"
   },
   "note": "git.commit is HEAD when exported; the export is committed with or after it. indexHtml is the build it was read from.",
   "renderer": [
