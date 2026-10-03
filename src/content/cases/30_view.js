@@ -103,6 +103,9 @@ narr: 「 {裏|うら} から {見|み}る と 、 {軸|じく} は {右|みぎ}
 !hook case_page view
 
 @scene cs.view_seat
+# Staged: sitting a while, you look up the stair (north) as the view is described; holding up the sketch as it hung
+# in the window, you hold it up before you; turned over, you turn it in your hands to look; leaving it here, you
+# reach to set it on the post beside the seat, and your companion nods.
 !call sb.path_bench
 !choice
 * しばらく {座|すわ}って {眺|なが}める || Sit and look out a while -> look
@@ -111,14 +114,19 @@ narr: 「 {裏|うら} から {見|み}る と 、 {軸|じく} は {右|みぎ}
 * [item.cs_sketch&case.view=done&!cs_view_framed] {絵|え} を ここ に {残|のこ}す || Leave the sketch here, where it was drawn -> frame
 * {先|さき} へ {進|すす}む || Move on -> end
 :look
+!gesture pc lookroad up
 !hook cs_look seat
 !end
 :back
+!prop pc paper
+!gesture pc present prop=paper
 !hook cs_holdup seat back
 !if var._res=1 -> match
 narr: {絵|え} と {景色|けしき} は 、 {重|かさ}ならない 。 {灯|あか}り と {祠|ほこら} と {枯|か}れ{木|き} の {並|なら}び が {違|ちが}う 。 || The sketch and the view don't line up: the lantern, the shrine and the bare tree are in a different order.
 !end
 :front
+!prop pc paper
+!gesture pc check prop=paper
 !hook cs_holdup seat front
 !if var._res=1 -> match
 narr: {絵|え} と {景色|けしき} は 、 {重|かさ}ならない 。 {灯|あか}り と {祠|ほこら} と {枯|か}れ{木|き} の {並|なら}び が {違|ちが}う 。 || The sketch and the view don't line up: the lantern, the shrine and the bare tree are in a different order.
@@ -130,10 +138,15 @@ narr: {絵|え} と {景色|けしき} は 、 {重|かさ}ならない 。 {灯
 !take cs_sketch
 !set cs_view_framed
 !sfx discover
+!prop pc paper
+!gesture pc handover 11,36
 narr: {腰掛|こしか}け の {横|よこ} の {柱|はしら} に 、 {小|ちい}さな {額|がく} を {作|つく}って {絵|え} を {納|おさ}めた 。 {表|おもて} を {景色|けしき} の ほう へ {向|む}けて 。 || On the post beside the seat you set the sketch in a small frame, its face turned towards the view.
+?(comp) !gesture comp nod pc
 ?(comp) comp[smile]: {絵|え} も 、 やっと {帰|かえ}って きた ね 。 || The picture's finally come home.
 
 @scene cs.view_west
+# Staged: looking out, you turn east across the slope; holding up the sketch as it hung, you hold it up before
+# you, facing the view; turned over, you turn it in your hands to look.
 narr: {雪|ゆき} を {払|はら}った {平|たい}らな {石|いし} 。 {誰|だれ} か が ここ に {立|た}って 、 {景色|けしき} を {見|み}る らしい 。 || A flat stone, swept clear of snow. Someone seems to stand here to look at the view.
 !choice
 * {景色|けしき} を {見|み}る || Look out -> look
@@ -141,14 +154,21 @@ narr: {雪|ゆき} を {払|はら}った {平|たい}らな {石|いし} 。 {�
 * [item.cs_sketch&case.view=open] {絵|え} を {裏返|うらがえ}して かざす || Hold up the sketch turned over -> front
 * {先|さき} へ {進|すす}む || Move on -> end
 :look
+!gesture pc lookroad right
 !hook cs_look west
 !end
 :back
+!prop pc paper
+!look pc right
+!gesture pc present prop=paper
 !hook cs_holdup west back
 !if var._res=1 -> match
 narr: {絵|え} と {景色|けしき} は 、 {重|かさ}ならない 。 {灯|あか}り と {祠|ほこら} と {枯|か}れ{木|き} の {並|なら}び が {違|ちが}う 。 || The sketch and the view don't line up: the lantern, the shrine and the bare tree are in a different order.
 !end
 :front
+!prop pc paper
+!look pc right
+!gesture pc check prop=paper
 !hook cs_holdup west front
 !if var._res=1 -> match
 narr: {絵|え} と {景色|けしき} は 、 {重|かさ}ならない 。 {灯|あか}り と {祠|ほこら} と {枯|か}れ{木|き} の {並|なら}び が {違|ちが}う 。 || The sketch and the view don't line up: the lantern, the shrine and the bare tree are in a different order.
@@ -157,6 +177,8 @@ narr: {絵|え} と {景色|けしき} は 、 {重|かさ}ならない 。 {灯
 !call cs.view_solved
 
 @scene cs.view_east
+# Staged: looking out, you turn back west along the slope; holding up the sketch as it hung, you hold it up
+# before you, facing the view; turned over, you turn it in your hands to look.
 narr: {雪|ゆき} を {払|はら}った {平|たい}らな {石|いし} 。 {下|した} の {道|みち} が よく {見|み}える 。 || A flat stone, swept clear of snow. You can see the lower path well from here.
 !choice
 * {景色|けしき} を {見|み}る || Look out -> look
@@ -164,14 +186,21 @@ narr: {雪|ゆき} を {払|はら}った {平|たい}らな {石|いし} 。 {�
 * [item.cs_sketch&case.view=open] {絵|え} を {裏返|うらがえ}して かざす || Hold up the sketch turned over -> front
 * {先|さき} へ {進|すす}む || Move on -> end
 :look
+!gesture pc lookroad left
 !hook cs_look east
 !end
 :back
+!prop pc paper
+!look pc left
+!gesture pc present prop=paper
 !hook cs_holdup east back
 !if var._res=1 -> match
 narr: {絵|え} と {景色|けしき} は 、 {重|かさ}ならない 。 {灯|あか}り と {祠|ほこら} と {枯|か}れ{木|き} の {並|なら}び が {違|ちが}う 。 || The sketch and the view don't line up: the lantern, the shrine and the bare tree are in a different order.
 !end
 :front
+!prop pc paper
+!look pc left
+!gesture pc check prop=paper
 !hook cs_holdup east front
 !if var._res=1 -> match
 narr: {絵|え} と {景色|けしき} は 、 {重|かさ}ならない 。 {灯|あか}り と {祠|ほこら} と {枯|か}れ{木|き} の {並|なら}び が {違|ちが}う 。 || The sketch and the view don't line up: the lantern, the shrine and the bare tree are in a different order.

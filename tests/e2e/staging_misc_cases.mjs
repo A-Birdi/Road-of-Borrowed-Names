@@ -115,6 +115,14 @@ const CASES = [
   M({ scene: 'cs.rosette_box', map: 'sb.hoshino', at: [5, 3, 'up'], flags: F(C4, { sb_log_solved: true }),
     variants: [{ name: 'one taken', picks: [0], comps: ['ren', 'mio'], expect: { pc: ['bend', 'check'] } }, { name: 'left', picks: [1], comp: 'nao' }] }),
   M({ scene: 'cs.spool_tokuji', map: 'lf.sluice', at: [16, 11, 'right'], talk: 'lf_tokuji', flags: F(C5, { lf_gate_c: true, lf_bell_rung: true }), comps: ['nao', 'suzu'], expect: { lf_tokuji: ['nod', 'handover'], pc: ['receive', 'check'] } }),
+  // the Star Stair's viewpoints (the case of the view): look out, or hold the sketch up either way round
+  M({ scene: 'cs.view_west', map: 'sb.obs_path', at: [4, 31, 'left'], flags: C4, cases: { view: 'open' }, items: { cs_sketch: 1 },
+    variants: [{ name: 'looked out', picks: [0], comp: 'ren', expect: { pc: ['lookroad'] } }, { name: 'held up as it hung', picks: [1], comp: 'mio', expect: { pc: ['present'] } }, { name: 'held up turned over', picks: [2], comp: 'nao', expect: { pc: ['check'] } }] }),
+  M({ scene: 'cs.view_east', map: 'sb.obs_path', at: [14, 33, 'up'], flags: C4, cases: { view: 'open' }, items: { cs_sketch: 1 },
+    variants: [{ name: 'looked out', picks: [0], comp: 'suzu', expect: { pc: ['lookroad'] } }, { name: 'held up as it hung', picks: [1], comp: 'ren', expect: { pc: ['present'] } }, { name: 'held up turned over', picks: [2], comp: 'mio', expect: { pc: ['check'] } }] }),
+  M({ scene: 'cs.view_seat', map: 'sb.obs_path', at: [10, 37, 'up'], flags: C4, cases: { view: 'open' }, items: { cs_sketch: 1 },
+    variants: [{ name: 'looked out', picks: [0], comp: 'mio', expect: { pc: ['lookroad'] } }, { name: 'held up as it hung', picks: [1], comp: 'nao', expect: { pc: ['present'] } },
+      { name: 'held up turned over: the match', picks: [2], comp: 'suzu', expect: { pc: ['check'] } }, { name: 'left where it was drawn', picks: [1], comp: 'ren', cases: { view: 'done' }, expect: { pc: ['handover'], comp: ['nod'] } }] }),
 ];
 
 // ---- Pet vignettes (src/content/pets) ---------------------------------------------------------------------------
@@ -131,6 +139,20 @@ const PETS = [
   M({ scene: 'pets.bird.bird', map: 'sg.harbor', at: [45, 27, 'left'], flags: S0, quests: { sg_main: 1 },
     variants: [{ name: 'restless', comps: ALL4, expect: { pc: ['observe'] } }, { name: 'settled · still · not now', vars: { pet_bird: 2 }, picks: [0, 1], comps: ALL4 },
       { name: 'settled · an open palm · not now', vars: { pet_bird: 2 }, picks: [1, 1], comp: 'mio', expect: { pc: ['palm'] } }, { name: 'settled · left be', vars: { pet_bird: 2 }, picks: [2], comp: 'nao' }] }),
+  // the dog's corner (co.village 32–33,26) cannot be faced on foot (the barrel, the crate and the wall close off
+  // 33,25): its scene is reached from the gate (31,26), which calls it once the gate stays shut, so it is played
+  // from the gate's side here (a finding of this pass, in the report)
+  M({ scene: 'pets.dog.dog', map: 'co.village', at: [31, 25, 'down'], flags: F(C3, { co_met_sayo: true }),
+    variants: [{ name: 'restless', comps: ALL4, expect: { pc: ['observe'] } }, { name: 'settled · a hand · not now', vars: { pet_dog: 2 }, picks: [0, 1], comps: ALL4, expect: { pc: ['kneel'] } },
+      { name: 'settled · sat down · not now', vars: { pet_dog: 2 }, picks: [1, 1], comp: 'ren' }, { name: 'settled · left be', vars: { pet_dog: 2 }, picks: [2], comp: 'mio' }] }),
+  M({ scene: 'pets.dog.gate', map: 'co.village', at: [31, 25, 'down'], flags: F(C3, { co_met_sayo: true }),
+    variants: [{ name: 'the latch loop', picks: [0], comps: ALL4, expect: { pc: ['observe', 'bend'] } }, { name: 'the stop peg', picks: [1], comp: 'nao', at: [30, 26, 'right'], expect: { pc: ['kneel'] } },
+      { name: 'left', picks: [2], comp: 'suzu' }, { name: 'shut · the dog not yet met', vars: { pet_dog: 2 }, picks: [2], comp: 'ren' }] }),
+  M({ scene: 'pets.tanuki.tanuki', map: 'co.road', at: [6, 4, 'up'], flags: C3,
+    variants: [{ name: 'restless', comps: ALL4, expect: { pc: ['observe'] } }, { name: 'settled · waited · not now', vars: { pet_tanuki: 2 }, picks: [0, 1], comps: ALL4 }, { name: 'settled · left be', vars: { pet_tanuki: 2 }, picks: [1], comp: 'nao' }] }),
+  M({ scene: 'pets.tanuki.papers', map: 'co.road', at: [5, 5, 'up'], flags: C3,
+    variants: [{ name: 'under a flat stone', picks: [0], comps: ALL4, expect: { pc: ['observe', 'kneel'] } }, { name: 'in the rock\'s lee', picks: [1], comp: 'mio', expect: { pc: ['bend'] } }, { name: 'left', picks: [2], comp: 'ren' },
+      { name: 'tidy · the tanuki not yet met', vars: { pet_tanuki: 2 }, picks: [1], comp: 'suzu' }] }),
   M({ scene: 'pets.bird.post', map: 'sg.harbor', at: [43, 27, 'up'], flags: S0, quests: { sg_main: 1 },
     variants: [{ name: 'untied', picks: [0], comps: ALL4, expect: { pc: ['observe', 'kneel'] } }, { name: 'tucked in', picks: [1], comp: 'ren', expect: { pc: ['bend'] } }, { name: 'left', picks: [2], comp: 'suzu' },
       { name: 'steady · the bird not yet met', vars: { pet_bird: 2 }, picks: [2], comp: 'mio' }] }),

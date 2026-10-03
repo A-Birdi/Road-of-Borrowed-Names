@@ -94211,6 +94211,9 @@ narr: 「 {裏|うら} から {見|み}る と 、 {軸|じく} は {右|みぎ}
 !hook case_page view
 
 @scene cs.view_seat
+# Staged: sitting a while, you look up the stair (north) as the view is described; holding up the sketch as it hung
+# in the window, you hold it up before you; turned over, you turn it in your hands to look; leaving it here, you
+# reach to set it on the post beside the seat, and your companion nods.
 !call sb.path_bench
 !choice
 * しばらく {座|すわ}って {眺|なが}める || Sit and look out a while -> look
@@ -94219,14 +94222,19 @@ narr: 「 {裏|うら} から {見|み}る と 、 {軸|じく} は {右|みぎ}
 * [item.cs_sketch&case.view=done&!cs_view_framed] {絵|え} を ここ に {残|のこ}す || Leave the sketch here, where it was drawn -> frame
 * {先|さき} へ {進|すす}む || Move on -> end
 :look
+!gesture pc lookroad up
 !hook cs_look seat
 !end
 :back
+!prop pc paper
+!gesture pc present prop=paper
 !hook cs_holdup seat back
 !if var._res=1 -> match
 narr: {絵|え} と {景色|けしき} は 、 {重|かさ}ならない 。 {灯|あか}り と {祠|ほこら} と {枯|か}れ{木|き} の {並|なら}び が {違|ちが}う 。 || The sketch and the view don't line up: the lantern, the shrine and the bare tree are in a different order.
 !end
 :front
+!prop pc paper
+!gesture pc check prop=paper
 !hook cs_holdup seat front
 !if var._res=1 -> match
 narr: {絵|え} と {景色|けしき} は 、 {重|かさ}ならない 。 {灯|あか}り と {祠|ほこら} と {枯|か}れ{木|き} の {並|なら}び が {違|ちが}う 。 || The sketch and the view don't line up: the lantern, the shrine and the bare tree are in a different order.
@@ -94238,10 +94246,15 @@ narr: {絵|え} と {景色|けしき} は 、 {重|かさ}ならない 。 {灯
 !take cs_sketch
 !set cs_view_framed
 !sfx discover
+!prop pc paper
+!gesture pc handover 11,36
 narr: {腰掛|こしか}け の {横|よこ} の {柱|はしら} に 、 {小|ちい}さな {額|がく} を {作|つく}って {絵|え} を {納|おさ}めた 。 {表|おもて} を {景色|けしき} の ほう へ {向|む}けて 。 || On the post beside the seat you set the sketch in a small frame, its face turned towards the view.
+?(comp) !gesture comp nod pc
 ?(comp) comp[smile]: {絵|え} も 、 やっと {帰|かえ}って きた ね 。 || The picture's finally come home.
 
 @scene cs.view_west
+# Staged: looking out, you turn east across the slope; holding up the sketch as it hung, you hold it up before
+# you, facing the view; turned over, you turn it in your hands to look.
 narr: {雪|ゆき} を {払|はら}った {平|たい}らな {石|いし} 。 {誰|だれ} か が ここ に {立|た}って 、 {景色|けしき} を {見|み}る らしい 。 || A flat stone, swept clear of snow. Someone seems to stand here to look at the view.
 !choice
 * {景色|けしき} を {見|み}る || Look out -> look
@@ -94249,14 +94262,21 @@ narr: {雪|ゆき} を {払|はら}った {平|たい}らな {石|いし} 。 {�
 * [item.cs_sketch&case.view=open] {絵|え} を {裏返|うらがえ}して かざす || Hold up the sketch turned over -> front
 * {先|さき} へ {進|すす}む || Move on -> end
 :look
+!gesture pc lookroad right
 !hook cs_look west
 !end
 :back
+!prop pc paper
+!look pc right
+!gesture pc present prop=paper
 !hook cs_holdup west back
 !if var._res=1 -> match
 narr: {絵|え} と {景色|けしき} は 、 {重|かさ}ならない 。 {灯|あか}り と {祠|ほこら} と {枯|か}れ{木|き} の {並|なら}び が {違|ちが}う 。 || The sketch and the view don't line up: the lantern, the shrine and the bare tree are in a different order.
 !end
 :front
+!prop pc paper
+!look pc right
+!gesture pc check prop=paper
 !hook cs_holdup west front
 !if var._res=1 -> match
 narr: {絵|え} と {景色|けしき} は 、 {重|かさ}ならない 。 {灯|あか}り と {祠|ほこら} と {枯|か}れ{木|き} の {並|なら}び が {違|ちが}う 。 || The sketch and the view don't line up: the lantern, the shrine and the bare tree are in a different order.
@@ -94265,6 +94285,8 @@ narr: {絵|え} と {景色|けしき} は 、 {重|かさ}ならない 。 {灯
 !call cs.view_solved
 
 @scene cs.view_east
+# Staged: looking out, you turn back west along the slope; holding up the sketch as it hung, you hold it up
+# before you, facing the view; turned over, you turn it in your hands to look.
 narr: {雪|ゆき} を {払|はら}った {平|たい}らな {石|いし} 。 {下|した} の {道|みち} が よく {見|み}える 。 || A flat stone, swept clear of snow. You can see the lower path well from here.
 !choice
 * {景色|けしき} を {見|み}る || Look out -> look
@@ -94272,14 +94294,21 @@ narr: {雪|ゆき} を {払|はら}った {平|たい}らな {石|いし} 。 {�
 * [item.cs_sketch&case.view=open] {絵|え} を {裏返|うらがえ}して かざす || Hold up the sketch turned over -> front
 * {先|さき} へ {進|すす}む || Move on -> end
 :look
+!gesture pc lookroad left
 !hook cs_look east
 !end
 :back
+!prop pc paper
+!look pc left
+!gesture pc present prop=paper
 !hook cs_holdup east back
 !if var._res=1 -> match
 narr: {絵|え} と {景色|けしき} は 、 {重|かさ}ならない 。 {灯|あか}り と {祠|ほこら} と {枯|か}れ{木|き} の {並|なら}び が {違|ちが}う 。 || The sketch and the view don't line up: the lantern, the shrine and the bare tree are in a different order.
 !end
 :front
+!prop pc paper
+!look pc left
+!gesture pc check prop=paper
 !hook cs_holdup east front
 !if var._res=1 -> match
 narr: {絵|え} と {景色|けしき} は 、 {重|かさ}ならない 。 {灯|あか}り と {祠|ほこら} と {枯|か}れ{木|き} の {並|なら}び が {違|ちが}う 。 || The sketch and the view don't line up: the lantern, the shrine and the bare tree are in a different order.
@@ -132434,34 +132463,54 @@ var RB = (globalThis.RB = globalThis.RB || {});
 ?(party=suzu) suzu: {水番|みずばん} さん の {庭|にわ} に 、 {看板|かんばん} {犬|いぬ} {発見|はっけん} 。 でも 、 {寝|ね}られない みたい 。 || Spotted: one star dog in the channel keeper's yard. But he can't get to sleep.
 
 @scene pets.dog.dog
+# Staged: you lean in to watch the dog lie down and get up again; your companion's own answer (Nao points at the
+# swinging gate, Mio leans in to the dog, Ren points at the gate, Suzu's shrug at the curtain that won't stay down).
+# Once he is settled: you look at him; crouching, you get down low to him (a kneel held); waiting, you sit down by
+# the barrel. Then Nao's nod, Mio's laugh behind her hand, Ren's nod, Suzu's small celebration; Tamotsu turns to you
+# from his yard to say the dog is nobody's; as the dog stands, so do you; not now, you look at his corner.
 !if var.pet_dog>=2 -> settled
+!gesture pc observe 32,26 hold
 narr: {薄|うす}い {茶色|ちゃいろ} の {犬|いぬ} が 、 {樽|たる} の {横|よこ} の {隅|すみ} で {横|よこ} に なろう と する 。 {水路|すいろ} から {風|かぜ} が {吹|ふ}く と 、 {小|ちい}さな {戸|と} が {開|ひら}いて {隅|すみ} に {当|あ}たり 、 {犬|いぬ} は また {起|お}き{上|あ}がる 。 || A pale fawn dog tries to lie down in the corner beside the barrel. When the wind comes up the channel, the little gate swings open into the corner, and he gets up again.
+?(party=nao) !gesture nao point 31,26
 ?(party=nao) nao: {寝床|ねどこ} に {扉|とびら} が {突|つ}っ{込|こ}んで くる ん じゃ 、 {寝|ね}られない よな 。 || Can't sleep with a door swinging into your bed.
+?(party=mio) !gesture mio observe 32,26
 ?(party=mio) mio: {戸|と} が ちゃんと {閉|し}まれば 、 {休|やす}める のに 。 || If the gate would just stay shut, he could rest.
+?(party=ren) !gesture ren point 31,26
 ?(party=ren) ren: {風|かぜ} の {通|とお}り{道|みち} に {戸|と} が ある 。 {原因|げんいん} は あれ です ね 。 || There's a gate in the wind's path. That's the cause.
+?(party=suzu) !gesture suzu shrug
 ?(party=suzu) suzu: {幕|まく} が {閉|し}まらない {舞台|ぶたい} みたい 。 {落|お}ち{着|つ}かない よ ね 。 || Like a stage where the curtain won't stay down. Unsettling.
 !var pet_dog = 1
 !end
 :settled
+!gesture pc observe 32,26
 narr: {犬|いぬ} は {隅|すみ} で {長|なが}く {伸|の}びて いる 。 あなた を {見|み}る と 、 しっぽ で {地面|じめん} を {一度|いちど} たたいた 。 || The dog is stretched out in the corner. When he sees you, his tail thumps the ground once.
 !choice
 * しゃがんで 、 {手|て} の {匂|にお}い を かがせる || Crouch and let him sniff your hand. -> hand
 * {樽|たる} の {横|よこ} に {座|すわ}って {待|ま}つ || Sit down by the barrel and wait. -> sit
 * そっと して おく || Leave him be. -> end
 :hand
+!gesture pc kneel 32,26 hold
 narr: しゃがんで 、 {手|て} を {低|ひく}く {出|だ}す 。 {犬|いぬ} は {起|お}き{上|あ}がって {匂|にお}い を かぎ 、 {頭|あたま} を {押|お}しつけて きた 。 || You crouch and hold out a hand, low. He gets up, sniffs it, and presses his head into it.
 !goto met
 :sit
+!pose pc sit
 narr: {樽|たる} の {横|よこ} に {腰|こし} を {下|お}ろす 。 {水路|すいろ} の {水|みず} の {音|おと} が する 。 || You sit down by the barrel. There is the sound of the channel water.
 narr: {犬|いぬ} は のそのそ と {起|お}きて きて 、 あなた の {隣|となり} に {座|すわ}った 。 || He gets up without hurrying, comes over and sits down next to you.
 :met
 !hook pet_vig dog near
+?(party=nao) !gesture nao nod pc
 ?(party=nao) nao[smirk]: {道|みち} を {知|し}ってる {顔|かお} だ 。 || He looks like he knows the roads.
+?(party=mio) !gesture mio laugh
 ?(party=mio) mio[smile]: あったかい 。 {背中|せなか} が お{日様|ひさま} の {匂|にお}い 。 || He's warm. His back smells of sunshine.
+?(party=ren) !gesture ren nod pc
 ?(party=ren) ren: {頼|たの}もしい {目|め} を して います 。 || He has a dependable look.
+?(party=suzu) !gesture suzu celebrate
 ?(party=suzu) suzu[laugh]: {拍手|はくしゅ} の {代|か}わり に 、 しっぽ ! || Instead of applause — a tail!
+!look co_tamotsu pc
 co_tamotsu: そいつ は {誰|だれ} の {犬|いぬ} でも ない 。 {俺|おれ} の {庭|にわ} で {寝|ね}て 、 {橋|はし} で {旅|たび}の{人|ひと} を {迎|むか}える 。 || He's nobody's dog. Sleeps in my yard, meets every traveller at the bridge.
 co_tamotsu: {行|い}きたい なら 、 {連|つ}れて {行|い}け 。 {帰|かえ}り{道|みち} は {知|し}ってる やつ だ 。 || If he wants to go with you, take him. He knows his way home.
+!pose pc -
+!gesture pc -
 narr: {犬|いぬ} は あなた の {顔|かお} を {見上|みあ}げて 、 {立|た}ち{上|あ}がった 。 {一緒|いっしょ} に {行|い}く {気|き} で いる よう だ 。 || The dog looks up at your face and stands. He seems ready to go with you.
 !choice
 * {一緒|いっしょ} に {来|く}る ? || Invite him to come with you. -> invite
@@ -132471,11 +132520,17 @@ narr: {犬|いぬ} は あなた の {顔|かお} を {見上|みあ}げて 、 
 !end
 :notnow
 !hook pet_vig dog back
+!gesture pc observe 32,26
 narr: {犬|いぬ} は {隅|すみ} に {戻|もど}って 、 {長|なが}く {伸|の}びた 。 ここ に {来|く}れば 、 また {会|あ}える 。 || He goes back to his corner and stretches out. He'll be here whenever you come by.
 
 @scene pets.dog.gate
+# Staged: you lean in to the gate hanging from one post; dropping the latch loop back, you bend to the post;
+# pushing the stop peg in, you crouch to it (a kneel). Your companion's own answer (Nao's nod, Mio points to the
+# dog's corner, Ren's nod, Suzu's small celebration), and you turn to watch the dog lie down. Shut already, you look
+# at the gate.
 !if var.pet_dog>=2&!pet.dog -> dog
 !if var.pet_dog>=2 -> fixed
+!gesture pc observe 31,26 hold
 narr: {低|ひく}い {木|き} の {戸|と} が 、 {片方|かたほう} の {柱|はしら} だけ に {下|さ}がって いる 。 {留|と}め{輪|わ} が {柱|はしら} から {外|はず}れて 、 {戸|と} を {止|と}める {杭|くい} は {草|くさ} の {中|なか} に {落|お}ちて いる 。 || A low wooden gate hangs from one post only. Its latch loop has slipped off the other post, and the stop peg that held it shut lies in the grass.
 !var pet_dog = 1
 !choice
@@ -132483,25 +132538,33 @@ narr: {低|ひく}い {木|き} の {戸|と} が 、 {片方|かたほう} の 
 * {杭|くい} を {地面|じめん} に {打|う}ち{直|なお}す || Push the stop peg back into the ground. -> peg
 * そのまま に して おく || Leave it for now. -> end
 :loop
+!gesture pc bend 31,26
 narr: {留|と}め{輪|わ} を {柱|はしら} に かけ{直|なお}す 。 {戸|と} は かたん と {閉|し}まって 、 もう {動|うご}かない 。 || You drop the latch loop back over the post. The gate clacks shut and stays.
 !var pet_dog = 2
 !set pet_dog_by_loop
 !goto after
 :peg
+!gesture pc kneel 31,26
 narr: {杭|くい} を {戸|と} の {前|まえ} に {強|つよ}く {押|お}し{込|こ}む 。 {風|かぜ} が {来|き}て も 、 {戸|と} は もう {開|ひら}かない 。 || You push the stop peg firmly into the ground in front of the gate. The wind comes, and the gate no longer opens.
 !var pet_dog = 2
 !set pet_dog_by_peg
 :after
+?(party=nao) !gesture nao nod pc
 ?(party=nao) nao: {戸締|とじ}まり 、 {完了|かんりょう} 。 || Gate secured.
+?(party=mio) !gesture mio point 32,26
 ?(party=mio) mio: これで {寝|ね}られる わ ね 。 || Now he can sleep.
+?(party=ren) !gesture ren nod pc
 ?(party=ren) ren: {小|ちい}さな {戸|と} ほど 、 よく {開|ひら}き ます から ね 。 || The small gates are always the ones that swing.
+?(party=suzu) !gesture suzu celebrate
 ?(party=suzu) suzu: {幕|まく} 、 {下|お}りました ! || Curtain down!
+!look pc 32,26
 narr: {犬|いぬ} は {隅|すみ} で ぐるり と {一回|いっかい} {回|まわ}って 、 {満足|まんぞく} そう に {横|よこ} に なった 。 || The dog turns round once in the corner and lies down, satisfied.
 !end
 :dog
 !call pets.dog.dog
 !end
 :fixed
+!gesture pc observe 31,26
 ?(pet_dog_by_peg) narr: {杭|くい} が {戸|と} を しっかり {止|と}めて いる 。 || The peg holds the gate firmly shut.
 ?(!pet_dog_by_peg) narr: {留|と}め{輪|わ} が {柱|はしら} に かかって 、 {戸|と} は {閉|し}まった まま だ 。 || The latch loop is over the post; the gate stays shut.
 `, 'pets/dog');
@@ -132713,29 +132776,45 @@ var RB = (globalThis.RB = globalThis.RB || {});
 ?(party=suzu) suzu: {見|み}て {見|み}て 、 たぬき ! {木|き} の {下|した} で 、 {出|で}たり {入|はい}ったり 。 || Look, look — a tanuki! In and out under the trees.
 
 @scene pets.tanuki.tanuki
+# Staged: you lean in to watch the tanuki try to get back into its hollow; your companion's own answer (Nao's
+# glance aside, Mio points to the papers before its bed, Ren points to the gap in the trees, Suzu laughs at the
+# confetti). Once it is settled: you look at it, and waiting, you sit down at the edge of the path and stay still
+# while it comes out to sit beside you; then Nao's nod, Mio's laugh behind her hand, Ren's nod, Suzu's small
+# celebration; not now, you get up and look at its hollow.
 !if var.pet_tanuki>=2 -> settled
+!gesture pc observe 6,3 hold
 narr: たぬき が 、 {大|おお}きな {木|き} の {根元|ねもと} の くぼみ に {戻|もど}ろう と する 。 {風|かぜ} が {吹|ふ}く と 、 {草|くさ} の {上|うえ} の {紙|かみ} が {舞|ま}い{上|あ}がって 、 たぬき は {後|うし}ろ に {下|さ}がって しまう 。 || A tanuki keeps trying to get back to the hollow at the foot of the big tree. When the wind blows, the papers in the grass fly up, and it backs away.
+?(party=nao) !gesture nao aside
 ?(party=nao) nao: {紙|かみ} が {苦手|にがて} な たぬき 、 か 。 {俺|おれ} と は {気|き} が {合|あ}わない な 。 || A tanuki that can't stand paper. We wouldn't get on.
+?(party=mio) !gesture mio point 5,4
 ?(party=mio) mio: {寝床|ねどこ} の {前|まえ} が 、 {散|ち}らかって いる の ね 。 || The front of its bed is all cluttered.
+?(party=ren) !gesture ren point 5,2
 ?(party=ren) ren: {風|かぜ} は どこ から {入|はい}って くる の でしょう 。 {木|き} の {間|あいだ} か な 。 || Where is the wind getting in? Between the trees, perhaps.
+?(party=suzu) !gesture suzu laugh
 ?(party=suzu) suzu: {出番|でばん} の たびに {紙吹雪|かみふぶき} 。 {本人|ほんにん} は {嬉|うれ}しくない みたい 。 || Confetti at every entrance. It doesn't seem pleased.
 !var pet_tanuki = 1
 !end
 :settled
+!gesture pc observe 6,3
 narr: たぬき は くぼみ の {中|なか} で {丸|まる}く なって いる 。 {目|め} だけ が こちら を {見|み}て いる 。 || The tanuki is curled up in the hollow. Only its eyes are on you.
 !choice
 * {道|みち} の {端|はし} に {座|すわ}って 、 {静|しず}か に {待|ま}つ || Sit at the edge of the path and wait quietly. -> wait
 * そっと して おく || Leave it be. -> end
 :wait
+!pose pc sit
 narr: {道|みち} の {端|はし} に {腰|こし} を {下|お}ろす 。 {葉|は} が {一枚|いちまい} 、 {落|お}ちて くる 。 || You sit down at the edge of the path. A leaf drifts down.
 narr: もう {一枚|いちまい} 。 {遠|とお}く で 、 {鳥|とり} が {鳴|な}いた 。 || Then another. Far off, a bird calls.
 !hook pet_vig tanuki peek
 narr: くぼみ から 、 {黒|くろ}い {鼻|はな} が {少|すこ}し だけ {出|で}て きた 。 {鼻|はな} が ぴくぴく {動|うご}く 。 || A black nose edges out of the hollow. It twitches.
 narr: たぬき は ゆっくり {出|で}て きて 、 あなた の {靴|くつ} の {匂|にお}い を かいで 、 {隣|となり} に {座|すわ}った 。 {座|すわ}り{方|かた} が 、 あなた と そっくり だ 。 || The tanuki comes out slowly, sniffs your boots, and sits down beside you. It sits exactly the way you do.
 !hook pet_vig tanuki near
+?(party=nao) !gesture nao nod pc
 ?(party=nao) nao[smirk]: まね が {上手|うま}い な 。 || Good at copying, isn't it.
+?(party=mio) !gesture mio laugh
 ?(party=mio) mio[smile]: {前足|まえあし} を そろえて いる 。 お{行儀|ぎょうぎ} が いい の ね 。 || Front paws together. Very well-mannered.
+?(party=ren) !gesture ren nod pc
 ?(party=ren) ren: {待|ま}つ こと が 、 {一番|いちばん} の {言葉|ことば} でした ね 。 || Waiting said more than anything we could have.
+?(party=suzu) !gesture suzu celebrate
 ?(party=suzu) suzu[laugh]: {新人|しんじん} {役者|やくしゃ} 、 {入団|にゅうだん} {希望|きぼう} ! || A new player, hoping to join the company!
 narr: たぬき は あなた を {見上|みあ}げて 、 {首|くび} を かしげた 。 {一緒|いっしょ} に {来|く}る {気|き} が ある よう だ 。 || The tanuki looks up at you and tilts its head. It seems willing to come along.
 !choice
@@ -132746,6 +132825,8 @@ narr: たぬき は あなた を {見上|みあ}げて 、 {首|くび} を か
 !end
 :notnow
 !hook pet_vig tanuki back
+!pose pc -
+!gesture pc observe 6,3
 narr: たぬき は くぼみ に {戻|もど}って 、 また {丸|まる}く なった 。 ここ に {来|く}れば 、 また {会|あ}える 。 || The tanuki goes back into its hollow and curls up again. It will be here whenever you come by.
 
 @scene pets.tanuki.empty
@@ -132757,8 +132838,13 @@ narr: {木|き} と {木|き} の {間|あいだ} に 、 {隙間|すきま} が
 ?(var.pet_tanuki<1) !var pet_tanuki = 1
 
 @scene pets.tanuki.papers
+# Staged: you lean in to the loose papers by the hollow; stacking them under a flat stone, you crouch to them (a
+# kneel); tucking them into the rock's lee, you bend to it. Your companion's own answer (Nao's nod at a bundle
+# ready for delivery, Mio points to the clear way into the hollow, Ren's open hand for someone's writing kept,
+# Suzu's small celebration), and you turn to watch the tanuki curl up. Tidied already, you look at them.
 !if var.pet_tanuki>=2&!pet.tanuki -> tanuki
 !if var.pet_tanuki>=2 -> fixed
+!gesture pc observe 5,4 hold
 narr: {古|ふる}い {祭|まつ}り の {貼|は}り{紙|がみ} が 、 {何枚|なんまい} か {草|くさ} の {上|うえ} に {落|お}ちて いる 。 {雨|あめ} で やわらかく なって いて 、 {風|かぜ} が {来|く}る たびに {浮|う}き{上|あ}がる 。 || A few old festival notices lie in the grass, soft with rain. Every time the wind comes, they lift.
 !var pet_tanuki = 1
 !choice
@@ -132766,25 +132852,33 @@ narr: {古|ふる}い {祭|まつ}り の {貼|は}り{紙|がみ} が 、 {何�
 * {紙|かみ} を まとめて 、 {岩|いわ} の {陰|かげ} に {入|い}れる || Gather them up and tuck them into the rock's lee. -> lee
 * そのまま に して おく || Leave them for now. -> end
 :stone
+!gesture pc kneel 5,4
 narr: {紙|かみ} を {一枚|いちまい} ずつ {拾|ひろ}って {重|かさ}ね 、 {平|たい}らな {石|いし} を {上|うえ} に {置|お}く 。 {風|かぜ} が {来|き}て も 、 もう {動|うご}かない 。 || You pick up the sheets one by one, stack them, and set a flat stone on top. The wind comes, and they no longer move.
 !var pet_tanuki = 2
 !set pet_tanuki_by_stone
 !goto after
 :lee
+!gesture pc bend 5,4
 narr: {紙|かみ} を まとめて 、 {岩|いわ} の {陰|かげ} に {差|さ}し{込|こ}む 。 {風|かぜ} は {岩|いわ} の {上|うえ} を {通|とお}り{過|す}ぎて いく 。 || You gather the sheets and slip them into the lee of the rock. The wind passes over the top of it.
 !var pet_tanuki = 2
 !set pet_tanuki_by_lee
 :after
+?(party=nao) !gesture nao nod pc
 ?(party=nao) nao: {配達|はいたつ} {前|まえ} の {手紙|てがみ} みたい に なった な 。 || Looks like a bundle ready for delivery.
+?(party=mio) !gesture mio point 6,3
 ?(party=mio) mio: {片付|かたづ}いた ね 。 {入|はい}り{口|ぐち} が すっきり した 。 || That's tidy. The way in is clear now.
+?(party=ren) !gesture ren palm
 ?(party=ren) ren: {紙|かみ} は {飛|と}ばさず に 、 {残|のこ}して おきましょう 。 {誰|だれ} か の {字|じ} です から 。 || Better to keep the papers than let them blow away. Someone wrote them.
+?(party=suzu) !gesture suzu celebrate
 ?(party=suzu) suzu: {紙吹雪|かみふぶき} 、 {片付|かたづ}け {完了|かんりょう} ! || Confetti cleared!
+!look pc 6,3
 narr: {風|かぜ} が {吹|ふ}いて も 、 もう {何|なに} も {舞|ま}わない 。 たぬき が くぼみ に {入|はい}って 、 {丸|まる}く なった 。 || The wind blows and nothing flies any more. The tanuki slips into its hollow and curls up.
 !end
 :tanuki
 !call pets.tanuki.tanuki
 !end
 :fixed
+!gesture pc observe 5,4
 ?(pet_tanuki_by_lee) narr: {紙|かみ} は {岩|いわ} の {陰|かげ} に まとまって いる 。 || The papers are gathered in the rock's lee.
 ?(!pet_tanuki_by_lee) narr: {紙|かみ} は {石|いし} の {下|した} に きちんと {重|かさ}なって いる 。 || The papers lie neatly stacked under the stone.
 `, 'pets/tanuki');
