@@ -15,7 +15,8 @@ below so the evidence can be matched.
 | Reviewed build | `index(2)(1).html`, SHA-256 `fd863571…df289a0`, 9,087,691 bytes |
 | Historical repository reconciliation in the review | `claude/stoic-sagan-n3jvgk` at `9aa71a8` |
 | Current pushed build for this ledger | `claude/stoic-sagan-n3jvgk` at `243069a`; root index.html SHA-256 begins `7bb6322662bf3d3d` |
-| Unmerged worker branches this ledger refers to | Animated dialogue portraits at `74c19e1`; overworld actor system at `77a3eee` plus uncommitted work; Harmony cut-in at `18cf5ea`; landmarks and bakery props, and the Harmony art contract (both just started) |
+| Merged since | Animated dialogue portraits (`1be42bd`, pushed with `fe75862`) |
+| Unmerged worker branches this ledger refers to | Overworld actor system at `77a3eee` plus uncommitted work; Harmony cut-in at `18cf5ea`; landmarks and bakery props, and the Harmony art contract (both just started) |
 
 **Status words** follow the packet:
 - still observed;
@@ -49,22 +50,29 @@ The review classed this as an observed presentation gap.
 
 The review classed this as measured static behaviour, plus a readability judgment.
 
-- **Owner:** the animated dialogue-portrait worker, at `74c19e1`.
-- **Reproduced on 243069a: still observed.** `tests/e2e/review_held_portrait.mjs`, the review's method, takes
-  11 samples over about 5 s during one held line spoken by Wataru:
-  - 1440×900: **1 distinct image**, portrait 116×116 CSS px.
-  - 390×844: **1 distinct image**, 64×64 CSS px.
-- **The same probe on the worker's build 74c19e1:** 5 distinct images at both sizes. The held line now
-  animates.
-  - The portrait measured **96×96 CSS px at both sizes**, against 116 and 64 on main. On a phone that is
-    larger than before.
-  - The worker has been asked whether this was deliberate and measured: does the box cover no more of the
-    scene on 390×844?
-- **Status:** reported fixed on the worker branch; retest pending after the merge, including the size
-  question.
-- **Still to check:** the stills-first readability check at actual size: neutral, thinking, angry, surprised
-  and the other expressions in use. The worker has eye-area fixes and before/after crops; they are not yet
-  reviewed by me.
+- **Owner:** the animated dialogue-portrait worker. Merged as `1be42bd` (squashed) and pushed with `fe75862`.
+- **Before the merge, on 243069a: still observed.** `tests/e2e/review_held_portrait.mjs` uses the review's
+  method: 11 samples over about 5 s of one held line by Wataru.
+  - 1440×900: 1 distinct image, at 116 CSS px.
+  - 390×844: 1 distinct image, at 64 CSS px.
+- **After the merge, on fe75862: fixed and retested** (headless Chromium).
+  - The same probe gives **5 distinct images at both sizes**: the idle loop.
+  - The portrait is **96 CSS px** at 1440×900 (ratio 1) and **64** at 390×844.
+  - Desktop moved from 116 to 96 deliberately, so each art pixel lands on whole device pixels. The box is
+    unchanged.
+  - The phone portrait never grows. The worker's first build had it at 96, which made the box 32 px taller;
+    the probe caught that and it was fixed.
+  - portrait_anim all passed. Section I runs a real scene by real clicks: one cue, the cue never advances the
+    line, no replay, no stale frame after a quick advance.
+- **Stills first:** `docs/screenshots/portraits/stills_desktop.png` and `stills_phone.png` show 6 characters ×
+  12 expressions, held still at the review's sizes, before and after. Eye crops are in `eyes_zoom.png` and
+  `eyes_real_size.png`.
+- **Remaining limitations:**
+  - On phones at device-pixel-ratio 1, 2 and 2.625 the 64-px portrait is still an uneven downscale, so some
+    rows drop.
+  - Expression readability has been judged only by the worker and the lead from captures.
+  - Firefox and a real phone are not tested.
+  - Owner's choice: the desktop portrait can go back to 116 px; it is one CSS setting.
 
 ## WR-03: narrated physical and emotional acting is not shown
 
