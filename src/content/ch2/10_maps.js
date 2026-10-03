@@ -335,8 +335,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // weather vane on its mast to the south-east, the stairhead in the north-west corner (over
   // the stairs of the room below). The railing stands just outside the walkable gallery on
   // every side (its tiles are off the map, so the map's edge is the line you cannot pass);
-  // beyond it, the sea far below (surround: 'sea' — glassy while the wind is dead, small
-  // whitecaps once it is back).
+  // beyond it, Saltglass far below (surround: the harbour map itself drawn small, the
+  // lighthouse's own place on it at the foot of the stone shaft that drops from the gallery's
+  // south edge; src/engine/61_below.js). The sea there is glassy while the wind is dead and
+  // breaks into small whitecaps once it is back (ambient.sea).
   // Genzō is up here only while he has climbed with you (sg_genzo_up, set in sg.genzo_wind
   // while the screen is dark); on the ground floor his figure is the other half of the same
   // condition, so he is never in two places, and neither figure ever walks to a door.
@@ -356,7 +358,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }
     C.maps['sg.lighthouse_top'] = {
       name: T('Top of the Lighthouse', '{灯台|とうだい} の {上|うえ}'), region: 'saltglass', music: null, noTravel: true,
-      surround: 'sea',
+      surround: { below: 'sg.harbor', at: [2.5, 31.7], hide: [1, 29, 3, 3], scale: 0.3, drop: 1.9, shaft: 'stone', top: 2, foot: 1.5, beyond: { left: 'water' } },
       ambient: { weather: null, sea: 'calm' },
       alt: [{ if: 'sg_fog_cleared', ambient: { weather: null, sea: 'wind' } }],
       terrain: K.build(GW, GH, '+', () => {}),

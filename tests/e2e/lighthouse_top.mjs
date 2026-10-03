@@ -10,15 +10,25 @@
 //   map you are on, he is never seen fading away or walking (to a door or anywhere), never walks in as an
 //   extra speaker and is never drawn twice;
 // - the vane is drawn, one picture while it is stuck, several once the wind is back, one again with
-//   reduced motion; outside the map is the sea (blue-green, not the timber round the room below), glassy
-//   before, with whitecaps after; the sea's frames stop with reduced motion;
+//   reduced motion;
+// - the view from height (the owner's feedback: "more like an island surrounded by water"): past the
+//   gallery is Saltglass itself far below, the harbour map drawn small — landmarks (the sea past the
+//   point, the quay, the forest, the causeway) are found at their projected places in their own colours;
+//   the stone shaft drops from the gallery's south edge to its foot in the town; the sea there is glassy
+//   before the wind and has whitecaps after, the causeway's fog lifts below when the wind comes back (the
+//   backdrop is patched, not rebuilt); the town shifts a little as you walk (parallax) but not with
+//   reduced motion, when the sea holds still too; the backdrop is released when you leave;
+// - the fire lookout (co.lookout, Chapter 3) gets the same: the festival village below at night with its
+//   lanterns shining through the dark, the timber legs dropping to the lookout's foot, the village (not
+//   the festival) once that evening is over; its bell and its way down work as before;
 // - the "later" branch leaves you at the top with Genzō; talking to him there again does not climb again;
 // - down the stairhead and back up by real movement: Genzō is back in his place downstairs (exactly once,
 //   not fading in, not walking); the stairs lead up only once the vane scene has happened;
 // - a save made at the top loads at the top with Genzō there;
 // - no page errors, no requests off the test origin.
 // Usage: node tests/e2e/lighthouse_top.mjs [--shots] [--slow]
-//   --shots also writes docs/screenshots/lighthouse_top/*.webp; --slow runs the game's clock at a quarter
+//   --shots also writes docs/screenshots/lighthouse_top/*.webp and docs/screenshots/lookout/*.webp;
+//   --slow runs the game's clock at a quarter
 //   of real time (a machine too busy for 20 frames a second), which the waits must survive.
 import fs from 'node:fs';
 import path from 'node:path';
@@ -47,7 +57,7 @@ async function start(p, o) {
     if (o.auto === false) RB.test.disable(); else RB.test.enable({ battle: 'unravel', choose: () => 0 });
     RB.test.departures = []; RB.test.twice = []; RB.test.extras = []; RB.test.absentSpeakers = [];
     const s = RB.game.debugStart(o.map || 'sg.lighthouse', o.x == null ? 4 : o.x, o.y == null ? 7 : o.y, { comp: o.comp === undefined ? 'mio' : o.comp, flags: Object.assign({}, o.base, o.flags || {}), dir: o.dir || 'up' });
-    s.chapter = 2;
+    s.chapter = o.chapter || 2;
     s.quests.sg_main = { stage: o.stage == null ? 6 : o.stage, done: false, t: 1 };
     for (const k of o.seen || []) s.seen[k] = true;
     if (o.follow) s.follow = o.follow;
@@ -183,19 +193,56 @@ function seaBox(r) {
   if (r.l > 140) return { x: 8, y: Math.max(8, Math.round(r.t)), w: Math.round(r.l - 90), h: Math.round(Math.min(r.b, r.H) - Math.max(8, r.t)) };
   return { x: 8, y: 70, w: r.W - 16, h: Math.round(r.t - 140) };
 }
-async function shot(p, name) {
+async function shot(p, name, dir) {
   if (!SHOTS) return;
-  fs.mkdirSync(OUT, { recursive: true });
+  const out = dir ? path.join(root, 'docs/screenshots', dir) : OUT;
+  fs.mkdirSync(out, { recursive: true });
   const png = await p.screenshot();
   const webp = await p.evaluate(async (src) => {
     const im = new Image(); im.src = src; await im.decode();
     const c = document.createElement('canvas'); c.width = im.width; c.height = im.height; c.getContext('2d').drawImage(im, 0, 0);
     return c.toDataURL('image/webp', 0.82);
   }, 'data:image/png;base64,' + png.toString('base64'));
-  fs.writeFileSync(path.join(OUT, name + '.webp'), Buffer.from(webp.split(',')[1], 'base64'));
-  console.log('     wrote docs/screenshots/lighthouse_top/' + name + '.webp');
+  fs.writeFileSync(path.join(out, name + '.webp'), Buffer.from(webp.split(',')[1], 'base64'));
+  console.log('     wrote docs/screenshots/' + (dir || 'lighthouse_top') + '/' + name + '.webp');
 }
 const has = (lines, re) => lines.find((l) => re.test(l.en));
+
+// The ground far below (src/engine/61_below.js). Landmarks of the ground map, each with the kind of
+// colour it is drawn in; one is checked where it is visible (on screen, clear of the deck, its railing
+// and the shaft): the backdrop's own colour there and the screen pixel at its projected place.
+const KIND = {
+  sea: (c) => c[2] > c[0] + 40 && c[2] >= c[1],
+  sand: (c) => c[0] > 165 && c[1] > 155 && c[0] >= c[2],
+  green: (c) => c[1] > c[0] + 12 && c[1] >= c[2],
+  stone: (c) => Math.abs(c[0] - c[1]) < 26 && Math.abs(c[1] - c[2]) < 26 && c[0] > 110,
+  warm: (c) => c[0] > c[2] + 18 && c[0] > 45,
+};
+const TOP_MARKS = [['sea past the point', 'sea', -20, 20], ['sea by the point', 'sea', -6, 36], ['sea in the harbour', 'sea', 24, 37], ['the quay', 'stone', 26, 26.5], ['forest to the north', 'green', 30, -4], ['the causeway', 'sand', 8.5, 38]];
+const LOOK_MARKS = [['the inn\'s roof', 'warm', 7, 11.6], ['the post house\'s roof', 'warm', 6, 21.6], ['the stage', 'warm', 23, 12.5], ['the terraces', 'warm', 10, 2], ['the orchard', 'warm', 6, 30]];
+const below = (p, marks) => p.evaluate((marks) => {
+  const st = RB.below.state(), W = RB.world.W, D = RB.below.deckOf(W.map);
+  const a = RB.render.tileToCss(D.x0 - 1.2, D.y0 - 1.5), z = RB.render.tileToCss(D.x1 + 1.2, D.y1 + 1);
+  const cv = document.getElementById('world');
+  const g = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
+  g.canvas.width = cv.width; g.canvas.height = cv.height; g.drawImage(cv, 0, 0);
+  const px = (x, y) => Array.from(g.getImageData(Math.round(x), Math.round(y), 1, 1).data.slice(0, 3));
+  const inShaft = (x, y) => st.shaftTop && y >= st.shaftTop.y - 4 && y <= st.shaftFoot.y + 30 && x >= Math.min(st.shaftTop.x0, st.shaftFoot.x0) - 30 && x <= Math.max(st.shaftTop.x1, st.shaftFoot.x1) + 60;
+  const rows = marks.map(([name, kind, gx, gy]) => {
+    const q = RB.below.project(gx, gy), mini = RB.below.sample(gx, gy);
+    const visible = !!(q && mini && q.x > 10 && q.y > 10 && q.x < cv.width - 10 && q.y < cv.height - 10 && !(q.x > a.x && q.x < z.x && q.y > a.y && q.y < z.y) && !inShaft(q.x, q.y));
+    return { name, kind, at: q && [Math.round(q.x), Math.round(q.y)], mini, scr: visible ? px(q.x, q.y) : null, visible };
+  });
+  // the shaft: down its middle, and beside it at the same height
+  let shaft = null;
+  if (st.shaftTop) {
+    const y = st.shaftTop.y + (st.shaftFoot.y - st.shaftTop.y) * 0.62, k = 0.62;
+    const xl = st.shaftTop.x0 + (st.shaftFoot.x0 - st.shaftTop.x0) * k, xr = st.shaftTop.x1 + (st.shaftFoot.x1 - st.shaftTop.x1) * k;
+    if (y < cv.height - 2) shaft = { y: Math.round(y), mid: px((xl + xr) / 2 - (xr - xl) * 0.2, y), beside: px(Math.max(2, xl - 40), y), inView: st.shaftFoot.y < cv.height };
+  }
+  return { st, rows, shaft };
+}, marks);
+const fmt = (r) => r.name + (r.visible ? ' ' + r.kind + ' ' + r.scr : ' (not in view)');
 
 for (const V of VIEWS) {
   const tag = V.name + ': ';
@@ -248,35 +295,60 @@ for (const V of VIEWS) {
     await p.close();
   }
 
-  // ---- 2. the vane and the sea, by their pixels ------------------------------------------------------------
+  // ---- 2. the vane, and Saltglass far below, by their pixels -------------------------------------------------
   {
     const { p, errors } = await page(b, url, V.opts);
-    // the room below: its surround is the dark timber of the building
-    await start(p, { comp: null, x: 4, y: 7, follow: '-' });
-    const r0 = await mapRect(p);
-    const room = await pixels(p, r0.l > 140 ? { x: 8, y: Math.max(8, Math.round(r0.t)), w: Math.round(r0.l - 60), h: 120 } : { x: 8, y: 70, w: r0.W - 16, h: Math.max(20, Math.round(r0.t - 120)) }, 300, 150);
     // the top, before the wind: nobody near the vane, no quest marks
     await start(p, { map: 'sg.lighthouse_top', comp: null, x: 2, y: 6, dir: 'down', follow: '-' });
-    const box = await vaneBox(p), r = await mapRect(p), sea = seaBox(r);
-    const v0 = await pixels(p, box, 2400, 150), s0 = await pixels(p, sea, 2600, 130);
+    const box = await vaneBox(p);
+    const v0 = await pixels(p, box, 2400, 150);
     ok(v0.ink > 0.12 && v0.warm > 0.02, tag + 'the vane is drawn, rust on it (' + Math.round(v0.ink * 100) + '% iron and groove, ' + Math.round(v0.warm * 100) + '% rust in its box)');
     ok(v0.pics === 1, tag + 'stuck: one picture of it in 2.4 s (' + v0.pics + ')');
-    const blueGreen = (m) => m[2] > m[0] + 40 && m[1] > m[0] + 25 && m[1] > 60 && m[2] > 80;
-    ok(blueGreen(s0.mean) && !blueGreen(room.mean) && s0.mean[1] - room.mean[1] > 25, tag + 'outside the map: the sea, blue-green (' + s0.mean + ') — not the timber round the room below (' + room.mean + ')');
-    ok(s0.caps === 0 && s0.pics >= 2, tag + 'the sea is glassy before the wind: no whitecaps, its glints come and go (' + s0.caps + ' whitecap px, ' + s0.pics + ' pictures)');
-    // the wind is back
+    const B0 = await below(p, TOP_MARKS), ph = B0.st.phases || {};
+    console.log('     cold build of the backdrop: ' + B0.st.lastMs + ' ms (tiles ' + ph.tiles + ', props and buildings ' + ph.things + ', shrink ' + ph.shrink + '; ' + (ph.size || []).join('×') + ' ground tiles)');
+    ok(B0.st.active && B0.st.ground === 'sg.harbor' && B0.st.cached === 1 && B0.st.builds >= 1, tag + 'past the gallery is the harbour map itself, drawn small (built once, ' + B0.st.lastMs + ' ms)');
+    const vis0 = B0.rows.filter((r) => r.visible);
+    ok(vis0.length >= 2 && vis0.every((r) => KIND[r.kind](r.mini) && KIND[r.kind](r.scr)), tag + 'landmarks at their places below: ' + B0.rows.map(fmt).join('; '));
+    const sh = B0.shaft;
+    ok(sh && sh.inView && KIND.stone(sh.mid) && Math.abs(sh.mid[0] - sh.beside[0]) + Math.abs(sh.mid[1] - sh.beside[1]) + Math.abs(sh.mid[2] - sh.beside[2]) > 40, tag + 'the stone shaft drops from the gallery to its foot in the town (' + JSON.stringify(sh) + ')');
+    // the sea's own life, near a piece of sea in view
+    const seaMark = vis0.find((r) => r.kind === 'sea');
+    const R0 = await p.evaluate(() => ({ W: innerWidth, H: innerHeight }));
+    const seaBox = seaMark && { x: Math.max(4, Math.min(R0.W - 124, seaMark.at[0] - 60)), y: Math.max(4, Math.min(R0.H - 124, seaMark.at[1] - 60)), w: 120, h: 120 };
+    const s0 = seaBox && await pixels(p, seaBox, 2600, 130);
+    ok(s0 && KIND.sea(s0.mean) && s0.caps === 0 && s0.pics >= 2, tag + 'the sea below is glassy before the wind: its glints come and go, no whitecaps (' + (s0 ? s0.mean + ', ' + s0.pics + ' pictures, ' + s0.caps + ' whitecap px' : 'no sea in view') + ')');
+    const fog0 = await p.evaluate(() => RB.below.sample(8.5, 39));
+    // the wind is back: the vane turns, the sea breaks, the fog lifts off the causeway below
     await p.evaluate(() => { RB.game.s.flags.sg_fog_cleared = true; RB.world.refreshActors(); });
     await p.waitForTimeout(300);
-    const v1 = await pixels(p, box, 3200, 120), s1 = await pixels(p, sea, 2600, 130);
+    const v1 = await pixels(p, box, 3200, 120), s1 = seaBox && await pixels(p, seaBox, 2600, 130);
+    const B1 = await below(p, TOP_MARKS), fog1 = await p.evaluate(() => RB.below.sample(8.5, 39));
     ok(v1.ink > 0.12 && v1.warm < v0.warm, tag + 'free: still drawn, the rust gone from it (' + Math.round(v1.ink * 100) + '% iron, ' + Math.round(v1.warm * 100) + '% rust)');
     ok(v1.pics >= 3, tag + 'free: it swings — ' + v1.pics + ' different pictures in 3.2 s');
-    ok(blueGreen(s1.mean) && s1.caps > 0 && s1.pics >= 2, tag + 'the sea with the wind back: still blue-green (' + s1.mean + '), small whitecaps (' + s1.caps + ' px), moving (' + s1.pics + ' pictures)');
-    // reduced motion holds the vane and the sea
-    await p.evaluate(() => { RB.game.settings.reducedMotion = true; RB.game.applySettings(); });
+    ok(s1 && KIND.sea(s1.mean) && s1.caps > 0 && s1.pics >= 2, tag + 'the sea below with the wind back: small whitecaps (' + (s1 ? s1.caps + ' px, ' + s1.pics + ' pictures' : '-') + ')');
+    ok(B1.st.patches >= 1 && B1.st.builds === B0.st.builds && B1.st.lastPatchMs < 200 && (fog0 == null || fog1 == null || fog0.join() !== fog1.join()), tag + 'the causeway\'s fog lifts below: the backdrop patched where it changed (' + B1.st.lastPatchMs + ' ms), not rebuilt; the causeway ' + JSON.stringify(fog0) + ' → ' + JSON.stringify(fog1));
+    // parallax: the town shifts a little as you walk, not at all with reduced motion
+    const f0 = (await below(p, [])).st.foot;
+    await p.evaluate(() => { RB.test.place(9, 6, 'down'); });
+    await p.waitForTimeout(250);
+    const f1 = (await below(p, [])).st.foot;
+    ok(Math.abs(f1.x - f0.x) >= 4 && Math.abs(f1.x - f0.x) < 120, tag + 'parallax: walking across the gallery shifts the town below a little (' + Math.round(f1.x - f0.x) + ' css px)');
+    await p.evaluate(() => { RB.game.settings.reducedMotion = true; RB.game.applySettings(); RB.test.place(2, 6, 'down'); });
+    await p.waitForTimeout(250);
+    const f2 = (await below(p, [])).st.foot;
+    await p.evaluate(() => { RB.test.place(9, 6, 'down'); });
+    await p.waitForTimeout(250);
+    const f3 = (await below(p, [])).st.foot;
+    ok(f2.x === f3.x && f2.y === f3.y, tag + 'reduced motion: the town below stays put as you walk (' + JSON.stringify([f2, f3]) + ')');
+    await p.evaluate(() => { RB.test.place(2, 6, 'down'); });
     await p.waitForTimeout(200);
-    const v2 = await pixels(p, box, 2400, 150), s2 = await pixels(p, sea, 2000, 150);
+    const v2 = await pixels(p, box, 2400, 150), s2 = seaBox && await pixels(p, seaBox, 2000, 150);
     ok(v2.pics === 1 && v2.ink > 0.12, tag + 'reduced motion: the vane is held still (' + v2.pics + ' picture in 2.4 s)');
-    ok(s2.pics === 1 && s2.caps > 0, tag + 'reduced motion: the sea is held still too, whitecaps and all (' + s2.pics + ' picture)');
+    ok(s2 && s2.pics === 1 && s2.caps > 0, tag + 'reduced motion: the sea below is held still too, whitecaps and all (' + (s2 ? s2.pics : '-') + ' picture)');
+    // leaving releases it
+    await p.evaluate(async () => { await RB.game.transition('sg.lighthouse', 1, 3, 'down', { inScript: true }); await new Promise((r) => setTimeout(r, 300)); });
+    const gone = (await p.evaluate(() => RB.below.state()));
+    ok(gone.cached === 0 && gone.released >= 1 && !gone.active, tag + 'down in the room the backdrop is released (' + JSON.stringify({ cached: gone.cached, released: gone.released }) + ')');
     ok(!errors.length, tag + 'no page errors (pixels)' + (errors.length ? ' ' + errors[0] : ''));
     await p.close();
   }
@@ -329,6 +401,71 @@ for (const V of VIEWS) {
     const w = await where(p);
     ok(w.map === 'sg.lighthouse' && w.x === 1 && w.y === 2, tag + 'before Genzō has shown you the top, the stairs do not take you up (' + [w.map, w.x, w.y].join(' ') + ')');
     ok(!errors.length, tag + 'no page errors (stairs)');
+    await p.close();
+  }
+
+  // ---- 7. the fire lookout: the village far below at night ------------------------------------------------
+  {
+    const { p, errors, requests } = await page(b, url, V.opts);
+    const LOOK = { ch1_done: true, departed: true, ch2_done: true, co_arrived: true, co_met_sayo: true, co_firebreak_cut: true, co_bell_done: true, co_kiln_done: true };
+    await start(p, { map: 'co.lookout', x: 7, y: 6, dir: 'up', base: LOOK, chapter: 3, comp: 'mio', follow: '-' });
+    const B = await below(p, LOOK_MARKS), ph = B.st.phases || {};
+    console.log('     cold build of the backdrop: ' + B.st.lastMs + ' ms (tiles ' + ph.tiles + ', props and buildings ' + ph.things + ', shrink ' + ph.shrink + '; ' + (ph.size || []).join('×') + ' ground tiles)');
+    ok(B.st.active && B.st.ground === 'co.festival', tag + 'lookout: below is the village on the festival night, drawn small (' + B.st.ground + ', ' + B.st.lastMs + ' ms)');
+    const vis = B.rows.filter((r) => r.visible);
+    ok(vis.length >= 2 && vis.every((r) => KIND[r.kind](r.mini) && KIND[r.kind](r.scr)), tag + 'lookout: landmarks at their places below: ' + B.rows.map(fmt).join('; '));
+    // the lanterns shine through the night
+    const lit = await p.evaluate(() => {
+      const cv = document.getElementById('world'), g = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
+      g.canvas.width = cv.width; g.canvas.height = cv.height; g.drawImage(cv, 0, 0);
+      let n = 0, seen = 0;
+      for (const [x, y] of RB.below.state().lights) {
+        const q = RB.below.project(x, y);
+        if (!q || q.x < 4 || q.y < 4 || q.x > cv.width - 4 || q.y > cv.height - 4) continue;
+        seen++;
+        const d = g.getImageData(Math.round(q.x) - 2, Math.round(q.y) - 2, 4, 4).data;
+        let best = 0;
+        for (let i = 0; i < d.length; i += 4) if (d[i] > d[i + 2] + 40) best = Math.max(best, d[i]);
+        if (best > 200) n++;
+      }
+      return { n, seen };
+    });
+    ok(lit.seen >= 3 && lit.n >= Math.min(3, lit.seen) && lit.n >= lit.seen * 0.6, tag + 'lookout: the lanterns and lit windows below shine through the dark (' + lit.n + ' of ' + lit.seen + ' in view bright and warm)');
+    // the timber legs: along the front-left leg, against the ground beside it
+    const leg = await p.evaluate(() => {
+      const L = RB.below.state().legs && RB.below.state().legs[0], cv = document.getElementById('world');
+      if (!L) return null;
+      const g = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
+      g.canvas.width = cv.width; g.canvas.height = cv.height; g.drawImage(cv, 0, 0);
+      const out = [];
+      for (const k of [0.55, 0.7, 0.85]) {
+        const x = L.x0 + (L.x1 - L.x0) * k, y = L.y0 + (L.y1 - L.y0) * k;
+        if (y > cv.height - 2) continue;
+        const on = Array.from(g.getImageData(Math.round(x), Math.round(y), 1, 1).data.slice(0, 3)), off = Array.from(g.getImageData(Math.round(x) - 9, Math.round(y), 1, 1).data.slice(0, 3));
+        out.push({ on, off, d: Math.abs(on[0] - off[0]) + Math.abs(on[1] - off[1]) + Math.abs(on[2] - off[2]) });
+      }
+      return out;
+    });
+    ok(leg && leg.length >= 2 && leg.filter((q) => q.d > 24 && q.on[0] > q.on[2]).length >= 2, tag + 'lookout: its timber legs drop from the platform to its foot in the village (' + JSON.stringify(leg) + ')');
+    await shot(p, 'festival_' + V.name, 'lookout');
+    // nothing to do with the platform has changed: its bell, its fences, its one way down
+    const geo = await p.evaluate(() => { const m = RB.world.W.map; return { exits: m.exits.length, triggers: m.triggers.map((t) => [t.x, t.y, t.scene, t.if]), scenes: m.def.props.filter((q) => q.scene).map((q) => q.p + '@' + q.x + ',' + q.y), walk: [...Array(m.w * m.h).keys()].filter((i) => !RB.maps.blockedStatic(m, i % m.w, (i / m.w) | 0)).length }; });
+    ok(geo.exits === 0 && JSON.stringify(geo.triggers) === JSON.stringify([[10, 7, 'co.lookout_down', 'ch3_done']]) && JSON.stringify(geo.scenes) === JSON.stringify(['bell@7,3']) && geo.walk === 22, tag + 'lookout: the platform is as it was (' + JSON.stringify(geo) + ')');
+    const n0 = await p.evaluate(() => RB.game.s.backlog.length);
+    await p.evaluate(async () => { await RB.test.use(7, 3); });
+    const bell = await p.evaluate((n0) => RB.game.s.backlog.slice(n0).map((e) => e.en || ''), n0);
+    ok(bell.some((t) => /The lookout bell/.test(t)) && (await p.evaluate(() => RB.world.W.map.id)) === 'co.lookout', tag + 'lookout: the bell is looked at as before (' + bell.length + ' lines)');
+    // once that evening is over, the village as it is
+    await p.evaluate(() => { const s = RB.game.s; s.flags.ch3_done = true; s.seen['co.reflection'] = true; });
+    await p.waitForTimeout(400);
+    const B2 = await below(p, LOOK_MARKS);
+    ok(B2.st.ground === 'co.village' && B2.rows.filter((r) => r.visible).length >= 2, tag + 'lookout: after the festival night, the village below (' + B2.st.ground + ')');
+    await shot(p, 'village_' + V.name, 'lookout');
+    // and down, by the way down (the trigger on the hatch, as before)
+    const down = await walk(p, 9, 7, 'right', 'co.village', [12, 14]);
+    const after = await p.evaluate(() => ({ map: RB.world.W.map.id, x: RB.world.W.player.x, y: RB.world.W.player.y, below: RB.below.state() }));
+    ok(down && after.map === 'co.village' && after.below.cached === 0 && !after.below.active, tag + 'lookout: climbing down still works, and the backdrop is released (' + JSON.stringify({ map: after.map, x: after.x, y: after.y, cached: after.below.cached }) + ')');
+    ok(!errors.length && !requests.length, tag + 'lookout: no page errors, no requests' + (errors.length ? ' ' + errors[0] : '') + (requests.length ? ' ' + requests[0] : ''));
     await p.close();
   }
 }

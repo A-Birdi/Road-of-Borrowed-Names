@@ -92,10 +92,12 @@ RB.render = (function () {
     }
     return (m.enclosed = e);
   }
-  // A map that brings its own surround (map.surround: 'sea' — the top of the
-  // lighthouse, with the sea far below) is framed like a room: no apron, no
-  // fade, the soft edge shadow (it reads as the drop). It is not indoors.
+  // A map that brings its own surround (map.surround: the ground far below an
+  // elevated deck, src/engine/61_below.js) is framed like a room: no apron, no
+  // fade, the soft edge shadow round its deck (it reads as the drop). It is
+  // not indoors.
   const framed = (m) => enclosed(m) || !!(m.def && m.def.surround);
+  const fromHeight = (m) => !!(RB.below && RB.below.active(m));
   const clampI = (v, n) => (v < 0 ? 0 : v >= n ? n - 1 : v);
   // Margin (tiles) the current view can show past each edge: half the room a
   // small map leaves, plus the touch-controls reserve below.
@@ -154,10 +156,11 @@ RB.render = (function () {
     const c = cv.getContext('2d');
     c.imageSmoothingEnabled = false;
     const pal = palOf(m);
-    const ext = !framed(m);
+    const ext = !framed(m), open = fromHeight(m);
     for (let y = -g.y; y < m.h + g.y; y++)
       for (let x = -g.x; x < m.w + g.x; x++) {
         const t = m.tiles[clampI(y, m.h) * m.w + clampI(x, m.w)];
+        if (open && t.id === 'void') continue; // round a deck the ground far below shows through
         // outdoors every tile sees the ground continuing past the edge
         const nb = ext ? (dx, dy) => m.tiles[clampI(y + dy, m.h) * m.w + clampI(x + dx, m.w)] : (dx, dy) => RB.maps.tileAt(m, x + dx, y + dy);
         const px = (x + g.x) * ATS, py = (y + g.y) * ATS;
@@ -216,10 +219,10 @@ RB.render = (function () {
   const ay = (ly) => Math.round((ly - cam.y) * ART);
 
   // Outside a small map: a quiet surround in the region's darkest colour —
-  // timber for interiors, a faint weave outdoors, or what the map names as
-  // its own surround (the sea far below) — and a soft edge shadow, so the map
-  // reads as a lit room or stage rather than an empty band. Nothing here
-  // looks walkable. Patterns are cached per palette (the sea per state/frame).
+  // timber for interiors, a faint weave outdoors, or, round an elevated deck,
+  // the ground far below (src/engine/61_below.js) — and a soft edge shadow, so
+  // the map reads as a lit room, a stage or a height rather than an empty band.
+  // Nothing here looks walkable. Patterns are cached per palette.
   const surroundCache = new Map();
   function mix(hex, to, a) {
     const n = parseInt(hex.slice(1), 16), m2 = parseInt(to.slice(1), 16);
@@ -258,92 +261,8 @@ RB.render = (function () {
     surroundCache.set(key, pat);
     return pat;
   }
-  // The sea far below (map.surround: 'sea'): deep water seen from high up, at
-  // a small scale. Calm (the map's ambient.sea 'calm'): glassy, with long faint
-  // swells, a soft sheen and the odd glint; windy ('wind'): broken ripples and
-  // small whitecaps. Four frames each so the glints and caps come and go (the
-  // first frame only, with reduced motion). 64×64 art px, cached like the rest.
-  function seaPattern(c, windy, f) {
-    const key = 'sea' + (windy ? 'w' : 'c') + f;
-    let pat = surroundCache.get(key);
-    if (pat) return pat;
-    const cv = RB.sprites.makeCanvas(64, 64);
-    const g = cv.getContext('2d');
-    const h = (i, k) => RB.tiles.hh(i, k, windy ? 71 : 37);
-    // a horizontal dash that wraps round the tile edges (so the pattern has no seams)
-    const dash = (x, y, w, col) => { g.fillStyle = col; for (let i = 0; i < w; i++) g.fillRect((x + i) & 63, y & 63, 1, 1); };
-    // positions are hashed over the whole tile (no rows), so the repeat does not read as a grid
-    const at = (i, k) => { const r = h(i, k); return [r & 63, (r >>> 6) & 63, r >>> 12]; };
-    if (!windy) {
-      g.fillStyle = '#1f5268';
-      g.fillRect(0, 0, 64, 64);
-      // broad, faint patches of sheen (the sky in the glassy water)
-      for (let i = 0; i < 3; i++) {
-        const [x, y, r] = at(i, 2), w = 10 + (r % 9);
-        dash(x + 2, y, w - 4, '#225870'); dash(x, y + 1, w, '#225870'); dash(x + 3, y + 2, w - 6, '#225870');
-      }
-      // long, low swells: a faintly lit crest over a darker trough, drifting a pixel to and fro
-      const drift = [0, 1, 2, 1][f];
-      for (let i = 0; i < 5; i++) {
-        const [x, y, r] = at(i, 1), w = 7 + (r % 9);
-        dash(x + drift, y, w, '#265f76');
-        dash(x + drift + 2, y + 1, w - 3, '#1b4a5f');
-      }
-      // glints: one or two at a time, each lit in two of the four frames
-      for (let i = 0; i < 3; i++) {
-        if ((i + f) % 4 > 1) continue;
-        const [x, y] = at(i, 3);
-        dash(x, y, 2, '#78b0c0'); dash(x, y, 1, '#d4eef2');
-      }
-    } else {
-      g.fillStyle = '#1d4d62';
-      g.fillRect(0, 0, 64, 64);
-      // short ripples scattered all over, lit and shadowed, shifting a pixel with the frames
-      for (let i = 0; i < 26; i++) {
-        const [x, y, r] = at(i, 4), w = 2 + (r % 3);
-        dash(x + ((i + f) & 1), y, w, i % 3 ? '#183f53' : '#2b687e');
-      }
-      // small whitecaps: a white dash with a pale tail, each breaking in three
-      // of the four frames (longest in the middle one)
-      for (let i = 0; i < 5; i++) {
-        const ph = (i + f) % 4;
-        if (ph === 3) continue;
-        const [x, y] = at(i, 5), w = ph === 1 ? 3 : 2;
-        dash(x + 1, y + 1, w, '#5f97a8');
-        dash(x, y, w, '#e8f6f6');
-      }
-    }
-    pat = c.createPattern(cv, 'repeat');
-    surroundCache.set(key, pat);
-    return pat;
-  }
-  function drawSurround(c, m, pal, t) {
-    const g = m.margin || { x: 0, y: 0 };
-    const mx = ax(-g.x * TS), my = ay(-g.y * TS), mw = (m.w + 2 * g.x) * ATS, mh = (m.h + 2 * g.y) * ATS;
-    c.fillStyle = pal.dark;
-    if (mx <= 0 && my <= 0 && mx + mw >= bw && my + mh >= bh) { c.fillRect(0, 0, bw, bh); return; }
-    // plain ground under the map itself; the patterned surround only in the
-    // strips around it (painting the whole buffer twice a frame cost about
-    // a third of a small interior's frame time)
-    c.fillRect(mx, my, mw, mh);
-    const indoor = framed(m);
-    // rooms get dark timber, larger walled places (archives, towers) the weave
-    const timber = m.region === 'interior' || (m.def && m.def.indoor) || (m.w <= 17 && m.h <= 12);
-    const sea = m.def && m.def.surround === 'sea';
-    c.save();
-    c.translate(mx & 63, my & 63); // the pattern stays put relative to the map
-    if (sea) {
-      const windy = (ambientOf(m).ambient || {}).sea === 'wind';
-      c.fillStyle = seaPattern(c, windy, RB.game.reducedMotion() ? 0 : Math.floor((t || 0) / (windy ? 420 : 650)) % 4);
-    } else c.fillStyle = surroundPattern(c, pal, timber);
-    const ox = mx & 63, oy = my & 63, top = Math.max(0, my), bot = Math.min(bh, my + mh);
-    if (my > 0) c.fillRect(-ox, -oy, bw, my);
-    if (my + mh < bh) c.fillRect(-ox, my + mh - oy, bw, bh - my - mh);
-    if (mx > 0 && bot > top) c.fillRect(-ox, top - oy, mx, bot - top);
-    if (mx + mw < bw && bot > top) c.fillRect(mx + mw - ox, top - oy, bw - mx - mw, bot - top);
-    c.restore();
-    if (!indoor) return; // outdoors the apron fades instead (drawFade)
-    // soft shadow just outside the room's edge
+  // soft shadow just outside a rectangle's edges (a room's walls, a deck's edge)
+  function edgeShadow(c, mx, my, mw, mh) {
     const sh = 20;
     const edge = (x0, y0, x1, y1, x, y, w, h) => {
       const gr = c.createLinearGradient(x0, y0, x1, y1);
@@ -356,6 +275,38 @@ RB.render = (function () {
     edge(0, my + mh, 0, my + mh + sh, mx - sh, my + mh, mw + 2 * sh, sh);
     edge(mx, 0, mx - sh, 0, mx - sh, my, sh, mh);
     edge(mx + mw, 0, mx + mw + sh, 0, mx + mw, my, sh, mh);
+  }
+  const belowEnv = (m, t) => ({ ax, ay, bw, bh, cam, t: t || 0, still: RB.game.reducedMotion(), player: RB.world.W.player, amb: ambientOf(m).ambient || {} });
+  function drawSurround(c, m, pal, t) {
+    if (fromHeight(m)) {
+      // the ground far below, round the deck, with the deck's edge shadow
+      RB.below.draw(c, m, belowEnv(m, t));
+      const D = RB.below.deckOf(m);
+      edgeShadow(c, ax(D.x0 * TS), ay(D.y0 * TS), (D.x1 - D.x0) * ATS, (D.y1 - D.y0) * ATS);
+      return;
+    }
+    const g = m.margin || { x: 0, y: 0 };
+    const mx = ax(-g.x * TS), my = ay(-g.y * TS), mw = (m.w + 2 * g.x) * ATS, mh = (m.h + 2 * g.y) * ATS;
+    c.fillStyle = pal.dark;
+    if (mx <= 0 && my <= 0 && mx + mw >= bw && my + mh >= bh) { c.fillRect(0, 0, bw, bh); return; }
+    // plain ground under the map itself; the patterned surround only in the
+    // strips around it (painting the whole buffer twice a frame cost about
+    // a third of a small interior's frame time)
+    c.fillRect(mx, my, mw, mh);
+    const indoor = framed(m);
+    // rooms get dark timber, larger walled places (archives, towers) the weave
+    const timber = m.region === 'interior' || (m.def && m.def.indoor) || (m.w <= 17 && m.h <= 12);
+    c.save();
+    c.translate(mx & 63, my & 63); // the pattern stays put relative to the map
+    c.fillStyle = surroundPattern(c, pal, timber);
+    const ox = mx & 63, oy = my & 63, top = Math.max(0, my), bot = Math.min(bh, my + mh);
+    if (my > 0) c.fillRect(-ox, -oy, bw, my);
+    if (my + mh < bh) c.fillRect(-ox, my + mh - oy, bw, bh - my - mh);
+    if (mx > 0 && bot > top) c.fillRect(-ox, top - oy, mx, bot - top);
+    if (mx + mw < bw && bot > top) c.fillRect(mx + mw - ox, top - oy, bw - mx - mw, bot - top);
+    c.restore();
+    if (!indoor) return; // outdoors the apron fades instead (drawFade)
+    edgeShadow(c, mx, my, mw, mh);
   }
 
   // Characters stand on their tile by a foot anchor (RB.sprites.ANCHOR, inside a
@@ -563,6 +514,7 @@ RB.render = (function () {
     drawFade(c, m, pal);
     interactMarker(c, W, t);
     drawLighting(c, m, W, t);
+    if (fromHeight(m)) RB.below.drawLights(c, m, belowEnv(m, t)); // the lights far below, through the night
     drawWeather(c, m, t);
     for (const e of W.emotes) {
       const a = RB.world.actorById(e.who);
