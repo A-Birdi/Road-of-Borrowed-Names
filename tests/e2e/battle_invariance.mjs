@@ -14,15 +14,20 @@
 // is listed, not compared), the next decision's phase and its response cards. The rules use no random stream (src/engine/95_combat.js: intents follow each
 // creature's pattern, a "random" aim is a function of the state), so any difference is a
 // presentation path changing an outcome.
+// Plus the coordinated technique (Harmony addendum §23.1): Harmony full, the first exchange the technique (its card,
+// its task, "Join the technique"), then Unravel — Nao, Mio, Ren, Suzu × creatures 1, 3 × Battle animations × motion
+// × the Harmony portrait flourish On / Off = 96 configurations, compared within each (companion, creatures).
 // Synthetic campaigns in fresh profiles; the presentation clock runs ×4 (RB.battleSeq.setTimeScale,
 // a virtual clock — cue order and intervals are unchanged; real-speed runs are battle_presentation.mjs).
-// Usage: node tests/e2e/battle_invariance.mjs [--quick] [--out tests/e2e/out/battle_invariance.json]
+// Usage: node tests/e2e/battle_invariance.mjs [--quick] [--tech] [--out tests/e2e/out/battle_invariance.json]
+//   --tech: the technique fixtures only
 import fs from 'node:fs';
 import path from 'node:path';
 import { serve, launch, page } from './lib.mjs';
 
 const args = process.argv.slice(2);
 const quick = args.includes('--quick');
+const techOnly = args.includes('--tech');
 const outAt = args.indexOf('--out');
 const OUT = outAt >= 0 ? args[outAt + 1] : 'tests/e2e/out/battle_invariance.json';
 const { srv, url } = await serve();
@@ -35,9 +40,13 @@ const MOTION = [false, true];
 const CONTROLS = ['adaptive', 'keep'];
 const TEXT = ['normal', 'fast', 'instant'];
 const configs = [];
-for (const comp of quick ? [null, 'mio'] : COMPS) for (const foes of quick ? [1, 3] : FOES) for (const anim of ANIM) for (const reduce of MOTION) for (const controls of CONTROLS) for (const text of quick ? ['normal'] : TEXT) configs.push({ comp, foes, anim, reduce, controls, text });
+if (!techOnly) for (const comp of quick ? [null, 'mio'] : COMPS) for (const foes of quick ? [1, 3] : FOES) for (const anim of ANIM) for (const reduce of MOTION) for (const controls of CONTROLS) for (const text of quick ? ['normal'] : TEXT) configs.push({ comp, foes, anim, reduce, controls, text });
 const pets = [{ pet: null }, { pet: 'cat', petBattle: true }, { pet: 'cat', petBattle: false }, { pet: 'dog', petBattle: true }];
-for (const pt of pets) configs.push({ comp: 'mio', foes: 2, anim: 'normal', reduce: false, controls: 'adaptive', text: 'normal', ...pt, petCase: true });
+if (!techOnly) for (const pt of pets) configs.push({ comp: 'mio', foes: 2, anim: 'normal', reduce: false, controls: 'adaptive', text: 'normal', ...pt, petCase: true });
+// the coordinated technique (Harmony addendum §7, §23.1): Harmony full from the start, the first exchange is the
+// technique (its card, the task, "Join the technique"), then Unravel; × Battle animations × motion × the Harmony
+// portrait flourish On / Off — the portrait is presentation only, so each fixture must agree
+for (const comp of quick ? ['mio', 'suzu'] : ['nao', 'mio', 'ren', 'suzu']) for (const foes of quick ? [1] : [1, 3]) for (const anim of quick ? ['normal', 'instant'] : ANIM) for (const reduce of MOTION) for (const flourish of [true, false]) configs.push({ comp, foes, anim, reduce, controls: 'adaptive', text: 'normal', tech: true, flourish });
 
 // one encounter, played to the end of three exchanges (or its end), in an open page
 async function play(p, c) {
@@ -49,7 +58,11 @@ async function play(p, c) {
     for (const k of ['strike', 'sweep', 'shroud', 'rest', 'heat', 'charge', 'lie', 'mirror', 'plea']) s.tips['intent:' + k] = 1;
     for (const w of s.words) s.tips['word:' + w] = 1;
     if (o.pet) { RB.pets.meet(s, o.pet); RB.pets.select(s, o.pet); }
-    Object.assign(RB.game.settings, { input: 'choice', battleAnim: o.anim, reducedMotion: o.reduce, battleControls: o.controls, textSpeed: o.text, petBattle: o.petBattle !== false });
+    Object.assign(RB.game.settings, { input: 'choice', battleAnim: o.anim, reducedMotion: o.reduce, battleControls: o.controls, textSpeed: o.text, petBattle: o.petBattle !== false, harmonyFlourish: o.flourish !== false });
+    // (a technique fixture: Harmony full when the encounter begins, this encounter only)
+    const L = RB.combatLogic;
+    if (!L.__inv) { L.__inv = true; const init = L.init; L.init = function (...a) { const st = init.apply(this, a); if (window.__invHarmony) { st.harmony = st.harmonyMax; window.__invHarmony = false; } return st; }; }
+    window.__invHarmony = !!o.tech;
     RB.game.applySettings();
     RB.battleSeq.setTimeScale(4);
     const run = RB.challenge.runStep;
@@ -72,7 +85,7 @@ async function play(p, c) {
     const s = await cards();
     if (s.r) break;
     steps.push(await p.evaluate(() => ({ phase: RB.combat.phase(), cur: RB.combat.state().cur, cards: [...document.querySelectorAll('.rcard[data-i]')].map((x) => x.getAttribute('data-cid') + (x.disabled ? '-' : '')).join(',') })));
-    await p.evaluate(() => { const c = [...document.querySelectorAll('.rcard[data-i]')].find((x) => !x.disabled && /unravel/i.test(x.textContent)); c.click(); });
+    await p.evaluate((tech) => { const c = [...document.querySelectorAll('.rcard[data-i]')].find((x) => !x.disabled && (tech ? x.getAttribute('data-cid') === 'tech' : /unravel/i.test(x.textContent))) || [...document.querySelectorAll('.rcard[data-i]')].find((x) => !x.disabled && /unravel/i.test(x.textContent)); c.click(); }, !!(c.tech && ex === 0));
     await p.waitForSelector('.chal .mc .btn', { timeout: 10000 });
     await p.evaluate(() => {
       const st = window.__lastStep;
@@ -130,7 +143,7 @@ for (let k = 0; k < configs.length; k++) {
 if (pg) await pg.ctx.close();
 
 // within each fixture every presentation variant must agree
-const key = (r) => (r.petCase ? 'pet ' : '') + (r.comp || 'alone') + ' ×' + r.foes;
+const key = (r) => (r.petCase ? 'pet ' : '') + (r.tech ? 'technique ' : '') + (r.comp || 'alone') + ' ×' + r.foes;
 const groups = new Map();
 for (const r of results) { const k = key(r); if (!groups.has(k)) groups.set(k, []); groups.get(k).push(r); }
 let bad = 0;
@@ -139,7 +152,7 @@ for (const [k, rs] of groups) {
   const errs = rs.filter((r) => r.error || (r.errors && r.errors.length));
   const sig = (r) => JSON.stringify([r.result, r.rules, r.phase, r.steps, r.won, r.words, r.learn]);
   const sigs = new Map();
-  for (const r of rs.filter((x) => !x.error)) { const s = sig(r); sigs.set(s, (sigs.get(s) || []).concat([`${r.anim}/${r.reduce ? 'reduced' : 'full'}/${r.controls}/text-${r.text}${r.pet ? '/pet-' + r.pet + (r.petBattle ? '-shown' : '-hidden') : ''}`])); }
+  for (const r of rs.filter((x) => !x.error)) { const s = sig(r); sigs.set(s, (sigs.get(s) || []).concat([`${r.anim}/${r.reduce ? 'reduced' : 'full'}/${r.controls}/text-${r.text}${r.pet ? '/pet-' + r.pet + (r.petBattle ? '-shown' : '-hidden') : ''}${r.tech ? '/portrait-' + (r.flourish ? 'on' : 'off') : ''}`])); }
   const ok = sigs.size === 1 && !errs.length;
   if (!ok) bad++;
   summary.push({ fixture: k, configs: rs.length, distinct: sigs.size, errors: errs.map((r) => r.error || r.errors.join('; ')).slice(0, 3), outcome: rs[0].result || 'three exchanges', variants: sigs.size > 1 ? [...sigs.values()].map((v) => v.slice(0, 4)) : undefined });

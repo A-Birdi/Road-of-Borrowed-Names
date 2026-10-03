@@ -57,7 +57,7 @@ RB.harmonyCutin = (function () {
   const now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
   const A = () => RB.harmonyArt;
   let cur = null, N = 0, onResize = null;
-  const S = { started: 0, shown: 0, disposed: 0, suppressed: {}, fallbacks: [], log: [], maxLive: 0, replaced: 0, relaid: 0 };
+  const S = { started: 0, shown: 0, displayed: 0, disposed: 0, suppressed: {}, fallbacks: [], log: [], maxLive: 0, replaced: 0, relaid: 0 };
 
   // ---- the setting and the moments it must not start -------------------------------------------------
   // "Harmony portrait flourish" (default On): presentation only; older settings records lack it (= On).
@@ -102,12 +102,13 @@ RB.harmonyCutin = (function () {
   const holdPhase = (comp) => { const T = timelineOf(comp); return T ? T[T.length - 1].phase : 'hold'; };
 
   // ---- measuring ------------------------------------------------------------------------------------
-  function visRect(el) {
+  // (fading: an element whose opacity is running up from 0 — the banner as it appears — still counts)
+  function visRect(el, fading) {
     if (!el || !el.getBoundingClientRect) return null;
     const r = el.getBoundingClientRect();
     if (r.width < 1 || r.height < 1) return null;
     const cs = getComputedStyle(el);
-    if (cs.display === 'none' || cs.visibility === 'hidden' || +cs.opacity < 0.05) return null;
+    if (cs.display === 'none' || cs.visibility === 'hidden' || (!fading && +cs.opacity < 0.05)) return null;
     return { x: r.left, y: r.top, w: r.width, h: r.height };
   }
   // Every rectangle the portrait must keep clear of (CSS px, viewport), with what it is.
@@ -118,7 +119,8 @@ RB.harmonyCutin = (function () {
     if (!root) return out;
     const withdrawn = root.classList.contains('cb-acting') && !root.classList.contains('cb-keep');
     add('status', visRect(root.querySelector('.cb-party')));
-    for (const b of root.querySelectorAll('.cb-banner')) if (b.classList.contains('on') || b.classList.contains('off')) add('banner', visRect(b));
+    // the banner as it appears (its fade starts at 0, and it drops 6 px into place): where it will stand
+    for (const b of root.querySelectorAll('.cb-banner')) if (b.classList.contains('on') || b.classList.contains('off')) { const r = visRect(b, true); if (r) { r.h += 8; add('banner', r); } }
     // the telegraph and the responses: occupied unless Adaptive has withdrawn them for the exchange
     if (!withdrawn) { add('intent', visRect(root.querySelector('.intent'))); add('responses', visRect(root.querySelector('.cb-dock'))); }
     add('skip', visRect(root.querySelector('.cb-skip')));
@@ -274,7 +276,11 @@ RB.harmonyCutin = (function () {
     const root = document.querySelector('.combat-ui');
     root.insertBefore(el, root.querySelector('.cb-banner'));
     N++;
-    cur = { n: N, tl: timelineOf(comp), state: 'inactive', action, comp, tech: cue.tech || comp, look, reduce, mode, d: { in: T.in, hold: T.hold, out: T.out }, t0: at, wall0: now(), el, pl, phase: null, opacity: 0, dx: 0, marks: [], trace: [], dirty: false, cut: null };
+    cur = { n: N, tl: timelineOf(comp), state: 'inactive', action, comp, tech: cue.tech || comp, look, reduce, mode, d: { in: T.in, hold: T.hold, out: T.out }, t0: at, wall0: now(), el, pl, phase: null, opacity: 0, dx: 0, marks: [], trace: [], dirty: false, cut: null,
+      // with large text (or an overlay that scrolls) the layout may still reflow as the menus withdraw: the
+      // portrait waits, unseen, until it has held still for a few frames (within its entrance), then takes its
+      // place — or, if none is left, is not shown at all (never a flash over what then moves under it)
+      settle: root.scrollHeight > root.clientHeight + 1 || ((RB.game.settings && RB.game.settings.textScale) || 1) > 1.25 ? { sig: null, n: 0 } : null };
     mark(cur, 'inactive', at);
     S.started++; S.shown++;
     S.maxLive = Math.max(S.maxLive, document.querySelectorAll('.cb-cutin').length);
@@ -285,9 +291,11 @@ RB.harmonyCutin = (function () {
     return cur ? cur.n : null;
   }
   function layout(c) {
-    const p = c.pl, el = c.el;
-    el.style.left = p.x + 'px';
-    el.style.top = p.y + 'px';
+    const p = c.pl, el = c.el, root = el.parentNode;
+    // placed in viewport px; inside the overlay, which scrolls with very large text (a scroll re-places it)
+    const rr = root && root.getBoundingClientRect ? root.getBoundingClientRect() : { left: 0, top: 0 };
+    el.style.left = (p.x - rr.left + (root ? root.scrollLeft : 0)) + 'px';
+    el.style.top = (p.y - rr.top + (root ? root.scrollTop : 0)) + 'px';
     el.style.width = p.w + 'px';
     el.style.height = p.h + 'px';
   }
@@ -295,7 +303,9 @@ RB.harmonyCutin = (function () {
     const spec = { comp: c.comp, look: c.look, variant: c.pl.variant, phase: ph, still: c.reduce && !c.tl, backing: c.pl.backing, fx: c.pl.fx };
     const comp = A().compose(spec);
     if (c.el.width !== comp.w || c.el.height !== comp.h) { c.el.width = comp.w; c.el.height = comp.h; }
-    const g = c.el.getContext('2d');
+    // (a CPU-backed canvas: not a composited layer of its own, so the text drawn beside it — Skip, the banner —
+    // is rasterised exactly as without it)
+    const g = c.el.getContext('2d', { willReadFrequently: true });
     g.imageSmoothingEnabled = false;
     g.clearRect(0, 0, comp.w, comp.h);
     g.drawImage(comp.cv, 0, 0);
@@ -321,18 +331,51 @@ RB.harmonyCutin = (function () {
     if (P.indexOf('flourish') >= 0 && el < c.d.in + c.d.hold * 0.5) return 'flourish';
     return 'hold';
   }
+  // A cheap signature of what the placement depends on: the stage's layout, the overlay's scroll, the banner
+  // and the status dock. Large text can make the overlay scroll or reflow as the menus withdraw; the same
+  // instance is then placed again (as on a resize).
+  function layoutSig() {
+    const St = RB.battleStage, L = St && St.lay && St.lay();
+    const root = document.querySelector('.combat-ui');
+    const r = (e) => { if (!e) return ''; const q = e.getBoundingClientRect(); return Math.round(q.left) + ',' + Math.round(q.top) + ',' + Math.round(q.width) + ',' + Math.round(q.height); };
+    const sz = (e) => { if (!e) return ''; const q = e.getBoundingClientRect(); return Math.round(q.width) + ',' + Math.round(q.height); }; // (the banner drops into place: its size only)
+    return (L ? L.foes.map((f) => f.ex + ',' + f.ey).join(';') + '|' + L.scale + '|' + (L.party ? L.party.x + ',' + L.party.y + ',' + L.party.w + ',' + L.party.h : '') : '') + '|' + (St && St.cssPerArt ? St.cssPerArt() : 1) +
+      '|' + (root ? root.scrollTop + '|' + r(root.querySelector('.cb-party')) + '|' + sz(root.querySelector('.cb-banner.on')) + '|' + root.classList.contains('cb-acting') : '');
+  }
   function frame(pt) {
     const c = cur;
     if (!c) return;
     const lay = readingOpen();
     if (lay) { dispose('layer:' + lay); return; }
+    if (c.settle) {
+      const sg = layoutSig();
+      if (sg === c.settle.sig) c.settle.n++; else { c.settle.sig = sg; c.settle.n = 0; }
+      const el0 = pt - c.t0;
+      if (c.settle.n < 6 || el0 < Math.min(c.d.in, 120)) {
+        if (el0 >= c.d.in + c.d.hold / 2) { note('unsettled'); S.fallbacks.push({ action: c.action, comp: c.comp, view: c.pl.view, reason: 'the layout did not settle in time', at: new Date().toISOString() }); dispose('unsettled'); return; }
+        c.el.style.opacity = '0';
+        return;
+      }
+      // placed now, in the settled layout; it comes in with a short fade where it stands (no slide)
+      c.settle = null; c.sig = sg; c.dirty = true; c.lateAt = el0;
+    }
+    if (!c.cut) { const sg = layoutSig(); if (c.sig !== sg) { if (c.sig != null) c.dirty = true; c.sig = sg; } }
     if (c.dirty) {
       c.dirty = false;
       S.relaid++;
       let pl;
       try { pl = place({ comp: c.comp, look: c.look, still: c.reduce }); } catch (e) { pl = { ok: false }; }
       if (pl.ok) { const redraw = pl.variant !== c.pl.variant || pl.backing !== c.pl.backing; c.pl = pl; if (redraw) c.phase = null; layout(c); }
-      else if (!c.cut) c.cut = { pt, d: Math.min(120, c.d.out), op: c.opacity, why: 'resize-invalid' };
+      else {
+        // no safe place any more: a short fade where it stands — or, if what it must keep clear of has moved
+        // under it (large text reflowing the overlay), gone at once: it never stays over protected content
+        S.fallbacks.push({ action: c.action, comp: c.comp, view: pl.view, reason: 'placed again: ' + (pl.reason || 'no safe space'), tried: pl.tried, at: new Date().toISOString() });
+        while (S.fallbacks.length > FALLBACK_CAP) S.fallbacks.shift();
+        let over = null;
+        try { const { sp } = spansOf({ comp: c.comp, look: c.look, still: c.reduce, variant: c.pl.variant, backing: c.pl.backing, fx: c.pl.fx }); over = hits(sp, c.pl.x + (c.dx || 0), c.pl.y, c.pl.scale, protectedRects()); } catch (e) { over = 'unknown'; }
+        if (over) { dispose('relayout-overlap'); return; }
+        if (!c.cut) c.cut = { pt, d: Math.min(120, c.d.out), op: c.opacity, why: 'resize-invalid' };
+      }
     }
     const el = pt - c.t0, d = c.d, total = d.in + d.hold + d.out;
     let state, op, dx = 0;
@@ -343,22 +386,24 @@ RB.harmonyCutin = (function () {
     } else if (el < d.in) {
       state = 'entering';
       const k = Math.max(0, el) / d.in;
-      if (c.reduce) op = smooth(k);
+      if (c.lateAt != null) op = smooth((el - c.lateAt) / 80);
+      else if (c.reduce) op = smooth(k);
       else {
         op = 1;
         // from beyond the left edge, eased out; moved in whole art pixels (the grid stays stable)
         const s = c.pl.scale, travel = c.pl.footprint.x + c.pl.footprint.w + 4;
         dx = -Math.round(((1 - easeOut(k)) * travel) / s) * s;
       }
-    } else if (el < d.in + d.hold) { state = 'holding'; op = 1; }
+    } else if (el < d.in + d.hold) { state = 'holding'; op = c.lateAt != null ? smooth((el - c.lateAt) / 80) : 1; }
     else if (el < total) { state = 'fading'; op = 1 - smooth((el - d.in - d.hold) / d.out); }
     else { dispose('done'); return; }
     if (state !== c.state) { c.state = state; mark(c, state, pt); }
     const ph = phaseAt(c, el);
     if (ph !== c.phase) draw(c, ph);
     c.opacity = op; c.dx = dx;
+    if (op > 0 && !c.seen) { c.seen = true; S.displayed++; }
     c.el.style.opacity = String(Math.round(op * 1000) / 1000);
-    c.el.style.transform = dx ? 'translate3d(' + dx + 'px,0,0)' : '';
+    c.el.style.transform = dx ? 'translate(' + dx + 'px,0)' : '';
     if (c.trace.length < TRACE_CAP) c.trace.push([Math.round(el * 10) / 10, state[0], Math.round(op * 1000) / 1000, dx, ph[0]]);
   }
   function dispose(why) {
@@ -371,7 +416,7 @@ RB.harmonyCutin = (function () {
     c.state = 'disposed';
     mark(c, 'disposed', pt);
     S.disposed++;
-    S.log.push({ n: c.n, action: c.action, comp: c.comp, why: why || 'done', mode: c.mode, reduce: c.reduce, variant: c.pl.variant, scale: c.pl.scale, fit: c.pl.fit, footprint: roundRect(c.pl.footprint), view: c.pl.view, faceH: c.pl.faceH, opacityAtEnd: Math.round(c.opacity * 1000) / 1000, marks: c.marks, trace: c.trace, look: c.look });
+    S.log.push({ n: c.n, action: c.action, comp: c.comp, why: why || 'done', displayed: !!c.seen, mode: c.mode, reduce: c.reduce, variant: c.pl.variant, scale: c.pl.scale, fit: c.pl.fit, footprint: roundRect(c.pl.footprint), view: c.pl.view, faceH: c.pl.faceH, opacityAtEnd: Math.round(c.opacity * 1000) / 1000, marks: c.marks, trace: c.trace, look: c.look });
     while (S.log.length > LOG_CAP) S.log.shift();
     return true;
   }
@@ -386,10 +431,10 @@ RB.harmonyCutin = (function () {
   function stats() {
     let cache = null;
     try { const s = A() && A().stats(); cache = s ? { busts: s.busts, compositions: s.compositions, bytes: s.bytes, builds: s.builds, hits: s.hits } : null; } catch (e) { cache = null; }
-    return { started: S.started, shown: S.shown, disposed: S.disposed, live: cur ? 1 : 0, layers: typeof document !== 'undefined' ? document.querySelectorAll('.cb-cutin').length : 0, maxLive: S.maxLive, replaced: S.replaced, relaid: S.relaid, suppressed: Object.assign({}, S.suppressed), fallbacks: S.fallbacks.slice(), spans: spanCache.size, listening: !!onResize, cache };
+    return { started: S.started, shown: S.shown, displayed: S.displayed, disposed: S.disposed, live: cur ? 1 : 0, layers: typeof document !== 'undefined' ? document.querySelectorAll('.cb-cutin').length : 0, maxLive: S.maxLive, replaced: S.replaced, relaid: S.relaid, suppressed: Object.assign({}, S.suppressed), fallbacks: S.fallbacks.slice(), spans: spanCache.size, listening: !!onResize, cache };
   }
   const last = () => (S.log.length ? S.log[S.log.length - 1] : null);
-  function reset() { dispose('reset'); S.started = S.shown = S.disposed = S.maxLive = S.replaced = S.relaid = 0; S.suppressed = {}; S.fallbacks = []; S.log = []; }
+  function reset() { dispose('reset'); S.started = S.shown = S.displayed = S.disposed = S.maxLive = S.replaced = S.relaid = 0; S.suppressed = {}; S.fallbacks = []; S.log = []; }
 
   // ---- preparation at a safe moment (§21) and cleanup ------------------------------------------------
   // At an encounter's start the committed companion's pair is built in idle slices (both variants, every
