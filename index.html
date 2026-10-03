@@ -49237,7 +49237,11 @@ RB.ui.settings = (function () {
     sh.className = 'bset-shield';
     sh.setAttribute('aria-hidden', 'true');
     document.body.appendChild(sh);
-    setTimeout(() => sh.remove(), 400);
+    // (and a click the closing key's release would send to the battle: some browsers activate the
+    // newly focused button when Space comes up)
+    const block = (e) => { if (e.target && e.target.closest && e.target.closest('.combat-ui')) { e.stopPropagation(); e.preventDefault(); } };
+    document.addEventListener('click', block, true);
+    setTimeout(() => { sh.remove(); document.removeEventListener('click', block, true); }, 400);
   }
   // the battle's Settings button: in the scene's lower right corner while the sheet may open
   let btn = null, poll = null;

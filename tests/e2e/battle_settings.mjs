@@ -451,6 +451,14 @@ for (const v of VIEWS) {
     await closeSheet(p);
     const k1 = JSON.parse(await battleKey(p)), a0 = JSON.parse(k0);
     assert(JSON.stringify(k1.st) === JSON.stringify(a0.st), 'the battle is untouched');
+    // a load that does not happen once the battle was left (an unreadable slot): back on the map, where
+    // the crab still is (it walks into you again: one new battle, from its start), nothing written
+    const id0 = await p.evaluate(() => RB.game.s.id);
+    const lf = await p.evaluate(async () => { try { await RB.game.loadCampaign(6, 'manual'); return 'loaded'; } catch (e) { return 'refused: ' + e.message; } });
+    await wait(p, 1200);
+    const kj = await p.evaluate(() => ({ id: RB.game.s && RB.game.s.id, modes: RB.game.G.modes.join('>'), screens: document.querySelectorAll('.combat-ui').length, round: RB.combat.state() && RB.combat.state().round, foe: RB.combat.context() && RB.combat.context().id, flag: !!RB.game.s.flags['foe:sg.cove:c1'], notices: window.__T.notices.filter((x) => /stepped back|wake at the last/i.test(x)) }));
+    assert(/^refused/.test(lf) && kj.id === id0 && !kj.flag && !kj.notices.length && kj.screens <= 1 && (kj.modes === 'world' || (kj.modes === 'world>combat' && kj.round === 0 && kj.foe === 'sg.crab')), 'a load that did not happen: the same journey, the battle left with nothing written, the crab there to engage again: ' + JSON.stringify({ lf, kj }));
+    assert((await framesAlive(p)) > 10, 'the frame loop runs');
     assert(!errors.length, 'no page errors: ' + errors.join('; '));
     await ctx.close();
   });

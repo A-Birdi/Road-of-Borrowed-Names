@@ -158,3 +158,18 @@ Captures made by `tests/e2e/kanji_chart.mjs` and `tests/e2e/pad_kanji.mjs`
 | Foundations, Words › Kanji chart, practising 守 (390×844) | [image](after/kanji_chart/foundations_practice_390x844.webp) |
 | 320×640, 200 % text: list, search, entry, practice | [list](after/kanji_chart/list_320x640_text200.webp) · [search](after/kanji_chart/search_320x640_text200.webp) · [entry](after/kanji_chart/entry_320x640_text200.webp) · [practice](after/kanji_chart/practice_320x640_text200.webp) |
 | A kanji outside the game (弦) with kanji reading on: the closest kanji to pick from | [image](after/kanji_chart/pad_outside_kanji_390x844.webp) |
+
+## Settings in battle (2026-10-03)
+
+The battle's Settings button (lower right of the scene), the sheet over a paused encounter
+(presentation only; the rest fixed until the encounter is over; no saving), and the question Load
+asks. Made by `tests/e2e/battle_settings_shots.mjs`; behaviour in docs/COMBAT_NOTES.md, "Settings
+in battle".
+
+| State | 1280×800 (¾ scale) | 390×844 |
+|---|---|---|
+| The battle, with its Settings button | [image](battle_settings/battle_1280x800.webp) | [image](battle_settings/battle_390x844.webp) |
+| The sheet (phone: its groups) | — | [image](battle_settings/sheet_390x844.webp) |
+| Speed & motion | [image](battle_settings/sheet_motion_1280x800.webp) | [image](battle_settings/sheet_motion_390x844.webp) |
+| Until the encounter is over (read-only) | [image](battle_settings/sheet_fixed_1280x800.webp) | [image](battle_settings/sheet_fixed_390x844.webp) |
+| Load a journey… asks first | [image](battle_settings/leave_1280x800.webp) | [image](battle_settings/leave_390x844.webp) |
