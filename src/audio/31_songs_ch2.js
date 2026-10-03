@@ -153,7 +153,7 @@ RB.audio = RB.audio || {};
   const SGC_B_CH = '3 7 6 3 3 7 4 1';
 
   S('sg_confession', {
-    title: 'The Unopened Notice',
+    title: 'The Ledger',
     kind: 'scene',
     motifs: [],
     notes: 'Cue (D minor, 63) for a confession at the warehouse and the judgement in the harbour office. A lone shakuhachi line in the low register over sparse koto and a held bowed note — something said with difficulty; B warms toward F major on koto with the bowed voice beneath, strict and kind at once; the shakuhachi returns with the koto answering.',

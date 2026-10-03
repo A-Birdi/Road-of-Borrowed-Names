@@ -228,7 +228,7 @@ RB.audio = RB.audio || {};
   const COFI_B_CH = '6 6 4 4 6 6 5M 5M';
 
   S('co_fire', {
-    title: 'The Night the Kiln Went White',
+    title: 'The Kiln’s Last Page',
     kind: 'scene',
     motifs: [],
     notes: 'Cue (A minor, 72) for the vision on the kiln’s last page: the night of the fire, heard rather than seen. A shakuhachi line with sharp breath accents (muraiki) over trembling koto and a biwa that strikes and buzzes; ōdaiko rolls swell and fall back like a fire catching in the wind. B is the woman going up to open the water gate: the line climbs and holds while the drums thin to a heartbeat.',

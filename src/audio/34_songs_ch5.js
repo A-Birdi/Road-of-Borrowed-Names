@@ -213,7 +213,7 @@ RB.audio = RB.audio || {};
   const LFF_B_CH = '1 7 1 7 6 1 5M 1';
 
   S('lf_flood', {
-    title: 'The Minutes of the Flood',
+    title: 'Old Minutes',
     kind: 'scene',
     motifs: ['road'],
     notes: 'Cue (D minor, 63) for the council minutes read aloud and the gatekeeper’s account of the flood night: a quarrel over a vague promise, a messenger running in the rain, a bell that rang too late. Koto rain in soft sixteenths, a low shakuhachi line, a biwa striking the bass, and a temple bell far off at the end of each phrase; B carries the road motif, as someone running.',
@@ -236,7 +236,7 @@ RB.audio = RB.audio || {};
 
   // The drowned bell rings; the voices in the pipes turn and run home.
   S('lf_bell', {
-    title: 'Thirty Years Late',
+    title: 'The Bell Rings',
     kind: 'scene',
     motifs: ['road'],
     notes: 'Cue (B-flat, 72) after the drowned bell is rung: the bell itself on every other downbeat, koto running up through each chord like the voices turning back down the pipes, the main theme on shakuhachi and shinobue an octave apart, ōdaiko rolls swelling, a shō underneath. B is the theme’s answering phrase, quieter, with the rin.',
