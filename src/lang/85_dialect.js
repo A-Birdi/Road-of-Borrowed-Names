@@ -236,10 +236,12 @@ RB.dialect = (function () {
     ['ろ', 'ろう', 'Kansai short volitional 〜ろ (= 〜ろう: let\'s)'],
     ['そ', 'そう', 'Kansai short volitional 〜そ (= 〜そう: let\'s)'],
     ['よ', 'よう', 'Kansai short volitional 〜よ (= 〜よう: let\'s)'],
+    ['も', 'もう', 'Kansai short volitional 〜も (= 〜もう: let\'s)'],
+    ['お', 'おう', 'Kansai short volitional 〜お (= 〜おう: let\'s)'],
     ['もろて', 'もらって', 'Kansai もろて (= もらって)'],
   ];
   // whole words with an irregular Kansai form
-  const WHOLE = { 'せえへん': 'しない', 'せーへん': 'しない', 'せえへんかった': 'しなかった', 'けえへん': 'こない', 'けーへん': 'こない', 'こーへん': 'こない', 'けえへんかった': 'こなかった', 'おらへん': 'いない', 'あらへん': 'ない', 'あらへんかった': 'なかった', 'いてる': 'いる', 'いてへん': 'いない', 'いてた': 'いた', 'もろた': 'もらった', 'もろて': 'もらって', 'おらん': 'いない' };
+  const WHOLE = { 'せえへん': 'しない', 'せーへん': 'しない', 'せえへんかった': 'しなかった', 'けえへん': 'こない', 'けーへん': 'こない', 'こーへん': 'こない', 'けえへんかった': 'こなかった', 'おらへん': 'いない', 'あらへん': 'ない', 'あらへんかった': 'なかった', 'いてる': 'いる', 'いてへん': 'いない', 'いてた': 'いた', 'もろた': 'もらった', 'もろて': 'もらって', 'おらん': 'いない', 'せな': 'しない' };
   function retail(tk, from, to) {
     const segs = (tk.segs || [{ t: tk.surface, r: null }]).map((s) => Object.assign({}, s));
     const last = segs[segs.length - 1];
@@ -274,6 +276,9 @@ RB.dialect = (function () {
     // 〜な before あかん (行かな あかん = 行かないと いけない)
     const nx = nextWord(tokens, i);
     if (nx && nx.surface === 'あかん' && /な$/.test(plainSurface)) {
+      // 〜たらな あかん = 〜てやらなければ (見せたらな あかん: must show them)
+      const r0 = /たらな$/.test(plainSurface) ? viaStandard(tk, retail(tk, 'たらな', 'てやらない'), 'Kansai 〜たらな あかん (= 〜てやらなければ いけない: must do it for them)') : null;
+      if (r0) return r0;
       const r = viaStandard(tk, retail(tk, 'な', 'ない'), 'Kansai 〜な あかん (= 〜なければ いけない: must)');
       if (r) return r;
     }

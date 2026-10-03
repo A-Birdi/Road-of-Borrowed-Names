@@ -51,6 +51,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     K('しゃあない', '', 'exp', 'E', 'it can\'t be helped', '仕方ない'),
     K('かまへん', '', 'exp', 'E', 'it\'s fine; I don\'t mind', 'かまわない'),
     K('ほな', '', 'conj', 'E', 'well then; right, so', 'じゃあ / それなら'),
+    K('よっしゃ', '', 'int', 'E', 'all right!; right then', 'よし'),
     K('ほんなら', '', 'conj', 'I', 'in that case', 'それなら'),
     K('ほんで', '', 'conj', 'I', 'and then; so', 'それで'),
     K('なんや', '', 'exp', 'E', 'what is it; oh, it\'s just…', 'なんだ'),
