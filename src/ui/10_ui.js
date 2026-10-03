@@ -81,6 +81,10 @@ RB.ui = (function () {
   function topLayer() {
     return layers[layers.length - 1] || null;
   }
+  // every layer opened inside `box` (a screen taken down at once: a battle left for another journey)
+  function popLayersIn(box) {
+    for (const l of layers.slice().reverse()) if (box.contains(l.el) || (l.parent && box.contains(l.parent))) popLayer(l);
+  }
   // Where keyboard focus may move while a layer is on top: the layer itself,
   // or a larger `scope` element that contains it.
   function scopeOf(layer) {
@@ -282,7 +286,7 @@ RB.ui = (function () {
   }
 
   return {
-    init, el, pushLayer, popLayer, topLayer, focusables, moveFocus, onAction, jhtml, ehtml, plainJp, label,
+    init, el, pushLayer, popLayer, popLayersIn, topLayer, focusables, moveFocus, onAction, jhtml, ehtml, plainJp, label,
     notice, toast, fade, card, placeName, confirm, shake, get root() { return root; }, get overlay() { return overlay; },
   };
 })();

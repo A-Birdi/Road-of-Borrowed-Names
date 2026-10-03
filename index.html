@@ -684,6 +684,12 @@ button.entry .kind.slotline { display: flex; flex-wrap: wrap; align-items: cente
 .keys .keycaps { margin-top: 0.2em; }
 kbd { display: inline-block; min-width: 1.6em; padding: 0 0.4em; border: 1px solid var(--ink-3); border-bottom-width: 2px; border-radius: 3px; background: #fffaf0; color: var(--ink); font: 0.9em var(--ui-font); text-align: center; }
 body.high-contrast .pv-box { background: #000; color: #fff; }
+/* Settings over a battle (presentation only): no saving here; leaving the encounter asks first */
+.folio-bset .folio-foot { align-items: center; }
+.folio-bset .bset-save { flex: 1 1 16em; margin: 0; display: flex; align-items: center; gap: 0.45em; color: var(--on-cloth-2); font-size: 0.9em; }
+.folio-bset .bset-save svg { width: 1.2em; height: 1.2em; flex: none; }
+.bset-fixed .t b { font-weight: 700; }
+@media (max-width: 599px) { .folio-bset .bset-save { flex-basis: 100%; } }
 
 /* ---- Company (src/ui/52_company.js): who is travelling, then the page ---------------------- */
 .co-pair { display: flex; flex-wrap: wrap; gap: 0.35em 1.4em; padding: 0.2em 0.1em 0.55em; margin-bottom: 0.5em; border-bottom: 1px dashed var(--paper-edge); }
@@ -1555,7 +1561,9 @@ body.bulb-on .place .jline .jt, body.bulb-on .card-slip .jline .jt, body.bulb-on
 body.veiled #ui > .dlg, body.veiled #ui > .choices, body.veiled #ui > .folio-scrim, body.veiled #ui > .scrim { z-index: 20; }
 .dlg.noportrait, .dlg.narration { grid-template-columns: minmax(0, 1fr); grid-template-areas: "tab" "sheet"; }
 .dlg .portrait {
-  grid-area: por; width: 116px; height: 116px; image-rendering: pixelated; align-self: end; margin-bottom: 10px;
+  /* --por-target: the layout's size; --por-size: the nearest size that is a whole number of device pixels per
+   * art pixel, set by src/ui/21_portrait_anim.js (96 CSS px at device-pixel-ratio 1, not 116 = 1.21×) */
+  grid-area: por; --por-target: 116px; width: var(--por-size, 116px); height: var(--por-size, 116px); image-rendering: pixelated; align-self: end; margin-bottom: 10px;
   background: var(--paper-3); border: 4px solid var(--paper); outline: 1px solid var(--paper-edge);
   box-shadow: 0 8px 20px rgba(0,0,0,0.45); border-radius: 2px;
 }
@@ -1620,7 +1628,7 @@ body.dlg-top .place { top: calc(var(--dlg-h, 0px) + max(12px, env(safe-area-inse
 .dlg.more .txt { -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 30px), rgba(0,0,0,0.25)); mask-image: linear-gradient(to bottom, #000 calc(100% - 30px), rgba(0,0,0,0.25)); }
 @media (max-height: 440px) { /* landscape phones: the sheet may use most of the height */
   .dlg-sheet { max-height: calc(100 * var(--vh) - 64px); }
-  .dlg .portrait { width: 84px; height: 84px; }
+  .dlg .portrait { --por-target: 84px; width: var(--por-size, 84px); height: var(--por-size, 84px); }
   .dlg .txt { padding-top: 10px; }
 }
 
@@ -1631,7 +1639,7 @@ body.dlg-top .place { top: calc(var(--dlg-h, 0px) + max(12px, env(safe-area-inse
     grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "por tab" "sheet sheet"; column-gap: 8px;
   }
   .dlg.noportrait, .dlg.narration { grid-template-columns: minmax(0, 1fr); grid-template-areas: "tab" "sheet"; }
-  .dlg .portrait { width: 64px; height: 64px; margin: 0 0 6px 8px; border-width: 3px; }
+  .dlg .portrait { --por-target: 64px; --por-grow: 0; width: var(--por-size, 64px); height: var(--por-size, 64px); margin: 0 0 6px 8px; border-width: 3px; }
   .dlg-tab { margin-left: 0; align-self: end; }
   .dlg-sheet { border-radius: 10px 10px 0 0; max-height: calc(60 * var(--vh)); border-left: 0; border-right: 0; }
   .dlg .txt { padding: 12px 16px 8px; }
@@ -2976,6 +2984,15 @@ body.reduced-motion .combat-ui > .cb-banner { transition: none; transform: trans
 /* Skip: in the scene's corner while an exchange plays (Normal and Fast) */
 .combat-ui > .cb-skip { grid-area: stage; justify-self: end; align-self: start; margin: 6px; z-index: 5; min-height: 44px; min-width: 44px; pointer-events: auto; }
 .combat-ui > .cb-skip[hidden] { display: none; }
+/* Settings for this encounter (src/ui/55_settings.js): the scene's lower right corner, clear of the
+   creatures' plates and Skip (top) and of the party (left); shown while the sheet may open */
+.combat-ui > .cb-set { grid-area: stage; justify-self: end; align-self: end; margin: 6px; z-index: 5; min-height: 44px; min-width: 44px; pointer-events: auto; padding: 0 0.75em; background-color: rgba(13, 18, 32, 0.78); }
+.combat-ui > .cb-set:hover { background-color: var(--cloth-700); }
+.combat-ui > .cb-set[hidden] { display: none; }
+body.high-contrast .combat-ui > .cb-set { background: #000; border-color: #fff; }
+/* the moment after the battle's settings close: the closing press (or the second click of a double
+   click) lands on this, never on the battle under it */
+.bset-shield { position: fixed; inset: 0; z-index: 2147483000; background: transparent; }
 
 /* Committed: the telegraph and the response dock withdraw through their edge (Adaptive) and the
    scene drawn under them shows; nothing is re-laid out. Keep visible leaves them, dimmed and inert. */
@@ -29477,7 +29494,17 @@ RB.battlerMoves = (function () {
  * highlight band, a selective outline). Parameters come from the character
  * definition (portrait: {...}) layered over what the overworld look implies,
  * so each named character keeps a distinct face, hair, collar and
- * accessories. Hair shapes live in 36_portraithair.js. */
+ * accessories. Hair shapes live in 36_portraithair.js.
+ *
+ * A portrait is composed from layers (back accessories, back hair, bust,
+ * face, front accessories, front hair, glasses, brows, head accessories) so
+ * the dialogue's animated portraits (src/ui/21_portrait_anim.js) can move the
+ * body and the head a pixel apart, sway hair a beat later and change the eyes
+ * without redrawing everything: each layer and each finished frame is cached
+ * (one byte-capped LRU), and a frame is described by a small object `fr`
+ * (eyes, lids, gaze, brow, mouth, blush, head/body offsets, sway, glasses
+ * glint and slip). With no `fr` the result is the still portrait every other
+ * screen shows. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.portraits = (function () {
@@ -29485,7 +29512,6 @@ RB.portraits = (function () {
   const S = 96;
   const P = RB.pix;
   const shade = P.shade, mix = P.mix, A = P.alpha;
-  const cache = new Map();
 
   // ---- parameters ----------------------------------------------------------------------------
   function paramsFor(id) {
@@ -29524,6 +29550,9 @@ RB.portraits = (function () {
       white: '#f8f4f2', whiteS: '#d8cfd8',
       mouth: mix(sd, '#7a2e34', 0.55), mouthIn: '#5a2026', tongue: '#c86a6a',
       blush: A('#f08080', 0.38), blushLine: A('#d85a64', 0.7),
+      // darker skin tones (the sprites' 3–6): the lash, iris and shadowed skin are close in value, so
+      // the eye gets a lit lower lid and a softer crease (PORTRAITS.md §3 item 3)
+      dark: P.lum(sk) < 0.62,
     };
   }
 
@@ -29536,6 +29565,14 @@ RB.portraits = (function () {
     m.poly(old ? JAW.map((v, i) => (i % 2 && v > 60 ? v + 1 : v)) : JAW, '#fff');
     return m;
   }
+  // the neck belongs to the body (it stays with the collar when the head moves a pixel)
+  function neck(b, p, C) {
+    const K = C.sk;
+    b.rect(40, 60, 16, 20, K[1]);
+    b.rect(40, 62, 3, 18, K[2]);
+    b.rect(53, 60, 3, 20, K[0]);
+    b.poly([40, 62, 56, 62, 56, 69, 48, 73, 40, 69], K[0]);
+  }
   function drawFace(b, p, C, m) {
     const K = C.sk;
     // ears: rim, inner fold, shadowed on the far side
@@ -29544,11 +29581,6 @@ RB.portraits = (function () {
       b.oval(x0 + 2, 43, x1 - 2, 51, lit ? K[1] : K[0]);
       b.rect(lit ? x0 + 1 : x1 - 2, 42, 1, 6, lit ? K[3] : K[1]);
     }
-    // neck, with the jaw's shadow falling across it
-    b.rect(40, 60, 16, 20, K[1]);
-    b.rect(40, 62, 3, 18, K[2]);
-    b.rect(53, 60, 3, 20, K[0]);
-    b.poly([40, 62, 56, 62, 56, 69, 48, 73, 40, 69], K[0]);
     // the face as a rounded solid lit from the upper left: mostly flat tone, a lit temple and
     // cheek, the terminator on the right, and shadow under the chin
     const L = [-0.36, -0.42, 0.83];
@@ -29588,11 +29620,14 @@ RB.portraits = (function () {
       '...wwwwwwwl..',
       '....lllll....',
     ],
+    // narrow eyes: one lash row over the same three-row opening (it was two lash rows: a dark bar that
+    // read the same whether open, smiling or closed; PORTRAITS.md §3 item 4). The opening keeps its
+    // height so the narrow-eyed elders and Ren keep their look.
     narrow: [
       '.............',
-      '.kkkkkkkkkk..',
-      'kkkkkkkkkkkkk',
-      '.wwwwwwwwwww.',
+      '.............',
+      '..kkkkkkkkkk.',
+      '.kwwwwwwwwwkk',
       '.wwwwwwwwwww.',
       '..wwwwwwwww..',
       '...lllllll...',
@@ -29610,6 +29645,9 @@ RB.portraits = (function () {
   };
   const CLOSED_DOWN = ['k...........k', '.kk.......kk.', '...kkkkkkk...', '....kkkkk....'];
   const CLOSED_UP = ['....kkkkk....', '..kkkkkkkkk..', '.kk.......kk.', 'k...........k'];
+  const EYE_CX = [37, 59], EYE_CY = 45;
+  // the rows an eye occupies (with its crease), for clipping the fringe out of it
+  const EYE_TOP = EYE_CY - 4;
   function eye(b, p, C, cx, cy, side, e) {
     const K = C.sk, st = EYE_T[p.eyes] ? p.eyes : 'round';
     const X = (i) => (side > 0 ? cx - 6 + i : cx + 5 - i);
@@ -29618,6 +29656,7 @@ RB.portraits = (function () {
       const rows = e.closed === 'up' ? CLOSED_UP : CLOSED_DOWN;
       put(rows, cy - 1, { k: C.lash });
       if (e.closed === 'down') { b.px(X(12), cy - 2, C.lash); b.px(X(12), cy - 3, C.lash); }
+      if (C.dark) for (let i = 4; i <= 8; i++) b.px(X(i), cy + (e.closed === 'up' ? -2 : 3), K[3]); // the lid catches the light
       return;
     }
     const T = EYE_T[st].slice();
@@ -29630,29 +29669,38 @@ RB.portraits = (function () {
     for (const [i, j] of open) { i0 = Math.min(i0, i); i1 = Math.max(i1, i); j0 = Math.min(j0, j); j1 = Math.max(j1, j); }
     const isOpen = (i, j) => T[j] && T[j][i] === 'w';
     for (const [i, j] of open) b.px(X(i), y0 + j, j <= j0 ? C.whiteS : C.white);
-    // iris: a tall oval with a dark upper rim, a lighter lower half, pupil and glints
+    // iris: a tall oval, 7 px wide and centred in the opening so white shows on both sides (gaze and
+    // surprise read from the white); its upper rim a step lighter than the lash line so the two do not
+    // merge into one dark band, a dark pupil, a lighter lower half, glints (PORTRAITS.md §3 items 1–2)
     const lk = e.look || [0, 0];
-    const iw = e.wide ? 5 : st === 'sharp' ? 7 : 8, ih = e.wide ? 6 : j1 - j0 + 2;
-    const ic = (i0 + i1) / 2 - 0.5 + lk[0], jc = e.wide ? (j0 + j1) / 2 + 0.5 : j0 + ih / 2 - 1 + lk[1];
+    const iw = e.wide ? 5 : 7, ih = e.wide ? 6 : j1 - j0 + 2;
+    const ic = (i0 + i1) / 2 + lk[0], jc = e.wide ? (j0 + j1) / 2 + 0.5 : j0 + ih / 2 - 1 + lk[1];
     const I = C.iris;
     for (let j = j0 - 1; j <= j1; j++) for (let i = i0; i <= i1; i++) {
       if (!isOpen(i, j)) continue;
-      const a = (i + 0.5 - ic - 0.5) / (iw / 2), bb = (j + 0.5 - jc) / (ih / 2);
+      const a = (i - ic) / (iw / 2), bb = (j + 0.5 - jc) / (ih / 2);
       if (a * a + bb * bb > 1) continue;
       const t = (j - (jc - ih / 2)) / ih;
-      b.px(X(i), y0 + j, t < 0.3 ? I[0] : t > 0.7 ? I[3] : I[2]);
+      b.px(X(i), y0 + j, t < 0.3 ? I[1] : t > 0.68 ? I[3] : I[2]);
     }
+    // the iris's top edge under the lid: one row of the iris's mid tone where it meets the lash
     const pi = Math.round(ic), pj = Math.round(jc - (e.wide ? 0 : 0.5));
-    for (let j = pj - (e.wide ? 0 : 1); j <= pj + (e.wide ? 0 : 1); j++) for (let i = pi; i <= pi + (e.wide ? 0 : 1); i++) if (isOpen(i, j)) b.px(X(i), y0 + j, I[0]);
+    for (let j = pj - (e.wide ? 0 : 1); j <= pj + (e.wide ? 0 : 1); j++) for (let i = pi - (e.wide ? 0 : 1); i <= pi + (e.wide ? 0 : 1); i++) {
+      if (!isOpen(i, j) || j < j0 + 1) continue;
+      b.px(X(i), y0 + j, i === pi || e.wide ? I[0] : I[1]);
+    }
     // glints: a big one to the upper left of the pupil, a small one low right
-    const gi = Math.round(ic - iw / 2 + 1.5), gj = j0 + (e.wide ? 1 : 1);
+    const gi = Math.round(ic - iw / 2 + 1), gj = j0 + 1;
     for (const [i, j] of [[gi, gj], [gi + 1, gj], [gi, gj + 1], [gi + 1, gj + 1]]) if (isOpen(i, j)) b.px(X(i), y0 + j, '#ffffff');
-    if (isOpen(Math.round(ic + iw / 2 - 1.5), j1 - 1)) b.px(X(Math.round(ic + iw / 2 - 1.5)), y0 + j1 - 1, A('#ffffff', 0.75));
+    if (isOpen(Math.round(ic + iw / 2 - 1), j1 - 1)) b.px(X(Math.round(ic + iw / 2 - 1)), y0 + j1 - 1, A('#ffffff', 0.75));
     if (e.tear) { b.px(X(gi), y0 + j1, '#ffffff'); b.px(X(gi + 1), y0 + j1, A('#cfe8ff', 0.9)); }
     // lashes and lower lid over everything
     put(T, y0, { k: C.lash, l: mix(C.lash, K[1], 0.55) });
-    // crease above the lid
-    for (let i = 2; i <= 10; i++) b.px(X(i), y0 - 2 + (i < 4 || i > 9 ? 1 : 0), K[1]);
+    // a lit rim under the lower lid on darker skin, so the eye's shape holds against the cheek
+    if (C.dark && !e.cheek) T[T.length - 1].split('').forEach((ch, i) => { if (ch === 'l') b.px(X(i), y0 + T.length, K[3]); });
+    // crease above the lid (softer on darker skin, where it joined the lash into one shadow)
+    const crease = C.dark ? mix(K[1], K[2], 0.5) : K[1];
+    if (!p.acc.includes('glasses')) for (let i = 2; i <= 10; i++) b.px(X(i), y0 - 2 + (i < 4 || i > 9 ? 1 : 0), crease);
     // lid modifiers
     const lidLine = (fn) => { for (let i = 0; i <= 12; i++) { const j = fn(i); if (j == null) continue; b.px(X(i), y0 + j, C.lash); b.px(X(i), y0 + j + 1, C.lash); } };
     const cover = (fn) => { for (let j = 0; j < T.length; j++) for (let i = 0; i <= 12; i++) if (fn(i, j) && (T[j][i] === 'w' || T[j][i] === 'k')) b.px(X(i), y0 + j, K[2]); };
@@ -29679,15 +29727,45 @@ RB.portraits = (function () {
     closed: { eyes: { closed: 'down' }, brow: 'flat', mouth: 'calm' },
     tired: { eyes: { heavy: true }, brow: 'worry', mouth: 'tired' },
   };
+  const exprName = (expr) => { const e = EXPR_ALIAS[expr] || expr; return EXPR[e] ? e : 'neutral'; };
 
-  function brows(b, p, C, ex) {
-    const old = p.age === 'old';
-    const col = p.browCol || (old ? '#d8d4d0' : shade(C.hair[1], -1));
+  // The expression with a frame's overrides: fr.expr (another expression for a cue's first beat),
+  // fr.lids 'half' | 'closed' (a blink), fr.look (gaze), fr.wink (the viewer's right eye closed in a
+  // smile), fr.eyes / fr.eyesR (raw eye modifiers), fr.brow, fr.mouth, fr.blush (0 none … 1 full).
+  function resolve(expr, fr) {
+    const base = EXPR[exprName((fr && fr.expr) || expr)];
+    let eyL = Object.assign({}, base.eyes), eyR = Object.assign({}, base.eyes, base.eyesR || {});
+    const ex = { brow: base.brow, mouth: base.mouth, blush: base.blush ? 1 : 0, lines: !!base.lines };
+    if (fr) {
+      if (fr.eyes) { Object.assign(eyL, fr.eyes); Object.assign(eyR, fr.eyes); }
+      if (fr.eyesR) Object.assign(eyR, fr.eyesR);
+      if (fr.look) { eyL.look = fr.look; eyR.look = fr.look; }
+      if (fr.lids === 'half') {
+        const half = (e) => Object.assign({}, e, { closed: undefined, wide: false, angry: false, heavy: true });
+        eyL = e0(eyL) ? half(eyL) : eyL; eyR = e0(eyR) ? half(eyR) : eyR;
+      } else if (fr.lids === 'closed') {
+        const shut = (e) => ({ closed: e.closed === 'up' ? 'up' : 'down' });
+        eyL = shut(eyL); eyR = shut(eyR);
+      }
+      if (fr.wink) eyR = { closed: 'up' };
+      if (fr.brow) ex.brow = fr.brow;
+      if (fr.mouth) ex.mouth = fr.mouth;
+      if (fr.blush != null) ex.blush = fr.blush;
+      if (ex.blush < 1) ex.lines = false;
+    }
+    ex.eyL = eyL; ex.eyR = eyR;
+    return ex;
+  }
+  const e0 = (e) => !e.closed; // an open eye (a half blink only lowers an open lid)
+
+  // Brows: their pixels (for drawing, and for cutting the fringe away round them).
+  function browPixels(p, C, kind0) {
     const y0 = 34 + (p.browY || 0) * 2;
     const thick = p.brows === 'thick' ? 3 : 2;
+    const out = [];
     for (const side of [-1, 1]) {
       const cx = side < 0 ? 37 : 59;
-      let kind = ex.brow;
+      let kind = kind0;
       if (kind === 'raise') kind = side > 0 ? 'high' : 'flat';
       // points: inner, middle, outer (u grows outward)
       const pts = { flat: [[-4, 1], [1, 0], [6, 1]], up: [[-4, 0], [1, -1], [6, 0]], high: [[-4, -1], [1, -3], [6, -2]], worry: [[-4, -2], [1, 0], [6, 2]], angry: [[-4, 3], [1, 1], [6, -1]] }[kind] || [[-4, 1], [1, 0], [6, 1]];
@@ -29697,10 +29775,23 @@ RB.portraits = (function () {
         for (let u = u0; u <= u1; u++) {
           const v = Math.round(v0 + ((v1 - v0) * (u - u0)) / (u1 - u0));
           const t = u >= 5 ? thick - 1 : thick;
-          b.rect(X(u), y0 + v, 1, t, col);
+          for (let k = 0; k < t; k++) out.push([X(u), y0 + v + k, k === t - 1 ? 1 : 0]);
         }
       }
     }
+    return out;
+  }
+  function browColour(p, C) {
+    const old = p.age === 'old';
+    return p.browCol || (old ? '#d8d4d0' : shade(C.hair[1], -1));
+  }
+  function brows(b, p, C, ex) {
+    const col = browColour(p, C);
+    // a light brow on light skin (white-haired elders, grey or gold hair) vanished: keep its colour
+    // and give it a darker underside from the skin's shadow (PORTRAITS.md §3 item 6)
+    const low = Math.abs(P.lum(col) - P.lum(C.sk[2])) < 0.3;
+    const under = low ? mix(C.lash, col, 0.3) : col;
+    for (const [x, y, last] of browPixels(p, C, ex.brow)) b.px(x, y, last ? under : col);
   }
   function mouth(b, p, C, kind) {
     const m = C.mouth, y = 61;
@@ -29732,11 +29823,11 @@ RB.portraits = (function () {
       b.rect(34, 53, 5, 1, soft); b.rect(57, 53, 5, 1, soft);
       b.rect(40, 30, 16, 1, soft); b.rect(42, 33, 12, 1, soft);
     }
-    const eyL = Object.assign({}, ex.eyes), eyR = Object.assign({}, ex.eyes, ex.eyesR || {});
-    eye(b, p, C, 37, 45, -1, eyL);
-    eye(b, p, C, 59, 45, 1, eyR);
-    if (ex.blush || p.blush) {
-      b.oval(29, 53, 39, 57, C.blush); b.oval(57, 53, 67, 57, C.blush);
+    eye(b, p, C, EYE_CX[0], EYE_CY, -1, ex.eyL);
+    eye(b, p, C, EYE_CX[1], EYE_CY, 1, ex.eyR);
+    if (ex.blush > 0 || p.blush) {
+      const bl = ex.blush > 0 && ex.blush < 1 && !p.blush ? A('#f08080', 0.38 * ex.blush) : C.blush;
+      b.oval(29, 53, 39, 57, bl); b.oval(57, 53, 67, 57, bl);
       if (ex.lines) for (const x of [31, 34, 37, 59, 62, 65]) { b.px(x + 1, 54, C.blushLine); b.px(x, 55, C.blushLine); }
     }
     mouth(b, p, C, ex.mouth);
@@ -29836,7 +29927,7 @@ RB.portraits = (function () {
   function accBack(b, p, C) {
     if (p.acc.includes('cape')) { const R = R4(p.capeCol || '#6a3a4a'); b.poly([0, 96, 2, 80, 14, 72, 24, 74, 16, 96], R[1]); b.poly([96, 96, 94, 80, 82, 72, 72, 74, 80, 96], R[0]); }
   }
-  function accFront(b, p, C, ex) {
+  function accFront(b, p, C) {
     const a = p.acc;
     if (a.includes('scarf')) {
       const R = R4(p.scarfCol || '#c8962e');
@@ -29878,19 +29969,31 @@ RB.portraits = (function () {
       b.oval(29, 78, 37, 86, GOLD[1]); b.oval(31, 80, 35, 84, '#3a5a8a'); b.px(32, 81, '#8ab0e0');
     }
     if (a.includes('cape')) { const R = R4(p.capeCol || '#6a3a4a'); b.poly([10, 80, 24, 72, 34, 76, 22, 84], R[2]); b.poly([86, 80, 72, 72, 62, 76, 74, 84], R[1]); b.oval(44, 70, 51, 77, GOLD[1]); b.px(46, 72, GOLD[2]); }
+    if (a.includes('atlas_lamplet')) lantern(b, 80, 80); // held, so it stays with the body
   }
-  function accHead(b, p, C) {
-    const a = p.acc;
-    if (a.includes('glasses')) {
-      const fc = p.glassCol || '#2e2a30';
-      for (const cx of [37, 59]) {
-        b.rect(cx - 6, 38, 12, 1, fc); b.rect(cx - 6, 52, 12, 1, fc); b.rect(cx - 8, 40, 1, 11, fc); b.rect(cx + 6, 40, 1, 11, fc);
-        b.px(cx - 7, 39, fc); b.px(cx + 5, 39, fc); b.px(cx - 7, 51, fc); b.px(cx + 5, 51, fc);
-        b.rect(cx - 7, 39, 13, 13, A('#e8f4ff', 0.1));
-        b.px(cx + 3, 40, A('#ffffff', 0.7)); b.px(cx + 4, 41, A('#ffffff', 0.5)); b.px(cx + 2, 41, A('#ffffff', 0.4));
-      }
-      b.rect(44, 43, 8, 1, fc); b.rect(21, 42, 8, 1, fc); b.rect(67, 42, 8, 1, fc);
+  // Glasses, drawn before the brows (the brows stay readable above the frame) with a lighter top
+  // rim one row lower than before (PORTRAITS.md §3 item 5). g: { dy: slipped (+1) or pushed up (−1),
+  // glint: 0…3 a light crossing the lenses, or null for the resting highlight }.
+  function glasses(b, p, C, g) {
+    const fc = p.glassCol || '#2e2a30', dy = (g && g.dy) || 0;
+    const top = mix(fc, C.sk[1], 0.45);
+    for (const cx of [37, 59]) {
+      const y = 39 + dy;
+      b.rect(cx - 6, y, 12, 1, top); b.rect(cx - 6, 52 + dy, 12, 1, fc); b.rect(cx - 8, y + 2, 1, 11 - (y + 2 - 40), fc); b.rect(cx + 6, y + 2, 1, 11 - (y + 2 - 40), fc);
+      b.px(cx - 7, y + 1, fc); b.px(cx + 5, y + 1, fc); b.px(cx - 7, 51 + dy, fc); b.px(cx + 5, 51 + dy, fc);
+      b.rect(cx - 7, y + 1, 13, 52 + dy - (y + 1), A('#e8f4ff', 0.1));
+      if (g && g.glint != null) { // a diagonal band of light sweeping across the lens, left to right
+        const x0 = cx - 7 + g.glint * 4;
+        for (let k = 0; k < 9; k++) { const x = x0 + Math.floor(k / 2), yy = y + 2 + 8 - k; if (x >= cx - 7 && x <= cx + 5) { b.px(x, yy, A('#ffffff', 0.75)); b.px(x + 1, yy, A('#ffffff', 0.4)); } }
+      } else { b.px(cx + 3, 41 + dy, A('#ffffff', 0.7)); b.px(cx + 4, 42 + dy, A('#ffffff', 0.5)); b.px(cx + 2, 42 + dy, A('#ffffff', 0.4)); }
     }
+    b.rect(44, 43 + dy, 8, 1, fc); b.rect(21, 42 + dy, 8, 1, fc); b.rect(67, 42 + dy, 8, 1, fc);
+  }
+  // Head accessories over the hair and the brows. sw: the secondary-motion offset (−1, 0, 1) of the
+  // parts that hang (ribbon tails, earring drops), a beat behind the head.
+  function accHead(b, p, C, sw) {
+    const a = p.acc;
+    sw = sw || 0;
     if (a.includes('goggles') || a.includes('atlas_goggles')) {
       b.rect(22, 21, 52, 5, '#5a4a3a'); b.rect(22, 21, 52, 1, '#7a6a5a');
       for (const cx of [38, 58]) { b.oval(cx - 8, 16, cx + 7, 30, '#3a3a3a'); b.oval(cx - 6, 18, cx + 5, 28, '#8fb8b0'); b.oval(cx - 5, 19, cx - 1, 23, '#d8f0e8'); }
@@ -29898,7 +30001,7 @@ RB.portraits = (function () {
     if (a.includes('headband')) {
       const R = R4(p.bandCol || C.ac[1]);
       for (let x = 20; x <= 76; x++) { const y = 25 + Math.round(((x - 48) / 28) ** 2 * 5); b.rect(x, y, 1, 5, R[2]); b.px(x, y, R[3]); b.px(x, y + 4, R[1]); }
-      b.poly([74, 28, 82, 26, 84, 34, 76, 34], R[1]); b.poly([76, 33, 82, 40, 78, 42, 74, 34], R[0]);
+      b.poly([74, 28, 82, 26, 84, 34, 76, 34], R[1]); b.poly([76 + sw, 33, 82 + sw, 40, 78 + sw, 42, 74, 34], R[0]);
     }
     if (a.includes('hood')) {
       const R = R4(p.hoodCol || C.cl[1]);
@@ -29907,6 +30010,7 @@ RB.portraits = (function () {
       m.each((x, y) => { let v = 2; if (x < 26 && y < 60) v = 3; if (x > 70) v = 1; if (y < 18 && x < 44) v = 3; b.px(x, y, R[v]); });
       b.line(28, 30, 48, 16, R[3]); b.line(48, 16, 68, 30, R[1]); b.line(24, 50, 28, 30, R[3]); b.line(72, 50, 68, 30, R[0]);
       b.line(34, 10, 30, 20, R[1]); b.line(62, 10, 66, 20, R[0]);
+      if (sw) { b.line(24 + sw, 52, 24 + sw, 70, R[sw < 0 ? 3 : 1]); b.line(72 + sw, 52, 72 + sw, 70, R[sw < 0 ? 1 : 0]); } // the hood's edge stirs
     }
     if (a.includes('hat')) {
       const R = R4(p.hatCol || '#8a6a44');
@@ -29926,7 +30030,7 @@ RB.portraits = (function () {
     }
     if (a.includes('ribbon')) {
       const R = R4(p.ribbonCol || '#c8687a');
-      b.poly([68, 22, 74, 30, 73, 38, 67, 29], R[1]); b.poly([72, 22, 82, 31, 84, 40, 76, 30], R[0]);  // tails
+      b.poly([68, 22, 74 + sw, 30, 73 + sw, 38, 67, 29], R[1]); b.poly([72, 22, 82 + sw, 31, 84 + sw, 40, 76 + sw, 30], R[0]);  // tails
       b.poly([66, 18, 52, 8, 50, 14, 54, 24], R[2]); b.poly([66, 18, 54, 10, 53, 14], R[3]);         // left loop
       b.poly([66, 18, 80, 6, 84, 14, 78, 24], R[1]); b.poly([66, 18, 80, 8, 81, 12], R[2]);          // right loop
       b.line(52, 9, 54, 23, R[0]); b.line(83, 8, 78, 23, R[0]);
@@ -29958,11 +30062,10 @@ RB.portraits = (function () {
     }
     if (a.includes('earrings')) {
       const G = p.earCol ? R4(p.earCol).slice(1, 4) : GOLD;
-      for (const x of [24, 71]) { b.oval(x, 54, x + 2, 56, GOLD[1]); b.rect(x + 1, 57, 1, 3, GOLD[0]); b.oval(x - 1, 59, x + 3, 64, G[1]); b.px(x, 60, G[2]); b.px(x + 2, 63, G[0]); }
+      for (const x of [24, 71]) { b.oval(x, 54, x + 2, 56, GOLD[1]); b.rect(x + 1, 57, 1, 3, GOLD[0]); b.oval(x - 1 + sw, 59, x + 3 + sw, 64, G[1]); b.px(x + sw, 60, G[2]); b.px(x + 2 + sw, 63, G[0]); }
     }
     if (a.includes('pencil')) { b.line(66, 30, 82, 12, '#e0b040', 3); b.line(67, 31, 83, 13, '#b88a20'); b.rect(81, 9, 4, 4, '#e8a0a0'); b.rect(64, 30, 3, 3, '#3a3040'); }
     if (a.includes('atlas_quill')) { b.line(68, 32, 80, 4, '#f4f0e0', 3); b.line(70, 32, 82, 6, '#d8d0bc'); b.px(68, 32, '#6a5a3a'); }
-    if (a.includes('atlas_lamplet')) lantern(b, 80, 80);
   }
 
   // Animal speakers (portrait kind: 'cat'): a cat's head and chest in the same light and palette rules.
@@ -29991,22 +30094,23 @@ RB.portraits = (function () {
     for (const x of [42, 47, 52]) b.line(x, 24, x + Math.round((x - 47) / 5), 33, R[1]); // forehead markings
     b.oval(36, 56, 60, 72, R[3]);
     // eyes: almond openings, green-gold irises, slit pupils that round out in surprise
-    const e = ex.eyes || {};
-    for (const [cx, side] of [[36, -1], [60, 1]]) {
+    for (const [cx, e] of [[36, ex.eyL || {}], [60, ex.eyR || {}]]) {
+      const side = cx < 48 ? -1 : 1;
       if (e.closed) {
         const up = e.closed === 'up';
         for (let u = -6; u <= 6; u++) { const v = Math.round(((u * u) / 36) * 3) * (up ? 1 : -1); b.rect(cx + u, 48 + v, 1, 2, C.lash); }
         continue;
       }
       const oy = e.heavy ? 3 : 0;
+      const lx = (e.look && e.look[0]) || 0;
       for (let y = 42 + oy; y <= 54; y++) for (let x = cx - 7; x <= cx + 7; x++) {
         const nx = (x + 0.5 - cx) / 7.5, ny = (y + 0.5 - 48) / 6.5;
         if (nx * nx + ny * ny > 1) continue;
         b.px(x, y, ny < -0.4 ? '#8a9a30' : ny > 0.4 ? '#d8e070' : '#b8c850');
       }
       const pw = e.wide ? 4 : 2;
-      b.rect(cx - (pw >> 1), 43 + oy, pw, 11 - oy, '#1a1614');
-      b.rect(cx - 4, 44 + oy, 2, 2, '#ffffff'); b.px(cx + 3, 51, A('#ffffff', 0.8));
+      b.rect(cx - (pw >> 1) + lx, 43 + oy, pw, 11 - oy, '#1a1614');
+      b.rect(cx - 4 + lx, 44 + oy, 2, 2, '#ffffff'); b.px(cx + 3 + lx, 51, A('#ffffff', 0.8));
       for (let x = cx - 7; x <= cx + 7; x++) { const nx = (x + 0.5 - cx) / 7.5; const y = Math.round(48 - 6.5 * Math.sqrt(Math.max(0, 1 - nx * nx))) + oy; b.px(x, y, C.lash); b.px(x, y - 1, C.lash); }
       if (e.angry) b.line(cx - 7 * side, 43, cx + 7 * side, 40, C.lash, 2);
       if (e.droop) b.line(cx - 7 * side, 40, cx + 7 * side, 44, C.lash, 2);
@@ -30017,51 +30121,208 @@ RB.portraits = (function () {
     if (open) { b.oval(44, 63, 52, 70, C.mouthIn); b.rect(46, 67, 4, 2, C.tongue); }
     b.rect(48, 62, 1, 2, R[0]); b.line(48, 64, 45, 66, R[0]); b.line(48, 64, 51, 66, R[0]);
     for (const k of [-1, 1]) for (let i = 0; i < 3; i++) b.line(48 + k * 12, 62 + i * 3, 48 + k * 30, 58 + i * 5, A('#f8f4ec', 0.85));
-    if (ex.blush) { b.oval(24, 58, 32, 62, C.blush); b.oval(64, 58, 72, 62, C.blush); }
+    if (ex.blush > 0) { b.oval(24, 58, 32, 62, C.blush); b.oval(64, 58, 72, 62, C.blush); }
   }
 
-  // ---- composition ----------------------------------------------------------------------------------
-  function drawAll(b, p, expr) {
-    const C = palette(p);
-    const ex = EXPR[EXPR_ALIAS[expr] || expr] || EXPR.neutral;
+  // ---- cache: one LRU of layers and finished frames, capped by bytes ------------------------------------
+  // A finished frame is a 96×96 canvas (36 KiB); a layer is kept cropped to its own pixels (a pair of brows is
+  // ≈1 KiB, a bust ≈11 KiB). The cap replaces the old 300-entry FIFO of finished portraits (which could reach
+  // ≈10.5 MiB): layers are shared by all of a portrait's frames, so the same bytes hold far more frames.
+  const ENTRY = S * S * 4;
+  const sizeOf = (v) => (!v ? 0 : v.crop ? v.w * v.h * 4 : ENTRY);
+  const lru = new Map();
+  const stat = { cap: 8 * 1024 * 1024, bytes: 0, hits: 0, misses: 0, layers: 0, frames: 0, evicted: 0, ms: 0, maxMs: 0, layerMs: {} };
+  function cget(k) {
+    if (!lru.has(k)) { stat.misses++; return undefined; }
+    const v = lru.get(k);
+    lru.delete(k); lru.set(k, v); // most recent last
+    stat.hits++;
+    return v.v;
+  }
+  function cset(k, v) {
+    const bytes = sizeOf(v);
+    if (lru.has(k)) { stat.bytes -= lru.get(k).b; lru.delete(k); }
+    lru.set(k, { v, b: bytes });
+    stat.bytes += bytes;
+    while (stat.bytes > stat.cap && lru.size > 1) {
+      const [ok, ov] = lru.entries().next().value;
+      lru.delete(ok); stat.bytes -= ov.b; stat.evicted++;
+    }
+  }
+  function clearCache(prefix) {
+    for (const [k, v] of Array.from(lru)) if (!prefix || k.startsWith(prefix)) { lru.delete(k); stat.bytes -= v.b; }
+  }
+
+  // ---- layers and composition ------------------------------------------------------------------------------
+  // [id, group]: group 'body' moves with the shoulders (breath, weight shift), 'head' with the head (a
+  // pixel later), 'hairB' with the head plus the sway (long hair and tails lag behind).
+  const NO_HALO = { wrap: 1, bald: 1, shaved: 1 };
+  function layerList(p) {
+    if (p.kind === 'cat') return [['cat', 'head']];
+    const L = [];
+    if (p.acc.includes('cape')) L.push(['cape', 'body']);
+    L.push(['hairB', 'hairB'], ['bust', 'body'], ['skin', 'head'], ['feat', 'head']);
+    if (p.beard) L.push(['beard', 'head']);
+    L.push(['front', 'body'], ['hairF', 'head']);
+    if (p.acc.includes('glasses')) L.push(['glasses', 'head']);
+    L.push(['brows', 'head'], ['headAcc', 'head']);
+    return L;
+  }
+  // the parts of a layer's key that the frame changes
+  function layerKey(id, p, ex, fr) {
+    switch (id) {
+      case 'feat': return JSON.stringify([ex.eyL, ex.eyR, ex.mouth, ex.blush, ex.lines]);
+      case 'cat': return JSON.stringify([ex.eyL, ex.eyR, ex.mouth, ex.blush]);
+      case 'hairF': case 'brows': return ex.brow;
+      case 'glasses': return ((fr && fr.glassDy) || 0) + ',' + (fr && fr.glint != null ? fr.glint : '');
+      case 'headAcc': return String((fr && fr.sway) || 0);
+      default: return '';
+    }
+  }
+  function drawLayer(id, p, C, ex, fr, hairF0) {
+    const b = new P.Buf(S, S);
     const H = RB.portraits.hairStyles || {};
     const hs = H[p.style] || H.short;
-    const ctx = { p, C, S, P };
-    if (p.kind === 'cat') { drawCat(b, p, C, ex); return C; }
-    accBack(b, p, C);
-    if (hs && hs.back) hs.back(b, ctx);
-    bust(b, p, C);
-    const fm = faceMask(p.age === 'old');
-    drawFace(b, p, C, fm);
-    features(b, p, C, ex);
-    if (p.beard) beard(b, p, C);
-    accFront(b, p, C, ex);
-    if (hs && hs.front) hs.front(b, ctx, fm);
-    brows(b, p, C, ex);
-    accHead(b, p, C);
-    return C;
+    const ctx = { p, C, S, P, hairF0 };
+    switch (id) {
+      case 'cat': drawCat(b, p, C, ex); break;
+      case 'cape': accBack(b, p, C); break;
+      case 'hairB': if (hs && hs.back) hs.back(b, ctx); break;
+      case 'bust': bust(b, p, C); neck(b, p, C); break;
+      case 'skin': drawFace(b, p, C, faceMask(p.age === 'old')); break;
+      case 'feat': features(b, p, C, ex); break;
+      case 'beard': beard(b, p, C); break;
+      case 'front': accFront(b, p, C); break;
+      case 'hairF0': if (hs && hs.front) hs.front(b, ctx, faceMask(p.age === 'old')); break;
+      case 'hairF': { // the front hair (drawn once per person) with the eyes and this brow cut out of it
+        if (ctx.hairF0) b.d.set(uncrop(ctx.hairF0).d);
+        clipFringe(b, p, C, ex);
+        break;
+      }
+      case 'glasses': glasses(b, p, C, { dy: (fr && fr.glassDy) || 0, glint: fr && fr.glint != null ? fr.glint : null }); break;
+      case 'brows': brows(b, p, C, ex); break;
+      case 'headAcc': accHead(b, p, C, (fr && fr.sway) || 0); break;
+    }
+    return b;
   }
-
-  function build(p, expr, keyStr) {
-    if (cache.has(keyStr)) return cache.get(keyStr);
+  // The fringe never covers the eyes (it stops two rows above the opening: tips used to reach into
+  // the upper lid), and a one-pixel margin of skin is cut round the brows, so a dark brow on a dark
+  // fringe (Nao, Mio, Ren, Wataru …) and a light one on a light fringe (Tsuru) still read
+  // (PORTRAITS.md §3 item 7).
+  function clipFringe(b, p, C, ex) {
+    // the eye's inner columns only: side locks keep their edge at the outer corners
+    for (const [x0, x1] of [[EYE_CX[0] - 4, EYE_CX[0] + 5], [EYE_CX[1] - 6, EYE_CX[1] + 3]]) {
+      for (let y = EYE_TOP; y <= EYE_CY + 5; y++) for (let x = x0; x <= x1; x++) b.clear(x, y);
+    }
+    if (NO_HALO[p.style]) return;
+    // under each brow column, the fringe is cut from the brow down to the eye (a strand of hair left
+    // between brow and eye read as a second, thicker brow)
+    for (const [x, y] of browPixels(p, C, ex.brow)) for (let yy = y - 1; yy < EYE_TOP; yy++) b.clear(x, yy);
+  }
+  // A layer cropped to the box of its opaque pixels: { crop, x0, y0, w, h, d } (null when empty).
+  function crop(b) {
+    let x0 = S, y0 = S, x1 = -1, y1 = -1;
+    const d = b.d;
+    for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) if (d[(y * S + x) * 4 + 3]) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+    if (x1 < 0) return null;
+    const w = x1 - x0 + 1, h = y1 - y0 + 1, out = new Uint8ClampedArray(w * h * 4);
+    for (let y = 0; y < h; y++) out.set(d.subarray(((y0 + y) * S + x0) * 4, ((y0 + y) * S + x0 + w) * 4), y * w * 4);
+    return { crop: true, x0, y0, w, h, d: out };
+  }
+  function uncrop(L) {
     const b = new P.Buf(S, S);
-    drawAll(b, p, expr || 'neutral');
-    let cv = b.toCanvas();
+    if (L) for (let y = 0; y < L.h; y++) b.d.set(L.d.subarray(y * L.w * 4, (y + 1) * L.w * 4), ((L.y0 + y) * S + L.x0) * 4);
+    return b;
+  }
+  // dst ← layer L shifted by (dx, dy): rows and columns brought in from the frame's bottom and side edges
+  // repeat the edge (the bust and long hair reach the bottom edge, the shoulders the sides)
+  function blit(dst, L, dx, dy) {
+    const s = L.d, d = dst.d, w = L.w, h = L.h;
+    const bottom = L.y0 + h === S, left = L.x0 === 0, right = L.x0 + w === S;
+    const ya = Math.max(0, L.y0 + dy), yb = Math.min(S - 1, bottom && dy < 0 ? S - 1 : L.y0 + h - 1 + dy);
+    const xa = Math.max(0, left && dx > 0 ? 0 : L.x0 + dx), xb = Math.min(S - 1, right && dx < 0 ? S - 1 : L.x0 + w - 1 + dx);
+    for (let y = ya; y <= yb; y++) {
+      let sy = y - dy - L.y0;
+      if (sy < 0) continue;
+      if (sy > h - 1) sy = h - 1;
+      for (let x = xa; x <= xb; x++) {
+        let sx = x - dx - L.x0;
+        if (sx < 0) sx = 0; else if (sx > w - 1) sx = w - 1;
+        const o = (sy * w + sx) * 4, a = s[o + 3];
+        if (!a) continue;
+        const q = (y * S + x) * 4, da = d[q + 3];
+        if (a === 255 || !da) { d[q] = s[o]; d[q + 1] = s[o + 1]; d[q + 2] = s[o + 2]; d[q + 3] = a; continue; }
+        // source over destination (the same blend as RB.pix's put)
+        const sa = a / 255, dA = da / 255, oa = sa + dA * (1 - sa);
+        d[q] = (s[o] * sa + d[q] * dA * (1 - sa)) / oa;
+        d[q + 1] = (s[o + 1] * sa + d[q + 1] * dA * (1 - sa)) / oa;
+        d[q + 2] = (s[o + 2] * sa + d[q + 2] * dA * (1 - sa)) / oa;
+        d[q + 3] = oa * 255;
+      }
+    }
+  }
+  const off = (v) => (v ? [v[0] || 0, v[1] || 0] : [0, 0]);
+
+  // A finished frame as a buffer (no canvas: node tests use this). subj: a stable key for the caches.
+  function renderBuf(p, expr, fr, subj) {
+    const t0 = typeof performance !== 'undefined' ? performance.now() : 0;
+    const C = palette(p);
+    const ex = resolve(expr || 'neutral', fr);
+    const head = off(fr && fr.head), body = off(fr && fr.body), sway = (fr && fr.sway) || 0;
+    const out = new P.Buf(S, S);
+    const layer = (id) => {
+      const k = subj != null ? subj + '|L|' + id + '|' + layerKey(id, p, ex, fr) : null;
+      let lb = k ? cget(k) : undefined;
+      if (lb === undefined) {
+        const t1 = typeof performance !== 'undefined' ? performance.now() : 0;
+        lb = crop(drawLayer(id, p, C, ex, fr, id === 'hairF' ? layer('hairF0') : null));
+        stat.layers++;
+        if (t1) stat.layerMs[id] = (stat.layerMs[id] || 0) + (performance.now() - t1);
+        if (k) cset(k, lb);
+      }
+      return lb;
+    };
+    for (const [id, group] of layerList(p)) {
+      const lb = layer(id);
+      if (!lb) continue;
+      const o = group === 'body' ? body : group === 'hairB' ? [head[0] + sway, head[1]] : head;
+      blit(out, lb, o[0], o[1]);
+    }
+    if (typeof performance !== 'undefined') { const ms = performance.now() - t0; stat.ms += ms; stat.maxMs = Math.max(stat.maxMs, ms); }
+    return out;
+  }
+  function finish(b, p, expr, fr) {
     if (p.extra2 || p.extra) {
-      // character-specific marks drawn by the content: extra2 at 96 px, older extra at 48 px (doubled)
+      // character-specific marks drawn by the content: extra2 at 96 px, older extra at 48 px (doubled);
+      // they follow the head, and are told the frame (a construct can blink too)
+      const cv = b.toCanvas();
       const c = cv.getContext('2d');
       c.save();
+      const h = off(fr && fr.head);
+      c.translate(h[0], h[1]);
       if (!p.extra2) c.scale(2, 2);
-      (p.extra2 || p.extra)(c, EXPR_ALIAS[expr] || expr || 'neutral');
+      (p.extra2 || p.extra)(c, exprName((fr && fr.expr) || expr || 'neutral'), fr || null);
       c.restore();
-      const img = c.getImageData(0, 0, S, S);
-      b.d.set(img.data);
+      b.d.set(c.getImageData(0, 0, S, S).data);
     }
     b.threshold(110);
     b.outline('#1a141c', { minA: 1 });
-    cv = b.toCanvas();
-    cache.set(keyStr, cv);
-    if (cache.size > 300) cache.delete(cache.keys().next().value);
+    return b;
+  }
+  // A stable string for a frame descriptor (the cache key and what the animation compares).
+  function frameKey(fr) {
+    if (!fr) return '';
+    const j = (v) => (v == null ? '' : Array.isArray(v) ? v.join(',') : typeof v === 'object' ? JSON.stringify(v) : String(v));
+    return [fr.expr, fr.lids, fr.look, fr.wink ? 1 : '', fr.eyes, fr.eyesR, fr.brow, fr.mouth, fr.blush, fr.head && (fr.head[0] || fr.head[1]) ? fr.head : '', fr.body && (fr.body[0] || fr.body[1]) ? fr.body : '', fr.sway || '', fr.glint, fr.glassDy || ''].map(j).join('|').replace(/\|+$/, '');
+  }
+  function build(p, expr, subj, fr) {
+    const key = subj + '|F|' + exprName(expr || 'neutral') + '|' + frameKey(fr);
+    const hit = cget(key);
+    if (hit) return hit;
+    const b = finish(renderBuf(p, expr, fr, subj), p, expr, fr);
+    const cv = b.toCanvas();
+    stat.frames++;
+    cset(key, cv);
     return cv;
   }
   // Background: flat bands stepping from the character's colour down to night, with a lighter disc
@@ -30081,37 +30342,59 @@ RB.portraits = (function () {
     }
     b.oval(8, 4, 87, 83, A(mix(key, '#fff4dc', 0.5), 0.07));
     cv = b.toCanvas();
+    if (bgCache.size > 64) bgCache.clear();
     bgCache.set(key, cv);
     return cv;
   }
   function paint(target, img, bg) {
     const c = target.getContext('2d');
-    target.width = S; target.height = S;
+    if (target.width !== S) target.width = S;
+    if (target.height !== S) target.height = S;
     c.imageSmoothingEnabled = false;
     c.drawImage(background(bg), 0, 0);
     c.drawImage(img, 0, 0);
   }
-  function draw(target, id, expr) {
-    const p = paramsFor(id);
-    if (!p) return;
-    paint(target, build(p, expr, id + '|' + expr), p.bg);
+
+  // ---- subjects: a character, or the player's portrait from the look they wear ----------------------------
+  const PC_BG = '#2e3a34';
+  function subject(who, look) {
+    if (who === 'pc' || look) {
+      const lk = look || (RB.equip ? RB.equip.look() : {});
+      const p = fromLook(lk);
+      p.bg = PC_BG;
+      return { key: 'pc|' + JSON.stringify(lk), p, who: 'pc' };
+    }
+    const p = paramsFor(who);
+    return p ? { key: who, p, who } : null;
   }
-  function drawPlayer(target, look, expr) {
-    const p = fromLook(look);
-    p.bg = '#2e3a34';
-    paint(target, build(p, expr, 'pc|' + JSON.stringify(look) + '|' + expr), p.bg);
+  // the frame of a subject (a canvas without background) and painted with its background
+  function frame(sj, expr, fr) { return sj ? build(sj.p, expr, sj.key, fr) : null; }
+  function paintFrame(target, sj, expr, fr) {
+    if (!sj) return false;
+    paint(target, frame(sj, expr, fr), sj.p.bg);
+    return true;
   }
-  function image(id, expr) {
-    const p = paramsFor(id);
-    return p ? build(p, expr, id + '|' + expr) : null;
-  }
+
+  // ---- the still portraits every screen uses --------------------------------------------------------------
+  function draw(target, id, expr) { paintFrame(target, subject(id), expr, null); }
+  function drawPlayer(target, look, expr) { paintFrame(target, subject('pc', look || {}), expr, null); }
+  function image(id, expr) { const sj = subject(id); return sj ? frame(sj, expr, null) : null; }
   // The player's portrait without its background (transparent), S×S — for
   // previews that sit on paper (character creation).
-  function playerImage(look, expr) {
-    return build(fromLook(look), expr, 'pc|' + JSON.stringify(look) + '|' + expr);
+  function playerImage(look, expr) { return frame(subject('pc', look || {}), expr, null); }
+  // facts the animation needs: which expressions hold their eyes closed, which look aside or open wide
+  function exprInfo(expr) {
+    const e = EXPR[exprName(expr)];
+    return { name: exprName(expr), closed: !!e.eyes.closed, wide: !!e.eyes.wide, look: e.eyes.look || null, heavy: !!e.eyes.heavy };
   }
   const EXPRESSIONS = Object.keys(EXPR);
-  return { draw, drawPlayer, image, playerImage, fromLook, S, EXPRESSIONS, background };
+  return {
+    draw, drawPlayer, image, playerImage, fromLook, S, EXPRESSIONS, background,
+    // animation (src/ui/21_portrait_anim.js) and tests
+    subject, frame, paintFrame, frameKey, exprInfo, exprName, paramsFor, renderBuf: (p, expr, fr, subj) => finish(renderBuf(p, expr, fr, subj), p, expr, fr),
+    cacheStats: () => Object.assign({ entries: lru.size }, stat), setCacheCap: (bytes) => { stat.cap = bytes; }, clearCache,
+    debug: { EYE_T, EYE_CX, EYE_CY, EYE_TOP, browPixels: (p, kind) => browPixels(p, palette(p), kind), layerList },
+  };
 })();
 
 
@@ -38368,6 +38651,12 @@ RB.script = (function () {
   function isRunning() {
     return running > 0;
   }
+  // A campaign change (load, new game, title) ends every scene of the campaign being left: a scene
+  // waiting on something (a battle left from its settings sheet never answers) no longer counts as
+  // running, and if it ever resumed it would stop at its next line (exec) without writing to the
+  // campaign that came next (`gen`).
+  let gen = 0;
+  if (RB.bus) RB.bus.on('campaign:changing', () => { gen++; running = 0; });
 
   async function run(sceneId, ctx) {
     const sc = RB.content.scenes[sceneId];
@@ -38375,14 +38664,16 @@ RB.script = (function () {
       console.warn('missing scene', sceneId);
       return;
     }
+    const g = gen;
     running++;
     RB.game.pushMode('dialogue');
     try {
       await exec(sc, ctx || {});
-      RB.game.s.seen[sceneId] = true;
+      if (g === gen) RB.game.s.seen[sceneId] = true;
     } catch (err) {
       console.error('scene error', sceneId, err);
     } finally {
+      if (g !== gen) return; // (the campaign it belonged to is gone)
       running--;
       // every run pushed one dialogue mode; pop it even when nested (a hook
       // running a scene inside a scene) so no stray dialogue mode is left
@@ -38397,11 +38688,13 @@ RB.script = (function () {
     }
   }
   async function runInline(lines) {
+    const g = gen;
     running++;
     RB.game.pushMode('dialogue');
     try {
-      for (const l of lines) await RB.ui.dialogue.say(l);
+      for (const l of lines) { if (g !== gen) break; await RB.ui.dialogue.say(l); }
     } finally {
+      if (g !== gen) return; // (the campaign it belonged to is gone)
       running--;
       RB.game.popMode('dialogue');
       if (running === 0) {
@@ -38423,6 +38716,7 @@ RB.script = (function () {
     let guard = 0;
     while (pc < sc.cmds.length) {
       if (++guard > 20000) throw new Error('script loop in ' + sc.id);
+      if (RB.game.s !== s) return; // the campaign changed under this scene: it ends here
       const c = sc.cmds[pc++];
       if (c.if && !RB.state.test(s, c.if)) continue;
       const a = c.args || [];
@@ -43093,8 +43387,15 @@ RB.save = (function () {
 
   class ConflictError extends Error {}
 
+  // No saving while a battle is open, by any route (the folio, a scene's !autosave, an activity, a
+  // timer): the playing campaign is written only once the encounter is over (src/engine/90_game.js
+  // inBattle(); the battle's settings sheet says "Saving is available after the encounter.").
+  // Copying or deleting slots in the ledger writes no playing state and is not affected.
+  const battling = () => !!(RB.game && RB.game.inBattle && RB.game.inBattle());
+  const IN_BATTLE = 'Saving is available after the encounter.';
   async function writeSlot(slot, st, opts) {
     opts = opts || {};
+    if (battling() && st === RB.game.s) throw new Error(IN_BATTLE);
     if (current.readOnly && slot === current.slot && !opts.force) throw new Error('This tab is read-only for this campaign.');
     const clean = trimForSave(RB.util.deepClone(st));
     const rec = { slot, rev: 0, meta: metaOf(clean), thumb: opts.thumb || null, state: clean };
@@ -43124,6 +43425,7 @@ RB.save = (function () {
   }
 
   async function writeRecovery(slot, st, kind, thumb) {
+    if (battling() && st === RB.game.s) throw new Error(IN_BATTLE);
     const clean = trimForSave(RB.util.deepClone(st));
     const now = Date.now();
     const key = kind === 'predeparture' ? slot + ':predeparture' : slot + ':auto:' + now;
@@ -43284,7 +43586,9 @@ RB.save = (function () {
   function setCurrent(slot, rev) { current.slot = slot; current.rev = rev || 0; }
 
   // ---- high-level helpers used by the game ------------------------------------------------
+  let skippedInBattle = 0; // autosaves asked for while a battle was open (none was written; tests)
   async function manualSave(slot) {
+    if (battling()) throw new Error(IN_BATTLE);
     const st = RB.game.s;
     const same = slot === current.slot;
     const rec = await writeSlot(slot, st, { thumb: RB.render.thumbnail(), expectRev: same ? current.rev : null });
@@ -43294,6 +43598,7 @@ RB.save = (function () {
   }
   async function autosave(kind) {
     if (current.slot == null || current.readOnly) return null;
+    if (battling()) { skippedInBattle++; return null; } // (quietly: the next safe place autosaves)
     try {
       return await writeRecovery(current.slot, RB.game.s, kind === 'predeparture' ? 'predeparture' : 'auto', RB.render.thumbnail());
     } catch (e) {
@@ -43306,7 +43611,7 @@ RB.save = (function () {
   return {
     detect, status, requestPersist, list, read, writeSlot, writeRecovery, del, copy, validate, migrate, addMigration,
     loadSettings, saveSettings, claim, takeOver, releaseLock, setReadOnly, setCurrent, manualSave, autosave,
-    ConflictError, SLOTS, current: () => current, _mode: () => mode,
+    ConflictError, SLOTS, current: () => current, _mode: () => mode, skippedInBattle: () => skippedInBattle,
   };
 })();
 
@@ -43430,6 +43735,8 @@ RB.game = (function () {
       else if (a === 'map') RB.ui.menu.open('map');
       return;
     }
+    // in battle the menu key opens the battle's settings sheet (presentation only; src/ui/55_settings.js)
+    if (a === 'menu' && m === 'combat' && RB.ui.settings && RB.ui.settings.openBattle && !RB.ui.settings.isOpen() && RB.ui.settings.openBattle()) return;
     RB.ui.onAction(a, e);
   }
 
@@ -43531,14 +43838,15 @@ RB.game = (function () {
 
   async function loadCampaign(slot, which) {
     RB.bus.emit('campaign:changing', { to: 'load', slot });
-    const r = await RB.save.read(slot, which);
+    let r;
+    try { r = await RB.save.read(slot, which); } catch (err) { keepJourney(); throw err; }
     const claim = await RB.save.claim(slot);
     if (claim === 'busy') {
       const c = await RB.ui.confirm(
         'This campaign is already open in another tab. Two tabs writing the same save could lose progress.',
         ['Take over here', 'Open read-only', 'Cancel']
       );
-      if (c === 2) { RB.save.releaseLock(); return false; }
+      if (c === 2) { RB.save.releaseLock(); keepJourney(); return false; }
       if (c === 0) await RB.save.takeOver(slot);
       else RB.save.setReadOnly(true);
     }
@@ -43557,6 +43865,18 @@ RB.game = (function () {
     RB.ui.hud.show();
     RB.ui.notice(which === 'auto' ? 'Continued from the latest autosave.' : which === 'predeparture' ? 'Restored the point before departure.' : 'Loaded.', 'info');
     return true;
+  }
+  // A load that did not happen (cancelled, or the save could not be read) after the campaign
+  // change had begun: a battle open then was already left (src/ui/80_combat.js abandon(), which
+  // keeps 'combat' on the mode stack and the screen dark) and the scene that asked for it has
+  // ended (src/engine/70_script.js), so the journey goes on from the map, where the creature
+  // still is. Nothing else was changed.
+  function keepJourney() {
+    if (!G.playing || G.modes.indexOf('combat') < 0 || (RB.combat && RB.combat.state())) return;
+    setBase('world');
+    RB.input.clearHeld();
+    RB.ui.dialogue.hide();
+    RB.render.setOverride(null);
   }
   async function toTitle() {
     RB.bus.emit('campaign:changing', { to: 'title' });
@@ -45344,6 +45664,10 @@ RB.ui = (function () {
   function topLayer() {
     return layers[layers.length - 1] || null;
   }
+  // every layer opened inside `box` (a screen taken down at once: a battle left for another journey)
+  function popLayersIn(box) {
+    for (const l of layers.slice().reverse()) if (box.contains(l.el) || (l.parent && box.contains(l.parent))) popLayer(l);
+  }
   // Where keyboard focus may move while a layer is on top: the layer itself,
   // or a larger `scope` element that contains it.
   function scopeOf(layer) {
@@ -45545,7 +45869,7 @@ RB.ui = (function () {
   }
 
   return {
-    init, el, pushLayer, popLayer, topLayer, focusables, moveFocus, onAction, jhtml, ehtml, plainJp, label,
+    init, el, pushLayer, popLayer, popLayersIn, topLayer, focusables, moveFocus, onAction, jhtml, ehtml, plainJp, label,
     notice, toast, fade, card, placeName, confirm, shake, get root() { return root; }, get overlay() { return overlay; },
   };
 })();
@@ -46177,10 +46501,11 @@ RB.ui.dialogue = (function () {
     box.classList.toggle('noportrait', !ch || !!line.noPortrait);
     const cv = box.querySelector('.portrait');
     cv.classList.toggle('hidden', !ch);
-    if (ch) {
-      if (ch.pc) RB.portraits.drawPlayer(cv, RB.equip.look(s), line.expr);
-      else RB.portraits.draw(cv, line.who, line.expr);
-    }
+    // Animated portrait (src/ui/21_portrait_anim.js): the speaker's idle loop and this line's one-off lead-in
+    // cue from its expression tag; the still image under Reduce motion and fast-forward. It owns the canvas
+    // until the next line or hide().
+    if (ch) RB.portraitAnim.play(cv, { who: ch.pc ? 'pc' : line.who, look: ch.pc ? RB.equip.look(s) : null, expr: line.expr, scene: line.sceneId });
+    else RB.portraitAnim.stop();
     const whoEl = box.querySelector('.who');
     whoEl.innerHTML = ch ? '<span class="nm">' + esc(ch.name.en) + '</span>' + (ch.name.jp ? '<span class="jp">' + RB.ui.jhtml(ch.name.jp) + '</span>' : '') : '<span class="nm narr">' + (line.jp || line.en ? '' : '') + '</span>';
     box.classList.toggle('narration', !ch);
@@ -46383,6 +46708,7 @@ RB.ui.dialogue = (function () {
 
   function hide() {
     if (!box) return;
+    RB.portraitAnim.stop(); // the portrait stops animating with the sheet
     box.classList.add('hidden');
     setTop(false);
     document.body.classList.remove('in-dialogue');
@@ -46400,6 +46726,578 @@ RB.ui.dialogue = (function () {
   }
   function isOpen() { return !!(box && !box.classList.contains('hidden')); }
   return { say, choose, hide, onAction, advance, isOpen, refresh, shown: () => (current ? { who: current.who, jp: current.jp, en: current.en, dia: current.dia || null } : null) };
+})();
+
+
+/* ==== src/ui/21_portrait_anim.js ==== */
+/* Animated dialogue portraits (owner's World Idle Life / Animated Portraits addendum §7; plan in
+ * docs/expressive/PORTRAITS.md). While a line is shown, the speaker's portrait keeps a quiet idle
+ * loop — a blink on an irregular seeded cadence, a one-pixel breath (shoulders first, the head a beat
+ * later), hair and hanging accessories a beat behind the head, glasses catching the light, and the
+ * person's own small habit (Ren's glasses, Suzu's poise, Mio's careful look, Nao's eye on the
+ * exits; the NPCs' habits from their mannerism profiles, docs/expressive/GESTURES.md §5–§7). A line
+ * tagged with an expression (`speaker[surprise]: …`) opens with a one-off lead-in cue (a shock's
+ * widen-and-hold, a laugh's two shoulder bobs, a sad slow blink …) and then settles into that
+ * expression's stable loop.
+ *
+ * The loop is a pure function of time (frameAt), so the canvas is repainted only when the frame
+ * changes (a few times a second at most, never per browser frame), and each frame comes from the
+ * portrait renderer's cache (src/engine/35_portraits.js: layers + frames, one byte-capped LRU).
+ * Nothing runs when the dialogue is hidden, the tab is hidden or the portrait is off-screen; with
+ * Reduce motion, fast-forward or the test harness's auto-advance the portrait is the still image.
+ *
+ * Other screens that show portraits (the history, kept sentences, Company pages, letters, the word
+ * games) keep the still image: they are reference views where a moving face would compete with the
+ * text being studied. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.portraitAnim = (function () {
+  'use strict';
+  const between = (r, ab) => ab[0] + r() * (ab[1] - ab[0]);
+  const pick = (r, arr) => arr[Math.floor(r() * arr.length) % arr.length];
+
+  // ---- profiles: class overlays, then each person's own habits ------------------------------------
+  // blink [min, max] ms between blinks; shut: ms the lids stay closed; dbl: chance of a double blink;
+  // breath: ms per breath (0: none); glance: { every, hold, dirs }; tilt: { every, hold, dx } (the head
+  // a pixel to one side, held); sway: { every } (hair and hanging things, by themselves);
+  // glint: { every } (glasses); habit: { kind, every, hold }; big: cues a frame larger (children).
+  const CLASS = {
+    base: { blink: [3600, 6000], shut: 100, dbl: 0.12, breath: 3600, glance: { every: [9000, 16000], hold: [700, 1200], dirs: [[-1, 0], [1, 0]] } },
+    official: { blink: [4800, 7600], dbl: 0.05, breath: 4400, glance: { every: [14000, 24000], hold: [900, 1400], dirs: [[-1, 0], [1, 0]] } },
+    scholar: { blink: [4000, 6600], breath: 4000, glance: { every: [11000, 18000], hold: [900, 1500], dirs: [[1, -1], [-1, -1]] } },
+    clerk: { blink: [3400, 5400], breath: 3600, glance: { every: [8000, 14000], hold: [800, 1300], dirs: [[0, 1], [-1, 1]] } },
+    host: { blink: [3400, 5400], breath: 3600, tilt: { every: [10000, 16000], hold: [2000, 3400], dx: [1, -1] }, glance: { every: [10000, 16000], hold: [700, 1100], dirs: [[-1, 0], [1, 0]] } },
+    craft: { blink: [3600, 6000], breath: 3400, glance: { every: [9000, 15000], hold: [800, 1300], dirs: [[-1, 1], [1, 1]] } },
+    elder: { blink: [5200, 8200], shut: 150, dbl: 0.04, breath: 4600, glance: { every: [16000, 26000], hold: [1000, 1600], dirs: [[-1, 0], [1, 0]] } },
+    child: { blink: [2600, 4200], dbl: 0.2, breath: 2600, glance: { every: [6000, 10000], hold: [400, 700], dirs: [[-1, 0], [1, 0], [0, -1]] }, big: true },
+    keeper: { blink: [4600, 7200], shut: 120, breath: 4200, glance: { every: [15000, 24000], hold: [1100, 1700], dirs: [[0, -1], [1, 0]] } },
+    traveller: { blink: [3600, 5600], breath: 3600, glance: { every: [8000, 12000], hold: [900, 1300], dirs: [[-1, 0], [1, 0]] } },
+    performer: { blink: [3200, 5200], breath: 3400, tilt: { every: [9000, 14000], hold: [2000, 3200], dx: [1, -1] }, sway: { every: [4000, 7000] }, glance: { every: [9000, 14000], hold: [600, 1000], dirs: [[1, 0], [-1, 0]] } },
+    nonhuman: { blink: [4200, 7000], shut: 120, breath: 4200, glance: null },
+  };
+  // Every character with a portrait. Class from GESTURES.md §7 (the recurring NPCs), §6 (the
+  // companions and the player); bespoke habits for the people PORTRAITS.md §4 and GESTURES.md §5 name.
+  const glassesPush = (every) => ({ kind: 'glassesPush', every, hold: [0, 0] });
+  const PEOPLE = {
+    pc: ['base', { glance: { every: [12000, 20000], hold: [700, 1100], dirs: [[1, 0], [0, 1]] } }],
+    // the companions
+    nao: ['traveller', { blink: [4400, 7400], dbl: 0.05, glance: { every: [6000, 10000], hold: [900, 1400], dirs: [[-1, 0], [1, 0]] }, hold: { smirk: { head: [-1, 0] } } }],
+    mio: ['host', { blink: [3400, 5000], dbl: 0.04, tilt: { every: [9000, 15000], hold: [2200, 3600], dx: [1] }, glance: { every: [10000, 16000], hold: [600, 900], dirs: [[0, 1], [-1, 1]] }, nod: true, laugh: 'hidden' }],
+    ren: ['scholar', { blink: [3800, 6000], glint: { every: [8000, 14000] }, sway: { every: [6000, 10000] }, adjust: true, slowClose: 1.4, glance: { every: [12000, 18000], hold: [900, 1300], dirs: [[1, 0], [-1, 0]] } }],
+    suzu: ['performer', { sway: { every: [4000, 7000] }, tilt: null, habit: { kind: 'weight', every: [10000, 16000], hold: [3000, 5000] }, wink: true, serious: { sad: 1, worry: 1, closed: 1, sad2: 1 } }],
+    // bespoke recurring characters
+    omi: ['official', { blink: [5200, 8000], dbl: 0, glance: { every: [16000, 26000], hold: [1000, 1500], dirs: [[1, 0]] } }],
+    wataru: ['clerk', { habit: { kind: 'glassesSlip', every: [9000, 15000], hold: [2600, 4000] }, sadLook: [-1, 1] }],
+    tsuru: ['elder', { blink: [6000, 9000], habit: { kind: 'chinUp', every: [12000, 20000], hold: [2000, 3000] }, thinkLids: true }],
+    kasane: ['keeper', { blink: [5000, 8000], glance: { every: [18000, 28000], hold: [1200, 1800], dirs: [[1, 0], [0, 1]] }, sway: { every: [7000, 12000] }, slowClose: 1.6 }],
+    hoshino: ['scholar', { glint: { every: [7000, 12000] }, habit: { kind: 'lookUp', every: [14000, 22000], hold: [1200, 1800] } }],
+    hana: ['host', { tilt: { every: [8000, 14000], hold: [2400, 3600], dx: [1] }, sadLook: [1, 1] }],
+    co_tokiwa: ['scholar', { habit: glassesPush([14000, 22000]), adjust: true, glance: { every: [10000, 16000], hold: [700, 1100], dirs: [[-1, 0], [-1, 1]] } }],
+    hiro: ['craft', { glance: { every: [9000, 14000], hold: [900, 1300], dirs: [[0, 1], [1, 1]] } }],
+    genzo: ['elder', { habit: { kind: 'squint', every: [10000, 16000], hold: [900, 1300] } }],
+    akari: ['clerk', { glance: { every: [9000, 15000], hold: [900, 1400], dirs: [[-1, -1], [0, 1]] } }],
+    lf_yae: ['official', { habit: { kind: 'nod', every: [9000, 15000], hold: [180, 220] } }],
+    lq_chigusa: ['host', { glance: { every: [8000, 13000], hold: [900, 1300], dirs: [[-1, 0]] } }],
+    umi: ['clerk', {}],
+    tamae: ['host', { big: true }],
+    yae: ['host', {}],
+    lf_tadashi: ['official', { glint: { every: [9000, 15000] }, habit: glassesPush([16000, 26000]) }],
+    shiori: ['scholar', { glance: { every: [9000, 14000], hold: [1000, 1500], dirs: [[1, 0], [1, -1]] } }],
+    lf_tokuji: ['elder', {}],
+    yasu: ['elder', { habit: { kind: 'nod', every: [12000, 20000], hold: [180, 220] } }],
+    koji: ['craft', {}],
+    lq_kayo: ['traveller', {}],
+    // class overlays (GESTURES.md §7)
+    co_ume: 'elder', co_goro: 'elder', sa_oyone: 'keeper', asahi: 'craft', tetsu: 'elder', co_sayo: 'host', lf_hayato: 'official',
+    fuki: 'elder', co_tamotsu: 'craft', kanta: 'child', co_fusa: 'host', sousuke: 'traveller', co_nobu: 'craft', co_isao: 'craft',
+    lf_kinu: 'host', sa_clerk: 'nonhuman', fuku: 'elder', lf_kohei: 'craft', sa_isamu: 'traveller', tetsuji: 'craft', denji: 'elder',
+    co_kotaro: 'child', co_asa: 'craft', sota: 'craft', lf_tsuya: 'elder', co_shino: 'traveller', tomo: 'host', lf_masaru: 'host',
+    co_heita: 'craft', lf_ritsu: 'host', daigo: 'craft', kiyo: 'host', cs_hama: 'craft', lf_nagi: 'keeper', sa_tsuzuri: 'nonhuman',
+    lf_setsu: 'host', mame: 'child', oto: 'craft', hayate: 'craft', natsume: 'craft', tobi: 'child', lf_kei: 'child', bunta: 'craft',
+    kiku: 'elder', sachi: 'host', lf_shu: 'craft', nagisa: 'traveller', chiyo: 'child', rokuta: 'child', sae: 'craft',
+    // people with fewer than three scenes, voices and creatures (no GESTURES.md profile: the nearest class)
+    cs_seto: 'elder', co_tomoe: 'craft', lf_toya: 'child', sa_ushio: 'elder', sa_tae: 'elder', fw_fumi: 'elder',
+    echo: ['nonhuman', { sway: { every: [5000, 9000] } }], sg_clerk: 'nonhuman', sb_lampvoice: ['nonhuman', { sway: { every: [5000, 9000] } }],
+    co_goat: 'nonhuman', co_warden: 'nonhuman', mochi: ['nonhuman', { blink: [3000, 6500], dbl: 0.25 }],
+    sa_reader: 'scholar', // the Archive's reader (by role)
+  };
+  const SWAY_STYLES = { long: 1, wavy: 1, ponytail: 1, twintails: 1 };
+  function profileOf(who, p) {
+    // an unlisted speaker gets the plain loop: no personality is inferred from glasses, age or dress (world review WR-01)
+    const row = PEOPLE[who] || 'base';
+    const [cls, own] = typeof row === 'string' ? [row, {}] : row;
+    const pr = Object.assign({ id: who, cls }, CLASS.base, CLASS[cls] || {}, own);
+    // the mannerism profiles of the actor system, when present (src/content/mannerisms), may add a portrait block
+    const ext = RB.mannerisms && RB.mannerisms.of && RB.mannerisms.of(who);
+    if (ext && ext.portrait && typeof ext.portrait === 'object') Object.assign(pr, ext.portrait);
+    const acc = (p && p.acc) || [];
+    pr.glasses = acc.includes('glasses');
+    if (pr.glasses && !pr.glint) pr.glint = { every: [10000, 16000] };
+    if (!pr.glasses) { pr.glint = null; pr.adjust = false; if (pr.habit && /^glasses/.test(pr.habit.kind)) pr.habit = null; }
+    // only hair or things that hang can sway (a short crop has nothing to lag behind)
+    const swings = !!p && (SWAY_STYLES[p.style] || acc.includes('ribbon') || acc.includes('earrings') || acc.includes('hood'));
+    if (!swings) pr.sway = null; else if (!pr.sway) pr.sway = { every: [7000, 12000] };
+    pr.swings = swings;
+    if (p && p.kind === 'cat') { pr.glance = null; pr.tilt = null; pr.sway = null; }
+    return pr;
+  }
+
+  // ---- each expression's stable loop --------------------------------------------------------------------
+  // blink: false (the eyes are already closed); glance: false or the gaze a glance returns to;
+  // tilt: false (no head tilts or weight shifts); breath: false (held still: anger is firm) or a factor.
+  const LOOP = {
+    surprise: { blinkMul: 1.6, glance: false },
+    laugh: { blink: false, glance: false, breath: 1.35 },
+    smile2: { blink: false, glance: false },
+    sad2: { blink: false, glance: false, tilt: false },
+    closed: { blink: false, glance: false, tilt: false },
+    angry: { breath: false, blinkMul: 1.3, tilt: false },
+    tired: { shut: 170, blinkMul: 1.25, breath: 1.2 },
+    think: { glance: [[0, 0]] },
+    shy: { glance: [[1, 1], [0, 1]], tilt: false },
+    sad: { tilt: false },
+  };
+
+  // ---- lead-in cues per tag: [duration ms, frame] played once, then the loop -----------------------------
+  // Frames describe the portrait over the line's own expression (RB.portraits frame descriptors):
+  // expr (another expression for a beat), lids, look, brow, mouth, blush, wink, head/body offsets,
+  // glint, glassDy. The last beat leads straight into the loop's resting frame.
+  const sweep = () => [[70, { glint: 0 }], [70, { glint: 1 }], [70, { glint: 2 }], [70, { glint: 3 }]];
+  const CUES = {
+    // shock: eyes widen over two beats, brows up, a pixel's pull back, held; then a steadier surprised loop
+    surprise: (pr) => [[70, { expr: 'neutral' }], [70, { eyes: { wide: false } }], [110, { head: [0, -1], body: [0, -1] }], ...(pr.big ? [[120, { head: [0, -2], body: [0, -1] }]] : []), [330, { head: [0, -1] }]],
+    // a laugh: a smile, then the shoulders bob twice (Suzu: with a wink; Mio laughs quietly, once)
+    laugh: (pr) => {
+      const bob = [[130, { body: [0, -1], head: [0, -1] }], [110, {}]];
+      if (pr.laugh === 'hidden') return [[120, { expr: 'smile2' }], [150, { body: [0, -1] }], [120, {}]];
+      return [[pr.wink ? 170 : 90, pr.wink ? { expr: 'smile', wink: true } : { expr: 'smile' }], ...bob, ...bob, ...(pr.big ? bob : [])];
+    },
+    // a smile: the cheeks lift a beat after the mouth
+    smile: () => [[110, { eyes: { cheek: false } }], [130, { head: [0, -1] }]],
+    // teasing: one lid lowers and the corner of the mouth lifts (Nao turns his head a little away; Suzu
+    // winks on her first smirk of a scene)
+    smirk: (pr, c) => {
+      const turn = (pr.hold && pr.hold.smirk) || {};
+      const k = [[90, { expr: 'neutral' }], [110, Object.assign({ eyesR: { heavy: false } }, turn)]];
+      if (pr.wink && c.first('wink')) k.push([260, Object.assign({ wink: true }, turn)]);
+      k.push([200, Object.assign({}, turn)]);
+      return k;
+    },
+    // realization: a glance aside, then up, one brow lifting; glasses catch the light (Ren and Tokiwa
+    // adjust theirs, at most once a scene); Tsuru's eyes narrow further
+    think: (pr, c) => {
+      const k = [[100, { expr: 'neutral' }], [130, { look: [1, 0] }]];
+      if (pr.glasses && pr.adjust && c.first('adjust')) k.push([170, { glassDy: -1 }], ...sweep());
+      else if (pr.glasses) k.push([90, {}], ...sweep());
+      else k.push([240, {}]);
+      if (pr.thinkLids) k.push([400, { lids: 'half' }]);
+      return k;
+    },
+    // worry: the brows draw up a beat late, the gaze drops a pixel (Mio: a small nod)
+    worry: (pr) => [[100, { brow: 'flat' }], [150, { look: [0, 1] }], ...(pr.nod ? [[160, { look: [0, 1], head: [0, 1] }]] : []), [220, { look: [0, 1] }]],
+    // sadness: a slow blink, the gaze goes down (or aside), the shoulders settle
+    sad: (pr) => [[120, { lids: 'half' }], [190, { lids: 'closed' }], [120, { lids: 'half' }], [340, { look: pr.sadLook || [0, 1], body: [0, 1], head: [0, 1] }]],
+    // eyes closing slowly over two beats (Kasane, Ren: slower, before a hard truth)
+    closed: (pr) => { const m = pr.slowClose || 1; return [[Math.round(150 * m), { eyes: { closed: null } }], [Math.round(180 * m), { eyes: { closed: null, heavy: true } }]]; },
+    // irritation: a short exhale (the shoulders drop, the lids half close), then the narrowed look
+    angry: () => [[170, { lids: 'half', body: [0, 1], head: [0, 1] }], [150, { body: [0, 1] }]],
+    // embarrassment: the gaze averts with a small recoil, the blush comes up
+    shy: () => [[130, { blush: 0, head: [-1, 0] }], [130, { blush: 0.5, head: [-1, 0] }], [240, { head: [-1, 0] }]],
+    // tiredness: a heavy blink
+    tired: () => [[80, {}], [250, { lids: 'closed' }], [130, { lids: 'half' }]],
+  };
+
+  // ---- the timeline: idle events (seeded) + breath + the cue, as a function of time -------------------------
+  // One small motion at a time: an event is placed so that its moments of change (a blink's start and end,
+  // a glance's turn and return …) keep GAP ms from every other event's, postponing it a little if needed;
+  // only the breath runs underneath. Long holds (a tilt, a weight shift) may contain a blink.
+  const GAP = 700;
+  function Timeline(pr0, seed) {
+    const r = RB.util.rng(seed);
+    const ref = { pr: pr0 };
+    const P_ = () => ref.pr; // the rates follow the current expression's loop; which motions exist is fixed
+    const pr = pr0;
+    const ev = [], marks = [];
+    let horizon = 0;
+    const gens = [];
+    const add = (a, b, fr, k, pri) => { ev.push({ a, b, fr, k, pri }); };
+    const free = (ts) => ts.every((x) => marks.every((m) => Math.abs(m - x) >= GAP));
+    // the first start at or after t whose moments are free (postponed in 350 ms steps)
+    const place = (t, moments) => { for (let i = 0; i < 16 && !free(moments(t)); i++) t += 350; marks.push(...moments(t)); return t; };
+    if (pr.blink) gens.push({ next: 700 + r() * pr.blink[0] * 0.6, gen(t) {
+      // half-closed, closed, half-open; a double blink closes again from half-open (no full open between)
+      const shut = P_().shut || 100, dbl = r() < (P_().dbl || 0), len = 100 + shut, all = dbl ? len + 70 + shut : len;
+      t = place(t, (t) => [t, t + all]);
+      add(t, t + 50, { lids: 'half' }, 'blink', 4); add(t + 50, t + 50 + shut, { lids: 'closed' }, 'blink', 4);
+      if (dbl) { add(t + 50 + shut, t + 120 + shut, { lids: 'half' }, 'blink', 4); add(t + 120 + shut, t + 120 + 2 * shut - 20, { lids: 'closed' }, 'blink', 4); add(t + 100 + 2 * shut, t + all, { lids: 'half' }, 'blink', 4); }
+      else add(t + 50 + shut, t + len, { lids: 'half' }, 'blink', 4);
+      return t + all + between(r, P_().blink || pr.blink);
+    } });
+    if (pr.glance) gens.push({ next: 2500 + r() * pr.glance.every[0], gen(t) {
+      const hold = between(r, pr.glance.hold), dir = pick(r, pr.glance.dirs);
+      t = place(t, (t) => [t, t + hold]);
+      add(t, t + hold, { look: dir }, 'glance', 3);
+      return t + hold + between(r, pr.glance.every);
+    } });
+    if (pr.tilt) gens.push({ next: 4000 + r() * pr.tilt.every[0], gen(t) {
+      const hold = between(r, pr.tilt.hold), dx = pick(r, pr.tilt.dx);
+      t = place(t, (t) => [t, t + 330, t + hold, t + hold + 330]);
+      add(t, t + hold, { head: [dx, 0] }, 'tilt', 2);
+      if (pr.swings) { add(t + 110, t + 330, { sway: -dx }, 'lag', 1); add(t + hold + 110, t + hold + 330, { sway: dx }, 'lag', 1); }
+      return t + hold + between(r, pr.tilt.every);
+    } });
+    if (pr.sway) gens.push({ next: 1500 + r() * pr.sway.every[0], gen(t) {
+      const d = r() < 0.5 ? -1 : 1;
+      t = place(t, (t) => [t, t + 240]);
+      add(t, t + 240, { sway: d }, 'sway', 1);
+      return t + 240 + between(r, pr.sway.every);
+    } });
+    if (pr.glint) gens.push({ next: 3000 + r() * pr.glint.every[0], gen(t) {
+      t = place(t, (t) => [t, t + 280]);
+      for (let i = 0; i < 4; i++) add(t + i * 70, t + (i + 1) * 70, { glint: i }, 'glint', 1);
+      return t + 280 + between(r, pr.glint.every);
+    } });
+    if (pr.habit) gens.push({ next: 5000 + r() * pr.habit.every[0], gen(t) {
+      const h = pr.habit, hold = between(r, h.hold || [0, 0]), dx = r() < 0.5 ? -1 : 1;
+      let end = t;
+      switch (h.kind) {
+        case 'glassesPush':
+          t = place(t, (t) => [t, t + 460]);
+          add(t, t + 180, { glassDy: -1 }, 'habit', 1); for (let i = 0; i < 4; i++) add(t + 180 + i * 70, t + 250 + i * 70, { glint: i }, 'habit', 1);
+          end = t + 460; break;
+        case 'glassesSlip': // the glasses slip a pixel, and after a while are pushed back up (a glint)
+          t = place(t, (t) => [t, t + hold, t + hold + 440]);
+          add(t, t + hold, { glassDy: 1 }, 'habit', 1); add(t + hold, t + hold + 160, { glassDy: -1 }, 'habit', 1);
+          for (let i = 0; i < 4; i++) add(t + hold + 160 + i * 70, t + hold + 230 + i * 70, { glint: i }, 'habit', 1);
+          end = t + hold + 440; break;
+        case 'nod': t = place(t, (t) => [t, t + hold]); add(t, t + hold, { head: [0, 1] }, 'habit', 2); end = t + hold; break;
+        case 'squint': t = place(t, (t) => [t, t + hold]); add(t, t + hold, { lids: 'half' }, 'squint', 3); end = t + hold; break;
+        case 'chinUp': t = place(t, (t) => [t, t + hold]); add(t, t + hold, { head: [0, -1] }, 'habit', 2); end = t + hold; break;
+        case 'lookUp': t = place(t, (t) => [t, t + hold]); add(t, t + hold, { look: [0, -1] }, 'glance', 3); end = t + hold; break;
+        case 'weight': // a weight shift: the shoulders first, the head after, the hair a beat behind
+          t = place(t, (t) => [t, t + 460, t + hold, t + hold + 460]);
+          add(t, t + hold, { body: [dx, 0] }, 'tilt', 2); add(t + 120, t + hold + 120, { head: [dx, 0] }, 'tilt', 2);
+          if (pr.swings) { add(t + 240, t + 460, { sway: -dx }, 'lag', 1); add(t + hold + 240, t + hold + 460, { sway: dx }, 'lag', 1); }
+          end = t + hold + 460; break;
+      }
+      return end + between(r, h.every);
+    } });
+    function extend(to) {
+      while (horizon < to) {
+        horizon += 5000;
+        for (const g of gens) while (g.next < horizon) g.next = g.gen(g.next);
+      }
+      // drop what is long past (a very long line must not grow the lists without bound)
+      if (ev.length > 400) { const cut = to - 60000; for (let i = ev.length - 1; i >= 0; i--) if (ev[i].b < cut) ev.splice(i, 1); }
+      if (marks.length > 400) { const cut = to - 60000; for (let i = marks.length - 1; i >= 0; i--) if (marks[i] < cut) marks.splice(i, 1); }
+    }
+    return { ev, extend, seed, ref };
+  }
+
+  // breath: the shoulders up a pixel for 1.2 s of each breath, the head a beat later
+  const LAG = 120;
+  function breathWindow(pr, loop) {
+    if (!pr.breath || loop.breath === false) return null;
+    const P = Math.round(pr.breath * (typeof loop.breath === 'number' ? loop.breath : 1));
+    const up = Math.max(1000, Math.min(1200, Math.round(P * 0.34))); // ≥ 1 s: at most two breath changes in any second
+    return { P, u0: Math.round(P * 0.3), u1: Math.round(P * 0.3) + up };
+  }
+  function addOff(fr, k, v) { const o = fr[k] || [0, 0]; fr[k] = [Math.max(-2, Math.min(2, o[0] + v[0])), Math.max(-2, Math.min(2, o[1] + v[1]))]; }
+  function merge(fr, add) {
+    for (const k in add) {
+      if (k === 'head' || k === 'body') addOff(fr, k, add[k]);
+      else if (k === 'sway') fr.sway = Math.max(-1, Math.min(1, (fr.sway || 0) + add.sway));
+      else fr[k] = add[k];
+    }
+    return fr;
+  }
+
+  // The frame at time t (ms on this speaker's idle clock) for state st:
+  // { pr, tl, expr, info (RB.portraits.exprInfo), loop, cue: { t0, beats: [[a, b, fr]], end } | null, quiet }
+  function frameAt(st, t) {
+    const pr = st.pr, loop = st.loop;
+    if (st.cue && t >= st.cue.t0 && t < st.cue.end) {
+      for (const [a, b, fr] of st.cue.beats) if (t >= a && t < b) return Object.assign({}, fr);
+    }
+    const fr = {};
+    const hold = pr.hold && pr.hold[st.info.name];
+    if (hold) merge(fr, hold);
+    const bw = breathWindow(pr, loop);
+    if (bw) {
+      const ph = (t + st.phase) % bw.P;
+      // after a cue the face holds still while it settles, then the breath resumes with the next whole
+      // breath (never a jump from the cue's last pose)
+      if (t - ph + bw.u0 >= st.quiet) {
+        if (ph >= bw.u0 && ph < bw.u1) addOff(fr, 'body', [0, -1]);
+        if (ph >= bw.u0 + LAG && ph < bw.u1 + LAG) addOff(fr, 'head', [0, -1]);
+      }
+    }
+    st.tl.extend(t + 6000);
+    const act = [];
+    for (const iv of st.tl.ev) {
+      if (iv.a > t || iv.b <= t || iv.a < st.quiet) continue;
+      if (iv.k === 'blink' && (loop.blink === false || st.info.closed)) continue;
+      if ((iv.k === 'glance' || iv.k === 'squint') && (loop.glance === false || st.info.closed)) continue;
+      if (iv.k === 'tilt' && (loop.tilt === false || (pr.serious && pr.serious[st.info.name]))) continue;
+      act.push(iv);
+    }
+    act.sort((x, y) => x.pri - y.pri);
+    for (const iv of act) {
+      if (iv.k === 'glance' && Array.isArray(loop.glance)) { merge(fr, { look: pick(() => (iv.a % 997) / 997, loop.glance) }); continue; }
+      merge(fr, iv.fr);
+    }
+    return fr;
+  }
+  // the next time after t at which the frame can change
+  function nextAt(st, t) {
+    let n = t + 60000;
+    if (st.cue && t < st.cue.end) for (const [a, b] of st.cue.beats) { if (a > t) n = Math.min(n, a); if (b > t) n = Math.min(n, b); }
+    const bw = breathWindow(st.pr, st.loop);
+    if (bw) {
+      const ph = (t + st.phase) % bw.P;
+      for (const x of [bw.u0, bw.u1, bw.u0 + LAG, bw.u1 + LAG]) { let d = (x - ph + bw.P) % bw.P; if (d <= 0) d += bw.P; n = Math.min(n, t + d); }
+    }
+    st.tl.extend(t + 6000);
+    for (const iv of st.tl.ev) { if (iv.a > t) n = Math.min(n, iv.a); else if (iv.b > t) n = Math.min(n, iv.b); }
+    if (st.quiet > t) n = Math.min(n, st.quiet);
+    return n;
+  }
+  // Scene memory: some cues happen at most once a scene (Ren's glasses adjustment, Suzu's wink).
+  function cueFor(st, tag, prevTag, memo, who) {
+    const mk = CUES[tag];
+    if (!mk) return null;
+    const ctx = { prev: prevTag, first: (k) => { const key = who + ':' + k; if (memo.has(key)) return false; memo.add(key); return true; } };
+    const beats = mk(st.pr, ctx);
+    return beats.length ? beats : null;
+  }
+
+  // ---- the player: one dialogue canvas at a time -----------------------------------------------------------
+  const now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
+  let cur = null;         // { cv, sj, who, expr, st, t0 (idle clock origin), timer, key }
+  let last = null;        // { subj, tag } of the previous line with a portrait (consecutive lines)
+  let memo = { scene: null, used: new Set() };
+  const stats = { plays: 0, cues: 0, paints: 0, ticks: 0, paintMs: 0, maxPaintMs: 0, log: [] };
+  const observed = typeof WeakSet !== 'undefined' ? new WeakSet() : null;
+  let io = null;
+  const vis = typeof WeakMap !== 'undefined' ? new WeakMap() : null; // canvas → on screen (IntersectionObserver)
+  const onScreenOf = (cv) => !vis || vis.get(cv) !== false;
+
+  function still(o) {
+    return !!((RB.game && RB.game.reducedMotion && RB.game.reducedMotion()) || (RB.game && RB.game.fastForward && RB.game.fastForward()) || o.still);
+  }
+  function paint(fr) {
+    const c = cur;
+    const key = RB.portraits.frameKey(fr);
+    if (key === c.key) return;
+    const t0 = now();
+    RB.portraits.paintFrame(c.cv, c.sj, c.expr, fr);
+    const ms = now() - t0;
+    c.key = key; c.fr = fr;
+    stats.paints++; stats.paintMs += ms; stats.maxPaintMs = Math.max(stats.maxPaintMs, ms);
+    stats.log.push({ t: Math.round(t0), k: key, who: c.who, expr: c.expr });
+    if (stats.log.length > 400) stats.log.splice(0, stats.log.length - 300);
+  }
+  function running() {
+    if (!cur || !cur.st) return false;
+    if (typeof document !== 'undefined' && document.hidden) return false;
+    if (!onScreenOf(cur.cv)) return false;
+    return !!(cur.cv && cur.cv.isConnected);
+  }
+  function schedule() {
+    if (!cur) return;
+    clearTimeout(cur.timer); cur.timer = null;
+    if (!running()) return;
+    const t = now() - cur.t0;
+    const n = nextAt(cur.st, t);
+    cur.timer = setTimeout(tick, Math.max(16, Math.ceil(n - t)));
+  }
+  function tick() {
+    if (!cur) return;
+    cur.timer = null;
+    stats.ticks++;
+    if (!running()) return;
+    if (still({})) { paint(null); cur.st = null; return; } // Reduce motion turned on while a line is shown
+    paint(frameAt(cur.st, now() - cur.t0));
+    schedule();
+  }
+
+  // Show `who`'s portrait for a line: o = { who ('pc' for the player), look (the player's), expr (the line's
+  // tag), scene (scene id), still (no animation) }.
+  function play(cv, o) {
+    o = o || {};
+    watch(cv);
+    const sj = RB.portraits.subject(o.who, o.who === 'pc' ? o.look || null : null);
+    if (!sj) { stop(); return; }
+    const tag = o.expr ? RB.portraits.exprName(o.expr) : null;
+    const expr = tag || 'neutral';
+    const scene = o.scene || null;
+    if (scene !== memo.scene) memo = { scene, used: new Set() };
+    const same = !!(last && last.subj === sj.key && cur && cur.cv === cv && cur.st);
+    const prevTag = same ? last.tag : null;
+    last = { subj: sj.key, tag };
+    stats.plays++;
+    if (cur && cur.cv !== cv) stop(true);
+    if (still(o)) {
+      if (cur) clearTimeout(cur.timer);
+      cur = { cv, sj, who: sj.who, expr, st: null, t0: now(), timer: null, key: null };
+      paint(null);
+      return;
+    }
+    const pr = profileOf(sj.who, sj.p);
+    const info = RB.portraits.exprInfo(expr);
+    const loop = Object.assign({}, LOOP[info.name] || {});
+    if (loop.blinkMul || loop.shut) pr.blink = pr.blink && pr.blink.map((v) => v * (loop.blinkMul || 1));
+    if (loop.shut) pr.shut = loop.shut;
+    // the same speaker goes on: keep the idle clock (the breath and blinks do not restart every line)
+    let t0 = now(), tl = null, phase = 0;
+    if (same && cur.st && cur.st.pr.id === pr.id) { t0 = cur.t0; tl = cur.st.tl; phase = cur.st.phase; tl.ref.pr = pr; }
+    if (!tl) {
+      const seed = RB.util.hashStr(sj.key + '|' + (scene || ''));
+      tl = Timeline(pr, seed);
+      phase = seed % 4000;
+    }
+    const t = now() - t0;
+    const st = { pr, tl, expr, info, loop, cue: null, quiet: 0, phase };
+    // the lead-in cue: once when the line appears; a repeated tag from the same speaker keeps the loop going
+    if (tag && !(same && prevTag === tag)) {
+      const beats = cueFor(st, info.name, prevTag, memo.used, sj.who);
+      if (beats) {
+        let a = t;
+        const out = [];
+        for (const [d, fr] of beats) { out.push([a, a + d, fr]); a += d; }
+        st.cue = { t0: t, beats: out, end: a, tag: info.name };
+        st.quiet = a + 400; // idle events wait until the face has settled
+        stats.cues++;
+      }
+    } else if (same && cur.st && cur.st.cue && t < cur.st.cue.end && cur.st.cue.tag === info.name) {
+      st.cue = cur.st.cue; st.quiet = cur.st.quiet; // the same cue goes on (it is never restarted)
+    }
+    if (same && cur.st) st.quiet = Math.max(st.quiet, cur.st.quiet);
+    const keep = cur && cur.cv === cv && cur.sj.key === sj.key && cur.expr === expr ? cur.key : null; // nothing to repaint
+    if (cur) clearTimeout(cur.timer);
+    cur = { cv, sj, who: sj.who, expr, st, t0, timer: null, key: keep, fr: cur && keep != null ? cur.fr : null };
+    paint(frameAt(st, t));
+    schedule();
+    prewarm();
+  }
+  // Prepare the people most likely to speak next (the companion, the player) in idle time, so their first
+  // line does not pay for drawing their hair and bust (≈10–30 ms, once per person while cached).
+  const warmed = new Set();
+  function prewarm() {
+    const s = RB.game && RB.game.s;
+    if (!s) return;
+    const ric = typeof requestIdleCallback !== 'undefined' ? requestIdleCallback : (fn) => setTimeout(fn, 250);
+    const todo = [];
+    if (s.comp) todo.push([s.comp, null]);
+    if (RB.equip && s.player) todo.push(['pc', RB.equip.look(s)]);
+    if (warmed.size > 40) warmed.clear();
+    for (const [who, look] of todo) {
+      const sj = RB.portraits.subject(who, look);
+      if (!sj || warmed.has(sj.key)) continue;
+      warmed.add(sj.key);
+      ric(() => { try { RB.portraits.frame(sj, 'neutral', null); } catch (e) { /* drawn when needed */ } }, { timeout: 2000 });
+    }
+  }
+  // Nothing more to show: the dialogue closed, or a line without a portrait.
+  function stop(keepLast) {
+    if (cur) clearTimeout(cur.timer);
+    cur = null;
+    if (!keepLast) last = null;
+  }
+  // The player's look changed while their portrait is up (equipment): repaint with the new look.
+  function refresh() {
+    if (!cur || cur.who !== 'pc') return;
+    const sj = RB.portraits.subject('pc', RB.equip ? RB.equip.look() : null);
+    if (!sj || sj.key === cur.sj.key) return;
+    cur.sj = sj; cur.key = null;
+    last = last && Object.assign({}, last, { subj: sj.key });
+    paint(cur.st ? frameAt(cur.st, now() - cur.t0) : null);
+  }
+  function watch(cv) {
+    if (!cv || !observed || observed.has(cv)) return;
+    observed.add(cv);
+    if (typeof IntersectionObserver !== 'undefined') {
+      if (!io) io = new IntersectionObserver((es) => {
+        for (const e of es) {
+          vis.set(e.target, e.isIntersecting);
+          if (!cur || e.target !== cur.cv) continue;
+          if (e.isIntersecting) schedule(); else { clearTimeout(cur.timer); cur.timer = null; }
+        }
+      });
+      io.observe(cv);
+    }
+    fit(cv);
+  }
+
+  // ---- integer display scale (PORTRAITS.md §3 item 8) ------------------------------------------------------
+  // The 96-px art at a size that maps to a whole number of device pixels per art pixel where that stays near
+  // the layout's size (--por-target in 50_play.css): 96 CSS px on desktop at device-pixel-ratio 1 and 2 (it was
+  // 116, a 1.21× scale that doubled some rows and not others), 128 at ratio 1.5 and 3; 96 on short landscape
+  // (84); 64 on phones at ratio 3 (2×) and 1.5 (1×). Where no whole multiple is within reach (ratio 1.25
+  // desktops, ratio-2 phones) the layout's size is kept. In the phone layout the portrait has a row of its own
+  // above the sheet, so it never grows there (--por-grow: 0): a larger portrait would make the sheet taller
+  // and cover more of the scene (a 390×844 window at ratio 1 keeps 64, uneven, as before).
+  function fitSize(target, dpr, grow) {
+    let k = Math.max(1, Math.round((target * dpr) / 96));
+    let css = (k * 96) / dpr;
+    if (css < target * 0.8) { k++; css = (k * 96) / dpr; }
+    if (css > target * 1.3) css = Math.max(target, 96 / dpr);
+    if (grow === false && css > target) css = target;
+    return Math.round(css * 100) / 100;
+  }
+  function fit(cv) {
+    if (!cv || typeof getComputedStyle === 'undefined') return;
+    const cs = getComputedStyle(cv);
+    const v = parseFloat(cs.getPropertyValue('--por-target'));
+    if (!v) return;
+    const grow = String(cs.getPropertyValue('--por-grow')).trim() !== '0';
+    const s = fitSize(v, (typeof devicePixelRatio !== 'undefined' && devicePixelRatio) || 1, grow);
+    cv.style.setProperty('--por-size', s + 'px');
+  }
+  if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+    let pend = false;
+    const refit = () => { if (pend) return; pend = true; requestAnimationFrame(() => { pend = false; document.querySelectorAll('canvas.portrait').forEach(fit); }); };
+    window.addEventListener('resize', refit);
+    document.addEventListener('visibilitychange', () => { if (cur) { if (document.hidden) { clearTimeout(cur.timer); cur.timer = null; } else schedule(); } });
+    // a change of device-pixel-ratio (a window moved between screens, zoom) fires resize in most browsers
+  }
+  if (RB.bus) {
+    RB.bus.on('equip:change', () => refresh());
+    RB.bus.on('campaign:changing', () => { stop(); warmed.clear(); RB.portraits.clearCache('pc|'); });
+  }
+
+  // Tests and the evidence pages: the frames of a line over time without painting.
+  function timeline(who, expr, o) {
+    o = o || {};
+    const sj = RB.portraits.subject(who, o.look || null);
+    const pr = profileOf(sj.who, sj.p);
+    const info = RB.portraits.exprInfo(expr || 'neutral');
+    const loop = Object.assign({}, LOOP[info.name] || {});
+    if (loop.blinkMul) pr.blink = pr.blink && pr.blink.map((v) => v * loop.blinkMul);
+    if (loop.shut) pr.shut = loop.shut;
+    const seed = o.seed != null ? o.seed : RB.util.hashStr(sj.key + '|' + (o.scene || ''));
+    const st = { pr, tl: Timeline(pr, seed), expr: info.name, info, loop, cue: null, quiet: 0, phase: seed % 4000 };
+    if (expr && o.cue !== false) {
+      const beats = cueFor(st, info.name, o.prevTag || null, new Set(o.used || []), sj.who);
+      if (beats) { let a = 0; const out = []; for (const [d, fr] of beats) { out.push([a, a + d, fr]); a += d; } st.cue = { t0: 0, beats: out, end: a, tag: info.name }; st.quiet = a + 400; }
+    }
+    const out = [];
+    let t = 0, prev = null;
+    const end = o.ms || 10000;
+    while (t < end) {
+      const fr = frameAt(st, t), k = RB.portraits.frameKey(fr);
+      if (k !== prev) { out.push({ t: Math.round(t), k, fr }); prev = k; }
+      t = nextAt(st, t);
+    }
+    return { frames: out, cueEnd: st.cue ? st.cue.end : 0, profile: pr };
+  }
+
+  return {
+    play, stop, refresh, timeline, profileOf, fitSize, CUES, LOOP, PEOPLE, CLASS,
+    state: () => (cur ? { who: cur.who, subj: cur.sj.key, expr: cur.expr, key: cur.key, fr: cur.fr || null, animating: !!cur.st, scheduled: !!cur.timer, cue: cur.st && cur.st.cue ? { tag: cur.st.cue.tag, end: cur.st.cue.end, t: now() - cur.t0 } : null, onScreen: onScreenOf(cur.cv) } : null),
+    stats: () => Object.assign({}, stats, { log: stats.log.slice(), cache: RB.portraits.cacheStats() }),
+    resetStats: () => { stats.plays = stats.cues = stats.paints = stats.ticks = 0; stats.paintMs = stats.maxPaintMs = 0; stats.log.length = 0; },
+  };
 })();
 
 
@@ -51425,7 +52323,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
  * for few exclusive options, switches for on/off, sliders with values,
  * a select for voices, key capture for remapping. Campaign-specific learning
  * choices are shown apart from preferences that apply to every campaign.
- * Changes apply and persist at once, as before (sliders debounce saving). */
+ * Changes apply and persist at once, as before (sliders debounce saving).
+ *
+ * In battle (openBattle(); the battle's Settings button or the menu key) the same
+ * settings and the same controls, presentation only: options that change no rule,
+ * reward or learning difficulty (IN_BATTLE); the others are listed read-only until
+ * the encounter is over. The encounter is paused while the sheet is open
+ * (RB.battleSeq.pause). No saving; Load and Return to title leave the encounter
+ * after asking (src/ui/80_combat.js abandon()). The audit of every setting is in
+ * docs/COMBAT_NOTES.md, "Settings in battle". */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.ui.settings = (function () {
@@ -51440,25 +52346,47 @@ RB.ui.settings = (function () {
     ['display', 'Display & Accessibility', '{表示|ひょうじ}', 'bulb'],
     ['storage', 'Storage', '{保存|ほぞん}', 'ledger'],
   ];
+  // in battle: presentation only (see the end of this file)
+  const BATTLE_GROUPS = [
+    ['motion', 'Speed & motion', '{速|はや}さと{動|うご}き', 'stride'],
+    ['audio', 'Audio', '{音|おと}', 'sound'],
+    ['reading', 'Reading & Language', '{読|よ}み{方|かた}と{言語|げんご}', 'words'],
+    ['display', 'Display & Accessibility', '{表示|ひょうじ}', 'bulb'],
+    ['battle', 'Battle display', '{戦|たたか}いの{表示|ひょうじ}', 'knot'],
+    ['fixed', 'Until the encounter is over', '{戦|たたか}いの{後|あと}で', 'ward'],
+  ];
   let lay = null, fr = null, group = null, mq = null, sampleCache = null;
+  let battle = false, lastBattle = false; // open over a battle (presentation only)
+  const groups = () => (battle ? BATTLE_GROUPS : GROUPS);
+  const firstGroup = () => (battle ? 'motion' : 'reading');
 
   function open() {
     if (lay) return;
-    fr = RB.ui.folio.frame({ onClose: close, closeLabel: 'Back', closeIcon: 'back', cls: 'folio-settings' });
-    fr.setTitle(RB.ui.label('{設定|せってい}', 'Settings'), RB.game.s ? 'Some choices belong to this campaign' : 'Preferences for every campaign');
-    lay = { el: fr.scrim, name: 'settings' };
-    lay.onCancel = back;
-    RB.ui.pushLayer(lay);
-    if (!group && RB.ui.folio.wide()) group = 'reading';
-    render();
-    if (typeof matchMedia !== 'undefined') { mq = matchMedia(RB.ui.folio.WIDE); mq.onchange = () => { if (lay) { if (!group && RB.ui.folio.wide()) group = 'reading'; render(); } }; }
+    // no route to the full Settings while a battle is open: it opens as the battle's sheet
+    if (RB.game.inBattle && RB.game.inBattle()) { openBattle(); return; }
+    show(false);
   }
-  function close() {
+  function show(inBattle) {
+    battle = inBattle;
+    if (battle !== lastBattle) { group = null; lastBattle = battle; }
+    fr = RB.ui.folio.frame({ onClose: close, closeLabel: battle ? 'Back to the encounter' : 'Back', closeIcon: 'back', cls: 'folio-settings' + (battle ? ' folio-bset' : '') });
+    fr.setTitle(RB.ui.label('{設定|せってい}', 'Settings'), battle ? 'During this encounter: how it looks, reads and sounds' : RB.game.s ? 'Some choices belong to this campaign' : 'Preferences for every campaign');
+    lay = { el: fr.scrim, name: battle ? 'battle-settings' : 'settings' };
+    lay.onCancel = back;
+    // (in battle the menu key that opened the sheet closes it again)
+    if (battle) { battleFoot(); lay.onAction = (a) => { if (a === 'menu') { close(); return true; } return false; }; }
+    RB.ui.pushLayer(lay);
+    if (!group && RB.ui.folio.wide()) group = firstGroup();
+    render();
+    if (typeof matchMedia !== 'undefined') { mq = matchMedia(RB.ui.folio.WIDE); mq.onchange = () => { if (lay) { if (!group && RB.ui.folio.wide()) group = firstGroup(); render(); } }; }
+  }
+  function close(o) {
     if (!lay) return;
     if (mq) mq.onchange = null;
     RB.ui.popLayer(lay);
     lay = null; fr = null;
     if (!RB.ui.folio.wide()) group = null;
+    if (battle) { battle = false; if (!(o && o.leaving)) resumeBattle(); }
   }
   function back() {
     if (group && !RB.ui.folio.wide()) { group = null; render(); return; }
@@ -51473,9 +52401,10 @@ RB.ui.settings = (function () {
     const keep = leaves.length ? [leaves[0].scrollTop, leaves[1] ? leaves[1].scrollTop : 0] : [0, 0];
     fr.box.innerHTML = '<div class="spread' + (two ? ' two' : '') + '"><div class="leaf" tabindex="0" aria-label="Settings groups"></div><div class="leaf leaf-b" tabindex="0" aria-label="Settings"></div></div>';
     const [A, B] = fr.box.querySelectorAll('.leaf');
-    const index = '<h3>Groups</h3><ul class="index">' + GROUPS.map(([id, en, jp, ic]) => '<li><button data-grp="' + id + '" aria-current="' + (group === id) + '">' + I(ic) + '<span class="lbl">' + RB.ui.label(jp, en) + '</span><span class="fill"></span></button></li>').join('') + '</ul>' +
-      '<p class="muted small">Changes take effect straight away and are remembered in this browser.</p>';
-    if (two) { A.innerHTML = index; B.innerHTML = groupHtml(group || 'reading'); }
+    const index = '<h3>Groups</h3><ul class="index">' + groups().map(([id, en, jp, ic]) => '<li><button data-grp="' + id + '" aria-current="' + (group === id) + '">' + I(ic) + '<span class="lbl">' + RB.ui.label(jp, en) + '</span><span class="fill"></span></button></li>').join('') + '</ul>' +
+      (battle ? '<p class="muted small">Only how the encounter looks, reads and sounds can change now; it stays paused while this is open. Changes take effect straight away and are remembered in this browser.</p>'
+        : '<p class="muted small">Changes take effect straight away and are remembered in this browser.</p>');
+    if (two) { A.innerHTML = index; B.innerHTML = groupHtml(group || firstGroup()); }
     else if (!group) { A.innerHTML = index; }
     else { A.innerHTML = '<div class="backline"><button class="pbtn quiet" data-grp="">' + I('back') + 'All groups</button></div>' + groupHtml(group); }
     A.scrollTop = keep[0]; B.scrollTop = keep[1];
@@ -51518,6 +52447,7 @@ RB.ui.settings = (function () {
   }
 
   function groupHtml(g) {
+    if (battle) return battleGroupHtml(g);
     const st = RB.game.settings;
     const s = RB.game.s;
     const title = GROUPS.find((x) => x[0] === g);
@@ -51563,15 +52493,7 @@ RB.ui.settings = (function () {
         radios('touchHand', 'Action and Run buttons on the', [['right', 'Right (move on the left)'], ['left', 'Left (move on the right)']]) +
         radios('touchSize', 'Touch control size', [['normal', 'Standard'], ['large', 'Large']]);
     } else if (g === 'audio') {
-      const vs = RB.voice ? RB.voice.status() : { supported: false, localJaCount: 0, note: 'Speech synthesis is not available.' };
-      const voices = RB.voice && RB.voice.japaneseVoices ? RB.voice.japaneseVoices() : [];
-      h += slider('vol.master', 'Overall volume', st.vol.master, 0, 1, 0.05, pct) + slider('vol.music', 'Music', st.vol.music, 0, 1, 0.05, pct) +
-        slider('vol.sfx', 'Effects', st.vol.sfx, 0, 1, 0.05, pct) + slider('vol.voice', 'Voice', st.vol.voice, 0, 1, 0.05, pct) + sw('muted', 'Mute all sound') +
-        '<h3>' + I('sound') + ' Japanese voice (optional)</h3><p class="small">' + esc(vs.note || '') + '</p>' +
-        (voices.length ? '<div class="field"><label class="lab" for="vsel">Voice</label><select id="vsel" data-voice>' + voices.map((v) => '<option value="' + esc(v.voiceURI) + '"' + (st.voice.uri === v.voiceURI ? ' selected' : '') + '>' + esc(v.name) + '</option>').join('') + '</select></div>' +
-          '<div class="field"><label class="switch"><input type="checkbox" role="switch" data-voiceauto' + (st.voice.auto ? ' checked' : '') + '><span>Speak dialogue automatically</span><span class="state">' + (st.voice.auto ? 'On' : 'Off') + '</span></label></div>' +
-          slider('voice.rate', 'Speech rate', st.voice.rate, 0.6, 1.3, 0.05, (v) => v.toFixed(2) + '×') : '<p class="note-slip">No Japanese voice is installed on this device, so nothing will be spoken. Everything works without it.</p>') +
-        '<p class="muted small">Voices are your device\'s own speech synthesis, labelled as such. They are not recorded actors and not a pronunciation authority.</p>';
+      h += audioRows();
     } else if (g === 'display') {
       h += preview() + slider('textScale', 'Text size', st.textScale, 0.85, 1.5, 0.05, pct) + sw('contrast', 'High contrast', null) + sw('reducedMotion', 'Reduce motion', 'Removes sliding and bouncing; changes still show immediately.');
     } else if (g === 'storage') {
@@ -51586,6 +52508,19 @@ RB.ui.settings = (function () {
   }
   const EXTRA = {};
   function addRows(g, f) { (EXTRA[g] = EXTRA[g] || []).push(f); }
+  // the volumes and the optional Japanese voice (the folio's Audio, and the battle's)
+  function audioRows() {
+    const st = RB.game.settings;
+    const vs = RB.voice ? RB.voice.status() : { supported: false, localJaCount: 0, note: 'Speech synthesis is not available.' };
+    const voices = RB.voice && RB.voice.japaneseVoices ? RB.voice.japaneseVoices() : [];
+    return slider('vol.master', 'Overall volume', st.vol.master, 0, 1, 0.05, pct) + slider('vol.music', 'Music', st.vol.music, 0, 1, 0.05, pct) +
+      slider('vol.sfx', 'Effects', st.vol.sfx, 0, 1, 0.05, pct) + slider('vol.voice', 'Voice', st.vol.voice, 0, 1, 0.05, pct) + sw('muted', 'Mute all sound') +
+      '<h3>' + I('sound') + ' Japanese voice (optional)</h3><p class="small">' + esc(vs.note || '') + '</p>' +
+      (voices.length ? '<div class="field"><label class="lab" for="vsel">Voice</label><select id="vsel" data-voice>' + voices.map((v) => '<option value="' + esc(v.voiceURI) + '"' + (st.voice.uri === v.voiceURI ? ' selected' : '') + '>' + esc(v.name) + '</option>').join('') + '</select></div>' +
+        '<div class="field"><label class="switch"><input type="checkbox" role="switch" data-voiceauto' + (st.voice.auto ? ' checked' : '') + '><span>Speak dialogue automatically</span><span class="state">' + (st.voice.auto ? 'On' : 'Off') + '</span></label></div>' +
+        slider('voice.rate', 'Speech rate', st.voice.rate, 0.6, 1.3, 0.05, (v) => v.toFixed(2) + '×') : '<p class="note-slip">No Japanese voice is installed on this device, so nothing will be spoken. Everything works without it.</p>') +
+      '<p class="muted small">Voices are your device\'s own speech synthesis, labelled as such. They are not recorded actors and not a pronunciation authority.</p>';
+  }
 
   // ---- behaviour (unchanged persistence: apply now, save now; sliders debounce) --------------
   function wire(L) {
@@ -51594,6 +52529,7 @@ RB.ui.settings = (function () {
       if (gb) { group = gb.dataset.grp || null; render(); return; }
       const b = e.target.closest('[data-bind],[data-a]');
       if (!b) return;
+      if (battle) return; // (in battle: no keys, no storage requests — nothing of the kind is offered)
       const st = RB.game.settings;
       if (b.hasAttribute('data-bind')) {
         const a = b.dataset.bind;
@@ -51618,6 +52554,8 @@ RB.ui.settings = (function () {
     L.onchange = async (e) => {
       const t = e.target;
       const st = RB.game.settings;
+      // in battle only what changes no rule: anything else is refused, whatever sent it
+      if (battle && !allowedNow(t)) { render(); return; }
       if (t.matches('input[type=radio][data-set]')) {
         let v = t.value;
         if (v === 'true') v = true; else if (v === 'false') v = false;
@@ -51644,6 +52582,7 @@ RB.ui.settings = (function () {
     L.oninput = (e) => {
       const r = e.target.closest('[data-range]');
       if (!r) return;
+      if (battle && !IN_BATTLE[r.dataset.range]) return;
       const st = RB.game.settings;
       const path = r.dataset.range.split('.');
       if (path.length === 2) st[path[0]][path[1]] = +r.value; else st[path[0]] = +r.value;
@@ -51661,7 +52600,194 @@ RB.ui.settings = (function () {
     if (n) n.focus({ preventScroll: true });
   }
 
-  return { open, close, addRows, isOpen: () => !!lay };
+  // ---- in battle: the same settings, presentation only ------------------------------------------
+  // What may change while a battle is open: how it looks, reads and sounds and how fast it plays —
+  // nothing that changes a rule, a reward, the learning difficulty or the campaign (the audit:
+  // docs/COMBAT_NOTES.md, "Settings in battle"). Keys of RB.game.settings, and the slider paths.
+  const IN_BATTLE = {
+    battleAnim: 1, textSpeed: 1, reducedMotion: 1,
+    'vol.master': 1, 'vol.music': 1, 'vol.sfx': 1, 'vol.voice': 1, muted: 1, petSounds: 1, 'voice.rate': 1,
+    lead: 1, secondary: 1, spacing: 1, lightbulb: 1, romaji: 1,
+    textScale: 1, contrast: 1,
+    battleControls: 1, intentDisplay: 1, petBattle: 1,
+  };
+  // (the voice and its automatic speaking, and Suzu's speech, which src/ui/56_suzu_speech.js applies, are allowed too)
+  function allowedNow(t) {
+    if (t.matches('input[type=radio][data-set]')) return t.dataset.obj !== 'learn' && !!IN_BATTLE[t.dataset.set];
+    if (t.matches('[data-sw]')) return !!IN_BATTLE[t.dataset.sw];
+    if (t.matches('[data-range]')) return !!IN_BATTLE[t.dataset.range]; // (sliders apply on input, below)
+    return t.matches('[data-voiceauto], [data-voice], [data-suzu-speech]');
+  }
+  // Fixed for the encounter, shown read-only with what they are (they change in the folio's
+  // Settings once it is over): the learning and challenge choices, how answers are read, the
+  // keys (so that none stops working mid-fight) and quest guidance (it belongs to the road).
+  const PROFILE = { F: 'Foundations', E: 'Elementary', I: 'Intermediate', A: 'Advanced' };
+  function fixedRows() {
+    const st = RB.game.settings, L = (RB.game.s && RB.game.s.learn) || {};
+    const v = (m, k) => m[k] || k || '—';
+    const rows = [
+      ['Japanese level', v(PROFILE, L.profile), 'Which version of each question you meet.'],
+      ['Mistakes in battle', v({ assist: 'Assisted — no cost', normal: 'Standard — small and capped' }, L.assist), 'What a mistake costs in this encounter.'],
+      ['Tactical challenge', v({ relaxed: 'Relaxed', normal: 'Standard', hard: 'Demanding' }, L.difficulty), 'How many creatures come, and how hard they press.'],
+      ['Default way to answer', v({ hand: 'Handwriting', choice: 'Choices', ime: 'Keyboard / IME' }, st.input), 'Inside each question you can still switch how you answer, as always.'],
+      ['Handwriting reads', v({ auto: 'By Japanese level', on: 'Kanji or kana', off: 'Kana only' }, st.padKanji || 'auto'), 'What the writing pad accepts. Read as on the pad still works inside a question.'],
+      ['Stroke-order notes', st.strokePractice ? 'On' : 'Off', 'How strictly handwriting is checked.'],
+      ['Keys', st.binds ? 'Your own' : 'The usual keys', 'So that no key stops working mid-fight.'],
+      ['Quest guidance', v({ full: 'Markers and hints', hints: 'Hints only', off: 'Off' }, st.questGuide || 'full'), 'Markers and hints belong to the road.'],
+    ];
+    return '<p class="note-slip">' + I('ward') + ' These stay as they are until this encounter is over; change them in the folio’s Settings afterwards.</p>' +
+      '<ul class="entries bset-fixed">' + rows.map(([l, val, why]) => '<li class="entry"><span class="mark">' + I('key') + '</span><div><div class="t">' + esc(l) + ': <b>' + esc(val) + '</b></div><div class="muted small">' + esc(why) + '</div></div></li>').join('') + '</ul>';
+  }
+  // Suzu's speech, the same control as in Reading & Language (src/ui/56_suzu_speech.js applies it)
+  function suzuRow() {
+    const v = RB.ui.suzuSpeech ? RB.ui.suzuSpeech.value() : 'standard';
+    const r = (val, label) => '<label class="opt"><input type="radio" name="suzuSpeech" data-suzu-speech value="' + val + '"' + (v === val ? ' checked' : '') + '><span>' + label + '</span></label>';
+    return '<fieldset class="field" data-speech-field><legend>Suzu’s speech</legend><div class="opts">' + r('standard', 'Standard') + r('kansai', 'Kansai (Kansai-ben)') + '</div>' +
+      '<div class="hint">How Suzu talks, wherever she speaks. Questions always use standard Japanese.</div></fieldset>';
+  }
+  function battleGroupHtml(g) {
+    const st = RB.game.settings;
+    const title = BATTLE_GROUPS.find((x) => x[0] === g) || BATTLE_GROUPS[0];
+    let h = '<h3>' + I(title[3]) + ' ' + RB.ui.label(title[2], title[1]) + '</h3>';
+    if (title[0] === 'motion') {
+      h += radios('battleAnim', 'Battle animations', [['normal', 'Normal'], ['fast', 'Fast'], ['instant', 'Instant']], null, 'How long each action takes to play. Instant shows the results at once, with a summary of the last exchange. An action already under way goes on at the new pace (with Instant, its results show at once).') +
+        radios('textSpeed', 'Text speed', [['normal', 'Normal'], ['fast', 'Fast'], ['instant', 'Instant']], null, 'The lines spoken in this encounter. Separate from Battle animations.') +
+        sw('reducedMotion', 'Reduce motion', 'Removes sliding and bouncing; changes still show immediately. An action under way settles at once.');
+    } else if (title[0] === 'audio') {
+      h += audioRows() + sw('petSounds', 'Quiet pet sounds', 'An occasional soft sound from your pet (never needed: everything it does is also seen).');
+    } else if (title[0] === 'reading') {
+      h += preview() +
+        radios('lead', 'Dialogue leads with', [['en', 'English'], ['ja', 'Japanese']]) +
+        radios('secondary', 'The second language', [['always', 'Always shown'], ['tap', 'Shown when tapped'], ['off', 'Hidden']]) +
+        sw('spacing', 'Spaces between Japanese words', 'Beginner-friendly. Standard Japanese is written without spaces.') +
+        sw('lightbulb', 'Word help (lightbulb)', 'Hover, focus or tap Japanese text for reading, meaning and notes. Inside a question it counts as assisted, as always.') +
+        sw('romaji', 'Romaji in word help') + suzuRow() +
+        '<p class="muted small">Furigana (readings over kanji) is always shown. It is an accessibility feature, not a difficulty setting.</p>';
+    } else if (title[0] === 'display') {
+      h += slider('textScale', 'Text size', st.textScale, 0.85, 1.5, 0.05, pct) + sw('contrast', 'High contrast', null) +
+        '<p class="muted small">While an action plays, the scene keeps its place and size; the menus take a new text size at once.</p>';
+    } else if (title[0] === 'battle') {
+      h += radios('battleControls', 'Battle controls during actions', [['adaptive', 'Adaptive'], ['keep', 'Keep visible']], null, 'Adaptive moves the menus out of the way while actions play, so the scene has room. Keep visible leaves them in place, disabled until your next choice. From the next exchange.') +
+        radios('intentDisplay', 'What creatures are about to do', [['adaptive', 'Adaptive'], ['expanded', 'Expanded']], null, 'Adaptive shows a compact badge on each creature that opens when you point at it, focus it or tap it; wording you need to read stays visible. Expanded keeps the full descriptions open while you decide.') +
+        sw('petBattle', 'Show pet in battle', 'It sits beside the two of you and watches. It never acts, and hiding it changes nothing.');
+    } else {
+      h += fixedRows();
+    }
+    return h;
+  }
+  // the foot: no saving here; leaving the encounter (Load, Return to title) asks first
+  function battleFoot() {
+    fr.foot.innerHTML = '<p class="bset-save">' + I('save') + '<span>Saving is available after the encounter.</span></p>' +
+      '<button type="button" class="cbtn" data-leave="load">' + I('load') + '<span>Load a journey…</span></button>' +
+      '<button type="button" class="cbtn" data-leave="title">' + I('title') + '<span>Return to title…</span></button>';
+    fr.foot.onclick = (e) => {
+      const b = e.target.closest('[data-leave]');
+      // (the second click of a double click opens nothing more)
+      if (!b || e.detail > 1) return;
+      leave(b.dataset.leave);
+    };
+  }
+  let leaving = false;
+  async function leave(kind) {
+    if (leaving || !lay || !battle) return;
+    leaving = true;
+    try {
+      const r = await RB.ui.confirm(kind === 'load'
+        ? 'Leave this encounter and load another journey? This battle won’t count — the creature will still be there.'
+        : 'Leave this encounter and return to the title? This battle won’t count — the creature will still be there. Anything since your last save or autosave will be lost.',
+      [kind === 'load' ? 'Choose a journey…' : 'Return to title', 'Stay in the encounter']);
+      if (r !== 0 || !lay || !battle || !RB.combat.state()) return;
+      // the campaign change takes the encounter down whole (src/ui/80_combat.js abandon()) and closes this sheet
+      if (kind === 'load') RB.ui.title.slots('load', true);
+      else RB.game.toTitle();
+    } finally { leaving = false; }
+  }
+  // When the battle's sheet may open: a battle on screen waiting for a choice (yours or your
+  // companion's) or playing an exchange — never over the language task, a question, a teaching
+  // card, a line being spoken, or the opening or the end of the encounter.
+  const OPEN_PHASES = { choose: 1, companion: 1, player: 1, 'companion-act': 1, enemy: 1, revive: 1, finish: 1 };
+  const BATTLE_LAYERS = { cards: 1, companion: 1, 'battle-sequence': 1 };
+  function battleReady() {
+    if (!(RB.game.inBattle && RB.game.inBattle()) || !RB.combat || !RB.combat.state() || !OPEN_PHASES[RB.combat.phase()]) return false;
+    if ((RB.challenge && RB.challenge.active && RB.challenge.active()) || (RB.ui.dialogue && RB.ui.dialogue.isOpen())) return false;
+    const top = RB.ui.topLayer();
+    return !top || !!BATTLE_LAYERS[top.name];
+  }
+  let was = null;
+  function openBattle() {
+    if (lay || !battleReady()) return false;
+    // the encounter waits: the playing action (if any) is paused where it stands; open notes close
+    RB.battleSeq.pause(true);
+    if (RB.combatHelp) RB.combatHelp.hide();
+    if (RB.battleIntents) RB.battleIntents.close(false);
+    const st = RB.game.settings;
+    was = { anim: st.battleAnim, reduce: !!st.reducedMotion };
+    if (RB.audio) RB.audio.sfx('menu_open');
+    show(true);
+    sync();
+    return true;
+  }
+  function resumeBattle() {
+    // the click that closed the sheet (or the second of a double click) lands on this, not on the battle
+    shield();
+    const st = RB.game.settings;
+    // Instant chosen, or Reduce motion turned on, while an action stood paused: the rest of it shows at once
+    if (was && RB.battleSeq.busy() && ((st.battleAnim === 'instant' && was.anim !== 'instant') || (st.reducedMotion && !was.reduce))) RB.battleSeq.settle('settings');
+    was = null;
+    RB.battleSeq.pause(false);
+    if (RB.combat.state()) RB.combat.refresh();
+    sync();
+  }
+  function shield() {
+    if (typeof document === 'undefined') return;
+    const sh = document.createElement('div');
+    sh.className = 'bset-shield';
+    sh.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(sh);
+    // (and a click the closing key's release would send to the battle: some browsers activate the
+    // newly focused button when Space comes up)
+    const block = (e) => { if (e.target && e.target.closest && e.target.closest('.combat-ui')) { e.stopPropagation(); e.preventDefault(); } };
+    document.addEventListener('click', block, true);
+    setTimeout(() => { sh.remove(); document.removeEventListener('click', block, true); }, 400);
+  }
+  // the battle's Settings button: in the scene's lower right corner while the sheet may open
+  let btn = null, poll = null;
+  function sync() {
+    if (btn && !btn.isConnected) unmount();
+    if (btn) btn.hidden = !(battleReady() || (lay && battle));
+  }
+  function mount() {
+    const root = typeof document !== 'undefined' && document.querySelector('.combat-ui');
+    if (!root) return;
+    unmount();
+    btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'cbtn cb-set';
+    btn.title = 'Settings for this encounter (C)';
+    btn.innerHTML = I('settings') + '<span>Settings</span>';
+    btn.hidden = true;
+    btn.addEventListener('click', (e) => { e.stopPropagation(); openBattle(); });
+    root.appendChild(btn);
+    poll = setInterval(sync, 150);
+    sync();
+  }
+  function unmount() {
+    if (poll) clearInterval(poll);
+    poll = null;
+    if (btn) btn.remove();
+    btn = null;
+  }
+  if (RB.bus) {
+    RB.bus.on('present:scene', (e) => {
+      if (!e || e.scope !== 'battle') return;
+      if (e.phase === 'enter') mount();
+      else if (e.phase === 'exit') { if (lay && battle) close({ leaving: true }); unmount(); }
+    });
+    // a campaign change closes the sheet without resuming anything: the battle is being left
+    RB.bus.on('campaign:changing', () => { if (lay && battle) close({ leaving: true }); unmount(); });
+  }
+
+  return { open, close, addRows, isOpen: () => !!lay, openBattle, battleReady, inBattle: () => !!(lay && battle) };
 })();
 
 
@@ -70724,6 +71850,12 @@ RB.combat = (function () {
     if (opts.group) return [enemyId].concat(opts.group).slice(0, (L().DIFF[s.learn.difficulty] || L().DIFF.normal).maxFoes);
     return L().groupFor(enemyId, opts.place, s.learn.difficulty);
   }
+  // Every await of start() goes through live(): once the battle has been left for another journey
+  // (abandon(), below) whatever it was waiting for never resumes it, so nothing of the abandoned
+  // battle (its outcome, flags, rewards, lines, fades, music) reaches the campaign that comes next.
+  let runN = 0;
+  const never = () => new Promise(() => {});
+  function live(p) { const n = runN; return Promise.resolve(p).then((v) => (n === runN ? v : never()), (e) => (n === runN ? Promise.reject(e) : never())); }
   async function start(enemyId, opts) {
     opts = opts || {};
     const s = RB.game.s;
@@ -70739,7 +71871,7 @@ RB.combat = (function () {
     // the zone's battle or boss theme (src/audio/39_zones.js); enemy.music still overrides
     const here = RB.world.W.map;
     RB.audio && RB.audio.playSong(RB.audio.battleSong ? RB.audio.battleSong(enemy, here && here.def, s.map) : (enemy.music || (enemy.boss ? 'boss' : 'battle')));
-    await RB.ui.fade(true, 200);
+    await live(RB.ui.fade(true, 200));
     if (RB.battlers && RB.battlers.prewarm) { RB.battlers.prewarm(RB.equip.look(s), 'pc'); if (s.comp) RB.battlers.prewarm(RB.content.chars[s.comp].look, 'comp'); }
     RB.render.setOverride(draw);
     st = L().init(enemy, s, Object.assign({}, opts, { group: members.slice(1) }));
@@ -70777,19 +71909,19 @@ RB.combat = (function () {
     ui.root.classList.add('cb-intro');
     for (const el of [ui.intent, ui.dock]) el.inert = true;
     try { renderUi(); } catch (e) { console.error('battle intro', e); }
-    await RB.ui.fade(false, 200);
+    await live(RB.ui.fade(false, 200));
     let outcome = null;
     try {
-      if (enemy.intro) await say(tierOf(enemy.intro) || enemy.intro, enemy.introWho);
+      if (enemy.intro) await live(say(tierOf(enemy.intro) || enemy.intro, enemy.introWho));
       RB.ui.dialogue.hide();
       while (!outcome) {
         // a creature's new phase (a guardian changing its ways) is told before you choose
         for (let i = 0; i < st.foes.length; i++) {
           const ph = st.foes[i].phaseChanged;
           if (!ph) continue;
-          if (ph.line) { await say(tierOf(ph.line) || ph.line, ph.who); RB.ui.dialogue.hide(); }
+          if (ph.line) { await live(say(tierOf(ph.line) || ph.line, ph.who)); RB.ui.dialogue.hide(); }
           if (ph.teach) {
-            await RB.challenge.teachCard({ title: 'Something has changed', en: ph.teach.en, jp: ph.teach.jp });
+            await live(RB.challenge.teachCard({ title: 'Something has changed', en: ph.teach.en, jp: ph.teach.jp }));
             // the authored note has just explained the move now telegraphed
             RB.combatHelp.mark(s, 'intent:' + st.foes[i].intent.kind);
           }
@@ -70807,10 +71939,10 @@ RB.combat = (function () {
         if (RB.creatures) RB.creatures.saw(s, st, members); // the telegraphs now on screen
         RB.audio && RB.audio.sfx('enemy_intent', { vol: 0.5 });
         st.assistedRound = false;
-        const card = await pickCard();
+        const card = await live(pickCard());
         if (card.kind === 'flee') {
           tg.lock = null;
-          const r = await RB.ui.confirm('Step back from this encounter? Nothing is lost; you can return whenever you like.', ['Step back', 'Stay']);
+          const r = await live(RB.ui.confirm('Step back from this encounter? Nothing is lost; you can return whenever you like.', ['Step back', 'Stay']));
           if (r === 0) { outcome = 'flee'; break; }
           continue;
         }
@@ -70820,10 +71952,10 @@ RB.combat = (function () {
         renderUi();
         const step = stepFor(card);
         const T = st.cur;
-        const res = await RB.challenge.runStep(step, {
+        const res = await live(RB.challenge.runStep(step, {
           header: situationHtml(card), status: statusInset,
           allowCancel: true, cancelLabel: 'Choose a different response', ctxTag: 'battle:' + (st.enemyId || enemyId),
-        });
+        }));
         // backed out: the preview drops back to normal, nothing else changed
         if (res.cancelled) { tg.lock = null; continue; }
         if (st.assistedRound) res.assisted = true;
@@ -70832,7 +71964,7 @@ RB.combat = (function () {
         if (st.compId && st.comp > 0 && L().compOptions(st, s, card).some((o) => !o.locked)) {
           phase = 'companion';
           renderUi();
-          const c = await pickCompanion(card);
+          const c = await live(pickCompanion(card));
           tg.compTarget = null;
           if (c === 'back') { tg.lock = null; L().target(st, T); continue; }
           cact = c;
@@ -70861,14 +71993,14 @@ RB.combat = (function () {
         // (the displayed state starts as `before` and steps forward: keep its knots apart)
         const knots0 = before.foes.map((f) => f.knots);
         chain = true;
-        await playPlayer(card, fx, before, won, reach, T, step);
+        await live(playPlayer(card, fx, before, won, reach, T, step));
         if (!won) {
           // a creature of the group whose last knot your response freed settles now
-          for (let i = 0; i < st.foes.length; i++) if (knots0[i] > 0 && V().foes[i].knots <= 0 && !wonByComp) await playSettle(i);
+          for (let i = 0; i < st.foes.length; i++) if (knots0[i] > 0 && V().foes[i].knots <= 0 && !wonByComp) await live(playSettle(i));
           if (cfx && cfx.length) {
             const kb = snapshot(V());
-            await playCompanion(cact.act, cfx, wonByComp, cact.target != null ? cact.target : T);
-            if (!wonByComp) for (let i = 0; i < st.foes.length; i++) if (kb.foes[i].knots > 0 && V().foes[i].knots <= 0) await playSettle(i);
+            await live(playCompanion(cact.act, cfx, wonByComp, cact.target != null ? cact.target : T));
+            if (!wonByComp) for (let i = 0; i < st.foes.length; i++) if (kb.foes[i].knots > 0 && V().foes[i].knots <= 0) await live(playSettle(i));
           }
         }
         // the moves your response and your companion's answered: shown on their badges now
@@ -70888,7 +72020,7 @@ RB.combat = (function () {
           let mine = efx.filter((f) => f.foe === i);
           if (k === standing.length - 1) mine = mine.concat(tail);
           const blockedByWard = fx.some((f) => f.t === 'ward' && f.block && (f.foe == null || f.foe === i));
-          await playEnemy(i, intents[i], mine, blockedByWard);
+          await live(playEnemy(i, intents[i], mine, blockedByWard));
         }
         actFoe = null;
         endChain();
@@ -70897,7 +72029,7 @@ RB.combat = (function () {
         L().endRound(st, enemy);
         if (st.log.length && st.log[st.log.length - 1].t === 'revive') {
           st.log.pop();
-          await playRevive();
+          await live(playRevive());
         }
         if (st.over) outcome = st.over;
       }
@@ -70906,11 +72038,11 @@ RB.combat = (function () {
         present('scene', { phase: 'victory' });
         phase = 'outro';
         RB.audio && RB.audio.playSong('victory');
-        if (enemy.settle) { await say(tierOf(enemy.settle) || enemy.settle, enemy.settleWho); RB.ui.dialogue.hide(); }
+        if (enemy.settle) { await live(say(tierOf(enemy.settle) || enemy.settle, enemy.settleWho)); RB.ui.dialogue.hide(); }
         if (RB.creatures) RB.creatures.settle(s, members, enemy); // a settled observation (no count)
         if (enemy.reward) {
-          for (const k in enemy.reward.items || {}) { RB.state.give(s, k, enemy.reward.items[k]); const it = RB.content.items[k]; if (it) await RB.ui.toast({ kind: 'item', jp: it.name.jp, en: it.name.en }); }
-          for (const wd of enemy.reward.words || []) if (s.words.indexOf(wd) < 0) { s.words.push(wd); const W = RB.content.words[wd]; if (W) await RB.ui.toast({ kind: 'word', jp: W.jp, en: W.en }); }
+          for (const k in enemy.reward.items || {}) { RB.state.give(s, k, enemy.reward.items[k]); const it = RB.content.items[k]; if (it) await live(RB.ui.toast({ kind: 'item', jp: it.name.jp, en: it.name.en })); }
+          for (const wd of enemy.reward.words || []) if (s.words.indexOf(wd) < 0) { s.words.push(wd); const W = RB.content.words[wd]; if (W) await live(RB.ui.toast({ kind: 'word', jp: W.jp, en: W.en })); }
         }
         s.vars.battlesWon = (s.vars.battlesWon || 0) + 1;
       }
@@ -70932,7 +72064,7 @@ RB.combat = (function () {
       lastCardId = null;
       if (ui) { window.removeEventListener('resize', ui.onHold); window.removeEventListener('resize', ui.onResize); document.removeEventListener('keydown', ui.onKey); if (ui.ro) ui.ro.disconnect(); ui.root.remove(); }
       ui = null; stageCss = null;
-      await RB.ui.fade(true, 200);
+      await live(RB.ui.fade(true, 200));
       // while the screen is dark, before the map comes back: the world settles its side of the
       // encounter (src/engine/90_game.js startBattle: a creature you settled is gone; one you
       // stepped back from backs off and stays calm)
@@ -70940,7 +72072,7 @@ RB.combat = (function () {
       RB.render.setOverride(null);
       RB.battleStage.end();
       RB.game.popMode('combat');
-      await RB.ui.fade(false, 200);
+      await live(RB.ui.fade(false, 200));
       const m = RB.world.W.map;
       const back = m && RB.world.musicFor(m.def, s);
       if (back) RB.audio && RB.audio.playSong(back);
@@ -70962,10 +72094,48 @@ RB.combat = (function () {
       frames: { n: cost.n, avg: cost.n ? +(cost.sum / cost.n).toFixed(3) : 0, max: +cost.max.toFixed(3), seqN: cost.seqN, seqAvg: cost.seqN ? +(cost.seqSum / cost.seqN).toFixed(3) : 0, seqMax: +cost.seqMax.toFixed(3) },
     };
   }
-  // A campaign changing (new, loaded, back to the title) leaves no battle screen behind: a battle
-  // overlay that no open battle owns is removed (two battles at once, now refused by
-  // RB.game.startBattle, could leave one over the map).
+  // ---- leaving the encounter for another journey ----------------------------------------------
+  // Load or Return to title from the battle's settings sheet (src/ui/55_settings.js), or any other
+  // campaign change while a battle is open: the battle is taken down at once — the playing sequence
+  // dropped unresolved, the overlay, its listeners and layers, the notes, the banner, the badges,
+  // the stage, the battle music — and its coroutine never resumes (live()). Nothing is written to
+  // either campaign: no outcome, no closing callback (so no win, flee or defeat flag), no Harmony,
+  // no rewards, no word marks. The mode stack keeps 'combat' on top until the campaign change
+  // replaces it (so the old map cannot start another encounter meanwhile), and the screen stays
+  // dark until the next campaign draws.
+  const VEIL = (c, w, h) => { c.fillStyle = '#0d1220'; c.fillRect(0, 0, w, h); };
+  VEIL.art = true;
+  function abandon() {
+    if (!st && !ui) return false;
+    runN++;
+    RB.battleSeq.drop();
+    present('scene', { phase: 'exit', outcome: 'abandoned' });
+    chain = false; view = null; sealHeld = null; curCard = null; phase = 'idle'; acting = false;
+    tg.hover = null; tg.lock = null; tg.compTarget = null; onTarget = null; lastCardId = null;
+    badgeSnap = null; actFoe = null; shownAnswered = null;
+    RB.combatHelp.detach();
+    RB.battleBanner.detach();
+    RB.battleIntents.detach();
+    if (RB.ui.dialogue) RB.ui.dialogue.hide();
+    if (ui) {
+      for (const t of ['pointerdown', 'keydown', 'keyup']) document.removeEventListener(t, ui.onPress, true);
+      window.removeEventListener('resize', ui.onHold); window.removeEventListener('resize', ui.onResize); document.removeEventListener('keydown', ui.onKey); if (ui.ro) ui.ro.disconnect();
+      RB.ui.popLayersIn(ui.root); // the responses' and the companion's menus
+      ui.root.remove();
+    }
+    ui = null; stageCss = null;
+    RB.render.setOverride(VEIL);
+    RB.battleStage.end();
+    if (RB.audio) RB.audio.stopSong({ fade: 300 });
+    RB.ui.fade(false, 120);
+    st = null; members = []; enemy = null;
+    return true;
+  }
+  // A campaign changing (new, loaded, back to the title) leaves no battle behind: an open one is
+  // abandoned, and a battle overlay that no open battle owns is removed (two battles at once, now
+  // refused by RB.game.startBattle, could leave one over the map).
   if (RB.bus) RB.bus.on('campaign:changing', () => {
+    abandon();
     if (typeof document === 'undefined') return;
     for (const el of document.querySelectorAll('.combat-ui')) if (!ui || el !== ui.root) el.remove();
   });
@@ -71415,6 +72585,7 @@ RB.battleSeq = (function () {
   const counters = { runs: 0, done: 0, settled: 0, hurried: 0, beats: 0, watchdogs: 0 };
   const timers = new Set();
   let onVis = null, onDown = null, layer = null;
+  let paused = false, pausedAt = 0; // the battle's settings sheet is open (pause(), below)
   const stage = () => RB.battleStage;
 
   function later(fn, ms) { const id = setTimeout(() => { timers.delete(id); fn(); }, ms); timers.add(id); return id; }
@@ -71439,6 +72610,7 @@ RB.battleSeq = (function () {
     if (cur) settle('exit');
     if (RB.harmonyCutin) RB.harmonyCutin.dispose('exit'); // (Harmony portrait: never outlives the encounter)
     skipping = false;
+    paused = false;
     if (RB.battleBanner) RB.battleBanner.clear();
     if (onVis) document.removeEventListener('visibilitychange', onVis);
     onVis = null;
@@ -71446,9 +72618,31 @@ RB.battleSeq = (function () {
     clearTimers();
     port = null;
   }
+  // ---- the battle's settings sheet (src/ui/55_settings.js, battle mode) ------------------------
+  // pause(true) while the sheet is open: the presentation clock stands still, no cue fires, no
+  // sequence ends and the watchdog waits; pause(false) resumes exactly where it stood. A hidden
+  // tab still settles, as always. Nothing here touches a rule: the exchange was resolved before
+  // its sequence started.
+  function pause(on) {
+    on = !!on;
+    if (on === paused) return;
+    paused = on;
+    if (on) { pausedAt = performance.now(); return; }
+    lastT = null; // (no catch-up for the time it stood still)
+    if (cur) {
+      cur.started += performance.now() - pausedAt;
+      if (cur.watch) { clearTimeout(cur.watch); timers.delete(cur.watch); }
+      cur.watch = later(watchdog, cur.wall);
+    }
+  }
+  // A battle left for another journey (src/ui/80_combat.js abandon()): the playing sequence is
+  // dropped unresolved (no remaining beat, no reconcile, its promise never settles) and the
+  // sequencer lets go of the screen.
+  function drop() { cur = null; detach(); }
   function tick(t) {
     const dt = lastT == null ? 16 : Math.max(0, Math.min(100, t - lastT));
     lastT = t;
+    if (paused) return pt;
     pt += dt * timeScale * (cur ? speed() * (cur.hurried ? T.hurry : 1) : 1);
     if (cur) step();
     if (RB.harmonyCutin) RB.harmonyCutin.frame(pt); // (Harmony portrait: on this clock, hurried with it)
@@ -71479,11 +72673,13 @@ RB.battleSeq = (function () {
       }
       // if frames stop arriving (a throttled tab, a stalled canvas), finish anyway
       const wall = (endAt / (speed() * Math.min(1, timeScale))) * 2 + 2500;
-      cur.watch = later(() => { if (cur && cur.started + wall - 50 <= performance.now()) { counters.watchdogs++; settle('watchdog'); } }, wall);
+      cur.wall = wall;
+      cur.watch = later(watchdog, wall);
       if (document.hidden) { settle('hidden'); return; }
-      step();
+      if (!paused) step();
     });
   }
+  function watchdog() { if (cur && !paused && cur.started + cur.wall - 50 <= performance.now()) { counters.watchdogs++; settle('watchdog'); } }
   function step() {
     const el = pt - cur.t0;
     while (cur && cur.i < cur.cues.length && cur.cues[cur.i].at <= el) fire(cur.cues[cur.i++], false);
@@ -71810,10 +73006,10 @@ RB.battleSeq = (function () {
   };
 
   function stats() {
-    return { running: !!cur, kind: cur && cur.kind, pt: Math.round(pt), timers: timers.size, layer: !!layer, pointer: !!onDown, attached: !!port, counters: Object.assign({}, counters) };
+    return { running: !!cur, kind: cur && cur.kind, paused, pt: Math.round(pt), timers: timers.size, layer: !!layer, pointer: !!onDown, attached: !!port, counters: Object.assign({}, counters) };
   }
   // setTimeScale(k): slow the presentation clock (k < 1) for frame captures; tests and tools only
-  return { T, attach, detach, tick, now, run, settle, hurry, skip, endExchange, skipping: () => skipping, mode, busy: () => !!cur, current: () => (cur ? { kind: cur.kind, banner: !!cur.banner, t: Math.round(pt - cur.t0), end: cur.end } : null), choreo, planOf: (card, fx, ctx) => RB.partyChoreo.planOf(card, fx, ctx, H), addDelivery, deliveryOf, stats, trace: () => trace.slice(), setTimeScale: (k) => { timeScale = Math.max(0.05, Math.min(4, +k || 1)); } };
+  return { T, attach, detach, pause, paused: () => paused, drop, tick, now, run, settle, hurry, skip, endExchange, skipping: () => skipping, mode, busy: () => !!cur, current: () => (cur ? { kind: cur.kind, banner: !!cur.banner, t: Math.round(pt - cur.t0), end: cur.end } : null), choreo, planOf: (card, fx, ctx) => RB.partyChoreo.planOf(card, fx, ctx, H), addDelivery, deliveryOf, stats, trace: () => trace.slice(), setTimeScale: (k) => { timeScale = Math.max(0.05, Math.min(4, +k || 1)); } };
 })();
 
 
@@ -107127,7 +108323,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const clerkFace = {
     skin: ['#ece6d6', '#cfc6b0'], hair: ['#d8d0bc', '#c4bca8', '#f4f0e6'], cloth: ['#8a8474', '#6e695c', '#c85a4a'],
     style: 'shaved', acc: [], eyes: 'round', bg: '#2a2c40', age: 'adult',
-    extra2: (c, expr) => {
+    extra2: (c, expr, fr) => {
       // a face made of index cards: a ruled card for a forehead, ink-slit eyes
       const R = (x, y, w, h, col) => { c.fillStyle = col; c.fillRect(x, y, w, h); };
       R(24, 16, 48, 20, '#f4efe2'); R(24, 16, 48, 2, '#c85a4a'); R(24, 18, 48, 1, '#e8a090');
@@ -107137,6 +108333,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const ink = '#2a2436';
       if (expr === 'smile' || expr === 'laugh') { R(34, 46, 8, 2, ink); R(54, 46, 8, 2, ink); R(33, 47, 1, 1, ink); R(62, 47, 1, 1, ink); }
       else if (expr === 'surprise') { R(36, 42, 4, 9, ink); R(56, 42, 4, 9, ink); }
+      else if (fr && fr.lids === 'closed') { R(35, 48, 6, 1, ink); R(55, 48, 6, 1, ink); } // the animated portrait's blink
+      else if (fr && fr.lids === 'half') { R(36, 47, 4, 3, ink); R(56, 47, 4, 3, ink); }
       else { R(36, 44, 4, 6, ink); R(56, 44, 4, 6, ink); R(36, 44, 1, 2, '#6a6480'); R(56, 44, 1, 2, '#6a6480'); }
       R(40, 60, 16, 2, '#b8b0a0');
     },

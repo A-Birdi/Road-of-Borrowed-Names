@@ -168,3 +168,32 @@ Captured from `index.html` at `20277f1` in headless Chromium (device-pixel-ratio
 |---|---|
 | 12 characters × 10 expressions at 128 CSS px | [image](expressive/portraits_grid.png) |
 | Ren, Suzu, Ōmi, Tsuru at the dialogue's 116 / 84 / 64 px | [image](expressive/portraits_sizes.png) |
+
+## Settings in battle (2026-10-03)
+
+The battle's Settings button (lower right of the scene), the sheet over a paused encounter
+(presentation only; the rest fixed until the encounter is over; no saving), and the question Load
+asks. Made by `tests/e2e/battle_settings_shots.mjs`; behaviour in docs/COMBAT_NOTES.md, "Settings
+in battle".
+
+| State | 1280×800 (¾ scale) | 390×844 |
+|---|---|---|
+| The battle, with its Settings button | [image](battle_settings/battle_1280x800.webp) | [image](battle_settings/battle_390x844.webp) |
+| The sheet (phone: its groups) | — | [image](battle_settings/sheet_390x844.webp) |
+| Speed & motion | [image](battle_settings/sheet_motion_1280x800.webp) | [image](battle_settings/sheet_motion_390x844.webp) |
+| Until the encounter is over (read-only) | [image](battle_settings/sheet_fixed_1280x800.webp) | [image](battle_settings/sheet_fixed_390x844.webp) |
+| Load a journey… asks first | [image](battle_settings/leave_1280x800.webp) | [image](battle_settings/leave_390x844.webp) |
+
+## Animated dialogue portraits (2026-10-03, paired addendum §7; docs/expressive/PORTRAITS.md §5)
+
+Made by `node tests/e2e/portrait_shots.mjs --before <index.html of eb0cb4b>` in headless Chromium.
+
+| What | Image |
+|---|---|
+| Eye area before / after the readability fixes, 12 characters × 7 expressions, 4× | [image](portraits/eyes_zoom.png) |
+| The same at the dialogue's real size, device-pixel-ratio 1 (before 116 px, after 96 px) | [image](portraits/eyes_real_size.png) |
+| Before / after at each layout size | [image](portraits/sizes.png) |
+| Held still at actual size, 6 characters × the 12 expressions in use, before / after (1440×900 and 390×844 at ratio 1) | [desktop](portraits/stills_desktop.png) · [phone](portraits/stills_phone.png) |
+| Each companion's lead-in cue for every tag, then the settled loop and its blink | [Nao](portraits/cues_nao.png) · [Mio](portraits/cues_mio.png) · [Ren](portraits/cues_ren.png) · [Suzu](portraits/cues_suzu.png) |
+| Idle-loop motions of the player and 12 NPCs | [image](portraits/idle_npcs.png) |
+| A conversation in real time (12 lines of sa.kasane_meet, 640×360) | [video](portraits/conversation.webm) · [still](portraits/conversation_still.png) |

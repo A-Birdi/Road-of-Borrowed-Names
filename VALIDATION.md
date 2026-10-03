@@ -1712,3 +1712,56 @@ musical judgement is analysis.
   (the festival night and the village), at 1280×800 and 390×844.
 - **Not verified:** Firefox (the owner's browser); a real phone; a person's judgement of the art. The town below
   is crisp in places, and more haze or a cooler tint may read as farther away.
+
+## Settings in battle — the owner's request of 2026-10-03 (presentation-only sheet; no saving; Load and Return to title leave the battle)
+- **What:** a Settings button in the battle, plus the menu key (C), opens the folio's Settings in a battle mode.
+  - It offers speed and motion, audio, reading, display and battle display. The learning and rule choices are listed read-only until the encounter is over.
+  - The encounter pauses while it is open (`RB.battleSeq.pause`) and resumes where it stood.
+  - Every save route refuses while `inBattle()`.
+  - Load and Return to title ask first. The campaign change then abandons the battle whole (`RB.combat.abandon`, `live()`), so nothing of it is written to the next campaign.
+  - The audit is in docs/COMBAT_NOTES.md, "Settings in battle".
+- **The worker's runs** (Chromium, on 34ba9eb unless noted): unit 22,067/0; validator no errors.
+  - New `tests/e2e/battle_settings.mjs` (in the default suite): 10/10 at 1280×800 and 390×844, twice.
+  - The same test on the unfixed build 96b60fd: 0/10.
+  - A probe on 96b60fd: manual saves and autosaves were written mid-battle. A mid-boss load left the battle screen, its rules state, a running scene and the response layer over the loaded map.
+  - settings 13 ok, combat_small 9 ok.
+  - On 240d3d0: combat_ui 7/7, playtest_repairs 7/7, battle_overlap 96 ok, battle_presentation 13/13, ui 14/14, shift_load_regression 18/18 (file://), and 18/18 (http origin, on 34ba9eb).
+- **The lead's runs on the merged build b4a598e** (with interludes, travel, zone music, lighthouse and the Harmony art): unit 23,856/0; validator no errors; battle_settings 10/10; settings all ok; combat_ui 7/7; combat_small all ok; battle_overlap all ok; playtest_repairs 7/7; battle_presentation 13/13; shift_load_regression 18/18 (file://); harmony_art 39/39.
+- **The default suite** (run on b67d469, before this merge): 68/69 scripts passed. mill_road failed one check ("click the mill door: walked there and went in") while the whole suite was running. Run alone on 408c051 it passed 36/36. Treated as load-related; it has not recurred.
+- **Not verified:** Firefox; the "slot open in another tab, then Cancel" path (only the unreadable-slot path ran); the default suite as a whole on this build.
+
+## Animated dialogue portraits — the paired addendum §7 and the world review's WR-02 (merged 2026-10-03)
+
+**What:** every speaking portrait has an idle loop, and every expression tag a one-off lead-in cue
+(`src/ui/21_portrait_anim.js`; layers in `src/engine/35_portraits.js`).
+- **Idle loop:** blink, breath, glance, sway and lens glint, one motion at a time.
+- **Eye-area fixes:** docs/expressive/PORTRAITS.md §3 items 1–8.
+- **Display size:** whole device pixels per art pixel on desktop, so 96 CSS px at ratio 1 (was 116). The phone layout never grows.
+- **Reduce motion:** shows the still.
+- **Cost:** one 8 MiB byte-capped LRU for layers and frames.
+
+**The worker's runs** (headless Chromium, on its branch at 28dfd61):
+- Unit 23,851/0, including portrait_anim 47 checks.
+- New `tests/e2e/portrait_anim.mjs`: 67 ok.
+- ui 14/14, play_ui 35 ok, dialect_kansai 59 ok, company 61 ok, bookmarks all ok, interludes 76/76, equipment 53 ok.
+- Box heights re-measured at 7 viewports: identical before and after.
+- Costs: a first frame 4.8 ms median, 14.6 max; a cached frame 0.03 ms; the cache peaked at 4.6 MiB of 8 over 50 lines.
+
+**The lead's runs on the merged build fe75862** (squash merge 1be42bd, with the battle settings, interludes, zone music, lighthouse and Harmony art):
+- Unit 23,903/0; validator no errors.
+- portrait_anim all passed; ui 14/14; play_ui all ok; dialect_kansai all passed; equipment all ok; interludes 76/76; battle_settings 10/10; harmony_art 39/39; company all passed.
+- `tests/e2e/review_held_portrait.mjs` (WR-02 probe): 5 distinct images in 11 samples over about 5 s at both 1440×900 (96 CSS px) and 390×844 (64 CSS px). On 243069a, before the merge: 1 distinct image at both.
+
+**Evidence:** docs/screenshots/portraits/:
+- eye crops before/after, at 4× and at real size;
+- sizes;
+- held-still sheets for desktop and phone;
+- cue sheets per companion;
+- NPC idle frames;
+- a 12-line conversation clip (webm) and its still.
+
+**Not verified:**
+- Firefox; a real phone.
+- A person's judgment of the expressions and the eye fixes on all 85 human faces; the worker looked at about 20 by eye, and the rest only through automated invariants.
+- Phones at ratio 1, 2 and 2.625 still downscale the 64-px portrait unevenly.
+- NPC cues outside the bespoke set share the generic variants.

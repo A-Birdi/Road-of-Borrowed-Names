@@ -368,6 +368,31 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
   `audio_zones.mjs`, `audio.check.mjs`.
 - **Open:** nobody has listened. If a phone struggles, thin the Chapter 5–6 battle and boss themes first.
 
+## Settings in battle (owner's request of 2026-10-03) — REQUIREMENTS.md BS1–BS4, VALIDATION.md "Settings in battle"
+- **The sheet:** `src/ui/55_settings.js` opens the folio's Settings in a battle mode, with an allow-list of
+  presentation settings. `RB.battleSeq.pause()` (src/ui/82_battle_seq.js) stops the animation clock while it is
+  open. The audit table is in docs/COMBAT_NOTES.md, "Settings in battle".
+- **Saving:** `src/engine/80_save.js` refuses every write of the playing campaign while `inBattle()`; autosave
+  counts the skip.
+- **Leaving:** Load and Return to title ask first. The campaign change runs `RB.combat.abandon()`
+  (src/ui/80_combat.js); every await in a battle goes through `live()`, so nothing of an abandoned battle is
+  written. A load that does not happen calls `keepJourney()` (src/engine/90_game.js).
+- **Test:** `tests/e2e/battle_settings.mjs` (default suite).
+
+## Harmony busts, painted (owner's review of 2026-10-03) — REQUIREMENTS.md HB1–HB2, docs/harmony/ASSET_BRIEF.md
+- **Why:** the owner judged the code-drawn busts far below their mockup. The busts will be painted with the owner's
+  image tool and integrated behind the same `RB.harmonyArt` API.
+- **What exists:** the brief (docs/harmony/ASSET_BRIEF.md) and the reference sheets and templates in
+  docs/harmony/asset_brief/ (`node tests/e2e/harmony_asset_refs.mjs`). The owner also has a published page with
+  a prompt builder.
+- **Plan:**
+  - Batch 1 (Suzu plus one preset player) becomes a playable proof first.
+  - Then the other companions, the layered player kit in key ramps, and wear.
+  - Native bust 192×160, pair 352×160; frames enter, flourish, hold, blink.
+- **The overlay worker** was told to read sizes from `NATIVE`/`fitScale()` only, and to treat the phase list as
+  data.
+- **Never commit** the owner's mockup images.
+
 ## Commands
 - Build: `node tools/build.mjs`
 - Content validation: `node tools/validate.mjs [--filter sg] [--unknown]`
@@ -454,6 +479,11 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
 14. Suzu's Kansai-ben (2026-10-03): a native Kansai speaker should read her lines, starting with her emotional
    high points (docs/dialect/suzu_kansai.md lists what to check first); the owner can switch it on and off on her
    Company page.
+15. Settings in battle (2026-10-03), in Firefox: open the sheet mid-exchange (C or the button), change text speed and
+   motion, close it, and check that the exchange continues. Try Load and Return to title from a boss. The other-tab Cancel path is
+   untested.
+16. Harmony busts: when the owner's Batch 1 arrives, build `tools/harmony_import.mjs` and the raster path in
+   `RB.harmonyArt` (docs/harmony/ASSET_BRIEF.md §10). Then send the proof's evidence before asking for the rest.
 
 ## Known issues / limits
 - No human handwriting samples tested (synthetic + font-derived only).

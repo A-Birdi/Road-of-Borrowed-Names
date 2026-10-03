@@ -133,6 +133,12 @@ RB.script = (function () {
   function isRunning() {
     return running > 0;
   }
+  // A campaign change (load, new game, title) ends every scene of the campaign being left: a scene
+  // waiting on something (a battle left from its settings sheet never answers) no longer counts as
+  // running, and if it ever resumed it would stop at its next line (exec) without writing to the
+  // campaign that came next (`gen`).
+  let gen = 0;
+  if (RB.bus) RB.bus.on('campaign:changing', () => { gen++; running = 0; });
 
   async function run(sceneId, ctx) {
     const sc = RB.content.scenes[sceneId];
@@ -140,14 +146,16 @@ RB.script = (function () {
       console.warn('missing scene', sceneId);
       return;
     }
+    const g = gen;
     running++;
     RB.game.pushMode('dialogue');
     try {
       await exec(sc, ctx || {});
-      RB.game.s.seen[sceneId] = true;
+      if (g === gen) RB.game.s.seen[sceneId] = true;
     } catch (err) {
       console.error('scene error', sceneId, err);
     } finally {
+      if (g !== gen) return; // (the campaign it belonged to is gone)
       running--;
       // every run pushed one dialogue mode; pop it even when nested (a hook
       // running a scene inside a scene) so no stray dialogue mode is left
@@ -162,11 +170,13 @@ RB.script = (function () {
     }
   }
   async function runInline(lines) {
+    const g = gen;
     running++;
     RB.game.pushMode('dialogue');
     try {
-      for (const l of lines) await RB.ui.dialogue.say(l);
+      for (const l of lines) { if (g !== gen) break; await RB.ui.dialogue.say(l); }
     } finally {
+      if (g !== gen) return; // (the campaign it belonged to is gone)
       running--;
       RB.game.popMode('dialogue');
       if (running === 0) {
@@ -188,6 +198,7 @@ RB.script = (function () {
     let guard = 0;
     while (pc < sc.cmds.length) {
       if (++guard > 20000) throw new Error('script loop in ' + sc.id);
+      if (RB.game.s !== s) return; // the campaign changed under this scene: it ends here
       const c = sc.cmds[pc++];
       if (c.if && !RB.state.test(s, c.if)) continue;
       const a = c.args || [];
