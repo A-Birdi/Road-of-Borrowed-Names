@@ -69,23 +69,38 @@ RB.game = (function () {
   }
 
   // ---- loop --------------------------------------------------------------------
+  // The frame loop never stops: an error in one part of a frame (the world, the
+  // interface, whatever the screen shows) is reported and the next frame still
+  // comes. (A drawing error used to end the loop for good: the screen froze on
+  // its last picture and only reloading the page brought it back.)
+  let loopErrAt = -1e9;
+  function loopErr(where, err) {
+    const now = typeof performance !== 'undefined' ? performance.now() : 0;
+    if (now - loopErrAt > 5000) { loopErrAt = now; console.error('frame (' + where + ')', err); }
+  }
   function loop(t) {
-    const dt = Math.min(50, t - (G.last || t));
-    G.last = t;
-    if (G.playing && RB.world.W.map) {
-      const m = mode();
-      RB.world.update(dt, m === 'world');
-      // play time: everything you do in a campaign — walking, talking,
-      // writing, battles, lessons, the folio — while the page is visible and
-      // you have touched a key, the pointer or the screen in the last five
-      // minutes (a game left open does not count). It used to count walking
-      // time only, so it read far less than the time actually played.
-      if (!document.hidden && t - (G.lastInput || 0) < 300000) G.s.playtime += dt / 1000;
-      if (m === 'world') RB.world.checkFoeContact();
+    try {
+      const dt = Math.min(50, t - (G.last || t));
+      G.last = t;
+      try {
+        if (G.playing && RB.world.W.map) {
+          RB.world.update(dt, mode() === 'world');
+          // play time: everything you do in a campaign — walking, talking,
+          // writing, battles, lessons, the folio — while the page is visible and
+          // you have touched a key, the pointer or the screen in the last five
+          // minutes (a game left open does not count). It used to count walking
+          // time only, so it read far less than the time actually played.
+          if (!document.hidden && t - (G.lastInput || 0) < 300000) G.s.playtime += dt / 1000;
+          // the mode as it is now: the step just taken may have opened a scene,
+          // a map change or a battle (a tap's walk ends by facing what was tapped)
+          if (mode() === 'world') RB.world.checkFoeContact();
+        }
+      } catch (err) { loopErr('world', err); }
+      try { RB.ui.tick && RB.ui.tick(dt, t); } catch (err) { loopErr('ui', err); }
+      try { RB.render.frame(t); } catch (err) { loopErr('render', err); }
+    } finally {
+      requestAnimationFrame(loop);
     }
-    RB.ui.tick && RB.ui.tick(dt, t);
-    RB.render.frame(t);
-    requestAnimationFrame(loop);
   }
 
   function onAction(a, e) {
@@ -298,13 +313,39 @@ RB.game = (function () {
   }
 
   // ---- battles ---------------------------------------------------------------------------
+  // One battle at a time. A battle is open from the moment it is asked for until
+  // its screen has handed the map back (its closing fade included); while it is,
+  // another is refused (null). Two battles at once shared the battle screen's
+  // state: the second one came up over the map with an empty creature list and
+  // the frame loop stopped (owner's report, Chapter 2, Saltglass cove).
+  let battleOpen = 0, battleN = 0;
+  function inBattle() { return battleOpen !== 0; }
+  // a campaign changing (new, loaded, back to the title) leaves no battle open behind it
+  if (RB.bus) RB.bus.on('campaign:changing', () => { battleOpen = 0; });
   async function startBattle(enemyId, opts) {
-    opts = opts || {};
+    if (battleOpen) { console.warn('a battle is already open; not starting', enemyId); return null; }
+    const me = (battleOpen = ++battleN);
+    opts = Object.assign({}, opts);
     // where the encounter happens: its backdrop and its lines follow the
     // place, not the species (a scripted battle happens where the player is)
     const W = RB.world.W;
     if (!opts.where && W && W.map && W.player) opts.where = { map: W.map.id, x: W.player.x, y: W.player.y };
-    const res = await RB.combat.start(enemyId, opts);
+    // While the screen is dark at the end (src/ui/80_combat.js), before the map
+    // comes back: a creature you settled is gone from it, and whoever asked for
+    // the battle (a creature on the map) settles its side of it.
+    const closing = opts.closing;
+    opts.closing = (res) => {
+      if (res === 'win' && opts.foeKey && G.s) { G.s.flags[opts.foeKey] = true; RB.world.refreshActors(); }
+      if (closing) closing(res);
+    };
+    let res = null;
+    try {
+      res = await RB.combat.start(enemyId, opts);
+    } finally {
+      if (battleOpen === me) battleOpen = 0;
+      // a moment after any battle in which no creature engages (src/engine/50_world.js)
+      RB.world.hush && RB.world.hush();
+    }
     if (res === 'win' && opts.foeKey) G.s.flags[opts.foeKey] = true;
     if (res === 'win') {
       RB.world.refreshActors();
@@ -387,7 +428,7 @@ RB.game = (function () {
     set s(v) { G.s = v; },
     get settings() { return G.settings; },
     G, mode, pushMode, popMode, setBase, boot, applySettings, saveSettings, reducedMotion, fastForward, setFastForward,
-    startNewCampaign, loadCampaign, toTitle, transition, afterScene, startBattle, recruit, depart, companionTalk, rest,
+    startNewCampaign, loadCampaign, toTitle, transition, afterScene, startBattle, inBattle, recruit, depart, companionTalk, rest,
     defaultSettings, runEnterEvents,
   };
 })();

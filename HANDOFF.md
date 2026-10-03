@@ -338,6 +338,20 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
 - **Open:** a native speaker's review. Found in passing: `src/content/ch1/31_scenes_mill.js` has
   `{少|すこ}なくとも`, which should read すくなくとも.
 
+## One battle at a time (owner's reports of 2026-10-03) — REQUIREMENTS.md BO1–BO5, VALIDATION.md "Battles one at a time"
+- **Causes:**
+  - A creature still touching you during a battle's closing fade started a second battle, and the first's teardown
+    then broke it.
+  - Contact was checked against a stale mode.
+  - Scene ends put creatures back on their starting tiles.
+- **Fix:**
+  - `RB.game.startBattle` refuses while a battle is open or closing (`RB.game.inBattle()`), and win handling runs
+    while the screen is dark (`opts.closing` in `src/ui/80_combat.js`).
+  - `canEngage()` and `RB.world.hush` in `src/engine/50_world.js`; creatures you stepped back from back off and stay
+    calm; `refreshActors` keeps creatures in place.
+  - The frame loop survives errors.
+- **Test:** `tests/e2e/battle_overlap.mjs`, in the default suite.
+
 ## Commands
 - Build: `node tools/build.mjs`
 - Content validation: `node tools/validate.mjs [--filter sg] [--unknown]`

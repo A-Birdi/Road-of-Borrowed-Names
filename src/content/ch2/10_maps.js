@@ -211,7 +211,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- interiors -------------------------------------------------------------------------------------
   function interior(id, name, w, h, doorX, back, extra) {
     C.maps[id] = Object.assign({
-      name, region: 'saltglass', music: null, noTravel: true,
+      name, region: 'saltglass', music: null, noTravel: true, travelKind: 'interior',
       terrain: K.room(w, h, '_', doorX),
       props: [],
       npcs: [],
@@ -358,6 +358,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }
     C.maps['sg.lighthouse_top'] = {
       name: T('Top of the Lighthouse', '{灯台|とうだい} の {上|うえ}'), region: 'saltglass', music: null, noTravel: true,
+      travelKind: 'dungeon', travelPlace: { en: 'the lighthouse' }, // up a tower: travel from the ground (src/engine/52_travel.js)
       surround: { below: 'sg.harbor', at: [2.5, 31.7], hide: [1, 29, 3, 3], scale: 0.3, drop: 1.9, shaft: 'stone', top: 2, foot: 1.5, beyond: { left: 'water' } },
       ambient: { weather: null, sea: 'calm' },
       alt: [{ if: 'sg_fog_cleared', ambient: { weather: null, sea: 'wind' } }],
@@ -413,7 +414,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- The fishers' cove -----------------------------------------------------------------------------
   C.maps['sg.cove'] = {
-    name: { en: "The Fishers' Cove", jp: '{漁師|りょうし} の {入|い}り{江|え}' }, region: 'saltglass', music: 'quiet_road', noTravel: true,
+    name: { en: "The Fishers' Cove", jp: '{漁師|りょうし} の {入|い}り{江|え}' }, region: 'saltglass', music: 'quiet_road',
     terrain: K.build(30, 20, 's', (k) => {
       k.rect(0, 0, 30, 4, '^');
       k.ragged('top', '^', 5, 51);
@@ -444,7 +445,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
 
   // ---- The Drowned Archive ------------------------------------------------------------------------------
-  const DA = { region: 'archive', music: 'drowned_archive', noTravel: true, ambient: { weather: 'pages', dark: 0.42, playerLight: 52, tint: 'rgba(40,70,110,0.10)' } };
+  const DA = { region: 'archive', music: 'drowned_archive', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the Drowned Archive' }, ambient: { weather: 'pages', dark: 0.42, playerLight: 52, tint: 'rgba(40,70,110,0.10)' } };
   C.maps['sg.da_entry'] = Object.assign({}, DA, {
     name: { en: 'Drowned Archive — Receiving Hall', jp: '{沈|しず}んだ{書庫|しょこ}・{受付|うけつけ}' },
     terrain: K.build(24, 18, '#', (k) => {

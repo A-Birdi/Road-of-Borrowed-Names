@@ -76,7 +76,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- the mill -----------------------------------------------------------------------
   C.maps['rw.mill1'] = {
-    name: T('The Old Mill', '{古|ふる}い {水車|すいしゃ}{小屋|ごや}'), region: 'reedwake', music: 'mill', noTravel: true,
+    name: T('The Old Mill', '{古|ふる}い {水車|すいしゃ}{小屋|ごや}'), region: 'reedwake', music: 'mill', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the Old Mill' },
     ambient: { dark: 0.45, playerLight: 52, weather: 'motes' },
     terrain: K.build(15, 12, '#', (k) => { k.rect(1, 2, 13, 9, '_'); k.set(7, 11, '_'); k.rect(11, 8, 2, 2, '+'); }),
     props: [
@@ -99,7 +99,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     spawn: { default: [7, 10, 'up'] },
   };
   C.maps['rw.mill2'] = {
-    name: T('The Mill Loft', '{屋根裏|やねうら}'), region: 'reedwake', music: 'mystery', noTravel: true,
+    name: T('The Mill Loft', '{屋根裏|やねうら}'), region: 'reedwake', music: 'mystery', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the Old Mill' },
     ambient: { dark: 0.5, playerLight: 48, weather: 'motes' },
     terrain: K.build(13, 9, '#', (k) => { k.rect(1, 2, 11, 6, '_'); }),
     props: [
@@ -115,7 +115,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // the ladder is a special exit: stepping onto the bottom of the loft ladder goes down
   C.maps['rw.mill2'].terrain = K.build(13, 9, '#', (k) => { k.rect(1, 2, 11, 6, '_'); k.set(2, 8, '_'); });
   C.maps['rw.mill0'] = {
-    name: T('The Wheel Pit', '{水車|すいしゃ} の {下|した}'), region: 'reedwake', music: 'mill', noTravel: true,
+    name: T('The Wheel Pit', '{水車|すいしゃ} の {下|した}'), region: 'reedwake', music: 'mill', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the Old Mill' },
     ambient: { dark: 0.55, playerLight: 46 },
     terrain: K.build(16, 10, '#', (k) => { k.rect(1, 2, 14, 7, '+'); k.rect(6, 2, 3, 7, '~'); k.hline(6, 8, 5, 'b'); k.set(2, 9, '+'); }),
     props: [

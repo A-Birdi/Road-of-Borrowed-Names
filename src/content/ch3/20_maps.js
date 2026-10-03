@@ -174,6 +174,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Dusk: the village gathers in the square (the assembly runs as one scene).
   C.maps['co.eve'] = {
     name: T('Cinder Orchard at dusk', '{夕暮|ゆうぐ}れ の {灰実|はいみ}'), region: 'cinder', music: 'sorrow', noTravel: true,
+    noTravelWhy: { en: 'The village is gathered in the square for the evening. Travel works again once it\'s over.' },
     ambient: { weather: 'leaves', tint: 'rgba(200,90,40,0.16)', dark: 0.25, darkCol: '60,20,10', playerLight: 40 },
     terrain: villageTerrain(), structs: villageStructs.map((s) => Object.assign({}, s, { to: undefined, lit: true })),
     props: villageProps.filter((p) => p.p !== 'co_seat' && p.p !== 'co_glasslantern').concat([
@@ -195,6 +196,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Festival night.
   C.maps['co.festival'] = {
     name: T('The Autumn Festival', '{秋祭|あきまつ}り'), region: 'cinder', music: 'cinder', noTravel: true,
+    noTravelWhy: { en: 'Tonight is the festival — the road can wait until tomorrow. When you\'re ready, climb the fire lookout at the corner of the square.' },
     ambient: { weather: 'fireflies', dark: 0.55, darkCol: '20,10,30', playerLight: 46 },
     terrain: villageTerrain(), structs: villageStructs.map((s) => Object.assign({}, s, { to: undefined, lit: true })),
     props: villageProps.filter((p) => p.p !== 'co_seat' && p.p !== 'co_glasslantern' && p.p !== 'co_lookout').concat([
@@ -233,7 +235,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ======================================================================================
   function interior(id, name, w, h, doorX, backXY, extra) {
     C.maps[id] = Object.assign({
-      name, region: 'cinder', music: null, noTravel: true,
+      name, region: 'cinder', music: null, noTravel: true, travelKind: 'interior',
       terrain: K.room(w, h, '_', doorX),
       props: [{ p: 'exitmat', x: doorX, y: h - 2 }],
       npcs: [],
@@ -417,7 +419,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Dungeon 1: the upper terraces (burned twenty years ago, replanted in rows)
   // ======================================================================================
   C.maps['co.upper'] = {
-    name: T('The Upper Terraces', '{上|うえ} の {段|だん}'), region: 'cinder', music: 'mystery', noTravel: true,
+    name: T('The Upper Terraces', '{上|うえ} の {段|だん}'), region: 'cinder', music: 'mystery',
     ambient: { weather: 'motes', tint: 'rgba(90,70,60,0.12)' },
     legend: { Y: { tile: 'ash', prop: 'orchard' }, Z: { tile: 'ash', prop: 'stump' } },
     terrain: K.build(40, 30, 'a', (k) => {
@@ -465,7 +467,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Dungeon 2: the old workshop row (burned shells) + ice house
   // ======================================================================================
   C.maps['co.oldworks'] = {
-    name: T('The Old Workshop Row', '{古|ふる}い {工房|こうぼう}{通|どお}り'), region: 'cinder', music: 'mystery', noTravel: true,
+    name: T('The Old Workshop Row', '{古|ふる}い {工房|こうぼう}{通|どお}り'), region: 'cinder', music: 'mystery',
     ambient: { weather: 'motes', tint: 'rgba(100,60,40,0.14)', dark: 0.12 },
     terrain: K.build(40, 26, 'a', (k) => {
       k.ragged('left', 'n', 2, 341).ragged('right', 'n', 2, 342);
@@ -519,7 +521,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
 
   C.maps['co.icehouse'] = {
-    name: T('The Ice House', '{氷室|ひむろ}'), region: 'cinder', music: null, noTravel: true,
+    name: T('The Ice House', '{氷室|ひむろ}'), region: 'cinder', music: null, noTravel: true, travelKind: 'interior',
     ambient: { dark: 0.35, tint: 'rgba(150,200,255,0.12)', playerLight: 40 },
     terrain: K.build(11, 10, '#', (k) => { k.rect(1, 2, 9, 7, 'i'); k.rect(4, 6, 3, 3, '+'); k.set(5, 9, '+'); }),
     props: [
@@ -537,7 +539,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Dungeon 3: inside the great climbing kiln — three chambers stepping uphill
   // ======================================================================================
   C.maps['co.kiln'] = {
-    name: T('The Great Kiln', '{大窯|おおがま}'), region: 'cinder', music: 'kiln', noTravel: true,
+    name: T('The Great Kiln', '{大窯|おおがま}'), region: 'cinder', music: 'kiln', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the Great Kiln' },
     ambient: { weather: 'embers', dark: 0.45, darkCol: '30,8,4', tint: 'rgba(255,110,40,0.08)', playerLight: 48 },
     terrain: K.build(30, 24, '#', (k) => {
       k.rect(2, 17, 26, 5, '+');           // chamber 1 (lowest, firemouth side)
@@ -575,7 +577,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
 
   C.maps['co.kiln_core'] = {
-    name: T("The Kiln's Heart", '{窯|かま}の{奥|おく}'), region: 'cinder', music: 'kiln', noTravel: true,
+    name: T("The Kiln's Heart", '{窯|かま}の{奥|おく}'), region: 'cinder', music: 'kiln', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the Great Kiln' },
     ambient: { weather: 'embers', dark: 0.4, darkCol: '40,8,0', tint: 'rgba(255,90,30,0.12)', playerLight: 50 },
     terrain: K.build(15, 12, '#', (k) => { k.rect(1, 2, 13, 9, 'g'); k.scatter('a', 20, 361, [1, 2, 13, 9], 'g'); k.set(7, 11, 'g'); }),
     props: [
@@ -594,7 +596,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // it at the foot of its timber legs; src/engine/61_below.js): the festival with its lanterns
   // while you are up there that night (until the evening's reflection is over), the village after.
   C.maps['co.lookout'] = {
-    name: T('The Lookout', '{火|ひ}の{見|み}{櫓|やぐら}'), region: 'cinder', music: 'quiet_road', noTravel: true,
+    name: T('The Lookout', '{火|ひ}の{見|み}{櫓|やぐら}'), region: 'cinder', music: 'quiet_road',
     ambient: { weather: 'fireflies', dark: 0.5, darkCol: '14,8,26', playerLight: 44 },
     surround: { below: [{ if: '!seen.co.reflection', map: 'co.festival' }, { map: 'co.village' }], at: [12, 12.9], hide: [11, 11, 2, 2], scale: 0.4, drop: 2.4, shaft: 'timber', top: 3, foot: 1.1 },
     terrain: K.build(16, 12, 'x', (k) => { k.rect(5, 4, 6, 4, '_'); }),
