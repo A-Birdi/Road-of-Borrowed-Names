@@ -4,15 +4,17 @@
  * 88_harmony_hair.js, 88_harmony_acc.js) in a pose-aware layer order. The
  * contract (§6.4 of the Harmony addendum), back to front:
  *
- *   hairBack · far earring · cape (back) · far arm when behind the body ·
- *   neck · torso/clothing · straps and chest pieces · scarf · head (face,
+ *   cape (back) · back hair · far earring · neck · torso/clothing (a hanging
+ *   arm is part of it) · straps and chest pieces · scarf · head (face, near
  *   ear) · hair cap · glasses · fringe and side locks · brows · head
- *   accessories · near earring · near arm and hand · what the hand holds ·
- *   effects
+ *   accessories · near earring · far arm, what it holds, far hand · near
+ *   arm, what it holds, near hand · lamp glow · held in front · ink · effects
  *
- * A pose may move a hand in front of the face (the far hand at Ren's glasses
- * as he arrives): that hand's layer is then placed after the head's, so it
- * covers part of a lens while the frame stays drawn and attached beneath it.
+ * A raised arm comes after the head, so a hand may cross the face (the far
+ * hand at Ren's glasses as he arrives): it covers part of a lens while the
+ * frame, drawn beneath, stays whole and attached. Held things sit between
+ * the sleeve and the fingers (a brush shaft, a vial) or hang in front (the
+ * lamp).
  *
  * Poses: 'rally' (the player: grounded, determined, the writing hand
  * gathering ink on the brush toward the shared action), 'route' (Nao),
@@ -36,7 +38,7 @@ RB.harmonyKit = RB.harmonyKit || {};
   // ---- appearance ------------------------------------------------------------------------------------
   // Everything the art needs from a look (the player's effective look, or a companion's canonical one
   // with their portrait traits), as plain data; also the cache key's source.
-  const ART_FIELDS = ['skin', 'hair', 'hairColor', 'outfit', 'cloth', 'shape', 'acc', 'scarfCol', 'scarfStripe', 'ribbonCol', 'hatCol', 'wrapCol', 'bandCol', 'flowerCol', 'capeCol', 'sashCol', 'earCol', 'capCol', 'leafCol', 'bellCol', 'cordCol', 'size', 'age', 'bigSatchel'];
+  const ART_FIELDS = ['skin', 'hair', 'hairColor', 'outfit', 'cloth', 'shape', 'acc', 'scarfCol', 'scarfStripe', 'ribbonCol', 'hatCol', 'wrapCol', 'bandCol', 'flowerCol', 'capeCol', 'sashCol', 'earCol', 'capCol', 'leafCol', 'bellCol', 'cordCol', 'glassCol', 'size', 'age', 'bigSatchel'];
   function artLook(look) {
     look = look || {};
     const o = {};
@@ -282,87 +284,10 @@ RB.harmonyKit = RB.harmonyKit || {};
   }
   HK.HANDS = HANDS; HK.drawHandTpl = drawHandTpl;
 
-  // ---- hands -----------------------------------------------------------------------------------------------
-  // Hands are authored in a hand space (the wrist at the origin, the fingers pointing up, -y) and turned by
-  // `ang` degrees (clockwise) onto the pose; the result is drawn as a new silhouette at that angle (never a
-  // rotated bitmap). side: 'R' (the character's right hand) or 'L'; face: 'palm' or 'back' toward us. For a
-  // right hand with its palm toward us the thumb is on our right; its back toward us, on our left.
-  function placeHand(h, wx, wy, ang) {
-    const a = (ang || 0) * Math.PI / 180, c = Math.cos(a), s = Math.sin(a);
-    const R = (p) => [wx + p[0] * c - p[1] * s, wy + p[0] * s + p[1] * c, p[2]];
-    return {
-      palm: h.palm.map(R),
-      palmShade: h.palmShade ? (x, y) => { const dx = x - wx, dy = y - wy; return h.palmShade(dx * c + dy * s, -dx * s + dy * c); } : null,
-      fingers: (h.fingers || []).map((f) => ({ pts: f.pts.map(R), base: f.base })),
-      thumb: h.thumb ? h.thumb.map(R) : null,
-      thumbBehind: h.thumbBehind, flowFromPalm: h.flowFromPalm,
-      at: (p) => R(p),
-    };
-  }
-  // thumb side: +1 when the thumb is on the hand space's +x side
-  const thumbSide = (side, face) => ((side === 'R') === (face === 'palm') ? 1 : -1);
-  // An open hand, fingers fanned (spread 0..1), a little curled (curl 0..1).
-  function handOpen(side, face, spread, curl) {
-    const t = thumbSide(side, face), sp = spread == null ? 0.6 : spread, cu = curl || 0;
-    const X = (x) => x * t;
-    const fingers = [];
-    // pinky → index (far from the thumb first, so the index overlaps toward the thumb)
-    const F = [[-3.6, -8.6, 6.6, -18], [-1.4, -9.8, 8.4, -6], [1, -10, 8.8, 4], [3.2, -9.2, 7.8, 14]];
-    for (const [bx, by, len, deg] of F) {
-      const a = (deg * sp + 0) * Math.PI / 180 * t;
-      const ux = Math.sin(a), uy = -Math.cos(a);
-      const mid = [bx + ux * len * 0.55, by + uy * len * 0.55];
-      const tip = [bx + ux * len * (1 - cu * 0.25) + t * cu * 1.2, by + uy * len * (1 - cu * 0.3)];
-      fingers.push({ pts: [[X(bx), by, 1.55], [X(mid[0]), mid[1], 1.5], [X(tip[0]), tip[1], 1.2]] });
-    }
-    return {
-      palm: [[X(-4.2), 0.6], [X(-4.6), -6], [X(-3.8), -9.6], [X(0), -10.6], [X(3.8), -9.8], [X(4.8), -4.4], [X(3.6), 0.8]],
-      palmShade: (x, y) => (x * t > 1.6 && y > -5 ? 3 : y > -1.6 ? 3 : (Math.abs(x * t - 0.6) < 0.6 && y < -3 && y > -8) ? 3 : 4),
-      fingers,
-      thumb: [[X(3.6), -2.6, 1.9], [X(6.6), -6, 1.7], [X(8.2), -9.4 + cu * 2, 1.35]],
-    };
-  }
-  // A hand pointing with the index finger (the others folded), seen from its back.
-  function handPoint(side, ext) {
-    const t = thumbSide(side, 'back'), e = ext == null ? 1 : ext;
-    const X = (x) => x * t;
-    return {
-      palm: [[X(-4), 0.6], [X(-4.6), -5.4], [X(-3.6), -9], [X(3.2), -9.6], [X(4.6), -6], [X(4), 0.6]],
-      palmShade: (x, y) => (x * t > 2.4 ? 3 : y < -7.8 ? 5 : 4),
-      fingers: [
-        // folded middle, ring and little fingers: knuckles across the top, the bent fingers below them
-        { pts: [[X(-3.2), -9, 1.6], [X(-3.6), -11.2, 1.6], [X(-3.2), -8.4, 1.4]], base: 3 },
-        { pts: [[X(-0.8), -9.4, 1.7], [X(-1), -11.8, 1.7], [X(-0.8), -8.6, 1.5]], base: 4 },
-        { pts: [[X(1.6), -9.6, 1.7], [X(1.6), -12, 1.7], [X(1.8), -9, 1.5]], base: 4 },
-        // the index, straight out
-        { pts: [[X(3.4), -9, 1.6], [X(3.8 - (1 - e) * 1), -14 + (1 - e) * 3, 1.5], [X(4 - (1 - e) * 2.4), -19.4 + (1 - e) * 7.6, 1.25]], base: 4 },
-      ],
-      thumb: [[X(-3.6), -3, 1.8], [X(-5.6), -7, 1.6], [X(-4.4), -10, 1.3]],
-      thumbBehind: false, flowFromPalm: false,
-    };
-  }
-  // A hand closed round something upright (held along the hand space's y axis through x = 0), seen from
-  // the thumb's side: the thumb over the front, the curled fingers' knuckles down the far side.
-  function handGrip(side, face) {
-    const t = thumbSide(side, face);
-    const X = (x) => x * t;
-    return {
-      palm: [[X(-3.6), 1], [X(-4.6), -4], [X(-3.8), -9.4], [X(2.6), -10], [X(4.6), -6], [X(4.2), 0.6]],
-      palmShade: (x, y) => (x * t < -2 ? 3 : 4),
-      fingers: [
-        { pts: [[X(-2.6), -9.6, 1.7], [X(-5.6), -9, 1.7], [X(-5.6), -6.4, 1.5]], base: 3 },
-        { pts: [[X(-2.8), -6.8, 1.7], [X(-6), -6.2, 1.7], [X(-6), -3.6, 1.5]], base: 3 },
-        { pts: [[X(-2.8), -3.8, 1.6], [X(-5.6), -3.2, 1.6], [X(-5.4), -0.8, 1.4]], base: 3 },
-      ],
-      thumb: [[X(3.2), -4.6, 1.9], [X(1.4), -9.6, 1.7], [X(-1.4), -11.4, 1.4]],
-      flowFromPalm: false,
-    };
-  }
-  HK.handOpen = handOpen; HK.handPoint = handPoint; HK.handGrip = handGrip; HK.placeHand = placeHand;
 
   // ---- props ---------------------------------------------------------------------------------------------------
   const PROP = {
-    wood: () => HK.M('brushWood', '#8a6038', { n: 5, at: 3, step: 0.1, cool: 350, warm: 48, lineCol: '#1c0e06' }),
+    wood: () => HK.M('brushWood', '#b0814c', { n: 5, at: 3, step: 0.1, cool: 350, warm: 48, lineCol: '#1c0e06' }),
     ink: () => HK.M('ink', '#24203a', { n: 4, at: 1, step: 0.08, cool: 250, warm: 230, lineCol: '#08060e' }),
     inkfx: () => HK.M('inkfx', '#262248', { n: 5, at: 1, step: 0.13, cool: 250, warm: 210, lineCol: '#06040c' }),
     route: () => HK.M('route', '#c8962e', { n: 5, at: 3, step: 0.1, cool: 20, warm: 56, lineCol: '#2a1404' }),
@@ -464,19 +389,19 @@ RB.harmonyKit = RB.harmonyKit || {};
       }
     }
   }
-  // a route-like ink stroke: dashes along a gentle arc, a small dot at its end
+  // a route-like ink stroke in Nao's gold: dashes along a gentle curve and a small waypoint at its end
   function route(L, pts) {
     const Mi = PROP.route();
-    const sm = HK.smooth(pts.map((p) => [p[0], p[1], 0.9]), 8);
+    const sm = HK.smooth(pts.map((p) => [p[0], p[1], 1.05]), 10);
     let run = 0;
     for (let i = 1; i < sm.length; i++) {
       run++;
-      if (run % 5 >= 3) continue;
-      HK.strand(L, [sm[i - 1], sm[i]], Mi, { raw: true, base: 2, tipDark: 0, seam: false });
+      if (run % 6 >= 4) continue;
+      HK.strand(L, [sm[i - 1], sm[i]], Mi, { raw: true, base: 3, tipDark: 0, seam: false });
     }
     const e = pts[pts.length - 1];
-    HK.strand(L, [[e[0], e[1], 1.5], [e[0] + 0.4, e[1], 1.5]], Mi, { raw: true, base: 2, tipDark: 0, seam: false });
-    HK.put(L, Math.floor(e[0] - 0.6), Math.floor(e[1] - 0.6), Mi, 4);
+    const X = Math.floor(e[0]), Y = Math.floor(e[1]);
+    for (const [dx, dy, k] of [[0, -1, 4], [-1, 0, 4], [0, 0, 3], [1, 0, 2], [0, 1, 2]]) HK.put(L, X + dx, Y + dy, Mi, k);
   }
   function glint(L, x, y) {
     const W = HK.flat('#fffbe8'), G = HK.flat('#ffd870');
@@ -512,13 +437,13 @@ RB.harmonyKit = RB.harmonyKit || {};
     let wr, el, ang;
     if (hold) {
       if (cmp) { wr = [29, -2]; el = [27, 14]; ang = 34; } else { wr = [35, 2]; el = [32, 17]; ang = 34; }
-    } else if (cmp) { wr = [-2, 6]; el = [16, 12]; ang = -22; }
-    else { wr = [-2, 8]; el = [17, 16]; ang = -22; }
+    } else if (cmp) { wr = [-2, 6]; el = [16, 12]; ang = -50; }
+    else { wr = [-2, 8]; el = [17, 16]; ang = -50; }
     p.farArm = { sh: [20, 2], el, wr, w0: 5.4, w1: 4.6, w2: 3.8, tpl: 'gripL' };
     const g = handAt(p.farArm, HANDS.gripL.hold);
     const a = ang * Math.PI / 180, ux = Math.sin(a), uy = -Math.cos(a);
-    const len = hold ? (cmp ? 21 : 26) : (cmp ? 20 : 23);
-    const from = [g[0] + 0.5 - ux * 8, g[1] + 2 - uy * 8], to = [from[0] + ux * len, from[1] + uy * len];
+    const len = hold ? (cmp ? 21 : 26) : (cmp ? 24 : 27), back = hold ? 8 : 5;
+    const from = [g[0] + 0.5 - ux * back, g[1] + 2 - uy * back], to = [from[0] + ux * len, from[1] + uy * len];
     p.props = (S, ax, ay, opt) => {
       brush(S.L('farHeld'), ax, ay, { from, to });
       if (hold && opt.fx) inkGather(S.L('ink'), ax, ay, to, [ux, uy]);
@@ -561,7 +486,7 @@ RB.harmonyKit = RB.harmonyKit || {};
     const tip = handAt(p.farArm, HANDS[p.farArm.tpl].tip);
     p.props = (S, ax, ay, opt) => {
       // (the compact pair has no room for it beside the player's face: particles go before faces, §5.4)
-      if (hold && opt.fx && !cmp) p.overlay = { kind: 'route', pts: [[ax + tip[0] + 3, ay + tip[1]], [ax + tip[0] + 9, ay + tip[1] - 3], [ax + tip[0] + 13, ay + tip[1] - 10]] };
+      if (hold && opt.fx && !cmp) p.overlay = { kind: 'route', pts: [[ax + tip[0] + 3, ay + tip[1]], [ax + tip[0] + 9, ay + tip[1] - 2], [ax + tip[0] + 13, ay + tip[1] - 7], [ax + tip[0] + 14, ay + tip[1] - 12]] };
     };
     return p;
   };
@@ -572,7 +497,7 @@ RB.harmonyKit = RB.harmonyKit || {};
     const hold = ph === 'hold', cmp = v === 'compact';
     const p = {
       head: [0, hold ? 0 : 1], settle: hold ? 0 : 2,
-      expr: hold ? { near: { smile: true }, far: { smile: true }, brow: 'soft', mouth: 'soft' } : { near: {}, far: {}, brow: 'soft', mouth: 'calm' },
+      expr: hold ? { near: { smile: true }, far: { smile: true }, brow: 'soft', mouth: 'soft', blush: true } : { near: {}, far: {}, brow: 'soft', mouth: 'calm' },
       arms: { near: 'up', far: 'down' },
     };
     let wr, el, ang;
@@ -613,13 +538,35 @@ RB.harmonyKit = RB.harmonyKit || {};
     return p;
   };
 
+  // The cool rim light of the battle figures (docs/battle/party.md): down the right-hand silhouette, the pixel
+  // just inside the outline takes a step toward a cool sky blue, so the bust turns in the same light.
+  function rim(L) {
+    const w = L.w, px = L.px, src = px.slice();
+    const A = (i) => src[i] >>> 24;
+    const lum = (c) => (c & 255) * 0.3 + ((c >> 8) & 255) * 0.59 + ((c >> 16) & 255) * 0.11;
+    for (let y = 1; y < L.h - 1; y++) for (let x = 1; x < w - 2; x++) {
+      const i = y * w + x;
+      if (A(i) < 255 || A(i + 1) < 255 || A(i + 2)) continue;          // two pixels in from an empty one, on the right
+      const c = src[i], o = src[i + 1];
+      if (lum(o) > 90 || lum(c) < 40) continue;                         // i + 1 must be the dark outline; skip near-blacks
+      const k = 0.36;
+      const r = (c & 255) * (1 - k) + 0x8e * k, g = ((c >> 8) & 255) * (1 - k) + 0xc0 * k, b = ((c >> 16) & 255) * (1 - k) + 0xff * k;
+      px[i] = ((255 << 24) | (Math.round(b) << 16) | (Math.round(g) << 8) | Math.round(r)) >>> 0;
+    }
+  }
+  HK.rim = rim;
+
   // ---- assembling a bust -------------------------------------------------------------------------------
   // who: 'pc' | 'nao' | 'mio' | 'ren' | 'suzu'; look: the player's effective look (ignored for companions);
   // pose: a POSES key; ph: 'enter' | 'hold'; variant: 'standard' | 'compact'.
   function drawBust(who, look, pose, ph, variant, opt) {
     opt = opt || {};
     let traits = { eyes: 'round' };
-    if (who !== 'pc') { const c = compLook(who); look = c.look; traits = c.traits; }
+    if (who !== 'pc') {
+      const c = compLook(who);
+      if (!c) throw new Error('harmony art: no companion "' + who + '" in RB.content.chars');
+      look = c.look; traits = c.traits;
+    }
     const d = dress(look);
     const S = new Stack(BW, BH);
     const P = (POSES[pose] || POSES.rally)(ph, variant);
@@ -627,7 +574,7 @@ RB.harmonyKit = RB.harmonyKit || {};
     const hx = ax + HEAD_AT[0] + (P.head ? P.head[0] : 0), hy = ay + HEAD_AT[1] + (P.head ? P.head[1] : 0);
     const H = HK.HEAD;
     const style = d.style;
-    const hc = { hx, hy, M: d.Mh, look, s: P.settle || 0, traits, d };
+    const hc = { hx, hy, M: d.Mh, look, s: P.settle || 0, traits, d, head: S.L('head') };
     // hair behind
     HK.hairPart('back', style, Object.assign({ L: S.L('hairBack') }, hc));
     // neck, torso
@@ -647,10 +594,13 @@ RB.harmonyKit = RB.harmonyKit || {};
     const ex = P.expr || {};
     HK.eye(head, hx + H.eyeN.x, hy + H.eyeN.y, 'near', Object.assign({ style: traits.eyes }, ex.near), d.F);
     HK.eye(head, hx + H.eyeF.x, hy + H.eyeF.y, 'far', Object.assign({ style: traits.eyes }, ex.far), d.F);
+    if (ex.blush) { // a warm flush across both cheeks, under the eyes
+      for (const [x0, w] of [[H.eyeN.x - 3, 5], [H.eyeF.x - 1, 3]]) for (let i = 0; i < w; i++) { HK.put(head, hx + x0 + i, hy + H.eyeN.y + 6, d.F.blush, 0); if (i % 2 === 0) HK.put(head, hx + x0 + i + 1, hy + H.eyeN.y + 7, d.F.blush, 0); }
+    }
     HK.nose(head, hx, hy, d.F.skin);
     HK.mouth(head, hx, hy, ex.mouth || 'firm', d.F);
     let mole = null;
-    if (traits.mole) { mole = { x: hx + 12, y: hy + 14 }; HK.put(head, mole.x, mole.y, d.F.lash, 0); }
+    if (traits.mole) { mole = { x: hx + 10, y: hy + 12 }; HK.put(head, mole.x, mole.y, d.F.lash, 0); }
     // accessories
     const ac = { S, hx, hy, ax, ay, look, d, arms: P.arms || {}, s: P.settle || 0, who };
     const accRes = HK.drawAcc(ac);
@@ -676,6 +626,7 @@ RB.harmonyKit = RB.harmonyKit || {};
     // the layering contract (a pose can move a hand in front of the face: P.order)
     const order = P.order || ['capeBack', 'hairBack', 'earF', 'neck', 'torso', 'chest', 'scarf', 'head', 'cap', 'glasses', 'front', 'brows', 'headAcc', 'earN', 'farArm', 'farHeld', 'farHand', 'nearArm', 'nearHeld', 'nearHand', 'glow', 'held', 'ink', 'fx'];
     const out = S.flatten(order, ['brows', 'fx', 'glasses', 'glow']);
+    rim(out);
     const face = { x: hx - 17, y: hy - 11, w: 36, h: 33 };
     const box = (L) => { let x0 = 1e9, y0 = 1e9, x1 = -1, y1 = -1; if (L) for (let i = 0; i < L.px.length; i++) if (L.px[i]) { const x = i % L.w, y = (i / L.w) | 0; if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; } return x1 < 0 ? null : { x0, y0, x1, y1 }; };
     return { layer: out, w: BW, h: BH, anchor: { x: ax, y: ay }, face, hands, head: { x: hx, y: hy }, acc: accRes, overlay: P.overlay || null, order, mole, hairBox: { back: box(S.layers.get('hairBack')) } };

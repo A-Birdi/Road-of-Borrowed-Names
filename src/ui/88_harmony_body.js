@@ -30,6 +30,8 @@ RB.harmonyKit = RB.harmonyKit || {};
   function M(key, base, o) {
     const k = key + '|' + base + '|' + JSON.stringify(o || {});
     let m = mats.get(k);
+    // (pxkit's material table resets after very many materials: a cached one must still be the table's)
+    if (m && K().MATS[m.id] !== m) { mats.clear(); byName.clear(); m = null; }
     if (!m) {
       m = K().mat(base, o); mats.set(k, m);
       if (!byName.has(key)) byName.set(key, new Set());
@@ -61,7 +63,7 @@ RB.harmonyKit = RB.harmonyKit || {};
     const dark = l < 0.22;
     return M('hair', mid, { n: 6, at: 3, step: dark ? 0.075 : 0.085, dk: 1.0, lt: dark ? 1.2 : 0.85, cool: 255, warm: dark ? 215 : 48, shift: 1.1, lineCol: dark ? '#0c0a14' : '#1c0c14' });
   }
-  function clothMat(c, o) { return M('cloth', c, Object.assign({ n: 6, at: 3, step: 0.075, cool: 250, warm: 52, lineCol: '#120c1c' }, o)); }
+  function clothMat(c, o) { return M('cloth', c, Object.assign({ n: 6, at: 3, step: 0.088, cool: 250, warm: 52, lineCol: '#120c1c' }, o)); }
   function metalMat(c) { return M('metal', c || '#e0b850', { n: 5, at: 3, step: 0.13, cool: 20, warm: 56, lineCol: '#2a1408' }); }
   function leatherMat(c) { return M('leather', c || '#8a6a3a', { n: 5, at: 3, step: 0.08, cool: 350, warm: 45, lineCol: '#1c0e08' }); }
   HK.M = M; HK.flat = flat; HK.skinMat = skinMat; HK.hairMat = hairMat; HK.clothMat = clothMat; HK.metalMat = metalMat; HK.leatherMat = leatherMat;

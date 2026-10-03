@@ -1,6 +1,6 @@
 /* Harmony portrait busts — the figure below the head: shoulders and chest in
  * each garment's construction (tunic, robe, coat, apron, dress, and the high
- * collar), sleeves on posed arms, and articulated hands.
+ * collar) and sleeves on posed arms.
  *
  * Anchor space: (0, 0) is the pit of the neck, x to the right, y down, art
  * px. The body is turned a little less than the head (about 20° to the
@@ -8,9 +8,7 @@
  * Cloth is shaded as planes round a turned cylinder, lit from the upper
  * left: the near shoulder's top and the near chest take the light, the far
  * side falls into shadow, and folds are drawn as a lit ridge beside a dark
- * crease. Hands are built from a palm and jointed fingers (each a tapered
- * capsule on two segments) laid as one silhouette, with dark lines where
- * fingers touch; what a hand holds is drawn by the pose (88_harmony_cast.js). */
+ * crease. The hands are authored drawings in 88_harmony_cast.js. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.harmonyKit = RB.harmonyKit || {};
@@ -66,21 +64,29 @@ RB.harmonyKit = RB.harmonyKit || {};
     return SIDES.near[arms.near === 'up' ? 'up' : 'down'].concat(SIDES.far[arms.far === 'up' ? 'up' : 'down']);
   }
   // Cloth shading round the turned body. Returns a step for (x, y) in anchor space.
+  // Cloth as planes round the turned body: the near chest and shoulder in the light, a broad half-tone down
+  // the front, the far side in shadow with a deeper band at its edge; the shoulders' tops face the sky.
   function clothStep(x, y, o) {
-    const nx = (x + 4) / 31;
+    const nx = (x + 5) / 31;
     let k = 3;
-    if (nx < -0.42) k = 4;
-    if (nx > 0.52) k = 2;
-    if (nx > 0.86) k = 1;
-    // the tops of the shoulders face the sky
+    if (nx < -0.36) k = 4;
+    if (nx > 0.4) k = 2;
+    if (nx > 0.8) k = 1;
     const sl = y - (Math.abs(x) * 0.42 - 10.4);
-    if (sl < 3.4 && x < -6) k = Math.max(k, 4);
-    if (sl < 2.2 && x < -12) k = 5;
+    if (sl < 3.6 && x < -6) k = Math.max(k, 4);
+    if (sl < 2.2 && x < -13) k = 5;
     if (sl < 3 && x > 8) k = Math.max(k, 3);
-    // the near sleeve (arm down): its own cylinder, lit on the outside
-    if (o && o.nearDown && x < -24.5 - (y > 12 ? 0.6 : 0) && y > 4) k = x < -31.5 ? 4 : x < -27.5 ? 3 : 2;
-    if (o && o.farDown && x > 21.5 && y > 5) k = x > 25 ? 1 : 2;
+    // the head's shadow on the chest under the chin, a shallow crescent
+    if (y < 3 + Math.max(0, 5 - Math.abs(x - 3) * 0.5) && y > -9 && Math.abs(x - 2) < 11) k = Math.min(k, 2);
+    // the near sleeve (arm down): its own cylinder, lit on the outside; the far sleeve in shadow
+    if (o && o.nearDown && x < -24.5 - (y > 12 ? 0.6 : 0) && y > 4) k = x < -32 ? 5 : x < -29 ? 4 : x < -26.6 ? 3 : 2;
+    if (o && o.farDown && x > 21.5 && y > 5) k = x > 25.4 ? 1 : 2;
     return k;
+  }
+  // a fold: a dark crease with its lit ridge on the side toward the light (only over painted cloth)
+  function fold(L, ax, ay, xa, ya, xb, yb, Mt, deep) {
+    line(L, ax, ay, xa, ya, xb, yb, Mt, deep ? 1 : 2, true);
+    line(L, ax, ay, xa - 1, ya, xb - 1, yb, Mt, 4, true);
   }
   // The garment's torso. g: { shape, M (cloth), A (accent), Iv (ivory), arms: { near, far } }
   function torso(L, ax, ay, g) {
@@ -89,12 +95,13 @@ RB.harmonyKit = RB.harmonyKit || {};
     const o = { nearDown: arms.near !== 'up', farDown: arms.far !== 'up' };
     polyFill(L, ax, ay, pts, g.M, (x, y) => clothStep(x, y, o));
     const Mt = g.M;
-    // armhole seams and the folds that run from the near armpit toward the chest
-    if (o.nearDown) { line(L, ax, ay, -26.4, 3, -25, 17, Mt, 1, true); line(L, ax, ay, -25, 17, -25.4, 44, Mt, 2, true); line(L, ax, ay, -27.4, 4, -26.4, 17, Mt, 4, true); }
-    if (o.farDown) { line(L, ax, ay, 21.6, 3, 21, 18, Mt, 1, true); line(L, ax, ay, 21, 18, 21.2, 44, Mt, 1, true); }
-    line(L, ax, ay, -22, 22, -15, 32, Mt, 2, true); line(L, ax, ay, -21, 21, -14, 31, Mt, 4, true);
-    line(L, ax, ay, -21, 30, -16, 38, Mt, 2, true);
-    line(L, ax, ay, 16, 18, 13, 30, Mt, 1, true);
+    // armhole seams; folds from the armpits toward the chest, a crease at each elbow-side of the sleeves
+    if (o.nearDown) { line(L, ax, ay, -26.4, 3, -25, 17, Mt, 1, true); line(L, ax, ay, -25, 17, -25.4, 44, Mt, 2, true); line(L, ax, ay, -27.4, 4, -26.4, 17, Mt, 5, true); fold(L, ax, ay, -32, 18, -28, 22, Mt); fold(L, ax, ay, -33, 25, -29, 28, Mt); }
+    else { fold(L, ax, ay, -24, 8, -20, 14, Mt, true); }
+    if (o.farDown) { line(L, ax, ay, 21.6, 3, 21, 18, Mt, 0, true); line(L, ax, ay, 21, 18, 21.2, 44, Mt, 1, true); }
+    else { line(L, ax, ay, 20.4, 6, 19.6, 20, Mt, 1, true); }
+    fold(L, ax, ay, -21, 18, -14, 28, Mt); fold(L, ax, ay, -22, 25, -16, 34, Mt);
+    fold(L, ax, ay, 17, 14, 13, 26, Mt, true); fold(L, ax, ay, 19, 22, 16, 32, Mt, true);
     const sh = g.shape;
     if (sh === 'robe') robe(L, ax, ay, g);
     else if (sh === 'coat') coat(L, ax, ay, g);
@@ -164,7 +171,11 @@ RB.harmonyKit = RB.harmonyKit || {};
       put(L, Math.round(ax + x), Math.round(ay + y), A, x < 2 ? 4 : 3);
       put(L, Math.round(ax + x), Math.round(ay + y + 1), A, x < 2 ? 2 : 1);
     }
-    for (const x of [-6, -1, 5]) { line(L, ax, ay, x, 4 + Math.abs(x) * 0.1, x - 1, 12, g.M, 2, true); line(L, ax, ay, x - 1, 4, x - 2, 11, g.M, 4, true); }
+    // gathers under the neckline: short pleats fanning down from the trim
+    for (const x of [-8, -4, 0, 4, 8]) { line(L, ax, ay, x, 3 + Math.abs(x) * 0.12, x - 0.6, 13, g.M, x > 3 ? 1 : 2, true); line(L, ax, ay, x - 1, 3 + Math.abs(x) * 0.12, x - 1.6, 11, g.M, x > 3 ? 3 : 4, true); }
+    // the sleeve heads gathered into the shoulder seam
+    line(L, ax, ay, -23, -1, -29, 6, A, 2, true);
+    for (const t of [0.2, 0.5, 0.8]) { const x = -23 - 6 * t, y = -1 + 7 * t; line(L, ax, ay, x, y, x - 1.6, y + 3.4, g.M, 2, true); }
   }
   // High collar: a standing band round the neck, closed at the front, trimmed at its top edge.
   function highCollar(L, ax, ay, g) {
@@ -192,51 +203,4 @@ RB.harmonyKit = RB.harmonyKit || {};
   }
   HK.arm = arm;
 
-  // ---- hands ---------------------------------------------------------------------------------------
-  // A hand: { wrist [x, y], palm: [[x, y], ...] polygon (anchor space), fingers: [{ pts: [[x, y, halfWidth],
-  // ...] }, ...] (base → tip), thumb: same, back: true when we see the back of the hand }. Fingers listed
-  // far to near: each later one is drawn over the earlier and a dark line marks where they touch.
-  function hand(L, ax, ay, h, sk) {
-    const T = (p) => [ax + p[0], ay + p[1], p[2]];
-    const tmp = RB.pxkit.layer(L.w, L.h);
-    const owner = new Int16Array(L.w * L.h).fill(-1);
-    const parts = [];
-    if (h.thumbBehind && h.thumb) parts.push({ pts: h.thumb, thumb: true });
-    parts.push({ palm: h.palm });
-    for (const f of h.fingers || []) parts.push(f);
-    if (!h.thumbBehind && h.thumb) parts.push({ pts: h.thumb, thumb: true });
-    parts.forEach((p, idx) => {
-      const before = tmp.px.slice();
-      if (p.palm) {
-        polyFill(tmp, ax, ay, p.palm, sk, (x, y) => {
-          const t = h.palmShade ? h.palmShade(x, y) : 4;
-          return t;
-        });
-      } else {
-        HK.strand(tmp, p.pts.map(T), sk, { base: p.base || 4, lit: 1, tipDark: 0, seam: false, shade: p.shade });
-      }
-      for (let i = 0; i < tmp.px.length; i++) if (tmp.px[i] !== before[i]) {
-        // where this part covers another one, keep a dark line along the covered part's side
-        owner[i] = idx;
-      }
-    });
-    // contact lines: a pixel whose neighbour (right or below) belongs to an earlier, different part
-    for (let Y = 1; Y < L.h - 1; Y++) for (let X = 1; X < L.w - 1; X++) {
-      const i = Y * L.w + X, o = owner[i];
-      if (o < 0) continue;
-      for (const j of [i - 1, i + 1, i - L.w, i + L.w]) {
-        const p = owner[j];
-        if (p >= 0 && p < o && !parts[o].palm && !(parts[p].palm && !parts[o].thumb && h.flowFromPalm !== false)) { tmp.px[i] = sk.c[1]; tmp.mt[i] = sk.id; break; }
-      }
-    }
-    let x0 = 1e9, y0 = 1e9, x1 = -1, y1 = -1;
-    for (let i = 0; i < tmp.px.length; i++) if (tmp.px[i]) {
-      L.px[i] = tmp.px[i]; L.mt[i] = tmp.mt[i];
-      const X = i % L.w, Y = (i / L.w) | 0;
-      if (X < x0) x0 = X; if (X > x1) x1 = X; if (Y < y0) y0 = Y; if (Y > y1) y1 = Y;
-    }
-    // the outline the layer will get adds a pixel all round
-    return x1 < 0 ? null : { x: x0 - 1, y: y0 - 1, w: x1 - x0 + 3, h: y1 - y0 + 3 };
-  }
-  HK.hand = hand;
 })(RB.harmonyKit);

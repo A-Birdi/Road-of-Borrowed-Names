@@ -286,12 +286,12 @@ RB.harmonyArt = (function () {
   }
 
   // The largest integer CSS scale at which the variant's visible footprint stays inside §5.2's limits
-  // (standard: 42 % width, 30 % height, 12 % area; compact: the view's width less 16 px, 24 % height).
+  // (standard: 42 % width, 30 % height, 12 % area; compact: up to the view's width, 27 % of its height).
   function fitScale(vw, vh, variant) {
     const N = NATIVE[variant === 'compact' ? 'compact' : 'standard'];
     for (let s = 6; s >= 1; s--) {
       const w = N.w * s, h = N.h * s;
-      if (variant === 'compact') { if (w <= vw && h <= vh * 0.24) return s; continue; }
+      if (variant === 'compact') { if (w <= vw && h <= vh * 0.27) return s; continue; }
       if (w <= vw * 0.42 && h <= vh * 0.3 && w * h <= vw * vh * 0.12) return s;
     }
     return 0;

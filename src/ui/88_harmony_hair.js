@@ -25,24 +25,33 @@ RB.harmonyKit = RB.harmonyKit || {};
   const LIGHT = [-0.62, -0.78];
 
   // ---- primitives --------------------------------------------------------------------------------
-  function nearest(pts, x, y) {
-    let best = null, acc = 0, total = 0;
-    const lens = [];
-    for (let i = 1; i < pts.length; i++) { const l = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); lens.push(l); total += l; }
+  // Segments of a polyline, precomputed once: endpoints, direction, length, cumulative length, widths and a
+  // bounding box (padded by the wider end) for a quick reject.
+  function segsOf(pts) {
+    const segs = [];
+    let total = 0;
     for (let i = 1; i < pts.length; i++) {
-      const a = pts[i - 1], b = pts[i], dx = b[0] - a[0], dy = b[1] - a[1], L2 = dx * dx + dy * dy || 1e-6;
-      const u = clamp(((x - a[0]) * dx + (y - a[1]) * dy) / L2, 0, 1);
-      const px = a[0] + dx * u, py = a[1] + dy * u;
+      const a = pts[i - 1], b = pts[i], dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1e-6;
+      const wa = a[2] == null ? 2 : a[2], wb = b[2] == null ? 2 : b[2], m = Math.max(wa, wb) + 1;
+      segs.push({ ax: a[0], ay: a[1], dx, dy, L2: l * l, l, acc: total, wa, wb, nx: -dy / l, ny: dx / l, x0: Math.min(a[0], b[0]) - m, x1: Math.max(a[0], b[0]) + m, y0: Math.min(a[1], b[1]) - m, y1: Math.max(a[1], b[1]) + m });
+      total += l;
+    }
+    segs.total = total || 1;
+    return segs;
+  }
+  function nearestSeg(segs, x, y) {
+    let best = null, bd = 1e9;
+    for (let i = 0; i < segs.length; i++) {
+      const g = segs[i];
+      if (x < g.x0 || x > g.x1 || y < g.y0 || y > g.y1) continue;
+      const u = clamp(((x - g.ax) * g.dx + (y - g.ay) * g.dy) / g.L2, 0, 1);
+      const px = g.ax + g.dx * u, py = g.ay + g.dy * u;
       const d = Math.hypot(x - px, y - py);
-      if (!best || d < best.d) {
-        const l = Math.sqrt(L2), nx = -dy / l, ny = dx / l;
-        const wa = a[2] == null ? 2 : a[2], wb = b[2] == null ? 2 : b[2];
-        best = { d, t: (acc + lens[i - 1] * u) / (total || 1), s: (x - px) * nx + (y - py) * ny, seg: i - 1, u, nx, ny, dx: dx / l, dy: dy / l, w: wa + (wb - wa) * u };
-      }
-      acc += lens[i - 1];
+      if (d < bd) { bd = d; best = { d, t: (g.acc + g.l * u) / segs.total, s: (x - px) * g.nx + (y - py) * g.ny, seg: i, u, nx: g.nx, ny: g.ny, dx: g.dx / g.l, dy: g.dy / g.l, w: g.wa + (g.wb - g.wa) * u }; }
     }
     return best;
   }
+  function nearest(pts, x, y) { return nearestSeg(segsOf(pts), x, y); }
   // Catmull-Rom through control points [[x, y, w], ...] → a denser polyline (so clumps curve smoothly).
   function smooth(pts, n) {
     if (pts.length < 3) return pts;
@@ -67,12 +76,13 @@ RB.harmonyKit = RB.harmonyKit || {};
   function strand(L, ctrl, Mt, o) {
     o = o || {};
     const pts = o.raw ? ctrl : smooth(ctrl, 5);
+    const segs = segsOf(pts);
     let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
     for (const p of pts) { const w = p[2] == null ? 2 : p[2]; x0 = Math.min(x0, p[0] - w); y0 = Math.min(y0, p[1] - w); x1 = Math.max(x1, p[0] + w); y1 = Math.max(y1, p[1] + w); }
     const base = o.base == null ? 3 : o.base;
     const out = [];
     for (let Y = Math.floor(y0) - 1; Y <= Math.ceil(y1) + 1; Y++) for (let X = Math.floor(x0) - 1; X <= Math.ceil(x1) + 1; X++) {
-      const q = nearest(pts, X + 0.5, Y + 0.5);
+      const q = nearestSeg(segs, X + 0.5, Y + 0.5);
       if (!q || q.d > q.w || q.w < 0.4) continue;
       if (o.only && !o.only(X, Y)) continue;
       const u = q.s / Math.max(0.6, q.w);
@@ -370,16 +380,23 @@ RB.harmonyKit = RB.harmonyKit || {};
     front(c) { clumps(c, [SIDEBURN]); clumps(c, FR.soft); tie(c, -17.4, -12.6, 3); tie(c, 17, -14, 2.6); },
   };
   // shaved: close stubble over the cranium, a crisp hairline
+  // shaved: close stubble painted over the scalp itself (no outline of its own), a crisp hairline
   S.shaved = {
     cap(c) {
-      const L = c.L, Mt = c.Mstub || c.M;
-      mass(L, P2(c, [[-18.6, 4], [-19, -8], [-15, -20], [-6, -25], [5, -25], [14, -20], [18.6, -10], [19, -4], [15, -4], [11, -9], [3, -12], [-6, -12], [-12, -7], [-13, 0], [-15, 6]]), Mt, { cx: c.hx - 3, cy: c.hy - 12, rx: 20, ry: 16, base: 2 });
-      // the hairline's edge dissolves in a sparse ordered pattern, the skull's light shows through
-      for (let Y = c.hy - 26; Y < c.hy + 8; Y++) for (let X = c.hx - 21; X < c.hx + 21; X++) {
+      const L = c.head || c.L, sk = c.d.F.skin, Mt = c.Mstub;
+      const pts = P2(c, [[-18, 6], [-19, -8], [-15, -20], [-6, -24.6], [5, -24.6], [14, -20], [18.4, -10], [18.6, -5], [15, -5], [11, -9.6], [3, -12.6], [-6, -12.6], [-12, -8], [-13, 0], [-15, 7]]);
+      for (let Y = c.hy - 26; Y < c.hy + 9; Y++) for (let X = c.hx - 21; X < c.hx + 21; X++) {
+        if (!HK.inPoly(pts, X + 0.5, Y + 0.5)) continue;
         const i = Y * L.w + X;
-        if (!L.px[i] || L.mt[i] !== Mt.id) continue;
-        const edge = !HK.get(L, X, Y + 1) || !HK.get(L, X + 1, Y + 1) || !HK.get(L, X - 1, Y + 1);
-        if (edge && (X + Y) % 2) { L.px[i] = 0; L.mt[i] = 0; }
+        if (!L.px[i] || L.mt[i] !== sk.id) continue;
+        const x = X + 0.5 - c.hx + 3, y = Y + 0.5 - c.hy + 12;
+        const v = (-x * 0.62 - y * 0.78) / 16;
+        let k = v > 0.45 ? 3 : v > -0.3 ? 2 : 1;
+        // the hairline thins out into the skin in a sparse ordered pattern
+        const edge = !HK.inPoly(pts, X + 0.5, Y + 1.5) || !HK.inPoly(pts, X + 1.5, Y + 1.5);
+        if (edge && (X + Y) % 2) continue;
+        if (((X * 3 + Y * 5) % 7) === 0 && k < 3) k += 1;
+        put(L, X, Y, Mt, k);
       }
     },
   };
@@ -456,9 +473,12 @@ RB.harmonyKit = RB.harmonyKit || {};
       const dx = X + 0.5 - cx, dy = Y + 0.5 - cy, d = Math.hypot(dx, dy);
       if (d > r) continue;
       const t = (dx * 0.62 + dy * 0.78) / r;
-      let k = base + (t < -0.35 ? 1 : t > 0.45 ? -1 : 0);
-      if (d < r * 0.4 && t < -0.1) k = base + 1;
-      if (d > r - 0.9 && t > 0.2) k = base - 2;
+      let k = base;
+      if (t < -0.4) k = base + 1;
+      if (t < -0.62 && d > r * 0.5) k = base + 2;          // the lit crescent of the ringlet
+      if (t > 0.3) k = base - 1;
+      if (d > r - 1.1 && t > 0.05) k = base - 2;          // its shadowed rim
+      if (d < r * 0.34 && t > -0.2) k = base - 1;         // the turn of the curl
       put(L, X, Y, Mt, clamp(k, 0, 5));
     }
   }
@@ -469,7 +489,7 @@ RB.harmonyKit = RB.harmonyKit || {};
     for (const [x, y] of cells) {
       const X = Math.round(c.hx + x), Y = Math.round(c.hy + y);
       if (!HK.get(L, X, Y)) continue;
-      curl(c, x, y, 3.6, base + 1);
+      curl(c, x, y, 4 + ((x * 3 + y * 5) & 1) * 0.6, base + 1);
     }
   }
   HK.tie = tie; HK.bun = bun; HK.braid = braid; HK.curl = curl;
@@ -492,7 +512,7 @@ RB.harmonyKit = RB.harmonyKit || {};
   function hairPart(part, style, c) {
     const st = S[style] || S.short;
     if (style === 'wrap') c.Mwrap = c.Mwrap || HK.clothMat(c.look && c.look.wrapCol ? c.look.wrapCol : c.d ? c.d.cloth[2] : '#c8962e');
-    if (style === 'shaved') { const P = RB.pxkit; c.Mstub = HK.M('stubble', P.hex(P.mix(c.M.rgba[2], c.d.F.skin.rgba[3], 0.42)), { n: 4, at: 2, step: 0.06, lineCol: '#2a1416' }); }
+    if (style === 'shaved') { const P = RB.pxkit, sk = c.d.F.skin.rgba; c.Mstub = HK.M('stubble', P.hex(P.mix(c.M.rgba[2], sk[3], 0.4)), { cols: [P.hex(P.mix(c.M.rgba[1], sk[2], 0.4)), P.hex(P.mix(c.M.rgba[2], sk[3], 0.45)), P.hex(P.mix(c.M.rgba[3], sk[4], 0.5)), P.hex(P.mix(c.M.rgba[4], sk[5], 0.55))], at: 2, line: false }); }
     if (!st[part]) return;
     st[part](c);
     if (part === 'cap') {

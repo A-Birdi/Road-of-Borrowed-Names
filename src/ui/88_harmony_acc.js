@@ -178,23 +178,35 @@ RB.harmonyKit = RB.harmonyKit || {};
     HK.strand(L, [[c.hx - 19, c.hy - 14, 1.8], [c.hx - 24 - c.s, c.hy - 9, 1.6], [c.hx - 25 - c.s, c.hy - 3, 0.6]], R, { base: 3 });
     HK.strand(L, [[c.hx - 19, c.hy - 13, 1.6], [c.hx - 21 - c.s, c.hy - 5, 1.4], [c.hx - 20 - c.s, c.hy, 0.5]], R, { base: 2 });
   };
+  // Hair under a hat or cap: everything above the band is the hat's (a spike or a bun does not poke through).
+  function hideHairUnder(c, yHead) {
+    const yb = c.hy + yHead;
+    for (const name of ['cap', 'front', 'hairBack']) {
+      const L = c.S.layers.get(name);
+      if (!L) continue;
+      for (let Y = 0; Y < Math.min(L.h, yb); Y++) for (let X = c.hx - 40; X <= c.hx + 40; X++) { if (X < 0 || X >= L.w) continue; const i = Y * L.w + X; L.px[i] = 0; L.mt[i] = 0; }
+    }
+  }
   A.hat = function (c) {
     const L = c.S.L('headAcc');
     const R = mat('hat', c.look.hatCol || '#8a6a44', { n: 6, at: 3, step: 0.075 });
     const hx = c.hx, hy = c.hy;
-    // crown, then the band, then the brim seen a little from above
-    HK.polyFill(L, hx, hy, [[-17, -18], [-15, -29], [-8, -35], [4, -36], [13, -32], [17, -24], [18, -17]], R, (x, y) => {
+    hideHairUnder(c, -14);
+    // the crown (woven rows), its band, then the brim seen a little from above
+    HK.polyFill(L, hx, hy, [[-17, -15], [-16, -25], [-9, -31], [4, -32], [13, -28], [17.6, -21], [18.4, -14]], R, (x, y) => {
       let k = x < -7 ? 4 : x > 9 ? 2 : 3;
-      if ((y + 40) % 4 < 1 && k > 1) k -= 1; // woven rows
+      if (x < -11 && y < -22) k = 5;
+      if ((y + 40) % 4 < 1 && k > 1) k -= 1;
       return k;
     });
-    HK.polyFill(L, hx, hy, [[-17.6, -21], [18.4, -20], [18.6, -16.6], [-17.8, -17.4]], R, () => 1);
-    for (let Y = hy - 24; Y <= hy - 10; Y++) for (let X = hx - 33; X <= hx + 34; X++) {
+    HK.polyFill(L, hx, hy, [[-17.4, -18], [18.4, -17], [18.6, -13.6], [-17.6, -14.4]], R, (x) => (x < -8 ? 2 : 1));
+    for (let Y = hy - 21; Y <= hy - 6; Y++) for (let X = hx - 33; X <= hx + 35; X++) {
       const x = X + 0.5 - hx, y = Y + 0.5 - hy;
-      if (!HK.inEll(x, y, 1.6, -16.4, 33, 6.4)) continue;
-      if (HK.inEll(x, y, 0.6, -18.2, 18.4, 3) && y < -17) continue; // behind the crown
-      let k = y < -16.6 ? (x < -8 ? 5 : 4) : y < -14 ? 3 : 2;
+      if (!HK.inEll(x, y, 1.6, -13.2, 32.6, 6)) continue;
+      if (HK.inEll(x, y, 0.6, -15.2, 18.4, 3) && y < -14) continue; // behind the crown
+      let k = y < -13.6 ? (x < -10 ? 5 : 4) : y < -11 ? 3 : 2;
       if (x > 20) k -= 1;
+      if (y > -10.4) k = 1;
       put(L, X, Y, R, Math.max(0, k));
     }
   };
@@ -202,6 +214,7 @@ RB.harmonyKit = RB.harmonyKit || {};
     const L = c.S.L('headAcc');
     const R = mat('cap', c.look.capCol || '#2c4468', { n: 6, at: 3, step: 0.075 });
     const hx = c.hx, hy = c.hy;
+    hideHairUnder(c, -15);
     HK.polyFill(L, hx, hy, [[-19, -14], [-19, -24], [-12, -31], [0, -33], [12, -30], [19, -22], [19.6, -14]], R, (x, y) => (x < -9 ? 4 : x > 10 ? 2 : 3));
     HK.polyFill(L, hx, hy, [[-19.4, -17], [19.8, -16.6], [19.8, -12.6], [-19.4, -13]], R, (x, y) => (y < -15.6 ? 2 : 1));
     // the peak, pointing forward (to the right)
@@ -209,19 +222,27 @@ RB.harmonyKit = RB.harmonyKit || {};
     const Mb = HK.metalMat(GOLD);
     for (const [x, y, k] of [[4, -24, 4], [5, -24, 3], [3, -23, 4], [4, -23, 3], [5, -23, 3], [6, -23, 2], [4, -22, 2], [5, -22, 1]]) put(L, hx + x, hy + y, Mb, k);
   };
+  // a bow: two loops tipped up and out (the near one toward the light), folding into a knot, tails behind
+  const BOW = [
+    '...444...........33...',
+    '..45554.........3443..',
+    '.4555544.......344432.',
+    '.45544444.....3443332.',
+    '.454444443..23443332..',
+    '.44444444322234433321.',
+    '..4444443322333332221.',
+    '...443333223333222211.',
+    '.....3332..22222111...',
+  ];
   A.ribbon = function (c) {
     const L = c.S.L('headAcc');
     const R = mat('ribbon', c.look.ribbonCol || '#c8687a', { n: 6, at: 3, step: 0.075 });
     const s = c.s || 0;
     const cx = c.hx + 6, cy = c.hy - 25;
-    // tails behind the knot, falling to the far side
-    HK.strand(L, [[cx + 1, cy + 2, 1.6], [cx + 5 + s * 0.4, cy + 9, 1.7], [cx + 6 + s, cy + 15, 1.2]], R, { base: 2 });
-    HK.strand(L, [[cx + 2, cy + 2, 1.4], [cx + 9 + s * 0.4, cy + 6, 1.6], [cx + 12 + s, cy + 10, 1]], R, { base: 2 });
-    // two loops tipped up and out, the near one lit, the far one turned away
-    HK.polyFill(L, cx, cy, [[0, 0], [-6, -5.4], [-10, -4.6], [-9.6, 0.6], [-5, 1.6]], R, (x, y) => (x < -6 && y < -1 ? 5 : y > 0 ? 3 : 4));
-    HK.polyFill(L, cx, cy, [[0, 0], [5, -6], [9.4, -5.6], [9.6, -1], [5, 1.4]], R, (x, y) => (x > 6 ? 2 : 3));
-    HK.line(L, cx, cy, -8.6, -3.6, -3, 0, R, 2); HK.line(L, cx, cy, 8.4, -4.4, 3, 0, R, 1);
-    HK.polyFill(L, cx, cy, [[-2, -2.4], [2, -2.4], [2.4, 1.6], [-2, 2]], R, (x, y) => (x < 0 ? 3 : 2));
+    // tails behind the knot, falling to the far side (they trail a pixel or two as the bust arrives)
+    HK.strand(L, [[cx + 1, cy + 2, 1.7], [cx + 4 + s * 0.4, cy + 8, 1.8], [cx + 5 + s, cy + 14, 1.2]], R, { base: 2 });
+    HK.strand(L, [[cx + 3, cy + 2, 1.5], [cx + 9 + s * 0.4, cy + 6, 1.7], [cx + 12 + s, cy + 10, 1]], R, { base: 2 });
+    HK.tpl(L, cx - 11, cy - 6, BOW, { 5: [R, 5], 4: [R, 4], 3: [R, 3], 2: [R, 2], 1: [R, 1] });
   };
   A.flower = function (c) {
     const L = c.S.L('headAcc');
