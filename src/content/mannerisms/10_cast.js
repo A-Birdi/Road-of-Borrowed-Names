@@ -28,7 +28,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     tells: { surprise: 'listen', worry: 'aside', sad: 'lowered', think: 'chin', happy: 'nod' }, props: ['lamp', 'glasses'], talk: [1, 9, 11, 7, 30], glassesPerScene: 1,
     strong: [{ beat: 'sa.shelf_ren', gesture: 'glasses' }], avoid: ['the glasses as the answer to every feeling'],
     portrait: { idle: 'ponytail sway; a glint over the lenses', cues: { think: 'one glasses adjustment (at most once per scene)', closed: 'a held close before hard truths' } } });
-  M('suzu', 'performer', B, { rest: 'hip', every: [7, 13], idle: [['hum', 3], ['heeltap', 2], ['touchhair', 2], ['check', 1, { prop: 'accountbook' }]], route: [['hum', 1]],
+  M('suzu', 'performer', B, { rest: 'hip', restScene: false, every: [7, 13], idle: [['hum', 3], ['heeltap', 2], ['touchhair', 2], ['check', 1, { prop: 'accountbook' }]], route: [['hum', 1]],
     tells: { surprise: 'recoil', worry: 'aside', sad: 'lowered', happy: 'laugh', think: 'chin', shy: 'avert' }, props: ['ribbon', 'accountbook'], talk: [9, 11, 31, 32], serious: [25, 27, 28],
     strong: [{ beat: 'co.suzu_truth', gesture: 'present' }, { beat: 'sa.end_comp', gesture: 'handover' }], avoid: ['a twirl or a wink in any apology, loss or confession'],
     portrait: { idle: 'ribbon and earring sway; a light weight shift', cues: { laugh: 'shoulders bob and a wink', serious: 'no flourish, a straighter head' } } });
@@ -45,7 +45,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
   M('omi', 'official', B, { every: [12, 22], idle: [['write', 4, { at: 'desk' }], ['sort', 2, { at: 'surface' }], ['lookroad', 1], ['shift', 1]], tells: { think: 'listen', angry: 'emphatic', surprise: 'listen', sad: 'exhale' }, props: ['ledger', 'tags', 'brush'], talk: [1, 11, 24, 14],
     strong: [{ beat: 'sg.omi_wataru', gesture: 'emphatic' }, { beat: 'sg.omi_wataru', gesture: 'size' }, { beat: 'sg.omi_wataru', gesture: 'point' }], avoid: ['shouting', 'a desk slam'], social: 0.3,
     portrait: { idle: 'slow blinks under the brim, almost no tilt', cues: { angry: 'a narrowing and one exhale; no shake' } } });
-  M('hiro', 'craft', B, { every: [9, 16], idle: [['hammer', 2, { at: 'bench' }], ['brow', 3], ['stretch', 1], ['glance', 1]], tells: { sad: 'forehead', think: 'aside', worry: 'aside' }, props: ['pipe'], talk: [1, 20, 2], strong: [{ beat: 'co.suzu_truth', gesture: 'forehead' }] });
+  // Hiro "can't let go" of the work (co.hiro_first): at the workshop the blowpipe never leaves his hands and
+  // keeps turning; elsewhere (the eve, the festival) he sits and wipes his brow under the head cloth
+  M('hiro', 'craft', B, { every: [9, 16], idle: [['brow', 3], ['stretch', 1], ['glance', 1]], tells: { sad: 'forehead', think: 'aside', worry: 'aside' }, props: ['blowpipe', 'head cloth'], talk: [1, 20, 2], strong: [{ beat: 'co.hiro_first', gesture: 'glasswork' }, { beat: 'co.suzu_truth', gesture: 'forehead' }],
+    maps: { 'co.glass': { rest: 'pipehold', restProp: 'pipeA', every: [3, 7], idle: [['glasswork', 6], ['glance', 1]] } } });
   M('wataru', 'clerk', B, { rest: 'heart.R', every: [8, 15], idle: [['countidle', 3], ['glasses', 2], ['glance', 2], ['sort', 1, { at: 'surface' }]], tells: { sad: 'lowered', worry: 'fidget', surprise: 'recoil', happy: 'exhale', shy: 'avert' }, props: ['book', 'tags', 'notice'], talk: [8, 26, 27, 9],
     strong: [{ beat: 'sg.omi_wataru', gesture: 'halfraise' }, { beat: 'sg.omi_wataru', gesture: 'recoil' }, { beat: 'sg.omi_wataru', gesture: 'exhale' }],
     portrait: { idle: 'glasses slip a pixel and are pushed back', cues: { sad: 'gaze down, then (on a later line) up' } } });

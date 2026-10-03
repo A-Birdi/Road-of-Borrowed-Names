@@ -315,7 +315,8 @@ wataru: …… {帳簿|ちょうぼ} の {整理|せいり} が あります の
 # Wataru's own route he takes the forward place at the desk's corner and the party stays behind his lead;
 # on the party's route you open, and he steps up into his own admission. The pivotal exchange (the two
 # faults, "not dismissing me?", the notice handed back and opened) is marked by the beats omi.pivot.* for
-# the illustrated close-up (SHOTS.md §2); the overworld staging under it stays complete on its own.
+# the illustrated close-up (SHOTS.md §2); the overworld staging under it stays complete on its own. Omi is
+# firm, not angry: her working hand stops, she listens, separates the two faults, and goes back to the desk.
 !beat omi.arrive
 !pose omi write1
 !prop omi brush
@@ -351,7 +352,7 @@ narr: ワタル は {全部|ぜんぶ} {話|はな}した 。 {船|ふね} の �
 omi[think]: {給料|きゅうりょう} が {遅|おく}れて いる の は 、 {会社|かいしゃ} の {落|お}ち{度|ど} だ 。 {灯落|ひおち} の {本店|ほんてん} に は 、 わたし から {手紙|てがみ} を {書|か}く 。 {遅|おく}れた {分|ぶん} は 、 {利子|りし} を つけて {払|はら}って もらう 。 || The wages being late is the company's fault. I'll write to head office in Lanternfall myself. They'll pay what they owe — with interest.
 !gesture omi size wataru
 omi: だが 、 {荷|に} を {売|う}った の は お{前|まえ} の {落|お}ち{度|ど} だ 。 {売|う}った {分|ぶん} は 、 {給料|きゅうりょう} から {返|かえ}して もらう 。 {灯台|とうだい} と ソウタ に は 、 {自分|じぶん} で {頭|あたま} を {下|さ}げに {行|い}け 。 || But selling the cargo is your fault. You'll repay what you sold out of your wages. And you'll go to the lighthouse and to Sōta yourself, and apologise.
-!gesture omi nod wataru
+!gesture omi point wataru
 omi: それ から 、 {港|みなと} じゅう の ラベル を {書|か}き{直|なお}せ 。 {一枚|いちまい} {残|のこ}らず 。 お{前|まえ} より {字|じ} の {綺麗|きれい} な {者|もの} は 、 この {港|みなと} に いない 。 || And then you'll rewrite every label in the harbour. Every last one. No one in this port writes a better hand than you.
 !gesture wataru flinch omi
 wataru[surprise]: …… {辞|や}めさせない ん です か 。 || …You're not dismissing me?
@@ -386,7 +387,9 @@ narr: {封|ふう} が {切|き}られた 。 {誰|だれ} も {何|なに} も 
 !beat omi.pivot.end
 !look wataru omi
 !gesture wataru nod omi
-!gesture omi nod wataru
+!look omi -
+!prop omi brush
+!pose omi write1
 !gesture pc listen wataru
 wataru: {倉庫|そうこ} に {戻|もど}ります 。 {返事|へんじ} を {書|か}かない と 。 …… よければ 、 {後|あと} で {寄|よ}って ください 。 || I'll go back to the warehouse. I have a reply to write. …Please stop by later, if you would.
 !autosave

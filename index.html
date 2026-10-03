@@ -26193,6 +26193,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     sitlook: { G: 'low', O: 'low', legs: 'sit', drop: 7, eyes: 'u' }, sitbook: { G: 'forward', O: 'forward', legs: 'sit', drop: 7, hy: 1, eyes: 'd', prop: 'both' },
     crouch: { G: 'low', O: 'low', legs: 'kneel', drop: 6, eyes: 'd' }, peek: { lean: 2, hx: 2, eyes: 'u' }, bounce: { drop: -1 },
     stiff: {}, tilt: { hx: 1 },
+    // glassblowing (Hiro): turning the pipe, a breath into it, the gather held still to cool
+    pipe1: { G: 'forward', O: 'in', hy: 1, eyes: 'd', prop: 'G' }, pipe2: { G: 'rub', O: 'in', hy: 1, eyes: 'd', prop: 'G' }, pipe3: { G: 'forward', O: 'low', hy: 1, eyes: 'd', prop: 'G' },
+    blow: { G: 'mouth', O: 'forward', eyes: 'd', prop: 'G' }, pipehold: { G: 'forward', O: 'low', prop: 'G' },
   };
 
   // ---- held objects (drawn at the hand; 'both' between the hands) ------------------------------
@@ -26216,10 +26219,23 @@ var RB = (globalThis.RB = globalThis.RB || {});
     cloth(b, x, y) { b.rect(x - 1, y, 3, 5, '#f0ece0'); b.rect(x - 1, y + 4, 3, 1, '#c8c4b8'); b.px(x + 1, y + 1, '#d8d4c8'); },
     envelopes(b, x, y) { b.rect(x - 3, y - 5, 6, 3, '#e8dcc0'); b.rect(x - 2, y - 3, 6, 3, '#f4ead4'); b.px(x + 1, y - 2, '#b83a3a'); b.rect(x - 3, y - 5, 6, 1, '#f8f0dc'); },
     pipe(b, x, y) { b.line(x, y, x + 9, y - 3, '#6a6a72'); b.rect(x + 9, y - 4, 2, 2, '#ffb050'); b.px(x + 10, y - 4, '#fff0a0'); },
+    // a glassblower's pipe held in both hands, angled down and forward, the glowing gather at its end;
+    // the three variants turn the gather (its bright side moves round), 'pipecool' is the gather cooling
+    pipeA(b, x, y) { blowpipe(b, x, y, 0); }, pipeB(b, x, y) { blowpipe(b, x, y, 1); }, pipeC(b, x, y) { blowpipe(b, x, y, 2); }, pipecool(b, x, y) { blowpipe(b, x, y, 3); },
     ribbon(b, x, y) { b.rect(x - 1, y, 2, 6, '#c8a0a8'); b.px(x, y + 6, '#a88088'); b.px(x - 1, y, '#e8c0c8'); },
     flint(b, x, y) { b.rect(x - 1, y - 2, 2, 2, '#8a8a92'); b.px(x - 1, y - 2, '#b8b8c0'); },
     seeds(b, x, y) { b.rect(x - 2, y - 3, 4, 3, '#b89a6a'); b.rect(x - 2, y - 3, 4, 1, '#d8ba8a'); b.px(x, y - 4, '#8a6a44'); },
   };
+  function blowpipe(b, x, y, k) {
+    b.line(x - 3, y - 2, x + 7, y + 5, '#5a5a62'); b.line(x - 3, y - 3, x + 7, y + 4, '#8a8a92'); // the pipe, lit along its top
+    const gx = x + 8, gy = y + 5;
+    const G = k === 3 ? ['#8a3a20', '#c85a28', '#e88a40', '#f0a860'] : ['#c8501e', '#ff8a28', '#ffc050', '#fff0b0'];
+    b.rect(gx - 1, gy - 1, 4, 4, G[1]); b.rect(gx, gy - 2, 2, 6, G[1]); b.rect(gx - 2, gy, 6, 2, G[1]);
+    b.rect(gx, gy, 2, 2, G[2]);
+    const hl = [[-1, -1], [2, -1], [1, 2], [0, -1]][k];
+    b.px(gx + hl[0], gy + hl[1], G[3]); b.px(gx + hl[0] + (hl[0] < 1 ? 1 : -1), gy + hl[1], G[2]);
+    b.px(gx + 2, gy + 2, G[0]); b.px(gx + 3, gy + 1, G[0]);
+  }
   const PROP_NAMES = Object.keys(PROPS);
 
   // ---- parsing frame keys -------------------------------------------------------------------------
@@ -32687,8 +32703,12 @@ RB.world = (function () {
     quietUntil: 0,      // W.time before which no creature engages (just after a battle)
   };
 
+  // People's blink timers draw from the world's own stream (xorshift), never Math.random: the language
+  // tasks pick from Math.random, and life in the world must not change which task comes next.
+  let wseed = 0x2545f491;
+  function wrand() { wseed ^= wseed << 13; wseed >>>= 0; wseed ^= wseed >>> 17; wseed ^= wseed << 5; wseed >>>= 0; return wseed / 4294967296; }
   function makeActor(x, y, dir, look) {
-    return { x, y, fx: x, fy: y, dir: dir || 'down', look, mv: null, frame: 0, stepToggle: 0, blinkT: Math.random() * 4000 };
+    return { x, y, fx: x, fy: y, dir: dir || 'down', look, mv: null, frame: 0, stepToggle: 0, blinkT: wrand() * 4000 };
   }
 
   function s() {
@@ -33054,7 +33074,7 @@ RB.world = (function () {
     }
     for (const n of W.npcs.concat(W.extras)) {
       if (n.fadeIn) { n.alpha = Math.min(1, (n.alpha || 0) + dt / 260); if (n.alpha >= 1) n.fadeIn = false; }
-      if (n.extra) { stepActor(n, dt); n.blinkT -= dt; if (n.blinkT < -140) n.blinkT = 2500 + Math.random() * 3000; }
+      if (n.extra) { stepActor(n, dt); n.blinkT -= dt; if (n.blinkT < -140) n.blinkT = 2500 + wrand() * 3000; }
       if (n.route && !n.mv) {
         if (followRoute(n, dt, 240) && !n.mv) { n.route = null; if (n.extra) faceTo(n, W.player.x, W.player.y); else n.dir = (n.def && n.def.dir) || n.dir; }
       }
@@ -33254,7 +33274,7 @@ RB.world = (function () {
     }
   }
   function faceTo(a, x, y) {
-    a.glanceFrom = null; a.glanceT = 6000 + Math.random() * 6000;
+    a.glanceFrom = null; a.glanceT = 6000 + wrand() * 6000;
     const dx = x - a.x, dy = y - a.y;
     if (Math.abs(dx) > Math.abs(dy)) a.dir = dx > 0 ? 'right' : 'left';
     else if (dy) a.dir = dy > 0 ? 'down' : 'up';
@@ -33293,7 +33313,7 @@ RB.world = (function () {
     for (const n of W.npcs) {
       stepActor(n, dt);
       n.blinkT -= dt;
-      if (n.blinkT < -140) n.blinkT = 2500 + Math.random() * 3000;
+      if (n.blinkT < -140) n.blinkT = 2500 + wrand() * 3000;
       if (n.route) continue;
       // standing still, people live by their mannerism profile (resting stance, habits, occupation
       // idles, a word with a neighbour, glances at what they witness): RB.staging.tick below, which
@@ -33303,7 +33323,7 @@ RB.world = (function () {
       if (!wander || n.mv || RB.game.mode() !== 'world') continue;
       // a wanderer pauses on their round (a route habit playing, or a scene that owns them)
       if (RB.staging && RB.staging.wanderPause(n)) continue;
-      const rnd = (k) => (RB.staging ? RB.staging.rand(n, k) : Math.random());
+      const rnd = (k) => (RB.staging ? RB.staging.rand(n, k) : wrand());
       n.wt = (n.wt || 1500 + rnd('wt0') * 2500) - dt;
       if (n.wt > 0) continue;
       n.wt = 1800 + rnd('wt') * 3500;
@@ -33311,8 +33331,9 @@ RB.world = (function () {
       const d = dirs[Math.floor(rnd('wd') * 4)];
       const [dx, dy] = DIRS[d];
       const nx = n.x + dx, ny = n.y + dy;
-      if (Math.abs(nx - n.home[0]) > wander || Math.abs(ny - n.home[1]) > wander) { n.dir = d; continue; }
-      if (blocked(nx, ny, { except: n }) || RB.maps.exitAt(W.map, nx, ny) || triggerAt(nx, ny)) { n.dir = d; continue; }
+      // (at the edge of their round, or with the way blocked, they turn: and now and then pause there)
+      if (Math.abs(nx - n.home[0]) > wander || Math.abs(ny - n.home[1]) > wander) { n.dir = d; if (RB.staging) RB.staging.stepped(n); continue; }
+      if (blocked(nx, ny, { except: n }) || RB.maps.exitAt(W.map, nx, ny) || triggerAt(nx, ny)) { n.dir = d; if (RB.staging) RB.staging.stepped(n); continue; }
       if (W.comp && ((W.comp.x === nx && W.comp.y === ny) || (W.comp.mv && W.comp.mv.tx === nx && W.comp.mv.ty === ny))) continue;
       if (Math.abs(nx - p.x) + Math.abs(ny - p.y) < 2) continue; // don't crowd the player
       startMove(n, d, 320);
@@ -33765,6 +33786,13 @@ RB.gestures = (function () {
   def('tendlamp', { label: 'tending a lamp', entry: [K('lampup', 300)], peak: K('trim', 1400), recover: [K('lampup', 240), K(null, 140)], needs: 'lamp' });
   def('tendlight', { label: 'tending a light', entry: [K('tend1', 300, { gaze: 'u' })], peak: K('tend2', 1000, { gaze: 'u' }), recover: [K(null, 160)], at: 'light' });
   def('feedfire', { label: 'tending a fire', entry: [K('bend', 300)], peak: K('feed', 1400), recover: [K('bend', 260), K(null, 140)], at: 'fire' });
+  // glassblowing: the pipe turned without a stop, a breath into it now and then (a loop: in a scene it
+  // keeps going through the lines when held; idle it plays a few turns); 'cool' sets the gather to cool
+  def('glasswork', { label: 'turning the blowpipe, shaping the gather', prop: 'pipeA', loop: true, cycles: 3,
+    entry: [K('pipe1', 260, { prop: 'pipeA' })], peak: K('pipe2', 260, { prop: 'pipeB' }),
+    recover: [K('pipe3', 260, { prop: 'pipeC' }), K('pipe1', 260, { prop: 'pipeA' }), K('pipe2', 260, { prop: 'pipeB' }), K('pipe3', 260, { prop: 'pipeC' }), K('blow', 700, { prop: 'pipeA' }), K('pipe1', 260, { prop: 'pipeB' })],
+    hold: true, still: 'pipehold' });
+  def('cool', { label: 'the gather held still to cool', prop: 'pipecool', entry: [K('pipehold', 300, { prop: 'pipeB' })], peak: K('pipehold', 420, { prop: 'pipecool', gaze: 'target' }), recover: [K(null, 200)], hold: true, still: 'pipehold' });
   def('jiggle', { label: 'jiggling a line or net', entry: [K('jiggle1', 300)], peak: K('jiggle2', 300), recover: [K('jiggle1', 300), K('jiggle2', 300), K(null, 140)], needs: 'two' });
   def('knead', { label: 'kneading', entry: [K('knead1', 340)], peak: K('knead2', 340), recover: [K('knead1', 340), K('knead2', 340), K(null, 140)], needs: 'two', at: 'surface' });
   def('sip', { label: 'a sip from a cup', prop: 'cup', entry: [K('cuphold', 400, { prop: 1 })], peak: K('sip', 700, { prop: 1 }), recover: [K('cuphold', 500, { prop: 1 }), K(null, 140)], needs: 'free' });
@@ -33857,7 +33885,8 @@ RB.gestures = (function () {
  *   { class, tier, rest: pose, every: [minS, maxS], idle: [[habit, weight, { at, prop, gaze }]],
  *     route: [[habit, weight]], tells: { surprise, worry, sad, angry, shy, happy, think }: gesture ids,
  *     props: [...], talk: [primitive numbers], strong: [{ beat, gesture }], avoid: [...],
- *     portrait: { idle: [...], cues: { tag: cue } }, states: [{ if, rest, idle, every }], social: 0..1 }
+ *     portrait: { idle: [...], cues: { tag: cue } }, states: [{ if, rest, idle, every }], social: 0..1,
+ *     maps: { mapId: { rest, restProp, idle } } (their own workplace: the glassblower at his bench) }
  * API: RB.mannerisms.add(id, profile), .of(id), .forActor(actor), .classOf(look, stations), .CLASSES,
  *      .profiles(), .BESPOKE (the ids authored as bespoke), .stationsAt(map, x, y) */
 var RB = (globalThis.RB = globalThis.RB || {});
@@ -33910,6 +33939,10 @@ RB.mannerisms = (function () {
     return out;
   }
   // ---- deriving a class from a look and a station ------------------------------------------------------
+  // A person without an authored profile is placed by what they do, not by how they look: the station
+  // they stand at (a desk, a counter, a hearth, a bench, a light) and a tool in hand (a lamp, a book, a
+  // tool belt). Glasses, age, dress, gender and skin tone never choose a personality (the world review,
+  // WR-01); a child-sized figure stays a child (the cast's children are written as children).
   function classOf(look, st) {
     look = look || {};
     st = st || new Set();
@@ -33917,12 +33950,10 @@ RB.mannerisms = (function () {
     if (look.custom || look.pet) return 'nonhuman';
     if (look.size === 'child') return 'child';
     if (acc.includes('lamp')) return 'keeper';
-    if (look.age === 'old') return 'elder';
-    if (st.has('desk') || acc.includes('book') || acc.includes('glasses')) return st.has('desk') && !acc.includes('glasses') ? 'clerk' : 'scholar';
-    if (st.has('hearth') || st.has('tea') || (look.shape === 'apron' && st.has('surface'))) return 'host';
-    if (acc.includes('toolbelt') || acc.includes('headband') || st.has('bench') || st.has('nets')) return 'craft';
-    if (acc.includes('satchel')) return 'traveller';
-    if (look.shape === 'apron') return 'host';
+    if (st.has('desk')) return 'clerk';
+    if (acc.includes('book')) return 'scholar';
+    if (st.has('hearth') || st.has('tea') || st.has('surface')) return 'host';
+    if (acc.includes('toolbelt') || st.has('bench') || st.has('nets') || st.has('laundry')) return 'craft';
     return 'town';
   }
   function merge(base, prof) {
@@ -33948,6 +33979,9 @@ RB.mannerisms = (function () {
     const st = W && W.map ? stationsAt(W.map, a.home ? a.home[0] : a.x, a.home ? a.home[1] : a.y) : new Set();
     let prof = of(id, a.look, st);
     const s = RB.game && RB.game.s;
+    // at their own workplace a person can have their own stance and work (maps: { mapId: overrides })
+    if (prof.maps && W && W.map && prof.maps[W.map.id]) prof = Object.assign({}, prof, prof.maps[W.map.id]);
+    // and their stance changes with the story (states: [{ if, … }], the last that holds wins)
     for (const v of prof.states || []) if (s && RB.state.test(s, v.if)) prof = Object.assign({}, prof, v);
     return { prof, stations: st };
   }
@@ -33990,7 +34024,7 @@ RB.staging = (function () {
   const DIRS = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
   const now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
   const st = {
-    seed: 20261003, on: true, token: 0, scene: null, gate: -1e9, pairs: new Map(), lastLeavers: new Set(),
+    seed: 20261003, on: true, token: 0, scene: null, evN: 0, cap: 1, busy: 0, gate: -1e9, pairs: new Map(), lastLeavers: new Set(),
     arrival: null, examine: null, shared: null, sharedNext: 0, lastMove: 0, lastMap: null, socialNext: 0,
     trace: [], stats: null,
   };
@@ -34018,10 +34052,24 @@ RB.staging = (function () {
   }
 
   // ---- profiles ------------------------------------------------------------------------------------------
+  // Restraint by place and story state (the world review's WR-06): Lanternfall before its bell is orderly
+  // and constrained (fewer, politer exchanges), the Archive road and the Still Archive are quiet. A mood
+  // slows the pace of habits, lowers how readily people turn to each other and narrows what they say.
+  const MOODS = [
+    { map: /^lf\./, if: '!lf_bell_rung', pace: 1.4, social: 0.4, talk: ['nod', 'palm'] },
+    { map: /^(sa|sv)\./, pace: 1.6, social: 0.3, talk: ['nod'] },
+  ];
+  function moodOf(m) {
+    const s = RB.game.s;
+    for (const md of MOODS) if (md.map.test(m.id) && (!md.if || (s && RB.state.test(s, md.if)))) return md;
+    return null;
+  }
   function profileOf(a) {
     const s = S(a), m = W().map;
     if (!s.prof || s.map !== (m && m.id)) {
       const r = RB.mannerisms ? RB.mannerisms.forActor(a) : { prof: { class: 'town', idle: [], every: [12, 24], talk: [] }, stations: new Set() };
+      const md = m && moodOf(m);
+      if (md) r.prof = Object.assign({}, r.prof, { every: (r.prof.every || [12, 24]).map((v) => v * md.pace), social: (r.prof.social || 0) * md.social, moodTalk: md.talk });
       s.prof = r.prof; s.stations = r.stations; s.map = m && m.id;
       s.rest = restFor(a, r.prof);
       s.next = null; s.n = {};
@@ -34111,9 +34159,15 @@ RB.staging = (function () {
     const keys = RB.gestures.keys(g);
     const peakI = g.entry.length;
     let t0 = T() + (o.delay || 0);
-    const run = { id: g.id, g, keys, peakI, t0, owner: o.owner, token: o.token || 0, hold: !!o.hold, holding: false, done: false, target: o.target || null, target2: o.target2 || null, prop: o.prop || null, hand: o.hand || null, dir: null, transfer: o.transfer || null, transferred: false, tag: o.tag || null };
-    run.total = keys.reduce((v, k) => v + k[1], 0);
-    run.toPeak = keys.slice(0, peakI + 1).reduce((v, k) => v + k[1], 0);
+    const run = { ev: o.ev || ++st.evN, id: g.id, g, keys, peakI, t0, owner: o.owner, token: o.token || 0, hold: !!o.hold, holding: false, done: false, target: o.target || null, target2: o.target2 || null, prop: o.prop || null, hand: o.hand || null, dir: null, transfer: o.transfer || null, transferred: false, tag: o.tag || null };
+    // a work loop (glassblowing, sweeping …): held in a scene it keeps cycling; idle it plays a few turns
+    if (g.loop) {
+      const cyc = [g.peak].concat(g.recover);
+      if (o.hold) { run.loop = { at: g.entry.reduce((v, k) => v + k[1], 0), keys: cyc, len: cyc.reduce((v, k) => v + k[1], 0) }; run.hold = false; }
+      else { run.keys = g.entry.slice(); for (let i = 0; i < (g.cycles || 2); i++) run.keys = run.keys.concat(cyc); }
+    }
+    run.total = run.keys.reduce((v, k) => v + k[1], 0);
+    run.toPeak = run.keys.slice(0, peakI + 1).reduce((v, k) => v + k[1], 0);
     // reduced motion: the key pose, no in-betweens (a cue holds at its peak until the line moves on)
     if (RB.game.reducedMotion()) { run.still = true; if (o.owner === 'scene') run.holding = true; }
     // a gesture that turns to its target turns at once (the facing is drawn; collision facing stays)
@@ -34128,6 +34182,11 @@ RB.staging = (function () {
     }
     let e = t - run.t0;
     if (e < 0) return null;
+    if (run.loop && e >= run.loop.at) {
+      let r = (e - run.loop.at) % run.loop.len;
+      for (const k of run.loop.keys) { if (r < k[1]) return k; r -= k[1]; }
+      return run.loop.keys[0];
+    }
     if (run.holding) return run.keys[run.peakI];
     for (let i = 0; i < run.keys.length; i++) {
       const k = run.keys[i];
@@ -34170,7 +34229,8 @@ RB.staging = (function () {
           else if (x.gaze === 'away') gaze = awayGaze(a, run, dir || a.dir);
           else if (x.gaze) gaze = x.gaze;
           if (x.look && (run.target || run.target2)) { const tg = x.look === 'b' ? run.target2 || run.target : run.target; dir = dirTo(a, tg); gaze = gazeTo(a, tg, dir); }
-          if (x.prop && run.prop) prop = run.prop;
+          if (typeof x.prop === 'string') prop = x.prop; // a key with its own state of the object (a gather turning)
+          else if (x.prop && run.prop) prop = run.prop;
           if (x.dx) { const d = DIRS[dir || a.dir]; ox = d[0] * x.dx; oy = d[1] * x.dx * 0.5; }
           if (x.dy) oy += x.dy;
         }
@@ -34187,7 +34247,7 @@ RB.staging = (function () {
       if (tp && (dv === 'down' || dv === 'up') && Math.abs(tp.y - a.y) > 2 * Math.abs(tp.x - a.x)) pose = (tp.y < a.y) === (dv === 'down') ? 'pointup' : 'pointdown';
     }
     if (!pose) {
-      pose = s.pose || s.rest;
+      pose = s.pose || (s.prof && s.prof.restScene === false && RB.game.mode() !== 'world' ? null : s.rest);
       if (pose && pose === s.rest && pose.indexOf('.') > 0) { hand = pose.slice(-1); pose = pose.slice(0, -2); }
       if (pose && pose === (s.rest || '').split('.')[0] && !prop && s.prof && s.prof.restProp) prop = s.prof.restProp;
     }
@@ -34292,6 +34352,7 @@ RB.staging = (function () {
       if (!run || run.owner !== 'scene') continue;
       if (run.transfer && !run.transferred) doTransfer(a, run);
       if (run.chain) { run.finished = true; s.run = null; run.done = true; chainNext(a, run, true); }
+      else if (run.loop) { /* work goes on through the next line */ }
       else if (run.hold) { run.holding = true; run.t0 = Math.min(run.t0, T()); }
       else { s.run = null; run.done = true; }
       st.stats.settled++;
@@ -34489,7 +34550,16 @@ RB.staging = (function () {
     let n = 0;
     for (const a of w.npcs.concat(w.extras || [], w.comp ? [w.comp] : [], [w.player])) {
       const s = a && a.stg;
-      if (s && s.run && s.run.owner === 'idle') { s.run = null; n++; }
+      if (s && s.run && s.run.owner === 'idle') {
+        // a tool in hand stays in hand (the brush, the pipe, the teapot) and the task is taken up again
+        // once the world is back: the conversation interrupted it, it did not end it
+        const r = s.run, k = r.still ? null : keyAt(r, T());
+        const kind = k && k[2] ? (typeof k[2].prop === 'string' ? k[2].prop : k[2].prop ? r.prop : null) : null;
+        if (kind && RB.sprites._pose.hasProp(kind) && !s.held) { s.held = { kind, auto: true }; s.resume = r.id; }
+        if (r.tag === 'idle' && r.g.loop) s.resume = r.id;
+        if (s.resume) s.next = T() + 1800 + rand(a, 'resume') * 1200;
+        s.run = null; n++;
+      }
       if (s && s.social) s.social = null;
     }
     if (st.shared) st.shared = null;
@@ -34537,6 +34607,7 @@ RB.staging = (function () {
   function startIdle(a, h, why) {
     const g = RB.gestures.get(h[0]);
     const opts = h[2] || {};
+    if (a.stg && a.stg.held && a.stg.held.auto) a.stg.held = null; // the task's own object takes over
     const tg = habitTarget(a, g.id);
     const run = mkRun(a, g, { owner: 'idle', target: tg, prop: opts.prop || g.prop || null, tag: why });
     if (run.still) return null;
@@ -34574,16 +34645,21 @@ RB.staging = (function () {
       profileOf(a);
       people.push(a);
     }
-    let active = 0;
+    // the cap counts events, not people: a word between two neighbours, or two people glancing at
+    // someone arriving, is one thing happening on screen
+    const evs = new Set();
     for (const a of people) {
       const s = a.stg;
       if (s.run && (s.run.done || (s.run.owner === 'idle' && T() - s.run.t0 > s.run.total + 50))) finish(a, s.run);
       if (s.run && s.run.owner === 'idle' && (a.mv || a.route || owned(a))) s.run = null;
-      if (s.run && s.run.owner === 'idle') active++;
+      if (s.run && s.run.owner === 'idle') evs.add(s.run.ev);
       if (s.next == null) s.next = time + (1500 + rand(a, 'first') * (((s.prof.every || [12, 24])[0]) * 1000));
     }
+    // off screen nothing runs (a person who walked out of view drops what they were doing)
+    for (const a of w.npcs) if (a.stg && a.stg.run && a.stg.run.owner === 'idle' && !people.includes(a)) a.stg.run = null;
+    let active = evs.size;
     const cap = Math.max(1, Math.min(4, Math.ceil(people.length / 4)));
-    st.stats.cap = cap;
+    st.stats.cap = cap; st.cap = cap; st.busy = active;
     // at most one new habit per tick, none sooner than 650 ms after the last, and never two neighbours in step
     if (active < cap && time - st.gate > 650) {
       for (const a of people) {
@@ -34592,14 +34668,18 @@ RB.staging = (function () {
         if (a.def && a.def.wander && s.wanderHold && time < s.wanderHold) continue;
         const crowd = people.some((b) => b !== a && b.stg.run && b.stg.run.owner === 'idle' && near(a, b, 3) && time - b.stg.run.t0 < 2500);
         if (crowd) { s.next = time + 1200 + rand(a, 'defer') * 1200; continue; }
-        const h = pickHabit(a, s.prof, s.prof.idle);
+        // back to the task a conversation interrupted, else a habit of their own
+        const back = s.resume && (s.prof.idle || []).find((x) => x[0] === s.resume && eligible(a, s.prof, x));
+        s.resume = null;
+        const h = back || pickHabit(a, s.prof, s.prof.idle);
         if (!h) { s.next = time + 8000; continue; }
         if (startIdle(a, h, 'idle')) { active++; break; }
       }
     }
+    st.busy = active;
     st.stats.maxActive = Math.max(st.stats.maxActive, active);
-    social(people, time);
-    reactions(people, time);
+    if (st.busy < st.cap || st.forceSocial) social(people, time);
+    if (st.busy < st.cap) reactions(people, time);
     companion(time);
     record(t0);
   }
@@ -34618,19 +34698,23 @@ RB.staging = (function () {
       if (!near(A, B, 2) || (A.x === B.x && A.y === B.y)) continue;
       const k = [A.id, B.id].sort().join('+');
       const nx = st.pairs.get(k);
-      if (nx == null) { st.pairs.set(k, time + 6000 + h32(k + '|first') * 12000); continue; }
-      if (time < nx) continue;
+      if (nx == null && !st.forceSocial) { st.pairs.set(k, time + 6000 + h32(k + '|first') * 12000); continue; }
+      if (nx != null && time < nx) continue;
       const p = Math.min(A.stg.prof.social, B.stg.prof.social);
-      const r = h32(k + '|' + Math.floor(nx));
+      const r = h32(k + '|' + Math.floor(nx || 0));
       st.pairs.set(k, time + 30000 + r * 30000);
-      if (r > p) continue;
+      if (r > p && !st.forceSocial) continue;
+      st.forceSocial = false;
       const [sp, li] = (A.stg.prof.social >= B.stg.prof.social) ? [A, B] : [B, A];
-      const talk = (sp.stg.prof.talk || [9]).map((n) => RB.gestures.PRIM[n]).filter((g) => g && RB.gestures.can(g.id, sp.look) && ['palm', 'point', 'size', 'nod', 'laugh', 'shrug', 'count', 'chin'].includes(g.id));
+      const allowed = sp.stg.prof.moodTalk || ['palm', 'point', 'size', 'nod', 'laugh', 'shrug', 'count', 'chin'];
+      const talk = (sp.stg.prof.talk || [9]).map((n) => RB.gestures.PRIM[n]).filter((g) => g && RB.gestures.can(g.id, sp.look) && allowed.includes(g.id));
       const g = talk.length ? talk[Math.floor(h32(k + '|g') * talk.length)] : RB.gestures.get('nod');
-      const r1 = mkRun(sp, g, { owner: 'idle', target: g.id === 'point' ? { x: sp.x + (li.x >= sp.x ? -3 : 3), y: sp.y - 2 } : li, tag: 'social' });
+      const ev = ++st.evN;
+      st.busy++;
+      const r1 = mkRun(sp, g, { owner: 'idle', ev, target: g.id === 'point' ? { x: sp.x + (li.x >= sp.x ? -3 : 3), y: sp.y - 2 } : li, tag: 'social' });
       r1.dir = dirTo(sp, li);
       r1.keys = [[null, 450, null]].concat(r1.keys, [[null, 900, null]]); r1.peakI += 1; r1.total += 1350; r1.toPeak += 450;
-      const r2 = mkRun(li, RB.gestures.get('nod'), { owner: 'idle', target: sp, tag: 'social' });
+      const r2 = mkRun(li, RB.gestures.get('nod'), { owner: 'idle', ev, target: sp, tag: 'social' });
       r2.dir = dirTo(li, sp);
       r2.keys = [[null, 450 + r1.toPeak - 450, { gaze: 'target' }]].concat(r2.keys, [[null, 700, { gaze: 'target' }]]); r2.peakI += 1; r2.total = r2.keys.reduce((v, x) => v + x[1], 0);
       sp.stg.run = r1; li.stg.run = r2;
@@ -34643,10 +34727,13 @@ RB.staging = (function () {
   function reactions(people, time) {
     const w = W();
     const glanceAt = (who, tgt, max, why) => {
+      if (st.busy >= st.cap) return;
       const cand = people.filter((a) => a !== tgt && !a.stg.run && !a.mv && !owned(a) && near(a, tgt, 6) && !(a.look && a.look.custom))
         .sort((a, b) => (Math.abs(a.x - tgt.x) + Math.abs(a.y - tgt.y)) - (Math.abs(b.x - tgt.x) + Math.abs(b.y - tgt.y)) || (a.id < b.id ? -1 : 1));
+      const ev = ++st.evN;
+      if (cand.length) st.busy++;
       cand.slice(0, max).forEach((a, i) => {
-        const run = mkRun(a, RB.gestures.get('glance'), { owner: 'idle', target: tgt, delay: 200 + i * 380 + rand(a, 'react') * 300, tag: why });
+        const run = mkRun(a, RB.gestures.get('glance'), { owner: 'idle', ev, target: tgt, delay: 200 + i * 380 + rand(a, 'react') * 300, tag: why });
         if (Math.abs(tgt.x - a.x) + Math.abs(tgt.y - a.y) >= 2) run.dir = dirTo(a, tgt);
         a.stg.run = run;
         st.stats.react++;
@@ -34729,7 +34816,8 @@ RB.staging = (function () {
     return false;
   }
   function stepped(n) {
-    if (!st.on || RB.game.reducedMotion()) return;
+    if (!st.on || RB.game.reducedMotion() || RB.game.mode() !== 'world') return;
+    if (!onScreen(n) || st.busy >= st.cap) return; // off screen nothing runs; the cap holds
     const prof = profileOf(n);
     if (rand(n, 'pause') >= 1 / 3) return;
     const h = pickHabit(n, prof, prof.route && prof.route.length ? prof.route : prof.idle);
@@ -34738,6 +34826,7 @@ RB.staging = (function () {
     const run = mkRun(n, g, { owner: 'idle', target: habitTarget(n, g.id), delay: 380, tag: 'route' });
     if (run.still) return;
     S(n).run = run;
+    st.busy++;
     st.stats.route++;
     st.trace.push({ who: keyOf(n), h: g.id, why: 'route', t: Math.round(T()) });
   }
@@ -34754,14 +34843,16 @@ RB.staging = (function () {
     enabled(v) { if (v != null) { st.on = !!v; if (!st.on) yieldIdle('off'); } return st.on; },
     seed(n) { if (n != null) { st.seed = n >>> 0; const w = W(); for (const a of (w.npcs || []).concat(w.comp ? [w.comp] : [], w.player ? [w.player] : [])) if (a && a.stg) { a.stg.n = {}; a.stg.next = null; a.stg.run = null; a.stg.hist = []; } st.trace = []; st.pairs.clear(); st.gate = -1e9; st.socialNext = 0; st.lastMap = null; st.arrival = null; st.examine = null; st.shared = null; st.sharedNext = 0; st.lastMove = 0; st.lastLeavers = new Set(); } return st.seed; },
     trace: () => st.trace.slice(),
-    stats: () => Object.assign({}, st.stats, { pose: RB.sprites._pose ? RB.sprites._pose.stats() : null }),
+    stats: () => Object.assign({}, st.stats, { busy: st.busy, forceSocial: !!st.forceSocial, socialIn: Math.round(st.socialNext - T()), pose: RB.sprites._pose ? RB.sprites._pose.stats() : null }),
     resetStats() { st.stats = fresh(); if (RB.sprites._pose) { /* the frame cache keeps its own counts */ } },
     state() {
       const w = W(), sc = st.scene;
-      const one = (a) => { const s = a.stg || {}; const r = s.run; return { id: idOf(a), x: a.x, y: a.y, dir: a.dir, run: r ? { id: r.id, owner: r.owner, holding: r.holding, tag: r.tag } : null, pose: s.pose || null, rest: s.rest || null, look: s.look ? s.look.dir : null, held: s.held ? s.held.kind : null, owned: owned(a), cls: s.prof ? s.prof.class : null, tier: s.prof ? s.prof.tier : null, hist: (s.hist || []).slice() }; };
+      const one = (a) => { const s = a.stg || {}; const r = s.run; return { id: idOf(a), x: a.x, y: a.y, dir: a.dir, run: r ? { id: r.id, owner: r.owner, holding: r.holding, tag: r.tag, ev: r.ev } : null, pose: s.pose || null, rest: s.rest || null, look: s.look ? s.look.dir : null, held: s.held ? s.held.kind : null, owned: owned(a), cls: s.prof ? s.prof.class : null, tier: s.prof ? s.prof.tier : null, hist: (s.hist || []).slice() }; };
       return { scene: sc ? { id: sc.id, token: sc.token, owned: [...sc.owned].map(idOf), beats: sc.beats.slice(), ambience: !!sc.ambience } : null,
         actors: w.map ? w.npcs.concat(w.extras || []).map(one).concat(w.comp ? [one(w.comp)] : [], [one(w.player)]) : [] };
     },
+    // tests: bring the next word between neighbours forward (the pair and the gesture stay seeded choices)
+    nudge(o) { o = o || {}; if (o.social) { st.socialNext = 0; for (const k of st.pairs.keys()) st.pairs.set(k, 0); st.forceSocial = true; } },
     release() { const sc = st.scene; if (sc) { st.scene = null; releaseScene(sc); } yieldIdle('release'); },
   };
 })();
@@ -38451,6 +38542,10 @@ RB.render = (function () {
     c.drawImage(light, 0, 0);
   }
 
+  // Weather particles draw from their own stream (xorshift), never Math.random: the language tasks pick
+  // from Math.random, and rain or snow must not change which task comes next.
+  let pseed = 0x6c8e9cf5;
+  function prand() { pseed ^= pseed << 13; pseed >>>= 0; pseed ^= pseed >>> 17; pseed ^= pseed << 5; pseed >>>= 0; return pseed / 4294967296; }
   // Weather at art resolution: finer drops, flakes and motes than the tiles.
   function drawWeather(c, m, t) {
     const amb = ambientOf(m).ambient || {};
@@ -38458,7 +38553,7 @@ RB.render = (function () {
     if (!kind) return;
     const reduced = RB.game.reducedMotion();
     const target = reduced ? 16 : kind === 'rain' ? 110 : 60;
-    while (particles.length < target) particles.push({ x: Math.random() * bw, y: Math.random() * bh, v: 0.5 + Math.random(), p: Math.random() * 6 });
+    while (particles.length < target) particles.push({ x: prand() * bw, y: prand() * bh, v: 0.5 + prand(), p: prand() * 6 });
     for (const p of particles) {
       if (kind === 'rain') {
         p.y += (reduced ? 2 : 8) * p.v; p.x -= reduced ? 0.4 : 2;
@@ -38490,8 +38585,8 @@ RB.render = (function () {
         c.fillRect(p.x, p.y, 6, 4);
         c.fillStyle = 'rgba(90,80,70,0.35)'; c.fillRect(p.x + 1, p.y + 1, 4, 1);
       }
-      if (p.y > bh + 8) { p.y = -8; p.x = Math.random() * bw; }
-      if (p.y < -12) { p.y = bh + 4; p.x = Math.random() * bw; }
+      if (p.y > bh + 8) { p.y = -8; p.x = prand() * bw; }
+      if (p.y < -12) { p.y = bh + 4; p.x = prand() * bw; }
       if (p.x < -8) p.x = bw + 4;
       if (p.x > bw + 12) p.x = -4;
     }
@@ -51015,7 +51110,8 @@ RB.actorDev = (function () {
     const who = o.who || ['pc', 'nao', 'mio', 'ren', 'suzu'];
     const phases = o.phases || (sheet === 'primitives' ? ['entry', 'peak', 'recover'] : ['peak']);
     let cols;
-    if (sheet === 'primitives') cols = Object.keys(RB.gestures.PRIM).map((n) => RB.gestures.PRIM[n].id);
+    if (o.cols) cols = o.cols.slice();
+    else if (sheet === 'primitives') cols = Object.keys(RB.gestures.PRIM).map((n) => RB.gestures.PRIM[n].id);
     else if (sheet === 'habits') cols = RB.gestures.list().filter((g) => g.kind === 'habit').map((g) => g.id);
     else cols = null; // profiles: per person their rest and their own habits
     root = document.createElement('div');
@@ -51045,7 +51141,10 @@ RB.actorDev = (function () {
         for (const id of cols) {
           const td = cell(null, null);
           const fit = RB.gestures.fit(id, lookOf(w), { prop: PROP_FOR[id] });
-          for (const ph of phases) { const cv = frame(w, id, ph, dir); if (cv) { const c = document.createElement('canvas'); c.width = cv.width * scale; c.height = cv.height * scale; const g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.drawImage(cv, 0, 0, c.width, c.height); td.appendChild(c); } }
+          const row = document.createElement('div');
+          row.setAttribute('style', 'display:flex;gap:2px;justify-content:center');
+          for (const ph of phases) { const cv = frame(w, id, ph, dir); if (cv) { const c = document.createElement('canvas'); c.width = cv.width * scale; c.height = cv.height * scale; const g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.drawImage(cv, 0, 0, c.width, c.height); row.appendChild(c); } }
+          td.appendChild(row);
           if (fit !== id) { const d = document.createElement('div'); d.textContent = fit ? '→ ' + fit : '—'; td.appendChild(d); }
           tr.appendChild(td);
         }
@@ -89703,7 +89802,8 @@ wataru: …… {帳簿|ちょうぼ} の {整理|せいり} が あります の
 # Wataru's own route he takes the forward place at the desk's corner and the party stays behind his lead;
 # on the party's route you open, and he steps up into his own admission. The pivotal exchange (the two
 # faults, "not dismissing me?", the notice handed back and opened) is marked by the beats omi.pivot.* for
-# the illustrated close-up (SHOTS.md §2); the overworld staging under it stays complete on its own.
+# the illustrated close-up (SHOTS.md §2); the overworld staging under it stays complete on its own. Omi is
+# firm, not angry: her working hand stops, she listens, separates the two faults, and goes back to the desk.
 !beat omi.arrive
 !pose omi write1
 !prop omi brush
@@ -89739,7 +89839,7 @@ narr: ワタル は {全部|ぜんぶ} {話|はな}した 。 {船|ふね} の �
 omi[think]: {給料|きゅうりょう} が {遅|おく}れて いる の は 、 {会社|かいしゃ} の {落|お}ち{度|ど} だ 。 {灯落|ひおち} の {本店|ほんてん} に は 、 わたし から {手紙|てがみ} を {書|か}く 。 {遅|おく}れた {分|ぶん} は 、 {利子|りし} を つけて {払|はら}って もらう 。 || The wages being late is the company's fault. I'll write to head office in Lanternfall myself. They'll pay what they owe — with interest.
 !gesture omi size wataru
 omi: だが 、 {荷|に} を {売|う}った の は お{前|まえ} の {落|お}ち{度|ど} だ 。 {売|う}った {分|ぶん} は 、 {給料|きゅうりょう} から {返|かえ}して もらう 。 {灯台|とうだい} と ソウタ に は 、 {自分|じぶん} で {頭|あたま} を {下|さ}げに {行|い}け 。 || But selling the cargo is your fault. You'll repay what you sold out of your wages. And you'll go to the lighthouse and to Sōta yourself, and apologise.
-!gesture omi nod wataru
+!gesture omi point wataru
 omi: それ から 、 {港|みなと} じゅう の ラベル を {書|か}き{直|なお}せ 。 {一枚|いちまい} {残|のこ}らず 。 お{前|まえ} より {字|じ} の {綺麗|きれい} な {者|もの} は 、 この {港|みなと} に いない 。 || And then you'll rewrite every label in the harbour. Every last one. No one in this port writes a better hand than you.
 !gesture wataru flinch omi
 wataru[surprise]: …… {辞|や}めさせない ん です か 。 || …You're not dismissing me?
@@ -89774,7 +89874,9 @@ narr: {封|ふう} が {切|き}られた 。 {誰|だれ} も {何|なに} も 
 !beat omi.pivot.end
 !look wataru omi
 !gesture wataru nod omi
-!gesture omi nod wataru
+!look omi -
+!prop omi brush
+!pose omi write1
 !gesture pc listen wataru
 wataru: {倉庫|そうこ} に {戻|もど}ります 。 {返事|へんじ} を {書|か}かない と 。 …… よければ 、 {後|あと} で {寄|よ}って ください 。 || I'll go back to the warehouse. I have a reply to write. …Please stop by later, if you would.
 !autosave
@@ -95541,15 +95643,29 @@ hiro: {外|そと} が {騒|さわ}がしい な 。 {窯|かま} の {方|ほ�
 !call co.suzu_truth
 
 @scene co.hiro_first
+# Staged (the world review, WR-03): Hiro keeps the blowpipe turning through the first lines (he cannot
+# let go), and holds the gather still to cool when he says he will listen; the companion answers in kind.
+!look hiro left
+!gesture hiro glasswork hold
+!gesture pc observe hiro
 hiro: …… {悪|わる}い 。 {今|いま} {手|て} が {離|はな}せない 。 ガラス は {待|ま}って くれない 。 || …Sorry. Can't let go of this. Glass doesn't wait.
 narr: ヒロ は {吹|ふ}き{竿|ざお} を {回|まわ}し{続|つづ}け 、 {橙色|だいだいいろ} の {塊|かたまり} を {丸|まる}く {整|ととの}えて いく 。 {額|ひたい} に {巻|ま}いた {手拭|てぬぐ}い が 、 {煤|すす} で {少|すこ}し {黒|くろ}い 。 || Hiro keeps the blowpipe turning, coaxing an orange gather into a sphere. The cloth tied round his forehead is a little black with soot.
+!gesture hiro cool pc hold
+!look pc hiro
 hiro: ヒロ だ 。 {祭|まつ}り の {灯籠|とうろう} の {火屋|ほや} を {作|つく}ってる 。 {用|よう} が あれば 、 {冷|さ}める {間|あいだ} に {聞|き}く 。 || I'm Hiro. I make the globes for the festival lanterns. If you need something, I'll listen while this cools.
+?(comp=nao) !gesture comp nod hiro
 ?(comp=nao) comp: {職人|しょくにん} は {無口|むくち} な {方|ほう} が {信用|しんよう} できる 。 {配達先|はいたつさき} と して も {楽|らく} だ 。 || Quiet craftsmen are the trustworthy kind. Easy to deliver to, too.
+?(comp=mio) !gesture comp observe hiro
 ?(comp=mio) comp[smile]: {額|ひたい} の {手拭|てぬぐ}い 、 {汗|あせ} {止|ど}め です ね 。 {火|ひ} の {粉|こ} {除|よ}け に も なる 。 {賢|かしこ}い 。 || The cloth on your forehead — for sweat. And to keep sparks off, too. Smart.
+?(comp=mio) !gesture hiro aside
 ?(comp=mio) hiro: …… {母|はは} の {真似|まね} だ 。 || …I copied my mother.
+?(comp=ren) !gesture comp bow
 ?(comp=ren) comp: {火屋|ほや} は 、 {灯|ひ} を {守|まも}る ガラス です 。 {灯守|ひもり} と して 、 {頭|あたま} が {下|さ}がります 。 || Globes are the glass that guards a flame. As a lantern keeper, I'm in your debt.
+?(comp=suzu) !gesture comp lowered hold
 ?(comp=suzu) comp[closed]: …… || …
+?(comp=suzu) !gesture comp palm hiro
 ?(comp=suzu) comp[smile]: {素敵|すてき} な {火屋|ほや} 。 {舞台|ぶたい} の {明|あ}かり に {欲|ほ}しい くらい 。 || Lovely globes. I'd want them for stage lights.
+?(comp=suzu) !gesture hiro shake
 ?(comp=suzu) hiro: …… {悪|わる}い が 、 {祭|まつ}り の {分|ぶん} で {手|て} {一杯|いっぱい} だ 。 || …Sorry, the festival order's all I can manage.
 
 @scene co.beam
@@ -117265,7 +117381,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     tells: { surprise: 'listen', worry: 'aside', sad: 'lowered', think: 'chin', happy: 'nod' }, props: ['lamp', 'glasses'], talk: [1, 9, 11, 7, 30], glassesPerScene: 1,
     strong: [{ beat: 'sa.shelf_ren', gesture: 'glasses' }], avoid: ['the glasses as the answer to every feeling'],
     portrait: { idle: 'ponytail sway; a glint over the lenses', cues: { think: 'one glasses adjustment (at most once per scene)', closed: 'a held close before hard truths' } } });
-  M('suzu', 'performer', B, { rest: 'hip', every: [7, 13], idle: [['hum', 3], ['heeltap', 2], ['touchhair', 2], ['check', 1, { prop: 'accountbook' }]], route: [['hum', 1]],
+  M('suzu', 'performer', B, { rest: 'hip', restScene: false, every: [7, 13], idle: [['hum', 3], ['heeltap', 2], ['touchhair', 2], ['check', 1, { prop: 'accountbook' }]], route: [['hum', 1]],
     tells: { surprise: 'recoil', worry: 'aside', sad: 'lowered', happy: 'laugh', think: 'chin', shy: 'avert' }, props: ['ribbon', 'accountbook'], talk: [9, 11, 31, 32], serious: [25, 27, 28],
     strong: [{ beat: 'co.suzu_truth', gesture: 'present' }, { beat: 'sa.end_comp', gesture: 'handover' }], avoid: ['a twirl or a wink in any apology, loss or confession'],
     portrait: { idle: 'ribbon and earring sway; a light weight shift', cues: { laugh: 'shoulders bob and a wink', serious: 'no flourish, a straighter head' } } });
@@ -117282,7 +117398,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
   M('omi', 'official', B, { every: [12, 22], idle: [['write', 4, { at: 'desk' }], ['sort', 2, { at: 'surface' }], ['lookroad', 1], ['shift', 1]], tells: { think: 'listen', angry: 'emphatic', surprise: 'listen', sad: 'exhale' }, props: ['ledger', 'tags', 'brush'], talk: [1, 11, 24, 14],
     strong: [{ beat: 'sg.omi_wataru', gesture: 'emphatic' }, { beat: 'sg.omi_wataru', gesture: 'size' }, { beat: 'sg.omi_wataru', gesture: 'point' }], avoid: ['shouting', 'a desk slam'], social: 0.3,
     portrait: { idle: 'slow blinks under the brim, almost no tilt', cues: { angry: 'a narrowing and one exhale; no shake' } } });
-  M('hiro', 'craft', B, { every: [9, 16], idle: [['hammer', 2, { at: 'bench' }], ['brow', 3], ['stretch', 1], ['glance', 1]], tells: { sad: 'forehead', think: 'aside', worry: 'aside' }, props: ['pipe'], talk: [1, 20, 2], strong: [{ beat: 'co.suzu_truth', gesture: 'forehead' }] });
+  // Hiro "can't let go" of the work (co.hiro_first): at the workshop the blowpipe never leaves his hands and
+  // keeps turning; elsewhere (the eve, the festival) he sits and wipes his brow under the head cloth
+  M('hiro', 'craft', B, { every: [9, 16], idle: [['brow', 3], ['stretch', 1], ['glance', 1]], tells: { sad: 'forehead', think: 'aside', worry: 'aside' }, props: ['blowpipe', 'head cloth'], talk: [1, 20, 2], strong: [{ beat: 'co.hiro_first', gesture: 'glasswork' }, { beat: 'co.suzu_truth', gesture: 'forehead' }],
+    maps: { 'co.glass': { rest: 'pipehold', restProp: 'pipeA', every: [3, 7], idle: [['glasswork', 6], ['glance', 1]] } } });
   M('wataru', 'clerk', B, { rest: 'heart.R', every: [8, 15], idle: [['countidle', 3], ['glasses', 2], ['glance', 2], ['sort', 1, { at: 'surface' }]], tells: { sad: 'lowered', worry: 'fidget', surprise: 'recoil', happy: 'exhale', shy: 'avert' }, props: ['book', 'tags', 'notice'], talk: [8, 26, 27, 9],
     strong: [{ beat: 'sg.omi_wataru', gesture: 'halfraise' }, { beat: 'sg.omi_wataru', gesture: 'recoil' }, { beat: 'sg.omi_wataru', gesture: 'exhale' }],
     portrait: { idle: 'glasses slip a pixel and are pushed back', cues: { sad: 'gaze down, then (on a later line) up' } } });

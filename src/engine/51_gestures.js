@@ -104,6 +104,13 @@ RB.gestures = (function () {
   def('tendlamp', { label: 'tending a lamp', entry: [K('lampup', 300)], peak: K('trim', 1400), recover: [K('lampup', 240), K(null, 140)], needs: 'lamp' });
   def('tendlight', { label: 'tending a light', entry: [K('tend1', 300, { gaze: 'u' })], peak: K('tend2', 1000, { gaze: 'u' }), recover: [K(null, 160)], at: 'light' });
   def('feedfire', { label: 'tending a fire', entry: [K('bend', 300)], peak: K('feed', 1400), recover: [K('bend', 260), K(null, 140)], at: 'fire' });
+  // glassblowing: the pipe turned without a stop, a breath into it now and then (a loop: in a scene it
+  // keeps going through the lines when held; idle it plays a few turns); 'cool' sets the gather to cool
+  def('glasswork', { label: 'turning the blowpipe, shaping the gather', prop: 'pipeA', loop: true, cycles: 3,
+    entry: [K('pipe1', 260, { prop: 'pipeA' })], peak: K('pipe2', 260, { prop: 'pipeB' }),
+    recover: [K('pipe3', 260, { prop: 'pipeC' }), K('pipe1', 260, { prop: 'pipeA' }), K('pipe2', 260, { prop: 'pipeB' }), K('pipe3', 260, { prop: 'pipeC' }), K('blow', 700, { prop: 'pipeA' }), K('pipe1', 260, { prop: 'pipeB' })],
+    hold: true, still: 'pipehold' });
+  def('cool', { label: 'the gather held still to cool', prop: 'pipecool', entry: [K('pipehold', 300, { prop: 'pipeB' })], peak: K('pipehold', 420, { prop: 'pipecool', gaze: 'target' }), recover: [K(null, 200)], hold: true, still: 'pipehold' });
   def('jiggle', { label: 'jiggling a line or net', entry: [K('jiggle1', 300)], peak: K('jiggle2', 300), recover: [K('jiggle1', 300), K('jiggle2', 300), K(null, 140)], needs: 'two' });
   def('knead', { label: 'kneading', entry: [K('knead1', 340)], peak: K('knead2', 340), recover: [K('knead1', 340), K('knead2', 340), K(null, 140)], needs: 'two', at: 'surface' });
   def('sip', { label: 'a sip from a cup', prop: 'cup', entry: [K('cuphold', 400, { prop: 1 })], peak: K('sip', 700, { prop: 1 }), recover: [K('cuphold', 500, { prop: 1 }), K(null, 140)], needs: 'free' });

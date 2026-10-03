@@ -32,7 +32,7 @@ RB.staging = (function () {
   const DIRS = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
   const now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
   const st = {
-    seed: 20261003, on: true, token: 0, scene: null, gate: -1e9, pairs: new Map(), lastLeavers: new Set(),
+    seed: 20261003, on: true, token: 0, scene: null, evN: 0, cap: 1, busy: 0, gate: -1e9, pairs: new Map(), lastLeavers: new Set(),
     arrival: null, examine: null, shared: null, sharedNext: 0, lastMove: 0, lastMap: null, socialNext: 0,
     trace: [], stats: null,
   };
@@ -60,10 +60,24 @@ RB.staging = (function () {
   }
 
   // ---- profiles ------------------------------------------------------------------------------------------
+  // Restraint by place and story state (the world review's WR-06): Lanternfall before its bell is orderly
+  // and constrained (fewer, politer exchanges), the Archive road and the Still Archive are quiet. A mood
+  // slows the pace of habits, lowers how readily people turn to each other and narrows what they say.
+  const MOODS = [
+    { map: /^lf\./, if: '!lf_bell_rung', pace: 1.4, social: 0.4, talk: ['nod', 'palm'] },
+    { map: /^(sa|sv)\./, pace: 1.6, social: 0.3, talk: ['nod'] },
+  ];
+  function moodOf(m) {
+    const s = RB.game.s;
+    for (const md of MOODS) if (md.map.test(m.id) && (!md.if || (s && RB.state.test(s, md.if)))) return md;
+    return null;
+  }
   function profileOf(a) {
     const s = S(a), m = W().map;
     if (!s.prof || s.map !== (m && m.id)) {
       const r = RB.mannerisms ? RB.mannerisms.forActor(a) : { prof: { class: 'town', idle: [], every: [12, 24], talk: [] }, stations: new Set() };
+      const md = m && moodOf(m);
+      if (md) r.prof = Object.assign({}, r.prof, { every: (r.prof.every || [12, 24]).map((v) => v * md.pace), social: (r.prof.social || 0) * md.social, moodTalk: md.talk });
       s.prof = r.prof; s.stations = r.stations; s.map = m && m.id;
       s.rest = restFor(a, r.prof);
       s.next = null; s.n = {};
@@ -153,9 +167,15 @@ RB.staging = (function () {
     const keys = RB.gestures.keys(g);
     const peakI = g.entry.length;
     let t0 = T() + (o.delay || 0);
-    const run = { id: g.id, g, keys, peakI, t0, owner: o.owner, token: o.token || 0, hold: !!o.hold, holding: false, done: false, target: o.target || null, target2: o.target2 || null, prop: o.prop || null, hand: o.hand || null, dir: null, transfer: o.transfer || null, transferred: false, tag: o.tag || null };
-    run.total = keys.reduce((v, k) => v + k[1], 0);
-    run.toPeak = keys.slice(0, peakI + 1).reduce((v, k) => v + k[1], 0);
+    const run = { ev: o.ev || ++st.evN, id: g.id, g, keys, peakI, t0, owner: o.owner, token: o.token || 0, hold: !!o.hold, holding: false, done: false, target: o.target || null, target2: o.target2 || null, prop: o.prop || null, hand: o.hand || null, dir: null, transfer: o.transfer || null, transferred: false, tag: o.tag || null };
+    // a work loop (glassblowing, sweeping …): held in a scene it keeps cycling; idle it plays a few turns
+    if (g.loop) {
+      const cyc = [g.peak].concat(g.recover);
+      if (o.hold) { run.loop = { at: g.entry.reduce((v, k) => v + k[1], 0), keys: cyc, len: cyc.reduce((v, k) => v + k[1], 0) }; run.hold = false; }
+      else { run.keys = g.entry.slice(); for (let i = 0; i < (g.cycles || 2); i++) run.keys = run.keys.concat(cyc); }
+    }
+    run.total = run.keys.reduce((v, k) => v + k[1], 0);
+    run.toPeak = run.keys.slice(0, peakI + 1).reduce((v, k) => v + k[1], 0);
     // reduced motion: the key pose, no in-betweens (a cue holds at its peak until the line moves on)
     if (RB.game.reducedMotion()) { run.still = true; if (o.owner === 'scene') run.holding = true; }
     // a gesture that turns to its target turns at once (the facing is drawn; collision facing stays)
@@ -170,6 +190,11 @@ RB.staging = (function () {
     }
     let e = t - run.t0;
     if (e < 0) return null;
+    if (run.loop && e >= run.loop.at) {
+      let r = (e - run.loop.at) % run.loop.len;
+      for (const k of run.loop.keys) { if (r < k[1]) return k; r -= k[1]; }
+      return run.loop.keys[0];
+    }
     if (run.holding) return run.keys[run.peakI];
     for (let i = 0; i < run.keys.length; i++) {
       const k = run.keys[i];
@@ -212,7 +237,8 @@ RB.staging = (function () {
           else if (x.gaze === 'away') gaze = awayGaze(a, run, dir || a.dir);
           else if (x.gaze) gaze = x.gaze;
           if (x.look && (run.target || run.target2)) { const tg = x.look === 'b' ? run.target2 || run.target : run.target; dir = dirTo(a, tg); gaze = gazeTo(a, tg, dir); }
-          if (x.prop && run.prop) prop = run.prop;
+          if (typeof x.prop === 'string') prop = x.prop; // a key with its own state of the object (a gather turning)
+          else if (x.prop && run.prop) prop = run.prop;
           if (x.dx) { const d = DIRS[dir || a.dir]; ox = d[0] * x.dx; oy = d[1] * x.dx * 0.5; }
           if (x.dy) oy += x.dy;
         }
@@ -229,7 +255,7 @@ RB.staging = (function () {
       if (tp && (dv === 'down' || dv === 'up') && Math.abs(tp.y - a.y) > 2 * Math.abs(tp.x - a.x)) pose = (tp.y < a.y) === (dv === 'down') ? 'pointup' : 'pointdown';
     }
     if (!pose) {
-      pose = s.pose || s.rest;
+      pose = s.pose || (s.prof && s.prof.restScene === false && RB.game.mode() !== 'world' ? null : s.rest);
       if (pose && pose === s.rest && pose.indexOf('.') > 0) { hand = pose.slice(-1); pose = pose.slice(0, -2); }
       if (pose && pose === (s.rest || '').split('.')[0] && !prop && s.prof && s.prof.restProp) prop = s.prof.restProp;
     }
@@ -334,6 +360,7 @@ RB.staging = (function () {
       if (!run || run.owner !== 'scene') continue;
       if (run.transfer && !run.transferred) doTransfer(a, run);
       if (run.chain) { run.finished = true; s.run = null; run.done = true; chainNext(a, run, true); }
+      else if (run.loop) { /* work goes on through the next line */ }
       else if (run.hold) { run.holding = true; run.t0 = Math.min(run.t0, T()); }
       else { s.run = null; run.done = true; }
       st.stats.settled++;
@@ -531,7 +558,16 @@ RB.staging = (function () {
     let n = 0;
     for (const a of w.npcs.concat(w.extras || [], w.comp ? [w.comp] : [], [w.player])) {
       const s = a && a.stg;
-      if (s && s.run && s.run.owner === 'idle') { s.run = null; n++; }
+      if (s && s.run && s.run.owner === 'idle') {
+        // a tool in hand stays in hand (the brush, the pipe, the teapot) and the task is taken up again
+        // once the world is back: the conversation interrupted it, it did not end it
+        const r = s.run, k = r.still ? null : keyAt(r, T());
+        const kind = k && k[2] ? (typeof k[2].prop === 'string' ? k[2].prop : k[2].prop ? r.prop : null) : null;
+        if (kind && RB.sprites._pose.hasProp(kind) && !s.held) { s.held = { kind, auto: true }; s.resume = r.id; }
+        if (r.tag === 'idle' && r.g.loop) s.resume = r.id;
+        if (s.resume) s.next = T() + 1800 + rand(a, 'resume') * 1200;
+        s.run = null; n++;
+      }
       if (s && s.social) s.social = null;
     }
     if (st.shared) st.shared = null;
@@ -579,6 +615,7 @@ RB.staging = (function () {
   function startIdle(a, h, why) {
     const g = RB.gestures.get(h[0]);
     const opts = h[2] || {};
+    if (a.stg && a.stg.held && a.stg.held.auto) a.stg.held = null; // the task's own object takes over
     const tg = habitTarget(a, g.id);
     const run = mkRun(a, g, { owner: 'idle', target: tg, prop: opts.prop || g.prop || null, tag: why });
     if (run.still) return null;
@@ -616,16 +653,21 @@ RB.staging = (function () {
       profileOf(a);
       people.push(a);
     }
-    let active = 0;
+    // the cap counts events, not people: a word between two neighbours, or two people glancing at
+    // someone arriving, is one thing happening on screen
+    const evs = new Set();
     for (const a of people) {
       const s = a.stg;
       if (s.run && (s.run.done || (s.run.owner === 'idle' && T() - s.run.t0 > s.run.total + 50))) finish(a, s.run);
       if (s.run && s.run.owner === 'idle' && (a.mv || a.route || owned(a))) s.run = null;
-      if (s.run && s.run.owner === 'idle') active++;
+      if (s.run && s.run.owner === 'idle') evs.add(s.run.ev);
       if (s.next == null) s.next = time + (1500 + rand(a, 'first') * (((s.prof.every || [12, 24])[0]) * 1000));
     }
+    // off screen nothing runs (a person who walked out of view drops what they were doing)
+    for (const a of w.npcs) if (a.stg && a.stg.run && a.stg.run.owner === 'idle' && !people.includes(a)) a.stg.run = null;
+    let active = evs.size;
     const cap = Math.max(1, Math.min(4, Math.ceil(people.length / 4)));
-    st.stats.cap = cap;
+    st.stats.cap = cap; st.cap = cap; st.busy = active;
     // at most one new habit per tick, none sooner than 650 ms after the last, and never two neighbours in step
     if (active < cap && time - st.gate > 650) {
       for (const a of people) {
@@ -634,14 +676,18 @@ RB.staging = (function () {
         if (a.def && a.def.wander && s.wanderHold && time < s.wanderHold) continue;
         const crowd = people.some((b) => b !== a && b.stg.run && b.stg.run.owner === 'idle' && near(a, b, 3) && time - b.stg.run.t0 < 2500);
         if (crowd) { s.next = time + 1200 + rand(a, 'defer') * 1200; continue; }
-        const h = pickHabit(a, s.prof, s.prof.idle);
+        // back to the task a conversation interrupted, else a habit of their own
+        const back = s.resume && (s.prof.idle || []).find((x) => x[0] === s.resume && eligible(a, s.prof, x));
+        s.resume = null;
+        const h = back || pickHabit(a, s.prof, s.prof.idle);
         if (!h) { s.next = time + 8000; continue; }
         if (startIdle(a, h, 'idle')) { active++; break; }
       }
     }
+    st.busy = active;
     st.stats.maxActive = Math.max(st.stats.maxActive, active);
-    social(people, time);
-    reactions(people, time);
+    if (st.busy < st.cap || st.forceSocial) social(people, time);
+    if (st.busy < st.cap) reactions(people, time);
     companion(time);
     record(t0);
   }
@@ -660,19 +706,23 @@ RB.staging = (function () {
       if (!near(A, B, 2) || (A.x === B.x && A.y === B.y)) continue;
       const k = [A.id, B.id].sort().join('+');
       const nx = st.pairs.get(k);
-      if (nx == null) { st.pairs.set(k, time + 6000 + h32(k + '|first') * 12000); continue; }
-      if (time < nx) continue;
+      if (nx == null && !st.forceSocial) { st.pairs.set(k, time + 6000 + h32(k + '|first') * 12000); continue; }
+      if (nx != null && time < nx) continue;
       const p = Math.min(A.stg.prof.social, B.stg.prof.social);
-      const r = h32(k + '|' + Math.floor(nx));
+      const r = h32(k + '|' + Math.floor(nx || 0));
       st.pairs.set(k, time + 30000 + r * 30000);
-      if (r > p) continue;
+      if (r > p && !st.forceSocial) continue;
+      st.forceSocial = false;
       const [sp, li] = (A.stg.prof.social >= B.stg.prof.social) ? [A, B] : [B, A];
-      const talk = (sp.stg.prof.talk || [9]).map((n) => RB.gestures.PRIM[n]).filter((g) => g && RB.gestures.can(g.id, sp.look) && ['palm', 'point', 'size', 'nod', 'laugh', 'shrug', 'count', 'chin'].includes(g.id));
+      const allowed = sp.stg.prof.moodTalk || ['palm', 'point', 'size', 'nod', 'laugh', 'shrug', 'count', 'chin'];
+      const talk = (sp.stg.prof.talk || [9]).map((n) => RB.gestures.PRIM[n]).filter((g) => g && RB.gestures.can(g.id, sp.look) && allowed.includes(g.id));
       const g = talk.length ? talk[Math.floor(h32(k + '|g') * talk.length)] : RB.gestures.get('nod');
-      const r1 = mkRun(sp, g, { owner: 'idle', target: g.id === 'point' ? { x: sp.x + (li.x >= sp.x ? -3 : 3), y: sp.y - 2 } : li, tag: 'social' });
+      const ev = ++st.evN;
+      st.busy++;
+      const r1 = mkRun(sp, g, { owner: 'idle', ev, target: g.id === 'point' ? { x: sp.x + (li.x >= sp.x ? -3 : 3), y: sp.y - 2 } : li, tag: 'social' });
       r1.dir = dirTo(sp, li);
       r1.keys = [[null, 450, null]].concat(r1.keys, [[null, 900, null]]); r1.peakI += 1; r1.total += 1350; r1.toPeak += 450;
-      const r2 = mkRun(li, RB.gestures.get('nod'), { owner: 'idle', target: sp, tag: 'social' });
+      const r2 = mkRun(li, RB.gestures.get('nod'), { owner: 'idle', ev, target: sp, tag: 'social' });
       r2.dir = dirTo(li, sp);
       r2.keys = [[null, 450 + r1.toPeak - 450, { gaze: 'target' }]].concat(r2.keys, [[null, 700, { gaze: 'target' }]]); r2.peakI += 1; r2.total = r2.keys.reduce((v, x) => v + x[1], 0);
       sp.stg.run = r1; li.stg.run = r2;
@@ -685,10 +735,13 @@ RB.staging = (function () {
   function reactions(people, time) {
     const w = W();
     const glanceAt = (who, tgt, max, why) => {
+      if (st.busy >= st.cap) return;
       const cand = people.filter((a) => a !== tgt && !a.stg.run && !a.mv && !owned(a) && near(a, tgt, 6) && !(a.look && a.look.custom))
         .sort((a, b) => (Math.abs(a.x - tgt.x) + Math.abs(a.y - tgt.y)) - (Math.abs(b.x - tgt.x) + Math.abs(b.y - tgt.y)) || (a.id < b.id ? -1 : 1));
+      const ev = ++st.evN;
+      if (cand.length) st.busy++;
       cand.slice(0, max).forEach((a, i) => {
-        const run = mkRun(a, RB.gestures.get('glance'), { owner: 'idle', target: tgt, delay: 200 + i * 380 + rand(a, 'react') * 300, tag: why });
+        const run = mkRun(a, RB.gestures.get('glance'), { owner: 'idle', ev, target: tgt, delay: 200 + i * 380 + rand(a, 'react') * 300, tag: why });
         if (Math.abs(tgt.x - a.x) + Math.abs(tgt.y - a.y) >= 2) run.dir = dirTo(a, tgt);
         a.stg.run = run;
         st.stats.react++;
@@ -771,7 +824,8 @@ RB.staging = (function () {
     return false;
   }
   function stepped(n) {
-    if (!st.on || RB.game.reducedMotion()) return;
+    if (!st.on || RB.game.reducedMotion() || RB.game.mode() !== 'world') return;
+    if (!onScreen(n) || st.busy >= st.cap) return; // off screen nothing runs; the cap holds
     const prof = profileOf(n);
     if (rand(n, 'pause') >= 1 / 3) return;
     const h = pickHabit(n, prof, prof.route && prof.route.length ? prof.route : prof.idle);
@@ -780,6 +834,7 @@ RB.staging = (function () {
     const run = mkRun(n, g, { owner: 'idle', target: habitTarget(n, g.id), delay: 380, tag: 'route' });
     if (run.still) return;
     S(n).run = run;
+    st.busy++;
     st.stats.route++;
     st.trace.push({ who: keyOf(n), h: g.id, why: 'route', t: Math.round(T()) });
   }
@@ -796,14 +851,16 @@ RB.staging = (function () {
     enabled(v) { if (v != null) { st.on = !!v; if (!st.on) yieldIdle('off'); } return st.on; },
     seed(n) { if (n != null) { st.seed = n >>> 0; const w = W(); for (const a of (w.npcs || []).concat(w.comp ? [w.comp] : [], w.player ? [w.player] : [])) if (a && a.stg) { a.stg.n = {}; a.stg.next = null; a.stg.run = null; a.stg.hist = []; } st.trace = []; st.pairs.clear(); st.gate = -1e9; st.socialNext = 0; st.lastMap = null; st.arrival = null; st.examine = null; st.shared = null; st.sharedNext = 0; st.lastMove = 0; st.lastLeavers = new Set(); } return st.seed; },
     trace: () => st.trace.slice(),
-    stats: () => Object.assign({}, st.stats, { pose: RB.sprites._pose ? RB.sprites._pose.stats() : null }),
+    stats: () => Object.assign({}, st.stats, { busy: st.busy, forceSocial: !!st.forceSocial, socialIn: Math.round(st.socialNext - T()), pose: RB.sprites._pose ? RB.sprites._pose.stats() : null }),
     resetStats() { st.stats = fresh(); if (RB.sprites._pose) { /* the frame cache keeps its own counts */ } },
     state() {
       const w = W(), sc = st.scene;
-      const one = (a) => { const s = a.stg || {}; const r = s.run; return { id: idOf(a), x: a.x, y: a.y, dir: a.dir, run: r ? { id: r.id, owner: r.owner, holding: r.holding, tag: r.tag } : null, pose: s.pose || null, rest: s.rest || null, look: s.look ? s.look.dir : null, held: s.held ? s.held.kind : null, owned: owned(a), cls: s.prof ? s.prof.class : null, tier: s.prof ? s.prof.tier : null, hist: (s.hist || []).slice() }; };
+      const one = (a) => { const s = a.stg || {}; const r = s.run; return { id: idOf(a), x: a.x, y: a.y, dir: a.dir, run: r ? { id: r.id, owner: r.owner, holding: r.holding, tag: r.tag, ev: r.ev } : null, pose: s.pose || null, rest: s.rest || null, look: s.look ? s.look.dir : null, held: s.held ? s.held.kind : null, owned: owned(a), cls: s.prof ? s.prof.class : null, tier: s.prof ? s.prof.tier : null, hist: (s.hist || []).slice() }; };
       return { scene: sc ? { id: sc.id, token: sc.token, owned: [...sc.owned].map(idOf), beats: sc.beats.slice(), ambience: !!sc.ambience } : null,
         actors: w.map ? w.npcs.concat(w.extras || []).map(one).concat(w.comp ? [one(w.comp)] : [], [one(w.player)]) : [] };
     },
+    // tests: bring the next word between neighbours forward (the pair and the gesture stay seeded choices)
+    nudge(o) { o = o || {}; if (o.social) { st.socialNext = 0; for (const k of st.pairs.keys()) st.pairs.set(k, 0); st.forceSocial = true; } },
     release() { const sc = st.scene; if (sc) { st.scene = null; releaseScene(sc); } yieldIdle('release'); },
   };
 })();

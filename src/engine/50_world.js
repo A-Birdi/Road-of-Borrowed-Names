@@ -27,8 +27,12 @@ RB.world = (function () {
     quietUntil: 0,      // W.time before which no creature engages (just after a battle)
   };
 
+  // People's blink timers draw from the world's own stream (xorshift), never Math.random: the language
+  // tasks pick from Math.random, and life in the world must not change which task comes next.
+  let wseed = 0x2545f491;
+  function wrand() { wseed ^= wseed << 13; wseed >>>= 0; wseed ^= wseed >>> 17; wseed ^= wseed << 5; wseed >>>= 0; return wseed / 4294967296; }
   function makeActor(x, y, dir, look) {
-    return { x, y, fx: x, fy: y, dir: dir || 'down', look, mv: null, frame: 0, stepToggle: 0, blinkT: Math.random() * 4000 };
+    return { x, y, fx: x, fy: y, dir: dir || 'down', look, mv: null, frame: 0, stepToggle: 0, blinkT: wrand() * 4000 };
   }
 
   function s() {
@@ -394,7 +398,7 @@ RB.world = (function () {
     }
     for (const n of W.npcs.concat(W.extras)) {
       if (n.fadeIn) { n.alpha = Math.min(1, (n.alpha || 0) + dt / 260); if (n.alpha >= 1) n.fadeIn = false; }
-      if (n.extra) { stepActor(n, dt); n.blinkT -= dt; if (n.blinkT < -140) n.blinkT = 2500 + Math.random() * 3000; }
+      if (n.extra) { stepActor(n, dt); n.blinkT -= dt; if (n.blinkT < -140) n.blinkT = 2500 + wrand() * 3000; }
       if (n.route && !n.mv) {
         if (followRoute(n, dt, 240) && !n.mv) { n.route = null; if (n.extra) faceTo(n, W.player.x, W.player.y); else n.dir = (n.def && n.def.dir) || n.dir; }
       }
@@ -594,7 +598,7 @@ RB.world = (function () {
     }
   }
   function faceTo(a, x, y) {
-    a.glanceFrom = null; a.glanceT = 6000 + Math.random() * 6000;
+    a.glanceFrom = null; a.glanceT = 6000 + wrand() * 6000;
     const dx = x - a.x, dy = y - a.y;
     if (Math.abs(dx) > Math.abs(dy)) a.dir = dx > 0 ? 'right' : 'left';
     else if (dy) a.dir = dy > 0 ? 'down' : 'up';
@@ -633,7 +637,7 @@ RB.world = (function () {
     for (const n of W.npcs) {
       stepActor(n, dt);
       n.blinkT -= dt;
-      if (n.blinkT < -140) n.blinkT = 2500 + Math.random() * 3000;
+      if (n.blinkT < -140) n.blinkT = 2500 + wrand() * 3000;
       if (n.route) continue;
       // standing still, people live by their mannerism profile (resting stance, habits, occupation
       // idles, a word with a neighbour, glances at what they witness): RB.staging.tick below, which
@@ -643,7 +647,7 @@ RB.world = (function () {
       if (!wander || n.mv || RB.game.mode() !== 'world') continue;
       // a wanderer pauses on their round (a route habit playing, or a scene that owns them)
       if (RB.staging && RB.staging.wanderPause(n)) continue;
-      const rnd = (k) => (RB.staging ? RB.staging.rand(n, k) : Math.random());
+      const rnd = (k) => (RB.staging ? RB.staging.rand(n, k) : wrand());
       n.wt = (n.wt || 1500 + rnd('wt0') * 2500) - dt;
       if (n.wt > 0) continue;
       n.wt = 1800 + rnd('wt') * 3500;
@@ -651,8 +655,9 @@ RB.world = (function () {
       const d = dirs[Math.floor(rnd('wd') * 4)];
       const [dx, dy] = DIRS[d];
       const nx = n.x + dx, ny = n.y + dy;
-      if (Math.abs(nx - n.home[0]) > wander || Math.abs(ny - n.home[1]) > wander) { n.dir = d; continue; }
-      if (blocked(nx, ny, { except: n }) || RB.maps.exitAt(W.map, nx, ny) || triggerAt(nx, ny)) { n.dir = d; continue; }
+      // (at the edge of their round, or with the way blocked, they turn: and now and then pause there)
+      if (Math.abs(nx - n.home[0]) > wander || Math.abs(ny - n.home[1]) > wander) { n.dir = d; if (RB.staging) RB.staging.stepped(n); continue; }
+      if (blocked(nx, ny, { except: n }) || RB.maps.exitAt(W.map, nx, ny) || triggerAt(nx, ny)) { n.dir = d; if (RB.staging) RB.staging.stepped(n); continue; }
       if (W.comp && ((W.comp.x === nx && W.comp.y === ny) || (W.comp.mv && W.comp.mv.tx === nx && W.comp.mv.ty === ny))) continue;
       if (Math.abs(nx - p.x) + Math.abs(ny - p.y) < 2) continue; // don't crowd the player
       startMove(n, d, 320);

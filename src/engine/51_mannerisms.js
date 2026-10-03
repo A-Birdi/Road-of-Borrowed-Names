@@ -17,7 +17,8 @@
  *   { class, tier, rest: pose, every: [minS, maxS], idle: [[habit, weight, { at, prop, gaze }]],
  *     route: [[habit, weight]], tells: { surprise, worry, sad, angry, shy, happy, think }: gesture ids,
  *     props: [...], talk: [primitive numbers], strong: [{ beat, gesture }], avoid: [...],
- *     portrait: { idle: [...], cues: { tag: cue } }, states: [{ if, rest, idle, every }], social: 0..1 }
+ *     portrait: { idle: [...], cues: { tag: cue } }, states: [{ if, rest, idle, every }], social: 0..1,
+ *     maps: { mapId: { rest, restProp, idle } } (their own workplace: the glassblower at his bench) }
  * API: RB.mannerisms.add(id, profile), .of(id), .forActor(actor), .classOf(look, stations), .CLASSES,
  *      .profiles(), .BESPOKE (the ids authored as bespoke), .stationsAt(map, x, y) */
 var RB = (globalThis.RB = globalThis.RB || {});
@@ -70,6 +71,10 @@ RB.mannerisms = (function () {
     return out;
   }
   // ---- deriving a class from a look and a station ------------------------------------------------------
+  // A person without an authored profile is placed by what they do, not by how they look: the station
+  // they stand at (a desk, a counter, a hearth, a bench, a light) and a tool in hand (a lamp, a book, a
+  // tool belt). Glasses, age, dress, gender and skin tone never choose a personality (the world review,
+  // WR-01); a child-sized figure stays a child (the cast's children are written as children).
   function classOf(look, st) {
     look = look || {};
     st = st || new Set();
@@ -77,12 +82,10 @@ RB.mannerisms = (function () {
     if (look.custom || look.pet) return 'nonhuman';
     if (look.size === 'child') return 'child';
     if (acc.includes('lamp')) return 'keeper';
-    if (look.age === 'old') return 'elder';
-    if (st.has('desk') || acc.includes('book') || acc.includes('glasses')) return st.has('desk') && !acc.includes('glasses') ? 'clerk' : 'scholar';
-    if (st.has('hearth') || st.has('tea') || (look.shape === 'apron' && st.has('surface'))) return 'host';
-    if (acc.includes('toolbelt') || acc.includes('headband') || st.has('bench') || st.has('nets')) return 'craft';
-    if (acc.includes('satchel')) return 'traveller';
-    if (look.shape === 'apron') return 'host';
+    if (st.has('desk')) return 'clerk';
+    if (acc.includes('book')) return 'scholar';
+    if (st.has('hearth') || st.has('tea') || st.has('surface')) return 'host';
+    if (acc.includes('toolbelt') || st.has('bench') || st.has('nets') || st.has('laundry')) return 'craft';
     return 'town';
   }
   function merge(base, prof) {
@@ -108,6 +111,9 @@ RB.mannerisms = (function () {
     const st = W && W.map ? stationsAt(W.map, a.home ? a.home[0] : a.x, a.home ? a.home[1] : a.y) : new Set();
     let prof = of(id, a.look, st);
     const s = RB.game && RB.game.s;
+    // at their own workplace a person can have their own stance and work (maps: { mapId: overrides })
+    if (prof.maps && W && W.map && prof.maps[W.map.id]) prof = Object.assign({}, prof, prof.maps[W.map.id]);
+    // and their stance changes with the story (states: [{ if, … }], the last that holds wins)
     for (const v of prof.states || []) if (s && RB.state.test(s, v.if)) prof = Object.assign({}, prof, v);
     return { prof, stations: st };
   }

@@ -629,6 +629,10 @@ RB.render = (function () {
     c.drawImage(light, 0, 0);
   }
 
+  // Weather particles draw from their own stream (xorshift), never Math.random: the language tasks pick
+  // from Math.random, and rain or snow must not change which task comes next.
+  let pseed = 0x6c8e9cf5;
+  function prand() { pseed ^= pseed << 13; pseed >>>= 0; pseed ^= pseed >>> 17; pseed ^= pseed << 5; pseed >>>= 0; return pseed / 4294967296; }
   // Weather at art resolution: finer drops, flakes and motes than the tiles.
   function drawWeather(c, m, t) {
     const amb = ambientOf(m).ambient || {};
@@ -636,7 +640,7 @@ RB.render = (function () {
     if (!kind) return;
     const reduced = RB.game.reducedMotion();
     const target = reduced ? 16 : kind === 'rain' ? 110 : 60;
-    while (particles.length < target) particles.push({ x: Math.random() * bw, y: Math.random() * bh, v: 0.5 + Math.random(), p: Math.random() * 6 });
+    while (particles.length < target) particles.push({ x: prand() * bw, y: prand() * bh, v: 0.5 + prand(), p: prand() * 6 });
     for (const p of particles) {
       if (kind === 'rain') {
         p.y += (reduced ? 2 : 8) * p.v; p.x -= reduced ? 0.4 : 2;
@@ -668,8 +672,8 @@ RB.render = (function () {
         c.fillRect(p.x, p.y, 6, 4);
         c.fillStyle = 'rgba(90,80,70,0.35)'; c.fillRect(p.x + 1, p.y + 1, 4, 1);
       }
-      if (p.y > bh + 8) { p.y = -8; p.x = Math.random() * bw; }
-      if (p.y < -12) { p.y = bh + 4; p.x = Math.random() * bw; }
+      if (p.y > bh + 8) { p.y = -8; p.x = prand() * bw; }
+      if (p.y < -12) { p.y = bh + 4; p.x = prand() * bw; }
       if (p.x < -8) p.x = bw + 4;
       if (p.x > bw + 12) p.x = -4;
     }

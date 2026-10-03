@@ -57,7 +57,8 @@ RB.actorDev = (function () {
     const who = o.who || ['pc', 'nao', 'mio', 'ren', 'suzu'];
     const phases = o.phases || (sheet === 'primitives' ? ['entry', 'peak', 'recover'] : ['peak']);
     let cols;
-    if (sheet === 'primitives') cols = Object.keys(RB.gestures.PRIM).map((n) => RB.gestures.PRIM[n].id);
+    if (o.cols) cols = o.cols.slice();
+    else if (sheet === 'primitives') cols = Object.keys(RB.gestures.PRIM).map((n) => RB.gestures.PRIM[n].id);
     else if (sheet === 'habits') cols = RB.gestures.list().filter((g) => g.kind === 'habit').map((g) => g.id);
     else cols = null; // profiles: per person their rest and their own habits
     root = document.createElement('div');
@@ -87,7 +88,10 @@ RB.actorDev = (function () {
         for (const id of cols) {
           const td = cell(null, null);
           const fit = RB.gestures.fit(id, lookOf(w), { prop: PROP_FOR[id] });
-          for (const ph of phases) { const cv = frame(w, id, ph, dir); if (cv) { const c = document.createElement('canvas'); c.width = cv.width * scale; c.height = cv.height * scale; const g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.drawImage(cv, 0, 0, c.width, c.height); td.appendChild(c); } }
+          const row = document.createElement('div');
+          row.setAttribute('style', 'display:flex;gap:2px;justify-content:center');
+          for (const ph of phases) { const cv = frame(w, id, ph, dir); if (cv) { const c = document.createElement('canvas'); c.width = cv.width * scale; c.height = cv.height * scale; const g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.drawImage(cv, 0, 0, c.width, c.height); row.appendChild(c); } }
+          td.appendChild(row);
           if (fit !== id) { const d = document.createElement('div'); d.textContent = fit ? '→ ' + fit : '—'; td.appendChild(d); }
           tr.appendChild(td);
         }

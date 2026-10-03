@@ -25,15 +25,29 @@ hiro: {外|そと} が {騒|さわ}がしい な 。 {窯|かま} の {方|ほ�
 !call co.suzu_truth
 
 @scene co.hiro_first
+# Staged (the world review, WR-03): Hiro keeps the blowpipe turning through the first lines (he cannot
+# let go), and holds the gather still to cool when he says he will listen; the companion answers in kind.
+!look hiro left
+!gesture hiro glasswork hold
+!gesture pc observe hiro
 hiro: …… {悪|わる}い 。 {今|いま} {手|て} が {離|はな}せない 。 ガラス は {待|ま}って くれない 。 || …Sorry. Can't let go of this. Glass doesn't wait.
 narr: ヒロ は {吹|ふ}き{竿|ざお} を {回|まわ}し{続|つづ}け 、 {橙色|だいだいいろ} の {塊|かたまり} を {丸|まる}く {整|ととの}えて いく 。 {額|ひたい} に {巻|ま}いた {手拭|てぬぐ}い が 、 {煤|すす} で {少|すこ}し {黒|くろ}い 。 || Hiro keeps the blowpipe turning, coaxing an orange gather into a sphere. The cloth tied round his forehead is a little black with soot.
+!gesture hiro cool pc hold
+!look pc hiro
 hiro: ヒロ だ 。 {祭|まつ}り の {灯籠|とうろう} の {火屋|ほや} を {作|つく}ってる 。 {用|よう} が あれば 、 {冷|さ}める {間|あいだ} に {聞|き}く 。 || I'm Hiro. I make the globes for the festival lanterns. If you need something, I'll listen while this cools.
+?(comp=nao) !gesture comp nod hiro
 ?(comp=nao) comp: {職人|しょくにん} は {無口|むくち} な {方|ほう} が {信用|しんよう} できる 。 {配達先|はいたつさき} と して も {楽|らく} だ 。 || Quiet craftsmen are the trustworthy kind. Easy to deliver to, too.
+?(comp=mio) !gesture comp observe hiro
 ?(comp=mio) comp[smile]: {額|ひたい} の {手拭|てぬぐ}い 、 {汗|あせ} {止|ど}め です ね 。 {火|ひ} の {粉|こ} {除|よ}け に も なる 。 {賢|かしこ}い 。 || The cloth on your forehead — for sweat. And to keep sparks off, too. Smart.
+?(comp=mio) !gesture hiro aside
 ?(comp=mio) hiro: …… {母|はは} の {真似|まね} だ 。 || …I copied my mother.
+?(comp=ren) !gesture comp bow
 ?(comp=ren) comp: {火屋|ほや} は 、 {灯|ひ} を {守|まも}る ガラス です 。 {灯守|ひもり} と して 、 {頭|あたま} が {下|さ}がります 。 || Globes are the glass that guards a flame. As a lantern keeper, I'm in your debt.
+?(comp=suzu) !gesture comp lowered hold
 ?(comp=suzu) comp[closed]: …… || …
+?(comp=suzu) !gesture comp palm hiro
 ?(comp=suzu) comp[smile]: {素敵|すてき} な {火屋|ほや} 。 {舞台|ぶたい} の {明|あ}かり に {欲|ほ}しい くらい 。 || Lovely globes. I'd want them for stage lights.
+?(comp=suzu) !gesture hiro shake
 ?(comp=suzu) hiro: …… {悪|わる}い が 、 {祭|まつ}り の {分|ぶん} で {手|て} {一杯|いっぱい} だ 。 || …Sorry, the festival order's all I can manage.
 
 @scene co.beam

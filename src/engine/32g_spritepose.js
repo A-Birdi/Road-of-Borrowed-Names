@@ -176,6 +176,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     sitlook: { G: 'low', O: 'low', legs: 'sit', drop: 7, eyes: 'u' }, sitbook: { G: 'forward', O: 'forward', legs: 'sit', drop: 7, hy: 1, eyes: 'd', prop: 'both' },
     crouch: { G: 'low', O: 'low', legs: 'kneel', drop: 6, eyes: 'd' }, peek: { lean: 2, hx: 2, eyes: 'u' }, bounce: { drop: -1 },
     stiff: {}, tilt: { hx: 1 },
+    // glassblowing (Hiro): turning the pipe, a breath into it, the gather held still to cool
+    pipe1: { G: 'forward', O: 'in', hy: 1, eyes: 'd', prop: 'G' }, pipe2: { G: 'rub', O: 'in', hy: 1, eyes: 'd', prop: 'G' }, pipe3: { G: 'forward', O: 'low', hy: 1, eyes: 'd', prop: 'G' },
+    blow: { G: 'mouth', O: 'forward', eyes: 'd', prop: 'G' }, pipehold: { G: 'forward', O: 'low', prop: 'G' },
   };
 
   // ---- held objects (drawn at the hand; 'both' between the hands) ------------------------------
@@ -199,10 +202,23 @@ var RB = (globalThis.RB = globalThis.RB || {});
     cloth(b, x, y) { b.rect(x - 1, y, 3, 5, '#f0ece0'); b.rect(x - 1, y + 4, 3, 1, '#c8c4b8'); b.px(x + 1, y + 1, '#d8d4c8'); },
     envelopes(b, x, y) { b.rect(x - 3, y - 5, 6, 3, '#e8dcc0'); b.rect(x - 2, y - 3, 6, 3, '#f4ead4'); b.px(x + 1, y - 2, '#b83a3a'); b.rect(x - 3, y - 5, 6, 1, '#f8f0dc'); },
     pipe(b, x, y) { b.line(x, y, x + 9, y - 3, '#6a6a72'); b.rect(x + 9, y - 4, 2, 2, '#ffb050'); b.px(x + 10, y - 4, '#fff0a0'); },
+    // a glassblower's pipe held in both hands, angled down and forward, the glowing gather at its end;
+    // the three variants turn the gather (its bright side moves round), 'pipecool' is the gather cooling
+    pipeA(b, x, y) { blowpipe(b, x, y, 0); }, pipeB(b, x, y) { blowpipe(b, x, y, 1); }, pipeC(b, x, y) { blowpipe(b, x, y, 2); }, pipecool(b, x, y) { blowpipe(b, x, y, 3); },
     ribbon(b, x, y) { b.rect(x - 1, y, 2, 6, '#c8a0a8'); b.px(x, y + 6, '#a88088'); b.px(x - 1, y, '#e8c0c8'); },
     flint(b, x, y) { b.rect(x - 1, y - 2, 2, 2, '#8a8a92'); b.px(x - 1, y - 2, '#b8b8c0'); },
     seeds(b, x, y) { b.rect(x - 2, y - 3, 4, 3, '#b89a6a'); b.rect(x - 2, y - 3, 4, 1, '#d8ba8a'); b.px(x, y - 4, '#8a6a44'); },
   };
+  function blowpipe(b, x, y, k) {
+    b.line(x - 3, y - 2, x + 7, y + 5, '#5a5a62'); b.line(x - 3, y - 3, x + 7, y + 4, '#8a8a92'); // the pipe, lit along its top
+    const gx = x + 8, gy = y + 5;
+    const G = k === 3 ? ['#8a3a20', '#c85a28', '#e88a40', '#f0a860'] : ['#c8501e', '#ff8a28', '#ffc050', '#fff0b0'];
+    b.rect(gx - 1, gy - 1, 4, 4, G[1]); b.rect(gx, gy - 2, 2, 6, G[1]); b.rect(gx - 2, gy, 6, 2, G[1]);
+    b.rect(gx, gy, 2, 2, G[2]);
+    const hl = [[-1, -1], [2, -1], [1, 2], [0, -1]][k];
+    b.px(gx + hl[0], gy + hl[1], G[3]); b.px(gx + hl[0] + (hl[0] < 1 ? 1 : -1), gy + hl[1], G[2]);
+    b.px(gx + 2, gy + 2, G[0]); b.px(gx + 3, gy + 1, G[0]);
+  }
   const PROP_NAMES = Object.keys(PROPS);
 
   // ---- parsing frame keys -------------------------------------------------------------------------
