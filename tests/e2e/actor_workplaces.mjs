@@ -37,7 +37,7 @@ const PLACES = [
   { key: 'office', map: 'sg.office', flags: F2, comp: 'nao', work: { omi: ['write', 'sort'] }, state: 'Chapter 2, before the confession' },
   { key: 'glass', map: 'co.glass', flags: F3, comp: 'mio', work: { hiro: ['glasswork'] }, state: 'Chapter 3, before the festival' },
   { key: 'inn', map: 'sb.inn', flags: F4, comp: 'ren', work: { yae: ['stir', 'tidy', 'countidle'] }, state: 'Chapter 4, the storm night (the inn full of people)' },
-  { key: 'bakery', map: 'lf.bakery', flags: F5, comp: 'suzu', work: {}, state: 'Chapter 5, before the bell (bakery props pending: see Masaru\'s profile TODO)' },
+  { key: 'bakery', map: 'lf.bakery', flags: F5, comp: 'suzu', work: { lf_masaru: ['knead'] }, state: 'Chapter 5, before the bell (Masaru at his kneading bench)' },
   { key: 'camp', map: 'sa.camp', flags: F6, comp: 'nao', work: { sa_isamu: ['rubhands', 'cupear', 'sitidle'] }, state: 'Chapter 6, on the way up (Isamu waiting by the fire)' },
 ];
 async function start(p, a) {

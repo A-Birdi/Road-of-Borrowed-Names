@@ -52,7 +52,7 @@ RB.mannerisms = (function () {
 
   // ---- stations: what a person stands at (props within a tile and a half) -------------------------
   const STATION = [
-    [/desk/, ['desk', 'surface']], [/counter|stall|register/, ['surface']], [/teaset|table/, ['surface', 'tea']],
+    [/desk/, ['desk', 'surface']], [/counter|stall|register|kneadbench/, ['surface']], [/teaset|table/, ['surface', 'tea']],
     [/stove|pot|irori|kettle|hearth|furnace|kiln|oven/, ['hearth']], [/campfire|brazier|fire/, ['fire']],
     [/anvil|workbench|wheel|loom|sawhorse/, ['bench']], [/laundry|wash/, ['laundry']], [/net/, ['nets']],
     [/lantern|lamppost|lamp|bellpost/, ['light']], [/shelf|bookpile|crate|barrel/, ['store']], [/sign|board|notice/, ['sign']],

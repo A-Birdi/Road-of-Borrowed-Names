@@ -97,9 +97,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   M('lf_tsuya', 'elder', O, { every: [14, 24], idle: [['lookroad', 3], ['glance', 1]], talk: [1, 32] });
   M('co_shino', 'traveller', O, { every: [9, 16], idle: [['sort', 2, { prop: 'letter' }], ['lookroad', 2], ['strap', 1]], talk: [14, 2] });
   M('tomo', 'host', O, { every: [9, 16], idle: [['hangwash', 2, { at: 'laundry' }], ['lookroad', 2], ['glance', 1]], talk: [13, 32] });
-  // TODO (lead, after the bakery props merge): Masaru's kneading needs a work surface within a tile of where he
-  // stands (lf.bakery 3,4); if the new prep surface's prop name does not match RB.mannerisms' station list
-  // (/table|counter|stall|desk|…/ → 'surface'), add it there. Until then he counts orders and wipes his brow.
+  // Masaru kneads at his floured bench (lf_kneadbench, a 'surface' station), standing side-on at its end (lf.bakery 4,3)
+  // so the work reads at play scale; between batches he counts the orders and wipes his brow.
   M('lf_masaru', 'host', O, { every: [8, 14], idle: [['knead', 3, { at: 'surface' }], ['countidle', 1], ['brow', 1]], talk: [12, 31] });
   M('co_heita', 'craft', O, { every: [12, 22], idle: [['doze', 3], ['stretch', 2], ['yawn', 1]], talk: [17] });
   M('lf_ritsu', 'host', O, { rest: 'clasp', every: [9, 16], idle: [['polish', 3], ['tidy', 1, { at: 'surface' }]], talk: [19, 26] });
