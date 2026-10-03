@@ -262,6 +262,18 @@ commit (VALIDATION.md); screenshots inspected by eye are noted as such.
   - `title_ledger.mjs` "title scene" at 1280×800, 900×1000, 390×844 and 844×390, and "title sky".
   - Captures inspected at 1280×800, 900×1000, 900×865, 390×844, 844×390 and 667×375, with bridge close-ups before and after.
 
+## Prologue (owner's report of 2026-10-03; VALIDATION.md "Prologue round"; docs/ART_DIRECTION.md §12)
+- [v] PR1 The traveller walks the road, not into the river:
+  - The walk starts on the road just above the caption slip and follows the road's centre line toward the horizon at a steady pace.
+  - The figure shrinks with distance (31 → about 11 art px on a desktop and a phone), shrunk onto the same pixel grid from the real walk frames.
+  - The title scene's pixel under the feet is road at every moment at 1920×1080, 1280×800, 390×844 and 844×390. The old path was off the road at 16–17 of 21 moments on the desktop and landscape screens, and hidden by the slip on the upright phone.
+  - With reduced motion the traveller stands still.
+  - Evidence: B prologue.
+- [v] PR2 The teahouse (twice), the riverbank lantern and the bridge are redrawn at art resolution in the title scene's manner (banded skies, hue-shifted ramps, selective outlines, stepped glows). Hana is her own portrait. Each composition keeps what matters above the caption slip, from 320×568 to 2000×1090. Evidence: B prologue (every shot, moving and still, four screen shapes); docs/screenshots/prologue/ (before and after).
+- [v] PR3 The lantern's name leaves it stroke by stroke and the lamp dims. The name is abstract cursive marks, not letters, so no kanji is drawn. Evidence: B prologue (ink pixels 139 → 70 → 0 at 1920×1080).
+- [v] PR4 The flow is unchanged: Next, Skip, Escape, the captions and their timing. The shots' caches are released when the prologue ends. Evidence: B prologue, create (382), ui, layout audit of create_prologue and title.
+- [b] PR5 Not verified: Firefox (the owner's browser), the foldable, a person's judgement of the art.
+
 ## Quest guidance (owner's question of 2026-09-29: hints in the ledger, map markers; VALIDATION.md "Quest guidance")
 - [v] G1 Where each quest's next step happens is derived from the content (src/engine/56_questguide.js): the scenes that move the quest on, walked the way the runner would against the current state, and the people, props, triggers, arrivals and foes that run them; a person who appears only later is not targeted; places you cannot reach yet are not preferred; what a blocked step waits for is followed two levels deep; more than six places marks none. Optional per-stage `hint` and `at` (validated). Evidence: tests/unit/quest_guide.test.mjs lists every stage of every quest — 116 derived, 1 authored (`rw_depart` 1), 4 set and passed within one scene, 0 missing — and checks live analysis on real states in every chapter; quest_guide.mjs checks it in the browser.
 - [v] G2 Journey: the objective stays first; "Need a nudge?" reveals up to three nudges one at a time (where and who; the authored hint or what to do there and which way; "Show on the map"), bilingual with furigana, generated from names, using words in the lexicon (465 generated lines checked); asking records nothing. Follow one quest at a time (the main road by default); the followed quest is first and marked; the text equivalent of the markers ("Next: Suzu, in Reedwake — south-west of you"). Evidence: quest_guide.mjs, quest_guide.test.mjs.

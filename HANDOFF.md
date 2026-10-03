@@ -127,6 +127,7 @@ real builds: docs/screenshots/ (README indexes them). Evidence: VALIDATION.md
   Settings (55_settings.js), dialogue (20_dialogue.js), word help, HUD,
   confirm sheets and cards (10_ui.js), touch pad (engine/10_input.js),
   title + six-slot ledger (30_title.js), four-step creation (40_create.js),
+  the prologue's shots (41_prologue_art.js, 41b–41d),
   challenge/pad/lessons/activities/combat (60–80_*.js), Atlas sheets
   (atlas/50_run.js).
 - Art: renderer at 2 art px per logical px (engine/60_render.js; hooks
@@ -286,6 +287,16 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
   16/16 whole-game runs, layout audit clean (VALIDATION.md "Full-game matrix — both addenda").
   What remains is by hand (Next concrete actions, item 10).
 
+## Prologue (owner's report of 2026-10-03) — complete on this branch; REQUIREMENTS.md PR1–PR5, VALIDATION.md "Prologue round", docs/ART_DIRECTION.md §12
+- **The report:** the prologue's panels were flat blocks beside the title scene's pixel art. In the last shot the traveller walked up from the screen's centre, beside the river and at full size; on a phone the caption slip hid them.
+- **The traveller now walks the road (`src/ui/41_prologue_art.js`):**
+  - The walk starts just above the slip and follows the road's centre (`RB.ui.title.roadGuide`) toward the horizon at a steady pace.
+  - The figure shrinks with distance, using the real walk frames shrunk onto the same grid, night-graded and lit by the lantern they carry.
+- **The four flat shots are redrawn with the pixel kit:** the teahouse twice (41b; Hana's own portrait), the riverbank lantern whose name leaves it (41c), and the broken bridge in the morning (41d).
+- **Tests and evidence:**
+  - `tests/e2e/prologue.mjs` (in the default suite) checks the pixel under the traveller's feet at every moment, at four screen shapes.
+  - `tests/e2e/prologue_shots.mjs` writes docs/screenshots/prologue/after/; before/ is the previous build.
+
 ## Commands
 - Build: `node tools/build.mjs`
 - Content validation: `node tools/validate.mjs [--filter sg] [--unknown]`
@@ -358,6 +369,11 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
    art (start with the Flour Moth and the Mill Echo) closer to the reference — the workers list what is
    still short of it (the crane and clerk stay fairly frontal; an 80 × 104 party figure cannot carry the
    reference's detail density).
+11. The prologue (2026-10-03), in Firefox and on the foldable: watch the six shots through once (New
+   Game → a slot). Does the traveller read as walking up the road into the distance? Do the teahouse,
+   the riverbank lantern and the bridge sit with the title scene? Try reduced motion and a phone held
+   sideways (the slip covers most of the road there, so that walk is short). Every judgement of this
+   art so far is a self-review.
 
 ## Known issues / limits
 - No human handwriting samples tested (synthetic + font-derived only).

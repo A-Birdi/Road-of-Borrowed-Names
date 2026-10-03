@@ -543,7 +543,8 @@ later; only `'upright'` is authored.
   column and when inspected (2× and 1.5× on short landscape screens); the
   compact phone slip keeps a ¾-size thumbnail beside the portrait so its
   text column is no narrower than before; the clothing-cut tiles at 1×; the
-  prologue walker walks the eight-phase cycle.
+  prologue's traveller walks the eight-phase cycle up the title's road,
+  shrunk onto the same grid as it recedes (§12).
 - Satchel, "How you look wearing it": Front and Side (road sprites) and In
   battle (the battle figure, trimmed to the figure), all at 2 CSS px per art
   px, then the portrait.
@@ -909,3 +910,102 @@ offsets per pose and a tiny prop per gesture, behind the same interface.
     0.2 s is the first frame building the backdrop and figure caches.
   - With the fallback figures, sequences averaged 0.5–0.7 ms.
   - Not measured on real phones.
+
+## 12. The prologue's shots (2026-10-03)
+
+The owner's report: the prologue's panels were flat blocks beside the title
+scene's pixel art, and in the last shot the traveller walked up from the
+middle of the screen as if into the river. Files: `src/ui/41_prologue_art.js`
+(the core, the traveller), `41b_prologue_room.js` (the teahouse, shots 2–3),
+`41c_prologue_lantern.js` (the riverbank lantern, shot 4),
+`41d_prologue_bridge.js` (the bridge, shot 5); the flow and captions stay in
+`40_create.js`. Shots 1 and 6 are the title scene itself.
+
+### The standard
+- Drawn at art resolution, on the same grid as the title scene and the
+  world: the buffer is about 640 × 360 art px on a desktop (3 device px per
+  art px at 1920 × 1080) and 390 × 844 on an upright phone. Nothing is
+  magnified; a close-up gets more pixels, not bigger ones.
+- The title's manner: skies as flat bands with a narrow ordered-dither seam
+  (`RB.pxkit.bands`); objects rasterised with the pixel kit (materials with
+  hue-shifted ramps, shading functions lit from the upper left, selective
+  outlines in each material's own dark tone); glows as stepped rings of
+  falling alpha, never a gradient; clusters, not noise.
+- Composition follows the caption slip: each shot measures the lowest buffer
+  row the slip leaves in view and keeps what matters above it. The focal
+  props are drawn at scale 1 wherever a 380 × 230 stage fits above the slip
+  (desktops, upright phones) and smaller only on a short landscape phone.
+- Each shot is a static layer built once per buffer size and view height
+  (36–85 ms the first time on this machine), plus a few live things per frame
+  (0–6 ms). The prologue releases the layers and the traveller's frames when
+  it ends. Reduced motion holds one drawing per shot.
+
+### The shots
+- **2–3, the teahouse at dawn.** Hana is her own dialogue portrait (`smile`,
+  then `think2`), graded into the room's light, behind an oiled hinoki
+  counter with a lit nosing. On the counter are a red-brown side-handled
+  kyūsu and two cream yunomi with an indigo line and green tea, on a
+  lacquered tray, each with a contact shadow. The window is half lattice over
+  the dawn (reeds, far hills, the river holding the light) and half a lit
+  shōji. The dawn falls through it across the counter in two flat steps, with
+  motes in it. The room has posts, a beam, a slatted transom, a shelf of
+  caddies and bowls, and the noren with the title's lantern crest. A tall
+  screen adds a paper lantern hanging from the beam. In shot 3 the room is a
+  little later in the morning: the first cup has gone cool, and the second
+  is ringed in light, its steam rising as motes.
+- **4, the riverbank lantern.** A chōchin (a ribbed paper barrel between
+  lacquered caps, lit from inside) hangs from a weathered post's arm out over
+  the water. The post stands on a riverside path. Behind are the far bank's
+  own lantern road, mist, a thin moon and its path on the water, and the
+  title's night bands. The name on the paper is three cursive marks of
+  eleven brush strokes: calligraphy, not letters, so there is no kanji to
+  carry furigana. The marks leave stroke by stroke (pale in steps, then gone,
+  motes rising), and the lamp dims by about a third as the name goes.
+- **5, the bridge in the morning.** An arched wooden bridge crosses a river
+  that meanders toward us between field strips. It has railings, bronze caps
+  on the end posts, braced piers, stone abutments, a reflection broken by
+  ripples and a shadow on the water. At three fifths of its span it ends:
+  ragged planks, a snapped post, a hanging plank, and motes leaving the
+  break in wood colours that pale to light. Between the break and the far
+  landing stands a lone pier. Above are a banded morning sky, the sun upper
+  left, flat clouds with lit tops, hazy ridges and a far wood with a temple
+  roof.
+- **6, the traveller.** The walk starts on the road just above the caption
+  slip and follows the road's centre line (`RB.ui.title.roadGuide`) toward
+  the horizon at a steady pace, so on screen the traveller slows and shrinks
+  as they recede.
+  - **Size:** height ∝ distance below the horizon, matched at the start to
+    0.75 of a roadside lantern post standing there. That is 31 art px at the
+    start on a desktop and on a phone (the full figure is 50), and about 11
+    at the end.
+  - **The figure:** the real walk frames (with the hand lantern the standard
+    draws), shrunk onto the same grid. Each new pixel takes one of the
+    drawing's own colours: the outline wins along the silhouette, and the lit
+    paper wins wherever it falls, so a small figure keeps its lamp.
+  - **Light:** it is night-graded, with a moonlit rim along the top and right
+    and the lantern's warm light in steps. A light pool and a short shadow
+    lie on the road; a stepped halo surrounds the lamp.
+  - **Reduced motion:** the traveller stands at one place.
+
+### Tests and evidence
+- `tests/e2e/prologue.mjs` (default suite):
+  - every shot at 1920 × 1080, 1280 × 800, 390 × 844 and 844 × 390, moving
+    and still;
+  - the title scene's pixel under the traveller's feet is road at every
+    moment, and the walk goes up the road and shrinks;
+  - the lantern's name leaves it;
+  - the real flow: six different pictures, caches released, no errors, no
+    network.
+- `tests/e2e/prologue_shots.mjs` writes `docs/screenshots/prologue/after/`
+  (stills at 1920 × 1080, 2000 × 1090 and 390 × 844; two real-time clips at
+  1280 × 720). `before/` holds the previous build's captures.
+
+### Limitations
+- Every judgement of the art here is the author's self-review from captures;
+  no person has looked at it yet.
+- On a short landscape phone the caption slip covers most of the road, so
+  the walk there is short (12 px of road is in view at 844 × 390).
+- Hana's portrait is the dialogue art at its own size: her head is a little
+  large against the cups.
+- Not checked in Firefox, Safari or on a real phone.
+
