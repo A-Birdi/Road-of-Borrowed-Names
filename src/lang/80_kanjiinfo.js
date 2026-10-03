@@ -314,7 +314,7 @@ RB.kanjiInfo = (function () {
     for (const w of s.words || []) { const x = C.words && C.words[w]; if (x) { addText(x.jpK); addText(x.jp); } }
     const items = (s.learn && s.learn.items) || {};
     for (const k of Object.keys(items)) addText(k.slice(2));
-    for (const n of s.notebook || []) if (n && n.kind === 'word') addText(n.surface);
+    for (const n of s.notebook || []) if (n && n.kind === 'word' && !n.dia) addText(n.surface); // (a noted Kansai form is not standard vocabulary)
     return set;
   }
 

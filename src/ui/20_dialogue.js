@@ -119,7 +119,9 @@ RB.ui.dialogue = (function () {
     const s = RB.game.s;
     const seenScene = line.sceneId && s.seen[line.sceneId];
     if (RB.game.fastForward() && !seenScene) RB.game.setFastForward(false);
-    current = line;
+    // Suzu's Kansai-ben (src/lang/85_dialect.js): what is shown may be her Kansai version; the history
+    // and a kept sentence keep the standard line (nothing Kansai is written into the save)
+    current = Object.assign({}, RB.dialect ? RB.dialect.line(line.who, line) : line, { src: line });
     showSub = RB.game.settings.secondary === 'always';
     const ch = charInfo(line.who);
     s.backlog.push({ who: line.who, jp: line.jp, en: line.en });
@@ -139,16 +141,9 @@ RB.ui.dialogue = (function () {
     const whoEl = box.querySelector('.who');
     whoEl.innerHTML = ch ? '<span class="nm">' + esc(ch.name.en) + '</span>' + (ch.name.jp ? '<span class="jp">' + RB.ui.jhtml(ch.name.jp) + '</span>' : '') : '<span class="nm narr">' + (line.jp || line.en ? '' : '') + '</span>';
     box.classList.toggle('narration', !ch);
-    const lead = RB.game.settings.lead;
     const main = box.querySelector('.main');
     const hasJp = !!line.jp;
-    if (lead === 'ja' && hasJp) {
-      main.className = 'main';
-      main.innerHTML = RB.ui.jhtml(line.jp);
-    } else {
-      main.className = 'main en';
-      main.innerHTML = RB.ui.ehtml(line.en || '');
-    }
+    renderMain();
     renderSub();
     box.querySelector('.b-voice').classList.toggle('hidden', !(hasJp && RB.voice && RB.voice.japaneseVoices && RB.voice.japaneseVoices().length));
     box.querySelector('.b-skip').classList.toggle('hidden', !(seenScene && RB.game.settings.skipSeen));
@@ -166,6 +161,27 @@ RB.ui.dialogue = (function () {
       if (RB.game.fastForward() && seenScene) setTimeout(() => advance(true), 40);
       else if (RB.test && RB.test.auto) setTimeout(() => advance(true), 5);
     });
+  }
+  function renderMain() {
+    if (!current) return;
+    const main = box.querySelector('.main');
+    if (RB.game.settings.lead === 'ja' && current.jp) {
+      main.className = 'main';
+      main.innerHTML = RB.ui.jhtml(current.jp);
+    } else {
+      main.className = 'main en';
+      main.innerHTML = RB.ui.ehtml(current.en || '');
+    }
+  }
+  // the line on screen again with the current settings (Suzu's speech changed while it shows)
+  function refresh() {
+    if (!box || !current || box.classList.contains('hidden')) return;
+    const src = current.src || current;
+    current = Object.assign({}, RB.dialect ? RB.dialect.line(src.who, src) : src, { src });
+    if (revealing) revealing.finish();
+    renderMain();
+    renderSub();
+    requestAnimationFrame(syncMore);
   }
   function renderSub() {
     if (!current) return;
@@ -340,5 +356,5 @@ RB.ui.dialogue = (function () {
     return false;
   }
   function isOpen() { return !!(box && !box.classList.contains('hidden')); }
-  return { say, choose, hide, onAction, advance, isOpen };
+  return { say, choose, hide, onAction, advance, isOpen, refresh, shown: () => (current ? { who: current.who, jp: current.jp, en: current.en, dia: current.dia || null } : null) };
 })();

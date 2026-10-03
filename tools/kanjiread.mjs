@@ -59,7 +59,9 @@ async function collect() {
   const { listSources } = await import(pathToFileURL(path.join(root, 'tools', 'build.mjs')).href);
   const groups = []; // [surface, reading]
   for (const f of listSources()) {
-    if (/[\\/]src[\\/](recog[\\/]1\d_|lang[\\/]75_kanjiread)/.test(f)) continue;
+    // (Suzu's Kansai-ben tables are left out: a colloquial reading there, 同 as おんな in おんなじ,
+    // is not a reading of the kanji to show on the pad)
+    if (/[\\/]src[\\/](recog[\\/]1\d_|lang[\\/]75_kanjiread|content[\\/]dialect[\\/])/.test(f)) continue;
     const text = stripComments(fs.readFileSync(f, 'utf8'), { dropRegex: true });
     for (const m of text.matchAll(/\{([^{}|\s]+)\|([^{}|\s]+)\}/g)) {
       const base = m[1], rd = toHira(m[2]);

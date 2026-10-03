@@ -708,6 +708,9 @@ RB.hooks = RB.hooks || {};
     AT.hud.update();
   });
 
+  // the companions' lines above, read-only, for the dialect inventory (tools/suzu_inventory.mjs)
+  AT.compLines = { COMP_OK, COMP_LATER, NAME_REACT, RELIC_ANY, RELIC_REACT, FORK_REACT, TEA };
+
   // ---- a reading panel (Japanese first; translation on request counts as assisted) --------------------
   AT.reading = function (jp, en, opts) {
     opts = opts || {};

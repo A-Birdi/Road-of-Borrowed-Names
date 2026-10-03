@@ -24,6 +24,7 @@ const suites = [
   // companionship: Company › Companion and Shared memories, invitations, reflections, rest (addendum §6–9, §19)
   ['company.mjs'],
   ['company_pets.mjs'],
+  ['dialect_kansai.mjs'], // Suzu's optional Kansai-ben: the choice, Settings, Company › Suzu, word help, saves (docs/dialect/suzu_kansai.md)
   ['addendum_integration.mjs'],
   // the two quest lines across the chapters (fixtures; --full adds all four
   // companions and a whole-game run with both lines as goals)

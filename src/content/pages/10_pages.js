@@ -595,7 +595,7 @@ RB.pages = (function () {
   }
 
   return {
-    COMPS, PQ, PROJECT, REPLY, RET, MEMO_TITLE, TOPICS,
+    COMPS, PQ, PROJECT, REPLY, RET, MEMO_TITLE, TOPICS, RECALL,
     state, pending, capture, runEnded, accept, page2, page3, endingDone, unfinishedDone,
     needRetro, needUnfinished, offerOpen, returned, retOf, campOpen, home2Open, home3Open, roadCampOpen, roadHomeOpen,
     recallable, describe, addTopics, topic, topicHeard, petVisible, pqDone,

@@ -89,7 +89,7 @@ RB.practiceDesk = (function () {
   function notebookCards(s) {
     const out = [], seen = new Set(base().map((c) => c.item));
     for (const n of (s && s.notebook) || []) {
-      if (!n || n.kind !== 'word' || typeof n.id !== 'string') continue;
+      if (!n || n.kind !== 'word' || typeof n.id !== 'string' || n.dia) continue; // a noted Kansai word is not standard vocabulary to practise
       const m = /^w:([^|]*)\|(.*)$/.exec(n.id);
       const lemma = m ? m[1] : n.surface, reading = m ? m[2] : n.reading;
       const e = (lemma && reading && RB.lex.get(lemma, reading)) || null;

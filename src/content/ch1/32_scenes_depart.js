@@ -124,6 +124,7 @@ suzu[think]: {昔|むかし} 、 {一|ひと}つ だけ 、 {終|お}わらせ�
 * もう {少|すこ}し {考|かんが}える || I need to think a bit more. -> end
 :ask
 !recruit suzu
+?(!seen.rw.suzu_speech) !call rw.suzu_speech
 suzu[smile]: {喜|よろこ}んで 。 …… {真面目|まじめ} に {言|い}う ね 。 {扉|とびら} を {出|で}たら 、 {私|わたし} は {幕|まく} が {下|お}りる まで {降|お}りない 。 {途中|とちゅう} で {逃|に}げ{出|だ}す {役|やく} は 、 もう {演|えん}じない って {決|き}めた の 。 || Gladly. …I'll say this seriously. Once we're out the door, I won't leave the stage until the curtain falls. I've decided I'm done playing the one who runs away halfway.
 !end
 :chosen
