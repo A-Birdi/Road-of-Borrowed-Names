@@ -2029,3 +2029,36 @@ listeners and 210 DOM nodes per encounter. It also grew on the base commit, and 
 - Left as is. The note is here in case a future path, such as an automatic campaign switch, ever needs it.
 
 **Not verified:** Firefox; a real phone; long sessions outside battles (the world, practice activities, cases).
+
+## World walk-ins step round standing people (2026-10-03; the staging worker's finding; REQUIREMENTS.md B2)
+
+**What:** the world's own comings and goings (walking in to speak, walking off, the story moving someone to a new place on
+the same map) used to plan their routes ignoring people. A walker only noticed you or the companion on bumping into you
+(a 300 ms pause, one detour, then through after 1.5 s). It walked straight through villagers, creatures, and people
+walking in or off.
+- **Seen in the staging runs:** the see-off in Reedwake; Sōta moving down the harbour.
+- **Now** (src/engine/50_world.js):
+  - `routeRound` plans round everyone's tile (`peopleTiles`: you, the companion, placed people, walk-ins, people
+    walking off, creatures). It falls back to the people-blind route only when there is no way round.
+  - `followRoute` checks anyone in the way (`personAt`). It re-plans round them every 500 ms after a 200 ms beat, and
+    goes on regardless only after 2.4 s of game time, so nothing stalls.
+  - Staging's walks home use the same follower.
+
+**The lead's runs** (headless Chromium on a loaded 4-core machine with five workers testing; build of this commit):
+- **New `tests/e2e/walk_round.mjs`: all passed (17 checks).**
+  - Sōta's move, planned round the companion and you, is on his old line from the start.
+  - Four walk-ins in the Reedwake square, with the companion beside you. Two of them would have crossed someone on the
+    old route.
+  - Suzu leaving round a villager who steps onto her way.
+  - Hana waiting about 2.8 s for you in the tea-house doorway, then going in.
+- **The same test on the old routing code** (only the test hooks added): **4 failed.**
+  - The two "planned from the start" checks.
+  - Kasane walking through the villager at (17,17).
+  - Suzu walking through the villager at (18,17).
+- Unit 24,315/0.
+- departures.mjs all ok, including its own "someone leaving steps round the player".
+- **Still running at this commit:** world_fixes, actor_life, staging_wataru, staging_chapters, story_ch1, town_animals.
+  Results are recorded below when they finish.
+
+**Not verified:** Firefox; a real phone; the staging worker's runner (on its branch, not merged yet). Its `world()`
+classification still lists these overlaps as non-failures; it is to be tightened after the merge.

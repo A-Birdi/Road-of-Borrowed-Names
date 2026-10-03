@@ -185,6 +185,12 @@ commit (VALIDATION.md); screenshots inspected by eye are noted as such.
 - [v] B2 People leave for where the story puts them next, not the nearest door:
   - The destination is the map where the person now appears (or an authored npc.leaveTo). The route is the shortest usable chain of map links, with conditions and locks respected; distance only chooses among exits that serve it. Arrivals come from where the person was last seen, or from where the story keeps them.
   - They walk on open ground, set off one after another, and step round the player.
+  - (2026-10-03) The world's own comings and goings step round **everyone** standing about, planned that way from the start:
+    the player, the companion, villagers, anyone who walked in, anyone walking off, creatures. This covers walking in to
+    speak, walking off, and the story moving someone to a new place on the same map. Previously the routes ignored people;
+    only you and the companion were noticed, on bumping into them, and villagers were walked through. Someone who steps into
+    the way is re-planned round every half second. With no way round, the walker waits up to 2.4 s, then goes on, so no scene
+    stalls. Evidence: walk_round.mjs (fails 4 checks on the old code).
   - A map change or save/load duplicates or strands nobody.
   - Evidence: departures.mjs, 14 checks. It includes the real conversation with Tsuru: Nao, Ren and Suzu take the north road although doors were 5–11 steps nearer. Also the evening walk to the Lantern Hall, and Hana into her tea house.
   - Whole-game audit: the E/nao run records every coming and going with its reason (pursue.mjs).

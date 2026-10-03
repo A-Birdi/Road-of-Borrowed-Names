@@ -177,7 +177,7 @@ RB.world = (function () {
   function usable(e, st) { return (!e.if || RB.state.test(st, e.if)) && (!e.locked || (e.unlock && RB.state.test(st, e.unlock))); }
   // Shortest walk (at most `max` steps) from x,y to the nearest of `goals`
   // (a set of "x,y"; default: every way out), through open ground; people are
-  // ignored (they step round each other), except tiles listed in `avoid`.
+  // ignored, except tiles listed in `avoid` (routeRound passes everyone's).
   function routeOut(x, y, max, goals, avoid) {
     goals = goals || waysOut();
     if (!goals.size) return null;
@@ -204,6 +204,35 @@ RB.world = (function () {
       q = next;
     }
     return null;
+  }
+  // The tiles people stand on now, or are stepping onto: you, your companion,
+  // everyone placed here, anyone who walked in to speak, anyone walking off,
+  // and creatures; never `self`, nor `also` (the figure `self` takes over from).
+  function peopleTiles(self, also) {
+    const out = new Set();
+    const add = (n) => {
+      if (!n || n === self || n === also) return;
+      out.add(n.x + ',' + n.y);
+      if (n.mv) out.add(n.mv.tx + ',' + n.mv.ty);
+    };
+    add(W.player); add(W.comp);
+    for (const list of [W.npcs, W.extras, W.leavers, W.foes]) for (const n of list) add(n);
+    return out;
+  }
+  // Someone standing on x,y (or stepping onto it) other than `self`.
+  function personAt(x, y, self) {
+    const on = (n) => n && n !== self && ((n.x === x && n.y === y) || (n.mv && n.mv.tx === x && n.mv.ty === y));
+    if (on(W.player)) return W.player;
+    if (on(W.comp)) return W.comp;
+    return actorAt(x, y, self) || W.leavers.find(on) || null;
+  }
+  // The world's own comings and goings (walking in to speak, walking off, the
+  // story moving someone to a new place here) step round everyone standing
+  // about. Only when there is no such way (someone in the one doorway, a lane
+  // they fill) is the shortest way taken regardless; the walker then waits
+  // for them as it goes (followRoute).
+  function routeRound(a, max, goals, also) {
+    return routeOut(a.x, a.y, max, goals, peopleTiles(a, also)) || routeOut(a.x, a.y, max, goals);
   }
 
   // ---- where someone is going (or coming from) ---------------------------------
@@ -302,7 +331,7 @@ RB.world = (function () {
     b.x = from.x; b.y = from.y; b.fx = from.x; b.fy = from.y; b.dir = from.dir; b.mv = null;
     b.alpha = 1; b.fadeIn = false; b.routeT = 0;
     const home = b.home ? b.home[0] + ',' + b.home[1] : null;
-    const route = home && (from.x + ',' + from.y) !== home ? routeOut(from.x, from.y, 160, new Set([home])) : null;
+    const route = home && (from.x + ',' + from.y) !== home ? routeRound(b, 160, new Set([home]), from) : null;
     b.route = route && route.length ? route : null;
     if (!b.route && home) { b.x = b.home[0]; b.y = b.home[1]; b.fx = b.x; b.fy = b.y; }
     noteDeparture(b, { goals: new Set(home ? [home] : []), to: W.map.id, via: null, reason: 'moves to a new place here' }, b.route, false);
@@ -334,7 +363,7 @@ RB.world = (function () {
     const way = wayFor(a, false);
     // already standing in the doorway they need: they just go
     const there = way.goals && way.goals.has(a.x + ',' + a.y);
-    const route = there ? [] : (way.goals && routeOut(a.x, a.y, 160, way.goals)) || routeOut(a.x, a.y, 18) || [];
+    const route = there ? [] : (way.goals && routeRound(a, 160, way.goals)) || routeRound(a, 18) || [];
     noteDeparture(a, there ? Object.assign({}, way, { reason: way.reason + ', at the way out' }) : route.length && way.goals ? way : Object.assign({}, way, { goals: null }), route, false);
     W.leavers.push(Object.assign({}, a, { mv: null, route, goals: way.goals, alpha: 1, fading: !route.length, wait: (i || 0) * 380 }));
   }
@@ -346,7 +375,8 @@ RB.world = (function () {
       return;
     }
     const way = wayFor(a, true);
-    const route = (way.goals && routeOut(a.x, a.y, 160, way.goals)) || routeOut(a.x, a.y, 18);
+    // (planned from where they will stand back to the way in, round everyone here)
+    const route = (way.goals && routeRound(a, 160, way.goals)) || routeRound(a, 18);
     noteDeparture(a, route && way.goals ? way : Object.assign({}, way, { goals: null }), route, true);
     if (!route || !route.length) { a.alpha = 0; a.fadeIn = true; return; }
     const path = route.slice(0, -1).reverse().concat([[a.x, a.y]]);
@@ -362,20 +392,24 @@ RB.world = (function () {
     const dx = nx - a.x, dy = ny - a.y;
     const dir = dx > 0 ? 'right' : dx < 0 ? 'left' : dy > 0 ? 'down' : 'up';
     if (Math.abs(dx) + Math.abs(dy) !== 1) { a.route = null; return true; }
-    // someone in the way: step round them if there is another way to the
-    // same place, otherwise wait for them to move; after a while just go on
-    a.routeT = (a.routeT || 0) + dt;
-    const inWay = (W.player.x === nx && W.player.y === ny) || (W.comp && W.comp.x === nx && W.comp.y === ny);
-    if (inWay && a.routeT > 300 && !a.detoured) {
-      a.detoured = true;
-      const last = a.route[a.route.length - 1];
-      const avoid = new Set([W.player.x + ',' + W.player.y].concat(W.comp ? [W.comp.x + ',' + W.comp.y] : []));
-      const round = routeOut(a.x, a.y, a.route.length + 8, a.goals || new Set([last.join(',')]), avoid);
-      if (round && round.length) { a.route = round; a.routeT = 0; return false; }
+    // someone in the way (you, your companion, anyone standing or walking
+    // here): after a beat, step round them if there is another way to the
+    // same place (looked for again every so often: they may move), otherwise
+    // wait for them; only after a long wait go on regardless, so that a scene
+    // never stalls on it
+    if (personAt(nx, ny, a)) {
+      a.routeT = (a.routeT || 0) + dt;
+      a.replanT = (a.replanT || 0) - dt;
+      if (a.routeT > 200 && a.replanT <= 0) {
+        a.replanT = 500;
+        const last = a.route[a.route.length - 1];
+        const round = routeOut(a.x, a.y, a.route.length + 10, a.goals || new Set([last.join(',')]), peopleTiles(a));
+        if (round && round.length) { a.route = round; a.routeT = 0; a.replanT = 0; return false; }
+      }
+      if (a.routeT < 2400) return false;
     }
-    if (a.routeT < 1500 && inWay) return false;
-    a.detoured = false;
     a.routeT = 0;
+    a.replanT = 0;
     a.route.shift();
     startMove(a, dir, dur);
     return false;
@@ -999,5 +1033,6 @@ RB.world = (function () {
     frontTile, frontAction, checkFoeContact, hush, faceTo, unstick, blocked, _tryMove: tryMovePlayer,
     towards, linksOf, mapsWith, // map-link search (also used by quest guidance, 56_questguide.js)
     musicFor, // the map's song now (also used to restore it after a battle, 80_combat.js)
+    routeOut, peopleTiles, personAt, // routes and who is in the way (tests/e2e/walk_round.mjs)
   };
 })();
