@@ -53,8 +53,9 @@ RB.audio = RB.audio || {};
     },
     still: {
       chapter: 6, regions: ['still', 'sa_mount', 'sa_still'], prefixes: ['sa.'],
-      battle: 'battle', boss: 'boss', route: 'quiet_road',
-      songs: ['still_archive', 'road'],
+      battle: 'battle_still', boss: 'boss_hush', route: 'sa_road',
+      songs: ['sa_road', 'sa_road_home', 'still_archive', 'sa_memories'],
+      cues: ['sa_kasane', 'sa_toya'],
     },
     atlas: {
       chapter: 7, regions: ['atlas'], prefixes: ['atlas'],

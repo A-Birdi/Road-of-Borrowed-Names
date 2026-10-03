@@ -17,7 +17,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- the road up from Lanternfall -----------------------------------------------------------
   C.maps['sa.road'] = {
     name: T('The Archive Road', '{書庫|しょこ} への {坂道|さかみち}'), region: 'sa_mount',
-    music: [{ if: 'sa_descent', id: 'ending' }, { if: 'sa_hush_down', id: 'road' }, { id: 'quiet_road' }],
+    music: [{ if: 'sa_descent', id: 'ending' }, { if: 'sa_hush_down', id: 'sa_road_home' }, { id: 'sa_road' }],
     ambient: {
       get weather() { return RB.game.s && RB.game.s.flags.sa_hush_down ? 'motes' : 'pages'; },
       get tint() { return RB.game.s && RB.game.s.flags.sa_descent && !RB.game.s.flags.postgame ? 'rgba(255,214,170,0.10)' : null; },
@@ -326,7 +326,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- the Room of Set-Down Memories ----------------------------------------------------------------------------
   C.maps['sa.memories'] = {
     name: T('The Room of Set-Down Memories', '{預|あず}けられた {記憶|きおく} の {部屋|へや}'), region: 'sa_still', noTravel: true,
-    music: [{ if: 'sa_hush_down', id: 'sorrow' }, { id: 'sorrow' }],
+    music: 'sa_memories',
     ambient: stillAmbient({ weather: 'motes', tint: 'rgba(230,220,200,0.06)', dark: 0.2 }, { weather: 'motes', tint: 'rgba(255,232,196,0.08)', dark: 0.1 }),
     terrain: K.build(24, 18, '#', (k) => {
       k.rect(1, 2, 22, 15, 'p');

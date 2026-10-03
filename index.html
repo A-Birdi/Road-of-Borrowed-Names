@@ -15362,27 +15362,28 @@ RB.audio = RB.audio || {};
   S('still_archive', {
     title: 'The Still Archive',
     kind: 'area',
+    chapter: 6,
     motifs: ['road', 'hush'],
-    notes: 'Final dungeon in B minor (80): a low-drum heartbeat and pluck ostinato under a bowed road motif. B is the archive’s own order — B lydian, open fifths, the Hush motif alone on glass, the pulse gone. C drives the road theme’s climbing phrase back in minor over the ostinato.',
+    notes: 'Final dungeon in B minor (80), re-orchestrated for Chapter 6 — same melody, form and motifs: an ōdaiko heartbeat and a koto ostinato under a bowed road motif. B is the archive’s own order — B lydian, open fifths, a held shō, the Hush motif alone on glass, the pulse gone. C drives the road theme’s climbing phrase back in minor on shakuhachi over the ostinato; the last A is on shakuhachi too.',
     key: 'B', mode: 'aeolian', bpm: 80,
     tracks: {
       lead: { i: 'bowed', o: 4, v: 0.75, rv: 0.35, dl: 0.2 },
-      fl: { i: 'flute', o: 4, v: 0.8, rv: 0.3 },
+      fl: { i: 'shakuhachi', o: 4, v: 0.7, rv: 0.3 },
       glass: { i: 'glass', o: 4, v: 1, rv: 0.55, pan: 0.15 },
-      ost: { i: 'pluck', o: 3, pat: true, v: 0.5, rv: 0.15, pan: -0.25 },
+      ost: { i: 'koto', o: 3, pat: true, v: 0.32, rv: 0.15, pan: -0.25 },
       pad: { i: 'pad', o: 3, hold: true, fold: 'all', win: -2, v: 0.45, rv: 0.45 },
       bass: { i: 'bass', o: 1, pat: true, bass: true, v: 0.7 },
-      drum: { perc: true, v: 0.55, rv: 0.2 },
+      drum: { perc: true, v: 0.5, rv: 0.2 },
       tick: { perc: true, v: 0.35, pan: 0.3 },
     },
     echo: { beats: 0.75, fb: 0.3, mix: 0.25 },
-    all: { ost: "0 2 1' 2 0 2 1' 2", pad: TRI, bass: '0 - - 0 - - 0 -', drum: 'l.l.....|........', tick: '....x...' },
+    all: { ost: "0 2 1' 2 0 2 1' 2", pad: TRI, bass: '0 - - 0 - - 0 -', drum: 'z.z.....|........', tick: '....x...' },
     sections: {
       A: { bars: 8, ch: SA_A_CH, lead: SA_A },
       B: { bars: 8, mode: 'lydian', ch: SA_B_CH, glass: SA_B, ost: null, drum: null, pad: '0+1', tick: 'g...g...' },
-      C: { bars: 8, ch: MINOR_B_CH, fl: ROAD_B, drum: 'l..l..l.' },
+      C: { bars: 8, ch: MINOR_B_CH, fl: ROAD_B, drum: 'z..z..z.' },
     },
-    form: ['A', 'B', 'C', { s: 'A', i: { lead: 'flute' } }],
+    form: ['A', { s: 'B', i: { pad: 'sho' }, o: { pad: 1 } }, 'C', { s: 'A', i: { lead: 'shakuhachi' }, o: { lead: 1 } }],
   });
 
   // =============================================================== FINALE
@@ -15394,28 +15395,29 @@ RB.audio = RB.audio || {};
   S('finale', {
     title: 'Which Promises We Keep',
     kind: 'area',
+    chapter: 6,
     motifs: ['road', 'hush'],
-    notes: 'Final confrontation (92). A: the road motif in D minor over a 3+3+2 drum while the Hush motif crawls in the bass. B: the theme’s climbing phrase, still in minor, with choir. C/D: the theme breaks into D major — and the Hush motif returns beneath it with a natural fourth, resolved instead of erased.',
+    notes: 'Final confrontation (92), re-orchestrated for Chapter 6 — same melody, form and motifs. A: the road motif in D minor on shakuhachi over a 3+3+2 ōdaiko and shime pulse and a shamisen ostinato, while the Hush motif crawls in the bowed bass. B: the theme’s climbing phrase, still in minor, with choir. C/D: the theme breaks into D major over koto arpeggios — and the Hush motif returns beneath it on glass with a natural fourth, resolved instead of erased.',
     key: 'D', mode: 'aeolian', bpm: 92,
     tracks: {
-      lead: { i: 'flute', o: 5, v: 0.85, rv: 0.3 },
+      lead: { i: 'shakuhachi', o: 5, v: 0.72, rv: 0.3 },
       low: { i: 'bowed', o: 3, v: 0.75, rv: 0.3, pan: -0.15 },
       glass: { i: 'glass', o: 4, v: 0.9, rv: 0.5, pan: 0.2 },
-      bell: { i: 'bell', o: 5, v: 0.45, rv: 0.4, pan: 0.25 },
+      bell: { i: 'koto', o: 5, v: 0.42, rv: 0.4, pan: 0.25 },
       choir: { i: 'choir', o: 4, hold: true, fold: 'all', win: -3, v: 0.55, rv: 0.45 },
-      ost: { i: 'pluck', o: 4, pat: true, v: 0.45, rv: 0.15, pan: -0.25 },
-      arp: { i: 'harp', o: 4, pat: true, v: 0.45, rv: 0.35, pan: -0.3 },
+      ost: { i: 'shamisen', o: 4, pat: true, v: 0.34, rv: 0.15, pan: -0.25 },
+      arp: { i: 'koto', o: 4, pat: true, v: 0.3, rv: 0.35, pan: -0.3 },
       pad: { i: 'pad', o: 3, hold: true, fold: 'all', win: 5, v: 0.4, rv: 0.4 },
       bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.7 },
-      drum: { perc: true, v: 0.6 },
-      shk: { perc: true, v: 0.35, pan: 0.3 },
+      drum: { perc: true, v: 0.55 },
+      shk: { perc: true, v: 0.28, pan: 0.3 },
     },
-    all: { ost: "0 2 1' 0 2 1' 0 2", pad: TRI, bass: '0 . . 0 . . 0 .', drum: 'l..l..t.|l..l..tt', shk: '..s...s.' },
+    all: { ost: "0 2 1' 0 2 1' 0 2", pad: TRI, bass: '0 . . 0 . . 0 .', drum: 'z..z..e.|z..z..ee', shk: '..a.....' },
     sections: {
       A: { bars: 8, ch: FIN_A_CH, lead: FIN_A, low: FIN_A_LOW },
       B: { bars: 8, ch: MINOR_B_CH, lead: ROAD_B, choir: TRI },
-      C: { bars: 8, mode: 'ionian', ch: ROAD_A_CH, lead: ROAD_A, glass: FIN_C_GLASS, choir: TRI, arp: ARP4, ost: null, bass: BASS4, drum: 'l.......' },
-      D: { bars: 8, mode: 'ionian', ch: ROAD_B_CH, lead: ROAD_B, bell: ROAD_B, choir: TRI, arp: ARP4, ost: null, bass: BASS4, drum: 'l...l...' },
+      C: { bars: 8, mode: 'ionian', ch: ROAD_A_CH, lead: ROAD_A, glass: FIN_C_GLASS, choir: TRI, arp: ARP4, ost: null, bass: BASS4, drum: 'z.......' },
+      D: { bars: 8, mode: 'ionian', ch: ROAD_B_CH, lead: ROAD_B, bell: ROAD_B, choir: TRI, arp: ARP4, ost: null, bass: BASS4, drum: 'z...z...' },
     },
     form: ['A', 'B', { s: 'A', i: { lead: 'bowed' }, o: { lead: -1 } }, 'C', 'D'],
   });
@@ -15751,7 +15753,7 @@ RB.audio = RB.audio || {};
     CIN_A, CIN_A_CH, CIN_A_CM, CIN_B, CIN_B_CH, CIN_C, CIN_C_CH, KILN_A, KILN_A_CH, KILN_B, KILN_B_CH,
     SNOW_A, SNOW_A_CH, SNOW_B, SNOW_B_CH, SNOW_C, SNOW_C_CH, OBS_A, OBS_A_CH, OBS_B, OBS_B_CH, QR_B1, QR_B2, QR_B_CH,
     LF_A, LF_A_CH, BT_A, BT_A_CH, SA_A, SA_A_CH, SA_B, SA_B_CH, FIN_A, FIN_A_CH,
-    BOSS_HUSH, HUSH_A, HUSH_A_CH, SOR_A, SOR_A_CH, WON_A, WON_A_CH,
+    BOSS_HUSH, HUSH_A, HUSH_A_CH, FIN_C_GLASS, SOR_A, SOR_A_CH, WON_A, WON_A_CH,
   });
 
   _.REQUIRED_SONGS = [
@@ -16806,6 +16808,281 @@ RB.audio = RB.audio || {};
 })(RB.audio);
 
 
+/* ==== src/audio/35_songs_ch6.js ==== */
+/* Chapter 6 — the Still Archive. The archive road (and the same road walked
+ * home afterwards), the room of set-down memories, the battle theme, the
+ * last boss, and the cues for the keeper of the Archive and for the note
+ * read again. The Still Archive and finale themes are re-orchestrated in
+ * place in 30_songs.js; the Hush's own theme stays as it was — glass, open
+ * fifths, nothing human in it. Notation: see 30_songs.js.
+ *
+ * Intensity, the last step: the busiest battle, every drum of the kit, the
+ * Hush's colour inside the fight; the final boss moves through the whole
+ * ensemble, has it taken away instrument by instrument, and gives it back.
+ * Still a chamber group: no choir of hundreds, no brass. */
+var RB = (globalThis.RB = globalThis.RB || {});
+RB.audio = RB.audio || {};
+
+(function (A) {
+  'use strict';
+  const _ = (A._ = A._ || {});
+  const M = _.mat;
+  function S(id, def) {
+    def.id = id;
+    def.chapter = 6;
+    _.songDefs[id] = def;
+  }
+
+  // ========================================================== ARCHIVE ROAD
+  const SAR_A = '5, - 3 - - 2 1 - | 2 - - - 4 - 3 - | 2 - - - 1 - 7, - | 1 - - - - - . . | 3 - - - 5 - 6 - | 5 - - - 3 - 2 - | 1 - - - 2 - 3 - | 2 - - - - - . .';
+  const SAR_A_CH = '1 7 5 1 3 4 6 5';
+  const SAR_B_GLASS = '5, - 1 - 2 - 3 - | 4 - - - - - - - | .:8 | .:8 | 5, - 1 - 2 - 3 - | 4 - - - 3 - - - | 2 - - - - - - - | .:8';
+  const SAR_B_KOTO = '.:8 | .:8 | 5, - 3 - - 2 1 - | 2 - - - . . . . | .:8 | .:8 | .:8 | .:8';
+  const SAR_B_CH = '1P 1P 2P 2P 1P 1P 2P 1P';
+  const SAR_C = '5, - 3 - - 2 1 - | 2 - - - 1 - 7, - | 5, - 3 - - 2 1 - | 6, - - - 5, - - - | 6, - 1 - 2 - 3 - | 5 - 4 - 3 - 2 - | #7, - - - 2 - - - | 1 - - - - - . .';
+  const SAR_C_CH = '1 7 1 6 6 4 5M 1';
+
+  S('sa_road', {
+    title: 'The Archive Road',
+    kind: 'area',
+    motifs: ['road', 'hush'],
+    notes: 'Chapter 6 route (B minor, 104): the last climb, the Archive above. A shakuhachi tune opened by the road motif over koto and a low biwa; B is the Archive’s order showing through — B lydian over open fifths and a held shō, the Hush motif on glass, the road motif slipping past on koto; C sets the road motif marching on shamisen over ōdaiko and shime: going on anyway.',
+    key: 'B', mode: 'aeolian', bpm: 104, loopFrom: 1,
+    tracks: {
+      lead: { i: 'shakuhachi', o: 4, v: 0.68, rv: 0.32 },
+      sham: { i: 'shamisen', o: 4, v: 0.48, rv: 0.2, pan: 0.15 },
+      glass: { i: 'glass', o: 5, v: 0.85, rv: 0.5, pan: -0.15 },
+      frag: { i: 'koto', o: 4, v: 0.45, rv: 0.45, dl: 0.3, pan: 0.3 },
+      arp: { i: 'koto', o: 3, pat: true, v: 0.28, rv: 0.3, pan: -0.3 },
+      drone: { i: 'biwa', o: 2, pat: true, bass: true, v: 0.36, rv: 0.3, pan: -0.1 },
+      pad: { i: 'pad', o: 3, hold: true, fold: 'all', win: 5, v: 0.32, rv: 0.4 },
+      bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.6 },
+      perc: { perc: true, v: 0.45 },
+    },
+    echo: { beats: 0.75, fb: 0.3, mix: 0.25 },
+    all: { arp: "0 2 1' 2 0 2 1' 2", drone: '0 - - - - - - -', pad: M.TRI, bass: '0 - - 0 2 - - -', perc: 'p...e..p|..p.e...' },
+    sections: {
+      intro: { bars: 2, ch: '1 1', lead: '1 - - - - - - - | 7, - - - 5, - - -', perc: null, bass: null, arp: null },
+      A: { bars: 8, ch: SAR_A_CH, lead: SAR_A },
+      B: { bars: 8, mode: 'lydian', ch: SAR_B_CH, glass: SAR_B_GLASS, frag: SAR_B_KOTO, arp: null, drone: null, pad: '0+1', perc: 'g...g...', dyn: 0.9 },
+      C: { bars: 8, ch: SAR_C_CH, sham: SAR_C, drone: '0 . . 0 . . 0 .', perc: 'z..e..e.|z..e.ee.' },
+      A2: { bars: 8, ch: SAR_A_CH, lead: SAR_A, sham: SAR_A },
+    },
+    form: ['intro', 'A', { s: 'B', i: { pad: 'sho' }, o: { pad: 1 } }, 'C', 'A2'],
+  });
+
+  // ========================================================= THE ROAD HOME
+  S('sa_road_home', {
+    title: 'The Road of Borrowed Names (Home)',
+    kind: 'area',
+    motifs: ['road'],
+    notes: 'The archive road after the Hush is gone (D, 84): the main theme of the game — the same melody, harmony and form as Chapter 1’s "road" — played by the whole Japanese ensemble the journey gathered: shakuhachi, then shamisen, koto arpeggios where the harp was, a shō where the pad was, shinobue for the answering phrase, hand pats, shime-daiko and a rin.',
+    key: 'D', bpm: 84, loopFrom: 1,
+    tracks: {
+      lead: { i: 'shakuhachi', o: 5, v: 0.7, rv: 0.3 },
+      koto: { i: 'koto', o: 5, v: 0.45, rv: 0.35, pan: 0.25 },
+      gt: { i: 'shamisen', o: 4, pat: true, fold: 'all', win: -3, v: 0.32, rv: 0.25, pan: -0.15 },
+      arp: { i: 'koto', o: 4, pat: true, v: 0.36, rv: 0.3, pan: -0.25 },
+      pad: { i: 'sho', o: 4, hold: true, fold: 'all', win: 0, v: 0.62, rv: 0.4 },
+      bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.62 },
+      perc: { perc: true, v: 0.42 },
+    },
+    all: { arp: M.ARP4, pad: M.TRI, bass: M.BASS4, perc: 'p...e..p|....e..p' },
+    sections: {
+      intro: { bars: 4, ch: '1 4 1 5s4', bass: '0 - - - - - - -', perc: 'i.......|........|........|........' },
+      A: { bars: 8, ch: M.ROAD_A_CH, lead: M.ROAD_A },
+      Ag: { bars: 8, ch: M.ROAD_A_CH, lead: M.ROAD_A, gt: '1 - - - - - - -', perc: 'p.e.e..p|m.e.e..p' },
+      Ab: { bars: 8, ch: M.ROAD_A_CH, lead: M.ROAD_A, koto: M.ROAD_A, gt: '1 - - - - - - -', perc: 'p.e.e..p|m.e.e..p' },
+      B: { bars: 8, ch: M.ROAD_B_CH, lead: M.ROAD_B },
+      Bg: { bars: 8, ch: M.ROAD_B_CH, lead: M.ROAD_B, gt: '1 - - - 3 - - -' },
+      C: { bars: 8, ch: M.ROAD_C_CH, koto: M.ROAD_C, perc: 'i.......|........|........|........', dyn: 0.85 },
+    },
+    form: ['intro', 'A', { s: 'Ag', i: { lead: 'shamisen' }, o: { lead: -1 } }, 'B', 'Ab', 'C', { s: 'Bg', i: { lead: 'shinobue' } }],
+  });
+
+  // ==================================================== SET-DOWN MEMORIES
+  const SAM_A = '5 - - - 3 - 2 - | 1 - - - - - . . | 3 - - - 2 - 1 - | 7, - - - - - . . | 6, - - - 7, - 1 - | 2 - - - 3 - 2 - | 1 - - - 7, - 6, - | 7, - - - - - . .';
+  const SAM_A_CH = '1 1 3 7 6 1 4 5';
+  const SAM_B = '5, - 3 - - 2 1 - | 2 - - - - - . . | 5, - 3 - - 2 1 - | 7, - - - 6, - - - | 6, - 1 - 2 - 3 - | 4 - - - 3 - - - | 2 - - - 1 - 7, - | 1 - - - - - . .';
+  const SAM_B_CH = '1 7 1 6 6 4 5 1';
+
+  S('sa_memories', {
+    title: 'Set-Down Memories',
+    kind: 'area',
+    motifs: ['road'],
+    notes: 'The room where the grieving set their memories down (B minor, 58). A slow koto line with a held shō and a rin; then the road motif on shakuhachi in minor, falling where it used to climb, as in the old "Sorrow" — but kept, not lost; the koto answers.',
+    key: 'B', mode: 'aeolian', bpm: 58,
+    tracks: {
+      koto: { i: 'koto', o: 4, v: 0.5, rv: 0.5, pan: 0.15 },
+      lead: { i: 'shakuhachi', o: 4, v: 0.62, rv: 0.5 },
+      arp: { i: 'koto', o: 3, pat: true, v: 0.24, rv: 0.5, pan: -0.25 },
+      sho: { i: 'sho', o: 4, hold: true, fold: 'all', win: 0, v: 0.4, rv: 0.55 },
+      bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.4 },
+      bowl: { perc: true, v: 0.28, rv: 0.6, pan: 0.3 },
+    },
+    all: { arp: "0 . 2 . 1' . 2 .", sho: M.TRI, bass: '0 - - - - - - -', bowl: 'i.......|........|........|........' },
+    sections: {
+      A: { bars: 8, ch: SAM_A_CH, koto: SAM_A },
+      B: { bars: 8, ch: SAM_B_CH, lead: SAM_B },
+      A2: { bars: 8, ch: SAM_A_CH, lead: SAM_A, koto: '.:8 | . . . . 5 - 6 - | .:8 | . . . . 3 - 2 - | .:8 | . . . . 5 - 4 - | .:8 | .:8' },
+    },
+    form: ['A', 'B', 'A2'],
+  });
+
+  // ================================================================ BATTLE
+  const BST_A = '1 - - 7, 1 - 3 - | 2 - 1 - 7, - 5, - | 1 - - 7, 1 - 4 - | 3 - - - - - . . | 5, - 3 - - 2 1 - | 2 - 3 - 4 - 5 - | 4 - 3 - 2 - 7, - | 1 - - - - - . .';
+  const BST_A_CH = '1 7 4 3 1 6 7 1';
+  const BST_B = "5 - 4 - 3 - 4 - | 5 - - - - - . . | 6 - 5 - 4 - 5 - | 6 - - - - - . . | 7 - 6 - 5 - 6 - | 7 - 1' - 2' - 1' - | 7 - 6 - 5 - 4 - | 5 - - - - - . .";
+  const BST_B_CH = '5 5 6 6 7 7 4 5M';
+  const BST_B_LOW = '5, - - - - - - - | 5, - - - - - - - | 6, - - - - - - - | 6, - - - - - - - | 7, - - - - - - - | 7, - - - - - - - | 4, - - - - - - - | 5, - - - - - - -';
+  const BST_C_LOW = '1 - - - - - - - | 2 - - - - - - - | 2 - - - - - - - | 3 - - - - - - - | 5 - - - - - - - | 2 - - - - - - - | 5 - - - - - - - | 5 - - - - - - -';
+  const BST_C_GLASS = '5, - 1 - 2 - 3 - | 4 - - - - - - - | .:8 | .:8 | 5, - 1 - 2 - 3 - | 4 - - - - - - - | .:8 | .:8';
+  const BST_C_HI = '.:8 | .:8 | 5,! - 3 - - 2 1 - | 2! - - - - - . . | .:8 | .:8 | .:8 | .:8';
+  const BST_C_CH = '1P 1P 2P 2P 1P 2P 5P 5P';
+
+  S('battle_still', {
+    title: 'Inkweaving — Every Name',
+    kind: 'battle',
+    motifs: ['road', 'hush'],
+    notes: 'Chapter 6 battle (B minor, 120). The 3+3+2 pulse with the whole kit: ōdaiko, shime-daiko in eighths, kotsuzumi and ōtsuzumi, hyōshigi, chappa; shamisen and koto ostinati under everything. A: a shakuhachi tune that runs into the road motif; B: koto high up over a bowed bass and unsettled ninth chords; C is the Archive’s order inside the fight — B lydian over open fifths with a cluster held inside them (root, flat ninth, raised fourth, fifth), the Hush motif on glass, a climbing bowed line, koto sixteenths, and the road motif thrown back on shinobue; B2 gives the koto line to the shamisen.',
+    key: 'B', mode: 'aeolian', bpm: 120, loopFrom: 1,
+    tracks: {
+      lead: { i: 'shakuhachi', o: 4, v: 0.66, rv: 0.25 },
+      koto: { i: 'koto', o: 4, v: 0.5, rv: 0.28, pan: 0.2 },
+      glass: { i: 'glass', o: 5, v: 0.85, rv: 0.4, pan: 0.2 },
+      hi: { i: 'shinobue', o: 5, v: 0.45, rv: 0.3, pan: -0.2 },
+      low: { i: 'bowed', o: 3, v: 0.55, rv: 0.25, pan: -0.15 },
+      ost: { i: 'shamisen', o: 3, pat: true, v: 0.36, rv: 0.12, pan: -0.25 },
+      arp: { i: 'koto', o: 3, pat: true, v: 0.26, rv: 0.25, pan: 0.3 },
+      pad: { i: 'pad', o: 3, hold: true, fold: 'all', win: 5, v: 0.32, rv: 0.3 },
+      bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.66 },
+      taiko: { perc: true, v: 0.52 },
+      shime: { perc: true, v: 0.4, pan: 0.2 },
+      noh: { perc: true, v: 0.42, pan: -0.25 },
+      metal: { perc: true, v: 0.3, rv: 0.3, pan: 0.3 },
+    },
+    all: {
+      ost: "0 0' 2 0' 1' 0' 2 0'", arp: "0 2 1' 2 0 2 1' 2", bass: '0 - - 0 - - 0 -', pad: '0+1+2+4',
+      taiko: 'Z..z..Z.|Z.zzZzZz', shime: 'eeEeeEee|eeEeeEee', noh: 'm..q..m.|q..m.qq.', metal: 'v......y|.......y|.......y|.......y',
+    },
+    sections: {
+      intro: { bars: 2, ch: '1 1', pad: null, arp: null, taiko: 'Z..z..Z.|ZzZzZZZZ', noh: 'q.q.q...|q.q.q.q.', metal: 'v.......|........' },
+      A: { bars: 8, ch: BST_A_CH, lead: BST_A },
+      B: { bars: 8, ch: BST_B_CH, koto: BST_B, low: BST_B_LOW, pad: '0+1+2+3+4' },
+      C: { bars: 8, mode: 'lydian', ch: BST_C_CH, low: BST_C_LOW, glass: BST_C_GLASS, hi: BST_C_HI, arp: { n: "0 2 1' 2", u: 0.25 }, pad: '0+b3+b2+2', taiko: 'Z..z..Z.|Z.zzZzZZ' },
+      B2: { bars: 8, ch: BST_B_CH, koto: BST_B, low: BST_B_LOW, pad: '0+1+2+3+4', arp: { n: "0 2 1' 2", u: 0.25 } },
+    },
+    form: ['intro', 'A', 'B', 'C', { s: 'B2', i: { koto: 'shamisen' } }],
+  });
+
+  // ============================================================ FINAL BOSS
+  const BOS6_RIFF = '1 5, 1 2 3 2 1 5, | 1 5, 1 2 4 3 2 1';
+  const BOS6_A_CH = '1 2 1 2 6 7 2 2';
+  const BOS6_HUSH = '5, - 1 - 2 - 3 - | 4 - - - - - - - | 5, - 1 - 2 - 3 - | 1 - - - - - - - | .:8 | .:8 | .:8 | .:8';
+  const BOS6_A_KOTO = '.:8 | .:8 | .:8 | .:8 | 3 - - - 5 - - - | 3 - - - 4 - 3 - | 2 - - - - - - - | .:8';
+  const BOS6_B = '5, - 3 - - 2 1 - | 2 - - - - - - - | 5, - 3 - - 2 1 - | 7, - - - - - - - | 1 - 3 - 5 - 6 - | 5 - 4 - 3 - 2 - | 3 - - - 1 - - - | 2 - - - - - - -';
+  const BOS6_B_CH = '1 2 1 7 6 4 1 2';
+  const BOS6_C_GLASS = '5, - 1 - 2 - 3 - | 4 - - - - - - - | 5, - 1 - 2 - 3 - | 4 - - - - - - -';
+  const BOS6_C_RIFF = '1 5, 1 2 3 2 1 5, | 1 . 1 . . . . . | 1 . . . . . . . | .:8';
+  const BOS6_D_LOW = '5, - 1 - 2 - 3 - | 4 - - - 3 - - - | 2 - - - - - - - | 1 - - - - - - - | 5, - 1 - 2 - 3 - | 3 - - - 2 - - - | 2 - - - 5, - - - | 1 - - - - - - -';
+
+  S('boss_hush', {
+    title: 'Nothing Left to Shelve',
+    kind: 'boss',
+    motifs: ['road', 'hush'],
+    notes: 'The last fight (F phrygian, 152), against the Hush itself. It opens sterile — glass ticks and a shō — then the whole ensemble arrives: a biwa riff, shamisen chords, ōdaiko, shime-daiko, the noh drums, chappa; the Hush motif on glass against koto, the road motif falling on shakuhachi. C is the Hush working: F lydian over open fifths, the drums stop, the riff thins to single notes and then to nothing, until for a moment only glass and ticks are left. D gives it all back: F major, every drum, shime-daiko in sixteenths, the road theme on shakuhachi and shinobue while the Hush motif sounds beneath with a natural fourth that resolves — the finale’s answer, heard first here.',
+    key: 'F', mode: 'phrygian', bpm: 152, loopFrom: 1,
+    tracks: {
+      lead: { i: 'shakuhachi', o: 4, v: 0.72, rv: 0.22 },
+      hi: { i: 'shinobue', o: 5, v: 0.45, rv: 0.25, pan: 0.2 },
+      glass: { i: 'glass', o: 5, v: 0.9, rv: 0.4, pan: 0.2 },
+      koto: { i: 'koto', o: 5, v: 0.5, rv: 0.3, pan: -0.2 },
+      low: { i: 'koto', o: 3, v: 0.4, rv: 0.3, pan: -0.25 },
+      riff: { i: 'biwa', o: 3, v: 0.52, rv: 0.12, pan: -0.15 },
+      ost: { i: 'shamisen', o: 3, pat: true, v: 0.3, rv: 0.1, pan: 0.25 },
+      sho: { i: 'sho', o: 4, hold: true, fold: 'all', win: 0, v: 0.55, rv: 0.35 },
+      bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.64 },
+      taiko: { perc: true, v: 0.54 },
+      shime: { perc: true, v: 0.34, pan: 0.15 },
+      noh: { perc: true, v: 0.4, pan: -0.1 },
+      tick: { perc: true, v: 0.4, pan: 0.3 },
+    },
+    all: {
+      riff: BOS6_RIFF, ost: '. 0+2 . . . 0+2 . 0+1', bass: "0 0 0' 0 0 0 0' 0", sho: M.TRI,
+      taiko: 'Z..z..Z.|Z.zzZzZz', shime: 'eeEeeEee', noh: '....q...|m...q.qm', tick: 'v.......|........|v.......|........',
+    },
+    sections: {
+      intro: { bars: 2, ch: '1P 1P', riff: null, ost: null, bass: null, taiko: null, shime: null, noh: null, tick: 'g.g.g.g.|g.g.gggg' },
+      A: { bars: 8, ch: BOS6_A_CH, glass: BOS6_HUSH, koto: BOS6_A_KOTO },
+      B: { bars: 8, ch: BOS6_B_CH, lead: BOS6_B, hi: BOS6_B },
+      C: { bars: 4, mode: 'lydian', ch: '1P 1P 2P 1P', glass: BOS6_C_GLASS, riff: BOS6_C_RIFF, ost: null, bass: '0 - - - - - - -', sho: '0+1', taiko: 'Z..z..Z.|Z.......|........|........', shime: 'eeEeeEee|e.e.e.e.|e.......|........', noh: 'q.......|........|........|........', tick: 'g.g.g.g.' },
+      D: { bars: 8, mode: 'ionian', ch: M.ROAD_A_CH, lead: M.ROAD_A, hi: M.ROAD_A, low: BOS6_D_LOW, riff: null, ost: '. 0+1+2 . . . 0+1+2 . .', taiko: 'Z..z..Z.|Z.zzZzZZ', shime: { n: 'eeeeEeeeeeeeEeee', u: 0.25 }, tick: 'v.......|........|........|........' },
+      A2: { bars: 8, ch: BOS6_A_CH, glass: BOS6_HUSH, koto: BOS6_A_KOTO, lead: '.:8 | .:8 | .:8 | .:8 | .:8 | .:8 | .:8 | .:8' },
+      B2: { bars: 8, ch: BOS6_B_CH, lead: BOS6_B, glass: BOS6_HUSH, taiko: 'Z..z..Z.|Z.zzZzZZ' },
+    },
+    form: ['intro', 'A', 'B', 'C', 'D', { s: 'A2', i: { riff: 'shamisen' }, o: { riff: 1 } }, 'B2'],
+  });
+
+  // ============================================================ STORY CUES
+  // The keeper of the Archive: the Hush's motif, and a tired human voice.
+  const SAK_A = '3 - - - 2 - 1 - | 2 - - - - - . . | 3 - - - 4 - 5 - | 4 - - - - - . . | 5 - - - 4 - 3 - | 2 - - - 3 - 2 - | 3 - - - 2 - - - | 1 - - - - - . .';
+  const SAK_A_CH = '1 2 1 2 1 2 5 1';
+  const SAK_B_GLASS = '5, - 1 - 2 - 3 - | 4 - - - - - - - | .:8 | .:8 | 5, - 1 - 2 - 3 - | 4 - - - - - - - | .:8 | .:8';
+  const SAK_B_KOTO = '.:8 | .:8 | 5, - 3 - - 2 1 - | 2 - - - - - . . | .:8 | .:8 | 5, - 3 - - . . . | .:8';
+
+  S('sa_kasane', {
+    title: 'The Keeper',
+    kind: 'scene',
+    motifs: ['road', 'hush'],
+    notes: 'Cue (F lydian, 60) for meeting the keeper of the Still Archive and for the last words before the Hush breaks loose. Her line is human — a shakuhachi in even, careful steps that sighs at the ends of phrases — over the Hush’s own colour: a held shō, glass, the raised fourth. In B the Hush motif and the road motif take turns, and the road motif is cut off.',
+    key: 'F', mode: 'lydian', bpm: 60,
+    tracks: {
+      lead: { i: 'shakuhachi', o: 4, v: 0.66, rv: 0.5 },
+      glass: { i: 'glass', o: 5, v: 0.85, rv: 0.55, pan: 0.2 },
+      koto: { i: 'koto', o: 4, v: 0.45, rv: 0.5, pan: -0.2 },
+      sho: { i: 'sho', o: 4, hold: true, fold: 'all', win: 0, v: 0.45, rv: 0.5 },
+      bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.38 },
+      tick: { perc: true, v: 0.35, rv: 0.3, pan: 0.25 },
+    },
+    all: { sho: M.TRI, bass: '0 - - - - - - -', tick: 'g...g...' },
+    sections: {
+      A: { bars: 8, ch: SAK_A_CH, lead: SAK_A },
+      B: { bars: 8, ch: '1P 1P 2P 2P 1P 1P 2P 2P', glass: SAK_B_GLASS, koto: SAK_B_KOTO, sho: '0+1' },
+    },
+    form: ['A', 'B', { s: 'A', i: { lead: 'koto' } }],
+  });
+
+  // The note read again, in context: the Hush's motif finds its natural fourth.
+  const SAT_A_KOTO = '5, - 1 - 2 - 3 - | 4 - - - 3 - - - | 2 - - - - - - - | 1 - - - - - - - | .:8 | .:8 | .:8 | .:8';
+  const SAT_A_SH = '.:8 | .:8 | .:8 | .:8 | 5, - 3 - - 2 1 - | 2 - - - - - . . | 5, - 3 - - 2 1 - | 1 - - - - - . .';
+  const SAT_A_CH = '1 4 5 1 1 5 1 1';
+  S('sa_toya', {
+    title: 'The Note, Read Again',
+    kind: 'scene',
+    motifs: ['road', 'hush'],
+    notes: 'Cue (D, 63) for the old note read again in its context. The Hush motif on koto — but in D major with a natural fourth that steps down and resolves; then the road motif answers on shakuhachi, gently. B lays the main theme over a held shō with the resolved Hush motif beneath it on glass, as the finale will.',
+    key: 'D', bpm: 63,
+    tracks: {
+      koto: { i: 'koto', o: 5, v: 0.5, rv: 0.5, pan: -0.15 },
+      lead: { i: 'shakuhachi', o: 5, v: 0.64, rv: 0.5 },
+      glass: { i: 'glass', o: 4, v: 0.8, rv: 0.5, pan: 0.2 },
+      arp: { i: 'koto', o: 3, pat: true, v: 0.22, rv: 0.5, pan: 0.25 },
+      sho: { i: 'sho', o: 4, hold: true, fold: 'all', win: 0, v: 0.42, rv: 0.5 },
+      bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.4 },
+      bowl: { perc: true, v: 0.3, rv: 0.6, pan: 0.3 },
+    },
+    all: { arp: "0 . 2 . 1' . 2 .", sho: M.TRI, bass: '0 - - - - - - -', bowl: 'i.......|........|........|........' },
+    sections: {
+      A: { bars: 8, ch: SAT_A_CH, koto: SAT_A_KOTO, lead: SAT_A_SH },
+      B: { bars: 8, ch: M.ROAD_A_CH, lead: M.ROAD_A, glass: M.FIN_C_GLASS },
+    },
+    form: ['A', 'B', { s: 'A', i: { koto: 'shakuhachi', lead: 'koto' } }],
+  });
+
+  _.REQUIRED_SONGS.push('sa_road', 'sa_road_home', 'sa_memories', 'battle_still', 'boss_hush', 'sa_kasane', 'sa_toya');
+})(RB.audio);
+
+
 /* ==== src/audio/39_zones.js ==== */
 /* Zone music: which battle and boss theme plays where.
  *
@@ -16862,8 +17139,9 @@ RB.audio = RB.audio || {};
     },
     still: {
       chapter: 6, regions: ['still', 'sa_mount', 'sa_still'], prefixes: ['sa.'],
-      battle: 'battle', boss: 'boss', route: 'quiet_road',
-      songs: ['still_archive', 'road'],
+      battle: 'battle_still', boss: 'boss_hush', route: 'sa_road',
+      songs: ['sa_road', 'sa_road_home', 'still_archive', 'sa_memories'],
+      cues: ['sa_kasane', 'sa_toya'],
     },
     atlas: {
       chapter: 7, regions: ['atlas'], prefixes: ['atlas'],
@@ -101165,7 +101443,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- the road up from Lanternfall -----------------------------------------------------------
   C.maps['sa.road'] = {
     name: T('The Archive Road', '{書庫|しょこ} への {坂道|さかみち}'), region: 'sa_mount',
-    music: [{ if: 'sa_descent', id: 'ending' }, { if: 'sa_hush_down', id: 'road' }, { id: 'quiet_road' }],
+    music: [{ if: 'sa_descent', id: 'ending' }, { if: 'sa_hush_down', id: 'sa_road_home' }, { id: 'sa_road' }],
     ambient: {
       get weather() { return RB.game.s && RB.game.s.flags.sa_hush_down ? 'motes' : 'pages'; },
       get tint() { return RB.game.s && RB.game.s.flags.sa_descent && !RB.game.s.flags.postgame ? 'rgba(255,214,170,0.10)' : null; },
@@ -101474,7 +101752,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- the Room of Set-Down Memories ----------------------------------------------------------------------------
   C.maps['sa.memories'] = {
     name: T('The Room of Set-Down Memories', '{預|あず}けられた {記憶|きおく} の {部屋|へや}'), region: 'sa_still', noTravel: true,
-    music: [{ if: 'sa_hush_down', id: 'sorrow' }, { id: 'sorrow' }],
+    music: 'sa_memories',
     ambient: stillAmbient({ weather: 'motes', tint: 'rgba(230,220,200,0.06)', dark: 0.2 }, { weather: 'motes', tint: 'rgba(255,232,196,0.08)', dark: 0.1 }),
     terrain: K.build(24, 18, '#', (k) => {
       k.rect(1, 2, 22, 15, 'p');
@@ -102429,7 +102707,7 @@ RB.script.add(`
 @scene sa.arrive
 !set sa_arrived
 !chapter 6
-!music quiet_road
+!music sa_road
 !card {第六章|だいろくしょう} 　 {静寂|しじま} の {書庫|しょこ} || Chapter Six — The Still Archive
 narr: {灯落|ひおち} の {上|うえ} で 、 {道|みち} は {急|きゅう} に {静|しず}か に なる 。 || Above Lanternfall, the road goes suddenly quiet.
 narr: {鳥|とり} の {声|こえ} も 、 {風|かぜ} の {音|おと} も 、 {少|すこ}し ずつ {遠|とお}く なって いく 。 || Birdsong and wind both drop away, a little at a time.
@@ -102656,7 +102934,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 RB.script.add(`
 @scene sa.kasane_meet
 !set sa_met_kasane
-!music hush
+!music sa_kasane
 !move pc up 4
 narr: {長|なが}い {机|つくえ} の {列|れつ} の {向|む}こう に 、 {誰|だれ}か が {立|た}って いる 。 || Beyond the long rows of desks, someone is standing.
 narr: {白|しろ}い {上着|うわぎ} 。 {袖|そで} に {墨|すみ} の しみ 。 {眠|ねむ}って いない {人|ひと} の {目|め} 。 || A pale coat. Ink stains on the cuffs. The eyes of someone who has not slept.
@@ -102702,6 +102980,7 @@ narr: カサネ は {棚|たな} の {間|あいだ} に {消|き}えた 。 {�
 ?(comp=suzu) suzu[think]: {丁寧|ていねい} な {悪役|あくやく} って 、 {一番|いちばん} {困|こま}る んだ よ ね 。 {嫌|きら}い に なりにくい から 。 || Polite villains are the worst. They're so hard to hate.
 !quest sa_main 1
 !journal {閲覧室|えつらんしつ} で カサネ に {会|あ}った 。 {目録|もくろく} を {読|よ}めば 、 {書架|しょか} へ の {扉|とびら} が {開|ひら}く と いう 。 || Met Kasane in the Reading Room. Reading the catalogue should open the door to the Stacks.
+!music still_archive
 
 @scene sa.clerk_first
 sa_clerk: {閲覧|えつらん} の お{客様|きゃくさま} です か 。 {整理|せいり}{番号|ばんごう} を どうぞ 。 || A reader? Your call number, please.
@@ -103240,7 +103519,7 @@ narr: ページ は {床|ゆか} に {落|お}ちて 、 {静|しず}か に {�
 
 @scene sa.heart_kasane
 !if seen.sa.heart_kasane -> again
-!music hush
+!music sa_kasane
 kasane: {来|き}ました ね 。 || You've come.
 kasane: {十分|じゅうぶん} {読|よ}みました か 。 わたし が {間違|まちが}って いる と {言|い}う に は 。 || Have you read enough — to tell me I'm wrong?
 !choice
@@ -103331,6 +103610,7 @@ kasane: …… {持|も}って {来|き}て くれた の です ね 。 || …Y
 !call sa.toya_read
 
 @scene sa.toya_read
+!music sa_toya
 narr: $name は 、 {綴|つづ}り を カサネ に {渡|わた}した 。 {雨|あめ} の {音|おと} 。 {石|いし} の {廊下|ろうか} 。 {若|わか}い {二人|ふたり} の {声|こえ} 。 || You hand Kasane the folio. The sound of rain. A stone corridor. Two young voices.
 kasane[closed]: …… 「 {誰|だれ} も {開|あ}けない 」 。 わたし が 、 そう {言|い}った 。 || …"No one is opening it." I said that.
 narr: $name は 、 {鍵|かぎ} の {控|ひか}え と {議会|ぎかい} の {貼|は}り{紙|がみ} を 、 {床|ゆか} に {並|なら}べた 。 || You lay the key slip and the council notice out on the floor beside it.
