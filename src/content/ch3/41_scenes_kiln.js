@@ -314,7 +314,7 @@ narr: {火屋|ほや} が {置|お}いて あった {場所|ばしょ} に 、 {
 !speakerless co_tomoe
 narr: {焦|こ}げた {紙|かみ} を {拾|ひろ}い{上|あ}げる 。 {窯焚|かまだ}き {日誌|にっし} の 、 {最後|さいご} の {頁|ページ} だ 。 || You pick up the scorched paper. It's the last page of the kiln's firing log.
 narr: {指|ゆび} が {触|ふ}れた {瞬間|しゅんかん} 、 {窯|かま} の {中|なか} が 、 {一瞬|いっしゅん} だけ {二十年前|にじゅうねんまえ} の {夜|よる} に {戻|もど}った 。 || The instant your fingers touch it, for one moment, the kiln is back on that night twenty years ago.
-!music sorrow
+!music co_fire
 co_tomoe: トキワ 、 {火|ひ} が {白|しろ}く なった ね 。 …… {上|うえ} の {窓|まど} ？ {開|あ}けた の ？ この {風|かぜ} で ？ || Tokiwa, it's gone white. …The upper vent? You opened it? In this wind?
 narr: {若|わか}い {声|こえ} が {何|なに} か {言|い}い かけて 、 {風|かぜ} の {音|おと} に かき{消|け}された 。 || A young voice starts to answer and is swallowed by the wind.
 co_tomoe: いい 、 {今|いま} は いい 。 …… ヒロ 、 おいで 。 {頭|あたま} に これ を {巻|ま}いて おき な 。 {火|ひ} の {粉|こ} が {熱|あつ}い から ね 。 || Never mind — not now. …Hiro, come here. Tie this round your head. The sparks are hot.

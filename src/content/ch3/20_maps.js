@@ -11,7 +11,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // The hill road (links Saltglass ← → Snowbell)
   // ======================================================================================
   C.maps['co.road'] = {
-    name: T('The Orchard Road', '{灰実|はいみ} へ の {坂道|さかみち}'), region: 'cinder', music: 'road',
+    name: T('The Orchard Road', '{灰実|はいみ} へ の {坂道|さかみち}'), region: 'cinder', music: 'co_road',
     ambient: { weather: 'leaves' },
     terrain: K.build(36, 20, '.', (k) => {
       k.ragged('top', 'T', 3, 301).ragged('bottom', 'T', 3, 302);
@@ -173,7 +173,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // Dusk: the village gathers in the square (the assembly runs as one scene).
   C.maps['co.eve'] = {
-    name: T('Cinder Orchard at dusk', '{夕暮|ゆうぐ}れ の {灰実|はいみ}'), region: 'cinder', music: 'sorrow', noTravel: true,
+    name: T('Cinder Orchard at dusk', '{夕暮|ゆうぐ}れ の {灰実|はいみ}'), region: 'cinder', music: 'co_assembly', noTravel: true,
     ambient: { weather: 'leaves', tint: 'rgba(200,90,40,0.16)', dark: 0.25, darkCol: '60,20,10', playerLight: 40 },
     terrain: villageTerrain(), structs: villageStructs.map((s) => Object.assign({}, s, { to: undefined, lit: true })),
     props: villageProps.filter((p) => p.p !== 'co_seat' && p.p !== 'co_glasslantern').concat([
@@ -194,7 +194,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // Festival night.
   C.maps['co.festival'] = {
-    name: T('The Autumn Festival', '{秋祭|あきまつ}り'), region: 'cinder', music: 'cinder', noTravel: true,
+    name: T('The Autumn Festival', '{秋祭|あきまつ}り'), region: 'cinder', music: 'co_festival', noTravel: true,
     ambient: { weather: 'fireflies', dark: 0.55, darkCol: '20,10,30', playerLight: 46 },
     terrain: villageTerrain(), structs: villageStructs.map((s) => Object.assign({}, s, { to: undefined, lit: true })),
     props: villageProps.filter((p) => p.p !== 'co_seat' && p.p !== 'co_glasslantern' && p.p !== 'co_lookout').concat([
@@ -417,7 +417,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Dungeon 1: the upper terraces (burned twenty years ago, replanted in rows)
   // ======================================================================================
   C.maps['co.upper'] = {
-    name: T('The Upper Terraces', '{上|うえ} の {段|だん}'), region: 'cinder', music: 'mystery', noTravel: true,
+    name: T('The Upper Terraces', '{上|うえ} の {段|だん}'), region: 'cinder', music: 'co_terraces', noTravel: true,
     ambient: { weather: 'motes', tint: 'rgba(90,70,60,0.12)' },
     legend: { Y: { tile: 'ash', prop: 'orchard' }, Z: { tile: 'ash', prop: 'stump' } },
     terrain: K.build(40, 30, 'a', (k) => {
@@ -465,7 +465,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Dungeon 2: the old workshop row (burned shells) + ice house
   // ======================================================================================
   C.maps['co.oldworks'] = {
-    name: T('The Old Workshop Row', '{古|ふる}い {工房|こうぼう}{通|どお}り'), region: 'cinder', music: 'mystery', noTravel: true,
+    name: T('The Old Workshop Row', '{古|ふる}い {工房|こうぼう}{通|どお}り'), region: 'cinder', music: 'co_terraces', noTravel: true,
     ambient: { weather: 'motes', tint: 'rgba(100,60,40,0.14)', dark: 0.12 },
     terrain: K.build(40, 26, 'a', (k) => {
       k.ragged('left', 'n', 2, 341).ragged('right', 'n', 2, 342);

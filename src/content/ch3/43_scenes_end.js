@@ -6,7 +6,7 @@ RB.script.add(`
 @scene co.assembly
 !fade out
 !warp co.eve 23 18 up
-!music sorrow
+!music co_assembly
 !fade in
 narr: {夕暮|ゆうぐ}れ の {広場|ひろば} に 、 {里|さと} の {人|ひと} が {集|あつ}まった 。 {飾|かざ}り {付|つ}け の {途中|とちゅう} の {舞台|ぶたい} に 、 トキワ が {立|た}って いる 。 || At dusk the village gathers in the square. Tokiwa stands on the half-decorated stage.
 co_tokiwa: {皆|みな} さん 。 {祭|まつ}り の {前|まえ} に 、 {聞|き}いて いただきたい こと が あります 。 || Everyone. Before the festival, there is something I must ask you to hear.
@@ -80,7 +80,7 @@ narr: ゴロウ の {櫓|やぐら} に は 、 {新|あたら}しい {綱|つ�
 !set co_firebreak_cut co_hiro_seat_named
 !card {秋祭|あきまつ}り || The autumn festival
 !warp co.festival 23 17 down
-!music cinder
+!music co_festival
 !fade in
 narr: {日|ひ} が {暮|く}れる と 、 {三十|さんじゅう} の ガラス の {灯籠|とうろう} に {火|ひ} が {入|はい}った 。 || When the sun goes down, fire is set in thirty glass lanterns.
 narr: ヒロ の {席|せき} に は 、 {名前|なまえ} の {札|ふだ} と 、 {橙色|だいだいいろ} の {火屋|ほや} が {一|ひと}つ {置|お}いて ある 。 || On Hiro's seat: a name slip, and a single orange lantern globe.

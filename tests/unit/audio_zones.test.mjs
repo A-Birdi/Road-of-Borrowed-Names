@@ -8,7 +8,7 @@ import { load } from '../lib/load.mjs';
 import { intensity, fmtIntensity } from '../lib/intensity.mjs';
 
 // zones that have their own score so far (chapter by chapter)
-const SCORED = ['saltglass'];
+const SCORED = ['saltglass', 'cinder'];
 
 export default async (t) => {
   globalThis.__RB_TEST__ = true;
@@ -79,12 +79,14 @@ export default async (t) => {
   // ---- scene cues
   let cues = 0;
   for (const [sid, sc] of Object.entries(C.scenes)) {
+    let warpedTo = null; // a scene that warps back to Reedwake may play Reedwake's music there
     for (const c of sc.cmds) {
+      if (c.op === 'warp') warpedTo = (c.args || [])[0];
       if (c.op !== 'music' || (c.args || [])[0] === '-') continue;
       const id = c.args[0];
       cues++;
       t.ok(!!songs[id], `${sid}: !music ${id} exists`);
-      const zid = A.zoneOf(null, null, sid);
+      const zid = A.zoneOf(null, warpedTo ? C.maps[warpedTo] : null, warpedTo || sid);
       if (SCORED.includes(zid)) t.ok(!CH1.has(id), `${sid} (${zid}): no Chapter 1 song as a cue (${id})`);
     }
   }

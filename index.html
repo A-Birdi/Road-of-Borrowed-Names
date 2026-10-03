@@ -15075,28 +15075,29 @@ RB.audio = RB.audio || {};
   S('cinder', {
     title: 'Cinder Orchard Festival',
     kind: 'area',
+    chapter: 3,
     motifs: ['road'],
-    notes: 'Festival town in A mixolydian (112): hand drums, woodblock and a steady shaker, flute over strummed pluck with little answering figures. B slips into A minor with the road motif — the festival history that does not match what people remember. C is a call-and-response dance on mallet.',
+    notes: 'Festival town in A mixolydian (112), re-orchestrated for Chapter 3 as a festival band — same melody, form and motifs as before: shinobue over strummed shamisen with koto answering figures, a small hayashi of ōdaiko, shime-daiko and rim clicks, the atarigane’s chan-chiki where the shaker was. B slips into A minor with the road motif on koto — the festival history that does not match what people remember. C is a call-and-response dance on shamisen; the last A2 is on koto.',
     key: 'A', mode: 'mixolydian', bpm: 112,
     tracks: {
-      lead: { i: 'flute', o: 4, v: 0.8, rv: 0.2 },
-      mal: { i: 'mallet', o: 4, v: 0.75, rv: 0.2, pan: 0.2 },
-      pl: { i: 'pluck', o: 4, v: 0.45, rv: 0.2, pan: -0.2 },
-      gtr: { i: 'pluck', o: 4, pat: true, fold: 'all', win: -4, v: 0.4, rv: 0.1, pan: -0.3 },
-      pad: { i: 'pad', o: 4, hold: true, fold: 'all', win: -5, v: 0.3, rv: 0.3 },
+      lead: { i: 'shinobue', o: 4, v: 0.52, rv: 0.2 },
+      mal: { i: 'koto', o: 4, v: 0.6, rv: 0.2, pan: 0.2 },
+      pl: { i: 'koto', o: 4, v: 0.38, rv: 0.2, pan: -0.2 },
+      gtr: { i: 'shamisen', o: 4, pat: true, fold: 'all', win: -4, v: 0.3, rv: 0.1, pan: -0.3 },
+      pad: { i: 'pad', o: 4, hold: true, fold: 'all', win: -5, v: 0.28, rv: 0.3 },
       bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.65 },
-      drum: { perc: true, v: 0.55 },
-      shk: { perc: true, v: 0.35, pan: 0.3 },
+      drum: { perc: true, v: 0.5 },
+      shk: { perc: true, v: 0.28, pan: 0.3 },
     },
-    all: { gtr: '0+1+2 . . 0+1+2 . . 0+1+2 .', bass: '0 . 0 2 . 0 2 .', pad: TRI, drum: 't..t..w.|t..t.tw.', shk: 'ssSsssSs' },
+    all: { gtr: '0+1+2 . . 0+1+2 . . 0+1+2 .', bass: '0 . 0 2 . 0 2 .', pad: TRI, drum: 'z..e..f.|z..e.ef.', shk: 'a..aa..a' },
     sections: {
-      intro: { bars: 1, ch: '1', gtr: null, pad: null, bass: null },
+      intro: { bars: 1, ch: '1', gtr: null, pad: null, bass: null, shk: 'y.y.y...' },
       A: { bars: 8, ch: CIN_A_CH, lead: CIN_A },
       A2: { bars: 8, ch: CIN_A_CH, lead: CIN_A, pl: CIN_A_CM },
-      B: { bars: 8, mode: 'aeolian', ch: CIN_B_CH, mal: CIN_B, drum: 't.......|....t...', shk: '..s...s.', gtr: null, dyn: 0.9 },
-      C: { bars: 8, ch: CIN_C_CH, mal: CIN_C, drum: 't..t..w.|t..t.tw.|t..t..w.|tt.t.tww' },
+      B: { bars: 8, mode: 'aeolian', ch: CIN_B_CH, mal: CIN_B, drum: 'z.......|....e...', shk: '..a...a.', gtr: null, dyn: 0.9 },
+      C: { bars: 8, ch: CIN_C_CH, mal: CIN_C, drum: 'z..e..f.|z..e.ef.|z..e..f.|zz.e.eff' },
     },
-    form: ['intro', 'A', 'A2', 'B', 'C', { s: 'A2', i: { lead: 'mallet' } }],
+    form: ['intro', 'A', 'A2', 'B', { s: 'C', i: { mal: 'shamisen' } }, { s: 'A2', i: { lead: 'koto' } }],
   });
 
   // ================================================================= KILN
@@ -15110,26 +15111,28 @@ RB.audio = RB.audio || {};
   S('kiln', {
     title: 'The Sealed Kiln',
     kind: 'area',
+    chapter: 3,
     motifs: ['hush'],
-    notes: 'E phrygian heat (84): a slow heartbeat drum, celesta shimmer in sixteenths, a bowed line leaning on the flat second. B opens into E lydian — the beauty of the glass itself. C strips back to the heartbeat while the Hush motif circles on glass.',
+    notes: 'E phrygian heat (84), re-orchestrated for Chapter 3 — same melody, form and motifs: an ōdaiko heartbeat, a low biwa buzzing on the root like heat in the walls, rim clicks, celesta shimmer in sixteenths, the bowed line leaning on the flat second. B opens into E lydian — the beauty of the glass itself — on koto over a held shō. C strips back to the heartbeat while the Hush motif circles on glass; the last A is on shakuhachi.',
     key: 'E', mode: 'phrygian', bpm: 84,
     tracks: {
       lead: { i: 'bowed', o: 4, v: 0.7, rv: 0.35 },
-      cel: { i: 'celesta', o: 5, v: 0.55, rv: 0.45, pan: 0.2 },
+      cel: { i: 'koto', o: 5, v: 0.5, rv: 0.45, pan: 0.2 },
       glass: { i: 'glass', o: 5, v: 0.9, rv: 0.5, pan: -0.15 },
       shim: { i: 'celesta', o: 4, pat: true, u: 0.25, v: 0.3, rv: 0.4, pan: 0.3 },
+      drone: { i: 'biwa', o: 2, pat: true, bass: true, v: 0.32, rv: 0.35, pan: -0.2 },
       pad: { i: 'pad', o: 3, hold: true, fold: 'all', win: 5, v: 0.45, rv: 0.4 },
       bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.55 },
-      beat: { perc: true, v: 0.6, rv: 0.2 },
-      tick: { perc: true, v: 0.35, pan: -0.3 },
+      beat: { perc: true, v: 0.55, rv: 0.2 },
+      tick: { perc: true, v: 0.3, pan: -0.3 },
     },
-    all: { shim: "0 2 1' 2 4 2 1' 2", pad: '0+2', bass: '0 - - - - - - -', beat: 'l.l.....|........', tick: '..x...x.' },
+    all: { shim: "0 2 1' 2 4 2 1' 2", drone: '0 - - - - - - -', pad: '0+2', bass: '0 - - - - - - -', beat: 'z.z.....|........', tick: '..f...f.' },
     sections: {
       A: { bars: 8, ch: KILN_A_CH, lead: KILN_A },
-      B: { bars: 8, mode: 'lydian', ch: KILN_B_CH, cel: KILN_B, pad: TRI, tick: null },
+      B: { bars: 8, mode: 'lydian', ch: KILN_B_CH, cel: KILN_B, pad: TRI, tick: null, drone: null },
       C: { bars: 8, ch: KILN_C_CH, glass: KILN_C, shim: null },
     },
-    form: ['A', 'B', 'C', { s: 'A', i: { lead: 'flute' } }],
+    form: ['A', { s: 'B', i: { pad: 'sho' }, o: { pad: 1 } }, 'C', { s: 'A', i: { lead: 'shakuhachi' } }],
   });
 
   // ============================================================= SNOWBELL
@@ -15999,6 +16002,293 @@ RB.audio = RB.audio || {};
 })(RB.audio);
 
 
+/* ==== src/audio/32_songs_ch3.js ==== */
+/* Chapter 3 — Cinder Orchard. The orchard road, the terraces and workshop
+ * row, the battle and boss themes, the festival, and the cues for the night
+ * of the fire and the village remembering it. The town and kiln themes are
+ * re-orchestrated in place in 30_songs.js. Notation: see 30_songs.js.
+ *
+ * Intensity, one step up from Chapter 2: a festival kumi-daiko (ōdaiko,
+ * shime, rim) in place of the harbour's light drums, shinobue on top, a
+ * little faster — and the heat of the in-scale (phrygian) for the kiln. */
+var RB = (globalThis.RB = globalThis.RB || {});
+RB.audio = RB.audio || {};
+
+(function (A) {
+  'use strict';
+  const _ = (A._ = A._ || {});
+  const M = _.mat;
+  function S(id, def) {
+    def.id = id;
+    def.chapter = 3;
+    _.songDefs[id] = def;
+  }
+
+  // ========================================================== ORCHARD ROAD
+  const COR_A = '5, - 3 - - 2 1 - | 2 - - - 5, - 6, - | 1 - 2 - 3 - 5 - | 6 - - - 5 - - - | 6 - 5 - 3 - 5 - | 2 - 3 - 1 - 7, - | 6, - 1 - 2 - 3 - | 2 - - - - - . .';
+  const COR_A_CH = '1 7 4 4 6 5 4 5s4';
+  const COR_C = '1 - - - 7, - 5, - | 6, - - - - - . . | 1 - - - 2 - 3 - | 2 - - - - - . . | 3 - - - 2 - 1 - | 7, - - - 6, - - - | 5, - 6, - 7, - 2 - | 1 - - - - - . .';
+  const COR_C_CH = '1 6 1 7 3 4 5 1';
+
+  S('co_road', {
+    title: 'The Orchard Road',
+    kind: 'area',
+    motifs: ['road'],
+    notes: 'Chapter 3 route (A mixolydian, 92): the slope up through the persimmon terraces, someone practising for the festival. The road motif opens a shinobue tune over a koto figure; A2 doubles it an octave down on shamisen, the min’yō way; B hands the Cinder Orchard tune to the koto with the shinobue answering — the village ahead; C turns to A minor on shakuhachi over a slow ōdaiko heartbeat — the fire nobody mentions.',
+    key: 'A', mode: 'mixolydian', bpm: 92, loopFrom: 1,
+    tracks: {
+      lead: { i: 'shinobue', o: 5, v: 0.5, rv: 0.28 },
+      sham: { i: 'shamisen', o: 4, v: 0.45, rv: 0.2, pan: -0.15 },
+      koto: { i: 'koto', o: 4, v: 0.55, rv: 0.25, pan: 0.15 },
+      hi: { i: 'shinobue', o: 4, v: 0.42, rv: 0.3, pan: 0.25 },
+      shaku: { i: 'shakuhachi', o: 4, v: 0.7, rv: 0.35 },
+      arp: { i: 'koto', o: 3, pat: true, v: 0.3, rv: 0.3, pan: -0.3 },
+      strum: { i: 'shamisen', o: 4, pat: true, fold: 'all', win: -4, v: 0.3, rv: 0.15, pan: -0.25 },
+      pad: { i: 'pad', o: 4, hold: true, fold: 'all', win: -5, v: 0.28, rv: 0.35 },
+      bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.62 },
+      perc: { perc: true, v: 0.45 },
+      bell: { perc: true, v: 0.3, rv: 0.35, pan: 0.3 },
+    },
+    all: { arp: "0 2 1' 2 0 2 1' 2", pad: M.TRI, bass: '0 . 0 2 . 0 2 .', perc: 'e..p.e.p|e..pe.p.' },
+    sections: {
+      intro: { bars: 2, ch: '1 7', bell: 'a.......|a.a.....', perc: null, bass: null },
+      A: { bars: 8, ch: COR_A_CH, lead: COR_A },
+      A2: { bars: 8, ch: COR_A_CH, lead: COR_A, sham: COR_A, bell: '....a...|........' },
+      B: { bars: 8, ch: M.CIN_A_CH, koto: M.CIN_A, hi: M.CIN_A_CM, arp: null, strum: '0+1+2 . . 0+1+2 . . 0+1+2 .', bell: '..a...a.' },
+      C: { bars: 8, mode: 'aeolian', ch: COR_C_CH, shaku: COR_C, arp: "0 2 4 2 1' 2 4 2", perc: 'z.......|........', dyn: 0.85 },
+    },
+    form: ['intro', 'A', 'B', 'C', 'A2'],
+  });
+
+  // ============================================== TERRACES AND WORKSHOP ROW
+  const COT_A = "5 . 6 . 1' . 6 5 | 4 - - - . . . . | 5 . 6 . 1' . 2' 1' | 6 - - - . . . . | 4 . 5 . 6 . 5 4 | 3 - 4 - 5 - . . | 6 - 5 - 4 - 3 - | 2 - - - . . . .";
+  const COT_A_CH = '1 4 1 4 4 3 6 5M';
+  const COT_B_SH = '3 - - - - - - - | 5 - - - 6 - - - | 7 - - - - - - - | 6 - - - 5 - - - | 4 - - - 3 - - - | 2 - - - 1 - - - | 2 - - - - - - - | #7, - - - 2 - - -';
+  const COT_B_KOTO = '.:8 | 5, - 3 - - 2 1 - | 2 - - - . . . . | .:8 | .:8 | 5, - . . 3 - . . | .:8 | .:8';
+  const COT_B_CH = '6 6 4 4 1 1 5M 5M';
+
+  S('co_terraces', {
+    title: 'Ash on the Terraces',
+    kind: 'area',
+    motifs: ['road'],
+    notes: 'Chapter 3 dungeon, the upper terraces and the old workshop row (B minor, 96): staccato koto questions over a shamisen walking figure, kotsuzumi "pon" and ōtsuzumi "kan" answering each other as in a noh play, a hyōshigi now and then. B is the half-remembered fire: a long shakuhachi line over a low biwa while the road motif comes through on koto in pieces; then the questions return on shamisen.',
+    key: 'B', mode: 'aeolian', bpm: 96,
+    tracks: {
+      koto: { i: 'koto', o: 4, v: 0.6, rv: 0.25, pan: 0.1 },
+      shaku: { i: 'shakuhachi', o: 4, v: 0.68, rv: 0.4 },
+      frag: { i: 'koto', o: 4, v: 0.45, rv: 0.45, dl: 0.3, pan: 0.3 },
+      walk: { i: 'shamisen', o: 3, pat: true, bass: true, v: 0.42, rv: 0.1, pan: -0.2 },
+      drone: { i: 'biwa', o: 2, pat: true, bass: true, v: 0.4, rv: 0.35, pan: -0.1 },
+      pad: { i: 'pad', o: 3, hold: true, fold: 'all', win: 5, v: 0.35, rv: 0.4 },
+      bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.55 },
+      noh: { perc: true, v: 0.45, pan: -0.2 },
+      clap: { perc: true, v: 0.3, rv: 0.3, pan: 0.3 },
+    },
+    echo: { beats: 0.75, fb: 0.3, mix: 0.25 },
+    all: { walk: "0 . 2 . 1' . 2 .", pad: '0+1+3', bass: '0 - - - - - - -', noh: 'm.....q.|..m.....', clap: '........|........|........|.......y' },
+    sections: {
+      A: { bars: 8, ch: COT_A_CH, koto: COT_A },
+      B: { bars: 8, ch: COT_B_CH, shaku: COT_B_SH, frag: COT_B_KOTO, walk: null, drone: '0 - - - - - - -', noh: 'm.......|....q...', clap: null, dyn: 0.9 },
+    },
+    form: ['A', 'B', { s: 'A', i: { koto: 'shamisen' } }, 'B'],
+  });
+
+  // ================================================================ BATTLE
+  const BCI_A = '5, - 3 - - 2 1 - | 7, - - - - - . . | 5, - 3 - - 2 1 - | 2 - - - 3 - 5 - | 6 - 5 - 3 - 2 - | 3 - - - 1 - - - | 7, - 1 - 2 - 3 - | 5, - - - - - . .';
+  const BCI_A_CH = '1 7 1 5 6 1 7 5';
+  const BCI_B = '3 - - - 2 - 1 - | 5 - - - - - . . | 4 - - - 3 - 2 - | 1 - - - - - . . | 3 - - - 5 - 6 - | 5 - - - 3 - . . | 4 - 3 - 2 - 1 - | #7, - - - - - . .';
+  const BCI_B_CH = '6 3 7 1 6 3 4 5M';
+  const BCI_B_LOW = '6, - - - - - - - | 5, - - - - - - - | 5, - - - - - - - | 5, - - - - - - - | 6, - - - - - - - | 5, - - - - - - - | 6, - - - - - - - | #7, - - - - - - -';
+  const BCI_C_LOW = '1 - - - - - - - | 2 - - - - - - - | 3 - - - - - - - | 4 - - - - - - - | 5 - - - - - - - | 4 - - - - - - - | 5 - - - - - - - | 5 - - - - - - -';
+  const BCI_C_HI = '.:8 | .:8 | .:8 | .:8 | 5, - 3 - - 2 1 - | 2 - - - - - . . | .:8 | .:8';
+  const BCI_C_CH = '1 2 1 2 6 7 5P 5P';
+
+  S('battle_cinder', {
+    title: 'Inkweaving — Festival Fire',
+    kind: 'battle',
+    motifs: ['road'],
+    notes: 'Chapter 3 battle (A minor, 108). The 3+3+2 pulse becomes a small festival kumi-daiko: ōdaiko on the accents, shime-daiko filling the eighths, rim clicks; a shamisen ostinato and koto underneath. A: the road motif on shinobue; B: a lyrical shakuhachi line over a bowed pedal; C slips into A phrygian — the kiln’s half-step, heat rising — with a climbing bowed line, koto sixteenths and the road motif on shinobue; B2 gives the line to the shamisen.',
+    key: 'A', mode: 'aeolian', bpm: 108, loopFrom: 1,
+    tracks: {
+      lead: { i: 'shinobue', o: 5, v: 0.5, rv: 0.25 },
+      shaku: { i: 'shakuhachi', o: 4, v: 0.7, rv: 0.25, pan: 0.1 },
+      hi: { i: 'shinobue', o: 5, v: 0.45, rv: 0.3, pan: 0.2 },
+      low: { i: 'bowed', o: 3, v: 0.58, rv: 0.25, pan: -0.15 },
+      ost: { i: 'shamisen', o: 3, pat: true, v: 0.4, rv: 0.12, pan: -0.25 },
+      arp: { i: 'koto', o: 3, pat: true, v: 0.28, rv: 0.25, pan: 0.3 },
+      pad: { i: 'pad', o: 3, hold: true, fold: 'all', win: 5, v: 0.34, rv: 0.3 },
+      bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.68 },
+      taiko: { perc: true, v: 0.55 },
+      shime: { perc: true, v: 0.4, pan: 0.2 },
+      rim: { perc: true, v: 0.4, pan: -0.25 },
+    },
+    all: {
+      ost: "0 0' 2 0' 0 0' 2 4", arp: "0 2 1' 2 0 2 1' 2", bass: '0 - - 0 - - 0 -', pad: '0+1+2+4',
+      taiko: 'Z..z..Z.|Z..z..Zz', shime: 'e.ee.ee.|e.ee.eee', rim: '.......f|...f...f',
+    },
+    sections: {
+      intro: { bars: 2, ch: '1 1', pad: null, arp: null, taiko: 'Z..z..Z.|Z.z.ZzZZ' },
+      A: { bars: 8, ch: BCI_A_CH, lead: BCI_A },
+      B: { bars: 8, ch: BCI_B_CH, shaku: BCI_B, low: BCI_B_LOW },
+      C: { bars: 8, mode: 'phrygian', ch: BCI_C_CH, low: BCI_C_LOW, hi: BCI_C_HI, arp: { n: "0 2 1' 2", u: 0.25 }, taiko: 'Z..z..Z.|Z.zz.zZz' },
+      B2: { bars: 8, ch: BCI_B_CH, shaku: BCI_B, low: BCI_B_LOW },
+    },
+    form: ['intro', 'A', 'B', 'C', { s: 'B2', i: { shaku: 'shamisen' } }],
+  });
+
+  // ================================================================== BOSS
+  const BOS3_RIFF = '1 2 1 5, 1 2 3 2 | 1 2 1 5, 4 3 2 1';
+  const BOS3_A_CH = '1 2 1 2 2 7 2 2';
+  const BOS3_HUSH = '5, - 1 - 2 - 3 - | 4 - - - - - - - | 5, - 1 - 2 - 3 - | 1 - - - - - - - | .:8 | .:8 | .:8 | .:8';
+  const BOS3_A_KOTO = '.:8 | .:8 | .:8 | .:8 | 1 - - - 2 - - - | 3 - - - 2 - 1 - | 2 - - - - - - - | .:8';
+  const BOS3_B = '5, - 3 - - 2 1 - | 2 - - - - - - - | 5, - 3 - - 2 1 - | 7, - - - - - - - | 1 - 3 - 5 - 6 - | 5 - 4 - 3 - 2 - | 3 - - - 1 - - - | 2 - - - - - - -';
+  const BOS3_B_CH = '1 2 1 7 6 4 1 2';
+  const BOS3_C_GLASS = '5, - 1 - 2 - 3 - | 4 - - - - - - - | .:8 | .:8 | 5, - 1 - 2 - 3 - | 4 - - - - - - - | .:8 | .:8';
+  const BOS3_C_TOLL = '.:8 | .:8 | 2 - - - - - - - | .:8 | .:8 | .:8 | 5, - - - - - - - | .:8';
+  const BOS3_C_WATER = "1' 5 3 1 1' 5 3 1 | 2' 6 4 2 2' 6 4 2 | 1' 5 3 1 1' 5 3 1 | 2' 6 4 2 2' 6 4 2 | 1' 5 3 1 1' 5 3 1 | 1' 5 3 1 1' 5 3 1 | 5 3 1 5, 5 3 1 5, | 5 3 1 5, 5 3 1 5,";
+
+  S('boss_cinder', {
+    title: 'The Kiln Will Not Cool',
+    kind: 'boss',
+    motifs: ['road', 'hush'],
+    notes: 'Chapter 3 boss (D phrygian, 142). A low biwa riff that circles the half-step like the kiln theme, shamisen chords, ōdaiko and shime on 3+3+2 with chappa crashes and rim clicks, the ōtsuzumi "kan" on the backbeat. The Hush motif on glass over a held shō; koto answers with the kiln theme’s head; the road motif falls on shakuhachi against it. C is the answer to heat: half time, the bell tolls, a cold koto figure ripples downward like water poured on the coals; B2 puts the road and the Hush together on shinobue and glass.',
+    key: 'D', mode: 'phrygian', bpm: 142, loopFrom: 1,
+    tracks: {
+      lead: { i: 'shakuhachi', o: 5, v: 0.72, rv: 0.22 },
+      glass: { i: 'glass', o: 5, v: 0.9, rv: 0.4, pan: 0.2 },
+      koto: { i: 'koto', o: 5, v: 0.52, rv: 0.3, pan: -0.2 },
+      water: { i: 'koto', o: 5, v: 0.28, rv: 0.45, pan: 0.3 },
+      toll: { i: 'toll', o: 3, v: 0.6, rv: 0.45 },
+      riff: { i: 'biwa', o: 3, v: 0.55, rv: 0.12, pan: -0.15 },
+      ost: { i: 'shamisen', o: 3, pat: true, v: 0.32, rv: 0.1, pan: 0.25 },
+      sho: { i: 'sho', o: 4, hold: true, fold: 'all', win: 0, v: 0.55, rv: 0.35 },
+      bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.64 },
+      taiko: { perc: true, v: 0.54 },
+      shime: { perc: true, v: 0.36, pan: 0.15 },
+      kan: { perc: true, v: 0.45, pan: -0.1 },
+      crash: { perc: true, v: 0.38, rv: 0.3, pan: 0.3 },
+    },
+    all: {
+      riff: BOS3_RIFF, ost: ". 0+2 . . . 0+2 . 0+1", bass: "0 0 0' 0 0 0 0' 0", sho: M.TRI,
+      taiko: 'Z..z..Z.|Z..zZ.Zz', shime: 'eeEeeEee', kan: '....q..f|....q.qf',
+      crash: 'v.......|........|........|........|v.......|........|........|........',
+    },
+    sections: {
+      intro: { bars: 2, ch: '1 1', sho: null, ost: null, kan: null, crash: null, taiko: 'Z..z..Z.|ZzZzZZZZ' },
+      A: { bars: 8, ch: BOS3_A_CH, glass: BOS3_HUSH, koto: BOS3_A_KOTO },
+      B: { bars: 8, ch: BOS3_B_CH, lead: BOS3_B },
+      C: { bars: 8, ch: '6 6 2 2 6 6 5P 5P', glass: BOS3_C_GLASS, toll: BOS3_C_TOLL, water: BOS3_C_WATER, riff: null, taiko: 'Z.......|Z...z.z.', shime: 'e.e.e.e.', kan: 'q.q.q.q.', ost: "0 2 1' 2", dyn: 0.9 },
+      B2: { bars: 8, ch: BOS3_B_CH, lead: BOS3_B, glass: BOS3_HUSH, taiko: 'Z..z..Z.|Z..zZzZZ' },
+      A2: { bars: 8, ch: BOS3_A_CH, glass: BOS3_HUSH, koto: BOS3_A_KOTO },
+    },
+    form: ['intro', 'A', 'B', 'C', { s: 'B2', i: { lead: 'shinobue' } }, { s: 'A2', i: { riff: 'shamisen' }, o: { riff: 1 } }],
+  });
+
+  // ============================================================== FESTIVAL
+  // matsuri-bayashi: shinobue over shime-daiko, ōdaiko and the atarigane's
+  // "chan-chiki"; then the Cinder tune sung on shamisen and koto, and the
+  // lanterns being lit.
+  const COF_A = "5 - 6 - 1' - 6 5 | 6 - 1' - 2' - - - | 1' - 6 - 5 - 3 - | 5 - - - - - . . | 5 - 6 - 1' - 6 5 | 6 - 1' - 3' - 2' - | 1' - 6 - 5 - 6 - | 1' - - - - - . .";
+  const COF_A_CH = '1 4 1 5 1 4 5 1';
+  const COF_C = '3 - - - 2 - 1 - | 6, - - - - - - - | 1 - - - 2 - 3 - | 5 - - - - - - - | 6 - - - 5 - 3 - | 2 - - - 1 - - - | 2 - - - 3 - 2 - | 1 - - - - - - -';
+  const COF_C_CH = '1 6 4 1 4 1 5 1';
+
+  S('co_festival', {
+    title: 'The Autumn Festival',
+    kind: 'area',
+    motifs: ['road'],
+    notes: 'The Cinder Orchard festival night (A, 116), a matsuri-bayashi: a pentatonic shinobue tune over shime-daiko, ōdaiko and the atarigane’s chan-chiki, a hyōshigi to start. B is the Cinder Orchard tune sung on shamisen with koto chords and the road motif tucked into the shinobue’s answer; C is quieter — the thirty glass lanterns being lit, koto and shakuhachi with a rin, the drums resting — before the band comes back.',
+    key: 'A', bpm: 116, loopFrom: 1,
+    tracks: {
+      fue: { i: 'shinobue', o: 5, v: 0.5, rv: 0.25 },
+      sham: { i: 'shamisen', o: 4, v: 0.5, rv: 0.2, pan: -0.15 },
+      ans: { i: 'shinobue', o: 4, v: 0.42, rv: 0.3, pan: 0.25 },
+      shaku: { i: 'shakuhachi', o: 4, v: 0.65, rv: 0.4 },
+      koto: { i: 'koto', o: 4, pat: true, fold: 'all', win: -3, v: 0.32, rv: 0.25, pan: 0.2 },
+      arp: { i: 'koto', o: 3, pat: true, v: 0.3, rv: 0.35, pan: -0.3 },
+      pad: { i: 'pad', o: 4, hold: true, fold: 'all', win: -5, v: 0.26, rv: 0.35 },
+      bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.6 },
+      shime: { perc: true, v: 0.42, pan: 0.15 },
+      taiko: { perc: true, v: 0.5 },
+      kane: { perc: true, v: 0.32, pan: -0.25 },
+      bowl: { perc: true, v: 0.32, rv: 0.6, pan: 0.3 },
+    },
+    all: { bass: '0 . 2 . 0 . 2 .', pad: M.TRI, shime: 'e.eee.e.|e.eee.ee', taiko: 'z.......|z...z...', kane: 'a..aa..a' },
+    sections: {
+      intro: { bars: 2, ch: '1 1', shime: 'y.y.y...|e.e.eeee', taiko: '........|z.......', kane: null, bass: null },
+      A: { bars: 8, ch: COF_A_CH, fue: COF_A, koto: '0+1+2 . . 0+1+2 . . 0+1+2 .' },
+      B: { bars: 8, mode: 'mixolydian', ch: M.CIN_A_CH, sham: M.CIN_A, ans: M.CIN_A_CM, koto: '. . 0+1+2 . . . 0+1+2 .', kane: 'a...a...' },
+      C: { bars: 8, ch: COF_C_CH, shaku: COF_C, arp: "0 2 1' 2 1' 2 0' 2", shime: null, taiko: null, kane: null, bowl: 'i.......|........|........|........', dyn: 0.85 },
+      A2: { bars: 8, ch: COF_A_CH, fue: COF_A, sham: COF_A, koto: '0+1+2 . . 0+1+2 . . 0+1+2 .', taiko: 'z...z...|z.z.z...' },
+      R: { bars: 8, ch: M.ROAD_A_CH, key: 'A', fue: M.ROAD_A, koto: '. . 0+1+2 . . . 0+1+2 .', kane: 'a...a...' },
+    },
+    form: ['intro', 'A', 'B', 'C', 'A2', { s: 'R', dyn: 0.95 }],
+  });
+
+  // ============================================================ STORY CUES
+  // The kiln's last page: the night of the fire, twenty years ago.
+  const COFI_A = '5 - - - - - 3 - | 2 - 1 - 7, - - - | 1 - - - 2 - 3 - | 2 - - - - - . . | 5 - - - 6 - 5 - | 3 - - - 2 - 1 - | 7, - 1 - 2 - 3 - | 1 - - - - - . .';
+  const COFI_A_CH = '1 7 6 5 1 4 5M 1';
+  const COFI_B = '5, - 1 - 2 - 3 - | 4 - - - 3 - 2 - | 3 - - - - - . . | .:8 | 5, - 1 - 2 - 3 - | 5 - - - 4 - 3 - | 2 - - - - - - - | .:8';
+  const COFI_B_CH = '6 6 4 4 6 6 5M 5M';
+
+  S('co_fire', {
+    title: 'The Night the Kiln Went White',
+    kind: 'scene',
+    motifs: [],
+    notes: 'Cue (A minor, 72) for the vision on the kiln’s last page: the night of the fire, heard rather than seen. A shakuhachi line with sharp breath accents (muraiki) over trembling koto and a biwa that strikes and buzzes; ōdaiko rolls swell and fall back like a fire catching in the wind. B is the woman going up to open the water gate: the line climbs and holds while the drums thin to a heartbeat.',
+    key: 'A', mode: 'aeolian', bpm: 72,
+    tracks: {
+      lead: { i: 'shakuhachi', o: 4, v: 0.72, rv: 0.4 },
+      trem: { i: 'koto', o: 4, pat: true, u: 0.25, v: 0.24, rv: 0.4, pan: 0.25 },
+      biwa: { i: 'biwa', o: 2, pat: true, bass: true, v: 0.45, rv: 0.35, pan: -0.2 },
+      low: { i: 'bowed', o: 3, pat: true, bass: true, v: 0.4, rv: 0.4 },
+      pad: { i: 'pad', o: 3, hold: true, fold: 'all', win: 5, v: 0.38, rv: 0.45 },
+      bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.5 },
+      roll: { perc: true, v: 0.45, rv: 0.3 },
+    },
+    all: { trem: '0 2 0 2', biwa: '0 . . . 0 . 2 .', low: '0 - - - - - - -', pad: '0+1+2', bass: '0 - - - - - - -', roll: 'z.......|z...z.zz|z.......|zzzzZ.Z.' },
+    sections: {
+      A: { bars: 8, ch: COFI_A_CH, lead: COFI_A, low: null },
+      B: { bars: 8, ch: COFI_B_CH, lead: COFI_B, trem: '0 1 2 1', roll: 'z.......|....z...', dyn: 0.9 },
+    },
+    form: ['A', 'B', { s: 'A', i: { lead: 'bowed' } }],
+  });
+
+  // The assembly at dusk: the village remembers, together.
+  const COAS_A = "3 - - - 2 - 1 - | 6, - - - - - . . | 1 - - - 2 - 3 - | 5 - - - - - . . | 6 - - - 5 - 3 - | 2 - - - 3 - 5 - | 3 - - - 2 - - - | 1 - - - - - . .";
+  const COAS_A_CH = '1 4 6 3 4 1 5s4 1';
+  const COAS_B = "5, - 3 - - 2 1 - | 2 - - - - - . . | 5, - 3 - - 2 1 - | 6, - - - 5, - - - | 6, - 1 - 2 - 3 - | 5 - - - 3 - 2 - | 1 - - - 2 - - - | 1 - - - - - . .";
+  const COAS_B_CH = '1 5 1 4 6 3 4 1';
+
+  S('co_assembly', {
+    title: 'What the Village Remembers',
+    kind: 'scene',
+    motifs: ['road'],
+    notes: 'Cue (F, 60) for the dusk assembly where the village remembers the fire together, and the square that evening. A slow koto and bowed hymn, shakuhachi above, a held shō; nothing hurried. B carries the road motif, heard as consolation rather than as a march, and the rin sounds once at each phrase.',
+    key: 'F', bpm: 60,
+    tracks: {
+      lead: { i: 'shakuhachi', o: 4, v: 0.68, rv: 0.45 },
+      koto: { i: 'koto', o: 4, v: 0.5, rv: 0.45, pan: 0.2 },
+      arp: { i: 'koto', o: 3, pat: true, v: 0.28, rv: 0.45, pan: -0.25 },
+      low: { i: 'bowed', o: 3, pat: true, bass: true, v: 0.4, rv: 0.45, pan: -0.1 },
+      sho: { i: 'sho', o: 4, hold: true, fold: 'all', win: 0, v: 0.45, rv: 0.5 },
+      bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.42 },
+      bowl: { perc: true, v: 0.3, rv: 0.6, pan: 0.3 },
+    },
+    all: { arp: "0 . 2 . 1' . 2 .", low: '0 - - - - - - -', sho: M.TRI, bass: '0 - - - - - - -', bowl: 'i.......|........|........|........' },
+    sections: {
+      A: { bars: 8, ch: COAS_A_CH, koto: COAS_A, low: null },
+      B: { bars: 8, ch: COAS_B_CH, lead: COAS_B },
+      A2: { bars: 8, ch: COAS_A_CH, lead: COAS_A, koto: '.:8 | . . . . 5 - 6 - | .:8 | . . . . 1 - 2 - | .:8 | . . . . 6 - 5 - | .:8 | .:8' },
+    },
+    form: ['A', 'B', 'A2'],
+  });
+
+  _.REQUIRED_SONGS.push('co_road', 'co_terraces', 'battle_cinder', 'boss_cinder', 'co_festival', 'co_fire', 'co_assembly');
+})(RB.audio);
+
+
 /* ==== src/audio/39_zones.js ==== */
 /* Zone music: which battle and boss theme plays where.
  *
@@ -16037,8 +16327,9 @@ RB.audio = RB.audio || {};
     },
     cinder: {
       chapter: 3, regions: ['cinder'], prefixes: ['co.'],
-      battle: 'battle', boss: 'boss', route: 'road',
-      songs: ['cinder', 'kiln', 'road'],
+      battle: 'battle_cinder', boss: 'boss_cinder', route: 'co_road',
+      songs: ['co_road', 'cinder', 'co_terraces', 'kiln', 'co_festival'],
+      cues: ['co_fire', 'co_assembly'],
     },
     snowbell: {
       chapter: 4, regions: ['snowbell'], prefixes: ['sb.'],
@@ -87979,7 +88270,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // The hill road (links Saltglass ← → Snowbell)
   // ======================================================================================
   C.maps['co.road'] = {
-    name: T('The Orchard Road', '{灰実|はいみ} へ の {坂道|さかみち}'), region: 'cinder', music: 'road',
+    name: T('The Orchard Road', '{灰実|はいみ} へ の {坂道|さかみち}'), region: 'cinder', music: 'co_road',
     ambient: { weather: 'leaves' },
     terrain: K.build(36, 20, '.', (k) => {
       k.ragged('top', 'T', 3, 301).ragged('bottom', 'T', 3, 302);
@@ -88141,7 +88432,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // Dusk: the village gathers in the square (the assembly runs as one scene).
   C.maps['co.eve'] = {
-    name: T('Cinder Orchard at dusk', '{夕暮|ゆうぐ}れ の {灰実|はいみ}'), region: 'cinder', music: 'sorrow', noTravel: true,
+    name: T('Cinder Orchard at dusk', '{夕暮|ゆうぐ}れ の {灰実|はいみ}'), region: 'cinder', music: 'co_assembly', noTravel: true,
     ambient: { weather: 'leaves', tint: 'rgba(200,90,40,0.16)', dark: 0.25, darkCol: '60,20,10', playerLight: 40 },
     terrain: villageTerrain(), structs: villageStructs.map((s) => Object.assign({}, s, { to: undefined, lit: true })),
     props: villageProps.filter((p) => p.p !== 'co_seat' && p.p !== 'co_glasslantern').concat([
@@ -88162,7 +88453,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // Festival night.
   C.maps['co.festival'] = {
-    name: T('The Autumn Festival', '{秋祭|あきまつ}り'), region: 'cinder', music: 'cinder', noTravel: true,
+    name: T('The Autumn Festival', '{秋祭|あきまつ}り'), region: 'cinder', music: 'co_festival', noTravel: true,
     ambient: { weather: 'fireflies', dark: 0.55, darkCol: '20,10,30', playerLight: 46 },
     terrain: villageTerrain(), structs: villageStructs.map((s) => Object.assign({}, s, { to: undefined, lit: true })),
     props: villageProps.filter((p) => p.p !== 'co_seat' && p.p !== 'co_glasslantern' && p.p !== 'co_lookout').concat([
@@ -88385,7 +88676,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Dungeon 1: the upper terraces (burned twenty years ago, replanted in rows)
   // ======================================================================================
   C.maps['co.upper'] = {
-    name: T('The Upper Terraces', '{上|うえ} の {段|だん}'), region: 'cinder', music: 'mystery', noTravel: true,
+    name: T('The Upper Terraces', '{上|うえ} の {段|だん}'), region: 'cinder', music: 'co_terraces', noTravel: true,
     ambient: { weather: 'motes', tint: 'rgba(90,70,60,0.12)' },
     legend: { Y: { tile: 'ash', prop: 'orchard' }, Z: { tile: 'ash', prop: 'stump' } },
     terrain: K.build(40, 30, 'a', (k) => {
@@ -88433,7 +88724,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Dungeon 2: the old workshop row (burned shells) + ice house
   // ======================================================================================
   C.maps['co.oldworks'] = {
-    name: T('The Old Workshop Row', '{古|ふる}い {工房|こうぼう}{通|どお}り'), region: 'cinder', music: 'mystery', noTravel: true,
+    name: T('The Old Workshop Row', '{古|ふる}い {工房|こうぼう}{通|どお}り'), region: 'cinder', music: 'co_terraces', noTravel: true,
     ambient: { weather: 'motes', tint: 'rgba(100,60,40,0.14)', dark: 0.12 },
     terrain: K.build(40, 26, 'a', (k) => {
       k.ragged('left', 'n', 2, 341).ragged('right', 'n', 2, 342);
@@ -89149,7 +89440,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.script.add(`
 @scene co.arrive
-!music road
+!music co_road
 !chapter 3
 !card {第三章|だいさんしょう} ・ {灰実|はいみ}の{里|さと} || Chapter Three — Cinder Orchard
 narr: {坂道|さかみち} の {両側|りょうがわ} に 、 {実|み} を つけた {柿|かき} の {木|き} が {並|なら}んで いる 。 || The road climbs between persimmon trees heavy with fruit.
@@ -89780,7 +90071,7 @@ narr: {火屋|ほや} が {置|お}いて あった {場所|ばしょ} に 、 {
 !speakerless co_tomoe
 narr: {焦|こ}げた {紙|かみ} を {拾|ひろ}い{上|あ}げる 。 {窯焚|かまだ}き {日誌|にっし} の 、 {最後|さいご} の {頁|ページ} だ 。 || You pick up the scorched paper. It's the last page of the kiln's firing log.
 narr: {指|ゆび} が {触|ふ}れた {瞬間|しゅんかん} 、 {窯|かま} の {中|なか} が 、 {一瞬|いっしゅん} だけ {二十年前|にじゅうねんまえ} の {夜|よる} に {戻|もど}った 。 || The instant your fingers touch it, for one moment, the kiln is back on that night twenty years ago.
-!music sorrow
+!music co_fire
 co_tomoe: トキワ 、 {火|ひ} が {白|しろ}く なった ね 。 …… {上|うえ} の {窓|まど} ？ {開|あ}けた の ？ この {風|かぜ} で ？ || Tokiwa, it's gone white. …The upper vent? You opened it? In this wind?
 narr: {若|わか}い {声|こえ} が {何|なに} か {言|い}い かけて 、 {風|かぜ} の {音|おと} に かき{消|け}された 。 || A young voice starts to answer and is swallowed by the wind.
 co_tomoe: いい 、 {今|いま} は いい 。 …… ヒロ 、 おいで 。 {頭|あたま} に これ を {巻|ま}いて おき な 。 {火|ひ} の {粉|こ} が {熱|あつ}い から ね 。 || Never mind — not now. …Hiro, come here. Tie this round your head. The sparks are hot.
@@ -90117,7 +90408,7 @@ RB.script.add(`
 @scene co.assembly
 !fade out
 !warp co.eve 23 18 up
-!music sorrow
+!music co_assembly
 !fade in
 narr: {夕暮|ゆうぐ}れ の {広場|ひろば} に 、 {里|さと} の {人|ひと} が {集|あつ}まった 。 {飾|かざ}り {付|つ}け の {途中|とちゅう} の {舞台|ぶたい} に 、 トキワ が {立|た}って いる 。 || At dusk the village gathers in the square. Tokiwa stands on the half-decorated stage.
 co_tokiwa: {皆|みな} さん 。 {祭|まつ}り の {前|まえ} に 、 {聞|き}いて いただきたい こと が あります 。 || Everyone. Before the festival, there is something I must ask you to hear.
@@ -90191,7 +90482,7 @@ narr: ゴロウ の {櫓|やぐら} に は 、 {新|あたら}しい {綱|つ�
 !set co_firebreak_cut co_hiro_seat_named
 !card {秋祭|あきまつ}り || The autumn festival
 !warp co.festival 23 17 down
-!music cinder
+!music co_festival
 !fade in
 narr: {日|ひ} が {暮|く}れる と 、 {三十|さんじゅう} の ガラス の {灯籠|とうろう} に {火|ひ} が {入|はい}った 。 || When the sun goes down, fire is set in thirty glass lanterns.
 narr: ヒロ の {席|せき} に は 、 {名前|なまえ} の {札|ふだ} と 、 {橙色|だいだいいろ} の {火屋|ほや} が {一|ひと}つ {置|お}いて ある 。 || On Hiro's seat: a name slip, and a single orange lantern globe.

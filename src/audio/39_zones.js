@@ -35,8 +35,9 @@ RB.audio = RB.audio || {};
     },
     cinder: {
       chapter: 3, regions: ['cinder'], prefixes: ['co.'],
-      battle: 'battle', boss: 'boss', route: 'road',
-      songs: ['cinder', 'kiln', 'road'],
+      battle: 'battle_cinder', boss: 'boss_cinder', route: 'co_road',
+      songs: ['co_road', 'cinder', 'co_terraces', 'kiln', 'co_festival'],
+      cues: ['co_fire', 'co_assembly'],
     },
     snowbell: {
       chapter: 4, regions: ['snowbell'], prefixes: ['sb.'],
