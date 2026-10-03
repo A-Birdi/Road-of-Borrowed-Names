@@ -38,6 +38,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     // ---- yes, no, so ------------------------------------------------------------------------------------
     K('せや', '', 'int', 'E', 'that\'s right; yeah', 'そうだ'),
     K('そや', '', 'int', 'E', 'that\'s right; yeah', 'そうだ'),
+    K('せやろ', '', 'exp', 'E', 'I thought so; right?', 'そうだろう'),
     K('せやな', '', 'exp', 'E', 'yeah, that\'s true', 'そうだね'),
     K('せやけど', '', 'conj', 'I', 'but; even so', 'だけど / でも'),
     K('せやから', '', 'conj', 'I', 'that\'s why; so', 'だから'),

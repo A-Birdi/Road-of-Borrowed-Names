@@ -191,6 +191,7 @@ RB.dialect = (function () {
     ['ひん', 'ない', 'Kansai negative 〜ひん (= 〜ない)'],
     ['てはった', 'ていた', 'Kansai respectful 〜てはった (= 〜ていらっしゃった: friendly respect for the person spoken of)'],
     ['てはる', 'ている', 'Kansai respectful 〜てはる (= 〜ていらっしゃる: friendly respect for the person spoken of)'],
+    ['ではった', 'でいた', 'Kansai respectful 〜ではった (= 〜でいらっしゃった)'],
     ['ではる', 'でいる', 'Kansai respectful 〜ではる (= 〜でいらっしゃる)'],
     ['はった', ['ない', 'ました'], 'Kansai respectful 〜はった: past of 〜はる (friendly respect for the person spoken of)'],
     ['はって', ['て', 'なくて'], 'Kansai respectful 〜はって: て-form of 〜はる (friendly respect for the person spoken of)'],
@@ -241,7 +242,7 @@ RB.dialect = (function () {
     ['もろて', 'もらって', 'Kansai もろて (= もらって)'],
   ];
   // whole words with an irregular Kansai form
-  const WHOLE = { 'せえへん': 'しない', 'せーへん': 'しない', 'せえへんかった': 'しなかった', 'けえへん': 'こない', 'けーへん': 'こない', 'こーへん': 'こない', 'けえへんかった': 'こなかった', 'おらへん': 'いない', 'あらへん': 'ない', 'あらへんかった': 'なかった', 'いてる': 'いる', 'いてへん': 'いない', 'いてた': 'いた', 'もろた': 'もらった', 'もろて': 'もらって', 'おらん': 'いない', 'せな': 'しない' };
+  const WHOLE = { 'せえへん': 'しない', 'せーへん': 'しない', 'せえへんかった': 'しなかった', 'けえへん': 'こない', 'けーへん': 'こない', 'こーへん': 'こない', 'けえへんかった': 'こなかった', 'おらへん': 'いない', 'あらへん': 'ない', 'あらへんかった': 'なかった', 'いてる': 'いる', 'いてへん': 'いない', 'いてた': 'いた', 'もろた': 'もらった', 'もろて': 'もらって', 'おらん': 'いない', 'せな': 'しない', 'せえ': 'しろ', 'せん': 'しない' };
   function retail(tk, from, to) {
     const segs = (tk.segs || [{ t: tk.surface, r: null }]).map((s) => Object.assign({}, s));
     const last = segs[segs.length - 1];
