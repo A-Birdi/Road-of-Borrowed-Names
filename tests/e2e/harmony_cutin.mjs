@@ -44,6 +44,9 @@ async function test(name, fn) {
 }
 const assert = (c, m) => { if (!c) throw new Error(m); };
 const wait = (p, ms) => p.waitForTimeout(ms);
+// wait for a selector and let go of the handle at once: a handle the test keeps holds that element's whole
+// (detached) subtree alive in the page, which reads as a per-encounter DOM and listener leak in the cycles test
+const waitSel = (p, sel, o) => p.waitForSelector(sel, o).then((h) => { if (h) return h.dispose(); });
 const NAME = { nao: 'Nao', mio: 'Mio', ren: 'Ren', suzu: 'Suzu' };
 const TECHNAME = { nao: 'Read the Opening', mio: 'Clearwater Draught', ren: 'Lantern Ward', suzu: 'Curtain Call' };
 const COMPS = ['nao', 'mio', 'ren', 'suzu'];
@@ -174,10 +177,10 @@ async function clickCard(p, re) {
   assert(c, 'the card ' + re + ' is covered');
   await wait(p, 120);
   await p.mouse.click(c.x, c.y);
-  await p.waitForSelector('.chal', { timeout: 10000 });
+  await waitSel(p, '.chal', { timeout: 10000 });
 }
 async function answerRight(p) {
-  await p.waitForSelector('.chal .mc .btn', { timeout: 10000 });
+  await waitSel(p, '.chal .mc .btn', { timeout: 10000 });
   await p.mouse.move(2, 2);
   const idx = await p.evaluate(() => {
     const st = window.__lastStep, bs = [...document.querySelectorAll('.chal .mc .btn')];
@@ -189,13 +192,13 @@ async function answerRight(p) {
   });
   assert(idx >= 0, 'the right option is on screen');
   await p.click('.chal .mc .btn[data-right="1"]');
-  await p.waitForSelector('.fbwrap .fb-go', { timeout: 10000 });
+  await waitSel(p, '.fbwrap .fb-go', { timeout: 10000 });
   await p.evaluate(() => document.querySelector('.fbwrap .fb-go').scrollIntoView({ block: 'center' }));
   await p.click('.fbwrap .fb-go');
 }
 // the companion's menu: "Join the technique" (or a support action by its text, or Back)
 async function companionPick(p, re) {
-  await p.waitForSelector('.ccard', { timeout: 8000 });
+  await waitSel(p, '.ccard', { timeout: 8000 });
   await p.mouse.move(2, 2);
   await wait(p, 300); // (the menu ignores presses in its first 250 ms)
   const a = await p.evaluate((m) => { const c = [...document.querySelectorAll('.ccard')].find((x) => !x.disabled && new RegExp(m, 'i').test(x.textContent)); if (!c) return null; c.setAttribute('data-pick', '1'); c.scrollIntoView({ block: 'center' }); return c.textContent.replace(/\s+/g, ' ').trim().slice(0, 60); }, re);
@@ -245,7 +248,7 @@ const signature = (p) => p.evaluate(() => {
 async function leave(p) {
   if (await p.evaluate(() => !!window.__result)) return;
   await p.evaluate(() => { const f = document.querySelector('.cb-dock [data-flee]'); if (f) f.click(); });
-  await p.waitForSelector('.csheet button', { timeout: 4000 }).catch(() => null);
+  await waitSel(p, '.csheet button', { timeout: 4000 }).catch(() => null);
   await p.evaluate(() => { const bs = [...document.querySelectorAll('.csheet button')].filter((x) => /Step back/.test(x.textContent)); if (bs.length) bs[bs.length - 1].click(); });
   for (let i = 0; i < 300 && !(await p.evaluate(() => !!window.__result)); i++) await wait(p, 20);
 }
@@ -339,7 +342,7 @@ await test('never: meter fill, a support action, hovering and focusing the techn
   assert((await started()) === s0, 'hover and focus (the preview): no cut-in');
   // open its task, then back out ("Choose a different response")
   await clickCard(p, 'With Mio');
-  await p.waitForSelector('.chal', { timeout: 8000 });
+  await waitSel(p, '.chal', { timeout: 8000 });
   const back = await p.evaluate(() => { const bt = [...document.querySelectorAll('.chal button')].find((x) => /different response/i.test(x.textContent)); if (bt) bt.click(); return !!bt; });
   assert(back, 'the task offers "Choose a different response"');
   await toCards(p);
@@ -347,7 +350,7 @@ await test('never: meter fill, a support action, hovering and focusing the techn
   // answer it, then back out of the companion's menu
   await clickCard(p, 'With Mio');
   await answerRight(p);
-  await p.waitForSelector('.ccard', { timeout: 8000 });
+  await waitSel(p, '.ccard', { timeout: 8000 });
   await wait(p, 300);
   const backed = await p.evaluate(() => { const bt = [...document.querySelectorAll('.cb-dock button, .ccard')].find((x) => /^\s*(Back|Choose a different)/i.test(x.textContent)); if (bt) { bt.click(); return bt.textContent.trim().slice(0, 40); } return null; });
   if (backed) { await toCards(p); assert((await started()) === s0, 'backing out of the companion\'s menu (' + backed + '): no cut-in'); }
@@ -634,11 +637,12 @@ await test('cycles: 20 techniques (each pairing, Normal / Fast / reduced, a few 
   console.log('  from cycle 5 to 20: listeners ' + a.listeners + ' → ' + z.listeners + ', nodes ' + a.nodes + ' → ' + z.nodes + ', heap ' + a.heapMB + ' → ' + z.heapMB + ' MB, art caches ' + z.busts + ' busts / ' + z.comps + ' compositions (' + z.artMiB + ' MiB), figure frames ' + z.frames);
   assert(rows.every((r) => r.layers === 0 && r.live === 0 && !r.listening && r.timers === 0), 'no layer, instance, listener or timer left after any cycle ' + JSON.stringify(rows.find((r) => r.layers || r.live || r.listening || r.timers)));
   // what the portrait and the performances own stays bounded: no layer, instance, listener or timer of theirs
-  // outlives a technique; the art and span caches and the figure frames stay under their caps. (Chrome's own
-  // page-wide counters are reported: in this harness — a fresh synthetic campaign and a Step back per
-  // encounter — they grow by about 13 listeners and 210 nodes an encounter on the base commit too, with or
-  // without a technique and with the portrait Off; that is not the overlay's, and is recorded as a finding.)
+  // outlives a technique; the art and span caches and the figure frames stay under their caps. Chrome's own
+  // page-wide counters must not grow with the encounters either. (They once grew by about 13 listeners and
+  // 210 nodes an encounter: that was this harness keeping Playwright element handles from waitForSelector,
+  // each holding a finished learning task's detached panel alive; waitSel lets go of them.)
   assert(z.spans <= 8 && z.busts <= 24 && z.comps <= 16 && z.frames <= 720 && rows.every((r) => r.left.combat === 0 && r.left.strips === 0 && r.left.fx === 0), 'bounded: spans ' + z.spans + ', busts ' + z.busts + ', compositions ' + z.comps + ', frames ' + z.frames + ', battle layers left ' + JSON.stringify(z.left));
+  assert(z.nodes - a.nodes <= 40 && z.listeners - a.listeners <= 20, 'page-wide counters stay flat from cycle 5 on: nodes ' + a.nodes + ' → ' + z.nodes + ', listeners ' + a.listeners + ' → ' + z.listeners);
   assert(process.env.HC_OFF || rows.filter((r) => r.shown === 1).length === rows.length, 'one cut-in in each technique');
   assert(!errors.length, errors.join('; '));
   await ctx.close();
@@ -653,9 +657,9 @@ await test('setting: "Harmony portrait flourish" is On by default (also for an o
   const old = await p.evaluate(() => { delete RB.game.settings.harmonyFlourish; return RB.harmonyCutin.enabled(); });
   assert(old === true, 'an older settings record (no key) counts as On');
   await p.evaluate(() => { RB.game.settings.harmonyFlourish = true; RB.ui.settings.open(); });
-  await p.waitForSelector('.folio-settings [data-grp="learning"]', { timeout: 8000 });
+  await waitSel(p, '.folio-settings [data-grp="learning"]', { timeout: 8000 });
   await p.click('.folio-settings [data-grp="learning"]');
-  await p.waitForSelector('[data-sw="harmonyFlourish"]', { timeout: 8000 });
+  await waitSel(p, '[data-sw="harmonyFlourish"]', { timeout: 8000 });
   const row = await p.evaluate(() => { const i = document.querySelector('[data-sw="harmonyFlourish"]'); const f = i.closest('.field'); const prev = f.previousElementSibling; return { label: f.textContent.replace(/\s+/g, ' ').trim(), checked: i.checked, afterBattles: !!(prev && /What creatures are about to do/.test(prev.textContent)) }; });
   assert(/Harmony portrait flourish/.test(row.label) && row.checked && row.afterBattles, 'the switch, On, beside the Battles settings ' + JSON.stringify(row));
   await p.evaluate(() => document.querySelector('[data-sw="harmonyFlourish"]').scrollIntoView({ block: 'center' }));
@@ -676,9 +680,9 @@ await test('setting: "Harmony portrait flourish" is On by default (also for an o
   const opened = await p.evaluate(() => RB.ui.settings.openBattle && RB.ui.settings.openBattle());
   let inSheet = null;
   if (opened) {
-    await p.waitForSelector('.folio-bset [data-grp="battle"]', { timeout: 8000 });
+    await waitSel(p, '.folio-bset [data-grp="battle"]', { timeout: 8000 });
     await p.click('.folio-bset [data-grp="battle"]');
-    await p.waitForSelector('.folio-bset [data-sw="harmonyFlourish"]', { timeout: 8000 });
+    await waitSel(p, '.folio-bset [data-sw="harmonyFlourish"]', { timeout: 8000 });
     const t0 = await p.evaluate(() => RB.harmonyCutin.state().t);
     await wait(p, 300);
     inSheet = await p.evaluate((t0) => ({ paused: RB.battleSeq.paused && RB.battleSeq.paused(), state: RB.harmonyCutin.state().state, still: RB.harmonyCutin.state().t === t0, checked: document.querySelector('.folio-bset [data-sw="harmonyFlourish"]').checked }), t0);
@@ -702,7 +706,7 @@ await test('dev viewer (?dev=harmony): refused on a normal page; on a dev page t
   assert(!refused.allowed && refused.battle === false && refused.panel === null && !refused.el, 'not reachable in normal play ' + JSON.stringify(refused));
   await plain.ctx.close();
   const { p, errors, ctx } = await page(b, url + '?dev=harmony', { viewport: { width: 1280, height: 720 } });
-  await p.waitForSelector('#harmony-dev', { timeout: 10000 });
+  await waitSel(p, '#harmony-dev', { timeout: 10000 });
   const label = await p.evaluate(() => document.getElementById('harmony-dev').textContent);
   assert(/Synthetic fixture/.test(label) && /no rules applied/.test(label), 'the panel says it is a synthetic fixture: ' + label.slice(0, 120));
   const out = [];

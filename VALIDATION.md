@@ -1962,7 +1962,7 @@ contract and the landmarks; tested in a scratch worktree before fast-forwarding)
   - The unit stub fits the art's getter-only `timeline`.
   - The new Settings button is protected.
 - **Not mine, seen in passing:**
-  - Listener and node growth per encounter. One page that starts encounters from fresh synthetic campaigns and leaves them grows by listeners 204 → 418 and nodes 1,372 → 4,844 over encounters 5–20. The base commit grew the same way. battle_cycle, a different flow, stays flat.
+  - Listener and node growth per encounter. One page that starts encounters from fresh synthetic campaigns and leaves them grew by listeners 204 → 418 and nodes 1,372 → 4,844 over encounters 5–20. The base commit grew the same way. battle_cycle, a different flow, stays flat. **Later investigated: not a game leak.** The harness kept Playwright element handles; see "The per-encounter listener and DOM growth" below.
   - At 390×844 the action banner overlaps the Skip button (compact_390x844_ren.webp).
 
 **Evidence:** docs/screenshots/harmony/cutin/ contains:
@@ -1984,3 +1984,48 @@ contract and the landmarks; tested in a scratch worktree before fast-forwarding)
   - harmony_raster 21/21; harmony_art 39/39;
   - battle_settings 10/10; battle_overlap all ok; combat_ui 7/7; playtest_repairs 7/7;
   - portrait_anim all passed; actor_life 39/39; landmarks 54/54.
+
+## The per-encounter listener and DOM growth — investigated (2026-10-03): not a game leak; the cut-in test held element handles
+
+**Question.** The Harmony cut-in worker reported that one page running encounters back to back grew by about 13
+listeners and 210 DOM nodes per encounter. It also grew on the base commit, and battle_cycle stayed flat.
+
+**Method.** `tests/e2e/leak_probe.mjs` (new, a diagnostic outside the default suite):
+- It wraps `addEventListener` and `removeEventListener` with weak references, so the probe retains nothing, and
+  records each adding call site, mapped to its src/ file.
+- Each cycle: a fresh synthetic campaign → a battle → optionally one full exchange (a response, its language
+  task answered right, Continue, the companion's turn) → Step back.
+- After each garbage-collected cycle it groups the live listeners by call site, target, and whether the target
+  is still in the page.
+
+**Results** (headless Chromium, build 4fc421e plus the battle_group test fix):
+
+| Setup | Listeners | Nodes |
+|---|---|---|
+| Battle then Step back, 10 cycles | 104 throughout | 212 throughout |
+| A full exchange each time, then Step back, 10 cycles | 104 throughout | 208 throughout |
+| The cut-in test's own cycles section, unchanged | 208 → 253 | 1,433 → 2,149 (cycles 5–8) |
+
+- **Unchanged cut-in cycles:** the connected page stayed at about 148 elements and the mode returned to the map
+  every time. The growth was one **detached** learning-task panel per encounter: `.chal` with its choice grid and
+  tab rail, listeners from `65_challenge.js` and `60_pad.js` guardTaps.
+- **Cause:** that test called `waitForSelector` 12 times and kept every returned element handle. A handle held
+  through the DevTools session keeps its element's whole detached subtree alive. battle_cycle already disposed
+  its handles, which is why it stayed flat.
+- **Fix, in the test only:** `waitSel()` releases each handle. The cycles section now asserts the page-wide
+  counters stay flat from cycle 5 on (nodes within +40, listeners within +20).
+- **Result after the fix:** 20 cycles: nodes 266 → 266, listeners 134 → 141. Listeners wobble 133–142 with no
+  trend; the probe finds no call site that grows.
+- **The whole harmony_cutin after the fix:** 10/10. Its cycles section: listeners 137 → 137, nodes 266 → 266.
+- **No game code changed.**
+
+**Found on the way: real, but not reachable by a player.**
+- If the campaign changes while a learning task is open, the task panel stays in the page. So do its two
+  `visualViewport` listeners (65_challenge.js line 474) and the abandoned battle's UI it references.
+- My first probe did this by starting a new debug campaign over an open task. That added about 22 listeners and
+  270 nodes a cycle.
+- A player cannot do it: an open task is the top layer and swallows every key and the menu, and the battle's
+  Settings sheet (with Load and Return to title) is not offered over a task.
+- Left as is. The note is here in case a future path, such as an automatic campaign switch, ever needs it.
+
+**Not verified:** Firefox; a real phone; long sessions outside battles (the world, practice activities, cases).
