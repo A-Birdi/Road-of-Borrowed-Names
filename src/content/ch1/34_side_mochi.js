@@ -51,9 +51,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.script.add(`
 @scene rw.tomo_lost
+# Staged: Tomo points to the notice on the board, a hand at her chest over the blank name tag, and a point
+# across the bridge to where Kōji saw a white cat.
 !faceplayer tomo
+!gesture tomo point 24,14
 tomo[worry]: {掲示板|けいじばん} の {貼|は}り{紙|がみ} 、 {見|み}た ？ うち の モチ が 、 {嵐|あらし} の {夜|よる} から {帰|かえ}って こない の 。 || Did you see the notice on the board? Our Mochi hasn't come home since the storm.
+!look tomo pc
+!gesture tomo guard
 tomo: {首輪|くびわ} の {名札|なふだ} も 、 きっと {白|しろ}く なってる 。 {誰|だれ} か に {拾|ひろ}われて も 、 {名前|なまえ} が わからない わ 。 || Her name tag's probably gone blank too. Even if someone found her, they wouldn't know her name.
+!gesture tomo point 44,20
 tomo: {橋|はし} の {向|む}こう で {白|しろ}い {猫|ねこ} を {見|み}た って 、 コウジ さん が {言|い}ってた けど …… 。 || Kōji said he saw a white cat across the bridge, but…
 !quest rw_mochi 0
 
@@ -66,12 +72,18 @@ narr: {抱|かか}え{上|あ}げる と 、 {意外|いがい} と {重|おも}
 !refresh
 
 @scene rw.tomo_mochi
+# Staged: Tomo's breath goes out in relief at the sight of Mochi; after the tag, a nod over the name, and
+# she hands you Mochi's old bell.
 !faceplayer tomo
+!gesture tomo exhale
 tomo[surprise]: モチ ！ …… よかった 。 {本当|ほんとう} に よかった 。 || Mochi! …Oh, thank goodness. Thank goodness.
 tomo: {名札|なふだ} 、 {書|か}き{直|なお}して もらえる ？ あなた の {字|じ} なら 、 {落|お}ちない って {聞|き}いた の 。 || Could you rewrite her tag? I heard your writing doesn't come off.
 !challenge rw.c_mochi
 !if var._res=0 -> later
+!gesture tomo nod pc
 tomo[smile]: モチ 。 …… {名前|なまえ} が ある って 、 いい ね 。 {呼|よ}べる から 。 || Mochi. …It's good to have a name. It means someone can call you.
+!gesture tomo handover pc
+!gesture pc receive tomo
 tomo: これ 、 {昔|むかし} モチ が つけて いた {鈴|すず} 。 うるさい って {嫌|いや}がる から 、 もう {使|つか}わない の 。 よかったら どうぞ 。 || This is the bell Mochi used to wear. She hated the noise, so we don't use it anymore. Take it, if you like.
 !give rw_catbell
 !unset rw_mochi_carried
@@ -79,6 +91,7 @@ tomo: これ 、 {昔|むかし} モチ が つけて いた {鈴|すず} 。 �
 !refresh
 !end
 :later
+!gesture tomo nod pc
 tomo: {急|いそ}がない で 。 モチ は もう {逃|に}げない から 。 …… たぶん 。 || No hurry. Mochi won't run off again. …Probably.
 
 @scene rw.mochi_home

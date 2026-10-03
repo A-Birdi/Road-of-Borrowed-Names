@@ -13,7 +13,10 @@ narr: 「 {井戸|いど} の {水|みず} は {沸|わ}かして から {飲|�
 narr: {道標|みちしるべ} 。 「 {北|きた} ： {水車|すいしゃ}{小屋|ごや} 　 {東|ひがし} ： {橋|はし} 　 {南|みなみ} ： {川|かわ} の {倉庫|そうこ} 」 。 {焼|や}き{印|いん} で {書|か}いて ある ので 、 {消|き}えて いない 。 || A signpost: "North: water mill · East: bridge · South: river warehouse." It's branded into the wood, so it survived.
 
 @scene rw.sign_road
+# Staged: you lean in to the blank signpost; once its arms are mended, if Mame still has her charm to
+# give, she waves from the square and you turn to see her.
 !if quest.rw_crossroads=done -> fixed
+!gesture pc observe 2,29
 narr: {村|むら} の {西|にし} の {辻|つじ} の {道標|みちしるべ} 。 {腕|うで} は {三|みっ}つ ある が 、 どれ も {真|ま}っ{白|しろ} だ 。 {旅人|たびびと} が {迷|まよ}って しまう 。 || The signpost at the crossroads west of the village. It has three arms, all blank. Travellers will get lost.
 !quest rw_crossroads start
 !choice
@@ -25,6 +28,8 @@ narr: {村|むら} の {西|にし} の {辻|つじ} の {道標|みちしるべ
 !set rw_sign_fixed
 !quest rw_crossroads done
 narr: {三|みっ}つ の {腕|うで} に 、 {行|い}き{先|さき} が {戻|もど}った 。 || The three arms have their destinations back.
+?(!rw_charm_given) !gesture mame wave pc
+?(!rw_charm_given) !look pc mame
 ?(!rw_charm_given) narr: {遠|とお}く で マメ が {手|て} を {振|ふ}って いる 。 {何|なに} か {渡|わた}したい もの が ある らしい 。 || In the distance, Mame is waving. It looks like she has something to give you.
 !end
 :fixed
@@ -71,8 +76,14 @@ oto: {父|ちち} の {代|だい} の {看板|かんばん} が 、 どこか �
 oto: {看板|かんばん} は {奥|おく} の {木箱|きばこ} の どこか 。 {革|かわ} の {下|した} かも ね 。 || The sign's somewhere in the crate at the back. Maybe under the leather.
 
 @scene rw.oto_sign
+# Staged: you step to Oto's side and she leans in to the old sign you show her; then she hands you the boots she made.
 !faceplayer oto
+!walkto pc 4 4 left
+!look oto pc
+!gesture oto observe pc
 oto[surprise]: {父|ちち} の {看板|かんばん} ！ …… そう 、 そう {書|か}いて あった 。 {子|こ}ども の {頃|ころ} 、 {毎日|まいにち} {見上|みあ}げてた のに 、 {忘|わす}れてた 。 || My father's sign! …Yes, that's what it said. I looked up at it every day as a kid, and I'd forgotten.
+!gesture oto handover pc
+!gesture pc receive oto
 oto: {描|か}き{直|なお}す よ 。 あんた の {字|じ} を {手本|てほん} に して ね 。 …… お{礼|れい} に 、 これ 。 {雨|あめ} でも {滑|すべ}らない 。 {灯守|ひもり} の {分|ぶん} も {作|つく}って あげたい ところ だ けど 、 {本人|ほんにん} が {来|こ}ない から ね 。 || I'll repaint it, using your writing as the model. …Here, as thanks. They won't slip even in the rain. I'd make a pair for the lantern keeper too, but they never come in.
 !give rw_boots_good
 !quest rw_boots done
@@ -109,12 +120,15 @@ kiku: それ より 、 {私|わたし} の {杼|ひ} を まだ {返|かえ}し
 !quest rw_tools 1
 
 @scene rw.bench_tools
+# Staged: you kneel to look under the workbench, and reach in for the plane that glints there.
 !if !quest.rw_tools -> plain
 !if rw_tally_read -> read
+!gesture pc kneel 1,3 hold
 narr: {作業台|さぎょうだい} の {裏|うら} を のぞく と 、 {小刀|こがたな} で {彫|ほ}った {字|じ} が {並|なら}んで いた 。 {彫|ほ}った {字|じ} は {消|き}えて いない 。 || Peering under the workbench, you find rows of letters cut with a knife. Carved letters don't fade.
 !challenge rw.c_tools
 !if var._res=0 -> end
 !set rw_tally_read
+!gesture pc receive 1,3 prop=plane hold
 narr: {作業台|さぎょうだい} の {下|した} の {暗|くら}がり に 、 {何|なに} か が {光|ひか}った 。 {埃|ほこり} を かぶった かんな だ 。 || Something glints in the dark under the bench: a dusty plane.
 !give rw_plane
 !quest rw_tools 2
@@ -126,10 +140,22 @@ narr: {作業台|さぎょうだい} の {裏|うら} の {記録|きろく} 。
 narr: よく {使|つか}い{込|こ}まれた {作業台|さぎょうだい} 。 {削|けず}り{屑|くず} の いい {匂|にお}い が する 。 || A well-used workbench. It smells pleasantly of wood shavings.
 
 @scene rw.bunta_tally
+# Staged: you step to Bunta's side and hold up the plane, and he rubs his forehead; he takes it from you as he owns up, then
+# holds out Kiku's shuttle for you to take to her.
 !faceplayer bunta
 !if !item.rw_plane -> gone
+!walkto pc 4 4 right
+!look bunta pc
+!prop pc plane
+!gesture pc present bunta hold
+!gesture bunta forehead
 narr: かんな を {見|み}せる と 、 ブンタ は {黙|だま}って {頭|あたま} を かいた 。 || You show him the plane. Bunta scratches his head in silence.
+!gesture pc handover bunta
+!gesture bunta receive pc
 bunta[shy]: …… {俺|おれ} の {作業台|さぎょうだい} の {下|した} に あった の か 。 {返|かえ}して もらってた の を 、 {忘|わす}れてた 。 {婆|ばあ}さん に {怒鳴|どな}り{込|こ}む {前|まえ} で よかった 。 || …It was under my own bench. She'd given it back and I forgot. Good thing I didn't go shouting at her.
+!prop bunta shuttle
+!gesture bunta handover pc
+!gesture pc receive bunta
 bunta: {杼|ひ} も {返|かえ}さねえ と な 。 {悪|わる}い が 、 {届|とど}けて くれる か 。 {顔|かお} を {合|あ}わせる の が 、 ちょっと な 。 || I'd better return her shuttle too. Sorry, but would you take it to her? Facing her right now is a bit…
 !take rw_plane
 !give rw_shuttle
@@ -138,9 +164,19 @@ bunta: {杼|ひ} も {返|かえ}さねえ と な 。 {悪|わる}い が 、 {
 bunta: {杼|ひ} を キク に {届|とど}けて くれた か ？ || Did you take the shuttle to Kiku?
 
 @scene rw.kiku_tally
+# Staged: you step to Kiku's side and hand her the shuttle; she holds it and smiles over Bunta; then she gives you the faded
+# ribbon from her hand to yours.
 !faceplayer kiku
 !if !item.rw_shuttle -> wait
+!walkto pc 4 5 left
+!look kiku pc
+!prop pc shuttle
+!gesture pc handover kiku
+!gesture kiku receive pc hold
 kiku[smile]: まあ 、 {私|わたし} の {杼|ひ} 。 …… ブンタ さん 、 {自分|じぶん} で {来|こ}られない の ね 。 {照|て}れ{屋|や} だ こと 。 || Oh, my shuttle. …Bunta couldn't bring it himself, I see. Such a shy man.
+!prop kiku ribbon
+!gesture kiku handover pc
+!gesture pc receive kiku
 kiku: お{礼|れい} に 、 これ を どうぞ 。 {昔|むかし} {織|お}った リボン の {残|のこ}り です 。 {色|いろ} は {褪|あ}せた けれど 、 {糸|いと} は まだ {丈夫|じょうぶ} よ 。 || Please take this as thanks. It's what's left of a ribbon I wove long ago. The colour has faded, but the thread is still strong.
 !take rw_shuttle
 !give rw_ribbon
@@ -170,7 +206,9 @@ kiku: {旅|たび} の お{話|はなし} 、 {聞|き}かせて ちょうだい
 narr: {糸|いと} の {入|はい}った {籠|かご} 。 {色|いろ} ごと に きちんと {分|わ}けて ある 。 || A basket of thread, neatly sorted by colour.
 
 @scene rw.yasu_first
+# Staged: Old Yasu points to his boat, idle on the high river; after the story, a nod to a good listener.
 !faceplayer yasu
+!gesture yasu point 35,26
 yasu: {川|かわ} が {高|たか}い うち は {舟|ふね} を {出|だ}せん 。 {暇|ひま} な {年寄|としよ}り の {話|はなし} でも {聞|き}いて いく か ？ || Can't take the boat out while the river's high. Want to hear an idle old man's story?
 !quest rw_founding start
 !choice
@@ -180,6 +218,8 @@ yasu: {川|かわ} が {高|たか}い うち は {舟|ふね} を {出|だ}せ�
 !activity rw.a_history
 !if var._res=0 -> end
 !quest rw_founding done
+!look yasu pc
+!gesture yasu nod pc
 yasu: {聞|き}き{上手|じょうず} だ な 。 …… {今|いま} の {話|はなし} 、 どこか に {書|か}いて おいて くれ 。 {紙|かみ} じゃ なくて も いい 。 {誰|だれ} か の {頭|あたま} の {中|なか} でも いい 。 || You're a good listener. …Write that story down somewhere. Doesn't have to be paper. Somebody's head will do.
 
 @scene rw.yasu_after
@@ -192,15 +232,20 @@ yasu: {川|かわ} は {正直|しょうじき} だ 。 {増|ふ}えれば {増|
 yasu: {孫|まご} に あんた の {話|はなし} を して やった 。 {少|すこ}し {盛|も}った が な 。 {年寄|としよ}り の {特権|とっけん} だ 。 || I told my grandchild about you. Embellished it a bit. An old man's privilege.
 
 @scene rw.mame_first
+# Staged: Mame's hands twist together over her name; told it won't vanish, a little celebration; told you
+# don't know, she points at you (you won't forget).
 !faceplayer mame
+!gesture mame fidget
 mame: ねえ ねえ ！ {字|じ} が {消|き}えた の 、 {見|み}た ？ マメ の {名前|なまえ} も {消|き}える ？ || Hey, hey! Did you see the writing disappear? Will Mame's name disappear too?
 !choice
 * {消|き}えない よ || It won't. -> no
 * わからない || I don't know. -> idk
 :no
+!gesture mame celebrate
 mame[smile]: ほんと ？ じゃあ 、 マメ も {字|じ} を {練習|れんしゅう} する ！ {自分|じぶん} で {書|か}けば 、 {消|き}えない よね ！ || Really? Then Mame will practise writing too! If I write it myself, it won't disappear, right?
 !end
 :idk
+!gesture mame point pc
 mame[think]: …… じゃあ 、 {大|おお}きい {声|こえ} で {言|い}う 。 マメ ！ マメ ！ これ で {忘|わす}れない でしょ ！ || …Then I'll say it loud. Mame! Mame! Now you won't forget!
 
 @scene rw.mame_after
@@ -209,10 +254,15 @@ mame: {橋|はし} 、 {向|む}こう まで {走|はし}った ！ {十回|じ
 ?(!quest.rw_crossroads=done) mame: {西|にし} の {辻|つじ} の {看板|かんばん} 、 {真|ま}っ{白|しろ} なの 。 {直|なお}せる ？ || The sign at the west crossroads is all white. Can you fix it?
 
 @scene rw.mame_charm
+# Staged: Mame holds out the reed charm she made and it passes into your hand; her laugh at "probably".
 !faceplayer mame
+!prop mame charm
+!gesture mame handover pc
+!gesture pc receive mame
 mame: {看板|かんばん} 、 {直|なお}して くれた ！ これ 、 あげる 。 {葦|あし} で {編|あ}んだ お{守|まも}り 。 マメ が {作|つく}った ！ || You fixed the sign! This is for you — a charm woven from reeds. Mame made it!
 !give rw_reed_charm
 !set rw_charm_given
+!gesture mame laugh
 mame: {持|も}って いる と 、 {悪|わる}い もの が ちょっと だけ よけて いく 。 …… たぶん ！ || If you carry it, bad things will step aside a little. …Probably!
 
 @scene rw.mame_post
@@ -245,7 +295,10 @@ koji: {姉|ねえ}さん の {茶|ちゃ} は {薄|うす}い 。 でも 、 こ
 koji: {橋|はし} と {舟|ふね} 、 {両方|りょうほう} ある の が {葦|あし}ノ{瀬|せ} だ 。 {急|いそ}ぐ {奴|やつ} は {橋|はし} 、 {話|はな}したい {奴|やつ} は {舟|ふね} 。 {最近|さいきん} は {舟|ふね} の {客|きゃく} の {方|ほう} が {多|おお}い 。 || Reedwake has both a bridge and a boat. In a hurry, take the bridge; want to talk, take the boat. These days the boat gets more customers.
 
 @scene rw.hana_rush
+# Staged: Hana is pouring as she greets you in the rush; after the orders, she hands you a pouch of her
+# morning tea leaves across the counter.
 !faceplayer hana
+!gesture hana pour
 hana[smile]: いらっしゃい ！ …… ごめん なさい 、 {今|いま} {朝|あさ} の {混|こ}む {時間|じかん} で 。 コウジ が {戻|もど}った って {聞|き}いて 、 みんな {見|み}に {来|く}る の よ 。 {手伝|てつだ}って くれる ？ || Welcome! …Sorry, it's the morning rush. Everyone heard Kōji's back and came to look. Would you help?
 !quest rw_teahouse start
 !choice
@@ -255,6 +308,9 @@ hana[smile]: いらっしゃい ！ …… ごめん なさい 、 {今|いま} 
 !activity rw.a_orders
 !if var._res=0 -> end
 !quest rw_teahouse done
+!prop hana seeds
+!gesture hana handover pc
+!gesture pc receive hana
 hana: {助|たす}かった ！ はい 、 お{礼|れい} 。 {朝|あさ} の お{茶|ちゃ} の {葉|は} 。 {旅|たび} の {途中|とちゅう} で 、 {誰|だれ} か と {飲|の}んで ね 。 {二杯|にはい} ずつ 。 || You saved me! Here, as thanks — my morning tea leaves. Drink them with someone on your travels. Two cups at a time.
 !give rw_tea_leaves
 
@@ -268,10 +324,14 @@ hana: お{帰|かえ}り なさい 。 {今日|きょう} は お{茶|ちゃ} �
 ?(end_mem_choose) hana: {山|やま} の {書庫|しょこ} に {預|あず}けた {記憶|きおく} を 、 {取|と}り に {行|い}く {人|ひと} も いる そう よ 。 {私|わたし} は …… {今|いま} の {朝|あさ} が あれば 、 いい かな 。 || I hear some people are going to the mountain archive to take back memories they left there. Me… I think my mornings as they are now are enough.
 
 @scene rw.tsuru_post
+# Staged: Tsuru thinks over the news of the Archive's keeper with a hand to her chin, and points to the new
+# ledger on the desk.
 !faceplayer tsuru
 tsuru: {帰|かえ}った かい 。 {灯|あか}り の {名前|なまえ} は 、 もう {滑|すべ}り{落|お}ちない 。 {年寄|としよ}り の {手|て} でも ね 。 || Back, are you? The lanterns' names don't slide off anymore. Not even in an old woman's hand.
+?(end_kasane_trial|end_kasane_keeper) !gesture tsuru chin
 ?(end_kasane_trial) tsuru[think]: {灯落|ひおち} で 、 あの {書庫|しょこ} の {番人|ばんにん} が {町|まち} の {人|ひと} と {話|はな}して いる そう だ 。 {許|ゆる}す {者|もの} も 、 {許|ゆる}さない {者|もの} も いる 。 それ で いい 。 {黙|だま}らせる より は ずっと いい 。 || I hear the Archive's keeper is talking with the people of Lanternfall. Some forgive, some don't. That's as it should be. Far better than silencing them.
 ?(end_kasane_keeper) tsuru[think]: あの {番人|ばんにん} は 、 {山|やま} で {書庫|しょこ} を {開|ひら}いて いる と さ 。 {見張|みは}り が ついて いる と は いえ 、 {変|か}われる もの か どう か 。 …… {見届|みとど}ける しか ない ね 。 || They say the keeper is still up in the mountains, keeping the Archive open. Watched, of course. Whether someone like that can change… all we can do is see.
+!gesture tsuru point 7,7
 tsuru: {机|つくえ} の {上|うえ} の {新|あたら}しい {帳面|ちょうめん} 、 {見|み}た かい 。 「 {書|か}かれて いない {地図|ちず} 」 。 {話|はな}して {欲|ほ}しけりゃ 、 また {声|こえ} を かけ な 。 || Did you see the new ledger on the desk? "The Unwritten Atlas". If you want me to explain, just ask again.
 !choice
 * {地図|ちず} の {話|はなし} を {聞|き}く || Ask about the Atlas. -> atlas
