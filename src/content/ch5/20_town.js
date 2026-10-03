@@ -351,7 +351,7 @@ narr: {今度|こんど} は 、{廊下|ろうか} も {静|しず}か だった
 # corridor they wiped.
 !gesture lf_setsu palm pc
 lf_setsu: いらっしゃいませ 。{今日|きょう} は …… {空|あ}いて おります よ 。{本当|ほんとう} に 。|| Welcome. Today we… have rooms free. Truly.
-!gesture lf_setsu lookroad 10,6
+?(end_kasane_trial) !gesture lf_setsu lookroad 10,6
 ?(end_kasane_trial) lf_setsu: カサネ さん が {町|まち} に {下|お}りて きた とき 、うち に {泊|と}まった んです 。{朝|あさ} {早|はや}く {起|お}きて 、{黙|だま}って {廊下|ろうか} を {拭|ふ}いて いました 。|| When Kasane came down to the town, they stayed here. Got up early and wiped the corridor without a word.
 ?(end_kasane_keeper) lf_setsu: {山|やま} の {上|うえ} の {方|かた} に 、{時々|ときどき} お{弁当|べんとう} を {届|とど}けて います 。「{要|い}りません」 と {返事|へんじ} が {来|く}る ので 、また {送|おく}ります 。|| I send the one up the mountain a lunchbox now and then. They write back "not necessary", so I send another.
 !choice
