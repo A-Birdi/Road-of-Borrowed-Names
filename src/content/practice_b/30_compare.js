@@ -203,7 +203,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       ref: { grammar: 'tsumori' }, item: 'g:tsumori',
       a: { scene: 'sg.wataru_confront', line: 10, who: 'wataru', ctx: T('Wataru, confronted at No. 2 warehouse', '{二番|にばん} {倉庫|そうこ} で {問|と}い{詰|つ}められた ワタル'),
         jp: '{荷|に} を {少|すこ}し ずつ {売|う}って 、 {払|はら}う つもり でした 。 {給料|きゅうりょう} が {出|で}たら 、 {全部|ぜんぶ} {戻|もど}す つもり で 。 ラベル が {勝手|かって} に {変|か}わり{始|はじ}めた とき …… {嵐|あらし} の せい に できる 、 と {思|おも}って しまった ん です 。', en: 'I meant to sell a little cargo at a time and pay it off. To put it all back once the wages came. When the labels started changing by themselves… I thought, I can blame the storm.', reading: 'にをすこしずつうって、はらうつもりでした。きゅうりょうがでたら、ぜんぶもどすつもりで。ラベルがかってにかわりはじめたとき……あらしのせいにできる、とおもってしまったんです。', h: 'nswt9r' },
-      b: { scene: 'sg.omi_wataru', line: 9, who: 'omi', ctx: T('Ōmi, deciding what Wataru must do', 'ワタル の {処分|しょぶん} を {決|き}める オウミ'),
+      b: { scene: 'sg.omi_wataru', line: 34, who: 'omi', ctx: T('Ōmi, deciding what Wataru must do', 'ワタル の {処分|しょぶん} を {決|き}める オウミ'),
         jp: 'だが 、 {荷|に} を {売|う}った の は お{前|まえ} の {落|お}ち{度|ど} だ 。 {売|う}った {分|ぶん} は 、 {給料|きゅうりょう} から {返|かえ}して もらう 。 {灯台|とうだい} と ソウタ に は 、 {自分|じぶん} で {頭|あたま} を {下|さ}げに {行|い}け 。', en: 'But selling the cargo is your fault. You\'ll repay what you sold out of your wages. And you\'ll go to the lighthouse and to Sōta yourself, and apologise.', reading: 'だが、にをうったのはおまえのおちどだ。うったぶんは、きゅうりょうからかえしてもらう。とうだいとソウタには、じぶんであたまをさげにいけ。', h: 'btsulm' },
       q: {
         F: choose(T('Did Wataru actually sell cargo?', 'ワタル は {本当|ほんとう} に {荷|に} を {売|う}った ？'), [

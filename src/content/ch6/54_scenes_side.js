@@ -23,16 +23,34 @@ sa_isamu: {沸|わ}く {前|まえ} の やかん だ 。 {覚|おぼ}えて お
 ?(!sa_catalogue_done) sa_isamu: {中|なか} の {目録|もくろく} は 、 {字|じ} が {全部|ぜんぶ} {消|き}えて た 。 {分|わ}かる {人|ひと} に {頼|たの}む しか ない 。 || The catalogue inside had all its writing gone. Needs someone who can make sense of it.
 
 @scene sa.isamu_return
+# Staged (Chapter 6 performed interaction): the folio handed over at the fire (the !take stays where it
+# is), held, opened; the laugh that comes back; the companion's own small response.
+!prop pc folio
+!gesture pc handover sa_isamu
+!gesture sa_isamu receive pc hold
 narr: $name は 、 {綴|つづ}り を イサム に {渡|わた}した 。 || You hand the folio to Isamu.
+!gesture sa_isamu present prop=folio hold
 sa_isamu: …… これ か 。 {薄|うす}い な 。 {五年|ごねん} {分|ぶん} 、 {重|おも}かった のに 。 || …This is it? It's so thin. It felt five years heavy.
+!gesture sa_isamu read prop=folio hold
 narr: イサム は 、 ゆっくり {表紙|ひょうし} を {開|ひら}いた 。 || Slowly, Isamu opens the cover.
+!gesture comp listen sa_isamu
 narr: {焚|た}き{火|び} の {音|おと} に {混|ま}じって 、 {誰|だれ}か が {笑|わら}った 。 {低|ひく}く {始|はじ}まって 、 {止|と}まらなく なる {笑|わら}い{声|ごえ} 。 || Mixed with the crackle of the fire, someone laughs. A laugh that starts low and can't stop.
+!gesture sa_isamu lowered hold
 sa_isamu[sad]: …… ああ 。 これ だ 。 これ だ よ 。 || …Ah. That's it. That's it.
+!gesture sa_isamu exhale
 sa_isamu: {痛|いた}い な 。 {痛|いた}い 。 …… {良|よ}かった 。 || It hurts. It hurts. …Good.
+?(comp=nao) !gesture comp nod sa_isamu
+?(comp=mio) !prop comp cloth
+?(comp=mio) !gesture comp present sa_isamu prop=cloth hold
+?(comp=ren) !gesture comp nod sa_isamu
+?(comp=suzu) !gesture comp size
 ?(comp=nao) nao: {配達|はいたつ} {完了|かんりょう} 。 …… {受取|うけとり}{印|いん} は {要|い}らない な 。 {顔|かお} に {書|か}いて ある 。 || Delivered. …Don't need a signature. It's written on his face.
 ?(comp=mio) mio: {手拭|てぬぐ}い 、 どうぞ 。 {二枚|にまい} あります 。 {一枚|いちまい} は わたし の {分|ぶん} です けど 。 || Here, a cloth. I have two. One's for me, mind.
 ?(comp=ren) ren: {頼|たの}まれた もの を 、 {返|かえ}した 。 …… {定|さだ}め より 、 {少|すこ}し {遅|おそ}く なりました が 。 || Asked for, and returned. …A little later than the charter intended.
 ?(comp=suzu) suzu: {貸|か}し {借|か}り 、 {一件|いっけん} {清算|せいさん} 。 …… こういう {帳簿|ちょうぼ} の {付|つ}け{方|かた} なら 、 {毎日|まいにち} したい な 。 || One account settled. …I'd keep books like this every day if I could.
+?(comp=mio) !prop comp -
+?(comp=mio) !gesture comp -
+!gesture sa_isamu nod pc
 sa_isamu[smile]: {礼|れい} を {言|い}う よ 。 {言葉|ことば} が {足|た}りない が 。 …… {今夜|こんや} は 、 これ を {聞|き}き ながら {寝|ね}る 。 || Thank you. I haven't got the words. …Tonight I'll fall asleep listening to this.
 !take sa_folio_isamu
 !quest sa_isamu done

@@ -132,32 +132,63 @@ comp[shy]: {一緒|いっしょ} に {来|き}て くれる ？ {声|こえ} が
 !autosave
 
 @scene lf.mio_refuse
+# Staged (Chapter 5 performed interaction; Mio's personal quest): Mio steps up to the counter herself;
+# your hand on her back; her refusal made with a flat hand and a shake of the head; the stamp held up
+# and stopped; then she turns to you, hands shaking.
 !if lf_bell_rung -> after
+!prop lf_tadashi stamp
+!pose lf_tadashi hold
+!walkto comp 8 5 up
+!look pc lf_tadashi
 lf_tadashi: ミオ {様|さま} 。お{薬|くすり} の {件|けん} 、{明日|あした} まで に お{願|ねが}い できます でしょう か 。|| Ms Mio. Regarding the medicine — might I ask for it by tomorrow?
+!gesture comp fidget
 comp: …… あの 。|| …Um.
+!gesture comp halfraise hold
 narr: ミオ の {口|くち} が 、「はい」 の {形|かたち} に {動|うご}き かけて 、{止|と}まる 。|| Mio's mouth starts to shape a "yes", and stops.
 !challenge lf.ch_mio_refuse
+!gesture pc touchback comp hold
 narr: {背中|せなか} に 、そっと {手|て} を {当|あ}てる 。|| You lay a hand gently on her back.
+!gesture comp emphatic lf_tadashi then=shake
 comp[angry]: …… お{断|ことわ}り します 。|| …I refuse.
 narr: {記録館|きろくかん} が 、しん と した 。{何年|なんねん} も {誰|だれ} も {口|くち} に して いない {言葉|ことば} だった 。|| The Records Hall falls utterly silent. No one has said those words aloud in years.
+!gesture pc -
+!pose lf_tadashi stampup
 lf_tadashi: かしこ@かしこまる …… 。|| Cert—
+!gesture lf_tadashi flinch comp
 lf_tadashi[surprise]: …… {今|いま} 、{何|なん} と ？|| …What did you say?
+!gesture comp palm lf_tadashi
 comp: {作|つく}りません 。{皆|みな}さん が {困|こま}って いる の は 、{気持|きも}ち が {騒|さわ}ぐ から じゃ ありません 。{言|い}いたい こと が 、{言|い}えない から です 。|| I won't make it. What's troubling everyone isn't that their feelings are too stirred up. It's that they can't say what they want to say.
+!gesture comp guard hold
 comp: {本人|ほんにん} に {黙|だま}って {飲|の}ませて 、{反対|はんたい} する {気持|きも}ち を {消|け}す の は 、{治療|ちりょう} じゃ ない 。{私|わたし} は {薬師|くすし} です 。だから 、{作|つく}りません 。|| Slipping something into people without telling them, to erase their objections — that isn't treatment. I'm an apothecary. So I won't make it.
+!look lf_tadashi comp
 narr: タダシ の 「{承認|しょうにん}」 の {判子|はんこ} が 、{宙|ちゅう} で {止|と}まった 。|| Tadashi's "approved" stamp stops in mid-air.
+!pose lf_tadashi hold
 lf_tadashi: …… {承認|しょうにん} …… できません 。「お{断|ことわ}り」 を {承認|しょうにん} する {様式|ようしき} は 、ございません ので 。|| …I cannot… approve this. There is no form for approving a refusal.
+!gesture lf_tadashi exhale
 lf_tadashi[think]: …… {不思議|ふしぎ} です 。{今|いま} 、{少|すこ}し だけ …… ほっと いたしました 。|| …How strange. Just now, I felt… a little relieved.
+!gesture lf_tadashi nod comp
 lf_tadashi: ご{依頼|いらい} は 、{取|と}り{下|さ}げます 。…… {取|と}り{下|さ}げる {様式|ようしき} なら 、ございます ので 。|| I withdraw the commission. …There is, at least, a form for withdrawing.
 !goto end_scene
 :after
+!prop lf_tadashi stamp
+!walkto comp 8 5 up
+!look pc lf_tadashi
 lf_tadashi: ミオ {様|さま} 。…… あの お{薬|くすり} の {件|けん} です が 。|| Ms Mio. …About that medicine.
+!gesture comp emphatic lf_tadashi then=shake
 comp: {作|つく}りません 。|| I won't make it.
+!gesture lf_tadashi nod comp
 lf_tadashi[think]: …… {鐘|かね} の {後|あと} ですから 、{私|わたし} も {申|もう}せます 。{作|つく}って いただかなくて {結構|けっこう} です 。{最初|さいしょ} から 、{出|だ}す べき で は ない {依頼|いらい} でした 。|| …Since the bell, I can say it too. You need not make it. It was a commission that should never have been sent.
+!gesture comp guard hold
 comp: それ でも 、{私|わたし} の {口|くち} で {言|い}いたかった んです 。お{断|ことわ}り します 。|| Even so, I wanted to say it with my own mouth. I refuse.
 :end_scene
+!look comp pc
+!gesture comp fidget
 comp[shy]: …… {言|い}えた 。{手|て} 、{震|ふる}えてる 。|| …I said it. My hands are shaking.
+!gesture comp lowered hold
 comp: ずっと 、{頼|たの}まれたら {全部|ぜんぶ} {引|ひ}き{受|う}けて きた 。{断|ことわ}ったら 、{役|やく} に {立|た}たない {人|ひと} に なる {気|き} が して 。|| All my life I've taken on everything anyone asked. It felt like if I refused, I'd become someone useless.
+!gesture comp nod pc
 comp: でも 、{断|ことわ}る の も 、{薬師|くすし} の {仕事|しごと} なんだ ね 。{効|き}かない {薬|くすり} を {出|だ}さない の と 、{同|おな}じ 。|| But refusing is part of an apothecary's work too. Same as not handing out medicine that doesn't work.
+!gesture comp laugh
 comp[laugh]: …… ふふ 。{町|まち} の {頼|たの}まれ{事|ごと} も 、{半分|はんぶん} くらい {断|ことわ}って こよう かな 。{十人分|じゅうにんぶん} の やけど {薬|ぐすり} は 、{三人分|さんにんぶん} で {足|た}りる し 。|| …Heh. Maybe I'll go and turn down about half the town's requests too. Ten people's worth of burn ointment? Three will do.
 !quest lf_mio done
 !set lf_mio_done

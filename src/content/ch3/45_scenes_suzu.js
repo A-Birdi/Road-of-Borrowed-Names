@@ -6,43 +6,69 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.script.add(`
 @scene co.suzu_night
+# Staged (Chapter 3 performed interaction): the fade covers only the time changing; Suzu is found
+# sitting on the edge of the inn's raised floor at night, and tells it from there (her account book
+# in her hands); she stands when she decides to help. Ambience is presentation only (!ambience).
 !if comp!=suzu -> end
 !if seen.co.suzu_night_done -> end
 !fade out
 !music companion_suzu
-narr: その {夜|よる} 。 {宿|やど} の {縁側|えんがわ} に 、 スズ が {一人|ひとり} で {座|すわ}って いた 。 || That night, Suzu is sitting alone on the inn's veranda.
+!ambience night_in
+!walkto comp 8 4 down now
+!pose comp sitlook
 !fade in
+narr: その {夜|よる} 。 {宿|やど} の {縁側|えんがわ} に 、 スズ が {一人|ひとり} で {座|すわ}って いた 。 || That night, Suzu is sitting alone on the inn's veranda.
+!walkto pc 7 4 right
+!pose comp sit
+!look comp pc
 comp[smile]: あら 、 {眠|ねむ}れない の ？ {私|わたし} も 。 {枕|まくら} が {変|か}わる と ダメ な の よ 。 {旅芸人|たびげいにん} の くせ に 。 || Oh, can't sleep? Me neither. A new pillow always gets me. And me a travelling performer.
 pc: スズ 。 この {里|さと} に 、 {来|き}た こと が ある ん だろう 。 || Suzu. You've been to this village before, haven't you.
+!gesture comp laugh
 comp[laugh]: {来|き}た こと ？ ある ある 。 {百回|ひゃっかい} くらい 。 {柿|かき} を {食|た}べ に 。 || Been here? Oh, loads. A hundred times. For the persimmons.
+!gesture comp lowered hold
 comp[closed]: …… || …
 comp: …… {一回|いっかい} だけ 。 {二十年前|にじゅうねんまえ} 。 {一座|いちざ} で 、 {秋祭|あきまつ}り の {舞台|ぶたい} に {立|た}つ はず だった 。 {私|わたし} は {十六|じゅうろく} で 、 {初|はじ}めて {台詞|せりふ} を もらった {年|とし} 。 || …Once. Twenty years ago. With the troupe — we were booked for the autumn festival. I was sixteen. The first year I had lines of my own.
 comp: {前|まえ} の {晩|ばん} に 、 {火事|かじ} が あった 。 {上|うえ} の {段|だん} が {燃|も}えた 。 {私|わたし} たち の {天幕|てんまく} は {水路|すいろ} の {下|した} に あって 、 {下|お}りて くる {子|こ}ども たち を {数|かぞ}えて いた 。 || The night before, there was a fire. The upper terraces burned. Our tents were at the bottom of the channel, and we counted the children as they came down.
+!gesture pc listen comp
 pc: {覚|おぼ}えて いる の か 。 {里|さと} の {人|ひと} は {誰|だれ} も …… || You remember it. Nobody in the village…
 comp: {私|わたし} たち は {次|つぎ} の {朝|あさ} に {発|た}った から 。 {静寂|しじま} が {来|き}た の は 、 たぶん {冬|ふゆ} 。 {私|わたし} だけ 、 {取|と}られ {損|そこ}ねた の ね 。 || We left the next morning. I think the Hush came that winter. I'm the one it missed.
+!gesture comp touchhair then=lowered hold
 comp[sad]: その {朝|あさ} 、 {小|ちい}さな {男|おとこ} の {子|こ} が {私|わたし} の リボン を {引|ひ}っ{張|ぱ}って 、 「 お{母|かあ}さん は どこ ？ 」 って {聞|き}いた の 。 || That morning a little boy tugged at my ribbon and asked me, "Where's my mum?"
 comp: {私|わたし} は {知|し}ってた 。 {窯|かま} の {人|ひと} で 、 {上|うえ} へ {行|い}った まま {戻|もど}らなかった 。 || I knew. She worked the kiln. She went up the hill and didn't come back.
 comp: {私|わたし} は {言|い}った 。 「 お{母|かあ}さん は {一座|いちざ} と {一緒|いっしょ} に {先|さき} へ {行|い}った の 。 {春|はる} に なったら {帰|かえ}って くる よ 」 って 。 || I told him: "Your mum's gone on ahead with the troupe. She'll be back when spring comes."
+!gesture comp avert pc hold
 comp[closed]: …… {台詞|せりふ} の {稽古|けいこ} より 、 ずっと {上手|じょうず} に {言|い}えた 。 || …I delivered it far better than any line I'd rehearsed.
 pc: その {子|こ} が …… || That boy…
+!gesture comp nod pc
 comp: ヒロ 。 {広場|ひろば} の {空|あ}いた {席|せき} 。 {毎年|まいとし} {誰|だれ} か の ため に {空|あ}けて ある って 、 サヨ さん が {言|い}ってた でしょ 。 || Hiro. The empty seat in the square. Sayo said someone keeps it free every year, didn't she.
+!prop comp accountbook
+!gesture comp read prop=accountbook hold
 narr: スズ は {小|ちい}さな {帳簿|ちょうぼ} を {取|と}り{出|だ}して 、 {最後|さいご} の {頁|ページ} を {開|ひら}いた 。 {丁寧|ていねい} な {字|じ} が {並|なら}んで いる 。 || Suzu takes out a little account book and opens it at the last page. Neat lines of names and figures.
 comp: {私|わたし} ね 、 {借|か}り は {全部|ぜんぶ} {書|か}いて おく の 。 {宿代|やどだい} 、 {傘|かさ} 、 {貸|か}して もらった {針|はり} {一本|いっぽん} まで 。 {返|かえ}したら {線|せん} を {引|ひ}く 。 || I write down every debt, you know. Lodgings, umbrellas, a single needle someone lent me. When I pay, I cross it out.
+!gesture comp present pc prop=accountbook hold
 comp: {線|せん} が {引|ひ}けて ない の は 、 これ だけ 。 || This is the only one I've never crossed out.
 narr: 「 ヒロ ── {本当|ほんとう} の こと {一|ひと}つ 。 {未払|みはら}い 。 」 || "Hiro — one truth. Unpaid."
+!gesture comp read prop=accountbook hold
 comp: {何年|なんねん} か して 、 {手紙|てがみ} を {書|か}いた こと が ある 。 {本当|ほんとう} の こと を 。 でも {封|ふう} を する {前|まえ} に 、 {字|じ} が {全部|ぜんぶ} {白|しろ}く {消|き}えた 。 || A few years later I wrote him a letter. The truth. But before I could seal it, every word faded to white.
+!prop comp -
+!gesture comp laugh
 comp[laugh]: {嘘|うそ} は {残|のこ}って 、 {本当|ほんとう} は {消|き}える 。 {皮肉|ひにく} でしょ ？ あの {夜|よる} の こと で 、 {静寂|しじま} が {取|と}らなかった の は 、 {私|わたし} の {嘘|うそ} だけ 。 {痛|いた}い ところ が {一|ひと}つ も ない から 。 || The lie stays; the truth fades. Ironic, isn't it? Of everything about that night, the only thing the Hush didn't take was my lie. There's nothing in it that hurts.
 !choice
 * {今|いま} なら 、 {届|とど}く かも しれない 。 || Maybe now it could reach him. -> reach
 * {無理|むり} に {話|はな}さなくて いい 。 || You don't have to tell him. -> push
 :reach
+!gesture comp chin hold
 comp[think]: …… {里|さと} が {火事|かじ} を {思|おも}い{出|だ}せば 、 {本当|ほんとう} の こと も {字|じ} に {残|のこ}る 。 そう いう こと ね 。 || …If the village remembers the fire, the truth will stay on the page too. That's what you mean.
 !goto both
 :push
+!gesture comp shake
 comp[smile]: {優|やさ}しい の ね 。 でも それ 、 {二十年前|にじゅうねんまえ} の {私|わたし} と {同|おな}じ {台詞|せりふ} よ 。 || You're kind. But that's exactly the line I gave myself twenty years ago.
 !goto both
 :both
+!pose comp -
+!gesture comp nod pc
 comp: {火事|かじ} を {取|と}り{戻|もど}す の を 、 {手伝|てつだ}う わ 。 {全部|ぜんぶ} {終|お}わったら 、 {言|い}う 。 {今度|こんど} は {字|じ} が {消|き}えない よう に 。 || I'll help you bring the fire back. And when it's done, I'll tell him. So that this time the words don't fade.
+!gesture comp palm pc
 comp[smirk]: …… その {前|まえ} に 、 ヒロ が {今|いま} {何|なに} を {信|しん}じてる か 、 {確|たし}かめたい 。 {付|つ}いて {来|き}て くれる ？ {観客|かんきゃく} が いる と 、 {私|わたし} 、 {強|つよ}い の 。 || …Before that, I want to know what Hiro believes now. Will you come? I'm braver with an audience.
 !note co_suzu_ledger
 !quest co_suzu 1

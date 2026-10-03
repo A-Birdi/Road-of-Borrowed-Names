@@ -198,6 +198,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
     let key = String(frame);
     let hit = pcacheK.get(key);
     if (hit) return hit;
+    // a posed frame ('p:<pose>…', src/engine/32g_spritepose.js): the pose layer parses it
+    if (typeof frame === 'string' && frame[0] === 'p' && frame[1] === ':' && SP._pose) {
+      hit = SP._pose.parse(frame);
+      pcacheK.set(key, hit);
+      if (pcacheK.size > 4000) pcacheK.delete(pcacheK.keys().next().value);
+      return hit;
+    }
     let blink = false, kind = 'stand', ph = 0;
     if (frame === 3) blink = true;
     else if (frame === 1) { kind = 'walk'; ph = 0; }
@@ -242,6 +249,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     };
     g.low = { tunic: g.hem, apron: g.hem, coat: g.hem + (child ? 3 : 6), robe: child ? 51 : 51, dress: child ? 47 : 46 }[g.shape];
     if (g.shape === 'robe' || g.shape === 'dress') g.low += 0;
+    // a posed frame (32g_spritepose.js): its spec; a dropped body (kneel, sit) keeps a dress to the ground
+    if (pose.P) { g.P = pose.P; g.eyes = pose.P.eyes || null; g.mouth = pose.P.mouth || null; if (g.shape === 'dress') g.low = Math.min(52, g.low + Math.max(0, pose.drop || 0)); }
     g.apronLow = g.hem + (child ? 3 : 5);
     return g;
   }
@@ -434,6 +443,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Both arms are drawn as the screen-left one and mirrored about the centre line for the other.
   const mxr = (s, x, w) => (s ? W - x - (w || 1) : x);
   function handsFB(g, view) {
+    if (g.P && SP._pose) return SP._pose.handsFB(g, view, handsFB0(g, view));
+    return handsFB0(g, view);
+  }
+  function handsFB0(g, view) {
     const out = [];
     for (let s = 0; s < 2; s++) {
       const sw = g.pose.arms[sideAt(view, s)];
@@ -522,9 +535,19 @@ var RB = (globalThis.RB = globalThis.RB || {});
   ];
   // A front-view eye, 3 wide: a dark lid with a lash tick at the outer corner, the iris with a
   // glint towards the light and a lighter lower rim.
-  function eyeD(b, p, x, y, blink, left) {
+  function eyeD(b, p, x, y, blink, left, gz) {
     const o = left ? x - 1 : x + 3;
-    if (blink) { b.rect(x, y + 2, 3, 1, p.eye); b.px(o, y + 1, p.eye); return; }
+    if (blink || gz === 'c') { b.rect(x, y + 2, 3, 1, p.eye); b.px(o, y + 1, p.eye); return; }
+    // posed gaze (32g_spritepose.js): 'd' downcast under a heavy lid, 'u' up, 'l'/'r' to that side of the screen
+    if (gz === 'd') { b.rect(x, y + 1, 3, 1, p.eye); b.px(o, y + 1, p.eye); b.rect(x, y + 2, 3, 2, p.iris); b.rect(x, y + 3, 3, 1, p.irisL); return; }
+    if (gz === 'u') { b.rect(x, y, 3, 1, p.eye); b.px(o, y, p.eye); b.rect(x, y + 1, 3, 2, p.iris); b.px(x + 1, y + 1, p.eye); b.rect(x, y + 3, 3, 1, p.white); return; }
+    if (gz === 'l' || gz === 'r') {
+      const ix = gz === 'l' ? x : x + 1;
+      b.rect(x, y, 3, 1, p.eye); b.px(o, y, p.eye);
+      b.rect(gz === 'l' ? x + 2 : x, y + 1, 1, 3, p.white);
+      b.rect(ix, y + 1, 2, 3, p.iris); b.px(gz === 'l' ? ix : ix + 1, y + 1, p.eye); b.rect(ix, y + 3, 2, 1, p.irisL);
+      return;
+    }
     b.rect(x, y, 3, 1, p.eye);
     b.px(o, y, p.eye);
     b.rect(x, y + 1, 3, 3, p.iris);
@@ -542,12 +565,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
     b.rect(29, y0 + 8, 1, 3, sk.s); b.px(29, y0 + 10, sk.z);
     const ey = y0 + 8;
     b.rect(13, ey - 2, 3, 1, p.brow); b.rect(24, ey - 2, 3, 1, p.brow);
-    eyeD(b, p, 13, ey, blink, true);
-    eyeD(b, p, 24, ey, blink, false);
+    eyeD(b, p, 13, ey, blink, true, g.eyes);
+    eyeD(b, p, 24, ey, blink, false, g.eyes);
     if (look.age === 'old') { b.px(13, ey + 5, sk.s); b.px(26, ey + 5, sk.s); b.px(12, ey + 4, sk.s); b.px(27, ey + 4, sk.s); }
     else { b.rect(12, ey + 5, 2, 1, p.blush); b.rect(26, ey + 5, 2, 1, p.blush); }
     b.px(20, ey + 4, mix(sk.S, sk.s, 0.6)); // nose
-    b.rect(19, ey + 6, 2, 1, mix(p.mouth, sk.s, 0.25));
+    // posed mouth (32g_spritepose.js): 'o' open (a laugh, a gasp), 'w' a smile, 'f' pressed tight
+    if (g.mouth === 'o') { b.rect(19, ey + 6, 2, 2, mix(p.mouth, '#2a1418', 0.45)); b.px(19, ey + 6, mix(p.mouth, '#2a1418', 0.7)); }
+    else if (g.mouth === 'w') { b.rect(19, ey + 6, 2, 1, mix(p.mouth, sk.s, 0.15)); b.px(18, ey + 5, mix(p.mouth, sk.s, 0.35)); b.px(21, ey + 5, mix(p.mouth, sk.s, 0.35)); }
+    else if (g.mouth === 'f') b.rect(18, ey + 6, 4, 1, mix(p.mouth, '#2a1418', 0.25));
+    else b.rect(19, ey + 6, 2, 1, mix(p.mouth, sk.s, 0.25));
   }
   function headUp(b, look, p, g) {
     const y0 = g.fy, sk = p.skin;
@@ -564,14 +591,20 @@ var RB = (globalThis.RB = globalThis.RB || {});
     b.rect(18, y0 + 8, 2, 3, sk.s); b.px(18, y0 + 9, sk.z); b.px(19, y0 + 8, sk.S); // ear
     const ey = y0 + 8;
     b.rect(25, ey - 2, 3, 1, p.brow);
-    if (blink) { b.rect(25, ey + 2, 2, 1, p.eye); }
+    const gz = g.eyes;
+    if (blink || gz === 'c') { b.rect(25, ey + 2, 2, 1, p.eye); }
+    else if (gz === 'd') { b.rect(25, ey + 1, 2, 1, p.eye); b.px(24, ey + 1, p.eye); b.rect(25, ey + 2, 2, 2, p.iris); b.px(25, ey + 3, p.irisL); }
+    else if (gz === 'u') { b.rect(25, ey, 2, 1, p.eye); b.px(24, ey, p.eye); b.rect(25, ey + 1, 2, 2, p.iris); b.px(26, ey + 1, p.eye); b.rect(25, ey + 3, 2, 1, p.white); }
+    else if (gz === 'b') { b.rect(25, ey, 2, 1, p.eye); b.px(24, ey, p.eye); b.rect(25, ey + 1, 1, 3, p.iris); b.rect(26, ey + 1, 1, 3, p.white); b.px(25, ey + 1, p.eye); } // a look back over the shoulder
     else { b.rect(25, ey, 2, 1, p.eye); b.rect(25, ey + 1, 2, 3, p.iris); b.px(26, ey + 1, p.white); b.px(25, ey + 3, p.irisL); b.px(24, ey, p.eye); }
     if (look.age !== 'old') b.rect(25, ey + 4, 2, 1, p.blush);
     else { b.px(24, ey + 4, sk.s); }
     // the profile: a nose tip standing one pixel proud of the face, its
     // underside joined to it, and the mouth a small notch on the face's own
     // front edge (FACE_S ends at x 27 on that row) — nothing floats outside
-    b.px(27, ey + 5, p.mouth); b.px(26, ey + 5, mix(p.mouth, sk.S, 0.5));
+    if (g.mouth === 'o') { b.px(27, ey + 5, mix(p.mouth, '#2a1418', 0.5)); b.px(27, ey + 6, mix(p.mouth, '#2a1418', 0.3)); b.px(26, ey + 5, mix(p.mouth, sk.S, 0.5)); }
+    else if (g.mouth === 'w') { b.px(27, ey + 5, p.mouth); b.px(26, ey + 4, mix(p.mouth, sk.S, 0.45)); }
+    else { b.px(27, ey + 5, p.mouth); b.px(26, ey + 5, mix(p.mouth, sk.S, 0.5)); }
     b.px(30, ey + 2, sk.S); b.px(29, ey + 3, sk.s); // nose tip
   }
 
@@ -662,6 +695,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
   // the hand of one arm in the side view: swings ahead (+x) or behind with the opposite foot
   function sideHand(g, side) {
+    if (g.P && SP._pose) { const h = SP._pose.sideHand(g, side); if (h) return h; }
     const sw = g.pose.arms[side];
     const t = g.t + 1, len = g.bt - g.t + 1;
     return { x: 19 + sw * 4, y: t + len - Math.abs(sw), sw, t };
@@ -717,6 +751,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }
   }
   function humanoid(b, look, dir, pose) {
+    if (pose.P && SP._pose) return SP._pose.humanoid(b, look, dir, pose);
     const p = palette(look);
     const g = geom(look, pose);
     const blink = pose.blink;
@@ -827,6 +862,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     if (look.pet) return petOnFrame(look, dir, frame);
     frame = frame == null ? 0 : frame;
     const small = SP.get(look, dir, frame === 3 ? 3 : typeof frame === 'number' ? frame : 0);
+    if (typeof frame === 'string' && frame[0] === 'p' && frame[1] === ':' && SP._pose) return SP._pose.art(small, look, dir, frame, build);
     let m = art.get(small);
     if (!m) { m = new Map(); art.set(small, m); }
     let cv = m.get(frame);
@@ -875,5 +911,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
   SP.FRAME = { w: W, h: H };
   SP.ANCHOR = { x: AX, y: AY + TOP };
   SP.artW = W; SP.artH = H;
-  SP._art = { W, H, AX, AY, palette, geom, hairRamp, poseOf, handsFB, sideHand, sideAt, sp, mir, stamp, newMask, shadeMask, curlShade, foldShade, IVORY, set HAIR(v) { HAIR = v; }, get HAIR() { return HAIR; }, set drawHair(f) { drawHair = f; }, set ACC(v) { ACC = v; }, get ACC() { return ACC; } };
+  SP._art = { W, H, AX, AY, TOP, palette, geom, hairRamp, poseOf, handsFB, handsFB0, sideHand, sideAt, sp, mir, stamp, newMask, shadeMask, curlShade, foldShade, IVORY,
+    legsFB, garmentFB, armsFB, headDown, headUp, headSide, legsSide, garmentSide, armSide, accs: (...a) => accs(...a), hair: (...a) => drawHair(...a), set HAIR(v) { HAIR = v; }, get HAIR() { return HAIR; }, set drawHair(f) { drawHair = f; }, set ACC(v) { ACC = v; }, get ACC() { return ACC; } };
 })();

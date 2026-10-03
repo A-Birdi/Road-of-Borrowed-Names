@@ -17,7 +17,8 @@ below so the evidence can be matched.
 | Current pushed build for this ledger | `claude/stoic-sagan-n3jvgk` at `243069a`; root index.html SHA-256 begins `7bb6322662bf3d3d` |
 | Merged since | Animated dialogue portraits (`1be42bd`, pushed with `fe75862`) |
 | Also merged | Harmony art contract v2 (`996d195`); landmarks, bakery, floorboard and headroom (`089ade7`, plus `7b4ae3c`) |
-| Unmerged worker branches this ledger refers to | Overworld actor system at `77a3eee` plus uncommitted work; Harmony cut-in at `18cf5ea`; landmarks and bakery props, and the Harmony art contract (both just started) |
+| Also merged | Overworld actor system (`4a9c357`) and Masaru's kneading |
+| Unmerged worker branches this ledger refers to | Harmony cut-in overlay (`18cf5ea`; the worker is still running) |
 
 **Status words** follow the packet:
 - still observed;
@@ -33,19 +34,31 @@ checked in Firefox or on a real phone.
 
 The review classed this as an observed presentation gap.
 
-- **Owner:** the overworld actor-system worker. It has a pose layer, gesture library, mannerism profiles for
-  the player, the four companions and 71 recurring characters, occupation loops, and RB.staging for idle
-  life outside dialogue.
-- **On 243069a:** still observed. No actor system has been merged.
-- **On the worker branch:** partly addressed, retest pending after the merge.
-- **Next check:** the review's five places in their real story states: the Harbourmaster's office, the Cinder
-  glass workshop, the occupied Snowbell inn, the Lanternfall bakery, and the Archive camp. Observe each long
-  enough to see the routine's cadence, and record the duration. Then check idle → conversation → story cue →
-  return to task.
-- **Messages sent:** the worker has the review's acceptance list. That includes not assigning mannerisms from
-  appearance, and not drawing on the shared random state used to pick language tasks. The second already
-  exists as a known issue in HANDOFF.md.
-- **Limitation:** none of the review's five places has been retested yet.
+- **Owner:** the overworld actor-system worker. Merged in `4a9c357`; Masaru's kneading added by the lead in the
+  following commit.
+- **Status:** **partly addressed, retested on the merged build.**
+- **Five workplaces** were each watched for 45 s from the door, in real story states
+  (`tests/e2e/actor_workplaces.mjs`, 30/30):
+  - Ōmi writes at her desk.
+  - Hiro works the blowpipe while Isao watches.
+  - Yae stirs and counts in the storm-night inn.
+  - Isamu sits by the camp fire.
+  - Masaru kneads at his new bench.
+  - In each, the person works at their station before anyone speaks; no routine moves anyone off their place or
+    into a doorway; at most one thing happens at once.
+- **Idle → conversation → return:** Ōmi keeps her brush, faces you, plays no habit while spoken to, and
+  resumes writing 1.9–2.1 s after.
+- **Mannerisms** come from role, station and tool; none are inferred from glasses, age, dress, gender or skin.
+- **Shared random state:** world blink, glance and weather timers now use their own random streams, so idle
+  life no longer draws from the random numbers that pick language tasks. Foes' patrol steps still do.
+- **Evidence:**
+  - `docs/screenshots/actors/workplace_*.png` and `workplaces.txt`.
+  - `video/idle_life_co_eve.webm`.
+  - actor_life 39/39.
+- **Limitations:**
+  - Only 7 of the scene manifest's "performed overworld" scenes are staged.
+  - Legibility was judged by the worker from contact sheets, with no person's review on a real screen.
+  - Counting on fingers, eyes-only glances and gestures in the back view are weak at play scale.
 
 ## WR-02: held dialogue portraits are static; eye-area readability
 
@@ -79,13 +92,26 @@ The review classed this as measured static behaviour, plus a readability judgmen
 
 The review classed this as a specific staging mismatch.
 
-- **`sg.omi_wataru` in `sg.office` (Wataru and the Harbourmaster):** covered by the actor worker's showcase on
-  both routes. Partly addressed on the worker branch; retest pending after the merge.
-- **`co.hiro_first` in `co.glass` (Hiro's glassworking):** **still observed** on 243069a. This scene was not in
-  the actor worker's original list. It has now been asked to stage the blowpipe work: hands, tool, gather and
-  workstation, with a safe pause where the text lets the glass cool.
-- **Other replayed scenes:** `co.festival_begin`, `sb.eve_start`, `sb.path_enter`, `lf.town_intro`,
-  `sa.study_enter`, `lq.kh_arrive`. These are samples for after the merge, not a certificate.
+- **`co.hiro_first` (Hiro's glassworking): fixed and retested** (`4a9c357`).
+  - The blowpipe and gather keep turning on "can't let go".
+  - When he says he will listen he holds the gather still to cool, and goes back to the pipe about 3.9 s
+    later.
+  - Evidence: actor_workplaces (`workplace_glass.png`, `workplace_glass_after.png`).
+- **`sg.omi_wataru` (Wataru and the Harbourmaster): fixed and retested.**
+  - Ōmi writes, stops, listens, is firm without anger, and separates the two faults with a palm, a size
+    gesture and a point.
+  - Wataru flinches, exhales, takes the notice and reads it.
+  - Each companion responds in their own way.
+  - Both routes × 4 companions; speaker order and conditions exact; staged and unstaged runs end in the same
+    state.
+  - Evidence: `staging_wataru.mjs` 112/112; `docs/screenshots/actors/wataru_*.png`; two route clips.
+- **One staged interaction per chapter** (`staging_chapters.mjs` 66/66): `rw.hana_first`, `co.suzu_night`,
+  `sb.yae`, `lf.mio_refuse`, `sa.isamu_return`.
+- **Remaining:**
+  - The other replayed scenes (`co.festival_begin`, `sb.eve_start`, `sb.path_enter`, `lf.town_intro`,
+    `sa.study_enter`, `lq.kh_arrive`) are not yet staged.
+  - Approach from another side, absent actors and revisits are not covered.
+  - At 960×600 the dialogue sheet hides Ōmi while she speaks (noted by the worker).
 
 ## WR-04: four long-quest landmarks in an older style
 
@@ -133,15 +159,21 @@ The review classed this as a design judgment.
     spoken to from (3,3); (3,5), (2,4) and (4,4) still work.
 - **Evidence:** `docs/screenshots/bakery/` (before and after at 1280×800 and 390×844, with Masaru); landmarks
   test (door-to-table path, scene, Masaru reachable).
-- **Remaining:** Masaru's working action (WR-01), after the actor-system merge.
+- **Masaru's working action: done.** He kneads at the bench end (4,3), side-on so the work reads, and is talked to from (4,4). actor_workplaces asserts it (30/30).
+- **Status:** fixed and retested, apart from a person's judgment of the look.
 
 ## WR-06: intentional restraint must survive the animation work
 
 This is a safeguard, not a defect.
 
-- **Applies to:** all ongoing presentation work. Both world-life workers have the safeguard.
-- **Retest after the merges:** Lanternfall before and after its story change, a quiet Archive room, and the
-  occupied Snowbell inn, for varied rhythms rather than a universal busy loop.
+- **Status:** applied and partly retested.
+- **What was done:**
+  - Calmer moods for Lanternfall before its bell, for the Archive road, and for the storm-night inn.
+  - A cap on how many people act at once.
+  - No habits during scenes; Suzu's hand-on-hip stance never shows in conversation.
+- **Evidence:** actor_life, actor_workplaces ("not continuous spectacle"), staging_wataru.
+- **Not yet retested by eye:** Lanternfall before and after its story change, a quiet Archive room, the
+  occupied Snowbell inn.
 
 ## Known or reported items from the review's historical reconciliation
 

@@ -51,7 +51,12 @@ function jen(o, where) {
 const sceneRefs = new Map(); // id -> where
 const ref = (id, where) => { if (id && !sceneRefs.has(id)) sceneRefs.set(id, where); };
 const speakers = new Set(['narr', 'pc', 'comp', 'npc']);
-const OPS = new Set(['say', 'set', 'unset', 'var', 'give', 'take', 'word', 'technique', 'note', 'quest', 'if', 'goto', 'choice', 'call', 'end', 'challenge', 'activity', 'battle', 'lesson', 'teach', 'warp', 'music', 'sfx', 'emote', 'move', 'face', 'faceplayer', 'wait', 'fade', 'interlude', 'shake', 'autosave', 'checkpoint', 'chapter', 'card', 'journal', 'toast', 'travel', 'refresh', 'recruit', 'depart', 'heal', 'inn', 'shop', 'menu', 'postgame', 'credits', 'speakerless', 'hook']);
+const OPS = new Set(['say', 'set', 'unset', 'var', 'give', 'take', 'word', 'technique', 'note', 'quest', 'if', 'goto', 'choice', 'call', 'end', 'challenge', 'activity', 'battle', 'lesson', 'teach', 'warp', 'music', 'sfx', 'emote', 'move', 'face', 'faceplayer', 'wait', 'fade', 'interlude', 'shake', 'autosave', 'checkpoint', 'chapter', 'card', 'journal', 'toast', 'travel', 'refresh', 'recruit', 'depart', 'heal', 'inn', 'shop', 'menu', 'postgame', 'credits', 'speakerless', 'hook',
+  // scene direction (src/engine/52_staging.js; docs/expressive/CONTRACT.md §3.4): presentation only
+  'gesture', 'look', 'pose', 'walkto', 'prop', 'beat', 'ambience']);
+// staging ops: the actor a cue names must be someone a scene can stage
+const STAGE_ACTOR = (who) => who === 'pc' || who === 'comp' || who === 'npc' || !!C.chars[who];
+const STAGE_TARGET = (t) => t == null || t === '-' || /^(up|down|left|right)$/.test(t) || /^-?\d+,-?\d+$/.test(t) || /^prop:[a-z_0-9]+$/.test(t) || STAGE_ACTOR(t);
 for (const id in C.scenes) {
   if (filter && !id.startsWith(filter)) continue;
   const sc = C.scenes[id];
@@ -80,6 +85,37 @@ for (const id in C.scenes) {
     if (c.op === 'music' && a[0] !== '-' && RB.audio && RB.audio.songList && !RB.audio.songList().some((s) => s.id === a[0])) Wn(where(c) + ' unknown song ' + a[0]);
     if (c.op === 'recruit' && !['nao', 'mio', 'ren', 'suzu', 'none'].includes(a[0])) E(where(c) + ' bad recruit id');
     if (c.op === 'hook' && !(RB.hooks && RB.hooks[a[0]])) E(where(c) + ' unknown hook ' + a[0]);
+    // scene direction: known actors, gestures, poses, props, targets; a walk to whole tiles
+    if (['gesture', 'look', 'pose', 'walkto', 'prop'].includes(c.op) && !STAGE_ACTOR(a[0])) E(where(c) + ' !' + c.op + ': unknown actor ' + a[0]);
+    if (c.op === 'gesture') {
+      const g = RB.gestures && RB.gestures.get(a[1]);
+      if (!g && a[1] !== '-') E(where(c) + ' !gesture: unknown gesture ' + a[1]);
+      const o = RB.script.stageArgs(a.slice(2));
+      if (!STAGE_TARGET(o.target)) E(where(c) + ' !gesture: unknown target ' + o.target);
+      if (o.target2 && !STAGE_TARGET(o.target2)) E(where(c) + ' !gesture: unknown second target ' + o.target2);
+      if (o.prop && !RB.sprites._pose.hasProp(o.prop)) E(where(c) + ' !gesture: unknown prop ' + o.prop);
+      if (o.hand && !/^[RL]$/.test(o.hand)) E(where(c) + ' !gesture: hand must be R or L');
+      for (const t of o.then || []) if (!RB.gestures.get(t)) E(where(c) + ' !gesture: unknown gesture in then= ' + t);
+      const last = o.then && o.then.length ? RB.gestures.get(o.then[o.then.length - 1]) : g;
+      if (last && o.hold && !last.hold) Wn(where(c) + ' !gesture ' + a[1] + ' has no hold; it plays through');
+    }
+    if (c.op === 'look' && !STAGE_TARGET(a[1])) E(where(c) + ' !look: unknown target ' + a[1]);
+    if (c.op === 'pose' && a[1] !== '-' && !(RB.sprites._pose && RB.sprites._pose.has(a[1]))) E(where(c) + ' !pose: unknown pose ' + a[1]);
+    if (c.op === 'prop' && a[1] !== '-' && !(RB.sprites._pose && RB.sprites._pose.hasProp(a[1]))) E(where(c) + ' !prop: unknown prop ' + a[1]);
+    if (c.op === 'prop' && a[2] && !/^[RL]$/.test(a[2])) E(where(c) + ' !prop: hand must be R or L');
+    if (c.op === 'walkto' && !(/^\d+$/.test(a[1] || '') && /^\d+$/.test(a[2] || ''))) E(where(c) + ' !walkto: needs whole tile coordinates');
+    if (c.op === 'walkto' && a[3] && !/^(up|down|left|right|now|stay)$/.test(a[3])) E(where(c) + ' !walkto: unknown facing ' + a[3]);
+    if (c.op === 'beat' && !/^[a-z0-9_.-]+$/.test(a[0] || '')) E(where(c) + ' !beat: needs an id');
+    if (c.op === 'ambience' && a[0] !== '-' && !(RB.staging && RB.staging.AMBIENCE[a[0]])) E(where(c) + ' !ambience: unknown preset ' + a[0]);
+  }
+  // the same person with the same generic gesture on two adjacent lines reads as a loop (§11.3)
+  let prevG = new Set(), curG = new Set();
+  for (const c of sc.cmds) {
+    if (c.op === 'say') { prevG = curG; curG = new Set(); continue; }
+    if (c.op !== 'gesture') continue;
+    const k = (c.if || '') + '|' + c.args[0] + '|' + c.args[1];
+    if (prevG.has(k) && !['listen', 'nod'].includes(c.args[1])) Wn(where(c) + ' ' + c.args[0] + ' ' + c.args[1] + ' again on the next line');
+    curG.add(k);
   }
 }
 

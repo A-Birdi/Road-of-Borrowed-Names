@@ -27,6 +27,9 @@ const suites = [
   ['company_pets.mjs'],
   ['dialect_kansai.mjs'], // Suzu's optional Kansai-ben: the choice, Settings, Company › Suzu, word help, saves (docs/dialect/suzu_kansai.md)
   ['addendum_integration.mjs'],
+  // overworld actors: idle life in each chapter, Wataru and Omi (both routes x 4 companions), one performed
+  // scene per chapter (docs/expressive/GESTURES.md §9); actor_workplaces.mjs (5 x 45 s) runs on its own
+  ['actor_life.mjs'], ['staging_chapters.mjs'], ['staging_wataru.mjs'],
   // the two quest lines across the chapters (fixtures; --full adds all four
   // companions and a whole-game run with both lines as goals)
   full ? ['long_quests.mjs', '--all-companions'] : ['long_quests.mjs', '--fixtures-only'],

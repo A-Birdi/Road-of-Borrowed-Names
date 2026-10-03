@@ -366,7 +366,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'lf_breadrack', x: 4, y: 2 }, { p: 'lf_kneadbench', x: 2, y: 3 },
     ],
     npcs: [
-      { id: 'lf_masaru', x: 3, y: 4, dir: 'down', talk: [{ if: 'post', scene: 'lf.masaru_post' }, { if: 'lf_bell_rung', scene: 'lf.masaru_after' }, { scene: 'lf.masaru' }] },
+      { id: 'lf_masaru', x: 4, y: 3, dir: 'left', talk: [{ if: 'post', scene: 'lf.masaru_post' }, { if: 'lf_bell_rung', scene: 'lf.masaru_after' }, { scene: 'lf.masaru' }] },
     ],
     spawn: { default: [3, 6, 'up'] },
   });
