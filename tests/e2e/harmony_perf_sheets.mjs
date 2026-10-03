@@ -147,7 +147,7 @@ for (const comp of comps) {
     });
     const T = await p.evaluate((c) => RB.partyChoreo.TECH[c], comp);
     const sig = T.pAt + T.pAnt;
-    const times = [0, 300, T.pAt + T.pAnt * 0.5, sig, sig + T.pAct * 0.2, sig + T.pAct * 0.4, sig + T.pAct * 0.6, sig + T.pAct, T.contact, T.contact + 120, T.contact + 300, T.contact + 480, T.rec + 60 + T.recD * 0.5, T.end - 20].map(Math.round);
+    const times = [0, 300, T.pAt + T.pAnt * 0.5, sig, sig + T.pAct * 0.2, sig + T.pAct * 0.4, sig + T.pAct * 0.6, sig + T.pAct, T.contact, T.contact + 120, T.contact + 300, T.contact + 480, T.rec + 60 + T.recD * 0.5, T.end - 20].map(Math.round).sort((x, y) => x - y).filter((x, i, a) => !i || x - a[i - 1] >= 40);
     const shots = [];
     for (const tt of times) {
       await p.waitForFunction((tt) => { const c = RB.battleSeq.current(); return !c || c.t >= tt; }, tt, { timeout: 30000, polling: 'raf' });
