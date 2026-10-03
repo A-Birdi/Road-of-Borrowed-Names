@@ -66,7 +66,7 @@ RB.dialect.add('kansai', `
 > …… ここ まで は 、 {来|こ}んかった 。 あの {夜|よる} は 。 || …I never came this far up. Not that night.
 @ ch3/upper:18 [co.upper_stone]
 = {石|いし} は {黙|だま}って {残|のこ}る 、 か 。 …… {私|わたし} と {逆|ぎゃく} ね 。 よく {喋|しゃべ}って 、 {残|のこ}らない 。 || Stone stays silent and remains. …The opposite of me. I talk a lot and never stay.
-> {石|いし} は {黙|だま}って {残|のこ}る 、 か 。 …… うち と {逆|ぎゃく} や な 。 よう しゃべって 、 {残|のこ}らへん 。 || Stone stays quiet and stays put. …The opposite of me. I talk a blue streak and never stay.
+> {石|いし} は {黙|だま}って {残|のこ}る 、 か 。 …… うち と {逆|ぎゃく} や な 。 よう {喋|しゃべ}って 、 {残|のこ}らへん 。 || Stone stays quiet and stays put. …The opposite of me. I talk a blue streak and never stay.
 @ ch3/upper:26 [co.upper_wall]
 = {舞台|ぶたい} の {大道具|おおどうぐ} と {同|おな}じ よ 。 {名前|なまえ} を {呼|よ}んで あげる と 、 {立|た}つ の 。 …… たぶん 。 || Same as stage sets. Call them by name and they stand up. …Probably.
 > {舞台|ぶたい} の {大道具|おおどうぐ} と {一緒|いっしょ} や 。 {名前|なまえ} を {呼|よ}んだら 、 {立|た}つ ねん 。 …… たぶん な 。 || Same as stage sets. Call 'em by name and they stand right up. …Probably.

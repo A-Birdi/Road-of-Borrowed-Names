@@ -85,6 +85,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     Object.assign(K('もん', '', 'n', 'E', 'thing; (at the end) because, you see', 'もの'), { casual: true }),
     Object.assign(K('おしまい', '', 'n', 'E', 'the end; that\'s all', '終わり'), { casual: true }),
     Object.assign(K('とこ', '', 'n', 'E', 'place; point; moment', 'ところ'), { casual: true }),
+    // ---- ordinary words whose kana spelling the standard lexicon reads as another word -----------
+    Object.assign(K('なし', '', 'n', 'E', 'none; without (無し)', '無し'), { plain: true }),
   ], 'kansai');
   // うち before に is usually "while" (〜うちに), not "I"
   for (const e of RB.dialect.lexAll()) if (e.w === 'うち') e.notNext = ['に'];

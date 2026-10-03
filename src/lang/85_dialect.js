@@ -166,7 +166,8 @@ RB.dialect = (function () {
     const fin = isFinal(tokens, i), prev = hasPrev(tokens, i), nx = nextWord(tokens, i);
     // an entry fits its place: `final` ones end a sentence after a word; `initial` ones open it;
     // `notNext` lists words after which this is not the Kansai word (うち に = "while", not "I …")
-    return list.find((e) => (!e.final || (fin && prev)) && (!e.initial || !prev) && !(e.notNext && nx && e.notNext.indexOf(nx.surface) >= 0)) || null;
+    // (notNext applies after a word: 観客 が いてる うち に = "while"; …… うち に は = "to me")
+    return list.find((e) => (!e.final || (fin && prev)) && (!e.initial || !prev) && !(e.notNext && prev && nx && e.notNext.indexOf(nx.surface) >= 0)) || null;
   }
   // a word before this one in the same sentence
   function hasPrev(tokens, i) {
@@ -303,7 +304,7 @@ RB.dialect = (function () {
   const OVERRIDE = { 'おる': 'おる' };
   // word help: a note under the meaning for a Kansai word or form
   function note(info) {
-    if (!info || !info.dia) return '';
+    if (!info || !info.dia || (info.entry && info.entry.plain)) return '';
     if (info.entry && info.entry.casual) return 'Casual speech (not only Kansai). The fuller form: ' + info.dia.std + '.';
     return 'Kansai dialect (関西弁). In standard Japanese: ' + info.dia.std + '. Suzu speaks Kansai-ben because you chose it; the game\'s exercises and answers always use standard Japanese.';
   }
