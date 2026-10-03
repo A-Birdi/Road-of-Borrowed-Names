@@ -31031,6 +31031,130 @@ RB.world = (function () {
 })();
 
 
+/* ==== src/engine/52_travel.js ==== */
+/* Quick travel: where the Map tab's Travel list works, and why it doesn't
+ * where it doesn't (docs/CONTENT.md "Quick travel").
+ *
+ * Travel works from anywhere out in the open — towns, roads, the wilderness,
+ * beaches — when nothing is under way (no scene, battle, transition or
+ * activity). It does not work on a map with `noTravel: true`, which says
+ * what kind of place it is:
+ *   - a building: travelKind 'interior' (the chapters' interior() helpers set
+ *     it; region 'interior' or def.indoor count as well);
+ *   - a dungeon or sealed place: travelKind 'dungeon', with travelPlace
+ *     naming the whole place ({ en: 'the Drowned Archive' });
+ *   - a map where leaving mid-sequence would break the story (or an
+ *     expedition's own flow): noTravelWhy { en, jp? }, the authored reason
+ *     (kind 'story', or travelKind 'expedition').
+ * travelPlace { en } may also name a building whose own name reads badly in
+ * a sentence. A `noTravel` map with no kind is an error (tools/validate.mjs,
+ * tests/unit/travel_rules.test.mjs). The way out is found the way people find
+ * theirs (RB.world.towards: exits and doors usable now, locks respected). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.travel = (function () {
+  'use strict';
+  const KINDS = ['interior', 'dungeon', 'story', 'expedition'];
+  const NEEDS_WHY = ['story', 'expedition'];
+
+  // 'open' | 'interior' | 'dungeon' | 'story' | 'expedition' | null (a noTravel map with no kind)
+  function kindOf(def) {
+    if (!def || !def.noTravel) return 'open';
+    if (def.travelKind) return def.travelKind;
+    if (def.noTravelWhy) return 'story';
+    if (def.region === 'interior' || def.indoor) return 'interior';
+    return null;
+  }
+  const opens = (def) => kindOf(def) === 'open';
+
+  // How a sentence names the place you are in: "the Tide-Watch Hut", "Isamu's
+  // House", "No. 2 Warehouse", "the Gull"; and a place a way leads to:
+  // "Saltglass", "the Mill Road".
+  function placeIn(def) {
+    if (def && def.travelPlace && def.travelPlace.en) return def.travelPlace.en;
+    const en = (def && def.name && def.name.en) || '';
+    if (!en) return 'this place';
+    if (/^the\s/i.test(en)) return 'the' + en.slice(3);
+    if (/['’]s\b|^No\.|^\d/.test(en)) return en;
+    return 'the ' + en;
+  }
+  function placeTo(def) {
+    const en = (def && def.name && def.name.en) || 'somewhere';
+    return /^the\s/i.test(en) ? 'the' + en.slice(3) : en;
+  }
+
+  // The nearest map where travel works, through exits and doors usable now:
+  // { to, via, hops, door } (door: this map's only way out leads straight
+  // there), or null when there is no way out just now.
+  function wayOut(from) {
+    const C = RB.content;
+    if (!RB.world || !RB.world.towards || !C.maps[from]) return null;
+    const dests = Object.keys(C.maps).filter((id) => id !== from && opens(C.maps[id]));
+    const hop = RB.world.towards(from, dests);
+    if (!hop) return null;
+    const links = RB.world.linksOf(from);
+    return { to: hop.to, via: hop.via, hops: hop.hops, door: hop.hops === 1 && links.length === 1 };
+  }
+
+  // Something under way: the folio opened over a conversation (History), or
+  // anything but the world beneath it. null when nothing is.
+  function underway() {
+    const g = RB.game;
+    if (!g || !g.s) return 'busy';
+    const modes = ((g.G && g.G.modes) || []).filter((m) => m !== 'menu');
+    const scene = RB.script && RB.script.isRunning && RB.script.isRunning();
+    if (scene || modes.includes('dialogue')) return 'scene';
+    if (g.mode() !== 'menu' || !modes.length || modes.some((m) => m !== 'world')) return 'busy';
+    return null;
+  }
+
+  // What the Travel list says about the map you are on: { ok, kind, en }.
+  function status(mapId) {
+    const C = RB.content, s = RB.game && RB.game.s;
+    const id = mapId || (s && s.map), def = C.maps[id] || {};
+    const kind = kindOf(def);
+    if (kind !== 'open') {
+      if (def.noTravelWhy && def.noTravelWhy.en) return { ok: false, kind, en: def.noTravelWhy.en };
+      const here = placeIn(def), way = wayOut(id), to = way && placeTo(C.maps[way.to]);
+      if (kind === 'interior') {
+        if (!way) return { ok: false, kind, en: 'You\'re inside ' + here + ', and there\'s no way out just now. Travel works again once you can step outside.' };
+        if (way.door) return { ok: false, kind, en: 'You\'re inside ' + here + '. Step out through the door to travel.' };
+        return { ok: false, kind, en: 'You\'re inside ' + here + '. Step outside to travel — the nearest way out leads to ' + to + '.' };
+      }
+      // a dungeon (and, should one ever be left unclassified, any other closed place)
+      return { ok: false, kind: kind || 'closed', en: 'You\'re in ' + here + '. Travel works again once you\'re back out in the open' + (way ? ' — the way out leads to ' + to + '.' : '.') };
+    }
+    const busy = underway();
+    if (busy === 'scene') return { ok: false, kind: 'scene', en: 'A conversation is under way. Travel works again once it\'s over.' };
+    if (busy) return { ok: false, kind: 'busy', en: 'Something is under way just now. Travel works again once it\'s over.' };
+    return { ok: true, kind: 'open', en: '' };
+  }
+
+  // Authoring problems of one map's travel fields (tools/validate.mjs, the unit test).
+  function problems(id, def) {
+    const out = [], k = kindOf(def);
+    const travelFields = ['travelKind', 'noTravelWhy', 'travelPlace'].filter((f) => def[f] != null);
+    if (def.noTravel && !k) out.push('noTravel without a kind: add travelKind (\'interior\' or \'dungeon\') or an authored noTravelWhy { en }');
+    if (k && k !== 'open' && KINDS.indexOf(k) < 0) out.push('unknown travelKind ' + JSON.stringify(k) + ' (one of ' + KINDS.join(', ') + ')');
+    if (!def.noTravel && travelFields.length) out.push(travelFields.join(', ') + ' on a map where travel works (it has no noTravel)');
+    if (!def.noTravel && (def.region === 'interior' || def.indoor)) out.push('an interior where travel works: add noTravel: true');
+    if (NEEDS_WHY.indexOf(k) >= 0 && !(def.noTravelWhy && def.noTravelWhy.en)) out.push(k + ' lock without its reason (noTravelWhy { en })');
+    for (const f of ['noTravelWhy', 'travelPlace']) {
+      const o = def[f];
+      if (o == null) continue;
+      if (typeof o !== 'object' || typeof o.en !== 'string' || !o.en.trim()) { out.push(f + ' needs English: { en: \'…\' }'); continue; }
+      if (o.jp != null) {
+        if (typeof o.jp !== 'string') out.push(f + '.jp is not a string');
+        else for (const p of RB.jp.validate(o.jp)) out.push(f + '.jp: ' + (p.msg || p.code) + ' in “' + o.jp.slice(0, 40) + '”');
+      }
+    }
+    return out.map((m) => 'map ' + id + ': ' + m);
+  }
+
+  return { KINDS, kindOf, opens, placeIn, placeTo, wayOut, underway, status, problems };
+})();
+
+
 /* ==== src/engine/55_fieldweave.js ==== */
 /* Field Inkweaving: authored field puzzles, their durable state, and the three
  * separate layers of a field action (addendum §13; docs/ADDENDUM_CONTRACTS.md;
@@ -47760,14 +47884,16 @@ RB.ui.menu = (function () {
   function mapChart(A, B, two, nav, navClick) {
     const s = RB.game.s;
     const curMap = RB.content.maps[s.map] || {};
-    const canTravel = !curMap.noTravel && RB.game.mode() === 'menu';
+    // out in the open with nothing under way; otherwise why not, in the place's own terms (src/engine/52_travel.js)
+    const tr = RB.travel.status(s.map);
+    const canTravel = tr.ok && RB.game.mode() === 'menu';
     const places = Object.keys(RB.content.places).map((id) => Object.assign({ id }, RB.content.places[id])).filter((p) => s.travel[p.id]);
     const gm = guideMarks(s);
     const chart = '<div class="chartbox" tabindex="-1">' + chartSvg(s, curMap) + '</div><p class="muted small">Solid lines are roads you have walked; dashed lines are roads you have heard of. The red mark is where you are.' +
       (gm ? ' The amber diamond marks where the next step of the quest you follow is.' : '') + '</p>' +
       (gm ? '<p class="note-slip next-note">' + I('follow') + ' <span>Next step of <b>' + esc(gm.title.en) + '</b>: ' + esc(gm.places.map((id) => (s.travel[id] ? RB.content.places[id].name.en : 'a place you have not reached yet')).join(', ')) + '.</span></p>' : '');
     const list = '<h3>' + I('travel') + ' Travel <span class="count">' + places.length + ' known</span></h3>' +
-      (canTravel ? '' : '<p class="note-slip warn">You can’t travel quickly from here. Step outside first.</p>') +
+      (canTravel ? '' : '<p class="note-slip warn travel-why" data-kind="' + esc(tr.kind) + '">' + esc(tr.en || 'You can’t travel quickly from here just now.') + '</p>') +
       '<ul class="entries">' + places.map((p) => {
         const here = curMap.region && p.region === curMap.region && p.hub;
         const next = gm && gm.places.includes(p.id);
@@ -47778,7 +47904,7 @@ RB.ui.menu = (function () {
     const handler = async (e) => {
       if (navClick(e)) return;
       const b = e.target.closest('[data-go]');
-      if (!b) return;
+      if (!b || !RB.travel.status(RB.game.s.map).ok) return;
       const p = RB.content.places[b.dataset.go];
       close();
       await RB.game.transition(p.map, p.x, p.y, p.dir || 'down');
@@ -81112,7 +81238,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- the mill -----------------------------------------------------------------------
   C.maps['rw.mill1'] = {
-    name: T('The Old Mill', '{古|ふる}い {水車|すいしゃ}{小屋|ごや}'), region: 'reedwake', music: 'mill', noTravel: true,
+    name: T('The Old Mill', '{古|ふる}い {水車|すいしゃ}{小屋|ごや}'), region: 'reedwake', music: 'mill', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the Old Mill' },
     ambient: { dark: 0.45, playerLight: 52, weather: 'motes' },
     terrain: K.build(15, 12, '#', (k) => { k.rect(1, 2, 13, 9, '_'); k.set(7, 11, '_'); k.rect(11, 8, 2, 2, '+'); }),
     props: [
@@ -81135,7 +81261,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     spawn: { default: [7, 10, 'up'] },
   };
   C.maps['rw.mill2'] = {
-    name: T('The Mill Loft', '{屋根裏|やねうら}'), region: 'reedwake', music: 'mystery', noTravel: true,
+    name: T('The Mill Loft', '{屋根裏|やねうら}'), region: 'reedwake', music: 'mystery', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the Old Mill' },
     ambient: { dark: 0.5, playerLight: 48, weather: 'motes' },
     terrain: K.build(13, 9, '#', (k) => { k.rect(1, 2, 11, 6, '_'); }),
     props: [
@@ -81151,7 +81277,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // the ladder is a special exit: stepping onto the bottom of the loft ladder goes down
   C.maps['rw.mill2'].terrain = K.build(13, 9, '#', (k) => { k.rect(1, 2, 11, 6, '_'); k.set(2, 8, '_'); });
   C.maps['rw.mill0'] = {
-    name: T('The Wheel Pit', '{水車|すいしゃ} の {下|した}'), region: 'reedwake', music: 'mill', noTravel: true,
+    name: T('The Wheel Pit', '{水車|すいしゃ} の {下|した}'), region: 'reedwake', music: 'mill', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the Old Mill' },
     ambient: { dark: 0.55, playerLight: 46 },
     terrain: K.build(16, 10, '#', (k) => { k.rect(1, 2, 14, 7, '+'); k.rect(6, 2, 3, 7, '~'); k.hline(6, 8, 5, 'b'); k.set(2, 9, '+'); }),
     props: [
@@ -84786,7 +84912,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- interiors -------------------------------------------------------------------------------------
   function interior(id, name, w, h, doorX, back, extra) {
     C.maps[id] = Object.assign({
-      name, region: 'saltglass', music: null, noTravel: true,
+      name, region: 'saltglass', music: null, noTravel: true, travelKind: 'interior',
       terrain: K.room(w, h, '_', doorX),
       props: [],
       npcs: [],
@@ -84931,6 +85057,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }
     C.maps['sg.lighthouse_top'] = {
       name: T('Top of the Lighthouse', '{灯台|とうだい} の {上|うえ}'), region: 'saltglass', music: null, noTravel: true,
+      travelKind: 'dungeon', travelPlace: { en: 'the lighthouse' }, // up a tower: travel from the ground (src/engine/52_travel.js)
       surround: 'sea',
       ambient: { weather: null, sea: 'calm' },
       alt: [{ if: 'sg_fog_cleared', ambient: { weather: null, sea: 'wind' } }],
@@ -84986,7 +85113,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- The fishers' cove -----------------------------------------------------------------------------
   C.maps['sg.cove'] = {
-    name: { en: "The Fishers' Cove", jp: '{漁師|りょうし} の {入|い}り{江|え}' }, region: 'saltglass', music: 'quiet_road', noTravel: true,
+    name: { en: "The Fishers' Cove", jp: '{漁師|りょうし} の {入|い}り{江|え}' }, region: 'saltglass', music: 'quiet_road',
     terrain: K.build(30, 20, 's', (k) => {
       k.rect(0, 0, 30, 4, '^');
       k.ragged('top', '^', 5, 51);
@@ -85017,7 +85144,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
 
   // ---- The Drowned Archive ------------------------------------------------------------------------------
-  const DA = { region: 'archive', music: 'drowned_archive', noTravel: true, ambient: { weather: 'pages', dark: 0.42, playerLight: 52, tint: 'rgba(40,70,110,0.10)' } };
+  const DA = { region: 'archive', music: 'drowned_archive', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the Drowned Archive' }, ambient: { weather: 'pages', dark: 0.42, playerLight: 52, tint: 'rgba(40,70,110,0.10)' } };
   C.maps['sg.da_entry'] = Object.assign({}, DA, {
     name: { en: 'Drowned Archive — Receiving Hall', jp: '{沈|しず}んだ{書庫|しょこ}・{受付|うけつけ}' },
     terrain: K.build(24, 18, '#', (k) => {
@@ -89236,6 +89363,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Dusk: the village gathers in the square (the assembly runs as one scene).
   C.maps['co.eve'] = {
     name: T('Cinder Orchard at dusk', '{夕暮|ゆうぐ}れ の {灰実|はいみ}'), region: 'cinder', music: 'sorrow', noTravel: true,
+    noTravelWhy: { en: 'The village is gathered in the square for the evening. Travel works again once it\'s over.' },
     ambient: { weather: 'leaves', tint: 'rgba(200,90,40,0.16)', dark: 0.25, darkCol: '60,20,10', playerLight: 40 },
     terrain: villageTerrain(), structs: villageStructs.map((s) => Object.assign({}, s, { to: undefined, lit: true })),
     props: villageProps.filter((p) => p.p !== 'co_seat' && p.p !== 'co_glasslantern').concat([
@@ -89257,6 +89385,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Festival night.
   C.maps['co.festival'] = {
     name: T('The Autumn Festival', '{秋祭|あきまつ}り'), region: 'cinder', music: 'cinder', noTravel: true,
+    noTravelWhy: { en: 'Tonight is the festival — the road can wait until tomorrow. When you\'re ready, climb the fire lookout at the corner of the square.' },
     ambient: { weather: 'fireflies', dark: 0.55, darkCol: '20,10,30', playerLight: 46 },
     terrain: villageTerrain(), structs: villageStructs.map((s) => Object.assign({}, s, { to: undefined, lit: true })),
     props: villageProps.filter((p) => p.p !== 'co_seat' && p.p !== 'co_glasslantern' && p.p !== 'co_lookout').concat([
@@ -89295,7 +89424,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ======================================================================================
   function interior(id, name, w, h, doorX, backXY, extra) {
     C.maps[id] = Object.assign({
-      name, region: 'cinder', music: null, noTravel: true,
+      name, region: 'cinder', music: null, noTravel: true, travelKind: 'interior',
       terrain: K.room(w, h, '_', doorX),
       props: [{ p: 'exitmat', x: doorX, y: h - 2 }],
       npcs: [],
@@ -89479,7 +89608,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Dungeon 1: the upper terraces (burned twenty years ago, replanted in rows)
   // ======================================================================================
   C.maps['co.upper'] = {
-    name: T('The Upper Terraces', '{上|うえ} の {段|だん}'), region: 'cinder', music: 'mystery', noTravel: true,
+    name: T('The Upper Terraces', '{上|うえ} の {段|だん}'), region: 'cinder', music: 'mystery',
     ambient: { weather: 'motes', tint: 'rgba(90,70,60,0.12)' },
     legend: { Y: { tile: 'ash', prop: 'orchard' }, Z: { tile: 'ash', prop: 'stump' } },
     terrain: K.build(40, 30, 'a', (k) => {
@@ -89527,7 +89656,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Dungeon 2: the old workshop row (burned shells) + ice house
   // ======================================================================================
   C.maps['co.oldworks'] = {
-    name: T('The Old Workshop Row', '{古|ふる}い {工房|こうぼう}{通|どお}り'), region: 'cinder', music: 'mystery', noTravel: true,
+    name: T('The Old Workshop Row', '{古|ふる}い {工房|こうぼう}{通|どお}り'), region: 'cinder', music: 'mystery',
     ambient: { weather: 'motes', tint: 'rgba(100,60,40,0.14)', dark: 0.12 },
     terrain: K.build(40, 26, 'a', (k) => {
       k.ragged('left', 'n', 2, 341).ragged('right', 'n', 2, 342);
@@ -89581,7 +89710,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
 
   C.maps['co.icehouse'] = {
-    name: T('The Ice House', '{氷室|ひむろ}'), region: 'cinder', music: null, noTravel: true,
+    name: T('The Ice House', '{氷室|ひむろ}'), region: 'cinder', music: null, noTravel: true, travelKind: 'interior',
     ambient: { dark: 0.35, tint: 'rgba(150,200,255,0.12)', playerLight: 40 },
     terrain: K.build(11, 10, '#', (k) => { k.rect(1, 2, 9, 7, 'i'); k.rect(4, 6, 3, 3, '+'); k.set(5, 9, '+'); }),
     props: [
@@ -89599,7 +89728,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Dungeon 3: inside the great climbing kiln — three chambers stepping uphill
   // ======================================================================================
   C.maps['co.kiln'] = {
-    name: T('The Great Kiln', '{大窯|おおがま}'), region: 'cinder', music: 'kiln', noTravel: true,
+    name: T('The Great Kiln', '{大窯|おおがま}'), region: 'cinder', music: 'kiln', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the Great Kiln' },
     ambient: { weather: 'embers', dark: 0.45, darkCol: '30,8,4', tint: 'rgba(255,110,40,0.08)', playerLight: 48 },
     terrain: K.build(30, 24, '#', (k) => {
       k.rect(2, 17, 26, 5, '+');           // chamber 1 (lowest, firemouth side)
@@ -89637,7 +89766,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
 
   C.maps['co.kiln_core'] = {
-    name: T("The Kiln's Heart", '{窯|かま}の{奥|おく}'), region: 'cinder', music: 'kiln', noTravel: true,
+    name: T("The Kiln's Heart", '{窯|かま}の{奥|おく}'), region: 'cinder', music: 'kiln', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the Great Kiln' },
     ambient: { weather: 'embers', dark: 0.4, darkCol: '40,8,0', tint: 'rgba(255,90,30,0.12)', playerLight: 50 },
     terrain: K.build(15, 12, '#', (k) => { k.rect(1, 2, 13, 9, 'g'); k.scatter('a', 20, 361, [1, 2, 13, 9], 'g'); k.set(7, 11, 'g'); }),
     props: [
@@ -89653,7 +89782,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // The top of the fire lookout: a platform over the lanterns.
   C.maps['co.lookout'] = {
-    name: T('The Lookout', '{火|ひ}の{見|み}{櫓|やぐら}'), region: 'cinder', music: 'quiet_road', noTravel: true,
+    name: T('The Lookout', '{火|ひ}の{見|み}{櫓|やぐら}'), region: 'cinder', music: 'quiet_road',
     ambient: { weather: 'fireflies', dark: 0.5, darkCol: '14,8,26', playerLight: 44 },
     terrain: K.build(16, 12, 'x', (k) => { k.rect(5, 4, 6, 4, '_'); }),
     props: [
@@ -93813,7 +93942,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- interiors ---------------------------------------------------------------------------------
   function interior(id, name, w, h, doorX, backTo, backXY, extra) {
     C.maps[id] = Object.assign({
-      name, region: 'snowbell', music: null, noTravel: true,
+      name, region: 'snowbell', music: null, noTravel: true, travelKind: 'interior',
       terrain: K.room(w, h, '_', doorX),
       props: [{ p: 'exitmat', x: doorX, y: h - 2 }],
       npcs: [],
@@ -93872,6 +94001,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Upstairs: the travellers' room.
   C.maps['sb.inn_room'] = {
     name: T('Upstairs at Yukimiya', '{雪見屋|ゆきみや} の {二階|にかい}'), region: 'snowbell', music: 'quiet_road', noTravel: true,
+    travelKind: 'interior', travelPlace: { en: 'the upstairs room at Yukimiya' },
     ambient: { get dark() { return storm() ? 0.5 : 0.15; }, playerLight: 30 },
     terrain: K.build(9, 8, '#', (k) => { k.rect(1, 2, 7, 5, 'm'); k.set(7, 6, '_'); }),
     props: [
@@ -93970,7 +94100,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const lampLit = () => { const s = RB.game && RB.game.s; return !!(s && s.flags.sb_lamp_lit); };
 
   C.maps['sb.obs_path'] = {
-    name: T('The Star Stair', '{星|ほし} の {石段|いしだん}'), region: 'snowbell', music: 'observatory', noTravel: true,
+    name: T('The Star Stair', '{星|ほし} の {石段|いしだん}'), region: 'snowbell', music: 'observatory',
     ambient: { weather: 'snow', get dark() { return lampLit() ? 0.2 : 0.1; }, tint: 'rgba(170,190,230,0.08)' },
     terrain: K.build(28, 40, '*', (k) => {
       k.ragged('left', 'P', 3, 61).ragged('right', 'P', 3, 62);
@@ -94032,7 +94162,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
 
   C.maps['sb.obs_hall'] = {
-    name: T('Observatory — Ground Floor', '{天文台|てんもんだい} {一階|いっかい}'), region: 'snowbell', music: 'observatory', noTravel: true,
+    name: T('Observatory — Ground Floor', '{天文台|てんもんだい} {一階|いっかい}'), region: 'snowbell', music: 'observatory', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the Observatory' },
     ambient: { dark: 0.35, playerLight: 46, tint: 'rgba(150,190,240,0.08)' },
     terrain: K.build(20, 16, '#', (k) => {
       k.rect(1, 2, 18, 13, '+');
@@ -94068,7 +94198,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
 
   C.maps['sb.obs_charts'] = {
-    name: T('The Chart Room', '{星図|せいず} の {部屋|へや}'), region: 'snowbell', music: 'observatory', noTravel: true,
+    name: T('The Chart Room', '{星図|せいず} の {部屋|へや}'), region: 'snowbell', music: 'observatory', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the Observatory' },
     ambient: { get dark() { const s = RB.game && RB.game.s; return s && s.flags.sb_stove_lit ? 0.2 : 0.4; }, playerLight: 44 },
     terrain: K.build(16, 12, '#', (k) => {
       k.rect(1, 2, 14, 9, '+');
@@ -94102,7 +94232,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
 
   C.maps['sb.obs_gallery'] = {
-    name: T('The Upper Gallery', '{上|うえ} の {回廊|かいろう}'), region: 'snowbell', music: 'observatory', noTravel: true,
+    name: T('The Upper Gallery', '{上|うえ} の {回廊|かいろう}'), region: 'snowbell', music: 'observatory', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the Observatory' },
     ambient: { dark: 0.4, playerLight: 46, tint: 'rgba(150,190,240,0.06)' },
     terrain: K.build(20, 14, '#', (k) => {
       k.rect(1, 2, 18, 11, '+');
@@ -94136,7 +94266,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
 
   C.maps['sb.obs_dome'] = {
-    name: T('The Lamp Room', '{灯|ひ} の {間|ま}'), region: 'snowbell', noTravel: true,
+    name: T('The Lamp Room', '{灯|ひ} の {間|ま}'), region: 'snowbell', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the Observatory' },
     music: [{ if: 'sb_lamp_lit', id: 'wonder' }, { id: 'observatory' }],
     ambient: { get dark() { return lampLit() ? 0.15 : 0.5; }, playerLight: 40, get tint() { return lampLit() ? 'rgba(255,200,120,0.08)' : 'rgba(150,190,240,0.12)'; } },
     terrain: K.build(14, 12, '#', (k) => {
@@ -97595,7 +97725,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- interiors -----------------------------------------------------------------------------------
   function interior(id, name, w, h, doorX, backXY, extra) {
     C.maps[id] = Object.assign({
-      name, region: 'lanternfall', music: null, noTravel: true,
+      name, region: 'lanternfall', music: null, noTravel: true, travelKind: 'interior',
       terrain: K.room(w, h, '_', doorX),
       props: [{ p: 'exitmat', x: doorX, y: h - 2 }],
       npcs: [],
@@ -97737,7 +97867,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- the basement stacks (a short, dim search) -------------------------------------------------
   C.maps['lf.stacks'] = {
-    name: T('Basement Stacks', '{地下|ちか}{書庫|しょこ}'), region: 'lanternfall', music: 'mystery', noTravel: true,
+    name: T('Basement Stacks', '{地下|ちか}{書庫|しょこ}'), region: 'lanternfall', music: 'mystery', noTravel: true, travelKind: 'dungeon',
     ambient: { dark: 0.55, playerLight: 46, weather: 'pages' },
     terrain: K.build(24, 16, '#', (k) => {
       k.rect(1, 2, 22, 13, '+');
@@ -98093,7 +98223,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // authored action poses and their own deliveries.
 
   // ---- tower maps ---------------------------------------------------------------------------------------
-  const TOWER = { region: 'lanternfall', music: 'belltower', noTravel: true };
+  const TOWER = { region: 'lanternfall', music: 'belltower', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the bell tower' } };
   const flood = (cells, cond) => cells.map(([x, y]) => ({ p: 'lf_flood', x, y, if: cond }));
   const rect = (x0, y0, w, h) => { const out = []; for (let y = y0; y < y0 + h; y++) for (let x = x0; x < x0 + w; x++) out.push([x, y]); return out; };
 
@@ -101615,7 +101745,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- the Reading Room ------------------------------------------------------------------------------------
   C.maps['sa.reading'] = {
-    name: T('The Reading Room', '{閲覧室|えつらんしつ}'), region: 'sa_still', noTravel: true,
+    name: T('The Reading Room', '{閲覧室|えつらんしつ}'), region: 'sa_still', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the Still Archive' },
     music: [{ if: 'sa_hush_down', id: 'wonder' }, { id: 'still_archive' }],
     ambient: stillAmbient({ weather: 'pages', tint: 'rgba(210,214,236,0.10)', dark: 0.15 }, { weather: 'motes', tint: 'rgba(255,232,196,0.06)' }),
     terrain: K.build(28, 20, '#', (k) => {
@@ -101668,7 +101798,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Aisle B (x13-15, below the passage) runs down to a barred niche with the
   // stair; the call slip on the entrance desk says which aisle to look for.
   C.maps['sa.stacks'] = {
-    name: T('The Stacks', '{書架|しょか}'), region: 'sa_still', noTravel: true,
+    name: T('The Stacks', '{書架|しょか}'), region: 'sa_still', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the Still Archive' },
     music: [{ if: 'sa_hush_down', id: 'wonder' }, { id: 'hush' }],
     ambient: stillAmbient({ weather: 'pages', tint: 'rgba(200,206,236,0.12)', dark: 0.3 }, { weather: 'motes', tint: 'rgba(255,232,196,0.06)', dark: 0.1 }),
     terrain: K.build(32, 24, '#', (k) => {
@@ -101715,7 +101845,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // is the plank at the charter gate, which stays flooded until the gate is
   // persuaded.
   C.maps['sa.conduits'] = {
-    name: T('The Quiet Conduits', '{静|しず}かな {水路|すいろ}'), region: 'sa_still', noTravel: true,
+    name: T('The Quiet Conduits', '{静|しず}かな {水路|すいろ}'), region: 'sa_still', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the Still Archive' },
     music: [{ if: 'sa_hush_down', id: 'wonder' }, { id: 'hush' }],
     ambient: stillAmbient({ weather: null, tint: 'rgba(160,180,230,0.10)', dark: 0.45 }, { weather: 'motes', tint: 'rgba(255,232,196,0.05)', dark: 0.2 }),
     terrain: K.build(30, 22, '#', (k) => {
@@ -101753,7 +101883,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- the Room of Set-Down Memories ----------------------------------------------------------------------------
   C.maps['sa.memories'] = {
-    name: T('The Room of Set-Down Memories', '{預|あず}けられた {記憶|きおく} の {部屋|へや}'), region: 'sa_still', noTravel: true,
+    name: T('The Room of Set-Down Memories', '{預|あず}けられた {記憶|きおく} の {部屋|へや}'), region: 'sa_still', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the Still Archive' },
     music: [{ if: 'sa_hush_down', id: 'sorrow' }, { id: 'sorrow' }],
     ambient: stillAmbient({ weather: 'motes', tint: 'rgba(230,220,200,0.06)', dark: 0.2 }, { weather: 'motes', tint: 'rgba(255,232,196,0.08)', dark: 0.1 }),
     terrain: K.build(24, 18, '#', (k) => {
@@ -101797,7 +101927,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- Kasane's study ---------------------------------------------------------------------------------------------
   C.maps['sa.study'] = {
-    name: T("The Keeper's Study", 'カサネ の {書斎|しょさい}'), region: 'sa_still', noTravel: true,
+    name: T("The Keeper's Study", 'カサネ の {書斎|しょさい}'), region: 'sa_still', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the Still Archive' },
     music: [{ if: 'sa_hush_down', id: 'wonder' }, { id: 'mystery' }],
     ambient: stillAmbient({ weather: null, tint: 'rgba(230,220,200,0.05)', dark: 0.35 }, { weather: null, tint: 'rgba(255,232,196,0.06)', dark: 0.2 }),
     terrain: K.build(15, 12, '#', (k) => {
@@ -101829,7 +101959,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- the Heart of the Hush -----------------------------------------------------------------------------------------
   C.maps['sa.heart'] = {
-    name: T('The Heart of the Hush', '{静寂|しじま} の {芯|しん}'), region: 'sa_still', noTravel: true,
+    name: T('The Heart of the Hush', '{静寂|しじま} の {芯|しん}'), region: 'sa_still', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the Still Archive' },
     music: [{ if: 'sa_hush_down', id: 'finale' }, { id: 'hush' }],
     ambient: stillAmbient({ weather: 'pages', tint: 'rgba(190,196,236,0.14)', dark: 0.4 }, { weather: 'motes', tint: 'rgba(255,226,186,0.10)', dark: 0.15 }),
     terrain: K.build(25, 20, 'x', (k) => {
@@ -122286,6 +122416,7 @@ RB.atlas = (function () {
     const sp = spawnOf(run, d);
     const def = {
       name: pat.name, region: 'atlas', music: pat.music || 'atlas', noTravel: true, noCheckpoint: true,
+      travelKind: 'expedition', noTravelWhy: { en: 'You\'re out on the Unwritten Atlas. Travel works again once you\'re home — the lantern at the end of the road takes you back, or you can head home early from a camp.' },
       ambient: ambientFor(run, d),
       legend: { X: { tile: 'atlas_blank' }, Y: { tile: 'atlas_sketch' } },
       terrain, props: deco.slice(), npcs: [], foes: [], exits: [], triggers: [],
