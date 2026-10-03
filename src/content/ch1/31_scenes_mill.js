@@ -132,7 +132,7 @@ suzu: {繰|く}り{返|かえ}す {相手|あいて} に は 、 {輪唱|りん�
 * {一緒|いっしょ} に {歌|うた}う || Sing with her. -> sing
 * {本当|ほんとう} に {効|き}く の ？ || Does that really work? -> ask
 :ask
-suzu[laugh]: {知|し}らない ！ {初|はじ}めて やる もの 。 …… でも 、 {怖|こわ}い とき に {歌|うた}う の は 、 {昔|むかし} から {効|き}く の よ 。 {少|すこ}なくとも 、 {歌|うた}って いる {方|ほう} に は 。 || No idea! I've never tried it. …But singing when you're scared has always worked — for the singer, at least.
+suzu[laugh]: {知|し}らない ！ {初|はじ}めて やる もの 。 …… でも 、 {怖|こわ}い とき に {歌|うた}う の は 、 {昔|むかし} から {効|き}く の よ 。 {少|すく}なくとも 、 {歌|うた}って いる {方|ほう} に は 。 || No idea! I've never tried it. …But singing when you're scared has always worked — for the singer, at least.
 :sing
 narr: スズ が {歌|うた}い{出|だ}し 、 {少|すこ}し {遅|おく}れて あなた も {歌|うた}う 。 {崖|がけ} の {声|こえ} は {二|ふた}つ の {歌|うた} を {追|お}いかけ 、 やがて {追|お}いつけなく なって 、 {静|しず}か に なった 。 || Suzu starts to sing, and a beat later you join in. The cliff-voices chase both songs, fall behind, and finally go quiet.
 !music companion_suzu

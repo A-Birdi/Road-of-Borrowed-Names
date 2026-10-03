@@ -1340,3 +1340,215 @@ profiles; no player save was used; nothing was checked in Firefox.
 - **Not verified:** Firefox (the owner's browser), Safari, a real phone or the foldable; the art judged by
   a person; frame rate on named hardware.
 
+## Prologue round — the owner's report of 2026-10-03 (the traveller's walk, the shots' art)
+The owner wrote that the prologue cutscene's panels did not match the current art style. In the last
+shot the traveller walked up from the centre of the screen as if into the water; they should start on
+the road and recede into the distance, shrinking or using a lower-detail model. Measured on the build
+before: the walk was the screen's centre column, from 95 % of the height up by 20 %, at full size.
+On the title scene that column is off the road at 16 of 21 moments at 1920×1080 and 1280×800 and 17
+of 21 at 844×390, on the grass beside the river. At 390×844 the caption slip covered the traveller
+for the whole shot. Every run below was in headless Chromium on Linux (Playwright) with fresh
+profiles; no player save was used; nothing was checked in Firefox.
+- **Build identities:** 5a2877e (the prologue round: `index.html` 9,067,541 bytes, sha256 `b64abcbe6b32a128…`), then 12a9757 (with the town animals' fixes and the case props, below), on which the default suite ran.
+- **The traveller (`src/ui/41_prologue_art.js`).**
+  - The walk starts on the road just above the caption slip and follows the road's centre line
+    (`RB.ui.title.roadGuide`) toward the horizon at a steady pace.
+  - Height is proportional to distance below the horizon, matched at the start to 0.75 of a roadside
+    lantern post there.
+  - The figure is the real walk frames shrunk onto the same grid, keeping the outline and the hand
+    lantern, night-graded and lit by that lantern.
+- **The shots (41b, 41c, 41d):** the teahouse twice, the riverbank lantern and the broken bridge,
+  redrawn at art resolution with the pixel kit. Details: docs/ART_DIRECTION.md §12.
+- **B `tests/e2e/prologue.mjs` (new, in the default suite): 100/100** at 1920×1080, 1280×800,
+  390×844 and 844×390.
+  - Every shot draws at the start, middle and end, moving and with reduced motion, and is a picture
+    (12 or more sampled colours).
+  - **The pixel of the title scene under the traveller's feet is road at all 21 moments on all four
+    screens** (blue minus red at most 30; the river is 46 or more).
+  - The feet stay within 0.04 of the road's half-width from its centre (0.16 at 844×390).
+  - The walk starts 4 px above the slip and goes up at least halfway to the horizon. At 1920×1080 the
+    feet go from row 287 to row 211 (horizon 169) and the figure from 31 to 11 px; at 390×844 from 573
+    to 363 (horizon 245), 31 → 11 px. At 844×390 the slip leaves only 12 px of road in view: 118 → 113,
+    17 → 6 px.
+  - With reduced motion the traveller stands at one place.
+  - The lantern's ink pixels go 139 → 70 → 0 (at 0.05, 0.4 and 0.95 of the shot; 43 → 24 → 0 at
+    844×390).
+  - The real flow shows six different pictures. The last Next reaches creation with the caches
+    released (0 layers, 0 frames). No console errors and no network requests.
+  - Cost: the first frame of a shot builds its layer in 31–92 ms (the teahouse the most); later frames
+    take 0–9 ms (draw calls timed in the page, not frame rate).
+- **Other runs on this build:**
+  - U unit 15,388 passed, 0 failed; validator no errors.
+  - B prologue 100/100 on 5a2877e (alone) and in the default suite on 12a9757; create 382/0, ui 14/0, title_ledger 18/0, settings all ok, audio checks all passed,
+    shift_load_regression 18/18 (http origin) and 18/18 (file://).
+  - Layout audit (`visual.mjs --check`): create_prologue and title ok at 320×568, 390×844, 844×390,
+    1280×800 and 1920×1080, and create_prologue Japanese-led at 390×844 and 1280×800.
+  - Default suite: **67/67 scripts passed on 12a9757** (headless Chromium, one run, no reruns).
+- **Evidence:** docs/screenshots/prologue/.
+  - `after/`: every shot at 1920×1080, 2000×1090 (the owner's size) and 390×844, each with its own
+    caption, and the traveller at the start, middle and end of the walk.
+  - Two real-time clips at 1280×720: `lantern_1280.webm` and `walker_1280.webm` (VP8, about 1.2 MB
+    each).
+  - `before/`: the previous build at 1920×1080 and 390×844.
+- **Self-review against the title scene** (the author's, from captures at 3× and 6×; no person has
+  looked):
+  - **Matches:**
+    - the banded skies and dithered seams;
+    - the stepped glows;
+    - hue-shifted ramps with cool shadows;
+    - selective outlines on every object;
+    - the same night palette for the lantern and the walk.
+  - **Short of it:**
+    - the bank in shot 4 is a broad dark shape;
+    - Hana's portrait is large against the cups;
+    - the traveller below about 9 px is a silhouette with a lit dot.
+- **Not verified:** Firefox (the owner's browser), Safari, a real phone or the foldable; the art judged by a
+  person.
+
+
+## Town animals — the owner's reports of 2026-10-03 (the cat's idle, Mochi's look, her path, her line)
+The owner reported four things about the town cats:
+- The cat in town had no proper idle: its tail should swish and it should have a small idle bounce, like
+  everyone else.
+- Mochi, Tomo's cat, should look like the ginger cat by the reed screen.
+- Picking Mochi up during A Cat Called Mochi, she walked into Kōji's house.
+- At night her line said she was stretched out in the sun.
+
+Every run below was in headless Chromium on Linux (Playwright) with synthetic campaigns in fresh
+profiles; no player save was used; nothing was checked in Firefox.
+- **Causes.**
+  - **Idle:** your pet and the animals not yet met changed pose only every few seconds (a blink, an ear,
+    a look), and stood still in between.
+  - **Mochi's look:** she was a separate 32×48 hand-drawn creature sprite with no idle at all.
+  - **Mochi's path:** when picked up, her npc stopped showing and the world treated her as a person
+    leaving. No map placed her anywhere while carried, so she took the nearest way out within 18 tiles,
+    the door at 45,15. Given back, she came out of the nearest door (11,24) and walked to Tomo.
+  - **Her line:** the line had no night version.
+- **Fixes (340bf68).**
+  - **Idle:** a life layer: breath on the people's settle-and-rise beat, and a tail on one short cycle
+    per species.
+  - **Mochi's look:** Mochi is drawn with the pets' rig (look `cat/mochi`, white with a red collar), is
+    found lying, and stays where the scenes say she is curled up.
+  - **Mochi's path:** two npc options, `leave: 'here'` and `arrive: 'here'`.
+  - **Her line:** it branches on `rw_night`.
+- **B `tests/e2e/town_animals.mjs` (new, in the default suite): 41/41** on 340bf68.
+  - **On the previous build 19 of its checks fail,** reproducing each report: no breath or tail values,
+    Mochi on the old sprite, the departure to 45,15 "nearest (unknown)", the arrival from 11,24, "in the
+    sun" at night.
+  - **The idle:**
+    - Every species breathes (3 steps) and moves its tail at rest, standing, sitting and lying (cat
+      tSide 5–8 values in 2.6–4 s, dog wag 3, tanuki 3, bird tUp 3).
+    - The picture changes with it (36 pictures in 4 s).
+    - A further 4 s of the same posture builds 4–9 new frames.
+    - The reed-screen cat and Mochi breathe and swish too.
+  - **Mochi's path:**
+    - Picked up with a real key press, she stays at 46,20 for every frame while she fades (alpha 0.94 →
+      0.04).
+    - Her departure is recorded as "authored: gone where they were", with no exit.
+    - Given back, she appears at 8,25 beside Tomo with no route.
+  - **Her line:** "stretched out in the sun" by day, "curled up at Tomo's feet" at night.
+  - **Reduced motion:** nothing is added (0 of 23–27 poses).
+- **Other runs on 340bf68:** unit 15,388/0; validator no errors; departures all ok; prologue 100/100.
+  Default suite: 67/67 scripts on 12a9757, which includes these fixes (see the prologue round above).
+- **Not verified:** Firefox, the foldable, a person's look at the animals.
+
+## Case props — the owner's report of 2026-10-03 (Hama's workbench and the call bell looked crude)
+The owner marked Hama's workbench and the ferry's call bell on the Saltglass quay as crude next to the
+newer art. They were the first pass's flat 16-px drawings, scaled up. Every run below was in headless
+Chromium on Linux (Playwright) with synthetic campaigns in fresh profiles; no player save was used;
+nothing was checked in Firefox.
+- **Fix (12a9757):** `src/content/cases/06_art2.js` gives all seven case props an art-resolution
+  `draw2` in the world's prop style: ramps, light from the upper left, an ink outline and a contact
+  shadow. The clues are kept: the bench's evenly spaced notches, the bell's notch in its right
+  shoulder, the empty bracket at the old landing. Details: docs/addendum/cases.md.
+- **A regression found on the way:** `characters.mjs` failed on Mochi's new look (the sprite functions
+  drew a pet look as a person and threw on its hair). `RB.sprites.getArt` and `get` now return the
+  rig's animal for a pet look; the test treats it like the other creatures.
+- **Runs on 12a9757:** unit 15,388/0; validator no errors; characters 23/0; town_animals 41/41; the
+  default suite: 67/67 scripts, including cases and cases_shots.
+- **Evidence:** `docs/screenshots/cases_props/quay_before.webp` and `quay_after.webp` (a 760×400 crop of the
+  quay on the previous build and this one).
+- **Not verified:** Firefox; a person's look at the props. The other five props were reviewed by the
+  author from captures only.
+
+## Interludes — the owner's report of 2026-10-03 (lines said in the dark; the wait at Shiori's window)
+The owner chose to wait with Shiori (Chapter 2) and got a black screen. Its lines could be advanced with Z but
+not read until the screen came back; "if it's meant to be a cutscene, it should be animated such, … at minimum
+show the whole dialogue box". The cause: the fade layer sits above the dialogue sheet. Nine scenes in the game
+speak while the screen is dark (found by code review). Every run below was in headless Chromium on Linux
+(Playwright) with synthetic campaigns in fresh profiles; no player save was used; nothing was checked in Firefox.
+- **Fixes:** 6e6f079 (source), built in 6ce2929 together with Suzu's Kansai-ben.
+  - `RB.ui.fade` marks the page `veiled` from the moment the screen darkens until it has cleared.
+  - **Interludes** (`!interlude`, `src/ui/42_interlude.js`) put a picture in place of the map while a scene's
+    lines go on.
+  - **The tide wait** (`src/ui/42b_interlude_tide.js`, `sg.tide_wait`). Details: docs/ART_DIRECTION.md §13.
+- **B `tests/e2e/interludes.mjs` (new, in the default suite): 76/76** on the merged build.
+  - **In the dark** (1280×800, 390×844): the sheet is the element on top at its own centre while the fade is
+    on, and History opens on top with the line in it. A real click on Next moves on. After the fade-in nothing
+    is left raised.
+  - **The tide wait**, from Shiori's real question with a real key press, at 1280×800, 2000×1090, 390×844 and
+    844×390:
+    - It is a picture and not the map (340–560 colours in a 200×120 sample), with the line over it.
+    - The sill, the point's tip and the island stand above the sheet.
+    - The road starts under water (0–1 % of its crown dry) and comes up from the point while the first line
+      stays up (tide level 2 → 33–34 of 48).
+    - When Shiori says it is time, the road's crown lies dry from the point to the island, white sand
+      between open water.
+    - Then the fog: white on the road's middle, and open water beside it.
+    - Then the room again for her worry, and the scene ends with `sg_main` 6 and `sg_tide_low` as before.
+  - **Reduced motion:** one still picture per stage (tide 0.55 while waiting, 1 when it is time).
+  - **Scene end:** a picture left showing is cleared when its scene ends.
+  - **Cost:** about 1 ms per frame (median of 30 draws); the first frame builds its layers in about 250 ms.
+  - No console errors and no network requests.
+  - **The first scratch run** of this test failed 4 checks, all in the test itself: Escape steps back through
+    History's pages before closing it, so the test now presses it until History is closed.
+- **Other runs:**
+  - On 6e6f079 (source): unit 15,388/0; validator no errors.
+  - On the merged build: unit 21,732/0; validator no errors; dialect_kansai, settings and company all passed.
+  - Default suite on this build: not yet run when this entry was written (to be added below).
+- **Evidence:** docs/screenshots/interludes/ (`interlude_shots.mjs`): each stage at 2000×1090, 1280×800 and
+  390×844, and a line said in the dark. `before_2000x1090_wait.webp` and `before_1280x800_dark_line.webp` are the previous build (12a9757) at the same moments: a black screen with no dialogue.
+- **Not verified:** Firefox (the owner's browser), the foldable, a person's judgement of the picture. The other
+  eight dark passages are readable but are not pictures.
+
+## Suzu's Kansai-ben — the owner's requests of 2026-10-03 (a dialect choice; a switch on her Company page)
+The owner asked for all of Suzu's Japanese in a Kansai dialect, as a choice, with the English re-voiced in a
+casual country tone. Later the same day they asked for a switch on her Company page, in "Talk with Suzu", for
+existing saves and for turning it back. The work was done in a worker branch (9df9006 … 06cc4b0) and merged
+(af9e6b2); the build is 6ce2929. Headless Chromium, fresh profiles, no player save. The Kansai text was written
+by the model; **no native speaker has reviewed it.**
+- **What:** every line of Suzu's has a Kansai version in Japanese and in English: 896 lines (872 distinct) from
+  scenes, Company, field and case reactions, shiritori, fishing, pet meetings, The Pages We Keep and the Atlas.
+  - **The inventory** (`tools/suzu_inventory.mjs`) is built three ways: tracing scenes, reading her data tables,
+    and a source scan for Japanese next to a `suzu` key.
+  - **Enforcement:** the validator and a unit test fail on a line without a version, a kanji without furigana,
+    a word no lexicon explains, mismatched placeholders, or caricature forms (さかい, まんねん, でんがな, でっせ/まっせ,
+    わて, おおきに).
+- **Where it is chosen:** a sheet when she joins; Settings › Reading & Language; her Company page under "Talk with
+  Suzu" (a radio group, plus an in-world ask with a one-line reply). A loaded save with Suzu and no choice is
+  offered the sheet once.
+- **What is stored:** `settings.suzuSpeech`, an optional key in the global settings record (absent means
+  standard). No save-schema change. History, memories and kept sentences store the standard line and swap it
+  only when shown.
+- **Learning:** word help reads her Kansai lines with a separate 68-entry Kansai lexicon first (Kansai words, and
+  verb forms explained through their standard form), with a note "Kansai dialect (関西弁). In standard Japanese:
+  …". Standard vocabulary practice never sees it. A noted Kansai word is marked and skipped by the writing desk,
+  the shiritori pool and "kanji met". Challenges, answers, recognition and the story are unchanged.
+- **The worker's runs** (Chromium, on its branch): unit 21,732/0; validator no errors.
+  - Browser tests passed: dialect_kansai (59 ok), settings, company, wordplay (83), story_ch3 E nao,
+    pages_ending, story_ch5 A suzu, ui, fishing, bookmarks, practice_a_desk, cases, company_pets, learning_ui.
+- **B `tests/e2e/dialect_kansai.mjs`** (new, in the default suite) checks:
+  - the choice at joining, and her next line in Kansai with furigana;
+  - word help on a Kansai word;
+  - History in Kansai while the campaign keeps standard;
+  - the setting in Settings, surviving a reload;
+  - a loaded save offered the choice once (Escape keeps standard);
+  - the Company control both ways by pointer and keyboard, mirrored in Settings, and the in-world ask;
+  - a case line, a Company thought and a shiritori invitation;
+  - no Kansai text in the campaign, and the saved slot unchanged;
+  - at 390×844, controls of 44 px or more.
+- **The lead's runs on the merged build:** unit 21,732/0, validator no errors, dialect_kansai all passed, settings
+  all ok, company all passed. Default suite on this build: not yet run when this entry was written (to be added below).
+- **Not verified:** a native Kansai speaker's review (the style sheet and review priorities are in
+  docs/dialect/suzu_kansai.md); the device voice reads Kansai lines with a standard accent; Firefox; the
+  foldable.

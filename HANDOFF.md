@@ -326,6 +326,18 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
 - **Test:** `tests/e2e/interludes.mjs`, in the default suite. Evidence: `tests/e2e/interlude_shots.mjs` →
   docs/screenshots/interludes/.
 
+## Suzu's Kansai-ben (owner's requests of 2026-10-03) — REQUIREMENTS.md KS1–KS5, VALIDATION.md "Suzu's Kansai-ben", docs/dialect/suzu_kansai.md
+- **What:** an optional Kansai version of every line of Suzu's (896), in Japanese and in re-voiced English, chosen
+  when she joins, in Settings, or on her Company page ("Talk with Suzu"). It is the global setting
+  `settings.suzuSpeech`; nothing is written into a campaign.
+- **Mechanism:** `src/lang/85_dialect.js` swaps a line at display time (dialogue, History, kept sentences, fishing,
+  shiritori, Company). The tables are in `src/content/dialect/` and the choice UI in `src/ui/56_suzu_speech.js`.
+- **Inventory:** `tools/suzu_inventory.mjs`; the validator fails on any line of hers without a version. A new
+  table of her words must be added to the inventory.
+- **Tests:** `tests/unit/dialect_kansai.test.mjs`, `tests/e2e/dialect_kansai.mjs` (default suite).
+- **Open:** a native speaker's review. Found in passing: `src/content/ch1/31_scenes_mill.js` has
+  `{少|すこ}なくとも`, which should read すくなくとも.
+
 ## Commands
 - Build: `node tools/build.mjs`
 - Content validation: `node tools/validate.mjs [--filter sg] [--unknown]`
@@ -409,6 +421,9 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
 13. The tide wait (2026-10-03), in Firefox and on the foldable: talk to Shiori at the tide table in Saltglass and
    choose to wait. Watch the tide go out over the lines, the road come up, the fog settle; then a scene that speaks
    in the dark (Genzō's climb) shows its line over the black.
+14. Suzu's Kansai-ben (2026-10-03): a native Kansai speaker should read her lines, starting with her emotional
+   high points (docs/dialect/suzu_kansai.md lists what to check first); the owner can switch it on and off on her
+   Company page.
 
 ## Known issues / limits
 - No human handwriting samples tested (synthetic + font-derived only).

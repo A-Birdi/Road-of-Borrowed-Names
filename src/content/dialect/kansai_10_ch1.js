@@ -44,7 +44,7 @@ RB.dialect.add('kansai', `
 = {繰|く}り{返|かえ}す {相手|あいて} に は 、 {輪唱|りんしょう} を ぶつける の 。 {同|おな}じ {歌|うた} を 、 {少|すこ}し ずらして 。 そう する と 、 どっち が どっち か わからなく なって 、 {黙|だま}る 。 || Against something that repeats, you throw a round at it. The same song, slightly staggered. It loses track of which is which and goes quiet.
 > {繰|く}り{返|かえ}す {相手|あいて} に は 、 {輪唱|りんしょう} を ぶつける ねん 。 {同|おな}じ {歌|うた} を 、 ちょっと ずらして 。 ほんなら 、 どっち が どっち か {分|わ}からん よう に なって 、 {黙|だま}る ねん 。 || Something that repeats? You throw a round at it. Same song, a little staggered. Then it can't tell which is which, and it hushes right up.
 @ ch1/31_mill:131 [rw.mr_suzu_talk]
-= {知|し}らない ！ {初|はじ}めて やる もの 。 …… でも 、 {怖|こわ}い とき に {歌|うた}う の は 、 {昔|むかし} から {効|き}く の よ 。 {少|すこ}なくとも 、 {歌|うた}って いる {方|ほう} に は 。 || No idea! I've never tried it. …But singing when you're scared has always worked — for the singer, at least.
+= {知|し}らない ！ {初|はじ}めて やる もの 。 …… でも 、 {怖|こわ}い とき に {歌|うた}う の は 、 {昔|むかし} から {効|き}く の よ 。 {少|すく}なくとも 、 {歌|うた}って いる {方|ほう} に は 。 || No idea! I've never tried it. …But singing when you're scared has always worked — for the singer, at least.
 > {知|し}らん ！ {初|はじ}めて やる もん 。 …… せやけど 、 {怖|こわ}い とき に {歌|うた}う の は 、 {昔|むかし} から {効|き}く ねん で 。 {少|すく}なくとも 、 {歌|うた}うてる {方|ほう} に は な 。 || No clue! Never tried it. …But singing when you're scared has always worked, y'know. For the one doing the singing, anyhow.
 @ ch1/31_mill:135 [rw.mr_suzu_talk]
 = …… ほら 。 {拍手|はくしゅ} は {後|あと} で まとめて ちょうだい 。 || …There. Save the applause for later.
