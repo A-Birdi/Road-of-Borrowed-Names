@@ -78,8 +78,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- notice · faults: over Wataru's shoulder onto Ōmi behind her desk -------------------------------------
   function geomFaults(w, h, vb) {
     const S = stage(w, h, vb), { s, lay } = S;
-    const ox = Math.round(w * (lay === 'narrow' ? 0.56 : 0.58)), deskY = Math.round(vb - s(lay === 'land' ? 26 : 30));
-    const oy = deskY + s(14); // Ōmi's portrait bottom (the desk covers her below the chest)
+    const ox = Math.round(w * (lay === 'narrow' ? 0.56 : 0.58));
+    // Ōmi's portrait bottom (the desk covers her below the chest); where the sheet leaves only a band, her face
+    // stays in it and the desk goes under the sheet
+    const oy = Math.max(Math.round(vb - s(lay === 'land' ? 26 : 30)) + s(14), 98), deskY = oy - s(14);
     const win = { x: Math.round(ox - s(70)), y: Math.round(Math.max(s(8), oy - 96 - s(40))), w: s(140), h: Math.round(Math.min(s(80), deskY - s(30) - Math.max(s(8), oy - 96 - s(40)))) };
     const led = { x: Math.round(ox - s(80)), y: deskY + s(6), w: s(60), h: s(20) }, tg = { x: Math.round(ox + s(30)), y: deskY + s(14) };
     return Object.assign(S, { ox, oy, deskY, win, led, tg });
@@ -151,13 +153,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const wb = Q.back(look('wataru'), Math.round(clamp(s(180), 120, 230)), { light: 'r' });
       if (wb) c.drawImage(wb.cv, Math.round((G.lay === 'narrow' ? w * 0.08 : w * 0.14) - wb.ax), Math.round(G.vb + s(40) - wb.ay));
     },
-    focus(w, h, vb) { const G = geomFaults(w, h, vb); return { x: G.led.x, y: G.oy - 96, w: G.tg.x + G.s(24) - G.led.x, h: G.led.y + G.led.h - (G.oy - 96) }; },
+    focus(w, h, vb) { const G = geomFaults(w, h, vb); return G.deskY > vb ? { x: G.ox - 30, y: G.oy - 88, w: 60, h: 56 } : { x: G.led.x, y: G.oy - 88, w: G.tg.x + G.s(24) - G.led.x, h: G.led.y + G.led.h - (G.oy - 88) }; },
   };
 
   // ---- notice · face: the reverse, close on Wataru ------------------------------------------------------------
   function geomFace(w, h, vb) {
     const S = stage(w, h, vb), { s, lay } = S;
-    const wx = Math.round(w * (lay === 'narrow' ? 0.46 : 0.44)), wy = Math.round(vb + s(10));
+    const wx = Math.round(w * (lay === 'narrow' ? 0.46 : 0.44)), wy = Math.max(Math.round(vb + s(10)), 98);
     return Object.assign(S, { wx, wy });
   }
   function faceStatic(G) {
@@ -337,7 +339,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const S = stage(w, h, vb), { s, lay } = S;
     const yW = Math.round(vb * (lay === 'narrow' ? 0.18 : 0.26));     // the window strip's bottom (the desk's far edge)
     const ex = Math.round(w * 0.5), ey = Math.round(lerp(yW, vb, 0.56)); // the envelope's place between the hands
-    const k = clamp(Math.min(w / 260, (vb - yW) / 70), 1.2, 3);
+    const k = clamp(Math.min(w / 260, (vb - yW) / 70), 0.7, 3);
     return Object.assign(S, { yW, ex, ey, k });
   }
   function noticeStatic(G) {
@@ -446,9 +448,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
   function geomShop(w, h, vb, near) {
     const S = stage(w, h, vb), { s, lay } = S;
-    const back = Math.round(vb * (near ? 0.9 : 0.78));            // the bench/counter line
-    const ax = Math.round(w * (lay === 'narrow' ? 0.56 : near ? 0.5 : 0.56)), ay = Math.round(near ? vb + s(4) : back + s(10));
-    return Object.assign(S, { back, ax, ay, near: !!near });
+    // her portrait's bottom; where the sheet leaves only a band (a phone on its side) her face stays in it
+    const ay0 = Math.round(near ? vb + s(4) : vb * 0.78 + s(10)), ay = Math.max(ay0, 98);
+    const back = near ? Math.round(vb * 0.9) : ay - s(10);       // the counter line (under the sheet in a band)
+    const band = ay > ay0;
+    const ax = Math.round(w * (lay === 'narrow' ? 0.56 : near ? (band ? 0.36 : 0.5) : 0.56));
+    return Object.assign(S, { back, ax, ay, band, near: !!near });
   }
   function shopStatic(G, lit) {
     return cached('ch2.shop|' + (G.near ? 'n' : 'm') + '|' + (lit ? 1 : 0) + '|' + G.w + 'x' + G.h + '|' + G.vb, () => {
@@ -510,7 +515,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (ph && out < 1) c.drawImage(ph.cv, Math.round(lerp(cxs - s(16) * k, s(-20), out) - ph.ax), Math.round(lerp(cys + s(8), G.vb + s(30), out) - ph.ay));
       if (take > 0) { const hd = Q.hand({ size: Math.round(11 * k), pose: 'pinch', side: 'L', angle: Math.PI * 0.62, skin: Q.skinOf(look('asahi')), sleeve: look('asahi').cloth[0] }); if (hd) c.drawImage(hd.cv, Math.round(cx + s(14) * k - hd.ax), Math.round(cy - hd.ay)); }
     },
-    focus(w, h, vb) { const G = geomShop(w, h, vb, false); return { x: G.ax - G.s(70), y: G.ay - 96, w: G.s(70) + 48, h: G.back + G.s(12) - (G.ay - 96) }; },
+    focus(w, h, vb) { const G = geomShop(w, h, vb, false); return G.band ? { x: G.ax - 30, y: G.ay - 88, w: 60, h: 56 } : { x: G.ax - G.s(70), y: G.ay - 88, w: G.s(70) + 48, h: G.back + G.s(12) - (G.ay - 88) }; },
   };
 
   // ---- plate · work: the hands at the bench, the plate taking shape ------------------------------------------
@@ -623,8 +628,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (ab) c.drawImage(ab.cv, ax - ab.ax, ay - ab.ay);
       // the finished plate rises into her hands, held out toward you
       const k = clamp(G.Z * 0.9, 0.7, 1.2), e = ease(kl);
-      const py = Math.round(lerp(G.vb + s(40), ay - s(12), e));
-      const pl = plate(c, ax, py, k, 1, 1, s, true);
+      // (in a band above the sheet she holds it up beside her face instead)
+      const py = Math.round(lerp(G.vb + s(40), G.band ? ay - 58 : ay - s(12), e)), pxx = G.band ? Math.round(ax + 48 + 58 * k) : ax;
+      const pl = plate(c, pxx, py, k, 1, 1, s, true);
       const skin = Q.skinOf(look('asahi')), sleeve = look('asahi').cloth[0];
       for (const [hx, side, ang] of [[pl.x0 + s(2), 'L', -0.4], [pl.x0 + pl.W - s(2), 'R', Math.PI + 0.4]]) {
         const hd = Q.hand({ size: Math.round(13 * k), pose: 'pinch', side, angle: ang - Math.PI / 2, skin, sleeve });
@@ -632,7 +638,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       }
       if (!still) Q.dust(c, 0, 0, w, G.vb, s(20), t, 12, lit ? '255,200,140' : '240,236,226', still, 23);
     },
-    focus(w, h, vb) { const G = geomShop(w, h, vb, true), W = Math.round(110 * clamp(G.Z * 0.9, 0.7, 1.2)); return { x: G.ax - W / 2, y: G.ay - 96, w: W, h: 96 }; },
+    focus(w, h, vb) { const G = geomShop(w, h, vb, true), k = clamp(G.Z * 0.9, 0.7, 1.2), W = Math.round(110 * k); return G.band ? { x: G.ax - 30, y: G.ay - 88, w: Math.round(78 + W), h: 56 } : { x: G.ax - W / 2, y: G.ay - 88, w: W, h: 88 }; },
   };
 
   RB.sequence.define('ch2.plate', {

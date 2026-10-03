@@ -73,11 +73,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // shrink as 1 / depth(z). Deck top band, the near beam under it, railings, piers in the water.
   function geomReach(w, h, vb) {
     const S = stage(w, h, vb), { s, lay } = S;
-    const yH = Math.round(vb * (lay === 'narrow' ? 0.3 : lay === 'land' ? 0.26 : 0.36));
+    // a phone on its side shows only a band above the sheet: the hut sized to fit it, the horizon low enough
+    const big = lay === 'land' ? clamp((vb - s(8)) / 62, 0.8, 1.7) : lay === 'narrow' ? 1.1 : 1;
+    const yH = Math.round(lay === 'land' ? Math.max(vb * 0.3, s(30) * big) : vb * (lay === 'narrow' ? 0.3 : 0.36));
     // a phone on its side: closer in, the bridge's far end and the hut (the near end off the frame)
     const N = lay === 'narrow' ? [w * 0.18, vb * 0.9] : lay === 'land' ? [w * -0.34, vb * 1.4] : [w * 0.22, vb * 0.9];
-    const F = lay === 'narrow' ? [w * 0.86, yH + s(12)] : lay === 'land' ? [w * 0.6, yH + s(22)] : [w * 0.74, yH + s(10)];
-    const big = lay === 'land' ? 1.7 : lay === 'narrow' ? 1.1 : 1;
+    const F = lay === 'narrow' ? [w * 0.72, yH + s(12)] : lay === 'land' ? [w * 0.6, yH + s(22) * big] : [w * 0.74, yH + s(10)];
     const DF = 3.4; // the far end is this many times further from us than the near end
     const depth = (z) => 1 + (DF - 1) * z;
     const sf = (z) => (1 - 1 / depth(z)) / (1 - 1 / DF);
@@ -470,7 +471,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const ph = 96;                                                                    // Hana's portrait (1 art px per px)
     const narrow = lay === 'narrow';
     const hx = Math.round(w * (narrow ? 0.6 : close ? 0.5 : 0.6));
-    const hy = Math.round(vb + (close ? s(6) : s(8)));                                // her portrait's bottom (cut by the sheet)
+    // her portrait's bottom, cut by the sheet; where the sheet leaves only a band (a phone on its side), her
+    // face stays in it and the rest of her is under the sheet (Hide text shows the whole picture)
+    const hy = Math.round(Math.max(vb + (close ? s(6) : s(8)), ph + 2));
     let dX, dW;
     if (close) { dX = Math.round(w * 0.06); dW = Math.round(w * 0.88); }              // inside the doorway: the frame is the door
     else { dW = Math.round(clamp(w * (narrow ? 0.62 : 0.34), ph * 1.6, ph * 2.6)); dX = Math.round(hx - dW * 0.48); }
@@ -598,7 +601,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (!still) Q.steam(c, cx - 1, cy - s(18), t, 2, 2, 0.7, s);
       c.drawImage(kb.cv, kx - kb.ax, Math.round(G.vb + s(70) - kb.ay));
     },
-    focus(w, h, vb) { const G = geomDoor(w, h, vb, false); return { x: G.hx - 48, y: G.hy - 96, w: 96, h: 60 }; },
+    focus(w, h, vb) { const G = geomDoor(w, h, vb, false); return { x: G.hx - 30, y: G.hy - 88, w: 60, h: 56 }; }, // her face
   };
   const closeShot = {
     phases: [['lower', 700], ['smile', 1000]],
@@ -634,7 +637,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // Kōji's hand and cup at the frame's edge, close to us
       cupInHand(c, Math.round(dX + dW - s(30)), Math.round(G.vb + s(2)), 1, Q.skinOf(look('koji')), '#5a6a7a', -0.4);
     },
-    focus(w, h, vb) { const G = geomDoor(w, h, vb, true); const x1 = G.hx + Math.max(G.s(84), G.dW * 0.24) + G.s(24); return { x: G.hx - 48, y: G.hy - 96, w: Math.round(x1 - (G.hx - 48)), h: 60 }; },
+    focus(w, h, vb) { const G = geomDoor(w, h, vb, true); const x1 = G.hx + Math.max(G.s(84), G.dW * 0.24) + G.s(24); return { x: G.hx - 30, y: G.hy - 88, w: Math.round(x1 - (G.hx - 30)), h: 56 }; }, // her face and the cups
   };
 
   // ---- shot 5: before the door closes, from the square ---------------------------------------------------
