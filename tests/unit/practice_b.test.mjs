@@ -192,6 +192,13 @@ export default async (t) => {
     t.ok(RB.compare.scan(s) >= 1 && RB.compare.rec(s).seen[RB.compare.keyOf(c02.b)] === c02.b.h, 'the sighting is kept (bounded, by key and hash)');
     s.backlog.length = 0;
     t.ok(RB.compare.unlocked(s).some((d) => d.id === 'C02'), 'and survives the history scrolling away');
+    // a sighting saved under the line's earlier index (scene direction added before it moved it) still counts
+    const r0 = RB.compare.rec(s), k0 = RB.compare.keyOf(c02.b);
+    delete r0.seen[k0]; r0.seen[c02.b.scene + '#' + (c02.b.line + 1000)] = c02.b.h;
+    t.ok(RB.compare.unlocked(s).some((d) => d.id === 'C02'), 'a sighting recorded at an earlier index of the same line still counts');
+    r0.seen[c02.b.scene + '#' + (c02.b.line + 1000)] = 'x';
+    t.ok(!RB.compare.unlocked(s).some((d) => d.id === 'C02'), 'but only for the same line (scene and hash)');
+    delete r0.seen[c02.b.scene + '#' + (c02.b.line + 1000)]; r0.seen[k0] = c02.b.h;
     // content changes: no silent contradiction
     const sc = RB.content.scenes[c11.a.scene], i = c11.a.line, keep = sc.cmds[i].jp;
     RB.compare.mark(s, 'C11');

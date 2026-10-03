@@ -193,23 +193,78 @@ export function keyMagenta(img, mode) {
   for (let o = 0; o < d.length; o += 4) if (d[o + 3] && near(o)) { d[o] = d[o + 1] = d[o + 2] = d[o + 3] = 0; n++; }
   return n;
 }
-// A painted "transparency" checkerboard: an opaque image whose corner blocks hold exactly two light greys.
+// A painted "transparency" checkerboard (contract §2: rejected). Returns null, or { cell, cover, levels } describing
+// it. Hardened in contract v3: the old test (an opaque image whose four corner blocks hold exactly two light greys)
+// missed a checkerboard with tool noise (more than two greys), one under art that covers a corner (busts reach the
+// bottom edge), and one inside a file that also has real transparency (padding round a flattened image).
+// Now: the light, near-neutral pixels (the checkerboard's candidates) are split into two grey levels; along rows and
+// columns, where one level meets the other between two candidates is a cell edge; a cell size from 4 to 64 px and a
+// phase are fitted to those edges per axis (the largest size whose grid holds ≥ 90 % of them); the pattern is then
+// checked in 2D. A checkerboard: ≥ 90 % of the candidates agree with the fitted pattern, they cover ≥ 10 % of the
+// image and reach at least two of its four edges (it fills the background, not a patch of the art).
 export function looksLikeCheckerboard(img) {
-  if (hasTransparency(img)) return false;
-  // corner blocks large enough to span two squares of any usual checker size
-  const d = img.data, s = Math.min(Math.floor(Math.min(img.w, img.h) / 2), Math.max(24, Math.floor(Math.min(img.w, img.h) / 12)));
-  for (const [cx, cy] of [[0, 0], [img.w - s, 0], [0, img.h - s], [img.w - s, img.h - s]]) {
-    const cols = new Set();
-    for (let y = cy; y < cy + s; y++) for (let x = cx; x < cx + s; x++) {
-      const o = (y * img.w + x) * 4;
-      const r = d[o], g = d[o + 1], b = d[o + 2];
-      if (Math.max(r, g, b) - Math.min(r, g, b) > 12 || r < 140) return false;
-      cols.add((r << 16) | (g << 8) | b);
-      if (cols.size > 2) return false;
-    }
-    if (cols.size !== 2) return false;
+  const { w, h, data: d } = img, n = w * h;
+  const lum = new Float32Array(n).fill(-1);
+  let cand = 0;
+  for (let i = 0; i < n; i++) {
+    const o = 4 * i;
+    if (d[o + 3] < ALPHA) continue;
+    const r = d[o], g = d[o + 1], b = d[o + 2], mx = Math.max(r, g, b), mn = Math.min(r, g, b);
+    if (mx - mn > 18 || mn < 120) continue;
+    lum[i] = 0.299 * r + 0.587 * g + 0.114 * b; cand++;
   }
-  return true;
+  if (cand < Math.max(64, n * 0.1)) return null;
+  // two levels: the split that best separates the candidates' lightness (Otsu on a 256-bin histogram)
+  const hist = new Float64Array(256);
+  for (let i = 0; i < n; i++) if (lum[i] >= 0) hist[Math.min(255, Math.round(lum[i]))]++;
+  let sum = 0;
+  for (let k = 0; k < 256; k++) sum += k * hist[k];
+  let wB = 0, sB = 0, best = -1, split = -1;
+  for (let k = 0; k < 256; k++) {
+    wB += hist[k]; if (!wB) continue;
+    const wF = cand - wB; if (!wF) break;
+    sB += k * hist[k];
+    const mB = sB / wB, mF = (sum - sB) / wF, v = wB * wF * (mB - mF) * (mB - mF);
+    if (v > best) { best = v; split = k; }
+  }
+  let lo = 0, nlo = 0, hi = 0, nhi = 0;
+  for (let k = 0; k < 256; k++) if (k <= split) { lo += k * hist[k]; nlo += hist[k]; } else { hi += k * hist[k]; nhi += hist[k]; }
+  if (!nlo || !nhi || hi / nhi - lo / nlo < 8 || Math.min(nlo, nhi) < cand * 0.2) return null;
+  const cls = (i) => (lum[i] < 0 ? -1 : lum[i] > split ? 1 : 0);
+  // cell edges along each axis: where two neighbouring candidates are of different levels
+  const fx = new Float64Array(w + 1), fy = new Float64Array(h + 1);
+  let ex = 0, ey = 0;
+  for (let y = 0; y < h; y++) for (let x = 1; x < w; x++) { const a = cls(y * w + x - 1), b = cls(y * w + x); if (a >= 0 && b >= 0 && a !== b) { fx[x]++; ex++; } }
+  for (let y = 1; y < h; y++) for (let x = 0; x < w; x++) { const a = cls((y - 1) * w + x), b = cls(y * w + x); if (a >= 0 && b >= 0 && a !== b) { fy[y]++; ey++; } }
+  if (ex < 8 || ey < 8) return null;
+  const fit = (f, tot, len) => {
+    let pick = null;
+    for (let c = 4; c <= Math.min(64, len >> 1); c++) {
+      const res = new Float64Array(c);
+      for (let k = 1; k < f.length; k++) if (f[k]) res[k % c] += f[k];
+      let bo = 0;
+      for (let o = 1; o < c; o++) if (res[o] > res[bo]) bo = o;
+      // (an edge a pixel off its line — a tool's soft cell edge — still counts)
+      const held = res[bo] + res[(bo + 1) % c] + res[(bo + c - 1) % c];
+      if (held >= 0.9 * tot) pick = { c, o: bo };
+    }
+    return pick;
+  };
+  const gx = fit(fx, ex, w), gy = fit(fy, ey, h);
+  if (!gx || !gy || gx.c !== gy.c) return null;
+  // the 2D pattern: a candidate's level against the parity of its cell
+  let agree = 0, one = 0;
+  const parity = (x, y) => (Math.floor((x - gx.o) / gx.c) + Math.floor((y - gy.o) / gy.c)) & 1;
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) { const c = cls(y * w + x); if (c < 0) continue; if (c === parity(x, y)) agree++; else one++; }
+  const fitShare = Math.max(agree, one) / cand;
+  if (fitShare < 0.9) return null;
+  const edges = [[0, 0, w, 1], [0, h - 1, w, h], [0, 0, 1, h], [w - 1, 0, w, h]].filter(([x0, y0, x1, y1]) => {
+    let k = 0, t = 0;
+    for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) { t++; if (cls(y * w + x) >= 0) k++; }
+    return k >= t * 0.25;
+  }).length;
+  if (edges < 2) return null;
+  return { cell: gx.c, cover: Math.round((cand / n) * 1000) / 10, levels: [Math.round(lo / nlo), Math.round(hi / nhi)], fit: Math.round(fitShare * 1000) / 10, edges };
 }
 // Place a native image on the canvas (W × H) at (dx, dy). Returns { img, outside: opaque pixels cut off }.
 export function place(src, W, H, dx, dy) {

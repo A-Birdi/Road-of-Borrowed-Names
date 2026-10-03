@@ -106,10 +106,11 @@ const files = await p.evaluate(() => {
     save('ref_player_wear.png', c);
   }
 
-  // ---- 4. palettes, plus the key ramps the player kit is painted in -------------------------
+  // ---- 4. palettes, plus the key families the player kit is painted in (contract v3) ---------------
   {
-    const [c, g] = mk(1320, 900, BG);
-    text(g, 'Game palettes the player kit is recoloured to (the game builds 5-step shaded ramps from these).', 20, 30, 15, INK, true);
+    const HC0 = RB.harmonyContract, CC = HC0.colour;
+    const [c, g] = mk(1320, 1340, BG);
+    text(g, 'Game palettes the player kit is recoloured to (the game builds shaded ramps from these).', 20, 30, 15, INK, true);
     let y = 56;
     const row = (title, list, names) => {
       text(g, title, 20, y + 14, 13, INK, true); y += 22;
@@ -124,22 +125,44 @@ const files = await p.evaluate(() => {
     row('Skin (7)', SP.SKIN);
     row('Hair colour (10)', SP.HAIR.slice(0, 9), SP.HAIR_NAMES.slice(0, 9)); row('', SP.HAIR.slice(9), SP.HAIR_NAMES.slice(9));
     row('Clothing colour (8): main, shade, trim', SP.CLOTH);
-    y += 20;
-    text(g, 'KEY RAMPS — paint the PLAYER KIT in these, darkest to lightest. The game swaps each for the chosen colour.', 20, y + 14, 15, '#f0c878', true); y += 26;
-    const KEYS = RB.harmonyKeyRamps || null;
-    const keys = KEYS || [
-      ['skin (reference)', ['#6e3e2a', '#9a5e40', '#c28e64', '#dcae84', '#f2d0a8']],
-      ['hair', ['#2a0a3a', '#5a1470', '#8a24a0', '#b848c8', '#e088ec']],
-      ['cloth main', ['#0c3a14', '#1a6428', '#2e8c3c', '#52b45a', '#8ad88a']],
-      ['cloth trim', ['#0a3a44', '#12687a', '#22a0b4', '#5ccce0', '#a8f0f8']],
-      ['accessory', ['#10164a', '#222e8a', '#3a4cc8', '#6a80ec', '#a8b8ff']],
-    ];
-    for (const [name, ramp] of keys) {
-      text(g, name, 20, y + 20, 13, INK, true);
-      ramp.forEach((h, k) => { g.fillStyle = h; g.fillRect(170 + k * 110, y, 100, 30); text(g, h, 170 + k * 110, y + 46, 12, DIM); });
-      y += 60;
+    y += 16;
+    const I = HC0.IMPORT, E = I.extend;
+    text(g, 'KEY FAMILIES (contract v' + HC0.VERSION + ') — paint the PLAYER KIT in these families, with as many values as the drawing needs (6–12 recommended).', 20, y + 14, 15, '#f0c878', true); y += 22;
+    text(g, 'Each band runs darkest → lightest, a little beyond both ends (' + E + ' steps). The five ▲ anchors are the exact key shades (contract v2\'s): useful, never required.', 20, y + 14, 13, INK); y += 18;
+    text(g, 'Rows: the band itself (middle) and how far a value may lean in hue or chroma and still belong to the family — up to about 12° of hue and 16 % of chroma in total', 20, y + 14, 13, INK); y += 18;
+    text(g, '(rim lights and warm highlights included). Further out the importer stops: unresolved, then fixed (it keeps its colour in every look). Not a palette to pick from: any value on the band is fine.', 20, y + 14, 13, INK); y += 26;
+    const keys = [['skin (key)', 'skin'], ['hair', 'hair'], ['cloth main', 'clothMain'], ['cloth trim', 'clothTrim'], ['accessory', 'accessory']];
+    const X0 = 170, BW = 1100, STEPS = 88, cw = BW / STEPS;
+    const tAt = (k) => -E + ((4 + 2 * E) * (k + 0.5)) / STEPS;
+    const xOfT = (t) => X0 + ((t + E) / (4 + 2 * E)) * BW;
+    const VAR = [[0, -12], [-0.16, 0], [0, 0], [0.16, 0], [0, 12]];
+    for (const [name, m] of keys) {
+      text(g, name, 20, y + 34, 13, INK, true);
+      const K = CC.keyCurve(m);
+      VAR.forEach(([rho, deg], ri) => {
+        const hgt = ri === 2 ? 30 : 11, yy = y + (ri < 2 ? ri * 12 : ri === 2 ? 24 : 54 + (ri - 3) * 12);
+        for (let k = 0; k < STEPS; k++) {
+          const q = CC.curveAt(K, tAt(k)), ch = Math.hypot(q[1], q[2]) * (1 + rho), h = Math.atan2(q[2], q[1]) + (deg * Math.PI) / 180;
+          const rgb = CC.srgbOf(q[0], ch * Math.cos(h), ch * Math.sin(h));
+          g.fillStyle = 'rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')';
+          g.fillRect(Math.floor(X0 + k * cw), yy, Math.ceil(cw), hgt);
+        }
+      });
+      text(g, '−12° hue', X0 - 66, y + 10, 10, DIM); text(g, '−16 % chroma', X0 - 84, y + 21, 10, DIM); text(g, '+16 % chroma', X0 - 84, y + 64, 10, DIM); text(g, '+12° hue', X0 - 66, y + 76, 10, DIM);
+      // the anchors (exact key shades), marked under the band with their hex
+      HC0.KEY_RAMPS[m].forEach((hx, sh) => {
+        const x = xOfT(sh);
+        g.fillStyle = INK; g.beginPath(); g.moveTo(x, y + 80); g.lineTo(x - 6, y + 90); g.lineTo(x + 6, y + 90); g.closePath(); g.fill();
+        g.strokeStyle = '#000'; g.lineWidth = 1; g.strokeRect(Math.round(x) - 0.5, y + 23.5, 1, 31);
+        text(g, 's' + sh + ' ' + hx, x - 30, y + 104, 11, DIM);
+      });
+      // the ends of the key ramp (s0, s4) and the band's extension past them
+      g.fillStyle = 'rgba(255,255,255,0.35)';
+      g.fillRect(Math.round(xOfT(0)) - 1, y - 2, 1, 4); g.fillRect(Math.round(xOfT(4)), y - 2, 1, 4);
+      y += 118;
     }
-    text(g, 'Outline ink #140c18. Everything not in a key ramp (eyes, brush, metal, glass, leather) is painted in its final colour and left as is.', 20, y + 14, 13, INK);
+    text(g, 'Outline ink #140c18, whites, eyes, brush, metal, glass and leather are painted in their final colours and never recoloured. Keep them clearly away from these families', 20, y + 14, 13, INK);
+    text(g, '(the synthetic sample\'s brown iris, 38 % less saturated than the skin family at its value, is the closest fixed colour it has: it stays fixed). Companions are never recoloured.', 20, y + 32, 13, INK);
     save('ref_palettes.png', c);
   }
 

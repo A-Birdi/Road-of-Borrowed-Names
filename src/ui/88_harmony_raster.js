@@ -29,7 +29,7 @@ RB.harmonyRaster = (function () {
   const CAP = 48;
   let man = null, src = null, decodeFn = null, err = null;
   const dec = new Map(), pend = new Map();
-  const S = { installs: 0, decodes: 0, decodeErrors: [], evictions: 0, paints: 0, fallbacks: 0, log: [] };
+  const S = { installs: 0, decodes: 0, decodeErrors: [], evictions: 0, paints: 0, fallbacks: 0, log: [], decomposed: 0, recoloured: 0, clipped: 0 };
   const ramps = new Map();
 
   // ---- install ---------------------------------------------------------------------------------------------------
@@ -70,16 +70,17 @@ RB.harmonyRaster = (function () {
     if (img.close) img.close();
     return { w, h, data };
   }
-  // pixel codes from a mask: 0 transparent, 1 fixed, 2 + material × 5 + shade (shade from the exact key colour,
-  // else the nearest key luminance); outline ink and near-white pixels are fixed whatever the mask says
+  // pixel codes from a mask: 0 transparent, 1 fixed, 2 + material × 5 + shade (the exact key shade, else the pixel's
+  // value on its material's key curve, rounded — for the mask views; recolouring reads the pixel's own colour);
+  // outline ink and near-white pixels are fixed whatever the mask says
   let keyIdx = null;
   function keys() {
     if (keyIdx) return keyIdx;
-    const P = RB.pxkit, H = C(), exact = new Map(), lum = [];
-    H.MATERIALS.forEach((m, mi) => { lum[mi] = []; H.KEY_RAMPS[m].forEach((hx, s) => { const c = P.parse(hx); exact.set((c[0] << 16) | (c[1] << 8) | c[2], mi * 5 + s); lum[mi][s] = 0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2]; }); });
+    const P = RB.pxkit, H = C(), exact = new Map();
+    H.MATERIALS.forEach((m, mi) => { H.KEY_RAMPS[m].forEach((hx, s) => { const c = P.parse(hx); exact.set((c[0] << 16) | (c[1] << 8) | c[2], mi * 5 + s); }); });
     const mask = H.MATERIALS.map((m) => { const c = P.parse(H.MASK[m]); return (c[0] << 16) | (c[1] << 8) | c[2]; });
     const prot = H.IMPORT.protect.map((hx) => P.parse(hx));
-    keyIdx = { exact, lum, mask, prot };
+    keyIdx = { exact, mask, prot };
     return keyIdx;
   }
   function protectedPx(r, g, b) {
@@ -90,6 +91,20 @@ RB.harmonyRaster = (function () {
     }
     return false;
   }
+  // A material pixel's place on its key curve (look-independent, memoised by colour and material):
+  // { t, rho, theta } — RB.harmonyContract.colour.decompose. Exact key shades are never looked up here.
+  const dcMemo = new Map();
+  const DC_CAP = 1 << 15;
+  function dcOf(rgb24, mi) {
+    const k = rgb24 * 8 + mi;
+    let v = dcMemo.get(k);
+    if (v) return v;
+    const CC = C().colour, lab = CC.oklab((rgb24 >> 16) & 255, (rgb24 >> 8) & 255, rgb24 & 255);
+    v = CC.decompose(lab, C().MATERIALS[mi]);
+    if (dcMemo.size >= DC_CAP) dcMemo.clear();
+    dcMemo.set(k, v); S.decomposed++;
+    return v;
+  }
   function codesOf(art, mask) {
     const n = art.w * art.h, code = new Uint8Array(n), K = keys(), a = art.data, m = mask.data;
     for (let i = 0; i < n; i++) {
@@ -99,10 +114,10 @@ RB.harmonyRaster = (function () {
       if (!m[o + 3]) continue;
       const mi = K.mask.indexOf((m[o] << 16) | (m[o + 1] << 8) | m[o + 2]);
       if (mi < 0 || protectedPx(a[o], a[o + 1], a[o + 2])) continue;
-      const ex = K.exact.get((a[o] << 16) | (a[o + 1] << 8) | a[o + 2]);
+      const rgb24 = (a[o] << 16) | (a[o + 1] << 8) | a[o + 2], ex = K.exact.get(rgb24);
       let s;
       if (ex != null && Math.floor(ex / 5) === mi) s = ex % 5;
-      else { const L = 0.299 * a[o] + 0.587 * a[o + 1] + 0.114 * a[o + 2]; let bd = 1e9; s = 0; K.lum[mi].forEach((v, k) => { if (Math.abs(v - L) < bd) { bd = Math.abs(v - L); s = k; } }); }
+      else { const t = dcOf(rgb24, mi).t; s = t <= 0 ? 0 : t >= 4 ? 4 : Math.round(t); }
       code[i] = 2 + mi * 5 + s;
     }
     return code;
@@ -168,33 +183,68 @@ RB.harmonyRaster = (function () {
   const ready = (pl) => !!(pl && pl.ok && pl.files.every((n) => dec.has(n)));
 
   // ---- the look's ramps (as the code busts build their materials) ---------------------------------------------------------
+  // Each recolourable material of a look gets a ROW: ramp (the five tones the exact key shades take — PICK of the code
+  // material's tones, exactly as in contract v2), curve (the target curve through ALL of that material's tones, the
+  // key shades at their PICKed tones: RB.harmonyContract.colour.targetCurve) and a memo (painted colour → output).
   function pick(M, idx) { return idx.map((i) => M.c[Math.min(i, M.c.length - 1)]); }
   const pickOf = (M) => (M.n >= 6 ? C().PICK.n6 : M.n === 5 ? C().PICK.n5 : C().PICK.n4);
+  const rgbOfPacked = (p) => [p & 255, (p >>> 8) & 255, (p >>> 16) & 255];
+  // `exact`: the colours the five exact key shades take — the ramp's tones, unless the value floor opened this ramp
+  // (then the opened curve's colour at that shade: listed in docs/screenshots/harmony/recolour_v3/proof.json)
+  function rowOf(M, idx) {
+    const at = idx.map((i) => Math.min(i, M.c.length - 1)), ramp = pick(M, at), CC = C().colour;
+    const curve = CC.targetCurve(Array.from(M.c, rgbOfPacked), at);
+    const exact = ramp.map((p, s) => {
+      const nd = curve.find((n) => n.t === s);
+      if (!nd || nd.L === nd.L0) return p;
+      const c = CC.srgbOf(nd.L, nd.a, nd.b);
+      return (0xff000000 | (c[2] << 16) | (c[1] << 8) | c[0]) >>> 0;
+    });
+    return { ramp, exact, opened: exact.some((p, s) => p !== ramp[s]), curve, memo: new Map() };
+  }
   function rampsOf(look) {
     const k = HK().lookKey(look);
     let r = ramps.get(k);
     if (r) return r;
     const col = RB.sprites.colorsOf(look), H = HK(), PK = C().PICK;
-    r = {
-      skin: pick(H.skinMat(col.skin), PK.skin), hair: pick(H.hairMat(col.hair), PK.n6),
-      clothMain: pick(H.clothMat(col.cloth[0]), PK.n6), clothTrim: pick(H.clothMat(col.cloth[2], { step: 0.09 }), PK.n6),
-      wrap: pick(H.clothMat(look.wrapCol || col.cloth[2]), PK.n6), acc: {}, cloth: col.cloth,
+    const rows = {
+      skin: rowOf(H.skinMat(col.skin), PK.skin), hair: rowOf(H.hairMat(col.hair), PK.n6),
+      clothMain: rowOf(H.clothMat(col.cloth[0]), PK.n6), clothTrim: rowOf(H.clothMat(col.cloth[2], { step: 0.09 }), PK.n6),
+      wrap: rowOf(H.clothMat(look.wrapCol || col.cloth[2]), PK.n6),
     };
+    r = { skin: rows.skin.ramp, hair: rows.hair.ramp, clothMain: rows.clothMain.ramp, clothTrim: rows.clothTrim.ramp, wrap: rows.wrap.ramp, rows, acc: {}, accRows: {}, cloth: col.cloth };
     ramps.set(k, r);
     while (ramps.size > 16) ramps.delete(ramps.keys().next().value);
     return r;
   }
-  function accRamp(r, look, a) {
-    if (r.acc[a]) return r.acc[a];
+  function accRow(r, look, a) {
+    if (r.accRows[a] !== undefined) return r.accRows[a];
     const ch = C().ACC[a] && C().ACC[a].channel;
-    if (!ch) return null;
+    if (!ch) { r.accRows[a] = null; return null; }
     let M;
     const v = look[ch.field];
     if (v) M = HK().M('acc_' + a, v, ch.opts);
     else if (ch.def === 'metal') M = HK().metalMat('#e0b850');
     else M = HK().M('acc_' + a, ch.def === 'cloth.2' ? r.cloth[2] : ch.def, ch.opts);
-    r.acc[a] = pick(M, pickOf(M));
-    return r.acc[a];
+    r.accRows[a] = rowOf(M, pickOf(M));
+    r.acc[a] = r.accRows[a].ramp;
+    return r.accRows[a];
+  }
+  const accRamp = (r, look, a) => { const row = accRow(r, look, a); return row ? row.ramp : null; };
+  // One material pixel (packed RGBA) of material mi → its colour in the look (packed): an exact key shade takes its
+  // ramp tone (contract v2's colours, exactly, unless the value floor opened the ramp); any other painted value is
+  // decomposed against its key curve and rebuilt on the row's target curve (value, then chroma and hue deviation ×
+  // RECOLOUR.residual, into the gamut).
+  function recolourPx(row, mi, p) {
+    const rgb24 = ((p & 255) << 16) | (p & 0xff00) | ((p >>> 16) & 255);
+    let q = row.memo.get(rgb24);
+    if (q !== undefined) return q;
+    const ex = keys().exact.get(rgb24);
+    if (ex != null && Math.floor(ex / 5) === mi) q = row.exact[ex % 5];
+    else { const c = C().colour.recolour(dcOf(rgb24, mi), row.curve); q = (0xff000000 | (c[2] << 16) | (c[1] << 8) | c[0]) >>> 0; S.recoloured++; if (c[3]) S.clipped++; }
+    if (row.memo.size > 8192) row.memo.clear();
+    row.memo.set(rgb24, q);
+    return q;
   }
 
   // ---- assembling ------------------------------------------------------------------------------------------------------
@@ -211,7 +261,8 @@ RB.harmonyRaster = (function () {
         if (X < 0 || X >= W) continue;
         if (skip && skip(X, Y)) continue;
         let q = p;
-        if (code && code[i] >= 2 && tab) { const c = code[i] - 2, row = tab[Math.floor(c / 5)]; if (row) q = row[c % 5]; }
+        // (a row is a look's material: its own colour per painted value; a plain list of five tones is the v2 lookup)
+        if (code && code[i] >= 2 && tab) { const c = code[i] - 2, mi = (c / 5) | 0, row = tab[mi]; if (row) q = Array.isArray(row) ? row[c % 5] : recolourPx(row, mi, p); }
         out[Y * W + X] = q;
       }
     }
@@ -230,7 +281,7 @@ RB.harmonyRaster = (function () {
       return res;
     }
     const r = rampsOf(look), P = man.pc || {};
-    const base = [r.skin, r.hair, r.clothMain, r.clothTrim, null];
+    const base = [r.rows.skin, r.rows.hair, r.rows.clothMain, r.rows.clothTrim, null];
     // slot order, with the pose's arm slot and glasses over a listed fringe
     let order = H.PC_SLOTS.slice();
     const armAt = P.armSlot && P.armSlot[pl.pose];
@@ -253,8 +304,8 @@ RB.harmonyRaster = (function () {
         let dx = g[0], dy = g[1];
         if (q.acc && H.ACC[q.acc].hair && P.attach && P.attach[pl.style] && P.attach[pl.style][q.acc]) { dx += P.attach[pl.style][q.acc][0]; dy += P.attach[pl.style][q.acc][1]; }
         let tab = base;
-        if (q.acc) { tab = base.slice(); tab[4] = accRamp(r, look, q.acc); }
-        else if (/^pc_hair_wrap_/.test(q.file)) { tab = base.slice(); tab[3] = r.wrap; }
+        if (q.acc) { tab = base.slice(); tab[4] = accRow(r, look, q.acc); }
+        else if (/^pc_hair_wrap_/.test(q.file)) { tab = base.slice(); tab[3] = r.rows.wrap; }
         draw(out, f, dx, dy, tab, slot === 'hair_back' || slot === 'hair_front' ? hide : null);
         if (slot === 'arm') armBox = bbox(f.px, f.w, f.h, dx, dy);
       }
@@ -292,11 +343,14 @@ RB.harmonyRaster = (function () {
       active: !!man, error: err, set: man ? man.set : null, synthetic: man ? !!man.synthetic : null, artVersion: artVersion(), contractVersion: C().VERSION,
       files: man ? Object.keys(man.files).length : 0, decoded: dec.size, pending: pend.size, decodedBytes: bytes, cap: CAP,
       decodes: S.decodes, evictions: S.evictions, decodeErrors: S.decodeErrors.slice(), paints: S.paints, fallbacks: S.fallbacks, fallbackLog: S.log.slice(), looksCached: ramps.size,
+      // contract v3: painted colours decomposed against their key curve (once per colour and material), colours
+      // rebuilt on a look's target curve (once per colour and look ramp), of which had to be pulled into the gamut
+      decomposed: S.decomposed, recoloured: S.recoloured, gamutClipped: S.clipped, approval: man ? C().approvalOf(man) : null,
     };
   }
 
   // the build's embedded set (assets/harmony/), when there is one
   if (RB.harmonyAssets && RB.harmonyAssets.manifest) { try { install(RB.harmonyAssets); } catch (e) { err = [String(e && e.message)]; } }
 
-  return { install, uninstall, active, manifest: () => man, artVersion, plan, ready, load, paint, timeline, stats, note, _: { codesOf, rampsOf, accRamp, draw, decoded: dec } };
+  return { install, uninstall, active, manifest: () => man, artVersion, plan, ready, load, paint, timeline, stats, note, _: { codesOf, rampsOf, accRamp, accRow, recolourPx, rowOf, draw, decoded: dec } };
 })();

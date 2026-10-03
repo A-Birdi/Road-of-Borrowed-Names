@@ -354,7 +354,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     A('sb_greatlamp', {
       box: [-4, -56, 72, 124], ink: true,
       v: (o) => (o.lit ? 'l' : o.frozen ? 'z' : 'd'),
-      f: (t, o) => (o.lit ? kit.flick(t, o, 140) : 0),
+      f: (t, o) => (o.lit ? kit.flickLively(t, o, 140) : 0), // the chapter's flame: lively (props balance pass)
       draw(g, M, v, f) {
         const s5 = ramp('#3a3440', 0.4, 0.45);
         R(g, 10, 48, 44, 12, s5[2]); R(g, 10, 48, 44, 2, s5[4]);

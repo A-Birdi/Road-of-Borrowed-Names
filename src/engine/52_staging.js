@@ -355,7 +355,8 @@ RB.staging = (function () {
     if (Math.abs(c.x - p.x) + Math.abs(c.y - p.y) <= 1) return;
     const back = DIRS[{ up: 'down', down: 'up', left: 'right', right: 'left' }[p.dir]];
     const goal = [p.x + back[0], p.y + back[1]];
-    const path = free(goal[0], goal[1], c) ? bfs(c, goal[0], goal[1]) : bfs(c, p.x, p.y, { adjacent: true });
+    // (behind you, if that place is free and can be reached; else any free place beside you)
+    const path = (free(goal[0], goal[1], c) && bfs(c, goal[0], goal[1])) || bfs(c, p.x, p.y, { adjacent: true });
     if (path && path.length) walkPath(c, path, null, 4000);
   }
   // an early advance (the reader moved on): every cue of this scene settles at its hold or its end

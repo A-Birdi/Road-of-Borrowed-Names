@@ -57,6 +57,9 @@ RB.compare = (function () {
   const byId = (id) => defs().find((d) => d.id === id) || null;
   const rec = (s) => { const P = RB.practice.of(s); if (!P.compare) P.compare = def(); return P.compare; };
   const keyOf = (src) => src.scene + '#' + src.line;
+  // a sighting recorded for this line, under its index now or an earlier one (scene direction added before a
+  // quoted line moves it to a later index; the recorded hash still names the same line)
+  const sighted = (r, src) => r.seen[keyOf(src)] === src.h || Object.keys(r.seen).some((k) => r.seen[k] === src.h && k.slice(0, k.lastIndexOf('#')) === src.scene);
   const isTeach = (src) => !!(src && src.teach);
   function tier(d, prof) {
     if (!d || !d.q) return null;
@@ -109,7 +112,7 @@ RB.compare = (function () {
     if (isTeach(src)) return true;
     if (!s) return false;
     const r = rec(s);
-    if (r.seen[keyOf(src)] === src.h) return true;
+    if (sighted(r, src)) return true;
     if (inBacklog(s, src)) return true;
     const i = indexNow(src);
     return i >= 0 && !!(s.seen && s.seen[src.scene]) && certainlyShown(src.scene, i);
@@ -120,7 +123,7 @@ RB.compare = (function () {
     const r = rec(s);
     let n = 0;
     for (const d of defs()) for (const src of [d.a, d.b]) {
-      if (isTeach(src) || r.seen[keyOf(src)] === src.h) continue;
+      if (isTeach(src) || sighted(r, src)) continue;
       if (status(src) === 'ok' || status(src) === 'moved') {
         if (inBacklog(s, src) || (s.seen && s.seen[src.scene] && certainlyShown(src.scene, indexNow(src)))) {
           if (Object.keys(r.seen).length >= MAX_SEEN) break;

@@ -582,17 +582,20 @@ RB.render = (function () {
       lctx.arc(x, y, R, 0, Math.PI * 2);
       lctx.fill();
     };
-    const flick = RB.game.reducedMotion() ? 0 : Math.sin(t / 180) * 1.5;
+    // each pool of light breathes on its own phase (by where it is), slowly: a map's lamps no longer pulse
+    // together like one heartbeat (the props balance pass)
+    const still = RB.game.reducedMotion();
+    const flick = (ph) => (still ? 0 : Math.sin(t / 300 + ph) * 1.2);
     const pr = amb.playerLight == null ? 44 : amb.playerLight;
-    if (pr) hole(W.player.fx * TS + 8, W.player.fy * TS + 4, pr + flick);
-    if (W.comp && W.comp.id === 'ren') hole(W.comp.fx * TS + 8, W.comp.fy * TS + 6, 34 + flick);
+    if (pr) hole(W.player.fx * TS + 8, W.player.fy * TS + 4, pr + flick(0));
+    if (W.comp && W.comp.id === 'ren') hole(W.comp.fx * TS + 8, W.comp.fy * TS + 6, 34 + flick(2.1));
     const s = RB.game.s;
     for (const p of m.props) {
       const pd = RB.props.P[p.p];
       if (!pd || !(pd.light || p.light)) continue;
       if (p.if && !RB.state.test(s, p.if)) continue;
       if (p.o && p.o.lit === false) continue;
-      hole(p.x * TS + 8, p.y * TS + 2, (p.light || pd.light) + flick);
+      hole(p.x * TS + 8, p.y * TS + 2, (p.light || pd.light) + flick(p.x * 1.7 + p.y * 2.3));
     }
     for (const st of m.structs) if (st.lit || ambientOf(m).night) (st.windows || []).forEach((wx) => hole((st.x + wx) * TS + 8, (st.y + st.h) * TS - 10, 18));
     lctx.globalCompositeOperation = 'source-over';

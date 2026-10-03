@@ -1,4 +1,22 @@
 {
+ "approval": {
+  "codeBusts": "provisional",
+  "labels": {
+   "approved": "approved visual direction",
+   "candidate": "visual candidate awaiting approval",
+   "provisional": "provisional artwork",
+   "synthetic": "synthetic sample — not art",
+   "verified": "integrated and verified"
+  },
+  "states": [
+   "provisional",
+   "candidate",
+   "approved",
+   "verified"
+  ],
+  "synthetic": "synthetic",
+  "where": "manifest companions.<id>.approval and pc.approval, from the batch import.json; RB.harmonyArt.stats().approval; the ?dev=harmony viewer"
+ },
  "artVersion": 1,
  "assetKeys": {
   "optional": [
@@ -124,6 +142,80 @@
    "suzu_prep_a",
    "suzu_settle_b"
   ]
+ },
+ "batches": {
+  "1a": {
+   "companion": "suzu",
+   "look": {
+    "acc": [
+     "glasses",
+     "flower",
+     "satchel"
+    ],
+    "hair": "ponytail",
+    "shape": "coat"
+   },
+   "notAssetKeys": [
+    "suzu_peak_fx"
+   ],
+   "optional": [
+    "suzu_prep_b",
+    "suzu_settle_a",
+    "suzu_peak_fx",
+    "pc_arm_prep_b_fitted"
+   ],
+   "phase": 1,
+   "purpose": "the quality bar: Suzu and the player's look A (owner approval before roll-out)",
+   "required": [
+    "suzu_prep_a",
+    "suzu_cue",
+    "suzu_peak",
+    "suzu_settle_b",
+    "pc_head_focus",
+    "pc_head_cue",
+    "pc_head_peak",
+    "pc_head_settle",
+    "pc_torso_coat",
+    "pc_arm_prep_a_fitted",
+    "pc_arm_cue_fitted",
+    "pc_arm_peak_suzu_fitted",
+    "pc_arm_settle_suzu_fitted",
+    "pc_hair_ponytail_back",
+    "pc_hair_ponytail_front",
+    "acc_glasses",
+    "acc_flower",
+    "acc_satchel"
+   ]
+  },
+  "1b": {
+   "after": "1a",
+   "companion": "suzu",
+   "look": {
+    "acc": [
+     "scarf",
+     "headband"
+    ],
+    "hair": "curly",
+    "shape": "robe"
+   },
+   "notAssetKeys": [],
+   "optional": [
+    "pc_arm_prep_b_wide"
+   ],
+   "phase": 2,
+   "purpose": "the customisation proof: a materially different look B on the same kit (after 1a is approved)",
+   "required": [
+    "pc_torso_robe",
+    "pc_arm_prep_a_wide",
+    "pc_arm_cue_wide",
+    "pc_arm_peak_suzu_wide",
+    "pc_arm_settle_suzu_wide",
+    "pc_hair_curly_back",
+    "pc_hair_curly_front",
+    "acc_scarf",
+    "acc_headband"
+   ]
+  }
  },
  "companions": {
   "mio": {
@@ -676,6 +768,19 @@
     ]
    }
   },
+  "approval": [
+   "provisional",
+   "candidate",
+   "approved",
+   "verified"
+  ],
+  "approvalLabel": {
+   "approved": "approved visual direction",
+   "candidate": "visual candidate awaiting approval",
+   "provisional": "provisional artwork",
+   "synthetic": "synthetic sample — not art",
+   "verified": "integrated and verified"
+  },
   "armRequiredShared": [
    "prep_a",
    "cue"
@@ -692,6 +797,76 @@
    "under_head",
    "under_torso"
   ],
+  "batches": {
+   "1a": {
+    "companion": "suzu",
+    "look": {
+     "acc": [
+      "glasses",
+      "flower",
+      "satchel"
+     ],
+     "hair": "ponytail",
+     "shape": "coat"
+    },
+    "optional": [
+     "suzu_prep_b",
+     "suzu_settle_a",
+     "suzu_peak_fx",
+     "pc_arm_prep_b_fitted"
+    ],
+    "phase": 1,
+    "purpose": "the quality bar: Suzu and the player's look A (owner approval before roll-out)",
+    "required": [
+     "suzu_prep_a",
+     "suzu_cue",
+     "suzu_peak",
+     "suzu_settle_b",
+     "pc_head_focus",
+     "pc_head_cue",
+     "pc_head_peak",
+     "pc_head_settle",
+     "pc_torso_coat",
+     "pc_arm_prep_a_fitted",
+     "pc_arm_cue_fitted",
+     "pc_arm_peak_suzu_fitted",
+     "pc_arm_settle_suzu_fitted",
+     "pc_hair_ponytail_back",
+     "pc_hair_ponytail_front",
+     "acc_glasses",
+     "acc_flower",
+     "acc_satchel"
+    ]
+   },
+   "1b": {
+    "after": "1a",
+    "companion": "suzu",
+    "look": {
+     "acc": [
+      "scarf",
+      "headband"
+     ],
+     "hair": "curly",
+     "shape": "robe"
+    },
+    "optional": [
+     "pc_arm_prep_b_wide"
+    ],
+    "phase": 2,
+    "purpose": "the customisation proof: a materially different look B on the same kit (after 1a is approved)",
+    "required": [
+     "pc_torso_robe",
+     "pc_arm_prep_a_wide",
+     "pc_arm_cue_wide",
+     "pc_arm_peak_suzu_wide",
+     "pc_arm_settle_suzu_wide",
+     "pc_hair_curly_back",
+     "pc_hair_curly_front",
+     "acc_scarf",
+     "acc_headband"
+    ]
+   }
+  },
   "bust": {
    "h": 160,
    "w": 192
@@ -704,11 +879,16 @@
    "settle_a": "hold",
    "settle_b": "hold"
   },
+  "colourModel": "OKLab key curves through the five anchor shades of each key family, extended 0.6 steps past both ends; t from lightness; deviation relative to the curve's chroma (src/ui/88_harmony_contract.js colour)",
   "compactSafe": [
    8,
    0,
    184,
    128
+  ],
+  "compatible": [
+   2,
+   3
   ],
   "display": {
    "compact": {
@@ -762,15 +942,22 @@
   ],
   "import": {
    "alpha": 128,
-   "ambiguous": 40,
+   "extend": 0.6,
+   "foreign": 0.1,
+   "inner": 0.31,
+   "margin": 0.1,
    "maxOffset": 24,
+   "outer": 0.34,
    "outline": 24,
    "protect": [
     "#140c18",
     "#ffffff",
     "#f6f2ee"
    ],
-   "snap": 12,
+   "v2": {
+    "ambiguous": 40,
+    "snap": 12
+   },
    "white": 24
   },
   "keyRamps": {
@@ -955,7 +1142,25 @@
     5
    ]
   },
+  "recolour": {
+   "maxChroma": 1,
+   "maxHue": 0.6,
+   "minChroma": 0.02,
+   "residual": 1,
+   "valueFloor": 0.05
+  },
   "reducedMotion": "settle_b",
+  "reducedMotionPlan": {
+   "at": {
+    "from": 0.5,
+    "seg": "hold"
+   },
+   "crossFade": 100,
+   "states": [
+    "peak",
+    "settle_b"
+   ]
+  },
   "required": [
    "prep_a",
    "cue",
@@ -1059,9 +1264,9 @@
     "to": 1
    }
   ],
-  "version": 2
+  "version": 3
  },
- "contractVersion": 2,
+ "contractVersion": 3,
  "creationAccessories": {
   "entries": {
    "cape": {
@@ -2476,6 +2681,73 @@
    "ramp": "RB.harmonyKit.hairMat(hair) — 6 tones round the mid colour",
    "resolve": "colorsOf(look).hair (an index into HAIR, or an explicit [dark, mid, light])"
   },
+  "keyFamilies": {
+   "anchors": {
+    "accessory": [
+     "#10164a",
+     "#222e8a",
+     "#3a4cc8",
+     "#6a80ec",
+     "#a8b8ff"
+    ],
+    "clothMain": [
+     "#0c3a14",
+     "#1a6428",
+     "#2e8c3c",
+     "#52b45a",
+     "#8ad88a"
+    ],
+    "clothTrim": [
+     "#004e60",
+     "#12687a",
+     "#22a0b4",
+     "#5ccce0",
+     "#a8f0f8"
+    ],
+    "hair": [
+     "#3c0a5c",
+     "#5a1470",
+     "#8a24a0",
+     "#b848c8",
+     "#e088ec"
+    ],
+    "skin": [
+     "#601c00",
+     "#943c08",
+     "#d06018",
+     "#f48c40",
+     "#ffc0a0"
+    ]
+   },
+   "note": "contract v3: each recolourable material is painted in its key family — the five anchor shades of KEY_RAMPS (contract.keyRamps) with any number of values between and a little beyond them; the game maps each painted value onto the ramp above (key shade s at the tone pick[s]) and keeps its hue and chroma deviation",
+   "recolour": {
+    "maxChroma": 1,
+    "maxHue": 0.6,
+    "minChroma": 0.02,
+    "residual": 1,
+    "valueFloor": 0.05
+   },
+   "thresholds": {
+    "alpha": 128,
+    "extend": 0.6,
+    "foreign": 0.1,
+    "inner": 0.31,
+    "margin": 0.1,
+    "maxOffset": 24,
+    "outer": 0.34,
+    "outline": 24,
+    "protect": [
+     "#140c18",
+     "#ffffff",
+     "#f6f2ee"
+    ],
+    "v2": {
+     "ambiguous": 40,
+     "snap": 12
+    },
+    "white": 24
+   }
+  },
   "playerIris": {
    "note": "the code busts give every player this iris (RB.harmonyKit.faceColours default); it is not a look field",
    "value": "#7a4630"
@@ -2680,12 +2952,12 @@
   "generator": "tools/harmony_registry.mjs",
   "git": {
    "branch": "claude/stoic-sagan-n3jvgk",
-   "commit": "996d1952a21c03a1ffac3fd0ba350161ea1b510a",
-   "dirty": false
+   "commit": "9174d120865818fc99f2e15e76ee5f7adde0f939",
+   "dirty": true
   },
   "indexHtml": {
-   "bytes": 10080125,
-   "sha256": "3bd7a1bc77171ce139231b91fc9e5e7ccfb299f1c5bf7e61d5e5996a3da22218"
+   "bytes": 10405032,
+   "sha256": "5adc6800f7aa7d7ede59a8238abc9378b3c20367b07fe30d2e802f8a45131e0c"
   },
   "note": "git.commit is HEAD when exported; the export is committed with or after it. indexHtml is the build it was read from.",
   "renderer": [

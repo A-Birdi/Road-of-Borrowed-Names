@@ -1,0 +1,10 @@
+{
+ "set": "rich",
+ "synthetic": true,
+ "approval": "synthetic",
+ "note": "SYNTHETIC SAMPLE — not art. The synthetic sample's player kit repainted with many values per key family (tools/harmony_rich.mjs). Import it after the sample: its files replace the sample's kit.",
+ "files": {
+  "pc_head_cue": {},
+  "pc_torso_coat": {}
+ }
+}

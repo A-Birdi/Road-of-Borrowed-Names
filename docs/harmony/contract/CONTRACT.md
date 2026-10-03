@@ -1,36 +1,81 @@
-# Harmony painted art — the machine contract (version 2)
+# Harmony painted art — the machine contract (version 3)
 
 **What this is.** The exact, checkable contract for the painted Harmony busts: what files the art comes in,
 how they are named, sized, aligned, layered and masked, how the game imports, assembles, recolours, times and
-caches them, and how a delivery is validated. It is the authority on formats. The artist-facing brief
+caches them, and how a delivery is validated and kept. It is the authority on formats. The artist-facing brief
 (`docs/harmony/ASSET_BRIEF.md`) explains the same contract to people and must agree with it.
+
+**Why version 3.** The owner's Art Direction Correction for the Harmony cut-ins (it wins where it conflicts with
+v2): the player's art must not be lower-fidelity than the companions' (v2 snapped every recolourable kit pixel to
+five shades), recolouring must keep the illustration's quality on every supported palette, dark and light, the pair
+must be compared at a comparable face size (v2 fitted the full canvas, so a 2048 × 1046 view got 1×), reduced
+motion uses held poses and restrained fades, a painted checkerboard is never transparency, approved source art is
+kept with the means to regenerate the game's files from it, and the art is approved in phases.
 
 **Single sources of truth.**
 
 | What | Where |
 |---|---|
-| Geometry, states, timeline, names, layer slots, accessories, mask colours, key ramps, thresholds, manifest schema | `src/ui/88_harmony_contract.js` (`RB.harmonyContract`; the importer loads the same file in node) |
-| Everything the game knows about appearance (hairstyles, cuts, accessories, keepsakes, palettes, channels, companions) and the asset keys the contract implies | `docs/harmony/contract/registry.json`, from `node tools/harmony_registry.mjs` (reads the built `index.html`) |
-| Import, normalisation, masks, report | `tools/harmony_import.mjs` (+ `tools/harmony/*.mjs`) |
-| Runtime: decode, assemble, recolour, cache, timeline | `src/ui/88_harmony_raster.js` behind `RB.harmonyArt` (`src/ui/88_harmony_art.js`) |
-| A working synthetic sample | `tests/fixtures/harmony_sample/` (SYNTHETIC SAMPLE — not art) |
+| Geometry, states, timeline, reduced-motion plan, names, layer slots, accessories, mask colours, key families, the colour model, thresholds, batches, approval states, manifest schema | `src/ui/88_harmony_contract.js` (`RB.harmonyContract`; the importer loads the same file in node) |
+| Everything the game knows about appearance and the asset keys and batches the contract implies | `docs/harmony/contract/registry.json`, from `node tools/harmony_registry.mjs` (reads the built `index.html`) |
+| Import, normalisation, masks, regeneration, report | `tools/harmony_import.mjs` (+ `tools/harmony/*.mjs`) |
+| Runtime: decode, assemble, recolour, cache, timeline, footprint | `src/ui/88_harmony_raster.js` behind `RB.harmonyArt` (`src/ui/88_harmony_art.js`) |
+| Synthetic fixtures | `tests/fixtures/harmony_sample/` (five exact key shades per family) and `tests/fixtures/harmony_rich/` (many values per family, with ground truth) — both SYNTHETIC SAMPLE, not art |
+| Threshold calibration | `node tools/harmony_calibrate.mjs [--sweep]` → `docs/harmony/contract/calibration.json` |
+| Recolouring proof | `node tools/harmony_recolour_proof.mjs` → `docs/screenshots/harmony/recolour_v3/` |
 
-Everything below is in **art px** (one pixel of the pixel-art grid) unless it says CSS px.
+Everything below is in **art px** (one pixel of the pixel-art grid) unless it says CSS px. Colour distances are in
+OKLab (§5.1) unless they say sRGB.
+
+## Changes from v2
+
+1. **Key families, free values** (§5). Each recolourable material is painted in its key *family* — the five key
+   shades are anchors on an OKLab curve, extended 0.6 steps past both ends — with as many values as the drawing
+   needs (6–12 recommended). The importer keeps every painted colour (v2 snapped each to one of five shades) and
+   classifies pixels by family with calibrated thresholds; the game recolours each pixel from its own colour: its
+   value maps onto the look's ramp, its hue and chroma deviation is carried over. Exact v2 key shades still give
+   exactly v2's colours, except on the 15 of 63 ramps where the game's own tones collapse (§5.4).
+2. **Fit on the visible footprint** (§3.3). `fitScale` measures painted art by the union of the composed pair's drawn
+   pixels across the pairing's whole timeline (`RB.harmonyArt.footprint`), not the full 352 × 160 canvas: the scale
+   is fixed for a performance, and 2048 × 1046 gets 2× (v2: 1×).
+3. **Reduced motion: held poses** (§4). With painted art: `peak` held, then `settle_b` held, one 100 ms cross-fade, no
+   travel, inside the overlay's reduced-motion timing (v2: `settle_b` alone). The code busts are unchanged.
+4. **Painted checkerboards** (§2, §9). The detector, which v2 already had, is hardened: it finds the two-grey grid
+   with tool noise, under art that covers corners, and inside a file that also has real transparency. v2 imported
+   that last case as art.
+5. **Source preservation** (§1, §9). Approved deliveries live in `art/harmony/source/<batch>/` (committed, with
+   `PROVENANCE.md`); `node tools/harmony_import.mjs art/harmony/source/<batch> … --replace` regenerates
+   `assets/harmony/` byte for byte. Unreviewed drops stay in the ignored `art/harmony/incoming/`.
+6. **Batches 1a and 1b** (§1.1), Phase 1 (the quality bar) and Phase 2 (the customisation proof), in the contract,
+   the registry and the import report.
+7. **Approval states** (§12): `provisional`, `candidate`, `approved`, `verified` (and `synthetic`) per pairing and for
+   the player kit, in the manifest, `RB.harmonyArt.stats()` and the `?dev=harmony` viewer — never shown to players.
+8. `contractVersion` 3. The game still installs v2 manifests (their kit pixels are exact key shades, recoloured as in
+   v2). The manifest names the registry by its asset keys, not by the build (so a regeneration is byte-identical).
 
 ---
 
 ## 1. Folders and file names
 
 ```
-art/harmony/incoming/<batch>/        as delivered (any enlargement); NOT committed unless the lead says so
+art/harmony/incoming/<batch>/        as delivered, unreviewed (any enlargement): ignored, never committed
+art/harmony/source/<batch>/          approved deliveries, committed exactly as delivered
   <name>.png                         one file per asset key (below)
   <name>.mask.png                    optional hand-made mask (overrides the derived one)
-  import.json                        optional batch settings (§8)
-assets/harmony/                      normalised by the importer; embedded by the build
+  import.json                        batch settings (§8): set, batch, approval, offsets, faces, …
+  PROVENANCE.md                      the owner's rights note for the delivery (required here)
+assets/harmony/                      regenerated from art/harmony/source/ by the importer; embedded by the build
   manifest.json                      §8
   <name>.png, <name>.mask.png        192 × 160, native grid
-  PROVENANCE.md                      the owner's rights note for the delivery
-  report/report.json, report/contact.png, report/masks.png
+  provenance/<set>.md                each batch's PROVENANCE.md, as delivered
+  report/report.json, report/contact.png
+```
+
+Moving a batch from `incoming/` to `source/` is the approval step for its *files* (the lead, with the owner's
+consent); its `approval` (§12) says how far the *art* has been accepted. Regenerating the game's files:
+
+```
+node tools/harmony_import.mjs art/harmony/source/<batch 1> [art/harmony/source/<batch 2> …] --replace
 ```
 
 | Kind | File name | Notes |
@@ -46,7 +91,33 @@ assets/harmony/                      normalised by the importer; embedded by the
 | Mask | `<name>.mask.png` | §5 |
 
 Names are lower case `a–z`, `0–9` and `_`. A name that is not in this table is rejected. The full list of
-asset keys (86 required, 33 optional for the current registry) is `assetKeys` in `registry.json`.
+asset keys (86 required, 33 optional for the current registry; unchanged from v2) is `assetKeys` in `registry.json`.
+
+### 1.1 Delivery batches (`RB.harmonyContract.BATCHES`, `registry.json` `batches`)
+
+**Batch 1a — Phase 1, the quality bar** (Suzu and the player's look A: ponytail, coat, glasses, flower, satchel).
+The owner approves it before anything else is produced. 18 required files:
+
+* `suzu_prep_a`, `suzu_cue`, `suzu_peak`, `suzu_settle_b` (optional: `suzu_prep_b`, `suzu_settle_a`, `suzu_peak_fx`)
+* `pc_head_focus`, `pc_head_cue`, `pc_head_peak`, `pc_head_settle`
+* `pc_torso_coat`
+* `pc_arm_prep_a_fitted`, `pc_arm_cue_fitted`, `pc_arm_peak_suzu_fitted`, `pc_arm_settle_suzu_fitted` (optional: `pc_arm_prep_b_fitted`)
+* `pc_hair_ponytail_back`, `pc_hair_ponytail_front`
+* `acc_glasses`, `acc_flower`, `acc_satchel` (the satchel strap is in look A: the owner's mockup shows it)
+
+**Batch 1b — Phase 2, the customisation proof** (a materially different look B on the same kit: curly hair, robe
+with its wide sleeve, scarf, headband — a hair-mounted, recolourable accessory on another hairstyle). After 1a is
+approved. 9 required files:
+
+* `pc_torso_robe`
+* `pc_arm_prep_a_wide`, `pc_arm_cue_wide`, `pc_arm_peak_suzu_wide`, `pc_arm_settle_suzu_wide` (optional: `pc_arm_prep_b_wide`)
+* `pc_hair_curly_back`, `pc_hair_curly_front`
+* `acc_scarf`, `acc_headband`
+
+A batch's `import.json` names it (`"batch": "1a"`); the importer then warns about files outside the batch and
+about missing required files, and the report and manifest record every batch's coverage (`batches`). Every file
+of both batches is a registry asset key (the effect file aside, as effects always are). The synthetic sample
+covers both batches (§11).
 
 ## 2. The PNG format
 
@@ -58,8 +129,13 @@ asset keys (86 required, 33 optional for the current registry) is `assetKeys` in
   no partial alpha anywhere: glasses' lenses are left transparent (the eyes show through), with any glint or
   rim painted as opaque pixels; glows and soft shadows are drawn as opaque pixel clusters or left to the game.
   A file with no transparency is accepted only if its background is one flat `#ff00ff` (keyed out
-  automatically when all four corners are that magenta, or always with `background: "magenta"`). A painted
-  checkerboard "transparency" is rejected.
+  automatically when all four corners are that magenta, or always with `background: "magenta"`).
+* **A painted transparency checkerboard is rejected** by name, wherever it is: the light, near-neutral pixels are
+  split into two grey levels, a cell size of 4–64 px and a phase are fitted to where the levels meet, and the file is
+  refused when ≥ 90 % of those pixels follow the grid, they cover ≥ 10 % of the image and they reach two of its
+  edges. That holds with tool noise (more than two greys), with art over the corners, and inside a file that also
+  has real transparency (padding round a flattened image) — cases the v2 test (exactly two greys in all four
+  corners of an opaque file) missed or reported only as "no transparency".
 * Any enlargement of the grid: whole (4× = 768 × 640) or not (a 1024 × 1024 square holding the 192 × 160
   canvas at 5.333×). The importer finds the grid (§9). Anti-aliased in-between colours at cell edges are
   ignored by sampling each cell's centre.
@@ -84,10 +160,9 @@ offsets are the import alignment in §9 and the runtime group/attachment offsets
 | Ink band's lower edge (the crop) | (0, 156) → (192, 150) | (0, 151) → (192, 145) |
 | Compact-safe box (face and hand above y 128) | 8, 0, 184, 128 | 8, 0, 184, 128 |
 
-**Changed from the brief's numbers, and why.** The player's band edge is (0, 151) → (192, 145), not
-(0, 156) → (192, 150): the band's lower edge is one straight line across the whole pair (§3.2), and at the
-player's canvas (x 160–352) that line runs 5 px higher. The other anchors are as given. The face box gives
-faces of 52 CSS px at 1× and 104 at 2× (the code-drawn busts: 33 art px tall).
+The player's band edge is (0, 151) → (192, 145): the band's lower edge is one straight line across the whole pair
+(§3.2), and at the player's canvas (x 160–352) that line runs 5 px higher. The face box gives faces of 50 CSS px
+wide at 1×, 100 at 2× (the owner's mockup: about 110).
 
 ### 3.2 The pair, built by the game
 
@@ -102,35 +177,46 @@ narrow screens: the player is 24 px closer, and the outer hands are cut (only th
 y 128 near the face are guaranteed). The game draws the indigo ink band behind the pair (§7); the art never
 contains it.
 
-### 3.3 Display (CSS px)
+### 3.3 Display (CSS px): fitted on the visible footprint
 
-`RB.harmonyArt.fitScale(viewW, viewH, variant[, dpr])` — standard: the largest **integer** scale inside the
-addendum's §5.2 limits (42 % of the width, 30 % of the height, 12 % of the area); compact: the largest
-**DPR-aware** scale (CSS px per art px whose product with `devicePixelRatio` is a whole number, so each art
-pixel is a whole number of device pixels), up to the view's width and 27 % of its height.
+`RB.harmonyArt.footprint({ comp, look, variant })` is the pairing's **visible footprint**: the union of the composed
+pair's alpha bounding box (busts, hands, effects and the ink band) across every state the companion's timeline
+shows — one rectangle for the whole performance. `RB.harmonyArt.fitScale(viewW, viewH, variant[, dpr[, footprint]])`
+measures painted art by it (without it, by the full canvas, as v2 did): standard — the largest **integer** scale
+inside the addendum's §5.2 limits (42 % of the width, 30 % of the height, 12 % of the area); compact — the largest
+**DPR-aware** scale (CSS px per art px whose product with `devicePixelRatio` is whole) up to the view's width and
+27 % of its height. `compose(spec).scale` and the cut-in overlay use the footprint, so the scale never changes
+mid-performance; reduced motion shows two of those states and gets the same scale. The code-drawn busts keep
+their own fit (their canvas is their footprint).
 
-| View (CSS px, DPR) | Standard | Footprint | Faces (CSS px) | Compact | Footprint | Faces |
-|---|---|---|---|---|---|---|
-| 1280 × 720, 1 | 1× | 352 × 160 (27.5 % × 22.2 %) | 52 | 1× | 248 × 128 | 52 |
-| 1366 × 768, 1 | 1× | 352 × 160 | 52 | 1× | 248 × 128 | 52 |
-| 1440 × 900, 1 | 1× | 352 × 160 | 52 | 1× | 248 × 128 | 52 |
-| 1600 × 900, 1 | 1× | 352 × 160 (22 % × 17.8 %) | 52 | 1× | 248 × 128 | 52 |
-| 1680 × 1050, 1 | 1× | 352 × 160 | 52 | 2× | 496 × 256 | 104 |
-| 1920 × 1080, 1 | 2× | 704 × 320 (36.7 % × 29.6 %) | 104 | 2× | 496 × 256 | 104 |
-| 2560 × 1440, 1 | 2× | 704 × 320 | 104 | 3× | 744 × 384 | 156 |
-| 768 × 1024, 2 (tablet) | — | | | 2× | 496 × 256 | 104 |
-| 844 × 390, 3 (phone, landscape) | — | | | 0.67× | 165 × 85 | 35 |
-| 390 × 844, 3 | — | | | 1.33× | 331 × 171 | 69 |
-| 412 × 915, 2.625 | — | | | 1.52× | 378 × 195 | 79 |
-| 360 × 800, 3 | — | | | 1.33× | 331 × 171 | 69 |
-| 375 × 667, 2 | — | | | 1× | 248 × 128 | 52 |
-| 320 × 640, 2 | — | | | 1× | 248 × 128 | 52 |
+The synthetic sample's footprint is 343 × 132 (standard) and 244 × 103 (compact) of 352 × 160 and 248 × 128 — the
+canvas's top rows and right end are empty. Real art will differ: a hairstyle reaching y 8 makes it about 150 rows.
 
-**Against the fixed decisions:** 2× needs at least 1677 × 1067 CSS px under §5.2 (704 px must be ≤ 42 % of
-the width and 320 ≤ 30 % of the height), so 1600–1676-wide and 1680 × 1050 views get 1×, not 2×. Phones
-below 360 CSS px wide at DPR 2, and short ones (375 × 667), get faces of 52 CSS px, not ≥ 64: the 27 % height
-cap and the two faces side by side leave no larger whole-device-pixel scale. Which pair the overlay shows is
-its decision (src/ui/82d_harmony_cutin.js; it reads only `NATIVE`, `fitScale` and the composed size).
+| View (CSS px, DPR) | Standard v2 (canvas) | Standard v3 (sample footprint) | Footprint | Faces* | Compact v2 | Compact v3 | Faces* |
+|---|---|---|---|---|---|---|---|
+| 2048 × 1046, 1 (the owner's Firefox) | 1× | **2×** | 686 × 264 (33.5 % × 25.2 %) | 100 | 2× | 2× | 100 |
+| 1920 × 1080, 1 | 2× | 2× | 686 × 264 (35.7 % × 24.4 %) | 100 | 2× | 2× | 100 |
+| 2560 × 1440, 1 | 2× | **3×** | 1029 × 396 (40.2 % × 27.5 %) | 150 | 3× | 3× | 150 |
+| 1680 × 1050, 1 | 1× | **2×** | 686 × 264 (40.8 % × 25.1 %) | 100 | 2× | 2× | 100 |
+| 1600 × 900, 1 | 1× | 1× | 343 × 132 | 50 | 1× | **2×** | 100 |
+| 1440 × 900, 1 | 1× | 1× | 343 × 132 | 50 | 1× | **2×** | 100 |
+| 1366 × 768, 1 | 1× | 1× | 343 × 132 | 50 | 1× | **2×** | 100 |
+| 1280 × 720, 1 | 1× | 1× | 343 × 132 | 50 | 1× | 1× | 50 |
+| 768 × 1024, 2 (tablet) | — | — | | | 2× | **2.5×** | 125 |
+| 844 × 390, 3 (phone, landscape) | — | — | | | 0.67× | **1×** | 50 |
+| 390 × 844, 3 | — | — | | | 1.33× | 1.33× | 67 |
+| 412 × 915, 2.625 | — | — | | | 1.52× | 1.52× | 76 |
+| 360 × 800, 3 | — | — | | | 1.33× | 1.33× | 67 |
+| 375 × 667, 2 | — | — | | | 1× | **1.5×** | 75 |
+| 320 × 640, 2 | — | — | | | 1× | 1× | 50 |
+
+\* Face width in CSS px for the template's 50-px face box (the sample's code-drawn faces are 36 × 33 art px).
+Computed from the rule; the browser test measures the same scales in the game at the geometry viewports
+(`docs/screenshots/harmony/cutin/painted_v3.json`). On the sample's footprint 2× needs at least 1634 CSS px of
+width, 880 of height and 1,509,200 px² of area (e.g. 1634 × 924, 1680 × 899); a 150-row footprint needs 1000 of
+height. **Which pair the overlay shows is its decision** (src/ui/82d_harmony_cutin.js): it tries the standard pair
+first unless its faces would be under 48 CSS px, so at 1366–1600 wide a real 52-px face shows standard at 1× even
+though the compact pair would fit at 2× (open question in V3_REPORT.md).
 
 ### 3.4 Accessories: files, slots, sides
 
@@ -150,11 +236,10 @@ its decision (src/ui/82d_harmony_cutin.js; it reads only `NATIVE`, `fitScale` an
 | earrings | `acc_earrings_far` → acc_ear_far, `acc_earrings_near` → acc_ear_near | | earCol → the gold metal ramp | both ears |
 | atlas_lamplet | — not painted: hangs at the hip, below the ink band crop | | | |
 
-The character's left is the player's **near** side in contract v2 (screen right): the flower, leaf, ribbon
-and quill are on the visible side of the player's head; in the code-drawn busts (turned right) they were on
-the far side. The registry's `codeBust` entries record how 88_harmony_acc.js draws each one (layers changed
-and screen side), from a pixel diff. Same-place rule: a hat or cap keepsake replaces the other
-(`RB.equip.SAME_PLACE`). Charms and tools are never drawn (`registry.statisticalItems`).
+The character's left is the player's **near** side (screen right): the flower, leaf, ribbon and quill are on the
+visible side of the player's head; in the code-drawn busts (turned right) they were on the far side. The registry's
+`codeBust` entries record how 88_harmony_acc.js draws each one. Same-place rule: a hat or cap keepsake replaces
+the other (`RB.equip.SAME_PLACE`). Charms and tools are never drawn (`registry.statisticalItems`).
 
 ## 4. Performance states and timing
 
@@ -168,7 +253,12 @@ and screen side), from a pixel diff. Same-place rule: a hat or cap keepsake repl
 | settle_b | yes | hold, then all of out | 0.79–1, 0–1 | 480–780 (fading 560–780) |
 
 * Segments: Normal in 180 / hold 380 / out 220 ms; Fast 100 / 220 / 160 ms (the overlay's
-  `RB.battleSeq.T.cutin`). Instant shows nothing. Reduced motion shows `settle_b` alone.
+  `RB.battleSeq.T.cutin`). Instant shows nothing.
+* **Reduced motion** (`RB.harmonyContract.REDUCED_MOTION`): no travel, the overlay's own fade in where it stands,
+  hold and fade out. With painted art, **two held poses**: `peak` from the start, then `settle_b`, joined by one
+  cross-fade of 100 presentation ms centred at the middle of the hold (Normal: peak 0–320, cross-fade 320–420,
+  settle_b 420–780; Fast: centred at 301 presentation ms). The cross-fade adds the two drawings (`lighter`) at
+  1 − k and k, so shared pixels keep full opacity. The code-drawn busts keep their single held drawing.
 * One-off: each state appears once, in order; nothing loops, blinks on a timer or repeats.
 * `RB.harmonyArt.timeline(comp)` → `[{ phase, seg: 'in'|'hold'|'out', from, to }]`, only while painted art is
   installed. A missing optional state is left out and the state before it spans its time. A companion's
@@ -189,18 +279,15 @@ and screen side), from a pixel diff. Same-place rule: a hat or cap keepsake repl
 | settle_a | pc_head_settle | settle_<comp> | `_swing` if delivered |
 | settle_b | pc_head_settle | settle_<comp> | plain |
 
-The sleeve follows the cut: **wide for the robe only**; fitted for tunic, coat, apron and dress (the road
-sprites flare only the robe's sleeve, `src/engine/32_spriteart.js` armsFB; the dress's puffed sleeve heads
-belong to its torso). Companion performances: Nao — Read the Opening (a directional hand cue); Mio —
-Clearwater Draught (lifts the vial); Ren — Lantern Ward (raises the lamp); Suzu — Curtain Call (a theatrical
-flourish, then one wink and one glint). Names from `RB.combat.TECHS`.
+The sleeve follows the cut: **wide for the robe only**; fitted for tunic, coat, apron and dress. Companion
+performances: Nao — Read the Opening; Mio — Clearwater Draught; Ren — Lantern Ward; Suzu — Curtain Call.
 
-## 5. Masks and recolouring
+## 5. Masks and recolouring: key families, free values
 
 **Companions are fixed identity: never recoloured, no masks.** Each player-kit file has a mask: the derived one
 (written by the importer) or a supplied `<name>.mask.png`, which always wins.
 
-| Material | Mask colour | Feeds from the look | Target ramp (built as the code busts build it) | Steps used |
+| Material | Mask colour | Feeds from the look | Target ramp (built as the code busts build it) | PICK (tones the key shades take) |
 |---|---|---|---|---|
 | skin | #ff0000 | skin | `skinMat(colorsOf(look).skin)` (6 tones) | 0, 1, 2, 4, 5 |
 | hair | #00ff00 | hairColor | `hairMat(colorsOf(look).hair)` | 1–5 |
@@ -210,42 +297,122 @@ flourish, then one wink and one glint). Names from `RB.combat.TECHS`.
 | fixed | #000000 | — | keeps its painted colour | |
 | transparent | alpha 0 | | | |
 
-* Every material pixel has a **shade index 0–4**: its luminance (0.299 R + 0.587 G + 0.114 B) nearest to one
-  of that material's five key shades. At runtime shade *s* becomes `targetRamp[material][s]`.
-* **Key ramps** (paint the kit's recolourable parts in these, darkest → lightest):
+### 5.1 The key families (paint the kit's recolourable parts in these)
 
-  | Material | s0 | s1 | s2 | s3 | s4 |
-  |---|---|---|---|---|---|
-  | skin (key) | #601c00 | #943c08 | #d06018 | #f48c40 | #ffc0a0 |
-  | hair | #3c0a5c | #5a1470 | #8a24a0 | #b848c8 | #e088ec |
-  | clothMain | #0c3a14 | #1a6428 | #2e8c3c | #52b45a | #8ad88a |
-  | clothTrim | #004e60 | #12687a | #22a0b4 | #5ccce0 | #a8f0f8 |
-  | accessory | #10164a | #222e8a | #3a4cc8 | #6a80ec | #a8b8ff |
+The five **anchor shades** per family, darkest → lightest (unchanged from v2; `KEY_RAMPS`;
+`docs/harmony/asset_brief/ref_palettes.png` shows each family as a band with its anchors and tolerance):
 
-  **Changed from the brief (all measured):**
-  * The skin key is an unnatural orange. The brief's natural one (#6e3e2a … #f2d0a8, kept as `KEY_SKIN_V1`)
-    is skin palette 2's own ramp — a recoloured skin-2 player would contain key colours, so "no key colour
-    survives" could not be checked — and it lies within 40 of 28 of the code's own face colours (the default
-    iris #7a4630 at 15.6, a mouth at 11.1, a blush at 10.3), which a mask derived by colour cannot tell from
-    skin. The orange key is within 40 of 5 of them (none within the snap radius), ≥ 91 from every other key
-    ramp and ≥ 19 from every real skin colour.
-  * The darkest hair and trim shades are more saturated (#3c0a5c, #004e60; brief: #2a0a3a, #0a3a44, kept as
-    `KEY_V1`). The brief's sat within 40 of the near-blacks every kit file holds: on the sample, lashes
-    (#2b1a20 at 30.5, #341c1c at 36.4) and the brush lacquer (#24203a at 38.1, #262248 at 37.1) were
-    unresolved; after the change the sample imports with none.
-  * Measured on the final ramps: every two key shades ≥ 37.4 apart (≥ 3 × the snap radius), every key shade
-    ≥ 46.9 from the outline ink, each ramp strictly rising in luminance (the shade index is luminance order).
-* **Derivation** (importer, per file; only the materials the file kind allows): heads skin + hair (brows,
-  stubble); torsos clothMain + clothTrim + skin; arms skin + clothMain + clothTrim; hair hair + clothTrim (ties,
-  the wrap); accessories accessory. For each opaque pixel, in order: within 24 of #140c18 (outline ink) or
-  of #ffffff / #f6f2ee (highlights, eye whites) → **fixed**; within **12** (Euclidean, sRGB 0–255) of an
-  allowed key shade → that material and shade (the pixel is snapped to the exact key colour); farther than
-  **40** from every allowed key shade → **fixed**; otherwise **unresolved** — the import fails and the report
-  lists each pixel. Blush and lips painted in skin key shades recolour with the skin.
-* **Never recoloured:** fixed pixels, outline ink, near-white highlights and eye whites, glasses, every
-  companion pixel — enforced again at runtime (a supplied mask cannot recolour an outline or a highlight).
-* A fixed pixel may not be exactly a key colour (the importer refuses it), so a recoloured output never
-  contains a key colour.
+| Family | s0 | s1 | s2 | s3 | s4 |
+|---|---|---|---|---|---|
+| skin (an unnatural orange key) | #601c00 | #943c08 | #d06018 | #f48c40 | #ffc0a0 |
+| hair | #3c0a5c | #5a1470 | #8a24a0 | #b848c8 | #e088ec |
+| clothMain | #0c3a14 | #1a6428 | #2e8c3c | #52b45a | #8ad88a |
+| clothTrim | #004e60 | #12687a | #22a0b4 | #5ccce0 | #a8f0f8 |
+| accessory | #10164a | #222e8a | #3a4cc8 | #6a80ec | #a8b8ff |
+
+**The colour model** (`RB.harmonyContract.colour`, used by the importer and the game alike). Each family's **key
+curve** is piecewise linear in OKLab through its anchors at t = 0…4, extended 0.6 steps past both ends along the end
+segments (each curve's lightness rises strictly, so lightness gives t). A colour is **projected** onto a curve at its
+own lightness: `t` (its value, in shade steps), and its **relative distance** `d` — the chroma-plane deviation from
+the curve's point (mapped into the sRGB gamut) divided by the curve's chroma there, combined with any shade steps of
+lightness beyond the extended ends. Relative, because every curve fades toward neutral at its ends: in absolute
+OKLab terms the sample's ivory shirt is 0.036 from the skin curve's pale end and a lash 0.056 from its dark end;
+relative to the curve's chroma both are more than half the family's colour away.
+
+**Painting within a family.** Any value along the band, beyond s0 and s4 by up to 0.6 steps, with hue up to about
+12° and chroma up to about 16 % off the band in total (rim lights and warm highlights included) is that material.
+Exact anchor shades are allowed and give exactly v2's colours (§5.4). Keep fixed colours (eyes, lips if fixed,
+brush, metal, leather) clearly away from the families — more than a third off in chroma or 20° in hue.
+
+### 5.2 Derivation (importer) and the thresholds
+
+Per file, only the materials its kind allows: heads skin + hair (brows, stubble); torsos clothMain + clothTrim +
+skin; arms skin + clothMain + clothTrim; hair hair + clothTrim (ties, the wrap); accessories accessory. For each
+opaque pixel, in order:
+
+1. within 24 (sRGB) of #140c18 (outline ink, snapped to it) or of #ffffff / #f6f2ee (highlights, eye whites) →
+   **fixed**;
+2. within **foreign = 0.1** of a family the file may **not** hold, and nearer to it than to every allowed one by the
+   margin → **unresolved** ("a skin-family colour in a file that may not contain skin": it would keep a key colour
+   in every look);
+3. the nearest allowed family within **inner = 0.31** and nearer than the next allowed one by **margin = 0.1** →
+   that **material**; the pixel **keeps its painted colour** (no snapping);
+4. farther than **outer = 0.34** from every allowed family → **fixed** (keeps its colour);
+5. otherwise **unresolved** — the import fails and the report lists each pixel, its colour, the nearest family and
+   its distance, unless a supplied `<name>.mask.png` decides.
+
+The mask stores the material; the shade index in the codes (`2 + material × 5 + round(t)`) is kept for reports and
+mask views only. The report counts each material's painted values per file (`values`).
+
+**Calibration** (`node tools/harmony_calibrate.mjs`, `calibration.json`; synthetic fixtures only): 38,154 material and
+2,138 unprotected fixed pixels (4,322 and 300 distinct colours per file) of the sample and the rich fixture, with ground
+truth.
+
+| Measured | Value | Threshold | Headroom |
+|---|---|---|---|
+| a material pixel's distance to its own family (rich fixture: p50 0.070, p99 0.227) | max **0.276** (a rim-lit hair value at t 4.5) | inner 0.31 | 1.12× |
+| a fixed pixel's distance to the nearest allowed family | min **0.379** (the code iris #7a4630 vs skin: same hue, 38 % less chroma) | outer 0.34 | 1.11× |
+| a material pixel's gap to the next allowed family | min **0.555** | margin 0.1 | 5.6× |
+| a legitimate fixed pixel's distance to a foreign family | min **0.118** (the flower centre's orange #ce6d1c vs skin, in an accessory file) | foreign 0.1 | 1.18× |
+| value recovered from colour vs the value painted | max 0.018 steps, mean 0.004 | | |
+
+With these: 0 pixels misclassified, 0 unresolved, on both fixtures. The stated painting tolerance (12° and 16 % together)
+gives 0.25; the rest is gamut and 8-bit rounding. The sweep (`--sweep`) shows inner 0.25 leaves 27 rich pixels
+unresolved and outer 0.38 makes the iris unresolved. The unresolved band (0.31–0.34) is narrow because the sample's
+iris is that close to the skin family: real art must keep its fixed colours farther away, or supply masks.
+
+**Supplied masks** decide: a pixel the derivation leaves unresolved may be marked a material (kept as painted). A
+pixel marked as a material must lie within outer of that family (else an error: it could not be recoloured
+faithfully); outline ink and highlights marked as a material are kept fixed (warning); a pixel marked fixed inside an
+allowed family is a warning (it keeps a key-family colour in every look). A fixed pixel may not be exactly an anchor
+shade (refused, as in v2).
+
+### 5.3 Recolouring (runtime)
+
+For each pixel the mask marks as material m: an **exact anchor shade** takes its ramp tone (PICK) — v2's colour;
+any other colour is **decomposed** against m's key curve (value t; chroma relative to the curve's, ρ; hue angle off
+the curve's, θ — look-independent, memoised by colour) and rebuilt on the look's **target curve**: the game's own
+material ramp in OKLab, with key shade s at its PICKed tone and the tones PICK skips at their fractional places (skin's
+middle tone at t 2.5; a 6-tone ramp's darkest at t −1), extended past its ends. The target point at t gets its chroma
+× (1 + k·ρ) and its hue + k·θ (k = **residual factor**, ρ capped at +100 %, θ at 0.6 rad), then is mapped into the
+sRGB gamut at constant lightness and hue. Outline ink, highlights and fixed pixels are never recoloured, whatever a
+mask says.
+
+**The residual factor is 1** (`RECOLOUR.residual`), chosen on the rich fixture (`proof.json` `residual.sweep`):
+
+| k | identity round trip (rich fixture → its own key ramps), ΔE mean / max | painted variation kept (mean ΔE vs k 0) | outputs' distance from their target family, mean / max | gamut-clipped |
+|---|---|---|---|---|
+| 0 | 0.0106 / 0.0521 | 0 | 0.011 / 0.126 | 0.03 % |
+| 0.5 | 0.0054 / 0.0265 | 0.0025 | 0.038 / 0.190 | 0.03 % |
+| 0.75 | 0.0027 / 0.0136 | 0.0036 | 0.053 / 0.252 | 0.03 % |
+| **1** | **0 / 0.0031** | **0.0047** | **0.070 / 0.47** | **0.08 %** |
+
+At 1 the recolouring is lossless (recolouring the fixture into the key ramps gives it back within 8-bit rounding),
+and a recoloured pixel sits as far from its target family, relatively, as the painted one sat from its key family
+(≤ 0.30, inside inner) — except the 0.08 % pulled into the gamut near white (the worst, 0.47, a skin-0 highlight at t
+4.5). Anything less discards part of what the artist painted. Hue deviations rotate with the family, so the
+12° tolerance also bounds how far a hue-shifted rim light can move on any target.
+
+### 5.4 The value floor: dark and light palettes keep readable form
+
+The game's own ramps collapse at the extremes: skin 6's tones 1 and 2 are 0.002 apart in lightness, white hair's two
+lightest tones are the same colour (v2's s3 and s4 were identical there), very dark or very light accessory colours
+repeat a tone. No painted value between them could stay distinct. So the target curve is **opened to a floor** of
+0.05 OKLab lightness per shade step (`RECOLOUR.valueFloor`): a weighted least-squares fit (isotonic regression on
+lightness less the floor's running total; key nodes weigh 100, the others 1), lightness only, within 0–1; a ramp that
+already meets the floor is left exactly as it is. Measured over the 63 supported targets (7 skins, 10 hair colours,
+8 cloth main, 8 cloth trim, 30 accessory channels; `proof.json`):
+
+* every pair of neighbouring painted values of the rich fixture (half steps from −0.5 to 4.5) stays ≥ **0.022** ΔE
+  and ΔL apart on every target (floor 0.02 ≈ one just-noticeable difference), the darkest (skin 6, black hair, cloth 5)
+  and the lightest (skin 0, white hair, cloth 6) included;
+* exact anchor shades give exactly v2's tones, bit for bit, on the **48 ramps the floor leaves alone** (315 of 315
+  shades as specified); the **15 opened ramps** move key tones in lightness only, by at most 0.028 (skin 6) except
+  white hair and #f4f0e8 accessories (up to 0.092: v2 gave them no room under white): skin 0, 1, 5, 6; hair gold, white; cloth 0
+  and 1 trim; cloth 6 main; #d8c89a and #f4f0e8 accessories. `valueFloor: 0` restores v2's tones everywhere.
+
+**Never recoloured:** fixed pixels, outline ink, near-white highlights and eye whites, glasses, every companion pixel —
+enforced again at runtime. A fixed pixel may not be exactly an anchor shade (the importer refuses it).
 
 ## 6. Layer order and transforms
 
@@ -271,42 +438,41 @@ Pose-dependent occlusion:
 * **A hand crossing the face:** the arm is last by default, so a raised hand covers the face and glasses.
 * **A hand behind something:** `pc.armSlot[pose]` puts the arm under `acc_head`, `hair_front`, `head` or `torso`.
 * **Fringe and glasses:** the fringe is drawn over the glasses; list a hairstyle in `pc.glassesOver` to draw
-  the glasses over its fringe (a fringe swept beside the glasses needs nothing: they do not overlap).
-* **Earrings** hang at their attachment points: the far one behind the head and torso, the near one over the
-  hair.
+  the glasses over its fringe.
+* **Earrings** hang at their attachment points: the far one behind the head and torso, the near one over the hair.
 * **Straps** (satchel, sash) are on the torso; **rear hair** is behind the shoulders, locks that fall in front
   belong to the front file.
-* **Hats and caps** hide every hair pixel above their band line (`pc.hatBand.<hat|cap>`, a row, plus the
-  hairstyle's attachment offset); the painted hat must cover the bald scalp above that line (the validator
-  checks it on every head expression).
+* **Hats and caps** hide every hair pixel above their band line (`pc.hatBand.<hat|cap>` plus the hairstyle's
+  attachment offset); the painted hat must cover the bald scalp above that line (the validator checks it).
 
 **Transforms (the only ones):** whole-pixel translation of the head group and the torso group per state
 (`pc.groups.<state>.head|torso = [dx, dy]`), of hair-mounted accessories per hairstyle (`pc.attach.<style>.<acc>`),
-and of a whole bust inside the pair (`offset`). No rotation, scaling, mirroring, blending or resampling of
-pixel art; anything else is new drawing. Companion frames are used exactly as delivered.
+and of a whole bust inside the pair (`offset`). No rotation, scaling, mirroring, blending or resampling of pixel art;
+anything else is new drawing. Companion frames are used exactly as delivered. (Reduced motion's cross-fade blends two
+whole compositions on the overlay's canvas; it never touches the art.)
 
 ## 7. The game's side
 
-* **Embedding:** `node tools/build.mjs` embeds `assets/harmony/manifest.json` and every PNG it lists (base64)
-  into `index.html` when the manifest exists, and prints the size; without it the build is unchanged apart
-  from the loader code. No fetch, no network.
+* **Embedding:** `node tools/build.mjs` embeds `assets/harmony/manifest.json` and every PNG it lists (base64) into
+  `index.html` when the manifest exists; without it the build is unchanged apart from the loader code. No fetch.
 * **Install:** `RB.harmonyRaster.install({ manifest, files })` (the build's embedded set installs itself);
-  `validateManifest` must pass and `contractVersion` must be 2, or nothing is installed (reported in
-  `RB.harmonyArt.stats().raster.error`).
-* **Decode:** `RB.harmonyArt.prepare(spec, { async: true })` decodes only the files the companion's states and
-  the look need (`createImageBitmap` with no premultiplication or colour conversion, else an `Image`), then
-  builds the compositions in idle slices. `compose()` never waits: a bust whose files are not decoded yet
-  draws its code version for that call and decoding starts.
-* **Whole-bust fallback:** a bust is painted only when every file it needs for that state and look exists and
-  is decoded; otherwise the **whole** bust is the code drawing (never painted and code parts in one bust),
-  placed at the neck pit. Recorded in `stats().raster.fallbacks` with the missing files.
-* **Caches:** the existing LRU caches (busts 24, compositions 16). Keys carry `ART_VERSION`, the contract
-  version, the manifest's `artVersion`, the companion, the state, the variant, painted/code for each bust and
-  the resolved look; `equip:change` drops the player's stale entries, `campaign:changing` clears everything.
-  Decoded files: their own LRU (cap 48 files).
+  `validateManifest` must pass and `contractVersion` must be 3 (or 2: a v2 manifest's kit pixels are exact anchor
+  shades and are recoloured exactly as in v2), or nothing is installed (`RB.harmonyArt.stats().raster.error`).
+* **Decode:** `RB.harmonyArt.prepare(spec, { async: true })` decodes only the files the companion's states and the
+  look need (`createImageBitmap`, no premultiplication or colour conversion), then builds the compositions in idle
+  slices. `compose()` never waits: a bust whose files are not decoded yet draws its code version for that call.
+* **Recolour cost:** each painted colour is decomposed once per material (memoised, cap 32,768) and rebuilt once per
+  look ramp (memoised per ramp); no per-pixel value channel is stored (measured, §10: recomputing from colour costs
+  nothing measurable; a value channel would add a PNG per kit file to decode).
+* **Whole-bust fallback:** a bust is painted only when every file it needs for that state and look exists and is
+  decoded; otherwise the **whole** bust is the code drawing, placed at the neck pit (`stats().raster.fallbacks`).
+* **Caches:** busts 24, compositions 16, footprints 16, decoded files 48, decompositions 32,768. Keys carry
+  `ART_VERSION`, the contract version, the manifest's `artVersion`, the companion, the state, the variant,
+  painted/code for each bust and the resolved look; `equip:change` drops the player's stale entries,
+  `campaign:changing` clears everything.
 * **API** (unchanged meaning): `compose`, `bust`, `prepare`, `fitScale`, `NATIVE` (`standard` 352 × 160 and
-  `compact` 248 × 128 while painted art is installed), `COMPANIONS`, `stats`, `clear`, `invalidate`, `keyOf`;
-  plus `PHASES` and `timeline(comp)`.
+  `compact` 248 × 128 while painted art is installed), `COMPANIONS`, `stats`, `clear`, `invalidate`, `keyOf`,
+  `PHASES`, `timeline(comp)`; new: `footprint(spec)`, `approval()`.
 
 ## 8. The manifest and the batch settings
 
@@ -315,16 +481,17 @@ pixel art; anything else is new drawing. Companion frames are used exactly as de
 ```json
 {
   "schema": "rbn-harmony-manifest",
-  "contractVersion": 2,
+  "contractVersion": 3,
   "artVersion": 1,
-  "set": "batch1",
+  "set": "batch1a",
   "synthetic": false,
-  "source": { "importer": "tools/harmony_import.mjs", "registry": { "sha256": "…", "indexHtml": "…" } },
+  "source": { "importer": "tools/harmony_import.mjs", "registry": { "contractVersion": 3, "assetKeysSha256": "…" },
+              "sets": ["batch1a"], "provenance": { "batch1a": { "file": "provenance/batch1a.md", "sha256": "…" } } },
   "files": {
     "suzu_peak": {
       "png": "suzu_peak.png", "w": 192, "h": 160, "kind": "comp", "sha256": "…", "bytes": 9124,
       "mask": null, "maskSource": "none", "bbox": [14, 9, 181, 160], "materials": { "fixed": 11873 },
-      "import": { "source": "suzu_peak.png", "sourceSha256": "…", "srcW": 768, "srcH": 640, "cell": [4, 4], "origin": [0, 0], "offset": [0, 0] }
+      "import": { "set": "batch1a", "source": "suzu_peak.png", "sourceSha256": "…", "srcW": 768, "srcH": 640, "cell": [4, 4], "origin": [0, 0], "offset": [0, 0] }
     },
     "pc_head_focus": {
       "png": "pc_head_focus.png", "w": 192, "h": 160, "kind": "head", "sha256": "…", "bytes": 3010,
@@ -334,124 +501,151 @@ pixel art; anything else is new drawing. Companion frames are used exactly as de
   },
   "companions": {
     "suzu": { "mode": "flat", "states": ["prep_a", "prep_b", "cue", "peak", "settle_b"], "layers": null, "fx": ["peak"],
-              "face": { "peak": [74, 52, 124, 104] }, "timeline": null, "offset": { "standard": [0, 0], "compact": [0, 0] } }
+              "face": { "peak": [74, 52, 124, 104] }, "timeline": null, "offset": { "standard": [0, 0], "compact": [0, 0] },
+              "approval": "candidate" }
   },
   "pc": {
-    "face": { "focus": [68, 52, 118, 104] },
-    "groups": { "prep_b": { "head": [0, -1], "torso": [0, 0] } },
-    "attach": { "curly": { "flower": [1, -3] } },
-    "hatBand": { "hat": 46, "cap": 46 },
-    "armSlot": { "prep_a": "front" },
-    "glassesOver": [],
-    "offset": { "standard": [0, 0], "compact": [0, 0] }
+    "face": { "focus": [68, 52, 118, 104] }, "groups": { "prep_b": { "head": [0, -1], "torso": [0, 0] } },
+    "attach": { "curly": { "flower": [1, -3] } }, "hatBand": { "hat": 46, "cap": 46 }, "armSlot": { "prep_a": "front" },
+    "glassesOver": [], "offset": { "standard": [0, 0], "compact": [0, 0] }, "approval": "candidate"
   },
-  "coverage": { "required": 86, "present": 31, "missingRequired": ["…"] }
+  "coverage": { "required": 86, "present": 18, "missingRequired": ["…"] },
+  "batches": { "1a": { "phase": 1, "required": 18, "present": 18, "missingRequired": [], "optionalPresent": ["suzu_prep_b"], "complete": true }, "1b": { "…": "…" } }
 }
 ```
+
+v3 requires an `approval` on every companion entry and on `pc` (§12): one of `provisional`, `candidate`, `approved`,
+`verified` — or `synthetic`, exactly when the set is synthetic. The registry is named by its asset keys only, so a
+later build regenerates the same manifest.
 
 `<batch>/import.json` (optional; everything has a default) — the same `companions` and `pc` blocks, plus:
 
 ```json
 {
-  "set": "batch1", "synthetic": false, "artVersion": 1,
+  "set": "batch1a", "batch": "1a", "approval": "candidate", "synthetic": false, "artVersion": 1,
   "files": { "suzu_peak": { "offset": [0, -16], "cell": 5.3333, "origin": [0, 85.33], "background": "magenta" } },
-  "companions": { "suzu": { "layers": ["body", "hand", "fx"] } }
+  "companions": { "suzu": { "layers": ["body", "hand", "fx"], "approval": "approved" } },
+  "pc": { "approval": "candidate" }
 }
 ```
 
-`offset` places the downsampled image on the 192 × 160 canvas (default: centred); `cell`/`origin` override grid
-detection; `background: "magenta"` keys out a flat #ff00ff. The importer merges a batch into an existing
-`assets/harmony/` (later batches add or replace files) unless given `--replace`.
+A batch that delivers a companion's frames sets that pairing's approval (and one that delivers kit files, the kit's)
+to the batch's `approval` (default `candidate`) unless it names one per pairing or for `pc`; what it does not deliver
+keeps its approval. `offset` places the downsampled image on the 192 × 160 canvas (default: centred); `cell`/`origin`
+override grid detection; `background: "magenta"` keys out a flat #ff00ff. Later batches add or replace files
+unless the first is imported with `--replace`.
 
-## 9. Import and validation
+## 9. Import, validation and regeneration
 
 ```
-node tools/harmony_import.mjs <inDir> [--set <name>] [--out assets/harmony] [--check] [--replace] [--suggest]
+node tools/harmony_import.mjs <inDir> [<inDir> …] [--set <name>] [--out assets/harmony] [--check] [--replace] [--suggest]
 node tools/harmony_import.mjs --verify assets/harmony
 ```
 
 1. **Grid:** a file that is an exact whole multiple of 192 × 160 is tried at that multiple first (1: native).
-   Otherwise, along each axis: the edge weight at every pixel boundary (colours more than 40 apart, so a tool's
-   noise inside a cell is ignored); for each candidate cell size from 1.5 to 24 px, in steps that drift at most
-   0.2 px across the image, the phase that puts most edge weight within ±0.44 px of a grid line (±0.8 px from
-   3 px cells up, so both halves of a blended cell edge count), scored against chance; the **largest** size
-   scoring within 10 % of the best wins (a grid's halves and thirds fit the same edges), refined by least
-   squares. Pixels are square: when the axes disagree, the larger size that fits both is used. Non-integer
-   sizes work (1024 / 192 found as 5.3334). Override with `cell` and `origin`.
+   Otherwise, along each axis: the edge weight at every pixel boundary (colours more than 40 apart), for each
+   candidate cell size from 1.5 to 24 px the phase that puts most edge weight near a grid line, scored against
+   chance; the **largest** size scoring within 10 % of the best wins, refined by least squares. Pixels are square.
+   Non-integer sizes work (1024 / 192 found as 5.3334). Override with `cell` and `origin`.
 2. **Downsample:** each cell's centre region (the middle half), majority colour; with no repeated colour (noise),
    the per-channel median.
-3. **Alpha:** binarised at 128; a flat `#ff00ff` background keyed out; checkerboards rejected.
-4. **Palette:** outline ink within 24 snapped to #140c18; key shades within 12 snapped (kit files).
-5. **Masks and shades** (§5): derived or read; supplied masks are checked against the file.
-6. **Align:** the per-file `offset` (from `import.json`). `--suggest` matches each file's silhouette (inside the
-   head box) against a reference — the same name already in `assets/harmony/`, else the kind's first file —
-   over ±24 px and reports the best offset; it never applies it by itself.
-7. **Write** the 192 × 160 PNGs, masks and `manifest.json` (not with `--check`).
-8. **Report:** `report/report.json` (per file: source size, grid, offset and suggestion, alpha, materials,
-   unresolved pixels, hashes; per set: names not in the contract, missing required keys, companion and kit
-   completeness) and `report/contact.png` (every file at 2× over the template's guides, with its mask view).
-   A set marked `synthetic` is labelled SYNTHETIC SAMPLE — not art on every sheet.
+3. **Alpha:** binarised at 128; a flat `#ff00ff` background keyed out; **painted checkerboards rejected** (§2).
+4. **Palette:** outline ink within 24 (sRGB) snapped to #140c18. Kit colours are kept as painted (v3).
+5. **Masks** (§5.2): derived or read; supplied masks are checked against the file and the families.
+6. **Align:** the per-file `offset` (from `import.json`). `--suggest` matches each file's silhouette against a
+   reference over ±24 px and reports the best offset; it never applies it by itself.
+7. **Write** the 192 × 160 PNGs, masks, `provenance/<set>.md` and `manifest.json` (not with `--check`).
+8. **Report:** `report/report.json` (per file: source size, grid, offset and suggestion, alpha, materials and their
+   painted values, unresolved pixels, hashes; per set: names not in the contract, missing keys, companion and kit
+   completeness, batch coverage, approval) and `report/contact.png`. A synthetic set is labelled SYNTHETIC SAMPLE —
+   not art on every sheet.
 
-Exit status: 0 when every file imports; 1 on any error (bad name, size, interlacing, unresolved pixels, a
-fixed pixel in a key colour, an invalid manifest). Missing keys are reported, not errors (batches are partial).
-`--verify` re-checks a normalised folder: schema, hashes, sizes, masks against pixels, key colours, hat cover.
+**Several batches** are imported in the order given, each merged over the ones before (the first replaces the
+output with `--replace`). **Regeneration is byte for byte**: the same sources, contract and registry asset keys give
+the same bytes in `assets/harmony/` (PNGs, masks, manifest, provenance, report) — nothing records the time, the
+build or the machine (tested: the synthetic sample with a provenance note, then the rich fixture over it, imported
+twice — every file of the output identical). A folder
+under `art/harmony/source/` without `PROVENANCE.md` is refused.
+
+Exit status: 0 when every file imports; 1 on any error (bad name, size, interlacing, a checkerboard, unresolved
+pixels, a fixed pixel in an anchor shade, a supplied mask marking a colour outside its family, a missing provenance
+note, an invalid manifest). Missing keys are reported, not errors (batches are partial). `--verify` re-checks a
+normalised folder: schema, hashes, sizes, masks against pixels (material pixels within outer of their family, never
+outline or highlight), anchor shades on fixed pixels, hat cover.
 
 ## 10. Budgets
 
 Measured by `node tests/e2e/harmony_raster.mjs --sheets` (written to `docs/harmony/contract/budgets.json`):
-Playwright, headless Chromium 141 with a software canvas, 1920 × 1080, DPR 1, a shared 4-core Linux machine — not
-a physical device, not a phone. The painted figures use the SYNTHETIC sample (Suzu + look A or B, every state the
-timeline shows, standard and compact: what the overlay prepares for one cut-in).
+Playwright, headless Chromium with a software canvas, 1920 × 1080, DPR 1, a shared 4-core Linux machine with other
+browser tests running — not a physical device, not a phone. Painted figures: Suzu + look A or B, every state the
+timeline shows, standard and compact (what the overlay prepares for one cut-in), on the sample (five anchor shades
+per family) and on the rich fixture over it (9–11 values per family).
 
 **Time**
 
-| | Code-drawn busts (today) | Painted path (sample) |
-|---|---|---|
-| Cold pairing (both busts + composition + ink backing) | 62–95 ms | 62–82 ms (almost all of it the backing, rebuilt after `clear()`) |
-| A further state, nothing cached but the backing | — (2 drawings only) | 2.7–3.5 ms |
-| One bust from decoded files (recolour + assemble) | — | mean 1.0–1.2 ms, max 7.6 ms |
-| Decoding a pairing's and look's files (19–21 PNGs, `createImageBitmap`, async) | — | mean 51 ms per batch, max 120 ms — off the learning task |
-| Everything for one cut-in (`prepare({ async: true })`: decode, then idle slices) | 230 ms for both phases × variants | 236–326 ms wall time, in idle slices |
-| Warm (cached) composition | ≤ 0.1 ms | ≤ 0.1 ms |
+| | Code-drawn busts | Painted, sample | Painted, rich fixture |
+|---|---|---|---|
+| Cold pairing (both busts + composition + ink backing) | 71–82 ms | 66–83 ms | 64–69 ms |
+| A further state, nothing cached but the backing | — | 3.5 ms | 2.9–3.2 ms |
+| One bust from decoded files (recolour + assemble) | — | mean 1.2–1.4 ms, max 9.1 | mean 1.1 ms, max 7.7 |
+| Decoding a pairing's and look's files (19–22 PNGs, async) | — | mean 81–84 ms per batch, max 159 | mean 85–89 ms, max 159 |
+| Everything for one cut-in (`prepare({ async: true })`) | 257 ms for both phases × variants | 378–471 ms wall, in idle slices | 300–404 ms wall |
+| Recolouring work (rich) | | | 953 colours decomposed; 2,417 (A) / 3,334 (B) rebuilt; 1–2 gamut-clipped |
+| Warm (cached) composition | ≤ 0.1 ms | ≤ 0.1 ms | ≤ 0.1 ms |
 
-**Decoded memory** (uncompressed surfaces: w × h × 4 bytes; the player kit adds 1 byte per pixel of material codes)
+(The decode and prepare times are higher than v2's measurement on the same kind of machine; they vary with the
+machine's load from other workers' browser tests, and the code path for decoding is unchanged.)
+
+**Decoded memory** (uncompressed surfaces: w × h × 4 bytes; the kit adds 1 byte per pixel of material codes)
 
 | | Code-drawn busts | Painted path |
 |---|---|---|
 | One decoded file | — | 122,880 B (companion) / 153,600 B (kit file with codes) |
-| One bust / one composition (layer + canvas) | 64,000 / 182,400 B | 122,880 / 450,560 B standard, 253,952 B compact |
-| One pairing and look, every state and both variants | 8 busts + 4 compositions = 1.18 MiB | 3.04 MB decoded (21 files) + 10 busts + 10 compositions + 2 backings 5.10 MB = **7.77 MiB peak** (look B: 7.47 MiB) |
-| Bound at the caches' caps (busts 24, compositions 16, decoded files 48) | ≈ 5.8 MiB | 2.9 + 7.2 + 7.4 + 0.35 MB ≈ **17 MiB** |
+| One pairing and look, every state and both variants | 8 busts + 4 compositions = 1.18 MiB | look A: 3.19 MB decoded (22 files) + caches = **7.91 MiB peak**; look B (19 files): 7.47 MiB — the same for both fixtures |
+| Recolour memo | — | ≤ 32,768 decompositions + ≤ 8,192 colours per look ramp (16 looks), a few hundred KiB at most |
+| Bound at the caches' caps | ≈ 5.8 MiB | ≈ 17 MiB (as in v2) |
 
-**Encoded size** (embedded as base64, +33 %; the game stays one offline file)
+**Encoded size** (embedded as base64, +33 %)
 
 | | Bytes |
 |---|---|
-| The sample: 30 files + 24 masks | 56,287 B (55 KiB) → 94 KiB embedded |
-| A full delivery at the sample's density (119 keys: 86 required + 33 optional, 95 masks) | 0.22 MiB |
-| A full delivery at the mockup's density (projected) | **0.70 MiB → ≈ 0.94 MiB embedded** (index.html is 9.6 MiB today) |
+| The sample: 31 files + 25 masks (56 PNGs) | 57,327 B → 75 KiB embedded |
+| The rich fixture over the sample (56 PNGs) | 98,500 B → 128 KiB embedded (+72 %: many values compress less than five) |
+| A full delivery at the mockup's density (projected, as in v2) | **0.70 MiB → ≈ 0.94 MiB embedded** |
 
-The projection: the per-kind opaque area of the sample's files × 2.19 (the template's 50 × 52 face over the code
-busts' 36 × 33) × 1.452 B per opaque pixel — the owner's mockup crop measured at its own pixel grid (2 px cells,
-364 × 148, 1,343 colours) in a scratch folder (the image is never copied into the project) — plus the sample's mask
-sizes. An estimate, not a measurement of delivered art: re-measure on Batch 1.
-
-**Budget policy.** No new hard limit: the measured peak (≈ 8 MiB per pairing) and the cap bound (≈ 17 MiB) are
-reported; if phones need less, lower the composition cap first (each painted composition is 450 KiB with its
-canvas). Decoding never runs when a technique fires: the overlay prepares at the encounter's start.
+The projection measured the owner's mockup at its own pixel grid (in a scratch folder; the image is never copied into
+the project), so it already reflects many values per material. An estimate, not a measurement of delivered art:
+re-measure on Batch 1a. **Budget policy:** no new hard limit; decoding never runs when a technique fires.
 
 ## 11. Tests and evidence
 
 | Command | What it checks |
 |---|---|
-| `node tests/run-unit.mjs harmony_png` | the codec: every colour type and filter, 16-bit, tRNS, iTXt, CRC, interlace refusal |
-| `node tests/run-unit.mjs harmony_import` | grid detection (1×–6.4×, 1024 / 192, padding, noise), downsampling, masks and their refusals, supplied masks, whole files, the sample's import and `--verify` |
-| `node tests/run-unit.mjs harmony_raster` | timeline fractions, painted compositions, recolouring discipline, no key colour in any output, shared colour logic, whole-bust fallback, invalidation, registry coverage, manifest schema, the code path after uninstall |
-| `node tests/e2e/harmony_raster.mjs [--sheets]` | the same in the built game through `compose()`/`prepare()`, the equip event, the embedded build, no network; `--sheets` writes the evidence and the budgets |
+| `node tests/run-unit.mjs harmony_png` | the codec |
+| `node tests/run-unit.mjs harmony_import` | grid detection, downsampling, family derivation (free values kept, thresholds, the foreign rule), supplied masks against the family, checkerboards (pure, noisy, under art, padded), the sample's import and `--verify`, the rich fixture against its ground truth (every pixel's material, every colour kept), byte-for-byte regeneration of two batches, provenance, approval, the batches |
+| `node tests/run-unit.mjs harmony_raster` | timeline fractions, painted compositions, the footprint and its scale, approval, the rich fixture's values kept apart on dark and pale looks, exact anchor shades = v2's tones on unopened ramps, recolouring discipline, whole-bust fallback, registry coverage, manifest schema, the code path after uninstall |
+| `node tests/run-unit.mjs harmony_timing` | the overlay's timeline playback, reduced motion's two held poses and its ≤ 120 ms cross-fade, the code busts' single held drawing |
+| `node tools/harmony_calibrate.mjs` | the thresholds against both fixtures: 0 errors and the stated headroom |
+| `node tools/harmony_recolour_proof.mjs` | value floor on 63 targets, exact anchors, the residual sweep; writes the proof sheets |
+| `node tests/e2e/harmony_raster.mjs [--sheets]` | the painted path in the built game (both fixtures), the footprint scale, approval, the embedded build, no network; `--sheets` writes the evidence and the budgets |
+| `node tests/e2e/harmony_cutin.mjs painted [--painted-docs]` | the painted overlay: timeline, reduced motion (held poses, cross-fade, no travel), and every geometry viewport plus 2048 × 1046 and 1920 × 1080 with the sample and the rich fixture (scale, faces in CSS px, nothing within 12 px of a protected rectangle) |
 | `node tests/run-unit.mjs harmony_art`, `node tests/e2e/harmony_art.mjs` | the code-drawn busts, unchanged |
 
-Evidence (`docs/screenshots/harmony/raster_sample/`, every image labelled SYNTHETIC SAMPLE — not art):
-`looks_states_1x.png` and `looks_states_2x.png` (both looks with Suzu across the six states, standard and compact),
-`recolour_2x.png` (one kit, eight skin / hair / cloth combinations), `masks_2x.png` (every kit file and its mask as
-the game reads it), `fallback_2x.png` (the whole-bust fallback), `import_contact.png` and `import_report.json` (the
-importer's own report on the sample).
+Evidence (every image labelled SYNTHETIC SAMPLE — not art): `docs/screenshots/harmony/recolour_v3/` (the rich
+fixture recoloured into every skin, hair colour, cloth palette and accessory channel; `proof.json`),
+`docs/screenshots/harmony/raster_sample/` (both batch looks across the states, recolouring, masks, fallback, the
+import report), `docs/screenshots/harmony/cutin/painted_v3.json` (scales and face sizes per viewport),
+`docs/harmony/contract/calibration.json`, `docs/harmony/contract/budgets.json`.
+
+## 12. Approval states
+
+| State | Label (dev viewer and stats) | Meaning |
+|---|---|---|
+| `provisional` | provisional artwork | the code-drawn busts (every companion without a complete painted set, the kit without painted files) |
+| `candidate` | visual candidate awaiting approval | delivered and imported, not yet accepted by the owner |
+| `approved` | approved visual direction | the owner accepted the art (Phase 1: the quality bar for everything after it) |
+| `verified` | integrated and verified | approved, integrated and checked in the game by the tests and by hand |
+| `synthetic` | synthetic sample — not art | the synthetic fixtures |
+
+`RB.harmonyArt.approval()` and `stats().approval` (and `stats().raster.approval` for the installed manifest) report
+them; the `?dev=harmony` panel shows them. They are never shown to players.

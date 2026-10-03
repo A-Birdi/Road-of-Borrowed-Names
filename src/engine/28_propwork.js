@@ -73,8 +73,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
     R(g, x + 1, y + 1, w - 2, h - 2, GL[4 - (k === 1 ? 1 : 0)]);
     R(g, x, y + h - 1, w, 1, GL[2]);
   }
-  const flick = (t, o, ms) => K.frame(t, ms || 150, 4, o.still, (o.cx | 0) * 0.37 + (o.cy | 0) * 0.21);
-  RB.propArt.kit = { plank, nail, post, top, board, signFace, lamp, flick, glyph };
+  // Lamp flicker. Every lamp maps the frame through [0, 1, 0, 2] (steady, inner dip, steady, outer dip).
+  // flick: a candle behind paper or glass, mostly steady: in each turn of eight slots (1.4 × ms each) the
+  // light dips once a little and once a little more, then holds — about two changes a second instead of
+  // the seven of a dip every 150 ms (the props balance pass: a street of lanterns twinkled like a sign).
+  // flickLively keeps the old quick cycle for a flame that is the subject (the great lamp of Snowbell).
+  const FLICK = [0, 0, 0, 1, 0, 0, 2, 3];
+  const flick = (t, o, ms) => FLICK[K.frame(t, (ms || 150) * 1.4, 8, o.still, (o.cx | 0) * 0.37 + (o.cy | 0) * 0.21)];
+  const flickLively = (t, o, ms) => K.frame(t, ms || 150, 4, o.still, (o.cx | 0) * 0.37 + (o.cy | 0) * 0.21);
+  RB.propArt.kit = { plank, nail, post, top, board, signFace, lamp, flick, flickLively, glyph };
 
   // ---- fences, shelves, lamps ------------------------------------------------------------------
   // Rail fence: squared posts with chamfered caps and two nailed rails that
@@ -333,22 +340,53 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- furniture --------------------------------------------------------------------------------
   function legs(g, xs, y0, y1, r5) { for (const x of xs) post(g, x, y0, 3, y1 - y0, r5); }
+  // What lies on a table whose scene describes it (o.on; the props balance pass): a bare wooden top on a wooden
+  // floor gave no sign that there was something to read or look at. Paper is suggested with dashes, never
+  // letters. (cx, y): the middle of the top's upper edge.
+  const CER = K.FIX.ceramic, LQ = K.FIX.lacquer;
+  function teacup(g, x, y, down) {
+    R(g, x, y, 4, 4, CER[3]); R(g, x, y, 1, 4, CER[4]); R(g, x + 3, y, 1, 4, CER[1]);
+    if (down) R(g, x + 1, y - 1, 2, 1, CER[2]); // its foot ring on top: upside down
+    else { R(g, x, y, 4, 1, '#7a9a5a'); R(g, x, y + 3, 4, 1, CER[1]); }
+  }
+  function sheet(g, x, y, w, h, lines) {
+    R(g, x, y, w, h, PP[3]); R(g, x, y, w, 1, PP[4]); R(g, x + w - 1, y + 1, 1, h - 1, PP[1]); R(g, x, y + h - 1, w, 1, PP[1]);
+    for (let k = 0; k < lines; k++) R(g, x + 2, y + 2 + k * 2, Math.max(2, w - 4 - (k % 2) * 2), 1, INK[3]);
+  }
+  function onTable(g, on, cx, y) {
+    if (on === 'paper') sheet(g, cx - 5, y + 2, 10, 7, 2);
+    else if (on === 'papers') { sheet(g, cx - 9, y + 3, 9, 7, 2); sheet(g, cx - 2, y + 1, 10, 7, 2); sheet(g, cx + 4, y + 4, 8, 6, 1); }
+    else if (on === 'letters') for (let i = 0; i < 3; i++) { const x = cx - 6 + i * 2, yy = y + 6 - i * 2; R(g, x, yy, 10, 5, PP[i === 2 ? 4 : 3]); R(g, x, yy + 4, 10, 1, PP[1]); R(g, x + 1, yy + 1, 4, 1, PP[1]); R(g, x + 5, yy + 1, 4, 1, PP[1]); R(g, x + 4, yy + 2, 2, 1, PP[1]); }
+    else if (on === 'book') { R(g, cx - 8, y + 2, 16, 8, LQ[1]); R(g, cx - 7, y + 2, 7, 7, PP[3]); R(g, cx, y + 2, 7, 7, PP[4]); R(g, cx, y + 2, 1, 7, PP[1]); for (let k = 0; k < 3; k++) { R(g, cx - 6, y + 4 + k * 2, 5, 1, INK[3]); R(g, cx + 2, y + 4 + k * 2, 4, 1, INK[3]); } }
+    else if (on === 'ink') { sheet(g, cx - 8, y + 2, 9, 7, 2); R(g, cx + 3, y + 3, 6, 5, INK[1]); R(g, cx + 4, y + 4, 4, 2, INK[3]); line(g, cx + 2, y + 9, cx + 9, y + 9, '#c8a870', 1); R(g, cx + 1, y + 9, 2, 1, INK[2]); }
+    else if (on === 'cup') teacup(g, cx - 2, y + 3);
+    else if (on === 'cups') { teacup(g, cx - 6, y + 3); teacup(g, cx + 2, y + 4); }
+    else if (on === 'cupdown') { teacup(g, cx - 6, y + 3); teacup(g, cx + 2, y + 4, true); }
+    else if (on === 'tray') { R(g, cx - 9, y + 3, 18, 7, LQ[2]); R(g, cx - 9, y + 3, 18, 1, LQ[4]); R(g, cx - 9, y + 9, 18, 1, LQ[0]); teacup(g, cx - 7, y + 4); teacup(g, cx - 2, y + 4); R(g, cx + 3, y + 5, 3, 3, '#e07a2a'); R(g, cx + 3, y + 5, 1, 1, '#ffb060'); R(g, cx + 6, y + 6, 2, 2, '#c0601c'); }
+    else if (on === 'board') { R(g, cx - 7, y + 1, 14, 9, '#c89a58'); R(g, cx - 7, y + 1, 14, 1, '#e4c078'); R(g, cx - 7, y + 9, 14, 1, '#8a6434'); for (let k = 1; k < 4; k++) { R(g, cx - 7 + k * 3 + 1, y + 2, 1, 7, '#9a7440'); R(g, cx - 6, y + 2 + k * 2, 12, 1, '#9a7440'); } for (const [px, py] of [[-5, 3], [-1, 5], [3, 3], [1, 7]]) R(g, cx + px, y + py, 2, 2, '#f0dcae'); R(g, cx + 9, y + 7, 2, 2, '#f0dcae'); }
+    else if (on === 'plate') { ell(g, cx, y + 6, 6, 2.5, CER[3]); ell(g, cx, y + 5.5, 4, 1.5, CER[4]); R(g, cx - 1, y + 3, 3, 3, '#4a2e1c'); R(g, cx - 1, y + 3, 1, 1, '#6e4a30'); R(g, cx + 2, y + 5, 3, 1, '#c8a870'); }
+  }
+  const ON = ['paper', 'papers', 'letters', 'book', 'ink', 'cup', 'cups', 'cupdown', 'tray', 'board', 'plate'];
   art('table', {
     box: [-2, -4, 68, 40],
-    draw(g, M) {
+    v: (o) => (ON.includes(o.on) ? o.on : 0),
+    draw(g, M, v) {
       const w5 = M.wood;
       legs(g, [5, 56], 19, 30, w5);
       R(g, 8, 25, 48, 2, w5[1]);
       top(g, 2, 4, 60, 14, 3, w5, 3);
+      if (v) onTable(g, v, 32, 4);
     },
     shadow: () => [32, 29, 30, 3.5, 0.3],
   });
   art('smalltable', {
     box: [-2, -4, 36, 40],
-    draw(g, M) {
+    v: (o) => (ON.includes(o.on) ? o.on : 0),
+    draw(g, M, v) {
       const w5 = M.wood;
       legs(g, [4, 25], 19, 30, w5);
       top(g, 2, 6, 28, 12, 3, w5, 5);
+      if (v) onTable(g, v, 16, 6);
     },
     shadow: () => [16, 29, 14, 3, 0.3],
   });
@@ -550,9 +588,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
     shadow: () => [16, 28, 12, 3, 0.3],
   });
   // Writing desk: paper, inkstone and brush, a drawer pedestal.
+  // o.on: 'heap' — records piled at the desk's left end, where its scene says the desk is stacked or piled;
+  // 'heapcups' — the same with three cups of cold tea on them (the harbourmaster's desk) (props balance pass).
   art('desk', {
     box: [-2, -6, 68, 40],
-    draw(g, M) {
+    v: (o) => (o.on === 'heap' || o.on === 'heapcups' ? o.on : 0),
+    draw(g, M, v) {
       const w5 = M.wood;
       R(g, 4, 18, 18, 12, w5[2]); R(g, 4, 18, 2, 12, w5[3]);
       for (const y of [19, 24]) { R(g, 6, y, 14, 4, w5[3]); R(g, 6, y, 14, 1, w5[4]); R(g, 12, y + 2, 3, 1, BR[3]); }
@@ -562,6 +603,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
       for (let k = 0; k < 3; k++) R(g, 14, 6 + k * 2, 11 - k * 2, 1, INK[3]);
       R(g, 38, 5, 7, 6, INK[1]); R(g, 39, 6, 5, 3, INK[3]); R(g, 39, 6, 2, 1, '#6a6a8a');
       line(g, 47, 11, 55, 5, '#c8a870', 1); R(g, 46, 11, 2, 2, INK[2]);
+      if (v) {
+        // a pile of ledgers and loose sheets, its edges offset, the top one lit
+        const cov = [LQ[1], '#4a5a6e', LQ[2], '#5a4a3a'];
+        for (let i = 0; i < 4; i++) { const y = 10 - i * 3, x = 2 + (i % 2); R(g, x, y, 10, 3, cov[i]); R(g, x + 1, y, 8, 1, PP[3 + (i === 3 ? 1 : 0)]); R(g, x, y + 2, 10, 1, '#2a2226'); }
+        R(g, 3, -1, 9, 2, PP[4]); R(g, 3, 0, 9, 1, PP[1]); R(g, 5, -1, 4, 1, INK[3]);
+        if (v === 'heapcups') for (const [x, y] of [[31, 7], [34, 9], [31, 11]]) teacup(g, x, y);
+      }
     },
     shadow: () => [32, 29, 30, 3, 0.3],
   });
@@ -756,10 +804,23 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
   // Pottery kiln: a domed brick kiln with a vent; the mouth glows unless
   // o.sealed, when it is plastered shut and marked with a glass seal.
+  // Each placement can match what its own text says (the props balance pass):
+  //   o.ash     the mouth choked with grey ash, cold, no seal mark (a disused kiln is not the Great
+  //             Kiln's glass seal, which is a puzzle);
+  //   o.embers  "still faintly warm": a low bed of embers, no open fire, no halo;
+  //   o.glass   a glassworks furnace: cold and ashen until o.litIf holds in the campaign (the scene says
+  //             "The fire is out"), then lit, with the orange gather turning slowly inside
+  //             ("Orange glass turns slowly inside the furnace").
   const KILN = ramp('#7a5a4a', 0.5, 0.4);
+  const kilnLit = (o) => { if (!o.litIf) return true; const s = RB.game && RB.game.s; return !!(s && RB.state && RB.state.test(s, o.litIf)); };
+  // 0 lit, 1 sealed, 2 ash (cold), 3 embers, 4 glass furnace lit
+  const kilnV = (o) => (o.sealed ? 1 : o.ash ? 2 : o.embers ? 3 : o.glass ? (kilnLit(o) ? 4 : 2) : 0);
+  // the furnace's gather on its slow turn: 8 places round a small ellipse in the mouth (art px)
+  const GATHER = [[0, 0], [2, -1], [4, -1], [5, 0], [4, 1], [2, 2], [0, 2], [-1, 1]];
   art('kiln', {
     box: [-6, -52, 108, 116],
-    v: (o) => (o.sealed ? 1 : 0),
+    v: kilnV,
+    f: (t, o) => (kilnV(o) === 4 ? K.frame(t, 340, 8, o.still, (o.cx | 0) * 0.3) : 0),
     draw(g, M, v, f, info) {
       const k5 = KILN;
       const inside = (fx, fy) => { if (fy > 60 || fy < -40) return false; const t = (fy + 40) / 100, hw = 44 * Math.sqrt(Math.min(1, t / 0.55)) + (t > 0.55 ? (t - 0.55) * 8 : 0); return Math.abs(fx - 48) <= hw; };
@@ -778,9 +839,34 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // mouth arch
       R(g, 34, 26, 28, 34, k5[0]);
       ell(g, 48, 28, 14, 6, k5[0]);
-      if (!v) {
+      if (v === 0) {
         R(g, 37, 30, 22, 30, '#2a1410'); ell(g, 48, 30, 11, 4, '#2a1410');
         R(g, 40, 42, 16, 16, '#f08a3a'); R(g, 42, 44, 12, 12, '#ffb45a'); R(g, 45, 47, 6, 6, '#ffe39c');
+        R(g, 38, 56, 20, 4, K.FIX.char[3]);
+      } else if (v === 2 || v === 3) {
+        // cold (choked with ash) or faintly warm (a low bed of embers under the ash)
+        const A = ['#2e2826', '#48403c', '#645a54', '#80766e', '#9c9288'];
+        R(g, 37, 30, 22, 30, v === 3 ? '#24140f' : '#221c1a'); ell(g, 48, 30, 11, 4, v === 3 ? '#24140f' : '#221c1a');
+        const top = v === 2 ? 40 : 50; // ash heaped to the arch, or a low bed
+        for (let y = top; y < 60; y++) {
+          const k = (y - top) / Math.max(1, 60 - top), hw = Math.round(5 + k * 6);
+          R(g, 48 - hw, y, hw * 2, 1, A[y < top + 2 ? 3 : y < top + 5 ? 2 : 1]);
+        }
+        R(g, 44, top, 7, 1, A[4]); R(g, 41, top + 3, 3, 1, A[3]); R(g, 52, top + 4, 3, 1, A[3]);
+        for (let i = 0; i < 5; i++) { const r = hh(i, 7, 41); R(g, 40 + (r % 16), top + 4 + ((r >>> 4) % Math.max(1, 56 - top)), 2, 1, K.FIX.char[1]); }
+        if (v === 3) {
+          const E = K.FIX.ember;
+          R(g, 42, 55, 3, 1, E[1]); R(g, 46, 54, 4, 1, E[1]); R(g, 51, 55, 3, 1, E[1]);
+          R(g, 47, 54, 2, 1, E[2]); R(g, 43, 56, 1, 1, E[2]); R(g, 48, 55, 1, 1, E[3]);
+        }
+        R(g, 38, 56, 20, 4, K.FIX.char[2]);
+      } else if (v === 4) {
+        // the glassworks furnace, lit: a fierce glow and the gather turning slowly in it
+        R(g, 37, 30, 22, 30, '#2a1410'); ell(g, 48, 30, 11, 4, '#2a1410');
+        R(g, 40, 42, 16, 16, '#f08a3a'); R(g, 42, 44, 12, 12, '#ffb45a');
+        const [gx, gy] = GATHER[f % 8];
+        R(g, 44 + gx, 48 + gy, 5, 4, '#ffd27a'); R(g, 45 + gx, 47 + gy, 3, 6, '#ffd27a');
+        R(g, 45 + gx, 48 + gy, 3, 3, '#ffe9b0'); R(g, 45 + gx, 48 + gy, 1, 1, '#fff8e4');
         R(g, 38, 56, 20, 4, K.FIX.char[3]);
       } else {
         R(g, 37, 30, 22, 30, '#5a4a42'); ell(g, 48, 30, 11, 4, '#5a4a42');
@@ -789,7 +875,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       }
       if (info.snow) K.snowTops(g, -6, -52, 108, 80, M.snow, 2, 3);
     },
-    over(g, M, v) { if (!v) K.halo(g, 48, 48, 18, '#ff9a40', 0.12); },
+    over(g, M, v, f) { if (v === 0) K.halo(g, 48, 48, 18, '#ff9a40', 0.12); else if (v === 4) K.halo(g, 48, 48, 19, '#ff9a40', 0.13 + (f % 4 === 1 ? 0.02 : 0)); },
     shadow: () => [48, 61, 46, 4, 0.34],
   });
 
@@ -947,7 +1033,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Campfire: a ring of stones, crossed logs, a lively fire and sparks.
   art('campfire', {
     box: [-2, -20, 36, 54],
-    f: (t, o) => K.frame(t, 90, 6, o.still),
+    // 125 ms a frame (was 90): still a lively fire, but the people warming their hands at it (the Archive
+    // road's camp, the Snowbell road) are no longer outpaced by it (the props balance pass)
+    f: (t, o) => K.frame(t, 125, 6, o.still, (o.cx | 0) * 0.43),
     draw(g, M, v, f) {
       const s5 = M.stone, w5 = M.wood;
       for (let i = 0; i < 10; i++) { const a = (i / 10) * PI * 2, x = 16 + Math.cos(a) * 12, y = 24 + Math.sin(a) * 5; if (Math.sin(a) < 0) { ell(g, x, y, 3, 2.2, s5[2]); R(g, Math.round(x - 2), Math.round(y - 2), 2, 1, s5[4]); } }
@@ -1124,10 +1212,22 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- glints and marks (animated, not outlined) -----------------------------------------------------------
   // Sparkle: something to find — a four-point star that swells and fades.
+  // o.faint: not something to find but a glint in the scenery (light on dark water, a far light seen from a
+  // height): a small point that brightens now and then, slower, and (with o.lit === false on the placement)
+  // no pool of light of its own, so it never reads as a pickup (the props balance pass).
   art('sparkle', {
     box: [0, -8, 32, 40], outline: false,
-    f: (t, o) => K.frame(t, 120, 8, o.still, (o.cx | 0) * 0.5),
+    v: (o) => (o.faint ? 1 : 0),
+    f: (t, o) => (o.faint ? K.frame(t, 230, 12, o.still, (o.cx | 0) * 0.71 + (o.cy | 0) * 0.37) : K.frame(t, 120, 8, o.still, (o.cx | 0) * 0.5)),
     draw(g, M, v, f) {
+      if (v) {
+        // mostly a dim point; one brief brightening (with a short cross) in each 2.8 s turn
+        const a = [0.3, 0.3, 0.3, 0.3, 0.3, 0.6, 0.9, 0.6, 0.3, 0.3, 0.3, 0.3][f];
+        const c = (al) => 'rgba(255,240,190,' + al.toFixed(2) + ')';
+        R(g, 15, 10, 2, 2, c(a));
+        if (a > 0.5) { const L = a > 0.8 ? 3 : 2; R(g, 15, 10 - L, 2, L * 2 + 2, c(a * 0.55)); R(g, 15 - L, 10, L * 2 + 2, 2, c(a * 0.55)); R(g, 15, 10, 2, 2, c(a)); }
+        return;
+      }
       const a = [0.55, 0.75, 0.95, 1, 0.9, 0.7, 0.5, 0.4][f], L = Math.round(4 + a * 6);
       const c = (al) => 'rgba(255,240,180,' + al.toFixed(2) + ')';
       R(g, 15, 12 - L, 2, L * 2, c(a * 0.9));

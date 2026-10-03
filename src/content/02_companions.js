@@ -45,7 +45,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         desc: 'Once per encounter: Nao moves on the opening without waiting for your signal — the target\'s move comes to nothing.' },
       // lq_ally2 ("whatever comes for you, count it as coming for me; I'll take half")
       { id: 'nao_mark', name: T('Take half', '{半分|はんぶん} {引|ひ}き{受|う}ける'), aim: 'allies', uses: 1, unlock: 'lq_ally2', effect: { kind: 'share' },
-        say: 'Nao stands at your shoulder: whatever comes for you this round, he takes half.',
+        say: 'Nao stands at your shoulder: whatever comes for you this round, they take half.',
         desc: 'Once per encounter: this round, every blow that lands on you is shared — Nao takes the larger half.' },
     ],
     mio: [

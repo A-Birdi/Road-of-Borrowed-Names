@@ -11,9 +11,16 @@ narr: {誰|だれ} も 「 {一緒|いっしょ} に {行|い}こう 」 と は
 !autosave
 
 @scene rw.mr_sae
+# Staged: Sae starts back from you (a voice?), then holds herself; when she can say no more, her head
+# goes down, and Mio, beside her, kneels to her box of medicines (you look round at her).
 !faceplayer sae
+!gesture sae recoil pc
 sae[worry]: {来|こ}ないで …… あ 、 ごめんなさい 。 {人|ひと} だ 。 {声|こえ} じゃ ない 。 || Don't come… oh, sorry. You're a person. Not a voice.
+!gesture sae guard hold
 sae: {粉屋|こなや} の サエ です 。 {父|ちち} の {水車|すいしゃ}{小屋|ごや} …… {嵐|あらし} の {夜|よる} から 、 {誰|だれ} も いない のに 、 {昔|むかし} の {声|こえ} が {呼|よ}ぶ ん です 。 {死|し}んだ {父|ちち} の {声|こえ} も 。 || I'm Sae, the miller's daughter. My father's mill… since the storm night, with nobody inside, old voices keep calling. Even my late father's.
+!gesture sae lowered hold
+!gesture mio kneel hold
+!gesture pc listen mio
 narr: サエ は {震|ふる}えて いて 、 それ {以上|いじょう} {話|はな}せない 。 {隣|となり} で ミオ が {薬|くすり} の {箱|はこ} を {開|ひら}いて いる 。 || Sae is shaking and can't say more. Next to her, Mio is opening a box of medicines.
 
 @scene rw.mr_sae2
@@ -22,14 +29,24 @@ sae: {歯車|はぐるま} の {軸|じく} 、 {使|つか}って ください 
 ?(rw_echo_done) sae[smile]: {水車|すいしゃ} が {回|まわ}る {音|おと} 、 {久|ひさ}しぶり に {聞|き}きました 。 ありがとう 。 || I haven't heard the wheel turning in so long. Thank you.
 
 @scene rw.mr_mio
+# Staged: Mio holds the warm cup she has brewed, puts it in Sae's hands and turns to her; Sae's head goes
+# down over her confession; Mio's nod; Sae looks away, then at you, and gives up the pin; Mio's nod to her.
 !faceplayer mio
+!prop mio cup
 mio: {落|お}ち{着|つ}く お{茶|ちゃ} を {煎|せん}じて います 。 {薬|くすり} と いう より 、 {温|あたた}かい もの を {持|も}って いる と 、 {人|ひと} は {少|すこ}し {楽|らく} に なる ので 。 || I'm brewing a calming tea. It's less the medicine than holding something warm — people feel a little better.
+!gesture mio handover sae
+!gesture sae receive mio hold
 narr: ミオ は サエ に {茶碗|ちゃわん} を {握|にぎ}らせ 、 {目|め} を {見|み}て {話|はな}す 。 || Mio puts a cup in Sae's hands and speaks to her, meeting her eyes.
+!gesture mio palm sae
 mio: 「 {気|き} の せい 」 と は {言|い}いません 。 {何|なに} か が {起|お}きて いる の は {本当|ほんとう} です 。 でも 、 それ は あなた の せい じゃ ない 。 || I won't tell you it's your imagination. Something really is happening. But it isn't your fault.
+!gesture sae lowered hold
 sae[think]: …… {父|ちち} の {声|こえ} が 、 「 {軸|じく} を {抜|ぬ}いて おけ 」 って {言|い}った ん です 。 {嵐|あらし} の {夜|よる} に 。 {怖|こわ}くて 、 {歯車|はぐるま} の {軸|じく} を {抜|ぬ}いて {逃|に}げた 。 だから {水車|すいしゃ} が {止|と}まった ん です 。 || …My father's voice said "pull the pin out". On the storm night. I was scared, so I pulled the gear pin and ran. That's why the wheel stopped.
+!gesture mio nod sae
 mio: {持|も}って いる の ね 。 …… {返|かえ}しても いい と {思|おも}える まで 、 {待|ま}つ から 。 || You still have it. …I'll wait until you feel you can give it back.
+!gesture sae avert pc hold
 sae: …… いいえ 。 あなた たち に {渡|わた}します 。 {止|と}まった ままの {父|ちち} の {水車|すいしゃ} なんて 、 {嫌|いや} です 。 || …No. I'll give it to you. I don't want my father's wheel standing still.
 !give rw_wheel_pin
+!gesture mio nod sae
 mio[smile]: よく {言|い}えました 。 …… {私|わたし} は ここ で サエ さん と いる 。 {気|き}を つけて ね 。 || Well said. …I'll stay here with Sae. Be careful.
 !set rw_mr_mio
 !quest rw_mill 1 quiet
@@ -62,6 +79,9 @@ ren[smile]: …… ありがとう 。 {灯|あか}り が {一|ひと}つ と�
 ren: {私|わたし} は ここ で {灯|あか}り を {見|み}て います 。 {消|き}えそう に なったら 、 {大声|おおごえ} で {歌|うた}います 。 {音痴|おんち} です が 、 {効果|こうか} は ある はず です 。 || I'll keep watch on the lantern here. If it starts to go out, I'll sing loudly. I'm tone-deaf, but it should be effective.
 
 @scene rw.mr_nao
+# Staged: Nao points out the narrows and turns to the reeds as they name the other way (you look); when
+# you have read the reeds yourself, a nod and a look between the two ways; if they clear them they go to
+# the reeds and kneel to part them (side-on); if you take the narrows they point you to the way out.
 !faceplayer nao
 !if !rw_mr_obs_reeds -> tell
 nao: {葦|あし} 、 {見|み}て きた な 。 どう {思|おも}った ？ || You've been looking at the reeds. What did you make of them?
@@ -69,23 +89,35 @@ nao: {葦|あし} 、 {見|み}て きた な 。 どう {思|おも}った ？ 
 * {下|した} に {細|ほそ}い {道|みち} が ある 。 {茎|くき} は {曲|ま}がってる だけ || There's a track underneath. The stalks are only bent aside. -> read
 * ただ の {葦|あし} に {見|み}えた || They looked like plain reeds to me. -> tell
 :read
+!gesture nao nod pc
 nao[smirk]: よく {見|み}てる 。 {獣道|けものみち} だ 。 {毎晩|まいばん} {何|なに} か が {通|とお}ってる 。 {折|お}らず に {分|わ}ければ 、 {人|ひと} も {通|とお}れる 。 || Sharp eyes. It's an animal track; something uses it every night. Part the reeds without breaking them and people can use it too.
+!gesture nao lookbetween 6,15 and=12,16
 nao: {崖|がけ} の {方|ほう} は 、 {声|こえ} に {押|お}し{戻|もど}される 。 どっち に する ？ || The narrows push you back with voices. Which way do you want?
 !goto choose
 :tell
+!gesture nao point 6,15
 nao: {先|さき} に {見|み}て きた 。 {狭|せま}い {崖|がけ} の {間|あいだ} で 、 {声|こえ} が {全部|ぜんぶ} {跳|は}ね{返|かえ}って くる 。 {通|とお}ろう と する と 、 {押|お}し{戻|もど}される 。 || I went ahead. In the narrows between the cliffs, every voice bounces back at you. Try to go through and you get pushed back.
+!look nao 12,16
+!gesture pc listen 12,16
 nao: {別|べつ} の {道|みち} も ある 。 {小屋|こや} の {裏|うら} 、 {背|せ} の {高|たか}い {葦|あし} の {向|む}こう 。 {獣道|けものみち} が {上|うえ} まで {続|つづ}いてる 。 || There's another way. Behind the shed, past the tall reeds — an animal track that goes all the way up.
 :choose
 !choice
 * {葦|あし} を {分|わ}けて もらう || Ask Nao to clear the reeds. -> clear
 * {崖|がけ} の {道|みち} を {行|い}く || I'll try the narrows. -> narrows
 :clear
+!look pc nao
+!look nao 12,16
 nao: {了解|りょうかい} 。 …… {葦|あし} を {折|お}る の は {悪|わる}い けど 、 {春|はる} に は また {生|は}える 。 {道|みち} は {生|は}えない 。 || Got it. …Feels bad breaking reeds, but they grow back in spring. Paths don't.
 !set rw_mr_nao
 !sfx wind
+!walkto nao 11 17 right
+!gesture nao kneel 12,17 hold
 narr: ナオ が {葦|あし} を {押|お}し{倒|たお}して 、 {細|ほそ}い {道|みち} を {作|つく}った 。 || Nao flattens the reeds, making a narrow path.
 !end
 :narrows
+!look pc nao
+!look nao pc
+!gesture nao point 10,25
 nao[smirk]: {正面|しょうめん} から か 。 {嫌|きら}い じゃ ない 。 {無理|むり} だったら {戻|もど}って きな 。 {出口|でぐち} は ここ に ある 。 || Straight through the front, huh. I don't hate it. If it's no good, come back. The exit's right here.
 
 @scene rw.mr_nao2
@@ -115,6 +147,9 @@ narr: {何|なに} か {小|ちい}さな もの が 、 {毎晩|まいばん} �
 !set rw_mr_obs_reeds
 
 @scene rw.mr_suzu_talk
+# Staged: Suzu shows off the cliffs like a theatre and gives the idea of a round with both hands; if
+# you sing, you both turn to the narrows and she conducts the cliff with an open hand; then she turns
+# back to you, pleased with herself.
 !faceplayer suzu
 !if !rw_mr_obs_echo -> intro
 suzu: {崖|がけ} に {入|はい}って みた の ？ {声|こえ} は どう だった ？ || You went into the narrows? What were the voices like?
@@ -122,20 +157,31 @@ suzu: {崖|がけ} に {入|はい}って みた の ？ {声|こえ} は どう
 * {最後|さいご} の {音|おと} を {一|ひと}つ ずつ {返|かえ}して くる || They throw back the last sound they caught, one at a time. -> read
 * ただ {押|お}し{返|かえ}された || They just pushed me back. -> intro
 :read
+!gesture suzu size
 suzu[laugh]: {一|ひと}つ ずつ ！ それ なら {話|はなし} は {早|はや}い 。 {二|ふた}つ {同時|どうじ} に {聞|き}かせれば いい の 。 {同|おな}じ {歌|うた} を {少|すこ}し ずらして 、 {輪唱|りんしょう} で 。 || One at a time! Then it's easy. We give it two at once: the same song, slightly staggered, as a round.
 !goto choose
 :intro
+!gesture suzu point 6,14
 suzu: この {崖|がけ} 、 いい {響|ひび}き ！ {劇場|げきじょう} に したい くらい 。 …… ただ 、 {客|きゃく} が {悪|わる}い 。 {同|おな}じ セリフ しか {言|い}わない 。 || These cliffs have wonderful acoustics! I'd love to make it a theatre. …Only, the audience is terrible. They only have one line.
+!look suzu pc
+!gesture suzu size
 suzu: {繰|く}り{返|かえ}す {相手|あいて} に は 、 {輪唱|りんしょう} を ぶつける の 。 {同|おな}じ {歌|うた} を 、 {少|すこ}し ずらして 。 そう する と 、 どっち が どっち か わからなく なって 、 {黙|だま}る 。 || Against something that repeats, you throw a round at it. The same song, slightly staggered. It loses track of which is which and goes quiet.
 :choose
 !choice
 * {一緒|いっしょ} に {歌|うた}う || Sing with her. -> sing
 * {本当|ほんとう} に {効|き}く の ？ || Does that really work? -> ask
 :ask
+!gesture suzu laugh
 suzu[laugh]: {知|し}らない ！ {初|はじ}めて やる もの 。 …… でも 、 {怖|こわ}い とき に {歌|うた}う の は 、 {昔|むかし} から {効|き}く の よ 。 {少|すく}なくとも 、 {歌|うた}って いる {方|ほう} に は 。 || No idea! I've never tried it. …But singing when you're scared has always worked — for the singer, at least.
 :sing
+!look pc 6,15
+!look suzu 6,15
+!gesture suzu palm
 narr: スズ が {歌|うた}い{出|だ}し 、 {少|すこ}し {遅|おく}れて あなた も {歌|うた}う 。 {崖|がけ} の {声|こえ} は {二|ふた}つ の {歌|うた} を {追|お}いかけ 、 やがて {追|お}いつけなく なって 、 {静|しず}か に なった 。 || Suzu starts to sing, and a beat later you join in. The cliff-voices chase both songs, fall behind, and finally go quiet.
 !music companion_suzu
+!look pc suzu
+!look suzu pc
+!gesture suzu celebrate
 suzu[smile]: …… ほら 。 {拍手|はくしゅ} は {後|あと} で まとめて ちょうだい 。 || …There. Save the applause for later.
 !set rw_mr_suzu
 !music mystery
@@ -162,23 +208,30 @@ narr: 「 …… あした も きて ね …… 」 「 …… おかえり …
 !autosave
 
 @scene rw.m1_gears
+# Staged: you lean in to the jammed gears; you reach in and set the pin; at the faint heat you turn to the
+# millstone, and the bang of the trapdoor makes you look up at the ladder.
 !if !item.rw_wheel_pin -> nopin
+!gesture pc observe 10,2 hold
 narr: {歯車|はぐるま} の {真|ま}ん{中|なか} に 、 {軸|じく} を {通|とお}す {穴|あな} が ある 。 {板|いた} に は {番号|ばんごう} の ような {字|じ} が {刻|きざ}まれて いる 。 || There's a hole in the middle of the gears for a pin. Plates carved with something like numbers.
 !lesson kana
 !challenge rw.c_mill_gears
 !if var._res=0 -> end
 !take rw_wheel_pin
 !sfx chest
+!gesture pc handover 10,2
 narr: {軸|じく} が はまり 、 {歯車|はぐるま} が {重|おも}たげ に {回|まわ}り{出|だ}した 。 {外|そと} で 、 {水車|すいしゃ} の きしむ {音|おと} が {変|か}わる 。 || The pin slots in, and the gears begin to turn, heavily. Outside, the creak of the waterwheel changes.
 narr: {床|ゆか} の {下|した} の {水路|すいろ} に 、 {冷|つめ}たい {水|みず} が {戻|もど}って きた 。 {歯車|はぐるま} の {板|いた} の {字|じ} の {中|なか} に 、 {一|ひと}つ だけ {数字|すうじ} で は ない {字|じ} が ある 。 「 {水|みず} 」 。 || Cold water runs back into the millrace under the floor. Among the characters on the gear plates, one isn't a number: the character for water, mizu.
 !word mizu
+!gesture pc listen 6,4
 narr: 「 みず 」 。 {熱|あつ}く なった もの を {冷|ひ}やす {言葉|ことば} だ 。 {部屋|へや} の {真|ま}ん{中|なか} の {石臼|いしうす} から 、 かすか に {熱|ねつ} を {感|かん}じる 。 || Mizu — water: a word that cools whatever has grown hot. From the millstone in the middle of the room, you feel a faint heat.
+!gesture pc flinch 2,2
 narr: {梯子|はしご} の {上|うえ} の {扉|とびら} が 、 がたん と {開|ひら}いた 。 || The trapdoor above the ladder bangs open.
 !set rw_gears
 !quest rw_mill 2
 !autosave
 !end
 :nopin
+!gesture pc observe 10,2
 narr: {歯車|はぐるま} の {真|ま}ん{中|なか} の {軸|じく} が {抜|ぬ}けて いる 。 これ では {回|まわ}らない 。 {誰|だれ} か が {持|も}って いった の だろう か 。 || The pin through the middle of the gears is missing. They won't turn like this. Did someone take it?
 
 @scene rw.m1_ladder
@@ -238,16 +291,24 @@ narr: {灯|あか}り に 「 {葦|あし}ノ{瀬|せ} 」 が ともる 。 {�
 narr: {灯|あか}り は {静|しず}か に ともって いる 。 || The lantern burns quietly.
 
 @scene rw.m0_chest
+# Staged: you kneel at the old box to take out the charm.
+!gesture pc kneel 13,3
 narr: {古|ふる}い {箱|はこ} の {中|なか} に 、 {丸|まる}い {石|いし} の {守|まも}り が {入|はい}って いた 。 {粉屋|こなや} が {水車|すいしゃ} の {無事|ぶじ} を {祈|いの}った もの らしい 。 || Inside an old box is a round stone charm. It seems the miller used to pray for the wheel's safety with it.
 !give rw_mill_charm
 !set rw_m0_chest
 
 @scene rw.m1_boss
+# Staged: you face the millstone where the voices swirl, start at the echo's words, and stand still to
+# understand them (no gesture on that line); remembering the word on the gear plate, a hand to your chin;
+# after the battle you look up at the voices leaving, and round towards the wheel outside.
 !music hush
+!gesture pc listen 6,4 hold
 narr: {石臼|いしうす} の {上|うえ} に 、 {声|こえ} が {渦|うず} を {巻|ま}いて いる 。 {聞|き}いた こと の ある {声|こえ} 、 {知|し}らない {声|こえ} 、 {名前|なまえ} の ない {呼|よ}び{声|ごえ} 。 || Above the millstone, voices swirl. Voices you know, voices you don't, calls with no names in them.
+!gesture pc flinch 6,4
 echo: …… おかえり 。 …… あした も 。 …… まって 。 || …Welcome back. …Tomorrow too. …Wait.
 narr: この {声|こえ} たち は {怒|おこ}って いる の では ない 。 {行|い}き{場|ば} を なくして いる だけ だ 。 || These voices aren't angry. They've just lost their way home.
 !if word.mizu -> fight
+!gesture pc chin
 narr: {石臼|いしうす} が {熱|あつ}く なって いく 。 {床|ゆか} の {下|した} で は 、 {水路|すいろ} の {水|みず} が {鳴|な}って いる 。 {歯車|はぐるま} の {板|いた} に あった {字|じ} を {思|おも}い{出|だ}す 。 「 {水|みず} 」 。 || The millstone is growing hot. Under the floor, the millrace is running. You remember the character on the gear plate: mizu, water.
 !word mizu
 :fight
@@ -256,7 +317,9 @@ narr: {石臼|いしうす} が {熱|あつ}く なって いく 。 {床|ゆか
 !set rw_echo_done bridge_fixed
 !quest rw_mill 4
 !music wonder
+!gesture pc lookroad up
 narr: {声|こえ} が ほどけて いく 。 {梁|はり} から 、 {屋根裏|やねうら} から 、 {外|そと} の {川|かわ} へ 。 || The voices come untied — from the beams, from the loft, out to the river.
+!gesture pc listen 10,2
 narr: {外|そと} で 、 {水車|すいしゃ} が {大|おお}きく {一|ひと}つ {回|まわ}った 。 || Outside, the waterwheel makes one great turn.
 !note rw_mill
 !lesson kana

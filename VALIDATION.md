@@ -2029,3 +2029,190 @@ listeners and 210 DOM nodes per encounter. It also grew on the base commit, and 
 - Left as is. The note is here in case a future path, such as an automatic campaign switch, ever needs it.
 
 **Not verified:** Firefox; a real phone; long sessions outside battles (the world, practice activities, cases).
+
+## World walk-ins step round standing people (2026-10-03; the staging worker's finding; REQUIREMENTS.md B2)
+
+**What:** the world's own comings and goings (walking in to speak, walking off, the story moving someone to a new place on
+the same map) used to plan their routes ignoring people. A walker only noticed you or the companion on bumping into you
+(a 300 ms pause, one detour, then through after 1.5 s). It walked straight through villagers, creatures, and people
+walking in or off.
+- **Seen in the staging runs:** the see-off in Reedwake; Sōta moving down the harbour.
+- **Now** (src/engine/50_world.js):
+  - `routeRound` plans round everyone's tile (`peopleTiles`: you, the companion, placed people, walk-ins, people
+    walking off, creatures). It falls back to the people-blind route only when there is no way round.
+  - `followRoute` checks anyone in the way (`personAt`). It re-plans round them every 500 ms after a 200 ms beat, and
+    goes on regardless only after 2.4 s of game time, so nothing stalls.
+  - Staging's walks home use the same follower.
+
+**The lead's runs** (headless Chromium on a loaded 4-core machine with five workers testing; build of this commit):
+- **New `tests/e2e/walk_round.mjs`: all passed (17 checks).**
+  - Sōta's move, planned round the companion and you, is on his old line from the start.
+  - Four walk-ins in the Reedwake square, with the companion beside you. Two of them would have crossed someone on the
+    old route.
+  - Suzu leaving round a villager who steps onto her way.
+  - Hana waiting about 2.8 s for you in the tea-house doorway, then going in.
+- **The same test on the old routing code** (only the test hooks added): **4 failed.**
+  - The two "planned from the start" checks.
+  - Kasane walking through the villager at (17,17).
+  - Suzu walking through the villager at (18,17).
+- Unit 24,315/0.
+- departures.mjs all ok, including its own "someone leaving steps round the player".
+- **Finished after the commit** (same build, one at a time):
+  - world_fixes all ok;
+  - actor_life 39/39;
+  - staging_wataru 112/112;
+  - staging_chapters 66/66;
+  - story_ch1: 4 companions × 30 checks, all PASS;
+  - town_animals 41/41.
+- Their re-captured evidence screenshots (docs/screenshots/actors/) differed only by capture timing, so the committed
+  ones were kept.
+
+**Not verified:** Firefox; a real phone; the staging worker's runner (on its branch, not merged yet). Its `world()`
+classification still lists these overlaps as non-failures; it is to be tightened after the merge.
+
+## Props balance, the review ledger, conversation continuity, portraits — the paired addendum's WI18, WI19, WI25–WI28 (merged 2026-10-03)
+
+**What** (worker branch, final aa27e1a; the full record is docs/expressive/reports/props_review.md; the ledger is
+docs/expressive/REVIEW.md):
+- Props now follow their own text:
+  - three kilns (a glassworks furnace cold until its story flag, a kiln with only embers, a kiln choked with ash and
+    without a false seal mark);
+  - the lighthouse lens, dim until its flag.
+- 12 decorative glints no longer look like pickups.
+- Every kind of lamp flickers more calmly (115+ placements); the great lamp keeps the lively flicker.
+- Pools of light breathe on their own phases, so a map's lamps no longer pulse in unison.
+- The campfire and Hiro's furnace are slower.
+- 27 tables and desks show what their scene describes, with dashes for writing and never letters.
+- The potter's wheel reads against the floor.
+- People's share of on-screen motion rose at every measured place (e.g. the lighthouse 55 → 91 %, Snowbell square
+  70 → 86 %). This depends on timing, so it is reported, not asserted.
+- **New tests:**
+  - `tests/e2e/props_balance.mjs`, now in the default suite: 48 checks. 13 of them fail on c2a799d, one per change.
+  - Unit `conversation_continuity.test.mjs`: every staged gesture is inside the person's mannerism profile, or a
+    documented escalation. 7 open findings are listed as KNOWN.
+  - Unit `portrait_speakers.test.mjs`: all 88 scripted speakers have a portrait; the 45 major ones animate.
+- **Open, not changed:**
+  - two look-alike pairs (Tamae/Yae, Ōmi/Umi): an owner decision;
+  - Asahi's heat habit beside her now-cold furnace;
+  - idles that don't yet change with the story;
+  - phone portrait scaling at DPR 1, 2 and 2.625.
+
+**The worker's runs** (headless Chromium, shared machine):
+- Unit 24,351/0; validator no errors.
+- props_balance --places 48/48 (35/13 on c2a799d).
+- landmarks 54/54; portrait_anim all passed; world_view all ok; town_animals 41/41; practice_a_desk 45/45;
+  lighthouse_top 106/106; staging_wataru 112/112; staging_chapters 66/66; actor_workplaces 30/30.
+- actor_life 37/39 inside the shared sequence. Its two timing checks passed 39/39 twice when run alone.
+- The overworld geometry fixture is unchanged: only placement options changed. Geometry 3/3.
+
+**The lead's runs on the merge** (task branch with the walk-round fix; the merged index.html is byte-identical to a
+fresh build):
+- unit 24,351/0;
+- props_balance 48/48;
+- walk_round all passed.
+
+**Not verified:** Firefox, Safari, phones; a person's eye on the art (the contrast measure stands in for it); Atlas rooms
+from the same seed differ by a few props between page loads (269–271 kind/option combinations), which was not
+investigated.
+
+## Harmony contract v3 — the owner's Art Direction Correction, machine side (merged 2026-10-03; REQUIREMENTS.md HB9)
+
+**What** (worker branch, final 152411f; CONTRACT.md v3 and docs/harmony/contract/V3_REPORT.md have the full record):
+- **Key families with free values.** The importer classifies by family, using a relative OKLab distance (inner 0.31,
+  outer 0.34, margin 0.1), and keeps the painted colours. The runtime recolours each pixel along its family's curve and
+  keeps its hue/chroma residual (factor 1).
+- **A value floor of 0.05 L per step.** It opens 15 of the 63 target ramps that collapse at an extreme: white hair,
+  skin 6, some accessory colours. On those, neighbouring values stay ≥ ΔE 0.022 apart. The other 48 ramps give v2's tones
+  bit for bit for exact key shades.
+- **Fit on the visible footprint**, taken as the union over the timeline:
+  - 2048 × 1046 and 1680 × 1050 go from 1× to 2×, and 2560 × 1440 from 2× to 3×;
+  - compact sizes: 1648 × 840 and 1440 × 900 at 2×, 768 × 1024 at 2.5×, 844 × 390 at 1× (there the portrait is omitted:
+    no clear place).
+- **Reduced motion:** `peak` held, a 100 ms cross-fade, then `settle_b` held.
+- **Approval states** in the manifest, `stats()` and the dev viewer.
+- **Approved source art** goes in art/harmony/source/ (with PROVENANCE.md) and regenerates byte for byte.
+- **Batches 1a and 1b** in the registry.
+- **The checkerboard detector** is hardened (a grid fitted to light near-neutral pixels; it now catches padding
+  checkerboards and noisy greys).
+- **New fixture** `tests/fixtures/harmony_rich/` (9–11 values per material, with jitter, rim lights and highlights):
+  calibration 0 misclassified and 0 unresolved over 38,154 material and 2,138 fixed pixels. The recolour proof sheets
+  are in docs/screenshots/harmony/recolour_v3/ (SYNTHETIC).
+
+**The worker's runs:**
+- Unit 24,365/0; validator no errors.
+- harmony_raster 26/26 (four runs); harmony_art 39/39.
+- battle_settings 10/10, combat_ui 7/7, playtest_repairs 7/7.
+- battle_invariance --tech: 96 configurations, all identical.
+- harmony_cutin: a first full run 7/4. The failures were timing (a frame within 12 px of the withdrawing response dock;
+  an element already gone; "holding" not reached under load). Each passed alone, and a second full run was 11/0.
+
+**The lead's runs on the merge** (task branch with the walk-round fix and the props merge; the merged index.html is
+byte-identical to a fresh build; registry.json regenerated for this branch):
+- unit 24,401/0;
+- browser, one at a time: harmony_raster 26/26; harmony_art 39/39; harmony_cutin 11/11, including the painted geometry at 2048 × 1046 and 1920 × 1080, and painted reduced motion as two held poses.
+
+**Not verified:**
+- Real art: every number is synthetic, and the calibration must be rerun on Batch 1a.
+- The unresolved band is narrow, so eyes or metal painted near a family will need masks.
+- Whether recoloured forms read well, and whether white hair still looks white with the value floor, needs the owner's
+  eye.
+- Firefox, the owner's actual 2048 × 1046 view, phones.
+
+**Open:**
+- At 1366–1600 px wide the standard pair is chosen at 1× (faces about 52 px) although the compact pair would fit at 2×.
+  The overlay's 48 px face threshold could move toward the mockup's size.
+- The response dock withdraws over 200 ms while the portrait finishes entering at 180 ms, so under load one frame can
+  touch the dock. This predates v3; aligning the two durations would fix it.
+
+## Chapters 1–2 staged: every "Performed overworld" scene directed (merged 2026-10-03; HX33–HX36, HX39, HX40 for Ch1–Ch2)
+
+**What** (worker branch, final 6ae3611; record in docs/expressive/reports/staging_ch1_ch2.md):
+- 96 scenes staged: 36 in Chapter 1, 60 in Chapter 2. Each carries a `# Staged:` note.
+- 136 of the 138 drafts are decided in `tools/scene_curated_ch12.mjs`, and SCENES.md and scenes.json are regenerated.
+- 30 scenes are decided "performed" but not staged: lq 17, cases 6, pages 3, pets 4. They were outside the worker's files.
+- **New pieces:** the `wave` gesture, seven held props, and a one-line `rejoin()` fallback in 52_staging.js.
+- **Quoted lines kept working:**
+  - 13 quoted lines in practice_b were re-pointed after the cues moved them;
+  - `79_compare.js` keeps a sighting saved under a line's old position when the scene and the text match, so old
+    saves keep their comparisons;
+  - no save field or schema changed.
+
+**The lead's integration** (on top of the walk-round fix and the props/continuity merge):
+- **The conversation-continuity check** (from the props merge) failed 75 times on the newly staged gestures, across 56
+  person/gesture pairs. Resolved:
+  - Gestures that fit each person were added to their conversation list:
+    - the player;
+    - Nao (shrug, head shake, open palm, emphatic, looking away);
+    - Mio, Ren, Suzu;
+    - Genzō, Ōmi, Wataru, Tamae, Tomo, Tsuru, Shiori, Sae, Mame, Asahi, Fuku, Yasu, Nagisa, Kiyo.
+  - Anger tells: Nao's emphatic hand, Genzō's folded arms.
+  - Six everyday actions any person may do when a scene calls for it: wave, a hand to the ear, shading the eyes,
+    writing, a stretch, wiping the brow.
+  - Tsuru's stronger reaction moved to the real farewell, `rw.seeoff`: she lowers her head as you look back.
+  - Two openers documented as narrated or spoken escalations: Bunta, Sae.
+  - Two of the earlier open findings are resolved by the profile additions: Ren's bow, Suzu's head shake.
+- **Two false positives fixed in the check:**
+  - a companion's cue was compared with another companion's branch line;
+  - a tense opener that is the person's own tell was flagged when the gesture was also in their ordinary list.
+- **Pronoun slips fixed in four player-visible lines.** The specification and the story use they/them for Nao and Ren:
+  - the practice comparison about Ren;
+  - Nao's "take half" support line;
+  - two pet greetings.
+- **The staging runner now fails on world walkers passing through people.** Only a walker that found no way round and
+  waited before going on (`forced`, set in 50_world.js followRoute) is recorded apart.
+- **Runs:**
+  - unit 24,966/0;
+  - validator: no errors;
+  - the merged index.html is byte-identical to a fresh build before the lead's edits;
+  - Chapter 1–2 staging in the browser is recorded below.
+
+**The worker's runs:**
+- staging_chapters --ch=1 698/0; --ch=2 1623/0 (after a runner fix for the wait between steps); showcase 66/0.
+- actor_life 39/39, staging_wataru 112/112, departures and world_fixes all ok, story_ch1 8/8, practice_b 6/6.
+- pursue.mjs through Chapter 2 with staging on (Mio twice, Ren): no problems, no page errors.
+
+**Not verified:**
+- How the scenes feel at play speed to a person.
+- Real devices.
+- Whether the dialogue box covers a listener (checked only on the lighthouse roof).
+- Oral-history fragments carry no gestures.

@@ -35,7 +35,7 @@ nao[smile]: よし 。 {頼|たよ}り に してる ぞ 、 {相棒|あいぼ�
 
 @scene pets.greet.nao.bird
 !hook pet_come comp
-narr: ナオ が {腕|うで} を {低|ひく}く {出|だ}す と 、 {小鳥|ことり} が ぴょん と {跳|と}んだ 。 || Nao holds his arm out low, and the little bird hops up.
+narr: ナオ が {腕|うで} を {低|ひく}く {出|だ}す と 、 {小鳥|ことり} が ぴょん と {跳|と}んだ 。 || Nao holds an arm out low, and the little bird hops up.
 !hook pet_do mirror
 nao[smirk]: {肩|かた} まで は {貸|か}す 。 {鞄|かばん} の {紐|ひも} を つつく の は なし だ 。 || You can have as far as my shoulder. No pecking the satchel strap.
 !hook pet_do affection
@@ -87,7 +87,7 @@ mio[laugh]: {頭|あたま} に のせて 、 {化|ば}ける の か と {思|�
 # ---- Ren --------------------------------------------------------------------------------------------------
 @scene pets.greet.ren.cat
 !hook pet_come comp
-narr: レン が {膝|ひざ} を ついて 、 {猫|ねこ} と {目|め} の {高|たか}さ を {合|あ}わせる 。 || Ren kneels to bring his eyes level with the cat's.
+narr: レン が {膝|ひざ} を ついて 、 {猫|ねこ} と {目|め} の {高|たか}さ を {合|あ}わせる 。 || Ren kneels to bring their eyes level with the cat's.
 !hook pet_do lookup
 ren: ゆっくり まばたき を する と 、 {猫|ねこ} は {安心|あんしん} する そう です 。 || They say a slow blink reassures a cat.
 !hook pet_do blink

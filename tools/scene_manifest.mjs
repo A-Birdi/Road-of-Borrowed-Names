@@ -24,6 +24,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { load, root } from '../tests/lib/load.mjs';
+import { CURATED_CH12, CURATED_INLINE_CH12 } from './scene_curated_ch12.mjs';
 
 export const CLASSES = ['Performed overworld', 'Illustrated sequence', 'Quiet by design', 'Interface/system text'];
 export const LOAD = ['core', 'lang', 'recog', 'engine', 'learn', 'ui', 'content', 'atlas'];
@@ -64,6 +65,10 @@ export const CURATED = {
   'co.hiro_first': [P, 'The world review WR-03 (staged): Hiro keeps the blowpipe turning through his first lines (he cannot let go) and holds the gather still to cool when he says he will listen; the companion answers in kind.', 'tests/e2e/actor_workplaces.mjs; docs/screenshots/actors/workplace_glass*.png'],
   'sa.end_comp': [P, 'The companion\'s ending at the bridge (four branches by comp): Nao\'s label with only your name, Mio\'s empty bottle with your name on it, Ren polishing two lamps, Suzu tying her faded ribbon round your wrist (no item is given: the handovers are staging only).'],
 };
+// the Chapter 1 and 2 staging pass's decisions (tools/scene_curated_ch12.mjs; its own file to keep the passes apart)
+Object.assign(CURATED, CURATED_CH12);
+// decided entries outside the scene files (the inline dialogue listed below: oral histories, inspections …), same shape
+export const CURATED_INLINE = Object.assign({}, CURATED_INLINE_CH12);
 // Dynamic scene ids (built in code); used to explain an entry point the static scan cannot see.
 const DYNAMIC = [
   [/^road\.(nao|mio|ren|suzu)\./, 'src/content/pages/40_topics.js and 10_pages.js (road.<comp>.<slot> topics and road.<comp>.quiet<n>, ids built at runtime: The Pages We Keep road talk)'],
@@ -358,7 +363,9 @@ export function buildManifest(RB) {
   }
   // ---- dialogue outside scene files ----------------------------------------------------------------------
   const inline = [];
-  const I = (o) => inline.push(Object.assign({ kind: 'inline', heuristic: true, chapter: null, storyline: 'ambient', lines: 0, speakers: {}, participants: [], comps: [], branches: { labels: [], ifs: [], choices: [], conds: [] }, prereq: { world: [], callers: [], content: [], code: [] }, maps: [], objects: { items: [], notes: [], interludes: [], props: [] }, quests: [], music: [], hooks: [], staging: { move: 0, face: 0, emote: 0, fadeOut: 0, interlude: 0, shake: 0 } }, o));
+  const I = (o) => inline.push(Object.assign({ kind: 'inline', heuristic: true, chapter: null, storyline: 'ambient', lines: 0, speakers: {}, participants: [], comps: [], branches: { labels: [], ifs: [], choices: [], conds: [] }, prereq: { world: [], callers: [], content: [], code: [] }, maps: [], objects: { items: [], notes: [], interludes: [], props: [] }, quests: [], music: [], hooks: [], staging: { move: 0, face: 0, emote: 0, fadeOut: 0, interlude: 0, shake: 0 } }, o,
+    // (an entry outside the scene files decided by reading, too)
+    CURATED_INLINE[o.id] ? { class: CURATED_INLINE[o.id][0], reason: CURATED_INLINE[o.id][1], heuristic: false, evidence: CURATED_INLINE[o.id][2] || null } : {}));
   // the prologue (src/ui/40_create.js SHOTS)
   I({ id: 'seq.prologue', kind: 'sequence', src: 'src/ui/40_create.js:44', area: 'Prologue', chapter: 0, storyline: 'main', lines: 6, speakers: { narr: 6 },
     prereq: { world: [], callers: [], content: [], code: ['src/ui/40_create.js:53 prologue() (New Game, before creation)'] }, class: IL,

@@ -1,7 +1,10 @@
 // The Harmony art importer's core (CLI: tools/harmony_import.mjs; contract: docs/harmony/contract/CONTRACT.md §9).
 // importSet(inDir, opt) reads a batch of delivered PNGs, normalises each to the 192 × 160 native canvas, derives or
 // reads the player kit's masks, assembles the manifest and the report, and (unless opt.check) writes them.
-// verifySet(dir) re-checks a normalised folder. Everything is deterministic for the same input.
+// importSets([dirs], opt) imports several batches in order (the first with opt.replace, the rest merged over it):
+// how assets/harmony/ is regenerated from the committed sources in art/harmony/source/<batch>/.
+// verifySet(dir) re-checks a normalised folder. Everything is deterministic for the same input: the same sources,
+// contract and registry asset keys give the same bytes (nothing records the time, the build or the machine).
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
@@ -63,7 +66,8 @@ export function normaliseFile(buf, name, opt) {
   try { src = decodePNG(buf); } catch (e) { return fail(e.message); }
   rep.srcW = src.w; rep.srcH = src.h; rep.png = { colorType: src.info.colorType, bitDepth: src.info.bitDepth };
   const fc = opt.fileCfg || {};
-  if (looksLikeCheckerboard(src)) return fail('the background is a painted checkerboard, not transparency');
+  const chk = looksLikeCheckerboard(src);
+  if (chk) { rep.checkerboard = chk; return fail('the background is a painted transparency checkerboard (two greys ' + chk.levels.join(' / ') + ', ' + chk.cell + ' px cells, ' + chk.cover + ' % of the image), not transparency: export with real alpha, or on a flat #ff00ff background'); }
   const keyed = keyMagenta(src, fc.background || 'auto');
   if (keyed) rep.warnings.push(keyed + ' #ff00ff background pixels keyed out');
   if (!hasTransparency(src)) return fail('no transparency (and no flat #ff00ff background)');
@@ -95,6 +99,7 @@ export function normaliseFile(buf, name, opt) {
         const mp = mk.w === W && mk.h === H ? { img: mn } : place(mn, W, H, off[0], off[1]);
         const r = readMask(img, mp.img, allowed, HC);
         codes = r.codes;
+        rep.values = r.values;
         for (const e of r.errors.slice(0, 40)) rep.errors.push('mask ' + e.x + ',' + e.y + ': ' + e.why);
         if (r.errors.length > 40) rep.errors.push('… ' + (r.errors.length - 40) + ' more mask errors');
         rep.warnings.push(...r.warnings);
@@ -103,10 +108,15 @@ export function normaliseFile(buf, name, opt) {
       maskSource = 'derived';
       const r = deriveMask(img, allowed, HC);
       codes = r.codes;
+      rep.values = r.values;
       rep.unresolved = r.unresolved.slice(0, 200);
       rep.unresolvedCount = r.unresolved.length;
-      if (r.unresolved.length) rep.errors.push(r.unresolved.length + ' unresolved pixels (neither a key shade within ' + HC.IMPORT.snap + ' nor ' + HC.IMPORT.ambiguous + ' away from every allowed key shade): see unresolved, or supply ' + name + '.mask.png');
-      if (r.snappedKey) rep.warnings.push(r.snappedKey + ' pixels snapped to their key shade');
+      if (r.unresolved.length) {
+        const by = {};
+        for (const u of r.unresolved) by[u.colour] = (by[u.colour] || 0) + 1;
+        const top = Object.entries(by).sort((a, b) => b[1] - a[1]).slice(0, 6).map(([c, k]) => c + ' ×' + k).join(', ');
+        rep.errors.push(r.unresolved.length + ' unresolved pixels (' + Object.keys(by).length + ' colours: ' + top + '): neither within ' + HC.IMPORT.inner + ' of one allowed key family (and ' + HC.IMPORT.margin + ' nearer than the next) nor beyond ' + HC.IMPORT.outer + ' of all — see unresolved, or supply ' + name + '.mask.png');
+      }
       if (r.snappedOutline) rep.warnings.push(r.snappedOutline + ' pixels snapped to the outline ink #140c18');
     }
     if (codes) {
@@ -149,7 +159,7 @@ function companionSets(names, HC, cfg, prev) {
       else for (const [st, ls] of c.layered) for (const l of ls) if (layers.indexOf(l) < 0) errors.push(who + '_' + st + '_' + l + ': layer "' + l + '" is not in the listed layers');
     }
     const missing = HC.REQUIRED.filter((s) => states.indexOf(s) < 0);
-    res[who] = { mode: layered ? 'layered' : 'flat', states, layers, fx: [...c.fx].sort((a, b) => HC.STATES.indexOf(a) - HC.STATES.indexOf(b)), face: cc.face || {}, timeline: cc.timeline || null, offset: cc.offset || { standard: [0, 0], compact: [0, 0] }, complete: !missing.length, missingRequired: missing };
+    res[who] = { mode: layered ? 'layered' : 'flat', states, layers, fx: [...c.fx].sort((a, b) => HC.STATES.indexOf(a) - HC.STATES.indexOf(b)), face: cc.face || {}, timeline: cc.timeline || null, offset: cc.offset || { standard: [0, 0], compact: [0, 0] }, approval: (cfg && cfg[who] && cfg[who].approval) || null, complete: !missing.length, missingRequired: missing };
   }
   return { sets: res, errors };
 }
@@ -226,10 +236,19 @@ export function importSet(inDir, opt = {}) {
   const cfg = fs.existsSync(cfgPath) ? JSON.parse(fs.readFileSync(cfgPath, 'utf8')) : {};
   const set = opt.set || cfg.set || path.basename(path.resolve(inDir)).toLowerCase().replace(/[^a-z0-9_-]/g, '_');
   const synthetic = !!cfg.synthetic;
+  // approval (contract v3): what this batch's files are; a synthetic set is always 'synthetic'
+  const approval = synthetic ? 'synthetic' : cfg.approval || 'candidate';
   const all = fs.readdirSync(inDir).filter((f) => /\.png$/i.test(f)).sort();
   const maskNames = new Set(all.filter((f) => /\.mask\.png$/i.test(f)));
   const artNames = all.filter((f) => !maskNames.has(f));
-  const report = { set, synthetic, contractVersion: HC.VERSION, inDir: rel(path.resolve(inDir)), out: rel(path.resolve(out)), files: {}, errors: [], warnings: [] };
+  const report = { set, synthetic, approval, batch: cfg.batch || null, contractVersion: HC.VERSION, inDir: rel(path.resolve(inDir)), out: rel(path.resolve(out)), files: {}, errors: [], warnings: [] };
+  if (!synthetic && HC.APPROVAL.indexOf(approval) < 0) report.errors.push('import.json approval must be one of ' + HC.APPROVAL.join(', ') + ' (got ' + approval + ')');
+  if (cfg.batch && !HC.BATCHES[cfg.batch]) report.errors.push('import.json batch must be one of ' + Object.keys(HC.BATCHES).join(', ') + ' (got ' + cfg.batch + ')');
+  // the owner's rights note: required for a committed source batch (art/harmony/source/<batch>/), copied with the set
+  const provPath = path.join(inDir, 'PROVENANCE.md');
+  const provenance = fs.existsSync(provPath) ? fs.readFileSync(provPath) : null;
+  const inSource = rel(path.resolve(inDir)).startsWith('art/harmony/source/');
+  if (inSource && !provenance) report.errors.push('a source batch needs PROVENANCE.md (the owner\'s rights note): ' + rel(path.resolve(inDir)));
   const done = [];
   for (const f of artNames) {
     const name = f.replace(/\.png$/i, '');
@@ -279,14 +298,28 @@ export function importSet(inDir, opt = {}) {
   report.errors.push(...cs.errors);
   const pc = Object.assign({ face: {}, groups: {}, attach: {}, hatBand: {}, armSlot: {}, glassesOver: [], offset: { standard: [0, 0], compact: [0, 0] } }, prev && prev.pc);
   for (const k of Object.keys(cfg.pc || {})) pc[k] = Array.isArray(cfg.pc[k]) ? cfg.pc[k].slice() : typeof cfg.pc[k] === 'object' ? Object.assign({}, pc[k], cfg.pc[k]) : cfg.pc[k];
+  // approval: a batch that delivers a companion's frames (or the player's kit files) sets that pairing's (the kit's)
+  // approval to its own — import.json `approval`, or per pairing `companions.<id>.approval` / `pc.approval`; what it
+  // does not deliver keeps the approval it had
+  const delivered = Object.keys(outputs);
+  const prevApproval = prev ? HC.approvalOf(prev) : { kit: approval, pairings: {} };
+  const kitNow = delivered.some((n) => HC.parse(n).kind !== 'comp');
+  pc.approval = synthetic ? 'synthetic' : (cfg.pc && cfg.pc.approval) || (kitNow ? approval : prevApproval.kit || approval);
   const keys = regFile ? regFile.json.assetKeys : null;
   const coverage = keys ? { required: keys.required.length, present: keys.required.filter((k) => files[k]).length, missingRequired: keys.required.filter((k) => !files[k]), optionalPresent: keys.optional.filter((k) => files[k]) } : { unresolved: true, reason: 'no docs/harmony/contract/registry.json' };
+  const provs = Object.assign({}, prev && prev.source && prev.source.provenance);
+  if (provenance) provs[set] = { file: 'provenance/' + set + '.md', sha256: sha(provenance) };
   const manifest = {
     schema: 'rbn-harmony-manifest', contractVersion: HC.VERSION, artVersion: cfg.artVersion || (prev ? prev.artVersion + (Object.keys(outputs).length ? 1 : 0) : 1), set, synthetic: synthetic || !!(prev && prev.synthetic),
-    source: { importer: 'tools/harmony_import.mjs', registry: regFile ? { sha256: sha(regFile.bytes), indexHtml: regFile.json.source.indexHtml.sha256, commit: regFile.json.source.git.commit } : null, sets: [...new Set([...(prev && prev.source && prev.source.sets) || [], set])] },
+    // (the registry is identified by its asset keys alone, so a later build regenerates the same manifest)
+    source: { importer: 'tools/harmony_import.mjs', registry: regFile ? { contractVersion: regFile.json.contractVersion, assetKeysSha256: sha(Buffer.from(JSON.stringify(regFile.json.assetKeys))) } : null, sets: [...new Set([...(prev && prev.source && prev.source.sets) || [], set])], provenance: provs },
     files: Object.fromEntries(names.map((n) => [n, files[n]])),
-    companions: Object.fromEntries(Object.entries(cs.sets).map(([k, v]) => [k, { mode: v.mode, states: v.states, layers: v.layers, fx: v.fx, face: v.face, timeline: v.timeline, offset: v.offset }])),
-    pc, coverage,
+    companions: Object.fromEntries(Object.entries(cs.sets).map(([k, v]) => {
+      const mine = delivered.some((n) => { const q = HC.parse(n); return q.kind === 'comp' && q.who === k; });
+      const ap = synthetic ? 'synthetic' : v.approval || (mine ? approval : prevApproval.pairings[k] || approval);
+      return [k, { mode: v.mode, states: v.states, layers: v.layers, fx: v.fx, face: v.face, timeline: v.timeline, offset: v.offset, approval: ap }];
+    })),
+    pc, coverage, batches: HC.batchCoverage(names),
   };
   // the images the manifest describes (new from this batch, earlier ones from the output folder)
   const imgOf = {};
@@ -297,6 +330,15 @@ export function importSet(inDir, opt = {}) {
   report.errors.push(...HC.validateManifest(manifest, pngList).map((e) => 'manifest: ' + e));
   report.companions = cs.sets;
   report.coverage = coverage;
+  report.batches = manifest.batches;
+  report.approvalNow = HC.approvalOf(manifest);
+  if (cfg.batch && HC.BATCHES[cfg.batch]) {
+    const B = HC.BATCHES[cfg.batch], mine = new Set(B.required.concat(B.optional));
+    const outside = artNames.map((f) => f.replace(/\.png$/i, '')).filter((n) => !mine.has(n));
+    if (outside.length) report.warnings.push('files outside batch ' + cfg.batch + ': ' + outside.join(', '));
+    const miss = B.required.filter((n) => !files[n]);
+    if (miss.length) report.warnings.push('batch ' + cfg.batch + ' is missing ' + miss.length + ' required files: ' + miss.join(', '));
+  }
   report.unknownNames = Object.entries(report.files).filter(([, r]) => r.errors.some((e) => /not a contract file name|unknown accessory/.test(e))).map(([n]) => n);
   const fileErrors = Object.values(report.files).reduce((n, r) => n + r.errors.length, 0);
   report.ok = !fileErrors && !report.errors.length;
@@ -304,8 +346,9 @@ export function importSet(inDir, opt = {}) {
   const sheet = contactSheet(done, { set, synthetic }, HC);
   if (!opt.check) {
     fs.mkdirSync(out, { recursive: true });
-    if (opt.replace) for (const f of fs.readdirSync(out)) if (/\.png$/.test(f)) fs.rmSync(path.join(out, f));
+    if (opt.replace) { for (const f of fs.readdirSync(out)) if (/\.png$/.test(f)) fs.rmSync(path.join(out, f)); fs.rmSync(path.join(out, 'provenance'), { recursive: true, force: true }); }
     for (const [n, o] of Object.entries(outputs)) { fs.writeFileSync(path.join(out, n + '.png'), o.png); if (o.mpng) fs.writeFileSync(path.join(out, n + '.mask.png'), o.mpng); }
+    if (provenance) { fs.mkdirSync(path.join(out, 'provenance'), { recursive: true }); fs.writeFileSync(path.join(out, 'provenance', set + '.md'), provenance); }
     if (report.ok || opt.force) fs.writeFileSync(prevPath, JSON.stringify(manifest, null, 1) + '\n');
     const rd = opt.reportDir || path.join(out, 'report');
     fs.mkdirSync(rd, { recursive: true });
@@ -313,6 +356,16 @@ export function importSet(inDir, opt = {}) {
     fs.writeFileSync(path.join(rd, 'contact.png'), encodePNG(sheet, { text: synthetic ? { Comment: SYNTHETIC_LABEL } : {} }));
   }
   return { manifest, report, outputs, sheet, done };
+}
+
+// Several batches in order: the first replaces the output (with opt.replace) or merges, the rest merge over it — how
+// assets/harmony/ is regenerated from art/harmony/source/<batch>/ (contract §9). With opt.check nothing is written,
+// so each batch is checked on its own. Returns the last batch's result plus every batch's report.
+export function importSets(dirs, opt = {}) {
+  const results = [];
+  dirs.forEach((d, i) => results.push(importSet(d, Object.assign({}, opt, { replace: i === 0 ? !!opt.replace : false, set: dirs.length > 1 ? null : opt.set }))));
+  const last = results[results.length - 1];
+  return Object.assign({}, last, { all: results, ok: results.every((r) => r.report.ok) });
 }
 
 // Re-check a normalised folder: schema, hashes, sizes, masks against pixels, key colours, hat cover.

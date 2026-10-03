@@ -1,0 +1,7 @@
+SYNTHETIC SAMPLE — not art
+
+Written by tools/harmony_rich.mjs from the synthetic sample (tests/fixtures/harmony_sample/): the same player kit,
+its recolourable parts repainted with many values per key family (contract v3: key families, free values),
+mild hue and chroma jitter, rim lights and warm highlights. incoming/ is a delivery-shaped folder (import it
+after the sample); truth/ holds the ground truth (material masks and painted values) for the calibration and
+the recolouring proof. Not art, not a style reference, not a delivery.
