@@ -415,6 +415,10 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
     in docs/harmony/asset_brief/ are already regenerated from the contract.
 - **The overlay worker** was told to read sizes from `NATIVE`/`fitScale()` only, to treat the phase list as
   data and to use `timeline()` when it exists (its src/ui/82d_harmony_cutin.js is not on this branch yet).
+- **The owner's Art Direction Correction (2026-10-03)** is kept verbatim in docs/harmony/ART_DIRECTION_CORRECTION.md and wins over
+  every earlier Harmony directive. docs/harmony/DIRECTIVE_RECONCILIATION.md lists the agreements, the nine conflicts (C1–C9)
+  and their resolutions, and the open points. The brief is v3; contract v3 (REQUIREMENTS.md HB9) is being built by a worker.
+  Labels: the code busts are **provisional artwork**; a delivered batch is a **visual candidate awaiting approval**.
 - **Never commit** the owner's mockup images.
 
 ## Overworld actor system: poses, gestures, mannerisms, idle life, scene direction (expressive addenda, work packages D and (a)) — CONTRACT.md ledger HX28–HX38, WI1–WI24; VALIDATION.md "Overworld actor system"
@@ -521,10 +525,11 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
 15. Settings in battle (2026-10-03), in Firefox: open the sheet mid-exchange (C or the button), change text speed and
    motion, close it, and check that the exchange continues. Try Load and Return to title from a boss. The other-tab Cancel path is
    untested.
-16. Harmony busts: rewrite docs/harmony/ASSET_BRIEF.md to contract v2 (CONTRACT.md). When Batch 1 arrives, put it
-   in art/harmony/incoming/batch1/, run `node tools/harmony_import.mjs art/harmony/incoming/batch1 --suggest`, fix
-   what the report lists (masks, offsets in import.json), import, build, then show the proof in a real battle with
-   the overlay before asking for the rest. Re-measure the budgets on real art (CONTRACT.md §10).
+16. Harmony busts (brief v3, docs/harmony/ASSET_BRIEF.md; the owner's correction wins): merge contract v3 (HB9). When Batch 1a arrives,
+   put it in art/harmony/incoming/batch1a/, run `node tools/harmony_import.mjs art/harmony/incoming/batch1a --suggest`, fix what the
+   report lists (masks, offsets in import.json), import, build, then show it as a visual candidate: the peak at in-battle and native
+   size, the animation, a real battle at Normal, Fast and reduced motion, particles on and off. Only after the owner approves: Batch 1b,
+   then 2–4. Re-measure the budgets on real art (CONTRACT.md §10). Open points for the owner: ASSET_BRIEF.md §11.
 
 ## Known issues / limits
 - No human handwriting samples tested (synthetic + font-derived only).
