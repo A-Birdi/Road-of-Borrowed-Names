@@ -222,7 +222,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   interior('sg.office', T('Harbour Office', '{港|みなと}の{事務所|じむしょ}'), 11, 9, 5, [16, 11], {
     props: [
       { p: 'exitmat', x: 5, y: 7 },
-      { p: 'desk', x: 4, y: 4, across: true, scene: 'sg.office_desk' },
+      { p: 'desk', x: 4, y: 4, across: true, scene: 'sg.office_desk', o: { on: 'heapcups' } },
       { p: 'shelf', x: 1, y: 2 }, { p: 'shelf', x: 2, y: 2 },
       { p: 'sign', x: 8, y: 2, scene: 'sg.office_chart' },
       { p: 'bookpile', x: 9, y: 6 }, { p: 'flowerpot', x: 9, y: 2 },
@@ -247,7 +247,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'counter', x: 8, y: 4, across: true }, { p: 'stove', x: 9, y: 2 }, { p: 'pot', x: 10, y: 2 }, { p: 'shelf', x: 11, y: 2 },
       { p: 'table', x: 2, y: 3, scene: 'sg.inn_table' }, { p: 'chair', x: 1, y: 3 }, { p: 'chair', x: 4, y: 3 },
       { p: 'table', x: 2, y: 6 }, { p: 'chair', x: 1, y: 6 }, { p: 'chair', x: 4, y: 6 },
-      { p: 'smalltable', x: 9, y: 7 }, { p: 'chair', x: 10, y: 7 },
+      { p: 'smalltable', x: 9, y: 7, o: { on: 'ink' } }, { p: 'chair', x: 10, y: 7 },
       { p: 'stairs', x: 11, y: 5, scene: 'sg.inn_stairs' },
       { p: 'sign', x: 7, y: 2, scene: 'sg.inn_menu' },
     ],
@@ -286,7 +286,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'exitmat', x: 5, y: 7 },
       { p: 'kiln', x: 1, y: 2, o: { glass: true, litIf: 'sg_boss_done' }, scene: 'sg.glass_kiln' }, // cold until the ash arrives (sg.glass_kiln)
       { p: 'glassware', x: 6, y: 2 }, { p: 'glassware', x: 7, y: 2 }, { p: 'shelf', x: 8, y: 2 },
-      { p: 'table', x: 6, y: 5, scene: 'sg.glass_table' },
+      { p: 'table', x: 6, y: 5, scene: 'sg.glass_table', o: { on: 'papers' } },
       { p: 'crate', x: 1, y: 6 }, { p: 'barrel', x: 8, y: 6 },
     ],
     npcs: [{ id: 'asahi', x: 4, y: 4, dir: 'down', talk: [
@@ -305,9 +305,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     terrain: K.build(9, 10, '#', (k) => { k.rect(1, 2, 7, 7, '+'); k.set(4, 9, '+'); k.rect(3, 3, 3, 3, 'k'); }),
     props: [
       { p: 'exitmat', x: 4, y: 8 },
-      { p: 'sg_lens', x: 4, y: 2, scene: 'sg.lh_lens' },
+      { p: 'sg_lens', x: 4, y: 2, o: { fullIf: 'sg_boss_done' }, scene: 'sg.lh_lens' }, // a small, rationed flame until the oil arrives (sg.lh_lens)
       { p: 'stairs', x: 1, y: 2, scene: 'sg.lh_stairs' },
-      { p: 'smalltable', x: 1, y: 6, scene: 'sg.lh_letter' },
+      { p: 'smalltable', x: 1, y: 6, scene: 'sg.lh_letter', o: { on: 'paper' } },
       { p: 'bed', x: 7, y: 5 }, { p: 'barrel', x: 7, y: 2, scene: 'sg.lh_oil' },
     ],
     // the stairs go up to the top once Genzō has shown you the vane (before that they are only looked at)
@@ -391,7 +391,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     props: [
       { p: 'exitmat', x: 4, y: 6 },
       { p: 'sg_tideboard', x: 1, y: 2, scene: 'sg.tideboard' },
-      { p: 'desk', x: 5, y: 2, scene: 'sg.tide_desk' },
+      { p: 'desk', x: 5, y: 2, scene: 'sg.tide_desk', o: { on: 'heap' } },
       { p: 'bed', x: 7, y: 4 }, { p: 'bookpile', x: 1, y: 5 }, { p: 'telescope', x: 7, y: 2, scene: 'sg.tide_scope' },
     ],
     npcs: [{ id: 'shiori', x: 4, y: 3, dir: 'down', if: '!sg_fog_cleared|sg_boss_done', talk: [
@@ -406,7 +406,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     props: [
       { p: 'exitmat', x: 3, y: 6 },
       { p: 'chair', x: 5, y: 3, scene: 'sg.isamu_chair' },
-      { p: 'smalltable', x: 2, y: 3, scene: 'sg.isamu_desk' },
+      { p: 'smalltable', x: 2, y: 3, scene: 'sg.isamu_desk', o: { on: 'ink' } },
       { p: 'bed', x: 1, y: 5 }, { p: 'crate', x: 6, y: 5 }, { p: 'flowerpot', x: 6, y: 2, scene: 'sg.isamu_plant' },
     ],
     onEnter: [{ scene: 'sg.isamu_nao', if: 'comp=nao' }],

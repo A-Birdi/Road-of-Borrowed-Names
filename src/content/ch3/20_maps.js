@@ -119,7 +119,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     { p: 'table', x: 25, y: 17, scene: 'co.glass_table' }, { p: 'chair', x: 24, y: 17 }, { p: 'chair', x: 27, y: 17 },
     { p: 'co_seat', x: 26, y: 18, scene: 'co.seat', if: '!co_hiro_seat_named' },
     { p: 'co_seat', x: 26, y: 18, scene: 'co.seat', o: { named: true }, if: 'co_hiro_seat_named' },
-    { p: 'smalltable', x: 29, y: 21, scene: 'co.sayo_table' },
+    { p: 'smalltable', x: 29, y: 21, scene: 'co.sayo_table', o: { on: 'paper' } },
     { p: 'well', x: 15, y: 15 },
     { p: 'lantern', x: 13, y: 17 }, { p: 'lantern', x: 32, y: 17 }, { p: 'lantern', x: 36, y: 20 },
     { p: 'kiln', x: 47, y: 21, o: { embers: true }, text: { jp: 'ノブ の {小|ちい}さな {窯|かま} 。 まだ {少|すこ}し {温|あたた}かい 。', en: 'Nobu\'s small pottery kiln. Still faintly warm from yesterday.' } },
@@ -306,7 +306,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'co_wheel', x: 3, y: 4, text: { jp: 'ろくろ 。 {粘土|ねんど} が まだ {湿|しめ}って いる 。', en: 'The potter\'s wheel. The clay on it is still damp.' } },
       { p: 'co_flasks', x: 6, y: 2, scene: 'co.flasks' },
       { p: 'shelf', x: 1, y: 2 }, { p: 'shelf', x: 9, y: 2 },
-      { p: 'smalltable', x: 8, y: 5, scene: 'co.pottery_slip' },
+      { p: 'smalltable', x: 8, y: 5, scene: 'co.pottery_slip', o: { on: 'paper' } },
       { p: 'pot', x: 1, y: 6 }, { p: 'pot', x: 9, y: 6 },
     ],
     npcs: [
@@ -317,7 +317,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   interior('co.post', T("Shino's Post House", 'シノ の {郵便所|ゆうびんじょ}'), 9, 8, 4, [6, 25], {
     props: [
       { p: 'exitmat', x: 4, y: 6 },
-      { p: 'desk', x: 1, y: 3, scene: 'co.post_desk' },
+      { p: 'desk', x: 1, y: 3, scene: 'co.post_desk', o: { on: 'heap' } },
       { p: 'shelf', x: 6, y: 2 }, { p: 'shelf', x: 7, y: 2, text: { jp: '{仕分|しわ}け{棚|だな} 。 {里|さと} の {家|いえ} の {数|かず} だけ {区切|くぎ}り が ある 。 {空|から} の {区切|くぎ}り が {五|いつ}つ 。', en: 'A sorting rack with one slot per household. Five slots at the end are empty and unlabelled.' } },
       { p: 'mailbox', x: 7, y: 5 },
     ],

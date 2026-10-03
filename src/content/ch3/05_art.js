@@ -374,7 +374,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     // Glass furnace: a brick body and chimney, a glowing mouth.
     A('co_furnace', {
       box: [-4, -40, 72, 108],
-      f: (t, o) => K.frame(t, 150, 4, o.still),
+      // the mouth's glow throbs slowly (230 ms a step, was 150), under Hiro's work rather than over it
+      f: (t, o) => K.frame(t, 230, 4, o.still),
       draw(g, M, v, f) {
         bricks(g, 4, -12, 56, 72, BRICK, 3);
         for (let i = 0; i < 56; i++) if (i < 3 || i > 52) R(g, 4 + i, -12, 1, 72, i < 3 ? 'rgba(255,240,200,0.12)' : 'rgba(22,16,40,0.25)');

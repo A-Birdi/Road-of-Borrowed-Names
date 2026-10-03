@@ -119,7 +119,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'exitmat', x: 5, y: 7 },
       { p: 'stove', x: 1, y: 2 }, { p: 'pot', x: 2, y: 2 },
       { p: 'bed', x: 9, y: 2 }, { p: 'bed', x: 8, y: 2 },
-      { p: 'table', x: 4, y: 4, scene: 'sa.hut_register' }, { p: 'chair', x: 3, y: 4 },
+      { p: 'table', x: 4, y: 4, scene: 'sa.hut_register', o: { on: 'book' } }, { p: 'chair', x: 3, y: 4 },
       { p: 'shelf', x: 6, y: 2, scene: 'sa.hut_shelf' },
       { p: 'teaset', x: 1, y: 5, scene: 'sa.hut_tea' },
     ],
@@ -337,7 +337,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.set(11, 1, 'p').set(11, 0, 'p');
     }),
     props: [
-      { p: 'table', x: 10, y: 8, scene: 'sa.mem_table' }, { p: 'chair', x: 12, y: 8 },
+      { p: 'table', x: 10, y: 8, scene: 'sa.mem_table', o: { on: 'cup' } }, { p: 'chair', x: 12, y: 8 },
       { p: 'crystal', x: 1, y: 9 }, { p: 'crystal', x: 22, y: 5 }, { p: 'crystal', x: 22, y: 13 },
       { p: 'sa_cabinet', x: 9, y: 13, scene: 'sa.mem_requests' },
       // readable shelves (the rest are simply shelves)
@@ -384,7 +384,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'bed', x: 12, y: 2, scene: 'sa.study_bed' },
       { p: 'shelf', x: 1, y: 2, scene: 'sa.study_objections' }, { p: 'shelf', x: 2, y: 2, scene: 'sa.study_objections' },
       { p: 'bookpile', x: 3, y: 2, scene: 'sa.study_notebook' },
-      { p: 'smalltable', x: 12, y: 8, scene: 'sa.study_cups' },
+      { p: 'smalltable', x: 12, y: 8, scene: 'sa.study_cups', o: { on: 'cups' } },
       { p: 'bookpile', x: 1, y: 9 }, { p: 'crate', x: 13, y: 9 },
       { p: 'stairs', x: 7, y: 1 },
       { p: 'sa_door', x: 0, y: 6, if: '!sa_shortcut', scene: 'sa.shortcut_open' },

@@ -296,7 +296,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     terrain: K.build(15, 10, '#', (k) => { k.rect(1, 2, 13, 7, '_'); k.rect(4, 3, 7, 4, 'k'); k.set(7, 9, '_'); }),
     props: [
       { p: 'exitmat', x: 7, y: 8 },
-      { p: 'table', x: 6, y: 4, across: true, scene: 'lf.council_table' }, { p: 'chair', x: 5, y: 4 }, { p: 'chair', x: 8, y: 4 },
+      { p: 'table', x: 6, y: 4, across: true, scene: 'lf.council_table', o: { on: 'book' } }, { p: 'chair', x: 5, y: 4 }, { p: 'chair', x: 8, y: 4 },
       { p: 'bench', x: 2, y: 6 }, { p: 'bench', x: 11, y: 6 },
       { p: 'shelf', x: 1, y: 2 }, { p: 'shelf', x: 13, y: 2 },
       { p: 'desk', x: 11, y: 2, scene: 'lf.council_stamp' },
@@ -311,11 +311,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
   interior('lf.clerks', T("Clerks' Office", '{事務所|じむしょ}'), 13, 9, 6, [39, 10], {
     props: [
       { p: 'exitmat', x: 6, y: 7 },
-      { p: 'desk', x: 1, y: 3, scene: 'lf.clerk_desk' }, { p: 'desk', x: 4, y: 3 }, { p: 'desk', x: 8, y: 3 },
+      { p: 'desk', x: 1, y: 3, scene: 'lf.clerk_desk', o: { on: 'heap' } }, { p: 'desk', x: 4, y: 3 }, { p: 'desk', x: 8, y: 3 },
       { p: 'chair', x: 2, y: 4 }, { p: 'chair', x: 9, y: 4 },
       { p: 'shelf', x: 11, y: 2 }, { p: 'bookpile', x: 11, y: 5 }, { p: 'bookpile', x: 1, y: 6 },
       { p: 'mailbox', x: 10, y: 6, scene: 'lf.returned_letters' },
-      { p: 'smalltable', x: 7, y: 6, if: 'lf_akari_leave&!post', scene: 'lf.akari_note' },
+      { p: 'smalltable', x: 7, y: 6, if: 'lf_akari_leave&!post', scene: 'lf.akari_note', o: { on: 'paper' } },
     ],
     npcs: [
       { id: 'akari', x: 5, y: 4, dir: 'down', if: '!lf_akari_leave|post', talk: [{ if: 'quest.lf_akari>=1&!quest.lf_akari=done', scene: 'lf.akari_letter' }, { if: 'post', scene: 'lf.akari_post' }, { if: 'quest.lf_akari=done', scene: 'lf.akari_done' }, { if: 'lf_bell_rung', scene: 'lf.akari_after' }, { if: 'lf_akari_key', scene: 'lf.akari_again' }, { if: 'quest.lf_main>=2', scene: 'lf.akari_hint' }, { scene: 'lf.akari' }] },
@@ -328,7 +328,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'exitmat', x: 6, y: 8 },
       { p: 'counter', x: 1, y: 4, across: true }, { p: 'shelf', x: 1, y: 2 }, { p: 'stove', x: 4, y: 2 },
       { p: 'bed', x: 10, y: 2, scene: 'lf.inn_bed' }, { p: 'bed', x: 11, y: 2, scene: 'lf.inn_bed' },
-      { p: 'table', x: 7, y: 5, scene: 'lf.inn_table' }, { p: 'chair', x: 6, y: 5 }, { p: 'chair', x: 9, y: 5 },
+      { p: 'table', x: 7, y: 5, scene: 'lf.inn_table', o: { on: 'cup' } }, { p: 'chair', x: 6, y: 5 }, { p: 'chair', x: 9, y: 5 },
       { p: 'smalltable', x: 2, y: 7 }, { p: 'chair', x: 1, y: 7 },
       { p: 'mat', x: 10, y: 6, scene: 'lf.inn_hall' }, { p: 'mat', x: 11, y: 6, scene: 'lf.inn_hall' },
     ],
@@ -344,7 +344,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     props: [
       { p: 'exitmat', x: 5, y: 7 },
       { p: 'counter', x: 1, y: 3, across: true }, { p: 'teaset', x: 1, y: 2 }, { p: 'shelf', x: 3, y: 2 }, { p: 'stove', x: 4, y: 2 },
-      { p: 'smalltable', x: 7, y: 3, scene: 'lf.cafe_table' }, { p: 'chair', x: 8, y: 3 },
+      { p: 'smalltable', x: 7, y: 3, scene: 'lf.cafe_table', o: { on: 'plate' } }, { p: 'chair', x: 8, y: 3 },
       { p: 'smalltable', x: 7, y: 6 }, { p: 'chair', x: 8, y: 6 },
       { p: 'flowerpot', x: 9, y: 2 },
       { p: 'noticeboard', x: 6, y: 2, scene: 'lf.cafe_menu' },
@@ -361,7 +361,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // a bakery at a glance (World review WR-05; art in 11_bakery.js): the bread oven where two
       // stoves stood, the day's bread where a bookcase stood, flour where a crate stood, and the
       // bench Masaru kneads at (his place is in front of its right end, at 3,4)
-      { p: 'lf_oven', x: 1, y: 2 }, { p: 'table', x: 5, y: 3, scene: 'lf.bakery_orders' },
+      { p: 'lf_oven', x: 1, y: 2 }, { p: 'table', x: 5, y: 3, scene: 'lf.bakery_orders', o: { on: 'papers' } },
       { p: 'crate', x: 7, y: 2 }, { p: 'lf_floursacks', x: 7, y: 3 }, { p: 'barrel', x: 1, y: 5 },
       { p: 'lf_breadrack', x: 4, y: 2 }, { p: 'lf_kneadbench', x: 2, y: 3 },
     ],
@@ -387,7 +387,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   interior('lf.tokuji', T("Tokuji's Hut", 'トクジ の {小屋|こや}'), 8, 8, 3, [23, 8], {
     props: [
       { p: 'exitmat', x: 3, y: 6 },
-      { p: 'bed', x: 1, y: 2 }, { p: 'smalltable', x: 5, y: 3, scene: 'lf.tokuji_table' }, { p: 'net', x: 4, y: 2 },
+      { p: 'bed', x: 1, y: 2 }, { p: 'smalltable', x: 5, y: 3, scene: 'lf.tokuji_table', o: { on: 'cupdown' } }, { p: 'net', x: 4, y: 2 },
       { p: 'shelf', x: 6, y: 2, scene: 'lf.tokuji_shelf' }, { p: 'pot', x: 6, y: 5 },
     ],
     exits: [{ x: 3, y: 7, to: 'lf.sluice', tx: 23, ty: 8, dir: 'down' }],

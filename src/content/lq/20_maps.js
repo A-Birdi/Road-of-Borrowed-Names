@@ -87,7 +87,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     terrain: K.room(9, 8, '_', 4),
     props: [
       { p: 'exitmat', x: 4, y: 6 },
-      { p: 'table', x: 1, y: 3, scene: 'lq.kh_book' },
+      { p: 'table', x: 1, y: 3, scene: 'lq.kh_book', o: { on: 'book' } },
       { p: 'chest', x: 6, y: 2, scene: 'lq.kh_chest', if: '!lq_kh_chest' },
       { p: 'chest', x: 6, y: 2, o: { open: true }, if: 'lq_kh_chest', text: T('The chest is empty now, apart from the smell of old persimmons.', '{箱|はこ} は もう {空|から} だ 。 {古|ふる}い {柿|かき} の {匂|にお}い だけ が {残|のこ}って いる 。') },
       { p: 'bottles', x: 7, y: 2, text: T('Rows of empty jars, and a string of persimmons dried to leather long ago.', '{空|から} の {瓶|びん} が {並|なら}んで いる 。 ずっと {昔|むかし} に {干|ほ}された {柿|かき} が 、 {革|かわ} の よう に なって {下|さ}がって いる 。') },
