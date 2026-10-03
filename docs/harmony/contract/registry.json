@@ -1,0 +1,2870 @@
+{
+ "artVersion": 1,
+ "assetKeys": {
+  "optional": [
+   "mio_prep_b",
+   "mio_settle_a",
+   "nao_prep_b",
+   "nao_settle_a",
+   "pc_arm_prep_b_fitted",
+   "pc_arm_prep_b_wide",
+   "pc_hair_bob_back_swing",
+   "pc_hair_bob_front_swing",
+   "pc_hair_braid_back_swing",
+   "pc_hair_braid_front_swing",
+   "pc_hair_bun_back_swing",
+   "pc_hair_bun_front_swing",
+   "pc_hair_curly_back_swing",
+   "pc_hair_curly_front_swing",
+   "pc_hair_long_back_swing",
+   "pc_hair_long_front_swing",
+   "pc_hair_ponytail_back_swing",
+   "pc_hair_ponytail_front_swing",
+   "pc_hair_shaved_front_swing",
+   "pc_hair_short_back_swing",
+   "pc_hair_short_front_swing",
+   "pc_hair_spiky_back_swing",
+   "pc_hair_spiky_front_swing",
+   "pc_hair_twintails_back_swing",
+   "pc_hair_twintails_front_swing",
+   "pc_hair_wavy_back_swing",
+   "pc_hair_wavy_front_swing",
+   "pc_hair_wrap_back_swing",
+   "pc_hair_wrap_front_swing",
+   "ren_prep_b",
+   "ren_settle_a",
+   "suzu_prep_b",
+   "suzu_settle_a"
+  ],
+  "required": [
+   "acc_atlas_pin",
+   "acc_atlas_quill",
+   "acc_atlas_sash",
+   "acc_bell",
+   "acc_cap",
+   "acc_cape_back",
+   "acc_cape_front",
+   "acc_earrings_far",
+   "acc_earrings_near",
+   "acc_flower",
+   "acc_glasses",
+   "acc_hat",
+   "acc_headband",
+   "acc_leaf",
+   "acc_ribbon",
+   "acc_satchel",
+   "acc_scarf",
+   "acc_scarf_knit",
+   "mio_cue",
+   "mio_peak",
+   "mio_prep_a",
+   "mio_settle_b",
+   "nao_cue",
+   "nao_peak",
+   "nao_prep_a",
+   "nao_settle_b",
+   "pc_arm_cue_fitted",
+   "pc_arm_cue_wide",
+   "pc_arm_peak_mio_fitted",
+   "pc_arm_peak_mio_wide",
+   "pc_arm_peak_nao_fitted",
+   "pc_arm_peak_nao_wide",
+   "pc_arm_peak_ren_fitted",
+   "pc_arm_peak_ren_wide",
+   "pc_arm_peak_suzu_fitted",
+   "pc_arm_peak_suzu_wide",
+   "pc_arm_prep_a_fitted",
+   "pc_arm_prep_a_wide",
+   "pc_arm_settle_mio_fitted",
+   "pc_arm_settle_mio_wide",
+   "pc_arm_settle_nao_fitted",
+   "pc_arm_settle_nao_wide",
+   "pc_arm_settle_ren_fitted",
+   "pc_arm_settle_ren_wide",
+   "pc_arm_settle_suzu_fitted",
+   "pc_arm_settle_suzu_wide",
+   "pc_hair_bob_back",
+   "pc_hair_bob_front",
+   "pc_hair_braid_back",
+   "pc_hair_braid_front",
+   "pc_hair_bun_back",
+   "pc_hair_bun_front",
+   "pc_hair_curly_back",
+   "pc_hair_curly_front",
+   "pc_hair_long_back",
+   "pc_hair_long_front",
+   "pc_hair_ponytail_back",
+   "pc_hair_ponytail_front",
+   "pc_hair_shaved_front",
+   "pc_hair_short_back",
+   "pc_hair_short_front",
+   "pc_hair_spiky_back",
+   "pc_hair_spiky_front",
+   "pc_hair_twintails_back",
+   "pc_hair_twintails_front",
+   "pc_hair_wavy_back",
+   "pc_hair_wavy_front",
+   "pc_hair_wrap_back",
+   "pc_hair_wrap_front",
+   "pc_head_cue",
+   "pc_head_focus",
+   "pc_head_peak",
+   "pc_head_settle",
+   "pc_torso_apron",
+   "pc_torso_coat",
+   "pc_torso_dress",
+   "pc_torso_robe",
+   "pc_torso_tunic",
+   "ren_cue",
+   "ren_peak",
+   "ren_prep_a",
+   "ren_settle_b",
+   "suzu_cue",
+   "suzu_peak",
+   "suzu_prep_a",
+   "suzu_settle_b"
+  ]
+ },
+ "companions": {
+  "mio": {
+   "codePose": "draught",
+   "id": "mio",
+   "look": {
+    "acc": [
+     "bottles"
+    ],
+    "cloth": [
+     "#6a8a7a",
+     "#50705e",
+     "#e8e0c8"
+    ],
+    "hair": "bun",
+    "hairColor": 0,
+    "pants": "#3a3a40",
+    "shape": "apron",
+    "skin": 1
+   },
+   "name": "Mio",
+   "portrait": {
+    "acc": [
+     "bottles"
+    ],
+    "bg": "#2a3a36",
+    "collar": "apron",
+    "eyes": "soft",
+    "pins": true,
+    "style": "bun"
+   },
+   "recolour": false,
+   "role": "Apothecary",
+   "technique": {
+    "reason": "RB.combat.TECHS not found",
+    "unresolved": true
+   }
+  },
+  "nao": {
+   "codePose": "route",
+   "id": "nao",
+   "look": {
+    "acc": [
+     "scarf",
+     "satchel"
+    ],
+    "bigSatchel": true,
+    "cloth": [
+     "#5a6a4a",
+     "#46543a",
+     "#c8962e"
+    ],
+    "hair": "spiky",
+    "hairColor": 1,
+    "pants": "#3a3440",
+    "scarfCol": "#c8962e",
+    "shape": "tunic",
+    "skin": 3
+   },
+   "name": "Nao",
+   "portrait": {
+    "acc": [
+     "scarf",
+     "satchel",
+     "pencil"
+    ],
+    "bg": "#3a3a2a",
+    "eyes": "sharp",
+    "scarfCol": "#c8962e",
+    "style": "spiky"
+   },
+   "recolour": false,
+   "role": "Courier",
+   "technique": {
+    "reason": "RB.combat.TECHS not found",
+    "unresolved": true
+   }
+  },
+  "ren": {
+   "codePose": "ward",
+   "id": "ren",
+   "look": {
+    "acc": [
+     "lamp",
+     "patches",
+     "glasses"
+    ],
+    "boots": "#5a4636",
+    "cloth": [
+     "#3a3e6a",
+     "#2a2c50",
+     "#d8b060"
+    ],
+    "hair": "ponytail",
+    "hairColor": 7,
+    "pants": "#2a2a3a",
+    "shape": "coat",
+    "skin": 2
+   },
+   "name": "Ren",
+   "portrait": {
+    "acc": [
+     "glasses",
+     "lamp",
+     "patches"
+    ],
+    "bg": "#262a44",
+    "collar": "high",
+    "eyes": "narrow",
+    "parted": true,
+    "style": "ponytail"
+   },
+   "recolour": false,
+   "role": "Lantern keeper",
+   "technique": {
+    "reason": "RB.combat.TECHS not found",
+    "unresolved": true
+   }
+  },
+  "suzu": {
+   "codePose": "curtain",
+   "id": "suzu",
+   "look": {
+    "acc": [
+     "ribbon",
+     "earrings"
+    ],
+    "cloth": [
+     "#8a3a5a",
+     "#6a2a44",
+     "#e8c070"
+    ],
+    "hair": "wavy",
+    "hairColor": 3,
+    "pants": "#3a2a34",
+    "ribbonCol": "#c8a0a8",
+    "shape": "dress",
+    "skin": 4
+   },
+   "name": "Suzu",
+   "portrait": {
+    "acc": [
+     "ribbon",
+     "earrings"
+    ],
+    "bg": "#3a2634",
+    "eyes": "round",
+    "mole": true,
+    "ribbonCol": "#c8a0a8",
+    "style": "wavy"
+   },
+   "recolour": false,
+   "role": "Travelling performer",
+   "technique": {
+    "reason": "RB.combat.TECHS not found",
+    "unresolved": true
+   }
+  }
+ },
+ "contract": {
+  "accessories": {
+   "atlas_pin": {
+    "channel": null,
+    "files": [
+     [
+      "acc_atlas_pin",
+      "acc_chest"
+     ]
+    ]
+   },
+   "atlas_quill": {
+    "channel": null,
+    "files": [
+     [
+      "acc_atlas_quill",
+      "acc_head"
+     ]
+    ],
+    "hair": true
+   },
+   "atlas_sash": {
+    "channel": {
+     "def": "#d8c89a",
+     "field": "sashCol",
+     "opts": {
+      "at": 3,
+      "cool": 230,
+      "lineCol": "#140c18",
+      "n": 5,
+      "step": 0.07,
+      "warm": 52
+     }
+    },
+    "files": [
+     [
+      "acc_atlas_sash",
+      "acc_chest"
+     ]
+    ]
+   },
+   "bell": {
+    "channel": {
+     "def": "#b8342a",
+     "field": "cordCol",
+     "opts": {
+      "at": 3,
+      "cool": 250,
+      "lineCol": "#140c18",
+      "n": 5,
+      "step": 0.08,
+      "warm": 52
+     }
+    },
+    "files": [
+     [
+      "acc_bell",
+      "acc_chest"
+     ]
+    ]
+   },
+   "cap": {
+    "channel": {
+     "def": "#2c4468",
+     "field": "capCol",
+     "opts": {
+      "at": 3,
+      "cool": 250,
+      "lineCol": "#140c18",
+      "n": 6,
+      "step": 0.075,
+      "warm": 52
+     }
+    },
+    "files": [
+     [
+      "acc_cap",
+      "acc_head"
+     ]
+    ],
+    "hair": true,
+    "hides": true
+   },
+   "cape": {
+    "channel": {
+     "def": "#6a3a4a",
+     "field": "capeCol",
+     "opts": {
+      "at": 3,
+      "cool": 250,
+      "lineCol": "#140c18",
+      "n": 6,
+      "step": 0.075,
+      "warm": 52
+     }
+    },
+    "files": [
+     [
+      "acc_cape_back",
+      "acc_back"
+     ],
+     [
+      "acc_cape_front",
+      "acc_chest"
+     ]
+    ]
+   },
+   "earrings": {
+    "channel": {
+     "def": "metal",
+     "field": "earCol",
+     "opts": {
+      "at": 3,
+      "cool": 250,
+      "lineCol": "#140c18",
+      "n": 5,
+      "step": 0.1,
+      "warm": 52
+     }
+    },
+    "files": [
+     [
+      "acc_earrings_far",
+      "acc_ear_far"
+     ],
+     [
+      "acc_earrings_near",
+      "acc_ear_near"
+     ]
+    ]
+   },
+   "flower": {
+    "channel": {
+     "def": "#f4a6a0",
+     "field": "flowerCol",
+     "opts": {
+      "at": 3,
+      "cool": 250,
+      "lineCol": "#140c18",
+      "n": 6,
+      "step": 0.07,
+      "warm": 52
+     }
+    },
+    "files": [
+     [
+      "acc_flower",
+      "acc_head"
+     ]
+    ],
+    "hair": true
+   },
+   "glasses": {
+    "channel": null,
+    "files": [
+     [
+      "acc_glasses",
+      "glasses"
+     ]
+    ]
+   },
+   "hat": {
+    "channel": {
+     "def": "#8a6a44",
+     "field": "hatCol",
+     "opts": {
+      "at": 3,
+      "cool": 250,
+      "lineCol": "#140c18",
+      "n": 6,
+      "step": 0.075,
+      "warm": 52
+     }
+    },
+    "files": [
+     [
+      "acc_hat",
+      "acc_head"
+     ]
+    ],
+    "hair": true,
+    "hides": true
+   },
+   "headband": {
+    "channel": {
+     "def": "cloth.2",
+     "field": "bandCol",
+     "opts": {
+      "at": 3,
+      "cool": 250,
+      "lineCol": "#140c18",
+      "n": 6,
+      "step": 0.08,
+      "warm": 52
+     }
+    },
+    "files": [
+     [
+      "acc_headband",
+      "acc_head"
+     ]
+    ],
+    "hair": true
+   },
+   "leaf": {
+    "channel": {
+     "def": "#c8452a",
+     "field": "leafCol",
+     "opts": {
+      "at": 3,
+      "cool": 250,
+      "lineCol": "#140c18",
+      "n": 6,
+      "step": 0.075,
+      "warm": 52
+     }
+    },
+    "files": [
+     [
+      "acc_leaf",
+      "acc_head"
+     ]
+    ],
+    "hair": true
+   },
+   "ribbon": {
+    "channel": {
+     "def": "#c8687a",
+     "field": "ribbonCol",
+     "opts": {
+      "at": 3,
+      "cool": 250,
+      "lineCol": "#140c18",
+      "n": 6,
+      "step": 0.075,
+      "warm": 52
+     }
+    },
+    "files": [
+     [
+      "acc_ribbon",
+      "acc_head"
+     ]
+    ],
+    "hair": true
+   },
+   "satchel": {
+    "channel": null,
+    "files": [
+     [
+      "acc_satchel",
+      "acc_chest"
+     ]
+    ]
+   },
+   "scarf": {
+    "channel": {
+     "def": "#c8962e",
+     "field": "scarfCol",
+     "opts": {
+      "at": 3,
+      "cool": 250,
+      "lineCol": "#140c18",
+      "n": 6,
+      "step": 0.075,
+      "warm": 52
+     }
+    },
+    "files": [
+     [
+      "acc_scarf",
+      "acc_neck"
+     ]
+    ],
+    "variant": {
+     "field": "scarfStripe",
+     "files": [
+      [
+       "acc_scarf_knit",
+       "acc_neck"
+      ]
+     ]
+    }
+   }
+  },
+  "allowed": {
+   "acc": [
+    "accessory"
+   ],
+   "arm": [
+    "skin",
+    "clothMain",
+    "clothTrim"
+   ],
+   "comp": [],
+   "hair": [
+    "hair"
+   ],
+   "hair_wrap": [
+    "hair",
+    "clothTrim"
+   ],
+   "head": [
+    "skin",
+    "hair"
+   ],
+   "torso": [
+    "clothMain",
+    "clothTrim",
+    "skin"
+   ]
+  },
+  "anchors": {
+   "comp": {
+    "crop": [
+     [
+      0,
+      156
+     ],
+     [
+      192,
+      150
+     ]
+    ],
+    "face": [
+     74,
+     52,
+     124,
+     104
+    ],
+    "hands": [
+     [
+      8,
+      36,
+      76,
+      150
+     ],
+     [
+      76,
+      30,
+      190,
+      150
+     ]
+    ],
+    "head": [
+     62,
+     18,
+     130,
+     104
+    ],
+    "neck": [
+     94,
+     118
+    ]
+   },
+   "pc": {
+    "crop": [
+     [
+      0,
+      151
+     ],
+     [
+      192,
+      145
+     ]
+    ],
+    "face": [
+     68,
+     52,
+     118,
+     104
+    ],
+    "hands": [
+     [
+      124,
+      30,
+      188,
+      150
+     ]
+    ],
+    "head": [
+     62,
+     18,
+     130,
+     104
+    ],
+    "neck": [
+     98,
+     118
+    ]
+   }
+  },
+  "armRequiredShared": [
+   "prep_a",
+   "cue"
+  ],
+  "armShared": [
+   "prep_a",
+   "prep_b",
+   "cue"
+  ],
+  "armSlot": [
+   "front",
+   "under_acc_head",
+   "under_hair_front",
+   "under_head",
+   "under_torso"
+  ],
+  "bust": {
+   "h": 160,
+   "w": 192
+  },
+  "codePhase": {
+   "cue": "hold",
+   "peak": "hold",
+   "prep_a": "enter",
+   "prep_b": "enter",
+   "settle_a": "hold",
+   "settle_b": "hold"
+  },
+  "compactSafe": [
+   8,
+   0,
+   184,
+   128
+  ],
+  "display": {
+   "compact": {
+    "dprAware": true,
+    "maxH": 0.27,
+    "maxW": 1
+   },
+   "maxScale": 6,
+   "minFaceCss": 64,
+   "standard": {
+    "integer": true,
+    "maxArea": 0.12,
+    "maxH": 0.3,
+    "maxW": 0.42
+   }
+  },
+  "exprOf": {
+   "cue": "cue",
+   "peak": "peak",
+   "prep_a": "focus",
+   "prep_b": "focus",
+   "settle_a": "settle",
+   "settle_b": "settle"
+  },
+  "exprs": [
+   "focus",
+   "cue",
+   "peak",
+   "settle"
+  ],
+  "frontOnly": [
+   "shaved"
+  ],
+  "groupOf": {
+   "acc_back": "torso",
+   "acc_chest": "torso",
+   "acc_ear_far": "head",
+   "acc_ear_near": "head",
+   "acc_head": "head",
+   "acc_neck": "torso",
+   "arm": "torso",
+   "glasses": "head",
+   "hair_back": "head",
+   "hair_front": "head",
+   "head": "head",
+   "torso": "torso"
+  },
+  "hairParts": [
+   "back",
+   "front"
+  ],
+  "import": {
+   "alpha": 128,
+   "ambiguous": 40,
+   "maxOffset": 24,
+   "outline": 24,
+   "protect": [
+    "#140c18",
+    "#ffffff",
+    "#f6f2ee"
+   ],
+   "snap": 12,
+   "white": 24
+  },
+  "keyRamps": {
+   "accessory": [
+    "#10164a",
+    "#222e8a",
+    "#3a4cc8",
+    "#6a80ec",
+    "#a8b8ff"
+   ],
+   "clothMain": [
+    "#0c3a14",
+    "#1a6428",
+    "#2e8c3c",
+    "#52b45a",
+    "#8ad88a"
+   ],
+   "clothTrim": [
+    "#0a3a44",
+    "#12687a",
+    "#22a0b4",
+    "#5ccce0",
+    "#a8f0f8"
+   ],
+   "hair": [
+    "#2a0a3a",
+    "#5a1470",
+    "#8a24a0",
+    "#b848c8",
+    "#e088ec"
+   ],
+   "skin": [
+    "#601c00",
+    "#943c08",
+    "#d06018",
+    "#f48c40",
+    "#ffc0a0"
+   ]
+  },
+  "keySkinV1": [
+   "#6e3e2a",
+   "#9a5e40",
+   "#c28e64",
+   "#dcae84",
+   "#f2d0a8"
+  ],
+  "mask": {
+   "accessory": "#ff00ff",
+   "clothMain": "#0000ff",
+   "clothTrim": "#ffff00",
+   "fixed": "#000000",
+   "hair": "#00ff00",
+   "skin": "#ff0000"
+  },
+  "materials": [
+   "skin",
+   "hair",
+   "clothMain",
+   "clothTrim",
+   "accessory"
+  ],
+  "notShown": {
+   "apronstrap": "part of the apron",
+   "atlas_lamplet": "hangs at the hip, below the ink band crop",
+   "basket": "not carried",
+   "beard": "not a player option",
+   "book": "not carried",
+   "bottles": "companion-only (Mio); carried at the hip, below the crop — her vial is part of her painted frames",
+   "cane": "not carried by any party member",
+   "hood": "not a player option",
+   "lamp": "companion-only (Ren); held in his painted frames",
+   "patches": "companion-only (Ren); part of his painted coat",
+   "pencil": "companion-only (Nao); part of his painted frames",
+   "toolbelt": "not carried"
+  },
+  "optional": [
+   "prep_b",
+   "settle_a"
+  ],
+  "outline": "#140c18",
+  "pair": {
+   "compact": {
+    "band": {
+     "bottom": [
+      [
+       0,
+       126
+      ],
+      [
+       248,
+       120
+      ]
+     ],
+     "end": 244,
+     "rise": 0.035,
+     "top0": 34
+    },
+    "comp": [
+     -38,
+     0
+    ],
+    "h": 128,
+    "pc": [
+     98,
+     0
+    ],
+    "w": 248
+   },
+   "standard": {
+    "band": {
+     "bottom": [
+      [
+       0,
+       156
+      ],
+      [
+       352,
+       145
+      ]
+     ],
+     "end": 344,
+     "rise": 0.05,
+     "top0": 42
+    },
+    "comp": [
+     0,
+     0
+    ],
+    "h": 160,
+    "pc": [
+     160,
+     0
+    ],
+    "w": 352
+   }
+  },
+  "pcSlots": [
+   "acc_back",
+   "hair_back",
+   "acc_ear_far",
+   "torso",
+   "acc_chest",
+   "acc_neck",
+   "head",
+   "glasses",
+   "hair_front",
+   "acc_head",
+   "acc_ear_near",
+   "arm"
+  ],
+  "pick": {
+   "n4": [
+    0,
+    1,
+    1,
+    2,
+    3
+   ],
+   "n5": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "n6": [
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "skin": [
+    0,
+    1,
+    2,
+    4,
+    5
+   ]
+  },
+  "reducedMotion": "settle_b",
+  "required": [
+   "prep_a",
+   "cue",
+   "peak",
+   "settle_b"
+  ],
+  "segments": {
+   "fast": {
+    "hold": 220,
+    "in": 100,
+    "out": 160
+   },
+   "normal": {
+    "hold": 380,
+    "in": 180,
+    "out": 220
+   }
+  },
+  "sleeveOf": {
+   "apron": "fitted",
+   "coat": "fitted",
+   "dress": "fitted",
+   "robe": "wide",
+   "tunic": "fitted"
+  },
+  "sleeves": [
+   "fitted",
+   "wide"
+  ],
+  "slotOrder": {
+   "acc_chest": [
+    "satchel",
+    "atlas_sash",
+    "bell",
+    "atlas_pin",
+    "cape"
+   ],
+   "acc_head": [
+    "hat",
+    "cap",
+    "headband",
+    "ribbon",
+    "flower",
+    "leaf",
+    "atlas_quill"
+   ]
+  },
+  "states": [
+   "prep_a",
+   "prep_b",
+   "cue",
+   "peak",
+   "settle_a",
+   "settle_b"
+  ],
+  "swingStates": [
+   "prep_b",
+   "settle_a"
+  ],
+  "timeline": [
+   {
+    "from": 0,
+    "phase": "prep_a",
+    "seg": "in",
+    "to": 0.5
+   },
+   {
+    "from": 0.5,
+    "phase": "prep_b",
+    "seg": "in",
+    "to": 1
+   },
+   {
+    "from": 0,
+    "phase": "cue",
+    "seg": "hold",
+    "to": 0.21
+   },
+   {
+    "from": 0.21,
+    "phase": "peak",
+    "seg": "hold",
+    "to": 0.58
+   },
+   {
+    "from": 0.58,
+    "phase": "settle_a",
+    "seg": "hold",
+    "to": 0.79
+   },
+   {
+    "from": 0.79,
+    "phase": "settle_b",
+    "seg": "hold",
+    "to": 1
+   },
+   {
+    "from": 0,
+    "phase": "settle_b",
+    "seg": "out",
+    "to": 1
+   }
+  ],
+  "version": 2
+ },
+ "contractVersion": 2,
+ "creationAccessories": {
+  "entries": {
+   "cape": {
+    "channel": {
+     "def": "#6a3a4a",
+     "field": "capeCol",
+     "material": "accessory",
+     "opts": {
+      "at": 3,
+      "cool": 250,
+      "lineCol": "#140c18",
+      "n": 6,
+      "step": 0.075,
+      "warm": 52
+     }
+    },
+    "codeBust": {
+     "characterSide": "both",
+     "codeView": {
+      "screenLeft": 1715,
+      "screenRight": 1359
+     },
+     "drawn": true,
+     "layers": {
+      "capeBack": {
+       "added": 2452,
+       "removed": 0,
+       "screenLeft": 1348,
+       "screenRight": 1104
+      },
+      "chest": {
+       "added": 622,
+       "removed": 0,
+       "screenLeft": 367,
+       "screenRight": 255
+      }
+     },
+     "v2PlayerScreenSide": "both"
+    },
+    "files": [
+     {
+      "file": "acc_cape_back",
+      "slot": "acc_back"
+     },
+     {
+      "file": "acc_cape_front",
+      "slot": "acc_chest"
+     }
+    ],
+    "hairMounted": false,
+    "hidesHairAboveBand": false,
+    "id": "cape",
+    "reason": null,
+    "visibleInBust": true
+   },
+   "earrings": {
+    "channel": {
+     "def": "metal",
+     "field": "earCol",
+     "material": "accessory",
+     "opts": {
+      "at": 3,
+      "cool": 250,
+      "lineCol": "#140c18",
+      "n": 5,
+      "step": 0.1,
+      "warm": 52
+     }
+    },
+    "codeBust": {
+     "characterSide": "both",
+     "codeView": {
+      "screenLeft": 24,
+      "screenRight": 19
+     },
+     "drawn": true,
+     "layers": {
+      "earF": {
+       "added": 19,
+       "removed": 0,
+       "screenLeft": 0,
+       "screenRight": 19
+      },
+      "earN": {
+       "added": 24,
+       "removed": 0,
+       "screenLeft": 24,
+       "screenRight": 0
+      }
+     },
+     "v2PlayerScreenSide": "both"
+    },
+    "files": [
+     {
+      "file": "acc_earrings_far",
+      "slot": "acc_ear_far"
+     },
+     {
+      "file": "acc_earrings_near",
+      "slot": "acc_ear_near"
+     }
+    ],
+    "hairMounted": false,
+    "hidesHairAboveBand": false,
+    "id": "earrings",
+    "reason": null,
+    "visibleInBust": true
+   },
+   "flower": {
+    "channel": {
+     "def": "#f4a6a0",
+     "field": "flowerCol",
+     "material": "accessory",
+     "opts": {
+      "at": 3,
+      "cool": 250,
+      "lineCol": "#140c18",
+      "n": 6,
+      "step": 0.07,
+      "warm": 52
+     }
+    },
+    "codeBust": {
+     "characterSide": "left",
+     "codeView": {
+      "screenLeft": 0,
+      "screenRight": 139
+     },
+     "drawn": true,
+     "layers": {
+      "headAcc": {
+       "added": 139,
+       "removed": 0,
+       "screenLeft": 0,
+       "screenRight": 139
+      }
+     },
+     "v2PlayerScreenSide": "right (near)"
+    },
+    "files": [
+     {
+      "file": "acc_flower",
+      "slot": "acc_head"
+     }
+    ],
+    "hairMounted": true,
+    "hidesHairAboveBand": false,
+    "id": "flower",
+    "reason": null,
+    "visibleInBust": true
+   },
+   "glasses": {
+    "channel": null,
+    "codeBust": {
+     "characterSide": "both",
+     "codeView": {
+      "screenLeft": 144,
+      "screenRight": 121
+     },
+     "drawn": true,
+     "layers": {
+      "glasses": {
+       "added": 265,
+       "removed": 0,
+       "screenLeft": 144,
+       "screenRight": 121
+      }
+     },
+     "v2PlayerScreenSide": "both"
+    },
+    "files": [
+     {
+      "file": "acc_glasses",
+      "slot": "glasses"
+     }
+    ],
+    "hairMounted": false,
+    "hidesHairAboveBand": false,
+    "id": "glasses",
+    "reason": null,
+    "visibleInBust": true
+   },
+   "hat": {
+    "channel": {
+     "def": "#8a6a44",
+     "field": "hatCol",
+     "material": "accessory",
+     "opts": {
+      "at": 3,
+      "cool": 250,
+      "lineCol": "#140c18",
+      "n": 6,
+      "step": 0.075,
+      "warm": 52
+     }
+    },
+    "codeBust": {
+     "characterSide": "both",
+     "codeView": {
+      "screenLeft": 570,
+      "screenRight": 612
+     },
+     "drawn": true,
+     "layers": {
+      "cap": {
+       "added": 31,
+       "removed": 451,
+       "screenLeft": 17,
+       "screenRight": 14
+      },
+      "front": {
+       "added": 32,
+       "removed": 250,
+       "screenLeft": 14,
+       "screenRight": 18
+      },
+      "headAcc": {
+       "added": 1119,
+       "removed": 0,
+       "screenLeft": 539,
+       "screenRight": 580
+      }
+     },
+     "v2PlayerScreenSide": "both"
+    },
+    "files": [
+     {
+      "file": "acc_hat",
+      "slot": "acc_head"
+     }
+    ],
+    "hairMounted": true,
+    "hidesHairAboveBand": true,
+    "id": "hat",
+    "reason": null,
+    "visibleInBust": true
+   },
+   "headband": {
+    "channel": {
+     "def": "cloth.2",
+     "field": "bandCol",
+     "material": "accessory",
+     "opts": {
+      "at": 3,
+      "cool": 250,
+      "lineCol": "#140c18",
+      "n": 6,
+      "step": 0.08,
+      "warm": 52
+     }
+    },
+    "codeBust": {
+     "characterSide": "both",
+     "codeView": {
+      "screenLeft": 201,
+      "screenRight": 103
+     },
+     "drawn": true,
+     "layers": {
+      "headAcc": {
+       "added": 304,
+       "removed": 0,
+       "screenLeft": 201,
+       "screenRight": 103
+      }
+     },
+     "v2PlayerScreenSide": "both"
+    },
+    "files": [
+     {
+      "file": "acc_headband",
+      "slot": "acc_head"
+     }
+    ],
+    "hairMounted": true,
+    "hidesHairAboveBand": false,
+    "id": "headband",
+    "reason": null,
+    "visibleInBust": true
+   },
+   "satchel": {
+    "channel": null,
+    "codeBust": {
+     "characterSide": "both",
+     "codeView": {
+      "screenLeft": 158,
+      "screenRight": 162
+     },
+     "drawn": true,
+     "layers": {
+      "chest": {
+       "added": 320,
+       "removed": 0,
+       "screenLeft": 158,
+       "screenRight": 162
+      }
+     },
+     "v2PlayerScreenSide": "both"
+    },
+    "files": [
+     {
+      "file": "acc_satchel",
+      "slot": "acc_chest"
+     }
+    ],
+    "hairMounted": false,
+    "hidesHairAboveBand": false,
+    "id": "satchel",
+    "reason": null,
+    "visibleInBust": true
+   },
+   "scarf": {
+    "channel": {
+     "def": "#c8962e",
+     "field": "scarfCol",
+     "material": "accessory",
+     "opts": {
+      "at": 3,
+      "cool": 250,
+      "lineCol": "#140c18",
+      "n": 6,
+      "step": 0.075,
+      "warm": 52
+     }
+    },
+    "codeBust": {
+     "characterSide": "both",
+     "codeView": {
+      "screenLeft": 172,
+      "screenRight": 400
+     },
+     "drawn": true,
+     "layers": {
+      "scarf": {
+       "added": 572,
+       "removed": 0,
+       "screenLeft": 172,
+       "screenRight": 400
+      }
+     },
+     "v2PlayerScreenSide": "both"
+    },
+    "files": [
+     {
+      "file": "acc_scarf",
+      "slot": "acc_neck"
+     }
+    ],
+    "hairMounted": false,
+    "hidesHairAboveBand": false,
+    "id": "scarf",
+    "reason": null,
+    "visibleInBust": true
+   }
+  },
+  "ids": [
+   "scarf",
+   "satchel",
+   "glasses",
+   "headband",
+   "flower",
+   "hat",
+   "earrings",
+   "cape"
+  ],
+  "maxChosen": 2
+ },
+ "garmentShapes": {
+  "all": [
+   "tunic",
+   "robe",
+   "coat",
+   "apron",
+   "dress"
+  ],
+  "battleOnly": [
+   "dress"
+  ],
+  "companionOnly": {
+   "high": "Ren's high collar (portrait.collar), drawn over his coat: his frames are painted, not a kit option"
+  },
+  "creationCuts": [
+   {
+    "id": "tunic",
+    "label": "Tunic"
+   },
+   {
+    "id": "robe",
+    "label": "Robe"
+   },
+   {
+    "id": "coat",
+    "label": "Coat"
+   },
+   {
+    "id": "apron",
+    "label": "Apron"
+   }
+  ],
+  "sleeveOf": {
+   "apron": "fitted",
+   "coat": "fitted",
+   "dress": "fitted",
+   "robe": "wide",
+   "tunic": "fitted"
+  }
+ },
+ "hairstyles": {
+  "aliases": {},
+  "fallback": {
+   "note": "an unknown style draws as short (src/engine/32h_spritehair.js, src/ui/88_harmony_hair.js hairPart)",
+   "value": "short"
+  },
+  "frontOnly": [
+   "shaved"
+  ],
+  "ids": [
+   "short",
+   "bob",
+   "long",
+   "ponytail",
+   "bun",
+   "curly",
+   "spiky",
+   "braid",
+   "shaved",
+   "twintails",
+   "wavy",
+   "wrap"
+  ],
+  "wrap": "a cloth head wrap in the clothTrim channel (look.wrapCol || cloth[2])"
+ },
+ "keepsakes": {
+  "atlas_cos_cape": {
+   "acc": "cape",
+   "channel": {
+    "def": "#6a3a4a",
+    "field": "capeCol",
+    "material": "accessory",
+    "opts": {
+     "at": 3,
+     "cool": 250,
+     "lineCol": "#140c18",
+     "n": 6,
+     "step": 0.075,
+     "warm": 52
+    }
+   },
+   "codeBust": {
+    "characterSide": "both",
+    "codeView": {
+     "screenLeft": 1715,
+     "screenRight": 1359
+    },
+    "drawn": true,
+    "layers": {
+     "capeBack": {
+      "added": 2452,
+      "removed": 0,
+      "screenLeft": 1348,
+      "screenRight": 1104
+     },
+     "chest": {
+      "added": 622,
+      "removed": 0,
+      "screenLeft": 367,
+      "screenRight": 255
+     }
+    },
+    "v2PlayerScreenSide": "both"
+   },
+   "files": [
+    {
+     "file": "acc_cape_back",
+     "slot": "acc_back"
+    },
+    {
+     "file": "acc_cape_front",
+     "slot": "acc_chest"
+    }
+   ],
+   "hairMounted": false,
+   "hidesHairAboveBand": false,
+   "id": "atlas_cos_cape",
+   "name": "Traveller's Cape",
+   "reason": null,
+   "replaces": [
+    "cape"
+   ],
+   "slot": "cosmetic",
+   "visibleInBust": true,
+   "wear": {
+    "capeCol": "#51666e"
+   }
+  },
+  "atlas_cos_flower": {
+   "acc": "flower",
+   "channel": {
+    "def": "#f4a6a0",
+    "field": "flowerCol",
+    "material": "accessory",
+    "opts": {
+     "at": 3,
+     "cool": 250,
+     "lineCol": "#140c18",
+     "n": 6,
+     "step": 0.07,
+     "warm": 52
+    }
+   },
+   "codeBust": {
+    "characterSide": "left",
+    "codeView": {
+     "screenLeft": 0,
+     "screenRight": 139
+    },
+    "drawn": true,
+    "layers": {
+     "headAcc": {
+      "added": 139,
+      "removed": 0,
+      "screenLeft": 0,
+      "screenRight": 139
+     }
+    },
+    "v2PlayerScreenSide": "right (near)"
+   },
+   "files": [
+    {
+     "file": "acc_flower",
+     "slot": "acc_head"
+    }
+   ],
+   "hairMounted": true,
+   "hidesHairAboveBand": false,
+   "id": "atlas_cos_flower",
+   "name": "Pressed Road-flower",
+   "reason": null,
+   "replaces": [
+    "flower"
+   ],
+   "slot": "cosmetic",
+   "visibleInBust": true,
+   "wear": {
+    "flowerCol": "#9fb6ea"
+   }
+  },
+  "atlas_cos_lamplet": {
+   "acc": "atlas_lamplet",
+   "codeBust": {
+    "characterSide": null,
+    "codeView": {
+     "screenLeft": 0,
+     "screenRight": 0
+    },
+    "drawn": false,
+    "layers": {},
+    "v2PlayerScreenSide": null
+   },
+   "id": "atlas_cos_lamplet",
+   "name": "Little Lantern",
+   "reason": "hangs at the hip, below the ink band crop",
+   "replaces": [
+    "atlas_lamplet"
+   ],
+   "slot": "cosmetic",
+   "visibleInBust": false,
+   "wear": null
+  },
+  "atlas_cos_pin": {
+   "acc": "atlas_pin",
+   "channel": null,
+   "codeBust": {
+    "characterSide": "right",
+    "codeView": {
+     "screenLeft": 37,
+     "screenRight": 0
+    },
+    "drawn": true,
+    "layers": {
+     "chest": {
+      "added": 37,
+      "removed": 0,
+      "screenLeft": 37,
+      "screenRight": 0
+     }
+    },
+    "v2PlayerScreenSide": "left (far)"
+   },
+   "files": [
+    {
+     "file": "acc_atlas_pin",
+     "slot": "acc_chest"
+    }
+   ],
+   "hairMounted": false,
+   "hidesHairAboveBand": false,
+   "id": "atlas_cos_pin",
+   "name": "Compass-rose Pin",
+   "reason": null,
+   "replaces": [
+    "atlas_pin"
+   ],
+   "slot": "cosmetic",
+   "visibleInBust": true,
+   "wear": null
+  },
+  "atlas_cos_quill": {
+   "acc": "atlas_quill",
+   "channel": null,
+   "codeBust": {
+    "characterSide": "left",
+    "codeView": {
+     "screenLeft": 0,
+     "screenRight": 174
+    },
+    "drawn": true,
+    "layers": {
+     "headAcc": {
+      "added": 174,
+      "removed": 0,
+      "screenLeft": 0,
+      "screenRight": 174
+     }
+    },
+    "v2PlayerScreenSide": "right (near)"
+   },
+   "files": [
+    {
+     "file": "acc_atlas_quill",
+     "slot": "acc_head"
+    }
+   ],
+   "hairMounted": true,
+   "hidesHairAboveBand": false,
+   "id": "atlas_cos_quill",
+   "name": "Quill",
+   "reason": null,
+   "replaces": [
+    "atlas_quill"
+   ],
+   "slot": "cosmetic",
+   "visibleInBust": true,
+   "wear": null
+  },
+  "atlas_cos_sash": {
+   "acc": "atlas_sash",
+   "channel": {
+    "def": "#d8c89a",
+    "field": "sashCol",
+    "material": "accessory",
+    "opts": {
+     "at": 3,
+     "cool": 230,
+     "lineCol": "#140c18",
+     "n": 5,
+     "step": 0.07,
+     "warm": 52
+    }
+   },
+   "codeBust": {
+    "characterSide": "both",
+    "codeView": {
+     "screenLeft": 251,
+     "screenRight": 240
+    },
+    "drawn": true,
+    "layers": {
+     "chest": {
+      "added": 491,
+      "removed": 0,
+      "screenLeft": 251,
+      "screenRight": 240
+     }
+    },
+    "v2PlayerScreenSide": "both"
+   },
+   "files": [
+    {
+     "file": "acc_atlas_sash",
+     "slot": "acc_chest"
+    }
+   ],
+   "hairMounted": false,
+   "hidesHairAboveBand": false,
+   "id": "atlas_cos_sash",
+   "name": "Map-paper Sash",
+   "reason": null,
+   "replaces": [
+    "atlas_sash"
+   ],
+   "slot": "cosmetic",
+   "visibleInBust": true,
+   "wear": null
+  },
+  "co_glass_beads": {
+   "acc": "earrings",
+   "channel": {
+    "def": "metal",
+    "field": "earCol",
+    "material": "accessory",
+    "opts": {
+     "at": 3,
+     "cool": 250,
+     "lineCol": "#140c18",
+     "n": 5,
+     "step": 0.1,
+     "warm": 52
+    }
+   },
+   "codeBust": {
+    "characterSide": "both",
+    "codeView": {
+     "screenLeft": 24,
+     "screenRight": 19
+    },
+    "drawn": true,
+    "layers": {
+     "earF": {
+      "added": 19,
+      "removed": 0,
+      "screenLeft": 0,
+      "screenRight": 19
+     },
+     "earN": {
+      "added": 24,
+      "removed": 0,
+      "screenLeft": 24,
+      "screenRight": 0
+     }
+    },
+    "v2PlayerScreenSide": "both"
+   },
+   "files": [
+    {
+     "file": "acc_earrings_far",
+     "slot": "acc_ear_far"
+    },
+    {
+     "file": "acc_earrings_near",
+     "slot": "acc_ear_near"
+    }
+   ],
+   "hairMounted": false,
+   "hidesHairAboveBand": false,
+   "id": "co_glass_beads",
+   "name": "Glass-bead earrings",
+   "reason": null,
+   "replaces": [
+    "earrings"
+   ],
+   "slot": "cosmetic",
+   "visibleInBust": true,
+   "wear": {
+    "earCol": "#e0781e"
+   }
+  },
+  "co_leaf_pin": {
+   "acc": "leaf",
+   "channel": {
+    "def": "#c8452a",
+    "field": "leafCol",
+    "material": "accessory",
+    "opts": {
+     "at": 3,
+     "cool": 250,
+     "lineCol": "#140c18",
+     "n": 6,
+     "step": 0.075,
+     "warm": 52
+    }
+   },
+   "codeBust": {
+    "characterSide": "left",
+    "codeView": {
+     "screenLeft": 0,
+     "screenRight": 190
+    },
+    "drawn": true,
+    "layers": {
+     "headAcc": {
+      "added": 190,
+      "removed": 0,
+      "screenLeft": 0,
+      "screenRight": 190
+     }
+    },
+    "v2PlayerScreenSide": "right (near)"
+   },
+   "files": [
+    {
+     "file": "acc_leaf",
+     "slot": "acc_head"
+    }
+   ],
+   "hairMounted": true,
+   "hidesHairAboveBand": false,
+   "id": "co_leaf_pin",
+   "name": "Maple-leaf hairpin",
+   "reason": null,
+   "replaces": [
+    "leaf"
+   ],
+   "slot": "cosmetic",
+   "visibleInBust": true,
+   "wear": {
+    "leafCol": "#c8452a"
+   }
+  },
+  "co_straw_hat": {
+   "acc": "hat",
+   "channel": {
+    "def": "#8a6a44",
+    "field": "hatCol",
+    "material": "accessory",
+    "opts": {
+     "at": 3,
+     "cool": 250,
+     "lineCol": "#140c18",
+     "n": 6,
+     "step": 0.075,
+     "warm": 52
+    }
+   },
+   "codeBust": {
+    "characterSide": "both",
+    "codeView": {
+     "screenLeft": 570,
+     "screenRight": 612
+    },
+    "drawn": true,
+    "layers": {
+     "cap": {
+      "added": 31,
+      "removed": 451,
+      "screenLeft": 17,
+      "screenRight": 14
+     },
+     "front": {
+      "added": 32,
+      "removed": 250,
+      "screenLeft": 14,
+      "screenRight": 18
+     },
+     "headAcc": {
+      "added": 1119,
+      "removed": 0,
+      "screenLeft": 539,
+      "screenRight": 580
+     }
+    },
+    "v2PlayerScreenSide": "both"
+   },
+   "files": [
+    {
+     "file": "acc_hat",
+     "slot": "acc_head"
+    }
+   ],
+   "hairMounted": true,
+   "hidesHairAboveBand": true,
+   "id": "co_straw_hat",
+   "name": "Terrace straw hat",
+   "reason": null,
+   "replaces": [
+    "hat",
+    "cap"
+   ],
+   "slot": "cosmetic",
+   "visibleInBust": true,
+   "wear": {
+    "hatCol": "#d6b25e"
+   }
+  },
+  "lf_ferry_cap": {
+   "acc": "cap",
+   "channel": {
+    "def": "#2c4468",
+    "field": "capCol",
+    "material": "accessory",
+    "opts": {
+     "at": 3,
+     "cool": 250,
+     "lineCol": "#140c18",
+     "n": 6,
+     "step": 0.075,
+     "warm": 52
+    }
+   },
+   "codeBust": {
+    "characterSide": "both",
+    "codeView": {
+     "screenLeft": 418,
+     "screenRight": 485
+    },
+    "drawn": true,
+    "layers": {
+     "cap": {
+      "added": 40,
+      "removed": 391,
+      "screenLeft": 20,
+      "screenRight": 20
+     },
+     "front": {
+      "added": 32,
+      "removed": 215,
+      "screenLeft": 14,
+      "screenRight": 18
+     },
+     "headAcc": {
+      "added": 831,
+      "removed": 0,
+      "screenLeft": 384,
+      "screenRight": 447
+     }
+    },
+    "v2PlayerScreenSide": "both"
+   },
+   "files": [
+    {
+     "file": "acc_cap",
+     "slot": "acc_head"
+    }
+   ],
+   "hairMounted": true,
+   "hidesHairAboveBand": true,
+   "id": "lf_ferry_cap",
+   "name": "Ferry cap",
+   "reason": null,
+   "replaces": [
+    "hat",
+    "cap"
+   ],
+   "slot": "cosmetic",
+   "visibleInBust": true,
+   "wear": {
+    "capCol": "#2c4468"
+   }
+  },
+  "lq_tenugui": {
+   "acc": "scarf",
+   "channel": {
+    "def": "#c8962e",
+    "field": "scarfCol",
+    "material": "accessory",
+    "opts": {
+     "at": 3,
+     "cool": 250,
+     "lineCol": "#140c18",
+     "n": 6,
+     "step": 0.075,
+     "warm": 52
+    }
+   },
+   "codeBust": {
+    "characterSide": "both",
+    "codeView": {
+     "screenLeft": 172,
+     "screenRight": 400
+    },
+    "drawn": true,
+    "layers": {
+     "scarf": {
+      "added": 572,
+      "removed": 0,
+      "screenLeft": 172,
+      "screenRight": 400
+     }
+    },
+    "v2PlayerScreenSide": "both"
+   },
+   "files": [
+    {
+     "file": "acc_scarf",
+     "slot": "acc_neck"
+    }
+   ],
+   "hairMounted": false,
+   "hidesHairAboveBand": false,
+   "id": "lq_tenugui",
+   "name": "Persimmon-dyed cloth",
+   "reason": null,
+   "replaces": [
+    "scarf"
+   ],
+   "slot": "cosmetic",
+   "visibleInBust": true,
+   "wear": {
+    "scarfCol": "#9a5a32"
+   }
+  },
+  "rw_catbell": {
+   "acc": "bell",
+   "channel": {
+    "def": "#b8342a",
+    "field": "cordCol",
+    "material": "accessory",
+    "opts": {
+     "at": 3,
+     "cool": 250,
+     "lineCol": "#140c18",
+     "n": 5,
+     "step": 0.08,
+     "warm": 52
+    }
+   },
+   "codeBust": {
+    "characterSide": "both",
+    "codeView": {
+     "screenLeft": 73,
+     "screenRight": 70
+    },
+    "drawn": true,
+    "layers": {
+     "chest": {
+      "added": 143,
+      "removed": 0,
+      "screenLeft": 73,
+      "screenRight": 70
+     }
+    },
+    "v2PlayerScreenSide": "both"
+   },
+   "files": [
+    {
+     "file": "acc_bell",
+     "slot": "acc_chest"
+    }
+   ],
+   "hairMounted": false,
+   "hidesHairAboveBand": false,
+   "id": "rw_catbell",
+   "name": "Tiny bell",
+   "reason": null,
+   "replaces": [
+    "bell"
+   ],
+   "slot": "cosmetic",
+   "visibleInBust": true,
+   "wear": null
+  },
+  "rw_ribbon": {
+   "acc": "ribbon",
+   "channel": {
+    "def": "#c8687a",
+    "field": "ribbonCol",
+    "material": "accessory",
+    "opts": {
+     "at": 3,
+     "cool": 250,
+     "lineCol": "#140c18",
+     "n": 6,
+     "step": 0.075,
+     "warm": 52
+    }
+   },
+   "codeBust": {
+    "characterSide": "left",
+    "codeView": {
+     "screenLeft": 38,
+     "screenRight": 243
+    },
+    "drawn": true,
+    "layers": {
+     "headAcc": {
+      "added": 281,
+      "removed": 0,
+      "screenLeft": 38,
+      "screenRight": 243
+     }
+    },
+    "v2PlayerScreenSide": "right (near)"
+   },
+   "files": [
+    {
+     "file": "acc_ribbon",
+     "slot": "acc_head"
+    }
+   ],
+   "hairMounted": true,
+   "hidesHairAboveBand": false,
+   "id": "rw_ribbon",
+   "name": "Faded ribbon",
+   "reason": null,
+   "replaces": [
+    "ribbon"
+   ],
+   "slot": "cosmetic",
+   "visibleInBust": true,
+   "wear": {
+    "ribbonCol": "#b98088"
+   }
+  },
+  "sb_scarf": {
+   "acc": "scarf",
+   "channel": {
+    "def": "#c8962e",
+    "field": "scarfCol",
+    "material": "accessory",
+    "opts": {
+     "at": 3,
+     "cool": 250,
+     "lineCol": "#140c18",
+     "n": 6,
+     "step": 0.075,
+     "warm": 52
+    }
+   },
+   "codeBust": {
+    "characterSide": "both",
+    "codeView": {
+     "screenLeft": 172,
+     "screenRight": 400
+    },
+    "drawn": true,
+    "layers": {
+     "scarf": {
+      "added": 572,
+      "removed": 0,
+      "screenLeft": 172,
+      "screenRight": 400
+     }
+    },
+    "v2PlayerScreenSide": "both"
+   },
+   "files": [
+    {
+     "file": "acc_scarf_knit",
+     "slot": "acc_neck"
+    }
+   ],
+   "hairMounted": false,
+   "hidesHairAboveBand": false,
+   "id": "sb_scarf",
+   "name": "Hand-knitted scarf",
+   "reason": null,
+   "replaces": [
+    "scarf"
+   ],
+   "slot": "cosmetic",
+   "visibleInBust": true,
+   "wear": {
+    "scarfCol": "#b8433a",
+    "scarfStripe": "#e9c648"
+   }
+  },
+  "sg_glass_earrings": {
+   "acc": "earrings",
+   "channel": {
+    "def": "metal",
+    "field": "earCol",
+    "material": "accessory",
+    "opts": {
+     "at": 3,
+     "cool": 250,
+     "lineCol": "#140c18",
+     "n": 5,
+     "step": 0.1,
+     "warm": 52
+    }
+   },
+   "codeBust": {
+    "characterSide": "both",
+    "codeView": {
+     "screenLeft": 24,
+     "screenRight": 19
+    },
+    "drawn": true,
+    "layers": {
+     "earF": {
+      "added": 19,
+      "removed": 0,
+      "screenLeft": 0,
+      "screenRight": 19
+     },
+     "earN": {
+      "added": 24,
+      "removed": 0,
+      "screenLeft": 24,
+      "screenRight": 0
+     }
+    },
+    "v2PlayerScreenSide": "both"
+   },
+   "files": [
+    {
+     "file": "acc_earrings_far",
+     "slot": "acc_ear_far"
+    },
+    {
+     "file": "acc_earrings_near",
+     "slot": "acc_ear_near"
+    }
+   ],
+   "hairMounted": false,
+   "hidesHairAboveBand": false,
+   "id": "sg_glass_earrings",
+   "name": "Sea-glass earrings",
+   "reason": null,
+   "replaces": [
+    "earrings"
+   ],
+   "slot": "cosmetic",
+   "visibleInBust": true,
+   "wear": {
+    "earCol": "#8fc6d8"
+   }
+  }
+ },
+ "materialChannels": {
+  "accessory": {
+   "lookFields": [
+    "capeCol (cape)",
+    "sashCol (atlas_sash)",
+    "cordCol (bell)",
+    "scarfCol (scarf)",
+    "hatCol (hat)",
+    "capCol (cap)",
+    "bandCol (headband)",
+    "ribbonCol (ribbon)",
+    "flowerCol (flower)",
+    "leafCol (leaf)",
+    "earCol (earrings)"
+   ],
+   "perAccessory": {
+    "atlas_pin": null,
+    "atlas_quill": null,
+    "atlas_sash": {
+     "def": "#d8c89a",
+     "field": "sashCol",
+     "opts": {
+      "at": 3,
+      "cool": 230,
+      "lineCol": "#140c18",
+      "n": 5,
+      "step": 0.07,
+      "warm": 52
+     }
+    },
+    "bell": {
+     "def": "#b8342a",
+     "field": "cordCol",
+     "opts": {
+      "at": 3,
+      "cool": 250,
+      "lineCol": "#140c18",
+      "n": 5,
+      "step": 0.08,
+      "warm": 52
+     }
+    },
+    "cap": {
+     "def": "#2c4468",
+     "field": "capCol",
+     "opts": {
+      "at": 3,
+      "cool": 250,
+      "lineCol": "#140c18",
+      "n": 6,
+      "step": 0.075,
+      "warm": 52
+     }
+    },
+    "cape": {
+     "def": "#6a3a4a",
+     "field": "capeCol",
+     "opts": {
+      "at": 3,
+      "cool": 250,
+      "lineCol": "#140c18",
+      "n": 6,
+      "step": 0.075,
+      "warm": 52
+     }
+    },
+    "earrings": {
+     "def": "metal",
+     "field": "earCol",
+     "opts": {
+      "at": 3,
+      "cool": 250,
+      "lineCol": "#140c18",
+      "n": 5,
+      "step": 0.1,
+      "warm": 52
+     }
+    },
+    "flower": {
+     "def": "#f4a6a0",
+     "field": "flowerCol",
+     "opts": {
+      "at": 3,
+      "cool": 250,
+      "lineCol": "#140c18",
+      "n": 6,
+      "step": 0.07,
+      "warm": 52
+     }
+    },
+    "glasses": null,
+    "hat": {
+     "def": "#8a6a44",
+     "field": "hatCol",
+     "opts": {
+      "at": 3,
+      "cool": 250,
+      "lineCol": "#140c18",
+      "n": 6,
+      "step": 0.075,
+      "warm": 52
+     }
+    },
+    "headband": {
+     "def": "cloth.2",
+     "field": "bandCol",
+     "opts": {
+      "at": 3,
+      "cool": 250,
+      "lineCol": "#140c18",
+      "n": 6,
+      "step": 0.08,
+      "warm": 52
+     }
+    },
+    "leaf": {
+     "def": "#c8452a",
+     "field": "leafCol",
+     "opts": {
+      "at": 3,
+      "cool": 250,
+      "lineCol": "#140c18",
+      "n": 6,
+      "step": 0.075,
+      "warm": 52
+     }
+    },
+    "ribbon": {
+     "def": "#c8687a",
+     "field": "ribbonCol",
+     "opts": {
+      "at": 3,
+      "cool": 250,
+      "lineCol": "#140c18",
+      "n": 6,
+      "step": 0.075,
+      "warm": 52
+     }
+    },
+    "satchel": null,
+    "scarf": {
+     "def": "#c8962e",
+     "field": "scarfCol",
+     "opts": {
+      "at": 3,
+      "cool": 250,
+      "lineCol": "#140c18",
+      "n": 6,
+      "step": 0.075,
+      "warm": 52
+     }
+    }
+   },
+   "pick": "n6 for 6-tone opts, n5 for 5-tone",
+   "ramp": "RB.harmonyKit.M(name, colour, opts) with the opts below (as 88_harmony_acc.js draws it)",
+   "resolve": "per accessory file: look[field], else the default (cloth.2 = the cloth trim; metal = the gold metal ramp)"
+  },
+  "clothMain": {
+   "lookFields": [
+    "outfit",
+    "cloth"
+   ],
+   "pick": [
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "ramp": "RB.harmonyKit.clothMat(cloth[0]) — 6 tones",
+   "resolve": "colorsOf(look).cloth[0] (look.cloth, else CLOTH[outfit])"
+  },
+  "clothTrim": {
+   "lookFields": [
+    "outfit",
+    "cloth",
+    "wrapCol (pc_hair_wrap_* only)"
+   ],
+   "pick": [
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "ramp": "clothMat(cloth[2], { step: 0.09 }); the wrap: clothMat(wrapCol || cloth[2])",
+   "resolve": "colorsOf(look).cloth[2]; the wrap hairstyle uses look.wrapCol || cloth[2]"
+  },
+  "fixed": {
+   "note": "never recoloured: eye whites, irises, outlines (#140c18 family), glasses, highlights, metal, leather, glass, and every companion pixel"
+  },
+  "hair": {
+   "lookFields": [
+    "hairColor"
+   ],
+   "pick": [
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "ramp": "RB.harmonyKit.hairMat(hair) — 6 tones round the mid colour",
+   "resolve": "colorsOf(look).hair (an index into HAIR, or an explicit [dark, mid, light])"
+  },
+  "playerIris": {
+   "note": "the code busts give every player this iris (RB.harmonyKit.faceColours default); it is not a look field",
+   "value": "#7a4630"
+  },
+  "skin": {
+   "lookFields": [
+    "skin"
+   ],
+   "pick": [
+    0,
+    1,
+    2,
+    4,
+    5
+   ],
+   "ramp": "RB.harmonyKit.skinMat(pair) — 6 tones",
+   "resolve": "RB.sprites.colorsOf(look).skin (an index into SKIN, or an explicit [light, shadow] pair)"
+  }
+ },
+ "palettes": {
+  "cloth": [
+   {
+    "id": 0,
+    "main": "#4a6a9a",
+    "shade": "#38527a",
+    "trim": "#e0c068"
+   },
+   {
+    "id": 1,
+    "main": "#9a4a3e",
+    "shade": "#7a3a30",
+    "trim": "#e8d8b0"
+   },
+   {
+    "id": 2,
+    "main": "#4e7a4a",
+    "shade": "#3c5e38",
+    "trim": "#d8b060"
+   },
+   {
+    "id": 3,
+    "main": "#7a5a8a",
+    "shade": "#5e446c",
+    "trim": "#e0c8a0"
+   },
+   {
+    "id": 4,
+    "main": "#c08a3a",
+    "shade": "#9a6c2a",
+    "trim": "#5a3a2a"
+   },
+   {
+    "id": 5,
+    "main": "#3e4450",
+    "shade": "#2c3038",
+    "trim": "#b8a070"
+   },
+   {
+    "id": 6,
+    "main": "#d8d0bc",
+    "shade": "#b8ae98",
+    "trim": "#6a8aa8"
+   },
+   {
+    "id": 7,
+    "main": "#2e6a6e",
+    "shade": "#225256",
+    "trim": "#e8b070"
+   }
+  ],
+  "hair": [
+   {
+    "dark": "#1e1a1c",
+    "id": 0,
+    "light": "#4a4442",
+    "mid": "#35302e",
+    "name": "black"
+   },
+   {
+    "dark": "#3b2a20",
+    "id": 1,
+    "light": "#6e5240",
+    "mid": "#553d2e",
+    "name": "dark brown"
+   },
+   {
+    "dark": "#6a4428",
+    "id": 2,
+    "light": "#a0724a",
+    "mid": "#855a38",
+    "name": "brown"
+   },
+   {
+    "dark": "#8e3e22",
+    "id": 3,
+    "light": "#c86a42",
+    "mid": "#aa5230",
+    "name": "auburn"
+   },
+   {
+    "dark": "#c8962e",
+    "id": 4,
+    "light": "#f0cc70",
+    "mid": "#e0b048",
+    "name": "gold"
+   },
+   {
+    "dark": "#8a8a90",
+    "id": 5,
+    "light": "#c8c8cc",
+    "mid": "#a8a8ae",
+    "name": "grey"
+   },
+   {
+    "dark": "#e4e0dc",
+    "id": 6,
+    "light": "#ffffff",
+    "mid": "#f4f2ee",
+    "name": "white"
+   },
+   {
+    "dark": "#1e2a44",
+    "id": 7,
+    "light": "#44587c",
+    "mid": "#2e3e5e",
+    "name": "blue-black"
+   },
+   {
+    "dark": "#2c6a6a",
+    "id": 8,
+    "light": "#52a0a0",
+    "mid": "#3a8484",
+    "name": "teal"
+   },
+   {
+    "dark": "#5a2e4e",
+    "id": 9,
+    "light": "#8e5480",
+    "mid": "#723e64",
+    "name": "plum"
+   }
+  ],
+  "skin": [
+   {
+    "id": 0,
+    "light": "#f6dcc4",
+    "shadow": "#e4bea0"
+   },
+   {
+    "id": 1,
+    "light": "#eec8a4",
+    "shadow": "#d8a882"
+   },
+   {
+    "id": 2,
+    "light": "#dcae84",
+    "shadow": "#c28e64"
+   },
+   {
+    "id": 3,
+    "light": "#c08a5e",
+    "shadow": "#a06e46"
+   },
+   {
+    "id": 4,
+    "light": "#9a6a44",
+    "shadow": "#7e5234"
+   },
+   {
+    "id": 5,
+    "light": "#74492e",
+    "shadow": "#5c3822"
+   },
+   {
+    "id": 6,
+    "light": "#553522",
+    "shadow": "#422818"
+   }
+  ]
+ },
+ "resolver": {
+  "look": "RB.equip.look(s) = RB.equip.lookWith(s.player.look, s.equip.cosmetic)",
+  "lookWith": "copies the base look, drops the accessories in the same place (SAME_PLACE[it.acc] or [it.acc]), appends it.acc last, then Object.assign(out, it.wear)",
+  "module": "src/engine/07_equip.js",
+  "samePlace": {
+   "cap": [
+    "hat",
+    "cap"
+   ],
+   "hat": [
+    "hat",
+    "cap"
+   ]
+  },
+  "source": {
+   "look": "function look(s) {\n    s = s || (RB.game && RB.game.s);\n    if (!s || !s.player) return {};\n    return lookWith(s.player.look, s.equip && s.equip.cosmetic);\n  }",
+   "lookWith": "function lookWith(base, id) {\n    base = base || {};\n    const out = Object.assign({}, base, { acc: (base.acc || []).slice() });\n    const it = item(id);\n    if (!it || !it.acc) return out;\n    const drop = SAME_PLACE[it.acc] || [it.acc];\n    out.acc = out.acc.filter((a) => drop.indexOf(a) < 0);\n    out.acc.push(it.acc); // last, so it is drawn over everything else in its layer\n    if (it.wear) Object.assign(out, it.wear);\n    return out;\n  }"
+  }
+ },
+ "source": {
+  "contractModule": "src/ui/88_harmony_contract.js",
+  "generator": "tools/harmony_registry.mjs",
+  "git": {
+   "branch": "worktree-agent-a4994cdf0f0b71e12",
+   "commit": "01682d2aef84dd0613db5fb09c45b76b718e4b91",
+   "dirty": false
+  },
+  "indexHtml": {
+   "bytes": 9997551,
+   "sha256": "6822d9d0270bc33768a1c1520ad64d6e78ad655b6450d0721c36e98994cf9214"
+  },
+  "note": "git.commit is HEAD when exported; the export is committed with or after it. indexHtml is the build it was read from.",
+  "renderer": [
+   "src/ui/88_harmony_art.js",
+   "src/ui/88_harmony_raster.js",
+   "src/ui/88_harmony_cast.js",
+   "src/ui/88_harmony_acc.js"
+  ]
+ },
+ "statisticalItems": {
+  "atlas_charm_mirror": {
+   "acc": null,
+   "drawn": false,
+   "effect": [
+    "atlasCharm"
+   ],
+   "id": "atlas_charm_mirror",
+   "name": "Mirror Shard (charm)",
+   "reason": "the charm slot is not part of the worn look: RB.equip.look applies only the cosmetic slot",
+   "slot": "charm"
+  },
+  "atlas_charm_page": {
+   "acc": null,
+   "drawn": false,
+   "effect": [
+    "atlasCharm"
+   ],
+   "id": "atlas_charm_page",
+   "name": "Blank Bookmark (charm)",
+   "reason": "the charm slot is not part of the worn look: RB.equip.look applies only the cosmetic slot",
+   "slot": "charm"
+  },
+  "atlas_charm_reed": {
+   "acc": null,
+   "drawn": false,
+   "effect": [
+    "atlasCharm"
+   ],
+   "id": "atlas_charm_reed",
+   "name": "Reed Knot (charm)",
+   "reason": "the charm slot is not part of the worn look: RB.equip.look applies only the cosmetic slot",
+   "slot": "charm"
+  },
+  "atlas_charm_tide": {
+   "acc": null,
+   "drawn": false,
+   "effect": [
+    "atlasCharm"
+   ],
+   "id": "atlas_charm_tide",
+   "name": "Tide-glass (charm)",
+   "reason": "the charm slot is not part of the worn look: RB.equip.look applies only the cosmetic slot",
+   "slot": "charm"
+  },
+  "lf_bell_shard": {
+   "acc": null,
+   "drawn": false,
+   "effect": [],
+   "id": "lf_bell_shard",
+   "name": "Bell fragment",
+   "reason": "the charm slot is not part of the worn look: RB.equip.look applies only the cosmetic slot",
+   "slot": "charm"
+  },
+  "lq_kaki_seed": {
+   "acc": null,
+   "drawn": false,
+   "effect": [
+    "harmonyStart"
+   ],
+   "id": "lq_kaki_seed",
+   "name": "Persimmon-seed charm",
+   "reason": "the charm slot is not part of the worn look: RB.equip.look applies only the cosmetic slot",
+   "slot": "charm"
+  },
+  "lq_kept_cup": {
+   "acc": null,
+   "drawn": false,
+   "effect": [
+    "resolve"
+   ],
+   "id": "lq_kept_cup",
+   "name": "The kept cup",
+   "reason": "the charm slot is not part of the worn look: RB.equip.look applies only the cosmetic slot",
+   "slot": "charm"
+  },
+  "rw_boots_good": {
+   "acc": null,
+   "drawn": false,
+   "effect": [
+    "walk"
+   ],
+   "id": "rw_boots_good",
+   "name": "Sturdy boots",
+   "reason": "the tool slot is not part of the worn look: RB.equip.look applies only the cosmetic slot",
+   "slot": "tool"
+  },
+  "rw_mill_charm": {
+   "acc": null,
+   "drawn": false,
+   "effect": [
+    "harmonyStart"
+   ],
+   "id": "rw_mill_charm",
+   "name": "Millstone charm",
+   "reason": "the charm slot is not part of the worn look: RB.equip.look applies only the cosmetic slot",
+   "slot": "charm"
+  },
+  "rw_reed_charm": {
+   "acc": null,
+   "drawn": false,
+   "effect": [
+    "startWard"
+   ],
+   "id": "rw_reed_charm",
+   "name": "Reed charm",
+   "reason": "the charm slot is not part of the worn look: RB.equip.look applies only the cosmetic slot",
+   "slot": "charm"
+  },
+  "sa_bookmark": {
+   "acc": null,
+   "drawn": false,
+   "effect": [],
+   "id": "sa_bookmark",
+   "name": "Archive bookmark",
+   "reason": "the charm slot is not part of the worn look: RB.equip.look applies only the cosmetic slot",
+   "slot": "charm"
+  },
+  "sb_bell_cord": {
+   "acc": null,
+   "drawn": false,
+   "effect": [
+    "harmonyStart"
+   ],
+   "id": "sb_bell_cord",
+   "name": "Bell-rope braid",
+   "reason": "the charm slot is not part of the worn look: RB.equip.look applies only the cosmetic slot",
+   "slot": "charm"
+  },
+  "sb_goat_bell": {
+   "acc": null,
+   "drawn": false,
+   "effect": [
+    "resolve"
+   ],
+   "id": "sb_goat_bell",
+   "name": "Goat bell",
+   "reason": "the charm slot is not part of the worn look: RB.equip.look applies only the cosmetic slot",
+   "slot": "charm"
+  },
+  "sg_float_charm": {
+   "acc": null,
+   "drawn": false,
+   "effect": [
+    "startWard"
+   ],
+   "id": "sg_float_charm",
+   "name": "Glass float charm",
+   "reason": "the charm slot is not part of the worn look: RB.equip.look applies only the cosmetic slot",
+   "slot": "charm"
+  },
+  "sg_lens_charm": {
+   "acc": null,
+   "drawn": false,
+   "effect": [
+    "harmonyStart"
+   ],
+   "id": "sg_lens_charm",
+   "name": "Lens chip",
+   "reason": "the charm slot is not part of the worn look: RB.equip.look applies only the cosmetic slot",
+   "slot": "charm"
+  }
+ },
+ "unresolved": {
+  "hairAttachOffsets": {
+   "reason": "per-hairstyle offsets for hair-mounted accessories depend on the painted hair volumes: set at import (manifest pc.attach)",
+   "unresolved": true
+  },
+  "hatBandLine": {
+   "reason": "the y of the hat and cap band depends on the painted hats: set at import (manifest pc.hatBand)",
+   "unresolved": true
+  },
+  "pairOffsets": {
+   "reason": "per-companion pair offsets default to 0 and are set after the art is seen (manifest companions.<id>.offset)",
+   "unresolved": true
+  }
+ }
+}
