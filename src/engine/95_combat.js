@@ -336,8 +336,12 @@ RB.combatLogic = (function () {
     }
     if (st.harmony >= st.harmonyMax && st.compId) {
       const T = TECHS[st.compId];
+      // a coordinated technique needs you both: like the companion's own turn (supportActions), it waits while
+      // they are out of resolve (Harmony is kept, not spent)
+      const nm = (RB.content.chars[st.compId] && RB.content.chars[st.compId].name.en) || 'Your companion';
       out.push({ id: 'tech', kind: 'tech', icon: '✧', jp: 'あわせ', en: T ? T.name : 'Coordinated technique', tech: st.compId,
-        desc: (T ? T.effect + ' ' : '') + 'Also cancels its move. Uses up Harmony.' + (T && isGroup(st) && standing(st).length > 1 ? ' ' + T.group : '') });
+        desc: (T ? T.effect + ' ' : '') + 'Also cancels its move. Uses up Harmony.' + (T && isGroup(st) && standing(st).length > 1 ? ' ' + T.group : ''),
+        disabled: st.comp > 0 ? null : nm + ' is out of resolve. A coordinated technique needs you both; your Harmony is kept.' });
     }
     return out;
   }

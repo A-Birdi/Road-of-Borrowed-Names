@@ -125,7 +125,7 @@ kasane[closed]: わたし は 、 {自分|じぶん} の {言葉|ことば} を 
 ?(comp=ren) ren[shy]: {失礼|しつれい} しました 。 {今|いま} の は 、 {解説|かいせつ} の {要|い}らない ほう の {駄洒落|だじゃれ} です 。 || Forgive me. That one doesn't need explaining.
 kasane: {言葉|ことば} を {一|ひと}つ の {意味|いみ} に {縛|しば}れば 、 {誰|だれ} も {読|よ}み{違|ちが}えない と {思|おも}った 。 でも {間違|まちが}えた の は 、 {言葉|ことば} じゃ ない 。 {前後|ぜんご} を {切|き}り{落|お}とした 、 わたし です 。 || I thought if I tied every word to a single meaning, no one could misread. But it wasn't the words that went wrong. It was me, cutting away everything around them.
 kasane: そして {世界|せかい} じゅう の {言葉|ことば} に 、 {同|おな}じ こと を した 。 || And then I did the same to every word in the world.
-?(item.lf_toya_bell) narr: $name は 、 テツ から {預|あず}かった {小|ちい}さな {鈴|すず} を {出|だ}した 。 || You take out the little bell Tetsu gave you.
+?(item.lf_toya_bell) narr: $name は 、 トクジ から {預|あず}かった {小|ちい}さな {鈴|すず} を {出|だ}した 。 || You take out the little bell Tokuji gave you.
 ?(item.lf_toya_bell) kasane[surprise]: {使|つか}い の {鈴|すず} 。 …… トウヤ の 。 || A messenger's bell. …Tōya's.
 ?(item.lf_toya_bell) narr: カサネ は {鈴|すず} を {一度|いちど} だけ {振|ふ}った 。 ちりん 。 {三十年|さんじゅうねん} {遅|おく}れ の {音|おと} が 、 {芯|しん} の {中|なか} に {広|ひろ}がった 。 || Kasane rings it once. Ting. A sound thirty years late spreads through the Heart.
 ?(item.lf_toya_bell) kasane: …… {持|も}って いて ください 。 あの {子|こ} は 、 {走|はし}る の が {仕事|しごと} でした から 。 {旅|たび} を {続|つづ}けさせて あげて 。 || …Please keep it. Running was his work. Let it go on travelling.

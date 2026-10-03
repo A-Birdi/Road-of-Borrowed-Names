@@ -623,7 +623,7 @@ RB.combat = (function () {
     const desc = c.disabled || RB.script.enVars(c.target ? String(c.desc).replace(/\s*\([^)]*\)\s*$/, '') : c.desc);
     const fresh = c.kind === 'word' && newWords.has(c.word.id);
     const ans = fresh ? L().answers(c.word).map((k) => L().INTENTS[k].label) : [];
-    const ready = c.kind === 'tech';
+    const ready = c.kind === 'tech' && !c.disabled; // a technique waiting for the companion doesn't glow
     return '<button class="resp rcard' + (fresh ? ' fresh' : '') + (ready ? ' tech' : '') + '" data-i="' + i + '"' + (c.id != null ? ' data-cid="' + esc(String(c.id)) + '"' : '') + ' data-foes="' + r.foes.join(',') + '" data-allies="' + r.allies.join(',') + '"' + (c.disabled ? ' disabled' : '') + '>' +
       '<span class="ic">' + I(cardIcon(c)) + '</span>' +
       '<span class="rc-w"><span class="rc-jp">' + RB.ui.jhtml(hi && c.word && c.word.jpK ? c.word.jpK : c.jp) + '</span><span class="rc-en">' + esc(c.en) + '</span>' +

@@ -122,6 +122,19 @@ export default async (t) => {
     st.harmony = 3;
     t.ok(!L.responses(st, s.words.map(W)).some((c) => c.kind === 'tech'), 'no technique without a companion');
   }
+  // a coordinated technique needs you both: while the companion is out of resolve it waits (shown, disabled,
+  // with its reason) and Harmony is kept — like the companion's own turn, which also waits (compOptions)
+  for (const comp of ['nao', 'mio', 'ren', 'suzu']) {
+    const s = camp({ comp });
+    const st = L.init(foe(['strike']), s, {});
+    st.harmony = st.harmonyMax; st.comp = 0;
+    const tech = L.responses(st, s.words.map(W)).find((c) => c.kind === 'tech');
+    t.ok(tech && tech.disabled && /out of resolve/.test(tech.disabled) && st.harmony === st.harmonyMax, comp + ': at 0 resolve the technique is shown disabled with its reason; Harmony kept');
+    t.eq(L.compOptions(st).length, 0, comp + ': at 0 resolve the companion has no turn of their own either');
+    st.comp = 1;
+    const back = L.responses(st, s.words.map(W)).find((c) => c.kind === 'tech');
+    t.ok(back && !back.disabled, comp + ': back on their feet, the technique is available again');
+  }
 
   // ---- which moves a word answers ----------------------------------------------------------------
   t.eq(L.answers(W('mizu')), ['heat'], 'みず answers Heat');
