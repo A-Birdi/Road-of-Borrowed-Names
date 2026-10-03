@@ -653,6 +653,33 @@ await test('setting: "Harmony portrait flourish" is On by default (also for an o
   const saved = await p.evaluate(async () => { const s = await RB.save.loadSettings(); return s && s.harmonyFlourish; });
   assert(saved === false && !(await p.evaluate(() => RB.harmonyCutin.enabled())), 'Off, saved with the settings');
   report.setting = { default: def.now, olderRecord: old, row: row.label, savedOff: saved === false };
+  await p.evaluate(() => { RB.ui.settings.close(); RB.game.settings.harmonyFlourish = true; });
+  // in battle: the battle's own settings sheet offers it (presentation only); opened while a portrait holds, the
+  // encounter pauses with the portrait where it stands; turned Off there, the portrait goes on resuming and the
+  // technique plays on unchanged
+  await setup(p, { comp: 'suzu', knots: 8 });
+  await clickCard(p, 'With Suzu');
+  await answerRight(p);
+  await companionPick(p, 'Join');
+  await p.waitForFunction(() => RB.harmonyCutin.state().state === 'holding', null, { timeout: 8000, polling: 'raf' });
+  const opened = await p.evaluate(() => RB.ui.settings.openBattle && RB.ui.settings.openBattle());
+  let inSheet = null;
+  if (opened) {
+    await p.waitForSelector('.folio-bset [data-grp="battle"]', { timeout: 8000 });
+    await p.click('.folio-bset [data-grp="battle"]');
+    await p.waitForSelector('.folio-bset [data-sw="harmonyFlourish"]', { timeout: 8000 });
+    const t0 = await p.evaluate(() => RB.harmonyCutin.state().t);
+    await wait(p, 300);
+    inSheet = await p.evaluate((t0) => ({ paused: RB.battleSeq.paused && RB.battleSeq.paused(), state: RB.harmonyCutin.state().state, still: RB.harmonyCutin.state().t === t0, checked: document.querySelector('.folio-bset [data-sw="harmonyFlourish"]').checked }), t0);
+    await p.evaluate(() => document.querySelector('.folio-bset [data-sw="harmonyFlourish"]').scrollIntoView({ block: 'center' }));
+    await p.click('.folio-bset label.switch:has([data-sw="harmonyFlourish"])');
+    await p.waitForFunction(() => RB.game.settings.harmonyFlourish === false, null, { timeout: 4000 });
+    await p.evaluate(() => RB.ui.settings.close());
+    await settle(p);
+    inSheet.after = await p.evaluate(() => ({ why: RB.harmonyCutin.last().why, layers: document.querySelectorAll('.cb-cutin').length, tech: RB.battleSeq.trace().filter((x) => x.meta && x.meta.card === 'tech').slice(-1)[0].beats.map((b) => b.t).join() }));
+  }
+  report.setting.battleSheet = { opened: !!opened, inSheet };
+  assert(opened && inSheet.paused && inSheet.state === 'holding' && inSheet.still && inSheet.checked && inSheet.after.why === 'off' && inSheet.after.layers === 0 && inSheet.after.tech === 'unravel,tech', 'the battle\'s sheet: paused with the portrait where it stood; Off there removes it on resuming; the technique completes ' + JSON.stringify(report.setting.battleSheet));
   assert(!errors.length, errors.join('; '));
   await ctx.close();
 });

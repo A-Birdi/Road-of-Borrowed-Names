@@ -289,6 +289,7 @@ RB.ui.settings = (function () {
     lead: 1, secondary: 1, spacing: 1, lightbulb: 1, romaji: 1,
     textScale: 1, contrast: 1,
     battleControls: 1, intentDisplay: 1, petBattle: 1,
+    harmonyFlourish: 1, // (Harmony addendum §7.4: the portrait layer only — presentation)
   };
   // (the voice and its automatic speaking, and Suzu's speech, which src/ui/56_suzu_speech.js applies, are allowed too)
   function allowedNow(t) {
@@ -348,7 +349,9 @@ RB.ui.settings = (function () {
     } else if (title[0] === 'battle') {
       h += radios('battleControls', 'Battle controls during actions', [['adaptive', 'Adaptive'], ['keep', 'Keep visible']], null, 'Adaptive moves the menus out of the way while actions play, so the scene has room. Keep visible leaves them in place, disabled until your next choice. From the next exchange.') +
         radios('intentDisplay', 'What creatures are about to do', [['adaptive', 'Adaptive'], ['expanded', 'Expanded']], null, 'Adaptive shows a compact badge on each creature that opens when you point at it, focus it or tap it; wording you need to read stays visible. Expanded keeps the full descriptions open while you decide.') +
-        sw('petBattle', 'Show pet in battle', 'It sits beside the two of you and watches. It never acts, and hiding it changes nothing.');
+        sw('petBattle', 'Show pet in battle', 'It sits beside the two of you and watches. It never acts, and hiding it changes nothing.') +
+        // (Harmony addendum §7.4: the portrait layer only; a portrait on screen goes when the encounter resumes)
+        sw('harmonyFlourish', 'Harmony portrait flourish', 'A short paired portrait of you and your companion as a coordinated technique begins. Off keeps the technique, its performance and its name at the top.');
     } else {
       h += fixedRows();
     }
