@@ -61,6 +61,7 @@ const KNOWN = {
   'sb.yae|yae|halfraise': ['finding', 'on "Anyway, she never missed a single night…"; halfraise (8) is not in her vocabulary'],
   'lf.town_intro|lf_hayato|stamp': ['escalation', 'narrated: "He nods pleasantly and stamps it." (the visitor\'s form stamped at the west gate)'],
   'lf.tokuji_story|lf_tokuji|flinch': ['escalation', 'narrated: "Having said it, Tokuji looks surprised at himself." (startled at his own order, "Take my boat")'],
+  'lf.nao_umi_first|nao|exhale': ['escalation', 'narrated: "Outside the office, Nao leans against the wall and lets out a long breath." (after refusing to hand over the letter)'],
   'sg.omi_wataru|wataru|size': ['finding', 'his then=size,palm chain: the two-handed size gesture (11) is Omi\'s (her stronger reaction in this scene), not his'],
 };
 
