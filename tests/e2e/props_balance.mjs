@@ -25,7 +25,7 @@
 //     animated tiles, lights; the weather counted apart), 6 s each with and 6 s without the weather, at the
 //     same places, printed (timing-sensitive on a shared machine, so reported, not asserted).
 // Writes a JSON report with --report <file>. Usage:
-//   node tests/e2e/props_balance.mjs [--html index.html] [--places] [--report out.json]
+//   node tests/e2e/props_balance.mjs [--html index.html] [--places] [--only place,place] [--report out.json]
 import fs from 'node:fs';
 import { serve, launch, page } from './lib.mjs';
 
@@ -34,6 +34,7 @@ const arg = (k, d) => (argv.includes(k) ? argv[argv.indexOf(k) + 1] : d);
 const HTML = arg('--html', 'index.html');
 const PLACES_ON = argv.includes('--places');
 const REPORT = arg('--report', null);
+const ONLY = arg('--only', null); // places: a comma-separated list of names
 let pass = 0, fail = 0;
 const ok = (c, m) => { if (c) { pass++; console.log('ok   ' + m); } else { fail++; console.log('FAIL ' + m); } };
 const report = {};
@@ -218,6 +219,7 @@ const PLACES = [
 ];
 const contrast = [], motion = [];
 for (const [name, kindOf, map0, x0, y0, flags] of PLACES) {
+  if (ONLY && !ONLY.split(',').includes(name)) continue;
   const { p, errors, ctx } = await page(b, url + HTML, { viewport: { width: 1280, height: 800 } });
   const r = await p.evaluate(async ([map, x, y, flags, doMotion]) => {
     const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
@@ -232,11 +234,16 @@ for (const [name, kindOf, map0, x0, y0, flags] of PLACES) {
       RB.game.debugStart(map, x, y, { comp: 'mio', flags, dir: 'down' });
       for (const ev of RB.content.maps[map].onEnter || []) RB.game.s.flags['enter:' + map + ':' + ev.scene] = true;
     }
+    // the creatures that patrol a dungeon are not props, and touching one would start a battle
+    const calm = () => { if (RB.world.W.foes) RB.world.W.foes.length = 0; };
+    calm();
     RB.game.settings.textSpeed = 'instant';
     await sleep(300);
     for (let i = 0; i < 60 && RB.ui.dialogue.isOpen(); i++) { RB.ui.dialogue.advance(true); await sleep(40); }
     if (RB.world.W.map.id !== map) RB.world.enter(map, x, y, 'down');
+    calm();
     await sleep(1200);
+    const battle = !!(RB.game.inBattle && RB.game.inBattle());
     const cv = document.querySelector('canvas');
     const W = cv.width, H = cv.height, k = W / innerWidth;
     const tmp = document.createElement('canvas'); tmp.width = W; tmp.height = H;
@@ -279,7 +286,7 @@ for (const [name, kindOf, map0, x0, y0, flags] of PLACES) {
     }
     m.def.ambient = keep[0]; (m.def.alt || []).forEach((a, i) => { a.ambient = keep[1][i]; });
     RB.render.frame(performance.now());
-    if (!doMotion) return { map: m.id, contrast: out };
+    if (!doMotion) return { map: m.id, battle, contrast: out };
     // 4. motion split, people and animals against everything else
     const actorMask = () => {
       const mk = new Uint8Array(W * H), Wd = RB.world.W;
@@ -313,11 +320,11 @@ for (const [name, kindOf, map0, x0, y0, flags] of PLACES) {
     const B = await run(6000);
     m.def.ambient = saved[0]; (m.def.alt || []).forEach((a, i) => { a.ambient = saved[1][i]; });
     const people = RB.world.W.npcs.filter((n) => { const q = RB.render.tileToCss(n.fx, n.fy); return q.x > -20 && q.y > -20 && q.x < innerWidth && q.y < innerHeight; }).length;
-    return { map: m.id, contrast: out, motion: { people, peoplePerFrame: Math.round(B.people), envPerFrame: Math.round(B.env), weatherPerFrame: Math.round(Math.max(0, A.env - B.env)), peopleShare: Math.round((100 * B.people) / Math.max(1, B.people + B.env)) } };
+    return { map: m.id, battle, contrast: out, motion: { people, peoplePerFrame: Math.round(B.people), envPerFrame: Math.round(B.env), weatherPerFrame: Math.round(Math.max(0, A.env - B.env)), peopleShare: Math.round((100 * B.people) / Math.max(1, B.people + B.env)) } };
   }, [map0, x0, y0, flags, PLACES_ON]);
   for (const c of r.contrast) contrast.push(Object.assign({ place: name, kindOf, map: r.map }, c));
   if (r.motion) { motion.push(Object.assign({ place: name, kindOf, map: r.map }, r.motion)); console.log('     motion ' + name.padEnd(13) + ' ' + kindOf.padEnd(16) + ' people on screen ' + r.motion.people + ', px/frame: people ' + r.motion.peoplePerFrame + ', environment ' + r.motion.envPerFrame + ', weather ' + r.motion.weatherPerFrame + ' (people ' + r.motion.peopleShare + '%)'); }
-  ok(!errors.length && (map0 !== '@atlas' || /^atlas\./.test(r.map)), 'place ' + name + ' (' + r.map + ', ' + r.contrast.length + ' props you can use on screen) without page errors ' + errors.join('; '));
+  ok(!errors.length && !r.battle && (map0 !== '@atlas' || /^atlas\./.test(r.map)), 'place ' + name + ' (' + r.map + ', ' + r.contrast.length + ' props you can use on screen) without page errors ' + errors.join('; '));
   await ctx.close();
 }
 report.contrast = contrast; report.motion = motion;
@@ -326,12 +333,12 @@ console.log('     the props you can use that stand least apart from their ground
 for (const c of contrast.slice(0, 12)) console.log('       ' + (c.place + ' ' + c.kind + ' ' + c.x + ',' + c.y).padEnd(36) + ' ' + Math.round(c.apart * 100) + '%  ' + c.mean);
 const find = (place, kind) => contrast.find((c) => c.place === place && c.kind === kind);
 const pct = (c) => (c ? Math.round(c.apart * 100) + '% of its pixels, mean ' + c.mean : 'not measured');
-ok(contrast.length >= 40, 'props you can use measured at the places (' + contrast.length + ')');
+if (!ONLY) ok(contrast.length >= 40, 'props you can use measured at the places (' + contrast.length + ')');
 // thresholds between the build before this pass (wheel 40 %, order-slip table 30 %, harbourmaster's desk 35 %) and after
 const wheel = find('co_pottery', 'co_wheel'), slip = find('co_pottery', 'smalltable'), omi = find('sg_office', 'desk');
-ok(wheel && wheel.apart >= 0.45, 'the potter\'s wheel, its clay still damp, stands apart from the wood floor (' + pct(wheel) + ')');
-ok(slip && slip.apart >= 0.35, 'the order slip shows on the pottery\'s small table, which its scene reads from (' + pct(slip) + ')');
-ok(omi && omi.apart >= 0.4, 'the harbourmaster\'s desk shows its mountain of papers and three cold cups (' + pct(omi) + ')');
+if (!ONLY) ok(wheel && wheel.apart >= 0.45, 'the potter\'s wheel, its clay still damp, stands apart from the wood floor (' + pct(wheel) + ')');
+if (!ONLY) ok(slip && slip.apart >= 0.35, 'the order slip shows on the pottery\'s small table, which its scene reads from (' + pct(slip) + ')');
+if (!ONLY) ok(omi && omi.apart >= 0.4, 'the harbourmaster\'s desk shows its mountain of papers and three cold cups (' + pct(omi) + ')');
 
 if (REPORT) fs.writeFileSync(REPORT, JSON.stringify(report, null, 1));
 console.log(`\n${pass} passed, ${fail} failed`);
