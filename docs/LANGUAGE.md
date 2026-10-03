@@ -14,6 +14,7 @@ Plain scripts on the global `RB`; no DOM access at load; all work in node `vm`
 | `70_lookup_ext.js` | (extends `RB.jp.lookup`) | number + counter compounds, names; exposes `RB.jp.counters`, `RB.jp.numerals` |
 | `75_kanjiread.js` | `RB.kanjiRead` | generated (`tools/kanjiread.mjs`): each kanji's readings from the game's furigana and lexicon |
 | `80_kanjiinfo.js` | `RB.kanjiInfo` | per-kanji readings, words, theme, uses, search, "met" — the data of the pad's chart |
+| `85_dialect.js` | `RB.dialect` | Suzu's optional Kansai-ben: the Kansai tables (`src/content/dialect/`), the display-time swap, the separate Kansai lexicon and word help for Kansai forms (docs/dialect/suzu_kansai.md) |
 
 ## Japanese line markup
 

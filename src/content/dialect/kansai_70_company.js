@@ -75,7 +75,7 @@ RB.dialect.add('kansai', `
 > {了解|りょうかい} 。 {打|う}ち{合|あ}わせ は {延期|えんき} 。 {延期|えんき} の {料金|りょうきん} は {取|と}らへん で 。 || Understood — meeting postponed. No postponement fee, mind.
 @ company/40_reflect:119 [co.reflect_travel_suzu]
 = {一座|いちざ} で は 、 {旅|たび} の {予定|よてい} は {帳簿|ちょうぼ} が {決|き}めてた の 。 {宿代|やどだい} が {払|はら}える {町|まち} まで 、 {何日|なんにち} で {着|つ}く か 。 || In the troupe, the ledger set the schedule. How many days to the next town we could afford to sleep in.
-> {一座|いちざ} で は 、 {旅|たび} の {予定|よてい} は {帳簿|ちょうぼ} が {決|き}めてて ん 。 {宿代|やどだい} が {払|はら}える {町|まち} まで 、 {何日|なんにち} で {着|つ}く か 。 || In the troupe, the ledger set the schedule. How many days to the next town we could afford to sleep in.
+> {一座|いちざ} で は 、 {旅|たび} の {予定|よてい} は {帳簿|ちょうぼ} が {決|き}めててん 。 {宿代|やどだい} が {払|はら}える {町|まち} まで 、 {何日|なんにち} で {着|つ}く か 。 || In the troupe, the ledger set the schedule. How many days to the next town we could afford to sleep in.
 @ company/40_reflect:120 [co.reflect_travel_suzu]
 = あなた と の {旅|たび} は 、 {帳簿|ちょうぼ} じゃ なくて {人|ひと} が {決|き}めてる 。 {困|こま}ってる {人|ひと} が いたら 、 {予定|よてい} は {全部|ぜんぶ} {書|か}き{直|なお}し 。 || Travelling with you, people set it, not a ledger. Someone in trouble, and the whole schedule gets rewritten.
 > あんた と の {旅|たび} は 、 {帳簿|ちょうぼ} や なくて {人|ひと} が {決|き}めてる 。 {困|こま}ってる {人|ひと} が おったら 、 {予定|よてい} は {全部|ぜんぶ} {書|か}き{直|なお}し や 。 || Travelling with you, it's folks who set it, not a ledger. Somebody in trouble, and the whole schedule gets rewritten.

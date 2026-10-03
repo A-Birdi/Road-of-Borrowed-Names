@@ -99,7 +99,7 @@ RB.dialect.add('kansai', `
 > …… ヒロ の お{母|かあ}さん も 、 この {中|なか} に おった ん や な 。 {返|かえ}って よかった 。 {痛|いた}くて も 。 || …Hiro's mother was in here too. I'm glad she went back. Even if it hurts.
 @ ch6/scenes-archive:361 [sa.shelf_tae]
 = {誰|だれ} が {鳴|な}らした か 、 {書|か}いて ない 。 {知|し}らない まま 、 {三十年|さんじゅうねん} 。 || It doesn't say who rang it. Thirty years without knowing.
-> {誰|だれ} が {鳴|な}らした か 、 {書|か}いて へん 。 {知|し}らん まま 、 {三十年|さんじゅうねん} 。 || It doesn't say who rang it. Thirty years without knowing.
+> {誰|だれ} が {鳴|な}らした か 、 {書|か}いてへん 。 {知|し}らん まま 、 {三十年|さんじゅうねん} 。 || It doesn't say who rang it. Thirty years without knowing.
 @ ch6/scenes-archive:373 [sa.shelf_grief2]
 = {寝坊|ねぼう} ！ …… ごめん 。 でも 、 これ は {返|かえ}して あげて ほしい な 。 {十年|じゅうねん} {後|ご} に は {笑|わら}い{話|ばなし} に なる やつ だ よ 。 || Overslept! …Sorry. But I'd like this one given back. In ten years it'll be a funny story.
 > {寝坊|ねぼう} ！ …… ごめん 。 せやけど 、 これ は {返|かえ}したって ほしい な 。 {十年|じゅうねん} {後|ご} に は {笑|わら}い{話|ばなし} に なる やつ や で 。 || Overslept! …Sorry. But I'd like this one given back. Ten years on, it'll be a funny story.

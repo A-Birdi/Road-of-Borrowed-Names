@@ -186,7 +186,7 @@ RB.dialect.add('kansai', `
 > ウシオ 。 {聞|き}いた こと ある わ 。 レン の {師匠|ししょう} やんな 。 {似顔絵|にがおえ} って 、 {残|のこ}された {方|ほう} に は {重|おも}い {荷物|にもつ} や で 。 {渡|わた}し{方|かた} {間違|まちが}えへん よう に せな あかん 。 || Ushio. I've heard that name. Ren's teacher, right? A portrait's a heavy thing to hand the one left behind. We'll have to be careful how we give it.
 @ ch4/dungeon:191 [sb.charts_stair_locked]
 = {鍵|かぎ} が {要|い}る 。 {机|つくえ} の {上|うえ} の {書|か}き{置|お}き に 、 {何|なに} か {書|か}いて ない ？ || We need a key. Doesn't the note on the desk say something?
-> {鍵|かぎ} が {要|い}る わ 。 {机|つくえ} の {上|うえ} の {書|か}き{置|お}き に 、 {何|なに} か {書|か}いて へん ？ || We need a key. Doesn't the note on the desk say something?
+> {鍵|かぎ} が {要|い}る わ 。 {机|つくえ} の {上|うえ} の {書|か}き{置|お}き に 、 {何|なに} か {書|か}いてへん ？ || We need a key. Doesn't the note on the desk say something?
 @ ch4/dungeon:200 [sb.gallery_enter]
 = {天井|てんじょう} {裏|うら} の {主役|しゅやく} が 、 {出番|でばん} を {待|ま}ってる ね 。 || Whoever's in the rafters is waiting for their cue.
 > {天井|てんじょう} {裏|うら} の {主役|しゅやく} が 、 {出番|でばん} {待|ま}ってる な 。 || Whoever's up in the rafters is waiting on their cue.

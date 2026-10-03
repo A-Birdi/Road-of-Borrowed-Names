@@ -297,13 +297,13 @@ RB.dialect.add('kansai', `
 > レン まで 。 {道|みち} に {迷|まよ}わんと {来|こ}られた ん ？ {奇跡|きせき} や な 。 || Even Ren. You made it here without getting lost? It's a miracle.
 @ ch3/suzu:78 [co.suzu_c_square]
 = {呼|よ}ばれて ない けど 、 {呼|よ}ばれた こと に した の 。 サヨ さん に {手紙|てがみ} を {出|だ}したら 、 {舞台|ぶたい} を {一枠|ひとわく} くれた わ 。 || Nobody invited me, so I invited myself. I wrote to Sayo and she gave me a slot on the stage.
-> {呼|よ}ばれて へん けど 、 {呼|よ}ばれた こと に した ん や 。 サヨ さん に {手紙|てがみ} {出|だ}したら 、 {舞台|ぶたい} を {一枠|ひとわく} くれはった わ 。 || Nobody invited me, so I invited myself. Wrote to Sayo and she gave me a slot on the stage.
+> {呼|よ}ばれてへん けど 、 {呼|よ}ばれた こと に した ん や 。 サヨ さん に {手紙|てがみ} {出|だ}したら 、 {舞台|ぶたい} を {一枠|ひとわく} くれはった わ 。 || Nobody invited me, so I invited myself. Wrote to Sayo and she gave me a slot on the stage.
 @ ch3/suzu:79 [co.suzu_c_square]
 = …… ねえ 、 ガラス {職人|しょくにん} の ヒロ って {人|ひと} 、 どこ で {働|はたら}いてる か {知|し}ってる ？ || …Say, do you know where a glassblower called Hiro works?
 > …… なあ 、 ガラス {職人|しょくにん} の ヒロ って {人|ひと} 、 どこ で {働|はたら}いてはる か {知|し}ってる ？ || …Say, you know where a glassblower called Hiro works?
 @ ch3/suzu:81 [co.suzu_c_square]
 = {知|し}り{合|あ}い …… じゃ ない わ 。 {向|む}こう は {私|わたし} を {覚|おぼ}えて ない もの 。 || Know him… no. He wouldn't remember me.
-> {知|し}り{合|あ}い …… ちゃう わ 。 {向|む}こう は うち の こと {覚|おぼ}えて へん もん 。 || Know him… no. He wouldn't remember me.
+> {知|し}り{合|あ}い …… ちゃう わ 。 {向|む}こう は うち の こと {覚|おぼ}えてへん もん 。 || Know him… no. He wouldn't remember me.
 @ ch3/suzu:82 [co.suzu_c_square]
 = …… {夜|よる} は フサ さん の {宿|やど} に いる から 。 {暇|ひま} が あったら {来|き}て 。 {観客|かんきゃく} が {一人|ひとり} {欲|ほ}しい の 。 || …I'm staying at Fusa's inn. If you've a moment this evening, come by. I need an audience of one.
 > …… {夜|よる} は フサ さん の {宿|やど} に おる から 。 {暇|ひま} が あったら {来|き}て 。 {観客|かんきゃく} が {一人|ひとり} {欲|ほ}しい ねん 。 || …I'm at Fusa's inn. If you've got a moment this evening, come by. I need an audience of one.

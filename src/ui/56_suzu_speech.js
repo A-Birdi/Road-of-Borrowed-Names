@@ -21,8 +21,9 @@ RB.ui.suzuSpeech = (function () {
   // escaped text whose {漢字|かな} pieces show as ruby (every kanji with its reading)
   const ruby = (t) => esc(t).replace(/\{([^|}]+)\|([^}]+)\}/g, '<ruby lang="ja">$1<rt>$2</rt></ruby>');
   const decided = () => !!(RB.game.settings && RB.game.settings.suzuSpeech);
-  const EXPLAIN = 'Kansai-ben ({関西弁|かんさいべん}) is the regional dialect of Osaka and Kyoto: the same Japanese, with its own endings and words — や for だ, 〜へん for 〜ない, ほんま for "really". Word help explains every Kansai word and form; your exercises and answers always stay in standard Japanese.';
-  const BACK = 'You can switch back any time if it is hard to follow: Settings › Reading & Language, or Company › Suzu.';
+  // one sentence on what it is; the small print says what stays the same and how to switch back
+  const EXPLAIN = 'Kansai-ben ({関西弁|かんさいべん}) is the regional dialect of Osaka and Kyoto: the same Japanese with its own endings and words (や for だ, 〜へん for 〜ない, ほんま for "really"), each one explained in word help.';
+  const BACK = 'Your exercises and answers always stay in standard Japanese, and you can switch back any time if it is hard to follow: Settings › Reading & Language, or Company › Suzu.';
   // one of her lines, both ways (the sample in the choice)
   const SAMPLE = { jp: '{開幕|かいまく} ！ …… ふふ 、 {一度|いちど} {言|い}って みたかった の 。', en: 'Curtain up! …Heh. I always wanted to say that.' };
   function sample(v) {

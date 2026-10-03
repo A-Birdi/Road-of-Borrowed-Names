@@ -13,6 +13,7 @@
 //      line in the history, Settings — and the in-world row (ask her) does too. A shiritori
 //      invitation, a scene line and her Company thought are re-voiced; the campaign save is the
 //      same before and after (only the settings record changes); the choice survives a reload.
+//   C. a phone (390×844): the Company control and the choice sheet fit; a tap switches.
 // (She has no Japanese battle remarks: battle effects are English-only, so there is none to swap.)
 // Usage: node tests/e2e/dialect_kansai.mjs
 import { serve, launch, page } from './lib.mjs';
@@ -329,6 +330,37 @@ const sceneLines = (p, id, who) => p.evaluate(([id, who]) => RB.content.scenes[i
   assert(await p.evaluate(() => RB.game.settings.suzuSpeech === 'standard' && window.__txt('.co-thought').length > 0), 'turned off on the Company page: standard again');
   assert(!errors.length, 'no page errors: ' + errors.join(' | '));
   assert(!requests.length, 'no network requests: ' + requests.join(' | '));
+  await ctx.close();
+}
+
+// =========================================================================================== C. a phone (390×844)
+{
+  const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
+  const { p, errors } = await page(b, url, { context: ctx });
+  await helpers(p);
+  await p.evaluate(() => window.__start('co.inn', 6, 8, { comp: 'suzu', flags: { departed: true, ch1_done: true } }));
+  await p.evaluate(() => RB.ui.menu.open('company'));
+  await p.waitForSelector('.co-speech');
+  await p.evaluate(() => document.querySelector('.co-speech').scrollIntoView());
+  await wait(p, 250);
+  const ph = await p.evaluate(() => ({
+    btns: [...document.querySelectorAll('[data-suzu-speech-set]')].map((x) => { const r = x.getBoundingClientRect(); return { h: Math.round(r.height), l: Math.round(r.left), r: Math.round(r.right) }; }),
+    over: document.documentElement.scrollWidth > innerWidth + 1,
+  }));
+  assert(ph.btns.length === 2 && ph.btns.every((x) => x.h >= 44 && x.l >= 0 && x.r <= 390), 'phone: the Company control fits the width, each button at least 44 px (' + JSON.stringify(ph.btns) + ')');
+  assert(!ph.over, 'phone: no horizontal scrolling');
+  await p.locator('[data-suzu-speech-set="kansai"]').tap();
+  await wait(p, 250);
+  assert(await p.evaluate(() => RB.game.settings.suzuSpeech === 'kansai'), 'phone: a tap switches to Kansai-ben');
+  await p.evaluate(() => { RB.ui.menu.close(); RB.ui.suzuSpeech.ask({ reason: 'existing' }); });
+  await p.waitForSelector('.speech-sheet');
+  await wait(p, 200);
+  const sh = await p.evaluate(() => { const r = document.querySelector('.speech-sheet').getBoundingClientRect(); return { l: Math.round(r.left), r: Math.round(r.right), opts: [...document.querySelectorAll('.speech-opt')].map((o) => Math.round(o.getBoundingClientRect().height)) }; });
+  assert(sh.l >= 0 && sh.r <= 390 && sh.opts.every((h) => h >= 44), 'phone: the choice sheet fits the screen (' + JSON.stringify(sh) + ')');
+  await p.keyboard.press('Escape');
+  await wait(p, 250);
+  assert(await p.evaluate(() => !document.querySelector('.speech-sheet') && RB.game.settings.suzuSpeech === 'kansai'), 'phone: Escape closes the sheet and keeps the current choice');
+  assert(!errors.length, 'no page errors: ' + errors.join(' | '));
   await ctx.close();
 }
 
