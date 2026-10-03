@@ -595,14 +595,15 @@ RB.audio = RB.audio || {};
   S('snowbell', {
     title: 'Snowbell',
     kind: 'area',
+    chapter: 4,
     motifs: ['road'],
-    notes: 'Mountain-hamlet waltz in F (80): music-box celesta, harp, a faint shake of small bells every few bars. B is the family-correspondence strain in D minor on flute; C carries the road motif in 3/4 like footprints in fresh snow.',
+    notes: 'Mountain-hamlet waltz in F (80), re-orchestrated for Chapter 4 — same melody, form and motifs: the music-box line now on koto over a second, lower koto, the small bells shaking every few bars and a rin now and then. B is the family-correspondence strain in D minor on shakuhachi; C carries the road motif in 3/4 like footprints in fresh snow.',
     key: 'F', bpm: 80, meter: 3,
     tracks: {
-      lead: { i: 'celesta', o: 5, v: 0.65, rv: 0.45 },
-      fl: { i: 'flute', o: 5, v: 0.7, rv: 0.4 },
-      arp: { i: 'harp', o: 4, pat: true, v: 0.45, rv: 0.4, pan: -0.25 },
-      pad: { i: 'pad', o: 4, hold: true, fold: 'all', win: -5, v: 0.45, rv: 0.45 },
+      lead: { i: 'koto', o: 5, v: 0.5, rv: 0.45 },
+      fl: { i: 'shakuhachi', o: 4, v: 0.66, rv: 0.4 },
+      arp: { i: 'koto', o: 4, pat: true, v: 0.26, rv: 0.4, pan: -0.25 },
+      pad: { i: 'pad', o: 4, hold: true, fold: 'all', win: -5, v: 0.42, rv: 0.45 },
       bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.5 },
       bells: { perc: true, v: 0.4, rv: 0.5, pan: 0.35 },
     },
@@ -612,7 +613,7 @@ RB.audio = RB.audio || {};
       A: { bars: 8, ch: SNOW_A_CH, lead: SNOW_A },
       B: { bars: 8, ch: SNOW_B_CH, fl: SNOW_B },
       A2: { bars: 8, ch: SNOW_A_CH, fl: SNOW_A, lead: SNOW_A_CM },
-      C: { bars: 8, ch: SNOW_C_CH, lead: SNOW_C, arp: "0 2 4 2 1' 2" },
+      C: { bars: 8, ch: SNOW_C_CH, lead: SNOW_C, arp: "0 2 4 2 1' 2", bells: 'j.....|......|i.....|......' },
       B2: { bars: 8, ch: SNOW_B_CH, lead: SNOW_B, dyn: 0.9 },
     },
     form: ['intro', 'A', 'B', 'A2', 'C', 'B2'],
@@ -628,14 +629,15 @@ RB.audio = RB.audio || {};
   S('observatory', {
     title: 'The Observatory',
     kind: 'area',
+    chapter: 4,
     motifs: ['road'],
-    notes: 'C lydian at 72: wheeling celesta sixteenths through a dotted echo, the tick of the old mechanism, flute and glass above. B lifts the road motif into lydian — the view from the top of the world — with a slow glass line falling beneath it on the repeat.',
+    notes: 'C lydian at 72, re-orchestrated for Chapter 4 — same melody, form and motifs: wheeling koto sixteenths through a dotted echo, the tick of the old mechanism, shakuhachi and glass above. B lifts the road motif into lydian on koto — the view from the top of the world — over a held shō; on the repeat a slow glass line falls beneath it.',
     key: 'C', mode: 'lydian', bpm: 72,
     tracks: {
-      lead: { i: 'flute', o: 5, v: 0.75, rv: 0.4 },
+      lead: { i: 'shakuhachi', o: 5, v: 0.66, rv: 0.4 },
       glass: { i: 'glass', o: 5, v: 0.8, rv: 0.5, pan: -0.15 },
-      cel: { i: 'celesta', o: 5, v: 0.55, rv: 0.45, pan: 0.15 },
-      arp: { i: 'celesta', o: 4, pat: true, u: 0.25, v: 0.3, rv: 0.35, dl: 0.35, pan: 0.3 },
+      cel: { i: 'koto', o: 5, v: 0.48, rv: 0.45, pan: 0.15 },
+      arp: { i: 'koto', o: 4, pat: true, u: 0.25, v: 0.22, rv: 0.35, dl: 0.35, pan: 0.3 },
       pad: { i: 'pad', o: 4, hold: true, fold: 'all', win: -5, v: 0.45, rv: 0.5 },
       bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.45 },
       clock: { perc: true, v: 0.35, pan: -0.35 },
@@ -648,7 +650,7 @@ RB.audio = RB.audio || {};
       A2: { bars: 8, ch: OBS_A_CH, glass: OBS_A },
       B2: { bars: 8, ch: OBS_B_CH, lead: OBS_B, glass: OBS_B_LINE },
     },
-    form: ['A', 'B', 'A2', 'B2'],
+    form: ['A', { s: 'B', i: { pad: 'sho' }, o: { pad: 1 } }, 'A2', { s: 'B2', i: { pad: 'sho' }, o: { pad: 1 } }],
   });
 
   // ============================================================ QUIET ROAD
@@ -1173,7 +1175,7 @@ RB.audio = RB.audio || {};
   Object.assign(_.mat, {
     REED_A, REED_A_CH, SALT_A, SALT_A_CH, SALT_B, SALT_B_CH, SALT_C, SALT_C_CH,
     CIN_A, CIN_A_CH, CIN_A_CM, CIN_B, CIN_B_CH, CIN_C, CIN_C_CH, KILN_A, KILN_A_CH, KILN_B, KILN_B_CH,
-    SNOW_A, SNOW_A_CH, SNOW_B, SNOW_B_CH, OBS_A, OBS_A_CH, OBS_B, OBS_B_CH, QR_B1, QR_B2, QR_B_CH,
+    SNOW_A, SNOW_A_CH, SNOW_B, SNOW_B_CH, SNOW_C, SNOW_C_CH, OBS_A, OBS_A_CH, OBS_B, OBS_B_CH, QR_B1, QR_B2, QR_B_CH,
     LF_A, LF_A_CH, BT_A, BT_A_CH, SA_A, SA_A_CH, SA_B, SA_B_CH, FIN_A, FIN_A_CH,
     BOSS_HUSH, HUSH_A, HUSH_A_CH, SOR_A, SOR_A_CH, WON_A, WON_A_CH,
   });

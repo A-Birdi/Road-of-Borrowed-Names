@@ -11,7 +11,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- the mountain road (link to Cinder Orchard and Lanternfall) -------------------------
   C.maps['sb.road'] = {
-    name: T('The Snowbell Road', '{雪鈴|ゆきすず} の {坂道|さかみち}'), region: 'snowbell', music: 'road',
+    name: T('The Snowbell Road', '{雪鈴|ゆきすず} の {坂道|さかみち}'), region: 'snowbell', music: 'sb_road',
     ambient: { weather: 'snow', tint: 'rgba(200,220,255,0.06)' },
     terrain: K.build(36, 22, '*', (k) => {
       k.ragged('top', 'P', 4, 41).ragged('bottom', 'P', 3, 42).ragged('left', 'P', 2, 43);
@@ -51,7 +51,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- Snowbell hamlet ------------------------------------------------------------------------
   C.maps['sb.hamlet'] = {
     name: T('Snowbell', '{雪鈴|ゆきすず}'), region: 'snowbell', place: 'snowbell', travel: 'snowbell',
-    music: [{ if: 'sb_evening', id: 'wonder' }, { id: 'snowbell' }],
+    music: [{ if: 'sb_evening', id: 'sb_lamp' }, { id: 'snowbell' }],
     ambient: {
       weather: 'snow',
       get dark() { return night() ? 0.45 : storm() ? 0.3 : 0; },
@@ -224,7 +224,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
   // Upstairs: the travellers' room.
   C.maps['sb.inn_room'] = {
-    name: T('Upstairs at Yukimiya', '{雪見屋|ゆきみや} の {二階|にかい}'), region: 'snowbell', music: 'quiet_road', noTravel: true,
+    name: T('Upstairs at Yukimiya', '{雪見屋|ゆきみや} の {二階|にかい}'), region: 'snowbell', music: 'sb_snowlight', noTravel: true,
     ambient: { get dark() { return storm() ? 0.5 : 0.15; }, playerLight: 30 },
     terrain: K.build(9, 8, '#', (k) => { k.rect(1, 2, 7, 5, 'm'); k.set(7, 6, '_'); }),
     props: [

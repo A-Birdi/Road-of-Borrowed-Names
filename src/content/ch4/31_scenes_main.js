@@ -173,7 +173,7 @@ RB.script.add(`
 !music -
 !sfx wind
 !warp sb.inn 8 9 up
-!music inn
+!music sb_blizzard
 narr: {夕方|ゆうがた} に は 、 {雪見屋|ゆきみや} の {囲炉裏|いろり} の まわり に 、 {村|むら} の {人|ひと} が ほとんど {集|あつ}まって いた 。 {外|そと} で は 、 {風|かぜ} が {戸|と} を {叩|たた}いて いる 。 || By evening nearly everyone in the hamlet has gathered round Yukimiya's hearth. Outside, the wind is hammering at the door.
 ?(sb_rang_storm) fuki[smile]: {吹雪|ふぶき} の {鐘|かね} を {鳴|な}らした の は 、 あんた かい 。 {若|わか}い {腕|うで} の {音|おと} だった 。 …… {間|ま}に{合|あ}った よ 。 {全員|ぜんいん} 。 || Was it you who rang the storm bell? It had the sound of young arms. …Everyone made it. Every last one.
 !quest sb_lamp 5

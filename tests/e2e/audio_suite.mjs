@@ -1,18 +1,23 @@
 // Runs the audio-related browser checks one after another against the built
 // index.html and prints a summary (zone music, instruments, the audio engine,
 // and the battle/story tests the music wiring touches).
-// Usage: node tools/build.mjs && node tests/e2e/audio_suite.mjs [--story]
+// Usage: node tools/build.mjs && node tests/e2e/audio_suite.mjs [--story] [--quick] [file.mjs:arg:arg …]
 //   --story  also runs story_ch1.mjs F mio and story_ch3.mjs E nao
+//   --quick  only the audio scripts (zones, instruments, audio.check)
+//   file.mjs:arg:arg  any further browser script, e.g. story_ch4.mjs:I:ren:go
 import { spawn } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const story = process.argv.includes('--story');
+const quick = process.argv.includes('--quick');
+const extra = process.argv.slice(2).filter((a) => a.includes('.mjs')).map((a) => a.split(':'));
 const suites = [
   ['audio_zones.mjs'], ['audio_instruments.mjs'], ['audio.check.mjs'],
-  ['combat_ui.mjs'], ['battle_presentation.mjs'],
+  ...(quick ? [] : [['combat_ui.mjs'], ['battle_presentation.mjs']]),
   ...(story ? [['story_ch1.mjs', 'F', 'mio'], ['story_ch3.mjs', 'E', 'nao']] : []),
+  ...extra,
 ];
 const results = [];
 for (const [file, ...args] of suites) {

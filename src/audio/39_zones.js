@@ -41,8 +41,9 @@ RB.audio = RB.audio || {};
     },
     snowbell: {
       chapter: 4, regions: ['snowbell'], prefixes: ['sb.'],
-      battle: 'battle', boss: 'boss', route: 'road',
-      songs: ['snowbell', 'observatory', 'road'],
+      battle: 'battle_snowbell', boss: 'boss_snowbell', route: 'sb_road',
+      songs: ['sb_road', 'snowbell', 'observatory'],
+      cues: ['sb_blizzard', 'sb_snowlight', 'sb_lamp'],
     },
     lanternfall: {
       chapter: 5, regions: ['lanternfall'], prefixes: ['lf.'],

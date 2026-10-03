@@ -8,7 +8,7 @@ import { load } from '../lib/load.mjs';
 import { intensity, fmtIntensity } from '../lib/intensity.mjs';
 
 // zones that have their own score so far (chapter by chapter)
-const SCORED = ['saltglass', 'cinder'];
+const SCORED = ['saltglass', 'cinder', 'snowbell'];
 
 export default async (t) => {
   globalThis.__RB_TEST__ = true;

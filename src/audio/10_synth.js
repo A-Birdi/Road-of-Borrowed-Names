@@ -591,22 +591,32 @@ RB.audio = RB.audio || {};
   // plectrum (bachi) clicks on string and skin, and the skin-covered body
   // answers with a short low "tsun". The string starts sharp — the tension
   // of the strike — and drops into tune.
+  // saw + mix × triangle as one periodic wave (the biwa's rounder string),
+  // not normalised, so it matches the two oscillators it replaces
+  function luteWave(g, mix) {
+    const key = 'luteWave' + mix;
+    if (g[key]) return g[key];
+    const H = 48;
+    const re = new Float32Array(H);
+    const im = new Float32Array(H);
+    for (let n = 1; n < H; n++) {
+      im[n] = (2 / (Math.PI * n)) * (n % 2 ? 1 : -1);
+      if (n % 2) im[n] += mix * (8 / (Math.PI * Math.PI * n * n)) * ((n - 1) / 2 % 2 ? -1 : 1);
+    }
+    try {
+      g[key] = g.ctx.createPeriodicWave(re, im, { disableNormalization: true });
+    } catch (e) {
+      g[key] = g.ctx.createPeriodicWave(re, im);
+    }
+    return g[key];
+  }
   function lute(g, out, t, f, d, v, o) {
     const c = g.ctx;
     const o1 = osc(c, 'sawtooth', f, t);
+    if (o.mix2) o1.setPeriodicWave(luteWave(g, o.mix2));
     const srcs = [o1];
     const nodes = [o1];
-    let src = o1;
-    if (o.mix2) {
-      const o2 = osc(c, o.wave2, f, t);
-      const m2 = amp(c, o.mix2);
-      src = amp(c, 1);
-      o1.connect(src);
-      o2.connect(m2);
-      m2.connect(src);
-      srcs.push(o2);
-      nodes.push(o2, m2, src);
-    }
+    const src = o1;
     glide(srcs, f, t, o.drop, 0, o.dropT);
     const off = t + Math.max(d, 0.04);
     const dec = clamp(o.dec - f / 2600, o.dec * 0.35, o.dec);
@@ -656,7 +666,7 @@ RB.audio = RB.audio || {};
   // Biwa: lower, rounder strings, a heavier bachi on the body, a longer and
   // stronger buzz (the biwa's frets are built for sawari).
   I.biwa = (g, o, t, f, d, v) => lute(g, o, t, f, d, v, {
-    wave2: 'triangle', mix2: 0.5, drop: 1.032, dropT: 0.07, q: 1, strike: 0.55, settle: 3.5, floor: 500, close: 0.05,
+    mix2: 0.5, drop: 1.032, dropT: 0.07, q: 1, strike: 0.55, settle: 3.5, floor: 500, close: 0.05,
     dec: 0.7, pk: 0.24, drive: 2.4, buzz: 0.5, buzzQ: 0.9, buzzF: 1800, buzzLen: 2.8,
     click: 0.28, clickF: 1200, clickT: 0.012, body: 140, thump: 0.16,
   });
@@ -667,31 +677,41 @@ RB.audio = RB.audio || {};
   // (tsume) and a click. `press` > 0 is ato-oshi (oshide): the string is
   // plucked a whole tone low and pressed up to the written note behind the
   // bridge.
+  // the koto's sustained core: a triangle with its octave partial, as one
+  // periodic wave (one oscillator per string instead of two)
+  function kotoWave(g) {
+    if (g.kotoWave) return g.kotoWave;
+    const re = new Float32Array(10);
+    const im = new Float32Array(10);
+    im[1] = 1;
+    im[2] = 0.22;
+    for (let k = 3; k < 10; k += 2) im[k] = (k % 4 === 1 ? 1 : -1) / (k * k);
+    g.kotoWave = g.ctx.createPeriodicWave(re, im);
+    return g.kotoWave;
+  }
   function koto(g, out, t, f, d, v, press) {
     const c = g.ctx;
-    const o1 = osc(c, 'triangle', f, t);
-    const o2 = osc(c, 'sine', f * 2, t);
-    const m2 = amp(c, 0.22);
+    const o1 = c.createOscillator();
+    o1.setPeriodicWave(kotoWave(g));
+    o1.frequency.setValueAtTime(f, t);
     const o3 = osc(c, 'sawtooth', f, t);
     const tg = osc(c, 'sine', f * 3.01, t);
-    if (press) glide([o1, o2, o3, tg], f, t, Math.pow(2, -press / 12), 0.06, 0.13);
-    else glide([o1, o2, o3, tg], f, t, 1.006, 0, 0.03);
+    if (press) glide([o1, o3, tg], f, t, Math.pow(2, -press / 12), 0.06, 0.13);
+    else glide([o1, o3, tg], f, t, 1.006, 0, 0.03);
     const ring = clamp(3.2 - f / 450, 0.9, 3.2);
     const off = t + Math.max(d, 0.05) + 0.25;
-    const a = plk(c, t, 0.27 * v, ring / 3, off, 0.15);
+    const a = plk(c, t, 0.31 * v, ring / 3, off, 0.15);
     const m3 = plk(c, t, 0.3 * v, 0.07);
     o1.connect(a);
-    o2.connect(m2);
-    m2.connect(a);
     a.connect(out);
     o3.connect(m3);
     m3.connect(out);
-    run(c, [o1, o2], [o1, o2, m2, a], t, Math.min(off + 0.65, t + ring * 2.4));
-    run(c, [o3], [o3, m3], t, t + 0.45);
+    run(c, [o1], [o1, a], t, Math.min(off + 0.65, t + ring * 2.4));
+    run(c, [o3], [o3, m3], t, t + 0.32);
     const tgg = plk(c, t, 0.12 * v, 0.08);
     tg.connect(tgg);
     tgg.connect(out);
-    run(c, [tg], [tg, tgg], t, t + 0.6);
+    run(c, [tg], [tg, tgg], t, t + 0.38);
     const n = noise(g);
     const ng = plk(c, t, 0.1 * v, 0.006);
     n.connect(ng);
