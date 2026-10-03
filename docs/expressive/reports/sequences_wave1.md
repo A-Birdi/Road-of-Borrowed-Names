@@ -22,7 +22,9 @@ browser), **stills** (images to look at, not assertions), **code review** (read,
 | `0746026` | evidence stills (54 WebP files) and their script |
 | `20354a0` | remapped keys in the regression test; the dev preview says on screen that it is synthetic (an optional visible `tag` on the standalone viewer) |
 | `85a48d0` | a browser test of the dev viewer (`tests/e2e/sequence_dev.mjs`) |
-| (this commit) | this report |
+| `eba10d9` | this report (first version) |
+| `5d012cc` | merge of the task branch at `ff4c450` (Chapters 1–2 staging, Harmony contract v3); no conflicts; `index.html` rebuilt |
+| (this commit) | this report: the runs on the merged build |
 
 ## What was built
 
@@ -121,6 +123,27 @@ Run on `0746026`, whose build is identical except for the dev viewer's tag and i
 - 20 enter/exit cycles: listeners 97 → 97, nodes 244 → 244, no player listener, timer, overlay, control row or
   cached layer left; 6 prologue views leave nothing; Return to title mid-sequence disposes everything.
 
+## Runs on the merged build (`5d012cc`: this work plus the task branch at `ff4c450`)
+
+The task branch had moved on (Chapters 1–2 staging, Harmony contract v3). It touched four of the files this
+work changes (`31_scenes_mill.js`, `21_scenes_main.js`, `24_scenes_hub.js`, `practice_b/30_compare.js`), but
+none of the three illustrated scenes: the merge had no conflicts and the sequence ops sit where they were.
+
+| Check | Kind | Result |
+|---|---|---|
+| `node tools/build.mjs` | build | 357 source files; the committed `index.html` is current |
+| `node tools/validate.mjs` | content validator | no errors |
+| `node tests/run-unit.mjs` | unit | 25,044 passed, 0 failed (includes the task branch's new `scene_manifest`, `conversation_continuity`, `practice_b` checks) |
+| `tests/e2e/sequence_manual.mjs` (full: 60 s idles, 20 cycles) | browser | **64 passed, 0 failed** (746 s; cycles: listeners 97 → 97, nodes 244 → 244) |
+| `tests/e2e/sequence_manual.mjs --quick` | browser | 64 passed, 0 failed |
+| `tests/e2e/staging_chapters.mjs` (every staged Ch1/Ch2 scene by branch; `rw.m1_boss` calls `rw.bridge_scene`, so the sequence runs inside it) | browser | 2,386 passed, 0 failed |
+| `tests/e2e/staging_wataru.mjs` | browser | 112 passed, 0 failed |
+| `tests/e2e/story_ch1.mjs F mio` | browser | PASS, 31 checks |
+| `tests/e2e/walk_round.mjs` | browser | all passed |
+| `tests/e2e/prologue.mjs` / `create.mjs` / `interludes.mjs` | browser | 100/0, 382/0, 76/0 |
+| `tests/e2e/sequence_dev.mjs` | browser | 9 passed, 0 failed |
+| `tests/e2e/quest_guide.mjs` / `company.mjs` | browser | all passed / all passed |
+
 ## The HX rows, honestly
 
 | Row | Status after this wave | Evidence |
@@ -175,7 +198,10 @@ Regenerate: `node tests/e2e/sequence_shots.mjs [--only ch1.bridge,prologue]`.
    are remappable; none collided with an existing default.
 4. A press during a new shot's dissolve (≈350 ms) only completes the dissolve. This is what keeps rapid clicks
    from skipping, but a fast reader may feel one press "eaten" at each shot change.
-5. `docs/expressive/scenes.json` was not regenerated (the unit tests pass without it).
+5. `docs/expressive/scenes.json` was not regenerated (the unit tests pass without it). On the task branch it
+   already classes `rw.bridge_scene` and `sg.omi_wataru` as "Illustrated sequence" (the latter's reason still
+   says "not yet drawn"); `sg.asahi_name` is still a heuristic "Performed overworld … part in the dark" and
+   could become "Illustrated sequence (faded passage filled)".
 6. The noren in `ch1.bridge` carries the same ring-and-dot lantern crest as the approved prologue room
    (`41b_prologue_room.js`): a mark, not a letter. Say if even that should go.
 7. `quest_guide.mjs` and `staging_wataru.mjs` rewrite committed stills when run (`docs/screenshots/quest_guide`,
