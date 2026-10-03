@@ -1712,3 +1712,19 @@ musical judgement is analysis.
   (the festival night and the village), at 1280×800 and 390×844.
 - **Not verified:** Firefox (the owner's browser); a real phone; a person's judgement of the art. The town below
   is crisp in places, and more haze or a cooler tint may read as farther away.
+
+## Settings in battle — the owner's request of 2026-10-03 (presentation-only sheet; no saving; Load and Return to title leave the battle)
+- **What:** a Settings button in the battle, plus the menu key (C), opens the folio's Settings in a battle mode.
+  - It offers speed and motion, audio, reading, display and battle display. The learning and rule choices are listed read-only until the encounter is over.
+  - The encounter pauses while it is open (`RB.battleSeq.pause`) and resumes where it stood.
+  - Every save route refuses while `inBattle()`.
+  - Load and Return to title ask first. The campaign change then abandons the battle whole (`RB.combat.abandon`, `live()`), so nothing of it is written to the next campaign.
+  - The audit is in docs/COMBAT_NOTES.md, "Settings in battle".
+- **The worker's runs** (Chromium, on 34ba9eb unless noted): unit 22,067/0; validator no errors.
+  - New `tests/e2e/battle_settings.mjs` (in the default suite): 10/10 at 1280×800 and 390×844, twice.
+  - The same test on the unfixed build 96b60fd: 0/10.
+  - A probe on 96b60fd: manual saves and autosaves were written mid-battle. A mid-boss load left the battle screen, its rules state, a running scene and the response layer over the loaded map.
+  - settings 13 ok, combat_small 9 ok.
+  - On 240d3d0: combat_ui 7/7, playtest_repairs 7/7, battle_overlap 96 ok, battle_presentation 13/13, ui 14/14, shift_load_regression 18/18 (file://), and 18/18 (http origin, on 34ba9eb).
+- **The lead's runs on the merged build b4a598e** (with interludes, travel, zone music, lighthouse and the Harmony art): unit 23,856/0; validator no errors; battle_settings 10/10; settings all ok; combat_ui 7/7; combat_small all ok; battle_overlap all ok; playtest_repairs 7/7; battle_presentation 13/13; shift_load_regression 18/18 (file://); harmony_art 39/39.
+- **Not verified:** Firefox; the "slot open in another tab, then Cancel" path (only the unreadable-slot path ran); the default suite as a whole on this build.
