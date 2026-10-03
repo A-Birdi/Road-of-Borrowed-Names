@@ -75500,7 +75500,9 @@ RB.battleIntents = (function () {
  *   resolves into its 'hold' gesture once), fades in place 560–780, and the layer is removed at zero —
  *   before every principal impact (the first result comes at ≥ 1,200 ms). Fast: 100 / 220 / 160 ms of wall
  *   time (RB.battleSeq.T.cutin). Reduced motion: a short fade in where it stands (no travel), the held
- *   drawing, the same smooth fade out. Instant, or the setting "Harmony portrait flourish" Off: nothing.
+ *   drawing, the same smooth fade out — with painted art (contract v3) two held poses instead of one: `peak`, then
+ *   `settle_b`, joined by one restrained cross-fade (RB.harmonyContract.REDUCED_MOTION: 100 presentation ms at the
+ *   middle of the hold), still no travel. Instant, or the setting "Harmony portrait flourish" Off: nothing.
  *   Hurried playback (×4) runs the same ramps faster. An older instance's callbacks can never touch a newer
  *   one (every path checks the token).
  *
@@ -75520,8 +75522,10 @@ RB.battleIntents = (function () {
  *   On resize or orientation change the same instance is placed again (no replay, nothing spent again); if
  *   no placement remains it fades out quickly and the stage action continues.
  *
- * Sizes come only from RB.harmonyArt (NATIVE, fitScale, the composed canvas's own width and height) and the
- * art's phase list is data (PHASES): the busts may be replaced by other art behind the same API.
+ * Sizes come only from RB.harmonyArt (NATIVE, fitScale, footprint, the composed canvas's own width and height) and
+ * the art's phase list is data (PHASES): the busts may be replaced by other art behind the same API. Painted art is
+ * scaled by its visible footprint (RB.harmonyArt.footprint: the union of the pairing's drawn pixels across its whole
+ * timeline), so the scale is fixed for the performance and the protected-region rules below apply unchanged.
  *
  * API
  *   RB.harmonyCutin.start(cue, atPt, rec) → token | null      (the sequencer only)
@@ -75581,8 +75585,24 @@ RB.harmonyCutin = (function () {
   // the drawings a composition can show over its life (the footprint is their union; prepare builds them all)
   function phaseList(comp, still) {
     const T = timelineOf(comp);
-    if (T) { const u = [...new Set(T.map((e) => e.phase))]; return still ? [T[T.length - 1].phase] : u; }
+    if (T) { const u = [...new Set(T.map((e) => e.phase))]; return still ? reducedStates(u) : u; }
     return still ? ['hold'] : phases();
+  }
+  // Reduced motion with a painted timeline: the held poses (contract v3: peak, then settle_b) that the timeline has;
+  // with only one of them, the last state alone.
+  function reducedStates(u) {
+    const RM = RB.harmonyContract && RB.harmonyContract.REDUCED_MOTION;
+    const st = RM ? RM.states.filter((x) => u.indexOf(x) >= 0) : [];
+    return st.length >= 2 ? st : [u[u.length - 1]];
+  }
+  // the cross-fade between them: { a, b, at, fade } in presentation ms from the start (null: a single held pose)
+  function reducedPlan(c) {
+    const RM = RB.harmonyContract && RB.harmonyContract.REDUCED_MOTION;
+    if (!c.reduce || !c.tl || !RM) return null;
+    const st = reducedStates([...new Set(c.tl.map((e) => e.phase))]);
+    if (st.length < 2) return null;
+    const segAt = { in: 0, hold: c.d.in, out: c.d.in + c.d.hold }, segLen = { in: c.d.in, hold: c.d.hold, out: c.d.out };
+    return { a: st[0], b: st[1], at: segAt[RM.at.seg] + segLen[RM.at.seg] * RM.at.from, fade: Math.min(120, RM.crossFade) };
   }
   const holdPhase = (comp) => { const T = timelineOf(comp); return T ? T[T.length - 1].phase : 'hold'; };
 
@@ -75688,7 +75708,10 @@ RB.harmonyCutin = (function () {
     const N = A().NATIVE, still = !!o.still;
     const faceOf = (spec, s) => { const c = A().compose(Object.assign({}, spec, { phase: holdPhase(spec.comp) })); return Math.min(...c.faces.map((f) => f.h)) * s; };
     const base = { comp: o.comp, look: o.look, still };
-    const sStd = A().fitScale(vw, vh, 'standard'), sCmp = A().fitScale(vw, vh, 'compact');
+    // painted art is fitted on its visible footprint across the whole performance (null for the code busts: their
+    // canvas is their footprint, as before)
+    const foot = (v) => { try { return A().footprint ? A().footprint({ comp: o.comp, look: o.look, variant: v }) : null; } catch (e) { return null; } };
+    const sStd = A().fitScale(vw, vh, 'standard', undefined, foot('standard')), sCmp = A().fitScale(vw, vh, 'compact', undefined, foot('compact'));
     const std = [], cmp = [];
     if (sStd > 0) { std.push({ variant: 'standard', scale: sStd, fit: 'standard', at: 'mid' }); std.push({ variant: 'standard', scale: sStd, fit: 'standard-moved', at: 'scan' }); }
     if (sCmp > 0) {
@@ -75704,7 +75727,7 @@ RB.harmonyCutin = (function () {
       const spec = Object.assign({}, base, { variant: st.variant, backing: st.backing !== false, fx: st.fx !== false });
       const { sp, comp } = spansOf(spec);
       const s = st.scale, b = comp.bounds;
-      const faceH = Math.min(...comp.faces.map((f) => f.h)) * s;
+      const faceH = Math.min(...comp.faces.map((f) => f.h)) * s, faceW = Math.min(...comp.faces.map((f) => f.w)) * s;
       if (faceH < 24) { tried.push({ fit: st.fit, scale: s, why: 'faces too small' }); continue; }
       const x = 0, w = comp.w * s, h = comp.h * s;
       if (x + (b.x + b.w) * s > vw) { tried.push({ fit: st.fit, scale: s, why: 'too wide' }); continue; }
@@ -75722,7 +75745,7 @@ RB.harmonyCutin = (function () {
       for (const y of cand) {
         const hit = hits(sp, x, y, s, rects);
         if (hit) { blocked = blocked || hit; continue; }
-        return { ok: true, variant: st.variant, scale: s, x, y, w, h, fit: st.fit, backing: spec.backing, fx: spec.fx, faceH, footprint: { x: x + b.x * s, y: y + b.y * s, w: b.w * s, h: b.h * s }, view: { w: vw, h: vh }, tried, rects: rects.map((r) => r.id) };
+        return { ok: true, variant: st.variant, scale: s, x, y, w, h, fit: st.fit, backing: spec.backing, fx: spec.fx, faceH, faceW, footprint: { x: x + b.x * s, y: y + b.y * s, w: b.w * s, h: b.h * s }, view: { w: vw, h: vh }, tried, rects: rects.map((r) => r.id) };
       }
       tried.push({ fit: st.fit, scale: s, why: 'overlaps ' + blocked });
     }
@@ -75764,11 +75787,12 @@ RB.harmonyCutin = (function () {
     const root = document.querySelector('.combat-ui');
     root.insertBefore(el, root.querySelector('.cb-banner'));
     N++;
-    cur = { n: N, tl: timelineOf(comp), state: 'inactive', action, comp, tech: cue.tech || comp, look, reduce, mode, d: { in: T.in, hold: T.hold, out: T.out }, t0: at, wall0: now(), el, pl, phase: null, opacity: 0, dx: 0, marks: [], trace: [], dirty: false, cut: null,
+    cur = { n: N, tl: timelineOf(comp), rm: null, mixQ: null, state: 'inactive', action, comp, tech: cue.tech || comp, look, reduce, mode, d: { in: T.in, hold: T.hold, out: T.out }, t0: at, wall0: now(), el, pl, phase: null, opacity: 0, dx: 0, marks: [], trace: [], dirty: false, cut: null,
       // with large text (or an overlay that scrolls) the layout may still reflow as the menus withdraw: the
       // portrait waits, unseen, until it has held still for a few frames (within its entrance), then takes its
       // place — or, if none is left, is not shown at all (never a flash over what then moves under it)
       settle: root.scrollHeight > root.clientHeight + 1 || ((RB.game.settings && RB.game.settings.textScale) || 1) > 1.25 ? { sig: null, n: 0 } : null };
+    cur.rm = reducedPlan(cur);
     mark(cur, 'inactive', at);
     S.started++; S.shown++;
     S.maxLive = Math.max(S.maxLive, document.querySelectorAll('.cb-cutin').length);
@@ -75797,16 +75821,47 @@ RB.harmonyCutin = (function () {
     g.clearRect(0, 0, comp.w, comp.h);
     g.drawImage(comp.cv, 0, 0);
     c.phase = ph;
+    c.mixQ = null;
     c.drawn = comp.key;
     layout(c);
+  }
+  // Reduced motion's cross-fade between two held poses (painted art): the one fading out at 1 − k, the one fading in
+  // at k, added ('lighter'), so a pixel both share keeps full opacity and one only either has fades with it. Drawn
+  // only when k moves on by a sixteenth.
+  function drawMix(c, mx) {
+    const q = Math.round(mx.k * 16) / 16;
+    if (c.mixQ === q && c.phase === mx.ph) return;
+    const spec = (ph) => ({ comp: c.comp, look: c.look, variant: c.pl.variant, phase: ph, still: false, backing: c.pl.backing, fx: c.pl.fx });
+    const ca = A().compose(spec(mx.a)), cb = A().compose(spec(mx.b));
+    if (c.el.width !== ca.w || c.el.height !== ca.h) { c.el.width = ca.w; c.el.height = ca.h; }
+    const g = c.el.getContext('2d', { willReadFrequently: true });
+    g.imageSmoothingEnabled = false;
+    g.clearRect(0, 0, ca.w, ca.h);
+    g.save();
+    g.globalCompositeOperation = 'lighter';
+    g.globalAlpha = 1 - q; g.drawImage(ca.cv, 0, 0);
+    g.globalAlpha = q; g.drawImage(cb.cv, 0, 0);
+    g.restore();
+    c.phase = mx.ph; c.mixQ = q;
+    c.drawn = ca.key + '~' + cb.key;
+    layout(c);
+  }
+  // reduced motion with painted art: the cross-fade under way at elapsed el, or null
+  function mixAt(c, el) {
+    const R = c.rm !== undefined ? c.rm : reducedPlan(c);
+    if (!R) return null;
+    const k = (el - (R.at - R.fade / 2)) / R.fade;
+    if (k <= 0 || k >= 1) return null;
+    return { a: R.a, b: R.b, k, ph: k < 0.5 ? R.a : R.b };
   }
   // which drawing shows at elapsed el (presentation ms): the arrival, then (shortly after it has arrived) the
   // one gesture resolved into the hold; a 'flourish' drawing, where the art has one, between them
   function phaseAt(c, el) {
     const T = c.tl !== undefined ? c.tl : timelineOf(c.comp);
     if (T) {
-      // reduced motion: the last state only; otherwise the latest state whose start has been reached
-      if (c.reduce) return T[T.length - 1].phase;
+      // reduced motion: held poses (peak, then settle_b at the middle of the hold), else the last state only;
+      // otherwise the latest state whose start has been reached
+      if (c.reduce) { const R = c.rm !== undefined ? c.rm : reducedPlan(Object.assign({ tl: T }, c)); return R ? (el < R.at ? R.a : R.b) : T[T.length - 1].phase; }
       const pos = el < c.d.in ? Math.max(0, el) / c.d.in : el < c.d.in + c.d.hold ? 1 + (el - c.d.in) / c.d.hold : 2 + Math.min(1, (el - c.d.in - c.d.hold) / c.d.out);
       let ph = T[0].phase;
       for (const e of T) if (e.at <= pos + 1e-9) ph = e.phase;
@@ -75858,7 +75913,7 @@ RB.harmonyCutin = (function () {
       S.relaid++;
       let pl;
       try { pl = place({ comp: c.comp, look: c.look, still: c.reduce }); } catch (e) { pl = { ok: false }; }
-      if (pl.ok) { const redraw = pl.variant !== c.pl.variant || pl.backing !== c.pl.backing; c.pl = pl; if (redraw) c.phase = null; layout(c); }
+      if (pl.ok) { const redraw = pl.variant !== c.pl.variant || pl.backing !== c.pl.backing; c.pl = pl; if (redraw) { c.phase = null; c.mixQ = null; } layout(c); }
       else {
         // no safe place any more: a short fade where it stands — or, if what it must keep clear of has moved
         // under it (large text reflowing the overlay), gone at once: it never stays over protected content
@@ -75891,13 +75946,14 @@ RB.harmonyCutin = (function () {
     else if (el < total) { state = 'fading'; op = 1 - smooth((el - d.in - d.hold) / d.out); }
     else { dispose('done'); return; }
     if (state !== c.state) { c.state = state; mark(c, state, pt); }
-    const ph = phaseAt(c, el);
-    if (ph !== c.phase) draw(c, ph);
+    const ph = phaseAt(c, el), mx = c.reduce ? mixAt(c, el) : null;
+    if (mx) drawMix(c, mx);
+    else if (ph !== c.phase || c.mixQ != null) draw(c, ph);
     c.opacity = op; c.dx = dx;
     if (op > 0 && !c.seen) { c.seen = true; S.displayed++; }
     c.el.style.opacity = String(Math.round(op * 1000) / 1000);
     c.el.style.transform = dx ? 'translate(' + dx + 'px,0)' : '';
-    if (c.trace.length < TRACE_CAP) c.trace.push([Math.round(el * 10) / 10, state[0], Math.round(op * 1000) / 1000, dx, ph]);
+    if (c.trace.length < TRACE_CAP) c.trace.push([Math.round(el * 10) / 10, state[0], Math.round(op * 1000) / 1000, dx, ph, mx ? Math.round(mx.k * 1000) / 1000 : null]);
   }
   function dispose(why) {
     const c = cur;
@@ -75909,7 +75965,7 @@ RB.harmonyCutin = (function () {
     c.state = 'disposed';
     mark(c, 'disposed', pt);
     S.disposed++;
-    S.log.push({ n: c.n, action: c.action, comp: c.comp, why: why || 'done', displayed: !!c.seen, mode: c.mode, reduce: c.reduce, variant: c.pl.variant, scale: c.pl.scale, fit: c.pl.fit, footprint: roundRect(c.pl.footprint), view: c.pl.view, faceH: c.pl.faceH, opacityAtEnd: Math.round(c.opacity * 1000) / 1000, marks: c.marks, trace: c.trace, look: c.look });
+    S.log.push({ n: c.n, action: c.action, comp: c.comp, why: why || 'done', displayed: !!c.seen, mode: c.mode, reduce: c.reduce, variant: c.pl.variant, scale: c.pl.scale, fit: c.pl.fit, footprint: roundRect(c.pl.footprint), view: c.pl.view, faceH: c.pl.faceH, faceW: c.pl.faceW, reducedPlan: c.rm, opacityAtEnd: Math.round(c.opacity * 1000) / 1000, marks: c.marks, trace: c.trace, look: c.look });
     while (S.log.length > LOG_CAP) S.log.shift();
     return true;
   }
@@ -75973,7 +76029,7 @@ RB.harmonyCutin = (function () {
     RB.bus.on('campaign:changing', () => { prepTok++; dispose('campaign'); spanCache.clear(); });
   }
 
-  return { start, frame, dispose, enabled, place, protectedRects, state, stats, last, reset, prepare, SEP, phases, _: { spansOf, hits, readingOpen, phaseAt, phaseList, timelineOf } };
+  return { start, frame, dispose, enabled, place, protectedRects, state, stats, last, reset, prepare, SEP, phases, _: { spansOf, hits, readingOpen, phaseAt, phaseList, timelineOf, mixAt, reducedPlan } };
 })();
 
 
@@ -75992,7 +76048,9 @@ RB.harmonyCutin = (function () {
  *   RB.harmonyCutin.dev.play({ comp?, foes?, slip? }) → Promise: plays the companion's technique presentation
  *                                                   on the live stage (visual cues only; the menus withdraw as
  *                                                   for a committed exchange and come back after)
- *   RB.harmonyCutin.dev.panel()                     → the on-page controls (opened automatically on a dev page) */
+ *   RB.harmonyCutin.dev.panel()                     → the on-page controls (opened automatically on a dev page)
+ *   RB.harmonyCutin.dev.status()                    → the art's approval state as the panel shows it (contract v3:
+ *                                                   provisional, candidate, approved, verified; synthetic) */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.harmonyCutin = RB.harmonyCutin || {};
@@ -76061,6 +76119,14 @@ RB.harmonyCutin.dev = (function () {
     try { return await RB.battleSeq.run('dev', cues, { end: P.end, action, synthetic: true }); }
     finally { if (root) { root.classList.remove('cb-acting', 'cb-keep'); for (const e of surf) if (e) e.inert = false; } }
   }
+  // the art's approval state (RB.harmonyArt.approval(), contract v3): development only, never shown to players
+  function status() {
+    if (!allowed()) return null;
+    try {
+      const a = RB.harmonyArt.approval(), L = a.labels;
+      return 'Art status — player kit: ' + L[a.kit] + '; ' + Object.entries(a.pairings).map(([c, v]) => c + ': ' + L[v]).join('; ');
+    } catch (e) { return 'Art status: unknown'; }
+  }
   function panel() {
     if (!allowed() || typeof document === 'undefined') return null;
     let el = document.getElementById('harmony-dev');
@@ -76075,6 +76141,7 @@ RB.harmonyCutin.dev = (function () {
     document.head.appendChild(css);
     const sel = (id, label, o) => '<label for="hd-' + id + '">' + label + '</label><select id="hd-' + id + '">' + o.map((v) => '<option>' + v + '</option>').join('') + '</select>';
     el.innerHTML = '<button type="button" id="hd-toggle" aria-expanded="true" style="grid-column:1/-1">Harmony (dev) — hide</button><span class="lbl">' + LABEL + '</span>' +
+      '<span id="hd-status" style="grid-column:1/-1;color:#c8d4e0;font-size:12px"></span>' +
       sel('comp', 'Companion', ['suzu', 'ren', 'nao', 'mio']) + sel('foes', 'Creatures', ['1', '2', '3']) + sel('anim', 'Playback', ['normal', 'fast', 'instant']) +
       sel('motion', 'Motion', ['full', 'reduced']) + sel('flourish', 'Portrait', ['on', 'off']) + sel('controls', 'Controls', ['adaptive', 'keep']) +
       '<span>Viewport</span><span>' + ['1648x840', '1280x720', '768x1024', '390x844', '844x390'].map((v) => '<button type="button" data-vp="' + v + '">' + v + '</button>').join(' ') + '</span>' +
@@ -76088,8 +76155,10 @@ RB.harmonyCutin.dev = (function () {
     fold(window.innerHeight < 500);
     const settings = () => ({ comp: $('comp').value, foes: +$('foes').value, anim: $('anim').value, reduce: $('motion').value === 'reduced', flourish: $('flourish').value === 'on', controls: $('controls').value });
     const apply = () => { const o = settings(); Object.assign(RB.game.settings, { battleAnim: o.anim, reducedMotion: o.reduce, harmonyFlourish: o.flourish, battleControls: o.controls }); RB.game.applySettings(); };
-    $('start').addEventListener('click', () => battle(settings()));
-    $('play').addEventListener('click', () => { apply(); play({}); });
+    const showStatus = () => { $('status').textContent = status() || ''; };
+    showStatus();
+    $('start').addEventListener('click', () => { battle(settings()); showStatus(); });
+    $('play').addEventListener('click', () => { apply(); showStatus(); play({}); });
     $('slip').addEventListener('click', () => { apply(); play({ slip: true }); });
     el.addEventListener('click', (e) => {
       const b = e.target.closest('[data-vp]');
@@ -76104,7 +76173,7 @@ RB.harmonyCutin.dev = (function () {
     const open = () => { if (window.__RB_READY__ === true && document.body) panel(); else if (++tries < 300) setTimeout(open, 100); };
     setTimeout(open, 0);
   }
-  return { allowed, battle, play, panel, LABEL };
+  return { allowed, battle, play, panel, status, LABEL };
 })();
 
 
@@ -83694,7 +83763,10 @@ RB.harmonyKit = RB.harmonyKit || {};
  *   RB.harmonyArt.bust(who, look, pose, phase[, variant]) → { cv, w, h, face, hands, anchor }
  *   RB.harmonyArt.prepare(spec | [spec], { async }) — build into the caches (in idle
  *     slices with async: true → Promise)
- *   RB.harmonyArt.fitScale(viewW, viewH, variant) → integer CSS px per art px (0: none fits)
+ *   RB.harmonyArt.fitScale(viewW, viewH, variant[, dpr[, footprint]]) → CSS px per art px (0: none fits)
+ *   RB.harmonyArt.footprint(spec) → painted art: the union of the pairing's visible bounds across every state of
+ *     its timeline ({ x, y, w, h }, art px), what fitScale measures painted art by; null for the code busts
+ *   RB.harmonyArt.approval() → { kit, pairings, labels }: the art's approval state (never shown to players)
  *   RB.harmonyArt.stats(), clear(), keyOf(spec)
  * Caches: busts and compositions, least-recently-used, bounded (CAP); keys carry
  * ART_VERSION, the resolved appearance (every art-relevant field of the effective
@@ -84033,7 +84105,8 @@ RB.harmonyArt = (function () {
     res.anchor = { x: 0, y: Math.round((E.top(0) + E.bot(0)) / 2) };
     return res;
   }
-  function compose(o) {
+  // the cached composition for a spec (built when missing)
+  function built(o) {
     const n = norm(o);
     if (!n.comp) throw new Error('harmonyArt.compose: comp must be one of ' + COMPANIONS.join(', '));
     const key = keyOf(o);
@@ -84048,16 +84121,24 @@ RB.harmonyArt = (function () {
       c.ms = now() - t0;
       store(comps, key, c, CAP.comps);
     }
+    return { c, n, key };
+  }
+  function compose(o) {
+    const { c, n, key } = built(o);
     if (n.painted) {
       const N = nativeP()[n.variant];
       const view = n.view || (typeof window !== 'undefined' && window.innerWidth ? { w: window.innerWidth, h: window.innerHeight } : null);
-      return {
+      const res = {
         cv: c.cv, w: N.w, h: N.h,
         faces: c.faces.map((r) => Object.assign({}, r)), hands: c.hands.map((r) => Object.assign({}, r)),
         anchor: Object.assign({}, c.anchor), bounds: Object.assign({}, c.bounds),
-        scale: view ? fitScale(view.w, view.h, n.variant) : null,
         bleed: { left: true }, key, phase: n.phase, variant: n.variant, painted: Object.assign({}, c.src),
       };
+      // the scale for the pairing's whole performance, fitted on its visible footprint (the union of every state):
+      // worked out when read (building the other states' compositions is the overlay's preparation, not this call's)
+      let sc;
+      Object.defineProperty(res, 'scale', { enumerable: true, get: () => (sc !== undefined ? sc : (sc = view ? fitScale(view.w, view.h, n.variant, undefined, footprint(o)) : null)) });
+      return res;
     }
     const N = NATIVE[n.variant];
     const view = n.view || (typeof window !== 'undefined' && window.innerWidth ? { w: window.innerWidth, h: window.innerHeight } : null);
@@ -84073,16 +84154,20 @@ RB.harmonyArt = (function () {
   // The largest integer CSS scale at which the variant's visible footprint stays inside §5.2's limits
   // (standard: 42 % width, 30 % height, 12 % area; compact: up to the view's width, 27 % of its height).
   // Painted art: standard at an integer scale inside the same limits; compact at a DPR-aware scale (CSS px per art
-  // px whose product with the device pixel ratio is whole, so every art pixel is whole device pixels).
-  function fitScale(vw, vh, variant, dpr) {
+  // px whose product with the device pixel ratio is whole, so every art pixel is whole device pixels). Contract v3:
+  // measured on the pairing's VISIBLE footprint (`foot`, from footprint(spec): the alpha bounding box of the
+  // composed pair, the union across its whole timeline), not the full pair canvas — the busts and the ink band
+  // leave the canvas's top rows and right end empty. Without `foot`, the full canvas (contract v2).
+  function fitScale(vw, vh, variant, dpr, foot) {
     if (painted()) {
       const H = HC(), v = variant === 'compact' ? 'compact' : 'standard', P = H.PAIR[v], D = H.DISPLAY;
+      const FW = foot && foot.w > 0 ? Math.min(foot.w, P.w) : P.w, FH = foot && foot.h > 0 ? Math.min(foot.h, P.h) : P.h;
       if (v === 'compact') {
         const r = dpr || (typeof devicePixelRatio === 'number' && devicePixelRatio > 0 ? devicePixelRatio : 1);
-        for (let k = Math.floor(D.maxScale * r); k >= 1; k--) { const s = k / r; if (P.w * s <= vw * D.compact.maxW && P.h * s <= vh * D.compact.maxH) return s; }
+        for (let k = Math.floor(D.maxScale * r); k >= 1; k--) { const s = k / r; if (FW * s <= vw * D.compact.maxW && FH * s <= vh * D.compact.maxH) return s; }
         return 0;
       }
-      for (let s = D.maxScale; s >= 1; s--) { const w = P.w * s, h = P.h * s; if (w <= vw * D.standard.maxW && h <= vh * D.standard.maxH && w * h <= vw * vh * D.standard.maxArea) return s; }
+      for (let s = D.maxScale; s >= 1; s--) { const w = FW * s, h = FH * s; if (w <= vw * D.standard.maxW && h <= vh * D.standard.maxH && w * h <= vw * vh * D.standard.maxArea) return s; }
       return 0;
     }
     const N = NATIVE[variant === 'compact' ? 'compact' : 'standard'];
@@ -84094,6 +84179,47 @@ RB.harmonyArt = (function () {
     return 0;
   }
 
+  // ---- the visible footprint (contract v3 §3.3) ---------------------------------------------------------
+  // Painted art: the union of the composed pair's visible bounds (alpha bounding box: busts, hands, effects and the
+  // ink band) across every state the companion's timeline shows, for the spec's variant, backing and effects — one
+  // footprint for the whole performance, so the scale never changes mid-performance. Reduced motion shows a subset
+  // of those states, so it gets the same scale. Cached by the compositions' keys. Code busts: null.
+  const foots = new Map();
+  function footprint(o) {
+    if (!painted()) return null;
+    o = o || {};
+    const n = norm(o);
+    if (!n.comp) return null;
+    const T = timeline(n.comp);
+    const phases = T ? [...new Set(T.map((e) => e.phase))] : HC().STATES.slice();
+    const all = phases.map((ph) => built(Object.assign({}, o, { phase: ph, still: false })));
+    const key = all.map((b) => b.key).join('#');
+    let f = foots.get(key);
+    if (!f) {
+      let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+      for (const { c } of all) { const b = c.bounds; if (!b.w) continue; x0 = Math.min(x0, b.x); y0 = Math.min(y0, b.y); x1 = Math.max(x1, b.x + b.w); y1 = Math.max(y1, b.y + b.h); }
+      f = x1 < x0 ? { x: 0, y: 0, w: 0, h: 0, phases: phases.length } : { x: x0, y: y0, w: x1 - x0, h: y1 - y0, phases: phases.length };
+      foots.set(key, f);
+      while (foots.size > 16) foots.delete(foots.keys().next().value);
+    }
+    return Object.assign({}, f);
+  }
+  // The art's approval state (contract v3; development only — never shown to players): each pairing's (a companion
+  // with a complete painted set: the manifest's; otherwise its code-drawn bust, 'provisional') and the player kit's.
+  function approval() {
+    const H = HC(), out = { kit: 'provisional', pairings: {}, labels: H.APPROVAL_LABEL };
+    const man = painted() ? R().manifest() : null;
+    const ap = man ? H.approvalOf(man) : null;
+    const kitFiles = man && Object.keys(man.files).some((k) => H.parse(k).kind !== 'comp');
+    if (ap && kitFiles) out.kit = ap.kit;
+    for (const c of COMPANIONS) {
+      const set = man && man.companions && man.companions[c];
+      const done = set && H.REQUIRED.every((s) => set.states.indexOf(s) >= 0);
+      out.pairings[c] = done ? ap.pairings[c] : 'provisional';
+    }
+    return out;
+  }
+
   // ---- preparation and housekeeping ----------------------------------------------------------------
   function specs(list) {
     list = Array.isArray(list) ? list : [list || {}];
@@ -84102,10 +84228,13 @@ RB.harmonyArt = (function () {
       const comps2 = o.comp === 'all' || !o.comp ? COMPANIONS : [o.comp];
       const variants = o.variant ? [o.variant] : ['standard'];
       for (const c of comps2) {
-        // painted: the states of the companion's timeline (reduced motion: the last alone)
+        // painted: the states of the companion's timeline (reduced motion: its held poses)
         const T = painted() && !o.phase ? timeline(c) : null;
-        const phases = o.phase ? [o.phase] : T ? (o.still ? [T[T.length - 1].phase] : [...new Set(T.map((e) => e.phase))]) : ['enter', 'hold'];
-        for (const ph of phases) for (const v of variants) out.push(Object.assign({}, o, { comp: c, phase: ph, variant: v }));
+        // (reduced motion: the held poses of the contract's plan that the timeline has — peak, then settle_b)
+        const u = T ? [...new Set(T.map((e) => e.phase))] : null, rs = u ? HC().REDUCED_MOTION.states.filter((x) => u.indexOf(x) >= 0) : null;
+        const phases = o.phase ? [o.phase] : T ? (o.still ? (rs.length >= 2 ? rs : [T[T.length - 1].phase]) : u) : ['enter', 'hold'];
+        // (a painted state is asked for by name: still would turn every one of them into settle_b)
+        for (const ph of phases) for (const v of variants) out.push(Object.assign({}, o, { comp: c, phase: ph, variant: v }, T ? { still: false } : null));
       }
     }
     return out;
@@ -84162,14 +84291,17 @@ RB.harmonyArt = (function () {
     };
     // painted art: the set, decoded files and their bytes, fallbacks (whole busts drawn in code, with why)
     if (R()) out.raster = Object.assign(R().stats(), { paintMs: sum(S.paintMs), decodeMs: sum(S.decodeMs) });
+    out.approval = approval();
+    out.footprints = foots.size;
     return out;
   }
-  function clear() { busts.clear(); comps.clear(); backs.clear(); S.invalidations++; }
+  function clear() { busts.clear(); comps.clear(); backs.clear(); foots.clear(); S.invalidations++; }
   // drop the player's entries that do not belong to the look now worn
   function invalidate(look) {
     const k = HK().lookKey(effectiveLook(look));
     for (const [key] of [...busts]) if (key.split('|')[1] === 'pc' && !key.endsWith(k)) busts.delete(key);
     for (const [key] of [...comps]) if (!key.endsWith(k)) comps.delete(key);
+    for (const [key] of [...foots]) if (!key.endsWith(k)) foots.delete(key);
     S.invalidations++;
   }
   if (RB.bus) {
@@ -84177,7 +84309,7 @@ RB.harmonyArt = (function () {
     RB.bus.on('campaign:changing', clear);
   }
 
-  const api = { ART_VERSION, COMPANIONS, POSE_OF, compose, bust, prepare, fitScale, stats, clear, invalidate, keyOf, _: { build, buildPainted, backingOf, norm, PLACE, painted } };
+  const api = { ART_VERSION, COMPANIONS, POSE_OF, compose, bust, prepare, fitScale, footprint, approval, stats, clear, invalidate, keyOf, _: { build, buildPainted, backingOf, norm, PLACE, painted } };
   // While painted art is installed: NATIVE is the contract's pair, PHASES its states and timeline(comp) exists.
   // Otherwise exactly as before: the code-drawn sizes, ['enter', 'hold'] and no timeline.
   Object.defineProperty(api, 'NATIVE', { enumerable: true, get: () => (painted() ? nativeP() : NATIVE) });
@@ -87007,6 +87139,9 @@ RB.harmonyRaster = (function () {
       active: !!man, error: err, set: man ? man.set : null, synthetic: man ? !!man.synthetic : null, artVersion: artVersion(), contractVersion: C().VERSION,
       files: man ? Object.keys(man.files).length : 0, decoded: dec.size, pending: pend.size, decodedBytes: bytes, cap: CAP,
       decodes: S.decodes, evictions: S.evictions, decodeErrors: S.decodeErrors.slice(), paints: S.paints, fallbacks: S.fallbacks, fallbackLog: S.log.slice(), looksCached: ramps.size,
+      // contract v3: painted colours decomposed against their key curve (once per colour and material), colours
+      // rebuilt on a look's target curve (once per colour and look ramp), of which had to be pulled into the gamut
+      decomposed: S.decomposed, recoloured: S.recoloured, gamutClipped: S.clipped, approval: man ? C().approvalOf(man) : null,
     };
   }
 

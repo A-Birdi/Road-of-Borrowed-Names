@@ -184,6 +184,8 @@ export default async (t) => {
     };
     const had = REAL.timeline;
     t.eq(seq('normal', false), [['enter', 0], ['hold', 240]], 'no timeline (today\'s art): the arrival drawing, then the hold resolved at 240 ms — unchanged');
+    t.eq(seq('normal', true), [['hold', 0]], 'no timeline, reduced motion: the code busts keep their single held drawing — unchanged');
+    t.eq(HC.mixAt({ comp: 'suzu', d: cut.normal, reduce: true }, 370), null, 'and no cross-fade');
     const FULL = [
       { phase: 'prep_a', seg: 'in', from: 0, to: 0.5 }, { phase: 'prep_b', seg: 'in', from: 0.5, to: 1 },
       { phase: 'cue', seg: 'hold', from: 0, to: 0.21 }, { phase: 'peak', seg: 'hold', from: 0.21, to: 0.58 }, { phase: 'settle_a', seg: 'hold', from: 0.58, to: 0.79 },
@@ -193,10 +195,20 @@ export default async (t) => {
       ART.timeline = () => FULL;
       t.eq(seq('normal', false), [['prep_a', 0], ['prep_b', 90], ['cue', 180], ['peak', 260], ['settle_a', 401], ['settle_b', 481]], 'Normal: prep_a 0, prep_b 90, cue 180, peak 260, settle_a 401, settle_b 481 ms through the fade (the art\'s fractions of 180 / 380 / 220)');
       t.eq(seq('fast', false), [['prep_a', 0], ['prep_b', 72], ['cue', 143], ['peak', 210], ['settle_a', 326], ['settle_b', 392]], 'Fast: the same states on its own 143 / 315 / 229 presentation ms (100 / 220 / 160 wall)');
-      t.eq(seq('normal', true), [['settle_b', 0]], 'reduced motion: the last state only');
+      // reduced motion with painted art (contract v3): two held poses, peak then settle_b, one restrained cross-fade
+      // at the middle of the hold, inside the overlay's own reduced timing (no travel: phaseAt has no position)
+      t.eq(seq('normal', true), [['peak', 0], ['settle_b', 370]], 'reduced motion: peak held, then settle_b held from the middle of the hold (370 ms at Normal)');
+      t.eq(seq('fast', true), [['peak', 0], ['settle_b', 301]], 'reduced motion, Fast: the same two held poses on its own clock (301 presentation ms)');
+      const mix = (mode) => { const d = cut[mode], c = { comp: 'suzu', d, reduce: true, tl: HC.timelineOf('suzu') }; let a = null, b = null, ks = []; for (let el = 0; el < sum(d); el += 1) { const m = HC.mixAt(c, el); if (m) { if (a == null) a = el; b = el; ks.push(m.k); } } return { from: a, to: b, len: b - a + 1, rising: ks.every((k, i) => !i || k > ks[i - 1]), ends: [m0(ks[0]), m0(ks[ks.length - 1])] }; };
+      const m0 = (k) => Math.round(k * 100) / 100;
+      const mn = mix('normal'), mf = mix('fast');
+      t.ok(mn.from === 321 && mn.to === 419 && mn.len <= 120 && mn.rising && mf.len <= 120 && mf.rising, 'one cross-fade, ≤ 120 ms: Normal ' + mn.from + '–' + mn.to + ' ms (' + mn.len + '), Fast ' + mf.from + '–' + mf.to + ' (' + mf.len + ' presentation ms), the blend rising ' + JSON.stringify(mn.ends));
+      t.ok(mn.from > cut.normal.in && mn.to < cut.normal.in + cut.normal.hold, 'the cross-fade sits inside the hold (after the fade in, before the fade out)');
+      t.eq(HC.phaseList('suzu', true), ['peak', 'settle_b'], 'reduced motion\'s footprint and preparation: the two held poses');
       t.eq(HC.phaseList('suzu', false), ['prep_a', 'prep_b', 'cue', 'peak', 'settle_a', 'settle_b'], 'every state of the timeline is footprint and is prepared ahead');
       ART.timeline = () => FULL.filter((e) => e.phase !== 'prep_b' && e.phase !== 'settle_a');
       t.eq(seq('normal', false), [['prep_a', 0], ['cue', 180], ['peak', 260], ['settle_b', 481]], 'optional states left out: the one before is held (prep_a through the arrival, peak until settle_b)');
+      t.eq(seq('normal', true), [['peak', 0], ['settle_b', 370]], 'reduced motion is the same two held poses without the optional states');
       ART.timeline = () => [];
       t.eq(seq('normal', false), [['enter', 0], ['hold', 240]], 'an empty timeline: the two drawings, as without one');
     } finally { RB.harmonyArt = REAL; }

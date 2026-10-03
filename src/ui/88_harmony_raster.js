@@ -342,6 +342,9 @@ RB.harmonyRaster = (function () {
       active: !!man, error: err, set: man ? man.set : null, synthetic: man ? !!man.synthetic : null, artVersion: artVersion(), contractVersion: C().VERSION,
       files: man ? Object.keys(man.files).length : 0, decoded: dec.size, pending: pend.size, decodedBytes: bytes, cap: CAP,
       decodes: S.decodes, evictions: S.evictions, decodeErrors: S.decodeErrors.slice(), paints: S.paints, fallbacks: S.fallbacks, fallbackLog: S.log.slice(), looksCached: ramps.size,
+      // contract v3: painted colours decomposed against their key curve (once per colour and material), colours
+      // rebuilt on a look's target curve (once per colour and look ramp), of which had to be pulled into the gamut
+      decomposed: S.decomposed, recoloured: S.recoloured, gamutClipped: S.clipped, approval: man ? C().approvalOf(man) : null,
     };
   }
 

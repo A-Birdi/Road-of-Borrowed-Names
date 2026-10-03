@@ -1,7 +1,9 @@
 {
  "set": "sample",
  "synthetic": true,
- "contractVersion": 2,
+ "approval": "synthetic",
+ "batch": null,
+ "contractVersion": 3,
  "inDir": "tests/fixtures/harmony_sample/incoming",
  "out": "(a temporary folder)",
  "files": {
@@ -40,6 +42,9 @@
     0,
     0
    ],
+   "values": {
+    "accessory": 5
+   },
    "unresolved": [],
    "unresolvedCount": 0,
    "bbox": [
@@ -91,6 +96,7 @@
     0,
     0
    ],
+   "values": {},
    "unresolved": [],
    "unresolvedCount": 0,
    "bbox": [
@@ -101,6 +107,58 @@
    ],
    "materials": {
     "fixed": 91
+   },
+   "maskSource": "derived"
+  },
+  "acc_headband": {
+   "source": "acc_headband.png",
+   "errors": [],
+   "warnings": [],
+   "kind": "acc",
+   "sourceSha256": "7d37777562fe047c214607052f8c604eb3c0871f62f17a1790682a3858668e1f",
+   "srcW": 192,
+   "srcH": 160,
+   "png": {
+    "colorType": 6,
+    "bitDepth": 8
+   },
+   "grid": {
+    "cell": [
+     1,
+     1
+    ],
+    "origin": [
+     0,
+     0
+    ],
+    "score": [
+     1,
+     1
+    ],
+    "native": [
+     192,
+     160
+    ],
+    "forced": false
+   },
+   "offset": [
+    0,
+    0
+   ],
+   "values": {
+    "accessory": 4
+   },
+   "unresolved": [],
+   "unresolvedCount": 0,
+   "bbox": [
+    79,
+    64,
+    127,
+    84
+   ],
+   "materials": {
+    "fixed": 119,
+    "accessory": 185
    },
    "maskSource": "derived"
   },
@@ -139,6 +197,7 @@
     0,
     0
    ],
+   "values": {},
    "unresolved": [],
    "unresolvedCount": 0,
    "bbox": [
@@ -187,6 +246,9 @@
     0,
     0
    ],
+   "values": {
+    "accessory": 5
+   },
    "unresolved": [],
    "unresolvedCount": 0,
    "bbox": [
@@ -238,6 +300,11 @@
     0,
     0
    ],
+   "values": {
+    "skin": 3,
+    "clothMain": 3,
+    "clothTrim": 3
+   },
    "unresolved": [],
    "unresolvedCount": 0,
    "bbox": [
@@ -291,6 +358,11 @@
     0,
     0
    ],
+   "values": {
+    "skin": 3,
+    "clothMain": 3,
+    "clothTrim": 3
+   },
    "unresolved": [],
    "unresolvedCount": 0,
    "bbox": [
@@ -344,6 +416,11 @@
     0,
     0
    ],
+   "values": {
+    "skin": 3,
+    "clothMain": 3,
+    "clothTrim": 3
+   },
    "unresolved": [],
    "unresolvedCount": 0,
    "bbox": [
@@ -397,6 +474,11 @@
     0,
     0
    ],
+   "values": {
+    "skin": 3,
+    "clothMain": 3,
+    "clothTrim": 3
+   },
    "unresolved": [],
    "unresolvedCount": 0,
    "bbox": [
@@ -450,6 +532,11 @@
     0,
     0
    ],
+   "values": {
+    "skin": 3,
+    "clothMain": 3,
+    "clothTrim": 3
+   },
    "unresolved": [],
    "unresolvedCount": 0,
    "bbox": [
@@ -503,6 +590,11 @@
     0,
     0
    ],
+   "values": {
+    "skin": 3,
+    "clothMain": 3,
+    "clothTrim": 3
+   },
    "unresolved": [],
    "unresolvedCount": 0,
    "bbox": [
@@ -556,6 +648,11 @@
     0,
     0
    ],
+   "values": {
+    "skin": 3,
+    "clothMain": 3,
+    "clothTrim": 3
+   },
    "unresolved": [],
    "unresolvedCount": 0,
    "bbox": [
@@ -609,6 +706,11 @@
     0,
     0
    ],
+   "values": {
+    "skin": 3,
+    "clothMain": 3,
+    "clothTrim": 3
+   },
    "unresolved": [],
    "unresolvedCount": 0,
    "bbox": [
@@ -660,6 +762,11 @@
     0,
     0
    ],
+   "values": {
+    "skin": 3,
+    "clothMain": 3,
+    "clothTrim": 3
+   },
    "bbox": [
     51,
     96,
@@ -709,6 +816,9 @@
     0,
     0
    ],
+   "values": {
+    "hair": 4
+   },
    "unresolved": [],
    "unresolvedCount": 0,
    "bbox": [
@@ -758,6 +868,9 @@
     0,
     0
    ],
+   "values": {
+    "hair": 5
+   },
    "unresolved": [],
    "unresolvedCount": 0,
    "bbox": [
@@ -807,6 +920,9 @@
     0,
     0
    ],
+   "values": {
+    "hair": 4
+   },
    "unresolved": [],
    "unresolvedCount": 0,
    "bbox": [
@@ -856,6 +972,9 @@
     0,
     0
    ],
+   "values": {
+    "hair": 4
+   },
    "unresolved": [],
    "unresolvedCount": 0,
    "bbox": [
@@ -905,6 +1024,10 @@
     0,
     0
    ],
+   "values": {
+    "hair": 5,
+    "clothTrim": 3
+   },
    "unresolved": [],
    "unresolvedCount": 0,
    "bbox": [
@@ -955,6 +1078,10 @@
     0,
     0
    ],
+   "values": {
+    "hair": 4,
+    "skin": 3
+   },
    "unresolved": [],
    "unresolvedCount": 0,
    "bbox": [
@@ -1005,6 +1132,10 @@
     0,
     0
    ],
+   "values": {
+    "hair": 4,
+    "skin": 3
+   },
    "unresolved": [],
    "unresolvedCount": 0,
    "bbox": [
@@ -1057,6 +1188,10 @@
     0,
     0
    ],
+   "values": {
+    "hair": 4,
+    "skin": 4
+   },
    "bbox": [
     81,
     59,
@@ -1105,6 +1240,10 @@
     0,
     0
    ],
+   "values": {
+    "hair": 4,
+    "skin": 3
+   },
    "unresolved": [],
    "unresolvedCount": 0,
    "bbox": [
@@ -1155,6 +1294,11 @@
     0,
     0
    ],
+   "values": {
+    "clothTrim": 4,
+    "clothMain": 5,
+    "skin": 1
+   },
    "unresolved": [],
    "unresolvedCount": 0,
    "bbox": [
@@ -1206,6 +1350,11 @@
     0,
     0
    ],
+   "values": {
+    "clothTrim": 3,
+    "skin": 1,
+    "clothMain": 5
+   },
    "bbox": [
     76,
     108,
@@ -1558,13 +1707,14 @@
      0
     ]
    },
+   "approval": null,
    "complete": true,
    "missingRequired": []
   }
  },
  "coverage": {
   "required": 86,
-  "present": 26,
+  "present": 27,
   "missingRequired": [
    "acc_atlas_pin",
    "acc_atlas_quill",
@@ -1576,7 +1726,6 @@
    "acc_earrings_far",
    "acc_earrings_near",
    "acc_hat",
-   "acc_headband",
    "acc_leaf",
    "acc_ribbon",
    "acc_scarf_knit",
@@ -1633,11 +1782,39 @@
    "suzu_prep_b"
   ]
  },
+ "batches": {
+  "1a": {
+   "phase": 1,
+   "required": 18,
+   "present": 18,
+   "missingRequired": [],
+   "optionalPresent": [
+    "suzu_prep_b",
+    "suzu_peak_fx",
+    "pc_arm_prep_b_fitted"
+   ],
+   "complete": true
+  },
+  "1b": {
+   "phase": 2,
+   "required": 9,
+   "present": 9,
+   "missingRequired": [],
+   "optionalPresent": [],
+   "complete": true
+  }
+ },
+ "approvalNow": {
+  "kit": "synthetic",
+  "pairings": {
+   "suzu": "synthetic"
+  }
+ },
  "unknownNames": [],
  "ok": true,
  "summary": {
-  "files": 30,
-  "imported": 30,
+  "files": 31,
+  "imported": 31,
   "fileErrors": 0,
   "setErrors": 0,
   "warnings": 11

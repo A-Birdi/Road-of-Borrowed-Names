@@ -83,6 +83,28 @@ export default async (t) => {
   }
   t.eq(bad, [], n + ' painted compositions (2 looks × 6 states × 2 variants): both busts painted, contract size, faces inside');
   t.eq(occl, [], 'no face is covered by the other bust (each compared with the other omitted)');
+
+  // ---- the visible footprint and the scale (contract v3 §3.3) -------------------------------------------------------------
+  {
+    const uniq = [...new Set(HA.timeline('suzu').map((e) => e.phase))];
+    for (const look of [LA, LB]) for (const variant of ['standard', 'compact']) {
+      const f = HA.footprint({ comp: 'suzu', look, variant });
+      let x0 = 1e9, y0 = 1e9, x1 = -1, y1 = -1;
+      for (const st of uniq) { const b = HA._.buildPainted(N({ comp: 'suzu', look, phase: st, variant })).bounds; x0 = Math.min(x0, b.x); y0 = Math.min(y0, b.y); x1 = Math.max(x1, b.x + b.w); y1 = Math.max(y1, b.y + b.h); }
+      t.eq([f.x, f.y, f.w, f.h, f.phases], [x0, y0, x1 - x0, y1 - y0, uniq.length], look.hair + ' ' + variant + ': the footprint is the union of the visible bounds of every state in the timeline (' + f.w + ' × ' + f.h + ' of ' + HA.NATIVE[variant].w + ' × ' + HA.NATIVE[variant].h + ')');
+    }
+    const fS = HA.footprint({ comp: 'suzu', look: LA, variant: 'standard' });
+    const sc = (w, h, foot) => HA.fitScale(w, h, 'standard', 1, foot);
+    t.eq([sc(2048, 1046, fS), sc(1920, 1080, fS), sc(1280, 720, fS)], [2, 2, 1], 'on the visible footprint: 2× at 2048 × 1046 and 1920 × 1080, 1× at 1280 × 720');
+    t.eq([sc(2048, 1046), sc(1920, 1080)], [1, 2], 'on the full canvas (contract v2) 2048 × 1046 got only 1×');
+    const views = [];
+    for (const st of HC.STATES) views.push(HA.compose({ comp: 'suzu', look: LA, phase: st, view: { w: 2048, h: 1046 } }).scale);
+    t.eq([...new Set(views)], [2], 'compose() gives every state of the performance the same scale (2× at 2048 × 1046): it never changes mid-performance');
+    t.eq(HA.footprint({ comp: 'suzu', look: LA, variant: 'standard', still: true }), fS, 'reduced motion is fitted on the same footprint (its held poses are states of the timeline)');
+  }
+  // ---- approval (contract v3; never shown to players) --------------------------------------------------------------------------------
+  t.eq(HA.approval().kit + ' ' + JSON.stringify(HA.approval().pairings), 'synthetic {"nao":"provisional","mio":"provisional","ren":"provisional","suzu":"synthetic"}', 'approval: the synthetic sample is "synthetic"; companions without a painted set are the provisional code busts');
+  t.eq(HA.stats().approval.labels.candidate, 'visual candidate awaiting approval', 'stats() carries the approval and its labels');
   const keyA = HA.keyOf({ comp: 'suzu', look: LA, phase: 'peak' });
   t.ok(new RegExp('^v1\\|c' + HC.VERSION + '\\|a1\\|suzu\\|standard\\|peak\\|b\\|fx\\|-\\|PP\\|').test(keyA), 'keys carry ART_VERSION, the contract and art versions, companion, variant, state and painted/code flags: ' + keyA.slice(0, 40));
   t.ok(HA.keyOf({ comp: 'suzu', look: LB, phase: 'peak' }) !== keyA && HA.keyOf({ comp: 'suzu', look: LA, phase: 'cue' }) !== keyA && HA.keyOf({ comp: 'suzu', look: LA, phase: 'peak', variant: 'compact' }) !== keyA, 'look, state and variant change the key');
@@ -140,6 +162,59 @@ export default async (t) => {
     t.eq([r.skin[3], r.hair[2], r.clothMain[2], r.clothTrim[0]], [HK.skinMat(col.skin).c[4], HK.hairMat(col.hair).c[3], HK.clothMat(col.cloth[0]).c[3], HK.clothMat(col.cloth[2], { step: 0.09 }).c[1]], 'target ramps are the code busts\' skinMat / hairMat / clothMat steps');
     const sc = HR._.accRamp(r, RB.equip.lookWith(LB, 'lq_tenugui'), 'scarf');
     t.ok(sc && sc.length === 5 && sc[2] !== HR._.accRamp(HR._.rampsOf(LA), LA, 'flower')[2], "an accessory takes its own look field (the tenugui's scarfCol)");
+  }
+
+  // ---- the rich fixture (contract v3: free values), recoloured ----------------------------------------------------------------------------
+  {
+    const { importSets } = await import('../../tools/harmony/importer.mjs');
+    const tmpR = fs.mkdtempSync(path.join(os.tmpdir(), 'rbn-raster-rich-'));
+    let rich;
+    try { rich = importSets(['tests/fixtures/harmony_sample/incoming', 'tests/fixtures/harmony_rich/incoming'].map((d) => path.join(root, d)), { out: tmpR, replace: true }); } catch (e) { fs.rmSync(tmpR, { recursive: true, force: true }); throw e; }
+    const rf = {};
+    for (const f of fs.readdirSync(tmpR).filter((f) => f.endsWith('.png'))) rf[f] = fs.readFileSync(path.join(tmpR, f)).toString('base64');
+    fs.rmSync(tmpR, { recursive: true, force: true });
+    t.ok(rich.ok && HR.install({ manifest: rich.manifest, files: rf }, { decode }).ok, 'the rich fixture over the sample installs');
+    const CC = HC.colour, dark = Object.assign({}, LA, { skin: 6, hairColor: 0, outfit: 5 }), pale = Object.assign({}, LA, { skin: 0, hairColor: 6, outfit: 6 });
+    const nd = new Set();
+    for (const look of [LA, dark, pale]) for (const st of HC.STATES) { const pl = HR.plan('pc', look, st, 'suzu'); if (pl.ok) pl.files.forEach((f) => nd.add(f)); }
+    await HR.load([...nd]);
+    // per material: the painted values (t from the input colour, in half-step buckets) and the outputs' lightness
+    const order = [], kept = [];
+    for (const look of [LA, dark, pale]) {
+      const r = HR._.rampsOf(look), buckets = {};
+      for (const [name, f] of HR._.decoded) {
+        if (!f.code || HC.parse(name).kind === 'acc') continue;
+        const tab = [r.rows.skin, r.rows.hair, r.rows.clothMain, r.rows.clothTrim, null];
+        const out = new Uint32Array(f.w * f.h);
+        HR._.draw(out, f, 0, 0, tab, null);
+        for (let i = 0; i < out.length; i++) {
+          const c = f.code[i]; if (c < 2) continue;
+          const mi = ((c - 2) / 5) | 0, p = f.px[i], q = out[i];
+          const tIn = CC.decompose(CC.oklab(p & 255, (p >>> 8) & 255, (p >>> 16) & 255), HC.MATERIALS[mi]).t;
+          const L = CC.oklab(q & 255, (q >>> 8) & 255, (q >>> 16) & 255)[0];
+          const k = HC.MATERIALS[mi] + ':' + Math.round(tIn * 2) / 2;
+          (buckets[k] = buckets[k] || []).push(L);
+        }
+      }
+      for (const m of ['skin', 'hair', 'clothMain', 'clothTrim']) {
+        const ks = Object.keys(buckets).filter((k) => k.startsWith(m + ':')).map((k) => +k.split(':')[1]).sort((a, b) => a - b);
+        const mean = (t) => { const a = buckets[m + ':' + t]; return a.reduce((x, y) => x + y, 0) / a.length; };
+        for (let i = 1; i < ks.length; i++) { const d = mean(ks[i]) - mean(ks[i - 1]); if (!(d >= 0.02)) order.push(m + ' look skin ' + look.skin + ': ' + ks[i - 1] + '→' + ks[i] + ' ΔL ' + d.toFixed(4)); }
+        kept.push(ks.length);
+      }
+    }
+    t.eq(order, [], 'every painted value stays apart from the next (mean ΔL ≥ 0.02 per half step) on look A, the darkest (skin 6, black hair, cloth 5) and the palest (skin 0, white hair, cloth 6) targets');
+    t.ok(Math.min(...kept) >= 8, 'and each family keeps its painted values (' + Math.min(...kept) + '–' + Math.max(...kept) + ' value levels per material)');
+    // exact key shades still give exactly the v2 tones on ramps the value floor leaves alone (look A)
+    const rA = HR._.rampsOf(LA);
+    let ex = 0, exBad = 0;
+    for (const [m, row] of [['skin', rA.rows.skin], ['hair', rA.rows.hair], ['clothMain', rA.rows.clothMain], ['clothTrim', rA.rows.clothTrim]]) HC.KEY_RAMPS[m].forEach((hx, s) => { const c = CC.hexRgb(hx), p = (0xff000000 | (c[2] << 16) | (c[1] << 8) | c[0]) >>> 0; const q = HR._.recolourPx(row, HC.MATERIALS.indexOf(m), p); if (!row.opened) { if (q === row.ramp[s]) ex++; else exBad++; } });
+    const openA = Object.entries(rA.rows).filter(([k, row]) => k !== 'wrap' && row.opened).map(([k]) => k);
+    t.ok(ex === 5 * (4 - openA.length) && ex >= 15 && exBad === 0, 'look A: every exact key shade gives exactly its v2 tone on each ramp the value floor leaves alone (' + ex + ' shades; opened here: ' + (openA.join(', ') || 'none') + ')');
+    t.eq(openA, ['skin'], 'look A\'s only opened ramp is skin 1 (its v2 tones for s3 and s4 are 0.036 apart, under the floor of 0.05)');
+    const r6 = HR._.rampsOf(dark).rows.skin;
+    t.ok(r6.opened && r6.curve.filter((nd2) => nd2.key).every((nd2, i, a) => !i || nd2.L - a[i - 1].L >= HC.RECOLOUR.valueFloor - 1e-9), 'the darkest skin\'s ramp (whose v2 tones 1 and 2 are 0.002 apart in lightness) is opened to the value floor (' + HC.RECOLOUR.valueFloor + ' per shade step)');
+    HR.install({ manifest, files }, { decode });
   }
 
   // ---- whole-bust fallback ---------------------------------------------------------------------------------------------------------------

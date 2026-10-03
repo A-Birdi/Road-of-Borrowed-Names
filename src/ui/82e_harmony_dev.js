@@ -12,7 +12,9 @@
  *   RB.harmonyCutin.dev.play({ comp?, foes?, slip? }) → Promise: plays the companion's technique presentation
  *                                                   on the live stage (visual cues only; the menus withdraw as
  *                                                   for a committed exchange and come back after)
- *   RB.harmonyCutin.dev.panel()                     → the on-page controls (opened automatically on a dev page) */
+ *   RB.harmonyCutin.dev.panel()                     → the on-page controls (opened automatically on a dev page)
+ *   RB.harmonyCutin.dev.status()                    → the art's approval state as the panel shows it (contract v3:
+ *                                                   provisional, candidate, approved, verified; synthetic) */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.harmonyCutin = RB.harmonyCutin || {};
@@ -81,6 +83,14 @@ RB.harmonyCutin.dev = (function () {
     try { return await RB.battleSeq.run('dev', cues, { end: P.end, action, synthetic: true }); }
     finally { if (root) { root.classList.remove('cb-acting', 'cb-keep'); for (const e of surf) if (e) e.inert = false; } }
   }
+  // the art's approval state (RB.harmonyArt.approval(), contract v3): development only, never shown to players
+  function status() {
+    if (!allowed()) return null;
+    try {
+      const a = RB.harmonyArt.approval(), L = a.labels;
+      return 'Art status — player kit: ' + L[a.kit] + '; ' + Object.entries(a.pairings).map(([c, v]) => c + ': ' + L[v]).join('; ');
+    } catch (e) { return 'Art status: unknown'; }
+  }
   function panel() {
     if (!allowed() || typeof document === 'undefined') return null;
     let el = document.getElementById('harmony-dev');
@@ -95,6 +105,7 @@ RB.harmonyCutin.dev = (function () {
     document.head.appendChild(css);
     const sel = (id, label, o) => '<label for="hd-' + id + '">' + label + '</label><select id="hd-' + id + '">' + o.map((v) => '<option>' + v + '</option>').join('') + '</select>';
     el.innerHTML = '<button type="button" id="hd-toggle" aria-expanded="true" style="grid-column:1/-1">Harmony (dev) — hide</button><span class="lbl">' + LABEL + '</span>' +
+      '<span id="hd-status" style="grid-column:1/-1;color:#c8d4e0;font-size:12px"></span>' +
       sel('comp', 'Companion', ['suzu', 'ren', 'nao', 'mio']) + sel('foes', 'Creatures', ['1', '2', '3']) + sel('anim', 'Playback', ['normal', 'fast', 'instant']) +
       sel('motion', 'Motion', ['full', 'reduced']) + sel('flourish', 'Portrait', ['on', 'off']) + sel('controls', 'Controls', ['adaptive', 'keep']) +
       '<span>Viewport</span><span>' + ['1648x840', '1280x720', '768x1024', '390x844', '844x390'].map((v) => '<button type="button" data-vp="' + v + '">' + v + '</button>').join(' ') + '</span>' +
@@ -108,8 +119,10 @@ RB.harmonyCutin.dev = (function () {
     fold(window.innerHeight < 500);
     const settings = () => ({ comp: $('comp').value, foes: +$('foes').value, anim: $('anim').value, reduce: $('motion').value === 'reduced', flourish: $('flourish').value === 'on', controls: $('controls').value });
     const apply = () => { const o = settings(); Object.assign(RB.game.settings, { battleAnim: o.anim, reducedMotion: o.reduce, harmonyFlourish: o.flourish, battleControls: o.controls }); RB.game.applySettings(); };
-    $('start').addEventListener('click', () => battle(settings()));
-    $('play').addEventListener('click', () => { apply(); play({}); });
+    const showStatus = () => { $('status').textContent = status() || ''; };
+    showStatus();
+    $('start').addEventListener('click', () => { battle(settings()); showStatus(); });
+    $('play').addEventListener('click', () => { apply(); showStatus(); play({}); });
     $('slip').addEventListener('click', () => { apply(); play({ slip: true }); });
     el.addEventListener('click', (e) => {
       const b = e.target.closest('[data-vp]');
@@ -124,5 +137,5 @@ RB.harmonyCutin.dev = (function () {
     const open = () => { if (window.__RB_READY__ === true && document.body) panel(); else if (++tries < 300) setTimeout(open, 100); };
     setTimeout(open, 0);
   }
-  return { allowed, battle, play, panel, LABEL };
+  return { allowed, battle, play, panel, status, LABEL };
 })();

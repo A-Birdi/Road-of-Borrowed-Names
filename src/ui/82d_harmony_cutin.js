@@ -16,7 +16,9 @@
  *   resolves into its 'hold' gesture once), fades in place 560–780, and the layer is removed at zero —
  *   before every principal impact (the first result comes at ≥ 1,200 ms). Fast: 100 / 220 / 160 ms of wall
  *   time (RB.battleSeq.T.cutin). Reduced motion: a short fade in where it stands (no travel), the held
- *   drawing, the same smooth fade out. Instant, or the setting "Harmony portrait flourish" Off: nothing.
+ *   drawing, the same smooth fade out — with painted art (contract v3) two held poses instead of one: `peak`, then
+ *   `settle_b`, joined by one restrained cross-fade (RB.harmonyContract.REDUCED_MOTION: 100 presentation ms at the
+ *   middle of the hold), still no travel. Instant, or the setting "Harmony portrait flourish" Off: nothing.
  *   Hurried playback (×4) runs the same ramps faster. An older instance's callbacks can never touch a newer
  *   one (every path checks the token).
  *
@@ -36,8 +38,10 @@
  *   On resize or orientation change the same instance is placed again (no replay, nothing spent again); if
  *   no placement remains it fades out quickly and the stage action continues.
  *
- * Sizes come only from RB.harmonyArt (NATIVE, fitScale, the composed canvas's own width and height) and the
- * art's phase list is data (PHASES): the busts may be replaced by other art behind the same API.
+ * Sizes come only from RB.harmonyArt (NATIVE, fitScale, footprint, the composed canvas's own width and height) and
+ * the art's phase list is data (PHASES): the busts may be replaced by other art behind the same API. Painted art is
+ * scaled by its visible footprint (RB.harmonyArt.footprint: the union of the pairing's drawn pixels across its whole
+ * timeline), so the scale is fixed for the performance and the protected-region rules below apply unchanged.
  *
  * API
  *   RB.harmonyCutin.start(cue, atPt, rec) → token | null      (the sequencer only)
@@ -97,8 +101,24 @@ RB.harmonyCutin = (function () {
   // the drawings a composition can show over its life (the footprint is their union; prepare builds them all)
   function phaseList(comp, still) {
     const T = timelineOf(comp);
-    if (T) { const u = [...new Set(T.map((e) => e.phase))]; return still ? [T[T.length - 1].phase] : u; }
+    if (T) { const u = [...new Set(T.map((e) => e.phase))]; return still ? reducedStates(u) : u; }
     return still ? ['hold'] : phases();
+  }
+  // Reduced motion with a painted timeline: the held poses (contract v3: peak, then settle_b) that the timeline has;
+  // with only one of them, the last state alone.
+  function reducedStates(u) {
+    const RM = RB.harmonyContract && RB.harmonyContract.REDUCED_MOTION;
+    const st = RM ? RM.states.filter((x) => u.indexOf(x) >= 0) : [];
+    return st.length >= 2 ? st : [u[u.length - 1]];
+  }
+  // the cross-fade between them: { a, b, at, fade } in presentation ms from the start (null: a single held pose)
+  function reducedPlan(c) {
+    const RM = RB.harmonyContract && RB.harmonyContract.REDUCED_MOTION;
+    if (!c.reduce || !c.tl || !RM) return null;
+    const st = reducedStates([...new Set(c.tl.map((e) => e.phase))]);
+    if (st.length < 2) return null;
+    const segAt = { in: 0, hold: c.d.in, out: c.d.in + c.d.hold }, segLen = { in: c.d.in, hold: c.d.hold, out: c.d.out };
+    return { a: st[0], b: st[1], at: segAt[RM.at.seg] + segLen[RM.at.seg] * RM.at.from, fade: Math.min(120, RM.crossFade) };
   }
   const holdPhase = (comp) => { const T = timelineOf(comp); return T ? T[T.length - 1].phase : 'hold'; };
 
@@ -204,7 +224,10 @@ RB.harmonyCutin = (function () {
     const N = A().NATIVE, still = !!o.still;
     const faceOf = (spec, s) => { const c = A().compose(Object.assign({}, spec, { phase: holdPhase(spec.comp) })); return Math.min(...c.faces.map((f) => f.h)) * s; };
     const base = { comp: o.comp, look: o.look, still };
-    const sStd = A().fitScale(vw, vh, 'standard'), sCmp = A().fitScale(vw, vh, 'compact');
+    // painted art is fitted on its visible footprint across the whole performance (null for the code busts: their
+    // canvas is their footprint, as before)
+    const foot = (v) => { try { return A().footprint ? A().footprint({ comp: o.comp, look: o.look, variant: v }) : null; } catch (e) { return null; } };
+    const sStd = A().fitScale(vw, vh, 'standard', undefined, foot('standard')), sCmp = A().fitScale(vw, vh, 'compact', undefined, foot('compact'));
     const std = [], cmp = [];
     if (sStd > 0) { std.push({ variant: 'standard', scale: sStd, fit: 'standard', at: 'mid' }); std.push({ variant: 'standard', scale: sStd, fit: 'standard-moved', at: 'scan' }); }
     if (sCmp > 0) {
@@ -220,7 +243,7 @@ RB.harmonyCutin = (function () {
       const spec = Object.assign({}, base, { variant: st.variant, backing: st.backing !== false, fx: st.fx !== false });
       const { sp, comp } = spansOf(spec);
       const s = st.scale, b = comp.bounds;
-      const faceH = Math.min(...comp.faces.map((f) => f.h)) * s;
+      const faceH = Math.min(...comp.faces.map((f) => f.h)) * s, faceW = Math.min(...comp.faces.map((f) => f.w)) * s;
       if (faceH < 24) { tried.push({ fit: st.fit, scale: s, why: 'faces too small' }); continue; }
       const x = 0, w = comp.w * s, h = comp.h * s;
       if (x + (b.x + b.w) * s > vw) { tried.push({ fit: st.fit, scale: s, why: 'too wide' }); continue; }
@@ -238,7 +261,7 @@ RB.harmonyCutin = (function () {
       for (const y of cand) {
         const hit = hits(sp, x, y, s, rects);
         if (hit) { blocked = blocked || hit; continue; }
-        return { ok: true, variant: st.variant, scale: s, x, y, w, h, fit: st.fit, backing: spec.backing, fx: spec.fx, faceH, footprint: { x: x + b.x * s, y: y + b.y * s, w: b.w * s, h: b.h * s }, view: { w: vw, h: vh }, tried, rects: rects.map((r) => r.id) };
+        return { ok: true, variant: st.variant, scale: s, x, y, w, h, fit: st.fit, backing: spec.backing, fx: spec.fx, faceH, faceW, footprint: { x: x + b.x * s, y: y + b.y * s, w: b.w * s, h: b.h * s }, view: { w: vw, h: vh }, tried, rects: rects.map((r) => r.id) };
       }
       tried.push({ fit: st.fit, scale: s, why: 'overlaps ' + blocked });
     }
@@ -280,11 +303,12 @@ RB.harmonyCutin = (function () {
     const root = document.querySelector('.combat-ui');
     root.insertBefore(el, root.querySelector('.cb-banner'));
     N++;
-    cur = { n: N, tl: timelineOf(comp), state: 'inactive', action, comp, tech: cue.tech || comp, look, reduce, mode, d: { in: T.in, hold: T.hold, out: T.out }, t0: at, wall0: now(), el, pl, phase: null, opacity: 0, dx: 0, marks: [], trace: [], dirty: false, cut: null,
+    cur = { n: N, tl: timelineOf(comp), rm: null, mixQ: null, state: 'inactive', action, comp, tech: cue.tech || comp, look, reduce, mode, d: { in: T.in, hold: T.hold, out: T.out }, t0: at, wall0: now(), el, pl, phase: null, opacity: 0, dx: 0, marks: [], trace: [], dirty: false, cut: null,
       // with large text (or an overlay that scrolls) the layout may still reflow as the menus withdraw: the
       // portrait waits, unseen, until it has held still for a few frames (within its entrance), then takes its
       // place — or, if none is left, is not shown at all (never a flash over what then moves under it)
       settle: root.scrollHeight > root.clientHeight + 1 || ((RB.game.settings && RB.game.settings.textScale) || 1) > 1.25 ? { sig: null, n: 0 } : null };
+    cur.rm = reducedPlan(cur);
     mark(cur, 'inactive', at);
     S.started++; S.shown++;
     S.maxLive = Math.max(S.maxLive, document.querySelectorAll('.cb-cutin').length);
@@ -313,16 +337,47 @@ RB.harmonyCutin = (function () {
     g.clearRect(0, 0, comp.w, comp.h);
     g.drawImage(comp.cv, 0, 0);
     c.phase = ph;
+    c.mixQ = null;
     c.drawn = comp.key;
     layout(c);
+  }
+  // Reduced motion's cross-fade between two held poses (painted art): the one fading out at 1 − k, the one fading in
+  // at k, added ('lighter'), so a pixel both share keeps full opacity and one only either has fades with it. Drawn
+  // only when k moves on by a sixteenth.
+  function drawMix(c, mx) {
+    const q = Math.round(mx.k * 16) / 16;
+    if (c.mixQ === q && c.phase === mx.ph) return;
+    const spec = (ph) => ({ comp: c.comp, look: c.look, variant: c.pl.variant, phase: ph, still: false, backing: c.pl.backing, fx: c.pl.fx });
+    const ca = A().compose(spec(mx.a)), cb = A().compose(spec(mx.b));
+    if (c.el.width !== ca.w || c.el.height !== ca.h) { c.el.width = ca.w; c.el.height = ca.h; }
+    const g = c.el.getContext('2d', { willReadFrequently: true });
+    g.imageSmoothingEnabled = false;
+    g.clearRect(0, 0, ca.w, ca.h);
+    g.save();
+    g.globalCompositeOperation = 'lighter';
+    g.globalAlpha = 1 - q; g.drawImage(ca.cv, 0, 0);
+    g.globalAlpha = q; g.drawImage(cb.cv, 0, 0);
+    g.restore();
+    c.phase = mx.ph; c.mixQ = q;
+    c.drawn = ca.key + '~' + cb.key;
+    layout(c);
+  }
+  // reduced motion with painted art: the cross-fade under way at elapsed el, or null
+  function mixAt(c, el) {
+    const R = c.rm !== undefined ? c.rm : reducedPlan(c);
+    if (!R) return null;
+    const k = (el - (R.at - R.fade / 2)) / R.fade;
+    if (k <= 0 || k >= 1) return null;
+    return { a: R.a, b: R.b, k, ph: k < 0.5 ? R.a : R.b };
   }
   // which drawing shows at elapsed el (presentation ms): the arrival, then (shortly after it has arrived) the
   // one gesture resolved into the hold; a 'flourish' drawing, where the art has one, between them
   function phaseAt(c, el) {
     const T = c.tl !== undefined ? c.tl : timelineOf(c.comp);
     if (T) {
-      // reduced motion: the last state only; otherwise the latest state whose start has been reached
-      if (c.reduce) return T[T.length - 1].phase;
+      // reduced motion: held poses (peak, then settle_b at the middle of the hold), else the last state only;
+      // otherwise the latest state whose start has been reached
+      if (c.reduce) { const R = c.rm !== undefined ? c.rm : reducedPlan(Object.assign({ tl: T }, c)); return R ? (el < R.at ? R.a : R.b) : T[T.length - 1].phase; }
       const pos = el < c.d.in ? Math.max(0, el) / c.d.in : el < c.d.in + c.d.hold ? 1 + (el - c.d.in) / c.d.hold : 2 + Math.min(1, (el - c.d.in - c.d.hold) / c.d.out);
       let ph = T[0].phase;
       for (const e of T) if (e.at <= pos + 1e-9) ph = e.phase;
@@ -374,7 +429,7 @@ RB.harmonyCutin = (function () {
       S.relaid++;
       let pl;
       try { pl = place({ comp: c.comp, look: c.look, still: c.reduce }); } catch (e) { pl = { ok: false }; }
-      if (pl.ok) { const redraw = pl.variant !== c.pl.variant || pl.backing !== c.pl.backing; c.pl = pl; if (redraw) c.phase = null; layout(c); }
+      if (pl.ok) { const redraw = pl.variant !== c.pl.variant || pl.backing !== c.pl.backing; c.pl = pl; if (redraw) { c.phase = null; c.mixQ = null; } layout(c); }
       else {
         // no safe place any more: a short fade where it stands — or, if what it must keep clear of has moved
         // under it (large text reflowing the overlay), gone at once: it never stays over protected content
@@ -407,13 +462,14 @@ RB.harmonyCutin = (function () {
     else if (el < total) { state = 'fading'; op = 1 - smooth((el - d.in - d.hold) / d.out); }
     else { dispose('done'); return; }
     if (state !== c.state) { c.state = state; mark(c, state, pt); }
-    const ph = phaseAt(c, el);
-    if (ph !== c.phase) draw(c, ph);
+    const ph = phaseAt(c, el), mx = c.reduce ? mixAt(c, el) : null;
+    if (mx) drawMix(c, mx);
+    else if (ph !== c.phase || c.mixQ != null) draw(c, ph);
     c.opacity = op; c.dx = dx;
     if (op > 0 && !c.seen) { c.seen = true; S.displayed++; }
     c.el.style.opacity = String(Math.round(op * 1000) / 1000);
     c.el.style.transform = dx ? 'translate(' + dx + 'px,0)' : '';
-    if (c.trace.length < TRACE_CAP) c.trace.push([Math.round(el * 10) / 10, state[0], Math.round(op * 1000) / 1000, dx, ph]);
+    if (c.trace.length < TRACE_CAP) c.trace.push([Math.round(el * 10) / 10, state[0], Math.round(op * 1000) / 1000, dx, ph, mx ? Math.round(mx.k * 1000) / 1000 : null]);
   }
   function dispose(why) {
     const c = cur;
@@ -425,7 +481,7 @@ RB.harmonyCutin = (function () {
     c.state = 'disposed';
     mark(c, 'disposed', pt);
     S.disposed++;
-    S.log.push({ n: c.n, action: c.action, comp: c.comp, why: why || 'done', displayed: !!c.seen, mode: c.mode, reduce: c.reduce, variant: c.pl.variant, scale: c.pl.scale, fit: c.pl.fit, footprint: roundRect(c.pl.footprint), view: c.pl.view, faceH: c.pl.faceH, opacityAtEnd: Math.round(c.opacity * 1000) / 1000, marks: c.marks, trace: c.trace, look: c.look });
+    S.log.push({ n: c.n, action: c.action, comp: c.comp, why: why || 'done', displayed: !!c.seen, mode: c.mode, reduce: c.reduce, variant: c.pl.variant, scale: c.pl.scale, fit: c.pl.fit, footprint: roundRect(c.pl.footprint), view: c.pl.view, faceH: c.pl.faceH, faceW: c.pl.faceW, reducedPlan: c.rm, opacityAtEnd: Math.round(c.opacity * 1000) / 1000, marks: c.marks, trace: c.trace, look: c.look });
     while (S.log.length > LOG_CAP) S.log.shift();
     return true;
   }
@@ -489,5 +545,5 @@ RB.harmonyCutin = (function () {
     RB.bus.on('campaign:changing', () => { prepTok++; dispose('campaign'); spanCache.clear(); });
   }
 
-  return { start, frame, dispose, enabled, place, protectedRects, state, stats, last, reset, prepare, SEP, phases, _: { spansOf, hits, readingOpen, phaseAt, phaseList, timelineOf } };
+  return { start, frame, dispose, enabled, place, protectedRects, state, stats, last, reset, prepare, SEP, phases, _: { spansOf, hits, readingOpen, phaseAt, phaseList, timelineOf, mixAt, reducedPlan } };
 })();

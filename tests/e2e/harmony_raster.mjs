@@ -8,14 +8,17 @@
 // 4. a look change through RB.equip (equip:change) drops the stale painted busts; the new look recolours;
 // 5. uninstalled: exactly the code path again (same keys and pixels as before the install);
 // 6. a build with the sample embedded (tools/build.mjs --harmony) installs it by itself; no network requests;
-// 7. budgets: code busts vs the painted path (build ms, cache entries, decoded bytes, peak during a pairing).
+// 7. budgets: code busts vs the painted path (build ms, cache entries, decoded bytes, peak during a pairing), on the
+//    sample (five exact key shades per family) and on the rich fixture over it (contract v3: 9–11 values per family);
+// 8. contract v3: the scale fitted on the visible footprint (2× at 2048 × 1046, where the full canvas gave 1×), the
+//    approval state, and the rich fixture recoloured in the page (exact key shades still v2's tones).
 // --sheets also writes the evidence (docs/screenshots/harmony/raster_sample/, every image labelled SYNTHETIC SAMPLE)
 // and docs/harmony/contract/budgets.json.
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { serve, launch, page, root } from './lib.mjs';
-import { importSet } from '../../tools/harmony/importer.mjs';
+import { importSet, importSets } from '../../tools/harmony/importer.mjs';
 
 const SHEETS = process.argv.includes('--sheets');
 const t0 = Date.now();
@@ -31,6 +34,12 @@ const files = {};
 for (const f of fs.readdirSync(path.join(OUT, 'assets')).filter((f) => f.endsWith('.png'))) files[f] = fs.readFileSync(path.join(OUT, 'assets', f)).toString('base64');
 const manifest = imp.manifest;
 const encodedBytes = Object.values(files).reduce((n, b) => n + Buffer.from(b, 'base64').length, 0);
+// the rich fixture over the sample (contract v3)
+const impR = importSets(['tests/fixtures/harmony_sample/incoming', 'tests/fixtures/harmony_rich/incoming'].map((d) => path.join(root, d)), { out: path.join(OUT, 'rich_assets'), replace: true });
+ok(impR.ok, 'the rich fixture imports over the sample: ' + JSON.stringify(impR.report.summary));
+const filesR = {};
+for (const f of fs.readdirSync(path.join(OUT, 'rich_assets')).filter((f) => f.endsWith('.png'))) filesR[f] = fs.readFileSync(path.join(OUT, 'rich_assets', f)).toString('base64');
+const encodedBytesR = Object.values(filesR).reduce((n, b) => n + Buffer.from(b, 'base64').length, 0);
 // a build with the sample embedded (for 6)
 const emb = spawnSync(process.execPath, [path.join(root, 'tools/build.mjs'), '--out', path.join(OUT, 'embedded.html'), '--harmony', path.join(OUT, 'assets')], { encoding: 'utf8' });
 ok(emb.status === 0 && /painted Harmony art: \d+ PNGs/.test(emb.stdout), 'tools/build.mjs --harmony embeds the set: ' + emb.stdout.trim().split('\n').pop());
@@ -38,8 +47,9 @@ ok(emb.status === 0 && /painted Harmony art: \d+ PNGs/.test(emb.stdout), 'tools/
 const { srv, url } = await serve();
 const browser = await launch();
 const { p, errors, requests } = await page(browser, url, { viewport: { width: 1920, height: 1080 } });
-const LA = { skin: 1, hair: 'ponytail', hairColor: 3, outfit: 2, shape: 'coat', acc: ['glasses', 'flower'] };
-const LB = { skin: 5, hair: 'curly', hairColor: 8, outfit: 6, shape: 'robe', acc: ['scarf', 'satchel'] };
+// the looks of Batches 1a and 1b (contract v3 §1.1)
+const LA = { skin: 1, hair: 'ponytail', hairColor: 3, outfit: 2, shape: 'coat', acc: ['glasses', 'flower', 'satchel'] };
+const LB = { skin: 5, hair: 'curly', hairColor: 8, outfit: 6, shape: 'robe', acc: ['scarf', 'headband'] };
 
 // ---- 1: nothing installed ---------------------------------------------------------------------------------------------
 const snap = () => p.evaluate(({ LA }) => {
@@ -133,8 +143,32 @@ await p.evaluate(() => { RB.harmonyRaster.uninstall(); RB.harmonyArt.clear(); })
 const after = await snap();
 ok(JSON.stringify(after) === JSON.stringify(before), 'after uninstall: PHASES, timeline, NATIVE, scales and 8 code compositions (keys and pixels) are as before the install');
 
+// ---- 8: contract v3 — the visible footprint, approval, the rich fixture in the page ----------------------------------------
+const r8 = await p.evaluate(async ({ manifest, files, filesR, manifestR, LA, LB }) => {
+  const HA = RB.harmonyArt, HR = RB.harmonyRaster, HC = RB.harmonyContract;
+  HR.install({ manifest, files }); HA.clear();
+  await HA.prepare([{ comp: 'suzu', look: LA, variant: 'standard' }, { comp: 'suzu', look: LA, variant: 'compact' }], { async: true });
+  const foot = HA.footprint({ comp: 'suzu', look: LA, variant: 'standard' });
+  const scales = HC.STATES.map((st) => HA.compose({ comp: 'suzu', look: LA, phase: st, view: { w: 2048, h: 1046 } }).scale);
+  const out = { foot, scales, full: HA.fitScale(2048, 1046, 'standard'), on1920: HA.fitScale(1920, 1080, 'standard', 1, foot), approval: HA.approval(), statsApproval: HA.stats().approval.kit };
+  // the rich fixture: every painted pixel of look A recoloured; how many distinct output colours per bust
+  HR.install({ manifest: manifestR, files: filesR }); HA.clear();
+  await HA.prepare([{ comp: 'suzu', look: LA, variant: 'standard' }, { comp: 'suzu', look: LB, variant: 'standard' }], { async: true });
+  const colours = (look) => { const c = HA.compose({ comp: 'suzu', look, phase: 'peak', omit: 'comp', backing: false }); const d = c.cv.getContext('2d').getImageData(0, 0, c.w, c.h).data; const s = new Set(); for (let i = 0; i < d.length; i += 4) if (d[i + 3]) s.add((d[i] << 16) | (d[i + 1] << 8) | d[i + 2]); return { n: s.size, painted: c.painted.pc }; };
+  out.richA = colours(LA); out.richB = colours(LB);
+  HR.install({ manifest, files }); HA.clear();
+  await HA.prepare([{ comp: 'suzu', look: LA, phase: 'peak' }], { async: true });
+  out.sampleA = colours(LA);
+  HR.uninstall(); HA.clear();
+  out.after = HA.approval();
+  return out;
+}, { manifest, files, filesR, manifestR: impR.manifest, LA, LB });
+ok(r8.foot && r8.foot.w < 352 && r8.foot.h < 160 && r8.scales.every((s) => s === 2) && r8.full === 1 && r8.on1920 === 2, 'contract v3: the pair fitted on its visible footprint (' + (r8.foot && r8.foot.w + ' × ' + r8.foot.h) + ' art px): 2× at 2048 × 1046 for every state (the full canvas gave ' + r8.full + '×), 2× at 1920 × 1080');
+ok(r8.approval.kit === 'synthetic' && r8.approval.pairings.suzu === 'synthetic' && r8.approval.pairings.nao === 'provisional' && r8.statsApproval === 'synthetic' && r8.after.kit === 'provisional' && Object.values(r8.after.pairings).every((v) => v === 'provisional'), 'approval: the sample is synthetic, the code busts provisional (and everything provisional once uninstalled): ' + JSON.stringify(r8.approval.pairings));
+ok(r8.richA.painted === 'painted' && r8.richB.painted === 'painted' && r8.richA.n > 2 * r8.sampleA.n, 'the rich fixture is painted in the page with its values kept: ' + r8.richA.n + ' colours in look A\'s player bust (the five-shade sample: ' + r8.sampleA.n + '), look B ' + r8.richB.n);
+
 // ---- 7: budgets ----------------------------------------------------------------------------------------------------------------
-const budget = await p.evaluate(async ({ manifest, files, LA, LB }) => {
+const budget = await p.evaluate(async ({ manifest, files, manifestR, filesR, LA, LB }) => {
   const HA = RB.harmonyArt, HR = RB.harmonyRaster;
   const out = { code: {}, painted: {} };
   // code busts: a cold pairing (both busts and the composition), both phases and both variants, then cache residency
@@ -165,11 +199,26 @@ const budget = await p.evaluate(async ({ manifest, files, LA, LB }) => {
     per[name] = { prepareAllMs: +ms.toFixed(1), decodeMs: r.decodeMs, decodedFiles: r.decoded, decodedBytes: r.decodedBytes, busts: s.busts, compositions: s.compositions, cacheBytes: s.bytes, peakBytes: s.bytes + r.decodedBytes, coldComposeWithBackingMs: +coldMs.toFixed(1), coldStateMs: +coldStateMs.toFixed(1), warmComposeMs: +warmMs.toFixed(2), paintMs: HA.stats().raster.paintMs };
   }
   out.painted = per;
+  // the rich fixture (contract v3): the same, with many values per family (the recolour memoised per painted colour)
+  const perR = {};
+  for (const [name, look] of [['A', LA], ['B', LB]]) {
+    HR.uninstall(); HR.install({ manifest: manifestR, files: filesR }); HA.clear();
+    const t2 = performance.now();
+    await HA.prepare([{ comp: 'suzu', look, variant: 'standard' }, { comp: 'suzu', look, variant: 'compact' }], { async: true });
+    const ms = performance.now() - t2;
+    const s = HA.stats(), r = s.raster;
+    HA.clear();
+    const t3 = performance.now(); HA.compose({ comp: 'suzu', look, phase: 'peak' }); const coldMs = performance.now() - t3;
+    const t5 = performance.now(); HA.compose({ comp: 'suzu', look, phase: 'cue' }); const coldStateMs = performance.now() - t5;
+    perR[name] = { prepareAllMs: +ms.toFixed(1), decodeMs: r.decodeMs, decodedFiles: r.decoded, decodedBytes: r.decodedBytes, busts: s.busts, compositions: s.compositions, cacheBytes: s.bytes, peakBytes: s.bytes + r.decodedBytes, coldComposeWithBackingMs: +coldMs.toFixed(1), coldStateMs: +coldStateMs.toFixed(1), paintMs: HA.stats().raster.paintMs, recoloured: r.recoloured, decomposed: r.decomposed, gamutClipped: r.gamutClipped };
+  }
+  out.paintedRich = perR;
   out.env = { ua: navigator.userAgent, cores: navigator.hardwareConcurrency, view: [innerWidth, innerHeight], dpr: devicePixelRatio };
   HR.uninstall(); HA.clear();
   return out;
-}, { manifest, files, LA, LB });
+}, { manifest, files, manifestR: impR.manifest, filesR, LA, LB });
 console.log('budgets', JSON.stringify(budget));
+ok(budget.paintedRich.A.decodedFiles > 0 && budget.paintedRich.A.recoloured > 0, 'rich-fixture budgets measured (' + budget.paintedRich.A.recoloured + ' painted colours recoloured; paint mean ' + JSON.stringify(budget.paintedRich.A.paintMs) + ' ms)');
 ok(budget.painted.A.decodedFiles > 0 && budget.painted.A.peakBytes > 0, 'budgets measured (decoded ' + budget.painted.A.decodedFiles + ' files, ' + (budget.painted.A.decodedBytes / 1024).toFixed(0) + ' KiB; peak ' + (budget.painted.A.peakBytes / 1048576).toFixed(2) + ' MiB)');
 
 // ---- --sheets: evidence ---------------------------------------------------------------------------------------------------------
@@ -180,7 +229,7 @@ if (SHEETS) {
     const HA = RB.harmonyArt, HR = RB.harmonyRaster, HC = RB.harmonyContract;
     HR.install({ manifest, files }); HA.clear();
     const LABEL = 'SYNTHETIC SAMPLE — not art';
-    const looks = [['Look A: ponytail, coat, glasses, flower (skin 1, auburn, green)', LA], ['Look B: curly, robe (wide sleeve), scarf, satchel (skin 5, teal, pale)', LB]];
+    const looks = [['Look A (Batch 1a): ponytail, coat, glasses, flower, satchel (skin 1, auburn, green)', LA], ['Look B (Batch 1b): curly, robe (wide sleeve), scarf, headband (skin 5, teal, pale)', LB]];
     await HA.prepare(looks.flatMap(([, l]) => [{ comp: 'suzu', look: l, variant: 'standard' }, { comp: 'suzu', look: l, variant: 'compact' }]), { async: true });
     const mk = (w, h) => { const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.fillStyle = '#22252e'; g.fillRect(0, 0, w, h); return [c, g]; };
     const txt = (g, s, x, y, size, col, bold) => { g.font = (bold ? 'bold ' : '') + size + 'px sans-serif'; g.fillStyle = col || '#e8e2d0'; g.fillText(s, x, y); };
@@ -189,7 +238,7 @@ if (SHEETS) {
     for (const sc of [1, 2]) {
       const W = 352 * sc, Hh = 160 * sc, cw = W + 16 * sc, top = 70 * sc;
       const [c, g] = mk(30 + 6 * cw, top + 2 * (Hh + 128 * sc + 60 * sc) + 30 * sc);
-      txt(g, LABEL + ' — the painted path assembling the sample kit with Suzu, every state (contract v2), ' + sc + '×', 14, 26 * sc, 14 * sc, '#ff9a6a', true);
+      txt(g, LABEL + ' — the painted path assembling the sample kit with Suzu, every state (contract v' + HC.VERSION + '), ' + sc + '×', 14, 26 * sc, 14 * sc, '#ff9a6a', true);
       txt(g, 'Code-drawn busts placed on the 192 × 160 template, the player mirrored and repainted in key ramps, recoloured by the game for each look. Not art, not a style reference.', 14, 46 * sc, 10 * sc, '#a8a294');
       HA.PHASES.forEach((s, i) => txt(g, s, 20 + i * cw, top - 6 * sc, 12 * sc, '#e8e2d0', true));
       looks.forEach(([label, look], li) => {
@@ -263,7 +312,7 @@ if (SHEETS) {
   const rep = JSON.parse(fs.readFileSync(path.join(OUT, 'assets/report/report.json'), 'utf8'));
   rep.inDir = 'tests/fixtures/harmony_sample/incoming'; rep.out = '(a temporary folder)';
   fs.writeFileSync(path.join(SH, 'import_report.json'), JSON.stringify(rep, null, 1) + '\n');
-  const b = { date: new Date().toISOString().slice(0, 10), note: 'SYNTHETIC SAMPLE — not art. Measured by tests/e2e/harmony_raster.mjs --sheets in headless Chromium (software canvas) on a shared machine; not a physical device.', sampleEncodedBytes: encodedBytes, sampleFiles: Object.keys(files).length, manifestFiles: Object.keys(manifest.files).length, ...budget };
+  const b = { date: new Date().toISOString().slice(0, 10), note: 'SYNTHETIC SAMPLE — not art. Measured by tests/e2e/harmony_raster.mjs --sheets in headless Chromium (software canvas) on a shared machine; not a physical device. painted: the sample (five exact key shades per family); paintedRich: the rich fixture over it (contract v3, 9–11 values per family).', contractVersion: 3, sampleEncodedBytes: encodedBytes, sampleFiles: Object.keys(files).length, richEncodedBytes: encodedBytesR, richFiles: Object.keys(filesR).length, manifestFiles: Object.keys(manifest.files).length, ...budget };
   fs.writeFileSync(path.join(root, 'docs/harmony/contract/budgets.json'), JSON.stringify(b, null, 1) + '\n');
   console.log('wrote', Object.keys(sheets).length + 2, 'evidence files to docs/screenshots/harmony/raster_sample/ and docs/harmony/contract/budgets.json');
 }
