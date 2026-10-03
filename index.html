@@ -87029,8 +87029,9 @@ RB.harmonyRaster = (function () {
   }
   const accRamp = (r, look, a) => { const row = accRow(r, look, a); return row ? row.ramp : null; };
   // One material pixel (packed RGBA) of material mi → its colour in the look (packed): an exact key shade takes its
-  // ramp tone (contract v2's colours, exactly, unless the value floor opened the ramp); any other painted value is decomposed against its key curve and
-  // rebuilt on the row's target curve (value, then chroma and hue deviation × RECOLOUR.residual, into the gamut).
+  // ramp tone (contract v2's colours, exactly, unless the value floor opened the ramp); any other painted value is
+  // decomposed against its key curve and rebuilt on the row's target curve (value, then chroma and hue deviation ×
+  // RECOLOUR.residual, into the gamut).
   function recolourPx(row, mi, p) {
     const rgb24 = ((p & 255) << 16) | (p & 0xff00) | ((p >>> 16) & 255);
     let q = row.memo.get(rgb24);

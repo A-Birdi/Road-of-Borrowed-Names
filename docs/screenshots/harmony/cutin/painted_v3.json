@@ -1,5 +1,5 @@
 {
- "when": "2026-10-03T18:22:43.270Z",
+ "when": "2026-10-03T19:05:29.475Z",
  "browser": "Chromium (Playwright, headless), software canvas, device pixel ratio 1, shared 4-core Linux machine — not a physical device",
  "note": "SYNTHETIC sample (tests/fixtures/harmony_sample) and rich fixture (tests/fixtures/harmony_rich), not the game's art. The sample's face boxes are the code busts' (36 × 33 art px); real art uses the template's 50 × 52.",
  "rows": [
@@ -48,7 +48,7 @@
     "h": 25.2
    },
    "overlaps": 0,
-   "checkedFrames": 15
+   "checkedFrames": 13
   },
   {
    "view": "1920×1080 @1x normal",
@@ -95,7 +95,7 @@
     "h": 24.4
    },
    "overlaps": 0,
-   "checkedFrames": 10
+   "checkedFrames": 15
   },
   {
    "view": "1648×840 @1x normal",
@@ -142,7 +142,7 @@
     "h": 24.5
    },
    "overlaps": 0,
-   "checkedFrames": 12
+   "checkedFrames": 27
   },
   {
    "view": "1440×900 @1x normal",
@@ -189,7 +189,7 @@
     "h": 22.9
    },
    "overlaps": 0,
-   "checkedFrames": 16
+   "checkedFrames": 15
   },
   {
    "view": "1280×720 @1x normal",
@@ -236,7 +236,7 @@
     "h": 18.3
    },
    "overlaps": 0,
-   "checkedFrames": 20
+   "checkedFrames": 24
   },
   {
    "view": "768×1024 @2x normal",
@@ -283,7 +283,7 @@
     "h": 25.2
    },
    "overlaps": 0,
-   "checkedFrames": 22
+   "checkedFrames": 17
   },
   {
    "view": "390×844 @3x normal",
@@ -330,7 +330,7 @@
     "h": 16.2
    },
    "overlaps": 0,
-   "checkedFrames": 19
+   "checkedFrames": 18
   },
   {
    "view": "320×640 @2x normal",
@@ -377,7 +377,7 @@
     "h": 16.1
    },
    "overlaps": 0,
-   "checkedFrames": 28
+   "checkedFrames": 27
   },
   {
    "view": "844×390 @3x normal",
@@ -474,7 +474,7 @@
     "h": 25.2
    },
    "overlaps": 0,
-   "checkedFrames": 8
+   "checkedFrames": 22
   },
   {
    "view": "1920×1080 @1x normal (rich)",
@@ -521,8 +521,43 @@
     "h": 24.4
    },
    "overlaps": 0,
-   "checkedFrames": 15
+   "checkedFrames": 21
   }
  ],
- "reduced": []
+ "reduced": [
+  {
+   "view": "1280×720 normal reduced",
+   "states": [
+    "peak",
+    "peak~",
+    "settle_b~",
+    "settle_b"
+   ],
+   "crossFadeMs": 83.4,
+   "travel": 0,
+   "plan": {
+    "a": "peak",
+    "b": "settle_b",
+    "at": 370,
+    "fade": 100
+   }
+  },
+  {
+   "view": "1280×720 fast reduced",
+   "states": [
+    "peak",
+    "peak~",
+    "settle_b~",
+    "settle_b"
+   ],
+   "crossFadeMs": 71.3,
+   "travel": 0,
+   "plan": {
+    "a": "peak",
+    "b": "settle_b",
+    "at": 300.5,
+    "fade": 100
+   }
+  }
+ ]
 }
