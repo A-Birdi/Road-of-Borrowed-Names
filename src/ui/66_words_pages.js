@@ -228,10 +228,11 @@ RB.ui.wordsPages = (function () {
   }
   function bmRow(b, open, s) {
     const who = speakerLine(b);
+    const shown = RB.dialect && !b.choice ? RB.dialect.line(b.who, b) : b; // Suzu's line as she speaks it now (kept standard)
     const title = b.title ? '<span class="bm-title">' + I('note') + '<span class="sr">Your title: </span>' + utext(b.title) + '</span>' : '';
     return '<li class="bm-item' + (open ? ' open' : '') + '"><button type="button" class="entry bm-row" data-bm-open="' + esc(b.id) + '" aria-expanded="' + open + '">' +
       '<span class="mark">' + I('bookmark') + '</span><span class="body">' + title +
-      '<span class="bm-jp">' + j(b.jp, b.v) + '</span><span class="bm-en">' + esc(b.en) + '</span>' +
+      '<span class="bm-jp">' + j(shown.jp, b.v) + '</span><span class="bm-en">' + esc(shown.en) + '</span>' +
       '<span class="kind">' + (who.sr ? '<span class="sr">' + esc(who.sr) + ' — </span>' : '') + '<span aria-hidden="' + (who.sr ? 'true' : 'false') + '">' + who.html + '</span> · ' + placeHtml(b) + '</span></span></button>' +
       (open ? bmDetail(b, s) : '') + '</li>';
   }

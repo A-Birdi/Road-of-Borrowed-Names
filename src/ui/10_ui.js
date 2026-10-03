@@ -143,7 +143,9 @@ RB.ui = (function () {
     if (!RB.jp || !RB.jp.render) return '<span class="jline" lang="ja">' + esc(String(line).replace(/\{([^|}]+)\|[^}]+\}/g, '$1').replace(/ /g, '')) + '</span>';
     const spacing = opts.spacing != null ? opts.spacing : RB.game.settings ? RB.game.settings.spacing : true;
     const r = RB.jp.render(line, { spacing, vars, furigana: true });
-    const id = RB.ui.help.register(r.tokens, line, opts.ctx);
+    // a Kansai line of Suzu's: word help reads it with the Kansai lexicon first (src/lang/85_dialect.js)
+    const ctx = RB.dialect && RB.dialect.isKansai(line) ? Object.assign({}, opts.ctx || {}, { dia: 'kansai' }) : opts.ctx;
+    const id = RB.ui.help.register(r.tokens, line, ctx);
     return '<span class="jline" lang="ja" data-src="' + id + '">' + r.html + '</span>';
   }
   function ehtml(text) {
@@ -377,13 +379,14 @@ RB.ui.help = (function () {
     if (cur) cur.classList.remove('active');
     cur = elm;
     elm.classList.add('active');
-    render(tok, elm, r);
+    render(tok, elm, r, +elm.getAttribute('data-i'));
     if (RB.challenge && RB.challenge.active()) RB.challenge.noteHelp(tok, elm);
   }
   const HI = (n) => (RB.ui.folio ? RB.ui.folio.icon(n) : '');
-  function render(tok, anchor, r) {
-    let info;
-    try { info = RB.jp.lookup(tok); } catch (e) { info = { unknown: true, reading: tok.reading || tok.surface }; }
+  function render(tok, anchor, r, idx) {
+    let info = null;
+    if (r && r.ctx && r.ctx.dia && RB.dialect) { try { info = RB.dialect.lookupIn(r.tokens, idx); } catch (e) { info = null; } }
+    if (!info) { try { info = RB.jp.lookup(tok); } catch (e) { info = { unknown: true, reading: tok.reading || tok.surface }; } }
     if (!panel) {
       panel = document.createElement('div');
       panel.className = 'help';
@@ -403,6 +406,7 @@ RB.ui.help = (function () {
     if (e) html += '<div class="mean">' + (info.gloss ? '<span class="lab">Dictionary</span>' : '') + esc(e.m) + (info.lemma && info.lemma !== surface ? ' <span class="small" lang="ja">(' + esc(info.lemma) + ')</span>' : '') + '</div>';
     if (info.forms && info.forms.length) html += '<div class="note">Form: ' + esc(info.forms.join(' → ')) + '</div>';
     if (info.parts && info.parts.length) html += '<div class="note">Parts: ' + info.parts.map((p) => esc(p.surface || p.w || '') + (p.m ? ' (' + esc(p.m) + ')' : '')).join(' + ') + '</div>';
+    if (info.dia && RB.dialect) html += '<div class="note dia" lang="en"><b>' + (e && e.casual ? 'Casual speech' : 'Kansai-ben') + '</b> ' + esc(RB.dialect.note(info)) + '</div>';
     if (e && e.n) html += '<div class="note">' + esc(e.n) + '</div>';
     if (!e && !info.gloss) html += '<div class="note">No dictionary note is recorded for this piece of text. The reading above is still accurate.</div>';
     if (mora && mora.length > 1) html += '<div class="note">Beats (morae): <span class="mora" lang="ja">' + mora.map((m) => '<span>' + esc(m) + '</span>').join('') + '</span></div>';
@@ -420,7 +424,7 @@ RB.ui.help = (function () {
       if (!b) return;
       const a = b.getAttribute('data-a');
       if (a === 'say') RB.voice.speak(reading || surface);
-      if (a === 'pin') { pinned = !pinned; render(tok, anchor, r); }
+      if (a === 'pin') { pinned = !pinned; render(tok, anchor, r, idx); }
       if (a === 'close') { pinned = false; hide(); if (anchor && anchor.isConnected && via === 'key') anchor.focus({ preventScroll: true }); }
       if (a === 'note') addToNotebook(tok, info);
     };
@@ -470,7 +474,8 @@ RB.ui.help = (function () {
     const s = RB.game.s;
     const key = 'w:' + (info.lemma || tok.surface) + '|' + (info.reading || '');
     if (!s.notebook.find((n) => n.id === key)) {
-      s.notebook.push({ kind: 'word', id: key, surface: tok.surface, reading: info.reading || '', m: info.gloss || (info.entry && info.entry.m) || '', t: Date.now() });
+      // a Kansai word or form is marked so: it is noted, but never practised as standard vocabulary
+      s.notebook.push(Object.assign({ kind: 'word', id: key, surface: tok.surface, reading: info.reading || '', m: info.gloss || (info.entry && info.entry.m) || '', t: Date.now() }, info.dia ? { dia: 'kansai' } : {}));
       RB.ui.notice('Added to your field notebook.', 'info');
     } else RB.ui.notice('Already in your notebook.', 'info');
   }

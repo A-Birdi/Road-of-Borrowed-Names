@@ -1,0 +1,24 @@
+/* How Suzu speaks (src/ui/56_suzu_speech.js): the choice sheet and Company › Suzu */
+.speech-sheet { width: min(560px, 100%); max-height: calc(100vh - 24px); overflow-y: auto; }
+.speech-sheet h3 { margin: 0 0 8px; display: flex; align-items: center; gap: 0.4em; }
+.speech-sheet p { margin: 0 0 10px; line-height: 1.5; }
+.speech-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 6px 0 12px; }
+@media (max-width: 520px) { .speech-opts { grid-template-columns: 1fr; } }
+.speech-opt {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-height: var(--tap); padding: 10px 12px; text-align: left;
+  font: inherit; color: var(--ink); background: var(--paper); border: 1px solid var(--ink-3); border-radius: var(--r-1);
+  box-shadow: 0 2px 0 var(--paper-3); cursor: pointer; touch-action: manipulation;
+}
+.speech-opt:hover { background: var(--paper-2); }
+.speech-opt:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.speech-opt[aria-pressed="true"] { box-shadow: inset 0 -3px 0 var(--ribbon); }
+.speech-opt .t { font-weight: 600; }
+.speech-opt .smp { display: block; margin-top: 4px; line-height: 1.8; }
+.speech-opt .smp .en { display: block; color: var(--ink-2); font-size: 0.9em; line-height: 1.4; }
+.co-speech { margin: 0.2em 0 0.8em; }
+.co-speech h5 { margin: 0.4em 0 0.3em; font-size: 0.95em; }
+.co-speech .row-acts { display: flex; flex-wrap: wrap; gap: 8px; }
+.co-speech .speech-btn { min-height: var(--tap); }
+.co-speech .speech-btn[aria-checked="true"] { background: var(--paper-2); box-shadow: inset 0 -3px 0 var(--ribbon); font-weight: 600; }
+.co-speech .speech-btn .jp { color: var(--ink-2); font-size: 0.9em; }
+.help .note.dia { border-left: 3px solid var(--ribbon); padding-left: 6px; }

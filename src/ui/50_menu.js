@@ -274,7 +274,9 @@ RB.ui.menu = (function () {
       A.innerHTML = sub + '<h3>Dialogue history <span class="count">' + lines.length + ' lines, oldest first</span></h3>' +
         (lines.length ? '<ol class="entries history">' + lines.map((l) => {
           const ch = l.who === 'pc' ? { name: { en: s.player.name } } : RB.content.chars[l.who];
-          return '<li class="entry"><span class="mark">' + I(l.choice ? 'next' : 'history') + '</span><div><div class="who">' + (l.choice ? 'You chose' : ch ? esc(ch.name.en) : '') + '</div>' + j(l.jp) + en(l.en) + '</div>' +
+          // Suzu's lines as she speaks them now (the history itself keeps the standard line)
+          const v = RB.dialect && !l.choice ? RB.dialect.line(l.who, l) : l;
+          return '<li class="entry"><span class="mark">' + I(l.choice ? 'next' : 'history') + '</span><div><div class="who">' + (l.choice ? 'You chose' : ch ? esc(ch.name.en) : '') + '</div>' + j(v.jp) + en(v.en) + '</div>' +
             (RB.ui.keep ? RB.ui.keep.historyButton(s, l) : '') + '</li>'; // Keep this sentence (src/ui/66_words_pages.js)
         }).join('') + '</ol>' : '<p class="muted">Nothing said yet.</p>');
       B.innerHTML = '<p class="muted">The history keeps the last 120 lines, in both languages. Replay a line’s voice from the dialogue box while it is on screen.</p>';

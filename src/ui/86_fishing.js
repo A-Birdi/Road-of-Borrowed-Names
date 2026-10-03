@@ -319,10 +319,13 @@ RB.ui.fishing = (function () {
       if (k === 'later' || !C.session.alive()) return;
       const i = +k.slice(1);
       const reply = F.content().remarks[comp].reflect[i];
-      F.reflect(s, { comp, choice: i, site: C.sid, lines: [{ who: 'narr', jp: spread.jp, en: spread.en }, { who: comp, jp: ask.jp, en: ask.en }, { who: 'pc', jp: choices[i].jp, en: choices[i].en, choice: true }, { who: comp, jp: reply.jp, en: reply.en }] });
+      // the memory keeps the standard lines; Suzu's are shown in Kansai when chosen (src/lang/85_dialect.js)
+      const askStd = RB.dialect ? RB.dialect.std(ask) : ask;
+      const shown = RB.dialect ? RB.dialect.line(comp, reply) : reply;
+      F.reflect(s, { comp, choice: i, site: C.sid, lines: [{ who: 'narr', jp: spread.jp, en: spread.en }, { who: comp, jp: askStd.jp, en: askStd.en }, { who: 'pc', jp: choices[i].jp, en: choices[i].en, choice: true }, { who: comp, jp: reply.jp, en: reply.en }] });
       C.ui.stage.say(reply, comp);
       C.ui.stage.event('remark');
-      await C.ui.ask('<blockquote class="fp-say"><span class="who">' + esc(nm) + '</span>' + J(reply.jp) + '<span class="en">' + esc(reply.en) + '</span></blockquote><p class="muted small">Kept in Company › Shared memories.</p><div class="fp-acts"><button class="pbtn primary" data-k="ok">' + I('done') + 'Close the notebook</button></div>', ['ok']);
+      await C.ui.ask('<blockquote class="fp-say"><span class="who">' + esc(nm) + '</span>' + J(shown.jp) + '<span class="en">' + esc(shown.en) + '</span></blockquote><p class="muted small">Kept in Company › Shared memories.</p><div class="fp-acts"><button class="pbtn primary" data-k="ok">' + I('done') + 'Close the notebook</button></div>', ['ok']);
       return;
     }
     if (!R.solo && !R.shared) {

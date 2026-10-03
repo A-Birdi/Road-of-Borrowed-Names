@@ -357,7 +357,8 @@ RB.fishing = (function () {
     const R = REMARKS[comp];
     const L = R && R[kind];
     if (!L || !L.length) return null;
-    return L[((seed | 0) % L.length + L.length) % L.length];
+    const pick = L[((seed | 0) % L.length + L.length) % L.length];
+    return RB.dialect ? RB.dialect.line(comp, pick) : pick; // shown as she speaks (Suzu's Kansai-ben, src/lang/85_dialect.js)
   }
 
   // ---- conditions: fish.intro, fish.survey, fish.frame, fish.spread, fish.count>=n, fish.seen.<id> ---------------

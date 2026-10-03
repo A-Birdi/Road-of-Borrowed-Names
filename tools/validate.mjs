@@ -1,6 +1,7 @@
 // Content validator. Usage: node tools/validate.mjs [--strict] [--unknown] [--filter prefix] [--stats]
 // Exits non-zero on errors. Warnings are listed but don't fail (unless --strict).
-import { load } from '../tests/lib/load.mjs';
+import { load, root } from '../tests/lib/load.mjs';
+import { suzuInventory, checkDialect } from './suzu_inventory.mjs';
 
 const args = process.argv.slice(2);
 const strict = args.includes('--strict');
@@ -357,6 +358,14 @@ for (const [id, where] of sceneRefs) if (!C.scenes[id]) E(where + ': missing sce
 // lexicon
 for (const c of RB.lex.conflicts()) Wn('lexicon conflict: ' + JSON.stringify(c).slice(0, 160));
 for (const p of RB.lex.problems()) E('lexicon problem: ' + JSON.stringify(p).slice(0, 160));
+// Suzu's Kansai-ben (docs/dialect/suzu_kansai.md): every line she speaks has a Kansai version (or is
+// marked the same), with furigana on every kanji and every word explained by a lexicon; the source
+// scan finds Suzu's words in a table the inventory does not know yet
+const dialectInv = suzuInventory(RB, { root });
+const dialect = checkDialect(RB, dialectInv);
+dialect.errors.forEach(E);
+dialect.warnings.forEach(Wn);
+for (const x of dialectInv.scan) E('dialect: ' + x.file + ':' + x.line + ': Suzu\'s Japanese that tools/suzu_inventory.mjs does not list (add its table to the inventory, or to the labels if it is not speech): “' + x.jp.slice(0, 40) + '”');
 
 // ---- report --------------------------------------------------------------------------------------
 const counts = {
@@ -364,6 +373,7 @@ const counts = {
   maps: Object.keys(C.maps).length, quests: Object.keys(C.quests).length, side: Object.values(C.quests).filter((q) => !q.main).length,
   enemies: Object.keys(C.enemies).length, challenges: Object.keys(C.challenges).length, drills: (C.drills || []).length,
   activities: Object.keys(C.activities).length, registryTexts: regTexts, lexicon: RB.lex.all().length, unknownTokens: unknownTok.size,
+  suzuLines: dialect.stats.unique, suzuKansai: dialect.stats.kansai, suzuSame: dialect.stats.same, kansaiLexicon: dialect.stats.lexicon,
 };
 console.log('content:', JSON.stringify(counts));
 if (args.includes('--stats')) {

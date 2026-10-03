@@ -725,7 +725,8 @@ RB.wordplay = (function () {
     if (!all.length) return null;
     const top = Math.max(...all.map((l) => l.prio || 0));
     const best = all.filter((l) => (l.prio || 0) === top);
-    return best[RB.util.hashStr(String(salt || '') + '|' + cat) % best.length];
+    const pick = best[RB.util.hashStr(String(salt || '') + '|' + cat) % best.length];
+    return RB.dialect ? RB.dialect.line(comp, pick) : pick; // shown as she speaks (Suzu's Kansai-ben, src/lang/85_dialect.js)
   }
   // at most one optional comment per four combined moves; Quiet keeps rules and results only
   function mayComment(s, cat) {

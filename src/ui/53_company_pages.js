@@ -39,7 +39,9 @@ RB.ui.companyPages = (function () {
   const sectionsHtml = (s, comp, V) => SECTIONS.map((d) => { try { return d.html(s, comp, V) || ''; } catch (e) { console.error('company section ' + d.id, e); return ''; } }).join('');
   const j = (t) => (t ? RB.ui.jhtml(t) : '');
   const chr = (id) => (id && RB.content.chars[id]) || null;
-  const said = (t, cls) => (t ? '<div class="co-said' + (cls ? ' ' + cls : '') + '">' + (t.jp ? '<div class="jp">' + j(t.jp) + '</div>' : '') + (t.en ? '<div class="en">' + RB.ui.ehtml(t.en) + '</div>' : '') + '</div>' : '');
+  // words of the companion `who` (Suzu's in Kansai when chosen: src/lang/85_dialect.js)
+  const said = (t, cls, who) => { t = t && who && RB.dialect ? RB.dialect.line(who, t) : t; return said0(t, cls); };
+  const said0 = (t, cls) => (t ? '<div class="co-said' + (cls ? ' ' + cls : '') + '">' + (t.jp ? '<div class="jp">' + j(t.jp) + '</div>' : '') + (t.en ? '<div class="en">' + RB.ui.ehtml(t.en) + '</div>' : '') + '</div>' : '');
   const AIM = { foe: 'the creature you target', foes: 'every creature', allies: 'you both', aimed: 'whoever the target is aiming at', lower: 'whichever of you has less resolve', pc: 'you', none: 'no target' };
   const BOND_LINE = {
     walking: { jp: '{一緒|いっしょ} に {歩|ある}き{始|はじ}めた ところ 。', en: 'You have set out together; the road is still new to you both.' },
@@ -133,7 +135,7 @@ RB.ui.companyPages = (function () {
       '<p class="co-bond"><span class="k">' + L('{絆|きずな}', 'Bond') + '</span> <b>' + esc(st.label.en) + '</b> <span class="jp">' + j(st.label.jp) + '</span></p></div></div>' +
       '<p class="co-bondline">' + j(bl.jp) + ' <span class="en">' + esc(bl.en) + '</span></p>' +
       '<section class="co-thought" aria-label="' + esc('On ' + c.name.en + '\'s mind') + '"><h4>' + I('mind') + L('{今|いま} の {思|おも}い', 'On ' + c.name.en + '\'s mind') + '</h4>' +
-      (th ? said(th.text) : '<p class="muted">Nothing in particular. The road is enough for now.</p>') + '</section>' +
+      (th ? said(th.text, null, comp) : '<p class="muted">Nothing in particular. The road is enough for now.</p>') + '</section>' +
       (known.length ? '<h4>' + I('companion') + L('{知|し}って いる こと', 'What you know of ' + c.name.en) + '</h4><ul class="co-know">' + known.map((x) => '<li>' + esc(x.en) + '</li>').join('') + '</ul>' : '') +
       (qi ? '<h4>' + I(qi.done ? 'done' : 'side') + L('{自分|じぶん} の {道|みち}', c.name.en + '\'s own road') + '</h4><p class="co-q"><span class="t">' + j(qi.qd.title.jp) + ' <span class="en">' + esc(qi.qd.title.en) + '</span></span> <span class="kind">' + (qi.done ? 'resolved' : 'in progress') + '</span></p>' : '');
   }
@@ -159,7 +161,11 @@ RB.ui.companyPages = (function () {
     if (rest) h += actionRow('rest', 'rest', 'Rest together', '{一緒|いっしょ} に {休|やす}む', 'a quiet moment here');
     h += actionRow('memories', 'journey', 'Shared memories', '{思|おも}い{出|で}', '');
     if (qi) h += actionRow('quest', qi.done ? 'done' : 'side', 'Personal quest details', '{自分|じぶん} の {道|みち}', '', ' aria-expanded="' + (V.detail === 'quest') + '"');
+    // how Suzu speaks: ask her in the world, or the plain choice below (src/ui/56_suzu_speech.js)
+    const sp = comp === 'suzu' && RB.ui.suzuSpeech;
+    if (sp) { const tl = sp.talkLabel(); h += actionRow('speech', 'talk', tl.en, tl.jp, ''); }
     h += '</ul>';
+    if (sp) h += sp.companyHtml(s);
     return h;
   }
   function questDetail(s, comp, c) {
@@ -192,7 +198,7 @@ RB.ui.companyPages = (function () {
     return '<div class="co-id"><canvas class="co-portrait" width="96" height="96" role="img" aria-label="' + esc('Portrait of ' + prov.name.en) + '"></canvas>' +
       '<div class="co-name"><h3>' + j(prov.name.jp) + ' <span class="en">' + esc(prov.name.en) + '</span></h3><p class="muted">' + L(prov.role ? prov.role.jp : '', prov.role ? prov.role.en : '') + '</p></div></div>' +
       '<p>' + esc(prov.name.en) + ' is travelling with you for now. Nothing is decided until you set out together — the lantern will carry two names, and you can still change your mind before the door.</p>' +
-      (b.first ? said(b.first, 'first') : '');
+      (b.first ? said(b.first, 'first', s.provisional) : '');
   }
   function companionPage(A, B, two, api) {
     const s = api.s, V = api.view;
@@ -220,6 +226,8 @@ RB.ui.companyPages = (function () {
     const click = async (e) => {
       const sb = e.target.closest('[data-co-sec]');
       if (sb) { const d = SECTIONS.find((x) => x.id === sb.dataset.coSec); if (d && d.click) await d.click(sb, s, api); return; }
+      const sps = e.target.closest('[data-suzu-speech-set]');
+      if (sps && RB.ui.suzuSpeech) { api.remember(); await RB.ui.suzuSpeech.set(sps.dataset.suzuSpeechSet); api.render(); return; }
       const b = e.target.closest('[data-co-act],[data-co-topic],[data-co-back],[data-co-case-talk],[data-co-case-open]');
       if (!b) return;
       if (b.hasAttribute('data-co-back')) { V.detail = null; api.render(); return; }
@@ -240,6 +248,11 @@ RB.ui.companyPages = (function () {
       if (act === 'quest') { V.detail = V.detail === 'quest' ? null : 'quest'; api.render(); return; }
       if (act === 'place') { await converse(api, () => RB.script.run('co.place')); return; }
       if (act === 'rest') { await converse(api, () => RB.script.run('co.rest')); return; }
+      if (act === 'speech' && RB.ui.suzuSpeech) {
+        // asked in the world where a conversation can be played; otherwise the choice is made here
+        if (!(await converse(api, () => RB.ui.suzuSpeech.talk()))) { await RB.ui.suzuSpeech.set(RB.ui.suzuSpeech.value() === 'kansai' ? 'standard' : 'kansai'); api.render(); }
+        return;
+      }
       if (act === 'mind') {
         await converse(api, async () => {
           const pd = pagesWaiting(s);
@@ -269,7 +282,7 @@ RB.ui.companyPages = (function () {
       '<div class="kind">' + esc(k.en) + (m.place ? ' · ' + esc(m.place.en || '') : '') + (m.retro ? ' · from the journey\'s record' : '') + '</div>' +
       '<div class="t">' + (m.title && m.title.jp ? j(m.title.jp) + ' ' : '') + '<span class="en">' + esc(m.title ? m.title.en : m.id) + '</span>' + (m.petName ? ' <span class="co-petname">“' + esc(m.petName) + '”</span>' : '') + '</div>' +
       (m.text ? '<div class="small">' + enOf(m, m.text.en) + '</div>' : '') +
-      (m.reply ? '<blockquote class="co-reply"><span class="who">' + esc(memName(m)) + '</span>' + said(m.reply) + '</blockquote>' : '') +
+      (m.reply ? '<blockquote class="co-reply"><span class="who">' + esc(memName(m)) + '</span>' + said(memReply(m), null, m.comp) + '</blockquote>' : '') +
       '<div class="row-acts"><button class="pbtn" data-co-recall="' + esc(m.id) + '" aria-pressed="' + !!sel + '">' + I('history') + L('{思|おも}い{出|だ}す', 'Recollect') + '</button>' +
       refButton(m) + '</div></div></li>';
   }
@@ -285,14 +298,19 @@ RB.ui.companyPages = (function () {
     if (r.kind === 'case' && RB.cases) return '<button class="pbtn quiet" data-co-ref="cases" data-id="' + esc(r.id) + '">' + I('scroll') + L('{記録|きろく} を {開|ひら}く', 'Open the case') + '</button>';
     return '';
   }
+  // a discovery memory keeps its remark's lines joined: shown line by line through the dialect
+  function memReply(m) {
+    const r = m.react && RB.company.reactions ? RB.company.reactions.find((x) => x.id === m.react) : null;
+    return r && r.lines && RB.dialect ? RB.dialect.joined(m.comp, m.reply, r.lines) : m.reply;
+  }
   // the recollection: only a transcript of what was kept; reading it runs nothing and changes nothing
   function recollection(s, m) {
     if (!m) return '<p class="muted">Choose a memory to recollect it.</p>';
     const who = memName(m);
     const lines = m.lines && m.lines.length ? m.lines : [
       m.text ? { who: 'narr', jp: m.text.jp, en: m.text.en } : null,
-      m.reply ? { who: m.comp, jp: m.reply.jp, en: m.reply.en } : null,
-    ].filter(Boolean);
+      m.reply ? Object.assign({ who: m.comp }, memReply(m)) : null,
+    ].filter(Boolean).map((l) => (RB.dialect && !l.choice ? RB.dialect.line(l.who, l) : l));
     const nm = (w) => (w === 'pc' ? s.player.name : w === 'narr' || !w ? '' : chr(w) ? chr(w).name.en : '');
     return '<section class="co-recall" aria-label="Recollection"><h4>' + I('history') + L('{思|おも}い{出|だ}す', 'Recollection') + '</h4>' +
       '<p class="kind">A record of what was kept. Reading it changes nothing.</p>' +

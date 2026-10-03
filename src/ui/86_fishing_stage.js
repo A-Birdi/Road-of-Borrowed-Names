@@ -648,6 +648,7 @@ RB.fishStage = (function () {
     function say(line, who) {
       clearTimeout(sayT);
       if (!line) { sayEl.innerHTML = ''; sayEl.classList.remove('on'); return; }
+      if (RB.dialect) line = RB.dialect.line(who, line); // Suzu's Kansai-ben when chosen
       const nm = who && RB.content.chars[who] ? RB.content.chars[who].name.en : '';
       sayEl.innerHTML = '<span class="who">' + RB.util.esc(nm) + '</span>' + RB.ui.jhtml(line.jp) + '<span class="en">' + RB.util.esc(line.en) + '</span>';
       sayEl.classList.add('on');

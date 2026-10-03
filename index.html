@@ -4210,6 +4210,32 @@ mark.pb-fixed { background: rgba(45, 95, 40, 0.14); color: inherit; border-botto
 /* a safety net: an icon nothing else sizes stays text-sized (zero specificity, so any rule wins) */
 :where(.lsheet.pb svg[viewBox="0 0 24 24"]) { width: 1.2em; height: 1.2em; flex: none; }
 .pb-asked svg { width: 1.2em; height: 1.2em; vertical-align: -0.25em; color: var(--ink-2); }
+
+/* ==== src/styles/79_speech.css ==== */
+/* How Suzu speaks (src/ui/56_suzu_speech.js): the choice sheet and Company › Suzu */
+.speech-sheet { width: min(560px, 100%); max-height: calc(100vh - 24px); overflow-y: auto; }
+.speech-sheet h3 { margin: 0 0 8px; display: flex; align-items: center; gap: 0.4em; }
+.speech-sheet p { margin: 0 0 10px; line-height: 1.5; }
+.speech-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 6px 0 12px; }
+@media (max-width: 520px) { .speech-opts { grid-template-columns: 1fr; } }
+.speech-opt {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-height: var(--tap); padding: 10px 12px; text-align: left;
+  font: inherit; color: var(--ink); background: var(--paper); border: 1px solid var(--ink-3); border-radius: var(--r-1);
+  box-shadow: 0 2px 0 var(--paper-3); cursor: pointer; touch-action: manipulation;
+}
+.speech-opt:hover { background: var(--paper-2); }
+.speech-opt:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.speech-opt[aria-pressed="true"] { box-shadow: inset 0 -3px 0 var(--ribbon); }
+.speech-opt .t { font-weight: 600; }
+.speech-opt .smp { display: block; margin-top: 4px; line-height: 1.8; }
+.speech-opt .smp .en { display: block; color: var(--ink-2); font-size: 0.9em; line-height: 1.4; }
+.co-speech { margin: 0.2em 0 0.8em; }
+.co-speech h5 { margin: 0.4em 0 0.3em; font-size: 0.95em; }
+.co-speech .row-acts { display: flex; flex-wrap: wrap; gap: 8px; }
+.co-speech .speech-btn { min-height: var(--tap); }
+.co-speech .speech-btn[aria-checked="true"] { background: var(--paper-2); box-shadow: inset 0 -3px 0 var(--ribbon); font-weight: 600; }
+.co-speech .speech-btn .jp { color: var(--ink-2); font-size: 0.9em; }
+.help .note.dia { border-left: 3px solid var(--ribbon); padding-left: 6px; }
 </style>
 </head>
 <body>
@@ -9501,6 +9527,305 @@ RB.kanjiInfo = (function () {
   function byUse(id) { return all().filter((e) => e.uses.indexOf(id) >= 0); }
 
   return { get, all, themes, uses, byTheme, byUse, search, met, reset, romanKey, readings: (ch) => readingsOf(ch).slice(), _internal: { themesOf, firstSense, KW, RADICAL_THEME, isNumeral, POS_USE } };
+})();
+
+
+/* ==== src/lang/85_dialect.js ==== */
+/* RB.dialect — Suzu's Kansai-ben (docs/dialect/suzu_kansai.md).
+ *
+ * The standard lines stay exactly as authored. A dialect table, keyed by the
+ * standard Japanese line (whitespace normalised), holds the Kansai version of
+ * every line Suzu speaks, Japanese and English; the swap happens only when a
+ * line is shown, and only when the line is hers and the player chose Kansai
+ * (settings.suzuSpeech === 'kansai'; absent = standard). Nothing Kansai is
+ * ever written into a campaign save: the history, memories and kept
+ * sentences keep the standard text and are swapped when shown.
+ *
+ * Tables (src/content/dialect/*.js):
+ *   RB.dialect.add('kansai', `
+ *   @ ch1/32_scenes_depart [rw.suzu_evening]        (where it comes from; informative)
+ *   = <standard Japanese> || <standard English>     (the key: its Japanese)
+ *   > <Kansai Japanese> || <Kansai English>         (or "> =" : the same in Kansai,
+ *   `, 'file');                                        or "> = || English" : same Japanese)
+ *   A standard line containing %T is a template (a title filled in at run time).
+ *
+ * The Kansai lexicon (separate from RB.lex, so Kansai forms never feed the
+ * standard vocabulary: kana practice, kanji words, the writing desk):
+ *   RB.dialect.addLex([{ w, r, pos, lv, m, std, n?, final? }], src)
+ *     std   the standard equivalent (shown in word help); final: only at the end of a sentence
+ *   RB.dialect.lookupIn(tokens, i)  word help for a token of a Kansai line: a Kansai entry, a
+ *     Kansai verb form explained through its standard form, or null (standard lookup applies). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.dialect = (function () {
+  'use strict';
+  const norm = (jp) => String(jp == null ? '' : jp).replace(/\s+/g, ' ').trim();
+  const T = { kansai: new Map() };       // norm(standard jp) -> entry
+  const TPL = { kansai: [] };            // template entries (standard with %T)
+  const KJP = new Set();                 // every Kansai Japanese string (render as Kansai)
+  const errors = [];                     // table syntax problems (the validator reports them)
+  const files = [];
+
+  function parse(dialect, src, file) {
+    const out = [];
+    let at = null, std = null;
+    src.split(/\r?\n/).forEach((raw, i) => {
+      const line = raw.trim();
+      if (!line || line[0] === '#') return;
+      const where = (file || 'dialect') + ':' + (i + 1);
+      if (line[0] === '@') { at = line.slice(1).trim(); return; }
+      const body = line.slice(1).trim();
+      const bar = body.indexOf('||');
+      const jp = bar < 0 ? body : body.slice(0, bar).trim();
+      const en = bar < 0 ? null : body.slice(bar + 2).trim();
+      if (line[0] === '=') {
+        if (std) errors.push(where + ': a standard line without its Kansai line before it');
+        std = { jp, en, where, at };
+        return;
+      }
+      if (line[0] === '>') {
+        if (!std) { errors.push(where + ': a Kansai line without a standard line'); return; }
+        const same = jp === '=';
+        const e = { dialect, std: std.jp, stdEn: std.en, jp: same ? std.jp : jp, en: en != null ? en : same ? std.en : '', same: same && en == null, sameJp: same, at: std.at, where: std.where, file };
+        if (!same && en == null) errors.push(where + ': a Kansai line without English');
+        out.push(e);
+        std = null;
+        return;
+      }
+      errors.push(where + ': cannot parse: ' + line.slice(0, 40));
+    });
+    if (std) errors.push(std.where + ': a standard line without a Kansai line');
+    return out;
+  }
+  const reEsc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const tplRe = (s) => new RegExp('^' + reEsc(norm(s)).replace(/%T/g, '(.+?)') + '$');
+  function add(dialect, src, file) {
+    const tab = T[dialect] || (T[dialect] = new Map());
+    const tpl = TPL[dialect] || (TPL[dialect] = []);
+    files.push(file);
+    for (const e of parse(dialect, src, file)) {
+      const k = norm(e.std);
+      const old = tab.get(k);
+      if (old && (norm(old.jp) !== norm(e.jp) || old.en !== e.en)) errors.push(e.where + ': a second, different Kansai version of a line already in ' + old.where);
+      if (old) continue;
+      tab.set(k, e);
+      KJP.add(norm(e.jp));
+      if (k.indexOf('%T') >= 0) {
+        e.re = tplRe(e.std);
+        e.enRe = e.stdEn ? tplRe(e.stdEn) : null;
+        tpl.push(e);
+      }
+    }
+  }
+
+  // ---- the choice ---------------------------------------------------------------------------------
+  // settings.suzuSpeech: 'kansai' | 'standard'; absent on older settings records = standard
+  function choice() {
+    const st = RB.game && RB.game.settings;
+    return st && st.suzuSpeech === 'kansai' ? 'kansai' : 'standard';
+  }
+  const SPEAKERS = { suzu: true };
+  function active(who) { return !!SPEAKERS[who] && choice() === 'kansai'; }
+
+  // the table entry for a standard line as shown (a template's %T filled in): { jp, en } or null
+  const made = new Map(); // shown standard (template filled) -> result, bounded
+  function find(jp, en, dialect) {
+    dialect = dialect || 'kansai';
+    const k = norm(jp);
+    const e = T[dialect] && T[dialect].get(k);
+    if (e) return e.same ? { jp, en, same: true } : { jp: e.jp, en: e.sameJp && en != null && e.en === e.stdEn ? en : e.en, entry: e };
+    for (const t of TPL[dialect] || []) {
+      const m = t.re.exec(k);
+      if (!m) continue;
+      const title = m[1];
+      const me = t.enRe && en != null ? t.enRe.exec(norm(en)) : null;
+      const out = { jp: t.jp.replace('%T', title), en: me ? t.en.replace('%T', me[1]) : t.en.replace('%T', title), entry: t };
+      KJP.add(norm(out.jp));
+      return out;
+    }
+    void made;
+    return null;
+  }
+  /* line(who, obj) -> obj itself, or a copy with the Kansai jp/en (and dia: 'kansai') when the
+   * line is spoken by Suzu and the player chose Kansai. obj: anything with jp (and en). */
+  function line(who, obj) {
+    if (who === 'comp') { const s = RB.game && RB.game.s; who = s ? s.comp || s.provisional : null; }
+    if (!obj || typeof obj.jp !== 'string' || !active(who)) return obj;
+    const f = find(obj.jp, obj.en);
+    if (!f || f.same) return obj;
+    return Object.assign({}, obj, { jp: f.jp, en: f.en, dia: 'kansai', std: { jp: obj.jp, en: obj.en } });
+  }
+  // the standard line behind a shown one (for anything that is kept in the save)
+  const std = (obj) => (obj && obj.std ? Object.assign({}, obj, obj.std, { dia: undefined, std: undefined }) : obj);
+  // several lines joined with spaces (a discovery memory keeps its remark's lines joined)
+  function joined(who, obj, parts) {
+    if (!obj || !active(who) || !parts || !parts.length) return line(who, obj);
+    const ls = parts.map((p) => line(who, p));
+    if (!ls.some((x) => x.dia)) return obj;
+    return Object.assign({}, obj, { jp: ls.map((x) => x.jp).join(' '), en: ls.map((x) => x.en).join(' '), dia: 'kansai' });
+  }
+  // is this Japanese a Kansai line (word help reads it with the Kansai lexicon first)?
+  const isKansai = (jp) => !!jp && KJP.has(norm(jp));
+
+  // ---- the Kansai lexicon and word help ------------------------------------------------------------
+  const LEX = new Map();      // surface -> [entry]
+  const LEXR = new Map();     // reading -> [entry]
+  const lexAll = [];
+  const lexProblems = [];
+  function addLex(list, src) {
+    for (const raw of list || []) {
+      const e = Object.assign({ dia: 'kansai', src: src || 'dialect' }, raw);
+      e.r = e.r || e.w;
+      const p = RB.lex && RB.lex.problemsOf ? RB.lex.problemsOf(e) : [];
+      if (!e.std) p.push('missing std (the standard equivalent)');
+      if (p.length) { lexProblems.push({ w: e.w, problems: p, src: e.src }); continue; }
+      (LEX.get(e.w) || LEX.set(e.w, []).get(e.w)).push(e);
+      (LEXR.get(e.r) || LEXR.set(e.r, []).get(e.r)).push(e);
+      lexAll.push(e);
+    }
+  }
+  // what may follow a sentence-final particle besides punctuation (わ な, わ ね: "I guess", "you know")
+  const FINAL_NEXT = { 'わ': new Set(['な', 'なあ', 'ね']) };
+  function nextWord(tokens, i) {
+    for (let j = i + 1; j < tokens.length; j++) if (tokens[j] && tokens[j].surface !== '') return tokens[j];
+    return null;
+  }
+  function isFinal(tokens, i) {
+    const nx = nextWord(tokens, i);
+    return !nx || /^[」』）)…。！？!?]/.test(nx.surface) || !!(FINAL_NEXT[tokens[i].surface] && FINAL_NEXT[tokens[i].surface].has(nx.surface));
+  }
+  function lexHit(tk, tokens, i) {
+    const list = (LEX.get(tk.surface) || []).concat(!/[一-鿿]/.test(tk.surface) ? LEXR.get(tk.surface) || [] : []);
+    const fin = isFinal(tokens, i), prev = hasPrev(tokens, i), nx = nextWord(tokens, i);
+    // an entry fits its place: `final` ones end a sentence after a word; `initial` ones open it;
+    // `notNext` lists words after which this is not the Kansai word (うち に = "while", not "I …")
+    return list.find((e) => (!e.final || (fin && prev)) && (!e.initial || !prev) && !(e.notNext && nx && e.notNext.indexOf(nx.surface) >= 0)) || null;
+  }
+  // a word before this one in the same sentence
+  function hasPrev(tokens, i) {
+    for (let j = i - 1; j >= 0; j--) {
+      const t = tokens[j];
+      if (!t || t.surface === '') continue;
+      return !t.punct;
+    }
+    return false;
+  }
+  // Kansai verb and copula forms, explained through the standard form they stand for:
+  // [ending, standard ending, what the form is]
+  const FORMS = [
+    ['へんかった', 'なかった', 'Kansai negative past 〜へんかった (= 〜なかった)'],
+    ['ひんかった', 'なかった', 'Kansai negative past 〜ひんかった (= 〜なかった)'],
+    ['へんかって', 'なくて', 'Kansai negative 〜へん (= 〜ない), て-form'],
+    ['へんの', 'ないの', 'Kansai negative 〜へん (= 〜ない)'],
+    ['いひん', 'ない', 'Kansai negative 〜ひん (= 〜ない)'],
+    ['へん', 'ない', 'Kansai negative 〜へん (= 〜ない)'],
+    ['ひん', 'ない', 'Kansai negative 〜ひん (= 〜ない)'],
+    ['てはった', 'ていらっしゃった', 'Kansai respectful 〜てはった (= 〜ていらっしゃった)'],
+    ['てはる', 'ていらっしゃる', 'Kansai respectful 〜てはる (= 〜ていらっしゃる; friendly respect)'],
+    ['ではる', 'でいらっしゃる', 'Kansai respectful 〜ではる (= 〜でいらっしゃる)'],
+    ['はった', 'ない', 'Kansai respectful 〜はった: past of 〜はる (friendly respect for the person spoken of)'],
+    ['はる', 'ない', 'Kansai respectful 〜はる (friendly respect for the person spoken of)'],
+    ['はらへん', 'ない', 'Kansai respectful negative 〜はらへん'],
+    ['うたる', 'ってやる', 'Kansai 〜たる (= 〜てやる: I\'ll do it for you)'],
+    ['うたろ', 'ってやろう', 'Kansai 〜たろ (= 〜てやろう: let me do it for you)'],
+    ['てもうて', 'てしまって', 'Kansai 〜てもうて (= 〜てしまって)'],
+    ['てもて', 'てしまって', 'Kansai 〜てもて (= 〜てしまって)'],
+    ['てまう', 'てしまう', 'Kansai 〜てまう (= 〜てしまう)'],
+    ['でまう', 'でしまう', 'Kansai 〜でまう (= 〜でしまう)'],
+    ['たるわ', 'てやるわ', 'Kansai 〜たる (= 〜てやる: I\'ll do it for you)'],
+    ['たろか', 'てやろうか', 'Kansai 〜たろか (= 〜てやろうか: shall I do it for you?)'],
+    ['たろ', 'てやろう', 'Kansai 〜たろ (= 〜てやろう: let me do it for you)'],
+    ['たる', 'てやる', 'Kansai 〜たる (= 〜てやる: I\'ll do it for you)'],
+    ['だる', 'でやる', 'Kansai 〜だる (= 〜でやる)'],
+    ['てもうた', 'てしまった', 'Kansai 〜てもうた (= 〜てしまった)'],
+    ['でもうた', 'でしまった', 'Kansai 〜でもうた (= 〜でしまった)'],
+    ['てもた', 'てしまった', 'Kansai 〜てもた (= 〜てしまった)'],
+    ['でもた', 'でしまった', 'Kansai 〜でもた (= 〜でしまった)'],
+    ['てしもた', 'てしまった', 'Kansai 〜てしもた (= 〜てしまった)'],
+    ['でしもた', 'でしまった', 'Kansai 〜でしもた (= 〜でしまった)'],
+    ['とった', 'ていた', 'Kansai 〜とった (= 〜ていた)'],
+    ['とって', 'ていて', 'Kansai 〜とって (= 〜ていて)'],
+    ['とる', 'ている', 'Kansai 〜とる (= 〜ている)'],
+    ['てん', 'たん', 'Kansai 〜てん (= 〜たんだ: explaining what happened)'],
+    ['でん', 'だん', 'Kansai 〜でん (= 〜だんだ: explaining what happened)'],
+    ['ゆうた', 'いった', 'Kansai 言うた (= 言った)'],
+    ['うたら', 'ったら', 'Kansai 〜うた (= 〜った: the う-sound past of 〜う verbs)'],
+    ['うたん', 'ったん', 'Kansai 〜うた (= 〜った: the う-sound past of 〜う verbs)'],
+    ['うてん', 'ったん', 'Kansai 〜うてん (= 〜ったんだ)'],
+    ['うてる', 'ってる', 'Kansai 〜うてる (= 〜ってる)'],
+    ['うてた', 'ってた', 'Kansai 〜うてた (= 〜ってた)'],
+    ['うて', 'って', 'Kansai 〜うて (= 〜って: the う-sound て-form of 〜う verbs)'],
+    ['うた', 'った', 'Kansai 〜うた (= 〜った: the う-sound past of 〜う verbs)'],
+    ['もろた', 'もらった', 'Kansai もろた (= もらった)'],
+    ['もろて', 'もらって', 'Kansai もろて (= もらって)'],
+  ];
+  // whole words with an irregular Kansai form
+  const WHOLE = { 'せえへん': 'しない', 'せーへん': 'しない', 'せえへんかった': 'しなかった', 'けえへん': 'こない', 'けーへん': 'こない', 'こーへん': 'こない', 'けえへんかった': 'こなかった', 'おらへん': 'いない', 'あらへん': 'ない', 'あらへんかった': 'なかった', 'いてる': 'いる', 'いてへん': 'いない', 'いてた': 'いた' };
+  function retail(tk, from, to) {
+    const segs = (tk.segs || [{ t: tk.surface, r: null }]).map((s) => Object.assign({}, s));
+    const last = segs[segs.length - 1];
+    if (!last || last.r != null || last.ph || !last.t.endsWith(from)) return null;
+    last.t = last.t.slice(0, last.t.length - from.length) + to;
+    if (!last.t) segs.pop();
+    const surface = segs.map((s) => s.t).join('');
+    const reading = segs.map((s) => (s.r != null ? s.r : s.t)).join('');
+    return { surface, reading, segs, lemma: null, gloss: null, punct: false, ph: null };
+  }
+  function viaStandard(tk, std, what) {
+    if (!std || !RB.jp || !RB.jp.lookup) return null;
+    let info;
+    try { info = RB.jp.lookup(std); } catch (e) { return null; }
+    if (!info || info.unknown || !info.entry) return null;
+    return Object.assign({}, info, { surface: tk.surface, reading: tk.reading, mora: RB.kana && RB.kana.mora ? RB.kana.mora(tk.reading) : info.mora, romaji: RB.kana ? RB.kana.romaji(tk.reading) : info.romaji, forms: [what + ' — standard ' + std.surface].concat(info.forms || []), dia: { std: std.surface, m: what }, parts: null });
+  }
+  function fromEntry(tk, e) {
+    return { surface: tk.surface, reading: tk.reading, entry: e, lemma: e.w, forms: [], romaji: e.ro || (RB.kana ? RB.kana.romaji(tk.reading || e.r) : ''), mora: RB.kana && RB.kana.mora ? RB.kana.mora(tk.reading || e.r) : [], gloss: tk.gloss || null, meaning: tk.gloss || e.m, parts: null, others: [], unknown: false, dia: { std: e.std, m: e.m } };
+  }
+  // tokens: RB.jp.parse of a Kansai line; i: the token's index. Returns a lookup result or null.
+  function lookupIn(tokens, i) {
+    const tk = tokens && tokens[i];
+    if (!tk || tk.punct || tk.ph) return null;
+    const hit = lexHit(tk, tokens, i);
+    if (hit) return fromEntry(tk, hit);
+    const plainSurface = tk.surface;
+    if (WHOLE[plainSurface]) {
+      const std = { surface: WHOLE[plainSurface], reading: WHOLE[plainSurface], segs: [{ t: WHOLE[plainSurface], r: null }] };
+      return viaStandard(tk, std, 'Kansai ' + plainSurface + ' (= ' + WHOLE[plainSurface] + ')');
+    }
+    // 〜な before あかん (行かな あかん = 行かないと いけない)
+    const nx = nextWord(tokens, i);
+    if (nx && nx.surface === 'あかん' && /な$/.test(plainSurface)) {
+      const r = viaStandard(tk, retail(tk, 'な', 'ない'), 'Kansai 〜な あかん (= 〜なければ いけない: must)');
+      if (r) return r;
+    }
+    // a word the standard lookup reads as one word is standard Japanese (〜てる, 〜とく, …); only a
+    // token it cannot read whole is explained as a Kansai form
+    let whole = null;
+    try { whole = RB.jp.lookup(tk); } catch (e) { whole = null; }
+    if (whole && !whole.unknown && !whole.parts) return null;
+    for (const [from, to, what] of FORMS) {
+      if (!plainSurface.endsWith(from) || plainSurface === from) continue;
+      const r = viaStandard(tk, retail(tk, from, to), what);
+      if (r) return r;
+      if (from === 'はる' || from === 'はった') {
+        const r2 = viaStandard(tk, retail(tk, from, from === 'はる' ? 'ます' : 'ました'), what);
+        if (r2) return r2;
+      }
+    }
+    return null;
+  }
+  // word help: a note under the meaning for a Kansai word or form
+  function note(info) {
+    if (!info || !info.dia) return '';
+    if (info.entry && info.entry.casual) return 'Casual speech (not only Kansai). The fuller form: ' + info.dia.std + '.';
+    return 'Kansai dialect (関西弁). In standard Japanese: ' + info.dia.std + '. Suzu speaks Kansai-ben because you chose it; the game\'s exercises and answers always use standard Japanese.';
+  }
+
+  return {
+    norm, add, parse, find, line, joined, std, isKansai, choice, active, SPEAKERS,
+    addLex, lookupIn, note, lexAll: () => lexAll.slice(), lexProblems: () => lexProblems.slice(),
+    table: (d) => T[d || 'kansai'], templates: (d) => (TPL[d || 'kansai'] || []).slice(), errors: () => errors.slice(), files: () => files.slice(),
+  };
 })();
 
 
@@ -37064,7 +37389,8 @@ RB.wordplay = (function () {
     if (!all.length) return null;
     const top = Math.max(...all.map((l) => l.prio || 0));
     const best = all.filter((l) => (l.prio || 0) === top);
-    return best[RB.util.hashStr(String(salt || '') + '|' + cat) % best.length];
+    const pick = best[RB.util.hashStr(String(salt || '') + '|' + cat) % best.length];
+    return RB.dialect ? RB.dialect.line(comp, pick) : pick; // shown as she speaks (Suzu's Kansai-ben, src/lang/85_dialect.js)
   }
   // at most one optional comment per four combined moves; Quiet keeps rules and results only
   function mayComment(s, cat) {
@@ -37845,7 +38171,8 @@ RB.fishing = (function () {
     const R = REMARKS[comp];
     const L = R && R[kind];
     if (!L || !L.length) return null;
-    return L[((seed | 0) % L.length + L.length) % L.length];
+    const pick = L[((seed | 0) % L.length + L.length) % L.length];
+    return RB.dialect ? RB.dialect.line(comp, pick) : pick; // shown as she speaks (Suzu's Kansai-ben, src/lang/85_dialect.js)
   }
 
   // ---- conditions: fish.intro, fish.survey, fish.frame, fish.spread, fish.count>=n, fish.seen.<id> ---------------
@@ -38721,7 +39048,7 @@ RB.practiceDesk = (function () {
   function notebookCards(s) {
     const out = [], seen = new Set(base().map((c) => c.item));
     for (const n of (s && s.notebook) || []) {
-      if (!n || n.kind !== 'word' || typeof n.id !== 'string') continue;
+      if (!n || n.kind !== 'word' || typeof n.id !== 'string' || n.dia) continue; // a noted Kansai word is not standard vocabulary to practise
       const m = /^w:([^|]*)\|(.*)$/.exec(n.id);
       const lemma = m ? m[1] : n.surface, reading = m ? m[2] : n.reading;
       const e = (lemma && reading && RB.lex.get(lemma, reading)) || null;
@@ -42069,7 +42396,9 @@ RB.ui = (function () {
     if (!RB.jp || !RB.jp.render) return '<span class="jline" lang="ja">' + esc(String(line).replace(/\{([^|}]+)\|[^}]+\}/g, '$1').replace(/ /g, '')) + '</span>';
     const spacing = opts.spacing != null ? opts.spacing : RB.game.settings ? RB.game.settings.spacing : true;
     const r = RB.jp.render(line, { spacing, vars, furigana: true });
-    const id = RB.ui.help.register(r.tokens, line, opts.ctx);
+    // a Kansai line of Suzu's: word help reads it with the Kansai lexicon first (src/lang/85_dialect.js)
+    const ctx = RB.dialect && RB.dialect.isKansai(line) ? Object.assign({}, opts.ctx || {}, { dia: 'kansai' }) : opts.ctx;
+    const id = RB.ui.help.register(r.tokens, line, ctx);
     return '<span class="jline" lang="ja" data-src="' + id + '">' + r.html + '</span>';
   }
   function ehtml(text) {
@@ -42303,13 +42632,14 @@ RB.ui.help = (function () {
     if (cur) cur.classList.remove('active');
     cur = elm;
     elm.classList.add('active');
-    render(tok, elm, r);
+    render(tok, elm, r, +elm.getAttribute('data-i'));
     if (RB.challenge && RB.challenge.active()) RB.challenge.noteHelp(tok, elm);
   }
   const HI = (n) => (RB.ui.folio ? RB.ui.folio.icon(n) : '');
-  function render(tok, anchor, r) {
-    let info;
-    try { info = RB.jp.lookup(tok); } catch (e) { info = { unknown: true, reading: tok.reading || tok.surface }; }
+  function render(tok, anchor, r, idx) {
+    let info = null;
+    if (r && r.ctx && r.ctx.dia && RB.dialect) { try { info = RB.dialect.lookupIn(r.tokens, idx); } catch (e) { info = null; } }
+    if (!info) { try { info = RB.jp.lookup(tok); } catch (e) { info = { unknown: true, reading: tok.reading || tok.surface }; } }
     if (!panel) {
       panel = document.createElement('div');
       panel.className = 'help';
@@ -42329,6 +42659,7 @@ RB.ui.help = (function () {
     if (e) html += '<div class="mean">' + (info.gloss ? '<span class="lab">Dictionary</span>' : '') + esc(e.m) + (info.lemma && info.lemma !== surface ? ' <span class="small" lang="ja">(' + esc(info.lemma) + ')</span>' : '') + '</div>';
     if (info.forms && info.forms.length) html += '<div class="note">Form: ' + esc(info.forms.join(' → ')) + '</div>';
     if (info.parts && info.parts.length) html += '<div class="note">Parts: ' + info.parts.map((p) => esc(p.surface || p.w || '') + (p.m ? ' (' + esc(p.m) + ')' : '')).join(' + ') + '</div>';
+    if (info.dia && RB.dialect) html += '<div class="note dia" lang="en"><b>' + (e && e.casual ? 'Casual speech' : 'Kansai-ben') + '</b> ' + esc(RB.dialect.note(info)) + '</div>';
     if (e && e.n) html += '<div class="note">' + esc(e.n) + '</div>';
     if (!e && !info.gloss) html += '<div class="note">No dictionary note is recorded for this piece of text. The reading above is still accurate.</div>';
     if (mora && mora.length > 1) html += '<div class="note">Beats (morae): <span class="mora" lang="ja">' + mora.map((m) => '<span>' + esc(m) + '</span>').join('') + '</span></div>';
@@ -42346,7 +42677,7 @@ RB.ui.help = (function () {
       if (!b) return;
       const a = b.getAttribute('data-a');
       if (a === 'say') RB.voice.speak(reading || surface);
-      if (a === 'pin') { pinned = !pinned; render(tok, anchor, r); }
+      if (a === 'pin') { pinned = !pinned; render(tok, anchor, r, idx); }
       if (a === 'close') { pinned = false; hide(); if (anchor && anchor.isConnected && via === 'key') anchor.focus({ preventScroll: true }); }
       if (a === 'note') addToNotebook(tok, info);
     };
@@ -42396,7 +42727,8 @@ RB.ui.help = (function () {
     const s = RB.game.s;
     const key = 'w:' + (info.lemma || tok.surface) + '|' + (info.reading || '');
     if (!s.notebook.find((n) => n.id === key)) {
-      s.notebook.push({ kind: 'word', id: key, surface: tok.surface, reading: info.reading || '', m: info.gloss || (info.entry && info.entry.m) || '', t: Date.now() });
+      // a Kansai word or form is marked so: it is noted, but never practised as standard vocabulary
+      s.notebook.push(Object.assign({ kind: 'word', id: key, surface: tok.surface, reading: info.reading || '', m: info.gloss || (info.entry && info.entry.m) || '', t: Date.now() }, info.dia ? { dia: 'kansai' } : {}));
       RB.ui.notice('Added to your field notebook.', 'info');
     } else RB.ui.notice('Already in your notebook.', 'info');
   }
@@ -42808,7 +43140,9 @@ RB.ui.dialogue = (function () {
     const s = RB.game.s;
     const seenScene = line.sceneId && s.seen[line.sceneId];
     if (RB.game.fastForward() && !seenScene) RB.game.setFastForward(false);
-    current = line;
+    // Suzu's Kansai-ben (src/lang/85_dialect.js): what is shown may be her Kansai version; the history
+    // and a kept sentence keep the standard line (nothing Kansai is written into the save)
+    current = Object.assign({}, RB.dialect ? RB.dialect.line(line.who, line) : line, { src: line });
     showSub = RB.game.settings.secondary === 'always';
     const ch = charInfo(line.who);
     s.backlog.push({ who: line.who, jp: line.jp, en: line.en });
@@ -42828,16 +43162,9 @@ RB.ui.dialogue = (function () {
     const whoEl = box.querySelector('.who');
     whoEl.innerHTML = ch ? '<span class="nm">' + esc(ch.name.en) + '</span>' + (ch.name.jp ? '<span class="jp">' + RB.ui.jhtml(ch.name.jp) + '</span>' : '') : '<span class="nm narr">' + (line.jp || line.en ? '' : '') + '</span>';
     box.classList.toggle('narration', !ch);
-    const lead = RB.game.settings.lead;
     const main = box.querySelector('.main');
     const hasJp = !!line.jp;
-    if (lead === 'ja' && hasJp) {
-      main.className = 'main';
-      main.innerHTML = RB.ui.jhtml(line.jp);
-    } else {
-      main.className = 'main en';
-      main.innerHTML = RB.ui.ehtml(line.en || '');
-    }
+    renderMain();
     renderSub();
     box.querySelector('.b-voice').classList.toggle('hidden', !(hasJp && RB.voice && RB.voice.japaneseVoices && RB.voice.japaneseVoices().length));
     box.querySelector('.b-skip').classList.toggle('hidden', !(seenScene && RB.game.settings.skipSeen));
@@ -42855,6 +43182,27 @@ RB.ui.dialogue = (function () {
       if (RB.game.fastForward() && seenScene) setTimeout(() => advance(true), 40);
       else if (RB.test && RB.test.auto) setTimeout(() => advance(true), 5);
     });
+  }
+  function renderMain() {
+    if (!current) return;
+    const main = box.querySelector('.main');
+    if (RB.game.settings.lead === 'ja' && current.jp) {
+      main.className = 'main';
+      main.innerHTML = RB.ui.jhtml(current.jp);
+    } else {
+      main.className = 'main en';
+      main.innerHTML = RB.ui.ehtml(current.en || '');
+    }
+  }
+  // the line on screen again with the current settings (Suzu's speech changed while it shows)
+  function refresh() {
+    if (!box || !current || box.classList.contains('hidden')) return;
+    const src = current.src || current;
+    current = Object.assign({}, RB.dialect ? RB.dialect.line(src.who, src) : src, { src });
+    if (revealing) revealing.finish();
+    renderMain();
+    renderSub();
+    requestAnimationFrame(syncMore);
   }
   function renderSub() {
     if (!current) return;
@@ -43029,7 +43377,7 @@ RB.ui.dialogue = (function () {
     return false;
   }
   function isOpen() { return !!(box && !box.classList.contains('hidden')); }
-  return { say, choose, hide, onAction, advance, isOpen };
+  return { say, choose, hide, onAction, advance, isOpen, refresh, shown: () => (current ? { who: current.who, jp: current.jp, en: current.en, dia: current.dia || null } : null) };
 })();
 
 
@@ -46233,7 +46581,9 @@ RB.ui.menu = (function () {
       A.innerHTML = sub + '<h3>Dialogue history <span class="count">' + lines.length + ' lines, oldest first</span></h3>' +
         (lines.length ? '<ol class="entries history">' + lines.map((l) => {
           const ch = l.who === 'pc' ? { name: { en: s.player.name } } : RB.content.chars[l.who];
-          return '<li class="entry"><span class="mark">' + I(l.choice ? 'next' : 'history') + '</span><div><div class="who">' + (l.choice ? 'You chose' : ch ? esc(ch.name.en) : '') + '</div>' + j(l.jp) + en(l.en) + '</div>' +
+          // Suzu's lines as she speaks them now (the history itself keeps the standard line)
+          const v = RB.dialect && !l.choice ? RB.dialect.line(l.who, l) : l;
+          return '<li class="entry"><span class="mark">' + I(l.choice ? 'next' : 'history') + '</span><div><div class="who">' + (l.choice ? 'You chose' : ch ? esc(ch.name.en) : '') + '</div>' + j(v.jp) + en(v.en) + '</div>' +
             (RB.ui.keep ? RB.ui.keep.historyButton(s, l) : '') + '</li>'; // Keep this sentence (src/ui/66_words_pages.js)
         }).join('') + '</ol>' : '<p class="muted">Nothing said yet.</p>');
       B.innerHTML = '<p class="muted">The history keeps the last 120 lines, in both languages. Replay a line’s voice from the dialogue box while it is on screen.</p>';
@@ -46890,7 +47240,9 @@ RB.ui.companyPages = (function () {
   const sectionsHtml = (s, comp, V) => SECTIONS.map((d) => { try { return d.html(s, comp, V) || ''; } catch (e) { console.error('company section ' + d.id, e); return ''; } }).join('');
   const j = (t) => (t ? RB.ui.jhtml(t) : '');
   const chr = (id) => (id && RB.content.chars[id]) || null;
-  const said = (t, cls) => (t ? '<div class="co-said' + (cls ? ' ' + cls : '') + '">' + (t.jp ? '<div class="jp">' + j(t.jp) + '</div>' : '') + (t.en ? '<div class="en">' + RB.ui.ehtml(t.en) + '</div>' : '') + '</div>' : '');
+  // words of the companion `who` (Suzu's in Kansai when chosen: src/lang/85_dialect.js)
+  const said = (t, cls, who) => { t = t && who && RB.dialect ? RB.dialect.line(who, t) : t; return said0(t, cls); };
+  const said0 = (t, cls) => (t ? '<div class="co-said' + (cls ? ' ' + cls : '') + '">' + (t.jp ? '<div class="jp">' + j(t.jp) + '</div>' : '') + (t.en ? '<div class="en">' + RB.ui.ehtml(t.en) + '</div>' : '') + '</div>' : '');
   const AIM = { foe: 'the creature you target', foes: 'every creature', allies: 'you both', aimed: 'whoever the target is aiming at', lower: 'whichever of you has less resolve', pc: 'you', none: 'no target' };
   const BOND_LINE = {
     walking: { jp: '{一緒|いっしょ} に {歩|ある}き{始|はじ}めた ところ 。', en: 'You have set out together; the road is still new to you both.' },
@@ -46984,7 +47336,7 @@ RB.ui.companyPages = (function () {
       '<p class="co-bond"><span class="k">' + L('{絆|きずな}', 'Bond') + '</span> <b>' + esc(st.label.en) + '</b> <span class="jp">' + j(st.label.jp) + '</span></p></div></div>' +
       '<p class="co-bondline">' + j(bl.jp) + ' <span class="en">' + esc(bl.en) + '</span></p>' +
       '<section class="co-thought" aria-label="' + esc('On ' + c.name.en + '\'s mind') + '"><h4>' + I('mind') + L('{今|いま} の {思|おも}い', 'On ' + c.name.en + '\'s mind') + '</h4>' +
-      (th ? said(th.text) : '<p class="muted">Nothing in particular. The road is enough for now.</p>') + '</section>' +
+      (th ? said(th.text, null, comp) : '<p class="muted">Nothing in particular. The road is enough for now.</p>') + '</section>' +
       (known.length ? '<h4>' + I('companion') + L('{知|し}って いる こと', 'What you know of ' + c.name.en) + '</h4><ul class="co-know">' + known.map((x) => '<li>' + esc(x.en) + '</li>').join('') + '</ul>' : '') +
       (qi ? '<h4>' + I(qi.done ? 'done' : 'side') + L('{自分|じぶん} の {道|みち}', c.name.en + '\'s own road') + '</h4><p class="co-q"><span class="t">' + j(qi.qd.title.jp) + ' <span class="en">' + esc(qi.qd.title.en) + '</span></span> <span class="kind">' + (qi.done ? 'resolved' : 'in progress') + '</span></p>' : '');
   }
@@ -47010,7 +47362,11 @@ RB.ui.companyPages = (function () {
     if (rest) h += actionRow('rest', 'rest', 'Rest together', '{一緒|いっしょ} に {休|やす}む', 'a quiet moment here');
     h += actionRow('memories', 'journey', 'Shared memories', '{思|おも}い{出|で}', '');
     if (qi) h += actionRow('quest', qi.done ? 'done' : 'side', 'Personal quest details', '{自分|じぶん} の {道|みち}', '', ' aria-expanded="' + (V.detail === 'quest') + '"');
+    // how Suzu speaks: ask her in the world, or the plain choice below (src/ui/56_suzu_speech.js)
+    const sp = comp === 'suzu' && RB.ui.suzuSpeech;
+    if (sp) { const tl = sp.talkLabel(); h += actionRow('speech', 'talk', tl.en, tl.jp, ''); }
     h += '</ul>';
+    if (sp) h += sp.companyHtml(s);
     return h;
   }
   function questDetail(s, comp, c) {
@@ -47043,7 +47399,7 @@ RB.ui.companyPages = (function () {
     return '<div class="co-id"><canvas class="co-portrait" width="96" height="96" role="img" aria-label="' + esc('Portrait of ' + prov.name.en) + '"></canvas>' +
       '<div class="co-name"><h3>' + j(prov.name.jp) + ' <span class="en">' + esc(prov.name.en) + '</span></h3><p class="muted">' + L(prov.role ? prov.role.jp : '', prov.role ? prov.role.en : '') + '</p></div></div>' +
       '<p>' + esc(prov.name.en) + ' is travelling with you for now. Nothing is decided until you set out together — the lantern will carry two names, and you can still change your mind before the door.</p>' +
-      (b.first ? said(b.first, 'first') : '');
+      (b.first ? said(b.first, 'first', s.provisional) : '');
   }
   function companionPage(A, B, two, api) {
     const s = api.s, V = api.view;
@@ -47071,6 +47427,8 @@ RB.ui.companyPages = (function () {
     const click = async (e) => {
       const sb = e.target.closest('[data-co-sec]');
       if (sb) { const d = SECTIONS.find((x) => x.id === sb.dataset.coSec); if (d && d.click) await d.click(sb, s, api); return; }
+      const sps = e.target.closest('[data-suzu-speech-set]');
+      if (sps && RB.ui.suzuSpeech) { api.remember(); await RB.ui.suzuSpeech.set(sps.dataset.suzuSpeechSet); api.render(); return; }
       const b = e.target.closest('[data-co-act],[data-co-topic],[data-co-back],[data-co-case-talk],[data-co-case-open]');
       if (!b) return;
       if (b.hasAttribute('data-co-back')) { V.detail = null; api.render(); return; }
@@ -47091,6 +47449,11 @@ RB.ui.companyPages = (function () {
       if (act === 'quest') { V.detail = V.detail === 'quest' ? null : 'quest'; api.render(); return; }
       if (act === 'place') { await converse(api, () => RB.script.run('co.place')); return; }
       if (act === 'rest') { await converse(api, () => RB.script.run('co.rest')); return; }
+      if (act === 'speech' && RB.ui.suzuSpeech) {
+        // asked in the world where a conversation can be played; otherwise the choice is made here
+        if (!(await converse(api, () => RB.ui.suzuSpeech.talk()))) { await RB.ui.suzuSpeech.set(RB.ui.suzuSpeech.value() === 'kansai' ? 'standard' : 'kansai'); api.render(); }
+        return;
+      }
       if (act === 'mind') {
         await converse(api, async () => {
           const pd = pagesWaiting(s);
@@ -47120,7 +47483,7 @@ RB.ui.companyPages = (function () {
       '<div class="kind">' + esc(k.en) + (m.place ? ' · ' + esc(m.place.en || '') : '') + (m.retro ? ' · from the journey\'s record' : '') + '</div>' +
       '<div class="t">' + (m.title && m.title.jp ? j(m.title.jp) + ' ' : '') + '<span class="en">' + esc(m.title ? m.title.en : m.id) + '</span>' + (m.petName ? ' <span class="co-petname">“' + esc(m.petName) + '”</span>' : '') + '</div>' +
       (m.text ? '<div class="small">' + enOf(m, m.text.en) + '</div>' : '') +
-      (m.reply ? '<blockquote class="co-reply"><span class="who">' + esc(memName(m)) + '</span>' + said(m.reply) + '</blockquote>' : '') +
+      (m.reply ? '<blockquote class="co-reply"><span class="who">' + esc(memName(m)) + '</span>' + said(memReply(m), null, m.comp) + '</blockquote>' : '') +
       '<div class="row-acts"><button class="pbtn" data-co-recall="' + esc(m.id) + '" aria-pressed="' + !!sel + '">' + I('history') + L('{思|おも}い{出|だ}す', 'Recollect') + '</button>' +
       refButton(m) + '</div></div></li>';
   }
@@ -47136,14 +47499,19 @@ RB.ui.companyPages = (function () {
     if (r.kind === 'case' && RB.cases) return '<button class="pbtn quiet" data-co-ref="cases" data-id="' + esc(r.id) + '">' + I('scroll') + L('{記録|きろく} を {開|ひら}く', 'Open the case') + '</button>';
     return '';
   }
+  // a discovery memory keeps its remark's lines joined: shown line by line through the dialect
+  function memReply(m) {
+    const r = m.react && RB.company.reactions ? RB.company.reactions.find((x) => x.id === m.react) : null;
+    return r && r.lines && RB.dialect ? RB.dialect.joined(m.comp, m.reply, r.lines) : m.reply;
+  }
   // the recollection: only a transcript of what was kept; reading it runs nothing and changes nothing
   function recollection(s, m) {
     if (!m) return '<p class="muted">Choose a memory to recollect it.</p>';
     const who = memName(m);
     const lines = m.lines && m.lines.length ? m.lines : [
       m.text ? { who: 'narr', jp: m.text.jp, en: m.text.en } : null,
-      m.reply ? { who: m.comp, jp: m.reply.jp, en: m.reply.en } : null,
-    ].filter(Boolean);
+      m.reply ? Object.assign({ who: m.comp }, memReply(m)) : null,
+    ].filter(Boolean).map((l) => (RB.dialect && !l.choice ? RB.dialect.line(l.who, l) : l));
     const nm = (w) => (w === 'pc' ? s.player.name : w === 'narr' || !w ? '' : chr(w) ? chr(w).name.en : '');
     return '<section class="co-recall" aria-label="Recollection"><h4>' + I('history') + L('{思|おも}い{出|だ}す', 'Recollection') + '</h4>' +
       '<p class="kind">A record of what was kept. Reading it changes nothing.</p>' +
@@ -47761,6 +48129,153 @@ RB.ui.settings = (function () {
   }
 
   return { open, close, addRows, isOpen: () => !!lay };
+})();
+
+
+/* ==== src/ui/56_suzu_speech.js ==== */
+/* How Suzu speaks: standard Japanese or Kansai-ben (docs/dialect/suzu_kansai.md).
+ * One setting, settings.suzuSpeech ('standard' | 'kansai'; an older settings
+ * record has none = standard), shown and changed in three places:
+ *   - once when she joins you (the Lantern Hall: rw.suzu_speech, `!hook suzu_speech`),
+ *     or, in a campaign where she already travels with you, once after the next
+ *     scene in which she speaks (never in the middle of a scene);
+ *   - Settings › Reading & Language: "Suzu's speech";
+ *   - Company › Suzu, in "Talk with Suzu": the same choice, plus an in-world way
+ *     to ask her (co.suzu_speech_kansai / co.suzu_speech_standard).
+ * Changing it applies at once (the line on screen, the history, the Company
+ * pages) and touches nothing in the campaign save. */
+var RB = (globalThis.RB = globalThis.RB || {});
+RB.hooks = RB.hooks || {};
+
+RB.ui.suzuSpeech = (function () {
+  'use strict';
+  const esc = RB.util.esc;
+  const I = (n) => (RB.ui.folio ? RB.ui.folio.icon(n) : '');
+  const value = () => (RB.dialect ? RB.dialect.choice() : 'standard');
+  const decided = () => !!(RB.game.settings && RB.game.settings.suzuSpeech);
+  const EXPLAIN = 'Kansai-ben (関西弁) is the regional dialect of Osaka and Kyoto: the same Japanese, with its own endings and words — や for だ, 〜へん for 〜ない, ほんま for "really". Word help explains every Kansai word and form; your exercises and answers always stay in standard Japanese.';
+  const BACK = 'You can switch back any time if it is hard to follow: Settings › Reading & Language, or Company › Suzu.';
+  // one of her lines, both ways (the sample in the choice)
+  const SAMPLE = { jp: '{開幕|かいまく} ！ …… ふふ 、 {一度|いちど} {言|い}って みたかった の 。', en: 'Curtain up! …Heh. I always wanted to say that.' };
+  function sample(v) {
+    if (v !== 'kansai' || !RB.dialect) return SAMPLE;
+    const f = RB.dialect.find(SAMPLE.jp, SAMPLE.en);
+    return f && !f.same ? { jp: f.jp, en: f.en } : SAMPLE;
+  }
+
+  async function set(v) {
+    const st = RB.game.settings;
+    if (!st) return;
+    st.suzuSpeech = v === 'kansai' ? 'kansai' : 'standard';
+    await RB.game.saveSettings();
+    if (RB.ui.dialogue && RB.ui.dialogue.refresh) RB.ui.dialogue.refresh();
+    RB.bus.emit('dialect:changed', { suzuSpeech: st.suzuSpeech });
+  }
+
+  // ---- the choice, as a folio sheet: resolves 'standard' | 'kansai' -------------------------------------
+  function ask(o) {
+    o = o || {};
+    return new Promise((res) => {
+      const cur = value();
+      const scrim = RB.ui.el('div', 'scrim confirm-scrim');
+      const panel = RB.ui.el('div', 'csheet speech-sheet');
+      panel.setAttribute('role', 'dialog');
+      panel.setAttribute('aria-modal', 'true');
+      panel.setAttribute('aria-labelledby', 'sp-q');
+      const opt = (v, title, sub) => {
+        const smp = sample(v);
+        return '<button type="button" class="speech-opt" data-sp="' + v + '" aria-pressed="' + (cur === v) + '"><span class="t">' + title + '</span><span class="muted small">' + sub + '</span>' +
+          '<span class="smp">' + RB.ui.jhtml(smp.jp) + '<span class="en">' + esc(smp.en) + '</span></span></button>';
+      };
+      panel.innerHTML = '<h3 id="sp-q">' + I('words') + ' How should Suzu speak?</h3>' +
+        (o.reason === 'existing' ? '<p>New: Suzu can now speak Kansai-ben. Nothing else in your journey changes.</p>' : '') +
+        '<p class="small">' + esc(EXPLAIN) + '</p>' +
+        '<div class="speech-opts" role="group" aria-label="How Suzu speaks">' +
+        opt('standard', 'Standard Japanese', 'As she speaks across the game') +
+        opt('kansai', 'Kansai-ben', 'Osaka-style regional dialect') + '</div>' +
+        '<p class="muted small">' + esc(BACK) + '</p>';
+      const layer = { el: scrim, name: 'speech' };
+      const done = (v) => { RB.ui.popLayer(layer); res(v); };
+      panel.addEventListener('click', (e) => {
+        const b = e.target.closest('[data-sp]');
+        if (b) done(b.dataset.sp);
+      });
+      layer.onCancel = () => done(cur);
+      scrim.appendChild(panel);
+      RB.ui.pushLayer(layer);
+      const first = panel.querySelector('[data-sp="' + cur + '"]');
+      if (first) setTimeout(() => first.focus({ preventScroll: true }), 30);
+    });
+  }
+  let asking = false;
+  async function choose(reason) {
+    if (asking) return null;
+    asking = true;
+    try {
+      const v = await ask({ reason });
+      await set(v);
+      return v;
+    } finally { asking = false; }
+  }
+  // !hook suzu_speech: asked once in a campaign, when she agrees to come (rw.suzu_speech)
+  RB.hooks.suzu_speech = async () => {
+    if (RB.test && RB.test.auto) return; // automated runs keep the setting as it is
+    if (RB.ui.dialogue) RB.ui.dialogue.hide();
+    await choose('join');
+  };
+
+  // ---- a campaign where she already travels with you: once, after a scene in which she spoke ------------
+  let askedNow = false;
+  function maybeAskExisting() {
+    const g = RB.game, s = g && g.s;
+    if (askedNow || decided() || !s || s.comp !== 'suzu' || (RB.test && RB.test.auto)) return;
+    const heard = (s.backlog || []).slice(-12).some((l) => l && l.who === 'suzu');
+    if (!heard) return;
+    setTimeout(async () => {
+      if (askedNow || decided() || g.mode() !== 'world' || RB.script.isRunning() || (RB.ui.topLayer && RB.ui.topLayer())) return;
+      askedNow = true;
+      await choose('existing');
+    }, 450);
+  }
+  if (RB.bus) RB.bus.on('story:settled', maybeAskExisting);
+
+  // ---- Settings › Reading & Language ---------------------------------------------------------------------
+  if (RB.ui.settings && RB.ui.settings.addRows) {
+    RB.ui.settings.addRows('reading', () => {
+      const v = value();
+      const r = (val, label) => '<label class="opt"><input type="radio" name="suzuSpeech" data-suzu-speech value="' + val + '"' + (v === val ? ' checked' : '') + '><span>' + label + '</span></label>';
+      return '<fieldset class="field" data-speech-field><legend>Suzu\'s speech</legend><div class="opts">' + r('standard', 'Standard') + r('kansai', 'Kansai (Kansai-ben)') + '</div>' +
+        '<div class="hint">How Suzu talks, wherever she speaks. Kansai-ben is the regional dialect of Osaka and Kyoto; word help explains its forms, and exercises always use standard Japanese.</div></fieldset>';
+    });
+  }
+  if (typeof document !== 'undefined') {
+    document.addEventListener('change', (e) => {
+      const t = e.target;
+      if (t && t.matches && t.matches('input[data-suzu-speech]') && t.checked) set(t.value);
+    });
+  }
+
+  // ---- Company › Suzu: in "Talk with Suzu" -----------------------------------------------------------------
+  function companyHtml() {
+    const v = value();
+    const b = (val, label, jp) => '<button type="button" class="pbtn speech-btn" role="radio" aria-checked="' + (v === val) + '" data-suzu-speech-set="' + val + '">' + (v === val ? I('done') : '') + '<span>' + label + '</span> <span class="jp" lang="ja">' + jp + '</span></button>';
+    return '<section class="co-speech" aria-labelledby="co-speech-h"><h5 id="co-speech-h">How Suzu speaks</h5>' +
+      '<div class="row-acts" role="radiogroup" aria-labelledby="co-speech-h">' + b('standard', 'Standard Japanese', '標準語') + b('kansai', 'Kansai-ben', '関西弁') + '</div>' +
+      '<p class="muted small">Kansai-ben is a regional dialect (Osaka, Kyoto). Word help explains it; if it is hard to follow, switch back any time.</p></section>';
+  }
+  // the in-world way: ask her (a row in the Talk list)
+  function talkLabel() {
+    return value() === 'kansai'
+      ? { en: 'Ask her to use her stage Japanese (standard)', jp: '{舞台|ぶたい} の {言葉|ことば} で {話|はな}して' }
+      : { en: 'Ask her to talk as she does backstage (Kansai-ben)', jp: '{楽屋|がくや} の {言葉|ことば} で {話|はな}して' };
+  }
+  async function talk() {
+    const to = value() === 'kansai' ? 'standard' : 'kansai';
+    await set(to);
+    await RB.script.run(to === 'kansai' ? 'co.suzu_speech_kansai' : 'co.suzu_speech_standard');
+  }
+
+  return { value, decided, set, ask, choose, companyHtml, talkLabel, talk, EXPLAIN, sample };
 })();
 
 
@@ -51438,10 +51953,11 @@ RB.ui.wordsPages = (function () {
   }
   function bmRow(b, open, s) {
     const who = speakerLine(b);
+    const shown = RB.dialect && !b.choice ? RB.dialect.line(b.who, b) : b; // Suzu's line as she speaks it now (kept standard)
     const title = b.title ? '<span class="bm-title">' + I('note') + '<span class="sr">Your title: </span>' + utext(b.title) + '</span>' : '';
     return '<li class="bm-item' + (open ? ' open' : '') + '"><button type="button" class="entry bm-row" data-bm-open="' + esc(b.id) + '" aria-expanded="' + open + '">' +
       '<span class="mark">' + I('bookmark') + '</span><span class="body">' + title +
-      '<span class="bm-jp">' + j(b.jp, b.v) + '</span><span class="bm-en">' + esc(b.en) + '</span>' +
+      '<span class="bm-jp">' + j(shown.jp, b.v) + '</span><span class="bm-en">' + esc(shown.en) + '</span>' +
       '<span class="kind">' + (who.sr ? '<span class="sr">' + esc(who.sr) + ' — </span>' : '') + '<span aria-hidden="' + (who.sr ? 'true' : 'false') + '">' + who.html + '</span> · ' + placeHtml(b) + '</span></span></button>' +
       (open ? bmDetail(b, s) : '') + '</li>';
   }
@@ -73228,6 +73744,7 @@ RB.fishStage = (function () {
     function say(line, who) {
       clearTimeout(sayT);
       if (!line) { sayEl.innerHTML = ''; sayEl.classList.remove('on'); return; }
+      if (RB.dialect) line = RB.dialect.line(who, line); // Suzu's Kansai-ben when chosen
       const nm = who && RB.content.chars[who] ? RB.content.chars[who].name.en : '';
       sayEl.innerHTML = '<span class="who">' + RB.util.esc(nm) + '</span>' + RB.ui.jhtml(line.jp) + '<span class="en">' + RB.util.esc(line.en) + '</span>';
       sayEl.classList.add('on');
@@ -73633,10 +74150,13 @@ RB.ui.fishing = (function () {
       if (k === 'later' || !C.session.alive()) return;
       const i = +k.slice(1);
       const reply = F.content().remarks[comp].reflect[i];
-      F.reflect(s, { comp, choice: i, site: C.sid, lines: [{ who: 'narr', jp: spread.jp, en: spread.en }, { who: comp, jp: ask.jp, en: ask.en }, { who: 'pc', jp: choices[i].jp, en: choices[i].en, choice: true }, { who: comp, jp: reply.jp, en: reply.en }] });
+      // the memory keeps the standard lines; Suzu's are shown in Kansai when chosen (src/lang/85_dialect.js)
+      const askStd = RB.dialect ? RB.dialect.std(ask) : ask;
+      const shown = RB.dialect ? RB.dialect.line(comp, reply) : reply;
+      F.reflect(s, { comp, choice: i, site: C.sid, lines: [{ who: 'narr', jp: spread.jp, en: spread.en }, { who: comp, jp: askStd.jp, en: askStd.en }, { who: 'pc', jp: choices[i].jp, en: choices[i].en, choice: true }, { who: comp, jp: reply.jp, en: reply.en }] });
       C.ui.stage.say(reply, comp);
       C.ui.stage.event('remark');
-      await C.ui.ask('<blockquote class="fp-say"><span class="who">' + esc(nm) + '</span>' + J(reply.jp) + '<span class="en">' + esc(reply.en) + '</span></blockquote><p class="muted small">Kept in Company › Shared memories.</p><div class="fp-acts"><button class="pbtn primary" data-k="ok">' + I('done') + 'Close the notebook</button></div>', ['ok']);
+      await C.ui.ask('<blockquote class="fp-say"><span class="who">' + esc(nm) + '</span>' + J(shown.jp) + '<span class="en">' + esc(shown.en) + '</span></blockquote><p class="muted small">Kept in Company › Shared memories.</p><div class="fp-acts"><button class="pbtn primary" data-k="ok">' + I('done') + 'Close the notebook</button></div>', ['ok']);
       return;
     }
     if (!R.solo && !R.shared) {
@@ -81131,6 +81651,7 @@ suzu[think]: {昔|むかし} 、 {一|ひと}つ だけ 、 {終|お}わらせ�
 * もう {少|すこ}し {考|かんが}える || I need to think a bit more. -> end
 :ask
 !recruit suzu
+?(!seen.rw.suzu_speech) !call rw.suzu_speech
 suzu[smile]: {喜|よろこ}んで 。 …… {真面目|まじめ} に {言|い}う ね 。 {扉|とびら} を {出|で}たら 、 {私|わたし} は {幕|まく} が {下|お}りる まで {降|お}りない 。 {途中|とちゅう} で {逃|に}げ{出|だ}す {役|やく} は 、 もう {演|えん}じない って {決|き}めた の 。 || Gladly. …I'll say this seriously. Once we're out the door, I won't leave the stage until the curtain falls. I've decided I'm done playing the one who runs away halfway.
 !end
 :chosen
@@ -104068,6 +104589,220 @@ var RB = (globalThis.RB = globalThis.RB || {});
 })(RB.content.company, RB.company);
 
 
+/* ==== src/content/dialect/00_lex.js ==== */
+/* The Kansai lexicon: the Kansai words and endings Suzu uses in her Kansai-ben lines
+ * (docs/dialect/suzu_kansai.md). Kept apart from RB.lex on purpose: these forms
+ * explain her lines in word help but never feed the standard vocabulary (kana
+ * practice words, the kanji chart's words, the writing desk, reviews). Verb forms
+ * (〜へん, 〜はる, 〜たる, 〜てもうた, 言うた, 〜てん …) are explained through their
+ * standard form by RB.dialect.lookupIn.
+ *   K(w, r, pos, lv, meaning, standard, note, final)
+ *   final: only at the end of a sentence (で, わ, な: the same kana are ordinary
+ *   particles elsewhere). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function () {
+  'use strict';
+  const K = (w, r, pos, lv, m, std, n, final) => Object.assign({ w, r: r || w, pos, lv, m, std }, n ? { n } : {}, final ? { final: true } : {});
+  RB.dialect.addLex([
+    // ---- the copula and what grows from it --------------------------------------------------------
+    K('や', '', 'aux', 'E', 'is; it\'s (the Kansai copula)', 'だ', 'Kansai uses や where standard Japanese uses だ: 本当だ → ほんまや.'),
+    K('やった', '', 'aux', 'E', 'was (Kansai past of や)', 'だった'),
+    K('やろ', '', 'aux', 'E', 'right?; probably; I bet', 'だろう / でしょう', 'Rising at the end, it asks for agreement: ええやろ？ "Nice, right?"'),
+    K('やろか', '', 'exp', 'I', 'I wonder; shall I?', 'だろうか'),
+    K('やん', '', 'aux', 'E', 'isn\'t it; you know (a friendly tag)', 'じゃない / じゃん', 'ええやん "That\'s nice, isn\'t it." Not a negative.'),
+    K('やんか', '', 'aux', 'I', 'isn\'t it; you know (a little more insistent than やん)', 'じゃないか'),
+    K('やんな', '', 'exp', 'I', 'right? (checking with someone)', 'だよね'),
+    K('やけど', '', 'conj', 'E', 'but; although (= だけど)', 'だけど'),
+    K('やから', '', 'conj', 'E', 'so; because (= だから)', 'だから'),
+    K('やし', '', 'conj', 'I', 'and besides; and what\'s more (= だし)', 'だし'),
+    K('やのに', '', 'conj', 'I', 'even though (= なのに)', 'なのに'),
+    K('やったら', '', 'conj', 'I', 'if it\'s…; in that case (= だったら)', 'だったら / なら'),
+    K('やって', '', 'conj', 'I', 'because; even (= だって)', 'だって'),
+    K('やねん', '', 'exp', 'E', 'it\'s that…; you see (や + ねん)', 'なんだ / なのよ'),
+    // ---- endings ---------------------------------------------------------------------------------------
+    K('ねん', '', 'prt', 'E', 'explanatory ending: "you see", "it\'s that…"', 'のだ / んだ / のよ', 'Kansai\'s everyday way of explaining or insisting: 知らんねん "I just don\'t know."'),
+    K('で', '', 'prt', 'E', 'sentence ending: "I tell you", firm and friendly', 'よ', 'Only at the end of a sentence; elsewhere で is the ordinary particle (at, by, with).', true),
+    K('わ', '', 'prt', 'E', 'sentence ending: assertion', 'よ', 'In Kansai わ is used by men and women alike, not a feminine ending.', true),
+    K('な', '', 'prt', 'E', 'sentence ending: shared feeling, agreement', 'ね', 'Kansai often uses な where standard speech has ね.', true),
+    K('なあ', '', 'prt', 'E', 'sentence ending: musing, shared feeling', 'ねえ', null, true),
+    // ---- yes, no, so ------------------------------------------------------------------------------------
+    K('せや', '', 'int', 'E', 'that\'s right; yeah', 'そうだ'),
+    K('そや', '', 'int', 'E', 'that\'s right; yeah', 'そうだ'),
+    K('せやな', '', 'exp', 'E', 'yeah, that\'s true', 'そうだね'),
+    K('せやけど', '', 'conj', 'I', 'but; even so', 'だけど / でも'),
+    K('せやから', '', 'conj', 'I', 'that\'s why; so', 'だから'),
+    K('ちゃう', '', 'exp', 'E', 'it isn\'t; that\'s wrong; not…', '違う / じゃない', 'うそ ちゃう "It\'s not a lie." ちゃう？ at the end asks "isn\'t it?"'),
+    K('ちゃうか', '', 'exp', 'I', 'isn\'t it?; I think…', 'じゃないか'),
+    K('ちゃうん', '', 'exp', 'I', 'isn\'t it?', 'じゃないの'),
+    K('ちゃうかった', '', 'exp', 'I', 'it wasn\'t; it was different', '違った / じゃなかった'),
+    K('ちゃうねん', '', 'exp', 'I', 'no, it\'s not like that', '違うんだ'),
+    K('あかん', '', 'exp', 'E', 'no good; mustn\'t; won\'t do', 'だめ / いけない', '〜な あかん = must (行かな あかん "I have to go").'),
+    K('あかんかった', '', 'exp', 'I', 'it was no good', 'だめだった'),
+    K('しゃあない', '', 'exp', 'E', 'it can\'t be helped', '仕方ない'),
+    K('かまへん', '', 'exp', 'E', 'it\'s fine; I don\'t mind', 'かまわない'),
+    K('ほな', '', 'conj', 'E', 'well then; right, so', 'じゃあ / それなら'),
+    K('ほんなら', '', 'conj', 'I', 'in that case', 'それなら'),
+    K('ほんで', '', 'conj', 'I', 'and then; so', 'それで'),
+    K('なんや', '', 'exp', 'E', 'what is it; oh, it\'s just…', 'なんだ'),
+    K('どない', '', 'adv', 'I', 'how; what (= どう)', 'どう', 'どないしたん？ "What happened?"'),
+    K('そない', '', 'adv', 'I', 'that much; like that (= そんなに)', 'そんなに'),
+    // ---- words -------------------------------------------------------------------------------------------
+    K('ほんま', '', 'adj-na', 'E', 'true; real; really', '本当'),
+    K('ほんまに', '', 'adv', 'E', 'really; truly', '本当に'),
+    K('ほんまもん', '', 'n', 'I', 'the real thing', '本物'),
+    K('めっちゃ', '', 'adv', 'E', 'really; super', 'とても'),
+    K('ええ', '', 'adj-i', 'E', 'good; nice; fine', 'いい', 'In standard Japanese ええ is also a soft "yes"; in Kansai it is the everyday word for "good".'),
+    K('ええよ', '', 'exp', 'E', 'sure; it\'s fine', 'いいよ'),
+    K('おもろい', '', 'adj-i', 'E', 'funny; interesting', 'おもしろい'),
+    K('しんどい', '', 'adj-i', 'I', 'tiring; hard going', 'つらい / 疲れる'),
+    K('しょうもない', '', 'adj-i', 'I', 'silly; pointless', 'くだらない'),
+    K('うち', '', 'pn', 'E', 'I; me (a woman speaking, Kansai)', 'わたし', 'Many Kansai women say うち for "I". (Elsewhere うち also means "home".)'),
+    K('うちら', '', 'pn', 'I', 'we; us', 'わたしたち'),
+    K('あんた', '', 'pn', 'E', 'you (warm and familiar in Kansai)', 'あなた', 'In Kansai あんた is friendly; elsewhere it can sound blunt.'),
+    K('いっぺん', '', 'adv', 'I', 'once; one time', '一度'),
+    K('なんぼ', '', 'adv', 'I', 'how much; however much', 'いくら'),
+    K('はよ', '', 'adv', 'I', 'quickly; hurry', '早く'),
+    K('ぎょうさん', '', 'adv', 'A', 'lots; plenty', 'たくさん'),
+    K('知らんけど', 'しらんけど', 'exp', 'I', '…not that I\'d know (a playful hedge at the end)', '知らないけど'),
+    Object.assign(K('なあ', '', 'int', 'E', 'hey; say (calling someone\'s attention)', 'ねえ'), { initial: true }),
+    // ---- casual speech that is not only Kansai (word help says so) -----------------------------
+    Object.assign(K('もん', '', 'n', 'E', 'thing; (at the end) because, you see', 'もの'), { casual: true }),
+    Object.assign(K('おしまい', '', 'n', 'E', 'the end; that\'s all', '終わり'), { casual: true }),
+    Object.assign(K('とこ', '', 'n', 'E', 'place; point; moment', 'ところ'), { casual: true }),
+  ], 'kansai');
+  // うち before に is usually "while" (〜うちに), not "I"
+  for (const e of RB.dialect.lexAll()) if (e.w === 'うち') e.notNext = ['に'];
+})();
+
+
+/* ==== src/content/dialect/95_scenes.js ==== */
+/* How Suzu speaks (src/ui/56_suzu_speech.js): the choice when she joins you, and the
+ * in-world way to ask her from Company › Suzu. Her lines here have Kansai versions
+ * like all her lines (kansai_70_company.js). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.script.add(`
+# asked once in a campaign, when Suzu agrees to come (called from rw.hall_suzu)
+@scene rw.suzu_speech
+!hook suzu_speech join
+
+# Company › Suzu: "Ask her to talk as she does backstage" (the setting is already Kansai)
+@scene co.suzu_speech_kansai
+suzu[laugh]: {楽屋|がくや} の {言葉|ことば} で {話|はな}して いい の ？ …… じゃあ 、 {遠慮|えんりょ} なく 。 {分|わ}からない ところ が あったら 、 いつ でも {言|い}って ね 。 || Backstage talk, then? …All right, no holding back. If you can't follow something, just say so, any time.
+
+# Company › Suzu: "Ask her to use her stage Japanese" (the setting is already standard)
+@scene co.suzu_speech_standard
+suzu[smile]: {了解|りょうかい} 。 {舞台|ぶたい} の {言葉|ことば} で {話|はな}す ね 。 {一番|いちばん} {後|うし}ろ の {席|せき} まで {届|とど}く よう に 。 || Understood. Stage Japanese it is — clear enough to reach the back row.
+`, 'dialect/scenes');
+
+
+/* ==== src/content/dialect/kansai_10_ch1.js ==== */
+/* Suzu's Kansai-ben: Chapter 1 — Reedwake.
+ * Format and rules: src/lang/85_dialect.js, docs/dialect/suzu_kansai.md.
+ * "=" the standard line as authored (the key: its Japanese); ">" the Kansai version. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.dialect.add('kansai', `
+@ ch1/30_arrival:267 [rw.suzu_first]
+= さあさあ 、 {旅|たび} の お{方|かた} ！ {嵐|あらし} の {夜|よる} の {不思議|ふしぎ} な {話|はなし} 、 {聞|き}いて いかない ？ お{代|だい} は {笑顔|えがお} ひとつ ！ || Roll up, traveller! Care to hear a strange tale of the storm night? The price — one smile!
+> さあさあ 、 {旅|たび} の お{方|かた} ！ {嵐|あらし} の {夜|よる} の {不思議|ふしぎ} な {話|はなし} 、 {聞|き}いて いかへん ？ お{代|だい} は {笑顔|えがお} ひとつ で ええ で ！ || Roll up, roll up, traveller! Wanna hear a strange tale from the storm night? The price? Just one smile!
+@ ch1/30_arrival:269 [rw.suzu_first]
+= {語|かた}り{部|べ} は {話|はなし} を {育|そだ}てる もの な の 。 || A storyteller helps her stories grow.
+> {語|かた}り{部|べ} は {話|はなし} を {育|そだ}てる もん や ねん 。 || A storyteller's gotta help her stories grow, y'know.
+@ ch1/30_arrival:271 [rw.suzu_first]
+= …… {本当|ほんとう} の ところ を {言|い}う と ね 。 {嵐|あらし} の {夜|よる} 、 {道|みち} を {誰|だれ} か が {歩|ある}いて いた 。 {足音|あしおと} が しない の 。 {水|みず}たまり を {踏|ふ}んで も 、 {音|おと} が しない 。 || …If I'm honest. On the storm night, someone was walking the road. No footsteps. Even stepping in puddles, no sound.
+> …… ほんま の とこ を {言|い}う と な 。 {嵐|あらし} の {夜|よる} 、 {道|みち} を {誰|だれ} か が {歩|ある}いててん 。 {足音|あしおと} が せえへん ねん 。 {水|みず}たまり を {踏|ふ}んで も 、 {音|おと} が せえへん 。 || …Truth be told, though. On the storm night, somebody was walking the road. No footsteps. Stepped right in the puddles, even — not a sound.
+@ ch1/30_arrival:272 [rw.suzu_first]
+= その {人|ひと} が {通|とお}った あと 、 {灯|あか}り が ひとつ ずつ {消|き}えた 。 {本|ほん} を {閉|と}じる みたい に 、 {丁寧|ていねい} に 。 || After that person passed, the lanterns went out one by one. Carefully, like someone closing books.
+> その {人|ひと} が {通|とお}った あと 、 {灯|あか}り が ひとつ ずつ {消|き}えた ん や 。 {本|ほん} を {閉|と}じる みたい に 、 {丁寧|ていねい} に 。 || After they passed, the lanterns went out one by one. Real careful, like somebody closing up books.
+@ ch1/30_arrival:273 [rw.suzu_first]
+= …… ほら ね 。 {三回|さんかい} {目|め} で やっと {本当|ほんとう} の {話|はなし} に なった 。 {話|はなし} は {育|そだ}つ の 。 || …See? Third time round, it finally became the true version. Stories grow.
+> …… ほら な 。 {三回|さんかい} {目|め} で やっと ほんま の {話|はなし} に なった やろ 。 {話|はなし} は {育|そだ}つ ねん 。 || …See? Third time round, it finally turned into the true one. Stories grow, y'know.
+@ ch1/30_arrival:274 [rw.suzu_first]
+= {一座|いちざ} は {先|さき} に {向|む}こう{岸|ぎし} へ {渡|わた}った の 。 {私|わたし} は {荷物|にもつ} の {番|ばん} で {残|のこ}ってたら 、 {橋|はし} が …… ね 。 {見|み}て の とおり 。 || My troupe crossed to the far bank ahead of me. I stayed behind to mind the luggage, and then the bridge… well. You've seen it.
+> {一座|いちざ} は {先|さき} に {向|む}こう{岸|ぎし} へ {渡|わた}ってん 。 うち は {荷物|にもつ} の {番|ばん} で {残|のこ}ってたら 、 {橋|はし} が …… な 。 {見|み}て の とおり や 。 || My troupe crossed to the far bank ahead of me. I stayed back to mind the bags, and then the bridge… well. You've seen it.
+@ ch1/30_arrival:280 [rw.suzu_again]
+= お{客|きゃく}さま 、 アンコール ？ {残念|ざんねん} 、 {今日|きょう} の {公演|こうえん} は {終|お}わり 。 {明日|あした} は {新作|しんさく} よ 。 || An encore, dear audience? Sorry — today's show is over. Tomorrow, a new piece.
+> お{客|きゃく}さん 、 アンコール ？ {残念|ざんねん} 、 {今日|きょう} の {公演|こうえん} は もう おしまい や 。 {明日|あした} は {新作|しんさく} や で 。 || An encore, folks? Sorry — today's show's all done. Tomorrow, a brand-new piece!
+@ ch1/30_arrival:281 [rw.suzu_again]
+= {橋|はし} が {届|とど}かない の 、 {私|わたし} の せい じゃ ない よ ね ？ …… {冗談|じょうだん} 。 {半分|はんぶん} は 。 || The bridge not reaching isn't my fault, right? …Joking. Half joking.
+> {橋|はし} が {届|とど}かへん の 、 うち の せい ちゃう よ な ？ …… {冗談|じょうだん} や 。 {半分|はんぶん} は な 。 || The bridge not reaching — that's not my fault, right? …Kidding. Half kidding.
+@ ch1/30_arrival:282 [rw.suzu_again]
+= {水車|すいしゃ}{小屋|ごや} ？ {怖|こわ}い {話|はなし} の {舞台|ぶたい} に ぴったり 。 …… {私|わたし} も {行|い}く 。 {怖|こわ}い から こそ 。 || The mill? The perfect set for a ghost story. …I'm coming too. Precisely because it's scary.
+> {水車|すいしゃ}{小屋|ごや} ？ {怖|こわ}い {話|はなし} の {舞台|ぶたい} に ぴったり やん 。 …… うち も {行|い}く わ 。 {怖|こわ}い から こそ や 。 || The mill? Now isn't that the perfect set for a ghost story. …I'm coming too. 'Cause it's scary, that's why.
+@ ch1/31_mill:116 [rw.mr_suzu_talk]
+= {崖|がけ} に {入|はい}って みた の ？ {声|こえ} は どう だった ？ || You went into the narrows? What were the voices like?
+> {崖|がけ} に {入|はい}って みた ん ？ {声|こえ} は どない やった ？ || You went into the narrows? So how were the voices?
+@ ch1/31_mill:121 [rw.mr_suzu_talk]
+= {一|ひと}つ ずつ ！ それ なら {話|はなし} は {早|はや}い 。 {二|ふた}つ {同時|どうじ} に {聞|き}かせれば いい の 。 {同|おな}じ {歌|うた} を {少|すこ}し ずらして 、 {輪唱|りんしょう} で 。 || One at a time! Then it's easy. We give it two at once: the same song, slightly staggered, as a round.
+> {一|ひと}つ ずつ ！ ほな {話|はなし} は {早|はや}い わ 。 {二|ふた}つ いっぺん に {聞|き}かせたら ええ ねん 。 {同|おな}じ {歌|うた} を ちょっと ずらして 、 {輪唱|りんしょう} で 。 || One at a time! Well then, that's easy. We just give it two at once — same song, a little staggered, as a round.
+@ ch1/31_mill:124 [rw.mr_suzu_talk]
+= この {崖|がけ} 、 いい {響|ひび}き ！ {劇場|げきじょう} に したい くらい 。 …… ただ 、 {客|きゃく} が {悪|わる}い 。 {同|おな}じ セリフ しか {言|い}わない 。 || These cliffs have wonderful acoustics! I'd love to make it a theatre. …Only, the audience is terrible. They only have one line.
+> この {崖|がけ} 、 めっちゃ ええ {響|ひび}き ！ {劇場|げきじょう} に したい くらい や 。 …… ただ 、 {客|きゃく} が あかん 。 {同|おな}じ セリフ しか {言|い}わへん ねん 。 || These cliffs have real fine acoustics! I'd turn 'em into a theatre if I could. …Only, the audience is no good. They've only got the one line.
+@ ch1/31_mill:125 [rw.mr_suzu_talk]
+= {繰|く}り{返|かえ}す {相手|あいて} に は 、 {輪唱|りんしょう} を ぶつける の 。 {同|おな}じ {歌|うた} を 、 {少|すこ}し ずらして 。 そう する と 、 どっち が どっち か わからなく なって 、 {黙|だま}る 。 || Against something that repeats, you throw a round at it. The same song, slightly staggered. It loses track of which is which and goes quiet.
+> {繰|く}り{返|かえ}す {相手|あいて} に は 、 {輪唱|りんしょう} を ぶつける ねん 。 {同|おな}じ {歌|うた} を 、 ちょっと ずらして 。 ほんなら 、 どっち が どっち か {分|わ}からん よう に なって 、 {黙|だま}る ねん 。 || Something that repeats? You throw a round at it. Same song, a little staggered. Then it can't tell which is which, and it hushes right up.
+@ ch1/31_mill:131 [rw.mr_suzu_talk]
+= {知|し}らない ！ {初|はじ}めて やる もの 。 …… でも 、 {怖|こわ}い とき に {歌|うた}う の は 、 {昔|むかし} から {効|き}く の よ 。 {少|すこ}なくとも 、 {歌|うた}って いる {方|ほう} に は 。 || No idea! I've never tried it. …But singing when you're scared has always worked — for the singer, at least.
+> {知|し}らん ！ {初|はじ}めて やる もん 。 …… せやけど 、 {怖|こわ}い とき に {歌|うた}う の は 、 {昔|むかし} から {効|き}く ねん で 。 {少|すく}なくとも 、 {歌|うた}うてる {方|ほう} に は な 。 || No clue! Never tried it. …But singing when you're scared has always worked, y'know. For the one doing the singing, anyhow.
+@ ch1/31_mill:135 [rw.mr_suzu_talk]
+= …… ほら 。 {拍手|はくしゅ} は {後|あと} で まとめて ちょうだい 。 || …There. Save the applause for later.
+> …… ほら な 。 {拍手|はくしゅ} は {後|あと} で まとめて ちょうだい 。 || …There ya go. Save the applause for later, all in one go.
+@ ch1/31_mill:141 [rw.mr_suzu2]
+= {私|わたし} は ここ で {崖|がけ} の お{客|きゃく} を {見張|みは}ってる 。 {文句|もんく} を {言|い}い{出|だ}したら 、 {二番|にばん} を {歌|うた}う から 。 || I'll keep an eye on the cliff audience. If they start complaining, I'll sing the second verse.
+> うち は ここ で {崖|がけ} の お{客|きゃく} を {見張|みは}っとく わ 。 {文句|もんく} {言|い}い{出|だ}したら 、 {二番|にばん} を {歌|うた}うたる から 。 || I'll keep an eye on the cliff audience right here. If they start grumbling, I'll give 'em the second verse.
+@ ch1/32_depart:19 [rw.suzu_evening]
+= {橋|はし} が {届|とど}いた から 、 {一座|いちざ} を {追|お}いかけられる ！ …… と {思|おも}った ん だ けど ね 。 || The bridge reaches, so I can chase after my troupe! …Or so I thought.
+> {橋|はし} が {届|とど}いた から 、 {一座|いちざ} を {追|お}いかけられる ！ …… って {思|おも}うたん や けど な 。 || The bridge reaches, so I can go chase down my troupe! …Or so I figured.
+@ ch1/32_depart:20 [rw.suzu_evening]
+= {正直|しょうじき} に {言|い}う と 、 {一座|いちざ} より 、 あなた の {話|はなし} の {続|つづ}き の {方|ほう} が {気|き} に なる 。 {悪|わる}い {癖|くせ} ね 。 || Honestly, I'm more curious about how your story continues than about my troupe. Bad habit of mine.
+> {正直|しょうじき} に {言|い}う と 、 {一座|いちざ} より 、 あんた の {話|はなし} の {続|つづ}き の {方|ほう} が {気|き} に なる ねん 。 {悪|わる}い {癖|くせ} や な 。 || Honestly? I'm more curious how your story goes on than about my troupe. Bad habit of mine.
+@ ch1/32_depart:115 [rw.hall_suzu]
+= {私|わたし} を {選|えら}ぶ と 、 {道中|どうちゅう} ずっと {退屈|たいくつ} しない ！ {歌|うた} も {芝居|しばい} も {手品|てじな} も つく よ 。 || Choose me and you'll never be bored on the road! Songs, plays and conjuring tricks included.
+> うち を {選|えら}んだら 、 {道中|どうちゅう} ずっと {退屈|たいくつ} せえへん で ！ {歌|うた} も {芝居|しばい} も {手品|てじな} も つく で 。 || Pick me and you won't be bored a single mile! Songs, plays and conjuring tricks — all included.
+@ ch1/32_depart:116 [rw.hall_suzu]
+= …… {冗談|じょうだん} は {置|お}いて おいて 。 {嘘|うそ} を つく の は 、 わりと {得意|とくい} なの 。 だから 、 {嘘|うそ} を {見抜|みぬ}く の も 、 たぶん {得意|とくい} 。 {西|にし} で は きっと {役|やく} に {立|た}つ 。 || …Jokes aside. I'm rather good at lying. Which means I'm probably good at seeing through lies too. That'll come in handy out west.
+> …… {冗談|じょうだん} は {置|お}いといて 。 {嘘|うそ} つく の は 、 わりと {得意|とくい} やねん 。 せやから 、 {嘘|うそ} を {見抜|みぬ}く の も 、 たぶん {得意|とくい} や 。 {西|にし} で は きっと {役|やく} に {立|た}つ で 。 || …Jokes aside. I'm pretty good at telling lies. So I reckon I'm pretty good at seeing through 'em too. That'll come in handy out west.
+@ ch1/32_depart:117 [rw.hall_suzu]
+= {昔|むかし} 、 {一|ひと}つ だけ 、 {終|お}わらせて いない {嘘|うそ} が ある の 。 {灰実|はいみ} の {方|ほう} で ね 。 || There's one lie I told long ago that I never finished. Over Cinder Orchard way.
+> {昔|むかし} 、 {一|ひと}つ だけ 、 {終|お}わらせてへん {嘘|うそ} が ある ねん 。 {灰実|はいみ} の {方|ほう} で な 。 || There's one lie I told way back that I never finished. Out Cinder Orchard way.
+@ ch1/32_depart:123 [rw.hall_suzu]
+= {喜|よろこ}んで 。 …… {真面目|まじめ} に {言|い}う ね 。 {扉|とびら} を {出|で}たら 、 {私|わたし} は {幕|まく} が {下|お}りる まで {降|お}りない 。 {途中|とちゅう} で {逃|に}げ{出|だ}す {役|やく} は 、 もう {演|えん}じない って {決|き}めた の 。 || Gladly. …I'll say this seriously. Once we're out the door, I won't leave the stage until the curtain falls. I've decided I'm done playing the one who runs away halfway.
+> {喜|よろこ}んで 。 …… {真面目|まじめ} に {言|い}う で 。 {扉|とびら} を {出|で}たら 、 うち は {幕|まく} が {下|お}りる まで {降|お}りへん 。 {途中|とちゅう} で {逃|に}げ{出|だ}す {役|やく} は 、 もう {演|えん}じへん って {決|き}めた ん や 。 || Gladly. …I'll say this straight. Once we're out that door, I don't leave the stage till the curtain falls. I've made up my mind — I'm done playing the one who runs off halfway.
+@ ch1/32_depart:126 [rw.hall_suzu]
+= {迷|まよ}って いい の よ 。 {幕|まく} が {上|あ}がる まで は 、 {配役|はいやく} は {変|か}えられる 。 || You're allowed to waver. Until the curtain rises, the casting can change.
+> {迷|まよ}って ええ ねん で 。 {幕|まく} が {上|あ}がる まで は 、 {配役|はいやく} は {変|か}えられる から な 。 || Go on and waver, it's fine. Till the curtain's up, the casting can still change.
+@ ch1/32_depart:132 [rw.hall_suzu]
+= {配役|はいやく} {変更|へんこう} ！ …… {平気|へいき} よ 。 {役者|やくしゃ} は {慣|な}れっこ だから 。 || A casting change! …I'm fine. Actors are used to it.
+> {配役|はいやく} {変更|へんこう} ！ …… {平気|へいき} や で 。 {役者|やくしゃ} は {慣|な}れっこ や から 。 || Casting change! …I'm fine, honest. Actors are used to it.
+@ ch1/32_depart:155 [rw.hall_shrine]
+= {幕|まく} を {上|あ}げる の は 、 あなた の {役目|やくめ} よ 。 || Raising the curtain is your job.
+> {幕|まく} を {上|あ}げる の は 、 あんた の {役目|やくめ} や で 。 || Raising the curtain's your job, y'know.
+@ ch1/32_depart:179 [rw.depart]
+= {開幕|かいまく} ！ …… ふふ 、 {一度|いちど} {言|い}って みたかった の 。 || Curtain up! …Heh. I always wanted to say that.
+> {開幕|かいまく} ！ …… ふふ 、 いっぺん {言|い}うて みたかってん 。 || Curtain up! …Heh. Always wanted to say that, y'know.
+@ ch1/32_depart:195 [rw.seeoff]
+= {次|つぎ} に {会|あ}う とき は 、 {新作|しんさく} を {見|み}せて あげる 。 {題名|だいめい} は まだ ない けど 、 {主役|しゅやく} は {決|き}まってる 。 || Next time we meet, I'll show you my new piece. No title yet, but I've already cast the lead.
+> {次|つぎ} に {会|あ}う とき は 、 {新作|しんさく} {見|み}せたる わ 。 {題名|だいめい} は まだ あらへん けど 、 {主役|しゅやく} は もう {決|き}まってる ねん 。 || Next time we meet, I'll show ya my new piece. No title yet, but I've already cast the lead.
+@ ch1/32_depart:201 [rw.seeoff]
+= {観客|かんきゃく} が いる うち に 、 {格好|かっこう} よく {退場|たいじょう} しましょ 。 || Let's make a stylish exit while we still have an audience.
+> {観客|かんきゃく} が いてる {間|あいだ} に 、 {格好|かっこう} よく {退場|たいじょう} しよう 。 || Let's make a classy exit while we've still got an audience.
+@ ch1/32_depart:223 [rw.suzu_after]
+= あら 、 {主役|しゅやく} の お{帰|かえ}り ！ {一座|いちざ} は {先|さき} に {行|い}っちゃった けど 、 {私|わたし} は {村|むら} の {子|こ}ども たち と {新作|しんさく} を {練習中|れんしゅうちゅう} 。 || Oh, the lead returns! My troupe's gone on ahead, but I'm rehearsing a new piece with the village kids.
+> あら 、 {主役|しゅやく} の お{帰|かえ}り や ！ {一座|いちざ} は {先|さき} に {行|い}ってもうた けど 、 うち は {村|むら} の {子|こ}ども たち と {新作|しんさく} を {練習中|れんしゅうちゅう} やねん 。 || Well, look who's back — the lead! My troupe's gone on ahead, but I'm rehearsing a new piece with the village kids.
+@ ch1/32_depart:224 [rw.suzu_after]
+= …… {灰実|はいみ} の {方|ほう} に 、 {一度|いちど} {行|い}って きた の 。 {言|い}う べき こと を 、 やっと {言|い}えた 。 {誰|だれ} に 、 かは {内緒|ないしょ} 。 || …I went over to Cinder Orchard once. I finally said what I should have said. To whom — that's a secret.
+> …… {灰実|はいみ} の {方|ほう} に 、 いっぺん {行|い}って きてん 。 {言|い}う べき こと 、 やっと {言|い}えた わ 。 {誰|だれ} に 、 か は {内緒|ないしょ} や 。 || …I went over Cinder Orchard way, once. Finally said what I should've said. Who to — that's a secret.
+@ ch1/33_banter:9 [rw.b_suzu1]
+= ねえ 、 {旅|たび} の {一座|いちざ} の {名前|なまえ} 、 {決|き}めない ？ 「 ふたり {座|ざ} 」 。 …… {却下|きゃっか} ？ {早|はや}い ！ || Hey, shall we name our travelling company? "The Two-Person Troupe." …Rejected? That was fast!
+> なあ 、 {旅|たび} の {一座|いちざ} の {名前|なまえ} 、 {決|き}めへん ？ 「 ふたり {座|ざ} 」 。 …… {却下|きゃっか} ？ {早|はや}い わ ！ || Hey, wanna name our travelling company? "The Two-Person Troupe." …Rejected? Well, that was quick!
+@ ch1/33_banter:17 [rw.b_suzu2]
+= {新作|しんさく} が できた の 。 {題名|だいめい} は 「 {借|か}りた {名前|なまえ} の {道|みち} 」 。 …… {主役|しゅやく} は {誰|だれ} か 、 わかる でしょ ？ || My new piece is finished. It's called "The Road of Borrowed Names". …You can guess who plays the lead, can't you?
+> {新作|しんさく} が できてん 。 {題名|だいめい} は 「 {借|か}りた {名前|なまえ} の {道|みち} 」 。 …… {主役|しゅやく} が {誰|だれ} か 、 わかる やろ ？ || My new piece is done. It's called "The Road of Borrowed Names." …Bet you can guess who's playing the lead, huh?
+`, 'dialect/kansai_10_ch1');
+
+
 /* ==== src/content/discovery/00_lex.js ==== */
 /* Lexicon for field discovery: the Mill Road repair, the field puzzles F1-F6,
  * field weaving and the Roadside Keepsakes. Format: w|r|pos|lv|meaning|note
@@ -109210,7 +109945,7 @@ RB.pages = (function () {
   }
 
   return {
-    COMPS, PQ, PROJECT, REPLY, RET, MEMO_TITLE, TOPICS,
+    COMPS, PQ, PROJECT, REPLY, RET, MEMO_TITLE, TOPICS, RECALL,
     state, pending, capture, runEnded, accept, page2, page3, endingDone, unfinishedDone,
     needRetro, needUnfinished, offerOpen, returned, retOf, campOpen, home2Open, home3Open, roadCampOpen, roadHomeOpen,
     recallable, describe, addTopics, topic, topicHeard, petVisible, pqDone,
@@ -119152,6 +119887,9 @@ RB.hooks = RB.hooks || {};
     }
     AT.hud.update();
   });
+
+  // the companions' lines above, read-only, for the dialect inventory (tools/suzu_inventory.mjs)
+  AT.compLines = { COMP_OK, COMP_LATER, NAME_REACT, RELIC_ANY, RELIC_REACT, FORK_REACT, TEA };
 
   // ---- a reading panel (Japanese first; translation on request counts as assisted) --------------------
   AT.reading = function (jp, en, opts) {
