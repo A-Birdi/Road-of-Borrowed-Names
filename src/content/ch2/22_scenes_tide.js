@@ -144,7 +144,8 @@ narr: {真|ま}っすぐ {歩|ある}いた 。 {確|たし}か に {真|ま}っ
 
 @scene sg.genzo_wind
 # Staged: Genzō shakes his head over the dead wind and points to the stairs up to the vane, a nod: come on;
-# at the top you lean in to the still vane, and he points to the letters his father cut; your companion's
+# at the top (your companion beside you, not under the dialogue box on this small roof) you lean in to the
+# still vane, and he points to the letters his father cut; your companion's
 # own answer (Ren's and Suzu's open hand, Nao's nod, Mio's hand to her chest); he looks you over: can you
 # write it? You step to the vane's side to write the word on its fin (side-on, so the brush shows); you look
 # out at the fog coming apart; he turns to the vane as it moves, and his small celebration; your companion's
@@ -161,6 +162,7 @@ genzo[think]: {来|き}な 。 {上|うえ} を {見|み}せて やる 。 || Co
 !set sg_genzo_up
 narr: {螺旋|らせん} {階段|かいだん} を {上|のぼ}る 。 ゲンゾウ は {膝|ひざ} を {叩|たた}きながら 、 {一段|いちだん} ずつ {上|のぼ}った 。 || You climb the spiral stairs. Genzō goes up one step at a time, slapping his knee.
 !warp sg.lighthouse_top 8 5 up
+!walkto comp 6 5 up now
 !fade in
 !gesture pc observe 8,4 hold
 narr: {灯台|とうだい} の {上|うえ} 。 {鉄|てつ} の {風見|かざみ} が 、 {錆|さ}び{付|つ}いた よう に {止|と}まって いる 。 {風見|かざみ} の {羽|はね} に 、 {文字|もじ} が {彫|ほ}って ある 。 || The top of the lighthouse. The iron weather vane stands still, as if rusted solid. Letters are cut into its fin.
