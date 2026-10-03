@@ -95,4 +95,26 @@ const ROAD = [
     variants: [{ name: 'both letters', comps: ['nao', 'ren'] }, { name: 'Tsuru\'s only', comp: 'ren', quests: { lq_fare: 1 } }, { name: 'Kōji\'s only', comp: 'mio', quests: { lq_road: 1 } }], expect: { pc: ['read'] } }),
 ];
 
-export const MISC = [...FARE, ...ROAD];
+// ---- Deduction cases and their keepsakes (src/content/cases) --------------------------------------------------
+const CASES = [
+  M({ scene: 'cs.parcel_shelf', map: 'rw.warehouse', at: [6, 3, 'up'], flags: RE,
+    variants: [{ name: 'taken · alone', comp: null, picks: [0, 1], expect: { pc: ['bend', 'read', 'check', 'observe'] } }, { name: 'taken', comps: ALL4, flags: RD, picks: [0, 1] },
+      { name: 'taken · the record', comp: 'nao', flags: RD, picks: [0, 0] }, { name: 'left', comp: 'mio', flags: RD, picks: [1] }] }),
+  M({ scene: 'cs.parcel_oldsite', map: 'sg.harbor', at: [53, 30, 'down'], flags: SC, cases: { parcel: 'open' }, items: { cs_parcel: 1 },
+    variants: [{ name: 'left at the post', picks: [0], comps: ALL4, expect: { pc: ['observe', 'present', 'check'] } }, { name: 'kept', picks: [1], comp: 'nao' }, { name: 'without the parcel', comp: 'ren', items: {} }] }),
+  M({ scene: 'cs.seto_parcel', map: 'sg.harbor', at: [52, 5, 'right'], talk: 'cs_seto', flags: SC, cases: { parcel: 'open' }, items: { cs_parcel: 1 }, comps: ['mio', 'suzu'],
+    expect: { pc: ['present', 'handover', 'receive'], cs_seto: ['receive', 'point', 'palm', 'handover'] } }),
+  M({ scene: 'cs.hama_parcel', map: 'sg.harbor', at: [39, 26, 'left'], talk: 'cs_hama', flags: SC, cases: { parcel: 'open' }, items: { cs_parcel: 1 }, minLines: 8,
+    variants: [{ name: 'told her', picks: [0], comps: ['nao', 'ren'] }, { name: 'only delivered', picks: [1], comp: 'suzu' }],
+    expect: { pc: ['present', 'handover', 'receive'], cs_hama: ['observe', 'point', 'receive', 'present', 'nod', 'handover'] } }),
+  M({ scene: 'cs.view_window', map: 'sg.lighthouse', at: [6, 3, 'up'], flags: SC,
+    variants: [{ name: 'lent', picks: [0, 1], comps: ALL4, expect: { pc: ['observe', 'receive'], genzo: ['point', 'shake', 'handover', 'present'] } }, { name: 'only looked', picks: [1], comp: 'mio' },
+      { name: 'lent already', comp: 'nao', cases: { view: 'open' } }, { name: 'after the case', comp: 'ren', cases: { view: 'done' }, expect: { genzo: ['nod'] } }] }),
+  M({ scene: 'cs.shell_shiori', map: 'sg.tidehut', at: [4, 4, 'up'], talk: 'shiori', flags: SE, comps: ['mio', 'nao'], expect: { shiori: ['nod', 'handover'], pc: ['receive', 'check'] } }),
+  M({ scene: 'cs.swallow_nobu', map: 'co.pottery', at: [4, 6, 'up'], talk: 'co_nobu', flags: F(C3, { ch3_done: true, co_kiln_open: true }), comps: ['ren', 'suzu'], expect: { co_nobu: ['nod', 'handover'], pc: ['receive', 'check'] } }),
+  M({ scene: 'cs.rosette_box', map: 'sb.hoshino', at: [5, 3, 'up'], flags: F(C4, { sb_log_solved: true }),
+    variants: [{ name: 'one taken', picks: [0], comps: ['ren', 'mio'], expect: { pc: ['bend', 'check'] } }, { name: 'left', picks: [1], comp: 'nao' }] }),
+  M({ scene: 'cs.spool_tokuji', map: 'lf.sluice', at: [16, 11, 'right'], talk: 'lf_tokuji', flags: F(C5, { lf_gate_c: true, lf_bell_rung: true }), comps: ['nao', 'suzu'], expect: { lf_tokuji: ['nod', 'handover'], pc: ['receive', 'check'] } }),
+];
+
+export const MISC = [...FARE, ...ROAD, ...CASES];

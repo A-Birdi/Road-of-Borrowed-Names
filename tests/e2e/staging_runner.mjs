@@ -33,6 +33,8 @@ export async function runBranch(p, c, v, o) {
     for (const [k, n] of Object.entries(Object.assign({}, c.items || {}, v.items || {}))) RB.state.give(s, k, n);
     for (const [k, st] of Object.entries(Object.assign({}, c.quests || {}, v.quests || {}))) RB.state.setQuest(s, k, st);
     Object.assign(s.vars, c.vars || {}, v.vars || {});
+    // deduction cases already open, or solved, at the moment the scene plays (src/engine/59_cases.js)
+    for (const [id, st] of Object.entries(Object.assign({}, c.cases || {}, v.cases || {}))) { const r = RB.cases.open(s, id); if (r && st === 'done') r.stage = 'done'; }
     Object.assign(s.player, c.player || {}, v.player || {});
     for (const w of (c.words || []).concat(v.words || [])) if (!s.words.includes(w)) s.words.push(w);
     // the creatures on the maps stay out of it (a patrol reaching you would start a battle mid-scene)

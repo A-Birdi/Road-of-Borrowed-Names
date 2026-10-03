@@ -14,6 +14,9 @@
  *   tenugui    the persimmon-dyed cloth from the tree-keeper's chest
  *   knife      a small folding knife (Kayo cuts her new height mark on the trunk)
  *   shears     garden shears (Kayo's, trembling in her hand while she says "certainly")
+ *   star       a folded paper star (from the box in Hoshino's house)
+ *   swallow    Nobu's small clay swallow
+ *   spool      Tokuji's little spool of mending thread
  */
 var RB = (globalThis.RB = globalThis.RB || {});
 
@@ -31,5 +34,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   add('shell', (b, x, y) => { b.rect(x - 1, y - 3, 3, 3, '#f0e4d0'); b.px(x, y - 2, '#a89878'); b.px(x - 1, y - 3, '#fff8ec'); b.px(x + 1, y - 1, '#c8b898'); });
   add('knife', (b, x, y) => { b.rect(x, y - 1, 1, 2, '#6a4a2a'); b.rect(x, y - 5, 1, 4, '#c8c8d0'); b.px(x, y - 6, '#e8e8f0'); b.px(x + 1, y - 4, '#8a8a92'); });
   add('shears', (b, x, y) => { b.line(x - 2, y - 5, x + 1, y - 1, '#a8a8b0'); b.line(x + 2, y - 5, x - 1, y - 1, '#c8c8d0'); b.rect(x - 2, y, 2, 2, '#8a3a2a'); b.rect(x + 1, y, 2, 2, '#8a3a2a'); });
+  add('star', (b, x, y) => { b.rect(x - 1, y - 3, 3, 3, '#f0d060'); b.px(x, y - 4, '#f8e890'); b.px(x - 2, y - 2, '#e8c040'); b.px(x + 2, y - 2, '#e8c040'); b.px(x, y - 2, '#c8a030'); });
+  add('swallow', (b, x, y) => { b.rect(x - 2, y - 2, 4, 2, '#b8683a'); b.px(x - 3, y - 3, '#a85a30'); b.px(x + 2, y - 3, '#a85a30'); b.px(x - 1, y - 3, '#d88858'); b.px(x + 1, y, '#8a4a28'); });
+  add('spool', (b, x, y) => { b.rect(x - 1, y - 4, 3, 1, '#8a6a44'); b.rect(x - 1, y, 3, 1, '#8a6a44'); b.rect(x - 1, y - 3, 3, 3, '#5a7aa8'); b.px(x, y - 2, '#8aa8d0'); });
   add('tenugui', (b, x, y) => { b.rect(x - 1, y, 3, 6, '#9a5a32'); b.rect(x - 1, y + 5, 3, 1, '#7a4222'); b.px(x + 1, y + 1, '#b87448'); b.px(x - 1, y + 2, '#b87448'); });
 })();

@@ -38,25 +38,44 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.script.add(`
 @scene cs.view_window
+# Staged: you lean in to the sketch pinned in the window; Genzō points up at it as he tells of the artist and
+# you turn to him; he shakes his head: it matches nowhere. Lent, he steps up beside you and hands you the
+# sketch, then holds up the white chart paper. Your companion's own answer (Nao looks between you and the
+# window, Mio leans in to the thin paper, Ren's open hand, Suzu presents the stage with both hands). Once lent,
+# you look at the pinholes; after the case, Genzō's nod.
 !if case.view -> lent
+!gesture pc observe 6,2 hold
 narr: {窓|まど} に 、 {薄|うす}い {紙|かみ} の {絵|え} が {留|と}めて ある 。 {外|そと} の {光|ひかり} が {透|す}けて 、 {鉛筆|えんぴつ} の {線|せん} が {浮|う}かんで {見|み}える 。 || A sketch on thin paper is pinned in the window. The light outside shines through it and the pencil lines seem to float.
 narr: {左|ひだり} から 、 {枯|か}れ{木|き} 、 {小|ちい}さな {祠|ほこら} 、 {柱|はしら} の {上|うえ} の {灯|あか}り 。 {雪|ゆき} の {斜面|しゃめん} らしい 。 || From left to right: a bare tree, a little shrine, a lamp on a post. A snowy slope, by the look of it.
 !hook case_clue view.sketch
+!look pc genzo
+!gesture genzo point 6,2
 genzo: {旅|たび} の {絵描|えか}き が {置|お}いて いった ん だ 。 {北|きた} の {道|みち} の 、 {座|すわ}って {休|やす}む {場所|ばしょ} から {描|か}いた …… と {言|い}って いた か な 。 || A travelling artist left it. Drew it from somewhere on the road north where you sit and rest… or so I think she said.
+!look genzo pc
+!gesture genzo shake
 genzo[think]: だが 、 どこ の {景色|けしき} とも {合|あ}わん 。 {俺|おれ} は {北|きた} の {道|みち} を {何度|なんど} も {歩|ある}いた が な 。 || Doesn't match anywhere, though. And I've walked the road north plenty of times.
 !hook case_clue view.genzo
 !choice
 * {貸|か}して ください || May I borrow it? -> lend
 * {見|み}る だけ に する || Just look -> end
 :lend
+!walkto genzo 5 3 right
+!prop genzo paper
+!gesture genzo handover pc
+!gesture pc receive genzo
 genzo: {持|も}って いけ 。 {描|か}かれた {場所|ばしょ} が {分|わ}かったら 、 そこ に {返|かえ}して やれ 。 {絵|え} の ほう が {喜|よろこ}ぶ 。 || Take it. If you find where it was drawn, give it back to the place. The picture'll like that better.
+!gesture genzo present prop=paper
 genzo: それ と 、 これ 。 {海図|かいず} の {白|しろ}い {紙|かみ} だ 。 {下|した} に {敷|し}けば 、 よく {見|み}える 。 || And this: white chart paper. Lay it underneath and you'll see it better.
 !give cs_sketch
 !set cs_view_backing
 !hook case_open view
+?(comp=nao) !gesture comp lookbetween pc and=6,2
 ?(comp=nao) comp: {描|か}いた {人|ひと} の {名前|なまえ} も {場所|ばしょ} も ない {絵|え} か 。 {宛名|あてな} の ない {手紙|てがみ} みたい だ な 。 || No name, no place. Like a letter with no address.
+?(comp=mio) !gesture comp observe pc
 ?(comp=mio) comp: {紙|かみ} が とても {薄|うす}い です ね 。 {破|やぶ}らない よう に 、 {気|き} を つけます 。 || The paper's so thin. I'll be careful not to tear it.
+?(comp=ren) !gesture comp palm
 ?(comp=ren) comp: {景色|けしき} は 、 {見|み}る {場所|ばしょ} で {変|か}わります 。 {灯|ひ} の {道|みち} も 、 {上|のぼ}り と {下|くだ}り で は {別|べつ} の {道|みち} です から 。 || A view changes with where you stand. Even a lantern road is a different road going up than coming down.
+?(comp=suzu) !gesture comp size
 ?(comp=suzu) comp: {舞台|ぶたい} も ね 、 {客席|きゃくせき} から と {袖|そで} から じゃ 、 {全然|ぜんぜん} {違|ちが}って {見|み}える の よ 。 || A stage looks completely different from the seats than from the wings, you know.
 !choice
 * {記録|きろく} を {見|み}る || Look at the case record -> page
@@ -65,7 +84,9 @@ genzo: それ と 、 これ 。 {海図|かいず} の {白|しろ}い {紙|か
 !hook case_page view
 !end
 :lent
+!gesture pc observe 6,2
 narr: {窓|まど} に は 、 {絵|え} を {留|と}めて いた {小|ちい}さな {穴|あな} だけ が {残|のこ}って いる 。 || Only the pinholes where the sketch hung are left in the window.
+?(case.view=done) !gesture genzo nod pc
 ?(case.view=done) genzo[smile]: {星|ほし} の {石段|いしだん} か 。 {上|のぼ}った こと は なかった な 。 {膝|ひざ} が {許|ゆる}せば 、 {一度|いちど} {座|すわ}って みる か 。 || The Star Stair, eh. Never been up it. If my knees allow, maybe I'll go and sit there once.
 
 @scene cs.view_note
