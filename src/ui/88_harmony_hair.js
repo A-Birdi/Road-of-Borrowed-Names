@@ -395,7 +395,6 @@ RB.harmonyKit = RB.harmonyKit || {};
         // the hairline thins out into the skin in a sparse ordered pattern
         const edge = !HK.inPoly(pts, X + 0.5, Y + 1.5) || !HK.inPoly(pts, X + 1.5, Y + 1.5);
         if (edge && (X + Y) % 2) continue;
-        if (((X * 3 + Y * 5) % 7) === 0 && k < 3) k += 1;
         put(L, X, Y, Mt, k);
       }
     },

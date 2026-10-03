@@ -201,9 +201,10 @@ RB.harmonyArtFixtures.fixtures(), coverage(list)        (QA only)
   residency measured in the 20-repeat test is in `docs/harmony/art_test_results.json`).
 * `equip:change` drops the player's busts and compositions that are not the running game's worn look;
   `campaign:changing` clears everything (no portrait from another campaign leaks into the next action).
-* Cold cost: 52–62 ms per composition (both busts and the composition) in the last browser run, headless
-  Chromium on the shared, loaded test machine; earlier runs before the clump rasteriser was optimised measured
-  56–136 ms. Warm (cached): ≤ 0.1 ms. Both phases of one pairing prepared together: 37–87 ms. **Call `prepare({ comp, look })` at a safe interval** — at the encounter's start with
+* Cold cost: 52–116 ms per composition (both busts and the composition) across the last two browser runs,
+  headless Chromium on the shared, loaded test machine (the spread is the machine's load); before the clump
+  rasteriser was optimised, 56–136 ms. Warm (cached): ≤ 0.1 ms. Both phases of one pairing prepared together:
+  37–116 ms. The last run's figures are in `docs/harmony/art_test_results.json`. **Call `prepare({ comp, look })` at a safe interval** — at the encounter's start with
   the committed companion, and after an equipment change — never at the moment the technique fires.
   `prepare(..., { async: true })` builds in idle callbacks, stopping after 8 ms of work in each (a single
   composition is never split, so one callback can take one cold build).
@@ -241,7 +242,9 @@ calls), not through a real save — the overlay integration should cover those p
 | Command | Result |
 |---|---|
 | `node tests/run-unit.mjs harmony_art` | 52 passed, 0 failed |
-| `node tests/e2e/harmony_art.mjs` | 39 passed, 0 failed (≈ 12 s): 41 fixtures, 656 compositions, 1,312 pixel face checks, equipment keys, bounds, phases/variants, reduced motion, scales, timings |
+| `node tests/run-unit.mjs` (whole suite) | 21,784 passed, 0 failed |
+| `node tools/validate.mjs` | no errors |
+| `node tests/e2e/harmony_art.mjs` | 39 passed, 0 failed (9–12 s): 41 fixtures, 656 compositions, 1,312 pixel face checks, equipment keys, bounds, phases/variants, reduced motion, scales, timings |
 | `node tests/e2e/harmony_art_sheets.mjs` | 11 sheets written, no page errors |
 
 The environment of the timings: Playwright, headless Chromium 141 with a software canvas, 1280 × 720 view,

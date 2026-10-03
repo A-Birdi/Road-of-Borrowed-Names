@@ -91,24 +91,24 @@
  },
  "timings": {
   "nao": {
-   "coldMs": 59.7,
+   "coldMs": 116.2,
    "warmMs": 0,
-   "prepareBothPhasesMs": 87.4
+   "prepareBothPhasesMs": 57.5
   },
   "mio": {
-   "coldMs": 62,
+   "coldMs": 68,
    "warmMs": 0,
-   "prepareBothPhasesMs": 37
+   "prepareBothPhasesMs": 60.9
   },
   "ren": {
-   "coldMs": 51.5,
+   "coldMs": 65.6,
    "warmMs": 0,
-   "prepareBothPhasesMs": 38.6
+   "prepareBothPhasesMs": 41.8
   },
   "suzu": {
-   "coldMs": 53.3,
-   "warmMs": 0.1,
-   "prepareBothPhasesMs": 37.6
+   "coldMs": 64.1,
+   "warmMs": 0,
+   "prepareBothPhasesMs": 115.8
   }
  },
  "cache": {
@@ -126,5 +126,5 @@
   ],
   "dpr": 1
  },
- "seconds": 9
+ "seconds": 11
 }
