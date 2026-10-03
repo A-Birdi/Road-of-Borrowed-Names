@@ -154,4 +154,140 @@ const CH5 = [
   { ch: 5, scene: 'lf.mioc_after', map: 'lf.inn', at: [4, 7, 'left'], talk: 'mio', flags: LB, comps: ['nao', 'ren', 'suzu'], expect: { mio: ['celebrate', 'laugh', 'check'] } },
 ];
 
-export const CH56 = [...CH5];
+// ---- Chapter 6: the Still Archive ----------------------------------------------------------------------------
+const S0 = F(LD, { sa_arrived: true }); // on the Archive road
+const SC = F(S0, { 'enter:sa.camp:sa.camp_first': true }); // the camp
+const SR = F(S0, { sa_met_kasane: true, sa_kasane_left: true }); // inside, after meeting Kasane
+const SK = F(SR, { sa_catalogue_done: true }); // the Stacks open
+const SN = F(SK, { sa_stacks_done: true }); // the Conduits
+const SM = F(SN, { sa_promise_done: true }); // the Room of Set-Down Memories and the study
+const SH = F(SM, { sa_shortcut: true }); // up to the Heart
+const SB = F(SH, { sa_hush_down: true }); // the Hush down
+const ST = F(SB, { sa_toya_read: true }); // Tōya's note read: the three decisions
+const SD = F(ST, { sa_choice_mem: true, sa_choice_archive: true, sa_choice_kasane: true, sa_descent: true }); // the way down
+const SDT = F(SD, { end_mem_return: true, end_archive_library: true, end_kasane_trial: true }); // one set of decisions
+const SDK = F(SD, { end_mem_choose: true, end_archive_closed: true, end_kasane_keeper: true }); // the other
+const SE = F(SDT, { sa_epilogue: true, sb_evening: true, co_restored: true, co_bell_done: true, rw_echo_done: true, rw_koji_back: true }); // the epilogue
+const SP = F(SDT, { sa_done: true, ch6_done: true, post: true, postgame: true }); // after the ending
+const SPK = F(SDK, { sa_done: true, ch6_done: true, post: true, postgame: true });
+const CH6 = [
+  // 50_scenes_road.js
+  { ch: 6, scene: 'sa.arrive', map: 'sa.road', at: [2, 23, 'up'], flags: LD, comps: ALL4, minLines: 5, expect: { pc: ['lookroad', 'observe'] } },
+  { ch: 6, scene: 'sa.lantern1', map: 'sa.road', at: [5, 21, 'up'], flags: S0, comps: ALL4, expect: { pc: ['observe', 'bend'] } },
+  { ch: 6, scene: 'sa.lantern2', map: 'sa.road', at: [22, 21, 'up'], flags: S0, comps: ['suzu', 'ren', 'nao'], expect: { pc: ['observe'] } },
+  { ch: 6, scene: 'sa.lantern3', map: 'sa.road', at: [12, 15, 'up'], flags: S0, comps: ['mio', 'nao', 'ren'], expect: { pc: ['observe'] } },
+  { ch: 6, scene: 'sa.lantern4', map: 'sa.road', at: [30, 4, 'left'], flags: S0, comps: ALL4, expect: { pc: ['observe'] } },
+  { ch: 6, scene: 'sa.road_marker', map: 'sa.road', at: [10, 22, 'down'], flags: S0, comps: ALL4, expect: { pc: ['observe', 'bend'] } },
+  { ch: 6, scene: 'sa.road_bundle', map: 'sa.road', at: [25, 9, 'up'], flags: S0, comps: ALL4, expect: { pc: ['bend'] } },
+  { ch: 6, scene: 'sa.camp_first', map: 'sa.camp', at: [13, 17, 'up'], flags: S0, comps: ALL4, expect: { pc: ['lookroad', 'observe'] } },
+  { ch: 6, scene: 'sa.camp_board', map: 'sa.camp', at: [9, 14, 'up'], flags: SC, comps: ALL4, expect: { pc: ['observe'] } },
+  { ch: 6, scene: 'sa.hut_register_signed', map: 'sa.hut', at: [4, 5, 'up'], flags: SC, comps: ALL4, expect: { pc: ['write'] } },
+  { ch: 6, scene: 'sa.oyone_first', map: 'sa.hut', at: [3, 3, 'up'], talk: 'sa_oyone', flags: SC, comps: ALL4, picks: [1], minLines: 6, expect: { sa_oyone: ['point', 'chin', 'lowered'] } },
+  { ch: 6, scene: 'sa.oyone_inn', map: 'sa.hut', at: [3, 3, 'up'], talk: 'sa_oyone', flags: SC, seen: ['sa.oyone_first'], comp: 'mio',
+    variants: [{ name: 'rest', picks: [0], expect: { sa_oyone: ['tendlight', 'observe'] } }, { name: 'not now', picks: [1], expect: { sa_oyone: ['nod'] } }] },
+  { ch: 6, scene: 'sa.ushio_grave', map: 'sa.gate', at: [22, 19, 'up'], flags: SR, expect: { pc: ['observe', 'bend'] },
+    variants: [{ name: 'without Ren', comps: ['nao', 'mio', 'suzu'] }, { name: 'Ren', comp: 'ren', expect: { comp: ['observe', 'lowered', 'tendlamp', 'nod'] } }, { name: 'seen before', comp: 'nao', seen: ['sa.ushio_grave'] }] },
+  { ch: 6, scene: 'sa.gate_first', map: 'sa.gate', at: [14, 19, 'up'], flags: S0, comps: ALL4, expect: { pc: ['lookroad', 'cupear', 'lookbetween'] } },
+  // 51_scenes_archive.js
+  { ch: 6, scene: 'sa.kasane_meet', map: 'sa.reading', at: [14, 17, 'up'], flags: S0, minLines: 20, expect: { kasane: ['palm', 'nod', 'lowered', 'point'], pc: ['lookroad'] },
+    variants: [{ name: 'without being asked?', comps: ALL4, picks: [0] }, { name: 'why arguments?', comp: 'ren', picks: [1] }] },
+  { ch: 6, scene: 'sa.clerk_first', map: 'sa.reading', at: [6, 5, 'up'], talk: 'sa_clerk', flags: SR, comps: ALL4, minLines: 10, expect: { sa_clerk: ['stiff'], pc: ['observe'] } },
+  { ch: 6, scene: 'sa.clerk_name', map: 'sa.reading', at: [6, 5, 'up'], talk: 'sa_clerk', flags: SM, items: { sa_ushio_notes: 1 }, quests: { sa_clerk: 0 }, expect: { pc: ['present'], sa_clerk: ['listen'] },
+    variants: [{ name: 'met · named', comps: ALL4, seen: ['sa.clerk_first'], expect: { pc: ['observe', 'receive'] } }, { name: 'first meeting · named', comp: 'nao', expect: { sa_clerk: ['stiff'] } }, { name: 'not yet', comp: 'mio', seen: ['sa.clerk_first'], fail: true, expect: { sa_clerk: ['stiff'] } }] },
+  { ch: 6, scene: 'sa.cabinet', map: 'sa.reading', at: [3, 3, 'up'], flags: SR, quests: { sa_main: 1 }, expect: { pc: ['observe'] },
+    variants: [{ name: 'sorted', comps: ALL4, expect: { pc: ['lookroad'], sa_clerk: ['stiff'] } }, { name: 'not yet', comp: 'nao', fail: true }] },
+  { ch: 6, scene: 'sa.reading_desk', map: 'sa.reading', at: [7, 6, 'down'], flags: SR, comps: ALL4, expect: { pc: ['observe', 'bend'] } },
+  { ch: 6, scene: 'sa.stacks_enter', map: 'sa.stacks', at: [29, 12, 'left'], flags: SK, quests: { sa_main: 2 }, comps: ALL4, expect: { pc: ['lookroad', 'observe'] } },
+  { ch: 6, scene: 'sa.stacks_gate', map: 'sa.stacks', at: [14, 18, 'down'], flags: SK, quests: { sa_main: 2 },
+    variants: [{ name: 'read the slip', comps: ALL4, seen: ['sa.stacks_slip'], expect: { pc: ['observe', 'lookroad'] } }, { name: 'no slip yet', comp: 'nao', expect: { pc: ['lookroad'] } },
+      { name: 'not yet', comp: 'mio', seen: ['sa.stacks_slip'], fail: true, expect: { pc: ['observe'] } }, { name: 'open', comp: 'ren', flags: SN, expect: { pc: ['lookroad'] } }] },
+  { ch: 6, scene: 'sa.conduits_enter', map: 'sa.conduits', at: [27, 4, 'down'], flags: SN, quests: { sa_main: 3 }, comps: ALL4, expect: { pc: ['lookroad', 'cupear'] } },
+  { ch: 6, scene: 'sa.notice_desk', map: 'sa.conduits', at: [2, 5, 'up'], flags: SN, quests: { sa_main: 3 }, expect: { pc: ['observe'] },
+    variants: [{ name: 'found', comps: ALL4, expect: { pc: ['bend'] } }, { name: 'taken', comp: 'nao', items: { sa_notice: 1 } }] },
+  { ch: 6, scene: 'sa.charter_gate', map: 'sa.conduits', at: [3, 13, 'down'], flags: SN, quests: { sa_main: 3 }, expect: { pc: ['observe'] },
+    variants: [{ name: 'read rightly', comps: ALL4, expect: { pc: ['bend', 'lookroad'] } }, { name: 'not yet', comp: 'mio', fail: true }, { name: 'open', comp: 'ren', flags: SM }] },
+  { ch: 6, scene: 'sa.conduit_crate', map: 'sa.conduits', at: [27, 15, 'down'], flags: SN, comps: ALL4, expect: { pc: ['bend', 'read'] } },
+  { ch: 6, scene: 'sa.memories_enter', map: 'sa.memories', at: [21, 9, 'left'], flags: SM, quests: { sa_main: 4 }, comps: ['nao', 'mio', 'suzu'], expect: { pc: ['lookroad', 'observe'] } },
+  { ch: 6, scene: 'sa.mem_requests', map: 'sa.memories', at: [9, 14, 'up'], flags: SM, comps: ALL4, expect: { pc: ['observe', 'read'] } },
+  { ch: 6, scene: 'sa.shelf_kasane', map: 'sa.memories', at: [3, 4, 'up'], flags: SM,
+    variants: [{ name: 'opened', comps: ALL4, expect: { pc: ['read'] } }, { name: 'asked for', comp: 'nao', flags: F(SB, { sa_need_letter: true }) }, { name: 'taken', comp: 'mio', items: { sa_letter_kasane: 1 }, expect: { pc: ['observe'] } }] },
+  { ch: 6, scene: 'sa.shelf_returned_rw', map: 'sa.memories', at: [6, 4, 'up'], flags: SM, comps: ['mio', 'nao'], expect: { pc: ['observe'] } },
+  { ch: 6, scene: 'sa.shelf_returned_co', map: 'sa.memories', at: [15, 4, 'up'], flags: SM, expect: { pc: ['observe'] },
+    variants: [{ name: 'still there', comp: 'nao' }, { name: 'returned', comp: 'suzu', flags: F(SM, { co_restored: true }), expect: { comp: ['lowered'] } }] },
+  { ch: 6, scene: 'sa.shelf_returned_lf', map: 'sa.memories', at: [7, 7, 'up'], flags: SM, comps: ['mio', 'nao'], expect: { pc: ['observe'] } },
+  { ch: 6, scene: 'sa.shelf_tae', map: 'sa.memories', at: [16, 7, 'up'], flags: SM, expect: { pc: ['observe'] },
+    variants: [{ name: 'the slip', comps: ALL4, expect: { pc: ['read'] } }, { name: 'taken', comp: 'ren', items: { sa_tae_slip: 1 } }] },
+  { ch: 6, scene: 'sa.shelf_grief2', map: 'sa.memories', at: [6, 13, 'up'], flags: SM, comps: ['suzu', 'nao'], expect: { pc: ['observe', 'bend'] } },
+  { ch: 6, scene: 'sa.shelf_empty', map: 'sa.memories', at: [5, 16, 'up'], flags: SM, comps: ALL4, expect: { pc: ['observe', 'bend'] } },
+  { ch: 6, scene: 'sa.shelf_isamu', map: 'sa.memories', at: [3, 13, 'up'], flags: SM,
+    variants: [{ name: 'found', comps: ALL4, quests: { sa_isamu: 0 }, expect: { pc: ['observe', 'read'] } }, { name: 'not found', comp: 'nao', quests: { sa_isamu: 0 }, fail: true, expect: { pc: ['observe'] } },
+      { name: 'no errand', comp: 'mio', expect: { pc: ['observe'] } }, { name: 'carrying it', comp: 'ren', quests: { sa_isamu: 1 }, items: { sa_folio_isamu: 1 } }, { name: 'returned', comp: 'suzu', quests: { sa_isamu: 'done' }, expect: { pc: ['observe'] } }] },
+  { ch: 6, scene: 'sa.study_enter', map: 'sa.study', at: [7, 9, 'up'], flags: SM, quests: { sa_main: 4 }, comps: ALL4, expect: { pc: ['lookroad', 'observe'] } },
+  { ch: 6, scene: 'sa.study_desk', map: 'sa.study', at: [5, 4, 'up'], flags: SM,
+    variants: [{ name: 'the slip', comps: ALL4, expect: { pc: ['bend', 'read'] } }, { name: 'taken', comp: 'nao', items: { sa_toya_reply: 1 }, expect: { pc: ['observe'] } }] },
+  { ch: 6, scene: 'sa.study_objections', map: 'sa.study', at: [2, 3, 'up'], flags: SM, comps: ALL4, expect: { pc: ['observe', 'read'] } },
+  { ch: 6, scene: 'sa.study_notebook', map: 'sa.study', at: [3, 3, 'up'], flags: SM,
+    variants: [{ name: 'no errand', comp: 'nao', expect: { pc: ['bend', 'read'] } }, { name: 'for the clerk · Ren', comp: 'ren', quests: { sa_clerk: 0 }, expect: { comp: ['tendlamp'] } },
+      { name: 'for the clerk · Mio', comp: 'mio', quests: { sa_clerk: 0 }, expect: { pc: ['lookroad'] } }, { name: 'taken', comp: 'suzu', items: { sa_ushio_notes: 1 }, expect: { pc: ['observe'] } }] },
+  { ch: 6, scene: 'sa.study_cups', map: 'sa.study', at: [12, 7, 'down'], flags: SM, comps: ALL4, expect: { pc: ['observe', 'bend'] } },
+  { ch: 6, scene: 'sa.shortcut_open', map: 'sa.study', at: [1, 6, 'left'], flags: SM, comps: ['nao', 'ren'], expect: { pc: ['observe', 'bend'] } },
+  // 52_scenes_climax.js
+  { ch: 6, scene: 'sa.heart_enter', map: 'sa.heart', at: [12, 17, 'up'], flags: SH, quests: { sa_main: 6 }, comps: ALL4, expect: { pc: ['lookroad', 'observe'] } },
+  { ch: 6, scene: 'sa.heart_kasane', map: 'sa.heart', at: [12, 11, 'up'], flags: SH, quests: { sa_main: 6 }, minLines: 3,
+    variants: [{ name: 'you are wrong', comps: ALL4, picks: [0], expect: { kasane: ['nod', 'palm', 'lowered', 'recoil'] } }, { name: 'Tōya\'s note', comp: 'nao', picks: [1], expect: { kasane: ['nod', 'palm', 'aside', 'recoil'] } },
+      { name: 'again · go', comp: 'mio', seen: ['sa.heart_kasane'], picks: [0], expect: { kasane: ['observe'] } }, { name: 'again · wait', comp: 'ren', seen: ['sa.heart_kasane'], picks: [1], expect: { kasane: ['observe', 'point'] } }] },
+  { ch: 6, scene: 'sa.after_battle', map: 'sa.heart', at: [12, 11, 'up'], flags: SB, quests: { sa_main: 6 }, minLines: 10, expect: { pc: ['observe', 'cupear', 'point'], kasane: ['lookroad', 'lowered', 'avert'] },
+    variants: [{ name: 'after the council', comps: ALL4, seen: ['lf.yae_after'], expect: { kasane: ['flinch'] } }, { name: 'without the message', comp: 'mio' }] },
+  { ch: 6, scene: 'sa.choose_mem', map: 'sa.memories', at: [11, 10, 'down'], talk: 'kasane', flags: ST, quests: { sa_main: 7 }, expect: { kasane: ['palm', 'lowered', 'point', 'nod'] },
+    variants: [{ name: 'return them', comps: ALL4, picks: [0], expect: { kasane: ['lookroad'] } }, { name: 'keep them', comps: ['nao', 'mio', 'suzu'], picks: [1] },
+      { name: 'keep them · Ren took the face', comp: 'ren', flags: F(ST, { sa_ren_took: true }), picks: [1] }, { name: 'keep them · Ren left it', comp: 'ren', flags: F(ST, { sa_ren_left: true }), picks: [1] }] },
+  { ch: 6, scene: 'sa.choose_archive', map: 'sa.reading', at: [14, 7, 'up'], talk: 'kasane', flags: F(ST, { sa_choice_mem: true, end_mem_return: true }), quests: { sa_main: 7 }, expect: { kasane: ['lookbetween', 'palm', 'point'] },
+    variants: [{ name: 'a library', comps: ALL4, picks: [0], expect: { sa_clerk: ['stiff'] } }, { name: 'closed', comps: ALL4, picks: [1], expect: { kasane: ['lowered'], sa_clerk: ['stiff'] } },
+      { name: 'Tsuzuri named · library', comp: 'nao', flags: F(ST, { sa_choice_mem: true, end_mem_return: true, sa_clerk_named: true }), picks: [0], expect: { sa_tsuzuri: ['stiff'] } }] },
+  { ch: 6, scene: 'sa.choose_kasane', map: 'sa.gate', at: [15, 13, 'up'], talk: 'kasane', flags: F(ST, { sa_choice_mem: true, sa_choice_archive: true, end_mem_return: true, end_archive_library: true }), quests: { sa_main: 8 }, expect: { kasane: ['lookroad', 'lowered', 'nod'] },
+    variants: [{ name: 'go down', comps: ALL4, picks: [0] }, { name: 'stay', comps: ALL4, picks: [1] },
+      { name: 'the empty shelf seen · closed · stay', comp: 'mio', seen: ['sa.shelf_empty'], flags: F(ST, { sa_choice_mem: true, sa_choice_archive: true, end_mem_return: true, end_archive_closed: true }), picks: [1], expect: { kasane: ['avert'], pc: ['palm'] } }] },
+  // 53_scenes_ending.js
+  { ch: 6, scene: 'sa.camp_descent', map: 'sa.camp', at: [13, 16, 'down'], minLines: 4,
+    variants: [{ name: 'Kasane comes down · Isamu helped', comps: ALL4, flags: SDT, quests: { sa_isamu: 'done' }, seen: ['sa.isamu_first'], expect: { sa_oyone: ['lookroad', 'observe', 'point'], kasane: ['avert'], sa_isamu: ['cupear'] } },
+      { name: 'Kasane stays · Isamu waiting', comp: 'ren', flags: SDK, quests: { sa_isamu: 0 }, seen: ['sa.isamu_first'], expect: { sa_oyone: ['nod', 'write'], sa_isamu: ['cupear', 'exhale', 'lookroad'] } },
+      { name: 'Isamu never met', comp: 'nao', flags: SDK, expect: { sa_oyone: ['lookroad'] } }] },
+  { ch: 6, scene: 'sa.kasane_walk', map: 'sa.camp', at: [15, 15, 'right'], talk: 'kasane', flags: SDT, comps: ['mio', 'nao'], expect: { kasane: ['lookroad'] } },
+  { ch: 6, scene: 'sa.epi_lf', map: 'lf.town', at: [2, 17, 'right'], minLines: 8, expect: { pc: ['lookroad', 'cupear', 'palm'], sa_tae: ['cupear', 'lowered', 'listen'] },
+    variants: [{ name: 'Kasane came down · Mio', comp: 'mio', flags: F(SE, { sb_hoshino_goes: true }), expect: { kasane: ['bow'], lf_yae: ['laugh'], comp: ['bow', 'laugh'], akari: ['lookroad'] } },
+      { name: 'Kasane stayed · Nao delivered', comp: 'nao', flags: F(SE, SDK, { lf_nao_cameo_done: true }), quests: { lf_nao: 'done' }, expect: { umi: ['palm'], comp: ['nod'] } },
+      { name: 'Nao came back too soon', comp: 'nao', flags: F(SE, { lf_nao_cameo_done: true }), quests: { lf_nao: 1 }, expect: { comp: ['strap'] } },
+      { name: 'Nao\'s letter undelivered', comp: 'nao', flags: F(SE, { lf_nao_cameo_done: true }), expect: { comp: ['strap'] } },
+      { name: 'Ren', comp: 'ren', flags: SE }, { name: 'Suzu', comp: 'suzu', flags: SE }] },
+  { ch: 6, scene: 'sa.epi_sb', map: 'sb.hamlet', at: [22, 33, 'up'], expect: { pc: ['lookroad'] },
+    variants: [{ name: 'the lamp lit early · Ren took the face', comp: 'ren', flags: F(SE, { sa_ren_took: true }), expect: { hoshino: ['lookroad'], pc: ['shadeeyes'] } }, { name: 'Hoshino went down · Ren left it', comp: 'ren', flags: F(SE, { sb_hoshino_goes: true }), expect: { kanta: ['nod'] } },
+      { name: 'nao', comp: 'nao', flags: SE }, { name: 'mio', comp: 'mio', flags: F(SE, SDK) }, { name: 'suzu', comp: 'suzu', flags: SE }] },
+  { ch: 6, scene: 'sa.epi_co', map: 'co.village', at: [3, 18, 'right'], flags: F(SE, { co_chronicle_read: true }), expect: { pc: ['lookroad'] },
+    variants: [{ name: 'suzu', comp: 'suzu', expect: { comp: ['lowered', 'nod'] } }, { name: 'nao', comp: 'nao' }, { name: 'mio · the seat named', comp: 'mio', flags: F(SE, { co_chronicle_read: true, co_hiro_seat_named: true }) }, { name: 'ren · no bell yet', comp: 'ren', flags: F(SE, { co_chronicle_read: true, co_bell_done: false }) }] },
+  { ch: 6, scene: 'sa.epi_sg', map: 'sg.harbor', at: [27, 3, 'down'], flags: SE, expect: { pc: ['lookroad'], wataru: ['exhale'] },
+    variants: [{ name: 'Isamu helped · mio', comp: 'mio', quests: { sa_isamu: 'done' }, expect: { sa_isamu: ['cupear'], nao: ['present'] } }, { name: 'nao', comp: 'nao' }, { name: 'ren', comp: 'ren' }, { name: 'suzu', comp: 'suzu' }] },
+  { ch: 6, scene: 'sa.epi_rw', map: 'rw.village', at: [22, 30, 'up'], flags: SE, expect: { pc: ['lookroad'], hana: ['present'], tsuru: ['point'] },
+    variants: [{ name: 'mio', comp: 'mio' }, { name: 'ren', comp: 'ren' }, { name: 'nao · Ren at home', comp: 'nao', flags: F(SE, { sa_ushio_found: true }), items: { sa_ren_folio: 1 }, expect: { ren: ['lowered', 'receive', 'read', 'thanks'] } }] },
+  { ch: 6, scene: 'sa.epi_ren_home', map: 'rw.village', at: [22, 30, 'up'], flags: SE,
+    variants: [{ name: 'the folio carried', comp: 'nao', flags: F(SE, { sa_ushio_found: true }), items: { sa_ren_folio: 1 }, expect: { pc: ['palm', 'handover'], ren: ['lowered', 'receive', 'read', 'thanks'] } },
+      { name: 'told of the folio', comp: 'mio', flags: F(SE, { sa_ushio_found: true, sa_ren_told: true }), expect: { ren: ['lowered', 'cupear'] } },
+      { name: 'the grave only', comp: 'suzu', flags: F(SE, { sa_ushio_found: true }), expect: { ren: ['lowered', 'tendlamp'] } },
+      { name: 'no news', comp: 'nao', expect: { ren: ['palm'] } }] },
+  { ch: 6, scene: 'sa.end_comp', map: 'rw.village', at: [22, 30, 'up'], flags: SE,
+    variants: [{ name: 'nao', comp: 'nao', expect: { comp: ['bend', 'point', 'present', 'aside', 'handover', 'lookbetween', 'nod'], pc: ['receive', 'read'] } },
+      { name: 'mio', comp: 'mio', expect: { comp: ['point', 'laugh', 'present', 'handover', 'shake'], pc: ['receive'] } },
+      { name: 'ren · took the face', comp: 'ren', flags: F(SE, { sa_ren_took: true }), expect: { comp: ['tendlamp', 'present', 'lowered', 'palm', 'chin', 'nod'] } },
+      { name: 'ren · left it', comp: 'ren', flags: F(SE, { sa_ren_left: true }), expect: { comp: ['aside'] } },
+      { name: 'suzu', comp: 'suzu', expect: { comp: ['check', 'point', 'chin', 'exhale', 'present', 'handover'], pc: ['receive'] } },
+      { name: 'alone', comp: null, expect: { pc: ['cupear'] } }] },
+  // 54_scenes_side.js
+  { ch: 6, scene: 'sa.isamu_first', map: 'sa.camp', at: [15, 11, 'right'], talk: 'sa_isamu', flags: SC, comps: ALL4, minLines: 8, expect: { sa_isamu: ['lookroad', 'cupear', 'lowered', 'rubhands', 'nod', 'exhale'], pc: ['observe'] } },
+  { ch: 6, scene: 'sa.oyone_post', map: 'sa.hut', at: [3, 3, 'up'], talk: 'sa_oyone', comp: 'nao', expect: { sa_oyone: ['point'] },
+    variants: [{ name: 'Kasane in Lanternfall', flags: SP, picks: [1], expect: { sa_oyone: ['nod'] } }, { name: 'Kasane kept the Archive', flags: SPK, picks: [0] }] },
+  { ch: 6, scene: 'sa.kasane_post', map: 'sa.gate', at: [15, 13, 'up'], talk: 'kasane', flags: SPK, comp: 'mio', expect: { kasane: ['palm', 'present'] },
+    variants: [{ name: 'at the shut gate · another time', picks: [1], expect: { kasane: ['lookroad'] } }, { name: 'at the shut gate · tell it', picks: [0], expect: { kasane: ['nod'] } },
+      { name: 'in the library', map: 'sa.reading', at: [14, 6, 'up'], flags: F(SPK, { end_archive_closed: false, end_archive_library: true }), picks: [1] }] },
+  { ch: 6, scene: 'sa.clerk_post', map: 'sa.camp', at: [16, 7, 'up'], talk: 'sa_clerk', flags: SPK, comp: 'ren', quests: { sa_clerk: 0 }, expect: { sa_clerk: ['stiff'] } },
+];
+
+export const CH56 = [...CH5, ...CH6];

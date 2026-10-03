@@ -182,7 +182,7 @@ if (CH !== 'showcase') {
   // a fresh page every 20 branches (and its page errors checked when it is let go)
   const release = async () => {
     if (!cur) return;
-    ok(cur.errors.length === 0, 'Ch1/Ch2 cases from ' + from + ': no page errors' + (cur.errors.length ? ': ' + cur.errors.slice(0, 2).join(' | ') : ''));
+    ok(cur.errors.length === 0, 'Chapter cases from ' + from + ': no page errors' + (cur.errors.length ? ': ' + cur.errors.slice(0, 2).join(' | ') : ''));
     await cur.p.context().close();
     cur = null;
   };
@@ -192,7 +192,7 @@ if (CH !== 'showcase') {
     after: async (p, c) => { runs++; if (runs % 20 === 1) from = c.scene; },
   });
   await release();
-  console.log('Ch1/Ch2 cases: ' + cases.length + ' scenes in ' + ((Date.now() - t0) / 1000).toFixed(0) + ' s');
+  console.log('Chapter cases: ' + cases.length + ' scenes in ' + ((Date.now() - t0) / 1000).toFixed(0) + ' s');
 }
 await b.close();
 srv.close();

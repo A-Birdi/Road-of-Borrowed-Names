@@ -4,17 +4,33 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.script.add(`
 @scene sa.isamu_first
+# Staged: you look at the sunburnt man by the fire; Isamu (sitting) looks up the slope to the Archive, puts a hand to
+# his ear for his wife's laugh, his head goes down, and he rubs his cold hands over three days of waiting; your
+# companion's own answer (Nao's nod, Mio bends to his cold hands, Ren's open hand, Suzu's shrug); his nod, and a
+# breath out over the kettle about to boil.
+!gesture pc observe sa_isamu
 narr: {焚|た}き{火|び} の {前|まえ} に 、 {日焼|ひや}け した {男|おとこ} が {座|すわ}って いる 。 {手|て} に は 、 {折|お}り{畳|たた}んだ {紙|かみ} 。 || A sunburnt man sits by the fire, a folded paper in his hand.
+!gesture sa_isamu lookroad up
 sa_isamu: …… {上|うえ} へ {行|い}く の かい 。 {中|なか} に は {入|はい}れる よ 。 {入|はい}れる けど 、 {誰|だれ} も {返事|へんじ} を しない 。 {棚|たな} ばかり だ 。 || …Going up, are you? You can get in. You can — but nobody answers. Nothing but shelves.
 sa_isamu: イサム だ 。 {潮硝子|しおがらす} で {網|あみ} を {繕|つくろ}ってる 。 {五年前|ごねんまえ} 、 この {坂|さか} を {登|のぼ}って 、 {預|あず}けた もの が ある 。 || Name's Isamu. I mend nets in Saltglass. Five years ago I climbed this slope and left something up there.
+!gesture sa_isamu cupear
 sa_isamu: {女房|にょうぼう} の {笑|わら}い{声|ごえ} だ 。 {死|し}んだ {後|あと} 、 {夜|よる} に {頭|あたま} の {中|なか} で {聞|き}こえる の が 、 {辛|つら}くて な 。 || My wife's laugh. After she died, hearing it in my head at night was more than I could take.
+!gesture sa_isamu lowered
 sa_isamu[sad]: {預|あず}けたら {楽|らく} に なる と {思|おも}った 。 {楽|らく} に は なった 。 …… でも 、 {笑|わら}い{方|かた} を {思|おも}い{出|だ}せない {家|いえ} は 、 {痛|いた}い {家|いえ} より {寒|さむ}い 。 || I thought I'd feel better if I left it. I did. …But a house where you can't remember how she laughed is colder than one that hurts.
+!gesture sa_isamu rubhands
 sa_isamu: {返|かえ}して くれ って {手紙|てがみ} を {書|か}いた 。 {扉|とびら} に {挟|はさ}んで 、 {三日|みっか} {待|ま}ってる 。 {中|なか} の {棚|たな} は 、 {俺|おれ} に は どれ が どれ だか {分|わ}からん 。 || I wrote asking for it back. Tucked it in the door, and I've waited three days. As for the shelves in there — I can't tell one from another.
+?(comp=nao) !gesture comp nod sa_isamu
 ?(comp=nao) nao: {返事|へんじ} の ない {手紙|てがみ} を {待|ま}つ の は 、 {一番|いちばん} {体|からだ} に {悪|わる}い 。 …… {届|とど}けて やる よ 。 {逆|ぎゃく} {方向|ほうこう} の {配達|はいたつ} だ けど 。 || Waiting on a letter that never gets answered is the worst thing for you. …We'll deliver it. Just in the opposite direction.
+?(comp=mio) !gesture comp bend sa_isamu
 ?(comp=mio) mio: イサム さん 、 {手|て} が {冷|つめ}たい 。 {三日|みっか} も {外|そと} に いた ん です か 。 …… お{茶|ちゃ} を {飲|の}んで 、 {待|ま}って いて ください 。 {探|さが}して きます 。 || Isamu, your hands are ice-cold. Three days out here? …Have some tea and wait. We'll look for it.
+?(comp=ren) !gesture comp palm sa_isamu
 ?(comp=ren) ren: {預|あず}けた もの は 、 {頼|たの}まれたら {返|かえ}す べき です 。 {灯守|ひもり} の {誓|ちか}い と {同|おな}じ です 。 {探|さが}して きます 。 || What's left in someone's keeping should be returned when they ask. It's the same as a lantern keeper's oath. We'll look for it.
+?(comp=suzu) !gesture comp shrug
 ?(comp=suzu) suzu: {預|あず}かり{証|しょう} は ある ？ …… ない 。 だよ ね 。 {大丈夫|だいじょうぶ} 、 {人|ひと} の {忘|わす}れ{物|もの} を {探|さが}す の は 、 {旅芸人|たびげいにん} の {副業|ふくぎょう} だ から 。 || Got a receipt? …No. Of course not. Don't worry — hunting down what people have lost is every travelling player's side job.
+!look sa_isamu pc
+!gesture sa_isamu nod pc
 sa_isamu: {頼|たの}む 。 {目録|もくろく} に は 、 {俺|おれ} の {言葉|ことば} じゃ なく 、 {向|む}こう の {言葉|ことば} で {書|か}いて ある かも しれん が 。 || I'd be grateful. Mind, the catalogue might describe it in their words, not mine.
+!gesture sa_isamu exhale
 sa_isamu: {笑|わら}い{方|かた} は な …… {沸|わ}く {前|まえ} の やかん みたい だった 。 {低|ひく}く {始|はじ}まって 、 {自分|じぶん} でも {止|と}められなく なる 。 || Her laugh… it was like a kettle just before it boils. It'd start low, and then she couldn't stop it.
 !quest sa_isamu start
 
@@ -60,24 +76,35 @@ sa_isamu[smile]: {礼|れい} を {言|い}う よ 。 {言葉|ことば} が {�
 sa_isamu: {時々|ときどき} 、 {急|きゅう} に {笑|わら}い{声|ごえ} が する んで 、 オヨネ さん が {驚|おどろ}いてる 。 …… {悪|わる}い な 。 {止|と}められない んだ 。 あいつ と {同|おな}じ で 。 || Every so often the laugh comes out of nowhere and startles Oyone. …Sorry. I can't stop it. Just like her.
 
 @scene sa.oyone_post
+# Staged: after the ending Oyone points you to the register (up and down, both), and nods over Kasane's letters.
+!gesture sa_oyone point prop:table
 sa_oyone: おや 、 また {来|き}た の かい 。 {宿帳|やどちょう} に {書|か}き な 。 {上|のぼ}り と {下|くだ}り 、 {両方|りょうほう} ね 。 || Well, back again? Sign the register. Up and down, both.
 ?(end_archive_library) sa_oyone: {近頃|ちかごろ} は 、 {読|よ}み に {登|のぼ}る {人|ひと} ばかり だ 。 {泣|な}き ながら {登|のぼ}る {人|ひと} は 、 もう {滅多|めった} に いない 。 {笑|わら}い ながら {下|くだ}って くる 。 || These days everyone who climbs up is going to read. Hardly anyone goes up crying any more. They come down laughing.
 ?(end_archive_closed) sa_oyone: {閉|と}じた {書庫|しょこ} の {鍵|かぎ} は 、 あたし が {預|あず}かってる 。 {開|あ}ける {用|よう} は ない けど ね 。 {誰|だれ}か が {持|も}ってる って だけ で 、 {落|お}ち{着|つ}く {人|ひと} も いる 。 || I keep the key to the closed Archive. Not that anyone needs it opened. Some folk just feel easier knowing someone's holding it.
 ?(end_mem_choose) sa_oyone: {綴|つづ}り を {取|と}り に {来|く}る {人|ひと} も いる 。 {来|き}て 、 {扉|とびら} の {前|まえ} で {引|ひ}き{返|かえ}す {人|ひと} も いる 。 どっち に も 、 お{茶|ちゃ} を {出|だ}す 。 || Some come for their folios. Some come as far as the door and turn back. Both get tea.
 ?(end_mem_return) sa_oyone: {全部|ぜんぶ} {返|かえ}した って ね 。 {下|した} の {町|まち} は 、 しばらく {泣|な}き{声|ごえ} だらけ だった そう だ 。 {今|いま} は 、 {笑|わら}い{声|ごえ} の ほう が {多|おお}い と さ 。 || They say everything was given back. The towns were full of crying for a while. More laughing than crying now, I hear.
 ?(end_kasane_keeper) sa_oyone: カサネ に は 、 {週|しゅう} に {一度|いちど} {飯|めし} を {持|も}って {上|あ}がる 。 {残|のこ}したら {叱|しか}る 。 {三十年|さんじゅうねん} {分|ぶん} 、 {叱|しか}ってる よ 。 || I carry Kasane's food up once a week. If there's anything left on the plate, I give them what for. Thirty years' worth of what for.
+?(end_kasane_trial) !gesture sa_oyone nod
 ?(end_kasane_trial) sa_oyone: カサネ は {灯落|ひおち} で 、 {名前|なまえ} を {書|か}き{写|うつ}してる そう だ 。 {時々|ときどき} {手紙|てがみ} が {来|く}る 。 {字|じ} が 、 {少|すこ}し {下手|へた} に なった 。 いい こと だ よ 。 || Kasane's in Lanternfall copying out names, they say. Letters come now and then. The handwriting's got a bit worse. That's a good sign.
 !call sa.oyone_inn
 
 @scene sa.kasane_post
+# Staged: after the ending Kasane's open hand of welcome for today's objection; they look over to the readers'
+# shelves or to the shut doors; they hold up one of the week's letters, and nod at being asked to tell it again.
+!gesture kasane palm pc
 kasane[smile]: いらっしゃい 。 {今日|きょう} も 、 {反対|はんたい} を {持|も}って {来|き}て くれました か 。 || Welcome. Have you brought me an objection today?
+?(end_archive_library) !gesture kasane lookroad 21,2
 ?(end_archive_library) kasane: {読|よ}み に {来|く}る {人|ひと} が 、 {毎日|まいにち} {少|すこ}し ずつ {増|ふ}えて います 。 {何|なに} も {取|と}らない {書庫|しょこ} は 、 {思|おも}って いた より {忙|いそが}しい 。 || More readers come every day. An archive that takes nothing is busier than I expected.
+?(end_archive_closed) !gesture kasane lookroad 15,8
 ?(end_archive_closed) kasane: {扉|とびら} は {閉|し}めた まま です 。 それ でも {時々|ときどき} 、 {誰|だれ}か が {来|き}て 、 {門|もん} の {前|まえ} で {話|はなし} を して いきます 。 {怒|おこ}る {人|ひと} も 、 {黙|だま}って {座|すわ}る {人|ひと} も 。 || The doors stay shut. Even so, now and then someone comes and talks with me at the gate. Some are angry. Some just sit in silence.
+!look kasane pc
+!gesture kasane present pc prop=letter
 kasane: {毎週|まいしゅう} 、 {手紙|てがみ} が {届|とど}きます 。 {全部|ぜんぶ} 、 {反対|はんたい} の {手紙|てがみ} です 。 {全部|ぜんぶ} に 、 {返事|へんじ} を {書|か}いて います 。 || Letters come every week. Every one of them an objection. I answer every one.
 !choice
 * あの {夜|よる} の {話|はなし} を 、 もう {一度|いちど} {聞|き}かせて 。 || Tell me about that night again. -> hist
 * また {来|く}る よ 。 || I'll come again. -> end
 :hist
+!gesture kasane nod pc
 kasane: …… ええ 。 {何度|なんど} でも 。 {話|はな}す たび に 、 {少|すこ}し ずつ {違|ちが}う ところ が {見|み}えて きます から 。 || …Yes. As often as you like. Each time I tell it, I see a little more of it.
 !activity sa.flood_history
 
@@ -92,6 +119,8 @@ kasane[smile]: どちら も 、 {本人|ほんにん} が {選|えら}んだ �
 ?(end_archive_closed) sa_tsuzuri: ツヅリ は 、 {小屋|こや} で {宿帳|やどちょう} を {付|つ}けて います 。 {上|のぼ}り と {下|くだ}り 。 {分類|ぶんるい} は {二|ふた}つ だけ 。 {快適|かいてき} です 。 || Tsuzuri keeps the register at the hut now. Up and down. Only two categories. Very restful.
 
 @scene sa.clerk_post
+# Staged: after the ending the clerk at the camp tilts as it says it still has no name.
+!gesture sa_clerk stiff pc
 sa_clerk: {当|とう}{書記|しょき} は 、 まだ {名前|なまえ} が ありません 。 ウシオさん の {手帳|てちょう} は 、 オヨネさん が {下|お}ろして くれました 。 || This clerk still has no name. Oyone brought Ushio's notebook down.
 !if item.sa_ushio_notes -> name
 !give sa_ushio_notes
